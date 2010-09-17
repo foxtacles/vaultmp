@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="default" />
+	<File name="RakNet\DS_Table.h" open="0" top="0" tabpos="0">
+		<Cursor position="2712" topLine="84" />
+	</File>
+	<File name="RakNet\RakMemoryOverride.h" open="0" top="0" tabpos="0">
+		<Cursor position="380" topLine="0" />
+	</File>
+	<File name="RakNet\RakString.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="10145" topLine="373" />
+	</File>
+	<File name="RakNet\rdlmalloc.h" open="0" top="0" tabpos="0">
+		<Cursor position="75279" topLine="1867" />
+	</File>
+	<File name="fallout3.cpp" open="0" top="0" tabpos="2">
+		<Cursor position="6581" topLine="211" />
+	</File>
+	<File name="fallout3.h" open="0" top="0" tabpos="3">
+		<Cursor position="321" topLine="8" />
+	</File>
+	<File name="ufmod.h" open="0" top="0" tabpos="0">
+		<Cursor position="8622" topLine="210" />
+	</File>
+	<File name="vaultmp.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="324" topLine="0" />
+	</File>
+	<File name="vaultmp.h" open="0" top="0" tabpos="0">
+		<Cursor position="745" topLine="2" />
+	</File>
+	<File name="vaultmp.rc" open="1" top="1" tabpos="5">
+		<Cursor position="124" topLine="0" />
+	</File>
+</CodeBlocks_layout_file>
