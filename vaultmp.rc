@@ -1,0 +1,5 @@
+#include "vaultmp.h"
+
+ICON_MAIN      ICON    DISCARDABLE   vaultmp.ico
+CHIPTUNE       RCDATA  DISCARDABLE   the_wasteland.xm
+POWERED        BITMAP  DISCARDABLE   powered.bmp
