@@ -55,20 +55,19 @@ int Script::Call(AMX* amx, char name[], char argl[], void* args[])
         {
             case 'i':
             {
-                break;
-            }
-            case 'c':
-            {
+                int* value = reinterpret_cast<int*>(args[i]);
+                amx_Push(amx, *value);
                 break;
             }
             case 'f':
             {
+                float* value = reinterpret_cast<float*>(args[i]);
+                amx_Push(amx, *value);
                 break;
             }
             case 's':
             {
                 char* string = reinterpret_cast<char*>(args[i]);
-
                 if (stackpointer != 0) amx_PushString(amx, NULL, NULL, string, 0, 0);
                 else amx_PushString(amx, &stackpointer, NULL, string, 0, 0);
                 break;
