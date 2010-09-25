@@ -5,12 +5,14 @@ using namespace std;
 
 RakPeerInterface* Dedicated::peer;
 SocketDescriptor* Dedicated::sockdescr;
-AMX* Dedicated::script;
+int Dedicated::port;
+int Dedicated::connections;
+AMX* Dedicated::amx;
+char* Dedicated::announce;
+bool Dedicated::query;
 
-#ifdef ANNOUNCE
 SystemAddress Dedicated::master;
 TimeMS Dedicated::announcetime;
-#endif
 
 ServerEntry Dedicated::self;
 
@@ -29,8 +31,6 @@ void Dedicated::TerminateThread()
 {
       thread = false;
 }
-
-#ifdef ANNOUNCE
 
 void Dedicated::Announce(bool announce)
 {
@@ -78,31 +78,32 @@ void Dedicated::Announce(bool announce)
     announcetime = GetTimeMS();
 }
 
-#endif
-
 DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
 {
-      sockdescr = new SocketDescriptor(RAKNET_PORT, 0);
+      sockdescr = new SocketDescriptor(port, 0);
       peer = RakPeerInterface::GetInstance();
-      peer->Startup(RAKNET_CONNECTIONS, sockdescr, 1, THREAD_PRIORITY_NORMAL);
-      #ifdef ANNOUNCE
-      peer->SetMaximumIncomingConnections(RAKNET_CONNECTIONS - 1);
-      #else
-      peer->SetMaximumIncomingConnections(RAKNET_CONNECTIONS);
-      #endif
+
+      if (announce)
+      {
+            peer->Startup(connections + 1, sockdescr, 1, THREAD_PRIORITY_NORMAL);
+            peer->SetMaximumIncomingConnections(connections);
+            master.SetBinaryAddress(strtok(announce, ":"));
+            char* cport = strtok(NULL, ":");
+            master.port = cport != NULL ? atoi(cport) : RAKNET_MASTER_STANDARD_PORT;
+            peer->Connect(master.ToString(false), master.port, 0, 0, 0, 0, 3, 500, 0);
+            announcetime = GetTimeMS();
+      }
+      else
+      {
+            peer->Startup(connections, sockdescr, 1, THREAD_PRIORITY_NORMAL);
+            peer->SetMaximumIncomingConnections(connections);
+      }
 
       Packet* packet;
 
-      #ifdef ANNOUNCE
-      master.SetBinaryAddress(RAKNET_MASTER_ADDRESS);
-      master.port = RAKNET_MASTER_PORT;
-      peer->Connect(RAKNET_MASTER_ADDRESS, RAKNET_MASTER_PORT, 0, 0, 0, 0, 3, 500, 0);
-      announcetime = GetTimeMS();
-      #endif
-
       self.SetServerName("testserver");
       self.SetServerMap("asdf");
-      self.SetServerPlayers(pair<int, int>(0, 32));
+      self.SetServerPlayers(pair<int, int>(0, connections));
       self.SetServerPing(123);
       self.SetServerRule("asdf", "kokolores");
       self.SetServerRule("blub", "moep");
@@ -135,50 +136,49 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                     }
                     case ID_MASTER_UPDATE:
                     {
-                        #ifdef QUERY
-
-                        BitStream query(packet->data, packet->length, false);
-                        query.IgnoreBytes(sizeof(MessageID));
-
-                        SystemAddress addr;
-                        query.Read(addr);
-                        query.Reset();
-
-                        query.Write((MessageID) ID_MASTER_UPDATE);
-                        query.Write(addr);
-
-                        RakString name(self.GetServerName().c_str()); RakString map(self.GetServerMap().c_str());
-                        int players = self.GetServerPlayers().first; int playersMax = self.GetServerPlayers().second;
-                        std::map<string, string> rules = self.GetServerRules();
-
-                        query.Write(name);
-                        query.Write(map);
-                        query.Write(players);
-                        query.Write(playersMax);
-                        query.Write((int) rules.size());
-
-                        for (std::map<string, string>::const_iterator i = rules.begin(); i != rules.end(); ++i)
+                        if (query)
                         {
-                            RakString key(i->first.c_str());
-                            RakString value(i->second.c_str());
-                            query.Write(key);
-                            query.Write(value);
+                            BitStream query(packet->data, packet->length, false);
+                            query.IgnoreBytes(sizeof(MessageID));
+
+                            SystemAddress addr;
+                            query.Read(addr);
+                            query.Reset();
+
+                            query.Write((MessageID) ID_MASTER_UPDATE);
+                            query.Write(addr);
+
+                            RakString name(self.GetServerName().c_str()); RakString map(self.GetServerMap().c_str());
+                            int players = self.GetServerPlayers().first; int playersMax = self.GetServerPlayers().second;
+                            std::map<string, string> rules = self.GetServerRules();
+
+                            query.Write(name);
+                            query.Write(map);
+                            query.Write(players);
+                            query.Write(playersMax);
+                            query.Write((int) rules.size());
+
+                            for (std::map<string, string>::const_iterator i = rules.begin(); i != rules.end(); ++i)
+                            {
+                                RakString key(i->first.c_str());
+                                RakString value(i->second.c_str());
+                                query.Write(key);
+                                query.Write(value);
+                            }
+
+                            peer->Send(&query, LOW_PRIORITY, RELIABLE, 0, packet->systemAddress, false, 0);
+
+                            Utils::timestamp();
+                            printf("Query processed (%s)\n", packet->systemAddress.ToString());
+                            break;
                         }
-
-                        peer->Send(&query, LOW_PRIORITY, RELIABLE, 0, packet->systemAddress, false, 0);
-
-                        Utils::timestamp();
-                        printf("Query processed (%s)\n", packet->systemAddress.ToString());
-                        break;
-
-                        #else
-
-                        Utils::timestamp();
-                        printf("Query is disabled (%s)\n", packet->systemAddress.ToString());
-                        peer->CloseConnection(packet->systemAddress, true, 0, LOW_PRIORITY);
-                        break;
-
-                        #endif
+                        else
+                        {
+                            Utils::timestamp();
+                            printf("Query is disabled (%s)\n", packet->systemAddress.ToString());
+                            peer->CloseConnection(packet->systemAddress, true, 0, LOW_PRIORITY);
+                            break;
+                        }
                     }
                     case ID_GAME_INIT:
                     {
@@ -192,7 +192,7 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
 
                         int ret = 1;
 
-                        if (script != NULL)
+                        if (amx != NULL)
                         {
                             void* args[2];
 
@@ -204,7 +204,7 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                             args[0] = reinterpret_cast<void*>(pwd);
                             args[1] = reinterpret_cast<void*>(name);
 
-                            ret = Script::Call(script, (char*) "OnClientAuthenticate", (char*) "ss", args);
+                            ret = Script::Call(amx, (char*) "OnClientAuthenticate", (char*) "ss", args);
                         }
 
                         if (ret)
@@ -232,12 +232,11 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                 }
             }
 
-            #ifdef ANNOUNCE
-
-            if ((GetTimeMS() - announcetime) > RAKNET_MASTER_RATE)
-                Announce(true);
-
-            #endif
+            if (announce)
+            {
+                if ((GetTimeMS() - announcetime) > RAKNET_MASTER_RATE)
+                    Announce(true);
+            }
 
             RakSleep(2);
       }
@@ -248,13 +247,17 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
       return ((DWORD) data);
 }
 
-HANDLE Dedicated::InitalizeServer(AMX* amx)
+HANDLE Dedicated::InitalizeServer(int port, int connections, AMX* amx, char* announce, bool query)
 {
     HANDLE hDedicatedThread;
     DWORD DedicatedID;
 
     thread = true;
-    script = amx;
+    Dedicated::port = port ? port : RAKNET_STANDARD_PORT;
+    Dedicated::connections = connections ? connections : RAKNET_STANDARD_CONNECTIONS;
+    Dedicated::amx = amx;
+    Dedicated::announce = announce;
+    Dedicated::query = query;
 
     hDedicatedThread = CreateThread(NULL, 0, DedicatedThread, (LPVOID) 0, 0, &DedicatedID);
 

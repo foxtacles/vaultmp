@@ -13,14 +13,10 @@
 #include "Script.h"
 #include "Utils.h"
 
-#define RAKNET_PORT           1770
-#define RAKNET_CONNECTIONS    32
-#define RAKNET_MASTER_ADDRESS "127.0.0.1"
-#define RAKNET_MASTER_PORT    1660
-#define RAKNET_MASTER_RATE    8000
-
-#define ANNOUNCE // if defined, one connection slot will be reserved for announce
-#define QUERY
+#define RAKNET_STANDARD_PORT        1770
+#define RAKNET_STANDARD_CONNECTIONS 32
+#define RAKNET_MASTER_RATE          6000
+#define RAKNET_MASTER_STANDARD_PORT 1660
 
 using namespace RakNet;
 using namespace std;
@@ -30,13 +26,16 @@ class Dedicated {
       private:
               static RakPeerInterface* peer;
               static SocketDescriptor* sockdescr;
-              static AMX* script;
 
-              #ifdef ANNOUNCE
+              static int port;
+              static int connections;
+              static AMX* amx;
+              static char* announce;
+              static bool query;
+
               static void Announce(bool announce);
               static TimeMS announcetime;
               static SystemAddress master;
-              #endif
 
               static ServerEntry self;
 
@@ -44,7 +43,7 @@ class Dedicated {
               static bool thread;
 
       public:
-              static HANDLE InitalizeServer(AMX* amx);
+              static HANDLE InitalizeServer(int port, int connections, AMX* amx, char* announce, bool query);
               static void TerminateThread();
 
 };

@@ -29,14 +29,34 @@ int main(int argc, char* argv[])
 
     AMX* vaultscript = NULL;
 
-    if (argc > 1)
+    bool query = false;
+    int announce = 0;
+    int script = 0;
+    int port = 0;
+    int connections = 0;
+
+    for (int i = 1; i < argc; i++)
+    {
+        if (strcmp(argv[i], "-q") == 0 || strcmp(argv[i], "-query") == 0)
+            query = true;
+        else if ((strcmp(argv[i], "-a") == 0 || strcmp(argv[i], "-announce") == 0) && i + 1 < argc)
+            announce = i + 1;
+        else if ((strcmp(argv[i], "-s") == 0 || strcmp(argv[i], "-script") == 0) && i + 1 < argc)
+            script = i + 1;
+        else if ((strcmp(argv[i], "-p") == 0 || strcmp(argv[i], "-port") == 0) && i + 1 < argc)
+            port = atoi(argv[i + 1]);
+        else if ((strcmp(argv[i], "-c") == 0 || strcmp(argv[i], "-connections") == 0) && i + 1 < argc)
+            connections = atoi(argv[i + 1]);
+    }
+
+    if (script != 0)
     {
         vaultscript = new AMX();
 
         cell ret = 0;
         int err = 0;
 
-        err = Script::LoadProgram(vaultscript, argv[1], NULL);
+        err = Script::LoadProgram(vaultscript, argv[script], NULL);
         if (err != AMX_ERR_NONE)
             Script::ErrorExit(vaultscript, err);
 
@@ -57,7 +77,7 @@ int main(int argc, char* argv[])
     Utils::timestamp();
     printf("Initalizing RakNet...\n");
 
-    HANDLE hDedicatedThread = Dedicated::InitalizeServer(vaultscript);
+    HANDLE hDedicatedThread = Dedicated::InitalizeServer(port, connections, vaultscript, announce ? argv[announce] : 0, query);
     HANDLE hInputThread;
     DWORD InputID;
 
