@@ -73,6 +73,7 @@ void Dedicated::Announce(bool announce)
     {
         Utils::timestamp();
         printf("Lost connection to MasterServer (%s)\n", master.ToString());
+        peer->Connect(master.ToString(false), master.port, 0, 0, 0, 0, 3, 100, 0);
     }
 
     announcetime = GetTimeMS();
