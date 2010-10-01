@@ -241,6 +241,8 @@
 		<Unit filename="..\RakNet\rdlmalloc-options.h" />
 		<Unit filename="..\RakNet\rdlmalloc.cpp" />
 		<Unit filename="..\RakNet\rdlmalloc.h" />
+		<Unit filename="Client.cpp" />
+		<Unit filename="Client.h" />
 		<Unit filename="Dedicated.cpp" />
 		<Unit filename="Dedicated.h" />
 		<Unit filename="Script.cpp" />

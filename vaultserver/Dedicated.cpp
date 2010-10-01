@@ -109,6 +109,8 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
       self.SetServerRule("asdf", "kokolores");
       self.SetServerRule("blub", "moep");
 
+      Client::SetMaximumClients(connections);
+
       while (thread)
       {
             for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
@@ -120,13 +122,31 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         printf("New incoming connection from %s\n", packet->systemAddress.ToString());
                         break;
                     case ID_DISCONNECTION_NOTIFICATION:
+                    {
                         Utils::timestamp();
                         printf("Client disconnected (%s)\n", packet->systemAddress.ToString());
+
+                        Client* client = Client::GetClientFromGUID(packet->guid);
+                        if (client != NULL)
+                        {
+                            delete client;
+                            self.SetServerPlayers(pair<int, int>(Client::GetClientCount(), connections));
+                        }
                         break;
+                    }
                     case ID_CONNECTION_LOST:
+                    {
                         Utils::timestamp();
                         printf("Lost connection (%s)\n", packet->systemAddress.ToString());
+
+                        Client* client = Client::GetClientFromGUID(packet->guid);
+                        if (client != NULL)
+                        {
+                            delete client;
+                            self.SetServerPlayers(pair<int, int>(Client::GetClientCount(), connections));
+                        }
                         break;
+                    }
                     case ID_CONNECTION_REQUEST_ACCEPTED:
                     {
                         master = packet->systemAddress;
@@ -191,21 +211,27 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         query.Read(rpwd);
                         query.Reset();
 
+                        char name[rname.GetLength()];
+                        char pwd[rpwd.GetLength()];
+                        strcpy(name, rname.C_String());
+                        strcpy(pwd, rpwd.C_String());
+
+                        Client* client = new Client(packet->guid, string(name), string(pwd));
+                        self.SetServerPlayers(pair<int, int>(Client::GetClientCount(), connections));
+
                         int ret = 1;
 
                         if (amx != NULL)
                         {
-                            void* args[2];
+                            void* args[3];
 
-                            char name[rname.GetLength()];
-                            char pwd[rpwd.GetLength()];
-                            strcpy(name, rname.C_String());
-                            strcpy(pwd, rpwd.C_String());
+                            int id = client->GetClientID();
 
                             args[0] = reinterpret_cast<void*>(pwd);
                             args[1] = reinterpret_cast<void*>(name);
+                            args[2] = reinterpret_cast<void*>(&id);
 
-                            ret = Script::Call(amx, (char*) "OnClientAuthenticate", (char*) "ss", args);
+                            ret = Script::Call(amx, (char*) "OnClientAuthenticate", (char*) "ssi", args);
                         }
 
                         if (ret)

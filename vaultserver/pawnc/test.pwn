@@ -11,8 +11,8 @@ if (strcmp(blub, "asdfkokolores") == 0)
 	print("string test: asdf!\n");
 }
 
-public OnClientAuthenticate(const name[], const pwd[])
+public OnClientAuthenticate(clientID, const name[], const pwd[])
 {
-	printf("OnClientAuthenticate: name: %s, pwd: %s\n", name, pwd);
+	printf("OnClientAuthenticate: ID: %d name: %s, pwd: %s\n", clientID, name, pwd);
 	return 1;
 }

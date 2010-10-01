@@ -10,6 +10,7 @@
 #include "../RakNet/GetTime.h"
 
 #include "ServerEntry.h"
+#include "Client.h"
 #include "Script.h"
 #include "Utils.h"
 

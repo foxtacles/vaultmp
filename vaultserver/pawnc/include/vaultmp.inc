@@ -1,3 +1,3 @@
 /* Vault-Tec Multiplayer */
 
-forward OnClientAuthenticate(const name[], const pwd[]);
+forward OnClientAuthenticate(clientID, const name[], const pwd[]);
