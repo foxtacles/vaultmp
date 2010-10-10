@@ -1,6 +1,5 @@
 #include <windows.h>
 #include <stdio.h>
-#include <time.h>
 
 #include "../RakNet/RakPeerInterface.h"
 #include "../RakNet/MessageIdentifiers.h"
@@ -46,5 +45,7 @@ class Dedicated {
       public:
               static HANDLE InitalizeServer(int port, int connections, AMX* amx, char* announce, bool query);
               static void TerminateThread();
+
+              // static void SetServerConnections(int connections);
 
 };

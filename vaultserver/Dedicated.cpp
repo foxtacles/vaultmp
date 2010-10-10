@@ -290,3 +290,8 @@ HANDLE Dedicated::InitalizeServer(int port, int connections, AMX* amx, char* ann
 
     return hDedicatedThread;
 }
+
+/* void Dedicated::SetServerConnections(int connections)
+{
+
+} */

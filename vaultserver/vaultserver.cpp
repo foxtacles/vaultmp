@@ -1,6 +1,5 @@
 #include <windows.h>
 #include <stdio.h>
-#include <time.h>
 
 #include "vaultserver.h"
 #include "Dedicated.h"
@@ -9,18 +8,27 @@
 
 DWORD WINAPI InputThread(LPVOID data)
 {
-      char input[64];
+    char input[64];
 
-      do
-      {
-          fgets(input, 64, stdin);
-          if (strlen(input) > 0 && input[strlen(input) - 1] == '\n') input[strlen(input) - 1] = '\0';
+    do
+    {
+        fgets(input, sizeof(input), stdin);
+        if (strlen(input) > 0 && input[strlen(input) - 1] == '\n') input[strlen(input) - 1] = '\0';
 
-      } while (strcmp(input, "exit") != 0);
+        /* char* command = strtok(input, " ");
+        char* param = strtok(NULL, " ");
 
-      Dedicated::TerminateThread();
+        if (param != NULL)
+        {
+            if (strcmp(command, "connections") == 0)
+                Dedicated::SetServerConnections(atoi(param));
+        } */
 
-      return ((DWORD) data);
+    } while (strcmp(input, "exit") != 0);
+
+    Dedicated::TerminateThread();
+
+    return ((DWORD) data);
 }
 
 int main(int argc, char* argv[])
@@ -39,14 +47,17 @@ int main(int argc, char* argv[])
     {
         if (strcmp(argv[i], "-q") == 0 || strcmp(argv[i], "-query") == 0)
             query = true;
-        else if ((strcmp(argv[i], "-a") == 0 || strcmp(argv[i], "-announce") == 0) && i + 1 < argc)
-            announce = i + 1;
-        else if ((strcmp(argv[i], "-s") == 0 || strcmp(argv[i], "-script") == 0) && i + 1 < argc)
-            script = i + 1;
-        else if ((strcmp(argv[i], "-p") == 0 || strcmp(argv[i], "-port") == 0) && i + 1 < argc)
-            port = atoi(argv[i + 1]);
-        else if ((strcmp(argv[i], "-c") == 0 || strcmp(argv[i], "-connections") == 0) && i + 1 < argc)
-            connections = atoi(argv[i + 1]);
+        else if (i + 1 < argc)
+        {
+            if (strcmp(argv[i], "-a") == 0 || strcmp(argv[i], "-announce") == 0)
+                announce = i + 1;
+            else if (strcmp(argv[i], "-s") == 0 || strcmp(argv[i], "-script") == 0)
+                script = i + 1;
+            else if (strcmp(argv[i], "-p") == 0 || strcmp(argv[i], "-port") == 0)
+                port = atoi(argv[i + 1]);
+            else if (strcmp(argv[i], "-c") == 0 || strcmp(argv[i], "-connections") == 0)
+                connections = atoi(argv[i + 1]);
+        }
     }
 
     if (script != 0)
