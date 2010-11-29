@@ -20,6 +20,7 @@ using namespace std;
 HINSTANCE instance;
 HANDLE mutex;
 HFONT hFont;
+HWND wndsortcur;
 HWND wndchiptune;
 HWND wndlistview;
 HWND wndlistview2;
@@ -28,6 +29,7 @@ HDC hdc, hdcMem;
 HBITMAP hBitmap;
 BITMAP bitmap;
 PAINTSTRUCT ps;
+BOOL sort;
 
 RakPeerInterface* peer;
 SocketDescriptor* sockdescr;
@@ -121,11 +123,8 @@ HWND CreateMainWindow()
 {
     HWND wnd;
     wnd = CreateWindowEx(0, WND_CLASS_NAME, "Vault-Tec Multiplayer Mod", WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, (GetSystemMetrics(SM_CXSCREEN) / 2) - 392, (GetSystemMetrics(SM_CYSCREEN) / 2) - 221, 785, 442, HWND_DESKTOP, NULL, instance, NULL);
-
     ShowWindow(wnd, SW_SHOWNORMAL);
-
     UpdateWindow(wnd);
-
     return wnd;
 }
 
@@ -140,10 +139,10 @@ void CreateWindowContent(HWND parent)
 {
     HWND wnd;
     LV_COLUMN col;
+    sort = true;
 
     col.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
     col.fmt = LVCFMT_LEFT;
-    col.iSubItem = 0;
 
     wnd = CreateWindowEx(0x00000000, "Button", "Server details", 0x50020007, 543, 0, 229, 214, parent, (HMENU) IDC_GROUP0, instance, NULL);
     SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
@@ -158,18 +157,22 @@ void CreateWindowContent(HWND parent)
 
     col.cx = 299;
     col.pszText = (char*) "Name";
+    col.iSubItem = 0;
     SendMessage(wnd, LVM_INSERTCOLUMN, 0, (LPARAM) &col);
 
     col.cx = 62;
     col.pszText = (char*) "Players";
+    col.iSubItem = 1;
     SendMessage(wnd, LVM_INSERTCOLUMN, 1, (LPARAM) &col);
 
     col.cx = 50;
     col.pszText = (char*) "Ping";
+    col.iSubItem = 2;
     SendMessage(wnd, LVM_INSERTCOLUMN, 2, (LPARAM) &col);
 
     col.cx = 116;
     col.pszText = (char*) "Map";
+    col.iSubItem = 3;
     SendMessage(wnd, LVM_INSERTCOLUMN, 3, (LPARAM) &col);
 
 	wnd = CreateWindowEx(0x00000200, "SysListView32", "", 0x50010001, 553, 19, 210, 157, parent, (HMENU) IDC_GRID1, instance, NULL);
@@ -178,10 +181,12 @@ void CreateWindowContent(HWND parent)
 
 	col.cx = 103;
 	col.pszText = (char*) "Key";
+    col.iSubItem = 0;
 	SendMessage(wnd, LVM_INSERTCOLUMN, 0, (LPARAM) &col);
 
 	col.cx = 103;
 	col.pszText = (char*) "Value";
+    col.iSubItem = 1;
 	SendMessage(wnd, LVM_INSERTCOLUMN, 1, (LPARAM) &col);
 
 	wnd = CreateWindowEx(0x00000000, "msctls_progress32", "", 0x50000000, 553, 184, 210, 16, parent, (HMENU) IDC_PROGRESS0, instance, NULL);
@@ -324,6 +329,19 @@ void RefreshServerList()
 
         Create4ColItem(wndlistview, addr, (char*) entry.GetServerName().c_str(), players, ping, (char*) entry.GetServerMap().c_str());
     }
+}
+
+int CALLBACK CompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
+{
+    static char buf[64], buf2[64];
+
+    ListView_GetItemText(wndsortcur, lParam1, lParamSort, buf, sizeof(buf));
+    ListView_GetItemText(wndsortcur, lParam2, lParamSort, buf2, sizeof(buf2));
+
+    if (sort)
+        return (stricmp(buf, buf2));
+    else
+        return (stricmp(buf, buf2) * -1);
 }
 
 LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -640,6 +658,14 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                             }
                         }
                     }
+                    break;
+                }
+                case LVN_COLUMNCLICK:
+                {
+                    NMLISTVIEW* nmlv = (NMLISTVIEW*) lParam;
+                    wndsortcur = (HWND)((LPNMHDR) lParam)->hwndFrom;
+                    ListView_SortItemsEx(wndsortcur, CompareProc, nmlv->iSubItem);
+                    sort = !sort;
                     break;
                 }
             }
