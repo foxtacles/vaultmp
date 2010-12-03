@@ -221,7 +221,7 @@ extern "C" void __declspec(dllexport) DLLjump()
     for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (0x006288C4 + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
     WriteProcessMemory(hProc, (LPVOID) (0x006288C4 + bytes), &tmp, sizeof(tmp), &rw);
 
-    /* Writing Fallout3 command INPUT detour TOTAL BYTES TO RESERVE: 68 */
+    /* Writing Fallout3 command INPUT detour TOTAL BYTES TO RESERVE: 61 */
 
     /* XXXXXXXX   50               PUSH EAX
      * XXXXXXXX   51               PUSH ECX
@@ -255,7 +255,7 @@ extern "C" void __declspec(dllexport) DLLjump()
     bytes = 0;
     rw = 0;
 
-    LPVOID Fallout3inputASM = VirtualAllocEx(hProc, 0, 68, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+    LPVOID Fallout3inputASM = VirtualAllocEx(hProc, 0, 61, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
 
     bytestream[0] = 0x50; bytestream[1] = 0x51; bytestream[2] = 0x56;
     for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
