@@ -27,7 +27,8 @@ class Fallout3 {
               static void InjectedEnd();
               static DWORD WINAPI Fallout3pipe(LPVOID data);
 
-              static PipeClient pipeClient;
+              static PipeClient* pipeServer;
+              static PipeServer* pipeClient;
 
               struct INJECT;
       public:

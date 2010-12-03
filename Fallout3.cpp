@@ -17,10 +17,11 @@ enum {
     ID_GAME_END
 };
 
-bool Fallout3::endThread;
+bool Fallout3::endThread = false;
 bool Fallout3::wakeup = false;
 HANDLE Fallout3::Fallout3thread;
-PipeClient Fallout3::pipeClient;
+PipeClient* Fallout3::pipeServer;
+PipeServer* Fallout3::pipeClient;
 
 DWORD Fallout3::lookupProgramID(const char process[])
 {
@@ -70,36 +71,39 @@ void Fallout3::InjectedEnd()
 
 DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
 {
-      pipeClient.SetPipeAttributes("Fallout3pipe", 512);
+    pipeClient->SetPipeAttributes("Fallout3client", 4096);
+    pipeClient->CreateServer();
+    pipeClient->ConnectToServer();
 
-      while (!pipeClient.ConnectToServer() && !endThread);
+    pipeServer->SetPipeAttributes("Fallout3server", 4096);
+    while (!pipeServer->ConnectToServer() && !endThread);
 
-      string send;
-      string recv;
-      string low;
-      string high;
+    string send;
+    string recv;
+    string low;
+    string high;
 
-      if (!endThread)
-      {
-          do
-          {
-                recv = pipeClient.Recv();
-                low = recv.substr(0, 3);
-                high = recv.substr(3);
+    if (!endThread)
+    {
+        do
+        {
+            recv = pipeClient->Recv();
+            low = recv.substr(0, 3);
+            high = recv.substr(3);
 
-                if (low.compare("op:") == 0)
-                {
+            if (low.compare("op:") == 0)
+            {
 
-                }
-                else if (low.compare("up:") == 0)
-                    wakeup = true;
+            }
+            else if (low.compare("up:") == 0)
+                wakeup = true;
 
-                if (lookupProgramID("Fallout3.exe") == 0)
-                    endThread = true;
-          } while (low.compare("ca:") != 0 && !endThread);
-      }
+            if (lookupProgramID("Fallout3.exe") == 0)
+                endThread = true;
+        } while (low.compare("ca:") != 0 && !endThread);
+    }
 
-      return ((DWORD) data);
+    return ((DWORD) data);
 }
 
 HANDLE Fallout3::InitalizeFallout3()
@@ -199,6 +203,8 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
 {
     endThread = false;
     Fallout3thread = NULL;
+    pipeClient = new PipeServer();
+    pipeServer = new PipeClient();
 
     if (peer->Connect(addr.ToString(false), addr.port, 0, 0, 0, 0, 3, 500, 0) == CONNECTION_ATTEMPT_STARTED)
     {
@@ -240,12 +246,29 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
 
                     Fallout3thread = InitalizeFallout3();
 
+                    Sleep(2500); // Let the game start
+
                     if (Fallout3thread != NULL)
                         query.Write((MessageID) ID_GAME_RUN);
                     else
                         query.Write((MessageID) ID_GAME_END);
 
                     peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, packet->systemAddress, false, 0);
+                    break;
+                }
+                case ID_GAME_RUN:
+                {
+                    BitStream query(packet->data, packet->length, false);
+                    query.IgnoreBytes(sizeof(MessageID));
+
+                    RakString save;
+                    query.Read(save);
+                    query.Reset();
+
+                    string input("op:load "); // Load Fallout3 savegame
+                    input.append(save);
+
+                    pipeServer->Send(&input);
                     break;
                 }
                 case ID_NO_FREE_INCOMING_CONNECTIONS:
@@ -268,4 +291,7 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
             endThread = true;
         CloseHandle(Fallout3thread);
     }
+
+    delete pipeClient;
+    delete pipeServer;
 }

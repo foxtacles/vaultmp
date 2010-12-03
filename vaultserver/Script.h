@@ -18,7 +18,7 @@ class Script {
               static int LoadProgram(AMX* amx, char* filename, void* memblock);
               static int Register(AMX* amx, const AMX_NATIVE_INFO* list, int number);
               static int Exec(AMX* amx, cell* retval, int index);
-              static int Call(AMX* amx, char name[], char argl[], void* args[]);
+              static int Call(AMX* amx, char name[], char argl[], void* args[], int buf = -1);
               static int FreeProgram(AMX* amx);
 
               static int CoreInit(AMX* amx);

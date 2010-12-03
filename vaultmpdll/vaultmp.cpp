@@ -8,7 +8,8 @@ using namespace std;
 using namespace pipe;
 
 HANDLE hProc;
-
+PipeServer pipeServer;
+PipeClient pipeClient;
 unsigned Fallout3opTrigger = 0x00;           // 0x00 = trigger disabled. 0x0A = trigger enabled.
 unsigned Fallout3refid = 0x00;               // RefID storage
 char Fallout3output[MAX_OUTPUT_LENGTH];      // Command output storage
@@ -48,7 +49,7 @@ void Fallout3toggleTrigger(bool toggle) {
 
 void Fallout3sendOp(string op) {
 
-     while (Fallout3mutex);
+     while (Fallout3mutex) Sleep(2);
 
      Fallout3mutex = true;
 
@@ -57,8 +58,11 @@ void Fallout3sendOp(string op) {
 
 void Fallout3commandNotify() {
 
-     //MessageBox ( NULL, Fallout3output, "cmd output debug", MB_OK);
-     //Beep(1000,20);
+    char format[MAX_OUTPUT_LENGTH + 3];
+    strcat(format, "op:");
+    strcat(format, Fallout3output);
+    string output(format);
+    pipeClient.Send(&output);
 }
 
 void Fallout3refidNotify() {
@@ -78,9 +82,10 @@ DWORD WINAPI Fallout3pipe(LPVOID data) {
         GUI_msg = (fMessage) GetProcAddress(vaultgui, "Message");
     }
 
-    PipeServer pipeServer;
-    pipeServer.SetPipeAttributes("Fallout3pipe", 512);
+    pipeClient.SetPipeAttributes("Fallout3client", 4096);
+    while (!pipeClient.ConnectToServer());
 
+    pipeServer.SetPipeAttributes("Fallout3server", 4096);
     pipeServer.CreateServer();
     pipeServer.ConnectToServer();
 
@@ -90,7 +95,9 @@ DWORD WINAPI Fallout3pipe(LPVOID data) {
     string high;
 
     send = "up:";
-    pipeServer.Send(&send);
+    pipeClient.Send(&send);
+
+    Fallout3toggleTrigger(true);
 
     do
     {
@@ -99,10 +106,7 @@ DWORD WINAPI Fallout3pipe(LPVOID data) {
         high = recv.substr(3);
 
         if (low.compare("op:") == 0)
-        {
-            Fallout3toggleTrigger(true);
             Fallout3sendOp(high);
-        }
         else if (low.compare("ce:") == 0)
         {
             if (vaultgui != NULL)

@@ -10,6 +10,11 @@ PipeServer::PipeServer()
     this->pipe = NULL;
 }
 
+PipeServer::~PipeServer()
+{
+    CloseHandle(this->pipe);
+}
+
 void PipeServer::SetPipeAttributes(string pName, unsigned int pSize)
 {
     this->pipeName = "\\\\.\\pipe\\" + pName;
@@ -20,12 +25,12 @@ bool PipeServer::CreateServer()
 {
     if (this->size == 0)
         return false;
-        
+
     this->pipe = CreateNamedPipe(this->pipeName.c_str(), PIPE_ACCESS_DUPLEX, PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE | PIPE_WAIT, PIPE_UNLIMITED_INSTANCES, this->size, this->size, 0, NULL);
-    
+
     if (this->pipe == INVALID_HANDLE_VALUE)
         return false;
-        
+
     return true;
 }
 
@@ -33,17 +38,17 @@ bool PipeServer::ConnectToServer()
 {
     if (this->pipe == INVALID_HANDLE_VALUE)
         return false;
-        
+
     if (ConnectNamedPipe(this->pipe, NULL))
         return true;
-        
+
     return false;
 }
 
 unsigned int PipeServer::Send(string* strSend)
 {
     DWORD dwActuallyWritten;
-    
+
     if (!WriteFile(this->pipe, strSend->c_str(), strSend->size(), &dwActuallyWritten, NULL))
         return 0;
     else
@@ -56,9 +61,9 @@ string PipeServer::Recv()
         return "-.-";
 
     char buffer[this->size];
-    
+
     DWORD dwActuallyRead;
-    
+
     if (!ReadFile(this->pipe, &buffer, this->size, &dwActuallyRead, NULL))
         return "-.-";
 
@@ -72,6 +77,11 @@ PipeClient::PipeClient()
     this->pipeName = "pipe";
     this->size = 0;
     this->pipe = NULL;
+}
+
+PipeClient::~PipeClient()
+{
+    CloseHandle(this->pipe);
 }
 
 void PipeClient::SetPipeAttributes(string pName, unsigned int pSize)
@@ -88,7 +98,7 @@ bool PipeClient::ConnectToServer()
     while (true)
     {
         this->pipe = CreateFile(this->pipeName.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
-        
+
         if (this->pipe != INVALID_HANDLE_VALUE)
             break;
 
@@ -100,7 +110,7 @@ bool PipeClient::ConnectToServer()
     }
 
     DWORD dwMode = PIPE_READMODE_MESSAGE;
-    
+
     if (!SetNamedPipeHandleState(this->pipe, &dwMode, NULL, NULL))
         return false;
 
@@ -110,7 +120,7 @@ bool PipeClient::ConnectToServer()
 unsigned int PipeClient::Send(string* strSend)
 {
     DWORD dwActuallyWritten;
-    
+
     if (!WriteFile(this->pipe, strSend->c_str(), strSend->size(), &dwActuallyWritten, NULL))
         return 0;
     else
@@ -123,9 +133,9 @@ string PipeClient::Recv()
         return "-.-";
 
     char buffer[this->size];
-    
+
     DWORD dwActuallyRead;
-    
+
     if (!ReadFile(this->pipe, &buffer, this->size, &dwActuallyRead, NULL))
         return "-.-";
 

@@ -37,17 +37,20 @@ int Script::Exec(AMX* amx, cell* retval, int index)
     return amx_Exec(amx, retval, index);
 }
 
-int Script::Call(AMX* amx, char name[], char argl[], void* args[])
+int Script::Call(AMX* amx, char name[], char argl[], void* args[], int buf)
 {
     cell ret = 0;
     int idx = 0;
     int err = 0;
+    int pos = -1;
+    int count = 0;
 
     err = amx_FindPublic(amx, name, &idx);
     if (err != AMX_ERR_NONE)
         ErrorExit(amx, err);
 
     cell stackpointer = 0;
+    cell* phys_addr[sizeof(argl)];
 
     for (int i = 0; i < sizeof(argl); i++)
     {
@@ -68,8 +71,9 @@ int Script::Call(AMX* amx, char name[], char argl[], void* args[])
             case 's':
             {
                 char* string = reinterpret_cast<char*>(args[i]);
-                if (stackpointer != 0) amx_PushString(amx, NULL, NULL, string, 0, 0);
-                else amx_PushString(amx, &stackpointer, NULL, string, 0, 0);
+                if (stackpointer != 0) amx_PushString(amx, NULL, &phys_addr[count], string, 0, 0);
+                else amx_PushString(amx, &stackpointer, &phys_addr[count], string, 0, 0);
+                count++;
                 break;
             }
         }
@@ -78,6 +82,22 @@ int Script::Call(AMX* amx, char name[], char argl[], void* args[])
     err = amx_Exec(amx, &ret, idx);
     if (err != AMX_ERR_NONE)
         ErrorExit(amx, err);
+
+    for (int i = 0; i < count; i++)
+    {
+        do {pos++;} while (argl[pos] != 's');
+
+        int length;
+        amx_StrLen(phys_addr[i], &length);
+
+        char* string = reinterpret_cast<char*>(args[pos]);
+
+        if (buf >= length)
+        {
+            ZeroMemory(string, buf);
+            amx_GetString(string, phys_addr[i], 0, UNLIMITED);
+        }
+    }
 
     amx_Release(amx, stackpointer);
 

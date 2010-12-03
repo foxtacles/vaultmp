@@ -245,8 +245,38 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                     }
                     case ID_GAME_RUN:
                     {
-                        /* Do things - game is running on client side */
+                        BitStream query;
 
+                        char savegame[128];
+                        strcpy(savegame, "default");
+
+                        int ret = 1;
+
+                        if (amx != NULL)
+                        {
+                            void* args[3];
+
+                            int id = Client::GetClientFromGUID(packet->guid)->GetClientID();
+                            int len = sizeof(savegame);
+
+                            args[0] = reinterpret_cast<void*>(&len);
+                            args[1] = reinterpret_cast<void*>(savegame);
+                            args[2] = reinterpret_cast<void*>(&id);
+
+                            ret = Script::Call(amx, (char*) "OnClientRequestGame", (char*) "isi", args, len);
+                        }
+
+                        if (ret)
+                        {
+                            query.Write((MessageID) ID_GAME_RUN);
+
+                            RakString save(savegame);
+                            query.Write(save);
+
+                            peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, packet->systemAddress, false, 0);
+                        }
+                        else
+                            peer->CloseConnection(packet->systemAddress, true, 0, HIGH_PRIORITY);
                         break;
                     }
                     case ID_GAME_END:

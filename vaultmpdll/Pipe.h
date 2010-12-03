@@ -11,6 +11,7 @@ namespace pipe
         HANDLE pipe;
     public:
         PipeServer();
+        ~PipeServer();
         void SetPipeAttributes(std::string pName, unsigned int pSize);
         bool CreateServer();
         bool ConnectToServer();
@@ -26,6 +27,7 @@ namespace pipe
         HANDLE pipe;
     public:
         PipeClient();
+        ~PipeClient();
         void SetPipeAttributes(std::string pName, unsigned int pSize);
         bool ConnectToServer();
         unsigned int Send(std::string* strSend);

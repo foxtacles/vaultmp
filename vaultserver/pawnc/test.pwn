@@ -16,3 +16,9 @@ public OnClientAuthenticate(clientID, const name[], const pwd[])
 	printf("OnClientAuthenticate: ID: %d name: %s, pwd: %s\n", clientID, name, pwd);
 	return 1;
 }
+
+public OnClientRequestGame(clientID, savegame[], len)
+{
+	printf("OnClientRequestGame: ID: %d savegame: %s, len: %d\n", clientID, savegame, len);
+	return 1;
+}
