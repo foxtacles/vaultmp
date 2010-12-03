@@ -234,13 +234,10 @@ extern "C" void __declspec(dllexport) DLLjump()
      * XXXXXXXX   58               POP EAX
      * XXXXXXXX   BA FFFEFE7E      MOV EDX,7EFEFEFF
      * XXXXXXXX  -E9 XXXXXXXX      JMP Fallout3.00C075B4
-     * XXXXXXXX   8A46 FF          MOV AL,BYTE PTR DS:[ESI-1]
-     * XXXXXXXX   3C 00            CMP AL,0
-     * XXXXXXXX  ^75 EC            JNZ SHORT XXXXXXXX
      * XXXXXXXX   B9 XXXXXXXX      MOV ECX,XXXXXXXX
      * XXXXXXXX   8A01             MOV AL,BYTE PTR DS:[ECX]
      * XXXXXXXX   3C 00            CMP AL,0
-     * XXXXXXXX  ^74 E1            JE SHORT XXXXXXXX
+     * XXXXXXXX  ^74 E8            JE SHORT XXXXXXXX
      * XXXXXXXX   8806             MOV BYTE PTR DS:[ESI],AL
      * XXXXXXXX   C601 00          MOV BYTE PTR DS:[ECX],0
      * XXXXXXXX   83C1 01          ADD ECX,1
@@ -250,7 +247,7 @@ extern "C" void __declspec(dllexport) DLLjump()
      * XXXXXXXX   74 02            JE SHORT XXXXXXXX
      * XXXXXXXX  ^EB ED            JMP SHORT XXXXXXXX
      * XXXXXXXX   C605 XXXXXXXX 00 MOV BYTE PTR DS:[XXXXXXXX],0
-     * XXXXXXXX  ^EB C5            JMP SHORT XXXXXXXX
+     * XXXXXXXX  ^EB CC            JMP SHORT XXXXXXXX
      *
      * 00C075AF   -E9 XXXXXXXX     JMP XXXXXXXX
      */
@@ -282,15 +279,6 @@ extern "C" void __declspec(dllexport) DLLjump()
     bytestream[0] = 0xE9; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
     WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
 
-    bytestream[0] = 0x8A; bytestream[1] = 0x46; bytestream[2] = 0xFF;
-    for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-    bytestream[0] = 0x3C; bytestream[1] = 0x00;
-    for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-    bytestream[0] = 0x75; bytestream[1] = 0xEC;
-    for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
     tmp = (unsigned) &Fallout3input;
     bytestream[0] = 0xB9; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
     WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
@@ -301,7 +289,7 @@ extern "C" void __declspec(dllexport) DLLjump()
     bytestream[0] = 0x3C; bytestream[1] = 0x00;
     for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
 
-    bytestream[0] = 0x74; bytestream[1] = 0xE1;
+    bytestream[0] = 0x74; bytestream[1] = 0xE8;
     for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
 
     bytestream[0] = 0x88; bytestream[1] = 0x06;
@@ -334,7 +322,7 @@ extern "C" void __declspec(dllexport) DLLjump()
     WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
     bytestream[0] = 0x00; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
 
-    bytestream[0] = 0xEB; bytestream[1] = 0xC5;
+    bytestream[0] = 0xEB; bytestream[1] = 0xCC;
     for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
 
     tmp = offset((unsigned) 0x00C075AF, ((unsigned) Fallout3inputASM), 5);
