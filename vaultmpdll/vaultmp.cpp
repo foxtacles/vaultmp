@@ -137,7 +137,12 @@ extern "C" void __declspec(dllexport) DLLjump()
      * 0062B666   90               NOP
      *
      * 0062B66B   0F85 BE150000    JNZ Fallout3.0062CC2F
+     * 00627A84   EB 6E            JMP SHORT Fallout3.00627AF4
+     * 0062B67E   EB 1B            JMP SHORT Fallout3.0062B69B
      *
+     * 00627AFF   E9 990D0000      JMP Fallout3.0062889D
+     * 00627B04   90               NOP
+
      * 0062B69B   90               NOP
      * 0062B69C   90               NOP
      * 0062B69D   90               NOP
@@ -174,6 +179,15 @@ extern "C" void __declspec(dllexport) DLLjump()
     bytestream[0] = 0x0F; bytestream[1] = 0x85; bytestream[2] = 0xBE; bytestream[3] = 0x15; bytestream[4] = 0x00; bytestream[5] = 0x00;
     for (int i = 0; i < 6; i++) WriteProcessMemory(hProc, (LPVOID) (0x0062B66B + i), &bytestream[i], sizeof(bytestream[i]), &rw);
 
+    bytestream[0] = 0xEB; bytestream[1] = 0x6E;
+    for (int i = 0; i < 2; i++) WriteProcessMemory(hProc, (LPVOID) (0x00627A84 + i), &bytestream[i], sizeof(bytestream[i]), &rw);
+
+    bytestream[0] = 0xEB; bytestream[1] = 0x1B;
+    for (int i = 0; i < 2; i++) WriteProcessMemory(hProc, (LPVOID) (0x0062B67E + i), &bytestream[i], sizeof(bytestream[i]), &rw);
+
+    bytestream[0] = 0xE9; bytestream[1] = 0x99; bytestream[2] = 0x0D; bytestream[3] = 0x00; bytestream[4] = 0x00; bytestream[5] = 0x90;
+    for (int i = 0; i < 6; i++) WriteProcessMemory(hProc, (LPVOID) (0x00627AFF + i), &bytestream[i], sizeof(bytestream[i]), &rw);
+
     bytestream[0] = 0x90; bytestream[1] = 0x90; bytestream[2] = 0x90; bytestream[3] = 0x90; bytestream[4] = 0x90; bytestream[5] = 0x90; bytestream[6] = 0x90;
     for (int i = 0; i < 7; i++) WriteProcessMemory(hProc, (LPVOID) (0x0062B69B + i), &bytestream[i], sizeof(bytestream[i]), &rw);
 
@@ -191,7 +205,8 @@ extern "C" void __declspec(dllexport) DLLjump()
      * XXXXXXXX  -0F84 XXXXXXXX    JE Fallout3.006288CA
      * XXXXXXXX  -E9 XXXXXXXX      JMP Fallout3.0062897A
      *
-     * 006288C4   -0F84 XXXXXXXX   JE XXXXXXXX
+     * 006288C4  -E9 XXXXXXXX      JMP XXXXXXXX
+     * 006288C9   90               NOP
      */
 
     bytes = 0;
@@ -216,10 +231,10 @@ extern "C" void __declspec(dllexport) DLLjump()
     bytestream[0] = 0xE9; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3triggerASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
     WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3triggerASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
 
-    tmp = offset((unsigned) 0x006288C4, (unsigned) Fallout3triggerASM, 6);
-    bytestream[0] = 0x0F; bytestream[1] = 0x84; bytes = 0;
-    for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (0x006288C4 + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-    WriteProcessMemory(hProc, (LPVOID) (0x006288C4 + bytes), &tmp, sizeof(tmp), &rw);
+    tmp = offset((unsigned) 0x006288C4, (unsigned) Fallout3triggerASM, 5);
+    bytestream[0] = 0xE9; bytes = 0; WriteProcessMemory(hProc, (LPVOID) (0x006288C4 + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
+    WriteProcessMemory(hProc, (LPVOID) (0x006288C4 + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
+    bytestream[0] = 0x90; WriteProcessMemory(hProc, (LPVOID) (0x006288C4 + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
 
     /* Writing Fallout3 command INPUT detour TOTAL BYTES TO RESERVE: 61 */
 
