@@ -67,6 +67,12 @@ void Fallout3commandNotify() {
 
 void Fallout3refidNotify() {
 
+    char format[16]; char refid[8];
+    sprintf(refid, "%x", Fallout3refid);
+    strcat(format, "re:");
+    strcat(format, refid);
+    string output(format);
+    pipeClient.Send(&output);
 }
 
 DWORD WINAPI Fallout3pipe(LPVOID data) {
@@ -425,14 +431,11 @@ extern "C" void __declspec(dllexport) DLLjump()
 
     /* Writing Fallout3 RefID detour TOTAL BYTES TO RESERVE: 28 */
 
-    /* XXXXXXXX   81FB 94DA1800    CMP EBX,18DA94
-     * XXXXXXXX   75 0A            JNZ SHORT XXXXXXXX
-     * XXXXXXXX   A3 XXXXXXXX      MOV DWORD PTR DS:[XXXXXXXX],EAX
-     * XXXXXXXX   E8 XXXXXXXX      CALL vaultmp.XXXXXXXX
-     * XXXXXXXX   E8 XXXXXXXX      CALL Fallout3.00880F70
-     * XXXXXXXX   -E9 XXXXXXXX     JMP Fallout3.00456378
+    /* XXXXXXXX   E8 XXXXXXXX      CALL vaultmp.XXXXXXXX
+     * XXXXXXXX   E8 XXXXXXXX      CALL Fallout3.00516790
+     * XXXXXXXX   -E9 XXXXXXXX     JMP Fallout3.0053CACF
      *
-     * 00456373   -E9 XXXXXXXX     JMP XXXXXXXX
+     * 0053CAC6   -E9 XXXXXXXX     JMP XXXXXXXX
      */
 
     bytes = 0;
@@ -440,31 +443,21 @@ extern "C" void __declspec(dllexport) DLLjump()
 
     LPVOID Fallout3refidASM = VirtualAllocEx(hProc, 0, 28, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
 
-    bytestream[0] = 0x81; bytestream[1] = 0xFB; bytestream[2] = 0x94; bytestream[3] = 0xDA; bytestream[4] = 0x18; bytestream[5] = 0x00;
-    for (int i = 0; i < 6; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-    bytestream[0] = 0x75; bytestream[1] = 0x0A;
-    for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-    tmp = (unsigned) &Fallout3refid;
-    bytestream[0] = 0xA3; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-    WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-
     tmp = offset((((unsigned) Fallout3refidASM) + bytes), (unsigned) &Fallout3refidNotify, 5);
     bytestream[0] = 0xE8; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
     WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
 
-    tmp = offset((((unsigned) Fallout3refidASM) + bytes), (unsigned) 0x00880F70, 5);
+    tmp = offset((((unsigned) Fallout3refidASM) + bytes), (unsigned) 0x00516790, 5);
     bytestream[0] = 0xE8; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
     WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
 
-    tmp = offset((((unsigned) Fallout3refidASM) + bytes), (unsigned) 0x00456378, 5);
+    tmp = offset((((unsigned) Fallout3refidASM) + bytes), (unsigned) 0x0053CACF, 5);
     bytestream[0] = 0xE9; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
     WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
 
-    tmp = offset((unsigned) 0x00456373, ((unsigned) Fallout3refidASM), 5);
-    bytestream[0] = 0xE9; bytes = 0; WriteProcessMemory(hProc, (LPVOID) ((unsigned) 0x00456373 + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-    WriteProcessMemory(hProc, (LPVOID) ((unsigned) 0x00456373 + bytes), &tmp, sizeof(tmp), &rw);
+    tmp = offset((unsigned) 0x0053CAC6, ((unsigned) Fallout3refidASM), 5);
+    bytestream[0] = 0xE9; bytes = 0; WriteProcessMemory(hProc, (LPVOID) ((unsigned) 0x0053CAC6 + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
+    WriteProcessMemory(hProc, (LPVOID) ((unsigned) 0x0053CAC6 + bytes), &tmp, sizeof(tmp), &rw);
 
     CloseHandle(hProc);
 

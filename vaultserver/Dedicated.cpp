@@ -22,7 +22,11 @@ enum {
     ID_MASTER_UPDATE,
     ID_GAME_INIT,
     ID_GAME_RUN,
-    ID_GAME_END
+    ID_GAME_START,
+    ID_GAME_END,
+    ID_NEW_PLAYER,
+    ID_PLAYER_LEFT,
+    ID_POS_UPDATE
 };
 
 bool Dedicated::thread;
@@ -127,6 +131,29 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         printf("Client disconnected (%s)\n", packet->systemAddress.ToString());
 
                         Client* client = Client::GetClientFromGUID(packet->guid);
+                        Player* player = Player::GetPlayerFromGUID(packet->guid);
+
+                        if (player != NULL)
+                        {
+                            delete player;
+
+                            map<RakNetGUID, string> players = Player::GetPlayerList();
+                            map<RakNetGUID, string>::iterator it;
+
+                            BitStream query(packet->data, packet->length, false);
+                            query.IgnoreBytes(sizeof(MessageID));
+                            query.Reset();
+
+                            query.Write((MessageID) ID_PLAYER_LEFT);
+                            query.Write(packet->guid);
+
+                            for (it = players.begin(); it != players.end(); it++)
+                            {
+                                RakNetGUID guid = it->first;
+                                peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, guid, false, 0);
+                            }
+                        }
+
                         if (client != NULL)
                         {
                             delete client;
@@ -277,6 +304,81 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         }
                         else
                             peer->CloseConnection(packet->systemAddress, true, 0, HIGH_PRIORITY);
+                        break;
+                    }
+                    case ID_GAME_START:
+                    {
+                        map<RakNetGUID, string> players = Player::GetPlayerList();
+                        map<RakNetGUID, string>::iterator it;
+
+                        Client* client = Client::GetClientFromGUID(packet->guid);
+                        string name = client->GetAuthName();
+                        RakString pname(name.c_str());
+
+                        BitStream query(packet->data, packet->length, false);
+                        query.IgnoreBytes(sizeof(MessageID));
+                        query.Reset();
+
+                        query.Write((MessageID) ID_NEW_PLAYER);
+                        query.Write(packet->guid);
+                        query.Write(pname);
+
+                        for (it = players.begin(); it != players.end(); it++)
+                        {
+                            RakNetGUID guid = it->first;
+                            peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, guid, false, 0);
+                        }
+
+                        query.Reset();
+
+                        for (it = players.begin(); it != players.end(); it++)
+                        {
+                            RakNetGUID guid = it->first;
+                            Player* player = Player::GetPlayerFromGUID(guid);
+                            string name = player->GetPlayerName();
+                            RakString pname(name.c_str());
+
+                            query.Write((MessageID) ID_NEW_PLAYER);
+                            query.Write(guid);
+                            query.Write(pname);
+                            peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, packet->guid, false, 0);
+                            query.Reset();
+                        }
+
+                        Player* player = new Player(packet->guid);
+                        player->SetPlayerName(name);
+                        break;
+                    }
+                    case ID_POS_UPDATE:
+                    {
+                        BitStream query(packet->data, packet->length, false);
+                        query.IgnoreBytes(sizeof(MessageID));
+
+                        float X, Y, Z;
+                        query.Read(X);
+                        query.Read(Y);
+                        query.Read(Z);
+                        query.Reset();
+
+                        query.Write((MessageID) ID_POS_UPDATE);
+                        query.Write(packet->guid);
+                        query.Write(X);
+                        query.Write(Y);
+                        query.Write(Z);
+
+                        map<RakNetGUID, string> players = Player::GetPlayerList();
+                        map<RakNetGUID, string>::iterator it;
+
+                        for (it = players.begin(); it != players.end(); it++)
+                        {
+                            RakNetGUID guid = it->first;
+                            if (guid != packet->guid) peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, guid, false, 0);
+                        }
+
+                        Player* player = Player::GetPlayerFromGUID(packet->guid);
+                        player->SetPlayerPos(0, X);
+                        player->SetPlayerPos(1, Y);
+                        player->SetPlayerPos(2, Z);
                         break;
                     }
                     case ID_GAME_END:

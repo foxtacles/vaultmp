@@ -25,6 +25,8 @@
 		</Linker>
 		<Unit filename="Pipe.cpp" />
 		<Unit filename="Pipe.h" />
+		<Unit filename="Player.cpp" />
+		<Unit filename="Player.h" />
 		<Unit filename="RakNet\AutopatcherPatchContext.h" />
 		<Unit filename="RakNet\AutopatcherRepositoryInterface.h" />
 		<Unit filename="RakNet\BitStream.cpp" />

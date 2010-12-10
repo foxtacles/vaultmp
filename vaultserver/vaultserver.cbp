@@ -23,6 +23,10 @@
 			<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\libwinmm.a" />
 			<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\libm.a" />
 		</Linker>
+		<Unit filename="..\Client.cpp" />
+		<Unit filename="..\Client.h" />
+		<Unit filename="..\Player.cpp" />
+		<Unit filename="..\Player.h" />
 		<Unit filename="..\RakNet\AutopatcherPatchContext.h" />
 		<Unit filename="..\RakNet\AutopatcherRepositoryInterface.h" />
 		<Unit filename="..\RakNet\BitStream.cpp" />
@@ -241,14 +245,12 @@
 		<Unit filename="..\RakNet\rdlmalloc-options.h" />
 		<Unit filename="..\RakNet\rdlmalloc.cpp" />
 		<Unit filename="..\RakNet\rdlmalloc.h" />
-		<Unit filename="Client.cpp" />
-		<Unit filename="Client.h" />
+		<Unit filename="..\ServerEntry.cpp" />
+		<Unit filename="..\ServerEntry.h" />
 		<Unit filename="Dedicated.cpp" />
 		<Unit filename="Dedicated.h" />
 		<Unit filename="Script.cpp" />
 		<Unit filename="Script.h" />
-		<Unit filename="ServerEntry.cpp" />
-		<Unit filename="ServerEntry.h" />
 		<Unit filename="Utils.cpp" />
 		<Unit filename="Utils.h" />
 		<Unit filename="amx\amx.c">

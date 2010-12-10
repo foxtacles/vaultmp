@@ -1,8 +1,11 @@
+#ifndef CLIENT_H
+#define CLIENT_H
+
 #include <string>
 #include <map>
 #include <stack>
 
-#include "../RakNet/RakPeerInterface.h"
+#include "RakNet/RakPeerInterface.h"
 
 using namespace RakNet;
 using namespace std;
@@ -30,3 +33,5 @@ class Client {
               string GetAuthName();
               string GetAuthPwd();
 };
+
+#endif

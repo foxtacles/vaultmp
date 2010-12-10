@@ -3,7 +3,7 @@
 #define WND_CLASS_NAME "vaultmp"
 
 #define RAKNET_CONNECTIONS    2
-#define RAKNET_MASTER_ADDRESS "127.0.0.1"
+#define RAKNET_MASTER_ADDRESS "vww-team.eu"
 #define RAKNET_MASTER_PORT    1660
 
 #define IDC_GROUP0    2000

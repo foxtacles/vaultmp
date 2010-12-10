@@ -8,8 +8,9 @@
 #include "../RakNet/RakSleep.h"
 #include "../RakNet/GetTime.h"
 
-#include "ServerEntry.h"
-#include "Client.h"
+#include "../ServerEntry.h"
+#include "../Client.h"
+#include "../Player.h"
 #include "Script.h"
 #include "Utils.h"
 

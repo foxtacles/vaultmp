@@ -24,8 +24,8 @@
 			<Add option="-enable-auto-import" />
 			<Add option="--no-export-all-symbols --add-stdcall-alias" />
 		</Linker>
-		<Unit filename="Pipe.cpp" />
-		<Unit filename="Pipe.h" />
+		<Unit filename="..\Pipe.cpp" />
+		<Unit filename="..\Pipe.h" />
 		<Unit filename="vaultmp.cpp" />
 		<Unit filename="vaultmp.h" />
 		<Extensions>

@@ -9,7 +9,7 @@
 #include "../RakNet/RakString.h"
 #include "../RakNet/RakSleep.h"
 
-#include "ServerEntry.h"
+#include "../ServerEntry.h"
 
 #define RAKNET_PORT        1660
 #define RAKNET_CONNECTIONS 128

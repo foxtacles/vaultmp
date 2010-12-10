@@ -14,12 +14,20 @@ enum {
     ID_MASTER_UPDATE,
     ID_GAME_INIT,
     ID_GAME_RUN,
-    ID_GAME_END
+    ID_GAME_START,
+    ID_GAME_END,
+    ID_NEW_PLAYER,
+    ID_PLAYER_LEFT,
+    ID_POS_UPDATE
 };
 
 bool Fallout3::endThread = false;
 bool Fallout3::wakeup = false;
-HANDLE Fallout3::Fallout3thread;
+HANDLE Fallout3::Fallout3pipethread;
+HANDLE Fallout3::Fallout3gamethread;
+Player* Fallout3::self;
+queue<Player*> Fallout3::refqueue;
+float Fallout3::pos[3] = {0.00, 0.00, 0.00};
 PipeClient* Fallout3::pipeServer;
 PipeServer* Fallout3::pipeClient;
 
@@ -93,7 +101,48 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
 
             if (low.compare("op:") == 0)
             {
+                char output[high.length()];
+                char* token;
+                strcpy(output, high.c_str());
+                token = strtok(output, ":.<> ");
 
+                if (strcmp(token, "GetPos") == 0)
+                {
+                    token = strtok(NULL, ":.<> ");
+
+                    if (strcmp(token, "X") == 0)
+                    {
+                        token = strtok(NULL, ":.<> ");
+                        float X = (float) atof(token);
+                        self->SetPlayerPos(0, X);
+                    }
+                    else if (strcmp(token, "Y") == 0)
+                    {
+                        token = strtok(NULL, ":.<> ");
+                        float Y = (float) atof(token);
+                        self->SetPlayerPos(1, Y);
+                    }
+                    else if (strcmp(token, "Z") == 0)
+                    {
+                        token = strtok(NULL, ":.<> ");
+                        float Z = (float) atof(token);
+                        self->SetPlayerPos(2, Z);
+                    }
+                }
+            }
+            else if (low.compare("re:") == 0)
+            {
+                string input = "op:";
+                input.append(high);
+                input.append(".setrestrained 1");
+                pipeServer->Send(&input);
+
+                if (!refqueue.empty())
+                {
+                    Player* player = refqueue.front();
+                    player->SetPlayerRefID(high);
+                    refqueue.pop();
+                }
             }
             else if (low.compare("up:") == 0)
                 wakeup = true;
@@ -101,6 +150,27 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
             if (lookupProgramID("Fallout3.exe") == 0)
                 endThread = true;
         } while (low.compare("ca:") != 0 && !endThread);
+    }
+
+    return ((DWORD) data);
+}
+
+DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
+{
+    while (!endThread)
+    {
+        string input;
+
+        input = "op:player.getpos X";
+        pipeServer->Send(&input);
+
+        input = "op:player.getpos Y";
+        pipeServer->Send(&input);
+
+        input = "op:player.getpos Z";
+        pipeServer->Send(&input);
+
+        Sleep(5000);
     }
 
     return ((DWORD) data);
@@ -202,9 +272,18 @@ HANDLE Fallout3::InitalizeFallout3()
 void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, string name, string pwd)
 {
     endThread = false;
-    Fallout3thread = NULL;
+    Fallout3pipethread = NULL;
+    Fallout3gamethread = NULL;
     pipeClient = new PipeServer();
     pipeServer = new PipeClient();
+
+    self = new Player(peer->GetMyGUID());
+    self->SetPlayerName(name);
+    self->SetPlayerRefID("player");
+
+    pos[0] = 0.00;
+    pos[1] = 0.00;
+    pos[2] = 0.00;
 
     if (peer->Connect(addr.ToString(false), addr.port, 0, 0, 0, 0, 3, 500, 0) == CONNECTION_ATTEMPT_STARTED)
     {
@@ -214,8 +293,16 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
 
         while (query)
         {
-            if (Fallout3thread != NULL)
-                if (WaitForSingleObject(Fallout3thread, 0) != WAIT_TIMEOUT)
+            if (Fallout3pipethread != NULL)
+                if (WaitForSingleObject(Fallout3pipethread, 0) != WAIT_TIMEOUT)
+                {
+                    BitStream query;
+                    query.Write((MessageID) ID_GAME_END);
+                    peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, addr, false, 0);
+                }
+
+            if (Fallout3gamethread != NULL)
+                if (WaitForSingleObject(Fallout3gamethread, 0) != WAIT_TIMEOUT)
                 {
                     BitStream query;
                     query.Write((MessageID) ID_GAME_END);
@@ -244,11 +331,11 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                 {
                     BitStream query;
 
-                    Fallout3thread = InitalizeFallout3();
+                    Fallout3pipethread = InitalizeFallout3();
 
                     Sleep(2500); // Let the game start
 
-                    if (Fallout3thread != NULL)
+                    if (Fallout3pipethread != NULL)
                         query.Write((MessageID) ID_GAME_RUN);
                     else
                         query.Write((MessageID) ID_GAME_END);
@@ -269,6 +356,107 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                     input.append(save);
 
                     pipeServer->Send(&input);
+
+                    DWORD Fallout3gamethreadID;
+                    Fallout3gamethread = CreateThread(NULL, 0, Fallout3game, (LPVOID) 0, 0, &Fallout3gamethreadID);
+
+                    query.Write((MessageID) ID_GAME_START);
+                    peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, packet->systemAddress, false, 0);
+                    break;
+                }
+                case ID_NEW_PLAYER:
+                {
+                    BitStream query(packet->data, packet->length, false);
+                    query.IgnoreBytes(sizeof(MessageID));
+
+                    RakNetGUID guid;
+                    RakString name;
+                    query.Read(guid);
+                    query.Read(name);
+                    query.Reset();
+
+                    Player* player = new Player(guid);
+                    player->SetPlayerName(string(name.C_String()));
+                    refqueue.push(player);
+
+                    string input("op:player.placeatme 30D82 1"); // Test
+                    pipeServer->Send(&input);
+                    break;
+                }
+                case ID_PLAYER_LEFT:
+                {
+                    BitStream query(packet->data, packet->length, false);
+                    query.IgnoreBytes(sizeof(MessageID));
+
+                    RakNetGUID guid;
+                    query.Read(guid);
+                    query.Reset();
+
+                    Player* player = Player::GetPlayerFromGUID(guid);
+                    string refID = player->GetPlayerRefID();
+
+                    if (refID.compare("none") != 0)
+                    {
+                        string input = "op:";
+                        input.append(refID);
+                        input.append(".disable");
+                        pipeServer->Send(&input);
+
+                        input = "op:";
+                        input.append(refID);
+                        input.append(".markfordelete");
+                        pipeServer->Send(&input);
+                    }
+
+                    delete player;
+                    break;
+                }
+                case ID_POS_UPDATE:
+                {
+                    BitStream query(packet->data, packet->length, false);
+                    query.IgnoreBytes(sizeof(MessageID));
+
+                    RakNetGUID guid;
+                    float X, Y, Z;
+                    query.Read(guid);
+                    query.Read(X);
+                    query.Read(Y);
+                    query.Read(Z);
+                    query.Reset();
+
+                    Player* player = Player::GetPlayerFromGUID(guid);
+                    string refID = player->GetPlayerRefID();
+
+                    if (refID.compare("none") != 0)
+                    {
+                        string input;
+                        char pos[16];
+
+                        input = "op:";
+                        sprintf(pos, "%f", X);
+                        input.append(refID);
+                        input.append(".setpos X ");
+                        input.append(pos);
+                        pipeServer->Send(&input);
+
+                        input = "op:";
+                        sprintf(pos, "%f", Y);
+                        input.append(refID);
+                        input.append(".setpos Y ");
+                        input.append(pos);
+                        pipeServer->Send(&input);
+
+                        input = "op:";
+                        sprintf(pos, "%f", Z);
+                        input.append(refID);
+                        input.append(".setpos Z ");
+                        input.append(pos);
+                        pipeServer->Send(&input);
+
+                        player->SetPlayerPos(0, X);
+                        player->SetPlayerPos(1, Y);
+                        player->SetPlayerPos(2, Z);
+                    }
                     break;
                 }
                 case ID_NO_FREE_INCOMING_CONNECTIONS:
@@ -281,17 +469,42 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                 }
             }
 
+            float X = self->GetPlayerPos(0);
+            float Y = self->GetPlayerPos(1);
+            float Z = self->GetPlayerPos(2);
+
+            if (X != pos[0] || Y != pos[1] || Z != pos[2])
+            {
+                BitStream query;
+                query.Write((MessageID) ID_POS_UPDATE);
+                query.Write(X);
+                query.Write(Y);
+                query.Write(Z);
+                peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, addr, false, 0);
+                pos[0] = X;
+                pos[1] = Y;
+                pos[2] = Z;
+            }
+
             RakSleep(2);
         }
     }
 
-    if (Fallout3thread != NULL)
+    if (Fallout3pipethread != NULL)
     {
-        if (WaitForSingleObject(Fallout3thread, 0) == WAIT_TIMEOUT)
+        if (WaitForSingleObject(Fallout3pipethread, 0) == WAIT_TIMEOUT)
             endThread = true;
-        CloseHandle(Fallout3thread);
+        CloseHandle(Fallout3pipethread);
     }
 
+    if (Fallout3gamethread != NULL)
+    {
+        if (WaitForSingleObject(Fallout3gamethread, 0) == WAIT_TIMEOUT)
+            endThread = true;
+        CloseHandle(Fallout3gamethread);
+    }
+
+    delete self;
     delete pipeClient;
     delete pipeServer;
 }
