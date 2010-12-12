@@ -49,7 +49,11 @@ unsigned int PipeServer::Send(string* strSend)
 {
     DWORD dwActuallyWritten;
 
-    if (!WriteFile(this->pipe, strSend->c_str(), strSend->size(), &dwActuallyWritten, NULL))
+    char buffer[this->size];
+
+    strcpy(buffer, strSend->c_str());
+
+    if (!WriteFile(this->pipe, &buffer, this->size, &dwActuallyWritten, NULL))
         return 0;
     else
         return dwActuallyWritten;
@@ -121,7 +125,11 @@ unsigned int PipeClient::Send(string* strSend)
 {
     DWORD dwActuallyWritten;
 
-    if (!WriteFile(this->pipe, strSend->c_str(), strSend->size(), &dwActuallyWritten, NULL))
+    char buffer[this->size];
+
+    strcpy(buffer, strSend->c_str());
+
+    if (!WriteFile(this->pipe, &buffer, this->size, &dwActuallyWritten, NULL))
         return 0;
     else
         return dwActuallyWritten;

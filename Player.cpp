@@ -15,6 +15,7 @@ Player::Player(RakNetGUID guid)
     pos[0] = 0.00;
     pos[1] = 0.00;
     pos[2] = 0.00;
+    moving = false;
     name = "Player";
 }
 
@@ -51,6 +52,11 @@ float Player::GetPlayerPos(int cell)
     return ret;
 }
 
+bool Player::GetPlayerMoving()
+{
+    return moving;
+}
+
 string Player::GetPlayerRefID()
 {
     return refID;
@@ -65,6 +71,11 @@ void Player::SetPlayerPos(int cell, float pos)
 {
     if (cell >= 0 && cell <= 3)
         this->pos[cell] = pos;
+}
+
+void Player::SetPlayerMoving(bool moving)
+{
+    this->moving = moving;
 }
 
 void Player::SetPlayerRefID(string refID)

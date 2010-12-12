@@ -19,6 +19,7 @@ class Player {
 
               string name;
               float pos[3];
+              bool moving;
 
       public:
               Player(RakNetGUID guid);
@@ -29,9 +30,11 @@ class Player {
 
               string GetPlayerName();
               float GetPlayerPos(int cell);
+              bool GetPlayerMoving();
               string GetPlayerRefID();
 
               void SetPlayerName(string name);
               void SetPlayerPos(int cell, float pos);
+              void SetPlayerMoving(bool moving);
               void SetPlayerRefID(string refID);
 };

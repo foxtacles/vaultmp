@@ -1,1 +1,1 @@
-#define DEDICATED_VERSION "0.1"
+#define DEDICATED_VERSION "0.1a"

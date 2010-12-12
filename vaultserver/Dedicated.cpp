@@ -355,9 +355,11 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         query.IgnoreBytes(sizeof(MessageID));
 
                         float X, Y, Z;
+                        bool moving;
                         query.Read(X);
                         query.Read(Y);
                         query.Read(Z);
+                        query.Read(moving);
                         query.Reset();
 
                         query.Write((MessageID) ID_POS_UPDATE);
@@ -365,6 +367,7 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         query.Write(X);
                         query.Write(Y);
                         query.Write(Z);
+                        query.Write(moving);
 
                         map<RakNetGUID, string> players = Player::GetPlayerList();
                         map<RakNetGUID, string>::iterator it;
@@ -379,6 +382,7 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         player->SetPlayerPos(0, X);
                         player->SetPlayerPos(1, Y);
                         player->SetPlayerPos(2, Z);
+                        player->SetPlayerMoving(moving);
                         break;
                     }
                     case ID_GAME_END:

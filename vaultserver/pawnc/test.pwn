@@ -6,8 +6,8 @@ print("Text aus dem ersten VaultScript ueberhaupt.\n", 1, -1, 1);
 new Float: asdf;
 asdf = 0.5666;
 printf("float test: %f\n", asdf);
-new blub[32] = "asdfkokolores";
-if (strcmp(blub, "asdfkokolores") == 0)
+new blub[32] = "asdf";
+if (strcmp(blub, "asdf") == 0)
 	print("string test: asdf!\n");
 }
 

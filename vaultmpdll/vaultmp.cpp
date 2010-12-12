@@ -67,7 +67,7 @@ void Fallout3commandNotify() {
 
 void Fallout3refidNotify() {
 
-    char format[16]; char refid[8];
+    char format[16]; char refid[16];
     sprintf(refid, "%x", Fallout3refid);
     strcat(format, "re:");
     strcat(format, refid);
@@ -107,6 +107,7 @@ DWORD WINAPI Fallout3pipe(LPVOID data) {
 
     do
     {
+        recv.clear(); low.clear(); high.clear();
         recv = pipeServer.Recv();
         low = recv.substr(0, 3);
         high = recv.substr(3);
@@ -429,9 +430,10 @@ extern "C" void __declspec(dllexport) DLLjump()
     bytestream[0] = 0xE9; bytes = 0; WriteProcessMemory(hProc, (LPVOID) ((unsigned) 0x0062B22B + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
     WriteProcessMemory(hProc, (LPVOID) ((unsigned) 0x0062B22B + bytes), &tmp, sizeof(tmp), &rw);
 
-    /* Writing Fallout3 RefID detour TOTAL BYTES TO RESERVE: 28 */
+    /* Writing Fallout3 RefID detour TOTAL BYTES TO RESERVE: 21 */
 
-    /* XXXXXXXX   E8 XXXXXXXX      CALL vaultmp.XXXXXXXX
+    /* XXXXXXXX   8915 XXXXXXXX    MOV DWORD PTR DS:[XXXXXXXX],EDX
+     * XXXXXXXX   E8 XXXXXXXX      CALL vaultmp.XXXXXXXX
      * XXXXXXXX   E8 XXXXXXXX      CALL Fallout3.00516790
      * XXXXXXXX   -E9 XXXXXXXX     JMP Fallout3.0053CACF
      *
@@ -441,7 +443,12 @@ extern "C" void __declspec(dllexport) DLLjump()
     bytes = 0;
     rw = 0;
 
-    LPVOID Fallout3refidASM = VirtualAllocEx(hProc, 0, 28, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+    LPVOID Fallout3refidASM = VirtualAllocEx(hProc, 0, 21, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+
+    tmp = (unsigned) &Fallout3refid;
+    bytestream[0] = 0x89; bytestream[1] = 0x15;
+    for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
+    WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
 
     tmp = offset((((unsigned) Fallout3refidASM) + bytes), (unsigned) &Fallout3refidNotify, 5);
     bytestream[0] = 0xE8; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;

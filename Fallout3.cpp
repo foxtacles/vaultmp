@@ -1,5 +1,5 @@
 #include "Fallout3.h"
-
+#include <fstream>
 using namespace std;
 using namespace RakNet;
 using namespace pipe;
@@ -28,6 +28,7 @@ HANDLE Fallout3::Fallout3gamethread;
 Player* Fallout3::self;
 queue<Player*> Fallout3::refqueue;
 float Fallout3::pos[3] = {0.00, 0.00, 0.00};
+bool Fallout3::movstate = false;
 PipeClient* Fallout3::pipeServer;
 PipeServer* Fallout3::pipeClient;
 
@@ -95,57 +96,84 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
     {
         do
         {
+            recv.clear(); low.clear(); high.clear();
             recv = pipeClient->Recv();
             low = recv.substr(0, 3);
             high = recv.substr(3);
 
-            if (low.compare("op:") == 0)
+            int find = 0;
+
+            while (find != string::npos)
             {
-                char output[high.length()];
-                char* token;
-                strcpy(output, high.c_str());
-                token = strtok(output, ":.<> ");
-
-                if (strcmp(token, "GetPos") == 0)
+                if (low.compare("op:") == 0)
                 {
-                    token = strtok(NULL, ":.<> ");
+                    char output[high.length()];
+                    char* token;
+                    strcpy(output, high.c_str());
+                    token = strtok(output, ":.<> ");
 
-                    if (strcmp(token, "X") == 0)
+                    if (strcmp(token, "GetPos") == 0)
                     {
                         token = strtok(NULL, ":.<> ");
-                        float X = (float) atof(token);
-                        self->SetPlayerPos(0, X);
+
+                        if (strcmp(token, "X") == 0)
+                        {
+                            token = strtok(NULL, ":<> ");
+                            float X = (float) atof(token);
+                            self->SetPlayerPos(0, X);
+                        }
+                        else if (strcmp(token, "Y") == 0)
+                        {
+                            token = strtok(NULL, ":<> ");
+                            float Y = (float) atof(token);
+                            self->SetPlayerPos(1, Y);
+                        }
+                        else if (strcmp(token, "Z") == 0)
+                        {
+                            token = strtok(NULL, ":<> ");
+                            float Z = (float) atof(token);
+                            self->SetPlayerPos(2, Z + 3.00);
+                        }
                     }
-                    else if (strcmp(token, "Y") == 0)
+                    else if (strcmp(token, "IsMoving") == 0)
                     {
                         token = strtok(NULL, ":.<> ");
-                        float Y = (float) atof(token);
-                        self->SetPlayerPos(1, Y);
-                    }
-                    else if (strcmp(token, "Z") == 0)
-                    {
-                        token = strtok(NULL, ":.<> ");
-                        float Z = (float) atof(token);
-                        self->SetPlayerPos(2, Z);
+                        int moving = atoi(token);
+
+                        self->SetPlayerMoving((moving != 0) ? true : false);
                     }
                 }
-            }
-            else if (low.compare("re:") == 0)
-            {
-                string input = "op:";
-                input.append(high);
-                input.append(".setrestrained 1");
-                pipeServer->Send(&input);
-
-                if (!refqueue.empty())
+                else if (low.compare("re:") == 0)
                 {
-                    Player* player = refqueue.front();
-                    player->SetPlayerRefID(high);
-                    refqueue.pop();
+                    string input = "op:";
+                    input.append(high);
+                    input.append(".setrestrained 1");
+                    pipeServer->Send(&input);
+                    input = "op:";
+                    input.append(high);
+                    input.append(".moveto player");
+                    pipeServer->Send(&input);
+
+                    if (!refqueue.empty())
+                    {
+                        Player* player = refqueue.front();
+                        player->SetPlayerRefID(high);
+                        refqueue.pop();
+                    }
+                }
+                else if (low.compare("up:") == 0)
+                    wakeup = true;
+
+                find = high.find("op:");
+                if (find == string::npos) find = high.find("re:");
+                if (find == string::npos) find = high.find("up:");
+                if (find == string::npos) find = high.find("ca:");
+                if (find != string::npos)
+                {
+                    low = high.substr(find, 3);
+                    high = high.substr(find + 3);
                 }
             }
-            else if (low.compare("up:") == 0)
-                wakeup = true;
 
             if (lookupProgramID("Fallout3.exe") == 0)
                 endThread = true;
@@ -170,7 +198,10 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
         input = "op:player.getpos Z";
         pipeServer->Send(&input);
 
-        Sleep(5000);
+        input = "op:player.ismoving";
+        pipeServer->Send(&input);
+
+        Sleep(1000);
     }
 
     return ((DWORD) data);
@@ -284,6 +315,7 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
     pos[0] = 0.00;
     pos[1] = 0.00;
     pos[2] = 0.00;
+    movstate = false;
 
     if (peer->Connect(addr.ToString(false), addr.port, 0, 0, 0, 0, 3, 500, 0) == CONNECTION_ATTEMPT_STARTED)
     {
@@ -418,10 +450,12 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
 
                     RakNetGUID guid;
                     float X, Y, Z;
+                    bool moving;
                     query.Read(guid);
                     query.Read(X);
                     query.Read(Y);
                     query.Read(Z);
+                    query.Read(moving);
                     query.Reset();
 
                     Player* player = Player::GetPlayerFromGUID(guid);
@@ -453,9 +487,15 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                         input.append(pos);
                         pipeServer->Send(&input);
 
+                        input = "op:";
+                        input.append(refID);
+                        input.append(".playgroup Idle 0");
+                        pipeServer->Send(&input);
+
                         player->SetPlayerPos(0, X);
                         player->SetPlayerPos(1, Y);
                         player->SetPlayerPos(2, Z);
+                        player->SetPlayerMoving(moving);
                     }
                     break;
                 }
@@ -472,18 +512,21 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
             float X = self->GetPlayerPos(0);
             float Y = self->GetPlayerPos(1);
             float Z = self->GetPlayerPos(2);
+            bool moving = self->GetPlayerMoving();
 
-            if (X != pos[0] || Y != pos[1] || Z != pos[2])
+            if (X != pos[0] || Y != pos[1] || Z != pos[2] || moving != movstate)
             {
                 BitStream query;
                 query.Write((MessageID) ID_POS_UPDATE);
                 query.Write(X);
                 query.Write(Y);
                 query.Write(Z);
+                query.Write(moving);
                 peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, addr, false, 0);
                 pos[0] = X;
                 pos[1] = Y;
                 pos[2] = Z;
+                movstate = moving;
             }
 
             RakSleep(2);
