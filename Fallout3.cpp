@@ -1,5 +1,5 @@
 #include "Fallout3.h"
-#include <fstream>
+
 using namespace std;
 using namespace RakNet;
 using namespace pipe;
