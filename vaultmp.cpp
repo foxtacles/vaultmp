@@ -430,6 +430,14 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                                         {
                                             query.Write((MessageID) ID_MASTER_UPDATE);
                                             SystemAddress addr = *selectedServer;
+
+                                            SystemAddress self = peer->GetExternalID(packet->systemAddress);
+
+                                            if (strcmp(addr.ToString(false), packet->systemAddress.ToString(false)) == 0)
+                                                addr.SetBinaryAddress("127.0.0.1");
+                                            else if (strcmp(addr.ToString(false), "127.0.0.1") == 0)
+                                                addr.SetBinaryAddress(self.ToString(false));
+
                                             query.Write(addr);
                                         }
                                         else
@@ -474,6 +482,13 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                                                 entry.SetServerRule(key.C_String(), value.C_String());
                                             }
 
+                                            SystemAddress self = peer->GetExternalID(packet->systemAddress);
+
+                                            if (strcmp(addr.ToString(false), "127.0.0.1") == 0)
+                                                addr.SetBinaryAddress(packet->systemAddress.ToString(false));
+                                            else if (strcmp(addr.ToString(false), self.ToString(false)) == 0)
+                                                addr.SetBinaryAddress("127.0.0.1");
+
                                             serverList.insert(pair<SystemAddress, ServerEntry>(addr, entry));
 
                                             peer->Ping(addr.ToString(false), addr.port, false);
@@ -493,6 +508,13 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
                                         SystemAddress addr;
                                         query.Read(addr);
+
+                                        SystemAddress self = peer->GetExternalID(packet->systemAddress);
+
+                                        if (strcmp(addr.ToString(false), "127.0.0.1") == 0)
+                                            addr.SetBinaryAddress(packet->systemAddress.ToString(false));
+                                        else if (strcmp(addr.ToString(false), self.ToString(false)) == 0)
+                                            addr.SetBinaryAddress("127.0.0.1");
 
                                         std::map<SystemAddress, ServerEntry>::iterator i;
                                         i = serverList.find(addr);
