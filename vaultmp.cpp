@@ -202,34 +202,41 @@ void CreateWindowContent(HWND parent)
     wnd = CreateWindowEx(0x00000000, "Button", "Powered by", 0x50020007, 6, 294, 531, 78, parent, (HMENU) IDC_GROUP2, instance, NULL);
     SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
-    wnd = CreateWindowEx(0x00000000, "Button", "mantronix - the wasteland", 0x50010003, 565, 372, 180, 32, parent, (HMENU) IDC_CHECK0, instance, NULL);
+    wnd = CreateWindowEx(0x00000000, "Button", "mantronix - the wasteland", 0x50010003, 565, 374, 180, 32, parent, (HMENU) IDC_CHECK0, instance, NULL);
     SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
     wndchiptune = wnd;
 
-    wnd = CreateWindowEx(0x00000000, "Button", "Join Server", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 555, 240, 100, 25, parent, (HMENU) IDC_BUTTON0, instance, NULL);
+    wnd = CreateWindowEx(0x00000000, "Button", "Join Server", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 555, 239, 100, 25, parent, (HMENU) IDC_BUTTON0, instance, NULL);
     SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
-    wnd = CreateWindowEx(0x00000000, "Button", "Update Server", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 660, 240, 100, 25, parent, (HMENU) IDC_BUTTON1, instance, NULL);
+    wnd = CreateWindowEx(0x00000000, "Button", "Update Server", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 660, 239, 100, 25, parent, (HMENU) IDC_BUTTON1, instance, NULL);
     SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
-    wnd = CreateWindowEx(0x00000000, "Button", "Master Query", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 555, 273, 100, 25, parent, (HMENU) IDC_BUTTON2, instance, NULL);
+    wnd = CreateWindowEx(0x00000000, "Button", "Master Query", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 555, 272, 100, 25, parent, (HMENU) IDC_BUTTON2, instance, NULL);
     SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
-    wnd = CreateWindowEx(0x00000000, "Button", "Master Address", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 660, 273, 100, 25, parent, (HMENU) IDC_BUTTON3, instance, NULL);
+    wnd = CreateWindowEx(0x00000000, "Button", "Credits", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 660, 272, 100, 25, parent, (HMENU) IDC_BUTTON3, instance, NULL);
     SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
-    wnd = CreateWindowEx(0x00000200, "Edit", "", 0x50010080, 611, 313, 146, 20, parent, (HMENU) IDC_EDIT0, instance, NULL);
+    wnd = CreateWindowEx(0x00000200, "Edit", "", 0x50010080, 611, 305, 146, 20, parent, (HMENU) IDC_EDIT3, instance, NULL);
+    SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
+    SendMessage(wnd, EM_SETLIMITTEXT, (WPARAM) 32, 0);
+
+    wnd = CreateWindowEx(0x00000200, "Edit", "", 0x50010080, 611, 331, 146, 20, parent, (HMENU) IDC_EDIT0, instance, NULL);
     SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
     SendMessage(wnd, EM_SETLIMITTEXT, (WPARAM) 16, 0);
 
-    wnd = CreateWindowEx(0x00000200, "Edit", "", 0x500100A0, 611, 346, 146, 20, parent, (HMENU) IDC_EDIT1, instance, NULL);
+    wnd = CreateWindowEx(0x00000200, "Edit", "", 0x500100A0, 611, 357, 146, 20, parent, (HMENU) IDC_EDIT1, instance, NULL);
     SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
     SendMessage(wnd, EM_SETLIMITTEXT, (WPARAM) 16, 0);
 
-    wnd = CreateWindowEx(0x00000000, "Static", "Name", 0x50000300, 575, 310, 35, 24, parent, (HMENU) IDC_STATIC2, instance, NULL);
+    wnd = CreateWindowEx(0x00000000, "Static", "Master", 0x50000300, 570, 302, 38, 24, parent, (HMENU) IDC_STATIC4, instance, NULL);
     SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
-    wnd = CreateWindowEx(0x00000000, "Static", "Password", 0x50000300, 554, 343, 57, 24, parent, (HMENU) IDC_STATIC3, instance, NULL);
+    wnd = CreateWindowEx(0x00000000, "Static", "Name", 0x50000300, 575, 328, 35, 24, parent, (HMENU) IDC_STATIC2, instance, NULL);
+    SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
+
+    wnd = CreateWindowEx(0x00000000, "Static", "Password", 0x50000300, 554, 354, 57, 24, parent, (HMENU) IDC_STATIC3, instance, NULL);
     SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 }
 
@@ -408,7 +415,24 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                     {
                         if (!update) serverList.clear();
 
-                        if (peer->Connect(RAKNET_MASTER_ADDRESS, RAKNET_MASTER_PORT, 0, 0, 0, 0, 3, 500, 0) == CONNECTION_ATTEMPT_STARTED)
+                        SystemAddress master;
+                        char maddr[32];
+                        GetDlgItemText(hwnd, IDC_EDIT3, maddr, sizeof(maddr));
+
+                        if (strcmp(maddr, "") == 0)
+                        {
+                            SetDlgItemText(hwnd, IDC_EDIT3, (char*) RAKNET_MASTER_ADDRESS);
+                            master.SetBinaryAddress((char*) RAKNET_MASTER_ADDRESS);
+                            master.port = RAKNET_MASTER_PORT;
+                        }
+                        else
+                        {
+                            master.SetBinaryAddress(strtok(maddr, ":"));
+                            char* cport = strtok(NULL, ":");
+                            master.port = cport != NULL ? atoi(cport) : RAKNET_MASTER_PORT;
+                        }
+
+                        if (peer->Connect(master.ToString(false), master.port, 0, 0, 0, 0, 3, 500, 0) == CONNECTION_ATTEMPT_STARTED)
                         {
                             bool query = true;
 
