@@ -34,6 +34,7 @@ class Fallout3 {
               static Player* self;
               static queue<Player*> refqueue;
               static float pos[3];
+              static float angle;
               static bool movstate;
 
               static PipeClient* pipeServer;

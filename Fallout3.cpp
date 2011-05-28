@@ -28,6 +28,7 @@ HANDLE Fallout3::Fallout3gamethread;
 Player* Fallout3::self;
 queue<Player*> Fallout3::refqueue;
 float Fallout3::pos[3] = {0.00, 0.00, 0.00};
+float Fallout3::angle;
 bool Fallout3::movstate = false;
 PipeClient* Fallout3::pipeServer;
 PipeServer* Fallout3::pipeClient;
@@ -135,6 +136,17 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                             self->SetPlayerPos(2, Z + 3.00);
                         }
                     }
+                    else if (strcmp(token, "GetAngle") == 0)
+                    {
+                        token = strtok(NULL, ":.<> ");
+
+                        if (strcmp(token, "Z") == 0)
+                        {
+                            token = strtok(NULL, ":<> ");
+                            float Z = (float) atof(token);
+                            self->SetPlayerAngle(Z);
+                        }
+                    }
                     else if (strcmp(token, "IsMoving") == 0)
                     {
                         token = strtok(NULL, ":.<> ");
@@ -192,16 +204,27 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
         input = "op:player.getpos X";
         pipeServer->Send(&input);
 
+        Sleep(200);
+
         input = "op:player.getpos Y";
         pipeServer->Send(&input);
+
+        Sleep(200);
 
         input = "op:player.getpos Z";
         pipeServer->Send(&input);
 
+        Sleep(200);
+
+        input = "op:player.getangle Z ";
+        pipeServer->Send(&input);
+
+        Sleep(200);
+
         input = "op:player.ismoving";
         pipeServer->Send(&input);
 
-        Sleep(1000);
+        Sleep(200);
     }
 
     return ((DWORD) data);
@@ -315,6 +338,7 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
     pos[0] = 0.00;
     pos[1] = 0.00;
     pos[2] = 0.00;
+    angle = 0.00;
     movstate = false;
 
     if (peer->Connect(addr.ToString(false), addr.port, 0, 0, 0, 0, 3, 500, 0) == CONNECTION_ATTEMPT_STARTED)
@@ -449,12 +473,13 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                     query.IgnoreBytes(sizeof(MessageID));
 
                     RakNetGUID guid;
-                    float X, Y, Z;
+                    float X, Y, Z, A;
                     bool moving;
                     query.Read(guid);
                     query.Read(X);
                     query.Read(Y);
                     query.Read(Z);
+                    query.Read(A);
                     query.Read(moving);
                     query.Reset();
 
@@ -466,35 +491,47 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                         string input;
                         char pos[16];
 
+                        if (!player->IsPlayerNearPoint(X, Y, Z, 10.0))
+                        {
+                            input = "op:";
+                            sprintf(pos, "%f", X);
+                            input.append(refID);
+                            input.append(".setpos X ");
+                            input.append(pos);
+                            pipeServer->Send(&input);
+
+                            input = "op:";
+                            sprintf(pos, "%f", Y);
+                            input.append(refID);
+                            input.append(".setpos Y ");
+                            input.append(pos);
+                            pipeServer->Send(&input);
+
+                            input = "op:";
+                            sprintf(pos, "%f", Z);
+                            input.append(refID);
+                            input.append(".setpos Z ");
+                            input.append(pos);
+                            pipeServer->Send(&input);
+                        }
+
                         input = "op:";
-                        sprintf(pos, "%f", X);
+                        sprintf(pos, "%f", A);
                         input.append(refID);
-                        input.append(".setpos X ");
+                        input.append(".setangle Z ");
                         input.append(pos);
                         pipeServer->Send(&input);
 
                         input = "op:";
-                        sprintf(pos, "%f", Y);
                         input.append(refID);
-                        input.append(".setpos Y ");
-                        input.append(pos);
-                        pipeServer->Send(&input);
-
-                        input = "op:";
-                        sprintf(pos, "%f", Z);
-                        input.append(refID);
-                        input.append(".setpos Z ");
-                        input.append(pos);
-                        pipeServer->Send(&input);
-
-                        input = "op:";
-                        input.append(refID);
-                        input.append(".playgroup Idle 0");
+                        if (moving && !player->GetPlayerMoving()) input.append(".playgroup FastForward 1");
+                        else if (!moving && player->GetPlayerMoving()) input.append(".playgroup Idle 0");
                         pipeServer->Send(&input);
 
                         player->SetPlayerPos(0, X);
                         player->SetPlayerPos(1, Y);
                         player->SetPlayerPos(2, Z);
+                        player->SetPlayerAngle(A);
                         player->SetPlayerMoving(moving);
                     }
                     break;
@@ -512,20 +549,23 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
             float X = self->GetPlayerPos(0);
             float Y = self->GetPlayerPos(1);
             float Z = self->GetPlayerPos(2);
+            float A = self->GetPlayerAngle();
             bool moving = self->GetPlayerMoving();
 
-            if (X != pos[0] || Y != pos[1] || Z != pos[2] || moving != movstate)
+            if (X != pos[0] || Y != pos[1] || Z != pos[2] || A != angle || moving != movstate)
             {
                 BitStream query;
                 query.Write((MessageID) ID_POS_UPDATE);
                 query.Write(X);
                 query.Write(Y);
                 query.Write(Z);
+                query.Write(A);
                 query.Write(moving);
                 peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, addr, false, 0);
                 pos[0] = X;
                 pos[1] = Y;
                 pos[2] = Z;
+                angle = A;
                 movstate = moving;
             }
 

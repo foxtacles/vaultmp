@@ -15,6 +15,7 @@ Player::Player(RakNetGUID guid)
     pos[0] = 0.00;
     pos[1] = 0.00;
     pos[2] = 0.00;
+    angle = 0.00;
     moving = false;
     name = "Player";
 }
@@ -52,6 +53,11 @@ float Player::GetPlayerPos(int cell)
     return ret;
 }
 
+float Player::GetPlayerAngle()
+{
+    return angle;
+}
+
 bool Player::GetPlayerMoving()
 {
     return moving;
@@ -73,6 +79,11 @@ void Player::SetPlayerPos(int cell, float pos)
         this->pos[cell] = pos;
 }
 
+void Player::SetPlayerAngle(float angle)
+{
+    this->angle = angle;
+}
+
 void Player::SetPlayerMoving(bool moving)
 {
     this->moving = moving;
@@ -81,4 +92,9 @@ void Player::SetPlayerMoving(bool moving)
 void Player::SetPlayerRefID(string refID)
 {
     this->refID = refID;
+}
+
+bool Player::IsPlayerNearPoint(float X, float Y, float Z, float R)
+{
+    return (sqrt((abs(pos[0] - X) * abs(pos[0] - X)) + (abs(pos[1] - Y) * abs(pos[1] - Y)) + (abs(pos[2] - Z) * abs(pos[2] - Z))) <= R);
 }
