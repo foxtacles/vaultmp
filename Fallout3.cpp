@@ -29,7 +29,7 @@ Player* Fallout3::self;
 queue<Player*> Fallout3::refqueue;
 float Fallout3::pos[3] = {0.00, 0.00, 0.00};
 float Fallout3::angle;
-bool Fallout3::movstate = false;
+int Fallout3::movstate = 0;
 PipeClient* Fallout3::pipeServer;
 PipeServer* Fallout3::pipeClient;
 
@@ -152,7 +152,7 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                         token = strtok(NULL, ":.<> ");
                         int moving = atoi(token);
 
-                        self->SetPlayerMoving((moving != 0) ? true : false);
+                        self->SetPlayerMoving(moving);
                     }
                 }
                 else if (low.compare("re:") == 0)
@@ -204,27 +204,27 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
         input = "op:player.getpos X";
         pipeServer->Send(&input);
 
-        Sleep(200);
+        Sleep(150);
 
         input = "op:player.getpos Y";
         pipeServer->Send(&input);
 
-        Sleep(200);
+        Sleep(150);
 
         input = "op:player.getpos Z";
         pipeServer->Send(&input);
 
-        Sleep(200);
+        Sleep(150);
 
         input = "op:player.getangle Z ";
         pipeServer->Send(&input);
 
-        Sleep(200);
+        Sleep(150);
 
         input = "op:player.ismoving";
         pipeServer->Send(&input);
 
-        Sleep(200);
+        Sleep(150);
     }
 
     return ((DWORD) data);
@@ -339,7 +339,7 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
     pos[1] = 0.00;
     pos[2] = 0.00;
     angle = 0.00;
-    movstate = false;
+    movstate = 0;
 
     if (peer->Connect(addr.ToString(false), addr.port, 0, 0, 0, 0, 3, 500, 0) == CONNECTION_ATTEMPT_STARTED)
     {
@@ -474,7 +474,7 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
 
                     RakNetGUID guid;
                     float X, Y, Z, A;
-                    bool moving;
+                    int moving;
                     query.Read(guid);
                     query.Read(X);
                     query.Read(Y);
@@ -491,7 +491,7 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                         string input;
                         char pos[16];
 
-                        if (!player->IsPlayerNearPoint(X, Y, Z, 10.0))
+                        if (!player->IsPlayerNearPoint(X, Y, Z, 400.0))
                         {
                             input = "op:";
                             sprintf(pos, "%f", X);
@@ -513,6 +513,10 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                             input.append(".setpos Z ");
                             input.append(pos);
                             pipeServer->Send(&input);
+
+                            player->SetPlayerPos(0, X);
+                            player->SetPlayerPos(1, Y);
+                            player->SetPlayerPos(2, Z);
                         }
 
                         input = "op:";
@@ -522,15 +526,31 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                         input.append(pos);
                         pipeServer->Send(&input);
 
-                        input = "op:";
-                        input.append(refID);
-                        if (moving && !player->GetPlayerMoving()) input.append(".playgroup FastForward 1");
-                        else if (!moving && player->GetPlayerMoving()) input.append(".playgroup Idle 0");
-                        pipeServer->Send(&input);
+                        if (moving != player->GetPlayerMoving())
+                        {
+                            input = "op:";
+                            input.append(refID);
+                            switch (moving)
+                            {
+                                case 0:
+                                    input.append(".playgroup Idle 0");
+                                    break;
+                                case 1:
+                                    input.append(".playgroup FastForward 1");
+                                    break;
+                                case 2:
+                                    input.append(".playgroup FastBackward 1");
+                                    break;
+                                case 3:
+                                    input.append(".playgroup FastLeft 1");
+                                    break;
+                                case 4:
+                                    input.append(".playgroup FastRight 1");
+                                    break;
+                            }
+                            pipeServer->Send(&input);
+                        }
 
-                        player->SetPlayerPos(0, X);
-                        player->SetPlayerPos(1, Y);
-                        player->SetPlayerPos(2, Z);
                         player->SetPlayerAngle(A);
                         player->SetPlayerMoving(moving);
                     }
@@ -550,7 +570,7 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
             float Y = self->GetPlayerPos(1);
             float Z = self->GetPlayerPos(2);
             float A = self->GetPlayerAngle();
-            bool moving = self->GetPlayerMoving();
+            int moving = self->GetPlayerMoving();
 
             if (X != pos[0] || Y != pos[1] || Z != pos[2] || A != angle || moving != movstate)
             {

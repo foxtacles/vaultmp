@@ -355,7 +355,7 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         query.IgnoreBytes(sizeof(MessageID));
 
                         float X, Y, Z, A;
-                        bool moving;
+                        int moving;
                         query.Read(X);
                         query.Read(Y);
                         query.Read(Z);

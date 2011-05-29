@@ -16,7 +16,7 @@ Player::Player(RakNetGUID guid)
     pos[1] = 0.00;
     pos[2] = 0.00;
     angle = 0.00;
-    moving = false;
+    moving = 0;
     name = "Player";
 }
 
@@ -58,7 +58,7 @@ float Player::GetPlayerAngle()
     return angle;
 }
 
-bool Player::GetPlayerMoving()
+int Player::GetPlayerMoving()
 {
     return moving;
 }
@@ -84,7 +84,7 @@ void Player::SetPlayerAngle(float angle)
     this->angle = angle;
 }
 
-void Player::SetPlayerMoving(bool moving)
+void Player::SetPlayerMoving(int moving)
 {
     this->moving = moving;
 }

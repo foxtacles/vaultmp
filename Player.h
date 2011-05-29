@@ -21,7 +21,7 @@ class Player {
               string name;
               float pos[3];
               float angle;
-              bool moving;
+              int moving;
 
       public:
               Player(RakNetGUID guid);
@@ -33,13 +33,13 @@ class Player {
               string GetPlayerName();
               float GetPlayerPos(int cell);
               float GetPlayerAngle();
-              bool GetPlayerMoving();
+              int GetPlayerMoving();
               string GetPlayerRefID();
 
               void SetPlayerName(string name);
               void SetPlayerPos(int cell, float pos);
               void SetPlayerAngle(float angle);
-              void SetPlayerMoving(bool moving);
+              void SetPlayerMoving(int moving);
               void SetPlayerRefID(string refID);
 
               bool IsPlayerNearPoint(float X, float Y, float Z, float R);
