@@ -102,6 +102,8 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
             low = recv.substr(0, 3);
             high = recv.substr(3);
 
+            Player* lastRef = self;
+
             int find = 0;
 
             while (find != string::npos)
@@ -113,46 +115,54 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                     strcpy(output, high.c_str());
                     token = strtok(output, ":.<> ");
 
-                    if (strcmp(token, "GetPos") == 0)
+                    if (stricmp(token, "GetPos") == 0)
                     {
                         token = strtok(NULL, ":.<> ");
 
-                        if (strcmp(token, "X") == 0)
+                        if (stricmp(token, "X") == 0)
                         {
                             token = strtok(NULL, ":<> ");
                             float X = (float) atof(token);
-                            self->SetPlayerPos(0, X);
+                            lastRef->SetPlayerPos(0, X);
                         }
-                        else if (strcmp(token, "Y") == 0)
+                        else if (stricmp(token, "Y") == 0)
                         {
                             token = strtok(NULL, ":<> ");
                             float Y = (float) atof(token);
-                            self->SetPlayerPos(1, Y);
+                            lastRef->SetPlayerPos(1, Y);
                         }
-                        else if (strcmp(token, "Z") == 0)
+                        else if (stricmp(token, "Z") == 0)
                         {
                             token = strtok(NULL, ":<> ");
                             float Z = (float) atof(token);
-                            self->SetPlayerPos(2, Z + 3.00);
+                            lastRef->SetPlayerPos(2, Z + 3.00);
                         }
                     }
-                    else if (strcmp(token, "GetAngle") == 0)
+                    else if (stricmp(token, "GetAngle") == 0)
                     {
                         token = strtok(NULL, ":.<> ");
 
-                        if (strcmp(token, "Z") == 0)
+                        if (stricmp(token, "Z") == 0)
                         {
                             token = strtok(NULL, ":<> ");
                             float Z = (float) atof(token);
-                            self->SetPlayerAngle(Z);
+                            lastRef->SetPlayerAngle(Z);
                         }
                     }
-                    else if (strcmp(token, "IsMoving") == 0)
+                    else if (stricmp(token, "IsMoving") == 0)
                     {
                         token = strtok(NULL, ":.<> ");
                         int moving = atoi(token);
 
-                        self->SetPlayerMoving(moving);
+                        lastRef->SetPlayerMoving(moving);
+                    }
+                    else if (stricmp(token, "player") == 0)
+                        lastRef = self;
+                    else
+                    {
+                        Player* newRef = Player::GetPlayerFromRefID(token);
+                        if (newRef != NULL)
+                            lastRef = newRef;
                     }
                 }
                 else if (low.compare("re:") == 0)
@@ -160,10 +170,6 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                     string input = "op:";
                     input.append(high);
                     input.append(".setrestrained 1");
-                    pipeServer->Send(&input);
-                    input = "op:";
-                    input.append(high);
-                    input.append(".moveto player");
                     pipeServer->Send(&input);
 
                     if (!refqueue.empty())
@@ -204,27 +210,59 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
         input = "op:player.getpos X";
         pipeServer->Send(&input);
 
-        Sleep(150);
+        Sleep(80);
 
         input = "op:player.getpos Y";
         pipeServer->Send(&input);
 
-        Sleep(150);
+        Sleep(80);
 
         input = "op:player.getpos Z";
         pipeServer->Send(&input);
 
-        Sleep(150);
+        Sleep(80);
 
-        input = "op:player.getangle Z ";
+        input = "op:player.getangle Z";
         pipeServer->Send(&input);
 
-        Sleep(150);
+        Sleep(80);
 
         input = "op:player.ismoving";
         pipeServer->Send(&input);
 
-        Sleep(150);
+        Sleep(80);
+
+        map<RakNetGUID, string> players = Player::GetPlayerList();
+        map<RakNetGUID, string>::iterator it;
+
+        for (it = players.begin(); it != players.end(); it++)
+        {
+            string refID = it->second;
+
+            if (refID.compare("none") != 0 && refID.compare("player") != 0)
+            {
+                input = "op:";
+                input.append(refID);
+                input.append(".getpos X");
+                pipeServer->Send(&input);
+
+                Sleep(80);
+
+                input = "op:";
+                input.append(refID);
+                input.append(".getpos Y");
+                pipeServer->Send(&input);
+
+                Sleep(80);
+
+                input = "op:";
+                input.append(refID);
+                input.append(".getpos Z");
+                pipeServer->Send(&input);
+
+                Sleep(80);
+            }
+        }
     }
 
     return ((DWORD) data);

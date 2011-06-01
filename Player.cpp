@@ -5,11 +5,10 @@ using namespace std;
 
 map<RakNetGUID, string> Player::players;
 map<RakNetGUID, Player*> Player::playersguids;
+map<string, Player*> Player::playersrefs;
 
 Player::Player(RakNetGUID guid)
 {
-    players.insert(pair<RakNetGUID, string>(guid, refID));
-    playersguids.insert(pair<RakNetGUID, Player*>(guid, this));
     this->guid = guid;
     refID = "none";
     pos[0] = 0.00;
@@ -18,12 +17,15 @@ Player::Player(RakNetGUID guid)
     angle = 0.00;
     moving = 0;
     name = "Player";
+    players.insert(pair<RakNetGUID, string>(guid, refID));
+    playersguids.insert(pair<RakNetGUID, Player*>(guid, this));
 }
 
 Player::~Player()
 {
     players.erase(this->guid);
     playersguids.erase(this->guid);
+    if (this->refID.compare("none") != 0) playersrefs.erase(this->refID);
 }
 
 Player* Player::GetPlayerFromGUID(RakNetGUID guid)
@@ -32,6 +34,17 @@ Player* Player::GetPlayerFromGUID(RakNetGUID guid)
     it = playersguids.find(guid);
 
     if (it != playersguids.end())
+        return it->second;
+
+    return NULL;
+}
+
+Player* Player::GetPlayerFromRefID(string refID)
+{
+    map<string, Player*>::iterator it;
+    it = playersrefs.find(refID);
+
+    if (it != playersrefs.end())
         return it->second;
 
     return NULL;
@@ -92,6 +105,10 @@ void Player::SetPlayerMoving(int moving)
 void Player::SetPlayerRefID(string refID)
 {
     this->refID = refID;
+    map<RakNetGUID, string>::iterator it;
+    it = players.find(this->guid);
+    it->second = refID;
+    playersrefs.insert(pair<string, Player*>(refID, this));
 }
 
 bool Player::IsPlayerNearPoint(float X, float Y, float Z, float R)

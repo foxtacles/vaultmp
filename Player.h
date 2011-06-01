@@ -14,6 +14,7 @@ class Player {
       private:
               static map<RakNetGUID, string> players;
               static map<RakNetGUID, Player*> playersguids;
+              static map<string, Player*> playersrefs;
 
               RakNetGUID guid;
               string refID;
@@ -29,6 +30,7 @@ class Player {
 
               static map<RakNetGUID, string> GetPlayerList();
               static Player* GetPlayerFromGUID(RakNetGUID guid);
+              static Player* GetPlayerFromRefID(string refID);
 
               string GetPlayerName();
               float GetPlayerPos(int cell);
