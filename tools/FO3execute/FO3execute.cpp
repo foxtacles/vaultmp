@@ -171,7 +171,7 @@ bool getFO3() {
             WriteProcessMemory(hProc, (LPVOID) (0x006288C4 + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
             bytestream[0] = 0x90; WriteProcessMemory(hProc, (LPVOID) (0x006288C4 + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
 
-            /* Writing Fallout3 command INPUT detour TOTAL BYTES TO RESERVE: 61 */
+            /* Writing Fallout3 command INPUT detour TOTAL BYTES TO RESERVE: 64 */
 
             /* XXXXXXXX   50               PUSH EAX
              * XXXXXXXX   51               PUSH ECX
@@ -197,7 +197,8 @@ bool getFO3() {
              * XXXXXXXX   74 02            JE SHORT XXXXXXXX
              * XXXXXXXX  ^EB ED            JMP SHORT XXXXXXXX
              * XXXXXXXX   C605 XXXXXXXX 00 MOV BYTE PTR DS:[XXXXXXXX],0
-             * XXXXXXXX  ^EB CC            JMP SHORT XXXXXXXX
+             * XXXXXXXX   C606 00          MOV BYTE PTR DS:[ESI],0
+             * XXXXXXXX  ^EB C9            JMP SHORT XXXXXXXX
              *
              * 00C075AF   -E9 XXXXXXXX     JMP XXXXXXXX
              */
@@ -205,7 +206,7 @@ bool getFO3() {
             bytes = 0;
             rw = 0;
 
-            LPVOID Fallout3inputASM = VirtualAllocEx(hProc, 0, 61, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+            LPVOID Fallout3inputASM = VirtualAllocEx(hProc, 0, 64, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
 
             bytestream[0] = 0x50; bytestream[1] = 0x51; bytestream[2] = 0x56;
             for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
@@ -272,7 +273,10 @@ bool getFO3() {
             WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
             bytestream[0] = 0x00; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
 
-            bytestream[0] = 0xEB; bytestream[1] = 0xCC;
+            bytestream[0] = 0xC6; bytestream[1] = 0x06; bytestream[2] = 0x00;
+            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
+
+            bytestream[0] = 0xEB; bytestream[1] = 0xC9;
             for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
 
             tmp = offset((unsigned) 0x00C075AF, ((unsigned) Fallout3inputASM), 5);
