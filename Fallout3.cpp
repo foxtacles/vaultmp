@@ -29,6 +29,8 @@ Player* Fallout3::self;
 queue<Player*> Fallout3::refqueue;
 float Fallout3::pos[3] = {0.00, 0.00, 0.00};
 float Fallout3::angle;
+float Fallout3::vhealth;
+bool Fallout3::sdead;
 int Fallout3::movstate = 0;
 PipeClient* Fallout3::pipeServer;
 PipeServer* Fallout3::pipeClient;
@@ -149,11 +151,27 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                             lastRef->SetPlayerAngle(Z);
                         }
                     }
+                    else if (stricmp(token, "GetActorValue") == 0)
+                    {
+                        token = strtok(NULL, ":.<> ");
+
+                        if (stricmp(token, "Health") == 0)
+                        {
+                            token = strtok(NULL, ":<> ");
+                            float health = (float) atof(token);
+                            lastRef->SetPlayerHealth(health);
+                        }
+                    }
+                    else if (stricmp(token, "GetDead") == 0)
+                    {
+                        token = strtok(NULL, ":<> ");
+                        float dead = (float) atof(token);
+                        lastRef->SetPlayerDead(dead != 0.00 ? true : false);
+                    }
                     else if (stricmp(token, "IsMoving") == 0)
                     {
                         token = strtok(NULL, ":.<> ");
                         int moving = atoi(token);
-
                         lastRef->SetPlayerMoving(moving);
                     }
                     else if (stricmp(token, "player") == 0)
@@ -227,6 +245,16 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
 
         Sleep(80);
 
+        input = "op:player.getactorvalue Health";
+        pipeServer->Send(&input);
+
+        Sleep(80);
+
+        input = "op:player.getdead";
+        pipeServer->Send(&input);
+
+        Sleep(80);
+
         input = "op:player.ismoving";
         pipeServer->Send(&input);
 
@@ -258,6 +286,13 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
                 input = "op:";
                 input.append(refID);
                 input.append(".getpos Z");
+                pipeServer->Send(&input);
+
+                Sleep(80);
+
+                input = "op:";
+                input.append(refID);
+                input.append(".getdead");
                 pipeServer->Send(&input);
 
                 Sleep(80);
@@ -377,6 +412,8 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
     pos[1] = 0.00;
     pos[2] = 0.00;
     angle = 0.00;
+    vhealth = 0.00;
+    sdead = false;
     movstate = 0;
 
     if (peer->Connect(addr.ToString(false), addr.port, 0, 0, 0, 0, 3, 500, 0) == CONNECTION_ATTEMPT_STARTED)
@@ -511,13 +548,16 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                     query.IgnoreBytes(sizeof(MessageID));
 
                     RakNetGUID guid;
-                    float X, Y, Z, A;
+                    float X, Y, Z, A, health;
+                    bool dead;
                     int moving;
                     query.Read(guid);
                     query.Read(X);
                     query.Read(Y);
                     query.Read(Z);
                     query.Read(A);
+                    query.Read(health);
+                    query.Read(dead);
                     query.Read(moving);
                     query.Reset();
 
@@ -557,10 +597,35 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                             player->SetPlayerPos(2, Z);
                         }
 
+                        if (player->IsPlayerDead() != dead)
+                        {
+                            input = "op:";
+                            input.append(refID);
+                            switch (dead)
+                            {
+                                case true:
+                                    input.append(".killactor");
+                                    break;
+                                case false:
+                                    input.append(".resurrect 0");
+                                    break;
+                            }
+                            pipeServer->Send(&input);
+
+                            player->SetPlayerDead(dead);
+                        }
+
                         input = "op:";
                         sprintf(pos, "%f", A);
                         input.append(refID);
                         input.append(".setangle Z ");
+                        input.append(pos);
+                        pipeServer->Send(&input);
+
+                        input = "op:";
+                        sprintf(pos, "%i", (int) health);
+                        input.append(refID);
+                        input.append(".forceactorvalue Health ");
                         input.append(pos);
                         pipeServer->Send(&input);
 
@@ -590,6 +655,7 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                         }
 
                         player->SetPlayerAngle(A);
+                        player->SetPlayerHealth(health);
                         player->SetPlayerMoving(moving);
                     }
                     break;
@@ -608,9 +674,11 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
             float Y = self->GetPlayerPos(1);
             float Z = self->GetPlayerPos(2);
             float A = self->GetPlayerAngle();
+            float health = self->GetPlayerHealth();
+            bool dead = self->IsPlayerDead();
             int moving = self->GetPlayerMoving();
 
-            if (X != pos[0] || Y != pos[1] || Z != pos[2] || A != angle || moving != movstate)
+            if (X != pos[0] || Y != pos[1] || Z != pos[2] || A != angle || health != vhealth || dead != sdead || moving != movstate)
             {
                 BitStream query;
                 query.Write((MessageID) ID_POS_UPDATE);
@@ -618,12 +686,16 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                 query.Write(Y);
                 query.Write(Z);
                 query.Write(A);
+                query.Write(health);
+                query.Write(dead);
                 query.Write(moving);
                 peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, addr, false, 0);
                 pos[0] = X;
                 pos[1] = Y;
                 pos[2] = Z;
                 angle = A;
+                vhealth = health;
+                sdead = dead;
                 movstate = moving;
             }
 

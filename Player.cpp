@@ -15,6 +15,8 @@ Player::Player(RakNetGUID guid)
     pos[1] = 0.00;
     pos[2] = 0.00;
     angle = 0.00;
+    health = 0.00;
+    dead = false;
     moving = 0;
     name = "Player";
     players.insert(pair<RakNetGUID, string>(guid, refID));
@@ -71,6 +73,16 @@ float Player::GetPlayerAngle()
     return angle;
 }
 
+float Player::GetPlayerHealth()
+{
+    return health;
+}
+
+bool Player::IsPlayerDead()
+{
+    return dead;
+}
+
 int Player::GetPlayerMoving()
 {
     return moving;
@@ -95,6 +107,16 @@ void Player::SetPlayerPos(int cell, float pos)
 void Player::SetPlayerAngle(float angle)
 {
     this->angle = angle;
+}
+
+void Player::SetPlayerHealth(float health)
+{
+    this->health = health;
+}
+
+void Player::SetPlayerDead(bool dead)
+{
+    this->dead = dead;
 }
 
 void Player::SetPlayerMoving(int moving)

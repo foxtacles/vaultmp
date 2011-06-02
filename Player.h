@@ -22,6 +22,8 @@ class Player {
               string name;
               float pos[3];
               float angle;
+              float health;
+              bool dead;
               int moving;
 
       public:
@@ -35,12 +37,16 @@ class Player {
               string GetPlayerName();
               float GetPlayerPos(int cell);
               float GetPlayerAngle();
+              float GetPlayerHealth();
+              bool IsPlayerDead();
               int GetPlayerMoving();
               string GetPlayerRefID();
 
               void SetPlayerName(string name);
               void SetPlayerPos(int cell, float pos);
               void SetPlayerAngle(float angle);
+              void SetPlayerHealth(float health);
+              void SetPlayerDead(bool dead);
               void SetPlayerMoving(int moving);
               void SetPlayerRefID(string refID);
 

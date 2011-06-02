@@ -354,12 +354,15 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         BitStream query(packet->data, packet->length, false);
                         query.IgnoreBytes(sizeof(MessageID));
 
-                        float X, Y, Z, A;
+                        float X, Y, Z, A, health;
+                        bool dead;
                         int moving;
                         query.Read(X);
                         query.Read(Y);
                         query.Read(Z);
                         query.Read(A);
+                        query.Read(health);
+                        query.Read(dead);
                         query.Read(moving);
                         query.Reset();
 
@@ -369,6 +372,8 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         query.Write(Y);
                         query.Write(Z);
                         query.Write(A);
+                        query.Write(health);
+                        query.Write(dead);
                         query.Write(moving);
 
                         map<RakNetGUID, string> players = Player::GetPlayerList();
@@ -385,6 +390,8 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         player->SetPlayerPos(1, Y);
                         player->SetPlayerPos(2, Z);
                         player->SetPlayerAngle(A);
+                        player->SetPlayerHealth(health);
+                        player->SetPlayerDead(dead);
                         player->SetPlayerMoving(moving);
                         break;
                     }
