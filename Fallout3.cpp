@@ -27,11 +27,13 @@ HANDLE Fallout3::Fallout3pipethread;
 HANDLE Fallout3::Fallout3gamethread;
 Player* Fallout3::self;
 queue<Player*> Fallout3::refqueue;
-float Fallout3::pos[3] = {0.00, 0.00, 0.00};
+float Fallout3::pos[3];
 float Fallout3::angle;
+float Fallout3::conds[6];
 float Fallout3::vhealth;
+float Fallout3::bhealth;
 bool Fallout3::sdead;
-int Fallout3::movstate = 0;
+int Fallout3::movstate;
 PipeClient* Fallout3::pipeServer;
 PipeServer* Fallout3::pipeClient;
 
@@ -151,6 +153,17 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                             lastRef->SetPlayerAngle(Z);
                         }
                     }
+                    else if (stricmp(token, "GetBaseActorValue") == 0)
+                    {
+                        token = strtok(NULL, ":.<> ");
+
+                        if (stricmp(token, "Health") == 0)
+                        {
+                            token = strtok(NULL, ":<> ");
+                            float baseHealth = (float) atof(token);
+                            lastRef->SetPlayerBaseHealth(baseHealth);
+                        }
+                    }
                     else if (stricmp(token, "GetActorValue") == 0)
                     {
                         token = strtok(NULL, ":.<> ");
@@ -160,6 +173,42 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                             token = strtok(NULL, ":<> ");
                             float health = (float) atof(token);
                             lastRef->SetPlayerHealth(health);
+                        }
+                        else if (stricmp(token, "PerceptionCondition") == 0)
+                        {
+                            token = strtok(NULL, ":<> ");
+                            float cond = (float) atof(token);
+                            lastRef->SetPlayerCondition(0, cond);
+                        }
+                        else if (stricmp(token, "EnduranceCondition") == 0)
+                        {
+                            token = strtok(NULL, ":<> ");
+                            float cond = (float) atof(token);
+                            lastRef->SetPlayerCondition(1, cond);
+                        }
+                        else if (stricmp(token, "LeftAttackCondition") == 0)
+                        {
+                            token = strtok(NULL, ":<> ");
+                            float cond = (float) atof(token);
+                            lastRef->SetPlayerCondition(2, cond);
+                        }
+                        else if (stricmp(token, "RightAttackCondition") == 0)
+                        {
+                            token = strtok(NULL, ":<> ");
+                            float cond = (float) atof(token);
+                            lastRef->SetPlayerCondition(3, cond);
+                        }
+                        else if (stricmp(token, "LeftMobilityCondition") == 0)
+                        {
+                            token = strtok(NULL, ":<> ");
+                            float cond = (float) atof(token);
+                            lastRef->SetPlayerCondition(4, cond);
+                        }
+                        else if (stricmp(token, "RightMobilityCondition") == 0)
+                        {
+                            token = strtok(NULL, ":<> ");
+                            float cond = (float) atof(token);
+                            lastRef->SetPlayerCondition(5, cond);
                         }
                     }
                     else if (stricmp(token, "GetDead") == 0)
@@ -227,38 +276,59 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
 
         input = "op:player.getpos X";
         pipeServer->Send(&input);
-
-        Sleep(80);
+        Sleep(50);
 
         input = "op:player.getpos Y";
         pipeServer->Send(&input);
-
-        Sleep(80);
+        Sleep(50);
 
         input = "op:player.getpos Z";
         pipeServer->Send(&input);
-
-        Sleep(80);
+        Sleep(50);
 
         input = "op:player.getangle Z";
         pipeServer->Send(&input);
+        Sleep(50);
 
-        Sleep(80);
+        input = "op:player.getbaseactorvalue Health";
+        pipeServer->Send(&input);
+        Sleep(50);
 
         input = "op:player.getactorvalue Health";
         pipeServer->Send(&input);
+        Sleep(50);
 
-        Sleep(80);
+        input = "op:player.getactorvalue PerceptionCondition";
+        pipeServer->Send(&input);
+        Sleep(50);
+
+        input = "op:player.getactorvalue EnduranceCondition";
+        pipeServer->Send(&input);
+        Sleep(50);
+
+        input = "op:player.getactorvalue LeftAttackCondition";
+        pipeServer->Send(&input);
+        Sleep(50);
+
+        input = "op:player.getactorvalue RightAttackCondition";
+        pipeServer->Send(&input);
+        Sleep(50);
+
+        input = "op:player.getactorvalue LeftMobilityCondition";
+        pipeServer->Send(&input);
+        Sleep(50);
+
+        input = "op:player.getactorvalue RightMobilityCondition";
+        pipeServer->Send(&input);
+        Sleep(50);
 
         input = "op:player.getdead";
         pipeServer->Send(&input);
-
-        Sleep(80);
+        Sleep(50);
 
         input = "op:player.ismoving";
         pipeServer->Send(&input);
-
-        Sleep(80);
+        Sleep(50);
 
         map<RakNetGUID, string> players = Player::GetPlayerList();
         map<RakNetGUID, string>::iterator it;
@@ -273,29 +343,25 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
                 input.append(refID);
                 input.append(".getpos X");
                 pipeServer->Send(&input);
-
-                Sleep(80);
+                Sleep(50);
 
                 input = "op:";
                 input.append(refID);
                 input.append(".getpos Y");
                 pipeServer->Send(&input);
-
-                Sleep(80);
+                Sleep(50);
 
                 input = "op:";
                 input.append(refID);
                 input.append(".getpos Z");
                 pipeServer->Send(&input);
-
-                Sleep(80);
+                Sleep(50);
 
                 input = "op:";
                 input.append(refID);
                 input.append(".getdead");
                 pipeServer->Send(&input);
-
-                Sleep(80);
+                Sleep(50);
             }
         }
     }
@@ -412,7 +478,14 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
     pos[1] = 0.00;
     pos[2] = 0.00;
     angle = 0.00;
+    conds[0] = 0.00;
+    conds[1] = 0.00;
+    conds[2] = 0.00;
+    conds[3] = 0.00;
+    conds[4] = 0.00;
+    conds[5] = 0.00;
     vhealth = 0.00;
+    bhealth = 0.00;
     sdead = false;
     movstate = 0;
 
@@ -548,7 +621,7 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                     query.IgnoreBytes(sizeof(MessageID));
 
                     RakNetGUID guid;
-                    float X, Y, Z, A, health;
+                    float X, Y, Z, A, health, baseHealth, cond0, cond1, cond2, cond3, cond4, cond5;
                     bool dead;
                     int moving;
                     query.Read(guid);
@@ -557,6 +630,13 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                     query.Read(Z);
                     query.Read(A);
                     query.Read(health);
+                    query.Read(baseHealth);
+                    query.Read(cond0);
+                    query.Read(cond1);
+                    query.Read(cond2);
+                    query.Read(cond3);
+                    query.Read(cond4);
+                    query.Read(cond5);
                     query.Read(dead);
                     query.Read(moving);
                     query.Reset();
@@ -631,7 +711,16 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                             player->SetPlayerMoving(moving);
                         }
 
-                        // BaseActorValues if changed
+                        if (baseHealth != player->GetPlayerBaseHealth())
+                        {
+                            input = "op:";
+                            sprintf(pos, "%i", (int) baseHealth);
+                            input.append(refID);
+                            input.append(".setactorvalue Health ");
+                            input.append(pos);
+                            pipeServer->Send(&input);
+                            player->SetPlayerBaseHealth(baseHealth);
+                        }
 
                         input = "op:";
                         sprintf(pos, "%i", (int) health);
@@ -640,6 +729,72 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                         input.append(pos);
                         pipeServer->Send(&input);
                         player->SetPlayerHealth(health);
+
+                        if (cond0 != player->GetPlayerCondition(0))
+                        {
+                            input = "op:";
+                            sprintf(pos, "%i", (int) cond0);
+                            input.append(refID);
+                            input.append(".forceactorvalue PerceptionCondition ");
+                            input.append(pos);
+                            pipeServer->Send(&input);
+                            player->SetPlayerCondition(0, cond0);
+                        }
+
+                        if (cond1 != player->GetPlayerCondition(1))
+                        {
+                            input = "op:";
+                            sprintf(pos, "%i", (int) cond1);
+                            input.append(refID);
+                            input.append(".forceactorvalue EnduranceCondition ");
+                            input.append(pos);
+                            pipeServer->Send(&input);
+                            player->SetPlayerCondition(1, cond1);
+                        }
+
+                        if (cond2 != player->GetPlayerCondition(2))
+                        {
+                            input = "op:";
+                            sprintf(pos, "%i", (int) cond2);
+                            input.append(refID);
+                            input.append(".forceactorvalue LeftAttackCondition ");
+                            input.append(pos);
+                            pipeServer->Send(&input);
+                            player->SetPlayerCondition(2, cond2);
+                        }
+
+                        if (cond3 != player->GetPlayerCondition(3))
+                        {
+                            input = "op:";
+                            sprintf(pos, "%i", (int) cond3);
+                            input.append(refID);
+                            input.append(".forceactorvalue RightAttackCondition ");
+                            input.append(pos);
+                            pipeServer->Send(&input);
+                            player->SetPlayerCondition(3, cond3);
+                        }
+
+                        if (cond4 != player->GetPlayerCondition(4))
+                        {
+                            input = "op:";
+                            sprintf(pos, "%i", (int) cond4);
+                            input.append(refID);
+                            input.append(".forceactorvalue LeftMobilityCondition ");
+                            input.append(pos);
+                            pipeServer->Send(&input);
+                            player->SetPlayerCondition(4, cond4);
+                        }
+
+                        if (cond5 != player->GetPlayerCondition(5))
+                        {
+                            input = "op:";
+                            sprintf(pos, "%i", (int) cond5);
+                            input.append(refID);
+                            input.append(".forceactorvalue RightMobilityCondition ");
+                            input.append(pos);
+                            pipeServer->Send(&input);
+                            player->SetPlayerCondition(5, cond5);
+                        }
 
                         // more ActorValues
 
@@ -651,12 +806,17 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                             {
                                 case true:
                                     input.append(".killactor");
+                                    pipeServer->Send(&input);
                                     break;
                                 case false:
                                     input.append(".resurrect 0");
+                                    pipeServer->Send(&input);
+                                    input = "op:";
+                                    input.append(refID);
+                                    input.append(".setrestrained 1");
+                                    pipeServer->Send(&input);
                                     break;
                             }
-                            pipeServer->Send(&input);
                             player->SetPlayerDead(dead);
                         }
                     }
@@ -677,10 +837,19 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
             float Z = self->GetPlayerPos(2);
             float A = self->GetPlayerAngle();
             float health = self->GetPlayerHealth();
+            float baseHealth = self->GetPlayerBaseHealth();
+            float cond0 = self->GetPlayerCondition(0);
+            float cond1 = self->GetPlayerCondition(1);
+            float cond2 = self->GetPlayerCondition(2);
+            float cond3 = self->GetPlayerCondition(3);
+            float cond4 = self->GetPlayerCondition(4);
+            float cond5 = self->GetPlayerCondition(5);
             bool dead = self->IsPlayerDead();
             int moving = self->GetPlayerMoving();
 
-            if (X != pos[0] || Y != pos[1] || Z != pos[2] || A != angle || health != vhealth || dead != sdead || moving != movstate)
+            if (X != pos[0] || Y != pos[1] || Z != pos[2] || A != angle || health != vhealth || baseHealth != bhealth ||
+                cond0 != conds[0] || cond1 != conds[1] || cond2 != conds[2] || cond3 != conds[3] || cond4 != conds[4] ||
+                cond5 != conds[5] || dead != sdead || moving != movstate)
             {
                 BitStream query;
                 query.Write((MessageID) ID_POS_UPDATE);
@@ -689,6 +858,13 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                 query.Write(Z);
                 query.Write(A);
                 query.Write(health);
+                query.Write(baseHealth);
+                query.Write(cond0);
+                query.Write(cond1);
+                query.Write(cond2);
+                query.Write(cond3);
+                query.Write(cond4);
+                query.Write(cond5);
                 query.Write(dead);
                 query.Write(moving);
                 peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, addr, false, 0);
@@ -697,6 +873,13 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                 pos[2] = Z;
                 angle = A;
                 vhealth = health;
+                bhealth = baseHealth;
+                conds[0] = cond0;
+                conds[1] = cond1;
+                conds[2] = cond2;
+                conds[3] = cond3;
+                conds[4] = cond4;
+                conds[5] = cond5;
                 sdead = dead;
                 movstate = moving;
             }

@@ -16,6 +16,13 @@ Player::Player(RakNetGUID guid)
     pos[2] = 0.00;
     angle = 0.00;
     health = 0.00;
+    baseHealth = 0.00;
+    cond[0] = 0.00;
+    cond[1] = 0.00;
+    cond[2] = 0.00;
+    cond[3] = 0.00;
+    cond[4] = 0.00;
+    cond[5] = 0.00;
     dead = false;
     moving = 0;
     name = "Player";
@@ -64,7 +71,7 @@ string Player::GetPlayerName()
 
 float Player::GetPlayerPos(int cell)
 {
-    float ret = (cell == 0) ? pos[0] : (cell == 1) ? pos[1] : (cell == 2) ? pos[2] : 0.00;
+    float ret = (cell >= 0 && cell <= 2) ? pos[cell] : 0.00;
     return ret;
 }
 
@@ -76,6 +83,17 @@ float Player::GetPlayerAngle()
 float Player::GetPlayerHealth()
 {
     return health;
+}
+
+float Player::GetPlayerBaseHealth()
+{
+    return baseHealth;
+}
+
+float Player::GetPlayerCondition(int cell)
+{
+    float ret = (cell >= 0 && cell <= 5) ? cond[cell] : 0.00;
+    return ret;
 }
 
 bool Player::IsPlayerDead()
@@ -100,7 +118,7 @@ void Player::SetPlayerName(string name)
 
 void Player::SetPlayerPos(int cell, float pos)
 {
-    if (cell >= 0 && cell <= 3)
+    if (cell >= 0 && cell <= 2)
         this->pos[cell] = pos;
 }
 
@@ -112,6 +130,17 @@ void Player::SetPlayerAngle(float angle)
 void Player::SetPlayerHealth(float health)
 {
     this->health = health;
+}
+
+void Player::SetPlayerBaseHealth(float baseHealth)
+{
+    this->baseHealth = baseHealth;
+}
+
+void Player::SetPlayerCondition(int cell, float cond)
+{
+    if (cell >= 0 && cell <= 5)
+        this->cond[cell] = cond;
 }
 
 void Player::SetPlayerDead(bool dead)

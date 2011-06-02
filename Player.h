@@ -23,6 +23,8 @@ class Player {
               float pos[3];
               float angle;
               float health;
+              float baseHealth;
+              float cond[6];
               bool dead;
               int moving;
 
@@ -38,6 +40,8 @@ class Player {
               float GetPlayerPos(int cell);
               float GetPlayerAngle();
               float GetPlayerHealth();
+              float GetPlayerBaseHealth();
+              float GetPlayerCondition(int cell);
               bool IsPlayerDead();
               int GetPlayerMoving();
               string GetPlayerRefID();
@@ -46,6 +50,8 @@ class Player {
               void SetPlayerPos(int cell, float pos);
               void SetPlayerAngle(float angle);
               void SetPlayerHealth(float health);
+              void SetPlayerBaseHealth(float baseHealth);
+              void SetPlayerCondition(int cell, float cond);
               void SetPlayerDead(bool dead);
               void SetPlayerMoving(int moving);
               void SetPlayerRefID(string refID);

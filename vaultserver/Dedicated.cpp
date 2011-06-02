@@ -354,7 +354,7 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         BitStream query(packet->data, packet->length, false);
                         query.IgnoreBytes(sizeof(MessageID));
 
-                        float X, Y, Z, A, health;
+                        float X, Y, Z, A, health, baseHealth, cond0, cond1, cond2, cond3, cond4, cond5;
                         bool dead;
                         int moving;
                         query.Read(X);
@@ -362,6 +362,13 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         query.Read(Z);
                         query.Read(A);
                         query.Read(health);
+                        query.Read(baseHealth);
+                        query.Read(cond0);
+                        query.Read(cond1);
+                        query.Read(cond2);
+                        query.Read(cond3);
+                        query.Read(cond4);
+                        query.Read(cond5);
                         query.Read(dead);
                         query.Read(moving);
                         query.Reset();
@@ -373,6 +380,13 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         query.Write(Z);
                         query.Write(A);
                         query.Write(health);
+                        query.Write(baseHealth);
+                        query.Write(cond0);
+                        query.Write(cond1);
+                        query.Write(cond2);
+                        query.Write(cond3);
+                        query.Write(cond4);
+                        query.Write(cond5);
                         query.Write(dead);
                         query.Write(moving);
 
@@ -391,6 +405,13 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         player->SetPlayerPos(2, Z);
                         player->SetPlayerAngle(A);
                         player->SetPlayerHealth(health);
+                        player->SetPlayerBaseHealth(baseHealth);
+                        player->SetPlayerCondition(0, cond0);
+                        player->SetPlayerCondition(1, cond1);
+                        player->SetPlayerCondition(2, cond2);
+                        player->SetPlayerCondition(3, cond3);
+                        player->SetPlayerCondition(4, cond4);
+                        player->SetPlayerCondition(5, cond5);
                         player->SetPlayerDead(dead);
                         player->SetPlayerMoving(moving);
                         break;

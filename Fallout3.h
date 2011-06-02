@@ -35,7 +35,9 @@ class Fallout3 {
               static queue<Player*> refqueue;
               static float pos[3];
               static float angle;
+              static float conds[6];
               static float vhealth;
+              static float bhealth;
               static bool sdead;
               static int movstate;
 
