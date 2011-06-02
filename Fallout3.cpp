@@ -597,37 +597,13 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                             player->SetPlayerPos(2, Z);
                         }
 
-                        if (player->IsPlayerDead() != dead)
-                        {
-                            input = "op:";
-                            input.append(refID);
-                            switch (dead)
-                            {
-                                case true:
-                                    input.append(".killactor");
-                                    break;
-                                case false:
-                                    input.append(".resurrect 0");
-                                    break;
-                            }
-                            pipeServer->Send(&input);
-
-                            player->SetPlayerDead(dead);
-                        }
-
                         input = "op:";
                         sprintf(pos, "%f", A);
                         input.append(refID);
                         input.append(".setangle Z ");
                         input.append(pos);
                         pipeServer->Send(&input);
-
-                        input = "op:";
-                        sprintf(pos, "%i", (int) health);
-                        input.append(refID);
-                        input.append(".forceactorvalue Health ");
-                        input.append(pos);
-                        pipeServer->Send(&input);
+                        player->SetPlayerAngle(A);
 
                         if (moving != player->GetPlayerMoving())
                         {
@@ -652,11 +628,37 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                                     break;
                             }
                             pipeServer->Send(&input);
+                            player->SetPlayerMoving(moving);
                         }
 
-                        player->SetPlayerAngle(A);
+                        // BaseActorValues if changed
+
+                        input = "op:";
+                        sprintf(pos, "%i", (int) health);
+                        input.append(refID);
+                        input.append(".forceactorvalue Health ");
+                        input.append(pos);
+                        pipeServer->Send(&input);
                         player->SetPlayerHealth(health);
-                        player->SetPlayerMoving(moving);
+
+                        // more ActorValues
+
+                        if (player->IsPlayerDead() != dead)
+                        {
+                            input = "op:";
+                            input.append(refID);
+                            switch (dead)
+                            {
+                                case true:
+                                    input.append(".killactor");
+                                    break;
+                                case false:
+                                    input.append(".resurrect 0");
+                                    break;
+                            }
+                            pipeServer->Send(&input);
+                            player->SetPlayerDead(dead);
+                        }
                     }
                     break;
                 }
