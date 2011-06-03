@@ -567,7 +567,9 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
 
                     string input("op:load "); // Load Fallout3 savegame
                     input.append(save);
+                    pipeServer->Send(&input);
 
+                    input = "op:player.removeallitems"; // Reset the players inventory
                     pipeServer->Send(&input);
 
                     DWORD Fallout3gamethreadID;

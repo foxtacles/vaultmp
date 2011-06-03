@@ -4,6 +4,7 @@
 #include "vaultserver.h"
 #include "Dedicated.h"
 #include "Script.h"
+#include "Functions.h"
 #include "Utils.h"
 
 DWORD WINAPI InputThread(LPVOID data)
@@ -76,7 +77,9 @@ int main(int argc, char* argv[])
         Script::FloatInit(vaultscript);
         Script::StringInit(vaultscript);
         Script::FileInit(vaultscript);
-        err = Script::TimeInit(vaultscript);
+        Script::TimeInit(vaultscript);
+
+        err = Functions::RegisterVaultmpFunctions(vaultscript);
         if (err != AMX_ERR_NONE)
             Script::ErrorExit(vaultscript, err);
 

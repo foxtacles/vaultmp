@@ -360,6 +360,19 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
 
                         Player* player = new Player(packet->guid);
                         player->SetPlayerName(name);
+
+                        int ret = 1;
+
+                        if (amx != NULL)
+                        {
+                            void* args[1];
+
+                            int id = Client::GetClientFromGUID(packet->guid)->GetClientID();
+
+                            args[0] = reinterpret_cast<void*>(&id);
+
+                            ret = Script::Call(amx, (char*) "OnPlayerJoin", (char*) "i", args);
+                        }
                         break;
                     }
                     case ID_PLAYER_UPDATE:

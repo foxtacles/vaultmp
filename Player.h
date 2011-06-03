@@ -1,3 +1,6 @@
+#ifndef PLAYER_H
+#define PLAYER_H
+
 #include <string>
 #include <map>
 #include <math.h>
@@ -58,3 +61,5 @@ class Player {
 
               bool IsPlayerNearPoint(float X, float Y, float Z, float R);
 };
+
+#endif

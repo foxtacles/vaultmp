@@ -22,3 +22,11 @@ public OnClientRequestGame(clientID, savegame[], len)
 	printf("OnClientRequestGame: ID: %d savegame: %s, len: %d\n", clientID, savegame, len);
 	return 1;
 }
+
+public OnPlayerJoin(clientID)
+{
+	new name[32];
+	GetPlayerName(clientID, name);
+	printf("OnPlayerJoin: ID: %d name: %s\n", clientID, name);
+	return 1;
+}

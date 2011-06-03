@@ -14,6 +14,7 @@ class Client {
 
       private:
               static map<RakNetGUID, Client*> clients;
+              static map<int, RakNetGUID> clientGUIDs;
               static stack<int> clientIDs;
 
               RakNetGUID guid; int ID;
@@ -27,6 +28,7 @@ class Client {
               static void SetMaximumClients(int clients);
               static int GetClientCount();
               static Client* GetClientFromGUID(RakNetGUID guid);
+              static RakNetGUID GetGUIDFromID(int ID);
 
               RakNetGUID GetRakNetGUID();
               int GetClientID();
