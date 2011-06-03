@@ -14,10 +14,11 @@
 class Functions {
 
       private:
-              static AMX_NATIVE_INFO vaultmp_functions[3];
+              static AMX_NATIVE_INFO vaultmp_functions[4];
 
               static cell vaultmp_GetPlayerName(AMX* amx, const cell* params);
               static cell vaultmp_GetPlayerPos(AMX* amx, const cell* params);
+              static cell vaultmp_GetPlayerZAngle(AMX* amx, const cell* params);
 
       public:
               static int RegisterVaultmpFunctions(AMX* amx);

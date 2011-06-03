@@ -4,6 +4,7 @@ AMX_NATIVE_INFO Functions::vaultmp_functions[] = {
 
     {"GetPlayerName", Functions::vaultmp_GetPlayerName},
     {"GetPlayerPos", Functions::vaultmp_GetPlayerPos},
+    {"GetPlayerZAngle", Functions::vaultmp_GetPlayerZAngle},
     {0, 0}
 
 };
@@ -40,8 +41,7 @@ cell Functions::vaultmp_GetPlayerName(AMX* amx, const cell* params)
 
 cell Functions::vaultmp_GetPlayerPos(AMX* amx, const cell* params)
 {
-    int i = 1, len, id;
-    cell* dest;
+    int i = 1, id;
 
     id = (int) params[1];
 
@@ -52,6 +52,26 @@ cell Functions::vaultmp_GetPlayerPos(AMX* amx, const cell* params)
     {
         float pos = player->GetPlayerPos((int) params[2]);
         return amx_ftoc(pos);
+    }
+    else
+        i = 0;
+
+    return i;
+}
+
+cell Functions::vaultmp_GetPlayerZAngle(AMX* amx, const cell* params)
+{
+    int i = 1, id;
+
+    id = (int) params[1];
+
+    RakNetGUID guid = Client::GetGUIDFromID(id);
+    Player* player = Player::GetPlayerFromGUID(guid);
+
+    if (player != NULL)
+    {
+        float angle = player->GetPlayerAngle();
+        return amx_ftoc(angle);
     }
     else
         i = 0;

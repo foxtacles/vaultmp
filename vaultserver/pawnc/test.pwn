@@ -35,10 +35,11 @@ public OnPlayerDisconnect(clientID)
 {
 	new name[32];
 	GetPlayerName(clientID, name);
-	new Float: X; new Float: Y; new Float: Z;
+	new Float: X; new Float: Y; new Float: Z; new Float: A;
 	X = GetPlayerPos(clientID, 0);
 	Y = GetPlayerPos(clientID, 1);
 	Z = GetPlayerPos(clientID, 2);
-	printf("OnPlayerDisconnect: ID: %d name: %s pos: %f %f %f\n", clientID, name, X, Y, Z);
+	A = GetPlayerZAngle(clientID);
+	printf("OnPlayerDisconnect: ID: %d name: %s pos: %f %f %f %f\n", clientID, name, X, Y, Z, A);
 	return 1;
 }

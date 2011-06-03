@@ -40,3 +40,10 @@ native GetPlayerName(clientID, name[]);
  */
 
 native Float:GetPlayerPos(clientID, axis);
+
+/* GetPlayerZAngle
+ * returns a Float referring to the Z angle
+ * returns 0: invalid clientID
+ */
+
+native Float:GetPlayerZAngle(clientID);
