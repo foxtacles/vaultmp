@@ -40,6 +40,8 @@ class Dedicated {
 
               static ServerEntry self;
 
+              struct pPlayerUpdate;
+
               static DWORD WINAPI DedicatedThread(LPVOID data);
               static bool thread;
 

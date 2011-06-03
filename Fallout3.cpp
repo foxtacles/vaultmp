@@ -18,8 +18,21 @@ enum {
     ID_GAME_END,
     ID_NEW_PLAYER,
     ID_PLAYER_LEFT,
-    ID_POS_UPDATE
+    ID_PLAYER_UPDATE
 };
+
+#pragma pack(push, 1)
+struct Fallout3::pPlayerUpdate {
+    unsigned char type;
+    RakNetGUID guid;
+    float X, Y, Z, A;
+    float health;
+    float baseHealth;
+    float conds[6];
+    bool dead;
+    int moving;
+};
+#pragma pack(pop)
 
 bool Fallout3::endThread = false;
 bool Fallout3::wakeup = false;
@@ -27,13 +40,7 @@ HANDLE Fallout3::Fallout3pipethread;
 HANDLE Fallout3::Fallout3gamethread;
 Player* Fallout3::self;
 queue<Player*> Fallout3::refqueue;
-float Fallout3::pos[3];
-float Fallout3::angle;
-float Fallout3::conds[6];
-float Fallout3::vhealth;
-float Fallout3::bhealth;
-bool Fallout3::sdead;
-int Fallout3::movstate;
+Fallout3::pPlayerUpdate Fallout3::localPlayerUpdate;
 PipeClient* Fallout3::pipeServer;
 PipeServer* Fallout3::pipeClient;
 
@@ -474,20 +481,22 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
     self->SetPlayerName(name);
     self->SetPlayerRefID("player");
 
-    pos[0] = 0.00;
-    pos[1] = 0.00;
-    pos[2] = 0.00;
-    angle = 0.00;
-    conds[0] = 0.00;
-    conds[1] = 0.00;
-    conds[2] = 0.00;
-    conds[3] = 0.00;
-    conds[4] = 0.00;
-    conds[5] = 0.00;
-    vhealth = 0.00;
-    bhealth = 0.00;
-    sdead = false;
-    movstate = 0;
+    localPlayerUpdate.type = ID_PLAYER_UPDATE;
+    localPlayerUpdate.guid = peer->GetMyGUID();
+    localPlayerUpdate.X = 0.00;
+    localPlayerUpdate.Y = 0.00;
+    localPlayerUpdate.Z = 0.00;
+    localPlayerUpdate.A = 0.00;
+    localPlayerUpdate.health = 0.00;
+    localPlayerUpdate.baseHealth = 0.00;
+    localPlayerUpdate.conds[0] = 0.00;
+    localPlayerUpdate.conds[1] = 0.00;
+    localPlayerUpdate.conds[2] = 0.00;
+    localPlayerUpdate.conds[3] = 0.00;
+    localPlayerUpdate.conds[4] = 0.00;
+    localPlayerUpdate.conds[5] = 0.00;
+    localPlayerUpdate.dead = false;
+    localPlayerUpdate.moving = 0;
 
     if (peer->Connect(addr.ToString(false), addr.port, 0, 0, 0, 0, 3, 500, 0) == CONNECTION_ATTEMPT_STARTED)
     {
@@ -615,33 +624,11 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                     delete player;
                     break;
                 }
-                case ID_POS_UPDATE:
+                case ID_PLAYER_UPDATE:
                 {
-                    BitStream query(packet->data, packet->length, false);
-                    query.IgnoreBytes(sizeof(MessageID));
+                    pPlayerUpdate* update = (pPlayerUpdate*) packet->data;
 
-                    RakNetGUID guid;
-                    float X, Y, Z, A, health, baseHealth, cond0, cond1, cond2, cond3, cond4, cond5;
-                    bool dead;
-                    int moving;
-                    query.Read(guid);
-                    query.Read(X);
-                    query.Read(Y);
-                    query.Read(Z);
-                    query.Read(A);
-                    query.Read(health);
-                    query.Read(baseHealth);
-                    query.Read(cond0);
-                    query.Read(cond1);
-                    query.Read(cond2);
-                    query.Read(cond3);
-                    query.Read(cond4);
-                    query.Read(cond5);
-                    query.Read(dead);
-                    query.Read(moving);
-                    query.Reset();
-
-                    Player* player = Player::GetPlayerFromGUID(guid);
+                    Player* player = Player::GetPlayerFromGUID(update->guid);
                     string refID = player->GetPlayerRefID();
 
                     if (refID.compare("none") != 0)
@@ -649,47 +636,47 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                         string input;
                         char pos[16];
 
-                        if (!player->IsPlayerNearPoint(X, Y, Z, 400.0))
+                        if (!player->IsPlayerNearPoint(update->X, update->Y, update->Z, 400.0))
                         {
                             input = "op:";
-                            sprintf(pos, "%f", X);
+                            sprintf(pos, "%f", update->X);
                             input.append(refID);
                             input.append(".setpos X ");
                             input.append(pos);
                             pipeServer->Send(&input);
 
                             input = "op:";
-                            sprintf(pos, "%f", Y);
+                            sprintf(pos, "%f", update->Y);
                             input.append(refID);
                             input.append(".setpos Y ");
                             input.append(pos);
                             pipeServer->Send(&input);
 
                             input = "op:";
-                            sprintf(pos, "%f", Z);
+                            sprintf(pos, "%f", update->Z);
                             input.append(refID);
                             input.append(".setpos Z ");
                             input.append(pos);
                             pipeServer->Send(&input);
 
-                            player->SetPlayerPos(0, X);
-                            player->SetPlayerPos(1, Y);
-                            player->SetPlayerPos(2, Z);
+                            player->SetPlayerPos(0, update->X);
+                            player->SetPlayerPos(1, update->Y);
+                            player->SetPlayerPos(2, update->Z);
                         }
 
                         input = "op:";
-                        sprintf(pos, "%f", A);
+                        sprintf(pos, "%f", update->A);
                         input.append(refID);
                         input.append(".setangle Z ");
                         input.append(pos);
                         pipeServer->Send(&input);
-                        player->SetPlayerAngle(A);
+                        player->SetPlayerAngle(update->A);
 
-                        if (moving != player->GetPlayerMoving())
+                        if (update->moving != player->GetPlayerMoving())
                         {
                             input = "op:";
                             input.append(refID);
-                            switch (moving)
+                            switch (update->moving)
                             {
                                 case 0:
                                     input.append(".playgroup Idle 0");
@@ -708,101 +695,101 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                                     break;
                             }
                             pipeServer->Send(&input);
-                            player->SetPlayerMoving(moving);
+                            player->SetPlayerMoving(update->moving);
                         }
 
-                        if (baseHealth != player->GetPlayerBaseHealth())
+                        if (update->baseHealth != player->GetPlayerBaseHealth())
                         {
                             input = "op:";
-                            sprintf(pos, "%i", (int) baseHealth);
+                            sprintf(pos, "%i", (int) update->baseHealth);
                             input.append(refID);
                             input.append(".setactorvalue Health ");
                             input.append(pos);
                             pipeServer->Send(&input);
-                            player->SetPlayerBaseHealth(baseHealth);
+                            player->SetPlayerBaseHealth(update->baseHealth);
                         }
 
                         input = "op:";
-                        sprintf(pos, "%i", (int) health);
+                        sprintf(pos, "%i", (int) update->health);
                         input.append(refID);
                         input.append(".forceactorvalue Health ");
                         input.append(pos);
                         pipeServer->Send(&input);
-                        player->SetPlayerHealth(health);
+                        player->SetPlayerHealth(update->health);
 
-                        if (cond0 != player->GetPlayerCondition(0))
+                        if (update->conds[0] != player->GetPlayerCondition(0))
                         {
                             input = "op:";
-                            sprintf(pos, "%i", (int) cond0);
+                            sprintf(pos, "%i", (int) update->conds[0]);
                             input.append(refID);
                             input.append(".forceactorvalue PerceptionCondition ");
                             input.append(pos);
                             pipeServer->Send(&input);
-                            player->SetPlayerCondition(0, cond0);
+                            player->SetPlayerCondition(0, update->conds[0]);
                         }
 
-                        if (cond1 != player->GetPlayerCondition(1))
+                        if (update->conds[1] != player->GetPlayerCondition(1))
                         {
                             input = "op:";
-                            sprintf(pos, "%i", (int) cond1);
+                            sprintf(pos, "%i", (int) update->conds[1]);
                             input.append(refID);
                             input.append(".forceactorvalue EnduranceCondition ");
                             input.append(pos);
                             pipeServer->Send(&input);
-                            player->SetPlayerCondition(1, cond1);
+                            player->SetPlayerCondition(1, update->conds[1]);
                         }
 
-                        if (cond2 != player->GetPlayerCondition(2))
+                        if (update->conds[2] != player->GetPlayerCondition(2))
                         {
                             input = "op:";
-                            sprintf(pos, "%i", (int) cond2);
+                            sprintf(pos, "%i", (int) update->conds[2]);
                             input.append(refID);
                             input.append(".forceactorvalue LeftAttackCondition ");
                             input.append(pos);
                             pipeServer->Send(&input);
-                            player->SetPlayerCondition(2, cond2);
+                            player->SetPlayerCondition(2, update->conds[2]);
                         }
 
-                        if (cond3 != player->GetPlayerCondition(3))
+                        if (update->conds[3] != player->GetPlayerCondition(3))
                         {
                             input = "op:";
-                            sprintf(pos, "%i", (int) cond3);
+                            sprintf(pos, "%i", (int) update->conds[3]);
                             input.append(refID);
                             input.append(".forceactorvalue RightAttackCondition ");
                             input.append(pos);
                             pipeServer->Send(&input);
-                            player->SetPlayerCondition(3, cond3);
+                            player->SetPlayerCondition(3, update->conds[3]);
                         }
 
-                        if (cond4 != player->GetPlayerCondition(4))
+                        if (update->conds[4] != player->GetPlayerCondition(4))
                         {
                             input = "op:";
-                            sprintf(pos, "%i", (int) cond4);
+                            sprintf(pos, "%i", (int) update->conds[4]);
                             input.append(refID);
                             input.append(".forceactorvalue LeftMobilityCondition ");
                             input.append(pos);
                             pipeServer->Send(&input);
-                            player->SetPlayerCondition(4, cond4);
+                            player->SetPlayerCondition(4, update->conds[4]);
                         }
 
-                        if (cond5 != player->GetPlayerCondition(5))
+                        if (update->conds[5] != player->GetPlayerCondition(5))
                         {
                             input = "op:";
-                            sprintf(pos, "%i", (int) cond5);
+                            sprintf(pos, "%i", (int) update->conds[5]);
                             input.append(refID);
                             input.append(".forceactorvalue RightMobilityCondition ");
                             input.append(pos);
                             pipeServer->Send(&input);
-                            player->SetPlayerCondition(5, cond5);
+                            player->SetPlayerCondition(5, update->conds[5]);
                         }
 
                         // more ActorValues
 
-                        if (player->IsPlayerDead() != dead)
+                        if (player->IsPlayerDead() != update->dead)
                         {
                             input = "op:";
                             input.append(refID);
-                            switch (dead)
+                            switch (update->dead)
                             {
                                 case true:
                                     input.append(".killactor");
@@ -817,7 +804,7 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                                     pipeServer->Send(&input);
                                     break;
                             }
-                            player->SetPlayerDead(dead);
+                            player->SetPlayerDead(update->dead);
                         }
                     }
                     break;
@@ -838,50 +825,29 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
             float A = self->GetPlayerAngle();
             float health = self->GetPlayerHealth();
             float baseHealth = self->GetPlayerBaseHealth();
-            float cond0 = self->GetPlayerCondition(0);
-            float cond1 = self->GetPlayerCondition(1);
-            float cond2 = self->GetPlayerCondition(2);
-            float cond3 = self->GetPlayerCondition(3);
-            float cond4 = self->GetPlayerCondition(4);
-            float cond5 = self->GetPlayerCondition(5);
+            float conds[6] = {self->GetPlayerCondition(0), self->GetPlayerCondition(1), self->GetPlayerCondition(2), self->GetPlayerCondition(3), self->GetPlayerCondition(4), self->GetPlayerCondition(5)};
             bool dead = self->IsPlayerDead();
             int moving = self->GetPlayerMoving();
 
-            if (X != pos[0] || Y != pos[1] || Z != pos[2] || A != angle || health != vhealth || baseHealth != bhealth ||
-                cond0 != conds[0] || cond1 != conds[1] || cond2 != conds[2] || cond3 != conds[3] || cond4 != conds[4] ||
-                cond5 != conds[5] || dead != sdead || moving != movstate)
+            if (X != localPlayerUpdate.X || Y != localPlayerUpdate.Y || Z != localPlayerUpdate.Z || A != localPlayerUpdate.A || health != localPlayerUpdate.health || baseHealth != localPlayerUpdate.baseHealth ||
+                conds[0] != localPlayerUpdate.conds[0] || conds[1] != localPlayerUpdate.conds[1] || conds[2] != localPlayerUpdate.conds[2] || conds[3] != localPlayerUpdate.conds[3] || conds[4] != localPlayerUpdate.conds[4] ||
+                conds[5] != localPlayerUpdate.conds[5] || dead != localPlayerUpdate.dead || moving != localPlayerUpdate.moving)
             {
-                BitStream query;
-                query.Write((MessageID) ID_POS_UPDATE);
-                query.Write(X);
-                query.Write(Y);
-                query.Write(Z);
-                query.Write(A);
-                query.Write(health);
-                query.Write(baseHealth);
-                query.Write(cond0);
-                query.Write(cond1);
-                query.Write(cond2);
-                query.Write(cond3);
-                query.Write(cond4);
-                query.Write(cond5);
-                query.Write(dead);
-                query.Write(moving);
-                peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, addr, false, 0);
-                pos[0] = X;
-                pos[1] = Y;
-                pos[2] = Z;
-                angle = A;
-                vhealth = health;
-                bhealth = baseHealth;
-                conds[0] = cond0;
-                conds[1] = cond1;
-                conds[2] = cond2;
-                conds[3] = cond3;
-                conds[4] = cond4;
-                conds[5] = cond5;
-                sdead = dead;
-                movstate = moving;
+                localPlayerUpdate.X = X;
+                localPlayerUpdate.Y = Y;
+                localPlayerUpdate.Z = Z;
+                localPlayerUpdate.A = A;
+                localPlayerUpdate.health = health;
+                localPlayerUpdate.baseHealth = baseHealth;
+                localPlayerUpdate.conds[0] = conds[0];
+                localPlayerUpdate.conds[1] = conds[1];
+                localPlayerUpdate.conds[2] = conds[2];
+                localPlayerUpdate.conds[3] = conds[3];
+                localPlayerUpdate.conds[4] = conds[4];
+                localPlayerUpdate.conds[5] = conds[5];
+                localPlayerUpdate.dead = dead;
+                localPlayerUpdate.moving = moving;
+                peer->Send((char*) &localPlayerUpdate, sizeof(localPlayerUpdate), HIGH_PRIORITY, RELIABLE, 0, addr, false, 0);
             }
 
             RakSleep(2);

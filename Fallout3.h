@@ -31,15 +31,11 @@ class Fallout3 {
               static DWORD WINAPI Fallout3pipe(LPVOID data);
               static DWORD WINAPI Fallout3game(LPVOID data);
 
+              struct pPlayerUpdate;
+
               static Player* self;
               static queue<Player*> refqueue;
-              static float pos[3];
-              static float angle;
-              static float conds[6];
-              static float vhealth;
-              static float bhealth;
-              static bool sdead;
-              static int movstate;
+              static pPlayerUpdate localPlayerUpdate;
 
               static PipeClient* pipeServer;
               static PipeServer* pipeClient;

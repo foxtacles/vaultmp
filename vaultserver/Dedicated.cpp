@@ -26,8 +26,21 @@ enum {
     ID_GAME_END,
     ID_NEW_PLAYER,
     ID_PLAYER_LEFT,
-    ID_POS_UPDATE
+    ID_PLAYER_UPDATE
 };
+
+#pragma pack(push, 1)
+struct Dedicated::pPlayerUpdate {
+    unsigned char type;
+    RakNetGUID guid;
+    float X, Y, Z, A;
+    float health;
+    float baseHealth;
+    float conds[6];
+    bool dead;
+    int moving;
+};
+#pragma pack(pop)
 
 bool Dedicated::thread;
 
@@ -349,46 +362,11 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         player->SetPlayerName(name);
                         break;
                     }
-                    case ID_POS_UPDATE:
+                    case ID_PLAYER_UPDATE:
                     {
-                        BitStream query(packet->data, packet->length, false);
-                        query.IgnoreBytes(sizeof(MessageID));
+                        pPlayerUpdate* update = (pPlayerUpdate*) packet->data;
 
-                        float X, Y, Z, A, health, baseHealth, cond0, cond1, cond2, cond3, cond4, cond5;
-                        bool dead;
-                        int moving;
-                        query.Read(X);
-                        query.Read(Y);
-                        query.Read(Z);
-                        query.Read(A);
-                        query.Read(health);
-                        query.Read(baseHealth);
-                        query.Read(cond0);
-                        query.Read(cond1);
-                        query.Read(cond2);
-                        query.Read(cond3);
-                        query.Read(cond4);
-                        query.Read(cond5);
-                        query.Read(dead);
-                        query.Read(moving);
-                        query.Reset();
-
-                        query.Write((MessageID) ID_POS_UPDATE);
-                        query.Write(packet->guid);
-                        query.Write(X);
-                        query.Write(Y);
-                        query.Write(Z);
-                        query.Write(A);
-                        query.Write(health);
-                        query.Write(baseHealth);
-                        query.Write(cond0);
-                        query.Write(cond1);
-                        query.Write(cond2);
-                        query.Write(cond3);
-                        query.Write(cond4);
-                        query.Write(cond5);
-                        query.Write(dead);
-                        query.Write(moving);
+                        // assert?
 
                         map<RakNetGUID, string> players = Player::GetPlayerList();
                         map<RakNetGUID, string>::iterator it;
@@ -396,24 +374,24 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         for (it = players.begin(); it != players.end(); it++)
                         {
                             RakNetGUID guid = it->first;
-                            if (guid != packet->guid) peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, guid, false, 0);
+                            if (guid != packet->guid) peer->Send((char*) update, sizeof(pPlayerUpdate), HIGH_PRIORITY, RELIABLE, 0, guid, false, 0);
                         }
 
                         Player* player = Player::GetPlayerFromGUID(packet->guid);
-                        player->SetPlayerPos(0, X);
-                        player->SetPlayerPos(1, Y);
-                        player->SetPlayerPos(2, Z);
-                        player->SetPlayerAngle(A);
-                        player->SetPlayerHealth(health);
-                        player->SetPlayerBaseHealth(baseHealth);
-                        player->SetPlayerCondition(0, cond0);
-                        player->SetPlayerCondition(1, cond1);
-                        player->SetPlayerCondition(2, cond2);
-                        player->SetPlayerCondition(3, cond3);
-                        player->SetPlayerCondition(4, cond4);
-                        player->SetPlayerCondition(5, cond5);
-                        player->SetPlayerDead(dead);
-                        player->SetPlayerMoving(moving);
+                        player->SetPlayerPos(0, update->X);
+                        player->SetPlayerPos(1, update->Y);
+                        player->SetPlayerPos(2, update->Z);
+                        player->SetPlayerAngle(update->A);
+                        player->SetPlayerHealth(update->health);
+                        player->SetPlayerBaseHealth(update->baseHealth);
+                        player->SetPlayerCondition(0, update->conds[0]);
+                        player->SetPlayerCondition(1, update->conds[1]);
+                        player->SetPlayerCondition(2, update->conds[2]);
+                        player->SetPlayerCondition(3, update->conds[3]);
+                        player->SetPlayerCondition(4, update->conds[4]);
+                        player->SetPlayerCondition(5, update->conds[5]);
+                        player->SetPlayerDead(update->dead);
+                        player->SetPlayerMoving(update->moving);
                         break;
                     }
                     case ID_GAME_END:
