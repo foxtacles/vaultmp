@@ -33,3 +33,10 @@ forward OnPlayerDisconnect(clientID);
  */
 
 native GetPlayerName(clientID, name[]);
+
+/* GetPlayerPos
+ * returns a Float referring to the position value on the specified axis (0 = X, 1 = Y, 2 = Z)
+ * returns 0: invalid clientID / invalid axis parameter
+ */
+
+native Float:GetPlayerPos(clientID, axis);
