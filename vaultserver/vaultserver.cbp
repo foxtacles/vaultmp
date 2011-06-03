@@ -249,6 +249,8 @@
 		<Unit filename="..\ServerEntry.h" />
 		<Unit filename="Dedicated.cpp" />
 		<Unit filename="Dedicated.h" />
+		<Unit filename="Functions.cpp" />
+		<Unit filename="Functions.h" />
 		<Unit filename="Script.cpp" />
 		<Unit filename="Script.h" />
 		<Unit filename="Utils.cpp" />
