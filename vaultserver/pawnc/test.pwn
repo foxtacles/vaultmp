@@ -30,3 +30,11 @@ public OnPlayerJoin(clientID)
 	printf("OnPlayerJoin: ID: %d name: %s\n", clientID, name);
 	return 1;
 }
+
+public OnPlayerDisconnect(clientID)
+{
+	new name[32];
+	GetPlayerName(clientID, name);
+	printf("OnPlayerDisconnect: ID: %d name: %s\n", clientID, name);
+	return 1;
+}

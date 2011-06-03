@@ -99,7 +99,7 @@ int Script::Call(AMX* amx, char name[], char argl[], void* args[], int buf)
         }
     }
 
-    amx_Release(amx, stackpointer);
+    if (stackpointer != 0) amx_Release(amx, stackpointer);
 
     return ret;
 }

@@ -10,7 +10,7 @@ forward OnClientAuthenticate(clientID, const name[], const pwd[]);
 
 /* OnClientRequestGame
  * called when a client attempts to start a game
- * set savegame string to the savegame name for the player to load (maxlength: len)
+ * set savegame string to the savegame name for the client to load (maxlength: len)
  * return 0: kick player
  */
 forward OnClientRequestGame(clientID, savegame[], len);
@@ -20,10 +20,15 @@ forward OnClientRequestGame(clientID, savegame[], len);
  */
 forward OnPlayerJoin(clientID);
 
+/* OnPlayerDisconnect
+ * called when a player leaves the game; note that you can't use any setter functions on the player anymore
+ */
+forward OnPlayerDisconnect(clientID);
+
 // Functions
 
 /* GetPlayerName
- * supply a buffer of at least 16 cells!
+ * supply a buffer of at least 16 cells
  * returns 0: invalid clientID
  */
 

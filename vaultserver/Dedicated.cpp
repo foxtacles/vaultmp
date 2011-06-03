@@ -139,12 +139,35 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         printf("New incoming connection from %s\n", packet->systemAddress.ToString());
                         break;
                     case ID_DISCONNECTION_NOTIFICATION:
+                    case ID_CONNECTION_LOST:
                     {
-                        Utils::timestamp();
-                        printf("Client disconnected (%s)\n", packet->systemAddress.ToString());
-
                         Client* client = Client::GetClientFromGUID(packet->guid);
                         Player* player = Player::GetPlayerFromGUID(packet->guid);
+
+                        int ret = 1;
+
+                        if (client != NULL && player != NULL && amx != NULL)
+                        {
+                            void* args[1];
+
+                            int id = client->GetClientID();
+
+                            args[0] = reinterpret_cast<void*>(&id);
+
+                            ret = Script::Call(amx, (char*) "OnPlayerDisconnect", (char*) "i", args);
+                        }
+
+                        Utils::timestamp();
+
+                        switch (packet->data[0])
+                        {
+                            case ID_DISCONNECTION_NOTIFICATION:
+                                printf("Client disconnected (%s)\n", packet->systemAddress.ToString());
+                                break;
+                            case ID_CONNECTION_LOST:
+                                printf("Lost connection (%s)\n", packet->systemAddress.ToString());
+                                break;
+                        }
 
                         if (player != NULL)
                         {
@@ -167,19 +190,6 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                             }
                         }
 
-                        if (client != NULL)
-                        {
-                            delete client;
-                            self.SetServerPlayers(pair<int, int>(Client::GetClientCount(), connections));
-                        }
-                        break;
-                    }
-                    case ID_CONNECTION_LOST:
-                    {
-                        Utils::timestamp();
-                        printf("Lost connection (%s)\n", packet->systemAddress.ToString());
-
-                        Client* client = Client::GetClientFromGUID(packet->guid);
                         if (client != NULL)
                         {
                             delete client;
