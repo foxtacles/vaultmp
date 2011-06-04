@@ -2,13 +2,15 @@
 
 main()
 {
-print("Text aus dem ersten VaultScript ueberhaupt.\n", 1, -1, 1);
-new Float: asdf;
-asdf = 0.5666;
-printf("float test: %f\n", asdf);
-new blub[32] = "asdf";
-if (strcmp(blub, "asdf") == 0)
-	print("string test: asdf!\n");
+timestamp();
+print("Random text from my vaultmp script in color red.\n", 1, -1, 1);
+new name[32] = "My first vaultmp server";
+new map[32] = "the wasteland";
+new rule[16] = "version";
+new value[16] = "0.1a";
+SetServerName(name);
+SetServerMap(map);
+SetServerRule(rule, value);
 }
 
 public OnClientAuthenticate(clientID, const name[], const pwd[])

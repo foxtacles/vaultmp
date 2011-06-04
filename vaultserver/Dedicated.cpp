@@ -14,7 +14,7 @@ bool Dedicated::query;
 SystemAddress Dedicated::master;
 TimeMS Dedicated::announcetime;
 
-ServerEntry Dedicated::self;
+ServerEntry* Dedicated::self;
 
 enum {
     ID_MASTER_QUERY = ID_USER_PACKET_ENUM,
@@ -50,6 +50,21 @@ void Dedicated::TerminateThread()
       thread = false;
 }
 
+void Dedicated::SetServerName(string name)
+{
+    self->SetServerName(name);
+}
+
+void Dedicated::SetServerMap(string map)
+{
+    self->SetServerMap(map);
+}
+
+void Dedicated::SetServerRule(string rule, string value)
+{
+    self->SetServerRule(rule, value);
+}
+
 void Dedicated::Announce(bool announce)
 {
     if (peer->GetConnectionState(master) == IS_CONNECTED)
@@ -61,9 +76,9 @@ void Dedicated::Announce(bool announce)
             query.Write((MessageID) ID_MASTER_ANNOUNCE);
             query.Write((bool) true);
 
-            RakString name(self.GetServerName().c_str()); RakString map(self.GetServerMap().c_str());
-            int players = self.GetServerPlayers().first; int playersMax = self.GetServerPlayers().second;
-            std::map<string, string> rules = self.GetServerRules();
+            RakString name(self->GetServerName().c_str()); RakString map(self->GetServerMap().c_str());
+            int players = self->GetServerPlayers().first; int playersMax = self->GetServerPlayers().second;
+            std::map<string, string> rules = self->GetServerRules();
 
             query.Write(name);
             query.Write(map);
@@ -119,13 +134,6 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
       }
 
       Packet* packet;
-
-      self.SetServerName("testserver");
-      self.SetServerMap("asdf");
-      self.SetServerPlayers(pair<int, int>(0, connections));
-      self.SetServerPing(123);
-      self.SetServerRule("asdf", "kokolores");
-      self.SetServerRule("blub", "moep");
 
       Client::SetMaximumClients(connections);
 
@@ -194,7 +202,7 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         if (client != NULL)
                         {
                             delete client;
-                            self.SetServerPlayers(pair<int, int>(Client::GetClientCount(), connections));
+                            self->SetServerPlayers(pair<int, int>(Client::GetClientCount(), connections));
                         }
                         break;
                     }
@@ -220,9 +228,9 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                             query.Write((MessageID) ID_MASTER_UPDATE);
                             query.Write(addr);
 
-                            RakString name(self.GetServerName().c_str()); RakString map(self.GetServerMap().c_str());
-                            int players = self.GetServerPlayers().first; int playersMax = self.GetServerPlayers().second;
-                            std::map<string, string> rules = self.GetServerRules();
+                            RakString name(self->GetServerName().c_str()); RakString map(self->GetServerMap().c_str());
+                            int players = self->GetServerPlayers().first; int playersMax = self->GetServerPlayers().second;
+                            std::map<string, string> rules = self->GetServerRules();
 
                             query.Write(name);
                             query.Write(map);
@@ -268,7 +276,7 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         strcpy(pwd, rpwd.C_String());
 
                         Client* client = new Client(packet->guid, string(name), string(pwd));
-                        self.SetServerPlayers(pair<int, int>(Client::GetClientCount(), connections));
+                        self->SetServerPlayers(pair<int, int>(Client::GetClientCount(), connections));
 
                         int ret = 1;
 
@@ -456,9 +464,15 @@ HANDLE Dedicated::InitalizeServer(int port, int connections, AMX* amx, char* ann
     Dedicated::announce = announce;
     Dedicated::query = query;
 
+    Dedicated::self->SetServerPlayers(pair<int, int>(0, Dedicated::connections));
     hDedicatedThread = CreateThread(NULL, 0, DedicatedThread, (LPVOID) 0, 0, &DedicatedID);
 
     return hDedicatedThread;
+}
+
+void Dedicated::SetServerEntry(ServerEntry* self)
+{
+    Dedicated::self = self;
 }
 
 /* void Dedicated::SetServerConnections(int connections)

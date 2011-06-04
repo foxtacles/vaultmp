@@ -38,7 +38,7 @@ int main()
     printf("Vault-Tec MasterServer version %s \n----------------------------------------------------------\n", MASTER_VERSION);
 
     timestamp();
-    printf("Initalizing RakNet...\n");
+    printf("Initializing RakNet...\n");
 
     HANDLE hMasterThread = MasterServer::InitalizeRakNet();
     HANDLE hInputThread;

@@ -114,3 +114,27 @@ native GetPlayerMoving(clientID);
  */
 
 native IsPlayerAlerted(clientID);
+
+/* SetServerName
+ * set the name of the server
+ */
+
+native SetServerName(name[]);
+
+/* SetServerMap
+ * set the map of the server
+ */
+
+native SetServerMap(map[]);
+
+/* SetServerRule
+ * add a rule to the server (note: you can't remove or overwrite rules)
+ */
+
+native SetServerRule(rule[], value[]);
+
+/* timestamp
+ * prints a vaultmp server timestamp in console
+ */
+
+native timestamp();

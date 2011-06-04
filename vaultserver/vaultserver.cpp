@@ -34,9 +34,11 @@ DWORD WINAPI InputThread(LPVOID data)
 
 int main(int argc, char* argv[])
 {
-    printf("Vault-Tec Dedicated Server version %s \n----------------------------------------------------------\n", DEDICATED_VERSION);
+    printf("Vault-Tec dedicated server version %s \n----------------------------------------------------------\n", DEDICATED_VERSION);
 
     AMX* vaultscript = NULL;
+    ServerEntry* self = new ServerEntry();
+    Dedicated::SetServerEntry(self);
 
     bool query = false;
     int announce = 0;
@@ -89,7 +91,7 @@ int main(int argc, char* argv[])
     }
 
     Utils::timestamp();
-    printf("Initalizing RakNet...\n");
+    printf("Initializing RakNet...\n");
 
     HANDLE hDedicatedThread = Dedicated::InitalizeServer(port, connections, vaultscript, announce ? argv[announce] : 0, query);
     HANDLE hInputThread;
@@ -111,6 +113,8 @@ int main(int argc, char* argv[])
         Script::FreeProgram(vaultscript);
         delete vaultscript;
     }
+
+    delete self;
 
     return 0;
 }

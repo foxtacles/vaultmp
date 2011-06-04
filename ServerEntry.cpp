@@ -4,7 +4,10 @@ using namespace std;
 
 ServerEntry::ServerEntry()
 {
-
+    this->name = "Vault-Tec Multiplayer Mod server";
+    this->map = "default";
+    this->players = pair<int, int>(0, 0);
+    this->ping = 999;
 }
 
 ServerEntry::ServerEntry(string name, string map, pair<int, int> players, int ping)

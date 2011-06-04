@@ -11,6 +11,10 @@ AMX_NATIVE_INFO Functions::vaultmp_functions[] = {
     {"IsPlayerDead", Functions::vaultmp_IsPlayerDead},
     {"GetPlayerMoving", Functions::vaultmp_GetPlayerMoving},
     {"IsPlayerAlerted", Functions::vaultmp_IsPlayerAlerted},
+    {"SetServerName", Functions::vaultmp_SetServerName},
+    {"SetServerMap", Functions::vaultmp_SetServerMap},
+    {"SetServerRule", Functions::vaultmp_SetServerRule},
+    {"timestamp", Functions::vaultmp_timestamp},
     {0, 0}
 
 };
@@ -198,6 +202,70 @@ cell Functions::vaultmp_IsPlayerAlerted(AMX* amx, const cell* params)
     }
     else
         i = -1;
+
+    return i;
+}
+
+cell Functions::vaultmp_SetServerName(AMX* amx, const cell* params)
+{
+    int i = 1, len;
+    cell* source;
+
+    amx_GetAddr(amx, params[1], &source);
+    amx_StrLen(source, &len);
+
+    char name[len + 1];
+
+    amx_GetString(name, source, 0, UNLIMITED);
+
+    Dedicated::SetServerName(string(name));
+
+    return i;
+}
+
+cell Functions::vaultmp_SetServerMap(AMX* amx, const cell* params)
+{
+    int i = 1, len;
+    cell* source;
+
+    amx_GetAddr(amx, params[1], &source);
+    amx_StrLen(source, &len);
+
+    char map[len + 1];
+
+    amx_GetString(map, source, 0, UNLIMITED);
+
+    Dedicated::SetServerMap(string(map));
+
+    return i;
+}
+
+cell Functions::vaultmp_SetServerRule(AMX* amx, const cell* params)
+{
+    int i = 1, len, len2;
+    cell* source; cell* source2;
+
+    amx_GetAddr(amx, params[1], &source);
+    amx_GetAddr(amx, params[2], &source2);
+    amx_StrLen(source, &len);
+    amx_StrLen(source2, &len2);
+
+    char rule[len + 1];
+    char value[len2 + 1];
+
+    amx_GetString(rule, source, 0, UNLIMITED);
+    amx_GetString(value, source2, 0, UNLIMITED);
+
+    Dedicated::SetServerRule(string(rule), string(value));
+
+    return i;
+}
+
+cell Functions::vaultmp_timestamp(AMX* amx, const cell* params)
+{
+    int i = 1;
+
+    Utils::timestamp();
 
     return i;
 }

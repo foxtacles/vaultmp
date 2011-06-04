@@ -1,3 +1,6 @@
+#ifndef SERVERENTRY_H
+#define SERVERENTRY_H
+
 #include <string>
 #include <map>
 
@@ -28,3 +31,5 @@ class ServerEntry {
               ServerEntry();
               ServerEntry(string name, string map, pair<int, int> players, int ping);
 };
+
+#endif

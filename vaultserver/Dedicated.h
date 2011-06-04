@@ -1,3 +1,6 @@
+#ifndef DEDICATED_H
+#define DEDICATED_H
+
 #include <windows.h>
 #include <stdio.h>
 
@@ -38,7 +41,7 @@ class Dedicated {
               static TimeMS announcetime;
               static SystemAddress master;
 
-              static ServerEntry self;
+              static ServerEntry* self;
 
               struct pPlayerUpdate;
 
@@ -47,8 +50,15 @@ class Dedicated {
 
       public:
               static HANDLE InitalizeServer(int port, int connections, AMX* amx, char* announce, bool query);
+              static void SetServerEntry(ServerEntry* self);
               static void TerminateThread();
+
+              static void SetServerName(string name);
+              static void SetServerMap(string map);
+              static void SetServerRule(string rule, string value);
 
               // static void SetServerConnections(int connections);
 
 };
+
+#endif
