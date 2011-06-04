@@ -699,6 +699,9 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                 {
                     pPlayerUpdate* update = (pPlayerUpdate*) packet->data;
 
+                    if (packet->length != sizeof(pPlayerUpdate))
+                        break;
+
                     Player* player = Player::GetPlayerFromGUID(update->guid);
                     string refID = player->GetPlayerRefID();
 

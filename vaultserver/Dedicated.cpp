@@ -398,7 +398,8 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                     {
                         pPlayerUpdate* update = (pPlayerUpdate*) packet->data;
 
-                        // assert?
+                        if (packet->length != sizeof(pPlayerUpdate))
+                            break;
 
                         map<RakNetGUID, string> players = Player::GetPlayerList();
                         map<RakNetGUID, string>::iterator it;
