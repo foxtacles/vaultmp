@@ -1,5 +1,24 @@
 /* Vault-Tec Multiplayer */
 
+// Constants
+
+#define		X_AXIS	0
+#define		Y_AXIS  1
+#define		Z_AXIS	2
+
+#define		COND_PERCEPTION    0
+#define		COND_ENDURANCE	   1
+#define		COND_LEFTATTACK    2
+#define		COND_RIGHTATTACK   3
+#define 	COND_LEFTMOBILITY  4
+#define		COND_RIGHTMOBILITY 5
+
+#define		MOV_IDLE	 0
+#define		MOV_FASTFORWARD  1
+#define		MOV_FASTBACKWARD 2
+#define		MOV_FASTLEFT     3
+#define 	MOV_FASTRIGHT	 4
+
 // Callbacks
 
 /* OnClientAuthenticate
@@ -35,7 +54,7 @@ forward OnPlayerDisconnect(clientID);
 native GetPlayerName(clientID, name[]);
 
 /* GetPlayerPos
- * returns a Float referring to the position value on the specified axis (0 = X, 1 = Y, 2 = Z)
+ * returns a Float referring to the position value on the specified axis (X_AXIS = X, Y_AXIS = Y, Z_AXIS = Z)
  * returns 0: invalid clientID / invalid axis parameter
  */
 
@@ -47,3 +66,39 @@ native Float:GetPlayerPos(clientID, axis);
  */
 
 native Float:GetPlayerZAngle(clientID);
+
+/* GetPlayerHealth
+ * returns a Float referring to the players health
+ * returns 0: invalid clientID
+ */
+
+native Float:GetPlayerHealth(clientID);
+
+/* GetPlayerBaseHealth
+ * returns a Float referring to the players base health
+ * returns 0: invalid clientID
+ */
+
+native Float:GetPlayerBaseHealth(clientID);
+
+/* GetPlayerCondition
+ * returns a Float referring to the players condition of the specified function (see Constants for a list)
+ * returns 0: invalid clientID / invalid condition parameter
+ */
+
+native Float:GetPlayerCondition(clientID, condition);
+
+/* IsPlayerDead
+ * returns 1 if the player is dead
+ * returns 0 if the player is alive
+ * returns -1: invalid clientID
+ */
+
+native IsPlayerDead(clientID);
+
+/* GetPlayerMoving
+ * returns a moving state (see Constants for a list)
+ * returns -1: invalid clientID
+ */
+
+native GetPlayerMoving(clientID);
