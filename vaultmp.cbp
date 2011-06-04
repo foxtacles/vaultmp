@@ -31,10 +31,18 @@
 		<Unit filename="RakNet\AutopatcherRepositoryInterface.h" />
 		<Unit filename="RakNet\BitStream.cpp" />
 		<Unit filename="RakNet\BitStream.h" />
+		<Unit filename="RakNet\CCRakNetSlidingWindow.cpp" />
+		<Unit filename="RakNet\CCRakNetSlidingWindow.h" />
 		<Unit filename="RakNet\CCRakNetUDT.cpp" />
 		<Unit filename="RakNet\CCRakNetUDT.h" />
 		<Unit filename="RakNet\CheckSum.cpp" />
 		<Unit filename="RakNet\CheckSum.h" />
+		<Unit filename="RakNet\CloudClient.cpp" />
+		<Unit filename="RakNet\CloudClient.h" />
+		<Unit filename="RakNet\CloudCommon.cpp" />
+		<Unit filename="RakNet\CloudCommon.h" />
+		<Unit filename="RakNet\CloudServer.cpp" />
+		<Unit filename="RakNet\CloudServer.h" />
 		<Unit filename="RakNet\CommandParserInterface.cpp" />
 		<Unit filename="RakNet\CommandParserInterface.h" />
 		<Unit filename="RakNet\ConnectionGraph2.cpp" />
@@ -47,6 +55,7 @@
 		<Unit filename="RakNet\DS_BytePool.h" />
 		<Unit filename="RakNet\DS_ByteQueue.cpp" />
 		<Unit filename="RakNet\DS_ByteQueue.h" />
+		<Unit filename="RakNet\DS_Hash.h" />
 		<Unit filename="RakNet\DS_Heap.h" />
 		<Unit filename="RakNet\DS_HuffmanEncodingTree.cpp" />
 		<Unit filename="RakNet\DS_HuffmanEncodingTree.h" />
@@ -72,6 +81,8 @@
 		<Unit filename="RakNet\DataCompressor.h" />
 		<Unit filename="RakNet\DirectoryDeltaTransfer.cpp" />
 		<Unit filename="RakNet\DirectoryDeltaTransfer.h" />
+		<Unit filename="RakNet\DynDNS.cpp" />
+		<Unit filename="RakNet\DynDNS.h" />
 		<Unit filename="RakNet\EmailSender.cpp" />
 		<Unit filename="RakNet\EmailSender.h" />
 		<Unit filename="RakNet\EncodeClassName.cpp" />
@@ -108,6 +119,8 @@
 		<Unit filename="RakNet\Kbhit.h" />
 		<Unit filename="RakNet\LinuxStrings.cpp" />
 		<Unit filename="RakNet\LinuxStrings.h" />
+		<Unit filename="RakNet\LocklessTypes.cpp" />
+		<Unit filename="RakNet\LocklessTypes.h" />
 		<Unit filename="RakNet\LogCommandParser.cpp" />
 		<Unit filename="RakNet\LogCommandParser.h" />
 		<Unit filename="RakNet\MTUSize.h" />
@@ -131,6 +144,7 @@
 		<Unit filename="RakNet\NetworkIDManager.h" />
 		<Unit filename="RakNet\NetworkIDObject.cpp" />
 		<Unit filename="RakNet\NetworkIDObject.h" />
+		<Unit filename="RakNet\PS3Includes.h" />
 		<Unit filename="RakNet\PacketConsoleLogger.cpp" />
 		<Unit filename="RakNet\PacketConsoleLogger.h" />
 		<Unit filename="RakNet\PacketFileLogger.cpp" />
@@ -147,6 +161,8 @@
 		<Unit filename="RakNet\PluginInterface2.h" />
 		<Unit filename="RakNet\RPC4Plugin.cpp" />
 		<Unit filename="RakNet\RPC4Plugin.h" />
+		<Unit filename="RakNet\Rackspace.cpp" />
+		<Unit filename="RakNet\Rackspace.h" />
 		<Unit filename="RakNet\RakAlloca.h" />
 		<Unit filename="RakNet\RakAssert.h" />
 		<Unit filename="RakNet\RakMemoryOverride.cpp" />
@@ -175,6 +191,8 @@
 		<Unit filename="RakNet\RakString.h" />
 		<Unit filename="RakNet\RakThread.cpp" />
 		<Unit filename="RakNet\RakThread.h" />
+		<Unit filename="RakNet\RakWString.cpp" />
+		<Unit filename="RakNet\RakWString.h" />
 		<Unit filename="RakNet\Rand.cpp" />
 		<Unit filename="RakNet\Rand.h" />
 		<Unit filename="RakNet\ReadyEvent.cpp" />
@@ -191,6 +209,7 @@
 		<Unit filename="RakNet\SHA1.cpp" />
 		<Unit filename="RakNet\SHA1.h" />
 		<Unit filename="RakNet\SecureHandshake.cpp" />
+		<Unit filename="RakNet\SecureHandshake.h" />
 		<Unit filename="RakNet\SendToThread.cpp" />
 		<Unit filename="RakNet\SendToThread.h" />
 		<Unit filename="RakNet\SignaledEvent.cpp" />
@@ -220,6 +239,8 @@
 		<Unit filename="RakNet\ThreadsafePacketLogger.cpp" />
 		<Unit filename="RakNet\ThreadsafePacketLogger.h" />
 		<Unit filename="RakNet\TransportInterface.h" />
+		<Unit filename="RakNet\TwoWayAuthentication.cpp" />
+		<Unit filename="RakNet\TwoWayAuthentication.h" />
 		<Unit filename="RakNet\UDPForwarder.cpp" />
 		<Unit filename="RakNet\UDPForwarder.h" />
 		<Unit filename="RakNet\UDPProxyClient.cpp" />
@@ -238,6 +259,7 @@
 		<Unit filename="RakNet\WSAStartupSingleton.cpp" />
 		<Unit filename="RakNet\WSAStartupSingleton.h" />
 		<Unit filename="RakNet\WindowsIncludes.h" />
+		<Unit filename="RakNet\XBox360Includes.h" />
 		<Unit filename="RakNet\_FindFirst.cpp" />
 		<Unit filename="RakNet\_FindFirst.h" />
 		<Unit filename="RakNet\gettimeofday.cpp" />
