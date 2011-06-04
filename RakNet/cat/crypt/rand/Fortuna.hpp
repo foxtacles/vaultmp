@@ -57,7 +57,7 @@
         + Reseed X uses pools numbered by the 1-bits in X (except MSB)
         + Previous seed keys the next seed
         + Diverges from normal Fortuna due to use of Skein instead of a block cipher
-            + Reseeds only once every ~51.2 seconds
+            + Reseeds only once every ~512 seconds
             + Does not have a limit of 2^16 output blocks
             + Skein-PRNG is guaranteed sufficient security properties anyway
 
@@ -74,8 +74,8 @@
         + Provides a unique random stream for each thread that uses Fortuna
 */
 
-#ifndef FORTUNA_HPP
-#define FORTUNA_HPP
+#ifndef CAT_FOR_TUNA_HPP
+#define CAT_FOR_TUNA_HPP
 
 #include <cat/rand/IRandom.hpp>
 #include <cat/crypt/hash/Skein.hpp>
@@ -204,7 +204,7 @@ class FortunaOutput : public IRandom
 
     FortunaOutput();
     FortunaOutput(FortunaOutput&) {}
-    FortunaOutput &operator=(FortunaOutput &) {}
+    FortunaOutput &operator=(FortunaOutput &) { return *this; }
 
 public:
     ~FortunaOutput();
@@ -219,4 +219,4 @@ public:
 
 } // namespace cat
 
-#endif // FORTUNA_HPP
+#endif // CAT_FOR_TUNA_HPP

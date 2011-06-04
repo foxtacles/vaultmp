@@ -72,9 +72,9 @@ void BigTwistedEdwards::PT_FN(const Leg *in_a, const Leg *in_b, Leg *out)
     // X3 = E * F, Y3 = G * H, T3 = E * H, Z3 = F * G
     MrMultiply(E, F, out+XOFF);
     MrMultiply(G, H, out+YOFF);
-#if defined(EXTENDED_T)
+
     MrMultiply(E, H, out+TOFF);
-#endif
+
     MrMultiply(F, G, out+ZOFF);
 }
 

@@ -23,7 +23,7 @@ TypeMapping typeMappings[NUM_TYPE_MAPPINGS] =
 unsigned int GetTypeMappingIndex(char c)
 {
 	unsigned int i;
-	for (i=0; i < NUM_TYPE_MAPPINGS; i++ )
+	for (i=0; i < (unsigned int) NUM_TYPE_MAPPINGS; i++ )
 		if (typeMappings[i].inputType==c)
 			return i;
 	return (unsigned int)-1;

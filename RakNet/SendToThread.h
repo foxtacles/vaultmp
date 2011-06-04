@@ -10,6 +10,8 @@
 #include "DS_ThreadsafeAllocatingQueue.h"
 #include "ThreadPool.h"
 
+namespace RakNet
+{
 class SendToThread
 {
 public:
@@ -19,9 +21,9 @@ public:
 	struct SendToThreadBlock
 	{
 		SOCKET s;
-		unsigned int binaryAddress;
-		unsigned short port;
+		SystemAddress systemAddress;
 		unsigned short remotePortRakNetWasStartedOn_PS3;
+		unsigned int extraSocketOptions;
 		char data[MAXIMUM_MTU_SIZE];
 		unsigned short dataWriteOffset;
 	};
@@ -37,6 +39,8 @@ protected:
 	static ThreadPool<SendToThreadBlock*,SendToThreadBlock*> threadPool;
 
 };
+}
+
 
 #endif
 

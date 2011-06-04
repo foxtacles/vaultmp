@@ -20,9 +20,9 @@
 
 #include "RakMemoryOverride.h"
 #include <stdio.h> // Needed for file access
-#if !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3)
+
 #include <memory.h> // Needed for memset and memcpy
-#endif
+
 #include <string.h> // Needed for strcat and strcpy
 #include "Export.h"
 

@@ -215,16 +215,28 @@ PluginReceiveResult NatPunchthroughServer::OnReceive(Packet *packet)
 	case ID_NAT_PUNCHTHROUGH_REQUEST:
 		OnNATPunchthroughRequest(packet);
 		return RR_STOP_PROCESSING_AND_DEALLOCATE;
+	case ID_NAT_GROUP_PUNCHTHROUGH_REQUEST:
+		OnNATGroupPunchthroughRequest(packet);
+		return RR_STOP_PROCESSING_AND_DEALLOCATE;
+	case ID_NAT_CONFIRM_CONNECTION_TO_SERVER:
+		OnNATConfirmConnectionToServer(packet);
+		return RR_STOP_PROCESSING_AND_DEALLOCATE;
+	case ID_NAT_GROUP_PUNCHTHROUGH_REPLY:
+		OnNATGroupPunchthroughReply(packet);
+		return RR_STOP_PROCESSING_AND_DEALLOCATE;
 	case ID_NAT_GET_MOST_RECENT_PORT:
 		OnGetMostRecentPort(packet);
 		return RR_STOP_PROCESSING_AND_DEALLOCATE;
 	case ID_NAT_CLIENT_READY:
 		OnClientReady(packet);
 		return RR_STOP_PROCESSING_AND_DEALLOCATE;
+	case ID_NAT_GROUP_PUNCHTHROUGH_FAILURE_NOTIFICATION:
+		OnFailureNotification(packet);
+		return RR_STOP_PROCESSING_AND_DEALLOCATE;
 	}
 	return RR_CONTINUE_PROCESSING;
 }
-void NatPunchthroughServer::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
+void NatPunchthroughServer::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
 	(void) lostConnectionReason;
 	(void) systemAddress;
@@ -279,9 +291,28 @@ void NatPunchthroughServer::OnClosedConnection(SystemAddress systemAddress, RakN
 			StartPunchthroughForUser(freedUpInProgressUsers[i]);
 		}
 	}
+
+	// Also remove from groupPunchthroughRequests
+	for (i=0; i < users.Size(); i++)
+	{
+		bool objectExists;
+		unsigned int gprIndex;
+		gprIndex = users[i]->groupPunchthroughRequests.GetIndexFromKey(rakNetGUID, &objectExists);
+		if (objectExists)
+		{
+//			printf("DEBUG %i\n", __LINE__);
+
+			RakNet::BitStream outgoingBs;
+			outgoingBs.Write((MessageID)ID_NAT_TARGET_NOT_CONNECTED);
+			outgoingBs.Write(rakNetGUID);
+			rakPeerInterface->Send(&outgoingBs,HIGH_PRIORITY,RELIABLE_ORDERED,0,users[i]->systemAddress,false);
+
+			users[i]->groupPunchthroughRequests.RemoveAtIndex(gprIndex);
+		}
+	}
 }
 
-void NatPunchthroughServer::OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming)
+void NatPunchthroughServer::OnNewConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, bool isIncoming)
 {
 	(void) systemAddress;
 	(void) isIncoming;
@@ -292,6 +323,9 @@ void NatPunchthroughServer::OnNewConnection(SystemAddress systemAddress, RakNetG
 	user->systemAddress=systemAddress;
 	user->isReady=true;
 	users.Insert(rakNetGUID, user, true, _FILE_AND_LINE_);
+
+//	printf("Adding to users %s\n", rakNetGUID.ToString());
+//	printf("DEBUG users[0] guid=%s\n", users[0]->guid.ToString());
 }
 void NatPunchthroughServer::OnNATPunchthroughRequest(Packet *packet)
 {
@@ -312,6 +346,10 @@ void NatPunchthroughServer::OnNATPunchthroughRequest(Packet *packet)
 	i = users.GetIndexFromKey(recipientGuid, &objectExists);
 	if (objectExists==false)
 	{
+// 		printf("DEBUG %i\n", __LINE__);
+// 		printf("DEBUG recipientGuid=%s\n", recipientGuid.ToString());
+// 		printf("DEBUG users[0] guid=%s\n", users[0]->guid.ToString());
+
 		outgoingBs.Write((MessageID)ID_NAT_TARGET_NOT_CONNECTED);
 		outgoingBs.Write(recipientGuid);
 		rakPeerInterface->Send(&outgoingBs,HIGH_PRIORITY,RELIABLE_ORDERED,0,packet->systemAddress,false);
@@ -333,6 +371,94 @@ void NatPunchthroughServer::OnNATPunchthroughRequest(Packet *packet)
 
 	StartPunchthroughForUser(ca->sender);
 }
+void NatPunchthroughServer::OnNATGroupPunchthroughRequest(Packet *packet)
+{
+	RakNet::BitStream outgoingBs;
+	RakNet::BitStream incomingBs(packet->data, packet->length, false);
+	incomingBs.IgnoreBytes(sizeof(MessageID));
+	RakNetGUID recipientGuid, senderGuid;
+	incomingBs.Read(recipientGuid);
+	senderGuid=packet->guid;
+	unsigned int i;
+	bool objectExists;
+	i = users.GetIndexFromKey(senderGuid, &objectExists);
+	RakAssert(objectExists);
+	User *sender=users[i];
+	i = users.GetIndexFromKey(recipientGuid, &objectExists);
+	if (objectExists==false)
+	{
+//		printf("DEBUG %i\n", __LINE__);
+
+		outgoingBs.Write((MessageID)ID_NAT_TARGET_NOT_CONNECTED);
+		outgoingBs.Write(recipientGuid);
+		rakPeerInterface->Send(&outgoingBs,HIGH_PRIORITY,RELIABLE_ORDERED,0,packet->systemAddress,false);
+		return;
+	}
+	if (sender->HasConnectionAttemptToUser(users[i]))
+	{
+		outgoingBs.Write((MessageID)ID_NAT_ALREADY_IN_PROGRESS);
+		outgoingBs.Write(recipientGuid);
+		rakPeerInterface->Send(&outgoingBs,HIGH_PRIORITY,RELIABLE_ORDERED,0,packet->systemAddress,false);
+		return;
+	}
+
+	i = sender->groupPunchthroughRequests.GetIndexFromKey(recipientGuid, &objectExists);
+	if (objectExists==true)
+	{
+		outgoingBs.Write((MessageID)ID_NAT_ALREADY_IN_PROGRESS);
+		outgoingBs.Write(recipientGuid);
+		rakPeerInterface->Send(&outgoingBs,HIGH_PRIORITY,RELIABLE_ORDERED,0,packet->systemAddress,false);
+		return;
+	}
+
+	// Store that we are waiting for a reply from the recipient. ID_NAT_TARGET_NOT_CONNECTED is returned if they disconnect before replying.
+	sender->groupPunchthroughRequests.InsertAtIndex(recipientGuid, i, _FILE_AND_LINE_);
+
+	// Forward request
+	outgoingBs.Write((MessageID)ID_NAT_GROUP_PUNCHTHROUGH_REQUEST);
+	outgoingBs.Write(senderGuid);
+	rakPeerInterface->Send(&outgoingBs,HIGH_PRIORITY,RELIABLE_ORDERED,0,recipientGuid,false);
+}
+void NatPunchthroughServer::OnNATConfirmConnectionToServer(Packet *packet)
+{
+	RakNet::BitStream outgoingBs;
+	RakNet::BitStream incomingBs(packet->data, packet->length, false);
+	incomingBs.IgnoreBytes(sizeof(MessageID));
+	RakNetGUID recipientGuid;
+	incomingBs.Read(recipientGuid);
+//	unsigned int i;
+	bool objectExists;
+	//i =
+		users.GetIndexFromKey(recipientGuid, &objectExists);
+	outgoingBs.Write((MessageID)ID_NAT_CONFIRM_CONNECTION_TO_SERVER);
+	outgoingBs.Write(recipientGuid);
+	outgoingBs.Write(objectExists);
+	rakPeerInterface->Send(&outgoingBs,HIGH_PRIORITY,RELIABLE_ORDERED,0,packet->guid,false);
+}
+void NatPunchthroughServer::OnNATGroupPunchthroughReply(Packet *packet)
+{
+	RakNet::BitStream incomingBs(packet->data, packet->length, false);
+	incomingBs.IgnoreBytes(sizeof(MessageID));
+	RakNetGUID senderGuid;
+	incomingBs.Read(senderGuid);
+
+	// Lookup sender in user list or just abort
+	unsigned int i;
+	bool objectExists;
+	i = users.GetIndexFromKey(senderGuid, &objectExists);
+	if (objectExists==false)
+		return;
+
+	// Remove from groupPunchthroughRequests since we are sending a response
+	users[i]->groupPunchthroughRequests.RemoveIfExists(packet->guid);
+
+	RakNet::BitStream outgoingBs;
+	outgoingBs.Write((MessageID)ID_NAT_GROUP_PUNCHTHROUGH_REPLY);
+	outgoingBs.Write(&incomingBs); // Write the remainder of the bitstream
+
+	// Forward message
+	rakPeerInterface->Send(&outgoingBs,HIGH_PRIORITY,RELIABLE_ORDERED,0,senderGuid,false);
+}
 void NatPunchthroughServer::OnClientReady(Packet *packet)
 {
 	unsigned int i;
@@ -344,7 +470,18 @@ void NatPunchthroughServer::OnClientReady(Packet *packet)
 		StartPunchthroughForUser(users[i]);
 	}
 }
+void NatPunchthroughServer::OnFailureNotification(Packet *packet)
+{
+	RakNet::BitStream bsIn(packet->data, packet->length, false);
+	bsIn.IgnoreBytes(sizeof(MessageID));
+	RakNetGUID destination;
+	bsIn.Read(destination);
 
+	RakNet::BitStream outgoingBs;
+	outgoingBs.Write((MessageID)ID_NAT_GROUP_PUNCHTHROUGH_FAILURE_NOTIFICATION);
+	outgoingBs.Write(packet->guid); // Write the remainder of the bitstream
+	rakPeerInterface->Send(&outgoingBs,HIGH_PRIORITY,RELIABLE_ORDERED,0,destination,false);
+}
 void NatPunchthroughServer::OnGetMostRecentPort(Packet *packet)
 {
 	RakNet::BitStream bsIn(packet->data, packet->length, false);
@@ -389,8 +526,8 @@ void NatPunchthroughServer::OnGetMostRecentPort(Packet *packet)
 				SystemAddress recipientSystemAddress = connectionAttempt->recipient->systemAddress;
 				SystemAddress recipientTargetAddress = recipientSystemAddress;
 				SystemAddress senderTargetAddress = senderSystemAddress;
-				recipientTargetAddress.port=connectionAttempt->recipient->mostRecentPort;
-				senderTargetAddress.port=connectionAttempt->sender->mostRecentPort;
+				recipientTargetAddress.SetPort(connectionAttempt->recipient->mostRecentPort);
+				senderTargetAddress.SetPort(connectionAttempt->sender->mostRecentPort);
 
 				// Pick a time far enough in the future that both systems will have gotten the message
 				int targetPing = rakPeerInterface->GetAveragePing(recipientTargetAddress);

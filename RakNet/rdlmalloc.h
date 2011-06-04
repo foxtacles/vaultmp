@@ -1066,11 +1066,25 @@ improvement at the expense of carrying around more memory.
 #endif  /* DL_PLATFORM_WIN32 */
 
 #if defined(_XBOX) || defined(X360)
-                                                                                                                                                                                                                                                                                                                         
+#define HAVE_MMAP 1
+#define HAVE_MORECORE 0
+#define LACKS_UNISTD_H
+#define LACKS_SYS_PARAM_H
+#define LACKS_SYS_MMAN_H
+#define LACKS_STRING_H
+#define LACKS_STRINGS_H
+#define LACKS_SYS_TYPES_H
+#define LACKS_ERRNO_H
+#ifndef MALLOC_FAILURE_ACTION
+#define MALLOC_FAILURE_ACTION
+#endif
+#define MMAP_CLEARS 1
 #endif
 
-#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                                                                                          
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(SN_TARGET_PSP2)
+#define LACKS_SYS_PARAM_H
+#include "sysutil\sysutil_sysparam.h"
+#define LACKS_SYS_MMAN_H
 #endif
 
 
@@ -1926,7 +1940,10 @@ extern void*     sbrk(ptrdiff_t);
 /* Declarations for locking */
 #if USE_LOCKS
 #if defined(_XBOX) || defined(X360)
-                                                                                                                                                                                                           
+#pragma intrinsic (_InterlockedCompareExchange)
+#pragma intrinsic (_InterlockedExchange)
+#define interlockedcompareexchange _InterlockedCompareExchange
+#define interlockedexchange _InterlockedExchange
 #elif !defined(DL_PLATFORM_WIN32)
 #include <pthread.h>
 #if defined (__SVR4) && defined (__sun)  /* solaris */
@@ -2063,9 +2080,47 @@ using so many "#if"s.
 #if HAVE_MMAP
 
 #if defined(_XBOX) || defined(X360)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
-#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                                                                                                                                                                                                                                   
+	/* Win32 MMAP via VirtualAlloc */
+	static void* win32mmap(size_t size) {
+		void* ptr = VirtualAlloc(0, size, MEM_RESERVE|MEM_COMMIT, PAGE_READWRITE);
+		return (ptr != 0)? ptr: MFAIL;
+	}
+
+	/* For direct MMAP, use MEM_TOP_DOWN to minimize interference */
+	static void* win32direct_mmap(size_t size) {
+		void* ptr = VirtualAlloc(0, size, MEM_RESERVE|MEM_COMMIT|MEM_TOP_DOWN,
+			PAGE_READWRITE);
+		return (ptr != 0)? ptr: MFAIL;
+	}
+
+	/* This function supports releasing coalesed segments */
+	static int win32munmap(void* ptr, size_t size) {
+		MEMORY_BASIC_INFORMATION minfo;
+		char* cptr = (char*)ptr;
+		while (size) {
+			if (VirtualQuery(cptr, &minfo, sizeof(minfo)) == 0)
+				return -1;
+			if (minfo.BaseAddress != cptr || minfo.AllocationBase != cptr ||
+				minfo.State != MEM_COMMIT || minfo.RegionSize > size)
+				return -1;
+			if (VirtualFree(cptr, 0, MEM_RELEASE) == 0)
+				return -1;
+			cptr += minfo.RegionSize;
+			size -= minfo.RegionSize;
+		}
+		return 0;
+	}
+
+	#define RAK_MMAP_DEFAULT(s)             win32mmap(s)
+	#define RAK_MUNMAP_DEFAULT(a, s)        win32munmap((a), (s))
+	#define RAK_DIRECT_MMAP_DEFAULT(s)      win32direct_mmap(s)
+#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(SN_TARGET_PSP2)
+
+inline int ___freeit_dlmalloc_default__(void* s) {free(s); return 0;}
+#define RAK_MMAP_DEFAULT(s) malloc(s);
+#define RAK_MUNMAP_DEFAULT(a, s) ___freeit_dlmalloc_default__(a);
+#define RAK_DIRECT_MMAP_DEFAULT(s) malloc(s);
+
 #elif !defined(DL_PLATFORM_WIN32)
 	#define RAK_MUNMAP_DEFAULT(a, s)  munmap((a), (s))
 	#define MMAP_PROT            (PROT_READ|PROT_WRITE)

@@ -40,7 +40,7 @@ namespace cat {
 
 
 // Base class for various versions of Skein
-class Skein : public ICryptHash
+class CAT_EXPORT Skein : public ICryptHash
 {
 protected:
     // Tweak word 1 bit field starting positions
@@ -67,8 +67,8 @@ protected:
     static const int BLK_TYPE_OUT = 63;   // output stage
 
     static const u32 ID_STRING_LE = 0x33414853;
-    static const u32 VERSION = 1;
-    static const u64 SCHEMA_VER = ((u64)VERSION << 32) | ID_STRING_LE;
+    static const u32 SKEIN_VERSION = 1;
+    static const u64 SCHEMA_VER = ((u64)SKEIN_VERSION << 32) | ID_STRING_LE;
 
     static const int MAX_BITS = 512;
     static const int MAX_WORDS = MAX_BITS / 64;

@@ -110,7 +110,7 @@ namespace cat {
 
 //// ChaChaKey
 
-class ChaChaKey
+class CAT_EXPORT ChaChaKey
 {
 	friend class ChaChaOutput;
 	u32 state[16];
@@ -125,7 +125,7 @@ public:
 
 //// ChaChaOutput
 
-class ChaChaOutput
+class CAT_EXPORT ChaChaOutput
 {
 	u32 state[16];
 

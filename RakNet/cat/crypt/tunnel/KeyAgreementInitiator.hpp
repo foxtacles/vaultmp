@@ -35,7 +35,7 @@
 namespace cat {
 
 
-class KeyAgreementInitiator : public KeyAgreementCommon
+class CAT_EXPORT KeyAgreementInitiator : public KeyAgreementCommon
 {
     Leg *B; // Responder's public key (pre-shared with initiator)
     Leg *a; // Initiator's private key (kept secret)
@@ -47,6 +47,10 @@ class KeyAgreementInitiator : public KeyAgreementCommon
 	Leg *A_neutral; // Endian-neutral A
 	Leg *B_neutral; // Endian-neutral B
 
+	// Identity data
+	Leg *I_private; // Initiator's identity private key
+	Leg *I_public; // Endian-neutral initiator's identity public key
+
     bool AllocateMemory();
     void FreeMemory();
 
@@ -57,6 +61,11 @@ public:
     bool Initialize(BigTwistedEdwards *math,
 					const u8 *responder_public_key, int public_bytes);
 
+	// Call after Initialize()
+	bool SetIdentity(BigTwistedEdwards *math,
+					 const u8 *initiator_public_key, int public_bytes,
+					 const u8 *initiator_private_key, int private_bytes);
+
 public:
     bool GenerateChallenge(BigTwistedEdwards *math, FortunaOutput *csprng,
 						   u8 *initiator_challenge, int challenge_bytes);
@@ -65,7 +74,13 @@ public:
 					   const u8 *responder_answer, int answer_bytes,
                        Skein *key_hash);
 
-	inline bool KeyEncryption(Skein *key_hash, AuthenticatedEncryption *auth_enc, const char *key_name)
+	// Will fail if SetIdentity() has not been called
+    bool ProcessAnswerWithIdentity(BigTwistedEdwards *math, FortunaOutput *csprng,
+								   const u8 *responder_answer, int answer_bytes,
+								   Skein *key_hash,
+								   u8 *identity_proof, int proof_bytes);
+
+	CAT_INLINE bool KeyEncryption(Skein *key_hash, AuthenticatedEncryption *auth_enc, const char *key_name)
 	{
 		return auth_enc->SetKey(KeyBytes, key_hash, true, key_name);
 	}

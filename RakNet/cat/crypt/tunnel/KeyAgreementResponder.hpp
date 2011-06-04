@@ -41,7 +41,7 @@
 namespace cat {
 
 
-class KeyAgreementResponder : public KeyAgreementCommon
+class CAT_EXPORT KeyAgreementResponder : public KeyAgreementCommon
 {
     Leg *b; // Responder's private key (kept secret)
     Leg *B; // Responder's public key (pre-shared with initiator)
@@ -78,6 +78,12 @@ public:
 	{
 		return auth_enc->SetKey(KeyBytes, key_hash, false, key_name);
 	}
+
+	// Public key is filled if proof succeeds, and will return true
+	bool VerifyInitiatorIdentity(BigTwistedEdwards *math,
+								 const u8 *responder_answer, int answer_bytes,
+								 const u8 *proof, int proof_bytes,
+								 u8 *public_key, int public_bytes);
 
 public:
     bool Sign(BigTwistedEdwards *math, FortunaOutput *csprng,

@@ -57,6 +57,12 @@ public:
 		/// \brief User data passed to one of the functions in the FileList class.
 		/// \details However, on error, this is instead changed to one of the enumerations in the PatchContext structure.
 		FileListNodeContext context;
+
+		/// \brief Who sent this file
+		SystemAddress senderSystemAddress;
+
+		/// \brief Who sent this file. Not valid when using TCP, only RakPeer (UDP)
+		RakNetGUID senderGuid;
 	};
 
 	// Note: If this structure is changed the struct in the swig files need to be changed as well
@@ -76,8 +82,31 @@ public:
 		char *iriDataChunk;
 		/// \param[out] iriWriteOffset Offset in bytes from the start of the file for the data pointed to by iriDataChunk
 		unsigned int iriWriteOffset;
+		/// \param[out] Who sent this file
+		SystemAddress senderSystemAddress;
+		/// \param[out] Who sent this file. Not valid when using TCP, only RakPeer (UDP)
+		RakNetGUID senderGuid;
 		/// \param[in] allocateIrIDataChunkAutomatically If true, then RakNet will hold iriDataChunk for you and return it in OnFile. Defaults to true
 		bool allocateIrIDataChunkAutomatically;
+	};
+
+	struct DownloadCompleteStruct
+	{
+		/// \brief Files are transmitted in sets, where more than one set of files can be transmitted at the same time.
+		/// \details This is the identifier for the set, which is returned by FileListTransfer::SetupReceive
+		unsigned short setID;
+
+		/// \brief The number of files that are in this set.
+		unsigned numberOfFilesInThisSet;
+
+		/// \brief The total length of the transmitted files for this set, after being uncompressed
+		unsigned byteLengthOfThisSet;
+
+		/// \brief Who sent this file
+		SystemAddress senderSystemAddress;
+
+		/// \brief Who sent this file. Not valid when using TCP, only RakPeer (UDP)
+		RakNetGUID senderGuid;
 	};
 
 	FileListTransferCBInterface() {}
@@ -106,7 +135,7 @@ public:
 	/// \details If you are finished with this class, return false.
 	/// At that point OnDereference will be called and the class will no longer be maintained by the FileListTransfer plugin.
 	/// Otherwise return true, and Update will continue to be called.
-	virtual bool OnDownloadComplete(void) {return false;}
+	virtual bool OnDownloadComplete(DownloadCompleteStruct *dcs) {(void) dcs; return false;}
 
 	/// \brief This function is called when this instance is about to be dereferenced by the FileListTransfer plugin.
 	/// \details Update will no longer be called.

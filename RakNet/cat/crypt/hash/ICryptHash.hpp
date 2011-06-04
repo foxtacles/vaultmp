@@ -38,7 +38,7 @@ namespace cat {
 
 
 // Cryptographic hash functions of any size will derive from ICryptoHash and implement its public methods
-class ICryptHash
+class CAT_EXPORT ICryptHash
 {
 protected:
     int digest_bytes;

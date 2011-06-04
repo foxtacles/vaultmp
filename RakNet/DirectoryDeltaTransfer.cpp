@@ -1,5 +1,5 @@
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_DirectoryDeltaTransfer==1
+#if _RAKNET_SUPPORT_DirectoryDeltaTransfer==1 && _RAKNET_SUPPORT_FileOperations==1
 
 #include "DirectoryDeltaTransfer.h"
 #include "FileList.h"
@@ -58,9 +58,9 @@ public:
 
 		onFileCallback->OnFileProgress(fps);
 	}
-	virtual bool OnDownloadComplete(void)
+	virtual bool OnDownloadComplete(DownloadCompleteStruct *dcs)
 	{
-		return onFileCallback->OnDownloadComplete();
+		return onFileCallback->OnDownloadComplete(dcs);
 	}
 };
 
@@ -81,11 +81,29 @@ DirectoryDeltaTransfer::~DirectoryDeltaTransfer()
 }
 void DirectoryDeltaTransfer::SetFileListTransferPlugin(FileListTransfer *flt)
 {
+	if (fileListTransfer)
+	{
+		DataStructures::List<FileListProgress*> fileListProgressList;
+		fileListTransfer->GetCallbacks(fileListProgressList);
+		unsigned int i;
+		for (i=0; i < fileListProgressList.Size(); i++)
+			availableUploads->RemoveCallback(fileListProgressList[i]);
+	}
+
 	fileListTransfer=flt;
+
 	if (flt)
-		availableUploads->SetCallback(flt->GetCallback());
+	{
+		DataStructures::List<FileListProgress*> fileListProgressList;
+		flt->GetCallbacks(fileListProgressList);
+		unsigned int i;
+		for (i=0; i < fileListProgressList.Size(); i++)
+			availableUploads->AddCallback(fileListProgressList[i]);
+	}
 	else
-		availableUploads->SetCallback(0);
+	{
+		availableUploads->ClearCallbacks();
+	}
 }
 void DirectoryDeltaTransfer::SetApplicationDirectory(const char *pathToApplication)
 {
@@ -114,7 +132,9 @@ unsigned short DirectoryDeltaTransfer::DownloadFromSubdirectory(const char *subd
 
 	DDTCallback *transferCallback;
 	FileList localFiles;
-	localFiles.SetCallback(cb);
+
+	localFiles.AddCallback(cb);
+
 	// Get a hash of all the files that we already have (if any)
 	localFiles.AddFilesFromDirectory(prependAppDirToOutputSubdir ? applicationDirectory : 0, outputSubdir, true, false, true, FileListNodeContext(0,0));
 

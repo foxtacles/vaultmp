@@ -172,7 +172,7 @@ namespace cat {
 // and that the math and prng objects are not null
 #define CAT_USER_ERROR_CHECKING
 
-class KeyAgreementCommon
+class CAT_EXPORT KeyAgreementCommon
 {
 public:
 	static BigTwistedEdwards *InstantiateMath(int bits);

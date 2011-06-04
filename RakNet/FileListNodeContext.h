@@ -11,12 +11,14 @@
 
 struct FileListNodeContext
 {
-	FileListNodeContext() {}
-	FileListNodeContext(unsigned char o, unsigned int f) : op(o), fileId(f) {}
+	FileListNodeContext() {dataPtr=0; dataLength=0;}
+	FileListNodeContext(unsigned char o, unsigned int f) : op(o), fileId(f) {dataPtr=0; dataLength=0;}
 	~FileListNodeContext() {}
 
 	unsigned char op;
 	unsigned int fileId;
+	void *dataPtr;
+	unsigned int dataLength;
 };
 
 inline RakNet::BitStream& operator<<(RakNet::BitStream& out, FileListNodeContext& in)

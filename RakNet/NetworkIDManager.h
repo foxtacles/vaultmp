@@ -40,6 +40,10 @@ public:
 	template <class returnType>
 	returnType GET_OBJECT_FROM_ID(NetworkID x) {
 		NetworkIDObject *nio = GET_BASE_OBJECT_FROM_ID(x);
+		if (nio==0)
+			return 0;
+		if (nio->GetParent())
+			return (returnType) nio->GetParent();
 		return (returnType) nio;
 	}
 

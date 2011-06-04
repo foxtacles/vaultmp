@@ -12,7 +12,7 @@
 /// Custom license users are subject to the terms therein.
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_UDPProxyCoordinator==1
+#if _RAKNET_SUPPORT_UDPProxyCoordinator==1 && _RAKNET_SUPPORT_UDPForwarder==1
 
 #ifndef __UDP_PROXY_COORDINATOR_H
 #define __UDP_PROXY_COORDINATOR_H
@@ -48,7 +48,7 @@ namespace RakNet
 		/// \internal
 		virtual void Update(void);
 		virtual PluginReceiveResult OnReceive(Packet *packet);
-		virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
+		virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 
 		struct SenderAndTargetAddress
 		{

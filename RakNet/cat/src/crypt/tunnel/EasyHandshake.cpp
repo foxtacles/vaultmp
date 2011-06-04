@@ -31,7 +31,6 @@
 #include <cat/time/Clock.hpp>
 using namespace cat;
 
-
 //// EasyHandshake
 
 static Mutex handshake_lock;
@@ -97,6 +96,14 @@ bool EasyHandshake::GenerateServerKey(void *out_public_key, void *out_private_ke
 							   private_key, PRIVATE_KEY_BYTES);
 }
 
+bool EasyHandshake::GenerateRandomNumber(void *out_num, int bytes)
+{
+	if (!tls_csprng) return false;
+
+	tls_csprng->Generate(out_num, bytes);
+	return true;
+}
+
 
 //// ServerEasyHandshake
 
@@ -110,7 +117,7 @@ ServerEasyHandshake::~ServerEasyHandshake()
 
 void ServerEasyHandshake::FillCookieJar(CookieJar *jar)
 {
-	jar->Initialize(tls_csprng);
+	if (tls_csprng) jar->Initialize(tls_csprng);
 }
 
 bool ServerEasyHandshake::Initialize(const void *in_public_key, const void *in_private_key)
@@ -153,6 +160,17 @@ bool ServerEasyHandshake::ProcessChallenge(const void *in_challenge, void *out_a
 	return true;
 }
 
+bool ServerEasyHandshake::VerifyInitiatorIdentity(const void *in_answer /* EasyHandshake::ANSWER_BYTES */,
+												  const void *in_proof /* EasyHandshake::IDENTITY_BYTES */,
+												  void *out_public_key /* EasyHandshake::PUBLIC_KEY_BYTES */)
+{
+	const u8 *answer = reinterpret_cast<const u8*>( in_answer );
+	const u8 *ident = reinterpret_cast<const u8*>( in_proof );
+	u8 *public_key = reinterpret_cast<u8*>( out_public_key );
+
+	return tun_server.VerifyInitiatorIdentity(tls_math, answer, ANSWER_BYTES, ident, IDENTITY_BYTES, public_key, PUBLIC_KEY_BYTES);
+}
+
 
 //// ClientEasyHandshake
 
@@ -170,6 +188,16 @@ bool ClientEasyHandshake::Initialize(const void *in_public_key)
 
 	// Initialize the tunnel client with the given public key
 	return tun_client.Initialize(tls_math, public_key, PUBLIC_KEY_BYTES);
+}
+
+bool ClientEasyHandshake::SetIdentity(const void *in_public_key /* EasyHandshake::PUBLIC_KEY_BYTES */,
+									  const void *in_private_key /* EasyHandshake::PRIVATE_KEY_BYTES */)
+{
+	const u8 *public_key = reinterpret_cast<const u8*>( in_public_key );
+	const u8 *private_key = reinterpret_cast<const u8*>( in_private_key );
+
+	// Initialize the tunnel client's identity
+	return tun_client.SetIdentity(tls_math, public_key, PUBLIC_KEY_BYTES, private_key, PRIVATE_KEY_BYTES);
 }
 
 bool ClientEasyHandshake::GenerateChallenge(void *out_challenge)
@@ -190,6 +218,34 @@ bool ClientEasyHandshake::ProcessAnswer(const void *in_answer, AuthenticatedEncr
 	// Process and validate the server's answer to our challenge.
 	// This is an expensive operation
 	if (!tun_client.ProcessAnswer(tls_math, answer, ANSWER_BYTES, &key_hash))
+		return false;
+
+	// Normally you would have the ability to key several authenticated encryption
+	// objects from the same handshake, and give each one a different name.  For
+	// simplicity I only allow one authenticated encryption object to be created per
+	// handshake.  This would be useful for encrypting several different channels,
+	// such as one handshake being used to key and encrypt a TCP stream and UDP
+	// packets, or multiple TCP streams keyed from the same handshake, etc
+	if (!tun_client.KeyEncryption(&key_hash, auth_enc, "NtQuerySystemInformation"))
+		return false;
+
+	// Erase the ephemeral private key we used for the handshake now that it is done
+	tun_client.SecureErasePrivateKey();
+
+	return true;
+}
+
+bool ClientEasyHandshake::ProcessAnswerWithIdentity(const void *in_answer, void *out_identity, AuthenticatedEncryption *auth_enc)
+{
+	const u8 *answer = reinterpret_cast<const u8*>( in_answer );
+	u8 *ident = reinterpret_cast<u8*>( out_identity );
+
+	// Create a key hash object on the stack
+	Skein key_hash;
+
+	// Process and validate the server's answer to our challenge.
+	// This is an expensive operation
+	if (!tun_client.ProcessAnswerWithIdentity(tls_math, tls_csprng, answer, ANSWER_BYTES, &key_hash, ident, IDENTITY_BYTES))
 		return false;
 
 	// Normally you would have the ability to key several authenticated encryption

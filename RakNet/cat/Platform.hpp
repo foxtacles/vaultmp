@@ -172,6 +172,12 @@ namespace cat {
 # endif
 # define CAT_FENCE_COMPILER _ReadWriteBarrier();
 #endif
+#if !defined(CAT_DLL_EXPORT)
+# define CAT_DLL_EXPORT __declspec(dllexport)
+#endif
+#if !defined(CAT_DLL_IMPORT)
+# define CAT_DLL_IMPORT __declspec(dllimport)
+#endif
 
 // GCC-compatible compilers
 #elif defined(CAT_COMPILER_COMPAT_GCC)
@@ -205,6 +211,12 @@ namespace cat {
 #endif
 #if !defined(CAT_FENCE_COMPILER)
 # define CAT_FENCE_COMPILER CAT_ASM_BEGIN "" ::: "memory" CAT_ASM_END
+#endif
+#if !defined(CAT_DLL_EXPORT)
+# define CAT_DLL_EXPORT __attribute__((dllexport))
+#endif
+#if !defined(CAT_DLL_IMPORT)
+# define CAT_DLL_IMPORT __attribute__((dllimport))
 #endif
 
 #endif // CAT_COMPILER_COMPAT_*
@@ -294,7 +306,7 @@ namespace cat {
 // __fastcall calling convention is rarely supported, and doesn't make sense for 64-bit targets
 #if !defined(CAT_FASTCALL)
 # define CAT_FASTCALL
-#elif defined(CAT_WORD_64)
+#elif !defined(CAT_ISA_X86) || defined(CAT_WORD_64)
 # undef CAT_FASTCALL
 # define CAT_FASTCALL
 #endif
@@ -304,9 +316,11 @@ namespace cat {
 
 #if defined(__APPLE__) && defined(TARGET_OS_IPHONE)
 # define CAT_OS_IPHONE
+# define CAT_OS_APPLE
 
 #elif defined(__APPLE__) && (defined(__MACH__) || defined(__DARWIN__))
 # define CAT_OS_OSX
+# define CAT_OS_APPLE
 
 #elif defined(__OpenBSD__) || defined(__NetBSD__) || defined(__FreeBSD__)
 # define CAT_OS_BSD
@@ -330,8 +344,37 @@ namespace cat {
 #elif defined(__OS2__)
 # define CAT_OS_OS2
 
+#elif defined(__APPLE__)
+# define CAT_OS_APPLE
+
 #else
 # define CAT_OS_UNKNOWN
+#endif
+
+// Detect CYGWIN environment
+#if defined(__CYGWIN__) || defined(__CYGWIN32__)
+# define CAT_CYGWIN
+#endif
+
+// DLL import/export macros based on OS
+#if defined(CAT_OS_WINDOWS) || defined(CAT_CYGWIN)
+
+# if defined(CAT_NEUTER_EXPORT)
+#  define CAT_EXPORT /* Do not import or export any symbols */
+# elif defined(CAT_BUILD_DLL)
+#  define CAT_EXPORT CAT_DLL_EXPORT /* Implementing a DLL so export this symbol */
+# else
+#  define CAT_EXPORT CAT_DLL_IMPORT /* Using a DLL so import this symbol, faster on Windows */
+# endif
+
+#else
+
+# undef CAT_DLL_EXPORT
+# undef CAT_DLL_IMPORT
+# define CAT_DLL_EXPORT
+# define CAT_DLL_IMPORT
+# define CAT_EXPORT
+
 #endif
 
 

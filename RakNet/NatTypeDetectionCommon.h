@@ -25,7 +25,7 @@ namespace RakNet
 		/// A different port is chosen for every remote destination. The same source address and port to a different destination uses a different mapping. Since the port will be different, the first external punchthrough attempt will fail. For this to work it requires port-prediction (MAX_PREDICTIVE_PORT_RANGE>1) and that the router chooses ports sequentially.
 		NAT_TYPE_SYMMETRIC,
 		/// Hasn't been determined. NATTypeDetectionClient does not use this, but other plugins might
-		NAT_TYPE_UKNOWN,
+		NAT_TYPE_UNKNOWN,
 		/// In progress. NATTypeDetectionClient does not use this, but other plugins might
 		NAT_TYPE_DETECTION_IN_PROGRESS,
 		/// Didn't bother figuring it out, as we support UPNP, so it is equivalent to NAT_TYPE_NONE. NATTypeDetectionClient does not use this, but other plugins might
@@ -35,19 +35,19 @@ namespace RakNet
 	};
 
 	/// \return Can one system with NATTypeDetectionResult \a type1 connect to \a type2
-	bool CanConnect(NATTypeDetectionResult type1, NATTypeDetectionResult type2);
+	bool RAK_DLL_EXPORT CanConnect(NATTypeDetectionResult type1, NATTypeDetectionResult type2);
 
 	/// Return a technical string representin the enumeration
-	const char *NATTypeDetectionResultToString(NATTypeDetectionResult type);
+	RAK_DLL_EXPORT const char * NATTypeDetectionResultToString(NATTypeDetectionResult type);
 
 	/// Return a friendly string representing the enumeration
 	/// None and relaxed can connect to anything
 	/// Moderate can connect to moderate or less
 	/// Strict can connect to relaxed or less
-	const char *NATTypeDetectionResultToStringFriendly(NATTypeDetectionResult type);
+	RAK_DLL_EXPORT const char * NATTypeDetectionResultToStringFriendly(NATTypeDetectionResult type);
 
 	/// \internal
-	SOCKET CreateNonblockingBoundSocket(const char *bindAddr);
+	SOCKET RAK_DLL_EXPORT CreateNonblockingBoundSocket(const char *bindAddr);
 
 	/// \internal
 	int NatTypeRecvFrom(char *data, SOCKET socket, SystemAddress &sender);

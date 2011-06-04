@@ -197,7 +197,7 @@ namespace cat {
 /*
 	Common data needed for handshaking
 */
-class EasyHandshake
+class CAT_EXPORT EasyHandshake
 {
 protected:
 	// Normally these would be created per-thread.
@@ -213,6 +213,7 @@ public:
 	static const int CHALLENGE_BYTES = BYTES * 2; // Packet # 1 in handshake, sent to server
 	static const int ANSWER_BYTES = BYTES * 4; // Packet # 2 in handshake, sent to client
 	static const int PROOF_BYTES = BYTES; // Packet # 3 in handshake, sent to server
+	static const int IDENTITY_BYTES = BYTES * 5; // [optional] Packet # 3 in handshake, sent to server, proves identity of client also
 
 public:
 	// Demonstrates how to allocate and free the math and prng objects
@@ -228,13 +229,17 @@ public:
 	// Connecting clients will need to know the public key in order to connect
 	bool GenerateServerKey(void *out_public_key /* EasyHandshake::PUBLIC_KEY_BYTES */,
 						   void *out_private_key /* EasyHandshake::PRIVATE_KEY_BYTES */);
+
+	// Fills the given buffer with a variable number of random bytes
+	// Returns false on failure
+	bool GenerateRandomNumber(void *out_num, int bytes);
 };
 
 /*
 	Implements the simple case of a server that performs handshakes with clients
 	from a single thread.  Note that this implementation is not thread-safe.
 */
-class ServerEasyHandshake : public EasyHandshake
+class CAT_EXPORT ServerEasyHandshake : public EasyHandshake
 {
 	KeyAgreementResponder tun_server;
 
@@ -254,13 +259,19 @@ public:
 	bool ProcessChallenge(const void *in_challenge /* EasyHandshake::CHALLENGE_BYTES */,
 						  void *out_answer /* EasyHandshake::ANSWER_BYTES */,
 						  AuthenticatedEncryption *auth_enc);
+
+	// Validate a client proof of identity
+	// Returns false if proof was invalid
+	bool VerifyInitiatorIdentity(const void *in_answer /* EasyHandshake::ANSWER_BYTES */,
+								 const void *in_proof /* EasyHandshake::IDENTITY_BYTES */,
+								 void *out_public_key /* EasyHandshake::PUBLIC_KEY_BYTES */);
 };
 
 /*
 	Implements the simple case of a client that performs handshakes with servers
 	from a single thread.  Note that this implementation is not thread-safe.
 */
-class ClientEasyHandshake : public EasyHandshake
+class CAT_EXPORT ClientEasyHandshake : public EasyHandshake
 {
 	KeyAgreementInitiator tun_client;
 
@@ -271,6 +282,10 @@ public:
 	// Provide the public key for the server, acquired through some secure means
 	bool Initialize(const void *in_public_key /* EasyHandshake::PUBLIC_KEY_BYTES */);
 
+	// (optional) Provide the identity for the client
+	bool SetIdentity(const void *in_public_key /* EasyHandshake::PUBLIC_KEY_BYTES */,
+					 const void *in_private_key /* EasyHandshake::PRIVATE_KEY_BYTES */);
+
 	// Generate a challenge for the server to answer
 	bool GenerateChallenge(void *out_challenge /* EasyHandshake::CHALLENGE_BYTES */);
 
@@ -278,6 +293,12 @@ public:
 	// Returns false if answer was invalid
 	bool ProcessAnswer(const void *in_answer /* EasyHandshake::ANSWER_BYTES */,
 					   AuthenticatedEncryption *auth_enc);
+
+	// Process a server answer to our challenge and provide a proof of client identity
+	// Returns false if answer was invalid
+	bool ProcessAnswerWithIdentity(const void *in_answer /* EasyHandshake::ANSWER_BYTES */,
+								   void *out_identity /* EasyHandshake::IDENTITY_BYTES */,
+								   AuthenticatedEncryption *auth_enc);
 };
 
 

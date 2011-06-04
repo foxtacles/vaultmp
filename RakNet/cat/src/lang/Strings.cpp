@@ -53,41 +53,41 @@ int cat::DecToString(s32 x, char *outs)
 	case 9:
 		d = n / 1000000000;
 		n %= 1000000000;
-		*out++ = '0' + d;
+		*out++ = '0' + (char)d;
 	case 8:
 		d = n / 100000000;
 		n %= 100000000;
-		*out++ = '0' + d;
+		*out++ = '0' + (char)d;
 	case 7:
 		d = n / 10000000;
 		n %= 10000000;
-		*out++ = '0' + d;
+		*out++ = '0' + (char)d;
 	case 6:
 		d = n / 1000000;
 		n %= 1000000;
-		*out++ = '0' + d;
+		*out++ = '0' + (char)d;
 	case 5:
 		d = n / 100000;
 		n %= 100000;
-		*out++ = '0' + d;
+		*out++ = '0' + (char)d;
 	case 4:
 		d = n / 10000;
 		n %= 10000;
-		*out++ = '0' + d;
+		*out++ = '0' + (char)d;
 	case 3:
 		d = n / 1000;
 		n %= 1000;
-		*out++ = '0' + d;
+		*out++ = '0' + (char)d;
 	case 2:
 		d = n / 100;
 		n %= 100;
-		*out++ = '0' + d;
+		*out++ = '0' + (char)d;
 	case 1:
 		d = n / 10;
 		n %= 10;
-		*out++ = '0' + d;
+		*out++ = '0' + (char)d;
 	default:
-		*out++ = '0' + n;
+		*out++ = '0' + (char)n;
 	}
 
 	return (int)(out - outs);
@@ -176,7 +176,7 @@ bool cat::IsZeroFixedBuffer(const void *vbuffer, u32 bytes)
 // Replaces all similar-looking glyphs with a common character
 char cat::DesimilarizeCharacter(char ch)
 {
-	ch = std::toupper(ch);
+	ch = (char)std::toupper(ch);
 
 	switch (ch)
 	{
@@ -257,4 +257,24 @@ u32 cat::DesimilarizeFixedString(char *str, u32 max_len)
 	}
 
 	return max_len;
+}
+
+// Copies the input string to an output string replacing lowercase letters with their uppercase equivalents
+void cat::CopyToUppercaseString(const char *from, char *to)
+{
+	char ch;
+
+	while ((ch = *from++)) *to++ = (char)std::toupper(ch);
+
+	*to = '\0';
+}
+
+// Copies the input string to an output string replacing uppercase letters with their lowercase equivalents
+void cat::CopyToLowercaseString(const char *from, char *to)
+{
+	char ch;
+
+	while ((ch = *from++)) *to++ = (char)std::tolower(ch);
+
+	*to = '\0';
 }

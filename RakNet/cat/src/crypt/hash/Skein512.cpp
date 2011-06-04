@@ -79,7 +79,7 @@ void Skein::HashComputation512(const void *_message, int blocks, u32 byte_count,
 
         // Parity extension
         t[2] = t[0] ^ t[1];
-        k[WORDS] = 0x5555555555555555LL;
+        k[WORDS] = 0x1BD11BDAA9FC1A22LL;
 
         // First full key injection
         u64 x[WORDS];

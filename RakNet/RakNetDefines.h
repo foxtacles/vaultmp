@@ -38,7 +38,7 @@
 /// Uncomment to use RakMemoryOverride for custom memory tracking
 /// See RakMemoryOverride.h. 
 #ifndef _USE_RAK_MEMORY_OVERRIDE
-#define _USE_RAK_MEMORY_OVERRIDE 1
+#define _USE_RAK_MEMORY_OVERRIDE 0
 #endif
 
 /// If defined, OpenSSL is enabled for the class TCPInterface
@@ -46,6 +46,9 @@
 /// Note that OpenSSL carries its own license restrictions that you should be aware of. If you don't agree, don't enable this define
 /// This also requires that you enable header search paths to DependentExtensions\openssl-0.9.8g
 // #define OPEN_SSL_CLIENT_SUPPORT
+#ifndef OPEN_SSL_CLIENT_SUPPORT
+#define OPEN_SSL_CLIENT_SUPPORT 0
+#endif
 
 /// Threshold at which to do a malloc / free rather than pushing data onto a fixed stack for the bitstream class
 /// Arbitrary size, just picking something likely to be larger than most packets
@@ -64,23 +67,28 @@
 #endif
 
 #ifndef RakAssert
-#if defined(_XBOX) || defined(X360)
-                    
-#else
+
+
+
+
 #if defined(_DEBUG)
 #define RakAssert(x) assert(x);
 #else
 #define RakAssert(x) 
 #endif
-#endif
+
 #endif
 
-/// This controls the amount of memory used per connection. If more than this many datagrams are sent without an ack, then the ack has no effect
+/// This controls the amount of memory used per connection.
+/// This many datagrams are tracked by datagramNumber. If more than this many datagrams are sent, then an ack for an older datagram would be ignored
+/// This results in an unnecessary resend in that case
 #ifndef DATAGRAM_MESSAGE_ID_ARRAY_LENGTH
 #define DATAGRAM_MESSAGE_ID_ARRAY_LENGTH 512
 #endif
 
 /// This is the maximum number of reliable user messages that can be on the wire at a time
+/// If this is too low, then high ping connections with a large throughput will be underutilized
+/// This will be evident because RakNetStatistics::messagesInSend buffer will increase over time, yet at the same time the outgoing bandwidth per second is less than your connection supports
 #ifndef RESEND_BUFFER_ARRAY_LENGTH
 #define RESEND_BUFFER_ARRAY_LENGTH 512
 #define RESEND_BUFFER_ARRAY_MASK 511
@@ -90,11 +98,61 @@
 // #define _LINK_DL_MALLOC
 
 #ifndef GET_TIME_SPIKE_LIMIT
-/// Workaround for http://support.microsoft.com/kb/274323 , only does anything on Windows and Linux
+/// Workaround for http://support.microsoft.com/kb/274323
 /// If two calls between RakNet::GetTime() happen farther apart than this time in microseconds, this delta will be returned instead
-/// \note RakNet itself calls RakNet::GetTime() constantly while active, so you won't see this limit unless you infrequently call RakNet::GetTime() while RakNet is not active
+/// Note: This will cause ID_TIMESTAMP to be temporarily inaccurate if you set a breakpoint that pauses the UpdateNetworkLoop() thread in RakPeer
 /// Define in RakNetDefinesOverrides.h to enable (non-zero) or disable (0)
 #define GET_TIME_SPIKE_LIMIT 0
 #endif
+
+// Use sliding window congestion control instead of ping based congestion control
+#ifndef USE_SLIDING_WINDOW_CONGESTION_CONTROL
+#define USE_SLIDING_WINDOW_CONGESTION_CONTROL 1
+#endif
+
+// When a large message is arriving, preallocate the memory for the entire block
+// This results in large messages not taking up time to reassembly with memcpy, but is vulnerable to attackers causing the host to run out of memory
+#ifndef PREALLOCATE_LARGE_MESSAGES
+#define PREALLOCATE_LARGE_MESSAGES 0
+#endif
+
+#ifndef RAKNET_SUPPORT_IPV6
+#define RAKNET_SUPPORT_IPV6 0
+#endif
+
+
+
+
+
+
+
+
+
+
+
+#ifndef RAKSTRING_TYPE
+#if defined(_UNICODE)
+#define RAKSTRING_TYPE RakWString
+#define RAKSTRING_TYPE_IS_UNICODE 1
+#else
+#define RAKSTRING_TYPE RakString
+#define RAKSTRING_TYPE_IS_UNICODE 0
+#endif
+#endif
+
+#ifndef RPC4_GLOBAL_REGISTRATION_MAX_FUNCTIONS
+#define RPC4_GLOBAL_REGISTRATION_MAX_FUNCTIONS 8
+#endif
+
+#ifndef RPC4_GLOBAL_REGISTRATION_MAX_FUNCTION_NAME_LENGTH
+#define RPC4_GLOBAL_REGISTRATION_MAX_FUNCTION_NAME_LENGTH 32
+#endif
+
+#ifndef XBOX_BYPASS_SECURITY
+#define XBOX_BYPASS_SECURITY 1
+#endif
+
+
+//#define USE_THREADED_SEND
 
 #endif // __RAKNET_DEFINES_H

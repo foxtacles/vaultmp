@@ -423,16 +423,16 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                         {
                             SetDlgItemText(hwnd, IDC_EDIT3, (char*) RAKNET_MASTER_ADDRESS);
                             master.SetBinaryAddress((char*) RAKNET_MASTER_ADDRESS);
-                            master.port = RAKNET_MASTER_PORT;
+                            master.SetPort(RAKNET_MASTER_PORT);
                         }
                         else
                         {
                             master.SetBinaryAddress(strtok(maddr, ":"));
                             char* cport = strtok(NULL, ":");
-                            master.port = cport != NULL ? atoi(cport) : RAKNET_MASTER_PORT;
+                            master.SetPort(cport != NULL ? atoi(cport) : RAKNET_MASTER_PORT);
                         }
 
-                        if (peer->Connect(master.ToString(false), master.port, 0, 0, 0, 0, 3, 500, 0) == CONNECTION_ATTEMPT_STARTED)
+                        if (peer->Connect(master.ToString(false), master.GetPort(), 0, 0, 0, 0, 3, 500, 0) == CONNECTION_ATTEMPT_STARTED)
                         {
                             bool query = true;
 
@@ -515,7 +515,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
                                             serverList.insert(pair<SystemAddress, ServerEntry>(addr, entry));
 
-                                            peer->Ping(addr.ToString(false), addr.port, false);
+                                            peer->Ping(addr.ToString(false), addr.GetPort(), false);
 
                                             SendMessage(wndprogressbar, PBM_STEPIT, 0, 0);
                                         }
@@ -578,7 +578,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                                                 entry->SetServerRule(key.C_String(), value.C_String());
                                             }
 
-                                            peer->Ping(addr.ToString(false), addr.port, false);
+                                            peer->Ping(addr.ToString(false), addr.GetPort(), false);
                                         }
                                         else
                                             if (i != serverList.end())
@@ -612,7 +612,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                                     {
                                         if (update && !lock)
                                         {
-                                            peer->Connect(selectedServer->ToString(false), selectedServer->port, 0, 0, 0, 0, 3, 500, 0);
+                                            peer->Connect(selectedServer->ToString(false), selectedServer->GetPort(), 0, 0, 0, 0, 3, 500, 0);
                                             lock = true;
                                         }
                                         else

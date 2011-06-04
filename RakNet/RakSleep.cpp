@@ -1,15 +1,17 @@
-#if defined(_XBOX) || defined(X360)
-                            
-#elif defined(_WIN32)
+
+
+#if   defined(_WIN32)
 #include "WindowsIncludes.h" // Sleep
-#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                                                
+
+
+
+
+
 #else
 #include <pthread.h>
 #include <time.h>
 #include <sys/time.h>
 #endif
-
 
 #include "RakSleep.h"
 
@@ -17,8 +19,11 @@ void RakSleep(unsigned int ms)
 {
 #ifdef _WIN32
 	Sleep(ms);
-#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                                                                                            
+
+
+
+
+
 #else
 	//Single thread sleep code thanks to Furquan Shaikh, http://somethingswhichidintknow.blogspot.com/2009/09/sleep-in-pthread.html
 	//Modified slightly from the original

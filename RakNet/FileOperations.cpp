@@ -1,6 +1,7 @@
+#include "FileOperations.h"
+#if _RAKNET_SUPPORT_FileOperations==1
 #include "RakMemoryOverride.h"
 #include "_FindFirst.h" // For linux
-#include "FileOperations.h"
 #include <stdio.h>
 #include <string.h>
 #ifdef _WIN32 
@@ -168,4 +169,5 @@ unsigned int GetFileLength(const char *path)
 #pragma warning( pop )
 #endif
 
+#endif // _RAKNET_SUPPORT_FileOperations
 

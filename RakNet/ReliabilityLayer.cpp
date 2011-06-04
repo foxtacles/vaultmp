@@ -12,6 +12,9 @@
 #include "RakAssert.h"
 #include "Rand.h"
 #include "MessageIdentifiers.h"
+#ifdef USE_THREADED_SEND
+#include "SendToThread.h"
+#endif
 #include <math.h>
 
 using namespace RakNet;
@@ -19,11 +22,11 @@ using namespace RakNet;
 // Can't figure out which library has this function on the PS3
 double Ceil(double d) {if (((double)((int)d))==d) return d; return (int) (d+1.0);}
 
-#if defined(new)
-#pragma push_macro("new")
-#undef new
-#define RELIABILITY_LAYER_NEW_UNDEF_ALLOCATING_QUEUE
-#endif
+// #if defined(new)
+// #pragma push_macro("new")
+// #undef new
+// #define RELIABILITY_LAYER_NEW_UNDEF_ALLOCATING_QUEUE
+// #endif
 
 
 //#define _DEBUG_LOGGER
@@ -49,19 +52,13 @@ typedef uint32_t BitstreamLengthEncoding;
 
 BPSTracker::TimeAndValue2::TimeAndValue2() {}
 BPSTracker::TimeAndValue2::~TimeAndValue2() {}
-BPSTracker::TimeAndValue2::TimeAndValue2(RakNet::TimeUS t, uint64_t v1) : time(t), value1(v1) {}
+BPSTracker::TimeAndValue2::TimeAndValue2(RakNet::TimeUS t, uint64_t v1) : value1(v1), time(t) {}
 //BPSTracker::TimeAndValue2::TimeAndValue2(RakNet::TimeUS t, uint64_t v1, uint64_t v2) : time(t), value1(v1), value2(v2) {}
 BPSTracker::BPSTracker() {Reset(_FILE_AND_LINE_);}
 BPSTracker::~BPSTracker() {}
 //void BPSTracker::Reset(const char *file, unsigned int line) {total1=total2=lastSec1=lastSec2=0; dataQueue.Clear(file,line);}
 void BPSTracker::Reset(const char *file, unsigned int line) {total1=lastSec1=0; dataQueue.Clear(file,line);}
-void BPSTracker::Push1(RakNet::TimeUS time, uint64_t value1) {
-	ClearExpired1(time);
-	dataQueue.Push(TimeAndValue2(time,value1),_FILE_AND_LINE_); total1+=value1; lastSec1+=value1;
-}
 //void BPSTracker::Push2(RakNetTimeUS time, uint64_t value1, uint64_t value2) {dataQueue.Push(TimeAndValue2(time,value1,value2),_FILE_AND_LINE_); total1+=value1; lastSec1+=value1;  total2+=value2; lastSec2+=value2;}
-uint64_t BPSTracker::GetBPS1(RakNet::TimeUS time) {ClearExpired1(time); return lastSec1;}
-uint64_t BPSTracker::GetBPS1Threadsafe(RakNet::TimeUS time) {(void) time; return lastSec1;}
 //uint64_t BPSTracker::GetBPS2(RakNetTimeUS time) {ClearExpired2(time); return lastSec2;}
 //void BPSTracker::GetBPS1And2(RakNetTimeUS time, uint64_t &out1, uint64_t &out2) {ClearExpired2(time); out1=lastSec1; out2=lastSec2;}
 uint64_t BPSTracker::GetTotal1(void) const {return total1;}
@@ -96,9 +93,11 @@ void BPSTracker::ClearExpired1(RakNet::TimeUS time)
 
 struct DatagramHeaderFormat
 {
-	// Time must be first, see SendToThread.cpp
+#if INCLUDE_TIMESTAMP_WITH_DATAGRAMS==1
 	CCTimeType sourceSystemTime;
+#endif
 	DatagramSequenceNumberType datagramNumber;
+
 	// Use floats to save bandwidth
 	//	float B; // Link capacity
 	float AS; // Data arrival rate
@@ -118,7 +117,11 @@ struct DatagramHeaderFormat
 	static unsigned int GetDataHeaderByteLength()
 	{
 		//return 2 + 3 + sizeof(RakNet::TimeMS) + sizeof(float)*2;
-		return 2 + 3 + sizeof(CCTimeType) + sizeof(float)*1;
+		return 2 + 3 +
+#if INCLUDE_TIMESTAMP_WITH_DATAGRAMS==1
+			sizeof(RakNetTimeMS) +
+#endif
+			sizeof(float)*1;
 	}
 
 	void Serialize(RakNet::BitStream *b)
@@ -134,7 +137,9 @@ struct DatagramHeaderFormat
 			b->Write(true);
 			b->Write(hasBAndAS);
 			b->AlignWriteToByteBoundary();
-			uint32_t timeMSLow=(uint32_t) sourceSystemTime&0xFFFFFFFF; b->Write(timeMSLow);
+#if INCLUDE_TIMESTAMP_WITH_DATAGRAMS==1
+			RakNet::TimeMS timeMSLow=(RakNet::TimeMS) sourceSystemTime&0xFFFFFFFF; b->Write(timeMSLow);
+#endif
 			if (hasBAndAS)
 			{
 				//		b->Write(B);
@@ -154,7 +159,9 @@ struct DatagramHeaderFormat
 			b->Write(isContinuousSend);
 			b->Write(needsBAndAs);
 			b->AlignWriteToByteBoundary();
-			uint32_t timeMSLow=(uint32_t) sourceSystemTime&0xFFFFFFFF; b->Write(timeMSLow);
+#if INCLUDE_TIMESTAMP_WITH_DATAGRAMS==1
+			RakNet::TimeMS timeMSLow=(RakNet::TimeMS) sourceSystemTime&0xFFFFFFFF; b->Write(timeMSLow);
+#endif
 			b->Write(datagramNumber);
 		}
 	}
@@ -172,7 +179,9 @@ struct DatagramHeaderFormat
 			isPacketPair=false;
 			b->Read(hasBAndAS);
 			b->AlignReadToByteBoundary();
-			uint32_t timeMS; b->Read(timeMS); sourceSystemTime=(CCTimeType) timeMS;
+#if INCLUDE_TIMESTAMP_WITH_DATAGRAMS==1
+			RakNet::TimeMS timeMS; b->Read(timeMS); sourceSystemTime=(CCTimeType) timeMS;
+#endif
 			if (hasBAndAS)
 			{
 				//			b->Read(B);
@@ -192,14 +201,18 @@ struct DatagramHeaderFormat
 				b->Read(isContinuousSend);
 				b->Read(needsBAndAs);
 				b->AlignReadToByteBoundary();
-				uint32_t timeMS; b->Read(timeMS); sourceSystemTime=(CCTimeType) timeMS;
+#if INCLUDE_TIMESTAMP_WITH_DATAGRAMS==1
+				RakNet::TimeMS timeMS; b->Read(timeMS); sourceSystemTime=(CCTimeType) timeMS;
+#endif
 				b->Read(datagramNumber);
 			}
 		}
 	}
 };
 
+
 #pragma warning(disable:4702)   // unreachable code
+
 
 #ifdef _WIN32
 //#define _DEBUG_LOGGER
@@ -217,13 +230,19 @@ using namespace RakNet;
 
 int RakNet::SplitPacketChannelComp( SplitPacketIdType const &key, SplitPacketChannel* const &data )
 {
+#if PREALLOCATE_LARGE_MESSAGES==1
+	if (key < data->returnedPacket->splitPacketId)
+		return -1;
+	if (key == data->returnedPacket->splitPacketId)
+		return 0;
+#else
 	if (key < data->splitPacketList[0]->splitPacketId)
 		return -1;
 	if (key == data->splitPacketList[0]->splitPacketId)
 		return 0;
+#endif
 	return 1;
 }
-
 
 // DEFINE_MULTILIST_PTR_TO_MEMBER_COMPARISONS( InternalPacket, SplitPacketIndexType, splitPacketIndex )
 
@@ -252,7 +271,7 @@ bool operator==( const DataStructures::MLKeyRef<InternalPacket *> &inputKey, con
 {
 	return inputKey.Get()->splitPacketIndex == cls->splitPacketIndex;
 }
-/*
+
 int SplitPacketIndexComp( SplitPacketIndexType const &key, InternalPacket* const &data )
 {
 if (key < data->splitPacketIndex)
@@ -261,7 +280,6 @@ if (key == data->splitPacketIndex)
 return 0;
 return 1;
 }
-*/
 
 //-------------------------------------------------------------------------------------------------------
 // Constructor
@@ -288,7 +306,7 @@ updateBitStream( MAXIMUM_MTU_SIZE
 #endif
 
 	InitializeVariables();
-
+//int i = sizeof(InternalPacket);
 	datagramHistoryMessagePool.SetPageSize(sizeof(MessageNumberNode)*128);
 	internalPacketPool.SetPageSize(sizeof(InternalPacket)*128);
 	refCountedDataPool.SetPageSize(sizeof(InternalPacket)*32);
@@ -361,6 +379,7 @@ void ReliabilityLayer::InitializeVariables( void )
 	bandwidthExceededStatistic=false;
 	remoteSystemTime=0;
 	unreliableTimeout=0;
+	lastBpsClear=0;
 
 	// Disable packet pairs
 	countdownToNextPacketPair=15;
@@ -437,7 +456,14 @@ void ReliabilityLayer::FreeThreadSafeMemory( void )
 			FreeInternalPacketData(splitPacketChannelList[i]->splitPacketList[j], _FILE_AND_LINE_ );
 			ReleaseToInternalPacketPool( splitPacketChannelList[i]->splitPacketList[j] );
 		}
-		RakNet::OP_DELETE(splitPacketChannelList[i], _FILE_AND_LINE_);
+#if PREALLOCATE_LARGE_MESSAGES==1
+		if (splitPacketChannelList[i]->returnedPacket)
+		{
+			FreeInternalPacketData(splitPacketChannelList[i]->returnedPacket, __FILE__, __LINE__ );
+			ReleaseToInternalPacketPool( splitPacketChannelList[i]->returnedPacket );
+		}
+#endif
+		RakNet::OP_DELETE(splitPacketChannelList[i], __FILE__, __LINE__);
 	}
 	splitPacketChannelList.Clear(false, _FILE_AND_LINE_);
 
@@ -567,8 +593,8 @@ void ReliabilityLayer::FreeThreadSafeMemory( void )
 //split packets
 //-------------------------------------------------------------------------------------------------------
 bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
-	const char *buffer, unsigned int length, SystemAddress systemAddress, DataStructures::List<PluginInterface2*> &messageHandlerList, int MTUSize,
-	SOCKET s, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, CCTimeType timeRead)
+	const char *buffer, unsigned int length, SystemAddress &systemAddress, DataStructures::List<PluginInterface2*> &messageHandlerList, int MTUSize,
+	SOCKET s, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions, CCTimeType timeRead)
 {
 #ifdef _DEBUG
 	RakAssert( !( buffer == 0 ) );
@@ -630,6 +656,8 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 	{
 		DatagramSequenceNumberType datagramNumber;
 		// datagramNumber=dhf.datagramNumber;
+
+#if INCLUDE_TIMESTAMP_WITH_DATAGRAMS==1
 		RakNet::TimeMS timeMSLow=(RakNet::TimeMS) timeRead&0xFFFFFFFF;
 		CCTimeType rtt = timeMSLow-dhf.sourceSystemTime;
 #if CC_TIME_TYPE_BYTES==4
@@ -644,6 +672,8 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 		//	RakAssert(rtt < 500000);
 		//	printf("%i ", (RakNet::TimeMS)(rtt/1000));
 		ackPing=rtt;
+#endif
+
 #ifdef _DEBUG
 		if (dhf.hasBAndAS==false)
 		{
@@ -674,16 +704,35 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 			}
 			for (datagramNumber=incomingAcks.ranges[i].minIndex; datagramNumber >= incomingAcks.ranges[i].minIndex && datagramNumber <= incomingAcks.ranges[i].maxIndex; datagramNumber++)
 			{
-				congestionManager.OnAck(timeRead, rtt, dhf.hasBAndAS, 0, dhf.AS, totalUserDataBytesAcked, bandwidthExceededStatistic, datagramNumber );
-
-				MessageNumberNode *messageNumberNode = GetMessageNumberNodeByDatagramIndex(datagramNumber);
-				while (messageNumberNode)
-				{
-					RemovePacketFromResendListAndDeleteOlderReliableSequenced( messageNumberNode->messageNumber, timeRead, messageHandlerList, systemAddress );
-					messageNumberNode=messageNumberNode->next;
-				}
+	//			bool isReliable;
+				MessageNumberNode *messageNumberNode = GetMessageNumberNodeByDatagramIndex(datagramNumber/*, &isReliable*/);
 				if (messageNumberNode)
+				{
+				//	printf("%p Got ack for %i\n", this, datagramNumber.val);
+#if INCLUDE_TIMESTAMP_WITH_DATAGRAMS==1
+					congestionManager.OnAck(timeRead, rtt, dhf.hasBAndAS, 0, dhf.AS, totalUserDataBytesAcked, bandwidthExceededStatistic, datagramNumber );
+#else
+					congestionManager.OnAck(timeRead, 0, dhf.hasBAndAS, 0, dhf.AS, totalUserDataBytesAcked, bandwidthExceededStatistic, datagramNumber );
+#endif
+
+					while (messageNumberNode)
+					{
+						// TESTING1
+// 						printf("Should remove %i on ack for datagramNumber=%i.\n", messageNumberNode->messageNumber.val, datagramNumber.val);
+
+						RemovePacketFromResendListAndDeleteOlderReliableSequenced( messageNumberNode->messageNumber, timeRead, messageHandlerList, systemAddress );
+						messageNumberNode=messageNumberNode->next;
+					}
+
 					RemoveFromDatagramHistory(datagramNumber);
+				}
+// 				else if (isReliable)
+// 				{
+// 					// Previously used slot, rather than empty unreliable slot
+// 					printf("%p Ack %i is duplicate\n", this, datagramNumber.val);
+// 
+//  					congestionManager.OnDuplicateAck(timeRead, datagramNumber);
+// 				}
 			}
 		}
 	}
@@ -718,7 +767,8 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 				// REMOVEME
 				//				printf("%p NAK %i\n", this, dhf.datagramNumber.val);
 
-				MessageNumberNode *messageNumberNode = GetMessageNumberNodeByDatagramIndex(messageNumber);
+		//		bool isReliable;
+				MessageNumberNode *messageNumberNode = GetMessageNumberNodeByDatagramIndex(messageNumber/*, &isReliable*/);
 				while (messageNumberNode)
 				{
 					// Update timers so resends occur immediately
@@ -758,12 +808,13 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 		}
 		remoteSystemNeedsBAndAS=dhf.needsBAndAs;
 
-		// REMOVEME
-		//		printf("%p Send ack %i\n", this, dhf.datagramNumber.val);
-
 		// Ack dhf.datagramNumber
 		// Ack even unreliable messages for congestion control, just don't resend them on no ack
+#if INCLUDE_TIMESTAMP_WITH_DATAGRAMS==1
 		SendAcknowledgementPacket( dhf.datagramNumber, dhf.sourceSystemTime);
+#else
+		SendAcknowledgementPacket( dhf.datagramNumber, 0);
+#endif
 
 		InternalPacket* internalPacket = CreateInternalPacketFromBitStream( &socketData, timeRead );
 		if (internalPacket==0)
@@ -805,6 +856,9 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 					// The subtraction unsigned overflow is intentional
 					holeCount = (DatagramSequenceNumberType)(internalPacket->reliableMessageNumber-receivedPacketsBaseIndex);
 					const DatagramSequenceNumberType typeRange = (DatagramSequenceNumberType)(const uint32_t)-1;
+
+					// TESTING1
+// 					printf("waiting on reliableMessageNumber=%i holeCount=%i datagramNumber=%i\n", receivedPacketsBaseIndex.val, holeCount.val, dhf.datagramNumber.val);
 
 					if (holeCount==(DatagramSequenceNumberType) 0)
 					{
@@ -923,7 +977,7 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 
 							// Sequenced
 							internalPacket = BuildPacketFromSplitPacketList( internalPacket->splitPacketId, timeRead,
-								s, systemAddress, rnr, remotePortRakNetWasStartedOn_PS3);
+								s, systemAddress, rnr, remotePortRakNetWasStartedOn_PS3, extraSocketOptions);
 
 							if ( internalPacket )
 							{
@@ -973,7 +1027,7 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 					InsertIntoSplitPacketList( internalPacket, timeRead );
 
 					internalPacket = BuildPacketFromSplitPacketList( internalPacket->splitPacketId, timeRead,
-						s, systemAddress, rnr, remotePortRakNetWasStartedOn_PS3);
+						s, systemAddress, rnr, remotePortRakNetWasStartedOn_PS3, extraSocketOptions);
 
 					if ( internalPacket == 0 )
 					{
@@ -1161,7 +1215,7 @@ bool ReliabilityLayer::Send( char *data, BitSize_t numberOfBitsToSend, PacketPri
 
 	if ( makeDataCopy )
 	{
-		AllocInternalPacketData(internalPacket, numberOfBytesToSend, _FILE_AND_LINE_ );
+		AllocInternalPacketData(internalPacket, numberOfBytesToSend, true, _FILE_AND_LINE_ );
 		//internalPacket->data = (unsigned char*) rakMalloc_Ex( numberOfBytesToSend, _FILE_AND_LINE_ );
 		memcpy( internalPacket->data, data, numberOfBytesToSend );
 	}
@@ -1264,10 +1318,10 @@ bool ReliabilityLayer::Send( char *data, BitSize_t numberOfBitsToSend, PacketPri
 //-------------------------------------------------------------------------------------------------------
 // Run this once per game cycle.  Handles internal lists and actually does the send
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSize, CCTimeType time,
+void ReliabilityLayer::Update( SOCKET s, SystemAddress &systemAddress, int MTUSize, CCTimeType time,
 							  unsigned bitsPerSecondLimit,
 							  DataStructures::List<PluginInterface2*> &messageHandlerList,
-							  RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3)
+							  RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions)
 
 {
 	(void) MTUSize;
@@ -1286,7 +1340,7 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 		if (delayList.Peek()->sendTime <= timeMs)
 		{
 			DataAndTime *dat = delayList.Pop();
-			SocketLayer::Instance()->SendTo( dat->s, dat->data, dat->length, systemAddress.binaryAddress, systemAddress.port, dat->remotePortRakNetWasStartedOn_PS3 );
+			SocketLayer::SendTo( dat->s, dat->data, dat->length, systemAddress, dat->remotePortRakNetWasStartedOn_PS3, dat->extraSocketOptions, __FILE__, __LINE__  );
 			RakNet::OP_DELETE(dat,__FILE__,__LINE__);
 		}
 		break;
@@ -1374,7 +1428,7 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 
 	if (congestionManager.ShouldSendACKs(time,timeSinceLastTick))
 	{
-		SendACKs(s, systemAddress, time, rnr, remotePortRakNetWasStartedOn_PS3);
+		SendACKs(s, systemAddress, time, rnr, remotePortRakNetWasStartedOn_PS3, extraSocketOptions);
 	}
 
 	if (NAKs.Size()>0)
@@ -1386,7 +1440,7 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 		dhfNAK.isPacketPair=false;
 		dhfNAK.Serialize(&updateBitStream);
 		NAKs.Serialize(&updateBitStream, GetMaxDatagramSizeExcludingMessageHeaderBits(), true);
-		SendBitStream( s, systemAddress, &updateBitStream, rnr, remotePortRakNetWasStartedOn_PS3, time );
+		SendBitStream( s, systemAddress, &updateBitStream, rnr, remotePortRakNetWasStartedOn_PS3, extraSocketOptions, time );
 	}
 
 	DatagramHeaderFormat dhf;
@@ -1404,6 +1458,24 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 
 	statistics.BPSLimitByOutgoingBandwidthLimit = BITS_TO_BYTES(bitsPerSecondLimit);
 	statistics.BPSLimitByCongestionControl = congestionManager.GetBytesPerSecondLimitByCongestionControl();
+
+	unsigned int i;
+	if (time > lastBpsClear+
+#if CC_TIME_TYPE_BYTES==4
+		100
+#else
+		100000
+#endif
+		)
+	{
+		for (i=0; i < RNS_PER_SECOND_METRICS_COUNT; i++)
+		{
+			bpsMetrics[i].ClearExpired1(time);
+		}
+
+		lastBpsClear=time;
+	}
+
 
 	if (hasDataToSendOrResend==true)
 	{
@@ -1445,10 +1517,9 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 							PopListHead(false);
 
 							InternalPacket *ackReceipt = AllocateFromInternalPacketPool();
-							AllocInternalPacketData(ackReceipt, 5,  _FILE_AND_LINE_ );
+							AllocInternalPacketData(ackReceipt, 5,  false, _FILE_AND_LINE_ );
 							ackReceipt->dataBitLength=BYTES_TO_BITS(5);
 							ackReceipt->data[0]=(MessageID)ID_SND_RECEIPT_LOSS;
-							ackReceipt->allocationScheme=InternalPacket::NORMAL;
 							memcpy(ackReceipt->data+sizeof(MessageID), &internalPacket->sendReceiptSerial, sizeof(internalPacket->sendReceiptSerial));
 							outputQueue.Push(ackReceipt, _FILE_AND_LINE_ );
 
@@ -1476,8 +1547,13 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 						CC_DEBUG_PRINTF_2("Rs %i ", internalPacket->reliableMessageNumber.val);
 
 						bpsMetrics[(int) USER_MESSAGE_BYTES_RESENT].Push1(time,BITS_TO_BYTES(internalPacket->dataBitLength));
+
+						// Testing1
+// 						if (internalPacket->reliability==RELIABLE_ORDERED)
+// 							printf("resend reliableMessageNumber %i with datagram %i\n", internalPacket->reliableMessageNumber.val, congestionManager.GetNextDatagramSequenceNumber().val);
+
 						PushPacket(time,internalPacket,true); // Affects GetNewTransmissionBandwidth()
-						internalPacket->timesSent++;
+//						internalPacket->timesSent++;
 						internalPacket->nextActionTime = congestionManager.GetRTOForRetransmission()+time;
 #if CC_TIME_TYPE_BYTES==4
 						if (internalPacket->nextActionTime-time > 10000)
@@ -1496,9 +1572,9 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 						for (unsigned int messageHandlerIndex=0; messageHandlerIndex < messageHandlerList.Size(); messageHandlerIndex++)
 						{
 #if CC_TIME_TYPE_BYTES==4
-							messageHandlerList[messageHandlerIndex]->OnInternalPacket(internalPacket, internalPacket->reliableMessageNumber, systemAddress, time, true);
+							messageHandlerList[messageHandlerIndex]->OnInternalPacket(internalPacket, packetsToSendThisUpdateDatagramBoundaries.Size()+congestionManager.GetNextDatagramSequenceNumber(), systemAddress, (RakNet::TimeMS) time, true);
 #else
-							messageHandlerList[messageHandlerIndex]->OnInternalPacket(internalPacket, internalPacket->reliableMessageNumber, systemAddress, (RakNet::TimeMS)(time/(CCTimeType)1000), true);
+							messageHandlerList[messageHandlerIndex]->OnInternalPacket(internalPacket, packetsToSendThisUpdateDatagramBoundaries.Size()+congestionManager.GetNextDatagramSequenceNumber(), systemAddress, (RakNet::TimeMS)(time/(CCTimeType)1000), true);
 #endif
 						}
 
@@ -1641,18 +1717,23 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 						//		printf("post:%i ", unacknowledgedBytes);
 						sendReliableMessageNumberIndex++;
 					}
-					internalPacket->timesSent=1;
+//					internalPacket->timesSent=1;
 					// If isReliable is false, the packet and its contents will be added to a list to be freed in ClearPacketsAndDatagrams
 					// However, the internalPacket structure will remain allocated and be in the resendBuffer list if it requires a receipt
 					bpsMetrics[(int) USER_MESSAGE_BYTES_SENT].Push1(time,BITS_TO_BYTES(internalPacket->dataBitLength));
+
+					// Testing1
+// 					if (internalPacket->reliability==RELIABLE_ORDERED)
+// 						printf("send reliableMessageNumber %i in datagram %i\n", internalPacket->reliableMessageNumber.val, congestionManager.GetNextDatagramSequenceNumber().val);
+
 					PushPacket(time,internalPacket, isReliable);
 
 					for (unsigned int messageHandlerIndex=0; messageHandlerIndex < messageHandlerList.Size(); messageHandlerIndex++)
 					{
 #if CC_TIME_TYPE_BYTES==4
-						messageHandlerList[messageHandlerIndex]->OnInternalPacket(internalPacket, internalPacket->reliableMessageNumber, systemAddress, time, true);
+						messageHandlerList[messageHandlerIndex]->OnInternalPacket(internalPacket, packetsToSendThisUpdateDatagramBoundaries.Size()+congestionManager.GetNextDatagramSequenceNumber(), systemAddress, (RakNet::TimeMS)time, true);
 #else
-						messageHandlerList[messageHandlerIndex]->OnInternalPacket(internalPacket, internalPacket->reliableMessageNumber, systemAddress, (RakNet::TimeMS)(time/(CCTimeType)1000), true);
+						messageHandlerList[messageHandlerIndex]->OnInternalPacket(internalPacket, packetsToSendThisUpdateDatagramBoundaries.Size()+congestionManager.GetNextDatagramSequenceNumber(), systemAddress, (RakNet::TimeMS)(time/(CCTimeType)1000), true);
 #endif
 					}
 					pushedAnything=true;
@@ -1680,8 +1761,10 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 			if (datagramIndex>0)
 				dhf.isContinuousSend=true;
 			MessageNumberNode* messageNumberNode = 0;
-			dhf.datagramNumber=congestionManager.GetNextDatagramSequenceNumber();
+			dhf.datagramNumber=congestionManager.GetAndIncrementNextDatagramSequenceNumber();
 			dhf.isPacketPair=datagramsToSendThisUpdateIsPair[datagramIndex];
+
+			//printf("%p pushing datagram %i\n", this, dhf.datagramNumber.val);
 
 			bool isSecondOfPacketPair=dhf.isPacketPair && datagramIndex>0 &&  datagramsToSendThisUpdateIsPair[datagramIndex-1];
 			unsigned int msgIndex, msgTerm;
@@ -1697,7 +1780,9 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 			}
 
 			// More accurate time to reset here
+#if INCLUDE_TIMESTAMP_WITH_DATAGRAMS==1
 			dhf.sourceSystemTime=RakNet::GetTimeUS();
+#endif
 			updateBitStream.Reset();
 			dhf.Serialize(&updateBitStream);
 			CC_DEBUG_PRINTF_2("S%i ",dhf.datagramNumber.val);
@@ -1735,8 +1820,7 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 
 			if (messageNumberNode==0)
 			{
-				// REMOVEME
-				//				printf("%p AddFirstToDatagramHistory (no reliable) %i\n", this, dhf.datagramNumber.val);
+				// Unreliable, add dummy node
 				AddFirstToDatagramHistory(dhf.datagramNumber);
 			}
 
@@ -1745,7 +1829,7 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 
 			congestionManager.OnSendBytes(time,UDP_HEADER_SIZE+DatagramHeaderFormat::GetDataHeaderByteLength());
 
-			SendBitStream( s, systemAddress, &updateBitStream, rnr, remotePortRakNetWasStartedOn_PS3, time );
+			SendBitStream( s, systemAddress, &updateBitStream, rnr, remotePortRakNetWasStartedOn_PS3, extraSocketOptions, time );
 
 			bandwidthExceededStatistic=outgoingPacketBuffer.Size()>0;
 			// 			bandwidthExceededStatistic=sendPacketSet[0].IsEmpty()==false ||
@@ -1779,7 +1863,7 @@ void ReliabilityLayer::Update( SOCKET s, SystemAddress systemAddress, int MTUSiz
 //-------------------------------------------------------------------------------------------------------
 // Writes a bitstream to the socket
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::SendBitStream( SOCKET s, SystemAddress systemAddress, RakNet::BitStream *bitStream, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, CCTimeType currentTime)
+void ReliabilityLayer::SendBitStream( SOCKET s, SystemAddress &systemAddress, RakNet::BitStream *bitStream, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions, CCTimeType currentTime)
 {
 	(void) systemAddress;
 	(void) rnr;
@@ -1809,6 +1893,7 @@ void ReliabilityLayer::SendBitStream( SOCKET s, SystemAddress systemAddress, Rak
 			dat->length=length;
 			dat->sendTime = RakNet::GetTimeMS() + delay;
 			dat->remotePortRakNetWasStartedOn_PS3=remotePortRakNetWasStartedOn_PS3;
+			dat->extraSocketOptions=extraSocketOptions;
 			for (unsigned int i=0; i < delayList.Size(); i++)
 			{
 				if (dat->sendTime < delayList[i]->sendTime)
@@ -1842,7 +1927,19 @@ void ReliabilityLayer::SendBitStream( SOCKET s, SystemAddress systemAddress, Rak
 	bpsMetrics[(int) ACTUAL_BYTES_SENT].Push1(currentTime,length);
 
 	RakAssert(length <= congestionManager.GetMTU());
-	SocketLayer::Instance()->SendTo( s, ( char* ) bitStream->GetData(), length, systemAddress.binaryAddress, systemAddress.port, remotePortRakNetWasStartedOn_PS3 );
+
+#ifdef USE_THREADED_SEND
+	SendToThread::SendToThreadBlock *block =  SendToThread::AllocateBlock();
+	memcpy(block->data, bitStream->GetData(), length);
+	block->dataWriteOffset=length;
+	block->extraSocketOptions=extraSocketOptions;
+	block->remotePortRakNetWasStartedOn_PS3=remotePortRakNetWasStartedOn_PS3;
+	block->s=s;
+	block->systemAddress=systemAddress;
+	SendToThread::ProcessBlock(block);
+#else
+	SocketLayer::SendTo( s, ( char* ) bitStream->GetData(), length, systemAddress, remotePortRakNetWasStartedOn_PS3, extraSocketOptions, __FILE__, __LINE__  );
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------------
@@ -1940,7 +2037,7 @@ void ReliabilityLayer::UpdateWindowFromAck( CCTimeType time )
 //-------------------------------------------------------------------------------------------------------
 // Does what the function name says
 //-------------------------------------------------------------------------------------------------------
-unsigned ReliabilityLayer::RemovePacketFromResendListAndDeleteOlderReliableSequenced( const MessageNumberType messageNumber, CCTimeType time, DataStructures::List<PluginInterface2*> &messageHandlerList, SystemAddress systemAddress )
+unsigned ReliabilityLayer::RemovePacketFromResendListAndDeleteOlderReliableSequenced( const MessageNumberType messageNumber, CCTimeType time, DataStructures::List<PluginInterface2*> &messageHandlerList, const SystemAddress &systemAddress )
 {
 	(void) time;
 	(void) messageNumber;
@@ -1960,12 +2057,25 @@ unsigned ReliabilityLayer::RemovePacketFromResendListAndDeleteOlderReliableSeque
 #endif
 	}
 
+	// Testing1
+// 	if (resendLinkedListHead)
+// 	{
+// 		InternalPacket *internalPacket = resendLinkedListHead;
+// 		do 
+// 		{
+// 			internalPacket=internalPacket->resendNext;
+// 			printf("%i ", internalPacket->reliableMessageNumber.val);
+// 		} while (internalPacket!=resendLinkedListHead);
+// 		printf("\n");
+// 	}
+
 	//	bool deleted;
 	//	deleted=resendTree.Delete(messageNumber, internalPacket);
 	internalPacket = resendBuffer[messageNumber & RESEND_BUFFER_ARRAY_MASK];
-	if (internalPacket)
+	// May ask to remove twice, for example resend twice, then second ack
+	if (internalPacket && internalPacket->reliableMessageNumber==messageNumber)
 	{
-		ValidateResendList();
+	//	ValidateResendList();
 		resendBuffer[messageNumber & RESEND_BUFFER_ARRAY_MASK]=0;
 		CC_DEBUG_PRINTF_2("AckRcv %i ", messageNumber);
 
@@ -1981,10 +2091,9 @@ unsigned ReliabilityLayer::RemovePacketFromResendListAndDeleteOlderReliableSeque
 			)
 		{
 			InternalPacket *ackReceipt = AllocateFromInternalPacketPool();
-			AllocInternalPacketData(ackReceipt, 5,  _FILE_AND_LINE_ );
+			AllocInternalPacketData(ackReceipt, 5,  false, _FILE_AND_LINE_ );
 			ackReceipt->dataBitLength=BYTES_TO_BITS(5);
 			ackReceipt->data[0]=(MessageID)ID_SND_RECEIPT_ACKED;
-			ackReceipt->allocationScheme=InternalPacket::NORMAL;
 			memcpy(ackReceipt->data+sizeof(MessageID), &internalPacket->sendReceiptSerial, sizeof(internalPacket->sendReceiptSerial));
 			outputQueue.Push(ackReceipt, _FILE_AND_LINE_ );
 		}
@@ -2021,6 +2130,9 @@ unsigned ReliabilityLayer::RemovePacketFromResendListAndDeleteOlderReliableSeque
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::SendAcknowledgementPacket( const DatagramSequenceNumberType messageNumber, CCTimeType time )
 {
+
+	// REMOVEME
+	// printf("%p Send ack %i\n", this, messageNumber.val);
 
 	nextAckTimeToSend=time;
 	acknowlegements.Insert(messageNumber);
@@ -2102,7 +2214,7 @@ BitSize_t ReliabilityLayer::WriteToBitStreamFromInternalPacket( RakNet::BitStrea
 	if (internalPacket->reliability==UNRELIABLE_WITH_ACK_RECEIPT)
 		tempChar=UNRELIABLE;
 	else if (internalPacket->reliability==RELIABLE_WITH_ACK_RECEIPT)
-		tempChar=RELIABLE_WITH_ACK_RECEIPT;
+		tempChar=RELIABLE;
 	else if (internalPacket->reliability==RELIABLE_ORDERED_WITH_ACK_RECEIPT)
 		tempChar=RELIABLE_ORDERED;
 	else
@@ -2242,7 +2354,7 @@ InternalPacket* ReliabilityLayer::CreateInternalPacketFromBitStream( RakNet::Bit
 	}
 
 	// Allocate memory to hold our data
-	AllocInternalPacketData(internalPacket, BITS_TO_BYTES( internalPacket->dataBitLength ),  _FILE_AND_LINE_ );
+	AllocInternalPacketData(internalPacket, BITS_TO_BYTES( internalPacket->dataBitLength ), false, _FILE_AND_LINE_ );
 	RakAssert(BITS_TO_BYTES( internalPacket->dataBitLength )<MAXIMUM_MTU_SIZE);
 
 	if (internalPacket->data == 0)
@@ -2414,14 +2526,14 @@ void ReliabilityLayer::SplitPacket( InternalPacket *internalPacket )
 	// Optimization
 	// internalPacketArray = RakNet::OP_NEW<InternalPacket*>(internalPacket->splitPacketCount, _FILE_AND_LINE_ );
 	bool usedAlloca=false;
-#if !defined(_XBOX) && !defined(_X360)
+
 	if (sizeof( InternalPacket* ) * internalPacket->splitPacketCount < MAX_ALLOCA_STACK_ALLOCATION)
 	{
 		internalPacketArray = ( InternalPacket** ) alloca( sizeof( InternalPacket* ) * internalPacket->splitPacketCount );
 		usedAlloca=true;
 	}
 	else
-#endif
+
 		internalPacketArray = (InternalPacket**) rakMalloc_Ex( sizeof(InternalPacket*) * internalPacket->splitPacketCount, _FILE_AND_LINE_ );
 
 	for ( i = 0; i < ( int ) internalPacket->splitPacketCount; i++ )
@@ -2512,19 +2624,106 @@ void ReliabilityLayer::InsertIntoSplitPacketList( InternalPacket * internalPacke
 	index=splitPacketChannelList.GetIndexFromKey(internalPacket->splitPacketId, &objectExists);
 	if (objectExists==false)
 	{
-		SplitPacketChannel *newChannel = RakNet::OP_NEW<SplitPacketChannel>( _FILE_AND_LINE_ );
-		//SplitPacketChannel *newChannel = RakNet::OP_NEW<SplitPacketChannel>(1, _FILE_AND_LINE_ );
+		SplitPacketChannel *newChannel = RakNet::OP_NEW<SplitPacketChannel>( __FILE__, __LINE__ );
+#if PREALLOCATE_LARGE_MESSAGES==1
+		index=splitPacketChannelList.Insert(internalPacket->splitPacketId, newChannel, true, __FILE__,__LINE__);
+		newChannel->returnedPacket=CreateInternalPacketCopy( internalPacket, 0, 0, time );
+		newChannel->gotFirstPacket=false;
+		newChannel->splitPacketsArrived=0;
+		AllocInternalPacketData(newChannel->returnedPacket, BITS_TO_BYTES( internalPacket->dataBitLength*internalPacket->splitPacketCount ),  __FILE__, __LINE__ );
+		RakAssert(newChannel->returnedPacket->data);
+#else
 		newChannel->firstPacket=0;
-		index=splitPacketChannelList.Insert(internalPacket->splitPacketId, newChannel, true, _FILE_AND_LINE_);
+		index=splitPacketChannelList.Insert(internalPacket->splitPacketId, newChannel, true, __FILE__,__LINE__);
 		// Preallocate to the final size, to avoid runtime copies
-		newChannel->splitPacketList.Preallocate(internalPacket->splitPacketCount, _FILE_AND_LINE_);
+		newChannel->splitPacketList.Preallocate(internalPacket->splitPacketCount, __FILE__,__LINE__);
+
+#endif
 	}
-	splitPacketChannelList[index]->splitPacketList.Insert(internalPacket, _FILE_AND_LINE_ );
+
+#if PREALLOCATE_LARGE_MESSAGES==1
+	splitPacketChannelList[index]->lastUpdateTime=time;
+	splitPacketChannelList[index]->splitPacketsArrived++;
+	splitPacketChannelList[index]->returnedPacket->dataBitLength+=internalPacket->dataBitLength;
+
+	bool dealloc;
+	if (internalPacket->splitPacketIndex==0)
+	{
+		splitPacketChannelList[index]->gotFirstPacket=true;
+		splitPacketChannelList[index]->stride=BITS_TO_BYTES(internalPacket->dataBitLength);
+
+		for (unsigned int j=0; j < splitPacketChannelList[index]->splitPacketList.Size(); j++)
+		{
+			memcpy(splitPacketChannelList[index]->returnedPacket->data+internalPacket->splitPacketIndex*splitPacketChannelList[index]->stride, internalPacket->data, (size_t) BITS_TO_BYTES(internalPacket->dataBitLength));
+			FreeInternalPacketData(splitPacketChannelList[index]->splitPacketList[j], __FILE__, __LINE__ );
+			ReleaseToInternalPacketPool(splitPacketChannelList[index]->splitPacketList[j]);
+		}
+
+		memcpy(splitPacketChannelList[index]->returnedPacket->data, internalPacket->data, (size_t) BITS_TO_BYTES(internalPacket->dataBitLength));
+		splitPacketChannelList[index]->splitPacketList.Clear(true,__FILE__,__LINE__);
+		dealloc=true;
+	}
+	else
+	{
+		if (splitPacketChannelList[index]->gotFirstPacket==true)
+		{
+			memcpy(splitPacketChannelList[index]->returnedPacket->data+internalPacket->splitPacketIndex*splitPacketChannelList[index]->stride, internalPacket->data, (size_t) BITS_TO_BYTES(internalPacket->dataBitLength));
+			dealloc=true;
+		}
+		else
+		{
+			splitPacketChannelList[index]->splitPacketList.Push(internalPacket,__FILE__,__LINE__);
+			dealloc=false;
+		}
+	}
+
+	if (splitPacketChannelList[index]->gotFirstPacket==true &&
+		splitMessageProgressInterval &&
+		// 		splitPacketChannelList[index]->firstPacket &&
+		// 		splitPacketChannelList[index]->splitPacketList.Size()!=splitPacketChannelList[index]->firstPacket->splitPacketCount &&
+		// 		(splitPacketChannelList[index]->splitPacketList.Size()%splitMessageProgressInterval)==0
+		splitPacketChannelList[index]->gotFirstPacket &&
+		splitPacketChannelList[index]->splitPacketsArrived!=splitPacketChannelList[index]->returnedPacket->splitPacketCount &&
+		(splitPacketChannelList[index]->splitPacketsArrived%splitMessageProgressInterval)==0
+		)
+	{
+		// Return ID_DOWNLOAD_PROGRESS
+		// Write splitPacketIndex (SplitPacketIndexType)
+		// Write splitPacketCount (SplitPacketIndexType)
+		// Write byteLength (4)
+		// Write data, splitPacketChannelList[index]->splitPacketList[0]->data
+		InternalPacket *progressIndicator = AllocateFromInternalPacketPool();
+		//		unsigned int len = sizeof(MessageID) + sizeof(unsigned int)*2 + sizeof(unsigned int) + (unsigned int) BITS_TO_BYTES(splitPacketChannelList[index]->firstPacket->dataBitLength);
+		unsigned int l = (unsigned int) splitPacketChannelList[index]->stride;
+		const unsigned int len = sizeof(MessageID) + sizeof(unsigned int)*2 + sizeof(unsigned int) + l;
+		AllocInternalPacketData(progressIndicator, len,  __FILE__, __LINE__ );
+		progressIndicator->dataBitLength=BYTES_TO_BITS(len);
+		progressIndicator->data[0]=(MessageID)ID_DOWNLOAD_PROGRESS;
+		unsigned int temp;
+		//	temp=splitPacketChannelList[index]->splitPacketList.Size();
+		temp=splitPacketChannelList[index]->splitPacketsArrived;
+		memcpy(progressIndicator->data+sizeof(MessageID), &temp, sizeof(unsigned int));
+		temp=(unsigned int)internalPacket->splitPacketCount;
+		memcpy(progressIndicator->data+sizeof(MessageID)+sizeof(unsigned int)*1, &temp, sizeof(unsigned int));
+		//		temp=(unsigned int) BITS_TO_BYTES(splitPacketChannelList[index]->firstPacket->dataBitLength);
+		temp=(unsigned int) BITS_TO_BYTES(l);
+		memcpy(progressIndicator->data+sizeof(MessageID)+sizeof(unsigned int)*2, &temp, sizeof(unsigned int));
+		//memcpy(progressIndicator->data+sizeof(MessageID)+sizeof(unsigned int)*3, splitPacketChannelList[index]->firstPacket->data, (size_t) BITS_TO_BYTES(splitPacketChannelList[index]->firstPacket->dataBitLength));
+		memcpy(progressIndicator->data+sizeof(MessageID)+sizeof(unsigned int)*3, splitPacketChannelList[index]->returnedPacket->data, (size_t) BITS_TO_BYTES(l));
+	}
+
+	if (dealloc)
+	{
+		FreeInternalPacketData(internalPacket, __FILE__, __LINE__ );
+		ReleaseToInternalPacketPool(internalPacket);
+	}
+#else
+	splitPacketChannelList[index]->splitPacketList.Insert(internalPacket, __FILE__, __LINE__ );
 	splitPacketChannelList[index]->lastUpdateTime=time;
 
 	if (internalPacket->splitPacketIndex==0)
 		splitPacketChannelList[index]->firstPacket=internalPacket;
-
+	
 	if (splitMessageProgressInterval &&
 		splitPacketChannelList[index]->firstPacket &&
 		splitPacketChannelList[index]->splitPacketList.Size()!=splitPacketChannelList[index]->firstPacket->splitPacketCount &&
@@ -2537,10 +2736,9 @@ void ReliabilityLayer::InsertIntoSplitPacketList( InternalPacket * internalPacke
 		// Write data, splitPacketChannelList[index]->splitPacketList[0]->data
 		InternalPacket *progressIndicator = AllocateFromInternalPacketPool();
 		unsigned int length = sizeof(MessageID) + sizeof(unsigned int)*2 + sizeof(unsigned int) + (unsigned int) BITS_TO_BYTES(splitPacketChannelList[index]->firstPacket->dataBitLength);
-		AllocInternalPacketData(progressIndicator, length,  _FILE_AND_LINE_ );
+		AllocInternalPacketData(progressIndicator, length,  false, __FILE__, __LINE__ );
 		progressIndicator->dataBitLength=BYTES_TO_BITS(length);
 		progressIndicator->data[0]=(MessageID)ID_DOWNLOAD_PROGRESS;
-		progressIndicator->allocationScheme=InternalPacket::NORMAL;
 		unsigned int temp;
 		temp=splitPacketChannelList[index]->splitPacketList.Size();
 		memcpy(progressIndicator->data+sizeof(MessageID), &temp, sizeof(unsigned int));
@@ -2550,8 +2748,10 @@ void ReliabilityLayer::InsertIntoSplitPacketList( InternalPacket * internalPacke
 		memcpy(progressIndicator->data+sizeof(MessageID)+sizeof(unsigned int)*2, &temp, sizeof(unsigned int));
 
 		memcpy(progressIndicator->data+sizeof(MessageID)+sizeof(unsigned int)*3, splitPacketChannelList[index]->firstPacket->data, (size_t) BITS_TO_BYTES(splitPacketChannelList[index]->firstPacket->dataBitLength));
-		outputQueue.Push(progressIndicator, _FILE_AND_LINE_ );
+		outputQueue.Push(progressIndicator, __FILE__, __LINE__ );
 	}
+
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------------
@@ -2561,6 +2761,12 @@ void ReliabilityLayer::InsertIntoSplitPacketList( InternalPacket * internalPacke
 //-------------------------------------------------------------------------------------------------------
 InternalPacket * ReliabilityLayer::BuildPacketFromSplitPacketList( SplitPacketChannel *splitPacketChannel, CCTimeType time )
 {
+#if PREALLOCATE_LARGE_MESSAGES==1
+	InternalPacket *returnedPacket=splitPacketChannel->returnedPacket;
+	RakNet::OP_DELETE(splitPacketChannel, __FILE__, __LINE__);
+	(void) time;
+	return returnedPacket;
+#else
 	unsigned int j;
 	InternalPacket * internalPacket, *splitPacket;
 	int splitPacketPartLength;
@@ -2585,13 +2791,14 @@ InternalPacket * ReliabilityLayer::BuildPacketFromSplitPacketList( SplitPacketCh
 		FreeInternalPacketData(splitPacketChannel->splitPacketList[j], _FILE_AND_LINE_ );
 		ReleaseToInternalPacketPool(splitPacketChannel->splitPacketList[j]);
 	}
-	RakNet::OP_DELETE(splitPacketChannel, _FILE_AND_LINE_);
+	RakNet::OP_DELETE(splitPacketChannel, __FILE__, __LINE__);
 
 	return internalPacket;
+#endif
 }
 //-------------------------------------------------------------------------------------------------------
 InternalPacket * ReliabilityLayer::BuildPacketFromSplitPacketList( SplitPacketIdType splitPacketId, CCTimeType time,
-																  SOCKET s, SystemAddress systemAddress, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3)
+																  SOCKET s, SystemAddress &systemAddress, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions)
 {
 	unsigned int i;
 	bool objectExists;
@@ -2600,10 +2807,15 @@ InternalPacket * ReliabilityLayer::BuildPacketFromSplitPacketList( SplitPacketId
 
 	i=splitPacketChannelList.GetIndexFromKey(splitPacketId, &objectExists);
 	splitPacketChannel=splitPacketChannelList[i];
+	
+#if PREALLOCATE_LARGE_MESSAGES==1
+	if (splitPacketChannel->splitPacketsArrived==splitPacketChannel->returnedPacket->splitPacketCount)
+#else
 	if (splitPacketChannel->splitPacketList.Size()==splitPacketChannel->splitPacketList[0]->splitPacketCount)
+#endif
 	{
 		// Ack immediately, because for large files this can take a long time
-		SendACKs(s, systemAddress, time, rnr, remotePortRakNetWasStartedOn_PS3);
+		SendACKs(s, systemAddress, time, rnr, remotePortRakNetWasStartedOn_PS3, extraSocketOptions);
 		internalPacket=BuildPacketFromSplitPacketList(splitPacketChannel,time);
 		splitPacketChannelList.RemoveAtIndex(i);
 		return internalPacket;
@@ -2658,7 +2870,7 @@ InternalPacket * ReliabilityLayer::CreateInternalPacketCopy( InternalPacket *ori
 
 	if ( dataByteLength > 0 )
 	{
-		AllocInternalPacketData(copy, BITS_TO_BYTES(dataByteLength ),  _FILE_AND_LINE_ );
+		AllocInternalPacketData(copy, BITS_TO_BYTES(dataByteLength ),  false, _FILE_AND_LINE_ );
 		memcpy( copy->data, original->data + dataByteOffset, dataByteLength );
 	}
 	else
@@ -2672,7 +2884,11 @@ InternalPacket * ReliabilityLayer::CreateInternalPacketCopy( InternalPacket *ori
 	copy->reliableMessageNumber = original->reliableMessageNumber;
 	copy->priority = original->priority;
 	copy->reliability = original->reliability;
-
+#if PREALLOCATE_LARGE_MESSAGES==1
+	copy->splitPacketCount = original->splitPacketCount;
+	copy->splitPacketId = original->splitPacketId;
+	copy->splitPacketIndex = original->splitPacketIndex;
+#endif
 
 	return copy;
 }
@@ -2742,14 +2958,6 @@ void ReliabilityLayer::InsertPacketIntoResendList( InternalPacket *internalPacke
 }
 
 //-------------------------------------------------------------------------------------------------------
-// If Read returns -1 and this returns true then a modified packet was detected
-//-------------------------------------------------------------------------------------------------------
-bool ReliabilityLayer::IsCheater( void ) const
-{
-	return cheater;
-}
-
-//-------------------------------------------------------------------------------------------------------
 //  Were you ever unable to deliver a packet despite retries?
 //-------------------------------------------------------------------------------------------------------
 bool ReliabilityLayer::IsDeadConnection( void ) const
@@ -2769,7 +2977,7 @@ void ReliabilityLayer::KillConnection( void )
 //-------------------------------------------------------------------------------------------------------
 // Statistics
 //-------------------------------------------------------------------------------------------------------
-RakNetStatistics * const ReliabilityLayer::GetStatistics( RakNetStatistics *rns )
+RakNetStatistics * ReliabilityLayer::GetStatistics( RakNetStatistics *rns )
 {
 	unsigned i;
 	RakNet::TimeUS time = RakNet::GetTimeUS();
@@ -2819,7 +3027,7 @@ unsigned int ReliabilityLayer::GetResendListDataSize(void) const
 }
 
 //-------------------------------------------------------------------------------------------------------
-bool ReliabilityLayer::AckTimeout(RakNet::TimeMS curTime)
+bool ReliabilityLayer::AckTimeout(RakNet::Time curTime)
 {
 	return curTime-timeLastDatagramArrived>timeoutTime;
 	// 
@@ -2840,9 +3048,16 @@ CCTimeType ReliabilityLayer::GetTimeBetweenPackets(void) const
 	return timeBetweenPackets;
 }
 //-------------------------------------------------------------------------------------------------------
+#if INCLUDE_TIMESTAMP_WITH_DATAGRAMS==1
 CCTimeType ReliabilityLayer::GetAckPing(void) const
 {
 	return ackPing;
+}
+#endif
+//-------------------------------------------------------------------------------------------------------
+void ReliabilityLayer::OnExternalPing(double pingMS)
+{
+	congestionManager.OnExternalPing(pingMS);
 }
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::ResetPacketsAndDatagrams(void)
@@ -2864,6 +3079,7 @@ void ReliabilityLayer::PushPacket(CCTimeType time, InternalPacket *internalPacke
 	packetsToSendThisUpdate.Push(internalPacket, _FILE_AND_LINE_ );
 	packetsToDeallocThisUpdate.Push(isReliable==false, _FILE_AND_LINE_ );
 	RakAssert(internalPacket->headerLength==GetMessageHeaderLengthBits(internalPacket));
+
 // This code tells me how much time elapses between when you send, and when the message actually goes out
 // 	if (internalPacket->data[0]==0)
 // 	{
@@ -2948,7 +3164,7 @@ void ReliabilityLayer::MoveToListHead(InternalPacket *internalPacket)
 	resendLinkedListHead=internalPacket;
 	RakAssert(internalPacket->headerLength+internalPacket->dataBitLength>0);
 
-	ValidateResendList();
+	//ValidateResendList();
 }
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::RemoveFromList(InternalPacket *internalPacket, bool modifyUnacknowledgedBytes)
@@ -2969,7 +3185,7 @@ void ReliabilityLayer::RemoveFromList(InternalPacket *internalPacket, bool modif
 		// printf("-unacknowledgedBytes:%i ", unacknowledgedBytes);
 
 
-		ValidateResendList();
+//		ValidateResendList();
 	}
 }
 //-------------------------------------------------------------------------------------------------------
@@ -2993,7 +3209,7 @@ void ReliabilityLayer::AddToListTail(InternalPacket *internalPacket, bool modify
 	internalPacket->resendPrev->resendNext=internalPacket;
 	resendLinkedListHead->resendPrev=internalPacket;
 
-	ValidateResendList();
+//	ValidateResendList();
 
 }
 //-------------------------------------------------------------------------------------------------------
@@ -3008,7 +3224,7 @@ bool ReliabilityLayer::IsResendQueueEmpty(void) const
 	return resendLinkedListHead==0;
 }
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::SendACKs(SOCKET s, SystemAddress systemAddress, CCTimeType time, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3)
+void ReliabilityLayer::SendACKs(SOCKET s, SystemAddress &systemAddress, CCTimeType time, RakNetRandom *rnr, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions)
 {
 	BitSize_t maxDatagramPayload = GetMaxDatagramSizeExcludingMessageHeaderBits();
 
@@ -3020,7 +3236,9 @@ void ReliabilityLayer::SendACKs(SOCKET s, SystemAddress systemAddress, CCTimeTyp
 		dhf.isACK=true;
 		dhf.isNAK=false;
 		dhf.isPacketPair=false;
+#if INCLUDE_TIMESTAMP_WITH_DATAGRAMS==1
 		dhf.sourceSystemTime=time;
+#endif
 		double B;
 		double AS;
 		bool hasBAndAS;
@@ -3031,14 +3249,16 @@ void ReliabilityLayer::SendACKs(SOCKET s, SystemAddress systemAddress, CCTimeTyp
 			dhf.hasBAndAS=hasBAndAS;
 		}
 		else
-			dhf.hasBAndAS=false;		
+			dhf.hasBAndAS=false;
+#if INCLUDE_TIMESTAMP_WITH_DATAGRAMS==1
 		dhf.sourceSystemTime=nextAckTimeToSend;
+#endif
 		//		dhf.B=(float)B;
 		updateBitStream.Reset();
 		dhf.Serialize(&updateBitStream);
 		CC_DEBUG_PRINTF_1("AckSnd ");
 		acknowlegements.Serialize(&updateBitStream, maxDatagramPayload, true);
-		SendBitStream( s, systemAddress, &updateBitStream, rnr, remotePortRakNetWasStartedOn_PS3, time );
+		SendBitStream( s, systemAddress, &updateBitStream, rnr, remotePortRakNetWasStartedOn_PS3, extraSocketOptions, time );
 		congestionManager.OnSendAck(time,updateBitStream.GetNumberOfBytesUsed());
 
 		// I think this is causing a bug where if the estimated bandwidth is very low for the recipient, only acks ever get sent
@@ -3127,24 +3347,22 @@ void ReliabilityLayer::AddToUnreliableLinkedList(InternalPacket *internalPacket)
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::ValidateResendList(void) const
 {
-	/*
-	unsigned int count1=0, count2=0;
-	for (unsigned int i=0; i < RESEND_BUFFER_ARRAY_LENGTH; i++)
-	if (resendBuffer[i])
-	count1++;
-
-	if (resendLinkedListHead)
-	{
-	InternalPacket *internalPacket = resendLinkedListHead;
-	do 
-	{
-	count2++;
-	internalPacket=internalPacket->resendNext;
-	} while (internalPacket!=resendLinkedListHead);
-	}
-	RakAssert(count1==count2);
-	RakAssert(count2<=RESEND_BUFFER_ARRAY_LENGTH);
-	*/
+// 	unsigned int count1=0, count2=0;
+// 	for (unsigned int i=0; i < RESEND_BUFFER_ARRAY_LENGTH; i++)
+// 	if (resendBuffer[i])
+// 	count1++;
+// 
+// 	if (resendLinkedListHead)
+// 	{
+// 	InternalPacket *internalPacket = resendLinkedListHead;
+// 	do 
+// 	{
+// 	count2++;
+// 	internalPacket=internalPacket->resendNext;
+// 	} while (internalPacket!=resendLinkedListHead);
+// 	}
+// 	RakAssert(count1==count2);
+// 	RakAssert(count2<=RESEND_BUFFER_ARRAY_LENGTH);
 }
 //-------------------------------------------------------------------------------------------------------
 bool ReliabilityLayer::ResendBufferOverflow(void) const
@@ -3156,17 +3374,20 @@ bool ReliabilityLayer::ResendBufferOverflow(void) const
 
 }
 //-------------------------------------------------------------------------------------------------------
-ReliabilityLayer::MessageNumberNode* ReliabilityLayer::GetMessageNumberNodeByDatagramIndex(DatagramSequenceNumberType index)
+ReliabilityLayer::MessageNumberNode* ReliabilityLayer::GetMessageNumberNodeByDatagramIndex(DatagramSequenceNumberType index/*, bool *isReliable*/)
 {
+//	*isReliable=false;
 	if (datagramHistory.IsEmpty())
 		return 0;
 
-	if (CCRakNetUDT::LessThan(index, datagramHistoryPopCount))
+	if (congestionManager.LessThan(index, datagramHistoryPopCount))
 		return 0;
 
 	DatagramSequenceNumberType offsetIntoList = index - datagramHistoryPopCount;
 	if (offsetIntoList >= datagramHistory.Size())
 		return 0;
+
+	// *isReliable=datagramHistory[offsetIntoList].isReliable;
 	return datagramHistory[offsetIntoList].head;
 }
 //-------------------------------------------------------------------------------------------------------
@@ -3194,7 +3415,8 @@ void ReliabilityLayer::AddFirstToDatagramHistory(DatagramSequenceNumberType data
 		datagramHistoryPopCount++;
 	}
 
-	datagramHistory.Push(DatagramHistoryNode(0), _FILE_AND_LINE_);
+	datagramHistory.Push(DatagramHistoryNode(0/*,false*/), _FILE_AND_LINE_);
+	// printf("%p Pushed empty DatagramHistoryNode to datagram history at index %i\n", this, datagramHistory.Size()-1);
 }
 //-------------------------------------------------------------------------------------------------------
 ReliabilityLayer::MessageNumberNode* ReliabilityLayer::AddFirstToDatagramHistory(DatagramSequenceNumberType datagramNumber, DatagramSequenceNumberType messageNumber)
@@ -3211,7 +3433,8 @@ ReliabilityLayer::MessageNumberNode* ReliabilityLayer::AddFirstToDatagramHistory
 	MessageNumberNode *mnm = datagramHistoryMessagePool.Allocate(_FILE_AND_LINE_);
 	mnm->next=0;
 	mnm->messageNumber=messageNumber;
-	datagramHistory.Push(DatagramHistoryNode(mnm), _FILE_AND_LINE_);
+	datagramHistory.Push(DatagramHistoryNode(mnm/*,true*/), _FILE_AND_LINE_);
+	// printf("%p Pushed message %i to DatagramHistoryNode to datagram history at index %i\n", this, messageNumber.val, datagramHistory.Size()-1);
 	return mnm;
 }
 //-------------------------------------------------------------------------------------------------------
@@ -3245,10 +3468,18 @@ void ReliabilityLayer::AllocInternalPacketData(InternalPacket *internalPacket, u
 	internalPacket->data=externallyAllocatedPtr;
 }
 //-------------------------------------------------------------------------------------------------------
-void ReliabilityLayer::AllocInternalPacketData(InternalPacket *internalPacket, unsigned int numBytes, const char *file, unsigned int line)
+void ReliabilityLayer::AllocInternalPacketData(InternalPacket *internalPacket, unsigned int numBytes, bool allowStack, const char *file, unsigned int line)
 {
-	internalPacket->allocationScheme=InternalPacket::NORMAL;
-	internalPacket->data=(unsigned char*) rakMalloc_Ex(numBytes,file,line);
+	if (allowStack && numBytes <= sizeof(internalPacket->stackData))
+	{
+		internalPacket->allocationScheme=InternalPacket::STACK;
+		internalPacket->data=internalPacket->stackData;
+	}
+	else
+	{
+		internalPacket->allocationScheme=InternalPacket::NORMAL;
+		internalPacket->data=(unsigned char*) rakMalloc_Ex(numBytes,file,line);
+	}
 }
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::FreeInternalPacketData(InternalPacket *internalPacket, const char *file, unsigned int line)
@@ -3271,12 +3502,17 @@ void ReliabilityLayer::FreeInternalPacketData(InternalPacket *internalPacket, co
 			internalPacket->refCountedData=0;
 		}
 	}
-	else
+	else if (internalPacket->allocationScheme==InternalPacket::NORMAL)
 	{
 		if (internalPacket->data==0)
 			return;
 
 		rakFree_Ex(internalPacket->data, file, line );
+		internalPacket->data=0;
+	}
+	else
+	{
+		// Data was on stack
 		internalPacket->data=0;
 	}
 }
@@ -3301,9 +3537,7 @@ BitSize_t ReliabilityLayer::GetMaxDatagramSizeExcludingMessageHeaderBits(void)
 void ReliabilityLayer::InitHeapWeights(void)
 {
 	for (int priorityLevel=0; priorityLevel < NUMBER_OF_PRIORITIES; priorityLevel++)
-	{
 		outgoingPacketBufferNextWeights[priorityLevel]=(1<<priorityLevel)*priorityLevel+priorityLevel;
-	}
 }
 //-------------------------------------------------------------------------------------------------------
 reliabilityHeapWeightType ReliabilityLayer::GetNextWeight(int priorityLevel)
@@ -3311,25 +3545,25 @@ reliabilityHeapWeightType ReliabilityLayer::GetNextWeight(int priorityLevel)
 	uint64_t next = outgoingPacketBufferNextWeights[priorityLevel];
 	if (outgoingPacketBuffer.Size()>0)
 	{
-		uint64_t min = outgoingPacketBuffer.PeekWeight()+(1<<priorityLevel)*priorityLevel+priorityLevel;
+		int peekPL = outgoingPacketBuffer.Peek()->priority;
+		reliabilityHeapWeightType weight = outgoingPacketBuffer.PeekWeight();
+		reliabilityHeapWeightType min = weight - (1<<peekPL)*peekPL+peekPL;
 		if (next<min)
-		{
-			next=min + (min%NUMBER_OF_PRIORITIES);
-		}
+			next=min + (1<<priorityLevel)*priorityLevel+priorityLevel;
+		outgoingPacketBufferNextWeights[priorityLevel]=next+(1<<priorityLevel)*(priorityLevel+1)+priorityLevel;
 	}
 	else
 	{
 		InitHeapWeights();
 	}
-	outgoingPacketBufferNextWeights[priorityLevel]=next+(1<<priorityLevel)*(priorityLevel+1)+priorityLevel;
 	return next;
 }
 
 //-------------------------------------------------------------------------------------------------------
-#if defined(RELIABILITY_LAYER_NEW_UNDEF_ALLOCATING_QUEUE)
-#pragma pop_macro("new")
-#undef RELIABILITY_LAYER_NEW_UNDEF_ALLOCATING_QUEUE
-#endif
+// #if defined(RELIABILITY_LAYER_NEW_UNDEF_ALLOCATING_QUEUE)
+// #pragma pop_macro("new")
+// #undef RELIABILITY_LAYER_NEW_UNDEF_ALLOCATING_QUEUE
+// #endif
 
 
 #ifdef _MSC_VER

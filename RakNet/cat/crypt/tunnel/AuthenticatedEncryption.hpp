@@ -79,7 +79,7 @@ class KeyAgreementInitiator;
 
 
 // This class is NOT THREAD-SAFE.
-class AuthenticatedEncryption
+class CAT_EXPORT AuthenticatedEncryption
 {
     friend class KeyAgreementResponder;
     friend class KeyAgreementInitiator;
@@ -97,10 +97,13 @@ class AuthenticatedEncryption
     u64 iv_bitmap[BITMAP_WORDS];
 
 public:
+	CAT_INLINE AuthenticatedEncryption() {}
+	CAT_INLINE ~AuthenticatedEncryption() {}
+
     // Tunnel overhead bytes
     static const int MAC_BYTES = 8;
     static const int IV_BYTES = 3;
-    static const int OVERHEAD_BYTES = IV_BYTES + MAC_BYTES;
+    static const u32 OVERHEAD_BYTES = IV_BYTES + MAC_BYTES;
 
     // IV constants
     static const int IV_BITS = IV_BYTES * 8;

@@ -6,7 +6,7 @@
 /// Usage of RakNet is subject to the appropriate license agreement.
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_PacketizedTCP==1
+#if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
 
 #ifndef __PACKETIZED_TCP
 #define __PACKETIZED_TCP
@@ -29,17 +29,21 @@ public:
 	virtual ~PacketizedTCP();
 
 	/// Starts the TCP server on the indicated port
-	/// \param[in] threadPriority Passed to thread creation routine. Use THREAD_PRIORITY_NORMAL for Windows. WARNING!!! On Linux, 0 means highest priority! You MUST set this to something valid based on the values used by your other threads
-	bool Start(unsigned short port, unsigned short maxIncomingConnections, int threadPriority=-99999);
+	/// \param[in] port Which port to listen on.
+	/// \param[in] maxIncomingConnections Max incoming connections we will accept
+	/// \param[in] maxConnections Max total connections, which should be >= maxIncomingConnections
+	/// \param[in] threadPriority Passed to the thread creation routine. Use THREAD_PRIORITY_NORMAL for Windows. For Linux based systems, you MUST pass something reasonable based on the thread priorities for your application.
+	/// \param[in] socketFamily IP version: For IPV4, use AF_INET (default). For IPV6, use AF_INET6. To autoselect, use AF_UNSPEC.
+	bool Start(unsigned short port, unsigned short maxIncomingConnections, int threadPriority=-99999, unsigned short socketFamily=AF_INET);
 
 	/// Stops the TCP server
 	void Stop(void);
 
 	/// Sends a byte stream
-	void Send( const char *data, unsigned length, SystemAddress systemAddress, bool broadcast );
+	void Send( const char *data, unsigned length, const SystemAddress &systemAddress, bool broadcast );
 
 	// Sends a concatenated list of byte streams
-	bool SendList( const char **data, const int *lengths, const int numParameters, SystemAddress systemAddress, bool broadcast );
+	bool SendList( const char **data, const int *lengths, const int numParameters, const SystemAddress &systemAddress, bool broadcast );
 
 	/// Returns data received
 	Packet* Receive( void );
@@ -67,8 +71,8 @@ public:
 
 protected:
 	void ClearAllConnections(void);
-	void RemoveFromConnectionList(SystemAddress sa);
-	void AddToConnectionList(SystemAddress sa);
+	void RemoveFromConnectionList(const SystemAddress &sa);
+	void AddToConnectionList(const SystemAddress &sa);
 	void PushNotificationsToQueues(void);
 	Packet *ReturnOutgoingPacket(void);
 

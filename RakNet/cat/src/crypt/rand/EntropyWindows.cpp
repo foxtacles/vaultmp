@@ -57,8 +57,8 @@ bool FortunaFactory::ThreadFunction(void *)
     const int POOL0_RESEED_RATE = 16;
 
     // Milliseconds between fast polls
-    // Indicates 51.2 seconds between reseeds
-    const int COLLECTION_PERIOD = 100;
+    // Indicates 512 seconds between reseeds
+    const int COLLECTION_PERIOD = 1000;
 
     int fast_pool = 0, slow_pool = 0, pool0_entropy = 0;
 

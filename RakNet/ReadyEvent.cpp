@@ -275,21 +275,21 @@ PluginReceiveResult ReadyEvent::OnReceive(Packet *packet)
 	unsigned char packetIdentifier;
 	packetIdentifier = ( unsigned char ) packet->data[ 0 ];
 
-//	bool doPrint = packet->systemAddress.port==60002 || rakPeerInterface->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS).port==60002;
+//	bool doPrint = packet->systemAddress.GetPort()==60002 || rakPeerInterface->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS).GetPort()==60002;
 
 	switch (packetIdentifier)
 	{
 	case ID_READY_EVENT_UNSET:
 	case ID_READY_EVENT_SET:
 	case ID_READY_EVENT_ALL_SET:
-//		if (doPrint) {if (packet->systemAddress.port==60002)	RAKNET_DEBUG_PRINTF("FROM 60002: "); else if (rakPeerInterface->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS).port==60002)	RAKNET_DEBUG_PRINTF("TO 60002: "); RAKNET_DEBUG_PRINTF("ID_READY_EVENT_SET\n");}
+//		if (doPrint) {if (packet->systemAddress.GetPort()==60002)	RAKNET_DEBUG_PRINTF("FROM 60002: "); else if (rakPeerInterface->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS).port==60002)	RAKNET_DEBUG_PRINTF("TO 60002: "); RAKNET_DEBUG_PRINTF("ID_READY_EVENT_SET\n");}
 		OnReadyEventPacketUpdate(packet);
 		return RR_CONTINUE_PROCESSING;
 	case ID_READY_EVENT_FORCE_ALL_SET:
 		OnReadyEventForceAllSet(packet);
 		return RR_CONTINUE_PROCESSING;
 	case ID_READY_EVENT_QUERY:
-//		if (doPrint) {if (packet->systemAddress.port==60002)	RAKNET_DEBUG_PRINTF("FROM 60002: "); else if (rakPeerInterface->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS).port==60002)	RAKNET_DEBUG_PRINTF("TO 60002: "); RAKNET_DEBUG_PRINTF("ID_READY_EVENT_QUERY\n");}
+//		if (doPrint) {if (packet->systemAddress.GetPort()==60002)	RAKNET_DEBUG_PRINTF("FROM 60002: "); else if (rakPeerInterface->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS).port==60002)	RAKNET_DEBUG_PRINTF("TO 60002: "); RAKNET_DEBUG_PRINTF("ID_READY_EVENT_QUERY\n");}
 		OnReadyEventQuery(packet);
 		return RR_STOP_PROCESSING_AND_DEALLOCATE;
 	}
@@ -378,7 +378,7 @@ void ReadyEvent::OnReadyEventQuery(Packet *packet)
 			SendReadyUpdate(readyIndex, systemIndex, true);
 	}
 }
-void ReadyEvent::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
+void ReadyEvent::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
 	(void) systemAddress;
 	(void) rakNetGUID;
@@ -549,7 +549,7 @@ void ReadyEvent::PushCompletionPacket(unsigned eventId)
 	// Not necessary
 	/*
 	// Pass a packet to the user that we are now completed, as setting ourselves to signaled was the last thing being waited on
-	Packet *p = rakPeerInterface->AllocatePacket(sizeof(MessageID)+sizeof(int));
+	Packet *p = AllocatePacketUnified(sizeof(MessageID)+sizeof(int));
 	RakNet::BitStream bs(p->data, sizeof(MessageID)+sizeof(int), false);
 	bs.SetWriteOffset(0);
 	bs.Write((MessageID)ID_READY_EVENT_ALL_SET);

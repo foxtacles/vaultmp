@@ -32,6 +32,14 @@
 namespace cat {
 
 
+// This definition overrides CAT_BUILD_DLL below.  Neuters CAT_EXPORT macro so symbols are
+// neither exported or imported.
+//#define CAT_NEUTER_EXPORT
+
+// This definition changes the meaning of the CAT_EXPORT macro on Windows.  When defined,
+// the CAT_EXPORT macro will export the associated symbol.  When undefined, it will import it.
+//#define CAT_BUILD_DLL
+
 // If you want to remove server-side code from a binary distribution of a client program:
 //#define CAT_OMIT_SERVER_CODE
 
@@ -42,8 +50,8 @@ namespace cat {
 // If you want to use faster 384-bit or 512-bit math, define this:
 //#define CAT_UNROLL_OVER_256_BITS
 
-// Adjust if your architecture uses larger than 128-bit cache line
-#define CAT_DEFAULT_CACHE_LINE_SIZE 16
+// Adjust if your architecture uses larger than 128-byte cache line
+#define CAT_DEFAULT_CACHE_LINE_SIZE 128
 
 
 } // namespace cat

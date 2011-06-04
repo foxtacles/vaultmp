@@ -71,6 +71,18 @@ void KeyAgreementInitiator::FreeMemory()
 		Aligned::Delete(Y_MultPrecomp);
 		Y_MultPrecomp = 0;
 	}
+
+	if (I_private)
+	{
+		Aligned::Delete(I_private);
+		I_private = 0;
+	}
+
+	if (I_public)
+	{
+		Aligned::Delete(I_public);
+		I_public = 0;
+	}
 }
 
 KeyAgreementInitiator::KeyAgreementInitiator()
@@ -79,6 +91,8 @@ KeyAgreementInitiator::KeyAgreementInitiator()
     G_MultPrecomp = 0;
     B_MultPrecomp = 0;
     Y_MultPrecomp = 0;
+	I_private = 0;
+	I_public = 0;
 }
 
 KeyAgreementInitiator::~KeyAgreementInitiator()
@@ -136,6 +150,47 @@ bool KeyAgreementInitiator::Initialize(BigTwistedEdwards *math, const u8 *respon
     math->PtEDouble(hB, hB);
 
     return true;
+}
+
+bool KeyAgreementInitiator::SetIdentity(BigTwistedEdwards *math,
+										const u8 *initiator_public_key, int public_bytes,
+										const u8 *initiator_private_key, int private_bytes)
+{
+#if defined(CAT_USER_ERROR_CHECKING)
+	if (!math || public_bytes != KeyBytes*2 || private_bytes != KeyBytes) return false;
+#endif
+
+	Leg *I_temp = math->Get(0);
+
+	// Unpack the initiator's public key
+	if (!math->LoadVerifyAffineXY(initiator_public_key, initiator_public_key + KeyBytes, I_temp))
+		return false;
+
+	// Verify public point is not identity element
+	if (math->IsAffineIdentity(I_temp))
+		return false;
+
+	// Allocate space for private key if needed
+	if (!I_private)
+	{
+		I_private = (Leg*)Aligned::Acquire(KeyBytes);
+		if (!I_private) return false;
+	}
+
+	// Allocate space for public key if needed
+	if (!I_public)
+	{
+		I_public = (Leg*)Aligned::Acquire(KeyBytes*2);
+		if (!I_public) return false;
+	}
+
+	// Copy the endian-neutral public key
+	memcpy(I_public, initiator_public_key, KeyBytes*2);
+
+	// Load the private key
+	math->Load(initiator_private_key, KeyBytes, I_private);
+
+	return true;
 }
 
 bool KeyAgreementInitiator::GenerateChallenge(BigTwistedEdwards *math, FortunaOutput *csprng,
@@ -237,6 +292,90 @@ bool KeyAgreementInitiator::ProcessAnswer(BigTwistedEdwards *math,
 	mac.Generate(expected, KeyBytes);
 
 	return SecureEqual(expected, responder_answer + KeyBytes * 3, KeyBytes);
+}
+
+bool KeyAgreementInitiator::ProcessAnswerWithIdentity(BigTwistedEdwards *math, FortunaOutput *csprng,
+													  const u8 *responder_answer, int answer_bytes,
+													  Skein *key_hash,
+													  u8 *identity_proof, int proof_bytes)
+{
+	// Process answer first and fail out if needed
+	if (!ProcessAnswer(math, responder_answer, answer_bytes, key_hash))
+		return false;
+
+#if defined(CAT_USER_ERROR_CHECKING)
+	// Verify that inputs are of the correct length
+	if (!csprng || proof_bytes != KeyBytes*5) return false;
+#endif
+
+	// Fill endian-neutral public key for initiator
+	memcpy(identity_proof, I_public, KeyBytes * 2);
+
+	// Fill initiator's random nonce
+	csprng->Generate(identity_proof + KeyBytes * 2, KeyBytes);
+
+	// Sign() code from KeyAgreementResponder.cpp:
+
+	Leg *k = math->Get(0);
+	Leg *K = math->Get(1);
+	Leg *e = math->Get(5);
+	Leg *s = math->Get(6);
+
+	do {
+
+		do {
+
+			// k = ephemeral key
+			GenerateKey(math, csprng, k);
+
+			// K = k * G
+			math->PtMultiply(G_MultPrecomp, 6, k, 0, K);
+			math->SaveAffineX(K, K);
+
+			// e = H(IRN || RRN || K)
+			Skein H;
+
+			if (!H.BeginKey(KeyBits)) return false;
+			H.Crunch(identity_proof + KeyBytes * 2, KeyBytes); // client random number
+			H.Crunch(responder_answer + KeyBytes * 2, KeyBytes); // server random number
+			H.Crunch(K, KeyBytes);
+			H.End();
+			H.Generate(identity_proof + KeyBytes * 3, KeyBytes);
+
+			math->Load(identity_proof + KeyBytes * 3, KeyBytes, e);
+
+			// e = e (mod q), for checking if it is congruent to q
+			while (!math->Less(e, math->GetCurveQ()))
+				math->Subtract(e, math->GetCurveQ(), e);
+
+		} while (math->IsZero(e));
+
+		// s = I_private * e (mod q)
+		math->MulMod(I_private, e, math->GetCurveQ(), s);
+
+		// s = -s (mod q)
+		if (!math->IsZero(s)) math->Subtract(math->GetCurveQ(), s, s);
+
+		// s = s + k (mod q)
+		if (math->Add(s, k, s))
+			while (!math->Subtract(s, math->GetCurveQ(), s));
+		while (!math->Less(s, math->GetCurveQ()))
+			math->Subtract(s, math->GetCurveQ(), s);
+
+	} while (math->IsZero(s));
+
+	math->Save(s, identity_proof + KeyBytes * 4, KeyBytes);
+
+	// Erase the ephemeral secret from memory
+	math->CopyX(0, k);
+
+	/*
+		Format of identity buffer:
+
+		256-bit security: [Initiator Public Key] (64) || [Initiator Random Number] (32) || [Signature] (64)
+	*/
+
+	return true;
 }
 
 bool KeyAgreementInitiator::Verify(BigTwistedEdwards *math,

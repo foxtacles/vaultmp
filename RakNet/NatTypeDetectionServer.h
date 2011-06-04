@@ -75,7 +75,7 @@ public:
 
 	/// \internal For plugin handling
 	virtual PluginReceiveResult OnReceive(Packet *packet);
-	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
+	virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 
 	enum NATDetectionState
 	{
@@ -104,7 +104,7 @@ public:
 protected:
 	void OnDetectionRequest(Packet *packet);
 	DataStructures::List<NATDetectionAttempt> natDetectionAttempts;
-	unsigned int GetDetectionAttemptIndex(SystemAddress sa);
+	unsigned int GetDetectionAttemptIndex(const SystemAddress &sa);
 	unsigned int GetDetectionAttemptIndex(RakNetGUID guid);
 
 	// s1p1 is rakpeer itself

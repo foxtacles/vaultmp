@@ -104,13 +104,13 @@ u32 BSF32(u32 x)
     _BitScanForward((unsigned long*)&index, x);
     return index;
 
-#elif defined(CAT_ASM_INTEL)
+#elif defined(CAT_ASM_INTEL) && defined(CAT_ISA_X86)
 
     CAT_ASM_BEGIN
         BSF eax, [x]
     CAT_ASM_END
 
-#elif defined(CAT_ASM_ATT)
+#elif defined(CAT_ASM_ATT) && defined(CAT_ISA_X86)
 
 	u32 retval;
 
@@ -139,13 +139,13 @@ u32 BSR32(u32 x)
     _BitScanReverse((unsigned long*)&index, x);
     return index;
 
-#elif defined(CAT_ASM_INTEL)
+#elif defined(CAT_ASM_INTEL) && defined(CAT_ISA_X86)
 
     CAT_ASM_BEGIN
         BSR eax, [x]
     CAT_ASM_END
 
-#elif defined(CAT_ASM_ATT)
+#elif defined(CAT_ASM_ATT) && defined(CAT_ISA_X86)
 
 	u32 retval;
 
@@ -182,7 +182,7 @@ u32 BSF64(u64 x)
     _BitScanForward64((unsigned long*)&index, x);
     return index;
 
-#elif defined(CAT_ASM_ATT) && defined(CAT_WORD_64)
+#elif defined(CAT_ASM_ATT) && defined(CAT_WORD_64) && defined(CAT_ISA_X86)
 
 	u32 retval;
 
@@ -211,7 +211,7 @@ u32 BSR64(u64 x)
     _BitScanReverse64((unsigned long*)&index, x);
     return index;
 
-#elif defined(CAT_ASM_ATT) && defined(CAT_WORD_64)
+#elif defined(CAT_ASM_ATT) && defined(CAT_WORD_64) && defined(CAT_ISA_X86)
 
 	u32 retval;
 

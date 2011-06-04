@@ -50,16 +50,18 @@ static u32 InitialState[12] = {
 // Key up to 384 bits
 void ChaChaKey::Set(const void *key, int bytes)
 {
+	// Precondition: Bytes must be a multiple of 4
 	if (bytes > 48) bytes = 48;
 
-	int remaining = 48 - bytes;
+	memcpy(state, InitialState, sizeof(InitialState));
 
-	memcpy(state, InitialState, remaining);
-	memcpy(&state[remaining/4], key, bytes);
+	const u32 *in32 = (const u32 *)key;
+	int words = bytes / 4;
 
-	// Fix byte order for math
-	for (int ii = remaining/4; ii < 12; ++ii)
-		swapLE(state[ii]);
+	for (int ii = 0; ii < words; ++ii)
+	{
+		state[ii] ^= getLE(in32[ii]);
+	}
 }
 
 
@@ -71,7 +73,7 @@ void ChaChaKey::Set(const void *key, int bytes)
 	x[a] += x[b]; x[d] = CAT_ROL32(x[d] ^ x[a], 8); \
 	x[c] += x[d]; x[b] = CAT_ROL32(x[b] ^ x[c], 7);
 
-void ChaChaOutput::GenerateKeyStream(u32 *out)
+void ChaChaOutput::GenerateKeyStream(u32 *out_words)
 {
 	// Update block counter
 	if (!++state[12]) state[13]++;
@@ -97,7 +99,7 @@ void ChaChaOutput::GenerateKeyStream(u32 *out)
 
 	// Add state to mixed state, little-endian
 	for (int jj = 0; jj < 16; ++jj)
-		out[jj] = getLE(x[jj] + state[jj]);
+		out_words[jj] = getLE(x[jj] + state[jj]);
 }
 
 ChaChaOutput::ChaChaOutput(const ChaChaKey &key, u64 iv)
@@ -119,55 +121,63 @@ ChaChaOutput::~ChaChaOutput()
 }
 
 // Message with any number of bytes
-void ChaChaOutput::Crypt(const void *in, void *out, int bytes)
+void ChaChaOutput::Crypt(const void *in_bytes, void *out_bytes, int bytes)
 {
-	const u64 *in64 = (const u64 *)in;
-	u64 *out64 = (u64 *)out;
+	const u32 *in32 = (const u32 *)in_bytes;
+	u32 *out32 = (u32 *)out_bytes;
+
+#ifdef CAT_AUDIT
+	int initial_bytes = bytes;
+	printf("AUDIT: ChaCha input ");
+	for (int ii = 0; ii < bytes; ++ii)
+	{
+		printf("%02x", ((cat::u8*)in_bytes)[ii]);
+	}
+	printf("\n");
+#endif
 
 	while (bytes >= 64)
 	{
-		u64 key64[8];
-		GenerateKeyStream((u32*)key64);
+		u32 key32[16];
+		GenerateKeyStream(key32);
 
-		out64[0] = in64[0] ^ key64[0];
-		out64[1] = in64[1] ^ key64[1];
-		out64[2] = in64[2] ^ key64[2];
-		out64[3] = in64[3] ^ key64[3];
-		out64[4] = in64[4] ^ key64[4];
-		out64[5] = in64[5] ^ key64[5];
-		out64[6] = in64[6] ^ key64[6];
-		out64[7] = in64[7] ^ key64[7];
+		for (int ii = 0; ii < 16; ++ii)
+			out32[ii] = in32[ii] ^ key32[ii];
 
-		out64 += 8;
-		in64 += 8;
+		out32 += 16;
+		in32 += 16;
 		bytes -= 64;
 	}
 
 	if (bytes)
 	{
-		u64 key64[8];
-		GenerateKeyStream((u32*)key64);
+		u32 key32[16];
+		GenerateKeyStream(key32);
 
-		int words = bytes / 8;
+		int words = bytes / 4;
 		for (int ii = 0; ii < words; ++ii)
-			out64[ii] = in64[ii] ^ key64[ii];
+			out32[ii] = in32[ii] ^ key32[ii];
 
-		const u8 *in8 = (const u8 *)(in64 + words);
-		u8 *out8 = (u8 *)(out64 + words);
-		const u8 *key8 = (const u8 *)(key64 + words);
+		const u8 *in8 = (const u8 *)(in32 + words);
+		u8 *out8 = (u8 *)(out32 + words);
+		const u8 *key8 = (const u8 *)(key32 + words);
 
-		switch (bytes % 8)
+		switch (bytes % 4)
 		{
-		case 7: out8[6] = in8[6] ^ key8[6];
-		case 6: out8[5] = in8[5] ^ key8[5];
-		case 5: out8[4] = in8[4] ^ key8[4];
-		case 4: *(u32*)out8 = *(const u32*)in8 ^ *(const u32*)key8;
-			break;
 		case 3: out8[2] = in8[2] ^ key8[2];
 		case 2: out8[1] = in8[1] ^ key8[1];
 		case 1: out8[0] = in8[0] ^ key8[0];
 		}
 	}
+
+#ifdef CAT_AUDIT
+	printf("AUDIT: ChaCha output ");
+	for (int ii = 0; ii < initial_bytes; ++ii)
+	{
+		printf("%02x", ((cat::u8*)out_bytes)[ii]);
+	}
+	printf("\n");
+#endif
 }
 
 #undef QUARTERROUND

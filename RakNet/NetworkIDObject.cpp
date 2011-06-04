@@ -15,6 +15,7 @@ using namespace RakNet;
 NetworkIDObject::NetworkIDObject()
 {
 	networkID=UNASSIGNED_NETWORK_ID;
+	parent=0;
 	networkIDManager=0;
 	nextInstanceForNetworkIDManager=0;
 }
@@ -50,4 +51,12 @@ void NetworkIDObject::SetNetworkID( NetworkID id )
 		networkIDManager->StopTrackingNetworkIDObject(this);
 	networkID = id;
 	networkIDManager->TrackNetworkIDObject(this);
+}
+void NetworkIDObject::SetParent( void *_parent )
+{
+	parent=_parent;
+}
+void* NetworkIDObject::GetParent( void ) const
+{
+	return parent;
 }

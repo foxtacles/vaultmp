@@ -106,7 +106,7 @@ void Dedicated::Announce(bool announce)
     {
         Utils::timestamp();
         printf("Lost connection to MasterServer (%s)\n", master.ToString());
-        peer->Connect(master.ToString(false), master.port, 0, 0, 0, 0, 3, 100, 0);
+        peer->Connect(master.ToString(false), master.GetPort(), 0, 0, 0, 0, 3, 100, 0);
     }
 
     announcetime = GetTimeMS();
@@ -123,8 +123,8 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
             peer->SetMaximumIncomingConnections(connections);
             master.SetBinaryAddress(strtok(announce, ":"));
             char* cport = strtok(NULL, ":");
-            master.port = cport != NULL ? atoi(cport) : RAKNET_MASTER_STANDARD_PORT;
-            peer->Connect(master.ToString(false), master.port, 0, 0, 0, 0, 3, 500, 0);
+            master.SetPort(cport != NULL ? atoi(cport) : RAKNET_MASTER_STANDARD_PORT);
+            peer->Connect(master.ToString(false), master.GetPort(), 0, 0, 0, 0, 3, 500, 0);
             announcetime = GetTimeMS();
       }
       else

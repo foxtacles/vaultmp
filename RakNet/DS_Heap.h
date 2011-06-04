@@ -228,13 +228,13 @@ namespace DataStructures
 	}
 
 	template  <class weight_type, class data_type, bool isMaxHeap>
-	data_type Heap<weight_type, data_type, isMaxHeap>::Peek(const unsigned startingIndex) const
+	inline data_type Heap<weight_type, data_type, isMaxHeap>::Peek(const unsigned startingIndex) const
 	{
 		return heap[startingIndex].data;
 	}
 
 	template  <class weight_type, class data_type, bool isMaxHeap>
-	weight_type Heap<weight_type, data_type, isMaxHeap>::PeekWeight(const unsigned startingIndex) const
+	inline weight_type Heap<weight_type, data_type, isMaxHeap>::PeekWeight(const unsigned startingIndex) const
 	{
 		return heap[startingIndex].weight;
 	}
@@ -246,7 +246,7 @@ namespace DataStructures
 	}
 
 	template <class weight_type, class data_type, bool isMaxHeap>
-	data_type& Heap<weight_type, data_type, isMaxHeap>::operator[] ( const unsigned int position ) const
+	inline data_type& Heap<weight_type, data_type, isMaxHeap>::operator[] ( const unsigned int position ) const
 	{
 		return heap[position].data;
 	}
@@ -257,19 +257,19 @@ namespace DataStructures
 	}
 
 	template <class weight_type, class data_type, bool isMaxHeap>
-	unsigned Heap<weight_type, data_type, isMaxHeap>::LeftChild(const unsigned i) const
+	inline unsigned Heap<weight_type, data_type, isMaxHeap>::LeftChild(const unsigned i) const
 	{
 		return i*2+1;
 	}
 
 	template <class weight_type, class data_type, bool isMaxHeap>
-	unsigned Heap<weight_type, data_type, isMaxHeap>::RightChild(const unsigned i) const
+	inline unsigned Heap<weight_type, data_type, isMaxHeap>::RightChild(const unsigned i) const
 	{
 		return i*2+2;
 	}
 
 	template <class weight_type, class data_type, bool isMaxHeap>
-	unsigned Heap<weight_type, data_type, isMaxHeap>::Parent(const unsigned i) const
+	inline unsigned Heap<weight_type, data_type, isMaxHeap>::Parent(const unsigned i) const
 	{
 #ifdef _DEBUG
 		RakAssert(i!=0);

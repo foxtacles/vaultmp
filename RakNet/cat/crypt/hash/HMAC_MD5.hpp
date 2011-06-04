@@ -47,7 +47,7 @@
 namespace cat {
 
 
-class HMAC_MD5 : public ICryptHash
+class CAT_EXPORT HMAC_MD5 : public ICryptHash
 {
 protected:
     static const int DIGEST_BYTES = 16;

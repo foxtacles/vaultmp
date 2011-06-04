@@ -1,5 +1,5 @@
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_UDPProxyServer==1
+#if _RAKNET_SUPPORT_UDPProxyServer==1 && _RAKNET_SUPPORT_UDPForwarder==1
 
 #include "UDPProxyServer.h"
 #include "BitStream.h"
@@ -14,10 +14,15 @@ STATIC_FACTORY_DEFINITIONS(UDPProxyServer,UDPProxyServer);
 UDPProxyServer::UDPProxyServer()
 {
 	resultHandler=0;
+	socketFamily=AF_INET;
 }
 UDPProxyServer::~UDPProxyServer()
 {
 
+}
+void UDPProxyServer::SetSocketFamily(unsigned short _socketFamily)
+{
+	socketFamily=_socketFamily;
 }
 void UDPProxyServer::SetResultHandler(UDPProxyServerResultHandler *rh)
 {
@@ -102,7 +107,7 @@ PluginReceiveResult UDPProxyServer::OnReceive(Packet *packet)
 	}
 	return RR_CONTINUE_PROCESSING;
 }
-void UDPProxyServer::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
+void UDPProxyServer::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
 	(void) lostConnectionReason;
 	(void) rakNetGUID;
@@ -138,11 +143,10 @@ void UDPProxyServer::OnForwardingRequestFromCoordinatorToServer(Packet *packet)
 	incomingBs.Read(targetAddress);
 	RakNet::TimeMS timeoutOnNoDataMS;
 	incomingBs.Read(timeoutOnNoDataMS);
-	RakAssert(timeoutOnNoDataMS > 0 && timeoutOnNoDataMS < UDP_FORWARDER_MAXIMUM_TIMEOUT);
+	RakAssert(timeoutOnNoDataMS > 0 && timeoutOnNoDataMS <= UDP_FORWARDER_MAXIMUM_TIMEOUT);
 
-	unsigned short srcToDestPort;
-	unsigned short destToSourcePort;
-	UDPForwarderResult success = udpForwarder.StartForwarding(sourceAddress, targetAddress, timeoutOnNoDataMS, 0, &srcToDestPort, &destToSourcePort, 0, 0);
+	unsigned short forwardingPort;
+	UDPForwarderResult success = udpForwarder.StartForwarding(sourceAddress, targetAddress, timeoutOnNoDataMS, 0, socketFamily, &forwardingPort, 0);
 	RakNet::BitStream outgoingBs;
 	outgoingBs.Write((MessageID)ID_UDP_PROXY_GENERAL);
 	outgoingBs.Write((MessageID)ID_UDP_PROXY_FORWARDING_REPLY_FROM_SERVER_TO_COORDINATOR);
@@ -151,8 +155,7 @@ void UDPProxyServer::OnForwardingRequestFromCoordinatorToServer(Packet *packet)
 	outgoingBs.Write((unsigned char) success);
 	if (success==UDPFORWARDER_SUCCESS)
 	{
-		outgoingBs.Write(srcToDestPort);
-		outgoingBs.Write(destToSourcePort);
+		outgoingBs.Write(forwardingPort);
 	}
 	rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
 }

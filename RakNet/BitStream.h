@@ -19,6 +19,7 @@
 #include "Export.h"
 #include "RakNetTypes.h"
 #include "RakString.h"
+#include "RakWString.h"
 #include "RakAssert.h"
 #include <math.h>
 #include <float.h>
@@ -270,13 +271,6 @@ namespace RakNet
 		/// \return true on success, false on failure.
 		template <class templateType>
 			bool Read(templateType &outTemplateVar);
-
-		/// \brief Read into a pointer to any integral type from a bitstream.  
-		/// \details Define __BITSTREAM_NATIVE_END if you need endian swapping.
-		/// \param[in] outTemplateVar The value to read
-		/// \return true on success, false on failure.
-		template <class templateType>
-			bool ReadPtr(templateType *outTemplateVar);
 
 		/// \brief Read any integral type from a bitstream.  
 		/// \details If the written value differed from the value compared against in the write function,
@@ -662,6 +656,10 @@ namespace RakNet
 		{
 			RakString::Serialize(inStringVar, this);
 		}
+		inline void Write(const wchar_t * const inStringVar)
+		{
+			RakWString::Serialize(inStringVar, this);
+		}
 		inline void Write(const unsigned char * const inTemplateVar)
 		{
 			Write((const char*)inTemplateVar);
@@ -677,6 +675,10 @@ namespace RakNet
 		inline void WriteCompressed(const char * const inStringVar)
 		{
 			RakString::SerializeCompressed(inStringVar,this,0,false);
+		}
+		inline void WriteCompressed(const wchar_t * const inStringVar)
+		{
+			RakWString::Serialize(inStringVar,this);
 		}
 		inline void WriteCompressed(const unsigned char * const inTemplateVar)
 		{
@@ -726,6 +728,8 @@ namespace RakNet
 			void Write(unsigned char* const &var);
 		template <>
 			void Write(const RakString &var);
+		template <>
+			void Write(const RakWString &var);
 
 		/// \brief Write a systemAddress.  
 		/// \details If the current value is different from the last value
@@ -779,6 +783,8 @@ namespace RakNet
 			void WriteCompressed(unsigned char* var);
 		template <>
 			void WriteCompressed(const RakString &var);
+		template <>
+			void WriteCompressed(const RakWString &var);
 
 		/// \brief Write a bool delta.  
 		/// \details Same thing as just calling Write
@@ -816,9 +822,13 @@ namespace RakNet
 		template <>
 			bool Read(char *&var);
 		template <>
+			bool Read(wchar_t *&var);
+		template <>
 			bool Read(unsigned char *&var);
 		template <>
 			bool Read(RakString &var);
+		template <>
+			bool Read(RakWString &var);
 
 		/// \brief Read a bool from a bitstream.
 		/// \param[in] var The value to read
@@ -849,9 +859,13 @@ namespace RakNet
 		template <>
 			bool ReadCompressed(char* &var);
 		template <>
+			bool ReadCompressed(wchar_t* &var);
+		template <>
 			bool ReadCompressed(unsigned char *&var);
 		template <>
 			bool ReadCompressed(RakString &var);
+		template <>
+			bool ReadCompressed(RakWString &var);
 
 		/// \brief Read a bool from a bitstream.
 		/// \param[in] var The value to read
@@ -1113,12 +1127,24 @@ namespace RakNet
 	template <>
 		inline void BitStream::Write(const SystemAddress &inTemplateVar)
 	{
-		// Hide the address so routers don't modify it
-		SystemAddress var2=inTemplateVar;
-		var2.binaryAddress=~inTemplateVar.binaryAddress;
-		// Don't endian swap the address
-		WriteBits((unsigned char*)&var2.binaryAddress, sizeof(var2.binaryAddress)*8, true);
-		Write(var2.port);
+		Write(inTemplateVar.GetIPVersion());
+		if (inTemplateVar.GetIPVersion()==4)
+		{
+			// Hide the address so routers don't modify it
+			SystemAddress var2=inTemplateVar;
+			uint32_t binaryAddress=~inTemplateVar.address.addr4.sin_addr.s_addr;
+			// Don't endian swap the address or port
+			WriteBits((unsigned char*)&binaryAddress, sizeof(binaryAddress)*8, true);
+			unsigned short p = var2.GetPortNetworkOrder();
+			WriteBits((unsigned char*)&p, sizeof(unsigned short)*8, true);
+		}
+		else
+		{
+#if RAKNET_SUPPORT_IPV6==1
+			// Don't endian swap
+			WriteBits((const unsigned char*) &inTemplateVar.address.addr6, sizeof(inTemplateVar.address.addr6)*8, true);
+#endif
+		}
 	}
 
 	template <>
@@ -1157,9 +1183,19 @@ namespace RakNet
 		inTemplateVar.Serialize(this);
 	}
 	template <>
+		inline void BitStream::Write(const RakWString &inTemplateVar)
+	{
+		inTemplateVar.Serialize(this);
+	}
+	template <>
 		inline void BitStream::Write(const char * const &inStringVar)
 	{
 		RakString::Serialize(inStringVar, this);
+	}
+	template <>
+		inline void BitStream::Write(const wchar_t * const &inStringVar)
+	{
+		RakWString::Serialize(inStringVar, this);
 	}
 	template <>
 		inline void BitStream::Write(const unsigned char * const &inTemplateVar)
@@ -1195,42 +1231,6 @@ namespace RakNet
 			Write(currentValue);
 		}
 	}
-
-		/*
-	/// \brief Write a systemAddress.  
-	/// \details If the current value is different from the last value
-	/// the current value will be written.  Otherwise, a single bit will be written
-	/// \param[in] currentValue The current value to write
-	/// \param[in] lastValue The last value to compare against
-	template <>
-		inline void BitStream::WriteDelta(SystemAddress currentValue, SystemAddress lastValue)
-	{
-		if (currentValue==lastValue)
-		{
-			Write(false);
-		}
-		else
-		{
-			Write(true);
-			Write(currentValue);
-		}
-	}
-
-	template <>
-		inline void BitStream::WriteDelta(RakNetGUID currentValue, RakNetGUID lastValue)
-		{
-			if (currentValue==lastValue)
-			{
-				Write(false);
-			}
-			else
-			{
-				Write(true);
-				Write(currentValue);
-			}
-		}
-
-	*/
 
 	/// \brief Write a bool delta. Same thing as just calling Write
 	/// \param[in] currentValue The current value to write
@@ -1332,10 +1332,7 @@ namespace RakNet
 			varCopy=-1.0f;
 		if (varCopy > 1.0f)
 			varCopy=1.0f;
-#ifdef _DEBUG
-		RakAssert(sizeof(unsigned long)==4);
-#endif
-		Write((unsigned long)((varCopy+1.0)*2147483648.0));
+		Write((uint32_t)((varCopy+1.0)*2147483648.0));
 	}
 
 	/// Compress the string
@@ -1345,9 +1342,19 @@ namespace RakNet
 		inTemplateVar.SerializeCompressed(this,0,false);
 	}
 	template <>
+	inline void BitStream::WriteCompressed(const RakWString &inTemplateVar)
+	{
+		inTemplateVar.Serialize(this);
+	}
+	template <>
 		inline void BitStream::WriteCompressed(const char * const &inStringVar)
 	{
 		RakString::SerializeCompressed(inStringVar,this,0,false);
+	}
+	template <>
+	inline void BitStream::WriteCompressed(const wchar_t * const &inStringVar)
+	{
+		RakWString::Serialize(inStringVar,this);
 	}
 	template <>
 		inline void BitStream::WriteCompressed(const unsigned char * const &inTemplateVar)
@@ -1448,36 +1455,6 @@ namespace RakNet
 		}
 	}
 
-	template <class templateType>
-	inline bool BitStream::ReadPtr(templateType *outTemplateVar)
-	{
-#ifdef _MSC_VER
-#pragma warning(disable:4127)   // conditional expression is constant
-#endif
-		if (sizeof(templateType)==1)
-			return ReadBits( ( unsigned char* ) outTemplateVar, sizeof(templateType) * 8, true );
-		else
-		{
-#ifndef __BITSTREAM_NATIVE_END
-#ifdef _MSC_VER
-#pragma warning(disable:4244)   // '=' : conversion from 'unsigned long' to 'unsigned short', possible loss of data
-#endif
-			if (DoEndianSwap())
-			{
-				unsigned char output[sizeof(templateType)];
-				if (ReadBits( ( unsigned char* ) output, sizeof(templateType) * 8, true ))
-				{
-					ReverseBytes(output, (unsigned char*)outTemplateVar, sizeof(templateType));
-					return true;
-				}
-				return false;
-			}
-			else
-#endif
-				return ReadBits( ( unsigned char* ) outTemplateVar, sizeof(templateType) * 8, true );
-		}
-	}
-
 	/// \brief Read a bool from a bitstream.
 	/// \param[in] outTemplateVar The value to read
 	template <>
@@ -1502,12 +1479,31 @@ namespace RakNet
 	template <>
 		inline bool BitStream::Read(SystemAddress &outTemplateVar)
 	{
-		// Read(var.binaryAddress);
-		// Don't endian swap the address
-		ReadBits( ( unsigned char* ) & outTemplateVar.binaryAddress, sizeof(outTemplateVar.binaryAddress) * 8, true );
-		// Unhide the IP address, done to prevent routers from changing it
-		outTemplateVar.binaryAddress=~outTemplateVar.binaryAddress;
-		return Read(outTemplateVar.port);
+		unsigned char ipVersion;
+		Read(ipVersion);
+		if (ipVersion==4)
+		{
+			outTemplateVar.address.addr4.sin_family=AF_INET;
+			// Read(var.binaryAddress);
+			// Don't endian swap the address or port
+			uint32_t binaryAddress;
+			ReadBits( ( unsigned char* ) & binaryAddress, sizeof(binaryAddress) * 8, true );
+			// Unhide the IP address, done to prevent routers from changing it
+			outTemplateVar.address.addr4.sin_addr.s_addr=~binaryAddress;
+			bool b = ReadBits(( unsigned char* ) & outTemplateVar.address.addr4.sin_port, sizeof(outTemplateVar.address.addr4.sin_port) * 8, true);
+			outTemplateVar.debugPort=ntohs(outTemplateVar.address.addr4.sin_port);
+			return b;
+		}
+		else
+		{
+#if RAKNET_SUPPORT_IPV6==1
+			bool b = ReadBits((unsigned char*) &outTemplateVar.address.addr6, sizeof(outTemplateVar.address.addr6)*8, true);
+			outTemplateVar.debugPort=ntohs(outTemplateVar.address.addr6.sin6_port);
+			return b;
+#else
+			return false;
+#endif
+		}	
 	}
 
 	template <>
@@ -1550,9 +1546,19 @@ namespace RakNet
 		return outTemplateVar.Deserialize(this);
 	}
 	template <>
+	inline bool BitStream::Read(RakWString &outTemplateVar)
+	{
+		return outTemplateVar.Deserialize(this);
+	}
+	template <>
 		inline bool BitStream::Read(char *&varString)
 	{
 		return RakString::Deserialize(varString,this);
+	}
+	template <>
+	inline bool BitStream::Read(wchar_t *&varString)
+	{
+		return RakWString::Deserialize(varString,this);
 	}
 	template <>
 		inline bool BitStream::Read(unsigned char *&varString)
@@ -1658,7 +1664,7 @@ namespace RakNet
 	template <>
 		inline bool BitStream::ReadCompressed(double &outTemplateVar)
 	{
-		unsigned long compressedFloat;
+		uint32_t compressedFloat;
 		if (Read(compressedFloat))
 		{
 			outTemplateVar = ((double)compressedFloat / 2147483648.0 - 1.0);
@@ -1674,9 +1680,19 @@ namespace RakNet
 		return outTemplateVar.DeserializeCompressed(this,false);
 	}
 	template <>
+	inline bool BitStream::ReadCompressed(RakWString &outTemplateVar)
+	{
+		return outTemplateVar.Deserialize(this);
+	}
+	template <>
 	inline bool BitStream::ReadCompressed(char *&outTemplateVar)
 	{
 		return RakString::DeserializeCompressed(outTemplateVar,this,false);
+	}
+	template <>
+	inline bool BitStream::ReadCompressed(wchar_t *&outTemplateVar)
+	{
+		return RakWString::Deserialize(outTemplateVar,this);
 	}
 	template <>
 	inline bool BitStream::ReadCompressed(unsigned char *&outTemplateVar)

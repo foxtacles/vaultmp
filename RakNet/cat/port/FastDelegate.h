@@ -101,7 +101,7 @@
 #endif
 
 // Does it allow function declarator syntax? The following compilers are known to work:
-#if defined(FASTDLGT_ISMSVC) && (_MSC_VER >=1310) // VC 7.1
+#if   _MSC_VER >=1310  // VC 7.1
 #define FASTDELEGATE_ALLOW_FUNCTION_TYPE_SYNTAX
 #endif
 
@@ -212,13 +212,13 @@ inline OutputClass horrible_cast(const InputClass input){
 //   in any automatic conversions. But on a 16-bit compiler it might
 //   cause extra code to be generated, so we disable it for all compilers
 //   except for VC6 (and VC5).
-#ifdef FASTDLGT_VC6
+
 // VC6 workaround
 typedef const void * DefaultVoid;
-#else
-// On any other compiler, just use a normal void.
-typedef void DefaultVoid;
-#endif
+
+
+
+
 
 // Translate from 'DefaultVoid' to 'void'.
 // Everything else is unchanged
@@ -251,14 +251,14 @@ struct VoidToDefaultVoid<void> { typedef DefaultVoid type; };
 // code if it knows the class only uses single inheritance.
 
 // Compilers using Microsoft's structure need to be treated as a special case.
-#ifdef  FASTDLGT_MICROSOFT_MFP
 
-#ifdef FASTDLGT_HASINHERITANCE_KEYWORDS
+
+
     // For Microsoft and Intel, we want to ensure that it's the most efficient type of MFP 
     // (4 bytes), even when the /vmg option is used. Declaring an empty class 
     // would give 16 byte pointers in this case....
     class __single_inheritance GenericClass;
-#endif
+
     // ...but for Codeplay, an empty class *always* gives 4 byte pointers.
     // If compiled with the /clr option ("managed C++"), the JIT compiler thinks
     // it needs to load GenericClass before it can call any of its functions,
@@ -266,9 +266,9 @@ struct VoidToDefaultVoid<void> { typedef DefaultVoid type; };
     // empty class to make it happy.
     // Codeplay and VC4 can't cope with the unknown_inheritance case either.
     class GenericClass {};
-#else
-    class GenericClass;
-#endif
+
+
+
 
 // The size of a single inheritance member function pointer.
 const int SINGLE_MEMFUNCPTR_SIZE = sizeof(void (GenericClass::*)());
@@ -326,7 +326,7 @@ struct SimplifyMemFunc<SINGLE_MEMFUNCPTR_SIZE>  {
 
 // Compilers with member function pointers which violate the standard (MSVC, Intel, Codeplay),
 // need to be treated as a special case.
-#ifdef FASTDLGT_MICROSOFT_MFP
+
 
 // We use unions to perform horrible_casts. I would like to use #pragma pack(push, 1)
 // at the start of each function for extra safety, but VC6 seems to ICE
@@ -506,7 +506,7 @@ struct SimplifyMemFunc<SINGLE_MEMFUNCPTR_SIZE + 3*sizeof(int) >
 };
 #endif // MSVC 7 and greater
 
-#endif // MS/Intel hacks
+
 
 }  // namespace detail
 
@@ -564,23 +564,23 @@ public: // my modification to allow for access -cat
     detail::GenericClass *m_pthis;
     GenericMemFuncType m_pFunction;
 
-#if !defined(FASTDELEGATE_USESTATICFUNCTIONHACK)
+
     typedef void (*GenericFuncPtr)(); // arbitrary code pointer
     GenericFuncPtr m_pStaticFunction;
-#endif
+
 
 public:
-#if !defined(FASTDELEGATE_USESTATICFUNCTIONHACK)
+
     DelegateMemento() : m_pthis(0), m_pFunction(0), m_pStaticFunction(0) {};
     void clear() {
         m_pthis=0; m_pFunction=0; m_pStaticFunction=0;
     }
-#else
-    DelegateMemento() : m_pthis(0), m_pFunction(0) {};
-    void clear() {    m_pthis=0; m_pFunction=0;    }
-#endif
+
+
+
+
 public:
-#if !defined(FASTDELEGATE_USESTATICFUNCTIONHACK)
+
     inline bool IsEqual (const DelegateMemento &x) const{
         // We have to cope with the static function pointers as a special case
         if (m_pFunction!=x.m_pFunction) return false;
@@ -589,18 +589,18 @@ public:
         if (m_pStaticFunction!=0) return m_pthis==x.m_pthis;
         else return true;
     }
-#else // Evil Method
-    inline bool IsEqual (const DelegateMemento &x) const{
-        return m_pthis==x.m_pthis && m_pFunction==x.m_pFunction;
-    }
-#endif
+
+
+
+
+
     // Provide a strict weak ordering for DelegateMementos.
     inline bool IsLess(const DelegateMemento &right) const {
         // deal with static function pointers first
-#if !defined(FASTDELEGATE_USESTATICFUNCTIONHACK)
+
         if (m_pStaticFunction !=0 || right.m_pStaticFunction!=0) 
                 return m_pStaticFunction < right.m_pStaticFunction;
-#endif
+
         if (m_pthis !=right.m_pthis) return m_pthis < right.m_pthis;
     // There are no ordering operators for member function pointers, 
     // but we can fake one by comparing each byte. The resulting ordering is
@@ -627,18 +627,18 @@ public:
         return right.IsLess(*this);
     }
     DelegateMemento (const DelegateMemento &right)  : 
-        m_pFunction(right.m_pFunction), m_pthis(right.m_pthis)
-#if !defined(FASTDELEGATE_USESTATICFUNCTIONHACK)
+        m_pthis(right.m_pthis), m_pFunction(right.m_pFunction)
+
         , m_pStaticFunction (right.m_pStaticFunction)
-#endif
+
         {}
 protected:
     void SetMementoFrom(const DelegateMemento &right)  {
-        m_pFunction = right.m_pFunction;
         m_pthis = right.m_pthis;
-#if !defined(FASTDELEGATE_USESTATICFUNCTIONHACK)
+		m_pFunction = right.m_pFunction;
+
         m_pStaticFunction = right.m_pStaticFunction;
-#endif
+
     }
 };
 
@@ -672,9 +672,9 @@ public:
     inline void bindmemfunc(X *pthis, XMemFunc function_to_bind ) {
         m_pthis = SimplifyMemFunc< sizeof(function_to_bind) >
             ::Convert(pthis, function_to_bind, m_pFunction);
-#if !defined(FASTDELEGATE_USESTATICFUNCTIONHACK)
+
         m_pStaticFunction = 0;
-#endif
+
     }
     // For const member functions, we only need a const class pointer.
     // Since we know that the member function is const, it's safe to 
@@ -684,19 +684,19 @@ public:
     inline void bindconstmemfunc(const X *pthis, XMemFunc function_to_bind) {
         m_pthis= SimplifyMemFunc< sizeof(function_to_bind) >
             ::Convert(const_cast<X*>(pthis), function_to_bind, m_pFunction);
-#if !defined(FASTDELEGATE_USESTATICFUNCTIONHACK)
+
         m_pStaticFunction = 0;
-#endif
+
     }
-#ifdef FASTDELEGATE_GCC_BUG_8271    // At present, GCC doesn't recognize constness of MFPs in templates
+
     template < class X, class XMemFunc>
     inline void bindmemfunc(const X *pthis, XMemFunc function_to_bind) {
         bindconstmemfunc(pthis, function_to_bind);
-#if !defined(FASTDELEGATE_USESTATICFUNCTIONHACK)
+
         m_pStaticFunction = 0;
-#endif
+
     }
-#endif
+
     // These functions are required for invoking the stored function
     inline GenericClass *GetClosureThis() const { return m_pthis; }
     inline GenericMemFunc GetClosureMemPtr() const { return reinterpret_cast<GenericMemFunc>(m_pFunction); }
@@ -707,7 +707,7 @@ public:
 // medium memory model. It's so evil that I can't recommend it, but I've
 // implemented it anyway because it produces very nice asm code.
 
-#if !defined(FASTDELEGATE_USESTATICFUNCTIONHACK)
+
 
 //                ClosurePtr<> - Safe version
 //
@@ -743,60 +743,60 @@ public:
     inline UnvoidStaticFuncPtr GetStaticFunction() const { 
         return reinterpret_cast<UnvoidStaticFuncPtr>(m_pStaticFunction); 
     }
-#else
 
-//                ClosurePtr<> - Evil version
-//
-// For compilers where data pointers are at least as big as code pointers, it is 
-// possible to store the function pointer in the this pointer, using another 
-// horrible_cast. Invocation isn't any faster, but it saves 4 bytes, and
-// speeds up comparison and assignment. If C++ provided direct language support
-// for delegates, they would produce asm code that was almost identical to this.
-// Note that the Sun C++ and MSVC documentation explicitly state that they 
-// support static_cast between void * and function pointers.
 
-    template< class DerivedClass >
-    inline void CopyFrom (DerivedClass *pParent, const DelegateMemento &right) {
-        SetMementoFrom(right);
-    }
-    // For static functions, the 'static_function_invoker' class in the parent 
-    // will be called. The parent then needs to call GetStaticFunction() to find out 
-    // the actual function to invoke.
-    // ******** EVIL, EVIL CODE! *******
-    template <     class DerivedClass, class ParentInvokerSig>
-    inline void bindstaticfunc(DerivedClass *pParent, ParentInvokerSig static_function_invoker, 
-                StaticFuncPtr function_to_bind) {
-        if (function_to_bind==0) { // cope with assignment to 0
-            m_pFunction=0;
-        } else { 
-           // We'll be ignoring the 'this' pointer, but we need to make sure we pass
-           // a valid value to bindmemfunc().
-            bindmemfunc(pParent, static_function_invoker);
-        }
 
-        // WARNING! Evil hack. We store the function in the 'this' pointer!
-        // Ensure that there's a compilation failure if function pointers 
-        // and data pointers have different sizes.
-        // If you get this error, you need to #undef FASTDELEGATE_USESTATICFUNCTIONHACK.
-        typedef int ERROR_CantUseEvilMethod[sizeof(GenericClass *)==sizeof(function_to_bind) ? 1 : -1];
-        m_pthis = horrible_cast<GenericClass *>(function_to_bind);
-        // MSVC, SunC++ and DMC accept the following (non-standard) code:
-//        m_pthis = static_cast<GenericClass *>(static_cast<void *>(function_to_bind));
-        // BCC32, Comeau and DMC accept this method. MSVC7.1 needs __int64 instead of long
-//        m_pthis = reinterpret_cast<GenericClass *>(reinterpret_cast<long>(function_to_bind));
-    }
-    // ******** EVIL, EVIL CODE! *******
-    // This function will be called with an invalid 'this' pointer!!
-    // We're just returning the 'this' pointer, converted into
-    // a function pointer!
-    inline UnvoidStaticFuncPtr GetStaticFunction() const {
-        // Ensure that there's a compilation failure if function pointers 
-        // and data pointers have different sizes.
-        // If you get this error, you need to #undef FASTDELEGATE_USESTATICFUNCTIONHACK.
-        typedef int ERROR_CantUseEvilMethod[sizeof(UnvoidStaticFuncPtr)==sizeof(this) ? 1 : -1];
-        return horrible_cast<UnvoidStaticFuncPtr>(this);
-    }
-#endif // !defined(FASTDELEGATE_USESTATICFUNCTIONHACK)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // Does the closure contain this static function?
     inline bool IsEqualToStaticFuncPtr(StaticFuncPtr funcptr){
@@ -1626,7 +1626,7 @@ private:    // Invoker for static functions
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifdef FASTDELEGATE_ALLOW_FUNCTION_TYPE_SYNTAX
+
 
 // Declare FastDelegate as a class template.  It will be specialized
 // later for all number of arguments.
@@ -1967,7 +1967,7 @@ public:
 };
 
 
-#endif //FASTDELEGATE_ALLOW_FUNCTION_TYPE_SYNTAX
+
 
 ////////////////////////////////////////////////////////////////////////////////
 //                        Fast Delegates, part 5:
@@ -1993,11 +1993,11 @@ public:
 // but VC6 doesn't allow 'typename' in this context.
 // So, I have to use a macro.
 
-#ifdef FASTDLGT_VC6
+
 #define FASTDLGT_RETTYPE detail::VoidToDefaultVoid<RetType>::type
-#else 
-#define FASTDLGT_RETTYPE RetType
-#endif
+
+
+
 
 //N=0
 template <class X, class Y, class RetType>

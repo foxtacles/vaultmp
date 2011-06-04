@@ -11,8 +11,7 @@
 using namespace RakNet;
 
 //DataStructures::MemoryPool<RakString::SharedString> RakString::pool;
-unsigned int RakString::nPos=(unsigned int) -1;
-RakString::SharedString RakString::emptyString={0,0,0,(char *)"",(char *)""};
+RakString::SharedString RakString::emptyString={0,0,0,(char*) "",(char*) ""};
 //RakString::SharedString *RakString::sharedStringFreeList=0;
 //unsigned int RakString::sharedStringFreeListAllocationCount=0;
 DataStructures::List<RakString::SharedString*> RakString::freeList;
@@ -124,6 +123,14 @@ RakString& RakString::operator = ( char *str )
 {
 	return operator = ((const char*)str);
 }
+RakString& RakString::operator = ( const unsigned char *str )
+{
+	return operator = ((const char*)str);
+}
+RakString& RakString::operator = ( char unsigned *str )
+{
+	return operator = ((const char*)str);
+}
 RakString& RakString::operator = ( const char c )
 {
 	char buff[2];
@@ -190,6 +197,14 @@ RakString& RakString::operator +=( const char *str )
 	return *this;
 }
 RakString& RakString::operator +=( char *str )
+{
+	return operator += ((const char*)str);
+}
+RakString& RakString::operator +=( const unsigned char *str )
+{
+	return operator += ((const char*)str);
+}
+RakString& RakString::operator +=( unsigned char *str )
 {
 	return operator += ((const char*)str);
 }
@@ -455,7 +470,7 @@ size_t RakString::Find(const char *stringToFind,size_t pos)
 	size_t len=GetLength();
 	if (pos>=len || stringToFind==0 || stringToFind[0]==0)
 	{
-		return nPos;
+		return (size_t) -1;
 	}
 	size_t matchLen= strlen(stringToFind);
 	size_t matchPos=0;
@@ -482,7 +497,7 @@ size_t RakString::Find(const char *stringToFind,size_t pos)
 		}
 	}
 
-	return nPos;
+	return (size_t) -1;
 }
 
 void RakString::Truncate(unsigned length)
@@ -572,11 +587,11 @@ int RakString::StrICmp(const RakString &rhs) const
 }
 void RakString::Printf(void)
 {
-	RAKNET_DEBUG_PRINTF(sharedString->c_str);
+	RAKNET_DEBUG_PRINTF("%s", sharedString->c_str);
 }
 void RakString::FPrintf(FILE *fp)
 {
-	fprintf(fp,sharedString->c_str);
+	fprintf(fp,"%s", sharedString->c_str);
 }
 bool RakString::IPAddressMatch(const char *IP)
 {
@@ -645,9 +660,9 @@ bool RakString::IsEmailAddress(void) const
 	if (IsEmpty())
 		return false;
 	size_t strLen = strlen(sharedString->c_str);
-	if (strLen < 7) // a@b.com
+	if (strLen < 6) // a@b.de
 		return false;
-	if (sharedString->c_str[strLen-4]!='.') // .com, .net., .org
+	if (sharedString->c_str[strLen-4]!='.' && sharedString->c_str[strLen-3]!='.') // .com, .net., .org, .de
 		return false;
 	unsigned i;
 	// Has non-printable?
@@ -756,6 +771,59 @@ RakNet::RakString& RakString::URLDecode(void)
 	*this = result;
 	return *this;
 }
+void RakString::SplitURI(RakNet::RakString &header, RakNet::RakString &domain, RakNet::RakString &path)
+{
+	header.Clear();
+	domain.Clear();
+	path.Clear();
+
+	size_t strLen = strlen(sharedString->c_str);
+
+	char c;
+	unsigned int i=0;
+	if (strncmp(sharedString->c_str, "http://", 7)==0)
+		i+=(unsigned int) strlen("http://");
+	else if (strncmp(sharedString->c_str, "https://", 8)==0)
+		i+=(unsigned int) strlen("https://");
+	
+	if (strncmp(sharedString->c_str, "www.", 4)==0)
+		i+=(unsigned int) strlen("www.");
+
+	if (i!=0)
+	{
+		header.Allocate(i+1);
+		strncpy(header.sharedString->c_str, sharedString->c_str, i);
+		header.sharedString->c_str[i]=0;
+	}
+
+
+	domain.Allocate(strLen-i+1);
+	char *domainOutput=domain.sharedString->c_str;
+	unsigned int outputIndex=0;
+	for (; i < strLen; i++)
+	{
+		c=sharedString->c_str[i];
+		if (c=='/')
+		{
+			break;
+		}
+		else
+		{
+			domainOutput[outputIndex++]=sharedString->c_str[i];
+		}
+	}
+
+	domainOutput[outputIndex]=0;
+
+	path.Allocate(strLen-header.GetLength()-outputIndex+1);
+	outputIndex=0;
+	char *pathOutput=path.sharedString->c_str;
+	for (; i < strLen; i++)
+	{
+		pathOutput[outputIndex++]=sharedString->c_str[i];
+	}
+	pathOutput[outputIndex]=0;
+}
 RakNet::RakString& RakString::SQLEscape(void)
 {
 	int strLen=(int)GetLength();
@@ -851,11 +919,11 @@ void RakString::Serialize(const char *str, BitStream *bs)
 	bs->Write(l);
 	bs->WriteAlignedBytes((const unsigned char*) str, (const unsigned int) l);
 }
-void RakString::SerializeCompressed(BitStream *bs, int languageId, bool writeLanguageId) const
+void RakString::SerializeCompressed(BitStream *bs, uint8_t languageId, bool writeLanguageId) const
 {
 	SerializeCompressed(C_String(), bs, languageId, writeLanguageId);
 }
-void RakString::SerializeCompressed(const char *str, BitStream *bs, int languageId, bool writeLanguageId)
+void RakString::SerializeCompressed(const char *str, BitStream *bs, uint8_t languageId, bool writeLanguageId)
 {
 	if (writeLanguageId)
 		bs->WriteCompressed(languageId);
@@ -897,7 +965,7 @@ bool RakString::Deserialize(char *str, BitStream *bs)
 }
 bool RakString::DeserializeCompressed(BitStream *bs, bool readLanguageId)
 {
-	unsigned int languageId;
+	uint8_t languageId;
 	if (readLanguageId)
 		bs->ReadCompressed(languageId);
 	else
@@ -906,7 +974,7 @@ bool RakString::DeserializeCompressed(BitStream *bs, bool readLanguageId)
 }
 bool RakString::DeserializeCompressed(char *str, BitStream *bs, bool readLanguageId)
 {
-	unsigned int languageId;
+	uint8_t languageId;
 	if (readLanguageId)
 		bs->ReadCompressed(languageId);
 	else
@@ -920,7 +988,7 @@ const char *RakString::ToString(int64_t i)
 #if defined(_WIN32)
 	sprintf(buff[index], "%I64d", i);
 #else
-	sprintf(buff[index], "%lld", i);
+	sprintf(buff[index], "%lld", (long long unsigned int) i);
 #endif
 	int lastIndex=index;
 	if (++index==64)
@@ -934,7 +1002,7 @@ const char *RakString::ToString(uint64_t i)
 #if defined(_WIN32)
 	sprintf(buff[index], "%I64u", i);
 #else
-	sprintf(buff[index], "%llu", i);
+	sprintf(buff[index], "%llu", (long long unsigned int) i);
 #endif
 	int lastIndex=index;
 	if (++index==64)
@@ -998,7 +1066,12 @@ void RakString::Assign(const char *str)
 void RakString::Assign(const char *str, va_list ap)
 {
 	char stackBuff[512];
-	if (_vsnprintf(stackBuff, 512, str, ap)!=-1)
+	if (_vsnprintf(stackBuff, 512, str, ap)!=-1
+#ifndef _WIN32
+		// Here Windows will return -1 if the string is too long; Linux just truncates the string.
+		&& strlen(str) <511
+#endif
+		)
 	{
 		Assign(stackBuff);
 		return;
@@ -1070,7 +1143,7 @@ unsigned long RakString::ToInteger(const char *str)
 	unsigned long hash = 0;
 	int c;
 
-	while (c = *str++)
+	while ((c = *str++))
 		hash = c + (hash << 6) + (hash << 16) - hash;
 
 	return hash;

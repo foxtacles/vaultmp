@@ -3,12 +3,13 @@
 #include <string.h>
 #include "RakAssert.h"
 #include <stdio.h>
-#if defined(_XBOX) || defined(X360)
-                            
-#elif defined(_WIN32)
+
+
+#if   defined(_WIN32)
 // IP_DONTFRAGMENT is different between winsock 1 and winsock 2.  Therefore, Winsock2.h must be linked againt Ws2_32.lib
 // winsock.h must be linked against WSock32.lib.  If these two are mixed up the flag won't work correctly
 #include <winsock2.h>
+
 #else
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -79,7 +80,7 @@ void CommandParserInterface::ParseConsoleString(char *str, const char delineator
 	parameterList[parameterListIndex]=0;
 	*numParameters=parameterListIndex;
 }
-void CommandParserInterface::SendCommandList(TransportInterface *transport, SystemAddress systemAddress)
+void CommandParserInterface::SendCommandList(TransportInterface *transport, const SystemAddress &systemAddress)
 {
 	unsigned i;
 	if (commandList.Size())
@@ -116,52 +117,42 @@ void CommandParserInterface::OnTransportChange(TransportInterface *transport)
 {
 	(void) transport;
 }
-void CommandParserInterface::OnNewIncomingConnection(SystemAddress systemAddress, TransportInterface *transport)
+void CommandParserInterface::OnNewIncomingConnection(const SystemAddress &systemAddress, TransportInterface *transport)
 {
 	(void) systemAddress;
 	(void) transport;
 }
-void CommandParserInterface::OnConnectionLost(SystemAddress systemAddress, TransportInterface *transport)
+void CommandParserInterface::OnConnectionLost(const SystemAddress &systemAddress, TransportInterface *transport)
 {
 	(void) systemAddress;
 	(void) transport;
 }
-void CommandParserInterface::ReturnResult(bool res, const char *command,TransportInterface *transport, SystemAddress systemAddress)
+void CommandParserInterface::ReturnResult(bool res, const char *command,TransportInterface *transport, const SystemAddress &systemAddress)
 {
 	if (res)
 		transport->Send(systemAddress, "%s returned true.\r\n", command);
 	else
 		transport->Send(systemAddress, "%s returned false.\r\n", command);
 }
-void CommandParserInterface::ReturnResult(int res, const char *command,TransportInterface *transport, SystemAddress systemAddress)
+void CommandParserInterface::ReturnResult(int res, const char *command,TransportInterface *transport, const SystemAddress &systemAddress)
 {
 	transport->Send(systemAddress, "%s returned %i.\r\n", command, res);
 }
-void CommandParserInterface::ReturnResult(const char *command, TransportInterface *transport, SystemAddress systemAddress)
+void CommandParserInterface::ReturnResult(const char *command, TransportInterface *transport, const SystemAddress &systemAddress)
 {
 	transport->Send(systemAddress, "Successfully called %s.\r\n", command);
 }
-void CommandParserInterface::ReturnResult(char *res, const char *command, TransportInterface *transport, SystemAddress systemAddress)
+void CommandParserInterface::ReturnResult(char *res, const char *command, TransportInterface *transport, const SystemAddress &systemAddress)
 {
 	transport->Send(systemAddress, "%s returned %s.\r\n", command, res);
 }
-void CommandParserInterface::ReturnResult(SystemAddress res, const char *command, TransportInterface *transport, SystemAddress systemAddress)
+void CommandParserInterface::ReturnResult(SystemAddress res, const char *command, TransportInterface *transport, const SystemAddress &systemAddress)
 {
-#if !defined(_XBOX) && !defined(_X360)
-	in_addr in;
-	in.s_addr = systemAddress.binaryAddress;
-	inet_ntoa( in );
-	transport->Send(systemAddress, "%s returned %s %i:%i\r\n", command,inet_ntoa( in ),res.binaryAddress, res.port);
-#else
-	transport->Send(systemAddress, "%s returned %i:%i\r\n", command,res.binaryAddress, res.port);
-#endif
-}
-SystemAddress CommandParserInterface::IntegersToSystemAddress(int binaryAddress, int port)
-{
-	SystemAddress systemAddress;
-	systemAddress.binaryAddress=binaryAddress;
-	systemAddress.port=(unsigned short)port;
-	return systemAddress;
+	char addr[128];
+	systemAddress.ToString(false,addr);
+	char addr2[128];
+	res.ToString(false,addr2);
+	transport->Send(systemAddress, "%s returned %s %s:%i\r\n", command,addr,addr2,res.GetPort());
 }
 
 #ifdef _MSC_VER

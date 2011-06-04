@@ -180,26 +180,24 @@ PluginReceiveResult UDPProxyClient::OnReceive(Packet *packet)
 				case ID_UDP_PROXY_FORWARDING_NOTIFICATION:
 				case ID_UDP_PROXY_FORWARDING_SUCCEEDED:
 					{
-						unsigned short srcToDestPort;
-						unsigned short destToSourcePort;
+						unsigned short forwardingPort;
 						RakNet::RakString serverIP;
 						incomingBs.Read(serverIP);
-						incomingBs.Read(srcToDestPort);
-						incomingBs.Read(destToSourcePort);
+						incomingBs.Read(forwardingPort);
 						if (packet->data[1]==ID_UDP_PROXY_FORWARDING_SUCCEEDED)
 						{
 							if (resultHandler)
-								resultHandler->OnForwardingSuccess(serverIP.C_String(), srcToDestPort, destToSourcePort, packet->systemAddress, senderAddress, targetAddress, this);
+								resultHandler->OnForwardingSuccess(serverIP.C_String(), forwardingPort, packet->systemAddress, senderAddress, targetAddress, this);
 						}
 						else
 						{
 							// Send a datagram to the proxy, so if we are behind a router, that router adds an entry to the routing table.
 							// Otherwise the router would block the incoming datagrams from source
 							// It doesn't matter if the message actually arrives as long as it goes through the router
-							rakPeerInterface->Ping(serverIP.C_String(), destToSourcePort, false);
+							rakPeerInterface->Ping(serverIP.C_String(), forwardingPort, false);
 
 							if (resultHandler)
-								resultHandler->OnForwardingNotification(serverIP.C_String(), srcToDestPort, destToSourcePort, packet->systemAddress, senderAddress, targetAddress, this);
+								resultHandler->OnForwardingNotification(serverIP.C_String(), forwardingPort, packet->systemAddress, senderAddress, targetAddress, this);
 						}
 					}
 					break;
@@ -258,7 +256,7 @@ void UDPProxyClient::OnPingServers(Packet *packet)
 		swp.ping=DEFAULT_UNRESPONSIVE_PING_TIME;
 		psg->serversToPing.Push(swp, _FILE_AND_LINE_ );
 		swp.serverAddress.ToString(false,ipStr);
-		rakPeerInterface->Ping(ipStr,swp.serverAddress.port,false,0);
+		rakPeerInterface->Ping(ipStr,swp.serverAddress.GetPort(),false,0);
 	}
 	pingServerGroups.Push(psg,_FILE_AND_LINE_);
 }

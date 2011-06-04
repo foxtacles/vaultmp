@@ -1,9 +1,13 @@
 #include "NativeFeatureIncludes.h"
 #if _RAKNET_SUPPORT_PacketLogger==1
 
+#if defined(UNICODE)
+#include "RakWString.h"
+#endif
+
 #include "PacketOutputWindowLogger.h"
 #include "RakString.h"
-#if defined(_WIN32) && !defined(__X360__) && !defined(_XBOX)
+#if defined(_WIN32) && !defined(X360__) 
 #include "WindowsIncludes.h"
 #endif
 
@@ -17,10 +21,18 @@ PacketOutputWindowLogger::~PacketOutputWindowLogger()
 }
 void PacketOutputWindowLogger::WriteLog(const char *str)
 {
-#if defined(_WIN32) && !defined(__X360__) && !defined(_XBOX)
-	RakNet::RakString str2 = str;
-	str2+="\n";
-	OutputDebugString(str2.C_String());
+#if defined(_WIN32) && !defined(X360__) 
+
+	#if defined(UNICODE)
+		RakNet::RakWString str2 = str;
+		str2+="\n";
+		OutputDebugString(str2.C_String());
+	#else
+		RakNet::RakString str2 = str;
+		str2+="\n";
+		OutputDebugString(str2.C_String());
+	#endif
+	
 #endif
 }
 

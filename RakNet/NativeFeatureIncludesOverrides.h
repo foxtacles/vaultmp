@@ -4,7 +4,7 @@
 #ifndef __NATIVE_FEATURE_INCLDUES_OVERRIDES_H
 #define __NATIVE_FEATURE_INCLDUES_OVERRIDES_H
 
-#define LIBCAT_SECURITY 0
+//#define LIBCAT_SECURITY 1
 
 #define _RAKNET_SUPPORT_ConnectionGraph2 0
 #define _RAKNET_SUPPORT_DirectoryDeltaTransfer 0
@@ -33,5 +33,6 @@
 #define _RAKNET_SUPPORT_EmailSender 0
 #define _RAKNET_SUPPORT_HTTPConnection 0
 #define _RAKNET_SUPPORT_PacketizedTCP 0
+#define _RAKNET_SUPPORT_TwoWayAuthentication 0
 
 #endif

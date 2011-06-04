@@ -52,12 +52,24 @@ public:
 	/// Sets the NetworkID for this instance.  Usually this is called by the clients and determined from the servers.  However, if you save multiplayer games you would likely use
 	/// This on load as well.	
 	virtual void SetNetworkID( NetworkID id );
+
+	/// Your class does not have to derive from NetworkIDObject, although that is the easiest way to implement this.
+	/// If you want this to be a member object of another class, rather than inherit, then call SetParent() with a pointer to the parent class instance.
+	/// GET_OBJECT_FROM_ID will then return the parent rather than this instance.
+	virtual void SetParent( void *_parent );
+
+	/// Return what was passed to SetParent
+	/// \return The value passed to SetParent, or 0 if it was never called.
+	virtual void* GetParent( void ) const;
 	
 protected:
 	/// The  network ID of this object
 	NetworkID networkID;
 	
 	NetworkIDManager *networkIDManager;
+
+	/// The parent set by SetParent()
+	void *parent;
 
 	/// \internal, used by NetworkIDManager
 	friend class NetworkIDManager;

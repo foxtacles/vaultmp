@@ -1,5 +1,5 @@
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_PacketizedTCP==1
+#if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
 
 #include "PacketizedTCP.h"
 #include "NativeTypes.h"
@@ -22,9 +22,9 @@ PacketizedTCP::~PacketizedTCP()
 	ClearAllConnections();
 }
 
-bool PacketizedTCP::Start(unsigned short port, unsigned short maxIncomingConnections, int threadPriority)
+bool PacketizedTCP::Start(unsigned short port, unsigned short maxIncomingConnections, int threadPriority, unsigned short socketFamily)
 {
-	bool success = TCPInterface::Start(port, maxIncomingConnections,0,threadPriority);
+	bool success = TCPInterface::Start(port, maxIncomingConnections,0,threadPriority, socketFamily);
 	if (success)
 	{
 		unsigned int i;
@@ -45,7 +45,7 @@ void PacketizedTCP::Stop(void)
 	ClearAllConnections();
 }
 
-void PacketizedTCP::Send( const char *data, unsigned length, SystemAddress systemAddress, bool broadcast )
+void PacketizedTCP::Send( const char *data, unsigned length, const SystemAddress &systemAddress, bool broadcast )
 {
 	PTCPHeader dataLength;
 	dataLength=length;
@@ -64,7 +64,7 @@ void PacketizedTCP::Send( const char *data, unsigned length, SystemAddress syste
 	lengthsArray[1]=length;
 	TCPInterface::SendList(dataArray,lengthsArray,2,systemAddress,broadcast);
 }
-bool PacketizedTCP::SendList( const char **data, const int *lengths, const int numParameters, SystemAddress systemAddress, bool broadcast )
+bool PacketizedTCP::SendList( const char **data, const int *lengths, const int numParameters, const SystemAddress &systemAddress, bool broadcast )
 {
 	if (isStarted==false)
 		return false;
@@ -345,7 +345,7 @@ void PacketizedTCP::CloseConnection( SystemAddress systemAddress )
 		messageHandlerList[i]->OnClosedConnection(systemAddress, UNASSIGNED_RAKNET_GUID, LCR_CLOSED_BY_USER);
 	TCPInterface::CloseConnection(systemAddress);
 }
-void PacketizedTCP::RemoveFromConnectionList(SystemAddress sa)
+void PacketizedTCP::RemoveFromConnectionList(const SystemAddress &sa)
 {
 	if (sa==UNASSIGNED_SYSTEM_ADDRESS)
 		return;
@@ -359,7 +359,7 @@ void PacketizedTCP::RemoveFromConnectionList(SystemAddress sa)
 		}
 	}
 }
-void PacketizedTCP::AddToConnectionList(SystemAddress sa)
+void PacketizedTCP::AddToConnectionList(const SystemAddress &sa)
 {
 	if (sa==UNASSIGNED_SYSTEM_ADDRESS)
 		return;

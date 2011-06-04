@@ -41,24 +41,22 @@ struct UDPProxyClientResultHandler
 	/// Called when our forwarding request was completed. We can now connect to \a targetAddress by using \a proxyAddress instead
 	/// \param[out] proxyIPAddress IP Address of the proxy server, which will forward messages to targetAddress
 	/// \param[out] proxyPort Remote port to use on the proxy server, which will forward messages to targetAddress
-	/// \param[out] reverseProxyPort The port the destination will reply back to us on. You may not need this.
 	/// \param[out] proxyCoordinator \a proxyCoordinator parameter originally passed to UDPProxyClient::RequestForwarding
 	/// \param[out] sourceAddress \a sourceAddress parameter passed to UDPProxyClient::RequestForwarding. If it was UNASSIGNED_SYSTEM_ADDRESS, it is now our external IP address.
 	/// \param[out] targetAddress \a targetAddress parameter originally passed to UDPProxyClient::RequestForwarding
 	/// \param[out] proxyClient The plugin that is calling this callback
-	virtual void OnForwardingSuccess(const char *proxyIPAddress, unsigned short proxyPort, unsigned short reverseProxyPort,
+	virtual void OnForwardingSuccess(const char *proxyIPAddress, unsigned short proxyPort,
 		SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)=0;
 
 	/// Called when another system has setup forwarding, with our system as the target address.
 	/// Plugin automatically sends a datagram to proxyIPAddress before this callback, to open our router if necessary.
 	/// \param[out] proxyIPAddress IP Address of the proxy server, which will forward messages to targetAddress
 	/// \param[out] proxyPort Remote port to use on the proxy server, which will forward messages to targetAddress
-	/// \param[out] reverseProxyPort The port the destination will reply back to us on. You may not need this.
 	/// \param[out] proxyCoordinator \a proxyCoordinator parameter originally passed to UDPProxyClient::RequestForwarding
 	/// \param[out] sourceAddress \a sourceAddress parameter passed to UDPProxyClient::RequestForwarding. This is originating source IP address of the remote system that will be sending to us.
 	/// \param[out] targetAddress \a targetAddress parameter originally passed to UDPProxyClient::RequestForwarding. This is our external IP address.
 	/// \param[out] proxyClient The plugin that is calling this callback
-	virtual void OnForwardingNotification(const char *proxyIPAddress, unsigned short proxyPort, unsigned short reverseProxyPort,
+	virtual void OnForwardingNotification(const char *proxyIPAddress, unsigned short proxyPort,
 		SystemAddress proxyCoordinator, SystemAddress sourceAddress, SystemAddress targetAddress, RakNet::UDPProxyClient *proxyClientPlugin)=0;
 
 	/// Called when our forwarding request failed, because no UDPProxyServers are connected to UDPProxyCoordinator

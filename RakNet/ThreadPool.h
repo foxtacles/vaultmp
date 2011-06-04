@@ -176,11 +176,16 @@ protected:
 	RakNet::SimpleMutex numThreadsRunningMutex;
 
 	RakNet::SignaledEvent quitAndIncomingDataEvents;
+
+
+
+
 };
 
 #include "ThreadPool.h"
 #include "RakSleep.h"
 #ifdef _WIN32
+
 #else
 #include <unistd.h>
 #endif
@@ -200,8 +205,13 @@ void* WorkerThread( void* arguments )
 #endif
 */
 {
-	bool returnOutput;
+
+
+
 	ThreadPool<ThreadInputType, ThreadOutputType> *threadPool = (ThreadPool<ThreadInputType, ThreadOutputType>*) arguments;
+
+
+	bool returnOutput;
 	ThreadOutputType (*userCallback)(ThreadInputType, bool *, void*);
 	ThreadInputType inputData;
 	ThreadOutputType callbackOutput;
@@ -301,9 +311,14 @@ bool ThreadPool<InputType, OutputType>::StartThreads(int numThreads, int stackSi
 {
 	(void) stackSize;
 
+
+
+
+
 	runThreadsMutex.Lock();
 	if (runThreads==true)
 	{
+		// Already running
 		runThreadsMutex.Unlock();
 		return false;
 	}
@@ -324,7 +339,12 @@ bool ThreadPool<InputType, OutputType>::StartThreads(int numThreads, int stackSi
 	int i;
 	for (i=0; i < numThreads; i++)
 	{
-		int errorCode = RakNet::RakThread::Create(WorkerThread<InputType, OutputType>, this);
+		int errorCode;
+
+
+
+		errorCode = RakNet::RakThread::Create(WorkerThread<InputType, OutputType>, this);
+
 		if (errorCode!=0)
 		{
 			StopThreads();
@@ -377,6 +397,12 @@ void ThreadPool<InputType, OutputType>::StopThreads(void)
 	}
 
 	quitAndIncomingDataEvents.CloseEvent();
+
+
+
+
+
+
 }
 template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::AddInput(OutputType (*workerThreadCallback)(InputType, bool *returnOutput, void* perThreadData), InputType inputData)

@@ -59,7 +59,7 @@ struct Packet;
 		/// \internal For plugin handling
 		virtual PluginReceiveResult OnReceive(Packet *packet);
 
-		virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
+		virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 
 	protected:
 		SOCKET c2;

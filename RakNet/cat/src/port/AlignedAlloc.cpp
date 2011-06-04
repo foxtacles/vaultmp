@@ -28,12 +28,16 @@
 
 #include <cat/port/AlignedAlloc.hpp>
 #include <cstdlib>
+#include <cstdio>
 using namespace std;
 using namespace cat;
 
 
 #if defined(CAT_OS_WINDOWS)
 #include <cat/port/WindowsInclude.hpp>
+#elif defined(CAT_OS_APPLE)
+#include <sys/sysctl.h>
+#else
 #endif
 
 
@@ -47,52 +51,74 @@ static u32 _cacheline_bytes = 0;
 
 static CAT_INLINE u32 DetermineCacheLineBytes()
 {
-#if defined(CAT_ASM_INTEL) && defined(CAT_ISA_X86)
+	// Based on work by Nick Strupat (http://strupat.ca/)
 
-	u32 cacheline = 0;
+	u32 discovered_cache_line_size = 0;
 
-	CAT_ASM_BEGIN
-		push ebx
-		xor ecx, ecx
-next0:	mov eax, 4
-		cpuid
-		test eax, 31
-		jz done0
-		or [cacheline], ebx
-		lea ecx, [ecx+1]
-		jmp next0
-done0:	pop ebx
-	CAT_ASM_END
+#if defined(CAT_OS_APPLE)
 
-	return (cacheline & 4095) + 1;
+	u64 line_size;
+	size_t size = sizeof(line_size);
 
-#elif defined(CAT_ASM_ATT) && defined(CAT_ISA_X86)
+	if (0 == sysctlbyname("hw.cachelinesize", &line_size, &size, 0, 0))
+	{
+		discovered_cache_line_size = (u32)line_size;
+	}
 
-	u32 cacheline = 0;
-	CAT_ASM_BEGIN
-		"movl %%ebx, %%edx\n\t"
-		"xorl %%ecx, %%ecx\n\t"
-		"next: movl $4, %%eax\n\t"
-		"cpuid\n\t"
-		"testl $31, %%eax\n\t"
-		"jz done\n\t"
-		"orl %%ebx, %0\n\t"
-		"leal 1(%%ecx), %%ecx\n\t"
-		"jmp next\n\t"
-		"done: ;"
-		"movl %%edx, %%ebx\n\t"
-		: "=r" (cacheline)
-		: /* no inputs */
-		: "cc", "eax", "ecx", "edx"
-	CAT_ASM_END
+#elif defined(CAT_OS_WINDOWS)
 
-	return (cacheline & 4095) + 1;
+	DWORD buffer_size = 0;
+	SYSTEM_LOGICAL_PROCESSOR_INFORMATION *buffer = 0;
 
-#else
+	GetLogicalProcessorInformation(0, &buffer_size);
 
-	return CAT_DEFAULT_CACHE_LINE_SIZE;
+	if (buffer_size > 0)
+	{
+		buffer = (SYSTEM_LOGICAL_PROCESSOR_INFORMATION *)malloc(buffer_size);
+		GetLogicalProcessorInformation(&buffer[0], &buffer_size);
+
+		for (int i = 0; i < (int)(buffer_size / sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION)); ++i)
+		{
+			if (buffer[i].Relationship == RelationCache &&
+				buffer[i].Cache.Level == 1)
+			{
+				discovered_cache_line_size = (u32)buffer[i].Cache.LineSize;
+				break;
+			}
+		}
+
+		free(buffer);
+	}
+
+#elif defined(CAT_OS_LINUX)
+
+	FILE *file = fopen("/sys/devices/system/cpu/cpu0/cache/index0/coherency_line_size", "r");
+
+	if (file)
+	{
+		if (1 != fscanf(file, "%d", &discovered_cache_line_size))
+		{
+			discovered_cache_line_size = 0;
+		}
+
+		fclose(file);
+	}
+
+#elif defined(CAT_OS_XBOX) || defined(CAT_OS_PS3)
+
+	discovered_cache_line_size = 128;
 
 #endif
+
+	// Validate cache line size and use default if discovery has failed
+	if (discovered_cache_line_size <= 0 ||
+		discovered_cache_line_size > 1024 ||
+		!CAT_IS_POWER_OF_2(discovered_cache_line_size))
+	{
+		discovered_cache_line_size = CAT_DEFAULT_CACHE_LINE_SIZE; // From Config.hpp
+	}
+
+	return discovered_cache_line_size;
 }
 
 u32 cat::GetCacheLineBytes()

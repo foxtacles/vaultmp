@@ -63,7 +63,7 @@ void Skein::HashComputation256(const void *_message, int blocks, u32 byte_count,
 
         // Parity extension
         u64 t2 = t0 ^ t1;
-        k[4] = 0x5555555555555555LL ^ k[0] ^ k[1] ^ k[2] ^ k[3];
+        k[4] = 0x1BD11BDAA9FC1A22LL ^ k[0] ^ k[1] ^ k[2] ^ k[3];
 
         // First full key injection
         register u64 x0 = k[0] + getLE(message[0]);

@@ -47,8 +47,8 @@ bool FortunaFactory::ThreadFunction(void *)
     const int POOL0_RESEED_RATE = 16;
 
     // Milliseconds between fast polls
-    // Indicates 51.2 seconds between reseeds
-    const int COLLECTION_PERIOD = 100;
+    // Indicates 512 seconds between reseeds
+    const int COLLECTION_PERIOD = 1000;
 
     int fast_pool = 0, slow_pool = 0, pool0_entropy = 0;
 
@@ -110,6 +110,43 @@ void FortunaFactory::ShutdownEntropySources()
         close(urandom_fd);
 }
 
+static void PollVMStat(Skein &pool)
+{
+	const char *PATH = "vmstat -s";
+
+	fd_set fds;
+	FD_ZERO(&fds);
+
+	if (!access(PATH, F_OK)) return;
+
+	FILE *fp = popen(PATH, "r");
+	if (!fp) return;
+
+	int fd = fileno(fp);
+	if (fd < 0) return;
+
+	FD_SET(fd, &fds);
+
+	timeval tv;
+	tv.tv_sec = 5;
+	tv.tv_usec = 0;
+
+	int r;
+	while ((r = select(1 + fd, &fds, 0, 0, &tv)))
+	{
+		if (r == -1 || !FD_ISSET(fd, &fds)) break;
+
+		static u8 buffer[4096];
+		int count = read(fd, buffer, sizeof(buffer));
+
+		if (count > 0) pool.Crunch(buffer, count);
+		else break;
+	}
+
+	pclose(fp);
+	FD_CLR(fd, &fds);
+}
+
 void FortunaFactory::PollInvariantSources(int pool_index)
 {
     Skein &pool = Pool[pool_index];
@@ -131,47 +168,13 @@ void FortunaFactory::PollInvariantSources(int pool_index)
     // pid
     Sources.pid = (u32)getpid();
 
+	// Poll vmstat -s
+	PollVMStat(pool);
+
     // Cycles at the end
     Sources.cycles_end = Clock::cycles();
 
     pool.Crunch(&Sources, sizeof(Sources));
-}
-
-static void PollVMStat(Skein &pool)
-{
-    const char *PATH = "vmstat -s";
-
-    fd_set fds;
-    FD_ZERO(&fds);
-
-    if (!access(PATH, F_OK)) return;
-
-    FILE *fp = popen(PATH, "r");
-    if (!fp) return;
-
-    int fd = fileno(fp);
-    if (fd < 0) return;
-
-    FD_SET(fd, &fds);
-
-    timeval tv;
-    tv.tv_sec = 5;
-    tv.tv_usec = 0;
-
-    int r;
-    while ((r = select(1 + fd, &fds, 0, 0, &tv)))
-    {
-        if (r == -1 || !FD_ISSET(fd, &fds)) break;
-
-        static u8 buffer[4096];
-        int count = read(fd, buffer, sizeof(buffer));
-
-        if (count > 0) pool.Crunch(buffer, count);
-        else break;
-    }
-
-    pclose(fp);
-    FD_CLR(fd, &fds);
 }
 
 void FortunaFactory::PollSlowEntropySources(int pool_index)
@@ -192,9 +195,6 @@ void FortunaFactory::PollSlowEntropySources(int pool_index)
     // /dev/urandom small request
     if (urandom_fd >= 0)
         read(urandom_fd, Sources.system_prng, sizeof(Sources.system_prng));
-
-    // Poll vmstat -s
-    PollVMStat(pool);
 
     // Poll time in microseconds
     Sources.this_request = Clock::usec();

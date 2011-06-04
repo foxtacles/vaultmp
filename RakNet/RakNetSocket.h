@@ -17,13 +17,20 @@ struct RAK_DLL_EXPORT RakNetSocket
 	unsigned int s;
 	unsigned int userConnectionSocketIndex;
 	SystemAddress boundAddress;
+	unsigned short socketFamily;
 
 #if defined (_WIN32) && defined(USE_WAIT_FOR_MULTIPLE_EVENTS)
 	void* recvEvent;
 #endif
-	// Only need to set for the PS3, when using signaling.
-	// Connect with the port returned by signaling. Set this to whatever port RakNet was actually started on
-	unsigned short remotePortRakNetWasStartedOn_PS3;
+
+
+
+
+
+
+	unsigned short remotePortRakNetWasStartedOn_PS3_PSP2;
+
+	unsigned int extraSocketOptions;
 };
 
 } // namespace RakNet

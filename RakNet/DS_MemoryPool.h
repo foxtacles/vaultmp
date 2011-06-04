@@ -35,7 +35,6 @@ namespace DataStructures
 			MemoryBlockType userMemory;
 			Page *parentPage;
 		};
-
 		struct Page
 		{
 			MemoryWithPage** availableStack;

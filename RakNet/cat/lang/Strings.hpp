@@ -29,6 +29,10 @@
 #ifndef CAT_STRINGS_HPP
 #define CAT_STRINGS_HPP
 
+/*
+	These are ANSI C String function that do not work with UNICODE, UTF-8, etc.
+*/
+
 #include <cat/Platform.hpp>
 
 #if defined(CAT_COMPILER_MSVC)
@@ -89,6 +93,12 @@ void CopyDesimilarizeString(const char *from, char *to);
 
 // Replaces all similar-looking glyphs with common characters in a fixed string
 u32 DesimilarizeFixedString(char *str, u32 max_len);
+
+// Copies the input string to an output string replacing lowercase letters with their uppercase equivalents
+void CopyToUppercaseString(const char *from, char *to);
+
+// Copies the input string to an output string replacing uppercase letters with their lowercase equivalents
+void CopyToLowercaseString(const char *from, char *to);
 
 
 } // namespace cat

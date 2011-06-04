@@ -1,4 +1,4 @@
-#if (defined(__GNUC__)  || defined(__GCCXML__)) && !defined(__WIN32)
+#if (defined(__GNUC__)  || defined(__GCCXML__)  ) && !defined(_WIN32)
 #include <string.h>
 #ifndef _stricmp
 int _stricmp(const char* s1, const char* s2)

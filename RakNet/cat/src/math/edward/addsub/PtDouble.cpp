@@ -129,15 +129,15 @@ void BigTwistedEdwards::PT_FN(const Leg *in, Leg *out)
     // X3 = E * F, Y3 = G * H, T3 = E * H, Z3 = F * G
     MrMultiply(E, F, out+XOFF);
     MrMultiply(G, H, out+YOFF);
-#if defined(EXTENDED_T)
+
     MrMultiply(E, H, out+TOFF);
-#endif
+
     MrMultiply(F, G, out+ZOFF);
 
 	CAT_CYCLE_COUNT(u32 t4 = Clock::cycles());
 
 #if defined(CAT_DISPLAY_CYCLE_COUNT)
-#if defined(EXTENDED_T)
+
 
 	cout << "[PtEDouble] time spent in misc operations: " << t1 - t0 + t3 - t2 << endl;
 	cout << "[PtEDouble] time spent in multiplies: " << t4-t3 << endl;
@@ -150,20 +150,20 @@ void BigTwistedEdwards::PT_FN(const Leg *in, Leg *out)
 	cout << "[PtEDouble] MrSubtract 2: " << t2e - t2d << endl;
 	cout << "[PtEDouble] MrAdd 3: " << t3 - t2e << endl;
 
-#else
 
-	cout << "[PtDouble] time spent in misc operations: " << t1 - t0 + t3 - t2 << endl;
-	cout << "[PtDouble] time spent in multiplies: " << t4-t3 << endl;
-	cout << "[PtDouble] time spent in squares: " << t2 - t1 << endl;
-	cout << "[PtDouble] MrAdd 1: " << t1 - t0 << endl;
-	cout << "[PtDouble] MrDouble: " << t2a - t2 << endl;
-	cout << "[PtDouble] MrNegate: " << t2b - t2a << endl;
-	cout << "[PtDouble] MrAdd 2: " << t2c - t2b << endl;
-	cout << "[PtDouble] MrSubtract 1: " << t2d - t2c << endl;
-	cout << "[PtDouble] MrSubtract 2: " << t2e - t2d << endl;
-	cout << "[PtDouble] MrAdd 3: " << t3 - t2e << endl;
 
-#endif
+
+
+
+
+
+
+
+
+
+
+
+
 #endif
 }
 

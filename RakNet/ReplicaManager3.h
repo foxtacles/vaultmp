@@ -81,7 +81,7 @@ public:
 	/// \param[in] systemAddress Address of the system you are adding
 	/// \param[in] rakNetGUID GUID of the system you are adding. See Packet::rakNetGUID or RakPeerInterface::GetGUIDFromSystemAddress()
 	/// \return The new connection instance.
-	virtual Connection_RM3* AllocConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID) const=0;
+	virtual Connection_RM3* AllocConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID) const=0;
 
 	/// \brief Implement to destroy a class instanced returned by AllocConnection()
 	/// \details Most likely just implement as {delete connection;}<BR>
@@ -169,7 +169,7 @@ public:
 	/// \brief Returns a connection pointer previously added with PushConnection()
 	/// \param[in] sa The system address of the connection to return
 	/// \return A Connection_RM3 pointer, or 0 if not found
-	Connection_RM3* GetConnectionBySystemAddress(SystemAddress sa) const;
+	Connection_RM3* GetConnectionBySystemAddress(const SystemAddress &sa) const;
 
 	/// \brief Returns a connection pointer previously added with PushConnection.()
 	/// \param[in] guid The guid of the connection to return
@@ -222,12 +222,12 @@ public:
 	/// The objects are unaffected locally
 	/// \param[in] replicaList List of Replica3 objects to tell other systems to destroy.
 	/// \param[in] exclusionAddress Which system to not send to. UNASSIGNED_SYSTEM_ADDRESS to send to all.
-	void BroadcastDestructionList(DataStructures::Multilist<ML_STACK, Replica3*> &replicaList, SystemAddress exclusionAddress);
+	void BroadcastDestructionList(DataStructures::Multilist<ML_STACK, Replica3*> &replicaList, const SystemAddress &exclusionAddress);
 
 	/// \internal
 	/// \details Tell other systems that have this replica to destroy this replica.<BR>
 	/// You shouldn't need to call this, as it happens in the Replica3 destructor
-	void BroadcastDestruction(Replica3 *replica, SystemAddress exclusionAddress);
+	void BroadcastDestruction(Replica3 *replica, const SystemAddress &exclusionAddress);
 
 	/// \internal	
 	/// \details Frees internal lists.<BR>
@@ -240,15 +240,16 @@ public:
 protected:
 	virtual PluginReceiveResult OnReceive(Packet *packet);
 	virtual void Update(void);
-	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
-	virtual void OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming);
+	virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
+	virtual void OnNewConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, bool isIncoming);
 	virtual void OnRakPeerShutdown(void);
+	virtual void OnDetach(void);
 
 	void OnConstructionExisting(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
-	void OnConstruction(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
-	void OnSerialize(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, RakNet::Time timestamp, unsigned char packetDataOffset);
-	void OnDownloadStarted(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
-	void OnDownloadComplete(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
+	PluginReceiveResult OnConstruction(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
+	PluginReceiveResult OnSerialize(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, RakNet::Time timestamp, unsigned char packetDataOffset);
+	PluginReceiveResult OnDownloadStarted(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
+	PluginReceiveResult OnDownloadComplete(Packet *packet, unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
 	void OnLocalConstructionRejected(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
 	void OnLocalConstructionAccepted(unsigned char *packetData, int packetDataLength, RakNetGUID senderGuid, unsigned char packetDataOffset);
 
@@ -357,7 +358,7 @@ class RAK_DLL_EXPORT Connection_RM3
 {
 public:
 
-	Connection_RM3(SystemAddress _systemAddress, RakNetGUID _guid);
+	Connection_RM3(const SystemAddress &_systemAddress, RakNetGUID _guid);
 	virtual ~Connection_RM3();
 
 	/// \brief Class factory to create a Replica3 instance, given a user-defined identifier
@@ -423,6 +424,16 @@ public:
 		/// See GridSectorizer.h under /Source for code that can help with this
 		QUERY_CONNECTION_FOR_REPLICA_LIST
 	};
+
+	/// \brief Return whether or not downloads to our system should all be processed the same tick (call to RakPeer::Receive() )
+	/// \details Normally the system will send ID_REPLICA_MANAGER_DOWNLOAD_STARTED, ID_REPLICA_MANAGER_CONSTRUCTION for all downloaded objects,
+	/// ID_REPLICA_MANAGER_SERIALIZE for each downloaded object, and lastly ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE.
+	/// This enables the application to show a downloading splash screen on ID_REPLICA_MANAGER_DOWNLOAD_STARTED, a progress bar, and to close the splash screen and activate all objects on ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE
+	/// However, if the application was not set up for this then it would result in incomplete objects spread out over time, and cause problems
+	/// If you return true from QueryGroupDownloadMessages(), then these messages will be returned all in one tick, returned only when the download is complete
+	/// \note ID_REPLICA_MANAGER_DOWNLOAD_STARTED calls the callback DeserializeOnDownloadStarted()
+	/// \note ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE calls the callback DeserializeOnDownloadComplete()
+	virtual bool QueryGroupDownloadMessages(void) const {return false;}
 
 	/// \brief Queries how to get the list of objects that exist on remote systems
 	/// \details The default of calling QueryConstruction for every known object is easy to use, but not efficient, especially for large worlds where many objects are outside of the player's circle of influence.<BR>
@@ -584,6 +595,12 @@ protected:
 	// Working lists
 	DataStructures::Multilist<ML_STACK, Replica3*, Replica3*> constructedReplicasCulled, destroyedReplicasCulled;
 
+	// This is used if QueryGroupDownloadMessages() returns true when ID_REPLICA_MANAGER_DOWNLOAD_STARTED arrives
+	// Packets will be gathered and not returned until ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE arrives
+	bool groupConstructionAndSerialize;
+	DataStructures::Multilist<ML_QUEUE, Packet*, Packet*> downloadGroup;
+	void ClearDownloadGroup(RakPeerInterface *rakPeerInterface);
+
 	friend class ReplicaManager3;
 private:
 	Connection_RM3() {};
@@ -707,7 +724,7 @@ public:
 	/// Sample implementation:<BR>
 	/// {allocationIdBitstream->Write(RakNet::RakString("Soldier");}<BR>
 	/// \param[out] allocationIdBitstream Bitstream for the user to write to, to identify this class
-	virtual void WriteAllocationID(RakNet::BitStream *allocationIdBitstream) const=0;
+	virtual void WriteAllocationID(RakNet::Connection_RM3 *destinationConnection, RakNet::BitStream *allocationIdBitstream) const=0;
 
 	/// \brief Ask if this object, which does not exist on \a destinationConnection should (now) be sent to that system.
 	/// \details If ReplicaManager3::QueryConstructionMode() returns QUERY_CONNECTION_FOR_REPLICA_LIST or QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION (default),
@@ -778,7 +795,7 @@ public:
 
 	/// \brief The system is asking what to do with this replica when the connection is dropped
 	/// \details Return QueryActionOnPopConnection_Client, QueryActionOnPopConnection_Server, or QueryActionOnPopConnection_PeerToPeer
-	virtual RM3ActionOnPopConnection QueryActionOnPopConnection(RakNet::Connection_RM3 *droppedConnection) const=0;
+	virtual RakNet::RM3ActionOnPopConnection QueryActionOnPopConnection(RakNet::Connection_RM3 *droppedConnection) const=0;
 
 	/// Notification called for each of our replicas when a connection is popped
 	void OnPoppedConnection(RakNet::Connection_RM3 *droppedConnection) {(void) droppedConnection;}
@@ -800,7 +817,7 @@ public:
 	/// Without this function, a careless implementation would serialize an object anytime it changed to all systems. This would give you feedback loops as the sender gets the same message back from the recipient it just sent to.<BR>
 	/// If more than one system can serialize the same object then you will need to override to return true, and control the serialization result from Replica3::Serialize(). Be careful not to send back the same data to the system that just sent to you!
 	/// \return True to allow calling Replica3::Serialize() for this connection, false to not call.
-	virtual RM3QuerySerializationResult QuerySerialization(RakNet::Connection_RM3 *destinationConnection)=0;
+	virtual RakNet::RM3QuerySerializationResult QuerySerialization(RakNet::Connection_RM3 *destinationConnection)=0;
 
 	/// \brief Called for each replica owned by the user, once per Serialization tick, before Serialize() is called.
 	/// If you want to do some kind of operation on the Replica objects that you own, just before Serialization(), then overload this function
@@ -817,7 +834,7 @@ public:
 
 	/// \brief Called when the class is actually transmitted via Serialize()
 	/// \details Use to track how much bandwidth this class it taking
-	virtual void OnSerializeTransmission(RakNet::BitStream *bitStream, SystemAddress systemAddress) {(void) bitStream; (void) systemAddress; }
+	virtual void OnSerializeTransmission(RakNet::BitStream *bitStream, const SystemAddress &systemAddress) {(void) bitStream; (void) systemAddress; }
 
 	/// \brief Read what was written in Serialize()
 	/// \details Reads the contents of the class from SerializationParamters::serializationBitstream.<BR>
@@ -870,40 +887,49 @@ public:
 	/// Call it before deleting the object
 	virtual void BroadcastDestruction(void);
 
-	/// Default call for QueryConstruction(). Allow clients to create this object
+	/// \brief Default call for QueryConstruction().
+	/// \details Both the client and the server is allowed to create this object. The network topology is client/server
 	/// \param[in] destinationConnection destinationConnection parameter passed to QueryConstruction()
 	/// \param[in] isThisTheServer True if this system is the server, false if not.
 	virtual RM3ConstructionState QueryConstruction_ClientConstruction(RakNet::Connection_RM3 *destinationConnection, bool isThisTheServer);
-	/// Default call for QueryRemoteConstruction(). Allow clients to create this object
+	/// Default call for QueryRemoteConstruction().
+	/// \details Both the client and the server is allowed to create this object. The network topology is client/server
 	/// \param[in] sourceConnection destinationConnection parameter passed to QueryConstruction()
 	/// \param[in] isThisTheServer True if this system is the server, false if not.
 	virtual bool QueryRemoteConstruction_ClientConstruction(RakNet::Connection_RM3 *sourceConnection, bool isThisTheServer);
 
-	/// Default call for QueryConstruction(). Allow the server to create this object, but not the client.
+	/// \brief Default call for QueryConstruction().
+	/// \details Only the server is allowed to create this object. The network topology is client/server
 	/// \param[in] destinationConnection destinationConnection parameter passed to QueryConstruction()
 	/// \param[in] isThisTheServer True if this system is the server, false if not.
 	virtual RM3ConstructionState QueryConstruction_ServerConstruction(RakNet::Connection_RM3 *destinationConnection, bool isThisTheServer);
-	/// Default call for QueryRemoteConstruction(). Allow the server to create this object, but not the client.
+	/// \brief Default call for QueryRemoteConstruction(). Allow the server to create this object, but not the client.
+	/// \details Only the server is allowed to create this object. The network topology is client/server
 	/// \param[in] sourceConnection destinationConnection parameter passed to QueryConstruction()
 	/// \param[in] isThisTheServer True if this system is the server, false if not.
 	virtual bool QueryRemoteConstruction_ServerConstruction(RakNet::Connection_RM3 *sourceConnection, bool isThisTheServer);
 
-	/// Default call for QueryConstruction(). Peer to peer - creating system sends the object to all other systems. No relaying.
+	/// \brief Default call for QueryConstruction().
+	/// \details All clients are allowed to create all objects. The object is not relayed when remotely created
 	/// \param[in] destinationConnection destinationConnection parameter passed to QueryConstruction()
 	virtual RM3ConstructionState QueryConstruction_PeerToPeer(RakNet::Connection_RM3 *destinationConnection);
-	/// Default call for QueryConstruction(). Peer to peer - creating system sends the object to all other systems. No relaying.
+	/// \brief Default call for QueryRemoteConstruction().
+	/// \details All clients are allowed to create all objects. The object is not relayed when remotely created
 	/// \param[in] sourceConnection destinationConnection parameter passed to QueryConstruction()
 	virtual bool QueryRemoteConstruction_PeerToPeer(RakNet::Connection_RM3 *sourceConnection);
 
-	/// Default call for QuerySerialization(). Use if the values you are serializing are generated by the client that owns the object. The serialization will be relayed through the server to the other clients.
+	/// \brief Default call for QuerySerialization().
+	/// \details Use if the values you are serializing are generated by the client that owns the object. The serialization will be relayed through the server to the other clients.
 	/// \param[in] destinationConnection destinationConnection parameter passed to QueryConstruction()
 	/// \param[in] isThisTheServer True if this system is the server, false if not.
 	virtual RakNet::RM3QuerySerializationResult QuerySerialization_ClientSerializable(RakNet::Connection_RM3 *destinationConnection, bool isThisTheServer);
-	/// Default call for QuerySerialization(). Use if the values you are serializing are generated only by the server. The serialization will be sent to all clients, but the clients will not send back to the server.
+	/// \brief Default call for QuerySerialization().
+	/// \details Use if the values you are serializing are generated only by the server. The serialization will be sent to all clients, but the clients will not send back to the server.
 	/// \param[in] destinationConnection destinationConnection parameter passed to QueryConstruction()
 	/// \param[in] isThisTheServer True if this system is the server, false if not.
 	virtual RakNet::RM3QuerySerializationResult QuerySerialization_ServerSerializable(RakNet::Connection_RM3 *destinationConnection, bool isThisTheServer);
-	/// Default call for QuerySerialization(). Use if the values you are serializing are on a peer to peer network. The peer that owns the object will send to all. Remote peers will not send.
+	/// \brief Default call for QuerySerialization().
+	/// \details Use if the values you are serializing are on a peer to peer network. The peer that owns the object will send to all. Remote peers will not send.
 	/// \param[in] destinationConnection destinationConnection parameter passed to QueryConstruction()
 	virtual RakNet::RM3QuerySerializationResult QuerySerialization_PeerToPeer(RakNet::Connection_RM3 *destinationConnection);
 

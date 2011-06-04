@@ -16,7 +16,7 @@
 /// option) any later version.
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_HTTPConnection==1
+#if _RAKNET_SUPPORT_HTTPConnection==1 && _RAKNET_SUPPORT_TCPInterface==1
 
 #include "TCPInterface.h"
 #include "HTTPConnection.h"
@@ -46,12 +46,21 @@ void HTTPConnection::Init(TCPInterface* _tcp, const char *_host, unsigned short 
 
 void HTTPConnection::Post(const char *remote_path, const char *data, const char *_contentType)
 {
-	OutgoingPost op;
+	OutgoingCommand op;
 	op.contentType=_contentType;
 	op.data=data;
 	op.remotePath=remote_path;
-	outgoingPosts.Push(op, _FILE_AND_LINE_ );
+	op.isPost=true;
+	outgoingCommand.Push(op, _FILE_AND_LINE_ );
 	//printf("Adding outgoing post\n");
+}
+
+void HTTPConnection::Get(const char *path)
+{
+	OutgoingCommand op;
+	op.remotePath=path;
+	op.isPost=false;
+	outgoingCommand.Push(op, _FILE_AND_LINE_ );
 }
 
 bool HTTPConnection::HasBadResponse(int *code, RakNet::RakString *data)
@@ -102,7 +111,7 @@ void HTTPConnection::Update(void)
 	{
 	case CS_NONE:
 		{
-			if (outgoingPosts.IsEmpty())
+			if (outgoingCommand.IsEmpty())
 				return;
 
 			//printf("Connecting\n");
@@ -131,31 +140,41 @@ void HTTPConnection::Update(void)
 	case CS_CONNECTED:
 		{
 			//printf("Connected\n");
-			if (outgoingPosts.IsEmpty())
+			if (outgoingCommand.IsEmpty())
 			{
 				//printf("Closed connection (nothing to do)\n");
 				CloseConnection();
 				return;
 			}
 
-#if defined(OPEN_SSL_CLIENT_SUPPORT)
+#if OPEN_SSL_CLIENT_SUPPORT==1
 			tcp->StartSSLClient(server);
 #endif
 
 			//printf("Sending request\n");
-			currentProcessingRequest = outgoingPosts.Pop();
-			RakString request("POST %s HTTP/1.0\r\n"
-				"Host: %s:%i\r\n"
-				"Content-Type: %s\r\n"
-				"Content-Length: %u\r\n"
-				"\r\n"
-				"%s",
-				currentProcessingRequest.remotePath.C_String(),
-				host.C_String(),
-				port,
-				currentProcessingRequest.contentType.C_String(),
-				(unsigned) currentProcessingRequest.data.GetLength(),
-				currentProcessingRequest.data.C_String());
+			currentProcessingCommand = outgoingCommand.Pop();
+			RakString request;
+			if (currentProcessingCommand.isPost)
+			{
+				request.Set("POST %s HTTP/1.0\r\n"
+					"Host: %s:%i\r\n"
+					"Content-Type: %s\r\n"
+					"Content-Length: %u\r\n"
+					"\r\n"
+					"%s",
+					currentProcessingCommand.remotePath.C_String(),
+					host.C_String(),
+					port,
+					currentProcessingCommand.contentType.C_String(),
+					(unsigned) currentProcessingCommand.data.GetLength(),
+					currentProcessingCommand.data.C_String());
+			}
+			else
+			{
+				request.Set("GET %s\r\n", host.C_String());
+			}
+			
+		//	printf(request.C_String());
 	//		request.URLEncode();
 			tcp->Send(request.C_String(), (unsigned int) request.GetLength(), server,false);
 			connectionState=CS_PROCESSING;
@@ -166,8 +185,8 @@ void HTTPConnection::Update(void)
 		}
 	}
 
-//	if (connectionState==CS_PROCESSING && currentProcessingRequest.data.IsEmpty()==false)
-//		outgoingPosts.PushAtHead(currentProcessingRequest);
+//	if (connectionState==CS_PROCESSING && currentProcessingCommand.data.IsEmpty()==false)
+//		outgoingCommand.PushAtHead(currentProcessingCommand);
 }
 bool HTTPConnection::HasRead(void) const
 {
@@ -182,14 +201,10 @@ RakString HTTPConnection::Read(void)
     // const char *start_of_body = strstr(resultStr.C_String(), "\r\n\r\n");
 	const char *start_of_body = strpbrk(resultStr.C_String(), "\001\002\003%");
     
-    if(! start_of_body)
-    {
-		return RakString();
-    }
-
-	// size_t len = strlen(start_of_body);
-	//printf("Returning result with length %i\n", len);
-	return RakNet::RakString::NonVariadic(start_of_body);
+    if(start_of_body)
+		return RakNet::RakString::NonVariadic(start_of_body);
+	else
+		return resultStr;
 }
 SystemAddress HTTPConnection::GetServerAddress(void) const
 {
@@ -228,7 +243,10 @@ void HTTPConnection::ProcessTCPPacket(Packet *packet)
 
 		// besides having the server close the connection, they may
 		// provide a length header and supply that many bytes
-		if(start_of_body && connectionState == CS_PROCESSING)
+		if(
+			// Why was start_of_body here? Makes the GET command fail
+			// start_of_body && 
+			connectionState == CS_PROCESSING)
 		{
 			/*
 			// The stupid programmer that wrote this originally didn't think that just because the header contains this value doesn't mean you got the whole message
@@ -239,19 +257,29 @@ void HTTPConnection::ProcessTCPPacket(Packet *packet)
 			else
 			{
 			*/
-				long length_of_headers = (long)(start_of_body + 4 - incomingData.C_String());
-
-				const char *length_header = strstr(incomingData, "\r\nLength: ");
-				if(length_header)
+				long length_of_headers;
+				if (start_of_body)
 				{
-					long length = atol(length_header + 10) + length_of_headers;
+					length_of_headers = (long)(start_of_body + 4 - incomingData.C_String());
+					const char *length_header = strstr(incomingData, "\r\nLength: ");
 
-					if((long) incomingData.GetLength() >= length)
+					if(length_header)
 					{
-						//printf("Closed connection (Got all data due to length header)\n");
-						CloseConnection();
+						long length = atol(length_header + 10) + length_of_headers;
+
+						if((long) incomingData.GetLength() >= length)
+						{
+							//printf("Closed connection (Got all data due to length header)\n");
+							CloseConnection();
+						}
 					}
 				}
+				else
+				{
+					// No processing needed
+				}
+
+				
 			//}
 		}
 	}

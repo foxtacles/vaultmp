@@ -9,8 +9,15 @@ struct timezone
   int  tz_dsttime;     /* type of dst correction */
 };
 int gettimeofday(struct timeval *tv, struct timezone *tz);
+
+
 #else
+
+
+
+
 #include <sys/time.h>
+
 #include <unistd.h>
 
 // Uncomment this if you need to

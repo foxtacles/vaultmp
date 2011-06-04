@@ -37,9 +37,73 @@ static MLOCK_T malloc_global_mutex = { initialization values };.
 #if USE_LOCKS == 1
 
 #if USE_SPIN_LOCKS && SPIN_LOCKS_AVAILABLE
-#if defined(_XBOX) || defined(X360)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
-#elif !defined(DL_PLATFORM_WIN32)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#if   !defined(DL_PLATFORM_WIN32)
 
 /* Custom pthread-style spin locks on x86 and x64 for gcc */
 struct pthread_mlock_t {
@@ -1342,10 +1406,10 @@ next, etc). This turns out to be cheaper than relying on hashes.
 
 /* Initialize mparams */
 static int init_mparams(void) {
-#ifdef NEED_GLOBAL_LOCK_INIT
+
 	if (malloc_global_mutex_status <= 0)
 		init_malloc_global_mutex();
-#endif
+
 
 	ACQUIRE_MALLOC_GLOBAL_LOCK();
 	if (mparams.magic == 0) {
@@ -1411,9 +1475,9 @@ DEFAULT_GRANULARITY : system_info.dwAllocationGranularity);
 			else
 #endif /* USE_DEV_RANDOM */
 
-#if defined(_XBOX) || defined(X360)
-                                                           
-#elif defined(DL_PLATFORM_WIN32)
+
+
+#if   defined(DL_PLATFORM_WIN32)
 				magic = (size_t)(GetTickCount() ^ (size_t)0x55555555U);
 #else
 				magic = (size_t)(time(0) ^ (size_t)0x55555555U);

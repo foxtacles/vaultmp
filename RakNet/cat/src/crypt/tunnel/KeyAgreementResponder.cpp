@@ -258,6 +258,85 @@ bool KeyAgreementResponder::ProcessChallenge(BigTwistedEdwards *math, FortunaOut
 	return true;
 }
 
+bool KeyAgreementResponder::VerifyInitiatorIdentity(BigTwistedEdwards *math,
+													const u8 *responder_answer, int answer_bytes,
+													const u8 *proof, int proof_bytes,
+													u8 *public_key, int public_bytes)
+{
+#if defined(CAT_USER_ERROR_CHECKING)
+	// Verify that inputs are of the correct length
+	if (!math || proof_bytes != KeyBytes*5 || answer_bytes != KeyBytes*4 || public_bytes != KeyBytes*2) return false;
+#endif
+
+	/*
+		Format of identity buffer:
+
+		256-bit security: [Initiator Public Key] (64) || [Initiator Random Number] (32) || [Signature] (64)
+	*/
+
+	// Copied from Verify() in KeyAgreementInitiator.cpp
+
+	Leg *e = math->Get(0);
+	Leg *s = math->Get(1);
+	Leg *Kp = math->Get(2);
+	Leg *ep = math->Get(6);
+	Leg *I_public = math->Get(7);
+
+	// Load e, s from proof
+	math->Load(proof + KeyBytes * 3, KeyBytes, e);
+	math->Load(proof + KeyBytes * 4, KeyBytes, s);
+
+	// e = e (mod q), for checking if it is congruent to q
+	while (!math->Less(e, math->GetCurveQ()))
+		math->Subtract(e, math->GetCurveQ(), e);
+
+	// Check e, s are in the range [1,q-1]
+	if (math->IsZero(e) || math->IsZero(s) ||
+		!math->Less(e, math->GetCurveQ()) ||
+		!math->Less(s, math->GetCurveQ()))
+	{
+		return false;
+	}
+
+	// Unpack the initiator's public key
+	if (!math->LoadVerifyAffineXY(proof, proof + KeyBytes, I_public))
+		return false;
+
+	// Verify public point is not identity element
+	if (math->IsAffineIdentity(I_public))
+		return false;
+
+	// Precompute a table for multiplication
+	Leg *I_MultPrecomp = math->PtMultiplyPrecompAlloc(8);
+	if (!I_MultPrecomp) return false;
+	math->PtUnpack(I_public);
+	math->PtMultiplyPrecomp(I_public, 8, I_MultPrecomp);
+
+	// K' = s*G + e*I_public
+	math->PtSiMultiply(G_MultPrecomp, I_MultPrecomp, 8, s, 0, e, 0, Kp);
+	math->SaveAffineX(Kp, Kp);
+
+	Aligned::Delete(I_MultPrecomp);
+
+	// e' = H(IRN || RRN || K')
+	Skein H;
+	if (!H.BeginKey(KeyBits)) return false;
+	H.Crunch(proof + KeyBytes * 2, KeyBytes); // client random number
+	H.Crunch(responder_answer + KeyBytes * 2, KeyBytes); // server random number
+	H.Crunch(Kp, KeyBytes);
+	H.End();
+	H.Generate(ep, KeyBytes);
+
+	// Verify that e' == e
+	bool success = SecureEqual(proof + KeyBytes * 3, ep, KeyBytes);
+
+	// On successful identity verification, copy the public key to the destination
+	if (success) memcpy(public_key, proof, KeyBytes*2);
+
+	return success;
+}
+
+
 bool KeyAgreementResponder::Sign(BigTwistedEdwards *math, FortunaOutput *csprng,
 								 const u8 *message, int message_bytes,
 								 u8 *signature, int signature_bytes)

@@ -13,19 +13,21 @@
 #include "RakNetDefines.h"
 #include <new>
 
-#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
-                                                                             
-#endif
+
+
+
+
+
 
 #include "RakAlloca.h"
 
-#if _USE_RAK_MEMORY_OVERRIDE==1
-	#if defined(new)
-		#pragma push_macro("new")
-		#undef new
-		#define RMO_NEW_UNDEF
-	#endif
-#endif
+// #if _USE_RAK_MEMORY_OVERRIDE==1
+// 	#if defined(new)
+// 		#pragma push_macro("new")
+// 		#undef new
+// 		#define RMO_NEW_UNDEF
+// 	#endif
+// #endif
 
 
 // These pointers are statically and globally defined in RakMemoryOverride.cpp
@@ -224,11 +226,11 @@ void UseRaknetFixedHeap(size_t initialCapacity,
 // Free memory allocated from UseRaknetFixedHeap
 void FreeRakNetFixedHeap(void);
 
-#if _USE_RAK_MEMORY_OVERRIDE==1
-	#if defined(RMO_NEW_UNDEF)
-	#pragma pop_macro("new")
-	#undef RMO_NEW_UNDEF
-	#endif
-#endif
+// #if _USE_RAK_MEMORY_OVERRIDE==1
+// 	#if defined(RMO_NEW_UNDEF)
+// 	#pragma pop_macro("new")
+// 	#undef RMO_NEW_UNDEF
+// 	#endif
+// #endif
 
 #endif

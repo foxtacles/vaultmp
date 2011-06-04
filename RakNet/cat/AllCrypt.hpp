@@ -41,3 +41,5 @@
 #include <cat/crypt/SecureCompare.hpp>
 
 #include <cat/crypt/rand/Fortuna.hpp>
+
+#include <cat/crypt/pass/Passwords.hpp>

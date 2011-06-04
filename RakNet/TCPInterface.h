@@ -23,7 +23,7 @@
 #include "DS_ByteQueue.h"
 #include "DS_ThreadsafeAllocatingQueue.h"
 
-#if defined(OPEN_SSL_CLIENT_SUPPORT)
+#if OPEN_SSL_CLIENT_SUPPORT==1
 #include <openssl/crypto.h>
 #include <openssl/x509.h>
 #include <openssl/pem.h>
@@ -48,16 +48,20 @@ public:
 	virtual ~TCPInterface();
 
 	/// Starts the TCP server on the indicated port
-	/// \param[in] threadPriority Passed to thread creation routine. Use THREAD_PRIORITY_NORMAL for Windows. WARNING!!! On Linux, 0 means highest priority! You MUST set this to something valid based on the values used by your other threads
-	bool Start(unsigned short port, unsigned short maxIncomingConnections, unsigned short maxConnections=0, int _threadPriority=-99999);
+	/// \param[in] port Which port to listen on.
+	/// \param[in] maxIncomingConnections Max incoming connections we will accept
+	/// \param[in] maxConnections Max total connections, which should be >= maxIncomingConnections
+	/// \param[in] threadPriority Passed to the thread creation routine. Use THREAD_PRIORITY_NORMAL for Windows. For Linux based systems, you MUST pass something reasonable based on the thread priorities for your application.
+	/// \param[in] socketFamily IP version: For IPV4, use AF_INET (default). For IPV6, use AF_INET6. To autoselect, use AF_UNSPEC.
+	bool Start(unsigned short port, unsigned short maxIncomingConnections, unsigned short maxConnections=0, int _threadPriority=-99999, unsigned short socketFamily=AF_INET);
 
 	/// Stops the TCP server
 	void Stop(void);
 
 	/// Connect to the specified host on the specified port
-	SystemAddress Connect(const char* host, unsigned short remotePort, bool block=true);
+	SystemAddress Connect(const char* host, unsigned short remotePort, bool block=true, unsigned short socketFamily=AF_INET);
 
-#if defined(OPEN_SSL_CLIENT_SUPPORT)
+#if OPEN_SSL_CLIENT_SUPPORT==1
 	/// Start SSL on an existing connection, notified with HasCompletedConnectionAttempt
 	void StartSSLClient(SystemAddress systemAddress);
 
@@ -66,10 +70,10 @@ public:
 #endif
 
 	/// Sends a byte stream
-	void Send( const char *data, unsigned int length, SystemAddress systemAddress, bool broadcast );
+	void Send( const char *data, unsigned int length, const SystemAddress &systemAddress, bool broadcast );
 
 	// Sends a concatenated list of byte streams
-	bool SendList( const char **data, const unsigned int  *lengths, const int numParameters, SystemAddress systemAddress, bool broadcast );
+	bool SendList( const char **data, const unsigned int  *lengths, const int numParameters, const SystemAddress &systemAddress, bool broadcast );
 
 	// Get how many bytes are waiting to be sent. If too many, you may want to skip sending
 	unsigned int GetOutgoingDataBufferSize(SystemAddress systemAddress) const;
@@ -113,6 +117,15 @@ public:
 
 	// Push a packet back to the queue
 	virtual void PushBackPacket( Packet *packet, bool pushAtHead );
+
+	static const char *Base64Map(void) {return "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";}
+
+	/// \brief Returns how many bytes were written.
+	static int Base64Encoding(const char *inputData, int dataLength, char *outputData);
+
+	/// Returns if Start() was called successfully
+	bool WasStarted(void) const;
+
 protected:
 
 	bool isStarted, threadRunning;
@@ -153,25 +166,31 @@ protected:
 	DataStructures::List<SOCKET> blockingSocketList;
 	SimpleMutex blockingSocketListMutex;
 
+
+
+
+
 	friend RAK_THREAD_DECLARATION(UpdateTCPInterfaceLoop);
 	friend RAK_THREAD_DECLARATION(ConnectionAttemptLoop);
 
 //	void DeleteRemoteClient(RemoteClient *remoteClient, fd_set *exceptionFD);
 //	void InsertRemoteClient(RemoteClient* remoteClient);
-	SOCKET SocketConnect(const char* host, unsigned short remotePort);
+	SOCKET SocketConnect(const char* host, unsigned short remotePort, unsigned short socketFamily);
 
 	struct ThisPtrPlusSysAddr
 	{
 		TCPInterface *tcpInterface;
 		SystemAddress systemAddress;
 		bool useSSL;
+		unsigned short socketFamily;
 	};
 
-#if defined(OPEN_SSL_CLIENT_SUPPORT)
+#if OPEN_SSL_CLIENT_SUPPORT==1
 	SSL_CTX* ctx;
 	SSL_METHOD *meth;
 	DataStructures::ThreadsafeAllocatingQueue<SystemAddress> startSSL;
 	DataStructures::List<SystemAddress> activeSSLConnections;
+	SimpleMutex sharedSslMutex;
 #endif
 };
 
@@ -179,7 +198,7 @@ protected:
 struct RemoteClient
 {
 	RemoteClient() {
-#if defined(OPEN_SSL_CLIENT_SUPPORT)
+#if OPEN_SSL_CLIENT_SUPPORT==1
 		ssl=0;
 #endif
 		isActive=false;
@@ -192,7 +211,7 @@ struct RemoteClient
 	SimpleMutex outgoingDataMutex;
 	SimpleMutex isActiveMutex;
 
-#if defined(OPEN_SSL_CLIENT_SUPPORT)
+#if OPEN_SSL_CLIENT_SUPPORT==1
 	SSL*     ssl;
 	void InitSSL(SSL_CTX* ctx, SSL_METHOD *meth);
 	void DisconnectSSL(void);

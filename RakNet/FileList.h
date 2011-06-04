@@ -4,6 +4,9 @@
 ///
 /// Usage of RakNet is subject to the appropriate license agreement.
 
+#include "NativeFeatureIncludes.h"
+#if _RAKNET_SUPPORT_FileOperations==1
+
 #ifndef __FILE_LIST
 #define __FILE_LIST
 
@@ -102,6 +105,18 @@ public:
 		(void) done;
 		(void) targetSystem;
 	}
+
+	/// \brief This function is called when all files have been read and are being transferred to a remote system
+	virtual void OnFilePushesComplete( SystemAddress systemAddress )
+	{
+		(void) systemAddress;
+	}
+
+	/// \brief This function is called when a send to a system was aborted (probably due to disconnection)
+	virtual void OnSendAborted( SystemAddress systemAddress )
+	{
+		(void) systemAddress;
+	}
 };
 
 /// Implementation of FileListProgress to use RAKNET_DEBUG_PRINTF
@@ -119,6 +134,12 @@ public:
 
 	/// Called for each directory, when that directory begins processing
 	virtual void OnDirectory(FileList *fileList, char *dir, unsigned int directoriesRemaining);
+
+	/// \brief This function is called when all files have been transferred to a particular remote system
+	virtual void OnFilePushesComplete( SystemAddress systemAddress );
+
+	/// \brief This function is called when a send to a system was aborted (probably due to disconnection)
+	virtual void OnSendAborted( SystemAddress systemAddress );
 };
 
 class RAK_DLL_EXPORT FileList
@@ -132,7 +153,7 @@ public:
 	/// \brief Add all the files at a given directory.
 	/// \param[in] applicationDirectory The first part of the path. This is not stored as part of the filename.  Use \ as the path delineator.
 	/// \param[in] subDirectory The rest of the path to the file. This is stored as a prefix to the filename
-	/// \param[in] writeHash The first SHA1_LENGTH bytes is a hash of the file, with the remainder the actual file data (should \a writeData be true)
+	/// \param[in] writeHash The first 4 bytes is a hash of the file, with the remainder the actual file data (should \a writeData be true)
 	/// \param[in] writeData Write the contents of each file
 	/// \param[in] recursive Whether or not to visit subdirectories
 	/// \param[in] context User defined byte to store with each file. Use for whatever you want.
@@ -188,7 +209,8 @@ public:
 	/// \param[in] fileLength Length of the file
 	/// \param[in] context User defined byte to store with each file. Use for whatever you want.
 	/// \param[in] isAReference Means that this is just a reference to a file elsewhere - does not actually have any data
-	void AddFile(const char *filename, const char *fullPathToFile, const char *data, const unsigned dataLength, const unsigned fileLength, FileListNodeContext context, bool isAReference=false);
+	/// \param[in] takeDataPointer If true, do not allocate dataLength. Just take the pointer passed to the \a data parameter
+	void AddFile(const char *filename, const char *fullPathToFile, const char *data, const unsigned dataLength, const unsigned fileLength, FileListNodeContext context, bool isAReference=false, bool takeDataPointer=false);
 
 	/// \brief Add a file, reading it from disk.
 	/// \param[in] filepath Complete path to the file, including the filename itself
@@ -200,16 +222,27 @@ public:
 	/// \param[in] applicationDirectory Prefixed to the path to each filename.  Use \ as the path delineator.
 	void DeleteFiles(const char *applicationDirectory);
 
-	/// \brief Set a callback to get progress reports about what this class does.
+	/// \brief Adds a callback to get progress reports about what the file list instances do.
 	/// \param[in] cb A pointer to an externally defined instance of FileListProgress. This pointer is held internally, so should remain valid as long as this class is valid.
-	void SetCallback(FileListProgress *cb);
+	void AddCallback(FileListProgress *cb);
+
+	/// \brief Removes a callback
+	/// \param[in] cb A pointer to an externally defined instance of FileListProgress that was previously added with AddCallback()
+	void RemoveCallback(FileListProgress *cb);
+
+	/// \brief Removes all callbacks
+	void ClearCallbacks(void);
+
+	/// Returns all callbacks added with AddCallback()
+	/// \param[out] callbacks The list is set to the list of callbacks
+	void GetCallbacks(DataStructures::List<FileListProgress*> &callbacks);
 
 	// Here so you can read it, but don't modify it
 	DataStructures::List<FileListNode> fileList;
 
 	static bool FixEndingSlash(char *str);
 protected:
-	FileListProgress *callback;
+	DataStructures::List<FileListProgress*> fileListProgressCallbacks;
 };
 
 } // namespace RakNet
@@ -219,3 +252,5 @@ protected:
 #endif
 
 #endif
+
+#endif // _RAKNET_SUPPORT_FileOperations

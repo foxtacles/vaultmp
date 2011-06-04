@@ -37,7 +37,6 @@ namespace cat {
 #if defined(CAT_WORD_64)
 
 #define CAT_LEG_BITS 64
-#define CAT_USE_LEGS_ASM64 /* use 64-bit assembly code inner loops */
 #define CAT_USED_BITS(x) BSR64(x) /* does not work if x = 0 */
 #define CAT_TRAILING_ZEROES(x) BSF64(x) /* does not work if x = 0 */
     typedef u64 Leg;
@@ -48,6 +47,11 @@ namespace cat {
 # define CAT_LEG_PAIRMUL(A, B) ((LegPair)A * B)
 #else
 # define CAT_NO_LEGPAIR
+#endif
+
+// If x86-64 and MSVC
+#if defined(CAT_ISA_X86) && defined(CAT_COMPILER_MSVC)
+#define CAT_USE_LEGS_ASM64 /* use 64-bit assembly code inner loops */
 #endif
 
 #elif defined(CAT_WORD_32)
@@ -178,12 +182,11 @@ const Leg CAT_LEG_MSB = (Leg)1 << (CAT_LEG_BITS - 1);
 // Q(hi:lo) = A(hi:lo) / B
 #define CAT_LEG_DIV(A_hi, A_lo, B, Q_hi, Q_lo)                    \
 {                                                                 \
-    LegPair _A = ((LegPair)(A_hi) << CAT_LEG_BITS) | (Leg)(A_lo); \
-    LegPair _qt = (LegPair)(_A / (B));                            \
+    LegPair _Ax = ((LegPair)(A_hi) << CAT_LEG_BITS) | (Leg)(A_lo); \
+    LegPair _qt = (LegPair)(_Ax / (B));                            \
     (Q_hi) = (Leg)(_qt >> CAT_LEG_BITS);                          \
     (Q_lo) = (Leg)_qt;                                            \
 }
-
 
 #endif // CAT_NO_LEGPAIR
 

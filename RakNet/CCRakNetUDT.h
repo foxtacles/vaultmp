@@ -1,3 +1,7 @@
+#include "RakNetDefines.h"
+
+#if USE_SLIDING_WINDOW_CONGESTION_CONTROL!=1
+
 #ifndef __CONGESTION_CONTROL_UDT_H
 #define __CONGESTION_CONTROL_UDT_H
 
@@ -12,11 +16,11 @@
 namespace RakNet
 {
 
-#if CC_TIME_TYPE_BYTES==8
+
 typedef uint64_t CCTimeType;
-#else
-typedef uint32_t CCTimeType;
-#endif
+
+
+
 
 typedef uint24_t DatagramSequenceNumberType;
 typedef double BytesPerMicrosecond;
@@ -45,7 +49,7 @@ typedef double MicrosecondsPerByte;
 /// Requirements:
 /// <OL>
 /// <LI>Each datagram is no more than MAXIMUM_MTU_SIZE, after accounting for the UDP header
-/// <LI>Each datagram containing a user message has a sequence number which is set after calling OnSendBytes(). Set it by calling GetNextDatagramSequenceNumber()
+/// <LI>Each datagram containing a user message has a sequence number which is set after calling OnSendBytes(). Set it by calling GetAndIncrementNextDatagramSequenceNumber()
 /// <LI>System is designed to be used from a single thread.
 /// <LI>Each packet should have a timeout time based on GetSenderRTOForACK(). If this time elapses, add the packet to the head of the send list for retransmission.
 /// </OL>
@@ -93,6 +97,7 @@ class CCRakNetUDT
 
 	/// Every data packet sent must contain a sequence number
 	/// Call this function to get it. The sequence number is passed into OnGotPacketPair()
+	DatagramSequenceNumberType GetAndIncrementNextDatagramSequenceNumber(void);
 	DatagramSequenceNumberType GetNextDatagramSequenceNumber(void);
 
 	/// Call this when you send packets
@@ -120,6 +125,7 @@ class CCRakNetUDT
 	/// B and AS are used in the calculations in UpdateWindowSizeAndAckOnAckPerSyn
 	/// B and AS are updated at most once per SYN 
 	void OnAck(CCTimeType curTime, CCTimeType rtt, bool hasBAndAS, BytesPerMicrosecond _B, BytesPerMicrosecond _AS, double totalUserDataBytesAcked, bool isContinuousSend, DatagramSequenceNumberType sequenceNumber );
+	void OnDuplicateAck( CCTimeType curTime, DatagramSequenceNumberType sequenceNumber ) {}
 	
 	/// Call when you send an ack, to see if the ack should have the B and AS parameters transmitted
 	/// Call before calling OnSendAck()
@@ -172,6 +178,7 @@ class CCRakNetUDT
 //	void SetTimeBetweenSendsLimit(unsigned int bitsPerSecond);
 	uint64_t GetBytesPerSecondLimitByCongestionControl(void) const;
 
+	void OnExternalPing(double pingMS) {(void) ping;}
 
 	protected:
 	// --------------------------- PROTECTED VARIABLES ---------------------------
@@ -383,5 +390,7 @@ class CCRakNetUDT
 };
 
 }
+
+#endif
 
 #endif

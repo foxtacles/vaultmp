@@ -1,4 +1,7 @@
 #include "CCRakNetUDT.h"
+
+#if USE_SLIDING_WINDOW_CONGESTION_CONTROL!=1
+
 #include "Rand.h"
 #include "MTUSize.h"
 #include <stdio.h>
@@ -224,6 +227,11 @@ bool CCRakNetUDT::ShouldSendACKs(CCTimeType curTime, CCTimeType estimatedTimeToN
 // ----------------------------------------------------------------------------------------------------------------------------
 DatagramSequenceNumberType CCRakNetUDT::GetNextDatagramSequenceNumber(void)
 {
+	return nextDatagramSequenceNumber;
+}
+// ----------------------------------------------------------------------------------------------------------------------------
+DatagramSequenceNumberType CCRakNetUDT::GetAndIncrementNextDatagramSequenceNumber(void)
+{
 	DatagramSequenceNumberType dsnt=nextDatagramSequenceNumber;
 	nextDatagramSequenceNumber++;
 	return dsnt;
@@ -353,7 +361,7 @@ CCTimeType CCRakNetUDT::GetSenderRTOForACK(void) const
 CCTimeType CCRakNetUDT::GetRTOForRetransmission(void) const
 {
 #if CC_TIME_TYPE_BYTES==4
-	const CCTimeType maxThreshold=1000;
+	const CCTimeType maxThreshold=10000;
 	const CCTimeType minThreshold=100;
 #else
 	const CCTimeType maxThreshold=1000000;
@@ -388,7 +396,7 @@ void CCRakNetUDT::OnResend(CCTimeType curTime)
 	if (hadPacketlossThisBlock==false)
 	{
 		// Logging
-//		 printf("Sending SLOWER due to Resend, Rate=%f MBPS. Rtt=%i\n", GetLocalSendRate(),  lastRtt );
+		// printf("Sending SLOWER due to Resend, Rate=%f MBPS. Rtt=%i\n", GetLocalSendRate(),  lastRtt );
 
 		IncreaseTimeBetweenSends();
 		hadPacketlossThisBlock=true;
@@ -410,13 +418,13 @@ void CCRakNetUDT::OnNAK(CCTimeType curTime, DatagramSequenceNumberType nakSequen
 	if (hadPacketlossThisBlock==false)
 	{
 		// Logging
-// 		printf("Sending SLOWER due to NAK, Rate=%f MBPS. Rtt=%i\n", GetLocalSendRate(),  lastRtt );
-// 		if (pingsLastInterval.Size()>10)
-// 		{
-// 			for (int i=0; i < 10; i++)
-// 				printf("%i, ", pingsLastInterval[pingsLastInterval.Size()-1-i]/1000);
-// 		}
-// 		printf("\n");
+		//printf("Sending SLOWER due to NAK, Rate=%f MBPS. Rtt=%i\n", GetLocalSendRate(),  lastRtt );
+		if (pingsLastInterval.Size()>10)
+		{
+			for (int i=0; i < 10; i++)
+				printf("%i, ", pingsLastInterval[pingsLastInterval.Size()-1-i]/1000);
+		}
+		printf("\n");
 		IncreaseTimeBetweenSends();
 
 		hadPacketlossThisBlock=true;
@@ -650,18 +658,18 @@ void CCRakNetUDT::UpdateWindowSizeAndAckOnAckPerSyn(CCTimeType curTime, CCTimeTy
 		else if (slopeSum < -.10*average)
 		{
 			// Logging
-//			printf("Ping dropping. slope=%f%%. Rate=%f MBPS. Rtt=%i\n", 100.0*slopeSum/average, GetLocalSendRate(),  rtt );
+			//printf("Ping dropping. slope=%f%%. Rate=%f MBPS. Rtt=%i\n", 100.0*slopeSum/average, GetLocalSendRate(),  rtt );
 		}
 		else if (slopeSum > .10*average)
 		{
 			// Logging
-//			printf("Ping rising. slope=%f%%. Rate=%f MBPS. Rtt=%i\n", 100.0*slopeSum/average, GetLocalSendRate(),  rtt );
+			//printf("Ping rising. slope=%f%%. Rate=%f MBPS. Rtt=%i\n", 100.0*slopeSum/average, GetLocalSendRate(),  rtt );
 			IncreaseTimeBetweenSends();
 		}
 		else
 		{
 			// Logging
-//			printf("Ping stable. slope=%f%%. Rate=%f MBPS. Rtt=%i\n", 100.0*slopeSum/average, GetLocalSendRate(),  rtt );
+			//printf("Ping stable. slope=%f%%. Rate=%f MBPS. Rtt=%i\n", 100.0*slopeSum/average, GetLocalSendRate(),  rtt );
 
 			// No packetloss over time threshhold, and rtt decreased, so send faster
 			lastRttOnIncreaseSendRate=rtt;
@@ -748,13 +756,12 @@ void CCRakNetUDT::IncreaseTimeBetweenSends(void)
 	// (SND+1.0) brings it to the range of 1 to 501
 	// Square the number, which is the range of 1 to 251001
 	// Divide by 251001, which is the range of 1/251001 to 1
-	// Multiple by .02
 
 	double increment;
 	increment = .02 * ((SND+1.0) * (SND+1.0)) / (501.0*501.0) ;
 	// SND=500 then increment=.02
 	// SND=0 then increment=near 0
-	SND*=(1.04 - increment);
+	SND*=(1.02 - increment);
 
 	// SND=0 then fast increase, slow decrease
 	// SND=500 then slow increase, fast decrease
@@ -787,3 +794,5 @@ void CCRakNetUDT::SetTimeBetweenSendsLimit(unsigned int bitsPerSecond)
 		SND=limit;
 }
 */
+
+#endif

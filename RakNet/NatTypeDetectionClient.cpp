@@ -35,11 +35,12 @@ void NatTypeDetectionClient::DetectNATType(SystemAddress _serverAddress)
 	{
 		DataStructures::List<RakNetSmartPtr<RakNetSocket> > sockets;
 		rakPeerInterface->GetSockets(sockets);
-		SystemAddress sockAddr = SocketLayer::GetSystemAddress(sockets[0]->s);
+		SystemAddress sockAddr;
+		SocketLayer::GetSystemAddress(sockets[0]->s, &sockAddr);
 		char str[64];
 		sockAddr.ToString(false,str);
 		c2=CreateNonblockingBoundSocket(str);
-		c2Port=SocketLayer::Instance()->GetLocalPort(c2);
+		c2Port=SocketLayer::GetLocalPort(c2);
 	}
 
 
@@ -53,13 +54,14 @@ void NatTypeDetectionClient::DetectNATType(SystemAddress _serverAddress)
 }
 void NatTypeDetectionClient::OnCompletion(NATTypeDetectionResult result)
 {
-	Packet *p = rakPeerInterface->AllocatePacket(sizeof(MessageID)+sizeof(unsigned char)*2);
+	Packet *p = AllocatePacketUnified(sizeof(MessageID)+sizeof(unsigned char)*2);
 	printf("Returning nat detection result to the user\n");
 	p->data[0]=ID_NAT_TYPE_DETECTION_RESULT;
 	p->systemAddress=serverAddress;
 	p->systemAddress.systemIndex=(SystemIndex)-1;
 	p->guid=rakPeerInterface->GetGuidFromSystemAddress(serverAddress);
 	p->data[1]=(unsigned char) result;
+	p->wasGeneratedLocally=true;
 	rakPeerInterface->PushBackPacket(p, true);
 
 	// Symmetric and port restricted are determined by server, so no need to notify server we are done
@@ -86,7 +88,7 @@ void NatTypeDetectionClient::Update(void)
 		int len;
 		SystemAddress sender;
 		len=NatTypeRecvFrom(data, c2, sender);
-		if (len==1 && data[0]==NAT_TYPE_NONE && sender==serverAddress)
+		if (len==1 && data[0]==NAT_TYPE_NONE)
 		{
 			OnCompletion(NAT_TYPE_NONE);
 			RakAssert(IsInProgress()==false);
@@ -95,7 +97,7 @@ void NatTypeDetectionClient::Update(void)
 }
 PluginReceiveResult NatTypeDetectionClient::OnReceive(Packet *packet)
 {
-	if (IsInProgress() && packet->systemAddress==serverAddress)
+	if (IsInProgress())
 	{
 		switch (packet->data[0])
 		{
@@ -109,8 +111,13 @@ PluginReceiveResult NatTypeDetectionClient::OnReceive(Packet *packet)
 			}
 			break;
 		case ID_NAT_TYPE_DETECTION_RESULT:
-			OnCompletion((NATTypeDetectionResult)packet->data[1]);
-			return RR_STOP_PROCESSING_AND_DEALLOCATE;
+			if (packet->wasGeneratedLocally==false)
+			{
+				OnCompletion((NATTypeDetectionResult)packet->data[1]);
+				return RR_STOP_PROCESSING_AND_DEALLOCATE;
+			}
+			else
+				break;
 		case ID_NAT_TYPE_DETECTION_REQUEST:
 			OnTestPortRestricted(packet);
 			return RR_STOP_PROCESSING_AND_DEALLOCATE;
@@ -119,7 +126,7 @@ PluginReceiveResult NatTypeDetectionClient::OnReceive(Packet *packet)
 
 	return RR_CONTINUE_PROCESSING;
 }
-void NatTypeDetectionClient::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
+void NatTypeDetectionClient::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
 	(void) lostConnectionReason;
 	(void) rakNetGUID;
@@ -135,17 +142,18 @@ void NatTypeDetectionClient::OnTestPortRestricted(Packet *packet)
 	bsIn.Read(s3p4StrAddress);
 	unsigned short s3p4Port;
 	bsIn.Read(s3p4Port);
-	SystemAddress s3p4Addr(s3p4StrAddress.C_String(), s3p4Port);
 
 	DataStructures::List<RakNetSmartPtr<RakNetSocket> > sockets;
 	rakPeerInterface->GetSockets(sockets);
+	SystemAddress s3p4Addr = sockets[0]->boundAddress;
+	s3p4Addr.FromStringExplicitPort(s3p4StrAddress.C_String(), s3p4Port);
 
 	// Send off the RakNet socket to the specified address, message is unformatted
 	// Server does this twice, so don't have to unduly worry about packetloss
 	RakNet::BitStream bsOut;
 	bsOut.Write((MessageID) NAT_TYPE_PORT_RESTRICTED);
 	bsOut.Write(rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS));
-	SocketLayer::Instance()->SendTo_PC( sockets[0]->s, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), s3p4Addr.binaryAddress, s3p4Addr.port);
+	SocketLayer::SendTo_PC( sockets[0]->s, (const char*) bsOut.GetData(), bsOut.GetNumberOfBytesUsed(), s3p4Addr, __FILE__, __LINE__ );
 }
 void NatTypeDetectionClient::Shutdown(void)
 {

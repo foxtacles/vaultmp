@@ -248,7 +248,7 @@ PluginReceiveResult TeamBalancer::OnReceive(Packet *packet)
 
 	return RR_CONTINUE_PROCESSING;
 }
-void TeamBalancer::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
+void TeamBalancer::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
 	(void) systemAddress;
 	(void) lostConnectionReason;

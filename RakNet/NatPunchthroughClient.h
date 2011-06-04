@@ -87,7 +87,7 @@ struct RAK_DLL_EXPORT PunchthroughConfiguration
 };
 
 /// \ingroup NAT_PUNCHTHROUGH_GROUP
-struct NatPunchthroughDebugInterface
+struct RAK_DLL_EXPORT NatPunchthroughDebugInterface
 {
 	NatPunchthroughDebugInterface() {}
 	virtual ~NatPunchthroughDebugInterface() {}
@@ -95,14 +95,14 @@ struct NatPunchthroughDebugInterface
 };
 
 /// \ingroup NAT_PUNCHTHROUGH_GROUP
-struct NatPunchthroughDebugInterface_Printf : public NatPunchthroughDebugInterface
+struct RAK_DLL_EXPORT NatPunchthroughDebugInterface_Printf : public NatPunchthroughDebugInterface
 {
 	virtual void OnClientMessage(const char *msg);
 };
 
 #if _RAKNET_SUPPORT_PacketLogger==1
 /// \ingroup NAT_PUNCHTHROUGH_GROUP
-struct NatPunchthroughDebugInterface_PacketLogger : public NatPunchthroughDebugInterface
+struct RAK_DLL_EXPORT NatPunchthroughDebugInterface_PacketLogger : public NatPunchthroughDebugInterface
 {
 	// Set to non-zero to write to the packetlogger!
 	PacketLogger *pl;
@@ -131,7 +131,22 @@ public:
 	~NatPunchthroughClient();
 
 	/// Punchthrough a NAT. Doesn't connect, just tries to setup the routing table
-	bool OpenNAT(RakNetGUID destination, SystemAddress facilitator);
+	/// \param[in] destination The system to punch. Must already be connected to \a facilitator
+	/// \param[in] facilitator A system we are already connected to running the NatPunchthroughServer plugin
+	/// \sa OpenNATGroup()
+	/// You will get ID_NAT_PUNCHTHROUGH_SUCCEEDED on success
+	/// You will get ID_NAT_TARGET_NOT_CONNECTED, ID_NAT_TARGET_UNRESPONSIVE, ID_NAT_CONNECTION_TO_TARGET_LOST, ID_NAT_ALREADY_IN_PROGRESS, or ID_NAT_PUNCHTHROUGH_FAILED on failures of various types
+	/// However, if you lose connection to the facilitator, you may not necessarily get above
+	bool OpenNAT(RakNetGUID destination, const SystemAddress &facilitator);
+
+	/// Punchthrough a NAT, and also every system the \a destination is connected to or has called OpenNATGroup() to \a destination
+	/// This is useful for peer to peer games where you want to connect to every system in the remote session, not just one particular system
+	/// If we cannot punch to any system in the group, then the punchthrough is considered a failure
+	/// \note For cloud computing, all systems in the group must be connected to the same facilitator since we're only specifying one
+	/// You will get ID_NAT_GROUP_PUNCH_SUCCEEDED on success
+	/// You will get ID_NAT_TARGET_NOT_CONNECTED, ID_NAT_ALREADY_IN_PROGRESS, or ID_NAT_GROUP_PUNCH_FAILED on failures of various types
+	/// However, if you lose connection to the facilitator, you may not necessarily get above
+	bool OpenNATGroup(RakNetGUID destination, const SystemAddress &facilitator);
 
 	/// Modify the system configuration if desired
 	/// Don't modify the variables in the structure while punchthrough is in progress
@@ -141,21 +156,11 @@ public:
 	/// \param[in] i Pointer to an interface. The pointer is stored, so don't delete it while in progress. Pass 0 to clear.
 	void SetDebugInterface(NatPunchthroughDebugInterface *i);
 
-	/// Returns the port on the router that incoming messages will be sent to
-	/// UPNP needs to know this (See UPNP project)
-	/// \pre Must have connected to the facilitator first
-	/// \return Port that incoming messages will be sent to, from other clients. This probably won't be the same port RakNet was started on.
-	unsigned short GetUPNPExternalPort(void) const;
+	/// Returns all systems except sender by default, ovveride to change
+	virtual void GetGuidsForGroupPunchthroughRequest(RakNetGUID excludeThisGuid, DataStructures::List<RakNetGUID> &guids);
 
-	/// Returns our internal port that RakNet was started on
-	/// Equivalent to calling rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS).port
-	/// \return Port that incoming messages will arrive on, on our actual system.
-	unsigned short GetUPNPInternalPort(void) const;
-
-	/// Returns our locally bound system address
-	/// Equivalent to calling rakPeer->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS).ToString(false);
-	/// \return Internal address that UPNP should forward messages to
-	RakNet::RakString GetUPNPInternalAddress(void) const;
+	/// Get the port mappings you should pass to UPNP (for miniupnpc-1.5, for the function UPNP_AddPortMapping)
+	void GetUPNPPortMappings(char *externalPort, char *internalPort, const SystemAddress &natPunchthroughServerAddress);
 
 	/// \internal For plugin handling
 	virtual void Update(void);
@@ -164,10 +169,10 @@ public:
 	virtual PluginReceiveResult OnReceive(Packet *packet);
 
 	/// \internal For plugin handling
-	virtual void OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming);
+	virtual void OnNewConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, bool isIncoming);
 
 	/// \internal For plugin handling
-	virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
+	virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 
 	virtual void OnAttach(void);
 	virtual void OnDetach(void);
@@ -176,27 +181,21 @@ public:
 
 protected:
 	unsigned short mostRecentNewExternalPort;
+	void OnNatGroupPunchthroughRequest(Packet *packet);
+	void OnFailureNotification(Packet *packet);
+	void OnConfirmConnectionToServer(Packet *packet);
+	void OnNatGroupPunchthroughReply(Packet *packet);
 	void OnGetMostRecentPort(Packet *packet);
 	void OnConnectAtTime(Packet *packet);
-	unsigned int GetPendingOpenNATIndex(RakNetGUID destination, SystemAddress facilitator);
-	void SendPunchthrough(RakNetGUID destination, SystemAddress facilitator);
-	void SendTTL(SystemAddress sa);
+	unsigned int GetPendingOpenNATIndex(RakNetGUID destination, const SystemAddress &facilitator);
+	void SendPunchthrough(RakNetGUID destination, const SystemAddress &facilitator);
+	void SendTTL(const SystemAddress &sa);
 	void SendOutOfBand(SystemAddress sa, MessageID oobId);
 	void OnPunchthroughFailure(void);
 	void OnReadyForNextPunchthrough(void);
 	void PushFailure(void);
 	bool RemoveFromFailureQueue(void);
 	void PushSuccess(void);
-	//void ProcessNextPunchthroughQueue(void);
-
-	/*
-	struct PendingOpenNAT
-	{
-		RakNetGUID destination;
-		SystemAddress facilitator;
-	};
-	DataStructures::List<PendingOpenNAT> pendingOpenNAT;
-	*/
 
 	struct SendPing
 	{
@@ -215,8 +214,11 @@ protected:
 		{
 			TESTING_INTERNAL_IPS,
 			WAITING_FOR_INTERNAL_IPS_RESPONSE,
-			TESTING_EXTERNAL_IPS_FROM_FACILITATOR_PORT,
-			TESTING_EXTERNAL_IPS_FROM_1024,
+			SEND_WITH_TTL,
+			TESTING_EXTERNAL_IPS_FACILITATOR_PORT_TO_FACILITATOR_PORT,
+			TESTING_EXTERNAL_IPS_1024_TO_FACILITATOR_PORT,
+			TESTING_EXTERNAL_IPS_FACILITATOR_PORT_TO_1024,
+			TESTING_EXTERNAL_IPS_1024_TO_1024,
 			WAITING_AFTER_ALL_ATTEMPTS,
 
 			// The trendnet remaps the remote port to 1024.
@@ -238,6 +240,29 @@ protected:
 		RakNetGUID guid;
 	};
 	DataStructures::List<AddrAndGuid> failedAttemptList;
+
+	void IncrementExternalAttemptCount(RakNet::Time time, RakNet::Time delta);
+
+	struct TimeAndGuid
+	{
+		RakNet::Time time;
+		RakNetGUID guid;
+	};
+	DataStructures::List<TimeAndGuid> groupRequestsInProgress;
+
+	struct GroupPunchRequest
+	{
+		RakNetGUID destination;
+		SystemAddress facilitator;
+		DataStructures::List<RakNetGUID> processingList;
+		DataStructures::List<RakNetGUID> failureList;
+		DataStructures::List<SystemAddress> successList;
+		bool confirmingDestinationConnected;
+	};
+	DataStructures::List<GroupPunchRequest*> groupPunchRequests;
+	void UpdateGroupPunchOnNatResult(SystemAddress facilitator, RakNetGUID targetSystem, SystemAddress targetSystemAddress, int result); // 0=failed, 1=success, 2=ignore
+	void PushGroupSuccess(GroupPunchRequest *gpr);
+	void PushGroupFailure(GroupPunchRequest *gpr);
 };
 
 } // namespace RakNet

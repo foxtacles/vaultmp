@@ -6,7 +6,7 @@
 /// Usage of RakNet is subject to the appropriate license agreement.
 
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_EmailSender==1
+#if _RAKNET_SUPPORT_EmailSender==1 && _RAKNET_SUPPORT_TCPInterface==1
 
 #ifndef __EMAIL_SENDER_H
 #define __EMAIL_SENDER_H
@@ -15,6 +15,7 @@
 #include "RakMemoryOverride.h"
 #include "Export.h"
 #include "Rand.h"
+#include "TCPInterface.h"
 
 namespace RakNet
 {
@@ -44,8 +45,6 @@ public:
 	/// \return 0 on success, otherwise a string indicating the error message
 	const char *Send(const char *hostAddress, unsigned short hostPort, const char *sender, const char *recipient, const char *senderName, const char *recipientName, const char *subject, const char *body, FileList *attachedFiles, bool doPrintf, const char *password);
 
-	// \brief Returns how many bytes were written.
-	int Base64Encoding(const char *inputData, int dataLength, char *outputData, const char *base64Map);
 protected:
 	const char *GetResponse(TCPInterface *tcpInterface, const SystemAddress &emailServer, bool doPrintf);
 	RakNetRandom rakNetRandom;

@@ -1,5 +1,5 @@
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_UDPProxyCoordinator==1
+#if _RAKNET_SUPPORT_UDPProxyCoordinator==1 && _RAKNET_SUPPORT_UDPForwarder==1
 
 #include "UDPProxyCoordinator.h"
 #include "BitStream.h"
@@ -99,7 +99,7 @@ PluginReceiveResult UDPProxyCoordinator::OnReceive(Packet *packet)
 	}
 	return RR_CONTINUE_PROCESSING;
 }
-void UDPProxyCoordinator::OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
+void UDPProxyCoordinator::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
 {
 	(void) lostConnectionReason;
 	(void) rakNetGUID;
@@ -320,18 +320,15 @@ void UDPProxyCoordinator::OnForwardingReplyFromServerToCoordinator(Packet *packe
 	{
 		char serverIP[64];
 		packet->systemAddress.ToString(false,serverIP);
-		unsigned short srcToDestPort;
-		unsigned short destToSourcePort;
-		incomingBs.Read(srcToDestPort);
-		incomingBs.Read(destToSourcePort);
+		unsigned short forwardingPort;
+		incomingBs.Read(forwardingPort);
 
 		outgoingBs.Write((MessageID)ID_UDP_PROXY_GENERAL);
 		outgoingBs.Write((MessageID)ID_UDP_PROXY_FORWARDING_SUCCEEDED);
 		outgoingBs.Write(sata.senderClientAddress);
 		outgoingBs.Write(sata.targetClientAddress);
 		outgoingBs.Write(RakNet::RakString(serverIP));
-		outgoingBs.Write(srcToDestPort);
-		outgoingBs.Write(destToSourcePort);
+		outgoingBs.Write(forwardingPort);
 		rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, fw->requestingAddress, false);
 
 		outgoingBs.Reset();
@@ -340,8 +337,7 @@ void UDPProxyCoordinator::OnForwardingReplyFromServerToCoordinator(Packet *packe
 		outgoingBs.Write(sata.senderClientAddress);
 		outgoingBs.Write(sata.targetClientAddress);
 		outgoingBs.Write(RakNet::RakString(serverIP));
-		outgoingBs.Write(srcToDestPort);
-		outgoingBs.Write(destToSourcePort);
+		outgoingBs.Write(forwardingPort);
 		rakPeerInterface->Send(&outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, sata.targetClientAddress, false);
 
 		// 05/18/09 Keep the entry around for some time after success, so duplicates are reported if attempting forwarding from the target system before notification of success
@@ -468,13 +464,13 @@ void UDPProxyCoordinator::ForwardingRequest::OrderRemainingServersToTry(void)
 		swp.serverAddress=remainingServersToTry[idx];
 		swp.ping=0;
 		if (sourceServerPings.GetSize())
-			swp.ping+=(unsigned short) sourceServerPings[idx].ping;
+			swp.ping+=(unsigned short) (sourceServerPings[idx].ping);
 		else
-			swp.ping+=(unsigned short) DEFAULT_CLIENT_UNRESPONSIVE_PING_TIME;
+			swp.ping+=(unsigned short) (DEFAULT_CLIENT_UNRESPONSIVE_PING_TIME);
 		if (targetServerPings.GetSize())
-			swp.ping+=(unsigned short) targetServerPings[idx].ping;
+			swp.ping+=(unsigned short) (targetServerPings[idx].ping);
 		else
-			swp.ping+=(unsigned short) DEFAULT_CLIENT_UNRESPONSIVE_PING_TIME;
+			swp.ping+=(unsigned short) (DEFAULT_CLIENT_UNRESPONSIVE_PING_TIME);
 		swpList.Push(swp, swp.ping, _FILE_AND_LINE_);
 	}
 	remainingServersToTry.Clear(true, _FILE_AND_LINE_ );

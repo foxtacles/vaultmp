@@ -6,7 +6,7 @@
 #ifndef GCC_FINDFIRST_H
 #define GCC_FINDFIRST_H
 
-#if (defined(__GNUC__)  || defined(__GCCXML__)) && !defined(__WIN32)
+#if (defined(__GNUC__)  || defined(__GCCXML__)) && !defined(_WIN32)
 
 #include <dirent.h>
 

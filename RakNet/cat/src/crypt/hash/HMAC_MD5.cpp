@@ -37,15 +37,15 @@ using namespace cat;
 #define I(x, y, z) ((y) ^ ((x) | ~(z)))
 
 // NOTE: Uses little-endian integers instead of big-endian as in standard MD5
-#define ROUND(a, b, Fbcd, x,o, s, ac) \
+#define ROUND(a, b, Fbcd, x, o, s, ac) \
     (a) += Fbcd + getLE(x[o]) + (u32)(ac); \
     (a) = CAT_ROL32((a), (s)); \
     (a) += (b);
 
-#define FF(a, b, c, d, x,o, s, ac) ROUND(a, b, F(b,c,d), x,o, s, ac)
-#define GG(a, b, c, d, x,o, s, ac) ROUND(a, b, G(b,c,d), x,o, s, ac)
-#define HH(a, b, c, d, x,o, s, ac) ROUND(a, b, H(b,c,d), x,o, s, ac)
-#define II(a, b, c, d, x,o, s, ac) ROUND(a, b, I(b,c,d), x,o, s, ac)
+#define FF(a, b, c, d, x,o, s, ac) ROUND(a, b, F(b,c,d), x, o, s, ac)
+#define GG(a, b, c, d, x,o, s, ac) ROUND(a, b, G(b,c,d), x, o, s, ac)
+#define HH(a, b, c, d, x,o, s, ac) ROUND(a, b, H(b,c,d), x, o, s, ac)
+#define II(a, b, c, d, x,o, s, ac) ROUND(a, b, I(b,c,d), x, o, s, ac)
 
 
 //// HMAC_MD5
@@ -59,6 +59,15 @@ void HMAC_MD5::HashComputation(const void *message, int blocks, u32 *NextState)
     while (blocks--)
     {
         u32 a = a0, b = b0, c = c0, d = d0;
+
+#ifdef CAT_AUDIT
+		printf("AUDIT: MD5 ");
+		for (int ii = 0; ii < 64; ++ii)
+		{
+			printf("%02x", ((u8*)words)[ii]);
+		}
+		printf("\n");
+#endif
 
         // Round 1
 		const int S11 = 7;
@@ -178,10 +187,10 @@ HMAC_MD5::~HMAC_MD5()
 
 bool HMAC_MD5::SetKey(ICryptHash *parent)
 {
-    State[0] = 0x67452301;
-    State[1] = 0xefcdab89;
-    State[2] = 0x98badcfe;
-    State[3] = 0x10325476;
+    State[0] = 0x27b70a85;
+    State[1] = 0x2e1b2138;
+    State[2] = 0x4d2c6dfc;
+    State[3] = 0x53380d13;
 
     static const int KEY_BYTES = WORK_BYTES / 2;
 
@@ -291,7 +300,7 @@ void HMAC_MD5::End()
     {
         Work[used_bytes++] = 0x80;
 
-        // Pad with zeroes
+        // Pad with zeros
         CAT_CLR(Work + used_bytes, WORK_BYTES - used_bytes);
 
         HashComputation(Work, 1, State);
@@ -299,11 +308,13 @@ void HMAC_MD5::End()
         used_bytes = 0;
     }
 
-    // Pad out zeroes
+    // Pad out zeros
     CAT_CLR(Work + used_bytes, (WORK_BYTES - 8) - used_bytes);
 
     // Attach bit count to the end
-    *(u64*)&Work[WORK_BYTES - 8] = getLE(byte_counter << 3);
+	u64 bit_counter = byte_counter << 3;
+	*(u32*)&Work[WORK_BYTES - 8] = getLE((u32)bit_counter);
+	*(u32*)&Work[WORK_BYTES - 4] = getLE((u32)(bit_counter >> 32));
 
     u32 *Output = (u32 *)Work;
 
@@ -322,7 +333,9 @@ void HMAC_MD5::End()
     byte_counter = 16;
     Work[16] = 0x80;
     CAT_CLR(Work + 17, (WORK_BYTES - 8) - 17);
-    *(u64*)&Work[WORK_BYTES - 8] = getLE(byte_counter << 3);
+
+	*(u32*)&Work[WORK_BYTES - 8] = getLE32(16 << 3);
+	*(u32*)&Work[WORK_BYTES - 4] = 0;
 
     // Final output hash
     HashComputation(Work, 1, State);

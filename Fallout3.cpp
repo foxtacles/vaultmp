@@ -567,7 +567,7 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
     localPlayerUpdate.alerted = false;
     localPlayerUpdate.moving = 0;
 
-    if (peer->Connect(addr.ToString(false), addr.port, 0, 0, 0, 0, 3, 500, 0) == CONNECTION_ATTEMPT_STARTED)
+    if (peer->Connect(addr.ToString(false), addr.GetPort(), 0, 0, 0, 0, 3, 500, 0) == CONNECTION_ATTEMPT_STARTED)
     {
         bool query = true;
 
