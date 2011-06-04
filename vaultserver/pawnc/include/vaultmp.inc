@@ -106,3 +106,11 @@ native IsPlayerDead(clientID);
  */
 
 native GetPlayerMoving(clientID);
+
+/* IsPlayerAlerted
+ * returns 1 if the player is alerted (has his weapon drawn)
+ * returns 0 if the player is not alerted
+ * returns -1: invalid clientID
+ */
+
+native IsPlayerAlerted(clientID);
