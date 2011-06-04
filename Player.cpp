@@ -24,6 +24,7 @@ Player::Player(RakNetGUID guid)
     cond[4] = 0.00;
     cond[5] = 0.00;
     dead = false;
+    alerted = false;
     moving = 0;
     name = "Player";
     players.insert(pair<RakNetGUID, string>(guid, refID));
@@ -101,6 +102,11 @@ bool Player::IsPlayerDead()
     return dead;
 }
 
+bool Player::IsPlayerAlerted()
+{
+    return alerted;
+}
+
 int Player::GetPlayerMoving()
 {
     return moving;
@@ -148,9 +154,15 @@ void Player::SetPlayerDead(bool dead)
     this->dead = dead;
 }
 
+void Player::SetPlayerAlerted(bool alerted)
+{
+    this->alerted = alerted;
+}
+
 void Player::SetPlayerMoving(int moving)
 {
-    this->moving = moving;
+    if (moving >= 0 && moving <= 8)
+        this->moving = moving;
 }
 
 void Player::SetPlayerRefID(string refID)

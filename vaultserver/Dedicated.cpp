@@ -38,6 +38,7 @@ struct Dedicated::pPlayerUpdate {
     float baseHealth;
     float conds[6];
     bool dead;
+    bool alerted;
     int moving;
 };
 #pragma pack(pop)
@@ -414,6 +415,7 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         player->SetPlayerCondition(4, update->conds[4]);
                         player->SetPlayerCondition(5, update->conds[5]);
                         player->SetPlayerDead(update->dead);
+                        player->SetPlayerAlerted(update->alerted);
                         player->SetPlayerMoving(update->moving);
                         break;
                     }

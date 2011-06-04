@@ -18,6 +18,10 @@
 #define		MOV_FASTBACKWARD 2
 #define		MOV_FASTLEFT     3
 #define 	MOV_FASTRIGHT	 4
+#define		MOV_FORWARD      5
+#define		MOV_BACKWARD     6
+#define		MOV_LEFT         7
+#define 	MOV_RIGHT	 8
 
 // Callbacks
 

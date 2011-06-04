@@ -29,6 +29,7 @@ class Player {
               float baseHealth;
               float cond[6];
               bool dead;
+              bool alerted;
               int moving;
 
       public:
@@ -46,6 +47,7 @@ class Player {
               float GetPlayerBaseHealth();
               float GetPlayerCondition(int cell);
               bool IsPlayerDead();
+              bool IsPlayerAlerted();
               int GetPlayerMoving();
               string GetPlayerRefID();
 
@@ -56,6 +58,7 @@ class Player {
               void SetPlayerBaseHealth(float baseHealth);
               void SetPlayerCondition(int cell, float cond);
               void SetPlayerDead(bool dead);
+              void SetPlayerAlerted(bool alerted);
               void SetPlayerMoving(int moving);
               void SetPlayerRefID(string refID);
 

@@ -30,6 +30,7 @@ struct Fallout3::pPlayerUpdate {
     float baseHealth;
     float conds[6];
     bool dead;
+    bool alerted;
     int moving;
 };
 #pragma pack(pop)
@@ -224,11 +225,74 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                         float dead = (float) atof(token);
                         lastRef->SetPlayerDead(dead != 0.00 ? true : false);
                     }
+                    else if (stricmp(token, "Wants") == 0)
+                    {
+                        token = strtok(NULL, ",");
+                        token = strtok(NULL, ",");
+
+                        if (stricmp(token, " Weapon Drawn 0") == 0)
+                            lastRef->SetPlayerAlerted(false);
+                        else
+                            lastRef->SetPlayerAlerted(true);
+                    }
+                    else if (stricmp(token, "Movement") == 0)
+                    {
+                        token = strtok(NULL, ":.<>-/ ");
+
+                        if (stricmp(token, "FastForward") == 0)
+                            lastRef->SetPlayerMoving(1);
+                        else if (stricmp(token, "FastBackward") == 0)
+                            lastRef->SetPlayerMoving(2);
+                        else if (stricmp(token, "FastLeft") == 0)
+                            lastRef->SetPlayerMoving(3);
+                        else if (stricmp(token, "FastRight") == 0)
+                            lastRef->SetPlayerMoving(4);
+                        else if (stricmp(token, "Forward") == 0)
+                            lastRef->SetPlayerMoving(5);
+                        else if (stricmp(token, "Backward") == 0)
+                            lastRef->SetPlayerMoving(6);
+                        else if (stricmp(token, "Left") == 0)
+                            lastRef->SetPlayerMoving(7);
+                        else if (stricmp(token, "Right") == 0)
+                            lastRef->SetPlayerMoving(8);
+                        else
+                        {
+                            token = strtok(NULL, ":.<>-/ ");
+
+                            if (token != NULL)
+                            {
+                                if (stricmp(token, "FastForward") == 0)
+                                    lastRef->SetPlayerMoving(1);
+                                else if (stricmp(token, "FastBackward") == 0)
+                                    lastRef->SetPlayerMoving(2);
+                                else if (stricmp(token, "FastLeft") == 0)
+                                    lastRef->SetPlayerMoving(3);
+                                else if (stricmp(token, "FastRight") == 0)
+                                    lastRef->SetPlayerMoving(4);
+                                else if (stricmp(token, "Forward") == 0)
+                                    lastRef->SetPlayerMoving(5);
+                                else if (stricmp(token, "Backward") == 0)
+                                    lastRef->SetPlayerMoving(6);
+                                else if (stricmp(token, "Left") == 0)
+                                    lastRef->SetPlayerMoving(7);
+                                else if (stricmp(token, "Right") == 0)
+                                    lastRef->SetPlayerMoving(8);
+                            }
+                        }
+                    }
+                    /*else if (stricmp(token, "Weapon") == 0)
+                    {
+
+                    }
+                    else if (stricmp(token, "Idle") == 0)
+                    {
+
+                    }*/
                     else if (stricmp(token, "IsMoving") == 0)
                     {
                         token = strtok(NULL, ":.<> ");
                         int moving = atoi(token);
-                        lastRef->SetPlayerMoving(moving);
+                        if (moving == 0) lastRef->SetPlayerMoving(moving);
                     }
                     else if (stricmp(token, "player") == 0)
                         lastRef = self;
@@ -283,59 +347,63 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
 
         input = "op:player.getpos X";
         pipeServer->Send(&input);
-        Sleep(50);
+        Sleep(20);
 
         input = "op:player.getpos Y";
         pipeServer->Send(&input);
-        Sleep(50);
+        Sleep(20);
 
         input = "op:player.getpos Z";
         pipeServer->Send(&input);
-        Sleep(50);
+        Sleep(20);
 
         input = "op:player.getangle Z";
         pipeServer->Send(&input);
-        Sleep(50);
+        Sleep(20);
 
         input = "op:player.getbaseactorvalue Health";
         pipeServer->Send(&input);
-        Sleep(50);
+        Sleep(20);
 
         input = "op:player.getactorvalue Health";
         pipeServer->Send(&input);
-        Sleep(50);
+        Sleep(20);
 
         input = "op:player.getactorvalue PerceptionCondition";
         pipeServer->Send(&input);
-        Sleep(50);
+        Sleep(20);
 
         input = "op:player.getactorvalue EnduranceCondition";
         pipeServer->Send(&input);
-        Sleep(50);
+        Sleep(20);
 
         input = "op:player.getactorvalue LeftAttackCondition";
         pipeServer->Send(&input);
-        Sleep(50);
+        Sleep(20);
 
         input = "op:player.getactorvalue RightAttackCondition";
         pipeServer->Send(&input);
-        Sleep(50);
+        Sleep(20);
 
         input = "op:player.getactorvalue LeftMobilityCondition";
         pipeServer->Send(&input);
-        Sleep(50);
+        Sleep(20);
 
         input = "op:player.getactorvalue RightMobilityCondition";
         pipeServer->Send(&input);
-        Sleep(50);
+        Sleep(20);
 
         input = "op:player.getdead";
         pipeServer->Send(&input);
-        Sleep(50);
+        Sleep(20);
+
+        input = "op:player.showanim";
+        pipeServer->Send(&input);
+        Sleep(20);
 
         input = "op:player.ismoving";
         pipeServer->Send(&input);
-        Sleep(50);
+        Sleep(20);
 
         map<RakNetGUID, string> players = Player::GetPlayerList();
         map<RakNetGUID, string>::iterator it;
@@ -350,25 +418,25 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
                 input.append(refID);
                 input.append(".getpos X");
                 pipeServer->Send(&input);
-                Sleep(50);
+                Sleep(20);
 
                 input = "op:";
                 input.append(refID);
                 input.append(".getpos Y");
                 pipeServer->Send(&input);
-                Sleep(50);
+                Sleep(20);
 
                 input = "op:";
                 input.append(refID);
                 input.append(".getpos Z");
                 pipeServer->Send(&input);
-                Sleep(50);
+                Sleep(20);
 
                 input = "op:";
                 input.append(refID);
                 input.append(".getdead");
                 pipeServer->Send(&input);
-                Sleep(50);
+                Sleep(20);
             }
         }
     }
@@ -496,6 +564,7 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
     localPlayerUpdate.conds[4] = 0.00;
     localPlayerUpdate.conds[5] = 0.00;
     localPlayerUpdate.dead = false;
+    localPlayerUpdate.alerted = false;
     localPlayerUpdate.moving = 0;
 
     if (peer->Connect(addr.ToString(false), addr.port, 0, 0, 0, 0, 3, 500, 0) == CONNECTION_ATTEMPT_STARTED)
@@ -674,6 +743,34 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                         pipeServer->Send(&input);
                         player->SetPlayerAngle(update->A);
 
+                        if (update->alerted != player->IsPlayerAlerted())
+                        {
+                            input = "op:";
+                            input.append(refID);
+                            input.append(".setrestrained 0");
+                            pipeServer->Send(&input);
+                            Sleep(50);
+                            input = "op:";
+                            input.append(refID);
+                            switch (update->alerted)
+                            {
+                                case true:
+                                    input.append(".setalert 1");
+                                    pipeServer->Send(&input);
+                                    break;
+                                case false:
+                                    input.append(".setalert 0");
+                                    pipeServer->Send(&input);
+                                    break;
+                            }
+                            Sleep(50);
+                            input = "op:";
+                            input.append(refID);
+                            input.append(".setrestrained 1");
+                            pipeServer->Send(&input);
+                            player->SetPlayerAlerted(update->alerted);
+                        }
+
                         if (update->moving != player->GetPlayerMoving())
                         {
                             input = "op:";
@@ -694,6 +791,18 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                                     break;
                                 case 4:
                                     input.append(".playgroup FastRight 1");
+                                    break;
+                                case 5:
+                                    input.append(".playgroup Forward 1");
+                                    break;
+                                case 6:
+                                    input.append(".playgroup Backward 1");
+                                    break;
+                                case 7:
+                                    input.append(".playgroup Left 1");
+                                    break;
+                                case 8:
+                                    input.append(".playgroup Right 1");
                                     break;
                             }
                             pipeServer->Send(&input);
@@ -829,11 +938,12 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
             float baseHealth = self->GetPlayerBaseHealth();
             float conds[6] = {self->GetPlayerCondition(0), self->GetPlayerCondition(1), self->GetPlayerCondition(2), self->GetPlayerCondition(3), self->GetPlayerCondition(4), self->GetPlayerCondition(5)};
             bool dead = self->IsPlayerDead();
+            bool alerted = self->IsPlayerAlerted();
             int moving = self->GetPlayerMoving();
 
             if (X != localPlayerUpdate.X || Y != localPlayerUpdate.Y || Z != localPlayerUpdate.Z || A != localPlayerUpdate.A || health != localPlayerUpdate.health || baseHealth != localPlayerUpdate.baseHealth ||
                 conds[0] != localPlayerUpdate.conds[0] || conds[1] != localPlayerUpdate.conds[1] || conds[2] != localPlayerUpdate.conds[2] || conds[3] != localPlayerUpdate.conds[3] || conds[4] != localPlayerUpdate.conds[4] ||
-                conds[5] != localPlayerUpdate.conds[5] || dead != localPlayerUpdate.dead || moving != localPlayerUpdate.moving)
+                conds[5] != localPlayerUpdate.conds[5] || dead != localPlayerUpdate.dead || alerted != localPlayerUpdate.alerted || moving != localPlayerUpdate.moving)
             {
                 localPlayerUpdate.X = X;
                 localPlayerUpdate.Y = Y;
@@ -848,6 +958,7 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                 localPlayerUpdate.conds[4] = conds[4];
                 localPlayerUpdate.conds[5] = conds[5];
                 localPlayerUpdate.dead = dead;
+                localPlayerUpdate.alerted = alerted;
                 localPlayerUpdate.moving = moving;
                 peer->Send((char*) &localPlayerUpdate, sizeof(localPlayerUpdate), HIGH_PRIORITY, RELIABLE, 0, addr, false, 0);
             }
