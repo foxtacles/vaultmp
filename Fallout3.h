@@ -3,6 +3,7 @@
 #include <tlhelp32.h>
 #include <shlwapi.h>
 #include <queue>
+#include <list>
 
 #include "RakNet/RakPeerInterface.h"
 #include "RakNet/MessageIdentifiers.h"
@@ -11,6 +12,11 @@
 
 #include "Player.h"
 #include "Pipe.h"
+
+#define FALLOUT3_TICKS 25
+#define OPENCMD() while (cmdmutex); cmdmutex = true;
+#define CLOSECMD() cmdmutex = false;
+#define PUSHCMD(cmd) cmdlist.push_back(cmd);
 
 using namespace RakNet;
 using namespace pipe;
@@ -32,9 +38,12 @@ class Fallout3 {
               static DWORD WINAPI Fallout3game(LPVOID data);
 
               struct pPlayerUpdate;
+              struct fCommand;
 
               static Player* self;
               static queue<Player*> refqueue;
+              static list<fCommand*> cmdlist;
+              static bool cmdmutex;
               static pPlayerUpdate localPlayerUpdate;
 
               static PipeClient* pipeServer;

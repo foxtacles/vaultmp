@@ -35,12 +35,21 @@ struct Fallout3::pPlayerUpdate {
 };
 #pragma pack(pop)
 
+struct Fallout3::fCommand {
+    string command;
+    string refID;
+    bool repeat;
+    bool forplayers;
+};
+
 bool Fallout3::endThread = false;
 bool Fallout3::wakeup = false;
 HANDLE Fallout3::Fallout3pipethread;
 HANDLE Fallout3::Fallout3gamethread;
 Player* Fallout3::self;
 queue<Player*> Fallout3::refqueue;
+list<Fallout3::fCommand*> Fallout3::cmdlist;
+bool Fallout3::cmdmutex = false;
 Fallout3::pPlayerUpdate Fallout3::localPlayerUpdate;
 PipeClient* Fallout3::pipeServer;
 PipeServer* Fallout3::pipeClient;
@@ -305,10 +314,16 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                 }
                 else if (low.compare("re:") == 0)
                 {
-                    string input = "op:";
-                    input.append(high);
-                    input.append(".setrestrained 1");
-                    pipeServer->Send(&input);
+                    OPENCMD();
+
+                    fCommand* cmd = new fCommand;
+                    cmd->command = "setrestrained 1";
+                    cmd->refID = high;
+                    cmd->forplayers = false;
+                    cmd->repeat = false;
+                    PUSHCMD(cmd);
+
+                    CLOSECMD();
 
                     if (!refqueue.empty())
                     {
@@ -341,104 +356,131 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
 
 DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
 {
+    fCommand cmds[15];
+
+    cmds[0].command = "getpos X";
+    cmds[0].repeat = true;
+    cmds[0].forplayers = true;
+
+    cmds[1].command = "getpos Y";
+    cmds[1].repeat = true;
+    cmds[1].forplayers = true;
+
+    cmds[2].command = "getpos Z";
+    cmds[2].repeat = true;
+    cmds[2].forplayers = true;
+
+    cmds[3].command = "getangle Z";
+    cmds[3].repeat = true;
+    cmds[3].forplayers = false;
+
+    cmds[4].command = "getbaseactorvalue Health";
+    cmds[4].repeat = true;
+    cmds[4].forplayers = false;
+
+    cmds[5].command = "getactorvalue Health";
+    cmds[5].repeat = true;
+    cmds[5].forplayers = false;
+
+    cmds[6].command = "getactorvalue PerceptionCondition";
+    cmds[6].repeat = true;
+    cmds[6].forplayers = false;
+
+    cmds[7].command = "getactorvalue EnduranceCondition";
+    cmds[7].repeat = true;
+    cmds[7].forplayers = false;
+
+    cmds[8].command = "getactorvalue LeftAttackCondition";
+    cmds[8].repeat = true;
+    cmds[8].forplayers = false;
+
+    cmds[9].command = "getactorvalue RightAttackCondition";
+    cmds[9].repeat = true;
+    cmds[9].forplayers = false;
+
+    cmds[10].command = "getactorvalue LeftMobilityCondition";
+    cmds[10].repeat = true;
+    cmds[10].forplayers = false;
+
+    cmds[11].command = "getactorvalue RightMobilityCondition";
+    cmds[11].repeat = true;
+    cmds[11].forplayers = false;
+
+    cmds[12].command = "getdead";
+    cmds[12].repeat = true;
+    cmds[12].forplayers = true;
+
+    cmds[13].command = "showanim";
+    cmds[13].repeat = true;
+    cmds[13].forplayers = false;
+
+    cmds[14].command = "ismoving";
+    cmds[14].repeat = true;
+    cmds[14].forplayers = false;
+
+    for (int i = 0; i < sizeof(cmds) / sizeof(fCommand); i++)
+        cmdlist.push_back(&cmds[i]);
+
     while (!endThread)
     {
-        string input;
+        OPENCMD();
 
-        input = "op:player.getpos X";
-        pipeServer->Send(&input);
-        Sleep(20);
+        list<fCommand*>::iterator it;
 
-        input = "op:player.getpos Y";
-        pipeServer->Send(&input);
-        Sleep(20);
-
-        input = "op:player.getpos Z";
-        pipeServer->Send(&input);
-        Sleep(20);
-
-        input = "op:player.getangle Z";
-        pipeServer->Send(&input);
-        Sleep(20);
-
-        input = "op:player.getbaseactorvalue Health";
-        pipeServer->Send(&input);
-        Sleep(20);
-
-        input = "op:player.getactorvalue Health";
-        pipeServer->Send(&input);
-        Sleep(20);
-
-        input = "op:player.getactorvalue PerceptionCondition";
-        pipeServer->Send(&input);
-        Sleep(20);
-
-        input = "op:player.getactorvalue EnduranceCondition";
-        pipeServer->Send(&input);
-        Sleep(20);
-
-        input = "op:player.getactorvalue LeftAttackCondition";
-        pipeServer->Send(&input);
-        Sleep(20);
-
-        input = "op:player.getactorvalue RightAttackCondition";
-        pipeServer->Send(&input);
-        Sleep(20);
-
-        input = "op:player.getactorvalue LeftMobilityCondition";
-        pipeServer->Send(&input);
-        Sleep(20);
-
-        input = "op:player.getactorvalue RightMobilityCondition";
-        pipeServer->Send(&input);
-        Sleep(20);
-
-        input = "op:player.getdead";
-        pipeServer->Send(&input);
-        Sleep(20);
-
-        input = "op:player.showanim";
-        pipeServer->Send(&input);
-        Sleep(20);
-
-        input = "op:player.ismoving";
-        pipeServer->Send(&input);
-        Sleep(20);
-
-        map<RakNetGUID, string> players = Player::GetPlayerList();
-        map<RakNetGUID, string>::iterator it;
-
-        for (it = players.begin(); it != players.end(); it++)
+        for (it = cmdlist.begin(); it != cmdlist.end();)
         {
-            string refID = it->second;
+            fCommand* cmd = *it;
 
-            if (refID.compare("none") != 0 && refID.compare("player") != 0)
+            if (!cmd->refID.empty())
             {
-                input = "op:";
-                input.append(refID);
-                input.append(".getpos X");
-                pipeServer->Send(&input);
-                Sleep(20);
-
-                input = "op:";
-                input.append(refID);
-                input.append(".getpos Y");
-                pipeServer->Send(&input);
-                Sleep(20);
-
-                input = "op:";
-                input.append(refID);
-                input.append(".getpos Z");
-                pipeServer->Send(&input);
-                Sleep(20);
-
-                input = "op:";
-                input.append(refID);
-                input.append(".getdead");
-                pipeServer->Send(&input);
-                Sleep(20);
+                if (cmd->refID.compare("none") == 0)
+                {
+                    string input = "op:" + cmd->command;
+                    pipeServer->Send(&input);
+                }
+                else
+                {
+                    string input = "op:" + cmd->refID + "." + cmd->command;
+                    pipeServer->Send(&input);
+                }
+                Sleep(FALLOUT3_TICKS);
             }
+            else if (!cmd->forplayers)
+            {
+                string input = "op:player." + cmd->command;
+                pipeServer->Send(&input);
+                Sleep(FALLOUT3_TICKS);
+            }
+            else
+            {
+                map<RakNetGUID, string> players = Player::GetPlayerList();
+                map<RakNetGUID, string>::iterator it2;
+
+                for (it2 = players.begin(); it2 != players.end(); it2++)
+                {
+                    string refID = it2->second;
+
+                    if (refID.compare("none") != 0)
+                    {
+                        string input = "op:" + refID + "." + cmd->command;
+                        pipeServer->Send(&input);
+                        Sleep(FALLOUT3_TICKS);
+                    }
+                }
+            }
+
+            if (!cmd->repeat)
+            {
+                delete cmd;
+                it = cmdlist.erase(it);
+            }
+            else
+                it++;
         }
+
+        CLOSECMD();
+
+        Sleep(30); // let the packets fill the ranks!
     }
 
     return ((DWORD) data);
@@ -545,6 +587,8 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
     pipeClient = new PipeServer();
     pipeServer = new PipeClient();
 
+    Player::DestroyInstances();
+
     self = new Player(peer->GetMyGUID());
     self->SetPlayerName(name);
     self->SetPlayerRefID("player");
@@ -566,6 +610,8 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
     localPlayerUpdate.dead = false;
     localPlayerUpdate.alerted = false;
     localPlayerUpdate.moving = 0;
+
+    cmdlist.clear();
 
     if (peer->Connect(addr.ToString(false), addr.GetPort(), 0, 0, 0, 0, 3, 500, 0) == CONNECTION_ATTEMPT_STARTED)
     {
@@ -634,12 +680,22 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                     query.Read(save);
                     query.Reset();
 
-                    string input("op:load "); // Load Fallout3 savegame
-                    input.append(save);
-                    pipeServer->Send(&input);
+                    OPENCMD();
 
-                    input = "op:player.removeallitems"; // Reset the players inventory
-                    pipeServer->Send(&input);
+                    fCommand* cmd = new fCommand;
+                    cmd->command = "load " + save;
+                    cmd->refID = "none";
+                    cmd->forplayers = false;
+                    cmd->repeat = false;
+                    PUSHCMD(cmd);
+
+                    cmd = new fCommand;
+                    cmd->command = "removeallitems";
+                    cmd->forplayers = false;
+                    cmd->repeat = false;
+                    PUSHCMD(cmd);
+
+                    CLOSECMD();
 
                     DWORD Fallout3gamethreadID;
                     Fallout3gamethread = CreateThread(NULL, 0, Fallout3game, (LPVOID) 0, 0, &Fallout3gamethreadID);
@@ -663,8 +719,15 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                     player->SetPlayerName(string(name.C_String()));
                     refqueue.push(player);
 
-                    string input("op:player.placeatme 30D82 1"); // Test
-                    pipeServer->Send(&input);
+                    OPENCMD();
+
+                    fCommand* cmd = new fCommand;
+                    cmd->command = "placeatme 30D82 1";
+                    cmd->forplayers = false;
+                    cmd->repeat = false;
+                    PUSHCMD(cmd);
+
+                    CLOSECMD();
                     break;
                 }
                 case ID_PLAYER_LEFT:
@@ -681,15 +744,23 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
 
                     if (refID.compare("none") != 0)
                     {
-                        string input = "op:";
-                        input.append(refID);
-                        input.append(".disable");
-                        pipeServer->Send(&input);
+                        OPENCMD();
 
-                        input = "op:";
-                        input.append(refID);
-                        input.append(".markfordelete");
-                        pipeServer->Send(&input);
+                        fCommand* cmd = new fCommand;
+                        cmd->command = "disable";
+                        cmd->refID = refID;
+                        cmd->forplayers = false;
+                        cmd->repeat = false;
+                        PUSHCMD(cmd);
+
+                        cmd = new fCommand;
+                        cmd->command = "markfordelete";
+                        cmd->refID = refID;
+                        cmd->forplayers = false;
+                        cmd->repeat = false;
+                        PUSHCMD(cmd);
+
+                        CLOSECMD();
                     }
 
                     delete player;
@@ -705,195 +776,244 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                     Player* player = Player::GetPlayerFromGUID(update->guid);
                     string refID = player->GetPlayerRefID();
 
+                    fCommand* cmd;
+
                     if (refID.compare("none") != 0)
                     {
-                        string input;
+                        OPENCMD();
+
                         char pos[16];
 
                         if (!player->IsPlayerNearPoint(update->X, update->Y, update->Z, 400.0))
                         {
-                            input = "op:";
                             sprintf(pos, "%f", update->X);
-                            input.append(refID);
-                            input.append(".setpos X ");
-                            input.append(pos);
-                            pipeServer->Send(&input);
 
-                            input = "op:";
+                            cmd = new fCommand;
+                            cmd->command = "setpos X " + string(pos);
+                            cmd->refID = refID;
+                            cmd->forplayers = false;
+                            cmd->repeat = false;
+                            PUSHCMD(cmd);
+
                             sprintf(pos, "%f", update->Y);
-                            input.append(refID);
-                            input.append(".setpos Y ");
-                            input.append(pos);
-                            pipeServer->Send(&input);
 
-                            input = "op:";
+                            cmd = new fCommand;
+                            cmd->command = "setpos Y " + string(pos);
+                            cmd->refID = refID;
+                            cmd->forplayers = false;
+                            cmd->repeat = false;
+                            PUSHCMD(cmd);
+
                             sprintf(pos, "%f", update->Z);
-                            input.append(refID);
-                            input.append(".setpos Z ");
-                            input.append(pos);
-                            pipeServer->Send(&input);
+
+                            cmd = new fCommand;
+                            cmd->command = "setpos Z " + string(pos);
+                            cmd->refID = refID;
+                            cmd->forplayers = false;
+                            cmd->repeat = false;
+                            PUSHCMD(cmd);
 
                             player->SetPlayerPos(0, update->X);
                             player->SetPlayerPos(1, update->Y);
                             player->SetPlayerPos(2, update->Z);
                         }
 
-                        input = "op:";
                         sprintf(pos, "%f", update->A);
-                        input.append(refID);
-                        input.append(".setangle Z ");
-                        input.append(pos);
-                        pipeServer->Send(&input);
-                        player->SetPlayerAngle(update->A);
+
+                        cmd = new fCommand;
+                        cmd->command = "setangle Z " + string(pos);
+                        cmd->refID = refID;
+                        cmd->forplayers = false;
+                        cmd->repeat = false;
+                        PUSHCMD(cmd);
 
                         if (update->alerted != player->IsPlayerAlerted())
                         {
-                            input = "op:";
-                            input.append(refID);
-                            input.append(".setrestrained 0");
-                            pipeServer->Send(&input);
-                            Sleep(50);
-                            input = "op:";
-                            input.append(refID);
+                            cmd = new fCommand;
+                            cmd->command = "setrestrained 0";
+                            cmd->refID = refID;
+                            cmd->forplayers = false;
+                            cmd->repeat = false;
+                            PUSHCMD(cmd);
+
+                            cmd = new fCommand;
+                            cmd->command = "setalert ";
+                            cmd->refID = refID;
+                            cmd->forplayers = false;
+                            cmd->repeat = false;
+
                             switch (update->alerted)
                             {
                                 case true:
-                                    input.append(".setalert 1");
-                                    pipeServer->Send(&input);
+                                    cmd->command.append("1");
                                     break;
                                 case false:
-                                    input.append(".setalert 0");
-                                    pipeServer->Send(&input);
+                                    cmd->command.append("0");
                                     break;
                             }
-                            Sleep(50);
-                            input = "op:";
-                            input.append(refID);
-                            input.append(".setrestrained 1");
-                            pipeServer->Send(&input);
+
+                            PUSHCMD(cmd);
+
+                            cmd = new fCommand;
+                            cmd->command = "setrestrained 1";
+                            cmd->refID = refID;
+                            cmd->forplayers = false;
+                            cmd->repeat = false;
+                            PUSHCMD(cmd);
+
                             player->SetPlayerAlerted(update->alerted);
                         }
 
                         if (update->moving != player->GetPlayerMoving())
                         {
-                            input = "op:";
-                            input.append(refID);
+                            cmd = new fCommand;
+                            cmd->command = "playgroup ";
+                            cmd->refID = refID;
+                            cmd->forplayers = false;
+                            cmd->repeat = false;
+
                             switch (update->moving)
                             {
                                 case 0:
-                                    input.append(".playgroup Idle 0");
+                                    cmd->command.append("Idle 0");
                                     break;
                                 case 1:
-                                    input.append(".playgroup FastForward 1");
+                                    cmd->command.append("FastForward 1");
                                     break;
                                 case 2:
-                                    input.append(".playgroup FastBackward 1");
+                                    cmd->command.append("FastBackward 1");
                                     break;
                                 case 3:
-                                    input.append(".playgroup FastLeft 1");
+                                    cmd->command.append("FastLeft 1");
                                     break;
                                 case 4:
-                                    input.append(".playgroup FastRight 1");
+                                    cmd->command.append("FastRight 1");
                                     break;
                                 case 5:
-                                    input.append(".playgroup Forward 1");
+                                    cmd->command.append("Forward 1");
                                     break;
                                 case 6:
-                                    input.append(".playgroup Backward 1");
+                                    cmd->command.append("Backward 1");
                                     break;
                                 case 7:
-                                    input.append(".playgroup Left 1");
+                                    cmd->command.append("Left 1");
                                     break;
                                 case 8:
-                                    input.append(".playgroup Right 1");
+                                    cmd->command.append("Right 1");
                                     break;
                             }
-                            pipeServer->Send(&input);
+
+                            PUSHCMD(cmd);
+
                             player->SetPlayerMoving(update->moving);
                         }
 
                         if (update->baseHealth != player->GetPlayerBaseHealth())
                         {
-                            input = "op:";
                             sprintf(pos, "%i", (int) update->baseHealth);
-                            input.append(refID);
-                            input.append(".setactorvalue Health ");
-                            input.append(pos);
-                            pipeServer->Send(&input);
+
+                            cmd = new fCommand;
+                            cmd->command = "setactorvalue Health " + string(pos);
+                            cmd->refID = refID;
+                            cmd->forplayers = false;
+                            cmd->repeat = false;
+                            PUSHCMD(cmd);
+
                             player->SetPlayerBaseHealth(update->baseHealth);
                         }
 
-                        input = "op:";
                         sprintf(pos, "%i", (int) update->health);
-                        input.append(refID);
-                        input.append(".forceactorvalue Health ");
-                        input.append(pos);
-                        pipeServer->Send(&input);
+
+                        cmd = new fCommand;
+                        cmd->command = "forceactorvalue Health " + string(pos);
+                        cmd->refID = refID;
+                        cmd->forplayers = false;
+                        cmd->repeat = false;
+                        PUSHCMD(cmd);
+
                         player->SetPlayerHealth(update->health);
 
                         if (update->conds[0] != player->GetPlayerCondition(0))
                         {
-                            input = "op:";
                             sprintf(pos, "%i", (int) update->conds[0]);
-                            input.append(refID);
-                            input.append(".forceactorvalue PerceptionCondition ");
-                            input.append(pos);
-                            pipeServer->Send(&input);
+
+                            cmd = new fCommand;
+                            cmd->command = "forceactorvalue PerceptionCondition " + string(pos);
+                            cmd->refID = refID;
+                            cmd->forplayers = false;
+                            cmd->repeat = false;
+                            PUSHCMD(cmd);
+
                             player->SetPlayerCondition(0, update->conds[0]);
                         }
 
                         if (update->conds[1] != player->GetPlayerCondition(1))
                         {
-                            input = "op:";
                             sprintf(pos, "%i", (int) update->conds[1]);
-                            input.append(refID);
-                            input.append(".forceactorvalue EnduranceCondition ");
-                            input.append(pos);
-                            pipeServer->Send(&input);
+
+                            cmd = new fCommand;
+                            cmd->command = "forceactorvalue EnduranceCondition " + string(pos);
+                            cmd->refID = refID;
+                            cmd->forplayers = false;
+                            cmd->repeat = false;
+                            PUSHCMD(cmd);
+
                             player->SetPlayerCondition(1, update->conds[1]);
                         }
 
                         if (update->conds[2] != player->GetPlayerCondition(2))
                         {
-                            input = "op:";
                             sprintf(pos, "%i", (int) update->conds[2]);
-                            input.append(refID);
-                            input.append(".forceactorvalue LeftAttackCondition ");
-                            input.append(pos);
-                            pipeServer->Send(&input);
+
+                            cmd = new fCommand;
+                            cmd->command = "forceactorvalue LeftAttackCondition " + string(pos);
+                            cmd->refID = refID;
+                            cmd->forplayers = false;
+                            cmd->repeat = false;
+                            PUSHCMD(cmd);
+
                             player->SetPlayerCondition(2, update->conds[2]);
                         }
 
                         if (update->conds[3] != player->GetPlayerCondition(3))
                         {
-                            input = "op:";
                             sprintf(pos, "%i", (int) update->conds[3]);
-                            input.append(refID);
-                            input.append(".forceactorvalue RightAttackCondition ");
-                            input.append(pos);
-                            pipeServer->Send(&input);
+
+                            cmd = new fCommand;
+                            cmd->command = "forceactorvalue RightAttackCondition " + string(pos);
+                            cmd->refID = refID;
+                            cmd->forplayers = false;
+                            cmd->repeat = false;
+                            PUSHCMD(cmd);
+
                             player->SetPlayerCondition(3, update->conds[3]);
                         }
 
                         if (update->conds[4] != player->GetPlayerCondition(4))
                         {
-                            input = "op:";
                             sprintf(pos, "%i", (int) update->conds[4]);
-                            input.append(refID);
-                            input.append(".forceactorvalue LeftMobilityCondition ");
-                            input.append(pos);
-                            pipeServer->Send(&input);
+
+                            cmd = new fCommand;
+                            cmd->command = "forceactorvalue LeftMobilityCondition " + string(pos);
+                            cmd->refID = refID;
+                            cmd->forplayers = false;
+                            cmd->repeat = false;
+                            PUSHCMD(cmd);
+
                             player->SetPlayerCondition(4, update->conds[4]);
                         }
 
                         if (update->conds[5] != player->GetPlayerCondition(5))
                         {
-                            input = "op:";
                             sprintf(pos, "%i", (int) update->conds[5]);
-                            input.append(refID);
-                            input.append(".forceactorvalue RightMobilityCondition ");
-                            input.append(pos);
-                            pipeServer->Send(&input);
+
+                            cmd = new fCommand;
+                            cmd->command = "forceactorvalue RightMobilityCondition " + string(pos);
+                            cmd->refID = refID;
+                            cmd->forplayers = false;
+                            cmd->repeat = false;
+                            PUSHCMD(cmd);
+
                             player->SetPlayerCondition(5, update->conds[5]);
                         }
 
@@ -901,25 +1021,33 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
 
                         if (player->IsPlayerDead() != update->dead)
                         {
-                            input = "op:";
-                            input.append(refID);
+                            cmd = new fCommand;
+                            cmd->refID = refID;
+                            cmd->forplayers = false;
+                            cmd->repeat = false;
+
                             switch (update->dead)
                             {
                                 case true:
-                                    input.append(".killactor");
-                                    pipeServer->Send(&input);
+                                    cmd->command = "killactor";
+                                    PUSHCMD(cmd);
                                     break;
                                 case false:
-                                    input.append(".resurrect 0");
-                                    pipeServer->Send(&input);
-                                    input = "op:";
-                                    input.append(refID);
-                                    input.append(".setrestrained 1");
-                                    pipeServer->Send(&input);
+                                    cmd->command = "resurrect 0";
+                                    PUSHCMD(cmd);
+
+                                    cmd = new fCommand;
+                                    cmd->command = "setrestrained 1";
+                                    cmd->refID = refID;
+                                    cmd->forplayers = false;
+                                    cmd->repeat = false;
+                                    PUSHCMD(cmd);
                                     break;
                             }
                             player->SetPlayerDead(update->dead);
                         }
+
+                        CLOSECMD();
                     }
                     break;
                 }

@@ -39,6 +39,7 @@ class Player {
               static map<RakNetGUID, string> GetPlayerList();
               static Player* GetPlayerFromGUID(RakNetGUID guid);
               static Player* GetPlayerFromRefID(string refID);
+              static void DestroyInstances();
 
               string GetPlayerName();
               float GetPlayerPos(int cell);

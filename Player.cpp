@@ -60,6 +60,20 @@ Player* Player::GetPlayerFromRefID(string refID)
     return NULL;
 }
 
+void Player::DestroyInstances()
+{
+    map<RakNetGUID, Player*>::iterator it;
+    int size = playersguids.size();
+    int i = 0;
+    Player* pPlayers[size];
+
+    for (it = playersguids.begin(); it != playersguids.end(); it++, i++)
+        pPlayers[i] = it->second;
+
+    for (int j = 0; j < size; j++)
+        delete pPlayers[j];
+}
+
 map<RakNetGUID, string> Player::GetPlayerList()
 {
     return players;
