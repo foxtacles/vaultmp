@@ -241,7 +241,7 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
 
                         if (stricmp(token, " Weapon Drawn 0") == 0)
                             lastRef->SetPlayerAlerted(false);
-                        else
+                        else if (stricmp(token, " Weapon Drawn 1") == 0)
                             lastRef->SetPlayerAlerted(true);
                     }
                     else if (stricmp(token, "Movement") == 0)
@@ -480,7 +480,7 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
 
         CLOSECMD();
 
-        Sleep(30); // let the packets fill the ranks!
+        Sleep(FALLOUT3_TICKS); // let the packets fill the ranks!
     }
 
     return ((DWORD) data);
@@ -826,6 +826,8 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                         cmd->forplayers = false;
                         cmd->repeat = false;
                         PUSHCMD(cmd);
+
+                        player->SetPlayerAngle(update->A);
 
                         if (update->alerted != player->IsPlayerAlerted())
                         {
