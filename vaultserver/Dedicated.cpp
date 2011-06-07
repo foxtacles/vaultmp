@@ -411,6 +411,23 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         }
 
                         Player* player = Player::GetPlayerFromGUID(packet->guid);
+
+                        if (update->dead == true && player->IsPlayerDead() != true)
+                        {
+                            int ret = 1;
+
+                            if (amx != NULL)
+                            {
+                                void* args[1];
+
+                                int id = Client::GetClientFromGUID(packet->guid)->GetClientID();
+
+                                args[0] = reinterpret_cast<void*>(&id);
+
+                                ret = Script::Call(amx, (char*) "OnPlayerDeath", (char*) "i", args);
+                            }
+                        }
+
                         player->SetPlayerPos(0, update->X);
                         player->SetPlayerPos(1, update->Y);
                         player->SetPlayerPos(2, update->Z);
