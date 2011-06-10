@@ -84,6 +84,7 @@ DWORD WINAPI MasterServer::MasterThread(LPVOID data)
                             ServerEntry entry = i->second;
                             RakString name(entry.GetServerName().c_str()); RakString map(entry.GetServerMap().c_str());
                             int players = entry.GetServerPlayers().first; int playersMax = entry.GetServerPlayers().second;
+                            bool NewVegas = entry.IsNewVegas();
                             std::map<string, string> rules = entry.GetServerRules();
 
                             query.Write(addr);
@@ -91,6 +92,7 @@ DWORD WINAPI MasterServer::MasterThread(LPVOID data)
                             query.Write(map);
                             query.Write(players);
                             query.Write(playersMax);
+                            query.Write(NewVegas);
                             query.Write((int) rules.size());
 
                             for (std::map<string, string>::const_iterator k = rules.begin(); k != rules.end(); ++k)
@@ -128,13 +130,15 @@ DWORD WINAPI MasterServer::MasterThread(LPVOID data)
                             ServerEntry entry = i->second;
                             RakString name(entry.GetServerName().c_str()); RakString map(entry.GetServerMap().c_str());
                             int players = entry.GetServerPlayers().first; int playersMax = entry.GetServerPlayers().second;
+                            bool NewVegas = entry.IsNewVegas();
                             std::map<string, string> rules = entry.GetServerRules();
 
                             query.Write(name);
                             query.Write(map);
                             query.Write(players);
                             query.Write(playersMax);
-                            query.Write(rules.size());
+                            query.Write(NewVegas);
+                            query.Write((int) rules.size());
 
                             for (std::map<string, string>::const_iterator k = rules.begin(); k != rules.end(); ++k)
                             {
@@ -166,11 +170,13 @@ DWORD WINAPI MasterServer::MasterThread(LPVOID data)
                         {
                             RakString name, map;
                             int players, playersMax, rsize;
+                            bool NewVegas;
 
                             query.Read(name);
                             query.Read(map);
                             query.Read(players);
                             query.Read(playersMax);
+                            query.Read(NewVegas);
                             query.Read(rsize);
 
                             ServerEntry* entry;
@@ -178,7 +184,7 @@ DWORD WINAPI MasterServer::MasterThread(LPVOID data)
                             if (i == serverList.end())
                             {
                                 std::pair<std::map<SystemAddress, ServerEntry>::iterator, bool> k;
-                                k = serverList.insert(pair<SystemAddress, ServerEntry>(packet->systemAddress, ServerEntry(name.C_String(), map.C_String(), pair<int, int>(players, playersMax), 999)));
+                                k = serverList.insert(pair<SystemAddress, ServerEntry>(packet->systemAddress, ServerEntry(name.C_String(), map.C_String(), pair<int, int>(players, playersMax), 999, NewVegas)));
                                 entry = &(k.first)->second;
                             }
                             else

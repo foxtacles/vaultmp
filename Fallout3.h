@@ -33,7 +33,7 @@ class Fallout3 {
               static bool wakeup;
               static HANDLE Fallout3pipethread;
               static HANDLE Fallout3gamethread;
-              static HANDLE InitalizeFallout3();
+              static HANDLE InitializeFallout3(bool NewVegas);
 
               static DWORD lookupProgramID(const char process[]);
               static DWORD WINAPI InjectedCode(LPVOID addr);
@@ -55,6 +55,6 @@ class Fallout3 {
 
               struct INJECT;
       public:
-              static void InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, string name, string pwd);
+              static void InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, string name, string pwd, bool NewVegas);
 
 };

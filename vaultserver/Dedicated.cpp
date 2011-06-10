@@ -78,12 +78,14 @@ void Dedicated::Announce(bool announce)
 
             RakString name(self->GetServerName().c_str()); RakString map(self->GetServerMap().c_str());
             int players = self->GetServerPlayers().first; int playersMax = self->GetServerPlayers().second;
+            bool NewVegas = self->IsNewVegas();
             std::map<string, string> rules = self->GetServerRules();
 
             query.Write(name);
             query.Write(map);
             query.Write(players);
             query.Write(playersMax);
+            query.Write(NewVegas);
             query.Write(rules.size());
 
             for (std::map<string, string>::const_iterator i = rules.begin(); i != rules.end(); ++i)

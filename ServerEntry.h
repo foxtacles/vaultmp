@@ -15,6 +15,8 @@ class ServerEntry {
               pair<int, int> players;
               int ping;
 
+              bool NewVegas;
+
       public:
               void SetServerName(string name);
               void SetServerMap(string map);
@@ -27,9 +29,10 @@ class ServerEntry {
               std::map<string, string> GetServerRules();
               pair<int, int> GetServerPlayers();
               int GetServerPing();
+              bool IsNewVegas();
 
-              ServerEntry();
-              ServerEntry(string name, string map, pair<int, int> players, int ping);
+              ServerEntry(bool NewVegas);
+              ServerEntry(string name, string map, pair<int, int> players, int ping, bool NewVegas);
 };
 
 #endif

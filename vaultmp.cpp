@@ -393,8 +393,11 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                             GetDlgItemText(hwnd, IDC_EDIT0, name, sizeof(name));
                             GetDlgItemText(hwnd, IDC_EDIT1, pwd, sizeof(pwd));
 
+                            map<SystemAddress, ServerEntry>::iterator i;
+                            i = serverList.find(*selectedServer);
+
                             MinimizeToTray(hwnd);
-                            Fallout3::InitalizeVaultMP(peer, addr, string(name), string(pwd));
+                            Fallout3::InitializeVaultMP(peer, addr, string(name), string(pwd), (&i->second)->IsNewVegas());
                             Maximize(hwnd);
 
                             selectedServer = NULL;
@@ -487,6 +490,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                                             SystemAddress addr;
                                             RakString name, map;
                                             int players, playersMax, rsize;
+                                            bool NewVegas;
                                             std::map<string, string> rules;
 
                                             query.Read(addr);
@@ -494,9 +498,10 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                                             query.Read(map);
                                             query.Read(players);
                                             query.Read(playersMax);
+                                            query.Read(NewVegas);
                                             query.Read(rsize);
 
-                                            ServerEntry entry(name.C_String(), map.C_String(), pair<int, int>(players, playersMax), 999);
+                                            ServerEntry entry(name.C_String(), map.C_String(), pair<int, int>(players, playersMax), 999, NewVegas);
 
                                             for (int j = 0; j < rsize; j++)
                                             {
@@ -547,11 +552,13 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                                         {
                                             RakString name, map;
                                             int players, playersMax, rsize;
+                                            bool NewVegas;
 
                                             query.Read(name);
                                             query.Read(map);
                                             query.Read(players);
                                             query.Read(playersMax);
+                                            query.Read(NewVegas);
                                             query.Read(rsize);
 
                                             ServerEntry* entry;
@@ -566,7 +573,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                                             else
                                             {
                                                 std::pair<std::map<SystemAddress, ServerEntry>::iterator, bool> k;
-                                                k = serverList.insert(pair<SystemAddress, ServerEntry>(addr, ServerEntry(name.C_String(), map.C_String(), pair<int, int>(players, playersMax), 999)));
+                                                k = serverList.insert(pair<SystemAddress, ServerEntry>(addr, ServerEntry(name.C_String(), map.C_String(), pair<int, int>(players, playersMax), 999, NewVegas)));
                                                 entry = &(k.first)->second;
                                             }
 

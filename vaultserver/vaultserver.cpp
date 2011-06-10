@@ -36,10 +36,7 @@ int main(int argc, char* argv[])
 {
     printf("Vault-Tec dedicated server version %s \n----------------------------------------------------------\n", DEDICATED_VERSION);
 
-    AMX* vaultscript = NULL;
-    ServerEntry* self = new ServerEntry();
-    Dedicated::SetServerEntry(self);
-
+    bool NewVegas = false;
     bool query = false;
     int announce = 0;
     int script = 0;
@@ -50,6 +47,8 @@ int main(int argc, char* argv[])
     {
         if (strcmp(argv[i], "-q") == 0 || strcmp(argv[i], "-query") == 0)
             query = true;
+        else if (strcmp(argv[i], "-nv") == 0 || strcmp(argv[i], "-newvegas") == 0)
+            NewVegas = true;
         else if (i + 1 < argc)
         {
             if (strcmp(argv[i], "-a") == 0 || strcmp(argv[i], "-announce") == 0)
@@ -62,6 +61,10 @@ int main(int argc, char* argv[])
                 connections = atoi(argv[i + 1]);
         }
     }
+
+    AMX* vaultscript = NULL;
+    ServerEntry* self = new ServerEntry(NewVegas);
+    Dedicated::SetServerEntry(self);
 
     if (script != 0)
     {

@@ -500,29 +500,29 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
     return ((DWORD) data);
 }
 
-HANDLE Fallout3::InitalizeFallout3()
+HANDLE Fallout3::InitializeFallout3(bool NewVegas)
 {
-    FILE* Fallout3 = fopen("Fallout3.exe", "rb");
-    FILE* FalloutNV = fopen("FalloutNV.exe", "rb");
+    FILE* Fallout = NewVegas ? fopen("FalloutNV.exe", "rb") : fopen("Fallout3.exe", "rb");
 
-    char module[32];
+    if (Fallout != NULL)
+    {
+        fclose(Fallout);
 
-    if (Fallout3 != NULL)
-    {
-        fclose(Fallout3);
-        strcpy(module, "Fallout3.exe");
-        NewVegas = false;
-    }
-    else if (FalloutNV != NULL)
-    {
-        fclose(FalloutNV);
-        strcpy(module, "FalloutNV.exe");
-        putenv("SteamAppID=22380"); // necessary for Steam
-        NewVegas = true;
-    }
+        char module[32];
 
-    if (strlen(module) != 0)
-    {
+        switch (NewVegas)
+        {
+            case false:
+                strcpy(module, "Fallout3.exe");
+                Fallout3::NewVegas = false;
+                break;
+            case true:
+                strcpy(module, "FalloutNV.exe");
+                putenv("SteamAppID=22380"); // necessary for Steam
+                Fallout3::NewVegas = true;
+                break;
+        }
+
         FILE* vaultmp = fopen("vaultmp.dll", "rb");
 
         if (vaultmp != NULL)
@@ -538,9 +538,9 @@ HANDLE Fallout3::InitalizeFallout3()
                 ZeroMemory(&pi, sizeof(pi));
                 si.cb = sizeof(si);
 
-                if (CreateProcess(module, NULL, NULL, NULL, FALSE, NewVegas ? 0 : CREATE_SUSPENDED, NULL, NULL, &si, &pi))
+                if (CreateProcess(module, NULL, NULL, NULL, FALSE, Fallout3::NewVegas ? 0 : CREATE_SUSPENDED, NULL, NULL, &si, &pi))
                 {
-                    if (NewVegas) Sleep(2000); // some Steam decrypt whatsoever needs time
+                    if (Fallout3::NewVegas) Sleep(2000); // some Steam decrypt whatsoever needs time
 
                     HANDLE hProc;
 
@@ -564,7 +564,7 @@ HANDLE Fallout3::InitalizeFallout3()
                         hDll = LoadLibrary("kernel32.dll");
                         data.LoadLibrary = (fLoadLibrary) GetProcAddress(hDll, "LoadLibraryA");
                         data.GetProcAddress = (fGetProcAddress) GetProcAddress(hDll, "GetProcAddress");
-                        data.NewVegas = NewVegas;
+                        data.NewVegas = Fallout3::NewVegas;
 
                         codesize = (DWORD) InjectedEnd - (DWORD) InjectedCode;
 
@@ -587,7 +587,7 @@ HANDLE Fallout3::InitalizeFallout3()
 
                         /* Resuming Fallout3.exe */
 
-                        if (!NewVegas) ResumeThread(pi.hThread);
+                        if (!Fallout3::NewVegas) ResumeThread(pi.hThread);
 
                         CloseHandle(hProc);
 
@@ -611,7 +611,7 @@ HANDLE Fallout3::InitalizeFallout3()
     return NULL;
 }
 
-void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, string name, string pwd)
+void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, string name, string pwd, bool NewVegas)
 {
     endThread = false;
     Fallout3pipethread = NULL;
@@ -691,7 +691,7 @@ void Fallout3::InitalizeVaultMP(RakPeerInterface* peer, SystemAddress addr, stri
                 {
                     BitStream query;
 
-                    Fallout3pipethread = InitalizeFallout3();
+                    Fallout3pipethread = InitializeFallout3(NewVegas);
 
                     Sleep(2500); // Let the game start
 
