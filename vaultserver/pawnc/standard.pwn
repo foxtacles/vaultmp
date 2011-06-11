@@ -23,7 +23,7 @@ public OnClientAuthenticate(clientID, const name[], const pwd[])
 public OnClientRequestGame(clientID, savegame[], len)
 {
 	timestamp();
-	printf("OnClientRequestGame: ID: %d savegame: %s, len: %d\n", clientID, savegame, len);
+	printf("OnClientRequestGame: ID: %d savegame: %s\n", clientID, savegame);
 	return 1;
 }
 
