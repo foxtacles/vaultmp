@@ -49,7 +49,7 @@ class Dedicated {
               static bool thread;
 
       public:
-              static HANDLE InitalizeServer(int port, int connections, AMX* amx, char* announce, bool query);
+              static HANDLE InitializeServer(int port, int connections, AMX* amx, char* announce, bool query);
               static void SetServerEntry(ServerEntry* self);
               static void TerminateThread();
 

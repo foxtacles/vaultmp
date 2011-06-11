@@ -472,7 +472,7 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
       return ((DWORD) data);
 }
 
-HANDLE Dedicated::InitalizeServer(int port, int connections, AMX* amx, char* announce, bool query)
+HANDLE Dedicated::InitializeServer(int port, int connections, AMX* amx, char* announce, bool query)
 {
     HANDLE hDedicatedThread;
     DWORD DedicatedID;

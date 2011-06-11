@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
     Utils::timestamp();
     printf("Initializing RakNet...\n");
 
-    HANDLE hDedicatedThread = Dedicated::InitalizeServer(port, connections, vaultscript, announce ? argv[announce] : 0, query);
+    HANDLE hDedicatedThread = Dedicated::InitializeServer(port, connections, vaultscript, announce ? argv[announce] : 0, query);
     HANDLE hInputThread;
     DWORD InputID;
 
