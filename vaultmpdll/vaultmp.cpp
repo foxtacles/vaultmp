@@ -181,6 +181,18 @@ extern "C" void __declspec(dllexport) DLLjump(bool NewVegas)
             bytestream[0] = 0x83; bytestream[1] = 0xFB; bytestream[2] = 0x0A; bytestream[3] = 0x90; bytestream[4] = 0x90; bytestream[5] = 0x90;
             for (int i = 0; i < 6; i++) WriteProcessMemory(hProc, (LPVOID) (0x0071AA91 + i), &bytestream[i], sizeof(bytestream[i]), &rw);
 
+            /* Disabling VATS system */
+
+            /* 0093FFAE   E9 5A020000      JMP FalloutN.0094020D
+             * 0093FFB3   90               NOP
+             */
+
+            bytes = 0;
+            rw = 0;
+
+            bytestream[0] = 0xE9; bytestream[1] = 0x5A; bytestream[2] = 0x02; bytestream[3] = 0x00; bytestream[4] = 0x00; bytestream[5] = 0x90;
+            for (int i = 0; i < 6; i++) WriteProcessMemory(hProc, (LPVOID) (0x0093FFAE + i), &bytestream[i], sizeof(bytestream[i]), &rw);
+
             /* Writing FalloutNV command trigger TOTAL BYTES TO RESERVE: 19 */
 
             /* XXXXXXXX   A1 XXXXXXXX      MOV EAX,[XXXXXXXX]
@@ -551,6 +563,18 @@ extern "C" void __declspec(dllexport) DLLjump(bool NewVegas)
             bytestream[0] = 0x90; bytestream[1] = 0x90; bytestream[2] = 0x90; bytestream[3] = 0x90; bytestream[4] = 0x90; bytestream[5] = 0x90; bytestream[6] = 0x90; bytestream[7] = 0x90;
             bytestream[8] = 0x90; bytestream[9] = 0x90; bytestream[10] = 0x90; bytestream[11] = 0x90; bytestream[12] = 0x90; bytestream[13] = 0x90; bytestream[14] = 0x90;
             for (int i = 0; i < 15; i++) WriteProcessMemory(hProc, (LPVOID) (0x006195E8 + i), &bytestream[i], sizeof(bytestream[i]), &rw);
+
+            /* Disabling VATS system */
+
+            /* 0078A27D   E9 88010000      JMP Fallout3.0078A40A
+             * 0078A282   90               NOP
+             */
+
+            bytes = 0;
+            rw = 0;
+
+            bytestream[0] = 0xE9; bytestream[1] = 0x88; bytestream[2] = 0x01; bytestream[3] = 0x00; bytestream[4] = 0x00; bytestream[5] = 0x90;
+            for (int i = 0; i < 6; i++) WriteProcessMemory(hProc, (LPVOID) (0x0078A27D + i), &bytestream[i], sizeof(bytestream[i]), &rw);
 
             /* Writing Fallout3 command trigger TOTAL BYTES TO RESERVE: 20 */
 
