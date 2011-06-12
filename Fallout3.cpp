@@ -40,6 +40,15 @@ struct Fallout3::fCommand {
     string refID;
     bool repeat;
     bool forplayers;
+    int sleepmult;
+
+    fCommand() {
+        command = "";
+        refID = "";
+        repeat = false;
+        forplayers = false;
+        sleepmult = 1;
+    }
 };
 
 bool Fallout3::NewVegas = false;
@@ -457,13 +466,13 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
                     string input = "op:" + cmd->refID + "." + cmd->command;
                     pipeServer->Send(&input);
                 }
-                Sleep(FALLOUT3_TICKS);
+                Sleep(FALLOUT3_TICKS * cmd->sleepmult);
             }
             else if (!cmd->forplayers)
             {
                 string input = "op:player." + cmd->command;
                 pipeServer->Send(&input);
-                Sleep(FALLOUT3_TICKS);
+                Sleep(FALLOUT3_TICKS * cmd->sleepmult);
             }
             else
             {
@@ -478,7 +487,7 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
                     {
                         string input = "op:" + refID + "." + cmd->command;
                         pipeServer->Send(&input);
-                        Sleep(FALLOUT3_TICKS);
+                        Sleep(FALLOUT3_TICKS * cmd->sleepmult);
                     }
                 }
             }
@@ -757,6 +766,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                     cmd->command = "placeatme 00000007 1";
                     cmd->forplayers = false;
                     cmd->repeat = false;
+                    cmd->sleepmult = 10;
                     PUSHCMD(cmd);
 
                     CLOSECMD();

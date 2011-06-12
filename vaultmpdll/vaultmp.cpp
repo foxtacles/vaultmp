@@ -54,6 +54,7 @@ void Fallout3sendOp(string op) {
      Fallout3mutex = true;
 
      strcpy(Fallout3input, op.c_str());
+
 }
 
 void Fallout3commandNotify() {
@@ -211,6 +212,8 @@ extern "C" void __declspec(dllexport) DLLjump(bool NewVegas)
              * 0070D709   90               NOP
              *
              * 00703224   EB 0C            JMP SHORT FalloutN.00703232
+             * 0070C2EE   0F85 15020000    JNZ FalloutN.0070C509
+             * 0071A836   EB 07            JMP SHORT FalloutN.0071A83F
              */
 
             bytes = 0;
@@ -242,8 +245,11 @@ extern "C" void __declspec(dllexport) DLLjump(bool NewVegas)
             bytestream[0] = 0x90; bytestream[1] = 0x90; bytestream[2] = 0x90; bytestream[3] = 0x90; bytestream[4] = 0x90; bytestream[5] = 0x90;
             for (int i = 0; i < 6; i++) WriteProcessMemory(hProc, (LPVOID) (0x0070D704 + i), &bytestream[i], sizeof(bytestream[i]), &rw);
 
-            bytestream[0] = 0xEB; bytestream[1] = 0x0C;
-            for (int i = 0; i < 2; i++) WriteProcessMemory(hProc, (LPVOID) (0x00703224 + i), &bytestream[i], sizeof(bytestream[i]), &rw);
+            bytestream[0] = 0x0F; bytestream[1] = 0x85; bytestream[2] = 0x15; bytestream[3] = 0x02; bytestream[4] = 0x00; bytestream[5] = 0x00;
+            for (int i = 0; i < 6; i++) WriteProcessMemory(hProc, (LPVOID) (0x0070C2EE + i), &bytestream[i], sizeof(bytestream[i]), &rw);
+
+            bytestream[0] = 0xEB; bytestream[1] = 0x07;
+            for (int i = 0; i < 2; i++) WriteProcessMemory(hProc, (LPVOID) (0x0071A836 + i), &bytestream[i], sizeof(bytestream[i]), &rw);
 
             /* Writing FalloutNV command INPUT detour TOTAL BYTES TO RESERVE: 68 */
 
