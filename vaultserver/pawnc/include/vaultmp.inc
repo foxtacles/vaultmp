@@ -25,128 +25,31 @@
 
 // Callbacks
 
-/* OnClientAuthenticate
- * called when a client attempts to join the server
- * return 0: kick player
- */
-
 forward OnClientAuthenticate(clientID, const name[], const pwd[]);
-
-/* OnClientRequestGame
- * called when a client attempts to start a game
- * set savegame string to the savegame name for the client to load (maxlength: len)
- * return 0: kick player
- */
-
 forward OnClientRequestGame(clientID, savegame[], len);
-
-/* OnPlayerJoin
- * called when a client is in-game (client is now a player)
- */
-
 forward OnPlayerJoin(clientID);
-
-/* OnPlayerDeath
- * called when a player died
- */
-
 forward OnPlayerDeath(clientID);
-
-/* OnPlayerDisconnect
- * called when a player leaves the game; note that you can't use any setter functions on the player anymore
- */
-
 forward OnPlayerDisconnect(clientID);
 
-
-
-// Functions
-
-/* GetPlayerName
- * supply a buffer of at least 16 cells
- * returns 0: invalid clientID
- */
+// Player functions
 
 native GetPlayerName(clientID, name[]);
-
-/* GetPlayerPos
- * returns a Float referring to the position value on the specified axis (X_AXIS = X, Y_AXIS = Y, Z_AXIS = Z)
- * returns 0: invalid clientID / invalid axis parameter
- */
-
 native Float:GetPlayerPos(clientID, axis);
-
-/* GetPlayerZAngle
- * returns a Float referring to the Z angle
- * returns 0: invalid clientID
- */
-
 native Float:GetPlayerZAngle(clientID);
-
-/* GetPlayerHealth
- * returns a Float referring to the players health
- * returns 0: invalid clientID
- */
-
 native Float:GetPlayerHealth(clientID);
-
-/* GetPlayerBaseHealth
- * returns a Float referring to the players base health
- * returns 0: invalid clientID
- */
-
 native Float:GetPlayerBaseHealth(clientID);
-
-/* GetPlayerCondition
- * returns a Float referring to the players condition of the specified function (see Constants for a list)
- * returns 0: invalid clientID / invalid condition parameter
- */
-
 native Float:GetPlayerCondition(clientID, condition);
-
-/* IsPlayerDead
- * returns 1 if the player is dead
- * returns 0 if the player is alive
- * returns -1: invalid clientID
- */
-
 native IsPlayerDead(clientID);
-
-/* GetPlayerMoving
- * returns a moving state (see Constants for a list)
- * returns -1: invalid clientID
- */
-
 native GetPlayerMoving(clientID);
-
-/* IsPlayerAlerted
- * returns 1 if the player is alerted (has his weapon drawn)
- * returns 0 if the player is not alerted
- * returns -1: invalid clientID
- */
-
 native IsPlayerAlerted(clientID);
 
-/* SetServerName
- * set the name of the server
- */
+// Server info functions
 
 native SetServerName(name[]);
-
-/* SetServerMap
- * set the map of the server
- */
-
 native SetServerMap(map[]);
-
-/* SetServerRule
- * add a rule to the server (note: you can't remove or overwrite rules)
- */
-
 native SetServerRule(rule[], value[]);
+native bool:IsNewVegas();
 
-/* timestamp
- * prints a vaultmp server timestamp in console
- */
+// Misc functions
 
 native timestamp();

@@ -14,6 +14,7 @@ AMX_NATIVE_INFO Functions::vaultmp_functions[] = {
     {"SetServerName", Functions::vaultmp_SetServerName},
     {"SetServerMap", Functions::vaultmp_SetServerMap},
     {"SetServerRule", Functions::vaultmp_SetServerRule},
+    {"IsNewVegas", Functions::vaultmp_IsNewVegas},
     {"timestamp", Functions::vaultmp_timestamp},
     {0, 0}
 
@@ -259,6 +260,11 @@ cell Functions::vaultmp_SetServerRule(AMX* amx, const cell* params)
     Dedicated::SetServerRule(string(rule), string(value));
 
     return i;
+}
+
+cell Functions::vaultmp_IsNewVegas(AMX* amx, const cell* params)
+{
+    return Dedicated::IsNewVegas();
 }
 
 cell Functions::vaultmp_timestamp(AMX* amx, const cell* params)

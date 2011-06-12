@@ -56,6 +56,7 @@ class Dedicated {
               static void SetServerName(string name);
               static void SetServerMap(string map);
               static void SetServerRule(string rule, string value);
+              static bool IsNewVegas();
 
               // static void SetServerConnections(int connections);
 

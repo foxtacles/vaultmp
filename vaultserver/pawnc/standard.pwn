@@ -2,15 +2,23 @@
 
 main()
 {
-timestamp();
-print("Random text from my vaultmp script in color red.\n", 1, -1, 1);
-new name[32] = "My first vaultmp server";
-new map[32] = "the wasteland";
-new rule[16] = "version";
-new value[16] = "0.1a";
-SetServerName(name);
-SetServerMap(map);
-SetServerRule(rule, value);
+	timestamp();
+	print("Random text from my vaultmp script in color red.\n", 1, -1, 1);
+
+	new name[32] = "My first vaultmp server";
+
+	new map[32];
+	if (!IsNewVegas())
+		map = "the wasteland";
+	else
+		map = "mojave desert";
+
+	new rule[16] = "version";
+	new value[16] = "0.1a";
+
+	SetServerName(name);
+	SetServerMap(map);
+	SetServerRule(rule, value);
 }
 
 public OnClientAuthenticate(clientID, const name[], const pwd[])

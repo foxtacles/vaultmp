@@ -65,6 +65,11 @@ void Dedicated::SetServerRule(string rule, string value)
     self->SetServerRule(rule, value);
 }
 
+bool Dedicated::IsNewVegas()
+{
+    return self->IsNewVegas();
+}
+
 void Dedicated::Announce(bool announce)
 {
     if (peer->GetConnectionState(master) == IS_CONNECTED)
