@@ -245,6 +245,9 @@ extern "C" void __declspec(dllexport) DLLjump(bool NewVegas)
             bytestream[0] = 0x90; bytestream[1] = 0x90; bytestream[2] = 0x90; bytestream[3] = 0x90; bytestream[4] = 0x90; bytestream[5] = 0x90;
             for (int i = 0; i < 6; i++) WriteProcessMemory(hProc, (LPVOID) (0x0070D704 + i), &bytestream[i], sizeof(bytestream[i]), &rw);
 
+            bytestream[0] = 0xEB; bytestream[1] = 0x0C;
+            for (int i = 0; i < 2; i++) WriteProcessMemory(hProc, (LPVOID) (0x00703224 + i), &bytestream[i], sizeof(bytestream[i]), &rw);
+
             bytestream[0] = 0x0F; bytestream[1] = 0x85; bytestream[2] = 0x15; bytestream[3] = 0x02; bytestream[4] = 0x00; bytestream[5] = 0x00;
             for (int i = 0; i < 6; i++) WriteProcessMemory(hProc, (LPVOID) (0x0070C2EE + i), &bytestream[i], sizeof(bytestream[i]), &rw);
 
