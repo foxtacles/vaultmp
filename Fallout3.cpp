@@ -59,6 +59,7 @@ HANDLE Fallout3::Fallout3gamethread;
 Player* Fallout3::self;
 queue<Player*> Fallout3::refqueue;
 list<Fallout3::fCommand*> Fallout3::cmdlist;
+list<Fallout3::fCommand*> Fallout3::tmplist;
 bool Fallout3::cmdmutex = false;
 Fallout3::pPlayerUpdate Fallout3::localPlayerUpdate;
 PipeClient* Fallout3::pipeServer;
@@ -455,8 +456,6 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
 
     while (!endThread)
     {
-        OPENCMD();
-
         list<fCommand*>::iterator it;
 
         for (it = cmdlist.begin(); it != cmdlist.end();)
@@ -510,9 +509,11 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
                 it++;
         }
 
-        CLOSECMD();
+        OPENCMD();
 
-        Sleep(FALLOUT3_TICKS); // let the packets fill the ranks!
+        cmdlist.splice(cmdlist.end(), tmplist);
+
+        CLOSECMD();
     }
 
     return ((DWORD) data);

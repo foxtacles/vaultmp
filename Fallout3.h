@@ -16,7 +16,7 @@
 #define FALLOUT3_TICKS 25
 #define OPENCMD() while (cmdmutex); cmdmutex = true;
 #define CLOSECMD() cmdmutex = false;
-#define PUSHCMD(cmd) cmdlist.push_back(cmd);
+#define PUSHCMD(cmd) tmplist.push_back(cmd);
 
 using namespace RakNet;
 using namespace pipe;
@@ -44,6 +44,7 @@ class Fallout3 {
               static Player* self;
               static queue<Player*> refqueue;
               static list<fCommand*> cmdlist;
+              static list<fCommand*> tmplist;
               static bool cmdmutex;
               static pPlayerUpdate localPlayerUpdate;
 
