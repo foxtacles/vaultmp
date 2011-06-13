@@ -143,12 +143,20 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
         {
             recv.clear(); low.clear(); high.clear();
             recv = pipeClient->Recv();
-            low = recv.substr(0, 3);
-            high = recv.substr(3);
-
-            Player* lastRef = self;
 
             int find = 0;
+
+            find = recv.find("op:");
+            if (find == string::npos) find = recv.find("re:");
+            if (find == string::npos) find = recv.find("up:");
+            if (find == string::npos) find = recv.find("ca:");
+            if (find != string::npos)
+            {
+                low = recv.substr(find, 3);
+                high = recv.substr(find + 3);
+            }
+
+            Player* lastRef = self;
 
             while (find != string::npos)
             {
@@ -344,6 +352,7 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                     cmd->refID = high;
                     cmd->forplayers = false;
                     cmd->repeat = false;
+                    cmd->sleepmult = 5;
                     PUSHCMD(cmd);
 
                     CLOSECMD();
@@ -728,12 +737,14 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                     cmd->refID = "none";
                     cmd->forplayers = false;
                     cmd->repeat = false;
+                    cmd->sleepmult = 5;
                     PUSHCMD(cmd);
 
                     cmd = new fCommand;
                     cmd->command = "removeallitems";
                     cmd->forplayers = false;
                     cmd->repeat = false;
+                    cmd->sleepmult = 5;
                     PUSHCMD(cmd);
 
                     CLOSECMD();
@@ -763,10 +774,11 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                     OPENCMD();
 
                     fCommand* cmd = new fCommand;
-                    cmd->command = "placeatme 00000007 1";
+                    if (NewVegas) cmd->command = "placeatme 8D0E7 1";
+                    else cmd->command = "placeatme 30D82 1";
                     cmd->forplayers = false;
                     cmd->repeat = false;
-                    cmd->sleepmult = 10;
+                    cmd->sleepmult = 15;
                     PUSHCMD(cmd);
 
                     CLOSECMD();
@@ -793,6 +805,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                         cmd->refID = refID;
                         cmd->forplayers = false;
                         cmd->repeat = false;
+                        cmd->sleepmult = 5;
                         PUSHCMD(cmd);
 
                         cmd = new fCommand;
@@ -800,6 +813,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                         cmd->refID = refID;
                         cmd->forplayers = false;
                         cmd->repeat = false;
+                        cmd->sleepmult = 5;
                         PUSHCMD(cmd);
 
                         CLOSECMD();
@@ -878,6 +892,8 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                             cmd->refID = refID;
                             cmd->forplayers = false;
                             cmd->repeat = false;
+                            cmd->sleepmult = 5;
+
                             PUSHCMD(cmd);
 
                             cmd = new fCommand;
@@ -903,6 +919,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                             cmd->refID = refID;
                             cmd->forplayers = false;
                             cmd->repeat = false;
+                            cmd->sleepmult = 5;
                             PUSHCMD(cmd);
 
                             player->SetPlayerAlerted(update->alerted);
@@ -1069,6 +1086,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                             cmd->refID = refID;
                             cmd->forplayers = false;
                             cmd->repeat = false;
+                            cmd->sleepmult = 5;
 
                             switch (update->dead)
                             {
@@ -1085,6 +1103,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                                     cmd->refID = refID;
                                     cmd->forplayers = false;
                                     cmd->repeat = false;
+                                    cmd->sleepmult = 5;
                                     PUSHCMD(cmd);
                                     break;
                             }

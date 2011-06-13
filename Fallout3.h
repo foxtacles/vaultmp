@@ -18,9 +18,6 @@
 #define CLOSECMD() cmdmutex = false;
 #define PUSHCMD(cmd) cmdlist.push_back(cmd);
 
-#define FALLOUT3_PLAYER_BASEID  00000007
-#define FALLOUTNV_PLAYER_BASEID 00000007
-
 using namespace RakNet;
 using namespace pipe;
 using namespace std;
