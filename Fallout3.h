@@ -12,13 +12,19 @@
 
 #include "Player.h"
 #include "Pipe.h"
+#include "Data.h"
+#include "vaultmp.h"
 
-#define FALLOUT3_TICKS 25
 #define OPENCMD() while (cmdmutex); cmdmutex = true;
 #define CLOSECMD() cmdmutex = false;
 #define PUSHCMD(cmd) tmplist.push_back(cmd);
+#define FLAG(flag) skipcmds[flag]->skipflag = true;
+#define UNFLAG(flag) skipcmds[flag]->skipflag = false;
+#define FLIPFLAG(flag) skipcmds[flag]->skipflag = !skipcmds[flag]->skipflag;
+#define GETFLAG(flag) skipcmds[flag]->skipflag
 
 using namespace RakNet;
+using namespace Data;
 using namespace pipe;
 using namespace std;
 
@@ -38,13 +44,11 @@ class Fallout3 {
               static DWORD WINAPI Fallout3pipe(LPVOID data);
               static DWORD WINAPI Fallout3game(LPVOID data);
 
-              struct pPlayerUpdate;
-              struct fCommand;
-
               static Player* self;
               static queue<Player*> refqueue;
               static list<fCommand*> cmdlist;
               static list<fCommand*> tmplist;
+              static fCommand* skipcmds[MAX_SKIP_FLAGS];
               static bool cmdmutex;
               static pPlayerUpdate localPlayerUpdate;
 

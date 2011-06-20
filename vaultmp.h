@@ -6,6 +6,10 @@
 #define RAKNET_MASTER_ADDRESS "127.0.0.1"
 #define RAKNET_MASTER_PORT    1660
 
+#define DEDICATED_VERSION "0.1a revision 122"
+#define MASTER_VERSION "0.1a revision 122"
+#define CLIENT_VERSION "0.1a revision 122"
+
 #define IDC_GROUP0    2000
 #define IDC_GROUP1    2001
 #define IDC_GROUP2    2002

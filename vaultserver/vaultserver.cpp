@@ -34,7 +34,7 @@ DWORD WINAPI InputThread(LPVOID data)
 
 int main(int argc, char* argv[])
 {
-    printf("Vault-Tec dedicated server version %s \n----------------------------------------------------------\n", DEDICATED_VERSION);
+    printf("Vault-Tec dedicated server %s \n----------------------------------------------------------\n", DEDICATED_VERSION);
 
     bool NewVegas = false;
     bool query = false;

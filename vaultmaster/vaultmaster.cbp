@@ -20,6 +20,7 @@
 			<Add option="-enable-auto-import" />
 			<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\libws2_32.a" />
 		</Linker>
+		<Unit filename="..\Data.h" />
 		<Unit filename="..\RakNet\AutopatcherPatchContext.h" />
 		<Unit filename="..\RakNet\AutopatcherRepositoryInterface.h" />
 		<Unit filename="..\RakNet\BitStream.cpp" />

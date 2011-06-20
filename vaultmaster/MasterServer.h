@@ -10,11 +10,14 @@
 #include "../RakNet/RakSleep.h"
 
 #include "../ServerEntry.h"
+#include "../Data.h"
+#include "vaultmaster.h"
 
 #define RAKNET_PORT        1660
 #define RAKNET_CONNECTIONS 128
 
 using namespace RakNet;
+using namespace Data;
 using namespace std;
 
 typedef map<SystemAddress, ServerEntry> ServerMap;

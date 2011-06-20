@@ -1,6 +1,7 @@
 #include "MasterServer.h"
 
 using namespace RakNet;
+using namespace Data;
 using namespace std;
 
 RakPeerInterface* MasterServer::peer;
@@ -8,12 +9,6 @@ SocketDescriptor* MasterServer::sockdescr;
 
 typedef map<SystemAddress, ServerEntry> ServerMap;
 ServerMap MasterServer::serverList;
-
-enum {
-    ID_MASTER_QUERY = ID_USER_PACKET_ENUM,
-    ID_MASTER_ANNOUNCE,
-    ID_MASTER_UPDATE
-};
 
 bool MasterServer::thread;
 
@@ -49,6 +44,7 @@ DWORD WINAPI MasterServer::MasterThread(LPVOID data)
       peer = RakPeerInterface::GetInstance();
       peer->Startup(RAKNET_CONNECTIONS, sockdescr, 1, THREAD_PRIORITY_NORMAL);
       peer->SetMaximumIncomingConnections(RAKNET_CONNECTIONS);
+      peer->SetIncomingPassword(MASTER_VERSION, sizeof(MASTER_VERSION));
 
       Packet* packet;
 

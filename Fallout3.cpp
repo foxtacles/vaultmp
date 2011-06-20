@@ -8,49 +8,6 @@ typedef HINSTANCE (__stdcall *fLoadLibrary)(char*);
 typedef LPVOID (__stdcall *fGetProcAddress)(HINSTANCE, char*);
 typedef void (*fDLLjump)(bool);
 
-enum {
-    ID_MASTER_QUERY = ID_USER_PACKET_ENUM,
-    ID_MASTER_ANNOUNCE,
-    ID_MASTER_UPDATE,
-    ID_GAME_INIT,
-    ID_GAME_RUN,
-    ID_GAME_START,
-    ID_GAME_END,
-    ID_NEW_PLAYER,
-    ID_PLAYER_LEFT,
-    ID_PLAYER_UPDATE
-};
-
-#pragma pack(push, 1)
-struct Fallout3::pPlayerUpdate {
-    unsigned char type;
-    RakNetGUID guid;
-    float X, Y, Z, A;
-    float health;
-    float baseHealth;
-    float conds[6];
-    bool dead;
-    bool alerted;
-    int moving;
-};
-#pragma pack(pop)
-
-struct Fallout3::fCommand {
-    string command;
-    string refID;
-    bool repeat;
-    bool forplayers;
-    int sleepmult;
-
-    fCommand() {
-        command = "";
-        refID = "";
-        repeat = false;
-        forplayers = false;
-        sleepmult = 1;
-    }
-};
-
 bool Fallout3::NewVegas = false;
 bool Fallout3::endThread = false;
 bool Fallout3::wakeup = false;
@@ -58,10 +15,11 @@ HANDLE Fallout3::Fallout3pipethread;
 HANDLE Fallout3::Fallout3gamethread;
 Player* Fallout3::self;
 queue<Player*> Fallout3::refqueue;
-list<Fallout3::fCommand*> Fallout3::cmdlist;
-list<Fallout3::fCommand*> Fallout3::tmplist;
+list<fCommand*> Fallout3::cmdlist;
+list<fCommand*> Fallout3::tmplist;
+fCommand* Fallout3::skipcmds[MAX_SKIP_FLAGS];
 bool Fallout3::cmdmutex = false;
-Fallout3::pPlayerUpdate Fallout3::localPlayerUpdate;
+pPlayerUpdate Fallout3::localPlayerUpdate;
 PipeClient* Fallout3::pipeServer;
 PipeServer* Fallout3::pipeClient;
 
@@ -353,7 +311,7 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                     cmd->refID = high;
                     cmd->forplayers = false;
                     cmd->repeat = false;
-                    cmd->sleepmult = 5;
+                    cmd->sleep = 150;
                     PUSHCMD(cmd);
 
                     CLOSECMD();
@@ -394,14 +352,17 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
     cmds[0].command = "getpos X";
     cmds[0].repeat = true;
     cmds[0].forplayers = true;
+    skipcmds[SKIPFLAG_GETPOS_X] = &cmds[0];
 
     cmds[1].command = "getpos Y";
     cmds[1].repeat = true;
     cmds[1].forplayers = true;
+    skipcmds[SKIPFLAG_GETPOS_Y] = &cmds[1];
 
     cmds[2].command = "getpos Z";
     cmds[2].repeat = true;
     cmds[2].forplayers = true;
+    skipcmds[SKIPFLAG_GETPOS_Z] = &cmds[2];
 
     cmds[3].command = "getangle Z";
     cmds[3].repeat = true;
@@ -462,6 +423,12 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
         {
             fCommand* cmd = *it;
 
+            if (cmd->skipflag)
+            {
+                it++;
+                continue;
+            }
+
             if (!cmd->refID.empty())
             {
                 if (cmd->refID.compare("none") == 0)
@@ -474,13 +441,13 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
                     string input = "op:" + cmd->refID + "." + cmd->command;
                     pipeServer->Send(&input);
                 }
-                Sleep(FALLOUT3_TICKS * cmd->sleepmult);
+                Sleep(cmd->sleep);
             }
             else if (!cmd->forplayers)
             {
                 string input = "op:player." + cmd->command;
                 pipeServer->Send(&input);
-                Sleep(FALLOUT3_TICKS * cmd->sleepmult);
+                Sleep(cmd->sleep);
             }
             else
             {
@@ -495,8 +462,20 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
                     {
                         string input = "op:" + refID + "." + cmd->command;
                         pipeServer->Send(&input);
-                        Sleep(FALLOUT3_TICKS * cmd->sleepmult);
+                        Sleep(cmd->sleep);
                     }
+                }
+            }
+
+            if (cmd->flipcmd != -1)
+            {
+                FLIPFLAG(cmd->flipcmd);
+
+                if (!cmd->refID.empty() && cmd->refID.compare("none") != 0)
+                {
+                    Player* player = Player::GetPlayerFromRefID(cmd->refID);
+                    if (player != NULL)
+                        player->ToggleNoOverride(cmd->flipcmd, GETFLAG(cmd->flipcmd));
                 }
             }
 
@@ -559,7 +538,7 @@ HANDLE Fallout3::InitializeFallout3(bool NewVegas)
 
                 if (CreateProcess(module, NULL, NULL, NULL, FALSE, Fallout3::NewVegas ? 0 : CREATE_SUSPENDED, NULL, NULL, &si, &pi))
                 {
-                    if (Fallout3::NewVegas) Sleep(2000); // some Steam decrypt whatsoever needs time
+                    if (Fallout3::NewVegas) Sleep(2000); // some decrypt whatsoever needs time
 
                     HANDLE hProc;
 
@@ -644,27 +623,11 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
     self->SetPlayerName(name);
     self->SetPlayerRefID("player");
 
-    localPlayerUpdate.type = ID_PLAYER_UPDATE;
-    localPlayerUpdate.guid = peer->GetMyGUID();
-    localPlayerUpdate.X = 0.00;
-    localPlayerUpdate.Y = 0.00;
-    localPlayerUpdate.Z = 0.00;
-    localPlayerUpdate.A = 0.00;
-    localPlayerUpdate.health = 0.00;
-    localPlayerUpdate.baseHealth = 0.00;
-    localPlayerUpdate.conds[0] = 0.00;
-    localPlayerUpdate.conds[1] = 0.00;
-    localPlayerUpdate.conds[2] = 0.00;
-    localPlayerUpdate.conds[3] = 0.00;
-    localPlayerUpdate.conds[4] = 0.00;
-    localPlayerUpdate.conds[5] = 0.00;
-    localPlayerUpdate.dead = false;
-    localPlayerUpdate.alerted = false;
-    localPlayerUpdate.moving = 0;
+    localPlayerUpdate = self->GetPlayerUpdateStruct();
 
     cmdlist.clear();
 
-    if (peer->Connect(addr.ToString(false), addr.GetPort(), 0, 0, 0, 0, 3, 500, 0) == CONNECTION_ATTEMPT_STARTED)
+    if (peer->Connect(addr.ToString(false), addr.GetPort(), DEDICATED_VERSION, sizeof(DEDICATED_VERSION), 0, 0, 3, 500, 0) == CONNECTION_ATTEMPT_STARTED)
     {
         bool query = true;
 
@@ -738,14 +701,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                     cmd->refID = "none";
                     cmd->forplayers = false;
                     cmd->repeat = false;
-                    cmd->sleepmult = 5;
-                    PUSHCMD(cmd);
-
-                    cmd = new fCommand;
-                    cmd->command = "removeallitems";
-                    cmd->forplayers = false;
-                    cmd->repeat = false;
-                    cmd->sleepmult = 5;
+                    cmd->sleep = 150;
                     PUSHCMD(cmd);
 
                     CLOSECMD();
@@ -779,7 +735,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                     else cmd->command = "placeatme 30D82 1";
                     cmd->forplayers = false;
                     cmd->repeat = false;
-                    cmd->sleepmult = 15;
+                    cmd->sleep = 1500;
                     PUSHCMD(cmd);
 
                     CLOSECMD();
@@ -806,7 +762,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                         cmd->refID = refID;
                         cmd->forplayers = false;
                         cmd->repeat = false;
-                        cmd->sleepmult = 5;
+                        cmd->sleep = 150;
                         PUSHCMD(cmd);
 
                         cmd = new fCommand;
@@ -814,7 +770,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                         cmd->refID = refID;
                         cmd->forplayers = false;
                         cmd->repeat = false;
-                        cmd->sleepmult = 5;
+                        cmd->sleep = 150;
                         PUSHCMD(cmd);
 
                         CLOSECMD();
@@ -841,50 +797,70 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
 
                         char pos[16];
 
-                        if (!player->IsPlayerNearPoint(update->X, update->Y, update->Z, 400.0))
+                        if (!player->IsCoordinateInRange(0, update->X, 350.0))
                         {
                             sprintf(pos, "%f", update->X);
+
+                            FLAG(SKIPFLAG_GETPOS_X);
+                            player->SetPlayerPos(0, update->X);
+                            player->ToggleNoOverride(SKIPFLAG_GETPOS_X, true);
 
                             cmd = new fCommand;
                             cmd->command = "setpos X " + string(pos);
                             cmd->refID = refID;
                             cmd->forplayers = false;
                             cmd->repeat = false;
+                            cmd->flipcmd = SKIPFLAG_GETPOS_X;
                             PUSHCMD(cmd);
+                        }
 
+                        if (!player->IsCoordinateInRange(1, update->Y, 350.0))
+                        {
                             sprintf(pos, "%f", update->Y);
+
+                            FLAG(SKIPFLAG_GETPOS_Y);
+                            player->SetPlayerPos(1, update->Y);
+                            player->ToggleNoOverride(SKIPFLAG_GETPOS_Y, true);
 
                             cmd = new fCommand;
                             cmd->command = "setpos Y " + string(pos);
                             cmd->refID = refID;
                             cmd->forplayers = false;
                             cmd->repeat = false;
+                            cmd->flipcmd = SKIPFLAG_GETPOS_Y;
                             PUSHCMD(cmd);
+                        }
 
+                        if (!player->IsCoordinateInRange(2, update->Z, 150.0))
+                        {
                             sprintf(pos, "%f", update->Z);
+
+                            FLAG(SKIPFLAG_GETPOS_Z);
+                            player->SetPlayerPos(2, update->Z);
+                            player->ToggleNoOverride(SKIPFLAG_GETPOS_Z, true);
 
                             cmd = new fCommand;
                             cmd->command = "setpos Z " + string(pos);
                             cmd->refID = refID;
                             cmd->forplayers = false;
                             cmd->repeat = false;
+                            cmd->flipcmd = SKIPFLAG_GETPOS_Z;
                             PUSHCMD(cmd);
-
-                            player->SetPlayerPos(0, update->X);
-                            player->SetPlayerPos(1, update->Y);
-                            player->SetPlayerPos(2, update->Z);
                         }
 
-                        sprintf(pos, "%f", update->A);
+                        if (update->A != player->GetPlayerAngle())
+                        {
+                            sprintf(pos, "%f", update->A);
 
-                        cmd = new fCommand;
-                        cmd->command = "setangle Z " + string(pos);
-                        cmd->refID = refID;
-                        cmd->forplayers = false;
-                        cmd->repeat = false;
-                        PUSHCMD(cmd);
+                            cmd = new fCommand;
+                            cmd->command = "setangle Z " + string(pos);
+                            cmd->refID = refID;
+                            cmd->forplayers = false;
+                            cmd->repeat = false;
+                            PUSHCMD(cmd);
 
-                        player->SetPlayerAngle(update->A);
+                            player->SetPlayerAngle(update->A);
+                        }
 
                         if (update->alerted != player->IsPlayerAlerted())
                         {
@@ -893,7 +869,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                             cmd->refID = refID;
                             cmd->forplayers = false;
                             cmd->repeat = false;
-                            cmd->sleepmult = 5;
+                            cmd->sleep = 150;
 
                             PUSHCMD(cmd);
 
@@ -920,7 +896,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                             cmd->refID = refID;
                             cmd->forplayers = false;
                             cmd->repeat = false;
-                            cmd->sleepmult = 5;
+                            cmd->sleep = 150;
                             PUSHCMD(cmd);
 
                             player->SetPlayerAlerted(update->alerted);
@@ -984,16 +960,19 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                             player->SetPlayerBaseHealth(update->baseHealth);
                         }
 
-                        sprintf(pos, "%i", (int) update->health);
+                        if (update->health != player->GetPlayerHealth())
+                        {
+                            sprintf(pos, "%i", (int) update->health);
 
-                        cmd = new fCommand;
-                        cmd->command = "forceactorvalue Health " + string(pos);
-                        cmd->refID = refID;
-                        cmd->forplayers = false;
-                        cmd->repeat = false;
-                        PUSHCMD(cmd);
+                            cmd = new fCommand;
+                            cmd->command = "forceactorvalue Health " + string(pos);
+                            cmd->refID = refID;
+                            cmd->forplayers = false;
+                            cmd->repeat = false;
+                            PUSHCMD(cmd);
 
-                        player->SetPlayerHealth(update->health);
+                            player->SetPlayerHealth(update->health);
+                        }
 
                         if (update->conds[0] != player->GetPlayerCondition(0))
                         {
@@ -1081,13 +1060,13 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
 
                         // more ActorValues
 
-                        if (player->IsPlayerDead() != update->dead)
+                        if (update->dead != player->IsPlayerDead())
                         {
                             cmd = new fCommand;
                             cmd->refID = refID;
                             cmd->forplayers = false;
                             cmd->repeat = false;
-                            cmd->sleepmult = 5;
+                            cmd->sleep = 150;
 
                             switch (update->dead)
                             {
@@ -1104,7 +1083,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                                     cmd->refID = refID;
                                     cmd->forplayers = false;
                                     cmd->repeat = false;
-                                    cmd->sleepmult = 5;
+                                    cmd->sleep = 150;
                                     PUSHCMD(cmd);
                                     break;
                             }
@@ -1115,6 +1094,8 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                     }
                     break;
                 }
+                case ID_INVALID_PASSWORD:
+                    MessageBox(NULL, "Dedicated server version mismatch.\nPlease download the most recent binaries from www.vaultmp.com", "Error", MB_OK | MB_ICONERROR);
                 case ID_NO_FREE_INCOMING_CONNECTIONS:
                 case ID_CONNECTION_ATTEMPT_FAILED:
                 case ID_DISCONNECTION_NOTIFICATION:
@@ -1125,38 +1106,10 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                 }
             }
 
-            float X = self->GetPlayerPos(0);
-            float Y = self->GetPlayerPos(1);
-            float Z = self->GetPlayerPos(2);
-            float A = self->GetPlayerAngle();
-            float health = self->GetPlayerHealth();
-            float baseHealth = self->GetPlayerBaseHealth();
-            float conds[6] = {self->GetPlayerCondition(0), self->GetPlayerCondition(1), self->GetPlayerCondition(2), self->GetPlayerCondition(3), self->GetPlayerCondition(4), self->GetPlayerCondition(5)};
-            bool dead = self->IsPlayerDead();
-            bool alerted = self->IsPlayerAlerted();
-            int moving = self->GetPlayerMoving();
+            /* Send updated data to server */
 
-            if (X != localPlayerUpdate.X || Y != localPlayerUpdate.Y || Z != localPlayerUpdate.Z || A != localPlayerUpdate.A || health != localPlayerUpdate.health || baseHealth != localPlayerUpdate.baseHealth ||
-                conds[0] != localPlayerUpdate.conds[0] || conds[1] != localPlayerUpdate.conds[1] || conds[2] != localPlayerUpdate.conds[2] || conds[3] != localPlayerUpdate.conds[3] || conds[4] != localPlayerUpdate.conds[4] ||
-                conds[5] != localPlayerUpdate.conds[5] || dead != localPlayerUpdate.dead || alerted != localPlayerUpdate.alerted || moving != localPlayerUpdate.moving)
-            {
-                localPlayerUpdate.X = X;
-                localPlayerUpdate.Y = Y;
-                localPlayerUpdate.Z = Z;
-                localPlayerUpdate.A = A;
-                localPlayerUpdate.health = health;
-                localPlayerUpdate.baseHealth = baseHealth;
-                localPlayerUpdate.conds[0] = conds[0];
-                localPlayerUpdate.conds[1] = conds[1];
-                localPlayerUpdate.conds[2] = conds[2];
-                localPlayerUpdate.conds[3] = conds[3];
-                localPlayerUpdate.conds[4] = conds[4];
-                localPlayerUpdate.conds[5] = conds[5];
-                localPlayerUpdate.dead = dead;
-                localPlayerUpdate.alerted = alerted;
-                localPlayerUpdate.moving = moving;
+            if (self->UpdatePlayerUpdateStruct(&localPlayerUpdate))
                 peer->Send((char*) &localPlayerUpdate, sizeof(localPlayerUpdate), HIGH_PRIORITY, RELIABLE, 0, addr, false, 0);
-            }
 
             RakSleep(2);
         }

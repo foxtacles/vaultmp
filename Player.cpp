@@ -29,6 +29,9 @@ Player::Player(RakNetGUID guid)
     name = "Player";
     players.insert(pair<RakNetGUID, string>(guid, refID));
     playersguids.insert(pair<RakNetGUID, Player*>(guid, this));
+
+    for (int i = 0; i < MAX_SKIP_FLAGS; i++)
+        nowrite[i] = false;
 }
 
 Player::~Player()
@@ -131,6 +134,60 @@ string Player::GetPlayerRefID()
     return refID;
 }
 
+pPlayerUpdate Player::GetPlayerUpdateStruct()
+{
+    pPlayerUpdate data;
+
+    data.type = ID_PLAYER_UPDATE;
+    data.guid = guid;
+    data.X = pos[0];
+    data.Y = pos[1];
+    data.Z = pos[2];
+    data.A = angle;
+    data.health = health;
+    data.baseHealth = baseHealth;
+    data.conds[0] = cond[0];
+    data.conds[1] = cond[1];
+    data.conds[2] = cond[2];
+    data.conds[3] = cond[3];
+    data.conds[4] = cond[4];
+    data.conds[5] = cond[5];
+    data.dead = dead;
+    data.alerted = alerted;
+    data.moving = moving;
+
+    return data;
+}
+
+bool Player::UpdatePlayerUpdateStruct(pPlayerUpdate* data)
+{
+    pPlayerUpdate player = this->GetPlayerUpdateStruct();
+
+    if (player.type != data->type ||
+        player.guid != data->guid ||
+        player.X != data->X ||
+        player.Y != data->Y ||
+        player.Z != data->Z ||
+        player.A != data->A ||
+        player.health != data->health ||
+        player.baseHealth != data->baseHealth ||
+        player.conds[0] != data->conds[0] ||
+        player.conds[1] != data->conds[1] ||
+        player.conds[2] != data->conds[2] ||
+        player.conds[3] != data->conds[3] ||
+        player.conds[4] != data->conds[4] ||
+        player.conds[5] != data->conds[5] ||
+        player.dead != data->dead ||
+        player.alerted != data->alerted ||
+        player.moving != data->moving)
+        {
+            (*data) = player;
+            return true;
+        }
+
+    return false;
+}
+
 void Player::SetPlayerName(string name)
 {
     this->name = name;
@@ -138,7 +195,7 @@ void Player::SetPlayerName(string name)
 
 void Player::SetPlayerPos(int cell, float pos)
 {
-    if (cell >= 0 && cell <= 2)
+    if (cell >= 0 && cell <= 2 && !nowrite[(cell == 0) ? SKIPFLAG_GETPOS_X : (cell == 1) ? SKIPFLAG_GETPOS_Y : (cell == 2) ? SKIPFLAG_GETPOS_Z : 0])
         this->pos[cell] = pos;
 }
 
@@ -188,7 +245,20 @@ void Player::SetPlayerRefID(string refID)
     playersrefs.insert(pair<string, Player*>(refID, this));
 }
 
+void Player::ToggleNoOverride(int skipflag, bool toggle)
+{
+    if (skipflag >= 0 && skipflag < MAX_SKIP_FLAGS)
+        nowrite[skipflag] = toggle;
+}
+
 bool Player::IsPlayerNearPoint(float X, float Y, float Z, float R)
 {
     return (sqrt((abs(pos[0] - X) * abs(pos[0] - X)) + (abs(pos[1] - Y) * abs(pos[1] - Y)) + (abs(pos[2] - Z) * abs(pos[2] - Z))) <= R);
+}
+
+bool Player::IsCoordinateInRange(int cell, float XYZ, float R)
+{
+    if (cell >=0 && cell <= 2)
+        return (pos[cell] > (XYZ - R) && pos[cell] < (XYZ + R));
+    return false;
 }

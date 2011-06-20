@@ -35,7 +35,7 @@ DWORD WINAPI InputThread(LPVOID data)
 
 int main()
 {
-    printf("Vault-Tec MasterServer version %s \n----------------------------------------------------------\n", MASTER_VERSION);
+    printf("Vault-Tec MasterServer %s \n----------------------------------------------------------\n", MASTER_VERSION);
 
     timestamp();
     printf("Initializing RakNet...\n");

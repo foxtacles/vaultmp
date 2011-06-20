@@ -6,10 +6,12 @@
 #include <math.h>
 
 #include "Client.h"
+#include "Data.h"
 
 #include "RakNet/RakPeerInterface.h"
 
 using namespace RakNet;
+using namespace Data;
 using namespace std;
 
 class Player {
@@ -32,6 +34,8 @@ class Player {
               bool alerted;
               int moving;
 
+              bool nowrite[MAX_SKIP_FLAGS];
+
       public:
               Player(RakNetGUID guid);
               ~Player();
@@ -52,6 +56,9 @@ class Player {
               int GetPlayerMoving();
               string GetPlayerRefID();
 
+              pPlayerUpdate GetPlayerUpdateStruct();
+              bool UpdatePlayerUpdateStruct(pPlayerUpdate* data);
+
               void SetPlayerName(string name);
               void SetPlayerPos(int cell, float pos);
               void SetPlayerAngle(float angle);
@@ -63,7 +70,10 @@ class Player {
               void SetPlayerMoving(int moving);
               void SetPlayerRefID(string refID);
 
+              void ToggleNoOverride(int skipflag, bool toggle);
+
               bool IsPlayerNearPoint(float X, float Y, float Z, float R);
+              bool IsCoordinateInRange(int cell, float XYZ, float R);
 };
 
 #endif

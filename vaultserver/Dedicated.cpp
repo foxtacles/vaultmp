@@ -1,6 +1,7 @@
 #include "Dedicated.h"
 
 using namespace RakNet;
+using namespace Data;
 using namespace std;
 
 RakPeerInterface* Dedicated::peer;
@@ -15,33 +16,6 @@ SystemAddress Dedicated::master;
 TimeMS Dedicated::announcetime;
 
 ServerEntry* Dedicated::self;
-
-enum {
-    ID_MASTER_QUERY = ID_USER_PACKET_ENUM,
-    ID_MASTER_ANNOUNCE,
-    ID_MASTER_UPDATE,
-    ID_GAME_INIT,
-    ID_GAME_RUN,
-    ID_GAME_START,
-    ID_GAME_END,
-    ID_NEW_PLAYER,
-    ID_PLAYER_LEFT,
-    ID_PLAYER_UPDATE
-};
-
-#pragma pack(push, 1)
-struct Dedicated::pPlayerUpdate {
-    unsigned char type;
-    RakNetGUID guid;
-    float X, Y, Z, A;
-    float health;
-    float baseHealth;
-    float conds[6];
-    bool dead;
-    bool alerted;
-    int moving;
-};
-#pragma pack(pop)
 
 bool Dedicated::thread;
 
@@ -113,7 +87,7 @@ void Dedicated::Announce(bool announce)
     {
         Utils::timestamp();
         printf("Lost connection to MasterServer (%s)\n", master.ToString());
-        peer->Connect(master.ToString(false), master.GetPort(), 0, 0, 0, 0, 3, 100, 0);
+        peer->Connect(master.ToString(false), master.GetPort(), MASTER_VERSION, sizeof(MASTER_VERSION), 0, 0, 3, 100, 0);
     }
 
     announcetime = GetTimeMS();
@@ -123,6 +97,7 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
 {
       sockdescr = new SocketDescriptor(port, 0);
       peer = RakPeerInterface::GetInstance();
+      peer->SetIncomingPassword(DEDICATED_VERSION, sizeof(DEDICATED_VERSION));
 
       if (announce)
       {
@@ -131,7 +106,7 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
             master.SetBinaryAddress(strtok(announce, ":"));
             char* cport = strtok(NULL, ":");
             master.SetPort(cport != NULL ? atoi(cport) : RAKNET_MASTER_STANDARD_PORT);
-            peer->Connect(master.ToString(false), master.GetPort(), 0, 0, 0, 0, 3, 500, 0);
+            peer->Connect(master.ToString(false), master.GetPort(), MASTER_VERSION, sizeof(MASTER_VERSION), 0, 0, 3, 500, 0);
             announcetime = GetTimeMS();
       }
       else
@@ -219,6 +194,12 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         Announce(true);
                         Utils::timestamp();
                         printf("Connected to MasterServer (%s)\n", packet->systemAddress.ToString());
+                        break;
+                    }
+                    case ID_INVALID_PASSWORD:
+                    {
+                        Utils::timestamp();
+                        printf("MasterServer version mismatch (%s)\n", packet->systemAddress.ToString());
                         break;
                     }
                     case ID_MASTER_UPDATE:

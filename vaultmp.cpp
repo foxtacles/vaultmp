@@ -5,6 +5,7 @@
 #include "vaultmp.h"
 #include "fallout3.h"
 #include "ServerEntry.h"
+#include "Data.h"
 #include "ufmod.h"
 
 #include "RakNet/RakPeerInterface.h"
@@ -15,6 +16,7 @@
 #include "RakNet/GetTime.h"
 
 using namespace RakNet;
+using namespace Data;
 using namespace std;
 
 HINSTANCE instance;
@@ -38,12 +40,6 @@ typedef map<SystemAddress, ServerEntry> ServerMap;
 ServerMap serverList;
 
 SystemAddress* selectedServer = NULL;
-
-enum {
-    ID_MASTER_QUERY = ID_USER_PACKET_ENUM,
-    ID_MASTER_ANNOUNCE,
-    ID_MASTER_UPDATE
-};
 
 HWND CreateMainWindow();
 int RegisterClasses();
@@ -122,7 +118,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR cmdline, 
 HWND CreateMainWindow()
 {
     HWND wnd;
-    wnd = CreateWindowEx(0, WND_CLASS_NAME, "Vault-Tec Multiplayer Mod", WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, (GetSystemMetrics(SM_CXSCREEN) / 2) - 392, (GetSystemMetrics(SM_CYSCREEN) / 2) - 221, 785, 442, HWND_DESKTOP, NULL, instance, NULL);
+    char wndtitle[sizeof(CLIENT_VERSION) + 64];
+    sprintf(wndtitle, "Vault-Tec Multiplayer Mod %s (FOR TESTING PURPOSES ONLY)", CLIENT_VERSION);
+    wnd = CreateWindowEx(0, WND_CLASS_NAME, wndtitle, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, (GetSystemMetrics(SM_CXSCREEN) / 2) - 392, (GetSystemMetrics(SM_CYSCREEN) / 2) - 221, 785, 442, HWND_DESKTOP, NULL, instance, NULL);
     ShowWindow(wnd, SW_SHOWNORMAL);
     UpdateWindow(wnd);
     return wnd;
@@ -435,7 +433,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                             master.SetPort(cport != NULL ? atoi(cport) : RAKNET_MASTER_PORT);
                         }
 
-                        if (peer->Connect(master.ToString(false), master.GetPort(), 0, 0, 0, 0, 3, 500, 0) == CONNECTION_ATTEMPT_STARTED)
+                        if (peer->Connect(master.ToString(false), master.GetPort(), MASTER_VERSION, sizeof(MASTER_VERSION), 0, 0, 3, 500, 0) == CONNECTION_ATTEMPT_STARTED)
                         {
                             bool query = true;
 
@@ -637,6 +635,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                                         }
                                         break;
                                     }
+                                    case ID_INVALID_PASSWORD:
+                                        MessageBox(NULL, "MasterServer version mismatch.\nPlease download the most recent binaries from www.vaultmp.com", "Error", MB_OK | MB_ICONERROR);
                                     case ID_DISCONNECTION_NOTIFICATION:
                                     case ID_CONNECTION_BANNED:
                                     case ID_CONNECTION_LOST:
@@ -653,6 +653,10 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                     update = false;
 
                     RefreshServerList();
+                    break;
+
+                case IDC_BUTTON3:
+                    MessageBox(NULL, "Vault-Tec Multiplayer Mod is an Open-Source project.\n\ncode: Recycler (www.brickster.net)\nnetwork: RakNet (www.jenkinssoftware.com)\nscripting: The PAWN language (www.compuphase.com)\nmusic: uFMOD (ufmod.sourceforge.net)\n\nGreetings fly out to:\nmqidx, benG, ArminSeiko\n\nThanks to everyone contributing to the project (ideas, code, moral support etc). You guys keep it going :-)\n\nwww.vaultmp.com", "vaultmp credits", MB_OK | MB_ICONINFORMATION);
                     break;
 
                 case IDC_CHECK0:

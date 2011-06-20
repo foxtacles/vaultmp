@@ -25,6 +25,7 @@
 		</Linker>
 		<Unit filename="..\Client.cpp" />
 		<Unit filename="..\Client.h" />
+		<Unit filename="..\Data.h" />
 		<Unit filename="..\Player.cpp" />
 		<Unit filename="..\Player.h" />
 		<Unit filename="..\RakNet\AutopatcherPatchContext.h" />
