@@ -24,6 +24,8 @@
 			<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\libws2_32.a" />
 		</Linker>
 		<Unit filename="Data.h" />
+		<Unit filename="Debug.cpp" />
+		<Unit filename="Debug.h" />
 		<Unit filename="Pipe.cpp" />
 		<Unit filename="Pipe.h" />
 		<Unit filename="Player.cpp" />

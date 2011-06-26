@@ -6,6 +6,7 @@ using namespace std;
 map<RakNetGUID, string> Player::players;
 map<RakNetGUID, Player*> Player::playersguids;
 map<string, Player*> Player::playersrefs;
+Debug* Player::debug;
 
 Player::Player(RakNetGUID guid)
 {
@@ -32,10 +33,28 @@ Player::Player(RakNetGUID guid)
 
     for (int i = 0; i < MAX_SKIP_FLAGS; i++)
         nowrite[i] = false;
+
+    if (debug != NULL)
+    {
+        char text[128];
+        ZeroMemory(text, sizeof(text));
+
+        sprintf(text, "New player object created (guid: %s)", this->guid.ToString());
+        debug->Print(text, true);
+    }
 }
 
 Player::~Player()
 {
+    if (debug != NULL)
+    {
+        char text[128];
+        ZeroMemory(text, sizeof(text));
+
+        sprintf(text, "Player object destroyed (ref: %s, guid: %s)", this->refID.c_str(), this->guid.ToString());
+        debug->Print(text, true);
+    }
+
     players.erase(this->guid);
     playersguids.erase(this->guid);
     if (this->refID.compare("none") != 0) playersrefs.erase(this->refID);
@@ -75,6 +94,17 @@ void Player::DestroyInstances()
 
     for (int j = 0; j < size; j++)
         delete pPlayers[j];
+
+    if (debug != NULL)
+        debug->Print((char*) "All player instances destroyed", true);
+}
+
+void Player::SetDebugHandler(Debug* debug)
+{
+    Player::debug = debug;
+
+    if (debug != NULL)
+        debug->Print((char*) "Attached debug handler to Player class", true);
 }
 
 map<RakNetGUID, string> Player::GetPlayerList()
@@ -191,49 +221,157 @@ bool Player::UpdatePlayerUpdateStruct(pPlayerUpdate* data)
 void Player::SetPlayerName(string name)
 {
     this->name = name;
+
+    if (debug != NULL)
+    {
+        char text[128];
+        ZeroMemory(text, sizeof(text));
+
+        sprintf(text, "Player name was set to %s (ref: %s, guid: %s)", this->name.c_str(), this->refID.c_str(), this->guid.ToString());
+        debug->Print(text, true);
+    }
 }
 
-void Player::SetPlayerPos(int cell, float pos)
+bool Player::SetPlayerPos(int cell, float pos)
 {
     if (cell >= 0 && cell <= 2 && !nowrite[(cell == 0) ? SKIPFLAG_GETPOS_X : (cell == 1) ? SKIPFLAG_GETPOS_Y : (cell == 2) ? SKIPFLAG_GETPOS_Z : 0])
-        this->pos[cell] = pos;
+    {
+        if ((pos != 2048.0 && pos != 128.0 && pos != 0.0))
+        {
+            this->pos[cell] = pos;
+
+            if (debug != NULL)
+            {
+                char text[128];
+                ZeroMemory(text, sizeof(text));
+
+                sprintf(text, "Player %c-coordinate was set to %f (ref: %s, guid: %s)", cell == 0 ? 'X' : cell == 1 ? 'Y' : 'Z', this->pos[cell], this->refID.c_str(), this->guid.ToString());
+                debug->Print(text, true);
+            }
+
+            return true;
+        }
+        else
+        {
+            if (debug != NULL)
+            {
+                char text[128];
+                ZeroMemory(text, sizeof(text));
+
+                sprintf(text, "Player %c-coordinate was NOT set to %f (INVALID) (ref: %s, guid: %s)", cell == 0 ? 'X' : cell == 1 ? 'Y' : 'Z', pos, this->refID.c_str(), this->guid.ToString());
+                debug->Print(text, true);
+            }
+
+            return false;
+        }
+    }
+
+    return false;
 }
 
 void Player::SetPlayerAngle(float angle)
 {
     this->angle = angle;
+
+    if (debug != NULL)
+    {
+        char text[128];
+        ZeroMemory(text, sizeof(text));
+
+        sprintf(text, "Player Z-angle was set to %f (ref: %s, guid: %s)", this->angle, this->refID.c_str(), this->guid.ToString());
+        debug->Print(text, true);
+    }
 }
 
 void Player::SetPlayerHealth(float health)
 {
     this->health = health;
+
+    if (debug != NULL)
+    {
+        char text[128];
+        ZeroMemory(text, sizeof(text));
+
+        sprintf(text, "Player health was set to %f (ref: %s, guid: %s)", this->health, this->refID.c_str(), this->guid.ToString());
+        debug->Print(text, true);
+    }
 }
 
 void Player::SetPlayerBaseHealth(float baseHealth)
 {
     this->baseHealth = baseHealth;
+
+    if (debug != NULL)
+    {
+        char text[128];
+        ZeroMemory(text, sizeof(text));
+
+        sprintf(text, "Player base health was set to %f (ref: %s, guid: %s)", this->baseHealth, this->refID.c_str(), this->guid.ToString());
+        debug->Print(text, true);
+    }
 }
 
 void Player::SetPlayerCondition(int cell, float cond)
 {
     if (cell >= 0 && cell <= 5)
+    {
         this->cond[cell] = cond;
+
+        if (debug != NULL)
+        {
+            char text[128];
+            ZeroMemory(text, sizeof(text));
+
+            sprintf(text, "Player %s was set to %f (ref: %s, guid: %s)", cell == 0 ? (char*) "PerceptionCondition" : cell == 1 ? (char*) "EnduranceCondition" : cell == 2 ? (char*) "LeftAttackCondition" : cell == 3 ? (char*) "RightAttackCondition" : cell == 4 ? (char*) "LeftMobilityCondition" : (char*) "RightMobilityCondition", this->cond[cell], this->refID.c_str(), this->guid.ToString());
+            debug->Print(text, true);
+        }
+    }
 }
 
 void Player::SetPlayerDead(bool dead)
 {
     this->dead = dead;
+
+    if (debug != NULL)
+    {
+        char text[128];
+        ZeroMemory(text, sizeof(text));
+
+        sprintf(text, "Player dead state was set to %d (ref: %s, guid: %s)", (int) this->dead, this->refID.c_str(), this->guid.ToString());
+        debug->Print(text, true);
+    }
 }
 
 void Player::SetPlayerAlerted(bool alerted)
 {
     this->alerted = alerted;
+
+    if (debug != NULL)
+    {
+        char text[128];
+        ZeroMemory(text, sizeof(text));
+
+        sprintf(text, "Player alerted state was set to %d (ref: %s, guid: %s)", (int) this->alerted, this->refID.c_str(), this->guid.ToString());
+        debug->Print(text, true);
+    }
 }
 
 void Player::SetPlayerMoving(int moving)
 {
     if (moving >= 0 && moving <= 8)
+    {
         this->moving = moving;
+
+        if (debug != NULL)
+        {
+            char text[128];
+            ZeroMemory(text, sizeof(text));
+
+            sprintf(text, "Player running animation was set to %s (ref: %s, guid: %s)", moving == 0 ? (char*) "Idle" : moving == 1 ? (char*) "FastForward" : moving == 2 ? (char*) "FastBackward" : moving == 3 ? (char*) "FastLeft" : moving == 4 ? (char*) "FastRight" : moving == 5 ? (char*) "Forward" : moving == 6 ? (char*) "Backward" : moving == 7 ? (char*) "Left" : (char*) "Right", this->refID.c_str(), this->guid.ToString());
+            debug->Print(text, true);
+        }
+    }
+
 }
 
 void Player::SetPlayerRefID(string refID)
@@ -243,6 +381,15 @@ void Player::SetPlayerRefID(string refID)
     it = players.find(this->guid);
     it->second = refID;
     playersrefs.insert(pair<string, Player*>(refID, this));
+
+    if (debug != NULL)
+    {
+        char text[128];
+        ZeroMemory(text, sizeof(text));
+
+        sprintf(text, "Player refID was set to %s (guid: %s)", this->refID.c_str(), this->guid.ToString());
+        debug->Print(text, true);
+    }
 }
 
 void Player::ToggleNoOverride(int skipflag, bool toggle)

@@ -389,32 +389,7 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         if (packet->length != sizeof(pPlayerUpdate))
                             break;
 
-                        map<RakNetGUID, string> players = Player::GetPlayerList();
-                        map<RakNetGUID, string>::iterator it;
-
-                        for (it = players.begin(); it != players.end(); it++)
-                        {
-                            RakNetGUID guid = it->first;
-                            if (guid != packet->guid) peer->Send((char*) update, sizeof(pPlayerUpdate), HIGH_PRIORITY, RELIABLE, 0, guid, false, 0);
-                        }
-
                         Player* player = Player::GetPlayerFromGUID(packet->guid);
-
-                        if (update->dead == true && player->IsPlayerDead() != true)
-                        {
-                            int ret = 1;
-
-                            if (amx != NULL)
-                            {
-                                void* args[1];
-
-                                int id = Client::GetClientFromGUID(packet->guid)->GetClientID();
-
-                                args[0] = reinterpret_cast<void*>(&id);
-
-                                ret = Script::Call(amx, (char*) "OnPlayerDeath", (char*) "i", args);
-                            }
-                        }
 
                         player->SetPlayerPos(0, update->X);
                         player->SetPlayerPos(1, update->Y);
@@ -431,6 +406,33 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         player->SetPlayerDead(update->dead);
                         player->SetPlayerAlerted(update->alerted);
                         player->SetPlayerMoving(update->moving);
+
+                        player->UpdatePlayerUpdateStruct(update);
+
+                        map<RakNetGUID, string> players = Player::GetPlayerList();
+                        map<RakNetGUID, string>::iterator it;
+
+                        for (it = players.begin(); it != players.end(); it++)
+                        {
+                            RakNetGUID guid = it->first;
+                            if (guid != packet->guid) peer->Send((char*) update, sizeof(pPlayerUpdate), HIGH_PRIORITY, RELIABLE, 0, guid, false, 0);
+                        }
+
+                        if (update->dead == true && player->IsPlayerDead() != true)
+                        {
+                            int ret = 1;
+
+                            if (amx != NULL)
+                            {
+                                void* args[1];
+
+                                int id = Client::GetClientFromGUID(packet->guid)->GetClientID();
+
+                                args[0] = reinterpret_cast<void*>(&id);
+
+                                ret = Script::Call(amx, (char*) "OnPlayerDeath", (char*) "i", args);
+                            }
+                        }
                         break;
                     }
                     case ID_GAME_END:

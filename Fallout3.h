@@ -15,6 +15,10 @@
 #include "Data.h"
 #include "vaultmp.h"
 
+#ifdef VAULTMP_DEBUG
+#include "Debug.h"
+#endif
+
 #define OPENCMD() while (cmdmutex); cmdmutex = true;
 #define CLOSECMD() cmdmutex = false;
 #define PUSHCMD(cmd) tmplist.push_back(cmd);
@@ -54,6 +58,10 @@ class Fallout3 {
 
               static PipeClient* pipeServer;
               static PipeServer* pipeClient;
+
+              #ifdef VAULTMP_DEBUG
+              static Debug* debug;
+              #endif
 
               struct INJECT;
       public:

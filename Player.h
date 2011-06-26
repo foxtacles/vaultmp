@@ -7,6 +7,7 @@
 
 #include "Client.h"
 #include "Data.h"
+#include "Debug.h"
 
 #include "RakNet/RakPeerInterface.h"
 
@@ -20,6 +21,7 @@ class Player {
               static map<RakNetGUID, string> players;
               static map<RakNetGUID, Player*> playersguids;
               static map<string, Player*> playersrefs;
+              static Debug* debug;
 
               RakNetGUID guid;
               string refID;
@@ -44,6 +46,7 @@ class Player {
               static Player* GetPlayerFromGUID(RakNetGUID guid);
               static Player* GetPlayerFromRefID(string refID);
               static void DestroyInstances();
+              static void SetDebugHandler(Debug* debug);
 
               string GetPlayerName();
               float GetPlayerPos(int cell);
@@ -60,7 +63,7 @@ class Player {
               bool UpdatePlayerUpdateStruct(pPlayerUpdate* data);
 
               void SetPlayerName(string name);
-              void SetPlayerPos(int cell, float pos);
+              bool SetPlayerPos(int cell, float pos);
               void SetPlayerAngle(float angle);
               void SetPlayerHealth(float health);
               void SetPlayerBaseHealth(float baseHealth);

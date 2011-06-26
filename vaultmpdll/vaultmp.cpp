@@ -60,6 +60,8 @@ void Fallout3sendOp(string op) {
 void Fallout3commandNotify() {
 
     char format[MAX_OUTPUT_LENGTH + 3];
+    ZeroMemory(format, MAX_OUTPUT_LENGTH + 3);
+
     strcat(format, "op:");
     strcat(format, Fallout3output);
     string output(format);

@@ -216,7 +216,7 @@ void CreateWindowContent(HWND parent)
     wnd = CreateWindowEx(0x00000000, "Button", "Credits", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 660, 272, 100, 25, parent, (HMENU) IDC_BUTTON3, instance, NULL);
     SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
-    wnd = CreateWindowEx(0x00000200, "Edit", "", 0x50010080, 611, 305, 146, 20, parent, (HMENU) IDC_EDIT3, instance, NULL);
+    wnd = CreateWindowEx(0x00000200, "Edit", "vaultmp.com", 0x50010080, 611, 305, 146, 20, parent, (HMENU) IDC_EDIT3, instance, NULL);
     SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
     SendMessage(wnd, EM_SETLIMITTEXT, (WPARAM) 32, 0);
 
