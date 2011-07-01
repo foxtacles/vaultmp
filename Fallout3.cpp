@@ -19,7 +19,6 @@ list<fCommand*> Fallout3::cmdlist;
 list<fCommand*> Fallout3::tmplist;
 fCommand* Fallout3::skipcmds[MAX_SKIP_FLAGS];
 bool Fallout3::cmdmutex = false;
-pPlayerUpdate Fallout3::localPlayerUpdate;
 PipeClient* Fallout3::pipeServer;
 PipeServer* Fallout3::pipeClient;
 
@@ -309,7 +308,7 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                         #ifdef VAULTMP_DEBUG
                         else
                         {
-                            char text[128];
+                            char text[256];
                             ZeroMemory(text, sizeof(text));
 
                             sprintf(text, "Command could not be processed: %s", const_cast<char*>(recv.c_str()));
@@ -368,6 +367,8 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
         } while (low.compare("ca:") != 0 && !endThread);
     }
 
+    // kill game process if running
+
     return ((DWORD) data);
 }
 
@@ -397,38 +398,49 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
     cmds[4].command = "getbaseactorvalue Health";
     cmds[4].repeat = true;
     cmds[4].forplayers = false;
+    cmds[4].priority = 50;
 
     cmds[5].command = "getactorvalue Health";
     cmds[5].repeat = true;
-    cmds[5].forplayers = false;
+    cmds[5].forplayers = true;
+    cmds[5].priority = 10;
+    skipcmds[SKIPFLAG_GETHEALTH] = &cmds[5];
 
     cmds[6].command = "getactorvalue PerceptionCondition";
     cmds[6].repeat = true;
     cmds[6].forplayers = false;
+    cmds[6].priority = 15;
 
     cmds[7].command = "getactorvalue EnduranceCondition";
     cmds[7].repeat = true;
     cmds[7].forplayers = false;
+    cmds[7].priority = 15;
 
     cmds[8].command = "getactorvalue LeftAttackCondition";
     cmds[8].repeat = true;
     cmds[8].forplayers = false;
+    cmds[8].priority = 15;
 
     cmds[9].command = "getactorvalue RightAttackCondition";
     cmds[9].repeat = true;
     cmds[9].forplayers = false;
+    cmds[9].priority = 15;
 
     cmds[10].command = "getactorvalue LeftMobilityCondition";
     cmds[10].repeat = true;
     cmds[10].forplayers = false;
+    cmds[10].priority = 15;
 
     cmds[11].command = "getactorvalue RightMobilityCondition";
     cmds[11].repeat = true;
     cmds[11].forplayers = false;
+    cmds[11].priority = 15;
 
     cmds[12].command = "getdead";
     cmds[12].repeat = true;
     cmds[12].forplayers = true;
+    cmds[12].priority = 7;
+    skipcmds[SKIPFLAG_GETDEAD] = &cmds[12];
 
     cmds[13].command = "showanim";
     cmds[13].repeat = true;
@@ -444,9 +456,40 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
     while (!endThread)
     {
         list<fCommand*>::iterator it;
+        list<fCommand*>::iterator insertAt = cmdlist.end();
 
         for (it = cmdlist.begin(); it != cmdlist.end() && !endThread;)
         {
+            if (!tmplist.empty())
+            {
+                OPENCMD();
+
+                int count = tmplist.size();
+
+                if (insertAt != cmdlist.end())
+                {
+                    list<fCommand*>::iterator insertAt_tmp = insertAt;
+                    insertAt_tmp++;
+                    cmdlist.splice(insertAt_tmp, tmplist);
+                }
+                else
+                {
+                    list<fCommand*>::iterator it_tmp = it;
+                    it_tmp++;
+                    cmdlist.splice(it_tmp, tmplist);
+                }
+
+                list<fCommand*>::iterator it_tmp = it;
+                advance(it_tmp, count);
+
+                insertAt = it_tmp;
+
+                CLOSECMD();
+            }
+
+            if (insertAt == it)
+                insertAt = cmdlist.end();
+
             fCommand* cmd = *it;
 
             if (cmd->skipflag)
@@ -455,11 +498,20 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
                 continue;
             }
 
+            if (cmd->curPriority != cmd->priority)
+            {
+                cmd->curPriority++;
+                it++;
+                continue;
+            }
+            else
+                cmd->curPriority = 0;
+
             #ifdef VAULTMP_DEBUG
             char text[128];
             ZeroMemory(text, sizeof(text));
 
-            sprintf(text, "Executing command (%s on %s, sleep: %d)", cmd->command.c_str(), cmd->forplayers ? "all" : cmd->refID.empty() ? "player" : cmd->refID.c_str(), cmd->sleep);
+            sprintf(text, "Executing command (%s on %s, sleep: %d, timediff: %dms)", cmd->command.c_str(), cmd->forplayers ? "all" : cmd->refID.empty() ? "player" : cmd->refID.c_str(), cmd->sleep, !cmd->repeat ? (GetTickCount() - cmd->tcount) : -1);
             debug->Print(text, true);
             #endif
 
@@ -521,12 +573,6 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
             else
                 it++;
         }
-
-        OPENCMD();
-
-        cmdlist.splice(cmdlist.end(), tmplist);
-
-        CLOSECMD();
     }
 
     return ((DWORD) data);
@@ -560,94 +606,103 @@ HANDLE Fallout3::InitializeFallout3(bool NewVegas)
 
         if (Fallout3::NewVegas ? (size == FALLOUTNV_EXE1_SIZE || size == FALLOUTNV_EXE2_SIZE) : (size == FALLOUT3_EXE_SIZE))
         {
-            FILE* vaultmp = fopen("vaultmp.dll", "rb");
+            FILE* fose = fopen(Fallout3::NewVegas ? "nvse_1_1.dll" : "fose_1_7.dll", "rb");
 
-            if (vaultmp != NULL)
+            if (fose != NULL)
             {
-                fseek(vaultmp, 0, SEEK_END);
-                size = ftell(vaultmp);
-                fclose(vaultmp);
+                fclose(fose);
 
-                if (size == VAULTMP_DLL_SIZE)
+                FILE* vaultmp = fopen("vaultmp.dll", "rb");
+
+                if (vaultmp != NULL)
                 {
-                    if (lookupProgramID(module) == 0)
+                    fseek(vaultmp, 0, SEEK_END);
+                    size = ftell(vaultmp);
+                    fclose(vaultmp);
+
+                    if (size == VAULTMP_DLL_SIZE)
                     {
-                        STARTUPINFO si;
-                        PROCESS_INFORMATION pi;
-
-                        ZeroMemory(&si, sizeof(si));
-                        ZeroMemory(&pi, sizeof(pi));
-                        si.cb = sizeof(si);
-
-                        if (CreateProcess(module, NULL, NULL, NULL, FALSE, Fallout3::NewVegas ? 0 : CREATE_SUSPENDED, NULL, NULL, &si, &pi))
+                        if (lookupProgramID(module) == 0)
                         {
-                            if (Fallout3::NewVegas) Sleep(2000); // some decrypt whatsoever needs time
+                            STARTUPINFO si;
+                            PROCESS_INFORMATION pi;
 
-                            HANDLE hProc;
+                            ZeroMemory(&si, sizeof(si));
+                            ZeroMemory(&pi, sizeof(pi));
+                            si.cb = sizeof(si);
 
-                            hProc = OpenProcess(PROCESS_ALL_ACCESS, false, pi.dwProcessId);
-
-                            if (hProc)
+                            if (CreateProcess(module, NULL, NULL, NULL, FALSE, Fallout3::NewVegas ? 0 : CREATE_SUSPENDED, NULL, NULL, &si, &pi))
                             {
-                                INJECT data;
-                                HINSTANCE hDll;
-                                TCHAR curdir[MAX_PATH + 1];
-                                LPVOID start, thread;
-                                DWORD codesize;
+                                if (Fallout3::NewVegas) Sleep(2000); // some decrypt whatsoever needs time
 
-                                GetModuleFileName(GetModuleHandle(NULL), (LPTSTR) curdir, MAX_PATH);
-                                PathRemoveFileSpec(curdir);
+                                HANDLE hProc;
 
-                                strcat(curdir, "\\vaultmp.dll");
-                                strcpy(data.DLLpath, curdir);
-                                strcpy(data.DLLjump, "DLLjump");
+                                hProc = OpenProcess(PROCESS_ALL_ACCESS, false, pi.dwProcessId);
 
-                                hDll = LoadLibrary("kernel32.dll");
-                                data.LoadLibrary = (fLoadLibrary) GetProcAddress(hDll, "LoadLibraryA");
-                                data.GetProcAddress = (fGetProcAddress) GetProcAddress(hDll, "GetProcAddress");
-                                data.NewVegas = Fallout3::NewVegas;
+                                if (hProc)
+                                {
+                                    INJECT data;
+                                    HINSTANCE hDll;
+                                    TCHAR curdir[MAX_PATH + 1];
+                                    LPVOID start, thread;
+                                    DWORD codesize;
 
-                                codesize = (DWORD) InjectedEnd - (DWORD) InjectedCode;
+                                    GetModuleFileName(GetModuleHandle(NULL), (LPTSTR) curdir, MAX_PATH);
+                                    PathRemoveFileSpec(curdir);
 
-                                start = VirtualAllocEx(hProc, 0, codesize + sizeof(INJECT), MEM_COMMIT, PAGE_EXECUTE_READWRITE);
-                                thread = (LPVOID) ((DWORD) start + sizeof(INJECT));
+                                    strcat(curdir, "\\vaultmp.dll");
+                                    strcpy(data.DLLpath, curdir);
+                                    strcpy(data.DLLjump, "DLLjump");
 
-                                WriteProcessMemory(hProc, start, (LPVOID) &data, sizeof(INJECT), NULL);
-                                WriteProcessMemory(hProc, thread, (LPVOID) InjectedCode, codesize, NULL);
+                                    hDll = LoadLibrary("kernel32.dll");
+                                    data.LoadLibrary = (fLoadLibrary) GetProcAddress(hDll, "LoadLibraryA");
+                                    data.GetProcAddress = (fGetProcAddress) GetProcAddress(hDll, "GetProcAddress");
+                                    data.NewVegas = Fallout3::NewVegas;
 
-                                CreateRemoteThread(hProc, 0, 0, (LPTHREAD_START_ROUTINE) thread, start, 0, 0);
+                                    codesize = (DWORD) InjectedEnd - (DWORD) InjectedCode;
 
-                                /* Initalizing vaultmp.exe <-> Fallout3.exe / FalloutNV.exe pipe */
+                                    start = VirtualAllocEx(hProc, 0, codesize + sizeof(INJECT), MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+                                    thread = (LPVOID) ((DWORD) start + sizeof(INJECT));
 
-                                HANDLE PipeThread;
-                                DWORD Fallout3pipeID;
+                                    WriteProcessMemory(hProc, start, (LPVOID) &data, sizeof(INJECT), NULL);
+                                    WriteProcessMemory(hProc, thread, (LPVOID) InjectedCode, codesize, NULL);
 
-                                PipeThread = CreateThread(NULL, 0, Fallout3pipe, (LPVOID) 0, 0, &Fallout3pipeID);
+                                    CreateRemoteThread(hProc, 0, 0, (LPTHREAD_START_ROUTINE) thread, start, 0, 0);
 
-                                while (!wakeup) Sleep(2);
+                                    /* Initalizing vaultmp.exe <-> Fallout3.exe / FalloutNV.exe pipe */
 
-                                /* Resuming Fallout3.exe */
+                                    HANDLE PipeThread;
+                                    DWORD Fallout3pipeID;
 
-                                if (!Fallout3::NewVegas) ResumeThread(pi.hThread);
+                                    PipeThread = CreateThread(NULL, 0, Fallout3pipe, (LPVOID) 0, 0, &Fallout3pipeID);
 
-                                CloseHandle(hProc);
+                                    while (!wakeup) Sleep(2);
 
-                                return PipeThread;
+                                    /* Resuming Fallout3.exe */
+
+                                    if (!Fallout3::NewVegas) ResumeThread(pi.hThread);
+
+                                    CloseHandle(hProc);
+
+                                    return PipeThread;
+                                }
+                                else
+                                    MessageBox(NULL, "Failed opening the game process!", "Error", MB_OK | MB_ICONERROR);
                             }
                             else
-                                MessageBox(NULL, "Failed opening the game process!", "Error", MB_OK | MB_ICONERROR);
+                                MessageBox(NULL, "Failed creating the game process!", "Error", MB_OK | MB_ICONERROR);
                         }
                         else
-                            MessageBox(NULL, "Failed creating the game process!", "Error", MB_OK | MB_ICONERROR);
+                            MessageBox(NULL, "Either Fallout 3 or Fallout: New Vegas is already runnning!", "Error", MB_OK | MB_ICONERROR);
                     }
                     else
-                        MessageBox(NULL, "Either Fallout 3 or Fallout: New Vegas is already runnning!", "Error", MB_OK | MB_ICONERROR);
+                        MessageBox(NULL, "vaultmp.dll is either corrupted or not up to date!", "Error", MB_OK | MB_ICONERROR);
                 }
                 else
-                    MessageBox(NULL, "vaultmp.dll is either corrupted or not up to date!", "Error", MB_OK | MB_ICONERROR);
+                    MessageBox(NULL, "Could not find vaultmp.dll!", "Error", MB_OK | MB_ICONERROR);
             }
             else
-                MessageBox(NULL, "Could not find vaultmp.dll!", "Error", MB_OK | MB_ICONERROR);
+                MessageBox(NULL, "Could not find FOSE 1.7 / NVSE 1.1!\nhttp://fose.silverlock.org/\nhttp://nvse.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
         }
         else
             MessageBox(NULL, "Fallout3.exe / FalloutNV.exe is either corrupted or not supported!", "Error", MB_OK | MB_ICONERROR);
@@ -690,7 +745,8 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
     self->SetPlayerName(name);
     self->SetPlayerRefID("player");
 
-    localPlayerUpdate = self->GetPlayerUpdateStruct();
+    pPlayerUpdate localPlayerUpdate = self->GetPlayerUpdateStruct();
+    pPlayerStateUpdate localPlayerStateUpdate = self->GetPlayerStateUpdateStruct();
 
     cmdlist.clear();
 
@@ -707,7 +763,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                 {
                     BitStream query;
                     query.Write((MessageID) ID_GAME_END);
-                    peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, addr, false, 0);
+                    peer->Send(&query, HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_SYSTEM, addr, false, 0);
                 }
 
             if (Fallout3gamethread != NULL)
@@ -715,7 +771,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                 {
                     BitStream query;
                     query.Write((MessageID) ID_GAME_END);
-                    peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, addr, false, 0);
+                    peer->Send(&query, HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_SYSTEM, addr, false, 0);
                 }
 
             for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
@@ -741,7 +797,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                     query.Write(rname);
                     query.Write(rpwd);
 
-                    peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, packet->systemAddress, false, 0);
+                    peer->Send(&query, HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_SYSTEM, packet->systemAddress, false, 0);
                     break;
                 }
                 case ID_GAME_INIT:
@@ -765,7 +821,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                     else
                         query.Write((MessageID) ID_GAME_END);
 
-                    peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, packet->systemAddress, false, 0);
+                    peer->Send(&query, HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_SYSTEM, packet->systemAddress, false, 0);
                     break;
                 }
                 case ID_GAME_RUN:
@@ -797,7 +853,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                     Fallout3gamethread = CreateThread(NULL, 0, Fallout3game, (LPVOID) 0, 0, &Fallout3gamethreadID);
 
                     query.Write((MessageID) ID_GAME_START);
-                    peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, packet->systemAddress, false, 0);
+                    peer->Send(&query, HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_SYSTEM, packet->systemAddress, false, 0);
                     break;
                 }
                 case ID_NEW_PLAYER:
@@ -1063,6 +1119,36 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                             player->SetPlayerMoving(update->moving);
                         }
 
+                        CLOSECMD();
+                    }
+                    break;
+                }
+                case ID_PLAYER_STATE_UPDATE:
+                {
+                    pPlayerStateUpdate* update = (pPlayerStateUpdate*) packet->data;
+
+                    if (packet->length != sizeof(pPlayerStateUpdate))
+                        break;
+
+                    Player* player = Player::GetPlayerFromGUID(update->guid);
+                    string refID = player->GetPlayerRefID();
+
+                    #ifdef VAULTMP_DEBUG
+                    char text[128];
+                    ZeroMemory(text, sizeof(text));
+
+                    sprintf(text, "Received player state update packet (name: %s, ref: %s, guid: %s)", player->GetPlayerName().c_str(), refID.c_str(), update->guid.ToString());
+                    debug->Print(text, true);
+                    #endif
+
+                    fCommand* cmd;
+
+                    if (refID.compare("none") != 0)
+                    {
+                        OPENCMD();
+
+                        char pos[16];
+
                         if (update->baseHealth != player->GetPlayerBaseHealth())
                         {
                             sprintf(pos, "%i", (int) update->baseHealth);
@@ -1079,6 +1165,9 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
 
                         if (update->health != player->GetPlayerHealth())
                         {
+                            FLAG(SKIPFLAG_GETHEALTH);
+                            player->ToggleNoOverride(SKIPFLAG_GETHEALTH, true);
+
                             sprintf(pos, "%i", (int) update->health);
 
                             cmd = new fCommand;
@@ -1086,6 +1175,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                             cmd->refID = refID;
                             cmd->forplayers = false;
                             cmd->repeat = false;
+                            cmd->flipcmd = SKIPFLAG_GETHEALTH;
                             PUSHCMD(cmd);
 
                             player->SetPlayerHealth(update->health);
@@ -1175,14 +1265,16 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                             player->SetPlayerCondition(5, update->conds[5]);
                         }
 
-                        // more ActorValues
-
                         if (update->dead != player->IsPlayerDead())
                         {
+                            FLAG(SKIPFLAG_GETDEAD);
+                            player->ToggleNoOverride(SKIPFLAG_GETDEAD, true);
+
                             cmd = new fCommand;
                             cmd->refID = refID;
                             cmd->forplayers = false;
                             cmd->repeat = false;
+                            cmd->flipcmd = SKIPFLAG_GETDEAD;
                             cmd->sleep = 150;
 
                             switch (update->dead)
@@ -1226,7 +1318,30 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
             /* Send updated data to server */
 
             if (self->UpdatePlayerUpdateStruct(&localPlayerUpdate))
-                peer->Send((char*) &localPlayerUpdate, sizeof(localPlayerUpdate), HIGH_PRIORITY, RELIABLE, 0, addr, false, 0);
+            {
+                peer->Send((char*) &localPlayerUpdate, sizeof(localPlayerUpdate), MEDIUM_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_PLAYER_UPDATE, addr, false, 0);
+
+                #ifdef VAULTMP_DEBUG
+                char text[128];
+                ZeroMemory(text, sizeof(text));
+
+                sprintf(text, "Sent player update packet (%s)", addr.ToString());
+                debug->Print(text, true);
+                #endif
+            }
+
+            if (self->UpdatePlayerStateUpdateStruct(&localPlayerStateUpdate))
+            {
+                peer->Send((char*) &localPlayerStateUpdate, sizeof(localPlayerStateUpdate), HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_PLAYER_STATE_UPDATE, addr, false, 0);
+
+                #ifdef VAULTMP_DEBUG
+                char text[128];
+                ZeroMemory(text, sizeof(text));
+
+                sprintf(text, "Sent player state update packet (%s)", addr.ToString());
+                debug->Print(text, true);
+                #endif
+            }
 
             RakSleep(2);
         }

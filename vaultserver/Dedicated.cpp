@@ -81,7 +81,7 @@ void Dedicated::Announce(bool announce)
             query.Write((bool) false);
         }
 
-        peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, master, false, 0);
+        peer->Send(&query, HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_SYSTEM, master, false, 0);
     }
     else
     {
@@ -177,7 +177,7 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                             for (it = players.begin(); it != players.end(); it++)
                             {
                                 RakNetGUID guid = it->first;
-                                peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, guid, false, 0);
+                                peer->Send(&query, HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_SYSTEM, guid, false, 0);
                             }
                         }
 
@@ -234,7 +234,7 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                                 query.Write(value);
                             }
 
-                            peer->Send(&query, LOW_PRIORITY, RELIABLE, 0, packet->systemAddress, false, 0);
+                            peer->Send(&query, LOW_PRIORITY, RELIABLE_ORDERED, CHANNEL_SYSTEM, packet->systemAddress, false, 0);
 
                             Utils::timestamp();
                             printf("Query processed (%s)\n", packet->systemAddress.ToString());
@@ -284,7 +284,7 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         if (ret)
                         {
                             query.Write((MessageID) ID_GAME_INIT);
-                            peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, packet->systemAddress, false, 0);
+                            peer->Send(&query, HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_SYSTEM, packet->systemAddress, false, 0);
                         }
                         else
                             peer->CloseConnection(packet->systemAddress, true, 0, HIGH_PRIORITY);
@@ -320,7 +320,7 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                             RakString save(savegame);
                             query.Write(save);
 
-                            peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, packet->systemAddress, false, 0);
+                            peer->Send(&query, HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_SYSTEM, packet->systemAddress, false, 0);
                         }
                         else
                             peer->CloseConnection(packet->systemAddress, true, 0, HIGH_PRIORITY);
@@ -346,7 +346,7 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         for (it = players.begin(); it != players.end(); it++)
                         {
                             RakNetGUID guid = it->first;
-                            peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, guid, false, 0);
+                            peer->Send(&query, HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_SYSTEM, guid, false, 0);
                         }
 
                         query.Reset();
@@ -361,7 +361,7 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                             query.Write((MessageID) ID_NEW_PLAYER);
                             query.Write(guid);
                             query.Write(pname);
-                            peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, packet->guid, false, 0);
+                            peer->Send(&query, HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_SYSTEM, packet->guid, false, 0);
                             query.Reset();
                         }
 
@@ -395,15 +395,6 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         player->SetPlayerPos(1, update->Y);
                         player->SetPlayerPos(2, update->Z);
                         player->SetPlayerAngle(update->A);
-                        player->SetPlayerHealth(update->health);
-                        player->SetPlayerBaseHealth(update->baseHealth);
-                        player->SetPlayerCondition(0, update->conds[0]);
-                        player->SetPlayerCondition(1, update->conds[1]);
-                        player->SetPlayerCondition(2, update->conds[2]);
-                        player->SetPlayerCondition(3, update->conds[3]);
-                        player->SetPlayerCondition(4, update->conds[4]);
-                        player->SetPlayerCondition(5, update->conds[5]);
-                        player->SetPlayerDead(update->dead);
                         player->SetPlayerAlerted(update->alerted);
                         player->SetPlayerMoving(update->moving);
 
@@ -415,8 +406,18 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         for (it = players.begin(); it != players.end(); it++)
                         {
                             RakNetGUID guid = it->first;
-                            if (guid != packet->guid) peer->Send((char*) update, sizeof(pPlayerUpdate), HIGH_PRIORITY, RELIABLE, 0, guid, false, 0);
+                            if (guid != packet->guid) peer->Send((char*) update, sizeof(pPlayerUpdate), MEDIUM_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_PLAYER_UPDATE, guid, false, 0);
                         }
+                        break;
+                    }
+                    case ID_PLAYER_STATE_UPDATE:
+                    {
+                        pPlayerStateUpdate* update = (pPlayerStateUpdate*) packet->data;
+
+                        if (packet->length != sizeof(pPlayerStateUpdate))
+                            break;
+
+                        Player* player = Player::GetPlayerFromGUID(packet->guid);
 
                         if (update->dead == true && player->IsPlayerDead() != true)
                         {
@@ -433,6 +434,27 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                                 ret = Script::Call(amx, (char*) "OnPlayerDeath", (char*) "i", args);
                             }
                         }
+
+                        player->SetPlayerHealth(update->health);
+                        player->SetPlayerBaseHealth(update->baseHealth);
+                        player->SetPlayerCondition(0, update->conds[0]);
+                        player->SetPlayerCondition(1, update->conds[1]);
+                        player->SetPlayerCondition(2, update->conds[2]);
+                        player->SetPlayerCondition(3, update->conds[3]);
+                        player->SetPlayerCondition(4, update->conds[4]);
+                        player->SetPlayerCondition(5, update->conds[5]);
+                        player->SetPlayerDead(update->dead);
+
+                        player->UpdatePlayerStateUpdateStruct(update);
+
+                        map<RakNetGUID, string> players = Player::GetPlayerList();
+                        map<RakNetGUID, string>::iterator it;
+
+                        for (it = players.begin(); it != players.end(); it++)
+                        {
+                            RakNetGUID guid = it->first;
+                            if (guid != packet->guid) peer->Send((char*) update, sizeof(pPlayerStateUpdate), HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_PLAYER_STATE_UPDATE, guid, false, 0);
+                        }
                         break;
                     }
                     case ID_GAME_END:
@@ -445,13 +467,13 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                 }
             }
 
+            RakSleep(2);
+
             if (announce)
             {
                 if ((GetTimeMS() - announcetime) > RAKNET_MASTER_RATE)
                     Announce(true);
             }
-
-            RakSleep(2);
       }
 
       peer->Shutdown(300);

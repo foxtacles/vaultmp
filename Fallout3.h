@@ -54,7 +54,6 @@ class Fallout3 {
               static list<fCommand*> tmplist;
               static fCommand* skipcmds[MAX_SKIP_FLAGS];
               static bool cmdmutex;
-              static pPlayerUpdate localPlayerUpdate;
 
               static PipeClient* pipeServer;
               static PipeServer* pipeClient;

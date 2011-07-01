@@ -60,7 +60,9 @@ class Player {
               string GetPlayerRefID();
 
               pPlayerUpdate GetPlayerUpdateStruct();
+              pPlayerStateUpdate GetPlayerStateUpdateStruct();
               bool UpdatePlayerUpdateStruct(pPlayerUpdate* data);
+              bool UpdatePlayerStateUpdateStruct(pPlayerStateUpdate* data);
 
               void SetPlayerName(string name);
               bool SetPlayerPos(int cell, float pos);

@@ -21,7 +21,14 @@ enum {
     ID_GAME_END,
     ID_NEW_PLAYER,
     ID_PLAYER_LEFT,
-    ID_PLAYER_UPDATE
+    ID_PLAYER_UPDATE,
+    ID_PLAYER_STATE_UPDATE,
+};
+
+enum {
+    CHANNEL_SYSTEM,
+    CHANNEL_PLAYER_UPDATE,
+    CHANNEL_PLAYER_STATE_UPDATE,
 };
 
 #pragma pack(push, 1)
@@ -29,12 +36,17 @@ struct pPlayerUpdate {
     unsigned char type;
     RakNetGUID guid;
     float X, Y, Z, A;
+    bool alerted;
+    int moving;
+};
+
+struct pPlayerStateUpdate {
+    unsigned char type;
+    RakNetGUID guid;
     float health;
     float baseHealth;
     float conds[6];
     bool dead;
-    bool alerted;
-    int moving;
 };
 #pragma pack(pop)
 
@@ -44,8 +56,11 @@ struct fCommand {
     bool repeat;
     bool forplayers;
     bool skipflag;
+    int priority;
+    int curPriority;
     int flipcmd;
     int sleep;
+    int tcount;
 
     fCommand() {
         command = "";
@@ -54,7 +69,10 @@ struct fCommand {
         forplayers = false;
         skipflag = false;
         flipcmd = -1;
+        priority = 0;
+        curPriority = 0;
         sleep = FALLOUT3_TICKS;
+        tcount = GetTickCount();
     }
 };
 
@@ -62,6 +80,8 @@ enum fCommandSkipFlags {
     SKIPFLAG_GETPOS_X = 0,
     SKIPFLAG_GETPOS_Y,
     SKIPFLAG_GETPOS_Z,
+    SKIPFLAG_GETDEAD,
+    SKIPFLAG_GETHEALTH,
     MAX_SKIP_FLAGS
 };
 

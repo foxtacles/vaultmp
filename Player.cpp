@@ -174,6 +174,18 @@ pPlayerUpdate Player::GetPlayerUpdateStruct()
     data.Y = pos[1];
     data.Z = pos[2];
     data.A = angle;
+    data.alerted = alerted;
+    data.moving = moving;
+
+    return data;
+}
+
+pPlayerStateUpdate Player::GetPlayerStateUpdateStruct()
+{
+    pPlayerStateUpdate data;
+
+    data.type = ID_PLAYER_STATE_UPDATE;
+    data.guid = guid;
     data.health = health;
     data.baseHealth = baseHealth;
     data.conds[0] = cond[0];
@@ -183,8 +195,6 @@ pPlayerUpdate Player::GetPlayerUpdateStruct()
     data.conds[4] = cond[4];
     data.conds[5] = cond[5];
     data.dead = dead;
-    data.alerted = alerted;
-    data.moving = moving;
 
     return data;
 }
@@ -199,6 +209,22 @@ bool Player::UpdatePlayerUpdateStruct(pPlayerUpdate* data)
         player.Y != data->Y ||
         player.Z != data->Z ||
         player.A != data->A ||
+        player.alerted != data->alerted ||
+        player.moving != data->moving)
+        {
+            (*data) = player;
+            return true;
+        }
+
+    return false;
+}
+
+bool Player::UpdatePlayerStateUpdateStruct(pPlayerStateUpdate* data)
+{
+    pPlayerStateUpdate player = this->GetPlayerStateUpdateStruct();
+
+    if (player.type != data->type ||
+        player.guid != data->guid ||
         player.health != data->health ||
         player.baseHealth != data->baseHealth ||
         player.conds[0] != data->conds[0] ||
@@ -207,9 +233,7 @@ bool Player::UpdatePlayerUpdateStruct(pPlayerUpdate* data)
         player.conds[3] != data->conds[3] ||
         player.conds[4] != data->conds[4] ||
         player.conds[5] != data->conds[5] ||
-        player.dead != data->dead ||
-        player.alerted != data->alerted ||
-        player.moving != data->moving)
+        player.dead != data->dead)
         {
             (*data) = player;
             return true;
@@ -285,15 +309,18 @@ void Player::SetPlayerAngle(float angle)
 
 void Player::SetPlayerHealth(float health)
 {
-    this->health = health;
-
-    if (debug != NULL)
+    if (!nowrite[SKIPFLAG_GETHEALTH])
     {
-        char text[128];
-        ZeroMemory(text, sizeof(text));
+        this->health = health;
 
-        sprintf(text, "Player health was set to %f (ref: %s, guid: %s)", this->health, this->refID.c_str(), this->guid.ToString());
-        debug->Print(text, true);
+        if (debug != NULL)
+        {
+            char text[128];
+            ZeroMemory(text, sizeof(text));
+
+            sprintf(text, "Player health was set to %f (ref: %s, guid: %s)", this->health, this->refID.c_str(), this->guid.ToString());
+            debug->Print(text, true);
+        }
     }
 }
 
@@ -330,15 +357,18 @@ void Player::SetPlayerCondition(int cell, float cond)
 
 void Player::SetPlayerDead(bool dead)
 {
-    this->dead = dead;
-
-    if (debug != NULL)
+    if (!nowrite[SKIPFLAG_GETDEAD])
     {
-        char text[128];
-        ZeroMemory(text, sizeof(text));
+        this->dead = dead;
 
-        sprintf(text, "Player dead state was set to %d (ref: %s, guid: %s)", (int) this->dead, this->refID.c_str(), this->guid.ToString());
-        debug->Print(text, true);
+        if (debug != NULL)
+        {
+            char text[128];
+            ZeroMemory(text, sizeof(text));
+
+            sprintf(text, "Player dead state was set to %d (ref: %s, guid: %s)", (int) this->dead, this->refID.c_str(), this->guid.ToString());
+            debug->Print(text, true);
+        }
     }
 }
 

@@ -15,6 +15,7 @@ unsigned Fallout3refid = 0x00;               // RefID storage
 char Fallout3output[MAX_OUTPUT_LENGTH];      // Command output storage
 char Fallout3input[MAX_INPUT_LENGTH];        // Command input storage
 bool Fallout3mutex = false;                  // Command queue mutex
+bool DLLerror = false;
 
 typedef HANDLE (*fDLLjump)(void);
 typedef void (*fDLLend)(void);
@@ -106,9 +107,15 @@ DWORD WINAPI Fallout3pipe(LPVOID data) {
     send = "up:";
     pipeClient.Send(&send);
 
+    if (DLLerror)
+    {
+        send = "ca:";
+        pipeClient.Send(&send);
+    }
+
     Fallout3toggleTrigger(true);
 
-    do
+    while (!DLLerror)
     {
         recv.clear(); low.clear(); high.clear();
         recv = pipeServer.Recv();
@@ -116,13 +123,21 @@ DWORD WINAPI Fallout3pipe(LPVOID data) {
         high = recv.substr(3);
 
         if (low.compare("op:") == 0)
+        {
             Fallout3sendOp(high);
+        }
         else if (low.compare("ce:") == 0)
         {
             if (vaultgui != NULL)
+            {
                 GUI_msg(high);
+            }
         }
-    } while (low.compare("ca:") != 0);
+        else if (low.compare("ca:") == 0)
+        {
+            DLLerror = true;
+        }
+    }
 
     if (vaultgui != NULL)
         GUI_end();
@@ -823,7 +838,7 @@ extern "C" void __declspec(dllexport) DLLjump(bool NewVegas)
              * XXXXXXXX   E8 XXXXXXXX      CALL Fallout3.00516790
              * XXXXXXXX   -E9 XXXXXXXX     JMP Fallout3.0053CACF
              *
-             * 0053CAC6   -E9 XXXXXXXX     JMP XXXXXXXX
+             * 0053CACA   -E9 XXXXXXXX     JMP XXXXXXXX
              */
 
             bytes = 0;
@@ -848,15 +863,27 @@ extern "C" void __declspec(dllexport) DLLjump(bool NewVegas)
             bytestream[0] = 0xE9; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
             WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
 
-            tmp = offset((unsigned) 0x0053CAC6, ((unsigned) Fallout3refidASM), 5);
-            bytestream[0] = 0xE9; bytes = 0; WriteProcessMemory(hProc, (LPVOID) ((unsigned) 0x0053CAC6 + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) ((unsigned) 0x0053CAC6 + bytes), &tmp, sizeof(tmp), &rw);
+            tmp = offset((unsigned) 0x0053CACA, ((unsigned) Fallout3refidASM), 5);
+            bytestream[0] = 0xE9; bytes = 0; WriteProcessMemory(hProc, (LPVOID) ((unsigned) 0x0053CACA + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) ((unsigned) 0x0053CACA + bytes), &tmp, sizeof(tmp), &rw);
 
             break;
         }
     }
 
     CloseHandle(hProc);
+
+    /* Loading FOSE / NVSE */
+
+    HINSTANCE fose = NULL;
+
+    if (NewVegas)
+        fose = LoadLibrary("nvse_1_1.dll");
+    else
+        fose = LoadLibrary("fose_1_7.dll");
+
+    if (fose == NULL)
+        DLLerror = true;
 
     /* Loading and initalizing vaultgui.dll */
 
@@ -871,6 +898,8 @@ extern "C" void __declspec(dllexport) DLLjump(bool NewVegas)
         init = (fDLLjump) GetProcAddress(vaultgui, "DLLjump");
         guiThread = init();
     }
+    /*else
+        DLLerror = true;*/
 
     /* Initalizing vaultmp.exe <-> Fallout3.exe pipe */
 
