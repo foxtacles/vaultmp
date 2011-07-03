@@ -115,7 +115,7 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
             int find = 0;
 
             find = recv.find("op:");
-            if (find == string::npos) find = recv.find("re:");
+            if (find == string::npos) find = recv.find("st:");
             if (find == string::npos) find = recv.find("up:");
             if (find == string::npos) find = recv.find("ca:");
 
@@ -126,139 +126,206 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
 
                 if (low.compare("op:") == 0)
                 {
+                    unsigned long long Fallout3_result = 0x00;
+                    DWORD Fallout3_opcode = 0x00;
+                    DWORD Fallout3_refID = 0x00;
+                    DWORD Fallout3_newRefID = 0x00;
+                    unsigned char Fallout3_coord = 0x00;
+
+                    char output[high.length()];
+                    char* token;
+                    strcpy(output, high.c_str());
+
+                    Fallout3_opcode = strtoul(output, &token, 16);
+                    Fallout3_refID = strtoul(token, &token, 16);
+                    Fallout3_result = strtoull(token, &token, 16);
+                    Fallout3_coord = (unsigned char) strtoul(token, &token, 16);
+                    Fallout3_newRefID = strtoull(token, &token, 16);
+
+                    if (Fallout3_refID == 0x00000014)
+                        lastRef = self;
+                    else
+                    {
+                        char refstr[8];
+                        ZeroMemory(refstr, sizeof(refstr));
+
+                        sprintf(refstr, "%x", Fallout3_refID);
+                        lastRef = Player::GetPlayerFromRefID(refstr);
+                    }
+
+                    if (lastRef != NULL)
+                    {
+                        switch (Fallout3_opcode)
+                        {
+                            case 0x1006: // GetPos
+                            {
+                                switch (Fallout3_coord)
+                                {
+                                    case 0x58: // X
+                                        lastRef->SetPlayerPos(0, (float) *((double*) (&Fallout3_result)));
+                                        break;
+                                    case 0x59: // Y
+                                        lastRef->SetPlayerPos(1, (float) *((double*) (&Fallout3_result)));
+                                        break;
+                                    case 0x5A: // Z
+                                        lastRef->SetPlayerPos(2, (float) *((double*) (&Fallout3_result)));
+                                        break;
+                                }
+                                break;
+                            }
+                            case 0x1008: // GetAngle
+                            {
+                                switch (Fallout3_coord)
+                                {
+                                    case 0x5A: // Z
+                                        lastRef->SetPlayerAngle((float) *((double*) (&Fallout3_result)));
+                                        break;
+                                }
+                                break;
+                            }
+                            case 0x1115: // GetBaseActorValue
+                            {
+                                switch (Fallout3_coord)
+                                {
+                                    case 0x10: // Health
+                                        lastRef->SetPlayerBaseHealth((float) *((double*) (&Fallout3_result)));
+                                        break;
+                                }
+                                break;
+                            }
+                            case 0x100E: // GetActorValue
+                            {
+                                switch (Fallout3_coord)
+                                {
+                                    case 0x10: // Health
+                                        lastRef->SetPlayerHealth((float) *((double*) (&Fallout3_result)));
+                                        break;
+                                    case 0x19: // PerceptionCondition
+                                        lastRef->SetPlayerCondition(0, (float) *((double*) (&Fallout3_result)));
+                                        break;
+                                    case 0x1A: // EnduranceCondition
+                                        lastRef->SetPlayerCondition(1, (float) *((double*) (&Fallout3_result)));
+                                        break;
+                                    case 0x1B: // LeftAttackCondition
+                                        lastRef->SetPlayerCondition(2, (float) *((double*) (&Fallout3_result)));
+                                        break;
+                                    case 0x1C: // RightAttackCondition
+                                        lastRef->SetPlayerCondition(3, (float) *((double*) (&Fallout3_result)));
+                                        break;
+                                    case 0x1D: // LeftMobilityCondition
+                                        lastRef->SetPlayerCondition(4, (float) *((double*) (&Fallout3_result)));
+                                        break;
+                                    case 0x1E: // RightMobilityCondition
+                                        lastRef->SetPlayerCondition(5, (float) *((double*) (&Fallout3_result)));
+                                        break;
+                                }
+                                break;
+                            }
+                            case 0x102E: // GetDead
+                            {
+                                if (Fallout3_result == 0x00)
+                                    lastRef->SetPlayerDead(false);
+                                else
+                                    lastRef->SetPlayerDead(true);
+                                break;
+                            }
+                            case 0x1019: // IsMoving
+                            {
+                                if (Fallout3_result == 0x00)
+                                    lastRef->SetPlayerMoving(0);
+                                break;
+                            }
+                            case 0x1025: // PlaceAtMe
+                            {
+                                char refstr[8];
+                                ZeroMemory(refstr, sizeof(refstr));
+
+                                sprintf(refstr, "%x", Fallout3_newRefID);
+
+                                OPENCMD();
+
+                                fCommand* cmd = new fCommand;
+                                cmd->command = "setrestrained 1";
+                                cmd->refID = refstr;
+                                cmd->forplayers = false;
+                                cmd->repeat = false;
+                                cmd->sleep = 150;
+                                PUSHCMD(cmd);
+
+                                CLOSECMD();
+
+                                #ifdef VAULTMP_DEBUG
+                                char text[128];
+                                ZeroMemory(text, sizeof(text));
+
+                                sprintf(text, "Received RefID from game: %s", refstr);
+                                debug->Print(text, true);
+                                #endif
+
+                                if (!refqueue.empty())
+                                {
+                                    Player* player = refqueue.front();
+                                    player->SetPlayerRefID(refstr);
+                                    refqueue.pop();
+                                }
+                                break;
+                            }
+                            case 0x0114: // ShowAnim
+                            {
+                                // has been handled by string parser
+                                break;
+                            }
+                            default:
+                            {
+                                #ifdef VAULTMP_DEBUG
+                                char text[128];
+                                ZeroMemory(text, sizeof(text));
+
+                                sprintf(text, "Command could not be processed: %s", const_cast<char*>(high.c_str()));
+                                debug->Print(text, true);
+                                #endif
+                                break;
+                            }
+                        }
+                    }
+                }
+                else if (low.compare("st:") == 0)
+                {
                     char output[high.length()];
                     char* token;
                     strcpy(output, high.c_str());
                     token = strtok(output, ":.<> ");
 
-                    if (stricmp(token, "GetPos") == 0)
-                    {
-                        token = strtok(NULL, ":.<> ");
-
-                        if (stricmp(token, "X") == 0)
-                        {
-                            token = strtok(NULL, ":<> ");
-                            float X = (float) atof(token);
-                            lastRef->SetPlayerPos(0, X);
-                        }
-                        else if (stricmp(token, "Y") == 0)
-                        {
-                            token = strtok(NULL, ":<> ");
-                            float Y = (float) atof(token);
-                            lastRef->SetPlayerPos(1, Y);
-                        }
-                        else if (stricmp(token, "Z") == 0)
-                        {
-                            token = strtok(NULL, ":<> ");
-                            float Z = (float) atof(token);
-                            lastRef->SetPlayerPos(2, Z);
-                        }
-                    }
-                    else if (stricmp(token, "GetAngle") == 0)
-                    {
-                        token = strtok(NULL, ":.<> ");
-
-                        if (stricmp(token, "Z") == 0)
-                        {
-                            token = strtok(NULL, ":<> ");
-                            float Z = (float) atof(token);
-                            lastRef->SetPlayerAngle(Z);
-                        }
-                    }
-                    else if (stricmp(token, "GetBaseActorValue") == 0)
-                    {
-                        token = strtok(NULL, ":.<> ");
-
-                        if (stricmp(token, "Health") == 0)
-                        {
-                            token = strtok(NULL, ":<> ");
-                            float baseHealth = (float) atof(token);
-                            lastRef->SetPlayerBaseHealth(baseHealth);
-                        }
-                    }
-                    else if (stricmp(token, "GetActorValue") == 0)
-                    {
-                        token = strtok(NULL, ":.<> ");
-
-                        if (stricmp(token, "Health") == 0)
-                        {
-                            token = strtok(NULL, ":<> ");
-                            float health = (float) atof(token);
-                            lastRef->SetPlayerHealth(health);
-                        }
-                        else if (stricmp(token, "PerceptionCondition") == 0)
-                        {
-                            token = strtok(NULL, ":<> ");
-                            float cond = (float) atof(token);
-                            lastRef->SetPlayerCondition(0, cond);
-                        }
-                        else if (stricmp(token, "EnduranceCondition") == 0)
-                        {
-                            token = strtok(NULL, ":<> ");
-                            float cond = (float) atof(token);
-                            lastRef->SetPlayerCondition(1, cond);
-                        }
-                        else if (stricmp(token, "LeftAttackCondition") == 0)
-                        {
-                            token = strtok(NULL, ":<> ");
-                            float cond = (float) atof(token);
-                            lastRef->SetPlayerCondition(2, cond);
-                        }
-                        else if (stricmp(token, "RightAttackCondition") == 0)
-                        {
-                            token = strtok(NULL, ":<> ");
-                            float cond = (float) atof(token);
-                            lastRef->SetPlayerCondition(3, cond);
-                        }
-                        else if (stricmp(token, "LeftMobilityCondition") == 0)
-                        {
-                            token = strtok(NULL, ":<> ");
-                            float cond = (float) atof(token);
-                            lastRef->SetPlayerCondition(4, cond);
-                        }
-                        else if (stricmp(token, "RightMobilityCondition") == 0)
-                        {
-                            token = strtok(NULL, ":<> ");
-                            float cond = (float) atof(token);
-                            lastRef->SetPlayerCondition(5, cond);
-                        }
-                    }
-                    else if (stricmp(token, "GetDead") == 0)
-                    {
-                        token = strtok(NULL, ":<> ");
-                        float dead = (float) atof(token);
-                        lastRef->SetPlayerDead(dead != 0.00 ? true : false);
-                    }
-                    else if (stricmp(token, "Wants") == 0)
+                    if (stricmp(token, "Wants") == 0)
                     {
                         token = strtok(NULL, ",");
                         token = strtok(NULL, ",");
 
                         if (stricmp(token, " Weapon Drawn 0") == 0)
-                            lastRef->SetPlayerAlerted(false);
+                            self->SetPlayerAlerted(false);
                         else if (stricmp(token, " Weapon Drawn 1") == 0)
-                            lastRef->SetPlayerAlerted(true);
+                            self->SetPlayerAlerted(true);
                     }
                     else if (stricmp(token, "Movement") == 0)
                     {
                         token = strtok(NULL, ":.<>-/ ");
 
                         if (stricmp(token, "FastForward") == 0)
-                            lastRef->SetPlayerMoving(1);
+                            self->SetPlayerMoving(1);
                         else if (stricmp(token, "FastBackward") == 0)
-                            lastRef->SetPlayerMoving(2);
+                            self->SetPlayerMoving(2);
                         else if (stricmp(token, "FastLeft") == 0)
-                            lastRef->SetPlayerMoving(3);
+                            self->SetPlayerMoving(3);
                         else if (stricmp(token, "FastRight") == 0)
-                            lastRef->SetPlayerMoving(4);
+                            self->SetPlayerMoving(4);
                         else if (stricmp(token, "Forward") == 0)
-                            lastRef->SetPlayerMoving(5);
+                            self->SetPlayerMoving(5);
                         else if (stricmp(token, "Backward") == 0)
-                            lastRef->SetPlayerMoving(6);
+                            self->SetPlayerMoving(6);
                         else if (stricmp(token, "Left") == 0)
-                            lastRef->SetPlayerMoving(7);
+                            self->SetPlayerMoving(7);
                         else if (stricmp(token, "Right") == 0)
-                            lastRef->SetPlayerMoving(8);
+                            self->SetPlayerMoving(8);
                         else
                         {
                             token = strtok(NULL, ":.<>-/ ");
@@ -266,21 +333,21 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                             if (token != NULL)
                             {
                                 if (stricmp(token, "FastForward") == 0)
-                                    lastRef->SetPlayerMoving(1);
+                                    self->SetPlayerMoving(1);
                                 else if (stricmp(token, "FastBackward") == 0)
-                                    lastRef->SetPlayerMoving(2);
+                                    self->SetPlayerMoving(2);
                                 else if (stricmp(token, "FastLeft") == 0)
-                                    lastRef->SetPlayerMoving(3);
+                                    self->SetPlayerMoving(3);
                                 else if (stricmp(token, "FastRight") == 0)
-                                    lastRef->SetPlayerMoving(4);
+                                    self->SetPlayerMoving(4);
                                 else if (stricmp(token, "Forward") == 0)
-                                    lastRef->SetPlayerMoving(5);
+                                    self->SetPlayerMoving(5);
                                 else if (stricmp(token, "Backward") == 0)
-                                    lastRef->SetPlayerMoving(6);
+                                    self->SetPlayerMoving(6);
                                 else if (stricmp(token, "Left") == 0)
-                                    lastRef->SetPlayerMoving(7);
+                                    self->SetPlayerMoving(7);
                                 else if (stricmp(token, "Right") == 0)
-                                    lastRef->SetPlayerMoving(8);
+                                    self->SetPlayerMoving(8);
                             }
                         }
                     }
@@ -292,58 +359,15 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                     {
 
                     }*/
-                    else if (stricmp(token, "IsMoving") == 0)
-                    {
-                        token = strtok(NULL, ":.<> ");
-                        int moving = atoi(token);
-                        if (moving == 0) lastRef->SetPlayerMoving(moving);
-                    }
-                    else if (stricmp(token, "player") == 0)
-                        lastRef = self;
                     else
                     {
-                        Player* newRef = Player::GetPlayerFromRefID(token);
-                        if (newRef != NULL)
-                            lastRef = newRef;
                         #ifdef VAULTMP_DEBUG
-                        else
-                        {
-                            char text[256];
-                            ZeroMemory(text, sizeof(text));
+                        char text[256];
+                        ZeroMemory(text, sizeof(text));
 
-                            sprintf(text, "Command could not be processed: %s", const_cast<char*>(recv.c_str()));
-                            debug->Print(text, true);
-                        }
+                        sprintf(text, "String could not be processed: %s", const_cast<char*>(high.c_str()));
+                        debug->Print(text, true);
                         #endif
-                    }
-                }
-                else if (low.compare("re:") == 0)
-                {
-                    OPENCMD();
-
-                    fCommand* cmd = new fCommand;
-                    cmd->command = "setrestrained 1";
-                    cmd->refID = high;
-                    cmd->forplayers = false;
-                    cmd->repeat = false;
-                    cmd->sleep = 150;
-                    PUSHCMD(cmd);
-
-                    CLOSECMD();
-
-                    #ifdef VAULTMP_DEBUG
-                    char text[128];
-                    ZeroMemory(text, sizeof(text));
-
-                    sprintf(text, "Received RefID from game: %s", high.c_str());
-                    debug->Print(text, true);
-                    #endif
-
-                    if (!refqueue.empty())
-                    {
-                        Player* player = refqueue.front();
-                        player->SetPlayerRefID(high);
-                        refqueue.pop();
                     }
                 }
                 else if (low.compare("up:") == 0)
@@ -606,103 +630,117 @@ HANDLE Fallout3::InitializeFallout3(bool NewVegas)
 
         if (Fallout3::NewVegas ? (size == FALLOUTNV_EXE1_SIZE || size == FALLOUTNV_EXE2_SIZE) : (size == FALLOUT3_EXE_SIZE))
         {
-            FILE* fose = fopen(Fallout3::NewVegas ? "nvse_1_1.dll" : "fose_1_7.dll", "rb");
+            FILE* xlive = fopen("xlive.dll", "rb");
 
-            if (fose != NULL)
+            if (xlive != NULL)
             {
-                fclose(fose);
+                fseek(xlive, 0, SEEK_END);
+                size = ftell(xlive);
+                fclose(xlive);
+            }
 
-                FILE* vaultmp = fopen("vaultmp.dll", "rb");
+            if (Fallout3::NewVegas || (xlive != NULL && size == XLIVE_DLL_SIZE))
+            {
+                FILE* fose = fopen(Fallout3::NewVegas ? "nvse_1_1.dll" : "fose_1_7.dll", "rb");
 
-                if (vaultmp != NULL)
+                if (fose != NULL)
                 {
-                    fseek(vaultmp, 0, SEEK_END);
-                    size = ftell(vaultmp);
-                    fclose(vaultmp);
+                    fclose(fose);
 
-                    if (size == VAULTMP_DLL_SIZE)
+                    FILE* vaultmp = fopen("vaultmp.dll", "rb");
+
+                    if (vaultmp != NULL)
                     {
-                        if (lookupProgramID(module) == 0)
+                        fseek(vaultmp, 0, SEEK_END);
+                        size = ftell(vaultmp);
+                        fclose(vaultmp);
+
+                        if (size == VAULTMP_DLL_SIZE || true) // FIXME
                         {
-                            STARTUPINFO si;
-                            PROCESS_INFORMATION pi;
-
-                            ZeroMemory(&si, sizeof(si));
-                            ZeroMemory(&pi, sizeof(pi));
-                            si.cb = sizeof(si);
-
-                            if (CreateProcess(module, NULL, NULL, NULL, FALSE, Fallout3::NewVegas ? 0 : CREATE_SUSPENDED, NULL, NULL, &si, &pi))
+                            if (lookupProgramID(module) == 0)
                             {
-                                if (Fallout3::NewVegas) Sleep(2000); // some decrypt whatsoever needs time
+                                STARTUPINFO si;
+                                PROCESS_INFORMATION pi;
 
-                                HANDLE hProc;
+                                ZeroMemory(&si, sizeof(si));
+                                ZeroMemory(&pi, sizeof(pi));
+                                si.cb = sizeof(si);
 
-                                hProc = OpenProcess(PROCESS_ALL_ACCESS, false, pi.dwProcessId);
-
-                                if (hProc)
+                                if (CreateProcess(module, NULL, NULL, NULL, FALSE, Fallout3::NewVegas ? 0 : CREATE_SUSPENDED, NULL, NULL, &si, &pi))
                                 {
-                                    INJECT data;
-                                    HINSTANCE hDll;
-                                    TCHAR curdir[MAX_PATH + 1];
-                                    LPVOID start, thread;
-                                    DWORD codesize;
+                                    if (Fallout3::NewVegas) Sleep(2000); // some decrypt whatsoever needs time
 
-                                    GetModuleFileName(GetModuleHandle(NULL), (LPTSTR) curdir, MAX_PATH);
-                                    PathRemoveFileSpec(curdir);
+                                    HANDLE hProc;
 
-                                    strcat(curdir, "\\vaultmp.dll");
-                                    strcpy(data.DLLpath, curdir);
-                                    strcpy(data.DLLjump, "DLLjump");
+                                    hProc = OpenProcess(PROCESS_ALL_ACCESS, false, pi.dwProcessId);
 
-                                    hDll = LoadLibrary("kernel32.dll");
-                                    data.LoadLibrary = (fLoadLibrary) GetProcAddress(hDll, "LoadLibraryA");
-                                    data.GetProcAddress = (fGetProcAddress) GetProcAddress(hDll, "GetProcAddress");
-                                    data.NewVegas = Fallout3::NewVegas;
+                                    if (hProc)
+                                    {
+                                        INJECT data;
+                                        HINSTANCE hDll;
+                                        TCHAR curdir[MAX_PATH + 1];
+                                        LPVOID start, thread;
+                                        DWORD codesize;
 
-                                    codesize = (DWORD) InjectedEnd - (DWORD) InjectedCode;
+                                        GetModuleFileName(GetModuleHandle(NULL), (LPTSTR) curdir, MAX_PATH);
+                                        PathRemoveFileSpec(curdir);
 
-                                    start = VirtualAllocEx(hProc, 0, codesize + sizeof(INJECT), MEM_COMMIT, PAGE_EXECUTE_READWRITE);
-                                    thread = (LPVOID) ((DWORD) start + sizeof(INJECT));
+                                        strcat(curdir, "\\vaultmp.dll");
+                                        strcpy(data.DLLpath, curdir);
+                                        strcpy(data.DLLjump, "DLLjump");
 
-                                    WriteProcessMemory(hProc, start, (LPVOID) &data, sizeof(INJECT), NULL);
-                                    WriteProcessMemory(hProc, thread, (LPVOID) InjectedCode, codesize, NULL);
+                                        hDll = LoadLibrary("kernel32.dll");
+                                        data.LoadLibrary = (fLoadLibrary) GetProcAddress(hDll, "LoadLibraryA");
+                                        data.GetProcAddress = (fGetProcAddress) GetProcAddress(hDll, "GetProcAddress");
+                                        data.NewVegas = Fallout3::NewVegas;
 
-                                    CreateRemoteThread(hProc, 0, 0, (LPTHREAD_START_ROUTINE) thread, start, 0, 0);
+                                        codesize = (DWORD) InjectedEnd - (DWORD) InjectedCode;
 
-                                    /* Initalizing vaultmp.exe <-> Fallout3.exe / FalloutNV.exe pipe */
+                                        start = VirtualAllocEx(hProc, 0, codesize + sizeof(INJECT), MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+                                        thread = (LPVOID) ((DWORD) start + sizeof(INJECT));
 
-                                    HANDLE PipeThread;
-                                    DWORD Fallout3pipeID;
+                                        WriteProcessMemory(hProc, start, (LPVOID) &data, sizeof(INJECT), NULL);
+                                        WriteProcessMemory(hProc, thread, (LPVOID) InjectedCode, codesize, NULL);
 
-                                    PipeThread = CreateThread(NULL, 0, Fallout3pipe, (LPVOID) 0, 0, &Fallout3pipeID);
+                                        CreateRemoteThread(hProc, 0, 0, (LPTHREAD_START_ROUTINE) thread, start, 0, 0);
 
-                                    while (!wakeup) Sleep(2);
+                                        /* Initalizing vaultmp.exe <-> Fallout3.exe / FalloutNV.exe pipe */
 
-                                    /* Resuming Fallout3.exe */
+                                        HANDLE PipeThread;
+                                        DWORD Fallout3pipeID;
 
-                                    if (!Fallout3::NewVegas) ResumeThread(pi.hThread);
+                                        PipeThread = CreateThread(NULL, 0, Fallout3pipe, (LPVOID) 0, 0, &Fallout3pipeID);
 
-                                    CloseHandle(hProc);
+                                        while (!wakeup) Sleep(2);
 
-                                    return PipeThread;
+                                        /* Resuming Fallout3.exe */
+
+                                        if (!Fallout3::NewVegas) ResumeThread(pi.hThread);
+
+                                        CloseHandle(hProc);
+
+                                        return PipeThread;
+                                    }
+                                    else
+                                        MessageBox(NULL, "Failed opening the game process!", "Error", MB_OK | MB_ICONERROR);
                                 }
                                 else
-                                    MessageBox(NULL, "Failed opening the game process!", "Error", MB_OK | MB_ICONERROR);
+                                    MessageBox(NULL, "Failed creating the game process!", "Error", MB_OK | MB_ICONERROR);
                             }
                             else
-                                MessageBox(NULL, "Failed creating the game process!", "Error", MB_OK | MB_ICONERROR);
+                                MessageBox(NULL, "Either Fallout 3 or Fallout: New Vegas is already runnning!", "Error", MB_OK | MB_ICONERROR);
                         }
                         else
-                            MessageBox(NULL, "Either Fallout 3 or Fallout: New Vegas is already runnning!", "Error", MB_OK | MB_ICONERROR);
+                            MessageBox(NULL, "vaultmp.dll is either corrupted or not up to date!", "Error", MB_OK | MB_ICONERROR);
                     }
                     else
-                        MessageBox(NULL, "vaultmp.dll is either corrupted or not up to date!", "Error", MB_OK | MB_ICONERROR);
+                        MessageBox(NULL, "Could not find vaultmp.dll!", "Error", MB_OK | MB_ICONERROR);
                 }
                 else
-                    MessageBox(NULL, "Could not find vaultmp.dll!", "Error", MB_OK | MB_ICONERROR);
+                    MessageBox(NULL, "Could not find FOSE 1.7 / NVSE 1.1!\nhttp://fose.silverlock.org/\nhttp://nvse.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
             }
             else
-                MessageBox(NULL, "Could not find FOSE 1.7 / NVSE 1.1!\nhttp://fose.silverlock.org/\nhttp://nvse.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
+                MessageBox(NULL, "xlive.dll is either missing or un-patched!", "Error", MB_OK | MB_ICONERROR);
         }
         else
             MessageBox(NULL, "Fallout3.exe / FalloutNV.exe is either corrupted or not supported!", "Error", MB_OK | MB_ICONERROR);

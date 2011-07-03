@@ -10,12 +10,195 @@ using namespace pipe;
 HANDLE hProc;
 PipeServer pipeServer;
 PipeClient pipeClient;
-unsigned Fallout3opTrigger = 0x00;           // 0x00 = trigger disabled. 0x0A = trigger enabled.
-unsigned Fallout3refid = 0x00;               // RefID storage
 char Fallout3output[MAX_OUTPUT_LENGTH];      // Command output storage
 char Fallout3input[MAX_INPUT_LENGTH];        // Command input storage
 bool Fallout3mutex = false;                  // Command queue mutex
+bool Fallout3_output = false;
+unsigned long long Fallout3_result = 0x00;
+DWORD Fallout3_opcode = 0x00;
+DWORD Fallout3_refID = 0x00;
+DWORD Fallout3_newRefID = 0x00;
+unsigned char Fallout3_coord = 0x00;
 bool DLLerror = false;
+
+void Fallout3commandNotify();
+void Fallout3commandHandler();
+
+/* Fallout: New Vegas version 1.3 */
+
+static unsigned FalloutNVpatch_cmd1patchAddr = 0x0071A823;
+static unsigned FalloutNVpatch_cmd2patchAddr = 0x0071A849;
+static unsigned FalloutNVpatch_cmd3patchAddr = 0x0071A949;
+static unsigned FalloutNVpatch_cmd4patchAddr = 0x0071AA91;
+static unsigned FalloutNVpatch_cmd5patchAddr = 0x0070D6E5;
+static unsigned FalloutNVpatch_cmd6patchAddr = 0x0070D704;
+static unsigned FalloutNVpatch_cmd7patchAddr = 0x00703224;
+static unsigned FalloutNVpatch_cmd8patchAddr = 0x0070C2EE;
+static unsigned FalloutNVpatch_cmd9patchAddr = 0x0071A836;
+static char FalloutNVpatch_cmd1[] = {0x90, 0x90};
+static char FalloutNVpatch_cmd2[] = {0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
+static char FalloutNVpatch_cmd3[] = {0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
+static char FalloutNVpatch_cmd4[] = {0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
+static char FalloutNVpatch_cmd5[] = {0xEB, 0x03, 0x90, 0x90, 0x90, 0x90};
+static char FalloutNVpatch_cmd6[] = {0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
+static char FalloutNVpatch_cmd7[] = {0xEB, 0x0C};
+static char FalloutNVpatch_cmd8[] = {0x0F, 0x85, 0x15, 0x02, 0x00, 0x00};
+static char FalloutNVpatch_cmd9[] = {0xEB, 0x07};
+
+static unsigned FalloutNVpatch_VATSpatchAddr = 0x0093FFAE;
+static char FalloutNVpatch_VATS[] = {0xE9, 0x5A, 0x02, 0x00, 0x00, 0x90};
+
+static LPVOID FalloutNVpatch_input1patchAddr = 0x00000000;
+static unsigned FalloutNVpatch_input2patchAddr = 0x0071AAC9;
+static char FalloutNVpatch_input1_1[] = {0x50, 0x51, 0x52, 0x8A, 0x10, 0x80, 0xFA, 0x00, 0x74, 0x0E, 0x5A, 0x59, 0x58, 0x8B, 0x8D, 0x58, 0xD7, 0xFF, 0xFF, 0xE9};
+static unsigned FalloutNVpatch_input1_2 = 0x00000000;
+static unsigned FalloutNVpatch_input1_2jmp = 0x0071AACE;
+static char FalloutNVpatch_input1_3[] = {0xB9};
+static unsigned FalloutNVpatch_input1_4 = (unsigned) &Fallout3input;
+static char FalloutNVpatch_input1_5[] = {0x8A, 0x11, 0x80, 0xFA, 0x00, 0x74, 0xE6, 0x88, 0x10, 0xC6, 0x01, 0x00, 0x83, 0xC1, 0x01, 0x83, 0xC0, 0x01, 0x8A, 0x11, 0x80, 0xFA, 0x00, 0x74, 0x02, 0xEB, 0x0EC, 0xC6, 0x05};
+static unsigned FalloutNVpatch_input1_6 = (unsigned) &Fallout3mutex;
+static char FalloutNVpatch_input1_7[] = {0x00, 0xC6, 0x00, 0x00, 0xEB, 0xC6};
+static char FalloutNVpatch_input2_1[] = {0xE9};
+static unsigned FalloutNVpatch_input2_2 = 0x00000000;
+static char FalloutNVpatch_input2_3[] = {0x50, 0x90};
+static unsigned FalloutNVpatch_input1size = sizeof(FalloutNVpatch_input1_1) + sizeof(FalloutNVpatch_input1_2) + sizeof(FalloutNVpatch_input1_3) + sizeof(FalloutNVpatch_input1_4) + sizeof(FalloutNVpatch_input1_5) +
+                                            sizeof(FalloutNVpatch_input1_6) + sizeof(FalloutNVpatch_input1_7);
+
+static LPVOID FalloutNVpatch_output1patchAddr = 0x00000000;
+static unsigned FalloutNVpatch_output2patchAddr = 0x0071C6E6;
+static char FalloutNVpatch_output1_1[] = {0x50, 0x51, 0x52, 0x8A, 0x0D};
+static unsigned FalloutNVpatch_output1_2 = (unsigned) &Fallout3_output;
+static char FalloutNVpatch_output1_3[] = {0x84, 0xC9, 0x74, 0x23, 0xB9};
+static unsigned FalloutNVpatch_output1_4 = (unsigned) &Fallout3output;
+static char FalloutNVpatch_output1_5[] = {0x83, 0xF8, 0x00, 0x74, 0x19, 0x8A, 0x10, 0x80, 0xFA, 0x00, 0x74, 0x0A, 0x88, 0x11, 0x83, 0xC0, 0x01, 0x83, 0xC1, 0x01, 0xEB, 0xEF, 0xC6, 0x01, 0x00, 0xE8};
+static unsigned FalloutNVpatch_output1_6 = 0x00000000;
+static unsigned FalloutNVpatch_output1_6cll = (unsigned) &Fallout3commandNotify;
+static char FalloutNVpatch_output1_7[] = {0x5A, 0x59, 0x58, 0x8B, 0x8D, 0xB4, 0xF7, 0xFF, 0xFF, 0xE9};
+static unsigned FalloutNVpatch_output1_8 = 0x00000000;
+static unsigned FalloutNVpatch_output1_8jmp = 0x0071C6EB;
+static char FalloutNVpatch_output2_1[] = {0xE9};
+static unsigned FalloutNVpatch_output2_2 = 0x00000000;
+static char FalloutNVpatch_output2_3[] = {0x50, 0x90};
+static unsigned FalloutNVpatch_output1size = sizeof(FalloutNVpatch_output1_1) + sizeof(FalloutNVpatch_output1_2) + sizeof(FalloutNVpatch_output1_3) + sizeof(FalloutNVpatch_output1_4) + sizeof(FalloutNVpatch_output1_5) +
+                                             sizeof(FalloutNVpatch_output1_6) + sizeof(FalloutNVpatch_output1_7) + sizeof(FalloutNVpatch_output1_8);
+
+static LPVOID FalloutNVpatch_handler1patchAddr = 0x00000000;
+static unsigned FalloutNVpatch_handler2patchAddr = 0x005E1E85;
+static char FalloutNVpatch_handler1_1[] = {0x81, 0x7D, 0x0C, 0x14, 0x01, 0x00, 0x00, 0x74, 0x0B, 0x81, 0x7D, 0x0C, 0x9C, 0x01, 0x00, 0x00, 0x74, 0x02, 0xEB, 0x0A, 0x50, 0xB8};
+static unsigned FalloutNVpatch_handler1_2 = (unsigned) &Fallout3_output;
+static char FalloutNVpatch_handler1_3[] = {0xC6, 0x00, 0x01, 0x58, 0xFF, 0x95, 0x48, 0xF1, 0xFF, 0xFF,0x50, 0x56, 0xB8};
+static unsigned FalloutNVpatch_handler1_4 = (unsigned) &Fallout3_output;
+static char FalloutNVpatch_handler1_5[] = {0xC6, 0x00, 0x00, 0x83, 0xC4, 0x08, 0xBE};
+static unsigned FalloutNVpatch_handler1_6 = (unsigned) &Fallout3_result;
+static char FalloutNVpatch_handler1_7[] = {0x8B, 0x44, 0x24, 0x18, 0x8B, 0x00, 0x89, 0x06, 0x83, 0xEC, 0x08, 0x56, 0xBE};
+static unsigned FalloutNVpatch_handler1_8 = (unsigned) &Fallout3_newRefID;
+static char FalloutNVpatch_handler1_9[] = {0x89, 0x06, 0x5E, 0x83, 0xC4, 0x08, 0x8B, 0x44, 0x24, 0x18, 0x8B, 0x40, 0x04, 0x89, 0x46, 0x04, 0xBE};
+static unsigned FalloutNVpatch_handler1_10 = (unsigned) &Fallout3_opcode;
+static char FalloutNVpatch_handler1_11[] = {0x8B, 0x45, 0x0C, 0x89, 0x06, 0xBE};
+static unsigned FalloutNVpatch_handler1_12 = (unsigned) &Fallout3_refID;
+static char FalloutNVpatch_handler1_13[] = {0x8B, 0x45, 0x10, 0x85, 0xC0, 0x74, 0x05, 0x8B, 0x40, 0x0C, 0x89, 0x06, 0xBE};
+static unsigned FalloutNVpatch_handler1_14 = (unsigned) &Fallout3_coord;
+static char FalloutNVpatch_handler1_15[] = {0x8A, 0x44, 0x24, 0xE8, 0x88, 0x06, 0x83, 0xEC, 0x08, 0x5E, 0x58, 0xE8};
+static unsigned FalloutNVpatch_handler1_16 = 0x00000000;
+static unsigned FalloutNVpatch_handler1_16cll = (unsigned) &Fallout3commandHandler;
+static char FalloutNVpatch_handler1_17[] = {0xE9};
+static unsigned FalloutNVpatch_handler1_18 = 0x00000000;
+static unsigned FalloutNVpatch_handler1_18jmp = 0x005E1E8B;
+static char FalloutNVpatch_handler2_1[] = {0xE9};
+static unsigned FalloutNVpatch_handler2_2 = 0x00000000;
+static char FalloutNVpatch_handler2_3[] = {0x90};
+static unsigned FalloutNVpatch_handler1size = sizeof(FalloutNVpatch_handler1_1) + sizeof(FalloutNVpatch_handler1_2) + sizeof(FalloutNVpatch_handler1_3) + sizeof(FalloutNVpatch_handler1_4) + sizeof(FalloutNVpatch_handler1_5) +
+                                             sizeof(FalloutNVpatch_handler1_6) + sizeof(FalloutNVpatch_handler1_7) + sizeof(FalloutNVpatch_handler1_8) + sizeof(FalloutNVpatch_handler1_9) + sizeof(FalloutNVpatch_handler1_10) +
+                                             sizeof(FalloutNVpatch_handler1_11) + sizeof(FalloutNVpatch_handler1_12) + sizeof(FalloutNVpatch_handler1_13) + sizeof(FalloutNVpatch_handler1_14) + sizeof(FalloutNVpatch_handler1_15) +
+                                             sizeof(FalloutNVpatch_handler1_16) + sizeof(FalloutNVpatch_handler1_17) + sizeof(FalloutNVpatch_handler1_18);
+
+/* Fallout 3 version 1.7 */
+
+static unsigned Fallout3patch_cmd1patchAddr = 0x0062B663;
+static unsigned Fallout3patch_cmd2patchAddr = 0x0062B66B;
+static unsigned Fallout3patch_cmd3patchAddr = 0x00627A84;
+static unsigned Fallout3patch_cmd4patchAddr = 0x0062B67E;
+static unsigned Fallout3patch_cmd5patchAddr = 0x00627AFF;
+static unsigned Fallout3patch_cmd6patchAddr = 0x0062B69B;
+static unsigned Fallout3patch_cmd7patchAddr = 0x0062B744;
+static unsigned Fallout3patch_cmd8patchAddr = 0x006195E8;
+static unsigned Fallout3patch_cmd9patchAddr = 0x006288C4;
+static char Fallout3patch_cmd1[] = {0x83, 0xFB, 0x0A, 0x90};
+static char Fallout3patch_cmd2[] = {0x0F, 0x85, 0xBE, 0x15, 0x00, 0x00};
+static char Fallout3patch_cmd3[] = {0xEB, 0x6E};
+static char Fallout3patch_cmd4[] = {0xEB, 0x1B};
+static char Fallout3patch_cmd5[] = {0xE9, 0x99, 0x0D, 0x00, 0x00, 0x90};
+static char Fallout3patch_cmd6[] = {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
+static char Fallout3patch_cmd7[] = {0x83, 0xFB, 0x0A, 0x90, 0x90, 0x90};
+static char Fallout3patch_cmd8[] = {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
+static char Fallout3patch_cmd9[] = {0xBB, 0x0A, 0x00, 0x00, 0x00, 0x90};
+
+static unsigned Fallout3patch_VATSpatchAddr = 0x0078A27D;
+static char Fallout3patch_VATS[] = {0xE9, 0x88, 0x01, 0x00, 0x00, 0x90};
+
+static LPVOID Fallout3patch_input1patchAddr = 0x00000000;
+static unsigned Fallout3patch_input2patchAddr = 0x00C075AF;
+static char Fallout3patch_input1_1[] = {0x50, 0x51, 0x56, 0x8A, 0x06, 0x3C, 0x00, 0x74, 0x0D, 0x5E, 0x59, 0x58, 0xBA, 0xFF, 0xFE, 0xFE, 0x7E, 0xE9};
+static unsigned Fallout3patch_input1_2 = 0x00000000;
+static unsigned Fallout3patch_input1_2jmp = 0x00C075B4;
+static char Fallout3patch_input1_3[] = {0xB9};
+static unsigned Fallout3patch_input1_4 = (unsigned) &Fallout3input;
+static char Fallout3patch_input1_5[] = {0x8A, 0x01, 0x3C, 0x00, 0x74, 0xE8, 0x88, 0x06, 0xC6, 0x01, 0x00, 0x83, 0xC1, 0x01, 0x83, 0xC6, 0x01, 0x8A, 0x01, 0x3C, 0x00, 0x74, 0x02, 0xEB, 0xED, 0xC6, 0x05};
+static unsigned Fallout3patch_input1_6 = (unsigned) &Fallout3mutex;
+static char Fallout3patch_input1_7[] = {0x00, 0xC6, 0x06, 0x00, 0xEB, 0xC9};
+static char Fallout3patch_input2_1[] = {0xE9};
+static unsigned Fallout3patch_input2_2 = 0x00000000;
+static unsigned Fallout3patch_input1size = sizeof(Fallout3patch_input1_1) + sizeof(Fallout3patch_input1_2) + sizeof(Fallout3patch_input1_3) + sizeof(Fallout3patch_input1_4) + sizeof(Fallout3patch_input1_5) +
+                                           sizeof(Fallout3patch_input1_6) + sizeof(Fallout3patch_input1_7);
+
+static LPVOID Fallout3patch_output1patchAddr = 0x00000000;
+static unsigned Fallout3patch_output2patchAddr = 0x0062B22B;
+static char Fallout3patch_output1_1[] = {0x50, 0x51, 0x52, 0x8A, 0x0D};
+static unsigned Fallout3patch_output1_2 = (unsigned) &Fallout3_output;
+static char Fallout3patch_output1_3[] = {0x84, 0xC9, 0x74, 0x1E, 0xB9};
+static unsigned Fallout3patch_output1_4 = (unsigned) &Fallout3output;
+static char Fallout3patch_output1_5[] = {0x8A, 0x10, 0x80, 0xFA, 0x00, 0x74, 0x0A, 0x88, 0x11, 0x83, 0xC0, 0x01, 0x83, 0xC1, 0x01, 0xEB, 0xEF, 0xC6, 0x01, 0x00, 0xE8};
+static unsigned Fallout3patch_output1_6 = 0x00000000;
+static unsigned Fallout3patch_output1_6cll = (unsigned) &Fallout3commandNotify;
+static char Fallout3patch_output1_7[] = {0x5A, 0x59, 0x58, 0xE8};
+static unsigned Fallout3patch_output1_8 = 0x00000000;
+static unsigned Fallout3patch_output1_8cll = 0x0062A800;
+static char Fallout3patch_output1_9[] = {0xE9};
+static unsigned Fallout3patch_output1_10 = 0x00000000;
+static unsigned Fallout3patch_output1_10jmp = 0x0062B230;
+static char Fallout3patch_output2_1[] = {0xE9};
+static unsigned Fallout3patch_output2_2 = 0x00000000;
+static unsigned Fallout3patch_output1size = sizeof(Fallout3patch_output1_1) + sizeof(Fallout3patch_output1_2) + sizeof(Fallout3patch_output1_3) + sizeof(Fallout3patch_output1_4) + sizeof(Fallout3patch_output1_5) +
+                                            sizeof(Fallout3patch_output1_6) + sizeof(Fallout3patch_output1_7) + sizeof(Fallout3patch_output1_8) + sizeof(Fallout3patch_output1_9) + sizeof(Fallout3patch_output1_10);
+
+static LPVOID Fallout3patch_handler1patchAddr = 0x00000000;
+static unsigned Fallout3patch_handler2patchAddr = 0x00540BDE;
+static char Fallout3patch_handler1_1[] = {0x81, 0x7D, 0x0C, 0x14, 0x01, 0x00, 0x00, 0x74, 0x0B, 0x81, 0x7D, 0x0C, 0x9C, 0x01, 0x00, 0x00, 0x74, 0x02, 0xEB, 0x0A, 0x50, 0xB8};
+static unsigned Fallout3patch_handler1_2 = (unsigned) &Fallout3_output;
+static char Fallout3patch_handler1_3[] = {0xC6, 0x00, 0x01, 0x58, 0x52, 0x57, 0x51, 0xFF, 0xD0, 0x50, 0x56, 0xB8};
+static unsigned Fallout3patch_handler1_4 = (unsigned) &Fallout3_output;
+static char Fallout3patch_handler1_5[] = {0xC6, 0x00, 0x00, 0x83, 0xC4, 0x08, 0xBE};
+static unsigned Fallout3patch_handler1_6 = (unsigned) &Fallout3_result;
+static char Fallout3patch_handler1_7[] = {0x8B, 0x44, 0x24, 0x18, 0x85, 0xC0, 0x74, 0x0E, 0x8B, 0x00, 0x89, 0x06, 0x8B, 0x44, 0x24, 0x18, 0x8B, 0x40, 0x04, 0x89, 0x46, 0x04, 0xBE};
+static unsigned Fallout3patch_handler1_8 = (unsigned) &Fallout3_opcode;
+static char Fallout3patch_handler1_9[] = {0x8B, 0x45, 0x0C, 0x89, 0x06, 0xBE};
+static unsigned Fallout3patch_handler1_10 = (unsigned) &Fallout3_refID;
+static char Fallout3patch_handler1_11[] = {0x8B, 0x45, 0x10, 0x85, 0xC0, 0x74, 0x05, 0x8B, 0x40, 0x0C, 0x89, 0x06, 0xBE};
+static unsigned Fallout3patch_handler1_12 = (unsigned) &Fallout3_newRefID;
+static char Fallout3patch_handler1_13[] = {0x89, 0x0E, 0xBE};
+static unsigned Fallout3patch_handler1_14 = (unsigned) &Fallout3_coord;
+static char Fallout3patch_handler1_15[] = {0x8A, 0x44, 0x24, 0xE8, 0x88, 0x06, 0x83, 0xEC, 0x08, 0x5E, 0x58, 0xE8};
+static unsigned Fallout3patch_handler1_16 = 0x00000000;
+static unsigned Fallout3patch_handler1_16cll = (unsigned) &Fallout3commandHandler;
+static char Fallout3patch_handler1_17[] = {0xE9};
+static unsigned Fallout3patch_handler1_18 = 0x00000000;
+static unsigned Fallout3patch_handler1_18jmp = 0x00540BE3;
+static char Fallout3patch_handler2_1[] = {0xE9};
+static unsigned Fallout3patch_handler2_2 = 0x00000000;
+static unsigned Fallout3patch_handler1size = sizeof(Fallout3patch_handler1_1) + sizeof(Fallout3patch_handler1_2) + sizeof(Fallout3patch_handler1_3) + sizeof(Fallout3patch_handler1_4) + sizeof(Fallout3patch_handler1_5) +
+                                             sizeof(Fallout3patch_handler1_6) + sizeof(Fallout3patch_handler1_7) + sizeof(Fallout3patch_handler1_8) + sizeof(Fallout3patch_handler1_9) + sizeof(Fallout3patch_handler1_10) +
+                                             sizeof(Fallout3patch_handler1_11) + sizeof(Fallout3patch_handler1_12) + sizeof(Fallout3patch_handler1_13) + sizeof(Fallout3patch_handler1_14) + sizeof(Fallout3patch_handler1_15) +
+                                             sizeof(Fallout3patch_handler1_16) + sizeof(Fallout3patch_handler1_17) + sizeof(Fallout3patch_handler1_18);
 
 typedef HANDLE (*fDLLjump)(void);
 typedef void (*fDLLend)(void);
@@ -44,10 +227,6 @@ unsigned offset(unsigned src, unsigned dest, unsigned jmpbytes) {
         return way;
      }
 
-void Fallout3toggleTrigger(bool toggle) {
-    Fallout3opTrigger = toggle ? 0x0A : 0x00;
-}
-
 void Fallout3sendOp(string op) {
 
      while (Fallout3mutex) Sleep(2);
@@ -61,20 +240,19 @@ void Fallout3sendOp(string op) {
 void Fallout3commandNotify() {
 
     char format[MAX_OUTPUT_LENGTH + 3];
-    ZeroMemory(format, MAX_OUTPUT_LENGTH + 3);
+    ZeroMemory(format, sizeof(format));
 
-    strcat(format, "op:");
-    strcat(format, Fallout3output);
+    sprintf(format, "st:%s", Fallout3output);
     string output(format);
     pipeClient.Send(&output);
 }
 
-void Fallout3refidNotify() {
+void Fallout3commandHandler() {
 
-    char format[16]; char refid[16];
-    sprintf(refid, "%x", Fallout3refid);
-    strcat(format, "re:");
-    strcat(format, refid);
+    char format[MAX_OUTPUT_LENGTH + 3];
+    ZeroMemory(format, sizeof(format));
+
+    sprintf(format, "op:%x %x %llx %x %x", Fallout3_opcode, Fallout3_refID, Fallout3_result, Fallout3_coord, Fallout3_newRefID);
     string output(format);
     pipeClient.Send(&output);
 }
@@ -112,8 +290,6 @@ DWORD WINAPI Fallout3pipe(LPVOID data) {
         send = "ca:";
         pipeClient.Send(&send);
     }
-
-    Fallout3toggleTrigger(true);
 
     while (!DLLerror)
     {
@@ -162,362 +338,96 @@ extern "C" void __declspec(dllexport) DLLjump(bool NewVegas)
         {
             /* Patching key event and console */
 
-            /* 0071A823   90               NOP
-             * 0071A824   90               NOP
-
-             * 0071A849   90               NOP
-             * 0071A84A   90               NOP
-             * 0071A84B   90               NOP
-             * 0071A84C   90               NOP
-             * 0071A84D   90               NOP
-             * 0071A84E   90               NOP
-
-             * 0071A949   90               NOP
-             * 0071A94A   90               NOP
-             * 0071A94B   90               NOP
-             * 0071A94C   90               NOP
-             * 0071A94D   90               NOP
-             * 0071A94E   90               NOP
-
-             * 0071AA91   90               NOP
-             * 0071AA92   90               NOP
-             * 0071AA93   90               NOP
-             * 0071AA94   90               NOP
-             * 0071AA95   90               NOP
-             * 0071AA96   90               NOP
-             */
-
-            bytestream[0] = 0x90; bytestream[1] = 0x90;
-            for (int i = 0; i < 2; i++) WriteProcessMemory(hProc, (LPVOID) (0x0071A823 + i), &bytestream[i], sizeof(bytestream[i]), &rw);
-
-            bytestream[0] = 0x90; bytestream[1] = 0x90; bytestream[2] = 0x90; bytestream[3] = 0x90; bytestream[4] = 0x90; bytestream[5] = 0x90;
-            for (int i = 0; i < 6; i++) WriteProcessMemory(hProc, (LPVOID) (0x0071A849 + i), &bytestream[i], sizeof(bytestream[i]), &rw);
-
-            bytestream[0] = 0x90; bytestream[1] = 0x90; bytestream[2] = 0x90; bytestream[3] = 0x90; bytestream[4] = 0x90; bytestream[5] = 0x90;
-            for (int i = 0; i < 6; i++) WriteProcessMemory(hProc, (LPVOID) (0x0071A949 + i), &bytestream[i], sizeof(bytestream[i]), &rw);
-
-            bytestream[0] = 0x83; bytestream[1] = 0xFB; bytestream[2] = 0x0A; bytestream[3] = 0x90; bytestream[4] = 0x90; bytestream[5] = 0x90;
-            for (int i = 0; i < 6; i++) WriteProcessMemory(hProc, (LPVOID) (0x0071AA91 + i), &bytestream[i], sizeof(bytestream[i]), &rw);
+            WriteProcessMemory(hProc, (LPVOID) FalloutNVpatch_cmd1patchAddr, &FalloutNVpatch_cmd1, sizeof(FalloutNVpatch_cmd1), &rw);
+            WriteProcessMemory(hProc, (LPVOID) FalloutNVpatch_cmd2patchAddr, &FalloutNVpatch_cmd2, sizeof(FalloutNVpatch_cmd2), &rw);
+            WriteProcessMemory(hProc, (LPVOID) FalloutNVpatch_cmd3patchAddr, &FalloutNVpatch_cmd3, sizeof(FalloutNVpatch_cmd3), &rw);
+            WriteProcessMemory(hProc, (LPVOID) FalloutNVpatch_cmd4patchAddr, &FalloutNVpatch_cmd4, sizeof(FalloutNVpatch_cmd4), &rw);
+            WriteProcessMemory(hProc, (LPVOID) FalloutNVpatch_cmd5patchAddr, &FalloutNVpatch_cmd5, sizeof(FalloutNVpatch_cmd5), &rw);
+            WriteProcessMemory(hProc, (LPVOID) FalloutNVpatch_cmd6patchAddr, &FalloutNVpatch_cmd6, sizeof(FalloutNVpatch_cmd6), &rw);
+            WriteProcessMemory(hProc, (LPVOID) FalloutNVpatch_cmd7patchAddr, &FalloutNVpatch_cmd7, sizeof(FalloutNVpatch_cmd7), &rw);
+            WriteProcessMemory(hProc, (LPVOID) FalloutNVpatch_cmd8patchAddr, &FalloutNVpatch_cmd8, sizeof(FalloutNVpatch_cmd8), &rw);
+            WriteProcessMemory(hProc, (LPVOID) FalloutNVpatch_cmd9patchAddr, &FalloutNVpatch_cmd9, sizeof(FalloutNVpatch_cmd9), &rw);
 
             /* Disabling VATS system */
 
-            /* 0093FFAE   E9 5A020000      JMP FalloutN.0094020D
-             * 0093FFB3   90               NOP
-             */
+            WriteProcessMemory(hProc, (LPVOID) FalloutNVpatch_VATSpatchAddr, &FalloutNVpatch_VATS, sizeof(FalloutNVpatch_VATS), &rw);
+
+            /* Writing FalloutNV command INPUT detour */
 
             bytes = 0;
-            rw = 0;
 
-            bytestream[0] = 0xE9; bytestream[1] = 0x5A; bytestream[2] = 0x02; bytestream[3] = 0x00; bytestream[4] = 0x00; bytestream[5] = 0x90;
-            for (int i = 0; i < 6; i++) WriteProcessMemory(hProc, (LPVOID) (0x0093FFAE + i), &bytestream[i], sizeof(bytestream[i]), &rw);
+            LPVOID FalloutNVpatch_input1patchAddr = VirtualAllocEx(hProc, 0, FalloutNVpatch_input1size, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
 
-            /* Writing FalloutNV command trigger TOTAL BYTES TO RESERVE: 19 */
-
-            /* XXXXXXXX   A1 XXXXXXXX      MOV EAX,[XXXXXXXX]
-             * XXXXXXXX   83F8 0A          CMP EAX,A
-             * XXXXXXXX  -0F84 XXXXXXXX    JE FalloutN.0070D6EA
-             * XXXXXXXX  -E9 XXXXXXXX      JMP FalloutN.0070D7AF
-             *
-             * 0070D6E5  -E9 XXXXXXXX      JMP XXXXXXXX
-             * 0070D6EA   90               NOP
-             *
-             * 0070D704   90               NOP
-             * 0070D705   90               NOP
-             * 0070D706   90               NOP
-             * 0070D707   90               NOP
-             * 0070D708   90               NOP
-             * 0070D709   90               NOP
-             *
-             * 00703224   EB 0C            JMP SHORT FalloutN.00703232
-             * 0070C2EE   0F85 15020000    JNZ FalloutN.0070C509
-             * 0071A836   EB 07            JMP SHORT FalloutN.0071A83F
-             */
+            WriteProcessMemory(hProc, (LPVOID) FalloutNVpatch_input1patchAddr, &FalloutNVpatch_input1_1, sizeof(FalloutNVpatch_input1_1), &rw); bytes += rw;
+            FalloutNVpatch_input1_2 = offset((((unsigned) FalloutNVpatch_input1patchAddr) + bytes - 1), (unsigned) FalloutNVpatch_input1_2jmp, 5);
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_input1patchAddr) + bytes), &FalloutNVpatch_input1_2, sizeof(FalloutNVpatch_input1_2), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_input1patchAddr) + bytes), &FalloutNVpatch_input1_3, sizeof(FalloutNVpatch_input1_3), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_input1patchAddr) + bytes), &FalloutNVpatch_input1_4, sizeof(FalloutNVpatch_input1_4), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_input1patchAddr) + bytes), &FalloutNVpatch_input1_5, sizeof(FalloutNVpatch_input1_5), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_input1patchAddr) + bytes), &FalloutNVpatch_input1_6, sizeof(FalloutNVpatch_input1_6), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_input1patchAddr) + bytes), &FalloutNVpatch_input1_7, sizeof(FalloutNVpatch_input1_7), &rw); bytes += rw;
 
             bytes = 0;
-            rw = 0;
+            WriteProcessMemory(hProc, (LPVOID) FalloutNVpatch_input2patchAddr, &FalloutNVpatch_input2_1, sizeof(FalloutNVpatch_input2_1), &rw); bytes += rw;
+            FalloutNVpatch_input2_2 = offset((((unsigned) FalloutNVpatch_input2patchAddr) + bytes - 1), (unsigned) FalloutNVpatch_input1patchAddr, 5);
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_input2patchAddr) + bytes), &FalloutNVpatch_input2_2, sizeof(FalloutNVpatch_input2_2), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_input2patchAddr) + bytes), &FalloutNVpatch_input2_3, sizeof(FalloutNVpatch_input2_3), &rw); bytes += rw;
 
-            LPVOID Fallout3triggerASM = VirtualAllocEx(hProc, 0, 19, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
-
-            tmp = (unsigned) &Fallout3opTrigger;
-            bytestream[0] = 0xA1; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3triggerASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3triggerASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-
-            bytestream[0] = 0x83; bytestream[1] = 0xF8; bytestream[2] = 0x0A;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3triggerASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            tmp = offset((((unsigned) Fallout3triggerASM) + bytes), (unsigned) 0x0070D6EA, 6);
-            bytestream[0] = 0x0F; bytestream[1] = 0x84;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3triggerASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3triggerASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-
-            tmp = offset((((unsigned) Fallout3triggerASM) + bytes), (unsigned) 0x0070D7AF, 5);
-            bytestream[0] = 0xE9; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3triggerASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3triggerASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-
-            tmp = offset((unsigned) 0x0070D6E5, (unsigned) Fallout3triggerASM, 5);
-            bytestream[0] = 0xE9; bytes = 0; WriteProcessMemory(hProc, (LPVOID) (0x0070D6E5 + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) (0x0070D6E5 + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-            bytestream[0] = 0x90; WriteProcessMemory(hProc, (LPVOID) (0x0070D6E5 + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-
-            bytestream[0] = 0x90; bytestream[1] = 0x90; bytestream[2] = 0x90; bytestream[3] = 0x90; bytestream[4] = 0x90; bytestream[5] = 0x90;
-            for (int i = 0; i < 6; i++) WriteProcessMemory(hProc, (LPVOID) (0x0070D704 + i), &bytestream[i], sizeof(bytestream[i]), &rw);
-
-            bytestream[0] = 0xEB; bytestream[1] = 0x0C;
-            for (int i = 0; i < 2; i++) WriteProcessMemory(hProc, (LPVOID) (0x00703224 + i), &bytestream[i], sizeof(bytestream[i]), &rw);
-
-            bytestream[0] = 0x0F; bytestream[1] = 0x85; bytestream[2] = 0x15; bytestream[3] = 0x02; bytestream[4] = 0x00; bytestream[5] = 0x00;
-            for (int i = 0; i < 6; i++) WriteProcessMemory(hProc, (LPVOID) (0x0070C2EE + i), &bytestream[i], sizeof(bytestream[i]), &rw);
-
-            bytestream[0] = 0xEB; bytestream[1] = 0x07;
-            for (int i = 0; i < 2; i++) WriteProcessMemory(hProc, (LPVOID) (0x0071A836 + i), &bytestream[i], sizeof(bytestream[i]), &rw);
-
-            /* Writing FalloutNV command INPUT detour TOTAL BYTES TO RESERVE: 68 */
-
-            /* XXXXXXXX   50               PUSH EAX
-             * XXXXXXXX   51               PUSH ECX
-             * XXXXXXXX   52               PUSH EDX
-             * XXXXXXXX   8A10             MOV DL,BYTE PTR DS:[EAX]
-             * XXXXXXXX   80FA 00          CMP DL,0
-             * XXXXXXXX   74 0E            JE SHORT XXXXXXXX
-             * XXXXXXXX   5A               POP EDX
-             * XXXXXXXX   59               POP ECX
-             * XXXXXXXX   58               POP EAX
-             * XXXXXXXX   8B8D 58D7FFFF    MOV ECX,DWORD PTR SS:[EBP-28A8]
-             * XXXXXXXX  -E9 XXXXXXXX      JMP FalloutN.0071AACE
-             * XXXXXXXX   B9 XXXXXXXX      MOV ECX,XXXXXXXX
-             * XXXXXXXX   8A11             MOV DL,BYTE PTR DS:[ECX]
-             * XXXXXXXX   80FA 00          CMP DL,0
-             * XXXXXXXX  ^74 E6            JE SHORT XXXXXXXX
-             * XXXXXXXX   8810             MOV BYTE PTR DS:[EAX],DL
-             * XXXXXXXX   C601 00          MOV BYTE PTR DS:[ECX],0
-             * XXXXXXXX   83C1 01          ADD ECX,1
-             * XXXXXXXX   83C0 01          ADD EAX,1
-             * XXXXXXXX   8A11             MOV DL,BYTE PTR DS:[ECX]
-             * XXXXXXXX   80FA 00          CMP DL,0
-             * XXXXXXXX   74 02            JE SHORT XXXXXXXX
-             * XXXXXXXX  ^EB EC            JMP SHORT XXXXXXXX
-             * XXXXXXXX   C605 XXXXXXXX 00 MOV BYTE PTR DS:[XXXXXXXX],0
-             * XXXXXXXX   C600 00          MOV BYTE PTR DS:[EAX],0
-             * XXXXXXXX  ^EB C6            JMP SHORT XXXXXXXX
-             *
-             * 0071AAC9  -E9 XXXXXXXX      JMP XXXXXXXX
-             * 0071AACE   50               PUSH EAX
-             * 0071AACF   90               NOP
-             */
+            /* Writing FalloutNV command OUTPUT detour */
 
             bytes = 0;
-            rw = 0;
 
-            LPVOID Fallout3inputASM = VirtualAllocEx(hProc, 0, 68, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+            LPVOID FalloutNVpatch_output1patchAddr = VirtualAllocEx(hProc, 0, FalloutNVpatch_output1size, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
 
-            bytestream[0] = 0x50; bytestream[1] = 0x51; bytestream[2] = 0x52;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x8A; bytestream[1] = 0x10;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x80; bytestream[1] = 0xFA; bytestream[2] = 0x00;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x74; bytestream[1] = 0x0E;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x5A; bytestream[1] = 0x59; bytestream[2] = 0x58;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x8B; bytestream[1] = 0x8D; bytestream[2] = 0x58; bytestream[3] = 0xD7; bytestream[4] = 0xFF; bytestream[5] = 0xFF;
-            for (int i = 0; i < 6; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            tmp = offset((((unsigned) Fallout3inputASM) + bytes), (unsigned) 0x0071AACE, 5);
-            bytestream[0] = 0xE9; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-
-            tmp = (unsigned) &Fallout3input;
-            bytestream[0] = 0xB9; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-
-            bytestream[0] = 0x8A; bytestream[1] = 0x11;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x80; bytestream[1] = 0xFA; bytestream[2] = 0x00;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x74; bytestream[1] = 0xE6;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x88; bytestream[1] = 0x10;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0xC6; bytestream[1] = 0x01; bytestream[2] = 0x00;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x83; bytestream[1] = 0xC1; bytestream[2] = 0x01;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x83; bytestream[1] = 0xC0; bytestream[2] = 0x01;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x8A; bytestream[1] = 0x11;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x80; bytestream[1] = 0xFA; bytestream[2] = 0x00;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x74; bytestream[1] = 0x02;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0xEB; bytestream[1] = 0xEC;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            tmp = (unsigned) &Fallout3mutex;
-            bytestream[0] = 0xC6; bytestream[1] = 0x05;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-            bytestream[0] = 0x00; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-
-            bytestream[0] = 0xC6; bytestream[1] = 0x00; bytestream[2] = 0x00;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0xEB; bytestream[1] = 0xC6;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            tmp = offset((unsigned) 0x0071AAC9, ((unsigned) Fallout3inputASM), 5);
-            bytestream[0] = 0xE9; bytes = 0; WriteProcessMemory(hProc, (LPVOID) ((unsigned) 0x0071AAC9 + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) ((unsigned) 0x0071AAC9 + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-
-            bytestream[0] = 0x50; bytestream[1] = 0x90;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) ((unsigned) 0x0071AAC9 + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            /* Writing FalloutNV command OUTPUT detour TOTAL BYTES TO RESERVE: 52 */
-
-            /* XXXXXXXX   50               PUSH EAX
-             * XXXXXXXX   51               PUSH ECX
-             * XXXXXXXX   52               PUSH EDX
-             * XXXXXXXX   B9 XXXXXXXX      MOV ECX,XXXXXXXX
-             * XXXXXXXX   83F8 00          CMP EAX,0
-             * XXXXXXXX   74 19            JE SHORT XXXXXXXX
-             * XXXXXXXX   8A10             MOV DL,BYTE PTR DS:[EAX]
-             * XXXXXXXX   80FA 00          CMP DL,0
-             * XXXXXXXX   74 0A            JE SHORT XXXXXXXX
-             * XXXXXXXX   8811             MOV BYTE PTR DS:[ECX],DL
-             * XXXXXXXX   83C0 01          ADD EAX,1
-             * XXXXXXXX   83C1 01          ADD ECX,1
-             * XXXXXXXX  ^EB EF            JMP SHORT XXXXXXXX
-             * XXXXXXXX   C601 00          MOV BYTE PTR DS:[ECX],0
-             * XXXXXXXX   E8 XXXXXXXX      CALL vaultmp.XXXXXXXX
-             * XXXXXXXX   5A               POP EDX
-             * XXXXXXXX   59               POP ECX
-             * XXXXXXXX   58               POP EAX
-             * XXXXXXXX   8B8D B4F7FFFF    MOV ECX,DWORD PTR SS:[EBP-84C]
-             * XXXXXXXX  -E9 XXXXXXXX      JMP Fallout3.0071C6EB
-             *
-             * 0071C6E6  -E9 XXXXXXXX      JMP XXXXXXXX
-             * 0071C6EB   50               PUSH EAX
-             * 0071C6EC   90               NOP
-             */
+            WriteProcessMemory(hProc, (LPVOID) FalloutNVpatch_output1patchAddr, &FalloutNVpatch_output1_1, sizeof(FalloutNVpatch_output1_1), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_output1patchAddr) + bytes), &FalloutNVpatch_output1_2, sizeof(FalloutNVpatch_output1_2), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_output1patchAddr) + bytes), &FalloutNVpatch_output1_3, sizeof(FalloutNVpatch_output1_3), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_output1patchAddr) + bytes), &FalloutNVpatch_output1_4, sizeof(FalloutNVpatch_output1_4), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_output1patchAddr) + bytes), &FalloutNVpatch_output1_5, sizeof(FalloutNVpatch_output1_5), &rw); bytes += rw;
+            FalloutNVpatch_output1_6 = offset((((unsigned) FalloutNVpatch_output1patchAddr) + bytes - 1), (unsigned) FalloutNVpatch_output1_6cll, 5);
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_output1patchAddr) + bytes), &FalloutNVpatch_output1_6, sizeof(FalloutNVpatch_output1_6), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_output1patchAddr) + bytes), &FalloutNVpatch_output1_7, sizeof(FalloutNVpatch_output1_7), &rw); bytes += rw;
+            FalloutNVpatch_output1_8 = offset((((unsigned) FalloutNVpatch_output1patchAddr) + bytes - 1), (unsigned) FalloutNVpatch_output1_8jmp, 5);
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_output1patchAddr) + bytes), &FalloutNVpatch_output1_8, sizeof(FalloutNVpatch_output1_8), &rw); bytes += rw;
 
             bytes = 0;
-            rw = 0;
+            WriteProcessMemory(hProc, (LPVOID) FalloutNVpatch_output2patchAddr, &FalloutNVpatch_output2_1, sizeof(FalloutNVpatch_output2_1), &rw); bytes += rw;
+            FalloutNVpatch_output2_2 = offset((((unsigned) FalloutNVpatch_output2patchAddr) + bytes - 1), (unsigned) FalloutNVpatch_output1patchAddr, 5);
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_output2patchAddr) + bytes), &FalloutNVpatch_output2_2, sizeof(FalloutNVpatch_output2_2), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_output2patchAddr) + bytes), &FalloutNVpatch_output2_3, sizeof(FalloutNVpatch_output2_3), &rw); bytes += rw;
 
-            LPVOID Fallout3outputASM = VirtualAllocEx(hProc, 0, 52, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
-
-            bytestream[0] = 0x50; bytestream[1] = 0x51; bytestream[2] = 0x52;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            tmp = (unsigned) &Fallout3output;
-            bytestream[0] = 0xB9; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-
-            bytestream[0] = 0x83; bytestream[1] = 0xF8; bytestream[2] = 0x00;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x74; bytestream[1] = 0x19;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x8A; bytestream[1] = 0x10;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x80; bytestream[1] = 0xFA; bytestream[2] = 0x00;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x74; bytestream[1] = 0x0A;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x88; bytestream[1] = 0x11;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x83; bytestream[1] = 0xC0; bytestream[2] = 0x01;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x83; bytestream[1] = 0xC1; bytestream[2] = 0x01;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0xEB; bytestream[1] = 0xEF;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0xC6; bytestream[1] = 0x01; bytestream[2] = 0x00;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            tmp = offset((((unsigned) Fallout3outputASM) + bytes), ((unsigned) &Fallout3commandNotify), 5);
-            bytestream[0] = 0xE8; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-
-            bytestream[0] = 0x5A; bytestream[1] = 0x59; bytestream[2] = 0x58;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x8B; bytestream[1] = 0x8D; bytestream[2] = 0xB4; bytestream[3] = 0xF7; bytestream[4] = 0xFF; bytestream[5] = 0xFF;
-            for (int i = 0; i < 6; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            tmp = offset((((unsigned) Fallout3outputASM) + bytes), (unsigned) 0x0071C6EB, 5);
-            bytestream[0] = 0xE9; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-
-            tmp = offset((unsigned) 0x0071C6E6, ((unsigned) Fallout3outputASM), 5);
-            bytestream[0] = 0xE9; bytes = 0; WriteProcessMemory(hProc, (LPVOID) ((unsigned) 0x0071C6E6 + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) ((unsigned) 0x0071C6E6 + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-
-            bytestream[0] = 0x50; bytestream[1] = 0x90;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) ((unsigned) 0x0071C6E6 + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            /* Writing FalloutNV RefID detour TOTAL BYTES TO RESERVE: 21 */
-
-            /* XXXXXXXX   A3 XXXXXXXX      MOV DWORD PTR DS:[XXXXXXXX],EAX
-             * XXXXXXXX   E8 XXXXXXXX      CALL vaultmp.XXXXXXXX
-             * XXXXXXXX   8945 E8          MOV DWORD PTR SS:[EBP-18],EAX
-             * XXXXXXXX   8B45 20          MOV EAX,DWORD PTR SS:[EBP+20]
-             * XXXXXXXX   -E9 XXXXXXXX     JMP Fallout3.005C49B0
-             *
-             * 005C49AB   -E9 XXXXXXXX     JMP XXXXXXXX
-             * 005C49B0   90               NOP
-             */
+            /* Writing FalloutNV command handler */
 
             bytes = 0;
-            rw = 0;
 
-            LPVOID Fallout3refidASM = VirtualAllocEx(hProc, 0, 21, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+            LPVOID FalloutNVpatch_handler1patchAddr = VirtualAllocEx(hProc, 0, FalloutNVpatch_handler1size, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
 
-            tmp = (unsigned) &Fallout3refid;
-            bytestream[0] = 0xA3; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) FalloutNVpatch_handler1patchAddr, &FalloutNVpatch_handler1_1, sizeof(FalloutNVpatch_handler1_1), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler1patchAddr) + bytes), &FalloutNVpatch_handler1_2, sizeof(FalloutNVpatch_handler1_2), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler1patchAddr) + bytes), &FalloutNVpatch_handler1_3, sizeof(FalloutNVpatch_handler1_3), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler1patchAddr) + bytes), &FalloutNVpatch_handler1_4, sizeof(FalloutNVpatch_handler1_4), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler1patchAddr) + bytes), &FalloutNVpatch_handler1_5, sizeof(FalloutNVpatch_handler1_5), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler1patchAddr) + bytes), &FalloutNVpatch_handler1_6, sizeof(FalloutNVpatch_handler1_6), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler1patchAddr) + bytes), &FalloutNVpatch_handler1_7, sizeof(FalloutNVpatch_handler1_7), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler1patchAddr) + bytes), &FalloutNVpatch_handler1_8, sizeof(FalloutNVpatch_handler1_8), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler1patchAddr) + bytes), &FalloutNVpatch_handler1_9, sizeof(FalloutNVpatch_handler1_9), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler1patchAddr) + bytes), &FalloutNVpatch_handler1_10, sizeof(FalloutNVpatch_handler1_10), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler1patchAddr) + bytes), &FalloutNVpatch_handler1_11, sizeof(FalloutNVpatch_handler1_11), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler1patchAddr) + bytes), &FalloutNVpatch_handler1_12, sizeof(FalloutNVpatch_handler1_12), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler1patchAddr) + bytes), &FalloutNVpatch_handler1_13, sizeof(FalloutNVpatch_handler1_13), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler1patchAddr) + bytes), &FalloutNVpatch_handler1_14, sizeof(FalloutNVpatch_handler1_14), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler1patchAddr) + bytes), &FalloutNVpatch_handler1_15, sizeof(FalloutNVpatch_handler1_15), &rw); bytes += rw;
+            FalloutNVpatch_handler1_16 = offset((((unsigned) FalloutNVpatch_handler1patchAddr) + bytes - 1), (unsigned) FalloutNVpatch_handler1_16cll, 5);
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler1patchAddr) + bytes), &FalloutNVpatch_handler1_16, sizeof(FalloutNVpatch_handler1_16), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler1patchAddr) + bytes), &FalloutNVpatch_handler1_17, sizeof(FalloutNVpatch_handler1_17), &rw); bytes += rw;
+            FalloutNVpatch_handler1_18 = offset((((unsigned) FalloutNVpatch_handler1patchAddr) + bytes - 1), (unsigned) FalloutNVpatch_handler1_18jmp, 5);
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler1patchAddr) + bytes), &FalloutNVpatch_handler1_18, sizeof(FalloutNVpatch_handler1_18), &rw); bytes += rw;
 
-            tmp = offset((((unsigned) Fallout3refidASM) + bytes), (unsigned) &Fallout3refidNotify, 5);
-            bytestream[0] = 0xE8; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-
-            bytestream[0] = 0x89; bytestream[1] = 0x45; bytestream[2] = 0xE8;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x8B; bytestream[1] = 0x45; bytestream[2] = 0x20;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            tmp = offset((((unsigned) Fallout3refidASM) + bytes), (unsigned) 0x005C49B0, 5);
-            bytestream[0] = 0xE9; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-
-            tmp = offset((unsigned) 0x005C49AB, ((unsigned) Fallout3refidASM), 5);
-            bytestream[0] = 0xE9; bytes = 0; WriteProcessMemory(hProc, (LPVOID) ((unsigned) 0x005C49AB + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) ((unsigned) 0x005C49AB + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-            bytestream[0] = 0x90; WriteProcessMemory(hProc, (LPVOID) (0x005C49AB + bytes), &bytestream[0], sizeof(bytestream[0]), &rw);
+            bytes = 0;
+            WriteProcessMemory(hProc, (LPVOID) FalloutNVpatch_handler2patchAddr, &FalloutNVpatch_handler2_1, sizeof(FalloutNVpatch_handler2_1), &rw); bytes += rw;
+            FalloutNVpatch_handler2_2 = offset((((unsigned) FalloutNVpatch_handler2patchAddr) + bytes - 1), (unsigned) FalloutNVpatch_handler1patchAddr, 5);
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler2patchAddr) + bytes), &FalloutNVpatch_handler2_2, sizeof(FalloutNVpatch_handler2_2), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler2patchAddr) + bytes), &FalloutNVpatch_handler2_3, sizeof(FalloutNVpatch_handler2_3), &rw); bytes += rw;
 
             break;
         }
@@ -525,347 +435,96 @@ extern "C" void __declspec(dllexport) DLLjump(bool NewVegas)
         {
             /* Patching key event and console */
 
-            /* 0062B663   83FB 0A          CMP EBX,A
-             * 0062B666   90               NOP
-             *
-             * 0062B66B   0F85 BE150000    JNZ Fallout3.0062CC2F
-             * 00627A84   EB 6E            JMP SHORT Fallout3.00627AF4
-             * 0062B67E   EB 1B            JMP SHORT Fallout3.0062B69B
-             *
-             * 00627AFF   E9 990D0000      JMP Fallout3.0062889D
-             * 00627B04   90               NOP
-
-             * 0062B69B   90               NOP
-             * 0062B69C   90               NOP
-             * 0062B69D   90               NOP
-             * 0062B69E   90               NOP
-             * 0062B69F   90               NOP
-             * 0062B6A0   90               NOP
-             * 0062B6A1   90               NOP
-             *
-             * 0062B744   83FB 0A          CMP EBX,A
-             * 0062B747   90               NOP
-             * 0062B748   90               NOP
-             * 0062B749   90               NOP
-             *
-             * 006195E8   90               NOP
-             * 006195E9   90               NOP
-             * 006195EA   90               NOP
-             * 006195EB   90               NOP
-             * 006195EC   90               NOP
-             * 006195ED   90               NOP
-             * 006195EE   90               NOP
-             * 006195EF   90               NOP
-             * 006195F0   90               NOP
-             * 006195F1   90               NOP
-             * 006195F2   90               NOP
-             * 006195F3   90               NOP
-             * 006195F4   90               NOP
-             * 006195F5   90               NOP
-             * 006195F6   90               NOP
-             */
-
-            bytestream[0] = 0x83; bytestream[1] = 0xFB; bytestream[2] = 0x0A; bytestream[3] = 0x90;
-            for (int i = 0; i < 4; i++) WriteProcessMemory(hProc, (LPVOID) (0x0062B663 + i), &bytestream[i], sizeof(bytestream[i]), &rw);
-
-            bytestream[0] = 0x0F; bytestream[1] = 0x85; bytestream[2] = 0xBE; bytestream[3] = 0x15; bytestream[4] = 0x00; bytestream[5] = 0x00;
-            for (int i = 0; i < 6; i++) WriteProcessMemory(hProc, (LPVOID) (0x0062B66B + i), &bytestream[i], sizeof(bytestream[i]), &rw);
-
-            bytestream[0] = 0xEB; bytestream[1] = 0x6E;
-            for (int i = 0; i < 2; i++) WriteProcessMemory(hProc, (LPVOID) (0x00627A84 + i), &bytestream[i], sizeof(bytestream[i]), &rw);
-
-            bytestream[0] = 0xEB; bytestream[1] = 0x1B;
-            for (int i = 0; i < 2; i++) WriteProcessMemory(hProc, (LPVOID) (0x0062B67E + i), &bytestream[i], sizeof(bytestream[i]), &rw);
-
-            bytestream[0] = 0xE9; bytestream[1] = 0x99; bytestream[2] = 0x0D; bytestream[3] = 0x00; bytestream[4] = 0x00; bytestream[5] = 0x90;
-            for (int i = 0; i < 6; i++) WriteProcessMemory(hProc, (LPVOID) (0x00627AFF + i), &bytestream[i], sizeof(bytestream[i]), &rw);
-
-            bytestream[0] = 0x90; bytestream[1] = 0x90; bytestream[2] = 0x90; bytestream[3] = 0x90; bytestream[4] = 0x90; bytestream[5] = 0x90; bytestream[6] = 0x90;
-            for (int i = 0; i < 7; i++) WriteProcessMemory(hProc, (LPVOID) (0x0062B69B + i), &bytestream[i], sizeof(bytestream[i]), &rw);
-
-            bytestream[0] = 0x83; bytestream[1] = 0xFB; bytestream[2] = 0x0A; bytestream[3] = 0x90; bytestream[4] = 0x90; bytestream[5] = 0x90;
-            for (int i = 0; i < 6; i++) WriteProcessMemory(hProc, (LPVOID) (0x0062B744 + i), &bytestream[i], sizeof(bytestream[i]), &rw);
-
-            bytestream[0] = 0x90; bytestream[1] = 0x90; bytestream[2] = 0x90; bytestream[3] = 0x90; bytestream[4] = 0x90; bytestream[5] = 0x90; bytestream[6] = 0x90; bytestream[7] = 0x90;
-            bytestream[8] = 0x90; bytestream[9] = 0x90; bytestream[10] = 0x90; bytestream[11] = 0x90; bytestream[12] = 0x90; bytestream[13] = 0x90; bytestream[14] = 0x90;
-            for (int i = 0; i < 15; i++) WriteProcessMemory(hProc, (LPVOID) (0x006195E8 + i), &bytestream[i], sizeof(bytestream[i]), &rw);
+            WriteProcessMemory(hProc, (LPVOID) Fallout3patch_cmd1patchAddr, &Fallout3patch_cmd1, sizeof(Fallout3patch_cmd1), &rw);
+            WriteProcessMemory(hProc, (LPVOID) Fallout3patch_cmd2patchAddr, &Fallout3patch_cmd2, sizeof(Fallout3patch_cmd2), &rw);
+            WriteProcessMemory(hProc, (LPVOID) Fallout3patch_cmd3patchAddr, &Fallout3patch_cmd3, sizeof(Fallout3patch_cmd3), &rw);
+            WriteProcessMemory(hProc, (LPVOID) Fallout3patch_cmd4patchAddr, &Fallout3patch_cmd4, sizeof(Fallout3patch_cmd4), &rw);
+            WriteProcessMemory(hProc, (LPVOID) Fallout3patch_cmd5patchAddr, &Fallout3patch_cmd5, sizeof(Fallout3patch_cmd5), &rw);
+            WriteProcessMemory(hProc, (LPVOID) Fallout3patch_cmd6patchAddr, &Fallout3patch_cmd6, sizeof(Fallout3patch_cmd6), &rw);
+            WriteProcessMemory(hProc, (LPVOID) Fallout3patch_cmd7patchAddr, &Fallout3patch_cmd7, sizeof(Fallout3patch_cmd7), &rw);
+            WriteProcessMemory(hProc, (LPVOID) Fallout3patch_cmd8patchAddr, &Fallout3patch_cmd8, sizeof(Fallout3patch_cmd8), &rw);
+            WriteProcessMemory(hProc, (LPVOID) Fallout3patch_cmd9patchAddr, &Fallout3patch_cmd9, sizeof(Fallout3patch_cmd9), &rw);
 
             /* Disabling VATS system */
 
-            /* 0078A27D   E9 88010000      JMP Fallout3.0078A40A
-             * 0078A282   90               NOP
-             */
+            WriteProcessMemory(hProc, (LPVOID) Fallout3patch_VATSpatchAddr, &Fallout3patch_VATS, sizeof(Fallout3patch_VATS), &rw);
+
+            /* Writing Fallout3 command INPUT detour */
 
             bytes = 0;
-            rw = 0;
 
-            bytestream[0] = 0xE9; bytestream[1] = 0x88; bytestream[2] = 0x01; bytestream[3] = 0x00; bytestream[4] = 0x00; bytestream[5] = 0x90;
-            for (int i = 0; i < 6; i++) WriteProcessMemory(hProc, (LPVOID) (0x0078A27D + i), &bytestream[i], sizeof(bytestream[i]), &rw);
+            LPVOID Fallout3patch_input1patchAddr = VirtualAllocEx(hProc, 0, Fallout3patch_input1size, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
 
-            /* Writing Fallout3 command trigger TOTAL BYTES TO RESERVE: 20 */
-
-            /* XXXXXXXX   8B1D XXXXXXXX    MOV EBX,[XXXXXXXX]
-             * XXXXXXXX   83FB 0A          CMP EBX,A
-             * XXXXXXXX  -0F84 XXXXXXXX    JE Fallout3.006288CA
-             * XXXXXXXX  -E9 XXXXXXXX      JMP Fallout3.0062897A
-             *
-             * 006288C4  -E9 XXXXXXXX      JMP XXXXXXXX
-             * 006288C9   90               NOP
-             */
+            WriteProcessMemory(hProc, (LPVOID) Fallout3patch_input1patchAddr, &Fallout3patch_input1_1, sizeof(Fallout3patch_input1_1), &rw); bytes += rw;
+            Fallout3patch_input1_2 = offset((((unsigned) Fallout3patch_input1patchAddr) + bytes - 1), (unsigned) Fallout3patch_input1_2jmp, 5);
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_input1patchAddr) + bytes), &Fallout3patch_input1_2, sizeof(Fallout3patch_input1_2), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_input1patchAddr) + bytes), &Fallout3patch_input1_3, sizeof(Fallout3patch_input1_3), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_input1patchAddr) + bytes), &Fallout3patch_input1_4, sizeof(Fallout3patch_input1_4), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_input1patchAddr) + bytes), &Fallout3patch_input1_5, sizeof(Fallout3patch_input1_5), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_input1patchAddr) + bytes), &Fallout3patch_input1_6, sizeof(Fallout3patch_input1_6), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_input1patchAddr) + bytes), &Fallout3patch_input1_7, sizeof(Fallout3patch_input1_7), &rw); bytes += rw;
 
             bytes = 0;
-            rw = 0;
+            WriteProcessMemory(hProc, (LPVOID) Fallout3patch_input2patchAddr, &Fallout3patch_input2_1, sizeof(Fallout3patch_input2_1), &rw); bytes += rw;
+            Fallout3patch_input2_2 = offset((((unsigned) Fallout3patch_input2patchAddr) + bytes - 1), (unsigned) Fallout3patch_input1patchAddr, 5);
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_input2patchAddr) + bytes), &Fallout3patch_input2_2, sizeof(Fallout3patch_input2_2), &rw); bytes += rw;
 
-            LPVOID Fallout3triggerASM = VirtualAllocEx(hProc, 0, 20, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
-
-            tmp = (unsigned) &Fallout3opTrigger;
-            bytestream[0] = 0x8B; bytestream[1] = 0x1D;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3triggerASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3triggerASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-
-            bytestream[0] = 0x83; bytestream[1] = 0xFB; bytestream[2] = 0x0A;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3triggerASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            tmp = offset((((unsigned) Fallout3triggerASM) + bytes), (unsigned) 0x006288CA, 6);
-            bytestream[0] = 0x0F; bytestream[1] = 0x84;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3triggerASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3triggerASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-
-            tmp = offset((((unsigned) Fallout3triggerASM) + bytes), (unsigned) 0x0062897A, 5);
-            bytestream[0] = 0xE9; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3triggerASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3triggerASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-
-            tmp = offset((unsigned) 0x006288C4, (unsigned) Fallout3triggerASM, 5);
-            bytestream[0] = 0xE9; bytes = 0; WriteProcessMemory(hProc, (LPVOID) (0x006288C4 + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) (0x006288C4 + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-            bytestream[0] = 0x90; WriteProcessMemory(hProc, (LPVOID) (0x006288C4 + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-
-            /* Writing Fallout3 command INPUT detour TOTAL BYTES TO RESERVE: 64 */
-
-            /* XXXXXXXX   50               PUSH EAX
-             * XXXXXXXX   51               PUSH ECX
-             * XXXXXXXX   56               PUSH ESI
-             * XXXXXXXX   8A06             MOV AL,BYTE PTR DS:[ESI]
-             * XXXXXXXX   3C 00            CMP AL,0
-             * XXXXXXXX   74 0D            JE SHORT XXXXXXXX
-             * XXXXXXXX   5E               POP ESI
-             * XXXXXXXX   59               POP ECX
-             * XXXXXXXX   58               POP EAX
-             * XXXXXXXX   BA FFFEFE7E      MOV EDX,7EFEFEFF
-             * XXXXXXXX  -E9 XXXXXXXX      JMP Fallout3.00C075B4
-             * XXXXXXXX   B9 XXXXXXXX      MOV ECX,XXXXXXXX
-             * XXXXXXXX   8A01             MOV AL,BYTE PTR DS:[ECX]
-             * XXXXXXXX   3C 00            CMP AL,0
-             * XXXXXXXX  ^74 E8            JE SHORT XXXXXXXX
-             * XXXXXXXX   8806             MOV BYTE PTR DS:[ESI],AL
-             * XXXXXXXX   C601 00          MOV BYTE PTR DS:[ECX],0
-             * XXXXXXXX   83C1 01          ADD ECX,1
-             * XXXXXXXX   83C6 01          ADD ESI,1
-             * XXXXXXXX   8A01             MOV AL,BYTE PTR DS:[ECX]
-             * XXXXXXXX   3C 00            CMP AL,0
-             * XXXXXXXX   74 02            JE SHORT XXXXXXXX
-             * XXXXXXXX  ^EB ED            JMP SHORT XXXXXXXX
-             * XXXXXXXX   C605 XXXXXXXX 00 MOV BYTE PTR DS:[XXXXXXXX],0
-             * XXXXXXXX   C606 00          MOV BYTE PTR DS:[ESI],0
-             * XXXXXXXX  ^EB C9            JMP SHORT XXXXXXXX
-             *
-             * 00C075AF   -E9 XXXXXXXX     JMP XXXXXXXX
-             */
+            /* Writing Fallout3 command OUTPUT detour */
 
             bytes = 0;
-            rw = 0;
 
-            LPVOID Fallout3inputASM = VirtualAllocEx(hProc, 0, 64, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+            LPVOID Fallout3patch_output1patchAddr = VirtualAllocEx(hProc, 0, Fallout3patch_output1size, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
 
-            bytestream[0] = 0x50; bytestream[1] = 0x51; bytestream[2] = 0x56;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x8A; bytestream[1] = 0x06;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x3C; bytestream[1] = 0x00;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x74; bytestream[1] = 0x0D;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x5E; bytestream[1] = 0x59; bytestream[2] = 0x58;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0xBA; bytestream[1] = 0xFF; bytestream[2] = 0xFE; bytestream[3] = 0xFE; bytestream[4] = 0x7E;
-            for (int i = 0; i < 5; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            tmp = offset((((unsigned) Fallout3inputASM) + bytes), (unsigned) 0x00C075B4, 5);
-            bytestream[0] = 0xE9; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-
-            tmp = (unsigned) &Fallout3input;
-            bytestream[0] = 0xB9; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-
-            bytestream[0] = 0x8A; bytestream[1] = 0x01;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x3C; bytestream[1] = 0x00;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x74; bytestream[1] = 0xE8;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x88; bytestream[1] = 0x06;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0xC6; bytestream[1] = 0x01; bytestream[2] = 0x00;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x83; bytestream[1] = 0xC1; bytestream[2] = 0x01;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x83; bytestream[1] = 0xC6; bytestream[2] = 0x01;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x8A; bytestream[1] = 0x01;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x3C; bytestream[1] = 0x00;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x74; bytestream[1] = 0x02;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0xEB; bytestream[1] = 0xED;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            tmp = (unsigned) &Fallout3mutex;
-            bytestream[0] = 0xC6; bytestream[1] = 0x05;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-            bytestream[0] = 0x00; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-
-            bytestream[0] = 0xC6; bytestream[1] = 0x06; bytestream[2] = 0x00;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0xEB; bytestream[1] = 0xC9;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3inputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            tmp = offset((unsigned) 0x00C075AF, ((unsigned) Fallout3inputASM), 5);
-            bytestream[0] = 0xE9; bytes = 0; WriteProcessMemory(hProc, (LPVOID) ((unsigned) 0x00C075AF + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) ((unsigned) 0x00C075AF + bytes), &tmp, sizeof(tmp), &rw);
-
-            /* Writing Fallout3 command OUTPUT detour TOTAL BYTES TO RESERVE: 46 */
-
-            /* XXXXXXXX   50               PUSH EAX
-             * XXXXXXXX   51               PUSH ECX
-             * XXXXXXXX   52               PUSH EDX
-             * XXXXXXXX   B9 XXXXXXXX      MOV ECX,XXXXXXXX
-             * XXXXXXXX   8A10             MOV DL,BYTE PTR DS:[EAX]
-             * XXXXXXXX   80FA 00          CMP DL,0
-             * XXXXXXXX   74 0A            JE SHORT XXXXXXXX
-             * XXXXXXXX   8811             MOV BYTE PTR DS:[ECX],DL
-             * XXXXXXXX   83C0 01          ADD EAX,1
-             * XXXXXXXX   83C1 01          ADD ECX,1
-             * XXXXXXXX  ^EB EF            JMP SHORT XXXXXXXX
-             * XXXXXXXX   C601 00          MOV BYTE PTR DS:[ECX],0
-             * XXXXXXXX   E8 XXXXXXXX      CALL vaultmp.XXXXXXXX
-             * XXXXXXXX   5A               POP EDX
-             * XXXXXXXX   59               POP ECX
-             * XXXXXXXX   58               POP EAX
-             * XXXXXXXX   E8 XXXXXXXX      CALL Fallout3.0062A800
-             * XXXXXXXX  -E9 XXXXXXXX      JMP Fallout3.0062B230
-             *
-             * 0062B22B   -E9 XXXXXXXX     JMP XXXXXXXX
-             */
+            WriteProcessMemory(hProc, (LPVOID) Fallout3patch_output1patchAddr, &Fallout3patch_output1_1, sizeof(Fallout3patch_output1_1), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_output1patchAddr) + bytes), &Fallout3patch_output1_2, sizeof(Fallout3patch_output1_2), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_output1patchAddr) + bytes), &Fallout3patch_output1_3, sizeof(Fallout3patch_output1_3), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_output1patchAddr) + bytes), &Fallout3patch_output1_4, sizeof(Fallout3patch_output1_4), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_output1patchAddr) + bytes), &Fallout3patch_output1_5, sizeof(Fallout3patch_output1_5), &rw); bytes += rw;
+            Fallout3patch_output1_6 = offset((((unsigned) Fallout3patch_output1patchAddr) + bytes - 1), (unsigned) Fallout3patch_output1_6cll, 5);
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_output1patchAddr) + bytes), &Fallout3patch_output1_6, sizeof(Fallout3patch_output1_6), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_output1patchAddr) + bytes), &Fallout3patch_output1_7, sizeof(Fallout3patch_output1_7), &rw); bytes += rw;
+            Fallout3patch_output1_8 = offset((((unsigned) Fallout3patch_output1patchAddr) + bytes - 1), (unsigned) Fallout3patch_output1_8cll, 5);
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_output1patchAddr) + bytes), &Fallout3patch_output1_8, sizeof(Fallout3patch_output1_8), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_output1patchAddr) + bytes), &Fallout3patch_output1_9, sizeof(Fallout3patch_output1_9), &rw); bytes += rw;
+            Fallout3patch_output1_10 = offset((((unsigned) Fallout3patch_output1patchAddr) + bytes - 1), (unsigned) Fallout3patch_output1_10jmp, 5);
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_output1patchAddr) + bytes), &Fallout3patch_output1_10, sizeof(Fallout3patch_output1_10), &rw); bytes += rw;
 
             bytes = 0;
-            rw = 0;
+            WriteProcessMemory(hProc, (LPVOID) Fallout3patch_output2patchAddr, &Fallout3patch_output2_1, sizeof(Fallout3patch_output2_1), &rw); bytes += rw;
+            Fallout3patch_output2_2 = offset((((unsigned) Fallout3patch_output2patchAddr) + bytes - 1), (unsigned) Fallout3patch_output1patchAddr, 5);
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_output2patchAddr) + bytes), &Fallout3patch_output2_2, sizeof(Fallout3patch_output2_2), &rw); bytes += rw;
 
-            LPVOID Fallout3outputASM = VirtualAllocEx(hProc, 0, 46, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
-
-            bytestream[0] = 0x50; bytestream[1] = 0x51; bytestream[2] = 0x52;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            tmp = (unsigned) &Fallout3output;
-            bytestream[0] = 0xB9; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-
-            bytestream[0] = 0x8A; bytestream[1] = 0x10;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x80; bytestream[1] = 0xFA; bytestream[2] = 0x00;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x74; bytestream[1] = 0x0A;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x88; bytestream[1] = 0x11;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x83; bytestream[1] = 0xC0; bytestream[2] = 0x01;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0x83; bytestream[1] = 0xC1; bytestream[2] = 0x01;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0xEB; bytestream[1] = 0xEF;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            bytestream[0] = 0xC6; bytestream[1] = 0x01; bytestream[2] = 0x00;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            tmp = offset((((unsigned) Fallout3outputASM) + bytes), ((unsigned) &Fallout3commandNotify), 5);
-            bytestream[0] = 0xE8; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-
-            bytestream[0] = 0x5A; bytestream[1] = 0x59; bytestream[2] = 0x58;
-            for (int i = 0; i < 3; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-
-            tmp = offset((((unsigned) Fallout3outputASM) + bytes), (unsigned) 0x0062A800, 5);
-            bytestream[0] = 0xE8; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-
-            tmp = offset((((unsigned) Fallout3outputASM) + bytes), (unsigned) 0x0062B230, 5);
-            bytestream[0] = 0xE9; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3outputASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-
-            tmp = offset((unsigned) 0x0062B22B, ((unsigned) Fallout3outputASM), 5);
-            bytestream[0] = 0xE9; bytes = 0; WriteProcessMemory(hProc, (LPVOID) ((unsigned) 0x0062B22B + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) ((unsigned) 0x0062B22B + bytes), &tmp, sizeof(tmp), &rw);
-
-            /* Writing Fallout3 RefID detour TOTAL BYTES TO RESERVE: 21 */
-
-            /* XXXXXXXX   8915 XXXXXXXX    MOV DWORD PTR DS:[XXXXXXXX],EDX
-             * XXXXXXXX   E8 XXXXXXXX      CALL vaultmp.XXXXXXXX
-             * XXXXXXXX   E8 XXXXXXXX      CALL Fallout3.00516790
-             * XXXXXXXX   -E9 XXXXXXXX     JMP Fallout3.0053CACF
-             *
-             * 0053CACA   -E9 XXXXXXXX     JMP XXXXXXXX
-             */
+            /* Writing Fallout3 command handler */
 
             bytes = 0;
-            rw = 0;
 
-            LPVOID Fallout3refidASM = VirtualAllocEx(hProc, 0, 21, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+            LPVOID Fallout3patch_handler1patchAddr = VirtualAllocEx(hProc, 0, Fallout3patch_handler1size, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
 
-            tmp = (unsigned) &Fallout3refid;
-            bytestream[0] = 0x89; bytestream[1] = 0x15;
-            for (int i = 0; i < 2; i++) { WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &bytestream[i], sizeof(bytestream[i]), &rw); bytes += rw; }
-            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) Fallout3patch_handler1patchAddr, &Fallout3patch_handler1_1, sizeof(Fallout3patch_handler1_1), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_handler1patchAddr) + bytes), &Fallout3patch_handler1_2, sizeof(Fallout3patch_handler1_2), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_handler1patchAddr) + bytes), &Fallout3patch_handler1_3, sizeof(Fallout3patch_handler1_3), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_handler1patchAddr) + bytes), &Fallout3patch_handler1_4, sizeof(Fallout3patch_handler1_4), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_handler1patchAddr) + bytes), &Fallout3patch_handler1_5, sizeof(Fallout3patch_handler1_5), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_handler1patchAddr) + bytes), &Fallout3patch_handler1_6, sizeof(Fallout3patch_handler1_6), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_handler1patchAddr) + bytes), &Fallout3patch_handler1_7, sizeof(Fallout3patch_handler1_7), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_handler1patchAddr) + bytes), &Fallout3patch_handler1_8, sizeof(Fallout3patch_handler1_8), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_handler1patchAddr) + bytes), &Fallout3patch_handler1_9, sizeof(Fallout3patch_handler1_9), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_handler1patchAddr) + bytes), &Fallout3patch_handler1_10, sizeof(Fallout3patch_handler1_10), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_handler1patchAddr) + bytes), &Fallout3patch_handler1_11, sizeof(Fallout3patch_handler1_11), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_handler1patchAddr) + bytes), &Fallout3patch_handler1_12, sizeof(Fallout3patch_handler1_12), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_handler1patchAddr) + bytes), &Fallout3patch_handler1_13, sizeof(Fallout3patch_handler1_13), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_handler1patchAddr) + bytes), &Fallout3patch_handler1_14, sizeof(Fallout3patch_handler1_14), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_handler1patchAddr) + bytes), &Fallout3patch_handler1_15, sizeof(Fallout3patch_handler1_15), &rw); bytes += rw;
+            Fallout3patch_handler1_16 = offset((((unsigned) Fallout3patch_handler1patchAddr) + bytes - 1), (unsigned) Fallout3patch_handler1_16cll, 5);
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_handler1patchAddr) + bytes), &Fallout3patch_handler1_16, sizeof(Fallout3patch_handler1_16), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_handler1patchAddr) + bytes), &Fallout3patch_handler1_17, sizeof(Fallout3patch_handler1_17), &rw); bytes += rw;
+            Fallout3patch_handler1_18 = offset((((unsigned) Fallout3patch_handler1patchAddr) + bytes - 1), (unsigned) Fallout3patch_handler1_18jmp, 5);
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_handler1patchAddr) + bytes), &Fallout3patch_handler1_18, sizeof(Fallout3patch_handler1_18), &rw); bytes += rw;
 
-            tmp = offset((((unsigned) Fallout3refidASM) + bytes), (unsigned) &Fallout3refidNotify, 5);
-            bytestream[0] = 0xE8; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-
-            tmp = offset((((unsigned) Fallout3refidASM) + bytes), (unsigned) 0x00516790, 5);
-            bytestream[0] = 0xE8; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-
-            tmp = offset((((unsigned) Fallout3refidASM) + bytes), (unsigned) 0x0053CACF, 5);
-            bytestream[0] = 0xE9; WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3refidASM) + bytes), &tmp, sizeof(tmp), &rw); bytes += rw;
-
-            tmp = offset((unsigned) 0x0053CACA, ((unsigned) Fallout3refidASM), 5);
-            bytestream[0] = 0xE9; bytes = 0; WriteProcessMemory(hProc, (LPVOID) ((unsigned) 0x0053CACA + bytes), &bytestream[0], sizeof(bytestream[0]), &rw); bytes += rw;
-            WriteProcessMemory(hProc, (LPVOID) ((unsigned) 0x0053CACA + bytes), &tmp, sizeof(tmp), &rw);
+            bytes = 0;
+            WriteProcessMemory(hProc, (LPVOID) Fallout3patch_handler2patchAddr, &Fallout3patch_handler2_1, sizeof(Fallout3patch_handler2_1), &rw); bytes += rw;
+            Fallout3patch_handler2_2 = offset((((unsigned) Fallout3patch_handler2patchAddr) + bytes - 1), (unsigned) Fallout3patch_handler1patchAddr, 5);
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_handler2patchAddr) + bytes), &Fallout3patch_handler2_2, sizeof(Fallout3patch_handler2_2), &rw); bytes += rw;
 
             break;
         }
