@@ -1,6 +1,8 @@
 #ifndef DATA_H
 #define DATA_H
 
+class Player;
+
 #include "RakNet/MessageIdentifiers.h"
 
 #define FALLOUT3_TICKS 1
@@ -23,12 +25,14 @@ enum {
     ID_PLAYER_LEFT,
     ID_PLAYER_UPDATE,
     ID_PLAYER_STATE_UPDATE,
+    ID_PLAYER_CELL_UPDATE,
 };
 
 enum {
     CHANNEL_SYSTEM,
     CHANNEL_PLAYER_UPDATE,
     CHANNEL_PLAYER_STATE_UPDATE,
+    CHANNEL_PLAYER_CELL_UPDATE,
 };
 
 #pragma pack(push, 1)
@@ -48,27 +52,33 @@ struct pPlayerStateUpdate {
     float conds[6];
     bool dead;
 };
+
+struct pPlayerCellUpdate {
+    unsigned char type;
+    RakNetGUID guid;
+    DWORD cell;
+};
 #pragma pack(pop)
 
 struct fCommand {
     string command;
-    string refID;
+    Player* player;
     bool repeat;
     bool forplayers;
-    bool skipflag;
+    bool enabledonly;
+    int skipflag;
     int priority;
     int curPriority;
-    int flipcmd;
     int sleep;
     int tcount;
 
     fCommand() {
         command = "";
-        refID = "";
+        player = NULL;
         repeat = false;
         forplayers = false;
-        skipflag = false;
-        flipcmd = -1;
+        enabledonly = true;
+        skipflag = -1;
         priority = 0;
         curPriority = 0;
         sleep = FALLOUT3_TICKS;
@@ -82,6 +92,7 @@ enum fCommandSkipFlags {
     SKIPFLAG_GETPOS_Z,
     SKIPFLAG_GETDEAD,
     SKIPFLAG_GETHEALTH,
+    SKIPFLAG_GETPARENTCELL,
     MAX_SKIP_FLAGS
 };
 

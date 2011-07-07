@@ -22,10 +22,6 @@
 #define OPENCMD() while (cmdmutex); cmdmutex = true;
 #define CLOSECMD() cmdmutex = false;
 #define PUSHCMD(cmd) tmplist.push_back(cmd);
-#define FLAG(flag) skipcmds[flag]->skipflag = true;
-#define UNFLAG(flag) skipcmds[flag]->skipflag = false;
-#define FLIPFLAG(flag) skipcmds[flag]->skipflag = !skipcmds[flag]->skipflag;
-#define GETFLAG(flag) skipcmds[flag]->skipflag
 
 using namespace RakNet;
 using namespace Data;
@@ -52,7 +48,6 @@ class Fallout3 {
               static queue<Player*> refqueue;
               static list<fCommand*> cmdlist;
               static list<fCommand*> tmplist;
-              static fCommand* skipcmds[MAX_SKIP_FLAGS];
               static bool cmdmutex;
 
               static PipeClient* pipeServer;

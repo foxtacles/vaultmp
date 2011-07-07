@@ -17,7 +17,6 @@ Player* Fallout3::self;
 queue<Player*> Fallout3::refqueue;
 list<fCommand*> Fallout3::cmdlist;
 list<fCommand*> Fallout3::tmplist;
-fCommand* Fallout3::skipcmds[MAX_SKIP_FLAGS];
 bool Fallout3::cmdmutex = false;
 PipeClient* Fallout3::pipeServer;
 PipeServer* Fallout3::pipeClient;
@@ -109,7 +108,7 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
             recv = pipeClient->Recv();
 
             #ifdef VAULTMP_DEBUG
-            //debug->Print(const_cast<char*>(recv.c_str()), true);
+            //debug->Print(const_cast<char*>(recv.c_str()), false);
             #endif
 
             int find = 0;
@@ -131,6 +130,8 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                     DWORD Fallout3_refID = 0x00;
                     DWORD Fallout3_newRefID = 0x00;
                     unsigned char Fallout3_coord = 0x00;
+                    unsigned char Fallout3_setcoord = 0x00;
+                    unsigned char Fallout3_valcoord = 0x00;
 
                     char output[high.length()];
                     char* token;
@@ -140,6 +141,8 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                     Fallout3_refID = strtoul(token, &token, 16);
                     Fallout3_result = strtoull(token, &token, 16);
                     Fallout3_coord = (unsigned char) strtoul(token, &token, 16);
+                    Fallout3_setcoord = (unsigned char) strtoul(token, &token, 16);
+                    Fallout3_valcoord = (unsigned char) strtoul(token, &token, 16);
                     Fallout3_newRefID = strtoull(token, &token, 16);
 
                     if (Fallout3_refID == 0x00000014)
@@ -242,11 +245,20 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
 
                                 sprintf(refstr, "%x", Fallout3_newRefID);
 
+                                Player* player;
+
+                                if (!refqueue.empty())
+                                {
+                                    player = refqueue.front();
+                                    player->SetPlayerRefID(refstr);
+                                    refqueue.pop();
+                                }
+
                                 OPENCMD();
 
                                 fCommand* cmd = new fCommand;
                                 cmd->command = "setrestrained 1";
-                                cmd->refID = refstr;
+                                cmd->player = player;
                                 cmd->forplayers = false;
                                 cmd->repeat = false;
                                 cmd->sleep = 150;
@@ -261,13 +273,155 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                                 sprintf(text, "Received RefID from game: %s", refstr);
                                 debug->Print(text, true);
                                 #endif
+                                break;
+                            }
+                            case 0x1495: // GetParentCell
+                            {
+                                DWORD cell = (DWORD) Fallout3_result;
 
-                                if (!refqueue.empty())
+                                if (lastRef != self && lastRef->GetPlayerRefID().compare("none") != 0)
                                 {
-                                    Player* player = refqueue.front();
-                                    player->SetPlayerRefID(refstr);
-                                    refqueue.pop();
+                                    if (self->GetPlayerGameCell() == lastRef->GetPlayerNetworkCell() && lastRef->GetPlayerGameCell() != lastRef->GetPlayerNetworkCell())
+                                    {
+                                        #ifdef VAULTMP_DEBUG
+                                        char text[128];
+                                        ZeroMemory(text, sizeof(text));
+
+                                        sprintf(text, "Moving player to cell (name: %s, ref: %s, cell: %x)", lastRef->GetPlayerName().c_str(), lastRef->GetPlayerRefID().c_str(), self->GetPlayerGameCell());
+                                        debug->Print(text, true);
+                                        #endif
+
+                                        OPENCMD();
+
+                                        lastRef->SetPlayerGameCell(self->GetPlayerGameCell());
+                                        lastRef->ToggleNoOverride(SKIPFLAG_GETPARENTCELL, true);
+
+                                        fCommand* cmd;
+
+                                        if (lastRef->SetPlayerEnabled(true))
+                                        {
+                                            cmd = new fCommand;
+                                            cmd->command = "enable";
+                                            cmd->player = lastRef;
+                                            cmd->forplayers = false;
+                                            cmd->repeat = false;
+                                            cmd->sleep = 150;
+                                            PUSHCMD(cmd);
+                                        }
+
+                                        cmd = new fCommand;
+                                        cmd->command = "moveto player";
+                                        cmd->player = lastRef;
+                                        cmd->forplayers = false;
+                                        cmd->repeat = false;
+                                        cmd->sleep = 150;
+                                        PUSHCMD(cmd);
+
+                                        CLOSECMD();
+                                    }
                                 }
+
+                                lastRef->SetPlayerGameCell(cell);
+
+                                if (lastRef != self && lastRef->GetPlayerRefID().compare("none") != 0)
+                                {
+                                    if (lastRef->GetPlayerNetworkCell() != self->GetPlayerGameCell() && !lastRef->IsPlayerNearPoint(self->GetPlayerPos(0), self->GetPlayerPos(1), self->GetPlayerPos(2), 20000.0))
+                                    {
+                                        if (lastRef->SetPlayerEnabled(false))
+                                        {
+                                            OPENCMD();
+
+                                            fCommand* cmd = new fCommand;
+                                            cmd->command = "disable";
+                                            cmd->player = lastRef;
+                                            cmd->forplayers = false;
+                                            cmd->repeat = false;
+                                            cmd->enabledonly = false;
+                                            cmd->sleep = 150;
+                                            PUSHCMD(cmd);
+
+                                            CLOSECMD();
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (lastRef->SetPlayerEnabled(true))
+                                        {
+                                            OPENCMD();
+
+                                            fCommand* cmd = new fCommand;
+                                            cmd->command = "enable";
+                                            cmd->player = lastRef;
+                                            cmd->forplayers = false;
+                                            cmd->repeat = false;
+                                            cmd->sleep = 150;
+                                            PUSHCMD(cmd);
+
+                                            CLOSECMD();
+                                        }
+                                    }
+                                }
+
+                                break;
+                            }
+                            case 0x1007: // SetPos
+                            {
+                                switch (Fallout3_setcoord)
+                                {
+                                    case 0x58: // X
+                                        lastRef->ToggleNoOverride(SKIPFLAG_GETPOS_X, false);
+                                        break;
+                                    case 0x59: // Y
+                                        lastRef->ToggleNoOverride(SKIPFLAG_GETPOS_Y, false);
+                                        break;
+                                    case 0x5A: // Z
+                                        lastRef->ToggleNoOverride(SKIPFLAG_GETPOS_Z, false);
+                                        break;
+                                }
+                                break;
+                            }
+                            case 0x1009: // SetAngle
+                            {
+                                switch (Fallout3_setcoord)
+                                {
+                                    case 0x58: // X
+                                        break;
+                                    case 0x59: // Y
+                                        break;
+                                    case 0x5A: // Z
+                                        break;
+                                }
+                                break;
+                            }
+                            case 0x108C: // Resurrect
+                            case 0x108B: // KillActor
+                            {
+                                lastRef->ToggleNoOverride(SKIPFLAG_GETDEAD, false);
+                                break;
+                            }
+                            case 0x109E: // MoveTo
+                            {
+                                lastRef->ToggleNoOverride(SKIPFLAG_GETPARENTCELL, false);
+                                break;
+                            }
+                            case 0x110E: // ForceActorValue
+                            {
+                                switch (Fallout3_valcoord)
+                                {
+                                    case 0x10: // Health
+                                        lastRef->ToggleNoOverride(SKIPFLAG_GETHEALTH, false);
+                                        break;
+                                }
+                                break;
+                            }
+                            case 0x11BB: // MarkForDelete
+                            {
+                                delete lastRef;
+                                break;
+                            }
+                            case 0x014F: // LoadGame
+                            {
+                                // we successfully loaded the savegame! do something here.
                                 break;
                             }
                             case 0x0114: // ShowAnim
@@ -351,14 +505,25 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                             }
                         }
                     }
-                    /*else if (stricmp(token, "Weapon") == 0)
-                    {
-
-                    }
+                    /* We probably process some of these later, but they shall not loot the log file for now */
+                    else if (stricmp(token, "---") == 0)
+                    {}
+                    else if (stricmp(token, "Weapon") == 0)
+                    {}
                     else if (stricmp(token, "Idle") == 0)
-                    {
-
-                    }*/
+                    {}
+                    else if (stricmp(token, "Anims") == 0)
+                    {}
+                    else if (stricmp(token, "Has") == 0)
+                    {}
+                    else if (stricmp(token, "Knock") == 0)
+                    {}
+                    else if (stricmp(token, "Sit/Sleep") == 0)
+                    {}
+                    else if (stricmp(token, "Life") == 0)
+                    {}
+                    else if (stricmp(token, "Process") == 0)
+                    {}
                     else
                     {
                         #ifdef VAULTMP_DEBUG
@@ -393,86 +558,96 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
 
     // kill game process if running
 
+    #ifdef VAULTMP_DEBUG
+    debug->Print((char*) "Game thread is going to terminate...", true);
+    #endif
+
     return ((DWORD) data);
 }
 
 DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
 {
-    fCommand cmds[15];
+    fCommand cmds[16];
 
     cmds[0].command = "getpos X";
     cmds[0].repeat = true;
     cmds[0].forplayers = true;
-    skipcmds[SKIPFLAG_GETPOS_X] = &cmds[0];
+    cmds[0].skipflag = SKIPFLAG_GETPOS_X;
 
     cmds[1].command = "getpos Y";
     cmds[1].repeat = true;
     cmds[1].forplayers = true;
-    skipcmds[SKIPFLAG_GETPOS_Y] = &cmds[1];
+    cmds[1].skipflag = SKIPFLAG_GETPOS_Y;
 
     cmds[2].command = "getpos Z";
     cmds[2].repeat = true;
     cmds[2].forplayers = true;
-    skipcmds[SKIPFLAG_GETPOS_Z] = &cmds[2];
+    cmds[2].skipflag = SKIPFLAG_GETPOS_Z;
 
-    cmds[3].command = "getangle Z";
+    cmds[3].command = "getparentcell";
     cmds[3].repeat = true;
-    cmds[3].forplayers = false;
+    cmds[3].forplayers = true;
+    cmds[3].enabledonly = false;
+    cmds[3].skipflag = SKIPFLAG_GETPARENTCELL;
 
-    cmds[4].command = "getbaseactorvalue Health";
+    cmds[4].command = "getangle Z";
     cmds[4].repeat = true;
-    cmds[4].forplayers = false;
-    cmds[4].priority = 50;
+    cmds[4].player = self;
 
-    cmds[5].command = "getactorvalue Health";
+    cmds[5].command = "getbaseactorvalue Health";
     cmds[5].repeat = true;
-    cmds[5].forplayers = true;
-    cmds[5].priority = 10;
-    skipcmds[SKIPFLAG_GETHEALTH] = &cmds[5];
+    cmds[5].player = self;
+    cmds[5].priority = 50;
 
-    cmds[6].command = "getactorvalue PerceptionCondition";
+    cmds[6].command = "getactorvalue Health";
     cmds[6].repeat = true;
-    cmds[6].forplayers = false;
-    cmds[6].priority = 15;
+    cmds[6].player = self;
+    cmds[6].priority = 10;
+    cmds[6].skipflag = SKIPFLAG_GETHEALTH;
 
-    cmds[7].command = "getactorvalue EnduranceCondition";
+    cmds[7].command = "getactorvalue PerceptionCondition";
     cmds[7].repeat = true;
-    cmds[7].forplayers = false;
+    cmds[7].player = self;
     cmds[7].priority = 15;
 
-    cmds[8].command = "getactorvalue LeftAttackCondition";
+    cmds[8].command = "getactorvalue EnduranceCondition";
     cmds[8].repeat = true;
-    cmds[8].forplayers = false;
+    cmds[8].player = self;
     cmds[8].priority = 15;
 
-    cmds[9].command = "getactorvalue RightAttackCondition";
+    cmds[9].command = "getactorvalue LeftAttackCondition";
     cmds[9].repeat = true;
-    cmds[9].forplayers = false;
+    cmds[9].player = self;
     cmds[9].priority = 15;
 
-    cmds[10].command = "getactorvalue LeftMobilityCondition";
+    cmds[10].command = "getactorvalue RightAttackCondition";
     cmds[10].repeat = true;
-    cmds[10].forplayers = false;
+    cmds[10].player = self;
     cmds[10].priority = 15;
 
-    cmds[11].command = "getactorvalue RightMobilityCondition";
+    cmds[11].command = "getactorvalue LeftMobilityCondition";
     cmds[11].repeat = true;
-    cmds[11].forplayers = false;
+    cmds[11].player = self;
     cmds[11].priority = 15;
 
-    cmds[12].command = "getdead";
+    cmds[12].command = "getactorvalue RightMobilityCondition";
     cmds[12].repeat = true;
-    cmds[12].forplayers = true;
-    cmds[12].priority = 7;
-    skipcmds[SKIPFLAG_GETDEAD] = &cmds[12];
+    cmds[12].player = self;
+    cmds[12].priority = 15;
 
-    cmds[13].command = "showanim";
+    cmds[13].command = "getdead";
     cmds[13].repeat = true;
-    cmds[13].forplayers = false;
+    cmds[13].forplayers = true;
+    cmds[13].priority = 7;
+    cmds[13].skipflag = SKIPFLAG_GETDEAD;
 
-    cmds[14].command = "ismoving";
+    cmds[14].command = "showanim";
     cmds[14].repeat = true;
-    cmds[14].forplayers = false;
+    cmds[14].player = self;
+
+    cmds[15].command = "ismoving";
+    cmds[15].repeat = true;
+    cmds[15].player = self;
 
     for (int i = 0; i < sizeof(cmds) / sizeof(fCommand); i++)
         cmdlist.push_back(&cmds[i]);
@@ -516,12 +691,6 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
 
             fCommand* cmd = *it;
 
-            if (cmd->skipflag)
-            {
-                it++;
-                continue;
-            }
-
             if (cmd->curPriority != cmd->priority)
             {
                 cmd->curPriority++;
@@ -531,42 +700,24 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
             else
                 cmd->curPriority = 0;
 
-            #ifdef VAULTMP_DEBUG
-            char text[128];
-            ZeroMemory(text, sizeof(text));
-
-            sprintf(text, "Executing command (%s on %s, sleep: %d, timediff: %dms)", cmd->command.c_str(), cmd->forplayers ? "all" : cmd->refID.empty() ? "player" : cmd->refID.c_str(), cmd->sleep, !cmd->repeat ? (GetTickCount() - cmd->tcount) : -1);
-            debug->Print(text, true);
-            #endif
-
-            if (!cmd->refID.empty())
+            if (cmd->player == NULL && !cmd->forplayers)
             {
-                if (cmd->refID.compare("none") == 0)
-                {
-                    string input = "op:" + cmd->command;
-                    pipeServer->Send(&input);
-                }
-                else
-                {
-                    string input = "op:" + cmd->refID + "." + cmd->command;
-                    pipeServer->Send(&input);
-                }
-                Sleep(cmd->sleep);
-            }
-            else if (!cmd->forplayers)
-            {
-                string input = "op:player." + cmd->command;
+                string input = "op:" + cmd->command;
                 pipeServer->Send(&input);
                 Sleep(cmd->sleep);
             }
-            else
+            else if (cmd->forplayers)
             {
                 map<RakNetGUID, string> players = Player::GetPlayerList();
                 map<RakNetGUID, string>::iterator it2;
 
                 for (it2 = players.begin(); it2 != players.end(); it2++)
                 {
+                    Player* player = Player::GetPlayerFromGUID(it2->first);
                     string refID = it2->second;
+
+                    if ((cmd->skipflag != -1 && player->GetPlayerOverrideFlag(cmd->skipflag) == true) || (cmd->enabledonly && player->GetPlayerEnabled() == false))
+                        continue;
 
                     if (refID.compare("none") != 0)
                     {
@@ -576,18 +727,26 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
                     }
                 }
             }
-
-            if (cmd->flipcmd != -1)
+            else
             {
-                FLIPFLAG(cmd->flipcmd);
-
-                if (!cmd->refID.empty() && cmd->refID.compare("none") != 0)
+                if ((cmd->skipflag != -1 && cmd->player->GetPlayerOverrideFlag(cmd->skipflag) == true) || (cmd->enabledonly && cmd->player->GetPlayerEnabled() == false))
                 {
-                    Player* player = Player::GetPlayerFromRefID(cmd->refID);
-                    if (player != NULL)
-                        player->ToggleNoOverride(cmd->flipcmd, GETFLAG(cmd->flipcmd));
+                    it++;
+                    continue;
                 }
+
+                string input = "op:" + cmd->player->GetPlayerRefID() + "." + cmd->command;
+                pipeServer->Send(&input);
+                Sleep(cmd->sleep);
             }
+
+            #ifdef VAULTMP_DEBUG
+            char text[128];
+            ZeroMemory(text, sizeof(text));
+
+            sprintf(text, "Executing command (%s on %s, sleep: %d, timediff: %dms)", cmd->command.c_str(), cmd->forplayers ? "all" : cmd->player != NULL ? cmd->player->GetPlayerRefID().c_str() : "-", cmd->sleep, !cmd->repeat ? (GetTickCount() - cmd->tcount) : -1);
+            debug->Print(text, true);
+            #endif
 
             if (!cmd->repeat)
             {
@@ -598,6 +757,10 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
                 it++;
         }
     }
+
+    #ifdef VAULTMP_DEBUG
+    debug->Print((char*) "Command thread is going to terminate...", true);
+    #endif
 
     return ((DWORD) data);
 }
@@ -655,7 +818,7 @@ HANDLE Fallout3::InitializeFallout3(bool NewVegas)
                         size = ftell(vaultmp);
                         fclose(vaultmp);
 
-                        if (size == VAULTMP_DLL_SIZE || true) // FIXME
+                        if (size == VAULTMP_DLL_SIZE)
                         {
                             if (lookupProgramID(module) == 0)
                             {
@@ -778,13 +941,13 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
     #endif
 
     Player::DestroyInstances();
-
     self = new Player(peer->GetMyGUID());
     self->SetPlayerName(name);
     self->SetPlayerRefID("player");
 
     pPlayerUpdate localPlayerUpdate = self->GetPlayerUpdateStruct();
     pPlayerStateUpdate localPlayerStateUpdate = self->GetPlayerStateUpdateStruct();
+    pPlayerCellUpdate localPlayerCellUpdate = self->GetPlayerCellUpdateStruct();
 
     cmdlist.clear();
 
@@ -879,7 +1042,6 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
 
                     fCommand* cmd = new fCommand;
                     cmd->command = "load " + save;
-                    cmd->refID = "none";
                     cmd->forplayers = false;
                     cmd->repeat = false;
                     cmd->sleep = 150;
@@ -924,6 +1086,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                     else cmd->command = "placeatme 30D82 1";
                     cmd->forplayers = false;
                     cmd->repeat = false;
+                    cmd->player = self;
                     cmd->sleep = 1500;
                     PUSHCMD(cmd);
 
@@ -956,7 +1119,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
 
                         fCommand* cmd = new fCommand;
                         cmd->command = "disable";
-                        cmd->refID = refID;
+                        cmd->player = player;
                         cmd->forplayers = false;
                         cmd->repeat = false;
                         cmd->sleep = 150;
@@ -964,7 +1127,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
 
                         cmd = new fCommand;
                         cmd->command = "markfordelete";
-                        cmd->refID = refID;
+                        cmd->player = player;
                         cmd->forplayers = false;
                         cmd->repeat = false;
                         cmd->sleep = 150;
@@ -972,8 +1135,6 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
 
                         CLOSECMD();
                     }
-
-                    delete player;
                     break;
                 }
                 case ID_PLAYER_UPDATE:
@@ -1002,122 +1163,23 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
 
                         char pos[16];
 
-                        if (!player->IsCoordinateInRange(0, update->X, 350.0))
-                        {
-                            if (player->SetPlayerPos(0, update->X))
-                            {
-                                FLAG(SKIPFLAG_GETPOS_X);
-                                player->ToggleNoOverride(SKIPFLAG_GETPOS_X, true);
-
-                                sprintf(pos, "%f", update->X);
-
-                                cmd = new fCommand;
-                                cmd->command = "setpos X " + string(pos);
-                                cmd->refID = refID;
-                                cmd->forplayers = false;
-                                cmd->repeat = false;
-                                cmd->flipcmd = SKIPFLAG_GETPOS_X;
-                                PUSHCMD(cmd);
-                            }
-                        }
-
-                        if (!player->IsCoordinateInRange(1, update->Y, 350.0))
-                        {
-                            if (player->SetPlayerPos(1, update->Y))
-                            {
-                                FLAG(SKIPFLAG_GETPOS_Y);
-                                player->ToggleNoOverride(SKIPFLAG_GETPOS_Y, true);
-
-                                sprintf(pos, "%f", update->Y);
-
-                                cmd = new fCommand;
-                                cmd->command = "setpos Y " + string(pos);
-                                cmd->refID = refID;
-                                cmd->forplayers = false;
-                                cmd->repeat = false;
-                                cmd->flipcmd = SKIPFLAG_GETPOS_Y;
-                                PUSHCMD(cmd);
-                            }
-                        }
-
-                        if (!player->IsCoordinateInRange(2, update->Z, 150.0))
-                        {
-                            if (player->SetPlayerPos(2, update->Z))
-                            {
-                                FLAG(SKIPFLAG_GETPOS_Z);
-                                player->ToggleNoOverride(SKIPFLAG_GETPOS_Z, true);
-
-                                sprintf(pos, "%f", update->Z);
-
-                                cmd = new fCommand;
-                                cmd->command = "setpos Z " + string(pos);
-                                cmd->refID = refID;
-                                cmd->forplayers = false;
-                                cmd->repeat = false;
-                                cmd->flipcmd = SKIPFLAG_GETPOS_Z;
-                                PUSHCMD(cmd);
-                            }
-                        }
-
-                        if (update->A != player->GetPlayerAngle())
+                        if (player->SetPlayerAngle(update->A) && player->GetPlayerEnabled())
                         {
                             sprintf(pos, "%f", update->A);
 
                             cmd = new fCommand;
                             cmd->command = "setangle Z " + string(pos);
-                            cmd->refID = refID;
+                            cmd->player = player;
                             cmd->forplayers = false;
                             cmd->repeat = false;
                             PUSHCMD(cmd);
-
-                            player->SetPlayerAngle(update->A);
                         }
 
-                        if (update->alerted != player->IsPlayerAlerted())
-                        {
-                            cmd = new fCommand;
-                            cmd->command = "setrestrained 0";
-                            cmd->refID = refID;
-                            cmd->forplayers = false;
-                            cmd->repeat = false;
-                            cmd->sleep = 150;
-
-                            PUSHCMD(cmd);
-
-                            cmd = new fCommand;
-                            cmd->command = "setalert ";
-                            cmd->refID = refID;
-                            cmd->forplayers = false;
-                            cmd->repeat = false;
-
-                            switch (update->alerted)
-                            {
-                                case true:
-                                    cmd->command.append("1");
-                                    break;
-                                case false:
-                                    cmd->command.append("0");
-                                    break;
-                            }
-
-                            PUSHCMD(cmd);
-
-                            cmd = new fCommand;
-                            cmd->command = "setrestrained 1";
-                            cmd->refID = refID;
-                            cmd->forplayers = false;
-                            cmd->repeat = false;
-                            cmd->sleep = 150;
-                            PUSHCMD(cmd);
-
-                            player->SetPlayerAlerted(update->alerted);
-                        }
-
-                        if (update->moving != player->GetPlayerMoving())
+                        if (player->SetPlayerMoving(update->moving) && player->GetPlayerEnabled())
                         {
                             cmd = new fCommand;
                             cmd->command = "playgroup ";
-                            cmd->refID = refID;
+                            cmd->player = player;
                             cmd->forplayers = false;
                             cmd->repeat = false;
 
@@ -1153,8 +1215,127 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                             }
 
                             PUSHCMD(cmd);
+                        }
 
-                            player->SetPlayerMoving(update->moving);
+                        if (!player->IsCoordinateInRange(0, update->X, 350.0))
+                        {
+                            if (player->SetPlayerPos(0, update->X) && player->GetPlayerEnabled())
+                            {
+                                player->ToggleNoOverride(SKIPFLAG_GETPOS_X, true);
+
+                                sprintf(pos, "%f", update->X);
+
+                                cmd = new fCommand;
+                                cmd->command = "setpos X " + string(pos);
+                                cmd->player = player;
+                                cmd->forplayers = false;
+                                cmd->repeat = false;
+                                PUSHCMD(cmd);
+                            }
+                        }
+
+                        if (!player->IsCoordinateInRange(1, update->Y, 350.0))
+                        {
+                            if (player->SetPlayerPos(1, update->Y) && player->GetPlayerEnabled())
+                            {
+                                player->ToggleNoOverride(SKIPFLAG_GETPOS_Y, true);
+
+                                sprintf(pos, "%f", update->Y);
+
+                                cmd = new fCommand;
+                                cmd->command = "setpos Y " + string(pos);
+                                cmd->player = player;
+                                cmd->forplayers = false;
+                                cmd->repeat = false;
+                                PUSHCMD(cmd);
+                            }
+                        }
+
+                        if (!player->IsCoordinateInRange(2, update->Z, 200.0))
+                        {
+                            if (player->SetPlayerPos(2, update->Z) && player->GetPlayerEnabled())
+                            {
+                                player->ToggleNoOverride(SKIPFLAG_GETPOS_Z, true);
+
+                                sprintf(pos, "%f", update->Z);
+
+                                cmd = new fCommand;
+                                cmd->command = "setpos Z " + string(pos);
+                                cmd->player = player;
+                                cmd->forplayers = false;
+                                cmd->repeat = false;
+                                PUSHCMD(cmd);
+                            }
+                        }
+
+                        /*
+                        if (player->GetPlayerMoving() == 0 && !player->IsPlayerNearPoint(update->X, update->Y, update->Z, 400.0) && player->GetPlayerEnabled())
+                        {
+                            if (player->SetPlayerPos(0, update->X))
+                            {
+                                player->ToggleNoOverride(SKIPFLAG_GETPOS_X, true);
+
+                                sprintf(pos, "%f", update->X);
+
+                                cmd = new fCommand;
+                                cmd->command = "setpos X " + string(pos);
+                                cmd->player = player;
+                                cmd->forplayers = false;
+                                cmd->repeat = false;
+                                PUSHCMD(cmd);
+                            }
+
+                            if (player->SetPlayerPos(1, update->Y))
+                            {
+                                player->ToggleNoOverride(SKIPFLAG_GETPOS_Y, true);
+
+                                sprintf(pos, "%f", update->Y);
+
+                                cmd = new fCommand;
+                                cmd->command = "setpos Y " + string(pos);
+                                cmd->player = player;
+                                cmd->forplayers = false;
+                                cmd->repeat = false;
+                                PUSHCMD(cmd);
+                            }
+                        }
+                        */
+
+                        if (player->SetPlayerAlerted(update->alerted) && player->GetPlayerEnabled())
+                        {
+                            cmd = new fCommand;
+                            cmd->command = "setrestrained 0";
+                            cmd->player = player;
+                            cmd->forplayers = false;
+                            cmd->repeat = false;
+                            cmd->sleep = 150;
+                            PUSHCMD(cmd);
+
+                            cmd = new fCommand;
+                            cmd->command = "setalert ";
+                            cmd->player = player;
+                            cmd->forplayers = false;
+                            cmd->repeat = false;
+
+                            switch (update->alerted)
+                            {
+                                case true:
+                                    cmd->command.append("1");
+                                    break;
+                                case false:
+                                    cmd->command.append("0");
+                                    break;
+                            }
+
+                            PUSHCMD(cmd);
+
+                            cmd = new fCommand;
+                            cmd->command = "setrestrained 1";
+                            cmd->player = player;
+                            cmd->forplayers = false;
+                            cmd->repeat = false;
+                            cmd->sleep = 150;
+                            PUSHCMD(cmd);
                         }
 
                         CLOSECMD();
@@ -1187,132 +1368,121 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
 
                         char pos[16];
 
-                        if (update->baseHealth != player->GetPlayerBaseHealth())
+                        if (player->SetPlayerBaseHealth(update->baseHealth))
                         {
                             sprintf(pos, "%i", (int) update->baseHealth);
 
                             cmd = new fCommand;
                             cmd->command = "setactorvalue Health " + string(pos);
-                            cmd->refID = refID;
+                            cmd->player = player;
                             cmd->forplayers = false;
                             cmd->repeat = false;
+                            cmd->enabledonly = false;
                             PUSHCMD(cmd);
-
-                            player->SetPlayerBaseHealth(update->baseHealth);
                         }
 
-                        if (update->health != player->GetPlayerHealth())
+                        if (player->SetPlayerHealth(update->health))
                         {
-                            FLAG(SKIPFLAG_GETHEALTH);
                             player->ToggleNoOverride(SKIPFLAG_GETHEALTH, true);
 
                             sprintf(pos, "%i", (int) update->health);
 
                             cmd = new fCommand;
                             cmd->command = "forceactorvalue Health " + string(pos);
-                            cmd->refID = refID;
+                            cmd->player = player;
                             cmd->forplayers = false;
                             cmd->repeat = false;
-                            cmd->flipcmd = SKIPFLAG_GETHEALTH;
+                            cmd->enabledonly = false;
                             PUSHCMD(cmd);
-
-                            player->SetPlayerHealth(update->health);
                         }
 
-                        if (update->conds[0] != player->GetPlayerCondition(0))
+                        if (player->SetPlayerCondition(0, update->conds[0]))
                         {
                             sprintf(pos, "%i", (int) update->conds[0]);
 
                             cmd = new fCommand;
                             cmd->command = "forceactorvalue PerceptionCondition " + string(pos);
-                            cmd->refID = refID;
+                            cmd->player = player;
                             cmd->forplayers = false;
                             cmd->repeat = false;
+                            cmd->enabledonly = false;
                             PUSHCMD(cmd);
-
-                            player->SetPlayerCondition(0, update->conds[0]);
                         }
 
-                        if (update->conds[1] != player->GetPlayerCondition(1))
+                        if (player->SetPlayerCondition(1, update->conds[1]))
                         {
                             sprintf(pos, "%i", (int) update->conds[1]);
 
                             cmd = new fCommand;
                             cmd->command = "forceactorvalue EnduranceCondition " + string(pos);
-                            cmd->refID = refID;
+                            cmd->player = player;
                             cmd->forplayers = false;
                             cmd->repeat = false;
+                            cmd->enabledonly = false;
                             PUSHCMD(cmd);
-
-                            player->SetPlayerCondition(1, update->conds[1]);
                         }
 
-                        if (update->conds[2] != player->GetPlayerCondition(2))
+                        if (player->SetPlayerCondition(2, update->conds[2]))
                         {
                             sprintf(pos, "%i", (int) update->conds[2]);
 
                             cmd = new fCommand;
                             cmd->command = "forceactorvalue LeftAttackCondition " + string(pos);
-                            cmd->refID = refID;
+                            cmd->player = player;
                             cmd->forplayers = false;
                             cmd->repeat = false;
+                            cmd->enabledonly = false;
                             PUSHCMD(cmd);
-
-                            player->SetPlayerCondition(2, update->conds[2]);
                         }
 
-                        if (update->conds[3] != player->GetPlayerCondition(3))
+                        if (player->SetPlayerCondition(3, update->conds[3]))
                         {
                             sprintf(pos, "%i", (int) update->conds[3]);
 
                             cmd = new fCommand;
                             cmd->command = "forceactorvalue RightAttackCondition " + string(pos);
-                            cmd->refID = refID;
+                            cmd->player = player;
                             cmd->forplayers = false;
                             cmd->repeat = false;
+                            cmd->enabledonly = false;
                             PUSHCMD(cmd);
-
-                            player->SetPlayerCondition(3, update->conds[3]);
                         }
 
-                        if (update->conds[4] != player->GetPlayerCondition(4))
+                        if (player->SetPlayerCondition(4, update->conds[4]))
                         {
                             sprintf(pos, "%i", (int) update->conds[4]);
 
                             cmd = new fCommand;
                             cmd->command = "forceactorvalue LeftMobilityCondition " + string(pos);
-                            cmd->refID = refID;
+                            cmd->player = player;
                             cmd->forplayers = false;
                             cmd->repeat = false;
+                            cmd->enabledonly = false;
                             PUSHCMD(cmd);
-
-                            player->SetPlayerCondition(4, update->conds[4]);
                         }
 
-                        if (update->conds[5] != player->GetPlayerCondition(5))
+                        if (player->SetPlayerCondition(5, update->conds[5]))
                         {
                             sprintf(pos, "%i", (int) update->conds[5]);
 
                             cmd = new fCommand;
                             cmd->command = "forceactorvalue RightMobilityCondition " + string(pos);
-                            cmd->refID = refID;
+                            cmd->player = player;
                             cmd->forplayers = false;
                             cmd->repeat = false;
+                            cmd->enabledonly = false;
                             PUSHCMD(cmd);
-
-                            player->SetPlayerCondition(5, update->conds[5]);
                         }
 
-                        if (update->dead != player->IsPlayerDead())
+                        if (player->SetPlayerDead(update->dead))
                         {
-                            FLAG(SKIPFLAG_GETDEAD);
                             player->ToggleNoOverride(SKIPFLAG_GETDEAD, true);
 
                             cmd = new fCommand;
-                            cmd->refID = refID;
+                            cmd->player = player;
                             cmd->forplayers = false;
                             cmd->repeat = false;
-                            cmd->flipcmd = SKIPFLAG_GETDEAD;
+                            cmd->enabledonly = false;
                             cmd->sleep = 150;
 
                             switch (update->dead)
@@ -1327,17 +1497,43 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
 
                                     cmd = new fCommand;
                                     cmd->command = "setrestrained 1";
-                                    cmd->refID = refID;
+                                    cmd->player = player;
                                     cmd->forplayers = false;
                                     cmd->repeat = false;
+                                    cmd->enabledonly = false;
                                     cmd->sleep = 150;
                                     PUSHCMD(cmd);
                                     break;
                             }
-                            player->SetPlayerDead(update->dead);
                         }
 
                         CLOSECMD();
+                    }
+                    break;
+                }
+                case ID_PLAYER_CELL_UPDATE:
+                {
+                    pPlayerCellUpdate* update = (pPlayerCellUpdate*) packet->data;
+
+                    if (packet->length != sizeof(pPlayerCellUpdate))
+                        break;
+
+                    Player* player = Player::GetPlayerFromGUID(update->guid);
+                    string refID = player->GetPlayerRefID();
+
+                    #ifdef VAULTMP_DEBUG
+                    char text[128];
+                    ZeroMemory(text, sizeof(text));
+
+                    sprintf(text, "Received player cell update packet (name: %s, ref: %s, guid: %s)", player->GetPlayerName().c_str(), refID.c_str(), update->guid.ToString());
+                    debug->Print(text, true);
+                    #endif
+
+                    fCommand* cmd;
+
+                    if (refID.compare("none") != 0)
+                    {
+                        player->SetPlayerNetworkCell(update->cell);
                     }
                     break;
                 }
@@ -1381,6 +1577,19 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                 #endif
             }
 
+            if (self->UpdatePlayerCellUpdateStruct(&localPlayerCellUpdate))
+            {
+                peer->Send((char*) &localPlayerCellUpdate, sizeof(localPlayerCellUpdate), HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_PLAYER_CELL_UPDATE, addr, false, 0);
+
+                #ifdef VAULTMP_DEBUG
+                char text[128];
+                ZeroMemory(text, sizeof(text));
+
+                sprintf(text, "Sent player cell update packet (%s)", addr.ToString());
+                debug->Print(text, true);
+                #endif
+            }
+
             RakSleep(2);
         }
     }
@@ -1404,6 +1613,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
     delete pipeServer;
 
     #ifdef VAULTMP_DEBUG
+    debug->Print((char*) "Network thread is going to terminate...", true);
     delete debug;
     #endif
 }

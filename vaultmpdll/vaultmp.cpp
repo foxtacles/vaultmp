@@ -19,6 +19,8 @@ DWORD Fallout3_opcode = 0x00;
 DWORD Fallout3_refID = 0x00;
 DWORD Fallout3_newRefID = 0x00;
 unsigned char Fallout3_coord = 0x00;
+unsigned char Fallout3_setcoord = 0x00;
+unsigned char Fallout3_valcoord = 0x00;
 bool DLLerror = false;
 
 void Fallout3commandNotify();
@@ -98,19 +100,24 @@ static char FalloutNVpatch_handler1_11[] = {0x8B, 0x45, 0x0C, 0x89, 0x06, 0xBE};
 static unsigned FalloutNVpatch_handler1_12 = (unsigned) &Fallout3_refID;
 static char FalloutNVpatch_handler1_13[] = {0x8B, 0x45, 0x10, 0x85, 0xC0, 0x74, 0x05, 0x8B, 0x40, 0x0C, 0x89, 0x06, 0xBE};
 static unsigned FalloutNVpatch_handler1_14 = (unsigned) &Fallout3_coord;
-static char FalloutNVpatch_handler1_15[] = {0x8A, 0x44, 0x24, 0xE8, 0x88, 0x06, 0x83, 0xEC, 0x08, 0x5E, 0x58, 0xE8};
-static unsigned FalloutNVpatch_handler1_16 = 0x00000000;
-static unsigned FalloutNVpatch_handler1_16cll = (unsigned) &Fallout3commandHandler;
-static char FalloutNVpatch_handler1_17[] = {0xE9};
-static unsigned FalloutNVpatch_handler1_18 = 0x00000000;
-static unsigned FalloutNVpatch_handler1_18jmp = 0x005E1E8B;
+static char FalloutNVpatch_handler1_15[] = {0x8A, 0x44, 0x24, 0xE8, 0x88, 0x06, 0xBE};
+static unsigned FalloutNVpatch_handler1_16 = (unsigned) &Fallout3_setcoord;
+static char FalloutNVpatch_handler1_17[] = {0x8A, 0x44, 0x24, 0xE4, 0x88, 0x06, 0xBE};
+static unsigned FalloutNVpatch_handler1_18 = (unsigned) &Fallout3_valcoord;
+static char FalloutNVpatch_handler1_19[] = {0x8A, 0x44, 0x24, 0xF0, 0x88, 0x06, 0x83, 0xEC, 0x08, 0x5E, 0x58, 0xE8};
+static unsigned FalloutNVpatch_handler1_20 = 0x00000000;
+static unsigned FalloutNVpatch_handler1_20cll = (unsigned) &Fallout3commandHandler;
+static char FalloutNVpatch_handler1_21[] = {0xE9};
+static unsigned FalloutNVpatch_handler1_22 = 0x00000000;
+static unsigned FalloutNVpatch_handler1_22jmp = 0x005E1E8B;
 static char FalloutNVpatch_handler2_1[] = {0xE9};
 static unsigned FalloutNVpatch_handler2_2 = 0x00000000;
 static char FalloutNVpatch_handler2_3[] = {0x90};
 static unsigned FalloutNVpatch_handler1size = sizeof(FalloutNVpatch_handler1_1) + sizeof(FalloutNVpatch_handler1_2) + sizeof(FalloutNVpatch_handler1_3) + sizeof(FalloutNVpatch_handler1_4) + sizeof(FalloutNVpatch_handler1_5) +
                                              sizeof(FalloutNVpatch_handler1_6) + sizeof(FalloutNVpatch_handler1_7) + sizeof(FalloutNVpatch_handler1_8) + sizeof(FalloutNVpatch_handler1_9) + sizeof(FalloutNVpatch_handler1_10) +
                                              sizeof(FalloutNVpatch_handler1_11) + sizeof(FalloutNVpatch_handler1_12) + sizeof(FalloutNVpatch_handler1_13) + sizeof(FalloutNVpatch_handler1_14) + sizeof(FalloutNVpatch_handler1_15) +
-                                             sizeof(FalloutNVpatch_handler1_16) + sizeof(FalloutNVpatch_handler1_17) + sizeof(FalloutNVpatch_handler1_18);
+                                             sizeof(FalloutNVpatch_handler1_16) + sizeof(FalloutNVpatch_handler1_17) + sizeof(FalloutNVpatch_handler1_18) + sizeof(FalloutNVpatch_handler1_19) + sizeof(FalloutNVpatch_handler1_20) +
+                                             sizeof(FalloutNVpatch_handler1_21) + sizeof(FalloutNVpatch_handler1_22);
 
 /* Fallout 3 version 1.7 */
 
@@ -187,18 +194,23 @@ static char Fallout3patch_handler1_11[] = {0x8B, 0x45, 0x10, 0x85, 0xC0, 0x74, 0
 static unsigned Fallout3patch_handler1_12 = (unsigned) &Fallout3_newRefID;
 static char Fallout3patch_handler1_13[] = {0x89, 0x0E, 0xBE};
 static unsigned Fallout3patch_handler1_14 = (unsigned) &Fallout3_coord;
-static char Fallout3patch_handler1_15[] = {0x8A, 0x44, 0x24, 0xE8, 0x88, 0x06, 0x83, 0xEC, 0x08, 0x5E, 0x58, 0xE8};
-static unsigned Fallout3patch_handler1_16 = 0x00000000;
-static unsigned Fallout3patch_handler1_16cll = (unsigned) &Fallout3commandHandler;
-static char Fallout3patch_handler1_17[] = {0xE9};
-static unsigned Fallout3patch_handler1_18 = 0x00000000;
-static unsigned Fallout3patch_handler1_18jmp = 0x00540BE3;
+static char Fallout3patch_handler1_15[] = {0x8A, 0x44, 0x24, 0xE8, 0x88, 0x06, 0xBE};
+static unsigned Fallout3patch_handler1_16 = (unsigned) &Fallout3_setcoord;
+static char Fallout3patch_handler1_17[] = {0x8A, 0x44, 0x24, 0xE0, 0x88, 0x06, 0xBE};
+static unsigned Fallout3patch_handler1_18 = (unsigned) &Fallout3_valcoord;
+static char Fallout3patch_handler1_19[] = {0x8A, 0x44, 0x24, 0xEC, 0x88, 0x06, 0x83, 0xEC, 0x08, 0x5E, 0x58, 0xE8};
+static unsigned Fallout3patch_handler1_20 = 0x00000000;
+static unsigned Fallout3patch_handler1_20cll = (unsigned) &Fallout3commandHandler;
+static char Fallout3patch_handler1_21[] = {0xE9};
+static unsigned Fallout3patch_handler1_22 = 0x00000000;
+static unsigned Fallout3patch_handler1_22jmp = 0x00540BE3;
 static char Fallout3patch_handler2_1[] = {0xE9};
 static unsigned Fallout3patch_handler2_2 = 0x00000000;
 static unsigned Fallout3patch_handler1size = sizeof(Fallout3patch_handler1_1) + sizeof(Fallout3patch_handler1_2) + sizeof(Fallout3patch_handler1_3) + sizeof(Fallout3patch_handler1_4) + sizeof(Fallout3patch_handler1_5) +
                                              sizeof(Fallout3patch_handler1_6) + sizeof(Fallout3patch_handler1_7) + sizeof(Fallout3patch_handler1_8) + sizeof(Fallout3patch_handler1_9) + sizeof(Fallout3patch_handler1_10) +
                                              sizeof(Fallout3patch_handler1_11) + sizeof(Fallout3patch_handler1_12) + sizeof(Fallout3patch_handler1_13) + sizeof(Fallout3patch_handler1_14) + sizeof(Fallout3patch_handler1_15) +
-                                             sizeof(Fallout3patch_handler1_16) + sizeof(Fallout3patch_handler1_17) + sizeof(Fallout3patch_handler1_18);
+                                             sizeof(Fallout3patch_handler1_16) + sizeof(Fallout3patch_handler1_17) + sizeof(Fallout3patch_handler1_18) + sizeof(Fallout3patch_handler1_19) + sizeof(Fallout3patch_handler1_20) +
+                                             sizeof(Fallout3patch_handler1_21) + sizeof(Fallout3patch_handler1_22);
 
 typedef HANDLE (*fDLLjump)(void);
 typedef void (*fDLLend)(void);
@@ -252,7 +264,7 @@ void Fallout3commandHandler() {
     char format[MAX_OUTPUT_LENGTH + 3];
     ZeroMemory(format, sizeof(format));
 
-    sprintf(format, "op:%x %x %llx %x %x", Fallout3_opcode, Fallout3_refID, Fallout3_result, Fallout3_coord, Fallout3_newRefID);
+    sprintf(format, "op:%x %x %llx %x %x %x %x", Fallout3_opcode, Fallout3_refID, Fallout3_result, Fallout3_coord, Fallout3_setcoord, Fallout3_valcoord, Fallout3_newRefID);
     string output(format);
     pipeClient.Send(&output);
 }
@@ -417,11 +429,15 @@ extern "C" void __declspec(dllexport) DLLjump(bool NewVegas)
             WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler1patchAddr) + bytes), &FalloutNVpatch_handler1_13, sizeof(FalloutNVpatch_handler1_13), &rw); bytes += rw;
             WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler1patchAddr) + bytes), &FalloutNVpatch_handler1_14, sizeof(FalloutNVpatch_handler1_14), &rw); bytes += rw;
             WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler1patchAddr) + bytes), &FalloutNVpatch_handler1_15, sizeof(FalloutNVpatch_handler1_15), &rw); bytes += rw;
-            FalloutNVpatch_handler1_16 = offset((((unsigned) FalloutNVpatch_handler1patchAddr) + bytes - 1), (unsigned) FalloutNVpatch_handler1_16cll, 5);
             WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler1patchAddr) + bytes), &FalloutNVpatch_handler1_16, sizeof(FalloutNVpatch_handler1_16), &rw); bytes += rw;
             WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler1patchAddr) + bytes), &FalloutNVpatch_handler1_17, sizeof(FalloutNVpatch_handler1_17), &rw); bytes += rw;
-            FalloutNVpatch_handler1_18 = offset((((unsigned) FalloutNVpatch_handler1patchAddr) + bytes - 1), (unsigned) FalloutNVpatch_handler1_18jmp, 5);
             WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler1patchAddr) + bytes), &FalloutNVpatch_handler1_18, sizeof(FalloutNVpatch_handler1_18), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler1patchAddr) + bytes), &FalloutNVpatch_handler1_19, sizeof(FalloutNVpatch_handler1_19), &rw); bytes += rw;
+            FalloutNVpatch_handler1_20 = offset((((unsigned) FalloutNVpatch_handler1patchAddr) + bytes - 1), (unsigned) FalloutNVpatch_handler1_20cll, 5);
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler1patchAddr) + bytes), &FalloutNVpatch_handler1_20, sizeof(FalloutNVpatch_handler1_20), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler1patchAddr) + bytes), &FalloutNVpatch_handler1_21, sizeof(FalloutNVpatch_handler1_21), &rw); bytes += rw;
+            FalloutNVpatch_handler1_22 = offset((((unsigned) FalloutNVpatch_handler1patchAddr) + bytes - 1), (unsigned) FalloutNVpatch_handler1_22jmp, 5);
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) FalloutNVpatch_handler1patchAddr) + bytes), &FalloutNVpatch_handler1_22, sizeof(FalloutNVpatch_handler1_22), &rw); bytes += rw;
 
             bytes = 0;
             WriteProcessMemory(hProc, (LPVOID) FalloutNVpatch_handler2patchAddr, &FalloutNVpatch_handler2_1, sizeof(FalloutNVpatch_handler2_1), &rw); bytes += rw;
@@ -515,11 +531,15 @@ extern "C" void __declspec(dllexport) DLLjump(bool NewVegas)
             WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_handler1patchAddr) + bytes), &Fallout3patch_handler1_13, sizeof(Fallout3patch_handler1_13), &rw); bytes += rw;
             WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_handler1patchAddr) + bytes), &Fallout3patch_handler1_14, sizeof(Fallout3patch_handler1_14), &rw); bytes += rw;
             WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_handler1patchAddr) + bytes), &Fallout3patch_handler1_15, sizeof(Fallout3patch_handler1_15), &rw); bytes += rw;
-            Fallout3patch_handler1_16 = offset((((unsigned) Fallout3patch_handler1patchAddr) + bytes - 1), (unsigned) Fallout3patch_handler1_16cll, 5);
             WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_handler1patchAddr) + bytes), &Fallout3patch_handler1_16, sizeof(Fallout3patch_handler1_16), &rw); bytes += rw;
             WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_handler1patchAddr) + bytes), &Fallout3patch_handler1_17, sizeof(Fallout3patch_handler1_17), &rw); bytes += rw;
-            Fallout3patch_handler1_18 = offset((((unsigned) Fallout3patch_handler1patchAddr) + bytes - 1), (unsigned) Fallout3patch_handler1_18jmp, 5);
             WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_handler1patchAddr) + bytes), &Fallout3patch_handler1_18, sizeof(Fallout3patch_handler1_18), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_handler1patchAddr) + bytes), &Fallout3patch_handler1_19, sizeof(Fallout3patch_handler1_19), &rw); bytes += rw;
+            Fallout3patch_handler1_20 = offset((((unsigned) Fallout3patch_handler1patchAddr) + bytes - 1), (unsigned) Fallout3patch_handler1_20cll, 5);
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_handler1patchAddr) + bytes), &Fallout3patch_handler1_20, sizeof(Fallout3patch_handler1_20), &rw); bytes += rw;
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_handler1patchAddr) + bytes), &Fallout3patch_handler1_21, sizeof(Fallout3patch_handler1_21), &rw); bytes += rw;
+            Fallout3patch_handler1_22 = offset((((unsigned) Fallout3patch_handler1patchAddr) + bytes - 1), (unsigned) Fallout3patch_handler1_22jmp, 5);
+            WriteProcessMemory(hProc, (LPVOID) (((unsigned) Fallout3patch_handler1patchAddr) + bytes), &Fallout3patch_handler1_22, sizeof(Fallout3patch_handler1_22), &rw); bytes += rw;
 
             bytes = 0;
             WriteProcessMemory(hProc, (LPVOID) Fallout3patch_handler2patchAddr, &Fallout3patch_handler2_1, sizeof(Fallout3patch_handler2_1), &rw); bytes += rw;

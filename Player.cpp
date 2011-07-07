@@ -6,7 +6,10 @@ using namespace std;
 map<RakNetGUID, string> Player::players;
 map<RakNetGUID, Player*> Player::playersguids;
 map<string, Player*> Player::playersrefs;
+
+#ifdef VAULTMP_DEBUG
 Debug* Player::debug;
+#endif
 
 Player::Player(RakNetGUID guid)
 {
@@ -16,6 +19,8 @@ Player::Player(RakNetGUID guid)
     pos[1] = 0.00;
     pos[2] = 0.00;
     angle = 0.00;
+    gcell = 0x00;
+    ncell = 0x00;
     health = 0.00;
     baseHealth = 0.00;
     cond[0] = 0.00;
@@ -28,12 +33,14 @@ Player::Player(RakNetGUID guid)
     alerted = false;
     moving = 0;
     name = "Player";
+    enabled = true;
     players.insert(pair<RakNetGUID, string>(guid, refID));
     playersguids.insert(pair<RakNetGUID, Player*>(guid, this));
 
     for (int i = 0; i < MAX_SKIP_FLAGS; i++)
         nowrite[i] = false;
 
+    #ifdef VAULTMP_DEBUG
     if (debug != NULL)
     {
         char text[128];
@@ -42,18 +49,21 @@ Player::Player(RakNetGUID guid)
         sprintf(text, "New player object created (guid: %s)", this->guid.ToString());
         debug->Print(text, true);
     }
+    #endif
 }
 
 Player::~Player()
 {
+    #ifdef VAULTMP_DEBUG
     if (debug != NULL)
     {
         char text[128];
         ZeroMemory(text, sizeof(text));
 
-        sprintf(text, "Player object destroyed (ref: %s, guid: %s)", this->refID.c_str(), this->guid.ToString());
+        sprintf(text, "Player object destroyed (ref: %s)", this->refID.c_str());
         debug->Print(text, true);
     }
+    #endif
 
     players.erase(this->guid);
     playersguids.erase(this->guid);
@@ -95,10 +105,13 @@ void Player::DestroyInstances()
     for (int j = 0; j < size; j++)
         delete pPlayers[j];
 
+    #ifdef VAULTMP_DEBUG
     if (debug != NULL)
         debug->Print((char*) "All player instances destroyed", true);
+    #endif
 }
 
+#ifdef VAULTMP_DEBUG
 void Player::SetDebugHandler(Debug* debug)
 {
     Player::debug = debug;
@@ -106,6 +119,7 @@ void Player::SetDebugHandler(Debug* debug)
     if (debug != NULL)
         debug->Print((char*) "Attached debug handler to Player class", true);
 }
+#endif
 
 map<RakNetGUID, string> Player::GetPlayerList()
 {
@@ -126,6 +140,16 @@ float Player::GetPlayerPos(int cell)
 float Player::GetPlayerAngle()
 {
     return angle;
+}
+
+DWORD Player::GetPlayerGameCell()
+{
+    return gcell;
+}
+
+DWORD Player::GetPlayerNetworkCell()
+{
+    return ncell;
 }
 
 float Player::GetPlayerHealth()
@@ -164,6 +188,11 @@ string Player::GetPlayerRefID()
     return refID;
 }
 
+bool Player::GetPlayerEnabled()
+{
+    return enabled;
+}
+
 pPlayerUpdate Player::GetPlayerUpdateStruct()
 {
     pPlayerUpdate data;
@@ -195,6 +224,17 @@ pPlayerStateUpdate Player::GetPlayerStateUpdateStruct()
     data.conds[4] = cond[4];
     data.conds[5] = cond[5];
     data.dead = dead;
+
+    return data;
+}
+
+pPlayerCellUpdate Player::GetPlayerCellUpdateStruct()
+{
+    pPlayerCellUpdate data;
+
+    data.type = ID_PLAYER_CELL_UPDATE;
+    data.guid = guid;
+    data.cell = gcell;
 
     return data;
 }
@@ -242,49 +282,78 @@ bool Player::UpdatePlayerStateUpdateStruct(pPlayerStateUpdate* data)
     return false;
 }
 
-void Player::SetPlayerName(string name)
+bool Player::UpdatePlayerCellUpdateStruct(pPlayerCellUpdate* data)
 {
+    pPlayerCellUpdate player = this->GetPlayerCellUpdateStruct();
+
+    if (player.type != data->type ||
+        player.guid != data->guid ||
+        player.cell != data->cell)
+        {
+            (*data) = player;
+            return true;
+        }
+
+    return false;
+}
+
+bool Player::SetPlayerName(string name)
+{
+    if (this->name == name)
+        return false;
+
     this->name = name;
 
+    #ifdef VAULTMP_DEBUG
     if (debug != NULL)
     {
         char text[128];
         ZeroMemory(text, sizeof(text));
 
-        sprintf(text, "Player name was set to %s (ref: %s, guid: %s)", this->name.c_str(), this->refID.c_str(), this->guid.ToString());
+        sprintf(text, "Player name was set to %s (ref: %s)", this->name.c_str(), this->refID.c_str());
         debug->Print(text, true);
     }
+    #endif
+
+    return true;
 }
 
 bool Player::SetPlayerPos(int cell, float pos)
 {
     if (cell >= 0 && cell <= 2 && !nowrite[(cell == 0) ? SKIPFLAG_GETPOS_X : (cell == 1) ? SKIPFLAG_GETPOS_Y : (cell == 2) ? SKIPFLAG_GETPOS_Z : 0])
     {
+        if (this->pos[cell] == pos)
+            return false;
+
         if ((pos != 2048.0 && pos != 128.0 && pos != 0.0))
         {
             this->pos[cell] = pos;
 
+            #ifdef VAULTMP_DEBUG
             if (debug != NULL)
             {
                 char text[128];
                 ZeroMemory(text, sizeof(text));
 
-                sprintf(text, "Player %c-coordinate was set to %f (ref: %s, guid: %s)", cell == 0 ? 'X' : cell == 1 ? 'Y' : 'Z', this->pos[cell], this->refID.c_str(), this->guid.ToString());
+                sprintf(text, "Player %c-coordinate was set to %f (ref: %s)", cell == 0 ? 'X' : cell == 1 ? 'Y' : 'Z', this->pos[cell], this->refID.c_str());
                 debug->Print(text, true);
             }
+            #endif
 
             return true;
         }
         else
         {
+            #ifdef VAULTMP_DEBUG
             if (debug != NULL)
             {
                 char text[128];
                 ZeroMemory(text, sizeof(text));
 
-                sprintf(text, "Player %c-coordinate was NOT set to %f (INVALID) (ref: %s, guid: %s)", cell == 0 ? 'X' : cell == 1 ? 'Y' : 'Z', pos, this->refID.c_str(), this->guid.ToString());
+                sprintf(text, "Player %c-coordinate was NOT set to %f (INVALID) (ref: %s)", cell == 0 ? 'X' : cell == 1 ? 'Y' : 'Z', pos, this->refID.c_str());
                 debug->Print(text, true);
             }
+            #endif
 
             return false;
         }
@@ -293,139 +362,338 @@ bool Player::SetPlayerPos(int cell, float pos)
     return false;
 }
 
-void Player::SetPlayerAngle(float angle)
+bool Player::SetPlayerAngle(float angle)
 {
+    if (this->angle == angle)
+        return false;
+
     this->angle = angle;
 
+    #ifdef VAULTMP_DEBUG
     if (debug != NULL)
     {
         char text[128];
         ZeroMemory(text, sizeof(text));
 
-        sprintf(text, "Player Z-angle was set to %f (ref: %s, guid: %s)", this->angle, this->refID.c_str(), this->guid.ToString());
+        sprintf(text, "Player Z-angle was set to %f (ref: %s)", this->angle, this->refID.c_str());
         debug->Print(text, true);
     }
+    #endif
+
+    return true;
 }
 
-void Player::SetPlayerHealth(float health)
+bool Player::SetPlayerGameCell(DWORD cell)
+{
+    if (!nowrite[SKIPFLAG_GETPARENTCELL])
+    {
+        if (cell != 0x00)
+        {
+            if (this->gcell == cell)
+                return false;
+
+            this->gcell = cell;
+
+            #ifdef VAULTMP_DEBUG
+            if (debug != NULL)
+            {
+                char text[128];
+                ZeroMemory(text, sizeof(text));
+
+                sprintf(text, "Player game cell was set to %x (ref: %s)", this->gcell, this->refID.c_str());
+                debug->Print(text, true);
+            }
+            #endif
+
+            return true;
+        }
+        else
+        {
+            #ifdef VAULTMP_DEBUG
+            if (debug != NULL)
+            {
+                char text[128];
+                ZeroMemory(text, sizeof(text));
+
+                sprintf(text, "Player game cell was NOT set to %x (INVALID) (ref: %s)", cell, this->refID.c_str());
+                debug->Print(text, true);
+            }
+            #endif
+
+            return false;
+        }
+    }
+
+    return false;
+}
+
+bool Player::SetPlayerNetworkCell(DWORD cell)
+{
+    if (cell != 0x00)
+    {
+        if (this->ncell == cell)
+            return false;
+
+        this->ncell = cell;
+
+        #ifdef VAULTMP_DEBUG
+        if (debug != NULL)
+        {
+            char text[128];
+            ZeroMemory(text, sizeof(text));
+
+            sprintf(text, "Player network cell was set to %x (ref: %s)", this->ncell, this->refID.c_str());
+            debug->Print(text, true);
+        }
+        #endif
+
+        return true;
+    }
+    else
+    {
+        #ifdef VAULTMP_DEBUG
+        if (debug != NULL)
+        {
+            char text[128];
+            ZeroMemory(text, sizeof(text));
+
+            sprintf(text, "Player network cell was NOT set to %x (INVALID) (ref: %s)", cell, this->refID.c_str());
+            debug->Print(text, true);
+        }
+        #endif
+
+        return false;
+    }
+
+    return false;
+}
+
+bool Player::SetPlayerHealth(float health)
 {
     if (!nowrite[SKIPFLAG_GETHEALTH])
     {
+        if (this->health == health)
+            return false;
+
         this->health = health;
 
+        #ifdef VAULTMP_DEBUG
         if (debug != NULL)
         {
             char text[128];
             ZeroMemory(text, sizeof(text));
 
-            sprintf(text, "Player health was set to %f (ref: %s, guid: %s)", this->health, this->refID.c_str(), this->guid.ToString());
+            sprintf(text, "Player health was set to %f (ref: %s)", this->health, this->refID.c_str());
             debug->Print(text, true);
         }
+        #endif
+
+        return true;
     }
+
+    return false;
 }
 
-void Player::SetPlayerBaseHealth(float baseHealth)
+bool Player::SetPlayerBaseHealth(float baseHealth)
 {
+    if (this->baseHealth == baseHealth)
+        return false;
+
     this->baseHealth = baseHealth;
 
+    #ifdef VAULTMP_DEBUG
     if (debug != NULL)
     {
         char text[128];
         ZeroMemory(text, sizeof(text));
 
-        sprintf(text, "Player base health was set to %f (ref: %s, guid: %s)", this->baseHealth, this->refID.c_str(), this->guid.ToString());
+        sprintf(text, "Player base health was set to %f (ref: %s)", this->baseHealth, this->refID.c_str());
         debug->Print(text, true);
     }
+    #endif
+
+    return true;
 }
 
-void Player::SetPlayerCondition(int cell, float cond)
+bool Player::SetPlayerCondition(int cell, float cond)
 {
     if (cell >= 0 && cell <= 5)
     {
+        if (this->cond[cell] == cond)
+            return false;
+
         this->cond[cell] = cond;
 
+        #ifdef VAULTMP_DEBUG
         if (debug != NULL)
         {
             char text[128];
             ZeroMemory(text, sizeof(text));
 
-            sprintf(text, "Player %s was set to %f (ref: %s, guid: %s)", cell == 0 ? (char*) "PerceptionCondition" : cell == 1 ? (char*) "EnduranceCondition" : cell == 2 ? (char*) "LeftAttackCondition" : cell == 3 ? (char*) "RightAttackCondition" : cell == 4 ? (char*) "LeftMobilityCondition" : (char*) "RightMobilityCondition", this->cond[cell], this->refID.c_str(), this->guid.ToString());
+            sprintf(text, "Player %s was set to %f (ref: %s)", cell == 0 ? (char*) "PerceptionCondition" : cell == 1 ? (char*) "EnduranceCondition" : cell == 2 ? (char*) "LeftAttackCondition" : cell == 3 ? (char*) "RightAttackCondition" : cell == 4 ? (char*) "LeftMobilityCondition" : (char*) "RightMobilityCondition", this->cond[cell], this->refID.c_str());
             debug->Print(text, true);
         }
+        #endif
+
+        return true;
     }
+
+    return false;
 }
 
-void Player::SetPlayerDead(bool dead)
+bool Player::SetPlayerDead(bool dead)
 {
     if (!nowrite[SKIPFLAG_GETDEAD])
     {
+        if (this->dead == dead)
+            return false;
+
         this->dead = dead;
 
+        #ifdef VAULTMP_DEBUG
         if (debug != NULL)
         {
             char text[128];
             ZeroMemory(text, sizeof(text));
 
-            sprintf(text, "Player dead state was set to %d (ref: %s, guid: %s)", (int) this->dead, this->refID.c_str(), this->guid.ToString());
+            sprintf(text, "Player dead state was set to %d (ref: %s)", (int) this->dead, this->refID.c_str());
             debug->Print(text, true);
         }
+        #endif
+
+        return true;
     }
+
+    return false;
 }
 
-void Player::SetPlayerAlerted(bool alerted)
+bool Player::SetPlayerAlerted(bool alerted)
 {
+    if (this->alerted == alerted)
+        return false;
+
     this->alerted = alerted;
 
+    #ifdef VAULTMP_DEBUG
     if (debug != NULL)
     {
         char text[128];
         ZeroMemory(text, sizeof(text));
 
-        sprintf(text, "Player alerted state was set to %d (ref: %s, guid: %s)", (int) this->alerted, this->refID.c_str(), this->guid.ToString());
+        sprintf(text, "Player alerted state was set to %d (ref: %s)", (int) this->alerted, this->refID.c_str());
         debug->Print(text, true);
     }
+    #endif
+
+    return true;
 }
 
-void Player::SetPlayerMoving(int moving)
+bool Player::SetPlayerMoving(int moving)
 {
     if (moving >= 0 && moving <= 8)
     {
+        if (this->moving == moving)
+            return false;
+
         this->moving = moving;
 
+        #ifdef VAULTMP_DEBUG
         if (debug != NULL)
         {
             char text[128];
             ZeroMemory(text, sizeof(text));
 
-            sprintf(text, "Player running animation was set to %s (ref: %s, guid: %s)", moving == 0 ? (char*) "Idle" : moving == 1 ? (char*) "FastForward" : moving == 2 ? (char*) "FastBackward" : moving == 3 ? (char*) "FastLeft" : moving == 4 ? (char*) "FastRight" : moving == 5 ? (char*) "Forward" : moving == 6 ? (char*) "Backward" : moving == 7 ? (char*) "Left" : (char*) "Right", this->refID.c_str(), this->guid.ToString());
+            sprintf(text, "Player running animation was set to %s (ref: %s)", moving == 0 ? (char*) "Idle" : moving == 1 ? (char*) "FastForward" : moving == 2 ? (char*) "FastBackward" : moving == 3 ? (char*) "FastLeft" : moving == 4 ? (char*) "FastRight" : moving == 5 ? (char*) "Forward" : moving == 6 ? (char*) "Backward" : moving == 7 ? (char*) "Left" : (char*) "Right", this->refID.c_str());
             debug->Print(text, true);
         }
+        #endif
+
+        return true;
     }
 
+    return false;
 }
 
-void Player::SetPlayerRefID(string refID)
+bool Player::SetPlayerRefID(string refID)
 {
+    if (this->refID == refID)
+        return false;
+
     this->refID = refID;
     map<RakNetGUID, string>::iterator it;
     it = players.find(this->guid);
     it->second = refID;
     playersrefs.insert(pair<string, Player*>(refID, this));
 
+    #ifdef VAULTMP_DEBUG
     if (debug != NULL)
     {
         char text[128];
         ZeroMemory(text, sizeof(text));
 
-        sprintf(text, "Player refID was set to %s (guid: %s)", this->refID.c_str(), this->guid.ToString());
+        sprintf(text, "Player refID was set to %s (name: %s)", this->refID.c_str(), this->GetPlayerName().c_str());
         debug->Print(text, true);
     }
+    #endif
+
+    return true;
 }
 
-void Player::ToggleNoOverride(int skipflag, bool toggle)
+bool Player::SetPlayerEnabled(bool enabled)
+{
+    if (this->enabled == enabled)
+        return false;
+
+    this->enabled = enabled;
+
+    #ifdef VAULTMP_DEBUG
+    if (debug != NULL)
+    {
+        char text[128];
+        ZeroMemory(text, sizeof(text));
+
+        sprintf(text, "Player enabled state was set to %d (ref: %s)", (int) this->enabled, this->refID.c_str());
+        debug->Print(text, true);
+    }
+    #endif
+
+    return true;
+}
+
+bool Player::ToggleNoOverride(int skipflag, bool toggle)
 {
     if (skipflag >= 0 && skipflag < MAX_SKIP_FLAGS)
+    {
+        if (nowrite[skipflag] == toggle)
+            return false;
+
         nowrite[skipflag] = toggle;
+
+        #ifdef VAULTMP_DEBUG
+        if (debug != NULL)
+        {
+            char text[128];
+            ZeroMemory(text, sizeof(text));
+
+            sprintf(text, "Player no-override flag %d was set to %d (ref: %s)", skipflag, (int) toggle, this->refID.c_str());
+            debug->Print(text, true);
+        }
+        #endif
+
+        return true;
+    }
+
+    return false;
+}
+
+bool Player::GetPlayerOverrideFlag(int skipflag)
+{
+    if (skipflag >= 0 && skipflag < MAX_SKIP_FLAGS)
+    {
+        return nowrite[skipflag];
+    }
+
+    return false;
 }
 
 bool Player::IsPlayerNearPoint(float X, float Y, float Z, float R)

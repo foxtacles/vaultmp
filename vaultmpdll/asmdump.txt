@@ -1,0 +1,342 @@
+// Fallout: New Vegas
+
+            /* Patching key event and console */
+
+            /* 0071A823   90               NOP
+             * 0071A824   90               NOP
+
+             * 0071A849   90               NOP
+             * 0071A84A   90               NOP
+             * 0071A84B   90               NOP
+             * 0071A84C   90               NOP
+             * 0071A84D   90               NOP
+             * 0071A84E   90               NOP
+
+             * 0071A949   90               NOP
+             * 0071A94A   90               NOP
+             * 0071A94B   90               NOP
+             * 0071A94C   90               NOP
+             * 0071A94D   90               NOP
+             * 0071A94E   90               NOP
+
+             * 0071AA91   90               NOP
+             * 0071AA92   90               NOP
+             * 0071AA93   90               NOP
+             * 0071AA94   90               NOP
+             * 0071AA95   90               NOP
+             * 0071AA96   90               NOP
+
+             * 0070D6E5   EB 03            JMP SHORT FalloutN.0070D6EA
+             * 0070D6E7   90               NOP
+             * 0070D6E8   90               NOP
+             * 0070D6E9   90               NOP
+             * 0070D6EA   90               NOP
+
+             * 0070D704   90               NOP
+             * 0070D705   90               NOP
+             * 0070D706   90               NOP
+             * 0070D707   90               NOP
+             * 0070D708   90               NOP
+             * 0070D709   90               NOP
+             *
+             * 00703224   EB 0C            JMP SHORT FalloutN.00703232
+             * 0070C2EE   0F85 15020000    JNZ FalloutN.0070C509
+             * 0071A836   EB 07            JMP SHORT FalloutN.0071A83F
+             */
+
+            /* Disabling VATS system */
+
+            /* 0093FFAE   E9 5A020000      JMP FalloutN.0094020D
+             * 0093FFB3   90               NOP
+             */
+
+            /* Writing FalloutNV command INPUT detour */
+
+            /* XXXXXXXX   50               PUSH EAX
+             * XXXXXXXX   51               PUSH ECX
+             * XXXXXXXX   52               PUSH EDX
+             * XXXXXXXX   8A10             MOV DL,BYTE PTR DS:[EAX]
+             * XXXXXXXX   80FA 00          CMP DL,0
+             * XXXXXXXX   74 0E            JE SHORT XXXXXXXX
+             * XXXXXXXX   5A               POP EDX
+             * XXXXXXXX   59               POP ECX
+             * XXXXXXXX   58               POP EAX
+             * XXXXXXXX   8B8D 58D7FFFF    MOV ECX,DWORD PTR SS:[EBP-28A8]
+             * XXXXXXXX  -E9 XXXXXXXX      JMP FalloutN.0071AACE
+             * XXXXXXXX   B9 XXXXXXXX      MOV ECX,XXXXXXXX
+             * XXXXXXXX   8A11             MOV DL,BYTE PTR DS:[ECX]
+             * XXXXXXXX   80FA 00          CMP DL,0
+             * XXXXXXXX  ^74 E6            JE SHORT XXXXXXXX
+             * XXXXXXXX   8810             MOV BYTE PTR DS:[EAX],DL
+             * XXXXXXXX   C601 00          MOV BYTE PTR DS:[ECX],0
+             * XXXXXXXX   83C1 01          ADD ECX,1
+             * XXXXXXXX   83C0 01          ADD EAX,1
+             * XXXXXXXX   8A11             MOV DL,BYTE PTR DS:[ECX]
+             * XXXXXXXX   80FA 00          CMP DL,0
+             * XXXXXXXX   74 02            JE SHORT XXXXXXXX
+             * XXXXXXXX  ^EB EC            JMP SHORT XXXXXXXX
+             * XXXXXXXX   C605 XXXXXXXX 00 MOV BYTE PTR DS:[XXXXXXXX],0
+             * XXXXXXXX   C600 00          MOV BYTE PTR DS:[EAX],0
+             * XXXXXXXX  ^EB C6            JMP SHORT XXXXXXXX
+             *
+             * 0071AAC9  -E9 XXXXXXXX      JMP XXXXXXXX
+             * 0071AACE   50               PUSH EAX
+             * 0071AACF   90               NOP
+             */
+
+            /* Writing FalloutNV command OUTPUT detour */
+
+            /* XXXXXXXX   50               PUSH EAX
+             * XXXXXXXX   51               PUSH ECX
+             * XXXXXXXX   52               PUSH EDX
+             * XXXXXXXX   8A0D XXXXXXXX    MOV CL,BYTE PTR DS:[XXXXXXXX]
+             * XXXXXXXX   84C9             TEST CL,CL
+             * XXXXXXXX   74 23            JE SHORT XXXXXXXX
+             * XXXXXXXX   B9 XXXXXXXX      MOV ECX,XXXXXXXX
+             * XXXXXXXX   83F8 00          CMP EAX,0
+             * XXXXXXXX   74 19            JE SHORT XXXXXXXX
+             * XXXXXXXX   8A10             MOV DL,BYTE PTR DS:[EAX]
+             * XXXXXXXX   80FA 00          CMP DL,0
+             * XXXXXXXX   74 0A            JE SHORT XXXXXXXX
+             * XXXXXXXX   8811             MOV BYTE PTR DS:[ECX],DL
+             * XXXXXXXX   83C0 01          ADD EAX,1
+             * XXXXXXXX   83C1 01          ADD ECX,1
+             * XXXXXXXX  ^EB EF            JMP SHORT XXXXXXXX
+             * XXXXXXXX   C601 00          MOV BYTE PTR DS:[ECX],0
+             * XXXXXXXX   E8 XXXXXXXX      CALL vaultmp.XXXXXXXX
+             * XXXXXXXX   5A               POP EDX
+             * XXXXXXXX   59               POP ECX
+             * XXXXXXXX   58               POP EAX
+             * XXXXXXXX   8B8D B4F7FFFF    MOV ECX,DWORD PTR SS:[EBP-84C]
+             * XXXXXXXX  -E9 XXXXXXXX      JMP FalloutN.0071C6EB
+             *
+             * 0071C6E6  -E9 XXXXXXXX      JMP XXXXXXXX
+             * 0071C6EB   50               PUSH EAX
+             * 0071C6EC   90               NOP
+             */
+
+	    /* Writing FalloutNV command handler */
+
+            /* XXXXXXXX    817D 0C 1401000 CMP DWORD PTR SS:[EBP+0C],114
+             * XXXXXXXX    74 0B           JE SHORT XXXXXXXX
+             * XXXXXXXX    817D 0C 9C01000 CMP DWORD PTR SS:[EBP+0C],19C
+             * XXXXXXXX    74 02           JE SHORT XXXXXXXX
+             * XXXXXXXX    EB 0A           JMP SHORT XXXXXXXX
+             * XXXXXXXX    50              PUSH EAX
+             * XXXXXXXX    B8 XXXXXXXX     MOV EAX,XXXXXXXX
+             * XXXXXXXX    C600 01         MOV BYTE PTR DS:[EAX],1
+             * XXXXXXXX    58              POP EAX
+             * XXXXXXXX    FF95 48F1FFFF   CALL DWORD PTR SS:[EBP-0EB8]
+             * XXXXXXXX    50              PUSH EAX
+             * XXXXXXXX    56              PUSH ESI
+             * XXXXXXXX    B8 XXXXXXXX     MOV EAX,XXXXXXXX
+             * XXXXXXXX    C600 00         MOV BYTE PTR DS:[EAX],0
+             * XXXXXXXX    83C4 08         ADD ESP,8
+             * XXXXXXXX    BE XXXXXXXX     MOV ESI,XXXXXXXX                         ; result qword ptr
+             * XXXXXXXX    8B4424 18       MOV EAX,DWORD PTR SS:[ESP+18]
+             * XXXXXXXX    8B00            MOV EAX,DWORD PTR DS:[EAX]
+             * XXXXXXXX    8906            MOV DWORD PTR DS:[ESI],EAX
+             * XXXXXXXX    83EC 08         SUB ESP,8
+             * XXXXXXXX    56              PUSH ESI
+             * XXXXXXXX    BE XXXXXXXX     MOV ESI,XXXXXXXX                         ; placeatme refID dword ptr
+             * XXXXXXXX    8906            MOV DWORD PTR DS:[ESI],EAX
+             * XXXXXXXX    5E              POP ESI
+             * XXXXXXXX    83C4 08         ADD ESP,8
+             * XXXXXXXX    8B4424 18       MOV EAX,DWORD PTR SS:[ESP+18]
+             * XXXXXXXX    8B40 04         MOV EAX,DWORD PTR DS:[EAX+4]
+             * XXXXXXXX    8946 04         MOV DWORD PTR DS:[ESI+4],EAX
+             * XXXXXXXX    BE XXXXXXXX     MOV ESI,XXXXXXXX                         ; opcode dword ptr
+             * XXXXXXXX    8B45 0C         MOV EAX,DWORD PTR SS:[EBP+0C]
+             * XXXXXXXX    8906            MOV DWORD PTR DS:[ESI],EAX
+             * XXXXXXXX    BE XXXXXXXX     MOV ESI,XXXXXXXX                         ; refID dword ptr
+             * XXXXXXXX    8B45 10         MOV EAX,DWORD PTR SS:[EBP+10]
+             * XXXXXXXX    85C0            TEST EAX,EAX
+             * XXXXXXXX    74 05           JE SHORT XXXXXXXX
+             * XXXXXXXX    8B40 0C         MOV EAX,DWORD PTR DS:[EAX+0C]
+             * XXXXXXXX    8906            MOV DWORD PTR DS:[ESI],EAX
+             * XXXXXXXX    BE XXXXXXXX     MOV ESI,XXXXXXXX                         ; axis byte ptr
+             * XXXXXXXX    8A4424 E8       MOV AL,BYTE PTR SS:[ESP-18]
+             * XXXXXXXX    8806            MOV BYTE PTR DS:[ESI],AL
+             * XXXXXXXX    BE XXXXXXXX     MOV ESI,XXXXXXXX  			    ; axis byte ptr (set)
+             * XXXXXXXX    8A4424 E4       MOV AL,BYTE PTR SS:[ESP-1C]
+             * XXXXXXXX    8806            MOV BYTE PTR DS:[ESI],AL
+             * XXXXXXXX    BE XXXXXXXX     MOV ESI,XXXXXXXX  			    ; value byte ptr (set)
+             * XXXXXXXX    8A4424 F0       MOV AL,BYTE PTR SS:[ESP-10]
+             * XXXXXXXX    8806            MOV BYTE PTR DS:[ESI],AL
+             * XXXXXXXX    83EC 08         SUB ESP,8
+             * XXXXXXXX    5E              POP ESI
+             * XXXXXXXX    58              POP EAX
+             * XXXXXXXX    E8 XXXXXXXX     CALL vaultmp.XXXXXXXX
+             * XXXXXXXX    E9 XXXXXXXX     JMP FalloutN.XXXXXXXX
+             */
+
+// Fallout 3
+
+            /* Patching key event and console */
+
+            /* 0062B663   83FB 0A          CMP EBX,0A
+             * 0062B666   90               NOP
+             *
+             * 0062B66B   0F85 BE150000    JNZ Fallout3.0062CC2F
+             * 00627A84   EB 6E            JMP SHORT Fallout3.00627AF4
+             * 0062B67E   EB 1B            JMP SHORT Fallout3.0062B69B
+             *
+             * 00627AFF   E9 990D0000      JMP Fallout3.0062889D
+             * 00627B04   90               NOP
+
+             * 0062B69B   90               NOP
+             * 0062B69C   90               NOP
+             * 0062B69D   90               NOP
+             * 0062B69E   90               NOP
+             * 0062B69F   90               NOP
+             * 0062B6A0   90               NOP
+             * 0062B6A1   90               NOP
+             *
+             * 0062B744   83FB 0A          CMP EBX,0A
+             * 0062B747   90               NOP
+             * 0062B748   90               NOP
+             * 0062B749   90               NOP
+             *
+             * 006195E8   90               NOP
+             * 006195E9   90               NOP
+             * 006195EA   90               NOP
+             * 006195EB   90               NOP
+             * 006195EC   90               NOP
+             * 006195ED   90               NOP
+             * 006195EE   90               NOP
+             * 006195EF   90               NOP
+             * 006195F0   90               NOP
+             * 006195F1   90               NOP
+             * 006195F2   90               NOP
+             * 006195F3   90               NOP
+             * 006195F4   90               NOP
+             * 006195F5   90               NOP
+             * 006195F6   90               NOP
+
+             * 006288C4   BB 0A000000      MOV EBX,0A
+             * 006288C9   90               NOP
+             */
+
+            /* Disabling VATS system */
+
+            /* 0078A27D   E9 88010000      JMP Fallout3.0078A40A
+             * 0078A282   90               NOP
+             */
+
+            /* Writing Fallout3 command INPUT detour */
+
+            /* XXXXXXXX   50               PUSH EAX
+             * XXXXXXXX   51               PUSH ECX
+             * XXXXXXXX   56               PUSH ESI
+             * XXXXXXXX   8A06             MOV AL,BYTE PTR DS:[ESI]
+             * XXXXXXXX   3C 00            CMP AL,0
+             * XXXXXXXX   74 0D            JE SHORT XXXXXXXX
+             * XXXXXXXX   5E               POP ESI
+             * XXXXXXXX   59               POP ECX
+             * XXXXXXXX   58               POP EAX
+             * XXXXXXXX   BA FFFEFE7E      MOV EDX,7EFEFEFF
+             * XXXXXXXX  -E9 XXXXXXXX      JMP Fallout3.00C075B4
+             * XXXXXXXX   B9 XXXXXXXX      MOV ECX,XXXXXXXX
+             * XXXXXXXX   8A01             MOV AL,BYTE PTR DS:[ECX]
+             * XXXXXXXX   3C 00            CMP AL,0
+             * XXXXXXXX  ^74 E8            JE SHORT XXXXXXXX
+             * XXXXXXXX   8806             MOV BYTE PTR DS:[ESI],AL
+             * XXXXXXXX   C601 00          MOV BYTE PTR DS:[ECX],0
+             * XXXXXXXX   83C1 01          ADD ECX,1
+             * XXXXXXXX   83C6 01          ADD ESI,1
+             * XXXXXXXX   8A01             MOV AL,BYTE PTR DS:[ECX]
+             * XXXXXXXX   3C 00            CMP AL,0
+             * XXXXXXXX   74 02            JE SHORT XXXXXXXX
+             * XXXXXXXX  ^EB ED            JMP SHORT XXXXXXXX
+             * XXXXXXXX   C605 XXXXXXXX 00 MOV BYTE PTR DS:[XXXXXXXX],0
+             * XXXXXXXX   C606 00          MOV BYTE PTR DS:[ESI],0
+             * XXXXXXXX  ^EB C9            JMP SHORT XXXXXXXX
+             *
+             * 00C075AF   -E9 XXXXXXXX     JMP XXXXXXXX
+             */
+
+            /* Writing Fallout3 command OUTPUT detour */
+
+            /* XXXXXXXX   50               PUSH EAX
+             * XXXXXXXX   51               PUSH ECX
+             * XXXXXXXX   52               PUSH EDX
+             * XXXXXXXX   8A0D XXXXXXXX    MOV CL,BYTE PTR DS:[XXXXXXXX]
+             * XXXXXXXX   84C9             TEST CL,CL
+             * XXXXXXXX   74 1E            JE SHORT XXXXXXXX
+             * XXXXXXXX   B9 XXXXXXXX      MOV ECX,XXXXXXXX
+             * XXXXXXXX   8A10             MOV DL,BYTE PTR DS:[EAX]
+             * XXXXXXXX   80FA 00          CMP DL,0
+             * XXXXXXXX   74 0A            JE SHORT XXXXXXXX
+             * XXXXXXXX   8811             MOV BYTE PTR DS:[ECX],DL
+             * XXXXXXXX   83C0 01          ADD EAX,1
+             * XXXXXXXX   83C1 01          ADD ECX,1
+             * XXXXXXXX  ^EB EF            JMP SHORT XXXXXXXX
+             * XXXXXXXX   C601 00          MOV BYTE PTR DS:[ECX],0
+             * XXXXXXXX   E8 XXXXXXXX      CALL vaultmp.XXXXXXXX
+             * XXXXXXXX   5A               POP EDX
+             * XXXXXXXX   59               POP ECX
+             * XXXXXXXX   58               POP EAX
+             * XXXXXXXX   E8 XXXXXXXX      CALL Fallout3.0062A800
+             * XXXXXXXX  -E9 XXXXXXXX      JMP Fallout3.0062B230
+             *
+             * 0062B22B   -E9 XXXXXXXX     JMP XXXXXXXX
+             */
+
+	    /* Writing Fallout3 command handler */
+
+            /* XXXXXXXX   817D 0C 14010000 CMP DWORD PTR SS:[EBP+C],114
+             * XXXXXXXX   74 0B            JE SHORT XXXXXXXX
+             * XXXXXXXX   817D 0C 9C010000 CMP DWORD PTR SS:[EBP+C],19C
+             * XXXXXXXX   74 02            JE SHORT XXXXXXXX
+             * XXXXXXXX   EB 0A            JMP SHORT XXXXXXXX
+             * XXXXXXXX   50               PUSH EAX
+             * XXXXXXXX   B8 XXXXXXXX      MOV EAX,XXXXXXXX
+             * XXXXXXXX   C600 01          MOV BYTE PTR DS:[EAX],1
+             * XXXXXXXX   58               POP EAX
+             * XXXXXXXX   52               PUSH EDX
+             * XXXXXXXX   57               PUSH EDI
+             * XXXXXXXX   51               PUSH ECX
+             * XXXXXXXX   FFD0             CALL EAX
+             * XXXXXXXX   50               PUSH EAX
+             * XXXXXXXX   56               PUSH ESI
+             * XXXXXXXX   B8 XXXXXXXX      MOV EAX,XXXXXXXX
+             * XXXXXXXX   C600 00          MOV BYTE PTR DS:[EAX],0
+             * XXXXXXXX   83C4 08          ADD ESP,8
+             * XXXXXXXX   BE XXXXXXXX      MOV ESI,XXXXXXXX                         ; result qword ptr
+             * XXXXXXXX   8B4424 18        MOV EAX,DWORD PTR SS:[ESP+18]
+             * XXXXXXXX   85C0             TEST EAX,EAX
+             * XXXXXXXX   74 0E            JE SHORT XXXXXXXX
+             * XXXXXXXX   8B00             MOV EAX,DWORD PTR DS:[EAX]
+             * XXXXXXXX   8906             MOV DWORD PTR DS:[ESI],EAX
+             * XXXXXXXX   8B4424 18        MOV EAX,DWORD PTR SS:[ESP+18]
+             * XXXXXXXX   8B40 04          MOV EAX,DWORD PTR DS:[EAX+4]
+             * XXXXXXXX   8946 04          MOV DWORD PTR DS:[ESI+4],EAX
+             * XXXXXXXX   BE XXXXXXXX      MOV ESI,XXXXXXXX                         ; opcode dword ptr
+             * XXXXXXXX   8B45 0C          MOV EAX,DWORD PTR SS:[EBP+C]
+             * XXXXXXXX   8906             MOV DWORD PTR DS:[ESI],EAX
+             * XXXXXXXX   BE XXXXXXXX      MOV ESI,XXXXXXXX                         ; refID dword ptr
+             * XXXXXXXX   8B45 10          MOV EAX,DWORD PTR SS:[EBP+10]
+             * XXXXXXXX   85C0             TEST EAX,EAX
+             * XXXXXXXX   74 05            JE SHORT XXXXXXXX
+             * XXXXXXXX   8B40 0C          MOV EAX,DWORD PTR DS:[EAX+C]
+             * XXXXXXXX   8906             MOV DWORD PTR DS:[ESI],EAX
+             * XXXXXXXX   BE XXXXXXXX      MOV ESI,XXXXXXXX                         ; placeatme refID dword ptr
+             * XXXXXXXX   890E             MOV DWORD PTR DS:[ESI],ECX
+             * XXXXXXXX   BE XXXXXXXX      MOV ESI,XXXXXXXX                         ; axis byte ptr
+             * XXXXXXXX   8A4424 E8        MOV AL,BYTE PTR SS:[ESP-18]
+             * XXXXXXXX   8806             MOV BYTE PTR DS:[ESI],AL
+             * XXXXXXXX   BE XXXXXXXX      MOV ESI,XXXXXXXX  			    ; axis byte ptr (set)
+             * XXXXXXXX   8A4424 E0        MOV AL,BYTE PTR SS:[ESP-20]
+             * XXXXXXXX   8806             MOV BYTE PTR DS:[ESI],AL
+             * XXXXXXXX   BE XXXXXXXX      MOV ESI,XXXXXXXX  			    ; value byte ptr (set)
+             * XXXXXXXX   8A4424 EC        MOV AL,BYTE PTR SS:[ESP-14]
+             * XXXXXXXX   8806             MOV BYTE PTR DS:[ESI],AL
+             * XXXXXXXX   83EC 08          SUB ESP,8
+             * XXXXXXXX   5E               POP ESI
+             * XXXXXXXX   58               POP EAX
+             * XXXXXXXX   E8 XXXXXXXX      CALL vaultmp.XXXXXXXX
+             * XXXXXXXX  -E9 XXXXXXXX      JMP Fallout3.00540BE3
+             * 
+             * 00540BDE  -E9 XXXXXXXX      JMP XXXXXXXX
+             */
+

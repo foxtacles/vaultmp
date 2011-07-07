@@ -6,9 +6,13 @@
 #define RAKNET_MASTER_ADDRESS "127.0.0.1"
 #define RAKNET_MASTER_PORT    1660
 
-#define DEDICATED_VERSION "0.1a revision 126"
-#define MASTER_VERSION "0.1a revision 124"
-#define CLIENT_VERSION "0.1a revision 127"
+#define DEDICATED_VERSION "0.1a revision 128"
+#define MASTER_VERSION "0.1a revision 128"
+#define CLIENT_VERSION "0.1a revision 128"
+
+#define MAX_PLAYER_NAME   16
+#define MAX_PASSWORD_SIZE 16
+#define MAX_MASTER_SERVER 32
 
 #define IDC_GROUP0    2000
 #define IDC_GROUP1    2001
@@ -34,9 +38,10 @@
 #define ICON_MAIN   4000
 #define POWERED     5000
 
-#define VAULTMP_DEBUG
-#define VAULTMP_DLL_SIZE 179200
+#define VAULTMP_DLL_SIZE 169984
 #define XLIVE_DLL_SIZE 21504
 #define FALLOUT3_EXE_SIZE 15044024
 #define FALLOUTNV_EXE1_SIZE 16432456
 #define FALLOUTNV_EXE2_SIZE 16066560
+
+#define VAULTMP_DEBUG

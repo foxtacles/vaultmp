@@ -457,6 +457,43 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         }
                         break;
                     }
+                    case ID_PLAYER_CELL_UPDATE:
+                    {
+                        pPlayerCellUpdate* update = (pPlayerCellUpdate*) packet->data;
+
+                        if (packet->length != sizeof(pPlayerCellUpdate))
+                            break;
+
+                        Player* player = Player::GetPlayerFromGUID(packet->guid);
+
+                        int ret = 1;
+
+                        /*if (amx != NULL)
+                        {
+                            void* args[1];
+
+                            int id = Client::GetClientFromGUID(packet->guid)->GetClientID();
+
+                            args[0] = reinterpret_cast<void*>(&id);
+
+                            ret = Script::Call(amx, (char*) "OnPlayerCellChange", (char*) "i", args);
+                        }*/
+
+                        player->SetPlayerGameCell(update->cell);
+                        player->SetPlayerNetworkCell(update->cell);
+
+                        player->UpdatePlayerCellUpdateStruct(update);
+
+                        map<RakNetGUID, string> players = Player::GetPlayerList();
+                        map<RakNetGUID, string>::iterator it;
+
+                        for (it = players.begin(); it != players.end(); it++)
+                        {
+                            RakNetGUID guid = it->first;
+                            if (guid != packet->guid) peer->Send((char*) update, sizeof(pPlayerCellUpdate), HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_PLAYER_CELL_UPDATE, guid, false, 0);
+                        }
+                        break;
+                    }
                     case ID_GAME_END:
                     {
                         /* Do things - game end for client */

@@ -40,6 +40,9 @@ typedef map<SystemAddress, ServerEntry> ServerMap;
 ServerMap serverList;
 
 SystemAddress* selectedServer = NULL;
+char inipath[256];
+char player_name[MAX_PLAYER_NAME];
+char server_master[MAX_MASTER_SERVER];
 
 HWND CreateMainWindow();
 int RegisterClasses();
@@ -102,6 +105,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR cmdline, 
     if (GetLastError() == ERROR_ALREADY_EXISTS) return MessageBox(NULL, "Vault-Tec Multiplayer Mod is already running.", "Error", MB_OK | MB_ICONERROR);
 
     instance = hInstance;
+
+    GetCurrentDirectory(sizeof(inipath), inipath);
+    strcat(inipath, "\\vaultmp.ini");
 
     seDebugPrivilege();
     InitCommonControls();
@@ -218,15 +224,15 @@ void CreateWindowContent(HWND parent)
 
     wnd = CreateWindowEx(0x00000200, "Edit", "vaultmp.com", 0x50010080, 611, 305, 146, 20, parent, (HMENU) IDC_EDIT3, instance, NULL);
     SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
-    SendMessage(wnd, EM_SETLIMITTEXT, (WPARAM) 32, 0);
+    SendMessage(wnd, EM_SETLIMITTEXT, (WPARAM) MAX_MASTER_SERVER, 0);
 
     wnd = CreateWindowEx(0x00000200, "Edit", "", 0x50010080, 611, 331, 146, 20, parent, (HMENU) IDC_EDIT0, instance, NULL);
     SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
-    SendMessage(wnd, EM_SETLIMITTEXT, (WPARAM) 16, 0);
+    SendMessage(wnd, EM_SETLIMITTEXT, (WPARAM) MAX_PLAYER_NAME, 0);
 
     wnd = CreateWindowEx(0x00000200, "Edit", "", 0x500100A0, 611, 357, 146, 20, parent, (HMENU) IDC_EDIT1, instance, NULL);
     SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
-    SendMessage(wnd, EM_SETLIMITTEXT, (WPARAM) 16, 0);
+    SendMessage(wnd, EM_SETLIMITTEXT, (WPARAM) MAX_PASSWORD_SIZE, 0);
 
     wnd = CreateWindowEx(0x00000000, "Static", "Master", 0x50000300, 570, 302, 38, 24, parent, (HMENU) IDC_STATIC4, instance, NULL);
     SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
@@ -270,6 +276,9 @@ int MessageLoop()
     }
 
     CleanUp();
+
+    WritePrivateProfileString("General", "name", player_name, inipath);
+    WritePrivateProfileString("General", "master", server_master, inipath);
 
     return msg.wParam;
 }
@@ -359,6 +368,10 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
             CreateWindowContent(hwnd);
             hBitmap = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(POWERED));
             GetObject(hBitmap, sizeof(BITMAP), &bitmap);
+            GetPrivateProfileString("General", "name", NULL, player_name, sizeof(player_name), inipath);
+            GetPrivateProfileString("General", "master", NULL, server_master, sizeof(server_master), inipath);
+            if (strlen(player_name) > 0) SetDlgItemText(hwnd, IDC_EDIT0, player_name);
+            if (strlen(server_master) > 0) SetDlgItemText(hwnd, IDC_EDIT3, server_master);
             break;
 
         case WM_PAINT:
@@ -387,9 +400,15 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                         if (selectedServer != NULL /*|| Direct IP */)
                         {
                             SystemAddress addr = *selectedServer;
-                            char name[16], pwd[16];
+                            char name[MAX_PLAYER_NAME], pwd[MAX_PASSWORD_SIZE];
                             GetDlgItemText(hwnd, IDC_EDIT0, name, sizeof(name));
                             GetDlgItemText(hwnd, IDC_EDIT1, pwd, sizeof(pwd));
+
+                            if (strlen(name) < 3)
+                            {
+                                MessageBox(NULL, "Please sepcify a player name of at least 3 characters.", "Error", MB_OK | MB_ICONERROR);
+                                break;
+                            }
 
                             map<SystemAddress, ServerEntry>::iterator i;
                             i = serverList.find(*selectedServer);
@@ -729,6 +748,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
             break;
 
         case WM_DESTROY:
+            GetDlgItemText(hwnd, IDC_EDIT0, player_name, sizeof(player_name));
+            GetDlgItemText(hwnd, IDC_EDIT3, server_master, sizeof(server_master));
             PostQuitMessage(0);
             break;
 
