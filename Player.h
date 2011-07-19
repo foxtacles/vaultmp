@@ -5,8 +5,10 @@
 
 #include <string>
 #include <map>
+#include <list>
 #include <math.h>
 
+#include "Inventory.h"
 #include "Client.h"
 #include "Data.h"
 
@@ -33,6 +35,7 @@ class Player {
 
               RakNetGUID guid;
               string refID;
+              Inventory* inventory;
 
               string name;
               float pos[3];
@@ -75,13 +78,16 @@ class Player {
               int GetPlayerMoving();
               string GetPlayerRefID();
               bool GetPlayerEnabled();
+              Inventory* GetPlayerInventory();
 
               pPlayerUpdate GetPlayerUpdateStruct();
               pPlayerStateUpdate GetPlayerStateUpdateStruct();
               pPlayerCellUpdate GetPlayerCellUpdateStruct();
+              pPlayerItemUpdate GetPlayerItemUpdateStruct(Item* item);
               bool UpdatePlayerUpdateStruct(pPlayerUpdate* data);
               bool UpdatePlayerStateUpdateStruct(pPlayerStateUpdate* data);
               bool UpdatePlayerCellUpdateStruct(pPlayerCellUpdate* data);
+              bool UpdatePlayerItemUpdateStruct(list<pPlayerItemUpdate>* items, Inventory* inv);
 
               bool SetPlayerName(string name);
               bool SetPlayerPos(int cell, float pos);
@@ -96,6 +102,7 @@ class Player {
               bool SetPlayerMoving(int moving);
               bool SetPlayerRefID(string refID);
               bool SetPlayerEnabled(bool enabled);
+              void SetPlayerInventory(Inventory* inv);
 
               bool ToggleNoOverride(int skipflag, bool toggle);
               bool GetPlayerOverrideFlag(int skipflag);

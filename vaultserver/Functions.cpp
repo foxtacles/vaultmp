@@ -11,6 +11,7 @@ AMX_NATIVE_INFO Functions::vaultmp_functions[] = {
     {"IsPlayerDead", Functions::vaultmp_IsPlayerDead},
     {"GetPlayerMoving", Functions::vaultmp_GetPlayerMoving},
     {"IsPlayerAlerted", Functions::vaultmp_IsPlayerAlerted},
+    {"GetPlayerCell", Functions::vaultmp_GetPlayerCell},
     {"SetServerName", Functions::vaultmp_SetServerName},
     {"SetServerMap", Functions::vaultmp_SetServerMap},
     {"SetServerRule", Functions::vaultmp_SetServerRule},
@@ -200,6 +201,25 @@ cell Functions::vaultmp_IsPlayerAlerted(AMX* amx, const cell* params)
     if (player != NULL)
     {
         return player->IsPlayerAlerted();
+    }
+    else
+        i = -1;
+
+    return i;
+}
+
+cell Functions::vaultmp_GetPlayerCell(AMX* amx, const cell* params)
+{
+    int i = 1, id;
+
+    id = (int) params[1];
+
+    RakNetGUID guid = Client::GetGUIDFromID(id);
+    Player* player = Player::GetPlayerFromGUID(guid);
+
+    if (player != NULL)
+    {
+        return player->GetPlayerNetworkCell();
     }
     else
         i = -1;

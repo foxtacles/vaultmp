@@ -44,6 +44,15 @@ public OnPlayerJoin(clientID)
 	return 1;
 }
 
+public OnPlayerCellChange(clientID, cell)
+{
+	timestamp();
+	new name[32];
+	GetPlayerName(clientID, name);
+	printf("OnPlayerCellChange: ID: %d cell: %x\n", clientID, cell);
+	return 1;
+}
+
 public OnPlayerDeath(clientID)
 {
 	timestamp();
@@ -59,6 +68,6 @@ public OnPlayerDisconnect(clientID)
 	timestamp();
 	new name[32];
 	GetPlayerName(clientID, name);
-	printf("OnPlayerDisconnect: ID: %d name: %s\n", clientID, name);
+	printf("OnPlayerDisconnect: ID: %d name: %s cell: %x\n", clientID, name, GetPlayerCell(clientID));
 	return 1;
 }

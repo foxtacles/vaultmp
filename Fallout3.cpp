@@ -11,13 +11,13 @@ typedef void (*fDLLjump)(bool);
 bool Fallout3::NewVegas = false;
 bool Fallout3::endThread = false;
 bool Fallout3::wakeup = false;
+bool Fallout3::cmdmutex = false;
 HANDLE Fallout3::Fallout3pipethread;
 HANDLE Fallout3::Fallout3gamethread;
 Player* Fallout3::self;
 queue<Player*> Fallout3::refqueue;
 list<fCommand*> Fallout3::cmdlist;
 list<fCommand*> Fallout3::tmplist;
-bool Fallout3::cmdmutex = false;
 PipeClient* Fallout3::pipeServer;
 PipeServer* Fallout3::pipeClient;
 
@@ -152,7 +152,7 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                         char refstr[8];
                         ZeroMemory(refstr, sizeof(refstr));
 
-                        sprintf(refstr, "%x", Fallout3_refID);
+                        sprintf(refstr, "%08x", Fallout3_refID);
                         lastRef = Player::GetPlayerFromRefID(refstr);
                     }
 
@@ -165,13 +165,13 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                                 switch (Fallout3_coord)
                                 {
                                     case 0x58: // X
-                                        lastRef->SetPlayerPos(0, (float) *((double*) (&Fallout3_result)));
+                                        lastRef->SetPlayerPos(X_AXIS, (float) *((double*) (&Fallout3_result)));
                                         break;
                                     case 0x59: // Y
-                                        lastRef->SetPlayerPos(1, (float) *((double*) (&Fallout3_result)));
+                                        lastRef->SetPlayerPos(Y_AXIS, (float) *((double*) (&Fallout3_result)));
                                         break;
                                     case 0x5A: // Z
-                                        lastRef->SetPlayerPos(2, (float) *((double*) (&Fallout3_result)));
+                                        lastRef->SetPlayerPos(Z_AXIS, (float) *((double*) (&Fallout3_result)));
                                         break;
                                 }
                                 break;
@@ -204,22 +204,22 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                                         lastRef->SetPlayerHealth((float) *((double*) (&Fallout3_result)));
                                         break;
                                     case 0x19: // PerceptionCondition
-                                        lastRef->SetPlayerCondition(0, (float) *((double*) (&Fallout3_result)));
+                                        lastRef->SetPlayerCondition(COND_PERCEPTION, (float) *((double*) (&Fallout3_result)));
                                         break;
                                     case 0x1A: // EnduranceCondition
-                                        lastRef->SetPlayerCondition(1, (float) *((double*) (&Fallout3_result)));
+                                        lastRef->SetPlayerCondition(COND_ENDURANCE, (float) *((double*) (&Fallout3_result)));
                                         break;
                                     case 0x1B: // LeftAttackCondition
-                                        lastRef->SetPlayerCondition(2, (float) *((double*) (&Fallout3_result)));
+                                        lastRef->SetPlayerCondition(COND_LEFTATTACK, (float) *((double*) (&Fallout3_result)));
                                         break;
                                     case 0x1C: // RightAttackCondition
-                                        lastRef->SetPlayerCondition(3, (float) *((double*) (&Fallout3_result)));
+                                        lastRef->SetPlayerCondition(COND_RIGHTATTACK, (float) *((double*) (&Fallout3_result)));
                                         break;
                                     case 0x1D: // LeftMobilityCondition
-                                        lastRef->SetPlayerCondition(4, (float) *((double*) (&Fallout3_result)));
+                                        lastRef->SetPlayerCondition(COND_LEFTMOBILITY, (float) *((double*) (&Fallout3_result)));
                                         break;
                                     case 0x1E: // RightMobilityCondition
-                                        lastRef->SetPlayerCondition(5, (float) *((double*) (&Fallout3_result)));
+                                        lastRef->SetPlayerCondition(COND_RIGHTMOBILITY, (float) *((double*) (&Fallout3_result)));
                                         break;
                                 }
                                 break;
@@ -235,7 +235,7 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                             case 0x1019: // IsMoving
                             {
                                 if (Fallout3_result == 0x00)
-                                    lastRef->SetPlayerMoving(0);
+                                    lastRef->SetPlayerMoving(MOV_IDLE);
                                 break;
                             }
                             case 0x1025: // PlaceAtMe
@@ -243,7 +243,7 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                                 char refstr[8];
                                 ZeroMemory(refstr, sizeof(refstr));
 
-                                sprintf(refstr, "%x", Fallout3_newRefID);
+                                sprintf(refstr, "%08x", Fallout3_newRefID);
 
                                 Player* player;
 
@@ -264,6 +264,54 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                                 cmd->sleep = 150;
                                 PUSHCMD(cmd);
 
+                                cmd = new fCommand;
+                                cmd->command = "setname " + player->GetPlayerName();
+                                cmd->player = player;
+                                cmd->forplayers = false;
+                                cmd->repeat = false;
+                                PUSHCMD(cmd);
+
+                                cmd = new fCommand;
+                                cmd->command = "removeallitems";
+                                cmd->player = player;
+                                cmd->forplayers = false;
+                                cmd->repeat = false;
+                                PUSHCMD(cmd);
+
+                                Inventory* handle = player->GetPlayerInventory();
+
+                                if (handle != NULL && !handle->IsEmpty())
+                                {
+                                    list<Item*> items = handle->GetItemList();
+                                    list<Item*>::iterator it;
+
+                                    for (it = items.begin(); it != items.end(); ++it)
+                                    {
+                                        Item* item = *it;
+
+                                        char amount[8];
+                                        sprintf(amount, "%d", item->count);
+
+                                        cmd = new fCommand;
+                                        cmd->command = "additem " + string(item->item->first) + " ";
+                                        cmd->command.append(amount);
+                                        cmd->player = player;
+                                        cmd->forplayers = false;
+                                        cmd->repeat = false;
+                                        PUSHCMD(cmd);
+
+                                        if (item->worn)
+                                        {
+                                            cmd = new fCommand;
+                                            cmd->command = "equipitem " + string(item->item->first) + " 1";
+                                            cmd->player = player;
+                                            cmd->forplayers = false;
+                                            cmd->repeat = false;
+                                            PUSHCMD(cmd);
+                                        }
+                                    }
+                                }
+
                                 CLOSECMD();
 
                                 #ifdef VAULTMP_DEBUG
@@ -275,7 +323,8 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                                 #endif
                                 break;
                             }
-                            case 0x1495: // GetParentCell
+                            case 0x146D: // GetParentCell New Vegas
+                            case 0x1495: // GetParentCell Fallout 3
                             {
                                 DWORD cell = (DWORD) Fallout3_result;
 
@@ -414,9 +463,24 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                                 }
                                 break;
                             }
+                            case 0x10F3: // SetRestrained
+                            case 0x10AD: // RemoveAllItems
+                            case 0x1002: // AddItem
+                            case 0x10EE: // EquipItem
+                            case 0x10EF: // UnequipItem
+                            case 0x1013: // PlayGroup
+                            case 0x1021: // Enable
+                            case 0x1022: // Disable
+                                break; // more stuff to do here
                             case 0x11BB: // MarkForDelete
                             {
                                 delete lastRef;
+                                break;
+                            }
+                            case 0x1485: // SetName Fallout 3
+                            case 0x144C: // SetName New Vegas
+                            {
+                                // player name was set in game
                                 break;
                             }
                             case 0x014F: // LoadGame
@@ -427,6 +491,14 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                             case 0x0114: // ShowAnim
                             {
                                 // has been handled by string parser
+                                break;
+                            }
+                            case 0x019B: // ShowInventory New Vegas
+                            case 0x019C: // ShowInventory Fallout 3
+                            {
+                                // has been handled by string parser
+
+                                lastRef->SetPlayerInventory(Inventory::TransferInventory());
                                 break;
                             }
                             default:
@@ -448,83 +520,90 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                     char output[high.length()];
                     char* token;
                     strcpy(output, high.c_str());
-                    token = strtok(output, ":.<> ");
 
-                    if (stricmp(token, "Wants") == 0)
+                    int count = 0;
+                    int iLastRef = 0;
+                    int wantsdrawn = 0;
+                    int weapdrawn = 0;
+                    char action[64];
+
+                    ZeroMemory(action, sizeof(action));
+
+                    if (sscanf(output, "%d", &count))
                     {
-                        token = strtok(NULL, ",");
-                        token = strtok(NULL, ",");
+                        char* data = strchr(output, '(');
 
-                        if (stricmp(token, " Weapon Drawn 0") == 0)
-                            self->SetPlayerAlerted(false);
-                        else if (stricmp(token, " Weapon Drawn 1") == 0)
-                            self->SetPlayerAlerted(true);
+                        int item = 0;
+                        int type = 0;
+                        float condition = 0.00;
+                        char worn[8];
+
+                        ZeroMemory(worn, sizeof(worn));
+
+                        if (data != NULL && sscanf(data, "(%X) (%d,%f%%) - %s", &item, &type, &condition, worn))
+                        {
+                            char basestr[8];
+                            ZeroMemory(basestr, sizeof(basestr));
+
+                            bool bWorn = (stricmp(worn, "Worn") == 0) ? true : false;
+                            sprintf(basestr, "%08x", item);
+
+                            if (!Inventory::AddItem_Internal(string(basestr), count, type, condition, bWorn))
+                            {
+                                // Item not registered in database, send error to server
+                            }
+                        }
                     }
-                    else if (stricmp(token, "Movement") == 0)
+                    else if (sscanf(output, "Wants Weapon Drawn %d, Weapon Drawn %d", &wantsdrawn, &weapdrawn))
                     {
-                        token = strtok(NULL, ":.<>-/ ");
+                        self->SetPlayerAlerted((bool) weapdrawn);
+                    }
+                    else if (sscanf(output, "Movement -> %s", action))
+                    {
+                        token = strtok(action, "/");
 
                         if (stricmp(token, "FastForward") == 0)
-                            self->SetPlayerMoving(1);
+                            self->SetPlayerMoving(MOV_FASTFORWARD);
                         else if (stricmp(token, "FastBackward") == 0)
-                            self->SetPlayerMoving(2);
+                            self->SetPlayerMoving(MOV_FASTBACKWARD);
                         else if (stricmp(token, "FastLeft") == 0)
-                            self->SetPlayerMoving(3);
+                            self->SetPlayerMoving(MOV_FASTLEFT);
                         else if (stricmp(token, "FastRight") == 0)
-                            self->SetPlayerMoving(4);
+                            self->SetPlayerMoving(MOV_FASTRIGHT);
                         else if (stricmp(token, "Forward") == 0)
-                            self->SetPlayerMoving(5);
+                            self->SetPlayerMoving(MOV_FORWARD);
                         else if (stricmp(token, "Backward") == 0)
-                            self->SetPlayerMoving(6);
+                            self->SetPlayerMoving(MOV_BACKWARD);
                         else if (stricmp(token, "Left") == 0)
-                            self->SetPlayerMoving(7);
+                            self->SetPlayerMoving(MOV_LEFT);
                         else if (stricmp(token, "Right") == 0)
-                            self->SetPlayerMoving(8);
+                            self->SetPlayerMoving(MOV_RIGHT);
                         else
                         {
-                            token = strtok(NULL, ":.<>-/ ");
+                            token = strtok(NULL, "/");
 
                             if (token != NULL)
                             {
                                 if (stricmp(token, "FastForward") == 0)
-                                    self->SetPlayerMoving(1);
+                                    self->SetPlayerMoving(MOV_FASTFORWARD);
                                 else if (stricmp(token, "FastBackward") == 0)
-                                    self->SetPlayerMoving(2);
+                                    self->SetPlayerMoving(MOV_FASTBACKWARD);
                                 else if (stricmp(token, "FastLeft") == 0)
-                                    self->SetPlayerMoving(3);
+                                    self->SetPlayerMoving(MOV_FASTLEFT);
                                 else if (stricmp(token, "FastRight") == 0)
-                                    self->SetPlayerMoving(4);
+                                    self->SetPlayerMoving(MOV_FASTRIGHT);
                                 else if (stricmp(token, "Forward") == 0)
-                                    self->SetPlayerMoving(5);
+                                    self->SetPlayerMoving(MOV_FORWARD);
                                 else if (stricmp(token, "Backward") == 0)
-                                    self->SetPlayerMoving(6);
+                                    self->SetPlayerMoving(MOV_BACKWARD);
                                 else if (stricmp(token, "Left") == 0)
-                                    self->SetPlayerMoving(7);
+                                    self->SetPlayerMoving(MOV_LEFT);
                                 else if (stricmp(token, "Right") == 0)
-                                    self->SetPlayerMoving(8);
+                                    self->SetPlayerMoving(MOV_RIGHT);
                             }
                         }
                     }
-                    /* We probably process some of these later, but they shall not loot the log file for now */
-                    else if (stricmp(token, "---") == 0)
-                    {}
-                    else if (stricmp(token, "Weapon") == 0)
-                    {}
-                    else if (stricmp(token, "Idle") == 0)
-                    {}
-                    else if (stricmp(token, "Anims") == 0)
-                    {}
-                    else if (stricmp(token, "Has") == 0)
-                    {}
-                    else if (stricmp(token, "Knock") == 0)
-                    {}
-                    else if (stricmp(token, "Sit/Sleep") == 0)
-                    {}
-                    else if (stricmp(token, "Life") == 0)
-                    {}
-                    else if (stricmp(token, "Process") == 0)
-                    {}
-                    else
+                    /*else
                     {
                         #ifdef VAULTMP_DEBUG
                         char text[256];
@@ -533,7 +612,7 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
                         sprintf(text, "String could not be processed: %s", const_cast<char*>(high.c_str()));
                         debug->Print(text, true);
                         #endif
-                    }
+                    }*/
                 }
                 else if (low.compare("up:") == 0)
                 {
@@ -567,7 +646,7 @@ DWORD WINAPI Fallout3::Fallout3pipe(LPVOID data)
 
 DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
 {
-    fCommand cmds[16];
+    fCommand cmds[17];
 
     cmds[0].command = "getpos X";
     cmds[0].repeat = true;
@@ -638,16 +717,21 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
     cmds[13].command = "getdead";
     cmds[13].repeat = true;
     cmds[13].forplayers = true;
-    cmds[13].priority = 7;
+    cmds[13].priority = 10;
     cmds[13].skipflag = SKIPFLAG_GETDEAD;
 
     cmds[14].command = "showanim";
     cmds[14].repeat = true;
     cmds[14].player = self;
 
-    cmds[15].command = "ismoving";
+    cmds[15].command = "showinventory";
     cmds[15].repeat = true;
     cmds[15].player = self;
+    cmds[15].priority = 10;
+
+    cmds[16].command = "ismoving";
+    cmds[16].repeat = true;
+    cmds[16].player = self;
 
     for (int i = 0; i < sizeof(cmds) / sizeof(fCommand); i++)
         cmdlist.push_back(&cmds[i]);
@@ -694,7 +778,7 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
             if (cmd->curPriority != cmd->priority)
             {
                 cmd->curPriority++;
-                it++;
+                ++it;
                 continue;
             }
             else
@@ -711,7 +795,7 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
                 map<RakNetGUID, string> players = Player::GetPlayerList();
                 map<RakNetGUID, string>::iterator it2;
 
-                for (it2 = players.begin(); it2 != players.end(); it2++)
+                for (it2 = players.begin(); it2 != players.end(); ++it2)
                 {
                     Player* player = Player::GetPlayerFromGUID(it2->first);
                     string refID = it2->second;
@@ -731,7 +815,7 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
             {
                 if ((cmd->skipflag != -1 && cmd->player->GetPlayerOverrideFlag(cmd->skipflag) == true) || (cmd->enabledonly && cmd->player->GetPlayerEnabled() == false))
                 {
-                    it++;
+                    ++it;
                     continue;
                 }
 
@@ -754,7 +838,7 @@ DWORD WINAPI Fallout3::Fallout3game(LPVOID data)
                 it = cmdlist.erase(it);
             }
             else
-                it++;
+                ++it;
         }
     }
 
@@ -791,7 +875,7 @@ HANDLE Fallout3::InitializeFallout3(bool NewVegas)
                 break;
         }
 
-        if (Fallout3::NewVegas ? (size == FALLOUTNV_EXE1_SIZE || size == FALLOUTNV_EXE2_SIZE) : (size == FALLOUT3_EXE_SIZE))
+        if (Fallout3::NewVegas ? (size == FALLOUTNV_EXE1_SIZE || size == FALLOUTNV_EXE2_SIZE || size == FALLOUTNV_EXE3_SIZE) : (size == FALLOUT3_EXE_SIZE))
         {
             FILE* xlive = fopen("xlive.dll", "rb");
 
@@ -921,6 +1005,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
     Fallout3gamethread = NULL;
     pipeClient = new PipeServer();
     pipeServer = new PipeClient();
+    Fallout3::NewVegas = NewVegas;
 
     #ifdef VAULTMP_DEBUG
     debug = new Debug((char*) "vaultmp");
@@ -938,6 +1023,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
     debug->Print((char*) "-----------------------------------------------------------------------------------------------------", false);
     //debug->PrintSystem();
     Player::SetDebugHandler(debug);
+    Inventory::SetDebugHandler(debug);
     #endif
 
     Player::DestroyInstances();
@@ -945,9 +1031,15 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
     self->SetPlayerName(name);
     self->SetPlayerRefID("player");
 
+    Inventory::Cleanup();
+    Inventory::Initialize(Fallout3::NewVegas);
+
+    Inventory localPlayerInventory;
+
     pPlayerUpdate localPlayerUpdate = self->GetPlayerUpdateStruct();
     pPlayerStateUpdate localPlayerStateUpdate = self->GetPlayerStateUpdateStruct();
     pPlayerCellUpdate localPlayerCellUpdate = self->GetPlayerCellUpdateStruct();
+    list<pPlayerItemUpdate> localPlayerItemUpdate;
 
     cmdlist.clear();
 
@@ -1045,6 +1137,13 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                     cmd->forplayers = false;
                     cmd->repeat = false;
                     cmd->sleep = 150;
+                    PUSHCMD(cmd);
+
+                    cmd = new fCommand;
+                    cmd->command = "setname " + self->GetPlayerName();
+                    cmd->player = self;
+                    cmd->forplayers = false;
+                    cmd->repeat = false;
                     PUSHCMD(cmd);
 
                     CLOSECMD();
@@ -1185,31 +1284,31 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
 
                             switch (update->moving)
                             {
-                                case 0:
+                                case MOV_IDLE:
                                     cmd->command.append("Idle 0");
                                     break;
-                                case 1:
+                                case MOV_FASTFORWARD:
                                     cmd->command.append("FastForward 1");
                                     break;
-                                case 2:
+                                case MOV_FASTBACKWARD:
                                     cmd->command.append("FastBackward 1");
                                     break;
-                                case 3:
+                                case MOV_FASTLEFT:
                                     cmd->command.append("FastLeft 1");
                                     break;
-                                case 4:
+                                case MOV_FASTRIGHT:
                                     cmd->command.append("FastRight 1");
                                     break;
-                                case 5:
+                                case MOV_FORWARD:
                                     cmd->command.append("Forward 1");
                                     break;
-                                case 6:
+                                case MOV_BACKWARD:
                                     cmd->command.append("Backward 1");
                                     break;
-                                case 7:
+                                case MOV_LEFT:
                                     cmd->command.append("Left 1");
                                     break;
-                                case 8:
+                                case MOV_RIGHT:
                                     cmd->command.append("Right 1");
                                     break;
                             }
@@ -1217,9 +1316,9 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                             PUSHCMD(cmd);
                         }
 
-                        if (!player->IsCoordinateInRange(0, update->X, 350.0))
+                        if (!player->IsCoordinateInRange(X_AXIS, update->X, 350.0))
                         {
-                            if (player->SetPlayerPos(0, update->X) && player->GetPlayerEnabled())
+                            if (player->SetPlayerPos(X_AXIS, update->X) && player->GetPlayerEnabled())
                             {
                                 player->ToggleNoOverride(SKIPFLAG_GETPOS_X, true);
 
@@ -1234,9 +1333,9 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                             }
                         }
 
-                        if (!player->IsCoordinateInRange(1, update->Y, 350.0))
+                        if (!player->IsCoordinateInRange(Y_AXIS, update->Y, 350.0))
                         {
-                            if (player->SetPlayerPos(1, update->Y) && player->GetPlayerEnabled())
+                            if (player->SetPlayerPos(Y_AXIS, update->Y) && player->GetPlayerEnabled())
                             {
                                 player->ToggleNoOverride(SKIPFLAG_GETPOS_Y, true);
 
@@ -1251,9 +1350,9 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                             }
                         }
 
-                        if (!player->IsCoordinateInRange(2, update->Z, 200.0))
+                        if (!player->IsCoordinateInRange(Z_AXIS, update->Z, 200.0))
                         {
-                            if (player->SetPlayerPos(2, update->Z) && player->GetPlayerEnabled())
+                            if (player->SetPlayerPos(Z_AXIS, update->Z) && player->GetPlayerEnabled())
                             {
                                 player->ToggleNoOverride(SKIPFLAG_GETPOS_Z, true);
 
@@ -1396,7 +1495,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                             PUSHCMD(cmd);
                         }
 
-                        if (player->SetPlayerCondition(0, update->conds[0]))
+                        if (player->SetPlayerCondition(COND_PERCEPTION, update->conds[0]))
                         {
                             sprintf(pos, "%i", (int) update->conds[0]);
 
@@ -1409,7 +1508,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                             PUSHCMD(cmd);
                         }
 
-                        if (player->SetPlayerCondition(1, update->conds[1]))
+                        if (player->SetPlayerCondition(COND_ENDURANCE, update->conds[1]))
                         {
                             sprintf(pos, "%i", (int) update->conds[1]);
 
@@ -1422,7 +1521,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                             PUSHCMD(cmd);
                         }
 
-                        if (player->SetPlayerCondition(2, update->conds[2]))
+                        if (player->SetPlayerCondition(COND_LEFTATTACK, update->conds[2]))
                         {
                             sprintf(pos, "%i", (int) update->conds[2]);
 
@@ -1435,7 +1534,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                             PUSHCMD(cmd);
                         }
 
-                        if (player->SetPlayerCondition(3, update->conds[3]))
+                        if (player->SetPlayerCondition(COND_RIGHTATTACK, update->conds[3]))
                         {
                             sprintf(pos, "%i", (int) update->conds[3]);
 
@@ -1448,7 +1547,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                             PUSHCMD(cmd);
                         }
 
-                        if (player->SetPlayerCondition(4, update->conds[4]))
+                        if (player->SetPlayerCondition(COND_LEFTMOBILITY, update->conds[4]))
                         {
                             sprintf(pos, "%i", (int) update->conds[4]);
 
@@ -1461,7 +1560,7 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                             PUSHCMD(cmd);
                         }
 
-                        if (player->SetPlayerCondition(5, update->conds[5]))
+                        if (player->SetPlayerCondition(COND_RIGHTMOBILITY, update->conds[5]))
                         {
                             sprintf(pos, "%i", (int) update->conds[5]);
 
@@ -1529,12 +1628,142 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                     debug->Print(text, true);
                     #endif
 
-                    fCommand* cmd;
-
                     if (refID.compare("none") != 0)
                     {
                         player->SetPlayerNetworkCell(update->cell);
                     }
+                    break;
+                }
+                case ID_PLAYER_ITEM_UPDATE:
+                {
+                    pPlayerItemUpdate* update = (pPlayerItemUpdate*) packet->data;
+
+                    if (packet->length != sizeof(pPlayerItemUpdate))
+                        break;
+
+                    Player* player = Player::GetPlayerFromGUID(update->guid);
+                    string refID = player->GetPlayerRefID();
+
+                    #ifdef VAULTMP_DEBUG
+                    char text[128];
+                    ZeroMemory(text, sizeof(text));
+
+                    sprintf(text, "Received player item update packet (name: %s, ref: %s, guid: %s)", player->GetPlayerName().c_str(), refID.c_str(), update->guid.ToString());
+                    debug->Print(text, true);
+                    #endif
+
+                    fCommand* cmd;
+
+                    if (refID.compare("none") != 0)
+                    {
+                        OPENCMD();
+
+                        string baseID = string(update->baseID);
+                        char amount[8];
+                        sprintf(amount, "%d", abs(update->item.count));
+
+                        if (update->item.count > 0)
+                        {
+                            cmd = new fCommand;
+                            cmd->player = player;
+                            cmd->forplayers = false;
+                            cmd->repeat = false;
+                            cmd->enabledonly = false;
+
+                            cmd->command = "additem " + baseID + " ";
+                            cmd->command.append(amount);
+                            if (update->hidden) cmd->command.append(" 1");
+                            else cmd->command.append(" 0");
+                            PUSHCMD(cmd);
+                        }
+                        else if (update->item.count < 0)
+                        {
+                            cmd = new fCommand;
+                            cmd->player = player;
+                            cmd->forplayers = false;
+                            cmd->repeat = false;
+                            cmd->enabledonly = false;
+
+                            cmd->command = "removeitem " + baseID + " ";
+                            cmd->command.append(amount);
+                            if (update->hidden) cmd->command.append(" 1");
+                            else cmd->command.append(" 0");
+                            PUSHCMD(cmd);
+                        }
+
+                        if (update->item.count >= 0)
+                        {
+                            if (update->item.worn)
+                            {
+                                cmd = new fCommand;
+                                cmd->player = player;
+                                cmd->forplayers = false;
+                                cmd->repeat = false;
+                                cmd->enabledonly = false;
+
+                                cmd->command = "equipitem " + baseID + " ";
+                                if (player != self) cmd->command.append("1");
+                                else cmd->command.append("0");
+                                if (update->hidden) cmd->command.append(" 1");
+                                else cmd->command.append(" 0");
+
+                                PUSHCMD(cmd);
+                            }
+                            else/* if (update->item.condition != 0.00)*/
+                            {
+                                cmd = new fCommand;
+
+                                cmd->player = player;
+                                cmd->forplayers = false;
+                                cmd->repeat = false;
+                                cmd->enabledonly = false;
+
+                                cmd->command = "unequipitem " + baseID + " ";
+                                if (player != self) cmd->command.append("1");
+                                else cmd->command.append("0");
+                                if (update->hidden) cmd->command.append(" 1");
+                                else cmd->command.append(" 0");
+
+                                PUSHCMD(cmd);
+                            }
+                        }
+
+                        CLOSECMD();
+                    }
+
+                    if (player != self)
+                    {
+                        Inventory* handle = player->GetPlayerInventory();
+
+                        if (handle == NULL)
+                        {
+                            handle = new Inventory();
+                            player->SetPlayerInventory(handle);
+                        }
+
+                        if (update->item.count == 0)
+                        {
+                            if (!handle->UpdateItem(string(update->baseID), update->item.condition, update->item.worn))
+                            {
+
+                            }
+                        }
+                        else if (update->item.count > 0)
+                        {
+                            if (!handle->AddItem(string(update->baseID), update->item.count, update->item.type, update->item.condition, update->item.worn))
+                            {
+
+                            }
+                        }
+                        else if (update->item.count < 0)
+                        {
+                            if (!handle->RemoveItem(string(update->baseID), abs(update->item.count)))
+                            {
+
+                            }
+                        }
+                    }
+
                     break;
                 }
                 case ID_INVALID_PASSWORD:
@@ -1586,6 +1815,22 @@ void Fallout3::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                 ZeroMemory(text, sizeof(text));
 
                 sprintf(text, "Sent player cell update packet (%s)", addr.ToString());
+                debug->Print(text, true);
+                #endif
+            }
+
+            if (self->UpdatePlayerItemUpdateStruct(&localPlayerItemUpdate, &localPlayerInventory))
+            {
+                list<pPlayerItemUpdate>::iterator it;
+
+                for (it = localPlayerItemUpdate.begin(); it != localPlayerItemUpdate.end(); ++it)
+                    peer->Send((char*) &(*it), sizeof(pPlayerItemUpdate), HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_PLAYER_ITEM_UPDATE, addr, false, 0);
+
+                #ifdef VAULTMP_DEBUG
+                char text[128];
+                ZeroMemory(text, sizeof(text));
+
+                sprintf(text, "Sent %d player item update packets (%s)", localPlayerItemUpdate.size(), addr.ToString());
                 debug->Print(text, true);
                 #endif
             }

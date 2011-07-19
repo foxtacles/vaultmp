@@ -11,6 +11,7 @@
 #include "RakNet/RakSleep.h"
 
 #include "Player.h"
+#include "Inventory.h"
 #include "Pipe.h"
 #include "Data.h"
 #include "vaultmp.h"

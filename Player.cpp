@@ -14,24 +14,25 @@ Debug* Player::debug;
 Player::Player(RakNetGUID guid)
 {
     this->guid = guid;
+    inventory = NULL;
     refID = "none";
-    pos[0] = 0.00;
-    pos[1] = 0.00;
-    pos[2] = 0.00;
+    pos[X_AXIS] = 0.00;
+    pos[Y_AXIS] = 0.00;
+    pos[Z_AXIS] = 0.00;
     angle = 0.00;
     gcell = 0x00;
     ncell = 0x00;
     health = 0.00;
     baseHealth = 0.00;
-    cond[0] = 0.00;
-    cond[1] = 0.00;
-    cond[2] = 0.00;
-    cond[3] = 0.00;
-    cond[4] = 0.00;
-    cond[5] = 0.00;
+    cond[COND_PERCEPTION] = 0.00;
+    cond[COND_ENDURANCE] = 0.00;
+    cond[COND_LEFTATTACK] = 0.00;
+    cond[COND_RIGHTATTACK] = 0.00;
+    cond[COND_LEFTMOBILITY] = 0.00;
+    cond[COND_RIGHTMOBILITY] = 0.00;
     dead = false;
     alerted = false;
-    moving = 0;
+    moving = MOV_IDLE;
     name = "Player";
     enabled = true;
     players.insert(pair<RakNetGUID, string>(guid, refID));
@@ -65,6 +66,9 @@ Player::~Player()
     }
     #endif
 
+    if (inventory != NULL)
+        delete inventory;
+
     players.erase(this->guid);
     playersguids.erase(this->guid);
     if (this->refID.compare("none") != 0) playersrefs.erase(this->refID);
@@ -96,10 +100,14 @@ void Player::DestroyInstances()
 {
     map<RakNetGUID, Player*>::iterator it;
     int size = playersguids.size();
+
+    if (size == 0)
+        return;
+
     int i = 0;
     Player* pPlayers[size];
 
-    for (it = playersguids.begin(); it != playersguids.end(); it++, i++)
+    for (it = playersguids.begin(); it != playersguids.end(); ++it, i++)
         pPlayers[i] = it->second;
 
     for (int j = 0; j < size; j++)
@@ -133,7 +141,7 @@ string Player::GetPlayerName()
 
 float Player::GetPlayerPos(int cell)
 {
-    float ret = (cell >= 0 && cell <= 2) ? pos[cell] : 0.00;
+    float ret = (cell >= X_AXIS && cell <= Z_AXIS) ? pos[cell] : 0.00;
     return ret;
 }
 
@@ -164,7 +172,7 @@ float Player::GetPlayerBaseHealth()
 
 float Player::GetPlayerCondition(int cell)
 {
-    float ret = (cell >= 0 && cell <= 5) ? cond[cell] : 0.00;
+    float ret = (cell >= COND_PERCEPTION && cell <= COND_LEFTMOBILITY) ? cond[cell] : 0.00;
     return ret;
 }
 
@@ -193,15 +201,20 @@ bool Player::GetPlayerEnabled()
     return enabled;
 }
 
+Inventory* Player::GetPlayerInventory()
+{
+    return inventory;
+}
+
 pPlayerUpdate Player::GetPlayerUpdateStruct()
 {
     pPlayerUpdate data;
 
     data.type = ID_PLAYER_UPDATE;
     data.guid = guid;
-    data.X = pos[0];
-    data.Y = pos[1];
-    data.Z = pos[2];
+    data.X = pos[X_AXIS];
+    data.Y = pos[Y_AXIS];
+    data.Z = pos[Z_AXIS];
     data.A = angle;
     data.alerted = alerted;
     data.moving = moving;
@@ -217,12 +230,12 @@ pPlayerStateUpdate Player::GetPlayerStateUpdateStruct()
     data.guid = guid;
     data.health = health;
     data.baseHealth = baseHealth;
-    data.conds[0] = cond[0];
-    data.conds[1] = cond[1];
-    data.conds[2] = cond[2];
-    data.conds[3] = cond[3];
-    data.conds[4] = cond[4];
-    data.conds[5] = cond[5];
+    data.conds[COND_PERCEPTION] = cond[COND_PERCEPTION];
+    data.conds[COND_ENDURANCE] = cond[COND_ENDURANCE];
+    data.conds[COND_LEFTATTACK] = cond[COND_LEFTATTACK];
+    data.conds[COND_RIGHTATTACK] = cond[COND_RIGHTATTACK];
+    data.conds[COND_LEFTMOBILITY] = cond[COND_LEFTMOBILITY];
+    data.conds[COND_RIGHTMOBILITY] = cond[COND_RIGHTMOBILITY];
     data.dead = dead;
 
     return data;
@@ -235,6 +248,20 @@ pPlayerCellUpdate Player::GetPlayerCellUpdateStruct()
     data.type = ID_PLAYER_CELL_UPDATE;
     data.guid = guid;
     data.cell = gcell;
+
+    return data;
+}
+
+pPlayerItemUpdate Player::GetPlayerItemUpdateStruct(Item* item)
+{
+    pPlayerItemUpdate data;
+
+    data.type = ID_PLAYER_ITEM_UPDATE;
+    data.hidden = false;
+    data.guid = guid;
+    data.item = (*item);
+
+    strcpy(data.baseID, item->item->first);
 
     return data;
 }
@@ -267,12 +294,12 @@ bool Player::UpdatePlayerStateUpdateStruct(pPlayerStateUpdate* data)
         player.guid != data->guid ||
         player.health != data->health ||
         player.baseHealth != data->baseHealth ||
-        player.conds[0] != data->conds[0] ||
-        player.conds[1] != data->conds[1] ||
-        player.conds[2] != data->conds[2] ||
-        player.conds[3] != data->conds[3] ||
-        player.conds[4] != data->conds[4] ||
-        player.conds[5] != data->conds[5] ||
+        player.conds[COND_PERCEPTION] != data->conds[COND_PERCEPTION] ||
+        player.conds[COND_ENDURANCE] != data->conds[COND_ENDURANCE] ||
+        player.conds[COND_LEFTATTACK] != data->conds[COND_LEFTATTACK] ||
+        player.conds[COND_RIGHTATTACK] != data->conds[COND_RIGHTATTACK] ||
+        player.conds[COND_LEFTMOBILITY] != data->conds[COND_LEFTMOBILITY] ||
+        player.conds[COND_RIGHTMOBILITY] != data->conds[COND_RIGHTMOBILITY] ||
         player.dead != data->dead)
         {
             (*data) = player;
@@ -295,6 +322,37 @@ bool Player::UpdatePlayerCellUpdateStruct(pPlayerCellUpdate* data)
         }
 
     return false;
+}
+
+bool Player::UpdatePlayerItemUpdateStruct(list<pPlayerItemUpdate>* items, Inventory* inv)
+{
+    if (inv == NULL || items == NULL || this->inventory == NULL)
+        return false;
+
+    Inventory* invcopy = inventory->Copy();
+    Inventory diff;
+
+    Inventory::CreateDiff(inv, invcopy, &diff);
+
+    if (diff.IsEmpty())
+    {
+        delete invcopy;
+        return false;
+    }
+
+    items->clear();
+
+    list<Item*> items_diff = diff.GetItemList();
+    list<Item*>::iterator it;
+    int i = 0;
+
+    for (it = items_diff.begin(), i = 0; it != items_diff.end(); ++it, i++)
+        items->push_back(GetPlayerItemUpdateStruct(*it));
+
+    invcopy->Copy(inv);
+    delete invcopy;
+
+    return true;
 }
 
 bool Player::SetPlayerName(string name)
@@ -320,7 +378,7 @@ bool Player::SetPlayerName(string name)
 
 bool Player::SetPlayerPos(int cell, float pos)
 {
-    if (cell >= 0 && cell <= 2 && !nowrite[(cell == 0) ? SKIPFLAG_GETPOS_X : (cell == 1) ? SKIPFLAG_GETPOS_Y : (cell == 2) ? SKIPFLAG_GETPOS_Z : 0])
+    if (cell >= X_AXIS && cell <= Z_AXIS && !nowrite[(cell == 0) ? SKIPFLAG_GETPOS_X : (cell == 1) ? SKIPFLAG_GETPOS_Y : (cell == 2) ? SKIPFLAG_GETPOS_Z : 0])
     {
         if (this->pos[cell] == pos)
             return false;
@@ -517,7 +575,7 @@ bool Player::SetPlayerBaseHealth(float baseHealth)
 
 bool Player::SetPlayerCondition(int cell, float cond)
 {
-    if (cell >= 0 && cell <= 5)
+    if (cell >= COND_PERCEPTION && cell <= COND_LEFTMOBILITY)
     {
         if (this->cond[cell] == cond)
             return false;
@@ -590,7 +648,7 @@ bool Player::SetPlayerAlerted(bool alerted)
 
 bool Player::SetPlayerMoving(int moving)
 {
-    if (moving >= 0 && moving <= 8)
+    if (moving >= MOV_IDLE && moving <= MOV_RIGHT)
     {
         if (this->moving == moving)
             return false;
@@ -660,6 +718,13 @@ bool Player::SetPlayerEnabled(bool enabled)
     return true;
 }
 
+void Player::SetPlayerInventory(Inventory* inv)
+{
+    if (inventory != NULL)
+        delete inventory;
+    inventory = inv;
+}
+
 bool Player::ToggleNoOverride(int skipflag, bool toggle)
 {
     if (skipflag >= 0 && skipflag < MAX_SKIP_FLAGS)
@@ -703,7 +768,7 @@ bool Player::IsPlayerNearPoint(float X, float Y, float Z, float R)
 
 bool Player::IsCoordinateInRange(int cell, float XYZ, float R)
 {
-    if (cell >=0 && cell <= 2)
+    if (cell >= X_AXIS && cell <= Z_AXIS)
         return (pos[cell] > (XYZ - R) && pos[cell] < (XYZ + R));
     return false;
 }

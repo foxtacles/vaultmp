@@ -29,6 +29,7 @@ forward OnClientAuthenticate(clientID, const name[], const pwd[]);
 forward OnClientRequestGame(clientID, savegame[], len);
 forward OnPlayerJoin(clientID);
 forward OnPlayerDeath(clientID);
+forward OnPlayerCellChange(clientID, cell);
 forward OnPlayerDisconnect(clientID);
 
 // Player functions
@@ -42,6 +43,7 @@ native Float:GetPlayerCondition(clientID, condition);
 native IsPlayerDead(clientID);
 native GetPlayerMoving(clientID);
 native IsPlayerAlerted(clientID);
+native GetPlayerCell(clientID);
 
 // Server info functions
 

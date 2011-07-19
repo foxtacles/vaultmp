@@ -2,52 +2,52 @@
 
             /* Patching key event and console */
 
-            /* 0071A823   90               NOP
-             * 0071A824   90               NOP
+            /* 0071B253   90               NOP
+             * 0071B254   90               NOP
 
-             * 0071A849   90               NOP
-             * 0071A84A   90               NOP
-             * 0071A84B   90               NOP
-             * 0071A84C   90               NOP
-             * 0071A84D   90               NOP
-             * 0071A84E   90               NOP
+             * 0071B279   90               NOP
+             * 0071B27A   90               NOP
+             * 0071B27B   90               NOP
+             * 0071B27C   90               NOP
+             * 0071B27D   90               NOP
+             * 0071B27E   90               NOP
 
-             * 0071A949   90               NOP
-             * 0071A94A   90               NOP
-             * 0071A94B   90               NOP
-             * 0071A94C   90               NOP
-             * 0071A94D   90               NOP
-             * 0071A94E   90               NOP
+             * 0071B379   90               NOP
+             * 0071B37A   90               NOP
+             * 0071B37B   90               NOP
+             * 0071B37C   90               NOP
+             * 0071B37D   90               NOP
+             * 0071B37E   90               NOP
 
-             * 0071AA91   90               NOP
-             * 0071AA92   90               NOP
-             * 0071AA93   90               NOP
-             * 0071AA94   90               NOP
-             * 0071AA95   90               NOP
-             * 0071AA96   90               NOP
+             * 0071B4C1   90               NOP
+             * 0071B4C2   90               NOP
+             * 0071B4C3   90               NOP
+             * 0071B4C4   90               NOP
+             * 0071B4C5   90               NOP
+             * 0071B4C6   90               NOP
 
-             * 0070D6E5   EB 03            JMP SHORT FalloutN.0070D6EA
-             * 0070D6E7   90               NOP
-             * 0070D6E8   90               NOP
-             * 0070D6E9   90               NOP
-             * 0070D6EA   90               NOP
+             * 0070E075   EB 03            JMP SHORT FalloutN.0070E07A
+             * 0070E077   90               NOP
+             * 0070E078   90               NOP
+             * 0070E079   90               NOP
+             * 0070E07A   90               NOP
 
-             * 0070D704   90               NOP
-             * 0070D705   90               NOP
-             * 0070D706   90               NOP
-             * 0070D707   90               NOP
-             * 0070D708   90               NOP
-             * 0070D709   90               NOP
+             * 0070E094   90               NOP
+             * 0070E095   90               NOP
+             * 0070E096   90               NOP
+             * 0070E097   90               NOP
+             * 0070E098   90               NOP
+             * 0070E099   90               NOP
              *
-             * 00703224   EB 0C            JMP SHORT FalloutN.00703232
-             * 0070C2EE   0F85 15020000    JNZ FalloutN.0070C509
-             * 0071A836   EB 07            JMP SHORT FalloutN.0071A83F
+             * 00703C44   EB 0C            JMP SHORT FalloutN.00703C52
+             * 0070CC7E   0F85 15020000    JNZ FalloutN.0070CE99
+             * 0071B266   EB 07            JMP SHORT FalloutN.0071B26F
              */
 
             /* Disabling VATS system */
 
-            /* 0093FFAE   E9 5A020000      JMP FalloutN.0094020D
-             * 0093FFB3   90               NOP
+            /* 009428AE   E9 35030000      JMP FalloutN.00942BE8
+             * 009428B3   90               NOP
              */
 
             /* Writing FalloutNV command INPUT detour */
@@ -62,7 +62,7 @@
              * XXXXXXXX   59               POP ECX
              * XXXXXXXX   58               POP EAX
              * XXXXXXXX   8B8D 58D7FFFF    MOV ECX,DWORD PTR SS:[EBP-28A8]
-             * XXXXXXXX  -E9 XXXXXXXX      JMP FalloutN.0071AACE
+             * XXXXXXXX  -E9 XXXXXXXX      JMP FalloutN.0071B4FE
              * XXXXXXXX   B9 XXXXXXXX      MOV ECX,XXXXXXXX
              * XXXXXXXX   8A11             MOV DL,BYTE PTR DS:[ECX]
              * XXXXXXXX   80FA 00          CMP DL,0
@@ -79,9 +79,9 @@
              * XXXXXXXX   C600 00          MOV BYTE PTR DS:[EAX],0
              * XXXXXXXX  ^EB C6            JMP SHORT XXXXXXXX
              *
-             * 0071AAC9  -E9 XXXXXXXX      JMP XXXXXXXX
-             * 0071AACE   50               PUSH EAX
-             * 0071AACF   90               NOP
+             * 0071B4F9  -E9 XXXXXXXX      JMP XXXXXXXX
+             * 0071B4FE   50               PUSH EAX
+             * 0071B4FF   90               NOP
              */
 
             /* Writing FalloutNV command OUTPUT detour */
@@ -108,18 +108,18 @@
              * XXXXXXXX   59               POP ECX
              * XXXXXXXX   58               POP EAX
              * XXXXXXXX   8B8D B4F7FFFF    MOV ECX,DWORD PTR SS:[EBP-84C]
-             * XXXXXXXX  -E9 XXXXXXXX      JMP FalloutN.0071C6EB
+             * XXXXXXXX  -E9 XXXXXXXX      JMP FalloutN.0071D11B
              *
-             * 0071C6E6  -E9 XXXXXXXX      JMP XXXXXXXX
-             * 0071C6EB   50               PUSH EAX
-             * 0071C6EC   90               NOP
+             * 0071D116  -E9 XXXXXXXX      JMP XXXXXXXX
+             * 0071D11B   50               PUSH EAX
+             * 0071D11C   90               NOP
              */
 
 	    /* Writing FalloutNV command handler */
 
             /* XXXXXXXX    817D 0C 1401000 CMP DWORD PTR SS:[EBP+0C],114
              * XXXXXXXX    74 0B           JE SHORT XXXXXXXX
-             * XXXXXXXX    817D 0C 9C01000 CMP DWORD PTR SS:[EBP+0C],19C
+             * XXXXXXXX    817D 0C 9B01000 CMP DWORD PTR SS:[EBP+0C],19B
              * XXXXXXXX    74 02           JE SHORT XXXXXXXX
              * XXXXXXXX    EB 0A           JMP SHORT XXXXXXXX
              * XXXXXXXX    50              PUSH EAX
@@ -167,7 +167,10 @@
              * XXXXXXXX    5E              POP ESI
              * XXXXXXXX    58              POP EAX
              * XXXXXXXX    E8 XXXXXXXX     CALL vaultmp.XXXXXXXX
-             * XXXXXXXX    E9 XXXXXXXX     JMP FalloutN.XXXXXXXX
+             * XXXXXXXX    E9 XXXXXXXX     JMP FalloutN.005E234B
+             *
+	     * 005E2345   -E9 XXXXXXXX     JMP XXXXXXXX
+             * 005E234A    90              NOP
              */
 
 // Fallout 3

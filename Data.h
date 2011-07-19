@@ -3,15 +3,48 @@
 
 class Player;
 
+#include <string>
+#include <map>
+
+#include "RakNet/RakPeerInterface.h"
+#include "RakNet/RakString.h"
 #include "RakNet/MessageIdentifiers.h"
 
 #define FALLOUT3_TICKS 1
 
+using namespace std;
 using namespace RakNet;
 
 /* Shared data structures and tables */
 
 namespace Data {
+
+enum {
+    X_AXIS,
+    Y_AXIS,
+    Z_AXIS,
+};
+
+enum {
+    COND_PERCEPTION,
+    COND_ENDURANCE,
+    COND_LEFTATTACK,
+    COND_RIGHTATTACK,
+    COND_LEFTMOBILITY,
+    COND_RIGHTMOBILITY,
+};
+
+enum {
+    MOV_IDLE,
+    MOV_FASTFORWARD,
+    MOV_FASTBACKWARD,
+    MOV_FASTLEFT,
+    MOV_FASTRIGHT,
+    MOV_FORWARD,
+    MOV_BACKWARD,
+    MOV_LEFT,
+    MOV_RIGHT,
+};
 
 enum {
     ID_MASTER_QUERY = ID_USER_PACKET_ENUM,
@@ -26,6 +59,7 @@ enum {
     ID_PLAYER_UPDATE,
     ID_PLAYER_STATE_UPDATE,
     ID_PLAYER_CELL_UPDATE,
+    ID_PLAYER_ITEM_UPDATE,
 };
 
 enum {
@@ -33,9 +67,28 @@ enum {
     CHANNEL_PLAYER_UPDATE,
     CHANNEL_PLAYER_STATE_UPDATE,
     CHANNEL_PLAYER_CELL_UPDATE,
+    CHANNEL_PLAYER_ITEM_UPDATE,
 };
 
 #pragma pack(push, 1)
+
+struct str_compare { bool operator() (const char* a, const char* b) { return (stricmp(a, b) < 0); } };
+
+struct Item {
+    map<const char*, const char*, str_compare>::iterator item;
+    int count;
+    int type;
+    float condition;
+    bool worn;
+
+    Item() {
+        count = 0;
+        type = 0;
+        condition = 0.00;
+        worn = false;
+    }
+};
+
 struct pPlayerUpdate {
     unsigned char type;
     RakNetGUID guid;
@@ -58,6 +111,15 @@ struct pPlayerCellUpdate {
     RakNetGUID guid;
     DWORD cell;
 };
+
+struct pPlayerItemUpdate {
+    unsigned char type;
+    bool hidden;
+    RakNetGUID guid;
+    char baseID[8];
+    Item item;
+};
+
 #pragma pack(pop)
 
 struct fCommand {
@@ -93,7 +155,8 @@ enum fCommandSkipFlags {
     SKIPFLAG_GETDEAD,
     SKIPFLAG_GETHEALTH,
     SKIPFLAG_GETPARENTCELL,
-    MAX_SKIP_FLAGS
+    SKIPFLAG_ITEMUPDATE,
+    MAX_SKIP_FLAGS,
 };
 
 }

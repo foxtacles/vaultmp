@@ -28,6 +28,9 @@
 		<Unit filename="..\Data.h" />
 		<Unit filename="..\Debug.cpp" />
 		<Unit filename="..\Debug.h" />
+		<Unit filename="..\Inventory.cpp" />
+		<Unit filename="..\Inventory.h" />
+		<Unit filename="..\Items.h" />
 		<Unit filename="..\Player.cpp" />
 		<Unit filename="..\Player.h" />
 		<Unit filename="..\RakNet\AutopatcherPatchContext.h" />

@@ -331,7 +331,7 @@ void RefreshServerList()
     SendMessage(wndlistview2, LVM_DELETEALLITEMS, 0, 0);
     selectedServer = NULL;
 
-    for (map<SystemAddress, ServerEntry>::const_iterator i = serverList.begin(); i != serverList.end(); ++i)
+    for (map<SystemAddress, ServerEntry>::iterator i = serverList.begin(); i != serverList.end(); ++i)
     {
         const SystemAddress* addr = &i->first;
         ServerEntry entry = i->second;
@@ -719,7 +719,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                             ServerEntry* entry = &i->second;
                             std::map<string, string> rules = entry->GetServerRules();
 
-                            for (map<string, string>::const_iterator k = rules.begin(); k != rules.end(); ++k)
+                            for (map<string, string>::iterator k = rules.begin(); k != rules.end(); ++k)
                             {
                                 string key = k->first;
                                 string value = k->second;

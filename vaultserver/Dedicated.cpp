@@ -11,6 +11,7 @@ int Dedicated::connections;
 AMX* Dedicated::amx;
 char* Dedicated::announce;
 bool Dedicated::query;
+Debug* Dedicated::debug;
 
 SystemAddress Dedicated::master;
 TimeMS Dedicated::announcetime;
@@ -21,7 +22,7 @@ bool Dedicated::thread;
 
 void Dedicated::TerminateThread()
 {
-      thread = false;
+    thread = false;
 }
 
 void Dedicated::SetServerName(string name)
@@ -115,9 +116,31 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
             peer->SetMaximumIncomingConnections(connections);
       }
 
+      #ifdef VAULTMP_DEBUG
+      debug = new Debug((char*) "vaultserver");
+
+      char text[128];
+      ZeroMemory(text, sizeof(text));
+      sprintf(text, "Vault-Tec Multiplayer Mod Dedicated server debug log (%s)", DEDICATED_VERSION);
+      debug->Print(text, false);
+
+      ZeroMemory(text, sizeof(text));
+      sprintf(text, "Local host: %s (game: %s)", peer->GetMyBoundAddress().ToString(), self->IsNewVegas() ? (char*) "Fallout New Vegas" : (char*) "Fallout 3");
+      debug->Print(text, false);
+
+      debug->Print((char*) "Visit www.vaultmp.com for help and upload this log if you experience problems with the mod.", false);
+      debug->Print((char*) "-----------------------------------------------------------------------------------------------------", false);
+      //debug->PrintSystem();
+      //Player::SetDebugHandler(debug);
+      Inventory::SetDebugHandler(debug);
+      #endif
+
       Packet* packet;
 
       Client::SetMaximumClients(connections);
+
+      Inventory::Cleanup();
+      Inventory::Initialize(self->IsNewVegas());
 
       while (thread)
       {
@@ -174,7 +197,7 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                             query.Write((MessageID) ID_PLAYER_LEFT);
                             query.Write(packet->guid);
 
-                            for (it = players.begin(); it != players.end(); it++)
+                            for (it = players.begin(); it != players.end(); ++it)
                             {
                                 RakNetGUID guid = it->first;
                                 peer->Send(&query, HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_SYSTEM, guid, false, 0);
@@ -343,7 +366,7 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         query.Write(packet->guid);
                         query.Write(pname);
 
-                        for (it = players.begin(); it != players.end(); it++)
+                        for (it = players.begin(); it != players.end(); ++it)
                         {
                             RakNetGUID guid = it->first;
                             peer->Send(&query, HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_SYSTEM, guid, false, 0);
@@ -351,7 +374,7 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
 
                         query.Reset();
 
-                        for (it = players.begin(); it != players.end(); it++)
+                        for (it = players.begin(); it != players.end(); ++it)
                         {
                             RakNetGUID guid = it->first;
                             Player* player = Player::GetPlayerFromGUID(guid);
@@ -363,6 +386,20 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                             query.Write(pname);
                             peer->Send(&query, HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_SYSTEM, packet->guid, false, 0);
                             query.Reset();
+
+                            Inventory* handle = player->GetPlayerInventory();
+
+                            if (handle != NULL && !handle->IsEmpty())
+                            {
+                                list<Item*> items = handle->GetItemList();
+                                list<Item*>::iterator it2;
+
+                                for (it2 = items.begin(); it2 != items.end(); ++it2)
+                                {
+                                    pPlayerItemUpdate item = player->GetPlayerItemUpdateStruct(*it2);
+                                    peer->Send((char*) &item, sizeof(pPlayerItemUpdate), HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_PLAYER_ITEM_UPDATE, packet->guid, false, 0);
+                                }
+                            }
                         }
 
                         Player* player = new Player(packet->guid);
@@ -391,9 +428,9 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
 
                         Player* player = Player::GetPlayerFromGUID(packet->guid);
 
-                        player->SetPlayerPos(0, update->X);
-                        player->SetPlayerPos(1, update->Y);
-                        player->SetPlayerPos(2, update->Z);
+                        player->SetPlayerPos(X_AXIS, update->X);
+                        player->SetPlayerPos(Y_AXIS, update->Y);
+                        player->SetPlayerPos(Z_AXIS, update->Z);
                         player->SetPlayerAngle(update->A);
                         player->SetPlayerAlerted(update->alerted);
                         player->SetPlayerMoving(update->moving);
@@ -403,7 +440,7 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         map<RakNetGUID, string> players = Player::GetPlayerList();
                         map<RakNetGUID, string>::iterator it;
 
-                        for (it = players.begin(); it != players.end(); it++)
+                        for (it = players.begin(); it != players.end(); ++it)
                         {
                             RakNetGUID guid = it->first;
                             if (guid != packet->guid) peer->Send((char*) update, sizeof(pPlayerUpdate), MEDIUM_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_PLAYER_UPDATE, guid, false, 0);
@@ -437,12 +474,12 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
 
                         player->SetPlayerHealth(update->health);
                         player->SetPlayerBaseHealth(update->baseHealth);
-                        player->SetPlayerCondition(0, update->conds[0]);
-                        player->SetPlayerCondition(1, update->conds[1]);
-                        player->SetPlayerCondition(2, update->conds[2]);
-                        player->SetPlayerCondition(3, update->conds[3]);
-                        player->SetPlayerCondition(4, update->conds[4]);
-                        player->SetPlayerCondition(5, update->conds[5]);
+                        player->SetPlayerCondition(COND_PERCEPTION, update->conds[COND_PERCEPTION]);
+                        player->SetPlayerCondition(COND_ENDURANCE, update->conds[COND_ENDURANCE]);
+                        player->SetPlayerCondition(COND_LEFTATTACK, update->conds[COND_LEFTATTACK]);
+                        player->SetPlayerCondition(COND_RIGHTATTACK, update->conds[COND_RIGHTATTACK]);
+                        player->SetPlayerCondition(COND_LEFTMOBILITY, update->conds[COND_LEFTMOBILITY]);
+                        player->SetPlayerCondition(COND_RIGHTMOBILITY, update->conds[COND_RIGHTMOBILITY]);
                         player->SetPlayerDead(update->dead);
 
                         player->UpdatePlayerStateUpdateStruct(update);
@@ -450,7 +487,7 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         map<RakNetGUID, string> players = Player::GetPlayerList();
                         map<RakNetGUID, string>::iterator it;
 
-                        for (it = players.begin(); it != players.end(); it++)
+                        for (it = players.begin(); it != players.end(); ++it)
                         {
                             RakNetGUID guid = it->first;
                             if (guid != packet->guid) peer->Send((char*) update, sizeof(pPlayerStateUpdate), HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_PLAYER_STATE_UPDATE, guid, false, 0);
@@ -468,16 +505,18 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
 
                         int ret = 1;
 
-                        /*if (amx != NULL)
+                        if (amx != NULL)
                         {
                             void* args[1];
 
                             int id = Client::GetClientFromGUID(packet->guid)->GetClientID();
+                            int cell = update->cell;
 
-                            args[0] = reinterpret_cast<void*>(&id);
+                            args[0] = reinterpret_cast<void*>(&cell);
+                            args[1] = reinterpret_cast<void*>(&id);
 
-                            ret = Script::Call(amx, (char*) "OnPlayerCellChange", (char*) "i", args);
-                        }*/
+                            ret = Script::Call(amx, (char*) "OnPlayerCellChange", (char*) "ii", args);
+                        }
 
                         player->SetPlayerGameCell(update->cell);
                         player->SetPlayerNetworkCell(update->cell);
@@ -487,10 +526,58 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                         map<RakNetGUID, string> players = Player::GetPlayerList();
                         map<RakNetGUID, string>::iterator it;
 
-                        for (it = players.begin(); it != players.end(); it++)
+                        for (it = players.begin(); it != players.end(); ++it)
                         {
                             RakNetGUID guid = it->first;
                             if (guid != packet->guid) peer->Send((char*) update, sizeof(pPlayerCellUpdate), HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_PLAYER_CELL_UPDATE, guid, false, 0);
+                        }
+                        break;
+                    }
+                    case ID_PLAYER_ITEM_UPDATE:
+                    {
+                        pPlayerItemUpdate* update = (pPlayerItemUpdate*) packet->data;
+
+                        if (packet->length != sizeof(pPlayerItemUpdate))
+                            break;
+
+                        Player* player = Player::GetPlayerFromGUID(packet->guid);
+                        Inventory* handle = player->GetPlayerInventory();
+
+                        if (handle == NULL)
+                        {
+                            handle = new Inventory();
+                            player->SetPlayerInventory(handle);
+                        }
+
+                        if (update->item.count == 0)
+                        {
+                            if (!handle->UpdateItem(string(update->baseID), update->item.condition, update->item.worn))
+                            {
+
+                            }
+                        }
+                        else if (update->item.count > 0)
+                        {
+                            if (!handle->AddItem(string(update->baseID), update->item.count, update->item.type, update->item.condition, update->item.worn))
+                            {
+
+                            }
+                        }
+                        else if (update->item.count < 0)
+                        {
+                            if (!handle->RemoveItem(string(update->baseID), abs(update->item.count)))
+                            {
+
+                            }
+                        }
+
+                        map<RakNetGUID, string> players = Player::GetPlayerList();
+                        map<RakNetGUID, string>::iterator it;
+
+                        for (it = players.begin(); it != players.end(); ++it)
+                        {
+                            RakNetGUID guid = it->first;
+                            if (guid != packet->guid) peer->Send((char*) update, sizeof(pPlayerItemUpdate), HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_PLAYER_ITEM_UPDATE, guid, false, 0);
                         }
                         break;
                     }
@@ -515,6 +602,11 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
 
       peer->Shutdown(300);
       RakPeerInterface::DestroyInstance(peer);
+
+      #ifdef VAULTMP_DEBUG
+      debug->Print((char*) "Network thread is going to terminate...", true);
+      delete debug;
+      #endif
 
       return ((DWORD) data);
 }

@@ -26,17 +26,17 @@ bool DLLerror = false;
 void Fallout3commandNotify();
 void Fallout3commandHandler();
 
-/* Fallout: New Vegas version 1.3 */
+/* Fallout: New Vegas version 1.4 */
 
-static unsigned FalloutNVpatch_cmd1patchAddr = 0x0071A823;
-static unsigned FalloutNVpatch_cmd2patchAddr = 0x0071A849;
-static unsigned FalloutNVpatch_cmd3patchAddr = 0x0071A949;
-static unsigned FalloutNVpatch_cmd4patchAddr = 0x0071AA91;
-static unsigned FalloutNVpatch_cmd5patchAddr = 0x0070D6E5;
-static unsigned FalloutNVpatch_cmd6patchAddr = 0x0070D704;
-static unsigned FalloutNVpatch_cmd7patchAddr = 0x00703224;
-static unsigned FalloutNVpatch_cmd8patchAddr = 0x0070C2EE;
-static unsigned FalloutNVpatch_cmd9patchAddr = 0x0071A836;
+static unsigned FalloutNVpatch_cmd1patchAddr = 0x0071B253;
+static unsigned FalloutNVpatch_cmd2patchAddr = 0x0071B279;
+static unsigned FalloutNVpatch_cmd3patchAddr = 0x0071B379;
+static unsigned FalloutNVpatch_cmd4patchAddr = 0x0071B4C1;
+static unsigned FalloutNVpatch_cmd5patchAddr = 0x0070E075;
+static unsigned FalloutNVpatch_cmd6patchAddr = 0x0070E094;
+static unsigned FalloutNVpatch_cmd7patchAddr = 0x00703C44;
+static unsigned FalloutNVpatch_cmd8patchAddr = 0x0070CC7E;
+static unsigned FalloutNVpatch_cmd9patchAddr = 0x0071B266;
 static char FalloutNVpatch_cmd1[] = {0x90, 0x90};
 static char FalloutNVpatch_cmd2[] = {0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
 static char FalloutNVpatch_cmd3[] = {0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
@@ -47,14 +47,14 @@ static char FalloutNVpatch_cmd7[] = {0xEB, 0x0C};
 static char FalloutNVpatch_cmd8[] = {0x0F, 0x85, 0x15, 0x02, 0x00, 0x00};
 static char FalloutNVpatch_cmd9[] = {0xEB, 0x07};
 
-static unsigned FalloutNVpatch_VATSpatchAddr = 0x0093FFAE;
-static char FalloutNVpatch_VATS[] = {0xE9, 0x5A, 0x02, 0x00, 0x00, 0x90};
+static unsigned FalloutNVpatch_VATSpatchAddr = 0x009428AE;
+static char FalloutNVpatch_VATS[] = {0xE9, 0x35, 0x03, 0x00, 0x00, 0x90};
 
 static LPVOID FalloutNVpatch_input1patchAddr = 0x00000000;
-static unsigned FalloutNVpatch_input2patchAddr = 0x0071AAC9;
+static unsigned FalloutNVpatch_input2patchAddr = 0x0071B4F9;
 static char FalloutNVpatch_input1_1[] = {0x50, 0x51, 0x52, 0x8A, 0x10, 0x80, 0xFA, 0x00, 0x74, 0x0E, 0x5A, 0x59, 0x58, 0x8B, 0x8D, 0x58, 0xD7, 0xFF, 0xFF, 0xE9};
 static unsigned FalloutNVpatch_input1_2 = 0x00000000;
-static unsigned FalloutNVpatch_input1_2jmp = 0x0071AACE;
+static unsigned FalloutNVpatch_input1_2jmp = 0x0071B4FE;
 static char FalloutNVpatch_input1_3[] = {0xB9};
 static unsigned FalloutNVpatch_input1_4 = (unsigned) &Fallout3input;
 static char FalloutNVpatch_input1_5[] = {0x8A, 0x11, 0x80, 0xFA, 0x00, 0x74, 0xE6, 0x88, 0x10, 0xC6, 0x01, 0x00, 0x83, 0xC1, 0x01, 0x83, 0xC0, 0x01, 0x8A, 0x11, 0x80, 0xFA, 0x00, 0x74, 0x02, 0xEB, 0x0EC, 0xC6, 0x05};
@@ -67,7 +67,7 @@ static unsigned FalloutNVpatch_input1size = sizeof(FalloutNVpatch_input1_1) + si
                                             sizeof(FalloutNVpatch_input1_6) + sizeof(FalloutNVpatch_input1_7);
 
 static LPVOID FalloutNVpatch_output1patchAddr = 0x00000000;
-static unsigned FalloutNVpatch_output2patchAddr = 0x0071C6E6;
+static unsigned FalloutNVpatch_output2patchAddr = 0x0071D116;
 static char FalloutNVpatch_output1_1[] = {0x50, 0x51, 0x52, 0x8A, 0x0D};
 static unsigned FalloutNVpatch_output1_2 = (unsigned) &Fallout3_output;
 static char FalloutNVpatch_output1_3[] = {0x84, 0xC9, 0x74, 0x23, 0xB9};
@@ -77,7 +77,7 @@ static unsigned FalloutNVpatch_output1_6 = 0x00000000;
 static unsigned FalloutNVpatch_output1_6cll = (unsigned) &Fallout3commandNotify;
 static char FalloutNVpatch_output1_7[] = {0x5A, 0x59, 0x58, 0x8B, 0x8D, 0xB4, 0xF7, 0xFF, 0xFF, 0xE9};
 static unsigned FalloutNVpatch_output1_8 = 0x00000000;
-static unsigned FalloutNVpatch_output1_8jmp = 0x0071C6EB;
+static unsigned FalloutNVpatch_output1_8jmp = 0x0071D11B;
 static char FalloutNVpatch_output2_1[] = {0xE9};
 static unsigned FalloutNVpatch_output2_2 = 0x00000000;
 static char FalloutNVpatch_output2_3[] = {0x50, 0x90};
@@ -85,8 +85,8 @@ static unsigned FalloutNVpatch_output1size = sizeof(FalloutNVpatch_output1_1) + 
                                              sizeof(FalloutNVpatch_output1_6) + sizeof(FalloutNVpatch_output1_7) + sizeof(FalloutNVpatch_output1_8);
 
 static LPVOID FalloutNVpatch_handler1patchAddr = 0x00000000;
-static unsigned FalloutNVpatch_handler2patchAddr = 0x005E1E85;
-static char FalloutNVpatch_handler1_1[] = {0x81, 0x7D, 0x0C, 0x14, 0x01, 0x00, 0x00, 0x74, 0x0B, 0x81, 0x7D, 0x0C, 0x9C, 0x01, 0x00, 0x00, 0x74, 0x02, 0xEB, 0x0A, 0x50, 0xB8};
+static unsigned FalloutNVpatch_handler2patchAddr = 0x005E2345;
+static char FalloutNVpatch_handler1_1[] = {0x81, 0x7D, 0x0C, 0x14, 0x01, 0x00, 0x00, 0x74, 0x0B, 0x81, 0x7D, 0x0C, 0x9B, 0x01, 0x00, 0x00, 0x74, 0x02, 0xEB, 0x0A, 0x50, 0xB8};
 static unsigned FalloutNVpatch_handler1_2 = (unsigned) &Fallout3_output;
 static char FalloutNVpatch_handler1_3[] = {0xC6, 0x00, 0x01, 0x58, 0xFF, 0x95, 0x48, 0xF1, 0xFF, 0xFF,0x50, 0x56, 0xB8};
 static unsigned FalloutNVpatch_handler1_4 = (unsigned) &Fallout3_output;
@@ -109,7 +109,7 @@ static unsigned FalloutNVpatch_handler1_20 = 0x00000000;
 static unsigned FalloutNVpatch_handler1_20cll = (unsigned) &Fallout3commandHandler;
 static char FalloutNVpatch_handler1_21[] = {0xE9};
 static unsigned FalloutNVpatch_handler1_22 = 0x00000000;
-static unsigned FalloutNVpatch_handler1_22jmp = 0x005E1E8B;
+static unsigned FalloutNVpatch_handler1_22jmp = 0x005E234B;
 static char FalloutNVpatch_handler2_1[] = {0xE9};
 static unsigned FalloutNVpatch_handler2_2 = 0x00000000;
 static char FalloutNVpatch_handler2_3[] = {0x90};

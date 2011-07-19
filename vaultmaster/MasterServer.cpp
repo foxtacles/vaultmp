@@ -74,7 +74,7 @@ DWORD WINAPI MasterServer::MasterThread(LPVOID data)
                         query.Write((MessageID) ID_MASTER_QUERY);
                         query.Write((unsigned int) serverList.size());
 
-                        for (map<SystemAddress, ServerEntry>::const_iterator i = serverList.begin(); i != serverList.end(); ++i)
+                        for (map<SystemAddress, ServerEntry>::iterator i = serverList.begin(); i != serverList.end(); ++i)
                         {
                             SystemAddress addr = i->first;
                             ServerEntry entry = i->second;
@@ -91,7 +91,7 @@ DWORD WINAPI MasterServer::MasterThread(LPVOID data)
                             query.Write(NewVegas);
                             query.Write((int) rules.size());
 
-                            for (std::map<string, string>::const_iterator k = rules.begin(); k != rules.end(); ++k)
+                            for (std::map<string, string>::iterator k = rules.begin(); k != rules.end(); ++k)
                             {
                                 RakString key(k->first.c_str());
                                 RakString value(k->second.c_str());
@@ -136,7 +136,7 @@ DWORD WINAPI MasterServer::MasterThread(LPVOID data)
                             query.Write(NewVegas);
                             query.Write((int) rules.size());
 
-                            for (std::map<string, string>::const_iterator k = rules.begin(); k != rules.end(); ++k)
+                            for (std::map<string, string>::iterator k = rules.begin(); k != rules.end(); ++k)
                             {
                                 RakString key(k->first.c_str());
                                 RakString value(k->second.c_str());
