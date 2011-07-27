@@ -7,6 +7,11 @@ map<RakNetGUID, string> Player::players;
 map<RakNetGUID, Player*> Player::playersguids;
 map<string, Player*> Player::playersrefs;
 
+Parameter Player::Param_EnabledPlayers = Parameter(vector<string>(), &Player::GetEnabledRefs);
+Parameter Player::Param_EnabledPlayers_NotSelf = Parameter(vector<string>(), &Player::GetEnabledRefs_NotSelf);
+Parameter Player::Param_AllPlayers = Parameter(vector<string>(), &Player::GetAllRefs);
+Parameter Player::Param_AllPlayers_NotSelf = Parameter(vector<string>(), &Player::GetAllRefs_NotSelf);
+
 #ifdef VAULTMP_DEBUG
 Debug* Player::debug;
 #endif
@@ -41,7 +46,7 @@ Player::Player(RakNetGUID guid)
     for (int i = 0; i < MAX_SKIP_FLAGS; i++)
         nowrite[i] = false;
 
-    #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
     if (debug != NULL)
     {
         char text[128];
@@ -50,12 +55,12 @@ Player::Player(RakNetGUID guid)
         sprintf(text, "New player object created (guid: %s)", this->guid.ToString());
         debug->Print(text, true);
     }
-    #endif
+#endif
 }
 
 Player::~Player()
 {
-    #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
     if (debug != NULL)
     {
         char text[128];
@@ -64,7 +69,7 @@ Player::~Player()
         sprintf(text, "Player object destroyed (ref: %s)", this->refID.c_str());
         debug->Print(text, true);
     }
-    #endif
+#endif
 
     if (inventory != NULL)
         delete inventory;
@@ -96,6 +101,53 @@ Player* Player::GetPlayerFromRefID(string refID)
     return NULL;
 }
 
+vector<string> Player::GetRefs(string cmd, bool enabled, bool notself)
+{
+    int skipflag = MAX_SKIP_FLAGS;
+
+    if (cmd.compare("GetPos") == 0)
+        skipflag = SKIPFLAG_GETPOS;
+    else if (cmd.compare("GetParentCell") == 0)
+        skipflag = SKIPFLAG_GETPARENTCELL;
+    else if (cmd.compare("GetActorValue") == 0)
+        skipflag = SKIPFLAG_GETACTORVALUE;
+    else if (cmd.compare("GetDead") == 0)
+        skipflag = SKIPFLAG_GETDEAD;
+
+    vector<string> result;
+    map<RakNetGUID, Player*>::iterator it;
+
+    for (it = playersguids.begin(); it != playersguids.end(); ++it)
+    {
+        string refID = it->second->GetPlayerRefID();
+
+        if (refID.compare("none") != 0 && (!notself || refID.compare("player") != 0) && (!enabled || it->second->GetPlayerEnabled()) && !it->second->GetPlayerOverrideFlag(skipflag))
+            result.push_back(refID);
+    }
+
+    return result;
+}
+
+vector<string> Player::GetAllRefs(string cmd)
+{
+    return GetRefs(cmd, false, false);
+}
+
+vector<string> Player::GetAllRefs_NotSelf(string cmd)
+{
+    return GetRefs(cmd, false, true);
+}
+
+vector<string> Player::GetEnabledRefs(string cmd)
+{
+    return GetRefs(cmd, true, false);
+}
+
+vector<string> Player::GetEnabledRefs_NotSelf(string cmd)
+{
+    return GetRefs(cmd, true, true);
+}
+
 void Player::DestroyInstances()
 {
     map<RakNetGUID, Player*>::iterator it;
@@ -113,10 +165,10 @@ void Player::DestroyInstances()
     for (int j = 0; j < size; j++)
         delete pPlayers[j];
 
-    #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
     if (debug != NULL)
         debug->Print((char*) "All player instances destroyed", true);
-    #endif
+#endif
 }
 
 #ifdef VAULTMP_DEBUG
@@ -206,6 +258,22 @@ Inventory* Player::GetPlayerInventory()
     return inventory;
 }
 
+Parameter Player::GetPlayerRefParam()
+{
+    vector<string> self;
+    if (this->GetPlayerRefID().compare("none") != 0) self.push_back(this->GetPlayerRefID());
+    Parameter Param_Self = Parameter(self, &Data::EmptyVector);
+    return Param_Self;
+}
+
+Parameter Player::GetPlayerNameParam()
+{
+    vector<string> self;
+    self.push_back(this->GetPlayerName());
+    Parameter Param_Self = Parameter(self, &Data::EmptyVector);
+    return Param_Self;
+}
+
 pPlayerUpdate Player::GetPlayerUpdateStruct()
 {
     pPlayerUpdate data;
@@ -271,17 +339,17 @@ bool Player::UpdatePlayerUpdateStruct(pPlayerUpdate* data)
     pPlayerUpdate player = this->GetPlayerUpdateStruct();
 
     if (player.type != data->type ||
-        player.guid != data->guid ||
-        player.X != data->X ||
-        player.Y != data->Y ||
-        player.Z != data->Z ||
-        player.A != data->A ||
-        player.alerted != data->alerted ||
-        player.moving != data->moving)
-        {
-            (*data) = player;
-            return true;
-        }
+            player.guid != data->guid ||
+            player.X != data->X ||
+            player.Y != data->Y ||
+            player.Z != data->Z ||
+            player.A != data->A ||
+            player.alerted != data->alerted ||
+            player.moving != data->moving)
+    {
+        (*data) = player;
+        return true;
+    }
 
     return false;
 }
@@ -291,20 +359,20 @@ bool Player::UpdatePlayerStateUpdateStruct(pPlayerStateUpdate* data)
     pPlayerStateUpdate player = this->GetPlayerStateUpdateStruct();
 
     if (player.type != data->type ||
-        player.guid != data->guid ||
-        player.health != data->health ||
-        player.baseHealth != data->baseHealth ||
-        player.conds[COND_PERCEPTION] != data->conds[COND_PERCEPTION] ||
-        player.conds[COND_ENDURANCE] != data->conds[COND_ENDURANCE] ||
-        player.conds[COND_LEFTATTACK] != data->conds[COND_LEFTATTACK] ||
-        player.conds[COND_RIGHTATTACK] != data->conds[COND_RIGHTATTACK] ||
-        player.conds[COND_LEFTMOBILITY] != data->conds[COND_LEFTMOBILITY] ||
-        player.conds[COND_RIGHTMOBILITY] != data->conds[COND_RIGHTMOBILITY] ||
-        player.dead != data->dead)
-        {
-            (*data) = player;
-            return true;
-        }
+            player.guid != data->guid ||
+            player.health != data->health ||
+            player.baseHealth != data->baseHealth ||
+            player.conds[COND_PERCEPTION] != data->conds[COND_PERCEPTION] ||
+            player.conds[COND_ENDURANCE] != data->conds[COND_ENDURANCE] ||
+            player.conds[COND_LEFTATTACK] != data->conds[COND_LEFTATTACK] ||
+            player.conds[COND_RIGHTATTACK] != data->conds[COND_RIGHTATTACK] ||
+            player.conds[COND_LEFTMOBILITY] != data->conds[COND_LEFTMOBILITY] ||
+            player.conds[COND_RIGHTMOBILITY] != data->conds[COND_RIGHTMOBILITY] ||
+            player.dead != data->dead)
+    {
+        (*data) = player;
+        return true;
+    }
 
     return false;
 }
@@ -314,12 +382,12 @@ bool Player::UpdatePlayerCellUpdateStruct(pPlayerCellUpdate* data)
     pPlayerCellUpdate player = this->GetPlayerCellUpdateStruct();
 
     if (player.type != data->type ||
-        player.guid != data->guid ||
-        player.cell != data->cell)
-        {
-            (*data) = player;
-            return true;
-        }
+            player.guid != data->guid ||
+            player.cell != data->cell)
+    {
+        (*data) = player;
+        return true;
+    }
 
     return false;
 }
@@ -362,7 +430,7 @@ bool Player::SetPlayerName(string name)
 
     this->name = name;
 
-    #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
     if (debug != NULL)
     {
         char text[128];
@@ -371,14 +439,14 @@ bool Player::SetPlayerName(string name)
         sprintf(text, "Player name was set to %s (ref: %s)", this->name.c_str(), this->refID.c_str());
         debug->Print(text, true);
     }
-    #endif
+#endif
 
     return true;
 }
 
 bool Player::SetPlayerPos(int cell, float pos)
 {
-    if (cell >= X_AXIS && cell <= Z_AXIS && !nowrite[(cell == 0) ? SKIPFLAG_GETPOS_X : (cell == 1) ? SKIPFLAG_GETPOS_Y : (cell == 2) ? SKIPFLAG_GETPOS_Z : 0])
+    if (cell >= X_AXIS && cell <= Z_AXIS && !nowrite[SKIPFLAG_GETPOS])
     {
         if (this->pos[cell] == pos)
             return false;
@@ -387,7 +455,7 @@ bool Player::SetPlayerPos(int cell, float pos)
         {
             this->pos[cell] = pos;
 
-            #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
             if (debug != NULL)
             {
                 char text[128];
@@ -396,13 +464,13 @@ bool Player::SetPlayerPos(int cell, float pos)
                 sprintf(text, "Player %c-coordinate was set to %f (ref: %s)", cell == 0 ? 'X' : cell == 1 ? 'Y' : 'Z', this->pos[cell], this->refID.c_str());
                 debug->Print(text, true);
             }
-            #endif
+#endif
 
             return true;
         }
         else
         {
-            #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
             if (debug != NULL)
             {
                 char text[128];
@@ -411,7 +479,7 @@ bool Player::SetPlayerPos(int cell, float pos)
                 sprintf(text, "Player %c-coordinate was NOT set to %f (INVALID) (ref: %s)", cell == 0 ? 'X' : cell == 1 ? 'Y' : 'Z', pos, this->refID.c_str());
                 debug->Print(text, true);
             }
-            #endif
+#endif
 
             return false;
         }
@@ -427,7 +495,7 @@ bool Player::SetPlayerAngle(float angle)
 
     this->angle = angle;
 
-    #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
     if (debug != NULL)
     {
         char text[128];
@@ -436,7 +504,7 @@ bool Player::SetPlayerAngle(float angle)
         sprintf(text, "Player Z-angle was set to %f (ref: %s)", this->angle, this->refID.c_str());
         debug->Print(text, true);
     }
-    #endif
+#endif
 
     return true;
 }
@@ -452,7 +520,7 @@ bool Player::SetPlayerGameCell(DWORD cell)
 
             this->gcell = cell;
 
-            #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
             if (debug != NULL)
             {
                 char text[128];
@@ -461,13 +529,13 @@ bool Player::SetPlayerGameCell(DWORD cell)
                 sprintf(text, "Player game cell was set to %x (ref: %s)", this->gcell, this->refID.c_str());
                 debug->Print(text, true);
             }
-            #endif
+#endif
 
             return true;
         }
         else
         {
-            #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
             if (debug != NULL)
             {
                 char text[128];
@@ -476,7 +544,7 @@ bool Player::SetPlayerGameCell(DWORD cell)
                 sprintf(text, "Player game cell was NOT set to %x (INVALID) (ref: %s)", cell, this->refID.c_str());
                 debug->Print(text, true);
             }
-            #endif
+#endif
 
             return false;
         }
@@ -494,7 +562,7 @@ bool Player::SetPlayerNetworkCell(DWORD cell)
 
         this->ncell = cell;
 
-        #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
         if (debug != NULL)
         {
             char text[128];
@@ -503,13 +571,13 @@ bool Player::SetPlayerNetworkCell(DWORD cell)
             sprintf(text, "Player network cell was set to %x (ref: %s)", this->ncell, this->refID.c_str());
             debug->Print(text, true);
         }
-        #endif
+#endif
 
         return true;
     }
     else
     {
-        #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
         if (debug != NULL)
         {
             char text[128];
@@ -518,7 +586,7 @@ bool Player::SetPlayerNetworkCell(DWORD cell)
             sprintf(text, "Player network cell was NOT set to %x (INVALID) (ref: %s)", cell, this->refID.c_str());
             debug->Print(text, true);
         }
-        #endif
+#endif
 
         return false;
     }
@@ -528,14 +596,14 @@ bool Player::SetPlayerNetworkCell(DWORD cell)
 
 bool Player::SetPlayerHealth(float health)
 {
-    if (!nowrite[SKIPFLAG_GETHEALTH])
+    if (!nowrite[SKIPFLAG_GETACTORVALUE])
     {
         if (this->health == health)
             return false;
 
         this->health = health;
 
-        #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
         if (debug != NULL)
         {
             char text[128];
@@ -544,7 +612,7 @@ bool Player::SetPlayerHealth(float health)
             sprintf(text, "Player health was set to %f (ref: %s)", this->health, this->refID.c_str());
             debug->Print(text, true);
         }
-        #endif
+#endif
 
         return true;
     }
@@ -559,7 +627,7 @@ bool Player::SetPlayerBaseHealth(float baseHealth)
 
     this->baseHealth = baseHealth;
 
-    #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
     if (debug != NULL)
     {
         char text[128];
@@ -568,7 +636,7 @@ bool Player::SetPlayerBaseHealth(float baseHealth)
         sprintf(text, "Player base health was set to %f (ref: %s)", this->baseHealth, this->refID.c_str());
         debug->Print(text, true);
     }
-    #endif
+#endif
 
     return true;
 }
@@ -582,7 +650,7 @@ bool Player::SetPlayerCondition(int cell, float cond)
 
         this->cond[cell] = cond;
 
-        #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
         if (debug != NULL)
         {
             char text[128];
@@ -591,7 +659,7 @@ bool Player::SetPlayerCondition(int cell, float cond)
             sprintf(text, "Player %s was set to %f (ref: %s)", cell == 0 ? (char*) "PerceptionCondition" : cell == 1 ? (char*) "EnduranceCondition" : cell == 2 ? (char*) "LeftAttackCondition" : cell == 3 ? (char*) "RightAttackCondition" : cell == 4 ? (char*) "LeftMobilityCondition" : (char*) "RightMobilityCondition", this->cond[cell], this->refID.c_str());
             debug->Print(text, true);
         }
-        #endif
+#endif
 
         return true;
     }
@@ -608,7 +676,7 @@ bool Player::SetPlayerDead(bool dead)
 
         this->dead = dead;
 
-        #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
         if (debug != NULL)
         {
             char text[128];
@@ -617,7 +685,7 @@ bool Player::SetPlayerDead(bool dead)
             sprintf(text, "Player dead state was set to %d (ref: %s)", (int) this->dead, this->refID.c_str());
             debug->Print(text, true);
         }
-        #endif
+#endif
 
         return true;
     }
@@ -632,7 +700,7 @@ bool Player::SetPlayerAlerted(bool alerted)
 
     this->alerted = alerted;
 
-    #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
     if (debug != NULL)
     {
         char text[128];
@@ -641,7 +709,7 @@ bool Player::SetPlayerAlerted(bool alerted)
         sprintf(text, "Player alerted state was set to %d (ref: %s)", (int) this->alerted, this->refID.c_str());
         debug->Print(text, true);
     }
-    #endif
+#endif
 
     return true;
 }
@@ -655,7 +723,7 @@ bool Player::SetPlayerMoving(int moving)
 
         this->moving = moving;
 
-        #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
         if (debug != NULL)
         {
             char text[128];
@@ -664,7 +732,7 @@ bool Player::SetPlayerMoving(int moving)
             sprintf(text, "Player running animation was set to %s (ref: %s)", moving == 0 ? (char*) "Idle" : moving == 1 ? (char*) "FastForward" : moving == 2 ? (char*) "FastBackward" : moving == 3 ? (char*) "FastLeft" : moving == 4 ? (char*) "FastRight" : moving == 5 ? (char*) "Forward" : moving == 6 ? (char*) "Backward" : moving == 7 ? (char*) "Left" : (char*) "Right", this->refID.c_str());
             debug->Print(text, true);
         }
-        #endif
+#endif
 
         return true;
     }
@@ -683,7 +751,7 @@ bool Player::SetPlayerRefID(string refID)
     it->second = refID;
     playersrefs.insert(pair<string, Player*>(refID, this));
 
-    #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
     if (debug != NULL)
     {
         char text[128];
@@ -692,7 +760,7 @@ bool Player::SetPlayerRefID(string refID)
         sprintf(text, "Player refID was set to %s (name: %s)", this->refID.c_str(), this->GetPlayerName().c_str());
         debug->Print(text, true);
     }
-    #endif
+#endif
 
     return true;
 }
@@ -704,7 +772,7 @@ bool Player::SetPlayerEnabled(bool enabled)
 
     this->enabled = enabled;
 
-    #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
     if (debug != NULL)
     {
         char text[128];
@@ -713,7 +781,7 @@ bool Player::SetPlayerEnabled(bool enabled)
         sprintf(text, "Player enabled state was set to %d (ref: %s)", (int) this->enabled, this->refID.c_str());
         debug->Print(text, true);
     }
-    #endif
+#endif
 
     return true;
 }
@@ -734,7 +802,7 @@ bool Player::ToggleNoOverride(int skipflag, bool toggle)
 
         nowrite[skipflag] = toggle;
 
-        #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
         if (debug != NULL)
         {
             char text[128];
@@ -743,7 +811,7 @@ bool Player::ToggleNoOverride(int skipflag, bool toggle)
             sprintf(text, "Player no-override flag %d was set to %d (ref: %s)", skipflag, (int) toggle, this->refID.c_str());
             debug->Print(text, true);
         }
-        #endif
+#endif
 
         return true;
     }

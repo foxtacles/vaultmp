@@ -4,8 +4,6 @@
 #include <windows.h>
 #include <stdio.h>
 
-#define VAULTMP_DEBUG
-
 #include "../RakNet/RakPeerInterface.h"
 #include "../RakNet/MessageIdentifiers.h"
 #include "../RakNet/BitStream.h"
@@ -23,7 +21,7 @@
 
 #define RAKNET_STANDARD_PORT        1770
 #define RAKNET_STANDARD_CONNECTIONS 32
-#define RAKNET_MASTER_RATE          3000
+#define RAKNET_MASTER_RATE          2000
 #define RAKNET_MASTER_STANDARD_PORT 1660
 
 using namespace RakNet;

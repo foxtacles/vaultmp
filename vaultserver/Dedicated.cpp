@@ -11,7 +11,9 @@ int Dedicated::connections;
 AMX* Dedicated::amx;
 char* Dedicated::announce;
 bool Dedicated::query;
+#ifdef VAULTMP_DEBUG
 Debug* Dedicated::debug;
+#endif
 
 SystemAddress Dedicated::master;
 TimeMS Dedicated::announcetime;

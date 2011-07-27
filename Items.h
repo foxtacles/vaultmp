@@ -4,7 +4,8 @@
 // Thanks to Stan for the formatted item lists! http://www.vaultmp.com/index.php?topic=16.msg353#msg353
 // source: http://fallout.wikia.com/wiki/Fallout_Wiki
 
-const char* Inventory::Fallout3Items[][2] = {
+const char* Inventory::Fallout3Items[][2] =
+{
 
     /* DLCs:
      * mz - Mothership Zeta
@@ -1091,7 +1092,7 @@ const char* Inventory::Fallout3Items[][2] = {
     {"Tumblers Today",                                  "00034046"},
     {"U.S. Army: 30 Handy Flamethrower Recipes",        "00034048"},
 
-	// Bobbleheads
+    // Bobbleheads
 
     {"Bobblehead - Agility",                            "000388e5"},
     {"Bobblehead - Charisma",                           "00038850"},
@@ -1114,7 +1115,7 @@ const char* Inventory::Fallout3Items[][2] = {
     {"Bobblehead - Speech",                             "00038956"},
     {"Bobblehead - Unarmed",                            "00038958"},
 
-	// Schematics
+    // Schematics
 
     {"Schematics - bottlecap mine",                     "000baffb"},
     {"Schematics - dart gun",                           "000baffa"},
@@ -1124,7 +1125,7 @@ const char* Inventory::Fallout3Items[][2] = {
     {"Schematics - Rock-It launcher",                   "000bafff"},
     {"Schematics - Shishkebab",                         "000bb000"},
 
-	// Keys
+    // Keys
 
     {"Abraham Washington's key",                        "000aa54a"},
     {"Agatha's ammo box key",                           "0004f7c6"},
@@ -1297,7 +1298,8 @@ const char* Inventory::Fallout3Items[][2] = {
 
 };
 
-const char* Inventory::FalloutNVItems[][2] = {
+const char* Inventory::FalloutNVItems[][2] =
+{
 
     /* DLCs:
      * hh - Honest Hearts
@@ -1664,7 +1666,7 @@ const char* Inventory::FalloutNVItems[][2] = {
     {"Mean super sledge",                   "0013e540"},
     {"Joshua's Pistol Whippin' .45",        "hh000e1f"},
 
-	// Weapon mods: Pistols
+    // Weapon mods: Pistols
 
     {".357 revolver long barrel",           "000eeeda"},
     {".357 revolver HD cylinder",           "000eeed9"},
@@ -1679,7 +1681,7 @@ const char* Inventory::FalloutNVItems[][2] = {
     {"10mm pistol laser sight",             "0010c859"},
     {"12.7mm pistol silencer",              "00147620"},
 
-	// Weapon mods: Rifles
+    // Weapon mods: Rifles
 
     {"Assault carbine extended magazines",  "0010c863"},
     {"Automatic rifle upgraded internals",  "dm012804"},
@@ -1700,7 +1702,7 @@ const char* Inventory::FalloutNVItems[][2] = {
     {"Varmint rifle night scope",           "000eeedb"},
     {"Varmint rifle silencer",              "000eeed7"},
 
-	// Weapon mods: SMGs
+    // Weapon mods: SMGs
 
     {".45 Auto SMG compensator",            "hh00996a"},
     {".45 Auto SMG drums",                  "hh00996b"},
@@ -1711,17 +1713,17 @@ const char* Inventory::FalloutNVItems[][2] = {
     {"10mm SMG recoil compensator",         "0010c85e"},
     {"12.7mm submachine gun silencer",      "001476b0"},
 
-	// Weapon mods: Shotguns
+    // Weapon mods: Shotguns
 
     {"Hunting shotgun longtube",            "000f0fe8"},
     {"Hunting shotgun choke",               "000f0fe9"},
 
-	// Weapon mods: Heavy
+    // Weapon mods: Heavy
 
     {"Minigun damped subframe",             "0010c866"},
     {"Minigun high-speed motor",            "0010c867"},
 
-	// Energy weapon mods: Rifles
+    // Energy weapon mods: Rifles
 
     {"Laser RCW recycler¹",                 "0010c854"},
     {"Holorifle focus optics",              "dm013b1a"},
@@ -1732,29 +1734,29 @@ const char* Inventory::FalloutNVItems[][2] = {
     {"Laser rifle scope",                   "0010c868"},
     {"Plasma rifle magnetic accelerator",   "0010c86b"},
 
-	// Energy weapon mods: Heavy
+    // Energy weapon mods: Heavy
 
     {"Flamer expanded tanks",               "0010c85f"},
     {"Gatling laser focus optics",          "0010c86c"},
     {"Gatling laser carbon fiber frame",    "0010c86d"},
     {"Plasma caster HS electrode",          "0010c855"},
 
-	// Explosive weapon mods: Rifles
+    // Explosive weapon mods: Rifles
 
     {"Grenade rifle long barrel",           "0010c856"},
 
-	// Explosive weapon mods: Heavy
+    // Explosive weapon mods: Heavy
 
     {"Fat Man Little Boy kit",              "0010c1ad"},
     {"Grenade machinegun high-speed kit",   "0010c857"},
     {"Missile launcher guidance system",    "0010c86e"},
 
-	// Melee weapon mods: Blunt
+    // Melee weapon mods: Blunt
 
     {"War club casings",                    "hh00cc05"},
     {"War club honors",                     "hh00cc06"},
 
-	// Melee weapon mods: Unarmed
+    // Melee weapon mods: Unarmed
 
     {"Bear trap fist heavy duty springs",   "dm012806"},
 
@@ -2886,7 +2888,7 @@ const char* Inventory::FalloutNVItems[][2] = {
     {"Wasteland Survival Guide",                                        "00160227"},
     {"Workbench crate",                                                 "0000e928"},
 
-	// Snowglobes
+    // Snowglobes
 
     {"Goodsprings",                                                     "0015db3a"},
     {"Hoover dam",                                                      "0015db39"},
@@ -2898,7 +2900,7 @@ const char* Inventory::FalloutNVItems[][2] = {
     {"Sierra Madre Casino",                                             "dm00fe80"},
     {"Zion National Park",                                              "hh00edf5"},
 
-	// Standard cards
+    // Standard cards
 
     {"2 of Clubs",                              "001649C1"},
     {"3 of Clubs",                              "001649C2"},
@@ -2955,7 +2957,7 @@ const char* Inventory::FalloutNVItems[][2] = {
     {"Joker 1",                                 "0016499C"},
     {"Joker 2",                                 "0016499B"},
 
-	// Gomorrah cards
+    // Gomorrah cards
 
     {"2 of Clubs - Gomorrah",                   "00166EBE"},
     {"3 of Clubs - Gomorrah",                   "00166EBF"},
@@ -3012,7 +3014,7 @@ const char* Inventory::FalloutNVItems[][2] = {
     {"Joker 1 - Gomorrah",                      "00166EE4"},
     {"Joker 2 - Gomorrah",                      "00166EE5"},
 
-	// Lucky 38 cards
+    // Lucky 38 cards
 
     {"2 of Clubs - Lucky 38",                   "00166F2D"},
     {"3 of Clubs - Lucky 38",                   "00166F2E"},
@@ -3069,7 +3071,7 @@ const char* Inventory::FalloutNVItems[][2] = {
     {"Joker 1 - Lucky 38",                      "00166F53"},
     {"Joker 2 - Lucky 38",                      "00166F54"},
 
-	// Sierra Madre cards
+    // Sierra Madre cards
 
     {"2 of Clubs - Sierra Madre",               "dm0134AF"},
     {"3 of Clubs - Sierra Madre",               "dm0134B0"},
@@ -3126,7 +3128,7 @@ const char* Inventory::FalloutNVItems[][2] = {
     {"Joker 1 - Sierra Madre",                  "dm0134EC"},
     {"Joker 2 - Sierra Madre",                  "dm0134ED"},
 
-	// The Tops cards
+    // The Tops cards
 
     {"2 of Clubs - Tops",                       "0015D7A3"},
     {"3 of Clubs - Tops",                       "0015D7A4"},
@@ -3183,7 +3185,7 @@ const char* Inventory::FalloutNVItems[][2] = {
     {"Joker 1 - Tops",                          "0015D7D8"},
     {"Joker 2 - Tops",                          "0015D7D9"},
 
-	// Ultra-Luxe cards
+    // Ultra-Luxe cards
 
     {"2 of Clubs - Ultra-Luxe",                 "00166EF4"},
     {"3 of Clubs - Ultra-Luxe",                 "00166EF5"},
@@ -3240,7 +3242,7 @@ const char* Inventory::FalloutNVItems[][2] = {
     {"Joker 1 - Ultra-Luxe",                    "00166F1A"},
     {"Joker 2 - Ultra-Luxe",                    "00166F1B"},
 
-	// Keys
+    // Keys
 
     {"Administration key",                      "000E2C76"},
     {"Andy's room key",                         "0013E475"},

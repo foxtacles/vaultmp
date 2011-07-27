@@ -10,10 +10,17 @@
 				<Option output="vaultmp" prefix_auto="1" extension_auto="1" />
 				<Option type="0" />
 				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Wredundant-decls" />
+					<Add option="-Wunreachable-code" />
+					<Add option="-g" />
+				</Compiler>
 			</Target>
 		</Build>
+		<Compiler>
+			<Add option="-g" />
+		</Compiler>
 		<Linker>
-			<Add option="-s" />
 			<Add option="ufmod.obj" />
 			<Add option="-static-libgcc" />
 			<Add option="-static-libstdc++" />
@@ -23,6 +30,10 @@
 			<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\libwinmm.a" />
 			<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\libws2_32.a" />
 		</Linker>
+		<Unit filename="Bethesda.cpp" />
+		<Unit filename="Bethesda.h" />
+		<Unit filename="Command.cpp" />
+		<Unit filename="Command.h" />
 		<Unit filename="Data.h" />
 		<Unit filename="Debug.cpp" />
 		<Unit filename="Debug.h" />
@@ -273,10 +284,10 @@
 		<Unit filename="RakNet\rdlmalloc-options.h" />
 		<Unit filename="RakNet\rdlmalloc.cpp" />
 		<Unit filename="RakNet\rdlmalloc.h" />
+		<Unit filename="Reference.cpp" />
+		<Unit filename="Reference.h" />
 		<Unit filename="ServerEntry.cpp" />
 		<Unit filename="ServerEntry.h" />
-		<Unit filename="fallout3.cpp" />
-		<Unit filename="fallout3.h" />
 		<Unit filename="ufmod.h" />
 		<Unit filename="vaultmp.cpp" />
 		<Unit filename="vaultmp.h" />

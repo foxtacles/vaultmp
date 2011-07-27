@@ -9,21 +9,22 @@
 
 using namespace std;
 
-class Debug {
+class Debug
+{
 
-      private:
-            string logfile;
-            FILE* vaultmplog;
-            bool filemutex;
+private:
+    string logfile;
+    FILE* vaultmplog;
+    bool filemutex;
 
-            static void GetTimeFormat(char* buf, int size, bool file);
+    static void GetTimeFormat(char* buf, int size, bool file);
 
-      public:
-            Debug(char* module);
-            ~Debug();
+public:
+    Debug(char* module);
+    ~Debug();
 
-            void Print(char* text, bool timestamp);
-            void PrintSystem();
+    void Print(char* text, bool timestamp);
+    void PrintSystem();
 
 };
 

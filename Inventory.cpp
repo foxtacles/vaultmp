@@ -54,22 +54,9 @@ void Inventory::AddItem(Item* item)
     container.push_back(item);
 }
 
-void Inventory::RemoveItem(Item* item)
-{
-    container.remove(item);
-}
-
 Item* Inventory::FindItem(map<const char*, const char*, str_compare>::iterator it)
 {
-    list<Item*>::iterator it2;
-
-    for (it2 = container.begin(); it2 != container.end(); ++it2)
-    {
-        if ((*it2)->item == it)
-            return (*it2);
-    }
-
-    return NULL;
+    return FindItem(this->container, it);
 }
 
 Item* Inventory::FindItem(list<Item*> container, map<const char*, const char*, str_compare>::iterator it)
@@ -94,19 +81,19 @@ void Inventory::Initialize(bool NewVegas)
 
         switch (NewVegas)
         {
-            case true:
-                for (int i = 0; FalloutNVItems[i][0] != NULL; i++)
-                    if (ResolveIndex(const_cast<char*>(FalloutNVItems[i][1])) != NULL && strlen(FalloutNVItems[i][1]) == 8)
-                        Item_map.insert(pair<const char*, const char*>(FalloutNVItems[i][1], FalloutNVItems[i][0]));
-                break;
-            case false:
-                for (int i = 0; Fallout3Items[i][0] != NULL; i++)
-                    if (ResolveIndex(const_cast<char*>(Fallout3Items[i][1])) != NULL && strlen(Fallout3Items[i][1]) == 8)
-                        Item_map.insert(pair<const char*, const char*>(Fallout3Items[i][1], Fallout3Items[i][0]));
-                break;
+        case true:
+            for (int i = 0; FalloutNVItems[i][0] != NULL; i++)
+                if (ResolveIndex(const_cast<char*>(FalloutNVItems[i][1])) != NULL && strlen(FalloutNVItems[i][1]) == 8)
+                    Item_map.insert(pair<const char*, const char*>(FalloutNVItems[i][1], FalloutNVItems[i][0]));
+            break;
+        case false:
+            for (int i = 0; Fallout3Items[i][0] != NULL; i++)
+                if (ResolveIndex(const_cast<char*>(Fallout3Items[i][1])) != NULL && strlen(Fallout3Items[i][1]) == 8)
+                    Item_map.insert(pair<const char*, const char*>(Fallout3Items[i][1], Fallout3Items[i][0]));
+            break;
         }
 
-        #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
         if (debug != NULL)
         {
             char text[128];
@@ -118,7 +105,7 @@ void Inventory::Initialize(bool NewVegas)
             sprintf(text, "%d items could not be resolved or have an invalid format", (NewVegas ? (sizeof(FalloutNVItems) / 8) : (sizeof(Fallout3Items) / 8)) - Item_map.size());
             debug->Print(text, true);
         }
-        #endif
+#endif
 
         initialized = true;
     }
@@ -136,10 +123,10 @@ void Inventory::Cleanup()
 
         initialized = false;
 
-        #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
         if (debug != NULL)
             debug->Print((char*) "Performed cleanup on Inventory class", true);
-        #endif
+#endif
     }
 }
 
@@ -148,7 +135,7 @@ void Inventory::RegisterIndex(string mod, string idx)
     Mod_map.insert(pair<string, string>(mod, idx));
     Mod_map.insert(pair<string, string>(idx, mod));
 
-    #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
     if (debug != NULL)
     {
         char text[128];
@@ -157,7 +144,7 @@ void Inventory::RegisterIndex(string mod, string idx)
         sprintf(text, "Registered Fallout mod index (%s => %s)", mod.c_str(), idx.c_str());
         debug->Print(text, true);
     }
-    #endif
+#endif
 }
 
 #ifdef VAULTMP_DEBUG
@@ -175,6 +162,19 @@ Inventory* Inventory::TransferInventory()
     Inventory* inv = internal;
     internal = new Inventory();
     return inv;
+}
+
+map<const char*, const char*, str_compare>::iterator Inventory::GetItemReference(string baseID)
+{
+    char baseID_real[16];
+
+    map<const char*, const char*, str_compare>::iterator it;
+    it = Item_map.find(baseID.c_str());
+
+    if (it == Item_map.end())
+        it = (Item_map.find(ResolveIndex(const_cast<char*>(baseID.c_str()), baseID_real)));
+
+    return it;
 }
 
 bool Inventory::CreateDiff(Inventory* inv1, Inventory* inv2, Inventory* diff)
@@ -235,13 +235,8 @@ bool Inventory::AddItem_Internal(string baseID, int count, int type, float condi
 
 bool Inventory::AddItem(string baseID, int count, int type, float condition, bool worn)
 {
-    char baseID_real[8];
-
     map<const char*, const char*, str_compare>::iterator it;
-    it = Item_map.find(baseID.c_str());
-
-    if (it == Item_map.end())
-        it = (Item_map.find(ResolveIndex(const_cast<char*>(baseID.c_str()), baseID_real)));
+    it = GetItemReference(baseID);
 
     if (it != Item_map.end())
     {
@@ -254,7 +249,7 @@ bool Inventory::AddItem(string baseID, int count, int type, float condition, boo
 
         this->container.push_back(item);
 
-        #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
         if (debug != NULL && this != internal)
         {
             char text[128];
@@ -263,11 +258,11 @@ bool Inventory::AddItem(string baseID, int count, int type, float condition, boo
             sprintf(text, "Added item \"%s\" (%s, count: %d, condition: %f, worn: %d) to inventory %08x", it->second, it->first, count, condition, (int) worn, this);
             debug->Print(text, true);
         }
-        #endif
+#endif
 
         return true;
     }
-    #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
     else if (debug != NULL)
     {
         char text[128];
@@ -276,14 +271,14 @@ bool Inventory::AddItem(string baseID, int count, int type, float condition, boo
         sprintf(text, "Item is not known to vaultmp (%s)", baseID.c_str());
         debug->Print(text, true);
     }
-    #endif
+#endif
 
     return false;
 }
 
 bool Inventory::RemoveItem(string baseID, int count)
 {
-    char baseID_real[8];
+    char baseID_real[16];
 
     map<const char*, const char*, str_compare>::iterator it;
     it = Item_map.find(baseID.c_str());
@@ -315,7 +310,7 @@ bool Inventory::RemoveItem(string baseID, int count)
             }
         }
 
-        #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
         if (debug != NULL)
         {
             char text[128];
@@ -324,11 +319,11 @@ bool Inventory::RemoveItem(string baseID, int count)
             sprintf(text, "Removed %d items \"%s\" (%s) from inventory %08x", s_count, it->second, it->first, this);
             debug->Print(text, true);
         }
-        #endif
+#endif
 
         return true;
     }
-    #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
     else if (debug != NULL)
     {
         char text[128];
@@ -337,14 +332,14 @@ bool Inventory::RemoveItem(string baseID, int count)
         sprintf(text, "Item is not known to vaultmp (%s)", baseID.c_str());
         debug->Print(text, true);
     }
-    #endif
+#endif
 
     return false;
 }
 
 bool Inventory::UpdateItem(string baseID, float condition, bool worn)
 {
-    char baseID_real[8];
+    char baseID_real[16];
 
     map<const char*, const char*, str_compare>::iterator it;
     it = Item_map.find(baseID.c_str());
@@ -362,7 +357,7 @@ bool Inventory::UpdateItem(string baseID, float condition, bool worn)
         find->condition = condition;
         find->worn = worn;
 
-        #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
         if (debug != NULL)
         {
             char text[128];
@@ -371,11 +366,11 @@ bool Inventory::UpdateItem(string baseID, float condition, bool worn)
             sprintf(text, "Updated item \"%s\" (%s, condition: %f, worn: %d) in inventory %08x", it->second, it->first, condition, (int) worn, this);
             debug->Print(text, true);
         }
-        #endif
+#endif
 
         return true;
     }
-    #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
     else if (debug != NULL)
     {
         char text[128];
@@ -384,7 +379,7 @@ bool Inventory::UpdateItem(string baseID, float condition, bool worn)
         sprintf(text, "Item is not known to vaultmp (%s)", baseID.c_str());
         debug->Print(text, true);
     }
-    #endif
+#endif
 
     return false;
 }
@@ -430,6 +425,65 @@ Inventory* Inventory::Copy(Inventory* copy)
     return copy;
 }
 
+Parameter Inventory::GetItemBaseParam(Item* item)
+{
+    vector<string> itemdat;
+    itemdat.push_back(string(item->item->first));
+    Parameter Param_Item = Parameter(itemdat, &Data::EmptyVector);
+    return Param_Item;
+}
+
+Parameter Inventory::GetItemCountParam(Item* item)
+{
+    vector<string> itemdat;
+    char count[8];
+    sprintf(count, "%d", item->count);
+    itemdat.push_back(string(count));
+    Parameter Param_Item = Parameter(itemdat, &Data::EmptyVector);
+    return Param_Item;
+}
+
+list<ParamList> Inventory::GetItemParamList_AddItem(bool hidden)
+{
+    list<ParamList> params;
+    list<Item*>::iterator it;
+
+    for (it = container.begin(); it != container.end(); ++it)
+    {
+        Item* item = *it;
+
+        ParamList param_Item;
+        param_Item.push_back(GetItemBaseParam(item));
+        param_Item.push_back(GetItemCountParam(item));
+        param_Item.push_back(hidden ? Data::Param_True : Data::Param_False);
+        params.push_back(param_Item);
+    }
+
+    return params;
+}
+
+list<ParamList> Inventory::GetItemParamList_EquipItem(bool unequip, bool hidden)
+{
+    list<ParamList> params;
+    list<Item*>::iterator it;
+
+    for (it = container.begin(); it != container.end(); ++it)
+    {
+        Item* item = *it;
+
+        if (!item->worn)
+            continue;
+
+        ParamList param_Item;
+        param_Item.push_back(GetItemBaseParam(item));
+        param_Item.push_back(unequip ? Data::Param_True : Data::Param_False);
+        param_Item.push_back(hidden ? Data::Param_True : Data::Param_False);
+        params.push_back(param_Item);
+    }
+
+    return params;
+}
+
 list<Item*> Inventory::GetItemList()
 {
     return container;
@@ -437,7 +491,7 @@ list<Item*> Inventory::GetItemList()
 
 void Inventory::PrintInventory()
 {
-    #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
     if (debug != NULL)
     {
         list<Item*>::iterator it;
@@ -456,5 +510,5 @@ void Inventory::PrintInventory()
             debug->Print(text, true);
         }
     }
-    #endif
+#endif
 }

@@ -12,6 +12,10 @@
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-Wredundant-decls" />
+					<Add option="-Wunreachable-code" />
+				</Compiler>
 			</Target>
 		</Build>
 		<Compiler>

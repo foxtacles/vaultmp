@@ -3,7 +3,7 @@
 #include <map>
 
 #include "vaultmp.h"
-#include "fallout3.h"
+#include "Bethesda.h"
 #include "ServerEntry.h"
 #include "Data.h"
 #include "ufmod.h"
@@ -179,23 +179,23 @@ void CreateWindowContent(HWND parent)
     col.iSubItem = 3;
     SendMessage(wnd, LVM_INSERTCOLUMN, 3, (LPARAM) &col);
 
-	wnd = CreateWindowEx(0x00000200, "SysListView32", "", 0x50010001, 553, 19, 210, 157, parent, (HMENU) IDC_GRID1, instance, NULL);
-	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
-	wndlistview2 = wnd;
+    wnd = CreateWindowEx(0x00000200, "SysListView32", "", 0x50010001, 553, 19, 210, 157, parent, (HMENU) IDC_GRID1, instance, NULL);
+    SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
+    wndlistview2 = wnd;
 
-	col.cx = 103;
-	col.pszText = (char*) "Key";
+    col.cx = 103;
+    col.pszText = (char*) "Key";
     col.iSubItem = 0;
-	SendMessage(wnd, LVM_INSERTCOLUMN, 0, (LPARAM) &col);
+    SendMessage(wnd, LVM_INSERTCOLUMN, 0, (LPARAM) &col);
 
-	col.cx = 103;
-	col.pszText = (char*) "Value";
+    col.cx = 103;
+    col.pszText = (char*) "Value";
     col.iSubItem = 1;
-	SendMessage(wnd, LVM_INSERTCOLUMN, 1, (LPARAM) &col);
+    SendMessage(wnd, LVM_INSERTCOLUMN, 1, (LPARAM) &col);
 
-	wnd = CreateWindowEx(0x00000000, "msctls_progress32", "", 0x50000000, 553, 184, 210, 16, parent, (HMENU) IDC_PROGRESS0, instance, NULL);
-	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
-	wndprogressbar = wnd;
+    wnd = CreateWindowEx(0x00000000, "msctls_progress32", "", 0x50000000, 553, 184, 210, 16, parent, (HMENU) IDC_PROGRESS0, instance, NULL);
+    SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
+    wndprogressbar = wnd;
 
     wnd = CreateWindowEx(0x00000000, "Static", "Fallout is a trademark or registered trademark of Bethesda Softworks LLC in the U.S. and/or", 0x5000030C, 6, 374, 531, 18, parent, (HMENU) IDC_STATIC0, instance, NULL);
     SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
@@ -364,397 +364,396 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
     switch (message)
     {
-        case WM_CREATE:
-            CreateWindowContent(hwnd);
-            hBitmap = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(POWERED));
-            GetObject(hBitmap, sizeof(BITMAP), &bitmap);
-            GetPrivateProfileString("General", "name", NULL, player_name, sizeof(player_name), inipath);
-            GetPrivateProfileString("General", "master", NULL, server_master, sizeof(server_master), inipath);
-            if (strlen(player_name) > 0) SetDlgItemText(hwnd, IDC_EDIT0, player_name);
-            if (strlen(server_master) > 0) SetDlgItemText(hwnd, IDC_EDIT3, server_master);
-            break;
+    case WM_CREATE:
+        CreateWindowContent(hwnd);
+        hBitmap = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(POWERED));
+        GetObject(hBitmap, sizeof(BITMAP), &bitmap);
+        GetPrivateProfileString("General", "name", NULL, player_name, sizeof(player_name), inipath);
+        GetPrivateProfileString("General", "master", NULL, server_master, sizeof(server_master), inipath);
+        if (strlen(player_name) > 0) SetDlgItemText(hwnd, IDC_EDIT0, player_name);
+        if (strlen(server_master) > 0) SetDlgItemText(hwnd, IDC_EDIT3, server_master);
+        break;
 
-        case WM_PAINT:
-            hdc = BeginPaint(hwnd, &ps);
-            hdcMem = CreateCompatibleDC(hdc);
-            SelectObject(hdcMem, hBitmap);
-            BitBlt(hdc, 13, 310, bitmap.bmWidth, bitmap.bmHeight, hdcMem, 0, 0, SRCCOPY);
-            DeleteDC(hdcMem);
-            EndPaint(hwnd, &ps);
-            break;
+    case WM_PAINT:
+        hdc = BeginPaint(hwnd, &ps);
+        hdcMem = CreateCompatibleDC(hdc);
+        SelectObject(hdcMem, hBitmap);
+        BitBlt(hdc, 13, 310, bitmap.bmWidth, bitmap.bmHeight, hdcMem, 0, 0, SRCCOPY);
+        DeleteDC(hdcMem);
+        EndPaint(hwnd, &ps);
+        break;
 
-        case WM_SIZE:
-            if (wParam == SIZE_MINIMIZED)
-                MinimizeToTray(hwnd);
-            break;
+    case WM_SIZE:
+        if (wParam == SIZE_MINIMIZED)
+            MinimizeToTray(hwnd);
+        break;
 
-        case WM_COMMAND:
-            switch (wParam)
+    case WM_COMMAND:
+        switch (wParam)
+        {
+        case IDC_BUTTON0:
+
+            /* RakNet Game */
+
+            if (peer->NumberOfConnections() == 0)
             {
-                case IDC_BUTTON0:
+                if (selectedServer != NULL /*|| Direct IP */)
+                {
+                    SystemAddress addr = *selectedServer;
+                    char name[MAX_PLAYER_NAME], pwd[MAX_PASSWORD_SIZE];
+                    GetDlgItemText(hwnd, IDC_EDIT0, name, sizeof(name));
+                    GetDlgItemText(hwnd, IDC_EDIT1, pwd, sizeof(pwd));
 
-                    /* RakNet Game */
-
-                    if (peer->NumberOfConnections() == 0)
+                    if (strlen(name) < 3)
                     {
-                        if (selectedServer != NULL /*|| Direct IP */)
-                        {
-                            SystemAddress addr = *selectedServer;
-                            char name[MAX_PLAYER_NAME], pwd[MAX_PASSWORD_SIZE];
-                            GetDlgItemText(hwnd, IDC_EDIT0, name, sizeof(name));
-                            GetDlgItemText(hwnd, IDC_EDIT1, pwd, sizeof(pwd));
+                        MessageBox(NULL, "Please sepcify a player name of at least 3 characters.", "Error", MB_OK | MB_ICONERROR);
+                        break;
+                    }
 
-                            if (strlen(name) < 3)
+                    map<SystemAddress, ServerEntry>::iterator i;
+                    i = serverList.find(*selectedServer);
+
+                    MinimizeToTray(hwnd);
+                    Bethesda::InitializeVaultMP(peer, addr, string(name), string(pwd), (&i->second)->IsNewVegas());
+                    Maximize(hwnd);
+
+                    selectedServer = NULL;
+                }
+            }
+
+            break;
+
+        case IDC_BUTTON1:
+            if (selectedServer != NULL) update = true;
+            else break;
+
+        case IDC_BUTTON2:
+
+            /* RakNet Master Query */
+
+            if (peer->NumberOfConnections() == 0)
+            {
+                if (!update) serverList.clear();
+
+                SystemAddress master;
+                char maddr[32];
+                GetDlgItemText(hwnd, IDC_EDIT3, maddr, sizeof(maddr));
+
+                if (strcmp(maddr, "") == 0)
+                {
+                    SetDlgItemText(hwnd, IDC_EDIT3, (char*) RAKNET_MASTER_ADDRESS);
+                    master.SetBinaryAddress((char*) RAKNET_MASTER_ADDRESS);
+                    master.SetPort(RAKNET_MASTER_PORT);
+                }
+                else
+                {
+                    master.SetBinaryAddress(strtok(maddr, ":"));
+                    char* cport = strtok(NULL, ":");
+                    master.SetPort(cport != NULL ? atoi(cport) : RAKNET_MASTER_PORT);
+                }
+
+                if (peer->Connect(master.ToString(false), master.GetPort(), MASTER_VERSION, sizeof(MASTER_VERSION), 0, 0, 3, 500, 0) == CONNECTION_ATTEMPT_STARTED)
+                {
+                    bool query = true;
+
+                    bool lock = false;
+
+                    Packet* packet;
+
+                    while (query)
+                    {
+                        for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
+                        {
+                            switch (packet->data[0])
                             {
-                                MessageBox(NULL, "Please sepcify a player name of at least 3 characters.", "Error", MB_OK | MB_ICONERROR);
+                            case ID_CONNECTION_REQUEST_ACCEPTED:
+                            {
+                                BitStream query;
+
+                                if (update)
+                                {
+                                    query.Write((MessageID) ID_MASTER_UPDATE);
+                                    SystemAddress addr = *selectedServer;
+
+                                    SystemAddress self = peer->GetExternalID(packet->systemAddress);
+
+                                    if (strcmp(addr.ToString(false), packet->systemAddress.ToString(false)) == 0)
+                                        addr.SetBinaryAddress("127.0.0.1");
+                                    else if (strcmp(addr.ToString(false), "127.0.0.1") == 0)
+                                        addr.SetBinaryAddress(self.ToString(false));
+
+                                    query.Write(addr);
+                                }
+                                else
+                                    query.Write((MessageID) ID_MASTER_QUERY);
+
+                                peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, packet->systemAddress, false, 0);
                                 break;
                             }
-
-                            map<SystemAddress, ServerEntry>::iterator i;
-                            i = serverList.find(*selectedServer);
-
-                            MinimizeToTray(hwnd);
-                            Fallout3::InitializeVaultMP(peer, addr, string(name), string(pwd), (&i->second)->IsNewVegas());
-                            Maximize(hwnd);
-
-                            selectedServer = NULL;
-                        }
-                    }
-
-                    break;
-
-                case IDC_BUTTON1:
-                    if (selectedServer != NULL) update = true;
-                    else break;
-
-                case IDC_BUTTON2:
-
-                    /* RakNet Master Query */
-
-                    if (peer->NumberOfConnections() == 0)
-                    {
-                        if (!update) serverList.clear();
-
-                        SystemAddress master;
-                        char maddr[32];
-                        GetDlgItemText(hwnd, IDC_EDIT3, maddr, sizeof(maddr));
-
-                        if (strcmp(maddr, "") == 0)
-                        {
-                            SetDlgItemText(hwnd, IDC_EDIT3, (char*) RAKNET_MASTER_ADDRESS);
-                            master.SetBinaryAddress((char*) RAKNET_MASTER_ADDRESS);
-                            master.SetPort(RAKNET_MASTER_PORT);
-                        }
-                        else
-                        {
-                            master.SetBinaryAddress(strtok(maddr, ":"));
-                            char* cport = strtok(NULL, ":");
-                            master.SetPort(cport != NULL ? atoi(cport) : RAKNET_MASTER_PORT);
-                        }
-
-                        if (peer->Connect(master.ToString(false), master.GetPort(), MASTER_VERSION, sizeof(MASTER_VERSION), 0, 0, 3, 500, 0) == CONNECTION_ATTEMPT_STARTED)
-                        {
-                            bool query = true;
-
-                            bool lock = false;
-
-                            Packet* packet;
-
-                            while (query)
+                            case ID_MASTER_QUERY:
                             {
-                                for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
+                                BitStream query(packet->data, packet->length, false);
+                                query.IgnoreBytes(sizeof(MessageID));
+
+                                unsigned int size;
+                                query.Read(size);
+
+                                SendMessage(wndprogressbar, PBM_SETPOS, 0, 0);
+                                SendMessage(wndprogressbar, PBM_SETRANGE, 0, MAKELONG(0, size));
+                                SendMessage(wndprogressbar, PBM_SETSTEP, 1, 0);
+
+                                for (int i = 0; i < size; i++)
                                 {
-                                    switch (packet->data[0])
+                                    SystemAddress addr;
+                                    RakString name, map;
+                                    int players, playersMax, rsize;
+                                    bool NewVegas;
+                                    std::map<string, string> rules;
+
+                                    query.Read(addr);
+                                    query.Read(name);
+                                    query.Read(map);
+                                    query.Read(players);
+                                    query.Read(playersMax);
+                                    query.Read(NewVegas);
+                                    query.Read(rsize);
+
+                                    ServerEntry entry(name.C_String(), map.C_String(), pair<int, int>(players, playersMax), 999, NewVegas);
+
+                                    for (int j = 0; j < rsize; j++)
                                     {
-                                    case ID_CONNECTION_REQUEST_ACCEPTED:
-                                    {
-                                        BitStream query;
-
-                                        if (update)
-                                        {
-                                            query.Write((MessageID) ID_MASTER_UPDATE);
-                                            SystemAddress addr = *selectedServer;
-
-                                            SystemAddress self = peer->GetExternalID(packet->systemAddress);
-
-                                            if (strcmp(addr.ToString(false), packet->systemAddress.ToString(false)) == 0)
-                                                addr.SetBinaryAddress("127.0.0.1");
-                                            else if (strcmp(addr.ToString(false), "127.0.0.1") == 0)
-                                                addr.SetBinaryAddress(self.ToString(false));
-
-                                            query.Write(addr);
-                                        }
-                                        else
-                                            query.Write((MessageID) ID_MASTER_QUERY);
-
-                                        peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, packet->systemAddress, false, 0);
-                                        break;
+                                        RakString key, value;
+                                        query.Read(key);
+                                        query.Read(value);
+                                        entry.SetServerRule(key.C_String(), value.C_String());
                                     }
-                                    case ID_MASTER_QUERY:
-                                    {
-                                        BitStream query(packet->data, packet->length, false);
-                                        query.IgnoreBytes(sizeof(MessageID));
 
-                                        unsigned int size;
-                                        query.Read(size);
+                                    SystemAddress self = peer->GetExternalID(packet->systemAddress);
 
-                                        SendMessage(wndprogressbar, PBM_SETPOS, 0, 0);
-                                        SendMessage(wndprogressbar, PBM_SETRANGE, 0, MAKELONG(0, size));
-                                        SendMessage(wndprogressbar, PBM_SETSTEP, 1, 0);
+                                    if (strcmp(addr.ToString(false), "127.0.0.1") == 0)
+                                        addr.SetBinaryAddress(packet->systemAddress.ToString(false));
+                                    else if (strcmp(addr.ToString(false), self.ToString(false)) == 0)
+                                        addr.SetBinaryAddress("127.0.0.1");
 
-                                        for (int i = 0; i < size; i++)
-                                        {
-                                            SystemAddress addr;
-                                            RakString name, map;
-                                            int players, playersMax, rsize;
-                                            bool NewVegas;
-                                            std::map<string, string> rules;
+                                    serverList.insert(pair<SystemAddress, ServerEntry>(addr, entry));
 
-                                            query.Read(addr);
-                                            query.Read(name);
-                                            query.Read(map);
-                                            query.Read(players);
-                                            query.Read(playersMax);
-                                            query.Read(NewVegas);
-                                            query.Read(rsize);
+                                    peer->Ping(addr.ToString(false), addr.GetPort(), false);
 
-                                            ServerEntry entry(name.C_String(), map.C_String(), pair<int, int>(players, playersMax), 999, NewVegas);
-
-                                            for (int j = 0; j < rsize; j++)
-                                            {
-                                                RakString key, value;
-                                                query.Read(key);
-                                                query.Read(value);
-                                                entry.SetServerRule(key.C_String(), value.C_String());
-                                            }
-
-                                            SystemAddress self = peer->GetExternalID(packet->systemAddress);
-
-                                            if (strcmp(addr.ToString(false), "127.0.0.1") == 0)
-                                                addr.SetBinaryAddress(packet->systemAddress.ToString(false));
-                                            else if (strcmp(addr.ToString(false), self.ToString(false)) == 0)
-                                                addr.SetBinaryAddress("127.0.0.1");
-
-                                            serverList.insert(pair<SystemAddress, ServerEntry>(addr, entry));
-
-                                            peer->Ping(addr.ToString(false), addr.GetPort(), false);
-
-                                            SendMessage(wndprogressbar, PBM_STEPIT, 0, 0);
-                                        }
-
-                                        peer->CloseConnection(packet->systemAddress, true, 0, LOW_PRIORITY);
-
-                                        query = false;
-                                        break;
-                                    }
-                                    case ID_MASTER_UPDATE:
-                                    {
-                                        BitStream query(packet->data, packet->length, false);
-                                        query.IgnoreBytes(sizeof(MessageID));
-
-                                        SystemAddress addr;
-                                        query.Read(addr);
-
-                                        SystemAddress self = peer->GetExternalID(packet->systemAddress);
-
-                                        if (strcmp(addr.ToString(false), "127.0.0.1") == 0)
-                                            addr.SetBinaryAddress(packet->systemAddress.ToString(false));
-                                        else if (strcmp(addr.ToString(false), self.ToString(false)) == 0)
-                                            addr.SetBinaryAddress("127.0.0.1");
-
-                                        std::map<SystemAddress, ServerEntry>::iterator i;
-                                        i = serverList.find(addr);
-
-                                        if (query.GetNumberOfUnreadBits() > 0)
-                                        {
-                                            RakString name, map;
-                                            int players, playersMax, rsize;
-                                            bool NewVegas;
-
-                                            query.Read(name);
-                                            query.Read(map);
-                                            query.Read(players);
-                                            query.Read(playersMax);
-                                            query.Read(NewVegas);
-                                            query.Read(rsize);
-
-                                            ServerEntry* entry;
-
-                                            if (i != serverList.end())
-                                            {
-                                                entry = &i->second;
-                                                entry->SetServerName(name.C_String());
-                                                entry->SetServerMap(map.C_String());
-                                                entry->SetServerPlayers(pair<int, int>(players, playersMax));
-                                            }
-                                            else
-                                            {
-                                                std::pair<std::map<SystemAddress, ServerEntry>::iterator, bool> k;
-                                                k = serverList.insert(pair<SystemAddress, ServerEntry>(addr, ServerEntry(name.C_String(), map.C_String(), pair<int, int>(players, playersMax), 999, NewVegas)));
-                                                entry = &(k.first)->second;
-                                            }
-
-                                            for (int j = 0; j < rsize; j++)
-                                            {
-                                                RakString key, value;
-                                                query.Read(key);
-                                                query.Read(value);
-                                                entry->SetServerRule(key.C_String(), value.C_String());
-                                            }
-
-                                            peer->Ping(addr.ToString(false), addr.GetPort(), false);
-                                        }
-                                        else
-                                            if (i != serverList.end())
-                                                serverList.erase(i);
-
-                                        peer->CloseConnection(packet->systemAddress, true, 0, LOW_PRIORITY);
-
-                                        query = false;
-                                        break;
-                                    }
-                                    case ID_UNCONNECTED_PONG:
-                                    {
-                                        BitStream query(packet->data, packet->length, false);
-                                        query.IgnoreBytes(sizeof(MessageID));
-
-                                        TimeMS ping;
-                                        query.Read(ping);
-
-                                        map<SystemAddress, ServerEntry>::iterator i;
-                                        i = serverList.find(packet->systemAddress);
-
-                                        if (i != serverList.end())
-                                        {
-                                            ServerEntry* entry = &i->second;
-                                            entry->SetServerPing(GetTimeMS() - ping);
-                                        }
-                                        break;
-                                    }
-                                    case ID_NO_FREE_INCOMING_CONNECTIONS:
-                                    case ID_CONNECTION_ATTEMPT_FAILED:
-                                    {
-                                        if (update && !lock)
-                                        {
-                                            peer->Connect(selectedServer->ToString(false), selectedServer->GetPort(), 0, 0, 0, 0, 3, 500, 0);
-                                            lock = true;
-                                        }
-                                        else
-                                        {
-                                            if (update)
-                                            {
-                                                map<SystemAddress, ServerEntry>::iterator i;
-                                                i = serverList.find(*selectedServer);
-
-                                                if (i != serverList.end())
-                                                    serverList.erase(*selectedServer);
-                                            }
-
-                                            query = false;
-                                        }
-                                        break;
-                                    }
-                                    case ID_INVALID_PASSWORD:
-                                        MessageBox(NULL, "MasterServer version mismatch.\nPlease download the most recent binaries from www.vaultmp.com", "Error", MB_OK | MB_ICONERROR);
-                                    case ID_DISCONNECTION_NOTIFICATION:
-                                    case ID_CONNECTION_BANNED:
-                                    case ID_CONNECTION_LOST:
-                                        query = false;
-                                        break;
-                                    }
+                                    SendMessage(wndprogressbar, PBM_STEPIT, 0, 0);
                                 }
 
-                                RakSleep(2);
+                                peer->CloseConnection(packet->systemAddress, true, 0, LOW_PRIORITY);
+
+                                query = false;
+                                break;
                             }
-                        }
-                    }
-
-                    update = false;
-
-                    RefreshServerList();
-                    break;
-
-                case IDC_BUTTON3:
-                    MessageBox(NULL, "Vault-Tec Multiplayer Mod is an Open-Source project.\n\ncode: Recycler (www.brickster.net)\nnetwork: RakNet (www.jenkinssoftware.com)\nscripting: The PAWN language (www.compuphase.com)\nmusic: uFMOD (ufmod.sourceforge.net)\n\nGreetings fly out to:\nmqidx, benG, ArminSeiko\n\nThanks to everyone contributing to the project (ideas, code, moral support etc). You guys keep it going :-)\n\nwww.vaultmp.com", "vaultmp credits", MB_OK | MB_ICONINFORMATION);
-                    break;
-
-                case IDC_CHECK0:
-                    if (SendMessage(wndchiptune, BM_GETCHECK, 0, 0))
-                        uFMOD_PlaySong(MAKEINTRESOURCE(CHIPTUNE), GetModuleHandle(NULL), XM_RESOURCE);
-                    else
-                        uFMOD_StopSong();
-                    break;
-            }
-            break;
-
-        case MSG_MINTRAYICON:
-            if (wParam == ICON_MAIN && lParam == WM_LBUTTONUP)
-                Maximize(hwnd);
-            break;
-
-        case WM_NOTIFY:
-            switch (((LPNMHDR) lParam)->code)
-            {
-                case (LVN_FIRST - 14): // LVN_ITEMACTIVATE
-                {
-                    HWND hwndFrom = (HWND)((LPNMHDR) lParam)->hwndFrom;
-
-                    if (hwndFrom == wndlistview)
-                    {
-                        LVITEM item;
-                        item.mask = LVIF_PARAM;
-                        item.iItem = ListView_GetNextItem(hwndFrom, -1, LVNI_SELECTED);
-                        item.iSubItem = 0;
-                        ListView_GetItem(hwndFrom, &item);
-
-                        selectedServer = (SystemAddress*) item.lParam;
-
-                        SendMessage(wndlistview2, LVM_DELETEALLITEMS, 0, 0);
-
-                        map<SystemAddress, ServerEntry>::iterator i;
-                        i = serverList.find(*selectedServer);
-
-                        if (i != serverList.end())
-                        {
-                            ServerEntry* entry = &i->second;
-                            std::map<string, string> rules = entry->GetServerRules();
-
-                            for (map<string, string>::iterator k = rules.begin(); k != rules.end(); ++k)
+                            case ID_MASTER_UPDATE:
                             {
-                                string key = k->first;
-                                string value = k->second;
+                                BitStream query(packet->data, packet->length, false);
+                                query.IgnoreBytes(sizeof(MessageID));
 
-                                char c_key[key.length()];
-                                char c_value[value.length()];
+                                SystemAddress addr;
+                                query.Read(addr);
 
-                                strcpy(c_key, key.c_str());
-                                strcpy(c_value, value.c_str());
+                                SystemAddress self = peer->GetExternalID(packet->systemAddress);
 
-                                Create2ColItem(wndlistview2, c_key, c_value);
+                                if (strcmp(addr.ToString(false), "127.0.0.1") == 0)
+                                    addr.SetBinaryAddress(packet->systemAddress.ToString(false));
+                                else if (strcmp(addr.ToString(false), self.ToString(false)) == 0)
+                                    addr.SetBinaryAddress("127.0.0.1");
+
+                                std::map<SystemAddress, ServerEntry>::iterator i;
+                                i = serverList.find(addr);
+
+                                if (query.GetNumberOfUnreadBits() > 0)
+                                {
+                                    RakString name, map;
+                                    int players, playersMax, rsize;
+                                    bool NewVegas;
+
+                                    query.Read(name);
+                                    query.Read(map);
+                                    query.Read(players);
+                                    query.Read(playersMax);
+                                    query.Read(NewVegas);
+                                    query.Read(rsize);
+
+                                    ServerEntry* entry;
+
+                                    if (i != serverList.end())
+                                    {
+                                        entry = &i->second;
+                                        entry->SetServerName(name.C_String());
+                                        entry->SetServerMap(map.C_String());
+                                        entry->SetServerPlayers(pair<int, int>(players, playersMax));
+                                    }
+                                    else
+                                    {
+                                        std::pair<std::map<SystemAddress, ServerEntry>::iterator, bool> k;
+                                        k = serverList.insert(pair<SystemAddress, ServerEntry>(addr, ServerEntry(name.C_String(), map.C_String(), pair<int, int>(players, playersMax), 999, NewVegas)));
+                                        entry = &(k.first)->second;
+                                    }
+
+                                    for (int j = 0; j < rsize; j++)
+                                    {
+                                        RakString key, value;
+                                        query.Read(key);
+                                        query.Read(value);
+                                        entry->SetServerRule(key.C_String(), value.C_String());
+                                    }
+
+                                    peer->Ping(addr.ToString(false), addr.GetPort(), false);
+                                }
+                                else if (i != serverList.end())
+                                    serverList.erase(i);
+
+                                peer->CloseConnection(packet->systemAddress, true, 0, LOW_PRIORITY);
+
+                                query = false;
+                                break;
+                            }
+                            case ID_UNCONNECTED_PONG:
+                            {
+                                BitStream query(packet->data, packet->length, false);
+                                query.IgnoreBytes(sizeof(MessageID));
+
+                                TimeMS ping;
+                                query.Read(ping);
+
+                                map<SystemAddress, ServerEntry>::iterator i;
+                                i = serverList.find(packet->systemAddress);
+
+                                if (i != serverList.end())
+                                {
+                                    ServerEntry* entry = &i->second;
+                                    entry->SetServerPing(GetTimeMS() - ping);
+                                }
+                                break;
+                            }
+                            case ID_NO_FREE_INCOMING_CONNECTIONS:
+                            case ID_CONNECTION_ATTEMPT_FAILED:
+                            {
+                                if (update && !lock)
+                                {
+                                    peer->Connect(selectedServer->ToString(false), selectedServer->GetPort(), 0, 0, 0, 0, 3, 500, 0);
+                                    lock = true;
+                                }
+                                else
+                                {
+                                    if (update)
+                                    {
+                                        map<SystemAddress, ServerEntry>::iterator i;
+                                        i = serverList.find(*selectedServer);
+
+                                        if (i != serverList.end())
+                                            serverList.erase(*selectedServer);
+                                    }
+
+                                    query = false;
+                                }
+                                break;
+                            }
+                            case ID_INVALID_PASSWORD:
+                                MessageBox(NULL, "MasterServer version mismatch.\nPlease download the most recent binaries from www.vaultmp.com", "Error", MB_OK | MB_ICONERROR);
+                            case ID_DISCONNECTION_NOTIFICATION:
+                            case ID_CONNECTION_BANNED:
+                            case ID_CONNECTION_LOST:
+                                query = false;
+                                break;
                             }
                         }
+
+                        RakSleep(2);
                     }
-                    break;
                 }
-                case LVN_COLUMNCLICK:
+            }
+
+            update = false;
+
+            RefreshServerList();
+            break;
+
+        case IDC_BUTTON3:
+            MessageBox(NULL, "Vault-Tec Multiplayer Mod is an Open-Source project.\n\ncode: Recycler (www.brickster.net)\nnetwork: RakNet (www.jenkinssoftware.com)\nscripting: The PAWN language (www.compuphase.com)\nmusic: uFMOD (ufmod.sourceforge.net)\n\nGreetings fly out to:\nmqidx, benG, ArminSeiko\n\nThanks to everyone contributing to the project (ideas, code, moral support etc). You guys keep it going :-)\n\nwww.vaultmp.com", "vaultmp credits", MB_OK | MB_ICONINFORMATION);
+            break;
+
+        case IDC_CHECK0:
+            if (SendMessage(wndchiptune, BM_GETCHECK, 0, 0))
+                uFMOD_PlaySong(MAKEINTRESOURCE(CHIPTUNE), GetModuleHandle(NULL), XM_RESOURCE);
+            else
+                uFMOD_StopSong();
+            break;
+        }
+        break;
+
+    case MSG_MINTRAYICON:
+        if (wParam == ICON_MAIN && lParam == WM_LBUTTONUP)
+            Maximize(hwnd);
+        break;
+
+    case WM_NOTIFY:
+        switch (((LPNMHDR) lParam)->code)
+        {
+        case (LVN_FIRST - 14): // LVN_ITEMACTIVATE
+        {
+            HWND hwndFrom = (HWND)((LPNMHDR) lParam)->hwndFrom;
+
+            if (hwndFrom == wndlistview)
+            {
+                LVITEM item;
+                item.mask = LVIF_PARAM;
+                item.iItem = ListView_GetNextItem(hwndFrom, -1, LVNI_SELECTED);
+                item.iSubItem = 0;
+                ListView_GetItem(hwndFrom, &item);
+
+                selectedServer = (SystemAddress*) item.lParam;
+
+                SendMessage(wndlistview2, LVM_DELETEALLITEMS, 0, 0);
+
+                map<SystemAddress, ServerEntry>::iterator i;
+                i = serverList.find(*selectedServer);
+
+                if (i != serverList.end())
                 {
-                    NMLISTVIEW* nmlv = (NMLISTVIEW*) lParam;
-                    wndsortcur = (HWND)((LPNMHDR) lParam)->hwndFrom;
-                    ListView_SortItemsEx(wndsortcur, CompareProc, nmlv->iSubItem);
-                    sort = !sort;
-                    break;
+                    ServerEntry* entry = &i->second;
+                    std::map<string, string> rules = entry->GetServerRules();
+
+                    for (map<string, string>::iterator k = rules.begin(); k != rules.end(); ++k)
+                    {
+                        string key = k->first;
+                        string value = k->second;
+
+                        char c_key[key.length()];
+                        char c_value[value.length()];
+
+                        strcpy(c_key, key.c_str());
+                        strcpy(c_value, value.c_str());
+
+                        Create2ColItem(wndlistview2, c_key, c_value);
+                    }
                 }
             }
             break;
-
-        case WM_DESTROY:
-            GetDlgItemText(hwnd, IDC_EDIT0, player_name, sizeof(player_name));
-            GetDlgItemText(hwnd, IDC_EDIT3, server_master, sizeof(server_master));
-            PostQuitMessage(0);
+        }
+        case LVN_COLUMNCLICK:
+        {
+            NMLISTVIEW* nmlv = (NMLISTVIEW*) lParam;
+            wndsortcur = (HWND)((LPNMHDR) lParam)->hwndFrom;
+            ListView_SortItemsEx(wndsortcur, CompareProc, nmlv->iSubItem);
+            sort = !sort;
             break;
+        }
+        }
+        break;
 
-        default:
-            return DefWindowProc(hwnd, message, wParam, lParam);
+    case WM_DESTROY:
+        GetDlgItemText(hwnd, IDC_EDIT0, player_name, sizeof(player_name));
+        GetDlgItemText(hwnd, IDC_EDIT3, server_master, sizeof(server_master));
+        PostQuitMessage(0);
+        break;
+
+    default:
+        return DefWindowProc(hwnd, message, wParam, lParam);
     }
 
     return 0;

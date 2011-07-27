@@ -11,6 +11,10 @@
 				<Option object_output="obj\" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Wredundant-decls" />
+					<Add option="-Wunreachable-code" />
+				</Compiler>
 			</Target>
 		</Build>
 		<Linker>
@@ -275,6 +279,7 @@
 		<Unit filename="..\RakNet\rdlmalloc.h" />
 		<Unit filename="..\ServerEntry.cpp" />
 		<Unit filename="..\ServerEntry.h" />
+		<Unit filename="..\vaultmp.h" />
 		<Unit filename="Dedicated.cpp" />
 		<Unit filename="Dedicated.h" />
 		<Unit filename="Functions.cpp" />
