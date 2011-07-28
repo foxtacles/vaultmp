@@ -43,6 +43,8 @@ SystemAddress* selectedServer = NULL;
 char inipath[256];
 char player_name[MAX_PLAYER_NAME];
 char server_master[MAX_MASTER_SERVER];
+bool foundFallout3 = false;
+bool foundNewVegas = false;
 
 HWND CreateMainWindow();
 int RegisterClasses();
@@ -101,8 +103,101 @@ void Maximize(HWND hwnd)
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR cmdline, int show)
 {
+#ifdef VAULTMP_DEBUG
+    if (LoadLibrary("exchndl.dll") == NULL)
+        return MessageBox(NULL, "Could not find exchndl.dll!", "Error", MB_OK | MB_ICONERROR);
+#endif
+
+    FILE* Fallout = NULL;
+
+    Fallout = fopen("Fallout3.exe", "rb");
+
+    if (Fallout != NULL)
+    {
+        long int size = 0;
+
+        fseek(Fallout, 0, SEEK_END);
+        size = ftell(Fallout);
+        fclose(Fallout);
+
+        if (size != FALLOUT3_EXE_SIZE)
+            return MessageBox(NULL, "Fallout3.exe is either corrupted or not supported!", "Error", MB_OK | MB_ICONERROR);
+        else
+        {
+            Fallout = fopen("fose_1_7.dll", "rb");
+
+            if (Fallout != NULL)
+            {
+                fclose(Fallout);
+
+                Fallout = fopen("xlive.dll", "rb");
+
+                if (Fallout != NULL)
+                {
+                    size = 0;
+
+                    fseek(Fallout, 0, SEEK_END);
+                    size = ftell(Fallout);
+                    fclose(Fallout);
+
+                    if (size != XLIVE_DLL_SIZE)
+                        return MessageBox(NULL, "xlive.dll is unpatched!", "Error", MB_OK | MB_ICONERROR);
+                    else
+                        foundFallout3 = true;
+                }
+                else
+                    return MessageBox(NULL, "xlive.dll is missing!", "Error", MB_OK | MB_ICONERROR);
+            }
+            else
+                return MessageBox(NULL, "Could not find FOSE 1.7!\nhttp://fose.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
+        }
+    }
+
+    Fallout = fopen("FalloutNV.exe", "rb");
+
+    if (Fallout != NULL)
+    {
+        long int size = 0;
+
+        fseek(Fallout, 0, SEEK_END);
+        size = ftell(Fallout);
+        fclose(Fallout);
+
+        if (size != FALLOUTNV_EXE1_SIZE && size != FALLOUTNV_EXE2_SIZE && size != FALLOUTNV_EXE3_SIZE)
+            return MessageBox(NULL, "FalloutNV.exe is either corrupted or not supported!", "Error", MB_OK | MB_ICONERROR);
+        else
+        {
+            Fallout = fopen("nvse_1_1.dll", "rb");
+
+            if (Fallout != NULL)
+            {
+                foundNewVegas = true;
+                fclose(Fallout);
+            }
+            else
+                return MessageBox(NULL, "Could not find NVSE 1.1!\nhttp://nvse.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
+        }
+    }
+
+    Fallout = fopen("vaultmp.dll", "rb");
+
+    if (Fallout != NULL)
+    {
+        long int size = 0;
+
+        fseek(Fallout, 0, SEEK_END);
+        size = ftell(Fallout);
+        fclose(Fallout);
+
+        if (size != VAULTMP_DLL_SIZE)
+            return MessageBox(NULL, "vaultmp.dll is either corrupted or not up to date!", "Error", MB_OK | MB_ICONERROR);
+    }
+    else
+        return MessageBox(NULL, "Could not find vaultmp.dll!", "Error", MB_OK | MB_ICONERROR);
+
     mutex = CreateMutex(NULL, TRUE, "vaultmp");
-    if (GetLastError() == ERROR_ALREADY_EXISTS) return MessageBox(NULL, "Vault-Tec Multiplayer Mod is already running.", "Error", MB_OK | MB_ICONERROR);
+    if (GetLastError() == ERROR_ALREADY_EXISTS)
+        return MessageBox(NULL, "Vault-Tec Multiplayer Mod is already running!", "Error", MB_OK | MB_ICONERROR);
 
     instance = hInstance;
 
@@ -112,11 +207,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR cmdline, 
     seDebugPrivilege();
     InitCommonControls();
     RegisterClasses();
+    InitRakNet();
 
     hFont = CreateFont(-11, 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Verdana");
     CreateMainWindow();
-
-    InitRakNet();
 
     return MessageLoop();
 }
@@ -413,8 +507,21 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                     map<SystemAddress, ServerEntry>::iterator i;
                     i = serverList.find(*selectedServer);
 
+                    bool NewVegas = (&i->second)->IsNewVegas();
+
+                    if (NewVegas && !foundNewVegas)
+                    {
+                        MessageBox(NULL, "Could not find FalloutNV.exe!", "Error", MB_OK | MB_ICONERROR);
+                        break;
+                    }
+                    else if (!NewVegas && !foundFallout3)
+                    {
+                        MessageBox(NULL, "Could not find Fallout3.exe!", "Error", MB_OK | MB_ICONERROR);
+                        break;
+                    }
+
                     MinimizeToTray(hwnd);
-                    Bethesda::InitializeVaultMP(peer, addr, string(name), string(pwd), (&i->second)->IsNewVegas());
+                    Bethesda::InitializeVaultMP(peer, addr, string(name), string(pwd), NewVegas);
                     Maximize(hwnd);
 
                     selectedServer = NULL;

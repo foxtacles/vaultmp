@@ -11,12 +11,7 @@
 #include "Data.h"
 #include "Pipe.h"
 
-#define OPENCMD() while (cmdmutex); cmdmutex = true;
-#define CLOSECMD() cmdmutex = false;
 #define PUSHCMD(cmd) tmplist.push_back(cmd);
-#define STARTSESSION() while (cmdsession); cmdsession = true;
-#define ENDSESSION() cmdsession = false;
-#define SESSION() cmdsession
 
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"
@@ -35,10 +30,9 @@ class Command
 private:
     static bool endThread;
     static bool wakeup;
-    static bool cmdmutex;
-    static bool cmdsession;
     static bool initialized;
     static char* module;
+    static CRITICAL_SECTION cs_cmd;
     static HANDLE hCommandThreadReceive;
     static HANDLE hCommandThreadSend;
     static CommandList cmdlist;
@@ -66,10 +60,10 @@ private:
 
 public:
 
-    static HANDLE* Initialize(char* module, ResultHandler, StringHandler);
-    static bool Terminate();
+    static bool Initialize(char* module, ResultHandler, StringHandler);
+    static void Terminate();
     static DWORD lookupProgramID(const char process[]);
-    static bool GetReady();
+    static bool IsAvailable();
 
     static void StartSession();
     static void EndSession();

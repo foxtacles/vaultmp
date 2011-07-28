@@ -8,8 +8,8 @@ typedef LPVOID (__stdcall *fGetProcAddress)(HINSTANCE, char*);
 typedef void (*fDLLjump)(bool);
 
 bool Bethesda::NewVegas = false;
+bool Bethesda::initialized = false;
 string Bethesda::savegame = "";
-HANDLE* Bethesda::threads = NULL;
 Player* Bethesda::self = NULL;
 queue<Player*> Bethesda::refqueue;
 
@@ -64,6 +64,8 @@ void Bethesda::CommandHandler(vector<void*> command)
     Fallout3_newRefID = *(reinterpret_cast<DWORD*>(command[6]));
 
     Player* lastRef = NULL;
+
+    Player::StartSession();
 
     if (Fallout3_refID == PLAYER_REFERENCE)
         lastRef = self;
@@ -412,6 +414,8 @@ void Bethesda::CommandHandler(vector<void*> command)
         }
         }
     }
+
+    Player::EndSession();
 }
 
 void Bethesda::StringHandler(string command)
@@ -427,6 +431,8 @@ void Bethesda::StringHandler(string command)
     char action[64];
 
     ZeroMemory(action, sizeof(action));
+
+    Player::StartSession();
 
     if (sscanf(output, "%d", &count))
     {
@@ -583,6 +589,8 @@ void Bethesda::StringHandler(string command)
         debug->Print(text, true);
         #endif
     }*/
+
+    Player::EndSession();
 }
 
 void Bethesda::InitializeCommands()
@@ -619,8 +627,6 @@ void Bethesda::InitializeCommands()
     Command::DefineCommand("PlaceAtMe", "%0.PlaceAtMe %1 %2 %3 %4");
     Command::DefineCommand("MarkForDelete", "%0.MarkForDelete");
     Command::DefineCommand("Load", "Load %0");
-
-    Command::StartSession();
 
     ParamList param_GetPos;
     param_GetPos.push_back(Player::Param_EnabledPlayers);
@@ -679,161 +685,105 @@ void Bethesda::InitializeCommands()
     ParamContainer ShowInventory = ParamContainer(param_ShowInventory, &Data::AlwaysTrue);
     Command::DefineNative("ShowInventory", ShowInventory);
     Command::ExecuteCommandLoop("ShowInventory", 10);
-
-    Command::EndSession();
 }
 
-HANDLE* Bethesda::InitializeFallout3(bool NewVegas)
+bool Bethesda::InitializeFallout(bool NewVegas)
 {
-    FILE* Fallout = NewVegas ? fopen("FalloutNV.exe", "rb") : fopen("Fallout3.exe", "rb");
+    char module[32];
 
-    if (Fallout != NULL)
+    switch (NewVegas)
     {
-        char module[32];
-        long int size = 0;
+    case false:
+        strcpy(module, "Fallout3.exe");
+        Bethesda::NewVegas = false;
+        break;
+    case true:
+        strcpy(module, "FalloutNV.exe");
+        putenv("SteamAppID=22380"); // necessary for Steam
+        Bethesda::NewVegas = true;
+        break;
+    }
 
-        fseek(Fallout, 0, SEEK_END);
-        size = ftell(Fallout);
-        fclose(Fallout);
+    if (Command::lookupProgramID(module) == 0)
+    {
+        STARTUPINFO si;
+        PROCESS_INFORMATION pi;
 
-        switch (NewVegas)
+        ZeroMemory(&si, sizeof(si));
+        ZeroMemory(&pi, sizeof(pi));
+        si.cb = sizeof(si);
+
+        if (CreateProcess(module, NULL, NULL, NULL, FALSE, Bethesda::NewVegas ? 0 : CREATE_SUSPENDED, NULL, NULL, &si, &pi))
         {
-        case false:
-            strcpy(module, "Fallout3.exe");
-            Bethesda::NewVegas = false;
-            break;
-        case true:
-            strcpy(module, "FalloutNV.exe");
-            putenv("SteamAppID=22380"); // necessary for Steam
-            Bethesda::NewVegas = true;
-            break;
-        }
+            if (Bethesda::NewVegas) Sleep(2000); // some decrypt whatsoever needs time
 
-        if (Bethesda::NewVegas ? (size == FALLOUTNV_EXE1_SIZE || size == FALLOUTNV_EXE2_SIZE || size == FALLOUTNV_EXE3_SIZE) : (size == FALLOUT3_EXE_SIZE))
-        {
-            FILE* xlive = fopen("xlive.dll", "rb");
+            HANDLE hProc;
 
-            if (xlive != NULL)
+            hProc = OpenProcess(PROCESS_ALL_ACCESS, false, pi.dwProcessId);
+
+            if (hProc)
             {
-                fseek(xlive, 0, SEEK_END);
-                size = ftell(xlive);
-                fclose(xlive);
-            }
+                INJECT data;
+                HINSTANCE hDll;
+                TCHAR curdir[MAX_PATH + 1];
+                LPVOID start, thread;
+                DWORD codesize;
 
-            if (Bethesda::NewVegas || (xlive != NULL && size == XLIVE_DLL_SIZE))
-            {
-                FILE* fose = fopen(Bethesda::NewVegas ? "nvse_1_1.dll" : "fose_1_7.dll", "rb");
+                GetModuleFileName(GetModuleHandle(NULL), (LPTSTR) curdir, MAX_PATH);
+                PathRemoveFileSpec(curdir);
 
-                if (fose != NULL)
-                {
-                    fclose(fose);
+                strcat(curdir, "\\vaultmp.dll");
+                strcpy(data.DLLpath, curdir);
+                strcpy(data.DLLjump, "DLLjump");
 
-                    FILE* vaultmp = fopen("vaultmp.dll", "rb");
+                hDll = LoadLibrary("kernel32.dll");
+                data.LoadLibrary = (fLoadLibrary) GetProcAddress(hDll, "LoadLibraryA");
+                data.GetProcAddress = (fGetProcAddress) GetProcAddress(hDll, "GetProcAddress");
+                data.NewVegas = Bethesda::NewVegas;
 
-                    if (vaultmp != NULL)
-                    {
-                        fseek(vaultmp, 0, SEEK_END);
-                        size = ftell(vaultmp);
-                        fclose(vaultmp);
+                codesize = (DWORD) InjectedEnd - (DWORD) InjectedCode;
 
-                        if (size == VAULTMP_DLL_SIZE)
-                        {
-                            if (Command::lookupProgramID(module) == 0)
-                            {
-                                STARTUPINFO si;
-                                PROCESS_INFORMATION pi;
+                start = VirtualAllocEx(hProc, 0, codesize + sizeof(INJECT), MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+                thread = (LPVOID) ((DWORD) start + sizeof(INJECT));
 
-                                ZeroMemory(&si, sizeof(si));
-                                ZeroMemory(&pi, sizeof(pi));
-                                si.cb = sizeof(si);
+                WriteProcessMemory(hProc, start, (LPVOID) &data, sizeof(INJECT), NULL);
+                WriteProcessMemory(hProc, thread, (LPVOID) InjectedCode, codesize, NULL);
 
-                                if (CreateProcess(module, NULL, NULL, NULL, FALSE, Bethesda::NewVegas ? 0 : CREATE_SUSPENDED, NULL, NULL, &si, &pi))
-                                {
-                                    if (Bethesda::NewVegas) Sleep(2000); // some decrypt whatsoever needs time
+                CreateRemoteThread(hProc, 0, 0, (LPTHREAD_START_ROUTINE) thread, start, 0, 0);
 
-                                    HANDLE hProc;
+                /* Initalizing vaultmp.exe <-> Fallout3.exe / FalloutNV.exe pipe */
 
-                                    hProc = OpenProcess(PROCESS_ALL_ACCESS, false, pi.dwProcessId);
+                HANDLE* threads;
 
-                                    if (hProc)
-                                    {
-                                        INJECT data;
-                                        HINSTANCE hDll;
-                                        TCHAR curdir[MAX_PATH + 1];
-                                        LPVOID start, thread;
-                                        DWORD codesize;
+                if (!Command::Initialize(module, &CommandHandler, &StringHandler))
+                    return false;
 
-                                        GetModuleFileName(GetModuleHandle(NULL), (LPTSTR) curdir, MAX_PATH);
-                                        PathRemoveFileSpec(curdir);
+                while (!Command::IsAvailable()) Sleep(1); // Some timeout is necessary here, or a signal
 
-                                        strcat(curdir, "\\vaultmp.dll");
-                                        strcpy(data.DLLpath, curdir);
-                                        strcpy(data.DLLjump, "DLLjump");
+                /* Resuming Fallout3.exe */
 
-                                        hDll = LoadLibrary("kernel32.dll");
-                                        data.LoadLibrary = (fLoadLibrary) GetProcAddress(hDll, "LoadLibraryA");
-                                        data.GetProcAddress = (fGetProcAddress) GetProcAddress(hDll, "GetProcAddress");
-                                        data.NewVegas = Bethesda::NewVegas;
+                if (!Bethesda::NewVegas) ResumeThread(pi.hThread);
 
-                                        codesize = (DWORD) InjectedEnd - (DWORD) InjectedCode;
+                CloseHandle(hProc);
 
-                                        start = VirtualAllocEx(hProc, 0, codesize + sizeof(INJECT), MEM_COMMIT, PAGE_EXECUTE_READWRITE);
-                                        thread = (LPVOID) ((DWORD) start + sizeof(INJECT));
-
-                                        WriteProcessMemory(hProc, start, (LPVOID) &data, sizeof(INJECT), NULL);
-                                        WriteProcessMemory(hProc, thread, (LPVOID) InjectedCode, codesize, NULL);
-
-                                        CreateRemoteThread(hProc, 0, 0, (LPTHREAD_START_ROUTINE) thread, start, 0, 0);
-
-                                        /* Initalizing vaultmp.exe <-> Fallout3.exe / FalloutNV.exe pipe */
-
-                                        HANDLE* threads;
-
-                                        threads = Command::Initialize(module, &CommandHandler, &StringHandler);
-
-                                        while (!Command::GetReady() && threads != NULL) Sleep(2);
-
-                                        /* Resuming Fallout3.exe */
-
-                                        if (!Bethesda::NewVegas) ResumeThread(pi.hThread);
-
-                                        CloseHandle(hProc);
-
-                                        return threads;
-                                    }
-                                    else
-                                        MessageBox(NULL, "Failed opening the game process!", "Error", MB_OK | MB_ICONERROR);
-                                }
-                                else
-                                    MessageBox(NULL, "Failed creating the game process!", "Error", MB_OK | MB_ICONERROR);
-                            }
-                            else
-                                MessageBox(NULL, "Either Fallout 3 or Fallout: New Vegas is already runnning!", "Error", MB_OK | MB_ICONERROR);
-                        }
-                        else
-                            MessageBox(NULL, "vaultmp.dll is either corrupted or not up to date!", "Error", MB_OK | MB_ICONERROR);
-                    }
-                    else
-                        MessageBox(NULL, "Could not find vaultmp.dll!", "Error", MB_OK | MB_ICONERROR);
-                }
-                else
-                    MessageBox(NULL, "Could not find FOSE 1.7 / NVSE 1.1!\nhttp://fose.silverlock.org/\nhttp://nvse.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
+                return true;
             }
             else
-                MessageBox(NULL, "xlive.dll is either missing or un-patched!", "Error", MB_OK | MB_ICONERROR);
+                MessageBox(NULL, "Failed opening the game process!", "Error", MB_OK | MB_ICONERROR);
         }
         else
-            MessageBox(NULL, "Fallout3.exe / FalloutNV.exe is either corrupted or not supported!", "Error", MB_OK | MB_ICONERROR);
+            MessageBox(NULL, "Failed creating the game process!", "Error", MB_OK | MB_ICONERROR);
     }
     else
-        MessageBox(NULL, "Could not find either Fallout3.exe or FalloutNV.exe!", "Error", MB_OK | MB_ICONERROR);
+        MessageBox(NULL, "Either Fallout 3 or Fallout: New Vegas is already runnning!", "Error", MB_OK | MB_ICONERROR);
 
-    return NULL;
+    return false;
 }
 
 void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, string name, string pwd, bool NewVegas)
 {
     Bethesda::NewVegas = NewVegas;
+    initialized = false;
 
 #ifdef VAULTMP_DEBUG
     debug = new Debug((char*) "vaultmp");
@@ -855,7 +805,7 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
     Command::SetDebugHandler(debug);
 #endif
 
-    Player::DestroyInstances();
+    Player::Initialize();
     self = new Player(peer->GetMyGUID());
     self->SetPlayerName(name);
     self->SetPlayerRefID("player");
@@ -879,14 +829,11 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
 
         while (query)
         {
-            if (threads != NULL)
+            if (initialized && !Command::IsAvailable())
             {
-                if (WaitForSingleObject(threads[0], 0) != WAIT_TIMEOUT || WaitForSingleObject(threads[1], 0) != WAIT_TIMEOUT)
-                {
-                    BitStream query;
-                    query.Write((MessageID) ID_GAME_END);
-                    peer->Send(&query, HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_SYSTEM, addr, false, 0);
-                }
+                BitStream query;
+                query.Write((MessageID) ID_GAME_END);
+                peer->Send(&query, HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_SYSTEM, addr, false, 0);
             }
 
             for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
@@ -928,9 +875,9 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
 
                     BitStream query;
 
-                    threads = InitializeFallout3(NewVegas);
+                    initialized = InitializeFallout(NewVegas);
 
-                    if (threads != NULL)
+                    if (initialized)
                         query.Write((MessageID) ID_GAME_RUN);
                     else
                         query.Write((MessageID) ID_GAME_END);
@@ -1050,7 +997,9 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
                         player->SetPlayerRefID("none");
                     }
 
+                    Player::StartSession();
                     delete player;
+                    Player::EndSession();
                     break;
                 }
                 case ID_PLAYER_UPDATE:
@@ -1642,16 +1591,8 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
         }
     }
 
-    if (threads != NULL)
-    {
-        Command::Terminate();
-        CloseHandle(threads[0]);
-        CloseHandle(threads[1]);
-        delete[] threads;
-        threads = NULL;
-    }
-
-    delete self;
+    Command::Terminate();
+    Player::DestroyInstances();
 
 #ifdef VAULTMP_DEBUG
     debug->Print((char*) "Network thread is going to terminate...", true);

@@ -6,6 +6,8 @@ using namespace std;
 map<RakNetGUID, string> Player::players;
 map<RakNetGUID, Player*> Player::playersguids;
 map<string, Player*> Player::playersrefs;
+CRITICAL_SECTION Player::cs_player;
+bool Player::initialized = false;
 
 Parameter Player::Param_EnabledPlayers = Parameter(vector<string>(), &Player::GetEnabledRefs);
 Parameter Player::Param_EnabledPlayers_NotSelf = Parameter(vector<string>(), &Player::GetEnabledRefs_NotSelf);
@@ -148,27 +150,59 @@ vector<string> Player::GetEnabledRefs_NotSelf(string cmd)
     return GetRefs(cmd, true, true);
 }
 
+void Player::Initialize()
+{
+    if (!initialized)
+    {
+        InitializeCriticalSection(&cs_player);
+        initialized = true;
+    }
+}
+
 void Player::DestroyInstances()
 {
-    map<RakNetGUID, Player*>::iterator it;
-    int size = playersguids.size();
+    if (initialized)
+    {
+        EnterCriticalSection(&cs_player);
+        LeaveCriticalSection(&cs_player);
+        DeleteCriticalSection(&cs_player);
 
-    if (size == 0)
-        return;
+        map<RakNetGUID, Player*>::iterator it;
+        int size = playersguids.size();
 
-    int i = 0;
-    Player* pPlayers[size];
+        if (size != 0)
+        {
+            int i = 0;
+            Player* pPlayers[size];
 
-    for (it = playersguids.begin(); it != playersguids.end(); ++it, i++)
-        pPlayers[i] = it->second;
+            for (it = playersguids.begin(); it != playersguids.end(); ++it, i++)
+                pPlayers[i] = it->second;
 
-    for (int j = 0; j < size; j++)
-        delete pPlayers[j];
+            for (int j = 0; j < size; j++)
+                delete pPlayers[j];
 
 #ifdef VAULTMP_DEBUG
-    if (debug != NULL)
-        debug->Print((char*) "All player instances destroyed", true);
+            if (debug != NULL)
+                debug->Print((char*) "All player instances destroyed", true);
 #endif
+        }
+
+        players.clear();
+        playersguids.clear();
+        playersrefs.clear();
+
+        initialized = false;
+    }
+}
+
+void Player::StartSession()
+{
+    EnterCriticalSection(&cs_player);
+}
+
+void Player::EndSession()
+{
+    LeaveCriticalSection(&cs_player);
 }
 
 #ifdef VAULTMP_DEBUG

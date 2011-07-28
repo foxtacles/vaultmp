@@ -28,6 +28,8 @@ private:
     static map<RakNetGUID, string> players;
     static map<RakNetGUID, Player*> playersguids;
     static map<string, Player*> playersrefs;
+    static CRITICAL_SECTION cs_player;
+    static bool initialized;
 
     static vector<string> GetRefs(string cmd, bool enabled, bool notself);
 
@@ -70,7 +72,11 @@ public:
     static vector<string> GetAllRefs_NotSelf(string cmd);
     static vector<string> GetEnabledRefs(string cmd);
     static vector<string> GetEnabledRefs_NotSelf(string cmd);
+
+    static void Initialize();
     static void DestroyInstances();
+    static void StartSession();
+    static void EndSession();
 
 #ifdef VAULTMP_DEBUG
     static void SetDebugHandler(Debug* debug);

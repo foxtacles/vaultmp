@@ -34,6 +34,11 @@ DWORD WINAPI InputThread(LPVOID data)
 
 int main(int argc, char* argv[])
 {
+#ifdef VAULTMP_DEBUG
+    if (LoadLibrary("exchndl.dll") == NULL)
+        return 0;
+#endif
+
     printf("Vault-Tec dedicated server %s \n----------------------------------------------------------\n", DEDICATED_VERSION);
 
     bool NewVegas = false;

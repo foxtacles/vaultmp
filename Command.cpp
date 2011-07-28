@@ -9,9 +9,8 @@ ResultHandler Command::resultHandler;
 StringHandler Command::stringHandler;
 bool Command::endThread = false;
 bool Command::wakeup = false;
-bool Command::cmdmutex = false;
-bool Command::cmdsession = false;
 bool Command::initialized = false;
+CRITICAL_SECTION Command::cs_cmd;
 char* Command::module;
 CommandList Command::cmdlist;
 CommandList Command::tmplist;
@@ -28,7 +27,7 @@ Command::Command()
 
 }
 
-HANDLE* Command::Initialize(char* module, ResultHandler resultHandler, StringHandler stringHandler)
+bool Command::Initialize(char* module, ResultHandler resultHandler, StringHandler stringHandler)
 {
     if (!initialized)
     {
@@ -37,8 +36,6 @@ HANDLE* Command::Initialize(char* module, ResultHandler resultHandler, StringHan
 
         endThread = false;
         wakeup = false;
-        cmdmutex = false;
-        cmdsession = false;
 
         if (pipeServer != NULL)
             delete pipeServer;
@@ -54,36 +51,50 @@ HANDLE* Command::Initialize(char* module, ResultHandler resultHandler, StringHan
         pipeClient = new PipeServer();
         pipeServer = new PipeClient();
 
-        HANDLE* threads = new HANDLE[2];
+        hCommandThreadReceive = CreateThread(NULL, 0, CommandThreadReceive, (LPVOID) Command::module, 0, NULL);
+        hCommandThreadSend = CreateThread(NULL, 0, CommandThreadSend, (LPVOID) 0, 0, NULL);
 
-        threads[0] = CreateThread(NULL, 0, CommandThreadReceive, (LPVOID) Command::module, 0, NULL);
-        threads[1] = CreateThread(NULL, 0, CommandThreadSend, (LPVOID) 0, 0, NULL);
-
-        if (threads[0] == NULL || threads[1] == NULL)
+        if (hCommandThreadReceive == NULL || hCommandThreadSend == NULL)
         {
             endThread = true;
-            return NULL;
+            return false;
         }
+
+        InitializeCriticalSection(&cs_cmd);
 
         initialized = true;
 
-        return threads;
+        return true;
     }
 
-    return NULL;
+    return false;
 }
 
-bool Command::Terminate()
+void Command::Terminate()
 {
     if (initialized)
     {
         endThread = true;
-        initialized = false;
+
+        HANDLE threads[2];
+        threads[0] = hCommandThreadReceive;
+        threads[1] = hCommandThreadSend;
+
+        WaitForMultipleObjects(2, threads, TRUE, INFINITE);
+
+        CloseHandle(hCommandThreadReceive);
+        CloseHandle(hCommandThreadSend);
 
         cmdlist.clear();
         tmplist.clear();
         natives.clear();
         defs.clear();
+
+        EnterCriticalSection(&cs_cmd);
+        LeaveCriticalSection(&cs_cmd);
+        DeleteCriticalSection(&cs_cmd);
+
+        initialized = false;
 
         delete[] module;
     }
@@ -122,21 +133,19 @@ DWORD Command::lookupProgramID(const char process[])
     return 0;
 }
 
-bool Command::GetReady()
+bool Command::IsAvailable()
 {
-    return wakeup;
+    return (wakeup && (WaitForSingleObject(hCommandThreadReceive, 0) == WAIT_TIMEOUT) && (WaitForSingleObject(hCommandThreadSend, 0) == WAIT_TIMEOUT));
 }
 
 void Command::StartSession()
 {
-    STARTSESSION();
-    OPENCMD();
+    EnterCriticalSection(&cs_cmd);
 }
 
 void Command::EndSession()
 {
-    ENDSESSION();
-    CLOSECMD();
+    LeaveCriticalSection(&cs_cmd);
 }
 
 void Command::DefineCommand(string name, string def)
@@ -170,9 +179,7 @@ void Command::ExecuteCommand(Native::iterator it, bool loop, int priority, int s
     data.push_back(sleep);
     data.push_back(priority);
 
-    while (!SESSION());
-
-    PUSHCMD((pair<Native::iterator, vector<int> >(it, data)));
+    PUSHCMD((pair<Native::iterator, vector<int> >(it, data))); // Critical section
 }
 
 void Command::ExecuteCommandLoop(string name, int priority, int sleep)
@@ -368,18 +375,18 @@ DWORD WINAPI Command::CommandThreadSend(LPVOID data)
 
         if (!tmplist.empty())
         {
-            OPENCMD();
+            EnterCriticalSection(&cs_cmd);
 
             cmdlist.splice(cmdlist.begin(), tmplist);
 
-            CLOSECMD();
+            LeaveCriticalSection(&cs_cmd);
         }
 
         for (it = cmdlist.begin(); it != cmdlist.end() && !endThread;)
         {
             if (!tmplist.empty())
             {
-                OPENCMD();
+                EnterCriticalSection(&cs_cmd);
 
                 int count = tmplist.size();
 
@@ -401,7 +408,7 @@ DWORD WINAPI Command::CommandThreadSend(LPVOID data)
 
                 insertAt = it_tmp;
 
-                CLOSECMD();
+                LeaveCriticalSection(&cs_cmd);
             }
 
             if (insertAt == it)

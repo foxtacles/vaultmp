@@ -30,10 +30,10 @@ class Bethesda
 
 private:
     static bool NewVegas;
+    static bool initialized;
     static string savegame;
-    static HANDLE* threads;
 
-    static HANDLE* InitializeFallout3(bool NewVegas);
+    static bool InitializeFallout(bool NewVegas);
     static void InitializeCommands();
 
     static DWORD WINAPI InjectedCode(LPVOID addr);
