@@ -219,7 +219,7 @@ HWND CreateMainWindow()
 {
     HWND wnd;
     char wndtitle[sizeof(CLIENT_VERSION) + 64];
-    sprintf(wndtitle, "Vault-Tec Multiplayer Mod %s (FOR TESTING PURPOSES ONLY)", CLIENT_VERSION);
+    snprintf(wndtitle, sizeof(wndtitle), "Vault-Tec Multiplayer Mod %s (FOR TESTING PURPOSES ONLY)", CLIENT_VERSION);
     wnd = CreateWindowEx(0, WND_CLASS_NAME, wndtitle, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, (GetSystemMetrics(SM_CXSCREEN) / 2) - 392, (GetSystemMetrics(SM_CYSCREEN) / 2) - 221, 785, 442, HWND_DESKTOP, NULL, instance, NULL);
     ShowWindow(wnd, SW_SHOWNORMAL);
     UpdateWindow(wnd);
@@ -432,8 +432,8 @@ void RefreshServerList()
 
         char players[16];
         char ping[16];
-        sprintf(players, "%d / %d", entry.GetServerPlayers().first, entry.GetServerPlayers().second);
-        sprintf(ping, "%d", entry.GetServerPing());
+        snprintf(players, sizeof(players), "%d / %d", entry.GetServerPlayers().first, entry.GetServerPlayers().second);
+        snprintf(ping, sizeof(ping), "%d", entry.GetServerPing());
 
         Create4ColItem(wndlistview, addr, (char*) entry.GetServerName().c_str(), players, ping, (char*) entry.GetServerMap().c_str());
     }

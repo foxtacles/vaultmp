@@ -158,7 +158,7 @@ struct Item
     }
 };
 
-struct pPlayerUpdate
+struct pActorUpdate
 {
     unsigned char type;
     RakNetGUID guid;
@@ -167,7 +167,7 @@ struct pPlayerUpdate
     int moving;
 };
 
-struct pPlayerStateUpdate
+struct pActorStateUpdate
 {
     unsigned char type;
     RakNetGUID guid;
@@ -177,14 +177,14 @@ struct pPlayerStateUpdate
     bool dead;
 };
 
-struct pPlayerCellUpdate
+struct pActorCellUpdate
 {
     unsigned char type;
     RakNetGUID guid;
     DWORD cell;
 };
 
-struct pPlayerItemUpdate
+struct pActorItemUpdate
 {
     unsigned char type;
     bool hidden;

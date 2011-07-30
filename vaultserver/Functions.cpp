@@ -39,7 +39,7 @@ cell Functions::vaultmp_GetPlayerName(AMX* amx, const cell* params)
 
     if (player != NULL)
     {
-        string pname = player->GetPlayerName();
+        string pname = player->GetActorName();
         char name[pname.length()];
         strcpy(name, pname.c_str());
 
@@ -62,7 +62,7 @@ cell Functions::vaultmp_GetPlayerPos(AMX* amx, const cell* params)
 
     if (player != NULL)
     {
-        float pos = player->GetPlayerPos((int) params[2]);
+        float pos = player->GetActorPos((int) params[2]);
         return amx_ftoc(pos);
     }
     else
@@ -82,7 +82,7 @@ cell Functions::vaultmp_GetPlayerZAngle(AMX* amx, const cell* params)
 
     if (player != NULL)
     {
-        float angle = player->GetPlayerAngle();
+        float angle = player->GetActorAngle();
         return amx_ftoc(angle);
     }
     else
@@ -102,7 +102,7 @@ cell Functions::vaultmp_GetPlayerHealth(AMX* amx, const cell* params)
 
     if (player != NULL)
     {
-        float health = player->GetPlayerHealth();
+        float health = player->GetActorHealth();
         return amx_ftoc(health);
     }
     else
@@ -122,7 +122,7 @@ cell Functions::vaultmp_GetPlayerBaseHealth(AMX* amx, const cell* params)
 
     if (player != NULL)
     {
-        float baseHealth = player->GetPlayerBaseHealth();
+        float baseHealth = player->GetActorBaseHealth();
         return amx_ftoc(baseHealth);
     }
     else
@@ -142,7 +142,7 @@ cell Functions::vaultmp_GetPlayerCondition(AMX* amx, const cell* params)
 
     if (player != NULL)
     {
-        float cond = player->GetPlayerCondition((int) params[2]);
+        float cond = player->GetActorCondition((int) params[2]);
         return amx_ftoc(cond);
     }
     else
@@ -162,7 +162,7 @@ cell Functions::vaultmp_IsPlayerDead(AMX* amx, const cell* params)
 
     if (player != NULL)
     {
-        return player->IsPlayerDead();
+        return player->IsActorDead();
     }
     else
         i = -1;
@@ -181,7 +181,7 @@ cell Functions::vaultmp_GetPlayerMoving(AMX* amx, const cell* params)
 
     if (player != NULL)
     {
-        return player->GetPlayerMoving();
+        return player->GetActorMoving();
     }
     else
         i = -1;
@@ -200,7 +200,7 @@ cell Functions::vaultmp_IsPlayerAlerted(AMX* amx, const cell* params)
 
     if (player != NULL)
     {
-        return player->IsPlayerAlerted();
+        return player->IsActorAlerted();
     }
     else
         i = -1;
@@ -219,7 +219,7 @@ cell Functions::vaultmp_GetPlayerCell(AMX* amx, const cell* params)
 
     if (player != NULL)
     {
-        return player->GetPlayerNetworkCell();
+        return player->GetActorNetworkCell();
     }
     else
         i = -1;

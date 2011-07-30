@@ -3,19 +3,8 @@
 #include <time.h>
 
 #include "vaultmaster.h"
+#include "../Utils.h"
 #include "MasterServer.h"
-
-void timestamp()
-{
-    time_t ltime;
-    ltime = time(NULL);
-    char t[32];
-    sprintf(t, "[%s", asctime(localtime(&ltime)));
-    char* newline = strchr(t, '\n');
-    *newline = ']';
-    strcat(t, " ");
-    printf(t);
-}
 
 DWORD WINAPI InputThread(LPVOID data)
 {
@@ -37,7 +26,7 @@ int main()
 {
     printf("Vault-Tec MasterServer %s \n----------------------------------------------------------\n", MASTER_VERSION);
 
-    timestamp();
+    Utils::timestamp();
     printf("Initializing RakNet...\n");
 
     HANDLE hMasterThread = MasterServer::InitalizeRakNet();

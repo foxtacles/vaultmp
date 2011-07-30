@@ -1,7 +1,6 @@
 #include <windows.h>
 #include <stdio.h>
 #include <shlwapi.h>
-#include <queue>
 #include <list>
 #include <vector>
 #include <string>
@@ -41,7 +40,7 @@ private:
     struct INJECT;
 
     static Player* self;
-    static queue<Player*> refqueue;
+    static list<Player*> refqueue;
 
     static void CommandHandler(vector<void*> command);
     static void StringHandler(string command);

@@ -267,6 +267,8 @@
 		<Unit filename="..\RakNet\rdlmalloc.h" />
 		<Unit filename="..\ServerEntry.cpp" />
 		<Unit filename="..\ServerEntry.h" />
+		<Unit filename="..\Utils.cpp" />
+		<Unit filename="..\Utils.h" />
 		<Unit filename="MasterServer.cpp" />
 		<Unit filename="MasterServer.h" />
 		<Unit filename="vaultmaster.cpp" />

@@ -8,9 +8,9 @@
 #include "amx/amx.h"
 #include "amx/amxaux.h"
 
-#include "Utils.h"
 #include "Script.h"
 #include "Dedicated.h"
+#include "../Utils.h"
 #include "../Player.h"
 
 class Functions {

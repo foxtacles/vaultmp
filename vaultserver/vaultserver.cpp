@@ -5,7 +5,7 @@
 #include "Dedicated.h"
 #include "Script.h"
 #include "Functions.h"
-#include "Utils.h"
+#include "../Utils.h"
 
 DWORD WINAPI InputThread(LPVOID data)
 {

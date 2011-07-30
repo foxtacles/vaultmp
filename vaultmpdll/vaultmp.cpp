@@ -253,8 +253,7 @@ void Fallout3commandNotify() {
 
     char format[MAX_OUTPUT_LENGTH + 3];
     ZeroMemory(format, sizeof(format));
-
-    sprintf(format, "st:%s", Fallout3output);
+    snprintf(format, sizeof(format), "st:%s", Fallout3output);
     string output(format);
     pipeClient.Send(&output);
 }
@@ -263,8 +262,7 @@ void Fallout3commandHandler() {
 
     char format[MAX_OUTPUT_LENGTH + 3];
     ZeroMemory(format, sizeof(format));
-
-    sprintf(format, "op:%x %x %llx %x %x %x %x", Fallout3_opcode, Fallout3_refID, Fallout3_result, Fallout3_coord, Fallout3_setcoord, Fallout3_valcoord, Fallout3_newRefID);
+    snprintf(format, sizeof(format), "op:%x %x %llx %x %x %x %x", Fallout3_opcode, Fallout3_refID, Fallout3_result, Fallout3_coord, Fallout3_setcoord, Fallout3_valcoord, Fallout3_newRefID);
     string output(format);
     pipeClient.Send(&output);
 }

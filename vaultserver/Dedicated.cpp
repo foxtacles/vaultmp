@@ -124,14 +124,10 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
     debug = new Debug((char*) "vaultserver");
 
     char text[128];
-    ZeroMemory(text, sizeof(text));
-    sprintf(text, "Vault-Tec Multiplayer Mod Dedicated server debug log (%s)", DEDICATED_VERSION);
+    snprintf(text, sizeof(text), "Vault-Tec Multiplayer Mod Dedicated server debug log (%s)", DEDICATED_VERSION);
     debug->Print(text, false);
-
-    ZeroMemory(text, sizeof(text));
-    sprintf(text, "Local host: %s (game: %s)", peer->GetMyBoundAddress().ToString(), self->IsNewVegas() ? (char*) "Fallout New Vegas" : (char*) "Fallout 3");
+    snprintf(text, sizeof(text), "Local host: %s (game: %s)", peer->GetMyBoundAddress().ToString(), self->IsNewVegas() ? (char*) "Fallout New Vegas" : (char*) "Fallout 3");
     debug->Print(text, false);
-
     debug->Print((char*) "Visit www.vaultmp.com for help and upload this log if you experience problems with the mod.", false);
     debug->Print((char*) "-----------------------------------------------------------------------------------------------------", false);
     //debug->PrintSystem();
@@ -192,8 +188,8 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                 {
                     delete player;
 
-                    map<RakNetGUID, string> players = Player::GetPlayerList();
-                    map<RakNetGUID, string>::iterator it;
+                    map<RakNetGUID, Player*> players = Player::GetPlayerList();
+                    map<RakNetGUID, Player*>::iterator it;
 
                     BitStream query(packet->data, packet->length, false);
                     query.IgnoreBytes(sizeof(MessageID));
@@ -358,8 +354,8 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
             }
             case ID_GAME_START:
             {
-                map<RakNetGUID, string> players = Player::GetPlayerList();
-                map<RakNetGUID, string>::iterator it;
+                map<RakNetGUID, Player*> players = Player::GetPlayerList();
+                map<RakNetGUID, Player*>::iterator it;
 
                 Client* client = Client::GetClientFromGUID(packet->guid);
                 string name = client->GetAuthName();
@@ -385,7 +381,7 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                 {
                     RakNetGUID guid = it->first;
                     Player* player = Player::GetPlayerFromGUID(guid);
-                    string name = player->GetPlayerName();
+                    string name = player->GetActorName();
                     RakString pname(name.c_str());
 
                     query.Write((MessageID) ID_NEW_PLAYER);
@@ -394,23 +390,22 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                     peer->Send(&query, HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_SYSTEM, packet->guid, false, 0);
                     query.Reset();
 
-                    Inventory* handle = player->GetPlayerInventory();
-
-                    if (handle != NULL && !handle->IsEmpty())
+                    if (!player->IsEmpty())
                     {
-                        list<Item*> items = handle->GetItemList();
+                        list<Item*> items = player->GetItemList();
                         list<Item*>::iterator it2;
 
                         for (it2 = items.begin(); it2 != items.end(); ++it2)
                         {
-                            pPlayerItemUpdate item = player->GetPlayerItemUpdateStruct(*it2);
-                            peer->Send((char*) &item, sizeof(pPlayerItemUpdate), HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_PLAYER_ITEM_UPDATE, packet->guid, false, 0);
+                            pActorItemUpdate item = player->GetActorItemUpdateStruct(*it2);
+                            item.guid = guid;
+                            peer->Send((char*) &item, sizeof(pActorItemUpdate), HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_PLAYER_ITEM_UPDATE, packet->guid, false, 0);
                         }
                     }
                 }
 
-                Player* player = new Player(packet->guid);
-                player->SetPlayerName(name);
+                Player* player = new Player(packet->guid, IsNewVegas() ? "8D0E7" : "30D82");
+                player->SetActorName(name);
 
                 int ret = 1;
 
@@ -428,42 +423,42 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
             }
             case ID_PLAYER_UPDATE:
             {
-                pPlayerUpdate* update = (pPlayerUpdate*) packet->data;
+                pActorUpdate* update = (pActorUpdate*) packet->data;
 
-                if (packet->length != sizeof(pPlayerUpdate))
+                if (packet->length != sizeof(pActorUpdate))
                     break;
 
                 Player* player = Player::GetPlayerFromGUID(packet->guid);
 
-                player->SetPlayerPos(X_AXIS, update->X);
-                player->SetPlayerPos(Y_AXIS, update->Y);
-                player->SetPlayerPos(Z_AXIS, update->Z);
-                player->SetPlayerAngle(update->A);
-                player->SetPlayerAlerted(update->alerted);
-                player->SetPlayerMoving(update->moving);
+                player->SetActorPos(X_AXIS, update->X);
+                player->SetActorPos(Y_AXIS, update->Y);
+                player->SetActorPos(Z_AXIS, update->Z);
+                player->SetActorAngle(update->A);
+                player->SetActorAlerted(update->alerted);
+                player->SetActorMoving(update->moving);
 
-                player->UpdatePlayerUpdateStruct(update);
+                player->UpdateActorUpdateStruct(update);
 
-                map<RakNetGUID, string> players = Player::GetPlayerList();
-                map<RakNetGUID, string>::iterator it;
+                map<RakNetGUID, Player*> players = Player::GetPlayerList();
+                map<RakNetGUID, Player*>::iterator it;
 
                 for (it = players.begin(); it != players.end(); ++it)
                 {
                     RakNetGUID guid = it->first;
-                    if (guid != packet->guid) peer->Send((char*) update, sizeof(pPlayerUpdate), MEDIUM_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_PLAYER_UPDATE, guid, false, 0);
+                    if (guid != packet->guid) peer->Send((char*) update, sizeof(pActorUpdate), MEDIUM_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_PLAYER_UPDATE, guid, false, 0);
                 }
                 break;
             }
             case ID_PLAYER_STATE_UPDATE:
             {
-                pPlayerStateUpdate* update = (pPlayerStateUpdate*) packet->data;
+                pActorStateUpdate* update = (pActorStateUpdate*) packet->data;
 
-                if (packet->length != sizeof(pPlayerStateUpdate))
+                if (packet->length != sizeof(pActorStateUpdate))
                     break;
 
                 Player* player = Player::GetPlayerFromGUID(packet->guid);
 
-                if (update->dead == true && player->IsPlayerDead() != true)
+                if (update->dead == true && player->IsActorDead() != true)
                 {
                     int ret = 1;
 
@@ -479,33 +474,33 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                     }
                 }
 
-                player->SetPlayerHealth(update->health);
-                player->SetPlayerBaseHealth(update->baseHealth);
-                player->SetPlayerCondition(COND_PERCEPTION, update->conds[COND_PERCEPTION]);
-                player->SetPlayerCondition(COND_ENDURANCE, update->conds[COND_ENDURANCE]);
-                player->SetPlayerCondition(COND_LEFTATTACK, update->conds[COND_LEFTATTACK]);
-                player->SetPlayerCondition(COND_RIGHTATTACK, update->conds[COND_RIGHTATTACK]);
-                player->SetPlayerCondition(COND_LEFTMOBILITY, update->conds[COND_LEFTMOBILITY]);
-                player->SetPlayerCondition(COND_RIGHTMOBILITY, update->conds[COND_RIGHTMOBILITY]);
-                player->SetPlayerDead(update->dead);
+                player->SetActorHealth(update->health);
+                player->SetActorBaseHealth(update->baseHealth);
+                player->SetActorCondition(COND_PERCEPTION, update->conds[COND_PERCEPTION]);
+                player->SetActorCondition(COND_ENDURANCE, update->conds[COND_ENDURANCE]);
+                player->SetActorCondition(COND_LEFTATTACK, update->conds[COND_LEFTATTACK]);
+                player->SetActorCondition(COND_RIGHTATTACK, update->conds[COND_RIGHTATTACK]);
+                player->SetActorCondition(COND_LEFTMOBILITY, update->conds[COND_LEFTMOBILITY]);
+                player->SetActorCondition(COND_RIGHTMOBILITY, update->conds[COND_RIGHTMOBILITY]);
+                player->SetActorDead(update->dead);
 
-                player->UpdatePlayerStateUpdateStruct(update);
+                player->UpdateActorStateUpdateStruct(update);
 
-                map<RakNetGUID, string> players = Player::GetPlayerList();
-                map<RakNetGUID, string>::iterator it;
+                map<RakNetGUID, Player*> players = Player::GetPlayerList();
+                map<RakNetGUID, Player*>::iterator it;
 
                 for (it = players.begin(); it != players.end(); ++it)
                 {
                     RakNetGUID guid = it->first;
-                    if (guid != packet->guid) peer->Send((char*) update, sizeof(pPlayerStateUpdate), HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_PLAYER_STATE_UPDATE, guid, false, 0);
+                    if (guid != packet->guid) peer->Send((char*) update, sizeof(pActorStateUpdate), HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_PLAYER_STATE_UPDATE, guid, false, 0);
                 }
                 break;
             }
             case ID_PLAYER_CELL_UPDATE:
             {
-                pPlayerCellUpdate* update = (pPlayerCellUpdate*) packet->data;
+                pActorCellUpdate* update = (pActorCellUpdate*) packet->data;
 
-                if (packet->length != sizeof(pPlayerCellUpdate))
+                if (packet->length != sizeof(pActorCellUpdate))
                     break;
 
                 Player* player = Player::GetPlayerFromGUID(packet->guid);
@@ -525,66 +520,59 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
                     ret = Script::Call(amx, (char*) "OnPlayerCellChange", (char*) "ii", args);
                 }
 
-                player->SetPlayerGameCell(update->cell);
-                player->SetPlayerNetworkCell(update->cell);
+                player->SetActorGameCell(update->cell);
+                player->SetActorNetworkCell(update->cell);
 
-                player->UpdatePlayerCellUpdateStruct(update);
+                player->UpdateActorCellUpdateStruct(update);
 
-                map<RakNetGUID, string> players = Player::GetPlayerList();
-                map<RakNetGUID, string>::iterator it;
+                map<RakNetGUID, Player*> players = Player::GetPlayerList();
+                map<RakNetGUID, Player*>::iterator it;
 
                 for (it = players.begin(); it != players.end(); ++it)
                 {
                     RakNetGUID guid = it->first;
-                    if (guid != packet->guid) peer->Send((char*) update, sizeof(pPlayerCellUpdate), HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_PLAYER_CELL_UPDATE, guid, false, 0);
+                    if (guid != packet->guid) peer->Send((char*) update, sizeof(pActorCellUpdate), HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_PLAYER_CELL_UPDATE, guid, false, 0);
                 }
                 break;
             }
             case ID_PLAYER_ITEM_UPDATE:
             {
-                pPlayerItemUpdate* update = (pPlayerItemUpdate*) packet->data;
+                pActorItemUpdate* update = (pActorItemUpdate*) packet->data;
 
-                if (packet->length != sizeof(pPlayerItemUpdate))
+                if (packet->length != sizeof(pActorItemUpdate))
                     break;
 
                 Player* player = Player::GetPlayerFromGUID(packet->guid);
-                Inventory* handle = player->GetPlayerInventory();
-
-                if (handle == NULL)
-                {
-                    handle = new Inventory();
-                    player->SetPlayerInventory(handle);
-                }
 
                 if (update->item.count == 0)
                 {
-                    if (!handle->UpdateItem(string(update->baseID), update->item.condition, update->item.worn))
+                    if (!player->UpdateItem(string(update->baseID), update->item.condition, update->item.worn))
                     {
 
                     }
                 }
                 else if (update->item.count > 0)
                 {
-                    if (!handle->AddItem(string(update->baseID), update->item.count, update->item.type, update->item.condition, update->item.worn))
+                    if (!player->AddItem(string(update->baseID), update->item.count, update->item.type, update->item.condition, update->item.worn))
                     {
 
                     }
                 }
                 else if (update->item.count < 0)
                 {
-                    if (!handle->RemoveItem(string(update->baseID), abs(update->item.count)))
+                    if (!player->RemoveItem(string(update->baseID), abs(update->item.count)))
                     {
 
                     }
                 }
 
-                map<RakNetGUID, string> players = Player::GetPlayerList();
-                map<RakNetGUID, string>::iterator it;
+                map<RakNetGUID, Player*> players = Player::GetPlayerList();
+                map<RakNetGUID, Player*>::iterator it;
 
                 for (it = players.begin(); it != players.end(); ++it)
                 {
                     RakNetGUID guid = it->first;
-                    if (guid != packet->guid) peer->Send((char*) update, sizeof(pPlayerItemUpdate), HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_PLAYER_ITEM_UPDATE, guid, false, 0);
+                    if (guid != packet->guid) peer->Send((char*) update, sizeof(pActorItemUpdate), HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_PLAYER_ITEM_UPDATE, guid, false, 0);
                 }
                 break;
             }

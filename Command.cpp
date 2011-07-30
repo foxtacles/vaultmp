@@ -219,7 +219,7 @@ list<string> Command::Eval(string name, string def, ParamContainer param)
             for (it = param.first.rbegin(); it != param.first.rend(); ++it, i++)
             {
                 char token[4];
-                sprintf(token, "%%%d", i);
+                snprintf(token, sizeof(token), "%%%d", i);
                 if (def.find(token) == string::npos)
                     return result;
 
@@ -245,7 +245,7 @@ list<string> Command::Eval(string name, string def, ParamContainer param)
                     int idx = ((int) (i / mult[j])) % lists.at(j)->first.size();
 
                     char token[4];
-                    sprintf(token, "%%%d", j);
+                    snprintf(token, sizeof(token), "%%%d", j);
 
                     cmd.replace(cmd.find(token), strlen(token), lists.at(j)->first.at(idx));
                 }
@@ -447,9 +447,7 @@ DWORD WINAPI Command::CommandThreadSend(LPVOID data)
                     if (debug != NULL)
                     {
                         char text[128];
-                        ZeroMemory(text, sizeof(text));
-
-                        sprintf(text, "Executing command (%s, sleep: %d)", send.c_str(), data->at(1));
+                        snprintf(text, sizeof(text), "Executing command (%s, sleep: %d)", send.c_str(), data->at(1));
                         debug->Print(text, true);
                     }
 #endif

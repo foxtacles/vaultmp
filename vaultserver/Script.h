@@ -9,7 +9,7 @@
 #include "amx/amx.h"
 #include "amx/amxaux.h"
 
-#include "Utils.h"
+#include "../Utils.h"
 
 class Script {
 

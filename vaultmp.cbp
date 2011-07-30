@@ -43,10 +43,14 @@
 			<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\libwinmm.a" />
 			<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\libws2_32.a" />
 		</Linker>
+		<Unit filename="Actor.cpp" />
+		<Unit filename="Actor.h" />
 		<Unit filename="Bethesda.cpp" />
 		<Unit filename="Bethesda.h" />
 		<Unit filename="Command.cpp" />
 		<Unit filename="Command.h" />
+		<Unit filename="CriticalSection.cpp" />
+		<Unit filename="CriticalSection.h" />
 		<Unit filename="Data.h" />
 		<Unit filename="Debug.cpp" />
 		<Unit filename="Debug.h" />

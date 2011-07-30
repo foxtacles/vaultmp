@@ -97,12 +97,9 @@ void Inventory::Initialize(bool NewVegas)
         if (debug != NULL)
         {
             char text[128];
-            ZeroMemory(text, sizeof(text));
-            sprintf(text, "Successfully registered %d Fallout items", Item_map.size());
+            snprintf(text, sizeof(text), "Successfully registered %d Fallout items", Item_map.size());
             debug->Print(text, true);
-
-            ZeroMemory(text, sizeof(text));
-            sprintf(text, "%d items could not be resolved or have an invalid format", (NewVegas ? (sizeof(FalloutNVItems) / 8) : (sizeof(Fallout3Items) / 8)) - Item_map.size());
+            snprintf(text, sizeof(text), "%d items could not be resolved or have an invalid format", (NewVegas ? (sizeof(FalloutNVItems) / 8) : (sizeof(Fallout3Items) / 8)) - Item_map.size());
             debug->Print(text, true);
         }
 #endif
@@ -139,9 +136,7 @@ void Inventory::RegisterIndex(string mod, string idx)
     if (debug != NULL)
     {
         char text[128];
-        ZeroMemory(text, sizeof(text));
-
-        sprintf(text, "Registered Fallout mod index (%s => %s)", mod.c_str(), idx.c_str());
+        snprintf(text, sizeof(text), "Registered Fallout mod index (%s => %s)", mod.c_str(), idx.c_str());
         debug->Print(text, true);
     }
 #endif
@@ -157,11 +152,15 @@ void Inventory::SetDebugHandler(Debug* debug)
 }
 #endif
 
-Inventory* Inventory::TransferInventory()
+Inventory* Inventory::TransferInventory(Inventory* dest)
 {
-    Inventory* inv = internal;
+    if (dest == NULL)
+        return NULL;
+
+    internal->Copy(dest);
+    delete internal;
     internal = new Inventory();
-    return inv;
+    return dest;
 }
 
 map<const char*, const char*, str_compare>::iterator Inventory::GetItemReference(string baseID)
@@ -253,9 +252,7 @@ bool Inventory::AddItem(string baseID, int count, int type, float condition, boo
         if (debug != NULL && this != internal)
         {
             char text[128];
-            ZeroMemory(text, sizeof(text));
-
-            sprintf(text, "Added item \"%s\" (%s, count: %d, condition: %f, worn: %d) to inventory %08x", it->second, it->first, count, condition, (int) worn, this);
+            snprintf(text, sizeof(text), "Added item \"%s\" (%s, count: %d, condition: %f, worn: %d) to inventory %08x", it->second, it->first, count, condition, (int) worn, this);
             debug->Print(text, true);
         }
 #endif
@@ -266,9 +263,7 @@ bool Inventory::AddItem(string baseID, int count, int type, float condition, boo
     else if (debug != NULL)
     {
         char text[128];
-        ZeroMemory(text, sizeof(text));
-
-        sprintf(text, "Item is not known to vaultmp (%s)", baseID.c_str());
+        snprintf(text, sizeof(text), "Item is not known to vaultmp (%s)", baseID.c_str());
         debug->Print(text, true);
     }
 #endif
@@ -314,9 +309,7 @@ bool Inventory::RemoveItem(string baseID, int count)
         if (debug != NULL)
         {
             char text[128];
-            ZeroMemory(text, sizeof(text));
-
-            sprintf(text, "Removed %d items \"%s\" (%s) from inventory %08x", s_count, it->second, it->first, this);
+            snprintf(text, sizeof(text), "Removed %d items \"%s\" (%s) from inventory %08x", s_count, it->second, it->first, this);
             debug->Print(text, true);
         }
 #endif
@@ -327,9 +320,7 @@ bool Inventory::RemoveItem(string baseID, int count)
     else if (debug != NULL)
     {
         char text[128];
-        ZeroMemory(text, sizeof(text));
-
-        sprintf(text, "Item is not known to vaultmp (%s)", baseID.c_str());
+        snprintf(text, sizeof(text), "Item is not known to vaultmp (%s)", baseID.c_str());
         debug->Print(text, true);
     }
 #endif
@@ -361,9 +352,7 @@ bool Inventory::UpdateItem(string baseID, float condition, bool worn)
         if (debug != NULL)
         {
             char text[128];
-            ZeroMemory(text, sizeof(text));
-
-            sprintf(text, "Updated item \"%s\" (%s, condition: %f, worn: %d) in inventory %08x", it->second, it->first, condition, (int) worn, this);
+            snprintf(text, sizeof(text), "Updated item \"%s\" (%s, condition: %f, worn: %d) in inventory %08x", it->second, it->first, condition, (int) worn, this);
             debug->Print(text, true);
         }
 #endif
@@ -374,9 +363,7 @@ bool Inventory::UpdateItem(string baseID, float condition, bool worn)
     else if (debug != NULL)
     {
         char text[128];
-        ZeroMemory(text, sizeof(text));
-
-        sprintf(text, "Item is not known to vaultmp (%s)", baseID.c_str());
+        snprintf(text, sizeof(text), "Item is not known to vaultmp (%s)", baseID.c_str());
         debug->Print(text, true);
     }
 #endif
@@ -437,7 +424,7 @@ Parameter Inventory::GetItemCountParam(Item* item)
 {
     vector<string> itemdat;
     char count[8];
-    sprintf(count, "%d", item->count);
+    snprintf(count, sizeof(count), "%d", item->count);
     itemdat.push_back(string(count));
     Parameter Param_Item = Parameter(itemdat, &Data::EmptyVector);
     return Param_Item;
@@ -497,16 +484,12 @@ void Inventory::PrintInventory()
         list<Item*>::iterator it;
 
         char text[128];
-        ZeroMemory(text, sizeof(text));
-
-        sprintf(text, "Inventory %08x contains %d items:", this, container.size());
+        snprintf(text, sizeof(text), "Inventory %08x contains %d items:", this, container.size());
         debug->Print(text, true);
 
         for (it = container.begin(); it != container.end(); ++it)
         {
-            ZeroMemory(text, sizeof(text));
-
-            sprintf(text, "Item \"%s\" (%s), count %d, type %d, condition %f, worn %d", (*it)->item->second, (*it)->item->first, (*it)->count, (*it)->type, (*it)->condition, (int) (*it)->worn);
+            snprintf(text, sizeof(text), "Item \"%s\" (%s), count %d, type %d, condition %f, worn %d", (*it)->item->second, (*it)->item->first, (*it)->count, (*it)->type, (*it)->condition, (int) (*it)->worn);
             debug->Print(text, true);
         }
     }

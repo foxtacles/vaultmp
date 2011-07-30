@@ -15,8 +15,8 @@
 #include "../Client.h"
 #include "../Player.h"
 #include "../Data.h"
+#include "../Utils.h"
 #include "Script.h"
-#include "Utils.h"
 #include "vaultserver.h"
 
 #define RAKNET_STANDARD_PORT        1770

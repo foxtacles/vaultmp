@@ -43,8 +43,12 @@
 			<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\libwinmm.a" />
 			<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\libm.a" />
 		</Linker>
+		<Unit filename="..\Actor.cpp" />
+		<Unit filename="..\Actor.h" />
 		<Unit filename="..\Client.cpp" />
 		<Unit filename="..\Client.h" />
+		<Unit filename="..\CriticalSection.cpp" />
+		<Unit filename="..\CriticalSection.h" />
 		<Unit filename="..\Data.h" />
 		<Unit filename="..\Debug.cpp" />
 		<Unit filename="..\Debug.h" />
@@ -293,8 +297,12 @@
 		<Unit filename="..\RakNet\rdlmalloc-options.h" />
 		<Unit filename="..\RakNet\rdlmalloc.cpp" />
 		<Unit filename="..\RakNet\rdlmalloc.h" />
+		<Unit filename="..\Reference.cpp" />
+		<Unit filename="..\Reference.h" />
 		<Unit filename="..\ServerEntry.cpp" />
 		<Unit filename="..\ServerEntry.h" />
+		<Unit filename="..\Utils.cpp" />
+		<Unit filename="..\Utils.h" />
 		<Unit filename="..\vaultmp.h" />
 		<Unit filename="Dedicated.cpp" />
 		<Unit filename="Dedicated.h" />
@@ -302,8 +310,6 @@
 		<Unit filename="Functions.h" />
 		<Unit filename="Script.cpp" />
 		<Unit filename="Script.h" />
-		<Unit filename="Utils.cpp" />
-		<Unit filename="Utils.h" />
 		<Unit filename="amx\amx.c">
 			<Option compilerVar="CC" />
 		</Unit>

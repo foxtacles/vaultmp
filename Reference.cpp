@@ -9,6 +9,13 @@ Reference::Reference(string ref, string base)
     references.push_back(this);
 }
 
+Reference::Reference()
+{
+    this->ref = "";
+    this->base = "";
+    references.push_back(this);
+}
+
 Reference::~Reference()
 {
     references.remove(this);

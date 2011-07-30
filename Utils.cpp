@@ -5,7 +5,7 @@ void Utils::timestamp()
     time_t ltime;
     ltime = time(NULL);
     char t[32];
-    sprintf(t, "[%s", asctime(localtime(&ltime)));
+    snprintf(t, sizeof(t), "[%s", asctime(localtime(&ltime)));
     char* newline = strchr(t, '\n');
     *newline = ']';
     strcat(t, " ");

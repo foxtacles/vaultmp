@@ -32,9 +32,7 @@ void Debug::GetTimeFormat(char* buf, int size, bool file)
 
     tm* local = localtime(&ltime);
     char timeformat[32];
-    ZeroMemory(timeformat, sizeof(timeformat));
-
-    sprintf(timeformat, "%d%c%02d%c%02d%c%02d%c%02d%c%02d", local->tm_year + 1900, '-', local->tm_mon + 1, '-', local->tm_mday, file ? '_' : ' ', local->tm_hour, file ? '-' : ':', local->tm_min, file ? '-' : ':', local->tm_sec);
+    snprintf(timeformat, sizeof(timeformat), "%d%c%02d%c%02d%c%02d%c%02d%c%02d", local->tm_year + 1900, '-', local->tm_mon + 1, '-', local->tm_mday, file ? '_' : ' ', local->tm_hour, file ? '-' : ':', local->tm_min, file ? '-' : ':', local->tm_sec);
 
     if (size > strlen(timeformat))
         strcpy(buf, timeformat);
