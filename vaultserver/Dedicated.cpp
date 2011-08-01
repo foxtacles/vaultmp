@@ -98,7 +98,12 @@ void Dedicated::Announce(bool announce)
     announcetime = GetTimeMS();
 }
 
+#ifdef __WIN32__
 DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
+#else
+void* Dedicated::DedicatedThread(void* data)
+#define THREAD_PRIORITY_NORMAL 1000
+#endif
 {
     sockdescr = new SocketDescriptor(port, 0);
     peer = RakPeerInterface::GetInstance();
@@ -605,13 +610,24 @@ DWORD WINAPI Dedicated::DedicatedThread(LPVOID data)
     delete debug;
 #endif
 
+#ifdef __WIN32__
     return ((DWORD) data);
+#else
+    return data;
+#endif
 }
 
+#ifdef __WIN32__
 HANDLE Dedicated::InitializeServer(int port, int connections, AMX* amx, char* announce, bool query)
+#else
+pthread_t Dedicated::InitializeServer(int port, int connections, AMX* amx, char* announce, bool query)
+#endif
 {
+#ifdef __WIN32__
     HANDLE hDedicatedThread;
-    DWORD DedicatedID;
+#else
+    pthread_t hDedicatedThread;
+#endif
 
     thread = true;
     Dedicated::port = port ? port : RAKNET_STANDARD_PORT;
@@ -621,7 +637,12 @@ HANDLE Dedicated::InitializeServer(int port, int connections, AMX* amx, char* an
     Dedicated::query = query;
 
     Dedicated::self->SetServerPlayers(pair<int, int>(0, Dedicated::connections));
-    hDedicatedThread = CreateThread(NULL, 0, DedicatedThread, (LPVOID) 0, 0, &DedicatedID);
+
+#ifdef __WIN32__
+    hDedicatedThread = CreateThread(NULL, 0, DedicatedThread, (LPVOID) 0, 0, NULL);
+#else
+    pthread_create(&hDedicatedThread, NULL, DedicatedThread, NULL);
+#endif
 
     return hDedicatedThread;
 }

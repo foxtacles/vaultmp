@@ -1,7 +1,9 @@
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
 
+#ifdef __WIN32__
 #include <windows.h>
+#endif
 #include <string>
 
 #define HAVE_STDINT_H

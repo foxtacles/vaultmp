@@ -181,7 +181,7 @@ struct pActorCellUpdate
 {
     unsigned char type;
     RakNetGUID guid;
-    DWORD cell;
+    int cell;
 };
 
 struct pActorItemUpdate

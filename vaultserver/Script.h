@@ -1,7 +1,9 @@
 #ifndef SCRIPT_H
 #define SCRIPT_H
 
+#ifdef __WIN32__
 #include <windows.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -10,6 +12,7 @@
 #include "amx/amxaux.h"
 
 #include "../Utils.h"
+#include "../vaultmp.h"
 
 class Script {
 

@@ -1,3 +1,6 @@
+#ifndef VAULTMP_H
+#define VAULTMP_H
+
 #define MSG_MINTRAYICON (WM_USER + 1)
 
 #define WND_CLASS_NAME "vaultmp"
@@ -6,9 +9,9 @@
 #define RAKNET_MASTER_ADDRESS "127.0.0.1"
 #define RAKNET_MASTER_PORT    1660
 
-#define DEDICATED_VERSION "0.1a revision 132"
-#define MASTER_VERSION "0.1a revision 132"
-#define CLIENT_VERSION "0.1a revision 132"
+#define DEDICATED_VERSION "0.1a revision 133"
+#define MASTER_VERSION "0.1a revision 133"
+#define CLIENT_VERSION "0.1a revision 133"
 
 #define MAX_PLAYER_NAME   16
 #define MAX_PASSWORD_SIZE 16
@@ -44,3 +47,10 @@
 #define FALLOUTNV_EXE1_SIZE 16549704
 #define FALLOUTNV_EXE2_SIZE 16079360
 #define FALLOUTNV_EXE3_SIZE 16544256
+
+#ifndef WIN32
+#define stricmp strcasecmp
+#define ZeroMemory(a, b) memset(a, 0, b)
+#endif
+
+#endif

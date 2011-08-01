@@ -162,8 +162,8 @@ void Actor::DestroyInstances()
 
 
 #ifdef VAULTMP_DEBUG
-            if (debug != NULL)
-                debug->Print((char*) "All actor instances destroyed", true);
+        if (debug != NULL)
+            debug->Print((char*) "All actor instances destroyed", true);
 #endif
 
         actorlist.clear();
@@ -188,12 +188,12 @@ float Actor::GetActorAngle()
     return angle;
 }
 
-DWORD Actor::GetActorGameCell()
+int Actor::GetActorGameCell()
 {
     return gcell;
 }
 
-DWORD Actor::GetActorNetworkCell()
+int Actor::GetActorNetworkCell()
 {
     return ncell;
 }
@@ -476,7 +476,7 @@ bool Actor::SetActorAngle(float angle)
     return true;
 }
 
-bool Actor::SetActorGameCell(DWORD cell)
+bool Actor::SetActorGameCell(int cell)
 {
     if (!nowrite[SKIPFLAG_GETPARENTCELL])
     {
@@ -516,7 +516,7 @@ bool Actor::SetActorGameCell(DWORD cell)
     return false;
 }
 
-bool Actor::SetActorNetworkCell(DWORD cell)
+bool Actor::SetActorNetworkCell(int cell)
 {
     if (cell != 0x00)
     {

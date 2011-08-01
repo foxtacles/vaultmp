@@ -1,10 +1,13 @@
 #ifndef INVENTORY_H
 #define INVENTORY_H
 
+#ifdef __WIN32__
 #include <windows.h>
+#endif
 #include <map>
 #include <list>
 #include <vector>
+#include <stdlib.h>
 
 #include "vaultmp.h"
 #include "Data.h"

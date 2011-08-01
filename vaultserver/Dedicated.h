@@ -1,7 +1,9 @@
 #ifndef DEDICATED_H
 #define DEDICATED_H
 
+#ifdef __WIN32__
 #include <windows.h>
+#endif
 #include <stdio.h>
 
 #include "../RakNet/RakPeerInterface.h"
@@ -28,42 +30,51 @@ using namespace RakNet;
 using namespace Data;
 using namespace std;
 
-class Dedicated {
+class Dedicated
+{
 
-      private:
-              static RakPeerInterface* peer;
-              static SocketDescriptor* sockdescr;
+private:
+    static RakPeerInterface* peer;
+    static SocketDescriptor* sockdescr;
 
-              static int port;
-              static int connections;
-              static AMX* amx;
-              static char* announce;
-              static bool query;
+    static int port;
+    static int connections;
+    static AMX* amx;
+    static char* announce;
+    static bool query;
 
-              static void Announce(bool announce);
-              static TimeMS announcetime;
-              static SystemAddress master;
+    static void Announce(bool announce);
+    static TimeMS announcetime;
+    static SystemAddress master;
 
-              static ServerEntry* self;
+    static ServerEntry* self;
 
-              static DWORD WINAPI DedicatedThread(LPVOID data);
-              static bool thread;
+    #ifdef __WIN32__
+    static DWORD WINAPI DedicatedThread(LPVOID data);
+    #else
+    static void* DedicatedThread(void* data);
+    #endif
+    static bool thread;
 
-              #ifdef VAULTMP_DEBUG
-              static Debug* debug;
-              #endif
+#ifdef VAULTMP_DEBUG
+    static Debug* debug;
+#endif
 
-      public:
-              static HANDLE InitializeServer(int port, int connections, AMX* amx, char* announce, bool query);
-              static void SetServerEntry(ServerEntry* self);
-              static void TerminateThread();
+public:
+    #ifdef __WIN32__
+    static HANDLE InitializeServer(int port, int connections, AMX* amx, char* announce, bool query);
+    #else
+    static pthread_t InitializeServer(int port, int connections, AMX* amx, char* announce, bool query);
+    #endif
+    static void SetServerEntry(ServerEntry* self);
+    static void TerminateThread();
 
-              static void SetServerName(string name);
-              static void SetServerMap(string map);
-              static void SetServerRule(string rule, string value);
-              static bool IsNewVegas();
+    static void SetServerName(string name);
+    static void SetServerMap(string map);
+    static void SetServerRule(string rule, string value);
+    static bool IsNewVegas();
 
-              // static void SetServerConnections(int connections);
+    //static void SetServerConnections(int connections);
 
 };
 

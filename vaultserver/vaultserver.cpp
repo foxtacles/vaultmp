@@ -1,4 +1,6 @@
+#ifdef __WIN32__
 #include <windows.h>
+#endif
 #include <stdio.h>
 
 #include "vaultserver.h"
@@ -7,7 +9,11 @@
 #include "Functions.h"
 #include "../Utils.h"
 
+#ifdef __WIN32__
 DWORD WINAPI InputThread(LPVOID data)
+#else
+void* InputThread(void* data)
+#endif
 {
     char input[64];
 
@@ -25,21 +31,34 @@ DWORD WINAPI InputThread(LPVOID data)
                 Dedicated::SetServerConnections(atoi(param));
         } */
 
-    } while (strcmp(input, "exit") != 0);
+    }
+    while (strcmp(input, "exit") != 0);
 
     Dedicated::TerminateThread();
 
+#ifdef __WIN32__
     return ((DWORD) data);
+#else
+    return data;
+#endif
 }
 
 int main(int argc, char* argv[])
 {
 #ifdef VAULTMP_DEBUG
+#ifdef __WIN32__
     if (LoadLibrary("exchndl.dll") == NULL)
         return 0;
+#else
+    system("ulimit -c unlimited");
+#endif
 #endif
 
-    printf("Vault-Tec dedicated server %s \n----------------------------------------------------------\n", DEDICATED_VERSION);
+#ifdef __WIN32__
+    printf("Vault-Tec dedicated server %s (Windows)\n----------------------------------------------------------\n", DEDICATED_VERSION);
+#else
+    printf("Vault-Tec dedicated server %s (Unix)\n----------------------------------------------------------\n", DEDICATED_VERSION);
+#endif
 
     bool NewVegas = false;
     bool query = false;
@@ -101,20 +120,27 @@ int main(int argc, char* argv[])
     Utils::timestamp();
     printf("Initializing RakNet...\n");
 
+#ifdef __WIN32__
     HANDLE hDedicatedThread = Dedicated::InitializeServer(port, connections, vaultscript, announce ? argv[announce] : 0, query);
     HANDLE hInputThread;
-    DWORD InputID;
-
-    hInputThread = CreateThread(NULL, 0, InputThread, (LPVOID) 0, 0, &InputID);
-
+    hInputThread = CreateThread(NULL, 0, InputThread, (LPVOID) 0, 0, NULL);
     HANDLE threads[2];
     threads[0] = hDedicatedThread;
     threads[1] = hInputThread;
+#else
+    pthread_t threads[2];
+    threads[0] = Dedicated::InitializeServer(port, connections, vaultscript, announce ? argv[announce] : 0, query);
+    pthread_create(&threads[1], NULL, InputThread, NULL);
+#endif
 
+#ifdef __WIN32__
     WaitForMultipleObjects(2, threads, TRUE, INFINITE);
-
     CloseHandle(hDedicatedThread);
     CloseHandle(hInputThread);
+#else
+    pthread_join(threads[0], NULL);
+    pthread_join(threads[1], NULL);
+#endif
 
     if (vaultscript != NULL)
     {

@@ -67,7 +67,7 @@
 # include <tchar.h>
 #elif !defined __T
   typedef char          TCHAR;
-# define __T(string)    string
+# define _T(string)    string
 # define _tchmod        chmod
 # define _tcscat        strcat
 # define _tcschr        strchr
@@ -800,7 +800,7 @@ static cell AMX_NATIVE_CALL n_fmatch(AMX *amx, const cell *params)
 static cell AMX_NATIVE_CALL n_fstat(AMX *amx, const cell *params)
 {
   #if !(defined __WIN32__ || defined _WIN32 || defined WIN32)
-    #define _stat(n,b)  stat(n,b)
+    #define _stat stat
   #endif
   TCHAR *name,fullname[_MAX_PATH]="";
   cell *cptr;
@@ -828,7 +828,8 @@ static cell AMX_NATIVE_CALL n_fstat(AMX *amx, const cell *params)
 static cell AMX_NATIVE_CALL n_fattrib(AMX *amx, const cell *params)
 {
   #if !(defined __WIN32__ || defined _WIN32 || defined WIN32)
-    #define _utime(n,t)  utime(n,t)
+    #define _utime utime
+    #define _utimbuf utimbuf
   #endif
   TCHAR *name,fullname[_MAX_PATH]="";
   int result=0;

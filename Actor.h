@@ -6,6 +6,7 @@
 #include <string>
 #include <list>
 #include <math.h>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -25,8 +26,8 @@ private:
     string name;
     float pos[3];
     float angle;
-    DWORD gcell;
-    DWORD ncell;
+    int gcell;
+    int ncell;
     float health;
     float baseHealth;
     float cond[6];
@@ -64,8 +65,8 @@ public:
     string GetActorName();
     float GetActorPos(int axis);
     float GetActorAngle();
-    DWORD GetActorGameCell();
-    DWORD GetActorNetworkCell();
+    int GetActorGameCell();
+    int GetActorNetworkCell();
     float GetActorHealth();
     float GetActorBaseHealth();
     float GetActorCondition(int cond);
@@ -88,8 +89,8 @@ public:
     bool SetActorName(string name);
     bool SetActorPos(int axis, float pos);
     bool SetActorAngle(float angle);
-    bool SetActorGameCell(DWORD cell);
-    bool SetActorNetworkCell(DWORD cell);
+    bool SetActorGameCell(int cell);
+    bool SetActorNetworkCell(int cell);
     bool SetActorHealth(float health);
     bool SetActorBaseHealth(float baseHealth);
     bool SetActorCondition(int cond, float value);

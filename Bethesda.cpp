@@ -764,6 +764,7 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, str
 {
     Bethesda::NewVegas = NewVegas;
     initialized = false;
+    refqueue.clear();
 
 #ifdef VAULTMP_DEBUG
     debug = new Debug((char*) "vaultmp");

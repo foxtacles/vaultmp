@@ -1,9 +1,12 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
+#ifdef __WIN32__
 #include <windows.h>
+#endif
 #include <time.h>
 #include <stdio.h>
+#include <string.h>
 
 #include <string>
 
