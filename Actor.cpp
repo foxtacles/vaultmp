@@ -370,18 +370,16 @@ bool Actor::UpdateActorItemUpdateStruct(list<pActorItemUpdate>* items, Inventory
         return false;
 
     this->StartSession();
-    Inventory* invcopy = this->Copy();
+    Inventory invcopy;
+    this->Copy(&invcopy);
     this->EndSession();
 
     Inventory diff;
 
-    Inventory::CreateDiff(inv, invcopy, &diff);
+    Inventory::CreateDiff(inv, &invcopy, &diff);
 
     if (diff.IsEmpty())
-    {
-        delete invcopy;
         return false;
-    }
 
     items->clear();
 
@@ -392,8 +390,7 @@ bool Actor::UpdateActorItemUpdateStruct(list<pActorItemUpdate>* items, Inventory
     for (it = items_diff.begin(), i = 0; it != items_diff.end(); ++it, i++)
         items->push_back(GetActorItemUpdateStruct(*it));
 
-    invcopy->Copy(inv);
-    delete invcopy;
+    invcopy.Copy(inv);
 
     return true;
 }

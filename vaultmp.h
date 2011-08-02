@@ -9,9 +9,9 @@
 #define RAKNET_MASTER_ADDRESS "127.0.0.1"
 #define RAKNET_MASTER_PORT    1660
 
-#define DEDICATED_VERSION "0.1a revision 133"
+#define DEDICATED_VERSION "0.1a revision 134"
 #define MASTER_VERSION "0.1a revision 133"
-#define CLIENT_VERSION "0.1a revision 133"
+#define CLIENT_VERSION "0.1a revision 134"
 
 #define MAX_PLAYER_NAME   16
 #define MAX_PASSWORD_SIZE 16

@@ -222,7 +222,18 @@ bool Inventory::CreateDiff(Inventory* inv1, Inventory* inv2, Inventory* diff)
     }
 
     for (it = inv2_list.begin(); it != inv2_list.end(); it = inv2_list.erase(it))
-        diff->AddItem(*it);
+    {
+        Item* list2_cur = (*it);
+
+        Item* diff_new = new Item();
+        diff_new->item = list2_cur->item;
+        diff_new->type = list2_cur->type;
+        diff_new->count = list2_cur->count;
+        diff_new->condition = list2_cur->condition;
+        diff_new->worn = list2_cur->worn;
+
+        diff->AddItem(diff_new);
+    }
 
     return true;
 }
