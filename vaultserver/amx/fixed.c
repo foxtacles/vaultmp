@@ -4,7 +4,7 @@
  *  library decimal fixed point numbers with an configurable number of
  *  decimals. The current setting is 3 decimals.
  *
- *  Copyright (c) ITB CompuPhase, 1998-2009
+ *  Copyright (c) ITB CompuPhase, 1998-2011
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not
  *  use this file except in compliance with the License. You may obtain a copy
@@ -18,7 +18,7 @@
  *  License for the specific language governing permissions and limitations
  *  under the License.
  *
- *  Version: $Id: fixed.c 4125 2009-06-15 16:51:06Z thiadmer $
+ *  Version: $Id: fixed.c 4523 2011-06-21 15:03:47Z thiadmer $
  */
 #include <assert.h>
 #include <stdio.h>      /* for NULL */
@@ -49,7 +49,7 @@ static cell AMX_NATIVE_CALL n_strfixed(AMX *amx,const cell *params)
   long multiplier,divisor;
   int len,sign=1;
 
-  amx_GetAddr(amx,params[1],&cstr);
+  cstr=amx_Address(amx,params[1]);
   amx_StrLen(cstr,&len);
   if (len>=50) {
     amx_RaiseError(amx,AMX_ERR_NATIVE);
@@ -567,7 +567,7 @@ static cell AMX_NATIVE_CALL n_fround(AMX *amx,const cell *params)
 
   (void)amx;
   switch (params[2]) {
-  case 1:       /* round downwards (truncate) */
+  case 1:       /* round downwards */
     value=params[1] / MULTIPLIER;
     if (params[1]<0 && (params[1] % MULTIPLIER)!=0)
       value--;
@@ -711,6 +711,14 @@ static cell AMX_NATIVE_CALL n_fabs(AMX *amx,const cell *params)
   return (result>=0) ? result : -result;
 }
 
+/* fint(Fixed:value)
+ */
+static cell AMX_NATIVE_CALL n_fint(AMX *amx,const cell *params)
+{
+  (void)amx;
+  return params[1] / MULTIPLIER;
+}
+
 #if defined __cplusplus
   extern "C"
 #endif
@@ -725,6 +733,7 @@ const AMX_NATIVE_INFO fixed_Natives[] = {
   { "fsqroot",  n_fsqroot },
   { "fpower",   n_fpower },
   { "fabs",     n_fabs },
+  { "fint",     n_fint }, // also add user-defined operator "="
   { NULL, NULL }        /* terminator */
 };
 

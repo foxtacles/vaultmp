@@ -3,7 +3,6 @@
 
 #include "CriticalSection.h"
 
-#include <string>
 #include <list>
 
 using namespace std;
@@ -14,22 +13,22 @@ class Reference : public CriticalSection
 private:
     static list<Reference*> references;
 
-    string ref;
-    string base;
+    unsigned int refID;
+    unsigned int baseID;
 
 protected:
-    Reference(string ref, string base);
+    Reference(unsigned int refID, unsigned int baseID);
     Reference();
     virtual ~Reference();
 
 public:
     static list<Reference*> GetReferences();
 
-    void SetReference(string ref);
-    void SetBase(string base);
+    void SetReference(unsigned int refID);
+    void SetBase(unsigned int baseID);
 
-    string GetReference();
-    string GetBase();
+    unsigned int GetReference();
+    unsigned int GetBase();
 
 };
 

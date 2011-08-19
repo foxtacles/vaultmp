@@ -4,6 +4,8 @@
 #include <string>
 #include <map>
 
+#include "vaultmp.h"
+
 using namespace std;
 
 class ServerEntry
@@ -16,7 +18,7 @@ private:
     pair<int, int> players;
     int ping;
 
-    bool NewVegas;
+    int game;
 
 public:
     void SetServerName(string name);
@@ -30,10 +32,10 @@ public:
     std::map<string, string> GetServerRules();
     pair<int, int> GetServerPlayers();
     int GetServerPing();
-    bool IsNewVegas();
+    int GetGame();
 
-    ServerEntry(bool NewVegas);
-    ServerEntry(string name, string map, pair<int, int> players, int ping, bool NewVegas);
+    ServerEntry(int game);
+    ServerEntry(string name, string map, pair<int, int> players, int ping, int game);
 };
 
 #endif

@@ -13,7 +13,10 @@
 #include "vaultmp.h"
 #include "Player.h"
 #include "Inventory.h"
-#include "Command.h"
+#include "Interface.h"
+#include "Lockable.h"
+#include "Network.h"
+#include "VaultException.h"
 #include "Data.h"
 
 #ifdef VAULTMP_DEBUG
@@ -26,13 +29,14 @@ using namespace std;
 
 class Bethesda
 {
+friend class Network;
 
 private:
-    static bool NewVegas;
-    static bool initialized;
+    static int game;
     static string savegame;
+    static bool initialized;
 
-    static bool InitializeFallout(bool NewVegas);
+    static void InitializeGame();
     static void InitializeCommands();
 
     static DWORD WINAPI InjectedCode(LPVOID addr);
@@ -42,8 +46,7 @@ private:
     static Player* self;
     static list<Player*> refqueue;
 
-    static void CommandHandler(vector<void*> command);
-    static void StringHandler(string command);
+    static void CommandHandler(signed int key, vector<double> info, double result);
 
 #ifdef VAULTMP_DEBUG
     static Debug* debug;
@@ -51,6 +54,6 @@ private:
 
     Bethesda();
 public:
-    static void InitializeVaultMP(RakPeerInterface* peer, SystemAddress addr, string name, string pwd, bool NewVegas);
+    static void InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, string name, string pwd, int game);
 
 };

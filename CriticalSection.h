@@ -17,11 +17,10 @@ private:
     pthread_mutex_t cs;
 #endif
 
-protected:
+public:
     CriticalSection();
     virtual ~CriticalSection();
 
-public:
     void StartSession();
     void EndSession();
 

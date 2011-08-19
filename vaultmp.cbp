@@ -25,6 +25,7 @@
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-O2" />
 					<Add option="-Wredundant-decls" />
 					<Add option="-Wunreachable-code" />
 				</Compiler>
@@ -43,20 +44,27 @@
 			<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\libwinmm.a" />
 			<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\libws2_32.a" />
 		</Linker>
+		<Unit filename="API.cpp" />
+		<Unit filename="API.h" />
 		<Unit filename="Actor.cpp" />
 		<Unit filename="Actor.h" />
 		<Unit filename="Bethesda.cpp" />
 		<Unit filename="Bethesda.h" />
-		<Unit filename="Command.cpp" />
-		<Unit filename="Command.h" />
 		<Unit filename="CriticalSection.cpp" />
 		<Unit filename="CriticalSection.h" />
 		<Unit filename="Data.h" />
 		<Unit filename="Debug.cpp" />
 		<Unit filename="Debug.h" />
+		<Unit filename="Interface.cpp" />
+		<Unit filename="Interface.h" />
 		<Unit filename="Inventory.cpp" />
 		<Unit filename="Inventory.h" />
 		<Unit filename="Items.h" />
+		<Unit filename="Lockable.cpp" />
+		<Unit filename="Lockable.h" />
+		<Unit filename="Network.h" />
+		<Unit filename="NetworkClient.cpp" />
+		<Unit filename="PacketTypes.h" />
 		<Unit filename="Pipe.cpp" />
 		<Unit filename="Pipe.h" />
 		<Unit filename="Player.cpp" />
@@ -305,6 +313,12 @@
 		<Unit filename="Reference.h" />
 		<Unit filename="ServerEntry.cpp" />
 		<Unit filename="ServerEntry.h" />
+		<Unit filename="Utils.cpp" />
+		<Unit filename="Utils.h" />
+		<Unit filename="Value.cpp" />
+		<Unit filename="Value.h" />
+		<Unit filename="VaultException.cpp" />
+		<Unit filename="VaultException.h" />
 		<Unit filename="ufmod.h" />
 		<Unit filename="vaultmp.cpp" />
 		<Unit filename="vaultmp.h" />

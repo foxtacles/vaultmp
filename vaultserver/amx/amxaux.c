@@ -1,6 +1,6 @@
 /*  Support routines for the Pawn Abstract Machine
  *
- *  Copyright (c) ITB CompuPhase, 2003-2009
+ *  Copyright (c) ITB CompuPhase, 2003-2011
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not
  *  use this file except in compliance with the License. You may obtain a copy
@@ -14,7 +14,7 @@
  *  License for the specific language governing permissions and limitations
  *  under the License.
  *
- *  Version: $Id: amxaux.c 4125 2009-06-15 16:51:06Z thiadmer $
+ *  Version: $Id: amxaux.c 4523 2011-06-21 15:03:47Z thiadmer $
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,7 +22,7 @@
 #include "amx.h"
 #include "amxaux.h"
 
-size_t AMXAPI aux_ProgramSize(char *filename)
+size_t AMXAPI aux_ProgramSize(const char *filename)
 {
   FILE *fp;
   AMX_HEADER hdr;
@@ -37,7 +37,7 @@ size_t AMXAPI aux_ProgramSize(char *filename)
   return (hdr.magic==AMX_MAGIC) ? (size_t)hdr.stp : 0;
 }
 
-int AMXAPI aux_LoadProgram(AMX *amx, char *filename, void *memblock)
+int AMXAPI aux_LoadProgram(AMX *amx, const char *filename, void *memblock)
 {
   FILE *fp;
   AMX_HEADER hdr;
@@ -89,7 +89,7 @@ int AMXAPI aux_FreeProgram(AMX *amx)
   if (amx->base!=NULL) {
     amx_Cleanup(amx);
     free(amx->base);
-    memset(amx,0,sizeof(AMX));
+    memset(amx, 0, sizeof(AMX));
   } /* if */
   return AMX_ERR_NONE;
 }
@@ -97,42 +97,42 @@ int AMXAPI aux_FreeProgram(AMX *amx)
 char * AMXAPI aux_StrError(int errnum)
 {
 static char *messages[] = {
-      /* AMX_ERR_NONE      */ (char*) "(none)",
-      /* AMX_ERR_EXIT      */ (char*) "Forced exit",
-      /* AMX_ERR_ASSERT    */ (char*) "Assertion failed",
-      /* AMX_ERR_STACKERR  */ (char*) "Stack/heap collision (insufficient stack size)",
-      /* AMX_ERR_BOUNDS    */ (char*) "Array index out of bounds",
-      /* AMX_ERR_MEMACCESS */ (char*) "Invalid memory access",
-      /* AMX_ERR_INVINSTR  */ (char*) "Invalid instruction",
-      /* AMX_ERR_STACKLOW  */ (char*) "Stack underflow",
-      /* AMX_ERR_HEAPLOW   */ (char*) "Heap underflow",
-      /* AMX_ERR_CALLBACK  */ (char*) "No (valid) native function callback",
-      /* AMX_ERR_NATIVE    */ (char*) "Native function failed",
-      /* AMX_ERR_DIVIDE    */ (char*) "Divide by zero",
-      /* AMX_ERR_SLEEP     */ (char*) "(sleep mode)",
-      /* AMX_ERR_INVSTATE  */ (char*) "Invalid state",
-      /* 14 */                (char*) "(reserved)",
-      /* 15 */                (char*) "(reserved)",
-      /* AMX_ERR_MEMORY    */ (char*) "Out of memory",
-      /* AMX_ERR_FORMAT    */ (char*) "Invalid/unsupported P-code file format",
-      /* AMX_ERR_VERSION   */ (char*) "File is for a newer version of the AMX",
-      /* AMX_ERR_NOTFOUND  */ (char*) "File or function is not found",
-      /* AMX_ERR_INDEX     */ (char*) "Invalid index parameter (bad entry point)",
-      /* AMX_ERR_DEBUG     */ (char*) "Debugger cannot run",
-      /* AMX_ERR_INIT      */ (char*) "AMX not initialized (or doubly initialized)",
-      /* AMX_ERR_USERDATA  */ (char*) "Unable to set user data field (table full)",
-      /* AMX_ERR_INIT_JIT  */ (char*) "Cannot initialize the JIT",
-      /* AMX_ERR_PARAMS    */ (char*) "Parameter error",
-      /* AMX_ERR_DOMAIN    */ (char*) "Domain error, expression result does not fit in range",
-      /* AMX_ERR_GENERAL   */ (char*) "General error (unknown or unspecific error)",
-      /* AMX_ERR_OVERLAY   */ (char*) "Overlays are unsupported (JIT) or uninitialized",
+      /* AMX_ERR_NONE      */ "(none)",
+      /* AMX_ERR_EXIT      */ "Forced exit",
+      /* AMX_ERR_ASSERT    */ "Assertion failed",
+      /* AMX_ERR_STACKERR  */ "Stack/heap collision (insufficient stack size)",
+      /* AMX_ERR_BOUNDS    */ "Array index out of bounds",
+      /* AMX_ERR_MEMACCESS */ "Invalid memory access",
+      /* AMX_ERR_INVINSTR  */ "Invalid instruction",
+      /* AMX_ERR_STACKLOW  */ "Stack underflow",
+      /* AMX_ERR_HEAPLOW   */ "Heap underflow",
+      /* AMX_ERR_CALLBACK  */ "No (valid) native function callback",
+      /* AMX_ERR_NATIVE    */ "Native function failed",
+      /* AMX_ERR_DIVIDE    */ "Divide by zero",
+      /* AMX_ERR_SLEEP     */ "(sleep mode)",
+      /* AMX_ERR_INVSTATE  */ "Invalid state",
+      /* 14 */                "(reserved)",
+      /* 15 */                "(reserved)",
+      /* AMX_ERR_MEMORY    */ "Out of memory",
+      /* AMX_ERR_FORMAT    */ "Invalid/unsupported P-code file format",
+      /* AMX_ERR_VERSION   */ "File is for a newer version of the AMX",
+      /* AMX_ERR_NOTFOUND  */ "File or function is not found",
+      /* AMX_ERR_INDEX     */ "Invalid index parameter (bad entry point)",
+      /* AMX_ERR_DEBUG     */ "Debugger cannot run",
+      /* AMX_ERR_INIT      */ "AMX not initialized (or doubly initialized)",
+      /* AMX_ERR_USERDATA  */ "Unable to set user data field (table full)",
+      /* AMX_ERR_INIT_JIT  */ "Cannot initialize the JIT",
+      /* AMX_ERR_PARAMS    */ "Parameter error",
+      /* AMX_ERR_DOMAIN    */ "Domain error, expression result does not fit in range",
+      /* AMX_ERR_GENERAL   */ "General error (unknown or unspecific error)",
+      /* AMX_ERR_OVERLAY   */ "Overlays are unsupported (JIT) or uninitialized",
     };
   if (errnum < 0 || errnum >= sizeof messages / sizeof messages[0])
-    return (char*) "(unknown)";
+    return "(unknown)";
   return messages[errnum];
 }
 
-int AMXAPI aux_GetSection(AMX *amx, int section, cell **start, size_t *size)
+int AMXAPI aux_GetSection(const AMX *amx, int section, cell **start, size_t *size)
 {
   AMX_HEADER *hdr;
 

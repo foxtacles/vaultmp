@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
     printf("Vault-Tec dedicated server %s (Unix)\n----------------------------------------------------------\n", DEDICATED_VERSION);
 #endif
 
-    bool NewVegas = false;
+    int game = FALLOUT3;
     bool query = false;
     int announce = 0;
     int script = 0;
@@ -71,8 +71,12 @@ int main(int argc, char* argv[])
     {
         if (strcmp(argv[i], "-q") == 0 || strcmp(argv[i], "-query") == 0)
             query = true;
+        else if (strcmp(argv[i], "-f3") == 0 || strcmp(argv[i], "-fallout3") == 0)
+            game = FALLOUT3;
         else if (strcmp(argv[i], "-nv") == 0 || strcmp(argv[i], "-newvegas") == 0)
-            NewVegas = true;
+            game = NEWVEGAS;
+        else if (strcmp(argv[i], "-ob") == 0 || strcmp(argv[i], "-oblivion") == 0)
+            game = OBLIVION;
         else if (i + 1 < argc)
         {
             if (strcmp(argv[i], "-a") == 0 || strcmp(argv[i], "-announce") == 0)
@@ -87,7 +91,7 @@ int main(int argc, char* argv[])
     }
 
     AMX* vaultscript = NULL;
-    ServerEntry* self = new ServerEntry(NewVegas);
+    ServerEntry* self = new ServerEntry(game);
     Dedicated::SetServerEntry(self);
 
     if (script != 0)

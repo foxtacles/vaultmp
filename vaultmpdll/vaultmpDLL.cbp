@@ -19,6 +19,8 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-O2" />
+			<Add option="-masm=intel" />
 			<Add option="-DBUILDING_DLL=1" />
 		</Compiler>
 		<Linker>
@@ -30,6 +32,8 @@
 		</Linker>
 		<Unit filename="..\Pipe.cpp" />
 		<Unit filename="..\Pipe.h" />
+		<Unit filename="..\Utils.cpp" />
+		<Unit filename="..\Utils.h" />
 		<Unit filename="vaultmp.cpp" />
 		<Unit filename="vaultmp.h" />
 		<Extensions>

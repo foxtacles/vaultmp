@@ -15,12 +15,12 @@ Parameter Player::Param_AllPlayers_NotSelf = Parameter(vector<string>(), &Player
 Debug* Player::debug;
 #endif
 
-Player::Player(RakNetGUID guid, string base) : Actor(base)
+Player::Player(RakNetGUID guid, unsigned int baseID) : Actor(baseID)
 {
     Startup(guid);
 }
 
-Player::Player(RakNetGUID guid, string ref, string base) : Actor(ref, base)
+Player::Player(RakNetGUID guid, unsigned int refID, unsigned int baseID) : Actor(refID, baseID)
 {
     Startup(guid);
 }
@@ -31,12 +31,13 @@ Player::~Player()
 
 #ifdef VAULTMP_DEBUG
     if (debug != NULL)
-    {
-        char text[128];
-        snprintf(text, sizeof(text), "Player object destroyed (ref: %s)", GetReference().c_str());
-        debug->Print(text, true);
-    }
+        debug->PrintFormat("Player object destroyed (ref: %08X)", true, GetReference());
 #endif
+}
+
+RakNetGUID Player::GetPlayerGUID()
+{
+    return guid;
 }
 
 #ifdef VAULTMP_DEBUG
@@ -45,7 +46,7 @@ void Player::SetDebugHandler(Debug* debug)
     Player::debug = debug;
 
     if (debug != NULL)
-        debug->Print((char*) "Attached debug handler to Player class", true);
+        debug->Print("Attached debug handler to Player class", true);
 }
 #endif
 
@@ -56,11 +57,7 @@ void Player::Startup(RakNetGUID guid)
 
 #ifdef VAULTMP_DEBUG
     if (debug != NULL)
-    {
-        char text[128];
-        snprintf(text, sizeof(text), "New player object created (ref: %s, guid: %s)", this->GetReference().c_str(), this->guid.ToString());
-        debug->Print(text, true);
-    }
+        debug->PrintFormat("New player object created (ref: %08X, guid: %s)", true, this->GetReference(), this->guid.ToString());
 #endif
 }
 
@@ -75,64 +72,53 @@ Player* Player::GetPlayerFromGUID(RakNetGUID guid)
     return NULL;
 }
 
-Player* Player::GetPlayerFromRefID(string refID)
+Player* Player::GetPlayerFromRefID(unsigned int refID)
 {
     map<RakNetGUID, Player*>::iterator it;
 
     for (it = playerlist.begin(); it != playerlist.end(); ++it)
     {
-        if (it->second->GetReference().compare(refID) == 0)
+        if (it->second->GetReference() == refID)
             return it->second;
     }
 
     return NULL;
 }
 
-vector<string> Player::GetRefs(string cmd, bool enabled, bool notself)
+vector<string> Player::GetRefs(bool enabled, bool notself, bool enabled_disabled, bool self_notself)
 {
-    int skipflag = MAX_SKIP_FLAGS;
-
-    if (cmd.compare("GetPos") == 0)
-        skipflag = SKIPFLAG_GETPOS;
-    else if (cmd.compare("GetParentCell") == 0)
-        skipflag = SKIPFLAG_GETPARENTCELL;
-    else if (cmd.compare("GetPlayerValue") == 0)
-        skipflag = SKIPFLAG_GETACTORVALUE;
-    else if (cmd.compare("GetDead") == 0)
-        skipflag = SKIPFLAG_GETDEAD;
-
     vector<string> result;
     map<RakNetGUID, Player*>::iterator it;
 
     for (it = playerlist.begin(); it != playerlist.end(); ++it)
     {
-        string refID = it->second->GetReference();
+        unsigned int refID = it->second->GetReference();
 
-        if (!refID.empty() && (!notself || refID.compare("player") != 0) && (!enabled || it->second->GetActorEnabled()) && !it->second->GetActorOverrideFlag(skipflag))
-            result.push_back(refID);
+        if (refID != 0x00 && (!enabled_disabled || it->second->GetActorEnabled() == enabled) && (!self_notself || !notself || refID != PLAYER_REFERENCE))
+            result.push_back(Utils::LongToHex(refID));
     }
 
     return result;
 }
 
-vector<string> Player::GetAllRefs(string cmd)
+vector<string> Player::GetAllRefs()
 {
-    return GetRefs(cmd, false, false);
+    return GetRefs(false, false);
 }
 
-vector<string> Player::GetAllRefs_NotSelf(string cmd)
+vector<string> Player::GetAllRefs_NotSelf()
 {
-    return GetRefs(cmd, false, true);
+    return GetRefs(false, true, false, true);
 }
 
-vector<string> Player::GetEnabledRefs(string cmd)
+vector<string> Player::GetEnabledRefs()
 {
-    return GetRefs(cmd, true, false);
+    return GetRefs(true, false, true, false);
 }
 
-vector<string> Player::GetEnabledRefs_NotSelf(string cmd)
+vector<string> Player::GetEnabledRefs_NotSelf()
 {
-    return GetRefs(cmd, true, true);
+    return GetRefs(true, true, true, true);
 }
 
 void Player::Initialize()
@@ -162,10 +148,9 @@ void Player::DestroyInstances()
                 delete pPlayers[i];
         }
 
-
 #ifdef VAULTMP_DEBUG
             if (debug != NULL)
-                debug->Print((char*) "All player instances destroyed", true);
+                debug->Print("All player instances destroyed", true);
 #endif
 
         playerlist.clear();

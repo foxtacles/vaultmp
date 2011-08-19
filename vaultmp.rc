@@ -1,4 +1,6 @@
-#include "vaultmp.h"
+#define CHIPTUNE                3000
+#define ICON_MAIN               4000
+#define POWERED                 5000
 
 ICON_MAIN      ICON    DISCARDABLE   vaultmp.ico
 CHIPTUNE       RCDATA  DISCARDABLE   the_wasteland.xm

@@ -1,7 +1,7 @@
 /*  Simple "run-time" for the Pawn Abstract Machine, with optional support
  *  for debugging information and overlays.
  *
- *  Copyright (c) ITB CompuPhase, 1997-2009
+ *  Copyright (c) ITB CompuPhase, 1997-2011
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not
  *  use this file except in compliance with the License. You may obtain a copy
@@ -15,7 +15,7 @@
  *  License for the specific language governing permissions and limitations
  *  under the License.
  *
- *  Version: $Id: pawnrun.c 4125 2009-06-15 16:51:06Z thiadmer $
+ *  Version: $Id: pawnrun.c 4523 2011-06-21 15:03:47Z thiadmer $
  */
 #include <assert.h>
 #include <stdio.h>
@@ -48,8 +48,8 @@ static char g_filename[_MAX_PATH];      /* for loading the debug or information
  * extension modules may be dynamically linked (depending on whether
  * support for dynamic linking is enabled).
  */
-extern int AMXEXPORT AMXAPI amx_ConsoleInit(AMX *amx);
-extern int AMXEXPORT AMXAPI amx_CoreInit(AMX *amx);
+extern int AMXAPI amx_ConsoleInit(AMX *amx);
+extern int AMXAPI amx_CoreInit(AMX *amx);
 
 AMX *global_amx;
 int AMXAPI prun_Monitor(AMX *amx);
@@ -162,7 +162,7 @@ int AMXAPI aux_LoadProgram(AMX *amx, char *filename)
   } else {
     size = hdr.stp;
   } /* if */
-  if ((datablock = malloc(size)) == NULL) {
+  if ((datablock = (unsigned char*)malloc(size)) == NULL) {
     fclose(fp);
     return AMX_ERR_MEMORY;
   } /* if */

@@ -3,7 +3,7 @@
  *  Or better said: this file contains macros that maps the function interface
  *  used by minIni to the standard C/C++ file I/O functions.
  *
- *  Copyright (c) ITB CompuPhase, 2008-2009
+ *  Copyright (c) ITB CompuPhase, 2008-2010
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not
  *  use this file except in compliance with the License. You may obtain a copy
@@ -17,7 +17,7 @@
  *  License for the specific language governing permissions and limitations
  *  under the License.
  *
- *  Version: $Id: minGlue.h 4125 2009-06-15 16:51:06Z thiadmer $
+ *  Version: $Id: minGlue.h 4234 2010-03-30 09:04:26Z thiadmer $
  */
 
 /* map required file I/O to the standard C library */

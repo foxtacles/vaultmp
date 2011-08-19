@@ -10,8 +10,8 @@
 #include "RakNet/RakString.h"
 #include "RakNet/MessageIdentifiers.h"
 
-#define PLAYER_REFERENCE 0x00000014
-#define FALLOUT3_TICKS 1
+#define PLAYER_REFERENCE    0x00000014
+#define PLAYER_BASE         0x00000007
 
 using namespace std;
 using namespace RakNet;
@@ -23,10 +23,9 @@ class Player;
 namespace Data
 {
 
-typedef vector<string> (*RetrieveParamVector)(string);
+typedef void (*ResultHandler)(signed int, vector<double>, double);
+typedef vector<string> (*RetrieveParamVector)();
 typedef bool (*RetrieveBooleanFlag)();
-typedef void (*ResultHandler)(vector<void*>);
-typedef void (*StringHandler)(string);
 typedef pair<vector<string>, RetrieveParamVector> Parameter;
 typedef list<Parameter> ParamList;
 typedef pair<ParamList, RetrieveBooleanFlag> ParamContainer;
@@ -36,7 +35,7 @@ static bool AlwaysTrue()
     return true;
 }
 
-static vector<string> EmptyVector(string cmd)
+static vector<string> EmptyVector()
 {
     return vector<string>();
 }
@@ -55,8 +54,10 @@ static const char* XYZ[] = {"X", "Y", "Z"};
 static const char* X[] = {"X"};
 static const char* Y[] = {"Y"};
 static const char* Z[] = {"Z"};
+static const char* Axis[] = {"Axis"};
 static const char* BaseActorValues[] = {"Health"};
 static const char* ActorValues[] = {"Health", "PerceptionCondition", "EnduranceCondition", "LeftAttackCondition", "RightAttackCondition", "LeftMobilityCondition", "RightMobilityCondition"};
+
 static vector<string> data_True(True, True + 1);
 static vector<string> data_False(False, False + 1);
 static vector<string> data_XYZ(XYZ, XYZ + 3);
@@ -65,7 +66,6 @@ static vector<string> data_Y(Y, Y + 1);
 static vector<string> data_Z(Z, Z + 1);
 static vector<string> data_BaseActorValues(BaseActorValues, BaseActorValues + 1);
 static vector<string> data_ActorValues(ActorValues, ActorValues + 7);
-
 static Parameter Param_True = Parameter(data_True, &EmptyVector);
 static Parameter Param_False = Parameter(data_False, &EmptyVector);
 static Parameter Param_XYZ = Parameter(data_XYZ, &EmptyVector);
@@ -77,58 +77,10 @@ static Parameter Param_ActorValues = Parameter(data_ActorValues, &EmptyVector);
 
 enum
 {
-    X_AXIS,
-    Y_AXIS,
-    Z_AXIS,
-};
-
-enum
-{
-    COND_PERCEPTION,
-    COND_ENDURANCE,
-    COND_LEFTATTACK,
-    COND_RIGHTATTACK,
-    COND_LEFTMOBILITY,
-    COND_RIGHTMOBILITY,
-};
-
-enum
-{
-    MOV_IDLE,
-    MOV_FASTFORWARD,
-    MOV_FASTBACKWARD,
-    MOV_FASTLEFT,
-    MOV_FASTRIGHT,
-    MOV_FORWARD,
-    MOV_BACKWARD,
-    MOV_LEFT,
-    MOV_RIGHT,
-};
-
-enum
-{
     ID_MASTER_QUERY = ID_USER_PACKET_ENUM,
     ID_MASTER_ANNOUNCE,
     ID_MASTER_UPDATE,
-    ID_GAME_INIT,
-    ID_GAME_RUN,
-    ID_GAME_START,
-    ID_GAME_END,
-    ID_NEW_PLAYER,
-    ID_PLAYER_LEFT,
-    ID_PLAYER_UPDATE,
-    ID_PLAYER_STATE_UPDATE,
-    ID_PLAYER_CELL_UPDATE,
-    ID_PLAYER_ITEM_UPDATE,
-};
-
-enum
-{
-    CHANNEL_SYSTEM,
-    CHANNEL_PLAYER_UPDATE,
-    CHANNEL_PLAYER_STATE_UPDATE,
-    CHANNEL_PLAYER_CELL_UPDATE,
-    CHANNEL_PLAYER_ITEM_UPDATE,
+    ID_GAME_FIRST,
 };
 
 #pragma pack(push, 1)
@@ -194,16 +146,6 @@ struct pActorItemUpdate
 };
 
 #pragma pack(pop)
-
-enum SkipFlags
-{
-    SKIPFLAG_GETPOS,
-    SKIPFLAG_GETDEAD,
-    SKIPFLAG_GETACTORVALUE,
-    SKIPFLAG_GETPARENTCELL,
-    SKIPFLAG_ITEMUPDATE,
-    MAX_SKIP_FLAGS,
-};
 
 }
 

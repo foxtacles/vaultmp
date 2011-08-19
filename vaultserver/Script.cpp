@@ -49,7 +49,7 @@ int Script::Call(AMX* amx, char name[], char argl[], void* args[], int buf)
     if (err != AMX_ERR_NONE)
         ErrorExit(amx, err);
 
-    cell stackpointer = 0;
+    cell* stackpointer = 0;
     cell* phys_addr[sizeof(argl)];
 
     for (int i = 0; i < sizeof(argl); i++)
@@ -71,8 +71,12 @@ int Script::Call(AMX* amx, char name[], char argl[], void* args[], int buf)
             case 's':
             {
                 char* string = reinterpret_cast<char*>(args[i]);
-                if (stackpointer != 0) amx_PushString(amx, NULL, &phys_addr[count], string, 0, 0);
-                else amx_PushString(amx, &stackpointer, &phys_addr[count], string, 0, 0);
+                if (stackpointer != 0) amx_PushString(amx, &phys_addr[count], string, 0, 0);
+                else
+                {
+                    amx_PushString(amx, &phys_addr[count], string, 0, 0);
+                    stackpointer = phys_addr[count];
+                }
                 count++;
                 break;
             }

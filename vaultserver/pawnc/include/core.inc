@@ -1,6 +1,6 @@
 /* Core functions
  *
- * (c) Copyright 1998-2008, ITB CompuPhase
+ * (c) Copyright 1998-2011, ITB CompuPhase
  * This file is provided as is (no warranties).
  */
 #pragma library Core

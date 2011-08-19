@@ -1,24 +1,30 @@
 #include "Actor.h"
 
-map<string, Actor*> Actor::actorlist;
+using namespace Values;
+
+map<unsigned int, Actor*> Actor::actorlist;
+map<unsigned char, unsigned int> Actor::axis;
+map<unsigned char, unsigned int> Actor::values;
+map<unsigned char, unsigned int> Actor::anims;
 bool Actor::initialized = false;
 
 Parameter Actor::Param_EnabledActors = Parameter(vector<string>(), &Actor::GetEnabledRefs);
+Parameter Actor::Param_DisabledActors = Parameter(vector<string>(), &Actor::GetDisabledRefs);
 Parameter Actor::Param_AllActors = Parameter(vector<string>(), &Actor::GetAllRefs);
 
 #ifdef VAULTMP_DEBUG
 Debug* Actor::debug;
 #endif
 
-Actor::Actor(string base)
+Actor::Actor(unsigned int baseID)
 {
-    Startup("", base);
+    Startup(0x00, baseID);
 }
 
-Actor::Actor(string ref, string base)
+Actor::Actor(unsigned int refID, unsigned int baseID)
 {
-    actorlist.insert(pair<string, Actor*>(ref, this));
-    Startup(ref, base);
+    actorlist.insert(pair<unsigned int, Actor*>(refID, this));
+    Startup(refID, baseID);
 }
 
 Actor::~Actor()
@@ -27,11 +33,7 @@ Actor::~Actor()
 
 #ifdef VAULTMP_DEBUG
     if (debug != NULL)
-    {
-        char text[128];
-        snprintf(text, sizeof(text), "Actor object destroyed (ref: %s)", this->GetReference().c_str());
-        debug->Print(text, true);
-    }
+        debug->PrintFormat("Actor object destroyed (ref: %08X)", true, this->GetReference());
 #endif
 }
 
@@ -41,102 +43,102 @@ void Actor::SetDebugHandler(Debug* debug)
     Actor::debug = debug;
 
     if (debug != NULL)
-        debug->Print((char*) "Attached debug handler to Actor class", true);
+        debug->Print("Attached debug handler to Actor class", true);
 }
 #endif
 
-void Actor::Startup(string ref, string base)
+void Actor::Startup(unsigned int refID, unsigned int baseID)
 {
-    pos[X_AXIS] = 0.00;
-    pos[Y_AXIS] = 0.00;
-    pos[Z_AXIS] = 0.00;
-    angle = 0.00;
-    gcell = 0x00;
-    ncell = 0x00;
-    health = 0.00;
-    baseHealth = 0.00;
-    cond[COND_PERCEPTION] = 0.00;
-    cond[COND_ENDURANCE] = 0.00;
-    cond[COND_LEFTATTACK] = 0.00;
-    cond[COND_RIGHTATTACK] = 0.00;
-    cond[COND_LEFTMOBILITY] = 0.00;
-    cond[COND_RIGHTMOBILITY] = 0.00;
-    dead = false;
-    alerted = false;
-    moving = MOV_IDLE;
-    name = "Actor";
-    enabled = true;
+    map<unsigned char, unsigned int>::iterator it;
 
-    SetReference(ref);
-    SetBase(base);
+    for (it = axis.begin(); it != axis.end(); ++it)
+    {
+        actor_Pos.push_back(Value<double>(it->first));
+        actor_Angle.push_back(Value<double>(it->first));
+    }
 
-    for (int i = 0; i < MAX_SKIP_FLAGS; i++)
-        nowrite[i] = false;
+    for (it = values.begin(); it != values.end(); ++it)
+    {
+        actor_Values.push_back(Value<double>(it->first));
+        actor_BaseValues.push_back(Value<double>(it->first));
+    }
+
+    for (it = anims.begin(); it != anims.end(); ++it)
+        actor_Animations.push_back(Value<bool>(it->first));
+
+    SetReference(refID);
+    SetBase(baseID);
 
 #ifdef VAULTMP_DEBUG
     if (debug != NULL)
-    {
-        char text[128];
-        snprintf(text, sizeof(text), "New actor object created (ref: %s)", ref.c_str());
-        debug->Print(text, true);
-    }
+        debug->PrintFormat("New actor object created (ref: %08X)", true, refID);
 #endif
 }
 
-Actor* Actor::GetActorFromRefID(string refID)
+Actor* Actor::GetActorFromRefID(unsigned int refID)
 {
-    map<string, Actor*>::iterator it;
+    map<unsigned int, Actor*>::iterator it;
 
     for (it = actorlist.begin(); it != actorlist.end(); ++it)
     {
-        if (it->second->GetReference().compare(refID) == 0)
+        if (it->second->GetReference() == refID)
             return it->second;
     }
 
     return NULL;
 }
 
-vector<string> Actor::GetRefs(string cmd, bool enabled)
+vector<string> Actor::GetRefs(bool enabled, bool enabled_disabled)
 {
-    int skipflag = MAX_SKIP_FLAGS;
-
-    if (cmd.compare("GetPos") == 0)
-        skipflag = SKIPFLAG_GETPOS;
-    else if (cmd.compare("GetParentCell") == 0)
-        skipflag = SKIPFLAG_GETPARENTCELL;
-    else if (cmd.compare("GetActorValue") == 0)
-        skipflag = SKIPFLAG_GETACTORVALUE;
-    else if (cmd.compare("GetDead") == 0)
-        skipflag = SKIPFLAG_GETDEAD;
-
     vector<string> result;
-    map<string, Actor*>::iterator it;
+    map<unsigned int, Actor*>::iterator it;
 
     for (it = actorlist.begin(); it != actorlist.end(); ++it)
     {
-        string refID = it->second->GetReference();
+        unsigned int refID = it->second->GetReference();
 
-        if (!refID.empty() && (!enabled || it->second->GetActorEnabled()) && !it->second->GetActorOverrideFlag(skipflag))
-            result.push_back(refID);
+        if (refID != 0x00 && (!enabled_disabled || (it->second->GetActorEnabled() == enabled)))
+            result.push_back(Utils::LongToHex(refID));
     }
 
     return result;
 }
 
-vector<string> Actor::GetAllRefs(string cmd)
+vector<string> Actor::GetEnabledRefs()
 {
-    return GetRefs(cmd, false);
+    return GetRefs(true, true);
 }
 
-vector<string> Actor::GetEnabledRefs(string cmd)
+vector<string> Actor::GetDisabledRefs()
 {
-    return GetRefs(cmd, true);
+    return GetRefs(false, true);
+}
+
+vector<string> Actor::GetAllRefs()
+{
+    return GetRefs();
 }
 
 void Actor::Initialize()
 {
     if (!initialized)
     {
+        vector<unsigned char>::iterator it;
+        vector<unsigned char> data = API::RetrieveAllAxis();
+
+        for (it = data.begin(); it != data.end(); ++it)
+            axis.insert(pair<unsigned char, unsigned int>(*it, axis.size()));
+
+        data = API::RetrieveAllValues();
+
+        for (it = data.begin(); it != data.end(); ++it)
+            values.insert(pair<unsigned char, unsigned int>(*it, values.size()));
+
+        data = API::RetrieveAllAnims();
+
+        for (it = data.begin(); it != data.end(); ++it)
+            anims.insert(pair<unsigned char, unsigned int>(*it, anims.size()));
+
         initialized = true;
     }
 }
@@ -149,7 +151,7 @@ void Actor::DestroyInstances()
 
         if (size != 0)
         {
-            map<string, Actor*>::iterator it;
+            map<unsigned int, Actor*>::iterator it;
             int i = 0;
             Actor* pActors[size];
 
@@ -163,81 +165,83 @@ void Actor::DestroyInstances()
 
 #ifdef VAULTMP_DEBUG
         if (debug != NULL)
-            debug->Print((char*) "All actor instances destroyed", true);
+            debug->Print("All actor instances destroyed", true);
 #endif
 
         actorlist.clear();
+        axis.clear();
+        values.clear();
+        anims.clear();
 
         initialized = false;
     }
 }
 
+unsigned int Actor::LookupIndex(map<unsigned char, unsigned int>& indices, unsigned char index)
+{
+    map<unsigned char, unsigned int>::iterator it;
+    it = indices.find(index);
+
+    if (it == indices.end())
+        throw VaultException("Error in Actor class; identifier %02X not found", (unsigned int) index);
+
+    return it->second;
+}
+
 string Actor::GetActorName()
 {
-    return name;
+    return name.Get();
 }
 
-float Actor::GetActorPos(int axis)
+double Actor::GetActorPos(unsigned char axis)
 {
-    float value = (axis >= X_AXIS && axis <= Z_AXIS) ? pos[axis] : 0.00;
-    return value;
+    return actor_Pos.at(LookupIndex(Actor::axis, axis)).Get();
 }
 
-float Actor::GetActorAngle()
+double Actor::GetActorAngle(unsigned char axis)
 {
-    return angle;
+    return actor_Angle.at(LookupIndex(Actor::axis, axis)).Get();
 }
 
-int Actor::GetActorGameCell()
+unsigned int Actor::GetActorGameCell()
 {
-    return gcell;
+    return cell_Game.Get();
 }
 
-int Actor::GetActorNetworkCell()
+unsigned int Actor::GetActorNetworkCell()
 {
-    return ncell;
+    return cell_Network.Get();
 }
 
-float Actor::GetActorHealth()
+double Actor::GetActorValue(unsigned char index)
 {
-    return health;
+    return actor_Values.at(LookupIndex(Actor::values, index)).Get();
 }
 
-float Actor::GetActorBaseHealth()
+double Actor::GetActorBaseValue(unsigned char index)
 {
-    return baseHealth;
+    return actor_BaseValues.at(LookupIndex(Actor::values, index)).Get();
 }
 
-float Actor::GetActorCondition(int cond)
+bool Actor::IsActorAnimationActive(unsigned char anim)
 {
-    float value = (cond >= COND_PERCEPTION && cond <= COND_LEFTMOBILITY) ? this->cond[cond] : 0.00;
-    return value;
-}
-
-bool Actor::IsActorDead()
-{
-    return dead;
-}
-
-bool Actor::IsActorAlerted()
-{
-    return alerted;
-}
-
-int Actor::GetActorMoving()
-{
-    return moving;
+    return actor_Animations.at(LookupIndex(Actor::anims, anim)).Get();
 }
 
 bool Actor::GetActorEnabled()
 {
-    return enabled;
+    return state_Enabled.Get();
+}
+
+bool Actor::GetActorDead()
+{
+    return state_Dead.Get();
 }
 
 Parameter Actor::GetActorRefParam()
 {
     vector<string> self;
-    if (!GetReference().empty()) self.push_back(GetReference());
+    if (GetReference() != 0x00) self.push_back(Utils::LongToHex(GetReference()));
     Parameter Param_Self = Parameter(self, &Data::EmptyVector);
     return Param_Self;
 }
@@ -245,506 +249,209 @@ Parameter Actor::GetActorRefParam()
 Parameter Actor::GetActorNameParam()
 {
     vector<string> self;
-    self.push_back(name);
+    self.push_back(GetActorName());
     Parameter Param_Self = Parameter(self, &Data::EmptyVector);
     return Param_Self;
 }
 
-pActorUpdate Actor::GetActorUpdateStruct()
-{
-    pActorUpdate data;
-
-    data.type = ID_PLAYER_UPDATE;
-    data.X = pos[X_AXIS];
-    data.Y = pos[Y_AXIS];
-    data.Z = pos[Z_AXIS];
-    data.A = angle;
-    data.alerted = alerted;
-    data.moving = moving;
-
-    return data;
-}
-
-pActorStateUpdate Actor::GetActorStateUpdateStruct()
-{
-    pActorStateUpdate data;
-
-    data.type = ID_PLAYER_STATE_UPDATE;
-    data.health = health;
-    data.baseHealth = baseHealth;
-    data.conds[COND_PERCEPTION] = cond[COND_PERCEPTION];
-    data.conds[COND_ENDURANCE] = cond[COND_ENDURANCE];
-    data.conds[COND_LEFTATTACK] = cond[COND_LEFTATTACK];
-    data.conds[COND_RIGHTATTACK] = cond[COND_RIGHTATTACK];
-    data.conds[COND_LEFTMOBILITY] = cond[COND_LEFTMOBILITY];
-    data.conds[COND_RIGHTMOBILITY] = cond[COND_RIGHTMOBILITY];
-    data.dead = dead;
-
-    return data;
-}
-
-pActorCellUpdate Actor::GetActorCellUpdateStruct()
-{
-    pActorCellUpdate data;
-
-    data.type = ID_PLAYER_CELL_UPDATE;
-    data.cell = gcell;
-
-    return data;
-}
-
-pActorItemUpdate Actor::GetActorItemUpdateStruct(Item* item)
-{
-    pActorItemUpdate data;
-
-    data.type = ID_PLAYER_ITEM_UPDATE;
-    data.hidden = false;
-    data.item = (*item);
-
-    strcpy(data.baseID, item->item->first);
-
-    return data;
-}
-
-bool Actor::UpdateActorUpdateStruct(pActorUpdate* data)
-{
-    pActorUpdate actor = this->GetActorUpdateStruct();
-    actor.guid = data->guid;
-
-    if (actor.type != data->type ||
-            actor.X != data->X ||
-            actor.Y != data->Y ||
-            actor.Z != data->Z ||
-            actor.A != data->A ||
-            actor.alerted != data->alerted ||
-            actor.moving != data->moving)
-    {
-        (*data) = actor;
-        return true;
-    }
-
-    return false;
-}
-
-bool Actor::UpdateActorStateUpdateStruct(pActorStateUpdate* data)
-{
-    pActorStateUpdate actor = this->GetActorStateUpdateStruct();
-    actor.guid = data->guid;
-
-    if (actor.type != data->type ||
-            actor.health != data->health ||
-            actor.baseHealth != data->baseHealth ||
-            actor.conds[COND_PERCEPTION] != data->conds[COND_PERCEPTION] ||
-            actor.conds[COND_ENDURANCE] != data->conds[COND_ENDURANCE] ||
-            actor.conds[COND_LEFTATTACK] != data->conds[COND_LEFTATTACK] ||
-            actor.conds[COND_RIGHTATTACK] != data->conds[COND_RIGHTATTACK] ||
-            actor.conds[COND_LEFTMOBILITY] != data->conds[COND_LEFTMOBILITY] ||
-            actor.conds[COND_RIGHTMOBILITY] != data->conds[COND_RIGHTMOBILITY] ||
-            actor.dead != data->dead)
-    {
-        (*data) = actor;
-        return true;
-    }
-
-    return false;
-}
-
-bool Actor::UpdateActorCellUpdateStruct(pActorCellUpdate* data)
-{
-    pActorCellUpdate actor = this->GetActorCellUpdateStruct();
-    actor.guid = data->guid;
-
-    if (actor.type != data->type ||
-            actor.cell != data->cell)
-    {
-        (*data) = actor;
-        return true;
-    }
-
-    return false;
-}
-
-bool Actor::UpdateActorItemUpdateStruct(list<pActorItemUpdate>* items, Inventory* inv)
-{
-    if (inv == NULL || items == NULL)
-        return false;
-
-    this->StartSession();
-    Inventory invcopy;
-    this->Copy(&invcopy);
-    this->EndSession();
-
-    Inventory diff;
-
-    Inventory::CreateDiff(inv, &invcopy, &diff);
-
-    if (diff.IsEmpty())
-        return false;
-
-    items->clear();
-
-    list<Item*> items_diff = diff.GetItemList();
-    list<Item*>::iterator it;
-    int i = 0;
-
-    for (it = items_diff.begin(), i = 0; it != items_diff.end(); ++it, i++)
-        items->push_back(GetActorItemUpdateStruct(*it));
-
-    invcopy.Copy(inv);
-
-    return true;
-}
-
 bool Actor::SetActorName(string name)
 {
-    if (this->name == name)
+    if (this->name.Get() == name)
         return false;
 
-    this->name = name;
+    if (!this->name.Set(name))
+        return false;
 
 #ifdef VAULTMP_DEBUG
     if (debug != NULL)
-    {
-        char text[128];
-        snprintf(text, sizeof(text), "Actor name was set to %s (ref: %s)", this->name.c_str(), this->GetReference().c_str());
-        debug->Print(text, true);
-    }
+        debug->PrintFormat("Actor name was set to %s (ref: %08X)", true, this->name.Get().c_str(), this->GetReference());
 #endif
 
     return true;
 }
 
-bool Actor::SetActorPos(int axis, float value)
+bool Actor::SetActorPos(unsigned char axis, double pos)
 {
-    if (axis >= X_AXIS && axis <= Z_AXIS && !nowrite[SKIPFLAG_GETPOS])
-    {
-        if (this->pos[axis] == value)
-            return false;
+    unsigned int idx = LookupIndex(Actor::axis, axis);
 
-        if ((value != 2048.0 && value != 128.0 && value != 0.0))
-        {
-            this->pos[axis] = value;
-
-#ifdef VAULTMP_DEBUG
-            if (debug != NULL)
-            {
-                char text[128];
-                snprintf(text, sizeof(text), "Actor %c-coordinate was set to %f (ref: %s)", axis == 0 ? 'X' : axis == 1 ? 'Y' : 'Z', this->pos[axis], this->GetReference().c_str());
-                debug->Print(text, true);
-            }
-#endif
-
-            return true;
-        }
-        else
-        {
-#ifdef VAULTMP_DEBUG
-            if (debug != NULL)
-            {
-                char text[128];
-                snprintf(text, sizeof(text), "Actor %c-coordinate was NOT set to %f (INVALID) (ref: %s)", axis == 0 ? 'X' : axis == 1 ? 'Y' : 'Z', value, this->GetReference().c_str());
-                debug->Print(text, true);
-            }
-#endif
-
-            return false;
-        }
-    }
-
-    return false;
-}
-
-bool Actor::SetActorAngle(float angle)
-{
-    if (this->angle == angle)
+    if (this->actor_Pos.at(idx).Get() == pos)
         return false;
 
-    this->angle = angle;
-
-#ifdef VAULTMP_DEBUG
-    if (debug != NULL)
+    if ((pos != 2048.0 && pos != 128.0 && pos != 0.0))
     {
-        char text[128];
-        snprintf(text, sizeof(text), "Actor Z-angle was set to %f (ref: %s)", this->angle, this->GetReference().c_str());
-        debug->Print(text, true);
-    }
-#endif
-
-    return true;
-}
-
-bool Actor::SetActorGameCell(int cell)
-{
-    if (!nowrite[SKIPFLAG_GETPARENTCELL])
-    {
-        if (cell != 0x00)
-        {
-            if (this->gcell == cell)
-                return false;
-
-            this->gcell = cell;
-
-#ifdef VAULTMP_DEBUG
-            if (debug != NULL)
-            {
-                char text[128];
-                snprintf(text, sizeof(text), "Actor game cell was set to %x (ref: %s)", this->gcell, this->GetReference().c_str());
-                debug->Print(text, true);
-            }
-#endif
-
-            return true;
-        }
-        else
-        {
-#ifdef VAULTMP_DEBUG
-            if (debug != NULL)
-            {
-                char text[128];
-                snprintf(text, sizeof(text), "Actor game cell was NOT set to %x (INVALID) (ref: %s)", cell, this->GetReference().c_str());
-                debug->Print(text, true);
-            }
-#endif
-
+        if (!this->actor_Pos.at(idx).Set(pos))
             return false;
-        }
+
+#ifdef VAULTMP_DEBUG
+        if (debug != NULL)
+            debug->PrintFormat("Actor %s-pos was set to %Lf (ref: %08X)", true, API::RetrieveAxis_Reverse(axis).c_str(), pos, this->GetReference());
+#endif
+        return true;
     }
 
     return false;
 }
 
-bool Actor::SetActorNetworkCell(int cell)
+bool Actor::SetActorAngle(unsigned char axis, double angle)
 {
+    unsigned int idx = LookupIndex(Actor::axis, axis);
+
+    if (this->actor_Angle.at(idx).Get() == angle)
+        return false;
+
+    if ((angle != 2048.0 && angle != 128.0 && angle != 0.0))
+    {
+        if (!this->actor_Angle.at(idx).Set(angle))
+            return false;
+
+#ifdef VAULTMP_DEBUG
+        if (debug != NULL)
+            debug->PrintFormat("Actor %s-angle was set to %Lf (ref: %08X)", true, API::RetrieveAxis_Reverse(axis).c_str(), angle, this->GetReference());
+#endif
+        return true;
+    }
+
+    return false;
+}
+
+bool Actor::SetActorGameCell(unsigned int cell)
+{
+    if (this->cell_Game.Get() == cell)
+        return false;
+
     if (cell != 0x00)
     {
-        if (this->ncell == cell)
+        if (!this->cell_Game.Set(cell))
             return false;
 
-        this->ncell = cell;
-
 #ifdef VAULTMP_DEBUG
         if (debug != NULL)
-        {
-            char text[128];
-            snprintf(text, sizeof(text), "Actor network cell was set to %x (ref: %s)", this->ncell, this->GetReference().c_str());
-            debug->Print(text, true);
-        }
+            debug->PrintFormat("Actor game cell was set to %08X (ref: %08X)", true, cell, this->GetReference());
 #endif
-
-        return true;
-    }
-    else
-    {
-#ifdef VAULTMP_DEBUG
-        if (debug != NULL)
-        {
-            char text[128];
-            snprintf(text, sizeof(text), "Actor network cell was NOT set to %x (INVALID) (ref: %s)", cell, this->GetReference().c_str());
-            debug->Print(text, true);
-        }
-#endif
-
-        return false;
-    }
-
-    return false;
-}
-
-bool Actor::SetActorHealth(float health)
-{
-    if (!nowrite[SKIPFLAG_GETACTORVALUE])
-    {
-        if (this->health == health)
-            return false;
-
-        this->health = health;
-
-#ifdef VAULTMP_DEBUG
-        if (debug != NULL)
-        {
-            char text[128];
-            snprintf(text, sizeof(text), "Actor health was set to %f (ref: %s)", this->health, this->GetReference().c_str());
-            debug->Print(text, true);
-        }
-#endif
-
         return true;
     }
 
     return false;
 }
 
-bool Actor::SetActorBaseHealth(float baseHealth)
+bool Actor::SetActorNetworkCell(unsigned int cell)
 {
-    if (this->baseHealth == baseHealth)
+    if (this->cell_Network.Get() == cell)
         return false;
 
-    this->baseHealth = baseHealth;
+    if (cell != 0x00)
+    {
+        if (!this->cell_Network.Set(cell))
+            return false;
+
+#ifdef VAULTMP_DEBUG
+        if (debug != NULL)
+            debug->PrintFormat("Actor network cell was set to %08X (ref: %08X)", cell, this->GetReference());
+#endif
+        return true;
+    }
+
+    return false;
+}
+
+bool Actor::SetActorValue(unsigned char index, double value)
+{
+    unsigned int idx = LookupIndex(Actor::values, index);
+
+    if (this->actor_Values.at(idx).Get() == value)
+        return false;
+
+    if (!this->actor_Values.at(idx).Set(value))
+        return false;
 
 #ifdef VAULTMP_DEBUG
     if (debug != NULL)
-    {
-        char text[128];
-        snprintf(text, sizeof(text), "Actor base health was set to %f (ref: %s)", this->baseHealth, this->GetReference().c_str());
-        debug->Print(text, true);
-    }
+        debug->PrintFormat("Actor value %s was set to %Lf (ref: %08X)", true, API::RetrieveValue_Reverse(index).c_str(), value, this->GetReference());
 #endif
 
     return true;
 }
 
-bool Actor::SetActorCondition(int cond, float value)
+bool Actor::SetActorBaseValue(unsigned char index, double value)
 {
-    if (cond >= COND_PERCEPTION && cond <= COND_LEFTMOBILITY)
-    {
-        if (this->cond[cond] == value)
-            return false;
+    unsigned int idx = LookupIndex(Actor::values, index);
 
-        this->cond[cond] = value;
-
-#ifdef VAULTMP_DEBUG
-        if (debug != NULL)
-        {
-            char text[128];
-            snprintf(text, sizeof(text), "Actor %s was set to %f (ref: %s)", cond == 0 ? (char*) "PerceptionCondition" : cond == 1 ? (char*) "EnduranceCondition" : cond == 2 ? (char*) "LeftAttackCondition" : cond == 3 ? (char*) "RightAttackCondition" : cond == 4 ? (char*) "LeftMobilityCondition" : (char*) "RightMobilityCondition", this->cond[cond], this->GetReference().c_str());
-            debug->Print(text, true);
-        }
-#endif
-
-        return true;
-    }
-
-    return false;
-}
-
-bool Actor::SetActorDead(bool dead)
-{
-    if (!nowrite[SKIPFLAG_GETDEAD])
-    {
-        if (this->dead == dead)
-            return false;
-
-        this->dead = dead;
-
-#ifdef VAULTMP_DEBUG
-        if (debug != NULL)
-        {
-            char text[128];
-            snprintf(text, sizeof(text), "Actor dead state was set to %d (ref: %s)", (int) this->dead, this->GetReference().c_str());
-            debug->Print(text, true);
-        }
-#endif
-
-        return true;
-    }
-
-    return false;
-}
-
-bool Actor::SetActorAlerted(bool alerted)
-{
-    if (this->alerted == alerted)
+    if (this->actor_BaseValues.at(idx).Get() == value)
         return false;
 
-    this->alerted = alerted;
+    if (!this->actor_BaseValues.at(idx).Set(value))
+        return false;
 
 #ifdef VAULTMP_DEBUG
     if (debug != NULL)
-    {
-        char text[128];
-        snprintf(text, sizeof(text), "Actor alerted state was set to %d (ref: %s)", (int) this->alerted, this->GetReference().c_str());
-        debug->Print(text, true);
-    }
+        debug->PrintFormat("Actor base value %s was set to %Lf (ref: %08X)", true, API::RetrieveValue_Reverse(index).c_str(), value, this->GetReference());
 #endif
 
     return true;
 }
 
-bool Actor::SetActorMoving(int moving)
+bool Actor::SetActorAnimation(unsigned char anim, bool state)
 {
-    if (moving >= MOV_IDLE && moving <= MOV_RIGHT)
-    {
-        if (this->moving == moving)
-            return false;
+    unsigned int idx = LookupIndex(Actor::anims, anim);
 
-        this->moving = moving;
-
-#ifdef VAULTMP_DEBUG
-        if (debug != NULL)
-        {
-            char text[128];
-            snprintf(text, sizeof(text), "Actor running animation was set to %s (ref: %s)", moving == 0 ? (char*) "Idle" : moving == 1 ? (char*) "FastForward" : moving == 2 ? (char*) "FastBackward" : moving == 3 ? (char*) "FastLeft" : moving == 4 ? (char*) "FastRight" : moving == 5 ? (char*) "Forward" : moving == 6 ? (char*) "Backward" : moving == 7 ? (char*) "Left" : (char*) "Right", this->GetReference().c_str());
-            debug->Print(text, true);
-        }
-#endif
-
-        return true;
-    }
-
-    return false;
-}
-
-bool Actor::SetActorEnabled(bool enabled)
-{
-    if (this->enabled == enabled)
+    if (this->actor_Animations.at(idx).Get() == state)
         return false;
 
-    this->enabled = enabled;
+    if (!this->actor_Animations.at(idx).Set(state))
+        return false;
 
 #ifdef VAULTMP_DEBUG
     if (debug != NULL)
-    {
-        char text[128];
-        snprintf(text, sizeof(text), "Actor enabled state was set to %d (ref: %s)", (int) this->enabled, this->GetReference().c_str());
-        debug->Print(text, true);
-    }
+        debug->PrintFormat("Actor animation %s was set to %d (ref: %08X)", true,  API::RetrieveAnim_Reverse(anim).c_str(), (int) state, this->GetReference());
 #endif
 
     return true;
 }
 
-bool Actor::ToggleNoOverride(int skipflag, bool toggle)
+bool Actor::SetActorEnabled(bool state)
 {
-    if (skipflag >= 0 && skipflag < MAX_SKIP_FLAGS)
-    {
-        if (nowrite[skipflag] == toggle)
-            return false;
+    if (this->state_Enabled.Get() == state)
+        return false;
 
-        nowrite[skipflag] = toggle;
+    if (!this->state_Enabled.Set(state))
+        return false;
 
 #ifdef VAULTMP_DEBUG
-        if (debug != NULL)
-        {
-            char text[128];
-            snprintf(text, sizeof(text), "Actor no-override flag %d was set to %d (ref: %s)", skipflag, (int) toggle, this->GetReference().c_str());
-            debug->Print(text, true);
-        }
+    if (debug != NULL)
+        debug->PrintFormat("Actor enabled state was set to %d (ref: %08X)", true, (int) state, this->GetReference());
 #endif
 
-        return true;
-    }
-
-    return false;
+    return true;
 }
 
-bool Actor::GetActorOverrideFlag(int skipflag)
+bool Actor::SetActorDead(bool state)
 {
-    if (skipflag >= 0 && skipflag < MAX_SKIP_FLAGS)
-    {
-        return nowrite[skipflag];
-    }
+    if (this->state_Dead.Get() == state)
+        return false;
 
-    return false;
+    if (!this->state_Dead.Set(state))
+        return false;
+
+#ifdef VAULTMP_DEBUG
+    if (debug != NULL)
+        debug->PrintFormat("Actor dead state was set to %d (ref: %08X)", true, (int) state, this->GetReference());
+#endif
+
+    return true;
 }
 
-bool Actor::IsActorNearPoint(float X, float Y, float Z, float R)
+bool Actor::IsActorNearPoint(double X, double Y, double Z, double R)
 {
-    return (sqrt((abs(pos[0] - X) * abs(pos[0] - X)) + (abs(pos[1] - Y) * abs(pos[1] - Y)) + (abs(pos[2] - Z) * abs(pos[2] - Z))) <= R);
+    unsigned int idx_X = LookupIndex(Actor::axis, Axis_X);
+    unsigned int idx_Y = LookupIndex(Actor::axis, Axis_Y);
+    unsigned int idx_Z = LookupIndex(Actor::axis, Axis_Z);
+
+    return (sqrt((abs(actor_Pos.at(idx_X).Get() - X) * abs(actor_Pos.at(idx_X).Get() - X)) + ((actor_Pos.at(idx_Y).Get() - Y) * abs(actor_Pos.at(idx_Y).Get() - Y)) + ((actor_Pos.at(idx_Z).Get() - Z) * abs(actor_Pos.at(idx_Z).Get() - Z))) <= R);
 }
 
-bool Actor::IsCoordinateInRange(int axis, float value, float R)
+bool Actor::IsCoordinateInRange(unsigned char axis, double pos, double R)
 {
-    if (axis >= X_AXIS && axis <= Z_AXIS)
-        return (pos[axis] > (value - R) && pos[axis] < (value + R));
-    return false;
+    unsigned int idx = LookupIndex(Actor::axis, axis);
+
+    return (actor_Pos.at(idx).Get() > (pos - R) && actor_Pos.at(idx).Get() < (pos + R));
 }

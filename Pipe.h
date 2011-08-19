@@ -1,36 +1,41 @@
 #include <windows.h>
 #include <string>
 
-namespace pipe
+using namespace std;
+
+class Pipe
 {
-class PipeServer
-{
-private:
-    std::string pipeName;
+
+protected:
+    Pipe();
+    virtual ~Pipe();
+
+    string name;
     unsigned int size;
     HANDLE pipe;
+
 public:
-    PipeServer();
-    ~PipeServer();
-    void SetPipeAttributes(std::string pName, unsigned int pSize);
-    bool CreateServer();
-    bool ConnectToServer();
-    unsigned int Send(std::string* strSend);
-    std::string Recv();
+    void SetPipeAttributes(string name, unsigned int size);
+    unsigned int Send(char* stream);
+    unsigned int Send(string stream);
+    void Receive(char* stream);
+    virtual bool ConnectToServer() = 0;
+
 };
 
-class PipeClient
+class PipeServer : public Pipe
 {
-private:
-    std::string pipeName;
-    unsigned int size;
-    HANDLE pipe;
+
 public:
-    PipeClient();
-    ~PipeClient();
-    void SetPipeAttributes(std::string pName, unsigned int pSize);
+    bool CreateServer();
     bool ConnectToServer();
-    unsigned int Send(std::string* strSend);
-    std::string Recv();
+
 };
+
+class PipeClient : public Pipe
+{
+
+public:
+    bool ConnectToServer();
+
 };

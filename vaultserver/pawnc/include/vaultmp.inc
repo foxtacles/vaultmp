@@ -50,7 +50,7 @@ native GetPlayerCell(clientID);
 native SetServerName(name[]);
 native SetServerMap(map[]);
 native SetServerRule(rule[], value[]);
-native bool:IsNewVegas();
+native GetGame();
 
 // Misc functions
 

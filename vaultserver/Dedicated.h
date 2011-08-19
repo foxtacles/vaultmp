@@ -15,16 +15,20 @@
 
 #include "../ServerEntry.h"
 #include "../Client.h"
+#include "../Actor.h"
 #include "../Player.h"
 #include "../Data.h"
 #include "../Utils.h"
+#include "../VaultException.h"
+#include "../Network.h"
+#include "../PacketTypes.h"
 #include "Script.h"
 #include "vaultserver.h"
 
-#define RAKNET_STANDARD_PORT        1770
-#define RAKNET_STANDARD_CONNECTIONS 32
-#define RAKNET_MASTER_RATE          2000
-#define RAKNET_MASTER_STANDARD_PORT 1660
+#define RAKNET_STANDARD_PORT            1770
+#define RAKNET_STANDARD_CONNECTIONS     32
+#define RAKNET_MASTER_RATE              2000
+#define RAKNET_MASTER_STANDARD_PORT     1660
 
 using namespace RakNet;
 using namespace Data;
@@ -32,14 +36,15 @@ using namespace std;
 
 class Dedicated
 {
+friend class Network;
 
 private:
     static RakPeerInterface* peer;
     static SocketDescriptor* sockdescr;
 
+    static AMX* amx;
     static int port;
     static int connections;
-    static AMX* amx;
     static char* announce;
     static bool query;
 
@@ -72,7 +77,7 @@ public:
     static void SetServerName(string name);
     static void SetServerMap(string map);
     static void SetServerRule(string rule, string value);
-    static bool IsNewVegas();
+    static int GetGame();
 
     //static void SetServerConnections(int connections);
 

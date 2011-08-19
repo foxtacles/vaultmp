@@ -1,6 +1,6 @@
 #include "Functions.h"
 
-AMX_NATIVE_INFO Functions::vaultmp_functions[] = {
+/*AMX_NATIVE_INFO Functions::vaultmp_functions[] = {
 
     {"GetPlayerName", Functions::vaultmp_GetPlayerName},
     {"GetPlayerPos", Functions::vaultmp_GetPlayerPos},
@@ -15,24 +15,25 @@ AMX_NATIVE_INFO Functions::vaultmp_functions[] = {
     {"SetServerName", Functions::vaultmp_SetServerName},
     {"SetServerMap", Functions::vaultmp_SetServerMap},
     {"SetServerRule", Functions::vaultmp_SetServerRule},
-    {"IsNewVegas", Functions::vaultmp_IsNewVegas},
+    {"GetGame", Functions::vaultmp_GetGame},
     {"timestamp", Functions::vaultmp_timestamp},
     {0, 0}
 
-};
+};*/
 
 int Functions::RegisterVaultmpFunctions(AMX* amx)
 {
-    return Script::Register(amx, Functions::vaultmp_functions, -1);
+    //return Script::Register(amx, Functions::vaultmp_functions, -1);
+    return 0;
 }
 
-cell Functions::vaultmp_GetPlayerName(AMX* amx, const cell* params)
+/*cell Functions::vaultmp_GetPlayerName(AMX* amx, const cell* params)
 {
     int i = 1, len, id;
     cell* dest;
 
     id = (int) params[1];
-    amx_GetAddr(amx, params[2], &dest);
+    dest = amx_Address(amx, params[2]);
 
     RakNetGUID guid = Client::GetGUIDFromID(id);
     Player* player = Player::GetPlayerFromGUID(guid);
@@ -232,7 +233,7 @@ cell Functions::vaultmp_SetServerName(AMX* amx, const cell* params)
     int i = 1, len;
     cell* source;
 
-    amx_GetAddr(amx, params[1], &source);
+    source = amx_Address(amx, params[1]);
     amx_StrLen(source, &len);
 
     char name[len + 1];
@@ -249,7 +250,7 @@ cell Functions::vaultmp_SetServerMap(AMX* amx, const cell* params)
     int i = 1, len;
     cell* source;
 
-    amx_GetAddr(amx, params[1], &source);
+    source = amx_Address(amx, params[1]);
     amx_StrLen(source, &len);
 
     char map[len + 1];
@@ -266,8 +267,8 @@ cell Functions::vaultmp_SetServerRule(AMX* amx, const cell* params)
     int i = 1, len, len2;
     cell* source; cell* source2;
 
-    amx_GetAddr(amx, params[1], &source);
-    amx_GetAddr(amx, params[2], &source2);
+    source = amx_Address(amx, params[1]);
+    source2 = amx_Address(amx, params[2]);
     amx_StrLen(source, &len);
     amx_StrLen(source2, &len2);
 
@@ -282,9 +283,9 @@ cell Functions::vaultmp_SetServerRule(AMX* amx, const cell* params)
     return i;
 }
 
-cell Functions::vaultmp_IsNewVegas(AMX* amx, const cell* params)
+cell Functions::vaultmp_GetGame(AMX* amx, const cell* params)
 {
-    return Dedicated::IsNewVegas();
+    return (cell) Dedicated::GetGame();
 }
 
 cell Functions::vaultmp_timestamp(AMX* amx, const cell* params)
@@ -295,3 +296,4 @@ cell Functions::vaultmp_timestamp(AMX* amx, const cell* params)
 
     return i;
 }
+*/

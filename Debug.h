@@ -10,15 +10,16 @@
 
 #include <string>
 
+#include "CriticalSection.h"
+
 using namespace std;
 
-class Debug
+class Debug : private CriticalSection
 {
 
 private:
     string logfile;
     FILE* vaultmplog;
-    bool filemutex;
 
     static void GetTimeFormat(char* buf, int size, bool file);
 
@@ -26,7 +27,8 @@ public:
     Debug(char* module);
     ~Debug();
 
-    void Print(char* text, bool timestamp);
+    void Print(const char* text, bool timestamp);
+    void PrintFormat(const char* format, bool timestamp, ...);
     void PrintSystem();
 
 };

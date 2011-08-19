@@ -1,6 +1,6 @@
 /*  Simple terminal for Microsoft Windows
  *
- *  Copyright (c) ITB CompuPhase, 2004-2009
+ *  Copyright (c) ITB CompuPhase, 2004-2011
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not
  *  use this file except in compliance with the License. You may obtain a copy
@@ -14,7 +14,7 @@
  *  License for the specific language governing permissions and limitations
  *  under the License.
  *
- *  Version: $Id: termwin.c 4125 2009-06-15 16:51:06Z thiadmer $
+ *  Version: $Id: termwin.c 4523 2011-06-21 15:03:47Z thiadmer $
  */
 
 #if defined _UNICODE || defined __UNICODE__ || defined UNICODE

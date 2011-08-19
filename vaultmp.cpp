@@ -6,6 +6,7 @@
 #include "Bethesda.h"
 #include "ServerEntry.h"
 #include "Data.h"
+#include "VaultException.h"
 #include "ufmod.h"
 
 #include "RakNet/RakPeerInterface.h"
@@ -14,6 +15,38 @@
 #include "RakNet/RakString.h"
 #include "RakNet/RakSleep.h"
 #include "RakNet/GetTime.h"
+
+#define MSG_MINTRAYICON         (WM_USER + 1)
+
+#define WND_CLASS_NAME          "vaultmp"
+
+#define RAKNET_CONNECTIONS      2
+#define RAKNET_MASTER_ADDRESS   "127.0.0.1"
+#define RAKNET_MASTER_PORT      1660
+
+#define IDC_GROUP0              2000
+#define IDC_GROUP1              2001
+#define IDC_GROUP2              2002
+#define IDC_STATIC0             2003
+#define IDC_STATIC1             2004
+#define IDC_STATIC2             2005
+#define IDC_STATIC3             2006
+#define IDC_STATIC4             2007
+#define IDC_GRID0               2008
+#define IDC_GRID1               2009
+#define IDC_CHECK0              2010
+#define IDC_BUTTON0             2011
+#define IDC_BUTTON1             2012
+#define IDC_BUTTON2             2013
+#define IDC_BUTTON3             2014
+#define IDC_EDIT0               2015
+#define IDC_EDIT1               2016
+#define IDC_EDIT3               2017
+#define IDC_PROGRESS0           2018
+
+#define CHIPTUNE                3000
+#define ICON_MAIN               4000
+#define POWERED                 5000
 
 using namespace RakNet;
 using namespace Data;
@@ -31,7 +64,7 @@ HDC hdc, hdcMem;
 HBITMAP hBitmap;
 BITMAP bitmap;
 PAINTSTRUCT ps;
-BOOL sort;
+BOOL sort_flag;
 
 RakPeerInterface* peer;
 SocketDescriptor* sockdescr;
@@ -43,8 +76,7 @@ SystemAddress* selectedServer = NULL;
 char inipath[256];
 char player_name[MAX_PLAYER_NAME];
 char server_master[MAX_MASTER_SERVER];
-bool foundFallout3 = false;
-bool foundNewVegas = false;
+int games;
 
 HWND CreateMainWindow();
 int RegisterClasses();
@@ -108,89 +140,67 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR cmdline, 
         return MessageBox(NULL, "Could not find exchndl.dll!", "Error", MB_OK | MB_ICONERROR);
 #endif
 
-    FILE* Fallout = NULL;
+    FILE* filecheck = NULL;
 
-    Fallout = fopen("Fallout3.exe", "rb");
+    filecheck = fopen("Fallout3.exe", "rb");
 
-    if (Fallout != NULL)
+    if (filecheck != NULL)
     {
-        long int size = 0;
+        filecheck = fopen("fose_1_7.dll", "rb");
 
-        fseek(Fallout, 0, SEEK_END);
-        size = ftell(Fallout);
-        fclose(Fallout);
-
-        if (size != FALLOUT3_EXE_SIZE)
-            return MessageBox(NULL, "Fallout3.exe is either corrupted or not supported!", "Error", MB_OK | MB_ICONERROR);
-        else
+        if (filecheck != NULL)
         {
-            Fallout = fopen("fose_1_7.dll", "rb");
+            fclose(filecheck);
 
-            if (Fallout != NULL)
+            filecheck = fopen("xlive.dll", "rb");
+
+            if (filecheck != NULL)
             {
-                fclose(Fallout);
-
-                Fallout = fopen("xlive.dll", "rb");
-
-                if (Fallout != NULL)
-                {
-                    size = 0;
-
-                    fseek(Fallout, 0, SEEK_END);
-                    size = ftell(Fallout);
-                    fclose(Fallout);
-
-                    if (size != XLIVE_DLL_SIZE)
-                        return MessageBox(NULL, "xlive.dll is unpatched!", "Error", MB_OK | MB_ICONERROR);
-                    else
-                        foundFallout3 = true;
-                }
-                else
-                    return MessageBox(NULL, "xlive.dll is missing!", "Error", MB_OK | MB_ICONERROR);
+                fclose(filecheck);
+                games |= FALLOUT3;
             }
             else
-                return MessageBox(NULL, "Could not find FOSE 1.7!\nhttp://fose.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
+                return MessageBox(NULL, "xlive.dll is missing!", "Error", MB_OK | MB_ICONERROR);
         }
-    }
-
-    Fallout = fopen("FalloutNV.exe", "rb");
-
-    if (Fallout != NULL)
-    {
-        long int size = 0;
-
-        fseek(Fallout, 0, SEEK_END);
-        size = ftell(Fallout);
-        fclose(Fallout);
-
-        if (size != FALLOUTNV_EXE1_SIZE && size != FALLOUTNV_EXE2_SIZE && size != FALLOUTNV_EXE3_SIZE)
-            return MessageBox(NULL, "FalloutNV.exe is either corrupted or not supported!", "Error", MB_OK | MB_ICONERROR);
         else
-        {
-            Fallout = fopen("nvse_1_1.dll", "rb");
-
-            if (Fallout != NULL)
-            {
-                foundNewVegas = true;
-                fclose(Fallout);
-            }
-            else
-                return MessageBox(NULL, "Could not find NVSE 1.1!\nhttp://nvse.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
-        }
+            return MessageBox(NULL, "Could not find FOSE 1.7!\nhttp://fose.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
     }
 
-    Fallout = fopen("vaultmp.dll", "rb");
+    filecheck = fopen("FalloutNV.exe", "rb");
 
-    if (Fallout != NULL)
+    if (filecheck != NULL)
     {
-        long int size = 0;
+        filecheck = fopen("nvse_1_1.dll", "rb");
 
-        fseek(Fallout, 0, SEEK_END);
-        size = ftell(Fallout);
-        fclose(Fallout);
+        if (filecheck != NULL)
+        {
+            fclose(filecheck);
+            games |= NEWVEGAS;
+        }
+        else
+            return MessageBox(NULL, "Could not find NVSE 1.1!\nhttp://nvse.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
+    }
 
-        if (size != VAULTMP_DLL_SIZE)
-            return MessageBox(NULL, "vaultmp.dll is either corrupted or not up to date!", "Error", MB_OK | MB_ICONERROR);
+    filecheck = fopen("Oblivion.exe", "rb");
+
+    if (filecheck != NULL)
+    {
+        filecheck = fopen("obse_1_2_416.dll", "rb");
+
+        if (filecheck != NULL)
+        {
+            fclose(filecheck);
+            games |= OBLIVION;
+        }
+        else
+            return MessageBox(NULL, "Could not find OBSE 1.2.416!\nhttp://obse.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
+    }
+
+    filecheck = fopen("vaultmp.dll", "rb");
+
+    if (filecheck != NULL)
+    {
+        fclose(filecheck);
     }
     else
         return MessageBox(NULL, "Could not find vaultmp.dll!", "Error", MB_OK | MB_ICONERROR);
@@ -237,7 +247,7 @@ void CreateWindowContent(HWND parent)
 {
     HWND wnd;
     LV_COLUMN col;
-    sort = true;
+    sort_flag = true;
 
     col.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
     col.fmt = LVCFMT_LEFT;
@@ -291,10 +301,10 @@ void CreateWindowContent(HWND parent)
     SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
     wndprogressbar = wnd;
 
-    wnd = CreateWindowEx(0x00000000, "Static", "Fallout is a trademark or registered trademark of Bethesda Softworks LLC in the U.S. and/or", 0x5000030C, 6, 374, 531, 18, parent, (HMENU) IDC_STATIC0, instance, NULL);
+    wnd = CreateWindowEx(0x00000000, "Static", "Fallout / TES: Oblivion are trademarks of Bethesda Softworks LLC in the U.S. and/or", 0x5000030C, 12, 374, 531, 18, parent, (HMENU) IDC_STATIC0, instance, NULL);
     SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
-    wnd = CreateWindowEx(0x00000000, "Static", "other countries. Vault-Tec Multiplayer Mod is not affliated with Bethesda Softworks LLC.", 0x50000300, 6, 392, 531, 18, parent, (HMENU) IDC_STATIC1, instance, NULL);
+    wnd = CreateWindowEx(0x00000000, "Static", "other countries. Vault-Tec Multiplayer Mod is not affliated with Bethesda Softworks LLC.", 0x50000300, 12, 392, 531, 18, parent, (HMENU) IDC_STATIC1, instance, NULL);
     SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
     wnd = CreateWindowEx(0x00000000, "Button", "Powered by", 0x50020007, 6, 294, 531, 78, parent, (HMENU) IDC_GROUP2, instance, NULL);
@@ -446,7 +456,7 @@ int CALLBACK CompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
     ListView_GetItemText(wndsortcur, lParam1, lParamSort, buf, sizeof(buf));
     ListView_GetItemText(wndsortcur, lParam2, lParamSort, buf2, sizeof(buf2));
 
-    if (sort)
+    if (sort_flag)
         return (stricmp(buf, buf2));
     else
         return (stricmp(buf, buf2) * -1);
@@ -507,21 +517,55 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                     map<SystemAddress, ServerEntry>::iterator i;
                     i = serverList.find(*selectedServer);
 
-                    bool NewVegas = (&i->second)->IsNewVegas();
+                    int game = (&i->second)->GetGame();
 
-                    if (NewVegas && !foundNewVegas)
+                    if ((games & game) != game)
                     {
-                        MessageBox(NULL, "Could not find FalloutNV.exe!", "Error", MB_OK | MB_ICONERROR);
-                        break;
-                    }
-                    else if (!NewVegas && !foundFallout3)
-                    {
-                        MessageBox(NULL, "Could not find Fallout3.exe!", "Error", MB_OK | MB_ICONERROR);
+                        switch (game)
+                        {
+                            case FALLOUT3:
+                                MessageBox(NULL, "Could not find Fallout3.exe!", "Error", MB_OK | MB_ICONERROR);
+                                break;
+                            case NEWVEGAS:
+                                MessageBox(NULL, "Could not find FalloutNV.exe!", "Error", MB_OK | MB_ICONERROR);
+                                break;
+                            case OBLIVION:
+                                MessageBox(NULL, "Could not find Oblivion.exe!", "Error", MB_OK | MB_ICONERROR);
+                                break;
+                        }
                         break;
                     }
 
                     MinimizeToTray(hwnd);
-                    Bethesda::InitializeVaultMP(peer, addr, string(name), string(pwd), NewVegas);
+
+                    try
+                    {
+                        try
+                        {
+                            Bethesda::InitializeVaultMP(peer, addr, string(name), string(pwd), game);
+                        }
+                        catch (std::exception& e)
+                        {
+                            try
+                            {
+                                VaultException& vaulterror = dynamic_cast<VaultException&>(e);
+                                throw vaulterror;
+                            }
+                            catch (std::bad_cast& no_vaulterror)
+                            {
+                                throw VaultException(e.what());
+                            }
+                        }
+                    }
+                    catch (VaultException& vaulterror)
+                    {
+                        vaulterror.Message();
+                    }
+
+                    #ifdef VAULTMP_DEBUG
+                    VaultException::FinalizeDebug();
+                    #endif
+
                     Maximize(hwnd);
 
                     selectedServer = NULL;
@@ -531,7 +575,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
             break;
 
         case IDC_BUTTON1:
-            if (selectedServer != NULL) update = true;
+            if (selectedServer != NULL)
+                update = true;
             else break;
 
         case IDC_BUTTON2:
@@ -559,7 +604,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                     master.SetPort(cport != NULL ? atoi(cport) : RAKNET_MASTER_PORT);
                 }
 
-                if (peer->Connect(master.ToString(false), master.GetPort(), MASTER_VERSION, sizeof(MASTER_VERSION), 0, 0, 3, 500, 0) == CONNECTION_ATTEMPT_STARTED)
+                if (peer->Connect(master.ToString(false), master.GetPort(), MASTER_VERSION, sizeof(MASTER_VERSION), 0, 0, 3, 100, 0) == CONNECTION_ATTEMPT_STARTED)
                 {
                     bool query = true;
 
@@ -614,7 +659,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                                     SystemAddress addr;
                                     RakString name, map;
                                     int players, playersMax, rsize;
-                                    bool NewVegas;
+                                    int game;
                                     std::map<string, string> rules;
 
                                     query.Read(addr);
@@ -622,10 +667,10 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                                     query.Read(map);
                                     query.Read(players);
                                     query.Read(playersMax);
-                                    query.Read(NewVegas);
+                                    query.Read(game);
                                     query.Read(rsize);
 
-                                    ServerEntry entry(name.C_String(), map.C_String(), pair<int, int>(players, playersMax), 999, NewVegas);
+                                    ServerEntry entry(name.C_String(), map.C_String(), pair<int, int>(players, playersMax), 999, game);
 
                                     for (int j = 0; j < rsize; j++)
                                     {
@@ -676,13 +721,13 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                                 {
                                     RakString name, map;
                                     int players, playersMax, rsize;
-                                    bool NewVegas;
+                                    int game;
 
                                     query.Read(name);
                                     query.Read(map);
                                     query.Read(players);
                                     query.Read(playersMax);
-                                    query.Read(NewVegas);
+                                    query.Read(game);
                                     query.Read(rsize);
 
                                     ServerEntry* entry;
@@ -697,7 +742,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                                     else
                                     {
                                         std::pair<std::map<SystemAddress, ServerEntry>::iterator, bool> k;
-                                        k = serverList.insert(pair<SystemAddress, ServerEntry>(addr, ServerEntry(name.C_String(), map.C_String(), pair<int, int>(players, playersMax), 999, NewVegas)));
+                                        k = serverList.insert(pair<SystemAddress, ServerEntry>(addr, ServerEntry(name.C_String(), map.C_String(), pair<int, int>(players, playersMax), 999, game)));
                                         entry = &(k.first)->second;
                                     }
 
@@ -781,7 +826,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
             break;
 
         case IDC_BUTTON3:
-            MessageBox(NULL, "Vault-Tec Multiplayer Mod is an Open-Source project.\n\ncode: Recycler (www.brickster.net)\nnetwork: RakNet (www.jenkinssoftware.com)\nscripting: The PAWN language (www.compuphase.com)\nmusic: uFMOD (ufmod.sourceforge.net)\n\nGreetings fly out to:\nmqidx, benG, ArminSeiko\n\nThanks to everyone contributing to the project (ideas, code, moral support etc). You guys keep it going :-)\n\nwww.vaultmp.com", "vaultmp credits", MB_OK | MB_ICONINFORMATION);
+            MessageBox(NULL, CREDITS, "vaultmp credits", MB_OK | MB_ICONINFORMATION);
             break;
 
         case IDC_CHECK0:
@@ -847,7 +892,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
             NMLISTVIEW* nmlv = (NMLISTVIEW*) lParam;
             wndsortcur = (HWND)((LPNMHDR) lParam)->hwndFrom;
             ListView_SortItemsEx(wndsortcur, CompareProc, nmlv->iSubItem);
-            sort = !sort;
+            sort_flag = !sort_flag;
             break;
         }
         }

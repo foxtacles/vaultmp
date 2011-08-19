@@ -2,24 +2,24 @@
 
 using namespace std;
 
-ServerEntry::ServerEntry(bool NewVegas)
+ServerEntry::ServerEntry(int game)
 {
-    this->NewVegas = NewVegas;
+    this->game = game;
     this->name = "Vault-Tec Multiplayer Mod server";
     this->map = "default";
     this->players = pair<int, int>(0, 0);
     this->ping = 999;
-    this->SetServerRule("game", NewVegas ? "Fallout NV" : "Fallout 3");
+    this->SetServerRule("game", game == FALLOUT3 ? "Fallout 3" : game == NEWVEGAS ? "Fallout NV" : "TES: Oblivion");
 }
 
-ServerEntry::ServerEntry(string name, string map, pair<int, int> players, int ping, bool NewVegas)
+ServerEntry::ServerEntry(string name, string map, pair<int, int> players, int ping, int game)
 {
-    this->NewVegas = NewVegas;
+    this->game = game;
     SetServerName(name);
     SetServerMap(map);
     SetServerPlayers(players);
     SetServerPing(ping);
-    SetServerRule("game", NewVegas ? "Fallout NV" : "Fallout 3");
+    SetServerRule("game", game == FALLOUT3 ? "Fallout 3" : game == NEWVEGAS ? "Fallout NV" : "TES: Oblivion");
 }
 
 void ServerEntry::SetServerName(string name)
@@ -72,7 +72,7 @@ int ServerEntry::GetServerPing()
     return ping;
 }
 
-bool ServerEntry::IsNewVegas()
+int ServerEntry::GetGame()
 {
-    return NewVegas;
+    return game;
 }

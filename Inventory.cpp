@@ -6,7 +6,7 @@ Debug* Inventory::debug;
 #endif
 
 bool Inventory::initialized = false;
-bool Inventory::NewVegas = false;
+int Inventory::game = 0;
 
 map<const char*, const char*, str_compare> Inventory::Item_map;
 map<string, string> Inventory::Mod_map;
@@ -72,35 +72,34 @@ Item* Inventory::FindItem(list<Item*> container, map<const char*, const char*, s
     return NULL;
 }
 
-void Inventory::Initialize(bool NewVegas)
+void Inventory::Initialize(int game)
 {
     if (!initialized)
     {
-        Inventory::NewVegas = NewVegas;
+        Inventory::game = game;
         Inventory::internal = new Inventory();
 
-        switch (NewVegas)
+        switch (game)
         {
-        case true:
+        case FALLOUT3:
+            for (int i = 0; Fallout3Items[i][0] != NULL; i++)
+                if (ResolveIndex(const_cast<char*>(Fallout3Items[i][1])) != NULL && strlen(Fallout3Items[i][1]) == 8)
+                    Item_map.insert(pair<const char*, const char*>(Fallout3Items[i][1], Fallout3Items[i][0]));
+            break;
+        case NEWVEGAS:
             for (int i = 0; FalloutNVItems[i][0] != NULL; i++)
                 if (ResolveIndex(const_cast<char*>(FalloutNVItems[i][1])) != NULL && strlen(FalloutNVItems[i][1]) == 8)
                     Item_map.insert(pair<const char*, const char*>(FalloutNVItems[i][1], FalloutNVItems[i][0]));
             break;
-        case false:
-            for (int i = 0; Fallout3Items[i][0] != NULL; i++)
-                if (ResolveIndex(const_cast<char*>(Fallout3Items[i][1])) != NULL && strlen(Fallout3Items[i][1]) == 8)
-                    Item_map.insert(pair<const char*, const char*>(Fallout3Items[i][1], Fallout3Items[i][0]));
+        case OBLIVION:
             break;
         }
 
 #ifdef VAULTMP_DEBUG
         if (debug != NULL)
         {
-            char text[128];
-            snprintf(text, sizeof(text), "Successfully registered %d Fallout items", Item_map.size());
-            debug->Print(text, true);
-            snprintf(text, sizeof(text), "%d items could not be resolved or have an invalid format", (NewVegas ? (sizeof(FalloutNVItems) / 8) : (sizeof(Fallout3Items) / 8)) - Item_map.size());
-            debug->Print(text, true);
+            debug->PrintFormat("Successfully registered %d items", true, Item_map.size());
+            debug->PrintFormat("%d items could not be resolved or have an invalid format", true, (game == FALLOUT3) ? ((sizeof(Fallout3Items) / 8) - Item_map.size()) : (game == NEWVEGAS) ? ((sizeof(FalloutNVItems) / 8) - Item_map.size()) : 0);
         }
 #endif
 
@@ -122,7 +121,7 @@ void Inventory::Cleanup()
 
 #ifdef VAULTMP_DEBUG
         if (debug != NULL)
-            debug->Print((char*) "Performed cleanup on Inventory class", true);
+            debug->Print("Performed cleanup on Inventory class", true);
 #endif
     }
 }
@@ -134,11 +133,7 @@ void Inventory::RegisterIndex(string mod, string idx)
 
 #ifdef VAULTMP_DEBUG
     if (debug != NULL)
-    {
-        char text[128];
-        snprintf(text, sizeof(text), "Registered Fallout mod index (%s => %s)", mod.c_str(), idx.c_str());
-        debug->Print(text, true);
-    }
+        debug->PrintFormat("Registered Fallout mod index (%s => %s)", true, mod.c_str(), idx.c_str());
 #endif
 }
 
@@ -148,7 +143,7 @@ void Inventory::SetDebugHandler(Debug* debug)
     Inventory::debug = debug;
 
     if (debug != NULL)
-        debug->Print((char*) "Attached debug handler to Inventory class", true);
+        debug->Print("Attached debug handler to Inventory class", true);
 }
 #endif
 
@@ -261,22 +256,14 @@ bool Inventory::AddItem(string baseID, int count, int type, float condition, boo
 
 #ifdef VAULTMP_DEBUG
         if (debug != NULL && this != internal)
-        {
-            char text[128];
-            snprintf(text, sizeof(text), "Added item \"%s\" (%s, count: %d, condition: %f, worn: %d) to inventory %08x", it->second, it->first, count, condition, (int) worn, this);
-            debug->Print(text, true);
-        }
+            debug->PrintFormat("Added item \"%s\" (%s, count: %d, condition: %f, worn: %d) to inventory %08x", true, it->second, it->first, count, condition, (int) worn, this);
 #endif
 
         return true;
     }
 #ifdef VAULTMP_DEBUG
     else if (debug != NULL)
-    {
-        char text[128];
-        snprintf(text, sizeof(text), "Item is not known to vaultmp (%s)", baseID.c_str());
-        debug->Print(text, true);
-    }
+        debug->PrintFormat("Item is not known to vaultmp (%s)", true, baseID.c_str());
 #endif
 
     return false;
@@ -318,22 +305,14 @@ bool Inventory::RemoveItem(string baseID, int count)
 
 #ifdef VAULTMP_DEBUG
         if (debug != NULL)
-        {
-            char text[128];
-            snprintf(text, sizeof(text), "Removed %d items \"%s\" (%s) from inventory %08x", s_count, it->second, it->first, this);
-            debug->Print(text, true);
-        }
+            debug->PrintFormat("Removed %d items \"%s\" (%s) from inventory %08x", true, s_count, it->second, it->first, this);
 #endif
 
         return true;
     }
 #ifdef VAULTMP_DEBUG
     else if (debug != NULL)
-    {
-        char text[128];
-        snprintf(text, sizeof(text), "Item is not known to vaultmp (%s)", baseID.c_str());
-        debug->Print(text, true);
-    }
+        debug->PrintFormat("Item is not known to vaultmp (%s)", true, baseID.c_str());
 #endif
 
     return false;
@@ -361,22 +340,14 @@ bool Inventory::UpdateItem(string baseID, float condition, bool worn)
 
 #ifdef VAULTMP_DEBUG
         if (debug != NULL)
-        {
-            char text[128];
-            snprintf(text, sizeof(text), "Updated item \"%s\" (%s, condition: %f, worn: %d) in inventory %08x", it->second, it->first, condition, (int) worn, this);
-            debug->Print(text, true);
-        }
+            debug->PrintFormat("Updated item \"%s\" (%s, condition: %f, worn: %d) in inventory %08x", true, it->second, it->first, condition, (int) worn, this);
 #endif
 
         return true;
     }
 #ifdef VAULTMP_DEBUG
     else if (debug != NULL)
-    {
-        char text[128];
-        snprintf(text, sizeof(text), "Item is not known to vaultmp (%s)", baseID.c_str());
-        debug->Print(text, true);
-    }
+        debug->PrintFormat("Item is not known to vaultmp (%s)", true, baseID.c_str());
 #endif
 
     return false;
@@ -494,15 +465,10 @@ void Inventory::PrintInventory()
     {
         list<Item*>::iterator it;
 
-        char text[128];
-        snprintf(text, sizeof(text), "Inventory %08x contains %d items:", this, container.size());
-        debug->Print(text, true);
+        debug->PrintFormat("Inventory %08x contains %d items:", true, this, container.size());
 
         for (it = container.begin(); it != container.end(); ++it)
-        {
-            snprintf(text, sizeof(text), "Item \"%s\" (%s), count %d, type %d, condition %f, worn %d", (*it)->item->second, (*it)->item->first, (*it)->count, (*it)->type, (*it)->condition, (int) (*it)->worn);
-            debug->Print(text, true);
-        }
+            debug->PrintFormat("Item \"%s\" (%s), count %d, type %d, condition %f, worn %d", true, (*it)->item->second, (*it)->item->first, (*it)->count, (*it)->type, (*it)->condition, (int) (*it)->worn);
     }
 #endif
 }

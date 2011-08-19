@@ -1,6 +1,6 @@
 /*  Script Arguments support module for the Pawn Abstract Machine
  *
- *  Copyright (c) ITB CompuPhase, 2005-2009
+ *  Copyright (c) ITB CompuPhase, 2005-2011
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not
  *  use this file except in compliance with the License. You may obtain a copy
@@ -14,7 +14,7 @@
  *  License for the specific language governing permissions and limitations
  *  under the License.
  *
- *  Version: $Id: amxargs.c 4125 2009-06-15 16:51:06Z thiadmer $
+ *  Version: $Id: amxargs.c 4523 2011-06-21 15:03:47Z thiadmer $
  */
 #if defined _UNICODE || defined __UNICODE__ || defined UNICODE
 # if !defined UNICODE   /* for Windows */
@@ -246,11 +246,7 @@ static cell AMX_NATIVE_CALL n_argindex(AMX *amx, const cell *params)
   max = (int)params[3];
   if (max <= 0)
     return 0;
-  amx_GetAddr(amx, params[2], &cptr);
-  if (cptr == NULL) {
-    amx_RaiseError(amx, AMX_ERR_NATIVE);
-    return 0;
-  } /* if */
+  cptr = amx_Address(amx, params[2]);
 
   if ((option = tokenize(cmdline, params[1], &length)) == NULL) {
     /* option not found, return an empty string */
@@ -288,11 +284,7 @@ static cell AMX_NATIVE_CALL n_argstr(AMX *amx, const cell *params)
   if (max <= 0)
     return 0;
   amx_StrParam(amx, params[2], key);
-  amx_GetAddr(amx, params[3], &cptr);
-  if (cptr == NULL) {
-    amx_RaiseError(amx, AMX_ERR_NATIVE);
-    return 0;
-  } /* if */
+  cptr = amx_Address(amx, params[3]);
 
   option = matcharg(key, (int)params[1], &length);
   if (option == NULL)
@@ -331,11 +323,7 @@ static cell AMX_NATIVE_CALL n_argvalue(AMX *amx, const cell *params)
   cell *cptr;
 
   amx_StrParam(amx, params[2], key);
-  amx_GetAddr(amx, params[3], &cptr);
-  if (cptr == NULL) {
-    amx_RaiseError(amx, AMX_ERR_NATIVE);
-    return 0;
-  } /* if */
+  cptr = amx_Address(amx, params[3]);
 
   option = matcharg(key, (int)params[1], &length);
   if (option == NULL)

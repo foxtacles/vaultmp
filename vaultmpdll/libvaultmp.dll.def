@@ -1,2 +1,2 @@
 EXPORTS
-    DLLjump @1
+    Initialize @1

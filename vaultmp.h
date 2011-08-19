@@ -1,52 +1,41 @@
 #ifndef VAULTMP_H
 #define VAULTMP_H
 
-#define MSG_MINTRAYICON (WM_USER + 1)
+#define DEDICATED_VERSION       "0.1a revision 134"
+#define MASTER_VERSION          "0.1a revision 133"
+#define CLIENT_VERSION          "0.1a revision 134"
 
-#define WND_CLASS_NAME "vaultmp"
+#define CREDITS \
+"Vault-Tec Multiplayer Mod is an Open-Source project.\n\
+\n\
+code: Recycler (www.brickster.net)\n\
+network: RakNet (www.jenkinssoftware.com)\n\
+scripting: The PAWN language (www.compuphase.com)\n\
+music: uFMOD (ufmod.sourceforge.net)\n\
+\n\
+Greetings fly out to:\n\
+mqidx, benG, ArminSeiko\n\
+\n\
+Thanks to everyone who contributed :-)\n\
+\n\
+www.vaultmp.com"
 
-#define RAKNET_CONNECTIONS    2
-#define RAKNET_MASTER_ADDRESS "127.0.0.1"
-#define RAKNET_MASTER_PORT    1660
+#define FALLOUT3                0x01
+#define NEWVEGAS                0x02
+#define OBLIVION                0x04
+#define FALLOUT_GAMES           0x03
+#define ALL_GAMES               0x07
 
-#define DEDICATED_VERSION "0.1a revision 134"
-#define MASTER_VERSION "0.1a revision 133"
-#define CLIENT_VERSION "0.1a revision 134"
+#define MAX_PLAYER_NAME         16
+#define MAX_PASSWORD_SIZE       16
+#define MAX_MASTER_SERVER       32
 
-#define MAX_PLAYER_NAME   16
-#define MAX_PASSWORD_SIZE 16
-#define MAX_MASTER_SERVER 32
-
-#define IDC_GROUP0    2000
-#define IDC_GROUP1    2001
-#define IDC_GROUP2    2002
-#define IDC_STATIC0   2003
-#define IDC_STATIC1   2004
-#define IDC_STATIC2   2005
-#define IDC_STATIC3   2006
-#define IDC_STATIC4   2007
-#define IDC_GRID0     2008
-#define IDC_GRID1     2009
-#define IDC_CHECK0    2010
-#define IDC_BUTTON0   2011
-#define IDC_BUTTON1   2012
-#define IDC_BUTTON2   2013
-#define IDC_BUTTON3   2014
-#define IDC_EDIT0     2015
-#define IDC_EDIT1     2016
-#define IDC_EDIT3     2017
-#define IDC_PROGRESS0 2018
-
-#define CHIPTUNE    3000
-#define ICON_MAIN   4000
-#define POWERED     5000
-
-#define VAULTMP_DLL_SIZE 191488
-#define XLIVE_DLL_SIZE 21504
-#define FALLOUT3_EXE_SIZE 15044024
-#define FALLOUTNV_EXE1_SIZE 16549704
-#define FALLOUTNV_EXE2_SIZE 16079360
-#define FALLOUTNV_EXE3_SIZE 16544256
+#define PIPE_LENGTH             300
+#define PIPE_SYS_WAKEUP         0x10
+#define PIPE_OP_COMMAND         0x11
+#define PIPE_OP_RETURN          0x12
+#define PIPE_ERROR_CLOSE        0x13
+#define PIPE_GUI_MESSAGE        0x14
 
 #ifndef WIN32
 #define stricmp strcasecmp

@@ -8,10 +8,12 @@ main()
 	new name[32] = "My first vaultmp server";
 
 	new map[32];
-	if (!IsNewVegas())
+	if (GetGame() == 0x01)
 		map = "the wasteland";
-	else
+	else if (GetGame() == 0x02)
 		map = "mojave desert";
+	else
+		map = "cyrodiil";
 
 	new rule[16] = "version";
 	new value[16] = "0.1a";

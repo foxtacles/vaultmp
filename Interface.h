@@ -1,13 +1,16 @@
-#ifndef COMMAND_H
-#define COMMAND_H
+#ifndef INTERFACE_H
+#define INTERFACE_H
 
 #include <windows.h>
 #include <tlhelp32.h>
 #include <string>
 #include <list>
+#include <map>
 #include <vector>
 
 #include "vaultmp.h"
+#include "API.h"
+#include "CriticalSection.h"
 #include "Data.h"
 #include "Pipe.h"
 
@@ -18,13 +21,12 @@
 #endif
 
 using namespace std;
-using namespace pipe;
 using namespace Data;
 
 typedef multimap<string, ParamContainer> Native;
 typedef list<pair<Native::iterator, vector<int> > > CommandList;
 
-class Command
+class Interface : public API
 {
 
 private:
@@ -32,7 +34,6 @@ private:
     static bool wakeup;
     static bool initialized;
     static char* module;
-    static CRITICAL_SECTION cs_cmd;
     static HANDLE hCommandThreadReceive;
     static HANDLE hCommandThreadSend;
     static CommandList cmdlist;
@@ -40,14 +41,14 @@ private:
     static PipeClient* pipeServer;
     static PipeServer* pipeClient;
     static ResultHandler resultHandler;
-    static StringHandler stringHandler;
+    static CriticalSection cs;
 
     static map<string, string> defs;
     static Native natives;
 
     static Native::iterator DefineNativeInternal(string name, ParamContainer);
-    static void ExecuteCommand(Native::iterator it, bool loop, int priority = 0, int sleep = 1);
-    static list<string> Eval(string name, string def, ParamContainer param);
+    static void ExecuteCommand(Native::iterator it, bool loop, int priority, int sleep, signed int key);
+    static multimap<string, string> Evaluate(string name, string def, ParamContainer param);
 
     static DWORD WINAPI CommandThreadReceive(LPVOID data);
     static DWORD WINAPI CommandThreadSend(LPVOID data);
@@ -56,11 +57,11 @@ private:
     static Debug* debug;
 #endif
 
-    Command();
+    Interface();
 
 public:
 
-    static bool Initialize(char* module, ResultHandler, StringHandler);
+    static bool Initialize(char* module, ResultHandler, int game);
     static void Terminate();
     static DWORD lookupProgramID(const char process[]);
     static bool IsAvailable();
@@ -68,10 +69,10 @@ public:
     static void StartSession();
     static void EndSession();
 
-    static void DefineCommand(string name, string def);
+    static void DefineCommand(string name, string def, string real = string());
     static void DefineNative(string name, ParamContainer param);
-    static void ExecuteCommandLoop(string name, int priority = 0, int sleep = 1);
-    static void ExecuteCommandOnce(string name, ParamContainer, int priority = 0, int sleep = 1);
+    static void ExecuteCommandLoop(string name, int priority = 0, int sleep = 3);
+    static void ExecuteCommandOnce(string name, ParamContainer, int priority = 0, int sleep = 3, signed int key = 0);
 
 #ifdef VAULTMP_DEBUG
     static void SetDebugHandler(Debug* debug);

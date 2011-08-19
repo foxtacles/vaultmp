@@ -24,7 +24,7 @@ private:
     static map<RakNetGUID, Player*> playerlist;
     static bool initialized;
 
-    static vector<string> GetRefs(string cmd, bool enabled, bool notself);
+    static vector<string> GetRefs(bool enabled = true, bool notself = false, bool enabled_disabled = false, bool self_notself = false);
 
 #ifdef VAULTMP_DEBUG
     static Debug* debug;
@@ -35,20 +35,22 @@ private:
     RakNetGUID guid;
 
 public:
-    Player(RakNetGUID guid, string base);
-    Player(RakNetGUID guid, string ref, string base);
+    Player(RakNetGUID guid, unsigned int baseID);
+    Player(RakNetGUID guid, unsigned int refID, unsigned int baseID);
     ~Player();
+
+    RakNetGUID GetPlayerGUID();
 
     static void Initialize();
     static void DestroyInstances();
 
     static map<RakNetGUID, Player*> GetPlayerList();
     static Player* GetPlayerFromGUID(RakNetGUID guid);
-    static Player* GetPlayerFromRefID(string refID);
-    static vector<string> GetAllRefs(string cmd);
-    static vector<string> GetAllRefs_NotSelf(string cmd);
-    static vector<string> GetEnabledRefs(string cmd);
-    static vector<string> GetEnabledRefs_NotSelf(string cmd);
+    static Player* GetPlayerFromRefID(unsigned int refID);
+    static vector<string> GetAllRefs();
+    static vector<string> GetAllRefs_NotSelf();
+    static vector<string> GetEnabledRefs();
+    static vector<string> GetEnabledRefs_NotSelf();
 
     static Parameter Param_EnabledPlayers;
     static Parameter Param_EnabledPlayers_NotSelf;

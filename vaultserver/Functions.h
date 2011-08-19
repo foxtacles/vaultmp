@@ -20,7 +20,7 @@ class Functions {
       private:
               static AMX_NATIVE_INFO vaultmp_functions[16];
 
-              static cell vaultmp_GetPlayerName(AMX* amx, const cell* params);
+              /*static cell vaultmp_GetPlayerName(AMX* amx, const cell* params);
               static cell vaultmp_GetPlayerPos(AMX* amx, const cell* params);
               static cell vaultmp_GetPlayerZAngle(AMX* amx, const cell* params);
               static cell vaultmp_GetPlayerHealth(AMX* amx, const cell* params);
@@ -33,8 +33,8 @@ class Functions {
               static cell vaultmp_SetServerName(AMX* amx, const cell* params);
               static cell vaultmp_SetServerMap(AMX* amx, const cell* params);
               static cell vaultmp_SetServerRule(AMX* amx, const cell* params);
-              static cell vaultmp_IsNewVegas(AMX* amx, const cell* params);
-              static cell vaultmp_timestamp(AMX* amx, const cell* params);
+              static cell vaultmp_GetGame(AMX* amx, const cell* params);
+              static cell vaultmp_timestamp(AMX* amx, const cell* params);*/
 
       public:
               static int RegisterVaultmpFunctions(AMX* amx);

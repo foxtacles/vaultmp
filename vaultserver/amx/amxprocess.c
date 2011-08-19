@@ -1,6 +1,6 @@
 /*  Process control and Foreign Function Interface module for the Pawn AMX
  *
- *  Copyright (c) ITB CompuPhase, 2005-2009
+ *  Copyright (c) ITB CompuPhase, 2005-2011
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not
  *  use this file except in compliance with the License. You may obtain a copy
@@ -14,7 +14,7 @@
  *  License for the specific language governing permissions and limitations
  *  under the License.
  *
- *  Version: $Id: amxprocess.c 4125 2009-06-15 16:51:06Z thiadmer $
+ *  Version: $Id: amxprocess.c 4523 2011-06-21 15:03:47Z thiadmer $
  */
 #if defined _UNICODE || defined __UNICODE__ || defined UNICODE
 # if !defined UNICODE   /* for Windows */
@@ -470,7 +470,7 @@ static cell AMX_NATIVE_CALL n_libcall(AMX *amx, const cell *params)
       typeidx++;                  /* skip closing ']' too */
     } /* if */
     /* get pointer to parameter */
-    amx_GetAddr(amx,params[paramidx+4],&cptr);
+    cptr=amx_Address(amx,params[paramidx+4]);
     switch (ps[paramidx].type) {
     case 'i': /* signed integer */
     case 'u': /* unsigned integer */
@@ -573,7 +573,7 @@ static cell AMX_NATIVE_CALL n_libcall(AMX *amx, const cell *params)
       break;
     case 'p' | BYREF:
     case 's' | BYREF:
-      amx_GetAddr(amx,params[idx+4],&cptr);
+      cptr=amx_Address(amx,params[idx+4]);
       amx_SetString(cptr,(char *)ps[idx].v.ptr,ps[idx].type==('p'|BYREF),sizeof(TCHAR)>1,UNLIMITED);
       free(ps[idx].v.ptr);
       break;
@@ -585,7 +585,7 @@ static cell AMX_NATIVE_CALL n_libcall(AMX *amx, const cell *params)
     case 'i' | BYREF:
     case 'u' | BYREF:
     case 'f' | BYREF:
-      amx_GetAddr(amx,params[idx+4],&cptr);
+      cptr=amx_Address(amx,params[idx+4]);
       if (ps[idx].range==1) {
         /* modify directly in the AMX (no memory block was allocated */
         switch (ps[idx].size) {
@@ -883,7 +883,7 @@ static cell AMX_NATIVE_CALL n_procread(AMX *amx, const cell *params)
       index--;
   line[index]=__T('\0');
 
-  amx_GetAddr(amx,params[1],&cptr);
+  cptr=amx_Address(amx,params[1]);
   amx_SetString(cptr,line,params[4],sizeof(TCHAR)>1,params[2]);
   return 1;
 }

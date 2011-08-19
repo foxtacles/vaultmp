@@ -32,7 +32,7 @@ private:
 #endif
 
     static bool initialized;
-    static bool NewVegas;
+    static int game;
     static Inventory* internal;
     static map<const char*, const char*, str_compare> Item_map;
     static map<string, string> Mod_map;
@@ -49,7 +49,7 @@ public:
     Inventory(string ref, string base);
     virtual ~Inventory();
 
-    static void Initialize(bool NewVegas);
+    static void Initialize(int game);
     static void Cleanup();
     static void RegisterIndex(string mod, string idx);
 

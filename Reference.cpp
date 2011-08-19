@@ -2,17 +2,17 @@
 
 list<Reference*> Reference::references;
 
-Reference::Reference(string ref, string base)
+Reference::Reference(unsigned int refID, unsigned int baseID)
 {
-    this->ref = ref;
-    this->base = base;
+    this->refID = refID;
+    this->baseID = baseID;
     references.push_back(this);
 }
 
 Reference::Reference()
 {
-    this->ref = "";
-    this->base = "";
+    this->refID = 0x00;
+    this->baseID = 0x00;
     references.push_back(this);
 }
 
@@ -26,22 +26,22 @@ list<Reference*> Reference::GetReferences()
     return references;
 }
 
-void Reference::SetReference(string ref)
+void Reference::SetReference(unsigned int refID)
 {
-    this->ref = ref;
+    this->refID = refID;
 }
 
-void Reference::SetBase(string base)
+void Reference::SetBase(unsigned int baseID)
 {
-    this->base = base;
+    this->baseID = baseID;
 }
 
-string Reference::GetReference()
+unsigned int Reference::GetReference()
 {
-    return ref;
+    return refID;
 }
 
-string Reference::GetBase()
+unsigned int Reference::GetBase()
 {
-    return base;
+    return baseID;
 }

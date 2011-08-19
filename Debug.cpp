@@ -11,7 +11,6 @@ Debug::Debug(char* module)
     this->logfile += ".log";
 
     this->vaultmplog = fopen(logfile.c_str(), "w");
-    filemutex = false;
 }
 
 Debug::~Debug()
@@ -38,11 +37,9 @@ void Debug::GetTimeFormat(char* buf, int size, bool file)
         strcpy(buf, timeformat);
 }
 
-void Debug::Print(char* text, bool timestamp)
+void Debug::Print(const char* text, bool timestamp)
 {
-    while (filemutex);
-
-    filemutex = true;
+    StartSession();
 
     if (vaultmplog == NULL) return;
 
@@ -58,14 +55,25 @@ void Debug::Print(char* text, bool timestamp)
     fwrite(text, sizeof(char), strlen(text), this->vaultmplog);
     fputc((int) '\n', this->vaultmplog);
 
-    filemutex = false;
+    EndSession();
+}
+
+void Debug::PrintFormat(const char* format, bool timestamp, ...)
+{
+    char text[256];
+    ZeroMemory(text, sizeof(text));
+
+    va_list args;
+    va_start(args, timestamp);
+    vsnprintf(text, sizeof(text), format, args);
+    va_end(args);
+
+    Print(text, timestamp);
 }
 
 void Debug::PrintSystem()
 {
-    while (filemutex);
-
-    filemutex = true;
+    StartSession();
 
     FILE* systeminfo = popen("systeminfo", "r");
 
@@ -77,5 +85,5 @@ void Debug::PrintSystem()
 
     pclose(systeminfo);
 
-    filemutex = false;
+    EndSession();
 }
