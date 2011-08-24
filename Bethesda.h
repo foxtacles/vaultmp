@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <stdio.h>
 #include <shlwapi.h>
+#include <shlobj.h>
 #include <list>
 #include <vector>
 #include <string>
@@ -15,8 +16,9 @@
 #include "Inventory.h"
 #include "Interface.h"
 #include "Lockable.h"
-#include "Network.h"
+#include "Game.h"
 #include "VaultException.h"
+#include "NetworkClient.h"
 #include "Data.h"
 
 #ifdef VAULTMP_DEBUG
@@ -27,24 +29,25 @@ using namespace RakNet;
 using namespace Data;
 using namespace std;
 
+typedef pair<string, unsigned int> Savegame;
+typedef vector<pair<string, unsigned int> > ModList;
+
 class Bethesda
 {
-friend class Network;
+friend class NetworkClient;
+friend class Game;
 
 private:
     static int game;
-    static string savegame;
+    static Savegame savegame;
+    static ModList modfiles;
     static bool initialized;
 
     static void InitializeGame();
-    static void InitializeCommands();
 
     static DWORD WINAPI InjectedCode(LPVOID addr);
     static void InjectedEnd();
     struct INJECT;
-
-    static Player* self;
-    static list<Player*> refqueue;
 
     static void CommandHandler(signed int key, vector<double> info, double result);
 

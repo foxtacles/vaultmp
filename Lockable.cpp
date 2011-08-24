@@ -9,16 +9,6 @@ CriticalSection Lockable::cs;
 Debug* Lockable::debug;
 #endif
 
-Lockable::Lockable()
-{
-
-}
-
-Lockable::~Lockable()
-{
-
-}
-
 #ifdef VAULTMP_DEBUG
 void Lockable::SetDebugHandler(Debug* debug)
 {
@@ -28,6 +18,16 @@ void Lockable::SetDebugHandler(Debug* debug)
         debug->Print("Attached debug handler to Lockable class", true);
 }
 #endif
+
+Lockable::Lockable()
+{
+
+}
+
+Lockable::~Lockable()
+{
+
+}
 
 signed int Lockable::NextKey(bool flat)
 {
@@ -51,7 +51,7 @@ signed int Lockable::NextKey(bool flat)
                 if (temp_key == flat_key)
                 {
                     cs.EndSession();
-                    return 0x00000000; // no key available
+                    throw VaultException("Lockable class ran out of flat keys");
                 }
             }
 
@@ -73,7 +73,7 @@ signed int Lockable::NextKey(bool flat)
                 if (temp_key == deep_key)
                 {
                     cs.EndSession();
-                    return 0x00000000; // no key available
+                    throw VaultException("Lockable class ran out of deep keys");
                 }
             }
 

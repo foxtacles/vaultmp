@@ -22,8 +22,10 @@ private:
 public:
     static void timestamp();
     static string LongToHex(unsigned int value);
+    static const char* FileOnly(const char* path);
+    static unsigned int FileLength(const char* file);
     static unsigned int crc32buf(char* buf, size_t len);
-    static bool crc32file(char* name, unsigned int* crc, long* charcnt);
+    static bool crc32file(char* name, unsigned int* crc);
 
 };
 

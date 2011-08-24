@@ -11,6 +11,8 @@ bool Actor::initialized = false;
 Parameter Actor::Param_EnabledActors = Parameter(vector<string>(), &Actor::GetEnabledRefs);
 Parameter Actor::Param_DisabledActors = Parameter(vector<string>(), &Actor::GetDisabledRefs);
 Parameter Actor::Param_AllActors = Parameter(vector<string>(), &Actor::GetAllRefs);
+Parameter Actor::Param_ActorValues = Parameter(vector<string>(), &API::RetrieveAllValues_Reverse);
+Parameter Actor::Param_Axis = Parameter(vector<string>(), &API::RetrieveAllAxis_Reverse);
 
 #ifdef VAULTMP_DEBUG
 Debug* Actor::debug;

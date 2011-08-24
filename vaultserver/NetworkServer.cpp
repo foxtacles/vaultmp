@@ -1,31 +1,21 @@
-#include "../Network.h"
+#include "NetworkServer.h"
 #include "Dedicated.h"
 
 #ifdef VAULTMP_DEBUG
-Debug* Network::debug = NULL;
+Debug* NetworkServer::debug = NULL;
 #endif
 
 #ifdef VAULTMP_DEBUG
-void Network::SetDebugHandler(Debug* debug)
+void NetworkServer::SetDebugHandler(Debug* debug)
 {
-    Network::debug = debug;
+    NetworkServer::debug = debug;
 
     if (debug != NULL)
         debug->Print("Attached debug handler to Network class", true);
 }
 #endif
 
-pair<pDefault*, vector<unsigned char> > Network::CreateResponse(pDefault* packet, unsigned char priority, unsigned char reliability, unsigned char channel)
-{
-    vector<unsigned char> data = vector<unsigned char>();
-    data.push_back(priority);
-    data.push_back(reliability);
-    data.push_back(channel);
-    pair<pDefault*, vector<unsigned char> > response = pair<pDefault*, vector<unsigned char> >(packet, data);
-    return response;
-}
-
-NetworkResponse Network::ProcessEvent(unsigned char id, RakNetGUID guid)
+NetworkResponse NetworkServer::ProcessEvent(unsigned char id)
 {
     NetworkResponse response;
 
@@ -34,7 +24,7 @@ NetworkResponse Network::ProcessEvent(unsigned char id, RakNetGUID guid)
     case ID_EVENT_SERVER_ERROR:
     {
         pDefault* packet = PacketFactory::CreatePacket(ID_GAME_END, ID_REASON_ERROR);
-        response.push_back(CreateResponse(packet, (unsigned char) HIGH_PRIORITY, (unsigned char) RELIABLE_ORDERED, CHANNEL_SYSTEM));
+        response = Network::CompleteResponse(Network::CreateResponse(packet, (unsigned char) HIGH_PRIORITY, (unsigned char) RELIABLE_ORDERED, CHANNEL_GAME, Player::GetPlayerNetworkList()));
         break;
     }
 
@@ -45,7 +35,7 @@ NetworkResponse Network::ProcessEvent(unsigned char id, RakNetGUID guid)
     return response;
 }
 
-NetworkResponse Network::ProcessPacket(Packet* data, RakNetGUID guid)
+NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 {
     NetworkResponse response;
     pDefault* packet;
@@ -59,6 +49,7 @@ NetworkResponse Network::ProcessPacket(Packet* data, RakNetGUID guid)
 #ifdef VAULTMP_DEBUG
         debug->PrintFormat("Connected to MasterServer (%s)", true, data->systemAddress.ToString());
 #endif
+
         Dedicated::master = data->systemAddress;
         Dedicated::Announce(true);
         break;
@@ -83,7 +74,7 @@ NetworkResponse Network::ProcessPacket(Packet* data, RakNetGUID guid)
                 break;
         }
 
-
+        response = Server::Disconnect(data->guid, ID_REASON_ERROR);
         break;
     }
     case ID_NEW_INCOMING_CONNECTION:
@@ -120,8 +111,7 @@ NetworkResponse Network::ProcessPacket(Packet* data, RakNetGUID guid)
             char name[MAX_PLAYER_NAME + 1]; ZeroMemory(name, sizeof(name));
             char pwd[MAX_PASSWORD_SIZE + 1]; ZeroMemory(pwd, sizeof(pwd));
             PacketFactory::Access(packet, name, pwd);
-
-            //response = Server::ProcessEvent(ID_EVENT_AUTH_RECEIVED);
+            response = Server::Authenticate(data->guid, string(name), string(pwd));
             break;
         }
 
@@ -135,8 +125,7 @@ NetworkResponse Network::ProcessPacket(Packet* data, RakNetGUID guid)
         {
             unsigned char reason;
             PacketFactory::Access(packet, &reason);
-
-            //response = Server::ProcessEvent(ID_EVENT_CLOSE_RECEIVED);
+            response = Server::Disconnect(data->guid, reason);
             break;
         }
 
@@ -152,18 +141,4 @@ NetworkResponse Network::ProcessPacket(Packet* data, RakNetGUID guid)
     }
 
     return response;
-}
-
-void Network::Dispatch(RakPeerInterface* peer, NetworkResponse& response, const SystemAddress& target, bool broadcast)
-{
-    if (peer == NULL)
-        throw VaultException("RakPeerInterface is NULL");
-
-    NetworkResponse::iterator it;
-
-    for (it = response.begin(); it != response.end(); ++it)
-    {
-        peer->Send((char*) it->first->get(), it->first->length(), (PacketPriority) it->second.at(0), (PacketReliability) it->second.at(1), it->second.at(2), target, broadcast);
-        delete it->first;
-    }
 }

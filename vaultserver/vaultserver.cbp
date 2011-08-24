@@ -93,8 +93,6 @@
 		<Unit filename="..\API.h" />
 		<Unit filename="..\Actor.cpp" />
 		<Unit filename="..\Actor.h" />
-		<Unit filename="..\Client.cpp" />
-		<Unit filename="..\Client.h" />
 		<Unit filename="..\CriticalSection.cpp" />
 		<Unit filename="..\CriticalSection.h" />
 		<Unit filename="..\Data.h" />
@@ -105,6 +103,7 @@
 		<Unit filename="..\Items.h" />
 		<Unit filename="..\Lockable.cpp" />
 		<Unit filename="..\Lockable.h" />
+		<Unit filename="..\Network.cpp" />
 		<Unit filename="..\Network.h" />
 		<Unit filename="..\PacketTypes.h" />
 		<Unit filename="..\Player.cpp" />
@@ -359,14 +358,27 @@
 		<Unit filename="..\Value.h" />
 		<Unit filename="..\VaultException.cpp" />
 		<Unit filename="..\VaultException.h" />
+		<Unit filename="..\iniparser\dictionary.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\iniparser\dictionary.h" />
+		<Unit filename="..\iniparser\iniparser.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\iniparser\iniparser.h" />
 		<Unit filename="..\vaultmp.h" />
+		<Unit filename="Client.cpp" />
+		<Unit filename="Client.h" />
 		<Unit filename="Dedicated.cpp" />
 		<Unit filename="Dedicated.h" />
-		<Unit filename="Functions.cpp" />
-		<Unit filename="Functions.h" />
 		<Unit filename="NetworkServer.cpp" />
+		<Unit filename="NetworkServer.h" />
+		<Unit filename="PAWN.cpp" />
+		<Unit filename="PAWN.h" />
 		<Unit filename="Script.cpp" />
 		<Unit filename="Script.h" />
+		<Unit filename="Server.cpp" />
+		<Unit filename="Server.h" />
 		<Unit filename="amx\amx.c">
 			<Option compilerVar="CC" />
 		</Unit>

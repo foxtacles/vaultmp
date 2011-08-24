@@ -29,6 +29,8 @@ www.vaultmp.com"
 #define MAX_PLAYER_NAME         16
 #define MAX_PASSWORD_SIZE       16
 #define MAX_MASTER_SERVER       32
+#define MAX_SAVEGAME_FILE       64
+#define MAX_MOD_FILE            64
 
 #define PIPE_LENGTH             300
 #define PIPE_SYS_WAKEUP         0x10
@@ -36,6 +38,11 @@ www.vaultmp.com"
 #define PIPE_OP_RETURN          0x12
 #define PIPE_ERROR_CLOSE        0x13
 #define PIPE_GUI_MESSAGE        0x14
+
+#define RAKNET_FILE_SERVER      1550
+#define RAKNET_FILE_RDY         0x01
+#define FILE_SAVEGAME           0x10
+#define FILE_MODFILE            0x20
 
 #ifndef WIN32
 #define stricmp strcasecmp

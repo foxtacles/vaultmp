@@ -22,17 +22,22 @@ enum
 {
     ID_GAME_AUTH = ID_GAME_FIRST,
     ID_GAME_CONFIRM,
+    ID_GAME_MOD,
     ID_GAME_START,
     ID_GAME_END,
-
-        ID_REASON_KICK,
-        ID_REASON_BAN,
-        ID_REASON_ERROR,
-        ID_REASON_NONE,
 
     ID_PLAYER_NEW,
     ID_PLAYER_LEFT,
     ID_PLAYER_UPDATE,
+};
+
+enum
+{
+    ID_REASON_KICK = 0,
+    ID_REASON_BAN,
+    ID_REASON_ERROR,
+    ID_REASON_DENIED,
+    ID_REASON_NONE,
 };
 
 /* ************************************** */
@@ -52,11 +57,23 @@ struct pTypeSpecifier
 
 class pDefault
 {
-friend class PacketFactory;
+    friend class PacketFactory;
 
 protected:
-    pDefault(unsigned char type) { this->type.type = type; this->stream = NULL; len = 0; this->base_len = sizeof(pTypeSpecifier); };
-    pDefault(unsigned char* stream, unsigned int len) { this->stream = new unsigned char[len]; memcpy(this->stream, stream, len); this->len = len; };
+    pDefault(unsigned char type)
+    {
+        this->type.type = type;
+        this->stream = NULL;
+        this->len = 0;
+        base();
+    };
+    pDefault(unsigned char* stream, unsigned int len)
+    {
+        this->stream = new unsigned char[len];
+        memcpy(this->stream, stream, len);
+        this->len = len;
+        base();
+    };
     pTypeSpecifier type;
     unsigned char* stream;
     unsigned int len;
@@ -65,17 +82,42 @@ protected:
     virtual void construct(void*, unsigned int) = 0;
     virtual void deconstruct(void*, unsigned int) = 0;
 
+    void base()
+    {
+        this->base_len = sizeof(pTypeSpecifier);
+    };
+
 public:
-    virtual ~pDefault() { if (stream) delete[] stream; };
-    unsigned char* get() { return stream; };
-    unsigned int length() { return len; };
+    virtual ~pDefault()
+    {
+        if (stream) delete[] stream;
+    };
+    const unsigned char* get()
+    {
+        return stream;
+    };
+    unsigned int length()
+    {
+        return len;
+    };
 };
 
 class pGameDefault : public pDefault
 {
 protected:
-    pGameDefault(unsigned char type) : pDefault(type) { this->base_len = pDefault::base_len; };
-    pGameDefault(unsigned char* stream, unsigned int len) : pDefault(stream, len) { };
+    pGameDefault(unsigned char type) : pDefault(type)
+    {
+        base();
+    };
+    pGameDefault(unsigned char* stream, unsigned int len) : pDefault(stream, len)
+    {
+        base();
+    };
+
+    void base()
+    {
+        this->base_len = pDefault::base_len;
+    };
 
     void construct(void* super = NULL, unsigned int len = 0)
     {
@@ -83,8 +125,10 @@ protected:
         {
             unsigned int written = 0;
             stream = new unsigned char[sizeof(pTypeSpecifier) + len];
-            memcpy(stream, &type, sizeof(pTypeSpecifier)); written += sizeof(pTypeSpecifier);
-            memcpy((void*) (stream + written), super, len); written += len;
+            memcpy(stream, &type, sizeof(pTypeSpecifier));
+            written += sizeof(pTypeSpecifier);
+            memcpy((void*) (stream + written), super, len);
+            written += len;
             this->len = written;
         }
     };
@@ -97,7 +141,8 @@ protected:
                 throw VaultException("Packet has size %d instead of expected %d bytes!", this->len, this->base_len + len);
 
             unsigned int read = 0;
-            type = *reinterpret_cast<pTypeSpecifier*>(stream); read += sizeof(pTypeSpecifier);
+            type = *reinterpret_cast<pTypeSpecifier*>(stream);
+            read += sizeof(pTypeSpecifier);
             if (super) memcpy(super, (void*) (stream + read), len);
         }
     };
@@ -106,9 +151,22 @@ protected:
 class pPlayerDefault : public pDefault
 {
 protected:
-    pPlayerDefault(unsigned char type, RakNetGUID guid) : pDefault(type) { this->guid = guid; this->base_len = sizeof(RakNetGUID); this->base_len += pDefault::base_len; };
-    pPlayerDefault(unsigned char* stream, unsigned int len) : pDefault(stream, len) { };
+    pPlayerDefault(unsigned char type, RakNetGUID guid) : pDefault(type)
+    {
+        this->guid = guid;
+        base();
+    };
+    pPlayerDefault(unsigned char* stream, unsigned int len) : pDefault(stream, len)
+    {
+        base();
+    };
     RakNetGUID guid;
+
+    void base()
+    {
+        this->base_len = sizeof(RakNetGUID);
+        this->base_len += pDefault::base_len;
+    };
 
     void construct(void* super = NULL, unsigned int len = 0)
     {
@@ -116,9 +174,12 @@ protected:
         {
             unsigned int written = 0;
             stream = new unsigned char[sizeof(pTypeSpecifier) + sizeof(RakNetGUID) + len];
-            memcpy(stream, &type, sizeof(pTypeSpecifier)); written += sizeof(pTypeSpecifier);
-            memcpy((void*) (stream + written), &guid, sizeof(RakNetGUID)); written += sizeof(RakNetGUID);
-            memcpy((void*) (stream + written), super, len); written += len;
+            memcpy(stream, &type, sizeof(pTypeSpecifier));
+            written += sizeof(pTypeSpecifier);
+            memcpy((void*) (stream + written), &guid, sizeof(RakNetGUID));
+            written += sizeof(RakNetGUID);
+            memcpy((void*) (stream + written), super, len);
+            written += len;
             this->len = written;
         }
     };
@@ -131,8 +192,10 @@ protected:
                 throw VaultException("Packet has size %d instead of expected %d bytes!", this->len, this->base_len + len);
 
             unsigned int read = 0;
-            type = *reinterpret_cast<pTypeSpecifier*>(stream); read += sizeof(pTypeSpecifier);
-            guid = *reinterpret_cast<RakNetGUID*>(stream + read); read += sizeof(RakNetGUID);
+            type = *reinterpret_cast<pTypeSpecifier*>(stream);
+            read += sizeof(pTypeSpecifier);
+            guid = *reinterpret_cast<RakNetGUID*>(stream + read);
+            read += sizeof(RakNetGUID);
             if (super) memcpy(super, (void*) (stream + read), len);
         }
     };
@@ -141,9 +204,22 @@ protected:
 class pPlayerUpdateDefault : public pPlayerDefault
 {
 protected:
-    pPlayerUpdateDefault(unsigned char type, unsigned char sub_type, RakNetGUID guid) : pPlayerDefault(type, guid) { this->sub_type.type = sub_type; this->base_len = sizeof(pTypeSpecifier); this->base_len += pPlayerDefault::base_len; };
-    pPlayerUpdateDefault(unsigned char* stream, unsigned int len) : pPlayerDefault(stream, len) { };
+    pPlayerUpdateDefault(unsigned char type, unsigned char sub_type, RakNetGUID guid) : pPlayerDefault(type, guid)
+    {
+        this->sub_type.type = sub_type;
+        base();
+    };
+    pPlayerUpdateDefault(unsigned char* stream, unsigned int len) : pPlayerDefault(stream, len)
+    {
+        base();
+    };
     pTypeSpecifier sub_type;
+
+    void base()
+    {
+        this->base_len = sizeof(pTypeSpecifier);
+        this->base_len += pPlayerDefault::base_len;
+    };
 
     void construct(void* super = NULL, unsigned int len = 0)
     {
@@ -151,10 +227,14 @@ protected:
         {
             unsigned int written = 0;
             stream = new unsigned char[sizeof(pTypeSpecifier) + sizeof(pTypeSpecifier) + sizeof(RakNetGUID) + len];
-            memcpy(stream, &type, sizeof(pTypeSpecifier)); written += sizeof(pTypeSpecifier);
-            memcpy((void*) (stream + written), &sub_type, sizeof(pTypeSpecifier)); written += sizeof(pTypeSpecifier);
-            memcpy((void*) (stream + written), &guid, sizeof(RakNetGUID)); written += sizeof(RakNetGUID);
-            memcpy((void*) (stream + written), super, len); written += len;
+            memcpy(stream, &type, sizeof(pTypeSpecifier));
+            written += sizeof(pTypeSpecifier);
+            memcpy((void*) (stream + written), &sub_type, sizeof(pTypeSpecifier));
+            written += sizeof(pTypeSpecifier);
+            memcpy((void*) (stream + written), &guid, sizeof(RakNetGUID));
+            written += sizeof(RakNetGUID);
+            memcpy((void*) (stream + written), super, len);
+            written += len;
             this->len = written;
         }
     };
@@ -167,9 +247,12 @@ protected:
                 throw VaultException("Packet has size %d instead of expected %d bytes!", this->len, this->base_len + len);
 
             unsigned int read = 0;
-            type = *reinterpret_cast<pTypeSpecifier*>(stream); read += sizeof(pTypeSpecifier);
-            sub_type = *reinterpret_cast<pTypeSpecifier*>(stream + read); read += sizeof(pTypeSpecifier);
-            guid = *reinterpret_cast<RakNetGUID*>(stream + read); read += sizeof(RakNetGUID);
+            type = *reinterpret_cast<pTypeSpecifier*>(stream);
+            read += sizeof(pTypeSpecifier);
+            sub_type = *reinterpret_cast<pTypeSpecifier*>(stream + read);
+            read += sizeof(pTypeSpecifier);
+            guid = *reinterpret_cast<RakNetGUID*>(stream + read);
+            read += sizeof(RakNetGUID);
             if (super) memcpy(super, (void*) (stream + read), len);
         }
     };
@@ -183,7 +266,7 @@ protected:
 
 class pGameConfirm : public pGameDefault
 {
-friend class PacketFactory;
+    friend class PacketFactory;
 
 private:
     pGameConfirm() : pGameDefault(ID_GAME_CONFIRM)
@@ -198,7 +281,7 @@ private:
 
 class pGameAuth : public pGameDefault
 {
-friend class PacketFactory;
+    friend class PacketFactory;
 
 private:
 #pragma pack(push, 1)
@@ -211,7 +294,7 @@ private:
 
     _pGameAuth _data;
 
-    pGameAuth(char* name, char* pwd) : pGameDefault(ID_GAME_AUTH)
+    pGameAuth(const char* name, const char* pwd) : pGameDefault(ID_GAME_AUTH)
     {
         ZeroMemory(&_data, sizeof(_data));
         strncpy(_data.name, name, sizeof(_data.name));
@@ -224,24 +307,65 @@ private:
     }
 };
 
-class pGameStart : public pGameDefault
+class pGameMod : public pGameDefault
 {
-friend class PacketFactory;
+    friend class PacketFactory;
 
 private:
-    pGameStart() : pGameDefault(ID_GAME_START)
+#pragma pack(push, 1)
+    struct _pGameMod
     {
-        construct();
+        char modfile[MAX_MOD_FILE];
+        unsigned int crc;
+    };
+#pragma pack(pop)
+
+    _pGameMod _data;
+
+    pGameMod(const char* modfile, unsigned int crc) : pGameDefault(ID_GAME_MOD)
+    {
+        ZeroMemory(&_data, sizeof(_data));
+        strncpy(_data.modfile, modfile, sizeof(_data.modfile));
+        _data.crc = crc;
+        construct(&_data, sizeof(_data));
+    }
+    pGameMod(unsigned char* stream, unsigned int len) : pGameDefault(stream, len)
+    {
+        deconstruct(&_data, sizeof(_data));
+    }
+};
+
+class pGameStart : public pGameDefault
+{
+    friend class PacketFactory;
+
+private:
+#pragma pack(push, 1)
+    struct _pGameStart
+    {
+        char savegame[MAX_SAVEGAME_FILE];
+        unsigned int crc;
+    };
+#pragma pack(pop)
+
+    _pGameStart _data;
+
+    pGameStart(const char* savegame, unsigned int crc) : pGameDefault(ID_GAME_START)
+    {
+        ZeroMemory(&_data, sizeof(_data));
+        strncpy(_data.savegame, savegame, sizeof(_data.savegame));
+        _data.crc = crc;
+        construct(&_data, sizeof(_data));
     }
     pGameStart(unsigned char* stream, unsigned int len) : pGameDefault(stream, len)
     {
-        deconstruct();
+        deconstruct(&_data, sizeof(_data));
     }
 };
 
 class pGameEnd : public pGameDefault
 {
-friend class PacketFactory;
+    friend class PacketFactory;
 
 private:
     pTypeSpecifier reason;
@@ -261,7 +385,7 @@ private:
 
 class pPlayerNew : public pPlayerDefault
 {
-friend class PacketFactory;
+    friend class PacketFactory;
 
 private:
 #pragma pack(push, 1)
@@ -289,7 +413,7 @@ private:
 
 class pPlayerLeft : public pPlayerDefault
 {
-friend class PacketFactory;
+    friend class PacketFactory;
 
 private:
     pPlayerLeft(RakNetGUID guid) : pPlayerDefault(ID_PLAYER_LEFT, guid)
@@ -336,9 +460,19 @@ public:
             break;
         }
 
+        case ID_GAME_MOD:
+        {
+            char* modfile = va_arg(args, char*);
+            unsigned int crc = va_arg(args, unsigned int);
+            packet = new pGameMod(modfile, crc);
+            break;
+        }
+
         case ID_GAME_START:
         {
-            packet = new pGameStart();
+            char* savegame = va_arg(args, char*);
+            unsigned int crc = va_arg(args, unsigned int);
+            packet = new pGameStart(savegame, crc);
             break;
         }
 
@@ -381,10 +515,13 @@ public:
         switch (stream[0])
         {
         case ID_GAME_CONFIRM:
-            packet = new pGameAuth(stream, len);
+            packet = new pGameConfirm(stream, len);
             break;
         case ID_GAME_AUTH:
             packet = new pGameAuth(stream, len);
+            break;
+        case ID_GAME_MOD:
+            packet = new pGameMod(stream, len);
             break;
         case ID_GAME_START:
             packet = new pGameStart(stream, len);
@@ -410,69 +547,78 @@ public:
         va_list args;
         va_start(args, packet);
 
-        try {
-
-        switch (packet->type.type)
+        try
         {
-        case ID_GAME_CONFIRM:
-        {
-            pGameConfirm* data = dynamic_cast<pGameConfirm*>(packet);
-            break;
-        }
 
-        case ID_GAME_AUTH:
-        {
-            pGameAuth* data = dynamic_cast<pGameAuth*>(packet);
+            switch (packet->type.type)
+            {
+            case ID_GAME_CONFIRM:
+            {
+                pGameConfirm* data = dynamic_cast<pGameConfirm*>(packet);
+                break;
+            }
 
-            char* name = va_arg(args, char*);
-            char* pwd = va_arg(args, char*);
+            case ID_GAME_AUTH:
+            {
+                pGameAuth* data = dynamic_cast<pGameAuth*>(packet);
+                char* name = va_arg(args, char*);
+                char* pwd = va_arg(args, char*);
+                strncpy(name, data->_data.name, sizeof(data->_data.name));
+                strncpy(pwd, data->_data.pwd, sizeof(data->_data.pwd));
+                break;
+            }
 
-            strncpy(name, data->_data.name, sizeof(data->_data.name));
-            strncpy(pwd, data->_data.pwd, sizeof(data->_data.pwd));
-            break;
-        }
+            case ID_GAME_MOD:
+            {
+                pGameMod* data = dynamic_cast<pGameMod*>(packet);
+                char* modfile = va_arg(args, char*);
+                unsigned int* crc = va_arg(args, unsigned int*);
+                strncpy(modfile, data->_data.modfile, sizeof(data->_data.modfile));
+                *crc = data->_data.crc;
+                break;
+            }
 
-        case ID_GAME_START:
-        {
-            pGameStart* data = dynamic_cast<pGameStart*>(packet);
-            break;
-        }
+            case ID_GAME_START:
+            {
+                pGameStart* data = dynamic_cast<pGameStart*>(packet);
+                char* savegame = va_arg(args, char*);
+                unsigned int* crc = va_arg(args, unsigned int*);
+                strncpy(savegame, data->_data.savegame, sizeof(data->_data.savegame));
+                *crc = data->_data.crc;
+                break;
+            }
 
-        case ID_GAME_END:
-        {
-            pGameEnd* data = dynamic_cast<pGameEnd*>(packet);
+            case ID_GAME_END:
+            {
+                pGameEnd* data = dynamic_cast<pGameEnd*>(packet);
+                unsigned char* reason = va_arg(args, unsigned char*);
+                *reason = data->reason.type;
+                break;
+            }
 
-            unsigned char* reason = va_arg(args, unsigned char*);
-            *reason = data->reason.type;
-            break;
-        }
+            case ID_PLAYER_NEW:
+            {
+                pPlayerNew* data = dynamic_cast<pPlayerNew*>(packet);
+                RakNetGUID* guid = va_arg(args, RakNetGUID*);
+                char* name = va_arg(args, char*);
+                unsigned int* baseID = va_arg(args, unsigned int*);
+                *guid = data->guid;
+                strncpy(name, data->_data.name, sizeof(data->_data.name));
+                *baseID = data->_data.baseID;
+                break;
+            }
 
-        case ID_PLAYER_NEW:
-        {
-            pPlayerNew* data = dynamic_cast<pPlayerNew*>(packet);
+            case ID_PLAYER_LEFT:
+            {
+                pPlayerLeft* data = dynamic_cast<pPlayerLeft*>(packet);
+                RakNetGUID* guid = va_arg(args, RakNetGUID*);
+                *guid = data->guid;
+                break;
+            }
 
-            RakNetGUID* guid = va_arg(args, RakNetGUID*);
-            char* name = va_arg(args, char*);
-            unsigned int* baseID = va_arg(args, unsigned int*);
-
-            *guid = data->guid;
-            strncpy(name, data->_data.name, sizeof(data->_data.name));
-            *baseID = data->_data.baseID;
-            break;
-        }
-
-        case ID_PLAYER_LEFT:
-        {
-            pPlayerLeft* data = dynamic_cast<pPlayerLeft*>(packet);
-
-            RakNetGUID* guid = va_arg(args, RakNetGUID*);
-            *guid = data->guid;
-            break;
-        }
-
-        default:
-            throw VaultException("Unhandled packet type %d", (int) packet->type.type);
-        }
+            default:
+                throw VaultException("Unhandled packet type %d", (int) packet->type.type);
+            }
 
         }
         catch (...)

@@ -8,7 +8,6 @@
 
 #define _RAKNET_SUPPORT_ConnectionGraph2 0
 #define _RAKNET_SUPPORT_DirectoryDeltaTransfer 0
-#define _RAKNET_SUPPORT_FileListTransfer 0
 #define _RAKNET_SUPPORT_FullyConnectedMesh2 0
 #define _RAKNET_SUPPORT_MessageFilter 0
 #define _RAKNET_SUPPORT_NatPunchthroughClient 0

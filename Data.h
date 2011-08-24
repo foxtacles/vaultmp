@@ -16,8 +16,6 @@
 using namespace std;
 using namespace RakNet;
 
-class Player;
-
 /* Shared data structures and tables */
 
 namespace Data
@@ -50,30 +48,11 @@ static Parameter BuildParameter(string param)
 
 static const char* True[] = {"1"};
 static const char* False[] = {"0"};
-static const char* XYZ[] = {"X", "Y", "Z"};
-static const char* X[] = {"X"};
-static const char* Y[] = {"Y"};
-static const char* Z[] = {"Z"};
-static const char* Axis[] = {"Axis"};
-static const char* BaseActorValues[] = {"Health"};
-static const char* ActorValues[] = {"Health", "PerceptionCondition", "EnduranceCondition", "LeftAttackCondition", "RightAttackCondition", "LeftMobilityCondition", "RightMobilityCondition"};
 
 static vector<string> data_True(True, True + 1);
 static vector<string> data_False(False, False + 1);
-static vector<string> data_XYZ(XYZ, XYZ + 3);
-static vector<string> data_X(X, X + 1);
-static vector<string> data_Y(Y, Y + 1);
-static vector<string> data_Z(Z, Z + 1);
-static vector<string> data_BaseActorValues(BaseActorValues, BaseActorValues + 1);
-static vector<string> data_ActorValues(ActorValues, ActorValues + 7);
 static Parameter Param_True = Parameter(data_True, &EmptyVector);
 static Parameter Param_False = Parameter(data_False, &EmptyVector);
-static Parameter Param_XYZ = Parameter(data_XYZ, &EmptyVector);
-static Parameter Param_X = Parameter(data_X, &EmptyVector);
-static Parameter Param_Y = Parameter(data_Y, &EmptyVector);
-static Parameter Param_Z = Parameter(data_Z, &EmptyVector);
-static Parameter Param_BaseActorValues = Parameter(data_BaseActorValues, &EmptyVector);
-static Parameter Param_ActorValues = Parameter(data_ActorValues, &EmptyVector);
 
 enum
 {
@@ -81,6 +60,13 @@ enum
     ID_MASTER_ANNOUNCE,
     ID_MASTER_UPDATE,
     ID_GAME_FIRST,
+};
+
+enum
+{
+    CHANNEL_SYSTEM,
+    CHANNEL_GAME,
+    CHANNEL_DATA,
 };
 
 #pragma pack(push, 1)

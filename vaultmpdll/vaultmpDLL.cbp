@@ -28,7 +28,8 @@
 			<Add option="-static-libgcc" />
 			<Add option="-static-libstdc++" />
 			<Add option="-enable-auto-import" />
-			<Add option="--no-export-all-symbols --add-stdcall-alias" />
+			<Add option="--no-export-all-symbols" />
+			<Add option="--add-stdcall-alias" />
 		</Linker>
 		<Unit filename="..\Pipe.cpp" />
 		<Unit filename="..\Pipe.h" />

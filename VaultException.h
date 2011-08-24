@@ -32,6 +32,7 @@ public:
     ~VaultException() throw() {}
 
     void Message();
+    void Console();
 
 #ifdef VAULTMP_DEBUG
     static void SetDebugHandler(Debug* debug);

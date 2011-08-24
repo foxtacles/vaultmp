@@ -6,8 +6,9 @@
 #include "vaultserver.h"
 #include "Dedicated.h"
 #include "Script.h"
-#include "Functions.h"
 #include "../Utils.h"
+#include "../iniparser/dictionary.c"
+#include "../iniparser/iniparser.c"
 
 #ifdef __WIN32__
 DWORD WINAPI InputThread(LPVOID data)
@@ -60,99 +61,132 @@ int main(int argc, char* argv[])
     printf("Vault-Tec dedicated server %s (Unix)\n----------------------------------------------------------\n", DEDICATED_VERSION);
 #endif
 
-    int game = FALLOUT3;
-    bool query = false;
-    int announce = 0;
-    int script = 0;
-    int port = 0;
-    int connections = 0;
+    int game;
+    int port;
+    int players;
+    int fileslots;
+    bool query;
+    bool files;
+    char* announce;
+    char* scripts;
+    char* mods;
+    char* savegame;
 
-    for (int i = 1; i < argc; i++)
+    dictionary* config = iniparser_load(argc > 1 ? argv[1] : (char*) "vaultserver.ini");
+
+    char* game_str = iniparser_getstring(config, (char*) "general:game", (char*) "fallout3");
+
+    if (stricmp(game_str, "newvegas") == 0)
+        game = NEWVEGAS;
+    else if (stricmp(game_str, "oblivion") == 0)
+        game = OBLIVION;
+    else
+        game = FALLOUT3;
+
+    port = iniparser_getint(config, (char*) "general:port", RAKNET_STANDARD_PORT);
+    players = iniparser_getint(config, (char*) "general:players", RAKNET_STANDARD_CONNECTIONS);
+    query = (bool) iniparser_getboolean(config, (char*) "general:query", 1);
+    files = (bool) iniparser_getboolean(config, (char*) "general:fileserve", 0);
+    fileslots = iniparser_getint(config, (char*) "general:fileslots", 8);
+    announce = iniparser_getstring(config, (char*) "general:master", (char*) "vaultmp.com");
+    savegame = iniparser_getstring(config, (char*) "general:save", (char*) "default.fos");
+    scripts = iniparser_getstring(config, (char*) "scripts:scripts", (char*) "standard.amx");
+    mods = iniparser_getstring(config, (char*) "mods:mods", (char*) "");
+
+    ServerEntry* self = new ServerEntry(game);
+    self->SetServerRule("version", DEDICATED_VERSION);
+    Dedicated::SetServerEntry(self);
+
+    try
     {
-        if (strcmp(argv[i], "-q") == 0 || strcmp(argv[i], "-query") == 0)
-            query = true;
-        else if (strcmp(argv[i], "-f3") == 0 || strcmp(argv[i], "-fallout3") == 0)
-            game = FALLOUT3;
-        else if (strcmp(argv[i], "-nv") == 0 || strcmp(argv[i], "-newvegas") == 0)
-            game = NEWVEGAS;
-        else if (strcmp(argv[i], "-ob") == 0 || strcmp(argv[i], "-oblivion") == 0)
-            game = OBLIVION;
-        else if (i + 1 < argc)
+        Script::LoadScripts(scripts);
+    }
+    catch (std::exception& e)
+    {
+        try
         {
-            if (strcmp(argv[i], "-a") == 0 || strcmp(argv[i], "-announce") == 0)
-                announce = i + 1;
-            else if (strcmp(argv[i], "-s") == 0 || strcmp(argv[i], "-script") == 0)
-                script = i + 1;
-            else if (strcmp(argv[i], "-p") == 0 || strcmp(argv[i], "-port") == 0)
-                port = atoi(argv[i + 1]);
-            else if (strcmp(argv[i], "-c") == 0 || strcmp(argv[i], "-connections") == 0)
-                connections = atoi(argv[i + 1]);
+            VaultException& vaulterror = dynamic_cast<VaultException&>(e);
+            vaulterror.Console();
+        }
+        catch (std::bad_cast& no_vaulterror)
+        {
+            VaultException vaulterror(e.what());
+            vaulterror.Console();
         }
     }
 
-    AMX* vaultscript = NULL;
-    ServerEntry* self = new ServerEntry(game);
-    Dedicated::SetServerEntry(self);
-
-    if (script != 0)
+    try
     {
-        vaultscript = new AMX();
+        char file[MAX_PATH];
+        getcwd(file, sizeof(file));
+        snprintf(file, sizeof(file), "%s\\%s\\%s", file, SAVEGAME_PATH, savegame);
 
-        cell ret = 0;
-        int err = 0;
+        unsigned int crc;
+        if (!Utils::crc32file(file, &crc))
+            throw VaultException("Could not find savegame %s in folder %s", savegame, SAVEGAME_PATH);
 
-        err = Script::LoadProgram(vaultscript, argv[script], NULL);
-        if (err != AMX_ERR_NONE)
-            Script::ErrorExit(vaultscript, err);
+        Dedicated::SetSavegame(Savegame(string(savegame), crc));
 
-        Script::CoreInit(vaultscript);
-        Script::ConsoleInit(vaultscript);
-        Script::FloatInit(vaultscript);
-        Script::StringInit(vaultscript);
-        Script::FileInit(vaultscript);
-        Script::TimeInit(vaultscript);
+        char* token = strtok(mods, ",");
+        ModList modfiles;
 
-        err = Functions::RegisterVaultmpFunctions(vaultscript);
-        if (err != AMX_ERR_NONE)
-            Script::ErrorExit(vaultscript, err);
+        while (token != NULL)
+        {
+            getcwd(file, sizeof(file));
+            snprintf(file, sizeof(file), "%s\\%s\\%s", file, MODFILES_PATH, token);
 
-        err = Script::Exec(vaultscript, &ret, AMX_EXEC_MAIN);
-        if (err != AMX_ERR_NONE)
-            Script::ErrorExit(vaultscript, err);
-    }
+            if (!Utils::crc32file(file, &crc))
+                throw VaultException("Could not find modfile %s in folder %s", token, MODFILES_PATH);
 
-    Utils::timestamp();
-    printf("Initializing RakNet...\n");
+            modfiles.push_back(pair<string, unsigned int>(string(token), crc));
+
+            token = strtok(NULL, ",");
+        }
+
+        Dedicated::SetModfiles(modfiles);
 
 #ifdef __WIN32__
-    HANDLE hDedicatedThread = Dedicated::InitializeServer(port, connections, vaultscript, announce ? argv[announce] : 0, query);
-    HANDLE hInputThread;
-    hInputThread = CreateThread(NULL, 0, InputThread, (LPVOID) 0, 0, NULL);
-    HANDLE threads[2];
-    threads[0] = hDedicatedThread;
-    threads[1] = hInputThread;
+        HANDLE hDedicatedThread = Dedicated::InitializeServer(port, players, announce, query, files, fileslots);
+        HANDLE hInputThread;
+        hInputThread = CreateThread(NULL, 0, InputThread, (LPVOID) 0, 0, NULL);
+        HANDLE threads[2];
+        threads[0] = hDedicatedThread;
+        threads[1] = hInputThread;
 #else
-    pthread_t threads[2];
-    threads[0] = Dedicated::InitializeServer(port, connections, vaultscript, announce ? argv[announce] : 0, query);
-    pthread_create(&threads[1], NULL, InputThread, NULL);
+        pthread_t threads[2];
+        threads[0] = Dedicated::InitializeServer(port, players, announce, query, files, fileslots);
+        pthread_create(&threads[1], NULL, InputThread, NULL);
 #endif
 
 #ifdef __WIN32__
-    WaitForMultipleObjects(2, threads, TRUE, INFINITE);
-    CloseHandle(hDedicatedThread);
-    CloseHandle(hInputThread);
+        WaitForMultipleObjects(2, threads, TRUE, INFINITE);
+        CloseHandle(hDedicatedThread);
+        CloseHandle(hInputThread);
 #else
-    pthread_join(threads[0], NULL);
-    pthread_join(threads[1], NULL);
+        pthread_join(threads[0], NULL);
+        pthread_join(threads[1], NULL);
 #endif
-
-    if (vaultscript != NULL)
+    }
+    catch (std::exception& e)
     {
-        Script::FreeProgram(vaultscript);
-        delete vaultscript;
+        try
+        {
+            VaultException& vaulterror = dynamic_cast<VaultException&>(e);
+            vaulterror.Console();
+        }
+        catch (std::bad_cast& no_vaulterror)
+        {
+            VaultException vaulterror(e.what());
+            vaulterror.Console();
+        }
     }
 
+    Dedicated::TerminateThread();
+    Script::UnloadScripts();
+    iniparser_freedict(config);
     delete self;
+
+    system("PAUSE");
 
     return 0;
 }

@@ -8,6 +8,7 @@ ValueList API::values;
 ValueList API::axis;
 ValueList API::anims;
 CommandQueue API::queue;
+API::CommandCache API::cache;
 int API::game = 0;
 
 #ifdef VAULTMP_DEBUG
@@ -210,7 +211,7 @@ struct API::op_default
         size_arg6 = sizeof(op_Arg6);
         size_arg7 = sizeof(op_Arg7);
         size_arg8 = sizeof(op_Arg8);
-        random = rand(); // make sure the command gets a "unique" CRC
+        random = 0x00000000; // make sure the command gets a "unique" CRC
     }
 };
 
@@ -400,6 +401,7 @@ void API::Terminate()
     anims.clear();
     functions.clear();
     queue.clear();
+    cache.clear();
 }
 
 #ifdef VAULTMP_DEBUG
@@ -420,289 +422,280 @@ pair<vector<double>, API::op_default*> API::ParseCommand(char* cmd, char* def, u
         throw VaultException("Invalid call to API::ParseCommand, one or more arguments are NULL");
 
     op_default* result = new op_default();
-    char* tokenizer = NULL;
-    unsigned int reference = 0x00;
-    result->arg2.opcode = opcode;
-    result_data.first.push_back(opcode);
+    unsigned int crc32 = Utils::crc32buf(cmd, strlen(cmd));
+    CommandCache::iterator it = cache.find(crc32);
 
-    if (opcode == 0x014E || opcode == 0x014F || opcode == 0x0148) // Some commands, such as LoadGame, require the calling thread to be the games main thread, delegate flag allows this
-        result->delegate = true;
-
-    if (*def == 'r')
+    if (it != cache.end())
     {
-        char* dot = strchr(cmd, '.');
+        *result = it->second.second;
+        result->random = rand();
+        result_data.first = it->second.first;
+        result_data.second = result;
+        return result_data;
+    }
 
-        if (dot != NULL)
-            *dot = ' ';
+    try
+    {
+        result->random = rand();
+        char* tokenizer = NULL;
+        unsigned int reference = 0x00;
+        result->arg2.opcode = opcode;
+        result_data.first.push_back(opcode);
 
-        tokenizer = strtok(cmd, " ");
+        if (opcode == 0x014E || opcode == 0x014F || opcode == 0x0148) // Some commands, such as LoadGame, require the calling thread to be the games main thread, delegate flag allows this
+            result->delegate = true;
 
-        if (tokenizer == NULL)
+        if (*def == 'r')
         {
-            delete result;
-            throw VaultException("API::ParseCommand expected a reference base operand, which could not be found");
+            char* dot = strchr(cmd, '.');
+
+            if (dot != NULL)
+                *dot = ' ';
+
+            tokenizer = strtok(cmd, " ");
+
+            if (tokenizer == NULL)
+                throw VaultException("API::ParseCommand expected a reference base operand, which could not be found");
+
+            reference = ExtractReference(tokenizer);
+
+            if (reference == 0x00)
+                throw VaultException("API::ParseCommand reference base operand is NULL");
+
+            result->arg3.reference = reference;
+            result_data.first.push_back(reference);
+            def++;
         }
 
-        reference = ExtractReference(tokenizer);
+        // Skip the function name
 
         if (reference == 0x00)
-        {
-            delete result;
-            throw VaultException("API::ParseCommand reference base operand is NULL");
-        }
-
-        result->arg3.reference = reference;
-        result_data.first.push_back(reference);
-        def++;
-    }
-
-    // Skip the function name
-
-    if (reference == 0x00)
-        tokenizer = strtok(cmd, " ");
-    else
-        tokenizer = strtok(NULL, " ");
-
-    if (tokenizer == NULL)
-    {
-        delete result;
-        throw VaultException("API::ParseCommand could not find the function name");
-    }
-
-    unsigned short numargs = 0x00;
-    unsigned int refparam = 0x00;
-    char* arg1_pos = (char*) &result->arg1.unk1;
-    char* arg2_pos = (char*) &result->arg2.param1;
-
-    while (*def != '\0' && numargs < 4) // We don't support more than 4 args yet
-    {
-        char type = *def;
-        def++;
-
-        if (isupper(type))
-            *((unsigned int*) (arg1_pos + 4)) = 0x00000001;
-
-        switch (tolower(type))
-        {
-        case 's': // String
-            *((unsigned int*) arg1_pos) = 0x00000000;
-            break;
-        case 'i': // Integer
-            *((unsigned int*) arg1_pos) = 0x00000001;
-            break;
-        case 'd': // Double
-            *((unsigned int*) arg1_pos) = 0x00000002;
-            break;
-        case 'j': // Object ID item
-            *((unsigned int*) arg1_pos) = 0x00000003;
-            break;
-        case 'o': // Object Reference ID
-            *((unsigned int*) arg1_pos) = 0x00000004;
-            break;
-        case 'v': // Actor Value
-            *((unsigned int*) arg1_pos) = 0x00000005;
-            break;
-        case 'q': // Actor
-            *((unsigned int*) arg1_pos) = 0x00000006;
-            break;
-        case 'a': // Axis
-            *((unsigned int*) arg1_pos) = 0x00000008;
-            break;
-        case 'g': // Animation Group
-            *((unsigned int*) arg1_pos) = 0x0000000A;
-            break;
-        case 'b': // Object ID
-            *((unsigned int*) arg1_pos) = 0x00000015;
-            break;
-        case 'c': // Container
-            *((unsigned int*) arg1_pos) = 0x0000001A;
-            break;
-        case 'k': // Object ID base item
-            *((unsigned int*) arg1_pos) = 0x00000032;
-            break;
-        default:
-            delete result;
-            throw VaultException("API::ParseCommand could not recognize argument identifier %02X", (unsigned int) tolower(type));
-        }
-
-        arg1_pos += 0x0C;
-
-        if (tokenizer != NULL)
-            tokenizer = strtok(NULL, " ");
+            tokenizer = strtok(cmd, " ");
         else
-            continue;
+            tokenizer = strtok(NULL, " ");
 
         if (tokenizer == NULL)
+            throw VaultException("API::ParseCommand could not find the function name");
+
+        unsigned short numargs = 0x00;
+        unsigned int refparam = 0x00;
+        char* arg1_pos = (char*) &result->arg1.unk1;
+        char* arg2_pos = (char*) &result->arg2.param1;
+
+        while (*def != '\0' && numargs < 4) // We don't support more than 4 args yet
         {
+            char type = *def;
+            def++;
+
             if (isupper(type))
-                continue;
+                *((unsigned int*) (arg1_pos + 4)) = 0x00000001;
+
+            switch (tolower(type))
+            {
+            case 's': // String
+                *((unsigned int*) arg1_pos) = 0x00000000;
+                break;
+            case 'i': // Integer
+                *((unsigned int*) arg1_pos) = 0x00000001;
+                break;
+            case 'd': // Double
+                *((unsigned int*) arg1_pos) = 0x00000002;
+                break;
+            case 'j': // Object ID item
+                *((unsigned int*) arg1_pos) = 0x00000003;
+                break;
+            case 'o': // Object Reference ID
+                *((unsigned int*) arg1_pos) = 0x00000004;
+                break;
+            case 'v': // Actor Value
+                *((unsigned int*) arg1_pos) = 0x00000005;
+                break;
+            case 'q': // Actor
+                *((unsigned int*) arg1_pos) = 0x00000006;
+                break;
+            case 'a': // Axis
+                *((unsigned int*) arg1_pos) = 0x00000008;
+                break;
+            case 'g': // Animation Group
+                *((unsigned int*) arg1_pos) = 0x0000000A;
+                break;
+            case 'b': // Object ID
+                *((unsigned int*) arg1_pos) = 0x00000015;
+                break;
+            case 'c': // Container
+                *((unsigned int*) arg1_pos) = 0x0000001A;
+                break;
+            case 'k': // Object ID base item
+                *((unsigned int*) arg1_pos) = 0x00000032;
+                break;
+            default:
+                throw VaultException("API::ParseCommand could not recognize argument identifier %02X", (unsigned int) tolower(type));
+            }
+
+            arg1_pos += 0x0C;
+
+            if (tokenizer != NULL)
+                tokenizer = strtok(NULL, " ");
             else
+                continue;
+
+            if (tokenizer == NULL)
             {
-                delete result;
-                throw VaultException("API::ParseCommand failed parsing command (end of input reached, not all required arguments could be found)");
-            }
-        }
-
-        /* Types:
-            a (Axis, 2 byte) - 0x00000008
-            d (Double, 8 byte, 0x7A) - 0x00000002
-            i (Integer, 4 byte, 0x6E) - 0x00000001
-            v (Actor Value, 2 byte) - 0x00000005
-            o (Object Reference ID, 2 byte, 0x72, stream) - 0x00000004
-            b (Object ID, 2 byte, 0x72, stream) - 0x00000015
-            g (Animation Group, 2 byte) - 0x0000000A
-            j (Object ID item, 2 byte, 0x72, stream) - 0x00000003
-            k (Object ID base item, 2 byte, 0x72, stream) - 0x00000032
-            c (Container, 2 byte, 0x72, stream) - 0x0000001A
-            q (Actor, 2 byte, 0x72, stream) - 0x00000006
-            s (String, 2 byte, length, followed by chars) - 0x00000000
-            r (Reference)
-
-            upper case means optional
-        */
-
-        switch (tolower(type))
-        {
-        case 'i': // Integer
-        {
-            int integer = atoi(tokenizer);
-            *((unsigned char*) arg2_pos) = 0x6E;
-            *((int*) (arg2_pos + 1)) = integer;
-            result_data.first.push_back(integer);
-            arg2_pos += 5;
-            break;
-        }
-        case 'd': // Double
-        {
-            double floating = atof(tokenizer);
-            *((unsigned char*) arg2_pos) = 0x7A;
-            *((double*) (arg2_pos + 1)) = floating;
-            result_data.first.push_back(floating);
-            arg2_pos += 9;
-            break;
-        }
-        case 'b': // Object ID
-        case 'j': // Object ID item
-        case 'k': // Object ID base item
-        case 'o': // Object Reference ID
-        case 'q': // Actor
-        case 'c': // Container
-        {
-            if (refparam != 0x00) // We don't support more than one refparam yet
-            {
-                delete result;
-                throw VaultException("API::ParseCommand does only support one reference argument up until now");
+                if (isupper(type))
+                    continue;
+                else
+                    throw VaultException("API::ParseCommand failed parsing command (end of input reached, not all required arguments could be found)");
             }
 
-            refparam = ExtractReference(tokenizer);
+            /* Types:
+                a (Axis, 2 byte) - 0x00000008
+                d (Double, 8 byte, 0x7A) - 0x00000002
+                i (Integer, 4 byte, 0x6E) - 0x00000001
+                v (Actor Value, 2 byte) - 0x00000005
+                o (Object Reference ID, 2 byte, 0x72, stream) - 0x00000004
+                b (Object ID, 2 byte, 0x72, stream) - 0x00000015
+                g (Animation Group, 2 byte) - 0x0000000A
+                j (Object ID item, 2 byte, 0x72, stream) - 0x00000003
+                k (Object ID base item, 2 byte, 0x72, stream) - 0x00000032
+                c (Container, 2 byte, 0x72, stream) - 0x0000001A
+                q (Actor, 2 byte, 0x72, stream) - 0x00000006
+                s (String, 2 byte, length, followed by chars) - 0x00000000
+                r (Reference)
 
-            if (!refparam)
+                upper case means optional
+            */
+
+            switch (tolower(type))
             {
-                delete result;
-                throw VaultException("API::ParseCommand reference argument is NULL");
+            case 'i': // Integer
+            {
+                int integer = atoi(tokenizer);
+                *((unsigned char*) arg2_pos) = 0x6E;
+                *((int*) (arg2_pos + 1)) = integer;
+                result_data.first.push_back(integer);
+                arg2_pos += 5;
+                break;
+            }
+            case 'd': // Double
+            {
+                double floating = atof(tokenizer);
+                *((unsigned char*) arg2_pos) = 0x7A;
+                *((double*) (arg2_pos + 1)) = floating;
+                result_data.first.push_back(floating);
+                arg2_pos += 9;
+                break;
+            }
+            case 'b': // Object ID
+            case 'j': // Object ID item
+            case 'k': // Object ID base item
+            case 'o': // Object Reference ID
+            case 'q': // Actor
+            case 'c': // Container
+            {
+                if (refparam != 0x00) // We don't support more than one refparam yet
+                    throw VaultException("API::ParseCommand does only support one reference argument up until now");
+
+                refparam = ExtractReference(tokenizer);
+
+                if (!refparam)
+                    throw VaultException("API::ParseCommand reference argument is NULL");
+
+                *((unsigned char*) arg2_pos) = 0x72;
+                *((unsigned short*) (arg2_pos + 1)) = (refparam == reference) ? 0x0001 : 0x0002;
+                result_data.first.push_back(refparam);
+                arg2_pos += 3;
+                break;
+            }
+            case 'v': // Actor Value
+            {
+                unsigned char value = RetrieveValue(tokenizer);
+
+                if (value == 0xFF)
+                    throw VaultException("API::ParseCommand could not find an Actor Value identifier for input %s", tokenizer);
+
+                *((unsigned short*) arg2_pos) = (unsigned short) value;
+                result_data.first.push_back(value);
+                arg2_pos += 2;
+                break;
+            }
+            case 'a': // Axis
+            {
+                unsigned char axis = RetrieveAxis(tokenizer);
+
+                if (axis == 0xFF)
+                    throw VaultException("API::ParseCommand could not find an Axis identifier for input %s", tokenizer);
+
+                *((unsigned short*) arg2_pos) = (unsigned short) axis;
+                result_data.first.push_back(axis);
+                arg2_pos += 2;
+                break;
+            }
+            case 'g': // Animation Group
+            {
+                unsigned char anim = RetrieveAnim(tokenizer);
+
+                if (anim == 0xFF)
+                    throw VaultException("API::ParseCommand could not find an Animation identifier for input %s", tokenizer);
+
+                *((unsigned short*) arg2_pos) = (unsigned short) anim;
+                result_data.first.push_back(anim);
+                arg2_pos += 2;
+                break;
+            }
+            case 's': // String
+            {
+                unsigned short length = (unsigned short) strlen(tokenizer);
+
+                if (length > 32)
+                    throw VaultException("API::ParseCommand string argument exceeds the limit of 32 characters", tokenizer);
+
+                *((unsigned short*) arg2_pos) = length;
+                memcpy(arg2_pos + 2, tokenizer, length);
+                result_data.first.push_back(length);
+                arg2_pos += 2;
+                arg2_pos += length;
+                break;
+            }
+            default:
+                throw VaultException("API::ParseCommand could not recognize argument identifier %02X", (unsigned int) tolower(type));
             }
 
-            *((unsigned char*) arg2_pos) = 0x72;
-            *((unsigned short*) (arg2_pos + 1)) = (refparam == reference) ? 0x0001 : 0x0002;
-            result_data.first.push_back(refparam);
-            arg2_pos += 3;
-            break;
-        }
-        case 'v': // Actor Value
-        {
-            unsigned char value = RetrieveValue(tokenizer);
-
-            if (value == 0xFF)
-            {
-                delete result;
-                throw VaultException("API::ParseCommand could not find an Actor Value identifier for input %s", tokenizer);
-            }
-
-            *((unsigned short*) arg2_pos) = (unsigned short) value;
-            result_data.first.push_back(value);
-            arg2_pos += 2;
-            break;
-        }
-        case 'a': // Axis
-        {
-            unsigned char axis = RetrieveAxis(tokenizer);
-
-            if (axis == 0xFF)
-            {
-                delete result;
-                throw VaultException("API::ParseCommand could not find an Axis identifier for input %s", tokenizer);
-            }
-
-            *((unsigned short*) arg2_pos) = (unsigned short) axis;
-            result_data.first.push_back(axis);
-            arg2_pos += 2;
-            break;
-        }
-        case 'g': // Animation Group
-        {
-            unsigned char anim = RetrieveAnim(tokenizer);
-
-            if (anim == 0xFF)
-            {
-                delete result;
-                throw VaultException("API::ParseCommand could not find an Animation identifier for input %s", tokenizer);
-            }
-
-            *((unsigned short*) arg2_pos) = (unsigned short) anim;
-            result_data.first.push_back(anim);
-            arg2_pos += 2;
-            break;
-        }
-        case 's': // String
-        {
-            unsigned short length = (unsigned short) strlen(tokenizer);
-
-            if (length > 32)
-            {
-                delete result;
-                throw VaultException("API::ParseCommand string argument exceeds the limit of 32 characters", tokenizer);
-            }
-
-            *((unsigned short*) arg2_pos) = length;
-            memcpy(arg2_pos + 2, tokenizer, length);
-            result_data.first.push_back(length);
-            arg2_pos += 2;
-            arg2_pos += length;
-            break;
-        }
-        default:
-            delete result;
-            throw VaultException("API::ParseCommand could not recognize argument identifier %02X", (unsigned int) tolower(type));
+            numargs++;
         }
 
-        numargs++;
-    }
+        result->arg2.numargs = numargs;
 
-    result->arg2.numargs = numargs;
-
-    if (reference != 0x00)
-    {
-        result->arg5.numargs++;
-        result->arg5.param1_reference = reference;
-
-        if (reference == PLAYER_REFERENCE)
-            result->arg5.param1_unk2 = 0x00060006;
-        else
-            result->arg5.param1_unk2 = (reference & 0xFF000000) == 0xFF000000 ? 0x00060006 : 0x00050005;
-
-        if (reference != refparam && refparam != 0x00)
+        if (reference != 0x00)
         {
             result->arg5.numargs++;
-            result->arg5.param2_reference = refparam;
+            result->arg5.param1_reference = reference;
 
-            if (refparam == PLAYER_REFERENCE)
-                result->arg5.param2_unk2 = 0x00060006;
+            if (reference == PLAYER_REFERENCE)
+                result->arg5.param1_unk2 = 0x00060006;
             else
-                result->arg5.param2_unk2 = (refparam & 0xFF000000) == 0xFF000000 ? 0x00060006 : 0x00050005;
+                result->arg5.param1_unk2 = (reference & 0xFF000000) == 0xFF000000 ? 0x00060006 : 0x00050005;
+
+            if (reference != refparam && refparam != 0x00)
+            {
+                result->arg5.numargs++;
+                result->arg5.param2_reference = refparam;
+
+                if (refparam == PLAYER_REFERENCE)
+                    result->arg5.param2_unk2 = 0x00060006;
+                else
+                    result->arg5.param2_unk2 = (refparam & 0xFF000000) == 0xFF000000 ? 0x00060006 : 0x00050005;
+            }
         }
+
+        result_data.second = result;
+    }
+    catch (...)
+    {
+        delete result;
+        throw;
     }
 
-    result_data.second = result;
+    cache.insert(pair<unsigned int, pair<vector<double>, op_default> >(crc32, pair<vector<double>, op_default>(result_data.first, *result_data.second)));
 
     return result_data;
 }
@@ -857,6 +850,48 @@ vector<unsigned char> API::RetrieveAllAnims()
     {
         if ((it->second.second & game) == game)
             result.push_back(it->second.first);
+    }
+
+    return result;
+}
+
+vector<string> API::RetrieveAllValues_Reverse()
+{
+    vector<string> result;
+    ValueList::iterator it;
+
+    for (it = values.begin(); it != values.end(); ++it)
+    {
+        if ((it->second.second & game) == game)
+            result.push_back(it->first);
+    }
+
+    return result;
+}
+
+vector<string> API::RetrieveAllAxis_Reverse()
+{
+    vector<string> result;
+    ValueList::iterator it;
+
+    for (it = axis.begin(); it != axis.end(); ++it)
+    {
+        if ((it->second.second & game) == game)
+            result.push_back(it->first);
+    }
+
+    return result;
+}
+
+vector<string> API::RetrieveAllAnims_Reverse()
+{
+    vector<string> result;
+    ValueList::iterator it;
+
+    for (it = anims.begin(); it != anims.end(); ++it)
+    {
+        if ((it->second.second & game) == game)
+            result.push_back(it->first);
     }
 
     return result;

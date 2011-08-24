@@ -9,9 +9,8 @@ typedef void (*fInitialize)(int);
 
 int Bethesda::game = 0;
 bool Bethesda::initialized = false;
-string Bethesda::savegame = "";
-Player* Bethesda::self = NULL;
-list<Player*> Bethesda::refqueue;
+Savegame Bethesda::savegame;
+ModList Bethesda::modfiles;
 
 #ifdef VAULTMP_DEBUG
 Debug* Bethesda::debug;
@@ -556,85 +555,6 @@ void Bethesda::CommandHandler(signed int key, vector<double> info, double result
     self->EndSession();
 }*/
 
-void Bethesda::InitializeCommands()
-{
-    Interface::DefineCommand("GetPos", "%0.GetPos %1");
-    Interface::DefineCommand("SetPos", "%0.SetPos %1 %2");
-    Interface::DefineCommand("GetAngle", "%0.GetAngle %1");
-    Interface::DefineCommand("SetAngle", "%0.SetAngle %1 %2");
-    Interface::DefineCommand("GetParentCell", "%0.GetParentCell");
-    Interface::DefineCommand("GetBaseActorValue", "%0.GetBaseActorValue %1");
-    Interface::DefineCommand("SetActorValue", "%0.SetActorValue %1 %2");
-    Interface::DefineCommand("ForceActorValue", "%0.ForceActorValue %1 %2");
-    Interface::DefineCommand("GetActorValue", "%0.GetActorValue %1");
-    Interface::DefineCommand("GetDead", "%0.GetDead");
-    Interface::DefineCommand("IsMoving", "%0.IsMoving");
-    Interface::DefineCommand("Enable", "%0.Enable %1");
-    Interface::DefineCommand("Disable", "%0.Disable %1");
-    Interface::DefineCommand("MoveTo", "%0.MoveTo %1 %2 %3 %4");
-    Interface::DefineCommand("SetRestrained", "%0.SetRestrained %1");
-    Interface::DefineCommand("PlayGroup", "%0.PlayGroup %1 %2");
-    Interface::DefineCommand("SetAlert", "%0.SetAlert %1");
-    Interface::DefineCommand("SetName", "%0.SetName %1");
-    Interface::DefineCommand("EquipItem", "%0.EquipItem %1 %2 %3");
-    Interface::DefineCommand("UnequipItem", "%0.UnequipItem %1 %2 %3");
-    Interface::DefineCommand("AddItem", "%0.AddItem %1 %2 %3");
-    Interface::DefineCommand("RemoveItem", "%0.RemoveItem %1 %2 %3");
-    Interface::DefineCommand("MoveAllItems", "%0.RemoveAllItems %1 %2", "RemoveAllItems");
-    Interface::DefineCommand("RemoveAllItems", "%0.RemoveAllItems");
-    Interface::DefineCommand("KillActor", "%0.Kill %1 %2 %3", "Kill");
-    Interface::DefineCommand("Kill", "%0.Kill");
-    Interface::DefineCommand("PlaceAtMe", "%0.PlaceAtMe %1 %2 %3 %4");
-    Interface::DefineCommand("MarkForDelete", "%0.MarkForDelete");
-    Interface::DefineCommand("Load", "Load %0");
-
-    ParamList param_GetPos;
-    param_GetPos.push_back(Player::Param_EnabledPlayers);
-    param_GetPos.push_back(Data::Param_XYZ);
-    ParamContainer GetPos = ParamContainer(param_GetPos, &Data::AlwaysTrue);
-    Interface::DefineNative("GetPos", GetPos);
-    Interface::ExecuteCommandLoop("GetPos");
-
-    ParamList param_GetParentCell;
-    param_GetParentCell.push_back(Player::Param_AllPlayers);
-    ParamContainer GetParentCell = ParamContainer(param_GetParentCell, &Data::AlwaysTrue);
-    Interface::DefineNative("GetParentCell", GetParentCell);
-    Interface::ExecuteCommandLoop("GetParentCell");
-
-    ParamList param_GetDead;
-    param_GetDead.push_back(Player::Param_EnabledPlayers_NotSelf);
-    ParamContainer GetDead = ParamContainer(param_GetDead, &Data::AlwaysTrue);
-    Interface::DefineNative("GetDead", GetDead);
-    Interface::ExecuteCommandLoop("GetDead", 10);
-
-    ParamList param_GetAngle;
-    param_GetAngle.push_back(self->GetActorRefParam());
-    param_GetAngle.push_back(Data::Param_Z);
-    ParamContainer GetAngle = ParamContainer(param_GetAngle, &Data::AlwaysTrue);
-    Interface::DefineNative("GetAngle", GetAngle);
-    Interface::ExecuteCommandLoop("GetAngle");
-
-    ParamList param_IsMoving;
-    param_IsMoving.push_back(self->GetActorRefParam());
-    ParamContainer IsMoving = ParamContainer(param_IsMoving, &Data::AlwaysTrue);
-    Interface::DefineNative("IsMoving", IsMoving);
-    Interface::ExecuteCommandLoop("IsMoving");
-
-    ParamList param_GetBaseActorValue;
-    param_GetBaseActorValue.push_back(self->GetActorRefParam());
-    param_GetBaseActorValue.push_back(Data::Param_BaseActorValues);
-    ParamContainer GetBaseActorValue = ParamContainer(param_GetBaseActorValue, &Data::AlwaysTrue);
-    Interface::DefineNative("GetBaseActorValue", GetBaseActorValue);
-    Interface::ExecuteCommandLoop("GetBaseActorValue", 70);
-
-    ParamList param_GetActorValue;
-    param_GetActorValue.push_back(self->GetActorRefParam());
-    param_GetActorValue.push_back(Data::Param_ActorValues);
-    ParamContainer GetActorValue = ParamContainer(param_GetActorValue, &Data::AlwaysTrue);
-    Interface::DefineNative("GetActorValue", GetActorValue);
-    Interface::ExecuteCommandLoop("GetActorValue", 20);
-}
-
 void Bethesda::InitializeGame()
 {
     char module[32];
@@ -653,8 +573,94 @@ void Bethesda::InitializeGame()
         strcpy(module, "Oblivion.exe");
         break;
     default:
-        throw VaultException("Bad game ID %08X", Bethesda::game = game);
+        throw VaultException("Bad game ID %08X", Bethesda::game);
     }
+
+    TCHAR savefile[MAX_PATH]; ZeroMemory(savefile, sizeof(savefile));
+    SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, 0, savefile); // SHGFP_TYPE_CURRENT
+
+    switch (Bethesda::game)
+    {
+    case FALLOUT3:
+        strcat(savefile, "\\My Games\\Fallout3\\Saves\\");
+        break;
+    case NEWVEGAS:
+        strcat(savefile, "\\My Games\\FalloutNV\\Saves\\");
+        break;
+    case OBLIVION:
+        strcat(savefile, "\\My Games\\Oblivion\\Saves\\");
+        break;
+    }
+
+    strcat(savefile, Utils::FileOnly(Bethesda::savegame.first.c_str()));
+    unsigned int crc;
+
+    if (!Utils::crc32file(savefile, &crc))
+        throw VaultException("Could not find savegame file:\n\n%s\n\nAsk the server owner to send you the file or try to Synchronize with the server.", savefile);
+
+    if (crc != Bethesda::savegame.second)
+        throw VaultException("Savegame differs from the server version:\n\n%s\n\nAsk the server owner to send you the file or try to Synchronize with the server.", savefile);
+
+    TCHAR curdir[MAX_PATH]; ZeroMemory(curdir, sizeof(curdir));
+    GetModuleFileName(GetModuleHandle(NULL), (LPTSTR) curdir, MAX_PATH);
+    PathRemoveFileSpec(curdir);
+
+    strcat(curdir, "\\Data\\");
+
+    for (ModList::iterator it = modfiles.begin(); it != modfiles.end(); ++it)
+    {
+        TCHAR modfile[MAX_PATH]; ZeroMemory(modfile, sizeof(modfile));
+        strcat(modfile, curdir);
+        strcat(modfile, it->first.c_str());
+
+        if (!Utils::crc32file(modfile, &crc))
+            throw VaultException("Could not find modification file:\n\n%s\n\nAsk the server owner to send you the file or try to Synchronize with the server.", modfile);
+
+        if (crc != it->second)
+            throw VaultException("Modfile differs from the server version:\n\n%s\n\nAsk the server owner to send you the file or try to Synchronize with the server.", modfile);
+    }
+
+    ZeroMemory(savefile, sizeof(savefile));
+    SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, savefile); // SHGFP_TYPE_CURRENT
+
+    switch (Bethesda::game)
+    {
+    case FALLOUT3:
+        strcat(savefile, "\\Fallout3\\plugins.txt");
+        break;
+    case NEWVEGAS:
+        strcat(savefile, "\\FalloutNV\\plugins.txt");
+        break;
+    case OBLIVION:
+        strcat(savefile, "\\Oblivion\\Plugins.txt");
+        break;
+    }
+
+    FILE* plugins = fopen(savefile, "w");
+
+    switch (Bethesda::game)
+    {
+    case FALLOUT3:
+    {
+        char esm[] = "Fallout3.esm\n";
+        fwrite(esm, sizeof(char), strlen(esm), plugins);
+        break;
+    }
+    case NEWVEGAS:
+    {
+        char esm[] = "FalloutNV.esm\n";
+        fwrite(esm, sizeof(char), strlen(esm), plugins);
+        break;
+    }
+    }
+
+    for (ModList::iterator it = modfiles.begin(); it != modfiles.end(); ++it)
+    {
+        fwrite(it->first.c_str(), sizeof(char), it->first.length(), plugins);
+        fwrite("\n", sizeof(char), 1, plugins);
+    }
+
+    fclose(plugins);
 
     if (Interface::lookupProgramID(module) == 0)
     {
@@ -678,7 +684,6 @@ void Bethesda::InitializeGame()
 
                 INJECT data;
                 HINSTANCE hDll;
-                TCHAR curdir[MAX_PATH + 1];
                 LPVOID start, thread;
                 DWORD codesize;
 
@@ -724,7 +729,7 @@ void Bethesda::InitializeGame()
 
                 // Normally, we would resume the main thread here. But Steam versions make trouble, look above
 
-                InitializeCommands();
+                initialized = true;
 
                 CloseHandle(hProc);
             }
@@ -741,8 +746,9 @@ void Bethesda::InitializeGame()
 void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, string name, string pwd, int game)
 {
     Bethesda::game = game;
+    Bethesda::savegame = Savegame();
+    Bethesda::modfiles.clear();
     initialized = false;
-    refqueue.clear();
 
 #ifdef VAULTMP_DEBUG
     Debug* debug = new Debug((char*) "vaultmp");
@@ -752,7 +758,7 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
     debug->Print("-----------------------------------------------------------------------------------------------------", false);
     //debug->PrintSystem();
     VaultException::SetDebugHandler(debug);
-    Network::SetDebugHandler(debug);
+    NetworkClient::SetDebugHandler(debug);
     Interface::SetDebugHandler(debug);
     Lockable::SetDebugHandler(debug);
     Inventory::SetDebugHandler(debug);
@@ -764,41 +770,43 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
     Actor::Initialize();
     Player::Initialize();
 
-    self = new Player(peer->GetMyGUID(), PLAYER_REFERENCE, PLAYER_BASE);
-    self->SetActorName(name);
+    Game::self = new Player(peer->GetMyGUID(), PLAYER_REFERENCE, PLAYER_BASE, pwd);
+    Game::self->SetActorName(name);
 
     try
     {
         if (peer->Connect(server.ToString(false), server.GetPort(), DEDICATED_VERSION, sizeof(DEDICATED_VERSION), 0, 0, 3, 500, 0) == CONNECTION_ATTEMPT_STARTED)
         {
             bool query = true;
-
             Packet* packet;
 
             while (query)
             {
                 if (initialized && !Interface::IsAvailable())
                 {
-                    NetworkResponse response = Network::ProcessEvent(ID_EVENT_INTERFACE_LOST, self->GetPlayerGUID());
-                    Network::Dispatch(peer, response, server);
-                    throw VaultException("Connection to interface lost");
+                    NetworkResponse response = NetworkClient::ProcessEvent(ID_EVENT_INTERFACE_LOST);
+                    Network::Dispatch(peer, response);
+                    peer->CloseConnection(server, true, CHANNEL_SYSTEM, HIGH_PRIORITY);
                 }
 
                 for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
                 {
                     if (packet->data[0] == ID_DISCONNECTION_NOTIFICATION)
                         query = false;
+                    else if (packet->data[0] == ID_CONNECTION_REQUEST_ACCEPTED)
+                        Game::server = peer->GetGuidFromSystemAddress(server);
 
                     try
                     {
-                        NetworkResponse response = Network::ProcessPacket(packet, self->GetPlayerGUID());
-                        Network::Dispatch(peer, response, server);
+                        NetworkResponse response = NetworkClient::ProcessPacket(packet);
+                        Network::Dispatch(peer, response);
                     }
                     catch (...)
                     {
                         peer->DeallocatePacket(packet);
-                        NetworkResponse response = Network::ProcessEvent(ID_EVENT_CLIENT_ERROR, self->GetPlayerGUID());
-                        Network::Dispatch(peer, response, server);
+                        NetworkResponse response = NetworkClient::ProcessEvent(ID_EVENT_CLIENT_ERROR);
+                        Network::Dispatch(peer, response);
+                        peer->CloseConnection(server, true, CHANNEL_SYSTEM, HIGH_PRIORITY);
                         throw;
                     }
                 }
@@ -1543,10 +1551,16 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
     }
     catch (...)
     {
+        Sleep(200); Packet* packet = NULL; while (packet = peer->Receive()) peer->DeallocatePacket(packet); // disconnection notification might still arrive
+
         Interface::Terminate();
         Player::DestroyInstances();
         Actor::DestroyInstances();
         Inventory::Cleanup();
+
+#ifdef VAULTMP_DEBUG
+        debug->Print("Network thread is going to terminate (ERROR)", true);
+#endif
         throw;
     }
 

@@ -1,4 +1,6 @@
 #include <windows.h>
+#include <shlwapi.h>
+#include <shlobj.h>
 #include <commctrl.h>
 #include <map>
 
@@ -10,7 +12,10 @@
 #include "ufmod.h"
 
 #include "RakNet/RakPeerInterface.h"
+#include "RakNet/PacketizedTCP.h"
 #include "RakNet/MessageIdentifiers.h"
+#include "RakNet/FileListTransfer.h"
+#include "RakNet/FileListTransferCBInterface.h"
 #include "RakNet/BitStream.h"
 #include "RakNet/RakString.h"
 #include "RakNet/RakSleep.h"
@@ -39,10 +44,11 @@
 #define IDC_BUTTON1             2012
 #define IDC_BUTTON2             2013
 #define IDC_BUTTON3             2014
-#define IDC_EDIT0               2015
-#define IDC_EDIT1               2016
-#define IDC_EDIT3               2017
-#define IDC_PROGRESS0           2018
+#define IDC_BUTTON4             2015
+#define IDC_EDIT0               2016
+#define IDC_EDIT1               2017
+#define IDC_EDIT3               2018
+#define IDC_PROGRESS0           2019
 
 #define CHIPTUNE                3000
 #define ICON_MAIN               4000
@@ -55,11 +61,13 @@ using namespace std;
 HINSTANCE instance;
 HANDLE mutex;
 HFONT hFont;
+HWND wndmain;
 HWND wndsortcur;
 HWND wndchiptune;
 HWND wndlistview;
 HWND wndlistview2;
 HWND wndprogressbar;
+HWND wndsync;
 HDC hdc, hdcMem;
 HBITMAP hBitmap;
 BITMAP bitmap;
@@ -85,6 +93,10 @@ void InitRakNet();
 void CreateWindowContent(HWND parent);
 void CleanUp();
 LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+FileListTransfer* flt;
+PacketizedTCP* tcp;
+ServerEntry* buf;
 
 void seDebugPrivilege()
 {
@@ -132,6 +144,107 @@ void Maximize(HWND hwnd)
     ShowWindow(hwnd, SW_RESTORE);
     SetForegroundWindow(hwnd);
 }
+
+class FileServer : public FileListTransferCBInterface
+{
+public:
+    bool OnFile(OnFileStruct* onFileStruct)
+    {
+        char wndtitle[256];
+        snprintf(wndtitle, sizeof(wndtitle), "(100%%) %i/%i %s %i bytes / %i bytes\n",
+                 onFileStruct->fileIndex+1,
+                 onFileStruct->numberOfFilesInThisSet,
+                 onFileStruct->fileName,
+                 onFileStruct->byteLengthOfThisFile,
+                 onFileStruct->byteLengthOfThisSet);
+
+        SetWindowText(wndmain, wndtitle);
+
+        TCHAR file[MAX_PATH];
+        ZeroMemory(file, sizeof(file));
+
+        switch (onFileStruct->context.op)
+        {
+        case FILE_SAVEGAME:
+        {
+            ZeroMemory(file, sizeof(file));
+            SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, 0, file); // SHGFP_TYPE_CURRENT
+
+            switch (buf->GetGame())
+            {
+            case FALLOUT3:
+                strcat(file, "\\My Games\\Fallout3\\Saves\\");
+                break;
+            case NEWVEGAS:
+                strcat(file, "\\My Games\\FalloutNV\\Saves\\");
+                break;
+            case OBLIVION:
+                strcat(file, "\\My Games\\Oblivion\\Saves\\");
+                break;
+            }
+
+            strcat(file, Utils::FileOnly(onFileStruct->fileName));
+            break;
+        }
+        case FILE_MODFILE:
+        {
+            GetModuleFileName(GetModuleHandle(NULL), (LPTSTR) file, MAX_PATH);
+            PathRemoveFileSpec(file);
+
+            strcat(file, "\\Data\\");
+            strcat(file, Utils::FileOnly(onFileStruct->fileName));
+            break;
+        }
+        }
+
+        FILE* fp = fopen(file, "rb");
+
+        if (fp != NULL)
+        {
+            fclose(fp);
+
+            char msg[256];
+            snprintf(msg, sizeof(msg), "%s\n\nalready exists. Do you want to overwrite it?", file);
+            int result = MessageBox(NULL, msg, "Attention", MB_YESNO | MB_ICONWARNING | MB_TOPMOST | MB_TASKMODAL);
+
+            if (result == IDNO)
+            {
+                return true;
+            }
+        }
+
+        fp = fopen(file, "wb");
+        fwrite(onFileStruct->fileData, onFileStruct->byteLengthOfThisFile, 1, fp);
+        fclose(fp);
+
+        return true;
+    }
+
+    virtual void OnFileProgress(FileProgressStruct *fps)
+    {
+        char wndtitle[256];
+        snprintf(wndtitle, sizeof(wndtitle), "(%i%%) %i/%i %s %i bytes / %i bytes\n",
+                 (int) (100.0 * (double) fps->partCount / (double) fps->partTotal),
+                 fps->onFileStruct->fileIndex+1,
+                 fps->onFileStruct->numberOfFilesInThisSet,
+                 fps->onFileStruct->fileName,
+                 fps->onFileStruct->byteLengthOfThisFile,
+                 fps->onFileStruct->byteLengthOfThisSet,
+                 fps->firstDataChunk);
+
+        SetWindowText(wndmain, wndtitle);
+    }
+
+    virtual bool OnDownloadComplete(DownloadCompleteStruct* dcs)
+    {
+        char wndtitle[sizeof(CLIENT_VERSION) + 64];
+        snprintf(wndtitle, sizeof(wndtitle), "Vault-Tec Multiplayer Mod %s (FOR TESTING PURPOSES ONLY)", CLIENT_VERSION);
+        SetWindowText(wndmain, wndtitle);
+        buf = NULL;
+        return false;
+    }
+
+} transferCallback;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR cmdline, int show)
 {
@@ -220,7 +333,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR cmdline, 
     InitRakNet();
 
     hFont = CreateFont(-11, 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Verdana");
-    CreateMainWindow();
+    wndmain = CreateMainWindow();
 
     return MessageLoop();
 }
@@ -238,7 +351,11 @@ HWND CreateMainWindow()
 
 void InitRakNet()
 {
+    tcp = PacketizedTCP::GetInstance();
+    flt = FileListTransfer::GetInstance();
     sockdescr = new SocketDescriptor();
+    tcp->Start(RAKNET_FILE_SERVER, 1);
+    tcp->AttachPlugin(flt);
     peer = RakPeerInterface::GetInstance();
     peer->Startup(RAKNET_CONNECTIONS, sockdescr, 1, THREAD_PRIORITY_NORMAL);
 }
@@ -310,9 +427,13 @@ void CreateWindowContent(HWND parent)
     wnd = CreateWindowEx(0x00000000, "Button", "Powered by", 0x50020007, 6, 294, 531, 78, parent, (HMENU) IDC_GROUP2, instance, NULL);
     SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
-    wnd = CreateWindowEx(0x00000000, "Button", "mantronix - the wasteland", 0x50010003, 565, 374, 180, 32, parent, (HMENU) IDC_CHECK0, instance, NULL);
+    wnd = CreateWindowEx(0x00000000, "Button", "mantronix - the wasteland", 0x50010003, 555, 374, 174, 32, parent, (HMENU) IDC_CHECK0, instance, NULL);
     SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
     wndchiptune = wnd;
+
+    wnd = CreateWindowEx(0x00000000, "Button", "", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_ICON, 730, 380, 34, 20, parent, (HMENU) IDC_BUTTON4, instance, NULL);
+    SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
+    SendMessage(wnd, BM_SETIMAGE, IMAGE_ICON, (LPARAM) LoadIcon(instance, MAKEINTRESOURCE(ICON_MAIN)));
 
     wnd = CreateWindowEx(0x00000000, "Button", "Join Server", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 555, 239, 100, 25, parent, (HMENU) IDC_BUTTON0, instance, NULL);
     SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
@@ -323,8 +444,9 @@ void CreateWindowContent(HWND parent)
     wnd = CreateWindowEx(0x00000000, "Button", "Master Query", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 555, 272, 100, 25, parent, (HMENU) IDC_BUTTON2, instance, NULL);
     SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
-    wnd = CreateWindowEx(0x00000000, "Button", "Credits", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 660, 272, 100, 25, parent, (HMENU) IDC_BUTTON3, instance, NULL);
+    wnd = CreateWindowEx(0x00000000, "Button", "Synchronize", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 660, 272, 100, 25, parent, (HMENU) IDC_BUTTON3, instance, NULL);
     SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
+    wndsync = wnd;
 
     wnd = CreateWindowEx(0x00000200, "Edit", "vaultmp.com", 0x50010080, 611, 305, 146, 20, parent, (HMENU) IDC_EDIT3, instance, NULL);
     SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
@@ -391,6 +513,9 @@ void CleanUp()
 {
     DeleteObject(hFont);
     DeleteObject(hBitmap);
+    tcp->DetachPlugin(flt);
+    FileListTransfer::DestroyInstance(flt);
+    PacketizedTCP::DestroyInstance(tcp);
     peer->Shutdown(300);
     RakPeerInterface::DestroyInstance(peer);
     CloseHandle(mutex);
@@ -497,11 +622,9 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
         {
         case IDC_BUTTON0:
 
-            /* RakNet Game */
-
             if (peer->NumberOfConnections() == 0)
             {
-                if (selectedServer != NULL /*|| Direct IP */)
+                if (selectedServer != NULL)
                 {
                     SystemAddress addr = *selectedServer;
                     char name[MAX_PLAYER_NAME], pwd[MAX_PASSWORD_SIZE];
@@ -510,7 +633,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
                     if (strlen(name) < 3)
                     {
-                        MessageBox(NULL, "Please sepcify a player name of at least 3 characters.", "Error", MB_OK | MB_ICONERROR);
+                        MessageBox(NULL, "Please sepcify a player name of at least 3 characters.", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
                         break;
                     }
 
@@ -523,15 +646,15 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                     {
                         switch (game)
                         {
-                            case FALLOUT3:
-                                MessageBox(NULL, "Could not find Fallout3.exe!", "Error", MB_OK | MB_ICONERROR);
-                                break;
-                            case NEWVEGAS:
-                                MessageBox(NULL, "Could not find FalloutNV.exe!", "Error", MB_OK | MB_ICONERROR);
-                                break;
-                            case OBLIVION:
-                                MessageBox(NULL, "Could not find Oblivion.exe!", "Error", MB_OK | MB_ICONERROR);
-                                break;
+                        case FALLOUT3:
+                            MessageBox(NULL, "Could not find Fallout3.exe!", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
+                            break;
+                        case NEWVEGAS:
+                            MessageBox(NULL, "Could not find FalloutNV.exe!", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
+                            break;
+                        case OBLIVION:
+                            MessageBox(NULL, "Could not find Oblivion.exe!", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
+                            break;
                         }
                         break;
                     }
@@ -540,31 +663,25 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
                     try
                     {
+                        Bethesda::InitializeVaultMP(peer, addr, string(name), string(pwd), game);
+                    }
+                    catch (std::exception& e)
+                    {
                         try
                         {
-                            Bethesda::InitializeVaultMP(peer, addr, string(name), string(pwd), game);
+                            VaultException& vaulterror = dynamic_cast<VaultException&>(e);
+                            vaulterror.Message();
                         }
-                        catch (std::exception& e)
+                        catch (std::bad_cast& no_vaulterror)
                         {
-                            try
-                            {
-                                VaultException& vaulterror = dynamic_cast<VaultException&>(e);
-                                throw vaulterror;
-                            }
-                            catch (std::bad_cast& no_vaulterror)
-                            {
-                                throw VaultException(e.what());
-                            }
+                            VaultException vaulterror(e.what());
+                            vaulterror.Message();
                         }
-                    }
-                    catch (VaultException& vaulterror)
-                    {
-                        vaulterror.Message();
                     }
 
-                    #ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
                     VaultException::FinalizeDebug();
-                    #endif
+#endif
 
                     Maximize(hwnd);
 
@@ -607,9 +724,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                 if (peer->Connect(master.ToString(false), master.GetPort(), MASTER_VERSION, sizeof(MASTER_VERSION), 0, 0, 3, 100, 0) == CONNECTION_ATTEMPT_STARTED)
                 {
                     bool query = true;
-
                     bool lock = false;
-
                     Packet* packet;
 
                     while (query)
@@ -806,7 +921,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                                 break;
                             }
                             case ID_INVALID_PASSWORD:
-                                MessageBox(NULL, "MasterServer version mismatch.\nPlease download the most recent binaries from www.vaultmp.com", "Error", MB_OK | MB_ICONERROR);
+                                MessageBox(NULL, "MasterServer version mismatch.\nPlease download the most recent binaries from www.vaultmp.com", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
                             case ID_DISCONNECTION_NOTIFICATION:
                             case ID_CONNECTION_BANNED:
                             case ID_CONNECTION_LOST:
@@ -825,9 +940,59 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
             RefreshServerList();
             break;
 
+            case IDC_BUTTON4:
+                MessageBox(NULL, CREDITS, "vaultmp credits", MB_OK | MB_ICONINFORMATION | MB_TOPMOST | MB_TASKMODAL);
+                break;
+
         case IDC_BUTTON3:
-            MessageBox(NULL, CREDITS, "vaultmp credits", MB_OK | MB_ICONINFORMATION);
+        {
+            /* RakNet File Transfer */
+
+            if (selectedServer != NULL)
+            {
+                EnableWindow(wndsync, 0);
+
+                int result = MessageBox(NULL, "This function downloads files (savegames, mods etc.) from the server. vaultmp has no control of which files get downloaded; this is up to the server configuration. Files will be placed in the \"Saves\" or \"Data\" folder of the appropiate game. Do NOT continue if you do not trust the server!", "Attention", MB_OKCANCEL | MB_ICONWARNING | MB_TOPMOST | MB_TASKMODAL);
+
+                if (result == IDCANCEL)
+                {
+                    EnableWindow(wndsync, 1);
+                    break;
+                }
+
+                SystemAddress server = *selectedServer;
+                map<SystemAddress, ServerEntry>::iterator i;
+                i = serverList.find(*selectedServer); buf = &i->second;
+                tcp->Connect(server.ToString(false), server.GetPort(), false); RakSleep(500);
+                server = tcp->HasCompletedConnectionAttempt();
+
+                if (server == UNASSIGNED_SYSTEM_ADDRESS)
+                {
+                    MessageBox(NULL, "Could not establish a connection to the fileserver. The server probably has file downloading disabled or its number of maximum parallel connections reached.", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
+                    EnableWindow(wndsync, 1);
+                    break;
+                }
+
+                char rdy[3]; rdy[0] = RAKNET_FILE_RDY;
+                *((unsigned short*) (rdy + 1)) = flt->SetupReceive(&transferCallback, false, server);
+                tcp->Send(rdy, sizeof(rdy), server, false);
+                Packet* packet;
+
+                while (buf)
+                {
+                    packet = tcp->Receive();
+                    tcp->DeallocatePacket(packet);
+                    RakSleep(5);
+                }
+
+                tcp->CloseConnection(server);
+
+                EnableWindow(wndsync, 1);
+
+                MessageBox(NULL, "Successfully synchronized with the server!", "Success", MB_OK | MB_ICONINFORMATION | MB_TOPMOST | MB_TASKMODAL);
+            }
             break;
+        }
 
         case IDC_CHECK0:
             if (SendMessage(wndchiptune, BM_GETCHECK, 0, 0))

@@ -1,31 +1,22 @@
-#include "Network.h"
+#include "NetworkClient.h"
 #include "Bethesda.h"
+#include "Game.h"
 
 #ifdef VAULTMP_DEBUG
-Debug* Network::debug = NULL;
+Debug* NetworkClient::debug = NULL;
 #endif
 
 #ifdef VAULTMP_DEBUG
-void Network::SetDebugHandler(Debug* debug)
+void NetworkClient::SetDebugHandler(Debug* debug)
 {
-    Network::debug = debug;
+    NetworkClient::debug = debug;
 
     if (debug != NULL)
-        debug->Print("Attached debug handler to Network class", true);
+        debug->Print("Attached debug handler to NetworkClient class", true);
 }
 #endif
 
-pair<pDefault*, vector<unsigned char> > Network::CreateResponse(pDefault* packet, unsigned char priority, unsigned char reliability, unsigned char channel)
-{
-    vector<unsigned char> data = vector<unsigned char>();
-    data.push_back(priority);
-    data.push_back(reliability);
-    data.push_back(channel);
-    pair<pDefault*, vector<unsigned char> > response = pair<pDefault*, vector<unsigned char> >(packet, data);
-    return response;
-}
-
-NetworkResponse Network::ProcessEvent(unsigned char id, RakNetGUID guid)
+NetworkResponse NetworkClient::ProcessEvent(unsigned char id)
 {
     NetworkResponse response;
 
@@ -35,13 +26,13 @@ NetworkResponse Network::ProcessEvent(unsigned char id, RakNetGUID guid)
     case ID_EVENT_INTERFACE_LOST:
     {
         pDefault* packet = PacketFactory::CreatePacket(ID_GAME_END, ID_REASON_ERROR);
-        response.push_back(CreateResponse(packet, (unsigned char) HIGH_PRIORITY, (unsigned char) RELIABLE_ORDERED, CHANNEL_SYSTEM));
+        response = Network::CompleteResponse(Network::CreateResponse(packet, (unsigned char) HIGH_PRIORITY, (unsigned char) RELIABLE_ORDERED, CHANNEL_GAME, Game::server));
         break;
     }
     case ID_EVENT_GAME_STARTED:
     {
         pDefault* packet = PacketFactory::CreatePacket(ID_GAME_CONFIRM);
-        response.push_back(CreateResponse(packet, (unsigned char) HIGH_PRIORITY, (unsigned char) RELIABLE_ORDERED, CHANNEL_SYSTEM));
+        response = Network::CompleteResponse(Network::CreateResponse(packet, (unsigned char) HIGH_PRIORITY, (unsigned char) RELIABLE_ORDERED, CHANNEL_GAME, Game::server));
         break;
     }
 
@@ -52,7 +43,7 @@ NetworkResponse Network::ProcessEvent(unsigned char id, RakNetGUID guid)
     return response;
 }
 
-NetworkResponse Network::ProcessPacket(Packet* data, RakNetGUID guid)
+NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 {
     NetworkResponse response;
     pDefault* packet;
@@ -64,8 +55,7 @@ NetworkResponse Network::ProcessPacket(Packet* data, RakNetGUID guid)
 #ifdef VAULTMP_DEBUG
         debug->PrintFormat("Connection request accepted (%s)", true, data->systemAddress.ToString());
 #endif
-
-        //response = Game::ProcessEvent();
+        response = Game::Authenticate();
         break;
     }
     case ID_DISCONNECTION_NOTIFICATION:
@@ -92,16 +82,29 @@ NetworkResponse Network::ProcessPacket(Packet* data, RakNetGUID guid)
 
         switch (data->data[0])
         {
+        case ID_GAME_MOD:
+        {
+            char modfile[MAX_MOD_FILE + 1]; ZeroMemory(modfile, sizeof(modfile));
+            unsigned int crc;
+            PacketFactory::Access(packet, modfile, &crc);
+            Bethesda::modfiles.push_back(pair<string, unsigned int>(string(modfile), crc));
+            break;
+        }
+
         case ID_GAME_START:
         {
 #ifdef VAULTMP_DEBUG
             debug->PrintFormat("We were successfully authenticated (%s)", true, data->systemAddress.ToString());
             debug->Print("Initiating vaultmp game thread...", true);
 #endif
+            char savegame[MAX_SAVEGAME_FILE + 1]; ZeroMemory(savegame, sizeof(savegame));
+            unsigned int crc;
+            PacketFactory::Access(packet, savegame, &crc);
+            Bethesda::savegame = Savegame(string(savegame), crc);
 
             Bethesda::InitializeGame();
 
-            response = Network::ProcessEvent(ID_EVENT_GAME_STARTED, guid);
+            response = NetworkClient::ProcessEvent(ID_EVENT_GAME_STARTED);
             break;
         }
 
@@ -109,6 +112,20 @@ NetworkResponse Network::ProcessPacket(Packet* data, RakNetGUID guid)
         {
             unsigned char reason;
             PacketFactory::Access(packet, &reason);
+
+            switch (reason)
+            {
+            case ID_REASON_KICK:
+                throw VaultException("You have been kicked from the server");
+            case ID_REASON_BAN:
+                throw VaultException("You have been banned from the server");
+            case ID_REASON_ERROR:
+                throw VaultException("The server encountered an internal error");
+            case ID_REASON_DENIED:
+                throw VaultException("Your authentication has been denied");
+            case ID_REASON_NONE:
+                break;
+            }
 
             break;
         }
@@ -145,18 +162,4 @@ NetworkResponse Network::ProcessPacket(Packet* data, RakNetGUID guid)
     }
 
     return response;
-}
-
-void Network::Dispatch(RakPeerInterface* peer, NetworkResponse& response, const SystemAddress& target, bool broadcast)
-{
-    if (peer == NULL)
-        throw VaultException("RakPeerInterface is NULL");
-
-    NetworkResponse::iterator it;
-
-    for (it = response.begin(); it != response.end(); ++it)
-    {
-        peer->Send((char*) it->first->get(), it->first->length(), (PacketPriority) it->second.at(0), (PacketReliability) it->second.at(1), it->second.at(2), target, broadcast);
-        delete it->first;
-    }
 }

@@ -311,11 +311,23 @@ class API
 {
 
 private:
+    struct op_Arg1;
+    struct op_Arg2;
+    struct op_Arg3;
+    struct op_Arg4;
+    struct op_Arg5;
+    struct op_Arg6;
+    struct op_Arg7;
+    struct op_Arg8;
+    struct op_default;
+    typedef map<unsigned int, pair<vector<double>, API::op_default> > CommandCache;
+
     static FunctionList functions;
     static ValueList values;
     static ValueList axis;
     static ValueList anims;
     static CommandQueue queue;
+    static CommandCache cache;
     static int game;
 
     static void DefineFunction(string name, string def, unsigned short opcode, unsigned short games);
@@ -326,16 +338,6 @@ private:
     static unsigned long ExtractReference(char* reference);
     static pair<string, unsigned short> RetrieveFunction(string name);
     static char* BuildCommandStream(char* stream, vector<double> info, unsigned int size, signed int key = 0);
-
-    struct op_Arg1;
-    struct op_Arg2;
-    struct op_Arg3;
-    struct op_Arg4;
-    struct op_Arg5;
-    struct op_Arg6;
-    struct op_Arg7;
-    struct op_Arg8;
-    struct op_default;
 
     static pair<vector<double>, op_default*> ParseCommand(char* cmd, char* def, unsigned short opcode);
 
@@ -369,6 +371,9 @@ public:
     static vector<unsigned char> RetrieveAllValues();
     static vector<unsigned char> RetrieveAllAxis();
     static vector<unsigned char> RetrieveAllAnims();
+    static vector<string> RetrieveAllValues_Reverse();
+    static vector<string> RetrieveAllAxis_Reverse();
+    static vector<string> RetrieveAllAnims_Reverse();
 
 };
 

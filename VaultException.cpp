@@ -53,6 +53,11 @@ void VaultException::FinalizeDebug()
 void VaultException::Message()
 {
 #ifdef __WIN32__
-    MessageBox(NULL, error.c_str(), "Fatal error", MB_OK | MB_ICONERROR);
+    MessageBox(NULL, error.c_str(), "Fatal error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
 #endif
+}
+
+void VaultException::Console()
+{
+    printf("%s\n", error.c_str());
 }

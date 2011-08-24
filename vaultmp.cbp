@@ -55,6 +55,8 @@
 		<Unit filename="Data.h" />
 		<Unit filename="Debug.cpp" />
 		<Unit filename="Debug.h" />
+		<Unit filename="Game.cpp" />
+		<Unit filename="Game.h" />
 		<Unit filename="Interface.cpp" />
 		<Unit filename="Interface.h" />
 		<Unit filename="Inventory.cpp" />
@@ -62,8 +64,10 @@
 		<Unit filename="Items.h" />
 		<Unit filename="Lockable.cpp" />
 		<Unit filename="Lockable.h" />
+		<Unit filename="Network.cpp" />
 		<Unit filename="Network.h" />
 		<Unit filename="NetworkClient.cpp" />
+		<Unit filename="NetworkClient.h" />
 		<Unit filename="PacketTypes.h" />
 		<Unit filename="Pipe.cpp" />
 		<Unit filename="Pipe.h" />

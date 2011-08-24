@@ -17,11 +17,13 @@ Debug* Player::debug;
 
 Player::Player(RakNetGUID guid, unsigned int baseID) : Actor(baseID)
 {
+    pwd = "";
     Startup(guid);
 }
 
-Player::Player(RakNetGUID guid, unsigned int refID, unsigned int baseID) : Actor(refID, baseID)
+Player::Player(RakNetGUID guid, unsigned int refID, unsigned int baseID, string pwd) : Actor(refID, baseID)
 {
+    this->pwd = pwd;
     Startup(guid);
 }
 
@@ -38,6 +40,11 @@ Player::~Player()
 RakNetGUID Player::GetPlayerGUID()
 {
     return guid;
+}
+
+string Player::GetPlayerPassword()
+{
+    return pwd;
 }
 
 #ifdef VAULTMP_DEBUG
@@ -164,3 +171,14 @@ map<RakNetGUID, Player*> Player::GetPlayerList()
     return playerlist;
 }
 
+vector<RakNetGUID> Player::GetPlayerNetworkList()
+{
+    map<RakNetGUID, Player*>::iterator it;
+    vector<RakNetGUID> network;
+    network.reserve(playerlist.size());
+
+    for (it = playerlist.begin(); it != playerlist.end(); ++it)
+        network.push_back(it->first);
+
+    return network;
+}

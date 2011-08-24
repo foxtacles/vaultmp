@@ -19,6 +19,24 @@ string Utils::LongToHex(unsigned int value)
     return string(str);
 }
 
+const char* Utils::FileOnly(const char* path)
+{
+    return strrchr(path, '\\') ? strrchr(path, '\\') + 1 : path;
+}
+
+unsigned int Utils::FileLength(const char* file)
+{
+    FILE* _file = fopen(file, "rb");
+    if (!_file)
+        return 0;
+
+    fseek(_file, 0, SEEK_END);
+    unsigned int size = ftell(_file);
+    fclose(_file);
+
+    return size;
+}
+
 /* From:
     http://web.archive.org/web/20080303102530/http://c.snippets.org/snip_lister.php?fname=crc_32.c
     */
@@ -77,13 +95,14 @@ unsigned int Utils::updateCRC32(unsigned char ch, unsigned int crc)
       return UPDC32(ch, crc);
 }
 
-bool Utils::crc32file(char* name, unsigned int* crc, long* charcnt)
+bool Utils::crc32file(char* name, unsigned int* crc)
 {
       FILE* fin;
       unsigned int oldcrc32;
+      long charcnt;
       int c;
 
-      oldcrc32 = 0xFFFFFFFF; *charcnt = 0;
+      oldcrc32 = 0xFFFFFFFF; charcnt = 0;
 
       if ((fin=fopen(name, "rb"))==NULL)
       {
@@ -92,13 +111,13 @@ bool Utils::crc32file(char* name, unsigned int* crc, long* charcnt)
 
       while ((c=getc(fin))!=EOF)
       {
-            ++*charcnt;
+            ++charcnt;
             oldcrc32 = UPDC32(c, oldcrc32);
       }
 
       if (ferror(fin))
       {
-            *charcnt = -1;
+            charcnt = -1;
       }
 
       fclose(fin);

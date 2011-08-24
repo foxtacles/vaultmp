@@ -3,7 +3,7 @@
 
 #include <string>
 #include <map>
-#include <list>
+#include <vector>
 
 #include "Actor.h"
 
@@ -33,18 +33,21 @@ private:
     void Startup(RakNetGUID guid);
 
     RakNetGUID guid;
+    string pwd;
 
 public:
     Player(RakNetGUID guid, unsigned int baseID);
-    Player(RakNetGUID guid, unsigned int refID, unsigned int baseID);
+    Player(RakNetGUID guid, unsigned int refID, unsigned int baseID, string pwd);
     ~Player();
 
     RakNetGUID GetPlayerGUID();
+    string GetPlayerPassword();
 
     static void Initialize();
     static void DestroyInstances();
 
     static map<RakNetGUID, Player*> GetPlayerList();
+    static vector<RakNetGUID> GetPlayerNetworkList();
     static Player* GetPlayerFromGUID(RakNetGUID guid);
     static Player* GetPlayerFromRefID(unsigned int refID);
     static vector<string> GetAllRefs();

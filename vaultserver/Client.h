@@ -5,7 +5,7 @@
 #include <map>
 #include <stack>
 
-#include "RakNet/RakPeerInterface.h"
+#include "../RakNet/RakPeerInterface.h"
 
 using namespace RakNet;
 using namespace std;

@@ -9,6 +9,7 @@
 
 #include "vaultmp.h"
 #include "CriticalSection.h"
+#include "VaultException.h"
 
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"

@@ -63,6 +63,8 @@ public:
     static Parameter Param_EnabledActors;
     static Parameter Param_DisabledActors;
     static Parameter Param_AllActors;
+    static Parameter Param_ActorValues;
+    static Parameter Param_Axis;
 
 #ifdef VAULTMP_DEBUG
     static void SetDebugHandler(Debug* debug);

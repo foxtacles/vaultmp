@@ -12,14 +12,8 @@
 
 #include <vector>
 
-typedef vector<pair<pDefault*, vector<unsigned char> > > NetworkResponse;
-
-enum
-{
-    CHANNEL_SYSTEM,
-    CHANNEL_GAME,
-    CHANNEL_PLAYER_DATA,
-};
+typedef pair<pair<pDefault*, vector<unsigned char> >, vector<RakNetGUID> > SingleResponse;
+typedef vector<SingleResponse> NetworkResponse;
 
 using namespace RakNet;
 
@@ -29,22 +23,13 @@ private:
 
     Network();
 
-    static pair<pDefault*, vector<unsigned char> > CreateResponse(pDefault* packet, unsigned char priority, unsigned char reliability, unsigned char channel);
-
-#ifdef VAULTMP_DEBUG
-    static Debug* debug;
-#endif
-
 public:
 
-#ifdef VAULTMP_DEBUG
-    static void SetDebugHandler(Debug* debug);
-#endif
+    static SingleResponse CreateResponse(pDefault* packet, unsigned char priority, unsigned char reliability, unsigned char channel, vector<RakNetGUID> targets);
+    static SingleResponse CreateResponse(pDefault* packet, unsigned char priority, unsigned char reliability, unsigned char channel, RakNetGUID target);
+    static NetworkResponse CompleteResponse(SingleResponse response);
 
-    static NetworkResponse ProcessEvent(unsigned char id, RakNetGUID guid);
-    static NetworkResponse ProcessPacket(Packet* data, RakNetGUID guid);
-
-    static void Dispatch(RakPeerInterface* peer, NetworkResponse& response, const SystemAddress& target, bool broadcast = false);
+    static void Dispatch(RakPeerInterface* peer, NetworkResponse& response);
 
 };
 
