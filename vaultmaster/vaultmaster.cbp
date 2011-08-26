@@ -21,8 +21,8 @@
 			<Add option="-s" />
 			<Add option="-static-libgcc" />
 			<Add option="-static-libstdc++" />
+			<Add option="-lws2_32" />
 			<Add option="-enable-auto-import" />
-			<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\libws2_32.a" />
 		</Linker>
 		<Unit filename="..\Data.h" />
 		<Unit filename="..\RakNet\AutopatcherPatchContext.h" />

@@ -71,8 +71,8 @@ public:
 
     static void DefineCommand(string name, string def, string real = string());
     static void DefineNative(string name, ParamContainer param);
-    static void ExecuteCommandLoop(string name, int priority = 0, int sleep = 3);
-    static void ExecuteCommandOnce(string name, ParamContainer, int priority = 0, int sleep = 3, signed int key = 0);
+    static void ExecuteCommandLoop(string name, int priority = 0, int sleep = 2);
+    static void ExecuteCommandOnce(string name, ParamContainer, int priority = 0, int sleep = 2, signed int key = 0);
 
 #ifdef VAULTMP_DEBUG
     static void SetDebugHandler(Debug* debug);

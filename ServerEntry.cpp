@@ -8,8 +8,8 @@ ServerEntry::ServerEntry(int game)
     this->name = "Vault-Tec Multiplayer Mod server";
     this->map = "default";
     this->players = pair<int, int>(0, 0);
-    this->ping = 999;
-    this->SetServerRule("game", game == FALLOUT3 ? "Fallout 3" : game == NEWVEGAS ? "Fallout NV" : "TES: Oblivion");
+    this->ping = USHRT_MAX;
+    this->SetServerRule("game", game == FALLOUT3 ? "Fallout 3" : game == NEWVEGAS ? "Fallout NV" : game == OBLIVION ? "TES: Oblivion" : "undefined");
 }
 
 ServerEntry::ServerEntry(string name, string map, pair<int, int> players, int ping, int game)
@@ -19,7 +19,7 @@ ServerEntry::ServerEntry(string name, string map, pair<int, int> players, int pi
     SetServerMap(map);
     SetServerPlayers(players);
     SetServerPing(ping);
-    SetServerRule("game", game == FALLOUT3 ? "Fallout 3" : game == NEWVEGAS ? "Fallout NV" : "TES: Oblivion");
+    SetGame(game);
 }
 
 void ServerEntry::SetServerName(string name)
@@ -34,6 +34,7 @@ void ServerEntry::SetServerMap(string map)
 
 void ServerEntry::SetServerRule(string rule, string value)
 {
+    this->rules.erase(rule);
     this->rules.insert(pair<string, string>(rule, value));
 }
 
@@ -45,6 +46,12 @@ void ServerEntry::SetServerPlayers(pair<int, int> players)
 void ServerEntry::SetServerPing(int ping)
 {
     this->ping = ping;
+}
+
+void ServerEntry::SetGame(int game)
+{
+    this->game = game;
+    this->SetServerRule("game", game == FALLOUT3 ? "Fallout 3" : game == NEWVEGAS ? "Fallout NV" : game == OBLIVION ? "TES: Oblivion" : "undefined");
 }
 
 string ServerEntry::GetServerName()

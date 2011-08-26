@@ -277,7 +277,7 @@ DWORD WINAPI Interface::CommandThreadReceive(LPVOID data)
             {
                 CommandResult result = API::Translate(buffer);
 
-                if (result.first.first != 0 && result.first.second.size() >= 1)
+                if (result.first.second.size() >= 1)
                     resultHandler(result.first.first, result.first.second, result.second);
             }
             else if (code == PIPE_SYS_WAKEUP)

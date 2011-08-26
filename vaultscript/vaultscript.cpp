@@ -22,38 +22,39 @@ void VAULTSCRIPT exec()
     }
 }
 
-bool VAULTSCRIPT OnClientAuthenticate(int client, string name, string pwd)
+bool VAULTSCRIPT OnClientAuthenticate(string name, string pwd)
 {
-    printf("C++: client auth %d, %s, %s\n", client, name.c_str(), pwd.c_str());
+    printf("C++: client auth %s, %s\n", name.c_str(), pwd.c_str());
     return true;
 }
 
-void VAULTSCRIPT OnPlayerConnect(int player)
+void VAULTSCRIPT OnPlayerConnect(unsigned int player)
 {
 
 }
 
-void VAULTSCRIPT OnPlayerDisconnect(int player, unsigned char reason)
+void VAULTSCRIPT OnPlayerDisconnect(unsigned int player, unsigned char reason)
 {
-    printf("C++: player disconnect %d, %d\n", player, (int) reason);
+    printf("C++: player disconnect %d, %d\n", player, (unsigned int) reason);
 }
 
-int VAULTSCRIPT OnPlayerRequestGame(int player)
+unsigned int VAULTSCRIPT OnPlayerRequestGame(unsigned int player)
 {
-    return 0;
+    printf("C++: player game %d\n", player);
+    return 0x00030D82;
 }
 
-void VAULTSCRIPT OnPlayerSpawn(int player)
-{
-
-}
-
-void VAULTSCRIPT OnPlayerDeath(int player)
+void VAULTSCRIPT OnPlayerSpawn(unsigned int player)
 {
 
 }
 
-void VAULTSCRIPT OnPlayerCellChange(int player, int cell)
+void VAULTSCRIPT OnPlayerDeath(unsigned int player)
+{
+
+}
+
+void VAULTSCRIPT OnPlayerCellChange(unsigned int player, unsigned int cell)
 {
 
 }

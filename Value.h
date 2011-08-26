@@ -10,6 +10,8 @@
 
 using namespace std;
 
+class Container;
+
 template <typename T>
 class Value : public Lockable
 {

@@ -11,15 +11,16 @@
 #include "RakNet/BitStream.h"
 #include "RakNet/RakSleep.h"
 
+#include "Data.h"
 #include "vaultmp.h"
 #include "Player.h"
-#include "Inventory.h"
+#include "Container.h"
 #include "Interface.h"
 #include "Lockable.h"
 #include "Game.h"
 #include "VaultException.h"
 #include "NetworkClient.h"
-#include "Data.h"
+#include "GameFactory.h"
 
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"
@@ -39,6 +40,7 @@ friend class Game;
 
 private:
     static int game;
+    static string password;
     static Savegame savegame;
     static ModList modfiles;
     static bool initialized;

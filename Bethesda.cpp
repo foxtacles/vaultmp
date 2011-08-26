@@ -9,6 +9,7 @@ typedef void (*fInitialize)(int);
 
 int Bethesda::game = 0;
 bool Bethesda::initialized = false;
+string Bethesda::password = "";
 Savegame Bethesda::savegame;
 ModList Bethesda::modfiles;
 
@@ -565,11 +566,11 @@ void Bethesda::InitializeGame()
         strcpy(module, "Fallout3.exe");
         break;
     case NEWVEGAS:
-        putenv("SteamAppID=22380");
+        SetEnvironmentVariable("SteamAppID", "22380");
         strcpy(module, "FalloutNV.exe");
         break;
     case OBLIVION:
-        putenv("SteamAppID=22330");
+        SetEnvironmentVariable("SteamAppID", "22330");
         strcpy(module, "Oblivion.exe");
         break;
     default:
@@ -746,8 +747,10 @@ void Bethesda::InitializeGame()
 void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, string name, string pwd, int game)
 {
     Bethesda::game = game;
+    Bethesda::password = pwd;
     Bethesda::savegame = Savegame();
     Bethesda::modfiles.clear();
+    Game::game = game;
     initialized = false;
 
 #ifdef VAULTMP_DEBUG
@@ -761,17 +764,18 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
     NetworkClient::SetDebugHandler(debug);
     Interface::SetDebugHandler(debug);
     Lockable::SetDebugHandler(debug);
-    Inventory::SetDebugHandler(debug);
+    Object::SetDebugHandler(debug);
+    Item::SetDebugHandler(debug);
+    Container::SetDebugHandler(debug);
     Actor::SetDebugHandler(debug);
     Player::SetDebugHandler(debug);
+    GameFactory::SetDebugHandler(debug);
 #endif
 
-    Inventory::Initialize(game);
-    Actor::Initialize();
-    Player::Initialize();
+    Container::Initialize(game);
 
-    Game::self = new Player(peer->GetMyGUID(), PLAYER_REFERENCE, PLAYER_BASE, pwd);
-    Game::self->SetActorName(name);
+    Game::self = (Player*) GameFactory::CreateInstance(ID_PLAYER, PLAYER_REFERENCE, PLAYER_BASE);
+    Game::self->SetName(name);
 
     try
     {
@@ -1554,9 +1558,8 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
         Sleep(200); Packet* packet = NULL; while (packet = peer->Receive()) peer->DeallocatePacket(packet); // disconnection notification might still arrive
 
         Interface::Terminate();
-        Player::DestroyInstances();
-        Actor::DestroyInstances();
-        Inventory::Cleanup();
+        GameFactory::DestroyAllInstances();
+        Container::Cleanup();
 
 #ifdef VAULTMP_DEBUG
         debug->Print("Network thread is going to terminate (ERROR)", true);
@@ -1565,9 +1568,8 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
     }
 
     Interface::Terminate();
-    Player::DestroyInstances();
-    Actor::DestroyInstances();
-    Inventory::Cleanup();
+    GameFactory::DestroyAllInstances();
+    Container::Cleanup();
 
 #ifdef VAULTMP_DEBUG
     debug->Print("Network thread is going to terminate (no error occured)", true);

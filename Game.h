@@ -21,11 +21,12 @@ private:
     static Debug* debug;
 #endif
 
+    static int game;
     static Player* self;
     static RakNetGUID server;
     static list<Player*> refqueue;
 
-    static NetworkResponse Authenticate();
+    static NetworkResponse Authenticate(string password);
 
     static void InitializeCommands();
 

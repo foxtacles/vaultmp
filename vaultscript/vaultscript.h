@@ -21,17 +21,17 @@
 using namespace std;
 extern "C" {
     VAULTSCRIPT void exec();
-    VAULTSCRIPT bool OnClientAuthenticate(int client, string name, string pwd);
-    VAULTSCRIPT void OnPlayerConnect(int player);
-    VAULTSCRIPT void OnPlayerDisconnect(int player, unsigned char reason);
-    VAULTSCRIPT int OnPlayerRequestGame(int player);
-    VAULTSCRIPT void OnPlayerSpawn(int player);
-    VAULTSCRIPT void OnPlayerDeath(int player);
-    VAULTSCRIPT void OnPlayerCellChange(int player, int cell);
+    VAULTSCRIPT bool OnClientAuthenticate(string name, string pwd);
+    VAULTSCRIPT void OnPlayerConnect(unsigned int player);
+    VAULTSCRIPT void OnPlayerDisconnect(unsigned int player, unsigned char reason);
+    VAULTSCRIPT unsigned int OnPlayerRequestGame(unsigned int player);
+    VAULTSCRIPT void OnPlayerSpawn(unsigned int player);
+    VAULTSCRIPT void OnPlayerDeath(unsigned int player);
+    VAULTSCRIPT void OnPlayerCellChange(unsigned int player, unsigned int cell);
 
     VAULTSCRIPT void (*timestamp)();
     VAULTSCRIPT void (*SetServerName)(string);
     VAULTSCRIPT void (*SetServerMap)(string);
     VAULTSCRIPT void (*SetServerRule)(string, string);
-    VAULTSCRIPT int (*GetGameCode)();
+    VAULTSCRIPT unsigned int (*GetGameCode)();
 }

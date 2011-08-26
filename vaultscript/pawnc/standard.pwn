@@ -17,9 +17,9 @@ main()
     }
 }
 
-public OnClientAuthenticate(client, const name[], const pwd[])
+public OnClientAuthenticate(const name[], const pwd[])
 {
-	printf("PAWN: client auth %d, %s, %s\n", client, name, pwd);
+	printf("PAWN: client auth %s, %s\n", name, pwd);
 	return true;
 }
 
@@ -35,7 +35,8 @@ public OnPlayerDisconnect(player, reason)
 
 public OnPlayerRequestGame(player)
 {
-	return 0;
+    	printf("PAWN: player game %d\n", player);
+    	return 0x00030D82;
 }
 
 public OnPlayerSpawn(player)

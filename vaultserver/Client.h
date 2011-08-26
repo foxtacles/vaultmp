@@ -4,36 +4,39 @@
 #include <string>
 #include <map>
 #include <stack>
+#include <vector>
 
 #include "../RakNet/RakPeerInterface.h"
+
+class Player;
 
 using namespace RakNet;
 using namespace std;
 
-class Client {
+class Client
+{
+private:
+    static map<RakNetGUID, Client*> clients;
+    static stack<unsigned int> clientID;
 
-      private:
-              static map<RakNetGUID, Client*> clients;
-              static map<int, RakNetGUID> clientGUIDs;
-              static stack<int> clientIDs;
+    RakNetGUID guid;
+    unsigned int ID;
+    Player* player;
 
-              RakNetGUID guid; int ID;
-              string authname;
-              string authpwd;
+public:
+    Client(RakNetGUID guid, Player* player);
+    ~Client();
 
-      public:
-              Client(RakNetGUID guid, string authname, string authpwd);
-              ~Client();
+    static void SetMaximumClients(unsigned int clients);
+    static int GetClientCount();
+    static Client* GetClientFromGUID(RakNetGUID guid);
+    static Client* GetClientFromID(unsigned int id);
+    static vector<RakNetGUID> GetNetworkList();
 
-              static void SetMaximumClients(int clients);
-              static int GetClientCount();
-              static Client* GetClientFromGUID(RakNetGUID guid);
-              static RakNetGUID GetGUIDFromID(int ID);
+    RakNetGUID GetGUID();
+    unsigned int GetID();
+    Player* GetPlayer();
 
-              RakNetGUID GetRakNetGUID();
-              int GetClientID();
-              string GetAuthName();
-              string GetAuthPwd();
 };
 
 #endif

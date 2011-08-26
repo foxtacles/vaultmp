@@ -1,47 +1,43 @@
 #include "Reference.h"
 
-list<Reference*> Reference::references;
-
 Reference::Reference(unsigned int refID, unsigned int baseID)
 {
-    this->refID = refID;
-    this->baseID = baseID;
-    references.push_back(this);
-}
-
-Reference::Reference()
-{
-    this->refID = 0x00;
-    this->baseID = 0x00;
-    references.push_back(this);
+    this->refID.Set(refID);
+    this->baseID.Set(baseID);
+    this->SetNetworkIDManager(Network::Manager());
 }
 
 Reference::~Reference()
 {
-    references.remove(this);
-}
 
-list<Reference*> Reference::GetReferences()
-{
-    return references;
 }
 
 void Reference::SetReference(unsigned int refID)
 {
-    this->refID = refID;
+    this->refID.Set(refID);
 }
 
 void Reference::SetBase(unsigned int baseID)
 {
-    this->baseID = baseID;
+    this->baseID.Set(baseID);
 }
 
 unsigned int Reference::GetReference()
 {
-    return refID;
+    return refID.Get();
 }
 
 unsigned int Reference::GetBase()
 {
-    return baseID;
+    return baseID.Get();
+}
+
+Parameter Reference::GetReferenceParam()
+{
+    return Parameter(vector<string>{Utils::LongToHex(refID.Get())}, &Data::EmptyVector);
+}
+
+Parameter Reference::GetBaseParam()
+{
+    return Parameter(vector<string>{Utils::LongToHex(baseID.Get())}, &Data::EmptyVector);
 }

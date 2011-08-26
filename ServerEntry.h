@@ -1,6 +1,7 @@
 #ifndef SERVERENTRY_H
 #define SERVERENTRY_H
 
+#include <limits.h>
 #include <string>
 #include <map>
 
@@ -26,6 +27,7 @@ public:
     void SetServerRule(string rule, string value);
     void SetServerPlayers(pair<int, int> players);
     void SetServerPing(int ping);
+    void SetGame(int game);
 
     string GetServerName();
     string GetServerMap();

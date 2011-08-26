@@ -34,15 +34,19 @@
 				</Linker>
 			</Target>
 		</Build>
+		<Compiler>
+			<Add option="-std=gnu++0x" />
+			<Add option="-fpermissive" />
+		</Compiler>
 		<Linker>
 			<Add option="ufmod.obj" />
 			<Add option="-static-libgcc" />
 			<Add option="-static-libstdc++" />
+			<Add option="-lshlwapi" />
+			<Add option="-lcomctl32" />
+			<Add option="-lwinmm" />
+			<Add option="-lws2_32" />
 			<Add option="-enable-auto-import" />
-			<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\libshlwapi.a" />
-			<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\libcomctl32.a" />
-			<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\libwinmm.a" />
-			<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\libws2_32.a" />
 		</Linker>
 		<Unit filename="API.cpp" />
 		<Unit filename="API.h" />
@@ -50,6 +54,8 @@
 		<Unit filename="Actor.h" />
 		<Unit filename="Bethesda.cpp" />
 		<Unit filename="Bethesda.h" />
+		<Unit filename="Container.cpp" />
+		<Unit filename="Container.h" />
 		<Unit filename="CriticalSection.cpp" />
 		<Unit filename="CriticalSection.h" />
 		<Unit filename="Data.h" />
@@ -57,10 +63,13 @@
 		<Unit filename="Debug.h" />
 		<Unit filename="Game.cpp" />
 		<Unit filename="Game.h" />
+		<Unit filename="GameFactory.cpp" />
+		<Unit filename="GameFactory.h" />
+		<Unit filename="GameTypes.h" />
 		<Unit filename="Interface.cpp" />
 		<Unit filename="Interface.h" />
-		<Unit filename="Inventory.cpp" />
-		<Unit filename="Inventory.h" />
+		<Unit filename="Item.cpp" />
+		<Unit filename="Item.h" />
 		<Unit filename="Items.h" />
 		<Unit filename="Lockable.cpp" />
 		<Unit filename="Lockable.h" />
@@ -68,6 +77,8 @@
 		<Unit filename="Network.h" />
 		<Unit filename="NetworkClient.cpp" />
 		<Unit filename="NetworkClient.h" />
+		<Unit filename="Object.cpp" />
+		<Unit filename="Object.h" />
 		<Unit filename="PacketTypes.h" />
 		<Unit filename="Pipe.cpp" />
 		<Unit filename="Pipe.h" />
@@ -323,6 +334,14 @@
 		<Unit filename="Value.h" />
 		<Unit filename="VaultException.cpp" />
 		<Unit filename="VaultException.h" />
+		<Unit filename="iniparser\dictionary.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="iniparser\dictionary.h" />
+		<Unit filename="iniparser\iniparser.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="iniparser\iniparser.h" />
 		<Unit filename="ufmod.h" />
 		<Unit filename="vaultmp.cpp" />
 		<Unit filename="vaultmp.h" />

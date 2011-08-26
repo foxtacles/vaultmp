@@ -3,8 +3,7 @@
 
 #include "RakNet/RakPeerInterface.h"
 #include "RakNet/MessageIdentifiers.h"
-#include "RakNet/BitStream.h"
-#include "RakNet/RakSleep.h"
+#include "RakNet/NetworkIDManager.h"
 
 #include "vaultmp.h"
 #include "PacketTypes.h"
@@ -23,6 +22,8 @@ private:
 
     Network();
 
+    static NetworkIDManager manager;
+
 public:
 
     static SingleResponse CreateResponse(pDefault* packet, unsigned char priority, unsigned char reliability, unsigned char channel, vector<RakNetGUID> targets);
@@ -30,6 +31,7 @@ public:
     static NetworkResponse CompleteResponse(SingleResponse response);
 
     static void Dispatch(RakPeerInterface* peer, NetworkResponse& response);
+    static NetworkIDManager* Manager();
 
 };
 

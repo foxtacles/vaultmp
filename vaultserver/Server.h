@@ -22,6 +22,7 @@ private:
 #endif
 
     static NetworkResponse Authenticate(RakNetGUID guid, string name, string pwd);
+    static NetworkResponse NewPlayer(RakNetGUID guid, NetworkID id, string name);
     static NetworkResponse Disconnect(RakNetGUID guid, unsigned char reason);
 
 public:

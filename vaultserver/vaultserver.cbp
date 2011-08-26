@@ -22,11 +22,11 @@
 				<Linker>
 					<Add option="-static-libgcc" />
 					<Add option="-static-libstdc++" />
+					<Add option="-lws2_32" />
+					<Add option="-lwinmm" />
+					<Add option="-lm" />
 					<Add option="amx/obj/amxexecn.obj" />
 					<Add option="-enable-auto-import" />
-					<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\libws2_32.a" />
-					<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\libwinmm.a" />
-					<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\libm.a" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -43,11 +43,11 @@
 					<Add option="-s" />
 					<Add option="-static-libgcc" />
 					<Add option="-static-libstdc++" />
+					<Add option="-lws2_32" />
+					<Add option="-lwinmm" />
+					<Add option="-lm" />
 					<Add option="amx/obj/amxexecn.obj" />
 					<Add option="-enable-auto-import" />
-					<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\libws2_32.a" />
-					<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\libwinmm.a" />
-					<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\libm.a" />
 				</Linker>
 			</Target>
 			<Target title="DebugUnix">
@@ -89,22 +89,32 @@
 				</Linker>
 			</Target>
 		</Build>
+		<Compiler>
+			<Add option="-std=gnu++0x" />
+			<Add option="-fpermissive" />
+		</Compiler>
 		<Unit filename="..\API.cpp" />
 		<Unit filename="..\API.h" />
 		<Unit filename="..\Actor.cpp" />
 		<Unit filename="..\Actor.h" />
+		<Unit filename="..\Container.cpp" />
+		<Unit filename="..\Container.h" />
 		<Unit filename="..\CriticalSection.cpp" />
 		<Unit filename="..\CriticalSection.h" />
 		<Unit filename="..\Data.h" />
 		<Unit filename="..\Debug.cpp" />
 		<Unit filename="..\Debug.h" />
-		<Unit filename="..\Inventory.cpp" />
-		<Unit filename="..\Inventory.h" />
+		<Unit filename="..\GameFactory.cpp" />
+		<Unit filename="..\GameFactory.h" />
+		<Unit filename="..\Item.cpp" />
+		<Unit filename="..\Item.h" />
 		<Unit filename="..\Items.h" />
 		<Unit filename="..\Lockable.cpp" />
 		<Unit filename="..\Lockable.h" />
 		<Unit filename="..\Network.cpp" />
 		<Unit filename="..\Network.h" />
+		<Unit filename="..\Object.cpp" />
+		<Unit filename="..\Object.h" />
 		<Unit filename="..\PacketTypes.h" />
 		<Unit filename="..\Player.cpp" />
 		<Unit filename="..\Player.h" />

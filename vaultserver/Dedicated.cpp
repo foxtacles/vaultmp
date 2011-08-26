@@ -154,7 +154,8 @@ void* Dedicated::FileThread(void* data)
     unsigned int len = Utils::FileLength(file);
     files.AddFile(savegame.first.c_str(), file, 0, len, len, FileListNodeContext(FILE_SAVEGAME, 0), true);
 
-    ModList::iterator it; int i = 1;
+    ModList::iterator it;
+    int i = 1;
     for (it = modfiles.begin(), i; it != modfiles.end(); ++it, i++)
     {
         snprintf(file, sizeof(file), "%s\\%s\\%s", dir, MODFILES_PATH, it->first.c_str());
@@ -225,14 +226,14 @@ void* Dedicated::DedicatedThread(void* data)
     //Player::SetDebugHandler(debug);
     VaultException::SetDebugHandler(debug);
     NetworkServer::SetDebugHandler(debug);
-    Inventory::SetDebugHandler(debug);
+    Container::SetDebugHandler(debug);
+    Object::SetDebugHandler(debug);
+    GameFactory::SetDebugHandler(debug);
 #endif
 
     Packet* packet;
 
-    Inventory::Initialize(self->GetGame());
-    Actor::Initialize();
-    Player::Initialize();
+    Container::Initialize(self->GetGame());
     Client::SetMaximumClients(connections);
 
     try
@@ -241,78 +242,83 @@ void* Dedicated::DedicatedThread(void* data)
         {
             for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
             {
-                try
+                if (packet->data[0] == ID_MASTER_UPDATE)
                 {
-                    NetworkResponse response = NetworkServer::ProcessPacket(packet);
+                    if (query)
+                    {
+                        BitStream query(packet->data, packet->length, false);
+                        query.IgnoreBytes(sizeof(MessageID));
 
-                    vector<RakNetGUID> closures;
-                    for (NetworkResponse::iterator it = response.begin(); it != response.end(); ++it)
-                        if (*it->first.first->get() == ID_GAME_END)
-                            closures.insert(closures.end(), it->second.begin(), it->second.end());
+                        SystemAddress addr;
+                        query.Read(addr);
+                        query.Reset();
 
-                    Network::Dispatch(peer, response);
+                        query.Write((MessageID) ID_MASTER_UPDATE);
+                        query.Write(addr);
 
-                    for (vector<RakNetGUID>::iterator it = closures.begin(); it != closures.end(); ++it)
-                        peer->CloseConnection(*it, true, CHANNEL_SYSTEM, HIGH_PRIORITY);
+                        RakString name(self->GetServerName().c_str());
+                        RakString map(self->GetServerMap().c_str());
+                        int players = self->GetServerPlayers().first;
+                        int playersMax = self->GetServerPlayers().second;
+                        int game = self->GetGame();
+                        std::map<string, string> rules = self->GetServerRules();
+
+                        query.Write(name);
+                        query.Write(map);
+                        query.Write(players);
+                        query.Write(playersMax);
+                        query.Write(game);
+                        query.Write((int) rules.size());
+
+                        for (std::map<string, string>::const_iterator i = rules.begin(); i != rules.end(); ++i)
+                        {
+                            RakString key(i->first.c_str());
+                            RakString value(i->second.c_str());
+                            query.Write(key);
+                            query.Write(value);
+                        }
+
+                        peer->Send(&query, LOW_PRIORITY, RELIABLE_ORDERED, CHANNEL_SYSTEM, packet->systemAddress, false, 0);
+
+                        Utils::timestamp();
+                        printf("Query processed (%s)\n", packet->systemAddress.ToString());
+                        break;
+                    }
+                    else
+                    {
+                        Utils::timestamp();
+                        printf("Query is disabled (%s)\n", packet->systemAddress.ToString());
+                        peer->CloseConnection(packet->systemAddress, true, 0, LOW_PRIORITY);
+                        break;
+                    }
                 }
-                catch (...)
+                else
                 {
-                    peer->DeallocatePacket(packet);
-                    NetworkResponse response = NetworkServer::ProcessEvent(ID_EVENT_SERVER_ERROR);
-                    Network::Dispatch(peer, response);
-                    throw;
+                    try
+                    {
+                        NetworkResponse response = NetworkServer::ProcessPacket(packet);
+
+                        vector<RakNetGUID> closures;
+                        for (NetworkResponse::iterator it = response.begin(); it != response.end(); ++it)
+                            if (*it->first.first->get() == ID_GAME_END)
+                                closures.insert(closures.end(), it->second.begin(), it->second.end());
+
+                        Network::Dispatch(peer, response);
+
+                        for (vector<RakNetGUID>::iterator it = closures.begin(); it != closures.end(); ++it)
+                            peer->CloseConnection(*it, true, CHANNEL_SYSTEM, HIGH_PRIORITY);
+                    }
+                    catch (...)
+                    {
+                        peer->DeallocatePacket(packet);
+                        NetworkResponse response = NetworkServer::ProcessEvent(ID_EVENT_SERVER_ERROR);
+                        Network::Dispatch(peer, response);
+                        throw;
+                    }
                 }
                 switch (packet->data[0])
                 {
                     /*
-                    case ID_MASTER_UPDATE:
-                    {
-                        if (query)
-                        {
-                            BitStream query(packet->data, packet->length, false);
-                            query.IgnoreBytes(sizeof(MessageID));
-
-                            SystemAddress addr;
-                            query.Read(addr);
-                            query.Reset();
-
-                            query.Write((MessageID) ID_MASTER_UPDATE);
-                            query.Write(addr);
-
-                            RakString name(self->GetServerName().c_str());
-                            RakString map(self->GetServerMap().c_str());
-                            int players = self->GetServerPlayers().first;
-                            int playersMax = self->GetServerPlayers().second;
-                            std::map<string, string> rules = self->GetServerRules();
-
-                            query.Write(name);
-                            query.Write(map);
-                            query.Write(players);
-                            query.Write(playersMax);
-                            query.Write((int) rules.size());
-
-                            for (std::map<string, string>::const_iterator i = rules.begin(); i != rules.end(); ++i)
-                            {
-                                RakString key(i->first.c_str());
-                                RakString value(i->second.c_str());
-                                query.Write(key);
-                                query.Write(value);
-                            }
-
-                            peer->Send(&query, LOW_PRIORITY, RELIABLE_ORDERED, CHANNEL_SYSTEM, packet->systemAddress, false, 0);
-
-                            Utils::timestamp();
-                            printf("Query processed (%s)\n", packet->systemAddress.ToString());
-                            break;
-                        }
-                        else
-                        {
-                            Utils::timestamp();
-                            printf("Query is disabled (%s)\n", packet->systemAddress.ToString());
-                            peer->CloseConnection(packet->systemAddress, true, 0, LOW_PRIORITY);
-                            break;
-                        }
-                    }
                     case ID_GAME_START:
                     {
                         map<RakNetGUID, Player*> players = Player::GetPlayerList();
@@ -566,8 +572,7 @@ void* Dedicated::DedicatedThread(void* data)
     peer->Shutdown(300);
     RakPeerInterface::DestroyInstance(peer);
 
-    Player::DestroyInstances();
-    Actor::DestroyInstances();
+    GameFactory::DestroyAllInstances();
 
 #ifdef VAULTMP_DEBUG
     debug->Print("Network thread is going to terminate", true);
@@ -598,7 +603,7 @@ pthread_t Dedicated::InitializeServer(int port, int connections, char* announce,
     thread = true;
     Dedicated::port = port ? port : RAKNET_STANDARD_PORT;
     Dedicated::connections = connections ? connections : RAKNET_STANDARD_CONNECTIONS;
-    Dedicated::announce = announce;
+    Dedicated::announce = strlen(announce) ? announce : NULL;
     Dedicated::query = query;
     Dedicated::fileserve = fileserve;
     Dedicated::fileslots = fileslots;

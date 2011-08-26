@@ -67,6 +67,7 @@ protected:
         this->len = 0;
         base();
     };
+
     pDefault(unsigned char* stream, unsigned int len)
     {
         this->stream = new unsigned char[len];
@@ -74,6 +75,7 @@ protected:
         this->len = len;
         base();
     };
+
     pTypeSpecifier type;
     unsigned char* stream;
     unsigned int len;
@@ -90,12 +92,15 @@ protected:
 public:
     virtual ~pDefault()
     {
-        if (stream) delete[] stream;
+        if (stream)
+            delete[] stream;
     };
+
     const unsigned char* get()
     {
         return stream;
     };
+
     unsigned int length()
     {
         return len;
@@ -109,6 +114,7 @@ protected:
     {
         base();
     };
+
     pGameDefault(unsigned char* stream, unsigned int len) : pDefault(stream, len)
     {
         base();
@@ -119,7 +125,7 @@ protected:
         this->base_len = pDefault::base_len;
     };
 
-    void construct(void* super = NULL, unsigned int len = 0)
+    virtual void construct(void* super = NULL, unsigned int len = 0)
     {
         if (!stream)
         {
@@ -133,7 +139,7 @@ protected:
         }
     };
 
-    void deconstruct(void* super = NULL, unsigned int len = 0)
+    virtual void deconstruct(void* super = NULL, unsigned int len = 0)
     {
         if (stream)
         {
@@ -143,7 +149,8 @@ protected:
             unsigned int read = 0;
             type = *reinterpret_cast<pTypeSpecifier*>(stream);
             read += sizeof(pTypeSpecifier);
-            if (super) memcpy(super, (void*) (stream + read), len);
+            if (super)
+                memcpy(super, (void*) (stream + read), len);
         }
     };
 };
@@ -151,40 +158,42 @@ protected:
 class pPlayerDefault : public pDefault
 {
 protected:
-    pPlayerDefault(unsigned char type, RakNetGUID guid) : pDefault(type)
+    pPlayerDefault(unsigned char type, NetworkID id) : pDefault(type)
     {
-        this->guid = guid;
+        this->id = id;
         base();
     };
+
     pPlayerDefault(unsigned char* stream, unsigned int len) : pDefault(stream, len)
     {
         base();
     };
-    RakNetGUID guid;
+
+    NetworkID id;
 
     void base()
     {
-        this->base_len = sizeof(RakNetGUID);
+        this->base_len = sizeof(NetworkID);
         this->base_len += pDefault::base_len;
     };
 
-    void construct(void* super = NULL, unsigned int len = 0)
+    virtual void construct(void* super = NULL, unsigned int len = 0)
     {
         if (!stream)
         {
             unsigned int written = 0;
-            stream = new unsigned char[sizeof(pTypeSpecifier) + sizeof(RakNetGUID) + len];
+            stream = new unsigned char[sizeof(pTypeSpecifier) + sizeof(NetworkID) + len];
             memcpy(stream, &type, sizeof(pTypeSpecifier));
             written += sizeof(pTypeSpecifier);
-            memcpy((void*) (stream + written), &guid, sizeof(RakNetGUID));
-            written += sizeof(RakNetGUID);
+            memcpy((void*) (stream + written), &id, sizeof(NetworkID));
+            written += sizeof(NetworkID);
             memcpy((void*) (stream + written), super, len);
             written += len;
             this->len = written;
         }
     };
 
-    void deconstruct(void* super = NULL, unsigned int len = 0)
+    virtual void deconstruct(void* super = NULL, unsigned int len = 0)
     {
         if (stream)
         {
@@ -194,9 +203,10 @@ protected:
             unsigned int read = 0;
             type = *reinterpret_cast<pTypeSpecifier*>(stream);
             read += sizeof(pTypeSpecifier);
-            guid = *reinterpret_cast<RakNetGUID*>(stream + read);
-            read += sizeof(RakNetGUID);
-            if (super) memcpy(super, (void*) (stream + read), len);
+            id = *reinterpret_cast<NetworkID*>(stream + read);
+            read += sizeof(NetworkID);
+            if (super)
+                memcpy(super, (void*) (stream + read), len);
         }
     };
 };
@@ -204,15 +214,17 @@ protected:
 class pPlayerUpdateDefault : public pPlayerDefault
 {
 protected:
-    pPlayerUpdateDefault(unsigned char type, unsigned char sub_type, RakNetGUID guid) : pPlayerDefault(type, guid)
+    pPlayerUpdateDefault(unsigned char type, unsigned char sub_type, NetworkID id) : pPlayerDefault(type, id)
     {
         this->sub_type.type = sub_type;
         base();
     };
+
     pPlayerUpdateDefault(unsigned char* stream, unsigned int len) : pPlayerDefault(stream, len)
     {
         base();
     };
+
     pTypeSpecifier sub_type;
 
     void base()
@@ -221,25 +233,25 @@ protected:
         this->base_len += pPlayerDefault::base_len;
     };
 
-    void construct(void* super = NULL, unsigned int len = 0)
+    virtual void construct(void* super = NULL, unsigned int len = 0)
     {
         if (!stream)
         {
             unsigned int written = 0;
-            stream = new unsigned char[sizeof(pTypeSpecifier) + sizeof(pTypeSpecifier) + sizeof(RakNetGUID) + len];
+            stream = new unsigned char[sizeof(pTypeSpecifier) + sizeof(pTypeSpecifier) + sizeof(NetworkID) + len];
             memcpy(stream, &type, sizeof(pTypeSpecifier));
             written += sizeof(pTypeSpecifier);
             memcpy((void*) (stream + written), &sub_type, sizeof(pTypeSpecifier));
             written += sizeof(pTypeSpecifier);
-            memcpy((void*) (stream + written), &guid, sizeof(RakNetGUID));
-            written += sizeof(RakNetGUID);
+            memcpy((void*) (stream + written), &id, sizeof(NetworkID));
+            written += sizeof(NetworkID);
             memcpy((void*) (stream + written), super, len);
             written += len;
             this->len = written;
         }
     };
 
-    void deconstruct(void* super = NULL, unsigned int len = 0)
+    virtual void deconstruct(void* super = NULL, unsigned int len = 0)
     {
         if (stream)
         {
@@ -251,9 +263,10 @@ protected:
             read += sizeof(pTypeSpecifier);
             sub_type = *reinterpret_cast<pTypeSpecifier*>(stream + read);
             read += sizeof(pTypeSpecifier);
-            guid = *reinterpret_cast<RakNetGUID*>(stream + read);
-            read += sizeof(RakNetGUID);
-            if (super) memcpy(super, (void*) (stream + read), len);
+            id = *reinterpret_cast<NetworkID*>(stream + read);
+            read += sizeof(NetworkID);
+            if (super)
+                memcpy(super, (void*) (stream + read), len);
         }
     };
 };
@@ -266,22 +279,35 @@ protected:
 
 class pGameConfirm : public pGameDefault
 {
-    friend class PacketFactory;
+friend class PacketFactory;
 
 private:
-    pGameConfirm() : pGameDefault(ID_GAME_CONFIRM)
+#pragma pack(push, 1)
+    struct _pGameConfirm
     {
-        construct();
+        NetworkID id;
+        char name[MAX_PLAYER_NAME];
+    };
+#pragma pack(pop)
+
+    _pGameConfirm _data;
+
+    pGameConfirm(NetworkID id, const char* name) : pGameDefault(ID_GAME_CONFIRM)
+    {
+        ZeroMemory(&_data, sizeof(_data));
+        _data.id = id;
+        strncpy(_data.name, name, sizeof(_data.name));
+        construct(&_data, sizeof(_data));
     }
     pGameConfirm(unsigned char* stream, unsigned int len) : pGameDefault(stream, len)
     {
-        deconstruct();
+        deconstruct(&_data, sizeof(_data));
     }
 };
 
 class pGameAuth : public pGameDefault
 {
-    friend class PacketFactory;
+friend class PacketFactory;
 
 private:
 #pragma pack(push, 1)
@@ -309,7 +335,7 @@ private:
 
 class pGameMod : public pGameDefault
 {
-    friend class PacketFactory;
+friend class PacketFactory;
 
 private:
 #pragma pack(push, 1)
@@ -337,7 +363,7 @@ private:
 
 class pGameStart : public pGameDefault
 {
-    friend class PacketFactory;
+friend class PacketFactory;
 
 private:
 #pragma pack(push, 1)
@@ -365,7 +391,7 @@ private:
 
 class pGameEnd : public pGameDefault
 {
-    friend class PacketFactory;
+friend class PacketFactory;
 
 private:
     pTypeSpecifier reason;
@@ -385,7 +411,7 @@ private:
 
 class pPlayerNew : public pPlayerDefault
 {
-    friend class PacketFactory;
+friend class PacketFactory;
 
 private:
 #pragma pack(push, 1)
@@ -398,7 +424,7 @@ private:
 
     _pPlayerNew _data;
 
-    pPlayerNew(RakNetGUID guid, char* name, unsigned int baseID) : pPlayerDefault(ID_PLAYER_NEW, guid)
+    pPlayerNew(NetworkID id, char* name, unsigned int baseID) : pPlayerDefault(ID_PLAYER_NEW, id)
     {
         ZeroMemory(&_data, sizeof(_data));
         strncpy(_data.name, name, sizeof(_data.name));
@@ -413,10 +439,10 @@ private:
 
 class pPlayerLeft : public pPlayerDefault
 {
-    friend class PacketFactory;
+friend class PacketFactory;
 
 private:
-    pPlayerLeft(RakNetGUID guid) : pPlayerDefault(ID_PLAYER_LEFT, guid)
+    pPlayerLeft(NetworkID id) : pPlayerDefault(ID_PLAYER_LEFT, id)
     {
         construct();
     }
@@ -448,7 +474,9 @@ public:
         {
         case ID_GAME_CONFIRM:
         {
-            packet = new pGameConfirm();
+            NetworkID id = va_arg(args, NetworkID);
+            char* name = va_arg(args, char*);
+            packet = new pGameConfirm(id, name);
             break;
         }
 
@@ -485,17 +513,17 @@ public:
 
         case ID_PLAYER_NEW:
         {
-            RakNetGUID guid = va_arg(args, RakNetGUID);
+            NetworkID id = va_arg(args, NetworkID);
             char* name = va_arg(args, char*);
             unsigned int baseID = va_arg(args, unsigned int);
-            packet = new pPlayerNew(guid, name, baseID);
+            packet = new pPlayerNew(id, name, baseID);
             break;
         }
 
         case ID_PLAYER_LEFT:
         {
-            RakNetGUID guid = va_arg(args, RakNetGUID);
-            packet = new pPlayerLeft(guid);
+            NetworkID id = va_arg(args, NetworkID);
+            packet = new pPlayerLeft(id);
             break;
         }
 
@@ -549,12 +577,15 @@ public:
 
         try
         {
-
             switch (packet->type.type)
             {
             case ID_GAME_CONFIRM:
             {
                 pGameConfirm* data = dynamic_cast<pGameConfirm*>(packet);
+                NetworkID* id = va_arg(args, NetworkID*);
+                char* name = va_arg(args, char*);
+                *id = data->_data.id;
+                strncpy(name, data->_data.name, sizeof(data->_data.name));
                 break;
             }
 
@@ -599,10 +630,10 @@ public:
             case ID_PLAYER_NEW:
             {
                 pPlayerNew* data = dynamic_cast<pPlayerNew*>(packet);
-                RakNetGUID* guid = va_arg(args, RakNetGUID*);
+                NetworkID* id = va_arg(args, NetworkID*);
                 char* name = va_arg(args, char*);
                 unsigned int* baseID = va_arg(args, unsigned int*);
-                *guid = data->guid;
+                *id = data->id;
                 strncpy(name, data->_data.name, sizeof(data->_data.name));
                 *baseID = data->_data.baseID;
                 break;
@@ -611,8 +642,8 @@ public:
             case ID_PLAYER_LEFT:
             {
                 pPlayerLeft* data = dynamic_cast<pPlayerLeft*>(packet);
-                RakNetGUID* guid = va_arg(args, RakNetGUID*);
-                *guid = data->guid;
+                NetworkID* id = va_arg(args, NetworkID*);
+                *id = data->id;
                 break;
             }
 

@@ -10,6 +10,8 @@
 #include "Data.h"
 #include "VaultException.h"
 #include "ufmod.h"
+#include "iniparser/dictionary.c"
+#include "iniparser/iniparser.c"
 
 #include "RakNet/RakPeerInterface.h"
 #include "RakNet/PacketizedTCP.h"
@@ -81,9 +83,9 @@ typedef map<SystemAddress, ServerEntry> ServerMap;
 ServerMap serverList;
 
 SystemAddress* selectedServer = NULL;
-char inipath[256];
-char player_name[MAX_PLAYER_NAME];
-char server_master[MAX_MASTER_SERVER];
+dictionary* config = NULL;
+char* player_name;
+char* server_name;
 int games;
 
 HWND CreateMainWindow();
@@ -324,13 +326,38 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR cmdline, 
 
     instance = hInstance;
 
-    GetCurrentDirectory(sizeof(inipath), inipath);
-    strcat(inipath, "\\vaultmp.ini");
-
     seDebugPrivilege();
     InitCommonControls();
     RegisterClasses();
     InitRakNet();
+
+    config = iniparser_load((char*) "vaultmp.ini");
+    player_name = iniparser_getstring(config, (char*) "general:name", (char*) "");
+    server_name = iniparser_getstring(config, (char*) "general:master", (char*) "");
+    char* servers = iniparser_getstring(config, (char*) "general:servers", (char*) "");
+
+    char* token;
+    token = strtok(servers, ",");
+
+    while (token != NULL)
+    {
+        SystemAddress addr;
+        char* port;
+
+        if (port = strchr(token, ':'))
+        {
+            *port = '\0';
+            addr.SetPort(atoi(port + 1));
+        }
+
+        addr.SetBinaryAddress(token);
+
+        ServerEntry entry(addr.ToString(true), "", pair<int, int>(0, 0), USHRT_MAX, 0);
+
+        serverList.insert(pair<SystemAddress, ServerEntry>(addr, entry));
+
+        token = strtok(NULL, ",");
+    }
 
     hFont = CreateFont(-11, 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Verdana");
     wndmain = CreateMainWindow();
@@ -503,9 +530,6 @@ int MessageLoop()
 
     CleanUp();
 
-    WritePrivateProfileString("General", "name", player_name, inipath);
-    WritePrivateProfileString("General", "master", server_master, inipath);
-
     return msg.wParam;
 }
 
@@ -518,6 +542,7 @@ void CleanUp()
     PacketizedTCP::DestroyInstance(tcp);
     peer->Shutdown(300);
     RakPeerInterface::DestroyInstance(peer);
+    iniparser_freedict(config);
     CloseHandle(mutex);
 }
 
@@ -595,12 +620,11 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
     {
     case WM_CREATE:
         CreateWindowContent(hwnd);
+        RefreshServerList();
         hBitmap = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(POWERED));
         GetObject(hBitmap, sizeof(BITMAP), &bitmap);
-        GetPrivateProfileString("General", "name", NULL, player_name, sizeof(player_name), inipath);
-        GetPrivateProfileString("General", "master", NULL, server_master, sizeof(server_master), inipath);
         if (strlen(player_name) > 0) SetDlgItemText(hwnd, IDC_EDIT0, player_name);
-        if (strlen(server_master) > 0) SetDlgItemText(hwnd, IDC_EDIT3, server_master);
+        if (strlen(server_name) > 0) SetDlgItemText(hwnd, IDC_EDIT3, server_name);
         break;
 
     case WM_PAINT:
@@ -642,7 +666,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
                     int game = (&i->second)->GetGame();
 
-                    if ((games & game) != game)
+                    if ((games & game) != game || !game)
                     {
                         switch (game)
                         {
@@ -654,6 +678,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                             break;
                         case OBLIVION:
                             MessageBox(NULL, "Could not find Oblivion.exe!", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
+                            break;
+                        default:
                             break;
                         }
                         break;
@@ -785,7 +811,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                                     query.Read(game);
                                     query.Read(rsize);
 
-                                    ServerEntry entry(name.C_String(), map.C_String(), pair<int, int>(players, playersMax), 999, game);
+                                    ServerEntry entry(name.C_String(), map.C_String(), pair<int, int>(players, playersMax), USHRT_MAX, game);
 
                                     for (int j = 0; j < rsize; j++)
                                     {
@@ -853,11 +879,12 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                                         entry->SetServerName(name.C_String());
                                         entry->SetServerMap(map.C_String());
                                         entry->SetServerPlayers(pair<int, int>(players, playersMax));
+                                        entry->SetGame(game);
                                     }
                                     else
                                     {
                                         std::pair<std::map<SystemAddress, ServerEntry>::iterator, bool> k;
-                                        k = serverList.insert(pair<SystemAddress, ServerEntry>(addr, ServerEntry(name.C_String(), map.C_String(), pair<int, int>(players, playersMax), 999, game)));
+                                        k = serverList.insert(pair<SystemAddress, ServerEntry>(addr, ServerEntry(name.C_String(), map.C_String(), pair<int, int>(players, playersMax), USHRT_MAX, game)));
                                         entry = &(k.first)->second;
                                     }
 
@@ -902,7 +929,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                             {
                                 if (update && !lock)
                                 {
-                                    peer->Connect(selectedServer->ToString(false), selectedServer->GetPort(), 0, 0, 0, 0, 3, 500, 0);
+                                    peer->Connect(selectedServer->ToString(false), selectedServer->GetPort(), DEDICATED_VERSION, sizeof(DEDICATED_VERSION), 0, 0, 3, 500, 0);
                                     lock = true;
                                 }
                                 else
@@ -921,7 +948,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                                 break;
                             }
                             case ID_INVALID_PASSWORD:
-                                MessageBox(NULL, "MasterServer version mismatch.\nPlease download the most recent binaries from www.vaultmp.com", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
+                                if (update) MessageBox(NULL, "MasterServer version mismatch.\nPlease download the most recent binaries from www.vaultmp.com", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
+                                else MessageBox(NULL, "Dedicated server version mismatch.\nPlease download the most recent binaries from www.vaultmp.com", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
                             case ID_DISCONNECTION_NOTIFICATION:
                             case ID_CONNECTION_BANNED:
                             case ID_CONNECTION_LOST:
@@ -940,15 +968,15 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
             RefreshServerList();
             break;
 
-            case IDC_BUTTON4:
-                MessageBox(NULL, CREDITS, "vaultmp credits", MB_OK | MB_ICONINFORMATION | MB_TOPMOST | MB_TASKMODAL);
-                break;
+        case IDC_BUTTON4:
+            MessageBox(NULL, CREDITS, "vaultmp credits", MB_OK | MB_ICONINFORMATION | MB_TOPMOST | MB_TASKMODAL);
+            break;
 
         case IDC_BUTTON3:
         {
             /* RakNet File Transfer */
 
-            if (selectedServer != NULL)
+            if (selectedServer != NULL && serverList.find(*selectedServer)->second.GetGame())
             {
                 EnableWindow(wndsync, 0);
 
@@ -961,9 +989,9 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                 }
 
                 SystemAddress server = *selectedServer;
-                map<SystemAddress, ServerEntry>::iterator i;
-                i = serverList.find(*selectedServer); buf = &i->second;
-                tcp->Connect(server.ToString(false), server.GetPort(), false); RakSleep(500);
+                buf = &serverList.find(*selectedServer)->second;
+                tcp->Connect(server.ToString(false), server.GetPort(), false);
+                RakSleep(500);
                 server = tcp->HasCompletedConnectionAttempt();
 
                 if (server == UNASSIGNED_SYSTEM_ADDRESS)
@@ -973,7 +1001,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                     break;
                 }
 
-                char rdy[3]; rdy[0] = RAKNET_FILE_RDY;
+                char rdy[3];
+                rdy[0] = RAKNET_FILE_RDY;
                 *((unsigned short*) (rdy + 1)) = flt->SetupReceive(&transferCallback, false, server);
                 tcp->Send(rdy, sizeof(rdy), server, false);
                 Packet* packet;
@@ -1064,8 +1093,6 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
         break;
 
     case WM_DESTROY:
-        GetDlgItemText(hwnd, IDC_EDIT0, player_name, sizeof(player_name));
-        GetDlgItemText(hwnd, IDC_EDIT3, server_master, sizeof(server_master));
         PostQuitMessage(0);
         break;
 

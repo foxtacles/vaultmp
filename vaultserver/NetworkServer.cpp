@@ -24,7 +24,11 @@ NetworkResponse NetworkServer::ProcessEvent(unsigned char id)
     case ID_EVENT_SERVER_ERROR:
     {
         pDefault* packet = PacketFactory::CreatePacket(ID_GAME_END, ID_REASON_ERROR);
-        response = Network::CompleteResponse(Network::CreateResponse(packet, (unsigned char) HIGH_PRIORITY, (unsigned char) RELIABLE_ORDERED, CHANNEL_GAME, Player::GetPlayerNetworkList()));
+        response = Network::CompleteResponse(Network::CreateResponse(packet,
+                                                                     (unsigned char) HIGH_PRIORITY,
+                                                                     (unsigned char) RELIABLE_ORDERED,
+                                                                     CHANNEL_GAME,
+                                                                     Client::GetNetworkList()));
         break;
     }
 
@@ -117,7 +121,10 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 
         case ID_GAME_CONFIRM:
         {
-            //response = Server::ProcessEvent(ID_EVENT_CONFIRM_RECEIVED);
+            NetworkID id;
+            char name[MAX_PLAYER_NAME + 1]; ZeroMemory(name, sizeof(name));
+            PacketFactory::Access(packet, &id, name);
+            response = Server::NewPlayer(data->guid, id, name);
             break;
         }
 

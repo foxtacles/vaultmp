@@ -13,6 +13,8 @@
 #define PLAYER_REFERENCE    0x00000014
 #define PLAYER_BASE         0x00000007
 
+#define SAFE_FIND(a,b) ((a.find(b) == a.end()) ? throw VaultException("Value not defined in database!") : a.find(b))
+
 using namespace std;
 using namespace RakNet;
 
@@ -42,8 +44,12 @@ static Parameter BuildParameter(string param)
 {
     vector<string> params;
     params.push_back(param);
-    Parameter Param_Param = Parameter(params, &Data::EmptyVector);
-    return Param_Param;
+    return Parameter(params, &Data::EmptyVector);
+}
+
+static Parameter BuildParameter(vector<string> params)
+{
+    return Parameter(params, &Data::EmptyVector);
 }
 
 static const char* True[] = {"1"};
@@ -68,70 +74,6 @@ enum
     CHANNEL_GAME,
     CHANNEL_DATA,
 };
-
-#pragma pack(push, 1)
-
-struct str_compare
-{
-    bool operator() (const char* a, const char* b)
-    {
-        return (stricmp(a, b) < 0);
-    }
-};
-
-struct Item
-{
-    map<const char*, const char*, str_compare>::iterator item;
-    int count;
-    int type;
-    float condition;
-    bool worn;
-
-    Item()
-    {
-        count = 0;
-        type = 0;
-        condition = 0.00;
-        worn = false;
-    }
-};
-
-struct pActorUpdate
-{
-    unsigned char type;
-    RakNetGUID guid;
-    float X, Y, Z, A;
-    bool alerted;
-    int moving;
-};
-
-struct pActorStateUpdate
-{
-    unsigned char type;
-    RakNetGUID guid;
-    float health;
-    float baseHealth;
-    float conds[6];
-    bool dead;
-};
-
-struct pActorCellUpdate
-{
-    unsigned char type;
-    RakNetGUID guid;
-    int cell;
-};
-
-struct pActorItemUpdate
-{
-    unsigned char type;
-    bool hidden;
-    RakNetGUID guid;
-    char baseID[8];
-    Item item;
-};
-
-#pragma pack(pop)
 
 }
 

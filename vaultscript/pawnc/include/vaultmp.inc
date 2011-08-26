@@ -9,7 +9,7 @@
 // Callbacks
 
 // the PAWN equivalent to exec() is main()
-forward OnClientAuthenticate(client, const name[], const pwd[]);
+forward OnClientAuthenticate(const name[], const pwd[]);
 forward OnPlayerConnect(player);
 forward OnPlayerDisconnect(player, reason);
 forward OnPlayerRequestGame(player);

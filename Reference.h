@@ -1,34 +1,38 @@
 #ifndef REFERENCE_H
 #define REFERENCE_H
 
+#include "Data.h"
+#include "Utils.h"
+#include "Value.h"
+#include "Network.h"
 #include "CriticalSection.h"
-
-#include <list>
+#include "RakNet/NetworkIDObject.h"
 
 using namespace std;
+using namespace RakNet;
+using namespace Data;
 
-class Reference : public CriticalSection
+class Reference : public CriticalSection, public NetworkIDObject
 {
+friend class GameFactory;
 
 private:
-    static list<Reference*> references;
-
-    unsigned int refID;
-    unsigned int baseID;
+    Value<unsigned int> refID;
+    Value<unsigned int> baseID;
 
 protected:
     Reference(unsigned int refID, unsigned int baseID);
-    Reference();
     virtual ~Reference();
 
 public:
-    static list<Reference*> GetReferences();
-
     void SetReference(unsigned int refID);
     void SetBase(unsigned int baseID);
 
     unsigned int GetReference();
     unsigned int GetBase();
+
+    Parameter GetReferenceParam();
+    Parameter GetBaseParam();
 
 };
 

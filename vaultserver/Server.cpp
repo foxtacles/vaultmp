@@ -18,10 +18,7 @@ void Server::SetDebugHandler(Debug* debug)
 NetworkResponse Server::Authenticate(RakNetGUID guid, string name, string pwd)
 {
     NetworkResponse response;
-
-    Client* client = new Client(guid, name, pwd);
-    Dedicated::self->SetServerPlayers(pair<int, int>(Client::GetClientCount(), Dedicated::connections));
-    int result = Script::Authenticate(client->GetClientID(), name, pwd);
+    bool result = Script::Authenticate(name, pwd);
 
     if (result)
     {
@@ -55,33 +52,50 @@ NetworkResponse Server::Authenticate(RakNetGUID guid, string name, string pwd)
     return response;
 }
 
+NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id, string name)
+{
+    NetworkResponse response;
+    Player* player = (Player*) GameFactory::CreateInstance(ID_PLAYER, 0x00);
+    player->SetNetworkID(id);
+    player->SetName(name);
+
+    vector<RakNetGUID> network = Client::GetNetworkList();
+    Client* client = new Client(guid, player);
+    Dedicated::self->SetServerPlayers(pair<int, int>(Client::GetClientCount(), Dedicated::connections));
+
+    unsigned int result = Script::RequestGame(client->GetID());
+    player->SetBase(result);
+
+    pDefault* packet = PacketFactory::CreatePacket(ID_PLAYER_NEW, id, name.c_str(), result);
+    response = Network::CompleteResponse(Network::CreateResponse(packet,
+                                         (unsigned char) HIGH_PRIORITY,
+                                         (unsigned char) RELIABLE_ORDERED,
+                                         CHANNEL_GAME,
+                                         network));
+
+    return response;
+}
+
 NetworkResponse Server::Disconnect(RakNetGUID guid, unsigned char reason)
 {
     NetworkResponse response;
-
     Client* client = Client::GetClientFromGUID(guid);
-    Player* player = Player::GetPlayerFromGUID(guid);
 
-    if (player != NULL && client != NULL)
-        Script::Disconnect(client->GetClientID(), reason);
-    else if (client != NULL)
-        Script::Disconnect(client->GetClientID(), ID_REASON_DENIED);
-
-    if (player != NULL)
+    if (client != NULL)
     {
-        delete player;
+        Script::Disconnect(client->GetID(), reason);
+        Player* player = client->GetPlayer();
+        delete client;
+
+        NetworkID id = GameFactory::DestroyInstance(player);
 
         pDefault* packet = PacketFactory::CreatePacket(ID_PLAYER_LEFT, guid);
         response = Network::CompleteResponse(Network::CreateResponse(packet,
                                              (unsigned char) HIGH_PRIORITY,
                                              (unsigned char) RELIABLE_ORDERED,
                                              CHANNEL_GAME,
-                                             Player::GetPlayerNetworkList()));
-    }
+                                             Client::GetNetworkList()));
 
-    if (client != NULL)
-    {
-        delete client;
         Dedicated::self->SetServerPlayers(pair<int, int>(Client::GetClientCount(), Dedicated::connections));
     }
 

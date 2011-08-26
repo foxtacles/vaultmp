@@ -4,31 +4,27 @@ using namespace RakNet;
 using namespace std;
 
 map<RakNetGUID, Client*> Client::clients;
-map<int, RakNetGUID> Client::clientGUIDs;
-stack<int> Client::clientIDs;
+stack<unsigned int> Client::clientID;
 
-Client::Client(RakNetGUID guid, string authname, string authpwd)
+Client::Client(RakNetGUID guid, Player* player)
 {
     clients.insert(pair<RakNetGUID, Client*>(guid, this));
     this->guid = guid;
-    this->authname = authname;
-    this->authpwd = authpwd;
-    this->ID = clientIDs.top();
-    clientGUIDs.insert(pair<int, RakNetGUID>(this->ID, guid));
-    clientIDs.pop();
+    this->player = player;
+    this->ID = clientID.top();
+    clientID.pop();
 }
 
 Client::~Client()
 {
     clients.erase(this->guid);
-    clientGUIDs.erase(this->ID);
-    clientIDs.push(this->ID);
+    clientID.push(this->ID);
 }
 
-void Client::SetMaximumClients(int clients)
+void Client::SetMaximumClients(unsigned int clients)
 {
     for (int i = clients - 1; i >= 0; i--)
-        clientIDs.push(i);
+        clientID.push(i);
 }
 
 int Client::GetClientCount()
@@ -47,34 +43,39 @@ Client* Client::GetClientFromGUID(RakNetGUID guid)
     return NULL;
 }
 
-RakNetGUID Client::GetGUIDFromID(int ID)
+Client* Client::GetClientFromID(unsigned int ID)
 {
-    map<int, RakNetGUID>::iterator it;
-    it = clientGUIDs.find(ID);
+    map<RakNetGUID, Client*>::iterator it;
 
-    if (it != clientGUIDs.end())
-        return it->second;
+    for (it = clients.begin(); it != clients.end(); ++it)
+        if (it->second->GetID() == ID)
+            return it->second;
 
-    RakNetGUID err;
-    return err;
+    return NULL;
 }
 
-RakNetGUID Client::GetRakNetGUID()
+vector<RakNetGUID> Client::GetNetworkList()
+{
+    vector<RakNetGUID> network;
+    map<RakNetGUID, Client*>::iterator it;
+
+    for (it = clients.begin(); it != clients.end(); ++it)
+        network.push_back(it->first);
+
+    return network;
+}
+
+RakNetGUID Client::GetGUID()
 {
     return guid;
 }
 
-int Client::GetClientID()
+unsigned int Client::GetID()
 {
     return ID;
 }
 
-string Client::GetAuthName()
+Player* Client::GetPlayer()
 {
-    return authname;
-}
-
-string Client::GetAuthPwd()
-{
-    return authpwd;
+    return player;
 }

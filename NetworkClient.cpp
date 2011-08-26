@@ -26,13 +26,21 @@ NetworkResponse NetworkClient::ProcessEvent(unsigned char id)
     case ID_EVENT_INTERFACE_LOST:
     {
         pDefault* packet = PacketFactory::CreatePacket(ID_GAME_END, ID_REASON_ERROR);
-        response = Network::CompleteResponse(Network::CreateResponse(packet, (unsigned char) HIGH_PRIORITY, (unsigned char) RELIABLE_ORDERED, CHANNEL_GAME, Game::server));
+        response = Network::CompleteResponse(Network::CreateResponse(packet,
+                                                                     (unsigned char) HIGH_PRIORITY,
+                                                                     (unsigned char) RELIABLE_ORDERED,
+                                                                     CHANNEL_GAME,
+                                                                     Game::server));
         break;
     }
     case ID_EVENT_GAME_STARTED:
     {
-        pDefault* packet = PacketFactory::CreatePacket(ID_GAME_CONFIRM);
-        response = Network::CompleteResponse(Network::CreateResponse(packet, (unsigned char) HIGH_PRIORITY, (unsigned char) RELIABLE_ORDERED, CHANNEL_GAME, Game::server));
+        pDefault* packet = PacketFactory::CreatePacket(ID_GAME_CONFIRM, Game::self->GetNetworkID(), Game::self->GetName().c_str());
+        response = Network::CompleteResponse(Network::CreateResponse(packet,
+                                                                     (unsigned char) HIGH_PRIORITY,
+                                                                     (unsigned char) RELIABLE_ORDERED,
+                                                                     CHANNEL_GAME,
+                                                                     Game::server));
         break;
     }
 
@@ -55,7 +63,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 #ifdef VAULTMP_DEBUG
         debug->PrintFormat("Connection request accepted (%s)", true, data->systemAddress.ToString());
 #endif
-        response = Game::Authenticate();
+        response = Game::Authenticate(Bethesda::password);
         break;
     }
     case ID_DISCONNECTION_NOTIFICATION:
@@ -103,6 +111,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
             Bethesda::savegame = Savegame(string(savegame), crc);
 
             Bethesda::InitializeGame();
+            Game::InitializeCommands();
 
             response = NetworkClient::ProcessEvent(ID_EVENT_GAME_STARTED);
             break;
@@ -132,10 +141,10 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
         case ID_PLAYER_NEW:
         {
-            RakNetGUID _guid;
+            NetworkID id;
             char name[MAX_PLAYER_NAME + 1]; ZeroMemory(name, sizeof(name));
             unsigned int baseID;
-            PacketFactory::Access(packet, &_guid, name, &baseID);
+            PacketFactory::Access(packet, &id, name, &baseID);
 
             //response = Game::ProcessEvent();
             break;
@@ -143,8 +152,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
         case ID_PLAYER_LEFT:
         {
-            RakNetGUID _guid;
-            PacketFactory::Access(packet, &_guid);
+            NetworkID id;
+            PacketFactory::Access(packet, &id);
 
             //response = Game::ProcessEvent();
             break;

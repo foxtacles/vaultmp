@@ -1,5 +1,7 @@
 #include "Network.h"
 
+NetworkIDManager Network::manager;
+
 SingleResponse Network::CreateResponse(pDefault* packet, unsigned char priority, unsigned char reliability, unsigned char channel, vector<RakNetGUID> targets)
 {
     vector<unsigned char> data = vector<unsigned char>();
@@ -38,4 +40,9 @@ void Network::Dispatch(RakPeerInterface* peer, NetworkResponse& response)
             peer->Send((char*) it->first.first->get(), it->first.first->length(), (PacketPriority) it->first.second.at(0), (PacketReliability) it->first.second.at(1), it->first.second.at(2), *it2, false);
         delete it->first.first;
     }
+}
+
+NetworkIDManager* Network::Manager()
+{
+    return &manager;
 }

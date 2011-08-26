@@ -124,7 +124,7 @@ void Script::UnloadScripts()
     scripts.clear();
 }
 
-bool Script::Authenticate(int client, string name, string pwd)
+bool Script::Authenticate(string name, string pwd)
 {
     vector<Script*>::iterator it;
     bool result;
@@ -132,15 +132,31 @@ bool Script::Authenticate(int client, string name, string pwd)
     for (it = scripts.begin(); it != scripts.end(); ++it)
     {
         if ((*it)->cpp_script)
-            result = (*it)->OnClientAuthenticate(client, name, pwd);
+            result = (*it)->OnClientAuthenticate(name, pwd);
         else
-            result = (bool) PAWN::Call((AMX*) (*it)->handle, "OnClientAuthenticate", "ssi", 0, pwd.c_str(), name.c_str(), client);
+            result = (bool) PAWN::Call((AMX*) (*it)->handle, "OnClientAuthenticate", "ss", 0, pwd.c_str(), name.c_str());
     }
 
     return result;
 }
 
-void Script::Disconnect(int player, unsigned char reason)
+unsigned int Script::RequestGame(unsigned int player)
+{
+    vector<Script*>::iterator it;
+    unsigned int result;
+
+    for (it = scripts.begin(); it != scripts.end(); ++it)
+    {
+        if ((*it)->cpp_script)
+            result = (*it)->OnPlayerRequestGame(player);
+        else
+            result = (unsigned int) PAWN::Call((AMX*) (*it)->handle, "OnPlayerRequestGame", "i", 0, player);
+    }
+
+    return result;
+}
+
+void Script::Disconnect(unsigned int player, unsigned char reason)
 {
     vector<Script*>::iterator it;
 

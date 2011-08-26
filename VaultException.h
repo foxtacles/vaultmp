@@ -6,6 +6,8 @@
 #endif
 
 #include "vaultmp.h"
+#include <stdio.h>
+#include <string>
 #include <typeinfo>
 
 #ifdef VAULTMP_DEBUG
@@ -29,7 +31,7 @@ public:
 
     VaultException(string error);
     VaultException(const char* format, ...);
-    ~VaultException() throw() {}
+    virtual ~VaultException() throw() {}
 
     void Message();
     void Console();
