@@ -47,20 +47,6 @@ list<Player*> Player::GetPlayerList()
     return playerlist;
 }
 
-Player* Player::GetPlayerFromRefID(unsigned int refID)
-{
-    list<Player*>::iterator it;
-    list<Player*> playerlist = GetPlayerList();
-
-    for (it = playerlist.begin(); it != playerlist.end(); ++it)
-    {
-        if ((*it)->GetReference() == refID)
-            return (*it);
-    }
-
-    return NULL;
-}
-
 vector<string> Player::GetRefs(bool enabled, bool notself, bool enabled_disabled, bool self_notself)
 {
     vector<string> result;
@@ -73,6 +59,8 @@ vector<string> Player::GetRefs(bool enabled, bool notself, bool enabled_disabled
 
         if (refID != 0x00 && (!enabled_disabled || (*it)->GetEnabled() == enabled) && (!self_notself || !notself || refID != PLAYER_REFERENCE))
             result.push_back(Utils::LongToHex(refID));
+
+        GameFactory::LeaveReference(*it);
     }
 
     return result;

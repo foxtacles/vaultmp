@@ -1,6 +1,8 @@
 #include "Network.h"
 
 NetworkIDManager Network::manager;
+NetworkQueue Network::queue;
+CriticalSection Network::cs;
 
 SingleResponse Network::CreateResponse(pDefault* packet, unsigned char priority, unsigned char reliability, unsigned char channel, vector<RakNetGUID> targets)
 {
@@ -45,4 +47,39 @@ void Network::Dispatch(RakPeerInterface* peer, NetworkResponse& response)
 NetworkIDManager* Network::Manager()
 {
     return &manager;
+}
+
+NetworkResponse Network::Next()
+{
+    NetworkResponse response;
+
+    if (!queue.empty())
+    {
+        cs.StartSession();
+
+        response = queue.back();
+        queue.pop_back();
+
+        cs.EndSession();
+    }
+
+    return response;
+}
+
+void Network::Queue(NetworkResponse response)
+{
+    cs.StartSession();
+
+    queue.push_front(response);
+
+    cs.EndSession();
+}
+
+void Network::Flush()
+{
+    cs.StartSession();
+
+    queue.clear(); // possible memory leak
+
+    cs.EndSession();
 }

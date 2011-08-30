@@ -23,13 +23,17 @@ private:
 
     PAWN();
 
-    static AMX_NATIVE_INFO vaultmp_functions[6];
+    static AMX_NATIVE_INFO vaultmp_functions[9];
 
     static cell vaultmp_timestamp(AMX* amx, const cell* params);
     static cell vaultmp_SetServerName(AMX* amx, const cell* params);
     static cell vaultmp_SetServerMap(AMX* amx, const cell* params);
     static cell vaultmp_SetServerRule(AMX* amx, const cell* params);
     static cell vaultmp_GetGameCode(AMX* amx, const cell* params);
+
+    static cell vaultmp_ValueToString(AMX* amx, const cell* params);
+    static cell vaultmp_AxisToString(AMX* amx, const cell* params);
+    static cell vaultmp_AnimToString(AMX* amx, const cell* params);
 
     /*static cell vaultmp_GetPlayerName(AMX* amx, const cell* params);
     static cell vaultmp_GetPlayerPos(AMX* amx, const cell* params);
@@ -41,9 +45,6 @@ private:
     static cell vaultmp_GetPlayerMoving(AMX* amx, const cell* params);
     static cell vaultmp_IsPlayerAlerted(AMX* amx, const cell* params);
     static cell vaultmp_GetPlayerCell(AMX* amx, const cell* params);*/
-
-
-
 
 public:
     static int LoadProgram(AMX* amx, char* filename, void* memblock);

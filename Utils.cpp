@@ -12,11 +12,24 @@ void Utils::timestamp()
     printf(t);
 }
 
+bool Utils::DoubleCompare(double a, double b, double epsilon)
+{
+    return fabs(a - b) < epsilon;
+}
+
 string Utils::LongToHex(unsigned int value)
 {
     char str[16];
     snprintf(str, sizeof(str), "%08X", value);
     return string(str);
+}
+
+string& Utils::RemoveExtension(string& file)
+{
+    unsigned int pos = file.find_last_of('.');
+    if (pos)
+        file = file.substr(0, pos);
+    return file;
 }
 
 const char* Utils::FileOnly(const char* path)

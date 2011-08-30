@@ -11,16 +11,19 @@
 #include <typeinfo>
 
 #ifdef VAULTMP_DEBUG
-#include "Debug.h"
+    #ifndef DONT_NEED_DEBUG
+    #include "Debug.h"
+    #else
+    class Debug;
+    #undef DONT_NEED_DEBUG
+    #endif
 #endif
 
 using namespace std;
 
 class VaultException : public exception
 {
-
 private:
-
     string error;
 
 #ifdef VAULTMP_DEBUG

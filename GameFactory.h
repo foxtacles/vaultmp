@@ -46,8 +46,8 @@ private:
     static Debug* debug;
 #endif
 
+    static CriticalSection cs;
     static multimap<unsigned char, Reference*> instances;
-    static list<Reference*> GetObjectTypes(unsigned char type);
 
 public:
 
@@ -57,6 +57,8 @@ public:
 
     static Reference* GetObject(NetworkID id);
     static Reference* GetObject(unsigned int refID);
+    static list<Reference*> GetObjectTypes(unsigned char type);
+    static void LeaveReference(Reference* reference);
 
     static Reference* CreateInstance(unsigned char type, unsigned int refID, unsigned int baseID);
     static Reference* CreateInstance(unsigned char type, unsigned int baseID);

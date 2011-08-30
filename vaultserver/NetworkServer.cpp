@@ -28,7 +28,7 @@ NetworkResponse NetworkServer::ProcessEvent(unsigned char id)
                                                                      (unsigned char) HIGH_PRIORITY,
                                                                      (unsigned char) RELIABLE_ORDERED,
                                                                      CHANNEL_GAME,
-                                                                     Client::GetNetworkList()));
+                                                                     Client::GetNetworkList(NULL)));
         break;
     }
 
@@ -136,9 +136,50 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
             break;
         }
 
-        case ID_PLAYER_UPDATE: // server -> client, client -> server
+        case ID_OBJECT_UPDATE:
+        case ID_ACTOR_UPDATE:
         {
-
+            switch (data->data[1])
+            {
+                case ID_UPDATE_POS:
+                {
+                    NetworkID id;
+                    unsigned char axis;
+                    double value;
+                    PacketFactory::Access(packet, &id, &axis, &value);
+                    response = Server::GetPos(data->guid, id, axis, value);
+                    break;
+                }
+                case ID_UPDATE_ANGLE:
+                {
+                    NetworkID id;
+                    unsigned char axis;
+                    double value;
+                    PacketFactory::Access(packet, &id, &axis, &value);
+                    response = Server::GetAngle(data->guid, id, axis, value);
+                    break;
+                }
+                case ID_UPDATE_CELL:
+                {
+                    NetworkID id;
+                    unsigned int cell;
+                    PacketFactory::Access(packet, &id, &cell);
+                    response = Server::GetGameCell(data->guid, id, cell);
+                    break;
+                }
+                case ID_UPDATE_VALUE:
+                {
+                    NetworkID id;
+                    bool base;
+                    unsigned char index;
+                    double value;
+                    PacketFactory::Access(packet, &id, &base, &index, &value);
+                    response = Server::GetActorValue(data->guid, id, base, index, value);
+                    break;
+                }
+                default:
+                    throw VaultException("Unhandled object update packet type %d", (int) data->data[1]);
+            }
             break;
         }
         default:

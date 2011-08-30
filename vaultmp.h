@@ -1,9 +1,9 @@
 #ifndef VAULTMP_H
 #define VAULTMP_H
 
-#define DEDICATED_VERSION       "0.1a revision 134"
-#define MASTER_VERSION          "0.1a revision 133"
-#define CLIENT_VERSION          "0.1a revision 134"
+#define DEDICATED_VERSION       "0.1a revision 142"
+#define MASTER_VERSION          "0.1a revision 142"
+#define CLIENT_VERSION          "0.1a revision 142"
 
 #define CREDITS \
 "Vault-Tec Multiplayer Mod is an Open-Source project.\n\

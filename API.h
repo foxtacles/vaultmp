@@ -347,9 +347,6 @@ private:
 
 protected:
 
-    static void Initialize(int game);
-    static void Terminate();
-
     static bool AnnounceFunction(string name);
     static CommandParsed Translate(multimap<string, string>& cmd, int key = 0);
     static CommandResult Translate(char* stream);
@@ -361,6 +358,9 @@ protected:
     API();
 
 public:
+
+    static void Initialize(int game);
+    static void Terminate();
 
     static unsigned char RetrieveValue(char* value);
     static unsigned char RetrieveAxis(char* axis);

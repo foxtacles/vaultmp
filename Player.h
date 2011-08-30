@@ -36,7 +36,6 @@ protected:
 
 public:
     static list<Player*> GetPlayerList();
-    static Player* GetPlayerFromRefID(unsigned int refID);
     static vector<string> GetAllRefs();
     static vector<string> GetAllRefs_NotSelf();
     static vector<string> GetEnabledRefs();

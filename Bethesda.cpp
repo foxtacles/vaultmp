@@ -4,8 +4,6 @@ using namespace std;
 using namespace RakNet;
 
 typedef HINSTANCE (__stdcall *fLoadLibrary)(char*);
-typedef LPVOID (__stdcall *fGetProcAddress)(HINSTANCE, char*);
-typedef void (*fInitialize)(int);
 
 int Bethesda::game = 0;
 bool Bethesda::initialized = false;
@@ -17,33 +15,73 @@ ModList Bethesda::modfiles;
 Debug* Bethesda::debug;
 #endif
 
-struct Bethesda::INJECT
-{
-    fLoadLibrary LoadLibrary;
-    fGetProcAddress GetProcAddress;
-    char DLLpath[256];
-    char Initialize[16];
-    int game;
-};
-
-DWORD WINAPI Bethesda::InjectedCode(LPVOID addr)
-{
-    HINSTANCE hDll;
-    fInitialize Initialize;
-    INJECT* is = (INJECT*) addr;
-    hDll = is->LoadLibrary(is->DLLpath);
-    Initialize = (fInitialize) is->GetProcAddress(hDll, is->Initialize);
-    Initialize(is->game);
-    return 0;
-}
-
-void Bethesda::InjectedEnd()
-{
-    /* This is to calculate the size of InjectedCode */
-}
-
 void Bethesda::CommandHandler(signed int key, vector<double> info, double result)
 {
+    Lockable* data = NULL;
+
+    if (key != 0x00000000)
+        data = Lockable::BlindUnlock(key);
+
+    using namespace Values;
+    unsigned short opcode = (unsigned short) info.at(0);
+
+    switch (opcode)
+    {
+        case Functions::Func_PlaceAtMe:
+            Game::PlaceAtMe(data, *reinterpret_cast<unsigned int*>(&result));
+            break;
+        case Functions::Func_GetPos:
+            Game::GetPos((unsigned int) info.at(1), (unsigned char) info.at(2), result);
+            break;
+        case Functions::Func_SetPos:
+            break;
+        case Functions::Func_GetAngle:
+            Game::GetAngle((unsigned int) info.at(1), (unsigned char) info.at(2), result);
+            break;
+        case Functions::Func_SetAngle:
+            break;
+        case Functions::Func_GetActorValue:
+            Game::GetActorValue((unsigned int) info.at(1), false, (unsigned char) info.at(2), result);
+            break;
+        case Functions::Func_ForceActorValue:
+            break;
+        case Functions::Func_GetBaseActorValue:
+            Game::GetActorValue((unsigned int) info.at(1), true, (unsigned char) info.at(2), result);
+            break;
+        case Functions::Func_SetActorValue:
+            break;
+        case Functions::Func_GetDead:
+            break;
+        case Functions::Func_MoveTo:
+            break;
+        case Functions::Func_Enable:
+            break;
+        case Functions::Func_Disable:
+            break;
+        case Functions::Func_SetRestrained:
+            break;
+        case Fallout::Functions::Func_IsMoving:
+            break;
+        case Fallout::Functions::Func_MarkForDelete:
+            break;
+        case Fallout3::Functions::Func_GetParentCell:
+        case FalloutNV::Functions::Func_GetParentCell:
+        case Oblivion::Functions::Func_GetParentCell:
+            Game::GetParentCell((unsigned int) info.at(1), *reinterpret_cast<unsigned int*>(&result));
+            break;
+        case Fallout3::Functions::Func_Load:
+        case FalloutNV::Functions::Func_Load:
+        case Oblivion::Functions::Func_Load:
+            Game::SetName(PLAYER_REFERENCE);
+            // reload game world
+            break;
+        case Fallout3::Functions::Func_SetName:
+        case FalloutNV::Functions::Func_SetName:
+        case Oblivion::Functions::Func_SetName:
+            break;
+        default:
+            throw VaultException("Unhandled function %hX", opcode);
+    }
 
     /*
     Player* lastRef = NULL;
@@ -204,11 +242,11 @@ void Bethesda::CommandHandler(signed int key, vector<double> info, double result
 
             Interface::EndSession();
 
-#ifdef VAULTMP_DEBUG
+    #ifdef VAULTMP_DEBUG
             char text[128];
             snprintf(text, sizeof(text), "Received RefID %s for actor %s", refstr, player->GetActorName().c_str());
             debug->Print(text, true);
-#endif
+    #endif
             break;
         }
         case 0x146D: // GetParentCell New Vegas
@@ -220,11 +258,11 @@ void Bethesda::CommandHandler(signed int key, vector<double> info, double result
             {
                 if (self->GetActorGameCell() == lastRef->GetActorNetworkCell() && lastRef->GetActorGameCell() != lastRef->GetActorNetworkCell())
                 {
-#ifdef VAULTMP_DEBUG
+    #ifdef VAULTMP_DEBUG
                     char text[128];
                     snprintf(text, sizeof(text), "Moving player to cell (name: %s, ref: %s, cell: %x)", lastRef->GetActorName().c_str(), lastRef->GetReference().c_str(), self->GetActorGameCell());
                     debug->Print(text, true);
-#endif
+    #endif
 
                     lastRef->SetActorGameCell(self->GetActorGameCell());debug->
                     lastRef->ToggleNoOverride(SKIPFLAG_GETPARENTCELL, true);
@@ -376,11 +414,11 @@ void Bethesda::CommandHandler(signed int key, vector<double> info, double result
         }
         default:
         {
-#ifdef VAULTMP_DEBUG
+    #ifdef VAULTMP_DEBUG
             char text[128];
             snprintf(text, sizeof(text), "Command could not be processed: %x %x %llx %x %x %x %x", Fallout3_opcode, Fallout3_refID, Fallout3_result, Fallout3_coord, Fallout3_setcoord, Fallout3_valcoord, Fallout3_newRefID);
             debug->Print(text, true);
-#endif
+    #endif
             break;
         }
         }
@@ -556,7 +594,7 @@ void Bethesda::CommandHandler(signed int key, vector<double> info, double result
     self->EndSession();
 }*/
 
-void Bethesda::InitializeGame()
+void Bethesda::Initialize()
 {
     char module[32];
 
@@ -577,7 +615,8 @@ void Bethesda::InitializeGame()
         throw VaultException("Bad game ID %08X", Bethesda::game);
     }
 
-    TCHAR savefile[MAX_PATH]; ZeroMemory(savefile, sizeof(savefile));
+    TCHAR savefile[MAX_PATH];
+    ZeroMemory(savefile, sizeof(savefile));
     SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, 0, savefile); // SHGFP_TYPE_CURRENT
 
     switch (Bethesda::game)
@@ -602,7 +641,8 @@ void Bethesda::InitializeGame()
     if (crc != Bethesda::savegame.second)
         throw VaultException("Savegame differs from the server version:\n\n%s\n\nAsk the server owner to send you the file or try to Synchronize with the server.", savefile);
 
-    TCHAR curdir[MAX_PATH]; ZeroMemory(curdir, sizeof(curdir));
+    TCHAR curdir[MAX_PATH];
+    ZeroMemory(curdir, sizeof(curdir));
     GetModuleFileName(GetModuleHandle(NULL), (LPTSTR) curdir, MAX_PATH);
     PathRemoveFileSpec(curdir);
 
@@ -610,7 +650,8 @@ void Bethesda::InitializeGame()
 
     for (ModList::iterator it = modfiles.begin(); it != modfiles.end(); ++it)
     {
-        TCHAR modfile[MAX_PATH]; ZeroMemory(modfile, sizeof(modfile));
+        TCHAR modfile[MAX_PATH];
+        ZeroMemory(modfile, sizeof(modfile));
         strcat(modfile, curdir);
         strcat(modfile, it->first.c_str());
 
@@ -680,43 +721,23 @@ void Bethesda::InitializeGame()
 
             if (hProc)
             {
-                ResumeThread(pi.hThread); // see below
-                Sleep(3000); // I need a way to circumvent this Steam protection. The executable is crypted. If you know the right technique, please send me a mail (recycler@brickster.net) or contribute a patch
-
-                INJECT data;
-                HINSTANCE hDll;
-                LPVOID start, thread;
-                DWORD codesize;
-
                 GetModuleFileName(GetModuleHandle(NULL), (LPTSTR) curdir, MAX_PATH);
                 PathRemoveFileSpec(curdir);
-
                 strcat(curdir, "\\vaultmp.dll");
-                strcpy(data.DLLpath, curdir);
-                strcpy(data.Initialize, "Initialize");
+                unsigned int size = strlen(curdir) + 16;
 
-                hDll = LoadLibrary("kernel32.dll");
-                data.LoadLibrary = (fLoadLibrary) GetProcAddress(hDll, "LoadLibraryA");
-                data.GetProcAddress = (fGetProcAddress) GetProcAddress(hDll, "GetProcAddress");
-                data.game = Bethesda::game;
+                HINSTANCE hDll = LoadLibrary("kernel32.dll");
+                fLoadLibrary LoadLibrary = (fLoadLibrary) GetProcAddress(hDll, "LoadLibraryA");
 
-                codesize = (DWORD) InjectedEnd - (DWORD) InjectedCode;
-
-                start = VirtualAllocEx(hProc, 0, codesize + sizeof(INJECT), MEM_COMMIT, PAGE_EXECUTE_READWRITE);
-                thread = (LPVOID) ((DWORD) start + sizeof(INJECT));
-
-                WriteProcessMemory(hProc, start, (LPVOID) &data, sizeof(INJECT), NULL);
-                WriteProcessMemory(hProc, thread, (LPVOID) InjectedCode, codesize, NULL);
-
-                CreateRemoteThread(hProc, 0, 0, (LPTHREAD_START_ROUTINE) thread, start, 0, 0);
-
-                /* Initalizing vaultmp.exe <-> Fallout3.exe / FalloutNV.exe pipe */
+                LPVOID remote = VirtualAllocEx(hProc, 0, size, MEM_COMMIT, PAGE_READWRITE);
+                WriteProcessMemory(hProc, remote, curdir, size, NULL);
+                CreateRemoteThread(hProc, NULL, 0, (LPTHREAD_START_ROUTINE) LoadLibrary, remote, 0, 0);
 
                 try
                 {
                     Interface::Initialize(module, &CommandHandler, Bethesda::game);
 
-                    for (int i = 0; i < 5 && !Interface::IsAvailable(); i++)
+                    for (int i = 0; i < 10 && !Interface::IsAvailable(); i++)
                         Sleep(50);
 
                     if (!Interface::IsAvailable())
@@ -728,7 +749,9 @@ void Bethesda::InitializeGame()
                     throw;
                 }
 
-                // Normally, we would resume the main thread here. But Steam versions make trouble, look above
+                ResumeThread(pi.hThread);
+
+                Sleep(5000);
 
                 initialized = true;
 
@@ -754,7 +777,7 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
     initialized = false;
 
 #ifdef VAULTMP_DEBUG
-    Debug* debug = new Debug((char*) "vaultmp");
+    debug = new Debug((char*) "vaultmp");
     debug->PrintFormat("Vault-Tec Multiplayer Mod client debug log (%s)", false, CLIENT_VERSION);
     debug->PrintFormat("Connecting to server: %s (name: %s, password: %s, game: %s)", false, server.ToString(), name.c_str(), pwd.c_str(), game == FALLOUT3 ? (char*) "Fallout 3" : game == NEWVEGAS ? (char*) "Fallout New Vegas" : (char*) "TES Oblivion");
     debug->Print("Visit www.vaultmp.com for help and upload this log if you experience problems with the mod.", false);
@@ -772,10 +795,16 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
     GameFactory::SetDebugHandler(debug);
 #endif
 
+    API::Initialize(game);
     Container::Initialize(game);
 
-    Game::self = (Player*) GameFactory::CreateInstance(ID_PLAYER, PLAYER_REFERENCE, PLAYER_BASE);
-    Game::self->SetName(name);
+    Player* self = (Player*) GameFactory::CreateInstance(ID_PLAYER, PLAYER_REFERENCE, PLAYER_BASE);
+    self->SetEnabled(true);
+    self->SetName(name);
+    GameFactory::LeaveReference(self);
+    self = NULL; // lets make sure that we dont use this by accident somewhere (old version code did so), I prefer a crash over a bug hard to track
+
+    Network::Flush();
 
     try
     {
@@ -786,12 +815,10 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
 
             while (query)
             {
-                if (initialized && !Interface::IsAvailable())
-                {
-                    NetworkResponse response = NetworkClient::ProcessEvent(ID_EVENT_INTERFACE_LOST);
+                NetworkResponse response;
+
+                while ((response = Network::Next()).size())
                     Network::Dispatch(peer, response);
-                    peer->CloseConnection(server, true, CHANNEL_SYSTEM, HIGH_PRIORITY);
-                }
 
                 for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
                 {
@@ -802,731 +829,740 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
 
                     try
                     {
-                        NetworkResponse response = NetworkClient::ProcessPacket(packet);
+                        response = NetworkClient::ProcessPacket(packet);
                         Network::Dispatch(peer, response);
                     }
                     catch (...)
                     {
                         peer->DeallocatePacket(packet);
-                        NetworkResponse response = NetworkClient::ProcessEvent(ID_EVENT_CLIENT_ERROR);
+                        response = NetworkClient::ProcessEvent(ID_EVENT_CLIENT_ERROR);
                         Network::Dispatch(peer, response);
                         peer->CloseConnection(server, true, CHANNEL_SYSTEM, HIGH_PRIORITY);
                         throw;
                     }
                 }
 
-
-                    switch (packet->data[0])
-                    {/*
-                    case ID_GAME_RUN:
-                    {
-                        BitStream query(packet->data, packet->length, false);
-                        query.IgnoreBytes(sizeof(MessageID));
-
-                        RakString save;
-                        query.Read(save);
-                        query.Reset();
-
-                        savegame = string(save.C_String());
-
-                        Interface::StartSession();
-
-                        ParamList param_Load;
-                        param_Load.push_back(Data::BuildParameter(savegame));
-                        ParamContainer Load = ParamContainer(param_Load, &Data::AlwaysTrue);
-                        Interface::ExecuteCommandOnce("Load", Load, 0, 150);
-
-                        ParamList param_SetName;
-                        param_SetName.push_back(self->GetActorRefParam());
-                        param_SetName.push_back(self->GetActorNameParam());
-                        ParamContainer SetName = ParamContainer(param_SetName, &Data::AlwaysTrue);
-                        Interface::ExecuteCommandOnce("SetName", SetName);
-
-                        Interface::EndSession();
-
-                        query.Write((MessageID) ID_GAME_START);
-                        peer->Send(&query, HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_SYSTEM, packet->systemAddress, false, 0);
-                        break;
-                    }
-                    case ID_NEW_PLAYER:
-                    {
-                        BitStream query(packet->data, packet->length, false);
-                        query.IgnoreBytes(sizeof(MessageID));
-
-                        RakNetGUID guid;
-                        RakString name;
-                        query.Read(guid);
-                        query.Read(name);
-                        query.Reset();
-
-    #ifdef VAULTMP_DEBUG
-                        debug->PrintFormat("New player on the server (name: %s, guid: %s)", true, name.C_String(), guid.ToString());
-    #endif
-
-                        string baseID = game == NEWVEGAS ? "8D0E7" : game == FALLOUT3 ? "30D82" : "35EBE";
-
-                        Player* player = new Player(guid, baseID);
-                        player->SetActorName(string(name.C_String()));
-                        refqueue.push_back(player);
-
-                        Interface::StartSession();
-
-                        ParamList param_PlaceAtMe;
-                        param_PlaceAtMe.push_back(self->GetActorRefParam());
-                        param_PlaceAtMe.push_back(Data::BuildParameter(baseID));
-                        param_PlaceAtMe.push_back(Data::Param_True);
-                        param_PlaceAtMe.push_back(Data::Param_False);
-                        param_PlaceAtMe.push_back(Data::Param_False);
-                        ParamContainer PlaceAtMe = ParamContainer(param_PlaceAtMe, &Data::AlwaysTrue);
-                        Interface::ExecuteCommandOnce("PlaceAtMe", PlaceAtMe, 0, 1000);
-
-                        Interface::EndSession();
-                        break;
-                    }
-                    case ID_PLAYER_LEFT:
-                    {
-                        BitStream query(packet->data, packet->length, false);
-                        query.IgnoreBytes(sizeof(MessageID));
-
-                        RakNetGUID guid;
-                        query.Read(guid);
-                        query.Reset();
-
-                        Player* player = Player::GetPlayerFromGUID(guid);
-
-                        if (player == NULL)
-                        {
-    #ifdef VAULTMP_DEBUG
-                            debug->PrintFormat("ERROR: Player could not be found (guid: %s)", true, guid.ToString());
-    #endif
-                            break;
-                        }
-
-                        string refID = player->GetReference();
-
-    #ifdef VAULTMP_DEBUG
-                        debug->PrintFormat("Player left (name: %s, guid: %s)", true, player->GetActorName().c_str(), guid.ToString());
-    #endif
-
-                        if (!refID.empty())
-                        {
-                            Interface::StartSession();
-
-                            if (player->SetActorEnabled(false))
-                            {
-                                ParamList param_Disable;
-                                param_Disable.push_back(player->GetActorRefParam());
-                                param_Disable.push_back(Data::Param_False);
-                                ParamContainer Disable = ParamContainer(param_Disable, &Data::AlwaysTrue);
-                                Interface::ExecuteCommandOnce("Disable", Disable, 0, 150);
-                            }
-
-                            ParamList param_MarkForDelete;
-                            param_MarkForDelete.push_back(player->GetActorRefParam());
-                            ParamContainer MarkForDelete = ParamContainer(param_MarkForDelete, &Data::AlwaysTrue);
-                            Interface::ExecuteCommandOnce("MarkForDelete", MarkForDelete, 0, 150);
-
-                            Interface::EndSession();
-                        }
-
-                        player->StartSession();
-                        delete player;
-                        player->EndSession();
-
-                        refqueue.remove(player);
-                        break;
-                    }
-                    /*case ID_PLAYER_UPDATE:
-                    {
-                        pActorUpdate* update = (pActorUpdate*) packet->data;
-
-                        if (packet->length != sizeof(pActorUpdate))
-                            break;
-
-                        Player* player = Player::GetPlayerFromGUID(update->guid);
-
-                        if (player == NULL)
-                        {
-    #ifdef VAULTMP_DEBUG
-                            char text[128];
-                            snprintf(text, sizeof(text), "ERROR: Player could not be found (guid: %s)", update->guid.ToString());
-                            debug->Print(text, true);
-    #endif
-                            break;
-                        }
-
-                        string refID = player->GetReference();
-
-    #ifdef VAULTMP_DEBUG
-                        char text[128];
-                        snprintf(text, sizeof(text), "Received player update packet (name: %s, ref: %s, guid: %s)", player->GetActorName().c_str(), refID.c_str(), update->guid.ToString());
-                        debug->Print(text, true);
-    #endif
-
-                        if (!refID.empty())
-                        {
-                            Interface::StartSession();
-
-                            char pos[16];
-
-                            if (player->SetActorAngle(update->A) && player->GetActorEnabled())
-                            {
-                                snprintf(pos, sizeof(pos), "%f", update->A);
-
-                                ParamList param_SetAngle;
-                                param_SetAngle.push_back(player->GetActorRefParam());
-                                param_SetAngle.push_back(Data::Param_Z);
-                                param_SetAngle.push_back(Data::BuildParameter(string(pos)));
-                                ParamContainer SetAngle = ParamContainer(param_SetAngle, &Data::AlwaysTrue);
-                                Interface::ExecuteCommandOnce("SetAngle", SetAngle);
-                            }
-
-                            if (player->SetActorMoving(update->moving) && player->GetActorEnabled())
-                            {
-                                ParamList param_PlayGroup;
-                                param_PlayGroup.push_back(player->GetActorRefParam());
-
-                                switch (update->moving)
-                                {
-                                case MOV_IDLE:
-                                    param_PlayGroup.push_back(Data::BuildParameter("Idle"));
-                                    param_PlayGroup.push_back(Data::Param_False);
-                                    break;
-                                case MOV_FASTFORWARD:
-                                    param_PlayGroup.push_back(Data::BuildParameter("FastForward"));
-                                    param_PlayGroup.push_back(Data::Param_True);
-                                    break;
-                                case MOV_FASTBACKWARD:
-                                    param_PlayGroup.push_back(Data::BuildParameter("FastBackward"));
-                                    param_PlayGroup.push_back(Data::Param_True);
-                                    break;
-                                case MOV_FASTLEFT:
-                                    param_PlayGroup.push_back(Data::BuildParameter("FastLeft"));
-                                    param_PlayGroup.push_back(Data::Param_True);
-                                    break;
-                                case MOV_FASTRIGHT:
-                                    param_PlayGroup.push_back(Data::BuildParameter("FastRight"));
-                                    param_PlayGroup.push_back(Data::Param_True);
-                                    break;
-                                case MOV_FORWARD:
-                                    param_PlayGroup.push_back(Data::BuildParameter("Forward"));
-                                    param_PlayGroup.push_back(Data::Param_True);
-                                    break;
-                                case MOV_BACKWARD:
-                                    param_PlayGroup.push_back(Data::BuildParameter("Backward"));
-                                    param_PlayGroup.push_back(Data::Param_True);
-                                    break;
-                                case MOV_LEFT:
-                                    param_PlayGroup.push_back(Data::BuildParameter("Left"));
-                                    param_PlayGroup.push_back(Data::Param_True);
-                                    break;
-                                case MOV_RIGHT:
-                                    param_PlayGroup.push_back(Data::BuildParameter("Right"));
-                                    param_PlayGroup.push_back(Data::Param_True);
-                                    break;
-                                }
-
-                                ParamContainer PlayGroup = ParamContainer(param_PlayGroup, &Data::AlwaysTrue);
-                                Interface::ExecuteCommandOnce("PlayGroup", PlayGroup);
-                            }
-
-                            if (!player->IsCoordinateInRange(X_AXIS, update->X, 350.0))
-                            {
-                                if (player->SetActorPos(X_AXIS, update->X) && player->GetActorEnabled())
-                                {
-                                    player->ToggleNoOverride(SKIPFLAG_GETPOS, true);
-
-                                    snprintf(pos, sizeof(pos), "%f", update->X);
-
-                                    ParamList param_SetPos;
-                                    param_SetPos.push_back(player->GetActorRefParam());
-                                    param_SetPos.push_back(Data::Param_X);
-                                    param_SetPos.push_back(Data::BuildParameter(string(pos)));
-                                    ParamContainer SetPos = ParamContainer(param_SetPos, &Data::AlwaysTrue);
-                                    Interface::ExecuteCommandOnce("SetPos", SetPos);
-                                }
-                            }
-
-                            if (!player->IsCoordinateInRange(Y_AXIS, update->Y, 350.0))
-                            {
-                                if (player->SetActorPos(Y_AXIS, update->Y) && player->GetActorEnabled())
-                                {
-                                    player->ToggleNoOverride(SKIPFLAG_GETPOS, true);
-
-                                    snprintf(pos, sizeof(pos), "%f", update->Y);
-
-                                    ParamList param_SetPos;
-                                    param_SetPos.push_back(player->GetActorRefParam());
-                                    param_SetPos.push_back(Data::Param_Y);
-                                    param_SetPos.push_back(Data::BuildParameter(string(pos)));
-                                    ParamContainer SetPos = ParamContainer(param_SetPos, &Data::AlwaysTrue);
-                                    Interface::ExecuteCommandOnce("SetPos", SetPos);
-                                }
-                            }
-
-                            if (!player->IsCoordinateInRange(Z_AXIS, update->Z, 200.0))
-                            {
-                                if (player->SetActorPos(Z_AXIS, update->Z) && player->GetActorEnabled())
-                                {
-                                    player->ToggleNoOverride(SKIPFLAG_GETPOS, true);
-
-                                    snprintf(pos, sizeof(pos), "%f", update->Z);
-
-                                    ParamList param_SetPos;
-                                    param_SetPos.push_back(player->GetActorRefParam());
-                                    param_SetPos.push_back(Data::Param_Z);
-                                    param_SetPos.push_back(Data::BuildParameter(string(pos)));
-                                    ParamContainer SetPos = ParamContainer(param_SetPos, &Data::AlwaysTrue);
-                                    Interface::ExecuteCommandOnce("SetPos", SetPos);
-                                }
-                            }
-
-
-                            if (player->GetActorMoving() == 0 && !player->IsActorNearPoint(update->X, update->Y, update->Z, 400.0) && player->GetActorEnabled())
-                            {
-                                if (player->SetActorPos(0, update->X))
-                                {
-                                    player->ToggleNoOverride(SKIPFLAG_GETPOS_X, true);
-
-                                    snprintf(pos, sizeof(pos), "%f", update->X);
-
-                                    cmd = new fCommand;
-                                    cmd->command = "setpos X " + string(pos);
-                                    cmd->player = player;
-                                    cmd->forplayers = false;
-                                    cmd->repeat = false;
-                                    PUSHCMD(cmd);
-                                }
-
-                                if (player->SetActorPos(1, update->Y))
-                                {
-                                    player->ToggleNoOverride(SKIPFLAG_GETPOS_Y, true);
-
-                                    snprintf(pos, sizeof(pos), "%f", update->Y);
-
-                                    cmd = new fCommand;
-                                    cmd->command = "setpos Y " + string(pos);
-                                    cmd->player = player;
-                                    cmd->forplayers = false;
-                                    cmd->repeat = false;
-                                    PUSHCMD(cmd);
-                                }
-                            }
-
-                            if (player->SetActorAlerted(update->alerted) && player->GetActorEnabled())
-                            {
-                                ParamList param_SetRestrained;
-                                param_SetRestrained.push_back(player->GetActorRefParam());
-                                param_SetRestrained.push_back(Data::Param_False);
-                                ParamContainer SetRestrained = ParamContainer(param_SetRestrained, &Data::AlwaysTrue);
-                                Interface::ExecuteCommandOnce("SetRestrained", SetRestrained, 0, 150);
-
-                                ParamList param_SetAlert;
-                                param_SetAlert.push_back(player->GetActorRefParam());
-
-                                switch (update->alerted)
-                                {
-                                case true:
-                                    param_SetAlert.push_back(Data::Param_True);
-                                    break;
-                                case false:
-                                    param_SetAlert.push_back(Data::Param_False);
-                                    break;
-                                }
-
-                                ParamContainer SetAlert = ParamContainer(param_SetAlert, &Data::AlwaysTrue);
-                                Interface::ExecuteCommandOnce("SetAlert", SetAlert, 0, 150);
-
-                                param_SetRestrained.clear();
-                                param_SetRestrained.push_back(player->GetActorRefParam());
-                                param_SetRestrained.push_back(Data::Param_True);
-                                SetRestrained = ParamContainer(param_SetRestrained, &Data::AlwaysTrue);
-                                Interface::ExecuteCommandOnce("SetRestrained", SetRestrained, 0, 150);
-                            }
-
-                            Interface::EndSession();
-                        }
-                        break;
-                    }
-                    case ID_PLAYER_STATE_UPDATE:
-                    {
-                        pActorStateUpdate* update = (pActorStateUpdate*) packet->data;
-
-                        if (packet->length != sizeof(pActorStateUpdate))
-                            break;
-
-                        Player* player = Player::GetPlayerFromGUID(update->guid);
-
-                        if (player == NULL)
-                        {
-    #ifdef VAULTMP_DEBUG
-                            char text[128];
-                            snprintf(text, sizeof(text), "ERROR: Player could not be found (guid: %s)", update->guid.ToString());
-                            debug->Print(text, true);
-    #endif
-                            break;
-                        }
-
-                        string refID = player->GetReference();
-
-    #ifdef VAULTMP_DEBUG
-                        char text[128];
-                        snprintf(text, sizeof(text), "Received player state update packet (name: %s, ref: %s, guid: %s)", player->GetActorName().c_str(), refID.c_str(), update->guid.ToString());
-                        debug->Print(text, true);
-    #endif
-
-                        if (!refID.empty())
-                        {
-                            Interface::StartSession();
-
-                            char pos[16];
-
-                            if (player->SetActorBaseHealth(update->baseHealth))
-                            {
-                                snprintf(pos, sizeof(pos), "%i", (int) update->baseHealth);
-
-                                ParamList param_SetActorValue;
-                                param_SetActorValue.push_back(player->GetActorRefParam());
-                                param_SetActorValue.push_back(Data::BuildParameter("Health"));
-                                param_SetActorValue.push_back(Data::BuildParameter(pos));
-                                ParamContainer SetActorValue = ParamContainer(param_SetActorValue, &Data::AlwaysTrue);
-                                Interface::ExecuteCommandOnce("SetActorValue", SetActorValue);
-                            }
-
-                            if (player->SetActorHealth(update->health))
-                            {
-                                player->ToggleNoOverride(SKIPFLAG_GETACTORVALUE, true);
-
-                                snprintf(pos, sizeof(pos), "%i", (int) update->health);
-
-                                ParamList param_ForceActorValue;
-                                param_ForceActorValue.push_back(player->GetActorRefParam());
-                                param_ForceActorValue.push_back(Data::BuildParameter("Health"));
-                                param_ForceActorValue.push_back(Data::BuildParameter(pos));
-                                ParamContainer ForceActorValue = ParamContainer(param_ForceActorValue, &Data::AlwaysTrue);
-                                Interface::ExecuteCommandOnce("ForceActorValue", ForceActorValue);
-                            }
-
-                            if (player->SetActorCondition(COND_PERCEPTION, update->conds[COND_PERCEPTION]))
-                            {
-                                snprintf(pos, sizeof(pos), "%i", (int) update->conds[COND_PERCEPTION]);
-
-                                ParamList param_ForceActorValue;
-                                param_ForceActorValue.push_back(player->GetActorRefParam());
-                                param_ForceActorValue.push_back(Data::BuildParameter("PerceptionCondition"));
-                                param_ForceActorValue.push_back(Data::BuildParameter(pos));
-                                ParamContainer ForceActorValue = ParamContainer(param_ForceActorValue, &Data::AlwaysTrue);
-                                Interface::ExecuteCommandOnce("ForceActorValue", ForceActorValue);
-                            }
-
-                            if (player->SetActorCondition(COND_ENDURANCE, update->conds[COND_ENDURANCE]))
-                            {
-                                snprintf(pos, sizeof(pos), "%i", (int) update->conds[COND_ENDURANCE]);
-
-                                ParamList param_ForceActorValue;
-                                param_ForceActorValue.push_back(player->GetActorRefParam());
-                                param_ForceActorValue.push_back(Data::BuildParameter("EnduranceCondition"));
-                                param_ForceActorValue.push_back(Data::BuildParameter(pos));
-                                ParamContainer ForceActorValue = ParamContainer(param_ForceActorValue, &Data::AlwaysTrue);
-                                Interface::ExecuteCommandOnce("ForceActorValue", ForceActorValue);
-                            }
-
-                            if (player->SetActorCondition(COND_LEFTATTACK, update->conds[COND_LEFTATTACK]))
-                            {
-                                snprintf(pos, sizeof(pos), "%i", (int) update->conds[COND_LEFTATTACK]);
-
-                                ParamList param_ForceActorValue;
-                                param_ForceActorValue.push_back(player->GetActorRefParam());
-                                param_ForceActorValue.push_back(Data::BuildParameter("LeftAttackCondition"));
-                                param_ForceActorValue.push_back(Data::BuildParameter(pos));
-                                ParamContainer ForceActorValue = ParamContainer(param_ForceActorValue, &Data::AlwaysTrue);
-                                Interface::ExecuteCommandOnce("ForceActorValue", ForceActorValue);
-                            }
-
-                            if (player->SetActorCondition(COND_RIGHTATTACK, update->conds[COND_RIGHTATTACK]))
-                            {
-                                snprintf(pos, sizeof(pos), "%i", (int) update->conds[COND_RIGHTATTACK]);
-
-                                ParamList param_ForceActorValue;
-                                param_ForceActorValue.push_back(player->GetActorRefParam());
-                                param_ForceActorValue.push_back(Data::BuildParameter("RightAttackCondition"));
-                                param_ForceActorValue.push_back(Data::BuildParameter(pos));
-                                ParamContainer ForceActorValue = ParamContainer(param_ForceActorValue, &Data::AlwaysTrue);
-                                Interface::ExecuteCommandOnce("ForceActorValue", ForceActorValue);
-                            }
-
-                            if (player->SetActorCondition(COND_LEFTMOBILITY, update->conds[COND_LEFTMOBILITY]))
-                            {
-                                snprintf(pos, sizeof(pos), "%i", (int) update->conds[COND_LEFTMOBILITY]);
-
-                                ParamList param_ForceActorValue;
-                                param_ForceActorValue.push_back(player->GetActorRefParam());
-                                param_ForceActorValue.push_back(Data::BuildParameter("LeftMobilityCondition"));
-                                param_ForceActorValue.push_back(Data::BuildParameter(pos));
-                                ParamContainer ForceActorValue = ParamContainer(param_ForceActorValue, &Data::AlwaysTrue);
-                                Interface::ExecuteCommandOnce("ForceActorValue", ForceActorValue);
-                            }
-
-                            if (player->SetActorCondition(COND_RIGHTMOBILITY, update->conds[COND_RIGHTMOBILITY]))
-                            {
-                                snprintf(pos, sizeof(pos), "%i", (int) update->conds[COND_RIGHTMOBILITY]);
-
-                                ParamList param_ForceActorValue;
-                                param_ForceActorValue.push_back(player->GetActorRefParam());
-                                param_ForceActorValue.push_back(Data::BuildParameter("RightMobilityCondition"));
-                                param_ForceActorValue.push_back(Data::BuildParameter(pos));
-                                ParamContainer ForceActorValue = ParamContainer(param_ForceActorValue, &Data::AlwaysTrue);
-                                Interface::ExecuteCommandOnce("ForceActorValue", ForceActorValue);
-                            }
-
-                            if (player->SetActorDead(update->dead))
-                            {
-                                player->ToggleNoOverride(SKIPFLAG_GETDEAD, true);
-
-                                switch (update->dead)
-                                {
-                                case true:
-                                {
-                                    ParamList param_Kill;
-                                    param_Kill.push_back(player->GetActorRefParam());
-                                    ParamContainer Kill = ParamContainer(param_Kill, &Data::AlwaysTrue);
-                                    Interface::ExecuteCommandOnce("Kill", Kill, 0, 150);
-                                    break;
-                                }
-                                case false:
-                                {
-                                    if (player->SetActorEnabled(false))
-                                    {
-                                        ParamList param_Disable;
-                                        param_Disable.push_back(player->GetActorRefParam());
-                                        param_Disable.push_back(Data::Param_False);
-                                        ParamContainer Disable = ParamContainer(param_Disable, &Data::AlwaysTrue);
-                                        Interface::ExecuteCommandOnce("Disable", Disable, 0, 150);
-                                    }
-
-                                    ParamList param_MarkForDelete;
-                                    param_MarkForDelete.push_back(player->GetActorRefParam());
-                                    ParamContainer MarkForDelete = ParamContainer(param_MarkForDelete, &Data::AlwaysTrue);
-                                    Interface::ExecuteCommandOnce("MarkForDelete", MarkForDelete, 0, 150);
-
-                                    player->SetReference("");
-
-                                    refqueue.push_back(player);
-
-                                    string baseID = game == NEWVEGAS ? "8D0E7" : game == FALLOUT3 ? "30D82" : "35EBE";
-
-                                    ParamList param_PlaceAtMe;
-                                    param_PlaceAtMe.push_back(self->GetActorRefParam());
-                                    param_PlaceAtMe.push_back(Data::BuildParameter(baseID));
-                                    param_PlaceAtMe.push_back(Data::Param_True);
-                                    param_PlaceAtMe.push_back(Data::Param_False);
-                                    param_PlaceAtMe.push_back(Data::Param_False);
-                                    ParamContainer PlaceAtMe = ParamContainer(param_PlaceAtMe, &Data::AlwaysTrue);
-                                    Interface::ExecuteCommandOnce("PlaceAtMe", PlaceAtMe, 0, 1000);
-                                    break;
-                                }
-                                }
-                            }
-
-                            Interface::EndSession();
-                        }
-                        break;
-                    }
-                    case ID_PLAYER_CELL_UPDATE:
-                    {
-                        pActorCellUpdate* update = (pActorCellUpdate*) packet->data;
-
-                        if (packet->length != sizeof(pActorCellUpdate))
-                            break;
-
-                        Player* player = Player::GetPlayerFromGUID(update->guid);
-
-                        if (player == NULL)
-                        {
-    #ifdef VAULTMP_DEBUG
-                            char text[128];
-                            snprintf(text, sizeof(text), "ERROR: Player could not be found (guid: %s)", update->guid.ToString());
-                            debug->Print(text, true);
-    #endif
-                            break;
-                        }
-
-                        string refID = player->GetReference();
-
-    #ifdef VAULTMP_DEBUG
-                        char text[128];
-                        snprintf(text, sizeof(text), "Received player cell update packet (name: %s, ref: %s, guid: %s)", player->GetActorName().c_str(), refID.c_str(), update->guid.ToString());
-                        debug->Print(text, true);
-    #endif
-
-                        if (!refID.empty())
-                        {
-                            player->SetActorNetworkCell(update->cell);
-                        }
-                        break;
-                    }
-                    case ID_PLAYER_ITEM_UPDATE:
-                    {
-                        pActorItemUpdate* update = (pActorItemUpdate*) packet->data;
-
-                        if (packet->length != sizeof(pActorItemUpdate))
-                            break;
-
-                        Player* player = Player::GetPlayerFromGUID(update->guid);
-
-                        if (player == NULL)
-                        {
-    #ifdef VAULTMP_DEBUG
-                            char text[128];
-                            snprintf(text, sizeof(text), "ERROR: Player could not be found (guid: %s)", update->guid.ToString());
-                            debug->Print(text, true);
-    #endif
-                            break;
-                        }
-
-                        string refID = player->GetReference();
-
-    #ifdef VAULTMP_DEBUG
-                        char text[128];
-                        snprintf(text, sizeof(text), "Received player item update packet (name: %s, ref: %s, guid: %s)", player->GetActorName().c_str(), refID.c_str(), update->guid.ToString());
-                        debug->Print(text, true);
-    #endif
-                        if (player != self)
-                        {
-                            player->StartSession();
-
-                            if (update->item.count == 0)
-                            {
-                                if (!player->UpdateItem(string(update->baseID), update->item.condition, update->item.worn))
-                                {
-
-                                }
-                            }
-                            else if (update->item.count > 0)
-                            {
-                                if (!player->AddItem(string(update->baseID), update->item.count, update->item.type, update->item.condition, update->item.worn))
-                                {
-
-                                }
-                            }
-                            else if (update->item.count < 0)
-                            {
-                                if (!player->RemoveItem(string(update->baseID), abs(update->item.count)))
-                                {
-
-                                }
-                            }
-
-                            player->EndSession();
-                        }
-
-                        if (!refID.empty())
-                        {
-                            string baseID = string(update->baseID);
-                            update->item.item = Inventory::GetItemReference(baseID);
-
-                            if (update->item.item == map<const char*, const char*, str_compare>().end())
-                                break;
-
-                            if (player == self)
-                                player->ToggleNoOverride(SKIPFLAG_ITEMUPDATE, true);
-
-                            Interface::StartSession();
-
-                            if (update->item.count > 0)
-                            {
-                                ParamList param_AddItem;
-                                param_AddItem.push_back(player->GetActorRefParam());
-                                param_AddItem.push_back(Inventory::GetItemBaseParam(&update->item));
-                                param_AddItem.push_back(Inventory::GetItemCountParam(&update->item));
-                                param_AddItem.push_back(update->hidden ? Data::Param_True : Data::Param_False);
-                                ParamContainer AddItem = ParamContainer(param_AddItem, &Data::AlwaysTrue);
-                                Interface::ExecuteCommandOnce("AddItem", AddItem);
-                            }
-                            else if (update->item.count < 0)
-                            {
-                                update->item.count = abs(update->item.count);
-
-                                ParamList param_RemoveItem;
-                                param_RemoveItem.push_back(player->GetActorRefParam());
-                                param_RemoveItem.push_back(Inventory::GetItemBaseParam(&update->item));
-                                param_RemoveItem.push_back(Inventory::GetItemCountParam(&update->item));
-                                param_RemoveItem.push_back(update->hidden ? Data::Param_True : Data::Param_False);
-                                ParamContainer RemoveItem = ParamContainer(param_RemoveItem, &Data::AlwaysTrue);
-                                Interface::ExecuteCommandOnce("RemoveItem", RemoveItem);
-                            }
-
-                            if (update->item.count >= 0)
-                            {
-                                if (update->item.worn)
-                                {
-                                    ParamList param_EquipItem;
-                                    param_EquipItem.push_back(player->GetActorRefParam());
-                                    param_EquipItem.push_back(Inventory::GetItemBaseParam(&update->item));
-                                    param_EquipItem.push_back(player != self ? Data::Param_True : Data::Param_False);
-                                    param_EquipItem.push_back(update->hidden ? Data::Param_True : Data::Param_False);
-                                    ParamContainer EquipItem = ParamContainer(param_EquipItem, &Data::AlwaysTrue);
-                                    Interface::ExecuteCommandOnce("EquipItem", EquipItem);
-                                }
-                                else if (update->item.condition != 0.00)
-                                {
-                                    ParamList param_UnequipItem;
-                                    param_UnequipItem.push_back(player->GetActorRefParam());
-                                    param_UnequipItem.push_back(Inventory::GetItemBaseParam(&update->item));
-                                    param_UnequipItem.push_back(player != self ? Data::Param_True : Data::Param_False);
-                                    param_UnequipItem.push_back(update->hidden ? Data::Param_True : Data::Param_False);
-                                    ParamContainer UnequipItem = ParamContainer(param_UnequipItem, &Data::AlwaysTrue);
-                                    Interface::ExecuteCommandOnce("UnequipItem", UnequipItem);
-                                }
-                            }
-
-                            Interface::EndSession();
-                        }
-                        break;
-                    }
-                    case ID_INVALID_PASSWORD:
-                        MessageBox(NULL, "Dedicated server version mismatch.\nPlease download the most recent binaries from www.vaultmp.com", "Error", MB_OK | MB_ICONERROR);
-                    case ID_NO_FREE_INCOMING_CONNECTIONS:
-                    case ID_CONNECTION_ATTEMPT_FAILED:
-                    case ID_DISCONNECTION_NOTIFICATION:
-                    case ID_CONNECTION_BANNED:
-                    case ID_CONNECTION_LOST:
-                        query = false;
-                        break;*/
-                    }
+                if (initialized && !Interface::IsAvailable())
+                {
+                    NetworkResponse response = NetworkClient::ProcessEvent(ID_EVENT_INTERFACE_LOST);
+                    Network::Dispatch(peer, response);
+                    peer->CloseConnection(server, true, CHANNEL_SYSTEM, HIGH_PRIORITY);
+                    throw VaultException("Lost connection to interface");
+                }
+
+
+                switch (packet->data[0])
+                {
+                    /*
+                                        case ID_GAME_RUN:
+                                        {
+                       BitStream query(packet->data, packet->length, false);
+                       query.IgnoreBytes(sizeof(MessageID));
+
+                       RakString save;
+                       query.Read(save);
+                       query.Reset();
+
+                       savegame = string(save.C_String());
+
+                       Interface::StartSession();
+
+                       ParamList param_Load;
+                       param_Load.push_back(Data::BuildParameter(savegame));
+                       ParamContainer Load = ParamContainer(param_Load, &Data::AlwaysTrue);
+                       Interface::ExecuteCommandOnce("Load", Load, 0, 150);
+
+                       ParamList param_SetName;
+                       param_SetName.push_back(self->GetActorRefParam());
+                       param_SetName.push_back(self->GetActorNameParam());
+                       ParamContainer SetName = ParamContainer(param_SetName, &Data::AlwaysTrue);
+                       Interface::ExecuteCommandOnce("SetName", SetName);
+
+                       Interface::EndSession();
+
+                       query.Write((MessageID) ID_GAME_START);
+                       peer->Send(&query, HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_SYSTEM, packet->systemAddress, false, 0);
+                       break;
+                                        }
+                                        case ID_NEW_PLAYER:
+                                        {
+                       BitStream query(packet->data, packet->length, false);
+                       query.IgnoreBytes(sizeof(MessageID));
+
+                       RakNetGUID guid;
+                       RakString name;
+                       query.Read(guid);
+                       query.Read(name);
+                       query.Reset();
+
+                        #ifdef VAULTMP_DEBUG
+                       debug->PrintFormat("New player on the server (name: %s, guid: %s)", true, name.C_String(), guid.ToString());
+                        #endif
+
+                       string baseID = game == NEWVEGAS ? "8D0E7" : game == FALLOUT3 ? "30D82" : "35EBE";
+
+                       Player* player = new Player(guid, baseID);
+                       player->SetActorName(string(name.C_String()));
+                       refqueue.push_back(player);
+
+                       Interface::StartSession();
+
+                       ParamList param_PlaceAtMe;
+                       param_PlaceAtMe.push_back(self->GetActorRefParam());
+                       param_PlaceAtMe.push_back(Data::BuildParameter(baseID));
+                       param_PlaceAtMe.push_back(Data::Param_True);
+                       param_PlaceAtMe.push_back(Data::Param_False);
+                       param_PlaceAtMe.push_back(Data::Param_False);
+                       ParamContainer PlaceAtMe = ParamContainer(param_PlaceAtMe, &Data::AlwaysTrue);
+                       Interface::ExecuteCommandOnce("PlaceAtMe", PlaceAtMe, 0, 1000);
+
+                       Interface::EndSession();
+                       break;
+                                        }
+                                        case ID_PLAYER_LEFT:
+                                        {
+                       BitStream query(packet->data, packet->length, false);
+                       query.IgnoreBytes(sizeof(MessageID));
+
+                       RakNetGUID guid;
+                       query.Read(guid);
+                       query.Reset();
+
+                       Player* player = Player::GetPlayerFromGUID(guid);
+
+                       if (player == NULL)
+                       {
+                        #ifdef VAULTMP_DEBUG
+                           debug->PrintFormat("ERROR: Player could not be found (guid: %s)", true, guid.ToString());
+                        #endif
+                           break;
+                       }
+
+                       string refID = player->GetReference();
+
+                        #ifdef VAULTMP_DEBUG
+                       debug->PrintFormat("Player left (name: %s, guid: %s)", true, player->GetActorName().c_str(), guid.ToString());
+                        #endif
+
+                       if (!refID.empty())
+                       {
+                           Interface::StartSession();
+
+                           if (player->SetActorEnabled(false))
+                           {
+                               ParamList param_Disable;
+                               param_Disable.push_back(player->GetActorRefParam());
+                               param_Disable.push_back(Data::Param_False);
+                               ParamContainer Disable = ParamContainer(param_Disable, &Data::AlwaysTrue);
+                               Interface::ExecuteCommandOnce("Disable", Disable, 0, 150);
+                           }
+
+                           ParamList param_MarkForDelete;
+                           param_MarkForDelete.push_back(player->GetActorRefParam());
+                           ParamContainer MarkForDelete = ParamContainer(param_MarkForDelete, &Data::AlwaysTrue);
+                           Interface::ExecuteCommandOnce("MarkForDelete", MarkForDelete, 0, 150);
+
+                           Interface::EndSession();
+                       }
+
+                       player->StartSession();
+                       delete player;
+                       player->EndSession();
+
+                       refqueue.remove(player);
+                       break;
+                                        }
+                                        /*case ID_PLAYER_UPDATE:
+                                        {
+                       pActorUpdate* update = (pActorUpdate*) packet->data;
+
+                       if (packet->length != sizeof(pActorUpdate))
+                           break;
+
+                       Player* player = Player::GetPlayerFromGUID(update->guid);
+
+                       if (player == NULL)
+                       {
+                        #ifdef VAULTMP_DEBUG
+                           char text[128];
+                           snprintf(text, sizeof(text), "ERROR: Player could not be found (guid: %s)", update->guid.ToString());
+                           debug->Print(text, true);
+                        #endif
+                           break;
+                       }
+
+                       string refID = player->GetReference();
+
+                        #ifdef VAULTMP_DEBUG
+                       char text[128];
+                       snprintf(text, sizeof(text), "Received player update packet (name: %s, ref: %s, guid: %s)", player->GetActorName().c_str(), refID.c_str(), update->guid.ToString());
+                       debug->Print(text, true);
+                        #endif
+
+                       if (!refID.empty())
+                       {
+                           Interface::StartSession();
+
+                           char pos[16];
+
+                           if (player->SetActorAngle(update->A) && player->GetActorEnabled())
+                           {
+                               snprintf(pos, sizeof(pos), "%f", update->A);
+
+                               ParamList param_SetAngle;
+                               param_SetAngle.push_back(player->GetActorRefParam());
+                               param_SetAngle.push_back(Data::Param_Z);
+                               param_SetAngle.push_back(Data::BuildParameter(string(pos)));
+                               ParamContainer SetAngle = ParamContainer(param_SetAngle, &Data::AlwaysTrue);
+                               Interface::ExecuteCommandOnce("SetAngle", SetAngle);
+                           }
+
+                           if (player->SetActorMoving(update->moving) && player->GetActorEnabled())
+                           {
+                               ParamList param_PlayGroup;
+                               param_PlayGroup.push_back(player->GetActorRefParam());
+
+                               switch (update->moving)
+                               {
+                               case MOV_IDLE:
+                                   param_PlayGroup.push_back(Data::BuildParameter("Idle"));
+                                   param_PlayGroup.push_back(Data::Param_False);
+                                   break;
+                               case MOV_FASTFORWARD:
+                                   param_PlayGroup.push_back(Data::BuildParameter("FastForward"));
+                                   param_PlayGroup.push_back(Data::Param_True);
+                                   break;
+                               case MOV_FASTBACKWARD:
+                                   param_PlayGroup.push_back(Data::BuildParameter("FastBackward"));
+                                   param_PlayGroup.push_back(Data::Param_True);
+                                   break;
+                               case MOV_FASTLEFT:
+                                   param_PlayGroup.push_back(Data::BuildParameter("FastLeft"));
+                                   param_PlayGroup.push_back(Data::Param_True);
+                                   break;
+                               case MOV_FASTRIGHT:
+                                   param_PlayGroup.push_back(Data::BuildParameter("FastRight"));
+                                   param_PlayGroup.push_back(Data::Param_True);
+                                   break;
+                               case MOV_FORWARD:
+                                   param_PlayGroup.push_back(Data::BuildParameter("Forward"));
+                                   param_PlayGroup.push_back(Data::Param_True);
+                                   break;
+                               case MOV_BACKWARD:
+                                   param_PlayGroup.push_back(Data::BuildParameter("Backward"));
+                                   param_PlayGroup.push_back(Data::Param_True);
+                                   break;
+                               case MOV_LEFT:
+                                   param_PlayGroup.push_back(Data::BuildParameter("Left"));
+                                   param_PlayGroup.push_back(Data::Param_True);
+                                   break;
+                               case MOV_RIGHT:
+                                   param_PlayGroup.push_back(Data::BuildParameter("Right"));
+                                   param_PlayGroup.push_back(Data::Param_True);
+                                   break;
+                               }
+
+                               ParamContainer PlayGroup = ParamContainer(param_PlayGroup, &Data::AlwaysTrue);
+                               Interface::ExecuteCommandOnce("PlayGroup", PlayGroup);
+                           }
+
+                           if (!player->IsCoordinateInRange(X_AXIS, update->X, 350.0))
+                           {
+                               if (player->SetActorPos(X_AXIS, update->X) && player->GetActorEnabled())
+                               {
+                                   player->ToggleNoOverride(SKIPFLAG_GETPOS, true);
+
+                                   snprintf(pos, sizeof(pos), "%f", update->X);
+
+                                   ParamList param_SetPos;
+                                   param_SetPos.push_back(player->GetActorRefParam());
+                                   param_SetPos.push_back(Data::Param_X);
+                                   param_SetPos.push_back(Data::BuildParameter(string(pos)));
+                                   ParamContainer SetPos = ParamContainer(param_SetPos, &Data::AlwaysTrue);
+                                   Interface::ExecuteCommandOnce("SetPos", SetPos);
+                               }
+                           }
+
+                           if (!player->IsCoordinateInRange(Y_AXIS, update->Y, 350.0))
+                           {
+                               if (player->SetActorPos(Y_AXIS, update->Y) && player->GetActorEnabled())
+                               {
+                                   player->ToggleNoOverride(SKIPFLAG_GETPOS, true);
+
+                                   snprintf(pos, sizeof(pos), "%f", update->Y);
+
+                                   ParamList param_SetPos;
+                                   param_SetPos.push_back(player->GetActorRefParam());
+                                   param_SetPos.push_back(Data::Param_Y);
+                                   param_SetPos.push_back(Data::BuildParameter(string(pos)));
+                                   ParamContainer SetPos = ParamContainer(param_SetPos, &Data::AlwaysTrue);
+                                   Interface::ExecuteCommandOnce("SetPos", SetPos);
+                               }
+                           }
+
+                           if (!player->IsCoordinateInRange(Z_AXIS, update->Z, 200.0))
+                           {
+                               if (player->SetActorPos(Z_AXIS, update->Z) && player->GetActorEnabled())
+                               {
+                                   player->ToggleNoOverride(SKIPFLAG_GETPOS, true);
+
+                                   snprintf(pos, sizeof(pos), "%f", update->Z);
+
+                                   ParamList param_SetPos;
+                                   param_SetPos.push_back(player->GetActorRefParam());
+                                   param_SetPos.push_back(Data::Param_Z);
+                                   param_SetPos.push_back(Data::BuildParameter(string(pos)));
+                                   ParamContainer SetPos = ParamContainer(param_SetPos, &Data::AlwaysTrue);
+                                   Interface::ExecuteCommandOnce("SetPos", SetPos);
+                               }
+                           }
+
+
+                           if (player->GetActorMoving() == 0 && !player->IsActorNearPoint(update->X, update->Y, update->Z, 400.0) && player->GetActorEnabled())
+                           {
+                               if (player->SetActorPos(0, update->X))
+                               {
+                                   player->ToggleNoOverride(SKIPFLAG_GETPOS_X, true);
+
+                                   snprintf(pos, sizeof(pos), "%f", update->X);
+
+                                   cmd = new fCommand;
+                                   cmd->command = "setpos X " + string(pos);
+                                   cmd->player = player;
+                                   cmd->forplayers = false;
+                                   cmd->repeat = false;
+                                   PUSHCMD(cmd);
+                               }
+
+                               if (player->SetActorPos(1, update->Y))
+                               {
+                                   player->ToggleNoOverride(SKIPFLAG_GETPOS_Y, true);
+
+                                   snprintf(pos, sizeof(pos), "%f", update->Y);
+
+                                   cmd = new fCommand;
+                                   cmd->command = "setpos Y " + string(pos);
+                                   cmd->player = player;
+                                   cmd->forplayers = false;
+                                   cmd->repeat = false;
+                                   PUSHCMD(cmd);
+                               }
+                           }
+
+                           if (player->SetActorAlerted(update->alerted) && player->GetActorEnabled())
+                           {
+                               ParamList param_SetRestrained;
+                               param_SetRestrained.push_back(player->GetActorRefParam());
+                               param_SetRestrained.push_back(Data::Param_False);
+                               ParamContainer SetRestrained = ParamContainer(param_SetRestrained, &Data::AlwaysTrue);
+                               Interface::ExecuteCommandOnce("SetRestrained", SetRestrained, 0, 150);
+
+                               ParamList param_SetAlert;
+                               param_SetAlert.push_back(player->GetActorRefParam());
+
+                               switch (update->alerted)
+                               {
+                               case true:
+                                   param_SetAlert.push_back(Data::Param_True);
+                                   break;
+                               case false:
+                                   param_SetAlert.push_back(Data::Param_False);
+                                   break;
+                               }
+
+                               ParamContainer SetAlert = ParamContainer(param_SetAlert, &Data::AlwaysTrue);
+                               Interface::ExecuteCommandOnce("SetAlert", SetAlert, 0, 150);
+
+                               param_SetRestrained.clear();
+                               param_SetRestrained.push_back(player->GetActorRefParam());
+                               param_SetRestrained.push_back(Data::Param_True);
+                               SetRestrained = ParamContainer(param_SetRestrained, &Data::AlwaysTrue);
+                               Interface::ExecuteCommandOnce("SetRestrained", SetRestrained, 0, 150);
+                           }
+
+                           Interface::EndSession();
+                       }
+                       break;
+                                        }
+                                        case ID_PLAYER_STATE_UPDATE:
+                                        {
+                       pActorStateUpdate* update = (pActorStateUpdate*) packet->data;
+
+                       if (packet->length != sizeof(pActorStateUpdate))
+                           break;
+
+                       Player* player = Player::GetPlayerFromGUID(update->guid);
+
+                       if (player == NULL)
+                       {
+                        #ifdef VAULTMP_DEBUG
+                           char text[128];
+                           snprintf(text, sizeof(text), "ERROR: Player could not be found (guid: %s)", update->guid.ToString());
+                           debug->Print(text, true);
+                        #endif
+                           break;
+                       }
+
+                       string refID = player->GetReference();
+
+                        #ifdef VAULTMP_DEBUG
+                       char text[128];
+                       snprintf(text, sizeof(text), "Received player state update packet (name: %s, ref: %s, guid: %s)", player->GetActorName().c_str(), refID.c_str(), update->guid.ToString());
+                       debug->Print(text, true);
+                        #endif
+
+                       if (!refID.empty())
+                       {
+                           Interface::StartSession();
+
+                           char pos[16];
+
+                           if (player->SetActorBaseHealth(update->baseHealth))
+                           {
+                               snprintf(pos, sizeof(pos), "%i", (int) update->baseHealth);
+
+                               ParamList param_SetActorValue;
+                               param_SetActorValue.push_back(player->GetActorRefParam());
+                               param_SetActorValue.push_back(Data::BuildParameter("Health"));
+                               param_SetActorValue.push_back(Data::BuildParameter(pos));
+                               ParamContainer SetActorValue = ParamContainer(param_SetActorValue, &Data::AlwaysTrue);
+                               Interface::ExecuteCommandOnce("SetActorValue", SetActorValue);
+                           }
+
+                           if (player->SetActorHealth(update->health))
+                           {
+                               player->ToggleNoOverride(SKIPFLAG_GETACTORVALUE, true);
+
+                               snprintf(pos, sizeof(pos), "%i", (int) update->health);
+
+                               ParamList param_ForceActorValue;
+                               param_ForceActorValue.push_back(player->GetActorRefParam());
+                               param_ForceActorValue.push_back(Data::BuildParameter("Health"));
+                               param_ForceActorValue.push_back(Data::BuildParameter(pos));
+                               ParamContainer ForceActorValue = ParamContainer(param_ForceActorValue, &Data::AlwaysTrue);
+                               Interface::ExecuteCommandOnce("ForceActorValue", ForceActorValue);
+                           }
+
+                           if (player->SetActorCondition(COND_PERCEPTION, update->conds[COND_PERCEPTION]))
+                           {
+                               snprintf(pos, sizeof(pos), "%i", (int) update->conds[COND_PERCEPTION]);
+
+                               ParamList param_ForceActorValue;
+                               param_ForceActorValue.push_back(player->GetActorRefParam());
+                               param_ForceActorValue.push_back(Data::BuildParameter("PerceptionCondition"));
+                               param_ForceActorValue.push_back(Data::BuildParameter(pos));
+                               ParamContainer ForceActorValue = ParamContainer(param_ForceActorValue, &Data::AlwaysTrue);
+                               Interface::ExecuteCommandOnce("ForceActorValue", ForceActorValue);
+                           }
+
+                           if (player->SetActorCondition(COND_ENDURANCE, update->conds[COND_ENDURANCE]))
+                           {
+                               snprintf(pos, sizeof(pos), "%i", (int) update->conds[COND_ENDURANCE]);
+
+                               ParamList param_ForceActorValue;
+                               param_ForceActorValue.push_back(player->GetActorRefParam());
+                               param_ForceActorValue.push_back(Data::BuildParameter("EnduranceCondition"));
+                               param_ForceActorValue.push_back(Data::BuildParameter(pos));
+                               ParamContainer ForceActorValue = ParamContainer(param_ForceActorValue, &Data::AlwaysTrue);
+                               Interface::ExecuteCommandOnce("ForceActorValue", ForceActorValue);
+                           }
+
+                           if (player->SetActorCondition(COND_LEFTATTACK, update->conds[COND_LEFTATTACK]))
+                           {
+                               snprintf(pos, sizeof(pos), "%i", (int) update->conds[COND_LEFTATTACK]);
+
+                               ParamList param_ForceActorValue;
+                               param_ForceActorValue.push_back(player->GetActorRefParam());
+                               param_ForceActorValue.push_back(Data::BuildParameter("LeftAttackCondition"));
+                               param_ForceActorValue.push_back(Data::BuildParameter(pos));
+                               ParamContainer ForceActorValue = ParamContainer(param_ForceActorValue, &Data::AlwaysTrue);
+                               Interface::ExecuteCommandOnce("ForceActorValue", ForceActorValue);
+                           }
+
+                           if (player->SetActorCondition(COND_RIGHTATTACK, update->conds[COND_RIGHTATTACK]))
+                           {
+                               snprintf(pos, sizeof(pos), "%i", (int) update->conds[COND_RIGHTATTACK]);
+
+                               ParamList param_ForceActorValue;
+                               param_ForceActorValue.push_back(player->GetActorRefParam());
+                               param_ForceActorValue.push_back(Data::BuildParameter("RightAttackCondition"));
+                               param_ForceActorValue.push_back(Data::BuildParameter(pos));
+                               ParamContainer ForceActorValue = ParamContainer(param_ForceActorValue, &Data::AlwaysTrue);
+                               Interface::ExecuteCommandOnce("ForceActorValue", ForceActorValue);
+                           }
+
+                           if (player->SetActorCondition(COND_LEFTMOBILITY, update->conds[COND_LEFTMOBILITY]))
+                           {
+                               snprintf(pos, sizeof(pos), "%i", (int) update->conds[COND_LEFTMOBILITY]);
+
+                               ParamList param_ForceActorValue;
+                               param_ForceActorValue.push_back(player->GetActorRefParam());
+                               param_ForceActorValue.push_back(Data::BuildParameter("LeftMobilityCondition"));
+                               param_ForceActorValue.push_back(Data::BuildParameter(pos));
+                               ParamContainer ForceActorValue = ParamContainer(param_ForceActorValue, &Data::AlwaysTrue);
+                               Interface::ExecuteCommandOnce("ForceActorValue", ForceActorValue);
+                           }
+
+                           if (player->SetActorCondition(COND_RIGHTMOBILITY, update->conds[COND_RIGHTMOBILITY]))
+                           {
+                               snprintf(pos, sizeof(pos), "%i", (int) update->conds[COND_RIGHTMOBILITY]);
+
+                               ParamList param_ForceActorValue;
+                               param_ForceActorValue.push_back(player->GetActorRefParam());
+                               param_ForceActorValue.push_back(Data::BuildParameter("RightMobilityCondition"));
+                               param_ForceActorValue.push_back(Data::BuildParameter(pos));
+                               ParamContainer ForceActorValue = ParamContainer(param_ForceActorValue, &Data::AlwaysTrue);
+                               Interface::ExecuteCommandOnce("ForceActorValue", ForceActorValue);
+                           }
+
+                           if (player->SetActorDead(update->dead))
+                           {
+                               player->ToggleNoOverride(SKIPFLAG_GETDEAD, true);
+
+                               switch (update->dead)
+                               {
+                               case true:
+                               {
+                                   ParamList param_Kill;
+                                   param_Kill.push_back(player->GetActorRefParam());
+                                   ParamContainer Kill = ParamContainer(param_Kill, &Data::AlwaysTrue);
+                                   Interface::ExecuteCommandOnce("Kill", Kill, 0, 150);
+                                   break;
+                               }
+                               case false:
+                               {
+                                   if (player->SetActorEnabled(false))
+                                   {
+                                       ParamList param_Disable;
+                                       param_Disable.push_back(player->GetActorRefParam());
+                                       param_Disable.push_back(Data::Param_False);
+                                       ParamContainer Disable = ParamContainer(param_Disable, &Data::AlwaysTrue);
+                                       Interface::ExecuteCommandOnce("Disable", Disable, 0, 150);
+                                   }
+
+                                   ParamList param_MarkForDelete;
+                                   param_MarkForDelete.push_back(player->GetActorRefParam());
+                                   ParamContainer MarkForDelete = ParamContainer(param_MarkForDelete, &Data::AlwaysTrue);
+                                   Interface::ExecuteCommandOnce("MarkForDelete", MarkForDelete, 0, 150);
+
+                                   player->SetReference("");
+
+                                   refqueue.push_back(player);
+
+                                   string baseID = game == NEWVEGAS ? "8D0E7" : game == FALLOUT3 ? "30D82" : "35EBE";
+
+                                   ParamList param_PlaceAtMe;
+                                   param_PlaceAtMe.push_back(self->GetActorRefParam());
+                                   param_PlaceAtMe.push_back(Data::BuildParameter(baseID));
+                                   param_PlaceAtMe.push_back(Data::Param_True);
+                                   param_PlaceAtMe.push_back(Data::Param_False);
+                                   param_PlaceAtMe.push_back(Data::Param_False);
+                                   ParamContainer PlaceAtMe = ParamContainer(param_PlaceAtMe, &Data::AlwaysTrue);
+                                   Interface::ExecuteCommandOnce("PlaceAtMe", PlaceAtMe, 0, 1000);
+                                   break;
+                               }
+                               }
+                           }
+
+                           Interface::EndSession();
+                       }
+                       break;
+                                        }
+                                        case ID_PLAYER_CELL_UPDATE:
+                                        {
+                       pActorCellUpdate* update = (pActorCellUpdate*) packet->data;
+
+                       if (packet->length != sizeof(pActorCellUpdate))
+                           break;
+
+                       Player* player = Player::GetPlayerFromGUID(update->guid);
+
+                       if (player == NULL)
+                       {
+                        #ifdef VAULTMP_DEBUG
+                           char text[128];
+                           snprintf(text, sizeof(text), "ERROR: Player could not be found (guid: %s)", update->guid.ToString());
+                           debug->Print(text, true);
+                        #endif
+                           break;
+                       }
+
+                       string refID = player->GetReference();
+
+                        #ifdef VAULTMP_DEBUG
+                       char text[128];
+                       snprintf(text, sizeof(text), "Received player cell update packet (name: %s, ref: %s, guid: %s)", player->GetActorName().c_str(), refID.c_str(), update->guid.ToString());
+                       debug->Print(text, true);
+                        #endif
+
+                       if (!refID.empty())
+                       {
+                           player->SetActorNetworkCell(update->cell);
+                       }
+                       break;
+                                        }
+                                        case ID_PLAYER_ITEM_UPDATE:
+                                        {
+                       pActorItemUpdate* update = (pActorItemUpdate*) packet->data;
+
+                       if (packet->length != sizeof(pActorItemUpdate))
+                           break;
+
+                       Player* player = Player::GetPlayerFromGUID(update->guid);
+
+                       if (player == NULL)
+                       {
+                        #ifdef VAULTMP_DEBUG
+                           char text[128];
+                           snprintf(text, sizeof(text), "ERROR: Player could not be found (guid: %s)", update->guid.ToString());
+                           debug->Print(text, true);
+                        #endif
+                           break;
+                       }
+
+                       string refID = player->GetReference();
+
+                        #ifdef VAULTMP_DEBUG
+                       char text[128];
+                       snprintf(text, sizeof(text), "Received player item update packet (name: %s, ref: %s, guid: %s)", player->GetActorName().c_str(), refID.c_str(), update->guid.ToString());
+                       debug->Print(text, true);
+                        #endif
+                       if (player != self)
+                       {
+                           player->StartSession();
+
+                           if (update->item.count == 0)
+                           {
+                               if (!player->UpdateItem(string(update->baseID), update->item.condition, update->item.worn))
+                               {
+
+                               }
+                           }
+                           else if (update->item.count > 0)
+                           {
+                               if (!player->AddItem(string(update->baseID), update->item.count, update->item.type, update->item.condition, update->item.worn))
+                               {
+
+                               }
+                           }
+                           else if (update->item.count < 0)
+                           {
+                               if (!player->RemoveItem(string(update->baseID), abs(update->item.count)))
+                               {
+
+                               }
+                           }
+
+                           player->EndSession();
+                       }
+
+                       if (!refID.empty())
+                       {
+                           string baseID = string(update->baseID);
+                           update->item.item = Inventory::GetItemReference(baseID);
+
+                           if (update->item.item == map<const char*, const char*, str_compare>().end())
+                               break;
+
+                           if (player == self)
+                               player->ToggleNoOverride(SKIPFLAG_ITEMUPDATE, true);
+
+                           Interface::StartSession();
+
+                           if (update->item.count > 0)
+                           {
+                               ParamList param_AddItem;
+                               param_AddItem.push_back(player->GetActorRefParam());
+                               param_AddItem.push_back(Inventory::GetItemBaseParam(&update->item));
+                               param_AddItem.push_back(Inventory::GetItemCountParam(&update->item));
+                               param_AddItem.push_back(update->hidden ? Data::Param_True : Data::Param_False);
+                               ParamContainer AddItem = ParamContainer(param_AddItem, &Data::AlwaysTrue);
+                               Interface::ExecuteCommandOnce("AddItem", AddItem);
+                           }
+                           else if (update->item.count < 0)
+                           {
+                               update->item.count = abs(update->item.count);
+
+                               ParamList param_RemoveItem;
+                               param_RemoveItem.push_back(player->GetActorRefParam());
+                               param_RemoveItem.push_back(Inventory::GetItemBaseParam(&update->item));
+                               param_RemoveItem.push_back(Inventory::GetItemCountParam(&update->item));
+                               param_RemoveItem.push_back(update->hidden ? Data::Param_True : Data::Param_False);
+                               ParamContainer RemoveItem = ParamContainer(param_RemoveItem, &Data::AlwaysTrue);
+                               Interface::ExecuteCommandOnce("RemoveItem", RemoveItem);
+                           }
+
+                           if (update->item.count >= 0)
+                           {
+                               if (update->item.worn)
+                               {
+                                   ParamList param_EquipItem;
+                                   param_EquipItem.push_back(player->GetActorRefParam());
+                                   param_EquipItem.push_back(Inventory::GetItemBaseParam(&update->item));
+                                   param_EquipItem.push_back(player != self ? Data::Param_True : Data::Param_False);
+                                   param_EquipItem.push_back(update->hidden ? Data::Param_True : Data::Param_False);
+                                   ParamContainer EquipItem = ParamContainer(param_EquipItem, &Data::AlwaysTrue);
+                                   Interface::ExecuteCommandOnce("EquipItem", EquipItem);
+                               }
+                               else if (update->item.condition != 0.00)
+                               {
+                                   ParamList param_UnequipItem;
+                                   param_UnequipItem.push_back(player->GetActorRefParam());
+                                   param_UnequipItem.push_back(Inventory::GetItemBaseParam(&update->item));
+                                   param_UnequipItem.push_back(player != self ? Data::Param_True : Data::Param_False);
+                                   param_UnequipItem.push_back(update->hidden ? Data::Param_True : Data::Param_False);
+                                   ParamContainer UnequipItem = ParamContainer(param_UnequipItem, &Data::AlwaysTrue);
+                                   Interface::ExecuteCommandOnce("UnequipItem", UnequipItem);
+                               }
+                           }
+
+                           Interface::EndSession();
+                       }
+                       break;
+                                        }
+                                        case ID_INVALID_PASSWORD:
+                       MessageBox(NULL, "Dedicated server version mismatch.\nPlease download the most recent binaries from www.vaultmp.com", "Error", MB_OK | MB_ICONERROR);
+                                        case ID_NO_FREE_INCOMING_CONNECTIONS:
+                                        case ID_CONNECTION_ATTEMPT_FAILED:
+                                        case ID_DISCONNECTION_NOTIFICATION:
+                                        case ID_CONNECTION_BANNED:
+                                        case ID_CONNECTION_LOST:
+                       query = false;
+                       break;*/
+                }
 
 
                 /*if (self->UpdateActorUpdateStruct(&localPlayerUpdate))
                 {
                     peer->Send((char*) &localPlayerUpdate, sizeof(localPlayerUpdate), MEDIUM_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_PLAYER_UPDATE, addr, false, 0);
 
-    #ifdef VAULTMP_DEBUG
+                    #ifdef VAULTMP_DEBUG
                     char text[128];
                     snprintf(text, sizeof(text), "Sent player update packet (%s)", addr.ToString());
                     debug->Print(text, true);
-    #endif
+                    #endif
                 }
 
                 if (self->UpdateActorStateUpdateStruct(&localPlayerStateUpdate))
                 {
                     peer->Send((char*) &localPlayerStateUpdate, sizeof(localPlayerStateUpdate), HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_PLAYER_STATE_UPDATE, addr, false, 0);
 
-    #ifdef VAULTMP_DEBUG
+                    #ifdef VAULTMP_DEBUG
                     char text[128];
                     snprintf(text, sizeof(text), "Sent player state update packet (%s)", addr.ToString());
                     debug->Print(text, true);
-    #endif
+                    #endif
                 }
 
                 if (self->UpdateActorCellUpdateStruct(&localPlayerCellUpdate))
                 {
                     peer->Send((char*) &localPlayerCellUpdate, sizeof(localPlayerCellUpdate), HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_PLAYER_CELL_UPDATE, addr, false, 0);
 
-    #ifdef VAULTMP_DEBUG
+                    #ifdef VAULTMP_DEBUG
                     char text[128];
                     snprintf(text, sizeof(text), "Sent player cell update packet (%s)", addr.ToString());
                     debug->Print(text, true);
-    #endif
+                    #endif
                 }
 
                 if (self->UpdateActorItemUpdateStruct(&localPlayerItemUpdate, &localPlayerInventory))
@@ -1540,11 +1576,11 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
                     }
 
 
-    #ifdef VAULTMP_DEBUG
+                    #ifdef VAULTMP_DEBUG
                     char text[128];
                     snprintf(text, sizeof(text), "Sent %d player item update packets (%s)", localPlayerItemUpdate.size(), addr.ToString());
                     debug->Print(text, true);
-    #endif
+                    #endif
                 }*/
 
                 RakSleep(2);
@@ -1555,11 +1591,14 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
     }
     catch (...)
     {
-        Sleep(200); Packet* packet = NULL; while (packet = peer->Receive()) peer->DeallocatePacket(packet); // disconnection notification might still arrive
+        Sleep(200);
+        Packet* packet = NULL;
+        while (packet = peer->Receive()) peer->DeallocatePacket(packet); // disconnection notification might still arrive
 
         Interface::Terminate();
         GameFactory::DestroyAllInstances();
         Container::Cleanup();
+        API::Terminate();
 
 #ifdef VAULTMP_DEBUG
         debug->Print("Network thread is going to terminate (ERROR)", true);
@@ -1570,6 +1609,7 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
     Interface::Terminate();
     GameFactory::DestroyAllInstances();
     Container::Cleanup();
+    API::Terminate();
 
 #ifdef VAULTMP_DEBUG
     debug->Print("Network thread is going to terminate (no error occured)", true);

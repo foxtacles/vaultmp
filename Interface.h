@@ -44,6 +44,7 @@ private:
     static CriticalSection cs;
 
     static map<string, string> defs;
+    static map<string, string> alias;
     static Native natives;
 
     static Native::iterator DefineNativeInternal(string name, ParamContainer);

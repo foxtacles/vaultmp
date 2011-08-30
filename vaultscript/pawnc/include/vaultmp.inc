@@ -10,12 +10,12 @@
 
 // the PAWN equivalent to exec() is main()
 forward OnClientAuthenticate(const name[], const pwd[]);
-forward OnPlayerConnect(player);
 forward OnPlayerDisconnect(player, reason);
 forward OnPlayerRequestGame(player);
 forward OnPlayerSpawn(player);
 forward OnPlayerDeath(player);
 forward OnPlayerCellChange(player, cell);
+forward OnPlayerValueChange(player, Bool:base, index, Float:value);
 
 // Functions
 
@@ -24,3 +24,7 @@ native SetServerName(name[]);
 native SetServerMap(map[]);
 native SetServerRule(rule[], value[]);
 native GetGameCode();
+
+native ValueToString(index, value[]);
+native AxisToString(index, value[]);
+native AnimToString(index, value[]);

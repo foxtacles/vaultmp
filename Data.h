@@ -10,10 +10,10 @@
 #include "RakNet/RakString.h"
 #include "RakNet/MessageIdentifiers.h"
 
-#define PLAYER_REFERENCE    0x00000014
-#define PLAYER_BASE         0x00000007
+static const unsigned int PLAYER_REFERENCE  = 0x00000014;
+static const unsigned int PLAYER_BASE       = 0x00000007;
 
-#define SAFE_FIND(a,b) ((a.find(b) == a.end()) ? throw VaultException("Value not defined in database!") : a.find(b))
+#define SAFE_FIND(a,b) ((a.find(b) == a.end()) ? throw VaultException("Value not defined in database") : a.find(b))
 
 using namespace std;
 using namespace RakNet;
@@ -42,9 +42,7 @@ static vector<string> EmptyVector()
 
 static Parameter BuildParameter(string param)
 {
-    vector<string> params;
-    params.push_back(param);
-    return Parameter(params, &Data::EmptyVector);
+    return Parameter(vector<string>{param}, &Data::EmptyVector);
 }
 
 static Parameter BuildParameter(vector<string> params)
@@ -52,13 +50,15 @@ static Parameter BuildParameter(vector<string> params)
     return Parameter(params, &Data::EmptyVector);
 }
 
-static const char* True[] = {"1"};
-static const char* False[] = {"0"};
+static Parameter BuildParameter(double param)
+{
+    char value[64];
+    snprintf(value, sizeof(value), "%llf", param);
+    return BuildParameter(string(value));
+}
 
-static vector<string> data_True(True, True + 1);
-static vector<string> data_False(False, False + 1);
-static Parameter Param_True = Parameter(data_True, &EmptyVector);
-static Parameter Param_False = Parameter(data_False, &EmptyVector);
+static const Parameter Param_True = Parameter(vector<string>{"1"}, &EmptyVector);
+static const Parameter Param_False = Parameter(vector<string>{"0"}, &EmptyVector);
 
 enum
 {

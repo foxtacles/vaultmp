@@ -24,6 +24,10 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
     {"SetServerRule", PAWN::vaultmp_SetServerRule},
     {"GetGameCode", PAWN::vaultmp_GetGameCode},
 
+    {"ValueToString", PAWN::vaultmp_ValueToString},
+    {"AxisToString", PAWN::vaultmp_AxisToString},
+    {"AnimToString", PAWN::vaultmp_AnimToString},
+
     /*{"GetPlayerName", PAWN::vaultmp_GetPlayerName},
     {"GetPlayerPos", PAWN::vaultmp_GetPlayerPos},
     {"GetPlayerZAngle", PAWN::vaultmp_GetPlayerZAngle},
@@ -110,6 +114,62 @@ cell PAWN::vaultmp_SetServerRule(AMX* amx, const cell* params)
 cell PAWN::vaultmp_GetGameCode(AMX* amx, const cell* params)
 {
     return (cell) Dedicated::GetGameCode();
+}
+
+cell PAWN::vaultmp_ValueToString(AMX* amx, const cell* params)
+{
+    int i = 1, index;
+    cell* dest;
+
+    index = (int) params[1];
+    dest = amx_Address(amx, params[2]);
+
+    string value = API::RetrieveValue_Reverse((unsigned char) index);
+
+    if (!value.empty())
+    {
+        amx_SetString(dest, value.c_str(), 0, 0, value.length() + 1);
+    }
+    else
+        i = 0;
+
+    return i;
+}
+
+cell PAWN::vaultmp_AxisToString(AMX* amx, const cell* params)
+{
+    int i = 1, index;
+    cell* dest;
+
+    index = (int) params[1];
+    dest = amx_Address(amx, params[2]);
+
+    string axis = API::RetrieveAxis_Reverse((unsigned char) index);
+
+    if (!axis.empty())
+        amx_SetString(dest, axis.c_str(), 0, 0, axis.length() + 1);
+    else
+        i = 0;
+
+    return i;
+}
+
+cell PAWN::vaultmp_AnimToString(AMX* amx, const cell* params)
+{
+    int i = 1, index;
+    cell* dest;
+
+    index = (int) params[1];
+    dest = amx_Address(amx, params[2]);
+
+    string anim = API::RetrieveAnim_Reverse((unsigned char) index);
+
+    if (!anim.empty())
+        amx_SetString(dest, anim.c_str(), 0, 0, anim.length() + 1);
+    else
+        i = 0;
+
+    return i;
 }
 
 /*cell PAWN::vaultmp_GetPlayerName(AMX* amx, const cell* params)
@@ -360,7 +420,7 @@ int PAWN::Call(AMX* amx, const char* name, const char* argl, int buf, ...)
             case 'f':
             {
                 float value = (float) va_arg(args, double);
-                amx_Push(amx, value);
+                amx_Push(amx, amx_ftoc(value));
                 break;
             }
             case 's':

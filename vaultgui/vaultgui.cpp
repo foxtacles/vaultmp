@@ -1,39 +1,29 @@
-#define NOMINMAX
 #include <windows.h>
 #include <string>
 #include <queue>
 
 #include "vaultgui.h"
-#include "cegui/CEGUI.h"
+#include "CD3D9Hook.h"
+#include "CGUIWindow.h"
+#include "../CriticalSection.h"
 
 using namespace std;
 
+CriticalSection cs;
 queue<string> ChatFIFO;
-bool QueueMutex = false;
 bool thread = false;
+
+VOID Render();
 
 DWORD WINAPI guiThread(LPVOID data)
 {
-
+    //InitD3D9Hooks();
 
     while (thread)
     {
-        while (QueueMutex) Sleep(2);
 
-        QueueMutex = true;
-
-        while (!ChatFIFO.empty())
-        {
-            string msg = ChatFIFO.front();
-
-            /* To the GUI */
-
-            ChatFIFO.pop();
-        }
-
-        QueueMutex = false;
-
-        Sleep(200);
+        //Render();
+        Sleep(50);
     }
 
     return ((DWORD) data);
@@ -41,33 +31,21 @@ DWORD WINAPI guiThread(LPVOID data)
 
 extern "C" void __declspec(dllexport) Message(string msg)
 {
-    while (QueueMutex) Sleep(2);
-
-    QueueMutex = true;
+    cs.StartSession();
 
     ChatFIFO.push(msg);
 
-    QueueMutex = false;
+    cs.EndSession();
 }
 
-extern "C" HANDLE __declspec(dllexport) DLLjump()
-{
-    HANDLE hGUIThread;
-    DWORD guiID;
-
-    thread = true;
-
-    hGUIThread = CreateThread(NULL, 0, guiThread, (LPVOID) 0, 0, &guiID);
-
-    return hGUIThread;
-}
-
-extern "C" void __declspec(dllexport) DLLend()
+extern "C" void __declspec(dllexport) End()
 {
     thread = false;
 }
 
 BOOL APIENTRY DllMain(HINSTANCE hInst, DWORD reason, LPVOID reserved)
 {
-   return TRUE;
+    thread = true;
+    CreateThread(NULL, 0, guiThread, (LPVOID) 0, 0, NULL);
+    return TRUE;
 }

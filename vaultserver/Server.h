@@ -25,6 +25,11 @@ private:
     static NetworkResponse NewPlayer(RakNetGUID guid, NetworkID id, string name);
     static NetworkResponse Disconnect(RakNetGUID guid, unsigned char reason);
 
+    static NetworkResponse GetPos(RakNetGUID guid, NetworkID id, unsigned char axis, double value);
+    static NetworkResponse GetAngle(RakNetGUID guid, NetworkID id, unsigned char axis, double value);
+    static NetworkResponse GetGameCell(RakNetGUID guid, NetworkID id, unsigned int cell);
+    static NetworkResponse GetActorValue(RakNetGUID guid, NetworkID id, bool base, unsigned char index, double value);
+
 public:
 
 #ifdef VAULTMP_DEBUG

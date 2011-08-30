@@ -40,10 +40,9 @@ private:
 protected:
 
     Lockable();
+    virtual ~Lockable();
 
 public:
-
-    virtual ~Lockable();
 
     static Lockable* BlindUnlock(signed int key);
 

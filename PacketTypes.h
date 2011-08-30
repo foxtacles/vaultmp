@@ -28,7 +28,17 @@ enum
 
     ID_PLAYER_NEW,
     ID_PLAYER_LEFT,
-    ID_PLAYER_UPDATE,
+
+    ID_OBJECT_UPDATE,
+    ID_ACTOR_UPDATE,
+};
+
+enum
+{
+    ID_UPDATE_POS,
+    ID_UPDATE_ANGLE,
+    ID_UPDATE_CELL,
+    ID_UPDATE_VALUE,
 };
 
 enum
@@ -57,7 +67,7 @@ struct pTypeSpecifier
 
 class pDefault
 {
-    friend class PacketFactory;
+friend class PacketFactory;
 
 protected:
     pDefault(unsigned char type)
@@ -86,7 +96,7 @@ protected:
 
     void base()
     {
-        this->base_len = sizeof(pTypeSpecifier);
+        base_len = sizeof(pTypeSpecifier);
     };
 
 public:
@@ -109,6 +119,8 @@ public:
 
 class pGameDefault : public pDefault
 {
+friend class PacketFactory;
+
 protected:
     pGameDefault(unsigned char type) : pDefault(type)
     {
@@ -122,7 +134,7 @@ protected:
 
     void base()
     {
-        this->base_len = pDefault::base_len;
+
     };
 
     virtual void construct(void* super = NULL, unsigned int len = 0)
@@ -130,7 +142,7 @@ protected:
         if (!stream)
         {
             unsigned int written = 0;
-            stream = new unsigned char[sizeof(pTypeSpecifier) + len];
+            stream = new unsigned char[base_len + len];
             memcpy(stream, &type, sizeof(pTypeSpecifier));
             written += sizeof(pTypeSpecifier);
             memcpy((void*) (stream + written), super, len);
@@ -143,8 +155,8 @@ protected:
     {
         if (stream)
         {
-            if (this->base_len + len != this->len)
-                throw VaultException("Packet has size %d instead of expected %d bytes!", this->len, this->base_len + len);
+            if (base_len + len != this->len)
+                throw VaultException("Packet has size %d instead of expected %d bytes!", this->len, base_len + len);
 
             unsigned int read = 0;
             type = *reinterpret_cast<pTypeSpecifier*>(stream);
@@ -155,16 +167,18 @@ protected:
     };
 };
 
-class pPlayerDefault : public pDefault
+class pObjectDefault : public pDefault
 {
+friend class PacketFactory;
+
 protected:
-    pPlayerDefault(unsigned char type, NetworkID id) : pDefault(type)
+    pObjectDefault(unsigned char type, NetworkID id) : pDefault(type)
     {
         this->id = id;
         base();
     };
 
-    pPlayerDefault(unsigned char* stream, unsigned int len) : pDefault(stream, len)
+    pObjectDefault(unsigned char* stream, unsigned int len) : pDefault(stream, len)
     {
         base();
     };
@@ -173,8 +187,7 @@ protected:
 
     void base()
     {
-        this->base_len = sizeof(NetworkID);
-        this->base_len += pDefault::base_len;
+        base_len += sizeof(NetworkID);
     };
 
     virtual void construct(void* super = NULL, unsigned int len = 0)
@@ -182,7 +195,7 @@ protected:
         if (!stream)
         {
             unsigned int written = 0;
-            stream = new unsigned char[sizeof(pTypeSpecifier) + sizeof(NetworkID) + len];
+            stream = new unsigned char[base_len + len];
             memcpy(stream, &type, sizeof(pTypeSpecifier));
             written += sizeof(pTypeSpecifier);
             memcpy((void*) (stream + written), &id, sizeof(NetworkID));
@@ -197,8 +210,8 @@ protected:
     {
         if (stream)
         {
-            if (this->base_len + len != this->len)
-                throw VaultException("Packet has size %d instead of expected %d bytes!", this->len, this->base_len + len);
+            if (base_len + len != this->len)
+                throw VaultException("Packet has size %d instead of expected %d bytes!", this->len, base_len + len);
 
             unsigned int read = 0;
             type = *reinterpret_cast<pTypeSpecifier*>(stream);
@@ -211,16 +224,86 @@ protected:
     };
 };
 
-class pPlayerUpdateDefault : public pPlayerDefault
+class pObjectNewDefault : public pObjectDefault
 {
+friend class PacketFactory;
+
 protected:
-    pPlayerUpdateDefault(unsigned char type, unsigned char sub_type, NetworkID id) : pPlayerDefault(type, id)
+    pObjectNewDefault(unsigned char type, unsigned int refID, unsigned int baseID, NetworkID id) : pObjectDefault(type, id)
+    {
+        this->refID = refID;
+        this->baseID = baseID;
+        base();
+    };
+
+    pObjectNewDefault(unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+    {
+        base();
+    };
+
+    unsigned int refID;
+    unsigned int baseID;
+
+    void base()
+    {
+        base_len += sizeof(unsigned int);
+        base_len += sizeof(unsigned int);
+    };
+
+    virtual void construct(void* super = NULL, unsigned int len = 0)
+    {
+        if (!stream)
+        {
+            unsigned int written = 0;
+            stream = new unsigned char[base_len + len];
+            memcpy(stream, &type, sizeof(pTypeSpecifier));
+            written += sizeof(pTypeSpecifier);
+            memcpy((void*) (stream + written), &id, sizeof(NetworkID));
+            written += sizeof(NetworkID);
+            memcpy((void*) (stream + written), &refID, sizeof(unsigned int));
+            written += sizeof(unsigned int);
+            memcpy((void*) (stream + written), &baseID, sizeof(unsigned int));
+            written += sizeof(unsigned int);
+            memcpy((void*) (stream + written), super, len);
+            written += len;
+            this->len = written;
+        }
+    };
+
+    virtual void deconstruct(void* super = NULL, unsigned int len = 0)
+    {
+        if (stream)
+        {
+            if (base_len + len != this->len)
+                throw VaultException("Packet has size %d instead of expected %d bytes!", this->len, base_len + len);
+
+            unsigned int read = 0;
+            type = *reinterpret_cast<pTypeSpecifier*>(stream);
+            read += sizeof(pTypeSpecifier);
+            id = *reinterpret_cast<NetworkID*>(stream + read);
+            read += sizeof(NetworkID);
+            refID = *reinterpret_cast<unsigned int*>(stream + read);
+            read += sizeof(unsigned int);
+            baseID = *reinterpret_cast<unsigned int*>(stream + read);
+            read += sizeof(unsigned int);
+            if (super)
+                memcpy(super, (void*) (stream + read), len);
+        }
+    };
+};
+
+class pObjectUpdateDefault : public pObjectDefault
+{
+friend class PacketFactory;
+
+protected:
+    pObjectUpdateDefault(unsigned char type, unsigned char sub_type, NetworkID id) : pObjectDefault(type, id)
     {
         this->sub_type.type = sub_type;
         base();
     };
 
-    pPlayerUpdateDefault(unsigned char* stream, unsigned int len) : pPlayerDefault(stream, len)
+    pObjectUpdateDefault(unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
     {
         base();
     };
@@ -229,8 +312,7 @@ protected:
 
     void base()
     {
-        this->base_len = sizeof(pTypeSpecifier);
-        this->base_len += pPlayerDefault::base_len;
+        base_len += sizeof(pTypeSpecifier);
     };
 
     virtual void construct(void* super = NULL, unsigned int len = 0)
@@ -255,8 +337,8 @@ protected:
     {
         if (stream)
         {
-            if (this->base_len + len != this->len)
-                throw VaultException("Packet has size %d instead of expected %d bytes!", this->len, this->base_len + len);
+            if (base_len + len != this->len)
+                throw VaultException("Packet has size %d instead of expected %d,%d bytes!", this->len, base_len , len);
 
             unsigned int read = 0;
             type = *reinterpret_cast<pTypeSpecifier*>(stream);
@@ -409,48 +491,145 @@ private:
 
 /* ************************************** */
 
-class pPlayerNew : public pPlayerDefault
+class pPlayerNew : public pObjectNewDefault
+{
+friend class PacketFactory;
+
+private:
+    char name[MAX_PLAYER_NAME];
+
+    pPlayerNew(NetworkID id, unsigned int refID, unsigned int baseID, char* name) : pObjectNewDefault(ID_PLAYER_NEW, refID, baseID, id)
+    {
+        ZeroMemory(this->name, sizeof(this->name));
+        strncpy(this->name, name, sizeof(this->name));
+        construct(name, sizeof(this->name));
+    }
+    pPlayerNew(unsigned char* stream, unsigned int len) : pObjectNewDefault(stream, len)
+    {
+        deconstruct(name, sizeof(this->name));
+    }
+};
+
+class pPlayerLeft : public pObjectDefault
+{
+friend class PacketFactory;
+
+private:
+    pPlayerLeft(NetworkID id) : pObjectDefault(ID_PLAYER_LEFT, id)
+    {
+        construct();
+    }
+    pPlayerLeft(unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+    {
+        deconstruct();
+    }
+};
+
+/* ************************************** */
+
+class pObjectPos : public pObjectUpdateDefault
 {
 friend class PacketFactory;
 
 private:
 #pragma pack(push, 1)
-    struct _pPlayerNew
+    struct _pObjectPos
     {
-        char name[MAX_PLAYER_NAME];
-        unsigned int baseID;
+        unsigned char axis;
+        double value;
     };
 #pragma pack(pop)
 
-    _pPlayerNew _data;
+    _pObjectPos _data;
 
-    pPlayerNew(NetworkID id, char* name, unsigned int baseID) : pPlayerDefault(ID_PLAYER_NEW, id)
+    pObjectPos(NetworkID id, unsigned char axis, double value) : pObjectUpdateDefault(ID_OBJECT_UPDATE, ID_UPDATE_POS, id)
     {
-        ZeroMemory(&_data, sizeof(_data));
-        strncpy(_data.name, name, sizeof(_data.name));
-        _data.baseID = baseID;
+        _data.axis = axis;
+        _data.value = value;
         construct(&_data, sizeof(_data));
     }
-    pPlayerNew(unsigned char* stream, unsigned int len) : pPlayerDefault(stream, len)
+    pObjectPos(unsigned char* stream, unsigned int len) : pObjectUpdateDefault(stream, len)
     {
         deconstruct(&_data, sizeof(_data));
     }
 };
 
-class pPlayerLeft : public pPlayerDefault
+class pObjectAngle : public pObjectUpdateDefault
 {
 friend class PacketFactory;
 
 private:
-    pPlayerLeft(NetworkID id) : pPlayerDefault(ID_PLAYER_LEFT, id)
+#pragma pack(push, 1)
+    struct _pObjectAngle
     {
-        construct();
+        unsigned char axis;
+        double value;
+    };
+#pragma pack(pop)
+
+    _pObjectAngle _data;
+
+    pObjectAngle(NetworkID id, unsigned char axis, double value) : pObjectUpdateDefault(ID_OBJECT_UPDATE, ID_UPDATE_ANGLE, id)
+    {
+        _data.axis = axis;
+        _data.value = value;
+        construct(&_data, sizeof(_data));
     }
-    pPlayerLeft(unsigned char* stream, unsigned int len) : pPlayerDefault(stream, len)
+    pObjectAngle(unsigned char* stream, unsigned int len) : pObjectUpdateDefault(stream, len)
     {
-        deconstruct();
+        deconstruct(&_data, sizeof(_data));
     }
 };
+
+class pObjectCell : public pObjectUpdateDefault
+{
+friend class PacketFactory;
+
+private:
+    unsigned int cell;
+
+    pObjectCell(NetworkID id, unsigned int cell) : pObjectUpdateDefault(ID_OBJECT_UPDATE, ID_UPDATE_CELL, id)
+    {
+        this->cell = cell;
+        construct(&this->cell, sizeof(this->cell));
+    }
+    pObjectCell(unsigned char* stream, unsigned int len) : pObjectUpdateDefault(stream, len)
+    {
+        deconstruct(&this->cell, sizeof(this->cell));
+    }
+};
+
+/* ************************************** */
+
+class pActorValue : public pObjectUpdateDefault
+{
+friend class PacketFactory;
+
+private:
+#pragma pack(push, 1)
+    struct _pActorValue
+    {
+        bool base;
+        unsigned char index;
+        double value;
+    };
+#pragma pack(pop)
+
+    _pActorValue _data;
+
+    pActorValue(NetworkID id, bool base, unsigned char index, double value) : pObjectUpdateDefault(ID_ACTOR_UPDATE, ID_UPDATE_VALUE, id)
+    {
+        _data.base = base;
+        _data.index = index;
+        _data.value = value;
+        construct(&_data, sizeof(_data));
+    }
+    pActorValue(unsigned char* stream, unsigned int len) : pObjectUpdateDefault(stream, len)
+    {
+        deconstruct(&_data, sizeof(_data));
+    }
+};
+
 
 /* ************************************** */
 
@@ -514,9 +693,10 @@ public:
         case ID_PLAYER_NEW:
         {
             NetworkID id = va_arg(args, NetworkID);
-            char* name = va_arg(args, char*);
+            unsigned int refID = va_arg(args, unsigned int);
             unsigned int baseID = va_arg(args, unsigned int);
-            packet = new pPlayerNew(id, name, baseID);
+            char* name = va_arg(args, char*);
+            packet = new pPlayerNew(id, refID, baseID, name);
             break;
         }
 
@@ -524,6 +704,42 @@ public:
         {
             NetworkID id = va_arg(args, NetworkID);
             packet = new pPlayerLeft(id);
+            break;
+        }
+
+        case ID_UPDATE_POS:
+        {
+            NetworkID id = va_arg(args, NetworkID);
+            unsigned char axis = (unsigned char) va_arg(args, unsigned int);
+            double value = va_arg(args, double);
+            packet = new pObjectPos(id, axis, value);
+            break;
+        }
+
+        case ID_UPDATE_ANGLE:
+        {
+            NetworkID id = va_arg(args, NetworkID);
+            unsigned char axis = (unsigned char) va_arg(args, unsigned int);
+            double value = va_arg(args, double);
+            packet = new pObjectAngle(id, axis, value);
+            break;
+        }
+
+        case ID_UPDATE_CELL:
+        {
+            NetworkID id = va_arg(args, NetworkID);
+            unsigned int cell = va_arg(args, unsigned int);
+            packet = new pObjectCell(id, cell);
+            break;
+        }
+
+        case ID_UPDATE_VALUE:
+        {
+            NetworkID id = va_arg(args, NetworkID);
+            bool base = (bool) va_arg(args, unsigned int);
+            unsigned char index = (unsigned char) va_arg(args, unsigned int);
+            double value = va_arg(args, double);
+            packet = new pActorValue(id, base, index, value);
             break;
         }
 
@@ -563,6 +779,30 @@ public:
         case ID_PLAYER_LEFT:
             packet = new pPlayerLeft(stream, len);
             break;
+        case ID_OBJECT_UPDATE:
+        case ID_ACTOR_UPDATE:
+        {
+            if (len < 2)
+                throw VaultException("Incomplete object packet type %d", (int) stream[0]);
+            switch (stream[1])
+            {
+            case ID_UPDATE_POS:
+                packet = new pObjectPos(stream, len);
+                break;
+            case ID_UPDATE_ANGLE:
+                packet = new pObjectAngle(stream, len);
+                break;
+            case ID_UPDATE_CELL:
+                packet = new pObjectCell(stream, len);
+                break;
+            case ID_UPDATE_VALUE:
+                packet = new pActorValue(stream, len);
+                break;
+            default:
+                throw VaultException("Unhandled object update packet type %d", (int) stream[1]);
+            }
+            break;
+        }
         default:
             throw VaultException("Unhandled packet type %d", (int) stream[0]);
         }
@@ -631,11 +871,13 @@ public:
             {
                 pPlayerNew* data = dynamic_cast<pPlayerNew*>(packet);
                 NetworkID* id = va_arg(args, NetworkID*);
-                char* name = va_arg(args, char*);
+                unsigned int* refID = va_arg(args, unsigned int*);
                 unsigned int* baseID = va_arg(args, unsigned int*);
+                char* name = va_arg(args, char*);
                 *id = data->id;
-                strncpy(name, data->_data.name, sizeof(data->_data.name));
-                *baseID = data->_data.baseID;
+                *refID = data->refID;
+                *baseID = data->baseID;
+                strncpy(name, data->name, sizeof(data->name));
                 break;
             }
 
@@ -644,6 +886,61 @@ public:
                 pPlayerLeft* data = dynamic_cast<pPlayerLeft*>(packet);
                 NetworkID* id = va_arg(args, NetworkID*);
                 *id = data->id;
+                break;
+            }
+
+            case ID_OBJECT_UPDATE:
+            case ID_ACTOR_UPDATE:
+            {
+                pObjectUpdateDefault* data = dynamic_cast<pObjectUpdateDefault*>(packet);
+
+                switch (data->sub_type.type)
+                {
+                    case ID_UPDATE_POS:
+                    {
+                        pObjectPos* update = dynamic_cast<pObjectPos*>(data);
+                        NetworkID* id = va_arg(args, NetworkID*);
+                        unsigned char* axis = va_arg(args, unsigned char*);
+                        double* value = va_arg(args, double*);
+                        *id = update->id;
+                        *axis = update->_data.axis;
+                        *value = update->_data.value;
+                        break;
+                    }
+                    case ID_UPDATE_ANGLE:
+                    {
+                        pObjectAngle* update = dynamic_cast<pObjectAngle*>(data);
+                        NetworkID* id = va_arg(args, NetworkID*);
+                        unsigned char* axis = va_arg(args, unsigned char*);
+                        double* value = va_arg(args, double*);
+                        *id = update->id;
+                        *axis = update->_data.axis;
+                        *value = update->_data.value;
+                        break;
+                    }
+                    case ID_UPDATE_CELL:
+                    {
+                        pObjectCell* update = dynamic_cast<pObjectCell*>(data);
+                        NetworkID* id = va_arg(args, NetworkID*);
+                        unsigned int* cell = va_arg(args, unsigned int*);
+                        *id = update->id;
+                        *cell = update->cell;
+                        break;
+                    }
+                    case ID_UPDATE_VALUE:
+                    {
+                        pActorValue* update = dynamic_cast<pActorValue*>(data);
+                        NetworkID* id = va_arg(args, NetworkID*);
+                        bool* base = va_arg(args, bool*);
+                        unsigned char* index = va_arg(args, unsigned char*);
+                        double* value = va_arg(args, double*);
+                        *id = update->id;
+                        *base = update->_data.base;
+                        *index = update->_data.index;
+                        *value = update->_data.value;
+                        break;
+                    }
+                }
                 break;
             }
 

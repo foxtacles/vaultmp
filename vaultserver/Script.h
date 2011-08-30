@@ -31,12 +31,12 @@ using namespace std;
 
 typedef void (*fexec)();
 typedef bool (*fOnClientAuthenticate)(string, string);
-typedef void (*fOnPlayerConnect)(unsigned int);
 typedef void (*fOnPlayerDisconnect)(unsigned int, unsigned char);
 typedef unsigned int (*fOnPlayerRequestGame)(unsigned int);
 typedef void (*fOnPlayerSpawn)(unsigned int);
 typedef void (*fOnPlayerDeath)(unsigned int);
 typedef void (*fOnPlayerCellChange)(unsigned int, unsigned int);
+typedef void (*fOnPlayerValueChange)(unsigned int, bool, unsigned char, double);
 
 class Script {
 
@@ -52,12 +52,12 @@ private:
 
     fexec exec;
     fOnClientAuthenticate OnClientAuthenticate;
-    fOnPlayerConnect OnPlayerConnect;
     fOnPlayerDisconnect OnPlayerDisconnect;
     fOnPlayerRequestGame OnPlayerRequestGame;
     fOnPlayerSpawn OnPlayerSpawn;
     fOnPlayerDeath OnPlayerDeath;
     fOnPlayerCellChange OnPlayerCellChange;
+    fOnPlayerValueChange OnPlayerValueChange;
 
 public:
 
@@ -65,8 +65,10 @@ public:
     static void UnloadScripts();
 
     static bool Authenticate(string name, string pwd);
-    static unsigned int RequestGame(unsigned int player);
     static void Disconnect(unsigned int player, unsigned char reason);
+    static unsigned int RequestGame(unsigned int player);
+    static void CellChange(unsigned int player, unsigned int cell);
+    static void ValueChange(unsigned int player, bool base, unsigned char index, double value);
 
 };
 

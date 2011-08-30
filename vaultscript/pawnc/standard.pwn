@@ -23,11 +23,6 @@ public OnClientAuthenticate(const name[], const pwd[])
 	return true;
 }
 
-public OnPlayerConnect(player)
-{
-
-}
-
 public OnPlayerDisconnect(player, reason)
 {
 	printf("PAWN: player disconnect %d, %d\n", player, reason);
@@ -51,5 +46,12 @@ public OnPlayerDeath(player)
 
 public OnPlayerCellChange(player, cell)
 {
+    	printf("PAWN: player cell %d,%x\n", player, cell);
+}
 
+public OnPlayerValueChange(player, Bool:base, index, Float:value)
+{
+	new values[64];
+	ValueToString(index, values);
+	printf("PAWN: player value %s -> %f\n", values, value);
 }

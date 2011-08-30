@@ -15,6 +15,7 @@
 #endif
 
 using namespace Data;
+using namespace Values;
 using namespace std;
 
 class Object : public Reference
@@ -29,6 +30,8 @@ private:
     Value<string> object_Name;
     map<unsigned char, Value<double> > object_Pos;
     map<unsigned char, Value<double> > object_Angle;
+    Value<unsigned int> cell_Game;
+    Value<unsigned int> cell_Network;
     Value<bool> state_Enabled;
 
 protected:
@@ -46,11 +49,18 @@ public:
     double GetPos(unsigned char axis);
     double GetAngle(unsigned char axis);
     bool GetEnabled();
+    unsigned int GetGameCell();
+    unsigned int GetNetworkCell();
 
-    bool SetName(string name);
-    bool SetPos(unsigned char axis, double pos);
-    bool SetAngle(unsigned char axis, double angle);
-    bool SetEnabled(bool state);
+    Lockable* SetName(string name);
+    Lockable* SetPos(unsigned char axis, double pos);
+    Lockable* SetAngle(unsigned char axis, double angle);
+    Lockable* SetEnabled(bool state);
+    Lockable* SetGameCell(unsigned int cell);
+    Lockable* SetNetworkCell(unsigned int cell);
+
+    bool IsNearPoint(double X, double Y, double Z, double R);
+    bool IsCoordinateInRange(unsigned char axis, double value, double R);
 
 };
 

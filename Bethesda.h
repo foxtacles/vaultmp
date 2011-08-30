@@ -45,12 +45,7 @@ private:
     static ModList modfiles;
     static bool initialized;
 
-    static void InitializeGame();
-
-    static DWORD WINAPI InjectedCode(LPVOID addr);
-    static void InjectedEnd();
-    struct INJECT;
-
+    static void Initialize();
     static void CommandHandler(signed int key, vector<double> info, double result);
 
 #ifdef VAULTMP_DEBUG

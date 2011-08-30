@@ -8,6 +8,7 @@
 #include <time.h>
 #include <string.h>
 #include <string>
+#include <cmath>
 
 using namespace std;
 
@@ -21,7 +22,9 @@ private:
 
 public:
     static void timestamp();
+    static bool DoubleCompare(double a, double b, double epsilon);
     static string LongToHex(unsigned int value);
+    static string& RemoveExtension(string& file);
     static const char* FileOnly(const char* path);
     static unsigned int FileLength(const char* file);
     static unsigned int crc32buf(char* buf, size_t len);

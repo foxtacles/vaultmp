@@ -16,7 +16,6 @@ using namespace std;
 
 class Debug : private CriticalSection
 {
-
 private:
     string logfile;
     FILE* vaultmplog;

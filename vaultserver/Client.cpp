@@ -6,7 +6,7 @@ using namespace std;
 map<RakNetGUID, Client*> Client::clients;
 stack<unsigned int> Client::clientID;
 
-Client::Client(RakNetGUID guid, Player* player)
+Client::Client(RakNetGUID guid, NetworkID player)
 {
     clients.insert(pair<RakNetGUID, Client*>(guid, this));
     this->guid = guid;
@@ -54,12 +54,23 @@ Client* Client::GetClientFromID(unsigned int ID)
     return NULL;
 }
 
-vector<RakNetGUID> Client::GetNetworkList()
+vector<RakNetGUID> Client::GetNetworkList(Client* except)
 {
     vector<RakNetGUID> network;
     map<RakNetGUID, Client*>::iterator it;
 
-    for (it = clients.begin(); it != clients.end(); ++it)
+    for (it = clients.begin(); it != clients.end() && it->second != except; ++it)
+        network.push_back(it->first);
+
+    return network;
+}
+
+vector<RakNetGUID> Client::GetNetworkList(RakNetGUID except)
+{
+    vector<RakNetGUID> network;
+    map<RakNetGUID, Client*>::iterator it;
+
+    for (it = clients.begin(); it != clients.end() && it->first != except; ++it)
         network.push_back(it->first);
 
     return network;
@@ -75,7 +86,7 @@ unsigned int Client::GetID()
     return ID;
 }
 
-Player* Client::GetPlayer()
+NetworkID Client::GetPlayer()
 {
     return player;
 }

@@ -20,33 +20,34 @@ PipeClient pipeClient;
 LookupForm FormLookup;
 LookupFunc FuncLookup;
 
-void PatchGame();
+void PatchGame(HINSTANCE& silverlock);
 void BethesdaDelegator();
 vector<void*> delegated;
 
 bool delegate = false;
 bool DLLerror = false;
+int game = 0;
 
-static unsigned FalloutNVpatch_VATS_src = 0x009428AE;
-static unsigned FalloutNVpatch_VATS_dest = 0x00942BE8;
-static unsigned FalloutNVpatch_delegator_src = 0x0086B3E3;
-static unsigned FalloutNVpatch_delegator_dest = 0x0086E649;
-static unsigned FalloutNVpatch_delegatorCall_src = 0x0086E64A;
-static unsigned FalloutNVpatch_delegatorCall_dest = (unsigned) &BethesdaDelegator;
+const unsigned FalloutNVpatch_VATS_src = 0x009428AE;
+const unsigned FalloutNVpatch_VATS_dest = 0x00942BE8;
+const unsigned FalloutNVpatch_delegator_src = 0x0086B3E3;
+const unsigned FalloutNVpatch_delegator_dest = 0x0086E649;
+const unsigned FalloutNVpatch_delegatorCall_src = 0x0086E64A;
+const unsigned FalloutNVpatch_delegatorCall_dest = (unsigned) &BethesdaDelegator;
 
-static unsigned Fallout3patch_VATS_src = 0x0078A27D;
-static unsigned Fallout3patch_VATS_dest = 0x0078A40A;
-static unsigned Fallout3patch_delegator_src = 0x006EEC86;
-static unsigned Fallout3patch_delegator_dest = 0x006EDBD9;
-static unsigned Fallout3patch_delegatorCall_src = 0x006EDBDA;
-static unsigned Fallout3patch_delegatorCall_dest = (unsigned) &BethesdaDelegator;
+const unsigned Fallout3patch_VATS_src = 0x0078A27D;
+const unsigned Fallout3patch_VATS_dest = 0x0078A40A;
+const unsigned Fallout3patch_delegator_src = 0x006EEC86;
+const unsigned Fallout3patch_delegator_dest = 0x006EDBD9;
+const unsigned Fallout3patch_delegatorCall_src = 0x006EDBDA;
+const unsigned Fallout3patch_delegatorCall_dest = (unsigned) &BethesdaDelegator;
 
-static unsigned OblivionPatch_delegator_src = 0x0040F270;
-static unsigned OblivionPatch_delegator_dest = 0x0040F753;
-static unsigned OblivionPatch_delegator_ret_src = 0x0040F75A;
-static unsigned OblivionPatch_delegator_ret_dest = 0x0040D800;
-static unsigned OblivionPatch_delegatorCall_src = 0x0040F754;
-static unsigned OblivionPatch_delegatorCall_dest = (unsigned) &BethesdaDelegator;
+const unsigned OblivionPatch_delegator_src = 0x0040F270;
+const unsigned OblivionPatch_delegator_dest = 0x0040F753;
+const unsigned OblivionPatch_delegator_ret_src = 0x0040F75A;
+const unsigned OblivionPatch_delegator_ret_dest = 0x0040D800;
+const unsigned OblivionPatch_delegatorCall_src = 0x0040F754;
+const unsigned OblivionPatch_delegatorCall_dest = (unsigned) &BethesdaDelegator;
 
 // Those snippets are from FOSE, thanks
 
@@ -212,7 +213,22 @@ void ExecuteCommand(const vector<void*> args, unsigned int crc, signed int key, 
 
 DWORD WINAPI vaultmp_pipe(LPVOID data)
 {
-    HINSTANCE vaultgui = (HINSTANCE) data;
+    /* Loading and initalizing vaultgui.dll */
+
+    HINSTANCE vaultgui = NULL;
+    HINSTANCE silverlock = NULL;
+    HANDLE guiThread;
+
+    vaultgui = LoadLibrary("vaultgui.dll");
+
+    if (vaultgui != NULL)
+    {
+        fInitialize init;
+        init = (fInitialize) GetProcAddress(vaultgui, "Initialize");
+        guiThread = init();
+    }
+    /*else
+        DLLerror = true;*/
 
     fMessage GUI_msg;
 
@@ -234,6 +250,9 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 
     buffer[0] = PIPE_SYS_WAKEUP;
     pipeClient.Send(buffer);
+
+    Sleep(3000);
+    PatchGame(silverlock);
 
     if (DLLerror)
     {
@@ -321,15 +340,42 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
     }
 
     if (vaultgui != NULL)
-    {
+        FreeLibrary(vaultgui);
 
-    }
+    if (silverlock != NULL)
+        FreeLibrary(silverlock);
 
     return ((DWORD) data);
 }
 
-void PatchGame(int game)
+void PatchGame(HINSTANCE& silverlock)
 {
+    TCHAR curdir[MAX_PATH]; ZeroMemory(curdir, sizeof(curdir));
+    GetModuleFileName(NULL, (LPTSTR) curdir, MAX_PATH);
+
+    /* Loading FOSE / NVSE */
+
+    silverlock = NULL;
+
+    if (strstr(curdir, "Fallout3.exe"))
+    {
+        game = FALLOUT3;
+        silverlock = LoadLibrary("fose_1_7.dll");
+    }
+    else if (strstr(curdir, "FalloutNV.exe"))
+    {
+        game = NEWVEGAS;
+        silverlock = LoadLibrary("nvse_1_1.dll");
+    }
+    else if (strstr(curdir, "Oblivion.exe"))
+    {
+        game = OBLIVION;
+        silverlock = LoadLibrary("obse_1_2_416.dll");
+    }
+
+    if (silverlock == NULL)
+        DLLerror = true;
+
     switch (game)
     {
     case FALLOUT3:
@@ -377,76 +423,13 @@ void PatchGame(int game)
     }
 }
 
-extern "C" void __declspec(dllexport) Initialize(int game)
+void Initialize()
 {
-    PatchGame(game);
-
-    /* Loading FOSE / NVSE */
-
-    HINSTANCE silverlock = NULL;
-
-    switch (game)
-    {
-    case FALLOUT3:
-        silverlock = LoadLibrary("fose_1_7.dll");
-        break;
-    case NEWVEGAS:
-        silverlock = LoadLibrary("nvse_1_1.dll");
-        break;
-    case OBLIVION:
-        silverlock = LoadLibrary("obse_1_2_416.dll");
-        break;
-    }
-
-    if (silverlock == NULL)
-        DLLerror = true;
-
-    /* Loading and initalizing vaultgui.dll */
-
-    HINSTANCE vaultgui = NULL;
-    HANDLE guiThread;
-
-    vaultgui = LoadLibrary("vaultgui.dll");
-
-    if (vaultgui != NULL)
-    {
-        fInitialize init;
-        init = (fInitialize) GetProcAddress(vaultgui, "Initialize");
-        guiThread = init();
-    }
-    /*else
-        DLLerror = true;*/
-
-    /* Initalizing vaultmp.exe <-> Fallout3.exe pipe */
-
-    HANDLE pipeThread;
-
-    pipeThread = CreateThread(NULL, 0, vaultmp_pipe, (LPVOID) vaultgui, 0, NULL);
-
-    if (guiThread != NULL && pipeThread != NULL)
-    {
-        HANDLE threads[2];
-        threads[0] = pipeThread;
-        threads[1] = guiThread;
-        WaitForMultipleObjects(2, threads, TRUE, INFINITE);
-    }
-    else if (pipeThread != NULL)
-        WaitForSingleObject(pipeThread, INFINITE);
-
-    if (pipeThread != NULL)
-        CloseHandle(pipeThread);
-
-    if (guiThread != NULL)
-        CloseHandle(guiThread);
-
-    if (vaultgui != NULL)
-        FreeLibrary(vaultgui);
-
-    if (silverlock != NULL)
-        FreeLibrary(silverlock);
+    CreateThread(NULL, 0, vaultmp_pipe, NULL, 0, NULL);
 }
 
-BOOL APIENTRY DllMain(HINSTANCE hInst, DWORD reason, LPVOID reserved)
+static void Startup(void) __attribute__((constructor));
+void Startup()
 {
-    return TRUE;
+    Initialize();
 }

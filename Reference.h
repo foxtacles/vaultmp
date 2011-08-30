@@ -25,8 +25,8 @@ protected:
     virtual ~Reference();
 
 public:
-    void SetReference(unsigned int refID);
-    void SetBase(unsigned int baseID);
+    Lockable* SetReference(unsigned int refID);
+    Lockable* SetBase(unsigned int baseID);
 
     unsigned int GetReference();
     unsigned int GetBase();

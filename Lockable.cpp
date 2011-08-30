@@ -120,6 +120,8 @@ signed int Lockable::Lock(bool flat)
     locks.push_back(next_key);
     keymap.insert(pair<signed int, Lockable*>(next_key, this));
     cs.EndSession();
+
+    return next_key;
 }
 
 Lockable* Lockable::Unlock(signed int key)

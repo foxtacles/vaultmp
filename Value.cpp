@@ -81,4 +81,5 @@ template class Value<unsigned int>;
 template class Value<bool>;
 template class Value<double>;
 template class Value<string>;
+template class Value<Object*>;
 template class Value<Container*>;

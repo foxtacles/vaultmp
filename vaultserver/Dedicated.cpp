@@ -233,13 +233,20 @@ void* Dedicated::DedicatedThread(void* data)
 
     Packet* packet;
 
+    API::Initialize(self->GetGame());
     Container::Initialize(self->GetGame());
     Client::SetMaximumClients(connections);
+    Network::Flush();
 
     try
     {
         while (thread)
         {
+            NetworkResponse response;
+
+            while ((response = Network::Next()).size())
+                Network::Dispatch(peer, response);
+
             for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
             {
                 if (packet->data[0] == ID_MASTER_UPDATE)
@@ -296,7 +303,7 @@ void* Dedicated::DedicatedThread(void* data)
                 {
                     try
                     {
-                        NetworkResponse response = NetworkServer::ProcessPacket(packet);
+                        response = NetworkServer::ProcessPacket(packet);
 
                         vector<RakNetGUID> closures;
                         for (NetworkResponse::iterator it = response.begin(); it != response.end(); ++it)
@@ -311,7 +318,7 @@ void* Dedicated::DedicatedThread(void* data)
                     catch (...)
                     {
                         peer->DeallocatePacket(packet);
-                        NetworkResponse response = NetworkServer::ProcessEvent(ID_EVENT_SERVER_ERROR);
+                        response = NetworkServer::ProcessEvent(ID_EVENT_SERVER_ERROR);
                         Network::Dispatch(peer, response);
                         throw;
                     }
@@ -573,6 +580,8 @@ void* Dedicated::DedicatedThread(void* data)
     RakPeerInterface::DestroyInstance(peer);
 
     GameFactory::DestroyAllInstances();
+    Container::Cleanup();
+    API::Terminate();
 
 #ifdef VAULTMP_DEBUG
     debug->Print("Network thread is going to terminate", true);

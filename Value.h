@@ -10,6 +10,7 @@
 
 using namespace std;
 
+class Object;
 class Container;
 
 template <typename T>

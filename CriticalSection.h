@@ -7,6 +7,13 @@
 #include <pthread.h>
 #endif
 
+#include <typeinfo>
+
+#define DONT_NEED_DEBUG
+#include "VaultException.h"
+
+#define CS_TIMEOUT     5000
+
 class CriticalSection
 {
 
@@ -17,12 +24,16 @@ private:
     pthread_mutex_t cs;
 #endif
 
+    bool finalize;
+    int locks;
+
 public:
     CriticalSection();
     virtual ~CriticalSection();
 
-    void StartSession();
+    CriticalSection* StartSession();
     void EndSession();
+    void Finalize();
 
 };
 

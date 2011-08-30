@@ -28,18 +28,22 @@ Script::Script(char* path)
 
         GetScriptCallback(fexec, "exec", exec);
         GetScriptCallback(fOnClientAuthenticate, "OnClientAuthenticate", OnClientAuthenticate);
-        GetScriptCallback(fOnPlayerConnect, "OnPlayerConnect", OnPlayerConnect);
         GetScriptCallback(fOnPlayerDisconnect, "OnPlayerDisconnect", OnPlayerDisconnect);
         GetScriptCallback(fOnPlayerRequestGame, "OnPlayerRequestGame", OnPlayerRequestGame);
         GetScriptCallback(fOnPlayerSpawn, "OnPlayerSpawn", OnPlayerSpawn);
         GetScriptCallback(fOnPlayerDeath, "OnPlayerDeath", OnPlayerDeath);
         GetScriptCallback(fOnPlayerCellChange, "OnPlayerCellChange", OnPlayerCellChange);
+        GetScriptCallback(fOnPlayerValueChange, "OnPlayerValueChange", OnPlayerValueChange);
 
         SetScriptFunction("timestamp", &Utils::timestamp);
         SetScriptFunction("SetServerName", &Dedicated::SetServerName);
         SetScriptFunction("SetServerMap", &Dedicated::SetServerMap);
         SetScriptFunction("SetServerRule", &Dedicated::SetServerRule);
         SetScriptFunction("GetGameCode", &Dedicated::GetGameCode);
+
+        SetScriptFunction("ValueToString", &API::RetrieveValue_Reverse);
+        SetScriptFunction("AxisToString", &API::RetrieveAxis_Reverse);
+        SetScriptFunction("AnimToString", &API::RetrieveAnim_Reverse);
 
         exec();
     }
@@ -165,7 +169,32 @@ void Script::Disconnect(unsigned int player, unsigned char reason)
         if ((*it)->cpp_script)
             (*it)->OnPlayerDisconnect(player, reason);
         else
-            PAWN::Call((AMX*) (*it)->handle, "OnPlayerDisconnect", "ii", 0, (int) reason, player);
+            PAWN::Call((AMX*) (*it)->handle, "OnPlayerDisconnect", "ii", 0, (unsigned int) reason, player);
     }
 }
 
+ void Script::CellChange(unsigned int player, unsigned int cell)
+ {
+    vector<Script*>::iterator it;
+
+    for (it = scripts.begin(); it != scripts.end(); ++it)
+    {
+        if ((*it)->cpp_script)
+            (*it)->OnPlayerCellChange(player, cell);
+        else
+            PAWN::Call((AMX*) (*it)->handle, "OnPlayerCellChange", "ii", 0, cell, player);
+    }
+ }
+
+ void Script::ValueChange(unsigned int player, bool base, unsigned char index, double value)
+ {
+    vector<Script*>::iterator it;
+
+    for (it = scripts.begin(); it != scripts.end(); ++it)
+    {
+        if ((*it)->cpp_script)
+            (*it)->OnPlayerValueChange(player, base, index, value);
+        else
+            PAWN::Call((AMX*) (*it)->handle, "OnPlayerValueChange", "fiii", 0, (float) value, (unsigned int) index, (unsigned int) base, player);
+    }
+ }

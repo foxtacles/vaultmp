@@ -9,17 +9,29 @@ Reference::Reference(unsigned int refID, unsigned int baseID)
 
 Reference::~Reference()
 {
-
+    Finalize();
 }
 
-void Reference::SetReference(unsigned int refID)
+Lockable* Reference::SetReference(unsigned int refID)
 {
-    this->refID.Set(refID);
+    if (this->refID.Get() == refID)
+        return NULL;
+
+    if (!this->refID.Set(refID))
+        return NULL;
+
+    return &this->refID;
 }
 
-void Reference::SetBase(unsigned int baseID)
+Lockable* Reference::SetBase(unsigned int baseID)
 {
-    this->baseID.Set(baseID);
+    if (this->baseID.Get() == baseID)
+        return NULL;
+
+    if (!this->baseID.Set(baseID))
+        return NULL;
+
+    return &this->baseID;
 }
 
 unsigned int Reference::GetReference()

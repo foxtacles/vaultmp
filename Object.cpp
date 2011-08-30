@@ -53,74 +53,138 @@ bool Object::GetEnabled()
     return state_Enabled.Get();
 }
 
-bool Object::SetName(string name)
+unsigned int Object::GetGameCell()
+{
+    return cell_Game.Get();
+}
+
+unsigned int Object::GetNetworkCell()
+{
+    return cell_Network.Get();
+}
+
+Lockable* Object::SetName(string name)
 {
     if (this->object_Name.Get() == name)
-        return false;
+        return NULL;
 
     if (!this->object_Name.Set(name))
-        return false;
+        return NULL;
 
 #ifdef VAULTMP_DEBUG
     if (debug != NULL)
         debug->PrintFormat("Object name was set to %s (ref: %08X)", true, this->object_Name.Get().c_str(), this->GetReference());
 #endif
 
-    return true;
+    return &this->object_Name;
 }
 
-bool Object::SetPos(unsigned char axis, double pos)
+Lockable* Object::SetPos(unsigned char axis, double pos)
 {
-    if (SAFE_FIND(this->object_Pos, axis)->second.Get() == pos)
-        return false;
+    Value<double>& data = SAFE_FIND(this->object_Pos, axis)->second;
+
+    if (Utils::DoubleCompare(data.Get(), pos, 0.01))
+        return NULL;
 
     if ((pos != 2048.0 && pos != 128.0 && pos != 0.0))
     {
-        if (!SAFE_FIND(this->object_Pos, axis)->second.Set(pos))
-            return false;
+        if (!data.Set(pos))
+            return NULL;
 
 #ifdef VAULTMP_DEBUG
         if (debug != NULL)
-            debug->PrintFormat("Object %s-pos was set to %Lf (ref: %08X)", true, API::RetrieveAxis_Reverse(axis).c_str(), pos, this->GetReference());
+            debug->PrintFormat("Object %s-pos was set to %f (ref: %08X)", true, API::RetrieveAxis_Reverse(axis).c_str(), (float) pos, this->GetReference());
 #endif
-        return true;
+        return &data;
     }
 
-    return false;
+    return NULL;
 }
 
-bool Object::SetAngle(unsigned char axis, double angle)
+Lockable* Object::SetAngle(unsigned char axis, double angle)
 {
-    if (SAFE_FIND(this->object_Angle, axis)->second.Get() == angle)
-        return false;
+    Value<double>& data = SAFE_FIND(this->object_Angle, axis)->second;
+
+    if (Utils::DoubleCompare(data.Get(), angle, 0.01))
+        return NULL;
 
     if ((angle != 2048.0 && angle != 128.0 && angle != 0.0))
     {
-        if (!SAFE_FIND(this->object_Angle, axis)->second.Set(angle))
-            return false;
+        if (!data.Set(angle))
+            return NULL;
 
 #ifdef VAULTMP_DEBUG
         if (debug != NULL)
-            debug->PrintFormat("Object %s-angle was set to %Lf (ref: %08X)", true, API::RetrieveAxis_Reverse(axis).c_str(), angle, this->GetReference());
+            debug->PrintFormat("Object %s-angle was set to %f (ref: %08X)", true, API::RetrieveAxis_Reverse(axis).c_str(), (float) angle, this->GetReference());
 #endif
-        return true;
+        return &data;
     }
 
-    return false;
+    return NULL;
 }
 
-bool Object::SetEnabled(bool state)
+Lockable* Object::SetEnabled(bool state)
 {
     if (this->state_Enabled.Get() == state)
-        return false;
+        return NULL;
 
     if (!this->state_Enabled.Set(state))
-        return false;
+        return NULL;
 
 #ifdef VAULTMP_DEBUG
     if (debug != NULL)
         debug->PrintFormat("Object enabled state was set to %d (ref: %08X)", true, (int) state, this->GetReference());
 #endif
 
-    return true;
+    return &this->state_Enabled;
+}
+
+Lockable* Object::SetGameCell(unsigned int cell)
+{
+    if (this->cell_Game.Get() == cell)
+        return NULL;
+
+    if (cell != 0x00000000)
+    {
+        if (!this->cell_Game.Set(cell))
+            return NULL;
+
+#ifdef VAULTMP_DEBUG
+        if (debug != NULL)
+            debug->PrintFormat("Object game cell was set to %08X (ref: %08X)", true, cell, this->GetReference());
+#endif
+        return &this->cell_Game;
+    }
+
+    return NULL;
+}
+
+Lockable* Object::SetNetworkCell(unsigned int cell)
+{
+    if (this->cell_Network.Get() == cell)
+        return NULL;
+
+    if (cell != 0x00000000)
+    {
+        if (!this->cell_Network.Set(cell))
+            return NULL;
+
+#ifdef VAULTMP_DEBUG
+        if (debug != NULL)
+            debug->PrintFormat("Object network cell was set to %08X (ref: %08X)", true, cell, this->GetReference());
+#endif
+        return &this->cell_Network;
+    }
+
+    return NULL;
+}
+
+bool Object::IsNearPoint(double X, double Y, double Z, double R)
+{
+    return (sqrt((abs(GetPos(Axis_X) - X) * abs(GetPos(Axis_X) - X)) + ((GetPos(Axis_Y) - Y) * abs(GetPos(Axis_Y) - Y)) + ((GetPos(Axis_Z) - Z) * abs(GetPos(Axis_Z) - Z))) <= R);
+}
+
+bool Object::IsCoordinateInRange(unsigned char axis, double pos, double R)
+{
+    return (GetPos(axis) > (pos - R) && GetPos(axis) < (pos + R));
 }

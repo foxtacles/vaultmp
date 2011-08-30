@@ -72,6 +72,8 @@ vector<string> Actor::GetRefs(bool enabled, bool enabled_disabled)
 
         if (refID != 0x00 && (!enabled_disabled || ((*it)->GetEnabled() == enabled)))
             result.push_back(Utils::LongToHex(refID));
+
+        GameFactory::LeaveReference(*it);
     }
 
     return result;
@@ -90,16 +92,6 @@ vector<string> Actor::GetDisabledRefs()
 vector<string> Actor::GetAllRefs()
 {
     return GetRefs();
-}
-
-unsigned int Actor::GetActorGameCell()
-{
-    return cell_Game.Get();
-}
-
-unsigned int Actor::GetActorNetworkCell()
-{
-    return cell_Network.Get();
 }
 
 double Actor::GetActorValue(unsigned char index)
@@ -122,116 +114,72 @@ bool Actor::GetActorDead()
     return state_Dead.Get();
 }
 
-bool Actor::SetActorGameCell(unsigned int cell)
+Lockable* Actor::SetActorValue(unsigned char index, double value)
 {
-    if (this->cell_Game.Get() == cell)
-        return false;
+    Value<double>& data = SAFE_FIND(this->actor_Values, index)->second;
 
-    if (cell != 0x00)
-    {
-        if (!this->cell_Game.Set(cell))
-            return false;
+    if (Utils::DoubleCompare(data.Get(), value, 0.01))
+        return NULL;
 
-#ifdef VAULTMP_DEBUG
-        if (debug != NULL)
-            debug->PrintFormat("Actor game cell was set to %08X (ref: %08X)", true, cell, this->GetReference());
-#endif
-        return true;
-    }
-
-    return false;
-}
-
-bool Actor::SetActorNetworkCell(unsigned int cell)
-{
-    if (this->cell_Network.Get() == cell)
-        return false;
-
-    if (cell != 0x00)
-    {
-        if (!this->cell_Network.Set(cell))
-            return false;
-
-#ifdef VAULTMP_DEBUG
-        if (debug != NULL)
-            debug->PrintFormat("Actor network cell was set to %08X (ref: %08X)", cell, this->GetReference());
-#endif
-        return true;
-    }
-
-    return false;
-}
-
-bool Actor::SetActorValue(unsigned char index, double value)
-{
-    if (SAFE_FIND(actor_Values, index)->second.Get() == value)
-        return false;
-
-    if (!SAFE_FIND(actor_Values, index)->second.Set(value))
-        return false;
+    if (!data.Set(value))
+        return NULL;
 
 #ifdef VAULTMP_DEBUG
     if (debug != NULL)
-        debug->PrintFormat("Actor value %s was set to %Lf (ref: %08X)", true, API::RetrieveValue_Reverse(index).c_str(), value, this->GetReference());
+        debug->PrintFormat("Actor value %s was set to %f (ref: %08X)", true, API::RetrieveValue_Reverse(index).c_str(), (float) value, this->GetReference());
 #endif
 
-    return true;
+    return &data;
 }
 
-bool Actor::SetActorBaseValue(unsigned char index, double value)
+Lockable* Actor::SetActorBaseValue(unsigned char index, double value)
 {
-    if (SAFE_FIND(actor_BaseValues, index)->second.Get() == value)
-        return false;
+    Value<double>& data = SAFE_FIND(this->actor_BaseValues, index)->second;
 
-    if (!SAFE_FIND(actor_BaseValues, index)->second.Set(value))
-        return false;
+    if (Utils::DoubleCompare(data.Get(), value, 0.01))
+        return NULL;
+
+    if (!data.Set(value))
+        return NULL;
 
 #ifdef VAULTMP_DEBUG
     if (debug != NULL)
-        debug->PrintFormat("Actor base value %s was set to %Lf (ref: %08X)", true, API::RetrieveValue_Reverse(index).c_str(), value, this->GetReference());
+        debug->PrintFormat("Actor base value %s was set to %f (ref: %08X)", true, API::RetrieveValue_Reverse(index).c_str(), (float) value, this->GetReference());
 #endif
 
-    return true;
+    return &data;
 }
 
-bool Actor::SetActorAnimation(unsigned char anim, bool state)
+Lockable* Actor::SetActorAnimation(unsigned char anim, bool state)
 {
-    if (SAFE_FIND(actor_Animations, anim)->second.Get() == state)
-        return false;
+    Value<bool>& data = SAFE_FIND(this->actor_Animations, anim)->second;
 
-    if (!SAFE_FIND(actor_Animations, anim)->second.Set(state))
-        return false;
+    if (data.Get() == state)
+        return NULL;
+
+    if (!data.Set(state))
+        return NULL;
 
 #ifdef VAULTMP_DEBUG
     if (debug != NULL)
         debug->PrintFormat("Actor animation %s was set to %d (ref: %08X)", true,  API::RetrieveAnim_Reverse(anim).c_str(), (int) state, this->GetReference());
 #endif
 
-    return true;
+    return &data;
 }
 
-bool Actor::SetActorDead(bool state)
+Lockable* Actor::SetActorDead(bool state)
 {
     if (this->state_Dead.Get() == state)
-        return false;
+        return NULL;
 
     if (!this->state_Dead.Set(state))
-        return false;
+        return NULL;
 
 #ifdef VAULTMP_DEBUG
     if (debug != NULL)
         debug->PrintFormat("Actor dead state was set to %d (ref: %08X)", true, (int) state, this->GetReference());
 #endif
 
-    return true;
-}
-
-bool Actor::IsActorNearPoint(double X, double Y, double Z, double R)
-{
-    return (sqrt((abs(GetPos(Axis_X) - X) * abs(GetPos(Axis_X) - X)) + ((GetPos(Axis_Y) - Y) * abs(GetPos(Axis_Y) - Y)) + ((GetPos(Axis_Z) - Z) * abs(GetPos(Axis_Z) - Z))) <= R);
-}
-
-bool Actor::IsCoordinateInRange(unsigned char axis, double pos, double R)
-{
-    return (GetPos(axis) > (pos - R) && GetPos(axis) < (pos + R));
+    return &this->state_Dead;
 }

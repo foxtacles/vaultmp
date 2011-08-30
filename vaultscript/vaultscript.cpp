@@ -28,11 +28,6 @@ bool VAULTSCRIPT OnClientAuthenticate(string name, string pwd)
     return true;
 }
 
-void VAULTSCRIPT OnPlayerConnect(unsigned int player)
-{
-
-}
-
 void VAULTSCRIPT OnPlayerDisconnect(unsigned int player, unsigned char reason)
 {
     printf("C++: player disconnect %d, %d\n", player, (unsigned int) reason);
@@ -56,7 +51,12 @@ void VAULTSCRIPT OnPlayerDeath(unsigned int player)
 
 void VAULTSCRIPT OnPlayerCellChange(unsigned int player, unsigned int cell)
 {
+    printf("C++: player cell %d,%08X\n", player, cell);
+}
 
+void VAULTSCRIPT OnPlayerValueChange(unsigned int player, bool base, unsigned char index, double value)
+{
+    printf("C++: player value %s -> %f\n", ValueToString(index).c_str(), (float)value);
 }
 
 #ifdef __WIN32__

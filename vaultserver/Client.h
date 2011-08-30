@@ -21,21 +21,22 @@ private:
 
     RakNetGUID guid;
     unsigned int ID;
-    Player* player;
+    NetworkID player;
 
 public:
-    Client(RakNetGUID guid, Player* player);
+    Client(RakNetGUID guid, NetworkID player);
     ~Client();
 
     static void SetMaximumClients(unsigned int clients);
     static int GetClientCount();
     static Client* GetClientFromGUID(RakNetGUID guid);
     static Client* GetClientFromID(unsigned int id);
-    static vector<RakNetGUID> GetNetworkList();
+    static vector<RakNetGUID> GetNetworkList(Client* except = NULL);
+    static vector<RakNetGUID> GetNetworkList(RakNetGUID except = UNASSIGNED_RAKNET_GUID);
 
     RakNetGUID GetGUID();
     unsigned int GetID();
-    Player* GetPlayer();
+    NetworkID GetPlayer();
 
 };
 

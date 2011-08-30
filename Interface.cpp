@@ -10,6 +10,7 @@ char* Interface::module;
 CommandList Interface::cmdlist;
 CommandList Interface::tmplist;
 map<string, string> Interface::defs;
+map<string, string> Interface::alias;
 Native Interface::natives;
 HANDLE Interface::hCommandThreadReceive;
 HANDLE Interface::hCommandThreadSend;
@@ -51,8 +52,6 @@ bool Interface::Initialize(char* module, ResultHandler resultHandler, int game)
             return false;
         }
 
-        API::Initialize(game);
-
         initialized = true;
 
         return true;
@@ -80,8 +79,7 @@ void Interface::Terminate()
         tmplist.clear();
         natives.clear();
         defs.clear();
-
-        API::Terminate();
+        alias.clear();
 
         initialized = false;
 
@@ -124,7 +122,7 @@ DWORD Interface::lookupProgramID(const char process[])
 
 bool Interface::IsAvailable()
 {
-    return (wakeup && (WaitForSingleObject(hCommandThreadReceive, 0) == WAIT_TIMEOUT) && (WaitForSingleObject(hCommandThreadSend, 0) == WAIT_TIMEOUT));
+    return (wakeup && !endThread && (WaitForSingleObject(hCommandThreadReceive, 0) == WAIT_TIMEOUT) && (WaitForSingleObject(hCommandThreadSend, 0) == WAIT_TIMEOUT));
 }
 
 void Interface::StartSession()
@@ -140,7 +138,10 @@ void Interface::EndSession()
 void Interface::DefineCommand(string name, string def, string real)
 {
     if (API::AnnounceFunction(real.empty() ? name : real) == false)
-        return;
+        throw VaultException("Function definition %s not found", (real.empty() ? name : real).c_str());
+
+    if (!real.empty())
+        alias.insert(pair<string, string>(name, real));
 
     defs.insert(pair<string, string>(name, def));
 }
@@ -164,7 +165,7 @@ Native::iterator Interface::DefineNativeInternal(string name, ParamContainer par
 void Interface::ExecuteCommand(Native::iterator it, bool loop, int priority, int sleep, signed int key)
 {
     if (it == natives.end())
-        return;
+        throw VaultException("Native definition not found");
 
     vector<int> data;
     data.push_back((int) loop);
@@ -181,7 +182,7 @@ void Interface::ExecuteCommandLoop(string name, int priority, int sleep)
     it = defs.find(name);
 
     if (it == defs.end())
-        return;
+        throw VaultException("Command definition %s not found", name.c_str());
 
     ExecuteCommand(natives.find(name), true, priority, sleep, 0);
 }
@@ -253,172 +254,218 @@ multimap<string, string> Interface::Evaluate(string name, string def, ParamConta
 
 DWORD WINAPI Interface::CommandThreadReceive(LPVOID data)
 {
-    pipeClient->SetPipeAttributes("BethesdaClient", PIPE_LENGTH);
-    pipeClient->CreateServer();
-    pipeClient->ConnectToServer();
-
-    pipeServer->SetPipeAttributes("BethesdaServer", PIPE_LENGTH);
-    while (!pipeServer->ConnectToServer() && !endThread);
-
-    char buffer[PIPE_LENGTH];
-    char code;
-
-    if (!endThread)
+    try
     {
-        do
+        pipeClient->SetPipeAttributes("BethesdaClient", PIPE_LENGTH);
+        pipeClient->CreateServer();
+        pipeClient->ConnectToServer();
+
+        pipeServer->SetPipeAttributes("BethesdaServer", PIPE_LENGTH);
+        while (!pipeServer->ConnectToServer() && !endThread);
+
+        char buffer[PIPE_LENGTH];
+        char code;
+
+        if (!endThread)
         {
-            ZeroMemory(buffer, sizeof(buffer));
-
-            pipeClient->Receive(buffer);
-            code = buffer[0];
-            char* content = buffer + 1;
-
-            if (code == PIPE_OP_RETURN)
+            do
             {
-                CommandResult result = API::Translate(buffer);
+                ZeroMemory(buffer, sizeof(buffer));
 
-                if (result.first.second.size() >= 1)
-                    resultHandler(result.first.first, result.first.second, result.second);
-            }
-            else if (code == PIPE_SYS_WAKEUP)
-            {
-                wakeup = true;
+                pipeClient->Receive(buffer);
+                code = buffer[0];
+                char* content = buffer + 1;
+
+                if (code == PIPE_OP_RETURN)
+                {
+                    CommandResult result = API::Translate(buffer);
+
+                    if (result.first.second.size() >= 1)
+                        resultHandler(result.first.first, result.first.second, result.second);
+                }
+                else if (code == PIPE_SYS_WAKEUP)
+                {
+                    wakeup = true;
 
 #ifdef VAULTMP_DEBUG
-                if (debug != NULL)
-                    debug->Print("vaultmp process waked up (game patched)", true);
+                    if (debug != NULL)
+                        debug->Print("vaultmp process waked up (game patched)", true);
 #endif
-            }
-            if (lookupProgramID((char*) data) == 0)
-            {
-                endThread = true;
+                }
+                if (lookupProgramID((char*) data) == 0)
+                {
+                    endThread = true;
 
 #ifdef VAULTMP_DEBUG
-                if (debug != NULL)
-                    debug->Print("Game process missing, shutting down", true);
+                    if (debug != NULL)
+                        debug->Print("Game process missing, shutting down", true);
 #endif
+                }
             }
+            while (code != PIPE_ERROR_CLOSE && !endThread);
         }
-        while (code != PIPE_ERROR_CLOSE && !endThread);
-    }
 
-    // kill game process if running
+        // kill game process if running
+    }
+    catch (std::exception& e)
+    {
+        try
+        {
+            VaultException& vaulterror = dynamic_cast<VaultException&>(e);
+            vaulterror.Message();
+        }
+        catch (std::bad_cast& no_vaulterror)
+        {
+            VaultException vaulterror(e.what());
+            vaulterror.Message();
+        }
+
+#ifdef VAULTMP_DEBUG
+        if (debug != NULL)
+            debug->Print("Receive thread is going to terminate (ERROR)", true);
+#endif
+
+        endThread = true;
+
+        return ((DWORD) data);
+    }
 
 #ifdef VAULTMP_DEBUG
     if (debug != NULL)
         debug->Print("Receive thread is going to terminate", true);
 #endif
 
+    endThread = true;
+
     return ((DWORD) data);
 }
 
 DWORD WINAPI Interface::CommandThreadSend(LPVOID data)
 {
-    while (!wakeup && !endThread);
-
-    while (!endThread)
+    try
     {
-        CommandList::iterator it;
-        CommandList::iterator insertAt = cmdlist.end();
+        while (!wakeup && !endThread);
 
-        if (!tmplist.empty())
+        while (!endThread)
         {
-            cs.StartSession();
+            CommandList::iterator it;
+            CommandList::iterator insertAt = cmdlist.end();
 
-            cmdlist.splice(cmdlist.begin(), tmplist);
-
-            cs.EndSession();
-        }
-
-        for (it = cmdlist.begin(); it != cmdlist.end() && !endThread;)
-        {
             if (!tmplist.empty())
             {
                 cs.StartSession();
 
-                int count = tmplist.size();
-
-                if (insertAt != cmdlist.end())
-                {
-                    CommandList::iterator insertAt_tmp = insertAt;
-                    ++insertAt_tmp;
-                    cmdlist.splice(insertAt_tmp, tmplist);
-                }
-                else
-                {
-                    CommandList::iterator it_tmp = it;
-                    ++it_tmp;
-                    cmdlist.splice(it_tmp, tmplist);
-                }
-
-                CommandList::iterator it_tmp = it;
-                advance(it_tmp, count);
-
-                insertAt = it_tmp;
+                cmdlist.splice(cmdlist.begin(), tmplist);
 
                 cs.EndSession();
             }
 
-            if (insertAt == it)
-                insertAt = cmdlist.end();
-
-            string name = it->first->first;
-            string def = defs.find(name)->second;
-            ParamContainer param = it->first->second;
-            vector<int>* data = &(it->second);
-
-            if (data->size() != 5)
-                data->push_back(data->at(2));
-
-            if (data->at(4) != 0)
+            for (it = cmdlist.begin(); it != cmdlist.end() && !endThread;)
             {
-                data->at(4)--;
-                ++it;
-                continue;
-            }
-            else
-                data->at(4) = data->at(2);
-
-            multimap<string, string> cmd = Interface::Evaluate(name, def, param);
-
-            if (cmd.size() != 0)
-            {
-                signed int key = data->at(3);
-                CommandParsed stream = API::Translate(cmd, key);
-
-                if (stream.size() != 0)
+                if (!tmplist.empty())
                 {
-                    CommandParsed::iterator it2;
+                    cs.StartSession();
 
-                    for (it2 = stream.begin(); it2 != stream.end() && !endThread; ++it2)
+                    int count = tmplist.size();
+
+                    if (insertAt != cmdlist.end())
                     {
-                        char* content = *it2;
-                        pipeServer->Send(content);
-                        Sleep(data->at(1));
+                        CommandList::iterator insertAt_tmp = insertAt;
+                        ++insertAt_tmp;
+                        cmdlist.splice(insertAt_tmp, tmplist);
+                    }
+                    else
+                    {
+                        CommandList::iterator it_tmp = it;
+                        ++it_tmp;
+                        cmdlist.splice(it_tmp, tmplist);
                     }
 
-                    for (it2 = stream.begin(); it2 != stream.end(); ++it2)
+                    CommandList::iterator it_tmp = it;
+                    advance(it_tmp, count);
+
+                    insertAt = it_tmp;
+
+                    cs.EndSession();
+                }
+
+                if (insertAt == it)
+                    insertAt = cmdlist.end();
+
+                map<string, string>::iterator al = alias.find(it->first->first);
+                string name = (al != alias.end() ? al->second : it->first->first);
+                string def = defs.find(name)->second;
+                ParamContainer param = it->first->second;
+                vector<int>* data = &(it->second);
+
+                if (data->size() != 5)
+                    data->push_back(data->at(2));
+
+                if (data->at(4) != 0)
+                {
+                    data->at(4)--;
+                    ++it;
+                    continue;
+                }
+                else
+                    data->at(4) = data->at(2);
+
+                multimap<string, string> cmd = Interface::Evaluate(name, def, param);
+
+                if (cmd.size() != 0)
+                {
+                    signed int key = data->at(3);
+                    CommandParsed stream = API::Translate(cmd, key);
+
+                    if (stream.size() != 0)
                     {
-                        char* content = *it2;
-                        delete[] content;
+                        CommandParsed::iterator it2;
+
+                        for (it2 = stream.begin(); it2 != stream.end() && !endThread; ++it2)
+                        {
+                            char* content = *it2;
+                            pipeServer->Send(content);
+                            Sleep(data->at(1));
+                        }
+
+                        for (it2 = stream.begin(); it2 != stream.end(); ++it2)
+                        {
+                            char* content = *it2;
+                            delete[] content;
+                        }
                     }
                 }
-            }
 
-            if (data->at(0) == 0)
-            {
-                natives.erase(it->first);
-                it = cmdlist.erase(it);
+                if (data->at(0) == 0)
+                {
+                    natives.erase(it->first);
+                    it = cmdlist.erase(it);
+                }
+                else
+                    ++it;
             }
-            else
-                ++it;
         }
     }
+    catch (std::exception& e)
+    {
+        try
+        {
+            VaultException& vaulterror = dynamic_cast<VaultException&>(e);
+            vaulterror.Message();
+        }
+        catch (std::bad_cast& no_vaulterror)
+        {
+            VaultException vaulterror(e.what());
+            vaulterror.Message();
+        }
 
 #ifdef VAULTMP_DEBUG
-    if (debug != NULL)
-        debug->Print("Send thread is going to terminate", true);
+        if (debug != NULL)
+            debug->Print("Send thread is going to terminate (ERROR)", true);
 #endif
+
+        return ((DWORD) data);
+    }
 
     return ((DWORD) data);
 }
