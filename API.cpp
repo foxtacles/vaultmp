@@ -9,7 +9,7 @@ ValueList API::axis;
 ValueList API::anims;
 CommandQueue API::queue;
 API::CommandCache API::cache;
-int API::game = 0;
+unsigned char API::game = 0x00;
 
 #ifdef VAULTMP_DEBUG
 Debug* API::debug = NULL;
@@ -222,7 +222,7 @@ API::API()
 
 }
 
-void API::Initialize(int game)
+void API::Initialize(unsigned char game)
 {
     API::game = game;
     srand(time(NULL));
@@ -363,6 +363,7 @@ void API::Initialize(int game)
     DefineFunction("PlayGroup", "rgi", Func_PlayGroup, ALL_GAMES);
     DefineFunction("SetAlert", "ri", Func_SetAlert, ALL_GAMES);
     DefineFunction("RemoveAllItems", "rCI", Func_RemoveAllItems, ALL_GAMES);
+    DefineFunction("GetActorState", "r", Func_GetActorState, ALL_GAMES); // vaultfunction
 
     DefineFunction("Enable", "rI", Func_Enable, FALLOUT_GAMES);
     DefineFunction("Disable", "rI", Func_Disable, FALLOUT_GAMES);
@@ -373,6 +374,7 @@ void API::Initialize(int game)
     DefineFunction("Kill", "rQII", Func_Kill, FALLOUT_GAMES);
     DefineFunction("IsMoving", "r", Fallout::Func_IsMoving, FALLOUT_GAMES);
     DefineFunction("MarkForDelete", "r", Fallout::Func_MarkForDelete, FALLOUT_GAMES);
+    DefineFunction("IsAnimPlaying", "rG", Fallout::Func_IsAnimPlaying, FALLOUT_GAMES);
 
     DefineFunction("Load", "s", Fallout3::Func_Load, FALLOUT3);
     DefineFunction("SetName", "rsB", Fallout3::Func_SetName, FALLOUT3);
@@ -392,6 +394,7 @@ void API::Initialize(int game)
     DefineFunction("Load", "s", Oblivion::Func_Load, OBLIVION);
     DefineFunction("SetName", "rsB", Oblivion::Func_SetName, OBLIVION);
     DefineFunction("GetParentCell", "r", Oblivion::Func_GetParentCell, OBLIVION);
+    DefineFunction("IsAnimGroupPlaying", "rg", Oblivion::Func_IsAnimGroupPlaying, OBLIVION);
 }
 
 void API::Terminate()
@@ -700,24 +703,24 @@ pair<vector<double>, API::op_default*> API::ParseCommand(char* cmd, char* def, u
     return result_data;
 }
 
-void API::DefineFunction(string name, string def, unsigned short opcode, unsigned short games)
+void API::DefineFunction(string name, string def, unsigned short opcode, unsigned char games)
 {
-    functions.insert(pair<string, pair<string, pair<unsigned short, unsigned short> > >(name, pair<string, pair<unsigned short, unsigned short> >(def, pair<unsigned short, unsigned short>(opcode, games))));
+    functions.insert(pair<string, pair<string, pair<unsigned short, unsigned short> > >(name, pair<string, pair<unsigned short, unsigned short> >(def, pair<unsigned short, unsigned char>(opcode, games))));
 }
 
-void API::DefineValueString(string name, unsigned char value, unsigned short games)
+void API::DefineValueString(string name, unsigned char value, unsigned char games)
 {
-    values.insert(pair<string, pair<unsigned char, unsigned short> >(name, pair<unsigned char, unsigned short>(value, games)));
+    values.insert(pair<string, pair<unsigned char, unsigned short> >(name, pair<unsigned char, unsigned char>(value, games)));
 }
 
-void API::DefineAxisString(string name, unsigned char axis, unsigned short games)
+void API::DefineAxisString(string name, unsigned char axis, unsigned char games)
 {
-    API::axis.insert(pair<string, pair<unsigned char, unsigned short> >(name, pair<unsigned char, unsigned short>(axis, games)));
+    API::axis.insert(pair<string, pair<unsigned char, unsigned short> >(name, pair<unsigned char, unsigned char>(axis, games)));
 }
 
-void API::DefineAnimString(string name, unsigned char anim, unsigned short games)
+void API::DefineAnimString(string name, unsigned char anim, unsigned char games)
 {
-    anims.insert(pair<string, pair<unsigned char, unsigned short> >(name, pair<unsigned char, unsigned short>(anim, games)));
+    anims.insert(pair<string, pair<unsigned char, unsigned short> >(name, pair<unsigned char, unsigned char>(anim, games)));
 }
 
 unsigned long API::ExtractReference(char* reference)
@@ -1003,7 +1006,7 @@ CommandResult API::Translate(char* stream)
     {
 #ifdef VAULTMP_DEBUG
         if (debug != NULL)
-            debug->PrintFormat("API did not retrieve the result of command with CRC32 %08X", true, queue.back().first);
+            debug->PrintFormat("API did not retrieve the result of command with CRC32 %08X (opcode %hX)", true, queue.back().first, (unsigned short) queue.back().second.at(0));
 #endif
         queue.pop_back();
     }
@@ -1012,7 +1015,7 @@ CommandResult API::Translate(char* stream)
     {
 #ifdef VAULTMP_DEBUG
         if (debug != NULL)
-            debug->PrintFormat("API did not retrieve the result of command with CRC32 %08X", true, crc);
+            debug->PrintFormat("API could not find a stored command with CRC32 %08X (queue is empty)", true, crc);
 #endif
         return result;
     }

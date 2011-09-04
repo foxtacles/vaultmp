@@ -21,7 +21,7 @@ private:
     static Debug* debug;
 #endif
 
-    static int game;
+    static unsigned char game;
     static RakNetGUID server;
 
     static void Initialize();
@@ -37,6 +37,7 @@ private:
     static void SetAngle(NetworkID id, unsigned char axis, double value);
     static void SetNetworkCell(NetworkID id, unsigned int cell);
     static void SetActorValue(NetworkID id, bool base, unsigned char index, double value);
+    static void SetActorState(NetworkID id, unsigned char index, bool alerted);
     static void MoveTo(NetworkID id, NetworkID id2);
 
     static NetworkResponse Authenticate(string password);
@@ -45,6 +46,7 @@ private:
     static void GetAngle(unsigned int refID, unsigned char axis, double value);
     static void GetParentCell(unsigned int refID, unsigned int cell);
     static void GetActorValue(unsigned int refID, bool base, unsigned char index, double value);
+    static void GetActorState(unsigned int refID, unsigned char index, bool alerted);
 
 public:
 

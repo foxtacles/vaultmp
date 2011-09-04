@@ -5,11 +5,14 @@ Reference::Reference(unsigned int refID, unsigned int baseID)
     this->refID.Set(refID);
     this->baseID.Set(baseID);
     this->SetNetworkIDManager(Network::Manager());
+#ifdef VAULTMP_DEBUG
+    //this->ToggleSectionDebug(true);
+#endif
 }
 
 Reference::~Reference()
 {
-    Finalize();
+
 }
 
 Lockable* Reference::SetReference(unsigned int refID)
@@ -34,22 +37,22 @@ Lockable* Reference::SetBase(unsigned int baseID)
     return &this->baseID;
 }
 
-unsigned int Reference::GetReference()
+unsigned int Reference::GetReference() const
 {
     return refID.Get();
 }
 
-unsigned int Reference::GetBase()
+unsigned int Reference::GetBase() const
 {
     return baseID.Get();
 }
 
-Parameter Reference::GetReferenceParam()
+const Parameter Reference::GetReferenceParam() const
 {
     return Parameter(vector<string>{Utils::LongToHex(refID.Get())}, &Data::EmptyVector);
 }
 
-Parameter Reference::GetBaseParam()
+const Parameter Reference::GetBaseParam() const
 {
     return Parameter(vector<string>{Utils::LongToHex(baseID.Get())}, &Data::EmptyVector);
 }

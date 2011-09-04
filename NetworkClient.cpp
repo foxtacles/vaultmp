@@ -35,7 +35,7 @@ NetworkResponse NetworkClient::ProcessEvent(unsigned char id)
     }
     case ID_EVENT_GAME_STARTED:
     {
-        Player* self = (Player*) GameFactory::GetObject(PLAYER_REFERENCE);
+        Player* self = (Player*) GameFactory::GetObject(ID_PLAYER, PLAYER_REFERENCE);
         pDefault* packet = PacketFactory::CreatePacket(ID_GAME_CONFIRM, self->GetNetworkID(), self->GetName().c_str());
         response = Network::CompleteResponse(Network::CreateResponse(packet,
                                                                      (unsigned char) HIGH_PRIORITY,
@@ -199,6 +199,15 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
                     double value;
                     PacketFactory::Access(packet, &id, &base, &index, &value);
                     Game::SetActorValue(id, base, index, value);
+                    break;
+                }
+                case ID_UPDATE_STATE:
+                {
+                    NetworkID id;
+                    unsigned char index;
+                    bool alerted;
+                    PacketFactory::Access(packet, &id, &index, &alerted);
+                    Game::SetActorState(id, index, alerted);
                     break;
                 }
                 default:

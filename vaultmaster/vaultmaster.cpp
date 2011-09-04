@@ -1,7 +1,3 @@
-#include <windows.h>
-#include <stdio.h>
-#include <time.h>
-
 #include "vaultmaster.h"
 #include "../Utils.h"
 #include "MasterServer.h"

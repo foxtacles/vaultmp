@@ -86,7 +86,7 @@ SystemAddress* selectedServer = NULL;
 dictionary* config = NULL;
 char* player_name;
 char* server_name;
-int games;
+unsigned char games;
 
 HWND CreateMainWindow();
 int RegisterClasses();
@@ -664,7 +664,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                     map<SystemAddress, ServerEntry>::iterator i;
                     i = serverList.find(*selectedServer);
 
-                    int game = (&i->second)->GetGame();
+                    unsigned char game = (&i->second)->GetGame();
 
                     if ((games & game) != game || !game)
                     {
@@ -800,7 +800,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                                     SystemAddress addr;
                                     RakString name, map;
                                     int players, playersMax, rsize;
-                                    int game;
+                                    unsigned char game;
                                     std::map<string, string> rules;
 
                                     query.Read(addr);
@@ -862,7 +862,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                                 {
                                     RakString name, map;
                                     int players, playersMax, rsize;
-                                    int game;
+                                    unsigned char game;
 
                                     query.Read(name);
                                     query.Read(map);

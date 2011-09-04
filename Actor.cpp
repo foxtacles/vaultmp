@@ -22,11 +22,6 @@ Actor::Actor(unsigned int refID, unsigned int baseID) : Container(refID, baseID)
         actor_BaseValues.insert(pair<unsigned char, Value<double> >(*it, Value<double>()));
     }
 
-    data = API::RetrieveAllAnims();
-
-    for (it = data.begin(); it != data.end(); ++it)
-        actor_Animations.insert(pair<unsigned char, Value<bool> >(*it, Value<bool>()));
-
 #ifdef VAULTMP_DEBUG
     if (debug != NULL)
         debug->PrintFormat("New actor object created (ref: %08X)", true, this->GetReference());
@@ -48,11 +43,11 @@ void Actor::SetDebugHandler(Debug* debug)
 }
 #endif
 
-list<Actor*> Actor::GetActorList()
+vector<Actor*> Actor::GetActorList()
 {
-    list<Actor*> actorlist;
-    list<Reference*>::iterator it;
-    list<Reference*> instances = GameFactory::GetObjectTypes(ID_ACTOR);
+    vector<Actor*> actorlist;
+    vector<Reference*>::iterator it;
+    vector<Reference*> instances = GameFactory::GetObjectTypes(ID_ACTOR);
 
     for (it = instances.begin(); it != instances.end(); ++it)
         actorlist.push_back((Actor*) *it);
@@ -63,8 +58,8 @@ list<Actor*> Actor::GetActorList()
 vector<string> Actor::GetRefs(bool enabled, bool enabled_disabled)
 {
     vector<string> result;
-    list<Actor*>::iterator it;
-    list<Actor*> actorlist = GetActorList();
+    vector<Actor*>::iterator it;
+    vector<Actor*> actorlist = GetActorList();
 
     for (it = actorlist.begin(); it != actorlist.end(); ++it)
     {
@@ -94,22 +89,27 @@ vector<string> Actor::GetAllRefs()
     return GetRefs();
 }
 
-double Actor::GetActorValue(unsigned char index)
+double Actor::GetActorValue(unsigned char index) const
 {
     return SAFE_FIND(actor_Values, index)->second.Get();
 }
 
-double Actor::GetActorBaseValue(unsigned char index)
+double Actor::GetActorBaseValue(unsigned char index) const
 {
     return SAFE_FIND(actor_BaseValues, index)->second.Get();
 }
 
-bool Actor::IsActorAnimationActive(unsigned char anim)
+unsigned char Actor::GetActorRunningAnimation() const
 {
-    return SAFE_FIND(actor_Animations, anim)->second.Get();
+    return anim_Running.Get();
 }
 
-bool Actor::GetActorDead()
+bool Actor::GetActorAlerted() const
+{
+    return state_Alerted.Get();
+}
+
+bool Actor::GetActorDead() const
 {
     return state_Dead.Get();
 }
@@ -150,22 +150,40 @@ Lockable* Actor::SetActorBaseValue(unsigned char index, double value)
     return &data;
 }
 
-Lockable* Actor::SetActorAnimation(unsigned char anim, bool state)
+Lockable* Actor::SetActorRunningAnimation(unsigned char index)
 {
-    Value<bool>& data = SAFE_FIND(this->actor_Animations, anim)->second;
+    string anim = API::RetrieveAnim_Reverse(index);
+    if (anim.empty())
+        throw VaultException("Value %02X not defined in database", index);
 
-    if (data.Get() == state)
+    if (anim_Running.Get() == index)
         return NULL;
 
-    if (!data.Set(state))
+    if (!anim_Running.Set(index))
         return NULL;
 
 #ifdef VAULTMP_DEBUG
     if (debug != NULL)
-        debug->PrintFormat("Actor animation %s was set to %d (ref: %08X)", true,  API::RetrieveAnim_Reverse(anim).c_str(), (int) state, this->GetReference());
+        debug->PrintFormat("Actor running animation was set to %s (ref: %08X)", true,  anim.c_str(), this->GetReference());
 #endif
 
-    return &data;
+    return &anim_Running;
+}
+
+Lockable* Actor::SetActorAlerted(bool state)
+{
+    if (this->state_Alerted.Get() == state)
+        return NULL;
+
+    if (!this->state_Alerted.Set(state))
+        return NULL;
+
+#ifdef VAULTMP_DEBUG
+    if (debug != NULL)
+        debug->PrintFormat("Actor alerted state was set to %d (ref: %08X)", true, (int) state, this->GetReference());
+#endif
+
+    return &this->state_Alerted;
 }
 
 Lockable* Actor::SetActorDead(bool state)

@@ -62,7 +62,7 @@ private:
 
 public:
 
-    static bool Initialize(char* module, ResultHandler, int game);
+    static bool Initialize(char* module, ResultHandler, unsigned char game);
     static void Terminate();
     static DWORD lookupProgramID(const char process[]);
     static bool IsAvailable();

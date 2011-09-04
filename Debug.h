@@ -4,9 +4,9 @@
 #ifdef __WIN32__
 #include <windows.h>
 #endif
-#include <time.h>
-#include <stdio.h>
-#include <string.h>
+#include <ctime>
+#include <cstdio>
+#include <cstring>
 
 #include <string>
 
@@ -21,6 +21,9 @@ private:
     FILE* vaultmplog;
 
     static void GetTimeFormat(char* buf, int size, bool file);
+
+    Debug(const Debug&);
+    Debug& operator=(const Debug&);
 
 public:
     Debug(char* module);

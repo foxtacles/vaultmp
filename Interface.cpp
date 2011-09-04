@@ -20,7 +20,7 @@ CriticalSection Interface::cs;
 Debug* Interface::debug;
 #endif
 
-bool Interface::Initialize(char* module, ResultHandler resultHandler, int game)
+bool Interface::Initialize(char* module, ResultHandler resultHandler, unsigned char game)
 {
     if (!initialized)
     {
@@ -157,7 +157,7 @@ Native::iterator Interface::DefineNativeInternal(string name, ParamContainer par
     it = defs.find(name);
 
     if (it == defs.end())
-        return natives.end();
+        throw VaultException("Function definition %s not found", name.c_str());
 
     return natives.insert(pair<string, ParamContainer>(name, param));
 }

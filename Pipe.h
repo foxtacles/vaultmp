@@ -6,6 +6,10 @@ using namespace std;
 class Pipe
 {
 
+private:
+    Pipe(const Pipe&);
+    Pipe& operator=(const Pipe&);
+
 protected:
     Pipe();
     virtual ~Pipe();
@@ -25,6 +29,9 @@ public:
 
 class PipeServer : public Pipe
 {
+
+private:
+    PipeServer& operator=(const PipeServer&);
 
 public:
     bool CreateServer();

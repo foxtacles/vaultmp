@@ -13,7 +13,7 @@
 static const unsigned int PLAYER_REFERENCE  = 0x00000014;
 static const unsigned int PLAYER_BASE       = 0x00000007;
 
-#define SAFE_FIND(a,b) ((a.find(b) == a.end()) ? throw VaultException("Value not defined in database") : a.find(b))
+#define SAFE_FIND(a,b) ((a.find(b) == a.end()) ? throw VaultException("Value %02X not defined in database", b) : a.find(b))
 
 using namespace std;
 using namespace RakNet;
@@ -72,7 +72,7 @@ enum
 {
     CHANNEL_SYSTEM,
     CHANNEL_GAME,
-    CHANNEL_DATA,
+    CHANNEL_CHAT,
 };
 
 }

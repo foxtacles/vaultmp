@@ -1,5 +1,13 @@
 #include "vaultscript.h"
-#include <stdio.h>
+#include <cstdio>
+
+using namespace std;
+using namespace vaultmp;
+
+void MyTimer()
+{
+    printf("C++ foo\n");
+}
 
 // It is not safe to call ANY vaultmp function before the execution of exec()
 void VAULTSCRIPT exec()
@@ -20,6 +28,8 @@ void VAULTSCRIPT exec()
         SetServerMap("cyrodiil");
         break;
     }
+
+    CreateTimer(&MyTimer, 5000);
 }
 
 bool VAULTSCRIPT OnClientAuthenticate(string name, string pwd)
@@ -28,41 +38,43 @@ bool VAULTSCRIPT OnClientAuthenticate(string name, string pwd)
     return true;
 }
 
-void VAULTSCRIPT OnPlayerDisconnect(unsigned int player, unsigned char reason)
+void VAULTSCRIPT OnPlayerDisconnect(Player player, Reason reason)
 {
-    printf("C++: player disconnect %d, %d\n", player, (unsigned int) reason);
+    printf("C++: player disconnect %d, %d\n", player, reason);
 }
 
-unsigned int VAULTSCRIPT OnPlayerRequestGame(unsigned int player)
+Base VAULTSCRIPT OnPlayerRequestGame(Player player)
 {
     printf("C++: player game %d\n", player);
     return 0x00030D82;
 }
 
-void VAULTSCRIPT OnPlayerSpawn(unsigned int player)
+void VAULTSCRIPT OnPlayerSpawn(Player player)
 {
 
 }
 
-void VAULTSCRIPT OnPlayerDeath(unsigned int player)
+void VAULTSCRIPT OnPlayerDeath(Player player)
 {
 
 }
 
-void VAULTSCRIPT OnPlayerCellChange(unsigned int player, unsigned int cell)
+void VAULTSCRIPT OnPlayerCellChange(Player player, Cell cell)
 {
     printf("C++: player cell %d,%08X\n", player, cell);
 }
 
-void VAULTSCRIPT OnPlayerValueChange(unsigned int player, bool base, unsigned char index, double value)
+void VAULTSCRIPT OnPlayerValueChange(Player player, Index index, Value value)
 {
     printf("C++: player value %s -> %f\n", ValueToString(index).c_str(), (float)value);
 }
 
-#ifdef __WIN32__
-BOOL APIENTRY DllMain(HINSTANCE hInst, DWORD reason, LPVOID reserved)
+void VAULTSCRIPT OnPlayerBaseValueChange(Player player, Index index, Value value)
 {
-    // do not use
-    return TRUE;
+    printf("C++: player base value %s -> %f\n", ValueToString(index).c_str(), (float)value);
 }
-#endif
+
+void VAULTSCRIPT OnPlayerStateChange(Player player, Index index, State alerted)
+{
+    printf("C++: player running animation %s, alerted %d\n", AnimToString(index).c_str(), (int)alerted);
+}

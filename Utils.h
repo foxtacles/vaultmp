@@ -4,11 +4,12 @@
 #ifdef __WIN32__
 #include <windows.h>
 #endif
-#include <stdio.h>
-#include <time.h>
-#include <string.h>
-#include <string>
+#include <cstdio>
+#include <ctime>
 #include <cmath>
+#include <cstring>
+
+#include <string>
 
 using namespace std;
 

@@ -34,6 +34,9 @@ private:
     Value<unsigned int> cell_Network;
     Value<bool> state_Enabled;
 
+    Object(const Object&);
+    Object& operator=(const Object&);
+
 protected:
     Object(unsigned int refID, unsigned int baseID);
     virtual ~Object();
@@ -45,12 +48,12 @@ public:
 
     static const Parameter Param_Axis;
 
-    string GetName();
-    double GetPos(unsigned char axis);
-    double GetAngle(unsigned char axis);
-    bool GetEnabled();
-    unsigned int GetGameCell();
-    unsigned int GetNetworkCell();
+    string GetName() const;
+    double GetPos(unsigned char axis) const;
+    double GetAngle(unsigned char axis) const;
+    bool GetEnabled() const;
+    unsigned int GetGameCell() const;
+    unsigned int GetNetworkCell() const;
 
     Lockable* SetName(string name);
     Lockable* SetPos(unsigned char axis, double pos);
@@ -59,8 +62,8 @@ public:
     Lockable* SetGameCell(unsigned int cell);
     Lockable* SetNetworkCell(unsigned int cell);
 
-    bool IsNearPoint(double X, double Y, double Z, double R);
-    bool IsCoordinateInRange(unsigned char axis, double value, double R);
+    bool IsNearPoint(double X, double Y, double Z, double R) const;
+    bool IsCoordinateInRange(unsigned char axis, double value, double R) const;
 
 };
 

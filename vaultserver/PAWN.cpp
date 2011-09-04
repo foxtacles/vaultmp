@@ -19,6 +19,9 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 {
 
     {"timestamp", PAWN::vaultmp_timestamp},
+    {"CreateTimer", PAWN::vaultmp_CreateTimer},
+    {"KillTimer", PAWN::vaultmp_KillTimer},
+
     {"SetServerName", PAWN::vaultmp_SetServerName},
     {"SetServerMap", PAWN::vaultmp_SetServerMap},
     {"SetServerRule", PAWN::vaultmp_SetServerRule},
@@ -27,6 +30,14 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
     {"ValueToString", PAWN::vaultmp_ValueToString},
     {"AxisToString", PAWN::vaultmp_AxisToString},
     {"AnimToString", PAWN::vaultmp_AnimToString},
+
+    {"GetPlayerPos", PAWN::vaultmp_GetPlayerPos},
+    {"GetPlayerPosXYZ", PAWN::vaultmp_GetPlayerPosXYZ},
+    {"GetPlayerAngle", PAWN::vaultmp_GetPlayerAngle},
+    {"GetPlayerAngleXYZ", PAWN::vaultmp_GetPlayerAngleXYZ},
+    {"GetPlayerValue", PAWN::vaultmp_GetPlayerValue},
+    {"GetPlayerBaseValue", PAWN::vaultmp_GetPlayerBaseValue},
+    {"GetPlayerCell", PAWN::vaultmp_GetPlayerCell},
 
     /*{"GetPlayerName", PAWN::vaultmp_GetPlayerName},
     {"GetPlayerPos", PAWN::vaultmp_GetPlayerPos},
@@ -50,19 +61,47 @@ int PAWN::RegisterVaultmpFunctions(AMX* amx)
 
 cell PAWN::vaultmp_timestamp(AMX* amx, const cell* params)
 {
-    int i = 1;
+    cell i = 1;
     Utils::timestamp();
+    return i;
+}
+
+cell PAWN::vaultmp_CreateTimer(AMX* amx, const cell* params)
+{
+    cell i = 1, interval; int len;
+    cell* source;
+
+    source = amx_Address(amx, params[1]);
+    amx_StrLen(source, &len);
+    char name[len + 1];
+
+    amx_GetString(name, source, 0, UNLIMITED);
+
+    interval = params[2];
+
+    i = (cell) Script::CreateTimerPAWN(string(name), amx, (unsigned int) interval);
+
+    return i;
+}
+
+cell PAWN::vaultmp_KillTimer(AMX* amx, const cell* params)
+{
+    cell i = 1, id;
+
+    id = params[1];
+
+    Script::KillTimer((NetworkID) id);
+
     return i;
 }
 
 cell PAWN::vaultmp_SetServerName(AMX* amx, const cell* params)
 {
-    int i = 1, len;
+    cell i = 1; int len;
     cell* source;
 
     source = amx_Address(amx, params[1]);
     amx_StrLen(source, &len);
-
     char name[len + 1];
 
     amx_GetString(name, source, 0, UNLIMITED);
@@ -74,12 +113,11 @@ cell PAWN::vaultmp_SetServerName(AMX* amx, const cell* params)
 
 cell PAWN::vaultmp_SetServerMap(AMX* amx, const cell* params)
 {
-    int i = 1, len;
+    cell i = 1; int len;
     cell* source;
 
     source = amx_Address(amx, params[1]);
     amx_StrLen(source, &len);
-
     char map[len + 1];
 
     amx_GetString(map, source, 0, UNLIMITED);
@@ -91,7 +129,7 @@ cell PAWN::vaultmp_SetServerMap(AMX* amx, const cell* params)
 
 cell PAWN::vaultmp_SetServerRule(AMX* amx, const cell* params)
 {
-    int i = 1, len, len2;
+    cell i = 1; int len, len2;
     cell* source;
     cell* source2;
 
@@ -118,17 +156,17 @@ cell PAWN::vaultmp_GetGameCode(AMX* amx, const cell* params)
 
 cell PAWN::vaultmp_ValueToString(AMX* amx, const cell* params)
 {
-    int i = 1, index;
+    cell i = 1, index;
     cell* dest;
 
-    index = (int) params[1];
+    index = params[1];
     dest = amx_Address(amx, params[2]);
 
     string value = API::RetrieveValue_Reverse((unsigned char) index);
 
     if (!value.empty())
     {
-        amx_SetString(dest, value.c_str(), 0, 0, value.length() + 1);
+        amx_SetString(dest, value.c_str(), 1, 0, value.length() + 1);
     }
     else
         i = 0;
@@ -138,16 +176,16 @@ cell PAWN::vaultmp_ValueToString(AMX* amx, const cell* params)
 
 cell PAWN::vaultmp_AxisToString(AMX* amx, const cell* params)
 {
-    int i = 1, index;
+    cell i = 1, index;
     cell* dest;
 
-    index = (int) params[1];
+    index = params[1];
     dest = amx_Address(amx, params[2]);
 
     string axis = API::RetrieveAxis_Reverse((unsigned char) index);
 
     if (!axis.empty())
-        amx_SetString(dest, axis.c_str(), 0, 0, axis.length() + 1);
+        amx_SetString(dest, axis.c_str(), 1, 0, axis.length() + 1);
     else
         i = 0;
 
@@ -156,18 +194,120 @@ cell PAWN::vaultmp_AxisToString(AMX* amx, const cell* params)
 
 cell PAWN::vaultmp_AnimToString(AMX* amx, const cell* params)
 {
-    int i = 1, index;
+    cell i = 1, index;
     cell* dest;
 
-    index = (int) params[1];
+    index = params[1];
     dest = amx_Address(amx, params[2]);
 
     string anim = API::RetrieveAnim_Reverse((unsigned char) index);
 
     if (!anim.empty())
-        amx_SetString(dest, anim.c_str(), 0, 0, anim.length() + 1);
+        amx_SetString(dest, anim.c_str(), 1, 0, anim.length() + 1);
     else
         i = 0;
+
+    return i;
+}
+
+cell PAWN::vaultmp_GetPlayerPos(AMX* amx, const cell* params)
+{
+    cell i = 1, id, index;
+
+    id = params[1];
+    index = params[2];
+
+    double value = Script::GetPlayerPos((unsigned int) id, (unsigned char) index);
+    i = amx_ftoc(value);
+
+    return i;
+}
+
+cell PAWN::vaultmp_GetPlayerPosXYZ(AMX* amx, const cell* params)
+{
+    cell i = 1, id;
+    cell* X; cell* Y; cell* Z;
+
+    id = params[1];
+    X = amx_Address(amx, params[2]);
+    Y = amx_Address(amx, params[3]);
+    Z = amx_Address(amx, params[4]);
+
+    double dX, dY, dZ;
+    Script::GetPlayerPosXYZ((unsigned int) id, dX, dY, dZ);
+    *X = amx_ftoc(dX);
+    *Y = amx_ftoc(dY);
+    *Z = amx_ftoc(dZ);
+
+    return i;
+}
+
+cell PAWN::vaultmp_GetPlayerAngle(AMX* amx, const cell* params)
+{
+    cell i = 1, id, index;
+
+    id = params[1];
+    index = params[2];
+
+    double value = Script::GetPlayerAngle((unsigned int) id, (unsigned char) index);
+    i = amx_ftoc(value);
+
+    return i;
+}
+
+cell PAWN::vaultmp_GetPlayerAngleXYZ(AMX* amx, const cell* params)
+{
+    cell i = 1, id;
+    cell* X; cell* Y; cell* Z;
+
+    id = params[1];
+    X = amx_Address(amx, params[2]);
+    Y = amx_Address(amx, params[3]);
+    Z = amx_Address(amx, params[4]);
+
+    double dX, dY, dZ;
+    Script::GetPlayerAngleXYZ((unsigned int) id, dX, dY, dZ);
+    *X = amx_ftoc(dX);
+    *Y = amx_ftoc(dY);
+    *Z = amx_ftoc(dZ);
+
+    return i;
+}
+
+cell PAWN::vaultmp_GetPlayerValue(AMX* amx, const cell* params)
+{
+    cell i = 1, id, index;
+
+    id = params[1];
+    index = params[2];
+
+    double value = Script::GetPlayerValue((unsigned int) id, (unsigned char) index);
+    i = amx_ftoc(value);
+
+    return i;
+}
+
+cell PAWN::vaultmp_GetPlayerBaseValue(AMX* amx, const cell* params)
+{
+    cell i = 1, id, index;
+
+    id = params[1];
+    index = params[2];
+
+    double value = Script::GetPlayerBaseValue((unsigned int) id, (unsigned char) index);
+    i = amx_ftoc(value);
+
+    return i;
+}
+
+cell PAWN::vaultmp_GetPlayerCell(AMX* amx, const cell* params)
+{
+    cell i = 1, id;
+
+    id = params[1];
+
+    unsigned int value = Script::GetPlayerCell((unsigned int) id);
+    i = (cell) value;
 
     return i;
 }
@@ -388,7 +528,12 @@ int PAWN::Exec(AMX* amx, cell* retval, int index)
     return amx_Exec(amx, retval, index);
 }
 
-int PAWN::Call(AMX* amx, const char* name, const char* argl, int buf, ...)
+int PAWN::FreeProgram(AMX* amx)
+{
+    return aux_FreeProgram(amx);
+}
+
+cell PAWN::Call(AMX* amx, const char* name, const char* argl, int buf, ...)
 {
     va_list args;
     va_start(args, buf);
@@ -413,13 +558,13 @@ int PAWN::Call(AMX* amx, const char* name, const char* argl, int buf, ...)
             {
             case 'i':
             {
-                int value = va_arg(args, int);
+                cell value = (cell) va_arg(args, unsigned int);
                 amx_Push(amx, value);
                 break;
             }
             case 'f':
             {
-                float value = (float) va_arg(args, double);
+                double value = va_arg(args, double);
                 amx_Push(amx, amx_ftoc(value));
                 break;
             }
@@ -427,7 +572,7 @@ int PAWN::Call(AMX* amx, const char* name, const char* argl, int buf, ...)
             {
                 char* string = va_arg(args, char*);
                 cell* store;
-                amx_PushString(amx, &store, string, 0, 0);
+                amx_PushString(amx, &store, string, 1, 0);
                 strings.push_back(pair<cell*, char*>(store, string));
                 break;
             }
@@ -462,11 +607,6 @@ int PAWN::Call(AMX* amx, const char* name, const char* argl, int buf, ...)
     }
 
     return ret;
-}
-
-int PAWN::FreeProgram(AMX* amx)
-{
-    return aux_FreeProgram(amx);
 }
 
 int PAWN::CoreInit(AMX* amx)

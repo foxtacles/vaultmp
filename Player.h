@@ -28,14 +28,15 @@ private:
     static Debug* debug;
 #endif
 
-    string pwd;
+    Player(const Player&);
+    Player& operator=(const Player&);
 
 protected:
     Player(unsigned int refID, unsigned int baseID);
     virtual ~Player();
 
 public:
-    static list<Player*> GetPlayerList();
+    static vector<Player*> GetPlayerList();
     static vector<string> GetAllRefs();
     static vector<string> GetAllRefs_NotSelf();
     static vector<string> GetEnabledRefs();

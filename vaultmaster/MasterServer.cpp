@@ -82,7 +82,7 @@ DWORD WINAPI MasterServer::MasterThread(LPVOID data)
                     RakString map(entry.GetServerMap().c_str());
                     int players = entry.GetServerPlayers().first;
                     int playersMax = entry.GetServerPlayers().second;
-                    int game = entry.GetGame();
+                    unsigned char game = entry.GetGame();
                     std::map<string, string> rules = entry.GetServerRules();
 
                     query.Write(addr);
@@ -130,7 +130,7 @@ DWORD WINAPI MasterServer::MasterThread(LPVOID data)
                     RakString map(entry.GetServerMap().c_str());
                     int players = entry.GetServerPlayers().first;
                     int playersMax = entry.GetServerPlayers().second;
-                    int game = entry.GetGame();
+                    unsigned char game = entry.GetGame();
                     std::map<string, string> rules = entry.GetServerRules();
 
                     query.Write(name);
@@ -170,7 +170,7 @@ DWORD WINAPI MasterServer::MasterThread(LPVOID data)
                 {
                     RakString name, map;
                     int players, playersMax, rsize;
-                    int game;
+                    unsigned char game;
 
                     query.Read(name);
                     query.Read(map);

@@ -4,17 +4,17 @@
 #define TYPECLASS
 #include "GameFactory.h"
 
+#include <string>
+#include <list>
+#include <cmath>
+#include <typeinfo>
+#include <cstdlib>
+
 #include "Value.h"
 #include "Container.h"
 #include "VaultException.h"
 #include "Utils.h"
 #include "API.h"
-
-#include <string>
-#include <list>
-#include <cmath>
-#include <typeinfo>
-#include <stdlib.h>
 
 using namespace std;
 
@@ -31,17 +31,19 @@ private:
 
     map<unsigned char, Value<double> > actor_Values;
     map<unsigned char, Value<double> > actor_BaseValues;
-    map<unsigned char, Value<bool> > actor_Animations;
+    Value<unsigned char> anim_Running;
+    Value<bool> state_Alerted;
     Value<bool> state_Dead;
 
-    void Startup();
+    Actor(const Actor&);
+    Actor& operator=(const Actor&);
 
 protected:
     Actor(unsigned int refID, unsigned int baseID);
     virtual ~Actor();
 
 public:
-    static list<Actor*> GetActorList();
+    static vector<Actor*> GetActorList();
     static vector<string> GetAllRefs();
     static vector<string> GetEnabledRefs();
     static vector<string> GetDisabledRefs();
@@ -55,14 +57,16 @@ public:
     static void SetDebugHandler(Debug* debug);
 #endif
 
-    double GetActorValue(unsigned char index);
-    double GetActorBaseValue(unsigned char index);
-    bool IsActorAnimationActive(unsigned char anim);
-    bool GetActorDead();
+    double GetActorValue(unsigned char index) const;
+    double GetActorBaseValue(unsigned char index) const;
+    unsigned char GetActorRunningAnimation() const;
+    bool GetActorAlerted() const;
+    bool GetActorDead() const;
 
     Lockable* SetActorValue(unsigned char index, double value);
     Lockable* SetActorBaseValue(unsigned char index, double value);
-    Lockable* SetActorAnimation(unsigned char anim, bool state);
+    Lockable* SetActorRunningAnimation(unsigned char index);
+    Lockable* SetActorAlerted(bool state);
     Lockable* SetActorDead(bool state);
 
 };

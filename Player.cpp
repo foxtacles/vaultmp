@@ -35,11 +35,11 @@ void Player::SetDebugHandler(Debug* debug)
 }
 #endif
 
-list<Player*> Player::GetPlayerList()
+vector<Player*> Player::GetPlayerList()
 {
-    list<Player*> playerlist;
-    list<Reference*>::iterator it;
-    list<Reference*> instances = GameFactory::GetObjectTypes(ID_PLAYER);
+    vector<Player*> playerlist;
+    vector<Reference*>::iterator it;
+    vector<Reference*> instances = GameFactory::GetObjectTypes(ID_PLAYER);
 
     for (it = instances.begin(); it != instances.end(); ++it)
         playerlist.push_back((Player*) *it);
@@ -50,8 +50,8 @@ list<Player*> Player::GetPlayerList()
 vector<string> Player::GetRefs(bool enabled, bool notself, bool enabled_disabled, bool self_notself)
 {
     vector<string> result;
-    list<Player*>::iterator it;
-    list<Player*> playerlist = GetPlayerList();
+    vector<Player*>::iterator it;
+    vector<Player*> playerlist = GetPlayerList();
 
     for (it = playerlist.begin(); it != playerlist.end(); ++it)
     {

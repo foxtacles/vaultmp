@@ -6,20 +6,6 @@ Debug* Value<T>::debug = NULL;
 #endif
 
 template <typename T>
-Value<T>::Value(unsigned char id)
-{
-    this->id = id;
-    value = 0;
-}
-
-template <>
-Value<string>::Value(unsigned char id)
-{
-    this->id = id;
-    value = "";
-}
-
-template <typename T>
 Value<T>::Value()
 {
     value = 0;
@@ -60,26 +46,14 @@ bool Value<T>::Set(T value)
 }
 
 template <typename T>
-T Value<T>::Get()
+T Value<T>::Get() const
 {
     return value;
 }
 
-template <typename T>
-void Value<T>::SetID(unsigned char id)
-{
-    this->id = id;
-}
-
-template <typename T>
-unsigned char Value<T>::GetID()
-{
-    return id;
-}
-
 template class Value<unsigned int>;
+template class Value<unsigned char>;
 template class Value<bool>;
 template class Value<double>;
 template class Value<string>;
-template class Value<Object*>;
 template class Value<Container*>;

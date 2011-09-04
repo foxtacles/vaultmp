@@ -17,7 +17,7 @@
  *  Version: $Id: amx.c 4535 2011-07-07 09:15:22Z thiadmer $
  */
 
-#define AMX_ASM // fast!
+//#define AMX_ASM // fast! I can't get this to work with 64bit cell size :(
 #define NDEBUG // no debug
 #define AMX_ANSIONLY // no unicode
 

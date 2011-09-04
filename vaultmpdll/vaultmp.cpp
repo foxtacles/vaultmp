@@ -1,5 +1,5 @@
 #include <windows.h>
-#include <stdio.h>
+#include <cstdio>
 #include <vector>
 #include <string>
 
@@ -10,9 +10,6 @@ using namespace std;
 typedef void (*CallCommand)(void*, void*, void*, void*, void*, void*, void*, void*);
 typedef unsigned int (*LookupForm)(unsigned int);
 typedef unsigned int (*LookupFunc)(unsigned int);
-
-typedef HANDLE (*fInitialize)(void);
-typedef void (*fMessage)(string);
 
 HANDLE hProc;
 PipeServer pipeServer;
@@ -26,7 +23,8 @@ vector<void*> delegated;
 
 bool delegate = false;
 bool DLLerror = false;
-int game = 0;
+unsigned char game = 0x00;
+void* _reference = 0x00;
 
 const unsigned FalloutNVpatch_VATS_src = 0x009428AE;
 const unsigned FalloutNVpatch_VATS_dest = 0x00942BE8;
@@ -109,13 +107,80 @@ void BethesdaDelegator()
     }
 }
 
-void ExecuteCommand(const vector<void*> args, unsigned int crc, signed int key, bool delegate_flag)
+void vaultfunction(void* reference, void* result, unsigned short opcode)
+{
+    switch (game)
+    {
+        case FALLOUT3:
+        case NEWVEGAS:
+        {
+            switch (opcode)
+            {
+                case 0xE001: // GetActorState - returns the actors running animation and alerted state
+                {
+                    ZeroMemory(result, sizeof(double));
+                    typedef void* (*animdat)(void*);
+                    _reference = reference;
+                    animdat Call = (animdat) *((unsigned int*) ((unsigned) *((unsigned int*) reference) + (unsigned) 0x01E4));
+                    asm (
+                        ".intel_syntax noprefix\n"
+                        "MOV ECX,__reference\n"
+                    );
+                    char* data = (char*) Call(reference);
+                    if (data != NULL)
+                    {
+                        char alerted = *(data + 0x4D);
+                        char running = *(data + 0x4E);
+                        memcpy(result, &alerted, 1);
+                        memcpy((void*) ((unsigned) result + 4), &running, 1);
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
+            break;
+        }
+        case OBLIVION:
+        {
+            switch (opcode)
+            {
+                case 0xE001: // GetActorState - returns the actors running animation and alerted state
+                {
+                    ZeroMemory(result, sizeof(double));
+                    typedef void* (*animdat)(void*);
+                    _reference = reference;
+                    animdat Call = (animdat) *((unsigned int*) ((unsigned) *((unsigned int*) reference) + (unsigned) 0x0164));
+                    asm (
+                        ".intel_syntax noprefix\n"
+                        "MOV ECX,__reference\n"
+                    );
+                    char* data = (char*) Call(reference);
+                    if (data != NULL)
+                    {
+                        char alerted = *(data + 0x3D);
+                        char running = *(data + 0x3C);
+                        memcpy(result, &alerted, 1);
+                        memcpy((void*) ((unsigned) result + 4), &running, 1);
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
+            break;
+        }
+        default:
+            break;
+    }
+}
+
+void ExecuteCommand(vector<void*>& args, unsigned int crc, signed int key, bool delegate_flag)
 {
     if (args.size() != 8)
         return;
 
     unsigned int reference = *((unsigned int*) args.at(2));
-    unsigned int reference_old = reference;
     unsigned short opcode;
 
     if (*((unsigned int*) args.at(1)) == 0x0001001C)
@@ -124,16 +189,6 @@ void ExecuteCommand(const vector<void*> args, unsigned int crc, signed int key, 
         opcode = *((unsigned short*) args.at(1));
 
     if (opcode == 0x00)
-        return;
-
-    unsigned int function = FuncLookup((unsigned int) opcode);
-
-    if (function == 0x00)
-        return;
-
-    void* callAddr = (void*) *((unsigned int*) (function + 0x18));
-
-    if (callAddr == 0x00)
         return;
 
     if (reference != 0x00)
@@ -177,27 +232,44 @@ void ExecuteCommand(const vector<void*> args, unsigned int crc, signed int key, 
         *((unsigned int*) (((unsigned) **param2) + 0x08)) = param2_ref;
     }
 
-    if (delegate_flag)
+    if ((opcode & VAULTFUNCTION) == VAULTFUNCTION)
     {
-        delegated.clear();
-        delegated.reserve(9);
-        delegated.push_back(args.at(0));
-        delegated.push_back(args.at(1));
-        delegated.push_back((void*) reference);
-        delegated.push_back((void*) *((unsigned int*) args.at(3)));
-        delegated.push_back(args.at(4));
-        delegated.push_back((void*) &arg4);
-        delegated.push_back(args.at(6));
-        delegated.push_back(args.at(7));
-        delegated.push_back(callAddr);
-        delegate = true;
-
-        while (delegate) Sleep(10);
+        vaultfunction((void*) reference, args.at(6), opcode);
     }
     else
     {
-        CallCommand Call = (CallCommand) callAddr;
-        Call(args.at(0), args.at(1), (void*) reference, (void*) *((unsigned int*) args.at(3)), args.at(4), (void*) &arg4, args.at(6), args.at(7));
+        unsigned int function = FuncLookup((unsigned int) opcode);
+
+        if (function == 0x00)
+            return;
+
+        void* callAddr = (void*) *((unsigned int*) (function + 0x18));
+
+        if (callAddr == 0x00)
+            return;
+
+        if (delegate_flag)
+        {
+            delegated.clear();
+            delegated.reserve(9);
+            delegated.push_back(args.at(0));
+            delegated.push_back(args.at(1));
+            delegated.push_back((void*) reference);
+            delegated.push_back((void*) *((unsigned int*) args.at(3)));
+            delegated.push_back(args.at(4));
+            delegated.push_back((void*) &arg4);
+            delegated.push_back(args.at(6));
+            delegated.push_back(args.at(7));
+            delegated.push_back(callAddr);
+            delegate = true;
+
+            while (delegate) Sleep(10);
+        }
+        else
+        {
+            CallCommand Call = (CallCommand) callAddr;
+            Call(args.at(0), args.at(1), (void*) reference, (void*) *((unsigned int*) args.at(3)), args.at(4), (void*) &arg4, args.at(6), args.at(7));
+        }
     }
 
     char result[PIPE_LENGTH];
@@ -217,25 +289,15 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 
     HINSTANCE vaultgui = NULL;
     HINSTANCE silverlock = NULL;
-    HANDLE guiThread;
 
     vaultgui = LoadLibrary("vaultgui.dll");
 
     if (vaultgui != NULL)
     {
-        fInitialize init;
-        init = (fInitialize) GetProcAddress(vaultgui, "Initialize");
-        guiThread = init();
+
     }
     /*else
         DLLerror = true;*/
-
-    fMessage GUI_msg;
-
-    if (vaultgui != NULL)
-    {
-        GUI_msg = (fMessage) GetProcAddress(vaultgui, "Message");
-    }
 
     pipeClient.SetPipeAttributes("BethesdaClient", PIPE_LENGTH);
     while (!pipeClient.ConnectToServer());
@@ -325,7 +387,6 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
         {
             if (vaultgui != NULL)
             {
-                GUI_msg(string(content));
             }
 
             break;

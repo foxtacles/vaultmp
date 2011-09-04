@@ -2,7 +2,7 @@
 
 using namespace std;
 
-ServerEntry::ServerEntry(int game)
+ServerEntry::ServerEntry(unsigned char game)
 {
     this->game = game;
     this->name = "Vault-Tec Multiplayer Mod server";
@@ -12,7 +12,7 @@ ServerEntry::ServerEntry(int game)
     this->SetServerRule("game", game == FALLOUT3 ? "Fallout 3" : game == NEWVEGAS ? "Fallout NV" : game == OBLIVION ? "TES: Oblivion" : "undefined");
 }
 
-ServerEntry::ServerEntry(string name, string map, pair<int, int> players, int ping, int game)
+ServerEntry::ServerEntry(string name, string map, pair<int, int> players, int ping, unsigned char game)
 {
     this->game = game;
     SetServerName(name);
@@ -48,7 +48,7 @@ void ServerEntry::SetServerPing(int ping)
     this->ping = ping;
 }
 
-void ServerEntry::SetGame(int game)
+void ServerEntry::SetGame(unsigned char game)
 {
     this->game = game;
     this->SetServerRule("game", game == FALLOUT3 ? "Fallout 3" : game == NEWVEGAS ? "Fallout NV" : game == OBLIVION ? "TES: Oblivion" : "undefined");
@@ -79,7 +79,7 @@ int ServerEntry::GetServerPing()
     return ping;
 }
 
-int ServerEntry::GetGame()
+unsigned char ServerEntry::GetGame()
 {
     return game;
 }

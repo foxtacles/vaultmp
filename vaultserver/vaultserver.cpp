@@ -1,7 +1,7 @@
 #ifdef __WIN32__
 #include <windows.h>
 #endif
-#include <stdio.h>
+#include <cstdio>
 
 #include "vaultserver.h"
 #include "Dedicated.h"
@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
     printf("Vault-Tec dedicated server %s (Unix)\n----------------------------------------------------------\n", DEDICATED_VERSION);
 #endif
 
-    int game;
+    unsigned char game;
     int port;
     int players;
     int fileslots;

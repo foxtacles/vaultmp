@@ -29,6 +29,7 @@ private:
     static NetworkResponse GetAngle(RakNetGUID guid, NetworkID id, unsigned char axis, double value);
     static NetworkResponse GetGameCell(RakNetGUID guid, NetworkID id, unsigned int cell);
     static NetworkResponse GetActorValue(RakNetGUID guid, NetworkID id, bool base, unsigned char index, double value);
+    static NetworkResponse GetActorState(RakNetGUID guid, NetworkID id, unsigned char index, bool alerted);
 
 public:
 

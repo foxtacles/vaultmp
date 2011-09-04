@@ -2,8 +2,8 @@
 #define API_H
 
 #include <windows.h>
-#include <time.h>
-#include <limits.h>
+#include <ctime>
+#include <climits>
 #include <string>
 #include <list>
 #include <map>
@@ -24,8 +24,8 @@ using namespace Data;
 
 typedef vector<char*> CommandParsed;
 typedef pair<pair<signed int, vector<double> >, double> CommandResult;
-typedef multimap<string, pair<string, pair<unsigned short, unsigned short> > > FunctionList;
-typedef multimap<string, pair<unsigned char, unsigned short> > ValueList;
+typedef multimap<string, pair<string, pair<unsigned short, unsigned char> > > FunctionList;
+typedef multimap<string, pair<unsigned char, unsigned char> > ValueList;
 typedef deque<pair<unsigned int, vector<double> > > CommandQueue;
 
 namespace Values {
@@ -82,6 +82,8 @@ namespace Values {
         Func_AddItem                    = 0x1002,
         Func_RemoveItem                 = 0x1052,
         Func_Kill                       = 0x108B,
+
+        Func_GetActorState              = 0x0001 | VAULTFUNCTION,
     };
 
     namespace Fallout {
@@ -90,6 +92,7 @@ namespace Values {
         {
             Func_IsMoving                   = 0x1019,
             Func_MarkForDelete              = 0x11BB,
+            Func_IsAnimPlaying              = 0x1128,
         };
 
         enum ActorVals
@@ -198,6 +201,7 @@ namespace Values {
             Func_Load                       = 0x0148,
             Func_SetName                    = 0x14A3,
             Func_GetParentCell              = 0x1412,
+            Func_IsAnimGroupPlaying         = 0x16C1, // equivalent to IsAnimPlaying in Fallout games
         };
 
 /*
@@ -328,12 +332,12 @@ private:
     static ValueList anims;
     static CommandQueue queue;
     static CommandCache cache;
-    static int game;
+    static unsigned char game;
 
-    static void DefineFunction(string name, string def, unsigned short opcode, unsigned short games);
-    static void DefineValueString(string name, unsigned char value, unsigned short games);
-    static void DefineAxisString(string name, unsigned char axis, unsigned short games);
-    static void DefineAnimString(string name, unsigned char anim, unsigned short games);
+    static void DefineFunction(string name, string def, unsigned short opcode, unsigned char games);
+    static void DefineValueString(string name, unsigned char value, unsigned char games);
+    static void DefineAxisString(string name, unsigned char axis, unsigned char games);
+    static void DefineAnimString(string name, unsigned char anim, unsigned char games);
 
     static unsigned long ExtractReference(char* reference);
     static pair<string, unsigned short> RetrieveFunction(string name);
@@ -351,15 +355,15 @@ protected:
     static CommandParsed Translate(multimap<string, string>& cmd, int key = 0);
     static CommandResult Translate(char* stream);
 
-#ifdef VAULTMP_DEBUG
-    static void SetDebugHandler(Debug* debug);
-#endif
-
     API();
 
 public:
 
-    static void Initialize(int game);
+#ifdef VAULTMP_DEBUG
+    static void SetDebugHandler(Debug* debug);
+#endif
+
+    static void Initialize(unsigned char game);
     static void Terminate();
 
     static unsigned char RetrieveValue(char* value);

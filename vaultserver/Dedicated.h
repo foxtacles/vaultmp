@@ -4,7 +4,7 @@
 #ifdef __WIN32__
 #include <windows.h>
 #endif
-#include <stdio.h>
+#include <cstdio>
 #include <io.h>
 
 #include "../RakNet/RakPeerInterface.h"
@@ -26,6 +26,7 @@
 #include "Client.h"
 #include "NetworkServer.h"
 #include "Script.h"
+#include "Timer.h"
 #include "vaultserver.h"
 
 #define RAKNET_STANDARD_PORT            1770
@@ -58,6 +59,7 @@ private:
     static bool fileserve;
 
     static void Announce(bool announce);
+    static void Query(Packet* packet);
     static TimeMS announcetime;
     static SystemAddress master;
     static ServerEntry* self;
@@ -91,7 +93,7 @@ public:
     static void SetServerName(string name);
     static void SetServerMap(string map);
     static void SetServerRule(string rule, string value);
-    static int GetGameCode();
+    static unsigned char GetGameCode();
 
     //static void SetServerConnections(int connections);
 

@@ -23,6 +23,9 @@ private:
     unsigned int ID;
     NetworkID player;
 
+    Client(const Client&);
+    Client& operator=(const Client&);
+
 public:
     Client(RakNetGUID guid, NetworkID player);
     ~Client();

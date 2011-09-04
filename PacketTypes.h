@@ -39,6 +39,7 @@ enum
     ID_UPDATE_ANGLE,
     ID_UPDATE_CELL,
     ID_UPDATE_VALUE,
+    ID_UPDATE_STATE,
 };
 
 enum
@@ -68,6 +69,10 @@ struct pTypeSpecifier
 class pDefault
 {
 friend class PacketFactory;
+
+private:
+    pDefault(const pDefault&);
+    pDefault& operator=(const pDefault&);
 
 protected:
     pDefault(unsigned char type)
@@ -121,6 +126,10 @@ class pGameDefault : public pDefault
 {
 friend class PacketFactory;
 
+private:
+    pGameDefault(const pGameDefault&);
+    pGameDefault& operator=(const pGameDefault&);
+
 protected:
     pGameDefault(unsigned char type) : pDefault(type)
     {
@@ -170,6 +179,10 @@ protected:
 class pObjectDefault : public pDefault
 {
 friend class PacketFactory;
+
+private:
+    pObjectDefault(const pObjectDefault&);
+    pObjectDefault& operator=(const pObjectDefault&);
 
 protected:
     pObjectDefault(unsigned char type, NetworkID id) : pDefault(type)
@@ -227,6 +240,10 @@ protected:
 class pObjectNewDefault : public pObjectDefault
 {
 friend class PacketFactory;
+
+private:
+    pObjectNewDefault(const pObjectNewDefault&);
+    pObjectNewDefault& operator=(const pObjectNewDefault&);
 
 protected:
     pObjectNewDefault(unsigned char type, unsigned int refID, unsigned int baseID, NetworkID id) : pObjectDefault(type, id)
@@ -295,6 +312,10 @@ protected:
 class pObjectUpdateDefault : public pObjectDefault
 {
 friend class PacketFactory;
+
+private:
+    pObjectUpdateDefault(const pObjectUpdateDefault&);
+    pObjectUpdateDefault& operator=(const pObjectUpdateDefault&);
 
 protected:
     pObjectUpdateDefault(unsigned char type, unsigned char sub_type, NetworkID id) : pObjectDefault(type, id)
@@ -385,6 +406,9 @@ private:
     {
         deconstruct(&_data, sizeof(_data));
     }
+
+    pGameConfirm(const pGameConfirm&);
+    pGameConfirm& operator=(const pGameConfirm&);
 };
 
 class pGameAuth : public pGameDefault
@@ -413,6 +437,9 @@ private:
     {
         deconstruct(&_data, sizeof(_data));
     }
+
+    pGameAuth(const pGameAuth&);
+    pGameAuth& operator=(const pGameAuth&);
 };
 
 class pGameMod : public pGameDefault
@@ -441,6 +468,9 @@ private:
     {
         deconstruct(&_data, sizeof(_data));
     }
+
+    pGameMod(const pGameMod&);
+    pGameMod& operator=(const pGameMod&);
 };
 
 class pGameStart : public pGameDefault
@@ -469,6 +499,9 @@ private:
     {
         deconstruct(&_data, sizeof(_data));
     }
+
+    pGameStart(const pGameStart&);
+    pGameStart& operator=(const pGameStart&);
 };
 
 class pGameEnd : public pGameDefault
@@ -487,6 +520,9 @@ private:
     {
         deconstruct(&reason, sizeof(reason));
     }
+
+    pGameEnd(const pGameEnd&);
+    pGameEnd& operator=(const pGameEnd&);
 };
 
 /* ************************************** */
@@ -508,6 +544,9 @@ private:
     {
         deconstruct(name, sizeof(this->name));
     }
+
+    pPlayerNew(const pPlayerNew&);
+    pPlayerNew& operator=(const pPlayerNew&);
 };
 
 class pPlayerLeft : public pObjectDefault
@@ -523,6 +562,9 @@ private:
     {
         deconstruct();
     }
+
+    pPlayerLeft(const pPlayerLeft&);
+    pPlayerLeft& operator=(const pPlayerLeft&);
 };
 
 /* ************************************** */
@@ -552,6 +594,9 @@ private:
     {
         deconstruct(&_data, sizeof(_data));
     }
+
+    pObjectPos(const pObjectPos&);
+    pObjectPos& operator=(const pObjectPos&);
 };
 
 class pObjectAngle : public pObjectUpdateDefault
@@ -579,6 +624,9 @@ private:
     {
         deconstruct(&_data, sizeof(_data));
     }
+
+    pObjectAngle(const pObjectAngle&);
+    pObjectAngle& operator=(const pObjectAngle&);
 };
 
 class pObjectCell : public pObjectUpdateDefault
@@ -597,6 +645,9 @@ private:
     {
         deconstruct(&this->cell, sizeof(this->cell));
     }
+
+    pObjectCell(const pObjectCell&);
+    pObjectCell& operator=(const pObjectCell&);
 };
 
 /* ************************************** */
@@ -628,8 +679,40 @@ private:
     {
         deconstruct(&_data, sizeof(_data));
     }
+
+    pActorValue(const pActorValue&);
+    pActorValue& operator=(const pActorValue&);
 };
 
+class pActorState : public pObjectUpdateDefault
+{
+friend class PacketFactory;
+
+private:
+#pragma pack(push, 1)
+    struct _pActorState
+    {
+        unsigned char index;
+        bool alerted;
+    };
+#pragma pack(pop)
+
+    _pActorState _data;
+
+    pActorState(NetworkID id, unsigned char index, bool alerted) : pObjectUpdateDefault(ID_ACTOR_UPDATE, ID_UPDATE_STATE, id)
+    {
+        _data.index = index;
+        _data.alerted = alerted;
+        construct(&_data, sizeof(_data));
+    }
+    pActorState(unsigned char* stream, unsigned int len) : pObjectUpdateDefault(stream, len)
+    {
+        deconstruct(&_data, sizeof(_data));
+    }
+
+    pActorState(const pActorState&);
+    pActorState& operator=(const pActorState&);
+};
 
 /* ************************************** */
 
@@ -743,6 +826,15 @@ public:
             break;
         }
 
+        case ID_UPDATE_STATE:
+        {
+            NetworkID id = va_arg(args, NetworkID);
+            unsigned char index = (unsigned char) va_arg(args, unsigned int);
+            bool alerted = (bool) va_arg(args, unsigned int);
+            packet = new pActorState(id, index, alerted);
+            break;
+        }
+
         default:
             throw VaultException("Unhandled packet type %d", (int) type);
         }
@@ -797,6 +889,9 @@ public:
                 break;
             case ID_UPDATE_VALUE:
                 packet = new pActorValue(stream, len);
+                break;
+            case ID_UPDATE_STATE:
+                packet = new pActorState(stream, len);
                 break;
             default:
                 throw VaultException("Unhandled object update packet type %d", (int) stream[1]);
@@ -938,6 +1033,17 @@ public:
                         *base = update->_data.base;
                         *index = update->_data.index;
                         *value = update->_data.value;
+                        break;
+                    }
+                    case ID_UPDATE_STATE:
+                    {
+                        pActorState* update = dynamic_cast<pActorState*>(data);
+                        NetworkID* id = va_arg(args, NetworkID*);
+                        unsigned char* index = va_arg(args, unsigned char*);
+                        bool* alerted = va_arg(args, bool*);
+                        *id = update->id;
+                        *index = update->_data.index;
+                        *alerted = update->_data.alerted;
                         break;
                     }
                 }

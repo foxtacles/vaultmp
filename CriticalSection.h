@@ -8,11 +8,9 @@
 #endif
 
 #include <typeinfo>
-
-#define DONT_NEED_DEBUG
-#include "VaultException.h"
-
 #define CS_TIMEOUT     5000
+
+class Debug;
 
 class CriticalSection
 {
@@ -24,8 +22,16 @@ private:
     pthread_mutex_t cs;
 #endif
 
+#ifdef VAULTMP_DEBUG
+    static Debug* debug;
+    bool ndebug;
+#endif
+
     bool finalize;
     int locks;
+
+    CriticalSection(const CriticalSection&);
+    CriticalSection& operator=(const CriticalSection&);
 
 public:
     CriticalSection();
@@ -34,6 +40,11 @@ public:
     CriticalSection* StartSession();
     void EndSession();
     void Finalize();
+
+#ifdef VAULTMP_DEBUG
+    void ToggleSectionDebug(bool toggle);
+    static void SetDebugHandler(Debug* debug);
+#endif
 
 };
 

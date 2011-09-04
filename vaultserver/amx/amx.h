@@ -20,6 +20,8 @@
 #ifndef AMX_H_INCLUDED
 #define AMX_H_INCLUDED
 
+#define PAWN_CELL_SIZE 64 // 64 bit cell size
+
 #include <stdlib.h>   /* for size_t */
 #include <limits.h>
 

@@ -33,32 +33,32 @@ Object::~Object()
 
 }
 
-string Object::GetName()
+string Object::GetName() const
 {
     return object_Name.Get();
 }
 
-double Object::GetPos(unsigned char axis)
+double Object::GetPos(unsigned char axis) const
 {
     return SAFE_FIND(object_Pos, axis)->second.Get();
 }
 
-double Object::GetAngle(unsigned char axis)
+double Object::GetAngle(unsigned char axis) const
 {
     return SAFE_FIND(object_Angle, axis)->second.Get();
 }
 
-bool Object::GetEnabled()
+bool Object::GetEnabled() const
 {
     return state_Enabled.Get();
 }
 
-unsigned int Object::GetGameCell()
+unsigned int Object::GetGameCell() const
 {
     return cell_Game.Get();
 }
 
-unsigned int Object::GetNetworkCell()
+unsigned int Object::GetNetworkCell() const
 {
     return cell_Network.Get();
 }
@@ -179,12 +179,12 @@ Lockable* Object::SetNetworkCell(unsigned int cell)
     return NULL;
 }
 
-bool Object::IsNearPoint(double X, double Y, double Z, double R)
+bool Object::IsNearPoint(double X, double Y, double Z, double R) const
 {
     return (sqrt((abs(GetPos(Axis_X) - X) * abs(GetPos(Axis_X) - X)) + ((GetPos(Axis_Y) - Y) * abs(GetPos(Axis_Y) - Y)) + ((GetPos(Axis_Z) - Z) * abs(GetPos(Axis_Z) - Z))) <= R);
 }
 
-bool Object::IsCoordinateInRange(unsigned char axis, double pos, double R)
+bool Object::IsCoordinateInRange(unsigned char axis, double pos, double R) const
 {
     return (GetPos(axis) > (pos - R) && GetPos(axis) < (pos + R));
 }

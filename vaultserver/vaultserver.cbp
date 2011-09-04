@@ -25,7 +25,6 @@
 					<Add option="-lws2_32" />
 					<Add option="-lwinmm" />
 					<Add option="-lm" />
-					<Add option="amx/obj/amxexecn.obj" />
 					<Add option="-enable-auto-import" />
 				</Linker>
 			</Target>
@@ -46,7 +45,6 @@
 					<Add option="-lws2_32" />
 					<Add option="-lwinmm" />
 					<Add option="-lm" />
-					<Add option="amx/obj/amxexecn.obj" />
 					<Add option="-enable-auto-import" />
 				</Linker>
 			</Target>

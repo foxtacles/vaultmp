@@ -5,19 +5,12 @@
 #include <windows.h>
 #endif
 
-#include "vaultmp.h"
-#include <stdio.h>
+#include <cstdio>
 #include <string>
 #include <typeinfo>
 
-#ifdef VAULTMP_DEBUG
-    #ifndef DONT_NEED_DEBUG
-    #include "Debug.h"
-    #else
-    class Debug;
-    #undef DONT_NEED_DEBUG
-    #endif
-#endif
+#include "vaultmp.h"
+#include "Debug.h"
 
 using namespace std;
 
@@ -29,6 +22,8 @@ private:
 #ifdef VAULTMP_DEBUG
     static Debug* debug;
 #endif
+
+    VaultException& operator=(const VaultException&);
 
 public:
 

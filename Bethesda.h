@@ -1,5 +1,5 @@
 #include <windows.h>
-#include <stdio.h>
+#include <cstdio>
 #include <shlwapi.h>
 #include <shlobj.h>
 #include <list>
@@ -39,7 +39,7 @@ friend class NetworkClient;
 friend class Game;
 
 private:
-    static int game;
+    static unsigned char game;
     static string password;
     static Savegame savegame;
     static ModList modfiles;
@@ -54,6 +54,6 @@ private:
 
     Bethesda();
 public:
-    static void InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, string name, string pwd, int game);
+    static void InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, string name, string pwd, unsigned char game);
 
 };

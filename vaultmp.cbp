@@ -65,7 +65,6 @@
 		<Unit filename="Game.h" />
 		<Unit filename="GameFactory.cpp" />
 		<Unit filename="GameFactory.h" />
-		<Unit filename="GameTypes.h" />
 		<Unit filename="Interface.cpp" />
 		<Unit filename="Interface.h" />
 		<Unit filename="Item.cpp" />

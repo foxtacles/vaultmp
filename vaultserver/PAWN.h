@@ -4,8 +4,8 @@
 #ifdef __WIN32__
 #include <windows.h>
 #endif
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <map>
 
 #define HAVE_STDINT_H
@@ -23,9 +23,12 @@ private:
 
     PAWN();
 
-    static AMX_NATIVE_INFO vaultmp_functions[9];
+    static AMX_NATIVE_INFO vaultmp_functions[18];
 
     static cell vaultmp_timestamp(AMX* amx, const cell* params);
+    static cell vaultmp_CreateTimer(AMX* amx, const cell* params);
+    static cell vaultmp_KillTimer(AMX* amx, const cell* params);
+
     static cell vaultmp_SetServerName(AMX* amx, const cell* params);
     static cell vaultmp_SetServerMap(AMX* amx, const cell* params);
     static cell vaultmp_SetServerRule(AMX* amx, const cell* params);
@@ -34,6 +37,14 @@ private:
     static cell vaultmp_ValueToString(AMX* amx, const cell* params);
     static cell vaultmp_AxisToString(AMX* amx, const cell* params);
     static cell vaultmp_AnimToString(AMX* amx, const cell* params);
+
+    static cell vaultmp_GetPlayerPos(AMX* amx, const cell* params);
+    static cell vaultmp_GetPlayerPosXYZ(AMX* amx, const cell* params);
+    static cell vaultmp_GetPlayerAngle(AMX* amx, const cell* params);
+    static cell vaultmp_GetPlayerAngleXYZ(AMX* amx, const cell* params);
+    static cell vaultmp_GetPlayerValue(AMX* amx, const cell* params);
+    static cell vaultmp_GetPlayerBaseValue(AMX* amx, const cell* params);
+    static cell vaultmp_GetPlayerCell(AMX* amx, const cell* params);
 
     /*static cell vaultmp_GetPlayerName(AMX* amx, const cell* params);
     static cell vaultmp_GetPlayerPos(AMX* amx, const cell* params);
@@ -50,8 +61,8 @@ public:
     static int LoadProgram(AMX* amx, char* filename, void* memblock);
     static int Register(AMX* amx, const AMX_NATIVE_INFO* list, int number);
     static int Exec(AMX* amx, cell* retval, int index);
-    static int Call(AMX* amx, const char* name, const char* argl, int buf, ...);
     static int FreeProgram(AMX* amx);
+    static cell Call(AMX* amx, const char* name, const char* argl, int buf, ...);
 
     static int CoreInit(AMX* amx);
     static int ConsoleInit(AMX* amx);

@@ -1,6 +1,6 @@
 #include <windows.h>
-#include <stdio.h>
-#include <time.h>
+#include <cstdio>
+#include <ctime>
 #include <map>
 
 #include "../RakNet/RakPeerInterface.h"

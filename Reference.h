@@ -20,6 +20,9 @@ private:
     Value<unsigned int> refID;
     Value<unsigned int> baseID;
 
+    Reference(const Reference&);
+    Reference& operator=(const Reference&);
+
 protected:
     Reference(unsigned int refID, unsigned int baseID);
     virtual ~Reference();
@@ -28,11 +31,11 @@ public:
     Lockable* SetReference(unsigned int refID);
     Lockable* SetBase(unsigned int baseID);
 
-    unsigned int GetReference();
-    unsigned int GetBase();
+    unsigned int GetReference() const;
+    unsigned int GetBase() const;
 
-    Parameter GetReferenceParam();
-    Parameter GetBaseParam();
+    const Parameter GetReferenceParam() const;
+    const Parameter GetBaseParam() const;
 
 };
 

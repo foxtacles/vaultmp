@@ -25,17 +25,17 @@ Item::~Item()
 
 }
 
-double Item::GetItemCondition()
+double Item::GetItemCondition() const
 {
     return this->item_Condition.Get();
 }
 
-Container* Item::GetItemContainer()
+Container* Item::GetItemContainer() const
 {
     return this->item_Container.Get();
 }
 
-bool Item::GetItemWorn()
+bool Item::GetItemWorn() const
 {
     return this->state_Worn.Get();
 }

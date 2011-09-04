@@ -1,5 +1,12 @@
 #include <vaultmp>
 
+forward MyTimer();
+
+public MyTimer()
+{
+    printf("PAWN bar\n");
+}
+
 main()
 {
     printf("My first PAWN vaultscript <3\n");
@@ -15,9 +22,11 @@ main()
     case OBLIVION:
         SetServerMap("cyrodiil");
     }
+
+    CreateTimer("MyTimer", 5000);
 }
 
-public OnClientAuthenticate(const name[], const pwd[])
+public OnClientAuthenticate(const name{}, const pwd{})
 {
 	printf("PAWN: client auth %s, %s\n", name, pwd);
 	return true;
@@ -49,9 +58,23 @@ public OnPlayerCellChange(player, cell)
     	printf("PAWN: player cell %d,%x\n", player, cell);
 }
 
-public OnPlayerValueChange(player, Bool:base, index, Float:value)
+public OnPlayerValueChange(player, index, Float:value)
 {
-	new values[64];
+	new values{64};
 	ValueToString(index, values);
 	printf("PAWN: player value %s -> %f\n", values, value);
+}
+
+public OnPlayerBaseValueChange(player, index, Float:value)
+{
+	new values{64};
+	ValueToString(index, values);
+	printf("PAWN: player base value %s -> %f\n", values, value);
+}
+
+public OnPlayerStateChange(player, index, Bool:alerted)
+{
+	new anims{64};
+	AnimToString(index, anims);
+	printf("PAWN: player running animation %s, alerted %d\n", anims, alerted);
 }

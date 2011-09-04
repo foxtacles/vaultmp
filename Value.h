@@ -10,7 +10,6 @@
 
 using namespace std;
 
-class Object;
 class Container;
 
 template <typename T>
@@ -26,17 +25,15 @@ private:
     static Debug* debug;
 #endif
 
+    Value& operator=(const Value&);
+
 public:
 
     Value();
-    Value(unsigned char id);
     virtual ~Value();
 
     bool Set(T value);
-    T Get();
-
-    void SetID(unsigned char id);
-    unsigned char GetID();
+    T Get() const;
 
 #ifdef VAULTMP_DEBUG
     static void SetDebugHandler(Debug* debug);

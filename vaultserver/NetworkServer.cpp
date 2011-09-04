@@ -177,6 +177,15 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
                     response = Server::GetActorValue(data->guid, id, base, index, value);
                     break;
                 }
+                case ID_UPDATE_STATE:
+                {
+                    NetworkID id;
+                    unsigned char index;
+                    bool alerted;
+                    PacketFactory::Access(packet, &id, &index, &alerted);
+                    response = Server::GetActorState(data->guid, id, index, alerted);
+                    break;
+                }
                 default:
                     throw VaultException("Unhandled object update packet type %d", (int) data->data[1]);
             }

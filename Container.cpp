@@ -2,7 +2,7 @@
 #include "Items.h"
 
 bool Container::initialized = false;
-int Container::game = 0;
+unsigned char Container::game = 0x00;
 ItemDatabase* Container::Items = NULL;
 IndexLookup Container::Mods;
 
@@ -41,7 +41,7 @@ unsigned int Container::ResolveIndex(unsigned int baseID)
     return baseID;
 }
 
-void Container::Initialize(int game)
+void Container::Initialize(unsigned char game)
 {
     if (!initialized)
     {
@@ -157,7 +157,7 @@ bool Container::CreateDiff(Container* inv1, Container* inv2, Container* diff)
 }
 */
 
-bool Container::IsEmpty()
+bool Container::IsEmpty() const
 {
     return container.empty();
 }
@@ -172,12 +172,12 @@ void Container::FlushContainer()
     container.clear();
 }
 
-void Container::PrintContainer()
+void Container::PrintContainer() const
 {
 
 }
 
-list<Item*> Container::GetItemList()
+list<Item*> Container::GetItemList() const
 {
     return container;
 }

@@ -33,6 +33,9 @@ private:
     Value<Container*> item_Container;
     Value<bool> state_Worn;
 
+    Item(const Item&);
+    Item& operator=(const Item&);
+
 protected:
     Item(unsigned int refID, unsigned int baseID);
     virtual ~Item();
@@ -42,9 +45,9 @@ public:
     static void SetDebugHandler(Debug* debug);
 #endif
 
-    double GetItemCondition();
-    Container* GetItemContainer();
-    bool GetItemWorn();
+    double GetItemCondition() const;
+    Container* GetItemContainer() const;
+    bool GetItemWorn() const;
 
     bool SetItemCondition(double condition);
     bool SetItemContainer(Container* container);

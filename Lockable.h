@@ -5,7 +5,7 @@
 #include <list>
 #include <string>
 #include <algorithm>
-#include <limits.h>
+#include <climits>
 
 #include "vaultmp.h"
 #include "CriticalSection.h"
@@ -37,6 +37,8 @@ private:
     static Debug* debug;
 #endif
 
+    Lockable& operator=(const Lockable&);
+
 protected:
 
     Lockable();
@@ -48,7 +50,7 @@ public:
 
     signed int Lock(bool flat);
     Lockable* Unlock(signed int key);
-    bool IsLocked();
+    bool IsLocked() const;
 
 #ifdef VAULTMP_DEBUG
     static void SetDebugHandler(Debug* debug);
