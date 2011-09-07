@@ -2,10 +2,7 @@
 
 using namespace Values;
 
-const Parameter Actor::Param_EnabledActors = Parameter(vector<string>(), &Actor::GetEnabledRefs);
-const Parameter Actor::Param_DisabledActors = Parameter(vector<string>(), &Actor::GetDisabledRefs);
-const Parameter Actor::Param_AllActors = Parameter(vector<string>(), &Actor::GetAllRefs);
-const Parameter Actor::Param_ActorValues = Parameter(vector<string>(), &API::RetrieveAllValues_Reverse);
+Parameter Actor::param_ActorValues = Parameter(vector<string>(), NULL);
 
 #ifdef VAULTMP_DEBUG
 Debug* Actor::debug;
@@ -55,38 +52,17 @@ vector<Actor*> Actor::GetActorList()
     return actorlist;
 }
 
-vector<string> Actor::GetRefs(bool enabled, bool enabled_disabled)
+const Parameter& Actor::Param_ActorValues()
 {
-    vector<string> result;
-    vector<Actor*>::iterator it;
-    vector<Actor*> actorlist = GetActorList();
+    if (param_ActorValues.first.empty())
+        param_ActorValues.first = API::RetrieveAllValues_Reverse();
 
-    for (it = actorlist.begin(); it != actorlist.end(); ++it)
-    {
-        unsigned int refID = (*it)->GetReference();
-
-        if (refID != 0x00 && (!enabled_disabled || ((*it)->GetEnabled() == enabled)))
-            result.push_back(Utils::LongToHex(refID));
-
-        GameFactory::LeaveReference(*it);
-    }
-
-    return result;
+    return param_ActorValues;
 }
 
-vector<string> Actor::GetEnabledRefs()
+const Parameter Actor::CreateFunctor(unsigned int flags)
 {
-    return GetRefs(true, true);
-}
-
-vector<string> Actor::GetDisabledRefs()
-{
-    return GetRefs(false, true);
-}
-
-vector<string> Actor::GetAllRefs()
-{
-    return GetRefs();
+    return Parameter(vector<string>(), new ActorFunctor(flags));
 }
 
 double Actor::GetActorValue(unsigned char index) const
@@ -200,4 +176,47 @@ Lockable* Actor::SetActorDead(bool state)
 #endif
 
     return &this->state_Dead;
+}
+
+vector<string> ActorFunctor::operator()()
+{
+    vector<string> result;
+    vector<Actor*>::iterator it;
+    vector<Actor*> actorlist = Actor::GetActorList();
+
+    for (it = actorlist.begin(); it != actorlist.end(); GameFactory::LeaveReference(*it), ++it)
+    {
+        Actor* actor = *it;
+        unsigned int refID = actor->GetReference();
+
+        if (refID != 0x00000000)
+        {
+            if (flags & FLAG_NOTSELF && refID == PLAYER_REFERENCE)
+                continue;
+
+            if (flags & FLAG_ENABLED && !actor->GetEnabled())
+                continue;
+            else if (flags & FLAG_DISABLED && actor->GetEnabled())
+                continue;
+
+            if (flags & FLAG_ALIVE && actor->GetActorDead())
+                continue;
+            else if (flags & FLAG_DEAD && !actor->GetActorDead())
+                continue;
+
+            if (flags & FLAG_ISALERTED && !actor->GetActorAlerted())
+                continue;
+            else if (flags & FLAG_NOTALERTED && actor->GetActorAlerted())
+                continue;
+        }
+
+        result.push_back(Utils::LongToHex(refID));
+    }
+
+    return result;
+}
+
+ActorFunctor::~ActorFunctor()
+{
+
 }

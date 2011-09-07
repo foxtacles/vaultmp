@@ -551,7 +551,7 @@ pair<vector<double>, API::op_default*> API::ParseCommand(char* cmd, char* def, u
             }
 
             /* Types:
-                a (Axis, 2 byte) - 0x00000008
+                a (Axis, 1 byte) - 0x00000008
                 d (Double, 8 byte, 0x7A) - 0x00000002
                 i (Integer, 4 byte, 0x6E) - 0x00000001
                 v (Actor Value, 2 byte) - 0x00000005
@@ -628,9 +628,9 @@ pair<vector<double>, API::op_default*> API::ParseCommand(char* cmd, char* def, u
                 if (axis == 0xFF)
                     throw VaultException("API::ParseCommand could not find an Axis identifier for input %s", tokenizer);
 
-                *((unsigned short*) arg2_pos) = (unsigned short) axis;
+                *((unsigned char*) arg2_pos) = axis;
                 result_data.first.push_back(axis);
-                arg2_pos += 2;
+                arg2_pos += 1;
                 break;
             }
             case 'g': // Animation Group
@@ -705,22 +705,26 @@ pair<vector<double>, API::op_default*> API::ParseCommand(char* cmd, char* def, u
 
 void API::DefineFunction(string name, string def, unsigned short opcode, unsigned char games)
 {
-    functions.insert(pair<string, pair<string, pair<unsigned short, unsigned short> > >(name, pair<string, pair<unsigned short, unsigned short> >(def, pair<unsigned short, unsigned char>(opcode, games))));
+    if (games & game)
+        functions.insert(pair<string, pair<string, unsigned short> >(name, pair<string, unsigned short>(def, opcode)));
 }
 
 void API::DefineValueString(string name, unsigned char value, unsigned char games)
 {
-    values.insert(pair<string, pair<unsigned char, unsigned short> >(name, pair<unsigned char, unsigned char>(value, games)));
+    if (games & game)
+        values.insert(pair<string, unsigned char>(name, value));
 }
 
 void API::DefineAxisString(string name, unsigned char axis, unsigned char games)
 {
-    API::axis.insert(pair<string, pair<unsigned char, unsigned short> >(name, pair<unsigned char, unsigned char>(axis, games)));
+    if (games & game)
+        API::axis.insert(pair<string, unsigned char>(name, axis));
 }
 
 void API::DefineAnimString(string name, unsigned char anim, unsigned char games)
 {
-    anims.insert(pair<string, pair<unsigned char, unsigned short> >(name, pair<unsigned char, unsigned char>(anim, games)));
+    if (games & game)
+        anims.insert(pair<string, unsigned char>(name, anim));
 }
 
 unsigned long API::ExtractReference(char* reference)
@@ -735,14 +739,10 @@ unsigned long API::ExtractReference(char* reference)
 unsigned char API::RetrieveValue(char* value)
 {
     ValueList::iterator it;
-    pair<ValueList::iterator, ValueList::iterator> it2;
-    it2 = values.equal_range(string(value));
+    it = values.find(string(value));
 
-    for (it = it2.first; it != it2.second; ++it)
-    {
-        if ((it->second.second & game) == game)
-            return it->second.first;
-    }
+    if (it != values.end())
+        return it->second;
 
     return 0xFF;
 }
@@ -750,14 +750,10 @@ unsigned char API::RetrieveValue(char* value)
 unsigned char API::RetrieveAxis(char* axis)
 {
     ValueList::iterator it;
-    pair<ValueList::iterator, ValueList::iterator> it2;
-    it2 = API::axis.equal_range(string(axis));
+    it = API::axis.find(string(axis));
 
-    for (it = it2.first; it != it2.second; ++it)
-    {
-        if ((it->second.second & game) == game)
-            return it->second.first;
-    }
+    if (it != API::axis.end())
+        return it->second;
 
     return 0xFF;
 }
@@ -765,14 +761,10 @@ unsigned char API::RetrieveAxis(char* axis)
 unsigned char API::RetrieveAnim(char* anim)
 {
     ValueList::iterator it;
-    pair<ValueList::iterator, ValueList::iterator> it2;
-    it2 = anims.equal_range(string(anim));
+    it = anims.find(string(anim));
 
-    for (it = it2.first; it != it2.second; ++it)
-    {
-        if ((it->second.second & game) == game)
-            return it->second.first;
-    }
+    if (it != anims.end())
+        return it->second;
 
     return 0xFF;
 }
@@ -780,12 +772,9 @@ unsigned char API::RetrieveAnim(char* anim)
 string API::RetrieveValue_Reverse(unsigned char value)
 {
     ValueList::iterator it;
-
-    for (it = values.begin(); it != values.end(); ++it)
-    {
-        if (it->second.first == value && (it->second.second & game) == game)
-            return it->first;
-    }
+    for (it = values.begin(); it != values.end() && it->second != value; ++it);
+    if (it != values.end())
+        return it->first;
 
     return string();
 }
@@ -793,12 +782,9 @@ string API::RetrieveValue_Reverse(unsigned char value)
 string API::RetrieveAxis_Reverse(unsigned char axis)
 {
     ValueList::iterator it;
-
-    for (it = API::axis.begin(); it != API::axis.end(); ++it)
-    {
-        if (it->second.first == axis && (it->second.second & game) == game)
-            return it->first;
-    }
+    for (it = API::axis.begin(); it != API::axis.end() && it->second != axis; ++it);
+    if (it != API::axis.end())
+        return it->first;
 
     return string();
 }
@@ -806,12 +792,9 @@ string API::RetrieveAxis_Reverse(unsigned char axis)
 string API::RetrieveAnim_Reverse(unsigned char anim)
 {
     ValueList::iterator it;
-
-    for (it = anims.begin(); it != anims.end(); ++it)
-    {
-        if (it->second.first == anim && (it->second.second & game) == game)
-            return it->first;
-    }
+    for (it = anims.begin(); it != anims.end() && it->second != anim; ++it);
+    if (it != anims.end())
+        return it->first;
 
     return string();
 }
@@ -822,10 +805,7 @@ vector<unsigned char> API::RetrieveAllValues()
     ValueList::iterator it;
 
     for (it = values.begin(); it != values.end(); ++it)
-    {
-        if ((it->second.second & game) == game)
-            result.push_back(it->second.first);
-    }
+        result.push_back(it->second);
 
     return result;
 }
@@ -836,10 +816,7 @@ vector<unsigned char> API::RetrieveAllAxis()
     ValueList::iterator it;
 
     for (it = axis.begin(); it != axis.end(); ++it)
-    {
-        if ((it->second.second & game) == game)
-            result.push_back(it->second.first);
-    }
+        result.push_back(it->second);
 
     return result;
 }
@@ -850,10 +827,7 @@ vector<unsigned char> API::RetrieveAllAnims()
     ValueList::iterator it;
 
     for (it = anims.begin(); it != anims.end(); ++it)
-    {
-        if ((it->second.second & game) == game)
-            result.push_back(it->second.first);
-    }
+        result.push_back(it->second);
 
     return result;
 }
@@ -864,10 +838,7 @@ vector<string> API::RetrieveAllValues_Reverse()
     ValueList::iterator it;
 
     for (it = values.begin(); it != values.end(); ++it)
-    {
-        if ((it->second.second & game) == game)
-            result.push_back(it->first);
-    }
+        result.push_back(it->first);
 
     return result;
 }
@@ -878,10 +849,7 @@ vector<string> API::RetrieveAllAxis_Reverse()
     ValueList::iterator it;
 
     for (it = axis.begin(); it != axis.end(); ++it)
-    {
-        if ((it->second.second & game) == game)
-            result.push_back(it->first);
-    }
+        result.push_back(it->first);
 
     return result;
 }
@@ -892,10 +860,7 @@ vector<string> API::RetrieveAllAnims_Reverse()
     ValueList::iterator it;
 
     for (it = anims.begin(); it != anims.end(); ++it)
-    {
-        if ((it->second.second & game) == game)
-            result.push_back(it->first);
-    }
+        result.push_back(it->first);
 
     return result;
 }
@@ -903,14 +868,10 @@ vector<string> API::RetrieveAllAnims_Reverse()
 pair<string, unsigned short> API::RetrieveFunction(string name)
 {
     FunctionList::iterator it;
-    pair<FunctionList::iterator, FunctionList::iterator> it2;
-    it2 = functions.equal_range(name);
+    it = functions.find(name);
 
-    for (it = it2.first; it != it2.second; ++it)
-    {
-        if ((it->second.second.second & game) == game)
-            return pair<string, unsigned short>(it->second.first, it->second.second.first);
-    }
+    if (it != functions.end())
+        return it->second;
 
     pair<string, unsigned short> empty = pair<string, unsigned short>("", 0x00);
 
@@ -937,19 +898,18 @@ char* API::BuildCommandStream(char* command, vector<double> info, unsigned int s
     char* data = new char[PIPE_LENGTH];
     ZeroMemory(data, sizeof(data));
     data[0] = PIPE_OP_COMMAND;
-    *((signed int*) ((unsigned) data + 5)) = key;
 
-    if (size + 9 > PIPE_LENGTH)
+    if (size + 5 > PIPE_LENGTH)
     {
         delete[] data;
-        throw VaultException("Error in API class; command size (%d bytes) exceeds the pipe length of %d bytes", size + 9, PIPE_LENGTH);
+        throw VaultException("Error in API class; command size (%d bytes) exceeds the pipe length of %d bytes", size + 5, PIPE_LENGTH);
     }
 
-    memcpy(data + 9, command, size);
+    memcpy(data + 5, command, size);
 
     unsigned int crc = Utils::crc32buf(data + 5, PIPE_LENGTH - 5);
     *((unsigned int*) ((unsigned) data + 1)) = crc;
-    queue.push_front(pair<unsigned int, vector<double> >(crc, info));
+    queue.push_front(pair<pair<unsigned int, vector<double> >, signed int>(pair<unsigned int, vector<double> >(crc, info), key));
 
     return data;
 }
@@ -991,23 +951,28 @@ CommandParsed API::Translate(multimap<string, string>& cmd, signed int key)
     return stream;
 }
 
-CommandResult API::Translate(char* stream)
+vector<CommandResult> API::Translate(char* stream)
 {
-    CommandResult result;
-    result.first.first = 0;
-    result.first.second = vector<double>();
+    vector<CommandResult> result;
 
     if (stream[0] != PIPE_OP_RETURN)
         return result;
 
     unsigned int crc = *((unsigned int*) ((unsigned) stream + 1));
 
-    while (!queue.empty() && queue.back().first != crc)
+    while (!queue.empty() && queue.back().first.first != crc)
     {
 #ifdef VAULTMP_DEBUG
         if (debug != NULL)
-            debug->PrintFormat("API did not retrieve the result of command with CRC32 %08X (opcode %hX)", true, queue.back().first, (unsigned short) queue.back().second.at(0));
+            debug->PrintFormat("API did not retrieve the result of command with CRC32 %08X (opcode %04hX)", true, queue.back().first.first, (unsigned short) queue.back().first.second.at(0));
 #endif
+
+        result.push_back(CommandResult());
+        result.back().first.first.first = queue.back().second;
+        result.back().first.first.second = queue.back().first.second;
+        result.back().first.second = 0x00000000;
+        result.back().second = true;
+
         queue.pop_back();
     }
 
@@ -1020,9 +985,11 @@ CommandResult API::Translate(char* stream)
         return result;
     }
 
-    result.first.first = *((signed int*) ((unsigned) stream + 5));
-    result.first.second = queue.back().second;
-    result.second = *((double*) ((unsigned) stream + 9));
+    result.push_back(CommandResult());
+    result.back().first.first.first = queue.back().second;
+    result.back().first.first.second = queue.back().first.second;
+    result.back().first.second = *((double*) ((unsigned) stream + 5));
+    result.back().second = false;
 
     queue.pop_back();
 

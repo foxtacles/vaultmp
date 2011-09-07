@@ -14,19 +14,35 @@ ModList Bethesda::modfiles;
 #ifdef VAULTMP_DEBUG
 Debug* Bethesda::debug;
 #endif
-
-void Bethesda::CommandHandler(signed int key, vector<double> info, double result)
+int mcount = 0;int qtime = 0;
+void Bethesda::CommandHandler(signed int key, vector<double>& info, double result, bool error)
 {
-    Lockable* data = NULL;
-
-    if (key != 0x00000000)
-        data = Lockable::BlindUnlock(key);
-
     using namespace Values;
     unsigned short opcode = (unsigned short) info.at(0);
 
-    switch (opcode)
+    /*if (!qtime)
+        qtime = GetTickCount();
+    if (GetTickCount() - qtime > 1000)
     {
+        debug->PrintFormat("%d",true,mcount);
+        mcount = 0;
+        qtime = GetTickCount();
+    }
+    mcount++;*/
+
+    if (!error)
+    {
+#ifdef VAULTMP_DEBUG
+        //debug->PrintFormat("Executing command %04hX on reference %08X", true, opcode, info.size() > 1 ? (unsigned int) info.at(1) : 0);
+#endif
+
+        Lockable* data = NULL;
+
+        if (key != 0x00000000)
+            data = Lockable::BlindUnlock(key);
+
+        switch (opcode)
+        {
         case Functions::Func_PlaceAtMe:
             Game::PlaceAtMe(data, *reinterpret_cast<unsigned int*>(&result));
             break;
@@ -53,6 +69,8 @@ void Bethesda::CommandHandler(signed int key, vector<double> info, double result
         case Functions::Func_GetActorState:
             Game::GetActorState((unsigned int) info.at(1), *reinterpret_cast<unsigned char*>(((unsigned) &result) + 4), *reinterpret_cast<bool*>(&result));
             break;
+        case Functions::Func_PlayGroup:
+            break;
         case Functions::Func_GetDead:
             break;
         case Functions::Func_MoveTo:
@@ -62,6 +80,8 @@ void Bethesda::CommandHandler(signed int key, vector<double> info, double result
         case Functions::Func_Disable:
             break;
         case Functions::Func_SetRestrained:
+            break;
+        case Functions::Func_SetAlert:
             break;
         case Fallout::Functions::Func_MarkForDelete:
             break;
@@ -82,6 +102,22 @@ void Bethesda::CommandHandler(signed int key, vector<double> info, double result
             break;
         default:
             throw VaultException("Unhandled function %hX", opcode);
+        }
+    }
+    else
+    {
+#ifdef VAULTMP_DEBUG
+        debug->PrintFormat("Command %04hX on reference %08X failed", true, opcode, info.size() > 1 ? (unsigned int) info.at(1) : 0);
+#endif
+
+        switch (opcode)
+        {
+        case Functions::Func_PlaceAtMe:
+            Game::Failure_PlaceAtMe((unsigned int) info.at(1), (unsigned int) info.at(2), (unsigned int) info.at(3), key);
+            break;
+        default:
+            break;
+        }
     }
 }
 
@@ -358,7 +394,6 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
 
         Interface::Terminate();
         GameFactory::DestroyAllInstances();
-        Container::Cleanup();
         API::Terminate();
 
 #ifdef VAULTMP_DEBUG
@@ -369,7 +404,6 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
 
     Interface::Terminate();
     GameFactory::DestroyAllInstances();
-    Container::Cleanup();
     API::Terminate();
 
 #ifdef VAULTMP_DEBUG

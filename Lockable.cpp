@@ -88,6 +88,13 @@ signed int Lockable::NextKey(bool flat)
     return next_key;
 }
 
+void Lockable::Reset()
+{
+    keymap.clear();
+    flat_key = 0x00 + 0x01;
+    deep_key = 0x00 - 0x01;
+}
+
 Lockable* Lockable::BlindUnlock(signed int key)
 {
     map<signed int, Lockable*>::iterator it;

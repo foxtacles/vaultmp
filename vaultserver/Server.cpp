@@ -76,8 +76,11 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id, string name)
                                             CHANNEL_GAME,
                                             Client::GetNetworkList(client)));
 
-    for (it = players.begin(); it != players.end() && *it != player; ++it)
+    for (it = players.begin(); it != players.end(); ++it)
     {
+        if (*it == player)
+            continue;
+
         Player* _player = (Player*) *it;
 
         packet = PacketFactory::CreatePacket(ID_PLAYER_NEW, _player->GetNetworkID(), _player->GetReference(), _player->GetBase(), _player->GetName().c_str());
@@ -169,7 +172,7 @@ NetworkResponse Server::GetAngle(RakNetGUID guid, NetworkID id, unsigned char ax
     Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, id);
     bool result = (bool) object->SetAngle(axis, value);
 
-    if (result)
+    if (result && axis != Axis_X)
     {
         pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_ANGLE, object->GetNetworkID(), axis, value);
         response = Network::CompleteResponse(Network::CreateResponse(packet,
@@ -257,7 +260,7 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, NetworkID id, unsigned ch
 
     try
     {
-        result = ((bool) actor->SetActorRunningAnimation(index) || (bool) actor->SetActorAlerted(alerted));
+        result = ((bool) actor->SetActorRunningAnimation(index) | (bool) actor->SetActorAlerted(alerted));
     }
     catch (...)
     {

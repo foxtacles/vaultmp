@@ -13,8 +13,15 @@
 #include "Value.h"
 #include "Container.h"
 #include "VaultException.h"
+#include "VaultFunctor.h"
 #include "Utils.h"
 #include "API.h"
+
+const unsigned int FLAG_NOTSELF         = FLAG_DISABLED << 1;
+const unsigned int FLAG_ALIVE           = FLAG_NOTSELF << 1;
+const unsigned int FLAG_DEAD            = FLAG_ALIVE << 1;
+const unsigned int FLAG_ISALERTED       = FLAG_DEAD << 1;
+const unsigned int FLAG_NOTALERTED      = FLAG_ISALERTED << 1;
 
 using namespace std;
 
@@ -23,7 +30,7 @@ class Actor : public Container
 friend class GameFactory;
 
 private:
-    static vector<string> GetRefs(bool enabled = true, bool enabled_disabled = false);
+    static Parameter param_ActorValues;
 
 #ifdef VAULTMP_DEBUG
     static Debug* debug;
@@ -44,14 +51,9 @@ protected:
 
 public:
     static vector<Actor*> GetActorList();
-    static vector<string> GetAllRefs();
-    static vector<string> GetEnabledRefs();
-    static vector<string> GetDisabledRefs();
 
-    static const Parameter Param_EnabledActors;
-    static const Parameter Param_DisabledActors;
-    static const Parameter Param_AllActors;
-    static const Parameter Param_ActorValues;
+    static const Parameter& Param_ActorValues();
+    static const Parameter CreateFunctor(unsigned int flags);
 
 #ifdef VAULTMP_DEBUG
     static void SetDebugHandler(Debug* debug);
@@ -69,6 +71,15 @@ public:
     Lockable* SetActorAlerted(bool state);
     Lockable* SetActorDead(bool state);
 
+};
+
+class ActorFunctor : public VaultFunctor
+{
+public:
+    ActorFunctor(unsigned int flags) : VaultFunctor(flags) {};
+    virtual ~ActorFunctor();
+
+    virtual vector<string> operator()();
 };
 
 #endif

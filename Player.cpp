@@ -1,15 +1,9 @@
 #include "Player.h"
 
-using namespace RakNet;
 using namespace std;
 
-const Parameter Player::Param_EnabledPlayers = Parameter(vector<string>(), &Player::GetEnabledRefs);
-const Parameter Player::Param_EnabledPlayers_NotSelf = Parameter(vector<string>(), &Player::GetEnabledRefs_NotSelf);
-const Parameter Player::Param_AllPlayers = Parameter(vector<string>(), &Player::GetAllRefs);
-const Parameter Player::Param_AllPlayers_NotSelf = Parameter(vector<string>(), &Player::GetAllRefs_NotSelf);
-
 #ifdef VAULTMP_DEBUG
-Debug* Player::debug;
+Debug* Player::debug = NULL;
 #endif
 
 Player::Player(unsigned int refID, unsigned int baseID) : Actor(refID, baseID)
@@ -35,6 +29,11 @@ void Player::SetDebugHandler(Debug* debug)
 }
 #endif
 
+const Parameter Player::CreateFunctor(unsigned int flags)
+{
+    return Parameter(vector<string>(), new PlayerFunctor(flags));
+}
+
 vector<Player*> Player::GetPlayerList()
 {
     vector<Player*> playerlist;
@@ -47,41 +46,45 @@ vector<Player*> Player::GetPlayerList()
     return playerlist;
 }
 
-vector<string> Player::GetRefs(bool enabled, bool notself, bool enabled_disabled, bool self_notself)
+vector<string> PlayerFunctor::operator()()
 {
     vector<string> result;
     vector<Player*>::iterator it;
-    vector<Player*> playerlist = GetPlayerList();
+    vector<Player*> playerlist = Player::GetPlayerList();
 
-    for (it = playerlist.begin(); it != playerlist.end(); ++it)
+    for (it = playerlist.begin(); it != playerlist.end(); GameFactory::LeaveReference(*it), ++it)
     {
-        unsigned int refID = (*it)->GetReference();
+        Player* player = *it;
+        unsigned int refID = player->GetReference();
 
-        if (refID != 0x00 && (!enabled_disabled || (*it)->GetEnabled() == enabled) && (!self_notself || !notself || refID != PLAYER_REFERENCE))
-            result.push_back(Utils::LongToHex(refID));
+        if (refID != 0x00000000)
+        {
+            if (flags & FLAG_NOTSELF && refID == PLAYER_REFERENCE)
+                continue;
 
-        GameFactory::LeaveReference(*it);
+            if (flags & FLAG_ENABLED && !player->GetEnabled())
+                continue;
+            else if (flags & FLAG_DISABLED && player->GetEnabled())
+                continue;
+
+            if (flags & FLAG_ALIVE && player->GetActorDead())
+                continue;
+            else if (flags & FLAG_DEAD && !player->GetActorDead())
+                continue;
+
+            if (flags & FLAG_ISALERTED && !player->GetActorAlerted())
+                continue;
+            else if (flags & FLAG_NOTALERTED && player->GetActorAlerted())
+                continue;
+        }
+
+        result.push_back(Utils::LongToHex(refID));
     }
 
     return result;
 }
 
-vector<string> Player::GetAllRefs()
+PlayerFunctor::~PlayerFunctor()
 {
-    return GetRefs(false, false);
-}
 
-vector<string> Player::GetAllRefs_NotSelf()
-{
-    return GetRefs(false, true, false, true);
-}
-
-vector<string> Player::GetEnabledRefs()
-{
-    return GetRefs(true, false, true, false);
-}
-
-vector<string> Player::GetEnabledRefs_NotSelf()
-{
-    return GetRefs(true, true, true, true);
 }

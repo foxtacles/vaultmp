@@ -59,8 +59,9 @@ vector<RakNetGUID> Client::GetNetworkList(Client* except)
     vector<RakNetGUID> network;
     map<RakNetGUID, Client*>::iterator it;
 
-    for (it = clients.begin(); it != clients.end() && it->second != except; ++it)
-        network.push_back(it->first);
+    for (it = clients.begin(); it != clients.end(); ++it)
+        if (it->second != except)
+            network.push_back(it->first);
 
     return network;
 }
@@ -70,8 +71,9 @@ vector<RakNetGUID> Client::GetNetworkList(RakNetGUID except)
     vector<RakNetGUID> network;
     map<RakNetGUID, Client*>::iterator it;
 
-    for (it = clients.begin(); it != clients.end() && it->first != except; ++it)
-        network.push_back(it->first);
+    for (it = clients.begin(); it != clients.end(); ++it)
+        if (it->first != except)
+            network.push_back(it->first);
 
     return network;
 }

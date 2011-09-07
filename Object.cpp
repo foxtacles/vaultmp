@@ -1,6 +1,6 @@
 #include "Object.h"
 
-const Parameter Object::Param_Axis = Parameter(vector<string>(), &API::RetrieveAllAxis_Reverse);
+Parameter Object::param_Axis = Parameter(vector<string>(), NULL);
 
 #ifdef VAULTMP_DEBUG
 Debug* Object::debug;
@@ -31,6 +31,14 @@ Object::Object(unsigned int refID, unsigned int baseID) : Reference(refID, baseI
 Object::~Object()
 {
 
+}
+
+const Parameter& Object::Param_Axis()
+{
+    if (param_Axis.first.empty())
+        param_Axis.first = API::RetrieveAllAxis_Reverse();
+
+    return param_Axis;
 }
 
 string Object::GetName() const

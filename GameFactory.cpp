@@ -28,15 +28,15 @@ vector<Reference*> GameFactory::GetObjectTypes(unsigned char type)
     ReferenceList::iterator it;
 
     cs.StartSession();
+    ReferenceList copy = instances;
+    cs.EndSession();
 
-    for (it = instances.begin(); it != instances.end() && (it->second & type); ++it)
+    for (it = copy.begin(); it != copy.end() && (it->second & type); ++it)
     {
         Reference* reference = (Reference*) it->first->StartSession();
         if (reference)
             result.push_back(reference);
     }
-
-    cs.EndSession();
 
     return result;
 }
@@ -123,6 +123,8 @@ vector<Reference*> GameFactory::GetMultiple(const vector<ObjectNetwork>& objects
         sort.insert(pair<Reference*, unsigned int>(reference, i));
     }
 
+    cs.EndSession();
+
     for (it2 = sort.begin(); it2 != sort.end(); ++it2)
     {
         Reference* reference = (Reference*) it2->first->StartSession();
@@ -136,8 +138,6 @@ vector<Reference*> GameFactory::GetMultiple(const vector<ObjectNetwork>& objects
 
         result[it2->second] = reference;
     }
-
-    cs.EndSession();
 
     return result;
 }
@@ -169,6 +169,8 @@ vector<Reference*> GameFactory::GetMultiple(const vector<ObjectReference>& objec
         sort.insert(pair<Reference*, unsigned int>(reference, i));
     }
 
+    cs.EndSession();
+
     for (it2 = sort.begin(); it2 != sort.end(); ++it2)
     {
         Reference* reference = (Reference*) it2->first->StartSession();
@@ -182,8 +184,6 @@ vector<Reference*> GameFactory::GetMultiple(const vector<ObjectReference>& objec
 
         result[it2->second] = reference;
     }
-
-    cs.EndSession();
 
     return result;
 }
@@ -342,6 +342,13 @@ void GameFactory::DestroyAllInstances()
     instances.clear();
 
     cs.EndSession();
+
+    // Cleanup classes
+
+    Container::Cleanup();
+    Object::param_Axis.first = vector<string>();
+    Actor::param_ActorValues.first = vector<string>();
+    Lockable::Reset();
 }
 
 bool GameFactory::DestroyInstance(NetworkID id)

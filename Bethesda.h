@@ -46,7 +46,7 @@ private:
     static bool initialized;
 
     static void Initialize();
-    static void CommandHandler(signed int key, vector<double> info, double result);
+    static void CommandHandler(signed int key, vector<double>& info, double result, bool error);
 
 #ifdef VAULTMP_DEBUG
     static Debug* debug;

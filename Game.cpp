@@ -70,14 +70,14 @@ void Game::Initialize()
     {
         ParamList param_GetPos;
         param_GetPos.push_back(self->GetReferenceParam());
-        param_GetPos.push_back(Actor::Param_Axis);
+        param_GetPos.push_back(Object::Param_Axis());
         ParamContainer GetPos = ParamContainer(param_GetPos, &Data::AlwaysTrue);
         Interface::DefineNative("GetPos", GetPos);
         Interface::ExecuteCommandLoop("GetPos");
 
         ParamList param_GetPos_NotSelf;
-        param_GetPos_NotSelf.push_back(Player::Param_EnabledPlayers_NotSelf);
-        param_GetPos_NotSelf.push_back(Actor::Param_Axis);
+        param_GetPos_NotSelf.push_back(Player::CreateFunctor(FLAG_ENABLED | FLAG_NOTSELF | FLAG_ALIVE));
+        param_GetPos_NotSelf.push_back(Object::Param_Axis());
         ParamContainer GetPos_NotSelf = ParamContainer(param_GetPos_NotSelf, &Data::AlwaysTrue);
         Interface::DefineNative("GetPosNotSelf", GetPos_NotSelf);
         Interface::ExecuteCommandLoop("GetPosNotSelf", 30);
@@ -96,13 +96,13 @@ void Game::Initialize()
         Interface::ExecuteCommandLoop("GetActorState");
 
         ParamList param_GetParentCell;
-        param_GetParentCell.push_back(Player::Param_AllPlayers);
+        param_GetParentCell.push_back(Player::CreateFunctor(0x00000000));
         ParamContainer GetParentCell = ParamContainer(param_GetParentCell, &Data::AlwaysTrue);
         Interface::DefineNative("GetParentCell", GetParentCell);
         Interface::ExecuteCommandLoop("GetParentCell", 30);
 
         ParamList param_GetDead;
-        param_GetDead.push_back(Player::Param_EnabledPlayers);
+        param_GetDead.push_back(Player::CreateFunctor(FLAG_ENABLED));
         ParamContainer GetDead = ParamContainer(param_GetDead, &Data::AlwaysTrue);
         Interface::DefineNative("GetDead", GetDead);
         Interface::ExecuteCommandLoop("GetDead", 30);
@@ -133,14 +133,14 @@ void Game::Initialize()
 
         ParamList param_GetActorValue;
         param_GetActorValue.push_back(self->GetReferenceParam());
-        param_GetActorValue.push_back(Actor::Param_ActorValues); // we could exclude health values here
+        param_GetActorValue.push_back(Actor::Param_ActorValues()); // we could exclude health values here
         ParamContainer GetActorValue = ParamContainer(param_GetActorValue, &Data::AlwaysTrue);
         Interface::DefineNative("GetActorValue", GetActorValue);
         Interface::ExecuteCommandLoop("GetActorValue", 100);
 
         ParamList param_GetBaseActorValue;
         param_GetBaseActorValue.push_back(self->GetReferenceParam());
-        param_GetBaseActorValue.push_back(Actor::Param_ActorValues);
+        param_GetBaseActorValue.push_back(Actor::Param_ActorValues());
         ParamContainer GetBaseActorValue = ParamContainer(param_GetBaseActorValue, &Data::AlwaysTrue);
         Interface::DefineNative("GetBaseActorValue", GetBaseActorValue);
         Interface::ExecuteCommandLoop("GetBaseActorValue", 200);
@@ -172,7 +172,6 @@ void Game::LoadGame(string savegame)
 
 void Game::NewPlayer(NetworkID id, unsigned int baseID, string name)
 {
-    GameFactory::CreateKnownInstance(ID_PLAYER, id, baseID);
     Player* self = (Player*) GameFactory::GetObject(ID_PLAYER, PLAYER_REFERENCE);
 
     Value<unsigned int>* store = new Value<unsigned int>;
@@ -191,16 +190,16 @@ void Game::NewPlayer(NetworkID id, unsigned int baseID, string name)
 
     GameFactory::LeaveReference(self);
 
-    for (int i = 0; i < 50 && !store->Get(); i++)
+    for (int i = 0; i < 100 && !store->Get(); i++)
         Sleep(100);
 
     if (!store->Get())
     {
         delete store;
-        GameFactory::DestroyInstance(id);
         throw VaultException("Player creation with baseID %08X and NetworkID %lld failed", baseID, id);
     }
 
+    GameFactory::CreateKnownInstance(ID_PLAYER, id, baseID);
     Player* player = (Player*) GameFactory::GetObject(ID_PLAYER, id);
     player->SetReference(store->Get());
     delete store;
@@ -276,11 +275,20 @@ void Game::SetName(NetworkID id, string name)
     Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, id);
     object->SetName(name);
 
+    SetName(object->GetReference());
+
+    GameFactory::LeaveReference(object);
+}
+
+void Game::SetName(unsigned int refID)
+{
+    Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, refID);
+
     Interface::StartSession();
 
     ParamList param_SetName;
     param_SetName.push_back(object->GetReferenceParam());
-    param_SetName.push_back(BuildParameter(name));
+    param_SetName.push_back(BuildParameter(object->GetName()));
     ParamContainer SetName = ParamContainer(param_SetName, &Data::AlwaysTrue);
     Interface::ExecuteCommandOnce("SetName", SetName);
 
@@ -289,14 +297,7 @@ void Game::SetName(NetworkID id, string name)
     GameFactory::LeaveReference(object);
 }
 
-void Game::SetName(unsigned int refID)
-{
-    Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, refID);
-    SetName(object->GetNetworkID(), object->GetName());
-    GameFactory::LeaveReference(object);
-}
-
-void Game::SetRestrained(NetworkID id, bool restrained)
+void Game::SetRestrained(NetworkID id, bool restrained, unsigned int delay)
 {
     Actor* actor = (Actor*) GameFactory::GetObject(ALL_ACTORS, id);
 
@@ -306,7 +307,7 @@ void Game::SetRestrained(NetworkID id, bool restrained)
     param_SetRestrained.push_back(actor->GetReferenceParam());
     param_SetRestrained.push_back(restrained ? Data::Param_True : Data::Param_False);
     ParamContainer SetRestrained = ParamContainer(param_SetRestrained, &Data::AlwaysTrue);
-    Interface::ExecuteCommandOnce("SetRestrained", SetRestrained, 0, 200);
+    Interface::ExecuteCommandOnce("SetRestrained", SetRestrained, 0, delay);
 
     Interface::EndSession();
 
@@ -325,7 +326,7 @@ void Game::SetPos(NetworkID id, unsigned char axis, double value)
         if (GameFactory::GetType(object) & ALL_ACTORS)
             actor = (Actor*) object;
 
-        if (actor == NULL || !actor->IsCoordinateInRange(axis, old_value, 300.0))
+        if (actor == NULL || !actor->IsCoordinateInRange(axis, old_value, 150.0))
         {
             signed int key = result->Lock(true);
 
@@ -351,27 +352,46 @@ void Game::SetAngle(NetworkID id, unsigned char axis, double value)
     bool result = (bool) object->SetAngle(axis, value);
 
     if (result && object->GetEnabled())
-    {
-        Interface::StartSession();
+        SetAngle(object->GetReference(), axis);
 
-        ParamList param_SetAngle;
-        param_SetAngle.push_back(object->GetReferenceParam());
-        param_SetAngle.push_back(BuildParameter(API::RetrieveAxis_Reverse(axis)));
-        param_SetAngle.push_back(BuildParameter(value));
-        ParamContainer SetAngle = ParamContainer(param_SetAngle, &Data::AlwaysTrue);
-        Interface::ExecuteCommandOnce("SetAngle", SetAngle);
+    GameFactory::LeaveReference(object);
+}
 
-        Interface::EndSession();
-    }
+void Game::SetAngle(unsigned int refID, unsigned char axis)
+{
+    Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, refID);
+
+    Interface::StartSession();
+
+    ParamList param_SetAngle;
+    param_SetAngle.push_back(object->GetReferenceParam());
+    param_SetAngle.push_back(BuildParameter(API::RetrieveAxis_Reverse(axis)));
+    param_SetAngle.push_back(BuildParameter(object->GetAngle(axis)));
+    ParamContainer SetAngle = ParamContainer(param_SetAngle, &Data::AlwaysTrue);
+    Interface::ExecuteCommandOnce("SetAngle", SetAngle);
+
+    Interface::EndSession();
 
     GameFactory::LeaveReference(object);
 }
 
 void Game::SetNetworkCell(NetworkID id, unsigned int cell)
 {
-    Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, id);
+    vector<Reference*> objects = GameFactory::GetMultiple(vector<ObjectNetwork> {ObjectNetwork(ALL_OBJECTS, id), ObjectNetwork(ID_PLAYER, GameFactory::LookupNetworkID(PLAYER_REFERENCE))});
+    Object* object = (Object*) objects[0];
+    Player* self = (Player*) objects[1];
+
     object->SetNetworkCell(cell);
-    GameFactory::LeaveReference(object);
+
+    if (object != self)
+    {
+        if (object->GetNetworkCell() != self->GetGameCell())
+            Enable(object->GetNetworkID(), false);
+        else
+            Enable(object->GetNetworkID(), true);
+    }
+
+    GameFactory::LeaveReference(objects);
 }
 
 void Game::SetActorValue(NetworkID id, bool base, unsigned char index, double value)
@@ -440,7 +460,7 @@ void Game::SetActorState(NetworkID id, unsigned char index, bool alerted)
         throw;
     }
 
-    if (result)
+    if (result && actor->GetEnabled())
     {
         signed int key = result->Lock(true);
 
@@ -458,7 +478,7 @@ void Game::SetActorState(NetworkID id, unsigned char index, bool alerted)
 
     result = actor->SetActorAlerted(alerted);
 
-    if (result)
+    if (result && actor->GetEnabled())
     {
         SetRestrained(id, false);
 
@@ -470,17 +490,17 @@ void Game::SetActorState(NetworkID id, unsigned char index, bool alerted)
         param_SetAlert.push_back(actor->GetReferenceParam());
         param_SetAlert.push_back(alerted ? Data::Param_True : Data::Param_False);
         ParamContainer SetAlert = ParamContainer(param_SetAlert, &Data::AlwaysTrue);
-        Interface::ExecuteCommandOnce("SetAlert", SetAlert, 0, 200, key);
+        Interface::ExecuteCommandOnce("SetAlert", SetAlert, 0, 50, key);
 
         Interface::EndSession();
 
-        SetRestrained(id, true);
+        SetRestrained(id, true, 2000); // prevents more or less efficiently alert state desync
     }
 
     GameFactory::LeaveReference(actor);
 }
 
-void Game::MoveTo(NetworkID id, NetworkID id2)
+void Game::MoveTo(NetworkID id, NetworkID id2, bool cell)
 {
     vector<Reference*> objects = GameFactory::GetMultiple(vector<ObjectNetwork> {ObjectNetwork(ALL_OBJECTS, id), ObjectNetwork(ALL_OBJECTS, id2)});
     Object* object = (Object*) objects[0];
@@ -497,9 +517,20 @@ void Game::MoveTo(NetworkID id, NetworkID id2)
         ParamList param_MoveTo;
         param_MoveTo.push_back(object->GetReferenceParam());
         param_MoveTo.push_back(object2->GetReferenceParam());
-        param_MoveTo.push_back(Data::Param_False);
-        param_MoveTo.push_back(Data::Param_False);
-        param_MoveTo.push_back(Data::Param_False);
+
+        if (cell)
+        {
+            param_MoveTo.push_back(BuildParameter(object->GetPos(Axis_X) - object2->GetPos(Axis_X)));
+            param_MoveTo.push_back(BuildParameter(object->GetPos(Axis_Y) - object2->GetPos(Axis_Y)));
+            param_MoveTo.push_back(BuildParameter(object->GetPos(Axis_Z) - object2->GetPos(Axis_Z)));
+        }
+        else
+        {
+            param_MoveTo.push_back(Data::Param_False);
+            param_MoveTo.push_back(Data::Param_False);
+            param_MoveTo.push_back(Data::Param_False);
+        }
+
         ParamContainer MoveTo = ParamContainer(param_MoveTo, &Data::AlwaysTrue);
         Interface::ExecuteCommandOnce("MoveTo", MoveTo, 0, 2, key);
 
@@ -538,12 +569,10 @@ void Game::PlaceAtMe(Lockable* data, unsigned int refID)
 
 void Game::GetPos(unsigned int refID, unsigned char axis, double value)
 {
-    vector<Reference*> objects = GameFactory::GetMultiple(vector<ObjectReference> {ObjectReference(ALL_OBJECTS, refID), ObjectReference(ID_PLAYER, PLAYER_REFERENCE)});
-    Object* object = (Object*) objects[0];
-    Player* self = (Player*) objects[1];
+    Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, refID);
     bool result = (bool) object->SetPos(axis, value);
 
-    if (result && object == self)
+    if (result && object->GetReference() == PLAYER_REFERENCE)
     {
         pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_POS, object->GetNetworkID(), axis, value);
         NetworkResponse response = Network::CompleteResponse(Network::CreateResponse(packet,
@@ -554,7 +583,7 @@ void Game::GetPos(unsigned int refID, unsigned char axis, double value)
         Network::Queue(response);
     }
 
-    GameFactory::LeaveReference(objects);
+    GameFactory::LeaveReference(object);
 }
 
 void Game::GetAngle(unsigned int refID, unsigned char axis, double value)
@@ -587,31 +616,31 @@ void Game::GetParentCell(unsigned int refID, unsigned int cell)
         if (self->GetGameCell() == object->GetNetworkCell() && object->GetGameCell() != object->GetNetworkCell())
         {
             Enable(object->GetNetworkID(), true);
-            MoveTo(object->GetNetworkID(), self->GetNetworkID());
+            MoveTo(object->GetNetworkID(), self->GetNetworkID(), true);
+            SetAngle(object->GetNetworkID(), Axis_Z);
         }
     }
 
     bool result = (bool) object->SetGameCell(cell);
 
-    if (result)
+    if (object != self)
     {
-        if (object != self)
-        {
-            if (object->GetNetworkCell() != self->GetGameCell() && !object->IsNearPoint(self->GetPos(Axis_X), self->GetPos(Axis_Y), self->GetPos(Axis_Z), 20000.0))
-                Enable(object->GetNetworkID(), false);
-            else
-                Enable(object->GetNetworkID(), true);
-        }
+        if (object->GetNetworkCell() != self->GetGameCell())
+            Enable(object->GetNetworkID(), false);
         else
-        {
-            pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_CELL, object->GetNetworkID(), cell);
-            NetworkResponse response = Network::CompleteResponse(Network::CreateResponse(packet,
-                                       (unsigned char) HIGH_PRIORITY,
-                                       (unsigned char) RELIABLE_SEQUENCED,
-                                       CHANNEL_GAME,
-                                       server));
-            Network::Queue(response);
-        }
+            Enable(object->GetNetworkID(), true);
+    }
+
+    if (result && object == self)
+    {
+
+        pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_CELL, object->GetNetworkID(), cell);
+        NetworkResponse response = Network::CompleteResponse(Network::CreateResponse(packet,
+                                   (unsigned char) HIGH_PRIORITY,
+                                   (unsigned char) RELIABLE_SEQUENCED,
+                                   CHANNEL_GAME,
+                                   server));
+        Network::Queue(response);
     }
 
     GameFactory::LeaveReference(objects);
@@ -659,7 +688,7 @@ void Game::GetActorState(unsigned int refID, unsigned char index, bool alerted)
 
     try
     {
-        result = ((bool) actor->SetActorRunningAnimation(index) || (bool) actor->SetActorAlerted(alerted));
+        result = ((bool) actor->SetActorRunningAnimation(index) | (bool) actor->SetActorAlerted(alerted));
     }
     catch (...)
     {
@@ -679,4 +708,18 @@ void Game::GetActorState(unsigned int refID, unsigned char index, bool alerted)
     }
 
     GameFactory::LeaveReference(actor);
+}
+
+void Game::Failure_PlaceAtMe(unsigned int refID, unsigned int baseID, unsigned int count, signed int key)
+{
+    Interface::StartSession();
+
+    ParamList param_PlaceAtMe;
+    param_PlaceAtMe.push_back(BuildParameter(Utils::LongToHex(refID)));
+    param_PlaceAtMe.push_back(BuildParameter(Utils::LongToHex(baseID)));
+    param_PlaceAtMe.push_back(BuildParameter(count));
+    ParamContainer PlaceAtMe = ParamContainer(param_PlaceAtMe, &Data::AlwaysTrue);
+    Interface::ExecuteCommandOnce("PlaceAtMe", PlaceAtMe, 0, 2, key);
+
+    Interface::EndSession();
 }

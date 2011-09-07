@@ -46,6 +46,7 @@ protected:
 
 public:
 
+    static void Reset();
     static Lockable* BlindUnlock(signed int key);
 
     signed int Lock(bool flat);

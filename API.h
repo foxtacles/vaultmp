@@ -23,10 +23,10 @@ using namespace std;
 using namespace Data;
 
 typedef vector<char*> CommandParsed;
-typedef pair<pair<signed int, vector<double> >, double> CommandResult;
-typedef multimap<string, pair<string, pair<unsigned short, unsigned char> > > FunctionList;
-typedef multimap<string, pair<unsigned char, unsigned char> > ValueList;
-typedef deque<pair<unsigned int, vector<double> > > CommandQueue;
+typedef pair<pair<pair<signed int, vector<double> >, double>, bool> CommandResult;
+typedef map<string, pair<string, unsigned short> > FunctionList;
+typedef map<string, unsigned char> ValueList;
+typedef deque<pair<pair<unsigned int, vector<double> >, signed int> > CommandQueue;
 
 namespace Values {
 
@@ -353,7 +353,7 @@ protected:
 
     static bool AnnounceFunction(string name);
     static CommandParsed Translate(multimap<string, string>& cmd, int key = 0);
-    static CommandResult Translate(char* stream);
+    static vector<CommandResult> Translate(char* stream);
 
     API();
 

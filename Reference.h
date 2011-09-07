@@ -6,6 +6,7 @@
 #include "Value.h"
 #include "Network.h"
 #include "CriticalSection.h"
+#include "VaultFunctor.h"
 #include "RakNet/NetworkIDObject.h"
 
 using namespace std;

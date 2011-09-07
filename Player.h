@@ -14,15 +14,14 @@
 #include "Debug.h"
 #endif
 
-using namespace Data;
 using namespace std;
 
 class Player : public Actor
 {
 friend class GameFactory;
+friend class PlayerFunctor;
 
 private:
-    static vector<string> GetRefs(bool enabled = true, bool notself = false, bool enabled_disabled = false, bool self_notself = false);
 
 #ifdef VAULTMP_DEBUG
     static Debug* debug;
@@ -37,20 +36,22 @@ protected:
 
 public:
     static vector<Player*> GetPlayerList();
-    static vector<string> GetAllRefs();
-    static vector<string> GetAllRefs_NotSelf();
-    static vector<string> GetEnabledRefs();
-    static vector<string> GetEnabledRefs_NotSelf();
 
-    static const Parameter Param_EnabledPlayers;
-    static const Parameter Param_EnabledPlayers_NotSelf;
-    static const Parameter Param_AllPlayers;
-    static const Parameter Param_AllPlayers_NotSelf;
+    static const Parameter CreateFunctor(unsigned int flags);
 
 #ifdef VAULTMP_DEBUG
     static void SetDebugHandler(Debug* debug);
 #endif
 
+};
+
+class PlayerFunctor : public VaultFunctor
+{
+public:
+    PlayerFunctor(unsigned int flags) : VaultFunctor(flags) {};
+    virtual ~PlayerFunctor();
+
+    virtual vector<string> operator()();
 };
 
 #endif

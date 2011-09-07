@@ -40,12 +40,6 @@ using namespace std;
 
 class GameFactory
 {
-friend class Reference;
-friend class Object;
-friend class Item;
-friend class Container;
-friend class Actor;
-friend class Player;
 
 private:
     GameFactory();

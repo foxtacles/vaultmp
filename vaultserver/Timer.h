@@ -33,8 +33,8 @@ private:
     TimerFunc timer;
     TimerPAWN pawnc;
     AMX* amx;
-    static map<NetworkID, Timer*> timers;
 
+    static map<NetworkID, Timer*> timers;
     static unsigned int msecs();
 
 public:

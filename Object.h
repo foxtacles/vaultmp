@@ -14,6 +14,9 @@
 #include "Debug.h"
 #endif
 
+const unsigned int FLAG_ENABLED         = 0x00000001;
+const unsigned int FLAG_DISABLED        = FLAG_ENABLED << 1;
+
 using namespace Data;
 using namespace Values;
 using namespace std;
@@ -23,6 +26,8 @@ class Object : public Reference
 friend class GameFactory;
 
 private:
+    static Parameter param_Axis;
+
 #ifdef VAULTMP_DEBUG
     static Debug* debug;
 #endif
@@ -46,7 +51,7 @@ public:
     static void SetDebugHandler(Debug* debug);
 #endif
 
-    static const Parameter Param_Axis;
+    static const Parameter& Param_Axis();
 
     string GetName() const;
     double GetPos(unsigned char axis) const;

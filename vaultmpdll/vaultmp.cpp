@@ -175,7 +175,7 @@ void vaultfunction(void* reference, void* result, unsigned short opcode)
     }
 }
 
-void ExecuteCommand(vector<void*>& args, unsigned int crc, signed int key, bool delegate_flag)
+void ExecuteCommand(vector<void*>& args, unsigned int crc, bool delegate_flag)
 {
     if (args.size() != 8)
         return;
@@ -276,9 +276,8 @@ void ExecuteCommand(vector<void*>& args, unsigned int crc, signed int key, bool 
     ZeroMemory(result, sizeof(result));
     result[0] = PIPE_OP_RETURN;
     *((unsigned int*) ((unsigned) result + 1)) = crc;
-    *((signed int*) ((unsigned) result + 5)) = key;
 
-    memcpy(result + 9, args.at(6), sizeof(double));
+    memcpy(result + 5, args.at(6), sizeof(double));
 
     pipeClient.Send(result);
 }
@@ -344,8 +343,6 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 
             if (Utils::crc32buf(content, PIPE_LENGTH - 5) == crc)
             {
-                signed int key = *((signed int*) content);
-                content += 4;
                 bool delegate_flag = (bool) *content;
                 content += 1;
 
@@ -372,7 +369,7 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
                 }
 
                 if (!DLLerror)
-                    ExecuteCommand(args, crc, key, delegate_flag);
+                    ExecuteCommand(args, crc, delegate_flag);
 
                 for (int i = 0; i < args.size(); i++)
                 {

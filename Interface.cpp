@@ -75,6 +75,12 @@ void Interface::Terminate()
         CloseHandle(hCommandThreadReceive);
         CloseHandle(hCommandThreadSend);
 
+        CommandList::iterator it;
+        cmdlist.splice(cmdlist.begin(), tmplist);
+
+        for (it = cmdlist.begin(); it != cmdlist.end(); ++it)
+            FreeContainer(it->first->second);
+
         cmdlist.clear();
         tmplist.clear();
         natives.clear();
@@ -217,8 +223,10 @@ multimap<string, string> Interface::Evaluate(string name, string def, ParamConta
                 if (def.find(token) == string::npos)
                     return result;
 
-                RetrieveParamVector getParams = it->second;
-                vector<string> params = getParams();
+                vector<string> params;
+                VaultFunctor* getParams = it->second;
+                if (getParams)
+                    params = (*getParams)();
 
                 if (!params.empty())
                     it->first.insert(it->first.end(), params.begin(), params.end());
@@ -278,10 +286,11 @@ DWORD WINAPI Interface::CommandThreadReceive(LPVOID data)
 
                 if (code == PIPE_OP_RETURN)
                 {
-                    CommandResult result = API::Translate(buffer);
+                    vector<CommandResult> result = API::Translate(buffer);
+                    vector<CommandResult>::iterator it;
 
-                    if (result.first.second.size() >= 1)
-                        resultHandler(result.first.first, result.first.second, result.second);
+                    for (it = result.begin(); it != result.end(); ++it)
+                        resultHandler(it->first.first.first, it->first.first.second, it->first.second, it->second);
                 }
                 else if (code == PIPE_SYS_WAKEUP)
                 {
@@ -395,26 +404,27 @@ DWORD WINAPI Interface::CommandThreadSend(LPVOID data)
                 map<string, string>::iterator al = alias.find(it->first->first);
                 string name = (al != alias.end() ? al->second : it->first->first);
                 string def = defs.find(name)->second;
-                ParamContainer param = it->first->second;
-                vector<int>* data = &(it->second);
+                ParamContainer& param = it->first->second;
+                vector<int>& data = it->second;
 
-                if (data->size() != 5)
-                    data->push_back(data->at(2));
+                if (data.size() != 5)
+                    data.push_back(data.at(2));
 
-                if (data->at(4) != 0)
+                if (data.at(4) != 0)
                 {
-                    data->at(4)--;
+                    data.at(4)--;
                     ++it;
                     continue;
                 }
                 else
-                    data->at(4) = data->at(2);
+                    data.at(4) = data.at(2);
 
                 multimap<string, string> cmd = Interface::Evaluate(name, def, param);
 
                 if (cmd.size() != 0)
                 {
-                    signed int key = data->at(3);
+                    signed int key = data.at(3);
+
                     CommandParsed stream = API::Translate(cmd, key);
 
                     if (stream.size() != 0)
@@ -425,7 +435,7 @@ DWORD WINAPI Interface::CommandThreadSend(LPVOID data)
                         {
                             char* content = *it2;
                             pipeServer->Send(content);
-                            Sleep(data->at(1));
+                            Sleep(data.at(1));
                         }
 
                         for (it2 = stream.begin(); it2 != stream.end(); ++it2)
@@ -436,8 +446,9 @@ DWORD WINAPI Interface::CommandThreadSend(LPVOID data)
                     }
                 }
 
-                if (data->at(0) == 0)
+                if (data.at(0) == 0)
                 {
+                    FreeContainer(param);
                     natives.erase(it->first);
                     it = cmdlist.erase(it);
                 }

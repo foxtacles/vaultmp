@@ -49,10 +49,10 @@ unsigned int Reference::GetBase() const
 
 const Parameter Reference::GetReferenceParam() const
 {
-    return Parameter(vector<string>{Utils::LongToHex(refID.Get())}, &Data::EmptyVector);
+    return Parameter(vector<string>{Utils::LongToHex(refID.Get())}, NULL);
 }
 
 const Parameter Reference::GetBaseParam() const
 {
-    return Parameter(vector<string>{Utils::LongToHex(baseID.Get())}, &Data::EmptyVector);
+    return Parameter(vector<string>{Utils::LongToHex(baseID.Get())}, NULL);
 }
