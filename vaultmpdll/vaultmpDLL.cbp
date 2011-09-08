@@ -27,6 +27,7 @@
 			<Add option="-s" />
 			<Add option="-static-libgcc" />
 			<Add option="-static-libstdc++" />
+			<Add option="-limagehlp" />
 			<Add option="-enable-auto-import" />
 			<Add option="--no-export-all-symbols" />
 			<Add option="--add-stdcall-alias" />

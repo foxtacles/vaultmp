@@ -3,16 +3,20 @@
 
 #include <string>
 #include <vector>
+#include <algorithm>
 #include "vaultmp.h"
 
 using namespace std;
 
 class VaultFunctor
 {
-protected:
-    unsigned int flags;
+private:
+    VaultFunctor* next;
     vector<string>(*func)();
 
+protected:
+    unsigned int flags;
+    void _next(vector<string>& result);
     VaultFunctor(unsigned int flags);
 
 public:
@@ -20,7 +24,8 @@ public:
     VaultFunctor(vector<string>(*func)());
     virtual ~VaultFunctor();
 
-    virtual inline vector<string> operator()() { if (func) return func(); else return vector<string>(); };
+    VaultFunctor* connect(VaultFunctor* next);
+    virtual vector<string> operator()();
 
 };
 

@@ -43,26 +43,21 @@ struct API::op_Arg1
 
 struct API::op_Arg2
 {
-    unsigned int unk1; // console / script? pure console functions don't have this
+    unsigned int unk1; // when we do not operate on a reference, this is missing
     unsigned short opcode; // important
     unsigned short unk2; // varies but not read
     unsigned short numargs; // number of arguments passed
-    unsigned char param1;
-    unsigned char unk4;
+    double param1;
     double param2;
     double param3;
     double param4;
     double param5;
     double param6;
 
-    // Arguments are typed and identified (partially) with a preceding byte:
-    // 6E - Integer, 4 byte
-    // 7A - Double, 8 byte
-    // 72 - followed by 2 byte, which tell something about the amount of reference parameters passed in Arg5? or the position of the reference in the stream
-
     op_Arg2()
     {
-        unk1 = 0x0001001C; // this is the value when run from console
+        unk1 = 0x0001001C; // this is when we operate on a reference (via console)
+        param1 = 0x0000000000000000;
         param2 = 0x0000000000000000;
         param3 = 0x0000000000000000;
         param4 = 0x0000000000000000;
@@ -93,7 +88,7 @@ struct API::op_Arg4
 
 struct API::op_Arg5
 {
-    unsigned int unk1;
+    unsigned int unk1; // accessed when a command fails, I found this out while experimenting with PlayGroup
     unsigned int unk2;
     unsigned int unk3; // don't have a clue what this is, but seems to be constant and it's being read
     unsigned int unk4; // next refID?
@@ -125,7 +120,7 @@ struct API::op_Arg5
 
     op_Arg5()
     {
-        unk1 = 0x00000000;
+        unk1 = (game & FALLOUT3) ? 0x00DD3D0C : (game & NEWVEGAS) ? 0x01037094 : 0x00A49DA4;
         unk2 = 0x00000000;
         unk3 = 0x0000400A;
         unk4 = 0x00000000;
@@ -171,11 +166,11 @@ struct API::op_Arg7
 
 struct API::op_Arg8
 {
-    unsigned int unk1; // function type? usually 0x00000008, console functions have 0x00000004, is read
+    unsigned int offset; // offset beginning arg2 to arguments
 
     op_Arg8()
     {
-        unk1 = 0x00000008;
+        offset = 0x00000008;
     }
 };
 
@@ -248,6 +243,30 @@ void API::Initialize(unsigned char game)
     DefineAnimString("DodgeRight", AnimGroup_DodgeRight, ALL_GAMES);
     DefineAnimString("TurnLeft", AnimGroup_TurnLeft, ALL_GAMES);
     DefineAnimString("TurnRight", AnimGroup_TurnRight, ALL_GAMES);
+
+    DefineAnimString("JumpStart", Fallout3::AnimGroup_JumpStart, FALLOUT3);
+    DefineAnimString("JumpLoop", Fallout3::AnimGroup_JumpLoop, FALLOUT3);
+    DefineAnimString("JumpLand", Fallout3::AnimGroup_JumpLand, FALLOUT3);
+    DefineAnimString("JumpLoopForward", Fallout3::AnimGroup_JumpLoopForward, FALLOUT3);
+    DefineAnimString("JumpLoopBackward", Fallout3::AnimGroup_JumpLoopBackward, FALLOUT3);
+    DefineAnimString("JumpLoopLeft", Fallout3::AnimGroup_JumpLoopLeft, FALLOUT3);
+    DefineAnimString("JumpLoopRight", Fallout3::AnimGroup_JumpLoopRight, FALLOUT3);
+    DefineAnimString("JumpLandForward", Fallout3::AnimGroup_JumpLandForward, FALLOUT3);
+    DefineAnimString("JumpLandBackward", Fallout3::AnimGroup_JumpLandBackward, FALLOUT3);
+    DefineAnimString("JumpLandLeft", Fallout3::AnimGroup_JumpLandLeft, FALLOUT3);
+    DefineAnimString("JumpLandRight", Fallout3::AnimGroup_JumpLandRight, FALLOUT3);
+
+    DefineAnimString("JumpStart", FalloutNV::AnimGroup_JumpStart, NEWVEGAS);
+    DefineAnimString("JumpLoop", FalloutNV::AnimGroup_JumpLoop, NEWVEGAS);
+    DefineAnimString("JumpLand", FalloutNV::AnimGroup_JumpLand, NEWVEGAS);
+    DefineAnimString("JumpLoopForward", FalloutNV::AnimGroup_JumpLoopForward, NEWVEGAS);
+    DefineAnimString("JumpLoopBackward", FalloutNV::AnimGroup_JumpLoopBackward, NEWVEGAS);
+    DefineAnimString("JumpLoopLeft", FalloutNV::AnimGroup_JumpLoopLeft, NEWVEGAS);
+    DefineAnimString("JumpLoopRight", FalloutNV::AnimGroup_JumpLoopRight, NEWVEGAS);
+    DefineAnimString("JumpLandForward", FalloutNV::AnimGroup_JumpLandForward, NEWVEGAS);
+    DefineAnimString("JumpLandBackward", FalloutNV::AnimGroup_JumpLandBackward, NEWVEGAS);
+    DefineAnimString("JumpLandLeft", FalloutNV::AnimGroup_JumpLandLeft, NEWVEGAS);
+    DefineAnimString("JumpLandRight", FalloutNV::AnimGroup_JumpLandRight, NEWVEGAS);
 
     DefineAnimString("Equip", Oblivion::AnimGroup_Equip, OBLIVION);
     DefineAnimString("Unequip", Oblivion::AnimGroup_Unequip, OBLIVION);
@@ -348,6 +367,79 @@ void API::Initialize(unsigned char game)
     DefineValueString("Variable10", Fallout::ActorVal_Variable10, FALLOUT_GAMES);
     DefineValueString("IgnoreCrippledLimbs", Fallout::ActorVal_IgnoreCrippledLimbs, FALLOUT_GAMES);
 
+    DefineValueString("Strength", Oblivion::ActorVal_Strength, OBLIVION);
+    DefineValueString("Intelligence", Oblivion::ActorVal_Intelligence, OBLIVION);
+    DefineValueString("Willpower", Oblivion::ActorVal_Willpower, OBLIVION);
+    DefineValueString("Agility", Oblivion::ActorVal_Agility, OBLIVION);
+    DefineValueString("Speed", Oblivion::ActorVal_Speed, OBLIVION);
+    DefineValueString("Endurance", Oblivion::ActorVal_Endurance, OBLIVION);
+    DefineValueString("Personality", Oblivion::ActorVal_Personality, OBLIVION);
+    DefineValueString("Luck", Oblivion::ActorVal_Luck, OBLIVION);
+    DefineValueString("Health", Oblivion::ActorVal_Health, OBLIVION);
+    DefineValueString("Magicka", Oblivion::ActorVal_Magicka, OBLIVION);
+    DefineValueString("Fatigue", Oblivion::ActorVal_Fatigue, OBLIVION);
+    DefineValueString("Encumbrance", Oblivion::ActorVal_Encumbrance, OBLIVION);
+    DefineValueString("Armorer", Oblivion::ActorVal_Armorer, OBLIVION);
+    DefineValueString("Athletics", Oblivion::ActorVal_Athletics, OBLIVION);
+    DefineValueString("Blade", Oblivion::ActorVal_Blade, OBLIVION);
+    DefineValueString("Block", Oblivion::ActorVal_Block, OBLIVION);
+    DefineValueString("Blunt", Oblivion::ActorVal_Blunt, OBLIVION);
+    DefineValueString("HandToHand", Oblivion::ActorVal_HandToHand, OBLIVION);
+    DefineValueString("HeavyArmor", Oblivion::ActorVal_HeavyArmor, OBLIVION);
+    DefineValueString("Alchemy", Oblivion::ActorVal_Alchemy, OBLIVION);
+    DefineValueString("Alteration", Oblivion::ActorVal_Alteration, OBLIVION);
+    DefineValueString("Conjuration", Oblivion::ActorVal_Conjuration, OBLIVION);
+    DefineValueString("Destruction", Oblivion::ActorVal_Destruction, OBLIVION);
+    DefineValueString("Illusion", Oblivion::ActorVal_Illusion, OBLIVION);
+    DefineValueString("Mysticism", Oblivion::ActorVal_Mysticism, OBLIVION);
+    DefineValueString("Restoration", Oblivion::ActorVal_Restoration, OBLIVION);
+    DefineValueString("Acrobatics", Oblivion::ActorVal_Acrobatics, OBLIVION);
+    DefineValueString("LightArmor", Oblivion::ActorVal_LightArmor, OBLIVION);
+    DefineValueString("Marksman", Oblivion::ActorVal_Marksman, OBLIVION);
+    DefineValueString("Mercantile", Oblivion::ActorVal_Mercantile, OBLIVION);
+    DefineValueString("Security", Oblivion::ActorVal_Security, OBLIVION);
+    DefineValueString("Sneak", Oblivion::ActorVal_Sneak, OBLIVION);
+    DefineValueString("Speechcraft", Oblivion::ActorVal_Speechcraft, OBLIVION);
+    DefineValueString("Aggression", Oblivion::ActorVal_Aggression, OBLIVION);
+    DefineValueString("Confidenc", Oblivion::ActorVal_Confidence, OBLIVION);
+    DefineValueString("Energy", Oblivion::ActorVal_Energy, OBLIVION);
+    DefineValueString("Responsibility", Oblivion::ActorVal_Responsibility, OBLIVION);
+    DefineValueString("Bounty", Oblivion::ActorVal_Bounty, OBLIVION);
+    DefineValueString("Fame", Oblivion::ActorVal_Fame, OBLIVION);
+    DefineValueString("Infamy", Oblivion::ActorVal_Infamy, OBLIVION);
+    DefineValueString("MagickaMultiplier", Oblivion::ActorVal_MagickaMultiplier, OBLIVION);
+    DefineValueString("NightEyeBonus", Oblivion::ActorVal_NightEyeBonus, OBLIVION);
+    DefineValueString("AttackBonus", Oblivion::ActorVal_AttackBonus, OBLIVION);
+    DefineValueString("DefendBonus", Oblivion::ActorVal_DefendBonus, OBLIVION);
+    DefineValueString("CastingPenalty", Oblivion::ActorVal_CastingPenalty, OBLIVION);
+    DefineValueString("Blindness", Oblivion::ActorVal_Blindness, OBLIVION);
+    DefineValueString("Chameleon", Oblivion::ActorVal_Chameleon, OBLIVION);
+    DefineValueString("Invisibility", Oblivion::ActorVal_Invisibility, OBLIVION);
+    DefineValueString("Paralysis", Oblivion::ActorVal_Paralysis, OBLIVION);
+    DefineValueString("Silence", Oblivion::ActorVal_Silence, OBLIVION);
+    DefineValueString("Confusion", Oblivion::ActorVal_Confusion, OBLIVION);
+    DefineValueString("DetectItemRange", Oblivion::ActorVal_DetectItemRange, OBLIVION);
+    DefineValueString("SpellAbsorbChance", Oblivion::ActorVal_SpellAbsorbChance, OBLIVION);
+    DefineValueString("SpellReflectChance", Oblivion::ActorVal_SpellReflectChance, OBLIVION);
+    DefineValueString("SwimSpeedMultiplier", Oblivion::ActorVal_SwimSpeedMultiplier, OBLIVION);
+    DefineValueString("WaterBreathing", Oblivion::ActorVal_WaterBreathing, OBLIVION);
+    DefineValueString("WaterWalking", Oblivion::ActorVal_WaterWalking, OBLIVION);
+    DefineValueString("StuntedMagicka", Oblivion::ActorVal_StuntedMagicka, OBLIVION);
+    DefineValueString("DetectLifeRange", Oblivion::ActorVal_DetectLifeRange, OBLIVION);
+    DefineValueString("ReflectDamage", Oblivion::ActorVal_ReflectDamage, OBLIVION);
+    DefineValueString("Telekinesis", Oblivion::ActorVal_Telekinesis, OBLIVION);
+    DefineValueString("ResistFire", Oblivion::ActorVal_ResistFire, OBLIVION);
+    DefineValueString("ResistFrost", Oblivion::ActorVal_ResistFrost, OBLIVION);
+    DefineValueString("ResistDisease", Oblivion::ActorVal_ResistDisease, OBLIVION);
+    DefineValueString("ResistMagic", Oblivion::ActorVal_ResistMagic, OBLIVION);
+    DefineValueString("ResistNormalWeapons", Oblivion::ActorVal_ResistNormalWeapons, OBLIVION);
+    DefineValueString("ResistParalysis", Oblivion::ActorVal_ResistParalysis, OBLIVION);
+    DefineValueString("ResistPoison", Oblivion::ActorVal_ResistPoison, OBLIVION);
+    DefineValueString("ResistShock", Oblivion::ActorVal_ResistShock, OBLIVION);
+    DefineValueString("Vampirism", Oblivion::ActorVal_Vampirism, OBLIVION);
+    DefineValueString("Darkness", Oblivion::ActorVal_Darkness, OBLIVION);
+    DefineValueString("ResistWaterDamage", Oblivion::ActorVal_ResistWaterDamage, OBLIVION);
+
     DefineFunction("GetPos", "ra", Func_GetPos, ALL_GAMES);
     DefineFunction("SetPos", "rad", Func_SetPos, ALL_GAMES);
     DefineFunction("GetAngle", "ra", Func_GetAngle, ALL_GAMES);
@@ -363,6 +455,7 @@ void API::Initialize(unsigned char game)
     DefineFunction("PlayGroup", "rgi", Func_PlayGroup, ALL_GAMES);
     DefineFunction("SetAlert", "ri", Func_SetAlert, ALL_GAMES);
     DefineFunction("RemoveAllItems", "rCI", Func_RemoveAllItems, ALL_GAMES);
+    DefineFunction("GetCombatTarget", "r", Func_GetCombatTarget, ALL_GAMES);
     DefineFunction("GetActorState", "r", Func_GetActorState, ALL_GAMES); // vaultfunction
 
     DefineFunction("Enable", "rI", Func_Enable, FALLOUT_GAMES);
@@ -379,10 +472,14 @@ void API::Initialize(unsigned char game)
     DefineFunction("Load", "s", Fallout3::Func_Load, FALLOUT3);
     DefineFunction("SetName", "rsB", Fallout3::Func_SetName, FALLOUT3);
     DefineFunction("GetParentCell", "r", Fallout3::Func_GetParentCell, FALLOUT3);
+    DefineFunction("GetFirstRef", "III", Fallout3::Func_GetFirstRef, FALLOUT3);
+    DefineFunction("GetNextRef", "", Fallout3::Func_GetNextRef, FALLOUT3);
 
     DefineFunction("Load", "s", FalloutNV::Func_Load, NEWVEGAS);
     DefineFunction("SetName", "rsB", FalloutNV::Func_SetName, NEWVEGAS);
     DefineFunction("GetParentCell", "r", FalloutNV::Func_GetParentCell, NEWVEGAS);
+    DefineFunction("GetFirstRef", "III", FalloutNV::Func_GetFirstRef, NEWVEGAS);
+    DefineFunction("GetNextRef", "", FalloutNV::Func_GetNextRef, NEWVEGAS);
 
     DefineFunction("Enable", "r", Func_Enable, OBLIVION);
     DefineFunction("Disable", "r", Func_Disable, OBLIVION);
@@ -395,6 +492,8 @@ void API::Initialize(unsigned char game)
     DefineFunction("SetName", "rsB", Oblivion::Func_SetName, OBLIVION);
     DefineFunction("GetParentCell", "r", Oblivion::Func_GetParentCell, OBLIVION);
     DefineFunction("IsAnimGroupPlaying", "rg", Oblivion::Func_IsAnimGroupPlaying, OBLIVION);
+    DefineFunction("GetFirstRef", "III", Oblivion::Func_GetFirstRef, OBLIVION);
+    DefineFunction("GetNextRef", "", Oblivion::Func_GetNextRef, OBLIVION);
 }
 
 void API::Terminate()
@@ -439,10 +538,14 @@ pair<vector<double>, API::op_default*> API::ParseCommand(char* cmd, char* def, u
 
     try
     {
+        char* arg1_pos = (char*) &result->arg1.unk1;
+        char* arg2_pos = (char*) &result->arg2.param1;
+        unsigned short* _opcode = &result->arg2.opcode;
+        unsigned short* _numargs = &result->arg2.numargs;
+
         result->random = rand();
         char* tokenizer = NULL;
         unsigned int reference = 0x00;
-        result->arg2.opcode = opcode;
         result_data.first.push_back(opcode);
 
         if (opcode == 0x014E || opcode == 0x014F || opcode == 0x0148) // Some commands, such as LoadGame, require the calling thread to be the games main thread, delegate flag allows this
@@ -469,6 +572,16 @@ pair<vector<double>, API::op_default*> API::ParseCommand(char* cmd, char* def, u
             result_data.first.push_back(reference);
             def++;
         }
+        else
+        {
+            // shift the stream pointers 4 byte
+            arg2_pos -= 4;
+            _opcode -= 2;
+            _numargs -= 2;
+            result->arg8.offset = 0x00000004;
+        }
+
+        *_opcode = opcode;
 
         // Skip the function name
 
@@ -482,8 +595,6 @@ pair<vector<double>, API::op_default*> API::ParseCommand(char* cmd, char* def, u
 
         unsigned short numargs = 0x00;
         unsigned int refparam = 0x00;
-        char* arg1_pos = (char*) &result->arg1.unk1;
-        char* arg2_pos = (char*) &result->arg2.param1;
 
         while (*def != '\0' && numargs < 4) // We don't support more than 4 args yet
         {
@@ -666,7 +777,7 @@ pair<vector<double>, API::op_default*> API::ParseCommand(char* cmd, char* def, u
             numargs++;
         }
 
-        result->arg2.numargs = numargs;
+        *_numargs = numargs;
 
         if (reference != 0x00)
         {
@@ -994,4 +1105,9 @@ vector<CommandResult> API::Translate(char* stream)
     queue.pop_back();
 
     return result;
+}
+
+unsigned char API::GetGameCode()
+{
+    return game;
 }

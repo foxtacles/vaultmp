@@ -178,6 +178,20 @@ Lockable* Actor::SetActorDead(bool state)
     return &this->state_Dead;
 }
 
+bool Actor::IsJumping() const
+{
+    unsigned char anim = this->GetActorRunningAnimation();
+    unsigned char game = API::GetGameCode();
+
+    return ((game & OBLIVION && anim >= Oblivion::AnimGroup_JumpStart && anim <= Oblivion::AnimGroup_JumpLand)
+            || (game & FALLOUT3 && ((anim >= Fallout3::AnimGroup_JumpStart && anim <= Fallout3::AnimGroup_JumpLand)
+                                    || (anim >= Fallout3::AnimGroup_JumpLoopForward && anim <= Fallout3::AnimGroup_JumpLoopRight)
+                                    || (anim >= Fallout3::AnimGroup_JumpLandForward && anim <= Fallout3::AnimGroup_JumpLandRight)))
+            || (game & NEWVEGAS && ((anim >= FalloutNV::AnimGroup_JumpStart && anim <= FalloutNV::AnimGroup_JumpLand)
+                                    || (anim >= FalloutNV::AnimGroup_JumpLoopForward && anim <= FalloutNV::AnimGroup_JumpLoopRight)
+                                    || (anim >= FalloutNV::AnimGroup_JumpLandForward && anim <= FalloutNV::AnimGroup_JumpLandRight))));
+}
+
 vector<string> ActorFunctor::operator()()
 {
     vector<string> result;
@@ -212,6 +226,8 @@ vector<string> ActorFunctor::operator()()
 
         result.push_back(Utils::LongToHex(refID));
     }
+
+    _next(result);
 
     return result;
 }

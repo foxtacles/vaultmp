@@ -6,10 +6,12 @@
 #endif
 #include <ctime>
 #include <cstdio>
+#include <cstdarg>
 #include <cstring>
 
 #include <string>
 
+#include "vaultmp.h"
 #include "CriticalSection.h"
 
 using namespace std;

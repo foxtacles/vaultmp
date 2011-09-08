@@ -71,6 +71,8 @@ public:
     Lockable* SetActorAlerted(bool state);
     Lockable* SetActorDead(bool state);
 
+    bool IsJumping() const;
+
 };
 
 class ActorFunctor : public VaultFunctor

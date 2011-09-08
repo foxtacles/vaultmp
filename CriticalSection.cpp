@@ -12,7 +12,8 @@ CriticalSection::CriticalSection()
 #ifdef __WIN32__
     InitializeCriticalSection(&cs);
 #else
-    pthread_mutex_init(&cs, PTHREAD_MUTEX_RECURSIVE);
+    pthread_mutexattr_settype(&mta, PTHREAD_MUTEX_RECURSIVE);
+    pthread_mutex_init(&cs, &mta);
 #endif
 #ifdef VAULTMP_DEBUG
     ndebug = true;
@@ -75,7 +76,7 @@ CriticalSection* CriticalSection::StartSession()
             i++
 #endif
         )
-        Sleep(1);
+        sleep(1);
 #endif
     if ((((bool) success) == result) && !finalize)
     {
@@ -112,7 +113,11 @@ void CriticalSection::EndSession()
 void CriticalSection::Finalize() // must be called by the thread which wants to delete this object
 {
     finalize = true;
+#ifdef __WIN32__
     Sleep(100); // give enough time to have other threads trying to enter notice that this will be destroyed
+#else
+    sleep(100);
+#endif
     EndSession();
 }
 

@@ -16,10 +16,10 @@ namespace vaultmp {
 typedef unsigned char Index; // 1 byte
 typedef unsigned char Reason; // 1 byte
 typedef bool State; // 1 byte
-typedef unsigned int Player; // 4 byte
 typedef unsigned int Cell; // 4 byte
 typedef unsigned int Base; // 4 byte
 typedef unsigned int Interval; // 4 byte
+typedef double ID; // 8 byte
 typedef double Value; // 8 byte
 typedef double Timer; // 8 byte
 
@@ -36,14 +36,14 @@ static const Index ALL_GAMES            =   FALLOUT_GAMES | OBLIVION;
 extern "C" {
     VAULTSCRIPT void exec();
     VAULTSCRIPT bool OnClientAuthenticate(std::string, std::string);
-    VAULTSCRIPT void OnPlayerDisconnect(vaultmp::Player, vaultmp::Reason);
-    VAULTSCRIPT vaultmp::Base OnPlayerRequestGame(vaultmp::Player);
-    VAULTSCRIPT void OnPlayerSpawn(vaultmp::Player);
-    VAULTSCRIPT void OnPlayerDeath(vaultmp::Player);
-    VAULTSCRIPT void OnPlayerCellChange(vaultmp::Player, vaultmp::Cell);
-    VAULTSCRIPT void OnPlayerValueChange(vaultmp::Player, vaultmp::Index, vaultmp::Value);
-    VAULTSCRIPT void OnPlayerBaseValueChange(vaultmp::Player, vaultmp::Index, vaultmp::Value);
-    VAULTSCRIPT void OnPlayerStateChange(vaultmp::Player, vaultmp::Index, vaultmp::State);
+    VAULTSCRIPT void OnPlayerDisconnect(vaultmp::ID, vaultmp::Reason);
+    VAULTSCRIPT vaultmp::Base OnPlayerRequestGame(vaultmp::ID);
+    VAULTSCRIPT void OnSpawn(vaultmp::ID);
+    VAULTSCRIPT void OnCellChange(vaultmp::ID, vaultmp::Cell);
+    VAULTSCRIPT void OnActorDeath(vaultmp::ID);
+    VAULTSCRIPT void OnActorValueChange(vaultmp::ID, vaultmp::Index, vaultmp::Value);
+    VAULTSCRIPT void OnActorBaseValueChange(vaultmp::ID, vaultmp::Index, vaultmp::Value);
+    VAULTSCRIPT void OnActorStateChange(vaultmp::ID, vaultmp::Index, vaultmp::State);
 
     VAULTSCRIPT void (*timestamp)();
     VAULTSCRIPT vaultmp::Timer (*CreateTimer)(vaultmp::TimerFunc, vaultmp::Interval);
@@ -58,11 +58,9 @@ extern "C" {
     VAULTSCRIPT std::string (*AxisToString)(vaultmp::Index);
     VAULTSCRIPT std::string (*AnimToString)(vaultmp::Index);
 
-    VAULTSCRIPT vaultmp::Value (*GetPlayerPos)(vaultmp::Player, vaultmp::Index);
-    VAULTSCRIPT void (*GetPlayerPosXYZ)(vaultmp::Player, vaultmp::Value&, vaultmp::Value&, vaultmp::Value&);
-    VAULTSCRIPT vaultmp::Value (*GetPlayerAngle)(vaultmp::Player, vaultmp::Index);
-    VAULTSCRIPT void (*GetPlayerAngleXYZ)(vaultmp::Player, vaultmp::Value&, vaultmp::Value&, vaultmp::Value&);
-    VAULTSCRIPT vaultmp::Value (*GetPlayerValue)(vaultmp::Player, vaultmp::Index);
-    VAULTSCRIPT vaultmp::Value (*GetPlayerBaseValue)(vaultmp::Player, vaultmp::Index);
-    VAULTSCRIPT vaultmp::Cell (*GetPlayerCell)(vaultmp::Player);
+    VAULTSCRIPT void (*GetPos)(vaultmp::ID, vaultmp::Value&, vaultmp::Value&, vaultmp::Value&);
+    VAULTSCRIPT void (*GetAngle)(vaultmp::ID, vaultmp::Value&, vaultmp::Value&, vaultmp::Value&);
+    VAULTSCRIPT vaultmp::Cell (*GetCell)(vaultmp::ID);
+    VAULTSCRIPT vaultmp::Value (*GetActorValue)(vaultmp::ID, vaultmp::Index);
+    VAULTSCRIPT vaultmp::Value (*GetActorBaseValue)(vaultmp::ID, vaultmp::Index);
 }

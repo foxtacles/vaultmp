@@ -199,7 +199,7 @@ void* Dedicated::FileThread(void* data)
     char file[MAX_PATH];
     getcwd(dir, sizeof(dir));
 
-    snprintf(file, sizeof(file), "%s\\%s\\%s", dir, SAVEGAME_PATH, savegame.first.c_str());
+    snprintf(file, sizeof(file), "%s/%s/%s", dir, SAVEGAME_PATH, savegame.first.c_str());
     unsigned int len = Utils::FileLength(file);
     files.AddFile(savegame.first.c_str(), file, 0, len, len, FileListNodeContext(FILE_SAVEGAME, 0), true);
 
@@ -207,7 +207,7 @@ void* Dedicated::FileThread(void* data)
     int i = 1;
     for (it = modfiles.begin(), i; it != modfiles.end(); ++it, i++)
     {
-        snprintf(file, sizeof(file), "%s\\%s\\%s", dir, MODFILES_PATH, it->first.c_str());
+        snprintf(file, sizeof(file), "%s/%s/%s", dir, MODFILES_PATH, it->first.c_str());
         len = Utils::FileLength(file);
         files.AddFile(it->first.c_str(), file, 0, len, len, FileListNodeContext(FILE_MODFILE, i), true);
     }
@@ -361,7 +361,6 @@ void* Dedicated::DedicatedThread(void* data)
     RakPeerInterface::DestroyInstance(peer);
 
     GameFactory::DestroyAllInstances();
-    Container::Cleanup();
     API::Terminate();
 
 #ifdef VAULTMP_DEBUG

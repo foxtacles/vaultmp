@@ -1,7 +1,9 @@
 #ifndef API_H
 #define API_H
 
+#ifdef __WIN32__
 #include <windows.h>
+#endif
 #include <ctime>
 #include <climits>
 #include <string>
@@ -82,6 +84,7 @@ namespace Values {
         Func_AddItem                    = 0x1002,
         Func_RemoveItem                 = 0x1052,
         Func_Kill                       = 0x108B,
+        Func_GetCombatTarget            = 0x10E8,
 
         Func_GetActorState              = 0x0001 | VAULTFUNCTION,
     };
@@ -179,8 +182,26 @@ namespace Values {
             Func_Load                       = 0x014F,
             Func_SetName                    = 0x1485,
             Func_GetParentCell              = 0x1495,
+            Func_GetFirstRef                = 0x14AF,
+            Func_GetNextRef                 = 0x14B0,
         };
 
+        enum AnimationGroups
+        {
+            AnimGroup_JumpStart             = 0xA8,
+            AnimGroup_JumpLoop              = 0xA9,
+            AnimGroup_JumpLand              = 0xAA,
+
+            AnimGroup_JumpLoopForward       = 0xAE,
+            AnimGroup_JumpLoopBackward      = 0xAF,
+            AnimGroup_JumpLoopLeft          = 0xB0,
+            AnimGroup_JumpLoopRight         = 0xB1,
+
+            AnimGroup_JumpLandForward       = 0xB3,
+            AnimGroup_JumpLandBackward      = 0xB4,
+            AnimGroup_JumpLandLeft          = 0xB5,
+            AnimGroup_JumpLandRight         = 0xB6,
+        };
     };
 
     namespace FalloutNV {
@@ -190,8 +211,26 @@ namespace Values {
             Func_Load                       = 0x014E,
             Func_SetName                    = 0x144C,
             Func_GetParentCell              = 0x146D,
+            Func_GetFirstRef                = 0x1471,
+            Func_GetNextRef                 = 0x1472,
         };
 
+        enum AnimationGroups
+        {
+            AnimGroup_JumpStart             = 0xE3,
+            AnimGroup_JumpLoop              = 0xE4,
+            AnimGroup_JumpLand              = 0xE5,
+
+            AnimGroup_JumpLoopForward       = 0xEC,
+            AnimGroup_JumpLoopBackward      = 0xED,
+            AnimGroup_JumpLoopLeft          = 0xEE,
+            AnimGroup_JumpLoopRight         = 0xEF,
+
+            AnimGroup_JumpLandForward       = 0xF1,
+            AnimGroup_JumpLandBackward      = 0xF2,
+            AnimGroup_JumpLandLeft          = 0xF3,
+            AnimGroup_JumpLandRight         = 0xF4,
+        };
     };
 
     namespace Oblivion {
@@ -202,82 +241,85 @@ namespace Values {
             Func_SetName                    = 0x14A3,
             Func_GetParentCell              = 0x1412,
             Func_IsAnimGroupPlaying         = 0x16C1, // equivalent to IsAnimPlaying in Fallout games
+            Func_GetFirstRef                = 0x1608,
+            Func_GetNextRef                 = 0x1609,
         };
 
-/*
-  0:    Strength
-  1:    Intelligence
-  2:    Willpower
-  3:    Agility
-  4:    Speed
-  5:    Endurance
-  6:    Personality
-  7:    Luck
-  8:    Health
-  9:    Magicka
- 10:    Fatigue
- 11:    Encumbrance
- 12:    Armorer
- 13:    Athletics
- 14:    Blade
- 15:    Block
- 16:    Blunt
- 17:    HandToHand
- 18:    HeavyArmor
- 19:    Alchemy
- 20:    Alteration
- 21:    Conjuration
- 22:    Destruction
- 23:    Illusion
- 24:    Mysticism
- 25:    Restoration
- 26:    Acrobatics
- 27:    LightArmor
- 28:    Marksman
- 29:    Mercantile
- 30:    Security
- 31:    Sneak
- 32:    Speechcraft
- 33:    Aggression
- 34:    Confidence
- 35:    Energy
- 36:    Responsibility
- 37:    Bounty
- 38:    Fame
- 39:    Infamy
- 40:    MagickaMultiplier
- 41:    NightEyeBonus
- 42:    AttackBonus
- 43:    DefendBonus
- 44:    CastingPenalty
- 45:    Blindness
- 46:    Chameleon
- 47:    Invisibility
- 48:    Paralysis
- 49:    Silence
- 50:    Confusion
- 51:    DetectItemRange
- 52:    SpellAbsorbChance
- 53:    SpellReflectChance
- 54:    SwimSpeedMultiplier
- 55:    WaterBreathing
- 56:    WaterWalking
- 57:    StuntedMagicka
- 58:    DetectLifeRange
- 59:    ReflectDamage
- 60:    Telekinesis
- 61:    ResistFire
- 62:    ResistFrost
- 63:    ResistDisease
- 64:    ResistMagic
- 65:    ResistNormalWeapons
- 68:    ResistParalysis
- 67:    ResistPoison
- 68:    ResistShock
- 69:    Vampirism
- 70:    Darkness
- 71:    ResistWaterDamage
-*/
+        enum ActorVals
+        {
+            ActorVal_Strength               = 0x00,
+            ActorVal_Intelligence           = 0x01,
+            ActorVal_Willpower              = 0x02,
+            ActorVal_Agility                = 0x03,
+            ActorVal_Speed                  = 0x04,
+            ActorVal_Endurance              = 0x05,
+            ActorVal_Personality            = 0x06,
+            ActorVal_Luck                   = 0x07,
+            ActorVal_Health                 = 0x08,
+            ActorVal_Magicka                = 0x09,
+            ActorVal_Fatigue                = 0x0A,
+            ActorVal_Encumbrance            = 0x0B,
+            ActorVal_Armorer                = 0x0C,
+            ActorVal_Athletics              = 0x0D,
+            ActorVal_Blade                  = 0x0E,
+            ActorVal_Block                  = 0x0F,
+            ActorVal_Blunt                  = 0x10,
+            ActorVal_HandToHand             = 0x11,
+            ActorVal_HeavyArmor             = 0x12,
+            ActorVal_Alchemy                = 0x13,
+            ActorVal_Alteration             = 0x14,
+            ActorVal_Conjuration            = 0x15,
+            ActorVal_Destruction            = 0x16,
+            ActorVal_Illusion               = 0x17,
+            ActorVal_Mysticism              = 0x18,
+            ActorVal_Restoration            = 0x19,
+            ActorVal_Acrobatics             = 0x1A,
+            ActorVal_LightArmor             = 0x1B,
+            ActorVal_Marksman               = 0x1C,
+            ActorVal_Mercantile             = 0x1D,
+            ActorVal_Security               = 0x1E,
+            ActorVal_Sneak                  = 0x1F,
+            ActorVal_Speechcraft            = 0x20,
+            ActorVal_Aggression             = 0x21,
+            ActorVal_Confidence             = 0x22,
+            ActorVal_Energy                 = 0x23,
+            ActorVal_Responsibility         = 0x24,
+            ActorVal_Bounty                 = 0x25,
+            ActorVal_Fame                   = 0x26,
+            ActorVal_Infamy                 = 0x27,
+            ActorVal_MagickaMultiplier      = 0x28,
+            ActorVal_NightEyeBonus          = 0x29,
+            ActorVal_AttackBonus            = 0x2A,
+            ActorVal_DefendBonus            = 0x2B,
+            ActorVal_CastingPenalty         = 0x2C,
+            ActorVal_Blindness              = 0x2D,
+            ActorVal_Chameleon              = 0x2E,
+            ActorVal_Invisibility           = 0x2F,
+            ActorVal_Paralysis              = 0x30,
+            ActorVal_Silence                = 0x31,
+            ActorVal_Confusion              = 0x32,
+            ActorVal_DetectItemRange        = 0x33,
+            ActorVal_SpellAbsorbChance      = 0x34,
+            ActorVal_SpellReflectChance     = 0x35,
+            ActorVal_SwimSpeedMultiplier    = 0x36,
+            ActorVal_WaterBreathing         = 0x37,
+            ActorVal_WaterWalking           = 0x38,
+            ActorVal_StuntedMagicka         = 0x39,
+            ActorVal_DetectLifeRange        = 0x3A,
+            ActorVal_ReflectDamage          = 0x3B,
+            ActorVal_Telekinesis            = 0x3C,
+            ActorVal_ResistFire             = 0x3D,
+            ActorVal_ResistFrost            = 0x3E,
+            ActorVal_ResistDisease          = 0x3F,
+            ActorVal_ResistMagic            = 0x40,
+            ActorVal_ResistNormalWeapons    = 0x41,
+            ActorVal_ResistParalysis        = 0x42,
+            ActorVal_ResistPoison           = 0x43,
+            ActorVal_ResistShock            = 0x44,
+            ActorVal_Vampirism              = 0x45,
+            ActorVal_Darkness               = 0x46,
+            ActorVal_ResistWaterDamage      = 0x47,
+        };
 
         enum AnimationGroups
         {
@@ -378,6 +420,8 @@ public:
     static vector<string> RetrieveAllValues_Reverse();
     static vector<string> RetrieveAllAxis_Reverse();
     static vector<string> RetrieveAllAnims_Reverse();
+
+    static unsigned char GetGameCode();
 
 };
 

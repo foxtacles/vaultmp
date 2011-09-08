@@ -6,7 +6,7 @@ using namespace vaultmp;
 
 void MyTimer()
 {
-    printf("C++ foo\n");
+
 }
 
 // It is not safe to call ANY vaultmp function before the execution of exec()
@@ -29,52 +29,64 @@ void VAULTSCRIPT exec()
         break;
     }
 
-    CreateTimer(&MyTimer, 5000);
+    //CreateTimer(&MyTimer, 5000);
 }
 
 bool VAULTSCRIPT OnClientAuthenticate(string name, string pwd)
 {
-    printf("C++: client auth %s, %s\n", name.c_str(), pwd.c_str());
     return true;
 }
 
-void VAULTSCRIPT OnPlayerDisconnect(Player player, Reason reason)
+void VAULTSCRIPT OnPlayerDisconnect(ID player, Reason reason)
 {
-    printf("C++: player disconnect %d, %d\n", player, reason);
 }
 
-Base VAULTSCRIPT OnPlayerRequestGame(Player player)
+Base VAULTSCRIPT OnPlayerRequestGame(ID player)
 {
-    printf("C++: player game %d\n", player);
-    return 0x00030D82;
+    Base base = 0x00000000;
+
+    switch (GetGameCode())
+    {
+    case FALLOUT3:
+        base = 0x00030D82; // Carter
+        break;
+    case NEWVEGAS:
+        base = 0x0010C0BE; // Jessup
+        break;
+    case OBLIVION:
+        base = 0x000A3166; // Achille
+        break;
+    }
+
+    return base;
 }
 
-void VAULTSCRIPT OnPlayerSpawn(Player player)
+void VAULTSCRIPT OnSpawn(ID object)
 {
 
 }
 
-void VAULTSCRIPT OnPlayerDeath(Player player)
+void VAULTSCRIPT OnCellChange(ID object, Cell cell)
 {
 
 }
 
-void VAULTSCRIPT OnPlayerCellChange(Player player, Cell cell)
+void VAULTSCRIPT OnActorDeath(ID actor)
 {
-    printf("C++: player cell %d,%08X\n", player, cell);
+
 }
 
-void VAULTSCRIPT OnPlayerValueChange(Player player, Index index, Value value)
+void VAULTSCRIPT OnActorValueChange(ID actor, Index index, Value value)
 {
-    printf("C++: player value %s -> %f\n", ValueToString(index).c_str(), (float)value);
+
 }
 
-void VAULTSCRIPT OnPlayerBaseValueChange(Player player, Index index, Value value)
+void VAULTSCRIPT OnActorBaseValueChange(ID actor, Index index, Value value)
 {
-    printf("C++: player base value %s -> %f\n", ValueToString(index).c_str(), (float)value);
+
 }
 
-void VAULTSCRIPT OnPlayerStateChange(Player player, Index index, State alerted)
+void VAULTSCRIPT OnActorStateChange(ID actor, Index index, State alerted)
 {
-    printf("C++: player running animation %s, alerted %d\n", AnimToString(index).c_str(), (int)alerted);
+
 }

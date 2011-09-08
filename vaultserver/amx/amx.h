@@ -21,6 +21,9 @@
 #define AMX_H_INCLUDED
 
 #define PAWN_CELL_SIZE 64 // 64 bit cell size
+#ifndef __WIN32__
+#define HAVE_I64
+#endif
 
 #include <stdlib.h>   /* for size_t */
 #include <limits.h>

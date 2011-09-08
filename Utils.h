@@ -2,7 +2,13 @@
 #define UTILS_H
 
 #ifdef __WIN32__
+#ifdef WINVER
+    #undef WINVER
+#endif
+    #define WINVER 0x0500
 #include <windows.h>
+    #undef WINVER
+#include <imagehlp.h>
 #endif
 #include <cstdio>
 #include <ctime>
@@ -30,6 +36,12 @@ public:
     static unsigned int FileLength(const char* file);
     static unsigned int crc32buf(char* buf, size_t len);
     static bool crc32file(char* name, unsigned int* crc);
+
+    #ifdef __WIN32__
+    static BOOL GenerateChecksum(const string& szFilename,
+                                        DWORD& dwExistingChecksum,
+                                        DWORD& dwChecksum );
+    #endif
 
 };
 

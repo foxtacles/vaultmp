@@ -46,8 +46,8 @@ void Game::Initialize()
     Interface::DefineCommand("RemoveItem", "%0.RemoveItem %1 %2 %3");
     Interface::DefineCommand("RemoveAllItems", "%0.RemoveAllItems");
     Interface::DefineCommand("MoveAllItems", "%0.RemoveAllItems %1 %2", "RemoveAllItems");
-    Interface::DefineCommand("KillActor", "%0.Kill %1 %2 %3", "Kill");
     Interface::DefineCommand("Kill", "%0.Kill");
+    Interface::DefineCommand("KillActor", "%0.Kill %1 %2 %3", "Kill");
     Interface::DefineCommand("PlaceAtMe", "%0.PlaceAtMe %1 %2 %3 %4");
     Interface::DefineCommand("Load", "Load %0");
 
@@ -326,7 +326,7 @@ void Game::SetPos(NetworkID id, unsigned char axis, double value)
         if (GameFactory::GetType(object) & ALL_ACTORS)
             actor = (Actor*) object;
 
-        if (actor == NULL || !actor->IsCoordinateInRange(axis, old_value, 150.0))
+        if (actor == NULL || !actor->IsCoordinateInRange(axis, old_value, 150.0) || actor->IsJumping())
         {
             signed int key = result->Lock(true);
 
@@ -617,7 +617,7 @@ void Game::GetParentCell(unsigned int refID, unsigned int cell)
         {
             Enable(object->GetNetworkID(), true);
             MoveTo(object->GetNetworkID(), self->GetNetworkID(), true);
-            SetAngle(object->GetNetworkID(), Axis_Z);
+            SetAngle(object->GetReference(), Axis_Z);
         }
     }
 

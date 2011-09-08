@@ -23,7 +23,7 @@ private:
 
     PAWN();
 
-    static AMX_NATIVE_INFO vaultmp_functions[18];
+    static AMX_NATIVE_INFO vaultmp_functions[16];
 
     static cell vaultmp_timestamp(AMX* amx, const cell* params);
     static cell vaultmp_CreateTimer(AMX* amx, const cell* params);
@@ -38,13 +38,11 @@ private:
     static cell vaultmp_AxisToString(AMX* amx, const cell* params);
     static cell vaultmp_AnimToString(AMX* amx, const cell* params);
 
-    static cell vaultmp_GetPlayerPos(AMX* amx, const cell* params);
-    static cell vaultmp_GetPlayerPosXYZ(AMX* amx, const cell* params);
-    static cell vaultmp_GetPlayerAngle(AMX* amx, const cell* params);
-    static cell vaultmp_GetPlayerAngleXYZ(AMX* amx, const cell* params);
-    static cell vaultmp_GetPlayerValue(AMX* amx, const cell* params);
-    static cell vaultmp_GetPlayerBaseValue(AMX* amx, const cell* params);
-    static cell vaultmp_GetPlayerCell(AMX* amx, const cell* params);
+    static cell vaultmp_GetPos(AMX* amx, const cell* params);
+    static cell vaultmp_GetAngle(AMX* amx, const cell* params);
+    static cell vaultmp_GetCell(AMX* amx, const cell* params);
+    static cell vaultmp_GetActorValue(AMX* amx, const cell* params);
+    static cell vaultmp_GetActorBaseValue(AMX* amx, const cell* params);
 
     /*static cell vaultmp_GetPlayerName(AMX* amx, const cell* params);
     static cell vaultmp_GetPlayerPos(AMX* amx, const cell* params);

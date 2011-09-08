@@ -14,12 +14,12 @@
 forward OnClientAuthenticate(const name{}, const pwd{});
 forward OnPlayerDisconnect(player, reason);
 forward OnPlayerRequestGame(player);
-forward OnPlayerSpawn(player);
-forward OnPlayerDeath(player);
-forward OnPlayerCellChange(player, cell);
-forward OnPlayerValueChange(player, index, Float:value);
-forward OnPlayerBaseValueChange(player, index, Float:value);
-forward OnPlayerStateChange(player, index, Bool:alerted);
+forward OnSpawn(object);
+forward OnCellChange(object, cell);
+forward OnActorDeath(actor);
+forward OnActorValueChange(actor, index, Float:value);
+forward OnActorBaseValueChange(actor, index, Float:value);
+forward OnActorStateChange(actor, index, Bool:alerted);
 
 // Functions
 
@@ -36,10 +36,8 @@ native ValueToString(index, value{});
 native AxisToString(index, value{});
 native AnimToString(index, value{});
 
-native Float:GetPlayerPos(player, index);
-native GetPlayerPosXYZ(player, &Float:X, &Float:Y, &Float:Z);
-native Float:GetPlayerAngle(player, index);
-native GetPlayerAngleXYZ(player, &Float:X, &Float:Y, &Float:Z);
-native Float:GetPlayerValue(player, index);
-native Float:GetPlayerBaseValue(player, index);
-native GetPlayerCell(player);
+native GetPos(player, &Float:X, &Float:Y, &Float:Z);
+native GetAngle(player, &Float:X, &Float:Y, &Float:Z);
+native GetCell(object);
+native Float:GetActorValue(actor, index);
+native Float:GetActorBaseValue(actor, index);

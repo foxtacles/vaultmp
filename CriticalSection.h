@@ -20,6 +20,7 @@ private:
     CRITICAL_SECTION cs;
 #else
     pthread_mutex_t cs;
+    pthread_mutexattr_t mta;
 #endif
 
 #ifdef VAULTMP_DEBUG

@@ -3,9 +3,9 @@
 
 #ifdef __WIN32__
 #include <windows.h>
+#include <io.h>
 #endif
 #include <cstdio>
-#include <io.h>
 
 #include "../RakNet/RakPeerInterface.h"
 #include "../RakNet/MessageIdentifiers.h"
@@ -33,6 +33,10 @@
 #define RAKNET_STANDARD_CONNECTIONS     4
 #define RAKNET_MASTER_RATE              2000
 #define RAKNET_MASTER_STANDARD_PORT     1660
+
+#ifndef MAX_PATH
+#define MAX_PATH PATH_MAX
+#endif
 
 using namespace RakNet;
 using namespace Data;

@@ -677,7 +677,15 @@ static cell AMX_NATIVE_CALL n_fremove(AMX *amx, const cell *params)
   amx_StrParam(amx,params[1],name);
   if (name!=NULL && completename(fullname,name,sizearray(fullname))!=NULL) {
     /* if this is a directory, try _trmdir() */
+#ifdef __WIN32__
     struct _tstat stbuf;
+#else
+    struct stat stbuf;
+    #undef _trmdir
+    #undef _tremove
+    #define _trmdir rmdir
+    #define _tremove remove
+#endif
     _tstat(fullname,  &stbuf);
     if (S_ISDIR(stbuf.st_mode))
       r=_trmdir(fullname);
@@ -783,6 +791,7 @@ static int matchfiles(const TCHAR *path,int skip,TCHAR *out,int outlen)
       FindClose(hfind);
     } /* if */
   #else
+  #define _T __T
     /* copy directory part only (zero-terminate) */
     if (basename==path) {
       strcpy(dirname,".");
@@ -847,7 +856,11 @@ static cell AMX_NATIVE_CALL n_fstat(AMX *amx, const cell *params)
   (void)amx;
   amx_StrParam(amx,params[1],name);
   if (name!=NULL && completename(fullname,name,sizearray(fullname))!=NULL) {
+#ifdef __WIN32__
     struct _tstat stbuf;
+#else
+    struct stat stbuf;
+#endif
     if (_tstat(name, &stbuf) == 0) {
       cptr=amx_Address(amx,params[2]);
       *cptr=stbuf.st_size;
@@ -868,6 +881,7 @@ static cell AMX_NATIVE_CALL n_fattrib(AMX *amx, const cell *params)
 {
   #if !(defined __WIN32__ || defined _WIN32 || defined WIN32)
     #define _utime(n,t)  utime(n,t)
+    #define _utimbuf utimbuf
   #endif
   TCHAR *name,fullname[_MAX_PATH]="";
   int result=0;
@@ -900,7 +914,7 @@ static cell AMX_NATIVE_CALL n_fcreatedir(AMX *amx, const cell *params)
     #if defined __WIN32__ || defined __DOS__
       r=_tmkdir(fullname);
     #else
-      r=_tmkdir(fullname,0755);
+      r=mkdir(fullname,0755);
     #endif
   } /* if */
   return r==0;

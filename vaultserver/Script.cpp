@@ -30,12 +30,12 @@ Script::Script(char* path)
         GetScriptCallback(fOnClientAuthenticate, "OnClientAuthenticate", OnClientAuthenticate);
         GetScriptCallback(fOnPlayerDisconnect, "OnPlayerDisconnect", OnPlayerDisconnect);
         GetScriptCallback(fOnPlayerRequestGame, "OnPlayerRequestGame", OnPlayerRequestGame);
-        GetScriptCallback(fOnPlayerSpawn, "OnPlayerSpawn", OnPlayerSpawn);
-        GetScriptCallback(fOnPlayerDeath, "OnPlayerDeath", OnPlayerDeath);
-        GetScriptCallback(fOnPlayerCellChange, "OnPlayerCellChange", OnPlayerCellChange);
-        GetScriptCallback(fOnPlayerValueChange, "OnPlayerValueChange", OnPlayerValueChange);
-        GetScriptCallback(fOnPlayerBaseValueChange, "OnPlayerBaseValueChange", OnPlayerBaseValueChange);
-        GetScriptCallback(fOnPlayerStateChange, "OnPlayerStateChange", OnPlayerStateChange);
+        GetScriptCallback(fOnSpawn, "OnSpawn", OnSpawn);
+        GetScriptCallback(fOnCellChange, "OnCellChange", OnCellChange);
+        GetScriptCallback(fOnActorDeath, "OnActorDeath", OnActorDeath);
+        GetScriptCallback(fOnActorValueChange, "OnActorValueChange", OnActorValueChange);
+        GetScriptCallback(fOnActorBaseValueChange, "OnActorBaseValueChange", OnActorBaseValueChange);
+        GetScriptCallback(fOnActorStateChange, "OnActorStateChange", OnActorStateChange);
 
         SetScriptFunction("timestamp", &Utils::timestamp);
         SetScriptFunction("CreateTimer", &Script::CreateTimer);
@@ -50,13 +50,11 @@ Script::Script(char* path)
         SetScriptFunction("AxisToString", &API::RetrieveAxis_Reverse);
         SetScriptFunction("AnimToString", &API::RetrieveAnim_Reverse);
 
-        SetScriptFunction("GetPlayerPos", &Script::GetPlayerPos);
-        SetScriptFunction("GetPlayerPosXYZ", &Script::GetPlayerPosXYZ);
-        SetScriptFunction("GetPlayerAngle", &Script::GetPlayerAngle);
-        SetScriptFunction("GetPlayerAngleXYZ", &Script::GetPlayerAngleXYZ);
-        SetScriptFunction("GetPlayerValue", &Script::GetPlayerValue);
-        SetScriptFunction("GetPlayerBaseValue", &Script:: GetPlayerBaseValue);
-        SetScriptFunction("GetPlayerCell", &Script::GetPlayerCell);
+        SetScriptFunction("GetPos", &Script::GetPos);
+        SetScriptFunction("GetAngle", &Script::GetAngle);
+        SetScriptFunction("GetCell", &Script::GetCell);
+        SetScriptFunction("GetActorValue", &Script::GetActorValue);
+        SetScriptFunction("GetActorBaseValue", &Script:: GetActorBaseValue);
 
         exec();
     }
@@ -112,7 +110,7 @@ Script::~Script()
     }
 }
 
-void Script::LoadScripts(char* scripts)
+void Script::LoadScripts(char* scripts, char* base)
 {
     char* token = strtok(scripts, ",");
 
@@ -120,7 +118,13 @@ void Script::LoadScripts(char* scripts)
     {
         while (token != NULL)
         {
+#ifdef __WIN32__
             Script* script = new Script(token);
+#else
+            char path[MAX_PATH];
+            snprintf(path, sizeof(path), "%s/%s", base, token);
+            Script* script = new Script(path);
+#endif
             token = strtok(NULL, ",");
         }
     }
@@ -175,7 +179,7 @@ bool Script::Authenticate(string name, string pwd)
     return result;
 }
 
-unsigned int Script::RequestGame(unsigned int player)
+unsigned int Script::RequestGame(NetworkID id)
 {
     vector<Script*>::iterator it;
     unsigned int result;
@@ -183,41 +187,41 @@ unsigned int Script::RequestGame(unsigned int player)
     for (it = scripts.begin(); it != scripts.end(); ++it)
     {
         if ((*it)->cpp_script)
-            result = (*it)->OnPlayerRequestGame(player);
+            result = (*it)->OnPlayerRequestGame(id);
         else
-            result = (unsigned int) PAWN::Call((AMX*) (*it)->handle, "OnPlayerRequestGame", "i", 0, player);
+            result = (unsigned int) PAWN::Call((AMX*) (*it)->handle, "OnPlayerRequestGame", "f", 0, id);
     }
 
     return result;
 }
 
-void Script::Disconnect(unsigned int player, unsigned char reason)
+void Script::Disconnect(NetworkID id, unsigned char reason)
 {
     vector<Script*>::iterator it;
 
     for (it = scripts.begin(); it != scripts.end(); ++it)
     {
         if ((*it)->cpp_script)
-            (*it)->OnPlayerDisconnect(player, reason);
+            (*it)->OnPlayerDisconnect(id, reason);
         else
-            PAWN::Call((AMX*) (*it)->handle, "OnPlayerDisconnect", "ii", 0, (unsigned int) reason, player);
+            PAWN::Call((AMX*) (*it)->handle, "OnPlayerDisconnect", "if", 0, (unsigned int) reason, id);
     }
 }
 
-void Script::CellChange(unsigned int player, unsigned int cell)
+void Script::CellChange(NetworkID id, unsigned int cell)
 {
     vector<Script*>::iterator it;
 
     for (it = scripts.begin(); it != scripts.end(); ++it)
     {
         if ((*it)->cpp_script)
-            (*it)->OnPlayerCellChange(player, cell);
+            (*it)->OnCellChange(id, cell);
         else
-            PAWN::Call((AMX*) (*it)->handle, "OnPlayerCellChange", "ii", 0, cell, player);
+            PAWN::Call((AMX*) (*it)->handle, "OnCellChange", "if", 0, cell, id);
     }
 }
 
-void Script::ValueChange(unsigned int player, unsigned char index, bool base, double value)
+void Script::ValueChange(NetworkID id, unsigned char index, bool base, double value)
 {
     vector<Script*>::iterator it;
 
@@ -226,208 +230,123 @@ void Script::ValueChange(unsigned int player, unsigned char index, bool base, do
         if ((*it)->cpp_script)
         {
             if (base)
-                (*it)->OnPlayerBaseValueChange(player, index, value);
+                (*it)->OnActorBaseValueChange(id, index, value);
             else
-                (*it)->OnPlayerValueChange(player, index, value);
+                (*it)->OnActorValueChange(id, index, value);
         }
         else
         {
             if (base)
-                PAWN::Call((AMX*) (*it)->handle, "OnPlayerBaseValueChange", "fii", 0, value, (unsigned int) index, player);
+                PAWN::Call((AMX*) (*it)->handle, "OnActorBaseValueChange", "fif", 0, value, (unsigned int) index, id);
             else
-                PAWN::Call((AMX*) (*it)->handle, "OnPlayerValueChange", "fii", 0, value, (unsigned int) index, player);
+                PAWN::Call((AMX*) (*it)->handle, "OnActorValueChange", "fif", 0, value, (unsigned int) index, id);
         }
     }
 }
 
-void Script::StateChange(unsigned int player, unsigned char index, bool alerted)
+void Script::StateChange(NetworkID id, unsigned char index, bool alerted)
 {
     vector<Script*>::iterator it;
 
     for (it = scripts.begin(); it != scripts.end(); ++it)
     {
         if ((*it)->cpp_script)
-            (*it)->OnPlayerStateChange(player, index, alerted);
+            (*it)->OnActorStateChange(id, index, alerted);
         else
-            PAWN::Call((AMX*) (*it)->handle, "OnPlayerStateChange", "iii", 0, (unsigned int) alerted, (unsigned int) index, player);
+            PAWN::Call((AMX*) (*it)->handle, "OnActorStateChange", "iif", 0, (unsigned int) alerted, (unsigned int) index, id);
     }
 }
 
-double Script::GetPlayerPos(unsigned int player, unsigned char index)
-{
-    double value = 0;
-    Client* client = Client::GetClientFromID(player);
-
-    if (client)
-    {
-        NetworkID id = client->GetPlayer();
-        Player* player = (Player*) GameFactory::GetObject(ID_PLAYER, id);
-
-        if (player)
-        {
-            try
-            {
-                value = player->GetPos(index);
-            }
-            catch (...)
-            {
-                GameFactory::LeaveReference(player);
-                throw;
-            }
-
-            GameFactory::LeaveReference(player);
-        }
-    }
-
-    return value;
-}
-
-void Script::GetPlayerPosXYZ(unsigned int player, double& X, double& Y, double& Z)
+void Script::GetPos(NetworkID id, double& X, double& Y, double& Z)
 {
     X = 0.00;
     Y = 0.00;
     Z = 0.00;
-    Client* client = Client::GetClientFromID(player);
 
-    if (client)
+    Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, id);
+
+    if (object)
     {
-        NetworkID id = client->GetPlayer();
-        Player* player = (Player*) GameFactory::GetObject(ID_PLAYER, id);
-
-        if (player)
-        {
-            X = player->GetPos(Axis_X);
-            Y = player->GetPos(Axis_Y);
-            Z = player->GetPos(Axis_Z);
-            GameFactory::LeaveReference(player);
-        }
+        X = object->GetPos(Axis_X);
+        Y = object->GetPos(Axis_Y);
+        Z = object->GetPos(Axis_Z);
+        GameFactory::LeaveReference(object);
     }
 }
 
-double Script::GetPlayerAngle(unsigned int player, unsigned char index)
-{
-    double value = 0;
-    Client* client = Client::GetClientFromID(player);
-
-    if (client)
-    {
-        NetworkID id = client->GetPlayer();
-        Player* player = (Player*) GameFactory::GetObject(ID_PLAYER, id);
-
-        if (player)
-        {
-            try
-            {
-                value = player->GetAngle(index);
-            }
-            catch (...)
-            {
-                GameFactory::LeaveReference(player);
-                throw;
-            }
-
-            GameFactory::LeaveReference(player);
-        }
-    }
-
-    return value;
-}
-
-void Script::GetPlayerAngleXYZ(unsigned int player, double& X, double& Y, double& Z)
+void Script::GetAngle(NetworkID id, double& X, double& Y, double& Z)
 {
     X = 0.00;
     Y = 0.00;
     Z = 0.00;
-    Client* client = Client::GetClientFromID(player);
 
-    if (client)
+    Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, id);
+
+    if (object)
     {
-        NetworkID id = client->GetPlayer();
-        Player* player = (Player*) GameFactory::GetObject(ID_PLAYER, id);
-
-        if (player)
-        {
-            X = player->GetAngle(Axis_X);
-            Y = player->GetAngle(Axis_Y);
-            Z = player->GetAngle(Axis_Z);
-            GameFactory::LeaveReference(player);
-        }
+        X = object->GetAngle(Axis_X);
+        Y = object->GetAngle(Axis_Y);
+        Z = object->GetAngle(Axis_Z);
+        GameFactory::LeaveReference(object);
     }
 }
 
-double Script::GetPlayerValue(unsigned int player, unsigned char index)
-{
-    double value = 0;
-    Client* client = Client::GetClientFromID(player);
-
-    if (client)
-    {
-        NetworkID id = client->GetPlayer();
-        Player* player = (Player*) GameFactory::GetObject(ID_PLAYER, id);
-
-        if (player)
-        {
-            try
-            {
-                value = player->GetActorValue(index);
-            }
-            catch (...)
-            {
-                GameFactory::LeaveReference(player);
-                throw;
-            }
-
-            GameFactory::LeaveReference(player);
-        }
-    }
-
-    return value;
-}
-
-double Script::GetPlayerBaseValue(unsigned int player, unsigned char index)
-{
-    double value = 0;
-    Client* client = Client::GetClientFromID(player);
-
-    if (client)
-    {
-        NetworkID id = client->GetPlayer();
-        Player* player = (Player*) GameFactory::GetObject(ID_PLAYER, id);
-
-        if (player)
-        {
-            try
-            {
-                value = player->GetActorBaseValue(index);
-            }
-            catch (...)
-            {
-                GameFactory::LeaveReference(player);
-                throw;
-            }
-
-            GameFactory::LeaveReference(player);
-        }
-    }
-
-    return value;
-}
-
-unsigned int Script::GetPlayerCell(unsigned int player)
+unsigned int Script::GetCell(NetworkID id)
 {
     unsigned int value = 0;
-    Client* client = Client::GetClientFromID(player);
 
-    if (client)
+    Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, id);
+
+    if (object)
     {
-        NetworkID id = client->GetPlayer();
-        Player* player = (Player*) GameFactory::GetObject(ID_PLAYER, id);
+        value = object->GetGameCell();
+        GameFactory::LeaveReference(object);
+    }
 
-        if (player)
+    return value;
+}
+
+double Script::GetActorValue(NetworkID id, unsigned char index)
+{
+    double value = 0.00;
+    Actor* actor = (Actor*) GameFactory::GetObject(ALL_ACTORS, id);
+
+    if (actor)
+    {
+        try
         {
-            value = player->GetGameCell();
-            GameFactory::LeaveReference(player);
+            value = actor->GetActorValue(index);
         }
+        catch (...)
+        {
+            GameFactory::LeaveReference(actor);
+            throw;
+        }
+
+        GameFactory::LeaveReference(actor);
+    }
+
+    return value;
+}
+
+double Script::GetActorBaseValue(NetworkID id, unsigned char index)
+{
+    double value = 0.00;
+    Actor* actor = (Actor*) GameFactory::GetObject(ALL_ACTORS, id);
+
+    if (actor)
+    {
+        try
+        {
+            value = actor->GetActorBaseValue(index);
+        }
+        catch (...)
+        {
+            GameFactory::LeaveReference(actor);
+            throw;
+        }
+
+        GameFactory::LeaveReference(actor);
     }
 
     return value;

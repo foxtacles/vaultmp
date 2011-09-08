@@ -97,9 +97,14 @@ int main(int argc, char* argv[])
     self->SetServerRule("version", DEDICATED_VERSION);
     Dedicated::SetServerEntry(self);
 
+    char base[MAX_PATH];
+    getcwd(base, sizeof(base));
+
     try
     {
-        Script::LoadScripts(scripts);
+        char _scripts[strlen(scripts) + 1];
+        snprintf(_scripts, sizeof(_scripts), "%s", scripts);
+        Script::LoadScripts(_scripts, base);
     }
     catch (std::exception& e)
     {
@@ -118,8 +123,7 @@ int main(int argc, char* argv[])
     try
     {
         char file[MAX_PATH];
-        getcwd(file, sizeof(file));
-        snprintf(file, sizeof(file), "%s\\%s\\%s", file, SAVEGAME_PATH, savegame);
+        snprintf(file, sizeof(file), "%s/%s/%s", base, SAVEGAME_PATH, savegame);
 
         unsigned int crc;
         if (!Utils::crc32file(file, &crc))
@@ -132,8 +136,7 @@ int main(int argc, char* argv[])
 
         while (token != NULL)
         {
-            getcwd(file, sizeof(file));
-            snprintf(file, sizeof(file), "%s\\%s\\%s", file, MODFILES_PATH, token);
+            snprintf(file, sizeof(file), "%s/%s/%s", base, MODFILES_PATH, token);
 
             if (!Utils::crc32file(file, &crc))
                 throw VaultException("Could not find modfile %s in folder %s", token, MODFILES_PATH);
@@ -186,7 +189,9 @@ int main(int argc, char* argv[])
     iniparser_freedict(config);
     delete self;
 
+#ifdef __WIN32__
     system("PAUSE");
+#endif
 
     return 0;
 }

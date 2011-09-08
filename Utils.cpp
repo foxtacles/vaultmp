@@ -51,6 +51,71 @@ unsigned int Utils::FileLength(const char* file)
 }
 
 /* From:
+    http://www.codeproject.com/KB/cpp/PEChecksum.aspx
+    */
+
+#ifdef __WIN32__
+BOOL Utils::GenerateChecksum(const string& szFilename,
+                                   DWORD& dwExistingChecksum,
+                                   DWORD& dwChecksum )
+{
+    HANDLE hFile = INVALID_HANDLE_VALUE;
+    HANDLE hFileMapping = NULL;
+    PVOID pBaseAddress = NULL;
+    DWORD dwFileLength = 0;
+    DWORD dwHeaderSum; // Checksum as stated by Header
+    DWORD dwCheckSum; // Calculated Checksum
+
+        /////////////////////////////////////////////////////////////
+        hFile = CreateFile( szFilename.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0 );
+        if ( INVALID_HANDLE_VALUE == hFile ||
+            NULL == hFile) { return false; }
+
+        /////////////////////////////////////////////////////////////
+        hFileMapping = CreateFileMapping(hFile, NULL,
+            PAGE_READONLY, 0, 0, NULL);
+        if ( NULL == hFileMapping )
+        {
+            return false;
+        }
+
+        /////////////////////////////////////////////////////////////
+        pBaseAddress = MapViewOfFile( hFileMapping,
+            FILE_MAP_READ, 0, 0, 0);
+        if ( NULL == pBaseAddress )
+        {
+            return false;
+        }
+
+        /////////////////////////////////////////////////////////////
+        DWORD dwSize = 0;
+        LARGE_INTEGER liSize = { 0, 0 };
+        if( TRUE == GetFileSizeEx( hFile, &liSize ) )
+        {
+            dwSize = liSize.LowPart;
+        }
+
+        SetLastError( ERROR_SUCCESS );
+
+        /////////////////////////////////////////////////////////////
+        PIMAGE_NT_HEADERS pNTHeaders = CheckSumMappedFile(
+            pBaseAddress, dwSize, &dwHeaderSum, &dwCheckSum );
+
+        if( NULL != pNTHeaders )
+        {
+            dwExistingChecksum = dwHeaderSum;
+            dwChecksum = dwCheckSum;
+        }
+
+    /////////////////////////////////////////////////////////////
+    UnmapViewOfFile( pBaseAddress );
+    CloseHandle( hFile );
+
+    return TRUE;
+}
+#endif
+
+/* From:
     http://web.archive.org/web/20080303102530/http://c.snippets.org/snip_lister.php?fname=crc_32.c
     */
 

@@ -31,13 +31,11 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
     {"AxisToString", PAWN::vaultmp_AxisToString},
     {"AnimToString", PAWN::vaultmp_AnimToString},
 
-    {"GetPlayerPos", PAWN::vaultmp_GetPlayerPos},
-    {"GetPlayerPosXYZ", PAWN::vaultmp_GetPlayerPosXYZ},
-    {"GetPlayerAngle", PAWN::vaultmp_GetPlayerAngle},
-    {"GetPlayerAngleXYZ", PAWN::vaultmp_GetPlayerAngleXYZ},
-    {"GetPlayerValue", PAWN::vaultmp_GetPlayerValue},
-    {"GetPlayerBaseValue", PAWN::vaultmp_GetPlayerBaseValue},
-    {"GetPlayerCell", PAWN::vaultmp_GetPlayerCell},
+    {"GetPos", PAWN::vaultmp_GetPos},
+    {"GetAngle", PAWN::vaultmp_GetAngle},
+    {"GetCell", PAWN::vaultmp_GetCell},
+    {"GetActorValue", PAWN::vaultmp_GetActorValue},
+    {"GetActorBaseValue", PAWN::vaultmp_GetActorBaseValue},
 
     /*{"GetPlayerName", PAWN::vaultmp_GetPlayerName},
     {"GetPlayerPos", PAWN::vaultmp_GetPlayerPos},
@@ -210,20 +208,7 @@ cell PAWN::vaultmp_AnimToString(AMX* amx, const cell* params)
     return i;
 }
 
-cell PAWN::vaultmp_GetPlayerPos(AMX* amx, const cell* params)
-{
-    cell i = 1, id, index;
-
-    id = params[1];
-    index = params[2];
-
-    double value = Script::GetPlayerPos((unsigned int) id, (unsigned char) index);
-    i = amx_ftoc(value);
-
-    return i;
-}
-
-cell PAWN::vaultmp_GetPlayerPosXYZ(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetPos(AMX* amx, const cell* params)
 {
     cell i = 1, id;
     cell* X; cell* Y; cell* Z;
@@ -234,7 +219,7 @@ cell PAWN::vaultmp_GetPlayerPosXYZ(AMX* amx, const cell* params)
     Z = amx_Address(amx, params[4]);
 
     double dX, dY, dZ;
-    Script::GetPlayerPosXYZ((unsigned int) id, dX, dY, dZ);
+    Script::GetPos(id, dX, dY, dZ);
     *X = amx_ftoc(dX);
     *Y = amx_ftoc(dY);
     *Z = amx_ftoc(dZ);
@@ -242,20 +227,7 @@ cell PAWN::vaultmp_GetPlayerPosXYZ(AMX* amx, const cell* params)
     return i;
 }
 
-cell PAWN::vaultmp_GetPlayerAngle(AMX* amx, const cell* params)
-{
-    cell i = 1, id, index;
-
-    id = params[1];
-    index = params[2];
-
-    double value = Script::GetPlayerAngle((unsigned int) id, (unsigned char) index);
-    i = amx_ftoc(value);
-
-    return i;
-}
-
-cell PAWN::vaultmp_GetPlayerAngleXYZ(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetAngle(AMX* amx, const cell* params)
 {
     cell i = 1, id;
     cell* X; cell* Y; cell* Z;
@@ -266,7 +238,7 @@ cell PAWN::vaultmp_GetPlayerAngleXYZ(AMX* amx, const cell* params)
     Z = amx_Address(amx, params[4]);
 
     double dX, dY, dZ;
-    Script::GetPlayerAngleXYZ((unsigned int) id, dX, dY, dZ);
+    Script::GetAngle(id, dX, dY, dZ);
     *X = amx_ftoc(dX);
     *Y = amx_ftoc(dY);
     *Z = amx_ftoc(dZ);
@@ -274,40 +246,40 @@ cell PAWN::vaultmp_GetPlayerAngleXYZ(AMX* amx, const cell* params)
     return i;
 }
 
-cell PAWN::vaultmp_GetPlayerValue(AMX* amx, const cell* params)
-{
-    cell i = 1, id, index;
-
-    id = params[1];
-    index = params[2];
-
-    double value = Script::GetPlayerValue((unsigned int) id, (unsigned char) index);
-    i = amx_ftoc(value);
-
-    return i;
-}
-
-cell PAWN::vaultmp_GetPlayerBaseValue(AMX* amx, const cell* params)
-{
-    cell i = 1, id, index;
-
-    id = params[1];
-    index = params[2];
-
-    double value = Script::GetPlayerBaseValue((unsigned int) id, (unsigned char) index);
-    i = amx_ftoc(value);
-
-    return i;
-}
-
-cell PAWN::vaultmp_GetPlayerCell(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetCell(AMX* amx, const cell* params)
 {
     cell i = 1, id;
 
     id = params[1];
 
-    unsigned int value = Script::GetPlayerCell((unsigned int) id);
+    unsigned int value = Script::GetCell(id);
     i = (cell) value;
+
+    return i;
+}
+
+cell PAWN::vaultmp_GetActorValue(AMX* amx, const cell* params)
+{
+    cell i = 1, id, index;
+
+    id = params[1];
+    index = params[2];
+
+    double value = Script::GetActorValue(id, (unsigned char) index);
+    i = amx_ftoc(value);
+
+    return i;
+}
+
+cell PAWN::vaultmp_GetActorBaseValue(AMX* amx, const cell* params)
+{
+    cell i = 1, id, index;
+
+    id = params[1];
+    index = params[2];
+
+    double value = Script::GetActorBaseValue(id, (unsigned char) index);
+    i = amx_ftoc(value);
 
     return i;
 }

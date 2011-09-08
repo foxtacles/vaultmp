@@ -81,6 +81,8 @@ vector<string> PlayerFunctor::operator()()
         result.push_back(Utils::LongToHex(refID));
     }
 
+    _next(result);
+
     return result;
 }
 

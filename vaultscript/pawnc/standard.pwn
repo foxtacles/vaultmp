@@ -4,7 +4,7 @@ forward MyTimer();
 
 public MyTimer()
 {
-    printf("PAWN bar\n");
+
 }
 
 main()
@@ -23,58 +23,61 @@ main()
         SetServerMap("cyrodiil");
     }
 
-    CreateTimer("MyTimer", 5000);
+    //CreateTimer("MyTimer", 5000);
 }
 
 public OnClientAuthenticate(const name{}, const pwd{})
 {
-	printf("PAWN: client auth %s, %s\n", name, pwd);
 	return true;
 }
 
 public OnPlayerDisconnect(player, reason)
 {
-	printf("PAWN: player disconnect %d, %d\n", player, reason);
 }
 
 public OnPlayerRequestGame(player)
 {
-    	printf("PAWN: player game %d\n", player);
-    	return 0x00030D82;
+    new base = 0x00000000;
+
+    switch (GetGameCode())
+    {
+    case FALLOUT3:
+        base = 0x00030D82; // Carter
+    case NEWVEGAS:
+        base = 0x0010C0BE; // Jessup
+    case OBLIVION:
+        base = 0x000A3166; // Achille
+    }
+
+    return base;
 }
 
-public OnPlayerSpawn(player)
+public OnSpawn(object)
 {
 
 }
 
-public OnPlayerDeath(player)
+public OnCellChange(object, cell)
 {
 
 }
 
-public OnPlayerCellChange(player, cell)
+public OnActorDeath(actor)
 {
-    	printf("PAWN: player cell %d,%x\n", player, cell);
+
 }
 
-public OnPlayerValueChange(player, index, Float:value)
+public OnActorValueChange(actor, index, Float:value)
 {
-	new values{64};
-	ValueToString(index, values);
-	printf("PAWN: player value %s -> %f\n", values, value);
+
 }
 
-public OnPlayerBaseValueChange(player, index, Float:value)
+public OnActorBaseValueChange(actor, index, Float:value)
 {
-	new values{64};
-	ValueToString(index, values);
-	printf("PAWN: player base value %s -> %f\n", values, value);
+
 }
 
-public OnPlayerStateChange(player, index, Bool:alerted)
+public OnActorStateChange(actor, index, Bool:alerted)
 {
-	new anims{64};
-	AnimToString(index, anims);
-	printf("PAWN: player running animation %s, alerted %d\n", anims, alerted);
+
 }

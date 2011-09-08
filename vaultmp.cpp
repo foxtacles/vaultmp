@@ -255,74 +255,133 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR cmdline, 
         return MessageBox(NULL, "Could not find exchndl.dll!", "Error", MB_OK | MB_ICONERROR);
 #endif
 
+    mutex = CreateMutex(NULL, TRUE, "vaultmp");
+    if (GetLastError() == ERROR_ALREADY_EXISTS)
+        return MessageBox(NULL, "Vault-Tec Multiplayer Mod is already running!", "Error", MB_OK | MB_ICONERROR);
+
     FILE* filecheck = NULL;
+    DWORD checksum, checksum_real;
 
     filecheck = fopen("Fallout3.exe", "rb");
 
     if (filecheck != NULL)
     {
-        filecheck = fopen("fose_1_7.dll", "rb");
+        fclose(filecheck);
+        Utils::GenerateChecksum("Fallout3.exe", checksum, checksum_real);
 
-        if (filecheck != NULL)
+        if (checksum == FALLOUT3_EN_VER17 /*|| checksum == FALLOUT3_EN_VER17_STEAM*/)
         {
-            fclose(filecheck);
-
-            filecheck = fopen("xlive.dll", "rb");
+            filecheck = fopen("fose_1_7.dll", "rb");
 
             if (filecheck != NULL)
             {
                 fclose(filecheck);
-                games |= FALLOUT3;
+                Utils::GenerateChecksum("fose_1_7.dll", checksum, checksum_real);
+
+                if (checksum_real == FOSE_VER0122)
+                {
+                    filecheck = fopen("xlive.dll", "rb");
+
+                    if (filecheck != NULL)
+                    {
+                        fclose(filecheck);
+                        Utils::GenerateChecksum("xlive.dll", checksum, checksum_real);
+
+                        if (checksum_real == XLIVE_PATCH)
+                        {
+                            games |= FALLOUT3;
+                        }
+                        else
+                            return MessageBox(NULL, "xlive.dll is unpatched!", "Error", MB_OK | MB_ICONERROR);
+                    }
+                    else
+                        return MessageBox(NULL, "xlive.dll is missing!", "Error", MB_OK | MB_ICONERROR);
+                }
+                else
+                    return MessageBox(NULL, "Your FOSE version is probably outdated!\nhttp://fose.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
             }
             else
-                return MessageBox(NULL, "xlive.dll is missing!", "Error", MB_OK | MB_ICONERROR);
+                return MessageBox(NULL, "Could not find FOSE!\nhttp://fose.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
         }
         else
-            return MessageBox(NULL, "Could not find FOSE 1.7!\nhttp://fose.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
+            return MessageBox(NULL, "Your version of Fallout 3 is not supported!", "Error", MB_OK | MB_ICONERROR);
     }
 
     filecheck = fopen("FalloutNV.exe", "rb");
 
     if (filecheck != NULL)
     {
-        filecheck = fopen("nvse_1_1.dll", "rb");
+        fclose(filecheck);
+        Utils::GenerateChecksum("FalloutNV.exe", checksum, checksum_real);
 
-        if (filecheck != NULL)
+        if (checksum == NEWVEGAS_EN_VER14_STEAM)
         {
-            fclose(filecheck);
-            games |= NEWVEGAS;
+            filecheck = fopen("nvse_1_1.dll", "rb");
+
+            if (filecheck != NULL)
+            {
+                fclose(filecheck);
+                Utils::GenerateChecksum("nvse_1_1.dll", checksum, checksum_real);
+
+                if (checksum_real == NVSE_VER0209)
+                {
+                    games |= NEWVEGAS;
+                }
+                else
+                    return MessageBox(NULL, "Your NVSE version is probably outdated!\nhttp://nvse.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
+            }
+            else
+                return MessageBox(NULL, "Could not find NVSE!\nhttp://nvse.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
         }
         else
-            return MessageBox(NULL, "Could not find NVSE 1.1!\nhttp://nvse.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
+            return MessageBox(NULL, "Your version of Fallout: New Vegas is not supported!", "Error", MB_OK | MB_ICONERROR);
     }
 
     filecheck = fopen("Oblivion.exe", "rb");
 
     if (filecheck != NULL)
     {
-        filecheck = fopen("obse_1_2_416.dll", "rb");
+        fclose(filecheck);
+        Utils::GenerateChecksum("Oblivion.exe", checksum, checksum_real);
 
-        if (filecheck != NULL)
+        if (checksum == OBLIVION_EN_VER120416 || checksum == OBLIVION_EN_VER120416_STEAM)
         {
-            fclose(filecheck);
-            games |= OBLIVION;
+            filecheck = fopen("obse_1_2_416.dll", "rb");
+
+            if (filecheck != NULL)
+            {
+                fclose(filecheck);
+                Utils::GenerateChecksum("obse_1_2_416.dll", checksum, checksum_real);
+
+                if (checksum_real == OBSE_VER0020)
+                {
+                    games |= OBLIVION;
+                }
+                else
+                    return MessageBox(NULL, "Your OBSE version is probably outdated!\nhttp://obse.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
+            }
+            else
+                return MessageBox(NULL, "Could not find OBSE!\nhttp://obse.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
         }
         else
-            return MessageBox(NULL, "Could not find OBSE 1.2.416!\nhttp://obse.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
+            return MessageBox(NULL, "Your version of TES: Oblivion is not supported!", "Error", MB_OK | MB_ICONERROR);
     }
+
+    if (!games)
+        return MessageBox(NULL, "Could not find either Fallout 3, Fallout: New Vegas or TES: Oblivion!", "Error", MB_OK | MB_ICONERROR);
 
     filecheck = fopen("vaultmp.dll", "rb");
 
     if (filecheck != NULL)
     {
         fclose(filecheck);
+        Utils::GenerateChecksum("vaultmp.dll", checksum, checksum_real);
+
+        if (checksum_real != VAULTMP_DLL)
+            return MessageBox(NULL, "vaultmp.dll is not up to date!", "Error", MB_OK | MB_ICONERROR);
     }
     else
         return MessageBox(NULL, "Could not find vaultmp.dll!", "Error", MB_OK | MB_ICONERROR);
-
-    mutex = CreateMutex(NULL, TRUE, "vaultmp");
-    if (GetLastError() == ERROR_ALREADY_EXISTS)
-        return MessageBox(NULL, "Vault-Tec Multiplayer Mod is already running!", "Error", MB_OK | MB_ICONERROR);
 
     instance = hInstance;
 
