@@ -33,6 +33,10 @@ using namespace std;
 typedef pair<string, unsigned int> Savegame;
 typedef vector<pair<string, unsigned int> > ModList;
 
+/**
+ * \brief Starting point to run a vaultmp game
+ */
+
 class Bethesda
 {
 friend class NetworkClient;
@@ -45,7 +49,14 @@ private:
     static ModList modfiles;
     static bool initialized;
 
+    /**
+     * \brief Starts up the game
+     */
     static void Initialize();
+
+    /**
+     * \brief Handles translated command results from the game
+     */
     static void CommandHandler(signed int key, vector<double>& info, double result, bool error);
 
 #ifdef VAULTMP_DEBUG
@@ -54,6 +65,10 @@ private:
 
     Bethesda();
 public:
+
+    /**
+     * \brief Initializes Vault-Tec Multiplayer Mod
+     */
     static void InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, string name, string pwd, unsigned char game);
 
 };

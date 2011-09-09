@@ -30,7 +30,15 @@ typedef map<string, pair<string, unsigned short> > FunctionList;
 typedef map<string, unsigned char> ValueList;
 typedef deque<pair<pair<unsigned int, vector<double> >, signed int> > CommandQueue;
 
+/*
+ * \brief This namespace contains hexadecimal representations of the games data
+ */
+
 namespace Values {
+
+    /**
+     * \brief Animation values shared across all games
+     */
 
     enum AnimationGroups
     {
@@ -53,12 +61,20 @@ namespace Values {
         AnimGroup_TurnRight             = 0x10,
     };
 
+    /**
+     * \brief Axis values ahared across all games
+     */
+
     enum XYZ
     {
         Axis_X                          = 0x58,
         Axis_Y                          = 0x59,
         Axis_Z                          = 0x5A,
     };
+
+    /**
+     * \brief Function opcodes shared across all games
+     */
 
     enum Functions
     {
@@ -89,7 +105,15 @@ namespace Values {
         Func_GetActorState              = 0x0001 | VAULTFUNCTION,
     };
 
+    /**
+     * \brief Data specific to Fallout games
+     */
+
     namespace Fallout {
+
+        /**
+         * \brief Function opcodes used in Fallout 3 / New Vegas
+         */
 
         enum Functions
         {
@@ -97,6 +121,10 @@ namespace Values {
             Func_MarkForDelete              = 0x11BB,
             Func_IsAnimPlaying              = 0x1128,
         };
+
+        /**
+         * \brief Actor values used in Fallout 3 / New Vegas
+         */
 
         enum ActorVals
         {
@@ -175,7 +203,15 @@ namespace Values {
         };
     };
 
+    /**
+     * \brief Data specific to Fallout 3
+     */
+
     namespace Fallout3 {
+
+        /**
+         * \brief Function opcodes used in Fallout 3
+         */
 
         enum Functions
         {
@@ -185,6 +221,10 @@ namespace Values {
             Func_GetFirstRef                = 0x14AF,
             Func_GetNextRef                 = 0x14B0,
         };
+
+        /**
+         * \brief Animation values used in Fallout 3
+         */
 
         enum AnimationGroups
         {
@@ -204,7 +244,15 @@ namespace Values {
         };
     };
 
+    /**
+     * \brief Data specific to New Vegas
+     */
+
     namespace FalloutNV {
+
+        /**
+         * \brief Function opcodes used in New Vegas
+         */
 
         enum Functions
         {
@@ -214,6 +262,10 @@ namespace Values {
             Func_GetFirstRef                = 0x1471,
             Func_GetNextRef                 = 0x1472,
         };
+
+        /**
+         * \brief Animation values used in New Vegas
+         */
 
         enum AnimationGroups
         {
@@ -233,7 +285,15 @@ namespace Values {
         };
     };
 
+    /**
+     * \brief Data specific to Oblivion
+     */
+
     namespace Oblivion {
+
+        /**
+         * \brief Function opcodes used in Oblivion
+         */
 
         enum Functions
         {
@@ -244,6 +304,10 @@ namespace Values {
             Func_GetFirstRef                = 0x1608,
             Func_GetNextRef                 = 0x1609,
         };
+
+        /**
+         * \brief Actor values used in Oblivion
+         */
 
         enum ActorVals
         {
@@ -321,6 +385,10 @@ namespace Values {
             ActorVal_ResistWaterDamage      = 0x47,
         };
 
+        /**
+         * \brief Animation values used in Oblivion
+         */
+
         enum AnimationGroups
         {
             AnimGroup_Equip                 = 0x11,
@@ -352,6 +420,13 @@ namespace Values {
         };
     };
 };
+
+/**
+ * \brief The programming interface to the game
+ *
+ * The API class provides facilities to translate an engine command to a stream of bytes which can be interpreted by vaultmp DLL.
+ * It also takes the results (data which has previously been retrieved from vaultmp DLL) and translates them into a usable form.
+ */
 
 class API
 {
@@ -393,8 +468,33 @@ private:
 
 protected:
 
+    /**
+     * \brief Checks whether a certain function is available in the current API environment
+     */
+
     static bool AnnounceFunction(string name);
-    static CommandParsed Translate(multimap<string, string>& cmd, int key = 0);
+
+    /**
+     * \brief Translates commands to a stream of bytes
+     *
+     * Takes a STL multimap as an argument (key is the function name, value is the command to parse).
+     * Also takes an optional signed key (usually comes from the Lockable extension class) which will automatically associated with each parsed command.
+     * Returns a STL vector containing the parsed commands (allocated on the heap; you are required to free them when you don't need them anymore).
+     */
+
+    static CommandParsed Translate(multimap<string, string>& cmd, signed int key = 0);
+
+    /**
+     * \brief Translates a result from vaultmp DLL
+     *
+     * Given the retrieved byte stream, will attempt to translate it to CommandResult's.
+     * CommandResult is of the form pair<pair<pair<signed int, vector<double> >, double>, bool>
+     * bool indicates if the command was successful.
+     * double is the result value of the command.
+     * signed int is the key provided to the corresponding Translate call.
+     * vector<double> is the argument list of the executed command; the first element is always the opcode of the function
+     */
+
     static vector<CommandResult> Translate(char* stream);
 
     API();
@@ -405,21 +505,72 @@ public:
     static void SetDebugHandler(Debug* debug);
 #endif
 
+    /**
+     * \brief Initializes the API for the given game code. Must be called before the API can be used
+     */
+
     static void Initialize(unsigned char game);
+
+    /**
+     * \brief Must be called when you are finished with the current API environment.
+     */
+
     static void Terminate();
 
+
+    /**
+     * \brief Given the string representation of an actor value, returns the hex code. 0xFF indicates an error
+     */
     static unsigned char RetrieveValue(char* value);
+    /**
+     * \brief Given the string representation of an axis value, returns the hex code. 0xFF indicates an error
+     */
     static unsigned char RetrieveAxis(char* axis);
+    /**
+     * \brief Given the string representation of an animation value, returns the hex code. 0xFF indicates an error
+     */
     static unsigned char RetrieveAnim(char* anim);
+    /**
+     * \brief Given the hex code of an actor value, returns the string representation. An empty string indicates an error
+     */
     static string RetrieveValue_Reverse(unsigned char value);
+    /**
+     * \brief Given the hex code of an axis value, returns the string representation. An empty string indicates an error
+     */
     static string RetrieveAxis_Reverse(unsigned char axis);
+    /**
+     * \brief Given the hex code of an animation value, returns the string representation. An empty string indicates an error
+     */
     static string RetrieveAnim_Reverse(unsigned char anim);
+    /**
+     * \brief Returns a STL vector containing every available actor value hex code
+     */
     static vector<unsigned char> RetrieveAllValues();
+    /**
+     * \brief Returns a STL vector containing every available axis value hex code
+     */
     static vector<unsigned char> RetrieveAllAxis();
+    /**
+     * \brief Returns a STL vector containing every available animation value hex code
+     */
     static vector<unsigned char> RetrieveAllAnims();
+    /**
+     * \brief Returns a STL vector containing every available actor value string representation
+     */
     static vector<string> RetrieveAllValues_Reverse();
+    /**
+     * \brief Returns a STL vector containing every available axis value string representation
+     */
     static vector<string> RetrieveAllAxis_Reverse();
+    /**
+     * \brief Returns a STL vector containing every available animation value string representation
+     */
     static vector<string> RetrieveAllAnims_Reverse();
+
+
+    /**
+     * \brief Returns the game code of the current API environment setup
+     */
 
     static unsigned char GetGameCode();
 

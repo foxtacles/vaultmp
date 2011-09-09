@@ -21,6 +21,12 @@ using namespace Data;
 using namespace Values;
 using namespace std;
 
+/**
+ * \brief Derives from Reference class and represents an object in-game
+ *
+ * Data specific to Objects are a name, XYZ position and angle, a cell and various states
+ */
+
 class Object : public Reference
 {
 friend class GameFactory;
@@ -51,23 +57,75 @@ public:
     static void SetDebugHandler(Debug* debug);
 #endif
 
+    /**
+     * \brief Retrieves a reference to a constant Parameter containing every available axis value string representation
+     *
+     * Used to pass axis values to the Interface
+     */
+
     static const Parameter& Param_Axis();
 
+    /**
+     * \brief Retrieves the Object's name
+     */
     string GetName() const;
+    /**
+     * \brief Retrieves the Object's coordinate on the specified axis (axis value hex code)
+     */
     double GetPos(unsigned char axis) const;
+    /**
+     * \brief Retrieves the Object's angle on the specified axis (axis value hex code)
+     */
     double GetAngle(unsigned char axis) const;
+    /**
+     * \brief Retrieves the Object's enabled state
+     */
     bool GetEnabled() const;
+    /**
+     * \brief Retrieves the Object's game cell
+     *
+     * This is the actual cell the object has in the game
+     */
     unsigned int GetGameCell() const;
+    /**
+     * \brief Retrieves the Object's game cell
+     *
+     * This is the "real" cell which the object should be in
+     */
     unsigned int GetNetworkCell() const;
 
+    /**
+     * \brief Sets the Object's name. Returns a Lockable pointer if successful
+     */
     Lockable* SetName(string name);
+    /**
+     * \brief Sets the Object's coordiante on the specified axis (axis value hex code). Returns a Lockable pointer if successful
+     */
     Lockable* SetPos(unsigned char axis, double pos);
+    /**
+     * \brief Sets the Object's angle on the specified axis (axis value hex code). Returns a Lockable pointer if successful
+     */
     Lockable* SetAngle(unsigned char axis, double angle);
+    /**
+     * \brief Sets the Object's enabled state. Returns a Lockable pointer if successful
+     */
     Lockable* SetEnabled(bool state);
+    /**
+     * \brief Sets the Object's game cell. Returns a Lockable pointer if successful
+     */
     Lockable* SetGameCell(unsigned int cell);
+    /**
+     * \brief Sets the Object's network cell. Returns a Lockable pointer if successful
+     */
     Lockable* SetNetworkCell(unsigned int cell);
 
+    /**
+     * \brief Returns true if the Object is in a given range
+     */
     bool IsNearPoint(double X, double Y, double Z, double R) const;
+    /**
+     * \brief Returns true if the Object's coordinate sepcified by axis (axis value hex code) is in a given range
+     */
     bool IsCoordinateInRange(unsigned char axis, double value, double R) const;
 
 };

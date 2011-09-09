@@ -17,6 +17,10 @@
 #include "../vaultmp.h"
 #include "../VaultException.h"
 
+/**
+ * \brief Contains the PAWN scripting function wrappers
+ */
+
 class PAWN
 {
 private:

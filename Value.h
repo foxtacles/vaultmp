@@ -12,6 +12,12 @@ using namespace std;
 
 class Container;
 
+/**
+ * \brief A container class which simply stores a variable of type T
+ *
+ * Derives from Lockable to lock / unlock the data member
+ */
+
 template <typename T>
 class Value : public Lockable
 {
@@ -32,7 +38,13 @@ public:
     Value();
     virtual ~Value();
 
+    /**
+     * \brief Sets the value
+     */
     bool Set(T value);
+    /**
+     * \brief Gets the value
+     */
     T Get() const;
 
 #ifdef VAULTMP_DEBUG

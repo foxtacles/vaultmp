@@ -16,6 +16,10 @@ typedef std::string TimerPAWN;
 
 using namespace RakNet;
 
+/**
+ * \brief Create timers to be used in scripts
+ */
+
 class Timer : public NetworkIDObject
 {
 private:
@@ -42,8 +46,19 @@ public:
     Timer(TimerFunc timer, unsigned int interval);
     Timer(TimerPAWN timer, AMX* amx, unsigned int interval);
 
+    /**
+     * \brief Called from the dedicated server main thread
+     *
+     * Calls timer functions
+     */
     static void GlobalTick();
+    /**
+     * \brief Terminates a timer
+     */
     static void Terminate(NetworkID id);
+    /**
+     * \brief Terminates all timers
+     */
     static void TerminateAll();
 
 #ifdef VAULTMP_DEBUG
