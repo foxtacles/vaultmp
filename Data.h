@@ -46,6 +46,21 @@ static Parameter BuildParameter(vector<string> params)
     return Parameter(params, NULL);
 }
 
+static Parameter BuildParameter(vector<unsigned char> params)
+{
+    vector<unsigned char>::iterator it;
+    vector<string> convert;
+
+    for (it = params.begin(); it != params.end(); ++it)
+    {
+        char value[64];
+        snprintf(value, sizeof(value), "%d", *it);
+        convert.push_back(string(value));
+    }
+
+    return BuildParameter(convert);
+}
+
 static Parameter BuildParameter(unsigned int param)
 {
     char value[64];

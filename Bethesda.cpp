@@ -14,21 +14,11 @@ ModList Bethesda::modfiles;
 #ifdef VAULTMP_DEBUG
 Debug* Bethesda::debug;
 #endif
-int mcount = 0;int qtime = 0;
+
 void Bethesda::CommandHandler(signed int key, vector<double>& info, double result, bool error)
 {
     using namespace Values;
     unsigned short opcode = (unsigned short) info.at(0);
-
-    /*if (!qtime)
-        qtime = GetTickCount();
-    if (GetTickCount() - qtime > 1000)
-    {
-        debug->PrintFormat("%d",true,mcount);
-        mcount = 0;
-        qtime = GetTickCount();
-    }
-    mcount++;*/
 
     if (!error)
     {
@@ -67,7 +57,7 @@ void Bethesda::CommandHandler(signed int key, vector<double>& info, double resul
         case Functions::Func_SetActorValue:
             break;
         case Functions::Func_GetActorState:
-            Game::GetActorState((unsigned int) info.at(1), *reinterpret_cast<unsigned char*>(((unsigned) &result) + 4), *reinterpret_cast<bool*>(&result));
+            Game::GetActorState((unsigned int) info.at(1), *reinterpret_cast<unsigned char*>(((unsigned) &result) + 4), *reinterpret_cast<unsigned char*>(((unsigned) &result) + 5), *reinterpret_cast<bool*>(&result), *reinterpret_cast<bool*>(((unsigned) &result) + 1));
             break;
         case Functions::Func_PlayGroup:
             break;
@@ -83,12 +73,19 @@ void Bethesda::CommandHandler(signed int key, vector<double>& info, double resul
             break;
         case Functions::Func_SetAlert:
             break;
+        case Functions::Func_SetForceSneak:
+            break;
         case Fallout::Functions::Func_MarkForDelete:
             break;
         case Fallout3::Functions::Func_GetParentCell:
         case FalloutNV::Functions::Func_GetParentCell:
         case Oblivion::Functions::Func_GetParentCell:
             Game::GetParentCell((unsigned int) info.at(1), *reinterpret_cast<unsigned int*>(&result));
+            break;
+        case Fallout3::Functions::Func_GetControl:
+        case FalloutNV::Functions::Func_GetControl:
+        case Oblivion::Functions::Func_GetControl:
+            Game::GetControl(PLAYER_REFERENCE, (unsigned char) info.at(1), (unsigned char) result);
             break;
         case Fallout3::Functions::Func_Load:
         case FalloutNV::Functions::Func_Load:
@@ -264,8 +261,8 @@ void Bethesda::Initialize()
                 {
                     Interface::Initialize(module, &CommandHandler, Bethesda::game);
 
-                    for (int i = 0; i < 10 && !Interface::IsAvailable(); i++)
-                        Sleep(50);
+                    for (int i = 0; i < 50 && !Interface::IsAvailable(); i++)
+                        Sleep(100);
 
                     if (!Interface::IsAvailable())
                         throw VaultException("Failed connecting to vaultmp interface");
@@ -321,6 +318,7 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
     Container::SetDebugHandler(debug);
     Actor::SetDebugHandler(debug);
     Player::SetDebugHandler(debug);
+    Game::SetDebugHandler(debug);
     GameFactory::SetDebugHandler(debug);
 #endif
 

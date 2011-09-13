@@ -34,7 +34,9 @@ string& Utils::RemoveExtension(string& file)
 
 const char* Utils::FileOnly(const char* path)
 {
-    return strrchr(path, '\\') ? strrchr(path, '\\') + 1 : path;
+    const char* tmp = path; const char* end = path;
+    for (tmp; (tmp = strpbrk(tmp, "\\/")) != NULL; end = tmp++);
+    return ++end;
 }
 
 unsigned int Utils::FileLength(const char* file)

@@ -19,6 +19,16 @@ void Game::SetDebugHandler(Debug* debug)
 }
 #endif
 
+void Game::AdjustZAngle(double& Z, double diff)
+{
+    Z += diff;
+
+    if (Z > 360.0)
+        Z -= 360.0;
+    else if (Z < 0.00)
+        Z += 360.0;
+}
+
 void Game::Initialize()
 {
     Interface::DefineCommand("GetPos", "%0.GetPos %1");
@@ -27,6 +37,7 @@ void Game::Initialize()
     Interface::DefineCommand("GetAngle", "%0.GetAngle %1");
     Interface::DefineCommand("SetAngle", "%0.SetAngle %1 %2");
     Interface::DefineCommand("GetParentCell", "%0.GetParentCell");
+    Interface::DefineCommand("GetControl", "GetControl %0");
     Interface::DefineCommand("GetBaseActorValue", "%0.GetBaseActorValue %1");
     Interface::DefineCommand("SetActorValue", "%0.SetActorValue %1 %2");
     Interface::DefineCommand("ForceActorValue", "%0.ForceActorValue %1 %2");
@@ -39,6 +50,7 @@ void Game::Initialize()
     Interface::DefineCommand("SetRestrained", "%0.SetRestrained %1");
     Interface::DefineCommand("PlayGroup", "%0.PlayGroup %1 %2");
     Interface::DefineCommand("SetAlert", "%0.SetAlert %1");
+    Interface::DefineCommand("SetForceSneak", "%0.SetForceSneak %1");
     Interface::DefineCommand("SetName", "%0.SetName %1");
     Interface::DefineCommand("EquipItem", "%0.EquipItem %1 %2 %3");
     Interface::DefineCommand("UnequipItem", "%0.UnequipItem %1 %2 %3");
@@ -60,7 +72,8 @@ void Game::Initialize()
     else
         Interface::DefineCommand("IsAnimGroupPlaying", "%0.IsAnimGroupPlaying %1");
 
-    Interface::DefineCommand("GetActorState", "%0.GetActorState");
+    Interface::DefineCommand("GetActorState", "%0.GetActorState %1");
+    Interface::DefineCommand("GetActorStateNotSelf", "%0.GetActorState", "GetActorState");
 
     Player* self = (Player*) GameFactory::GetObject(ID_PLAYER, PLAYER_REFERENCE);
 
@@ -91,6 +104,7 @@ void Game::Initialize()
 
         ParamList param_GetActorState;
         param_GetActorState.push_back(self->GetReferenceParam());
+        param_GetActorState.push_back(Player::CreateFunctor(FLAG_MOVCONTROLS, self->GetNetworkID()));
         ParamContainer GetActorState = ParamContainer(param_GetActorState, &Data::AlwaysTrue);
         Interface::DefineNative("GetActorState", GetActorState);
         Interface::ExecuteCommandLoop("GetActorState");
@@ -144,6 +158,11 @@ void Game::Initialize()
         ParamContainer GetBaseActorValue = ParamContainer(param_GetBaseActorValue, &Data::AlwaysTrue);
         Interface::DefineNative("GetBaseActorValue", GetBaseActorValue);
         Interface::ExecuteCommandLoop("GetBaseActorValue", 200);
+
+        ParamList param_GetControl;
+        param_GetControl.push_back(BuildParameter(API::RetrieveAllControls()));
+        ParamContainer GetControl = ParamContainer(param_GetControl, &Data::AlwaysTrue);
+        Interface::ExecuteCommandOnce("GetControl", GetControl);
     }
     catch (...)
     {
@@ -190,7 +209,7 @@ void Game::NewPlayer(NetworkID id, unsigned int baseID, string name)
 
     GameFactory::LeaveReference(self);
 
-    for (int i = 0; i < 100 && !store->Get(); i++)
+    for (int i = 0; i < 200 && !store->Get(); i++)
         Sleep(100);
 
     if (!store->Get())
@@ -314,30 +333,59 @@ void Game::SetRestrained(NetworkID id, bool restrained, unsigned int delay)
     GameFactory::LeaveReference(actor);
 }
 
-void Game::SetPos(NetworkID id, unsigned char axis, double value)
+void Game::SetPos(NetworkID id, double X, double Y, double Z)
 {
     Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, id);
-    double old_value = object->GetPos(axis);
-    Lockable* result = object->SetPos(axis, value);
+    bool result = ((bool) object->SetNetworkPos(Axis_X, X) | (bool) object->SetNetworkPos(Axis_Y, Y) | (bool) object->SetNetworkPos(Axis_Z, Z));
 
-    if (result && object->GetEnabled())
+    if (result)
+        SetPos(object->GetReference());
+
+    GameFactory::LeaveReference(object);
+}
+
+void Game::SetPos(unsigned int refID)
+{
+    Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, refID);
+
+    if (object->GetEnabled())
     {
         Actor* actor = NULL; // maybe we should consider items, too (they have physics)
         if (GameFactory::GetType(object) & ALL_ACTORS)
             actor = (Actor*) object;
 
-        if (actor == NULL || !actor->IsCoordinateInRange(axis, old_value, 150.0) || actor->IsJumping())
+        if (actor == NULL || (!actor->IsNearPoint(object->GetNetworkPos(Axis_X), object->GetNetworkPos(Axis_Y), object->GetNetworkPos(Axis_Z), 200.0) && actor->GetActorRunningAnimation() == AnimGroup_Idle) || actor->IsJumping())
         {
-            signed int key = result->Lock(true);
+            Lockable* key = NULL;
 
             Interface::StartSession();
 
+            key = object->SetGamePos(Axis_X, object->GetNetworkPos(Axis_X));
+
             ParamList param_SetPos;
             param_SetPos.push_back(object->GetReferenceParam());
-            param_SetPos.push_back(BuildParameter(API::RetrieveAxis_Reverse(axis)));
-            param_SetPos.push_back(BuildParameter(value));
+            param_SetPos.push_back(BuildParameter(API::RetrieveAxis_Reverse(Axis_X)));
+            param_SetPos.push_back(BuildParameter(object->GetNetworkPos(Axis_X)));
             ParamContainer SetPos = ParamContainer(param_SetPos, &Data::AlwaysTrue);
-            Interface::ExecuteCommandOnce("SetPos", SetPos, 0, 2, key);
+            Interface::ExecuteCommandOnce("SetPos", SetPos, 0, 2, key ? key->Lock(true) : 0);
+
+            key = object->SetGamePos(Axis_Y, object->GetNetworkPos(Axis_Y));
+
+            param_SetPos.clear();
+            param_SetPos.push_back(object->GetReferenceParam());
+            param_SetPos.push_back(BuildParameter(API::RetrieveAxis_Reverse(Axis_Y)));
+            param_SetPos.push_back(BuildParameter(object->GetNetworkPos(Axis_Y)));
+            SetPos = ParamContainer(param_SetPos, &Data::AlwaysTrue);
+            Interface::ExecuteCommandOnce("SetPos", SetPos, 0, 2, key ? key->Lock(true) : 0);
+
+            key = object->SetGamePos(Axis_Z, object->GetNetworkPos(Axis_Z));
+
+            param_SetPos.clear();
+            param_SetPos.push_back(object->GetReferenceParam());
+            param_SetPos.push_back(BuildParameter(API::RetrieveAxis_Reverse(Axis_Z)));
+            param_SetPos.push_back(BuildParameter(object->GetNetworkPos(Axis_Z)));
+            SetPos = ParamContainer(param_SetPos, &Data::AlwaysTrue);
+            Interface::ExecuteCommandOnce("SetPos", SetPos, 0, 2, key ? key->Lock(true) : 0);
 
             Interface::EndSession();
         }
@@ -366,7 +414,18 @@ void Game::SetAngle(unsigned int refID, unsigned char axis)
     ParamList param_SetAngle;
     param_SetAngle.push_back(object->GetReferenceParam());
     param_SetAngle.push_back(BuildParameter(API::RetrieveAxis_Reverse(axis)));
-    param_SetAngle.push_back(BuildParameter(object->GetAngle(axis)));
+
+    double value = object->GetAngle(axis);
+    if (axis == Axis_Z && GameFactory::GetType(object) & ALL_ACTORS)
+    {
+        Actor* actor = (Actor*) object;
+        if (actor->GetActorMovingXY() == 0x01)
+            AdjustZAngle(value, -45.0);
+        else if (actor->GetActorMovingXY() == 0x02)
+            AdjustZAngle(value, 45.0);
+    }
+
+    param_SetAngle.push_back(BuildParameter(value));
     ParamContainer SetAngle = ParamContainer(param_SetAngle, &Data::AlwaysTrue);
     Interface::ExecuteCommandOnce("SetAngle", SetAngle);
 
@@ -444,11 +503,66 @@ void Game::SetActorValue(NetworkID id, bool base, unsigned char index, double va
     GameFactory::LeaveReference(actor);
 }
 
-void Game::SetActorState(NetworkID id, unsigned char index, bool alerted)
+void Game::SetActorState(NetworkID id, unsigned char index, unsigned char moving, bool alerted, bool sneaking)
 {
     Actor* actor = (Actor*) GameFactory::GetObject(ALL_ACTORS, id);
 
     Lockable* result;
+
+    try
+    {
+        result = actor->SetActorMovingXY(moving);
+    }
+    catch (...)
+    {
+        GameFactory::LeaveReference(actor);
+        throw;
+    }
+
+    if (result && actor->GetEnabled())
+        SetAngle(actor->GetReference(), Axis_Z);
+
+    result = actor->SetActorAlerted(alerted);
+
+    if (result && actor->GetEnabled())
+    {
+        SetRestrained(id, false);
+
+        signed int key = result->Lock(true);
+
+        Interface::StartSession();
+
+        ParamList param_SetAlert;
+        param_SetAlert.push_back(actor->GetReferenceParam());
+        param_SetAlert.push_back(alerted ? Data::Param_True : Data::Param_False);
+        ParamContainer SetAlert = ParamContainer(param_SetAlert, &Data::AlwaysTrue);
+        Interface::ExecuteCommandOnce("SetAlert", SetAlert, 0, 50, key);
+
+        Interface::EndSession();
+
+        SetRestrained(id, true, 2000); // prevents more or less efficiently alert state desync
+    }
+
+    result = actor->SetActorSneaking(sneaking);
+
+    if (result && actor->GetEnabled())
+    {
+        SetRestrained(id, false);
+
+        signed int key = result->Lock(true);
+
+        Interface::StartSession();
+
+        ParamList param_SetForceSneak;
+        param_SetForceSneak.push_back(actor->GetReferenceParam());
+        param_SetForceSneak.push_back(sneaking ? Data::Param_True : Data::Param_False);
+        ParamContainer SetForceSneak = ParamContainer(param_SetForceSneak, &Data::AlwaysTrue);
+        Interface::ExecuteCommandOnce("SetForceSneak", SetForceSneak, 0, 50, key);
+
+        Interface::EndSession();
+
+        SetRestrained(id, true);
+    }
 
     try
     {
@@ -474,27 +588,9 @@ void Game::SetActorState(NetworkID id, unsigned char index, bool alerted)
         Interface::ExecuteCommandOnce("PlayGroup", PlayGroup, 0, 2, key);
 
         Interface::EndSession();
-    }
 
-    result = actor->SetActorAlerted(alerted);
-
-    if (result && actor->GetEnabled())
-    {
-        SetRestrained(id, false);
-
-        signed int key = result->Lock(true);
-
-        Interface::StartSession();
-
-        ParamList param_SetAlert;
-        param_SetAlert.push_back(actor->GetReferenceParam());
-        param_SetAlert.push_back(alerted ? Data::Param_True : Data::Param_False);
-        ParamContainer SetAlert = ParamContainer(param_SetAlert, &Data::AlwaysTrue);
-        Interface::ExecuteCommandOnce("SetAlert", SetAlert, 0, 50, key);
-
-        Interface::EndSession();
-
-        SetRestrained(id, true, 2000); // prevents more or less efficiently alert state desync
+        if (index == AnimGroup_Idle)
+            SetPos(actor->GetReference());
     }
 
     GameFactory::LeaveReference(actor);
@@ -520,9 +616,9 @@ void Game::MoveTo(NetworkID id, NetworkID id2, bool cell)
 
         if (cell)
         {
-            param_MoveTo.push_back(BuildParameter(object->GetPos(Axis_X) - object2->GetPos(Axis_X)));
-            param_MoveTo.push_back(BuildParameter(object->GetPos(Axis_Y) - object2->GetPos(Axis_Y)));
-            param_MoveTo.push_back(BuildParameter(object->GetPos(Axis_Z) - object2->GetPos(Axis_Z)));
+            param_MoveTo.push_back(BuildParameter(object->GetNetworkPos(Axis_X) - object2->GetNetworkPos(Axis_X)));
+            param_MoveTo.push_back(BuildParameter(object->GetNetworkPos(Axis_Y) - object2->GetNetworkPos(Axis_Y)));
+            param_MoveTo.push_back(BuildParameter(object->GetNetworkPos(Axis_Z) - object2->GetNetworkPos(Axis_Z)));
         }
         else
         {
@@ -570,11 +666,11 @@ void Game::PlaceAtMe(Lockable* data, unsigned int refID)
 void Game::GetPos(unsigned int refID, unsigned char axis, double value)
 {
     Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, refID);
-    bool result = (bool) object->SetPos(axis, value);
+    bool result = (bool) object->SetGamePos(axis, value);
 
-    if (result && object->GetReference() == PLAYER_REFERENCE)
+    if (result && axis == Axis_Z && object->GetReference() == PLAYER_REFERENCE)
     {
-        pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_POS, object->GetNetworkID(), axis, value);
+        pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_POS, object->GetNetworkID(), object->GetGamePos(Axis_X), object->GetGamePos(Axis_Y), object->GetGamePos(Axis_Z));
         NetworkResponse response = Network::CompleteResponse(Network::CreateResponse(packet,
                                    (unsigned char) HIGH_PRIORITY,
                                    (unsigned char) RELIABLE_SEQUENCED,
@@ -678,7 +774,7 @@ void Game::GetActorValue(unsigned int refID, bool base, unsigned char index, dou
     GameFactory::LeaveReference(actor);
 }
 
-void Game::GetActorState(unsigned int refID, unsigned char index, bool alerted)
+void Game::GetActorState(unsigned int refID, unsigned char index, unsigned char moving, bool alerted, bool sneaking)
 {
     Actor* actor = (Actor*) GameFactory::GetObject(ALL_ACTORS, refID);
     bool result;
@@ -688,7 +784,7 @@ void Game::GetActorState(unsigned int refID, unsigned char index, bool alerted)
 
     try
     {
-        result = ((bool) actor->SetActorRunningAnimation(index) | (bool) actor->SetActorAlerted(alerted));
+        result = ((bool) actor->SetActorRunningAnimation(index) | (bool) actor->SetActorMovingXY(moving) | (bool) actor->SetActorAlerted(alerted) | (bool) actor->SetActorSneaking(sneaking));
     }
     catch (...)
     {
@@ -698,7 +794,7 @@ void Game::GetActorState(unsigned int refID, unsigned char index, bool alerted)
 
     if (result)
     {
-        pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_STATE, actor->GetNetworkID(), index, alerted);
+        pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_STATE, actor->GetNetworkID(), index, moving, alerted, sneaking);
         NetworkResponse response = Network::CompleteResponse(Network::CreateResponse(packet,
                                    (unsigned char) HIGH_PRIORITY,
                                    (unsigned char) RELIABLE_ORDERED,
@@ -708,6 +804,28 @@ void Game::GetActorState(unsigned int refID, unsigned char index, bool alerted)
     }
 
     GameFactory::LeaveReference(actor);
+}
+
+void Game::GetControl(unsigned int refID, unsigned char control, unsigned char key)
+{
+    Player* player = (Player*) GameFactory::GetObject(ID_PLAYER, refID);
+    bool result;
+
+    try
+    {
+        result = (bool) player->SetPlayerControl(control, key);
+    }
+    catch (...)
+    {
+        GameFactory::LeaveReference(player);
+        throw;
+    }
+
+    if (result)
+    {
+    }
+
+    GameFactory::LeaveReference(player);
 }
 
 void Game::Failure_PlaceAtMe(unsigned int refID, unsigned int baseID, unsigned int count, signed int key)

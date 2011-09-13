@@ -45,7 +45,7 @@ public:
     /**
      * \brief Handles GetPos network packet
      */
-    static NetworkResponse GetPos(RakNetGUID guid, NetworkID id, unsigned char axis, double value);
+    static NetworkResponse GetPos(RakNetGUID guid, NetworkID id, double X, double Y, double Z);
     /**
      * \brief Handles GetAngle network packet
      */
@@ -61,7 +61,7 @@ public:
     /**
      * \brief Handles actor state network packet
      */
-    static NetworkResponse GetActorState(RakNetGUID guid, NetworkID id, unsigned char index, bool alerted);
+    static NetworkResponse GetActorState(RakNetGUID guid, NetworkID id, unsigned char index, unsigned char moving, bool alerted, bool sneaking);
 
 #ifdef VAULTMP_DEBUG
     static void SetDebugHandler(Debug* debug);

@@ -43,7 +43,8 @@ extern "C" {
     VAULTSCRIPT void OnActorDeath(vaultmp::ID);
     VAULTSCRIPT void OnActorValueChange(vaultmp::ID, vaultmp::Index, vaultmp::Value);
     VAULTSCRIPT void OnActorBaseValueChange(vaultmp::ID, vaultmp::Index, vaultmp::Value);
-    VAULTSCRIPT void OnActorStateChange(vaultmp::ID, vaultmp::Index, vaultmp::State);
+    VAULTSCRIPT void OnActorAlert(vaultmp::ID, vaultmp::State);
+    VAULTSCRIPT void OnActorSneak(vaultmp::ID, vaultmp::State);
 
     VAULTSCRIPT void (*timestamp)();
     VAULTSCRIPT vaultmp::Timer (*CreateTimer)(vaultmp::TimerFunc, vaultmp::Interval);

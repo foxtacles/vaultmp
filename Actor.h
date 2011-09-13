@@ -45,7 +45,9 @@ private:
     map<unsigned char, Value<double> > actor_Values;
     map<unsigned char, Value<double> > actor_BaseValues;
     Value<unsigned char> anim_Running;
+    Value<unsigned char> state_MovingXY;
     Value<bool> state_Alerted;
+    Value<bool> state_Sneaking;
     Value<bool> state_Dead;
 
     Actor(const Actor&);
@@ -95,32 +97,56 @@ public:
      */
     unsigned char GetActorRunningAnimation() const;
     /**
+     * \brief Retrieves the Actor's moving state
+     *
+     * 0x00 - the actor moves Forward / Backward
+     * 0x01 - the actor moves ForwardLeft / BackwardRight
+     * 0x02 - the actor moves ForwardRight / BackwardLeft
+     */
+    unsigned char GetActorMovingXY() const;
+    /**
      * \brief Retrieves the Actor's alerted state
      */
     bool GetActorAlerted() const;
+    /**
+     * \brief Retrieves the Actor's sneaking state
+     */
+    bool GetActorSneaking() const;
     /**
      * \brief Retrieves the Actor's dead state
      */
     bool GetActorDead() const;
 
     /**
-     * \brief Sets the Actor's actor value specified by index (actor value hex code). Returns a Lockable pointer if successful
+     * \brief Sets the Actor's actor value specified by index (actor value hex code)
      */
     Lockable* SetActorValue(unsigned char index, double value);
     /**
-     * \brief Sets the Actor's base actor value specified by index (actor value hex code). Returns a Lockable pointer if successful
+     * \brief Sets the Actor's base actor value specified by index (actor value hex code)
      */
     Lockable* SetActorBaseValue(unsigned char index, double value);
     /**
-     * \brief Sets the Actor's running animation. Returns a Lockable pointer if successful
+     * \brief Sets the Actor's running animation
      */
     Lockable* SetActorRunningAnimation(unsigned char index);
     /**
-     * \brief Sets the Actor's alerted state. Returns a Lockable pointer if successful
+     * \brief Sets the Actor's moving state
+     *
+     * 0x00 - the actor moves Forward / Backward
+     * 0x01 - the actor moves ForwardLeft / BackwardRight
+     * 0x02 - the actor moves ForwardRight / BackwardLeft
+     */
+    Lockable* SetActorMovingXY(unsigned char moving);
+    /**
+     * \brief Sets the Actor's alerted state
      */
     Lockable* SetActorAlerted(bool state);
     /**
-     * \brief Sets the Actor's dead state. Returns a Lockable pointer if successful
+     * \brief Sets the Actor's sneaking state
+     */
+    Lockable* SetActorSneaking(bool state);
+    /**
+     * \brief Sets the Actor's dead state
      */
     Lockable* SetActorDead(bool state);
 

@@ -7,7 +7,7 @@
 #include <ctime>
 #include <climits>
 #include <string>
-#include <list>
+#include <set>
 #include <map>
 #include <queue>
 #include <vector>
@@ -26,8 +26,9 @@ using namespace Data;
 
 typedef vector<char*> CommandParsed;
 typedef pair<pair<pair<signed int, vector<double> >, double>, bool> CommandResult;
-typedef map<string, pair<string, unsigned short> > FunctionList;
-typedef map<string, unsigned char> ValueList;
+typedef map<string, pair<string, unsigned short> > FunctionMap;
+typedef map<string, unsigned char> ValueMap;
+typedef set<unsigned char> ValueList;
 typedef deque<pair<pair<unsigned int, vector<double> >, signed int> > CommandQueue;
 
 /*
@@ -37,7 +38,7 @@ typedef deque<pair<pair<unsigned int, vector<double> >, signed int> > CommandQue
 namespace Values {
 
     /**
-     * \brief Animation values shared across all games
+     * \brief Animation values
      */
 
     enum AnimationGroups
@@ -62,7 +63,7 @@ namespace Values {
     };
 
     /**
-     * \brief Axis values ahared across all games
+     * \brief Axis values
      */
 
     enum XYZ
@@ -73,7 +74,7 @@ namespace Values {
     };
 
     /**
-     * \brief Function opcodes shared across all games
+     * \brief Function opcodes
      */
 
     enum Functions
@@ -101,6 +102,7 @@ namespace Values {
         Func_RemoveItem                 = 0x1052,
         Func_Kill                       = 0x108B,
         Func_GetCombatTarget            = 0x10E8,
+        Func_SetForceSneak              = 0x10D3,
 
         Func_GetActorState              = 0x0001 | VAULTFUNCTION,
     };
@@ -201,6 +203,42 @@ namespace Values {
             ActorVal_Variable10             = 0x47,
             ActorVal_IgnoreCrippledLimbs    = 0x48,
         };
+
+        /**
+         * \brief Control codes (for script extenders control functions) used in Fallout 3 / New Vegas
+         */
+
+        enum ControlCodes
+        {
+            ControlCode_Forward             = 0,
+            ControlCode_Backward            = 1,
+            ControlCode_Left                = 2,
+            ControlCode_Right               = 3,
+            ControlCode_Attack              = 4,
+            ControlCode_Activate            = 5,
+            ControlCode_Block               = 6,
+            ControlCode_ReadyItem           = 7,
+            ControlCode_Crouch              = 8,
+            ControlCode_Run                 = 9,
+            ControlCode_AlwaysRun           = 10,
+            ControlCode_AutoMove            = 11,
+            ControlCode_Jump                = 12,
+            ControlCode_TogglePOV           = 13,
+            ControlCode_MenuMode            = 14,
+            ControlCode_Rest                = 15,
+            ControlCode_VATS                = 16,
+            ControlCode_Hotkey1             = 17,
+            ControlCode_Hotkey2             = 18,
+            ControlCode_Hotkey3             = 19,
+            ControlCode_Hotkey4             = 20,
+            ControlCode_Hotkey5             = 21,
+            ControlCode_Hotkey6             = 22,
+            ControlCode_Hotkey7             = 23,
+            ControlCode_Hotkey8             = 24,
+            ControlCode_Quicksave           = 25,
+            ControlCode_Quickload           = 26,
+            ControlCode_Grab                = 27,
+        };
     };
 
     /**
@@ -220,6 +258,7 @@ namespace Values {
             Func_GetParentCell              = 0x1495,
             Func_GetFirstRef                = 0x14AF,
             Func_GetNextRef                 = 0x14B0,
+            Func_GetControl                 = 0x144E,
         };
 
         /**
@@ -261,6 +300,7 @@ namespace Values {
             Func_GetParentCell              = 0x146D,
             Func_GetFirstRef                = 0x1471,
             Func_GetNextRef                 = 0x1472,
+            Func_GetControl                 = 0x145D,
         };
 
         /**
@@ -303,6 +343,7 @@ namespace Values {
             Func_IsAnimGroupPlaying         = 0x16C1, // equivalent to IsAnimPlaying in Fallout games
             Func_GetFirstRef                = 0x1608,
             Func_GetNextRef                 = 0x1609,
+            Func_GetControl                 = 0x146A,
         };
 
         /**
@@ -418,6 +459,43 @@ namespace Values {
             AnimGroup_JumpLoop              = 0x29,
             AnimGroup_JumpLand              = 0x2A,
         };
+
+        /**
+         * \brief Control codes (for script extenders control functions) used in Oblivion
+         */
+
+        enum ControlCodes
+        {
+            ControlCode_Forward             = 0,
+            ControlCode_Backward            = 1,
+            ControlCode_SlideLeft           = 2,
+            ControlCode_SlideRight          = 3,
+            ControlCode_Use                 = 4,
+            ControlCode_Activate            = 5,
+            ControlCode_Block               = 6,
+            ControlCode_Cast                = 7,
+            ControlCode_ReadyItem           = 8,
+            ControlCode_Crouch              = 9,
+            ControlCode_Run                 = 10,
+            ControlCode_AlwaysRun           = 11,
+            ControlCode_AutoMove            = 12,
+            ControlCode_Jump                = 13,
+            ControlCode_TogglePOV           = 14,
+            ControlCode_MenuMode            = 15,
+            ControlCode_Rest                = 16,
+            ControlCode_QuickMenu           = 17,
+            ControlCode_Hotkey1             = 18,
+            ControlCode_Hotkey2             = 19,
+            ControlCode_Hotkey3             = 20,
+            ControlCode_Hotkey4             = 21,
+            ControlCode_Hotkey5             = 22,
+            ControlCode_Hotkey6             = 23,
+            ControlCode_Hotkey7             = 24,
+            ControlCode_Hotkey8             = 25,
+            ControlCode_Quicksave           = 26,
+            ControlCode_Quickload           = 27,
+            ControlCode_Grab                = 28,
+        };
     };
 };
 
@@ -443,10 +521,11 @@ private:
     struct op_default;
     typedef map<unsigned int, pair<vector<double>, API::op_default> > CommandCache;
 
-    static FunctionList functions;
-    static ValueList values;
-    static ValueList axis;
-    static ValueList anims;
+    static FunctionMap functions;
+    static ValueMap values;
+    static ValueMap axis;
+    static ValueMap anims;
+    static ValueList controls;
     static CommandQueue queue;
     static CommandCache cache;
     static unsigned char game;
@@ -455,6 +534,7 @@ private:
     static void DefineValueString(string name, unsigned char value, unsigned char games);
     static void DefineAxisString(string name, unsigned char axis, unsigned char games);
     static void DefineAnimString(string name, unsigned char anim, unsigned char games);
+    static void DefineControl(unsigned char control, unsigned char games);
 
     static unsigned long ExtractReference(char* reference);
     static pair<string, unsigned short> RetrieveFunction(string name);
@@ -531,6 +611,10 @@ public:
      */
     static unsigned char RetrieveAnim(char* anim);
     /**
+     * \brief Returns true if the given value is a valid control code
+     */
+    static bool IsControl(unsigned char control);
+    /**
      * \brief Given the hex code of an actor value, returns the string representation. An empty string indicates an error
      */
     static string RetrieveValue_Reverse(unsigned char value);
@@ -555,6 +639,10 @@ public:
      */
     static vector<unsigned char> RetrieveAllAnims();
     /**
+     * \brief Returns a STL vector containing every available control code
+     */
+    static vector<unsigned char> RetrieveAllControls();
+    /**
      * \brief Returns a STL vector containing every available actor value string representation
      */
     static vector<string> RetrieveAllValues_Reverse();
@@ -571,7 +659,6 @@ public:
     /**
      * \brief Returns the game code of the current API environment setup
      */
-
     static unsigned char GetGameCode();
 
 };

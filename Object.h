@@ -39,7 +39,8 @@ private:
 #endif
 
     Value<string> object_Name;
-    map<unsigned char, Value<double> > object_Pos;
+    map<unsigned char, Value<double> > object_Game_Pos;
+    map<unsigned char, Value<double> > object_Network_Pos;
     map<unsigned char, Value<double> > object_Angle;
     Value<unsigned int> cell_Game;
     Value<unsigned int> cell_Network;
@@ -70,9 +71,13 @@ public:
      */
     string GetName() const;
     /**
-     * \brief Retrieves the Object's coordinate on the specified axis (axis value hex code)
+     * \brief Retrieves the Object's game coordinate on the specified axis (axis value hex code)
      */
-    double GetPos(unsigned char axis) const;
+    double GetGamePos(unsigned char axis) const;
+    /**
+     * \brief Retrieves the Object's network coordinate on the specified axis (axis value hex code)
+     */
+    double GetNetworkPos(unsigned char axis) const;
     /**
      * \brief Retrieves the Object's angle on the specified axis (axis value hex code)
      */
@@ -88,34 +93,38 @@ public:
      */
     unsigned int GetGameCell() const;
     /**
-     * \brief Retrieves the Object's game cell
+     * \brief Retrieves the Object's network cell
      *
      * This is the "real" cell which the object should be in
      */
     unsigned int GetNetworkCell() const;
 
     /**
-     * \brief Sets the Object's name. Returns a Lockable pointer if successful
+     * \brief Sets the Object's name
      */
     Lockable* SetName(string name);
     /**
-     * \brief Sets the Object's coordiante on the specified axis (axis value hex code). Returns a Lockable pointer if successful
+     * \brief Sets the Object's game coordiante on the specified axis (axis value hex code)
      */
-    Lockable* SetPos(unsigned char axis, double pos);
+    Lockable* SetGamePos(unsigned char axis, double pos);
     /**
-     * \brief Sets the Object's angle on the specified axis (axis value hex code). Returns a Lockable pointer if successful
+     * \brief Sets the Object's network coordiante on the specified axis (axis value hex code)
+     */
+    Lockable* SetNetworkPos(unsigned char axis, double pos);
+    /**
+     * \brief Sets the Object's angle on the specified axis (axis value hex code)
      */
     Lockable* SetAngle(unsigned char axis, double angle);
     /**
-     * \brief Sets the Object's enabled state. Returns a Lockable pointer if successful
+     * \brief Sets the Object's enabled state
      */
     Lockable* SetEnabled(bool state);
     /**
-     * \brief Sets the Object's game cell. Returns a Lockable pointer if successful
+     * \brief Sets the Object's game cell
      */
     Lockable* SetGameCell(unsigned int cell);
     /**
-     * \brief Sets the Object's network cell. Returns a Lockable pointer if successful
+     * \brief Sets the Object's network cell
      */
     Lockable* SetNetworkCell(unsigned int cell);
 

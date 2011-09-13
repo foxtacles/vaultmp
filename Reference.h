@@ -46,11 +46,11 @@ public:
     unsigned int GetBase() const;
 
     /**
-     * \brief Sets the Reference's reference ID. Returns a Lockable pointer if successful
+     * \brief Sets the Reference's reference ID
      */
     Lockable* SetReference(unsigned int refID);
     /**
-     * \brief Sets the Reference's base ID. Returns a Lockable pointer if successful
+     * \brief Sets the Reference's base ID
      */
     Lockable* SetBase(unsigned int baseID);
 

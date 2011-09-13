@@ -86,7 +86,12 @@ void VAULTSCRIPT OnActorBaseValueChange(ID actor, Index index, Value value)
 
 }
 
-void VAULTSCRIPT OnActorStateChange(ID actor, Index index, State alerted)
+void VAULTSCRIPT OnActorAlert(ID actor, State alerted)
+{
+
+}
+
+void VAULTSCRIPT OnActorSneak(ID actor, State sneaking)
 {
 
 }

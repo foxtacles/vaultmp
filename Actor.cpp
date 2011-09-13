@@ -80,9 +80,19 @@ unsigned char Actor::GetActorRunningAnimation() const
     return anim_Running.Get();
 }
 
+unsigned char Actor::GetActorMovingXY() const
+{
+    return state_MovingXY.Get();
+}
+
 bool Actor::GetActorAlerted() const
 {
     return state_Alerted.Get();
+}
+
+bool Actor::GetActorSneaking() const
+{
+    return state_Sneaking.Get();
 }
 
 bool Actor::GetActorDead() const
@@ -146,6 +156,22 @@ Lockable* Actor::SetActorRunningAnimation(unsigned char index)
     return &anim_Running;
 }
 
+Lockable* Actor::SetActorMovingXY(unsigned char moving)
+{
+    if (this->state_MovingXY.Get() == moving)
+        return NULL;
+
+    if (!this->state_MovingXY.Set(moving))
+        return NULL;
+
+#ifdef VAULTMP_DEBUG
+    if (debug != NULL)
+        debug->PrintFormat("Actor moving state was set to %02X (ref: %08X)", true, moving, this->GetReference());
+#endif
+
+    return &this->state_MovingXY;
+}
+
 Lockable* Actor::SetActorAlerted(bool state)
 {
     if (this->state_Alerted.Get() == state)
@@ -160,6 +186,22 @@ Lockable* Actor::SetActorAlerted(bool state)
 #endif
 
     return &this->state_Alerted;
+}
+
+Lockable* Actor::SetActorSneaking(bool state)
+{
+    if (this->state_Sneaking.Get() == state)
+        return NULL;
+
+    if (!this->state_Sneaking.Set(state))
+        return NULL;
+
+#ifdef VAULTMP_DEBUG
+    if (debug != NULL)
+        debug->PrintFormat("Actor sneaking state was set to %d (ref: %08X)", true, (int) state, this->GetReference());
+#endif
+
+    return &this->state_Sneaking;
 }
 
 Lockable* Actor::SetActorDead(bool state)

@@ -26,15 +26,13 @@ bool DLLerror = false;
 unsigned char game = 0x00;
 void* _reference = 0x00;
 
-const unsigned FalloutNVpatch_VATS_src = 0x009428AE;
-const unsigned FalloutNVpatch_VATS_dest = 0x00942BE8;
+const unsigned FalloutNVpatch_PlayGroup = 0x00494D5C;
 const unsigned FalloutNVpatch_delegator_src = 0x0086B3E3;
 const unsigned FalloutNVpatch_delegator_dest = 0x0086E649;
 const unsigned FalloutNVpatch_delegatorCall_src = 0x0086E64A;
 const unsigned FalloutNVpatch_delegatorCall_dest = (unsigned) &BethesdaDelegator;
 
-const unsigned Fallout3patch_VATS_src = 0x0078A27D;
-const unsigned Fallout3patch_VATS_dest = 0x0078A40A;
+const unsigned Fallout3patch_PlayGroup = 0x0045F704;
 const unsigned Fallout3patch_delegator_src = 0x006EEC86;
 const unsigned Fallout3patch_delegator_dest = 0x006EDBD9;
 const unsigned Fallout3patch_delegatorCall_src = 0x006EDBDA;
@@ -107,71 +105,82 @@ void BethesdaDelegator()
     }
 }
 
-void vaultfunction(void* reference, void* result, unsigned short opcode)
+void vaultfunction(void* reference, void* result, void* args, unsigned short opcode)
 {
-    switch (game)
+    switch (opcode)
     {
-        case FALLOUT3:
-        case NEWVEGAS:
+    case 0xE001: // GetActorState - returns the actors running animation, alerted / sneaking state
+    {
+        ZeroMemory(result, sizeof(double));
+        typedef void* (*animdat)(void*);
+        _reference = reference;
+        animdat Call;
+
+        if (game & FALLOUT_GAMES)
+            Call = (animdat) *((unsigned int*) ((unsigned) *((unsigned int*) reference) + (unsigned) 0x01E4));
+        else
+            Call = (animdat) *((unsigned int*) ((unsigned) *((unsigned int*) reference) + (unsigned) 0x0164));
+
+        asm (
+            ".intel_syntax noprefix\n"
+            "MOV ECX,__reference\n"
+        );
+
+        unsigned char* data = (unsigned char*) Call(reference);
+
+        if (data != NULL)
         {
-            switch (opcode)
+            unsigned char alerted, sneaking, running;
+
+            if (game & FALLOUT_GAMES)
             {
-                case 0xE001: // GetActorState - returns the actors running animation and alerted state
-                {
-                    ZeroMemory(result, sizeof(double));
-                    typedef void* (*animdat)(void*);
-                    _reference = reference;
-                    animdat Call = (animdat) *((unsigned int*) ((unsigned) *((unsigned int*) reference) + (unsigned) 0x01E4));
-                    asm (
-                        ".intel_syntax noprefix\n"
-                        "MOV ECX,__reference\n"
-                    );
-                    char* data = (char*) Call(reference);
-                    if (data != NULL)
-                    {
-                        char alerted = *(data + 0x4D);
-                        char running = *(data + 0x4E);
-                        memcpy(result, &alerted, 1);
-                        memcpy((void*) ((unsigned) result + 4), &running, 1);
-                    }
-                    break;
-                }
-                default:
-                    break;
+                alerted = *(data + 0x6C) != 0xFF ? 0x01 : 0x00;
+                sneaking = *(data + 0x4D) == 0x10 ? 0x01 : 0x00;
+                running = *(data + 0x4E);
             }
-            break;
-        }
-        case OBLIVION:
-        {
-            switch (opcode)
+            else
             {
-                case 0xE001: // GetActorState - returns the actors running animation and alerted state
-                {
-                    ZeroMemory(result, sizeof(double));
-                    typedef void* (*animdat)(void*);
-                    _reference = reference;
-                    animdat Call = (animdat) *((unsigned int*) ((unsigned) *((unsigned int*) reference) + (unsigned) 0x0164));
-                    asm (
-                        ".intel_syntax noprefix\n"
-                        "MOV ECX,__reference\n"
-                    );
-                    char* data = (char*) Call(reference);
-                    if (data != NULL)
-                    {
-                        char alerted = *(data + 0x3D);
-                        char running = *(data + 0x3C);
-                        memcpy(result, &alerted, 1);
-                        memcpy((void*) ((unsigned) result + 4), &running, 1);
-                    }
-                    break;
-                }
-                default:
-                    break;
+                alerted = *(data + 0x5C) != 0xFF ? 0x01 : 0x00;
+                sneaking = *(data + 0x3D) == 0x10 ? 0x01 : 0x00;
+                running = *(data + 0x3C);
             }
-            break;
+
+            memcpy(result, &alerted, 1);
+            memcpy((void*) ((unsigned) result + 1), &sneaking, 1);
+            memcpy((void*) ((unsigned) result + 4), &running, 1);
+
+            // This detection is unreliable; i.e. what when the player holds Forward/Backward/Left/Right all together for some reason?
+            unsigned char* _args = (unsigned char*) args;
+            if (*_args == 0x6E) // Forward, Backward, Left, Right unsigned char scan codes stored in Integer, optional
+            {
+                _args++;
+                unsigned char forward = *_args;
+                unsigned char backward = *(_args + 1);
+                unsigned char left = *(_args + 2);
+                unsigned char right = *(_args + 3);
+
+                if (!(forward && backward && left && right))
+                    break;
+
+                // MAPVK_VSC_TO_VK
+                if (((GetAsyncKeyState(MapVirtualKey(forward, 1)) & 0x8000) && (GetAsyncKeyState(MapVirtualKey(left, 1)) & 0x8000))
+                        || ((GetAsyncKeyState(MapVirtualKey(backward, 1)) & 0x8000) && (GetAsyncKeyState(MapVirtualKey(right, 1)) & 0x8000)))
+                {
+                    unsigned char type = 0x01; // that equals to a Z-angle correction of -45²
+                    memcpy((void*) ((unsigned) result + 5), &type, 1);
+                }
+                else if (((GetAsyncKeyState(MapVirtualKey(forward, 1)) & 0x8000) && (GetAsyncKeyState(MapVirtualKey(right, 1)) & 0x8000))
+                         || ((GetAsyncKeyState(MapVirtualKey(backward, 1)) & 0x8000) && (GetAsyncKeyState(MapVirtualKey(left, 1)) & 0x8000)))
+                {
+                    unsigned char type = 0x02; // that equals to a Z-angle correction of 45²
+                    memcpy((void*) ((unsigned) result + 5), &type, 1);
+                }
+            }
         }
-        default:
-            break;
+        break;
+    }
+    default:
+        break;
     }
 }
 
@@ -182,11 +191,18 @@ void ExecuteCommand(vector<void*>& args, unsigned int crc, bool delegate_flag)
 
     unsigned int reference = *((unsigned int*) args.at(2));
     unsigned short opcode;
+    void* _args;
 
     if (*((unsigned int*) args.at(1)) == 0x0001001C)
+    {
         opcode = *((unsigned short*) (((unsigned) args.at(1)) + 4));
+        _args = (void*) (((unsigned) args.at(1)) + 4 + 2 + 2 + 2); // skip 0001001C, opcode, unk2, numargs
+    }
     else
+    {
         opcode = *((unsigned short*) args.at(1));
+        _args = (void*) (((unsigned) args.at(1)) + 2 + 2 + 2); // skip opcode, unk2, numargs
+    }
 
     if (opcode == 0x00)
         return;
@@ -204,6 +220,12 @@ void ExecuteCommand(vector<void*>& args, unsigned int crc, bool delegate_flag)
 
     unsigned int** param1 = (unsigned int**) (base + 0x44);
     unsigned int*** param2 = (unsigned int***) (base + 0x48);
+
+    if (*param2 == 0x00000000)
+    {
+        param1 = (unsigned int**) (base + 0x40);
+        param2 = (unsigned int***) (base + 0x44);
+    }
 
     *param1 = (unsigned int*) ((unsigned) *param1 + base);
     *param2 = (unsigned int**) ((unsigned) *param2 + base);
@@ -234,7 +256,7 @@ void ExecuteCommand(vector<void*>& args, unsigned int crc, bool delegate_flag)
 
     if ((opcode & VAULTFUNCTION) == VAULTFUNCTION)
     {
-        vaultfunction((void*) reference, args.at(6), opcode);
+        vaultfunction((void*) reference, args.at(6), _args, opcode);
     }
     else
     {
@@ -408,7 +430,8 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 
 void PatchGame(HINSTANCE& silverlock)
 {
-    TCHAR curdir[MAX_PATH]; ZeroMemory(curdir, sizeof(curdir));
+    TCHAR curdir[MAX_PATH];
+    ZeroMemory(curdir, sizeof(curdir));
     GetModuleFileName(NULL, (LPTSTR) curdir, MAX_PATH);
 
     /* Loading FOSE / NVSE */
@@ -443,8 +466,8 @@ void PatchGame(HINSTANCE& silverlock)
 
         SafeWrite8(Fallout3patch_delegator_dest, 0x51); // PUSH ECX
         SafeWrite8(Fallout3patch_delegatorCall_src + 5, 0x59); // POP ECX
+        SafeWrite8(Fallout3patch_PlayGroup, 0xEB); // JMP SHORT
 
-        WriteRelJump(Fallout3patch_VATS_src, Fallout3patch_VATS_dest);
         WriteRelCall(Fallout3patch_delegatorCall_src, Fallout3patch_delegatorCall_dest);
         WriteRelCall(Fallout3patch_delegator_src, Fallout3patch_delegator_dest);
 
@@ -457,8 +480,8 @@ void PatchGame(HINSTANCE& silverlock)
 
         SafeWrite8(FalloutNVpatch_delegator_dest, 0x51); // PUSH ECX
         SafeWrite8(FalloutNVpatch_delegatorCall_src + 5, 0x59); // POP ECX
+        SafeWrite8(FalloutNVpatch_PlayGroup, 0xEB); // JMP SHORT
 
-        WriteRelJump(FalloutNVpatch_VATS_src, FalloutNVpatch_VATS_dest);
         WriteRelCall(FalloutNVpatch_delegatorCall_src, FalloutNVpatch_delegatorCall_dest);
         WriteRelCall(FalloutNVpatch_delegator_src, FalloutNVpatch_delegator_dest);
 

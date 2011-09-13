@@ -23,7 +23,8 @@ Object::Object(unsigned int refID, unsigned int baseID) : Reference(refID, baseI
 
     for (it = data.begin(); it != data.end(); ++it)
     {
-        object_Pos.insert(pair<unsigned char, Value<double> >(*it, Value<double>()));
+        object_Game_Pos.insert(pair<unsigned char, Value<double> >(*it, Value<double>()));
+        object_Network_Pos.insert(pair<unsigned char, Value<double> >(*it, Value<double>()));
         object_Angle.insert(pair<unsigned char, Value<double> >(*it, Value<double>()));
     }
 }
@@ -46,9 +47,14 @@ string Object::GetName() const
     return object_Name.Get();
 }
 
-double Object::GetPos(unsigned char axis) const
+double Object::GetGamePos(unsigned char axis) const
 {
-    return SAFE_FIND(object_Pos, axis)->second.Get();
+    return SAFE_FIND(object_Game_Pos, axis)->second.Get();
+}
+
+double Object::GetNetworkPos(unsigned char axis) const
+{
+    return SAFE_FIND(object_Network_Pos, axis)->second.Get();
 }
 
 double Object::GetAngle(unsigned char axis) const
@@ -87,9 +93,9 @@ Lockable* Object::SetName(string name)
     return &this->object_Name;
 }
 
-Lockable* Object::SetPos(unsigned char axis, double pos)
+Lockable* Object::SetGamePos(unsigned char axis, double pos)
 {
-    Value<double>& data = SAFE_FIND(this->object_Pos, axis)->second;
+    Value<double>& data = SAFE_FIND(this->object_Game_Pos, axis)->second;
 
     if (Utils::DoubleCompare(data.Get(), pos, 0.01))
         return NULL;
@@ -101,7 +107,29 @@ Lockable* Object::SetPos(unsigned char axis, double pos)
 
 #ifdef VAULTMP_DEBUG
         if (debug != NULL)
-            debug->PrintFormat("Object %s-pos was set to %f (ref: %08X)", true, API::RetrieveAxis_Reverse(axis).c_str(), (float) pos, this->GetReference());
+            debug->PrintFormat("Object game %s-pos was set to %f (ref: %08X)", true, API::RetrieveAxis_Reverse(axis).c_str(), (float) pos, this->GetReference());
+#endif
+        return &data;
+    }
+
+    return NULL;
+}
+
+Lockable* Object::SetNetworkPos(unsigned char axis, double pos)
+{
+    Value<double>& data = SAFE_FIND(this->object_Network_Pos, axis)->second;
+
+    if (Utils::DoubleCompare(data.Get(), pos, 0.01))
+        return NULL;
+
+    if ((pos != 2048.0 && pos != 128.0 && pos != 0.0))
+    {
+        if (!data.Set(pos))
+            return NULL;
+
+#ifdef VAULTMP_DEBUG
+        if (debug != NULL)
+            debug->PrintFormat("Object network %s-pos was set to %f (ref: %08X)", true, API::RetrieveAxis_Reverse(axis).c_str(), (float) pos, this->GetReference());
 #endif
         return &data;
     }
@@ -189,10 +217,10 @@ Lockable* Object::SetNetworkCell(unsigned int cell)
 
 bool Object::IsNearPoint(double X, double Y, double Z, double R) const
 {
-    return (sqrt((abs(GetPos(Axis_X) - X) * abs(GetPos(Axis_X) - X)) + ((GetPos(Axis_Y) - Y) * abs(GetPos(Axis_Y) - Y)) + ((GetPos(Axis_Z) - Z) * abs(GetPos(Axis_Z) - Z))) <= R);
+    return (sqrt((abs(GetGamePos(Axis_X) - X) * abs(GetGamePos(Axis_X) - X)) + ((GetGamePos(Axis_Y) - Y) * abs(GetGamePos(Axis_Y) - Y)) + ((GetGamePos(Axis_Z) - Z) * abs(GetGamePos(Axis_Z) - Z))) <= R);
 }
 
 bool Object::IsCoordinateInRange(unsigned char axis, double pos, double R) const
 {
-    return (GetPos(axis) > (pos - R) && GetPos(axis) < (pos + R));
+    return (GetGamePos(axis) > (pos - R) && GetGamePos(axis) < (pos + R));
 }

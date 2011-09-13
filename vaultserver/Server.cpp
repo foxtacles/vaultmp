@@ -96,19 +96,14 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id, string name)
         packet = PacketFactory::CreatePacket(ID_UPDATE_CELL, _player->GetNetworkID(), _player->GetGameCell());
         response.push_back(Network::CreateResponse(packet, (unsigned char) HIGH_PRIORITY, (unsigned char) RELIABLE_ORDERED, CHANNEL_GAME, guid));
 
-        vector<unsigned char> data = API::RetrieveAllAxis();
-        vector<unsigned char>::iterator it2;
-
-        for (it2 = data.begin(); it2 != data.end(); ++it2)
-        {
-            packet = PacketFactory::CreatePacket(ID_UPDATE_POS, _player->GetNetworkID(), *it2, _player->GetPos(*it2));
-            response.push_back(Network::CreateResponse(packet, (unsigned char) HIGH_PRIORITY, (unsigned char) RELIABLE_ORDERED, CHANNEL_GAME, guid));
-        }
-
-        packet = PacketFactory::CreatePacket(ID_UPDATE_STATE, _player->GetNetworkID(), _player->GetActorRunningAnimation(), _player->GetActorAlerted());
+        packet = PacketFactory::CreatePacket(ID_UPDATE_POS, _player->GetNetworkID(), _player->GetGamePos(Axis_X), _player->GetGamePos(Axis_Y), _player->GetGamePos(Axis_Z));
         response.push_back(Network::CreateResponse(packet, (unsigned char) HIGH_PRIORITY, (unsigned char) RELIABLE_ORDERED, CHANNEL_GAME, guid));
 
-        data = API::RetrieveAllValues();
+        packet = PacketFactory::CreatePacket(ID_UPDATE_STATE, _player->GetNetworkID(), _player->GetActorRunningAnimation(), _player->GetActorMovingXY(), _player->GetActorAlerted(), _player->GetActorSneaking());
+        response.push_back(Network::CreateResponse(packet, (unsigned char) HIGH_PRIORITY, (unsigned char) RELIABLE_ORDERED, CHANNEL_GAME, guid));
+
+        vector<unsigned char> data = API::RetrieveAllValues();
+        vector<unsigned char>::iterator it2;
 
         for (it2 = data.begin(); it2 != data.end(); ++it2)
         {
@@ -152,15 +147,15 @@ NetworkResponse Server::Disconnect(RakNetGUID guid, unsigned char reason)
     return response;
 }
 
-NetworkResponse Server::GetPos(RakNetGUID guid, NetworkID id, unsigned char axis, double value)
+NetworkResponse Server::GetPos(RakNetGUID guid, NetworkID id, double X, double Y, double Z)
 {
     NetworkResponse response;
     Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, id);
-    bool result = (bool) object->SetPos(axis, value);
+    bool result = ((bool) object->SetGamePos(Axis_X, X) | (bool) object->SetGamePos(Axis_Y, Y) | (bool) object->SetGamePos(Axis_Z, Z));
 
     if (result)
     {
-        pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_POS, id, axis, value);
+        pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_POS, id, X, Y, Z);
         response = Network::CompleteResponse(Network::CreateResponse(packet,
                                              (unsigned char) HIGH_PRIORITY,
                                              (unsigned char) RELIABLE_SEQUENCED,
@@ -202,14 +197,14 @@ NetworkResponse Server::GetGameCell(RakNetGUID guid, NetworkID id, unsigned int 
 
     if (result)
     {
-        Script::CellChange(id, cell);
-
         pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_CELL, id, cell);
         response = Network::CompleteResponse(Network::CreateResponse(packet,
                                              (unsigned char) HIGH_PRIORITY,
                                              (unsigned char) RELIABLE_SEQUENCED,
                                              CHANNEL_GAME,
                                              Client::GetNetworkList(guid)));
+
+        Script::CellChange(id, cell);
     }
 
     GameFactory::LeaveReference(object);
@@ -238,14 +233,14 @@ NetworkResponse Server::GetActorValue(RakNetGUID guid, NetworkID id, bool base, 
 
     if (result)
     {
-        Script::ValueChange(id, index, base, value);
-
         pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_VALUE, actor->GetNetworkID(), base, index, value);
         response = Network::CompleteResponse(Network::CreateResponse(packet,
                                              (unsigned char) HIGH_PRIORITY,
                                              (unsigned char) RELIABLE_ORDERED,
                                              CHANNEL_GAME,
                                              Client::GetNetworkList(guid)));
+
+        Script::ValueChange(id, index, base, value);
     }
 
     GameFactory::LeaveReference(actor);
@@ -253,15 +248,17 @@ NetworkResponse Server::GetActorValue(RakNetGUID guid, NetworkID id, bool base, 
     return response;
 }
 
-NetworkResponse Server::GetActorState(RakNetGUID guid, NetworkID id, unsigned char index, bool alerted)
+NetworkResponse Server::GetActorState(RakNetGUID guid, NetworkID id, unsigned char index, unsigned char moving, bool alerted, bool sneaking)
 {
     NetworkResponse response;
     Actor* actor = (Actor*) GameFactory::GetObject(ALL_ACTORS, id);
-    bool result;
+    bool result, _alerted, _sneaking;
 
     try
     {
-        result = ((bool) actor->SetActorRunningAnimation(index) | (bool) actor->SetActorAlerted(alerted));
+        _alerted = (bool) actor->SetActorAlerted(alerted);
+        _sneaking = (bool) actor->SetActorSneaking(sneaking);
+        result = ((bool) actor->SetActorRunningAnimation(index) | (bool) actor->SetActorMovingXY(moving) | _alerted | _sneaking);
     }
     catch (...)
     {
@@ -271,14 +268,18 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, NetworkID id, unsigned ch
 
     if (result)
     {
-        Script::StateChange(id, index, alerted);
-
-        pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_STATE, actor->GetNetworkID(), index, alerted);
+        pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_STATE, actor->GetNetworkID(), index, moving, alerted, sneaking);
         response = Network::CompleteResponse(Network::CreateResponse(packet,
                                              (unsigned char) HIGH_PRIORITY,
                                              (unsigned char) RELIABLE_ORDERED,
                                              CHANNEL_GAME,
                                              Client::GetNetworkList(guid)));
+
+        if (_alerted)
+            Script::Alert(id, alerted);
+
+        if (_sneaking)
+            Script::Sneak(id, sneaking);
     }
 
     GameFactory::LeaveReference(actor);

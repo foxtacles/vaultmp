@@ -577,17 +577,19 @@ private:
 #pragma pack(push, 1)
     struct _pObjectPos
     {
-        unsigned char axis;
-        double value;
+        double X;
+        double Y;
+        double Z;
     };
 #pragma pack(pop)
 
     _pObjectPos _data;
 
-    pObjectPos(NetworkID id, unsigned char axis, double value) : pObjectUpdateDefault(ID_OBJECT_UPDATE, ID_UPDATE_POS, id)
+    pObjectPos(NetworkID id, double X, double Y, double Z) : pObjectUpdateDefault(ID_OBJECT_UPDATE, ID_UPDATE_POS, id)
     {
-        _data.axis = axis;
-        _data.value = value;
+        _data.X = X;
+        _data.Y = Y;
+        _data.Z = Z;
         construct(&_data, sizeof(_data));
     }
     pObjectPos(unsigned char* stream, unsigned int len) : pObjectUpdateDefault(stream, len)
@@ -693,16 +695,20 @@ private:
     struct _pActorState
     {
         unsigned char index;
+        unsigned char moving;
         bool alerted;
+        bool sneaking;
     };
 #pragma pack(pop)
 
     _pActorState _data;
 
-    pActorState(NetworkID id, unsigned char index, bool alerted) : pObjectUpdateDefault(ID_ACTOR_UPDATE, ID_UPDATE_STATE, id)
+    pActorState(NetworkID id, unsigned char index, unsigned char moving, bool alerted, bool sneaking) : pObjectUpdateDefault(ID_ACTOR_UPDATE, ID_UPDATE_STATE, id)
     {
         _data.index = index;
+        _data.moving = moving;
         _data.alerted = alerted;
+        _data.sneaking = sneaking;
         construct(&_data, sizeof(_data));
     }
     pActorState(unsigned char* stream, unsigned int len) : pObjectUpdateDefault(stream, len)
@@ -793,9 +799,10 @@ public:
         case ID_UPDATE_POS:
         {
             NetworkID id = va_arg(args, NetworkID);
-            unsigned char axis = (unsigned char) va_arg(args, unsigned int);
-            double value = va_arg(args, double);
-            packet = new pObjectPos(id, axis, value);
+            double X = va_arg(args, double);
+            double Y = va_arg(args, double);
+            double Z = va_arg(args, double);
+            packet = new pObjectPos(id, X, Y, Z);
             break;
         }
 
@@ -830,8 +837,10 @@ public:
         {
             NetworkID id = va_arg(args, NetworkID);
             unsigned char index = (unsigned char) va_arg(args, unsigned int);
+            unsigned char moving = (unsigned char) va_arg(args, unsigned int);
             bool alerted = (bool) va_arg(args, unsigned int);
-            packet = new pActorState(id, index, alerted);
+            bool sneaking = (bool) va_arg(args, unsigned int);
+            packet = new pActorState(id, index, moving, alerted, sneaking);
             break;
         }
 
@@ -995,11 +1004,13 @@ public:
                     {
                         pObjectPos* update = dynamic_cast<pObjectPos*>(data);
                         NetworkID* id = va_arg(args, NetworkID*);
-                        unsigned char* axis = va_arg(args, unsigned char*);
-                        double* value = va_arg(args, double*);
+                        double* X = va_arg(args, double*);
+                        double* Y = va_arg(args, double*);
+                        double* Z = va_arg(args, double*);
                         *id = update->id;
-                        *axis = update->_data.axis;
-                        *value = update->_data.value;
+                        *X = update->_data.X;
+                        *Y = update->_data.Y;
+                        *Z = update->_data.Z;
                         break;
                     }
                     case ID_UPDATE_ANGLE:
@@ -1040,10 +1051,14 @@ public:
                         pActorState* update = dynamic_cast<pActorState*>(data);
                         NetworkID* id = va_arg(args, NetworkID*);
                         unsigned char* index = va_arg(args, unsigned char*);
+                        unsigned char* moving = va_arg(args, unsigned char*);
                         bool* alerted = va_arg(args, bool*);
+                        bool* sneaking = va_arg(args, bool*);
                         *id = update->id;
                         *index = update->_data.index;
+                        *moving = update->_data.moving;
                         *alerted = update->_data.alerted;
+                        *sneaking = update->_data.sneaking;
                         break;
                     }
                 }

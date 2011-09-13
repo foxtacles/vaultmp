@@ -36,6 +36,7 @@ private:
 public:
 
     Value();
+    Value(T t);
     virtual ~Value();
 
     /**

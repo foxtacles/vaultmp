@@ -35,7 +35,8 @@ Script::Script(char* path)
         GetScriptCallback(fOnActorDeath, "OnActorDeath", OnActorDeath);
         GetScriptCallback(fOnActorValueChange, "OnActorValueChange", OnActorValueChange);
         GetScriptCallback(fOnActorBaseValueChange, "OnActorBaseValueChange", OnActorBaseValueChange);
-        GetScriptCallback(fOnActorStateChange, "OnActorStateChange", OnActorStateChange);
+        GetScriptCallback(fOnActorAlert, "OnActorAlert", OnActorAlert);
+        GetScriptCallback(fOnActorSneak, "OnActorSneak", OnActorSneak);
 
         SetScriptFunction("timestamp", &Utils::timestamp);
         SetScriptFunction("CreateTimer", &Script::CreateTimer);
@@ -244,16 +245,29 @@ void Script::ValueChange(NetworkID id, unsigned char index, bool base, double va
     }
 }
 
-void Script::StateChange(NetworkID id, unsigned char index, bool alerted)
+void Script::Alert(NetworkID id, bool alerted)
 {
     vector<Script*>::iterator it;
 
     for (it = scripts.begin(); it != scripts.end(); ++it)
     {
         if ((*it)->cpp_script)
-            (*it)->OnActorStateChange(id, index, alerted);
+            (*it)->OnActorAlert(id, alerted);
         else
-            PAWN::Call((AMX*) (*it)->handle, "OnActorStateChange", "iif", 0, (unsigned int) alerted, (unsigned int) index, id);
+            PAWN::Call((AMX*) (*it)->handle, "OnActorAlert", "if", 0, (unsigned int) alerted, id);
+    }
+}
+
+void Script::Sneak(NetworkID id, bool sneaking)
+{
+    vector<Script*>::iterator it;
+
+    for (it = scripts.begin(); it != scripts.end(); ++it)
+    {
+        if ((*it)->cpp_script)
+            (*it)->OnActorSneak(id, sneaking);
+        else
+            PAWN::Call((AMX*) (*it)->handle, "OnActorSneak", "if", 0, (unsigned int) sneaking, id);
     }
 }
 
@@ -267,9 +281,9 @@ void Script::GetPos(NetworkID id, double& X, double& Y, double& Z)
 
     if (object)
     {
-        X = object->GetPos(Axis_X);
-        Y = object->GetPos(Axis_Y);
-        Z = object->GetPos(Axis_Z);
+        X = object->GetGamePos(Axis_X);
+        Y = object->GetGamePos(Axis_Y);
+        Z = object->GetGamePos(Axis_Z);
         GameFactory::LeaveReference(object);
     }
 }

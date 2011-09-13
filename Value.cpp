@@ -11,6 +11,12 @@ Value<T>::Value()
     value = 0;
 }
 
+template <typename T>
+Value<T>::Value(T t) : value(t)
+{
+
+}
+
 template <>
 Value<string>::Value()
 {

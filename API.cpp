@@ -3,10 +3,11 @@
 using namespace std;
 using namespace Values;
 
-FunctionList API::functions;
-ValueList API::values;
-ValueList API::axis;
-ValueList API::anims;
+FunctionMap API::functions;
+ValueMap API::values;
+ValueMap API::axis;
+ValueMap API::anims;
+ValueList API::controls;
 CommandQueue API::queue;
 API::CommandCache API::cache;
 unsigned char API::game = 0x00;
@@ -99,7 +100,7 @@ struct API::op_Arg5
     double unk9;
     double unk10;
     double unk11;
-    unsigned int unk12;
+    unsigned int unk12; // param1 for Oblivion
     unsigned int* param1; // pointer to reference argument, offset 0x44
     unsigned int** param2; // pointer to pointer to reference argument
 
@@ -124,6 +125,9 @@ struct API::op_Arg5
         unk2 = 0x00000000;
         unk3 = 0x0000400A;
         unk4 = 0x00000000;
+        unk12 = 0x00000000;
+        param1 = 0x00000000;
+        param2 = 0x00000000;
 
         numargs = 0x00000000;
 
@@ -137,8 +141,11 @@ struct API::op_Arg5
         param2_reference = 0x00000000;
         param2_unk4 = 0x00000000;
 
-        param1 = (unsigned int*) ((unsigned) &param1_reftext - (unsigned) &unk1);
-        param2 = (unsigned int**) ((unsigned) &param2_real - (unsigned) &unk1);
+        unsigned int** param1 = (game & FALLOUT_GAMES ? &this->param1 : (unsigned int**) &unk12);
+        unsigned int*** param2 = (game & FALLOUT_GAMES ? &this->param2 : (unsigned int***) &this->param1);
+
+        *param1 = (unsigned int*) ((unsigned) &param1_reftext - (unsigned) &unk1);
+        *param2 = (unsigned int**) ((unsigned) &param2_real - (unsigned) &unk1);
         param2_real = (unsigned int*) ((unsigned) &param2_reftext - (unsigned) &unk1);
         param2_null = 0x00000000;
     }
@@ -440,6 +447,65 @@ void API::Initialize(unsigned char game)
     DefineValueString("Darkness", Oblivion::ActorVal_Darkness, OBLIVION);
     DefineValueString("ResistWaterDamage", Oblivion::ActorVal_ResistWaterDamage, OBLIVION);
 
+    DefineControl(Fallout::ControlCode_Forward, FALLOUT_GAMES);
+    DefineControl(Fallout::ControlCode_Backward, FALLOUT_GAMES);
+    DefineControl(Fallout::ControlCode_Left, FALLOUT_GAMES);
+    DefineControl(Fallout::ControlCode_Right, FALLOUT_GAMES);
+    DefineControl(Fallout::ControlCode_Attack, FALLOUT_GAMES);
+    DefineControl(Fallout::ControlCode_Activate, FALLOUT_GAMES);
+    DefineControl(Fallout::ControlCode_Block, FALLOUT_GAMES);
+    DefineControl(Fallout::ControlCode_ReadyItem, FALLOUT_GAMES);
+    DefineControl(Fallout::ControlCode_Crouch, FALLOUT_GAMES);
+    DefineControl(Fallout::ControlCode_Run, FALLOUT_GAMES);
+    DefineControl(Fallout::ControlCode_AlwaysRun, FALLOUT_GAMES);
+    DefineControl(Fallout::ControlCode_AutoMove, FALLOUT_GAMES);
+    DefineControl(Fallout::ControlCode_Jump, FALLOUT_GAMES);
+    DefineControl(Fallout::ControlCode_TogglePOV, FALLOUT_GAMES);
+    DefineControl(Fallout::ControlCode_MenuMode, FALLOUT_GAMES);
+    DefineControl(Fallout::ControlCode_Rest, FALLOUT_GAMES);
+    DefineControl(Fallout::ControlCode_VATS, FALLOUT_GAMES);
+    DefineControl(Fallout::ControlCode_Hotkey1, FALLOUT_GAMES);
+    DefineControl(Fallout::ControlCode_Hotkey2, FALLOUT_GAMES);
+    DefineControl(Fallout::ControlCode_Hotkey3, FALLOUT_GAMES);
+    DefineControl(Fallout::ControlCode_Hotkey4, FALLOUT_GAMES);
+    DefineControl(Fallout::ControlCode_Hotkey5, FALLOUT_GAMES);
+    DefineControl(Fallout::ControlCode_Hotkey6, FALLOUT_GAMES);
+    DefineControl(Fallout::ControlCode_Hotkey7, FALLOUT_GAMES);
+    DefineControl(Fallout::ControlCode_Hotkey8, FALLOUT_GAMES);
+    DefineControl(Fallout::ControlCode_Quicksave, FALLOUT_GAMES);
+    DefineControl(Fallout::ControlCode_Quickload, FALLOUT_GAMES);
+    DefineControl(Fallout::ControlCode_Grab, FALLOUT_GAMES);
+
+    DefineControl(Oblivion::ControlCode_Forward, OBLIVION);
+    DefineControl(Oblivion::ControlCode_Backward, OBLIVION);
+    DefineControl(Oblivion::ControlCode_SlideLeft, OBLIVION);
+    DefineControl(Oblivion::ControlCode_SlideRight, OBLIVION);
+    DefineControl(Oblivion::ControlCode_Use, OBLIVION);
+    DefineControl(Oblivion::ControlCode_Activate, OBLIVION);
+    DefineControl(Oblivion::ControlCode_Block, OBLIVION);
+    DefineControl(Oblivion::ControlCode_Cast, OBLIVION);
+    DefineControl(Oblivion::ControlCode_ReadyItem, OBLIVION);
+    DefineControl(Oblivion::ControlCode_Crouch, OBLIVION);
+    DefineControl(Oblivion::ControlCode_Run, OBLIVION);
+    DefineControl(Oblivion::ControlCode_AlwaysRun, OBLIVION);
+    DefineControl(Oblivion::ControlCode_AutoMove, OBLIVION);
+    DefineControl(Oblivion::ControlCode_Jump, OBLIVION);
+    DefineControl(Oblivion::ControlCode_TogglePOV, OBLIVION);
+    DefineControl(Oblivion::ControlCode_MenuMode, OBLIVION);
+    DefineControl(Oblivion::ControlCode_Rest, OBLIVION);
+    DefineControl(Oblivion::ControlCode_QuickMenu, OBLIVION);
+    DefineControl(Oblivion::ControlCode_Hotkey1, OBLIVION);
+    DefineControl(Oblivion::ControlCode_Hotkey2, OBLIVION);
+    DefineControl(Oblivion::ControlCode_Hotkey3, OBLIVION);
+    DefineControl(Oblivion::ControlCode_Hotkey4, OBLIVION);
+    DefineControl(Oblivion::ControlCode_Hotkey5, OBLIVION);
+    DefineControl(Oblivion::ControlCode_Hotkey6, OBLIVION);
+    DefineControl(Oblivion::ControlCode_Hotkey7, OBLIVION);
+    DefineControl(Oblivion::ControlCode_Hotkey8, OBLIVION);
+    DefineControl(Oblivion::ControlCode_Quicksave, OBLIVION);
+    DefineControl(Oblivion::ControlCode_Quickload, OBLIVION);
+    DefineControl(Oblivion::ControlCode_Grab, OBLIVION);
+
     DefineFunction("GetPos", "ra", Func_GetPos, ALL_GAMES);
     DefineFunction("SetPos", "rad", Func_SetPos, ALL_GAMES);
     DefineFunction("GetAngle", "ra", Func_GetAngle, ALL_GAMES);
@@ -456,7 +522,8 @@ void API::Initialize(unsigned char game)
     DefineFunction("SetAlert", "ri", Func_SetAlert, ALL_GAMES);
     DefineFunction("RemoveAllItems", "rCI", Func_RemoveAllItems, ALL_GAMES);
     DefineFunction("GetCombatTarget", "r", Func_GetCombatTarget, ALL_GAMES);
-    DefineFunction("GetActorState", "r", Func_GetActorState, ALL_GAMES); // vaultfunction
+    DefineFunction("SetForceSneak", "ri", Func_SetForceSneak, ALL_GAMES);
+    DefineFunction("GetActorState", "rI", Func_GetActorState, ALL_GAMES); // vaultfunction
 
     DefineFunction("Enable", "rI", Func_Enable, FALLOUT_GAMES);
     DefineFunction("Disable", "rI", Func_Disable, FALLOUT_GAMES);
@@ -469,17 +536,19 @@ void API::Initialize(unsigned char game)
     DefineFunction("MarkForDelete", "r", Fallout::Func_MarkForDelete, FALLOUT_GAMES);
     DefineFunction("IsAnimPlaying", "rG", Fallout::Func_IsAnimPlaying, FALLOUT_GAMES);
 
-    DefineFunction("Load", "s", Fallout3::Func_Load, FALLOUT3);
+    DefineFunction("Load", "$s", Fallout3::Func_Load, FALLOUT3);
     DefineFunction("SetName", "rsB", Fallout3::Func_SetName, FALLOUT3);
     DefineFunction("GetParentCell", "r", Fallout3::Func_GetParentCell, FALLOUT3);
     DefineFunction("GetFirstRef", "III", Fallout3::Func_GetFirstRef, FALLOUT3);
     DefineFunction("GetNextRef", "", Fallout3::Func_GetNextRef, FALLOUT3);
+    DefineFunction("GetControl", "x", Fallout3::Func_GetControl, FALLOUT3);
 
-    DefineFunction("Load", "s", FalloutNV::Func_Load, NEWVEGAS);
+    DefineFunction("Load", "$s", FalloutNV::Func_Load, NEWVEGAS);
     DefineFunction("SetName", "rsB", FalloutNV::Func_SetName, NEWVEGAS);
     DefineFunction("GetParentCell", "r", FalloutNV::Func_GetParentCell, NEWVEGAS);
     DefineFunction("GetFirstRef", "III", FalloutNV::Func_GetFirstRef, NEWVEGAS);
     DefineFunction("GetNextRef", "", FalloutNV::Func_GetNextRef, NEWVEGAS);
+    DefineFunction("GetControl", "x", FalloutNV::Func_GetControl, NEWVEGAS);
 
     DefineFunction("Enable", "r", Func_Enable, OBLIVION);
     DefineFunction("Disable", "r", Func_Disable, OBLIVION);
@@ -488,12 +557,13 @@ void API::Initialize(unsigned char game)
     DefineFunction("AddItem", "rki", Func_AddItem, OBLIVION);
     DefineFunction("RemoveItem", "rki", Func_RemoveItem, OBLIVION);
     DefineFunction("Kill", "rQ", Func_Kill, OBLIVION);
-    DefineFunction("Load", "s", Oblivion::Func_Load, OBLIVION);
+    DefineFunction("Load", "$s", Oblivion::Func_Load, OBLIVION);
     DefineFunction("SetName", "rsB", Oblivion::Func_SetName, OBLIVION);
     DefineFunction("GetParentCell", "r", Oblivion::Func_GetParentCell, OBLIVION);
     DefineFunction("IsAnimGroupPlaying", "rg", Oblivion::Func_IsAnimGroupPlaying, OBLIVION);
     DefineFunction("GetFirstRef", "III", Oblivion::Func_GetFirstRef, OBLIVION);
     DefineFunction("GetNextRef", "", Oblivion::Func_GetNextRef, OBLIVION);
+    DefineFunction("GetControl", "x", Oblivion::Func_GetControl, OBLIVION);
 }
 
 void API::Terminate()
@@ -501,6 +571,7 @@ void API::Terminate()
     values.clear();
     axis.clear();
     anims.clear();
+    controls.clear();
     functions.clear();
     queue.clear();
     cache.clear();
@@ -524,6 +595,7 @@ pair<vector<double>, API::op_default*> API::ParseCommand(char* cmd, char* def, u
         throw VaultException("Invalid call to API::ParseCommand, one or more arguments are NULL");
 
     op_default* result = new op_default();
+    string _cmd(cmd);
     unsigned int crc32 = Utils::crc32buf(cmd, strlen(cmd));
     CommandCache::iterator it = cache.find(crc32);
 
@@ -547,9 +619,6 @@ pair<vector<double>, API::op_default*> API::ParseCommand(char* cmd, char* def, u
         char* tokenizer = NULL;
         unsigned int reference = 0x00;
         result_data.first.push_back(opcode);
-
-        if (opcode == 0x014E || opcode == 0x014F || opcode == 0x0148) // Some commands, such as LoadGame, require the calling thread to be the games main thread, delegate flag allows this
-            result->delegate = true;
 
         if (*def == 'r')
         {
@@ -601,6 +670,15 @@ pair<vector<double>, API::op_default*> API::ParseCommand(char* cmd, char* def, u
             char type = *def;
             def++;
 
+            switch (type)
+            {
+            case '$': // delegate
+                result->delegate = true;
+                continue;
+            default:
+                break;
+            }
+
             if (isupper(type))
                 *((unsigned int*) (arg1_pos + 4)) = 0x00000001;
 
@@ -609,6 +687,7 @@ pair<vector<double>, API::op_default*> API::ParseCommand(char* cmd, char* def, u
             case 's': // String
                 *((unsigned int*) arg1_pos) = 0x00000000;
                 break;
+            case 'x': // Control code
             case 'i': // Integer
                 *((unsigned int*) arg1_pos) = 0x00000001;
                 break;
@@ -658,7 +737,7 @@ pair<vector<double>, API::op_default*> API::ParseCommand(char* cmd, char* def, u
                 if (isupper(type))
                     continue;
                 else
-                    throw VaultException("API::ParseCommand failed parsing command (end of input reached, not all required arguments could be found)");
+                    throw VaultException("API::ParseCommand failed parsing command %s (end of input reached, not all required arguments could be found)", _cmd.c_str());
             }
 
             /* Types:
@@ -674,6 +753,7 @@ pair<vector<double>, API::op_default*> API::ParseCommand(char* cmd, char* def, u
                 c (Container, 2 byte, 0x72, stream) - 0x0000001A
                 q (Actor, 2 byte, 0x72, stream) - 0x00000006
                 s (String, 2 byte, length, followed by chars) - 0x00000000
+                x (Control code, 4 byte, 0x6E) - 0x00000001
                 r (Reference)
 
                 upper case means optional
@@ -681,9 +761,14 @@ pair<vector<double>, API::op_default*> API::ParseCommand(char* cmd, char* def, u
 
             switch (tolower(type))
             {
+            case 'x': // Control code
             case 'i': // Integer
             {
                 int integer = atoi(tokenizer);
+
+                if (tolower(type) == 'x' && !IsControl((unsigned char) integer))
+                    throw VaultException("API::ParseCommand could not find a control code for input %s", tokenizer);
+
                 *((unsigned char*) arg2_pos) = 0x6E;
                 *((int*) (arg2_pos + 1)) = integer;
                 result_data.first.push_back(integer);
@@ -838,6 +923,12 @@ void API::DefineAnimString(string name, unsigned char anim, unsigned char games)
         anims.insert(pair<string, unsigned char>(name, anim));
 }
 
+void API::DefineControl(unsigned char control, unsigned char games)
+{
+    if (games & game)
+        controls.insert(control);
+}
+
 unsigned long API::ExtractReference(char* reference)
 {
     unsigned long reference_value;
@@ -849,7 +940,7 @@ unsigned long API::ExtractReference(char* reference)
 
 unsigned char API::RetrieveValue(char* value)
 {
-    ValueList::iterator it;
+    ValueMap::iterator it;
     it = values.find(string(value));
 
     if (it != values.end())
@@ -860,7 +951,7 @@ unsigned char API::RetrieveValue(char* value)
 
 unsigned char API::RetrieveAxis(char* axis)
 {
-    ValueList::iterator it;
+    ValueMap::iterator it;
     it = API::axis.find(string(axis));
 
     if (it != API::axis.end())
@@ -871,7 +962,7 @@ unsigned char API::RetrieveAxis(char* axis)
 
 unsigned char API::RetrieveAnim(char* anim)
 {
-    ValueList::iterator it;
+    ValueMap::iterator it;
     it = anims.find(string(anim));
 
     if (it != anims.end())
@@ -880,9 +971,14 @@ unsigned char API::RetrieveAnim(char* anim)
     return 0xFF;
 }
 
+bool API::IsControl(unsigned char control)
+{
+    return (controls.find(control) != controls.end() ? true : false);
+}
+
 string API::RetrieveValue_Reverse(unsigned char value)
 {
-    ValueList::iterator it;
+    ValueMap::iterator it;
     for (it = values.begin(); it != values.end() && it->second != value; ++it);
     if (it != values.end())
         return it->first;
@@ -892,7 +988,7 @@ string API::RetrieveValue_Reverse(unsigned char value)
 
 string API::RetrieveAxis_Reverse(unsigned char axis)
 {
-    ValueList::iterator it;
+    ValueMap::iterator it;
     for (it = API::axis.begin(); it != API::axis.end() && it->second != axis; ++it);
     if (it != API::axis.end())
         return it->first;
@@ -902,7 +998,7 @@ string API::RetrieveAxis_Reverse(unsigned char axis)
 
 string API::RetrieveAnim_Reverse(unsigned char anim)
 {
-    ValueList::iterator it;
+    ValueMap::iterator it;
     for (it = anims.begin(); it != anims.end() && it->second != anim; ++it);
     if (it != anims.end())
         return it->first;
@@ -913,7 +1009,7 @@ string API::RetrieveAnim_Reverse(unsigned char anim)
 vector<unsigned char> API::RetrieveAllValues()
 {
     vector<unsigned char> result;
-    ValueList::iterator it;
+    ValueMap::iterator it;
 
     for (it = values.begin(); it != values.end(); ++it)
         result.push_back(it->second);
@@ -924,7 +1020,7 @@ vector<unsigned char> API::RetrieveAllValues()
 vector<unsigned char> API::RetrieveAllAxis()
 {
     vector<unsigned char> result;
-    ValueList::iterator it;
+    ValueMap::iterator it;
 
     for (it = axis.begin(); it != axis.end(); ++it)
         result.push_back(it->second);
@@ -935,7 +1031,7 @@ vector<unsigned char> API::RetrieveAllAxis()
 vector<unsigned char> API::RetrieveAllAnims()
 {
     vector<unsigned char> result;
-    ValueList::iterator it;
+    ValueMap::iterator it;
 
     for (it = anims.begin(); it != anims.end(); ++it)
         result.push_back(it->second);
@@ -943,10 +1039,21 @@ vector<unsigned char> API::RetrieveAllAnims()
     return result;
 }
 
+vector<unsigned char> API::RetrieveAllControls()
+{
+    vector<unsigned char> result;
+    ValueList::iterator it;
+
+    for (it = controls.begin(); it != controls.end(); ++it)
+        result.push_back(*it);
+
+    return result;
+}
+
 vector<string> API::RetrieveAllValues_Reverse()
 {
     vector<string> result;
-    ValueList::iterator it;
+    ValueMap::iterator it;
 
     for (it = values.begin(); it != values.end(); ++it)
         result.push_back(it->first);
@@ -957,7 +1064,7 @@ vector<string> API::RetrieveAllValues_Reverse()
 vector<string> API::RetrieveAllAxis_Reverse()
 {
     vector<string> result;
-    ValueList::iterator it;
+    ValueMap::iterator it;
 
     for (it = axis.begin(); it != axis.end(); ++it)
         result.push_back(it->first);
@@ -968,7 +1075,7 @@ vector<string> API::RetrieveAllAxis_Reverse()
 vector<string> API::RetrieveAllAnims_Reverse()
 {
     vector<string> result;
-    ValueList::iterator it;
+    ValueMap::iterator it;
 
     for (it = anims.begin(); it != anims.end(); ++it)
         result.push_back(it->first);
@@ -978,7 +1085,7 @@ vector<string> API::RetrieveAllAnims_Reverse()
 
 pair<string, unsigned short> API::RetrieveFunction(string name)
 {
-    FunctionList::iterator it;
+    FunctionMap::iterator it;
     it = functions.find(name);
 
     if (it != functions.end())

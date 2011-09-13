@@ -19,7 +19,8 @@ forward OnCellChange(object, cell);
 forward OnActorDeath(actor);
 forward OnActorValueChange(actor, index, Float:value);
 forward OnActorBaseValueChange(actor, index, Float:value);
-forward OnActorStateChange(actor, index, Bool:alerted);
+forward OnActorAlert(actor, Bool:alerted);
+forward OnActorSneak(actor, Bool:sneaking);
 
 // Functions
 

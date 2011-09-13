@@ -30,6 +30,8 @@ private:
     static unsigned char game;
     static RakNetGUID server;
 
+    static void AdjustZAngle(double& Z, double diff);
+
 public:
 
     /**
@@ -71,7 +73,11 @@ public:
     /**
      * \brief Sets the position of an Object
      */
-    static void SetPos(NetworkID id, unsigned char axis, double value);
+    static void SetPos(NetworkID id, double X, double Y, double Z);
+    /**
+     * \brief Resets the position of an Object
+     */
+    static void SetPos(unsigned int refID);
     /**
      * \brief Sets the angle of an Object
      */
@@ -89,9 +95,9 @@ public:
      */
     static void SetActorValue(NetworkID id, bool base, unsigned char index, double value);
     /**
-     * \brief Sets the running animation and alerted state of an Actor
+     * \brief Sets the running animation, alerted and sneaking state of an Actor
      */
-    static void SetActorState(NetworkID id, unsigned char index, bool alerted);
+    static void SetActorState(NetworkID id, unsigned char index, unsigned char moving, bool alerted, bool sneaking);
     /**
      * \brief Moves an Object to another Object
      */
@@ -123,10 +129,13 @@ public:
      */
     static void GetActorValue(unsigned int refID, bool base, unsigned char index, double value);
     /**
-     * \brief Handles GetActorState  command result
+     * \brief Handles GetActorState command result
      */
-    static void GetActorState(unsigned int refID, unsigned char index, bool alerted);
-
+    static void GetActorState(unsigned int refID, unsigned char index, unsigned char moving, bool alerted, bool sneaking);
+    /**
+     * \brief Handles GetControl command result
+     */
+    static void GetControl(unsigned int refID, unsigned char control, unsigned char key);
 
     /**
      * \brief Handles a failed PlaceAtMe command

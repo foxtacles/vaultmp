@@ -144,10 +144,9 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
                 case ID_UPDATE_POS:
                 {
                     NetworkID id;
-                    unsigned char axis;
-                    double value;
-                    PacketFactory::Access(packet, &id, &axis, &value);
-                    response = Server::GetPos(data->guid, id, axis, value);
+                    double X, Y, Z;
+                    PacketFactory::Access(packet, &id, &X, &Y, &Z);
+                    response = Server::GetPos(data->guid, id, X, Y, Z);
                     break;
                 }
                 case ID_UPDATE_ANGLE:
@@ -181,9 +180,11 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
                 {
                     NetworkID id;
                     unsigned char index;
+                    unsigned char moving;
                     bool alerted;
-                    PacketFactory::Access(packet, &id, &index, &alerted);
-                    response = Server::GetActorState(data->guid, id, index, alerted);
+                    bool sneaking;
+                    PacketFactory::Access(packet, &id, &index, &moving, &alerted, &sneaking);
+                    response = Server::GetActorState(data->guid, id, index, moving, alerted, sneaking);
                     break;
                 }
                 default:

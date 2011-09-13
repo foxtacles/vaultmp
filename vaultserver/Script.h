@@ -43,7 +43,8 @@ typedef void (*fOnCellChange)(NetworkID, unsigned int);
 typedef void (*fOnActorDeath)(NetworkID);
 typedef void (*fOnActorValueChange)(NetworkID, unsigned char, double);
 typedef void (*fOnActorBaseValueChange)(NetworkID, unsigned char, double);
-typedef void (*fOnActorStateChange)(NetworkID, unsigned char, bool);
+typedef void (*fOnActorAlert)(NetworkID, bool);
+typedef void (*fOnActorSneak)(NetworkID, bool);
 
 /**
  * \brief Maintains communication with a script
@@ -72,7 +73,8 @@ private:
     fOnActorDeath OnActorDeath;
     fOnActorValueChange OnActorValueChange;
     fOnActorBaseValueChange OnActorBaseValueChange;
-    fOnActorStateChange OnActorStateChange;
+    fOnActorAlert OnActorAlert;
+    fOnActorSneak OnActorSneak;
 
     Script(const Script&);
     Script& operator=(const Script&);
@@ -119,13 +121,18 @@ public:
      */
     static void CellChange(NetworkID id, unsigned int cell);
     /**
-     * \brief OnValueChange callback
+     * \brief OnActorValueChange / OnActorBaseValueChange callback
      */
     static void ValueChange(NetworkID id, unsigned char index, bool base, double value);
     /**
-     * \brief OnStateChange callback
+     * \brief OnActorAlert callback
      */
-    static void StateChange(NetworkID id, unsigned char index, bool alerted);
+    static void Alert(NetworkID id, bool alerted);
+    /**
+     * \brief OnActorSneak callback
+     */
+    static void Sneak(NetworkID id, bool sneaking);
+
 
     /**
      * \brief GetPos function

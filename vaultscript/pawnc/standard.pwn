@@ -77,7 +77,12 @@ public OnActorBaseValueChange(actor, index, Float:value)
 
 }
 
-public OnActorStateChange(actor, index, Bool:alerted)
+public OnActorAlert(actor, Bool:alerted)
 {
+	printf("alert: %d", alerted);
+}
 
+public OnActorSneak(actor, Bool:sneaking)
+{
+	printf("sneaking: %d", sneaking);
 }

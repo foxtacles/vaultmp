@@ -59,7 +59,7 @@ void Timer::GlobalTick()
 
         if (timer->markdelete)
         {
-            it = timers.erase(it);
+            timers.erase(it++);
             delete timer;
             continue;
         }
@@ -90,7 +90,7 @@ void Timer::TerminateAll()
 {
     map<NetworkID, Timer*>::iterator it;
 
-    for (it = timers.begin(); it != timers.end(); it = timers.erase(it))
+    for (it = timers.begin(); it != timers.end(); timers.erase(it++))
     {
         Timer* timer = it->second;
         delete timer;

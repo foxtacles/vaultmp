@@ -85,6 +85,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
         throw VaultException("You are banned from the server");
     case ID_CONNECTION_LOST:
         throw VaultException("Lost connection to the server");
+    case ID_UNCONNECTED_PONG:
+        break;
 
     default:
     {
@@ -168,10 +170,9 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
                 case ID_UPDATE_POS:
                 {
                     NetworkID id;
-                    unsigned char axis;
-                    double value;
-                    PacketFactory::Access(packet, &id, &axis, &value);
-                    Game::SetPos(id, axis, value);
+                    double X, Y, Z;
+                    PacketFactory::Access(packet, &id, &X, &Y, &Z);
+                    Game::SetPos(id, X, Y, Z);
                     break;
                 }
                 case ID_UPDATE_ANGLE:
@@ -205,9 +206,11 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
                 {
                     NetworkID id;
                     unsigned char index;
+                    unsigned char moving;
                     bool alerted;
-                    PacketFactory::Access(packet, &id, &index, &alerted);
-                    Game::SetActorState(id, index, alerted);
+                    bool sneaking;
+                    PacketFactory::Access(packet, &id, &index, &moving, &alerted, &sneaking);
+                    Game::SetActorState(id, index, moving, alerted, sneaking);
                     break;
                 }
                 default:
