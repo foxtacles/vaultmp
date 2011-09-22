@@ -19,7 +19,6 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-O2" />
 			<Add option="-masm=intel" />
 			<Add option="-DBUILDING_DLL=1" />
 		</Compiler>
@@ -28,9 +27,6 @@
 			<Add option="-static-libgcc" />
 			<Add option="-static-libstdc++" />
 			<Add option="-limagehlp" />
-			<Add option="-enable-auto-import" />
-			<Add option="--no-export-all-symbols" />
-			<Add option="--add-stdcall-alias" />
 		</Linker>
 		<Unit filename="..\Pipe.cpp" />
 		<Unit filename="..\Pipe.h" />

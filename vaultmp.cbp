@@ -39,6 +39,7 @@
 		<Compiler>
 			<Add option="-std=gnu++0x" />
 			<Add option="-fpermissive" />
+			<Add directory="D:\Programmierung\vaultmp\" />
 		</Compiler>
 		<Linker>
 			<Add option="ufmod.obj" />
@@ -49,7 +50,6 @@
 			<Add option="-lwinmm" />
 			<Add option="-lws2_32" />
 			<Add option="-limagehlp" />
-			<Add option="-enable-auto-import" />
 		</Linker>
 		<Unit filename="API.cpp" />
 		<Unit filename="API.h" />

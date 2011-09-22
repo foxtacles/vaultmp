@@ -535,6 +535,7 @@ void API::Initialize(unsigned char game)
     DefineFunction("IsMoving", "r", Fallout::Func_IsMoving, FALLOUT_GAMES);
     DefineFunction("MarkForDelete", "r", Fallout::Func_MarkForDelete, FALLOUT_GAMES);
     DefineFunction("IsAnimPlaying", "rG", Fallout::Func_IsAnimPlaying, FALLOUT_GAMES);
+    DefineFunction("ScanContainer", "r", Fallout::Func_ScanContainer, FALLOUT_GAMES);
 
     DefineFunction("Load", "$s", Fallout3::Func_Load, FALLOUT3);
     DefineFunction("SetName", "rsB", Fallout3::Func_SetName, FALLOUT3);
@@ -587,9 +588,9 @@ void API::SetDebugHandler(Debug* debug)
 }
 #endif
 
-pair<vector<double>, API::op_default*> API::ParseCommand(char* cmd, char* def, unsigned short opcode)
+pair<vector<boost::any>, API::op_default*> API::ParseCommand(char* cmd, char* def, unsigned short opcode)
 {
-    pair<vector<double>, op_default*> result_data = pair<vector<double>, op_default*>(vector<double>(), NULL);
+    pair<vector<boost::any>, op_default*> result_data = pair<vector<boost::any>, op_default*>(vector<boost::any>(), NULL);
 
     if (*cmd == 0x00 || *def == 0x00 || opcode == 0x00)
         throw VaultException("Invalid call to API::ParseCommand, one or more arguments are NULL");
@@ -850,7 +851,7 @@ pair<vector<double>, API::op_default*> API::ParseCommand(char* cmd, char* def, u
 
                 *((unsigned short*) arg2_pos) = length;
                 memcpy(arg2_pos + 2, tokenizer, length);
-                result_data.first.push_back(length);
+                result_data.first.push_back(string(tokenizer));
                 arg2_pos += 2;
                 arg2_pos += length;
                 break;
@@ -894,7 +895,7 @@ pair<vector<double>, API::op_default*> API::ParseCommand(char* cmd, char* def, u
         throw;
     }
 
-    cache.insert(pair<unsigned int, pair<vector<double>, op_default> >(crc32, pair<vector<double>, op_default>(result_data.first, *result_data.second)));
+    cache.insert(pair<unsigned int, pair<vector<boost::any>, op_default> >(crc32, pair<vector<boost::any>, op_default>(result_data.first, *result_data.second)));
 
     return result_data;
 }
@@ -1111,7 +1112,7 @@ bool API::AnnounceFunction(string name)
     return false;
 }
 
-char* API::BuildCommandStream(char* command, vector<double> info, unsigned int size, signed int key)
+char* API::BuildCommandStream(char* command, vector<boost::any> info, unsigned int size, signed int key)
 {
     char* data = new char[PIPE_LENGTH];
     ZeroMemory(data, sizeof(data));
@@ -1127,7 +1128,7 @@ char* API::BuildCommandStream(char* command, vector<double> info, unsigned int s
 
     unsigned int crc = Utils::crc32buf(data + 5, PIPE_LENGTH - 5);
     *((unsigned int*) ((unsigned) data + 1)) = crc;
-    queue.push_front(pair<pair<unsigned int, vector<double> >, signed int>(pair<unsigned int, vector<double> >(crc, info), key));
+    queue.push_front(pair<pair<unsigned int, vector<boost::any> >, signed int>(pair<unsigned int, vector<boost::any> >(crc, info), key));
 
     return data;
 }
@@ -1157,7 +1158,7 @@ CommandParsed API::Translate(multimap<string, string>& cmd, signed int key)
         strcpy(def, func.first.c_str());
         strcpy(content, it->second.c_str());
 
-        pair<vector<double>, op_default*> command = ParseCommand(content, def, func.second);
+        pair<vector<boost::any>, op_default*> command = ParseCommand(content, def, func.second);
 
         char* data = BuildCommandStream((char*) command.second, command.first, sizeof(op_default), key);
 
@@ -1173,8 +1174,8 @@ vector<CommandResult> API::Translate(char* stream)
 {
     vector<CommandResult> result;
 
-    if (stream[0] != PIPE_OP_RETURN)
-        return result;
+    if (stream[0] != PIPE_OP_RETURN && stream[0] != PIPE_OP_RETURN_BIG)
+        throw VaultException("API could not recognize stream identifier %02X", stream[0]);
 
     unsigned int crc = *((unsigned int*) ((unsigned) stream + 1));
 
@@ -1182,13 +1183,14 @@ vector<CommandResult> API::Translate(char* stream)
     {
 #ifdef VAULTMP_DEBUG
         if (debug != NULL)
-            debug->PrintFormat("API did not retrieve the result of command with CRC32 %08X (opcode %04hX)", true, queue.back().first.first, (unsigned short) queue.back().first.second.at(0));
+            debug->PrintFormat("API did not retrieve the result of command with CRC32 %08X (opcode %04hX)", true, queue.back().first.first, boost::any_cast<unsigned short>(queue.back().first.second.at(0)));
 #endif
 
+        double zero = 0x0000000000000000;
         result.push_back(CommandResult());
         result.back().first.first.first = queue.back().second;
         result.back().first.first.second = queue.back().first.second;
-        result.back().first.second = 0x00000000;
+        result.back().first.second = zero;
         result.back().second = true;
 
         queue.pop_back();
@@ -1206,7 +1208,17 @@ vector<CommandResult> API::Translate(char* stream)
     result.push_back(CommandResult());
     result.back().first.first.first = queue.back().second;
     result.back().first.first.second = queue.back().first.second;
-    result.back().first.second = *((double*) ((unsigned) stream + 5));
+
+    if (stream[0] == PIPE_OP_RETURN_BIG)
+    {
+        unsigned int length = *((unsigned int*) ((unsigned) stream + 5));
+        unsigned char* data = (unsigned char*) ((unsigned) stream + 9);
+        vector<unsigned char> _result(data, data + length);
+        result.back().first.second = _result;
+    }
+    else
+        result.back().first.second = *((double*) ((unsigned) stream + 5));
+
     result.back().second = false;
 
     queue.pop_back();

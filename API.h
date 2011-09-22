@@ -12,6 +12,8 @@
 #include <queue>
 #include <vector>
 
+#include "boost/any.hpp"
+
 #include "vaultmp.h"
 #include "Utils.h"
 #include "VaultException.h"
@@ -25,11 +27,11 @@ using namespace std;
 using namespace Data;
 
 typedef vector<char*> CommandParsed;
-typedef pair<pair<pair<signed int, vector<double> >, double>, bool> CommandResult;
+typedef pair<pair<pair<signed int, vector<boost::any> >, boost::any>, bool> CommandResult;
 typedef map<string, pair<string, unsigned short> > FunctionMap;
 typedef map<string, unsigned char> ValueMap;
 typedef set<unsigned char> ValueList;
-typedef deque<pair<pair<unsigned int, vector<double> >, signed int> > CommandQueue;
+typedef deque<pair<pair<unsigned int, vector<boost::any> >, signed int> > CommandQueue;
 
 /*
  * \brief This namespace contains hexadecimal representations of the games data
@@ -122,6 +124,8 @@ namespace Values {
             Func_IsMoving                   = 0x1019,
             Func_MarkForDelete              = 0x11BB,
             Func_IsAnimPlaying              = 0x1128,
+
+            Func_ScanContainer              = 0x0002 | VAULTFUNCTION,
         };
 
         /**
@@ -519,7 +523,7 @@ private:
     struct op_Arg7;
     struct op_Arg8;
     struct op_default;
-    typedef map<unsigned int, pair<vector<double>, API::op_default> > CommandCache;
+    typedef map<unsigned int, pair<vector<boost::any>, API::op_default> > CommandCache;
 
     static FunctionMap functions;
     static ValueMap values;
@@ -538,9 +542,9 @@ private:
 
     static unsigned long ExtractReference(char* reference);
     static pair<string, unsigned short> RetrieveFunction(string name);
-    static char* BuildCommandStream(char* stream, vector<double> info, unsigned int size, signed int key = 0);
+    static char* BuildCommandStream(char* stream, vector<boost::any> info, unsigned int size, signed int key = 0);
 
-    static pair<vector<double>, op_default*> ParseCommand(char* cmd, char* def, unsigned short opcode);
+    static pair<vector<boost::any>, op_default*> ParseCommand(char* cmd, char* def, unsigned short opcode);
 
 #ifdef VAULTMP_DEBUG
     static Debug* debug;

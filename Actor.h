@@ -60,13 +60,6 @@ protected:
 public:
 
     /**
-     * \brief Retrieves all Actors
-     *
-     * The function obtains a lock for every Actor. You have to manually release the obtained STL vector of Actor pointers via GameFactory::LeaveReference
-     */
-    static vector<Actor*> GetActorList();
-
-    /**
      * \brief Retrieves a reference to a constant Parameter containing every available actor value string representation
      *
      * Used to pass actor values to the Interface

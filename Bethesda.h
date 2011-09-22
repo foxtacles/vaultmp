@@ -6,6 +6,8 @@
 #include <vector>
 #include <string>
 
+#include "boost/any.hpp"
+
 #include "RakNet/RakPeerInterface.h"
 #include "RakNet/MessageIdentifiers.h"
 #include "RakNet/BitStream.h"
@@ -57,7 +59,7 @@ private:
     /**
      * \brief Handles translated command results from the game
      */
-    static void CommandHandler(signed int key, vector<double>& info, double result, bool error);
+    static void CommandHandler(signed int key, vector<boost::any>& info, boost::any& result, bool error);
 
 #ifdef VAULTMP_DEBUG
     static Debug* debug;

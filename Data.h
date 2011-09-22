@@ -6,6 +6,8 @@
 #include <vector>
 #include <map>
 
+#include "boost/any.hpp"
+
 #include "RakNet/RakPeerInterface.h"
 #include "RakNet/RakString.h"
 #include "RakNet/MessageIdentifiers.h"
@@ -25,7 +27,7 @@ using namespace RakNet;
 namespace Data
 {
 
-typedef void (*ResultHandler)(signed int, vector<double>&, double, bool);
+typedef void (*ResultHandler)(signed int, vector<boost::any>&, boost::any&, bool);
 typedef bool (*RetrieveBooleanFlag)();
 typedef pair<vector<string>, VaultFunctor*> Parameter;
 typedef list<Parameter> ParamList;

@@ -35,9 +35,13 @@ private:
 public:
 
     /**
-     * \brief Initializes the game
+     * \brief Initializes the Game class
      */
     static void Initialize();
+    /**
+     * \brief Starts the game command schedule
+     */
+    static void Startup();
     /**
      * \brief Loads a savegame
      */
@@ -49,59 +53,55 @@ public:
     /**
      * \brief Removes a Player from the game
      */
-    static void PlayerLeft(NetworkID id);
+    static void PlayerLeft(FactoryObject& reference);
     /**
      * \brief Enables / Disables an Object
      */
-    static void Enable(NetworkID id, bool enable);
+    static void Enable(FactoryObject reference, bool enable);
     /**
      * \brief Deletes an Object
      */
-    static void Delete(NetworkID id);
+    static void Delete(FactoryObject& reference);
     /**
      * \brief Sets the name of an Object
      */
-    static void SetName(NetworkID id, string name);
-    /**
-     * \brief Resets the name of an Object
-     */
-    static void SetName(unsigned int refID);
+    static void SetName(FactoryObject reference, string name);
     /**
      * \brief Puts an Actor into restrained / unrestrained state
      */
-    static void SetRestrained(NetworkID id, bool restrained, unsigned int delay = 2);
+    static void SetRestrained(FactoryObject reference, bool restrained, unsigned int delay = 2);
     /**
      * \brief Sets the position of an Object
      */
-    static void SetPos(NetworkID id, double X, double Y, double Z);
+    static void SetPos(FactoryObject reference, double X, double Y, double Z);
     /**
      * \brief Resets the position of an Object
      */
-    static void SetPos(unsigned int refID);
+    static void SetPos(FactoryObject reference);
     /**
      * \brief Sets the angle of an Object
      */
-    static void SetAngle(NetworkID id, unsigned char axis, double value);
+    static void SetAngle(FactoryObject reference, unsigned char axis, double value);
     /**
      * \brief Resets the angle of an Object
      */
-    static void SetAngle(unsigned int refID, unsigned char axis);
+    static void SetAngle(FactoryObject reference, unsigned char axis);
     /**
      * \brief Sets the network cell of an Object
      */
-    static void SetNetworkCell(NetworkID id, unsigned int cell);
+    static void SetNetworkCell(vector<FactoryObject> reference, unsigned int cell);
     /**
      * \brief Sets an actor value of an Actor
      */
-    static void SetActorValue(NetworkID id, bool base, unsigned char index, double value);
+    static void SetActorValue(FactoryObject reference, bool base, unsigned char index, double value);
     /**
      * \brief Sets the running animation, alerted and sneaking state of an Actor
      */
-    static void SetActorState(NetworkID id, unsigned char index, unsigned char moving, bool alerted, bool sneaking);
+    static void SetActorState(FactoryObject reference, unsigned char index, unsigned char moving, bool alerted, bool sneaking);
     /**
      * \brief Moves an Object to another Object
      */
-    static void MoveTo(NetworkID id, NetworkID id2, bool cell = false);
+    static void MoveTo(vector<FactoryObject> reference, bool cell = false);
 
 
     /**
@@ -115,27 +115,31 @@ public:
     /**
      * \brief Handles GetPos command result
      */
-    static void GetPos(unsigned int refID, unsigned char axis, double value);
+    static void GetPos(FactoryObject reference, unsigned char axis, double value);
     /**
      * \brief Handles GetAngle command result
      */
-    static void GetAngle(unsigned int refID, unsigned char axis, double value);
+    static void GetAngle(FactoryObject reference, unsigned char axis, double value);
     /**
      * \brief Handles GetParentCell command result
      */
-    static void GetParentCell(unsigned int refID, unsigned int cell);
+    static void GetParentCell(vector<FactoryObject> reference, unsigned int cell);
     /**
      * \brief Handles GetActorValue command result
      */
-    static void GetActorValue(unsigned int refID, bool base, unsigned char index, double value);
+    static void GetActorValue(FactoryObject reference, bool base, unsigned char index, double value);
     /**
      * \brief Handles GetActorState command result
      */
-    static void GetActorState(unsigned int refID, unsigned char index, unsigned char moving, bool alerted, bool sneaking);
+    static void GetActorState(FactoryObject reference, unsigned char index, unsigned char moving, bool alerted, bool sneaking);
     /**
      * \brief Handles GetControl command result
      */
-    static void GetControl(unsigned int refID, unsigned char control, unsigned char key);
+    static void GetControl(FactoryObject reference, unsigned char control, unsigned char key);
+    /**
+     * \brief Handles ScanContainer command result
+     */
+    static void ScanContainer(FactoryObject reference, vector<unsigned char>& data);
 
     /**
      * \brief Handles a failed PlaceAtMe command

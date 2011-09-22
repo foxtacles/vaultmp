@@ -111,27 +111,27 @@ public:
     /**
      * \brief OnPlayerDisconnect callback
      */
-    static void Disconnect(NetworkID id, unsigned char reason);
+    static void Disconnect(FactoryObject reference, unsigned char reason);
     /**
      * \brief OnPlayerRequestGame callback
      */
-    static unsigned int RequestGame(NetworkID id);
+    static unsigned int RequestGame(FactoryObject reference);
     /**
      * \brief OnCellChange callback
      */
-    static void CellChange(NetworkID id, unsigned int cell);
+    static void CellChange(FactoryObject reference, unsigned int cell);
     /**
      * \brief OnActorValueChange / OnActorBaseValueChange callback
      */
-    static void ValueChange(NetworkID id, unsigned char index, bool base, double value);
+    static void ValueChange(FactoryObject reference, unsigned char index, bool base, double value);
     /**
      * \brief OnActorAlert callback
      */
-    static void Alert(NetworkID id, bool alerted);
+    static void Alert(FactoryObject reference, bool alerted);
     /**
      * \brief OnActorSneak callback
      */
-    static void Sneak(NetworkID id, bool sneaking);
+    static void Sneak(FactoryObject reference, bool sneaking);
 
 
     /**

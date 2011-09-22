@@ -11,39 +11,44 @@ typedef void (*CallCommand)(void*, void*, void*, void*, void*, void*, void*, voi
 typedef unsigned int (*LookupForm)(unsigned int);
 typedef unsigned int (*LookupFunc)(unsigned int);
 
-HANDLE hProc;
-PipeServer pipeServer;
-PipeClient pipeClient;
-LookupForm FormLookup;
-LookupFunc FuncLookup;
+static HANDLE hProc;
+static PipeServer pipeServer;
+static PipeClient pipeClient;
+static LookupForm FormLookup;
+static LookupFunc FuncLookup;
 
-void PatchGame(HINSTANCE& silverlock);
-void BethesdaDelegator();
-vector<void*> delegated;
+static void PatchGame(HINSTANCE& silverlock);
+static void BethesdaDelegator();
+static vector<void*> delegated;
 
-bool delegate = false;
-bool DLLerror = false;
-unsigned char game = 0x00;
-void* _reference = 0x00;
+static bool delegate = false;
+static bool DLLerror = false;
+static unsigned char game = 0x00;
 
-const unsigned FalloutNVpatch_PlayGroup = 0x00494D5C;
-const unsigned FalloutNVpatch_delegator_src = 0x0086B3E3;
-const unsigned FalloutNVpatch_delegator_dest = 0x0086E649;
-const unsigned FalloutNVpatch_delegatorCall_src = 0x0086E64A;
-const unsigned FalloutNVpatch_delegatorCall_dest = (unsigned) &BethesdaDelegator;
+unsigned int _reference = 0x00000000;
+unsigned int _call = 0x00000000;
+unsigned int _result = 0x00000000;
+unsigned int _temp = 0x00000000;
+double _store = 0x0000000000000000;
 
-const unsigned Fallout3patch_PlayGroup = 0x0045F704;
-const unsigned Fallout3patch_delegator_src = 0x006EEC86;
-const unsigned Fallout3patch_delegator_dest = 0x006EDBD9;
-const unsigned Fallout3patch_delegatorCall_src = 0x006EDBDA;
-const unsigned Fallout3patch_delegatorCall_dest = (unsigned) &BethesdaDelegator;
+static const unsigned FalloutNVpatch_PlayGroup = 0x00494D5C;
+static const unsigned FalloutNVpatch_delegator_src = 0x0086B3E3;
+static const unsigned FalloutNVpatch_delegator_dest = 0x0086E649;
+static const unsigned FalloutNVpatch_delegatorCall_src = 0x0086E64A;
+static const unsigned FalloutNVpatch_delegatorCall_dest = (unsigned) &BethesdaDelegator;
 
-const unsigned OblivionPatch_delegator_src = 0x0040F270;
-const unsigned OblivionPatch_delegator_dest = 0x0040F753;
-const unsigned OblivionPatch_delegator_ret_src = 0x0040F75A;
-const unsigned OblivionPatch_delegator_ret_dest = 0x0040D800;
-const unsigned OblivionPatch_delegatorCall_src = 0x0040F754;
-const unsigned OblivionPatch_delegatorCall_dest = (unsigned) &BethesdaDelegator;
+static const unsigned Fallout3patch_PlayGroup = 0x0045F704;
+static const unsigned Fallout3patch_delegator_src = 0x006EEC86;
+static const unsigned Fallout3patch_delegator_dest = 0x006EDBD9;
+static const unsigned Fallout3patch_delegatorCall_src = 0x006EDBDA;
+static const unsigned Fallout3patch_delegatorCall_dest = (unsigned) &BethesdaDelegator;
+
+static const unsigned OblivionPatch_delegator_src = 0x0040F270;
+static const unsigned OblivionPatch_delegator_dest = 0x0040F753;
+static const unsigned OblivionPatch_delegator_ret_src = 0x0040F75A;
+static const unsigned OblivionPatch_delegator_ret_dest = 0x0040D800;
+static const unsigned OblivionPatch_delegatorCall_src = 0x0040F754;
+static const unsigned OblivionPatch_delegatorCall_dest = (unsigned) &BethesdaDelegator;
 
 // Those snippets are from FOSE, thanks
 
@@ -105,15 +110,15 @@ void BethesdaDelegator()
     }
 }
 
-void vaultfunction(void* reference, void* result, void* args, unsigned short opcode)
+bool vaultfunction(void* reference, void* result, void* args, unsigned short opcode)
 {
     switch (opcode)
     {
-    case 0xE001: // GetActorState - returns the actors running animation, alerted / sneaking state
+    case 0xE001: // GetActorState - returns the actors animations, alerted / sneaking state
     {
         ZeroMemory(result, sizeof(double));
         typedef void* (*animdat)(void*);
-        _reference = reference;
+        _reference = (unsigned int) reference;
         animdat Call;
 
         if (game & FALLOUT_GAMES)
@@ -153,7 +158,7 @@ void vaultfunction(void* reference, void* result, void* args, unsigned short opc
             unsigned char* _args = (unsigned char*) args;
             if (*_args == 0x6E) // Forward, Backward, Left, Right unsigned char scan codes stored in Integer, optional
             {
-                _args++;
+                ++_args;
                 unsigned char forward = *_args;
                 unsigned char backward = *(_args + 1);
                 unsigned char left = *(_args + 2);
@@ -179,9 +184,156 @@ void vaultfunction(void* reference, void* result, void* args, unsigned short opc
         }
         break;
     }
+    case 0xE002: // ScanContainer - Returns a containers content including baseID, amount, condition, equipped state
+    {
+        ZeroMemory(result, sizeof(double));
+
+        if (!(game & FALLOUT_GAMES))
+            break;
+
+        _call = ((game & FALLOUT3) ? ITEM_COUNT_FALLOUT3 : ITEM_COUNT_NEWVEGAS);
+        _reference = (unsigned int) reference;
+
+        asm (
+            ".intel_syntax noprefix\n"
+            "PUSH 1\n"
+            "PUSH 0\n"
+            "MOV ECX,__reference\n"
+            "MOV EAX,__call\n"
+            "CALL EAX\n"
+            "MOV __result,EAX\n"
+        );
+
+        unsigned int count = _result;
+
+        if (count > 0)
+        {
+            unsigned int size = count * 20;
+            vector<unsigned char> container;
+            container.reserve(size);
+
+            for (_temp = 0; _temp < count; ++_temp)
+            {
+                _call = ((game & FALLOUT3) ? ITEM_GET_FALLOUT3 : ITEM_GET_NEWVEGAS);
+
+                asm (
+                    ".intel_syntax noprefix\n"
+                    "PUSH 0\n"
+                    "PUSH __temp\n"
+                    "MOV ECX,__reference\n"
+                    "MOV EAX,__call\n"
+                    "CALL EAX\n"
+                    "MOV __result,EAX\n"
+                );
+
+                unsigned int item = _result;
+
+                if (item)
+                {
+                    unsigned int amount = *((unsigned int*) (((unsigned) item) + 0x04));
+                    unsigned int baseForm = *((unsigned int*) (((unsigned) item) + 0x08));
+
+                    if (baseForm)
+                    {
+                        unsigned char type = *((unsigned char*) (((unsigned) baseForm) + 0x04));
+                        unsigned int baseID = *((unsigned int*) (((unsigned) baseForm) + 0x0C));
+
+                        container.insert(container.end(), (unsigned char*) &baseID, ((unsigned char*) &baseID) + 4);
+                        container.insert(container.end(), (unsigned char*) &amount, ((unsigned char*) &amount) + 4);
+
+                        _call = ((game & FALLOUT3) ? ITEM_ISEQUIPPED_FALLOUT3 : ITEM_ISEQUIPPED_NEWVEGAS);
+                        _result = item;
+
+                        asm (
+                            ".intel_syntax noprefix\n"
+                            "PUSH 0\n"
+                            "MOV ECX,__result\n"
+                            "MOV EAX,__call\n"
+                            "CALL EAX\n"
+                            "MOV __result,EAX\n"
+                        );
+
+                        unsigned int equipped = (bool) (_result & 0x00000001);
+                        container.insert(container.end(), (unsigned char*) &equipped, ((unsigned char*) &equipped) + 4);
+
+                        _store = 0x0000000000000000;
+
+                        if (type == 0x18 || type == 0x28)
+                        {
+                            _call = ((game & FALLOUT3) ? ITEM_CONDITION_FALLOUT3 : ITEM_CONDITION_NEWVEGAS);
+                            _result = item;
+
+                            asm (
+                                ".intel_syntax noprefix\n"
+                                "PUSH 1\n"
+                                "MOV ECX,__result\n"
+                                "MOV EAX,__call\n"
+                                "CALL EAX\n"
+                                "FSTP QWORD PTR __store\n"
+                            );
+                        }
+
+                        container.insert(container.end(), (unsigned char*) &_store, ((unsigned char*) &_store) + 8);
+
+                        // Kind of cleanup here? not sure what this is
+
+                        if (game & FALLOUT3)
+                        {
+                            _call = ITEM_UNK1_FALLOUT3;
+                            _result = item;
+
+                            asm (
+                                ".intel_syntax noprefix\n"
+                                "MOV ECX,__result\n"
+                                "MOV EAX,__call\n"
+                                "CALL EAX\n"
+                                "PUSH __result\n"
+                            );
+
+                            _call = ITEM_UNK2_FALLOUT3;
+                            _result = ITEM_UNK3_FALLOUT3;
+
+                            asm (
+                                ".intel_syntax noprefix\n"
+                                "MOV ECX,__result\n"
+                                "MOV EAX,__call\n"
+                                "CALL EAX\n"
+                            );
+                        }
+                        else
+                        {
+                            _call = ITEM_UNK1_NEWVEGAS;
+                            _result = item;
+
+                            asm (
+                                ".intel_syntax noprefix\n"
+                                "PUSH 1\n"
+                                "MOV ECX,__result\n"
+                                "MOV EAX,__call\n"
+                                "CALL EAX\n"
+                            );
+                        }
+                    }
+                    else
+                        return true;
+                }
+            }
+
+            size = container.size();
+            unsigned char* data = new unsigned char[size];
+            memcpy(data, &container[0], size);
+
+            memcpy(result, &size, 4);
+            memcpy((void*) ((unsigned) result + 4), &data, 4);
+        }
+
+        return true;
+    }
     default:
         break;
     }
+
+    return false;
 }
 
 void ExecuteCommand(vector<void*>& args, unsigned int crc, bool delegate_flag)
@@ -254,10 +406,10 @@ void ExecuteCommand(vector<void*>& args, unsigned int crc, bool delegate_flag)
         *((unsigned int*) (((unsigned) **param2) + 0x08)) = param2_ref;
     }
 
+    bool bigresult = false;
+
     if ((opcode & VAULTFUNCTION) == VAULTFUNCTION)
-    {
-        vaultfunction((void*) reference, args.at(6), _args, opcode);
-    }
+        bigresult = vaultfunction((void*) reference, args.at(6), _args, opcode);
     else
     {
         unsigned int function = FuncLookup((unsigned int) opcode);
@@ -296,10 +448,27 @@ void ExecuteCommand(vector<void*>& args, unsigned int crc, bool delegate_flag)
 
     char result[PIPE_LENGTH];
     ZeroMemory(result, sizeof(result));
-    result[0] = PIPE_OP_RETURN;
+
     *((unsigned int*) ((unsigned) result + 1)) = crc;
 
-    memcpy(result + 5, args.at(6), sizeof(double));
+    if (!bigresult)
+    {
+        result[0] = PIPE_OP_RETURN;
+        memcpy(result + 5, args.at(6), sizeof(double));
+    }
+    else
+    {
+        result[0] = PIPE_OP_RETURN_BIG;
+        void* data = args.at(6);
+        unsigned int size = *((unsigned int*) data);
+        unsigned char* _data = (unsigned char*) *((unsigned int*) (((unsigned) data) + 4));
+        if (size && size <= (PIPE_LENGTH - 9))
+        {
+            memcpy(result + 5, &size, 4);
+            memcpy(result + 9, _data, size);
+        }
+        delete[] _data;
+    }
 
     pipeClient.Send(result);
 }

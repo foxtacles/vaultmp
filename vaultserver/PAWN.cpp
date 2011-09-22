@@ -17,7 +17,6 @@
 
 AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 {
-
     {"timestamp", PAWN::vaultmp_timestamp},
     {"CreateTimer", PAWN::vaultmp_CreateTimer},
     {"KillTimer", PAWN::vaultmp_KillTimer},
@@ -49,7 +48,6 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
     {"GetPlayerCell", PAWN::vaultmp_GetPlayerCell},*/
 
     {0, 0}
-
 };
 
 int PAWN::RegisterVaultmpFunctions(AMX* amx)

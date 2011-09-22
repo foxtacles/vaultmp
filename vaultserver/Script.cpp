@@ -180,9 +180,10 @@ bool Script::Authenticate(string name, string pwd)
     return result;
 }
 
-unsigned int Script::RequestGame(NetworkID id)
+unsigned int Script::RequestGame(FactoryObject reference)
 {
     vector<Script*>::iterator it;
+    NetworkID id = (*reference)->GetNetworkID();
     unsigned int result;
 
     for (it = scripts.begin(); it != scripts.end(); ++it)
@@ -196,9 +197,10 @@ unsigned int Script::RequestGame(NetworkID id)
     return result;
 }
 
-void Script::Disconnect(NetworkID id, unsigned char reason)
+void Script::Disconnect(FactoryObject reference, unsigned char reason)
 {
     vector<Script*>::iterator it;
+    NetworkID id = (*reference)->GetNetworkID();
 
     for (it = scripts.begin(); it != scripts.end(); ++it)
     {
@@ -209,9 +211,10 @@ void Script::Disconnect(NetworkID id, unsigned char reason)
     }
 }
 
-void Script::CellChange(NetworkID id, unsigned int cell)
+void Script::CellChange(FactoryObject reference, unsigned int cell)
 {
     vector<Script*>::iterator it;
+    NetworkID id = (*reference)->GetNetworkID();
 
     for (it = scripts.begin(); it != scripts.end(); ++it)
     {
@@ -222,9 +225,10 @@ void Script::CellChange(NetworkID id, unsigned int cell)
     }
 }
 
-void Script::ValueChange(NetworkID id, unsigned char index, bool base, double value)
+void Script::ValueChange(FactoryObject reference, unsigned char index, bool base, double value)
 {
     vector<Script*>::iterator it;
+    NetworkID id = (*reference)->GetNetworkID();
 
     for (it = scripts.begin(); it != scripts.end(); ++it)
     {
@@ -245,9 +249,10 @@ void Script::ValueChange(NetworkID id, unsigned char index, bool base, double va
     }
 }
 
-void Script::Alert(NetworkID id, bool alerted)
+void Script::Alert(FactoryObject reference, bool alerted)
 {
     vector<Script*>::iterator it;
+    NetworkID id = (*reference)->GetNetworkID();
 
     for (it = scripts.begin(); it != scripts.end(); ++it)
     {
@@ -258,9 +263,10 @@ void Script::Alert(NetworkID id, bool alerted)
     }
 }
 
-void Script::Sneak(NetworkID id, bool sneaking)
+void Script::Sneak(FactoryObject reference, bool sneaking)
 {
     vector<Script*>::iterator it;
+    NetworkID id = (*reference)->GetNetworkID();
 
     for (it = scripts.begin(); it != scripts.end(); ++it)
     {
@@ -277,14 +283,14 @@ void Script::GetPos(NetworkID id, double& X, double& Y, double& Z)
     Y = 0.00;
     Z = 0.00;
 
-    Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, id);
+    FactoryObject reference = GameFactory::GetObject(id);
+    Object* object = vaultcast<Object>(reference);
 
     if (object)
     {
         X = object->GetGamePos(Axis_X);
         Y = object->GetGamePos(Axis_Y);
         Z = object->GetGamePos(Axis_Z);
-        GameFactory::LeaveReference(object);
     }
 }
 
@@ -294,14 +300,14 @@ void Script::GetAngle(NetworkID id, double& X, double& Y, double& Z)
     Y = 0.00;
     Z = 0.00;
 
-    Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, id);
+    FactoryObject reference = GameFactory::GetObject(id);
+    Object* object = vaultcast<Object>(reference);
 
     if (object)
     {
         X = object->GetAngle(Axis_X);
         Y = object->GetAngle(Axis_Y);
         Z = object->GetAngle(Axis_Z);
-        GameFactory::LeaveReference(object);
     }
 }
 
@@ -309,13 +315,11 @@ unsigned int Script::GetCell(NetworkID id)
 {
     unsigned int value = 0;
 
-    Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, id);
+    FactoryObject reference = GameFactory::GetObject(id);
+    Object* object = vaultcast<Object>(reference);
 
     if (object)
-    {
         value = object->GetGameCell();
-        GameFactory::LeaveReference(object);
-    }
 
     return value;
 }
@@ -323,22 +327,12 @@ unsigned int Script::GetCell(NetworkID id)
 double Script::GetActorValue(NetworkID id, unsigned char index)
 {
     double value = 0.00;
-    Actor* actor = (Actor*) GameFactory::GetObject(ALL_ACTORS, id);
+
+    FactoryObject reference = GameFactory::GetObject(id);
+    Actor* actor = vaultcast<Actor>(reference);
 
     if (actor)
-    {
-        try
-        {
-            value = actor->GetActorValue(index);
-        }
-        catch (...)
-        {
-            GameFactory::LeaveReference(actor);
-            throw;
-        }
-
-        GameFactory::LeaveReference(actor);
-    }
+        value = actor->GetActorValue(index);
 
     return value;
 }
@@ -346,22 +340,12 @@ double Script::GetActorValue(NetworkID id, unsigned char index)
 double Script::GetActorBaseValue(NetworkID id, unsigned char index)
 {
     double value = 0.00;
-    Actor* actor = (Actor*) GameFactory::GetObject(ALL_ACTORS, id);
+
+    FactoryObject reference = GameFactory::GetObject(id);
+    Actor* actor = vaultcast<Actor>(reference);
 
     if (actor)
-    {
-        try
-        {
-            value = actor->GetActorBaseValue(index);
-        }
-        catch (...)
-        {
-            GameFactory::LeaveReference(actor);
-            throw;
-        }
-
-        GameFactory::LeaveReference(actor);
-    }
+        value = actor->GetActorBaseValue(index);
 
     return value;
 }

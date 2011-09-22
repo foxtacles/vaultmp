@@ -40,18 +40,6 @@ void Actor::SetDebugHandler(Debug* debug)
 }
 #endif
 
-vector<Actor*> Actor::GetActorList()
-{
-    vector<Actor*> actorlist;
-    vector<Reference*>::iterator it;
-    vector<Reference*> instances = GameFactory::GetObjectTypes(ID_ACTOR);
-
-    for (it = instances.begin(); it != instances.end(); ++it)
-        actorlist.push_back((Actor*) *it);
-
-    return actorlist;
-}
-
 const Parameter& Actor::Param_ActorValues()
 {
     if (param_ActorValues.first.empty())
@@ -237,12 +225,12 @@ bool Actor::IsJumping() const
 vector<string> ActorFunctor::operator()()
 {
     vector<string> result;
-    vector<Actor*>::iterator it;
-    vector<Actor*> actorlist = Actor::GetActorList();
+    vector<FactoryObject>::iterator it;
+    vector<FactoryObject> actorlist = GameFactory::GetObjectTypes(ALL_ACTORS);
 
     for (it = actorlist.begin(); it != actorlist.end(); GameFactory::LeaveReference(*it), ++it)
     {
-        Actor* actor = *it;
+        Actor* actor = vaultcast<Actor>(*it);
         unsigned int refID = actor->GetReference();
 
         if (refID != 0x00000000)

@@ -35,14 +35,14 @@ NetworkResponse NetworkClient::ProcessEvent(unsigned char id)
     }
     case ID_EVENT_GAME_STARTED:
     {
-        Player* self = (Player*) GameFactory::GetObject(ID_PLAYER, PLAYER_REFERENCE);
+        FactoryObject reference = GameFactory::GetObject(PLAYER_REFERENCE);
+        Player* self = vaultcast<Player>(reference);
         pDefault* packet = PacketFactory::CreatePacket(ID_GAME_CONFIRM, self->GetNetworkID(), self->GetName().c_str());
         response = Network::CompleteResponse(Network::CreateResponse(packet,
                                                                      (unsigned char) HIGH_PRIORITY,
                                                                      (unsigned char) RELIABLE_ORDERED,
                                                                      CHANNEL_GAME,
                                                                      Game::server));
-        GameFactory::LeaveReference(self);
         break;
     }
 
@@ -96,7 +96,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
         {
         case ID_GAME_MOD:
         {
-            char modfile[MAX_MOD_FILE + 1]; ZeroMemory(modfile, sizeof(modfile));
+            char modfile[MAX_MOD_FILE + 1];
+            ZeroMemory(modfile, sizeof(modfile));
             unsigned int crc;
             PacketFactory::Access(packet, modfile, &crc);
             Bethesda::modfiles.push_back(pair<string, unsigned int>(string(modfile), crc));
@@ -109,13 +110,16 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
             debug->PrintFormat("We were successfully authenticated (%s)", true, data->systemAddress.ToString());
             debug->Print("Initiating vaultmp game thread...", true);
 #endif
-            char savegame[MAX_SAVEGAME_FILE + 1]; ZeroMemory(savegame, sizeof(savegame));
+            char savegame[MAX_SAVEGAME_FILE + 1];
+            ZeroMemory(savegame, sizeof(savegame));
             unsigned int crc;
             PacketFactory::Access(packet, savegame, &crc);
             Bethesda::savegame = Savegame(string(savegame), crc);
 
-            Bethesda::Initialize(); Game::Initialize();
+            Bethesda::Initialize();
+            Game::Initialize();
             Game::LoadGame(Utils::FileOnly(Bethesda::savegame.first.c_str()));
+            Game::Startup();
 
             response = NetworkClient::ProcessEvent(ID_EVENT_GAME_STARTED);
             break;
@@ -158,7 +162,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
         {
             NetworkID id;
             PacketFactory::Access(packet, &id);
-            Game::PlayerLeft(id);
+            FactoryObject reference = GameFactory::GetObject(id);
+            Game::PlayerLeft(reference);
             break;
         }
 
@@ -172,7 +177,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
                     NetworkID id;
                     double X, Y, Z;
                     PacketFactory::Access(packet, &id, &X, &Y, &Z);
-                    Game::SetPos(id, X, Y, Z);
+                    FactoryObject reference = GameFactory::GetObject(id);
+                    Game::SetPos(reference, X, Y, Z);
                     break;
                 }
                 case ID_UPDATE_ANGLE:
@@ -181,7 +187,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
                     unsigned char axis;
                     double value;
                     PacketFactory::Access(packet, &id, &axis, &value);
-                    Game::SetAngle(id, axis, value);
+                    FactoryObject reference = GameFactory::GetObject(id);
+                    Game::SetAngle(reference, axis, value);
                     break;
                 }
                 case ID_UPDATE_CELL:
@@ -189,7 +196,9 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
                     NetworkID id;
                     unsigned int cell;
                     PacketFactory::Access(packet, &id, &cell);
-                    Game::SetNetworkCell(id, cell);
+                    FactoryObject reference = GameFactory::GetObject(id);
+                    FactoryObject self = GameFactory::GetObject(PLAYER_REFERENCE);
+                    Game::SetNetworkCell(vector<FactoryObject>{reference, self}, cell);
                     break;
                 }
                 case ID_UPDATE_VALUE:
@@ -199,7 +208,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
                     unsigned char index;
                     double value;
                     PacketFactory::Access(packet, &id, &base, &index, &value);
-                    Game::SetActorValue(id, base, index, value);
+                    FactoryObject reference = GameFactory::GetObject(id);
+                    Game::SetActorValue(reference, base, index, value);
                     break;
                 }
                 case ID_UPDATE_STATE:
@@ -210,7 +220,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
                     bool alerted;
                     bool sneaking;
                     PacketFactory::Access(packet, &id, &index, &moving, &alerted, &sneaking);
-                    Game::SetActorState(id, index, moving, alerted, sneaking);
+                    FactoryObject reference = GameFactory::GetObject(id);
+                    Game::SetActorState(reference, index, moving, alerted, sneaking);
                     break;
                 }
                 default:

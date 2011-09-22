@@ -45,23 +45,23 @@ public:
     /**
      * \brief Handles GetPos network packet
      */
-    static NetworkResponse GetPos(RakNetGUID guid, NetworkID id, double X, double Y, double Z);
+    static NetworkResponse GetPos(RakNetGUID guid, FactoryObject reference, double X, double Y, double Z);
     /**
      * \brief Handles GetAngle network packet
      */
-    static NetworkResponse GetAngle(RakNetGUID guid, NetworkID id, unsigned char axis, double value);
+    static NetworkResponse GetAngle(RakNetGUID guid, FactoryObject reference, unsigned char axis, double value);
     /**
      * \brief Handles cell network packet
      */
-    static NetworkResponse GetGameCell(RakNetGUID guid, NetworkID id, unsigned int cell);
+    static NetworkResponse GetGameCell(RakNetGUID guid, FactoryObject reference, unsigned int cell);
     /**
      * \brief Handles actor value network packet
      */
-    static NetworkResponse GetActorValue(RakNetGUID guid, NetworkID id, bool base, unsigned char index, double value);
+    static NetworkResponse GetActorValue(RakNetGUID guid, FactoryObject reference, bool base, unsigned char index, double value);
     /**
      * \brief Handles actor state network packet
      */
-    static NetworkResponse GetActorState(RakNetGUID guid, NetworkID id, unsigned char index, unsigned char moving, bool alerted, bool sneaking);
+    static NetworkResponse GetActorState(RakNetGUID guid, FactoryObject reference, unsigned char index, unsigned char moving, bool alerted, bool sneaking);
 
 #ifdef VAULTMP_DEBUG
     static void SetDebugHandler(Debug* debug);

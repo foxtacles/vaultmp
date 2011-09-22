@@ -56,23 +56,20 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id, string name)
     NetworkResponse response;
     Player* player;
     GameFactory::CreateKnownInstance(ID_PLAYER, id, 0x00000000);
-    vector<Reference*> players = GameFactory::GetObjectTypes(ID_PLAYER);
+    vector<FactoryObject> players = GameFactory::GetObjectTypes(ID_PLAYER);
+    vector<FactoryObject>::iterator it;
 
-    vector<Reference*>::iterator it;
-    for (it = players.begin(); it != players.end() && (*it)->GetNetworkID() != id; ++it);
-    player = (Player*) *it;
+    FactoryObject reference = GameFactory::GetObject(id);
+    player = vaultcast<Player>(reference);
     player->SetName(name);
 
     Client* client = new Client(guid, player->GetNetworkID());
     Dedicated::self->SetServerPlayers(pair<int, int>(Client::GetClientCount(), Dedicated::connections));
 
-    unsigned int result = Script::RequestGame(id);
+    unsigned int result = Script::RequestGame(reference);
 
     if (!result)
-    {
-        GameFactory::LeaveReference(players);
         throw VaultException("Script did not provide an actor base for a player");
-    }
 
     player->SetBase(result);
 
@@ -83,12 +80,12 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id, string name)
                        CHANNEL_GAME,
                        Client::GetNetworkList(client)));
 
-    for (it = players.begin(); it != players.end(); ++it)
+    for (it = players.begin(); it != players.end(); GameFactory::LeaveReference(*it), ++it)
     {
-        if (*it == player)
+        if (**it == player)
             continue;
 
-        Player* _player = (Player*) *it;
+        Player* _player = vaultcast<Player>(*it);
 
         packet = PacketFactory::CreatePacket(ID_PLAYER_NEW, _player->GetNetworkID(), _player->GetReference(), _player->GetBase(), _player->GetName().c_str());
         response.push_back(Network::CreateResponse(packet, (unsigned char) HIGH_PRIORITY, (unsigned char) RELIABLE_ORDERED, CHANNEL_GAME, guid));
@@ -112,11 +109,7 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id, string name)
             packet = PacketFactory::CreatePacket(ID_UPDATE_VALUE, _player->GetNetworkID(), false, *it2, _player->GetActorValue(*it2));
             response.push_back(Network::CreateResponse(packet, (unsigned char) HIGH_PRIORITY, (unsigned char) RELIABLE_ORDERED, CHANNEL_GAME, guid));
         }
-
-        GameFactory::LeaveReference(_player);
     }
-
-    GameFactory::LeaveReference(player);
 
     return response;
 }
@@ -128,11 +121,11 @@ NetworkResponse Server::Disconnect(RakNetGUID guid, unsigned char reason)
 
     if (client != NULL)
     {
-        Script::Disconnect(client->GetPlayer(), reason);
-        Player* player = (Player*) GameFactory::GetObject(ID_PLAYER, client->GetPlayer());
+        FactoryObject reference = GameFactory::GetObject(client->GetPlayer());
+        Script::Disconnect(reference, reason);
         delete client;
 
-        NetworkID id = GameFactory::DestroyInstance(player);
+        NetworkID id = GameFactory::DestroyInstance(reference);
 
         pDefault* packet = PacketFactory::CreatePacket(ID_PLAYER_LEFT, id);
         response = Network::CompleteResponse(Network::CreateResponse(packet,
@@ -147,15 +140,15 @@ NetworkResponse Server::Disconnect(RakNetGUID guid, unsigned char reason)
     return response;
 }
 
-NetworkResponse Server::GetPos(RakNetGUID guid, NetworkID id, double X, double Y, double Z)
+NetworkResponse Server::GetPos(RakNetGUID guid, FactoryObject reference, double X, double Y, double Z)
 {
     NetworkResponse response;
-    Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, id);
+    Object* object = vaultcast<Object>(reference);
     bool result = ((bool) object->SetGamePos(Axis_X, X) | (bool) object->SetGamePos(Axis_Y, Y) | (bool) object->SetGamePos(Axis_Z, Z));
 
     if (result)
     {
-        pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_POS, id, X, Y, Z);
+        pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_POS, object->GetNetworkID(), X, Y, Z);
         response = Network::CompleteResponse(Network::CreateResponse(packet,
                                              (unsigned char) HIGH_PRIORITY,
                                              (unsigned char) RELIABLE_SEQUENCED,
@@ -163,20 +156,18 @@ NetworkResponse Server::GetPos(RakNetGUID guid, NetworkID id, double X, double Y
                                              Client::GetNetworkList(guid)));
     }
 
-    GameFactory::LeaveReference(object);
-
     return response;
 }
 
-NetworkResponse Server::GetAngle(RakNetGUID guid, NetworkID id, unsigned char axis, double value)
+NetworkResponse Server::GetAngle(RakNetGUID guid, FactoryObject reference, unsigned char axis, double value)
 {
     NetworkResponse response;
-    Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, id);
+    Object* object = vaultcast<Object>(reference);
     bool result = (bool) object->SetAngle(axis, value);
 
     if (result && axis != Axis_X)
     {
-        pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_ANGLE, id, axis, value);
+        pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_ANGLE, object->GetNetworkID(), axis, value);
         response = Network::CompleteResponse(Network::CreateResponse(packet,
                                              (unsigned char) HIGH_PRIORITY,
                                              (unsigned char) RELIABLE_SEQUENCED,
@@ -184,52 +175,44 @@ NetworkResponse Server::GetAngle(RakNetGUID guid, NetworkID id, unsigned char ax
                                              Client::GetNetworkList(guid)));
     }
 
-    GameFactory::LeaveReference(object);
-
     return response;
 }
 
-NetworkResponse Server::GetGameCell(RakNetGUID guid, NetworkID id, unsigned int cell)
+NetworkResponse Server::GetGameCell(RakNetGUID guid, FactoryObject reference, unsigned int cell)
 {
     NetworkResponse response;
-    Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, id);
+    Object* object = vaultcast<Object>(reference);
     bool result = (bool) object->SetGameCell(cell);
 
     if (result)
     {
-        pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_CELL, id, cell);
+        pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_CELL, object->GetNetworkID(), cell);
         response = Network::CompleteResponse(Network::CreateResponse(packet,
                                              (unsigned char) HIGH_PRIORITY,
                                              (unsigned char) RELIABLE_SEQUENCED,
                                              CHANNEL_GAME,
                                              Client::GetNetworkList(guid)));
 
-        Script::CellChange(id, cell);
+        Script::CellChange(reference, cell);
     }
-
-    GameFactory::LeaveReference(object);
 
     return response;
 }
 
-NetworkResponse Server::GetActorValue(RakNetGUID guid, NetworkID id, bool base, unsigned char index, double value)
+NetworkResponse Server::GetActorValue(RakNetGUID guid, FactoryObject reference, bool base, unsigned char index, double value)
 {
+    Actor* actor = vaultcast<Actor>(reference);
+
+    if (!actor)
+        throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+
     NetworkResponse response;
-    Actor* actor = (Actor*) GameFactory::GetObject(ALL_ACTORS, id);
     bool result;
 
-    try
-    {
-        if (base)
-            result = (bool) actor->SetActorBaseValue(index, value);
-        else
-            result = (bool) actor->SetActorValue(index, value);
-    }
-    catch (...)
-    {
-        GameFactory::LeaveReference(actor);
-        throw;
-    }
+    if (base)
+        result = (bool) actor->SetActorBaseValue(index, value);
+    else
+        result = (bool) actor->SetActorValue(index, value);
 
     if (result)
     {
@@ -240,31 +223,26 @@ NetworkResponse Server::GetActorValue(RakNetGUID guid, NetworkID id, bool base, 
                                              CHANNEL_GAME,
                                              Client::GetNetworkList(guid)));
 
-        Script::ValueChange(id, index, base, value);
+        Script::ValueChange(reference, index, base, value);
     }
-
-    GameFactory::LeaveReference(actor);
 
     return response;
 }
 
-NetworkResponse Server::GetActorState(RakNetGUID guid, NetworkID id, unsigned char index, unsigned char moving, bool alerted, bool sneaking)
+NetworkResponse Server::GetActorState(RakNetGUID guid, FactoryObject reference, unsigned char index, unsigned char moving, bool alerted, bool sneaking)
 {
+    Actor* actor = vaultcast<Actor>(reference);
+
+    if (!actor)
+        throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+
     NetworkResponse response;
-    Actor* actor = (Actor*) GameFactory::GetObject(ALL_ACTORS, id);
     bool result, _alerted, _sneaking;
 
-    try
-    {
-        _alerted = (bool) actor->SetActorAlerted(alerted);
-        _sneaking = (bool) actor->SetActorSneaking(sneaking);
-        result = ((bool) actor->SetActorRunningAnimation(index) | (bool) actor->SetActorMovingXY(moving) | _alerted | _sneaking);
-    }
-    catch (...)
-    {
-        GameFactory::LeaveReference(actor);
-        throw;
-    }
+    _alerted = (bool) actor->SetActorAlerted(alerted);
+    _sneaking = (bool) actor->SetActorSneaking(sneaking);
+    result = ((bool) actor->SetActorRunningAnimation(index) | (bool) actor->SetActorMovingXY(moving) | _alerted | _sneaking);
+
 
     if (result)
     {
@@ -276,13 +254,11 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, NetworkID id, unsigned ch
                                              Client::GetNetworkList(guid)));
 
         if (_alerted)
-            Script::Alert(id, alerted);
+            Script::Alert(reference, alerted);
 
         if (_sneaking)
-            Script::Sneak(id, sneaking);
+            Script::Sneak(reference, sneaking);
     }
-
-    GameFactory::LeaveReference(actor);
 
     return response;
 }

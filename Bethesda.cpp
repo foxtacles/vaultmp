@@ -15,15 +15,23 @@ ModList Bethesda::modfiles;
 Debug* Bethesda::debug;
 #endif
 
-void Bethesda::CommandHandler(signed int key, vector<double>& info, double result, bool error)
+void Bethesda::CommandHandler(signed int key, vector<boost::any>& info, boost::any& result, bool error)
 {
     using namespace Values;
-    unsigned short opcode = (unsigned short) info.at(0);
+    unsigned short opcode = boost::any_cast<unsigned short>(info.at(0));
 
     if (!error)
     {
 #ifdef VAULTMP_DEBUG
-        //debug->PrintFormat("Executing command %04hX on reference %08X", true, opcode, info.size() > 1 ? (unsigned int) info.at(1) : 0);
+        /*unsigned int refID = 0x00000000;
+        if (info.size() > 1)
+        {
+            try
+            {
+                refID = boost::any_cast<unsigned int>(info.at(1));
+            } catch (...) {}
+        }
+        debug->PrintFormat("Executing command %04hX on reference %08X", true, opcode, refID);*/
 #endif
 
         Lockable* data = NULL;
@@ -31,34 +39,48 @@ void Bethesda::CommandHandler(signed int key, vector<double>& info, double resul
         if (key != 0x00000000)
             data = Lockable::BlindUnlock(key);
 
+        FactoryObject reference, self;
+
         switch (opcode)
         {
         case Functions::Func_PlaceAtMe:
-            Game::PlaceAtMe(data, *reinterpret_cast<unsigned int*>(&result));
+            Game::PlaceAtMe(data, *reinterpret_cast<unsigned int*>(boost::any_cast<double>(&result)));
             break;
         case Functions::Func_GetPos:
-            Game::GetPos((unsigned int) info.at(1), (unsigned char) info.at(2), result);
+            reference = GameFactory::GetObject(boost::any_cast<unsigned int>(info.at(1)));
+            Game::GetPos(reference, boost::any_cast<unsigned char>(info.at(2)), boost::any_cast<double>(result));
             break;
         case Functions::Func_SetPos:
             break;
         case Functions::Func_GetAngle:
-            Game::GetAngle((unsigned int) info.at(1), (unsigned char) info.at(2), result);
+            reference = GameFactory::GetObject(boost::any_cast<unsigned int>(info.at(1)));
+            Game::GetAngle(reference, boost::any_cast<unsigned char>(info.at(2)), boost::any_cast<double>(result));
             break;
         case Functions::Func_SetAngle:
             break;
         case Functions::Func_GetActorValue:
-            Game::GetActorValue((unsigned int) info.at(1), false, (unsigned char) info.at(2), result);
+            reference = GameFactory::GetObject(boost::any_cast<unsigned int>(info.at(1)));
+            Game::GetActorValue(reference, false, boost::any_cast<unsigned char>(info.at(2)), boost::any_cast<double>(result));
             break;
         case Functions::Func_ForceActorValue:
             break;
         case Functions::Func_GetBaseActorValue:
-            Game::GetActorValue((unsigned int) info.at(1), true, (unsigned char) info.at(2), result);
+            reference = GameFactory::GetObject(boost::any_cast<unsigned int>(info.at(1)));
+            Game::GetActorValue(reference, true, boost::any_cast<unsigned char>(info.at(2)), boost::any_cast<double>(result));
             break;
         case Functions::Func_SetActorValue:
             break;
         case Functions::Func_GetActorState:
-            Game::GetActorState((unsigned int) info.at(1), *reinterpret_cast<unsigned char*>(((unsigned) &result) + 4), *reinterpret_cast<unsigned char*>(((unsigned) &result) + 5), *reinterpret_cast<bool*>(&result), *reinterpret_cast<bool*>(((unsigned) &result) + 1));
+        {
+            reference = GameFactory::GetObject(boost::any_cast<unsigned int>(info.at(1)));
+            double* _result = boost::any_cast<double>(&result);
+            Game::GetActorState(reference,
+                                *reinterpret_cast<unsigned char*>(((unsigned) _result) + 4),
+                                *reinterpret_cast<unsigned char*>(((unsigned) _result) + 5),
+                                *reinterpret_cast<bool*>(_result),
+                                *reinterpret_cast<bool*>(((unsigned) _result) + 1));
             break;
+        }
         case Functions::Func_PlayGroup:
             break;
         case Functions::Func_GetDead:
@@ -75,22 +97,34 @@ void Bethesda::CommandHandler(signed int key, vector<double>& info, double resul
             break;
         case Functions::Func_SetForceSneak:
             break;
+        case Fallout::Functions::Func_ScanContainer:
+        {
+            reference = GameFactory::GetObject(boost::any_cast<unsigned int>(info.at(1)));
+            Game::ScanContainer(reference, boost::any_cast<vector<unsigned char>&>(result));
+            break;
+        }
         case Fallout::Functions::Func_MarkForDelete:
             break;
         case Fallout3::Functions::Func_GetParentCell:
         case FalloutNV::Functions::Func_GetParentCell:
         case Oblivion::Functions::Func_GetParentCell:
-            Game::GetParentCell((unsigned int) info.at(1), *reinterpret_cast<unsigned int*>(&result));
+        {
+            reference = GameFactory::GetObject(boost::any_cast<unsigned int>(info.at(1)));
+            self = GameFactory::GetObject(PLAYER_REFERENCE);
+            Game::GetParentCell(vector<FactoryObject>{reference, self}, *reinterpret_cast<unsigned int*>(boost::any_cast<double>(&result)));
             break;
+        }
         case Fallout3::Functions::Func_GetControl:
         case FalloutNV::Functions::Func_GetControl:
         case Oblivion::Functions::Func_GetControl:
-            Game::GetControl(PLAYER_REFERENCE, (unsigned char) info.at(1), (unsigned char) result);
+            self = GameFactory::GetObject(PLAYER_REFERENCE);
+            Game::GetControl(self, boost::any_cast<int>(info.at(1)), boost::any_cast<double>(result));
             break;
         case Fallout3::Functions::Func_Load:
         case FalloutNV::Functions::Func_Load:
         case Oblivion::Functions::Func_Load:
-            Game::SetName(PLAYER_REFERENCE);
+            self = GameFactory::GetObject(PLAYER_REFERENCE);
+            Game::SetName(self, ((Player*)(*self))->GetName());
             // reload game world
             break;
         case Fallout3::Functions::Func_SetName:
@@ -98,19 +132,27 @@ void Bethesda::CommandHandler(signed int key, vector<double>& info, double resul
         case Oblivion::Functions::Func_SetName:
             break;
         default:
-            throw VaultException("Unhandled function %hX", opcode);
+            throw VaultException("Unhandled function %04hX", opcode);
         }
     }
     else
     {
 #ifdef VAULTMP_DEBUG
-        debug->PrintFormat("Command %04hX on reference %08X failed", true, opcode, info.size() > 1 ? (unsigned int) info.at(1) : 0);
+        unsigned int refID = 0x00000000;
+        if (info.size() > 1)
+        {
+            try
+            {
+                refID = boost::any_cast<unsigned int>(info.at(1));
+            } catch (...) {}
+        }
+        debug->PrintFormat("Command %04hX on reference %08X failed", true, opcode, refID);
 #endif
 
         switch (opcode)
         {
         case Functions::Func_PlaceAtMe:
-            Game::Failure_PlaceAtMe((unsigned int) info.at(1), (unsigned int) info.at(2), (unsigned int) info.at(3), key);
+            Game::Failure_PlaceAtMe(boost::any_cast<unsigned int>(info.at(1)), boost::any_cast<unsigned int>(info.at(2)), boost::any_cast<unsigned int>(info.at(3)), key);
             break;
         default:
             break;
@@ -326,10 +368,11 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
     Container::Initialize(game);
 
     NetworkID id = GameFactory::CreateInstance(ID_PLAYER, PLAYER_REFERENCE, PLAYER_BASE);
-    Player* self = (Player*) GameFactory::GetObject(ID_PLAYER, id);
+    FactoryObject reference = GameFactory::GetObject(id);
+    Player* self = vaultcast<Player>(reference);
     self->SetEnabled(true);
     self->SetName(name);
-    GameFactory::LeaveReference(self);
+    GameFactory::LeaveReference(reference);
     self = NULL; // lets make sure that we dont use this by accident somewhere (old version code did so), I prefer a crash over a bug hard to track
 
     Network::Flush();

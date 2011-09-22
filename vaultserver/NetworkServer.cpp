@@ -146,7 +146,8 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
                     NetworkID id;
                     double X, Y, Z;
                     PacketFactory::Access(packet, &id, &X, &Y, &Z);
-                    response = Server::GetPos(data->guid, id, X, Y, Z);
+                    FactoryObject reference = GameFactory::GetObject(id);
+                    response = Server::GetPos(data->guid, reference, X, Y, Z);
                     break;
                 }
                 case ID_UPDATE_ANGLE:
@@ -155,7 +156,8 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
                     unsigned char axis;
                     double value;
                     PacketFactory::Access(packet, &id, &axis, &value);
-                    response = Server::GetAngle(data->guid, id, axis, value);
+                    FactoryObject reference = GameFactory::GetObject(id);
+                    response = Server::GetAngle(data->guid, reference, axis, value);
                     break;
                 }
                 case ID_UPDATE_CELL:
@@ -163,7 +165,8 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
                     NetworkID id;
                     unsigned int cell;
                     PacketFactory::Access(packet, &id, &cell);
-                    response = Server::GetGameCell(data->guid, id, cell);
+                    FactoryObject reference = GameFactory::GetObject(id);
+                    response = Server::GetGameCell(data->guid, reference, cell);
                     break;
                 }
                 case ID_UPDATE_VALUE:
@@ -173,7 +176,8 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
                     unsigned char index;
                     double value;
                     PacketFactory::Access(packet, &id, &base, &index, &value);
-                    response = Server::GetActorValue(data->guid, id, base, index, value);
+                    FactoryObject reference = GameFactory::GetObject(id);
+                    response = Server::GetActorValue(data->guid, reference, base, index, value);
                     break;
                 }
                 case ID_UPDATE_STATE:
@@ -184,7 +188,8 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
                     bool alerted;
                     bool sneaking;
                     PacketFactory::Access(packet, &id, &index, &moving, &alerted, &sneaking);
-                    response = Server::GetActorState(data->guid, id, index, moving, alerted, sneaking);
+                    FactoryObject reference = GameFactory::GetObject(id);
+                    response = Server::GetActorState(data->guid, reference, index, moving, alerted, sneaking);
                     break;
                 }
                 default:

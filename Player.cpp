@@ -38,18 +38,6 @@ const Parameter Player::CreateFunctor(unsigned int flags, NetworkID player)
     return Parameter(vector<string>(), new PlayerFunctor(flags, player));
 }
 
-vector<Player*> Player::GetPlayerList()
-{
-    vector<Player*> playerlist;
-    vector<Reference*>::iterator it;
-    vector<Reference*> instances = GameFactory::GetObjectTypes(ID_PLAYER);
-
-    for (it = instances.begin(); it != instances.end(); ++it)
-        playerlist.push_back((Player*) *it);
-
-    return playerlist;
-}
-
 unsigned char Player::GetPlayerControl(unsigned char control) const
 {
     return SAFE_FIND(player_Controls, control)->second.first.Get();
@@ -102,7 +90,8 @@ vector<string> PlayerFunctor::operator()()
 
     if (this->player)
     {
-        Player* player = (Player*) GameFactory::GetObject(ID_PLAYER, this->player);
+        FactoryObject reference = GameFactory::GetObject(this->player);
+        Player* player = vaultcast<Player>(reference);
 
         if (player)
         {
@@ -130,18 +119,16 @@ vector<string> PlayerFunctor::operator()()
                 snprintf(value, sizeof(value), "%d", movcontrols);
                 result.push_back(string(value));
             }
-
-            GameFactory::LeaveReference(player);
         }
     }
     else
     {
-        vector<Player*>::iterator it;
-        vector<Player*> playerlist = Player::GetPlayerList();
+        vector<FactoryObject>::iterator it;
+        vector<FactoryObject> playerlist = GameFactory::GetObjectTypes(ID_PLAYER);
 
         for (it = playerlist.begin(); it != playerlist.end(); GameFactory::LeaveReference(*it), ++it)
         {
-            Player* player = *it;
+            Player* player = vaultcast<Player>(*it);
             unsigned int refID = player->GetReference();
 
             if (refID != 0x00000000)

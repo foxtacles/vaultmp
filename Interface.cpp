@@ -284,7 +284,7 @@ DWORD WINAPI Interface::CommandThreadReceive(LPVOID data)
                 code = buffer[0];
                 char* content = buffer + 1;
 
-                if (code == PIPE_OP_RETURN)
+                if (code == PIPE_OP_RETURN || code == PIPE_OP_RETURN_BIG)
                 {
                     vector<CommandResult> result = API::Translate(buffer);
                     vector<CommandResult>::iterator it;
@@ -301,6 +301,9 @@ DWORD WINAPI Interface::CommandThreadReceive(LPVOID data)
                         debug->Print("vaultmp process waked up (game patched)", true);
 #endif
                 }
+                else if (code)
+                    throw VaultException("Unknown pipe code identifier %02X", code);
+
                 if (lookupProgramID((char*) data) == 0)
                 {
                     endThread = true;

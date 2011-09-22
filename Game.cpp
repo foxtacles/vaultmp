@@ -68,14 +68,19 @@ void Game::Initialize()
         Interface::DefineCommand("IsMoving", "%0.IsMoving");
         Interface::DefineCommand("IsAnimPlaying", "%0.IsAnimPlaying %1");
         Interface::DefineCommand("MarkForDelete", "%0.MarkForDelete");
+        Interface::DefineCommand("ScanContainer", "%0.ScanContainer");
     }
     else
         Interface::DefineCommand("IsAnimGroupPlaying", "%0.IsAnimGroupPlaying %1");
 
     Interface::DefineCommand("GetActorState", "%0.GetActorState %1");
     Interface::DefineCommand("GetActorStateNotSelf", "%0.GetActorState", "GetActorState");
+}
 
-    Player* self = (Player*) GameFactory::GetObject(ID_PLAYER, PLAYER_REFERENCE);
+void Game::Startup()
+{
+    FactoryObject reference = GameFactory::GetObject(PLAYER_REFERENCE);
+    Player* self = vaultcast<Player>(reference);
 
     Interface::StartSession();
 
@@ -114,6 +119,12 @@ void Game::Initialize()
         ParamContainer GetParentCell = ParamContainer(param_GetParentCell, &Data::AlwaysTrue);
         Interface::DefineNative("GetParentCell", GetParentCell);
         Interface::ExecuteCommandLoop("GetParentCell", 30);
+
+        ParamList param_ScanContainer;
+        param_ScanContainer.push_back(self->GetReferenceParam());
+        ParamContainer ScanContainer = ParamContainer(param_ScanContainer, &Data::AlwaysTrue);
+        Interface::DefineNative("ScanContainer", ScanContainer);
+        Interface::ExecuteCommandLoop("ScanContainer", 50);
 
         ParamList param_GetDead;
         param_GetDead.push_back(Player::CreateFunctor(FLAG_ENABLED));
@@ -167,12 +178,10 @@ void Game::Initialize()
     catch (...)
     {
         Interface::EndSession();
-        GameFactory::LeaveReference(self);
         throw;
     }
 
     Interface::EndSession();
-    GameFactory::LeaveReference(self);
 }
 
 void Game::LoadGame(string savegame)
@@ -191,7 +200,8 @@ void Game::LoadGame(string savegame)
 
 void Game::NewPlayer(NetworkID id, unsigned int baseID, string name)
 {
-    Player* self = (Player*) GameFactory::GetObject(ID_PLAYER, PLAYER_REFERENCE);
+    FactoryObject reference = GameFactory::GetObject(PLAYER_REFERENCE);
+    Player* self = vaultcast<Player>(reference);
 
     Value<unsigned int>* store = new Value<unsigned int>;
     signed int key = store->Lock(true);
@@ -207,8 +217,6 @@ void Game::NewPlayer(NetworkID id, unsigned int baseID, string name)
 
     Interface::EndSession();
 
-    GameFactory::LeaveReference(self);
-
     for (int i = 0; i < 200 && !store->Get(); i++)
         Sleep(100);
 
@@ -219,27 +227,25 @@ void Game::NewPlayer(NetworkID id, unsigned int baseID, string name)
     }
 
     GameFactory::CreateKnownInstance(ID_PLAYER, id, baseID);
-    Player* player = (Player*) GameFactory::GetObject(ID_PLAYER, id);
+    reference = GameFactory::GetObject(id);
+    Player* player = vaultcast<Player>(reference);
     player->SetReference(store->Get());
     delete store;
 
-    SetName(id, name);
-    SetRestrained(id, true);
-
-    GameFactory::LeaveReference(player);
+    SetName(reference, name);
+    SetRestrained(reference, true);
 }
 
-void Game::PlayerLeft(NetworkID id)
+void Game::PlayerLeft(FactoryObject& reference)
 {
-    Player* player = (Player*) GameFactory::GetObject(ID_PLAYER, id);
-    // Delete invokes DestroyInstance, we must make sure that the lock count is zero here, this function performs only a type check
-    GameFactory::LeaveReference(player);
-    Delete(id);
+    if (!vaultcast<Player>(reference))
+        throw VaultException("Object with reference %08X is not a Player", (*reference)->GetReference());
+    Delete(reference);
 }
 
-void Game::Enable(NetworkID id, bool enable)
+void Game::Enable(FactoryObject reference, bool enable)
 {
-    Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, id);
+    Object* object = vaultcast<Object>(reference);
     bool result = (bool) object->SetEnabled(enable);
 
     if (result)
@@ -265,14 +271,13 @@ void Game::Enable(NetworkID id, bool enable)
 
         Interface::EndSession();
     }
-
-    GameFactory::LeaveReference(object);
 }
 
-void Game::Delete(NetworkID id)
+void Game::Delete(FactoryObject& reference)
 {
-    Enable(id, false);
-    Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, id);
+    Enable(reference, false);
+
+    Object* object = vaultcast<Object>(reference);
 
     if (game & FALLOUT_GAMES)
     {
@@ -286,22 +291,14 @@ void Game::Delete(NetworkID id)
         Interface::EndSession();
     }
 
-    GameFactory::DestroyInstance(object);
+    GameFactory::DestroyInstance(reference);
 }
 
-void Game::SetName(NetworkID id, string name)
+void Game::SetName(FactoryObject reference, string name)
 {
-    Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, id);
+    Object* object = vaultcast<Object>(reference);
+
     object->SetName(name);
-
-    SetName(object->GetReference());
-
-    GameFactory::LeaveReference(object);
-}
-
-void Game::SetName(unsigned int refID)
-{
-    Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, refID);
 
     Interface::StartSession();
 
@@ -312,13 +309,14 @@ void Game::SetName(unsigned int refID)
     Interface::ExecuteCommandOnce("SetName", SetName);
 
     Interface::EndSession();
-
-    GameFactory::LeaveReference(object);
 }
 
-void Game::SetRestrained(NetworkID id, bool restrained, unsigned int delay)
+void Game::SetRestrained(FactoryObject reference, bool restrained, unsigned int delay)
 {
-    Actor* actor = (Actor*) GameFactory::GetObject(ALL_ACTORS, id);
+    Actor* actor = vaultcast<Actor>(reference);
+
+    if (!actor)
+        throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
 
     Interface::StartSession();
 
@@ -329,30 +327,24 @@ void Game::SetRestrained(NetworkID id, bool restrained, unsigned int delay)
     Interface::ExecuteCommandOnce("SetRestrained", SetRestrained, 0, delay);
 
     Interface::EndSession();
-
-    GameFactory::LeaveReference(actor);
 }
 
-void Game::SetPos(NetworkID id, double X, double Y, double Z)
+void Game::SetPos(FactoryObject reference, double X, double Y, double Z)
 {
-    Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, id);
+    Object* object = vaultcast<Object>(reference);
     bool result = ((bool) object->SetNetworkPos(Axis_X, X) | (bool) object->SetNetworkPos(Axis_Y, Y) | (bool) object->SetNetworkPos(Axis_Z, Z));
 
     if (result)
-        SetPos(object->GetReference());
-
-    GameFactory::LeaveReference(object);
+        SetPos(reference);
 }
 
-void Game::SetPos(unsigned int refID)
+void Game::SetPos(FactoryObject reference)
 {
-    Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, refID);
+    Object* object = vaultcast<Object>(reference);
 
     if (object->GetEnabled())
     {
-        Actor* actor = NULL; // maybe we should consider items, too (they have physics)
-        if (GameFactory::GetType(object) & ALL_ACTORS)
-            actor = (Actor*) object;
+        Actor* actor = vaultcast<Actor>(object); // maybe we should consider items, too (they have physics)
 
         if (actor == NULL || (!actor->IsNearPoint(object->GetNetworkPos(Axis_X), object->GetNetworkPos(Axis_Y), object->GetNetworkPos(Axis_Z), 200.0) && actor->GetActorRunningAnimation() == AnimGroup_Idle) || actor->IsJumping())
         {
@@ -390,24 +382,20 @@ void Game::SetPos(unsigned int refID)
             Interface::EndSession();
         }
     }
-
-    GameFactory::LeaveReference(object);
 }
 
-void Game::SetAngle(NetworkID id, unsigned char axis, double value)
+void Game::SetAngle(FactoryObject reference, unsigned char axis, double value)
 {
-    Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, id);
+    Object* object = vaultcast<Object>(reference);
     bool result = (bool) object->SetAngle(axis, value);
 
     if (result && object->GetEnabled())
-        SetAngle(object->GetReference(), axis);
-
-    GameFactory::LeaveReference(object);
+        SetAngle(reference, axis);
 }
 
-void Game::SetAngle(unsigned int refID, unsigned char axis)
+void Game::SetAngle(FactoryObject reference, unsigned char axis)
 {
-    Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, refID);
+    Object* object = vaultcast<Object>(reference);
 
     Interface::StartSession();
 
@@ -416,9 +404,9 @@ void Game::SetAngle(unsigned int refID, unsigned char axis)
     param_SetAngle.push_back(BuildParameter(API::RetrieveAxis_Reverse(axis)));
 
     double value = object->GetAngle(axis);
-    if (axis == Axis_Z && GameFactory::GetType(object) & ALL_ACTORS)
+    Actor* actor = vaultcast<Actor>(object);
+    if (axis == Axis_Z && actor)
     {
-        Actor* actor = (Actor*) object;
         if (actor->GetActorMovingXY() == 0x01)
             AdjustZAngle(value, -45.0);
         else if (actor->GetActorMovingXY() == 0x02)
@@ -430,47 +418,40 @@ void Game::SetAngle(unsigned int refID, unsigned char axis)
     Interface::ExecuteCommandOnce("SetAngle", SetAngle);
 
     Interface::EndSession();
-
-    GameFactory::LeaveReference(object);
 }
 
-void Game::SetNetworkCell(NetworkID id, unsigned int cell)
+void Game::SetNetworkCell(vector<FactoryObject> reference, unsigned int cell)
 {
-    vector<Reference*> objects = GameFactory::GetMultiple(vector<ObjectNetwork> {ObjectNetwork(ALL_OBJECTS, id), ObjectNetwork(ID_PLAYER, GameFactory::LookupNetworkID(PLAYER_REFERENCE))});
-    Object* object = (Object*) objects[0];
-    Player* self = (Player*) objects[1];
+    Object* object = vaultcast<Object>(reference[0]);
+    Player* self = vaultcast<Player>(reference[1]);
+
+    if (!self)
+        throw VaultException("Object with reference %08X is not a Player", (*reference[1])->GetReference());
 
     object->SetNetworkCell(cell);
 
     if (object != self)
     {
         if (object->GetNetworkCell() != self->GetGameCell())
-            Enable(object->GetNetworkID(), false);
+            Enable(reference[0], false);
         else
-            Enable(object->GetNetworkID(), true);
+            Enable(reference[0], true);
     }
-
-    GameFactory::LeaveReference(objects);
 }
 
-void Game::SetActorValue(NetworkID id, bool base, unsigned char index, double value)
+void Game::SetActorValue(FactoryObject reference, bool base, unsigned char index, double value)
 {
-    Actor* actor = (Actor*) GameFactory::GetObject(ALL_ACTORS, id);
+    Actor* actor = vaultcast<Actor>(reference);
+
+    if (!actor)
+        throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
 
     Lockable* result;
 
-    try
-    {
-        if (base)
-            result = actor->SetActorBaseValue(index, value);
-        else
-            result = actor->SetActorValue(index, value);
-    }
-    catch (...)
-    {
-        GameFactory::LeaveReference(actor);
-        throw;
-    }
+    if (base)
+        result = actor->SetActorBaseValue(index, value);
+    else
+        result = actor->SetActorValue(index, value);
 
     if (result)
     {
@@ -499,34 +480,27 @@ void Game::SetActorValue(NetworkID id, bool base, unsigned char index, double va
 
         Interface::EndSession();
     }
-
-    GameFactory::LeaveReference(actor);
 }
 
-void Game::SetActorState(NetworkID id, unsigned char index, unsigned char moving, bool alerted, bool sneaking)
+void Game::SetActorState(FactoryObject reference, unsigned char index, unsigned char moving, bool alerted, bool sneaking)
 {
-    Actor* actor = (Actor*) GameFactory::GetObject(ALL_ACTORS, id);
+    Actor* actor = vaultcast<Actor>(reference);
+
+    if (!actor)
+        throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
 
     Lockable* result;
 
-    try
-    {
-        result = actor->SetActorMovingXY(moving);
-    }
-    catch (...)
-    {
-        GameFactory::LeaveReference(actor);
-        throw;
-    }
+    result = actor->SetActorMovingXY(moving);
 
     if (result && actor->GetEnabled())
-        SetAngle(actor->GetReference(), Axis_Z);
+        SetAngle(reference, Axis_Z);
 
     result = actor->SetActorAlerted(alerted);
 
     if (result && actor->GetEnabled())
     {
-        SetRestrained(id, false);
+        SetRestrained(reference, false);
 
         signed int key = result->Lock(true);
 
@@ -540,14 +514,14 @@ void Game::SetActorState(NetworkID id, unsigned char index, unsigned char moving
 
         Interface::EndSession();
 
-        SetRestrained(id, true, 2000); // prevents more or less efficiently alert state desync
+        SetRestrained(reference, true, 2000); // prevents more or less efficiently alert state desync
     }
 
     result = actor->SetActorSneaking(sneaking);
 
     if (result && actor->GetEnabled())
     {
-        SetRestrained(id, false);
+        SetRestrained(reference, false);
 
         signed int key = result->Lock(true);
 
@@ -561,18 +535,10 @@ void Game::SetActorState(NetworkID id, unsigned char index, unsigned char moving
 
         Interface::EndSession();
 
-        SetRestrained(id, true);
+        SetRestrained(reference, true);
     }
 
-    try
-    {
-        result = actor->SetActorRunningAnimation(index);
-    }
-    catch (...)
-    {
-        GameFactory::LeaveReference(actor);
-        throw;
-    }
+    result = actor->SetActorRunningAnimation(index);
 
     if (result && actor->GetEnabled())
     {
@@ -590,17 +556,14 @@ void Game::SetActorState(NetworkID id, unsigned char index, unsigned char moving
         Interface::EndSession();
 
         if (index == AnimGroup_Idle)
-            SetPos(actor->GetReference());
+            SetPos(reference);
     }
-
-    GameFactory::LeaveReference(actor);
 }
 
-void Game::MoveTo(NetworkID id, NetworkID id2, bool cell)
+void Game::MoveTo(vector<FactoryObject> reference, bool cell)
 {
-    vector<Reference*> objects = GameFactory::GetMultiple(vector<ObjectNetwork> {ObjectNetwork(ALL_OBJECTS, id), ObjectNetwork(ALL_OBJECTS, id2)});
-    Object* object = (Object*) objects[0];
-    Object* object2 = (Object*) objects[1];
+    Object* object = vaultcast<Object>(reference[0]);
+    Object* object2 = vaultcast<Object>(reference[1]);
 
     Lockable* result = object->SetGameCell(object2->GetGameCell());
 
@@ -632,21 +595,19 @@ void Game::MoveTo(NetworkID id, NetworkID id2, bool cell)
 
         Interface::EndSession();
     }
-
-    GameFactory::LeaveReference(objects);
 }
 
 NetworkResponse Game::Authenticate(string password)
 {
     NetworkResponse response;
-    Player* self = (Player*) GameFactory::GetObject(ID_PLAYER, PLAYER_REFERENCE);
+    FactoryObject reference = GameFactory::GetObject(PLAYER_REFERENCE);
+    Player* self = vaultcast<Player>(reference);
     pDefault* packet = PacketFactory::CreatePacket(ID_GAME_AUTH, self->GetName().c_str(), password.c_str());
     response = Network::CompleteResponse(Network::CreateResponse(packet,
                                          (unsigned char) HIGH_PRIORITY,
                                          (unsigned char) RELIABLE_ORDERED,
                                          CHANNEL_GAME,
                                          server));
-    GameFactory::LeaveReference(self);
     return response;
 }
 
@@ -663,9 +624,9 @@ void Game::PlaceAtMe(Lockable* data, unsigned int refID)
     store->Set(refID);
 }
 
-void Game::GetPos(unsigned int refID, unsigned char axis, double value)
+void Game::GetPos(FactoryObject reference, unsigned char axis, double value)
 {
-    Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, refID);
+    Object* object = vaultcast<Object>(reference);
     bool result = (bool) object->SetGamePos(axis, value);
 
     if (result && axis == Axis_Z && object->GetReference() == PLAYER_REFERENCE)
@@ -678,13 +639,11 @@ void Game::GetPos(unsigned int refID, unsigned char axis, double value)
                                    server));
         Network::Queue(response);
     }
-
-    GameFactory::LeaveReference(object);
 }
 
-void Game::GetAngle(unsigned int refID, unsigned char axis, double value)
+void Game::GetAngle(FactoryObject reference, unsigned char axis, double value)
 {
-    Object* object = (Object*) GameFactory::GetObject(ALL_OBJECTS, refID);
+    Object* object = vaultcast<Object>(reference);
     bool result = (bool) object->SetAngle(axis, value);
 
     if (result)
@@ -697,23 +656,23 @@ void Game::GetAngle(unsigned int refID, unsigned char axis, double value)
                                    server));
         Network::Queue(response);
     }
-
-    GameFactory::LeaveReference(object);
 }
 
-void Game::GetParentCell(unsigned int refID, unsigned int cell)
+void Game::GetParentCell(vector<FactoryObject> reference, unsigned int cell)
 {
-    vector<Reference*> objects = GameFactory::GetMultiple(vector<ObjectReference> {ObjectReference(ALL_OBJECTS, refID), ObjectReference(ID_PLAYER, PLAYER_REFERENCE)});
-    Object* object = (Object*) objects[0];
-    Player* self = (Player*) objects[1];
+    Object* object = vaultcast<Object>(reference[0]);
+    Player* self = vaultcast<Player>(reference[1]);
+
+    if (!self)
+        throw VaultException("Object with reference %08X is not a Player", (*reference[1])->GetReference());
 
     if (object != self)
     {
         if (self->GetGameCell() == object->GetNetworkCell() && object->GetGameCell() != object->GetNetworkCell())
         {
-            Enable(object->GetNetworkID(), true);
-            MoveTo(object->GetNetworkID(), self->GetNetworkID(), true);
-            SetAngle(object->GetReference(), Axis_Z);
+            Enable(reference[0], true);
+            MoveTo(reference, true);
+            SetAngle(reference[0], Axis_Z);
         }
     }
 
@@ -722,14 +681,13 @@ void Game::GetParentCell(unsigned int refID, unsigned int cell)
     if (object != self)
     {
         if (object->GetNetworkCell() != self->GetGameCell())
-            Enable(object->GetNetworkID(), false);
+            Enable(reference[0], false);
         else
-            Enable(object->GetNetworkID(), true);
+            Enable(reference[0], true);
     }
 
     if (result && object == self)
     {
-
         pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_CELL, object->GetNetworkID(), cell);
         NetworkResponse response = Network::CompleteResponse(Network::CreateResponse(packet,
                                    (unsigned char) HIGH_PRIORITY,
@@ -738,27 +696,21 @@ void Game::GetParentCell(unsigned int refID, unsigned int cell)
                                    server));
         Network::Queue(response);
     }
-
-    GameFactory::LeaveReference(objects);
 }
 
-void Game::GetActorValue(unsigned int refID, bool base, unsigned char index, double value)
+void Game::GetActorValue(FactoryObject reference, bool base, unsigned char index, double value)
 {
-    Actor* actor = (Actor*) GameFactory::GetObject(ALL_ACTORS, refID);
+    Actor* actor = vaultcast<Actor>(reference);
+
+    if (!actor)
+        throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+
     bool result;
 
-    try
-    {
-        if (base)
-            result = (bool) actor->SetActorBaseValue(index, value);
-        else
-            result = (bool) actor->SetActorValue(index, value);
-    }
-    catch (...)
-    {
-        GameFactory::LeaveReference(actor);
-        throw;
-    }
+    if (base)
+        result = (bool) actor->SetActorBaseValue(index, value);
+    else
+        result = (bool) actor->SetActorValue(index, value);
 
     if (result)
     {
@@ -770,27 +722,21 @@ void Game::GetActorValue(unsigned int refID, bool base, unsigned char index, dou
                                    server));
         Network::Queue(response);
     }
-
-    GameFactory::LeaveReference(actor);
 }
 
-void Game::GetActorState(unsigned int refID, unsigned char index, unsigned char moving, bool alerted, bool sneaking)
+void Game::GetActorState(FactoryObject reference, unsigned char index, unsigned char moving, bool alerted, bool sneaking)
 {
-    Actor* actor = (Actor*) GameFactory::GetObject(ALL_ACTORS, refID);
+    Actor* actor  = vaultcast<Actor>(reference);
+
+    if (!actor)
+        throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+
     bool result;
 
     if (index == 0xFF)
         index = AnimGroup_Idle;
 
-    try
-    {
-        result = ((bool) actor->SetActorRunningAnimation(index) | (bool) actor->SetActorMovingXY(moving) | (bool) actor->SetActorAlerted(alerted) | (bool) actor->SetActorSneaking(sneaking));
-    }
-    catch (...)
-    {
-        GameFactory::LeaveReference(actor);
-        throw;
-    }
+    result = ((bool) actor->SetActorRunningAnimation(index) | (bool) actor->SetActorMovingXY(moving) | (bool) actor->SetActorAlerted(alerted) | (bool) actor->SetActorSneaking(sneaking));
 
     if (result)
     {
@@ -802,30 +748,47 @@ void Game::GetActorState(unsigned int refID, unsigned char index, unsigned char 
                                    server));
         Network::Queue(response);
     }
-
-    GameFactory::LeaveReference(actor);
 }
 
-void Game::GetControl(unsigned int refID, unsigned char control, unsigned char key)
+void Game::GetControl(FactoryObject reference, unsigned char control, unsigned char key)
 {
-    Player* player = (Player*) GameFactory::GetObject(ID_PLAYER, refID);
+    Player* player = vaultcast<Player>(reference);
+
+    if (!player)
+        throw VaultException("Object with reference %08X is not a Player", (*reference)->GetReference());
+
     bool result;
 
-    try
-    {
-        result = (bool) player->SetPlayerControl(control, key);
-    }
-    catch (...)
-    {
-        GameFactory::LeaveReference(player);
-        throw;
-    }
+    result = (bool) player->SetPlayerControl(control, key);
 
     if (result)
     {
     }
+}
 
-    GameFactory::LeaveReference(player);
+void Game::ScanContainer(FactoryObject reference, vector<unsigned char>& data)
+{
+    Container* container = vaultcast<Container>(reference);
+
+    if (!container)
+        throw VaultException("Object with reference %08X is not a Container", (*reference)->GetReference());
+
+#pragma pack(push, 1)
+    struct ItemInfo
+    {
+        unsigned int baseID;
+        unsigned int amount;
+        unsigned int equipped;
+        double condition;
+    };
+#pragma pack(pop)
+
+    ItemInfo* items = reinterpret_cast<ItemInfo*>(&data[0]);
+    unsigned int count = data.size() / sizeof(ItemInfo);
+
+    debug->PrintFormat("%d",true,count);
+    for (int i = 0; i< count; ++i)
+    debug->PrintFormat("%08X %d %f %d",true,items[i].baseID, items[i].amount, (float)items[i].condition, items[i].equipped);
 }
 
 void Game::Failure_PlaceAtMe(unsigned int refID, unsigned int baseID, unsigned int count, signed int key)
