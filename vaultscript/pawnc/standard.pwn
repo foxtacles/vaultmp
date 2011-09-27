@@ -62,11 +62,6 @@ public OnCellChange(object, cell)
 
 }
 
-public OnActorDeath(actor)
-{
-
-}
-
 public OnActorValueChange(actor, index, Float:value)
 {
 
@@ -79,10 +74,15 @@ public OnActorBaseValueChange(actor, index, Float:value)
 
 public OnActorAlert(actor, Bool:alerted)
 {
-	printf("alert: %d", alerted);
+
 }
 
 public OnActorSneak(actor, Bool:sneaking)
 {
-	printf("sneaking: %d", sneaking);
+
+}
+
+public OnActorDeath(actor)
+{
+
 }

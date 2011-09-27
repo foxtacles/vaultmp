@@ -5,7 +5,7 @@ using namespace RakNet;
 
 typedef HINSTANCE (__stdcall *fLoadLibrary)(char*);
 
-unsigned char Bethesda::game = 0;
+unsigned char Bethesda::game = 0x00;
 bool Bethesda::initialized = false;
 string Bethesda::password = "";
 Savegame Bethesda::savegame;
@@ -98,11 +98,9 @@ void Bethesda::CommandHandler(signed int key, vector<boost::any>& info, boost::a
         case Functions::Func_SetForceSneak:
             break;
         case Fallout::Functions::Func_ScanContainer:
-        {
             reference = GameFactory::GetObject(boost::any_cast<unsigned int>(info.at(1)));
             Game::ScanContainer(reference, boost::any_cast<vector<unsigned char>&>(result));
             break;
-        }
         case Fallout::Functions::Func_MarkForDelete:
             break;
         case Fallout3::Functions::Func_GetParentCell:
@@ -124,7 +122,7 @@ void Bethesda::CommandHandler(signed int key, vector<boost::any>& info, boost::a
         case FalloutNV::Functions::Func_Load:
         case Oblivion::Functions::Func_Load:
             self = GameFactory::GetObject(PLAYER_REFERENCE);
-            Game::SetName(self, ((Player*)(*self))->GetName());
+            Game::SetName(self, vaultcast<Player>(self)->GetName());
             // reload game world
             break;
         case Fallout3::Functions::Func_SetName:
@@ -373,7 +371,7 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
     self->SetEnabled(true);
     self->SetName(name);
     GameFactory::LeaveReference(reference);
-    self = NULL; // lets make sure that we dont use this by accident somewhere (old version code did so), I prefer a crash over a bug hard to track
+    self = NULL; // lets make sure that we dont use this by accident somewhere (old version code did so)
 
     Network::Flush();
 

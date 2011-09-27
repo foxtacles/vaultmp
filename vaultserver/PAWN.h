@@ -27,7 +27,7 @@ private:
 
     PAWN();
 
-    static AMX_NATIVE_INFO vaultmp_functions[16];
+    static AMX_NATIVE_INFO vaultmp_functions[22];
 
     static cell vaultmp_timestamp(AMX* amx, const cell* params);
     static cell vaultmp_CreateTimer(AMX* amx, const cell* params);
@@ -42,22 +42,18 @@ private:
     static cell vaultmp_AxisToString(AMX* amx, const cell* params);
     static cell vaultmp_AnimToString(AMX* amx, const cell* params);
 
+    static cell vaultmp_GetName(AMX* amx, const cell* params);
     static cell vaultmp_GetPos(AMX* amx, const cell* params);
     static cell vaultmp_GetAngle(AMX* amx, const cell* params);
     static cell vaultmp_GetCell(AMX* amx, const cell* params);
+
     static cell vaultmp_GetActorValue(AMX* amx, const cell* params);
     static cell vaultmp_GetActorBaseValue(AMX* amx, const cell* params);
-
-    /*static cell vaultmp_GetPlayerName(AMX* amx, const cell* params);
-    static cell vaultmp_GetPlayerPos(AMX* amx, const cell* params);
-    static cell vaultmp_GetPlayerZAngle(AMX* amx, const cell* params);
-    static cell vaultmp_GetPlayerHealth(AMX* amx, const cell* params);
-    static cell vaultmp_GetPlayerBaseHealth(AMX* amx, const cell* params);
-    static cell vaultmp_GetPlayerCondition(AMX* amx, const cell* params);
-    static cell vaultmp_IsPlayerDead(AMX* amx, const cell* params);
-    static cell vaultmp_GetPlayerMoving(AMX* amx, const cell* params);
-    static cell vaultmp_IsPlayerAlerted(AMX* amx, const cell* params);
-    static cell vaultmp_GetPlayerCell(AMX* amx, const cell* params);*/
+    static cell vaultmp_GetActorMovingAnimation(AMX* amx, const cell* params);
+    static cell vaultmp_GetActorAlerted(AMX* amx, const cell* params);
+    static cell vaultmp_GetActorSneaking(AMX* amx, const cell* params);
+    static cell vaultmp_GetActorDead(AMX* amx, const cell* params);
+    static cell vaultmp_IsActorJumping(AMX* amx, const cell* params);
 
 public:
     static int LoadProgram(AMX* amx, char* filename, void* memblock);

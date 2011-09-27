@@ -40,11 +40,11 @@ typedef void (*fOnPlayerDisconnect)(NetworkID, unsigned char);
 typedef unsigned int (*fOnPlayerRequestGame)(NetworkID);
 typedef void (*fOnSpawn)(NetworkID);
 typedef void (*fOnCellChange)(NetworkID, unsigned int);
-typedef void (*fOnActorDeath)(NetworkID);
 typedef void (*fOnActorValueChange)(NetworkID, unsigned char, double);
 typedef void (*fOnActorBaseValueChange)(NetworkID, unsigned char, double);
 typedef void (*fOnActorAlert)(NetworkID, bool);
 typedef void (*fOnActorSneak)(NetworkID, bool);
+typedef void (*fOnActorDeath)(NetworkID);
 
 /**
  * \brief Maintains communication with a script
@@ -70,11 +70,11 @@ private:
     fOnPlayerRequestGame OnPlayerRequestGame;
     fOnSpawn OnSpawn;
     fOnCellChange OnCellChange;
-    fOnActorDeath OnActorDeath;
     fOnActorValueChange OnActorValueChange;
     fOnActorBaseValueChange OnActorBaseValueChange;
     fOnActorAlert OnActorAlert;
     fOnActorSneak OnActorSneak;
+    fOnActorDeath OnActorDeath;
 
     Script(const Script&);
     Script& operator=(const Script&);
@@ -104,56 +104,26 @@ public:
      */
     static void KillTimer(NetworkID id);
 
-    /**
-     * \brief OnClientAuthenticate callback
-     */
     static bool Authenticate(string name, string pwd);
-    /**
-     * \brief OnPlayerDisconnect callback
-     */
     static void Disconnect(FactoryObject reference, unsigned char reason);
-    /**
-     * \brief OnPlayerRequestGame callback
-     */
     static unsigned int RequestGame(FactoryObject reference);
-    /**
-     * \brief OnCellChange callback
-     */
     static void CellChange(FactoryObject reference, unsigned int cell);
-    /**
-     * \brief OnActorValueChange / OnActorBaseValueChange callback
-     */
     static void ValueChange(FactoryObject reference, unsigned char index, bool base, double value);
-    /**
-     * \brief OnActorAlert callback
-     */
     static void Alert(FactoryObject reference, bool alerted);
-    /**
-     * \brief OnActorSneak callback
-     */
     static void Sneak(FactoryObject reference, bool sneaking);
 
-
-    /**
-     * \brief GetPos function
-     */
+    static string GetName(NetworkID id);
     static void GetPos(NetworkID id, double& X, double& Y, double& Z);
-    /**
-     * \brief GetAngle function
-     */
     static void GetAngle(NetworkID id, double& X, double& Y, double& Z);
-    /**
-     * \brief GetCell function
-     */
     static unsigned int GetCell(NetworkID id);
-    /**
-     * \brief GetActorValue function
-     */
+
     static double GetActorValue(NetworkID id, unsigned char index);
-    /**
-     * \brief GetActorBaseValue function
-     */
     static double GetActorBaseValue(NetworkID id, unsigned char index);
+    static unsigned char GetActorMovingAnimation(NetworkID id);
+    static bool GetActorAlerted(NetworkID id);
+    static bool GetActorSneaking(NetworkID id);
+    static bool GetActorDead(NetworkID id);
+    static bool IsActorJumping(NetworkID id);
 
 };
 

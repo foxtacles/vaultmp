@@ -44,7 +44,7 @@ private:
 
     map<unsigned char, Value<double> > actor_Values;
     map<unsigned char, Value<double> > actor_BaseValues;
-    Value<unsigned char> anim_Running;
+    Value<unsigned char> anim_Moving;
     Value<unsigned char> state_MovingXY;
     Value<bool> state_Alerted;
     Value<bool> state_Sneaking;
@@ -86,9 +86,9 @@ public:
      */
     double GetActorBaseValue(unsigned char index) const;
     /**
-     * \brief Retrieves the Actor's running animation
+     * \brief Retrieves the Actor's moving animation
      */
-    unsigned char GetActorRunningAnimation() const;
+    unsigned char GetActorMovingAnimation() const;
     /**
      * \brief Retrieves the Actor's moving state
      *
@@ -119,9 +119,9 @@ public:
      */
     Lockable* SetActorBaseValue(unsigned char index, double value);
     /**
-     * \brief Sets the Actor's running animation
+     * \brief Sets the Actor's moving animation
      */
-    Lockable* SetActorRunningAnimation(unsigned char index);
+    Lockable* SetActorMovingAnimation(unsigned char index);
     /**
      * \brief Sets the Actor's moving state
      *
@@ -146,7 +146,7 @@ public:
     /**
      * \brief Returns true if the Actor is jumping
      */
-    bool IsJumping() const;
+    bool IsActorJumping() const;
 };
 
 class ActorFunctor : public VaultFunctor

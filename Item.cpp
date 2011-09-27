@@ -17,7 +17,10 @@ void Item::SetDebugHandler(Debug* debug)
 
 Item::Item(unsigned int refID, unsigned int baseID) : Object(refID, baseID)
 {
+    data = Container::Items->find(baseID);
 
+    if (data == Container::Items->end())
+        data = Container::Items->find(Container::ResolveIndex(baseID));
 }
 
 Item::~Item()
@@ -25,19 +28,33 @@ Item::~Item()
 
 }
 
+unsigned int Item::GetItemCount() const
+{
+    return this->item_Count.Get();
+}
+
 double Item::GetItemCondition() const
 {
     return this->item_Condition.Get();
 }
 
-Container* Item::GetItemContainer() const
+bool Item::GetItemEquipped() const
 {
-    return this->item_Container.Get();
+    return this->state_Equipped.Get();
 }
 
-bool Item::GetItemWorn() const
+bool Item::SetItemCount(unsigned int count)
 {
-    return this->state_Worn.Get();
+    if (this->item_Count.Get() == count)
+        return false;
+
+    if (!this->item_Count.Set(count))
+        return false;
+
+#ifdef VAULTMP_DEBUG
+    if (debug != NULL)
+        debug->PrintFormat("Item count was set to %d (ref: %08X)", true, count, this->GetReference());
+#endif
 }
 
 bool Item::SetItemCondition(double condition)
@@ -50,36 +67,44 @@ bool Item::SetItemCondition(double condition)
 
 #ifdef VAULTMP_DEBUG
     if (debug != NULL)
-        debug->PrintFormat("Item condition was set to %Lf (ref: %08X)", true, condition, this->GetReference());
+        debug->PrintFormat("Item condition was set to %f (ref: %08X)", true, (float) condition, this->GetReference());
 #endif
 }
 
-bool Item::SetItemContainer(Container* container)
+bool Item::SetItemEquipped(bool state)
 {
-    if (this->item_Container.Get() == container)
+    if (this->state_Equipped.Get() == state)
         return false;
 
-    if (!this->item_Container.Set(container))
+    if (!this->state_Equipped.Set(state))
         return false;
 
 #ifdef VAULTMP_DEBUG
     if (debug != NULL)
-        debug->PrintFormat("Item container was set to %s (ref: %08X)", true, container->GetName().c_str(), this->GetReference());
-#endif
-}
-
-bool Item::SetItemWorn(bool worn)
-{
-    if (this->state_Worn.Get() == worn)
-        return false;
-
-    if (!this->state_Worn.Set(worn))
-        return false;
-
-#ifdef VAULTMP_DEBUG
-    if (debug != NULL)
-        debug->PrintFormat("Item worn state was set to %d (ref: %08X)", true, (int) worn, this->GetReference());
+        debug->PrintFormat("Item equipped state was set to %d (ref: %08X)", true, (int) state, this->GetReference());
 #endif
 
     return true;
+}
+
+string Item::ToString() const
+{
+    string name = "";
+
+    if (data != Container::Items->end())
+        name = string(data->second);
+
+    return name;
+}
+
+NetworkID Item::Copy() const
+{
+    FactoryObject reference = GameFactory::GetObject(GameFactory::CreateInstance(ID_ITEM, 0x00000000, this->GetBase()));
+    Item* item = vaultcast<Item>(reference);
+
+    item->SetItemCount(this->GetItemCount());
+    item->SetItemCondition(this->GetItemCondition());
+    item->SetItemEquipped(this->GetItemEquipped());
+
+    return item->GetNetworkID();
 }

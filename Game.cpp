@@ -346,7 +346,7 @@ void Game::SetPos(FactoryObject reference)
     {
         Actor* actor = vaultcast<Actor>(object); // maybe we should consider items, too (they have physics)
 
-        if (actor == NULL || (!actor->IsNearPoint(object->GetNetworkPos(Axis_X), object->GetNetworkPos(Axis_Y), object->GetNetworkPos(Axis_Z), 200.0) && actor->GetActorRunningAnimation() == AnimGroup_Idle) || actor->IsJumping())
+        if (actor == NULL || (!actor->IsNearPoint(object->GetNetworkPos(Axis_X), object->GetNetworkPos(Axis_Y), object->GetNetworkPos(Axis_Z), 200.0) && actor->GetActorMovingAnimation() == AnimGroup_Idle) || actor->IsActorJumping())
         {
             Lockable* key = NULL;
 
@@ -538,7 +538,7 @@ void Game::SetActorState(FactoryObject reference, unsigned char index, unsigned 
         SetRestrained(reference, true);
     }
 
-    result = actor->SetActorRunningAnimation(index);
+    result = actor->SetActorMovingAnimation(index);
 
     if (result && actor->GetEnabled())
     {
@@ -736,7 +736,7 @@ void Game::GetActorState(FactoryObject reference, unsigned char index, unsigned 
     if (index == 0xFF)
         index = AnimGroup_Idle;
 
-    result = ((bool) actor->SetActorRunningAnimation(index) | (bool) actor->SetActorMovingXY(moving) | (bool) actor->SetActorAlerted(alerted) | (bool) actor->SetActorSneaking(sneaking));
+    result = ((bool) actor->SetActorMovingAnimation(index) | (bool) actor->SetActorMovingXY(moving) | (bool) actor->SetActorAlerted(alerted) | (bool) actor->SetActorSneaking(sneaking));
 
     if (result)
     {
@@ -786,9 +786,25 @@ void Game::ScanContainer(FactoryObject reference, vector<unsigned char>& data)
     ItemInfo* items = reinterpret_cast<ItemInfo*>(&data[0]);
     unsigned int count = data.size() / sizeof(ItemInfo);
 
-    debug->PrintFormat("%d",true,count);
-    for (int i = 0; i< count; ++i)
-    debug->PrintFormat("%08X %d %f %d",true,items[i].baseID, items[i].amount, (float)items[i].condition, items[i].equipped);
+    FactoryObject _temp = GameFactory::GetObject(GameFactory::CreateInstance(ID_CONTAINER, 0x00000000));
+    Container* temp = vaultcast<Container>(_temp);
+
+    for (int i = 0; i < count; ++i)
+    {
+        FactoryObject _item = GameFactory::GetObject(GameFactory::CreateInstance(ID_ITEM, items[i].baseID));
+        Item* item = vaultcast<Item>(_item);
+        item->SetItemCount(items[i].amount);
+        item->SetItemEquipped((bool) items[i].equipped);
+        item->SetItemCondition(items[i].condition);
+        temp->AddItem(item->GetNetworkID());
+    }
+
+    //ContainerDiff diff = container->Compare(temp->GetNetworkID());
+
+    if (!temp->IsEmpty())
+    temp->PrintContainer();
+
+    GameFactory::DestroyInstance(_temp);
 }
 
 void Game::Failure_PlaceAtMe(unsigned int refID, unsigned int baseID, unsigned int count, signed int key)

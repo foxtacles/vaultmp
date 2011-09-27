@@ -96,7 +96,7 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id, string name)
         packet = PacketFactory::CreatePacket(ID_UPDATE_POS, _player->GetNetworkID(), _player->GetGamePos(Axis_X), _player->GetGamePos(Axis_Y), _player->GetGamePos(Axis_Z));
         response.push_back(Network::CreateResponse(packet, (unsigned char) HIGH_PRIORITY, (unsigned char) RELIABLE_ORDERED, CHANNEL_GAME, guid));
 
-        packet = PacketFactory::CreatePacket(ID_UPDATE_STATE, _player->GetNetworkID(), _player->GetActorRunningAnimation(), _player->GetActorMovingXY(), _player->GetActorAlerted(), _player->GetActorSneaking());
+        packet = PacketFactory::CreatePacket(ID_UPDATE_STATE, _player->GetNetworkID(), _player->GetActorMovingAnimation(), _player->GetActorMovingXY(), _player->GetActorAlerted(), _player->GetActorSneaking());
         response.push_back(Network::CreateResponse(packet, (unsigned char) HIGH_PRIORITY, (unsigned char) RELIABLE_ORDERED, CHANNEL_GAME, guid));
 
         vector<unsigned char> data = API::RetrieveAllValues();
@@ -241,8 +241,7 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, FactoryObject reference, 
 
     _alerted = (bool) actor->SetActorAlerted(alerted);
     _sneaking = (bool) actor->SetActorSneaking(sneaking);
-    result = ((bool) actor->SetActorRunningAnimation(index) | (bool) actor->SetActorMovingXY(moving) | _alerted | _sneaking);
-
+    result = ((bool) actor->SetActorMovingAnimation(index) | (bool) actor->SetActorMovingXY(moving) | _alerted | _sneaking);
 
     if (result)
     {

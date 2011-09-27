@@ -32,11 +32,11 @@ Script::Script(char* path)
         GetScriptCallback(fOnPlayerRequestGame, "OnPlayerRequestGame", OnPlayerRequestGame);
         GetScriptCallback(fOnSpawn, "OnSpawn", OnSpawn);
         GetScriptCallback(fOnCellChange, "OnCellChange", OnCellChange);
-        GetScriptCallback(fOnActorDeath, "OnActorDeath", OnActorDeath);
         GetScriptCallback(fOnActorValueChange, "OnActorValueChange", OnActorValueChange);
         GetScriptCallback(fOnActorBaseValueChange, "OnActorBaseValueChange", OnActorBaseValueChange);
         GetScriptCallback(fOnActorAlert, "OnActorAlert", OnActorAlert);
         GetScriptCallback(fOnActorSneak, "OnActorSneak", OnActorSneak);
+        GetScriptCallback(fOnActorDeath, "OnActorDeath", OnActorDeath);
 
         SetScriptFunction("timestamp", &Utils::timestamp);
         SetScriptFunction("CreateTimer", &Script::CreateTimer);
@@ -51,11 +51,17 @@ Script::Script(char* path)
         SetScriptFunction("AxisToString", &API::RetrieveAxis_Reverse);
         SetScriptFunction("AnimToString", &API::RetrieveAnim_Reverse);
 
+        SetScriptFunction("GetName", &Script::GetName);
         SetScriptFunction("GetPos", &Script::GetPos);
         SetScriptFunction("GetAngle", &Script::GetAngle);
         SetScriptFunction("GetCell", &Script::GetCell);
         SetScriptFunction("GetActorValue", &Script::GetActorValue);
-        SetScriptFunction("GetActorBaseValue", &Script:: GetActorBaseValue);
+        SetScriptFunction("GetActorBaseValue", &Script::GetActorBaseValue);
+        SetScriptFunction("GetActorMovingAnimation", &Script::GetActorMovingAnimation);
+        SetScriptFunction("GetActorAlerted", &Script::GetActorAlerted);
+        SetScriptFunction("GetActorSneaking", &Script::GetActorSneaking);
+        SetScriptFunction("GetActorDead", &Script::GetActorDead);
+        SetScriptFunction("IsActorJumping", &Script::IsActorJumping);
 
         exec();
     }
@@ -277,6 +283,19 @@ void Script::Sneak(FactoryObject reference, bool sneaking)
     }
 }
 
+string Script::GetName(NetworkID id)
+{
+    string name = "";
+
+    FactoryObject reference = GameFactory::GetObject(id);
+    Object* object = vaultcast<Object>(reference);
+
+    if (object)
+        name = object->GetName();
+
+    return name;
+}
+
 void Script::GetPos(NetworkID id, double& X, double& Y, double& Z)
 {
     X = 0.00;
@@ -348,4 +367,69 @@ double Script::GetActorBaseValue(NetworkID id, unsigned char index)
         value = actor->GetActorBaseValue(index);
 
     return value;
+}
+
+unsigned char Script::GetActorMovingAnimation(NetworkID id)
+{
+    unsigned char index = 0x00;
+
+    FactoryObject reference = GameFactory::GetObject(id);
+    Actor* actor = vaultcast<Actor>(reference);
+
+    if (actor)
+        index = actor->GetActorMovingAnimation();
+
+    return index;
+}
+
+bool Script::GetActorAlerted(NetworkID id)
+{
+    bool state = false;
+
+    FactoryObject reference = GameFactory::GetObject(id);
+    Actor* actor = vaultcast<Actor>(reference);
+
+    if (actor)
+        state = actor->GetActorAlerted();
+
+    return state;
+}
+
+bool Script::GetActorSneaking(NetworkID id)
+{
+    bool state = false;
+
+    FactoryObject reference = GameFactory::GetObject(id);
+    Actor* actor = vaultcast<Actor>(reference);
+
+    if (actor)
+        state = actor->GetActorSneaking();
+
+    return state;
+}
+
+bool Script::GetActorDead(NetworkID id)
+{
+    bool state = false;
+
+    FactoryObject reference = GameFactory::GetObject(id);
+    Actor* actor = vaultcast<Actor>(reference);
+
+    if (actor)
+        state = actor->GetActorDead();
+
+    return state;
+}
+
+bool Script::IsActorJumping(NetworkID id)
+{
+    bool state = false;
+
+    FactoryObject reference = GameFactory::GetObject(id);
+    Actor* actor = vaultcast<Actor>(reference);
+
+    if (actor)
+        state = actor->IsActorJumping();
+
+    return state;
 }

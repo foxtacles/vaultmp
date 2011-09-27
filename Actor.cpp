@@ -63,9 +63,9 @@ double Actor::GetActorBaseValue(unsigned char index) const
     return SAFE_FIND(actor_BaseValues, index)->second.Get();
 }
 
-unsigned char Actor::GetActorRunningAnimation() const
+unsigned char Actor::GetActorMovingAnimation() const
 {
-    return anim_Running.Get();
+    return anim_Moving.Get();
 }
 
 unsigned char Actor::GetActorMovingXY() const
@@ -124,24 +124,24 @@ Lockable* Actor::SetActorBaseValue(unsigned char index, double value)
     return &data;
 }
 
-Lockable* Actor::SetActorRunningAnimation(unsigned char index)
+Lockable* Actor::SetActorMovingAnimation(unsigned char index)
 {
     string anim = API::RetrieveAnim_Reverse(index);
     if (anim.empty())
         throw VaultException("Value %02X not defined in database", index);
 
-    if (anim_Running.Get() == index)
+    if (anim_Moving.Get() == index)
         return NULL;
 
-    if (!anim_Running.Set(index))
+    if (!anim_Moving.Set(index))
         return NULL;
 
 #ifdef VAULTMP_DEBUG
     if (debug != NULL)
-        debug->PrintFormat("Actor running animation was set to %s (ref: %08X)", true,  anim.c_str(), this->GetReference());
+        debug->PrintFormat("Actor moving animation was set to %s (ref: %08X)", true,  anim.c_str(), this->GetReference());
 #endif
 
-    return &anim_Running;
+    return &anim_Moving;
 }
 
 Lockable* Actor::SetActorMovingXY(unsigned char moving)
@@ -208,9 +208,9 @@ Lockable* Actor::SetActorDead(bool state)
     return &this->state_Dead;
 }
 
-bool Actor::IsJumping() const
+bool Actor::IsActorJumping() const
 {
-    unsigned char anim = this->GetActorRunningAnimation();
+    unsigned char anim = this->GetActorMovingAnimation();
     unsigned char game = API::GetGameCode();
 
     return ((game & OBLIVION && anim >= Oblivion::AnimGroup_JumpStart && anim <= Oblivion::AnimGroup_JumpLand)

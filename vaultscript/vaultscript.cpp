@@ -71,11 +71,6 @@ void VAULTSCRIPT OnCellChange(ID object, Cell cell)
 
 }
 
-void VAULTSCRIPT OnActorDeath(ID actor)
-{
-
-}
-
 void VAULTSCRIPT OnActorValueChange(ID actor, Index index, Value value)
 {
 
@@ -92,6 +87,11 @@ void VAULTSCRIPT OnActorAlert(ID actor, State alerted)
 }
 
 void VAULTSCRIPT OnActorSneak(ID actor, State sneaking)
+{
+
+}
+
+void VAULTSCRIPT OnActorDeath(ID actor)
 {
 
 }

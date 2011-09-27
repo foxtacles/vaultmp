@@ -16,11 +16,11 @@ forward OnPlayerDisconnect(player, reason);
 forward OnPlayerRequestGame(player);
 forward OnSpawn(object);
 forward OnCellChange(object, cell);
-forward OnActorDeath(actor);
 forward OnActorValueChange(actor, index, Float:value);
 forward OnActorBaseValueChange(actor, index, Float:value);
 forward OnActorAlert(actor, Bool:alerted);
 forward OnActorSneak(actor, Bool:sneaking);
+forward OnActorDeath(actor);
 
 // Functions
 
@@ -37,8 +37,14 @@ native ValueToString(index, value{});
 native AxisToString(index, value{});
 native AnimToString(index, value{});
 
-native GetPos(player, &Float:X, &Float:Y, &Float:Z);
-native GetAngle(player, &Float:X, &Float:Y, &Float:Z);
+native GetName(object, name{});
+native GetPos(object, &Float:X, &Float:Y, &Float:Z);
+native GetAngle(object, &Float:X, &Float:Y, &Float:Z);
 native GetCell(object);
 native Float:GetActorValue(actor, index);
 native Float:GetActorBaseValue(actor, index);
+native GetActorMovingAnimation(actor);
+native Bool:GetActorAlerted(actor);
+native Bool:GetActorSneaking(actor);
+native Bool:GetActorDead(actor);
+native Bool:IsActorJumping(actor);

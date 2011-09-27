@@ -19,6 +19,8 @@ using namespace std;
 
 class Container;
 
+typedef const map<const unsigned int, const char*> ItemDatabase;
+
 class Item : public Object
 {
 friend class GameFactory;
@@ -29,9 +31,11 @@ private:
     static Debug* debug;
 #endif
 
+    ItemDatabase::const_iterator data;
+
+    Value<unsigned int> item_Count;
     Value<double> item_Condition;
-    Value<Container*> item_Container;
-    Value<bool> state_Worn;
+    Value<bool> state_Equipped;
 
     Item(const Item&);
     Item& operator=(const Item&);
@@ -45,13 +49,16 @@ public:
     static void SetDebugHandler(Debug* debug);
 #endif
 
+    unsigned int GetItemCount() const;
     double GetItemCondition() const;
-    Container* GetItemContainer() const;
-    bool GetItemWorn() const;
+    bool GetItemEquipped() const;
 
+    bool SetItemCount(unsigned int count);
     bool SetItemCondition(double condition);
-    bool SetItemContainer(Container* container);
-    bool SetItemWorn(bool worn);
+    bool SetItemEquipped(bool state);
+
+    string ToString() const;
+    NetworkID Copy() const;
 
 };
 

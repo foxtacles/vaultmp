@@ -30,22 +30,18 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
     {"AxisToString", PAWN::vaultmp_AxisToString},
     {"AnimToString", PAWN::vaultmp_AnimToString},
 
+    {"GetName", PAWN::vaultmp_GetName},
     {"GetPos", PAWN::vaultmp_GetPos},
     {"GetAngle", PAWN::vaultmp_GetAngle},
     {"GetCell", PAWN::vaultmp_GetCell},
+
     {"GetActorValue", PAWN::vaultmp_GetActorValue},
     {"GetActorBaseValue", PAWN::vaultmp_GetActorBaseValue},
-
-    /*{"GetPlayerName", PAWN::vaultmp_GetPlayerName},
-    {"GetPlayerPos", PAWN::vaultmp_GetPlayerPos},
-    {"GetPlayerZAngle", PAWN::vaultmp_GetPlayerZAngle},
-    {"GetPlayerHealth", PAWN::vaultmp_GetPlayerHealth},
-    {"GetPlayerBaseHealth", PAWN::vaultmp_GetPlayerBaseHealth},
-    {"GetPlayerCondition", PAWN::vaultmp_GetPlayerCondition},
-    {"IsPlayerDead", PAWN::vaultmp_IsPlayerDead},
-    {"GetPlayerMoving", PAWN::vaultmp_GetPlayerMoving},
-    {"IsPlayerAlerted", PAWN::vaultmp_IsPlayerAlerted},
-    {"GetPlayerCell", PAWN::vaultmp_GetPlayerCell},*/
+    {"GetActorMovingAnimation", PAWN::vaultmp_GetActorMovingAnimation},
+    {"GetActorAlerted", PAWN::vaultmp_GetActorAlerted},
+    {"GetActorSneaking", PAWN::vaultmp_GetActorSneaking},
+    {"GetActorDead", PAWN::vaultmp_GetActorDead},
+    {"IsActorJumping", PAWN::vaultmp_IsActorJumping},
 
     {0, 0}
 };
@@ -206,6 +202,26 @@ cell PAWN::vaultmp_AnimToString(AMX* amx, const cell* params)
     return i;
 }
 
+cell PAWN::vaultmp_GetName(AMX* amx, const cell* params)
+{
+    cell i = 1, id;
+    cell* dest;
+
+    id = params[1];
+    dest = amx_Address(amx, params[2]);
+
+    string name = Script::GetName(id);
+
+    if (!name.empty())
+    {
+        amx_SetString(dest, name.c_str(), 1, 0, name.length() + 1);
+    }
+    else
+        i = 0;
+
+    return i;
+}
+
 cell PAWN::vaultmp_GetPos(AMX* amx, const cell* params)
 {
     cell i = 1, id;
@@ -282,206 +298,65 @@ cell PAWN::vaultmp_GetActorBaseValue(AMX* amx, const cell* params)
     return i;
 }
 
-/*cell PAWN::vaultmp_GetPlayerName(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetActorMovingAnimation(AMX* amx, const cell* params)
 {
-    int i = 1, len, id;
-    cell* dest;
+    cell i = 1, id;
 
-    id = (int) params[1];
-    dest = amx_Address(amx, params[2]);
+    id = params[1];
 
-    RakNetGUID guid = Client::GetGUIDFromID(id);
-    Player* player = Player::GetPlayerFromGUID(guid);
-
-    if (player != NULL)
-    {
-        string pname = player->GetActorName();
-        char name[pname.length()];
-        strcpy(name, pname.c_str());
-
-        amx_SetString(dest, name, 0, 0, strlen(name) + 1);
-    }
-    else
-        i = 0;
+    unsigned char index = Script::GetActorMovingAnimation(id);
+    i = (cell) index;
 
     return i;
 }
 
-cell PAWN::vaultmp_GetPlayerPos(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetActorAlerted(AMX* amx, const cell* params)
 {
-    int i = 1, id;
+    cell i = 1, id;
 
-    id = (int) params[1];
+    id = params[1];
 
-    RakNetGUID guid = Client::GetGUIDFromID(id);
-    Player* player = Player::GetPlayerFromGUID(guid);
-
-    if (player != NULL)
-    {
-        float pos = player->GetActorPos((int) params[2]);
-        return amx_ftoc(pos);
-    }
-    else
-        i = 0;
+    bool state = Script::GetActorAlerted(id);
+    i = (cell) state;
 
     return i;
 }
 
-cell PAWN::vaultmp_GetPlayerZAngle(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetActorSneaking(AMX* amx, const cell* params)
 {
-    int i = 1, id;
+    cell i = 1, id;
 
-    id = (int) params[1];
+    id = params[1];
 
-    RakNetGUID guid = Client::GetGUIDFromID(id);
-    Player* player = Player::GetPlayerFromGUID(guid);
-
-    if (player != NULL)
-    {
-        float angle = player->GetActorAngle();
-        return amx_ftoc(angle);
-    }
-    else
-        i = 0;
+    bool state = Script::GetActorSneaking(id);
+    i = (cell) state;
 
     return i;
 }
 
-cell PAWN::vaultmp_GetPlayerHealth(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetActorDead(AMX* amx, const cell* params)
 {
-    int i = 1, id;
+    cell i = 1, id;
 
-    id = (int) params[1];
+    id = params[1];
 
-    RakNetGUID guid = Client::GetGUIDFromID(id);
-    Player* player = Player::GetPlayerFromGUID(guid);
-
-    if (player != NULL)
-    {
-        float health = player->GetActorHealth();
-        return amx_ftoc(health);
-    }
-    else
-        i = 0;
+    bool state = Script::GetActorDead(id);
+    i = (cell) state;
 
     return i;
 }
 
-cell PAWN::vaultmp_GetPlayerBaseHealth(AMX* amx, const cell* params)
+cell PAWN::vaultmp_IsActorJumping(AMX* amx, const cell* params)
 {
-    int i = 1, id;
+    cell i = 1, id;
 
-    id = (int) params[1];
+    id = params[1];
 
-    RakNetGUID guid = Client::GetGUIDFromID(id);
-    Player* player = Player::GetPlayerFromGUID(guid);
-
-    if (player != NULL)
-    {
-        float baseHealth = player->GetActorBaseHealth();
-        return amx_ftoc(baseHealth);
-    }
-    else
-        i = 0;
+    bool state = Script::IsActorJumping(id);
+    i = (cell) state;
 
     return i;
 }
-
-cell PAWN::vaultmp_GetPlayerCondition(AMX* amx, const cell* params)
-{
-    int i = 1, id;
-
-    id = (int) params[1];
-
-    RakNetGUID guid = Client::GetGUIDFromID(id);
-    Player* player = Player::GetPlayerFromGUID(guid);
-
-    if (player != NULL)
-    {
-        float cond = player->GetActorCondition((int) params[2]);
-        return amx_ftoc(cond);
-    }
-    else
-        i = 0;
-
-    return i;
-}
-
-cell PAWN::vaultmp_IsPlayerDead(AMX* amx, const cell* params)
-{
-    int i = 1, id;
-
-    id = (int) params[1];
-
-    RakNetGUID guid = Client::GetGUIDFromID(id);
-    Player* player = Player::GetPlayerFromGUID(guid);
-
-    if (player != NULL)
-    {
-        return player->IsActorDead();
-    }
-    else
-        i = -1;
-
-    return i;
-}
-
-cell PAWN::vaultmp_GetPlayerMoving(AMX* amx, const cell* params)
-{
-    int i = 1, id;
-
-    id = (int) params[1];
-
-    RakNetGUID guid = Client::GetGUIDFromID(id);
-    Player* player = Player::GetPlayerFromGUID(guid);
-
-    if (player != NULL)
-    {
-        return player->GetActorMoving();
-    }
-    else
-        i = -1;
-
-    return i;
-}
-
-cell PAWN::vaultmp_IsPlayerAlerted(AMX* amx, const cell* params)
-{
-    int i = 1, id;
-
-    id = (int) params[1];
-
-    RakNetGUID guid = Client::GetGUIDFromID(id);
-    Player* player = Player::GetPlayerFromGUID(guid);
-
-    if (player != NULL)
-    {
-        return player->IsActorAlerted();
-    }
-    else
-        i = -1;
-
-    return i;
-}
-
-cell PAWN::vaultmp_GetPlayerCell(AMX* amx, const cell* params)
-{
-    int i = 1, id;
-
-    id = (int) params[1];
-
-    RakNetGUID guid = Client::GetGUIDFromID(id);
-    Player* player = Player::GetPlayerFromGUID(guid);
-
-    if (player != NULL)
-    {
-        return player->GetActorNetworkCell();
-    }
-    else
-        i = -1;
-
-    return i;
-}*/
 
 int PAWN::LoadProgram(AMX* amx, char* filename, void* memblock)
 {
