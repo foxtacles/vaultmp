@@ -65,16 +65,16 @@ private:
     bool cpp_script;
 
     fexec exec;
-    fOnClientAuthenticate OnClientAuthenticate;
-    fOnPlayerDisconnect OnPlayerDisconnect;
-    fOnPlayerRequestGame OnPlayerRequestGame;
-    fOnSpawn OnSpawn;
-    fOnCellChange OnCellChange;
-    fOnActorValueChange OnActorValueChange;
-    fOnActorBaseValueChange OnActorBaseValueChange;
-    fOnActorAlert OnActorAlert;
-    fOnActorSneak OnActorSneak;
-    fOnActorDeath OnActorDeath;
+    fOnClientAuthenticate _OnClientAuthenticate;
+    fOnPlayerDisconnect _OnPlayerDisconnect;
+    fOnPlayerRequestGame _OnPlayerRequestGame;
+    fOnSpawn _OnSpawn;
+    fOnCellChange _OnCellChange;
+    fOnActorValueChange _OnActorValueChange;
+    fOnActorBaseValueChange _OnActorBaseValueChange;
+    fOnActorAlert _OnActorAlert;
+    fOnActorSneak _OnActorSneak;
+    fOnActorDeath _OnActorDeath;
 
     Script(const Script&);
     Script& operator=(const Script&);
@@ -104,14 +104,16 @@ public:
      */
     static void KillTimer(NetworkID id);
 
-    static bool Authenticate(string name, string pwd);
-    static void Disconnect(FactoryObject reference, unsigned char reason);
-    static unsigned int RequestGame(FactoryObject reference);
-    static void CellChange(FactoryObject reference, unsigned int cell);
-    static void ValueChange(FactoryObject reference, unsigned char index, bool base, double value);
-    static void Alert(FactoryObject reference, bool alerted);
-    static void Sneak(FactoryObject reference, bool sneaking);
+    static bool OnClientAuthenticate(string name, string pwd);
+    static void OnPlayerDisconnect(FactoryObject reference, unsigned char reason);
+    static unsigned int OnPlayerRequestGame(FactoryObject reference);
+    static void OnCellChange(FactoryObject reference, unsigned int cell);
+    static void OnActorValueChange(FactoryObject reference, unsigned char index, bool base, double value);
+    static void OnActorAlert(FactoryObject reference, bool alerted);
+    static void OnActorSneak(FactoryObject reference, bool sneaking);
 
+    static unsigned int GetReference(NetworkID id);
+    static unsigned int GetBase(NetworkID id);
     static string GetName(NetworkID id);
     static void GetPos(NetworkID id, double& X, double& Y, double& Z);
     static void GetAngle(NetworkID id, double& X, double& Y, double& Z);

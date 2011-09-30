@@ -31,11 +31,11 @@ public OnClientAuthenticate(const name{}, const pwd{})
 	return true;
 }
 
-public OnPlayerDisconnect(player, reason)
+public OnPlayerDisconnect(ID, reason)
 {
 }
 
-public OnPlayerRequestGame(player)
+public OnPlayerRequestGame(ID)
 {
     new base = 0x00000000;
 
@@ -52,37 +52,37 @@ public OnPlayerRequestGame(player)
     return base;
 }
 
-public OnSpawn(object)
+public OnSpawn(ID)
 {
 
 }
 
-public OnCellChange(object, cell)
+public OnCellChange(ID, cell)
 {
 
 }
 
-public OnActorValueChange(actor, index, Float:value)
+public OnActorValueChange(ID, index, Float:value)
 {
 
 }
 
-public OnActorBaseValueChange(actor, index, Float:value)
+public OnActorBaseValueChange(ID, index, Float:value)
 {
 
 }
 
-public OnActorAlert(actor, Bool:alerted)
+public OnActorAlert(ID, Bool:alerted)
 {
 
 }
 
-public OnActorSneak(actor, Bool:sneaking)
+public OnActorSneak(ID, Bool:sneaking)
 {
 
 }
 
-public OnActorDeath(actor)
+public OnActorDeath(ID)
 {
 
 }

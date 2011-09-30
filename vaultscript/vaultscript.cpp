@@ -9,7 +9,6 @@ void MyTimer()
 
 }
 
-// It is not safe to call ANY vaultmp function before the execution of exec()
 void VAULTSCRIPT exec()
 {
     printf("My first C++ vaultscript <3\n");

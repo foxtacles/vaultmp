@@ -27,7 +27,7 @@ private:
 
     PAWN();
 
-    static AMX_NATIVE_INFO vaultmp_functions[22];
+    static AMX_NATIVE_INFO vaultmp_functions[24];
 
     static cell vaultmp_timestamp(AMX* amx, const cell* params);
     static cell vaultmp_CreateTimer(AMX* amx, const cell* params);
@@ -42,6 +42,8 @@ private:
     static cell vaultmp_AxisToString(AMX* amx, const cell* params);
     static cell vaultmp_AnimToString(AMX* amx, const cell* params);
 
+    static cell vaultmp_GetReference(AMX* amx, const cell* params);
+    static cell vaultmp_GetBase(AMX* amx, const cell* params);
     static cell vaultmp_GetName(AMX* amx, const cell* params);
     static cell vaultmp_GetPos(AMX* amx, const cell* params);
     static cell vaultmp_GetAngle(AMX* amx, const cell* params);

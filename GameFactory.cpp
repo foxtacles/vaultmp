@@ -258,12 +258,16 @@ void GameFactory::DestroyAllInstances()
 
     for (it = instances.begin(); it != instances.end(); ++it)
     {
+        if (it->second == ID_CONTAINER)
+            vaultcast<Container>(it->first)->container.clear();
+
 #ifdef VAULTMP_DEBUG
         if (debug != NULL)
             debug->PrintFormat("Reference %08X with base %08X and NetworkID %lld (type: %s) to be destructed", true, it->first->GetReference(), it->first->GetBase(), it->first->GetNetworkID(), typeid(*(it->first)).name());
 #endif
 
         Reference* reference = (Reference*) it->first->StartSession();
+
         if (reference)
         {
             reference->Finalize();

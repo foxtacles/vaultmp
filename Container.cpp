@@ -61,6 +61,14 @@ bool Container::Item_sort(NetworkID id, NetworkID id2)
     return true;
 }
 
+bool Container::Diff_sort(pair<unsigned int, Diff> diff, pair<unsigned int, Diff> diff2)
+{
+    if (diff.second.equipped > diff2.second.equipped)
+        return false;
+
+    return true;
+}
+
 StripCopy Container::Strip() const
 {
     StripCopy result;
@@ -232,15 +240,14 @@ ContainerDiff Container::Compare(NetworkID id) const
                 }
             }
         }
-        else if (iCompare_base > iSelf_base) // Item in self is not existent in compare (delete)
+        else if (iCompare_base < iSelf_base) // Item in compare is not existent in self (new / changed)
         {
-            ++it2;
+            ++it;
             continue;
         }
 
-        // Item in compare is not existent in self (new / changed)
-        diff.push_back(pair<NetworkID, bool>(*it, true));
-        compare->container.erase(it++);
+        // Item in self is not existent in compare (delete / changed)
+        ++it2;
     }
 
     for (it = self->container.begin(); it != self->container.end(); ++it)
@@ -248,12 +255,113 @@ ContainerDiff Container::Compare(NetworkID id) const
         list<NetworkID>& _delete = _strip_assoc.find(*it)->second;
 
         for (it2 = _delete.begin(); it2 != _delete.end(); ++it2)
-            diff.push_back(pair<NetworkID, bool>(*it2, false));
+            diff.first.push_back(*it2);
     }
+
+    for (it = compare->container.begin(); it != compare->container.end(); compare->container.erase(it++))
+        diff.second.push_back(*it);
+
+    diff.first.sort(Item_sort);
+    diff.second.sort(Item_sort);
 
     GameFactory::DestroyInstance(_self);
     GameFactory::DestroyInstance(_compare);
     return diff;
+}
+
+GameDiff Container::ApplyDiff(ContainerDiff& diff)
+{
+    GameDiff result;
+    map<unsigned int, Diff> assoc_delete;
+
+    list<NetworkID>::iterator it;
+    map<unsigned int, Diff>::iterator it2;
+
+    for (it = diff.first.begin(); it != diff.first.end(); ++it)
+    {
+        FactoryObject _iDelete = GameFactory::GetObject(*it);
+        Item* iDelete = vaultcast<Item>(_iDelete);
+
+        Diff* _diff = NULL;
+        _diff = &assoc_delete.insert(pair<unsigned int, Diff>(iDelete->GetBase(), Diff())).first->second;
+
+        _diff->count -= iDelete->GetItemCount();
+        _diff->equipped -= iDelete->GetItemEquipped();
+
+        this->RemoveItem(*it);
+        GameFactory::DestroyInstance(_iDelete);
+    }
+
+    for (it = diff.second.begin(); it != diff.second.end(); ++it)
+    {
+        FactoryObject _iNew = GameFactory::GetObject(*it);
+        Item* iNew = vaultcast<Item>(_iNew);
+
+        Diff* _diff = NULL;
+        it2 = assoc_delete.find(iNew->GetBase());
+
+        if (it2 != assoc_delete.end())
+        {
+            _diff = &it2->second;
+
+            if (iNew->GetItemEquipped() && _diff->equipped == -1)
+            {
+                Diff _result;
+                _result.count = 0;
+                _result.condition = iNew->GetItemCondition();
+                _result.equipped = 0;
+                result.push_back(pair<unsigned int, Diff>(iNew->GetBase(), _result));
+
+                _diff->count += iNew->GetItemCount(); // always 1
+                _diff->equipped = 0;
+            }
+            else
+            {
+                _diff->count += iNew->GetItemCount();
+                _diff->condition = iNew->GetItemCondition();
+
+                if (iNew->GetItemEquipped())
+                    _diff->equipped = 1;
+            }
+        }
+        else
+        {
+            Diff _result;
+            _result.count = iNew->GetItemCount();
+            _result.condition = iNew->GetItemCondition();
+            _result.equipped = iNew->GetItemEquipped();
+            result.push_back(pair<unsigned int, Diff>(iNew->GetBase(), _result));
+        }
+
+        this->AddItem(*it);
+    }
+
+    for (it2 = assoc_delete.begin(); it2 != assoc_delete.end(); ++it2)
+    {
+        if (it2->second.count == 0 && it2->second.equipped == 0)
+            continue;
+
+        result.push_back(pair<unsigned int, Diff>(*it2));
+    }
+
+    result.sort(Diff_sort);
+    diff.first.clear();
+    diff.second.clear();
+    return result;
+}
+
+void FreeDiff(ContainerDiff& diff)
+{
+    list<NetworkID>::iterator it;
+
+    for (it = diff.second.begin(); it != diff.second.end(); ++it)
+    {
+        FactoryObject _item = GameFactory::GetObject(*it);
+        GameFactory::DestroyInstance(_item);
+    }
+
+    diff.first.clear();
+    diff.second.clear();
 }
 
 NetworkID Container::Copy() const

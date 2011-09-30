@@ -24,9 +24,24 @@ using namespace std;
 
 class Item;
 
+struct Diff
+{
+    signed int count;
+    double condition;
+    signed int equipped;
+
+    Diff()
+    {
+        count = 0;
+        condition = 0.00;
+        equipped = 0;
+    }
+};
+
 typedef const map<const unsigned int, const char*> ItemDatabase;
 typedef map<const unsigned char, const unsigned char> IndexLookup;
-typedef list<pair<NetworkID, bool> > ContainerDiff;
+typedef pair<list<NetworkID>, list<NetworkID> > ContainerDiff;
+typedef list<pair<unsigned int, Diff> > GameDiff;
 typedef pair<NetworkID, map<NetworkID, list<NetworkID> > > StripCopy;
 
 class Container : public Object
@@ -50,6 +65,7 @@ private:
     static unsigned char game;
     static unsigned int ResolveIndex(unsigned int baseID);
     static bool Item_sort(NetworkID id, NetworkID id2);
+    static bool Diff_sort(pair<unsigned int, Diff> diff, pair<unsigned int, Diff> diff2);
 
     list<NetworkID> container;
 
@@ -74,6 +90,8 @@ public:
     void AddItem(NetworkID id);
     void RemoveItem(NetworkID id);
     ContainerDiff Compare(NetworkID id) const;
+    GameDiff ApplyDiff(ContainerDiff& diff);
+    static void FreeDiff(ContainerDiff& diff);
 
     bool IsEmpty() const;
     void PrintContainer() const;

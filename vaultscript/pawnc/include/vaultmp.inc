@@ -8,19 +8,21 @@
 #define FALLOUT_GAMES		(FALLOUT3 | NEWVEGAS)
 #define ALL_GAMES		(FALLOUT_GAMES | OBLIVION)
 
+#define MAX_PLAYER_NAME		16
+#define MAX_PASSWORD_SIZE	16
+
 // Callbacks
 
-// the PAWN equivalent to exec() is main()
 forward OnClientAuthenticate(const name{}, const pwd{});
-forward OnPlayerDisconnect(player, reason);
-forward OnPlayerRequestGame(player);
-forward OnSpawn(object);
-forward OnCellChange(object, cell);
-forward OnActorValueChange(actor, index, Float:value);
-forward OnActorBaseValueChange(actor, index, Float:value);
-forward OnActorAlert(actor, Bool:alerted);
-forward OnActorSneak(actor, Bool:sneaking);
-forward OnActorDeath(actor);
+forward OnPlayerDisconnect(ID, reason);
+forward OnPlayerRequestGame(ID);
+forward OnSpawn(ID);
+forward OnCellChange(ID, cell);
+forward OnActorValueChange(ID, index, Float:value);
+forward OnActorBaseValueChange(ID, index, Float:value);
+forward OnActorAlert(ID, Bool:alerted);
+forward OnActorSneak(ID, Bool:sneaking);
+forward OnActorDeath(ID);
 
 // Functions
 
@@ -37,14 +39,17 @@ native ValueToString(index, value{});
 native AxisToString(index, value{});
 native AnimToString(index, value{});
 
-native GetName(object, name{});
-native GetPos(object, &Float:X, &Float:Y, &Float:Z);
-native GetAngle(object, &Float:X, &Float:Y, &Float:Z);
-native GetCell(object);
-native Float:GetActorValue(actor, index);
-native Float:GetActorBaseValue(actor, index);
-native GetActorMovingAnimation(actor);
-native Bool:GetActorAlerted(actor);
-native Bool:GetActorSneaking(actor);
-native Bool:GetActorDead(actor);
-native Bool:IsActorJumping(actor);
+native GetReference(ID);
+native GetBase(ID);
+native GetName(ID, name{});
+native GetPos(ID, &Float:X, &Float:Y, &Float:Z);
+native GetAngle(ID, &Float:X, &Float:Y, &Float:Z);
+native GetCell(ID);
+
+native Float:GetActorValue(ID, index);
+native Float:GetActorBaseValue(ID, index);
+native GetActorMovingAnimation(ID);
+native Bool:GetActorAlerted(ID);
+native Bool:GetActorSneaking(ID);
+native Bool:GetActorDead(ID);
+native Bool:IsActorJumping(ID);

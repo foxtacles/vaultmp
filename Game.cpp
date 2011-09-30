@@ -799,10 +799,13 @@ void Game::ScanContainer(FactoryObject reference, vector<unsigned char>& data)
         temp->AddItem(item->GetNetworkID());
     }
 
-    //ContainerDiff diff = container->Compare(temp->GetNetworkID());
+    ContainerDiff diff = container->Compare(temp->GetNetworkID());
 
-    if (!temp->IsEmpty())
-    temp->PrintContainer();
+    if (!diff.first.empty() || !diff.second.empty())
+    {
+
+        container->ApplyDiff(diff);
+    }
 
     GameFactory::DestroyInstance(_temp);
 }

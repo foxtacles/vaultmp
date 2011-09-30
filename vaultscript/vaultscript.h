@@ -16,8 +16,9 @@ namespace vaultmp {
 typedef unsigned char Index; // 1 byte
 typedef unsigned char Reason; // 1 byte
 typedef bool State; // 1 byte
-typedef unsigned int Cell; // 4 byte
+typedef unsigned int Reference; // 4 byte
 typedef unsigned int Base; // 4 byte
+typedef unsigned int Cell; // 4 byte
 typedef unsigned int Interval; // 4 byte
 typedef unsigned long long ID; // 8 byte
 typedef unsigned long long Timer; // 8 byte
@@ -31,10 +32,14 @@ static const Index OBLIVION             =   NEWVEGAS << 1;
 static const Index FALLOUT_GAMES        =   FALLOUT3 | NEWVEGAS;
 static const Index ALL_GAMES            =   FALLOUT_GAMES | OBLIVION;
 
+static const Index MAX_PLAYER_NAME      =   16;
+static const Index MAX_PASSWORD_SIZE    =   16;
+
 };
 
 extern "C" {
     VAULTSCRIPT void exec();
+
     VAULTSCRIPT bool OnClientAuthenticate(std::string, std::string);
     VAULTSCRIPT void OnPlayerDisconnect(vaultmp::ID, vaultmp::Reason);
     VAULTSCRIPT vaultmp::Base OnPlayerRequestGame(vaultmp::ID);
@@ -59,6 +64,8 @@ extern "C" {
     VAULTSCRIPT std::string (*AxisToString)(vaultmp::Index);
     VAULTSCRIPT std::string (*AnimToString)(vaultmp::Index);
 
+    VAULTSCRIPT vaultmp::Reference (*GetReference)(vaultmp::ID);
+    VAULTSCRIPT vaultmp::Base (*GetBase)(vaultmp::ID);
     VAULTSCRIPT std::string (*GetName)(vaultmp::ID);
     VAULTSCRIPT void (*GetPos)(vaultmp::ID, vaultmp::Value&, vaultmp::Value&, vaultmp::Value&);
     VAULTSCRIPT void (*GetAngle)(vaultmp::ID, vaultmp::Value&, vaultmp::Value&, vaultmp::Value&);

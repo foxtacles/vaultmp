@@ -30,6 +30,8 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
     {"AxisToString", PAWN::vaultmp_AxisToString},
     {"AnimToString", PAWN::vaultmp_AnimToString},
 
+    {"GetReference", PAWN::vaultmp_GetReference},
+    {"GetBase", PAWN::vaultmp_GetBase},
     {"GetName", PAWN::vaultmp_GetName},
     {"GetPos", PAWN::vaultmp_GetPos},
     {"GetAngle", PAWN::vaultmp_GetAngle},
@@ -198,6 +200,30 @@ cell PAWN::vaultmp_AnimToString(AMX* amx, const cell* params)
         amx_SetString(dest, anim.c_str(), 1, 0, anim.length() + 1);
     else
         i = 0;
+
+    return i;
+}
+
+cell PAWN::vaultmp_GetReference(AMX* amx, const cell* params)
+{
+    cell i = 1, id;
+
+    id = params[1];
+
+    unsigned int value = Script::GetReference(id);
+    i = (cell) value;
+
+    return i;
+}
+
+cell PAWN::vaultmp_GetBase(AMX* amx, const cell* params)
+{
+    cell i = 1, id;
+
+    id = params[1];
+
+    unsigned int value = Script::GetBase(id);
+    i = (cell) value;
 
     return i;
 }

@@ -27,16 +27,16 @@ Script::Script(char* path)
         scripts.push_back(this);
 
         GetScriptCallback(fexec, "exec", exec);
-        GetScriptCallback(fOnClientAuthenticate, "OnClientAuthenticate", OnClientAuthenticate);
-        GetScriptCallback(fOnPlayerDisconnect, "OnPlayerDisconnect", OnPlayerDisconnect);
-        GetScriptCallback(fOnPlayerRequestGame, "OnPlayerRequestGame", OnPlayerRequestGame);
-        GetScriptCallback(fOnSpawn, "OnSpawn", OnSpawn);
-        GetScriptCallback(fOnCellChange, "OnCellChange", OnCellChange);
-        GetScriptCallback(fOnActorValueChange, "OnActorValueChange", OnActorValueChange);
-        GetScriptCallback(fOnActorBaseValueChange, "OnActorBaseValueChange", OnActorBaseValueChange);
-        GetScriptCallback(fOnActorAlert, "OnActorAlert", OnActorAlert);
-        GetScriptCallback(fOnActorSneak, "OnActorSneak", OnActorSneak);
-        GetScriptCallback(fOnActorDeath, "OnActorDeath", OnActorDeath);
+        GetScriptCallback(fOnClientAuthenticate, "OnClientAuthenticate", _OnClientAuthenticate);
+        GetScriptCallback(fOnPlayerDisconnect, "OnPlayerDisconnect", _OnPlayerDisconnect);
+        GetScriptCallback(fOnPlayerRequestGame, "OnPlayerRequestGame", _OnPlayerRequestGame);
+        GetScriptCallback(fOnSpawn, "OnSpawn", _OnSpawn);
+        GetScriptCallback(fOnCellChange, "OnCellChange", _OnCellChange);
+        GetScriptCallback(fOnActorValueChange, "OnActorValueChange", _OnActorValueChange);
+        GetScriptCallback(fOnActorBaseValueChange, "OnActorBaseValueChange", _OnActorBaseValueChange);
+        GetScriptCallback(fOnActorAlert, "OnActorAlert", _OnActorAlert);
+        GetScriptCallback(fOnActorSneak, "OnActorSneak", _OnActorSneak);
+        GetScriptCallback(fOnActorDeath, "OnActorDeath", _OnActorDeath);
 
         SetScriptFunction("timestamp", &Utils::timestamp);
         SetScriptFunction("CreateTimer", &Script::CreateTimer);
@@ -51,10 +51,13 @@ Script::Script(char* path)
         SetScriptFunction("AxisToString", &API::RetrieveAxis_Reverse);
         SetScriptFunction("AnimToString", &API::RetrieveAnim_Reverse);
 
+        SetScriptFunction("GetReference", &Script::GetReference);
+        SetScriptFunction("GetBase", &Script::GetBase);
         SetScriptFunction("GetName", &Script::GetName);
         SetScriptFunction("GetPos", &Script::GetPos);
         SetScriptFunction("GetAngle", &Script::GetAngle);
         SetScriptFunction("GetCell", &Script::GetCell);
+
         SetScriptFunction("GetActorValue", &Script::GetActorValue);
         SetScriptFunction("GetActorBaseValue", &Script::GetActorBaseValue);
         SetScriptFunction("GetActorMovingAnimation", &Script::GetActorMovingAnimation);
@@ -170,7 +173,7 @@ void Script::KillTimer(NetworkID id)
     Timer::Terminate(id);
 }
 
-bool Script::Authenticate(string name, string pwd)
+bool Script::OnClientAuthenticate(string name, string pwd)
 {
     vector<Script*>::iterator it;
     bool result;
@@ -178,7 +181,7 @@ bool Script::Authenticate(string name, string pwd)
     for (it = scripts.begin(); it != scripts.end(); ++it)
     {
         if ((*it)->cpp_script)
-            result = (*it)->OnClientAuthenticate(name, pwd);
+            result = (*it)->_OnClientAuthenticate(name, pwd);
         else
             result = (bool) PAWN::Call((AMX*) (*it)->handle, "OnClientAuthenticate", "ss", 0, pwd.c_str(), name.c_str());
     }
@@ -186,7 +189,7 @@ bool Script::Authenticate(string name, string pwd)
     return result;
 }
 
-unsigned int Script::RequestGame(FactoryObject reference)
+unsigned int Script::OnPlayerRequestGame(FactoryObject reference)
 {
     vector<Script*>::iterator it;
     NetworkID id = (*reference)->GetNetworkID();
@@ -195,7 +198,7 @@ unsigned int Script::RequestGame(FactoryObject reference)
     for (it = scripts.begin(); it != scripts.end(); ++it)
     {
         if ((*it)->cpp_script)
-            result = (*it)->OnPlayerRequestGame(id);
+            result = (*it)->_OnPlayerRequestGame(id);
         else
             result = (unsigned int) PAWN::Call((AMX*) (*it)->handle, "OnPlayerRequestGame", "f", 0, id);
     }
@@ -203,7 +206,7 @@ unsigned int Script::RequestGame(FactoryObject reference)
     return result;
 }
 
-void Script::Disconnect(FactoryObject reference, unsigned char reason)
+void Script::OnPlayerDisconnect(FactoryObject reference, unsigned char reason)
 {
     vector<Script*>::iterator it;
     NetworkID id = (*reference)->GetNetworkID();
@@ -211,13 +214,13 @@ void Script::Disconnect(FactoryObject reference, unsigned char reason)
     for (it = scripts.begin(); it != scripts.end(); ++it)
     {
         if ((*it)->cpp_script)
-            (*it)->OnPlayerDisconnect(id, reason);
+            (*it)->_OnPlayerDisconnect(id, reason);
         else
             PAWN::Call((AMX*) (*it)->handle, "OnPlayerDisconnect", "if", 0, (unsigned int) reason, id);
     }
 }
 
-void Script::CellChange(FactoryObject reference, unsigned int cell)
+void Script::OnCellChange(FactoryObject reference, unsigned int cell)
 {
     vector<Script*>::iterator it;
     NetworkID id = (*reference)->GetNetworkID();
@@ -225,13 +228,13 @@ void Script::CellChange(FactoryObject reference, unsigned int cell)
     for (it = scripts.begin(); it != scripts.end(); ++it)
     {
         if ((*it)->cpp_script)
-            (*it)->OnCellChange(id, cell);
+            (*it)->_OnCellChange(id, cell);
         else
             PAWN::Call((AMX*) (*it)->handle, "OnCellChange", "if", 0, cell, id);
     }
 }
 
-void Script::ValueChange(FactoryObject reference, unsigned char index, bool base, double value)
+void Script::OnActorValueChange(FactoryObject reference, unsigned char index, bool base, double value)
 {
     vector<Script*>::iterator it;
     NetworkID id = (*reference)->GetNetworkID();
@@ -241,9 +244,9 @@ void Script::ValueChange(FactoryObject reference, unsigned char index, bool base
         if ((*it)->cpp_script)
         {
             if (base)
-                (*it)->OnActorBaseValueChange(id, index, value);
+                (*it)->_OnActorBaseValueChange(id, index, value);
             else
-                (*it)->OnActorValueChange(id, index, value);
+                (*it)->_OnActorValueChange(id, index, value);
         }
         else
         {
@@ -255,7 +258,7 @@ void Script::ValueChange(FactoryObject reference, unsigned char index, bool base
     }
 }
 
-void Script::Alert(FactoryObject reference, bool alerted)
+void Script::OnActorAlert(FactoryObject reference, bool alerted)
 {
     vector<Script*>::iterator it;
     NetworkID id = (*reference)->GetNetworkID();
@@ -263,13 +266,13 @@ void Script::Alert(FactoryObject reference, bool alerted)
     for (it = scripts.begin(); it != scripts.end(); ++it)
     {
         if ((*it)->cpp_script)
-            (*it)->OnActorAlert(id, alerted);
+            (*it)->_OnActorAlert(id, alerted);
         else
             PAWN::Call((AMX*) (*it)->handle, "OnActorAlert", "if", 0, (unsigned int) alerted, id);
     }
 }
 
-void Script::Sneak(FactoryObject reference, bool sneaking)
+void Script::OnActorSneak(FactoryObject reference, bool sneaking)
 {
     vector<Script*>::iterator it;
     NetworkID id = (*reference)->GetNetworkID();
@@ -277,10 +280,36 @@ void Script::Sneak(FactoryObject reference, bool sneaking)
     for (it = scripts.begin(); it != scripts.end(); ++it)
     {
         if ((*it)->cpp_script)
-            (*it)->OnActorSneak(id, sneaking);
+            (*it)->_OnActorSneak(id, sneaking);
         else
             PAWN::Call((AMX*) (*it)->handle, "OnActorSneak", "if", 0, (unsigned int) sneaking, id);
     }
+}
+
+unsigned int Script::GetReference(NetworkID id)
+{
+    unsigned int value = 0;
+
+    FactoryObject reference = GameFactory::GetObject(id);
+    Object* object = vaultcast<Object>(reference);
+
+    if (object)
+        value = object->GetReference();
+
+    return value;
+}
+
+unsigned int Script::GetBase(NetworkID id)
+{
+    unsigned int value = 0;
+
+    FactoryObject reference = GameFactory::GetObject(id);
+    Object* object = vaultcast<Object>(reference);
+
+    if (object)
+        value = object->GetBase();
+
+    return value;
 }
 
 string Script::GetName(NetworkID id)

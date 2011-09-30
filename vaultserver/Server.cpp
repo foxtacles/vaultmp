@@ -17,7 +17,7 @@ void Server::SetDebugHandler(Debug* debug)
 NetworkResponse Server::Authenticate(RakNetGUID guid, string name, string pwd)
 {
     NetworkResponse response;
-    bool result = Script::Authenticate(name, pwd);
+    bool result = Script::OnClientAuthenticate(name, pwd);
 
     if (result)
     {
@@ -66,7 +66,7 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id, string name)
     Client* client = new Client(guid, player->GetNetworkID());
     Dedicated::self->SetServerPlayers(pair<int, int>(Client::GetClientCount(), Dedicated::connections));
 
-    unsigned int result = Script::RequestGame(reference);
+    unsigned int result = Script::OnPlayerRequestGame(reference);
 
     if (!result)
         throw VaultException("Script did not provide an actor base for a player");
@@ -122,7 +122,7 @@ NetworkResponse Server::Disconnect(RakNetGUID guid, unsigned char reason)
     if (client != NULL)
     {
         FactoryObject reference = GameFactory::GetObject(client->GetPlayer());
-        Script::Disconnect(reference, reason);
+        Script::OnPlayerDisconnect(reference, reason);
         delete client;
 
         NetworkID id = GameFactory::DestroyInstance(reference);
@@ -193,7 +193,7 @@ NetworkResponse Server::GetGameCell(RakNetGUID guid, FactoryObject reference, un
                                              CHANNEL_GAME,
                                              Client::GetNetworkList(guid)));
 
-        Script::CellChange(reference, cell);
+        Script::OnCellChange(reference, cell);
     }
 
     return response;
@@ -223,7 +223,7 @@ NetworkResponse Server::GetActorValue(RakNetGUID guid, FactoryObject reference, 
                                              CHANNEL_GAME,
                                              Client::GetNetworkList(guid)));
 
-        Script::ValueChange(reference, index, base, value);
+        Script::OnActorValueChange(reference, index, base, value);
     }
 
     return response;
@@ -253,10 +253,10 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, FactoryObject reference, 
                                              Client::GetNetworkList(guid)));
 
         if (_alerted)
-            Script::Alert(reference, alerted);
+            Script::OnActorAlert(reference, alerted);
 
         if (_sneaking)
-            Script::Sneak(reference, sneaking);
+            Script::OnActorSneak(reference, sneaking);
     }
 
     return response;
