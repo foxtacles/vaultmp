@@ -34,6 +34,10 @@ public:
      */
     static NetworkResponse Authenticate(RakNetGUID guid, string name, string pwd);
     /**
+     * \brief Sends the game world data
+     */
+    static NetworkResponse LoadGame(RakNetGUID guid);
+    /**
      * \brief Creates a new Player
      */
     static NetworkResponse NewPlayer(RakNetGUID guid, NetworkID id, string name);

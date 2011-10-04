@@ -12,10 +12,11 @@
 #include "amx/amx.h"
 #include "amx/amxaux.h"
 
-#include "Dedicated.h"
+#include "boost/any.hpp"
+
 #include "../Utils.h"
-#include "../vaultmp.h"
 #include "../VaultException.h"
+#include "../vaultmp.h"
 
 /**
  * \brief Contains the PAWN scripting function wrappers
@@ -27,11 +28,14 @@ private:
 
     PAWN();
 
-    static AMX_NATIVE_INFO vaultmp_functions[24];
+    static AMX_NATIVE_INFO vaultmp_functions[27];
 
     static cell vaultmp_timestamp(AMX* amx, const cell* params);
     static cell vaultmp_CreateTimer(AMX* amx, const cell* params);
+    static cell vaultmp_CreateTimerEx(AMX* amx, const cell* params);
     static cell vaultmp_KillTimer(AMX* amx, const cell* params);
+    static cell vaultmp_MakePublic(AMX* amx, const cell* params);
+    static cell vaultmp_CallPublic(AMX* amx, const cell* params);
 
     static cell vaultmp_SetServerName(AMX* amx, const cell* params);
     static cell vaultmp_SetServerMap(AMX* amx, const cell* params);
@@ -63,6 +67,7 @@ public:
     static int Exec(AMX* amx, cell* retval, int index);
     static int FreeProgram(AMX* amx);
     static cell Call(AMX* amx, const char* name, const char* argl, int buf, ...);
+    static cell Call(AMX* amx, const char* name, const char* argl, const vector<boost::any>& args);
 
     static int CoreInit(AMX* amx);
     static int ConsoleInit(AMX* amx);

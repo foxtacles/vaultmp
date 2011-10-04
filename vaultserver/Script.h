@@ -9,9 +9,12 @@
 #include <vector>
 #include <string>
 
+#include "boost/any.hpp"
+
+#include "ScriptFunction.h"
+#include "Public.h"
 #include "PAWN.h"
 #include "Dedicated.h"
-#include "Timer.h"
 #include "../API.h"
 #include "../Utils.h"
 #include "../vaultmp.h"
@@ -20,14 +23,10 @@
 #ifdef __WIN32__
 #define GetScriptCallback(a,b,c) c = (a) GetProcAddress((HINSTANCE)this->handle,b); \
     if (!c) throw VaultException("Script callback not found: %s", b);
+#define SetScriptFunction(a,b) *((unsigned int*)(GetProcAddress((HINSTANCE)this->handle,a)?GetProcAddress((HINSTANCE)this->handle,a):throw VaultException("Script function pointer not found: %s", a)))=(unsigned int)b;
 #else
 #define GetScriptCallback(a,b,c) c = (a) dlsym(this->handle,b); \
     if (!c) throw VaultException("Script callback not found: %s", b);
-#endif
-
-#ifdef __WIN32__
-#define SetScriptFunction(a,b) *((unsigned int*)(GetProcAddress((HINSTANCE)this->handle,a)?GetProcAddress((HINSTANCE)this->handle,a):throw VaultException("Script function pointer not found: %s", a)))=(unsigned int)b;
-#else
 #define SetScriptFunction(a,b) *((unsigned int*)(dlsym(this->handle,a)?dlsym(this->handle,a):throw VaultException("Script function pointer not found: %s", a)))=(unsigned int)b;
 #endif
 
@@ -52,14 +51,16 @@ typedef void (*fOnActorDeath)(NetworkID);
  * A script can be either a C++ or PAWN script
  */
 
-class Script {
-
+class Script
+{
 private:
 
     Script(char* path);
     ~Script();
 
     static vector<Script*> scripts;
+
+    static void GetArguments(vector<boost::any>& params, va_list args, string def);
 
     void* handle;
     bool cpp_script;
@@ -81,28 +82,18 @@ private:
 
 public:
 
-    /**
-     * \brief Loads a comma separated list of scripts
-     *
-     * base is the absolute path to the scripts
-     */
     static void LoadScripts(char* scripts, char* base);
-    /**
-     * \brief Unloads all scripts
-     */
     static void UnloadScripts();
-    /**
-     * \brief Creates a C++ timer
-     */
-    static NetworkID CreateTimer(TimerFunc timer, unsigned int interval);
-    /**
-     * \brief Creates a PAWN timer
-     */
-    static NetworkID CreateTimerPAWN(TimerPAWN timer, AMX* amx, unsigned int interval);
-    /**
-     * \brief Kills a timer
-     */
+
+    static NetworkID CreateTimer(ScriptFunc timer, unsigned int interval);
+    static NetworkID CreateTimerEx(ScriptFunc timer, unsigned int interval, string def, ...);
+    static NetworkID CreateTimerPAWN(ScriptFuncPAWN timer, AMX* amx, unsigned int interval);
+    static NetworkID CreateTimerPAWNEx(ScriptFuncPAWN timer, AMX* amx, unsigned int interval, string def, const vector<boost::any>& args);
     static void KillTimer(NetworkID id);
+    static void MakePublic(ScriptFunc _public, string name, string def);
+    static void MakePublicPAWN(ScriptFuncPAWN _public, AMX* amx, string name, string def);
+    static unsigned long long CallPublic(string name, ...);
+    static unsigned long long CallPublicPAWN(string name, const vector<boost::any>& args);
 
     static bool OnClientAuthenticate(string name, string pwd);
     static void OnPlayerDisconnect(FactoryObject reference, unsigned char reason);

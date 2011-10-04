@@ -20,7 +20,10 @@ Item::Item(unsigned int refID, unsigned int baseID) : Object(refID, baseID)
     data = Container::Items->find(baseID);
 
     if (data == Container::Items->end())
-        data = Container::Items->find(Container::ResolveIndex(baseID));
+        data = Container::Items->find(Reference::ResolveIndex(baseID));
+
+    if (data != Container::Items->end())
+        this->SetName(string(data->second));
 }
 
 Item::~Item()
@@ -85,16 +88,6 @@ bool Item::SetItemEquipped(bool state)
 #endif
 
     return true;
-}
-
-string Item::ToString() const
-{
-    string name = "";
-
-    if (data != Container::Items->end())
-        name = string(data->second);
-
-    return name;
 }
 
 NetworkID Item::Copy() const

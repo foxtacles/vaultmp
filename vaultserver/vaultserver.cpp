@@ -102,6 +102,7 @@ int main(int argc, char* argv[])
 
     try
     {
+        putenv(PWNFILES_PATH);
         char _scripts[strlen(scripts) + 1];
         snprintf(_scripts, sizeof(_scripts), "%s", scripts);
         Script::LoadScripts(_scripts, base);

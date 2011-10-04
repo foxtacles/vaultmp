@@ -55,6 +55,7 @@
 		<Unit filename="API.h" />
 		<Unit filename="Actor.cpp" />
 		<Unit filename="Actor.h" />
+		<Unit filename="Actors.h" />
 		<Unit filename="Bethesda.cpp" />
 		<Unit filename="Bethesda.h" />
 		<Unit filename="Container.cpp" />

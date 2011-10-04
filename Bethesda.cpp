@@ -362,8 +362,8 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
     GameFactory::SetDebugHandler(debug);
 #endif
 
+    GameFactory::Initialize(game);
     API::Initialize(game);
-    Container::Initialize(game);
 
     NetworkID id = GameFactory::CreateInstance(ID_PLAYER, PLAYER_REFERENCE, PLAYER_BASE);
     FactoryObject reference = GameFactory::GetObject(id);

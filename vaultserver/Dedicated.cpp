@@ -286,8 +286,8 @@ void* Dedicated::DedicatedThread(void* data)
 
     Packet* packet;
 
+    GameFactory::Initialize(self->GetGame());
     API::Initialize(self->GetGame());
-    Container::Initialize(self->GetGame());
     Client::SetMaximumClients(connections);
     Network::Flush();
 

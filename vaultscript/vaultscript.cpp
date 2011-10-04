@@ -4,11 +4,6 @@
 using namespace std;
 using namespace vaultmp;
 
-void MyTimer()
-{
-
-}
-
 void VAULTSCRIPT exec()
 {
     printf("My first C++ vaultscript <3\n");
@@ -27,8 +22,6 @@ void VAULTSCRIPT exec()
         SetServerMap("cyrodiil");
         break;
     }
-
-    //CreateTimer(&MyTimer, 5000);
 }
 
 bool VAULTSCRIPT OnClientAuthenticate(string name, string pwd)

@@ -15,11 +15,16 @@
 #include "amx/amxtime.c"
 #include "amx/float.c"
 
+#include "Script.h"
+
 AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 {
     {"timestamp", PAWN::vaultmp_timestamp},
     {"CreateTimer", PAWN::vaultmp_CreateTimer},
+    {"CreateTimerEx", PAWN::vaultmp_CreateTimerEx},
     {"KillTimer", PAWN::vaultmp_KillTimer},
+    {"MakePublic", PAWN::vaultmp_MakePublic},
+    {"CallPublic", PAWN::vaultmp_CallPublic},
 
     {"SetServerName", PAWN::vaultmp_SetServerName},
     {"SetServerMap", PAWN::vaultmp_SetServerMap},
@@ -62,7 +67,8 @@ cell PAWN::vaultmp_timestamp(AMX* amx, const cell* params)
 
 cell PAWN::vaultmp_CreateTimer(AMX* amx, const cell* params)
 {
-    cell i = 1, interval; int len;
+    cell i = 1, interval;
+    int len;
     cell* source;
 
     source = amx_Address(amx, params[1]);
@@ -78,6 +84,71 @@ cell PAWN::vaultmp_CreateTimer(AMX* amx, const cell* params)
     return i;
 }
 
+cell PAWN::vaultmp_CreateTimerEx(AMX* amx, const cell* params)
+{
+    cell i = 1, interval;
+    int len;
+    cell* source;
+
+    source = amx_Address(amx, params[1]);
+    amx_StrLen(source, &len);
+    char name[len + 1];
+
+    amx_GetString(name, source, 0, UNLIMITED);
+
+    interval = params[2];
+
+    source = amx_Address(amx, params[3]);
+    amx_StrLen(source, &len);
+    char def[len + 1];
+
+    amx_GetString(def, source, 0, UNLIMITED);
+
+    vector<boost::any> args;
+    unsigned int count = (params[0] / sizeof(cell)) - 3;
+
+    if (count != len)
+        throw VaultException("Script call: Number of arguments does not match definition");
+
+    for (int i = 0; i < count; ++i)
+    {
+        cell* data = amx_Address(amx, params[i + 4]);
+
+        switch (def[i])
+        {
+        case 'i':
+        {
+            args.push_back((unsigned int) *data);
+            break;
+        }
+        case 'l':
+        {
+            args.push_back((unsigned long long) *data);
+            break;
+        }
+        case 'f':
+        {
+            args.push_back((double) amx_ctof(*data));
+            break;
+        }
+        case 's':
+        {
+            amx_StrLen(data, &len);
+            char str[len + 1];
+            amx_GetString(str, data, 0, UNLIMITED);
+            args.push_back(string(str));
+            break;
+        }
+        default:
+            throw VaultException("PAWN call: Unknown argument identifier %02X", def[i]);
+        }
+    }
+
+    i = (cell) Script::CreateTimerPAWNEx(string(name), amx, (unsigned int) interval, string(def), args);
+
+    return i;
+}
+
 cell PAWN::vaultmp_KillTimer(AMX* amx, const cell* params)
 {
     cell i = 1, id;
@@ -89,9 +160,98 @@ cell PAWN::vaultmp_KillTimer(AMX* amx, const cell* params)
     return i;
 }
 
+cell PAWN::vaultmp_MakePublic(AMX* amx, const cell* params)
+{
+    cell i = 1;
+    int len;
+    cell* source;
+
+    source = amx_Address(amx, params[1]);
+    amx_StrLen(source, &len);
+    char real[len + 1];
+
+    amx_GetString(real, source, 0, UNLIMITED);
+
+    source = amx_Address(amx, params[2]);
+    amx_StrLen(source, &len);
+    char name[len + 1];
+
+    amx_GetString(name, source, 0, UNLIMITED);
+
+    source = amx_Address(amx, params[3]);
+    amx_StrLen(source, &len);
+    char def[len + 1];
+
+    amx_GetString(def, source, 0, UNLIMITED);
+
+    Script::MakePublicPAWN(string(real), amx, string(name), string(def));
+
+    return i;
+}
+
+cell PAWN::vaultmp_CallPublic(AMX* amx, const cell* params)
+{
+    cell i = 1;
+    int len;
+    cell* source;
+
+    source = amx_Address(amx, params[1]);
+    amx_StrLen(source, &len);
+    char name[len + 1];
+
+    amx_GetString(name, source, 0, UNLIMITED);
+
+    string def = Public::GetDefinition(string(name));
+
+    vector<boost::any> args;
+    unsigned int count = (params[0] / sizeof(cell)) - 1;
+
+    if (count != def.length())
+        throw VaultException("Script call: Number of arguments does not match definition");
+
+    for (int i = 0; i < count; ++i)
+    {
+        cell* data = amx_Address(amx, params[i + 2]);
+
+        switch (def[i])
+        {
+        case 'i':
+        {
+            args.push_back((unsigned int) *data);
+            break;
+        }
+        case 'l':
+        {
+            args.push_back((unsigned long long) *data);
+            break;
+        }
+        case 'f':
+        {
+            args.push_back((double) amx_ctof(*data));
+            break;
+        }
+        case 's':
+        {
+            amx_StrLen(data, &len);
+            char str[len + 1];
+            amx_GetString(str, data, 0, UNLIMITED);
+            args.push_back(string(str));
+            break;
+        }
+        default:
+            throw VaultException("PAWN call: Unknown argument identifier %02X", def[i]);
+        }
+    }
+
+    i = (cell) Script::CallPublicPAWN(string(name), args);
+
+    return i;
+}
+
 cell PAWN::vaultmp_SetServerName(AMX* amx, const cell* params)
 {
-    cell i = 1; int len;
+    cell i = 1;
+    int len;
     cell* source;
 
     source = amx_Address(amx, params[1]);
@@ -107,7 +267,8 @@ cell PAWN::vaultmp_SetServerName(AMX* amx, const cell* params)
 
 cell PAWN::vaultmp_SetServerMap(AMX* amx, const cell* params)
 {
-    cell i = 1; int len;
+    cell i = 1;
+    int len;
     cell* source;
 
     source = amx_Address(amx, params[1]);
@@ -123,7 +284,8 @@ cell PAWN::vaultmp_SetServerMap(AMX* amx, const cell* params)
 
 cell PAWN::vaultmp_SetServerRule(AMX* amx, const cell* params)
 {
-    cell i = 1; int len, len2;
+    cell i = 1;
+    int len, len2;
     cell* source;
     cell* source2;
 
@@ -251,7 +413,9 @@ cell PAWN::vaultmp_GetName(AMX* amx, const cell* params)
 cell PAWN::vaultmp_GetPos(AMX* amx, const cell* params)
 {
     cell i = 1, id;
-    cell* X; cell* Y; cell* Z;
+    cell* X;
+    cell* Y;
+    cell* Z;
 
     id = params[1];
     X = amx_Address(amx, params[2]);
@@ -270,7 +434,9 @@ cell PAWN::vaultmp_GetPos(AMX* amx, const cell* params)
 cell PAWN::vaultmp_GetAngle(AMX* amx, const cell* params)
 {
     cell i = 1, id;
-    cell* X; cell* Y; cell* Z;
+    cell* X;
+    cell* Y;
+    cell* Z;
 
     id = params[1];
     X = amx_Address(amx, params[2]);
@@ -409,19 +575,16 @@ cell PAWN::Call(AMX* amx, const char* name, const char* argl, int buf, ...)
     va_list args;
     va_start(args, buf);
     cell ret = 0;
+    vector<pair<cell*, char*> > strings;
 
     try
     {
         int idx = 0;
         int err = 0;
-        int pos = -1;
-        int count = 0;
 
         err = amx_FindPublic(amx, name, &idx);
         if (err != AMX_ERR_NONE)
             throw VaultException("PAWN runtime error (%d): \"%s\"", err, aux_StrError(err));
-
-        vector<pair<cell*, char*> > strings;
 
         for (int i = 0; i < strlen(argl); i++)
         {
@@ -430,6 +593,12 @@ cell PAWN::Call(AMX* amx, const char* name, const char* argl, int buf, ...)
             case 'i':
             {
                 cell value = (cell) va_arg(args, unsigned int);
+                amx_Push(amx, value);
+                break;
+            }
+            case 'l':
+            {
+                cell value = (cell) va_arg(args, unsigned long long);
                 amx_Push(amx, value);
                 break;
             }
@@ -447,6 +616,8 @@ cell PAWN::Call(AMX* amx, const char* name, const char* argl, int buf, ...)
                 strings.push_back(pair<cell*, char*>(store, string));
                 break;
             }
+            default:
+                throw VaultException("PAWN call: Unknown argument identifier %02X", argl[i]);
             }
         }
 
@@ -469,11 +640,83 @@ cell PAWN::Call(AMX* amx, const char* name, const char* argl, int buf, ...)
             }
         }
 
-        if (!strings.empty()) amx_Release(amx, strings.at(0).first);
+        if (!strings.empty())
+            amx_Release(amx, strings.at(0).first);
     }
     catch (...)
     {
         va_end(args);
+
+        if (!strings.empty())
+            amx_Release(amx, strings.at(0).first);
+        throw;
+    }
+
+    return ret;
+}
+
+cell PAWN::Call(AMX* amx, const char* name, const char* argl, const vector<boost::any>& args)
+{
+    cell ret = 0;
+    cell* str = NULL;
+
+    try
+    {
+        int idx = 0;
+        int err = 0;
+
+        err = amx_FindPublic(amx, name, &idx);
+        if (err != AMX_ERR_NONE)
+            throw VaultException("PAWN runtime error (%d): \"%s\"", err, aux_StrError(err));
+
+        for (int i = strlen(argl) - 1; i >= 0; i--)
+        {
+            switch (argl[i])
+            {
+            case 'i':
+            {
+                cell value = (cell) boost::any_cast<unsigned int>(args.at(i));
+                amx_Push(amx, value);
+                break;
+            }
+            case 'l':
+            {
+                cell value = (cell) boost::any_cast<unsigned long long>(args.at(i));
+                amx_Push(amx, value);
+                break;
+            }
+            case 'f':
+            {
+                double value = boost::any_cast<double>(args.at(i));
+                amx_Push(amx, amx_ftoc(value));
+                break;
+            }
+            case 's':
+            {
+                string _string = boost::any_cast<string>(args.at(i));
+                const char* string = _string.c_str();
+                cell* store;
+                amx_PushString(amx, &store, string, 1, 0);
+                if (!str)
+                    str = store;
+                break;
+            }
+            default:
+                throw VaultException("PAWN call: Unknown argument identifier %02X", argl[i]);
+            }
+        }
+
+        err = amx_Exec(amx, &ret, idx);
+        if (err != AMX_ERR_NONE)
+            throw VaultException("PAWN runtime error (%d): \"%s\"", err, aux_StrError(err));
+
+        if (str)
+            amx_Release(amx, str);
+    }
+    catch (...)
+    {
+        if (str)
+            amx_Release(amx, str);
         throw;
     }
 

@@ -93,12 +93,14 @@
 		<Compiler>
 			<Add option="-std=gnu++0x" />
 			<Add option="-fpermissive" />
+			<Add option="-masm=intel" />
 			<Add directory="D:\Programmierung\vaultmp\" />
 		</Compiler>
 		<Unit filename="..\API.cpp" />
 		<Unit filename="..\API.h" />
 		<Unit filename="..\Actor.cpp" />
 		<Unit filename="..\Actor.h" />
+		<Unit filename="..\Actors.h" />
 		<Unit filename="..\Container.cpp" />
 		<Unit filename="..\Container.h" />
 		<Unit filename="..\CriticalSection.cpp" />
@@ -391,6 +393,8 @@
 		<Unit filename="PAWN.h" />
 		<Unit filename="Script.cpp" />
 		<Unit filename="Script.h" />
+		<Unit filename="ScriptFunction.cpp" />
+		<Unit filename="ScriptFunction.h" />
 		<Unit filename="Server.cpp" />
 		<Unit filename="Server.h" />
 		<Unit filename="Timer.cpp" />

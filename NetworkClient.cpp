@@ -35,6 +35,16 @@ NetworkResponse NetworkClient::ProcessEvent(unsigned char id)
     }
     case ID_EVENT_GAME_STARTED:
     {
+        pDefault* packet = PacketFactory::CreatePacket(ID_GAME_LOAD);
+        response = Network::CompleteResponse(Network::CreateResponse(packet,
+                                                                     (unsigned char) HIGH_PRIORITY,
+                                                                     (unsigned char) RELIABLE_ORDERED,
+                                                                     CHANNEL_GAME,
+                                                                     Game::server));
+        break;
+    }
+    case ID_EVENT_GAME_LOADED:
+    {
         FactoryObject reference = GameFactory::GetObject(PLAYER_REFERENCE);
         Player* self = vaultcast<Player>(reference);
         pDefault* packet = PacketFactory::CreatePacket(ID_GAME_CONFIRM, self->GetNetworkID(), self->GetName().c_str());
@@ -119,9 +129,15 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
             Bethesda::Initialize();
             Game::Initialize();
             Game::LoadGame(Utils::FileOnly(Bethesda::savegame.first.c_str()));
-            Game::Startup();
 
             response = NetworkClient::ProcessEvent(ID_EVENT_GAME_STARTED);
+            break;
+        }
+
+        case ID_GAME_LOAD:
+        {
+            Game::Startup();
+            response = NetworkClient::ProcessEvent(ID_EVENT_GAME_LOADED);
             break;
         }
 

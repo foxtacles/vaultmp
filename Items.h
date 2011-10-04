@@ -1,12 +1,9 @@
 #ifndef ITEMS_H
 #define ITEMS_H
 
-// Thanks to Stan for the formatted item lists! http://www.vaultmp.com/index.php?topic=16.msg353#msg353
-// Thanks to Houstin for the formatted Oblivion list! http://www.vaultmp.com/index.php?topic=285.msg2763#msg2763
-// sources: http://fallout.wikia.com/wiki/Fallout_Wiki
-// http://forums.gamewinners.com/forums/showthread.php?t=480367
+// Databases contributed by Stan, Houstin (www.vaultmp.com)
 
-ItemDatabase Container::Fallout3Items =
+Database Container::Fallout3Items =
 {
     /* DLCs:
      * E0 - Mothership Zeta
@@ -1210,7 +1207,7 @@ ItemDatabase Container::Fallout3Items =
 
 };
 
-ItemDatabase Container::FalloutNVItems =
+Database Container::FalloutNVItems =
 {
     /* DLCs:
      * E0 - Honest Hearts
@@ -3032,7 +3029,7 @@ ItemDatabase Container::FalloutNVItems =
 
 };
 
-ItemDatabase Container::OblivionItems =
+Database Container::OblivionItems =
 {
     {0x0000000A,	"Lockpick"},
     {0x0000000B,	"Skeleton Key"},

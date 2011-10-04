@@ -51,22 +51,33 @@ NetworkResponse Server::Authenticate(RakNetGUID guid, string name, string pwd)
     return response;
 }
 
+NetworkResponse Server::LoadGame(RakNetGUID guid)
+{
+    NetworkResponse response;
+
+    pDefault* packet = PacketFactory::CreatePacket(ID_GAME_LOAD);
+    response.push_back(Network::CreateResponse(packet,
+                       (unsigned char) HIGH_PRIORITY,
+                       (unsigned char) RELIABLE_ORDERED,
+                       CHANNEL_GAME,
+                       guid));
+
+    return response;
+}
+
 NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id, string name)
 {
     NetworkResponse response;
-    Player* player;
     GameFactory::CreateKnownInstance(ID_PLAYER, id, 0x00000000);
-    vector<FactoryObject> players = GameFactory::GetObjectTypes(ID_PLAYER);
-    vector<FactoryObject>::iterator it;
+    FactoryObject _player = GameFactory::GetObject(id);
+    Player* player = vaultcast<Player>(_player);
 
-    FactoryObject reference = GameFactory::GetObject(id);
-    player = vaultcast<Player>(reference);
     player->SetName(name);
 
     Client* client = new Client(guid, player->GetNetworkID());
     Dedicated::self->SetServerPlayers(pair<int, int>(Client::GetClientCount(), Dedicated::connections));
 
-    unsigned int result = Script::OnPlayerRequestGame(reference);
+    unsigned int result = Script::OnPlayerRequestGame(_player);
 
     if (!result)
         throw VaultException("Script did not provide an actor base for a player");
@@ -79,37 +90,6 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id, string name)
                        (unsigned char) RELIABLE_ORDERED,
                        CHANNEL_GAME,
                        Client::GetNetworkList(client)));
-
-    for (it = players.begin(); it != players.end(); GameFactory::LeaveReference(*it), ++it)
-    {
-        if (**it == player)
-            continue;
-
-        Player* _player = vaultcast<Player>(*it);
-
-        packet = PacketFactory::CreatePacket(ID_PLAYER_NEW, _player->GetNetworkID(), _player->GetReference(), _player->GetBase(), _player->GetName().c_str());
-        response.push_back(Network::CreateResponse(packet, (unsigned char) HIGH_PRIORITY, (unsigned char) RELIABLE_ORDERED, CHANNEL_GAME, guid));
-
-        packet = PacketFactory::CreatePacket(ID_UPDATE_CELL, _player->GetNetworkID(), _player->GetGameCell());
-        response.push_back(Network::CreateResponse(packet, (unsigned char) HIGH_PRIORITY, (unsigned char) RELIABLE_ORDERED, CHANNEL_GAME, guid));
-
-        packet = PacketFactory::CreatePacket(ID_UPDATE_POS, _player->GetNetworkID(), _player->GetGamePos(Axis_X), _player->GetGamePos(Axis_Y), _player->GetGamePos(Axis_Z));
-        response.push_back(Network::CreateResponse(packet, (unsigned char) HIGH_PRIORITY, (unsigned char) RELIABLE_ORDERED, CHANNEL_GAME, guid));
-
-        packet = PacketFactory::CreatePacket(ID_UPDATE_STATE, _player->GetNetworkID(), _player->GetActorMovingAnimation(), _player->GetActorMovingXY(), _player->GetActorAlerted(), _player->GetActorSneaking());
-        response.push_back(Network::CreateResponse(packet, (unsigned char) HIGH_PRIORITY, (unsigned char) RELIABLE_ORDERED, CHANNEL_GAME, guid));
-
-        vector<unsigned char> data = API::RetrieveAllValues();
-        vector<unsigned char>::iterator it2;
-
-        for (it2 = data.begin(); it2 != data.end(); ++it2)
-        {
-            packet = PacketFactory::CreatePacket(ID_UPDATE_VALUE, _player->GetNetworkID(), true, *it2, _player->GetActorBaseValue(*it2));
-            response.push_back(Network::CreateResponse(packet, (unsigned char) HIGH_PRIORITY, (unsigned char) RELIABLE_ORDERED, CHANNEL_GAME, guid));
-            packet = PacketFactory::CreatePacket(ID_UPDATE_VALUE, _player->GetNetworkID(), false, *it2, _player->GetActorValue(*it2));
-            response.push_back(Network::CreateResponse(packet, (unsigned char) HIGH_PRIORITY, (unsigned char) RELIABLE_ORDERED, CHANNEL_GAME, guid));
-        }
-    }
 
     return response;
 }

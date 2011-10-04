@@ -25,12 +25,6 @@ static bool delegate = false;
 static bool DLLerror = false;
 static unsigned char game = 0x00;
 
-unsigned int _reference = 0x00000000;
-unsigned int _call = 0x00000000;
-unsigned int _result = 0x00000000;
-unsigned int _temp = 0x00000000;
-double _store = 0x0000000000000000;
-
 static const unsigned FalloutNVpatch_PlayGroup = 0x00494D5C;
 static const unsigned FalloutNVpatch_delegator_src = 0x0086B3E3;
 static const unsigned FalloutNVpatch_delegator_dest = 0x0086E649;
@@ -117,21 +111,18 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
     case 0xE001: // GetActorState - returns the actors animations, alerted / sneaking state
     {
         ZeroMemory(result, sizeof(double));
-        typedef void* (*animdat)(void*);
-        _reference = (unsigned int) reference;
-        animdat Call;
+        unsigned char* data;
 
-        if (game & FALLOUT_GAMES)
-            Call = (animdat) *((unsigned int*) ((unsigned) *((unsigned int*) reference) + (unsigned) 0x01E4));
-        else
-            Call = (animdat) *((unsigned int*) ((unsigned) *((unsigned int*) reference) + (unsigned) 0x0164));
-
+        // thiscall convention
         asm (
-            ".intel_syntax noprefix\n"
-            "MOV ECX,__reference\n"
+            "MOV ECX,%1\n"
+            "CALL %2\n"
+            "MOV %0,EAX\n"
+            : "=m"(data)
+            : "m"(reference), "r"((game & FALLOUT_GAMES) ? (*((unsigned int*) ((unsigned) *((unsigned int*) reference) + (unsigned) 0x01E4)))
+                                                         : (*((unsigned int*) ((unsigned) *((unsigned int*) reference) + (unsigned) 0x0164))))
+            : "ecx"
         );
-
-        unsigned char* data = (unsigned char*) Call(reference);
 
         if (data != NULL)
         {
@@ -191,20 +182,18 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
         if (!(game & FALLOUT_GAMES))
             break;
 
-        _call = ((game & FALLOUT3) ? ITEM_COUNT_FALLOUT3 : ITEM_COUNT_NEWVEGAS);
-        _reference = (unsigned int) reference;
+        unsigned int count;
 
         asm (
-            ".intel_syntax noprefix\n"
+            "MOV ECX,%1\n"
             "PUSH 1\n"
             "PUSH 0\n"
-            "MOV ECX,__reference\n"
-            "MOV EAX,__call\n"
-            "CALL EAX\n"
-            "MOV __result,EAX\n"
+            "CALL %2\n"
+            "MOV %0,EAX\n"
+            : "=m"(count)
+            : "m"(reference), "r"((game & FALLOUT3) ? ITEM_COUNT_FALLOUT3 : ITEM_COUNT_NEWVEGAS)
+            : "ecx"
         );
-
-        unsigned int count = _result;
 
         if (count > 0)
         {
@@ -212,21 +201,20 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
             vector<unsigned char> container;
             container.reserve(size);
 
-            for (_temp = 0; _temp < count; ++_temp)
+            for (int i = 0; i < count; ++i)
             {
-                _call = ((game & FALLOUT3) ? ITEM_GET_FALLOUT3 : ITEM_GET_NEWVEGAS);
+                unsigned int item;
 
                 asm (
-                    ".intel_syntax noprefix\n"
+                    "MOV ECX,%2\n"
                     "PUSH 0\n"
-                    "PUSH __temp\n"
-                    "MOV ECX,__reference\n"
-                    "MOV EAX,__call\n"
-                    "CALL EAX\n"
-                    "MOV __result,EAX\n"
+                    "PUSH %1\n"
+                    "CALL %3\n"
+                    "MOV %0,EAX\n"
+                    : "=m"(item)
+                    : "r"(i), "m"(reference), "r"((game & FALLOUT3) ? ITEM_GET_FALLOUT3 : ITEM_GET_NEWVEGAS)
+                    : "ecx"
                 );
-
-                unsigned int item = _result;
 
                 if (item)
                 {
@@ -241,78 +229,71 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
                         container.insert(container.end(), (unsigned char*) &baseID, ((unsigned char*) &baseID) + 4);
                         container.insert(container.end(), (unsigned char*) &amount, ((unsigned char*) &amount) + 4);
 
-                        _call = ((game & FALLOUT3) ? ITEM_ISEQUIPPED_FALLOUT3 : ITEM_ISEQUIPPED_NEWVEGAS);
-                        _result = item;
+                        unsigned int equipped;
 
                         asm (
-                            ".intel_syntax noprefix\n"
+                            "MOV ECX,%1\n"
                             "PUSH 0\n"
-                            "MOV ECX,__result\n"
-                            "MOV EAX,__call\n"
-                            "CALL EAX\n"
-                            "MOV __result,EAX\n"
+                            "CALL %2\n"
+                            "MOV %0,EAX\n"
+                            : "=m"(equipped)
+                            : "m"(item), "r"((game & FALLOUT3) ? ITEM_ISEQUIPPED_FALLOUT3 : ITEM_ISEQUIPPED_NEWVEGAS)
+                            : "ecx"
                         );
 
-                        unsigned int equipped = (bool) (_result & 0x00000001);
+                        equipped &= 0x00000001;
+
                         container.insert(container.end(), (unsigned char*) &equipped, ((unsigned char*) &equipped) + 4);
 
-                        _store = 0x0000000000000000;
+                        double condition;
 
                         if (type == 0x18 || type == 0x28)
                         {
-                            _call = ((game & FALLOUT3) ? ITEM_CONDITION_FALLOUT3 : ITEM_CONDITION_NEWVEGAS);
-                            _result = item;
-
                             asm (
-                                ".intel_syntax noprefix\n"
+                                "MOV ECX,%1\n"
                                 "PUSH 1\n"
-                                "MOV ECX,__result\n"
-                                "MOV EAX,__call\n"
-                                "CALL EAX\n"
-                                "FSTP QWORD PTR __store\n"
+                                "CALL %2\n"
+                                "FSTP QWORD PTR %0\n"
+                                : "=m"(condition)
+                                : "m"(item), "r"((game & FALLOUT3) ? ITEM_CONDITION_FALLOUT3 : ITEM_CONDITION_NEWVEGAS)
+                                : "ecx"
                             );
                         }
 
-                        container.insert(container.end(), (unsigned char*) &_store, ((unsigned char*) &_store) + 8);
+                        container.insert(container.end(), (unsigned char*) &condition, ((unsigned char*) &condition) + 8);
 
                         // Kind of cleanup here? not sure what this is
 
-                        if (game & FALLOUT3)
+                        /*if (game & FALLOUT3)
                         {
-                            _call = ITEM_UNK1_FALLOUT3;
-                            _result = item;
-
                             asm (
-                                ".intel_syntax noprefix\n"
-                                "MOV ECX,__result\n"
-                                "MOV EAX,__call\n"
-                                "CALL EAX\n"
-                                "PUSH __result\n"
+                                "MOV ECX,%0\n"
+                                "CALL %1\n"
+                                "PUSH %0\n"
+                                :
+                                : "m"(item), "r"(ITEM_UNK1_FALLOUT3)
+                                : "ecx"
                             );
 
-                            _call = ITEM_UNK2_FALLOUT3;
-                            _result = ITEM_UNK3_FALLOUT3;
-
                             asm (
-                                ".intel_syntax noprefix\n"
-                                "MOV ECX,__result\n"
-                                "MOV EAX,__call\n"
-                                "CALL EAX\n"
+                                "MOV ECX,%0\n"
+                                "CALL %1\n"
+                                :
+                                : "r"(ITEM_UNK3_FALLOUT3), "r"(ITEM_UNK2_FALLOUT3)
+                                : "ecx"
                             );
                         }
                         else
                         {
-                            _call = ITEM_UNK1_NEWVEGAS;
-                            _result = item;
-
                             asm (
-                                ".intel_syntax noprefix\n"
+                                "MOV ECX,%0\n"
                                 "PUSH 1\n"
-                                "MOV ECX,__result\n"
-                                "MOV EAX,__call\n"
-                                "CALL EAX\n"
+                                "CALL %1\n"
+                                :
+                                : "m"(item), "r"(ITEM_UNK1_NEWVEGAS)
+                                : "ecx"
                             );
-                        }
+                        }*/
                     }
                     else
                         return true;

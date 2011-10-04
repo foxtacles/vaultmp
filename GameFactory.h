@@ -60,8 +60,11 @@ private:
 
     static CriticalSection cs;
     static ReferenceList instances;
+    static unsigned char game;
 
 public:
+
+    static void Initialize(unsigned char game);
 
 #ifdef VAULTMP_DEBUG
     static void SetDebugHandler(Debug* debug);

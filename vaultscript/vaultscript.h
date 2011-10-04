@@ -6,9 +6,9 @@
 #include <string>
 
 #ifndef __WIN32__
-  #define VAULTSCRIPT __attribute__ ((__visibility__("default")))
+    #define VAULTSCRIPT __attribute__ ((__visibility__("default"))) __cdecl
 #else
-    #define VAULTSCRIPT __declspec(dllexport)
+    #define VAULTSCRIPT __declspec(dllexport) __cdecl
 #endif
 
 namespace vaultmp {
@@ -22,9 +22,10 @@ typedef unsigned int Cell; // 4 byte
 typedef unsigned int Interval; // 4 byte
 typedef unsigned long long ID; // 8 byte
 typedef unsigned long long Timer; // 8 byte
+typedef unsigned long long Result; // 8 byte
 typedef double Value; // 8 byte
 
-typedef void (*TimerFunc)();
+typedef Result (__cdecl *Function)();
 
 static const Index FALLOUT3             =   0x01;
 static const Index NEWVEGAS             =   FALLOUT3 << 1;
@@ -52,8 +53,11 @@ extern "C" {
     VAULTSCRIPT void OnActorDeath(vaultmp::ID);
 
     VAULTSCRIPT void (*timestamp)();
-    VAULTSCRIPT vaultmp::Timer (*CreateTimer)(vaultmp::TimerFunc, vaultmp::Interval);
+    VAULTSCRIPT vaultmp::Timer (*CreateTimer)(vaultmp::Function, vaultmp::Interval);
+    VAULTSCRIPT vaultmp::Timer (*CreateTimerEx)(vaultmp::Function, vaultmp::Interval, std::string, ...);
     VAULTSCRIPT void (*KillTimer)(vaultmp::Timer);
+    VAULTSCRIPT void (*MakePublic)(vaultmp::Function, std::string, std::string);
+    VAULTSCRIPT vaultmp::Result (*CallPublic)(std::string, ...);
 
     VAULTSCRIPT void (*SetServerName)(std::string);
     VAULTSCRIPT void (*SetServerMap)(std::string);

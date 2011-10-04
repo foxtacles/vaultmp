@@ -1,10 +1,7 @@
 #include "Container.h"
 #include "Items.h"
 
-bool Container::initialized = false;
-unsigned char Container::game = 0x00;
-ItemDatabase* Container::Items = NULL;
-IndexLookup Container::Mods;
+Database* Container::Items = NULL;
 
 #ifdef VAULTMP_DEBUG
 Debug* Container::debug;
@@ -28,17 +25,6 @@ Container::Container(unsigned int refID, unsigned int baseID) : Object(refID, ba
 Container::~Container()
 {
     this->FlushContainer();
-}
-
-unsigned int Container::ResolveIndex(unsigned int baseID)
-{
-    unsigned char idx = (unsigned char) (((unsigned int) (baseID & 0xFF000000)) >> 24);
-    IndexLookup::iterator it = Mods.find(idx);
-
-    if (it != Mods.end())
-        return (baseID & 0x00FFFFFF) | (((unsigned int) it->second) << 24);
-
-    return baseID;
 }
 
 bool Container::Item_sort(NetworkID id, NetworkID id2)
@@ -117,58 +103,6 @@ StripCopy Container::Strip() const
     }
 
     return result;
-}
-
-void Container::Initialize(unsigned char game)
-{
-    if (!initialized)
-    {
-        Container::game = game;
-
-        switch (game)
-        {
-        case FALLOUT3:
-            Items = &Fallout3Items;
-            break;
-        case NEWVEGAS:
-            Items = &FalloutNVItems;
-            break;
-        case OBLIVION:
-            Items = &OblivionItems;
-            break;
-        default:
-            throw VaultException("Bad game ID %08X", game);
-        }
-
-#ifdef VAULTMP_DEBUG
-        if (debug != NULL)
-            debug->PrintFormat("Found %d items in the database", true, Items->size());
-#endif
-
-        initialized = true;
-    }
-}
-
-void Container::Cleanup()
-{
-    if (initialized)
-    {
-        initialized = false;
-
-#ifdef VAULTMP_DEBUG
-        if (debug != NULL)
-            debug->Print("Performed cleanup on Container class", true);
-#endif
-    }
-}
-
-void Container::RegisterIndex(unsigned char real, unsigned char idx)
-{
-
-#ifdef VAULTMP_DEBUG
-    if (debug != NULL)
-        debug->PrintFormat("Registered Fallout mod index (%02X => %02X)", true, real, idx);
-#endif
 }
 
 void Container::AddItem(NetworkID id)
@@ -398,7 +332,7 @@ void Container::PrintContainer() const
         {
             FactoryObject _reference = GameFactory::GetObject(*it);
             Item* item = vaultcast<Item>(_reference);
-            debug->PrintFormat("%d of %s (%08X), condition %f, equipped state %d", true, item->GetItemCount(), item->ToString().c_str(), item->GetBase(), (float) item->GetItemCondition(), (int) item->GetItemEquipped());
+            debug->PrintFormat("%d of %s (%08X), condition %f, equipped state %d", true, item->GetItemCount(), item->GetName().c_str(), item->GetBase(), (float) item->GetItemCondition(), (int) item->GetItemEquipped());
         }
     }
 #endif

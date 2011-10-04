@@ -13,6 +13,7 @@ enum
     ID_EVENT_CLIENT_ERROR,
     ID_EVENT_SERVER_ERROR,
     ID_EVENT_GAME_STARTED,
+    ID_EVENT_GAME_LOADED,
     ID_EVENT_AUTH_RECEIVED,
     ID_EVENT_CONFIRM_RECEIVED,
     ID_EVENT_CLOSE_RECEIVED,
@@ -22,6 +23,7 @@ enum
 {
     ID_GAME_AUTH = ID_GAME_FIRST,
     ID_GAME_CONFIRM,
+    ID_GAME_LOAD,
     ID_GAME_MOD,
     ID_GAME_START,
     ID_GAME_END,
@@ -442,6 +444,24 @@ private:
     pGameAuth& operator=(const pGameAuth&);
 };
 
+class pGameLoad : public pGameDefault
+{
+friend class PacketFactory;
+
+private:
+    pGameLoad() : pGameDefault(ID_GAME_LOAD)
+    {
+        construct();
+    }
+    pGameLoad(unsigned char* stream, unsigned int len) : pGameDefault(stream, len)
+    {
+        deconstruct();
+    }
+
+    pGameLoad(const pGameLoad&);
+    pGameLoad& operator=(const pGameLoad&);
+};
+
 class pGameMod : public pGameDefault
 {
 friend class PacketFactory;
@@ -756,6 +776,12 @@ public:
             break;
         }
 
+        case ID_GAME_LOAD:
+        {
+            packet = new pGameLoad();
+            break;
+        }
+
         case ID_GAME_MOD:
         {
             char* modfile = va_arg(args, char*);
@@ -865,6 +891,9 @@ public:
         case ID_GAME_AUTH:
             packet = new pGameAuth(stream, len);
             break;
+        case ID_GAME_LOAD:
+            packet = new pGameLoad(stream, len);
+            break;
         case ID_GAME_MOD:
             packet = new pGameMod(stream, len);
             break;
@@ -940,6 +969,12 @@ public:
                 char* pwd = va_arg(args, char*);
                 strncpy(name, data->_data.name, sizeof(data->_data.name));
                 strncpy(pwd, data->_data.pwd, sizeof(data->_data.pwd));
+                break;
+            }
+
+            case ID_GAME_LOAD:
+            {
+                pGameLoad* data = dynamic_cast<pGameLoad*>(packet);
                 break;
             }
 

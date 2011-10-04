@@ -119,6 +119,12 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
             break;
         }
 
+        case ID_GAME_LOAD:
+        {
+            response = Server::LoadGame(data->guid);
+            break;
+        }
+
         case ID_GAME_CONFIRM:
         {
             NetworkID id;

@@ -2,6 +2,7 @@
 
 CriticalSection GameFactory::cs;
 ReferenceList GameFactory::instances;
+unsigned char GameFactory::game = 0x00;
 
 #ifdef VAULTMP_DEBUG
 Debug* GameFactory::debug;
@@ -10,6 +11,31 @@ Debug* GameFactory::debug;
 GameFactory::GameFactory()
 {
 
+}
+
+void GameFactory::Initialize(unsigned char game)
+{
+    GameFactory::game = game;
+
+    switch (game)
+    {
+    case FALLOUT3:
+        Container::Items = &Container::Fallout3Items;
+        break;
+    case NEWVEGAS:
+        Container::Items = &Container::FalloutNVItems;
+        break;
+    case OBLIVION:
+        Container::Items = &Container::OblivionItems;
+        break;
+    default:
+        throw VaultException("Bad game ID %08X", game);
+    }
+
+#ifdef VAULTMP_DEBUG
+    if (debug != NULL)
+        debug->PrintFormat("Found %d items in the database", true, Container::Items->size());
+#endif
 }
 
 #ifdef VAULTMP_DEBUG
@@ -281,9 +307,13 @@ void GameFactory::DestroyAllInstances()
 
     // Cleanup classes
 
-    Container::Cleanup();
+    game = 0x00;
     Object::param_Axis.first = vector<string>();
+    Container::Items = NULL;
+    Actor::Actors = NULL;
+    Actor::Creatures = NULL;
     Actor::param_ActorValues.first = vector<string>();
+
     Lockable::Reset();
 }
 

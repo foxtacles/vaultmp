@@ -19,6 +19,7 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-O2" />
 			<Add option="-masm=intel" />
 			<Add option="-DBUILDING_DLL=1" />
 		</Compiler>

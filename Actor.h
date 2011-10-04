@@ -36,11 +36,24 @@ class Actor : public Container
 friend class GameFactory;
 
 private:
+    static Database Fallout3Actors;
+    static Database FalloutNVActors;
+    static Database OblivionActors;
+
+    static Database Fallout3Creatures;
+    static Database FalloutNVCreatures;
+    static Database OblivionCreatures;
+
+    static Database* Actors;
+    static Database* Creatures;
+
     static Parameter param_ActorValues;
 
 #ifdef VAULTMP_DEBUG
     static Debug* debug;
 #endif
+
+    Database::const_iterator data;
 
     map<unsigned char, Value<double> > actor_Values;
     map<unsigned char, Value<double> > actor_BaseValues;

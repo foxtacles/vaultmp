@@ -79,7 +79,16 @@ void Network::Flush()
 {
     cs.StartSession();
 
-    queue.clear(); // possible memory leak
+    deque<NetworkResponse>::iterator it;
+    NetworkResponse::iterator it2;
+
+    for (it = queue.begin(); it != queue.end(); ++it)
+    {
+        for (it2 = (*it).begin(); it2 != (*it).end(); ++it2)
+            delete it2->first.first;
+    }
+
+    queue.clear();
 
     cs.EndSession();
 }

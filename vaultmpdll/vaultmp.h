@@ -8,7 +8,7 @@ static const unsigned int ITEM_COUNT_FALLOUT3         = 0x004E85E0;
 static const unsigned int ITEM_GET_FALLOUT3           = 0x004E8570;
 static const unsigned int ITEM_ISEQUIPPED_FALLOUT3    = 0x0047D260;
 static const unsigned int ITEM_CONDITION_FALLOUT3     = 0x0047CF30;
-// has probably something to do with memory freeing
+// unk
 static const unsigned int ITEM_UNK1_FALLOUT3          = 0x0047FD30;
 static const unsigned int ITEM_UNK2_FALLOUT3          = 0x0086BA60;
 static const unsigned int ITEM_UNK3_FALLOUT3          = 0x01090A78;

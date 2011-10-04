@@ -1,12 +1,5 @@
 #include <vaultmp>
 
-forward MyTimer();
-
-public MyTimer()
-{
-
-}
-
 main()
 {
     printf("My first PAWN vaultscript <3\n");
@@ -22,8 +15,6 @@ main()
     case OBLIVION:
         SetServerMap("cyrodiil");
     }
-
-    //CreateTimer("MyTimer", 5000);
 }
 
 public OnClientAuthenticate(const name{}, const pwd{})

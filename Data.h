@@ -32,6 +32,8 @@ typedef bool (*RetrieveBooleanFlag)();
 typedef pair<vector<string>, VaultFunctor*> Parameter;
 typedef list<Parameter> ParamList;
 typedef pair<ParamList, RetrieveBooleanFlag> ParamContainer;
+typedef const map<const unsigned int, const char*> Database;
+typedef map<const unsigned char, const unsigned char> IndexLookup;
 
 static bool AlwaysTrue()
 {

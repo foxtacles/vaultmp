@@ -28,11 +28,14 @@ forward OnActorDeath(ID);
 
 native timestamp();
 native CreateTimer(const func{}, interval);
+native CreateTimerEx(const func{}, interval, const def{}, {Fixed,Float,_}:...);
 native KillTimer(timer);
+native MakePublic(const func{}, const name{}, const def{});
+native CallPublic(const name{}, {Fixed,Float,_}:...);
 
-native SetServerName(name{});
-native SetServerMap(map{});
-native SetServerRule(rule{}, value{});
+native SetServerName(const name{});
+native SetServerMap(const map{});
+native SetServerRule(const rule{}, const value{});
 native GetGameCode();
 
 native ValueToString(index, value{});

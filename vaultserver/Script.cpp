@@ -40,7 +40,10 @@ Script::Script(char* path)
 
         SetScriptFunction("timestamp", &Utils::timestamp);
         SetScriptFunction("CreateTimer", &Script::CreateTimer);
+        SetScriptFunction("CreateTimerEx", &Script::CreateTimerEx);
         SetScriptFunction("KillTimer", &Script::KillTimer);
+        SetScriptFunction("MakePublic", &Script::MakePublic);
+        SetScriptFunction("CallPublic", &Script::CallPublic);
 
         SetScriptFunction("SetServerName", &Dedicated::SetServerName);
         SetScriptFunction("SetServerMap", &Dedicated::SetServerMap);
@@ -153,24 +156,115 @@ void Script::UnloadScripts()
         delete *it;
 
     Timer::TerminateAll();
+    Public::DeleteAll();
     scripts.clear();
 }
 
-NetworkID Script::CreateTimer(TimerFunc timer, unsigned int interval)
+void Script::GetArguments(vector<boost::any>& params, va_list args, string def)
 {
-    Timer* t = new Timer(timer, interval);
+    string::iterator it;
+    params.reserve(def.length());
+
+    try
+    {
+        for (it = def.begin(); it != def.end(); ++it)
+        {
+            switch (*it)
+            {
+            case 'i':
+            {
+                params.push_back(va_arg(args, unsigned int));
+                break;
+            }
+            case 'l':
+            {
+                params.push_back(va_arg(args, unsigned long long));
+                break;
+            }
+            case 'f':
+            {
+                params.push_back(va_arg(args, double));
+                break;
+            }
+            case 's':
+            {
+                params.push_back(string(va_arg(args, const char*)));
+                break;
+            }
+            default:
+                throw VaultException("C++ call: Unknown argument identifier %02X", *it);
+            }
+        }
+    }
+    catch (...)
+    {
+        va_end(args);
+        throw;
+    }
+}
+
+NetworkID Script::CreateTimer(ScriptFunc timer, unsigned int interval)
+{
+    Timer* t = new Timer(timer, string(), vector<boost::any>(), interval);
     return t->GetNetworkID();
 }
 
-NetworkID Script::CreateTimerPAWN(TimerPAWN timer, AMX* amx, unsigned int interval)
+NetworkID Script::CreateTimerEx(ScriptFunc timer, unsigned int interval, string def, ...)
 {
-    Timer* t = new Timer(timer, amx, interval);
+    vector<boost::any> params;
+
+    va_list args;
+    va_start(args, def);
+    GetArguments(params, args, def);
+    va_end(args);
+
+    Timer* t = new Timer(timer, def, params, interval);
+    return t->GetNetworkID();
+}
+
+NetworkID Script::CreateTimerPAWN(ScriptFuncPAWN timer, AMX* amx, unsigned int interval)
+{
+    Timer* t = new Timer(timer, amx, string(), vector<boost::any>(), interval);
+    return t->GetNetworkID();
+}
+
+NetworkID Script::CreateTimerPAWNEx(ScriptFuncPAWN timer, AMX* amx, unsigned int interval, string def, const vector<boost::any>& args)
+{
+    Timer* t = new Timer(timer, amx, def, args, interval);
     return t->GetNetworkID();
 }
 
 void Script::KillTimer(NetworkID id)
 {
     Timer::Terminate(id);
+}
+
+void Script::MakePublic(ScriptFunc _public, string name, string def)
+{
+    new Public(_public, name, def);
+}
+
+void Script::MakePublicPAWN(ScriptFuncPAWN _public, AMX* amx, string name, string def)
+{
+    new Public(_public, amx, name, def);
+}
+
+unsigned long long Script::CallPublic(string name, ...)
+{
+    vector<boost::any> params;
+    string def = Public::GetDefinition(name);
+
+    va_list args;
+    va_start(args, name);
+    GetArguments(params, args, def);
+    va_end(args);
+
+    return Public::Call(name, params);
+}
+
+unsigned long long Script::CallPublicPAWN(string name, const vector<boost::any>& args)
+{
+    return Public::Call(name, args);
 }
 
 bool Script::OnClientAuthenticate(string name, string pwd)
@@ -200,7 +294,7 @@ unsigned int Script::OnPlayerRequestGame(FactoryObject reference)
         if ((*it)->cpp_script)
             result = (*it)->_OnPlayerRequestGame(id);
         else
-            result = (unsigned int) PAWN::Call((AMX*) (*it)->handle, "OnPlayerRequestGame", "f", 0, id);
+            result = (unsigned int) PAWN::Call((AMX*) (*it)->handle, "OnPlayerRequestGame", "l", 0, id);
     }
 
     return result;
@@ -216,7 +310,7 @@ void Script::OnPlayerDisconnect(FactoryObject reference, unsigned char reason)
         if ((*it)->cpp_script)
             (*it)->_OnPlayerDisconnect(id, reason);
         else
-            PAWN::Call((AMX*) (*it)->handle, "OnPlayerDisconnect", "if", 0, (unsigned int) reason, id);
+            PAWN::Call((AMX*) (*it)->handle, "OnPlayerDisconnect", "il", 0, (unsigned int) reason, id);
     }
 }
 
@@ -230,7 +324,7 @@ void Script::OnCellChange(FactoryObject reference, unsigned int cell)
         if ((*it)->cpp_script)
             (*it)->_OnCellChange(id, cell);
         else
-            PAWN::Call((AMX*) (*it)->handle, "OnCellChange", "if", 0, cell, id);
+            PAWN::Call((AMX*) (*it)->handle, "OnCellChange", "il", 0, cell, id);
     }
 }
 
@@ -251,9 +345,9 @@ void Script::OnActorValueChange(FactoryObject reference, unsigned char index, bo
         else
         {
             if (base)
-                PAWN::Call((AMX*) (*it)->handle, "OnActorBaseValueChange", "fif", 0, value, (unsigned int) index, id);
+                PAWN::Call((AMX*) (*it)->handle, "OnActorBaseValueChange", "fil", 0, value, (unsigned int) index, id);
             else
-                PAWN::Call((AMX*) (*it)->handle, "OnActorValueChange", "fif", 0, value, (unsigned int) index, id);
+                PAWN::Call((AMX*) (*it)->handle, "OnActorValueChange", "fil", 0, value, (unsigned int) index, id);
         }
     }
 }
@@ -268,7 +362,7 @@ void Script::OnActorAlert(FactoryObject reference, bool alerted)
         if ((*it)->cpp_script)
             (*it)->_OnActorAlert(id, alerted);
         else
-            PAWN::Call((AMX*) (*it)->handle, "OnActorAlert", "if", 0, (unsigned int) alerted, id);
+            PAWN::Call((AMX*) (*it)->handle, "OnActorAlert", "il", 0, (unsigned int) alerted, id);
     }
 }
 
@@ -282,7 +376,7 @@ void Script::OnActorSneak(FactoryObject reference, bool sneaking)
         if ((*it)->cpp_script)
             (*it)->_OnActorSneak(id, sneaking);
         else
-            PAWN::Call((AMX*) (*it)->handle, "OnActorSneak", "if", 0, (unsigned int) sneaking, id);
+            PAWN::Call((AMX*) (*it)->handle, "OnActorSneak", "il", 0, (unsigned int) sneaking, id);
     }
 }
 

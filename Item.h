@@ -19,8 +19,6 @@ using namespace std;
 
 class Container;
 
-typedef const map<const unsigned int, const char*> ItemDatabase;
-
 class Item : public Object
 {
 friend class GameFactory;
@@ -31,7 +29,7 @@ private:
     static Debug* debug;
 #endif
 
-    ItemDatabase::const_iterator data;
+    Database::const_iterator data;
 
     Value<unsigned int> item_Count;
     Value<double> item_Condition;
@@ -57,7 +55,6 @@ public:
     bool SetItemCondition(double condition);
     bool SetItemEquipped(bool state);
 
-    string ToString() const;
     NetworkID Copy() const;
 
 };

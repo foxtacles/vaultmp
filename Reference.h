@@ -27,10 +27,14 @@ private:
     Value<unsigned int> refID;
     Value<unsigned int> baseID;
 
+    static IndexLookup Mods;
+
     Reference(const Reference&);
     Reference& operator=(const Reference&);
 
 protected:
+    static unsigned int ResolveIndex(unsigned int baseID);
+
     Reference(unsigned int refID, unsigned int baseID);
     virtual ~Reference();
 

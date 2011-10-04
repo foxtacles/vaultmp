@@ -2,38 +2,15 @@
 
 map<NetworkID, Timer*> Timer::timers;
 
-#ifdef VAULTMP_DEBUG
-Debug* Timer::debug = NULL;
-#endif
-
-#ifdef VAULTMP_DEBUG
-void Timer::SetDebugHandler(Debug* debug)
-{
-    Timer::debug = debug;
-
-    if (debug != NULL)
-        debug->Print("Attached debug handler to Timer class", true);
-}
-#endif
-
-Timer::Timer(TimerFunc timer, unsigned int interval) : timer(timer), interval(interval)
+Timer::Timer(ScriptFunc timer, string def, vector<boost::any> args, unsigned int interval) : markdelete(false), ms(msecs()), interval(interval), args(args), ScriptFunction(timer, def)
 {
     this->SetNetworkIDManager(Network::Manager());
-    this->ms = msecs();
-    this->markdelete = false;
-    this->pawn = false;
     timers.insert(pair<NetworkID, Timer*>(this->GetNetworkID(), this));
 }
 
-Timer::Timer(TimerPAWN timer, AMX* amx, unsigned int interval) : pawnc(timer), amx(amx), interval(interval)
+Timer::Timer(ScriptFuncPAWN timer, AMX* amx, string def, vector<boost::any> args, unsigned int interval) : markdelete(false), ms(msecs()), interval(interval), args(args), ScriptFunction(timer, amx, def)
 {
-    if (!amx)
-        throw VaultException("Timer: AMX pointer is NULL");
-
     this->SetNetworkIDManager(Network::Manager());
-    this->ms = msecs();
-    this->markdelete = false;
-    this->pawn = true;
     timers.insert(pair<NetworkID, Timer*>(this->GetNetworkID(), this));
 }
 
@@ -66,11 +43,7 @@ void Timer::GlobalTick()
 
         if ((msecs() - timer->ms) > timer->interval)
         {
-            if (timer->pawn)
-                PAWN::Call(timer->amx, timer->pawnc.c_str(), "", 0);
-            else
-                timer->timer();
-
+            timer->Call(timer->args);
             timer->ms = msecs();
         }
 
