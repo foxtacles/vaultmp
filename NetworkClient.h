@@ -9,34 +9,34 @@
 
 class NetworkClient : public Network
 {
-friend class Game;
+		friend class Game;
 
-private:
+	private:
 
-    NetworkClient();
-
-#ifdef VAULTMP_DEBUG
-    static Debug* debug;
-#endif
-
-public:
+		NetworkClient();
 
 #ifdef VAULTMP_DEBUG
-    static void SetDebugHandler(Debug* debug);
+		static Debug* debug;
 #endif
 
-    /**
-     * \brief Processes an event of a given type
-     *
-     * Returns a NetworkResponse to send to the server
-     */
-    static NetworkResponse ProcessEvent(unsigned char id);
-    /**
-     * \brief Processes a packet from the server
-     *
-     * Returns a NetworkResponse to send to the server
-     */
-    static NetworkResponse ProcessPacket(Packet* data);
+	public:
+
+#ifdef VAULTMP_DEBUG
+		static void SetDebugHandler( Debug* debug );
+#endif
+
+		/**
+		 * \brief Processes an event of a given type
+		 *
+		 * Returns a NetworkResponse to send to the server
+		 */
+		static NetworkResponse ProcessEvent( unsigned char id );
+		/**
+		 * \brief Processes a packet from the server
+		 *
+		 * Returns a NetworkResponse to send to the server
+		 */
+		static NetworkResponse ProcessPacket( Packet* data );
 
 };
 

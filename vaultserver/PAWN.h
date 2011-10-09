@@ -24,59 +24,59 @@
 
 class PAWN
 {
-private:
+	private:
 
-    PAWN();
+		PAWN();
 
-    static AMX_NATIVE_INFO vaultmp_functions[27];
+		static AMX_NATIVE_INFO vaultmp_functions[27];
 
-    static cell vaultmp_timestamp(AMX* amx, const cell* params);
-    static cell vaultmp_CreateTimer(AMX* amx, const cell* params);
-    static cell vaultmp_CreateTimerEx(AMX* amx, const cell* params);
-    static cell vaultmp_KillTimer(AMX* amx, const cell* params);
-    static cell vaultmp_MakePublic(AMX* amx, const cell* params);
-    static cell vaultmp_CallPublic(AMX* amx, const cell* params);
+		static cell vaultmp_timestamp( AMX* amx, const cell* params );
+		static cell vaultmp_CreateTimer( AMX* amx, const cell* params );
+		static cell vaultmp_CreateTimerEx( AMX* amx, const cell* params );
+		static cell vaultmp_KillTimer( AMX* amx, const cell* params );
+		static cell vaultmp_MakePublic( AMX* amx, const cell* params );
+		static cell vaultmp_CallPublic( AMX* amx, const cell* params );
 
-    static cell vaultmp_SetServerName(AMX* amx, const cell* params);
-    static cell vaultmp_SetServerMap(AMX* amx, const cell* params);
-    static cell vaultmp_SetServerRule(AMX* amx, const cell* params);
-    static cell vaultmp_GetGameCode(AMX* amx, const cell* params);
+		static cell vaultmp_SetServerName( AMX* amx, const cell* params );
+		static cell vaultmp_SetServerMap( AMX* amx, const cell* params );
+		static cell vaultmp_SetServerRule( AMX* amx, const cell* params );
+		static cell vaultmp_GetGameCode( AMX* amx, const cell* params );
 
-    static cell vaultmp_ValueToString(AMX* amx, const cell* params);
-    static cell vaultmp_AxisToString(AMX* amx, const cell* params);
-    static cell vaultmp_AnimToString(AMX* amx, const cell* params);
+		static cell vaultmp_ValueToString( AMX* amx, const cell* params );
+		static cell vaultmp_AxisToString( AMX* amx, const cell* params );
+		static cell vaultmp_AnimToString( AMX* amx, const cell* params );
 
-    static cell vaultmp_GetReference(AMX* amx, const cell* params);
-    static cell vaultmp_GetBase(AMX* amx, const cell* params);
-    static cell vaultmp_GetName(AMX* amx, const cell* params);
-    static cell vaultmp_GetPos(AMX* amx, const cell* params);
-    static cell vaultmp_GetAngle(AMX* amx, const cell* params);
-    static cell vaultmp_GetCell(AMX* amx, const cell* params);
+		static cell vaultmp_GetReference( AMX* amx, const cell* params );
+		static cell vaultmp_GetBase( AMX* amx, const cell* params );
+		static cell vaultmp_GetName( AMX* amx, const cell* params );
+		static cell vaultmp_GetPos( AMX* amx, const cell* params );
+		static cell vaultmp_GetAngle( AMX* amx, const cell* params );
+		static cell vaultmp_GetCell( AMX* amx, const cell* params );
 
-    static cell vaultmp_GetActorValue(AMX* amx, const cell* params);
-    static cell vaultmp_GetActorBaseValue(AMX* amx, const cell* params);
-    static cell vaultmp_GetActorMovingAnimation(AMX* amx, const cell* params);
-    static cell vaultmp_GetActorAlerted(AMX* amx, const cell* params);
-    static cell vaultmp_GetActorSneaking(AMX* amx, const cell* params);
-    static cell vaultmp_GetActorDead(AMX* amx, const cell* params);
-    static cell vaultmp_IsActorJumping(AMX* amx, const cell* params);
+		static cell vaultmp_GetActorValue( AMX* amx, const cell* params );
+		static cell vaultmp_GetActorBaseValue( AMX* amx, const cell* params );
+		static cell vaultmp_GetActorMovingAnimation( AMX* amx, const cell* params );
+		static cell vaultmp_GetActorAlerted( AMX* amx, const cell* params );
+		static cell vaultmp_GetActorSneaking( AMX* amx, const cell* params );
+		static cell vaultmp_GetActorDead( AMX* amx, const cell* params );
+		static cell vaultmp_IsActorJumping( AMX* amx, const cell* params );
 
-public:
-    static int LoadProgram(AMX* amx, char* filename, void* memblock);
-    static int Register(AMX* amx, const AMX_NATIVE_INFO* list, int number);
-    static int Exec(AMX* amx, cell* retval, int index);
-    static int FreeProgram(AMX* amx);
-    static cell Call(AMX* amx, const char* name, const char* argl, int buf, ...);
-    static cell Call(AMX* amx, const char* name, const char* argl, const vector<boost::any>& args);
+	public:
+		static int LoadProgram( AMX* amx, char* filename, void* memblock );
+		static int Register( AMX* amx, const AMX_NATIVE_INFO* list, int number );
+		static int Exec( AMX* amx, cell* retval, int index );
+		static int FreeProgram( AMX* amx );
+		static cell Call( AMX* amx, const char* name, const char* argl, int buf, ... );
+		static cell Call( AMX* amx, const char* name, const char* argl, const vector<boost::any>& args );
 
-    static int CoreInit(AMX* amx);
-    static int ConsoleInit(AMX* amx);
-    static int FloatInit(AMX* amx);
-    static int TimeInit(AMX* amx);
-    static int StringInit(AMX* amx);
-    static int FileInit(AMX* amx);
+		static int CoreInit( AMX* amx );
+		static int ConsoleInit( AMX* amx );
+		static int FloatInit( AMX* amx );
+		static int TimeInit( AMX* amx );
+		static int StringInit( AMX* amx );
+		static int FileInit( AMX* amx );
 
-    static int RegisterVaultmpFunctions(AMX* amx);
+		static int RegisterVaultmpFunctions( AMX* amx );
 
 };
 

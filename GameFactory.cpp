@@ -13,344 +13,370 @@ GameFactory::GameFactory()
 
 }
 
-void GameFactory::Initialize(unsigned char game)
+void GameFactory::Initialize( unsigned char game )
 {
-    GameFactory::game = game;
+	GameFactory::game = game;
 
-    switch (game)
-    {
-    case FALLOUT3:
-        Container::Items = &Container::Fallout3Items;
-        break;
-    case NEWVEGAS:
-        Container::Items = &Container::FalloutNVItems;
-        break;
-    case OBLIVION:
-        Container::Items = &Container::OblivionItems;
-        break;
-    default:
-        throw VaultException("Bad game ID %08X", game);
-    }
+	switch ( game )
+	{
+		case FALLOUT3:
+			Container::Items = &Container::Fallout3Items;
+			break;
+
+		case NEWVEGAS:
+			Container::Items = &Container::FalloutNVItems;
+			break;
+
+		case OBLIVION:
+			Container::Items = &Container::OblivionItems;
+			break;
+
+		default:
+			throw VaultException( "Bad game ID %08X", game );
+	}
 
 #ifdef VAULTMP_DEBUG
-    if (debug != NULL)
-        debug->PrintFormat("Found %d items in the database", true, Container::Items->size());
+
+	if ( debug != NULL )
+		debug->PrintFormat( "Found %d items in the database", true, Container::Items->size() );
+
 #endif
 }
 
 #ifdef VAULTMP_DEBUG
-void GameFactory::SetDebugHandler(Debug* debug)
+void GameFactory::SetDebugHandler( Debug* debug )
 {
-    GameFactory::debug = debug;
+	GameFactory::debug = debug;
 
-    if (debug != NULL)
-        debug->Print("Attached debug handler to GameFactory class", true);
+	if ( debug != NULL )
+		debug->Print( "Attached debug handler to GameFactory class", true );
 }
 #endif
 
-vector<FactoryObject> GameFactory::GetObjectTypes(unsigned char type)
+vector<FactoryObject> GameFactory::GetObjectTypes( unsigned char type )
 {
-    vector<FactoryObject> result;
-    ReferenceList::iterator it;
+	vector<FactoryObject> result;
+	ReferenceList::iterator it;
 
-    cs.StartSession();
-    ReferenceList copy = instances;
-    cs.EndSession();
+	cs.StartSession();
+	ReferenceList copy = instances;
+	cs.EndSession();
 
-    for (it = copy.begin(); it != copy.end() && (it->second & type); ++it)
-        result.push_back(FactoryObject(it->first));
+	for ( it = copy.begin(); it != copy.end() && ( it->second & type ); ++it )
+		result.push_back( FactoryObject( it->first ) );
 
-    return result;
+	return result;
 }
 
-FactoryObject GameFactory::GetObject(NetworkID id)
+FactoryObject GameFactory::GetObject( NetworkID id )
 {
-    cs.StartSession();
-    Reference* reference = Network::Manager()->GET_OBJECT_FROM_ID<Reference*>(id);
-    cs.EndSession();
+	cs.StartSession();
+	Reference* reference = Network::Manager()->GET_OBJECT_FROM_ID<Reference*>( id );
+	cs.EndSession();
 
-    if (!reference)
-        throw VaultException("Unknown object with NetworkID %lld", id);
+	if ( !reference )
+		throw VaultException( "Unknown object with NetworkID %lld", id );
 
-    return FactoryObject(reference);
+	return FactoryObject( reference );
 }
 
-FactoryObject GameFactory::GetObject(unsigned int refID)
+FactoryObject GameFactory::GetObject( unsigned int refID )
 {
-    ReferenceList::iterator it;
+	ReferenceList::iterator it;
 
-    cs.StartSession();
-    for (it = instances.begin(); it != instances.end() && it->first->GetReference() != refID; ++it);
-    Reference* reference = (it != instances.end() ? it->first : NULL);
-    cs.EndSession();
+	cs.StartSession();
 
-    if (!reference)
-        throw VaultException("Unknown object with reference %08X", refID);
+	for ( it = instances.begin(); it != instances.end() && it->first->GetReference() != refID; ++it );
 
-    return FactoryObject(reference);
+	Reference* reference = ( it != instances.end() ? it->first : NULL );
+	cs.EndSession();
+
+	if ( !reference )
+		throw VaultException( "Unknown object with reference %08X", refID );
+
+	return FactoryObject( reference );
 }
 
-vector<FactoryObject> GameFactory::GetMultiple(const vector<NetworkID>& objects)
+vector<FactoryObject> GameFactory::GetMultiple( const vector<NetworkID>& objects )
 {
-    vector<FactoryObject> result;
-    result.resize(objects.size(), FactoryObject());
-    vector<NetworkID>::const_iterator it;
-    multimap<Reference*, unsigned int> sort;
-    multimap<Reference*, unsigned int>::iterator it2;
-    int i = 0;
+	vector<FactoryObject> result;
+	result.resize( objects.size(), FactoryObject() );
+	vector<NetworkID>::const_iterator it;
+	multimap<Reference*, unsigned int> sort;
+	multimap<Reference*, unsigned int>::iterator it2;
+	int i = 0;
 
-    cs.StartSession();
+	cs.StartSession();
 
-    for (it = objects.begin(); it != objects.end(); ++it, i++)
-    {
-        Reference* reference = Network::Manager()->GET_OBJECT_FROM_ID<Reference*>(*it);
+	for ( it = objects.begin(); it != objects.end(); ++it, i++ )
+	{
+		Reference* reference = Network::Manager()->GET_OBJECT_FROM_ID<Reference*>( *it );
 
-        if (!reference)
-            throw VaultException("Unknown object with NetworkID %lld", *it);
+		if ( !reference )
+			throw VaultException( "Unknown object with NetworkID %lld", *it );
 
-        sort.insert(pair<Reference*, unsigned int>(reference, i));
-    }
+		sort.insert( pair<Reference*, unsigned int>( reference, i ) );
+	}
 
-    cs.EndSession();
+	cs.EndSession();
 
-    for (it2 = sort.begin(); it2 != sort.end(); ++it2)
-        result[it2->second] = FactoryObject(it2->first);
+	for ( it2 = sort.begin(); it2 != sort.end(); ++it2 )
+		result[it2->second] = FactoryObject( it2->first );
 
-    return result;
+	return result;
 }
 
-vector<FactoryObject> GameFactory::GetMultiple(const vector<unsigned int>& objects)
+vector<FactoryObject> GameFactory::GetMultiple( const vector<unsigned int>& objects )
 {
-    vector<FactoryObject> result;
-    result.resize(objects.size(), FactoryObject());
-    vector<unsigned int>::const_iterator it;
-    multimap<Reference*, unsigned int> sort;
-    multimap<Reference*, unsigned int>::iterator it2;
-    ReferenceList::iterator it3;
-    int i = 0;
+	vector<FactoryObject> result;
+	result.resize( objects.size(), FactoryObject() );
+	vector<unsigned int>::const_iterator it;
+	multimap<Reference*, unsigned int> sort;
+	multimap<Reference*, unsigned int>::iterator it2;
+	ReferenceList::iterator it3;
+	int i = 0;
 
-    cs.StartSession();
+	cs.StartSession();
 
-    for (it = objects.begin(); it != objects.end(); ++it, i++)
-    {
-        for (it3 = instances.begin(); it3 != instances.end() && it3->first->GetReference() != *it; ++it3);
-        Reference* reference = (it3 != instances.end() ? it3->first : NULL);
+	for ( it = objects.begin(); it != objects.end(); ++it, i++ )
+	{
+		for ( it3 = instances.begin(); it3 != instances.end() && it3->first->GetReference() != *it; ++it3 );
 
-        if (!reference)
-            throw VaultException("Unknown object with reference %08X", *it);
+		Reference* reference = ( it3 != instances.end() ? it3->first : NULL );
 
-        sort.insert(pair<Reference*, unsigned int>(reference, i));
-    }
+		if ( !reference )
+			throw VaultException( "Unknown object with reference %08X", *it );
 
-    cs.EndSession();
+		sort.insert( pair<Reference*, unsigned int>( reference, i ) );
+	}
 
-    for (it2 = sort.begin(); it2 != sort.end(); ++it2)
-        result[it2->second] = FactoryObject(it2->first);
+	cs.EndSession();
 
-    return result;
+	for ( it2 = sort.begin(); it2 != sort.end(); ++it2 )
+		result[it2->second] = FactoryObject( it2->first );
+
+	return result;
 }
 
-NetworkID GameFactory::LookupNetworkID(unsigned int refID)
+NetworkID GameFactory::LookupNetworkID( unsigned int refID )
 {
-    ReferenceList::iterator it;
+	ReferenceList::iterator it;
 
-    cs.StartSession();
-    for (it = instances.begin(); it != instances.end() && it->first->GetReference() != refID; ++it);
-    NetworkID id = (it != instances.end() ? it->first->GetNetworkID() : throw VaultException("Unknown object with reference %08X", refID));
-    cs.EndSession();
+	cs.StartSession();
 
-    return id;
+	for ( it = instances.begin(); it != instances.end() && it->first->GetReference() != refID; ++it );
+
+	NetworkID id = ( it != instances.end() ? it->first->GetNetworkID() : throw VaultException( "Unknown object with reference %08X", refID ) );
+	cs.EndSession();
+
+	return id;
 }
 
-unsigned int GameFactory::LookupRefID(NetworkID id)
+unsigned int GameFactory::LookupRefID( NetworkID id )
 {
-    cs.StartSession();
-    Reference* reference = Network::Manager()->GET_OBJECT_FROM_ID<Reference*>(id);
-    unsigned int refID = (reference != NULL ? reference->GetReference() : throw VaultException("Unknown object with NetworkID %lld", id));
-    cs.EndSession();
+	cs.StartSession();
+	Reference* reference = Network::Manager()->GET_OBJECT_FROM_ID<Reference*>( id );
+	unsigned int refID = ( reference != NULL ? reference->GetReference() : throw VaultException( "Unknown object with NetworkID %lld", id ) );
+	cs.EndSession();
 
-    return refID;
+	return refID;
 }
 
-void GameFactory::LeaveReference(FactoryObject& reference)
+void GameFactory::LeaveReference( FactoryObject& reference )
 {
-    Reference* _reference = reference.reference;
+	Reference* _reference = reference.reference;
 
-    if (!_reference)
-        throw VaultException("GameFactory::LeaveReference Reference is NULL");
+	if ( !_reference )
+		throw VaultException( "GameFactory::LeaveReference Reference is NULL" );
 
-    _reference->EndSession();
-    reference.reference = NULL;
+	_reference->EndSession();
+	reference.reference = NULL;
 }
 
-unsigned char GameFactory::GetType(Reference* reference)
+unsigned char GameFactory::GetType( Reference* reference )
 {
-    ReferenceList::iterator it;
+	ReferenceList::iterator it;
 
-    cs.StartSession();
-    unsigned char type;
-    it = instances.find(reference);
-    type = (it != instances.end() ? it->second : 0x00);
-    cs.EndSession();
+	cs.StartSession();
+	unsigned char type;
+	it = instances.find( reference );
+	type = ( it != instances.end() ? it->second : 0x00 );
+	cs.EndSession();
 
-    return type;
+	return type;
 }
 
-NetworkID GameFactory::CreateInstance(unsigned char type, unsigned int refID, unsigned int baseID)
+NetworkID GameFactory::CreateInstance( unsigned char type, unsigned int refID, unsigned int baseID )
 {
-    Reference* reference;
+	Reference* reference;
 
-    switch (type)
-    {
-    case ID_REFERENCE:
-        throw VaultException("It is not possible to have a pure Reference instance");
-    case ID_OBJECT:
-        reference = new Object(refID, baseID);
-        break;
-    case ID_ITEM:
-        reference = new Item(refID, baseID);
-        break;
-    case ID_CONTAINER:
-        reference = new Container(refID, baseID);
-        break;
-    case ID_ACTOR:
-        reference = new Actor(refID, baseID);
-        break;
-    case ID_PLAYER:
-        reference = new Player(refID, baseID);
-        break;
-    default:
-        throw VaultException("Unknown type identifier %X", type);
-    }
+	switch ( type )
+	{
+		case ID_REFERENCE:
+			throw VaultException( "It is not possible to have a pure Reference instance" );
 
-    NetworkID id = reference->GetNetworkID();
+		case ID_OBJECT:
+			reference = new Object( refID, baseID );
+			break;
 
-    cs.StartSession();
-    instances.insert(pair<Reference*, unsigned char>(reference, type));
-    cs.EndSession();
+		case ID_ITEM:
+			reference = new Item( refID, baseID );
+			break;
 
-    return id;
+		case ID_CONTAINER:
+			reference = new Container( refID, baseID );
+			break;
+
+		case ID_ACTOR:
+			reference = new Actor( refID, baseID );
+			break;
+
+		case ID_PLAYER:
+			reference = new Player( refID, baseID );
+			break;
+
+		default:
+			throw VaultException( "Unknown type identifier %X", type );
+	}
+
+	NetworkID id = reference->GetNetworkID();
+
+	cs.StartSession();
+	instances.insert( pair<Reference*, unsigned char>( reference, type ) );
+	cs.EndSession();
+
+	return id;
 }
 
-NetworkID GameFactory::CreateInstance(unsigned char type, unsigned int baseID)
+NetworkID GameFactory::CreateInstance( unsigned char type, unsigned int baseID )
 {
-    return CreateInstance(type, 0x00, baseID);
+	return CreateInstance( type, 0x00, baseID );
 }
 
-void GameFactory::CreateKnownInstance(unsigned char type, NetworkID id, unsigned int refID, unsigned int baseID)
+void GameFactory::CreateKnownInstance( unsigned char type, NetworkID id, unsigned int refID, unsigned int baseID )
 {
-    Reference* reference;
+	Reference* reference;
 
-    switch (type)
-    {
-    case ID_REFERENCE:
-        throw VaultException("It is not possible to have a pure Reference instance");
-    case ID_OBJECT:
-        reference = new Object(refID, baseID);
-        break;
-    case ID_ITEM:
-        reference = new Item(refID, baseID);
-        break;
-    case ID_CONTAINER:
-        reference = new Container(refID, baseID);
-        break;
-    case ID_ACTOR:
-        reference = new Actor(refID, baseID);
-        break;
-    case ID_PLAYER:
-        reference = new Player(refID, baseID);
-        break;
-    default:
-        throw VaultException("Unknown type identifier %X", type);
-    }
+	switch ( type )
+	{
+		case ID_REFERENCE:
+			throw VaultException( "It is not possible to have a pure Reference instance" );
 
-    reference->SetNetworkID(id);
+		case ID_OBJECT:
+			reference = new Object( refID, baseID );
+			break;
 
-    cs.StartSession();
-    instances.insert(pair<Reference*, unsigned char>(reference, type));
-    cs.EndSession();
+		case ID_ITEM:
+			reference = new Item( refID, baseID );
+			break;
+
+		case ID_CONTAINER:
+			reference = new Container( refID, baseID );
+			break;
+
+		case ID_ACTOR:
+			reference = new Actor( refID, baseID );
+			break;
+
+		case ID_PLAYER:
+			reference = new Player( refID, baseID );
+			break;
+
+		default:
+			throw VaultException( "Unknown type identifier %X", type );
+	}
+
+	reference->SetNetworkID( id );
+
+	cs.StartSession();
+	instances.insert( pair<Reference*, unsigned char>( reference, type ) );
+	cs.EndSession();
 }
 
-void GameFactory::CreateKnownInstance(unsigned char type, NetworkID id, unsigned int baseID)
+void GameFactory::CreateKnownInstance( unsigned char type, NetworkID id, unsigned int baseID )
 {
-    return CreateKnownInstance(type, id, 0x00, baseID);
+	return CreateKnownInstance( type, id, 0x00, baseID );
 }
 
 void GameFactory::DestroyAllInstances()
 {
-    ReferenceList::iterator it;
+	ReferenceList::iterator it;
 
-    cs.StartSession();
+	cs.StartSession();
 
-    for (it = instances.begin(); it != instances.end(); ++it)
-    {
-        if (it->second == ID_CONTAINER)
-            vaultcast<Container>(it->first)->container.clear();
-
-#ifdef VAULTMP_DEBUG
-        if (debug != NULL)
-            debug->PrintFormat("Reference %08X with base %08X and NetworkID %lld (type: %s) to be destructed", true, it->first->GetReference(), it->first->GetBase(), it->first->GetNetworkID(), typeid(*(it->first)).name());
-#endif
-
-        Reference* reference = (Reference*) it->first->StartSession();
-
-        if (reference)
-        {
-            reference->Finalize();
-            delete reference;
-        }
-    }
-
-    instances.clear();
-
-    cs.EndSession();
-
-    // Cleanup classes
-
-    game = 0x00;
-    Object::param_Axis.first = vector<string>();
-    Container::Items = NULL;
-    Actor::Actors = NULL;
-    Actor::Creatures = NULL;
-    Actor::param_ActorValues.first = vector<string>();
-
-    Lockable::Reset();
-}
-
-bool GameFactory::DestroyInstance(NetworkID id)
-{
-    FactoryObject reference = GetObject(id);
-    DestroyInstance(reference);
-    return true;
-}
-
-NetworkID GameFactory::DestroyInstance(FactoryObject& reference)
-{
-    Reference* _reference = reference.reference;
-
-    if (!_reference)
-        throw VaultException("GameFactory::DestroyInstance Reference is NULL");
-
-    NetworkID id = _reference->GetNetworkID();
+	for ( it = instances.begin(); it != instances.end(); ++it )
+	{
+		if ( it->second == ID_CONTAINER )
+			vaultcast<Container>( it->first )->container.clear();
 
 #ifdef VAULTMP_DEBUG
-    if (debug != NULL)
-        debug->PrintFormat("Reference %08X with base %08X and NetworkID %lld (type: %s) to be destructed", true, _reference->GetReference(), _reference->GetBase(), _reference->GetNetworkID(), typeid(*_reference).name());
+
+		if ( debug != NULL )
+			debug->PrintFormat( "Reference %08X with base %08X and NetworkID %lld (type: %s) to be destructed", true, it->first->GetReference(), it->first->GetBase(), it->first->GetNetworkID(), typeid( *( it->first ) ).name() );
+
 #endif
 
-    cs.StartSession();
+		Reference* reference = ( Reference* ) it->first->StartSession();
 
-    ReferenceList::iterator it;
-    it = instances.find(_reference);
+		if ( reference )
+		{
+			reference->Finalize();
+			delete reference;
+		}
+	}
 
-    if (it != instances.end())
-        instances.erase(it);
+	instances.clear();
 
-    cs.EndSession();
+	cs.EndSession();
 
-    _reference->Finalize();
-    delete _reference;
-    reference.reference = NULL;
+	// Cleanup classes
 
-    return id;
+	game = 0x00;
+	Object::param_Axis.first = vector<string>();
+	Container::Items = NULL;
+	Actor::Actors = NULL;
+	Actor::Creatures = NULL;
+	Actor::param_ActorValues.first = vector<string>();
+
+	Lockable::Reset();
+}
+
+bool GameFactory::DestroyInstance( NetworkID id )
+{
+	FactoryObject reference = GetObject( id );
+	DestroyInstance( reference );
+	return true;
+}
+
+NetworkID GameFactory::DestroyInstance( FactoryObject& reference )
+{
+	Reference* _reference = reference.reference;
+
+	if ( !_reference )
+		throw VaultException( "GameFactory::DestroyInstance Reference is NULL" );
+
+	NetworkID id = _reference->GetNetworkID();
+
+#ifdef VAULTMP_DEBUG
+
+	if ( debug != NULL )
+		debug->PrintFormat( "Reference %08X with base %08X and NetworkID %lld (type: %s) to be destructed", true, _reference->GetReference(), _reference->GetBase(), _reference->GetNetworkID(), typeid( *_reference ).name() );
+
+#endif
+
+	cs.StartSession();
+
+	ReferenceList::iterator it;
+	it = instances.find( _reference );
+
+	if ( it != instances.end() )
+		instances.erase( it );
+
+	cs.EndSession();
+
+	_reference->Finalize();
+	delete _reference;
+	reference.reference = NULL;
+
+	return id;
 }

@@ -33,142 +33,142 @@ using namespace std;
 
 class Actor : public Container
 {
-friend class GameFactory;
+		friend class GameFactory;
 
-private:
-    static Database Fallout3Actors;
-    static Database FalloutNVActors;
-    static Database OblivionActors;
+	private:
+		static Database Fallout3Actors;
+		static Database FalloutNVActors;
+		static Database OblivionActors;
 
-    static Database Fallout3Creatures;
-    static Database FalloutNVCreatures;
-    static Database OblivionCreatures;
+		static Database Fallout3Creatures;
+		static Database FalloutNVCreatures;
+		static Database OblivionCreatures;
 
-    static Database* Actors;
-    static Database* Creatures;
+		static Database* Actors;
+		static Database* Creatures;
 
-    static Parameter param_ActorValues;
-
-#ifdef VAULTMP_DEBUG
-    static Debug* debug;
-#endif
-
-    Database::const_iterator data;
-
-    map<unsigned char, Value<double> > actor_Values;
-    map<unsigned char, Value<double> > actor_BaseValues;
-    Value<unsigned char> anim_Moving;
-    Value<unsigned char> state_MovingXY;
-    Value<bool> state_Alerted;
-    Value<bool> state_Sneaking;
-    Value<bool> state_Dead;
-
-    Actor(const Actor&);
-    Actor& operator=(const Actor&);
-
-protected:
-    Actor(unsigned int refID, unsigned int baseID);
-    virtual ~Actor();
-
-public:
-
-    /**
-     * \brief Retrieves a reference to a constant Parameter containing every available actor value string representation
-     *
-     * Used to pass actor values to the Interface
-     */
-    static const Parameter& Param_ActorValues();
-
-    /**
-     * \brief Creates a Parameter containing a VaultFunctor initialized with the given flags
-     *
-     * Used to pass Actor references matching the provided flags to the Interface
-     */
-    static const Parameter CreateFunctor(unsigned int flags);
+		static Parameter param_ActorValues;
 
 #ifdef VAULTMP_DEBUG
-    static void SetDebugHandler(Debug* debug);
+		static Debug* debug;
 #endif
 
-    /**
-     * \brief Retrieves the Actor's actor value specified by index (actor value hex code)
-     */
-    double GetActorValue(unsigned char index) const;
-    /**
-     * \brief Retrieves the Actor's base actor value specified by index (actor value hex code)
-     */
-    double GetActorBaseValue(unsigned char index) const;
-    /**
-     * \brief Retrieves the Actor's moving animation
-     */
-    unsigned char GetActorMovingAnimation() const;
-    /**
-     * \brief Retrieves the Actor's moving state
-     *
-     * 0x00 - the actor moves Forward / Backward
-     * 0x01 - the actor moves ForwardLeft / BackwardRight
-     * 0x02 - the actor moves ForwardRight / BackwardLeft
-     */
-    unsigned char GetActorMovingXY() const;
-    /**
-     * \brief Retrieves the Actor's alerted state
-     */
-    bool GetActorAlerted() const;
-    /**
-     * \brief Retrieves the Actor's sneaking state
-     */
-    bool GetActorSneaking() const;
-    /**
-     * \brief Retrieves the Actor's dead state
-     */
-    bool GetActorDead() const;
+		Database::const_iterator data;
 
-    /**
-     * \brief Sets the Actor's actor value specified by index (actor value hex code)
-     */
-    Lockable* SetActorValue(unsigned char index, double value);
-    /**
-     * \brief Sets the Actor's base actor value specified by index (actor value hex code)
-     */
-    Lockable* SetActorBaseValue(unsigned char index, double value);
-    /**
-     * \brief Sets the Actor's moving animation
-     */
-    Lockable* SetActorMovingAnimation(unsigned char index);
-    /**
-     * \brief Sets the Actor's moving state
-     *
-     * 0x00 - the actor moves Forward / Backward
-     * 0x01 - the actor moves ForwardLeft / BackwardRight
-     * 0x02 - the actor moves ForwardRight / BackwardLeft
-     */
-    Lockable* SetActorMovingXY(unsigned char moving);
-    /**
-     * \brief Sets the Actor's alerted state
-     */
-    Lockable* SetActorAlerted(bool state);
-    /**
-     * \brief Sets the Actor's sneaking state
-     */
-    Lockable* SetActorSneaking(bool state);
-    /**
-     * \brief Sets the Actor's dead state
-     */
-    Lockable* SetActorDead(bool state);
+		map<unsigned char, Value<double> > actor_Values;
+		map<unsigned char, Value<double> > actor_BaseValues;
+		Value<unsigned char> anim_Moving;
+		Value<unsigned char> state_MovingXY;
+		Value<bool> state_Alerted;
+		Value<bool> state_Sneaking;
+		Value<bool> state_Dead;
 
-    /**
-     * \brief Returns true if the Actor is jumping
-     */
-    bool IsActorJumping() const;
+		Actor( const Actor& );
+		Actor& operator=( const Actor& );
+
+	protected:
+		Actor( unsigned int refID, unsigned int baseID );
+		virtual ~Actor();
+
+	public:
+
+		/**
+		 * \brief Retrieves a reference to a constant Parameter containing every available actor value string representation
+		 *
+		 * Used to pass actor values to the Interface
+		 */
+		static const Parameter& Param_ActorValues();
+
+		/**
+		 * \brief Creates a Parameter containing a VaultFunctor initialized with the given flags
+		 *
+		 * Used to pass Actor references matching the provided flags to the Interface
+		 */
+		static const Parameter CreateFunctor( unsigned int flags );
+
+#ifdef VAULTMP_DEBUG
+		static void SetDebugHandler( Debug* debug );
+#endif
+
+		/**
+		 * \brief Retrieves the Actor's actor value specified by index (actor value hex code)
+		 */
+		double GetActorValue( unsigned char index ) const;
+		/**
+		 * \brief Retrieves the Actor's base actor value specified by index (actor value hex code)
+		 */
+		double GetActorBaseValue( unsigned char index ) const;
+		/**
+		 * \brief Retrieves the Actor's moving animation
+		 */
+		unsigned char GetActorMovingAnimation() const;
+		/**
+		 * \brief Retrieves the Actor's moving state
+		 *
+		 * 0x00 - the actor moves Forward / Backward
+		 * 0x01 - the actor moves ForwardLeft / BackwardRight
+		 * 0x02 - the actor moves ForwardRight / BackwardLeft
+		 */
+		unsigned char GetActorMovingXY() const;
+		/**
+		 * \brief Retrieves the Actor's alerted state
+		 */
+		bool GetActorAlerted() const;
+		/**
+		 * \brief Retrieves the Actor's sneaking state
+		 */
+		bool GetActorSneaking() const;
+		/**
+		 * \brief Retrieves the Actor's dead state
+		 */
+		bool GetActorDead() const;
+
+		/**
+		 * \brief Sets the Actor's actor value specified by index (actor value hex code)
+		 */
+		Lockable* SetActorValue( unsigned char index, double value );
+		/**
+		 * \brief Sets the Actor's base actor value specified by index (actor value hex code)
+		 */
+		Lockable* SetActorBaseValue( unsigned char index, double value );
+		/**
+		 * \brief Sets the Actor's moving animation
+		 */
+		Lockable* SetActorMovingAnimation( unsigned char index );
+		/**
+		 * \brief Sets the Actor's moving state
+		 *
+		 * 0x00 - the actor moves Forward / Backward
+		 * 0x01 - the actor moves ForwardLeft / BackwardRight
+		 * 0x02 - the actor moves ForwardRight / BackwardLeft
+		 */
+		Lockable* SetActorMovingXY( unsigned char moving );
+		/**
+		 * \brief Sets the Actor's alerted state
+		 */
+		Lockable* SetActorAlerted( bool state );
+		/**
+		 * \brief Sets the Actor's sneaking state
+		 */
+		Lockable* SetActorSneaking( bool state );
+		/**
+		 * \brief Sets the Actor's dead state
+		 */
+		Lockable* SetActorDead( bool state );
+
+		/**
+		 * \brief Returns true if the Actor is jumping
+		 */
+		bool IsActorJumping() const;
 };
 
 class ActorFunctor : public VaultFunctor
 {
-public:
-    ActorFunctor(unsigned int flags) : VaultFunctor(flags) {};
-    virtual ~ActorFunctor();
+	public:
+		ActorFunctor( unsigned int flags ) : VaultFunctor( flags ) {};
+		virtual ~ActorFunctor();
 
-    virtual vector<string> operator()();
+		virtual vector<string> operator()();
 };
 
 #endif

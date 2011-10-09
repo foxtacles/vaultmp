@@ -27,84 +27,84 @@ using namespace RakNet;
 namespace Data
 {
 
-typedef void (*ResultHandler)(signed int, vector<boost::any>&, boost::any&, bool);
-typedef bool (*RetrieveBooleanFlag)();
-typedef pair<vector<string>, VaultFunctor*> Parameter;
-typedef list<Parameter> ParamList;
-typedef pair<ParamList, RetrieveBooleanFlag> ParamContainer;
-typedef const map<const unsigned int, const char*> Database;
-typedef map<const unsigned char, const unsigned char> IndexLookup;
+	typedef void ( *ResultHandler )( signed int, vector<boost::any>&, boost::any&, bool );
+	typedef bool ( *RetrieveBooleanFlag )();
+	typedef pair<vector<string>, VaultFunctor*> Parameter;
+	typedef list<Parameter> ParamList;
+	typedef pair<ParamList, RetrieveBooleanFlag> ParamContainer;
+	typedef const map<const unsigned int, const char*> Database;
+	typedef map<const unsigned char, const unsigned char> IndexLookup;
 
-static bool AlwaysTrue()
-{
-    return true;
-}
+	static bool AlwaysTrue()
+	{
+		return true;
+	}
 
-static Parameter BuildParameter(string param)
-{
-    return Parameter(vector<string>{param}, NULL);
-}
+	static Parameter BuildParameter( string param )
+	{
+		return Parameter( vector<string> {param}, NULL );
+	}
 
-static Parameter BuildParameter(vector<string> params)
-{
-    return Parameter(params, NULL);
-}
+	static Parameter BuildParameter( vector<string> params )
+	{
+		return Parameter( params, NULL );
+	}
 
-static Parameter BuildParameter(vector<unsigned char> params)
-{
-    vector<unsigned char>::iterator it;
-    vector<string> convert;
+	static Parameter BuildParameter( vector<unsigned char> params )
+	{
+		vector<unsigned char>::iterator it;
+		vector<string> convert;
 
-    for (it = params.begin(); it != params.end(); ++it)
-    {
-        char value[64];
-        snprintf(value, sizeof(value), "%d", *it);
-        convert.push_back(string(value));
-    }
+		for ( it = params.begin(); it != params.end(); ++it )
+		{
+			char value[64];
+			snprintf( value, sizeof( value ), "%d", *it );
+			convert.push_back( string( value ) );
+		}
 
-    return BuildParameter(convert);
-}
+		return BuildParameter( convert );
+	}
 
-static Parameter BuildParameter(unsigned int param)
-{
-    char value[64];
-    snprintf(value, sizeof(value), "%d", param);
-    return BuildParameter(string(value));
-}
+	static Parameter BuildParameter( unsigned int param )
+	{
+		char value[64];
+		snprintf( value, sizeof( value ), "%d", param );
+		return BuildParameter( string( value ) );
+	}
 
-static Parameter BuildParameter(double param)
-{
-    char value[64];
-    snprintf(value, sizeof(value), "%f", param);
-    return BuildParameter(string(value));
-}
+	static Parameter BuildParameter( double param )
+	{
+		char value[64];
+		snprintf( value, sizeof( value ), "%f", param );
+		return BuildParameter( string( value ) );
+	}
 
-static const Parameter Param_True = Parameter(vector<string>{"1"}, NULL);
-static const Parameter Param_False = Parameter(vector<string>{"0"}, NULL);
+	static const Parameter Param_True = Parameter( vector<string> {"1"}, NULL );
+	static const Parameter Param_False = Parameter( vector<string> {"0"}, NULL );
 
-static void FreeContainer(ParamContainer& param)
-{
-    ParamList::iterator it;
+	static void FreeContainer( ParamContainer& param )
+	{
+		ParamList::iterator it;
 
-    for (it = param.first.begin(); it != param.first.end(); ++it)
-        if (it->second)
-            delete it->second;
-}
+		for ( it = param.first.begin(); it != param.first.end(); ++it )
+			if ( it->second )
+				delete it->second;
+	}
 
-enum
-{
-    ID_MASTER_QUERY = ID_USER_PACKET_ENUM,
-    ID_MASTER_ANNOUNCE,
-    ID_MASTER_UPDATE,
-    ID_GAME_FIRST,
-};
+	enum
+	{
+		ID_MASTER_QUERY = ID_USER_PACKET_ENUM,
+		ID_MASTER_ANNOUNCE,
+		ID_MASTER_UPDATE,
+		ID_GAME_FIRST,
+	};
 
-enum
-{
-    CHANNEL_SYSTEM,
-    CHANNEL_GAME,
-    CHANNEL_CHAT,
-};
+	enum
+	{
+		CHANNEL_SYSTEM,
+		CHANNEL_GAME,
+		CHANNEL_CHAT,
+	};
 
 }
 

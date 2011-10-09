@@ -21,41 +21,41 @@ class Container;
 
 class Item : public Object
 {
-friend class GameFactory;
-friend class Container;
+		friend class GameFactory;
+		friend class Container;
 
-private:
+	private:
 #ifdef VAULTMP_DEBUG
-    static Debug* debug;
+		static Debug* debug;
 #endif
 
-    Database::const_iterator data;
+		Database::const_iterator data;
 
-    Value<unsigned int> item_Count;
-    Value<double> item_Condition;
-    Value<bool> state_Equipped;
+		Value<unsigned int> item_Count;
+		Value<double> item_Condition;
+		Value<bool> state_Equipped;
 
-    Item(const Item&);
-    Item& operator=(const Item&);
+		Item( const Item& );
+		Item& operator=( const Item& );
 
-protected:
-    Item(unsigned int refID, unsigned int baseID);
-    virtual ~Item();
+	protected:
+		Item( unsigned int refID, unsigned int baseID );
+		virtual ~Item();
 
-public:
+	public:
 #ifdef VAULTMP_DEBUG
-    static void SetDebugHandler(Debug* debug);
+		static void SetDebugHandler( Debug* debug );
 #endif
 
-    unsigned int GetItemCount() const;
-    double GetItemCondition() const;
-    bool GetItemEquipped() const;
+		unsigned int GetItemCount() const;
+		double GetItemCondition() const;
+		bool GetItemEquipped() const;
 
-    bool SetItemCount(unsigned int count);
-    bool SetItemCondition(double condition);
-    bool SetItemEquipped(bool state);
+		bool SetItemCount( unsigned int count );
+		bool SetItemCondition( double condition );
+		bool SetItemEquipped( bool state );
 
-    NetworkID Copy() const;
+		NetworkID Copy() const;
 
 };
 

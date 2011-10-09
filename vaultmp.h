@@ -21,7 +21,7 @@ static const unsigned int VAULTMP_DLL                  =   0x0003D5E4;
 static const unsigned int XLIVE_PATCH                  =   0x0000D57E;
 
 #define CREDITS \
-"Vault-Tec Multiplayer Mod is an Open-Source project.\n\
+	"Vault-Tec Multiplayer Mod is an Open-Source project.\n\
 \n\
 code: Recycler (www.brickster.net)\n\
 network: RakNet (www.jenkinssoftware.com)\n\

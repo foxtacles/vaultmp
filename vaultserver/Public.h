@@ -22,28 +22,28 @@ using namespace RakNet;
 
 class Public : public ScriptFunction
 {
-private:
-    ~Public();
+	private:
+		~Public();
 
-    static map<string, Public*> publics;
+		static map<string, Public*> publics;
 
-public:
+	public:
 
-    Public(ScriptFunc _public, string name, string def);
-    Public(ScriptFuncPAWN _public, AMX* amx, string name, string def);
+		Public( ScriptFunc _public, string name, string def );
+		Public( ScriptFuncPAWN _public, AMX* amx, string name, string def );
 
-    /**
-     * \brief Calls a public
-     */
-    static unsigned long long Call(string name, const vector<boost::any>& args);
-    /**
-     * \brief Retrieves the definition of a public
-     */
-    static string GetDefinition(string name);
-    /**
-     * \brief Deletes all publics
-     */
-    static void DeleteAll();
+		/**
+		 * \brief Calls a public
+		 */
+		static unsigned long long Call( string name, const vector<boost::any>& args );
+		/**
+		 * \brief Retrieves the definition of a public
+		 */
+		static string GetDefinition( string name );
+		/**
+		 * \brief Deletes all publics
+		 */
+		static void DeleteAll();
 };
 
 #endif

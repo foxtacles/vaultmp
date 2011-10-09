@@ -15,36 +15,36 @@ class Debug;
 class CriticalSection
 {
 
-private:
+	private:
 #ifdef __WIN32__
-    CRITICAL_SECTION cs;
+		CRITICAL_SECTION cs;
 #else
-    pthread_mutex_t cs;
-    pthread_mutexattr_t mta;
+		pthread_mutex_t cs;
+		pthread_mutexattr_t mta;
 #endif
 
 #ifdef VAULTMP_DEBUG
-    static Debug* debug;
-    bool ndebug;
+		static Debug* debug;
+		bool ndebug;
 #endif
 
-    bool finalize;
-    int locks;
+		bool finalize;
+		int locks;
 
-    CriticalSection(const CriticalSection&);
-    CriticalSection& operator=(const CriticalSection&);
+		CriticalSection( const CriticalSection& );
+		CriticalSection& operator=( const CriticalSection& );
 
-public:
-    CriticalSection();
-    virtual ~CriticalSection();
+	public:
+		CriticalSection();
+		virtual ~CriticalSection();
 
-    CriticalSection* StartSession();
-    void EndSession();
-    void Finalize();
+		CriticalSection* StartSession();
+		void EndSession();
+		void Finalize();
 
 #ifdef VAULTMP_DEBUG
-    void ToggleSectionDebug(bool toggle);
-    static void SetDebugHandler(Debug* debug);
+		void ToggleSectionDebug( bool toggle );
+		static void SetDebugHandler( Debug* debug );
 #endif
 
 };

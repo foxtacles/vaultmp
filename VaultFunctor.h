@@ -16,31 +16,31 @@ using namespace std;
 
 class VaultFunctor
 {
-private:
-    VaultFunctor* next;
-    vector<string>(*func)();
+	private:
+		VaultFunctor* next;
+		vector<string>( *func )();
 
-protected:
-    unsigned int flags;
-    void _next(vector<string>& result);
-    VaultFunctor(unsigned int flags);
+	protected:
+		unsigned int flags;
+		void _next( vector<string>& result );
+		VaultFunctor( unsigned int flags );
 
-public:
-    VaultFunctor();
-    VaultFunctor(vector<string>(*func)());
-    virtual ~VaultFunctor();
+	public:
+		VaultFunctor();
+		VaultFunctor( vector<string>( *func )() );
+		virtual ~VaultFunctor();
 
-    /**
-     * \brief Connects this VaultFunctor with another one
-     *
-     * This is to build a chain of functors
-     * Returns the connected VaultFunctor on success
-     */
-    VaultFunctor* connect(VaultFunctor* next);
-    /**
-     * \brief The functor call
-     */
-    virtual vector<string> operator()();
+		/**
+		 * \brief Connects this VaultFunctor with another one
+		 *
+		 * This is to build a chain of functors
+		 * Returns the connected VaultFunctor on success
+		 */
+		VaultFunctor* connect( VaultFunctor* next );
+		/**
+		 * \brief The functor call
+		 */
+		virtual vector<string> operator()();
 
 };
 

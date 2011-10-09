@@ -22,33 +22,33 @@ using namespace std;
 
 class VaultException : public exception
 {
-private:
-    string error;
+	private:
+		string error;
 
 #ifdef VAULTMP_DEBUG
-    static Debug* debug;
+		static Debug* debug;
 #endif
 
-    VaultException& operator=(const VaultException&);
+		VaultException& operator=( const VaultException& );
 
-public:
+	public:
 
-    VaultException(string error);
-    VaultException(const char* format, ...);
-    virtual ~VaultException() throw() {}
+		VaultException( string error );
+		VaultException( const char* format, ... );
+		virtual ~VaultException() throw() {}
 
-    /**
-     * \brief Creates a MessageBox displaying the exception message (Win32 only)
-     */
-    void Message();
-    /**
-     * \brief Prints the exception message to the console
-     */
-    void Console();
+		/**
+		 * \brief Creates a MessageBox displaying the exception message (Win32 only)
+		 */
+		void Message();
+		/**
+		 * \brief Prints the exception message to the console
+		 */
+		void Console();
 
 #ifdef VAULTMP_DEBUG
-    static void SetDebugHandler(Debug* debug);
-    static void FinalizeDebug();
+		static void SetDebugHandler( Debug* debug );
+		static void FinalizeDebug();
 #endif
 
 };

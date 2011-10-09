@@ -8,11 +8,11 @@ Debug* Value<T>::debug = NULL;
 template <typename T>
 Value<T>::Value()
 {
-    value = 0;
+	value = 0;
 }
 
 template <typename T>
-Value<T>::Value(T t) : value(t)
+Value<T>::Value( T t ) : value( t )
 {
 
 }
@@ -20,7 +20,7 @@ Value<T>::Value(T t) : value(t)
 template <>
 Value<string>::Value()
 {
-    value = "";
+	value = "";
 }
 
 template <typename T>
@@ -31,30 +31,30 @@ Value<T>::~Value()
 
 #ifdef VAULTMP_DEBUG
 template <typename T>
-void Value<T>::SetDebugHandler(Debug* debug)
+void Value<T>::SetDebugHandler( Debug* debug )
 {
-    Value::debug = debug;
+	Value::debug = debug;
 
-    if (debug != NULL)
-        debug->Print("Attached debug handler to Value class", true);
+	if ( debug != NULL )
+		debug->Print( "Attached debug handler to Value class", true );
 }
 #endif
 
 template <typename T>
-bool Value<T>::Set(T value)
+bool Value<T>::Set( T value )
 {
-    if (this->IsLocked())
-        return false;
+	if ( this->IsLocked() )
+		return false;
 
-    this->value = value;
+	this->value = value;
 
-    return true;
+	return true;
 }
 
 template <typename T>
 T Value<T>::Get() const
 {
-    return value;
+	return value;
 }
 
 template class Value<unsigned int>;

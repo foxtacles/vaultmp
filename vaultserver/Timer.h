@@ -24,36 +24,36 @@ using namespace RakNet;
 
 class Timer : public ScriptFunction, public NetworkIDObject
 {
-private:
-    ~Timer();
+	private:
+		~Timer();
 
-    unsigned int ms;
-    unsigned int interval;
-    vector<boost::any> args;
-    bool markdelete;
+		unsigned int ms;
+		unsigned int interval;
+		vector<boost::any> args;
+		bool markdelete;
 
-    static map<NetworkID, Timer*> timers;
-    static unsigned int msecs();
+		static map<NetworkID, Timer*> timers;
+		static unsigned int msecs();
 
-public:
+	public:
 
-    Timer(ScriptFunc timer, string def, vector<boost::any> args, unsigned int interval);
-    Timer(ScriptFuncPAWN timer, AMX* amx, string def, vector<boost::any> args, unsigned int interval);
+		Timer( ScriptFunc timer, string def, vector<boost::any> args, unsigned int interval );
+		Timer( ScriptFuncPAWN timer, AMX* amx, string def, vector<boost::any> args, unsigned int interval );
 
-    /**
-     * \brief Called from the dedicated server main thread
-     *
-     * Calls timer functions
-     */
-    static void GlobalTick();
-    /**
-     * \brief Terminates a timer
-     */
-    static void Terminate(NetworkID id);
-    /**
-     * \brief Terminates all timers
-     */
-    static void TerminateAll();
+		/**
+		 * \brief Called from the dedicated server main thread
+		 *
+		 * Calls timer functions
+		 */
+		static void GlobalTick();
+		/**
+		 * \brief Terminates a timer
+		 */
+		static void Terminate( NetworkID id );
+		/**
+		 * \brief Terminates all timers
+		 */
+		static void TerminateAll();
 };
 
 #endif

@@ -41,36 +41,36 @@ typedef vector<pair<string, unsigned int> > ModList;
 
 class Bethesda
 {
-friend class NetworkClient;
-friend class Game;
+		friend class NetworkClient;
+		friend class Game;
 
-private:
-    static unsigned char game;
-    static string password;
-    static Savegame savegame;
-    static ModList modfiles;
-    static bool initialized;
+	private:
+		static unsigned char game;
+		static string password;
+		static Savegame savegame;
+		static ModList modfiles;
+		static bool initialized;
 
-    /**
-     * \brief Starts up the game
-     */
-    static void Initialize();
+		/**
+		 * \brief Starts up the game
+		 */
+		static void Initialize();
 
-    /**
-     * \brief Handles translated command results from the game
-     */
-    static void CommandHandler(signed int key, vector<boost::any>& info, boost::any& result, bool error);
+		/**
+		 * \brief Handles translated command results from the game
+		 */
+		static void CommandHandler( signed int key, vector<boost::any>& info, boost::any& result, bool error );
 
 #ifdef VAULTMP_DEBUG
-    static Debug* debug;
+		static Debug* debug;
 #endif
 
-    Bethesda();
-public:
+		Bethesda();
+	public:
 
-    /**
-     * \brief Initializes Vault-Tec Multiplayer Mod
-     */
-    static void InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, string name, string pwd, unsigned char game);
+		/**
+		 * \brief Initializes Vault-Tec Multiplayer Mod
+		 */
+		static void InitializeVaultMP( RakPeerInterface* peer, SystemAddress server, string name, string pwd, unsigned char game );
 
 };

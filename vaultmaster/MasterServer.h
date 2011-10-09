@@ -22,21 +22,22 @@ using namespace std;
 
 typedef map<SystemAddress, ServerEntry> ServerMap;
 
-class MasterServer {
+class MasterServer
+{
 
-      private:
-              static RakPeerInterface* peer;
-              static SocketDescriptor* sockdescr;
+	private:
+		static RakPeerInterface* peer;
+		static SocketDescriptor* sockdescr;
 
-              static ServerMap serverList;
-              static void RemoveServer(SystemAddress addr);
+		static ServerMap serverList;
+		static void RemoveServer( SystemAddress addr );
 
-              static DWORD WINAPI MasterThread(LPVOID data);
-              static void timestamp();
-              static bool thread;
+		static DWORD WINAPI MasterThread( LPVOID data );
+		static void timestamp();
+		static bool thread;
 
-      public:
-              static HANDLE InitalizeRakNet();
-              static void TerminateThread();
+	public:
+		static HANDLE InitalizeRakNet();
+		static void TerminateThread();
 
 };

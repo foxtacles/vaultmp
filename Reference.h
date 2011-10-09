@@ -21,51 +21,51 @@ using namespace Data;
 
 class Reference : public CriticalSection, public NetworkIDObject
 {
-friend class GameFactory;
+		friend class GameFactory;
 
-private:
-    Value<unsigned int> refID;
-    Value<unsigned int> baseID;
+	private:
+		Value<unsigned int> refID;
+		Value<unsigned int> baseID;
 
-    static IndexLookup Mods;
+		static IndexLookup Mods;
 
-    Reference(const Reference&);
-    Reference& operator=(const Reference&);
+		Reference( const Reference& );
+		Reference& operator=( const Reference& );
 
-protected:
-    static unsigned int ResolveIndex(unsigned int baseID);
+	protected:
+		static unsigned int ResolveIndex( unsigned int baseID );
 
-    Reference(unsigned int refID, unsigned int baseID);
-    virtual ~Reference();
+		Reference( unsigned int refID, unsigned int baseID );
+		virtual ~Reference();
 
-public:
+	public:
 
-    /**
-     * \brief Retrieves the Reference's reference ID
-     */
-    unsigned int GetReference() const;
-    /**
-     * \brief Retrieves the Reference's base ID
-     */
-    unsigned int GetBase() const;
+		/**
+		 * \brief Retrieves the Reference's reference ID
+		 */
+		unsigned int GetReference() const;
+		/**
+		 * \brief Retrieves the Reference's base ID
+		 */
+		unsigned int GetBase() const;
 
-    /**
-     * \brief Sets the Reference's reference ID
-     */
-    Lockable* SetReference(unsigned int refID);
-    /**
-     * \brief Sets the Reference's base ID
-     */
-    Lockable* SetBase(unsigned int baseID);
+		/**
+		 * \brief Sets the Reference's reference ID
+		 */
+		Lockable* SetReference( unsigned int refID );
+		/**
+		 * \brief Sets the Reference's base ID
+		 */
+		Lockable* SetBase( unsigned int baseID );
 
-    /**
-     * \brief Returns a constant Parameter used to pass the reference ID of this Reference to the Interface
-     */
-    const Parameter GetReferenceParam() const;
-    /**
-     * \brief Returns a constant Parameter used to pass the base ID of this Reference to the Interface
-     */
-    const Parameter GetBaseParam() const;
+		/**
+		 * \brief Returns a constant Parameter used to pass the reference ID of this Reference to the Interface
+		 */
+		const Parameter GetReferenceParam() const;
+		/**
+		 * \brief Returns a constant Parameter used to pass the base ID of this Reference to the Interface
+		 */
+		const Parameter GetBaseParam() const;
 
 };
 

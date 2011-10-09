@@ -22,34 +22,34 @@ template <typename T>
 class Value : public Lockable
 {
 
-private:
+	private:
 
-    unsigned char id;
-    T value;
+		unsigned char id;
+		T value;
 
 #ifdef VAULTMP_DEBUG
-    static Debug* debug;
+		static Debug* debug;
 #endif
 
-    Value& operator=(const Value&);
+		Value& operator=( const Value& );
 
-public:
+	public:
 
-    Value();
-    Value(T t);
-    virtual ~Value();
+		Value();
+		Value( T t );
+		virtual ~Value();
 
-    /**
-     * \brief Sets the value
-     */
-    bool Set(T value);
-    /**
-     * \brief Gets the value
-     */
-    T Get() const;
+		/**
+		 * \brief Sets the value
+		 */
+		bool Set( T value );
+		/**
+		 * \brief Gets the value
+		 */
+		T Get() const;
 
 #ifdef VAULTMP_DEBUG
-    static void SetDebugHandler(Debug* debug);
+		static void SetDebugHandler( Debug* debug );
 #endif
 
 };
