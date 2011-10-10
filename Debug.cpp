@@ -54,7 +54,7 @@ void Debug::Print( const char* text, bool timestamp )
 
 	if( FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, GetLastError(), MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ), ( LPTSTR ) &lpMsgBuf, 0, NULL ) )
 	{
-		fprintf( this->vaultmplog, "[error: %s(0x%x)] ", lpMsgBuf, GetLastError() )
+		fprintf( this->vaultmplog, "[error: %s(0x%x)] ", lpMsgBuf, GetLastError() );
 	}
 
 	fwrite( text, sizeof( char ), strlen( text ), this->vaultmplog );

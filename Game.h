@@ -69,7 +69,7 @@ class Game
 		/**
 		 * \brief Puts an Actor into restrained / unrestrained state
 		 */
-		static void SetRestrained( FactoryObject reference, bool restrained, unsigned int delay = 2 );
+		static void SetRestrained( FactoryObject reference, bool restrained );
 		/**
 		 * \brief Sets the position of an Object
 		 */

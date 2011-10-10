@@ -14,8 +14,6 @@
 #include "Data.h"
 #include "Pipe.h"
 
-#define PUSHCMD(cmd) tmplist.push_back(cmd);
-
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"
 #endif
@@ -53,9 +51,9 @@ class Interface : public API
 		static map<string, string> alias;
 		static Native natives;
 
-		static Native::iterator DefineNativeInternal( string name, ParamContainer );
-		static void ExecuteCommand( Native::iterator it, bool loop, int priority, int sleep, signed int key );
-		static multimap<string, string> Evaluate( string name, string def, ParamContainer param );
+    static Native::iterator DefineNativeInternal(string name, ParamContainer);
+    static void ExecuteCommand(Native::iterator it, bool loop, unsigned int priority, signed int key);
+    static multimap<string, string> Evaluate(string name, string def, ParamContainer param);
 
 		static DWORD WINAPI CommandThreadReceive( LPVOID data );
 		static DWORD WINAPI CommandThreadSend( LPVOID data );
@@ -123,21 +121,19 @@ class Interface : public API
 		 *
 		 * name refers to an existing command.
 		 * priority (optional) - the lower this variable, the higher is the priority
-		 * sleep (optional) - how many MS to sleep after the execution of this command
 		 *
 		 * A native must be defined for the given command.
 		 */
-		static void ExecuteCommandLoop( string name, int priority = 0, int sleep = 2 );
+		static void ExecuteCommandLoop( string name, unsigned int priority = 0 );
 		/**
 		 * \brief Executes a command once
 		 *
 		 * name refers to an existing command
 		 * see DefineNative for a short explanation of ParamContainer
 		 * priority (optional) - the lower this variable, the higher is the priority
-		 * sleep (optional) - how many MS to sleep after the execution of this command
 		 * key (optional) - a signed key (usually from the Lockable class) which is to later identify this command
 		 */
-		static void ExecuteCommandOnce( string name, ParamContainer, int priority = 0, int sleep = 2, signed int key = 0 );
+		static void ExecuteCommandOnce( string name, ParamContainer, unsigned int priority = 0, signed int key = 0 );
 
 #ifdef VAULTMP_DEBUG
 		static void SetDebugHandler( Debug* debug );

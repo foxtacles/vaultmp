@@ -169,21 +169,21 @@ Native::iterator Interface::DefineNativeInternal( string name, ParamContainer pa
 	return natives.insert( pair<string, ParamContainer>( name, param ) );
 }
 
-void Interface::ExecuteCommand( Native::iterator it, bool loop, int priority, int sleep, signed int key )
+void Interface::ExecuteCommand(Native::iterator it, bool loop, unsigned int priority, signed int key)
 {
 	if ( it == natives.end() )
 		throw VaultException( "Native definition not found" );
 
-	vector<int> data;
-	data.push_back( ( int ) loop );
-	data.push_back( sleep );
-	data.push_back( priority );
-	data.push_back( key );
+    vector<signed int> data;
+    data.push_back((signed int) loop);
+    data.push_back(priority);
+    data.push_back(priority);
+    data.push_back(key);
 
-	PUSHCMD( ( pair<Native::iterator, vector<int> >( it, data ) ) ); // Critical section
+    tmplist.push_back((pair<Native::iterator, vector<signed int> >(it, data))); // Critical section
 }
 
-void Interface::ExecuteCommandLoop( string name, int priority, int sleep )
+void Interface::ExecuteCommandLoop(string name, unsigned int priority)
 {
 	map<string, string>::iterator it;
 	it = defs.find( name );
@@ -191,12 +191,12 @@ void Interface::ExecuteCommandLoop( string name, int priority, int sleep )
 	if ( it == defs.end() )
 		throw VaultException( "Command definition %s not found", name.c_str() );
 
-	ExecuteCommand( natives.find( name ), true, priority, sleep, 0 );
+    ExecuteCommand(natives.find(name), true, priority, 0);
 }
 
-void Interface::ExecuteCommandOnce( string name, ParamContainer param, int priority, int sleep, signed int key )
+void Interface::ExecuteCommandOnce(string name, ParamContainer param, unsigned int priority, signed int key)
 {
-	ExecuteCommand( DefineNativeInternal( name, param ), false, priority, sleep, key );
+    ExecuteCommand(DefineNativeInternal(name, param), false, priority, key);
 }
 
 multimap<string, string> Interface::Evaluate( string name, string def, ParamContainer param )
@@ -205,22 +205,24 @@ multimap<string, string> Interface::Evaluate( string name, string def, ParamCont
 	ParamList::reverse_iterator it;
 	RetrieveBooleanFlag performCheck = param.second;
 
-	if ( !param.first.empty() )
-	{
-		if ( performCheck() )
-		{
-			int i = 0;
-			int rsize = 1;
-			int lsize = param.first.size();
-			vector<int> mult;
-			vector<ParamList::reverse_iterator> lists;
-			mult.reserve( lsize );
-			lists.reserve( lsize );
+    if (!param.first.empty())
+    {
+        if (performCheck())
+        {
+            unsigned int i = 0;
+            unsigned int rsize = 1;
+            unsigned int lsize = param.first.size();
+            vector<unsigned int> mult;
+            vector<ParamList::reverse_iterator> lists;
+            mult.reserve(lsize);
+            lists.reserve(lsize);
 
-			for ( it = param.first.rbegin(); it != param.first.rend(); ++it, i++ )
-			{
-				char token[4];
-				snprintf( token, sizeof( token ), "%%%d", i );
+            for (it = param.first.rbegin(); it != param.first.rend(); ++it, ++i)
+            {
+                char token[4];
+                snprintf(token, sizeof(token), "%%%d", i);
+                if (def.find(token) == string::npos)
+                    return result;
 
 				if ( def.find( token ) == string::npos )
 					return result;
@@ -233,13 +235,12 @@ multimap<string, string> Interface::Evaluate( string name, string def, ParamCont
 
 				if ( !params.empty() )
 					it->first.insert( it->first.end(), params.begin(), params.end() );
+                else if (it->first.empty())
+                    return result;
 
-				else if ( it->first.empty() )
-					return result;
-
-				mult.insert( mult.begin(), rsize );
-				lists.insert( lists.begin(), it );
-				rsize *= it->first.size();
+                mult.insert( mult.begin(), rsize );
+                lists.insert( lists.begin(), it );
+                rsize *= it->first.size();
 			}
 
 			for ( i = 0; i < rsize; i++ )
@@ -248,7 +249,7 @@ multimap<string, string> Interface::Evaluate( string name, string def, ParamCont
 
 				for ( int j = 0; j < lsize; j++ )
 				{
-					int idx = ( ( int ) ( i / mult[j] ) ) % lists.at( j )->first.size();
+					unsigned int idx = ( ( int ) ( i / mult[j] ) ) % lists.at( j )->first.size();
 
 					char token[4];
 					snprintf( token, sizeof( token ), "%%%d", j );
@@ -371,9 +372,10 @@ DWORD WINAPI Interface::CommandThreadReceive( LPVOID data )
 
 DWORD WINAPI Interface::CommandThreadSend( LPVOID data )
 {
-	try
-	{
-		while ( !wakeup && !endThread );
+    try
+    {
+        while (!wakeup && !endThread)
+            Sleep(10);
 
 		while ( !endThread )
 		{
@@ -383,9 +385,7 @@ DWORD WINAPI Interface::CommandThreadSend( LPVOID data )
 			if ( !tmplist.empty() )
 			{
 				cs.StartSession();
-
 				cmdlist.splice( cmdlist.begin(), tmplist );
-
 				cs.EndSession();
 			}
 
@@ -395,7 +395,7 @@ DWORD WINAPI Interface::CommandThreadSend( LPVOID data )
 				{
 					cs.StartSession();
 
-					int count = tmplist.size();
+                    unsigned int count = tmplist.size();
 
 					if ( insertAt != cmdlist.end() )
 					{
@@ -419,91 +419,76 @@ DWORD WINAPI Interface::CommandThreadSend( LPVOID data )
 					cs.EndSession();
 				}
 
-				if ( insertAt == it )
-					insertAt = cmdlist.end();
+                map<string, string>::iterator al = alias.find(it->first->first);
+                string name = (al != alias.end() ? al->second : it->first->first);
+                string def = defs.find(name)->second;
+                ParamContainer& param = it->first->second;
+                vector<signed int>& data = it->second;
 
-				map<string, string>::iterator al = alias.find( it->first->first );
-				string name = ( al != alias.end() ? al->second : it->first->first );
-				string def = defs.find( name )->second;
-				ParamContainer& param = it->first->second;
-				vector<int>& data = it->second;
+                if (data[2] != 0)
+                {
+                    data[2]--;
+                    ++it;
+                    continue;
+                }
 
-				if ( data.size() != 5 )
-					data.push_back( data.at( 2 ) );
+                multimap<string, string> cmd = Interface::Evaluate(name, def, param);
 
-				if ( data.at( 4 ) != 0 )
-				{
-					data.at( 4 )--;
-					++it;
-					continue;
-				}
+                if (cmd.size() != 0)
+                {
+                    signed int key = data[3];
 
-				else
-					data.at( 4 ) = data.at( 2 );
+                    CommandParsed stream = API::Translate(cmd, key);
 
-				multimap<string, string> cmd = Interface::Evaluate( name, def, param );
+                    if (stream.size() != 0)
+                    {
+                        CommandParsed::iterator it2;
 
-				if ( cmd.size() != 0 )
-				{
-					signed int key = data.at( 3 );
+                        for (it2 = stream.begin(); it2 != stream.end() && !endThread; ++it2)
+                        {
+                            char* content = *it2;
+                            pipeServer->Send(content);
+                        }
 
-					CommandParsed stream = API::Translate( cmd, key );
+                        for (it2 = stream.begin(); it2 != stream.end(); ++it2)
+                        {
+                            char* content = *it2;
+                            delete[] content;
+                        }
+                    }
+                }
 
-					if ( stream.size() != 0 )
-					{
-						CommandParsed::iterator it2;
-
-						for ( it2 = stream.begin(); it2 != stream.end() && !endThread; ++it2 )
-						{
-							char* content = *it2;
-							pipeServer->Send( content );
-							Sleep( data.at( 1 ) );
-						}
-
-						for ( it2 = stream.begin(); it2 != stream.end(); ++it2 )
-						{
-							char* content = *it2;
-							delete[] content;
-						}
-					}
-				}
-
-				if ( data.at( 0 ) == 0 )
-				{
-					FreeContainer( param );
-					natives.erase( it->first );
-					it = cmdlist.erase( it );
-				}
-
-				else
-					++it;
-			}
-		}
-	}
-
-	catch ( std::exception& e )
-	{
-		try
-		{
-			VaultException& vaulterror = dynamic_cast<VaultException&>( e );
-			vaulterror.Message();
-		}
-
-		catch ( std::bad_cast& no_vaulterror )
-		{
-			VaultException vaulterror( e.what() );
-			vaulterror.Message();
-		}
+                if (data[0] == 0)
+                {
+                    FreeContainer(param);
+                    natives.erase(it->first);
+                    it = cmdlist.erase(it);
+                }
+                else
+                    ++it;
+            }
+        }
+    }
+    catch (std::exception& e)
+    {
+        try
+        {
+            VaultException& vaulterror = dynamic_cast<VaultException&>(e);
+            vaulterror.Message();
+        }
+        catch (std::bad_cast& no_vaulterror)
+        {
+            VaultException vaulterror(e.what());
+            vaulterror.Message();
+        }
 
 #ifdef VAULTMP_DEBUG
-
-		if ( debug != NULL )
-			debug->Print( "Send thread is going to terminate (ERROR)", true );
-
+        if (debug != NULL)
+            debug->Print("Send thread is going to terminate (ERROR)", true);
 #endif
 
-		return ( ( DWORD ) data );
-	}
+        return ((DWORD) data);
+    }
 
-	return ( ( DWORD ) data );
+    return ((DWORD) data);
 }

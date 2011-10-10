@@ -1250,14 +1250,12 @@ vector<CommandResult> API::Translate( char* stream )
 	result.back().first.first.first = queue.back().second;
 	result.back().first.first.second = queue.back().first.second;
 
-	if ( stream[0] == PIPE_OP_RETURN_BIG )
-	{
-		unsigned int length = *( ( unsigned int* ) ( ( unsigned ) stream + 5 ) );
-		unsigned char* data = ( unsigned char* ) ( ( unsigned ) stream + 9 );
-		vector<unsigned char> _result( data, data + length );
-		result.back().first.second = _result;
-	}
-
+    if (stream[0] == PIPE_OP_RETURN_BIG)
+    {
+        unsigned int length = *((unsigned int*) ((unsigned) stream + 5));
+        unsigned char* data = (unsigned char*) ((unsigned) stream + 9);
+        result.back().first.second = vector<unsigned char>(data, data + length);
+    }
 	else
 		result.back().first.second = *( ( double* ) ( ( unsigned ) stream + 5 ) );
 

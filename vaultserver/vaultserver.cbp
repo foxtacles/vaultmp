@@ -391,6 +391,8 @@
 		<Unit filename="NetworkServer.h" />
 		<Unit filename="PAWN.cpp" />
 		<Unit filename="PAWN.h" />
+		<Unit filename="Public.cpp" />
+		<Unit filename="Public.h" />
 		<Unit filename="Script.cpp" />
 		<Unit filename="Script.h" />
 		<Unit filename="ScriptFunction.cpp" />

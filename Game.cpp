@@ -213,12 +213,12 @@ void Game::NewPlayer( NetworkID id, unsigned int baseID, string name )
 
 	Interface::StartSession();
 
-	ParamList param_PlaceAtMe;
-	param_PlaceAtMe.push_back( self->GetReferenceParam() ); // need something else here
-	param_PlaceAtMe.push_back( BuildParameter( Utils::LongToHex( baseID ) ) );
-	param_PlaceAtMe.push_back( Data::Param_True );
-	ParamContainer PlaceAtMe = ParamContainer( param_PlaceAtMe, &Data::AlwaysTrue );
-	Interface::ExecuteCommandOnce( "PlaceAtMe", PlaceAtMe, 0, 2, key );
+    ParamList param_PlaceAtMe;
+    param_PlaceAtMe.push_back(self->GetReferenceParam()); // need something else here
+    param_PlaceAtMe.push_back(BuildParameter(Utils::LongToHex(baseID)));
+    param_PlaceAtMe.push_back(Data::Param_True);
+    ParamContainer PlaceAtMe = ParamContainer(param_PlaceAtMe, &Data::AlwaysTrue);
+    Interface::ExecuteCommandOnce("PlaceAtMe", PlaceAtMe, 0, key);
 
 	Interface::EndSession();
 
@@ -318,7 +318,7 @@ void Game::SetName( FactoryObject reference, string name )
 	Interface::EndSession();
 }
 
-void Game::SetRestrained( FactoryObject reference, bool restrained, unsigned int delay )
+void Game::SetRestrained(FactoryObject reference, bool restrained)
 {
 	Actor* actor = vaultcast<Actor>( reference );
 
@@ -327,11 +327,11 @@ void Game::SetRestrained( FactoryObject reference, bool restrained, unsigned int
 
 	Interface::StartSession();
 
-	ParamList param_SetRestrained;
-	param_SetRestrained.push_back( actor->GetReferenceParam() );
-	param_SetRestrained.push_back( restrained ? Data::Param_True : Data::Param_False );
-	ParamContainer SetRestrained = ParamContainer( param_SetRestrained, &Data::AlwaysTrue );
-	Interface::ExecuteCommandOnce( "SetRestrained", SetRestrained, 0, delay );
+    ParamList param_SetRestrained;
+    param_SetRestrained.push_back(actor->GetReferenceParam());
+    param_SetRestrained.push_back(restrained ? Data::Param_True : Data::Param_False);
+    ParamContainer SetRestrained = ParamContainer(param_SetRestrained, &Data::AlwaysTrue);
+    Interface::ExecuteCommandOnce("SetRestrained", SetRestrained);
 
 	Interface::EndSession();
 }
@@ -361,30 +361,30 @@ void Game::SetPos( FactoryObject reference )
 
 			key = object->SetGamePos( Axis_X, object->GetNetworkPos( Axis_X ) );
 
-			ParamList param_SetPos;
-			param_SetPos.push_back( object->GetReferenceParam() );
-			param_SetPos.push_back( BuildParameter( API::RetrieveAxis_Reverse( Axis_X ) ) );
-			param_SetPos.push_back( BuildParameter( object->GetNetworkPos( Axis_X ) ) );
-			ParamContainer SetPos = ParamContainer( param_SetPos, &Data::AlwaysTrue );
-			Interface::ExecuteCommandOnce( "SetPos", SetPos, 0, 2, key ? key->Lock( true ) : 0 );
+            ParamList param_SetPos;
+            param_SetPos.push_back(object->GetReferenceParam());
+            param_SetPos.push_back(BuildParameter(API::RetrieveAxis_Reverse(Axis_X)));
+            param_SetPos.push_back(BuildParameter(object->GetNetworkPos(Axis_X)));
+            ParamContainer SetPos = ParamContainer(param_SetPos, &Data::AlwaysTrue);
+            Interface::ExecuteCommandOnce("SetPos", SetPos, 0, key ? key->Lock(true) : 0);
 
 			key = object->SetGamePos( Axis_Y, object->GetNetworkPos( Axis_Y ) );
 
-			param_SetPos.clear();
-			param_SetPos.push_back( object->GetReferenceParam() );
-			param_SetPos.push_back( BuildParameter( API::RetrieveAxis_Reverse( Axis_Y ) ) );
-			param_SetPos.push_back( BuildParameter( object->GetNetworkPos( Axis_Y ) ) );
-			SetPos = ParamContainer( param_SetPos, &Data::AlwaysTrue );
-			Interface::ExecuteCommandOnce( "SetPos", SetPos, 0, 2, key ? key->Lock( true ) : 0 );
+            param_SetPos.clear();
+            param_SetPos.push_back(object->GetReferenceParam());
+            param_SetPos.push_back(BuildParameter(API::RetrieveAxis_Reverse(Axis_Y)));
+            param_SetPos.push_back(BuildParameter(object->GetNetworkPos(Axis_Y)));
+            SetPos = ParamContainer(param_SetPos, &Data::AlwaysTrue);
+            Interface::ExecuteCommandOnce("SetPos", SetPos, 0, key ? key->Lock(true) : 0);
 
 			key = object->SetGamePos( Axis_Z, object->GetNetworkPos( Axis_Z ) );
 
-			param_SetPos.clear();
-			param_SetPos.push_back( object->GetReferenceParam() );
-			param_SetPos.push_back( BuildParameter( API::RetrieveAxis_Reverse( Axis_Z ) ) );
-			param_SetPos.push_back( BuildParameter( object->GetNetworkPos( Axis_Z ) ) );
-			SetPos = ParamContainer( param_SetPos, &Data::AlwaysTrue );
-			Interface::ExecuteCommandOnce( "SetPos", SetPos, 0, 2, key ? key->Lock( true ) : 0 );
+            param_SetPos.clear();
+            param_SetPos.push_back(object->GetReferenceParam());
+            param_SetPos.push_back(BuildParameter(API::RetrieveAxis_Reverse(Axis_Z)));
+            param_SetPos.push_back(BuildParameter(object->GetNetworkPos(Axis_Z)));
+            SetPos = ParamContainer(param_SetPos, &Data::AlwaysTrue);
+            Interface::ExecuteCommandOnce("SetPos", SetPos, 0, key ? key->Lock(true) : 0);
 
 			Interface::EndSession();
 		}
@@ -468,7 +468,24 @@ void Game::SetActorValue( FactoryObject reference, bool base, unsigned char inde
 	{
 		signed int key = result->Lock( true );
 
-		Interface::StartSession();
+        if (base)
+        {
+            ParamList param_SetActorValue;
+            param_SetActorValue.push_back(actor->GetReferenceParam());
+            param_SetActorValue.push_back(BuildParameter(API::RetrieveValue_Reverse(index)));
+            param_SetActorValue.push_back(BuildParameter(value));
+            ParamContainer SetActorValue = ParamContainer(param_SetActorValue, &Data::AlwaysTrue);
+            Interface::ExecuteCommandOnce("SetActorValue", SetActorValue, 0, key);
+        }
+        else
+        {
+            ParamList param_ForceActorValue;
+            param_ForceActorValue.push_back(actor->GetReferenceParam());
+            param_ForceActorValue.push_back(BuildParameter(API::RetrieveValue_Reverse(index)));
+            param_ForceActorValue.push_back(BuildParameter(value));
+            ParamContainer ForceActorValue = ParamContainer(param_ForceActorValue, &Data::AlwaysTrue);
+            Interface::ExecuteCommandOnce("ForceActorValue", ForceActorValue, 0, key);
+        }
 
 		if ( base )
 		{
@@ -477,7 +494,7 @@ void Game::SetActorValue( FactoryObject reference, bool base, unsigned char inde
 			param_SetActorValue.push_back( BuildParameter( API::RetrieveValue_Reverse( index ) ) );
 			param_SetActorValue.push_back( BuildParameter( value ) );
 			ParamContainer SetActorValue = ParamContainer( param_SetActorValue, &Data::AlwaysTrue );
-			Interface::ExecuteCommandOnce( "SetActorValue", SetActorValue, 0, 2, key );
+			Interface::ExecuteCommandOnce( "SetActorValue", SetActorValue, 0, key );
 		}
 
 		else
@@ -487,7 +504,7 @@ void Game::SetActorValue( FactoryObject reference, bool base, unsigned char inde
 			param_ForceActorValue.push_back( BuildParameter( API::RetrieveValue_Reverse( index ) ) );
 			param_ForceActorValue.push_back( BuildParameter( value ) );
 			ParamContainer ForceActorValue = ParamContainer( param_ForceActorValue, &Data::AlwaysTrue );
-			Interface::ExecuteCommandOnce( "ForceActorValue", ForceActorValue, 0, 2, key );
+			Interface::ExecuteCommandOnce( "ForceActorValue", ForceActorValue, 0, key );
 		}
 
 		Interface::EndSession();
@@ -518,16 +535,16 @@ void Game::SetActorState( FactoryObject reference, unsigned char index, unsigned
 
 		Interface::StartSession();
 
-		ParamList param_SetAlert;
-		param_SetAlert.push_back( actor->GetReferenceParam() );
-		param_SetAlert.push_back( alerted ? Data::Param_True : Data::Param_False );
-		ParamContainer SetAlert = ParamContainer( param_SetAlert, &Data::AlwaysTrue );
-		Interface::ExecuteCommandOnce( "SetAlert", SetAlert, 0, 50, key );
+        ParamList param_SetAlert;
+        param_SetAlert.push_back(actor->GetReferenceParam());
+        param_SetAlert.push_back(alerted ? Data::Param_True : Data::Param_False);
+        ParamContainer SetAlert = ParamContainer(param_SetAlert, &Data::AlwaysTrue);
+        Interface::ExecuteCommandOnce("SetAlert", SetAlert, 0, key);
 
 		Interface::EndSession();
 
-		SetRestrained( reference, true, 2000 ); // prevents more or less efficiently alert state desync
-	}
+        SetRestrained(reference, true);
+    }
 
 	result = actor->SetActorSneaking( sneaking );
 
@@ -539,11 +556,11 @@ void Game::SetActorState( FactoryObject reference, unsigned char index, unsigned
 
 		Interface::StartSession();
 
-		ParamList param_SetForceSneak;
-		param_SetForceSneak.push_back( actor->GetReferenceParam() );
-		param_SetForceSneak.push_back( sneaking ? Data::Param_True : Data::Param_False );
-		ParamContainer SetForceSneak = ParamContainer( param_SetForceSneak, &Data::AlwaysTrue );
-		Interface::ExecuteCommandOnce( "SetForceSneak", SetForceSneak, 0, 50, key );
+        ParamList param_SetForceSneak;
+        param_SetForceSneak.push_back(actor->GetReferenceParam());
+        param_SetForceSneak.push_back(sneaking ? Data::Param_True : Data::Param_False);
+        ParamContainer SetForceSneak = ParamContainer(param_SetForceSneak, &Data::AlwaysTrue);
+        Interface::ExecuteCommandOnce("SetForceSneak", SetForceSneak, 0, key);
 
 		Interface::EndSession();
 
@@ -558,12 +575,12 @@ void Game::SetActorState( FactoryObject reference, unsigned char index, unsigned
 
 		Interface::StartSession();
 
-		ParamList param_PlayGroup;
-		param_PlayGroup.push_back( actor->GetReferenceParam() );
-		param_PlayGroup.push_back( BuildParameter( API::RetrieveAnim_Reverse( index ) ) );
-		param_PlayGroup.push_back( Data::Param_True );
-		ParamContainer PlayGroup = ParamContainer( param_PlayGroup, &Data::AlwaysTrue );
-		Interface::ExecuteCommandOnce( "PlayGroup", PlayGroup, 0, 2, key );
+        ParamList param_PlayGroup;
+        param_PlayGroup.push_back(actor->GetReferenceParam());
+        param_PlayGroup.push_back(BuildParameter(API::RetrieveAnim_Reverse(index)));
+        param_PlayGroup.push_back(Data::Param_True);
+        ParamContainer PlayGroup = ParamContainer(param_PlayGroup, &Data::AlwaysTrue);
+        Interface::ExecuteCommandOnce("PlayGroup", PlayGroup, 0, key);
 
 		Interface::EndSession();
 
@@ -596,15 +613,8 @@ void Game::MoveTo( vector<FactoryObject> reference, bool cell )
 			param_MoveTo.push_back( BuildParameter( object->GetNetworkPos( Axis_Z ) - object2->GetNetworkPos( Axis_Z ) ) );
 		}
 
-		else
-		{
-			param_MoveTo.push_back( Data::Param_False );
-			param_MoveTo.push_back( Data::Param_False );
-			param_MoveTo.push_back( Data::Param_False );
-		}
-
 		ParamContainer MoveTo = ParamContainer( param_MoveTo, &Data::AlwaysTrue );
-		Interface::ExecuteCommandOnce( "MoveTo", MoveTo, 0, 2, key );
+		Interface::ExecuteCommandOnce( "MoveTo", MoveTo, 0, key );
 
 		Interface::EndSession();
 	}
@@ -829,12 +839,12 @@ void Game::Failure_PlaceAtMe( unsigned int refID, unsigned int baseID, unsigned 
 {
 	Interface::StartSession();
 
-	ParamList param_PlaceAtMe;
-	param_PlaceAtMe.push_back( BuildParameter( Utils::LongToHex( refID ) ) );
-	param_PlaceAtMe.push_back( BuildParameter( Utils::LongToHex( baseID ) ) );
-	param_PlaceAtMe.push_back( BuildParameter( count ) );
-	ParamContainer PlaceAtMe = ParamContainer( param_PlaceAtMe, &Data::AlwaysTrue );
-	Interface::ExecuteCommandOnce( "PlaceAtMe", PlaceAtMe, 0, 2, key );
+    ParamList param_PlaceAtMe;
+    param_PlaceAtMe.push_back(BuildParameter(Utils::LongToHex(refID)));
+    param_PlaceAtMe.push_back(BuildParameter(Utils::LongToHex(baseID)));
+    param_PlaceAtMe.push_back(BuildParameter(count));
+    ParamContainer PlaceAtMe = ParamContainer(param_PlaceAtMe, &Data::AlwaysTrue);
+    Interface::ExecuteCommandOnce("PlaceAtMe", PlaceAtMe, 0, key);
 
 	Interface::EndSession();
 }

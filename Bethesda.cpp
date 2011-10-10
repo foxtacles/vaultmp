@@ -333,9 +333,9 @@ void Bethesda::Initialize()
 			hDll = LoadLibrary( "kernel32.dll" );
 			pLoadLibrary = ( fLoadLibrary ) GetProcAddress( hDll, "LoadLibraryA" ); // TODO: GetRemoteProcAddress
 
-			if( ( remote = VirtualAllocEx( hProc, 0, size, MEM_COMMIT, PAGE_READWRITE ) ) == NULL )
+			if( ( remote = VirtualAllocEx( pi.hProcess, 0, size, MEM_COMMIT, PAGE_READWRITE ) ) == NULL )
 			{
-				VirtualFreeEx( pi->hProcess, remote, size, MEM_RELEASE );
+				VirtualFreeEx( pi.hProcess, remote, size, MEM_RELEASE );
 				CloseHandle( pi.hThread );
 				CloseHandle( pi.hProcess );
 				throw VaultException( "Couldn't allocate memory in remote process" );
@@ -343,7 +343,7 @@ void Bethesda::Initialize()
 
 			if( WriteProcessMemory( pi.hProcess, remote, curdir, size, NULL ) == false )
 			{
-				VirtualFreeEx( pi->hProcess, remote, size, MEM_RELEASE );
+				VirtualFreeEx( pi.hProcess, remote, size, MEM_RELEASE );
 				CloseHandle( pi.hThread );
 				CloseHandle( pi.hProcess );
 				throw VaultException( "Couldn't write memory in remote process" );
@@ -351,7 +351,7 @@ void Bethesda::Initialize()
 
 			if( ( hRemoteThread = CreateRemoteThread( pi.hProcess, NULL, 0, ( LPTHREAD_START_ROUTINE ) pLoadLibrary, remote, 0, 0 ) ) == NULL )
 			{
-				VirtualFreeEx( pi->hProcess, remote, size, MEM_RELEASE );
+				VirtualFreeEx( pi.hProcess, remote, size, MEM_RELEASE );
 				CloseHandle( pi.hThread );
 				CloseHandle( pi.hProcess );
 				throw VaultException( "Couldn't create remote thread" );
@@ -359,11 +359,11 @@ void Bethesda::Initialize()
 
 			if( WaitForSingleObject( hRemoteThread, 5000 ) != WAIT_OBJECT_0 )
 			{
-				VirtualFreeEx( pi->hProcess, remote, size, MEM_RELEASE );
-				throw VaultException( "Remote thread timed out" )
+				VirtualFreeEx( pi.hProcess, remote, size, MEM_RELEASE );
+				throw VaultException( "Remote thread timed out" );
 			}
 
-			VirtualFreeEx( pi->hProcess, remote, size, MEM_RELEASE );
+			VirtualFreeEx( pi.hProcess, remote, size, MEM_RELEASE );
 
 			try
 			{
