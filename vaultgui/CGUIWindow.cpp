@@ -1,4 +1,5 @@
 #include "CGUIWindow.h"
+#include "Input.h"
 
 CWindow::CWindow()
 {
@@ -35,77 +36,80 @@ void CWindow::Add( float x, float y, float w, float h )
 
 void CWindow::Render()
 {
-	if( this->dr->cState == CS_CLICKED )
+	if(isChatMouseInputOpen)
 	{
-		if( this->dr->IsCursorIn( this->wx + this->ww - 19, this->wy + 5, 16, 16 ) )
+		if( this->dr->cState == CS_CLICKED )
 		{
-			if( this->state == cWS_MINI )
-				this->state = cWS_VISIBLE;
+			if( this->dr->IsCursorIn( this->wx + this->ww - 19, this->wy + 5, 16, 16 ) )
+			{
+				if( this->state == cWS_MINI )
+					this->state = cWS_VISIBLE;
+
+				else
+					this->state = cWS_MINI;
+			}
 
 			else
-				this->state = cWS_MINI;
-		}
-
-		else
-		{
-			if( this->state != cWS_MINI )
 			{
-				//check if it's any of this window's objects
-				for( int i = 0; i < 64; i++ )
+				if( this->state != cWS_MINI )
 				{
-					if( this->objects[i] != NULL )
+					//check if it's any of this window's objects
+					for( int i = 0; i < 64; i++ )
 					{
-						if( this->objects[i]->MouseEvent( this->wx, this->wy ) )
-							break;
-					}
+						if( this->objects[i] != NULL )
+						{
+							if( this->objects[i]->MouseEvent( this->wx, this->wy ) )
+								break;
+						}
 
-					else
-					{
-						break;
+						else
+						{
+							break;
+						}
 					}
 				}
-			}
 
-			//check if the event is to move this window
-			if( this->dr->IsCursorIn( this->wx, this->wy, this->ww, 26 ) )
-			{
-				this->dragging = 1;
+				//check if the event is to move this window
+				if( this->dr->IsCursorIn( this->wx, this->wy, this->ww, 26 ) )
+				{
+					this->dragging = 1;
+				}
 			}
 		}
-	}
 
-	else if( this->dr->cState == CS_HELD )
-	{
-	}
-	else if( this->dr->cState == CS_UP )
-	{
-		this->dragging = 0;
-	}
+		else if( this->dr->cState == CS_HELD )
+		{
+		}
+		else if( this->dr->cState == CS_UP )
+		{
+			this->dragging = 0;
+		}
 
-	if( this->dragging )
-	{
-		this->wx = this->dr->cX;
-		this->wy = this->dr->cY;
+		if( this->dragging )
+		{
+			this->wx = this->dr->cX;
+			this->wy = this->dr->cY;
 
-		if( this->wx < ( float )this->dr->viewport.X )
-			this->wx = ( float )this->dr->viewport.X;
+			if( this->wx < ( float )this->dr->viewport.X )
+				this->wx = ( float )this->dr->viewport.X;
 
-		if( this->wy < ( float )this->dr->viewport.Y )
-			this->wy = ( float )this->dr->viewport.Y;
+			if( this->wy < ( float )this->dr->viewport.Y )
+				this->wy = ( float )this->dr->viewport.Y;
 
-		float maxx = ( float )( this->dr->viewport.X + this->dr->viewport.Width ) - this->ww - 1, maxy;
+			float maxx = ( float )( this->dr->viewport.X + this->dr->viewport.Width ) - this->ww - 1, maxy;
 
-		if( this->state != cWS_MINI )
-			maxy = ( float )( this->dr->viewport.Y + this->dr->viewport.Height ) - this->wh - 1;
+			if( this->state != cWS_MINI )
+				maxy = ( float )( this->dr->viewport.Y + this->dr->viewport.Height ) - this->wh - 1;
 
-		else
-			maxy = ( float )( this->dr->viewport.Y + this->dr->viewport.Height ) - TBG_H - 2;
+			else
+				maxy = ( float )( this->dr->viewport.Y + this->dr->viewport.Height ) - TBG_H - 2;
 
-		if( this->wx > maxx )
-			this->wx = maxx;
+			if( this->wx > maxx )
+				this->wx = maxx;
 
-		if( this->wy > maxy )
-			this->wy = maxy;
+			if( this->wy > maxy )
+				this->wy = maxy;
+		}
 	}
 
 	if( this->state != cWS_MINI )

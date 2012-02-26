@@ -8,8 +8,8 @@ bool APIENTRY DllMain( HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReser
 	{
 		case DLL_PROCESS_ATTACH:
 			{
-				installhook();
 				InitD3D9Hooks();
+				CreateThread(0,0,(LPTHREAD_START_ROUTINE)installhook,0,0,0);// TODO: move init code to void DllExport Initiate();
 				break;
 			}
 	}

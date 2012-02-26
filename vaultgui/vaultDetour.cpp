@@ -63,6 +63,13 @@ void WriteJump( const LPBYTE lpbFrom, const LPBYTE lpbTo )
 	JmpType jmpType = GetJmpType( lpbFrom, lpbTo );
 	WriteJump( lpbFrom, lpbTo, jmpType );
 }
+
+void WriteCall( const LPBYTE lpbFrom, const LPBYTE lpbTo ) // slight modification by houstin
+{
+	lpbFrom[0] = 0xE8;
+	DWORD offset = reinterpret_cast<DWORD>( lpbTo ) - reinterpret_cast<DWORD>( lpbFrom ) - relativeJmpSize;
+	*reinterpret_cast<PDWORD>( lpbFrom + 1 ) = static_cast<DWORD>( offset );
+}
 /* END DETOURXS CODE BY SINNER */
 
 /* BEGIN FUNCLEN CODE BY DARAWK */
@@ -77,6 +84,7 @@ void WriteJump( const LPBYTE lpbFrom, const LPBYTE lpbTo )
 #define INSTR_RETF 0xCB
 #define INSTR_RELJCX 0xE3
 #define INSTR_RELJMP 0xE9
+#define INSTR_RELCALL 0xE8
 #define INSTR_SHORTJMP 0xEB
 
 typedef	unsigned __int8		u8;
@@ -107,6 +115,7 @@ void *GetBranchAddress( u8 *instr )
 			break;
 
 		case INSTR_RELJMP:
+		case INSTR_RELCALL:
 			offset  = *( s32 * )( instr + 1 );
 			offset += 5;
 			break;
@@ -157,7 +166,7 @@ size_t GetTrampolineLength( void* at, size_t lenOfHook )
 
 void* BuildTrampoline( void* at, size_t len )
 {
-	void* tramp = VirtualAlloc( 0, 20, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE );
+	void* tramp = VirtualAlloc( 0, 1024, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE );
 
 	if( !tramp )
 		return tramp;
@@ -176,7 +185,7 @@ void* BuildTrampoline( void* at, size_t len )
 
 void* BuildTrampolineSteam( void* at, void* steamhook )
 {
-	void* tramp = VirtualAlloc( 0, 20, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE );
+	void* tramp = VirtualAlloc( 0, 1024, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE );
 
 	if( !tramp )
 		return tramp;
@@ -185,6 +194,20 @@ void* BuildTrampolineSteam( void* at, void* steamhook )
 	VirtualProtect( tramp, 1024, PAGE_EXECUTE_READWRITE, &ignore ); // make executable
 
 	WriteJump( ( BYTE* )tramp, ( BYTE* )steamhook );
+	return tramp;
+}
+
+void* BuildTrampolineEnbseries( void* at, void* enbhook )
+{
+	void* tramp = VirtualAlloc( 0, 1024, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE );
+
+	if( !tramp )
+		return tramp;
+
+	DWORD ignore;
+	VirtualProtect( tramp, 1024, PAGE_EXECUTE_READWRITE, &ignore ); // make executable
+
+	WriteCall( ( BYTE* )tramp, ( BYTE* )enbhook );
 	return tramp;
 }
 
@@ -201,12 +224,22 @@ void* DetourFunction( void* from, void* to )
 
 void* DetourForSteam( void* from, void* to )
 {
-	if( *( BYTE* )from == 0xE9 ) // already hooked
+	DWORD dwOldProt;
+	VirtualProtect( from, 15, PAGE_EXECUTE_READWRITE, &dwOldProt );
+	if( *( BYTE* )from == 0xE9) // already hooked
 	{
 		void* steamHook = GetBranchAddress( ( u8* )from );
-		DWORD dwOldProt;
-		VirtualProtect( from, 15, PAGE_EXECUTE_READWRITE, &dwOldProt );
 		void* tramp = BuildTrampolineSteam( from, steamHook );
+		WriteJump( ( BYTE* )from, ( BYTE* )to );
+		VirtualProtect( from, 15, dwOldProt, &dwOldProt );
+		return tramp;
+	}
+
+	else if(*(BYTE*)from == 0xE8) // enbseries
+	{
+		void* steamHook = GetBranchAddress( ( u8* )from );
+		void* tramp = BuildTrampolineEnbseries( from, steamHook );
+		WriteJump(MakePtr(LPBYTE,tramp,5),MakePtr(LPBYTE,from,5));
 		WriteJump( ( BYTE* )from, ( BYTE* )to );
 		VirtualProtect( from, 15, dwOldProt, &dwOldProt );
 		return tramp;

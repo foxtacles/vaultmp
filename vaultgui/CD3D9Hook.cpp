@@ -33,6 +33,19 @@ char* ui_cache = 0;
 
 #define DllExport   __declspec( dllexport )__stdcall
 
+char inputToggle = 't';
+char mouseInputToggle = 'y';
+
+void DllExport SetTextInputKey(char newKey)
+{
+	inputToggle = newKey;
+}
+
+void DllExport SetMouseInputKey(char newKey)
+{
+	mouseInputToggle = newKey;
+}
+
 void DllExport AppendChatMessageA( char* msg )
 {
 	strcat( textbox_buffer, msg );
@@ -69,9 +82,17 @@ __declspec( naked ) void hPresent()
 		rend.Text_Begin();
 		rend.Shape_Begin();
 		tw->Render();
-		rend.Draw2DTriangle( rend.cX - 2, rend.cY - 2, rend.cX + 17, rend.cY + 10, rend.cX + 4, rend.cY + 17, rend.Easy_Grey ); // cursor outline
-		rend.Draw2DTriangle( rend.cX, rend.cY, rend.cX + 15, rend.cY + 10, rend.cX + 5, rend.cY + 15, rend.Easy_Green ); // cursor fill
-		rend.DrawTextMain( 20, 20, rend.Normal, iBuf, rend.Black ); // TOOO: remove when keyboard input is working
+
+		if(isChatMouseInputOpen)
+		{
+			rend.Draw2DTriangle( rend.cX - 2, rend.cY - 2, rend.cX + 17, rend.cY + 10, rend.cX + 4, rend.cY + 17, rend.Easy_Grey ); // cursor outline
+			rend.Draw2DTriangle( rend.cX, rend.cY, rend.cX + 15, rend.cY + 10, rend.cX + 5, rend.cY + 15, rend.Easy_Green ); // cursor fill
+		}
+		if(isChatinputOpen)
+		{
+			rend.DrawSquare(19, 19, 400, 20, rend.DarkGrey);
+			rend.DrawTextMain( 20, 20, rend.Normal, iBuf, rend.White );
+		}
 		rend.Shape_End();
 		rend.Text_End();
 	}
@@ -82,25 +103,27 @@ __declspec( naked ) void hPresent()
 
 __declspec( naked ) void hRelease()
 {
+	_asm pushad
 	rend.Release();
+	_asm popad
 	_asm jmp oRelease
 }
 
 __declspec( naked ) HRESULT hReset( D3DPRESENT_PARAMETERS* pPresentationParameters )
 {
-	_asm pushad
-	rend.Lost();
+	//_asm pushad
+	//rend.Lost();
 	//rend.Release();
 	//rend.Reset();
-	_asm popad
+	//_asm popad
 
 	//iWindowed = pPresentationParameters->Windowed;
 	//_asm jmp oReset
 	oReset( pPresentationParameters );
 	_asm pushad
 
-	rend.Reset();
-	//rend.Initialize();
+	//rend.Reset();
+	rend.Initialize();
 	//rend.Lost();
 	_asm popad
 }
@@ -119,7 +142,7 @@ HRESULT APIENTRY hCreateDevice( IDirect3D9* pDirect3D, UINT Adapter, D3DDEVTYPE 
 			//oEndScene = (tEndScene)DetourForSteam((*ppReturnedDeviceInterface)->lpVtbl->EndScene,hEndScene);
 			oPresent = ( void* )DetourForSteam( ( *ppReturnedDeviceInterface )->lpVtbl->Present, hPresent );
 			//oRelease = (void*)DetourForSteam((*ppReturnedDeviceInterface)->lpVtbl->Release,hRelease);
-			oReset = ( tReset )DetourForSteam( ( *ppReturnedDeviceInterface )->lpVtbl->Reset, hReset );
+			//oReset = ( tReset )DetourForSteam( ( *ppReturnedDeviceInterface )->lpVtbl->Reset, hReset );
 		}
 
 		rend.d = pDevice;
@@ -128,6 +151,7 @@ HRESULT APIENTRY hCreateDevice( IDirect3D9* pDirect3D, UINT Adapter, D3DDEVTYPE 
 		if( tw )
 			delete tw;
 
+		nullprefix = 0;
 		tw = new CWindow( 1, 1, WINDOW_W, WINDOW_H, &rend, "Vault-MP GUI" );
 		tw->AddTab( "Chat" );
 		tw->AddTextbox( 2, 48, WINDOW_W - 18, WINDOW_H - 51, textbox_buffer, 0 );
