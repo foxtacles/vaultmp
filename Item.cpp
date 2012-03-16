@@ -107,3 +107,12 @@ NetworkID Item::Copy() const
 
 	return item->GetNetworkID();
 }
+
+pDefault* Item::toPacket()
+{
+    pDefault* pObjectNew = Object::toPacket();
+
+    pDefault* packet = PacketFactory::CreatePacket(ID_ITEM_NEW, pObjectNew, this->GetItemCount(), this->GetItemCondition(), this->GetItemEquipped());
+
+    return packet;
+}

@@ -258,6 +258,11 @@ bool Actor::IsActorJumping() const
 									   || ( anim >= FalloutNV::AnimGroup_JumpLandForward && anim <= FalloutNV::AnimGroup_JumpLandRight ) ) ) );
 }
 
+pDefault* Actor::toPacket()
+{
+
+}
+
 vector<string> ActorFunctor::operator()()
 {
 	vector<string> result;

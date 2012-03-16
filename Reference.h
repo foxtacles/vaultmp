@@ -67,6 +67,10 @@ class Reference : public CriticalSection, public NetworkIDObject
 		 */
 		const Parameter GetBaseParam() const;
 
+		/**
+		 * \brief For network transfer
+		 */
+        virtual pDefault* toPacket() = 0;
 };
 
 #endif

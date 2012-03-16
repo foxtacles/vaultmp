@@ -2,7 +2,7 @@
 #define GAME_H
 
 #include "vaultmp.h"
-#include "PacketTypes.h"
+#include "PacketFactory.h"
 #include "Interface.h"
 #include "Player.h"
 #include "Network.h"

@@ -91,6 +91,10 @@ class Container : public Object
 
 		NetworkID Copy() const;
 
+		/**
+		 * \brief For network transfer
+		 */
+        virtual pDefault* toPacket();
 };
 
 #endif

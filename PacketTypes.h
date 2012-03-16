@@ -5,54 +5,6 @@
 #include "VaultException.h"
 #include "Data.h"
 
-using namespace Data;
-
-enum
-{
-	ID_EVENT_INTERFACE_LOST,
-	ID_EVENT_CLIENT_ERROR,
-	ID_EVENT_SERVER_ERROR,
-	ID_EVENT_GAME_STARTED,
-	ID_EVENT_GAME_LOADED,
-	ID_EVENT_AUTH_RECEIVED,
-	ID_EVENT_CONFIRM_RECEIVED,
-	ID_EVENT_CLOSE_RECEIVED,
-};
-
-enum
-{
-	ID_GAME_AUTH = ID_GAME_FIRST,
-	ID_GAME_CONFIRM,
-	ID_GAME_LOAD,
-	ID_GAME_MOD,
-	ID_GAME_START,
-	ID_GAME_END,
-
-	ID_PLAYER_NEW,
-	ID_PLAYER_LEFT,
-
-	ID_OBJECT_UPDATE,
-	ID_ACTOR_UPDATE,
-};
-
-enum
-{
-	ID_UPDATE_POS,
-	ID_UPDATE_ANGLE,
-	ID_UPDATE_CELL,
-	ID_UPDATE_VALUE,
-	ID_UPDATE_STATE,
-};
-
-enum
-{
-	ID_REASON_KICK = 0,
-	ID_REASON_BAN,
-	ID_REASON_ERROR,
-	ID_REASON_DENIED,
-	ID_REASON_NONE,
-};
-
 /* ************************************** */
 
 // Standard definitions
@@ -386,19 +338,37 @@ class pObjectUpdateDefault : public pObjectDefault
 
 /* ************************************** */
 
+#pragma pack(push, 1)
+    struct _pGameConfirm
+    {
+        NetworkID id;
+        char name[MAX_PLAYER_NAME];
+    };
+
+    struct _pGameMod
+    {
+        char modfile[MAX_MOD_FILE];
+        unsigned int crc;
+    };
+
+    struct _pGameAuth
+    {
+        char name[MAX_PLAYER_NAME];
+        char pwd[MAX_PASSWORD_SIZE];
+    };
+
+    struct _pGameStart
+    {
+        char savegame[MAX_SAVEGAME_FILE];
+        unsigned int crc;
+    };
+#pragma pack(pop)
+
 class pGameConfirm : public pGameDefault
 {
 		friend class PacketFactory;
 
 	private:
-#pragma pack(push, 1)
-		struct _pGameConfirm
-		{
-			NetworkID id;
-			char name[MAX_PLAYER_NAME];
-		};
-#pragma pack(pop)
-
 		_pGameConfirm _data;
 
 		pGameConfirm( NetworkID id, const char* name ) : pGameDefault( ID_GAME_CONFIRM )
@@ -422,14 +392,6 @@ class pGameAuth : public pGameDefault
 		friend class PacketFactory;
 
 	private:
-#pragma pack(push, 1)
-		struct _pGameAuth
-		{
-			char name[MAX_PLAYER_NAME];
-			char pwd[MAX_PASSWORD_SIZE];
-		};
-#pragma pack(pop)
-
 		_pGameAuth _data;
 
 		pGameAuth( const char* name, const char* pwd ) : pGameDefault( ID_GAME_AUTH )
@@ -471,14 +433,6 @@ class pGameMod : public pGameDefault
 		friend class PacketFactory;
 
 	private:
-#pragma pack(push, 1)
-		struct _pGameMod
-		{
-			char modfile[MAX_MOD_FILE];
-			unsigned int crc;
-		};
-#pragma pack(pop)
-
 		_pGameMod _data;
 
 		pGameMod( const char* modfile, unsigned int crc ) : pGameDefault( ID_GAME_MOD )
@@ -502,14 +456,6 @@ class pGameStart : public pGameDefault
 		friend class PacketFactory;
 
 	private:
-#pragma pack(push, 1)
-		struct _pGameStart
-		{
-			char savegame[MAX_SAVEGAME_FILE];
-			unsigned int crc;
-		};
-#pragma pack(pop)
-
 		_pGameStart _data;
 
 		pGameStart( const char* savegame, unsigned int crc ) : pGameDefault( ID_GAME_START )
@@ -550,6 +496,111 @@ class pGameEnd : public pGameDefault
 };
 
 /* ************************************** */
+
+#pragma pack(push, 1)
+    struct _pObjectNew
+    {
+        char name[MAX_PLAYER_NAME];
+        double X;
+        double Y;
+        double Z;
+        double aX;
+        double aY;
+        double aZ;
+        unsigned int cell;
+        bool enabled;
+    };
+
+    struct _pItemNew
+    {
+        _pObjectNew _data_pObjectNew;
+        unsigned int count;
+        double condition;
+        bool equipped;
+    };
+#pragma pack(pop)
+
+class pObjectNew : public pObjectNewDefault
+{
+		friend class PacketFactory;
+
+	private:
+		_pObjectNew _data;
+
+		pObjectNew( NetworkID id, unsigned int refID, unsigned int baseID, char* name, double X, double Y, double Z, double aX, double aY, double aZ, unsigned int cell, bool enabled) : pObjectNewDefault( ID_OBJECT_NEW, refID, baseID, id )
+		{
+			strncpy( this->_data.name, name, sizeof( this->_data.name ) );
+			_data.X = X;
+			_data.Y = Y;
+			_data.Z = Z;
+			_data.aX = aX;
+			_data.aY = aY;
+			_data.aZ = aZ;
+			_data.cell = cell;
+			_data.enabled = enabled;
+			construct( &_data, sizeof( _data ) );
+		}
+		pObjectNew( NetworkID id, unsigned int refID, unsigned int baseID, _pObjectNew& data) : pObjectNewDefault( ID_OBJECT_NEW, refID, baseID, id )
+		{
+            _data = data;
+			construct( &_data, sizeof( _data ) );
+		}
+		pObjectNew( unsigned char* stream, unsigned int len ) : pObjectNewDefault( stream, len )
+		{
+			deconstruct( &_data, sizeof( _data ) );
+		}
+
+		pObjectNew( const pObjectNew& );
+		pObjectNew& operator=( const pObjectNew& );
+};
+
+class pItemNew : public pObjectNewDefault
+{
+		friend class PacketFactory;
+
+	private:
+		_pItemNew _data;
+
+		pItemNew(pDefault* _data_pObjectNew, unsigned int count, double condition, bool equipped) : pObjectNewDefault( ID_ITEM_NEW, PacketFactory::ExtractRefID(_data_pObjectNew), PacketFactory::ExtractBaseID(_data_pObjectNew), PacketFactory::ExtractNetworkID(_data_pObjectNew))
+		{
+            memcpy(&this->_data._data_pObjectNew, PacketFactory::ExtractRawData(_data_pObjectNew), sizeof(this->_data._data_pObjectNew));
+			_data.count = count;
+			_data.condition = condition;
+			_data.equipped = equipped;
+			construct( &_data, sizeof( _data ) );
+		}
+		pItemNew( unsigned char* stream, unsigned int len ) : pObjectNewDefault( stream, len )
+		{
+			deconstruct( &_data, sizeof( _data ) );
+		}
+
+		pItemNew( const pItemNew& );
+		pItemNew& operator=( const pItemNew& );
+};
+
+/*
+class pContainerNew : public pObjectNewDefault
+{
+		friend class PacketFactory;
+
+	private:
+		_pContainerNew _data;
+
+		pContainerNew(pDefault* _data_pObjectNew) : pObjectNewDefault( ID_CONTAINER_NEW, PacketFactory::ExtractRefID(_data_pObjectNew), PacketFactory::ExtractBaseID(_data_pObjectNew), PacketFactory::ExtractNetworkID(_data_pObjectNew))
+		{
+
+			construct( &_data, sizeof( _data ) );
+		}
+		pContainerNew( unsigned char* stream, unsigned int len ) : pObjectNewDefault( stream, len )
+		{
+
+			deconstruct( &_data, sizeof( _data ) );
+		}
+
+		pContainerNew( const pContainerNew& );
+		pContainerNew& operator=( const pContainerNew& );
+};
+*/
 
 class pPlayerNew : public pObjectNewDefault
 {
@@ -593,20 +644,26 @@ class pPlayerLeft : public pObjectDefault
 
 /* ************************************** */
 
+#pragma pack(push, 1)
+    struct _pObjectPos
+    {
+        double X;
+        double Y;
+        double Z;
+    };
+
+    struct _pObjectAngle
+    {
+        unsigned char axis;
+        double value;
+    };
+#pragma pack(pop)
+
 class pObjectPos : public pObjectUpdateDefault
 {
 		friend class PacketFactory;
 
 	private:
-#pragma pack(push, 1)
-		struct _pObjectPos
-		{
-			double X;
-			double Y;
-			double Z;
-		};
-#pragma pack(pop)
-
 		_pObjectPos _data;
 
 		pObjectPos( NetworkID id, double X, double Y, double Z ) : pObjectUpdateDefault( ID_OBJECT_UPDATE, ID_UPDATE_POS, id )
@@ -630,14 +687,6 @@ class pObjectAngle : public pObjectUpdateDefault
 		friend class PacketFactory;
 
 	private:
-#pragma pack(push, 1)
-		struct _pObjectAngle
-		{
-			unsigned char axis;
-			double value;
-		};
-#pragma pack(pop)
-
 		_pObjectAngle _data;
 
 		pObjectAngle( NetworkID id, unsigned char axis, double value ) : pObjectUpdateDefault( ID_OBJECT_UPDATE, ID_UPDATE_ANGLE, id )
@@ -678,20 +727,28 @@ class pObjectCell : public pObjectUpdateDefault
 
 /* ************************************** */
 
+#pragma pack(push, 1)
+    struct _pActorValue
+    {
+        bool base;
+        unsigned char index;
+        double value;
+    };
+
+    struct _pActorState
+    {
+        unsigned char index;
+        unsigned char moving;
+        bool alerted;
+        bool sneaking;
+    };
+#pragma pack(pop)
+
 class pActorValue : public pObjectUpdateDefault
 {
 		friend class PacketFactory;
 
 	private:
-#pragma pack(push, 1)
-		struct _pActorValue
-		{
-			bool base;
-			unsigned char index;
-			double value;
-		};
-#pragma pack(pop)
-
 		_pActorValue _data;
 
 		pActorValue( NetworkID id, bool base, unsigned char index, double value ) : pObjectUpdateDefault( ID_ACTOR_UPDATE, ID_UPDATE_VALUE, id )
@@ -715,16 +772,6 @@ class pActorState : public pObjectUpdateDefault
 		friend class PacketFactory;
 
 	private:
-#pragma pack(push, 1)
-		struct _pActorState
-		{
-			unsigned char index;
-			unsigned char moving;
-			bool alerted;
-			bool sneaking;
-		};
-#pragma pack(pop)
-
 		_pActorState _data;
 
 		pActorState( NetworkID id, unsigned char index, unsigned char moving, bool alerted, bool sneaking ) : pObjectUpdateDefault( ID_ACTOR_UPDATE, ID_UPDATE_STATE, id )
@@ -742,403 +789,6 @@ class pActorState : public pObjectUpdateDefault
 
 		pActorState( const pActorState& );
 		pActorState& operator=( const pActorState& );
-};
-
-/* ************************************** */
-
-// Factory
-
-/* ************************************** */
-
-class PacketFactory
-{
-	private:
-		PacketFactory();
-
-	public:
-		static pDefault* CreatePacket( unsigned char type, ... )
-		{
-			va_list args;
-			va_start( args, type );
-			pDefault* packet;
-
-			switch ( type )
-			{
-				case ID_GAME_CONFIRM:
-					{
-						NetworkID id = va_arg( args, NetworkID );
-						char* name = va_arg( args, char* );
-						packet = new pGameConfirm( id, name );
-						break;
-					}
-
-				case ID_GAME_AUTH:
-					{
-						char* name = va_arg( args, char* );
-						char* pwd = va_arg( args, char* );
-						packet = new pGameAuth( name, pwd );
-						break;
-					}
-
-				case ID_GAME_LOAD:
-					{
-						packet = new pGameLoad();
-						break;
-					}
-
-				case ID_GAME_MOD:
-					{
-						char* modfile = va_arg( args, char* );
-						unsigned int crc = va_arg( args, unsigned int );
-						packet = new pGameMod( modfile, crc );
-						break;
-					}
-
-				case ID_GAME_START:
-					{
-						char* savegame = va_arg( args, char* );
-						unsigned int crc = va_arg( args, unsigned int );
-						packet = new pGameStart( savegame, crc );
-						break;
-					}
-
-				case ID_GAME_END:
-					{
-						unsigned char reason = ( unsigned char ) va_arg( args, unsigned int );
-						packet = new pGameEnd( reason );
-						break;
-					}
-
-				case ID_PLAYER_NEW:
-					{
-						NetworkID id = va_arg( args, NetworkID );
-						unsigned int refID = va_arg( args, unsigned int );
-						unsigned int baseID = va_arg( args, unsigned int );
-						char* name = va_arg( args, char* );
-						packet = new pPlayerNew( id, refID, baseID, name );
-						break;
-					}
-
-				case ID_PLAYER_LEFT:
-					{
-						NetworkID id = va_arg( args, NetworkID );
-						packet = new pPlayerLeft( id );
-						break;
-					}
-
-				case ID_UPDATE_POS:
-					{
-						NetworkID id = va_arg( args, NetworkID );
-						double X = va_arg( args, double );
-						double Y = va_arg( args, double );
-						double Z = va_arg( args, double );
-						packet = new pObjectPos( id, X, Y, Z );
-						break;
-					}
-
-				case ID_UPDATE_ANGLE:
-					{
-						NetworkID id = va_arg( args, NetworkID );
-						unsigned char axis = ( unsigned char ) va_arg( args, unsigned int );
-						double value = va_arg( args, double );
-						packet = new pObjectAngle( id, axis, value );
-						break;
-					}
-
-				case ID_UPDATE_CELL:
-					{
-						NetworkID id = va_arg( args, NetworkID );
-						unsigned int cell = va_arg( args, unsigned int );
-						packet = new pObjectCell( id, cell );
-						break;
-					}
-
-				case ID_UPDATE_VALUE:
-					{
-						NetworkID id = va_arg( args, NetworkID );
-						bool base = ( bool ) va_arg( args, unsigned int );
-						unsigned char index = ( unsigned char ) va_arg( args, unsigned int );
-						double value = va_arg( args, double );
-						packet = new pActorValue( id, base, index, value );
-						break;
-					}
-
-				case ID_UPDATE_STATE:
-					{
-						NetworkID id = va_arg( args, NetworkID );
-						unsigned char index = ( unsigned char ) va_arg( args, unsigned int );
-						unsigned char moving = ( unsigned char ) va_arg( args, unsigned int );
-						bool alerted = ( bool ) va_arg( args, unsigned int );
-						bool sneaking = ( bool ) va_arg( args, unsigned int );
-						packet = new pActorState( id, index, moving, alerted, sneaking );
-						break;
-					}
-
-				default:
-					throw VaultException( "Unhandled packet type %d", ( int ) type );
-			}
-
-			va_end( args );
-
-			return packet;
-		}
-
-		static pDefault* CreatePacket( unsigned char* stream, unsigned int len )
-		{
-			pDefault* packet;
-
-			switch ( stream[0] )
-			{
-				case ID_GAME_CONFIRM:
-					packet = new pGameConfirm( stream, len );
-					break;
-
-				case ID_GAME_AUTH:
-					packet = new pGameAuth( stream, len );
-					break;
-
-				case ID_GAME_LOAD:
-					packet = new pGameLoad( stream, len );
-					break;
-
-				case ID_GAME_MOD:
-					packet = new pGameMod( stream, len );
-					break;
-
-				case ID_GAME_START:
-					packet = new pGameStart( stream, len );
-					break;
-
-				case ID_GAME_END:
-					packet = new pGameEnd( stream, len );
-					break;
-
-				case ID_PLAYER_NEW:
-					packet = new pPlayerNew( stream, len );
-					break;
-
-				case ID_PLAYER_LEFT:
-					packet = new pPlayerLeft( stream, len );
-					break;
-
-				case ID_OBJECT_UPDATE:
-				case ID_ACTOR_UPDATE:
-					{
-						if ( len < 2 )
-							throw VaultException( "Incomplete object packet type %d", ( int ) stream[0] );
-
-						switch ( stream[1] )
-						{
-							case ID_UPDATE_POS:
-								packet = new pObjectPos( stream, len );
-								break;
-
-							case ID_UPDATE_ANGLE:
-								packet = new pObjectAngle( stream, len );
-								break;
-
-							case ID_UPDATE_CELL:
-								packet = new pObjectCell( stream, len );
-								break;
-
-							case ID_UPDATE_VALUE:
-								packet = new pActorValue( stream, len );
-								break;
-
-							case ID_UPDATE_STATE:
-								packet = new pActorState( stream, len );
-								break;
-
-							default:
-								throw VaultException( "Unhandled object update packet type %d", ( int ) stream[1] );
-						}
-
-						break;
-					}
-
-				default:
-					throw VaultException( "Unhandled packet type %d", ( int ) stream[0] );
-			}
-
-			return packet;
-		}
-
-		static void Access( pDefault* packet, ... )
-		{
-			va_list args;
-			va_start( args, packet );
-
-			try
-			{
-				switch ( packet->type.type )
-				{
-					case ID_GAME_CONFIRM:
-						{
-							pGameConfirm* data = dynamic_cast<pGameConfirm*>( packet );
-							NetworkID* id = va_arg( args, NetworkID* );
-							char* name = va_arg( args, char* );
-							*id = data->_data.id;
-							strncpy( name, data->_data.name, sizeof( data->_data.name ) );
-							break;
-						}
-
-					case ID_GAME_AUTH:
-						{
-							pGameAuth* data = dynamic_cast<pGameAuth*>( packet );
-							char* name = va_arg( args, char* );
-							char* pwd = va_arg( args, char* );
-							strncpy( name, data->_data.name, sizeof( data->_data.name ) );
-							strncpy( pwd, data->_data.pwd, sizeof( data->_data.pwd ) );
-							break;
-						}
-
-					case ID_GAME_LOAD:
-						{
-							pGameLoad* data = dynamic_cast<pGameLoad*>( packet );
-							break;
-						}
-
-					case ID_GAME_MOD:
-						{
-							pGameMod* data = dynamic_cast<pGameMod*>( packet );
-							char* modfile = va_arg( args, char* );
-							unsigned int* crc = va_arg( args, unsigned int* );
-							strncpy( modfile, data->_data.modfile, sizeof( data->_data.modfile ) );
-							*crc = data->_data.crc;
-							break;
-						}
-
-					case ID_GAME_START:
-						{
-							pGameStart* data = dynamic_cast<pGameStart*>( packet );
-							char* savegame = va_arg( args, char* );
-							unsigned int* crc = va_arg( args, unsigned int* );
-							strncpy( savegame, data->_data.savegame, sizeof( data->_data.savegame ) );
-							*crc = data->_data.crc;
-							break;
-						}
-
-					case ID_GAME_END:
-						{
-							pGameEnd* data = dynamic_cast<pGameEnd*>( packet );
-							unsigned char* reason = va_arg( args, unsigned char* );
-							*reason = data->reason.type;
-							break;
-						}
-
-					case ID_PLAYER_NEW:
-						{
-							pPlayerNew* data = dynamic_cast<pPlayerNew*>( packet );
-							NetworkID* id = va_arg( args, NetworkID* );
-							unsigned int* refID = va_arg( args, unsigned int* );
-							unsigned int* baseID = va_arg( args, unsigned int* );
-							char* name = va_arg( args, char* );
-							*id = data->id;
-							*refID = data->refID;
-							*baseID = data->baseID;
-							strncpy( name, data->name, sizeof( data->name ) );
-							break;
-						}
-
-					case ID_PLAYER_LEFT:
-						{
-							pPlayerLeft* data = dynamic_cast<pPlayerLeft*>( packet );
-							NetworkID* id = va_arg( args, NetworkID* );
-							*id = data->id;
-							break;
-						}
-
-					case ID_OBJECT_UPDATE:
-					case ID_ACTOR_UPDATE:
-						{
-							pObjectUpdateDefault* data = dynamic_cast<pObjectUpdateDefault*>( packet );
-
-							switch ( data->sub_type.type )
-							{
-								case ID_UPDATE_POS:
-									{
-										pObjectPos* update = dynamic_cast<pObjectPos*>( data );
-										NetworkID* id = va_arg( args, NetworkID* );
-										double* X = va_arg( args, double* );
-										double* Y = va_arg( args, double* );
-										double* Z = va_arg( args, double* );
-										*id = update->id;
-										*X = update->_data.X;
-										*Y = update->_data.Y;
-										*Z = update->_data.Z;
-										break;
-									}
-
-								case ID_UPDATE_ANGLE:
-									{
-										pObjectAngle* update = dynamic_cast<pObjectAngle*>( data );
-										NetworkID* id = va_arg( args, NetworkID* );
-										unsigned char* axis = va_arg( args, unsigned char* );
-										double* value = va_arg( args, double* );
-										*id = update->id;
-										*axis = update->_data.axis;
-										*value = update->_data.value;
-										break;
-									}
-
-								case ID_UPDATE_CELL:
-									{
-										pObjectCell* update = dynamic_cast<pObjectCell*>( data );
-										NetworkID* id = va_arg( args, NetworkID* );
-										unsigned int* cell = va_arg( args, unsigned int* );
-										*id = update->id;
-										*cell = update->cell;
-										break;
-									}
-
-								case ID_UPDATE_VALUE:
-									{
-										pActorValue* update = dynamic_cast<pActorValue*>( data );
-										NetworkID* id = va_arg( args, NetworkID* );
-										bool* base = va_arg( args, bool* );
-										unsigned char* index = va_arg( args, unsigned char* );
-										double* value = va_arg( args, double* );
-										*id = update->id;
-										*base = update->_data.base;
-										*index = update->_data.index;
-										*value = update->_data.value;
-										break;
-									}
-
-								case ID_UPDATE_STATE:
-									{
-										pActorState* update = dynamic_cast<pActorState*>( data );
-										NetworkID* id = va_arg( args, NetworkID* );
-										unsigned char* index = va_arg( args, unsigned char* );
-										unsigned char* moving = va_arg( args, unsigned char* );
-										bool* alerted = va_arg( args, bool* );
-										bool* sneaking = va_arg( args, bool* );
-										*id = update->id;
-										*index = update->_data.index;
-										*moving = update->_data.moving;
-										*alerted = update->_data.alerted;
-										*sneaking = update->_data.sneaking;
-										break;
-									}
-							}
-
-							break;
-						}
-
-					default:
-						throw VaultException( "Unhandled packet type %d", ( int ) packet->type.type );
-				}
-
-			}
-
-			catch ( ... )
-			{
-				va_end( args );
-				throw;
-			}
-
-			va_end( args );
-		}
 };
 
 #endif

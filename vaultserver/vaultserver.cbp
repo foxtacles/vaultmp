@@ -119,6 +119,8 @@
 		<Unit filename="..\Network.h" />
 		<Unit filename="..\Object.cpp" />
 		<Unit filename="..\Object.h" />
+		<Unit filename="..\PacketFactory.cpp" />
+		<Unit filename="..\PacketFactory.h" />
 		<Unit filename="..\PacketTypes.h" />
 		<Unit filename="..\Player.cpp" />
 		<Unit filename="..\Player.h" />

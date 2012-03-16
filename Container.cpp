@@ -364,3 +364,8 @@ const list<NetworkID>& Container::GetItemList() const
 {
 	return container;
 }
+
+pDefault* Container::toPacket()
+{
+
+}

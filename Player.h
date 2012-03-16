@@ -61,6 +61,9 @@ class Player : public Actor
 		 */
 		static const Parameter CreateFunctor( unsigned int flags, NetworkID player = 0 );
 
+#ifdef VAULTMP_DEBUG
+		static void SetDebugHandler( Debug* debug );
+#endif
 
 		/**
 		 * \brief Retrieves the key associated to the Player's control
@@ -80,10 +83,10 @@ class Player : public Actor
 		 */
 		Lockable* SetPlayerControlEnabled( unsigned char control, bool state );
 
-#ifdef VAULTMP_DEBUG
-		static void SetDebugHandler( Debug* debug );
-#endif
-
+		/**
+		 * \brief For network transfer
+		 */
+        virtual pDefault* toPacket();
 };
 
 class PlayerFunctor : public VaultFunctor

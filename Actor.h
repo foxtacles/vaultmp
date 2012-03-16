@@ -160,6 +160,11 @@ class Actor : public Container
 		 * \brief Returns true if the Actor is jumping
 		 */
 		bool IsActorJumping() const;
+
+		/**
+		 * \brief For network transfer
+		 */
+        virtual pDefault* toPacket();
 };
 
 class ActorFunctor : public VaultFunctor

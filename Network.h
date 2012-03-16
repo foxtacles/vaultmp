@@ -6,7 +6,7 @@
 #include "RakNet/NetworkIDManager.h"
 
 #include "vaultmp.h"
-#include "PacketTypes.h"
+#include "PacketFactory.h"
 #include "VaultException.h"
 #include "CriticalSection.h"
 

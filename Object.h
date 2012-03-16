@@ -9,6 +9,7 @@
 #include "API.h"
 #include "Reference.h"
 #include "Value.h"
+#include "PacketFactory.h"
 
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"
@@ -137,6 +138,10 @@ class Object : public Reference
 		 */
 		bool IsCoordinateInRange( unsigned char axis, double value, double R ) const;
 
+		/**
+		 * \brief For network transfer
+		 */
+        virtual pDefault* toPacket();
 };
 
 #endif

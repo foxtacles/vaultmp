@@ -90,6 +90,11 @@ Lockable* Player::SetPlayerControlEnabled( unsigned char control, bool state )
 	return &data;
 }
 
+pDefault* Player::toPacket()
+{
+
+}
+
 vector<string> PlayerFunctor::operator()()
 {
 	vector<string> result;
