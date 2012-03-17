@@ -74,6 +74,11 @@ class pDefault
 		{
 			return len;
 		};
+
+		unsigned int base_length()
+		{
+			return base_len;
+		};
 };
 
 class pGameDefault : public pDefault
@@ -593,7 +598,7 @@ class pContainerNew : public pObjectNewDefault
 		pContainerNew(pDefault* _data_pObjectNew, list<pDefault*>& _data_pItemNew) : pObjectNewDefault( ID_CONTAINER_NEW, PacketFactory::ExtractReference(_data_pObjectNew), PacketFactory::ExtractBase(_data_pObjectNew), PacketFactory::ExtractNetworkID(_data_pObjectNew))
 		{
             unsigned int at = 0;
-            unsigned int length = sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int) + sizeof(_pItemNew);
+            unsigned int length = sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int) + sizeof(_pItemNew); // improve me: base_len
             unsigned int size = _data_pItemNew.size();
             unsigned int mem = sizeof(_pObjectNew) + (length * size) + sizeof(unsigned int);
             _data = new unsigned char[mem];
@@ -626,7 +631,7 @@ class pContainerNew : public pObjectNewDefault
 		}
 		pContainerNew( NetworkID id, unsigned int refID, unsigned int baseID, unsigned char* data) : pObjectNewDefault( ID_CONTAINER_NEW, refID, baseID, id )
 		{
-            unsigned int length = sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int) + sizeof(_pItemNew);
+            unsigned int length = sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int) + sizeof(_pItemNew); // improve me: base_len
             unsigned int size = *reinterpret_cast<unsigned int*>(&data[sizeof(_pObjectNew)]);
             unsigned int mem = sizeof(_pObjectNew) + (length * size) + sizeof(unsigned int);
             _data = new unsigned char[mem];
@@ -636,7 +641,7 @@ class pContainerNew : public pObjectNewDefault
 		}
 		pContainerNew( unsigned char* stream, unsigned int len ) : pObjectNewDefault( stream, len )
 		{
-            unsigned int mem = len - (sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int));
+            unsigned int mem = len - (sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int)); // improve me: base_len
             _data = new unsigned char[mem];
 
             deconstruct( _data, mem);
@@ -666,7 +671,7 @@ class pActorNew : public pObjectNewDefault
                 throw VaultException("Lengths of values / base values of an Actor must be equal!");
 
             unsigned int size = values.size();
-            unsigned int container_length = _data_pContainerNew->length() - (sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int));
+            unsigned int container_length = _data_pContainerNew->length() - _data_pContainerNew->base_length();
             unsigned int mem = container_length + (length * size) + (sizeof(unsigned char) * 2) + (sizeof(bool) * 3);
             _data = new unsigned char[mem];
 
@@ -712,7 +717,7 @@ class pActorNew : public pObjectNewDefault
 		}
 		pActorNew( unsigned char* stream, unsigned int len ) : pObjectNewDefault( stream, len )
 		{
-            unsigned int mem = len - (sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int));
+            unsigned int mem = len - (sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int)); // improve me: base_len
             _data = new unsigned char[mem];
 
             deconstruct( _data, mem);

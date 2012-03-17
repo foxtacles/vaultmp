@@ -77,7 +77,7 @@ class PacketFactory
 
 		static unsigned int ExtractBase( pDefault* packet);
 
-		static const char* ExtractRawData(pDefault* packet);
+		static const unsigned char* ExtractRawData(pDefault* packet);
 
 		static void FreePacket(pDefault* packet);
 };

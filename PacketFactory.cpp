@@ -574,20 +574,20 @@ unsigned int PacketFactory::ExtractBase( pDefault* packet)
     return data->baseID;
 }
 
-const char* PacketFactory::ExtractRawData(pDefault* packet)
+const unsigned char* PacketFactory::ExtractRawData(pDefault* packet)
 {
     switch ( packet->type.type )
     {
         case ID_OBJECT_NEW:
         {
             pObjectNew* data = dynamic_cast<pObjectNew*>( packet );
-            return reinterpret_cast<const char*>(&data->_data);
+            return reinterpret_cast<const unsigned char*>(&data->_data);
         }
 
         case ID_CONTAINER_NEW:
         {
             pContainerNew* data = dynamic_cast<pContainerNew*>( packet );
-            return reinterpret_cast<const char*>(&data->_data);
+            return reinterpret_cast<const unsigned char*>(&data->_data);
         }
 
         default:
