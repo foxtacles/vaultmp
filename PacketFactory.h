@@ -73,11 +73,13 @@ class PacketFactory
 
 		static NetworkID ExtractNetworkID( pDefault* packet);
 
-		static unsigned int ExtractRefID( pDefault* packet);
+		static unsigned int ExtractReference( pDefault* packet);
 
-		static unsigned int ExtractBaseID( pDefault* packet);
+		static unsigned int ExtractBase( pDefault* packet);
 
 		static const char* ExtractRawData(pDefault* packet);
+
+		static void FreePacket(pDefault* packet);
 };
 
 #include "PacketTypes.h"

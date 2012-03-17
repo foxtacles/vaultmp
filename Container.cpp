@@ -353,8 +353,8 @@ void Container::FlushContainer()
 
 	for ( it = container.begin(); it != container.end(); ++it )
 	{
-		FactoryObject reference = GameFactory::GetObject( *it );
-		GameFactory::DestroyInstance( reference );
+		FactoryObject _reference = GameFactory::GetObject( *it );
+		GameFactory::DestroyInstance( _reference );
 	}
 
 	container.clear();
@@ -367,5 +367,25 @@ const list<NetworkID>& Container::GetItemList() const
 
 pDefault* Container::toPacket()
 {
+	list<NetworkID>::iterator it;
+	list<pDefault*> items;
 
+	for ( it = container.begin(); it != container.end(); ++it )
+	{
+		FactoryObject _reference = GameFactory::GetObject( *it );
+		Item* item = vaultcast<Item>( _reference );
+        items.push_back(item->toPacket());
+	}
+
+    pDefault* pObjectNew = Object::toPacket();
+
+    pDefault* packet = PacketFactory::CreatePacket(ID_CONTAINER_NEW, pObjectNew, &items);
+
+    list<pDefault*>::iterator it2;
+	for ( it2 = items.begin(); it2 != items.end(); ++it2 )
+        PacketFactory::FreePacket(*it2);
+
+    PacketFactory::FreePacket(pObjectNew);
+
+    return packet;
 }

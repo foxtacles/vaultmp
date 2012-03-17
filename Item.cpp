@@ -114,5 +114,7 @@ pDefault* Item::toPacket()
 
     pDefault* packet = PacketFactory::CreatePacket(ID_ITEM_NEW, pObjectNew, this->GetItemCount(), this->GetItemCondition(), this->GetItemEquipped());
 
+    PacketFactory::FreePacket(pObjectNew);
+
     return packet;
 }

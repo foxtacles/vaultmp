@@ -81,6 +81,14 @@ pDefault* PacketFactory::CreatePacket( unsigned char type, ... )
             break;
         }
 
+        case ID_CONTAINER_NEW:
+        {
+            pDefault* pObjectNew = va_arg(args, pDefault*);
+            list<pDefault*>* pItemNew = va_arg(args, list<pDefault*>*);
+            packet = new pContainerNew(pObjectNew, *pItemNew);
+            break;
+        }
+
         case ID_PLAYER_NEW:
         {
             NetworkID id = va_arg( args, NetworkID );
@@ -190,7 +198,11 @@ pDefault* PacketFactory::CreatePacket( unsigned char* stream, unsigned int len )
             break;
 
         case ID_ITEM_NEW:
-            packet = new pObjectNew( stream, len );
+            packet = new pItemNew( stream, len );
+            break;
+
+        case ID_CONTAINER_NEW:
+            packet = new pContainerNew( stream, len );
             break;
 
         case ID_PLAYER_NEW:
@@ -350,6 +362,27 @@ void PacketFactory::Access( pDefault* packet, ... )
                 break;
             }
 
+            case ID_CONTAINER_NEW:
+            {
+                pContainerNew* data = dynamic_cast<pContainerNew*>( packet );
+                pDefault** __pObjectNew = va_arg( args, pDefault** );
+                list<pDefault*>* _pItemNew = va_arg( args, list<pDefault*>* );
+
+                *__pObjectNew = new pObjectNew(data->id, data->refID, data->baseID, *reinterpret_cast<_pObjectNew*>(&data->_data[data->base_len]));
+                _pItemNew->clear();
+
+                unsigned int length = data->base_len + sizeof(_pItemNew);
+                unsigned int size = *reinterpret_cast<unsigned int*>(&data->_data[data->base_len + sizeof(_pObjectNew)]);
+                unsigned int at = data->base_len + sizeof(_pObjectNew) + sizeof(unsigned int);
+
+                for (int i = 0; i < size; ++i, at += length)
+                {
+                    pItemNew* item = new pItemNew(&data->_data[at], length);
+                    _pItemNew->push_back(item);
+                }
+                break;
+            }
+
             case ID_PLAYER_NEW:
             {
                 pPlayerNew* data = dynamic_cast<pPlayerNew*>( packet );
@@ -469,13 +502,13 @@ NetworkID PacketFactory::ExtractNetworkID( pDefault* packet)
     return data->id;
 }
 
-unsigned int PacketFactory::ExtractRefID( pDefault* packet)
+unsigned int PacketFactory::ExtractReference( pDefault* packet)
 {
     pObjectNewDefault* data = dynamic_cast<pObjectNewDefault*>( packet );
     return data->refID;
 }
 
-unsigned int PacketFactory::ExtractBaseID( pDefault* packet)
+unsigned int PacketFactory::ExtractBase( pDefault* packet)
 {
     pObjectNewDefault* data = dynamic_cast<pObjectNewDefault*>( packet );
     return data->baseID;
@@ -496,4 +529,10 @@ const char* PacketFactory::ExtractRawData(pDefault* packet)
     }
 
     return NULL;
+}
+
+void PacketFactory::FreePacket(pDefault* packet)
+{
+    if (packet)
+        delete packet;
 }

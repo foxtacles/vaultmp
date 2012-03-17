@@ -41,7 +41,8 @@ void Debug::Print( const char* text, bool timestamp )
 {
 	StartSession();
 
-	if ( vaultmplog == NULL ) return;
+	if ( vaultmplog == NULL )
+        return;
 
 	if ( timestamp )
 	{
@@ -50,12 +51,14 @@ void Debug::Print( const char* text, bool timestamp )
 		fprintf( this->vaultmplog, "[%s] ", buf );
 	}
 
+    /*
 	char* lpMsgBuf;
 
 	if( FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, GetLastError(), MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ), ( LPTSTR ) &lpMsgBuf, 0, NULL ) )
 	{
 		fprintf( this->vaultmplog, "[error: %s(0x%x)] ", lpMsgBuf, GetLastError() );
 	}
+	*/
 
 	fwrite( text, sizeof( char ), strlen( text ), this->vaultmplog );
 	fputc( ( int ) '\n', this->vaultmplog );
@@ -82,7 +85,8 @@ void Debug::PrintSystem()
 
 	FILE* systeminfo = popen( "systeminfo", "r" );
 
-	if ( systeminfo == NULL ) return;
+	if ( systeminfo == NULL )
+        return;
 
 	char buf[2048];
 

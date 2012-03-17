@@ -561,12 +561,17 @@ class pItemNew : public pObjectNewDefault
 	private:
 		_pItemNew _data;
 
-		pItemNew(pDefault* _data_pObjectNew, unsigned int count, double condition, bool equipped) : pObjectNewDefault( ID_ITEM_NEW, PacketFactory::ExtractRefID(_data_pObjectNew), PacketFactory::ExtractBaseID(_data_pObjectNew), PacketFactory::ExtractNetworkID(_data_pObjectNew))
+		pItemNew(pDefault* _data_pObjectNew, unsigned int count, double condition, bool equipped) : pObjectNewDefault( ID_ITEM_NEW, PacketFactory::ExtractReference(_data_pObjectNew), PacketFactory::ExtractBase(_data_pObjectNew), PacketFactory::ExtractNetworkID(_data_pObjectNew))
 		{
             memcpy(&this->_data._data_pObjectNew, PacketFactory::ExtractRawData(_data_pObjectNew), sizeof(this->_data._data_pObjectNew));
 			_data.count = count;
 			_data.condition = condition;
 			_data.equipped = equipped;
+			construct( &_data, sizeof( _data ) );
+		}
+		pItemNew( NetworkID id, unsigned int refID, unsigned int baseID, _pItemNew& data) : pObjectNewDefault( ID_ITEM_NEW, refID, baseID, id )
+		{
+            _data = data;
 			construct( &_data, sizeof( _data ) );
 		}
 		pItemNew( unsigned char* stream, unsigned int len ) : pObjectNewDefault( stream, len )
@@ -578,29 +583,65 @@ class pItemNew : public pObjectNewDefault
 		pItemNew& operator=( const pItemNew& );
 };
 
-/*
 class pContainerNew : public pObjectNewDefault
 {
 		friend class PacketFactory;
 
 	private:
-		_pContainerNew _data;
+		unsigned char* _data;
 
-		pContainerNew(pDefault* _data_pObjectNew) : pObjectNewDefault( ID_CONTAINER_NEW, PacketFactory::ExtractRefID(_data_pObjectNew), PacketFactory::ExtractBaseID(_data_pObjectNew), PacketFactory::ExtractNetworkID(_data_pObjectNew))
+		pContainerNew(pDefault* _data_pObjectNew, list<pDefault*>& _data_pItemNew) : pObjectNewDefault( ID_CONTAINER_NEW, PacketFactory::ExtractReference(_data_pObjectNew), PacketFactory::ExtractBase(_data_pObjectNew), PacketFactory::ExtractNetworkID(_data_pObjectNew))
 		{
+            unsigned int at = 0;
+            unsigned int length = sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int) + sizeof(_pItemNew);
+            unsigned int size = _data_pItemNew.size();
+            unsigned int mem = sizeof(_pObjectNew) + (length * size) + sizeof(unsigned int);
+            _data = new unsigned char[mem];
 
-			construct( &_data, sizeof( _data ) );
+            memcpy(&this->_data[0], PacketFactory::ExtractRawData(_data_pObjectNew), sizeof(_pObjectNew));
+            at += sizeof(_pObjectNew);
+
+            memcpy(&this->_data[at], &size, sizeof(unsigned int));
+            at += sizeof(unsigned int);
+
+            if (size > 0)
+            {
+                list<pDefault*>::iterator it;
+
+                for (it = _data_pItemNew.begin(); it != _data_pItemNew.end(); ++it, at += length)
+                {
+                    pDefault* packet = *it;
+
+                    if (packet->length() != length)
+                    {
+                        delete[] _data;
+                        throw VaultException( "Packet has size %d instead of expected %d bytes!", packet->length(), length );
+                    }
+
+                    memcpy(&_data[at], packet->get(), length);
+                }
+            }
+
+            construct( _data, mem);
 		}
 		pContainerNew( unsigned char* stream, unsigned int len ) : pObjectNewDefault( stream, len )
 		{
+            unsigned int at = sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int);
+            unsigned int length = sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int) + sizeof(_pItemNew);
+            unsigned int size = *reinterpret_cast<unsigned int*>(&stream[at + sizeof(_pObjectNew)]);
+            unsigned int mem = sizeof(_pObjectNew) + (length * size) + sizeof(unsigned int);
+            _data = new unsigned char[mem];
 
-			deconstruct( &_data, sizeof( _data ) );
+            deconstruct( _data, mem);
+		}
+		virtual ~pContainerNew()
+		{
+            delete[] _data;
 		}
 
 		pContainerNew( const pContainerNew& );
 		pContainerNew& operator=( const pContainerNew& );
 };
-*/
 
 class pPlayerNew : public pObjectNewDefault
 {

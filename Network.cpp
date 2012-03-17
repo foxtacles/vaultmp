@@ -41,7 +41,7 @@ void Network::Dispatch( RakPeerInterface* peer, NetworkResponse& response )
 		for ( it2 = it->second.begin(); it2 != it->second.end(); ++it2 )
 			peer->Send( ( char* ) it->first.first->get(), it->first.first->length(), ( PacketPriority ) it->first.second.at( 0 ), ( PacketReliability ) it->first.second.at( 1 ), it->first.second.at( 2 ), *it2, false );
 
-		delete it->first.first;
+		PacketFactory::FreePacket(it->first.first);
 	}
 }
 
@@ -86,7 +86,7 @@ void Network::Flush()
 	for ( it = queue.begin(); it != queue.end(); ++it )
 	{
 		for ( it2 = ( *it ).begin(); it2 != ( *it ).end(); ++it2 )
-			delete it2->first.first;
+			PacketFactory::FreePacket(it2->first.first);
 	}
 
 	queue.clear();
