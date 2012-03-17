@@ -260,7 +260,25 @@ bool Actor::IsActorJumping() const
 
 pDefault* Actor::toPacket()
 {
+    vector<unsigned char>::iterator it;
+    vector<unsigned char> data = API::RetrieveAllValues();
+    map<unsigned char, double> values;
+    map<unsigned char, double> baseValues;
 
+    for (it = data.begin(); it != data.end(); ++it)
+    {
+        values.insert(pair<unsigned char, double>(*it, this->GetActorValue(*it)));
+        baseValues.insert(pair<unsigned char, double>(*it, this->GetActorBaseValue(*it)));
+    }
+
+    pDefault* pContainerNew = Container::toPacket();
+
+    pDefault* packet = PacketFactory::CreatePacket(ID_ACTOR_NEW, pContainerNew, &values, &baseValues, this->GetActorMovingAnimation(), this->GetActorMovingXY(),
+                                                   this->GetActorAlerted(), this->GetActorSneaking(), this->GetActorDead());
+
+    PacketFactory::FreePacket(pContainerNew);
+
+    return packet;
 }
 
 vector<string> ActorFunctor::operator()()

@@ -624,12 +624,19 @@ class pContainerNew : public pObjectNewDefault
 
             construct( _data, mem);
 		}
+		pContainerNew( NetworkID id, unsigned int refID, unsigned int baseID, unsigned char* data) : pObjectNewDefault( ID_CONTAINER_NEW, refID, baseID, id )
+		{
+            unsigned int length = sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int) + sizeof(_pItemNew);
+            unsigned int size = *reinterpret_cast<unsigned int*>(&data[sizeof(_pObjectNew)]);
+            unsigned int mem = sizeof(_pObjectNew) + (length * size) + sizeof(unsigned int);
+            _data = new unsigned char[mem];
+            memcpy(_data, data, mem);
+
+			construct( _data, mem);
+		}
 		pContainerNew( unsigned char* stream, unsigned int len ) : pObjectNewDefault( stream, len )
 		{
-            unsigned int at = sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int);
-            unsigned int length = sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int) + sizeof(_pItemNew);
-            unsigned int size = *reinterpret_cast<unsigned int*>(&stream[at + sizeof(_pObjectNew)]);
-            unsigned int mem = sizeof(_pObjectNew) + (length * size) + sizeof(unsigned int);
+            unsigned int mem = len - (sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int));
             _data = new unsigned char[mem];
 
             deconstruct( _data, mem);
@@ -641,6 +648,82 @@ class pContainerNew : public pObjectNewDefault
 
 		pContainerNew( const pContainerNew& );
 		pContainerNew& operator=( const pContainerNew& );
+};
+
+class pActorNew : public pObjectNewDefault
+{
+		friend class PacketFactory;
+
+	private:
+		unsigned char* _data;
+
+		pActorNew(pDefault* _data_pContainerNew, map<unsigned char, double>& values, map<unsigned char, double>& baseValues, unsigned char moving, unsigned char moving_xy, bool alerted, bool sneaking, bool dead) : pObjectNewDefault( ID_ACTOR_NEW, PacketFactory::ExtractReference(_data_pContainerNew), PacketFactory::ExtractBase(_data_pContainerNew), PacketFactory::ExtractNetworkID(_data_pContainerNew))
+		{
+            unsigned int at = 0;
+            unsigned int length = sizeof(unsigned char) + sizeof(double);
+
+            if (values.size() != baseValues.size())
+                throw VaultException("Lengths of values / base values of an Actor must be equal!");
+
+            unsigned int size = values.size();
+            unsigned int container_length = _data_pContainerNew->length() - (sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int));
+            unsigned int mem = container_length + (length * size) + (sizeof(unsigned char) * 2) + (sizeof(bool) * 3);
+            _data = new unsigned char[mem];
+
+            memcpy(&this->_data[0], PacketFactory::ExtractRawData(_data_pContainerNew), container_length);
+            at += container_length;
+
+            memcpy(&this->_data[at], &size, sizeof(unsigned int));
+            at += sizeof(unsigned int);
+
+            if (size > 0)
+            {
+                map<unsigned char, double>::iterator it;
+
+                for (it = values.begin(); it != values.end(); ++it, at += length)
+                {
+                    memcpy(&_data[at], &it->first, sizeof(unsigned char));
+                    memcpy(&_data[at + sizeof(unsigned char)], &it->second, sizeof(double));
+                }
+
+                for (it = baseValues.begin(); it != baseValues.end(); ++it, at += length)
+                {
+                    memcpy(&_data[at], &it->first, sizeof(unsigned char));
+                    memcpy(&_data[at + sizeof(unsigned char)], &it->second, sizeof(double));
+                }
+            }
+
+            memcpy(&_data[at], &moving, sizeof(unsigned char));
+            at += sizeof(unsigned char);
+
+            memcpy(&_data[at], &moving_xy, sizeof(unsigned char));
+            at += sizeof(unsigned char);
+
+            memcpy(&_data[at], &alerted, sizeof(bool));
+            at += sizeof(bool);
+
+            memcpy(&_data[at], &sneaking, sizeof(bool));
+            at += sizeof(bool);
+
+            memcpy(&_data[at], &dead, sizeof(bool));
+            at += sizeof(bool);
+
+            construct( _data, mem);
+		}
+		pActorNew( unsigned char* stream, unsigned int len ) : pObjectNewDefault( stream, len )
+		{
+            unsigned int mem = len - (sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int));
+            _data = new unsigned char[mem];
+
+            deconstruct( _data, mem);
+		}
+		virtual ~pActorNew()
+		{
+            delete[] _data;
+		}
+
+		pActorNew( const pActorNew& );
+		pActorNew& operator=( const pActorNew& );
 };
 
 class pPlayerNew : public pObjectNewDefault

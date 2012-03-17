@@ -89,6 +89,20 @@ pDefault* PacketFactory::CreatePacket( unsigned char type, ... )
             break;
         }
 
+        case ID_ACTOR_NEW:
+        {
+            pDefault* pContainerNew = va_arg(args, pDefault*);
+            map<unsigned char, double>* values = (map<unsigned char, double>*) va_arg(args, void*); // compile error when placing map<unsigned char, double>* as 2nd argument?
+            map<unsigned char, double>* baseValues = (map<unsigned char, double>*) va_arg(args, void*);
+            unsigned char moving = (unsigned char) va_arg(args, unsigned int);
+            unsigned char moving_xy = (unsigned char) va_arg(args, unsigned int);
+            bool alerted = (bool) va_arg(args, unsigned int);
+            bool sneaking = (bool) va_arg(args, unsigned int);
+            bool dead = (bool) va_arg(args, unsigned int);
+            packet = new pActorNew(pContainerNew, *values, *baseValues, moving, moving_xy, alerted, sneaking, dead);
+            break;
+        }
+
         case ID_PLAYER_NEW:
         {
             NetworkID id = va_arg( args, NetworkID );
@@ -203,6 +217,10 @@ pDefault* PacketFactory::CreatePacket( unsigned char* stream, unsigned int len )
 
         case ID_CONTAINER_NEW:
             packet = new pContainerNew( stream, len );
+            break;
+
+        case ID_ACTOR_NEW:
+            packet = new pActorNew( stream, len );
             break;
 
         case ID_PLAYER_NEW:
@@ -383,6 +401,48 @@ void PacketFactory::Access( pDefault* packet, ... )
                 break;
             }
 
+            case ID_ACTOR_NEW:
+            {
+                pActorNew* data = dynamic_cast<pActorNew*>( packet );
+                pDefault** __pContainerNew = va_arg( args, pDefault** );
+                map<unsigned char, double>* values = (map<unsigned char, double>*) va_arg( args, void*);
+                map<unsigned char, double>* baseValues = (map<unsigned char, double>*) va_arg( args, void*);
+                unsigned char* moving = va_arg(args, unsigned char*);
+                unsigned char* moving_xy = va_arg(args, unsigned char*);
+                bool* alerted = va_arg(args, bool*);
+                bool* sneaking = va_arg(args, bool*);
+                bool* dead = va_arg(args, bool*);
+
+                *__pContainerNew = new pContainerNew(data->id, data->refID, data->baseID, &data->_data[data->base_len]);
+                values->clear();
+                baseValues->clear();
+
+                unsigned int length = sizeof(unsigned char) + sizeof(double);
+                unsigned int size = *reinterpret_cast<unsigned int*>(&data->_data[data->base_len + (*__pContainerNew)->length() - (*__pContainerNew)->base_len]);
+                unsigned int at = (data->base_len + (*__pContainerNew)->length() - (*__pContainerNew)->base_len) + sizeof(unsigned int);
+
+                for (int i = 0; i < size; ++i, at += length)
+                    values->insert(pair<unsigned char, double>(*reinterpret_cast<unsigned char*>(&data->_data[at]), *reinterpret_cast<double*>(&data->_data[at + sizeof(unsigned char)])));
+
+                for (int i = 0; i < size; ++i, at += length)
+                    baseValues->insert(pair<unsigned char, double>(*reinterpret_cast<unsigned char*>(&data->_data[at]), *reinterpret_cast<double*>(&data->_data[at + sizeof(unsigned char)])));
+
+                *moving = *reinterpret_cast<unsigned char*>(&data->_data[at]);
+                at += sizeof(unsigned char);
+
+                *moving_xy = *reinterpret_cast<unsigned char*>(&data->_data[at]);
+                at += sizeof(unsigned char);
+
+                *alerted = *reinterpret_cast<bool*>(&data->_data[at]);
+                at += sizeof(bool);
+
+                *sneaking = *reinterpret_cast<bool*>(&data->_data[at]);
+                at += sizeof(bool);
+
+                *dead = *reinterpret_cast<bool*>(&data->_data[at]);
+                break;
+            }
+
             case ID_PLAYER_NEW:
             {
                 pPlayerNew* data = dynamic_cast<pPlayerNew*>( packet );
@@ -521,6 +581,12 @@ const char* PacketFactory::ExtractRawData(pDefault* packet)
         case ID_OBJECT_NEW:
         {
             pObjectNew* data = dynamic_cast<pObjectNew*>( packet );
+            return reinterpret_cast<const char*>(&data->_data);
+        }
+
+        case ID_CONTAINER_NEW:
+        {
+            pContainerNew* data = dynamic_cast<pContainerNew*>( packet );
             return reinterpret_cast<const char*>(&data->_data);
         }
 
