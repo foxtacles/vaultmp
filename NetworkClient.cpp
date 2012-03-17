@@ -269,6 +269,8 @@ NetworkResponse NetworkClient::ProcessPacket( Packet* data )
 					default:
 						throw VaultException( "Unhandled packet type %d", ( int ) data->data[0] );
 				}
+
+				PacketFactory::FreePacket(packet);
 			}
 	}
 
