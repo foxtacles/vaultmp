@@ -92,7 +92,20 @@ Lockable* Player::SetPlayerControlEnabled( unsigned char control, bool state )
 
 pDefault* Player::toPacket()
 {
+    vector<unsigned char>::iterator it;
+    vector<unsigned char> data = API::RetrieveAllControls();
+    map<unsigned char, pair<unsigned char, bool> > controls;
 
+    for (it = data.begin(); it != data.end(); ++it)
+        controls.insert(pair<unsigned char, pair<unsigned char, bool> >(*it, pair<unsigned char, bool>(this->GetPlayerControl(*it), this->GetPlayerControlEnabled(*it))));
+
+    pDefault* pActorNew = Actor::toPacket();
+
+    pDefault* packet = PacketFactory::CreatePacket(ID_PLAYER_NEW, pActorNew, &controls);
+
+    PacketFactory::FreePacket(pActorNew);
+
+    return packet;
 }
 
 vector<string> PlayerFunctor::operator()()

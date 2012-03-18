@@ -85,12 +85,15 @@ NetworkResponse Server::NewPlayer( RakNetGUID guid, NetworkID id, string name )
 
 	player->SetBase( result );
 
+    /*
+     * old code, FIXME
 	pDefault* packet = PacketFactory::CreatePacket( ID_PLAYER_NEW, id, 0x00000000, player->GetBase(), name.c_str() );
 	response.push_back( Network::CreateResponse( packet,
 						( unsigned char ) HIGH_PRIORITY,
 						( unsigned char ) RELIABLE_ORDERED,
 						CHANNEL_GAME,
 						Client::GetNetworkList( client ) ) );
+    */
 
 	return response;
 }

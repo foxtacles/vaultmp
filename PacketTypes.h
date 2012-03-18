@@ -672,7 +672,7 @@ class pActorNew : public pObjectNewDefault
 
             unsigned int size = values.size();
             unsigned int container_length = _data_pContainerNew->length() - _data_pContainerNew->base_length();
-            unsigned int mem = container_length + (length * size) + (sizeof(unsigned char) * 2) + (sizeof(bool) * 3);
+            unsigned int mem = container_length + (length * size) + sizeof(unsigned int) + (sizeof(unsigned char) * 2) + (sizeof(bool) * 3);
             _data = new unsigned char[mem];
 
             memcpy(&this->_data[0], PacketFactory::ExtractRawData(_data_pContainerNew), container_length);
@@ -715,6 +715,21 @@ class pActorNew : public pObjectNewDefault
 
             construct( _data, mem);
 		}
+		pActorNew( NetworkID id, unsigned int refID, unsigned int baseID, unsigned char* data) : pObjectNewDefault( ID_ACTOR_NEW, refID, baseID, id )
+		{
+            unsigned int container_length = sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int) + sizeof(_pItemNew); // improve me: base_len
+            unsigned int container_size = *reinterpret_cast<unsigned int*>(&data[sizeof(_pObjectNew)]);
+            unsigned int mem = sizeof(_pObjectNew) + (container_length * container_size) + sizeof(unsigned int);
+
+            unsigned int length = sizeof(unsigned char) + sizeof(double);
+            unsigned int size = *reinterpret_cast<unsigned int*>(&data[mem]);
+            mem += (length * size) + sizeof(unsigned int) + (sizeof(unsigned char) * 2) + (sizeof(bool) * 3);;
+
+            _data = new unsigned char[mem];
+            memcpy(_data, data, mem);
+
+			construct( _data, mem);
+		}
 		pActorNew( unsigned char* stream, unsigned int len ) : pObjectNewDefault( stream, len )
 		{
             unsigned int mem = len - (sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int)); // improve me: base_len
@@ -736,17 +751,47 @@ class pPlayerNew : public pObjectNewDefault
 		friend class PacketFactory;
 
 	private:
-		char name[MAX_PLAYER_NAME];
+		unsigned char* _data;
 
-		pPlayerNew( NetworkID id, unsigned int refID, unsigned int baseID, char* name ) : pObjectNewDefault( ID_PLAYER_NEW, refID, baseID, id )
+		pPlayerNew(pDefault* _data_pActorNew, map<unsigned char, pair<unsigned char, bool> >& controls) : pObjectNewDefault( ID_PLAYER_NEW, PacketFactory::ExtractReference(_data_pActorNew), PacketFactory::ExtractBase(_data_pActorNew), PacketFactory::ExtractNetworkID(_data_pActorNew))
 		{
-			ZeroMemory( this->name, sizeof( this->name ) );
-			strncpy( this->name, name, sizeof( this->name ) );
-			construct( name, sizeof( this->name ) );
+            unsigned int at = 0;
+            unsigned int length = sizeof(unsigned char) + sizeof(unsigned char) + sizeof(bool);
+            unsigned int size = controls.size();
+            unsigned int actor_length = _data_pActorNew->length() - _data_pActorNew->base_length();
+            unsigned int mem = actor_length + (length * size) + sizeof(unsigned int);
+            _data = new unsigned char[mem];
+
+            memcpy(&this->_data[0], PacketFactory::ExtractRawData(_data_pActorNew), actor_length);
+            at += actor_length;
+
+            memcpy(&this->_data[at], &size, sizeof(unsigned int));
+            at += sizeof(unsigned int);
+
+            if (size > 0)
+            {
+                map<unsigned char, pair<unsigned char, bool> >::iterator it;
+
+                for (it = controls.begin(); it != controls.end(); ++it, at += length)
+                {
+                    memcpy(&_data[at], &it->first, sizeof(unsigned char));
+                    memcpy(&_data[at + sizeof(unsigned char)], &it->second.first, sizeof(unsigned char));
+                    memcpy(&_data[at + (sizeof(unsigned char) * 2)], &it->second.second, sizeof(bool));
+                }
+            }
+
+            construct( _data, mem);
 		}
 		pPlayerNew( unsigned char* stream, unsigned int len ) : pObjectNewDefault( stream, len )
 		{
-			deconstruct( name, sizeof( this->name ) );
+            unsigned int mem = len - (sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int)); // improve me: base_len
+            _data = new unsigned char[mem];
+
+            deconstruct( _data, mem);
+		}
+		virtual ~pPlayerNew()
+		{
+            delete[] _data;
 		}
 
 		pPlayerNew( const pPlayerNew& );

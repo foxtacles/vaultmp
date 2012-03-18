@@ -105,11 +105,9 @@ pDefault* PacketFactory::CreatePacket( unsigned char type, ... )
 
         case ID_PLAYER_NEW:
         {
-            NetworkID id = va_arg( args, NetworkID );
-            unsigned int refID = va_arg( args, unsigned int );
-            unsigned int baseID = va_arg( args, unsigned int );
-            char* name = va_arg( args, char* );
-            packet = new pPlayerNew( id, refID, baseID, name );
+            pDefault* pActorNew = va_arg(args, pDefault*);
+            map<unsigned char, pair<unsigned char, bool> >* controls = (map<unsigned char, pair<unsigned char, bool> >*) va_arg(args, void*);
+            packet = new pPlayerNew(pActorNew, *controls);
             break;
         }
 
@@ -413,13 +411,13 @@ void PacketFactory::Access( pDefault* packet, ... )
                 bool* sneaking = va_arg(args, bool*);
                 bool* dead = va_arg(args, bool*);
 
-                *__pContainerNew = new pContainerNew(data->id, data->refID, data->baseID, &data->_data[data->base_len]);
+                *__pContainerNew = new pContainerNew(data->id, data->refID, data->baseID, &data->_data[data->base_length()]);
                 values->clear();
                 baseValues->clear();
 
                 unsigned int length = sizeof(unsigned char) + sizeof(double);
-                unsigned int size = *reinterpret_cast<unsigned int*>(&data->_data[data->base_len + (*__pContainerNew)->length() - (*__pContainerNew)->base_len]);
-                unsigned int at = (data->base_len + (*__pContainerNew)->length() - (*__pContainerNew)->base_len) + sizeof(unsigned int);
+                unsigned int size = *reinterpret_cast<unsigned int*>(&data->_data[data->base_length() + (*__pContainerNew)->length() - (*__pContainerNew)->base_length()]);
+                unsigned int at = (data->base_length() + (*__pContainerNew)->length() - (*__pContainerNew)->base_length()) + sizeof(unsigned int);
 
                 for (int i = 0; i < size; ++i, at += length)
                     values->insert(pair<unsigned char, double>(*reinterpret_cast<unsigned char*>(&data->_data[at]), *reinterpret_cast<double*>(&data->_data[at + sizeof(unsigned char)])));
@@ -446,14 +444,18 @@ void PacketFactory::Access( pDefault* packet, ... )
             case ID_PLAYER_NEW:
             {
                 pPlayerNew* data = dynamic_cast<pPlayerNew*>( packet );
-                NetworkID* id = va_arg( args, NetworkID* );
-                unsigned int* refID = va_arg( args, unsigned int* );
-                unsigned int* baseID = va_arg( args, unsigned int* );
-                char* name = va_arg( args, char* );
-                *id = data->id;
-                *refID = data->refID;
-                *baseID = data->baseID;
-                strncpy( name, data->name, sizeof( data->name ) );
+                pDefault** __pActorNew = va_arg( args, pDefault** );
+                map<unsigned char, pair<unsigned char, bool> >* controls = (map<unsigned char, pair<unsigned char, bool> >*) va_arg( args, void*);
+
+                *__pActorNew = new pActorNew(data->id, data->refID, data->baseID, &data->_data[data->base_length()]);
+                controls->clear();
+
+                unsigned int length = sizeof(unsigned char) + sizeof(unsigned char) + sizeof(bool);
+                unsigned int size = *reinterpret_cast<unsigned int*>(&data->_data[data->base_length() + (*__pActorNew)->length() - (*__pActorNew)->base_length()]);
+                unsigned int at = (data->base_length() + (*__pActorNew)->length() - (*__pActorNew)->base_length()) + sizeof(unsigned int);
+
+                for (int i = 0; i < size; ++i, at += length)
+                    controls->insert(pair<unsigned char, pair<unsigned char, bool> >(*reinterpret_cast<unsigned char*>(&data->_data[at]), pair<unsigned char, bool>(*reinterpret_cast<double*>(&data->_data[at + sizeof(unsigned char)]), *reinterpret_cast<double*>(&data->_data[at + (sizeof(unsigned char) * 2)]))));
                 break;
             }
 
@@ -587,6 +589,12 @@ const unsigned char* PacketFactory::ExtractRawData(pDefault* packet)
         case ID_CONTAINER_NEW:
         {
             pContainerNew* data = dynamic_cast<pContainerNew*>( packet );
+            return reinterpret_cast<const unsigned char*>(&data->_data);
+        }
+
+        case ID_ACTOR_NEW:
+        {
+            pActorNew* data = dynamic_cast<pActorNew*>( packet );
             return reinterpret_cast<const unsigned char*>(&data->_data);
         }
 

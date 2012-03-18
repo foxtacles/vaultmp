@@ -178,6 +178,8 @@ NetworkResponse NetworkClient::ProcessPacket( Packet* data )
 
 					case ID_PLAYER_NEW:
 						{
+						    /*
+						     * old code, FIXME
 							NetworkID id;
 							unsigned int refID; // always 0x00000000 for players
 							unsigned int baseID;
@@ -185,6 +187,7 @@ NetworkResponse NetworkClient::ProcessPacket( Packet* data )
 							ZeroMemory( name, sizeof( name ) );
 							PacketFactory::Access( packet, &id, &refID, &baseID, name );
 							Game::NewPlayer( id, baseID, string( name ) );
+							*/
 							break;
 						}
 
