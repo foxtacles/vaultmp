@@ -42,8 +42,7 @@
 			</Target>
 		</Build>
 		<Linker>
-			<Add option="-static-libgcc" />
-			<Add option="-static-libstdc++" />
+			<Add option="-static" />
 		</Linker>
 		<Unit filename="vaultscript.cpp" />
 		<Unit filename="vaultscript.h" />

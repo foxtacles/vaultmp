@@ -44,13 +44,12 @@
 		</Compiler>
 		<Linker>
 			<Add option="ufmod.obj" />
-			<Add option="-static-libgcc" />
-			<Add option="-static-libstdc++" />
 			<Add option="-lshlwapi" />
 			<Add option="-lcomctl32" />
 			<Add option="-lwinmm" />
 			<Add option="-lws2_32" />
 			<Add option="-limagehlp" />
+			<Add option="-static" />
 		</Linker>
 		<Unit filename="API.cpp" />
 		<Unit filename="API.h" />

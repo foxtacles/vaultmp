@@ -20,14 +20,13 @@
 		<Compiler>
 			<Add option="-std=gnu++0x" />
 			<Add option="-fpermissive" />
+			<Add directory="D:\Programmierung\vaultmp" />
 		</Compiler>
 		<Linker>
 			<Add option="-s" />
-			<Add option="-static-libgcc" />
-			<Add option="-static-libstdc++" />
 			<Add option="-lws2_32" />
 			<Add option="-limagehlp" />
-			<Add option="-enable-auto-import" />
+			<Add option="-static" />
 		</Linker>
 		<Unit filename="..\Data.h" />
 		<Unit filename="..\RakNet\AutopatcherPatchContext.h" />

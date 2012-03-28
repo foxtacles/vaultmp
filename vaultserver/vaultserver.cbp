@@ -20,12 +20,11 @@
 					<Add option="-DVAULTMP_DEBUG" />
 				</Compiler>
 				<Linker>
-					<Add option="-static-libgcc" />
-					<Add option="-static-libstdc++" />
 					<Add option="-lws2_32" />
 					<Add option="-lwinmm" />
 					<Add option="-lm" />
 					<Add option="-limagehlp" />
+					<Add option="-static" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -41,12 +40,11 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
-					<Add option="-static-libgcc" />
-					<Add option="-static-libstdc++" />
 					<Add option="-lws2_32" />
 					<Add option="-lwinmm" />
 					<Add option="-lm" />
 					<Add option="-limagehlp" />
+					<Add option="-static" />
 				</Linker>
 			</Target>
 			<Target title="DebugUnix">
@@ -91,6 +89,7 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-std=c++0x" />
 			<Add option="-std=gnu++0x" />
 			<Add option="-fpermissive" />
 			<Add option="-masm=intel" />
