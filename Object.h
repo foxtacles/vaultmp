@@ -52,6 +52,8 @@ class Object : public Reference
 
 	protected:
 		Object( unsigned int refID, unsigned int baseID );
+		Object(const pDefault* packet);
+		Object(pDefault* packet);
 		virtual ~Object();
 
 	public:

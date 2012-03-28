@@ -63,11 +63,15 @@ class Actor : public Container
 		Value<bool> state_Sneaking;
 		Value<bool> state_Dead;
 
+        void initialize();
+
 		Actor( const Actor& );
 		Actor& operator=( const Actor& );
 
 	protected:
 		Actor( unsigned int refID, unsigned int baseID );
+		Actor(const pDefault* packet);
+		Actor(pDefault* packet);
 		virtual ~Actor();
 
 	public:

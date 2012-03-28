@@ -29,6 +29,16 @@ Object::Object( unsigned int refID, unsigned int baseID ) : Reference( refID, ba
 	}
 }
 
+Object::Object(const pDefault* packet) : Object( PacketFactory::ExtractReference(packet), PacketFactory::ExtractBase(packet) )
+{
+    // read packet
+}
+
+Object::Object(pDefault* packet) : Object(reinterpret_cast<const pDefault*>(packet))
+{
+    PacketFactory::FreePacket(packet);
+}
+
 Object::~Object()
 {
 

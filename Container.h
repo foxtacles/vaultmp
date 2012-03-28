@@ -65,11 +65,15 @@ class Container : public Object
 
 		StripCopy Strip() const;
 
+        void initialize();
+
 		Container( const Container& );
 		Container& operator=( const Container& );
 
 	protected:
 		Container( unsigned int refID, unsigned int baseID );
+		Container(const pDefault* packet);
+		Container(pDefault* packet);
 		virtual ~Container();
 
 	public:

@@ -114,114 +114,122 @@ NetworkResponse NetworkServer::ProcessPacket( Packet* data )
 			{
 				packet = PacketFactory::CreatePacket( data->data, data->length );
 
-				switch ( data->data[0] )
-				{
-					case ID_GAME_AUTH:
-						{
-							char name[MAX_PLAYER_NAME + 1];
-							ZeroMemory( name, sizeof( name ) );
-							char pwd[MAX_PASSWORD_SIZE + 1];
-							ZeroMemory( pwd, sizeof( pwd ) );
-							PacketFactory::Access( packet, name, pwd );
-							response = Server::Authenticate( data->guid, string( name ), string( pwd ) );
-							break;
-						}
+                try
+                {
+                    switch ( data->data[0] )
+                    {
+                        case ID_GAME_AUTH:
+                            {
+                                char name[MAX_PLAYER_NAME + 1];
+                                ZeroMemory( name, sizeof( name ) );
+                                char pwd[MAX_PASSWORD_SIZE + 1];
+                                ZeroMemory( pwd, sizeof( pwd ) );
+                                PacketFactory::Access( packet, name, pwd );
+                                response = Server::Authenticate( data->guid, string( name ), string( pwd ) );
+                                break;
+                            }
 
-					case ID_GAME_LOAD:
-						{
-							response = Server::LoadGame( data->guid );
-							break;
-						}
+                        case ID_GAME_LOAD:
+                            {
+                                response = Server::LoadGame( data->guid );
+                                break;
+                            }
 
-					case ID_GAME_CONFIRM:
-						{
-							NetworkID id;
-							char name[MAX_PLAYER_NAME + 1];
-							ZeroMemory( name, sizeof( name ) );
-							PacketFactory::Access( packet, &id, name );
-							response = Server::NewPlayer( data->guid, id, name );
-							break;
-						}
+                        case ID_GAME_CONFIRM:
+                            {
+                                NetworkID id;
+                                char name[MAX_PLAYER_NAME + 1];
+                                ZeroMemory( name, sizeof( name ) );
+                                PacketFactory::Access( packet, &id, name );
+                                response = Server::NewPlayer( data->guid, id, name );
+                                break;
+                            }
 
-					case ID_GAME_END:
-						{
-							unsigned char reason;
-							PacketFactory::Access( packet, &reason );
-							response = Server::Disconnect( data->guid, reason );
-							break;
-						}
+                        case ID_GAME_END:
+                            {
+                                unsigned char reason;
+                                PacketFactory::Access( packet, &reason );
+                                response = Server::Disconnect( data->guid, reason );
+                                break;
+                            }
 
-					case ID_OBJECT_UPDATE:
-					case ID_ACTOR_UPDATE:
-						{
-							switch ( data->data[1] )
-							{
-								case ID_UPDATE_POS:
-									{
-										NetworkID id;
-										double X, Y, Z;
-										PacketFactory::Access( packet, &id, &X, &Y, &Z );
-										FactoryObject reference = GameFactory::GetObject( id );
-										response = Server::GetPos( data->guid, reference, X, Y, Z );
-										break;
-									}
+                        case ID_OBJECT_UPDATE:
+                        case ID_ACTOR_UPDATE:
+                            {
+                                switch ( data->data[1] )
+                                {
+                                    case ID_UPDATE_POS:
+                                        {
+                                            NetworkID id;
+                                            double X, Y, Z;
+                                            PacketFactory::Access( packet, &id, &X, &Y, &Z );
+                                            FactoryObject reference = GameFactory::GetObject( id );
+                                            response = Server::GetPos( data->guid, reference, X, Y, Z );
+                                            break;
+                                        }
 
-								case ID_UPDATE_ANGLE:
-									{
-										NetworkID id;
-										unsigned char axis;
-										double value;
-										PacketFactory::Access( packet, &id, &axis, &value );
-										FactoryObject reference = GameFactory::GetObject( id );
-										response = Server::GetAngle( data->guid, reference, axis, value );
-										break;
-									}
+                                    case ID_UPDATE_ANGLE:
+                                        {
+                                            NetworkID id;
+                                            unsigned char axis;
+                                            double value;
+                                            PacketFactory::Access( packet, &id, &axis, &value );
+                                            FactoryObject reference = GameFactory::GetObject( id );
+                                            response = Server::GetAngle( data->guid, reference, axis, value );
+                                            break;
+                                        }
 
-								case ID_UPDATE_CELL:
-									{
-										NetworkID id;
-										unsigned int cell;
-										PacketFactory::Access( packet, &id, &cell );
-										FactoryObject reference = GameFactory::GetObject( id );
-										response = Server::GetGameCell( data->guid, reference, cell );
-										break;
-									}
+                                    case ID_UPDATE_CELL:
+                                        {
+                                            NetworkID id;
+                                            unsigned int cell;
+                                            PacketFactory::Access( packet, &id, &cell );
+                                            FactoryObject reference = GameFactory::GetObject( id );
+                                            response = Server::GetGameCell( data->guid, reference, cell );
+                                            break;
+                                        }
 
-								case ID_UPDATE_VALUE:
-									{
-										NetworkID id;
-										bool base;
-										unsigned char index;
-										double value;
-										PacketFactory::Access( packet, &id, &base, &index, &value );
-										FactoryObject reference = GameFactory::GetObject( id );
-										response = Server::GetActorValue( data->guid, reference, base, index, value );
-										break;
-									}
+                                    case ID_UPDATE_VALUE:
+                                        {
+                                            NetworkID id;
+                                            bool base;
+                                            unsigned char index;
+                                            double value;
+                                            PacketFactory::Access( packet, &id, &base, &index, &value );
+                                            FactoryObject reference = GameFactory::GetObject( id );
+                                            response = Server::GetActorValue( data->guid, reference, base, index, value );
+                                            break;
+                                        }
 
-								case ID_UPDATE_STATE:
-									{
-										NetworkID id;
-										unsigned char index;
-										unsigned char moving;
-										bool alerted;
-										bool sneaking;
-										PacketFactory::Access( packet, &id, &index, &moving, &alerted, &sneaking );
-										FactoryObject reference = GameFactory::GetObject( id );
-										response = Server::GetActorState( data->guid, reference, index, moving, alerted, sneaking );
-										break;
-									}
+                                    case ID_UPDATE_STATE:
+                                        {
+                                            NetworkID id;
+                                            unsigned char index;
+                                            unsigned char moving;
+                                            bool alerted;
+                                            bool sneaking;
+                                            PacketFactory::Access( packet, &id, &index, &moving, &alerted, &sneaking );
+                                            FactoryObject reference = GameFactory::GetObject( id );
+                                            response = Server::GetActorState( data->guid, reference, index, moving, alerted, sneaking );
+                                            break;
+                                        }
 
-								default:
-									throw VaultException( "Unhandled object update packet type %d", ( int ) data->data[1] );
-							}
+                                    default:
+                                        throw VaultException( "Unhandled object update packet type %d", ( int ) data->data[1] );
+                                }
 
-							break;
-						}
+                                break;
+                            }
 
-					default:
-						throw VaultException( "Unhandled packet type %d", ( int ) data->data[0] );
-				}
+                        default:
+                            throw VaultException( "Unhandled packet type %d", ( int ) data->data[0] );
+                    }
+                }
+                catch (...)
+                {
+                    PacketFactory::FreePacket(packet);
+                    throw;
+                }
 
 				PacketFactory::FreePacket(packet);
 			}

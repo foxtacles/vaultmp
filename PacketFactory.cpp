@@ -271,7 +271,7 @@ pDefault* PacketFactory::CreatePacket( unsigned char* stream, unsigned int len )
     return packet;
 }
 
-void PacketFactory::Access( pDefault* packet, ... )
+void PacketFactory::Access( const pDefault* packet, ... )
 {
     va_list args;
     va_start( args, packet );
@@ -282,7 +282,7 @@ void PacketFactory::Access( pDefault* packet, ... )
         {
             case ID_GAME_CONFIRM:
             {
-                pGameConfirm* data = dynamic_cast<pGameConfirm*>( packet );
+                const pGameConfirm* data = dynamic_cast<const pGameConfirm*>( packet );
                 NetworkID* id = va_arg( args, NetworkID* );
                 char* name = va_arg( args, char* );
                 *id = data->_data.id;
@@ -292,7 +292,7 @@ void PacketFactory::Access( pDefault* packet, ... )
 
             case ID_GAME_AUTH:
             {
-                pGameAuth* data = dynamic_cast<pGameAuth*>( packet );
+                const pGameAuth* data = dynamic_cast<const pGameAuth*>( packet );
                 char* name = va_arg( args, char* );
                 char* pwd = va_arg( args, char* );
                 strncpy( name, data->_data.name, sizeof( data->_data.name ) );
@@ -302,13 +302,13 @@ void PacketFactory::Access( pDefault* packet, ... )
 
             case ID_GAME_LOAD:
             {
-                pGameLoad* data = dynamic_cast<pGameLoad*>( packet );
+                const pGameLoad* data = dynamic_cast<const pGameLoad*>( packet );
                 break;
             }
 
             case ID_GAME_MOD:
             {
-                pGameMod* data = dynamic_cast<pGameMod*>( packet );
+                const pGameMod* data = dynamic_cast<const pGameMod*>( packet );
                 char* modfile = va_arg( args, char* );
                 unsigned int* crc = va_arg( args, unsigned int* );
                 strncpy( modfile, data->_data.modfile, sizeof( data->_data.modfile ) );
@@ -318,7 +318,7 @@ void PacketFactory::Access( pDefault* packet, ... )
 
             case ID_GAME_START:
             {
-                pGameStart* data = dynamic_cast<pGameStart*>( packet );
+                const pGameStart* data = dynamic_cast<const pGameStart*>( packet );
                 char* savegame = va_arg( args, char* );
                 unsigned int* crc = va_arg( args, unsigned int* );
                 strncpy( savegame, data->_data.savegame, sizeof( data->_data.savegame ) );
@@ -328,7 +328,7 @@ void PacketFactory::Access( pDefault* packet, ... )
 
             case ID_GAME_END:
             {
-                pGameEnd* data = dynamic_cast<pGameEnd*>( packet );
+                const pGameEnd* data = dynamic_cast<const pGameEnd*>( packet );
                 unsigned char* reason = va_arg( args, unsigned char* );
                 *reason = data->reason.type;
                 break;
@@ -336,7 +336,7 @@ void PacketFactory::Access( pDefault* packet, ... )
 
             case ID_OBJECT_NEW:
             {
-                pObjectNew* data = dynamic_cast<pObjectNew*>( packet );
+                const pObjectNew* data = dynamic_cast<const pObjectNew*>( packet );
                 NetworkID* id = va_arg( args, NetworkID* );
                 unsigned int* refID = va_arg( args, unsigned int* );
                 unsigned int* baseID = va_arg( args, unsigned int* );
@@ -366,7 +366,7 @@ void PacketFactory::Access( pDefault* packet, ... )
 
             case ID_ITEM_NEW:
             {
-                pItemNew* data = dynamic_cast<pItemNew*>( packet );
+                const pItemNew* data = dynamic_cast<const pItemNew*>( packet );
                 pDefault** _pObjectNew = va_arg( args, pDefault** );
                 unsigned int* count = va_arg( args, unsigned int* );
                 double* condition = va_arg( args, double* );
@@ -380,7 +380,7 @@ void PacketFactory::Access( pDefault* packet, ... )
 
             case ID_CONTAINER_NEW:
             {
-                pContainerNew* data = dynamic_cast<pContainerNew*>( packet );
+                const pContainerNew* data = dynamic_cast<const pContainerNew*>( packet );
                 pDefault** __pObjectNew = va_arg( args, pDefault** );
                 list<pDefault*>* _pItemNew = va_arg( args, list<pDefault*>* );
 
@@ -401,7 +401,7 @@ void PacketFactory::Access( pDefault* packet, ... )
 
             case ID_ACTOR_NEW:
             {
-                pActorNew* data = dynamic_cast<pActorNew*>( packet );
+                const pActorNew* data = dynamic_cast<const pActorNew*>( packet );
                 pDefault** __pContainerNew = va_arg( args, pDefault** );
                 map<unsigned char, double>* values = (map<unsigned char, double>*) va_arg( args, void*);
                 map<unsigned char, double>* baseValues = (map<unsigned char, double>*) va_arg( args, void*);
@@ -443,7 +443,7 @@ void PacketFactory::Access( pDefault* packet, ... )
 
             case ID_PLAYER_NEW:
             {
-                pPlayerNew* data = dynamic_cast<pPlayerNew*>( packet );
+                const pPlayerNew* data = dynamic_cast<const pPlayerNew*>( packet );
                 pDefault** __pActorNew = va_arg( args, pDefault** );
                 map<unsigned char, pair<unsigned char, bool> >* controls = (map<unsigned char, pair<unsigned char, bool> >*) va_arg( args, void*);
 
@@ -461,7 +461,7 @@ void PacketFactory::Access( pDefault* packet, ... )
 
             case ID_PLAYER_LEFT:
             {
-                pPlayerLeft* data = dynamic_cast<pPlayerLeft*>( packet );
+                const pPlayerLeft* data = dynamic_cast<const pPlayerLeft*>( packet );
                 NetworkID* id = va_arg( args, NetworkID* );
                 *id = data->id;
                 break;
@@ -470,13 +470,13 @@ void PacketFactory::Access( pDefault* packet, ... )
             case ID_OBJECT_UPDATE:
             case ID_ACTOR_UPDATE:
             {
-                pObjectUpdateDefault* data = dynamic_cast<pObjectUpdateDefault*>( packet );
+                const pObjectUpdateDefault* data = dynamic_cast<const pObjectUpdateDefault*>( packet );
 
                 switch ( data->sub_type.type )
                 {
                     case ID_UPDATE_POS:
                     {
-                        pObjectPos* update = dynamic_cast<pObjectPos*>( data );
+                        const pObjectPos* update = dynamic_cast<const pObjectPos*>( data );
                         NetworkID* id = va_arg( args, NetworkID* );
                         double* X = va_arg( args, double* );
                         double* Y = va_arg( args, double* );
@@ -490,7 +490,7 @@ void PacketFactory::Access( pDefault* packet, ... )
 
                     case ID_UPDATE_ANGLE:
                     {
-                        pObjectAngle* update = dynamic_cast<pObjectAngle*>( data );
+                        const pObjectAngle* update = dynamic_cast<const pObjectAngle*>( data );
                         NetworkID* id = va_arg( args, NetworkID* );
                         unsigned char* axis = va_arg( args, unsigned char* );
                         double* value = va_arg( args, double* );
@@ -502,7 +502,7 @@ void PacketFactory::Access( pDefault* packet, ... )
 
                     case ID_UPDATE_CELL:
                     {
-                        pObjectCell* update = dynamic_cast<pObjectCell*>( data );
+                        const pObjectCell* update = dynamic_cast<const pObjectCell*>( data );
                         NetworkID* id = va_arg( args, NetworkID* );
                         unsigned int* cell = va_arg( args, unsigned int* );
                         *id = update->id;
@@ -512,7 +512,7 @@ void PacketFactory::Access( pDefault* packet, ... )
 
                     case ID_UPDATE_VALUE:
                     {
-                        pActorValue* update = dynamic_cast<pActorValue*>( data );
+                        const pActorValue* update = dynamic_cast<const pActorValue*>( data );
                         NetworkID* id = va_arg( args, NetworkID* );
                         bool* base = va_arg( args, bool* );
                         unsigned char* index = va_arg( args, unsigned char* );
@@ -526,7 +526,7 @@ void PacketFactory::Access( pDefault* packet, ... )
 
                     case ID_UPDATE_STATE:
                     {
-                        pActorState* update = dynamic_cast<pActorState*>( data );
+                        const pActorState* update = dynamic_cast<const pActorState*>( data );
                         NetworkID* id = va_arg( args, NetworkID* );
                         unsigned char* index = va_arg( args, unsigned char* );
                         unsigned char* moving = va_arg( args, unsigned char* );
@@ -558,44 +558,79 @@ void PacketFactory::Access( pDefault* packet, ... )
     va_end( args );
 }
 
-NetworkID PacketFactory::ExtractNetworkID( pDefault* packet)
+NetworkID PacketFactory::ExtractNetworkID( const pDefault* packet)
 {
-    pObjectDefault* data = dynamic_cast<pObjectDefault*>( packet );
+    const pObjectDefault* data = dynamic_cast<const pObjectDefault*>( packet );
     return data->id;
 }
 
-unsigned int PacketFactory::ExtractReference( pDefault* packet)
+unsigned int PacketFactory::ExtractReference( const pDefault* packet)
 {
-    pObjectNewDefault* data = dynamic_cast<pObjectNewDefault*>( packet );
+    const pObjectNewDefault* data = dynamic_cast<const pObjectNewDefault*>( packet );
     return data->refID;
 }
 
-unsigned int PacketFactory::ExtractBase( pDefault* packet)
+unsigned int PacketFactory::ExtractBase( const pDefault* packet)
 {
-    pObjectNewDefault* data = dynamic_cast<pObjectNewDefault*>( packet );
+    const pObjectNewDefault* data = dynamic_cast<const pObjectNewDefault*>( packet );
     return data->baseID;
 }
 
-const unsigned char* PacketFactory::ExtractRawData(pDefault* packet)
+const unsigned char* PacketFactory::ExtractRawData(const pDefault* packet)
 {
     switch ( packet->type.type )
     {
         case ID_OBJECT_NEW:
         {
-            pObjectNew* data = dynamic_cast<pObjectNew*>( packet );
+            const pObjectNew* data = dynamic_cast<const pObjectNew*>( packet );
             return reinterpret_cast<const unsigned char*>(&data->_data);
         }
 
         case ID_CONTAINER_NEW:
         {
-            pContainerNew* data = dynamic_cast<pContainerNew*>( packet );
+            const pContainerNew* data = dynamic_cast<const pContainerNew*>( packet );
             return reinterpret_cast<const unsigned char*>(&data->_data);
         }
 
         case ID_ACTOR_NEW:
         {
-            pActorNew* data = dynamic_cast<pActorNew*>( packet );
+            const pActorNew* data = dynamic_cast<const pActorNew*>( packet );
             return reinterpret_cast<const unsigned char*>(&data->_data);
+        }
+
+        default:
+            throw VaultException( "Unhandled packet type %d", ( int ) packet->type.type );
+    }
+
+    return NULL;
+}
+
+pDefault* PacketFactory::ExtractPartial(const pDefault* packet)
+{
+    switch ( packet->type.type )
+    {
+        case ID_ITEM_NEW:
+        {
+            const pItemNew* data = dynamic_cast<const pItemNew*>( packet );
+            return new pObjectNew(data->id, data->refID, data->baseID, data->_data._data_pObjectNew);
+        }
+
+        case ID_CONTAINER_NEW:
+        {
+            const pContainerNew* data = dynamic_cast<const pContainerNew*>( packet );
+            return new pObjectNew(data->id, data->refID, data->baseID, *reinterpret_cast<_pObjectNew*>(&data->_data[data->base_len]));
+        }
+
+        case ID_ACTOR_NEW:
+        {
+            const pActorNew* data = dynamic_cast<const pActorNew*>( packet );
+            return new pContainerNew(data->id, data->refID, data->baseID, &data->_data[data->base_length()]);
+        }
+
+        case ID_PLAYER_NEW:
+        {
+            const pPlayerNew* data = dynamic_cast<const pPlayerNew*>( packet );
+            return new pActorNew(data->id, data->refID, data->baseID, &data->_data[data->base_length()]);
         }
 
         default:

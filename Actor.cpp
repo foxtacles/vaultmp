@@ -12,6 +12,27 @@ Debug* Actor::debug;
 
 Actor::Actor( unsigned int refID, unsigned int baseID ) : Container( refID, baseID )
 {
+    initialize();
+}
+
+Actor::Actor(const pDefault* packet) : Container(PacketFactory::ExtractPartial(packet))
+{
+    initialize();
+    // read packet
+}
+
+Actor::Actor(pDefault* packet) : Actor(reinterpret_cast<const pDefault*>(packet))
+{
+    PacketFactory::FreePacket(packet);
+}
+
+Actor::~Actor()
+{
+
+}
+
+void Actor::initialize()
+{
 	vector<unsigned char>::iterator it;
 	vector<unsigned char> data = API::RetrieveAllValues();
 
@@ -23,6 +44,7 @@ Actor::Actor( unsigned int refID, unsigned int baseID ) : Container( refID, base
 
 	if ( Actor::Actors )
 	{
+	    unsigned int baseID = this->GetBase();
 		this->data = Actor::Actors->find( baseID );
 
 		if ( this->data == Actor::Actors->end() )
@@ -44,11 +66,6 @@ Actor::Actor( unsigned int refID, unsigned int baseID ) : Container( refID, base
 		debug->PrintFormat( "New actor object created (ref: %08X)", true, this->GetReference() );
 
 #endif
-}
-
-Actor::~Actor()
-{
-
 }
 
 #ifdef VAULTMP_DEBUG

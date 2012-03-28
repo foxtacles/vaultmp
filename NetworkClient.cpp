@@ -111,167 +111,168 @@ NetworkResponse NetworkClient::ProcessPacket( Packet* data )
 			{
 				packet = PacketFactory::CreatePacket( data->data, data->length );
 
-				switch ( data->data[0] )
-				{
-					case ID_GAME_MOD:
-						{
-							char modfile[MAX_MOD_FILE + 1];
-							ZeroMemory( modfile, sizeof( modfile ) );
-							unsigned int crc;
-							PacketFactory::Access( packet, modfile, &crc );
-							Bethesda::modfiles.push_back( pair<string, unsigned int>( string( modfile ), crc ) );
-							break;
-						}
+                try
+                {
+                    switch ( data->data[0] )
+                    {
+                        case ID_GAME_MOD:
+                            {
+                                char modfile[MAX_MOD_FILE + 1];
+                                ZeroMemory( modfile, sizeof( modfile ) );
+                                unsigned int crc;
+                                PacketFactory::Access( packet, modfile, &crc );
+                                Bethesda::modfiles.push_back( pair<string, unsigned int>( string( modfile ), crc ) );
+                                break;
+                            }
 
-					case ID_GAME_START:
-						{
-#ifdef VAULTMP_DEBUG
-							debug->PrintFormat( "We were successfully authenticated (%s)", true, data->systemAddress.ToString() );
-							debug->Print( "Initiating vaultmp game thread...", true );
-#endif
-							char savegame[MAX_SAVEGAME_FILE + 1];
-							ZeroMemory( savegame, sizeof( savegame ) );
-							unsigned int crc;
-							PacketFactory::Access( packet, savegame, &crc );
-							Bethesda::savegame = Savegame( string( savegame ), crc );
+                        case ID_GAME_START:
+                            {
+    #ifdef VAULTMP_DEBUG
+                                debug->PrintFormat( "We were successfully authenticated (%s)", true, data->systemAddress.ToString() );
+                                debug->Print( "Initiating vaultmp game thread...", true );
+    #endif
+                                char savegame[MAX_SAVEGAME_FILE + 1];
+                                ZeroMemory( savegame, sizeof( savegame ) );
+                                unsigned int crc;
+                                PacketFactory::Access( packet, savegame, &crc );
+                                Bethesda::savegame = Savegame( string( savegame ), crc );
 
-							Bethesda::Initialize();
-							Game::Initialize();
-							Game::LoadGame( Utils::FileOnly( Bethesda::savegame.first.c_str() ) );
+                                Bethesda::Initialize();
+                                Game::Initialize();
+                                Game::LoadGame( Utils::FileOnly( Bethesda::savegame.first.c_str() ) );
 
-							response = NetworkClient::ProcessEvent( ID_EVENT_GAME_STARTED );
-							break;
-						}
+                                response = NetworkClient::ProcessEvent( ID_EVENT_GAME_STARTED );
+                                break;
+                            }
 
-					case ID_GAME_LOAD:
-						{
-							Game::Startup();
-							response = NetworkClient::ProcessEvent( ID_EVENT_GAME_LOADED );
-							break;
-						}
+                        case ID_GAME_LOAD:
+                            {
+                                Game::Startup();
+                                response = NetworkClient::ProcessEvent( ID_EVENT_GAME_LOADED );
+                                break;
+                            }
 
-					case ID_GAME_END:
-						{
-							unsigned char reason;
-							PacketFactory::Access( packet, &reason );
+                        case ID_GAME_END:
+                            {
+                                unsigned char reason;
+                                PacketFactory::Access( packet, &reason );
 
-							switch ( reason )
-							{
-								case ID_REASON_KICK:
-									throw VaultException( "You have been kicked from the server" );
+                                switch ( reason )
+                                {
+                                    case ID_REASON_KICK:
+                                        throw VaultException( "You have been kicked from the server" );
 
-								case ID_REASON_BAN:
-									throw VaultException( "You have been banned from the server" );
+                                    case ID_REASON_BAN:
+                                        throw VaultException( "You have been banned from the server" );
 
-								case ID_REASON_ERROR:
-									throw VaultException( "The server encountered an internal error" );
+                                    case ID_REASON_ERROR:
+                                        throw VaultException( "The server encountered an internal error" );
 
-								case ID_REASON_DENIED:
-									throw VaultException( "Your authentication has been denied" );
+                                    case ID_REASON_DENIED:
+                                        throw VaultException( "Your authentication has been denied" );
 
-								case ID_REASON_NONE:
-									break;
-							}
+                                    case ID_REASON_NONE:
+                                        break;
+                                }
 
-							break;
-						}
+                                break;
+                            }
 
-					case ID_PLAYER_NEW:
-						{
-						    /*
-						     * old code, FIXME
-							NetworkID id;
-							unsigned int refID; // always 0x00000000 for players
-							unsigned int baseID;
-							char name[MAX_PLAYER_NAME + 1];
-							ZeroMemory( name, sizeof( name ) );
-							PacketFactory::Access( packet, &id, &refID, &baseID, name );
-							Game::NewPlayer( id, baseID, string( name ) );
-							*/
-							break;
-						}
+                        case ID_PLAYER_NEW:
+                            {
+                                NetworkID id = GameFactory::CreateKnownInstance(ID_PLAYER, packet);
 
-					case ID_PLAYER_LEFT:
-						{
-							NetworkID id;
-							PacketFactory::Access( packet, &id );
-							FactoryObject reference = GameFactory::GetObject( id );
-							Game::PlayerLeft( reference );
-							break;
-						}
+                                // Call to some game function, not written yet
+                                break;
+                            }
 
-					case ID_OBJECT_UPDATE:
-					case ID_ACTOR_UPDATE:
-						{
-							switch ( data->data[1] )
-							{
-								case ID_UPDATE_POS:
-									{
-										NetworkID id;
-										double X, Y, Z;
-										PacketFactory::Access( packet, &id, &X, &Y, &Z );
-										FactoryObject reference = GameFactory::GetObject( id );
-										Game::SetPos( reference, X, Y, Z );
-										break;
-									}
+                        case ID_PLAYER_LEFT:
+                            {
+                                NetworkID id;
+                                PacketFactory::Access( packet, &id );
+                                FactoryObject reference = GameFactory::GetObject( id );
+                                Game::PlayerLeft( reference );
+                                break;
+                            }
 
-								case ID_UPDATE_ANGLE:
-									{
-										NetworkID id;
-										unsigned char axis;
-										double value;
-										PacketFactory::Access( packet, &id, &axis, &value );
-										FactoryObject reference = GameFactory::GetObject( id );
-										Game::SetAngle( reference, axis, value );
-										break;
-									}
+                        case ID_OBJECT_UPDATE:
+                        case ID_ACTOR_UPDATE:
+                            {
+                                switch ( data->data[1] )
+                                {
+                                    case ID_UPDATE_POS:
+                                        {
+                                            NetworkID id;
+                                            double X, Y, Z;
+                                            PacketFactory::Access( packet, &id, &X, &Y, &Z );
+                                            FactoryObject reference = GameFactory::GetObject( id );
+                                            Game::SetPos( reference, X, Y, Z );
+                                            break;
+                                        }
 
-								case ID_UPDATE_CELL:
-									{
-										NetworkID id;
-										unsigned int cell;
-										PacketFactory::Access( packet, &id, &cell );
-										FactoryObject reference = GameFactory::GetObject( id );
-										FactoryObject self = GameFactory::GetObject( PLAYER_REFERENCE );
-										Game::SetNetworkCell( vector<FactoryObject> {reference, self}, cell );
-										break;
-									}
+                                    case ID_UPDATE_ANGLE:
+                                        {
+                                            NetworkID id;
+                                            unsigned char axis;
+                                            double value;
+                                            PacketFactory::Access( packet, &id, &axis, &value );
+                                            FactoryObject reference = GameFactory::GetObject( id );
+                                            Game::SetAngle( reference, axis, value );
+                                            break;
+                                        }
 
-								case ID_UPDATE_VALUE:
-									{
-										NetworkID id;
-										bool base;
-										unsigned char index;
-										double value;
-										PacketFactory::Access( packet, &id, &base, &index, &value );
-										FactoryObject reference = GameFactory::GetObject( id );
-										Game::SetActorValue( reference, base, index, value );
-										break;
-									}
+                                    case ID_UPDATE_CELL:
+                                        {
+                                            NetworkID id;
+                                            unsigned int cell;
+                                            PacketFactory::Access( packet, &id, &cell );
+                                            FactoryObject reference = GameFactory::GetObject( id );
+                                            FactoryObject self = GameFactory::GetObject( PLAYER_REFERENCE );
+                                            Game::SetNetworkCell( vector<FactoryObject> {reference, self}, cell );
+                                            break;
+                                        }
 
-								case ID_UPDATE_STATE:
-									{
-										NetworkID id;
-										unsigned char index;
-										unsigned char moving;
-										bool alerted;
-										bool sneaking;
-										PacketFactory::Access( packet, &id, &index, &moving, &alerted, &sneaking );
-										FactoryObject reference = GameFactory::GetObject( id );
-										Game::SetActorState( reference, index, moving, alerted, sneaking );
-										break;
-									}
+                                    case ID_UPDATE_VALUE:
+                                        {
+                                            NetworkID id;
+                                            bool base;
+                                            unsigned char index;
+                                            double value;
+                                            PacketFactory::Access( packet, &id, &base, &index, &value );
+                                            FactoryObject reference = GameFactory::GetObject( id );
+                                            Game::SetActorValue( reference, base, index, value );
+                                            break;
+                                        }
 
-								default:
-									throw VaultException( "Unhandled object update packet type %d", ( int ) data->data[1] );
-							}
+                                    case ID_UPDATE_STATE:
+                                        {
+                                            NetworkID id;
+                                            unsigned char index;
+                                            unsigned char moving;
+                                            bool alerted;
+                                            bool sneaking;
+                                            PacketFactory::Access( packet, &id, &index, &moving, &alerted, &sneaking );
+                                            FactoryObject reference = GameFactory::GetObject( id );
+                                            Game::SetActorState( reference, index, moving, alerted, sneaking );
+                                            break;
+                                        }
 
-							break;
-						}
+                                    default:
+                                        throw VaultException( "Unhandled object update packet type %d", ( int ) data->data[1] );
+                                }
 
-					default:
-						throw VaultException( "Unhandled packet type %d", ( int ) data->data[0] );
-				}
+                                break;
+                            }
+
+                        default:
+                            throw VaultException( "Unhandled packet type %d", ( int ) data->data[0] );
+                    }
+                }
+                catch (...)
+                {
+                    PacketFactory::FreePacket(packet);
+                    throw;
+                }
 
 				PacketFactory::FreePacket(packet);
 			}

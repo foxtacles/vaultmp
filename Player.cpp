@@ -8,11 +8,13 @@ Debug* Player::debug = NULL;
 
 Player::Player( unsigned int refID, unsigned int baseID ) : Actor( refID, baseID )
 {
-	vector<unsigned char>::iterator it;
-	vector<unsigned char> data = API::RetrieveAllControls();
+    initialize();
+}
 
-	for ( it = data.begin(); it != data.end(); ++it )
-		player_Controls.insert( pair<unsigned char, pair<Value<unsigned char>, Value<bool> > >( *it, pair<Value<unsigned char>, Value<bool> >( Value<unsigned char>(), Value<bool>( true ) ) ) );
+Player::Player(const pDefault* packet) : Actor(PacketFactory::ExtractPartial(packet))
+{
+    initialize();
+    // read packet
 }
 
 Player::~Player()
@@ -23,6 +25,15 @@ Player::~Player()
 		debug->PrintFormat( "Player object destroyed (ref: %08X)", true, GetReference() );
 
 #endif
+}
+
+void Player::initialize()
+{
+	vector<unsigned char>::iterator it;
+	vector<unsigned char> data = API::RetrieveAllControls();
+
+	for ( it = data.begin(); it != data.end(); ++it )
+		player_Controls.insert( pair<unsigned char, pair<Value<unsigned char>, Value<bool> > >( *it, pair<Value<unsigned char>, Value<bool> >( Value<unsigned char>(), Value<bool>( true ) ) ) );
 }
 
 #ifdef VAULTMP_DEBUG

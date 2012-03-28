@@ -17,6 +17,29 @@ void Item::SetDebugHandler( Debug* debug )
 
 Item::Item( unsigned int refID, unsigned int baseID ) : Object( refID, baseID )
 {
+    initialize();
+}
+
+Item::Item(const pDefault* packet) : Object(PacketFactory::ExtractPartial(packet))
+{
+    initialize();
+    // read packet
+}
+
+Item::Item(pDefault* packet) : Item(reinterpret_cast<const pDefault*>(packet))
+{
+    PacketFactory::FreePacket(packet);
+}
+
+Item::~Item()
+{
+
+}
+
+void Item::initialize()
+{
+    unsigned int baseID = this->GetBase();
+
 	data = Container::Items->find( baseID );
 
 	if ( data == Container::Items->end() )
@@ -24,11 +47,6 @@ Item::Item( unsigned int refID, unsigned int baseID ) : Object( refID, baseID )
 
 	if ( data != Container::Items->end() )
 		this->SetName( string( data->second ) );
-}
-
-Item::~Item()
-{
-
 }
 
 unsigned int Item::GetItemCount() const

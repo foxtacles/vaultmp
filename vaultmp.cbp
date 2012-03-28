@@ -37,6 +37,7 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-std=c++0x" />
 			<Add option="-std=gnu++0x" />
 			<Add option="-fpermissive" />
 			<Add directory="D:\Programmierung\vaultmp\" />

@@ -19,12 +19,28 @@ void Container::SetDebugHandler( Debug* debug )
 
 Container::Container( unsigned int refID, unsigned int baseID ) : Object( refID, baseID )
 {
+    initialize();
+}
 
+Container::Container(const pDefault* packet) : Object(PacketFactory::ExtractPartial(packet))
+{
+    initialize();
+    // read packet
+}
+
+Container::Container(pDefault* packet) : Container(reinterpret_cast<const pDefault*>(packet))
+{
+    PacketFactory::FreePacket(packet);
 }
 
 Container::~Container()
 {
 	this->FlushContainer();
+}
+
+void Container::initialize()
+{
+
 }
 
 bool Container::Item_sort( NetworkID id, NetworkID id2 )

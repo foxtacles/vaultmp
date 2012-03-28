@@ -65,17 +65,17 @@ class pDefault
 				delete[] stream;
 		};
 
-		const unsigned char* get()
+		const unsigned char* get() const
 		{
 			return stream;
 		};
 
-		unsigned int length()
+		unsigned int length() const
 		{
 			return len;
 		};
 
-		unsigned int base_length()
+		unsigned int base_length() const
 		{
 			return base_len;
 		};
@@ -545,7 +545,7 @@ class pObjectNew : public pObjectNewDefault
 			_data.enabled = enabled;
 			construct( &_data, sizeof( _data ) );
 		}
-		pObjectNew( NetworkID id, unsigned int refID, unsigned int baseID, _pObjectNew& data) : pObjectNewDefault( ID_OBJECT_NEW, refID, baseID, id )
+		pObjectNew( NetworkID id, unsigned int refID, unsigned int baseID, const _pObjectNew& data) : pObjectNewDefault( ID_OBJECT_NEW, refID, baseID, id )
 		{
             _data = data;
 			construct( &_data, sizeof( _data ) );

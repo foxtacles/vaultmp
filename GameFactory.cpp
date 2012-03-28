@@ -298,6 +298,49 @@ void GameFactory::CreateKnownInstance( unsigned char type, NetworkID id, unsigne
 	return CreateKnownInstance( type, id, 0x00, baseID );
 }
 
+NetworkID GameFactory::CreateKnownInstance( unsigned char type, const pDefault* packet)
+{
+	Reference* reference;
+
+	switch ( type )
+	{
+		case ID_REFERENCE:
+			throw VaultException( "It is not possible to have a pure Reference instance" );
+
+		case ID_OBJECT:
+			reference = new Object( packet );
+			break;
+
+		case ID_ITEM:
+			reference = new Item( packet );
+			break;
+
+		case ID_CONTAINER:
+			reference = new Container( packet );
+			break;
+
+		case ID_ACTOR:
+			reference = new Actor( packet );
+			break;
+
+		case ID_PLAYER:
+			reference = new Player( packet );
+			break;
+
+		default:
+			throw VaultException( "Unknown type identifier %X", type );
+	}
+
+	NetworkID id = PacketFactory::ExtractNetworkID(packet);
+	reference->SetNetworkID(id);
+
+	cs.StartSession();
+	instances.insert( pair<Reference*, unsigned char>( reference, type ) );
+	cs.EndSession();
+
+	return id;
+}
+
 void GameFactory::DestroyAllInstances()
 {
 	ReferenceList::iterator it;

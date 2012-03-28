@@ -37,11 +37,14 @@ class Player : public Actor
 
 		map<unsigned char, pair<Value<unsigned char>, Value<bool> > > player_Controls;
 
+        void initialize();
+
 		Player( const Player& );
 		Player& operator=( const Player& );
 
 	protected:
 		Player( unsigned int refID, unsigned int baseID );
+		Player(const pDefault* packet);
 		virtual ~Player();
 
 	public:

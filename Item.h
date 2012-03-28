@@ -35,11 +35,15 @@ class Item : public Object
 		Value<double> item_Condition;
 		Value<bool> state_Equipped;
 
+        void initialize();
+
 		Item( const Item& );
 		Item& operator=( const Item& );
 
 	protected:
 		Item( unsigned int refID, unsigned int baseID );
+		Item(const pDefault* packet);
+        Item(pDefault* packet);
 		virtual ~Item();
 
 	public:

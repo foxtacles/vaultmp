@@ -132,6 +132,10 @@ class GameFactory
 		 * \brief Creates a known instance of a given type
 		 */
 		static void CreateKnownInstance( unsigned char type, NetworkID id, unsigned int baseID );
+		/**
+		 * \brief Creates a known instance from a network packet
+		 */
+		static NetworkID CreateKnownInstance( unsigned char type, const pDefault* packet );
 
 		/**
 		 * \brief Destroys all instances and cleans up type classes

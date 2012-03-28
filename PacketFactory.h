@@ -69,15 +69,17 @@ class PacketFactory
 
 		static pDefault* CreatePacket( unsigned char* stream, unsigned int len );
 
-		static void Access( pDefault* packet, ... );
+		static void Access( const pDefault* packet, ... );
 
-		static NetworkID ExtractNetworkID( pDefault* packet);
+		static NetworkID ExtractNetworkID( const pDefault* packet);
 
-		static unsigned int ExtractReference( pDefault* packet);
+		static unsigned int ExtractReference( const pDefault* packet);
 
-		static unsigned int ExtractBase( pDefault* packet);
+		static unsigned int ExtractBase( const pDefault* packet);
 
-		static const unsigned char* ExtractRawData(pDefault* packet);
+		static const unsigned char* ExtractRawData(const pDefault* packet);
+
+		static pDefault* ExtractPartial(const pDefault* packet);
 
 		static void FreePacket(pDefault* packet);
 };
