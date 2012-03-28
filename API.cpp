@@ -121,7 +121,7 @@ struct API::op_Arg5
 
 	op_Arg5()
 	{
-		unk1 = ( game & FALLOUT3 ) ? 0x00DD3D0C : ( game & NEWVEGAS ) ? 0x01037094 : 0x00A49DA4;
+		unk1 = ( game & FALLOUT3 ) ? 0x00DD3D0C : 0x01037094;
 		unk2 = 0x00000000;
 		unk3 = 0x0000400A;
 		unk4 = 0x00000000;
@@ -141,8 +141,8 @@ struct API::op_Arg5
 		param2_reference = 0x00000000;
 		param2_unk4 = 0x00000000;
 
-		unsigned int** param1 = ( game & FALLOUT_GAMES ? &this->param1 : ( unsigned int** ) &unk12 );
-		unsigned int*** param2 = ( game & FALLOUT_GAMES ? &this->param2 : ( unsigned int*** ) &this->param1 );
+		unsigned int** param1 = &this->param1;
+		unsigned int*** param2 = &this->param2;
 
 		*param1 = ( unsigned int* ) ( ( unsigned ) &param1_reftext - ( unsigned ) &unk1 );
 		*param2 = ( unsigned int** ) ( ( unsigned ) &param2_real - ( unsigned ) &unk1 );
@@ -275,33 +275,6 @@ void API::Initialize( unsigned char game )
 	DefineAnimString( "JumpLandLeft", FalloutNV::AnimGroup_JumpLandLeft, NEWVEGAS );
 	DefineAnimString( "JumpLandRight", FalloutNV::AnimGroup_JumpLandRight, NEWVEGAS );
 
-	DefineAnimString( "Equip", Oblivion::AnimGroup_Equip, OBLIVION );
-	DefineAnimString( "Unequip", Oblivion::AnimGroup_Unequip, OBLIVION );
-	DefineAnimString( "AttackBow", Oblivion::AnimGroup_AttackBow, OBLIVION );
-	DefineAnimString( "AttackLeft", Oblivion::AnimGroup_AttackLeft, OBLIVION );
-	DefineAnimString( "AttackRight", Oblivion::AnimGroup_AttackRight, OBLIVION );
-	DefineAnimString( "AttackPower", Oblivion::AnimGroup_AttackPower, OBLIVION );
-	DefineAnimString( "AttackForwardPower", Oblivion::AnimGroup_AttackForwardPower, OBLIVION );
-	DefineAnimString( "AttackBackPower", Oblivion::AnimGroup_AttackBackPower, OBLIVION );
-	DefineAnimString( "AttackLeftPower", Oblivion::AnimGroup_AttackLeftPower, OBLIVION );
-	DefineAnimString( "AttackRightPower", Oblivion::AnimGroup_AttackRightPower, OBLIVION );
-	DefineAnimString( "BlockIdle", Oblivion::AnimGroup_BlockIdle, OBLIVION );
-	DefineAnimString( "BlockHit", Oblivion::AnimGroup_BlockHit, OBLIVION );
-	DefineAnimString( "BlockAttack", Oblivion::AnimGroup_BlockAttack, OBLIVION );
-	DefineAnimString( "Recoil", Oblivion::AnimGroup_Recoil, OBLIVION );
-	DefineAnimString( "Stagger", Oblivion::AnimGroup_Stagger, OBLIVION );
-	DefineAnimString( "Death", Oblivion::AnimGroup_Death, OBLIVION );
-	DefineAnimString( "TorchIdle", Oblivion::AnimGroup_TorchIdle, OBLIVION );
-	DefineAnimString( "CastSelf", Oblivion::AnimGroup_CastSelf, OBLIVION );
-	DefineAnimString( "CastTouch", Oblivion::AnimGroup_CastTouch, OBLIVION );
-	DefineAnimString( "CastTarget", Oblivion::AnimGroup_CastTarget, OBLIVION );
-	DefineAnimString( "CastSelfAlt", Oblivion::AnimGroup_CastSelfAlt, OBLIVION );
-	DefineAnimString( "CastTouchAlt", Oblivion::AnimGroup_CastTouchAlt, OBLIVION );
-	DefineAnimString( "CastTargetAlt", Oblivion::AnimGroup_CastTargetAlt, OBLIVION );
-	DefineAnimString( "JumpStart", Oblivion::AnimGroup_JumpStart, OBLIVION );
-	DefineAnimString( "JumpLoop", Oblivion::AnimGroup_JumpLoop, OBLIVION );
-	DefineAnimString( "JumpLand", Oblivion::AnimGroup_JumpLand, OBLIVION );
-
 	DefineValueString( "Aggression", Fallout::ActorVal_Aggression, FALLOUT_GAMES );
 	DefineValueString( "Confidence", Fallout::ActorVal_Confidence, FALLOUT_GAMES );
 	DefineValueString( "Energy", Fallout::ActorVal_Energy, FALLOUT_GAMES );
@@ -374,79 +347,6 @@ void API::Initialize( unsigned char game )
 	DefineValueString( "Variable10", Fallout::ActorVal_Variable10, FALLOUT_GAMES );
 	DefineValueString( "IgnoreCrippledLimbs", Fallout::ActorVal_IgnoreCrippledLimbs, FALLOUT_GAMES );
 
-	DefineValueString( "Strength", Oblivion::ActorVal_Strength, OBLIVION );
-	DefineValueString( "Intelligence", Oblivion::ActorVal_Intelligence, OBLIVION );
-	DefineValueString( "Willpower", Oblivion::ActorVal_Willpower, OBLIVION );
-	DefineValueString( "Agility", Oblivion::ActorVal_Agility, OBLIVION );
-	DefineValueString( "Speed", Oblivion::ActorVal_Speed, OBLIVION );
-	DefineValueString( "Endurance", Oblivion::ActorVal_Endurance, OBLIVION );
-	DefineValueString( "Personality", Oblivion::ActorVal_Personality, OBLIVION );
-	DefineValueString( "Luck", Oblivion::ActorVal_Luck, OBLIVION );
-	DefineValueString( "Health", Oblivion::ActorVal_Health, OBLIVION );
-	DefineValueString( "Magicka", Oblivion::ActorVal_Magicka, OBLIVION );
-	DefineValueString( "Fatigue", Oblivion::ActorVal_Fatigue, OBLIVION );
-	DefineValueString( "Encumbrance", Oblivion::ActorVal_Encumbrance, OBLIVION );
-	DefineValueString( "Armorer", Oblivion::ActorVal_Armorer, OBLIVION );
-	DefineValueString( "Athletics", Oblivion::ActorVal_Athletics, OBLIVION );
-	DefineValueString( "Blade", Oblivion::ActorVal_Blade, OBLIVION );
-	DefineValueString( "Block", Oblivion::ActorVal_Block, OBLIVION );
-	DefineValueString( "Blunt", Oblivion::ActorVal_Blunt, OBLIVION );
-	DefineValueString( "HandToHand", Oblivion::ActorVal_HandToHand, OBLIVION );
-	DefineValueString( "HeavyArmor", Oblivion::ActorVal_HeavyArmor, OBLIVION );
-	DefineValueString( "Alchemy", Oblivion::ActorVal_Alchemy, OBLIVION );
-	DefineValueString( "Alteration", Oblivion::ActorVal_Alteration, OBLIVION );
-	DefineValueString( "Conjuration", Oblivion::ActorVal_Conjuration, OBLIVION );
-	DefineValueString( "Destruction", Oblivion::ActorVal_Destruction, OBLIVION );
-	DefineValueString( "Illusion", Oblivion::ActorVal_Illusion, OBLIVION );
-	DefineValueString( "Mysticism", Oblivion::ActorVal_Mysticism, OBLIVION );
-	DefineValueString( "Restoration", Oblivion::ActorVal_Restoration, OBLIVION );
-	DefineValueString( "Acrobatics", Oblivion::ActorVal_Acrobatics, OBLIVION );
-	DefineValueString( "LightArmor", Oblivion::ActorVal_LightArmor, OBLIVION );
-	DefineValueString( "Marksman", Oblivion::ActorVal_Marksman, OBLIVION );
-	DefineValueString( "Mercantile", Oblivion::ActorVal_Mercantile, OBLIVION );
-	DefineValueString( "Security", Oblivion::ActorVal_Security, OBLIVION );
-	DefineValueString( "Sneak", Oblivion::ActorVal_Sneak, OBLIVION );
-	DefineValueString( "Speechcraft", Oblivion::ActorVal_Speechcraft, OBLIVION );
-	DefineValueString( "Aggression", Oblivion::ActorVal_Aggression, OBLIVION );
-	DefineValueString( "Confidenc", Oblivion::ActorVal_Confidence, OBLIVION );
-	DefineValueString( "Energy", Oblivion::ActorVal_Energy, OBLIVION );
-	DefineValueString( "Responsibility", Oblivion::ActorVal_Responsibility, OBLIVION );
-	DefineValueString( "Bounty", Oblivion::ActorVal_Bounty, OBLIVION );
-	DefineValueString( "Fame", Oblivion::ActorVal_Fame, OBLIVION );
-	DefineValueString( "Infamy", Oblivion::ActorVal_Infamy, OBLIVION );
-	DefineValueString( "MagickaMultiplier", Oblivion::ActorVal_MagickaMultiplier, OBLIVION );
-	DefineValueString( "NightEyeBonus", Oblivion::ActorVal_NightEyeBonus, OBLIVION );
-	DefineValueString( "AttackBonus", Oblivion::ActorVal_AttackBonus, OBLIVION );
-	DefineValueString( "DefendBonus", Oblivion::ActorVal_DefendBonus, OBLIVION );
-	DefineValueString( "CastingPenalty", Oblivion::ActorVal_CastingPenalty, OBLIVION );
-	DefineValueString( "Blindness", Oblivion::ActorVal_Blindness, OBLIVION );
-	DefineValueString( "Chameleon", Oblivion::ActorVal_Chameleon, OBLIVION );
-	DefineValueString( "Invisibility", Oblivion::ActorVal_Invisibility, OBLIVION );
-	DefineValueString( "Paralysis", Oblivion::ActorVal_Paralysis, OBLIVION );
-	DefineValueString( "Silence", Oblivion::ActorVal_Silence, OBLIVION );
-	DefineValueString( "Confusion", Oblivion::ActorVal_Confusion, OBLIVION );
-	DefineValueString( "DetectItemRange", Oblivion::ActorVal_DetectItemRange, OBLIVION );
-	DefineValueString( "SpellAbsorbChance", Oblivion::ActorVal_SpellAbsorbChance, OBLIVION );
-	DefineValueString( "SpellReflectChance", Oblivion::ActorVal_SpellReflectChance, OBLIVION );
-	DefineValueString( "SwimSpeedMultiplier", Oblivion::ActorVal_SwimSpeedMultiplier, OBLIVION );
-	DefineValueString( "WaterBreathing", Oblivion::ActorVal_WaterBreathing, OBLIVION );
-	DefineValueString( "WaterWalking", Oblivion::ActorVal_WaterWalking, OBLIVION );
-	DefineValueString( "StuntedMagicka", Oblivion::ActorVal_StuntedMagicka, OBLIVION );
-	DefineValueString( "DetectLifeRange", Oblivion::ActorVal_DetectLifeRange, OBLIVION );
-	DefineValueString( "ReflectDamage", Oblivion::ActorVal_ReflectDamage, OBLIVION );
-	DefineValueString( "Telekinesis", Oblivion::ActorVal_Telekinesis, OBLIVION );
-	DefineValueString( "ResistFire", Oblivion::ActorVal_ResistFire, OBLIVION );
-	DefineValueString( "ResistFrost", Oblivion::ActorVal_ResistFrost, OBLIVION );
-	DefineValueString( "ResistDisease", Oblivion::ActorVal_ResistDisease, OBLIVION );
-	DefineValueString( "ResistMagic", Oblivion::ActorVal_ResistMagic, OBLIVION );
-	DefineValueString( "ResistNormalWeapons", Oblivion::ActorVal_ResistNormalWeapons, OBLIVION );
-	DefineValueString( "ResistParalysis", Oblivion::ActorVal_ResistParalysis, OBLIVION );
-	DefineValueString( "ResistPoison", Oblivion::ActorVal_ResistPoison, OBLIVION );
-	DefineValueString( "ResistShock", Oblivion::ActorVal_ResistShock, OBLIVION );
-	DefineValueString( "Vampirism", Oblivion::ActorVal_Vampirism, OBLIVION );
-	DefineValueString( "Darkness", Oblivion::ActorVal_Darkness, OBLIVION );
-	DefineValueString( "ResistWaterDamage", Oblivion::ActorVal_ResistWaterDamage, OBLIVION );
-
 	DefineControl( Fallout::ControlCode_Forward, FALLOUT_GAMES );
 	DefineControl( Fallout::ControlCode_Backward, FALLOUT_GAMES );
 	DefineControl( Fallout::ControlCode_Left, FALLOUT_GAMES );
@@ -475,36 +375,6 @@ void API::Initialize( unsigned char game )
 	DefineControl( Fallout::ControlCode_Quicksave, FALLOUT_GAMES );
 	DefineControl( Fallout::ControlCode_Quickload, FALLOUT_GAMES );
 	DefineControl( Fallout::ControlCode_Grab, FALLOUT_GAMES );
-
-	DefineControl( Oblivion::ControlCode_Forward, OBLIVION );
-	DefineControl( Oblivion::ControlCode_Backward, OBLIVION );
-	DefineControl( Oblivion::ControlCode_SlideLeft, OBLIVION );
-	DefineControl( Oblivion::ControlCode_SlideRight, OBLIVION );
-	DefineControl( Oblivion::ControlCode_Use, OBLIVION );
-	DefineControl( Oblivion::ControlCode_Activate, OBLIVION );
-	DefineControl( Oblivion::ControlCode_Block, OBLIVION );
-	DefineControl( Oblivion::ControlCode_Cast, OBLIVION );
-	DefineControl( Oblivion::ControlCode_ReadyItem, OBLIVION );
-	DefineControl( Oblivion::ControlCode_Crouch, OBLIVION );
-	DefineControl( Oblivion::ControlCode_Run, OBLIVION );
-	DefineControl( Oblivion::ControlCode_AlwaysRun, OBLIVION );
-	DefineControl( Oblivion::ControlCode_AutoMove, OBLIVION );
-	DefineControl( Oblivion::ControlCode_Jump, OBLIVION );
-	DefineControl( Oblivion::ControlCode_TogglePOV, OBLIVION );
-	DefineControl( Oblivion::ControlCode_MenuMode, OBLIVION );
-	DefineControl( Oblivion::ControlCode_Rest, OBLIVION );
-	DefineControl( Oblivion::ControlCode_QuickMenu, OBLIVION );
-	DefineControl( Oblivion::ControlCode_Hotkey1, OBLIVION );
-	DefineControl( Oblivion::ControlCode_Hotkey2, OBLIVION );
-	DefineControl( Oblivion::ControlCode_Hotkey3, OBLIVION );
-	DefineControl( Oblivion::ControlCode_Hotkey4, OBLIVION );
-	DefineControl( Oblivion::ControlCode_Hotkey5, OBLIVION );
-	DefineControl( Oblivion::ControlCode_Hotkey6, OBLIVION );
-	DefineControl( Oblivion::ControlCode_Hotkey7, OBLIVION );
-	DefineControl( Oblivion::ControlCode_Hotkey8, OBLIVION );
-	DefineControl( Oblivion::ControlCode_Quicksave, OBLIVION );
-	DefineControl( Oblivion::ControlCode_Quickload, OBLIVION );
-	DefineControl( Oblivion::ControlCode_Grab, OBLIVION );
 
 	DefineFunction( "GetPos", "ra", Func_GetPos, ALL_GAMES );
 	DefineFunction( "SetPos", "rad", Func_SetPos, ALL_GAMES );
@@ -550,21 +420,6 @@ void API::Initialize( unsigned char game )
 	DefineFunction( "GetFirstRef", "III", FalloutNV::Func_GetFirstRef, NEWVEGAS );
 	DefineFunction( "GetNextRef", "", FalloutNV::Func_GetNextRef, NEWVEGAS );
 	DefineFunction( "GetControl", "x", FalloutNV::Func_GetControl, NEWVEGAS );
-
-	DefineFunction( "Enable", "r", Func_Enable, OBLIVION );
-	DefineFunction( "Disable", "r", Func_Disable, OBLIVION );
-	DefineFunction( "EquipItem", "rjI", Func_EquipItem, OBLIVION );
-	DefineFunction( "UnequipItem", "rjI", Func_UnequipItem, OBLIVION );
-	DefineFunction( "AddItem", "rki", Func_AddItem, OBLIVION );
-	DefineFunction( "RemoveItem", "rki", Func_RemoveItem, OBLIVION );
-	DefineFunction( "Kill", "rQ", Func_Kill, OBLIVION );
-	DefineFunction( "Load", "$s", Oblivion::Func_Load, OBLIVION );
-	DefineFunction( "SetName", "rsB", Oblivion::Func_SetName, OBLIVION );
-	DefineFunction( "GetParentCell", "r", Oblivion::Func_GetParentCell, OBLIVION );
-	DefineFunction( "IsAnimGroupPlaying", "rg", Oblivion::Func_IsAnimGroupPlaying, OBLIVION );
-	DefineFunction( "GetFirstRef", "III", Oblivion::Func_GetFirstRef, OBLIVION );
-	DefineFunction( "GetNextRef", "", Oblivion::Func_GetNextRef, OBLIVION );
-	DefineFunction( "GetControl", "x", Oblivion::Func_GetControl, OBLIVION );
 }
 
 void API::Terminate()

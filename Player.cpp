@@ -134,21 +134,10 @@ vector<string> PlayerFunctor::operator()()
 			{
 				unsigned int forward, backward, left, right;
 
-				if ( API::GetGameCode() & FALLOUT_GAMES )
-				{
-					forward = player->GetPlayerControl( Values::Fallout::ControlCode_Forward );
-					backward = player->GetPlayerControl( Values::Fallout::ControlCode_Backward );
-					left = player->GetPlayerControl( Values::Fallout::ControlCode_Left );
-					right = player->GetPlayerControl( Values::Fallout::ControlCode_Right );
-				}
-
-				else
-				{
-					forward = player->GetPlayerControl( Values::Oblivion::ControlCode_Forward );
-					backward = player->GetPlayerControl( Values::Oblivion::ControlCode_Backward );
-					left = player->GetPlayerControl( Values::Oblivion::ControlCode_SlideLeft );
-					right = player->GetPlayerControl( Values::Oblivion::ControlCode_SlideRight );
-				}
+                forward = player->GetPlayerControl( Values::Fallout::ControlCode_Forward );
+                backward = player->GetPlayerControl( Values::Fallout::ControlCode_Backward );
+                left = player->GetPlayerControl( Values::Fallout::ControlCode_Left );
+                right = player->GetPlayerControl( Values::Fallout::ControlCode_Right );
 
 				unsigned int movcontrols = ( right | ( left << 8 ) | ( backward << 16 ) | ( forward << 24 ) );
 

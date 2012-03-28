@@ -9,7 +9,7 @@ ServerEntry::ServerEntry( unsigned char game )
 	this->map = "default";
 	this->players = pair<int, int>( 0, 0 );
 	this->ping = USHRT_MAX;
-	this->SetServerRule( "game", game == FALLOUT3 ? "Fallout 3" : game == NEWVEGAS ? "Fallout NV" : game == OBLIVION ? "TES: Oblivion" : "undefined" );
+	this->SetServerRule( "game", game == FALLOUT3 ? "Fallout 3" : game == NEWVEGAS ? "Fallout NV" : "undefined" );
 }
 
 ServerEntry::ServerEntry( string name, string map, pair<int, int> players, int ping, unsigned char game )
@@ -51,7 +51,7 @@ void ServerEntry::SetServerPing( int ping )
 void ServerEntry::SetGame( unsigned char game )
 {
 	this->game = game;
-	this->SetServerRule( "game", game == FALLOUT3 ? "Fallout 3" : game == NEWVEGAS ? "Fallout NV" : game == OBLIVION ? "TES: Oblivion" : "undefined" );
+	this->SetServerRule( "game", game == FALLOUT3 ? "Fallout 3" : game == NEWVEGAS ? "Fallout NV" : "undefined" );
 }
 
 string ServerEntry::GetServerName()

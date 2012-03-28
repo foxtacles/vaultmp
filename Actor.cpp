@@ -266,8 +266,7 @@ bool Actor::IsActorJumping() const
 	unsigned char anim = this->GetActorMovingAnimation();
 	unsigned char game = API::GetGameCode();
 
-	return ( ( game & OBLIVION && anim >= Oblivion::AnimGroup_JumpStart && anim <= Oblivion::AnimGroup_JumpLand )
-			 || ( game & FALLOUT3 && ( ( anim >= Fallout3::AnimGroup_JumpStart && anim <= Fallout3::AnimGroup_JumpLand )
+	return ( ( game & FALLOUT3 && ( ( anim >= Fallout3::AnimGroup_JumpStart && anim <= Fallout3::AnimGroup_JumpLand )
 									   || ( anim >= Fallout3::AnimGroup_JumpLoopForward && anim <= Fallout3::AnimGroup_JumpLoopRight )
 									   || ( anim >= Fallout3::AnimGroup_JumpLandForward && anim <= Fallout3::AnimGroup_JumpLandRight ) ) )
 			 || ( game & NEWVEGAS && ( ( anim >= FalloutNV::AnimGroup_JumpStart && anim <= FalloutNV::AnimGroup_JumpLand )

@@ -20,6 +20,3 @@ static const unsigned int ITEM_GET_NEWVEGAS           = 0x005754A0;
 static const unsigned int ITEM_ISEQUIPPED_NEWVEGAS    = 0x004BDDD0;
 static const unsigned int ITEM_CONDITION_NEWVEGAS     = 0x004BCDB0;
 static const unsigned int ITEM_UNK1_NEWVEGAS          = 0x004459E0;
-
-static const unsigned int LOOKUP_FORM_OBLIVION        = 0x0046B250; // Credit goes to OBSE
-static const unsigned int LOOKUP_FUNC_OBLIVION        = 0x004FCA30;

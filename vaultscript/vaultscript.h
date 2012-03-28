@@ -30,9 +30,8 @@ namespace vaultmp
 
 	static const Index FALLOUT3             =   0x01;
 	static const Index NEWVEGAS             =   FALLOUT3 << 1;
-	static const Index OBLIVION             =   NEWVEGAS << 1;
 	static const Index FALLOUT_GAMES        =   FALLOUT3 | NEWVEGAS;
-	static const Index ALL_GAMES            =   FALLOUT_GAMES | OBLIVION;
+	static const Index ALL_GAMES            =   FALLOUT_GAMES;
 
 	static const Index MAX_PLAYER_NAME      =   16;
 	static const Index MAX_PASSWORD_SIZE    =   16;

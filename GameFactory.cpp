@@ -27,10 +27,6 @@ void GameFactory::Initialize( unsigned char game )
 			Container::Items = &Container::FalloutNVItems;
 			break;
 
-		case OBLIVION:
-			Container::Items = &Container::OblivionItems;
-			break;
-
 		default:
 			throw VaultException( "Bad game ID %08X", game );
 	}

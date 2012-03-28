@@ -125,7 +125,6 @@ void Bethesda::CommandHandler( signed int key, vector<boost::any>& info, boost::
 
 			case Fallout3::Functions::Func_GetParentCell:
 			case FalloutNV::Functions::Func_GetParentCell:
-			case Oblivion::Functions::Func_GetParentCell:
 				{
 					reference = GameFactory::GetObject( boost::any_cast<unsigned int>( info.at( 1 ) ) );
 					self = GameFactory::GetObject( PLAYER_REFERENCE );
@@ -135,14 +134,12 @@ void Bethesda::CommandHandler( signed int key, vector<boost::any>& info, boost::
 
 			case Fallout3::Functions::Func_GetControl:
 			case FalloutNV::Functions::Func_GetControl:
-			case Oblivion::Functions::Func_GetControl:
 				self = GameFactory::GetObject( PLAYER_REFERENCE );
 				Game::GetControl( self, boost::any_cast<int>( info.at( 1 ) ), boost::any_cast<double>( result ) );
 				break;
 
 			case Fallout3::Functions::Func_Load:
 			case FalloutNV::Functions::Func_Load:
-			case Oblivion::Functions::Func_Load:
 				self = GameFactory::GetObject( PLAYER_REFERENCE );
 				Game::SetName( self, vaultcast<Player>( self )->GetName() );
 				// reload game world
@@ -150,7 +147,6 @@ void Bethesda::CommandHandler( signed int key, vector<boost::any>& info, boost::
 
 			case Fallout3::Functions::Func_SetName:
 			case FalloutNV::Functions::Func_SetName:
-			case Oblivion::Functions::Func_SetName:
 				break;
 
 			default:
@@ -203,11 +199,6 @@ void Bethesda::Initialize()
 			strcpy( module, "FalloutNV.exe" );
 			break;
 
-		case OBLIVION:
-			SetEnvironmentVariable( "SteamAppID", "22330" );
-			strcpy( module, "Oblivion.exe" );
-			break;
-
 		default:
 			throw VaultException( "Bad game ID %08X", Bethesda::game );
 	}
@@ -224,10 +215,6 @@ void Bethesda::Initialize()
 
 		case NEWVEGAS:
 			strcat( savefile, "\\My Games\\FalloutNV\\Saves\\" );
-			break;
-
-		case OBLIVION:
-			strcat( savefile, "\\My Games\\Oblivion\\Saves\\" );
 			break;
 	}
 
@@ -272,10 +259,6 @@ void Bethesda::Initialize()
 
 		case NEWVEGAS:
 			strcat( savefile, "\\FalloutNV\\plugins.txt" );
-			break;
-
-		case OBLIVION:
-			strcat( savefile, "\\Oblivion\\Plugins.txt" );
 			break;
 	}
 
@@ -399,7 +382,7 @@ void Bethesda::Initialize()
 	}
 
 	else
-		throw VaultException( "Either Fallout 3, Fallout: New Vegas or TES: Oblivion is already runnning" );
+		throw VaultException( "Either Fallout 3 or Fallout: New Vegas is already runnning" );
 }
 
 void Bethesda::InitializeVaultMP( RakPeerInterface* peer, SystemAddress server, string name, string pwd, unsigned char game )
@@ -414,7 +397,7 @@ void Bethesda::InitializeVaultMP( RakPeerInterface* peer, SystemAddress server, 
 #ifdef VAULTMP_DEBUG
 	debug = new Debug( ( char* ) "vaultmp" );
 	debug->PrintFormat( "Vault-Tec Multiplayer Mod client debug log (%s)", false, CLIENT_VERSION );
-	debug->PrintFormat( "Connecting to server: %s (name: %s, password: %s, game: %s)", false, server.ToString(), name.c_str(), pwd.c_str(), game == FALLOUT3 ? ( char* ) "Fallout 3" : game == NEWVEGAS ? ( char* ) "Fallout New Vegas" : ( char* ) "TES Oblivion" );
+	debug->PrintFormat( "Connecting to server: %s (name: %s, password: %s, game: %s)", false, server.ToString(), name.c_str(), pwd.c_str(), game == FALLOUT3 ? ( char* ) "Fallout 3" : ( char* ) "Fallout New Vegas" );
 	debug->Print( "Visit www.vaultmp.com for help and upload this log if you experience problems with the mod.", false );
 	debug->Print( "-----------------------------------------------------------------------------------------------------", false );
 	//debug->PrintSystem();

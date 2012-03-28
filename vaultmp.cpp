@@ -181,10 +181,6 @@ class FileServer : public FileListTransferCBInterface
 							case NEWVEGAS:
 								strcat( file, "\\My Games\\FalloutNV\\Saves\\" );
 								break;
-
-							case OBLIVION:
-								strcat( file, "\\My Games\\Oblivion\\Saves\\" );
-								break;
 						}
 
 						strcat( file, Utils::FileOnly( onFileStruct->fileName ) );
@@ -351,41 +347,8 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR cmdline,
 			return MessageBox( NULL, "Your version of Fallout: New Vegas is not supported!", "Error", MB_OK | MB_ICONERROR );
 	}
 
-	filecheck = fopen( "Oblivion.exe", "rb" );
-
-	if ( filecheck != NULL )
-	{
-		fclose( filecheck );
-		Utils::GenerateChecksum( "Oblivion.exe", checksum, checksum_real );
-
-		if ( checksum == OBLIVION_EN_VER120416 || checksum == OBLIVION_EN_VER120416_STEAM )
-		{
-			filecheck = fopen( "obse_1_2_416.dll", "rb" );
-
-			if ( filecheck != NULL )
-			{
-				fclose( filecheck );
-				Utils::GenerateChecksum( "obse_1_2_416.dll", checksum, checksum_real );
-
-				if ( checksum_real == OBSE_VER0020 )
-				{
-					games |= OBLIVION;
-				}
-
-				else
-					return MessageBox( NULL, "Your OBSE version is probably outdated!\nhttp://obse.silverlock.org/", "Error", MB_OK | MB_ICONERROR );
-			}
-
-			else
-				return MessageBox( NULL, "Could not find OBSE!\nhttp://obse.silverlock.org/", "Error", MB_OK | MB_ICONERROR );
-		}
-
-		else
-			return MessageBox( NULL, "Your version of TES: Oblivion is not supported!", "Error", MB_OK | MB_ICONERROR );
-	}
-
 	if ( !games )
-		return MessageBox( NULL, "Could not find either Fallout 3, Fallout: New Vegas or TES: Oblivion!", "Error", MB_OK | MB_ICONERROR );
+		return MessageBox( NULL, "Could not find either Fallout 3 or Fallout: New Vegas!", "Error", MB_OK | MB_ICONERROR );
 
 	filecheck = fopen( "vaultmp.dll", "rb" );
 
@@ -522,10 +485,10 @@ void CreateWindowContent( HWND parent )
 	SendMessage( wnd, WM_SETFONT, ( WPARAM ) hFont, TRUE );
 	wndprogressbar = wnd;
 
-	wnd = CreateWindowEx( 0x00000000, "Static", "Fallout / TES: Oblivion are trademarks of Bethesda Softworks LLC in the U.S. and/or", 0x5000030C, 12, 374, 531, 18, parent, ( HMENU ) IDC_STATIC0, instance, NULL );
+	wnd = CreateWindowEx( 0x00000000, "Static", "Fallout is a trademark of Bethesda Softworks LLC in the U.S. and/or other countries.", 0x5000030C, 12, 374, 531, 18, parent, ( HMENU ) IDC_STATIC0, instance, NULL );
 	SendMessage( wnd, WM_SETFONT, ( WPARAM ) hFont, TRUE );
 
-	wnd = CreateWindowEx( 0x00000000, "Static", "other countries. Vault-Tec Multiplayer Mod is not affliated with Bethesda Softworks LLC.", 0x50000300, 12, 392, 531, 18, parent, ( HMENU ) IDC_STATIC1, instance, NULL );
+	wnd = CreateWindowEx( 0x00000000, "Static", "Vault-Tec Multiplayer Mod is not affliated with Bethesda Softworks LLC.", 0x50000300, 12, 392, 531, 18, parent, ( HMENU ) IDC_STATIC1, instance, NULL );
 	SendMessage( wnd, WM_SETFONT, ( WPARAM ) hFont, TRUE );
 
 	wnd = CreateWindowEx( 0x00000000, "Button", "Powered by", 0x50020007, 6, 294, 531, 78, parent, ( HMENU ) IDC_GROUP2, instance, NULL );
@@ -758,10 +721,6 @@ LRESULT CALLBACK WindowProcedure( HWND hwnd, UINT message, WPARAM wParam, LPARAM
 
 									case NEWVEGAS:
 										MessageBox( NULL, "Could not find FalloutNV.exe!", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL );
-										break;
-
-									case OBLIVION:
-										MessageBox( NULL, "Could not find Oblivion.exe!", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL );
 										break;
 
 									default:

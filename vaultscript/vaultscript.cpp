@@ -19,10 +19,6 @@ void VAULTSCRIPT exec()
 		case NEWVEGAS:
 			SetServerMap( "mojave desert" );
 			break;
-
-		case OBLIVION:
-			SetServerMap( "cyrodiil" );
-			break;
 	}
 }
 
@@ -47,10 +43,6 @@ Base VAULTSCRIPT OnPlayerRequestGame( ID player )
 
 		case NEWVEGAS:
 			base = 0x0010C0BE; // Jessup
-			break;
-
-		case OBLIVION:
-			base = 0x000A3166; // Achille
 			break;
 	}
 

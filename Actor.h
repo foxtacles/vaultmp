@@ -38,11 +38,9 @@ class Actor : public Container
 	private:
 		static Database Fallout3Actors;
 		static Database FalloutNVActors;
-		static Database OblivionActors;
 
 		static Database Fallout3Creatures;
 		static Database FalloutNVCreatures;
-		static Database OblivionCreatures;
 
 		static Database* Actors;
 		static Database* Creatures;

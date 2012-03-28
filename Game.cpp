@@ -64,16 +64,10 @@ void Game::Initialize()
 	Interface::DefineCommand( "PlaceAtMe", "%0.PlaceAtMe %1 %2 %3 %4" );
 	Interface::DefineCommand( "Load", "Load %0" );
 
-	if ( game & FALLOUT_GAMES )
-	{
-		Interface::DefineCommand( "IsMoving", "%0.IsMoving" );
-		Interface::DefineCommand( "IsAnimPlaying", "%0.IsAnimPlaying %1" );
-		Interface::DefineCommand( "MarkForDelete", "%0.MarkForDelete" );
-		Interface::DefineCommand( "ScanContainer", "%0.ScanContainer" );
-	}
-
-	else
-		Interface::DefineCommand( "IsAnimGroupPlaying", "%0.IsAnimGroupPlaying %1" );
+    Interface::DefineCommand( "IsMoving", "%0.IsMoving" );
+    Interface::DefineCommand( "IsAnimPlaying", "%0.IsAnimPlaying %1" );
+    Interface::DefineCommand( "MarkForDelete", "%0.MarkForDelete" );
+    Interface::DefineCommand( "ScanContainer", "%0.ScanContainer" );
 
 	Interface::DefineCommand( "GetActorState", "%0.GetActorState %1" );
 	Interface::DefineCommand( "GetActorStateNotSelf", "%0.GetActorState", "GetActorState" );
@@ -136,21 +130,13 @@ void Game::Startup()
 
 		vector<string> healthValues;
 
-		if ( game & FALLOUT_GAMES )
-		{
-			healthValues.push_back( API::RetrieveValue_Reverse( Fallout::ActorVal_Health ) );
-			healthValues.push_back( API::RetrieveValue_Reverse( Fallout::ActorVal_Head ) );
-			healthValues.push_back( API::RetrieveValue_Reverse( Fallout::ActorVal_Torso ) );
-			healthValues.push_back( API::RetrieveValue_Reverse( Fallout::ActorVal_LeftArm ) );
-			healthValues.push_back( API::RetrieveValue_Reverse( Fallout::ActorVal_RightArm ) );
-			healthValues.push_back( API::RetrieveValue_Reverse( Fallout::ActorVal_LeftLeg ) );
-			healthValues.push_back( API::RetrieveValue_Reverse( Fallout::ActorVal_RightLeg ) );
-		}
-
-		else
-		{
-
-		}
+        healthValues.push_back( API::RetrieveValue_Reverse( Fallout::ActorVal_Health ) );
+        healthValues.push_back( API::RetrieveValue_Reverse( Fallout::ActorVal_Head ) );
+        healthValues.push_back( API::RetrieveValue_Reverse( Fallout::ActorVal_Torso ) );
+        healthValues.push_back( API::RetrieveValue_Reverse( Fallout::ActorVal_LeftArm ) );
+        healthValues.push_back( API::RetrieveValue_Reverse( Fallout::ActorVal_RightArm ) );
+        healthValues.push_back( API::RetrieveValue_Reverse( Fallout::ActorVal_LeftLeg ) );
+        healthValues.push_back( API::RetrieveValue_Reverse( Fallout::ActorVal_RightLeg ) );
 
 		ParamList param_GetActorValue_Health;
 		//param_GetActorValue_Health.push_back(Player::Param_EnabledPlayers);
@@ -286,17 +272,14 @@ void Game::Delete( FactoryObject& reference )
 
 	Object* object = vaultcast<Object>( reference );
 
-	if ( game & FALLOUT_GAMES )
-	{
-		Interface::StartSession();
+    Interface::StartSession();
 
-		ParamList param_MarkForDelete;
-		param_MarkForDelete.push_back( object->GetReferenceParam() );
-		ParamContainer MarkForDelete = ParamContainer( param_MarkForDelete, &Data::AlwaysTrue );
-		Interface::ExecuteCommandOnce( "MarkForDelete", MarkForDelete );
+    ParamList param_MarkForDelete;
+    param_MarkForDelete.push_back( object->GetReferenceParam() );
+    ParamContainer MarkForDelete = ParamContainer( param_MarkForDelete, &Data::AlwaysTrue );
+    Interface::ExecuteCommandOnce( "MarkForDelete", MarkForDelete );
 
-		Interface::EndSession();
-	}
+    Interface::EndSession();
 
 	GameFactory::DestroyInstance( reference );
 }

@@ -81,10 +81,6 @@ int main( int argc, char* argv[] )
 
 	if ( stricmp( game_str, "newvegas" ) == 0 )
 		game = NEWVEGAS;
-
-	else if ( stricmp( game_str, "oblivion" ) == 0 )
-		game = OBLIVION;
-
 	else
 		game = FALLOUT3;
 

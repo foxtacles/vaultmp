@@ -37,13 +37,6 @@ static const unsigned Fallout3patch_delegator_dest = 0x006EDBD9;
 static const unsigned Fallout3patch_delegatorCall_src = 0x006EDBDA;
 static const unsigned Fallout3patch_delegatorCall_dest = ( unsigned ) &BethesdaDelegator;
 
-static const unsigned OblivionPatch_delegator_src = 0x0040F270;
-static const unsigned OblivionPatch_delegator_dest = 0x0040F753;
-static const unsigned OblivionPatch_delegator_ret_src = 0x0040F75A;
-static const unsigned OblivionPatch_delegator_ret_dest = 0x0040D800;
-static const unsigned OblivionPatch_delegatorCall_src = 0x0040F754;
-static const unsigned OblivionPatch_delegatorCall_dest = ( unsigned ) &BethesdaDelegator;
-
 // Those snippets are from FOSE, thanks
 
 void SafeWrite8( unsigned int addr, unsigned int data )
@@ -119,8 +112,7 @@ bool vaultfunction( void* reference, void* result, void* args, unsigned short op
 					"CALL %2\n"
 					"MOV %0,EAX\n"
 					: "=m"( data )
-					: "m"( reference ), "r"( ( game & FALLOUT_GAMES ) ? ( *( ( unsigned int* ) ( ( unsigned ) *( ( unsigned int* ) reference ) + ( unsigned ) 0x01E4 ) ) )
-											 : ( *( ( unsigned int* ) ( ( unsigned ) *( ( unsigned int* ) reference ) + ( unsigned ) 0x0164 ) ) ) )
+					: "m"( reference ), "r"(  *( ( unsigned int* ) ( ( unsigned ) *( ( unsigned int* ) reference ) + ( unsigned ) 0x01E4 ) ) )
 					: "ecx"
 				);
 
@@ -128,19 +120,9 @@ bool vaultfunction( void* reference, void* result, void* args, unsigned short op
 				{
 					unsigned char alerted, sneaking, running;
 
-					if ( game & FALLOUT_GAMES )
-					{
-						alerted = *( data + 0x6C ) != 0xFF ? 0x01 : 0x00;
-						sneaking = *( data + 0x4D ) == 0x10 ? 0x01 : 0x00;
-						running = *( data + 0x4E );
-					}
-
-					else
-					{
-						alerted = *( data + 0x5C ) != 0xFF ? 0x01 : 0x00;
-						sneaking = *( data + 0x3D ) == 0x10 ? 0x01 : 0x00;
-						running = *( data + 0x3C );
-					}
+                    alerted = *( data + 0x6C ) != 0xFF ? 0x01 : 0x00;
+                    sneaking = *( data + 0x4D ) == 0x10 ? 0x01 : 0x00;
+                    running = *( data + 0x4E );
 
 					memcpy( result, &alerted, 1 );
 					memcpy( ( void* ) ( ( unsigned ) result + 1 ), &sneaking, 1 );
@@ -183,9 +165,6 @@ bool vaultfunction( void* reference, void* result, void* args, unsigned short op
 		case 0xE002: // ScanContainer - Returns a containers content including baseID, amount, condition, equipped state
 			{
 				ZeroMemory( result, sizeof( double ) );
-
-				if ( !( game & FALLOUT_GAMES ) )
-					break;
 
 				unsigned int count;
 
@@ -618,12 +597,6 @@ void PatchGame( HINSTANCE& silverlock )
 		silverlock = LoadLibrary( "nvse_1_1.dll" );
 	}
 
-	else if ( strstr( curdir, "Oblivion.exe" ) )
-	{
-		game = OBLIVION;
-		silverlock = LoadLibrary( "obse_1_2_416.dll" );
-	}
-
 	if ( silverlock == NULL )
 		DLLerror = true;
 
@@ -655,21 +628,6 @@ void PatchGame( HINSTANCE& silverlock )
 
 				WriteRelCall( FalloutNVpatch_delegatorCall_src, FalloutNVpatch_delegatorCall_dest );
 				WriteRelCall( FalloutNVpatch_delegator_src, FalloutNVpatch_delegator_dest );
-
-				break;
-			}
-
-		case OBLIVION:
-			{
-				FormLookup = ( LookupForm ) LOOKUP_FORM_OBLIVION;
-				FuncLookup = ( LookupFunc ) LOOKUP_FUNC_OBLIVION;
-
-				SafeWrite8( OblivionPatch_delegator_dest, 0x51 ); // PUSH ECX
-				SafeWrite8( OblivionPatch_delegatorCall_src + 5, 0x59 ); // POP ECX
-
-				WriteRelJump( OblivionPatch_delegator_ret_src, OblivionPatch_delegator_ret_dest );
-				WriteRelCall( OblivionPatch_delegatorCall_src, OblivionPatch_delegatorCall_dest );
-				WriteRelCall( OblivionPatch_delegator_src, OblivionPatch_delegator_dest );
 
 				break;
 			}

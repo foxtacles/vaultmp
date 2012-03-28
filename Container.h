@@ -50,7 +50,6 @@ class Container : public Object
 	private:
 		static Database Fallout3Items;
 		static Database FalloutNVItems;
-		static Database OblivionItems;
 
 		static Database* Items;
 

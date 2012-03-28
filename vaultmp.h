@@ -10,12 +10,9 @@
 static const unsigned int FALLOUT3_EN_VER17            =   0x00E59528;
 //static const unsigned int FALLOUT3_EN_VER17_STEAM      =
 static const unsigned int NEWVEGAS_EN_VER14_STEAM      =   0x00FCB4FE;
-static const unsigned int OBLIVION_EN_VER120416        =   0x0073A457;
-static const unsigned int OBLIVION_EN_VER120416_STEAM  =   0x00793BDD;
 
 static const unsigned int FOSE_VER0122                 =   0x0004E1B5;
 static const unsigned int NVSE_VER0209                 =   0x00065388;
-static const unsigned int OBSE_VER0020                 =   0x0012AE8A;
 
 static const unsigned int VAULTMP_DLL                  =   0x0003D5E4;
 static const unsigned int XLIVE_PATCH                  =   0x0000D57E;
@@ -37,9 +34,8 @@ www.vaultmp.com"
 
 static const unsigned char FALLOUT3             =   0x01;
 static const unsigned char NEWVEGAS             =   FALLOUT3 << 1;
-static const unsigned char OBLIVION             =   NEWVEGAS << 1;
 static const unsigned char FALLOUT_GAMES        =   FALLOUT3 | NEWVEGAS;
-static const unsigned char ALL_GAMES            =   FALLOUT_GAMES | OBLIVION;
+static const unsigned char ALL_GAMES            =   FALLOUT_GAMES;
 
 static const unsigned int MAX_PLAYER_NAME       =   16;
 static const unsigned int MAX_PASSWORD_SIZE     =   16;
