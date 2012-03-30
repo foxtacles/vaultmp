@@ -14,7 +14,17 @@ Player::Player( unsigned int refID, unsigned int baseID ) : Actor( refID, baseID
 Player::Player(const pDefault* packet) : Actor(PacketFactory::ExtractPartial(packet))
 {
     initialize();
-    // read packet
+
+    map<unsigned char, pair<unsigned char, bool> > controls;
+    map<unsigned char, pair<unsigned char, bool> >::iterator it;
+
+    PacketFactory::Access(packet, &controls);
+
+    for (it = controls.begin(); it != controls.end(); ++it)
+    {
+        this->SetPlayerControl(it->first, it->second.first);
+        this->SetPlayerControlEnabled(it->first, it->second.second);
+    }
 }
 
 Player::~Player()

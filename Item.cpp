@@ -23,7 +23,16 @@ Item::Item( unsigned int refID, unsigned int baseID ) : Object( refID, baseID )
 Item::Item(const pDefault* packet) : Object(PacketFactory::ExtractPartial(packet))
 {
     initialize();
-    // read packet
+
+    unsigned int count;
+    double condition;
+    bool equipped;
+
+    PacketFactory::Access(packet, &count, &condition, &equipped);
+
+    this->SetItemCount(count);
+    this->SetItemCondition(condition);
+    this->SetItemEquipped(equipped);
 }
 
 Item::Item(pDefault* packet) : Item(reinterpret_cast<const pDefault*>(packet))

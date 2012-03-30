@@ -25,7 +25,18 @@ Container::Container( unsigned int refID, unsigned int baseID ) : Object( refID,
 Container::Container(const pDefault* packet) : Object(PacketFactory::ExtractPartial(packet))
 {
     initialize();
-    // read packet
+
+    list<pDefault*> items;
+    list<pDefault*>::iterator it;
+
+    PacketFactory::Access(packet, &items);
+
+    for (it = items.begin(); it != items.end(); ++it)
+    {
+        NetworkID id = GameFactory::CreateKnownInstance(ID_ITEM_NEW, *it);
+        this->AddItem(id);
+        PacketFactory::FreePacket(*it);
+    }
 }
 
 Container::Container(pDefault* packet) : Container(reinterpret_cast<const pDefault*>(packet))

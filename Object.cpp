@@ -31,7 +31,26 @@ Object::Object( unsigned int refID, unsigned int baseID ) : Reference( refID, ba
 
 Object::Object(const pDefault* packet) : Object( PacketFactory::ExtractReference(packet), PacketFactory::ExtractBase(packet) )
 {
-    // read packet
+    NetworkID id;
+    unsigned int refID, baseID;
+    char name[MAX_PLAYER_NAME + 1];
+    ZeroMemory(name, sizeof(name));
+    double X, Y, Z, aX, aY, aZ;
+    unsigned int cell;
+    bool enabled;
+
+    PacketFactory::Access(packet, &id, &refID, &baseID, name, &X, &Y, &Z, &aX, &aY, &aZ, &cell, &enabled);
+
+    // NetworkID set by GameFactory, refID and baseID in constructor
+    this->SetName(string(name));
+    this->SetNetworkPos(Axis_X, X);
+    this->SetNetworkPos(Axis_Y, Y);
+    this->SetNetworkPos(Axis_Z, Z);
+    this->SetAngle(Axis_X, aX);
+    this->SetAngle(Axis_Y, aY);
+    this->SetAngle(Axis_Z, aZ);
+    this->SetNetworkCell(cell);
+    this->SetEnabled(enabled);
 }
 
 Object::Object(pDefault* packet) : Object(reinterpret_cast<const pDefault*>(packet))

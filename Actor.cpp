@@ -18,7 +18,25 @@ Actor::Actor( unsigned int refID, unsigned int baseID ) : Container( refID, base
 Actor::Actor(const pDefault* packet) : Container(PacketFactory::ExtractPartial(packet))
 {
     initialize();
-    // read packet
+
+    map<unsigned char, double> values, baseValues;
+    map<unsigned char, double>::iterator it, it2;
+    unsigned char moving, moving_xy;
+    bool alerted, sneaking, dead;
+
+    PacketFactory::Access(packet, &values, &baseValues, &moving, &moving_xy, &alerted, &sneaking, &dead);
+
+    for (it = values.begin(), it2 = baseValues.begin(); it != values.end() && it2 != baseValues.end(); ++it, ++it2)
+    {
+        this->SetActorValue(it->first, it->second);
+        this->SetActorBaseValue(it2->first, it2->second);
+    }
+
+    this->SetActorMovingAnimation(moving);
+    this->SetActorMovingXY(moving_xy);
+    this->SetActorAlerted(alerted);
+    this->SetActorSneaking(sneaking);
+    this->SetActorDead(dead);
 }
 
 Actor::Actor(pDefault* packet) : Actor(reinterpret_cast<const pDefault*>(packet))
