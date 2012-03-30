@@ -367,11 +367,9 @@ void PacketFactory::Access( const pDefault* packet, ... )
             case ID_ITEM_NEW:
             {
                 const pItemNew* data = dynamic_cast<const pItemNew*>( packet );
-                pDefault** _pObjectNew = va_arg( args, pDefault** );
                 unsigned int* count = va_arg( args, unsigned int* );
                 double* condition = va_arg( args, double* );
                 bool* equipped = va_arg( args, bool* );
-                *_pObjectNew = new pObjectNew(data->id, data->refID, data->baseID, data->_data._data_pObjectNew);
                 *count = data->_data.count;
                 *condition = data->_data.condition;
                 *equipped = data->_data.equipped;
@@ -381,15 +379,12 @@ void PacketFactory::Access( const pDefault* packet, ... )
             case ID_CONTAINER_NEW:
             {
                 const pContainerNew* data = dynamic_cast<const pContainerNew*>( packet );
-                pDefault** __pObjectNew = va_arg( args, pDefault** );
                 list<pDefault*>* _pItemNew = va_arg( args, list<pDefault*>* );
 
-                *__pObjectNew = new pObjectNew(data->id, data->refID, data->baseID, *reinterpret_cast<_pObjectNew*>(&data->_data[data->base_len]));
                 _pItemNew->clear();
-
-                unsigned int length = data->base_len + sizeof(_pItemNew);
-                unsigned int size = *reinterpret_cast<unsigned int*>(&data->_data[data->base_len + sizeof(_pObjectNew)]);
-                unsigned int at = data->base_len + sizeof(_pObjectNew) + sizeof(unsigned int);
+                unsigned int length = pItemNew::as_packet_length();
+                unsigned int size = *reinterpret_cast<unsigned int*>(&data->_data[pObjectNew::data_length()]);
+                unsigned int at = pObjectNew::data_length() + sizeof(unsigned int);
 
                 for (int i = 0; i < size; ++i, at += length)
                 {
@@ -402,7 +397,6 @@ void PacketFactory::Access( const pDefault* packet, ... )
             case ID_ACTOR_NEW:
             {
                 const pActorNew* data = dynamic_cast<const pActorNew*>( packet );
-                pDefault** __pContainerNew = va_arg( args, pDefault** );
                 map<unsigned char, double>* values = (map<unsigned char, double>*) va_arg( args, void*);
                 map<unsigned char, double>* baseValues = (map<unsigned char, double>*) va_arg( args, void*);
                 unsigned char* moving = va_arg(args, unsigned char*);
@@ -411,13 +405,11 @@ void PacketFactory::Access( const pDefault* packet, ... )
                 bool* sneaking = va_arg(args, bool*);
                 bool* dead = va_arg(args, bool*);
 
-                *__pContainerNew = new pContainerNew(data->id, data->refID, data->baseID, &data->_data[data->base_length()]);
                 values->clear();
                 baseValues->clear();
-
                 unsigned int length = sizeof(unsigned char) + sizeof(double);
-                unsigned int size = *reinterpret_cast<unsigned int*>(&data->_data[data->base_length() + (*__pContainerNew)->length() - (*__pContainerNew)->base_length()]);
-                unsigned int at = (data->base_length() + (*__pContainerNew)->length() - (*__pContainerNew)->base_length()) + sizeof(unsigned int);
+                unsigned int size = *reinterpret_cast<unsigned int*>(&data->_data[pContainerNew::data_length(data->_data)]);
+                unsigned int at = pContainerNew::data_length(data->_data) + sizeof(unsigned int);
 
                 for (int i = 0; i < size; ++i, at += length)
                     values->insert(pair<unsigned char, double>(*reinterpret_cast<unsigned char*>(&data->_data[at]), *reinterpret_cast<double*>(&data->_data[at + sizeof(unsigned char)])));
@@ -444,15 +436,12 @@ void PacketFactory::Access( const pDefault* packet, ... )
             case ID_PLAYER_NEW:
             {
                 const pPlayerNew* data = dynamic_cast<const pPlayerNew*>( packet );
-                pDefault** __pActorNew = va_arg( args, pDefault** );
                 map<unsigned char, pair<unsigned char, bool> >* controls = (map<unsigned char, pair<unsigned char, bool> >*) va_arg( args, void*);
 
-                *__pActorNew = new pActorNew(data->id, data->refID, data->baseID, &data->_data[data->base_length()]);
                 controls->clear();
-
                 unsigned int length = sizeof(unsigned char) + sizeof(unsigned char) + sizeof(bool);
-                unsigned int size = *reinterpret_cast<unsigned int*>(&data->_data[data->base_length() + (*__pActorNew)->length() - (*__pActorNew)->base_length()]);
-                unsigned int at = (data->base_length() + (*__pActorNew)->length() - (*__pActorNew)->base_length()) + sizeof(unsigned int);
+                unsigned int size = *reinterpret_cast<unsigned int*>(&data->_data[pActorNew::data_length(data->_data)]);
+                unsigned int at = pActorNew::data_length(data->_data) + sizeof(unsigned int);
 
                 for (int i = 0; i < size; ++i, at += length)
                     controls->insert(pair<unsigned char, pair<unsigned char, bool> >(*reinterpret_cast<unsigned char*>(&data->_data[at]), pair<unsigned char, bool>(*reinterpret_cast<double*>(&data->_data[at + sizeof(unsigned char)]), *reinterpret_cast<double*>(&data->_data[at + (sizeof(unsigned char) * 2)]))));

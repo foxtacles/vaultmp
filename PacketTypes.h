@@ -37,7 +37,7 @@ class pDefault
 			base();
 		};
 
-		pDefault( unsigned char* stream, unsigned int len )
+		pDefault( const unsigned char* stream, unsigned int len )
 		{
 			this->stream = new unsigned char[len];
 			memcpy( this->stream, stream, len );
@@ -95,7 +95,7 @@ class pGameDefault : public pDefault
 			base();
 		};
 
-		pGameDefault( unsigned char* stream, unsigned int len ) : pDefault( stream, len )
+		pGameDefault( const unsigned char* stream, unsigned int len ) : pDefault( stream, len )
 		{
 			base();
 		};
@@ -151,7 +151,7 @@ class pObjectDefault : public pDefault
 			base();
 		};
 
-		pObjectDefault( unsigned char* stream, unsigned int len ) : pDefault( stream, len )
+		pObjectDefault( const unsigned char* stream, unsigned int len ) : pDefault( stream, len )
 		{
 			base();
 		};
@@ -214,7 +214,7 @@ class pObjectNewDefault : public pObjectDefault
 			base();
 		};
 
-		pObjectNewDefault( unsigned char* stream, unsigned int len ) : pObjectDefault( stream, len )
+		pObjectNewDefault( const unsigned char* stream, unsigned int len ) : pObjectDefault( stream, len )
 		{
 			base();
 		};
@@ -286,7 +286,7 @@ class pObjectUpdateDefault : public pObjectDefault
 			base();
 		};
 
-		pObjectUpdateDefault( unsigned char* stream, unsigned int len ) : pObjectDefault( stream, len )
+		pObjectUpdateDefault( const unsigned char* stream, unsigned int len ) : pObjectDefault( stream, len )
 		{
 			base();
 		};
@@ -383,7 +383,7 @@ class pGameConfirm : public pGameDefault
 			strncpy( _data.name, name, sizeof( _data.name ) );
 			construct( &_data, sizeof( _data ) );
 		}
-		pGameConfirm( unsigned char* stream, unsigned int len ) : pGameDefault( stream, len )
+		pGameConfirm( const unsigned char* stream, unsigned int len ) : pGameDefault( stream, len )
 		{
 			deconstruct( &_data, sizeof( _data ) );
 		}
@@ -406,7 +406,7 @@ class pGameAuth : public pGameDefault
 			strncpy( _data.pwd, pwd, sizeof( _data.pwd ) );
 			construct( &_data, sizeof( _data ) );
 		}
-		pGameAuth( unsigned char* stream, unsigned int len ) : pGameDefault( stream, len )
+		pGameAuth( const unsigned char* stream, unsigned int len ) : pGameDefault( stream, len )
 		{
 			deconstruct( &_data, sizeof( _data ) );
 		}
@@ -424,7 +424,7 @@ class pGameLoad : public pGameDefault
 		{
 			construct();
 		}
-		pGameLoad( unsigned char* stream, unsigned int len ) : pGameDefault( stream, len )
+		pGameLoad( const unsigned char* stream, unsigned int len ) : pGameDefault( stream, len )
 		{
 			deconstruct();
 		}
@@ -447,7 +447,7 @@ class pGameMod : public pGameDefault
 			_data.crc = crc;
 			construct( &_data, sizeof( _data ) );
 		}
-		pGameMod( unsigned char* stream, unsigned int len ) : pGameDefault( stream, len )
+		pGameMod( const unsigned char* stream, unsigned int len ) : pGameDefault( stream, len )
 		{
 			deconstruct( &_data, sizeof( _data ) );
 		}
@@ -470,7 +470,7 @@ class pGameStart : public pGameDefault
 			_data.crc = crc;
 			construct( &_data, sizeof( _data ) );
 		}
-		pGameStart( unsigned char* stream, unsigned int len ) : pGameDefault( stream, len )
+		pGameStart( const unsigned char* stream, unsigned int len ) : pGameDefault( stream, len )
 		{
 			deconstruct( &_data, sizeof( _data ) );
 		}
@@ -491,7 +491,7 @@ class pGameEnd : public pGameDefault
 			reason.type = _reason;
 			construct( &reason, sizeof( reason ) );
 		}
-		pGameEnd( unsigned char* stream, unsigned int len ) : pGameDefault( stream, len )
+		pGameEnd( const unsigned char* stream, unsigned int len ) : pGameDefault( stream, len )
 		{
 			deconstruct( &reason, sizeof( reason ) );
 		}
@@ -550,13 +550,20 @@ class pObjectNew : public pObjectNewDefault
             _data = data;
 			construct( &_data, sizeof( _data ) );
 		}
-		pObjectNew( unsigned char* stream, unsigned int len ) : pObjectNewDefault( stream, len )
+		pObjectNew( const unsigned char* stream, unsigned int len ) : pObjectNewDefault( stream, len )
 		{
 			deconstruct( &_data, sizeof( _data ) );
 		}
 
 		pObjectNew( const pObjectNew& );
 		pObjectNew& operator=( const pObjectNew& );
+
+    public:
+        inline
+        static unsigned int data_length()
+        {
+            return sizeof(_pObjectNew);
+        }
 };
 
 class pItemNew : public pObjectNewDefault
@@ -568,7 +575,7 @@ class pItemNew : public pObjectNewDefault
 
 		pItemNew(pDefault* _data_pObjectNew, unsigned int count, double condition, bool equipped) : pObjectNewDefault( ID_ITEM_NEW, PacketFactory::ExtractReference(_data_pObjectNew), PacketFactory::ExtractBase(_data_pObjectNew), PacketFactory::ExtractNetworkID(_data_pObjectNew))
 		{
-            memcpy(&this->_data._data_pObjectNew, PacketFactory::ExtractRawData(_data_pObjectNew), sizeof(this->_data._data_pObjectNew));
+            memcpy(&this->_data._data_pObjectNew, PacketFactory::ExtractRawData(_data_pObjectNew), pObjectNew::data_length());
 			_data.count = count;
 			_data.condition = condition;
 			_data.equipped = equipped;
@@ -579,13 +586,29 @@ class pItemNew : public pObjectNewDefault
             _data = data;
 			construct( &_data, sizeof( _data ) );
 		}
-		pItemNew( unsigned char* stream, unsigned int len ) : pObjectNewDefault( stream, len )
+		pItemNew( const unsigned char* stream, unsigned int len ) : pObjectNewDefault( stream, len )
 		{
 			deconstruct( &_data, sizeof( _data ) );
 		}
 
 		pItemNew( const pItemNew& );
 		pItemNew& operator=( const pItemNew& );
+
+    public:
+        inline
+        static unsigned int data_length()
+        {
+            return sizeof(_pItemNew);
+        }
+
+        // I need a design solution for that
+
+        inline
+        static unsigned int as_packet_length()
+        {
+            return sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int) + sizeof(_pItemNew);
+        }
+
 };
 
 class pContainerNew : public pObjectNewDefault
@@ -598,13 +621,13 @@ class pContainerNew : public pObjectNewDefault
 		pContainerNew(pDefault* _data_pObjectNew, list<pDefault*>& _data_pItemNew) : pObjectNewDefault( ID_CONTAINER_NEW, PacketFactory::ExtractReference(_data_pObjectNew), PacketFactory::ExtractBase(_data_pObjectNew), PacketFactory::ExtractNetworkID(_data_pObjectNew))
 		{
             unsigned int at = 0;
-            unsigned int length = sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int) + sizeof(_pItemNew); // improve me: base_len
+            unsigned int length = pItemNew::as_packet_length();
             unsigned int size = _data_pItemNew.size();
-            unsigned int mem = sizeof(_pObjectNew) + (length * size) + sizeof(unsigned int);
+            unsigned int mem = pObjectNew::data_length() + (length * size) + sizeof(unsigned int);
             _data = new unsigned char[mem];
 
-            memcpy(&this->_data[0], PacketFactory::ExtractRawData(_data_pObjectNew), sizeof(_pObjectNew));
-            at += sizeof(_pObjectNew);
+            memcpy(&this->_data[0], PacketFactory::ExtractRawData(_data_pObjectNew), pObjectNew::data_length());
+            at += pObjectNew::data_length();
 
             memcpy(&this->_data[at], &size, sizeof(unsigned int));
             at += sizeof(unsigned int);
@@ -629,19 +652,17 @@ class pContainerNew : public pObjectNewDefault
 
             construct( _data, mem);
 		}
-		pContainerNew( NetworkID id, unsigned int refID, unsigned int baseID, unsigned char* data) : pObjectNewDefault( ID_CONTAINER_NEW, refID, baseID, id )
+		pContainerNew( NetworkID id, unsigned int refID, unsigned int baseID, const unsigned char* data) : pObjectNewDefault( ID_CONTAINER_NEW, refID, baseID, id )
 		{
-            unsigned int length = sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int) + sizeof(_pItemNew); // improve me: base_len
-            unsigned int size = *reinterpret_cast<unsigned int*>(&data[sizeof(_pObjectNew)]);
-            unsigned int mem = sizeof(_pObjectNew) + (length * size) + sizeof(unsigned int);
+		    unsigned int mem = pContainerNew::data_length(data);
             _data = new unsigned char[mem];
             memcpy(_data, data, mem);
 
 			construct( _data, mem);
 		}
-		pContainerNew( unsigned char* stream, unsigned int len ) : pObjectNewDefault( stream, len )
+		pContainerNew( const unsigned char* stream, unsigned int len ) : pObjectNewDefault( stream, len )
 		{
-            unsigned int mem = len - (sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int)); // improve me: base_len
+            unsigned int mem = len - this->base_length();
             _data = new unsigned char[mem];
 
             deconstruct( _data, mem);
@@ -653,6 +674,16 @@ class pContainerNew : public pObjectNewDefault
 
 		pContainerNew( const pContainerNew& );
 		pContainerNew& operator=( const pContainerNew& );
+
+    public:
+        static unsigned int data_length(const unsigned char* data)
+        {
+            unsigned int length = pItemNew::as_packet_length();
+            unsigned int size = *reinterpret_cast<const unsigned int*>(&data[pObjectNew::data_length()]);
+            unsigned int mem = pObjectNew::data_length() + (length * size) + sizeof(unsigned int);
+
+            return mem;
+        }
 };
 
 class pActorNew : public pObjectNewDefault
@@ -671,7 +702,7 @@ class pActorNew : public pObjectNewDefault
                 throw VaultException("Lengths of values / base values of an Actor must be equal!");
 
             unsigned int size = values.size();
-            unsigned int container_length = _data_pContainerNew->length() - _data_pContainerNew->base_length();
+            unsigned int container_length = pContainerNew::data_length(PacketFactory::ExtractRawData(_data_pContainerNew));
             unsigned int mem = container_length + (length * size) + sizeof(unsigned int) + (sizeof(unsigned char) * 2) + (sizeof(bool) * 3);
             _data = new unsigned char[mem];
 
@@ -715,24 +746,17 @@ class pActorNew : public pObjectNewDefault
 
             construct( _data, mem);
 		}
-		pActorNew( NetworkID id, unsigned int refID, unsigned int baseID, unsigned char* data) : pObjectNewDefault( ID_ACTOR_NEW, refID, baseID, id )
+		pActorNew( NetworkID id, unsigned int refID, unsigned int baseID, const unsigned char* data) : pObjectNewDefault( ID_ACTOR_NEW, refID, baseID, id )
 		{
-            unsigned int container_length = sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int) + sizeof(_pItemNew); // improve me: base_len
-            unsigned int container_size = *reinterpret_cast<unsigned int*>(&data[sizeof(_pObjectNew)]);
-            unsigned int mem = sizeof(_pObjectNew) + (container_length * container_size) + sizeof(unsigned int);
-
-            unsigned int length = sizeof(unsigned char) + sizeof(double);
-            unsigned int size = *reinterpret_cast<unsigned int*>(&data[mem]);
-            mem += (length * size) + sizeof(unsigned int) + (sizeof(unsigned char) * 2) + (sizeof(bool) * 3);;
-
+		    unsigned int mem = pActorNew::data_length(data);
             _data = new unsigned char[mem];
             memcpy(_data, data, mem);
 
 			construct( _data, mem);
 		}
-		pActorNew( unsigned char* stream, unsigned int len ) : pObjectNewDefault( stream, len )
+		pActorNew( const unsigned char* stream, unsigned int len ) : pObjectNewDefault( stream, len )
 		{
-            unsigned int mem = len - (sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int)); // improve me: base_len
+            unsigned int mem = len - this->base_length();
             _data = new unsigned char[mem];
 
             deconstruct( _data, mem);
@@ -744,6 +768,17 @@ class pActorNew : public pObjectNewDefault
 
 		pActorNew( const pActorNew& );
 		pActorNew& operator=( const pActorNew& );
+
+    public:
+        static unsigned int data_length(const unsigned char* data)
+        {
+            unsigned int mem = pContainerNew::data_length(data);
+            unsigned int length = sizeof(unsigned char) + sizeof(double);
+            unsigned int size = *reinterpret_cast<const unsigned int*>(&data[mem]);
+            mem += (length * size) + sizeof(unsigned int) + (sizeof(unsigned char) * 2) + (sizeof(bool) * 3);;
+
+            return mem;
+        }
 };
 
 class pPlayerNew : public pObjectNewDefault
@@ -758,7 +793,7 @@ class pPlayerNew : public pObjectNewDefault
             unsigned int at = 0;
             unsigned int length = sizeof(unsigned char) + sizeof(unsigned char) + sizeof(bool);
             unsigned int size = controls.size();
-            unsigned int actor_length = _data_pActorNew->length() - _data_pActorNew->base_length();
+            unsigned int actor_length = pActorNew::data_length(PacketFactory::ExtractRawData(_data_pActorNew));
             unsigned int mem = actor_length + (length * size) + sizeof(unsigned int);
             _data = new unsigned char[mem];
 
@@ -784,7 +819,7 @@ class pPlayerNew : public pObjectNewDefault
 		}
 		pPlayerNew( unsigned char* stream, unsigned int len ) : pObjectNewDefault( stream, len )
 		{
-            unsigned int mem = len - (sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int)); // improve me: base_len
+            unsigned int mem = len - this->base_length();
             _data = new unsigned char[mem];
 
             deconstruct( _data, mem);
