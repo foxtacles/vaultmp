@@ -578,13 +578,13 @@ const unsigned char* PacketFactory::ExtractRawData(const pDefault* packet)
         case ID_CONTAINER_NEW:
         {
             const pContainerNew* data = dynamic_cast<const pContainerNew*>( packet );
-            return reinterpret_cast<const unsigned char*>(&data->_data);
+            return reinterpret_cast<const unsigned char*>(data->_data);
         }
 
         case ID_ACTOR_NEW:
         {
             const pActorNew* data = dynamic_cast<const pActorNew*>( packet );
-            return reinterpret_cast<const unsigned char*>(&data->_data);
+            return reinterpret_cast<const unsigned char*>(data->_data);
         }
 
         default:
@@ -607,19 +607,19 @@ pDefault* PacketFactory::ExtractPartial(const pDefault* packet)
         case ID_CONTAINER_NEW:
         {
             const pContainerNew* data = dynamic_cast<const pContainerNew*>( packet );
-            return new pObjectNew(data->id, data->refID, data->baseID, *reinterpret_cast<_pObjectNew*>(&data->_data[data->base_len]));
+            return new pObjectNew(data->id, data->refID, data->baseID, *reinterpret_cast<_pObjectNew*>(data->_data));
         }
 
         case ID_ACTOR_NEW:
         {
             const pActorNew* data = dynamic_cast<const pActorNew*>( packet );
-            return new pContainerNew(data->id, data->refID, data->baseID, &data->_data[data->base_length()]);
+            return new pContainerNew(data->id, data->refID, data->baseID, data->_data);
         }
 
         case ID_PLAYER_NEW:
         {
             const pPlayerNew* data = dynamic_cast<const pPlayerNew*>( packet );
-            return new pActorNew(data->id, data->refID, data->baseID, &data->_data[data->base_length()]);
+            return new pActorNew(data->id, data->refID, data->baseID, data->_data);
         }
 
         default:
