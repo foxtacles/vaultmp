@@ -49,7 +49,7 @@ NetworkResponse NetworkClient::ProcessEvent( unsigned char id )
 			{
 				FactoryObject reference = GameFactory::GetObject( PLAYER_REFERENCE );
 				Player* self = vaultcast<Player>( reference );
-				pDefault* packet = PacketFactory::CreatePacket( ID_GAME_CONFIRM, self->GetNetworkID(), self->GetName().c_str() );
+				pDefault* packet = self->toPacket();
 				response = Network::CompleteResponse( Network::CreateResponse( packet,
 													  ( unsigned char ) HIGH_PRIORITY,
 													  ( unsigned char ) RELIABLE_ORDERED,
@@ -148,6 +148,8 @@ NetworkResponse NetworkClient::ProcessPacket( Packet* data )
                         case ID_GAME_LOAD:
                             {
                                 Game::Startup();
+                                // Player information is being already queried...flush the queue after response? => Duplicate information. Need better design solution.
+
                                 response = NetworkClient::ProcessEvent( ID_EVENT_GAME_LOADED );
                                 break;
                             }

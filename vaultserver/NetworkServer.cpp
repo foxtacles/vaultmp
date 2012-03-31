@@ -135,21 +135,18 @@ NetworkResponse NetworkServer::ProcessPacket( Packet* data )
                                 break;
                             }
 
-                        case ID_GAME_CONFIRM:
-                            {
-                                NetworkID id;
-                                char name[MAX_PLAYER_NAME + 1];
-                                ZeroMemory( name, sizeof( name ) );
-                                PacketFactory::Access( packet, &id, name );
-                                response = Server::NewPlayer( data->guid, id, name );
-                                break;
-                            }
-
                         case ID_GAME_END:
                             {
                                 unsigned char reason;
                                 PacketFactory::Access( packet, &reason );
                                 response = Server::Disconnect( data->guid, reason );
+                                break;
+                            }
+
+                        case ID_PLAYER_NEW:
+                            {
+                                NetworkID id = GameFactory::CreateKnownInstance(ID_PLAYER, packet);
+                                response = Server::NewPlayer(data->guid, id);
                                 break;
                             }
 

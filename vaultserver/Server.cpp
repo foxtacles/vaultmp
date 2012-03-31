@@ -66,14 +66,11 @@ NetworkResponse Server::LoadGame( RakNetGUID guid )
 	return response;
 }
 
-NetworkResponse Server::NewPlayer( RakNetGUID guid, NetworkID id, string name )
+NetworkResponse Server::NewPlayer( RakNetGUID guid, NetworkID id)
 {
 	NetworkResponse response;
-	GameFactory::CreateKnownInstance( ID_PLAYER, id, 0x00000000 );
 	FactoryObject _player = GameFactory::GetObject( id );
 	Player* player = vaultcast<Player>( _player );
-
-	player->SetName( name );
 
 	Client* client = new Client( guid, player->GetNetworkID() );
 	Dedicated::self->SetServerPlayers( pair<int, int>( Client::GetClientCount(), Dedicated::connections ) );
@@ -85,15 +82,12 @@ NetworkResponse Server::NewPlayer( RakNetGUID guid, NetworkID id, string name )
 
 	player->SetBase( result );
 
-    /*
-     * old code, FIXME
-	pDefault* packet = PacketFactory::CreatePacket( ID_PLAYER_NEW, id, 0x00000000, player->GetBase(), name.c_str() );
+	pDefault* packet = player->toPacket();
 	response.push_back( Network::CreateResponse( packet,
 						( unsigned char ) HIGH_PRIORITY,
 						( unsigned char ) RELIABLE_ORDERED,
 						CHANNEL_GAME,
 						Client::GetNetworkList( client ) ) );
-    */
 
 	return response;
 }

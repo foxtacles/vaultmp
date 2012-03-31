@@ -40,7 +40,7 @@ class Server
 		/**
 		 * \brief Creates a new Player
 		 */
-		static NetworkResponse NewPlayer( RakNetGUID guid, NetworkID id, string name );
+		static NetworkResponse NewPlayer( RakNetGUID guid, NetworkID id );
 		/**
 		 * \brief Disconnects a client
 		 */
