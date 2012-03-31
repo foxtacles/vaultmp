@@ -12,8 +12,6 @@ main()
         SetServerMap("the wasteland");
     case NEWVEGAS:
         SetServerMap("mojave desert");
-    case OBLIVION:
-        SetServerMap("cyrodiil");
     }
 }
 
@@ -36,8 +34,6 @@ public OnPlayerRequestGame(ID)
         base = 0x00030D82; // Carter
     case NEWVEGAS:
         base = 0x0010C0BE; // Jessup
-    case OBLIVION:
-        base = 0x000A3166; // Achille
     }
 
     return base;

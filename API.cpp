@@ -443,12 +443,12 @@ void API::SetDebugHandler( Debug* debug )
 }
 #endif
 
-pair<vector<boost::any>, API::op_default*> API::ParseCommand( char* cmd, char* def, unsigned short opcode )
+pair<vector<boost::any>, API::op_default*> API::ParseCommand( char* cmd, const char* def, unsigned short opcode )
 {
 	pair<vector<boost::any>, op_default*> result_data = pair<vector<boost::any>, op_default*>( vector<boost::any>(), NULL );
 
 	if ( *cmd == 0x00 || *def == 0x00 || opcode == 0x00 )
-		throw VaultException( "Invalid call to API::ParseCommand, one or more arguments are NULL" );
+		throw VaultException( "Invalid call to API::ParseCommand, one or more arguments are NULL (%s, %s, %04X)", cmd, def, opcode );
 
 	op_default* result = new op_default();
 	string _cmd( cmd );
@@ -1045,12 +1045,11 @@ CommandParsed API::Translate( multimap<string, string>& cmd, signed int key )
 			continue;
 		}
 
-		char def[func.first.length()];
-		char content[it->second.length()];
-		strcpy( def, func.first.c_str() );
-		strcpy( content, it->second.c_str() );
+        char content[it->second.length() + 1];
+        ZeroMemory(content, sizeof(content));
+        strcpy(content, it->second.c_str());
 
-		pair<vector<boost::any>, op_default*> command = ParseCommand( content, def, func.second );
+		pair<vector<boost::any>, op_default*> command = ParseCommand( content, func.first.c_str(), func.second );
 
 		char* data = BuildCommandStream( ( char* ) command.second, command.first, sizeof( op_default ), key );
 

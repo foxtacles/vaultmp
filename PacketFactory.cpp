@@ -65,7 +65,7 @@ pDefault* PacketFactory::CreatePacket( unsigned char type, ... )
 
         case ID_ITEM_NEW:
         {
-            pDefault* pObjectNew = va_arg(args, pDefault*);
+            const pDefault* pObjectNew = va_arg(args, pDefault*);
             unsigned int count = va_arg(args, unsigned int);
             double condition = va_arg(args, double);
             bool equipped = (bool) va_arg(args, unsigned int);
@@ -75,15 +75,15 @@ pDefault* PacketFactory::CreatePacket( unsigned char type, ... )
 
         case ID_CONTAINER_NEW:
         {
-            pDefault* pObjectNew = va_arg(args, pDefault*);
-            list<pDefault*>* pItemNew = va_arg(args, list<pDefault*>*);
+            const pDefault* pObjectNew = va_arg(args, pDefault*);
+            list<const pDefault*>* pItemNew = va_arg(args, list<const pDefault*>*);
             packet = new pContainerNew(pObjectNew, *pItemNew);
             break;
         }
 
         case ID_ACTOR_NEW:
         {
-            pDefault* pContainerNew = va_arg(args, pDefault*);
+            const pDefault* pContainerNew = va_arg(args, pDefault*);
             map<unsigned char, double>* values = (map<unsigned char, double>*) va_arg(args, void*); // compile error when placing map<unsigned char, double>* as 2nd argument?
             map<unsigned char, double>* baseValues = (map<unsigned char, double>*) va_arg(args, void*);
             unsigned char moving = (unsigned char) va_arg(args, unsigned int);
@@ -97,7 +97,7 @@ pDefault* PacketFactory::CreatePacket( unsigned char type, ... )
 
         case ID_PLAYER_NEW:
         {
-            pDefault* pActorNew = va_arg(args, pDefault*);
+            const pDefault* pActorNew = va_arg(args, pDefault*);
             map<unsigned char, pair<unsigned char, bool> >* controls = (map<unsigned char, pair<unsigned char, bool> >*) va_arg(args, void*);
             packet = new pPlayerNew(pActorNew, *controls);
             break;
@@ -610,5 +610,5 @@ pDefault* PacketFactory::ExtractPartial(const pDefault* packet)
 void PacketFactory::FreePacket(pDefault* packet)
 {
     if (packet)
-        delete packet;
+            delete packet;
 }

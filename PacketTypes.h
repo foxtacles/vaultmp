@@ -544,7 +544,7 @@ class pItemNew : public pObjectNewDefault
 	private:
 		_pItemNew _data;
 
-		pItemNew(pDefault* _data_pObjectNew, unsigned int count, double condition, bool equipped) : pObjectNewDefault( ID_ITEM_NEW, PacketFactory::ExtractReference(_data_pObjectNew), PacketFactory::ExtractBase(_data_pObjectNew), PacketFactory::ExtractNetworkID(_data_pObjectNew))
+		pItemNew(const pDefault* _data_pObjectNew, unsigned int count, double condition, bool equipped) : pObjectNewDefault( ID_ITEM_NEW, PacketFactory::ExtractReference(_data_pObjectNew), PacketFactory::ExtractBase(_data_pObjectNew), PacketFactory::ExtractNetworkID(_data_pObjectNew))
 		{
             memcpy(&this->_data._data_pObjectNew, PacketFactory::ExtractRawData(_data_pObjectNew), pObjectNew::data_length());
 			_data.count = count;
@@ -589,7 +589,7 @@ class pContainerNew : public pObjectNewDefault
 	private:
 		unsigned char* _data;
 
-		pContainerNew(pDefault* _data_pObjectNew, list<pDefault*>& _data_pItemNew) : pObjectNewDefault( ID_CONTAINER_NEW, PacketFactory::ExtractReference(_data_pObjectNew), PacketFactory::ExtractBase(_data_pObjectNew), PacketFactory::ExtractNetworkID(_data_pObjectNew))
+		pContainerNew(const pDefault* _data_pObjectNew, list<const pDefault*>& _data_pItemNew) : pObjectNewDefault( ID_CONTAINER_NEW, PacketFactory::ExtractReference(_data_pObjectNew), PacketFactory::ExtractBase(_data_pObjectNew), PacketFactory::ExtractNetworkID(_data_pObjectNew))
 		{
             unsigned int at = 0;
             unsigned int length = pItemNew::as_packet_length();
@@ -605,11 +605,11 @@ class pContainerNew : public pObjectNewDefault
 
             if (size > 0)
             {
-                list<pDefault*>::iterator it;
+                list<const pDefault*>::const_iterator it;
 
                 for (it = _data_pItemNew.begin(); it != _data_pItemNew.end(); ++it, at += length)
                 {
-                    pDefault* packet = *it;
+                    const pDefault* packet = *it;
 
                     if (packet->length() != length)
                     {
@@ -664,7 +664,7 @@ class pActorNew : public pObjectNewDefault
 	private:
 		unsigned char* _data;
 
-		pActorNew(pDefault* _data_pContainerNew, map<unsigned char, double>& values, map<unsigned char, double>& baseValues, unsigned char moving, unsigned char moving_xy, bool alerted, bool sneaking, bool dead) : pObjectNewDefault( ID_ACTOR_NEW, PacketFactory::ExtractReference(_data_pContainerNew), PacketFactory::ExtractBase(_data_pContainerNew), PacketFactory::ExtractNetworkID(_data_pContainerNew))
+		pActorNew(const pDefault* _data_pContainerNew, map<unsigned char, double>& values, map<unsigned char, double>& baseValues, unsigned char moving, unsigned char moving_xy, bool alerted, bool sneaking, bool dead) : pObjectNewDefault( ID_ACTOR_NEW, PacketFactory::ExtractReference(_data_pContainerNew), PacketFactory::ExtractBase(_data_pContainerNew), PacketFactory::ExtractNetworkID(_data_pContainerNew))
 		{
             unsigned int at = 0;
             unsigned int length = sizeof(unsigned char) + sizeof(double);
@@ -674,7 +674,7 @@ class pActorNew : public pObjectNewDefault
 
             unsigned int size = values.size();
             unsigned int container_length = pContainerNew::data_length(PacketFactory::ExtractRawData(_data_pContainerNew));
-            unsigned int mem = container_length + (length * size) + sizeof(unsigned int) + (sizeof(unsigned char) * 2) + (sizeof(bool) * 3);
+            unsigned int mem = container_length + (length * size * 2) + sizeof(unsigned int) + (sizeof(unsigned char) * 2) + (sizeof(bool) * 3);
             _data = new unsigned char[mem];
 
             memcpy(&this->_data[0], PacketFactory::ExtractRawData(_data_pContainerNew), container_length);
@@ -746,7 +746,7 @@ class pActorNew : public pObjectNewDefault
             unsigned int mem = pContainerNew::data_length(data);
             unsigned int length = sizeof(unsigned char) + sizeof(double);
             unsigned int size = *reinterpret_cast<const unsigned int*>(&data[mem]);
-            mem += (length * size) + sizeof(unsigned int) + (sizeof(unsigned char) * 2) + (sizeof(bool) * 3);;
+            mem += (length * size * 2) + sizeof(unsigned int) + (sizeof(unsigned char) * 2) + (sizeof(bool) * 3);;
 
             return mem;
         }
@@ -759,7 +759,7 @@ class pPlayerNew : public pObjectNewDefault
 	private:
 		unsigned char* _data;
 
-		pPlayerNew(pDefault* _data_pActorNew, map<unsigned char, pair<unsigned char, bool> >& controls) : pObjectNewDefault( ID_PLAYER_NEW, PacketFactory::ExtractReference(_data_pActorNew), PacketFactory::ExtractBase(_data_pActorNew), PacketFactory::ExtractNetworkID(_data_pActorNew))
+		pPlayerNew(const pDefault* _data_pActorNew, map<unsigned char, pair<unsigned char, bool> >& controls) : pObjectNewDefault( ID_PLAYER_NEW, PacketFactory::ExtractReference(_data_pActorNew), PacketFactory::ExtractBase(_data_pActorNew), PacketFactory::ExtractNetworkID(_data_pActorNew))
 		{
             unsigned int at = 0;
             unsigned int length = sizeof(unsigned char) + sizeof(unsigned char) + sizeof(bool);

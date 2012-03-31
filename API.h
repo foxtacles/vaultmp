@@ -375,7 +375,7 @@ class API
 		static pair<string, unsigned short> RetrieveFunction( string name );
 		static char* BuildCommandStream( char* stream, vector<boost::any> info, unsigned int size, signed int key = 0 );
 
-		static pair<vector<boost::any>, op_default*> ParseCommand( char* cmd, char* def, unsigned short opcode );
+		static pair<vector<boost::any>, op_default*> ParseCommand( char* cmd, const char* def, unsigned short opcode );
 
 #ifdef VAULTMP_DEBUG
 		static Debug* debug;

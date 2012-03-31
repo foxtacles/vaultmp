@@ -4,9 +4,8 @@
 
 #define FALLOUT3                0x01
 #define NEWVEGAS                (FALLOUT3 << 1)
-#define OBLIVION                (NEWVEGAS << 1)
 #define FALLOUT_GAMES		(FALLOUT3 | NEWVEGAS)
-#define ALL_GAMES		(FALLOUT_GAMES | OBLIVION)
+#define ALL_GAMES		FALLOUT_GAMES
 
 #define MAX_PLAYER_NAME		16
 #define MAX_PASSWORD_SIZE	16

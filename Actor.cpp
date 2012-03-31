@@ -296,8 +296,7 @@ pDefault* Actor::toPacket()
 {
     vector<unsigned char>::iterator it;
     vector<unsigned char> data = API::RetrieveAllValues();
-    map<unsigned char, double> values;
-    map<unsigned char, double> baseValues;
+    map<unsigned char, double> values, baseValues;
 
     for (it = data.begin(); it != data.end(); ++it)
     {
