@@ -344,12 +344,6 @@ class pObjectUpdateDefault : public pObjectDefault
 /* ************************************** */
 
 #pragma pack(push, 1)
-    struct _pGameConfirm
-    {
-        NetworkID id;
-        char name[MAX_PLAYER_NAME];
-    };
-
     struct _pGameMod
     {
         char modfile[MAX_MOD_FILE];
@@ -368,29 +362,6 @@ class pObjectUpdateDefault : public pObjectDefault
         unsigned int crc;
     };
 #pragma pack(pop)
-
-class pGameConfirm : public pGameDefault
-{
-		friend class PacketFactory;
-
-	private:
-		_pGameConfirm _data;
-
-		pGameConfirm( NetworkID id, const char* name ) : pGameDefault( ID_GAME_CONFIRM )
-		{
-			ZeroMemory( &_data, sizeof( _data ) );
-			_data.id = id;
-			strncpy( _data.name, name, sizeof( _data.name ) );
-			construct( &_data, sizeof( _data ) );
-		}
-		pGameConfirm( const unsigned char* stream, unsigned int len ) : pGameDefault( stream, len )
-		{
-			deconstruct( &_data, sizeof( _data ) );
-		}
-
-		pGameConfirm( const pGameConfirm& );
-		pGameConfirm& operator=( const pGameConfirm& );
-};
 
 class pGameAuth : public pGameDefault
 {

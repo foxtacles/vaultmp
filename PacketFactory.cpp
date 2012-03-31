@@ -8,14 +8,6 @@ pDefault* PacketFactory::CreatePacket( unsigned char type, ... )
 
     switch ( type )
     {
-        case ID_GAME_CONFIRM:
-        {
-            NetworkID id = va_arg( args, NetworkID );
-            char* name = va_arg( args, char* );
-            packet = new pGameConfirm( id, name );
-            break;
-        }
-
         case ID_GAME_AUTH:
         {
             char* name = va_arg( args, char* );
@@ -181,10 +173,6 @@ pDefault* PacketFactory::CreatePacket( unsigned char* stream, unsigned int len )
 
     switch ( stream[0] )
     {
-        case ID_GAME_CONFIRM:
-            packet = new pGameConfirm( stream, len );
-            break;
-
         case ID_GAME_AUTH:
             packet = new pGameAuth( stream, len );
             break;
@@ -280,16 +268,6 @@ void PacketFactory::Access( const pDefault* packet, ... )
     {
         switch ( packet->type.type )
         {
-            case ID_GAME_CONFIRM:
-            {
-                const pGameConfirm* data = dynamic_cast<const pGameConfirm*>( packet );
-                NetworkID* id = va_arg( args, NetworkID* );
-                char* name = va_arg( args, char* );
-                *id = data->_data.id;
-                strncpy( name, data->_data.name, sizeof( data->_data.name ) );
-                break;
-            }
-
             case ID_GAME_AUTH:
             {
                 const pGameAuth* data = dynamic_cast<const pGameAuth*>( packet );
