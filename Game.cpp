@@ -771,6 +771,13 @@ void Game::GetControl( FactoryObject reference, unsigned char control, unsigned 
 
 	if ( result )
 	{
+		pDefault* packet = PacketFactory::CreatePacket( ID_UPDATE_CONTROL, player->GetNetworkID(), control, key);
+		NetworkResponse response = Network::CompleteResponse( Network::CreateResponse( packet,
+								   ( unsigned char ) HIGH_PRIORITY,
+								   ( unsigned char ) RELIABLE_ORDERED,
+								   CHANNEL_GAME,
+								   server ) );
+		Network::Queue( response );
 	}
 }
 

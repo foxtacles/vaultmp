@@ -152,6 +152,7 @@ NetworkResponse NetworkServer::ProcessPacket( Packet* data )
 
                         case ID_OBJECT_UPDATE:
                         case ID_ACTOR_UPDATE:
+                        case ID_PLAYER_UPDATE:
                             {
                                 switch ( data->data[1] )
                                 {
@@ -208,6 +209,17 @@ NetworkResponse NetworkServer::ProcessPacket( Packet* data )
                                             PacketFactory::Access( packet, &id, &index, &moving, &alerted, &sneaking );
                                             FactoryObject reference = GameFactory::GetObject( id );
                                             response = Server::GetActorState( data->guid, reference, index, moving, alerted, sneaking );
+                                            break;
+                                        }
+
+                                    case ID_UPDATE_CONTROL:
+                                        {
+                                            NetworkID id;
+                                            unsigned char control;
+                                            unsigned char key;
+                                            PacketFactory::Access( packet, &id, &control, &key );
+                                            FactoryObject reference = GameFactory::GetObject( id );
+                                            response = Server::GetPlayerControl( data->guid, reference, control, key );
                                             break;
                                         }
 

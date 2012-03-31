@@ -158,6 +158,15 @@ pDefault* PacketFactory::CreatePacket( unsigned char type, ... )
             break;
         }
 
+        case ID_UPDATE_CONTROL:
+        {
+            NetworkID id = va_arg( args, NetworkID );
+            unsigned char control = ( unsigned char ) va_arg( args, unsigned int );
+            unsigned char key = ( unsigned char ) va_arg( args, unsigned int );
+            packet = new pPlayerControl( id, control, key);
+            break;
+        }
+
         default:
             throw VaultException( "Unhandled packet type %d", ( int ) type );
     }
@@ -219,6 +228,7 @@ pDefault* PacketFactory::CreatePacket( unsigned char* stream, unsigned int len )
 
         case ID_OBJECT_UPDATE:
         case ID_ACTOR_UPDATE:
+        case ID_PLAYER_UPDATE:
         {
             if ( len < 2 )
                 throw VaultException( "Incomplete object packet type %d", ( int ) stream[0] );
@@ -243,6 +253,10 @@ pDefault* PacketFactory::CreatePacket( unsigned char* stream, unsigned int len )
 
                 case ID_UPDATE_STATE:
                     packet = new pActorState( stream, len );
+                    break;
+
+                case ID_UPDATE_CONTROL:
+                    packet = new pPlayerControl( stream, len );
                     break;
 
                 default:
@@ -436,6 +450,7 @@ void PacketFactory::Access( const pDefault* packet, ... )
 
             case ID_OBJECT_UPDATE:
             case ID_ACTOR_UPDATE:
+            case ID_PLAYER_UPDATE:
             {
                 const pObjectUpdateDefault* data = dynamic_cast<const pObjectUpdateDefault*>( packet );
 
@@ -504,6 +519,18 @@ void PacketFactory::Access( const pDefault* packet, ... )
                         *moving = update->_data.moving;
                         *alerted = update->_data.alerted;
                         *sneaking = update->_data.sneaking;
+                        break;
+                    }
+
+                    case ID_UPDATE_CONTROL:
+                    {
+                        const pPlayerControl* update = dynamic_cast<const pPlayerControl*>( data );
+                        NetworkID* id = va_arg( args, NetworkID* );
+                        unsigned char* control = va_arg( args, unsigned char* );
+                        unsigned char* key = va_arg( args, unsigned char* );
+                        *id = update->id;
+                        *control = update->_data.control;
+                        *key = update->_data.key;
                         break;
                     }
                 }

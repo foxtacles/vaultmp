@@ -66,6 +66,10 @@ class Server
 		 * \brief Handles actor state network packet
 		 */
 		static NetworkResponse GetActorState( RakNetGUID guid, FactoryObject reference, unsigned char index, unsigned char moving, bool alerted, bool sneaking );
+		/**
+		 * \brief Handles player control network packet
+		 */
+		static NetworkResponse GetPlayerControl( RakNetGUID guid, FactoryObject reference, unsigned char control, unsigned char key );
 
 #ifdef VAULTMP_DEBUG
 		static void SetDebugHandler( Debug* debug );

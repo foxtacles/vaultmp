@@ -199,6 +199,7 @@ NetworkResponse NetworkClient::ProcessPacket( Packet* data )
 
                         case ID_OBJECT_UPDATE:
                         case ID_ACTOR_UPDATE:
+                        case ID_PLAYER_UPDATE:
                             {
                                 switch ( data->data[1] )
                                 {

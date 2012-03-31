@@ -240,3 +240,23 @@ NetworkResponse Server::GetActorState( RakNetGUID guid, FactoryObject reference,
 
 	return response;
 }
+
+NetworkResponse Server::GetPlayerControl( RakNetGUID guid, FactoryObject reference, unsigned char control, unsigned char key )
+{
+	Player* player = vaultcast<Player>( reference );
+
+	if ( !player )
+		throw VaultException( "Object with reference %08X is not a Player", ( *reference )->GetReference() );
+
+	NetworkResponse response;
+	bool result;
+
+	result = (bool) player->SetPlayerControl(control, key);
+
+	if ( result )
+	{
+        // maybe script call
+	}
+
+	return response;
+}

@@ -971,4 +971,36 @@ class pActorState : public pObjectUpdateDefault
 		pActorState& operator=( const pActorState& );
 };
 
+/* ************************************** */
+
+#pragma pack(push, 1)
+    struct _pPlayerControl
+    {
+        unsigned char control;
+        unsigned char key;
+    };
+#pragma pack(pop)
+
+class pPlayerControl : public pObjectUpdateDefault
+{
+		friend class PacketFactory;
+
+	private:
+		_pPlayerControl _data;
+
+		pPlayerControl( NetworkID id, unsigned char control, unsigned char key) : pObjectUpdateDefault( ID_PLAYER_UPDATE, ID_UPDATE_CONTROL, id )
+		{
+			_data.control = control;
+			_data.key = key;
+			construct( &_data, sizeof( _data ) );
+		}
+		pPlayerControl( unsigned char* stream, unsigned int len ) : pObjectUpdateDefault( stream, len )
+		{
+			deconstruct( &_data, sizeof( _data ) );
+		}
+
+		pPlayerControl( const pPlayerControl& );
+		pPlayerControl& operator=( const pPlayerControl& );
+};
+
 #endif
