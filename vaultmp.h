@@ -1,6 +1,8 @@
 #ifndef VAULTMP_H
 #define VAULTMP_H
 
+#define _GLIBCXX_USE_NANOSLEEP // remove that
+
 #define NO_CS_TIMEOUT
 
 #define DEDICATED_VERSION       "0.1a revision 148"

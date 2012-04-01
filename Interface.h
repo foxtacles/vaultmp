@@ -1,14 +1,17 @@
 #ifndef INTERFACE_H
 #define INTERFACE_H
 
-#include <windows.h>
+#include "vaultmp.h"
+
+#include <winsock2.h>
 #include <tlhelp32.h>
 #include <string>
 #include <list>
 #include <map>
 #include <vector>
+#include <thread>
+#include <chrono>
 
-#include "vaultmp.h"
 #include "API.h"
 #include "CriticalSection.h"
 #include "Data.h"
@@ -38,8 +41,8 @@ class Interface : public API
 		static bool wakeup;
 		static bool initialized;
 		static char* module;
-		static HANDLE hCommandThreadReceive;
-		static HANDLE hCommandThreadSend;
+        static thread hCommandThreadReceive;
+        static thread hCommandThreadSend;
 		static CommandList cmdlist;
 		static CommandList tmplist;
 		static PipeClient* pipeServer;
@@ -55,8 +58,8 @@ class Interface : public API
     static void ExecuteCommand(Native::iterator it, bool loop, unsigned int priority, signed int key);
     static multimap<string, string> Evaluate(string name, string def, ParamContainer param);
 
-		static DWORD WINAPI CommandThreadReceive( LPVOID data );
-		static DWORD WINAPI CommandThreadSend( LPVOID data );
+		static void CommandThreadReceive( char* module );
+		static void CommandThreadSend();
 
 #ifdef VAULTMP_DEBUG
 		static Debug* debug;

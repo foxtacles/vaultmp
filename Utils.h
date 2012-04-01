@@ -6,7 +6,7 @@
 #undef WINVER
 #endif
 #define WINVER 0x0500
-#include <windows.h>
+#include <winsock2.h>
 #undef WINVER
 #include <imagehlp.h>
 #endif

@@ -1,4 +1,4 @@
-#include <windows.h>
+#include <winsock2.h>
 #include <shlwapi.h>
 #include <shlobj.h>
 #include <commctrl.h>
@@ -61,7 +61,7 @@ using namespace Data;
 using namespace std;
 
 HINSTANCE instance;
-HANDLE mutex;
+HANDLE global_mutex;
 HFONT hFont;
 HWND wndmain;
 HWND wndsortcur;
@@ -256,7 +256,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR cmdline,
 
 #endif
 
-	mutex = CreateMutex( NULL, TRUE, "vaultmp" );
+	global_mutex = CreateMutex( NULL, TRUE, "vaultmp" );
 
 	if ( GetLastError() == ERROR_ALREADY_EXISTS )
 		return MessageBox( NULL, "Vault-Tec Multiplayer Mod is already running!", "Error", MB_OK | MB_ICONERROR );
@@ -583,7 +583,7 @@ void CleanUp()
 	peer->Shutdown( 300 );
 	RakPeerInterface::DestroyInstance( peer );
 	iniparser_freedict( config );
-	CloseHandle( mutex );
+	CloseHandle( global_mutex );
 }
 
 int Create2ColItem( HWND hwndList, char* text1, char* text2 )

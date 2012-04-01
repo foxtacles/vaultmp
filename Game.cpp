@@ -208,8 +208,10 @@ void Game::NewPlayer( NetworkID id, unsigned int baseID, string name )
 
 	Interface::EndSession();
 
-	for ( int i = 0; i < 200 && !store->Get(); i++ )
-		Sleep( 100 );
+    chrono::steady_clock::time_point till = chrono::steady_clock::now() + chrono::seconds(15);
+
+    while (chrono::steady_clock::now() < till && !store->Get())
+        this_thread::sleep_for(chrono::milliseconds(100));
 
 	if ( !store->Get() )
 	{

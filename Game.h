@@ -8,6 +8,8 @@
 #include "Network.h"
 #include "VaultException.h"
 
+#include <chrono>
+
 /**
  * \brief Client game code, using the Interface to execute commands and communicate with the game
  *

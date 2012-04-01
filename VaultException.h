@@ -2,7 +2,7 @@
 #define VAULTEXCEPTION_H
 
 #ifdef __WIN32__
-#include <windows.h>
+#include <winsock2.h>
 #endif
 
 #include <cstdio>

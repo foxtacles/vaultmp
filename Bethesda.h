@@ -1,10 +1,14 @@
-#include <windows.h>
+#include "vaultmp.h"
+
+#include <winsock2.h>
 #include <cstdio>
 #include <shlwapi.h>
 #include <shlobj.h>
 #include <list>
 #include <vector>
 #include <string>
+#include <thread>
+#include <chrono>
 
 #include "boost/any.hpp"
 
@@ -14,7 +18,6 @@
 #include "RakNet/RakSleep.h"
 
 #include "Data.h"
-#include "vaultmp.h"
 #include "Player.h"
 #include "Container.h"
 #include "Interface.h"

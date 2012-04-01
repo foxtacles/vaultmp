@@ -1,27 +1,24 @@
 #ifndef CRITICALSECTION_H
 #define CRITICALSECTION_H
 
-#ifdef __WIN32__
-#include <windows.h>
-#else
-#include <pthread.h>
-#endif
+#include "vaultmp.h"
 
+#include <mutex>
+#include <chrono>
+#include <thread>
 #include <typeinfo>
+
 #define CS_TIMEOUT     5000
 
 class Debug;
+
+using namespace std;
 
 class CriticalSection
 {
 
 	private:
-#ifdef __WIN32__
-		CRITICAL_SECTION cs;
-#else
-		pthread_mutex_t cs;
-		pthread_mutexattr_t mta;
-#endif
+        recursive_timed_mutex cs;
 
 #ifdef VAULTMP_DEBUG
 		static Debug* debug;
@@ -29,7 +26,7 @@ class CriticalSection
 #endif
 
 		bool finalize;
-		int locks;
+		unsigned int locks;
 
 		CriticalSection( const CriticalSection& );
 		CriticalSection& operator=( const CriticalSection& );

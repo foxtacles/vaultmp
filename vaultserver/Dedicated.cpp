@@ -182,12 +182,7 @@ class FileProgress : public FileListProgress
 
 } fileProgress;
 
-#ifdef __WIN32__
-DWORD WINAPI Dedicated::FileThread( LPVOID data )
-#else
-void* Dedicated::FileThread( void* data )
-#define THREAD_PRIORITY_NORMAL 1000
-#endif
+void Dedicated::FileThread()
 {
 	PacketizedTCP tcp;
 	FileList files;
@@ -231,22 +226,11 @@ void* Dedicated::FileThread( void* data )
 			flt.Send( &files, 0, packet->systemAddress, *( ( unsigned short* ) ( packet->data + 1 ) ), MEDIUM_PRIORITY, CHANNEL_SYSTEM, &incInterface, 2000000 );
 
 		tcp.DeallocatePacket( packet );
-		RakSleep( 5 );
+		this_thread::sleep_for(chrono::milliseconds(5));
 	}
-
-#ifdef __WIN32__
-	return ( ( DWORD ) data );
-#else
-	return data;
-#endif
 }
 
-#ifdef __WIN32__
-DWORD WINAPI Dedicated::DedicatedThread( LPVOID data )
-#else
-void* Dedicated::DedicatedThread( void* data )
-#define THREAD_PRIORITY_NORMAL 1000
-#endif
+void Dedicated::DedicatedThread()
 {
 	sockdescr = new SocketDescriptor( port, 0 );
 	peer = RakPeerInterface::GetInstance();
@@ -340,7 +324,7 @@ void* Dedicated::DedicatedThread( void* data )
 
 			Timer::GlobalTick();
 
-			RakSleep( 2 );
+            this_thread::sleep_for(chrono::milliseconds(2));
 
 			if ( announce )
 			{
@@ -377,27 +361,11 @@ void* Dedicated::DedicatedThread( void* data )
 	debug->Print( "Network thread is going to terminate", true );
 	VaultException::FinalizeDebug();
 #endif
-
-#ifdef __WIN32__
-	return ( ( DWORD ) data );
-#else
-	return data;
-#endif
 }
 
-#ifdef __WIN32__
-HANDLE Dedicated::InitializeServer( int port, int connections, char* announce, bool query, bool fileserve, int fileslots )
-#else
-pthread_t Dedicated::InitializeServer( int port, int connections, char* announce, bool query, bool fileserve, int fileslots )
-#endif
+std::thread Dedicated::InitializeServer( int port, int connections, char* announce, bool query, bool fileserve, int fileslots )
 {
-#ifdef __WIN32__
-	HANDLE hDedicatedThread;
-	HANDLE hFileThread;
-#else
-	pthread_t hDedicatedThread;
-	pthread_t hFileThread;
-#endif
+	std::thread hDedicatedThread;
 
 	thread = true;
 	Dedicated::port = port ? port : RAKNET_STANDARD_PORT;
@@ -408,19 +376,10 @@ pthread_t Dedicated::InitializeServer( int port, int connections, char* announce
 	Dedicated::fileslots = fileslots;
 	Dedicated::self->SetServerPlayers( pair<int, int>( 0, Dedicated::connections ) );
 
-#ifdef __WIN32__
-	hDedicatedThread = CreateThread( NULL, 0, DedicatedThread, ( LPVOID ) 0, 0, NULL );
+	hDedicatedThread = std::thread(DedicatedThread);
 
 	if ( fileserve )
-		hFileThread = CreateThread( NULL, 0, FileThread, ( LPVOID ) 0, 0, NULL );
-
-#else
-	pthread_create( &hDedicatedThread, NULL, DedicatedThread, NULL );
-
-	if ( fileserve )
-		pthread_create( &hFileThread, NULL, FileThread, NULL );
-
-#endif
+		std::thread(FileThread).detach();
 
 	return hDedicatedThread;
 }

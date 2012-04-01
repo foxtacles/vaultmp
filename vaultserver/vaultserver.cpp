@@ -1,7 +1,8 @@
 #ifdef __WIN32__
-#include <windows.h>
+#include <winsock2.h>
 #endif
 #include <cstdio>
+#include <thread>
 
 #include "vaultserver.h"
 #include "Dedicated.h"
@@ -10,11 +11,7 @@
 #include "../iniparser/dictionary.c"
 #include "../iniparser/iniparser.c"
 
-#ifdef __WIN32__
-DWORD WINAPI InputThread( LPVOID data )
-#else
-void* InputThread( void* data )
-#endif
+void InputThread()
 {
 	char input[64];
 
@@ -33,16 +30,9 @@ void* InputThread( void* data )
 		        Dedicated::SetServerConnections(atoi(param));
 		} */
 
-	}
-	while ( strcmp( input, "exit" ) != 0 );
+	} while ( strcmp( input, "exit" ) != 0 );
 
 	Dedicated::TerminateThread();
-
-#ifdef __WIN32__
-	return ( ( DWORD ) data );
-#else
-	return data;
-#endif
 }
 
 int main( int argc, char* argv[] )
@@ -153,27 +143,13 @@ int main( int argc, char* argv[] )
 
 		Dedicated::SetModfiles( modfiles );
 
-#ifdef __WIN32__
-		HANDLE hDedicatedThread = Dedicated::InitializeServer( port, players, announce, query, files, fileslots );
-		HANDLE hInputThread;
-		hInputThread = CreateThread( NULL, 0, InputThread, ( LPVOID ) 0, 0, NULL );
-		HANDLE threads[2];
-		threads[0] = hDedicatedThread;
-		threads[1] = hInputThread;
-#else
-		pthread_t threads[2];
-		threads[0] = Dedicated::InitializeServer( port, players, announce, query, files, fileslots );
-		pthread_create( &threads[1], NULL, InputThread, NULL );
-#endif
+		thread hDedicatedThread = Dedicated::InitializeServer( port, players, announce, query, files, fileslots );
+		thread hInputThread = thread(InputThread);
 
-#ifdef __WIN32__
-		WaitForMultipleObjects( 2, threads, TRUE, INFINITE );
-		CloseHandle( hDedicatedThread );
-		CloseHandle( hInputThread );
-#else
-		pthread_join( threads[0], NULL );
-		pthread_join( threads[1], NULL );
-#endif
+        hDedicatedThread.join();
+
+        if (hInputThread.joinable())
+            hInputThread.join();
 	}
 
 	catch ( std::exception& e )
@@ -191,7 +167,6 @@ int main( int argc, char* argv[] )
 		}
 	}
 
-	Dedicated::TerminateThread();
 	Script::UnloadScripts();
 	iniparser_freedict( config );
 	delete self;

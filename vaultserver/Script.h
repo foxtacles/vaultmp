@@ -2,7 +2,7 @@
 #define SCRIPT_H
 
 #ifdef __WIN32__
-#include <windows.h>
+#include <winsock2.h>
 #else
 #include <dlfcn.h>
 #endif

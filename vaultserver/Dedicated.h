@@ -1,10 +1,14 @@
 #ifndef DEDICATED_H
 #define DEDICATED_H
 
+#include "../vaultmp.h"
+
 #ifdef __WIN32__
-#include <windows.h>
+#include <winsock2.h>
 #include <io.h>
 #endif
+#include <thread>
+#include <chrono>
 #include <cstdio>
 
 #include "../RakNet/RakPeerInterface.h"
@@ -74,13 +78,9 @@ class Dedicated
 		static Savegame savegame;
 		static ModList modfiles;
 
-#ifdef __WIN32__
-		static DWORD WINAPI DedicatedThread( LPVOID data );
-		static DWORD WINAPI FileThread( LPVOID data );
-#else
-		static void* DedicatedThread( void* data );
-		static void* FileThread( void* data );
-#endif
+		static void DedicatedThread();
+		static void FileThread();
+
 		static bool thread;
 
 #ifdef VAULTMP_DEBUG
@@ -99,21 +99,7 @@ class Dedicated
 		 * fileserver - enable / disable file downloading from this server
 		 * fileslots - the maximum amount of file downloading connections
 		 */
-#ifdef __WIN32__
-		static HANDLE InitializeServer( int port, int connections, char* announce, bool query, bool fileserve, int fileslots );
-#else
-		/**
-		 * \brief Initializes the dedicated server
-		 *
-		 * port - the port to run the server on
-		 * connections - the maximum amount of player connections
-		 * announce - whether the server should announce himself to a MasterServer, can be NULL
-		 * query - enable / disable direct query
-		 * fileserver - enable / disable file downloading from this server
-		 * fileslots - the maximum amount of file downloading connections
-		 */
-		static pthread_t InitializeServer( int port, int connections, char* announce, bool query, bool fileserve, int fileslots );
-#endif
+		static std::thread InitializeServer( int port, int connections, char* announce, bool query, bool fileserve, int fileslots );
 		/**
 		 * \brief Sets the ServerEntry of the dedicated server
 		 *

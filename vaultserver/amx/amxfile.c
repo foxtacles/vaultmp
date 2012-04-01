@@ -677,14 +677,14 @@ static cell AMX_NATIVE_CALL n_fremove(AMX *amx, const cell *params)
   amx_StrParam(amx,params[1],name);
   if (name!=NULL && completename(fullname,name,sizearray(fullname))!=NULL) {
     /* if this is a directory, try _trmdir() */
-#ifdef __WIN32__
-    struct _tstat stbuf;
-#else
-    struct stat stbuf;
     #undef _trmdir
     #undef _tremove
     #define _trmdir rmdir
     #define _tremove remove
+#ifdef __WIN32__
+    struct _tstat stbuf;
+#else
+    struct stat stbuf;
 #endif
     _tstat(fullname,  &stbuf);
     if (S_ISDIR(stbuf.st_mode))
@@ -911,6 +911,8 @@ static cell AMX_NATIVE_CALL n_fcreatedir(AMX *amx, const cell *params)
   (void)amx;
   amx_StrParam(amx,params[1],name);
   if (name!=NULL && completename(fullname,name,sizearray(fullname))!=NULL) {
+    #undef _tmkdir
+    #define _tmkdir mkdir
     #if defined __WIN32__ || defined __DOS__
       r=_tmkdir(fullname);
     #else

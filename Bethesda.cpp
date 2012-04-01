@@ -352,8 +352,10 @@ void Bethesda::Initialize()
 			{
 				Interface::Initialize( module, &CommandHandler, Bethesda::game );
 
-				for ( int i = 0; i < 50 && !Interface::IsAvailable(); i++ )
-					Sleep( 100 );
+                chrono::steady_clock::time_point till = chrono::steady_clock::now() + chrono::milliseconds(5000);
+
+                while (chrono::steady_clock::now() < till && !Interface::IsAvailable())
+                    this_thread::sleep_for(chrono::milliseconds(100));
 
 				if ( !Interface::IsAvailable() )
 					throw VaultException( "Failed connecting to vaultmp interface" );
@@ -363,7 +365,6 @@ void Bethesda::Initialize()
 			{
 				CloseHandle( pi.hThread );
 				CloseHandle( pi.hProcess );
-				//throw VaultException("Error connecting to vaultmp interface");
 				throw;
 			}
 
@@ -371,7 +372,7 @@ void Bethesda::Initialize()
 			CloseHandle( pi.hThread );
 			CloseHandle( pi.hProcess );
 
-			Sleep( 5000 );
+			this_thread::sleep_for(chrono::milliseconds(5000));
 
 			initialized = true;
 
@@ -475,7 +476,7 @@ void Bethesda::InitializeVaultMP( RakPeerInterface* peer, SystemAddress server, 
 					throw VaultException( "Lost connection to interface" );
 				}
 
-				RakSleep( 2 );
+				this_thread::sleep_for(chrono::milliseconds(2));
 			}
 		}
 
@@ -485,7 +486,7 @@ void Bethesda::InitializeVaultMP( RakPeerInterface* peer, SystemAddress server, 
 
 	catch ( ... )
 	{
-		Sleep( 200 );
+		this_thread::sleep_for(chrono::milliseconds(200));
 		Packet* packet = NULL;
 
 		while ( packet = peer->Receive() ) peer->DeallocatePacket( packet ); // disconnection notification might still arrive

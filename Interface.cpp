@@ -12,8 +12,8 @@ CommandList Interface::tmplist;
 map<string, string> Interface::defs;
 map<string, string> Interface::alias;
 Native Interface::natives;
-HANDLE Interface::hCommandThreadReceive;
-HANDLE Interface::hCommandThreadSend;
+thread Interface::hCommandThreadReceive;
+thread Interface::hCommandThreadSend;
 CriticalSection Interface::cs;
 
 #ifdef VAULTMP_DEBUG
@@ -36,7 +36,8 @@ bool Interface::Initialize( char* module, ResultHandler resultHandler, unsigned 
 		if ( pipeClient != NULL )
 			delete pipeClient;
 
-		Interface::module = new char[strlen( module )];
+		Interface::module = new char[strlen( module ) + 1];
+		ZeroMemory(Interface::module, strlen( module ) + 1);
 		strcpy( Interface::module, module );
 
 		Interface::resultHandler = resultHandler;
@@ -44,10 +45,10 @@ bool Interface::Initialize( char* module, ResultHandler resultHandler, unsigned 
 		pipeClient = new PipeServer();
 		pipeServer = new PipeClient();
 
-		hCommandThreadReceive = CreateThread( NULL, 0, CommandThreadReceive, ( LPVOID ) Interface::module, 0, NULL );
-		hCommandThreadSend = CreateThread( NULL, 0, CommandThreadSend, ( LPVOID ) 0, 0, NULL );
+		hCommandThreadReceive = thread(CommandThreadReceive, Interface::module);
+		hCommandThreadSend = thread(CommandThreadSend);
 
-		if ( hCommandThreadReceive == NULL || hCommandThreadSend == NULL )
+		if ( !hCommandThreadReceive.joinable() || !hCommandThreadSend.joinable() )
 		{
 			endThread = true;
 			return false;
@@ -67,14 +68,11 @@ void Interface::Terminate()
 	{
 		endThread = true;
 
-		HANDLE threads[2];
-		threads[0] = hCommandThreadReceive;
-		threads[1] = hCommandThreadSend;
+        if (hCommandThreadReceive.joinable())
+            hCommandThreadReceive.join();
 
-		WaitForMultipleObjects( 2, threads, TRUE, INFINITE );
-
-		CloseHandle( hCommandThreadReceive );
-		CloseHandle( hCommandThreadSend );
+        if (hCommandThreadSend.joinable())
+            hCommandThreadSend.join();
 
 		CommandList::iterator it;
 		cmdlist.splice( cmdlist.begin(), tmplist );
@@ -129,7 +127,7 @@ DWORD Interface::lookupProgramID( const char process[] )
 
 bool Interface::IsAvailable()
 {
-	return ( wakeup && !endThread && ( WaitForSingleObject( hCommandThreadReceive, 0 ) == WAIT_TIMEOUT ) && ( WaitForSingleObject( hCommandThreadSend, 0 ) == WAIT_TIMEOUT ) );
+	return ( wakeup && !endThread && hCommandThreadReceive.joinable() && hCommandThreadSend.joinable());
 }
 
 void Interface::StartSession()
@@ -265,7 +263,7 @@ multimap<string, string> Interface::Evaluate( string name, string def, ParamCont
 	return result;
 }
 
-DWORD WINAPI Interface::CommandThreadReceive( LPVOID data )
+void Interface::CommandThreadReceive( char* module )
 {
 	try
 	{
@@ -314,7 +312,7 @@ DWORD WINAPI Interface::CommandThreadReceive( LPVOID data )
 				else if ( code )
 					throw VaultException( "Unknown pipe code identifier %02X", code );
 
-				if ( lookupProgramID( ( char* ) data ) == 0 )
+				if ( lookupProgramID( reinterpret_cast<char*>(module) ) == 0 )
 				{
 					endThread = true;
 
@@ -354,8 +352,6 @@ DWORD WINAPI Interface::CommandThreadReceive( LPVOID data )
 #endif
 
 		endThread = true;
-
-		return ( ( DWORD ) data );
 	}
 
 #ifdef VAULTMP_DEBUG
@@ -366,16 +362,14 @@ DWORD WINAPI Interface::CommandThreadReceive( LPVOID data )
 #endif
 
 	endThread = true;
-
-	return ( ( DWORD ) data );
 }
 
-DWORD WINAPI Interface::CommandThreadSend( LPVOID data )
+void Interface::CommandThreadSend()
 {
     try
     {
         while (!wakeup && !endThread)
-            Sleep(10);
+            this_thread::sleep_for(chrono::milliseconds(10));
 
 		while ( !endThread )
 		{
@@ -486,9 +480,5 @@ DWORD WINAPI Interface::CommandThreadSend( LPVOID data )
         if (debug != NULL)
             debug->Print("Send thread is going to terminate (ERROR)", true);
 #endif
-
-        return ((DWORD) data);
     }
-
-    return ((DWORD) data);
 }
