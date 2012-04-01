@@ -78,55 +78,46 @@ void Game::Startup()
 	FactoryObject reference = GameFactory::GetObject( PLAYER_REFERENCE );
 	Player* self = vaultcast<Player>( reference );
 
-	Interface::StartSession();
+	Interface::StartSetup();
 
-	try
-	{
-		ParamList param_GetPos;
+		ParamContainer param_GetPos;
 		param_GetPos.push_back( self->GetReferenceParam() );
 		param_GetPos.push_back( Object::Param_Axis() );
-		ParamContainer GetPos = ParamContainer( param_GetPos, &Data::AlwaysTrue );
-		Interface::DefineNative( "GetPos", GetPos );
-		Interface::ExecuteCommandLoop( "GetPos" );
+		Interface::DefineNative( "GetPos", param_GetPos );
+		Interface::SetupCommand( "GetPos" );
 
-		ParamList param_GetPos_NotSelf;
+		ParamContainer param_GetPos_NotSelf;
 		param_GetPos_NotSelf.push_back( Player::CreateFunctor( FLAG_ENABLED | FLAG_NOTSELF | FLAG_ALIVE ) );
 		param_GetPos_NotSelf.push_back( Object::Param_Axis() );
-		ParamContainer GetPos_NotSelf = ParamContainer( param_GetPos_NotSelf, &Data::AlwaysTrue );
-		Interface::DefineNative( "GetPosNotSelf", GetPos_NotSelf );
-		Interface::ExecuteCommandLoop( "GetPosNotSelf", 30 );
+		Interface::DefineNative( "GetPosNotSelf", param_GetPos_NotSelf );
+		Interface::SetupCommand( "GetPosNotSelf", 30 );
 
-		ParamList param_GetAngle;
+		ParamContainer param_GetAngle;
 		param_GetAngle.push_back( self->GetReferenceParam() );
 		param_GetAngle.push_back( BuildParameter( vector<string> {API::RetrieveAxis_Reverse( Axis_X ), API::RetrieveAxis_Reverse( Axis_Z )} ) ); // exclude Y-angle, not used
-		ParamContainer GetAngle = ParamContainer( param_GetAngle, &Data::AlwaysTrue );
-		Interface::DefineNative( "GetAngle", GetAngle );
-		Interface::ExecuteCommandLoop( "GetAngle" );
+		Interface::DefineNative( "GetAngle", param_GetAngle );
+		Interface::SetupCommand( "GetAngle" );
 
-		ParamList param_GetActorState;
+		ParamContainer param_GetActorState;
 		param_GetActorState.push_back( self->GetReferenceParam() );
 		param_GetActorState.push_back( Player::CreateFunctor( FLAG_MOVCONTROLS, self->GetNetworkID() ) );
-		ParamContainer GetActorState = ParamContainer( param_GetActorState, &Data::AlwaysTrue );
-		Interface::DefineNative( "GetActorState", GetActorState );
-		Interface::ExecuteCommandLoop( "GetActorState" );
+		Interface::DefineNative( "GetActorState", param_GetActorState );
+		Interface::SetupCommand( "GetActorState" );
 
-		ParamList param_GetParentCell;
+		ParamContainer param_GetParentCell;
 		param_GetParentCell.push_back( Player::CreateFunctor( 0x00000000 ) );
-		ParamContainer GetParentCell = ParamContainer( param_GetParentCell, &Data::AlwaysTrue );
-		Interface::DefineNative( "GetParentCell", GetParentCell );
-		Interface::ExecuteCommandLoop( "GetParentCell", 30 );
+		Interface::DefineNative( "GetParentCell", param_GetParentCell );
+		Interface::SetupCommand( "GetParentCell", 30 );
 
-		ParamList param_ScanContainer;
+		ParamContainer param_ScanContainer;
 		param_ScanContainer.push_back( self->GetReferenceParam() );
-		ParamContainer ScanContainer = ParamContainer( param_ScanContainer, &Data::AlwaysTrue );
-		Interface::DefineNative( "ScanContainer", ScanContainer );
-		Interface::ExecuteCommandLoop( "ScanContainer", 50 );
+		Interface::DefineNative( "ScanContainer", param_ScanContainer );
+		Interface::SetupCommand( "ScanContainer", 50 );
 
-		ParamList param_GetDead;
+		ParamContainer param_GetDead;
 		param_GetDead.push_back( Player::CreateFunctor( FLAG_ENABLED ) );
-		ParamContainer GetDead = ParamContainer( param_GetDead, &Data::AlwaysTrue );
-		Interface::DefineNative( "GetDead", GetDead );
-		Interface::ExecuteCommandLoop( "GetDead", 30 );
+		Interface::DefineNative( "GetDead", param_GetDead );
+		Interface::SetupCommand( "GetDead", 30 );
 
 		vector<string> healthValues;
 
@@ -138,55 +129,57 @@ void Game::Startup()
         healthValues.push_back( API::RetrieveValue_Reverse( Fallout::ActorVal_LeftLeg ) );
         healthValues.push_back( API::RetrieveValue_Reverse( Fallout::ActorVal_RightLeg ) );
 
-		ParamList param_GetActorValue_Health;
+		ParamContainer param_GetActorValue_Health;
 		//param_GetActorValue_Health.push_back(Player::Param_EnabledPlayers);
 		param_GetActorValue_Health.push_back( self->GetReferenceParam() );
 		param_GetActorValue_Health.push_back( BuildParameter( healthValues ) );
-		ParamContainer GetActorValue_Health = ParamContainer( param_GetActorValue_Health, &Data::AlwaysTrue );
-		Interface::DefineNative( "GetActorValueHealth", GetActorValue_Health );
-		Interface::ExecuteCommandLoop( "GetActorValueHealth", 30 );
+		Interface::DefineNative( "GetActorValueHealth", param_GetActorValue_Health );
+		Interface::SetupCommand( "GetActorValueHealth", 30 );
 
-		ParamList param_GetActorValue;
+		ParamContainer param_GetActorValue;
 		param_GetActorValue.push_back( self->GetReferenceParam() );
 		param_GetActorValue.push_back( Actor::Param_ActorValues() ); // we could exclude health values here
-		ParamContainer GetActorValue = ParamContainer( param_GetActorValue, &Data::AlwaysTrue );
-		Interface::DefineNative( "GetActorValue", GetActorValue );
-		Interface::ExecuteCommandLoop( "GetActorValue", 100 );
+		Interface::DefineNative( "GetActorValue", param_GetActorValue );
+		Interface::SetupCommand( "GetActorValue", 100 );
 
-		ParamList param_GetBaseActorValue;
+		ParamContainer param_GetBaseActorValue;
 		param_GetBaseActorValue.push_back( self->GetReferenceParam() );
 		param_GetBaseActorValue.push_back( Actor::Param_ActorValues() );
-		ParamContainer GetBaseActorValue = ParamContainer( param_GetBaseActorValue, &Data::AlwaysTrue );
-		Interface::DefineNative( "GetBaseActorValue", GetBaseActorValue );
-		Interface::ExecuteCommandLoop( "GetBaseActorValue", 200 );
+		Interface::DefineNative( "GetBaseActorValue", param_GetBaseActorValue );
+		Interface::SetupCommand( "GetBaseActorValue", 200 );
 
-		ParamList param_GetControl;
-		param_GetControl.push_back( BuildParameter( API::RetrieveAllControls() ) );
-		ParamContainer GetControl = ParamContainer( param_GetControl, &Data::AlwaysTrue );
-		Interface::ExecuteCommandOnce( "GetControl", GetControl );
-	}
-
-	catch ( ... )
-	{
-		Interface::EndSession();
-		throw;
-	}
-
-	Interface::EndSession();
+	Interface::EndSetup();
 }
 
 void Game::LoadGame( string savegame )
 {
 	Utils::RemoveExtension( savegame );
 
-	Interface::StartSession();
+	Interface::StartDynamic();
 
-	ParamList param_Load;
+	ParamContainer param_Load;
 	param_Load.push_back( BuildParameter( savegame ) );
-	ParamContainer Load = ParamContainer( param_Load, &Data::AlwaysTrue );
-	Interface::ExecuteCommandOnce( "Load", Load );
+	Interface::ExecuteCommand( "Load", param_Load );
 
-	Interface::EndSession();
+	Interface::EndDynamic();
+}
+
+void Game::LoadEnvironment()
+{
+	FactoryObject reference = GameFactory::GetObject( PLAYER_REFERENCE );
+	Player* self = vaultcast<Player>( reference );
+
+    // load environment
+
+    Interface::StartDynamic();
+
+    ParamContainer param_GetControl;
+    param_GetControl.push_back( BuildParameter( API::RetrieveAllControls() ) );
+    Interface::ExecuteCommand( "GetControl", param_GetControl );
+
+    Interface::EndDynamic();
+
+	Game::SetName( reference, self->GetName() );
 }
 
 void Game::NewPlayer( NetworkID id, unsigned int baseID, string name )
@@ -197,16 +190,15 @@ void Game::NewPlayer( NetworkID id, unsigned int baseID, string name )
 	Value<unsigned int>* store = new Value<unsigned int>;
 	signed int key = store->Lock( true );
 
-	Interface::StartSession();
+	Interface::StartDynamic();
 
-    ParamList param_PlaceAtMe;
+    ParamContainer param_PlaceAtMe;
     param_PlaceAtMe.push_back(self->GetReferenceParam()); // need something else here
     param_PlaceAtMe.push_back(BuildParameter(Utils::LongToHex(baseID)));
     param_PlaceAtMe.push_back(Data::Param_True);
-    ParamContainer PlaceAtMe = ParamContainer(param_PlaceAtMe, &Data::AlwaysTrue);
-    Interface::ExecuteCommandOnce("PlaceAtMe", PlaceAtMe, 0, key);
+    Interface::ExecuteCommand("PlaceAtMe", param_PlaceAtMe, key);
 
-	Interface::EndSession();
+	Interface::EndDynamic();
 
     unsigned int refID;
 
@@ -245,27 +237,25 @@ void Game::Enable( FactoryObject reference, bool enable )
 
 	if ( result )
 	{
-		Interface::StartSession();
+		Interface::StartDynamic();
 
 		if ( enable )
 		{
-			ParamList param_Enable;
+			ParamContainer param_Enable;
 			param_Enable.push_back( object->GetReferenceParam() );
 			param_Enable.push_back( Data::Param_True );
-			ParamContainer Enable = ParamContainer( param_Enable, &Data::AlwaysTrue );
-			Interface::ExecuteCommandOnce( "Enable", Enable );
+			Interface::ExecuteCommand( "Enable", param_Enable );
 		}
 
 		else
 		{
-			ParamList param_Disable;
+			ParamContainer param_Disable;
 			param_Disable.push_back( object->GetReferenceParam() );
 			param_Disable.push_back( Data::Param_False );
-			ParamContainer Disable = ParamContainer( param_Disable, &Data::AlwaysTrue );
-			Interface::ExecuteCommandOnce( "Disable", Disable );
+			Interface::ExecuteCommand( "Disable", param_Disable );
 		}
 
-		Interface::EndSession();
+		Interface::EndDynamic();
 	}
 }
 
@@ -275,14 +265,13 @@ void Game::Delete( FactoryObject& reference )
 
 	Object* object = vaultcast<Object>( reference );
 
-    Interface::StartSession();
+    Interface::StartDynamic();
 
-    ParamList param_MarkForDelete;
+    ParamContainer param_MarkForDelete;
     param_MarkForDelete.push_back( object->GetReferenceParam() );
-    ParamContainer MarkForDelete = ParamContainer( param_MarkForDelete, &Data::AlwaysTrue );
-    Interface::ExecuteCommandOnce( "MarkForDelete", MarkForDelete );
+    Interface::ExecuteCommand( "MarkForDelete", param_MarkForDelete );
 
-    Interface::EndSession();
+    Interface::EndDynamic();
 
 	GameFactory::DestroyInstance( reference );
 }
@@ -293,15 +282,14 @@ void Game::SetName( FactoryObject reference, string name )
 
 	object->SetName( name );
 
-	Interface::StartSession();
+	Interface::StartDynamic();
 
-	ParamList param_SetName;
+	ParamContainer param_SetName;
 	param_SetName.push_back( object->GetReferenceParam() );
 	param_SetName.push_back( BuildParameter( object->GetName() ) );
-	ParamContainer SetName = ParamContainer( param_SetName, &Data::AlwaysTrue );
-	Interface::ExecuteCommandOnce( "SetName", SetName );
+	Interface::ExecuteCommand( "SetName", param_SetName );
 
-	Interface::EndSession();
+	Interface::EndDynamic();
 }
 
 void Game::SetRestrained(FactoryObject reference, bool restrained)
@@ -311,15 +299,14 @@ void Game::SetRestrained(FactoryObject reference, bool restrained)
 	if ( !actor )
 		throw VaultException( "Object with reference %08X is not an Actor", ( *reference )->GetReference() );
 
-	Interface::StartSession();
+	Interface::StartDynamic();
 
-    ParamList param_SetRestrained;
+    ParamContainer param_SetRestrained;
     param_SetRestrained.push_back(actor->GetReferenceParam());
     param_SetRestrained.push_back(restrained ? Data::Param_True : Data::Param_False);
-    ParamContainer SetRestrained = ParamContainer(param_SetRestrained, &Data::AlwaysTrue);
-    Interface::ExecuteCommandOnce("SetRestrained", SetRestrained);
+    Interface::ExecuteCommand("SetRestrained", param_SetRestrained);
 
-	Interface::EndSession();
+	Interface::EndDynamic();
 }
 
 void Game::SetPos( FactoryObject reference, double X, double Y, double Z )
@@ -343,16 +330,15 @@ void Game::SetPos( FactoryObject reference )
 		{
 			Lockable* key = NULL;
 
-			Interface::StartSession();
+			Interface::StartDynamic();
 
 			key = object->SetGamePos( Axis_X, object->GetNetworkPos( Axis_X ) );
 
-            ParamList param_SetPos;
+            ParamContainer param_SetPos;
             param_SetPos.push_back(object->GetReferenceParam());
             param_SetPos.push_back(BuildParameter(API::RetrieveAxis_Reverse(Axis_X)));
             param_SetPos.push_back(BuildParameter(object->GetNetworkPos(Axis_X)));
-            ParamContainer SetPos = ParamContainer(param_SetPos, &Data::AlwaysTrue);
-            Interface::ExecuteCommandOnce("SetPos", SetPos, 0, key ? key->Lock(true) : 0);
+            Interface::ExecuteCommand("SetPos", param_SetPos, key ? key->Lock(true) : 0);
 
 			key = object->SetGamePos( Axis_Y, object->GetNetworkPos( Axis_Y ) );
 
@@ -360,8 +346,7 @@ void Game::SetPos( FactoryObject reference )
             param_SetPos.push_back(object->GetReferenceParam());
             param_SetPos.push_back(BuildParameter(API::RetrieveAxis_Reverse(Axis_Y)));
             param_SetPos.push_back(BuildParameter(object->GetNetworkPos(Axis_Y)));
-            SetPos = ParamContainer(param_SetPos, &Data::AlwaysTrue);
-            Interface::ExecuteCommandOnce("SetPos", SetPos, 0, key ? key->Lock(true) : 0);
+            Interface::ExecuteCommand("SetPos", param_SetPos, key ? key->Lock(true) : 0);
 
 			key = object->SetGamePos( Axis_Z, object->GetNetworkPos( Axis_Z ) );
 
@@ -369,10 +354,9 @@ void Game::SetPos( FactoryObject reference )
             param_SetPos.push_back(object->GetReferenceParam());
             param_SetPos.push_back(BuildParameter(API::RetrieveAxis_Reverse(Axis_Z)));
             param_SetPos.push_back(BuildParameter(object->GetNetworkPos(Axis_Z)));
-            SetPos = ParamContainer(param_SetPos, &Data::AlwaysTrue);
-            Interface::ExecuteCommandOnce("SetPos", SetPos, 0, key ? key->Lock(true) : 0);
+            Interface::ExecuteCommand("SetPos", param_SetPos, key ? key->Lock(true) : 0);
 
-			Interface::EndSession();
+			Interface::EndDynamic();
 		}
 	}
 }
@@ -390,9 +374,9 @@ void Game::SetAngle( FactoryObject reference, unsigned char axis )
 {
 	Object* object = vaultcast<Object>( reference );
 
-	Interface::StartSession();
+	Interface::StartDynamic();
 
-	ParamList param_SetAngle;
+	ParamContainer param_SetAngle;
 	param_SetAngle.push_back( object->GetReferenceParam() );
 	param_SetAngle.push_back( BuildParameter( API::RetrieveAxis_Reverse( axis ) ) );
 
@@ -409,10 +393,9 @@ void Game::SetAngle( FactoryObject reference, unsigned char axis )
 	}
 
 	param_SetAngle.push_back( BuildParameter( value ) );
-	ParamContainer SetAngle = ParamContainer( param_SetAngle, &Data::AlwaysTrue );
-	Interface::ExecuteCommandOnce( "SetAngle", SetAngle );
+	Interface::ExecuteCommand( "SetAngle", param_SetAngle );
 
-	Interface::EndSession();
+	Interface::EndDynamic();
 }
 
 void Game::SetNetworkCell( vector<FactoryObject> reference, unsigned int cell )
@@ -456,44 +439,40 @@ void Game::SetActorValue( FactoryObject reference, bool base, unsigned char inde
 
         if (base)
         {
-            ParamList param_SetActorValue;
+            ParamContainer param_SetActorValue;
             param_SetActorValue.push_back(actor->GetReferenceParam());
             param_SetActorValue.push_back(BuildParameter(API::RetrieveValue_Reverse(index)));
             param_SetActorValue.push_back(BuildParameter(value));
-            ParamContainer SetActorValue = ParamContainer(param_SetActorValue, &Data::AlwaysTrue);
-            Interface::ExecuteCommandOnce("SetActorValue", SetActorValue, 0, key);
+            Interface::ExecuteCommand("SetActorValue", param_SetActorValue, key);
         }
         else
         {
-            ParamList param_ForceActorValue;
+            ParamContainer param_ForceActorValue;
             param_ForceActorValue.push_back(actor->GetReferenceParam());
             param_ForceActorValue.push_back(BuildParameter(API::RetrieveValue_Reverse(index)));
             param_ForceActorValue.push_back(BuildParameter(value));
-            ParamContainer ForceActorValue = ParamContainer(param_ForceActorValue, &Data::AlwaysTrue);
-            Interface::ExecuteCommandOnce("ForceActorValue", ForceActorValue, 0, key);
+            Interface::ExecuteCommand("ForceActorValue", param_ForceActorValue, key);
         }
 
 		if ( base )
 		{
-			ParamList param_SetActorValue;
+			ParamContainer param_SetActorValue;
 			param_SetActorValue.push_back( actor->GetReferenceParam() );
 			param_SetActorValue.push_back( BuildParameter( API::RetrieveValue_Reverse( index ) ) );
 			param_SetActorValue.push_back( BuildParameter( value ) );
-			ParamContainer SetActorValue = ParamContainer( param_SetActorValue, &Data::AlwaysTrue );
-			Interface::ExecuteCommandOnce( "SetActorValue", SetActorValue, 0, key );
+			Interface::ExecuteCommand( "SetActorValue", param_SetActorValue, key );
 		}
 
 		else
 		{
-			ParamList param_ForceActorValue;
+			ParamContainer param_ForceActorValue;
 			param_ForceActorValue.push_back( actor->GetReferenceParam() );
 			param_ForceActorValue.push_back( BuildParameter( API::RetrieveValue_Reverse( index ) ) );
 			param_ForceActorValue.push_back( BuildParameter( value ) );
-			ParamContainer ForceActorValue = ParamContainer( param_ForceActorValue, &Data::AlwaysTrue );
-			Interface::ExecuteCommandOnce( "ForceActorValue", ForceActorValue, 0, key );
+			Interface::ExecuteCommand( "ForceActorValue", param_ForceActorValue, key );
 		}
 
-		Interface::EndSession();
+		Interface::EndDynamic();
 	}
 }
 
@@ -519,15 +498,14 @@ void Game::SetActorState( FactoryObject reference, unsigned char index, unsigned
 
 		signed int key = result->Lock( true );
 
-		Interface::StartSession();
+		Interface::StartDynamic();
 
-        ParamList param_SetAlert;
+        ParamContainer param_SetAlert;
         param_SetAlert.push_back(actor->GetReferenceParam());
         param_SetAlert.push_back(alerted ? Data::Param_True : Data::Param_False);
-        ParamContainer SetAlert = ParamContainer(param_SetAlert, &Data::AlwaysTrue);
-        Interface::ExecuteCommandOnce("SetAlert", SetAlert, 0, key);
+        Interface::ExecuteCommand("SetAlert", param_SetAlert, key);
 
-		Interface::EndSession();
+		Interface::EndDynamic();
 
         SetRestrained(reference, true);
     }
@@ -540,15 +518,14 @@ void Game::SetActorState( FactoryObject reference, unsigned char index, unsigned
 
 		signed int key = result->Lock( true );
 
-		Interface::StartSession();
+		Interface::StartDynamic();
 
-        ParamList param_SetForceSneak;
+        ParamContainer param_SetForceSneak;
         param_SetForceSneak.push_back(actor->GetReferenceParam());
         param_SetForceSneak.push_back(sneaking ? Data::Param_True : Data::Param_False);
-        ParamContainer SetForceSneak = ParamContainer(param_SetForceSneak, &Data::AlwaysTrue);
-        Interface::ExecuteCommandOnce("SetForceSneak", SetForceSneak, 0, key);
+        Interface::ExecuteCommand("SetForceSneak", param_SetForceSneak, key);
 
-		Interface::EndSession();
+		Interface::EndDynamic();
 
 		SetRestrained( reference, true );
 	}
@@ -559,16 +536,15 @@ void Game::SetActorState( FactoryObject reference, unsigned char index, unsigned
 	{
 		signed int key = result->Lock( true );
 
-		Interface::StartSession();
+		Interface::StartDynamic();
 
-        ParamList param_PlayGroup;
+        ParamContainer param_PlayGroup;
         param_PlayGroup.push_back(actor->GetReferenceParam());
         param_PlayGroup.push_back(BuildParameter(API::RetrieveAnim_Reverse(index)));
         param_PlayGroup.push_back(Data::Param_True);
-        ParamContainer PlayGroup = ParamContainer(param_PlayGroup, &Data::AlwaysTrue);
-        Interface::ExecuteCommandOnce("PlayGroup", PlayGroup, 0, key);
+        Interface::ExecuteCommand("PlayGroup", param_PlayGroup, key);
 
-		Interface::EndSession();
+		Interface::EndDynamic();
 
 		if ( index == AnimGroup_Idle )
 			SetPos( reference );
@@ -586,9 +562,9 @@ void Game::MoveTo( vector<FactoryObject> reference, bool cell )
 	{
 		signed int key = result->Lock( true );
 
-		Interface::StartSession();
+		Interface::StartDynamic();
 
-		ParamList param_MoveTo;
+		ParamContainer param_MoveTo;
 		param_MoveTo.push_back( object->GetReferenceParam() );
 		param_MoveTo.push_back( object2->GetReferenceParam() );
 
@@ -599,10 +575,9 @@ void Game::MoveTo( vector<FactoryObject> reference, bool cell )
 			param_MoveTo.push_back( BuildParameter( object->GetNetworkPos( Axis_Z ) - object2->GetNetworkPos( Axis_Z ) ) );
 		}
 
-		ParamContainer MoveTo = ParamContainer( param_MoveTo, &Data::AlwaysTrue );
-		Interface::ExecuteCommandOnce( "MoveTo", MoveTo, 0, key );
+		Interface::ExecuteCommand( "MoveTo", param_MoveTo, key );
 
-		Interface::EndSession();
+		Interface::EndDynamic();
 	}
 }
 
@@ -831,14 +806,13 @@ void Game::ScanContainer( FactoryObject reference, vector<unsigned char>& data )
 
 void Game::Failure_PlaceAtMe( unsigned int refID, unsigned int baseID, unsigned int count, signed int key )
 {
-	Interface::StartSession();
+	Interface::StartDynamic();
 
-    ParamList param_PlaceAtMe;
+    ParamContainer param_PlaceAtMe;
     param_PlaceAtMe.push_back(BuildParameter(Utils::LongToHex(refID)));
     param_PlaceAtMe.push_back(BuildParameter(Utils::LongToHex(baseID)));
     param_PlaceAtMe.push_back(BuildParameter(count));
-    ParamContainer PlaceAtMe = ParamContainer(param_PlaceAtMe, &Data::AlwaysTrue);
-    Interface::ExecuteCommandOnce("PlaceAtMe", PlaceAtMe, 0, key);
+    Interface::ExecuteCommand("PlaceAtMe", param_PlaceAtMe, key);
 
-	Interface::EndSession();
+	Interface::EndDynamic();
 }

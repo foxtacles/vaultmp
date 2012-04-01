@@ -27,7 +27,6 @@ class Value : public Lockable
 
 	private:
 
-		unsigned char id;
 		T value;
 		promise<T> async;
 

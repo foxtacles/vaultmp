@@ -21,8 +21,7 @@ class CriticalSection
         recursive_timed_mutex cs;
 
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
-		bool ndebug;
+		Debug* debug;
 #endif
 
 		bool finalize;
@@ -40,8 +39,7 @@ class CriticalSection
 		void Finalize();
 
 #ifdef VAULTMP_DEBUG
-		void ToggleSectionDebug( bool toggle );
-		static void SetDebugHandler( Debug* debug );
+		void SetDebugHandler( Debug* debug );
 #endif
 
 };

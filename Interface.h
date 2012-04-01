@@ -8,9 +8,12 @@
 #include <string>
 #include <list>
 #include <map>
+#include <unordered_map>
 #include <vector>
 #include <thread>
 #include <chrono>
+#include <numeric>
+#include <algorithm>
 
 #include "API.h"
 #include "CriticalSection.h"
@@ -24,8 +27,10 @@
 using namespace std;
 using namespace Data;
 
-typedef multimap<string, ParamContainer> Native;
-typedef list<pair<Native::iterator, vector<int> > > CommandList;
+typedef unordered_multimap<string, ParamContainer> Native;
+typedef multimap<unsigned int, Native::iterator> PriorityMap;
+typedef list<list<Native::iterator>> StaticCommandList;
+typedef list<pair<Native::iterator, signed int>> DynamicCommandList;
 
 /**
  * \brief Provides facilities to execute engine commands, connects with the game process and is responsible for sending / retrieving game data
@@ -43,20 +48,22 @@ class Interface : public API
 		static char* module;
         static thread hCommandThreadReceive;
         static thread hCommandThreadSend;
-		static CommandList cmdlist;
-		static CommandList tmplist;
+        static PriorityMap priorityMap;
+		static StaticCommandList static_cmdlist;
+		static DynamicCommandList dynamic_cmdlist;
 		static PipeClient* pipeServer;
 		static PipeServer* pipeClient;
 		static ResultHandler resultHandler;
-		static CriticalSection cs;
+		static CriticalSection static_cs;
+		static CriticalSection dynamic_cs;
 
-		static map<string, string> defs;
-		static map<string, string> alias;
+		static unordered_map<string, string> defs;
+		static unordered_map<string, string> alias;
 		static Native natives;
 
-    static Native::iterator DefineNativeInternal(string name, ParamContainer);
-    static void ExecuteCommand(Native::iterator it, bool loop, unsigned int priority, signed int key);
-    static multimap<string, string> Evaluate(string name, string def, ParamContainer param);
+        static Native::iterator DefineNativeInternal(string name, ParamContainer);
+        static void ExecuteCommand(Native::iterator it, signed int key);
+        static multimap<string, string> Evaluate(Native::iterator _it);
 
 		static void CommandThreadReceive( char* module );
 		static void CommandThreadSend();
@@ -89,17 +96,31 @@ class Interface : public API
 		static bool IsAvailable();
 
 		/**
+		 * \brief Starts a setup Interface session
+		 *
+		 * Used to start input static commands
+		 */
+		static void StartSetup();
+		/**
+		 * \brief Ends a setup Interface session
+		 *
+		 * Must be called when finished inputting static commands
+		 */
+		static void EndSetup();
+
+		/**
 		 * \brief Starts an Interface session
 		 *
-		 * Used to start executing commands
+		 * Used to start input dynamic commands
 		 */
-		static void StartSession();
+		static void StartDynamic();
 		/**
 		 * \brief Ends an Interface session
 		 *
-		 * Must be called when finished executing commands
+		 * Must be called when finished inputting dynamic commands
 		 */
-		static void EndSession();
+		static void EndDynamic();
+
 
 		/**
 		 * \brief Defines an Interface command
@@ -115,8 +136,7 @@ class Interface : public API
 		 * \brief Defines a native for an existing command
 		 *
 		 * name refers to an existing command.
-		 * param is a ParamContainer which has the form pair<ParamList, RetrieveBooleanFlag>
-		 * ParamList is a STL list of Parameter's, RetrieveBooleanFlag is a function pointer which takes no arguments and returns a bool
+		 * param is a ParamContainer which is a STL list of Parameter's
 		 */
 		static void DefineNative( string name, ParamContainer param );
 		/**
@@ -127,16 +147,15 @@ class Interface : public API
 		 *
 		 * A native must be defined for the given command.
 		 */
-		static void ExecuteCommandLoop( string name, unsigned int priority = 0 );
+		static void SetupCommand( string name, unsigned int priority = 1 );
 		/**
 		 * \brief Executes a command once
 		 *
 		 * name refers to an existing command
 		 * see DefineNative for a short explanation of ParamContainer
-		 * priority (optional) - the lower this variable, the higher is the priority
 		 * key (optional) - a signed key (usually from the Lockable class) which is to later identify this command
 		 */
-		static void ExecuteCommandOnce( string name, ParamContainer, unsigned int priority = 0, signed int key = 0 );
+		static void ExecuteCommand( string name, ParamContainer, signed int key = 0 );
 
 #ifdef VAULTMP_DEBUG
 		static void SetDebugHandler( Debug* debug );

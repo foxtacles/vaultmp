@@ -9,6 +9,7 @@
 #include <string>
 #include <set>
 #include <map>
+#include <unordered_map>
 #include <queue>
 #include <vector>
 
@@ -28,8 +29,8 @@ using namespace Data;
 
 typedef vector<char*> CommandParsed;
 typedef pair<pair<pair<signed int, vector<boost::any> >, boost::any>, bool> CommandResult;
-typedef map<string, pair<string, unsigned short> > FunctionMap;
-typedef map<string, unsigned char> ValueMap;
+typedef unordered_map<string, pair<string, unsigned short> > FunctionMap;
+typedef unordered_map<string, unsigned char> ValueMap;
 typedef set<unsigned char> ValueList;
 typedef deque<pair<pair<unsigned int, vector<boost::any> >, signed int> > CommandQueue;
 

@@ -1,17 +1,13 @@
 #include "CriticalSection.h"
 #include "VaultException.h"
 
-#ifdef VAULTMP_DEBUG
-Debug* CriticalSection::debug;
-#endif
-
 CriticalSection::CriticalSection()
 {
 	finalize = false;
 	locks = 0;
 
 #ifdef VAULTMP_DEBUG
-	ndebug = true;
+	debug = NULL;
 #endif
 }
 
@@ -31,17 +27,12 @@ CriticalSection::~CriticalSection()
 }
 
 #ifdef VAULTMP_DEBUG
-void CriticalSection::ToggleSectionDebug( bool toggle )
-{
-	ndebug = !toggle;
-}
-
 void CriticalSection::SetDebugHandler( Debug* debug )
 {
-	CriticalSection::debug = debug;
+	this->debug = debug;
 
 	if ( debug != NULL )
-		debug->Print( "Attached debug handler to CriticalSection class", true );
+		debug->PrintFormat( "Attached debug handler to CriticalSection object %08X (%s)", true, this, typeid( *this ).name());
 }
 #endif
 
@@ -58,7 +49,7 @@ CriticalSection* CriticalSection::StartSession()
 
 #ifdef VAULTMP_DEBUG
 
-		if ( !ndebug && debug != NULL )
+		if ( debug != NULL )
 			debug->PrintFormat( "CriticalSection object %08X (%s) locked", true, this, typeid( *this ).name() );
 
 #endif
@@ -85,7 +76,7 @@ void CriticalSection::EndSession()
 
 #ifdef VAULTMP_DEBUG
 
-	if ( !ndebug && debug != NULL )
+	if ( debug != NULL )
 		debug->PrintFormat( "CriticalSection object %08X (%s) unlocked", true, this, typeid( *this ).name() );
 
 #endif

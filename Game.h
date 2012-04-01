@@ -49,6 +49,10 @@ class Game
 		 */
 		static void LoadGame( string savegame );
 		/**
+		 * \brief Loads the environment after savegame load
+		 */
+		static void LoadEnvironment();
+		/**
 		 * \brief Creates a new Player
 		 */
 		static void NewPlayer( NetworkID id, unsigned int baseID, string name );

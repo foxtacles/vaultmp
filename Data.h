@@ -28,17 +28,10 @@ namespace Data
 {
 
 	typedef void ( *ResultHandler )( signed int, vector<boost::any>&, boost::any&, bool );
-	typedef bool ( *RetrieveBooleanFlag )();
 	typedef pair<vector<string>, VaultFunctor*> Parameter;
-	typedef list<Parameter> ParamList;
-	typedef pair<ParamList, RetrieveBooleanFlag> ParamContainer;
+	typedef list<Parameter> ParamContainer;
 	typedef const map<const unsigned int, const char*> Database;
 	typedef map<const unsigned char, const unsigned char> IndexLookup;
-
-	static bool AlwaysTrue()
-	{
-		return true;
-	}
 
 	static Parameter BuildParameter( string param )
 	{
@@ -84,9 +77,9 @@ namespace Data
 
 	static void FreeContainer( ParamContainer& param )
 	{
-		ParamList::iterator it;
+		ParamContainer::iterator it;
 
-		for ( it = param.first.begin(); it != param.first.end(); ++it )
+		for ( it = param.begin(); it != param.end(); ++it )
 			if ( it->second )
 				delete it->second;
 	}

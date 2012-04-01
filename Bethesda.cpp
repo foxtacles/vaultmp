@@ -140,9 +140,7 @@ void Bethesda::CommandHandler( signed int key, vector<boost::any>& info, boost::
 
 			case Fallout3::Functions::Func_Load:
 			case FalloutNV::Functions::Func_Load:
-				self = GameFactory::GetObject( PLAYER_REFERENCE );
-				Game::SetName( self, vaultcast<Player>( self )->GetName() );
-				// reload game world
+                Game::LoadEnvironment();
 				break;
 
 			case Fallout3::Functions::Func_SetName:
@@ -404,7 +402,6 @@ void Bethesda::InitializeVaultMP( RakPeerInterface* peer, SystemAddress server, 
 	//debug->PrintSystem();
 	API::SetDebugHandler( debug );
 	VaultException::SetDebugHandler( debug );
-	CriticalSection::SetDebugHandler( debug );
 	NetworkClient::SetDebugHandler( debug );
 	Interface::SetDebugHandler( debug );
 	Lockable::SetDebugHandler( debug );

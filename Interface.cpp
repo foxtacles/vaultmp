@@ -7,14 +7,16 @@ bool Interface::endThread = false;
 bool Interface::wakeup = false;
 bool Interface::initialized = false;
 char* Interface::module;
-CommandList Interface::cmdlist;
-CommandList Interface::tmplist;
-map<string, string> Interface::defs;
-map<string, string> Interface::alias;
+PriorityMap Interface::priorityMap;
+StaticCommandList Interface::static_cmdlist;
+DynamicCommandList Interface::dynamic_cmdlist;
+unordered_map<string, string> Interface::defs;
+unordered_map<string, string> Interface::alias;
 Native Interface::natives;
 thread Interface::hCommandThreadReceive;
 thread Interface::hCommandThreadSend;
-CriticalSection Interface::cs;
+CriticalSection Interface::static_cs;
+CriticalSection Interface::dynamic_cs;
 
 #ifdef VAULTMP_DEBUG
 Debug* Interface::debug;
@@ -56,6 +58,9 @@ bool Interface::Initialize( char* module, ResultHandler resultHandler, unsigned 
 
 		initialized = true;
 
+        //static_cs.SetDebugHandler(debug);
+        //dynamic_cs.SetDebugHandler(debug);
+
 		return true;
 	}
 
@@ -74,14 +79,15 @@ void Interface::Terminate()
         if (hCommandThreadSend.joinable())
             hCommandThreadSend.join();
 
-		CommandList::iterator it;
-		cmdlist.splice( cmdlist.begin(), tmplist );
+        Native::iterator it;
 
-		for ( it = cmdlist.begin(); it != cmdlist.end(); ++it )
-			FreeContainer( it->first->second );
+		for ( it = natives.begin(); it != natives.end(); ++it )
+			FreeContainer( it->second );
 
-		cmdlist.clear();
-		tmplist.clear();
+		static_cmdlist.clear();
+		dynamic_cmdlist.clear();
+		priorityMap.clear();
+
 		natives.clear();
 		defs.clear();
 		alias.clear();
@@ -130,14 +136,54 @@ bool Interface::IsAvailable()
 	return ( wakeup && !endThread && hCommandThreadReceive.joinable() && hCommandThreadSend.joinable());
 }
 
-void Interface::StartSession()
+void Interface::StartSetup()
 {
-	cs.StartSession();
+	static_cs.StartSession();
+
+	static_cmdlist.clear();
+	priorityMap.clear();
 }
 
-void Interface::EndSession()
+void Interface::EndSetup()
 {
-	cs.EndSession();
+    vector<unsigned int> priorities;
+    priorities.reserve(priorityMap.size());
+
+    PriorityMap::iterator it;
+
+    for (it = priorityMap.begin(); it != priorityMap.end(); ++it)
+        priorities.push_back(it->first);
+
+    vector<unsigned int>::iterator it2 = unique(priorities.begin(), priorities.end());
+    priorities.resize(it2 - priorities.begin());
+
+    auto gcd = [](int x, int y) { for (;;) { if (x == 0) return y; y %= x; if (y == 0) return x; x %= y; } };
+    auto lcm = [=](int x, int y) { int temp = gcd(x, y); return temp ? (x / temp * y) : 0; };
+
+    unsigned int result = accumulate(priorities.begin(), priorities.end(), 1, lcm);
+
+    for (unsigned int i = 0; i < result; ++i)
+    {
+        list<Native::iterator> content = list<Native::iterator>();
+
+        for (it = priorityMap.begin(); it != priorityMap.end(); ++it)
+            if (((i + 1) % it->first) == 0)
+                content.push_back(it->second);
+
+        static_cmdlist.push_back(content);
+    }
+
+	static_cs.EndSession();
+}
+
+void Interface::StartDynamic()
+{
+	dynamic_cs.StartSession();
+}
+
+void Interface::EndDynamic()
+{
+	dynamic_cs.EndSession();
 }
 
 void Interface::DefineCommand( string name, string def, string real )
@@ -158,106 +204,98 @@ void Interface::DefineNative( string name, ParamContainer param )
 
 Native::iterator Interface::DefineNativeInternal( string name, ParamContainer param )
 {
-	map<string, string>::iterator it;
+	unordered_map<string, string>::iterator it;
 	it = defs.find( name );
 
 	if ( it == defs.end() )
-		throw VaultException( "Function definition %s not found", name.c_str() );
+		throw VaultException( "Function definition for %s not found", name.c_str() );
 
 	return natives.insert( pair<string, ParamContainer>( name, param ) );
 }
 
-void Interface::ExecuteCommand(Native::iterator it, bool loop, unsigned int priority, signed int key)
+void Interface::ExecuteCommand(Native::iterator it, signed int key)
 {
 	if ( it == natives.end() )
 		throw VaultException( "Native definition not found" );
 
-    vector<signed int> data;
-    data.push_back((signed int) loop);
-    data.push_back(priority);
-    data.push_back(priority);
-    data.push_back(key);
-
-    tmplist.push_back((pair<Native::iterator, vector<signed int> >(it, data))); // Critical section
+    dynamic_cmdlist.push_back((pair<Native::iterator, signed int>(it, key)));
 }
 
-void Interface::ExecuteCommandLoop(string name, unsigned int priority)
+void Interface::SetupCommand(string name, unsigned int priority)
 {
-	map<string, string>::iterator it;
-	it = defs.find( name );
+    Native::iterator it = natives.find(name);
 
-	if ( it == defs.end() )
-		throw VaultException( "Command definition %s not found", name.c_str() );
+	if ( it == natives.end() )
+		throw VaultException( "Native definition for %s not found", name.c_str() );
 
-    ExecuteCommand(natives.find(name), true, priority, 0);
+    priorityMap.insert(pair<unsigned int, Native::iterator>(priority, it));
 }
 
-void Interface::ExecuteCommandOnce(string name, ParamContainer param, unsigned int priority, signed int key)
+void Interface::ExecuteCommand(string name, ParamContainer param, signed int key)
 {
-    ExecuteCommand(DefineNativeInternal(name, param), false, priority, key);
+    ExecuteCommand(DefineNativeInternal(name, param), key);
 }
 
-multimap<string, string> Interface::Evaluate( string name, string def, ParamContainer param )
+multimap<string, string> Interface::Evaluate(Native::iterator _it)
 {
+    unordered_map<string, string>::iterator al = alias.find(_it->first);
+    string name = (al != alias.end() ? al->second : _it->first);
+    string def = defs.find(name)->second;
+    ParamContainer param = _it->second; // copy...maybe change function to operate on reference
+
 	multimap<string, string> result;
-	ParamList::reverse_iterator it;
-	RetrieveBooleanFlag performCheck = param.second;
+	ParamContainer::reverse_iterator it;
 
-    if (!param.first.empty())
+    if (!param.empty())
     {
-        if (performCheck())
+        unsigned int i = 0;
+        unsigned int rsize = 1;
+        unsigned int lsize = param.size();
+        vector<unsigned int> mult;
+        vector<ParamContainer::reverse_iterator> lists;
+        mult.reserve(lsize);
+        lists.reserve(lsize);
+
+        for (it = param.rbegin(); it != param.rend(); ++it, ++i)
         {
-            unsigned int i = 0;
-            unsigned int rsize = 1;
-            unsigned int lsize = param.first.size();
-            vector<unsigned int> mult;
-            vector<ParamList::reverse_iterator> lists;
-            mult.reserve(lsize);
-            lists.reserve(lsize);
+            char token[4];
+            snprintf(token, sizeof(token), "%%%d", i);
 
-            for (it = param.first.rbegin(); it != param.first.rend(); ++it, ++i)
+            if ( def.find( token ) == string::npos )
+                return result;
+
+            vector<string> params;
+            VaultFunctor* getParams = it->second;
+
+            if ( getParams )
+                params = ( *getParams )();
+
+            if ( !params.empty() )
+                it->first.insert( it->first.end(), params.begin(), params.end() );
+            else if (it->first.empty())
+                return result;
+
+            mult.insert( mult.begin(), rsize );
+            lists.insert( lists.begin(), it );
+            rsize *= it->first.size();
+        }
+
+        for ( i = 0; i < rsize; ++i )
+        {
+            string cmd = def;
+
+            for ( int j = 0; j < lsize; j++ )
             {
+                unsigned int idx = ( ( int ) ( i / mult[j] ) ) % lists.at( j )->first.size();
+
                 char token[4];
-                snprintf(token, sizeof(token), "%%%d", i);
-                if (def.find(token) == string::npos)
-                    return result;
+                snprintf( token, sizeof( token ), "%%%d", j );
 
-				if ( def.find( token ) == string::npos )
-					return result;
+                cmd.replace( cmd.find( token ), strlen( token ), lists.at( j )->first.at( idx ) );
+            }
 
-				vector<string> params;
-				VaultFunctor* getParams = it->second;
-
-				if ( getParams )
-					params = ( *getParams )();
-
-				if ( !params.empty() )
-					it->first.insert( it->first.end(), params.begin(), params.end() );
-                else if (it->first.empty())
-                    return result;
-
-                mult.insert( mult.begin(), rsize );
-                lists.insert( lists.begin(), it );
-                rsize *= it->first.size();
-			}
-
-			for ( i = 0; i < rsize; i++ )
-			{
-				string cmd = def;
-
-				for ( int j = 0; j < lsize; j++ )
-				{
-					unsigned int idx = ( ( int ) ( i / mult[j] ) ) % lists.at( j )->first.size();
-
-					char token[4];
-					snprintf( token, sizeof( token ), "%%%d", j );
-
-					cmd.replace( cmd.find( token ), strlen( token ), lists.at( j )->first.at( idx ) );
-				}
-
-				result.insert( pair<string, string>( name, cmd ) );
-			}
-		}
+            result.insert( pair<string, string>( name, cmd ) );
+        }
 	}
 
 	return result;
@@ -373,94 +411,80 @@ void Interface::CommandThreadSend()
 
 		while ( !endThread )
 		{
-			CommandList::iterator it;
-			CommandList::iterator insertAt = cmdlist.end();
+			StaticCommandList::iterator it;
 
-			if ( !tmplist.empty() )
+            static_cs.StartSession();
+
+			for ( it = static_cmdlist.begin(); it != static_cmdlist.end() && !endThread; ++it)
 			{
-				cs.StartSession();
-				cmdlist.splice( cmdlist.begin(), tmplist );
-				cs.EndSession();
-			}
+                list<Native::iterator>::iterator it2;
+                list<Native::iterator>& next_list = *it;
 
-			for ( it = cmdlist.begin(); it != cmdlist.end() && !endThread; )
-			{
-				if ( !tmplist.empty() )
-				{
-					cs.StartSession();
-
-                    unsigned int count = tmplist.size();
-
-					if ( insertAt != cmdlist.end() )
-					{
-						CommandList::iterator insertAt_tmp = insertAt;
-						++insertAt_tmp;
-						cmdlist.splice( insertAt_tmp, tmplist );
-					}
-
-					else
-					{
-						CommandList::iterator it_tmp = it;
-						++it_tmp;
-						cmdlist.splice( it_tmp, tmplist );
-					}
-
-					CommandList::iterator it_tmp = it;
-					advance( it_tmp, count );
-
-					insertAt = it_tmp;
-
-					cs.EndSession();
-				}
-
-                map<string, string>::iterator al = alias.find(it->first->first);
-                string name = (al != alias.end() ? al->second : it->first->first);
-                string def = defs.find(name)->second;
-                ParamContainer& param = it->first->second;
-                vector<signed int>& data = it->second;
-
-                if (data[2] != 0)
+                for (it2 = next_list.begin(); it2 != next_list.end() && !endThread; ++it2)
                 {
-                    data[2]--;
-                    ++it;
-                    continue;
-                }
+                    multimap<string, string> cmd = Interface::Evaluate(*it2);
 
-                multimap<string, string> cmd = Interface::Evaluate(name, def, param);
-
-                if (cmd.size() != 0)
-                {
-                    signed int key = data[3];
-
-                    CommandParsed stream = API::Translate(cmd, key);
-
-                    if (stream.size() != 0)
+                    if (cmd.size() != 0)
                     {
-                        CommandParsed::iterator it2;
+                        CommandParsed stream = API::Translate(cmd);
 
-                        for (it2 = stream.begin(); it2 != stream.end() && !endThread; ++it2)
+                        if (stream.size() != 0)
                         {
-                            char* content = *it2;
-                            pipeServer->Send(content);
-                        }
+                            CommandParsed::iterator it;
 
-                        for (it2 = stream.begin(); it2 != stream.end(); ++it2)
-                        {
-                            char* content = *it2;
-                            delete[] content;
+                            for (it = stream.begin(); it != stream.end() && !endThread; ++it)
+                            {
+                                char* content = *it;
+                                pipeServer->Send(content);
+                            }
+
+                            for (it = stream.begin(); it != stream.end(); ++it)
+                            {
+                                char* content = *it;
+                                delete[] content;
+                            }
                         }
                     }
                 }
 
-                if (data[0] == 0)
+                dynamic_cs.StartSession();
+
+                DynamicCommandList::iterator it3;
+
+                for (it3 = dynamic_cmdlist.begin(); it3 != dynamic_cmdlist.end() && !endThread; it3 = dynamic_cmdlist.erase(it3))
                 {
-                    FreeContainer(param);
-                    natives.erase(it->first);
-                    it = cmdlist.erase(it);
+                    multimap<string, string> cmd = Interface::Evaluate(it3->first);
+
+                    if (cmd.size() != 0)
+                    {
+                        CommandParsed stream = API::Translate(cmd, it3->second);
+
+                        if (stream.size() != 0)
+                        {
+                            CommandParsed::iterator it;
+
+                            for (it = stream.begin(); it != stream.end() && !endThread; ++it)
+                            {
+                                char* content = *it;
+                                pipeServer->Send(content);
+                            }
+
+                            for (it = stream.begin(); it != stream.end(); ++it)
+                            {
+                                char* content = *it;
+                                delete[] content;
+                            }
+                        }
+                    }
+
+                    FreeContainer(it3->first->second);
+                    natives.erase(it3->first);
                 }
-                else
-                    ++it;
+
+                dynamic_cs.EndSession();
             }
+
+            static_cs.EndSession();
         }
     }
     catch (std::exception& e)
