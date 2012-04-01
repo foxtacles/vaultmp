@@ -208,21 +208,22 @@ void Game::NewPlayer( NetworkID id, unsigned int baseID, string name )
 
 	Interface::EndSession();
 
-    chrono::steady_clock::time_point till = chrono::steady_clock::now() + chrono::seconds(15);
+    unsigned int refID;
 
-    while (chrono::steady_clock::now() < till && !store->Get())
-        this_thread::sleep_for(chrono::milliseconds(100));
-
-	if ( !store->Get() )
-	{
-		delete store;
-		throw VaultException( "Player creation with baseID %08X and NetworkID %lld failed", baseID, id );
-	}
+    try
+    {
+        refID = store->get_future(chrono::seconds(15));
+    }
+    catch (...)
+    {
+        delete store;
+        throw VaultException( "Player creation with baseID %08X and NetworkID %lld failed", baseID, id );
+    }
 
 	GameFactory::CreateKnownInstance( ID_PLAYER, id, baseID );
 	reference = GameFactory::GetObject( id );
 	Player* player = vaultcast<Player>( reference );
-	player->SetReference( store->Get() );
+	player->SetReference( refID );
 	delete store;
 
 	SetName( reference, name );
@@ -629,7 +630,8 @@ void Game::PlaceAtMe( Lockable* data, unsigned int refID )
 	if ( store == NULL )
 		throw VaultException( "Reference storage is corrupted" );
 
-	store->Set( refID );
+	store->set( refID );
+	store->set_promise();
 }
 
 void Game::GetPos( FactoryObject reference, unsigned char axis, double value )

@@ -4,6 +4,9 @@
 #include "vaultmp.h"
 #include "Lockable.h"
 
+#include <chrono>
+#include <future>
+
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"
 #endif
@@ -26,6 +29,7 @@ class Value : public Lockable
 
 		unsigned char id;
 		T value;
+		promise<T> async;
 
 #ifdef VAULTMP_DEBUG
 		static Debug* debug;
@@ -37,16 +41,27 @@ class Value : public Lockable
 
 		Value();
 		Value( T t );
+		Value(Value&&) = default;
+		Value& operator=(Value&&) = default;
 		virtual ~Value();
 
 		/**
 		 * \brief Sets the value
 		 */
-		bool Set( T value );
+		bool set( T value );
 		/**
 		 * \brief Gets the value
 		 */
-		T Get() const;
+		T get() const;
+		/**
+		 * \brief Sets the current value as promise
+		 */
+		bool set_promise();
+		/**
+		 * \brief Waits for the future value
+		 */
+		T get_future(chrono::milliseconds timeout = chrono::milliseconds(0));
+
 
 #ifdef VAULTMP_DEBUG
 		static void SetDebugHandler( Debug* debug );

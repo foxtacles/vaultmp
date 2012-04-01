@@ -63,22 +63,22 @@ const Parameter Player::CreateFunctor( unsigned int flags, NetworkID player )
 
 unsigned char Player::GetPlayerControl( unsigned char control ) const
 {
-	return SAFE_FIND( player_Controls, control )->second.first.Get();
+	return SAFE_FIND( player_Controls, control )->second.first.get();
 }
 
 bool Player::GetPlayerControlEnabled( unsigned char control ) const
 {
-	return SAFE_FIND( player_Controls, control )->second.second.Get();
+	return SAFE_FIND( player_Controls, control )->second.second.get();
 }
 
 Lockable* Player::SetPlayerControl( unsigned char control, unsigned char key )
 {
 	Value<unsigned char>& data = SAFE_FIND( this->player_Controls, control )->second.first;
 
-	if ( data.Get() == key )
+	if ( data.get() == key )
 		return NULL;
 
-	if ( !data.Set( key ) )
+	if ( !data.set( key ) )
 		return NULL;
 
 #ifdef VAULTMP_DEBUG
@@ -95,10 +95,10 @@ Lockable* Player::SetPlayerControlEnabled( unsigned char control, bool state )
 {
 	Value<bool>& data = SAFE_FIND( this->player_Controls, control )->second.second;
 
-	if ( data.Get() == state )
+	if ( data.get() == state )
 		return NULL;
 
-	if ( !data.Set( state ) )
+	if ( !data.set( state ) )
 		return NULL;
 
 #ifdef VAULTMP_DEBUG

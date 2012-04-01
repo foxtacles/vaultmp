@@ -4,8 +4,8 @@ IndexLookup Reference::Mods;
 
 Reference::Reference( unsigned int refID, unsigned int baseID )
 {
-	this->refID.Set( refID );
-	this->baseID.Set( baseID );
+	this->refID.set( refID );
+	this->baseID.set( baseID );
 	this->SetNetworkIDManager( Network::Manager() );
 #ifdef VAULTMP_DEBUG
 	//this->ToggleSectionDebug(true);
@@ -30,10 +30,10 @@ unsigned int Reference::ResolveIndex( unsigned int baseID )
 
 Lockable* Reference::SetReference( unsigned int refID )
 {
-	if ( this->refID.Get() == refID )
+	if ( this->refID.get() == refID )
 		return NULL;
 
-	if ( !this->refID.Set( refID ) )
+	if ( !this->refID.set( refID ) )
 		return NULL;
 
 	return &this->refID;
@@ -41,10 +41,10 @@ Lockable* Reference::SetReference( unsigned int refID )
 
 Lockable* Reference::SetBase( unsigned int baseID )
 {
-	if ( this->baseID.Get() == baseID )
+	if ( this->baseID.get() == baseID )
 		return NULL;
 
-	if ( !this->baseID.Set( baseID ) )
+	if ( !this->baseID.set( baseID ) )
 		return NULL;
 
 	return &this->baseID;
@@ -52,20 +52,20 @@ Lockable* Reference::SetBase( unsigned int baseID )
 
 unsigned int Reference::GetReference() const
 {
-	return refID.Get();
+	return refID.get();
 }
 
 unsigned int Reference::GetBase() const
 {
-	return baseID.Get();
+	return baseID.get();
 }
 
 const Parameter Reference::GetReferenceParam() const
 {
-	return Parameter( vector<string> {Utils::LongToHex( refID.Get() )}, NULL );
+	return Parameter( vector<string> {Utils::LongToHex( refID.get() )}, NULL );
 }
 
 const Parameter Reference::GetBaseParam() const
 {
-	return Parameter( vector<string> {Utils::LongToHex( baseID.Get() )}, NULL );
+	return Parameter( vector<string> {Utils::LongToHex( baseID.get() )}, NULL );
 }

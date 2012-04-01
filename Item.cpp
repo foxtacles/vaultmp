@@ -60,25 +60,25 @@ void Item::initialize()
 
 unsigned int Item::GetItemCount() const
 {
-	return this->item_Count.Get();
+	return this->item_Count.get();
 }
 
 double Item::GetItemCondition() const
 {
-	return this->item_Condition.Get();
+	return this->item_Condition.get();
 }
 
 bool Item::GetItemEquipped() const
 {
-	return this->state_Equipped.Get();
+	return this->state_Equipped.get();
 }
 
 bool Item::SetItemCount( unsigned int count )
 {
-	if ( this->item_Count.Get() == count )
+	if ( this->item_Count.get() == count )
 		return false;
 
-	if ( !this->item_Count.Set( count ) )
+	if ( !this->item_Count.set( count ) )
 		return false;
 
 #ifdef VAULTMP_DEBUG
@@ -91,10 +91,10 @@ bool Item::SetItemCount( unsigned int count )
 
 bool Item::SetItemCondition( double condition )
 {
-	if ( this->item_Condition.Get() == condition )
+	if ( this->item_Condition.get() == condition )
 		return false;
 
-	if ( !this->item_Condition.Set( condition ) )
+	if ( !this->item_Condition.set( condition ) )
 		return false;
 
 #ifdef VAULTMP_DEBUG
@@ -107,10 +107,10 @@ bool Item::SetItemCondition( double condition )
 
 bool Item::SetItemEquipped( bool state )
 {
-	if ( this->state_Equipped.Get() == state )
+	if ( this->state_Equipped.get() == state )
 		return false;
 
-	if ( !this->state_Equipped.Set( state ) )
+	if ( !this->state_Equipped.set( state ) )
 		return false;
 
 #ifdef VAULTMP_DEBUG

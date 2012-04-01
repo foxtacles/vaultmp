@@ -48,6 +48,8 @@ class Lockable
 	protected:
 
 		Lockable();
+		Lockable(Lockable&&) = default;
+		Lockable& operator=(Lockable&&) = default;
 		virtual ~Lockable();
 
 	public:

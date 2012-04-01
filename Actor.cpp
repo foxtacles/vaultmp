@@ -111,47 +111,47 @@ const Parameter Actor::CreateFunctor( unsigned int flags )
 
 double Actor::GetActorValue( unsigned char index ) const
 {
-	return SAFE_FIND( actor_Values, index )->second.Get();
+	return SAFE_FIND( actor_Values, index )->second.get();
 }
 
 double Actor::GetActorBaseValue( unsigned char index ) const
 {
-	return SAFE_FIND( actor_BaseValues, index )->second.Get();
+	return SAFE_FIND( actor_BaseValues, index )->second.get();
 }
 
 unsigned char Actor::GetActorMovingAnimation() const
 {
-	return anim_Moving.Get();
+	return anim_Moving.get();
 }
 
 unsigned char Actor::GetActorMovingXY() const
 {
-	return state_MovingXY.Get();
+	return state_MovingXY.get();
 }
 
 bool Actor::GetActorAlerted() const
 {
-	return state_Alerted.Get();
+	return state_Alerted.get();
 }
 
 bool Actor::GetActorSneaking() const
 {
-	return state_Sneaking.Get();
+	return state_Sneaking.get();
 }
 
 bool Actor::GetActorDead() const
 {
-	return state_Dead.Get();
+	return state_Dead.get();
 }
 
 Lockable* Actor::SetActorValue( unsigned char index, double value )
 {
 	Value<double>& data = SAFE_FIND( this->actor_Values, index )->second;
 
-	if ( Utils::DoubleCompare( data.Get(), value, 0.01 ) )
+	if ( Utils::DoubleCompare( data.get(), value, 0.01 ) )
 		return NULL;
 
-	if ( !data.Set( value ) )
+	if ( !data.set( value ) )
 		return NULL;
 
 #ifdef VAULTMP_DEBUG
@@ -168,10 +168,10 @@ Lockable* Actor::SetActorBaseValue( unsigned char index, double value )
 {
 	Value<double>& data = SAFE_FIND( this->actor_BaseValues, index )->second;
 
-	if ( Utils::DoubleCompare( data.Get(), value, 0.01 ) )
+	if ( Utils::DoubleCompare( data.get(), value, 0.01 ) )
 		return NULL;
 
-	if ( !data.Set( value ) )
+	if ( !data.set( value ) )
 		return NULL;
 
 #ifdef VAULTMP_DEBUG
@@ -191,10 +191,10 @@ Lockable* Actor::SetActorMovingAnimation( unsigned char index )
 	if ( anim.empty() )
 		throw VaultException( "Value %02X not defined in database", index );
 
-	if ( anim_Moving.Get() == index )
+	if ( anim_Moving.get() == index )
 		return NULL;
 
-	if ( !anim_Moving.Set( index ) )
+	if ( !anim_Moving.set( index ) )
 		return NULL;
 
 #ifdef VAULTMP_DEBUG
@@ -209,10 +209,10 @@ Lockable* Actor::SetActorMovingAnimation( unsigned char index )
 
 Lockable* Actor::SetActorMovingXY( unsigned char moving )
 {
-	if ( this->state_MovingXY.Get() == moving )
+	if ( this->state_MovingXY.get() == moving )
 		return NULL;
 
-	if ( !this->state_MovingXY.Set( moving ) )
+	if ( !this->state_MovingXY.set( moving ) )
 		return NULL;
 
 #ifdef VAULTMP_DEBUG
@@ -227,10 +227,10 @@ Lockable* Actor::SetActorMovingXY( unsigned char moving )
 
 Lockable* Actor::SetActorAlerted( bool state )
 {
-	if ( this->state_Alerted.Get() == state )
+	if ( this->state_Alerted.get() == state )
 		return NULL;
 
-	if ( !this->state_Alerted.Set( state ) )
+	if ( !this->state_Alerted.set( state ) )
 		return NULL;
 
 #ifdef VAULTMP_DEBUG
@@ -245,10 +245,10 @@ Lockable* Actor::SetActorAlerted( bool state )
 
 Lockable* Actor::SetActorSneaking( bool state )
 {
-	if ( this->state_Sneaking.Get() == state )
+	if ( this->state_Sneaking.get() == state )
 		return NULL;
 
-	if ( !this->state_Sneaking.Set( state ) )
+	if ( !this->state_Sneaking.set( state ) )
 		return NULL;
 
 #ifdef VAULTMP_DEBUG
@@ -263,10 +263,10 @@ Lockable* Actor::SetActorSneaking( bool state )
 
 Lockable* Actor::SetActorDead( bool state )
 {
-	if ( this->state_Dead.Get() == state )
+	if ( this->state_Dead.get() == state )
 		return NULL;
 
-	if ( !this->state_Dead.Set( state ) )
+	if ( !this->state_Dead.set( state ) )
 		return NULL;
 
 #ifdef VAULTMP_DEBUG

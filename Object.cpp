@@ -73,51 +73,51 @@ const Parameter& Object::Param_Axis()
 
 string Object::GetName() const
 {
-	return object_Name.Get();
+	return object_Name.get();
 }
 
 double Object::GetGamePos( unsigned char axis ) const
 {
-	return SAFE_FIND( object_Game_Pos, axis )->second.Get();
+	return SAFE_FIND( object_Game_Pos, axis )->second.get();
 }
 
 double Object::GetNetworkPos( unsigned char axis ) const
 {
-	return SAFE_FIND( object_Network_Pos, axis )->second.Get();
+	return SAFE_FIND( object_Network_Pos, axis )->second.get();
 }
 
 double Object::GetAngle( unsigned char axis ) const
 {
-	return SAFE_FIND( object_Angle, axis )->second.Get();
+	return SAFE_FIND( object_Angle, axis )->second.get();
 }
 
 bool Object::GetEnabled() const
 {
-	return state_Enabled.Get();
+	return state_Enabled.get();
 }
 
 unsigned int Object::GetGameCell() const
 {
-	return cell_Game.Get();
+	return cell_Game.get();
 }
 
 unsigned int Object::GetNetworkCell() const
 {
-	return cell_Network.Get();
+	return cell_Network.get();
 }
 
 Lockable* Object::SetName( string name )
 {
-	if ( this->object_Name.Get() == name )
+	if ( this->object_Name.get() == name )
 		return NULL;
 
-	if ( !this->object_Name.Set( name ) )
+	if ( !this->object_Name.set( name ) )
 		return NULL;
 
 #ifdef VAULTMP_DEBUG
 
 	if ( debug != NULL )
-		debug->PrintFormat( "Object name was set to %s (ref: %08X)", true, this->object_Name.Get().c_str(), this->GetReference() );
+		debug->PrintFormat( "Object name was set to %s (ref: %08X)", true, this->object_Name.get().c_str(), this->GetReference() );
 
 #endif
 
@@ -128,12 +128,12 @@ Lockable* Object::SetGamePos( unsigned char axis, double pos )
 {
 	Value<double>& data = SAFE_FIND( this->object_Game_Pos, axis )->second;
 
-	if ( Utils::DoubleCompare( data.Get(), pos, 0.01 ) )
+	if ( Utils::DoubleCompare( data.get(), pos, 0.01 ) )
 		return NULL;
 
 	if ( ( pos != 2048.0 && pos != 128.0 && pos != 0.0 ) )
 	{
-		if ( !data.Set( pos ) )
+		if ( !data.set( pos ) )
 			return NULL;
 
 #ifdef VAULTMP_DEBUG
@@ -152,12 +152,12 @@ Lockable* Object::SetNetworkPos( unsigned char axis, double pos )
 {
 	Value<double>& data = SAFE_FIND( this->object_Network_Pos, axis )->second;
 
-	if ( Utils::DoubleCompare( data.Get(), pos, 0.01 ) )
+	if ( Utils::DoubleCompare( data.get(), pos, 0.01 ) )
 		return NULL;
 
 	if ( ( pos != 2048.0 && pos != 128.0 && pos != 0.0 ) )
 	{
-		if ( !data.Set( pos ) )
+		if ( !data.set( pos ) )
 			return NULL;
 
 #ifdef VAULTMP_DEBUG
@@ -176,12 +176,12 @@ Lockable* Object::SetAngle( unsigned char axis, double angle )
 {
 	Value<double>& data = SAFE_FIND( this->object_Angle, axis )->second;
 
-	if ( Utils::DoubleCompare( data.Get(), angle, 0.01 ) )
+	if ( Utils::DoubleCompare( data.get(), angle, 0.01 ) )
 		return NULL;
 
 	if ( ( angle != 2048.0 && angle != 128.0 && angle != 0.0 ) )
 	{
-		if ( !data.Set( angle ) )
+		if ( !data.set( angle ) )
 			return NULL;
 
 #ifdef VAULTMP_DEBUG
@@ -198,10 +198,10 @@ Lockable* Object::SetAngle( unsigned char axis, double angle )
 
 Lockable* Object::SetEnabled( bool state )
 {
-	if ( this->state_Enabled.Get() == state )
+	if ( this->state_Enabled.get() == state )
 		return NULL;
 
-	if ( !this->state_Enabled.Set( state ) )
+	if ( !this->state_Enabled.set( state ) )
 		return NULL;
 
 #ifdef VAULTMP_DEBUG
@@ -216,12 +216,12 @@ Lockable* Object::SetEnabled( bool state )
 
 Lockable* Object::SetGameCell( unsigned int cell )
 {
-	if ( this->cell_Game.Get() == cell )
+	if ( this->cell_Game.get() == cell )
 		return NULL;
 
 	if ( cell != 0x00000000 )
 	{
-		if ( !this->cell_Game.Set( cell ) )
+		if ( !this->cell_Game.set( cell ) )
 			return NULL;
 
 #ifdef VAULTMP_DEBUG
@@ -238,12 +238,12 @@ Lockable* Object::SetGameCell( unsigned int cell )
 
 Lockable* Object::SetNetworkCell( unsigned int cell )
 {
-	if ( this->cell_Network.Get() == cell )
+	if ( this->cell_Network.get() == cell )
 		return NULL;
 
 	if ( cell != 0x00000000 )
 	{
-		if ( !this->cell_Network.Set( cell ) )
+		if ( !this->cell_Network.set( cell ) )
 			return NULL;
 
 #ifdef VAULTMP_DEBUG
