@@ -449,6 +449,8 @@ void Interface::CommandThreadSend()
                 }
 
                 dynamic_cs.EndSession();
+
+                this_thread::sleep_for(chrono::milliseconds(1));
             }
 
             static_cs.EndSession();

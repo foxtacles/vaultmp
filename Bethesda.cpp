@@ -490,7 +490,7 @@ void Bethesda::InitializeVaultMP( RakPeerInterface* peer, SystemAddress server, 
 					throw VaultException( "Lost connection to interface" );
 				}
 
-				this_thread::sleep_for(chrono::milliseconds(2));
+				this_thread::sleep_for(chrono::milliseconds(1));
 			}
 		}
 

@@ -7,7 +7,11 @@
 #include <chrono>
 #include <thread>
 #include <typeinfo>
+
+#ifdef VAULTMP_DEBUG
+// only in debug, streams blow the executable size
 #include <sstream>
+#endif
 
 #define CS_TIMEOUT     5000
 
@@ -39,10 +43,9 @@ class CriticalSection
 		void EndSession();
 		void Finalize();
 
+#ifdef VAULTMP_DEBUG
         static string thread_id(thread&);
         static string thread_id();
-
-#ifdef VAULTMP_DEBUG
 		void SetDebugHandler( Debug* debug );
 #endif
 

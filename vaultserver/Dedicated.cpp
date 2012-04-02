@@ -324,7 +324,7 @@ void Dedicated::DedicatedThread()
 
 			Timer::GlobalTick();
 
-            this_thread::sleep_for(chrono::milliseconds(2));
+            this_thread::sleep_for(chrono::milliseconds(1));
 
 			if ( announce )
 			{
