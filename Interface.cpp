@@ -313,8 +313,8 @@ void Interface::CommandThreadReceive( char* module )
 
 		while ( !pipeServer->ConnectToServer() && !endThread );
 
-		char buffer[PIPE_LENGTH];
-		char code;
+		unsigned char buffer[PIPE_LENGTH];
+		unsigned char code;
 
 		if ( !endThread )
 		{
@@ -324,7 +324,7 @@ void Interface::CommandThreadReceive( char* module )
 
 				pipeClient->Receive( buffer );
 				code = buffer[0];
-				char* content = buffer + 1;
+				unsigned char* content = buffer + 1;
 
 				if ( code == PIPE_OP_RETURN || code == PIPE_OP_RETURN_BIG )
 				{
@@ -434,13 +434,13 @@ void Interface::CommandThreadSend()
 
                             for (it = stream.begin(); it != stream.end() && !endThread; ++it)
                             {
-                                char* content = *it;
+                                unsigned char* content = *it;
                                 pipeServer->Send(content);
                             }
 
                             for (it = stream.begin(); it != stream.end(); ++it)
                             {
-                                char* content = *it;
+                                unsigned char* content = *it;
                                 delete[] content;
                             }
                         }
@@ -465,13 +465,13 @@ void Interface::CommandThreadSend()
 
                             for (it = stream.begin(); it != stream.end() && !endThread; ++it)
                             {
-                                char* content = *it;
+                                unsigned char* content = *it;
                                 pipeServer->Send(content);
                             }
 
                             for (it = stream.begin(); it != stream.end(); ++it)
                             {
-                                char* content = *it;
+                                unsigned char* content = *it;
                                 delete[] content;
                             }
                         }

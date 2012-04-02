@@ -13,8 +13,6 @@
 #include <queue>
 #include <vector>
 
-#include "boost/any.hpp"
-
 #include "vaultmp.h"
 #include "Utils.h"
 #include "VaultException.h"
@@ -27,12 +25,12 @@
 using namespace std;
 using namespace Data;
 
-typedef vector<char*> CommandParsed;
-typedef pair<pair<pair<signed int, vector<boost::any> >, boost::any>, bool> CommandResult;
-typedef unordered_map<string, pair<string, unsigned short> > FunctionMap;
+typedef vector<unsigned char*> CommandParsed;
+typedef pair<pair<pair<signed int, vector<double>>, double>, bool> CommandResult;
+typedef unordered_map<string, pair<string, unsigned short>> FunctionMap;
 typedef unordered_map<string, unsigned char> ValueMap;
 typedef set<unsigned char> ValueList;
-typedef deque<pair<pair<unsigned int, vector<boost::any> >, signed int> > CommandQueue;
+typedef deque<pair<pair<unsigned int, vector<double>>, signed int>> CommandQueue;
 
 /*
  * \brief This namespace contains hexadecimal representations of the games data
@@ -355,7 +353,6 @@ class API
 		struct op_Arg7;
 		struct op_Arg8;
 		struct op_default;
-		typedef map<unsigned int, pair<vector<boost::any>, API::op_default> > CommandCache;
 
 		static FunctionMap functions;
 		static ValueMap values;
@@ -363,7 +360,6 @@ class API
 		static ValueMap anims;
 		static ValueList controls;
 		static CommandQueue queue;
-		static CommandCache cache;
 		static unsigned char game;
 
 		static void DefineFunction( string name, string def, unsigned short opcode, unsigned char games );
@@ -374,9 +370,9 @@ class API
 
 		static unsigned long ExtractReference( char* reference );
 		static pair<string, unsigned short> RetrieveFunction( string name );
-		static char* BuildCommandStream( char* stream, vector<boost::any> info, unsigned int size, signed int key = 0 );
+		static unsigned char* BuildCommandStream(vector<double>& info, signed int key, unsigned char* command, unsigned int size);
 
-		static pair<vector<boost::any>, op_default*> ParseCommand( char* cmd, const char* def, unsigned short opcode );
+		static vector<double> ParseCommand( char* cmd, const char* def, op_default* result, unsigned short opcode );
 
 #ifdef VAULTMP_DEBUG
 		static Debug* debug;
@@ -411,7 +407,7 @@ class API
 		 * vector<double> is the argument list of the executed command; the first element is always the opcode of the function
 		 */
 
-		static vector<CommandResult> Translate( char* stream );
+		static vector<CommandResult> Translate( unsigned char* stream );
 
 		API();
 

@@ -20,11 +20,11 @@ void Pipe::SetPipeAttributes( string name, unsigned int size )
 	this->size = size;
 }
 
-unsigned int Pipe::Send( char* stream )
+unsigned int Pipe::Send( unsigned char* stream )
 {
 	DWORD dwActuallyWritten;
 
-	char buffer[this->size];
+	unsigned char buffer[this->size];
 	ZeroMemory( buffer, sizeof( buffer ) );
 
 	memcpy( buffer, stream, sizeof( buffer ) );
@@ -44,9 +44,9 @@ unsigned int Pipe::Send( string stream )
 	return Send( c_stream );
 }
 
-void Pipe::Receive( char* stream )
+void Pipe::Receive( unsigned char* stream )
 {
-	char buffer[this->size];
+	unsigned char buffer[this->size];
 	ZeroMemory( buffer, sizeof( buffer ) );
 
 	DWORD dwActuallyRead;

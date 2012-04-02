@@ -303,7 +303,7 @@ bool vaultfunction( void* reference, void* result, void* args, unsigned short op
 	return false;
 }
 
-void ExecuteCommand( vector<void*>& args, unsigned int crc, bool delegate_flag )
+void ExecuteCommand( vector<void*>& args, unsigned int r, bool delegate_flag )
 {
 	if ( args.size() != 8 )
 		return;
@@ -416,10 +416,10 @@ void ExecuteCommand( vector<void*>& args, unsigned int crc, bool delegate_flag )
 		}
 	}
 
-	char result[PIPE_LENGTH];
+	unsigned char result[PIPE_LENGTH];
 	ZeroMemory( result, sizeof( result ) );
 
-	*( ( unsigned int* ) ( ( unsigned ) result + 1 ) ) = crc;
+	*( ( unsigned int* ) ( ( unsigned ) result + 1 ) ) = r;
 
 	if ( !bigresult )
 	{
@@ -471,8 +471,8 @@ DWORD WINAPI vaultmp_pipe( LPVOID data )
 	pipeServer.CreateServer();
 	pipeServer.ConnectToServer();
 
-	char buffer[PIPE_LENGTH];
-	char code;
+	unsigned char buffer[PIPE_LENGTH];
+	unsigned char code;
 	ZeroMemory( buffer, sizeof( buffer ) );
 
 	buffer[0] = PIPE_SYS_WAKEUP;
@@ -494,7 +494,7 @@ DWORD WINAPI vaultmp_pipe( LPVOID data )
 
 		pipeServer.Receive( buffer );
 		code = buffer[0];
-		char* content = buffer + 1;
+		unsigned char* content = buffer + 1;
 
 		switch ( code )
 		{
@@ -504,46 +504,43 @@ DWORD WINAPI vaultmp_pipe( LPVOID data )
 					args.clear();
 					args.reserve( 8 );
 
-					unsigned int crc = *( ( unsigned int* ) content );
+					unsigned int r = *( ( unsigned int* ) content );
 					content += 4;
 
-					if ( Utils::crc32buf( content, PIPE_LENGTH - 5 ) == crc )
-					{
-						bool delegate_flag = ( bool ) * content;
-						content += 1;
+                    bool delegate_flag = ( bool ) * content;
+                    content += 1;
 
-						for ( int i = 0; i < 8; i++ )
-						{
-							unsigned char size = *content;
+                    for ( int i = 0; i < 8; i++ )
+                    {
+                        unsigned char size = *content;
 
-							if ( size != 0 )
-							{
-								char* arg = new char[size];
-								content++;
+                        if ( size != 0 )
+                        {
+                            unsigned char* arg = new unsigned char[size];
+                            ++content;
 
-								memcpy( arg, content, size );
-								content += size;
+                            memcpy( arg, content, size );
+                            content += size;
 
-								args.push_back( ( void* ) arg );
-							}
+                            args.push_back( ( void* ) arg );
+                        }
 
-							else
-							{
-								buffer[0] = PIPE_ERROR_CLOSE;
-								pipeClient.Send( buffer );
-								DLLerror = true;
-							}
-						}
+                        else
+                        {
+                            buffer[0] = PIPE_ERROR_CLOSE;
+                            pipeClient.Send( buffer );
+                            DLLerror = true;
+                        }
+                    }
 
-						if ( !DLLerror )
-							ExecuteCommand( args, crc, delegate_flag );
+                    if ( !DLLerror )
+                        ExecuteCommand( args, r, delegate_flag );
 
-						for ( int i = 0; i < args.size(); i++ )
-						{
-							char* arg = ( char* ) args[i];
-							delete[] arg;
-						}
-					}
+                    for ( int i = 0; i < args.size(); i++ )
+                    {
+                        unsigned char* arg = ( unsigned char* ) args[i];
+                        delete[] arg;
+                    }
 
 					break;
 				}

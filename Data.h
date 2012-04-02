@@ -6,8 +6,6 @@
 #include <vector>
 #include <map>
 
-#include "boost/any.hpp"
-
 #include "RakNet/RakPeerInterface.h"
 #include "RakNet/RakString.h"
 #include "RakNet/MessageIdentifiers.h"
@@ -27,11 +25,16 @@ using namespace RakNet;
 namespace Data
 {
 
-	typedef void ( *ResultHandler )( signed int, vector<boost::any>&, boost::any&, bool );
+	typedef void ( *ResultHandler )( signed int, vector<double>&, double, bool );
 	typedef pair<vector<string>, VaultFunctor*> Parameter;
 	typedef list<Parameter> ParamContainer;
 	typedef const map<const unsigned int, const char*> Database;
 	typedef map<const unsigned char, const unsigned char> IndexLookup;
+
+    template <typename R, typename T>
+    inline static R storeIn(T t) { R r; *reinterpret_cast<T*>(&r) = t; return r; }
+    template <typename R, typename T>
+    inline static T getFrom(R r) { return *reinterpret_cast<T*>(&r); }
 
 	static Parameter BuildParameter( string param )
 	{

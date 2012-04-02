@@ -20,9 +20,9 @@ class Pipe
 
 	public:
 		void SetPipeAttributes( string name, unsigned int size );
-		unsigned int Send( char* stream );
+		unsigned int Send( unsigned char* stream );
 		unsigned int Send( string stream );
-		void Receive( char* stream );
+		void Receive( unsigned char* stream );
 		virtual bool ConnectToServer() = 0;
 
 };

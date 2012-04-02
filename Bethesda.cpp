@@ -15,23 +15,15 @@ ModList Bethesda::modfiles;
 Debug* Bethesda::debug;
 #endif
 
-void Bethesda::CommandHandler( signed int key, vector<boost::any>& info, boost::any& result, bool error )
+void Bethesda::CommandHandler( signed int key, vector<double>& info, double result, bool error )
 {
 	using namespace Values;
-	unsigned short opcode = boost::any_cast<unsigned short>( info.at( 0 ) );
+	unsigned short opcode = getFrom<double, unsigned short>(info.at( 0 ));
 
 	if ( !error )
 	{
 #ifdef VAULTMP_DEBUG
-		/*unsigned int refID = 0x00000000;
-		if (info.size() > 1)
-		{
-		    try
-		    {
-		        refID = boost::any_cast<unsigned int>(info.at(1));
-		    } catch (...) {}
-		}
-		debug->PrintFormat("Executing command %04hX on reference %08X", true, opcode, refID);*/
+		//debug->PrintFormat("Executing command %04hX on reference %08X", true, opcode, getFrom<double, unsigned int>(info.at(1)));
 #endif
 
 		Lockable* data = NULL;
@@ -44,36 +36,36 @@ void Bethesda::CommandHandler( signed int key, vector<boost::any>& info, boost::
 		switch ( opcode )
 		{
 			case Functions::Func_PlaceAtMe:
-				Game::PlaceAtMe( data, *reinterpret_cast<unsigned int*>( boost::any_cast<double>( &result ) ) );
+				Game::PlaceAtMe( data, getFrom<double, unsigned int>(result) );
 				break;
 
 			case Functions::Func_GetPos:
-				reference = GameFactory::GetObject( boost::any_cast<unsigned int>( info.at( 1 ) ) );
-				Game::GetPos( reference, boost::any_cast<unsigned char>( info.at( 2 ) ), boost::any_cast<double>( result ) );
+				reference = GameFactory::GetObject( getFrom<double, unsigned int>(info.at(1)) );
+				Game::GetPos( reference, getFrom<double, unsigned char>( info.at( 2 ) ), result);
 				break;
 
 			case Functions::Func_SetPos:
 				break;
 
 			case Functions::Func_GetAngle:
-				reference = GameFactory::GetObject( boost::any_cast<unsigned int>( info.at( 1 ) ) );
-				Game::GetAngle( reference, boost::any_cast<unsigned char>( info.at( 2 ) ), boost::any_cast<double>( result ) );
+				reference = GameFactory::GetObject( getFrom<double, unsigned int>(info.at(1)) );
+				Game::GetAngle( reference, getFrom<double, unsigned char>( info.at( 2 ) ), result);
 				break;
 
 			case Functions::Func_SetAngle:
 				break;
 
 			case Functions::Func_GetActorValue:
-				reference = GameFactory::GetObject( boost::any_cast<unsigned int>( info.at( 1 ) ) );
-				Game::GetActorValue( reference, false, boost::any_cast<unsigned char>( info.at( 2 ) ), boost::any_cast<double>( result ) );
+				reference = GameFactory::GetObject( getFrom<double, unsigned int>(info.at(1)) );
+				Game::GetActorValue( reference, false, getFrom<double, unsigned char>( info.at( 2 ) ), result);
 				break;
 
 			case Functions::Func_ForceActorValue:
 				break;
 
 			case Functions::Func_GetBaseActorValue:
-				reference = GameFactory::GetObject( boost::any_cast<unsigned int>( info.at( 1 ) ) );
-				Game::GetActorValue( reference, true, boost::any_cast<unsigned char>( info.at( 2 ) ), boost::any_cast<double>( result ) );
+				reference = GameFactory::GetObject( getFrom<double, unsigned int>(info.at(1)) );
+				Game::GetActorValue( reference, true, getFrom<double, unsigned char>( info.at( 2 ) ), result);
 				break;
 
 			case Functions::Func_SetActorValue:
@@ -81,13 +73,12 @@ void Bethesda::CommandHandler( signed int key, vector<boost::any>& info, boost::
 
 			case Functions::Func_GetActorState:
 				{
-					reference = GameFactory::GetObject( boost::any_cast<unsigned int>( info.at( 1 ) ) );
-					double* _result = boost::any_cast<double>( &result );
+					reference = GameFactory::GetObject( getFrom<double, unsigned int>(info.at(1)) );
 					Game::GetActorState( reference,
-										 *reinterpret_cast<unsigned char*>( ( ( unsigned ) _result ) + 4 ),
-										 *reinterpret_cast<unsigned char*>( ( ( unsigned ) _result ) + 5 ),
-										 *reinterpret_cast<bool*>( _result ),
-										 *reinterpret_cast<bool*>( ( ( unsigned ) _result ) + 1 ) );
+										 *reinterpret_cast<unsigned char*>(((unsigned) &result) + 4 ),
+										 *reinterpret_cast<unsigned char*>(((unsigned) &result) + 5 ),
+										 *reinterpret_cast<bool*>(&result),
+										 *reinterpret_cast<bool*>(((unsigned) &result) + 1));
 					break;
 				}
 
@@ -116,9 +107,13 @@ void Bethesda::CommandHandler( signed int key, vector<boost::any>& info, boost::
 				break;
 
 			case Fallout::Functions::Func_ScanContainer:
-				reference = GameFactory::GetObject( boost::any_cast<unsigned int>( info.at( 1 ) ) );
-				Game::ScanContainer( reference, boost::any_cast<vector<unsigned char>&>( result ) );
+			{
+				reference = GameFactory::GetObject( getFrom<double, unsigned int>(info.at(1)) );
+				vector<unsigned char>* data = getFrom<double, vector<unsigned char>*>(result);
+				Game::ScanContainer( reference, *data);
+				delete data;
 				break;
+			}
 
 			case Fallout::Functions::Func_MarkForDelete:
 				break;
@@ -126,16 +121,16 @@ void Bethesda::CommandHandler( signed int key, vector<boost::any>& info, boost::
 			case Fallout3::Functions::Func_GetParentCell:
 			case FalloutNV::Functions::Func_GetParentCell:
 				{
-					reference = GameFactory::GetObject( boost::any_cast<unsigned int>( info.at( 1 ) ) );
+					reference = GameFactory::GetObject( getFrom<double, unsigned int>(info.at(1)) );
 					self = GameFactory::GetObject( PLAYER_REFERENCE );
-					Game::GetParentCell( vector<FactoryObject> {reference, self}, *reinterpret_cast<unsigned int*>( boost::any_cast<double>( &result ) ) );
+					Game::GetParentCell( vector<FactoryObject> {reference, self}, getFrom<double, unsigned int>(result) );
 					break;
 				}
 
 			case Fallout3::Functions::Func_GetControl:
 			case FalloutNV::Functions::Func_GetControl:
 				self = GameFactory::GetObject( PLAYER_REFERENCE );
-				Game::GetControl( self, boost::any_cast<int>( info.at( 1 ) ), boost::any_cast<double>( result ) );
+				Game::GetControl( self, getFrom<double, int>(info.at(1)), result);
 				break;
 
 			case Fallout3::Functions::Func_Load:
@@ -155,25 +150,13 @@ void Bethesda::CommandHandler( signed int key, vector<boost::any>& info, boost::
 	else
 	{
 #ifdef VAULTMP_DEBUG
-		unsigned int refID = 0x00000000;
-
-		if ( info.size() > 1 )
-		{
-			try
-			{
-				refID = boost::any_cast<unsigned int>( info.at( 1 ) );
-			}
-
-			catch ( ... ) {}
-		}
-
-		debug->PrintFormat( "Command %04hX on reference %08X failed", true, opcode, refID );
+		debug->PrintFormat( "Command %04hX failed", true, opcode);
 #endif
 
 		switch ( opcode )
 		{
 			case Functions::Func_PlaceAtMe:
-				Game::Failure_PlaceAtMe( boost::any_cast<unsigned int>( info.at( 1 ) ), boost::any_cast<unsigned int>( info.at( 2 ) ), boost::any_cast<unsigned int>( info.at( 3 ) ), key );
+				Game::Failure_PlaceAtMe( getFrom<double, unsigned int>(info.at(1)), getFrom<double, unsigned int>(info.at(2)), getFrom<double, unsigned int>(info.at(3)), key );
 				break;
 
 			default:

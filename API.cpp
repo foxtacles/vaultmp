@@ -9,7 +9,6 @@ ValueMap API::axis;
 ValueMap API::anims;
 ValueList API::controls;
 CommandQueue API::queue;
-API::CommandCache API::cache;
 unsigned char API::game = 0x00;
 
 #ifdef VAULTMP_DEBUG
@@ -200,7 +199,6 @@ struct API::op_default
 	op_Arg7 arg7;
 	unsigned char size_arg8;
 	op_Arg8 arg8;
-	unsigned int random;
 
 	op_default()
 	{
@@ -213,7 +211,6 @@ struct API::op_default
 		size_arg6 = sizeof( op_Arg6 );
 		size_arg7 = sizeof( op_Arg7 );
 		size_arg8 = sizeof( op_Arg8 );
-		random = 0x00000000; // make sure the command gets a "unique" CRC
 	}
 };
 
@@ -430,7 +427,6 @@ void API::Terminate()
 	controls.clear();
 	functions.clear();
 	queue.clear();
-	cache.clear();
 }
 
 #ifdef VAULTMP_DEBUG
@@ -443,38 +439,25 @@ void API::SetDebugHandler( Debug* debug )
 }
 #endif
 
-pair<vector<boost::any>, API::op_default*> API::ParseCommand( char* cmd, const char* def, unsigned short opcode )
+vector<double> API::ParseCommand( char* cmd, const char* def, op_default* result, unsigned short opcode )
 {
-	pair<vector<boost::any>, op_default*> result_data = pair<vector<boost::any>, op_default*>( vector<boost::any>(), NULL );
+	vector<double> result_data = vector<double>();
 
 	if ( *cmd == 0x00 || *def == 0x00 || opcode == 0x00 )
 		throw VaultException( "Invalid call to API::ParseCommand, one or more arguments are NULL (%s, %s, %04X)", cmd, def, opcode );
 
-	op_default* result = new op_default();
 	string _cmd( cmd );
-	unsigned int crc32 = Utils::crc32buf( cmd, strlen( cmd ) );
-	CommandCache::iterator it = cache.find( crc32 );
-
-	if ( it != cache.end() )
-	{
-		*result = it->second.second;
-		result->random = rand();
-		result_data.first = it->second.first;
-		result_data.second = result;
-		return result_data;
-	}
 
 	try
 	{
-		char* arg1_pos = ( char* ) &result->arg1.unk1;
-		char* arg2_pos = ( char* ) &result->arg2.param1;
+		char* arg1_pos = reinterpret_cast<char*>(&result->arg1.unk1);
+		char* arg2_pos = reinterpret_cast<char*>(&result->arg2.param1);
 		unsigned short* _opcode = &result->arg2.opcode;
 		unsigned short* _numargs = &result->arg2.numargs;
 
-		result->random = rand();
 		char* tokenizer = NULL;
 		unsigned int reference = 0x00;
-		result_data.first.push_back( opcode );
+		result_data.push_back(storeIn<double, unsigned short>(opcode));
 
 		if ( *def == 'r' )
 		{
@@ -494,8 +477,8 @@ pair<vector<boost::any>, API::op_default*> API::ParseCommand( char* cmd, const c
 				throw VaultException( "API::ParseCommand reference base operand is NULL" );
 
 			result->arg3.reference = reference;
-			result_data.first.push_back( reference );
-			def++;
+			result_data.push_back(storeIn<double, unsigned int>(reference));
+			++def;
 		}
 
 		else
@@ -539,62 +522,66 @@ pair<vector<boost::any>, API::op_default*> API::ParseCommand( char* cmd, const c
 			}
 
 			if ( isupper( type ) )
-				*( ( unsigned int* ) ( arg1_pos + 4 ) ) = 0x00000001;
+				*reinterpret_cast<unsigned int*>(arg1_pos + 4) = 0x00000001;
+
+            unsigned int typecode;
 
 			switch ( tolower( type ) )
 			{
 				case 's': // String
-					*( ( unsigned int* ) arg1_pos ) = 0x00000000;
+					typecode = 0x00000000;
 					break;
 
 				case 'x': // Control code
 				case 'i': // Integer
-					*( ( unsigned int* ) arg1_pos ) = 0x00000001;
+					typecode = 0x00000001;
 					break;
 
 				case 'd': // Double
-					*( ( unsigned int* ) arg1_pos ) = 0x00000002;
+					typecode = 0x00000002;
 					break;
 
 				case 'j': // Object ID item
-					*( ( unsigned int* ) arg1_pos ) = 0x00000003;
+					typecode = 0x00000003;
 					break;
 
 				case 'o': // Object Reference ID
-					*( ( unsigned int* ) arg1_pos ) = 0x00000004;
+					typecode = 0x00000004;
 					break;
 
 				case 'v': // Actor Value
-					*( ( unsigned int* ) arg1_pos ) = 0x00000005;
+					typecode = 0x00000005;
 					break;
 
 				case 'q': // Actor
-					*( ( unsigned int* ) arg1_pos ) = 0x00000006;
+					typecode = 0x00000006;
 					break;
 
 				case 'a': // Axis
-					*( ( unsigned int* ) arg1_pos ) = 0x00000008;
+					typecode = 0x00000008;
 					break;
 
 				case 'g': // Animation Group
-					*( ( unsigned int* ) arg1_pos ) = 0x0000000A;
+					typecode = 0x0000000A;
 					break;
 
 				case 'b': // Object ID
-					*( ( unsigned int* ) arg1_pos ) = 0x00000015;
+					typecode = 0x00000015;
 					break;
 
 				case 'c': // Container
-					*( ( unsigned int* ) arg1_pos ) = 0x0000001A;
+					typecode = 0x0000001A;
 					break;
 
 				case 'k': // Object ID base item
-					*( ( unsigned int* ) arg1_pos ) = 0x00000032;
+					typecode = 0x00000032;
 					break;
 
 				default:
 					throw VaultException( "API::ParseCommand could not recognize argument identifier %02X", ( unsigned int ) tolower( type ) );
 			}
+
+			*reinterpret_cast<unsigned int*>(arg1_pos) = typecode;
 
 			arg1_pos += 0x0C;
 
@@ -642,20 +629,20 @@ pair<vector<boost::any>, API::op_default*> API::ParseCommand( char* cmd, const c
 						if ( tolower( type ) == 'x' && !IsControl( ( unsigned char ) integer ) )
 							throw VaultException( "API::ParseCommand could not find a control code for input %s", tokenizer );
 
-						*( ( unsigned char* ) arg2_pos ) = 0x6E;
-						*( ( int* ) ( arg2_pos + 1 ) ) = integer;
-						result_data.first.push_back( integer );
-						arg2_pos += 5;
+						*reinterpret_cast<unsigned char*>(arg2_pos) = 0x6E;
+						*reinterpret_cast<int*>(arg2_pos + sizeof(unsigned char)) = integer;
+						result_data.push_back( storeIn<double, int>(integer) );
+						arg2_pos += sizeof(unsigned char) + sizeof(int);
 						break;
 					}
 
 				case 'd': // Double
 					{
 						double floating = atof( tokenizer );
-						*( ( unsigned char* ) arg2_pos ) = 0x7A;
-						*( ( double* ) ( arg2_pos + 1 ) ) = floating;
-						result_data.first.push_back( floating );
-						arg2_pos += 9;
+						*reinterpret_cast<unsigned char*>(arg2_pos) = 0x7A;
+						*reinterpret_cast<double*>(arg2_pos + sizeof(unsigned char)) = floating;
+						result_data.push_back( floating );
+						arg2_pos += sizeof(unsigned char) + sizeof(double);
 						break;
 					}
 
@@ -674,10 +661,10 @@ pair<vector<boost::any>, API::op_default*> API::ParseCommand( char* cmd, const c
 						if ( !refparam )
 							throw VaultException( "API::ParseCommand reference argument is NULL" );
 
-						*( ( unsigned char* ) arg2_pos ) = 0x72;
-						*( ( unsigned short* ) ( arg2_pos + 1 ) ) = ( refparam == reference ) ? 0x0001 : 0x0002;
-						result_data.first.push_back( refparam );
-						arg2_pos += 3;
+						*reinterpret_cast<unsigned char*>(arg2_pos) = 0x72;
+						*reinterpret_cast<unsigned short*>(arg2_pos + sizeof(unsigned char)) = ( refparam == reference ) ? 0x0001 : 0x0002;
+						result_data.push_back(storeIn<double, unsigned int>(refparam));
+						arg2_pos += sizeof(unsigned char) + sizeof(unsigned short);
 						break;
 					}
 
@@ -688,9 +675,9 @@ pair<vector<boost::any>, API::op_default*> API::ParseCommand( char* cmd, const c
 						if ( value == 0xFF )
 							throw VaultException( "API::ParseCommand could not find an Actor Value identifier for input %s", tokenizer );
 
-						*( ( unsigned short* ) arg2_pos ) = ( unsigned short ) value;
-						result_data.first.push_back( value );
-						arg2_pos += 2;
+						*reinterpret_cast<unsigned short*>(arg2_pos) = ( unsigned short ) value;
+						result_data.push_back( storeIn<double, unsigned short>(value));
+						arg2_pos += sizeof(unsigned short);
 						break;
 					}
 
@@ -701,9 +688,9 @@ pair<vector<boost::any>, API::op_default*> API::ParseCommand( char* cmd, const c
 						if ( axis == 0xFF )
 							throw VaultException( "API::ParseCommand could not find an Axis identifier for input %s", tokenizer );
 
-						*( ( unsigned char* ) arg2_pos ) = axis;
-						result_data.first.push_back( axis );
-						arg2_pos += 1;
+						*reinterpret_cast<unsigned char*>(arg2_pos) = axis;
+						result_data.push_back(storeIn<double, unsigned char>(axis));
+						arg2_pos += sizeof(unsigned char);
 						break;
 					}
 
@@ -714,9 +701,9 @@ pair<vector<boost::any>, API::op_default*> API::ParseCommand( char* cmd, const c
 						if ( anim == 0xFF )
 							throw VaultException( "API::ParseCommand could not find an Animation identifier for input %s", tokenizer );
 
-						*( ( unsigned short* ) arg2_pos ) = ( unsigned short ) anim;
-						result_data.first.push_back( anim );
-						arg2_pos += 2;
+						*reinterpret_cast<unsigned short*>(arg2_pos) = ( unsigned short ) anim;
+						result_data.push_back( storeIn<double, unsigned short>(anim) );
+						arg2_pos += sizeof(unsigned short);
 						break;
 					}
 
@@ -724,13 +711,13 @@ pair<vector<boost::any>, API::op_default*> API::ParseCommand( char* cmd, const c
 					{
 						unsigned short length = ( unsigned short ) strlen( tokenizer );
 
-						if ( length > 32 )
+						if ( length > 31 )
 							throw VaultException( "API::ParseCommand string argument exceeds the limit of 32 characters", tokenizer );
 
-						*( ( unsigned short* ) arg2_pos ) = length;
-						memcpy( arg2_pos + 2, tokenizer, length );
-						result_data.first.push_back( string( tokenizer ) );
-						arg2_pos += 2;
+						*reinterpret_cast<unsigned short*>(arg2_pos) = length;
+						memcpy( arg2_pos + sizeof(unsigned short), tokenizer, length +  sizeof(unsigned char) );
+						result_data.push_back(0); // Don't pass on string for now
+						arg2_pos += sizeof(unsigned short);
 						arg2_pos += length;
 						break;
 					}
@@ -739,7 +726,7 @@ pair<vector<boost::any>, API::op_default*> API::ParseCommand( char* cmd, const c
 					throw VaultException( "API::ParseCommand could not recognize argument identifier %02X", ( unsigned int ) tolower( type ) );
 			}
 
-			numargs++;
+			++numargs;
 		}
 
 		*_numargs = numargs;
@@ -767,17 +754,12 @@ pair<vector<boost::any>, API::op_default*> API::ParseCommand( char* cmd, const c
 					result->arg5.param2_unk2 = ( refparam & 0xFF000000 ) == 0xFF000000 ? 0x00060006 : 0x00050005;
 			}
 		}
-
-		result_data.second = result;
 	}
 
 	catch ( ... )
 	{
-		delete result;
 		throw;
 	}
-
-	cache.insert( pair<unsigned int, pair<vector<boost::any>, op_default> >( crc32, pair<vector<boost::any>, op_default>( result_data.first, *result_data.second ) ) );
 
 	return result_data;
 }
@@ -1002,9 +984,9 @@ bool API::AnnounceFunction( string name )
 	return false;
 }
 
-char* API::BuildCommandStream( char* command, vector<boost::any> info, unsigned int size, signed int key )
+unsigned char* API::BuildCommandStream(vector<double>& info, signed int key, unsigned char* command, unsigned int size)
 {
-	char* data = new char[PIPE_LENGTH];
+	unsigned char* data = new unsigned char[PIPE_LENGTH];
 	ZeroMemory( data, sizeof( data ) );
 	data[0] = PIPE_OP_COMMAND;
 
@@ -1016,9 +998,9 @@ char* API::BuildCommandStream( char* command, vector<boost::any> info, unsigned 
 
 	memcpy( data + 5, command, size );
 
-	unsigned int crc = Utils::crc32buf( data + 5, PIPE_LENGTH - 5 );
-	*( ( unsigned int* ) ( ( unsigned ) data + 1 ) ) = crc;
-	queue.push_front( pair<pair<unsigned int, vector<boost::any> >, signed int>( pair<unsigned int, vector<boost::any> >( crc, info ), key ) );
+	unsigned int r = rand();
+	*reinterpret_cast<unsigned int*>(data + 1) = r;
+	queue.push_front( pair<pair<unsigned int, vector<double> >, signed int>( pair<unsigned int, vector<double> >( r, info ), key ) );
 
 	return data;
 }
@@ -1049,33 +1031,30 @@ CommandParsed API::Translate( multimap<string, string>& cmd, signed int key )
         ZeroMemory(content, sizeof(content));
         strcpy(content, it->second.c_str());
 
-		pair<vector<boost::any>, op_default*> command = ParseCommand( content, func.first.c_str(), func.second );
-
-		char* data = BuildCommandStream( ( char* ) command.second, command.first, sizeof( op_default ), key );
-
+        op_default result;
+		vector<double> command = ParseCommand( content, func.first.c_str(), &result, func.second );
+		unsigned char* data = BuildCommandStream(command, key, reinterpret_cast<unsigned char*>(&result), sizeof(op_default));
 		stream.push_back( data );
-
-		delete command.second;
 	}
 
 	return stream;
 }
 
-vector<CommandResult> API::Translate( char* stream )
+vector<CommandResult> API::Translate( unsigned char* stream )
 {
 	vector<CommandResult> result;
 
 	if ( stream[0] != PIPE_OP_RETURN && stream[0] != PIPE_OP_RETURN_BIG )
 		throw VaultException( "API could not recognize stream identifier %02X", stream[0] );
 
-	unsigned int crc = *( ( unsigned int* ) ( ( unsigned ) stream + 1 ) );
+	unsigned int r = *reinterpret_cast<unsigned int*>(stream + 1);
 
-	while ( !queue.empty() && queue.back().first.first != crc )
+	while ( !queue.empty() && queue.back().first.first != r)
 	{
 #ifdef VAULTMP_DEBUG
 
 		if ( debug != NULL )
-			debug->PrintFormat( "API did not retrieve the result of command with CRC32 %08X (opcode %04hX)", true, queue.back().first.first, boost::any_cast<unsigned short>( queue.back().first.second.at( 0 ) ) );
+			debug->PrintFormat( "API did not retrieve the result of command with CRC32 %08X (opcode %04hX)", true, queue.back().first.first, getFrom<double, unsigned short>(queue.back().first.second.at(0)));
 
 #endif
 
@@ -1094,7 +1073,7 @@ vector<CommandResult> API::Translate( char* stream )
 #ifdef VAULTMP_DEBUG
 
 		if ( debug != NULL )
-			debug->PrintFormat( "API could not find a stored command with CRC32 %08X (queue is empty)", true, crc );
+			debug->PrintFormat( "API could not find a stored command with CRC32 %08X (queue is empty)", true, r );
 
 #endif
 		return result;
@@ -1106,12 +1085,13 @@ vector<CommandResult> API::Translate( char* stream )
 
     if (stream[0] == PIPE_OP_RETURN_BIG)
     {
-        unsigned int length = *((unsigned int*) ((unsigned) stream + 5));
-        unsigned char* data = (unsigned char*) ((unsigned) stream + 9);
-        result.back().first.second = vector<unsigned char>(data, data + length);
+        unsigned int length = *reinterpret_cast<unsigned int*>(stream + 5);
+        unsigned char* data = reinterpret_cast<unsigned char*>(stream + 9);
+        vector<unsigned char>* big = new vector<unsigned char>(data, data + length);
+        result.back().first.second = storeIn<double, vector<unsigned char>*>(big);
     }
 	else
-		result.back().first.second = *( ( double* ) ( ( unsigned ) stream + 5 ) );
+		result.back().first.second = *reinterpret_cast<double*>(stream + 5);
 
 	result.back().second = false;
 
