@@ -50,6 +50,7 @@ class Bethesda
 		static string password;
 		static Savegame savegame;
 		static ModList modfiles;
+		static char module[32];
 		static bool initialized;
 
 		/**
@@ -58,10 +59,19 @@ class Bethesda
 		static void Initialize();
 
 		/**
+		 * \brief Kills the game process
+		 */
+		static void Terminate();
+
+		/**
 		 * \brief Handles translated command results from the game
 		 */
 		static void CommandHandler( signed int key, vector<double>& info, double result, bool error );
 
+		/**
+		 * \brief Lookup the ID of a given process name
+		 */
+		static DWORD lookupProgramID( const char process[] );
 #ifdef VAULTMP_DEBUG
 		static Debug* debug;
 #endif

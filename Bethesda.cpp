@@ -10,6 +10,7 @@ bool Bethesda::initialized = false;
 string Bethesda::password = "";
 Savegame Bethesda::savegame;
 ModList Bethesda::modfiles;
+char Bethesda::module[32];
 
 #ifdef VAULTMP_DEBUG
 Debug* Bethesda::debug;
@@ -23,7 +24,7 @@ void Bethesda::CommandHandler( signed int key, vector<double>& info, double resu
 	if ( !error )
 	{
 #ifdef VAULTMP_DEBUG
-		//debug->PrintFormat("Executing command %04hX on reference %08X", true, opcode, getFrom<double, unsigned int>(info.at(1)));
+		//debug->PrintFormat("Executing command %04hX on reference %08X", true, opcode, info.size() > 1 ? getFrom<double, unsigned int>(info.at(1)) : 0);
 #endif
 
 		Lockable* data = NULL;
@@ -165,10 +166,31 @@ void Bethesda::CommandHandler( signed int key, vector<double>& info, double resu
 	}
 }
 
+DWORD Bethesda::lookupProgramID( const char process[] )
+{
+	HANDLE hSnapshot;
+	PROCESSENTRY32 ProcessEntry;
+	ProcessEntry.dwSize = sizeof( PROCESSENTRY32 );
+	hSnapshot = CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 );
+
+	if ( Process32First( hSnapshot, &ProcessEntry ) )
+		do
+		{
+			if ( !strcmp( ProcessEntry.szExeFile, process ) )
+			{
+				CloseHandle( hSnapshot );
+				return ProcessEntry.th32ProcessID;
+			}
+		}
+		while( Process32Next( hSnapshot, &ProcessEntry ) );
+
+	CloseHandle( hSnapshot );
+
+	return 0;
+}
+
 void Bethesda::Initialize()
 {
-	char module[32];
-
 	switch ( Bethesda::game = game )
 	{
 		case FALLOUT3:
@@ -270,7 +292,7 @@ void Bethesda::Initialize()
 
 	fclose( plugins );
 
-	if ( Interface::lookupProgramID( module ) == 0 )
+	if ( lookupProgramID( module ) == 0 )
 	{
 		STARTUPINFO si;
 		PROCESS_INFORMATION pi;
@@ -331,7 +353,7 @@ void Bethesda::Initialize()
 
 			try
 			{
-				Interface::Initialize( module, &CommandHandler, Bethesda::game );
+				Interface::Initialize( &CommandHandler, Bethesda::game );
 
                 chrono::steady_clock::time_point till = chrono::steady_clock::now() + chrono::milliseconds(5000);
 
@@ -356,7 +378,6 @@ void Bethesda::Initialize()
 			this_thread::sleep_for(chrono::milliseconds(5000));
 
 			initialized = true;
-
 		}
 
 		else
@@ -367,12 +388,25 @@ void Bethesda::Initialize()
 		throw VaultException( "Either Fallout 3 or Fallout: New Vegas is already runnning" );
 }
 
+void Bethesda::Terminate()
+{
+    DWORD id;
+
+    if (*module && (id = Bethesda::lookupProgramID(module)))
+    {
+        HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, 0, id);
+        TerminateProcess(hProcess, 0);
+        CloseHandle(hProcess);
+    }
+}
+
 void Bethesda::InitializeVaultMP( RakPeerInterface* peer, SystemAddress server, string name, string pwd, unsigned char game )
 {
 	Bethesda::game = game;
 	Bethesda::password = pwd;
 	Bethesda::savegame = Savegame();
 	Bethesda::modfiles.clear();
+	ZeroMemory(module, sizeof(module));
 	Game::game = game;
 	initialized = false;
 
@@ -474,6 +508,7 @@ void Bethesda::InitializeVaultMP( RakPeerInterface* peer, SystemAddress server, 
 		Interface::Terminate();
 		GameFactory::DestroyAllInstances();
 		API::Terminate();
+		Bethesda::Terminate();
 
 #ifdef VAULTMP_DEBUG
 		debug->Print( "Network thread is going to terminate (ERROR)", true );
@@ -484,6 +519,7 @@ void Bethesda::InitializeVaultMP( RakPeerInterface* peer, SystemAddress server, 
 	Interface::Terminate();
 	GameFactory::DestroyAllInstances();
 	API::Terminate();
+	Bethesda::Terminate();
 
 #ifdef VAULTMP_DEBUG
 	debug->Print( "Network thread is going to terminate (no error occured)", true );

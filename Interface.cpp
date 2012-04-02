@@ -6,7 +6,6 @@ ResultHandler Interface::resultHandler;
 bool Interface::endThread = false;
 bool Interface::wakeup = false;
 bool Interface::initialized = false;
-char* Interface::module;
 PriorityMap Interface::priorityMap;
 StaticCommandList Interface::static_cmdlist;
 DynamicCommandList Interface::dynamic_cmdlist;
@@ -22,13 +21,10 @@ CriticalSection Interface::dynamic_cs;
 Debug* Interface::debug;
 #endif
 
-bool Interface::Initialize( char* module, ResultHandler resultHandler, unsigned char game )
+bool Interface::Initialize( ResultHandler resultHandler, unsigned char game )
 {
 	if ( !initialized )
 	{
-		if ( !strlen( module ) )
-			return NULL;
-
 		endThread = false;
 		wakeup = false;
 
@@ -38,16 +34,12 @@ bool Interface::Initialize( char* module, ResultHandler resultHandler, unsigned 
 		if ( pipeClient != NULL )
 			delete pipeClient;
 
-		Interface::module = new char[strlen( module ) + 1];
-		ZeroMemory(Interface::module, strlen( module ) + 1);
-		strcpy( Interface::module, module );
-
 		Interface::resultHandler = resultHandler;
 
 		pipeClient = new PipeServer();
 		pipeServer = new PipeClient();
 
-		hCommandThreadReceive = thread(CommandThreadReceive, Interface::module);
+		hCommandThreadReceive = thread(CommandThreadReceive);
 		hCommandThreadSend = thread(CommandThreadSend);
 
 		if ( !hCommandThreadReceive.joinable() || !hCommandThreadSend.joinable() )
@@ -58,8 +50,10 @@ bool Interface::Initialize( char* module, ResultHandler resultHandler, unsigned 
 
 		initialized = true;
 
+#ifdef VAULTMP_DEBUG
         //static_cs.SetDebugHandler(debug);
         //dynamic_cs.SetDebugHandler(debug);
+#endif
 
 		return true;
 	}
@@ -93,8 +87,6 @@ void Interface::Terminate()
 		alias.clear();
 
 		initialized = false;
-
-		delete[] module;
 	}
 }
 
@@ -107,29 +99,6 @@ void Interface::SetDebugHandler( Debug* debug )
 		debug->Print( "Attached debug handler to Interface class", true );
 }
 #endif
-
-DWORD Interface::lookupProgramID( const char process[] )
-{
-	HANDLE hSnapshot;
-	PROCESSENTRY32 ProcessEntry;
-	ProcessEntry.dwSize = sizeof( PROCESSENTRY32 );
-	hSnapshot = CreateToolhelp32Snapshot( TH32CS_SNAPPROCESS, 0 );
-
-	if ( Process32First( hSnapshot, &ProcessEntry ) )
-		do
-		{
-			if ( !strcmp( ProcessEntry.szExeFile, process ) )
-			{
-				CloseHandle( hSnapshot );
-				return ProcessEntry.th32ProcessID;
-			}
-		}
-		while( Process32Next( hSnapshot, &ProcessEntry ) );
-
-	CloseHandle( hSnapshot );
-
-	return 0;
-}
 
 bool Interface::IsAvailable()
 {
@@ -301,7 +270,7 @@ multimap<string, string> Interface::Evaluate(Native::iterator _it)
 	return result;
 }
 
-void Interface::CommandThreadReceive( char* module )
+void Interface::CommandThreadReceive()
 {
 	try
 	{
@@ -350,7 +319,7 @@ void Interface::CommandThreadReceive( char* module )
 				else if ( code )
 					throw VaultException( "Unknown pipe code identifier %02X", code );
 
-				if ( lookupProgramID( reinterpret_cast<char*>(module) ) == 0 )
+				/*if ( lookupProgramID( reinterpret_cast<char*>(module) ) == 0 )
 				{
 					endThread = true;
 
@@ -360,12 +329,10 @@ void Interface::CommandThreadReceive( char* module )
 						debug->Print( "Game process missing, shutting down", true );
 
 #endif
-				}
+				}*/
 			}
-			while ( code != PIPE_ERROR_CLOSE && !endThread );
+			while ( code && code != PIPE_ERROR_CLOSE && !endThread );
 		}
-
-		// kill game process if running
 	}
 
 	catch ( std::exception& e )

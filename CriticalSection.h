@@ -7,6 +7,7 @@
 #include <chrono>
 #include <thread>
 #include <typeinfo>
+#include <sstream>
 
 #define CS_TIMEOUT     5000
 
@@ -37,6 +38,9 @@ class CriticalSection
 		CriticalSection* StartSession();
 		void EndSession();
 		void Finalize();
+
+        static string thread_id(thread&);
+        static string thread_id();
 
 #ifdef VAULTMP_DEBUG
 		void SetDebugHandler( Debug* debug );

@@ -45,7 +45,6 @@ class Interface : public API
 		static bool endThread;
 		static bool wakeup;
 		static bool initialized;
-		static char* module;
         static thread hCommandThreadReceive;
         static thread hCommandThreadSend;
         static PriorityMap priorityMap;
@@ -65,7 +64,7 @@ class Interface : public API
         static void ExecuteCommand(Native::iterator it, signed int key);
         static multimap<string, string> Evaluate(Native::iterator _it);
 
-		static void CommandThreadReceive( char* module );
+		static void CommandThreadReceive();
 		static void CommandThreadSend();
 
 #ifdef VAULTMP_DEBUG
@@ -79,17 +78,13 @@ class Interface : public API
 		/**
 		 * \brief Initializes the Interface
 		 *
-		 * Takes the name of the game executable to initialize, a ResultHandler function pointer and the game code
+		 * Takes a ResultHandler function pointer and the game code
 		 */
-		static bool Initialize( char* module, ResultHandler, unsigned char game );
+		static bool Initialize( ResultHandler, unsigned char game );
 		/**
 		 * \brief Terminates the Interface
 		 */
 		static void Terminate();
-		/**
-		 * \brief Lookup the ID of a given process name
-		 */
-		static DWORD lookupProgramID( const char process[] );
 		/**
 		 * \brief Checks if the Interface is up and running
 		 */
