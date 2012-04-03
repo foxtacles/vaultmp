@@ -103,10 +103,10 @@ pDefault* PacketFactory::CreatePacket( unsigned char type, ... )
             break;
         }
 
-        case ID_PLAYER_LEFT:
+        case ID_OBJECT_REMOVE:
         {
             NetworkID id = va_arg( args, NetworkID );
-            packet = new pPlayerLeft( id );
+            packet = new pObjectRemove( id );
             break;
         }
 
@@ -222,8 +222,8 @@ pDefault* PacketFactory::CreatePacket( unsigned char* stream, unsigned int len )
             packet = new pPlayerNew( stream, len );
             break;
 
-        case ID_PLAYER_LEFT:
-            packet = new pPlayerLeft( stream, len );
+        case ID_OBJECT_REMOVE:
+            packet = new pObjectRemove( stream, len );
             break;
 
         case ID_OBJECT_UPDATE:
@@ -440,9 +440,9 @@ void PacketFactory::Access( const pDefault* packet, ... )
                 break;
             }
 
-            case ID_PLAYER_LEFT:
+            case ID_OBJECT_REMOVE:
             {
-                const pPlayerLeft* data = dynamic_cast<const pPlayerLeft*>( packet );
+                const pObjectRemove* data = dynamic_cast<const pObjectRemove*>( packet );
                 NetworkID* id = va_arg( args, NetworkID* );
                 *id = data->id;
                 break;

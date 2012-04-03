@@ -804,22 +804,22 @@ class pPlayerNew : public pObjectNewDefault
 		pPlayerNew& operator=( const pPlayerNew& );
 };
 
-class pPlayerLeft : public pObjectDefault
+class pObjectRemove : public pObjectDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pPlayerLeft( NetworkID id ) : pObjectDefault( ID_PLAYER_LEFT, id )
+		pObjectRemove( NetworkID id ) : pObjectDefault( ID_OBJECT_REMOVE, id )
 		{
 			construct();
 		}
-		pPlayerLeft( unsigned char* stream, unsigned int len ) : pObjectDefault( stream, len )
+		pObjectRemove( unsigned char* stream, unsigned int len ) : pObjectDefault( stream, len )
 		{
 			deconstruct();
 		}
 
-		pPlayerLeft( const pPlayerLeft& );
-		pPlayerLeft& operator=( const pPlayerLeft& );
+		pObjectRemove( const pObjectRemove& );
+		pObjectRemove& operator=( const pObjectRemove& );
 };
 
 /* ************************************** */

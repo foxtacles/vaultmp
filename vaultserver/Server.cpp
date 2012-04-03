@@ -56,6 +56,23 @@ NetworkResponse Server::LoadGame( RakNetGUID guid )
 {
 	NetworkResponse response;
 
+    vector<FactoryObject> references = GameFactory::GetObjectTypes(ALL_OBJECTS);
+    vector<FactoryObject>::iterator it;
+
+    for (it = references.begin(); it != references.end(); ++it)
+    {
+        Object* object = vaultcast<Object>(*it);
+
+        pDefault* packet = object->toPacket();
+        response.push_back( Network::CreateResponse( packet,
+                            ( unsigned char ) HIGH_PRIORITY,
+                            ( unsigned char ) RELIABLE_ORDERED,
+                            CHANNEL_GAME,
+                            guid ) );
+
+        GameFactory::LeaveReference(*it);
+    }
+
 	pDefault* packet = PacketFactory::CreatePacket( ID_GAME_LOAD );
 	response.push_back( Network::CreateResponse( packet,
 						( unsigned char ) HIGH_PRIORITY,
@@ -105,7 +122,7 @@ NetworkResponse Server::Disconnect( RakNetGUID guid, unsigned char reason )
 
 		NetworkID id = GameFactory::DestroyInstance( reference );
 
-		pDefault* packet = PacketFactory::CreatePacket( ID_PLAYER_LEFT, id );
+		pDefault* packet = PacketFactory::CreatePacket( ID_OBJECT_REMOVE, id );
 		response = Network::CompleteResponse( Network::CreateResponse( packet,
 											  ( unsigned char ) HIGH_PRIORITY,
 											  ( unsigned char ) RELIABLE_ORDERED,

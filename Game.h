@@ -53,13 +53,29 @@ class Game
 		 */
 		static void LoadEnvironment();
 		/**
+		 * \brief Creates a new Object
+		 */
+		static void NewObject( FactoryObject reference );
+		/**
+		 * \brief Creates a new Item
+		 */
+		static void NewItem( FactoryObject reference );
+		/**
+		 * \brief Creates a new Container
+		 */
+		static void NewContainer( FactoryObject reference );
+		/**
+		 * \brief Creates a new Actor
+		 */
+		static void NewActor( FactoryObject reference );
+		/**
 		 * \brief Creates a new Player
 		 */
-		static void NewPlayer( NetworkID id, unsigned int baseID, string name );
+		static void NewPlayer( FactoryObject reference );
 		/**
-		 * \brief Removes a Player from the game
+		 * \brief Removes an Object from the game
 		 */
-		static void PlayerLeft( FactoryObject& reference );
+		static void RemoveObject( FactoryObject& reference );
 		/**
 		 * \brief Enables / Disables an Object
 		 */

@@ -180,20 +180,52 @@ NetworkResponse NetworkClient::ProcessPacket( Packet* data )
                                 break;
                             }
 
-                        case ID_PLAYER_NEW:
+                        case ID_OBJECT_NEW:
                             {
-                                NetworkID id = GameFactory::CreateKnownInstance(ID_PLAYER, packet);
-
-                                // Call to some game function, not written yet
+                                NetworkID id = GameFactory::CreateKnownInstance(ID_OBJECT, packet);
+                                FactoryObject reference = GameFactory::GetObject( id );
+                                Game::NewObject(reference);
                                 break;
                             }
 
-                        case ID_PLAYER_LEFT:
+                        case ID_ITEM_NEW:
+                            {
+                                NetworkID id = GameFactory::CreateKnownInstance(ID_ITEM, packet);
+                                FactoryObject reference = GameFactory::GetObject( id );
+                                Game::NewItem(reference);
+                                break;
+                            }
+
+                        case ID_CONTAINER_NEW:
+                            {
+                                NetworkID id = GameFactory::CreateKnownInstance(ID_CONTAINER, packet);
+                                FactoryObject reference = GameFactory::GetObject( id );
+                                Game::NewContainer(reference);
+                                break;
+                            }
+
+                        case ID_ACTOR_NEW:
+                            {
+                                NetworkID id = GameFactory::CreateKnownInstance(ID_ACTOR, packet);
+                                FactoryObject reference = GameFactory::GetObject( id );
+                                Game::NewActor(reference);
+                                break;
+                            }
+
+                        case ID_PLAYER_NEW:
+                            {
+                                NetworkID id = GameFactory::CreateKnownInstance(ID_PLAYER, packet);
+                                FactoryObject reference = GameFactory::GetObject( id );
+                                Game::NewPlayer(reference);
+                                break;
+                            }
+
+                        case ID_OBJECT_REMOVE:
                             {
                                 NetworkID id;
                                 PacketFactory::Access( packet, &id );
                                 FactoryObject reference = GameFactory::GetObject( id );
-                                Game::PlayerLeft( reference );
+                                Game::RemoveObject( reference );
                                 break;
                             }
 

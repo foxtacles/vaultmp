@@ -182,51 +182,88 @@ void Game::LoadEnvironment()
 	Game::SetName( reference, self->GetName() );
 }
 
-void Game::NewPlayer( NetworkID id, unsigned int baseID, string name )
+void Game::NewObject( FactoryObject reference )
 {
-	FactoryObject reference = GameFactory::GetObject( PLAYER_REFERENCE );
-	Player* self = vaultcast<Player>( reference );
+	Object* object = vaultcast<Object>(reference);
 
-	Value<unsigned int>* store = new Value<unsigned int>;
-	signed int key = store->Lock( true );
-
-	Interface::StartDynamic();
-
-    ParamContainer param_PlaceAtMe;
-    param_PlaceAtMe.push_back(self->GetReferenceParam()); // need something else here
-    param_PlaceAtMe.push_back(BuildParameter(Utils::LongToHex(baseID)));
-    param_PlaceAtMe.push_back(Data::Param_True);
-    Interface::ExecuteCommand("PlaceAtMe", param_PlaceAtMe, key);
-
-	Interface::EndDynamic();
-
-    unsigned int refID;
-
-    try
+    if (!object->GetReference())
     {
-        refID = store->get_future(chrono::seconds(15));
-    }
-    catch (...)
-    {
+        FactoryObject _self = GameFactory::GetObject( PLAYER_REFERENCE );
+        Player* self = vaultcast<Player>( reference );
+
+        Value<unsigned int>* store = new Value<unsigned int>;
+        signed int key = store->Lock( true );
+
+        Interface::StartDynamic();
+
+        ParamContainer param_PlaceAtMe;
+        param_PlaceAtMe.push_back(self->GetReferenceParam()); // need something else here
+        param_PlaceAtMe.push_back(BuildParameter(Utils::LongToHex(object->GetBase())));
+        param_PlaceAtMe.push_back(Data::Param_True);
+        Interface::ExecuteCommand("PlaceAtMe", param_PlaceAtMe, key);
+
+        Interface::EndDynamic();
+
+        unsigned int refID;
+
+        try
+        {
+            refID = store->get_future(chrono::seconds(15));
+        }
+        catch (...)
+        {
+            delete store;
+            throw VaultException( "Object creation with baseID %08X and NetworkID %lld failed", object->GetBase(), object->GetNetworkID() );
+        }
+
+        object->SetReference(refID);
         delete store;
-        throw VaultException( "Player creation with baseID %08X and NetworkID %lld failed", baseID, id );
+    }
+    else
+    {
+        // existing objects
     }
 
-	GameFactory::CreateKnownInstance( ID_PLAYER, id, baseID );
-	reference = GameFactory::GetObject( id );
-	Player* player = vaultcast<Player>( reference );
-	player->SetReference( refID );
-	delete store;
-
-	SetName( reference, name );
+	SetName( reference, object->GetName() );
 	SetRestrained( reference, true );
+	SetPos(reference);
+
+	// maybe more
 }
 
-void Game::PlayerLeft( FactoryObject& reference )
+void Game::NewItem( FactoryObject reference )
 {
-	if ( !vaultcast<Player>( reference ) )
-		throw VaultException( "Object with reference %08X is not a Player", ( *reference )->GetReference() );
+    NewObject(reference);
 
+    // set condition
+}
+
+void Game::NewContainer( FactoryObject reference )
+{
+    NewObject(reference);
+
+    // insert items
+}
+
+void Game::NewActor( FactoryObject reference )
+{
+    NewObject(reference);
+    NewContainer(reference);
+
+    // set values and other
+}
+
+void Game::NewPlayer( FactoryObject reference )
+{
+    NewObject(reference);
+    NewContainer(reference);
+    NewActor(reference);
+
+    // ...
+}
+
+void Game::RemoveObject( FactoryObject& reference )
+{
 	Delete( reference );
 }
 

@@ -318,18 +318,6 @@ void Interface::CommandThreadReceive()
 
 				else if ( code )
 					throw VaultException( "Unknown pipe code identifier %02X", code );
-
-				/*if ( lookupProgramID( reinterpret_cast<char*>(module) ) == 0 )
-				{
-					endThread = true;
-
-#ifdef VAULTMP_DEBUG
-
-					if ( debug != NULL )
-						debug->Print( "Game process missing, shutting down", true );
-
-#endif
-				}*/
 			}
 			while ( code && code != PIPE_ERROR_CLOSE && !endThread );
 		}
