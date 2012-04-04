@@ -16,7 +16,7 @@ CFLAGS =  -std=c++0x -std=gnu++0x -fpermissive
 RESINC = 
 LIBDIR = 
 LIB = 
-LDFLAGS = -lc -lstdc++ -lpthread
+LDFLAGS = -ldl -lncurses -lpthread -static
 
 INC_DEBUGUNIX =  $(INC) -Iamx/linux
 CFLAGS_DEBUGUNIX =  $(CFLAGS) -Wredundant-decls -Wunreachable-code -gstabs -DVAULTMP_DEBUG
@@ -35,7 +35,7 @@ RESINC_RELEASEUNIX =  $(RESINC)
 RCFLAGS_RELEASEUNIX =  $(RCFLAGS)
 LIBDIR_RELEASEUNIX =  $(LIBDIR)
 LIB_RELEASEUNIX = $(LIB)
-LDFLAGS_RELEASEUNIX =  $(LDFLAGS)
+LDFLAGS_RELEASEUNIX =  $(LDFLAGS) -s
 OBJDIR_RELEASEUNIX = .objs/ReleaseUnix
 DEP_RELEASEUNIX = 
 OUT_RELEASEUNIX = vaultserver

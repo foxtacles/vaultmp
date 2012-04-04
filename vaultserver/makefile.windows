@@ -16,7 +16,7 @@ CFLAGS =  -std=c++0x -std=gnu++0x -fpermissive
 RESINC = 
 LIBDIR = 
 LIB = 
-LDFLAGS = 
+LDFLAGS = -lws2_32 -lwinmm -lm -limagehlp -static
 
 INC_DEBUG =  $(INC) -Iamx/linux
 CFLAGS_DEBUG =  $(CFLAGS) -Wredundant-decls -Wunreachable-code -gstabs -DVAULTMP_DEBUG
@@ -24,7 +24,7 @@ RESINC_DEBUG =  $(RESINC)
 RCFLAGS_DEBUG =  $(RCFLAGS)
 LIBDIR_DEBUG =  $(LIBDIR)
 LIB_DEBUG = $(LIB)
-LDFLAGS_DEBUG =  $(LDFLAGS) -lws2_32 -lwinmm -lm -limagehlp -static
+LDFLAGS_DEBUG =  $(LDFLAGS)
 OBJDIR_DEBUG = .objs\\Debug
 DEP_DEBUG = 
 OUT_DEBUG = vaultserverd.exe
@@ -35,7 +35,7 @@ RESINC_RELEASE =  $(RESINC)
 RCFLAGS_RELEASE =  $(RCFLAGS)
 LIBDIR_RELEASE =  $(LIBDIR)
 LIB_RELEASE = $(LIB)
-LDFLAGS_RELEASE =  $(LDFLAGS) -s -lws2_32 -lwinmm -lm -limagehlp -static
+LDFLAGS_RELEASE =  $(LDFLAGS) -s
 OBJDIR_RELEASE = .objs\\Release
 DEP_RELEASE = 
 OUT_RELEASE = vaultserver.exe
