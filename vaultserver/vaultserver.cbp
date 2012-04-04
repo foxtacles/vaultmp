@@ -93,7 +93,7 @@
 			<Add option="-std=gnu++0x" />
 			<Add option="-fpermissive" />
 			<Add option="-masm=intel" />
-			<Add directory="D:\Programmierung\vaultmp\" />
+			<Add directory=".." />
 		</Compiler>
 		<Unit filename="..\API.cpp" />
 		<Unit filename="..\API.h" />

@@ -4,6 +4,7 @@
 	<Project>
 		<Option title="vaultmp" />
 		<Option platforms="Windows;" />
+		<Option makefile="makefile" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
@@ -40,7 +41,7 @@
 			<Add option="-std=c++0x" />
 			<Add option="-std=gnu++0x" />
 			<Add option="-fpermissive" />
-			<Add directory="D:\Programmierung\vaultmp\" />
+			<Add directory="." />
 		</Compiler>
 		<Linker>
 			<Add option="ufmod.obj" />

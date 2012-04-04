@@ -1,7 +1,9 @@
 #ifndef VAULTMP_H
 #define VAULTMP_H
 
+#ifndef _GLIBCXX_USE_NANOSLEEP
 #define _GLIBCXX_USE_NANOSLEEP // remove that
+#endif
 
 #define NO_CS_TIMEOUT
 
