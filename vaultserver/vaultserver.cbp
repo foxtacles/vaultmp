@@ -79,13 +79,9 @@
 					<Add option="-Wunreachable-code" />
 				</Compiler>
 				<Linker>
-					<Add option="-s" />
-					<Add option="-static-libgcc" />
-					<Add option="-static-libstdc++" />
-					<Add option="-lws2_32" />
-					<Add option="-lwinmm" />
-					<Add option="-lm" />
-					<Add option="-limagehlp" />
+					<Add option="-lc" />
+					<Add option="-lpthread" />
+					<Add library="\lib\libncurses.so.5" />
 				</Linker>
 			</Target>
 		</Build>

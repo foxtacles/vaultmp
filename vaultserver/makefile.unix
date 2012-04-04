@@ -16,15 +16,15 @@ CFLAGS =  -std=c++0x -std=gnu++0x -fpermissive
 RESINC = 
 LIBDIR = 
 LIB = 
-LDFLAGS = 
+LDFLAGS = -ldl -lncurses -lpthread -static
 
 INC_DEBUGUNIX =  $(INC) -Iamx/linux
 CFLAGS_DEBUGUNIX =  $(CFLAGS) -Wredundant-decls -Wunreachable-code -gstabs -DVAULTMP_DEBUG
 RESINC_DEBUGUNIX =  $(RESINC)
 RCFLAGS_DEBUGUNIX =  $(RCFLAGS)
 LIBDIR_DEBUGUNIX =  $(LIBDIR)
-LIB_DEBUGUNIX = $(LIB) /lib/libncurses.so.5
-LDFLAGS_DEBUGUNIX =  $(LDFLAGS) -lc -lpthread
+LIB_DEBUGUNIX = $(LIB)
+LDFLAGS_DEBUGUNIX =  $(LDFLAGS)
 OBJDIR_DEBUGUNIX = .objs/DebugUnix
 DEP_DEBUGUNIX = 
 OUT_DEBUGUNIX = vaultserverd
@@ -35,7 +35,7 @@ RESINC_RELEASEUNIX =  $(RESINC)
 RCFLAGS_RELEASEUNIX =  $(RCFLAGS)
 LIBDIR_RELEASEUNIX =  $(LIBDIR)
 LIB_RELEASEUNIX = $(LIB)
-LDFLAGS_RELEASEUNIX =  $(LDFLAGS) -s -static-libgcc -static-libstdc++ -lws2_32 -lwinmm -lm -limagehlp
+LDFLAGS_RELEASEUNIX =  $(LDFLAGS) -s
 OBJDIR_RELEASEUNIX = .objs/ReleaseUnix
 DEP_RELEASEUNIX = 
 OUT_RELEASEUNIX = vaultserver
