@@ -16,7 +16,7 @@ CFLAGS =  -std=c++0x -std=gnu++0x -fpermissive
 RESINC = 
 LIBDIR = 
 LIB = 
-LDFLAGS = -lws2_32 -lwinmm -lm -limagehlp -static
+LDFLAGS = -m32 -lws2_32 -lwinmm -lm -limagehlp -static
 
 INC_DEBUG =  $(INC) -Iamx/linux
 CFLAGS_DEBUG =  $(CFLAGS) -Wredundant-decls -Wunreachable-code -gstabs -DVAULTMP_DEBUG

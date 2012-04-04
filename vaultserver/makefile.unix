@@ -16,7 +16,7 @@ CFLAGS =  -std=c++0x -std=gnu++0x -fpermissive
 RESINC = 
 LIBDIR = 
 LIB = 
-LDFLAGS = -ldl -lncurses -lpthread -static
+LDFLAGS = -m32 -ldl -lncurses -lpthread -static
 
 INC_DEBUGUNIX =  $(INC) -Iamx/linux
 CFLAGS_DEBUGUNIX =  $(CFLAGS) -Wredundant-decls -Wunreachable-code -gstabs -DVAULTMP_DEBUG
