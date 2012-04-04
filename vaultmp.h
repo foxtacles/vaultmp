@@ -5,6 +5,11 @@
 #define _GLIBCXX_USE_NANOSLEEP // remove that
 #endif
 
+#ifndef THREAD_PRIORITY_NORMAL
+#define THREAD_PRIORITY_NORMAL 1000
+#endif
+
+
 #define NO_CS_TIMEOUT
 
 #define DEDICATED_VERSION       "0.1a revision 148"
