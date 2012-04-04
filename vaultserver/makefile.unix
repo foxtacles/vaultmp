@@ -29,7 +29,7 @@ OBJDIR_DEBUGUNIX = .objs/DebugUnix
 DEP_DEBUGUNIX = 
 OUT_DEBUGUNIX = vaultserverd
 
-INC_RELEASEUNIX =  $(INC)
+INC_RELEASEUNIX =  $(INC) -Iamx/linux
 CFLAGS_RELEASEUNIX =  $(CFLAGS) -O2 -Wredundant-decls -Wunreachable-code
 RESINC_RELEASEUNIX =  $(RESINC)
 RCFLAGS_RELEASEUNIX =  $(RCFLAGS)
@@ -198,7 +198,7 @@ $(OBJDIR_DEBUGUNIX)/Server.o: Server.cpp
 	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c Server.cpp -o $(OBJDIR_DEBUGUNIX)/Server.o
 
 $(OBJDIR_DEBUGUNIX)/ScriptFunction.o: ScriptFunction.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ScriptFunction.cpp -o $(OBJDIR_DEBUGUNIX)/ScriptFunction.o
+	$(CXX) $(CFLAGS_DEBUGUNIX) -masm=intel $(INC_DEBUGUNIX) -c ScriptFunction.cpp -o $(OBJDIR_DEBUGUNIX)/ScriptFunction.o
 
 $(OBJDIR_DEBUGUNIX)/Script.o: Script.cpp
 	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c Script.cpp -o $(OBJDIR_DEBUGUNIX)/Script.o
@@ -595,7 +595,7 @@ $(OBJDIR_RELEASEUNIX)/Server.o: Server.cpp
 	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c Server.cpp -o $(OBJDIR_RELEASEUNIX)/Server.o
 
 $(OBJDIR_RELEASEUNIX)/ScriptFunction.o: ScriptFunction.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ScriptFunction.cpp -o $(OBJDIR_RELEASEUNIX)/ScriptFunction.o
+	$(CXX) $(CFLAGS_RELEASEUNIX) -masm=intel $(INC_RELEASEUNIX) -c ScriptFunction.cpp -o $(OBJDIR_RELEASEUNIX)/ScriptFunction.o
 
 $(OBJDIR_RELEASEUNIX)/Script.o: Script.cpp
 	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c Script.cpp -o $(OBJDIR_RELEASEUNIX)/Script.o
