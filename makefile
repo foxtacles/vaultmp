@@ -11,7 +11,7 @@ AR = ar.exe
 LD = g++.exe
 WINDRES = windres.exe
 
-INC =  -ID:\\Programmierung\\vaultmp\
+INC =  -I.
 CFLAGS =  -std=c++0x -std=gnu++0x -fpermissive
 RESINC = 
 LIBDIR = 
