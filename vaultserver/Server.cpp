@@ -97,6 +97,7 @@ NetworkResponse Server::NewPlayer( RakNetGUID guid, NetworkID id)
 	if ( !result )
 		throw VaultException( "Script did not provide an actor base for a player" );
 
+    player->SetReference(0x00000000);
 	player->SetBase( result );
 
 	pDefault* packet = player->toPacket();
