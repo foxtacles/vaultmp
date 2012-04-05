@@ -62,9 +62,10 @@
 					<Add directory="amx\linux" />
 				</Compiler>
 				<Linker>
-					<Add option="-lc" />
+					<Add option="-ldl" />
+					<Add option="-lncurses" />
 					<Add option="-lpthread" />
-					<Add library="\lib\libncurses.so.5" />
+					<Add option="-static" />
 				</Linker>
 			</Target>
 			<Target title="ReleaseUnix">
@@ -77,11 +78,13 @@
 					<Add option="-O2" />
 					<Add option="-Wredundant-decls" />
 					<Add option="-Wunreachable-code" />
+					<Add directory="amx\linux" />
 				</Compiler>
 				<Linker>
-					<Add option="-lc" />
+					<Add option="-ldl" />
+					<Add option="-lncurses" />
 					<Add option="-lpthread" />
-					<Add library="\lib\libncurses.so.5" />
+					<Add option="-static" />
 				</Linker>
 			</Target>
 		</Build>
