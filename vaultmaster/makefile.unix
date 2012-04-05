@@ -16,7 +16,7 @@ CFLAGS =  -std=gnu++0x -fpermissive
 RESINC = 
 LIBDIR = 
 LIB = 
-LDFLAGS = 
+LDFLAGS = -lpthread -static
 
 INC_UNIX =  $(INC)
 CFLAGS_UNIX =  $(CFLAGS) -O2 -Wredundant-decls -Wunreachable-code
@@ -24,7 +24,7 @@ RESINC_UNIX =  $(RESINC)
 RCFLAGS_UNIX =  $(RCFLAGS)
 LIBDIR_UNIX =  $(LIBDIR)
 LIB_UNIX = $(LIB)
-LDFLAGS_UNIX =  $(LDFLAGS) -s -lpthread -static
+LDFLAGS_UNIX =  $(LDFLAGS) -s
 OBJDIR_UNIX = obj
 DEP_UNIX = 
 OUT_UNIX = vaultmaster

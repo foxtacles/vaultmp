@@ -16,7 +16,7 @@ CFLAGS =  -std=gnu++0x -fpermissive
 RESINC = 
 LIBDIR = 
 LIB = 
-LDFLAGS = 
+LDFLAGS = -lws2_32 -limagehlp -static
 
 INC_WINDOWS =  $(INC)
 CFLAGS_WINDOWS =  $(CFLAGS) -O2 -Wredundant-decls -Wunreachable-code
@@ -24,7 +24,7 @@ RESINC_WINDOWS =  $(RESINC)
 RCFLAGS_WINDOWS =  $(RCFLAGS)
 LIBDIR_WINDOWS =  $(LIBDIR)
 LIB_WINDOWS = $(LIB)
-LDFLAGS_WINDOWS =  $(LDFLAGS) -s -lws2_32 -limagehlp -static
+LDFLAGS_WINDOWS =  $(LDFLAGS) -s
 OBJDIR_WINDOWS = obj
 DEP_WINDOWS = 
 OUT_WINDOWS = vaultmaster.exe
