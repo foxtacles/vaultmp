@@ -3,18 +3,44 @@
 	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="vaultmaster" />
+		<Option platforms="Windows;Unix;" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
-			<Target title="Release">
+			<Target title="Windows">
+				<Option platforms="Windows;" />
 				<Option output="vaultmaster" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj\" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-O2" />
 					<Add option="-Wredundant-decls" />
 					<Add option="-Wunreachable-code" />
 				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="-lws2_32" />
+					<Add option="-limagehlp" />
+					<Add option="-static" />
+				</Linker>
+			</Target>
+			<Target title="Unix">
+				<Option platforms="Unix;" />
+				<Option output="vaultmaster" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-Wredundant-decls" />
+					<Add option="-Wunreachable-code" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="-lpthread" />
+					<Add option="-static" />
+				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
@@ -22,12 +48,6 @@
 			<Add option="-fpermissive" />
 			<Add directory=".." />
 		</Compiler>
-		<Linker>
-			<Add option="-s" />
-			<Add option="-lws2_32" />
-			<Add option="-limagehlp" />
-			<Add option="-static" />
-		</Linker>
 		<Unit filename="..\Data.h" />
 		<Unit filename="..\RakNet\AutopatcherPatchContext.h" />
 		<Unit filename="..\RakNet\AutopatcherRepositoryInterface.h" />

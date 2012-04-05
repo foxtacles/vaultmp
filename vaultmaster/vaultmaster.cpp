@@ -2,7 +2,7 @@
 #include "../Utils.h"
 #include "MasterServer.h"
 
-DWORD WINAPI InputThread( LPVOID data )
+void InputThread()
 {
 	char input[64];
 
@@ -16,8 +16,6 @@ DWORD WINAPI InputThread( LPVOID data )
 	while ( strcmp( input, "exit" ) != 0 );
 
 	MasterServer::TerminateThread();
-
-	return ( ( DWORD ) data );
 }
 
 int main()
@@ -27,20 +25,13 @@ int main()
 	Utils::timestamp();
 	printf( "Initializing RakNet...\n" );
 
-	HANDLE hMasterThread = MasterServer::InitalizeRakNet();
-	HANDLE hInputThread;
-	DWORD InputID;
+	thread hMasterThread = MasterServer::InitalizeRakNet();
+    thread hInputThread = thread(InputThread);
 
-	hInputThread = CreateThread( NULL, 0, InputThread, ( LPVOID ) 0, 0, &InputID );
+    hMasterThread.join();
 
-	HANDLE threads[2];
-	threads[0] = hMasterThread;
-	threads[1] = hInputThread;
-
-	WaitForMultipleObjects( 2, threads, TRUE, INFINITE );
-
-	CloseHandle( hMasterThread );
-	CloseHandle( hInputThread );
+    if (hInputThread.joinable())
+        hInputThread.join();
 
 	return 0;
 }

@@ -17,18 +17,6 @@ void MasterServer::TerminateThread()
 	thread = false;
 }
 
-void MasterServer::timestamp()
-{
-	time_t ltime;
-	ltime = time( NULL );
-	char t[32];
-	snprintf( t, sizeof( t ), "[%s", asctime( localtime( &ltime ) ) );
-	char* newline = strchr( t, '\n' );
-	*newline = ']';
-	strcat( t, " " );
-	printf( t );
-}
-
 void MasterServer::RemoveServer( SystemAddress addr )
 {
 	map<SystemAddress, ServerEntry>::iterator i;
@@ -38,7 +26,7 @@ void MasterServer::RemoveServer( SystemAddress addr )
 		serverList.erase( i );
 }
 
-DWORD WINAPI MasterServer::MasterThread( LPVOID data )
+void MasterServer::MasterThread()
 {
 	sockdescr = new SocketDescriptor( RAKNET_PORT, 0 );
 	peer = RakPeerInterface::GetInstance();
@@ -55,18 +43,18 @@ DWORD WINAPI MasterServer::MasterThread( LPVOID data )
 			switch ( packet->data[0] )
 			{
 				case ID_NEW_INCOMING_CONNECTION:
-					timestamp();
+					Utils::timestamp();
 					printf( "New incoming connection from %s\n", packet->systemAddress.ToString() );
 					break;
 
 				case ID_DISCONNECTION_NOTIFICATION:
-					timestamp();
+					Utils::timestamp();
 					printf( "Client disconnected (%s)\n", packet->systemAddress.ToString() );
 					RemoveServer( packet->systemAddress );
 					break;
 
 				case ID_CONNECTION_LOST:
-					timestamp();
+					Utils::timestamp();
 					printf( "Lost connection (%s)\n", packet->systemAddress.ToString() );
 					RemoveServer( packet->systemAddress );
 					break;
@@ -107,7 +95,7 @@ DWORD WINAPI MasterServer::MasterThread( LPVOID data )
 
 						peer->Send( &query, HIGH_PRIORITY, RELIABLE, 0, packet->systemAddress, false, 0 );
 
-						timestamp();
+						Utils::timestamp();
 						printf( "Query processed (%s)\n", packet->systemAddress.ToString() );
 						break;
 					}
@@ -155,7 +143,7 @@ DWORD WINAPI MasterServer::MasterThread( LPVOID data )
 
 						peer->Send( &query, HIGH_PRIORITY, RELIABLE, 0, packet->systemAddress, false, 0 );
 
-						timestamp();
+						Utils::timestamp();
 						printf( "Update processed (%s)\n", packet->systemAddress.ToString() );
 						break;
 					}
@@ -213,30 +201,23 @@ DWORD WINAPI MasterServer::MasterThread( LPVOID data )
 						else if ( i != serverList.end() )
 							serverList.erase( i );
 
-						timestamp();
+						Utils::timestamp();
 						printf( "Announce processed (%s)\n", packet->systemAddress.ToString() );
 						break;
 					}
 			}
 		}
 
-		RakSleep( 2 );
+        this_thread::sleep_for(chrono::milliseconds(1));
 	}
 
 	peer->Shutdown( 300 );
 	RakPeerInterface::DestroyInstance( peer );
-
-	return ( ( DWORD ) data );
 }
 
-HANDLE MasterServer::InitalizeRakNet()
+std::thread MasterServer::InitalizeRakNet()
 {
-	HANDLE hMasterThread;
-	DWORD MasterID;
-
 	thread = true;
 
-	hMasterThread = CreateThread( NULL, 0, MasterThread, ( LPVOID ) 0, 0, &MasterID );
-
-	return hMasterThread;
+	return std::thread(MasterThread);
 }

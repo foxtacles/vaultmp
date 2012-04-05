@@ -1,7 +1,14 @@
+#ifdef __WIN32__
 #include <winsock2.h>
+#endif
+
+#include "../vaultmp.h"
+
 #include <cstdio>
 #include <ctime>
 #include <map>
+#include <thread>
+#include <chrono>
 
 #include "../RakNet/RakPeerInterface.h"
 #include "../RakNet/MessageIdentifiers.h"
@@ -11,6 +18,7 @@
 
 #include "../ServerEntry.h"
 #include "../Data.h"
+#include "../Utils.h"
 #include "vaultmaster.h"
 
 #define RAKNET_PORT        1660
@@ -32,12 +40,11 @@ class MasterServer
 		static ServerMap serverList;
 		static void RemoveServer( SystemAddress addr );
 
-		static DWORD WINAPI MasterThread( LPVOID data );
-		static void timestamp();
+		static void MasterThread();
 		static bool thread;
 
 	public:
-		static HANDLE InitalizeRakNet();
+		static std::thread InitalizeRakNet();
 		static void TerminateThread();
 
 };

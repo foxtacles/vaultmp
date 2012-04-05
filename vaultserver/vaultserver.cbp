@@ -10,7 +10,7 @@
 		<Build>
 			<Target title="Debug">
 				<Option platforms="Windows;" />
-				<Option output="vaultserverd" prefix_auto="1" extension_auto="1" />
+				<Option output="vaultserverd.exe" prefix_auto="0" extension_auto="0" />
 				<Option object_output=".objs\Debug" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -30,7 +30,7 @@
 			</Target>
 			<Target title="Release">
 				<Option platforms="Windows;" />
-				<Option output="vaultserver" prefix_auto="1" extension_auto="1" />
+				<Option output="vaultserver.exe" prefix_auto="0" extension_auto="0" />
 				<Option object_output=".objs\Release" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -50,7 +50,7 @@
 			</Target>
 			<Target title="DebugUnix">
 				<Option platforms="Unix;" />
-				<Option output="vaultserverd" prefix_auto="1" extension_auto="1" />
+				<Option output="vaultserverd" prefix_auto="0" extension_auto="0" />
 				<Option object_output=".objs\DebugUnix" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -70,7 +70,7 @@
 			</Target>
 			<Target title="ReleaseUnix">
 				<Option platforms="Unix;" />
-				<Option output="vaultserver" prefix_auto="1" extension_auto="1" />
+				<Option output="vaultserver" prefix_auto="0" extension_auto="0" />
 				<Option object_output=".objs\ReleaseUnix" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -89,7 +89,6 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-std=c++0x" />
 			<Add option="-std=gnu++0x" />
 			<Add option="-fpermissive" />
 			<Add directory=".." />

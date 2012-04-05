@@ -12,7 +12,7 @@ LD = g++
 WINDRES = windres
 
 INC =  -I..
-CFLAGS =  -std=c++0x -std=gnu++0x -fpermissive -m32
+CFLAGS =  -std=gnu++0x -fpermissive -m32
 RESINC = 
 LIBDIR = 
 LIB = 
