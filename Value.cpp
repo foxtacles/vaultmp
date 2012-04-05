@@ -60,9 +60,6 @@ T Value<T>::get() const
 template <typename T>
 bool Value<T>::set_promise()
 {
-	if ( this->async.get_future().valid() )
-		return false;
-
     this->async.set_value(this->get());
 
 	return true;
@@ -71,11 +68,13 @@ bool Value<T>::set_promise()
 template <typename T>
 T Value<T>::get_future(chrono::milliseconds timeout)
 {
+    future<T> f = this->async.get_future();
+
 	if (timeout > chrono::milliseconds(0))
-        if (this->async.get_future().wait_for(timeout) == future_status::timeout)
+        if (f.wait_for(timeout) == future_status::timeout)
             throw VaultException("Timeout of %d reached for future value retrieval", timeout.count());
 
-	T value = this->async.get_future().get();
+	T value = f.get();
 	this->async = promise<T>();
 
 	return value;

@@ -24,7 +24,7 @@ void Bethesda::CommandHandler( signed int key, vector<double>& info, double resu
 	if ( !error )
 	{
 #ifdef VAULTMP_DEBUG
-		//debug->PrintFormat("Executing command %04hX on reference %08X", true, opcode, info.size() > 1 ? getFrom<double, unsigned int>(info.at(1)) : 0);
+		debug->PrintFormat("Executing command %04hX on reference %08X", true, opcode, info.size() > 1 ? getFrom<double, unsigned int>(info.at(1)) : 0);
 #endif
 
 		Lockable* data = NULL;
@@ -122,9 +122,8 @@ void Bethesda::CommandHandler( signed int key, vector<double>& info, double resu
 			case Fallout3::Functions::Func_GetParentCell:
 			case FalloutNV::Functions::Func_GetParentCell:
 				{
-					reference = GameFactory::GetObject( getFrom<double, unsigned int>(info.at(1)) );
-					self = GameFactory::GetObject( PLAYER_REFERENCE );
-					Game::GetParentCell( vector<FactoryObject> {reference, self}, getFrom<double, unsigned int>(result) );
+					vector<FactoryObject> objects = GameFactory::GetMultiple(vector<unsigned int>{getFrom<double, unsigned int>(info.at(1)), PLAYER_REFERENCE});
+					Game::GetParentCell(objects, getFrom<double, unsigned int>(result) );
 					break;
 				}
 

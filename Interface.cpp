@@ -52,7 +52,8 @@ bool Interface::Initialize( ResultHandler resultHandler, unsigned char game )
 
 #ifdef VAULTMP_DEBUG
         //static_cs.SetDebugHandler(debug);
-        //dynamic_cs.SetDebugHandler(debug);
+        dynamic_cs.SetDebugHandler(debug);
+        debug->PrintFormat("Threads %s %s %p %p", true, CriticalSection::thread_id(hCommandThreadReceive).c_str(), CriticalSection::thread_id(hCommandThreadSend).c_str(), &static_cs, &dynamic_cs);
 #endif
 
 		return true;
@@ -370,37 +371,40 @@ void Interface::CommandThreadSend()
 
             static_cs.StartSession();
 
-			for ( it = static_cmdlist.begin(); it != static_cmdlist.end() && !endThread; ++it)
+			for ( it = static_cmdlist.begin(); (it != static_cmdlist.end() || dynamic_cmdlist.size()) && !endThread; ++it)
 			{
-                list<Native::iterator>::iterator it2;
-                list<Native::iterator>& next_list = *it;
+			    if (it != static_cmdlist.end())
+			    {
+                    list<Native::iterator>::iterator it2;
+                    list<Native::iterator>& next_list = *it;
 
-                for (it2 = next_list.begin(); it2 != next_list.end() && !endThread; ++it2)
-                {
-                    multimap<string, string> cmd = Interface::Evaluate(*it2);
-
-                    if (cmd.size() != 0)
+                    for (it2 = next_list.begin(); it2 != next_list.end() && !endThread; ++it2)
                     {
-                        CommandParsed stream = API::Translate(cmd);
+                        multimap<string, string> cmd = Interface::Evaluate(*it2);
 
-                        if (stream.size() != 0)
+                        if (cmd.size() != 0)
                         {
-                            CommandParsed::iterator it;
+                            CommandParsed stream = API::Translate(cmd);
 
-                            for (it = stream.begin(); it != stream.end() && !endThread; ++it)
+                            if (stream.size() != 0)
                             {
-                                unsigned char* content = *it;
-                                pipeServer->Send(content);
-                            }
+                                CommandParsed::iterator it;
 
-                            for (it = stream.begin(); it != stream.end(); ++it)
-                            {
-                                unsigned char* content = *it;
-                                delete[] content;
+                                for (it = stream.begin(); it != stream.end() && !endThread; ++it)
+                                {
+                                    unsigned char* content = *it;
+                                    pipeServer->Send(content);
+                                }
+
+                                for (it = stream.begin(); it != stream.end(); ++it)
+                                {
+                                    unsigned char* content = *it;
+                                    delete[] content;
+                                }
                             }
                         }
                     }
-                }
+			    }
 
                 dynamic_cs.StartSession();
 

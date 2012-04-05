@@ -474,7 +474,7 @@ vector<double> API::ParseCommand( char* cmd, const char* def, op_default* result
 			reference = ExtractReference( tokenizer );
 
 			if ( reference == 0x00 )
-				throw VaultException( "API::ParseCommand reference base operand is NULL" );
+				throw VaultException( "API::ParseCommand reference base operand is NULL (%s, %s, %04X)", _cmd.c_str(), def, opcode );
 
 			result->arg3.reference = reference;
 			result_data.push_back(storeIn<double, unsigned int>(reference));

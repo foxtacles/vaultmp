@@ -171,6 +171,8 @@ void Game::LoadEnvironment()
 
     // load environment
 
+    SetName( reference, self->GetName() );
+
     Interface::StartDynamic();
 
     ParamContainer param_GetControl;
@@ -178,8 +180,6 @@ void Game::LoadEnvironment()
     Interface::ExecuteCommand( "GetControl", param_GetControl );
 
     Interface::EndDynamic();
-
-	Game::SetName( reference, self->GetName() );
 }
 
 void Game::NewObject( FactoryObject reference )
@@ -188,16 +188,13 @@ void Game::NewObject( FactoryObject reference )
 
     if (!object->GetReference())
     {
-        FactoryObject _self = GameFactory::GetObject( PLAYER_REFERENCE );
-        Player* self = vaultcast<Player>( reference );
-
         Value<unsigned int>* store = new Value<unsigned int>;
         signed int key = store->Lock( true );
 
         Interface::StartDynamic();
 
         ParamContainer param_PlaceAtMe;
-        param_PlaceAtMe.push_back(self->GetReferenceParam()); // need something else here
+        param_PlaceAtMe.push_back(BuildParameter(Utils::LongToHex(PLAYER_REFERENCE))); // need something else here
         param_PlaceAtMe.push_back(BuildParameter(Utils::LongToHex(object->GetBase())));
         param_PlaceAtMe.push_back(Data::Param_True);
         Interface::ExecuteCommand("PlaceAtMe", param_PlaceAtMe, key);
@@ -210,10 +207,10 @@ void Game::NewObject( FactoryObject reference )
         {
             refID = store->get_future(chrono::seconds(15));
         }
-        catch (...)
+        catch (exception& e)
         {
             delete store;
-            throw VaultException( "Object creation with baseID %08X and NetworkID %lld failed", object->GetBase(), object->GetNetworkID() );
+            throw VaultException( "Object creation with baseID %08X and NetworkID %lld failed (%s)", object->GetBase(), object->GetNetworkID(), e.what() );
         }
 
         object->SetReference(refID);
@@ -473,6 +470,8 @@ void Game::SetActorValue( FactoryObject reference, bool base, unsigned char inde
 	if ( result )
 	{
 		signed int key = result->Lock( true );
+
+        Interface::StartDynamic();
 
         if (base)
         {
