@@ -110,7 +110,8 @@ void Dedicated::Query( Packet* packet )
 
 		SystemAddress addr;
 		query.Read( addr );
-		query.Reset();
+
+		query = BitStream();
 
 		query.Write( ( MessageID ) ID_MASTER_UPDATE );
 		query.Write( addr );

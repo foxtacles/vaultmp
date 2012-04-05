@@ -107,7 +107,8 @@ void MasterServer::MasterThread()
 
 						SystemAddress addr;
 						query.Read( addr );
-						query.Reset();
+
+						query = BitStream();
 
 						map<SystemAddress, ServerEntry>::iterator i;
 						i = serverList.find( addr );

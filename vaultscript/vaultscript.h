@@ -6,6 +6,9 @@
 #include <string>
 
 #ifndef __WIN32__
+#ifndef __cdecl
+#define __cdecl __attribute__((__cdecl__))
+#endif
 #define VAULTSCRIPT __attribute__ ((__visibility__("default"))) __cdecl
 #else
 #define VAULTSCRIPT __declspec(dllexport) __cdecl
