@@ -261,9 +261,8 @@ NetworkResponse NetworkClient::ProcessPacket( Packet* data )
                                             NetworkID id;
                                             unsigned int cell;
                                             PacketFactory::Access( packet, &id, &cell );
-                                            FactoryObject reference = GameFactory::GetObject( id );
-                                            FactoryObject self = GameFactory::GetObject( PLAYER_REFERENCE );
-                                            Game::SetNetworkCell( vector<FactoryObject> {reference, self}, cell );
+                                            vector<FactoryObject> objects = GameFactory::GetMultiple(vector<unsigned int>{GameFactory::LookupRefID(id), PLAYER_REFERENCE});
+                                            Game::SetNetworkCell( objects, cell );
                                             break;
                                         }
 
