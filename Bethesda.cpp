@@ -37,7 +37,7 @@ void Bethesda::CommandHandler( signed int key, vector<double>& info, double resu
 		switch ( opcode )
 		{
 			case Functions::Func_PlaceAtMe:
-				Game::PlaceAtMe( data, getFrom<double, unsigned int>(result) );
+				Game::FutureSet<unsigned int>( data, getFrom<double, unsigned int>(result) );
 				break;
 
 			case Functions::Func_GetPos:
@@ -135,6 +135,7 @@ void Bethesda::CommandHandler( signed int key, vector<double>& info, double resu
 
 			case Fallout3::Functions::Func_Load:
 			case FalloutNV::Functions::Func_Load:
+                Game::FutureSet<bool>( data, true );
                 Game::LoadEnvironment();
 				break;
 

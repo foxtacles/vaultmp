@@ -73,6 +73,20 @@ void Game::Initialize()
 	Interface::DefineCommand( "GetActorStateNotSelf", "%0.GetActorState", "GetActorState" );
 }
 
+NetworkResponse Game::Authenticate( string password )
+{
+	NetworkResponse response;
+	FactoryObject reference = GameFactory::GetObject( PLAYER_REFERENCE );
+	Player* self = vaultcast<Player>( reference );
+	pDefault* packet = PacketFactory::CreatePacket( ID_GAME_AUTH, self->GetName().c_str(), password.c_str() );
+	response = Network::CompleteResponse( Network::CreateResponse( packet,
+										  ( unsigned char ) HIGH_PRIORITY,
+										  ( unsigned char ) RELIABLE_ORDERED,
+										  CHANNEL_GAME,
+										  server ) );
+	return response;
+}
+
 void Game::Startup()
 {
 	FactoryObject reference = GameFactory::GetObject( PLAYER_REFERENCE );
@@ -151,17 +165,52 @@ void Game::Startup()
 	Interface::EndSetup();
 }
 
+template <typename T>
+void Game::FutureSet( Lockable* data, T t )
+{
+	if ( data == NULL )
+		throw VaultException( "Could not relocate reference storage" );
+
+	Value<T>* store = dynamic_cast<Value<T>*>( data );
+
+	if ( store == NULL )
+		throw VaultException( "Reference storage is corrupted" );
+
+	store->set(t);
+	store->set_promise();
+}
+template void Game::FutureSet(Lockable* data, unsigned int t);
+template void Game::FutureSet(Lockable* data, bool t);
+
 void Game::LoadGame( string savegame )
 {
 	Utils::RemoveExtension( savegame );
+
+    Value<bool>* store = new Value<bool>;
+    signed int key = store->Lock( true );
 
 	Interface::StartDynamic();
 
 	ParamContainer param_Load;
 	param_Load.push_back( BuildParameter( savegame ) );
-	Interface::ExecuteCommand( "Load", param_Load );
+	Interface::ExecuteCommand( "Load", param_Load, key );
 
 	Interface::EndDynamic();
+
+	bool ready;
+
+    try
+    {
+        ready = store->get_future(chrono::seconds(15));
+    }
+    catch (exception& e)
+    {
+        delete store;
+        throw VaultException( "Loading of savegame %s failed (%s)", savegame.c_str(), e.what() );
+    }
+
+    delete store;
+    // ready state
 }
 
 void Game::LoadEnvironment()
@@ -224,6 +273,7 @@ void Game::NewObject( FactoryObject reference )
 	SetName( reference );
 	SetRestrained( reference, true );
 	SetPos(reference);
+	SetAngle(reference);
 
 	// maybe more
 }
@@ -247,7 +297,18 @@ void Game::NewActor( FactoryObject reference )
     NewObject(reference);
     NewContainer(reference);
 
-    // set values and other
+    vector<unsigned char> values = API::RetrieveAllValues();
+    vector<unsigned char>::iterator it;
+
+    for (it = values.begin(); it != values.end(); ++it)
+    {
+        SetActorValue(reference, true, *it);
+        SetActorValue(reference, false, *it);
+    }
+
+    SetActorAlerted(reference);
+    SetActorSneaking(reference);
+    SetActorMovingAnimation(reference);
 }
 
 void Game::NewPlayer( FactoryObject reference )
@@ -624,34 +685,6 @@ void Game::net_SetActorState( FactoryObject reference, unsigned char index, unsi
 		if ( index == AnimGroup_Idle )
 			SetPos( reference );
 	}
-}
-
-NetworkResponse Game::Authenticate( string password )
-{
-	NetworkResponse response;
-	FactoryObject reference = GameFactory::GetObject( PLAYER_REFERENCE );
-	Player* self = vaultcast<Player>( reference );
-	pDefault* packet = PacketFactory::CreatePacket( ID_GAME_AUTH, self->GetName().c_str(), password.c_str() );
-	response = Network::CompleteResponse( Network::CreateResponse( packet,
-										  ( unsigned char ) HIGH_PRIORITY,
-										  ( unsigned char ) RELIABLE_ORDERED,
-										  CHANNEL_GAME,
-										  server ) );
-	return response;
-}
-
-void Game::PlaceAtMe( Lockable* data, unsigned int refID )
-{
-	if ( data == NULL )
-		throw VaultException( "Could not relocate reference storage" );
-
-	Value<unsigned int>* store = dynamic_cast<Value<unsigned int>*>( data );
-
-	if ( store == NULL )
-		throw VaultException( "Reference storage is corrupted" );
-
-	store->set( refID );
-	store->set_promise();
 }
 
 void Game::GetPos( FactoryObject reference, unsigned char axis, double value )

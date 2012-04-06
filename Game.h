@@ -36,18 +36,28 @@ class Game
 
 	public:
 
-        /**
-         * Game functions
-         */
-
 		/**
 		 * \brief Initializes the Game class
 		 */
 		static void Initialize();
 		/**
+		 * \brief Builds an authenticate packet for the server
+		 */
+		static NetworkResponse Authenticate( string password );
+		/**
 		 * \brief Starts the game command schedule
 		 */
 		static void Startup();
+		/**
+		 * \brief Future set
+		 */
+        template <typename T>
+		static void FutureSet( Lockable* data, T t );
+
+        /**
+         * Game functions
+         */
+
 		/**
 		 * \brief Loads a savegame
 		 */
@@ -154,14 +164,6 @@ class Game
          * Interface functions
          */
 
-		/**
-		 * \brief Builds an authenticate packet for the server
-		 */
-		static NetworkResponse Authenticate( string password );
-		/**
-		 * \brief Handles PlaceAtMe command result
-		 */
-		static void PlaceAtMe( Lockable* data, unsigned int refID );
 		/**
 		 * \brief Handles GetPos command result
 		 */
