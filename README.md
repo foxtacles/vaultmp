@@ -12,6 +12,6 @@ The main goal is to enable players to roam the open worlds of the wastelands and
 
 # The application
 
-![Application structure](http://www.vaultmp.com/wiki/images/9/95/Structurevaultmp.png "Application structure")
+![Application structure](http://www.brickster.net/files/vaultmp/structure.png "Application structure")
 
 
