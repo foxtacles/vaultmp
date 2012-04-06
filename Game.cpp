@@ -171,7 +171,7 @@ void Game::LoadEnvironment()
 
     // load environment
 
-    SetName( reference, self->GetName() );
+    SetName( reference );
 
     Interface::StartDynamic();
 
@@ -221,7 +221,7 @@ void Game::NewObject( FactoryObject reference )
         // existing objects
     }
 
-	SetName( reference, object->GetName() );
+	SetName( reference );
 	SetRestrained( reference, true );
 	SetPos(reference);
 
@@ -264,40 +264,36 @@ void Game::RemoveObject( FactoryObject& reference )
 	Delete( reference );
 }
 
-void Game::Enable( FactoryObject reference, bool enable )
+void Game::ToggleEnabled( FactoryObject reference )
 {
 	Object* object = vaultcast<Object>( reference );
-	bool result = ( bool ) object->SetEnabled( enable );
 
-	if ( result )
-	{
-		Interface::StartDynamic();
+    Interface::StartDynamic();
 
-		if ( enable )
-		{
-			ParamContainer param_Enable;
-			param_Enable.push_back( object->GetReferenceParam() );
-			param_Enable.push_back( Data::Param_True );
-			Interface::ExecuteCommand( "Enable", param_Enable );
-		}
+    if (object->GetEnabled())
+    {
+        ParamContainer param_Enable;
+        param_Enable.push_back( object->GetReferenceParam() );
+        param_Enable.push_back( Data::Param_True );
+        Interface::ExecuteCommand( "Enable", param_Enable );
+    }
+    else
+    {
+        ParamContainer param_Disable;
+        param_Disable.push_back( object->GetReferenceParam() );
+        param_Disable.push_back( Data::Param_False );
+        Interface::ExecuteCommand( "Disable", param_Disable );
+    }
 
-		else
-		{
-			ParamContainer param_Disable;
-			param_Disable.push_back( object->GetReferenceParam() );
-			param_Disable.push_back( Data::Param_False );
-			Interface::ExecuteCommand( "Disable", param_Disable );
-		}
-
-		Interface::EndDynamic();
-	}
+    Interface::EndDynamic();
 }
 
 void Game::Delete( FactoryObject& reference )
 {
-	Enable( reference, false );
+    Object* object = vaultcast<Object>(reference);
 
-	Object* object = vaultcast<Object>( reference );
+    if (object->SetEnabled(false))
+        ToggleEnabled( reference);
 
     Interface::StartDynamic();
 
@@ -310,11 +306,10 @@ void Game::Delete( FactoryObject& reference )
 	GameFactory::DestroyInstance( reference );
 }
 
-void Game::SetName( FactoryObject reference, string name )
+void Game::SetName( FactoryObject reference )
 {
 	Object* object = vaultcast<Object>( reference );
-
-	object->SetName( name );
+	string name = object->GetName();
 
 	Interface::StartDynamic();
 
@@ -333,6 +328,8 @@ void Game::SetRestrained(FactoryObject reference, bool restrained)
 	if ( !actor )
 		throw VaultException( "Object with reference %08X is not an Actor", ( *reference )->GetReference() );
 
+    //bool restrained = actor->GetActorRestrained();
+
 	Interface::StartDynamic();
 
     ParamContainer param_SetRestrained;
@@ -343,68 +340,42 @@ void Game::SetRestrained(FactoryObject reference, bool restrained)
 	Interface::EndDynamic();
 }
 
-void Game::SetPos( FactoryObject reference, double X, double Y, double Z )
-{
-	Object* object = vaultcast<Object>( reference );
-	bool result = ( ( bool ) object->SetNetworkPos( Axis_X, X ) | ( bool ) object->SetNetworkPos( Axis_Y, Y ) | ( bool ) object->SetNetworkPos( Axis_Z, Z ) );
-
-	if ( result )
-		SetPos( reference );
-}
-
 void Game::SetPos( FactoryObject reference )
 {
 	Object* object = vaultcast<Object>( reference );
 
-	if ( object->GetEnabled() )
-	{
-		Actor* actor = vaultcast<Actor>( object ); // maybe we should consider items, too (they have physics)
+    Lockable* key = NULL;
 
-		if ( actor == NULL || ( !actor->IsNearPoint( object->GetNetworkPos( Axis_X ), object->GetNetworkPos( Axis_Y ), object->GetNetworkPos( Axis_Z ), 200.0 ) && actor->GetActorMovingAnimation() == AnimGroup_Idle ) || actor->IsActorJumping() )
-		{
-			Lockable* key = NULL;
+    Interface::StartDynamic();
 
-			Interface::StartDynamic();
+    key = object->SetGamePos( Axis_X, object->GetNetworkPos( Axis_X ) );
 
-			key = object->SetGamePos( Axis_X, object->GetNetworkPos( Axis_X ) );
+    ParamContainer param_SetPos;
+    param_SetPos.push_back(object->GetReferenceParam());
+    param_SetPos.push_back(BuildParameter(API::RetrieveAxis_Reverse(Axis_X)));
+    param_SetPos.push_back(BuildParameter(object->GetNetworkPos(Axis_X)));
+    Interface::ExecuteCommand("SetPos", param_SetPos, key ? key->Lock(true) : 0);
 
-            ParamContainer param_SetPos;
-            param_SetPos.push_back(object->GetReferenceParam());
-            param_SetPos.push_back(BuildParameter(API::RetrieveAxis_Reverse(Axis_X)));
-            param_SetPos.push_back(BuildParameter(object->GetNetworkPos(Axis_X)));
-            Interface::ExecuteCommand("SetPos", param_SetPos, key ? key->Lock(true) : 0);
+    key = object->SetGamePos( Axis_Y, object->GetNetworkPos( Axis_Y ) );
 
-			key = object->SetGamePos( Axis_Y, object->GetNetworkPos( Axis_Y ) );
+    param_SetPos.clear();
+    param_SetPos.push_back(object->GetReferenceParam());
+    param_SetPos.push_back(BuildParameter(API::RetrieveAxis_Reverse(Axis_Y)));
+    param_SetPos.push_back(BuildParameter(object->GetNetworkPos(Axis_Y)));
+    Interface::ExecuteCommand("SetPos", param_SetPos, key ? key->Lock(true) : 0);
 
-            param_SetPos.clear();
-            param_SetPos.push_back(object->GetReferenceParam());
-            param_SetPos.push_back(BuildParameter(API::RetrieveAxis_Reverse(Axis_Y)));
-            param_SetPos.push_back(BuildParameter(object->GetNetworkPos(Axis_Y)));
-            Interface::ExecuteCommand("SetPos", param_SetPos, key ? key->Lock(true) : 0);
+    key = object->SetGamePos( Axis_Z, object->GetNetworkPos( Axis_Z ) );
 
-			key = object->SetGamePos( Axis_Z, object->GetNetworkPos( Axis_Z ) );
+    param_SetPos.clear();
+    param_SetPos.push_back(object->GetReferenceParam());
+    param_SetPos.push_back(BuildParameter(API::RetrieveAxis_Reverse(Axis_Z)));
+    param_SetPos.push_back(BuildParameter(object->GetNetworkPos(Axis_Z)));
+    Interface::ExecuteCommand("SetPos", param_SetPos, key ? key->Lock(true) : 0);
 
-            param_SetPos.clear();
-            param_SetPos.push_back(object->GetReferenceParam());
-            param_SetPos.push_back(BuildParameter(API::RetrieveAxis_Reverse(Axis_Z)));
-            param_SetPos.push_back(BuildParameter(object->GetNetworkPos(Axis_Z)));
-            Interface::ExecuteCommand("SetPos", param_SetPos, key ? key->Lock(true) : 0);
-
-			Interface::EndDynamic();
-		}
-	}
+    Interface::EndDynamic();
 }
 
-void Game::SetAngle( FactoryObject reference, unsigned char axis, double value )
-{
-	Object* object = vaultcast<Object>( reference );
-	bool result = ( bool ) object->SetAngle( axis, value );
-
-	if ( result && object->GetEnabled() )
-		SetAngle( reference, axis );
-}
-
-void Game::SetAngle( FactoryObject reference, unsigned char axis )
+void Game::SetAngle( FactoryObject reference )
 {
 	Object* object = vaultcast<Object>( reference );
 
@@ -412,12 +383,19 @@ void Game::SetAngle( FactoryObject reference, unsigned char axis )
 
 	ParamContainer param_SetAngle;
 	param_SetAngle.push_back( object->GetReferenceParam() );
-	param_SetAngle.push_back( BuildParameter( API::RetrieveAxis_Reverse( axis ) ) );
+	param_SetAngle.push_back( BuildParameter( API::RetrieveAxis_Reverse( Axis_X ) ) );
+	param_SetAngle.push_back( BuildParameter( object->GetAngle(Axis_X) ) );
+	Interface::ExecuteCommand( "SetAngle", param_SetAngle );
 
-	double value = object->GetAngle( axis );
+	param_SetAngle.clear();
+
+	param_SetAngle.push_back( object->GetReferenceParam() );
+	param_SetAngle.push_back( BuildParameter( API::RetrieveAxis_Reverse( Axis_Z ) ) );
+
+	double value = object->GetAngle( Axis_Z );
 	Actor* actor = vaultcast<Actor>( object );
 
-	if ( axis == Axis_Z && actor )
+	if ( actor )
 	{
 		if ( actor->GetActorMovingXY() == 0x01 )
 			AdjustZAngle( value, -45.0 );
@@ -426,13 +404,140 @@ void Game::SetAngle( FactoryObject reference, unsigned char axis )
 			AdjustZAngle( value, 45.0 );
 	}
 
-	param_SetAngle.push_back( BuildParameter( value ) );
+	param_SetAngle.push_back( BuildParameter( object->GetAngle(Axis_Z) ) );
 	Interface::ExecuteCommand( "SetAngle", param_SetAngle );
 
 	Interface::EndDynamic();
 }
 
-void Game::SetNetworkCell( vector<FactoryObject> reference, unsigned int cell )
+void Game::MoveTo( vector<FactoryObject> reference, bool cell, signed int key )
+{
+	Object* object = vaultcast<Object>( reference[0] );
+	Object* object2 = vaultcast<Object>( reference[1] );
+
+    Interface::StartDynamic();
+
+    ParamContainer param_MoveTo;
+    param_MoveTo.push_back( object->GetReferenceParam() );
+    param_MoveTo.push_back( object2->GetReferenceParam() );
+
+    if ( cell )
+    {
+        param_MoveTo.push_back( BuildParameter( object->GetNetworkPos( Axis_X ) - object2->GetNetworkPos( Axis_X ) ) );
+        param_MoveTo.push_back( BuildParameter( object->GetNetworkPos( Axis_Y ) - object2->GetNetworkPos( Axis_Y ) ) );
+        param_MoveTo.push_back( BuildParameter( object->GetNetworkPos( Axis_Z ) - object2->GetNetworkPos( Axis_Z ) ) );
+    }
+
+    Interface::ExecuteCommand( "MoveTo", param_MoveTo, key );
+
+    Interface::EndDynamic();
+}
+
+void Game::SetActorValue( FactoryObject reference, bool base, unsigned char index, signed int key)
+{
+	Actor* actor = vaultcast<Actor>( reference );
+
+	if ( !actor )
+		throw VaultException( "Object with reference %08X is not an Actor", ( *reference )->GetReference() );
+
+    Interface::StartDynamic();
+
+	if ( base )
+	{
+        ParamContainer param_SetActorValue;
+        param_SetActorValue.push_back(actor->GetReferenceParam());
+        param_SetActorValue.push_back(BuildParameter(API::RetrieveValue_Reverse(index)));
+        param_SetActorValue.push_back(BuildParameter(actor->GetActorBaseValue(index)));
+        Interface::ExecuteCommand("SetActorValue", param_SetActorValue, key);
+	}
+	else
+	{
+        ParamContainer param_ForceActorValue;
+        param_ForceActorValue.push_back(actor->GetReferenceParam());
+        param_ForceActorValue.push_back(BuildParameter(API::RetrieveValue_Reverse(index)));
+        param_ForceActorValue.push_back(BuildParameter(actor->GetActorValue(index)));
+        Interface::ExecuteCommand("ForceActorValue", param_ForceActorValue, key);
+	}
+
+    Interface::EndDynamic();
+}
+
+void Game::SetActorSneaking(FactoryObject reference, signed int key)
+{
+	Actor* actor = vaultcast<Actor>( reference );
+
+	if ( !actor )
+		throw VaultException( "Object with reference %08X is not an Actor", ( *reference )->GetReference() );
+
+    Interface::StartDynamic();
+
+    ParamContainer param_SetForceSneak;
+    param_SetForceSneak.push_back(actor->GetReferenceParam());
+    param_SetForceSneak.push_back(actor->GetActorSneaking() ? Data::Param_True : Data::Param_False);
+    Interface::ExecuteCommand("SetForceSneak", param_SetForceSneak, key);
+
+    Interface::EndDynamic();
+}
+
+void Game::SetActorAlerted(FactoryObject reference, signed int key)
+{
+	Actor* actor = vaultcast<Actor>( reference );
+
+	if ( !actor )
+		throw VaultException( "Object with reference %08X is not an Actor", ( *reference )->GetReference() );
+
+    Interface::StartDynamic();
+
+    ParamContainer param_SetAlert;
+    param_SetAlert.push_back(actor->GetReferenceParam());
+    param_SetAlert.push_back(actor->GetActorAlerted() ? Data::Param_True : Data::Param_False);
+    Interface::ExecuteCommand("SetAlert", param_SetAlert, key);
+
+    Interface::EndDynamic();
+}
+
+void Game::SetActorMovingAnimation(FactoryObject reference, signed int key)
+{
+	Actor* actor = vaultcast<Actor>( reference );
+
+	if ( !actor )
+		throw VaultException( "Object with reference %08X is not an Actor", ( *reference )->GetReference() );
+
+    Interface::StartDynamic();
+
+    ParamContainer param_PlayGroup;
+    param_PlayGroup.push_back(actor->GetReferenceParam());
+    param_PlayGroup.push_back(BuildParameter(API::RetrieveAnim_Reverse(actor->GetActorMovingAnimation())));
+    param_PlayGroup.push_back(Data::Param_True);
+    Interface::ExecuteCommand("PlayGroup", param_PlayGroup, key);
+
+    Interface::EndDynamic();
+}
+
+void Game::net_SetPos( FactoryObject reference, double X, double Y, double Z)
+{
+    Object* object = vaultcast<Object>( reference );
+	bool result = ( ( bool ) object->SetNetworkPos( Axis_X, X ) | ( bool ) object->SetNetworkPos( Axis_Y, Y ) | ( bool ) object->SetNetworkPos( Axis_Z, Z ) );
+
+	if ( result && object->GetEnabled())
+	{
+	    Actor* actor = vaultcast<Actor>( object ); // maybe we should consider items, too (they have physics)
+
+        if ( actor == NULL || ( !actor->IsNearPoint( object->GetNetworkPos( Axis_X ), object->GetNetworkPos( Axis_Y ), object->GetNetworkPos( Axis_Z ), 200.0 ) && actor->GetActorMovingAnimation() == AnimGroup_Idle ) || actor->IsActorJumping() )
+            SetPos( reference );
+	}
+}
+
+void Game::net_SetAngle( FactoryObject reference, unsigned char axis, double value )
+{
+	Object* object = vaultcast<Object>( reference );
+	bool result = ( bool ) object->SetAngle( axis, value );
+
+	if ( result && object->GetEnabled() )
+		SetAngle( reference );
+}
+
+void Game::net_SetCell( vector<FactoryObject> reference, unsigned int cell )
 {
 	Object* object = vaultcast<Object>( reference[0] );
 	Player* self = vaultcast<Player>( reference[1] );
@@ -445,14 +550,19 @@ void Game::SetNetworkCell( vector<FactoryObject> reference, unsigned int cell )
 	if ( object != self )
 	{
 		if ( object->GetNetworkCell() != self->GetGameCell() )
-			Enable( reference[0], false );
-
+		{
+		    if (object->SetEnabled(false))
+                ToggleEnabled( reference[0]);
+		}
 		else
-			Enable( reference[0], true );
+		{
+		    if (object->SetEnabled(true))
+                ToggleEnabled( reference[0]);
+		}
 	}
 }
 
-void Game::SetActorValue( FactoryObject reference, bool base, unsigned char index, double value )
+void Game::net_SetActorValue( FactoryObject reference, bool base, unsigned char index, double value )
 {
 	Actor* actor = vaultcast<Actor>( reference );
 
@@ -463,56 +573,14 @@ void Game::SetActorValue( FactoryObject reference, bool base, unsigned char inde
 
 	if ( base )
 		result = actor->SetActorBaseValue( index, value );
-
 	else
 		result = actor->SetActorValue( index, value );
 
-	if ( result )
-	{
-		signed int key = result->Lock( true );
-
-        Interface::StartDynamic();
-
-        if (base)
-        {
-            ParamContainer param_SetActorValue;
-            param_SetActorValue.push_back(actor->GetReferenceParam());
-            param_SetActorValue.push_back(BuildParameter(API::RetrieveValue_Reverse(index)));
-            param_SetActorValue.push_back(BuildParameter(value));
-            Interface::ExecuteCommand("SetActorValue", param_SetActorValue, key);
-        }
-        else
-        {
-            ParamContainer param_ForceActorValue;
-            param_ForceActorValue.push_back(actor->GetReferenceParam());
-            param_ForceActorValue.push_back(BuildParameter(API::RetrieveValue_Reverse(index)));
-            param_ForceActorValue.push_back(BuildParameter(value));
-            Interface::ExecuteCommand("ForceActorValue", param_ForceActorValue, key);
-        }
-
-		if ( base )
-		{
-			ParamContainer param_SetActorValue;
-			param_SetActorValue.push_back( actor->GetReferenceParam() );
-			param_SetActorValue.push_back( BuildParameter( API::RetrieveValue_Reverse( index ) ) );
-			param_SetActorValue.push_back( BuildParameter( value ) );
-			Interface::ExecuteCommand( "SetActorValue", param_SetActorValue, key );
-		}
-
-		else
-		{
-			ParamContainer param_ForceActorValue;
-			param_ForceActorValue.push_back( actor->GetReferenceParam() );
-			param_ForceActorValue.push_back( BuildParameter( API::RetrieveValue_Reverse( index ) ) );
-			param_ForceActorValue.push_back( BuildParameter( value ) );
-			Interface::ExecuteCommand( "ForceActorValue", param_ForceActorValue, key );
-		}
-
-		Interface::EndDynamic();
-	}
+    if (result)
+        SetActorValue(reference, base, index, result->Lock(true));
 }
 
-void Game::SetActorState( FactoryObject reference, unsigned char index, unsigned char moving, bool alerted, bool sneaking )
+void Game::net_SetActorState( FactoryObject reference, unsigned char index, unsigned char moving, bool alerted, bool sneaking )
 {
 	Actor* actor = vaultcast<Actor>( reference );
 
@@ -524,25 +592,15 @@ void Game::SetActorState( FactoryObject reference, unsigned char index, unsigned
 	result = actor->SetActorMovingXY( moving );
 
 	if ( result && actor->GetEnabled() )
-		SetAngle( reference, Axis_Z );
+		SetAngle( reference);
 
 	result = actor->SetActorAlerted( alerted );
 
 	if ( result && actor->GetEnabled() )
 	{
 		SetRestrained( reference, false );
-
 		signed int key = result->Lock( true );
-
-		Interface::StartDynamic();
-
-        ParamContainer param_SetAlert;
-        param_SetAlert.push_back(actor->GetReferenceParam());
-        param_SetAlert.push_back(alerted ? Data::Param_True : Data::Param_False);
-        Interface::ExecuteCommand("SetAlert", param_SetAlert, key);
-
-		Interface::EndDynamic();
-
+        SetActorAlerted(reference, key);
         SetRestrained(reference, true);
     }
 
@@ -551,18 +609,8 @@ void Game::SetActorState( FactoryObject reference, unsigned char index, unsigned
 	if ( result && actor->GetEnabled() )
 	{
 		SetRestrained( reference, false );
-
 		signed int key = result->Lock( true );
-
-		Interface::StartDynamic();
-
-        ParamContainer param_SetForceSneak;
-        param_SetForceSneak.push_back(actor->GetReferenceParam());
-        param_SetForceSneak.push_back(sneaking ? Data::Param_True : Data::Param_False);
-        Interface::ExecuteCommand("SetForceSneak", param_SetForceSneak, key);
-
-		Interface::EndDynamic();
-
+        SetActorSneaking(reference, key);
 		SetRestrained( reference, true );
 	}
 
@@ -571,49 +619,10 @@ void Game::SetActorState( FactoryObject reference, unsigned char index, unsigned
 	if ( result && actor->GetEnabled() )
 	{
 		signed int key = result->Lock( true );
-
-		Interface::StartDynamic();
-
-        ParamContainer param_PlayGroup;
-        param_PlayGroup.push_back(actor->GetReferenceParam());
-        param_PlayGroup.push_back(BuildParameter(API::RetrieveAnim_Reverse(index)));
-        param_PlayGroup.push_back(Data::Param_True);
-        Interface::ExecuteCommand("PlayGroup", param_PlayGroup, key);
-
-		Interface::EndDynamic();
+        SetActorMovingAnimation(reference, key);
 
 		if ( index == AnimGroup_Idle )
 			SetPos( reference );
-	}
-}
-
-void Game::MoveTo( vector<FactoryObject> reference, bool cell )
-{
-	Object* object = vaultcast<Object>( reference[0] );
-	Object* object2 = vaultcast<Object>( reference[1] );
-
-	Lockable* result = object->SetGameCell( object2->GetGameCell() );
-
-	if ( result )
-	{
-		signed int key = result->Lock( true );
-
-		Interface::StartDynamic();
-
-		ParamContainer param_MoveTo;
-		param_MoveTo.push_back( object->GetReferenceParam() );
-		param_MoveTo.push_back( object2->GetReferenceParam() );
-
-		if ( cell )
-		{
-			param_MoveTo.push_back( BuildParameter( object->GetNetworkPos( Axis_X ) - object2->GetNetworkPos( Axis_X ) ) );
-			param_MoveTo.push_back( BuildParameter( object->GetNetworkPos( Axis_Y ) - object2->GetNetworkPos( Axis_Y ) ) );
-			param_MoveTo.push_back( BuildParameter( object->GetNetworkPos( Axis_Z ) - object2->GetNetworkPos( Axis_Z ) ) );
-		}
-
-		Interface::ExecuteCommand( "MoveTo", param_MoveTo, key );
-
-		Interface::EndDynamic();
 	}
 }
 
@@ -691,9 +700,15 @@ void Game::GetParentCell( vector<FactoryObject> reference, unsigned int cell )
 	{
 		if ( self->GetGameCell() == object->GetNetworkCell() && object->GetGameCell() != object->GetNetworkCell() )
 		{
-			Enable( reference[0], true );
-			MoveTo( reference, true );
-			SetAngle( reference[0], Axis_Z );
+		    if (object->SetEnabled(true))
+                ToggleEnabled(reference[0]);
+
+            Lockable* result = object->SetGameCell( self->GetGameCell() );
+
+            if (result)
+                MoveTo( reference, true, result->Lock(true) );
+
+			SetAngle( reference[0] );
 		}
 	}
 
@@ -702,10 +717,15 @@ void Game::GetParentCell( vector<FactoryObject> reference, unsigned int cell )
 	if ( object != self )
 	{
 		if ( object->GetNetworkCell() != self->GetGameCell() )
-			Enable( reference[0], false );
-
+		{
+		    if (object->SetEnabled(false))
+                ToggleEnabled( reference[0]);
+		}
 		else
-			Enable( reference[0], true );
+		{
+		    if (object->SetEnabled(true))
+                ToggleEnabled( reference[0]);
+		}
 	}
 
 	if ( result && object == self )

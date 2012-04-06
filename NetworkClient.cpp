@@ -241,7 +241,7 @@ NetworkResponse NetworkClient::ProcessPacket( Packet* data )
                                             double X, Y, Z;
                                             PacketFactory::Access( packet, &id, &X, &Y, &Z );
                                             FactoryObject reference = GameFactory::GetObject( id );
-                                            Game::SetPos( reference, X, Y, Z );
+                                            Game::net_SetPos( reference, X, Y, Z );
                                             break;
                                         }
 
@@ -252,7 +252,7 @@ NetworkResponse NetworkClient::ProcessPacket( Packet* data )
                                             double value;
                                             PacketFactory::Access( packet, &id, &axis, &value );
                                             FactoryObject reference = GameFactory::GetObject( id );
-                                            Game::SetAngle( reference, axis, value );
+                                            Game::net_SetAngle( reference, axis, value );
                                             break;
                                         }
 
@@ -262,7 +262,7 @@ NetworkResponse NetworkClient::ProcessPacket( Packet* data )
                                             unsigned int cell;
                                             PacketFactory::Access( packet, &id, &cell );
                                             vector<FactoryObject> objects = GameFactory::GetMultiple(vector<unsigned int>{GameFactory::LookupRefID(id), PLAYER_REFERENCE});
-                                            Game::SetNetworkCell( objects, cell );
+                                            Game::net_SetCell( objects, cell );
                                             break;
                                         }
 
@@ -274,7 +274,7 @@ NetworkResponse NetworkClient::ProcessPacket( Packet* data )
                                             double value;
                                             PacketFactory::Access( packet, &id, &base, &index, &value );
                                             FactoryObject reference = GameFactory::GetObject( id );
-                                            Game::SetActorValue( reference, base, index, value );
+                                            Game::net_SetActorValue( reference, base, index, value );
                                             break;
                                         }
 
@@ -287,7 +287,7 @@ NetworkResponse NetworkClient::ProcessPacket( Packet* data )
                                             bool sneaking;
                                             PacketFactory::Access( packet, &id, &index, &moving, &alerted, &sneaking );
                                             FactoryObject reference = GameFactory::GetObject( id );
-                                            Game::SetActorState( reference, index, moving, alerted, sneaking );
+                                            Game::net_SetActorState( reference, index, moving, alerted, sneaking );
                                             break;
                                         }
 

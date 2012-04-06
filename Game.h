@@ -36,6 +36,10 @@ class Game
 
 	public:
 
+        /**
+         * Game functions
+         */
+
 		/**
 		 * \brief Initializes the Game class
 		 */
@@ -79,7 +83,7 @@ class Game
 		/**
 		 * \brief Enables / Disables an Object
 		 */
-		static void Enable( FactoryObject reference, bool enable );
+		static void ToggleEnabled( FactoryObject reference );
 		/**
 		 * \brief Deletes an Object
 		 */
@@ -87,7 +91,7 @@ class Game
 		/**
 		 * \brief Sets the name of an Object
 		 */
-		static void SetName( FactoryObject reference, string name );
+		static void SetName( FactoryObject reference );
 		/**
 		 * \brief Puts an Actor into restrained / unrestrained state
 		 */
@@ -95,36 +99,60 @@ class Game
 		/**
 		 * \brief Sets the position of an Object
 		 */
-		static void SetPos( FactoryObject reference, double X, double Y, double Z );
+		static void SetPos( FactoryObject reference  );
 		/**
-		 * \brief Resets the position of an Object
+		 * \brief Sets the angles of an Object
 		 */
-		static void SetPos( FactoryObject reference );
-		/**
-		 * \brief Sets the angle of an Object
-		 */
-		static void SetAngle( FactoryObject reference, unsigned char axis, double value );
-		/**
-		 * \brief Resets the angle of an Object
-		 */
-		static void SetAngle( FactoryObject reference, unsigned char axis );
-		/**
-		 * \brief Sets the network cell of an Object
-		 */
-		static void SetNetworkCell( vector<FactoryObject> reference, unsigned int cell );
-		/**
-		 * \brief Sets an actor value of an Actor
-		 */
-		static void SetActorValue( FactoryObject reference, bool base, unsigned char index, double value );
-		/**
-		 * \brief Sets the running animation, alerted and sneaking state of an Actor
-		 */
-		static void SetActorState( FactoryObject reference, unsigned char index, unsigned char moving, bool alerted, bool sneaking );
+		static void SetAngle( FactoryObject reference );
 		/**
 		 * \brief Moves an Object to another Object
 		 */
-		static void MoveTo( vector<FactoryObject> reference, bool cell = false );
+		static void MoveTo( vector<FactoryObject> reference, bool cell = false, signed int key = 0 );
+		/**
+		 * \brief Sets an actor value of an Actor
+		 */
+		static void SetActorValue( FactoryObject reference, bool base, unsigned char index, signed int key = 0 );
+		/**
+		 * \brief Sets the sneaking state of an Actor
+		 */
+		static void SetActorSneaking( FactoryObject reference, signed int key = 0 );
+		/**
+		 * \brief Sets the alerted state of an Actor
+		 */
+		static void SetActorAlerted( FactoryObject reference, signed int key = 0 );
+		/**
+		 * \brief Sets the moving animation of an Actor
+		 */
+		static void SetActorMovingAnimation( FactoryObject reference, signed int key = 0 );
 
+        /**
+         * Network functions
+         */
+
+		/**
+		 * \brief Network function to handle Object position
+		 */
+		static void net_SetPos( FactoryObject reference, double X, double Y, double Z);
+		/**
+		 * \brief Network function to handle Object position
+		 */
+		static void net_SetAngle( FactoryObject reference, unsigned char axis, double value );
+		/**
+		 * \brief Network function to handle Object cell
+		 */
+		static void net_SetCell( vector<FactoryObject> reference, unsigned int cell );
+		/**
+		 * \brief Network function to handle Actor value
+		 */
+		static void net_SetActorValue( FactoryObject reference, bool base, unsigned char index, double value );
+		/**
+		 * \brief Network function to handle Actor state
+		 */
+		static void net_SetActorState( FactoryObject reference, unsigned char index, unsigned char moving, bool alerted, bool sneaking );
+
+        /**
+         * Interface functions
+         */
 
 		/**
 		 * \brief Builds an authenticate packet for the server
