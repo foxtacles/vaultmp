@@ -65,3 +65,8 @@ void VaultException::Console()
 {
 	printf( "%s\n", error.c_str() );
 }
+
+const char* VaultException::what() const throw()
+{
+    return this->error.c_str();
+}
