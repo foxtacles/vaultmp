@@ -46,6 +46,8 @@ class VaultException : public exception
 		 */
 		void Console();
 
+		virtual const char* what() const throw();
+
 #ifdef VAULTMP_DEBUG
 		static void SetDebugHandler( Debug* debug );
 		static void FinalizeDebug();
