@@ -66,6 +66,7 @@ class PAWN
 		static int Register( AMX* amx, const AMX_NATIVE_INFO* list, int number );
 		static int Exec( AMX* amx, cell* retval, int index );
 		static int FreeProgram( AMX* amx );
+		static bool IsCallbackPresent(AMX* amx, const char* name);
 		static cell Call( AMX* amx, const char* name, const char* argl, int buf, ... );
 		static cell Call( AMX* amx, const char* name, const char* argl, const vector<boost::any>& args );
 

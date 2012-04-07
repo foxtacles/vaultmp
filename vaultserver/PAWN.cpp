@@ -582,6 +582,14 @@ int PAWN::FreeProgram( AMX* amx )
 	return aux_FreeProgram( amx );
 }
 
+bool PAWN::IsCallbackPresent(AMX* amx, const char* name)
+{
+    int idx = 0;
+    int err = 0;
+    err = amx_FindPublic( amx, name, &idx );
+    return (err == AMX_ERR_NONE);
+}
+
 cell PAWN::Call( AMX* amx, const char* name, const char* argl, int buf, ... )
 {
 	va_list args;

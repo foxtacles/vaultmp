@@ -21,12 +21,10 @@
 #include "../VaultException.h"
 
 #ifdef __WIN32__
-#define GetScriptCallback(a,b,c) c = (a) GetProcAddress((HINSTANCE)this->handle,b); \
-	if (!c) throw VaultException("Script callback not found: %s", b);
+#define GetScriptCallback(a,b,c) (c = (a) GetProcAddress((HINSTANCE)this->handle,b))
 #define SetScriptFunction(a,b) *((unsigned int*)(GetProcAddress((HINSTANCE)this->handle,a)?GetProcAddress((HINSTANCE)this->handle,a):throw VaultException("Script function pointer not found: %s", a)))=(unsigned int)b;
 #else
-#define GetScriptCallback(a,b,c) c = (a) dlsym(this->handle,b); \
-	if (!c) throw VaultException("Script callback not found: %s", b);
+#define GetScriptCallback(a,b,c) (c = (a) dlsym(this->handle,b))
 #define SetScriptFunction(a,b) *((unsigned int*)(dlsym(this->handle,a)?dlsym(this->handle,a):throw VaultException("Script function pointer not found: %s", a)))=(unsigned int)b;
 #endif
 

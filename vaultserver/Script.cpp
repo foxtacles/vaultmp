@@ -28,6 +28,10 @@ Script::Script( char* path )
 		scripts.push_back( this );
 
 		GetScriptCallback( fexec, "exec", exec );
+
+		if (!exec)
+            throw VaultException("Could not find exec() callback in: %s", path);
+
 		GetScriptCallback( fOnClientAuthenticate, "OnClientAuthenticate", _OnClientAuthenticate );
 		GetScriptCallback( fOnPlayerDisconnect, "OnPlayerDisconnect", _OnPlayerDisconnect );
 		GetScriptCallback( fOnPlayerRequestGame, "OnPlayerRequestGame", _OnPlayerRequestGame );
@@ -283,15 +287,17 @@ unsigned long long Script::CallPublicPAWN( string name, const vector<boost::any>
 bool Script::OnClientAuthenticate( string name, string pwd )
 {
 	vector<Script*>::iterator it;
-	bool result;
+	bool result = true;
 
 	for ( it = scripts.begin(); it != scripts.end(); ++it )
 	{
-		if ( ( *it )->cpp_script )
-			result = ( *it )->_OnClientAuthenticate( name, pwd );
-
-		else
-			result = ( bool ) PAWN::Call( ( AMX* ) ( *it )->handle, "OnClientAuthenticate", "ss", 0, pwd.c_str(), name.c_str() );
+		if ( ( *it )->cpp_script)
+		{
+		    if (( *it )->_OnClientAuthenticate)
+                result = ( *it )->_OnClientAuthenticate( name, pwd );
+		}
+		else if (PAWN::IsCallbackPresent(( AMX* ) ( *it )->handle, "OnClientAuthenticate"))
+            result = ( bool ) PAWN::Call( ( AMX* ) ( *it )->handle, "OnClientAuthenticate", "ss", 0, pwd.c_str(), name.c_str() );
 	}
 
 	return result;
@@ -301,15 +307,17 @@ unsigned int Script::OnPlayerRequestGame( FactoryObject reference )
 {
 	vector<Script*>::iterator it;
 	NetworkID id = ( *reference )->GetNetworkID();
-	unsigned int result;
+	unsigned int result = 0;
 
 	for ( it = scripts.begin(); it != scripts.end(); ++it )
 	{
 		if ( ( *it )->cpp_script )
-			result = ( *it )->_OnPlayerRequestGame( id );
-
-		else
-			result = ( unsigned int ) PAWN::Call( ( AMX* ) ( *it )->handle, "OnPlayerRequestGame", "l", 0, id );
+		{
+		    if (( *it )->_OnPlayerRequestGame)
+                result = ( *it )->_OnPlayerRequestGame( id );
+		}
+		else if (PAWN::IsCallbackPresent(( AMX* ) ( *it )->handle, "OnPlayerRequestGame"))
+            result = ( unsigned int ) PAWN::Call( ( AMX* ) ( *it )->handle, "OnPlayerRequestGame", "l", 0, id );
 	}
 
 	return result;
@@ -323,9 +331,11 @@ void Script::OnPlayerDisconnect( FactoryObject reference, unsigned char reason )
 	for ( it = scripts.begin(); it != scripts.end(); ++it )
 	{
 		if ( ( *it )->cpp_script )
-			( *it )->_OnPlayerDisconnect( id, reason );
-
-		else
+		{
+		    if (( *it )->_OnPlayerDisconnect)
+                ( *it )->_OnPlayerDisconnect( id, reason );
+		}
+		else if (PAWN::IsCallbackPresent(( AMX* ) ( *it )->handle, "OnPlayerDisconnect"))
 			PAWN::Call( ( AMX* ) ( *it )->handle, "OnPlayerDisconnect", "il", 0, ( unsigned int ) reason, id );
 	}
 }
@@ -338,9 +348,11 @@ void Script::OnCellChange( FactoryObject reference, unsigned int cell )
 	for ( it = scripts.begin(); it != scripts.end(); ++it )
 	{
 		if ( ( *it )->cpp_script )
-			( *it )->_OnCellChange( id, cell );
-
-		else
+		{
+		    if (( *it )->_OnCellChange)
+                ( *it )->_OnCellChange( id, cell );
+		}
+		else if (PAWN::IsCallbackPresent(( AMX* ) ( *it )->handle, "OnCellChange"))
 			PAWN::Call( ( AMX* ) ( *it )->handle, "OnCellChange", "il", 0, cell, id );
 	}
 }
@@ -355,18 +367,21 @@ void Script::OnActorValueChange( FactoryObject reference, unsigned char index, b
 		if ( ( *it )->cpp_script )
 		{
 			if ( base )
-				( *it )->_OnActorBaseValueChange( id, index, value );
-
-			else
+			{
+			    if (( *it )->_OnActorBaseValueChange)
+                    ( *it )->_OnActorBaseValueChange( id, index, value );
+			}
+			else if (( *it )->_OnActorValueChange)
 				( *it )->_OnActorValueChange( id, index, value );
 		}
-
 		else
 		{
 			if ( base )
-				PAWN::Call( ( AMX* ) ( *it )->handle, "OnActorBaseValueChange", "fil", 0, value, ( unsigned int ) index, id );
-
-			else
+			{
+			    if (PAWN::IsCallbackPresent(( AMX* ) ( *it )->handle, "OnActorBaseValueChange"))
+                    PAWN::Call( ( AMX* ) ( *it )->handle, "OnActorBaseValueChange", "fil", 0, value, ( unsigned int ) index, id );
+			}
+			else if (PAWN::IsCallbackPresent(( AMX* ) ( *it )->handle, "OnActorValueChange"))
 				PAWN::Call( ( AMX* ) ( *it )->handle, "OnActorValueChange", "fil", 0, value, ( unsigned int ) index, id );
 		}
 	}
@@ -380,9 +395,11 @@ void Script::OnActorAlert( FactoryObject reference, bool alerted )
 	for ( it = scripts.begin(); it != scripts.end(); ++it )
 	{
 		if ( ( *it )->cpp_script )
-			( *it )->_OnActorAlert( id, alerted );
-
-		else
+		{
+		    if (( *it )->_OnActorAlert)
+                ( *it )->_OnActorAlert( id, alerted );
+		}
+		else if (PAWN::IsCallbackPresent(( AMX* ) ( *it )->handle, "OnActorAlert"))
 			PAWN::Call( ( AMX* ) ( *it )->handle, "OnActorAlert", "il", 0, ( unsigned int ) alerted, id );
 	}
 }
@@ -395,9 +412,11 @@ void Script::OnActorSneak( FactoryObject reference, bool sneaking )
 	for ( it = scripts.begin(); it != scripts.end(); ++it )
 	{
 		if ( ( *it )->cpp_script )
-			( *it )->_OnActorSneak( id, sneaking );
-
-		else
+		{
+		    if (( *it )->_OnActorSneak)
+                ( *it )->_OnActorSneak( id, sneaking );
+		}
+		else if (PAWN::IsCallbackPresent(( AMX* ) ( *it )->handle, "OnActorSneak"))
 			PAWN::Call( ( AMX* ) ( *it )->handle, "OnActorSneak", "il", 0, ( unsigned int ) sneaking, id );
 	}
 }
