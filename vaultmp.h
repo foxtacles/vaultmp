@@ -25,6 +25,7 @@ static const unsigned int NVSE_VER0209                 =   0x00065388;
 static const unsigned int VAULTMP_DLL                  =   0x0003D5E4;
 static const unsigned int XLIVE_PATCH                  =   0x0000D57E;
 
+/*
 #define CREDITS \
 	"Vault-Tec Multiplayer Mod is an Open-Source project.\n\
 \n\
@@ -39,6 +40,7 @@ mqidx, benG, ArminSeiko\n\
 Thanks to everyone who contributed :-)\n\
 \n\
 www.vaultmp.com"
+*/
 
 static const unsigned char FALLOUT3             =   0x01;
 static const unsigned char NEWVEGAS             =   FALLOUT3 << 1;

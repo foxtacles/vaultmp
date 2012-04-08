@@ -288,8 +288,16 @@ void Game::NewItem( FactoryObject reference )
 void Game::NewContainer( FactoryObject reference )
 {
     NewObject(reference);
+    RemoveAllItems(reference);
 
-    // insert items
+    Container* container = vaultcast<Container>(reference);
+    vector<FactoryObject> items = GameFactory::GetMultiple(vector<NetworkID>(container->GetItemList().begin(), container->GetItemList().end()));
+    vector<FactoryObject>::iterator it;
+
+    for (it = items.begin(); it != items.end(); ++it)
+        AddItem(vector<FactoryObject>{reference, *it});
+
+    // consider condition, equipped state, ...
 }
 
 void Game::NewActor( FactoryObject reference )
@@ -571,6 +579,56 @@ void Game::SetActorMovingAnimation(FactoryObject reference, signed int key)
     param_PlayGroup.push_back(BuildParameter(API::RetrieveAnim_Reverse(actor->GetActorMovingAnimation())));
     param_PlayGroup.push_back(Data::Param_True);
     Interface::ExecuteCommand("PlayGroup", param_PlayGroup, key);
+
+    Interface::EndDynamic();
+}
+
+void Game::AddItem( vector<FactoryObject> reference, bool silent )
+{
+	Container* container = vaultcast<Container>( reference[0] );
+	Item* item = vaultcast<Item>( reference[1] );
+
+    Interface::StartDynamic();
+
+    ParamContainer param_AddItem;
+    param_AddItem.push_back( container->GetReferenceParam() );
+    param_AddItem.push_back( item->GetBaseParam() );
+    param_AddItem.push_back( BuildParameter(item->GetItemCount()) );
+    param_AddItem.push_back( silent ? Data::Param_True : Data::Param_False );
+
+    Interface::ExecuteCommand( "AddItem", param_AddItem);
+
+    Interface::EndDynamic();
+}
+
+void Game::RemoveItem( vector<FactoryObject> reference, bool silent )
+{
+	Container* container = vaultcast<Container>( reference[0] );
+	Item* item = vaultcast<Item>( reference[1] );
+
+    Interface::StartDynamic();
+
+    ParamContainer param_RemoveItem;
+    param_RemoveItem.push_back( container->GetReferenceParam() );
+    param_RemoveItem.push_back( item->GetBaseParam() );
+    param_RemoveItem.push_back( BuildParameter(item->GetItemCount()) );
+    param_RemoveItem.push_back( silent ? Data::Param_True : Data::Param_False );
+
+    Interface::ExecuteCommand( "RemoveItem", param_RemoveItem);
+
+    Interface::EndDynamic();
+}
+
+void Game::RemoveAllItems( FactoryObject reference )
+{
+	Container* container = vaultcast<Container>( reference );
+
+    Interface::StartDynamic();
+
+    ParamContainer param_RemoveAllItems;
+    param_RemoveAllItems.push_back( container->GetReferenceParam() );
+
+    Interface::ExecuteCommand( "RemoveAllItems", param_RemoveAllItems);
 
     Interface::EndDynamic();
 }

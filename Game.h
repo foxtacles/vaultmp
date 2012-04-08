@@ -134,6 +134,18 @@ class Game
 		 * \brief Sets the moving animation of an Actor
 		 */
 		static void SetActorMovingAnimation( FactoryObject reference, signed int key = 0 );
+		/**
+		 * \brief Adds an Item to a Container
+		 */
+		static void AddItem( vector<FactoryObject> reference, bool silent = true );
+		/**
+		 * \brief Removes an Item from a Container
+		 */
+		static void RemoveItem( vector<FactoryObject> reference, bool silent = true );
+		/**
+		 * \brief Removes all items from a Container
+		 */
+		static void RemoveAllItems( FactoryObject reference );
 
         /**
          * Network functions
