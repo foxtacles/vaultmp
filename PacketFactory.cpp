@@ -463,6 +463,7 @@ void PacketFactory::Access( const pDefault* packet, ... )
             }
 
             case ID_OBJECT_UPDATE:
+            case ID_CONTAINER_UPDATE:
             case ID_ACTOR_UPDATE:
             case ID_PLAYER_UPDATE:
             {
