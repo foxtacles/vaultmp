@@ -146,6 +146,14 @@ class Game
 		 * \brief Removes all items from a Container
 		 */
 		static void RemoveAllItems( FactoryObject reference );
+		/**
+		 * \brief Equips an Item
+		 */
+		static void EquipItem( vector<FactoryObject> reference, bool stick = true, bool silent = true );
+		/**
+		 * \brief Unequips an Item
+		 */
+		static void UnequipItem( vector<FactoryObject> reference, bool stick = true, bool silent = true );
 
         /**
          * Network functions

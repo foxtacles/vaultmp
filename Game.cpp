@@ -634,6 +634,42 @@ void Game::RemoveAllItems( FactoryObject reference )
     Interface::EndDynamic();
 }
 
+void Game::EquipItem( vector<FactoryObject> reference, bool stick, bool silent )
+{
+	Actor* actor = vaultcast<Actor>( reference[0] );
+	Item* item = vaultcast<Item>( reference[1] );
+
+    Interface::StartDynamic();
+
+    ParamContainer param_EquipItem;
+    param_EquipItem.push_back( actor->GetReferenceParam() );
+    param_EquipItem.push_back( item->GetBaseParam() );
+    param_EquipItem.push_back( stick ? Data::Param_True : Data::Param_False );
+    param_EquipItem.push_back( silent ? Data::Param_True : Data::Param_False );
+
+    Interface::ExecuteCommand( "EquipItem", param_EquipItem);
+
+    Interface::EndDynamic();
+}
+
+void Game::UnequipItem( vector<FactoryObject> reference, bool stick, bool silent )
+{
+	Actor* actor = vaultcast<Actor>( reference[0] );
+	Item* item = vaultcast<Item>( reference[1] );
+
+    Interface::StartDynamic();
+
+    ParamContainer param_UnequipItem;
+    param_UnequipItem.push_back( actor->GetReferenceParam() );
+    param_UnequipItem.push_back( item->GetBaseParam() );
+    param_UnequipItem.push_back( stick ? Data::Param_True : Data::Param_False );
+    param_UnequipItem.push_back( silent ? Data::Param_True : Data::Param_False );
+
+    Interface::ExecuteCommand( "UnequipItem", param_UnequipItem);
+
+    Interface::EndDynamic();
+}
+
 void Game::net_SetPos( FactoryObject reference, double X, double Y, double Z)
 {
     Object* object = vaultcast<Object>( reference );
@@ -931,7 +967,7 @@ void Game::ScanContainer( FactoryObject reference, vector<unsigned char>& data )
 	FactoryObject _temp = GameFactory::GetObject( GameFactory::CreateInstance( ID_CONTAINER, 0x00000000 ) );
 	Container* temp = vaultcast<Container>( _temp );
 
-	for ( int i = 0; i < count; ++i )
+	for ( unsigned int i = 0; i < count; ++i )
 	{
 		FactoryObject _item = GameFactory::GetObject( GameFactory::CreateInstance( ID_ITEM, items[i].baseID ) );
 		Item* item = vaultcast<Item>( _item );
