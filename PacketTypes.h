@@ -4,6 +4,7 @@
 #include "vaultmp.h"
 #include "VaultException.h"
 #include "Data.h"
+#include "GameFactory.h"
 
 /* ************************************** */
 
@@ -12,12 +13,10 @@
 /* ************************************** */
 
 #pragma pack(push, 1)
-
 struct pTypeSpecifier
 {
 	unsigned char type;
 };
-
 #pragma pack(pop)
 
 class pDefault
@@ -903,6 +902,72 @@ class pObjectCell : public pObjectUpdateDefault
 
 		pObjectCell( const pObjectCell& );
 		pObjectCell& operator=( const pObjectCell& );
+};
+
+/* ************************************** */
+
+class pContainerUpdate : public pObjectUpdateDefault
+{
+		friend class PacketFactory;
+
+	private:
+		unsigned char* _data;
+
+		pContainerUpdate(NetworkID id, const ContainerDiff& diff) : pObjectUpdateDefault( ID_CONTAINER_UPDATE, ID_UPDATE_CONTAINER, id )
+		{
+            unsigned int at = 0;
+            unsigned int length = sizeof(NetworkID);
+            unsigned int size = diff.first.size();
+            unsigned int mem = (length * size) + sizeof(unsigned int);
+
+            unsigned int length2 = pItemNew::as_packet_length();
+            unsigned int size2 = diff.second.size();
+            mem += (length2 * size2) + sizeof(unsigned int);
+            _data = new unsigned char[mem];
+
+            memcpy(&this->_data[at], &size, sizeof(unsigned int));
+            at += sizeof(unsigned int);
+
+            list<NetworkID>::const_iterator it;
+
+            for (it = diff.first.begin(); it != diff.first.end(); ++it)
+            {
+                memcpy(&this->_data[at], &(*it), length);
+                at += length;
+            }
+
+            memcpy(&this->_data[at], &size2, sizeof(unsigned int));
+            at += sizeof(unsigned int);
+
+            for (it = diff.second.begin(); it != diff.second.end(); ++it)
+            {
+                FactoryObject _item = GameFactory::GetObject(*it);
+                Item* item = vaultcast<Item>(_item);
+
+                pDefault* packet = item->toPacket();
+
+                memcpy(&this->_data[at], packet->get(), length2);
+                at += length2;
+
+                PacketFactory::FreePacket(packet);
+            }
+
+            construct( _data, mem);
+		}
+		pContainerUpdate( const unsigned char* stream, unsigned int len ) : pObjectUpdateDefault( stream, len )
+		{
+            unsigned int mem = len - this->base_length();
+            _data = new unsigned char[mem];
+
+            deconstruct( _data, mem);
+		}
+		virtual ~pContainerUpdate()
+		{
+            delete[] _data;
+		}
+
+		pContainerUpdate( const pContainerUpdate& );
+		pContainerUpdate& operator=( const pContainerUpdate& );
 };
 
 /* ************************************** */

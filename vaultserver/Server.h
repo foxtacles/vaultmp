@@ -57,7 +57,11 @@ class Server
 		/**
 		 * \brief Handles cell network packet
 		 */
-		static NetworkResponse GetGameCell( RakNetGUID guid, FactoryObject reference, unsigned int cell );
+		static NetworkResponse GetCell( RakNetGUID guid, FactoryObject reference, unsigned int cell );
+		/**
+		 * \brief Handles container update network packet
+		 */
+		static NetworkResponse GetContainerUpdate( RakNetGUID guid, FactoryObject reference, ContainerDiff diff );
 		/**
 		 * \brief Handles actor value network packet
 		 */

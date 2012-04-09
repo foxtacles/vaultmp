@@ -2,7 +2,6 @@
 #define GAME_H
 
 #include "vaultmp.h"
-#include "PacketFactory.h"
 #include "Interface.h"
 #include "Player.h"
 #include "Network.h"
@@ -147,11 +146,11 @@ class Game
 		 */
 		static void RemoveAllItems( FactoryObject reference );
 		/**
-		 * \brief Equips an Item
+		 * \brief Makes an Actor equip an Item
 		 */
 		static void EquipItem( vector<FactoryObject> reference, bool stick = true, bool silent = true );
 		/**
-		 * \brief Unequips an Item
+		 * \brief Makes an Actor unequip an Item
 		 */
 		static void UnequipItem( vector<FactoryObject> reference, bool stick = true, bool silent = true );
 
@@ -171,6 +170,10 @@ class Game
 		 * \brief Network function to handle Object cell
 		 */
 		static void net_SetCell( vector<FactoryObject> reference, unsigned int cell );
+		/**
+		 * \brief Network function to handle Container update
+		 */
+		static void net_ContainerUpdate( FactoryObject reference, ContainerDiff diff );
 		/**
 		 * \brief Network function to handle Actor value
 		 */

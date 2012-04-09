@@ -1,4 +1,5 @@
 #include "PacketFactory.h"
+#include "PacketTypes.h"
 
 pDefault* PacketFactory::CreatePacket( unsigned char type, ... )
 {
@@ -137,6 +138,14 @@ pDefault* PacketFactory::CreatePacket( unsigned char type, ... )
             break;
         }
 
+        case ID_UPDATE_CONTAINER:
+        {
+            NetworkID id = va_arg( args, NetworkID );
+            const ContainerDiff* diff = va_arg(args, ContainerDiff*);
+            packet = new pContainerUpdate(id, *diff);
+            break;
+        }
+
         case ID_UPDATE_VALUE:
         {
             NetworkID id = va_arg( args, NetworkID );
@@ -227,6 +236,7 @@ pDefault* PacketFactory::CreatePacket( unsigned char* stream, unsigned int len )
             break;
 
         case ID_OBJECT_UPDATE:
+        case ID_CONTAINER_UPDATE:
         case ID_ACTOR_UPDATE:
         case ID_PLAYER_UPDATE:
         {
@@ -245,6 +255,10 @@ pDefault* PacketFactory::CreatePacket( unsigned char* stream, unsigned int len )
 
                 case ID_UPDATE_CELL:
                     packet = new pObjectCell( stream, len );
+                    break;
+
+                case ID_UPDATE_CONTAINER:
+                    packet = new pContainerUpdate( stream, len );
                     break;
 
                 case ID_UPDATE_VALUE:
@@ -489,6 +503,37 @@ void PacketFactory::Access( const pDefault* packet, ... )
                         unsigned int* cell = va_arg( args, unsigned int* );
                         *id = update->id;
                         *cell = update->cell;
+                        break;
+                    }
+
+                    case ID_UPDATE_CONTAINER:
+                    {
+                        const pContainerUpdate* update = dynamic_cast<const pContainerUpdate*>( data );
+                        NetworkID* id = va_arg( args, NetworkID* );
+                        ContainerDiff* diff = va_arg(args, ContainerDiff*);
+
+                        *id = update->id;
+
+                        diff->first.clear();
+                        diff->second.clear();
+                        unsigned int length = sizeof(NetworkID);
+                        unsigned int size = *reinterpret_cast<unsigned int*>(&update->_data[0]);
+                        unsigned int at = sizeof(unsigned int);
+
+                        for (int i = 0; i < size; ++i, at += length)
+                            diff->first.push_back(*reinterpret_cast<NetworkID*>(&update->_data[at]));
+
+                        length = pItemNew::as_packet_length();
+                        size = *reinterpret_cast<unsigned int*>(&update->_data[at]);
+                        at += sizeof(unsigned int);
+
+                        for (int i = 0; i < size; ++i, at += length)
+                        {
+                            pItemNew* item = new pItemNew(&update->_data[at], length);
+                            NetworkID id = GameFactory::CreateKnownInstance(ID_ITEM, item);
+                            diff->second.push_back(id);
+                            PacketFactory::FreePacket(item);
+                        }
                         break;
                     }
 

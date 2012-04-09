@@ -10,20 +10,6 @@
 #include <algorithm>
 #include <cstdlib>
 
-#include "vaultmp.h"
-#include "Data.h"
-#include "Item.h"
-#include "Object.h"
-
-#ifdef VAULTMP_DEBUG
-#include "Debug.h"
-#endif
-
-using namespace Data;
-using namespace std;
-
-class Item;
-
 struct Diff
 {
 	signed int count;
@@ -41,6 +27,19 @@ struct Diff
 typedef pair<list<NetworkID>, list<NetworkID> > ContainerDiff;
 typedef list<pair<unsigned int, Diff> > GameDiff;
 typedef pair<NetworkID, map<NetworkID, list<NetworkID> > > StripCopy;
+
+#include "vaultmp.h"
+#include "Data.h"
+#include "Item.h"
+#include "Object.h"
+#include "PacketFactory.h"
+
+#ifdef VAULTMP_DEBUG
+#include "Debug.h"
+#endif
+
+using namespace Data;
+using namespace std;
 
 class Container : public Object
 {

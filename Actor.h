@@ -16,6 +16,7 @@
 #include "VaultFunctor.h"
 #include "Utils.h"
 #include "API.h"
+#include "PacketFactory.h"
 
 const unsigned int FLAG_NOTSELF         = FLAG_DISABLED << 1;
 const unsigned int FLAG_ALIVE           = FLAG_NOTSELF << 1;

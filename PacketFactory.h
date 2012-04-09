@@ -35,6 +35,7 @@ enum
 	ID_OBJECT_REMOVE,
 
 	ID_OBJECT_UPDATE,
+	ID_CONTAINER_UPDATE,
 	ID_ACTOR_UPDATE,
 	ID_PLAYER_UPDATE,
 };
@@ -44,6 +45,7 @@ enum
 	ID_UPDATE_POS,
 	ID_UPDATE_ANGLE,
 	ID_UPDATE_CELL,
+	ID_UPDATE_CONTAINER,
 	ID_UPDATE_VALUE,
 	ID_UPDATE_STATE,
 	ID_UPDATE_CONTROL,
@@ -84,7 +86,5 @@ class PacketFactory
 
 		static void FreePacket(pDefault* packet);
 };
-
-#include "PacketTypes.h"
 
 #endif

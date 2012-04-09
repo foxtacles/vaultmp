@@ -174,7 +174,7 @@ NetworkResponse Server::GetAngle( RakNetGUID guid, FactoryObject reference, unsi
 	return response;
 }
 
-NetworkResponse Server::GetGameCell( RakNetGUID guid, FactoryObject reference, unsigned int cell )
+NetworkResponse Server::GetCell( RakNetGUID guid, FactoryObject reference, unsigned int cell )
 {
 	NetworkResponse response;
 	Object* object = vaultcast<Object>( reference );
@@ -191,6 +191,29 @@ NetworkResponse Server::GetGameCell( RakNetGUID guid, FactoryObject reference, u
 
 		Script::OnCellChange( reference, cell );
 	}
+
+	return response;
+}
+
+NetworkResponse Server::GetContainerUpdate( RakNetGUID guid, FactoryObject reference, ContainerDiff diff )
+{
+	Container* container = vaultcast<Container>( reference );
+
+	if ( !container )
+		throw VaultException( "Object with reference %08X is not a Container", ( *reference )->GetReference() );
+
+	NetworkResponse response;
+
+    pDefault* packet = PacketFactory::CreatePacket( ID_UPDATE_CONTAINER, container->GetNetworkID(), &diff );
+    response = Network::CompleteResponse( Network::CreateResponse( packet,
+                                            ( unsigned char ) HIGH_PRIORITY,
+                                            ( unsigned char ) RELIABLE_SEQUENCED,
+                                            CHANNEL_GAME,
+                                            Client::GetNetworkList( guid ) ) );
+
+    GameDiff gamediff = container->ApplyDiff(diff);
+
+    // script
 
 	return response;
 }

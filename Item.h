@@ -8,7 +8,6 @@
 #include "Data.h"
 #include "Value.h"
 #include "Object.h"
-#include "Container.h"
 
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"

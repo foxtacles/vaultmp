@@ -6,18 +6,19 @@
 #include "RakNet/NetworkIDManager.h"
 
 #include "vaultmp.h"
-#include "PacketFactory.h"
 #include "VaultException.h"
 #include "CriticalSection.h"
 
 #include <vector>
 #include <deque>
 
+using namespace RakNet;
+
+class pDefault;
+
 typedef pair<pair<pDefault*, vector<unsigned char> >, vector<RakNetGUID> > SingleResponse;
 typedef vector<SingleResponse> NetworkResponse;
 typedef deque<NetworkResponse> NetworkQueue;
-
-using namespace RakNet;
 
 /**
  * \brief The Network class provides basic facilities to create, send and queue packets

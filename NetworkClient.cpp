@@ -230,6 +230,7 @@ NetworkResponse NetworkClient::ProcessPacket( Packet* data )
                             }
 
                         case ID_OBJECT_UPDATE:
+                        case ID_CONTAINER_UPDATE:
                         case ID_ACTOR_UPDATE:
                         case ID_PLAYER_UPDATE:
                             {
@@ -261,8 +262,18 @@ NetworkResponse NetworkClient::ProcessPacket( Packet* data )
                                             NetworkID id;
                                             unsigned int cell;
                                             PacketFactory::Access( packet, &id, &cell );
-                                            vector<FactoryObject> objects = GameFactory::GetMultiple(vector<unsigned int>{GameFactory::LookupRefID(id), PLAYER_REFERENCE});
-                                            Game::net_SetCell( objects, cell );
+                                            vector<FactoryObject> reference = GameFactory::GetMultiple(vector<unsigned int>{GameFactory::LookupRefID(id), PLAYER_REFERENCE});
+                                            Game::net_SetCell( reference, cell );
+                                            break;
+                                        }
+
+                                    case ID_UPDATE_CONTAINER:
+                                        {
+                                            NetworkID id;
+                                            ContainerDiff diff;
+                                            PacketFactory::Access( packet, &id, &diff );
+                                            FactoryObject reference = GameFactory::GetObject( id );
+                                            Game::net_ContainerUpdate( reference, diff );
                                             break;
                                         }
 

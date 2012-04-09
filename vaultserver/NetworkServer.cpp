@@ -151,6 +151,7 @@ NetworkResponse NetworkServer::ProcessPacket( Packet* data )
                             }
 
                         case ID_OBJECT_UPDATE:
+                        case ID_CONTAINER_UPDATE:
                         case ID_ACTOR_UPDATE:
                         case ID_PLAYER_UPDATE:
                             {
@@ -183,7 +184,17 @@ NetworkResponse NetworkServer::ProcessPacket( Packet* data )
                                             unsigned int cell;
                                             PacketFactory::Access( packet, &id, &cell );
                                             FactoryObject reference = GameFactory::GetObject( id );
-                                            response = Server::GetGameCell( data->guid, reference, cell );
+                                            response = Server::GetCell( data->guid, reference, cell );
+                                            break;
+                                        }
+
+                                    case ID_UPDATE_CONTAINER:
+                                        {
+                                            NetworkID id;
+                                            ContainerDiff diff;
+                                            PacketFactory::Access( packet, &id, &diff );
+                                            FactoryObject reference = GameFactory::GetObject( id );
+                                            response = Server::GetContainerUpdate( data->guid, reference, diff );
                                             break;
                                         }
 

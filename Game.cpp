@@ -718,6 +718,18 @@ void Game::net_SetCell( vector<FactoryObject> reference, unsigned int cell )
 	}
 }
 
+void Game::net_ContainerUpdate( FactoryObject reference, ContainerDiff diff )
+{
+    Container* container = vaultcast<Container>(reference);
+
+	if ( !container )
+		throw VaultException( "Object with reference %08X is not a Container", ( *reference )->GetReference() );
+
+    GameDiff gamediff = container->ApplyDiff(diff);
+
+    // process
+}
+
 void Game::net_SetActorValue( FactoryObject reference, bool base, unsigned char index, double value )
 {
 	Actor* actor = vaultcast<Actor>( reference );
@@ -981,6 +993,13 @@ void Game::ScanContainer( FactoryObject reference, vector<unsigned char>& data )
 
 	if ( !diff.first.empty() || !diff.second.empty() )
 	{
+		pDefault* packet = PacketFactory::CreatePacket( ID_UPDATE_CONTAINER, container->GetNetworkID(), &diff);
+		NetworkResponse response = Network::CompleteResponse( Network::CreateResponse( packet,
+								   ( unsigned char ) HIGH_PRIORITY,
+								   ( unsigned char ) RELIABLE_ORDERED,
+								   CHANNEL_GAME,
+								   server ) );
+		Network::Queue( response );
 
 		container->ApplyDiff( diff );
 	}
