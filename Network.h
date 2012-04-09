@@ -34,6 +34,7 @@ class Network
 		static NetworkIDManager manager;
 		static NetworkQueue queue;
 		static CriticalSection cs;
+		static bool dequeue;
 
 	public:
 
@@ -84,6 +85,10 @@ class Network
 		 * \brief Queues a NetworkResponse
 		 */
 		static void Queue( NetworkResponse response );
+		/**
+		 * \brief Toggles dequeueing
+		 */
+		static void ToggleDequeue(bool toggle);
 		/**
 		 * \brief Flushes the queue
 		 */

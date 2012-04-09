@@ -3,6 +3,7 @@
 NetworkIDManager Network::manager;
 NetworkQueue Network::queue;
 CriticalSection Network::cs;
+bool Network::dequeue = true;
 
 SingleResponse Network::CreateResponse( pDefault* packet, unsigned char priority, unsigned char reliability, unsigned char channel, vector<RakNetGUID> targets )
 {
@@ -54,7 +55,7 @@ NetworkResponse Network::Next()
 {
 	NetworkResponse response;
 
-	if ( !queue.empty() )
+	if ( !queue.empty() && dequeue )
 	{
 		cs.StartSession();
 
@@ -74,6 +75,11 @@ void Network::Queue( NetworkResponse response )
 	queue.push_front( response );
 
 	cs.EndSession();
+}
+
+void Network::ToggleDequeue(bool toggle)
+{
+    Network::dequeue = toggle;
 }
 
 void Network::Flush()

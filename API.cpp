@@ -397,6 +397,7 @@ void API::Initialize( unsigned char game )
 	DefineFunction( "EquipItem", "rjII", Func_EquipItem, FALLOUT_GAMES );
 	DefineFunction( "UnequipItem", "rjII", Func_UnequipItem, FALLOUT_GAMES );
 	DefineFunction( "AddItem", "rkiI", Func_AddItem, FALLOUT_GAMES );
+	DefineFunction( "AddItemHealthPercent", "rjidI", Func_AddItemHealthPercent, FALLOUT_GAMES );
 	DefineFunction( "RemoveItem", "rkiI", Func_RemoveItem, FALLOUT_GAMES );
 	DefineFunction( "Kill", "rQII", Func_Kill, FALLOUT_GAMES );
 	DefineFunction( "IsMoving", "r", Fallout::Func_IsMoving, FALLOUT_GAMES );

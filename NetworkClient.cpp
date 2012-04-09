@@ -42,6 +42,7 @@ NetworkResponse NetworkClient::ProcessEvent( unsigned char id )
 													  ( unsigned char ) RELIABLE_ORDERED,
 													  CHANNEL_GAME,
 													  Game::server ) );
+                Network::ToggleDequeue(false);
 				break;
 			}
 
@@ -55,6 +56,7 @@ NetworkResponse NetworkClient::ProcessEvent( unsigned char id )
 													  ( unsigned char ) RELIABLE_ORDERED,
 													  CHANNEL_GAME,
 													  Game::server ) );
+                Network::ToggleDequeue(true);
 				break;
 			}
 
@@ -148,8 +150,6 @@ NetworkResponse NetworkClient::ProcessPacket( Packet* data )
                         case ID_GAME_LOAD:
                             {
                                 Game::Startup();
-                                // Player information is being already queried...flush the queue after response? => Duplicate information. Need better design solution.
-
                                 response = NetworkClient::ProcessEvent( ID_EVENT_GAME_LOADED );
                                 break;
                             }

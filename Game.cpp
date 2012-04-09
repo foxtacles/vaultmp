@@ -56,6 +56,7 @@ void Game::Initialize()
 	Interface::DefineCommand( "EquipItem", "%0.EquipItem %1 %2 %3" );
 	Interface::DefineCommand( "UnequipItem", "%0.UnequipItem %1 %2 %3" );
 	Interface::DefineCommand( "AddItem", "%0.AddItem %1 %2 %3" );
+	Interface::DefineCommand( "AddItemHealthPercent", "%0.AddItemHealthPercent %1 %2 %3 %4" );
 	Interface::DefineCommand( "RemoveItem", "%0.RemoveItem %1 %2 %3" );
 	Interface::DefineCommand( "RemoveAllItems", "%0.RemoveAllItems" );
 	Interface::DefineCommand( "MoveAllItems", "%0.RemoveAllItems %1 %2", "RemoveAllItems" );

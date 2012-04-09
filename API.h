@@ -101,6 +101,7 @@ namespace Values
 		Func_EquipItem                  = 0x10EE,
 		Func_UnequipItem                = 0x10EF,
 		Func_AddItem                    = 0x1002,
+		Func_AddItemHealthPercent       = 0x11BC,
 		Func_RemoveItem                 = 0x1052,
 		Func_Kill                       = 0x108B,
 		Func_GetCombatTarget            = 0x10E8,
