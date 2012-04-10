@@ -59,6 +59,11 @@ void VAULTSCRIPT OnCellChange( ID object, Cell cell )
 
 }
 
+void VAULTSCRIPT OnContainerItemChange( ID container, Base base, Count count, Value value )
+{
+
+}
+
 void VAULTSCRIPT OnActorValueChange( ID actor, Index index, Value value )
 {
 
@@ -80,6 +85,16 @@ void VAULTSCRIPT OnActorSneak( ID actor, State sneaking )
 }
 
 void VAULTSCRIPT OnActorDeath( ID actor )
+{
+
+}
+
+void VAULTSCRIPT OnActorEquipItem( ID actor, Base base, Value value )
+{
+
+}
+
+void VAULTSCRIPT OnActorUnequipItem( ID actor, Base base, Value value )
 {
 
 }

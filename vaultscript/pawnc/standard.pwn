@@ -49,6 +49,11 @@ public OnCellChange(ID, cell)
 
 }
 
+public OnContainerItemChange(ID, base, count, Float:value)
+{
+
+}
+
 public OnActorValueChange(ID, index, Float:value)
 {
 
@@ -70,6 +75,16 @@ public OnActorSneak(ID, Bool:sneaking)
 }
 
 public OnActorDeath(ID)
+{
+
+}
+
+public OnActorEquipItem(ID, base, Float:value)
+{
+
+}
+
+public OnActorUnequipItem(ID, base, Float:value)
 {
 
 }
