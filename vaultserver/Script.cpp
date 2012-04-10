@@ -525,9 +525,9 @@ void Script::GetPos( NetworkID id, double& X, double& Y, double& Z )
 
 	if ( object )
 	{
-		X = object->GetGamePos( Axis_X );
-		Y = object->GetGamePos( Axis_Y );
-		Z = object->GetGamePos( Axis_Z );
+		X = object->GetNetworkPos( Axis_X );
+		Y = object->GetNetworkPos( Axis_Y );
+		Z = object->GetNetworkPos( Axis_Z );
 	}
 }
 

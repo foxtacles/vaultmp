@@ -140,7 +140,7 @@ NetworkResponse Server::GetPos( RakNetGUID guid, FactoryObject reference, double
 {
 	NetworkResponse response;
 	Object* object = vaultcast<Object>( reference );
-	bool result = ( ( bool ) object->SetGamePos( Axis_X, X ) | ( bool ) object->SetGamePos( Axis_Y, Y ) | ( bool ) object->SetGamePos( Axis_Z, Z ) );
+	bool result = ( ( bool ) object->SetNetworkPos( Axis_X, X ) | ( bool ) object->SetNetworkPos( Axis_Y, Y ) | ( bool ) object->SetNetworkPos( Axis_Z, Z ) );
 
 	if ( result )
 	{
