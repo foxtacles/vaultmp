@@ -296,9 +296,13 @@ void Game::NewContainer( FactoryObject reference )
     vector<FactoryObject>::iterator it;
 
     for (it = items.begin(); it != items.end(); ++it)
+    {
         AddItem(vector<FactoryObject>{reference, *it});
+        Item* item = vaultcast<Item>(*it);
 
-    // consider condition, equipped state, ...
+        if (item->GetItemEquipped())
+            EquipItem(vector<FactoryObject>{reference, *it});
+    }
 }
 
 void Game::NewActor( FactoryObject reference )
@@ -586,33 +590,57 @@ void Game::SetActorMovingAnimation(FactoryObject reference, signed int key)
 
 void Game::AddItem( vector<FactoryObject> reference, bool silent )
 {
-	Container* container = vaultcast<Container>( reference[0] );
 	Item* item = vaultcast<Item>( reference[1] );
+    AddItem(reference[0], item->GetBase(), item->GetItemCount(), item->GetItemCondition(), silent);
+}
+
+void Game::AddItem( FactoryObject reference, unsigned int baseID, unsigned int count, double condition, bool silent )
+{
+    Container* container = vaultcast<Container>( reference );
 
     Interface::StartDynamic();
 
-    ParamContainer param_AddItem;
-    param_AddItem.push_back( container->GetReferenceParam() );
-    param_AddItem.push_back( item->GetBaseParam() );
-    param_AddItem.push_back( BuildParameter(item->GetItemCount()) );
-    param_AddItem.push_back( silent ? Data::Param_True : Data::Param_False );
+    if (!condition || Utils::DoubleCompare(condition, 100.0, 0.01))
+    {
+        ParamContainer param_AddItem;
+        param_AddItem.push_back( container->GetReferenceParam() );
+        param_AddItem.push_back( BuildParameter(Utils::LongToHex(baseID)) );
+        param_AddItem.push_back( BuildParameter(count) );
+        param_AddItem.push_back( silent ? Data::Param_True : Data::Param_False );
 
-    Interface::ExecuteCommand( "AddItem", param_AddItem);
+        Interface::ExecuteCommand( "AddItem", param_AddItem);
+    }
+    else
+    {
+        ParamContainer param_AddItemHealthPercent;
+        param_AddItemHealthPercent.push_back( container->GetReferenceParam() );
+        param_AddItemHealthPercent.push_back( BuildParameter(Utils::LongToHex(baseID)) );
+        param_AddItemHealthPercent.push_back( BuildParameter(count) );
+        param_AddItemHealthPercent.push_back( BuildParameter(condition / 100) );
+        param_AddItemHealthPercent.push_back( silent ? Data::Param_True : Data::Param_False );
+
+        Interface::ExecuteCommand( "AddItemHealthPercent", param_AddItemHealthPercent);
+    }
 
     Interface::EndDynamic();
 }
 
 void Game::RemoveItem( vector<FactoryObject> reference, bool silent )
 {
-	Container* container = vaultcast<Container>( reference[0] );
 	Item* item = vaultcast<Item>( reference[1] );
+    RemoveItem(reference[0], item->GetBase(), item->GetItemCount(), silent);
+}
+
+void Game::RemoveItem( FactoryObject reference, unsigned int baseID, unsigned int count, bool silent )
+{
+	Container* container = vaultcast<Container>( reference );
 
     Interface::StartDynamic();
 
     ParamContainer param_RemoveItem;
     param_RemoveItem.push_back( container->GetReferenceParam() );
-    param_RemoveItem.push_back( item->GetBaseParam() );
-    param_RemoveItem.push_back( BuildParameter(item->GetItemCount()) );
+    param_RemoveItem.push_back( BuildParameter(Utils::LongToHex(baseID)) );
+    param_RemoveItem.push_back( BuildParameter(count) );
     param_RemoveItem.push_back( silent ? Data::Param_True : Data::Param_False );
 
     Interface::ExecuteCommand( "RemoveItem", param_RemoveItem);
@@ -636,14 +664,19 @@ void Game::RemoveAllItems( FactoryObject reference )
 
 void Game::EquipItem( vector<FactoryObject> reference, bool stick, bool silent )
 {
-	Actor* actor = vaultcast<Actor>( reference[0] );
 	Item* item = vaultcast<Item>( reference[1] );
+    RemoveItem(reference[0], item->GetBase(), stick, silent);
+}
+
+void Game::EquipItem( FactoryObject reference, unsigned int baseID, bool stick, bool silent )
+{
+	Actor* actor = vaultcast<Actor>( reference );
 
     Interface::StartDynamic();
 
     ParamContainer param_EquipItem;
     param_EquipItem.push_back( actor->GetReferenceParam() );
-    param_EquipItem.push_back( item->GetBaseParam() );
+    param_EquipItem.push_back( BuildParameter(Utils::LongToHex(baseID)) );
     param_EquipItem.push_back( stick ? Data::Param_True : Data::Param_False );
     param_EquipItem.push_back( silent ? Data::Param_True : Data::Param_False );
 
@@ -654,14 +687,19 @@ void Game::EquipItem( vector<FactoryObject> reference, bool stick, bool silent )
 
 void Game::UnequipItem( vector<FactoryObject> reference, bool stick, bool silent )
 {
-	Actor* actor = vaultcast<Actor>( reference[0] );
 	Item* item = vaultcast<Item>( reference[1] );
+    RemoveItem(reference[0], item->GetBase(), stick, silent);
+}
+
+void Game::UnequipItem( FactoryObject reference, unsigned int baseID, bool stick, bool silent )
+{
+	Actor* actor = vaultcast<Actor>( reference );
 
     Interface::StartDynamic();
 
     ParamContainer param_UnequipItem;
     param_UnequipItem.push_back( actor->GetReferenceParam() );
-    param_UnequipItem.push_back( item->GetBaseParam() );
+    param_UnequipItem.push_back( BuildParameter(Utils::LongToHex(baseID)) );
     param_UnequipItem.push_back( stick ? Data::Param_True : Data::Param_False );
     param_UnequipItem.push_back( silent ? Data::Param_True : Data::Param_False );
 
@@ -726,8 +764,24 @@ void Game::net_ContainerUpdate( FactoryObject reference, ContainerDiff diff )
 		throw VaultException( "Object with reference %08X is not a Container", ( *reference )->GetReference() );
 
     GameDiff gamediff = container->ApplyDiff(diff);
+    GameDiff::iterator it;
 
-    // process
+    for (it = gamediff.begin(); it != gamediff.end(); ++it)
+    {
+        if (it->second.equipped)
+        {
+            if (it->second.equipped > 0)
+                EquipItem(reference, it->first);
+            else if (it->second.equipped < 0)
+                UnequipItem(reference, it->first);
+        }
+        else if (it->second.count > 0)
+            AddItem(reference, it->first, it->second.count, it->second.condition);
+        else if (it->second.count < 0)
+            RemoveItem(reference, it->first, abs(it->second.count));
+        //else
+            // new condition, can't handle yet
+    }
 }
 
 void Game::net_SetActorValue( FactoryObject reference, bool base, unsigned char index, double value )

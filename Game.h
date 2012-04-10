@@ -137,10 +137,12 @@ class Game
 		 * \brief Adds an Item to a Container
 		 */
 		static void AddItem( vector<FactoryObject> reference, bool silent = true );
+		static void AddItem( FactoryObject reference, unsigned int baseID, unsigned int count, double condition, bool silent = true );
 		/**
 		 * \brief Removes an Item from a Container
 		 */
 		static void RemoveItem( vector<FactoryObject> reference, bool silent = true );
+		static void RemoveItem( FactoryObject reference, unsigned int baseID, unsigned int count, bool silent = true );
 		/**
 		 * \brief Removes all items from a Container
 		 */
@@ -149,10 +151,12 @@ class Game
 		 * \brief Makes an Actor equip an Item
 		 */
 		static void EquipItem( vector<FactoryObject> reference, bool stick = true, bool silent = true );
+		static void EquipItem( FactoryObject reference, unsigned int baseID, bool stick = true, bool silent = true );
 		/**
 		 * \brief Makes an Actor unequip an Item
 		 */
 		static void UnequipItem( vector<FactoryObject> reference, bool stick = true, bool silent = true );
+		static void UnequipItem( FactoryObject reference, unsigned int baseID, bool stick = true, bool silent = true );
 
         /**
          * Network functions
