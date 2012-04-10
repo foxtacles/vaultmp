@@ -21,27 +21,15 @@
 #include "../VaultException.h"
 
 #ifdef __WIN32__
-#define GetScriptCallback(a,b,c) (c = (a) GetProcAddress((HINSTANCE)this->handle,b))
+#define GetScriptCallback(a,b) (b = (decltype(b)) GetProcAddress((HINSTANCE)this->handle,a))
 #define SetScriptFunction(a,b) *((unsigned int*)(GetProcAddress((HINSTANCE)this->handle,a)?GetProcAddress((HINSTANCE)this->handle,a):throw VaultException("Script function pointer not found: %s", a)))=(unsigned int)b;
 #else
-#define GetScriptCallback(a,b,c) (c = (a) dlsym(this->handle,b))
+#define GetScriptCallback(a,b) (b = (decltype(b)) dlsym(this->handle,a))
 #define SetScriptFunction(a,b) *((unsigned int*)(dlsym(this->handle,a)?dlsym(this->handle,a):throw VaultException("Script function pointer not found: %s", a)))=(unsigned int)b;
 #endif
 
 using namespace std;
 using namespace Values;
-
-typedef void ( *fexec )();
-typedef bool ( *fOnClientAuthenticate )( string, string );
-typedef void ( *fOnPlayerDisconnect )( NetworkID, unsigned char );
-typedef unsigned int ( *fOnPlayerRequestGame )( NetworkID );
-typedef void ( *fOnSpawn )( NetworkID );
-typedef void ( *fOnCellChange )( NetworkID, unsigned int );
-typedef void ( *fOnActorValueChange )( NetworkID, unsigned char, double );
-typedef void ( *fOnActorBaseValueChange )( NetworkID, unsigned char, double );
-typedef void ( *fOnActorAlert )( NetworkID, bool );
-typedef void ( *fOnActorSneak )( NetworkID, bool );
-typedef void ( *fOnActorDeath )( NetworkID );
 
 /**
  * \brief Maintains communication with a script
@@ -63,17 +51,20 @@ class Script
 		void* handle;
 		bool cpp_script;
 
-		fexec exec;
-		fOnClientAuthenticate _OnClientAuthenticate;
-		fOnPlayerDisconnect _OnPlayerDisconnect;
-		fOnPlayerRequestGame _OnPlayerRequestGame;
-		fOnSpawn _OnSpawn;
-		fOnCellChange _OnCellChange;
-		fOnActorValueChange _OnActorValueChange;
-		fOnActorBaseValueChange _OnActorBaseValueChange;
-		fOnActorAlert _OnActorAlert;
-		fOnActorSneak _OnActorSneak;
-		fOnActorDeath _OnActorDeath;
+        typedef void ( *fexec )(); fexec exec;
+        typedef void ( *fOnSpawn )( NetworkID ); fOnSpawn _OnSpawn;
+        typedef void ( *fOnCellChange )( NetworkID, unsigned int ); fOnCellChange _OnCellChange;
+        typedef void ( *fOnContainerItemChange )( NetworkID, unsigned int, signed int, double ); fOnContainerItemChange _OnContainerItemChange;
+        typedef void ( *fOnActorValueChange )( NetworkID, unsigned char, double ); fOnActorValueChange _OnActorValueChange;
+        typedef void ( *fOnActorBaseValueChange )( NetworkID, unsigned char, double ); fOnActorBaseValueChange _OnActorBaseValueChange;
+        typedef void ( *fOnActorAlert )( NetworkID, bool ); fOnActorAlert _OnActorAlert;
+        typedef void ( *fOnActorSneak )( NetworkID, bool ); fOnActorSneak _OnActorSneak;
+        typedef void ( *fOnActorDeath )( NetworkID ); fOnActorDeath _OnActorDeath;
+        typedef void ( *fOnActorEquipItem )( NetworkID, unsigned int, double ); fOnActorEquipItem _OnActorEquipItem;
+        typedef void ( *fOnActorUnequipItem )( NetworkID, unsigned int, double ); fOnActorUnequipItem _OnActorUnequipItem;
+        typedef void ( *fOnPlayerDisconnect )( NetworkID, unsigned char ); fOnPlayerDisconnect _OnPlayerDisconnect;
+        typedef unsigned int ( *fOnPlayerRequestGame )( NetworkID ); fOnPlayerRequestGame _OnPlayerRequestGame;
+        typedef bool ( *fOnClientAuthenticate )( string, string ); fOnClientAuthenticate _OnClientAuthenticate;
 
 		Script( const Script& );
 		Script& operator=( const Script& );
@@ -93,13 +84,16 @@ class Script
 		static unsigned long long CallPublic( string name, ... );
 		static unsigned long long CallPublicPAWN( string name, const vector<boost::any>& args );
 
-		static bool OnClientAuthenticate( string name, string pwd );
-		static void OnPlayerDisconnect( FactoryObject reference, unsigned char reason );
-		static unsigned int OnPlayerRequestGame( FactoryObject reference );
 		static void OnCellChange( FactoryObject reference, unsigned int cell );
+		static void OnContainerItemChange( FactoryObject reference, unsigned int baseID, signed int count, double condition );
 		static void OnActorValueChange( FactoryObject reference, unsigned char index, bool base, double value );
 		static void OnActorAlert( FactoryObject reference, bool alerted );
 		static void OnActorSneak( FactoryObject reference, bool sneaking );
+		static void OnActorEquipItem( FactoryObject reference, unsigned int baseID, double condition );
+		static void OnActorUnequipItem( FactoryObject reference, unsigned int baseID, double condition );
+		static void OnPlayerDisconnect( FactoryObject reference, unsigned char reason );
+		static unsigned int OnPlayerRequestGame( FactoryObject reference );
+		static bool OnClientAuthenticate( string name, string pwd );
 
 		static unsigned int GetReference( NetworkID id );
 		static unsigned int GetBase( NetworkID id );

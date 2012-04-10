@@ -12,16 +12,19 @@
 
 // Callbacks
 
-forward OnClientAuthenticate(const name{}, const pwd{});
-forward OnPlayerDisconnect(ID, reason);
-forward OnPlayerRequestGame(ID);
 forward OnSpawn(ID);
 forward OnCellChange(ID, cell);
+forward OnContainerItemChange(ID, base, count, Float:value);
 forward OnActorValueChange(ID, index, Float:value);
 forward OnActorBaseValueChange(ID, index, Float:value);
 forward OnActorAlert(ID, Bool:alerted);
 forward OnActorSneak(ID, Bool:sneaking);
 forward OnActorDeath(ID);
+forward OnActorEquipItem(ID, base, Float:value);
+forward OnActorUnequipItem(ID, base, Float:value);
+forward OnPlayerDisconnect(ID, reason);
+forward OnPlayerRequestGame(ID);
+forward OnClientAuthenticate(const name{}, const pwd{});
 
 // Functions
 

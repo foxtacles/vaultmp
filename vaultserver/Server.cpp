@@ -212,8 +212,20 @@ NetworkResponse Server::GetContainerUpdate( RakNetGUID guid, FactoryObject refer
                                             Client::GetNetworkList( guid ) ) );
 
     GameDiff gamediff = container->ApplyDiff(diff);
+    GameDiff::iterator it;
 
-    // script
+    for (it = gamediff.begin(); it != gamediff.end(); ++it)
+    {
+        if (it->second.equipped)
+        {
+            if (it->second.equipped > 0)
+                Script::OnActorEquipItem(reference, it->first, it->second.condition);
+            else if (it->second.equipped < 0)
+                Script::OnActorUnequipItem(reference, it->first, it->second.condition);
+        }
+        else
+            Script::OnContainerItemChange(reference, it->first, it->second.count, it->second.condition);
+    }
 
 	return response;
 }

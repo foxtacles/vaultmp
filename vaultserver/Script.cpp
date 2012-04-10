@@ -27,21 +27,24 @@ Script::Script( char* path )
 		this->cpp_script = true;
 		scripts.push_back( this );
 
-		GetScriptCallback( fexec, "exec", exec );
+		GetScriptCallback( "exec", exec );
 
 		if (!exec)
             throw VaultException("Could not find exec() callback in: %s", path);
 
-		GetScriptCallback( fOnClientAuthenticate, "OnClientAuthenticate", _OnClientAuthenticate );
-		GetScriptCallback( fOnPlayerDisconnect, "OnPlayerDisconnect", _OnPlayerDisconnect );
-		GetScriptCallback( fOnPlayerRequestGame, "OnPlayerRequestGame", _OnPlayerRequestGame );
-		GetScriptCallback( fOnSpawn, "OnSpawn", _OnSpawn );
-		GetScriptCallback( fOnCellChange, "OnCellChange", _OnCellChange );
-		GetScriptCallback( fOnActorValueChange, "OnActorValueChange", _OnActorValueChange );
-		GetScriptCallback( fOnActorBaseValueChange, "OnActorBaseValueChange", _OnActorBaseValueChange );
-		GetScriptCallback( fOnActorAlert, "OnActorAlert", _OnActorAlert );
-		GetScriptCallback( fOnActorSneak, "OnActorSneak", _OnActorSneak );
-		GetScriptCallback( fOnActorDeath, "OnActorDeath", _OnActorDeath );
+		GetScriptCallback( "OnSpawn", _OnSpawn );
+		GetScriptCallback( "OnCellChange", _OnCellChange );
+		GetScriptCallback( "OnContainerItemChange", _OnContainerItemChange );
+		GetScriptCallback( "OnActorValueChange", _OnActorValueChange );
+		GetScriptCallback( "OnActorBaseValueChange", _OnActorBaseValueChange );
+		GetScriptCallback( "OnActorAlert", _OnActorAlert );
+		GetScriptCallback( "OnActorSneak", _OnActorSneak );
+		GetScriptCallback( "OnActorDeath", _OnActorDeath );
+		GetScriptCallback( "OnActorEquipItem", _OnActorEquipItem );
+		GetScriptCallback( "OnActorUnequipItem", _OnActorUnequipItem );
+		GetScriptCallback( "OnPlayerDisconnect", _OnPlayerDisconnect );
+		GetScriptCallback( "OnPlayerRequestGame", _OnPlayerRequestGame );
+		GetScriptCallback( "OnClientAuthenticate", _OnClientAuthenticate );
 
 		SetScriptFunction( "timestamp", &Utils::timestamp );
 		SetScriptFunction( "CreateTimer", &Script::CreateTimer );
@@ -284,62 +287,6 @@ unsigned long long Script::CallPublicPAWN( string name, const vector<boost::any>
 	return Public::Call( name, args );
 }
 
-bool Script::OnClientAuthenticate( string name, string pwd )
-{
-	vector<Script*>::iterator it;
-	bool result = true;
-
-	for ( it = scripts.begin(); it != scripts.end(); ++it )
-	{
-		if ( ( *it )->cpp_script)
-		{
-		    if (( *it )->_OnClientAuthenticate)
-                result = ( *it )->_OnClientAuthenticate( name, pwd );
-		}
-		else if (PAWN::IsCallbackPresent(( AMX* ) ( *it )->handle, "OnClientAuthenticate"))
-            result = ( bool ) PAWN::Call( ( AMX* ) ( *it )->handle, "OnClientAuthenticate", "ss", 0, pwd.c_str(), name.c_str() );
-	}
-
-	return result;
-}
-
-unsigned int Script::OnPlayerRequestGame( FactoryObject reference )
-{
-	vector<Script*>::iterator it;
-	NetworkID id = ( *reference )->GetNetworkID();
-	unsigned int result = 0;
-
-	for ( it = scripts.begin(); it != scripts.end(); ++it )
-	{
-		if ( ( *it )->cpp_script )
-		{
-		    if (( *it )->_OnPlayerRequestGame)
-                result = ( *it )->_OnPlayerRequestGame( id );
-		}
-		else if (PAWN::IsCallbackPresent(( AMX* ) ( *it )->handle, "OnPlayerRequestGame"))
-            result = ( unsigned int ) PAWN::Call( ( AMX* ) ( *it )->handle, "OnPlayerRequestGame", "l", 0, id );
-	}
-
-	return result;
-}
-
-void Script::OnPlayerDisconnect( FactoryObject reference, unsigned char reason )
-{
-	vector<Script*>::iterator it;
-	NetworkID id = ( *reference )->GetNetworkID();
-
-	for ( it = scripts.begin(); it != scripts.end(); ++it )
-	{
-		if ( ( *it )->cpp_script )
-		{
-		    if (( *it )->_OnPlayerDisconnect)
-                ( *it )->_OnPlayerDisconnect( id, reason );
-		}
-		else if (PAWN::IsCallbackPresent(( AMX* ) ( *it )->handle, "OnPlayerDisconnect"))
-			PAWN::Call( ( AMX* ) ( *it )->handle, "OnPlayerDisconnect", "il", 0, ( unsigned int ) reason, id );
-	}
-}
-
 void Script::OnCellChange( FactoryObject reference, unsigned int cell )
 {
 	vector<Script*>::iterator it;
@@ -354,6 +301,23 @@ void Script::OnCellChange( FactoryObject reference, unsigned int cell )
 		}
 		else if (PAWN::IsCallbackPresent(( AMX* ) ( *it )->handle, "OnCellChange"))
 			PAWN::Call( ( AMX* ) ( *it )->handle, "OnCellChange", "il", 0, cell, id );
+	}
+}
+
+void Script::OnContainerItemChange( FactoryObject reference, unsigned int baseID, signed int count, double condition )
+{
+	vector<Script*>::iterator it;
+	NetworkID id = ( *reference )->GetNetworkID();
+
+	for ( it = scripts.begin(); it != scripts.end(); ++it )
+	{
+		if ( ( *it )->cpp_script )
+		{
+		    if (( *it )->_OnContainerItemChange)
+                ( *it )->_OnContainerItemChange( id, baseID, count, condition );
+		}
+		else if (PAWN::IsCallbackPresent(( AMX* ) ( *it )->handle, "OnContainerItemChange"))
+			PAWN::Call( ( AMX* ) ( *it )->handle, "OnContainerItemChange", "fiil", 0, condition, count, baseID, id );
 	}
 }
 
@@ -419,6 +383,96 @@ void Script::OnActorSneak( FactoryObject reference, bool sneaking )
 		else if (PAWN::IsCallbackPresent(( AMX* ) ( *it )->handle, "OnActorSneak"))
 			PAWN::Call( ( AMX* ) ( *it )->handle, "OnActorSneak", "il", 0, ( unsigned int ) sneaking, id );
 	}
+}
+
+void Script::OnActorEquipItem( FactoryObject reference, unsigned int baseID, double condition )
+{
+	vector<Script*>::iterator it;
+	NetworkID id = ( *reference )->GetNetworkID();
+
+	for ( it = scripts.begin(); it != scripts.end(); ++it )
+	{
+		if ( ( *it )->cpp_script )
+		{
+		    if (( *it )->_OnActorEquipItem)
+                ( *it )->_OnActorEquipItem( id, baseID, condition );
+		}
+		else if (PAWN::IsCallbackPresent(( AMX* ) ( *it )->handle, "OnActorEquipItem"))
+			PAWN::Call( ( AMX* ) ( *it )->handle, "OnActorEquipItem", "fil", 0, condition, baseID, id );
+	}
+}
+
+void Script::OnActorUnequipItem( FactoryObject reference, unsigned int baseID, double condition )
+{
+	vector<Script*>::iterator it;
+	NetworkID id = ( *reference )->GetNetworkID();
+
+	for ( it = scripts.begin(); it != scripts.end(); ++it )
+	{
+		if ( ( *it )->cpp_script )
+		{
+		    if (( *it )->_OnActorUnequipItem)
+                ( *it )->_OnActorUnequipItem( id, baseID, condition );
+		}
+		else if (PAWN::IsCallbackPresent(( AMX* ) ( *it )->handle, "OnActorUnequipItem"))
+			PAWN::Call( ( AMX* ) ( *it )->handle, "OnActorUnequipItem", "fil", 0, condition, baseID, id );
+	}
+}
+
+void Script::OnPlayerDisconnect( FactoryObject reference, unsigned char reason )
+{
+	vector<Script*>::iterator it;
+	NetworkID id = ( *reference )->GetNetworkID();
+
+	for ( it = scripts.begin(); it != scripts.end(); ++it )
+	{
+		if ( ( *it )->cpp_script )
+		{
+		    if (( *it )->_OnPlayerDisconnect)
+                ( *it )->_OnPlayerDisconnect( id, reason );
+		}
+		else if (PAWN::IsCallbackPresent(( AMX* ) ( *it )->handle, "OnPlayerDisconnect"))
+			PAWN::Call( ( AMX* ) ( *it )->handle, "OnPlayerDisconnect", "il", 0, ( unsigned int ) reason, id );
+	}
+}
+
+unsigned int Script::OnPlayerRequestGame( FactoryObject reference )
+{
+	vector<Script*>::iterator it;
+	NetworkID id = ( *reference )->GetNetworkID();
+	unsigned int result = 0;
+
+	for ( it = scripts.begin(); it != scripts.end(); ++it )
+	{
+		if ( ( *it )->cpp_script )
+		{
+		    if (( *it )->_OnPlayerRequestGame)
+                result = ( *it )->_OnPlayerRequestGame( id );
+		}
+		else if (PAWN::IsCallbackPresent(( AMX* ) ( *it )->handle, "OnPlayerRequestGame"))
+            result = ( unsigned int ) PAWN::Call( ( AMX* ) ( *it )->handle, "OnPlayerRequestGame", "l", 0, id );
+	}
+
+	return result;
+}
+
+bool Script::OnClientAuthenticate( string name, string pwd )
+{
+	vector<Script*>::iterator it;
+	bool result = true;
+
+	for ( it = scripts.begin(); it != scripts.end(); ++it )
+	{
+		if ( ( *it )->cpp_script)
+		{
+		    if (( *it )->_OnClientAuthenticate)
+                result = ( *it )->_OnClientAuthenticate( name, pwd );
+		}
+		else if (PAWN::IsCallbackPresent(( AMX* ) ( *it )->handle, "OnClientAuthenticate"))
+            result = ( bool ) PAWN::Call( ( AMX* ) ( *it )->handle, "OnClientAuthenticate", "ss", 0, pwd.c_str(), name.c_str() );
+	}
+
+	return result;
 }
 
 unsigned int Script::GetReference( NetworkID id )

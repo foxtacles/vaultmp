@@ -23,6 +23,7 @@ namespace vaultmp
 	typedef unsigned int Reference; // 4 byte
 	typedef unsigned int Base; // 4 byte
 	typedef unsigned int Cell; // 4 byte
+	typedef signed int Count; // 4 byte
 	typedef unsigned int Interval; // 4 byte
 	typedef unsigned long long ID; // 8 byte
 	typedef unsigned long long Timer; // 8 byte
@@ -44,16 +45,19 @@ namespace vaultmp
 extern "C" {
 	VAULTSCRIPT void exec();
 
-	VAULTSCRIPT bool OnClientAuthenticate( std::string, std::string );
-	VAULTSCRIPT void OnPlayerDisconnect( vaultmp::ID, vaultmp::Reason );
-	VAULTSCRIPT vaultmp::Base OnPlayerRequestGame( vaultmp::ID );
 	VAULTSCRIPT void OnSpawn( vaultmp::ID );
 	VAULTSCRIPT void OnCellChange( vaultmp::ID, vaultmp::Cell );
+	VAULTSCRIPT void OnContainerItemChange( vaultmp::ID, vaultmp::Base, vaultmp::Count, vaultmp::Value );
 	VAULTSCRIPT void OnActorValueChange( vaultmp::ID, vaultmp::Index, vaultmp::Value );
 	VAULTSCRIPT void OnActorBaseValueChange( vaultmp::ID, vaultmp::Index, vaultmp::Value );
 	VAULTSCRIPT void OnActorAlert( vaultmp::ID, vaultmp::State );
 	VAULTSCRIPT void OnActorSneak( vaultmp::ID, vaultmp::State );
 	VAULTSCRIPT void OnActorDeath( vaultmp::ID );
+	VAULTSCRIPT void OnActorEquipItem( vaultmp::ID, vaultmp::Base, vaultmp::Value );
+	VAULTSCRIPT void OnActorUnequipItem( vaultmp::ID, vaultmp::Base, vaultmp::Value );
+	VAULTSCRIPT void OnPlayerDisconnect( vaultmp::ID, vaultmp::Reason );
+	VAULTSCRIPT vaultmp::Base OnPlayerRequestGame( vaultmp::ID );
+    VAULTSCRIPT bool OnClientAuthenticate( std::string, std::string );
 
 	VAULTSCRIPT void ( *timestamp )();
 	VAULTSCRIPT vaultmp::Timer ( *CreateTimer )( vaultmp::Function, vaultmp::Interval );
