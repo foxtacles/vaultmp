@@ -600,7 +600,7 @@ void Game::AddItem( FactoryObject reference, unsigned int baseID, unsigned int c
 
     Interface::StartDynamic();
 
-    if (!condition || Utils::DoubleCompare(condition, 100.0, 0.01))
+    /*if (!condition || Utils::DoubleCompare(condition, 100.0, 0.01))
     {
         ParamContainer param_AddItem;
         param_AddItem.push_back( container->GetReferenceParam() );
@@ -611,7 +611,8 @@ void Game::AddItem( FactoryObject reference, unsigned int baseID, unsigned int c
         Interface::ExecuteCommand( "AddItem", param_AddItem);
     }
     else
-    {
+    {*/
+        // AddItemHealthPercent doesn't has the "equip best stuff"-bug
         ParamContainer param_AddItemHealthPercent;
         param_AddItemHealthPercent.push_back( container->GetReferenceParam() );
         param_AddItemHealthPercent.push_back( BuildParameter(Utils::LongToHex(baseID)) );
@@ -620,7 +621,7 @@ void Game::AddItem( FactoryObject reference, unsigned int baseID, unsigned int c
         param_AddItemHealthPercent.push_back( silent ? Data::Param_True : Data::Param_False );
 
         Interface::ExecuteCommand( "AddItemHealthPercent", param_AddItemHealthPercent);
-    }
+    //}
 
     Interface::EndDynamic();
 }
