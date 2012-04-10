@@ -345,7 +345,7 @@ void GameFactory::DestroyAllInstances()
 
 	for ( it = instances.begin(); it != instances.end(); ++it )
 	{
-		if ( it->second == ID_CONTAINER )
+		if ( it->second & ID_CONTAINER )
 			vaultcast<Container>( it->first )->container.clear();
 
 #ifdef VAULTMP_DEBUG

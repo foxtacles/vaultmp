@@ -178,7 +178,7 @@ NetworkResponse Server::GetCell( RakNetGUID guid, FactoryObject reference, unsig
 {
 	NetworkResponse response;
 	Object* object = vaultcast<Object>( reference );
-	bool result = ( bool ) object->SetGameCell( cell );
+	bool result = ( bool ) object->SetNetworkCell( cell );
 
 	if ( result )
 	{

@@ -107,6 +107,27 @@ void Bethesda::CommandHandler( signed int key, vector<double>& info, double resu
 			case Functions::Func_SetForceSneak:
 				break;
 
+			case Functions::Func_AddItem:
+                break;
+
+			case Functions::Func_AddItemHealthPercent:
+                break;
+
+			case Functions::Func_RemoveItem:
+                break;
+
+			case Functions::Func_RemoveAllItems:
+                break;
+
+			case Functions::Func_EquipItem:
+                break;
+
+			case Functions::Func_UnequipItem:
+                break;
+
+			case Fallout::Functions::Func_MarkForDelete:
+				break;
+
 			case Fallout::Functions::Func_ScanContainer:
 			{
 				reference = GameFactory::GetObject( getFrom<double, unsigned int>(info.at(1)) );
@@ -115,9 +136,6 @@ void Bethesda::CommandHandler( signed int key, vector<double>& info, double resu
 				delete data;
 				break;
 			}
-
-			case Fallout::Functions::Func_MarkForDelete:
-				break;
 
 			case Fallout3::Functions::Func_GetParentCell:
 			case FalloutNV::Functions::Func_GetParentCell:

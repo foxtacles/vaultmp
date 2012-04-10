@@ -556,7 +556,7 @@ unsigned int Script::GetCell( NetworkID id )
 	Object* object = vaultcast<Object>( reference );
 
 	if ( object )
-		value = object->GetGameCell();
+		value = object->GetNetworkCell();
 
 	return value;
 }
