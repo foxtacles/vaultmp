@@ -90,6 +90,11 @@ class Game
 		 */
 		static void RemoveObject( FactoryObject& reference );
 		/**
+		 * \brief Places an Object in-game
+		 */
+        static void PlaceAtMe( FactoryObject reference, unsigned int baseID, unsigned int count, signed int key = 0 );
+		static void PlaceAtMe( unsigned int refID, unsigned int baseID, unsigned int count, signed int key = 0 );
+		/**
 		 * \brief Enables / Disables an Object
 		 */
 		static void ToggleEnabled( FactoryObject reference );
@@ -219,11 +224,6 @@ class Game
 		 * \brief Handles ScanContainer command result
 		 */
 		static void ScanContainer( FactoryObject reference, vector<unsigned char>& data );
-
-		/**
-		 * \brief Handles a failed PlaceAtMe command
-		 */
-		static void Failure_PlaceAtMe( unsigned int refID, unsigned int baseID, unsigned int count, signed int key );
 
 #ifdef VAULTMP_DEBUG
 		static void SetDebugHandler( Debug* debug );

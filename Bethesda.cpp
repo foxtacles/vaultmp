@@ -175,7 +175,7 @@ void Bethesda::CommandHandler( signed int key, vector<double>& info, double resu
 		switch ( opcode )
 		{
 			case Functions::Func_PlaceAtMe:
-				Game::Failure_PlaceAtMe( getFrom<double, unsigned int>(info.at(1)), getFrom<double, unsigned int>(info.at(2)), getFrom<double, unsigned int>(info.at(3)), key );
+				Game::PlaceAtMe( getFrom<double, unsigned int>(info.at(1)), getFrom<double, unsigned int>(info.at(2)), getFrom<double, unsigned int>(info.at(3)), key );
 				break;
 
 			default:

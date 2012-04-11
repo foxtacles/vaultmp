@@ -62,7 +62,7 @@ void Game::Initialize()
 	Interface::DefineCommand( "MoveAllItems", "%0.RemoveAllItems %1 %2", "RemoveAllItems" );
 	Interface::DefineCommand( "Kill", "%0.Kill" );
 	Interface::DefineCommand( "KillActor", "%0.Kill %1 %2 %3", "Kill" );
-	Interface::DefineCommand( "PlaceAtMe", "%0.PlaceAtMe %1 %2 %3 %4" );
+	Interface::DefineCommand( "PlaceAtMe", "%0.PlaceAtMe %1 %2" );
 	Interface::DefineCommand( "Load", "Load %0" );
 
     Interface::DefineCommand( "IsMoving", "%0.IsMoving" );
@@ -217,7 +217,6 @@ void Game::LoadGame( string savegame )
 void Game::LoadEnvironment()
 {
 	FactoryObject reference = GameFactory::GetObject( PLAYER_REFERENCE );
-	Player* self = vaultcast<Player>( reference );
 
     // load environment
 
@@ -241,15 +240,7 @@ void Game::NewObject( FactoryObject reference )
         Value<unsigned int>* store = new Value<unsigned int>;
         signed int key = store->Lock( true );
 
-        Interface::StartDynamic();
-
-        ParamContainer param_PlaceAtMe;
-        param_PlaceAtMe.push_back(BuildParameter(Utils::LongToHex(PLAYER_REFERENCE))); // need something else here
-        param_PlaceAtMe.push_back(BuildParameter(Utils::LongToHex(object->GetBase())));
-        param_PlaceAtMe.push_back(Data::Param_True);
-        Interface::ExecuteCommand("PlaceAtMe", param_PlaceAtMe, key);
-
-        Interface::EndDynamic();
+        PlaceAtMe(PLAYER_REFERENCE, object->GetBase(), 1, key);
 
         unsigned int refID;
 
@@ -336,6 +327,29 @@ void Game::NewPlayer( FactoryObject reference )
 void Game::RemoveObject( FactoryObject& reference )
 {
 	Delete( reference );
+}
+
+void Game::PlaceAtMe( FactoryObject reference, unsigned int baseID, unsigned int count, signed int key )
+{
+    Container* container = vaultcast<Container>(reference);
+
+	if ( !container )
+		throw VaultException( "Object with reference %08X is not a Container", ( *reference )->GetReference() );
+
+    PlaceAtMe(container->GetReference(), baseID, count, key);
+}
+
+void Game::PlaceAtMe( unsigned int refID, unsigned int baseID, unsigned int count, signed int key )
+{
+	Interface::StartDynamic();
+
+    ParamContainer param_PlaceAtMe;
+    param_PlaceAtMe.push_back(BuildParameter(Utils::LongToHex(refID)));
+    param_PlaceAtMe.push_back(BuildParameter(Utils::LongToHex(baseID)));
+    param_PlaceAtMe.push_back(BuildParameter(count));
+    Interface::ExecuteCommand("PlaceAtMe", param_PlaceAtMe, key);
+
+	Interface::EndDynamic();
 }
 
 void Game::ToggleEnabled( FactoryObject reference )
@@ -591,12 +605,19 @@ void Game::SetActorMovingAnimation(FactoryObject reference, signed int key)
 void Game::AddItem( vector<FactoryObject> reference, bool silent )
 {
 	Item* item = vaultcast<Item>( reference[1] );
+
+	if ( !item )
+		throw VaultException( "Object with reference %08X is not an Item", ( *reference[1] )->GetReference() );
+
     AddItem(reference[0], item->GetBase(), item->GetItemCount(), item->GetItemCondition(), silent);
 }
 
 void Game::AddItem( FactoryObject reference, unsigned int baseID, unsigned int count, double condition, bool silent )
 {
     Container* container = vaultcast<Container>( reference );
+
+	if ( !container )
+		throw VaultException( "Object with reference %08X is not a Container", ( *reference )->GetReference() );
 
     Interface::StartDynamic();
 
@@ -629,12 +650,19 @@ void Game::AddItem( FactoryObject reference, unsigned int baseID, unsigned int c
 void Game::RemoveItem( vector<FactoryObject> reference, bool silent )
 {
 	Item* item = vaultcast<Item>( reference[1] );
+
+	if ( !item )
+		throw VaultException( "Object with reference %08X is not an Item", ( *reference[1] )->GetReference() );
+
     RemoveItem(reference[0], item->GetBase(), item->GetItemCount(), silent);
 }
 
 void Game::RemoveItem( FactoryObject reference, unsigned int baseID, unsigned int count, bool silent )
 {
 	Container* container = vaultcast<Container>( reference );
+
+	if ( !container )
+		throw VaultException( "Object with reference %08X is not a Container", ( *reference )->GetReference() );
 
     Interface::StartDynamic();
 
@@ -653,6 +681,9 @@ void Game::RemoveAllItems( FactoryObject reference )
 {
 	Container* container = vaultcast<Container>( reference );
 
+	if ( !container )
+		throw VaultException( "Object with reference %08X is not a Container", ( *reference )->GetReference() );
+
     Interface::StartDynamic();
 
     ParamContainer param_RemoveAllItems;
@@ -666,12 +697,19 @@ void Game::RemoveAllItems( FactoryObject reference )
 void Game::EquipItem( vector<FactoryObject> reference, bool stick, bool silent )
 {
 	Item* item = vaultcast<Item>( reference[1] );
+
+	if ( !item )
+		throw VaultException( "Object with reference %08X is not an Item", ( *reference[1] )->GetReference() );
+
     RemoveItem(reference[0], item->GetBase(), stick, silent);
 }
 
 void Game::EquipItem( FactoryObject reference, unsigned int baseID, bool stick, bool silent )
 {
 	Actor* actor = vaultcast<Actor>( reference );
+
+	if ( !actor )
+		throw VaultException( "Object with reference %08X is not an Actor", ( *reference )->GetReference() );
 
     Interface::StartDynamic();
 
@@ -689,12 +727,19 @@ void Game::EquipItem( FactoryObject reference, unsigned int baseID, bool stick, 
 void Game::UnequipItem( vector<FactoryObject> reference, bool stick, bool silent )
 {
 	Item* item = vaultcast<Item>( reference[1] );
+
+	if ( !item )
+		throw VaultException( "Object with reference %08X is not an Item", ( *reference[1] )->GetReference() );
+
     RemoveItem(reference[0], item->GetBase(), stick, silent);
 }
 
 void Game::UnequipItem( FactoryObject reference, unsigned int baseID, bool stick, bool silent )
 {
 	Actor* actor = vaultcast<Actor>( reference );
+
+	if ( !actor )
+		throw VaultException( "Object with reference %08X is not an Actor", ( *reference )->GetReference() );
 
     Interface::StartDynamic();
 
@@ -1060,17 +1105,4 @@ void Game::ScanContainer( FactoryObject reference, vector<unsigned char>& data )
 	}
 
 	GameFactory::DestroyInstance( _temp );
-}
-
-void Game::Failure_PlaceAtMe( unsigned int refID, unsigned int baseID, unsigned int count, signed int key )
-{
-	Interface::StartDynamic();
-
-    ParamContainer param_PlaceAtMe;
-    param_PlaceAtMe.push_back(BuildParameter(Utils::LongToHex(refID)));
-    param_PlaceAtMe.push_back(BuildParameter(Utils::LongToHex(baseID)));
-    param_PlaceAtMe.push_back(BuildParameter(count));
-    Interface::ExecuteCommand("PlaceAtMe", param_PlaceAtMe, key);
-
-	Interface::EndDynamic();
 }
