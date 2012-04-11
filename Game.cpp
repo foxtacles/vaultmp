@@ -326,7 +326,18 @@ void Game::NewPlayer( FactoryObject reference )
 
 void Game::RemoveObject( FactoryObject& reference )
 {
-	Delete( reference );
+    Object* object = vaultcast<Object>(reference);
+
+    if (object->SetEnabled(false))
+        ToggleEnabled(reference);
+
+    Interface::StartDynamic();
+
+    ParamContainer param_MarkForDelete;
+    param_MarkForDelete.push_back( object->GetReferenceParam() );
+    Interface::ExecuteCommand( "MarkForDelete", param_MarkForDelete );
+
+    Interface::EndDynamic();
 }
 
 void Game::PlaceAtMe( FactoryObject reference, unsigned int baseID, unsigned int count, signed int key )
@@ -378,19 +389,7 @@ void Game::ToggleEnabled( FactoryObject reference )
 
 void Game::Delete( FactoryObject& reference )
 {
-    Object* object = vaultcast<Object>(reference);
-
-    if (object->SetEnabled(false))
-        ToggleEnabled( reference);
-
-    Interface::StartDynamic();
-
-    ParamContainer param_MarkForDelete;
-    param_MarkForDelete.push_back( object->GetReferenceParam() );
-    Interface::ExecuteCommand( "MarkForDelete", param_MarkForDelete );
-
-    Interface::EndDynamic();
-
+    RemoveObject(reference);
 	GameFactory::DestroyInstance( reference );
 }
 

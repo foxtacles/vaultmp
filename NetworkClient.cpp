@@ -225,7 +225,7 @@ NetworkResponse NetworkClient::ProcessPacket( Packet* data )
                                 NetworkID id;
                                 PacketFactory::Access( packet, &id );
                                 FactoryObject reference = GameFactory::GetObject( id );
-                                Game::RemoveObject( reference );
+                                Game::Delete( reference );
                                 break;
                             }
 
