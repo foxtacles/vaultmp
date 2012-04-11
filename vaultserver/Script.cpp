@@ -68,7 +68,6 @@ Script::Script( char* path )
 		SetScriptFunction( "GetPos", &Script::GetPos );
 		SetScriptFunction( "GetAngle", &Script::GetAngle );
 		SetScriptFunction( "GetCell", &Script::GetCell );
-
 		SetScriptFunction( "GetActorValue", &Script::GetActorValue );
 		SetScriptFunction( "GetActorBaseValue", &Script::GetActorBaseValue );
 		SetScriptFunction( "GetActorMovingAnimation", &Script::GetActorMovingAnimation );
@@ -76,6 +75,9 @@ Script::Script( char* path )
 		SetScriptFunction( "GetActorSneaking", &Script::GetActorSneaking );
 		SetScriptFunction( "GetActorDead", &Script::GetActorDead );
 		SetScriptFunction( "IsActorJumping", &Script::IsActorJumping );
+
+		SetScriptFunction( "SetActorValue", &Script::SetActorValue );
+		SetScriptFunction( "SetActorBaseValue", &Script::SetActorBaseValue );
 
 		exec();
 	}
@@ -650,4 +652,46 @@ bool Script::IsActorJumping( NetworkID id )
 		state = actor->IsActorJumping();
 
 	return state;
+}
+
+void Script::SetActorValue( NetworkID id, unsigned char index, double value )
+{
+	FactoryObject reference = GameFactory::GetObject( id );
+	Actor* actor = vaultcast<Actor>( reference );
+
+	if ( actor )
+	{
+	    if (actor->SetActorValue(index, value))
+	    {
+	        NetworkResponse response;
+            pDefault* packet = PacketFactory::CreatePacket( ID_UPDATE_VALUE, actor->GetNetworkID(), false, index, value );
+            response = Network::CompleteResponse( Network::CreateResponse( packet,
+											  ( unsigned char ) HIGH_PRIORITY,
+											  ( unsigned char ) RELIABLE_ORDERED,
+											  CHANNEL_GAME,
+											  Client::GetNetworkList( NULL ) ) );
+            Network::Queue(response);
+	    }
+	}
+}
+
+void Script::SetActorBaseValue( NetworkID id, unsigned char index, double value )
+{
+	FactoryObject reference = GameFactory::GetObject( id );
+	Actor* actor = vaultcast<Actor>( reference );
+
+	if ( actor )
+	{
+	    if (actor->SetActorBaseValue(index, value))
+	    {
+	        NetworkResponse response;
+            pDefault* packet = PacketFactory::CreatePacket( ID_UPDATE_VALUE, actor->GetNetworkID(), true, index, value );
+            response = Network::CompleteResponse( Network::CreateResponse( packet,
+											  ( unsigned char ) HIGH_PRIORITY,
+											  ( unsigned char ) RELIABLE_ORDERED,
+											  CHANNEL_GAME,
+											  Client::GetNetworkList( NULL ) ) );
+            Network::Queue(response);
+	    }
+	}
 }

@@ -29,6 +29,7 @@ bool VAULTSCRIPT OnClientAuthenticate( string name, string pwd )
 
 void VAULTSCRIPT OnPlayerDisconnect( ID player, Reason reason )
 {
+
 }
 
 Base VAULTSCRIPT OnPlayerRequestGame( ID player )

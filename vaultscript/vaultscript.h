@@ -81,7 +81,6 @@ extern "C" {
 	VAULTSCRIPT void ( *GetPos )( vaultmp::ID, vaultmp::Value&, vaultmp::Value&, vaultmp::Value& );
 	VAULTSCRIPT void ( *GetAngle )( vaultmp::ID, vaultmp::Value&, vaultmp::Value&, vaultmp::Value& );
 	VAULTSCRIPT vaultmp::Cell ( *GetCell )( vaultmp::ID );
-
 	VAULTSCRIPT vaultmp::Value ( *GetActorValue )( vaultmp::ID, vaultmp::Index );
 	VAULTSCRIPT vaultmp::Value ( *GetActorBaseValue )( vaultmp::ID, vaultmp::Index );
 	VAULTSCRIPT vaultmp::Index ( *GetActorMovingAnimation )( vaultmp::ID );
@@ -89,4 +88,8 @@ extern "C" {
 	VAULTSCRIPT vaultmp::State ( *GetActorSneaking )( vaultmp::ID );
 	VAULTSCRIPT vaultmp::State ( *GetActorDead )( vaultmp::ID );
 	VAULTSCRIPT vaultmp::State ( *IsActorJumping )( vaultmp::ID );
+
+	VAULTSCRIPT void ( *SetActorValue )( vaultmp::ID, vaultmp::Index, vaultmp::Value );
+	VAULTSCRIPT void ( *SetActorBaseValue )( vaultmp::ID, vaultmp::Index, vaultmp::Value );
+
 }

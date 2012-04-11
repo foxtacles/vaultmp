@@ -50,7 +50,6 @@ native GetName(ID, name{});
 native GetPos(ID, &Float:X, &Float:Y, &Float:Z);
 native GetAngle(ID, &Float:X, &Float:Y, &Float:Z);
 native GetCell(ID);
-
 native Float:GetActorValue(ID, index);
 native Float:GetActorBaseValue(ID, index);
 native GetActorMovingAnimation(ID);
@@ -58,3 +57,6 @@ native Bool:GetActorAlerted(ID);
 native Bool:GetActorSneaking(ID);
 native Bool:GetActorDead(ID);
 native Bool:IsActorJumping(ID);
+
+native SetActorValue(ID, index, Float:value);
+native SetActorBaseValue(ID, index, Float:value);

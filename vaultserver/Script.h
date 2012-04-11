@@ -101,7 +101,6 @@ class Script
 		static void GetPos( NetworkID id, double& X, double& Y, double& Z );
 		static void GetAngle( NetworkID id, double& X, double& Y, double& Z );
 		static unsigned int GetCell( NetworkID id );
-
 		static double GetActorValue( NetworkID id, unsigned char index );
 		static double GetActorBaseValue( NetworkID id, unsigned char index );
 		static unsigned char GetActorMovingAnimation( NetworkID id );
@@ -109,6 +108,9 @@ class Script
 		static bool GetActorSneaking( NetworkID id );
 		static bool GetActorDead( NetworkID id );
 		static bool IsActorJumping( NetworkID id );
+
+		static void SetActorValue( NetworkID id, unsigned char index, double value );
+		static void SetActorBaseValue( NetworkID id, unsigned char index, double value );
 
 };
 

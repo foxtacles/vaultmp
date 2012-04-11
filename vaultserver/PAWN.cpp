@@ -41,7 +41,6 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"GetPos", PAWN::vaultmp_GetPos},
 	{"GetAngle", PAWN::vaultmp_GetAngle},
 	{"GetCell", PAWN::vaultmp_GetCell},
-
 	{"GetActorValue", PAWN::vaultmp_GetActorValue},
 	{"GetActorBaseValue", PAWN::vaultmp_GetActorBaseValue},
 	{"GetActorMovingAnimation", PAWN::vaultmp_GetActorMovingAnimation},
@@ -49,6 +48,9 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"GetActorSneaking", PAWN::vaultmp_GetActorSneaking},
 	{"GetActorDead", PAWN::vaultmp_GetActorDead},
 	{"IsActorJumping", PAWN::vaultmp_IsActorJumping},
+
+    {"SetActorValue", PAWN::vaultmp_SetActorValue},
+    {"SetActorBaseValue", PAWN::vaultmp_SetActorBaseValue},
 
 	{0, 0}
 };
@@ -558,6 +560,34 @@ cell PAWN::vaultmp_IsActorJumping( AMX* amx, const cell* params )
 
 	bool state = Script::IsActorJumping( id );
 	i = ( cell ) state;
+
+	return i;
+}
+
+cell PAWN::vaultmp_SetActorValue( AMX* amx, const cell* params )
+{
+	cell i = 1, id, index;
+	double value;
+
+	id = params[1];
+	index = params[2];
+	value = amx_ctof(params[3]);
+
+    Script::SetActorValue(id, index, value);
+
+	return i;
+}
+
+cell PAWN::vaultmp_SetActorBaseValue( AMX* amx, const cell* params )
+{
+	cell i = 1, id, index;
+	double value;
+
+	id = params[1];
+	index = params[2];
+	value = amx_ctof(params[3]);
+
+    Script::SetActorBaseValue(id, index, value);
 
 	return i;
 }

@@ -28,7 +28,7 @@ class PAWN
 
 		PAWN();
 
-		static AMX_NATIVE_INFO vaultmp_functions[27];
+		static AMX_NATIVE_INFO vaultmp_functions[29];
 
 		static cell vaultmp_timestamp( AMX* amx, const cell* params );
 		static cell vaultmp_CreateTimer( AMX* amx, const cell* params );
@@ -52,7 +52,6 @@ class PAWN
 		static cell vaultmp_GetPos( AMX* amx, const cell* params );
 		static cell vaultmp_GetAngle( AMX* amx, const cell* params );
 		static cell vaultmp_GetCell( AMX* amx, const cell* params );
-
 		static cell vaultmp_GetActorValue( AMX* amx, const cell* params );
 		static cell vaultmp_GetActorBaseValue( AMX* amx, const cell* params );
 		static cell vaultmp_GetActorMovingAnimation( AMX* amx, const cell* params );
@@ -60,6 +59,9 @@ class PAWN
 		static cell vaultmp_GetActorSneaking( AMX* amx, const cell* params );
 		static cell vaultmp_GetActorDead( AMX* amx, const cell* params );
 		static cell vaultmp_IsActorJumping( AMX* amx, const cell* params );
+
+		static cell vaultmp_SetActorValue( AMX* amx, const cell* params );
+		static cell vaultmp_SetActorBaseValue( AMX* amx, const cell* params );
 
 	public:
 		static int LoadProgram( AMX* amx, char* filename, void* memblock );
