@@ -741,15 +741,18 @@ void Script::RemoveAllItems( NetworkID id )
 	{
         ContainerDiff diff = container->RemoveAllItems();
 
-        pDefault* packet = PacketFactory::CreatePacket( ID_UPDATE_CONTAINER, id, &diff);
-        NetworkResponse response = Network::CompleteResponse( Network::CreateResponse( packet,
-                                                        ( unsigned char ) HIGH_PRIORITY,
-                                                        ( unsigned char ) RELIABLE_ORDERED,
-                                                        CHANNEL_GAME,
-                                                        Client::GetNetworkList( NULL ) ) );
-        Network::Queue( response );
+        if ( !diff.first.empty() || !diff.second.empty() )
+        {
+            pDefault* packet = PacketFactory::CreatePacket( ID_UPDATE_CONTAINER, id, &diff);
+            NetworkResponse response = Network::CompleteResponse( Network::CreateResponse( packet,
+                                                            ( unsigned char ) HIGH_PRIORITY,
+                                                            ( unsigned char ) RELIABLE_ORDERED,
+                                                            CHANNEL_GAME,
+                                                            Client::GetNetworkList( NULL ) ) );
+            Network::Queue( response );
 
-        container->ApplyDiff( diff );
+            container->ApplyDiff( diff );
+        }
 	}
 }
 
