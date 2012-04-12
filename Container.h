@@ -81,7 +81,10 @@ class Container : public Object
 #endif
 
 		void AddItem( NetworkID id );
+		ContainerDiff AddItem( unsigned int baseID, unsigned int count, double condition );
 		void RemoveItem( NetworkID id );
+		ContainerDiff RemoveItem( unsigned int baseID, unsigned int count );
+
 		ContainerDiff Compare( NetworkID id ) const;
 		GameDiff ApplyDiff( ContainerDiff& diff );
 		static void FreeDiff( ContainerDiff& diff );

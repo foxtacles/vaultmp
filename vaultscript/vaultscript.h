@@ -23,6 +23,7 @@ namespace vaultmp
 	typedef unsigned int Reference; // 4 byte
 	typedef unsigned int Base; // 4 byte
 	typedef unsigned int Cell; // 4 byte
+	typedef unsigned int UCount; // 4 byte
 	typedef signed int Count; // 4 byte
 	typedef unsigned int Interval; // 4 byte
 	typedef unsigned long long ID; // 8 byte
@@ -89,6 +90,8 @@ extern "C" {
 	VAULTSCRIPT vaultmp::State ( *GetActorDead )( vaultmp::ID );
 	VAULTSCRIPT vaultmp::State ( *IsActorJumping )( vaultmp::ID );
 
+    VAULTSCRIPT void ( *AddItem )( vaultmp::ID, vaultmp::Base, vaultmp::UCount, vaultmp::Value );
+    VAULTSCRIPT vaultmp::UCount ( *RemoveItem )( vaultmp::ID, vaultmp::Base, vaultmp::UCount );
 	VAULTSCRIPT void ( *SetActorValue )( vaultmp::ID, vaultmp::Index, vaultmp::Value );
 	VAULTSCRIPT void ( *SetActorBaseValue )( vaultmp::ID, vaultmp::Index, vaultmp::Value );
 

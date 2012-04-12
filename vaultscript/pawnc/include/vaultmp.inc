@@ -58,5 +58,7 @@ native Bool:GetActorSneaking(ID);
 native Bool:GetActorDead(ID);
 native Bool:IsActorJumping(ID);
 
+native AddItem(ID, base, count, Float:value);
+native RemoveItem(ID, base, count);
 native SetActorValue(ID, index, Float:value);
 native SetActorBaseValue(ID, index, Float:value);

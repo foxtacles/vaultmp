@@ -76,6 +76,8 @@ Script::Script( char* path )
 		SetScriptFunction( "GetActorDead", &Script::GetActorDead );
 		SetScriptFunction( "IsActorJumping", &Script::IsActorJumping );
 
+        SetScriptFunction( "AddItem", &Script::AddItem );
+        SetScriptFunction( "RemoveItem", &Script::RemoveItem );
 		SetScriptFunction( "SetActorValue", &Script::SetActorValue );
 		SetScriptFunction( "SetActorBaseValue", &Script::SetActorBaseValue );
 
@@ -652,6 +654,61 @@ bool Script::IsActorJumping( NetworkID id )
 		state = actor->IsActorJumping();
 
 	return state;
+}
+
+void Script::AddItem( NetworkID id, unsigned int baseID, unsigned int count, double condition )
+{
+	FactoryObject reference = GameFactory::GetObject( id );
+	Container* container = vaultcast<Container>( reference );
+
+	if ( container && count )
+	{
+        // validate baseID, or put validation in Item constructor
+
+        ContainerDiff diff = container->AddItem(baseID, count, condition);
+
+        pDefault* packet = PacketFactory::CreatePacket( ID_UPDATE_CONTAINER, id, &diff);
+        NetworkResponse response = Network::CompleteResponse( Network::CreateResponse( packet,
+                                                        ( unsigned char ) HIGH_PRIORITY,
+                                                        ( unsigned char ) RELIABLE_ORDERED,
+                                                        CHANNEL_GAME,
+                                                        Client::GetNetworkList( NULL ) ) );
+        Network::Queue( response );
+
+        container->ApplyDiff( diff );
+	}
+}
+
+unsigned int Script::RemoveItem( NetworkID id, unsigned int baseID, unsigned int count )
+{
+	FactoryObject reference = GameFactory::GetObject( id );
+	Container* container = vaultcast<Container>( reference );
+
+	unsigned int removed = 0;
+
+	if ( container && count )
+	{
+        // validate baseID, or put validation in Item constructor
+
+        ContainerDiff diff = container->RemoveItem(baseID, count);
+
+        if ( !diff.first.empty() || !diff.second.empty() )
+        {
+            pDefault* packet = PacketFactory::CreatePacket( ID_UPDATE_CONTAINER, id, &diff);
+            NetworkResponse response = Network::CompleteResponse( Network::CreateResponse( packet,
+                                                            ( unsigned char ) HIGH_PRIORITY,
+                                                            ( unsigned char ) RELIABLE_ORDERED,
+                                                            CHANNEL_GAME,
+                                                            Client::GetNetworkList( NULL ) ) );
+            Network::Queue( response );
+
+            GameDiff gamediff = container->ApplyDiff( diff );
+
+            removed = abs(gamediff.front().second.count);
+        }
+	}
+
+	return removed;
 }
 
 void Script::SetActorValue( NetworkID id, unsigned char index, double value )
