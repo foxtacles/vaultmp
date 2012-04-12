@@ -112,6 +112,7 @@ class Script
 
         static void AddItem( NetworkID id, unsigned int baseID, unsigned int count, double condition );
         static unsigned int RemoveItem( NetworkID id, unsigned int baseID, unsigned int count );
+        static void RemoveAllItems( NetworkID id );
 		static void SetActorValue( NetworkID id, unsigned char index, double value );
 		static void SetActorBaseValue( NetworkID id, unsigned char index, double value );
 

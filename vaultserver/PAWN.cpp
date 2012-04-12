@@ -52,6 +52,7 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 
     {"AddItem", PAWN::vaultmp_AddItem},
     {"RemoveItem", PAWN::vaultmp_RemoveItem},
+    {"RemoveAllItems", PAWN::vaultmp_RemoveAllItems},
     {"SetActorValue", PAWN::vaultmp_SetActorValue},
     {"SetActorBaseValue", PAWN::vaultmp_SetActorBaseValue},
 
@@ -610,6 +611,17 @@ cell PAWN::vaultmp_RemoveItem( AMX* amx, const cell* params )
 	count = params[3];
 
     i = (cell) Script::RemoveItem(id, base, count);
+
+	return i;
+}
+
+cell PAWN::vaultmp_RemoveAllItems( AMX* amx, const cell* params )
+{
+	cell i = 1, id;
+
+	id = params[1];
+
+    Script::RemoveAllItems(id);
 
 	return i;
 }

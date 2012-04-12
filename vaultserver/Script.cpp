@@ -79,6 +79,7 @@ Script::Script( char* path )
 
         SetScriptFunction( "AddItem", &Script::AddItem );
         SetScriptFunction( "RemoveItem", &Script::RemoveItem );
+        SetScriptFunction( "RemoveAllItems", &Script::RemoveAllItems );
 		SetScriptFunction( "SetActorValue", &Script::SetActorValue );
 		SetScriptFunction( "SetActorBaseValue", &Script::SetActorBaseValue );
 
@@ -729,6 +730,27 @@ unsigned int Script::RemoveItem( NetworkID id, unsigned int baseID, unsigned int
 	}
 
 	return removed;
+}
+
+void Script::RemoveAllItems( NetworkID id )
+{
+	FactoryObject reference = GameFactory::GetObject( id );
+	Container* container = vaultcast<Container>( reference );
+
+	if ( container )
+	{
+        ContainerDiff diff = container->RemoveAllItems();
+
+        pDefault* packet = PacketFactory::CreatePacket( ID_UPDATE_CONTAINER, id, &diff);
+        NetworkResponse response = Network::CompleteResponse( Network::CreateResponse( packet,
+                                                        ( unsigned char ) HIGH_PRIORITY,
+                                                        ( unsigned char ) RELIABLE_ORDERED,
+                                                        CHANNEL_GAME,
+                                                        Client::GetNetworkList( NULL ) ) );
+        Network::Queue( response );
+
+        container->ApplyDiff( diff );
+	}
 }
 
 void Script::SetActorValue( NetworkID id, unsigned char index, double value )

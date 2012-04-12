@@ -93,6 +93,7 @@ extern "C" {
 
     VAULTSCRIPT void ( *AddItem )( vaultmp::ID, vaultmp::Base, vaultmp::UCount, vaultmp::Value );
     VAULTSCRIPT vaultmp::UCount ( *RemoveItem )( vaultmp::ID, vaultmp::Base, vaultmp::UCount );
+    VAULTSCRIPT void ( *RemoveAllItems )( vaultmp::ID );
 	VAULTSCRIPT void ( *SetActorValue )( vaultmp::ID, vaultmp::Index, vaultmp::Value );
 	VAULTSCRIPT void ( *SetActorBaseValue )( vaultmp::ID, vaultmp::Index, vaultmp::Value );
 

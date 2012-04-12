@@ -202,6 +202,13 @@ ContainerDiff Container::RemoveItem( unsigned int baseID, unsigned int count ) c
     return diff;
 }
 
+ContainerDiff Container::RemoveAllItems() const
+{
+    ContainerDiff diff;
+    diff.first = this->container;
+    return diff;
+}
+
 ContainerDiff Container::Compare( NetworkID id ) const
 {
 	FactoryObject reference = GameFactory::GetObject( id );

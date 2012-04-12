@@ -84,6 +84,7 @@ class Container : public Object
 		ContainerDiff AddItem( unsigned int baseID, unsigned int count, double condition ) const;
 		void RemoveItem( NetworkID id );
 		ContainerDiff RemoveItem( unsigned int baseID, unsigned int count ) const;
+		ContainerDiff RemoveAllItems() const;
 
 		ContainerDiff Compare( NetworkID id ) const;
 		GameDiff ApplyDiff( ContainerDiff& diff );
