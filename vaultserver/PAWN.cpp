@@ -41,6 +41,7 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"GetPos", PAWN::vaultmp_GetPos},
 	{"GetAngle", PAWN::vaultmp_GetAngle},
 	{"GetCell", PAWN::vaultmp_GetCell},
+	{"GetContainerItemCount", PAWN::vaultmp_GetContainerItemCount},
 	{"GetActorValue", PAWN::vaultmp_GetActorValue},
 	{"GetActorBaseValue", PAWN::vaultmp_GetActorBaseValue},
 	{"GetActorMovingAnimation", PAWN::vaultmp_GetActorMovingAnimation},
@@ -481,6 +482,19 @@ cell PAWN::vaultmp_GetCell( AMX* amx, const cell* params )
 	id = params[1];
 
 	unsigned int value = Script::GetCell( id );
+	i = ( cell ) value;
+
+	return i;
+}
+
+cell PAWN::vaultmp_GetContainerItemCount( AMX* amx, const cell* params )
+{
+	cell i = 1, id, baseID;
+
+	id = params[1];
+	baseID = params[2];
+
+	unsigned int value = Script::GetContainerItemCount( id, baseID );
 	i = ( cell ) value;
 
 	return i;

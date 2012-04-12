@@ -81,9 +81,9 @@ class Container : public Object
 #endif
 
 		void AddItem( NetworkID id );
-		ContainerDiff AddItem( unsigned int baseID, unsigned int count, double condition );
+		ContainerDiff AddItem( unsigned int baseID, unsigned int count, double condition ) const;
 		void RemoveItem( NetworkID id );
-		ContainerDiff RemoveItem( unsigned int baseID, unsigned int count );
+		ContainerDiff RemoveItem( unsigned int baseID, unsigned int count ) const;
 
 		ContainerDiff Compare( NetworkID id ) const;
 		GameDiff ApplyDiff( ContainerDiff& diff );
@@ -91,6 +91,7 @@ class Container : public Object
 
 		bool IsEmpty() const;
 		void PrintContainer() const;
+		unsigned int GetItemCount(unsigned int baseID) const;
 		void FlushContainer();
 		const list<NetworkID>& GetItemList() const;
 

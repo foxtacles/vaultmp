@@ -149,7 +149,7 @@ void Container::AddItem( NetworkID id )
 		throw VaultException( "Object with reference %08X is not an Item", ( *reference )->GetReference() );
 }
 
-ContainerDiff Container::AddItem( unsigned int baseID, unsigned int count, double condition )
+ContainerDiff Container::AddItem( unsigned int baseID, unsigned int count, double condition ) const
 {
     FactoryObject _item = GameFactory::GetObject( GameFactory::CreateInstance( ID_ITEM, baseID ) );
     Item* item = vaultcast<Item>( _item );
@@ -172,10 +172,10 @@ void Container::RemoveItem( NetworkID id )
 	container.erase( it );
 }
 
-ContainerDiff Container::RemoveItem( unsigned int baseID, unsigned int count )
+ContainerDiff Container::RemoveItem( unsigned int baseID, unsigned int count ) const
 {
     ContainerDiff diff;
-	list<NetworkID>::iterator it;
+	list<NetworkID>::const_iterator it;
 
 	for ( it = container.begin(); it != container.end(); ++it )
 	{
@@ -394,6 +394,23 @@ NetworkID Container::Copy() const
 bool Container::IsEmpty() const
 {
 	return container.empty();
+}
+
+unsigned int Container::GetItemCount( unsigned int baseID ) const
+{
+    unsigned int count = 0;
+	list<NetworkID>::const_iterator it;
+
+	for ( it = container.begin(); it != container.end(); ++it )
+	{
+		FactoryObject _reference = GameFactory::GetObject( *it );
+		Item* item = vaultcast<Item>( _reference );
+
+		if (!baseID || item->GetBase() == baseID)
+            count += item->GetItemCount();
+	}
+
+    return count;
 }
 
 void Container::PrintContainer() const

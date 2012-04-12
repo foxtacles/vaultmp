@@ -82,6 +82,7 @@ extern "C" {
 	VAULTSCRIPT void ( *GetPos )( vaultmp::ID, vaultmp::Value&, vaultmp::Value&, vaultmp::Value& );
 	VAULTSCRIPT void ( *GetAngle )( vaultmp::ID, vaultmp::Value&, vaultmp::Value&, vaultmp::Value& );
 	VAULTSCRIPT vaultmp::Cell ( *GetCell )( vaultmp::ID );
+	VAULTSCRIPT vaultmp::UCount ( *GetContainerItemCount )( vaultmp::ID, vaultmp::Base );
 	VAULTSCRIPT vaultmp::Value ( *GetActorValue )( vaultmp::ID, vaultmp::Index );
 	VAULTSCRIPT vaultmp::Value ( *GetActorBaseValue )( vaultmp::ID, vaultmp::Index );
 	VAULTSCRIPT vaultmp::Index ( *GetActorMovingAnimation )( vaultmp::ID );

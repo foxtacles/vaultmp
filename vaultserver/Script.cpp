@@ -68,6 +68,7 @@ Script::Script( char* path )
 		SetScriptFunction( "GetPos", &Script::GetPos );
 		SetScriptFunction( "GetAngle", &Script::GetAngle );
 		SetScriptFunction( "GetCell", &Script::GetCell );
+		SetScriptFunction( "GetContainerItemCount", &Script::GetContainerItemCount );
 		SetScriptFunction( "GetActorValue", &Script::GetActorValue );
 		SetScriptFunction( "GetActorBaseValue", &Script::GetActorBaseValue );
 		SetScriptFunction( "GetActorMovingAnimation", &Script::GetActorMovingAnimation );
@@ -567,6 +568,19 @@ unsigned int Script::GetCell( NetworkID id )
 
 	if ( object )
 		value = object->GetNetworkCell();
+
+	return value;
+}
+
+unsigned int Script::GetContainerItemCount( NetworkID id, unsigned int baseID )
+{
+	unsigned int value = 0;
+
+	FactoryObject reference = GameFactory::GetObject( id );
+	Container* container = vaultcast<Container>( reference );
+
+	if ( container )
+		value = container->GetItemCount(baseID);
 
 	return value;
 }
