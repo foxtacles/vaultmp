@@ -53,7 +53,7 @@ unsigned long long ScriptFunction::Call( const vector<boost::any>& args )
 								:
 							);
 
-							size += 4;
+							size += sizeof(unsigned int);
 							break;
 						}
 
@@ -70,7 +70,7 @@ unsigned long long ScriptFunction::Call( const vector<boost::any>& args )
 								:
 							);
 
-							size += 8;
+							size += sizeof(unsigned long long);
 							break;
 						}
 
@@ -87,7 +87,24 @@ unsigned long long ScriptFunction::Call( const vector<boost::any>& args )
 								:
 							);
 
-							size += 8;
+							size += sizeof(double);
+							break;
+						}
+
+					case 'p':
+						{
+							void* value = boost::any_cast<void*>( *it2 );
+
+							asm (
+								"ADD ESP,8\n"
+								"PUSH %0\n"
+								"SUB ESP,8\n"
+								:
+								: "m"( value )
+								:
+							);
+
+							size += sizeof(void*);
 							break;
 						}
 
@@ -104,7 +121,7 @@ unsigned long long ScriptFunction::Call( const vector<boost::any>& args )
 								:
 							);
 
-							size += 4;
+							size += sizeof(const char*);
 							break;
 						}
 

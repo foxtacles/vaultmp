@@ -241,6 +241,12 @@ cell PAWN::vaultmp_CallPublic( AMX* amx, const cell* params )
 					break;
 				}
 
+			case 'p':
+				{
+					args.push_back( ( void* ) data );
+					break;
+				}
+
 			case 's':
 				{
 					amx_StrLen( data, &len );
@@ -692,6 +698,13 @@ cell PAWN::Call( AMX* amx, const char* name, const char* argl, int buf, ... )
 						break;
 					}
 
+				case 'p':
+					{
+						cell value = ( cell ) va_arg( args, void* );
+						amx_Push( amx, value );
+						break;
+					}
+
 				case 's':
 					{
 						char* string = va_arg( args, char* );
@@ -780,6 +793,13 @@ cell PAWN::Call( AMX* amx, const char* name, const char* argl, const vector<boos
 					{
 						double value = boost::any_cast<double>( args.at( i ) );
 						amx_Push( amx, amx_ftoc( value ) );
+						break;
+					}
+
+				case 'p':
+					{
+						cell value = ( cell ) boost::any_cast<void*>( args.at( i ) );
+						amx_Push( amx, value );
 						break;
 					}
 

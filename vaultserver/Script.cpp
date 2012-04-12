@@ -208,6 +208,12 @@ void Script::GetArguments( vector<boost::any>& params, va_list args, string def 
 						break;
 					}
 
+				case 'p':
+					{
+						params.push_back( va_arg( args, void* ) );
+						break;
+					}
+
 				case 's':
 					{
 						params.push_back( string( va_arg( args, const char* ) ) );
