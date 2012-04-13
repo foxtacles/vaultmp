@@ -113,16 +113,39 @@ bool vaultfunction( void* reference, void* result, void* args, unsigned short op
 					"MOV %0,EAX\n"
 					: "=m"( data )
 					: "m"( reference ), "r"(  *( ( unsigned int* ) ( ( unsigned ) *( ( unsigned int* ) reference ) + ( unsigned ) 0x01E4 ) ) )
-					: "ecx"
+					: "eax", "ecx"
 				);
 
 				if ( data != NULL )
 				{
 					unsigned char alerted, sneaking, running;
 
-                    alerted = *( data + 0x6C ) != 0xFF ? 0x01 : 0x00;
-                    sneaking = *( data + 0x4D ) == 0x10 ? 0x01 : 0x00;
                     running = *( data + 0x4E );
+
+                    // EDX being used by the callee
+                    asm (
+                        "MOV ECX,%1\n"
+                        "CALL %2\n"
+                        "MOV %0,EAX\n"
+                        : "=m"( data )
+                        : "m"( reference ), "r"( ( game & FALLOUT3 ) ? ALERTED_STATE_FALLOUT3 : ALERTED_STATE_NEWVEGAS )
+                        : "eax", "ecx", "edx"
+                    );
+
+                    alerted = ((unsigned) data & 0x00000001);
+
+                    asm (
+                        "MOV ECX,%1\n"
+                        "CALL %2\n"
+                        "MOV %0,EAX\n"
+                        : "=m"( data )
+                        : "m"( reference ), "r"( ( game & FALLOUT3 ) ? SNEAKING_STATE_FALLOUT3 : SNEAKING_STATE_NEWVEGAS )
+                        : "eax", "ecx", "edx"
+                    );
+
+                    sneaking = (game & FALLOUT3 ? ((bool) ((unsigned) data & 0x00000400)) : ((unsigned) data & 0x00000001));
+
+                    //sneaking = *( data + 0x4D ) == 0x10 ? 0x01 : 0x00;
 
 					memcpy( result, &alerted, 1 );
 					memcpy( ( void* ) ( ( unsigned ) result + 1 ), &sneaking, 1 );
@@ -176,7 +199,7 @@ bool vaultfunction( void* reference, void* result, void* args, unsigned short op
 					"MOV %0,EAX\n"
 					: "=m"( count )
 					: "m"( reference ), "r"( ( game & FALLOUT3 ) ? ITEM_COUNT_FALLOUT3 : ITEM_COUNT_NEWVEGAS )
-					: "ecx"
+					: "eax", "ecx"
 				);
 
 				if ( count > 0 )
@@ -197,7 +220,7 @@ bool vaultfunction( void* reference, void* result, void* args, unsigned short op
 							"MOV %0,EAX\n"
 							: "=m"( item )
 							: "r"( i ), "m"( reference ), "r"( ( game & FALLOUT3 ) ? ITEM_GET_FALLOUT3 : ITEM_GET_NEWVEGAS )
-							: "ecx"
+							: "eax", "ecx"
 						);
 
 						if ( item )
@@ -222,7 +245,7 @@ bool vaultfunction( void* reference, void* result, void* args, unsigned short op
 									"MOV %0,EAX\n"
 									: "=m"( equipped )
 									: "m"( item ), "r"( ( game & FALLOUT3 ) ? ITEM_ISEQUIPPED_FALLOUT3 : ITEM_ISEQUIPPED_NEWVEGAS )
-									: "ecx"
+									: "eax", "ecx"
 								);
 
 								equipped &= 0x00000001;
