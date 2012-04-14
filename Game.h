@@ -219,7 +219,7 @@ class Game
 		/**
 		 * \brief Handles GetDead command result
 		 */
-		static void GetDead( vector<FactoryObject> reference, bool dead );
+		static void GetDead( vector<FactoryObject>& reference, bool dead );
 		/**
 		 * \brief Handles GetActorValue command result
 		 */

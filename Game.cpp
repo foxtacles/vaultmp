@@ -130,7 +130,7 @@ void Game::Startup()
 		Interface::SetupCommand( "ScanContainer", 50 );
 
 		ParamContainer param_GetDead;
-		param_GetDead.push_back( Player::CreateFunctor( FLAG_ENABLED ) );
+		param_GetDead.push_back( Player::CreateFunctor( FLAG_ENABLED | FLAG_ALIVE ) );
 		Interface::DefineNative( "GetDead", param_GetDead );
 		Interface::SetupCommand( "GetDead", 30 );
 
@@ -223,11 +223,11 @@ void Game::LoadEnvironment()
     {
         FactoryObject& reference = *it;
 
-        if (!(*reference)->IsPersistent())
-            (*reference)->SetReference(0x00000000);
-
         if ((*reference)->GetReference() != PLAYER_REFERENCE)
         {
+            if (!(*reference)->IsPersistent())
+                (*reference)->SetReference(0x00000000);
+
             switch (GameFactory::GetType(*reference))
             {
                 case ID_OBJECT:
@@ -967,7 +967,7 @@ void Game::net_SetActorDead( FactoryObject reference, bool dead )
 
         if (dead)
             KillActor(reference, key);
-        else
+        else if (actor->GetReference() != PLAYER_REFERENCE)
         {
             RemoveObject(reference);
             actor->SetReference(0x00000000);
@@ -1062,7 +1062,7 @@ void Game::GetParentCell( vector<FactoryObject> reference, unsigned int cell )
 	}
 }
 
-void Game::GetDead( vector<FactoryObject> reference, bool dead )
+void Game::GetDead( vector<FactoryObject>& reference, bool dead )
 {
 	Actor* actor = vaultcast<Actor>( reference[0] );
 
@@ -1096,7 +1096,11 @@ void Game::GetDead( vector<FactoryObject> reference, bool dead )
 		Network::Queue( response );
 
         if (actor == self && !dead)
+        {
+            GameFactory::LeaveReference(reference[0]);
+            GameFactory::LeaveReference(reference[1]);
             Game::LoadEnvironment();
+        }
     }
 }
 
