@@ -141,27 +141,27 @@ class Game
 		/**
 		 * \brief Adds an Item to a Container
 		 */
-		static void AddItem( vector<FactoryObject> reference, bool silent = true );
-		static void AddItem( FactoryObject reference, unsigned int baseID, unsigned int count, double condition, bool silent = true );
+		static void AddItem( vector<FactoryObject> reference, bool silent = true, signed int key = 0 );
+		static void AddItem( FactoryObject reference, unsigned int baseID, unsigned int count, double condition, bool silent = true, signed int key = 0 );
 		/**
 		 * \brief Removes an Item from a Container
 		 */
-		static void RemoveItem( vector<FactoryObject> reference, bool silent = true );
-		static void RemoveItem( FactoryObject reference, unsigned int baseID, unsigned int count, bool silent = true );
+		static void RemoveItem( vector<FactoryObject> reference, bool silent = true, signed int key = 0 );
+		static void RemoveItem( FactoryObject reference, unsigned int baseID, unsigned int count, bool silent = true, signed int key = 0 );
 		/**
 		 * \brief Removes all items from a Container
 		 */
-		static void RemoveAllItems( FactoryObject reference );
+		static void RemoveAllItems( FactoryObject reference, signed int key = 0 );
 		/**
 		 * \brief Makes an Actor equip an Item
 		 */
-		static void EquipItem( vector<FactoryObject> reference, bool stick = true, bool silent = true );
-		static void EquipItem( FactoryObject reference, unsigned int baseID, bool stick = true, bool silent = true );
+		static void EquipItem( vector<FactoryObject> reference, bool stick = true, bool silent = true, signed int key = 0 );
+		static void EquipItem( FactoryObject reference, unsigned int baseID, bool stick = true, bool silent = true, signed int key = 0 );
 		/**
 		 * \brief Makes an Actor unequip an Item
 		 */
-		static void UnequipItem( vector<FactoryObject> reference, bool stick = true, bool silent = true );
-		static void UnequipItem( FactoryObject reference, unsigned int baseID, bool stick = true, bool silent = true );
+		static void UnequipItem( vector<FactoryObject> reference, bool stick = true, bool silent = true, signed int key = 0 );
+		static void UnequipItem( FactoryObject reference, unsigned int baseID, bool stick = true, bool silent = true, signed int key = 0 );
 
         /**
          * Network functions

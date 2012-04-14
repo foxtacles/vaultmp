@@ -60,6 +60,7 @@ class Container : public Object
 		static bool Diff_sort( pair<unsigned int, Diff> diff, pair<unsigned int, Diff> diff2 );
 
 		list<NetworkID> container;
+		Value<bool> flag_Lock;
 
 		StripCopy Strip() const;
 
@@ -90,12 +91,13 @@ class Container : public Object
 		GameDiff ApplyDiff( ContainerDiff& diff );
 		static void FreeDiff( ContainerDiff& diff );
 
+        Lockable* getLock();
 		bool IsEmpty() const;
 		void PrintContainer() const;
 		unsigned int GetItemCount(unsigned int baseID) const;
-		void FlushContainer();
 		const list<NetworkID>& GetItemList() const;
 
+        void FlushContainer();
 		NetworkID Copy() const;
 
 		/**

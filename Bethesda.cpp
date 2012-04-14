@@ -29,7 +29,7 @@ void Bethesda::CommandHandler( signed int key, vector<double>& info, double resu
 
 		Lockable* data = NULL;
 
-		if ( key != 0x00000000 )
+		if (key)
 			data = Lockable::BlindUnlock( key );
 
 		FactoryObject reference, self;

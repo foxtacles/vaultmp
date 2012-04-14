@@ -601,17 +601,17 @@ void Game::SetActorMovingAnimation(FactoryObject reference, signed int key)
     Interface::EndDynamic();
 }
 
-void Game::AddItem( vector<FactoryObject> reference, bool silent )
+void Game::AddItem( vector<FactoryObject> reference, bool silent, signed int key )
 {
 	Item* item = vaultcast<Item>( reference[1] );
 
 	if ( !item )
 		throw VaultException( "Object with reference %08X is not an Item", ( *reference[1] )->GetReference() );
 
-    AddItem(reference[0], item->GetBase(), item->GetItemCount(), item->GetItemCondition(), silent);
+    AddItem(reference[0], item->GetBase(), item->GetItemCount(), item->GetItemCondition(), silent, key);
 }
 
-void Game::AddItem( FactoryObject reference, unsigned int baseID, unsigned int count, double condition, bool silent )
+void Game::AddItem( FactoryObject reference, unsigned int baseID, unsigned int count, double condition, bool silent, signed int key )
 {
     Container* container = vaultcast<Container>( reference );
 
@@ -628,7 +628,7 @@ void Game::AddItem( FactoryObject reference, unsigned int baseID, unsigned int c
         param_AddItem.push_back( BuildParameter(count) );
         param_AddItem.push_back( silent ? Data::Param_True : Data::Param_False );
 
-        Interface::ExecuteCommand( "AddItem", param_AddItem);
+        Interface::ExecuteCommand( "AddItem", param_AddItem, key);
     }
     else
     {*/
@@ -640,23 +640,23 @@ void Game::AddItem( FactoryObject reference, unsigned int baseID, unsigned int c
         param_AddItemHealthPercent.push_back( BuildParameter(condition / 100) );
         param_AddItemHealthPercent.push_back( silent ? Data::Param_True : Data::Param_False );
 
-        Interface::ExecuteCommand( "AddItemHealthPercent", param_AddItemHealthPercent);
+        Interface::ExecuteCommand( "AddItemHealthPercent", param_AddItemHealthPercent, key);
     //}
 
     Interface::EndDynamic();
 }
 
-void Game::RemoveItem( vector<FactoryObject> reference, bool silent )
+void Game::RemoveItem( vector<FactoryObject> reference, bool silent, signed int key )
 {
 	Item* item = vaultcast<Item>( reference[1] );
 
 	if ( !item )
 		throw VaultException( "Object with reference %08X is not an Item", ( *reference[1] )->GetReference() );
 
-    RemoveItem(reference[0], item->GetBase(), item->GetItemCount(), silent);
+    RemoveItem(reference[0], item->GetBase(), item->GetItemCount(), silent, key);
 }
 
-void Game::RemoveItem( FactoryObject reference, unsigned int baseID, unsigned int count, bool silent )
+void Game::RemoveItem( FactoryObject reference, unsigned int baseID, unsigned int count, bool silent, signed int key )
 {
 	Container* container = vaultcast<Container>( reference );
 
@@ -671,12 +671,12 @@ void Game::RemoveItem( FactoryObject reference, unsigned int baseID, unsigned in
     param_RemoveItem.push_back( BuildParameter(count) );
     param_RemoveItem.push_back( silent ? Data::Param_True : Data::Param_False );
 
-    Interface::ExecuteCommand( "RemoveItem", param_RemoveItem);
+    Interface::ExecuteCommand( "RemoveItem", param_RemoveItem, key);
 
     Interface::EndDynamic();
 }
 
-void Game::RemoveAllItems( FactoryObject reference )
+void Game::RemoveAllItems( FactoryObject reference, signed int key )
 {
 	Container* container = vaultcast<Container>( reference );
 
@@ -688,22 +688,22 @@ void Game::RemoveAllItems( FactoryObject reference )
     ParamContainer param_RemoveAllItems;
     param_RemoveAllItems.push_back( container->GetReferenceParam() );
 
-    Interface::ExecuteCommand( "RemoveAllItems", param_RemoveAllItems);
+    Interface::ExecuteCommand( "RemoveAllItems", param_RemoveAllItems, key);
 
     Interface::EndDynamic();
 }
 
-void Game::EquipItem( vector<FactoryObject> reference, bool stick, bool silent )
+void Game::EquipItem( vector<FactoryObject> reference, bool stick, bool silent, signed int key )
 {
 	Item* item = vaultcast<Item>( reference[1] );
 
 	if ( !item )
 		throw VaultException( "Object with reference %08X is not an Item", ( *reference[1] )->GetReference() );
 
-    RemoveItem(reference[0], item->GetBase(), stick, silent);
+    RemoveItem(reference[0], item->GetBase(), stick, silent, key);
 }
 
-void Game::EquipItem( FactoryObject reference, unsigned int baseID, bool stick, bool silent )
+void Game::EquipItem( FactoryObject reference, unsigned int baseID, bool stick, bool silent, signed int key )
 {
 	Actor* actor = vaultcast<Actor>( reference );
 
@@ -718,22 +718,22 @@ void Game::EquipItem( FactoryObject reference, unsigned int baseID, bool stick, 
     param_EquipItem.push_back( stick ? Data::Param_True : Data::Param_False );
     param_EquipItem.push_back( silent ? Data::Param_True : Data::Param_False );
 
-    Interface::ExecuteCommand( "EquipItem", param_EquipItem);
+    Interface::ExecuteCommand( "EquipItem", param_EquipItem, key);
 
     Interface::EndDynamic();
 }
 
-void Game::UnequipItem( vector<FactoryObject> reference, bool stick, bool silent )
+void Game::UnequipItem( vector<FactoryObject> reference, bool stick, bool silent, signed int key )
 {
 	Item* item = vaultcast<Item>( reference[1] );
 
 	if ( !item )
 		throw VaultException( "Object with reference %08X is not an Item", ( *reference[1] )->GetReference() );
 
-    RemoveItem(reference[0], item->GetBase(), stick, silent);
+    RemoveItem(reference[0], item->GetBase(), stick, silent, key);
 }
 
-void Game::UnequipItem( FactoryObject reference, unsigned int baseID, bool stick, bool silent )
+void Game::UnequipItem( FactoryObject reference, unsigned int baseID, bool stick, bool silent, signed int key )
 {
 	Actor* actor = vaultcast<Actor>( reference );
 
@@ -748,7 +748,7 @@ void Game::UnequipItem( FactoryObject reference, unsigned int baseID, bool stick
     param_UnequipItem.push_back( stick ? Data::Param_True : Data::Param_False );
     param_UnequipItem.push_back( silent ? Data::Param_True : Data::Param_False );
 
-    Interface::ExecuteCommand( "UnequipItem", param_UnequipItem);
+    Interface::ExecuteCommand( "UnequipItem", param_UnequipItem, key);
 
     Interface::EndDynamic();
 }
@@ -808,6 +808,12 @@ void Game::net_ContainerUpdate( FactoryObject reference, ContainerDiff diff )
 	if ( !container )
 		throw VaultException( "Object with reference %08X is not a Container", ( *reference )->GetReference() );
 
+    Lockable* result;
+
+    while (!(result = container->getLock()));
+
+    signed int key = result->Lock(true);
+
     GameDiff gamediff = container->ApplyDiff(diff);
     GameDiff::iterator it;
 
@@ -816,17 +822,19 @@ void Game::net_ContainerUpdate( FactoryObject reference, ContainerDiff diff )
         if (it->second.equipped)
         {
             if (it->second.equipped > 0)
-                EquipItem(reference, it->first);
+                EquipItem(reference, it->first, true, true, result->Lock(true));
             else if (it->second.equipped < 0)
-                UnequipItem(reference, it->first);
+                UnequipItem(reference, it->first, true, true, result->Lock(true));
         }
         else if (it->second.count > 0)
-            AddItem(reference, it->first, it->second.count, it->second.condition);
+            AddItem(reference, it->first, it->second.count, it->second.condition, true, result->Lock(true));
         else if (it->second.count < 0)
-            RemoveItem(reference, it->first, abs(it->second.count));
+            RemoveItem(reference, it->first, abs(it->second.count), true, result->Lock(true));
         //else
             // new condition, can't handle yet
     }
+
+    result->Unlock(key);
 }
 
 void Game::net_SetActorValue( FactoryObject reference, bool base, unsigned char index, double value )
@@ -1062,46 +1070,55 @@ void Game::ScanContainer( FactoryObject reference, vector<unsigned char>& data )
 	if ( !container )
 		throw VaultException( "Object with reference %08X is not a Container", ( *reference )->GetReference() );
 
-#pragma pack(push, 1)
-	struct ItemInfo
-	{
-		unsigned int baseID;
-		unsigned int amount;
-		unsigned int equipped;
-		double condition;
-	};
-#pragma pack(pop)
+    Lockable* result;
 
-	ItemInfo* items = reinterpret_cast<ItemInfo*>( &data[0] );
-	unsigned int count = data.size() / sizeof( ItemInfo );
+    if (result = container->getLock())
+    {
+        signed int key = result->Lock(true);
 
-	FactoryObject _temp = GameFactory::GetObject( GameFactory::CreateInstance( ID_CONTAINER, 0x00000000 ) );
-	Container* temp = vaultcast<Container>( _temp );
+        #pragma pack(push, 1)
+        struct ItemInfo
+        {
+            unsigned int baseID;
+            unsigned int amount;
+            unsigned int equipped;
+            double condition;
+        };
+        #pragma pack(pop)
 
-	for ( unsigned int i = 0; i < count; ++i )
-	{
-		FactoryObject _item = GameFactory::GetObject( GameFactory::CreateInstance( ID_ITEM, items[i].baseID ) );
-		Item* item = vaultcast<Item>( _item );
-		item->SetItemCount( items[i].amount );
-		item->SetItemEquipped( ( bool ) items[i].equipped );
-		item->SetItemCondition( items[i].condition );
-		temp->AddItem( item->GetNetworkID() );
-	}
+        ItemInfo* items = reinterpret_cast<ItemInfo*>( &data[0] );
+        unsigned int count = data.size() / sizeof( ItemInfo );
 
-	ContainerDiff diff = container->Compare( temp->GetNetworkID() );
+        FactoryObject _temp = GameFactory::GetObject( GameFactory::CreateInstance( ID_CONTAINER, 0x00000000 ) );
+        Container* temp = vaultcast<Container>( _temp );
 
-	if ( !diff.first.empty() || !diff.second.empty() )
-	{
-		pDefault* packet = PacketFactory::CreatePacket( ID_UPDATE_CONTAINER, container->GetNetworkID(), &diff);
-		NetworkResponse response = Network::CompleteResponse( Network::CreateResponse( packet,
-								   ( unsigned char ) HIGH_PRIORITY,
-								   ( unsigned char ) RELIABLE_ORDERED,
-								   CHANNEL_GAME,
-								   server ) );
-		Network::Queue( response );
+        for ( unsigned int i = 0; i < count; ++i )
+        {
+            FactoryObject _item = GameFactory::GetObject( GameFactory::CreateInstance( ID_ITEM, items[i].baseID ) );
+            Item* item = vaultcast<Item>( _item );
+            item->SetItemCount( items[i].amount );
+            item->SetItemEquipped( ( bool ) items[i].equipped );
+            item->SetItemCondition( items[i].condition );
+            temp->AddItem( item->GetNetworkID() );
+        }
 
-		container->ApplyDiff( diff );
-	}
+        ContainerDiff diff = container->Compare( temp->GetNetworkID() );
 
-	GameFactory::DestroyInstance( _temp );
+        if ( !diff.first.empty() || !diff.second.empty() )
+        {
+            pDefault* packet = PacketFactory::CreatePacket( ID_UPDATE_CONTAINER, container->GetNetworkID(), &diff);
+            NetworkResponse response = Network::CompleteResponse( Network::CreateResponse( packet,
+                                       ( unsigned char ) HIGH_PRIORITY,
+                                       ( unsigned char ) RELIABLE_ORDERED,
+                                       CHANNEL_GAME,
+                                       server ) );
+            Network::Queue( response );
+
+            container->ApplyDiff( diff );
+        }
+
+        GameFactory::DestroyInstance( _temp );
+
+        result->Unlock(key);
+    }
 }

@@ -398,6 +398,14 @@ NetworkID Container::Copy() const
 	return container->GetNetworkID();
 }
 
+Lockable* Container::getLock()
+{
+    if (flag_Lock.IsLocked())
+        return NULL;
+
+    return &flag_Lock;
+}
+
 bool Container::IsEmpty() const
 {
 	return container.empty();
