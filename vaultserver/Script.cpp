@@ -299,6 +299,23 @@ unsigned long long Script::CallPublicPAWN( string name, const vector<boost::any>
 	return Public::Call( name, args );
 }
 
+void Script::OnSpawn( FactoryObject reference )
+{
+	vector<Script*>::iterator it;
+	NetworkID id = ( *reference )->GetNetworkID();
+
+	for ( it = scripts.begin(); it != scripts.end(); ++it )
+	{
+		if ( ( *it )->cpp_script )
+		{
+		    if (( *it )->_OnSpawn)
+                ( *it )->_OnSpawn( id );
+		}
+		else if (PAWN::IsCallbackPresent(( AMX* ) ( *it )->handle, "OnSpawn"))
+			PAWN::Call( ( AMX* ) ( *it )->handle, "OnSpawn", "l", 0, id );
+	}
+}
+
 void Script::OnCellChange( FactoryObject reference, unsigned int cell )
 {
 	vector<Script*>::iterator it;
@@ -394,6 +411,23 @@ void Script::OnActorSneak( FactoryObject reference, bool sneaking )
 		}
 		else if (PAWN::IsCallbackPresent(( AMX* ) ( *it )->handle, "OnActorSneak"))
 			PAWN::Call( ( AMX* ) ( *it )->handle, "OnActorSneak", "il", 0, ( unsigned int ) sneaking, id );
+	}
+}
+
+void Script::OnActorDeath( FactoryObject reference )
+{
+	vector<Script*>::iterator it;
+	NetworkID id = ( *reference )->GetNetworkID();
+
+	for ( it = scripts.begin(); it != scripts.end(); ++it )
+	{
+		if ( ( *it )->cpp_script )
+		{
+		    if (( *it )->_OnActorDeath)
+                ( *it )->_OnActorDeath( id );
+		}
+		else if (PAWN::IsCallbackPresent(( AMX* ) ( *it )->handle, "OnActorDeath"))
+			PAWN::Call( ( AMX* ) ( *it )->handle, "OnActorDeath", "l", 0, id );
 	}
 }
 

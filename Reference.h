@@ -48,6 +48,10 @@ class Reference : public CriticalSection, public NetworkIDObject
 		 * \brief Retrieves the Reference's base ID
 		 */
 		unsigned int GetBase() const;
+		/**
+		 * \brief Determines if the reference ID is persistent
+		 */
+		bool IsPersistent() const;
 
 		/**
 		 * \brief Sets the Reference's reference ID

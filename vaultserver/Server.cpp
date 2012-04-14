@@ -59,7 +59,7 @@ NetworkResponse Server::LoadGame( RakNetGUID guid )
     vector<FactoryObject> references = GameFactory::GetObjectTypes(ALL_OBJECTS);
     vector<FactoryObject>::iterator it;
 
-    for (it = references.begin(); it != references.end(); ++it)
+    for (it = references.begin(); it != references.end(); GameFactory::LeaveReference(*it), ++it)
     {
         Object* object = vaultcast<Object>(*it);
 
@@ -69,8 +69,6 @@ NetworkResponse Server::LoadGame( RakNetGUID guid )
                             ( unsigned char ) RELIABLE_ORDERED,
                             CHANNEL_GAME,
                             guid ) );
-
-        GameFactory::LeaveReference(*it);
     }
 
 	pDefault* packet = PacketFactory::CreatePacket( ID_GAME_LOAD );
@@ -106,6 +104,8 @@ NetworkResponse Server::NewPlayer( RakNetGUID guid, NetworkID id)
 						( unsigned char ) RELIABLE_ORDERED,
 						CHANNEL_GAME,
 						Client::GetNetworkList( client ) ) );
+
+    Script::OnSpawn(_player);
 
 	return response;
 }
@@ -289,6 +289,36 @@ NetworkResponse Server::GetActorState( RakNetGUID guid, FactoryObject reference,
 
 		if ( _sneaking )
 			Script::OnActorSneak( reference, sneaking );
+	}
+
+	return response;
+}
+
+NetworkResponse Server::GetActorDead( RakNetGUID guid, FactoryObject reference, bool dead )
+{
+	Actor* actor = vaultcast<Actor>( reference );
+
+	if ( !actor )
+		throw VaultException( "Object with reference %08X is not an Actor", ( *reference )->GetReference() );
+
+	NetworkResponse response;
+	bool result;
+
+	result = (bool) actor->SetActorDead(dead);
+
+	if ( result )
+	{
+		pDefault* packet = PacketFactory::CreatePacket( ID_UPDATE_DEAD, actor->GetNetworkID(), dead );
+		response = Network::CompleteResponse( Network::CreateResponse( packet,
+											  ( unsigned char ) HIGH_PRIORITY,
+											  ( unsigned char ) RELIABLE_ORDERED,
+											  CHANNEL_GAME,
+											  Client::GetNetworkList( guid ) ) );
+
+        if (dead)
+            Script::OnActorDeath(reference);
+        else
+            Script::OnSpawn(reference);
 	}
 
 	return response;

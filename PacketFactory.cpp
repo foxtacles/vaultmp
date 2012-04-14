@@ -167,6 +167,14 @@ pDefault* PacketFactory::CreatePacket( unsigned char type, ... )
             break;
         }
 
+        case ID_UPDATE_DEAD:
+        {
+            NetworkID id = va_arg( args, NetworkID );
+            bool dead = ( bool ) va_arg( args, unsigned int );
+            packet = new pActorDead( id, dead );
+            break;
+        }
+
         case ID_UPDATE_CONTROL:
         {
             NetworkID id = va_arg( args, NetworkID );
@@ -267,6 +275,10 @@ pDefault* PacketFactory::CreatePacket( unsigned char* stream, unsigned int len )
 
                 case ID_UPDATE_STATE:
                     packet = new pActorState( stream, len );
+                    break;
+
+                case ID_UPDATE_DEAD:
+                    packet = new pActorDead( stream, len );
                     break;
 
                 case ID_UPDATE_CONTROL:
@@ -565,6 +577,16 @@ void PacketFactory::Access( const pDefault* packet, ... )
                         *moving = update->_data.moving;
                         *alerted = update->_data.alerted;
                         *sneaking = update->_data.sneaking;
+                        break;
+                    }
+
+                    case ID_UPDATE_DEAD:
+                    {
+                        const pActorDead* update = dynamic_cast<const pActorDead*>( data );
+                        NetworkID* id = va_arg( args, NetworkID* );
+                        bool* dead = va_arg( args, bool* );
+                        *id = update->id;
+                        *dead = update->_data.dead;
                         break;
                     }
 

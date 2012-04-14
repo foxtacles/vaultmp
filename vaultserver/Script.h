@@ -84,11 +84,13 @@ class Script
 		static unsigned long long CallPublic( string name, ... );
 		static unsigned long long CallPublicPAWN( string name, const vector<boost::any>& args );
 
+        static void OnSpawn( FactoryObject reference );
 		static void OnCellChange( FactoryObject reference, unsigned int cell );
 		static void OnContainerItemChange( FactoryObject reference, unsigned int baseID, signed int count, double condition );
 		static void OnActorValueChange( FactoryObject reference, unsigned char index, bool base, double value );
 		static void OnActorAlert( FactoryObject reference, bool alerted );
 		static void OnActorSneak( FactoryObject reference, bool sneaking );
+		static void OnActorDeath( FactoryObject reference );
 		static void OnActorEquipItem( FactoryObject reference, unsigned int baseID, double condition );
 		static void OnActorUnequipItem( FactoryObject reference, unsigned int baseID, double condition );
 		static void OnPlayerDisconnect( FactoryObject reference, unsigned char reason );

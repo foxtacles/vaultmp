@@ -52,7 +52,7 @@ Base VAULTSCRIPT OnPlayerRequestGame( ID player )
 
 void VAULTSCRIPT OnSpawn( ID object )
 {
-
+    printf("spawn\n");
 }
 
 void VAULTSCRIPT OnCellChange( ID object, Cell cell )
@@ -87,7 +87,7 @@ void VAULTSCRIPT OnActorSneak( ID actor, State sneaking )
 
 void VAULTSCRIPT OnActorDeath( ID actor )
 {
-
+    printf("dead\n");
 }
 
 void VAULTSCRIPT OnActorEquipItem( ID actor, Base base, Value value )

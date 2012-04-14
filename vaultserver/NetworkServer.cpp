@@ -223,6 +223,16 @@ NetworkResponse NetworkServer::ProcessPacket( Packet* data )
                                             break;
                                         }
 
+                                    case ID_UPDATE_DEAD:
+                                        {
+                                            NetworkID id;
+                                            bool dead;
+                                            PacketFactory::Access( packet, &id, &dead );
+                                            FactoryObject reference = GameFactory::GetObject( id );
+                                            response = Server::GetActorDead( data->guid, reference, dead );
+                                            break;
+                                        }
+
                                     case ID_UPDATE_CONTROL:
                                         {
                                             NetworkID id;

@@ -60,6 +60,12 @@ unsigned int Reference::GetBase() const
 	return baseID.get();
 }
 
+bool Reference::IsPersistent() const
+{
+    unsigned int refID = GetReference();
+    return !(refID & 0xFF000000) && refID;
+}
+
 const Parameter Reference::GetReferenceParam() const
 {
 	return Parameter( vector<string> {Utils::LongToHex( refID.get() )}, NULL );

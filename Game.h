@@ -139,6 +139,10 @@ class Game
 		 */
 		static void SetActorMovingAnimation( FactoryObject reference, signed int key = 0 );
 		/**
+		 * \brief Kills an Actor
+		 */
+		static void KillActor( FactoryObject reference, signed int key = 0 );
+		/**
 		 * \brief Adds an Item to a Container
 		 */
 		static void AddItem( vector<FactoryObject> reference, bool silent = true, signed int key = 0 );
@@ -191,6 +195,10 @@ class Game
 		 * \brief Network function to handle Actor state
 		 */
 		static void net_SetActorState( FactoryObject reference, unsigned char index, unsigned char moving, bool alerted, bool sneaking );
+		/**
+		 * \brief Network function to handle Actor death
+		 */
+		static void net_SetActorDead( FactoryObject reference, bool dead );
 
         /**
          * Interface functions
@@ -208,6 +216,10 @@ class Game
 		 * \brief Handles GetParentCell command result
 		 */
 		static void GetParentCell( vector<FactoryObject> reference, unsigned int cell );
+		/**
+		 * \brief Handles GetDead command result
+		 */
+		static void GetDead( vector<FactoryObject> reference, bool dead );
 		/**
 		 * \brief Handles GetActorValue command result
 		 */

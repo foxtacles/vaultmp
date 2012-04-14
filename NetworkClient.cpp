@@ -302,6 +302,16 @@ NetworkResponse NetworkClient::ProcessPacket( Packet* data )
                                             break;
                                         }
 
+                                    case ID_UPDATE_DEAD:
+                                        {
+                                            NetworkID id;
+                                            bool dead;
+                                            PacketFactory::Access( packet, &id, &dead );
+                                            FactoryObject reference = GameFactory::GetObject( id );
+                                            Game::net_SetActorDead( reference, dead );
+                                            break;
+                                        }
+
                                     default:
                                         throw VaultException( "Unhandled object update packet type %d", ( int ) data->data[1] );
                                 }

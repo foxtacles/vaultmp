@@ -216,11 +216,44 @@ void Game::LoadGame( string savegame )
 
 void Game::LoadEnvironment()
 {
-	FactoryObject reference = GameFactory::GetObject( PLAYER_REFERENCE );
+	vector<FactoryObject> reference = GameFactory::GetObjectTypes(ALL_OBJECTS);
+	vector<FactoryObject>::iterator it;
 
-    // load environment
+    for (it = reference.begin(); it != reference.end(); GameFactory::LeaveReference(*it), ++it)
+    {
+        FactoryObject& reference = *it;
 
-    SetName( reference );
+        if (!(*reference)->IsPersistent())
+            (*reference)->SetReference(0x00000000);
+
+        if ((*reference)->GetReference() != PLAYER_REFERENCE)
+        {
+            switch (GameFactory::GetType(*reference))
+            {
+                case ID_OBJECT:
+                    NewObject(reference);
+                    break;
+
+                case ID_ITEM:
+                    NewItem(reference);
+                    break;
+
+                case ID_CONTAINER:
+                    NewContainer(reference);
+                    break;
+
+                case ID_ACTOR:
+                    NewActor(reference);
+                    break;
+
+                case ID_PLAYER:
+                    NewPlayer(reference);
+                    break;
+            }
+        }
+        else
+            SetName(reference);
+    }
 
     Interface::StartDynamic();
 
@@ -601,6 +634,22 @@ void Game::SetActorMovingAnimation(FactoryObject reference, signed int key)
     Interface::EndDynamic();
 }
 
+void Game::KillActor( FactoryObject reference, signed int key )
+{
+	Actor* actor = vaultcast<Actor>( reference );
+
+	if ( !actor )
+		throw VaultException( "Object with reference %08X is not an Actor", ( *reference )->GetReference() );
+
+    Interface::StartDynamic();
+
+    ParamContainer param_Kill;
+    param_Kill.push_back(actor->GetReferenceParam());
+    Interface::ExecuteCommand("Kill", param_Kill, key);
+
+    Interface::EndDynamic();
+}
+
 void Game::AddItem( vector<FactoryObject> reference, bool silent, signed int key )
 {
 	Item* item = vaultcast<Item>( reference[1] );
@@ -901,6 +950,32 @@ void Game::net_SetActorState( FactoryObject reference, unsigned char index, unsi
 	}
 }
 
+void Game::net_SetActorDead( FactoryObject reference, bool dead )
+{
+	Actor* actor = vaultcast<Actor>( reference );
+
+	if ( !actor )
+		throw VaultException( "Object with reference %08X is not an Actor", ( *reference )->GetReference() );
+
+    Lockable* result;
+
+    result = actor->SetActorDead(dead);
+
+    if (result)
+    {
+        signed int key = result->Lock(true);
+
+        if (dead)
+            KillActor(reference, key);
+        else
+        {
+            RemoveObject(reference);
+            actor->SetReference(0x00000000);
+            NewActor(reference);
+        }
+    }
+}
+
 void Game::GetPos( FactoryObject reference, unsigned char axis, double value )
 {
 	Object* object = vaultcast<Object>( reference );
@@ -985,6 +1060,44 @@ void Game::GetParentCell( vector<FactoryObject> reference, unsigned int cell )
 								   server ) );
 		Network::Queue( response );
 	}
+}
+
+void Game::GetDead( vector<FactoryObject> reference, bool dead )
+{
+	Actor* actor = vaultcast<Actor>( reference[0] );
+
+	if ( !actor )
+		throw VaultException( "Object with reference %08X is not an Actor", ( *reference[0] )->GetReference() );
+
+	Player* self = vaultcast<Player>( reference[1] );
+
+	if ( !self )
+		throw VaultException( "Object with reference %08X is not a Player", ( *reference[1] )->GetReference() );
+
+    /*if (actor != self && !self->GetActorAlerted())
+    {
+        // "bug death"
+
+        return;
+    }*/
+
+	bool result;
+
+    result = (bool) actor->SetActorDead(dead);
+
+    if (result)
+    {
+		pDefault* packet = PacketFactory::CreatePacket( ID_UPDATE_DEAD, actor->GetNetworkID(), dead );
+		NetworkResponse response = Network::CompleteResponse( Network::CreateResponse( packet,
+								   ( unsigned char ) HIGH_PRIORITY,
+								   ( unsigned char ) RELIABLE_ORDERED,
+								   CHANNEL_GAME,
+								   server ) );
+		Network::Queue( response );
+
+        if (actor == self && !dead)
+            Game::LoadEnvironment();
+    }
 }
 
 void Game::GetActorValue( FactoryObject reference, bool base, unsigned char index, double value )

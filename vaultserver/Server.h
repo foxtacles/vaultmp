@@ -71,6 +71,10 @@ class Server
 		 */
 		static NetworkResponse GetActorState( RakNetGUID guid, FactoryObject reference, unsigned char index, unsigned char moving, bool alerted, bool sneaking );
 		/**
+		 * \brief Handles actor dead network packet
+		 */
+		static NetworkResponse GetActorDead( RakNetGUID guid, FactoryObject reference, bool dead );
+		/**
 		 * \brief Handles player control network packet
 		 */
 		static NetworkResponse GetPlayerControl( RakNetGUID guid, FactoryObject reference, unsigned char control, unsigned char key );

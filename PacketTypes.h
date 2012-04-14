@@ -987,6 +987,11 @@ class pContainerUpdate : public pObjectUpdateDefault
         bool alerted;
         bool sneaking;
     };
+
+    struct _pActorDead
+    {
+        bool dead;
+    };
 #pragma pack(pop)
 
 class pActorValue : public pObjectUpdateDefault
@@ -1034,6 +1039,27 @@ class pActorState : public pObjectUpdateDefault
 
 		pActorState( const pActorState& );
 		pActorState& operator=( const pActorState& );
+};
+
+class pActorDead : public pObjectUpdateDefault
+{
+		friend class PacketFactory;
+
+	private:
+		_pActorDead _data;
+
+		pActorDead( NetworkID id, bool dead ) : pObjectUpdateDefault( ID_ACTOR_UPDATE, ID_UPDATE_DEAD, id )
+		{
+			_data.dead = dead;
+			construct( &_data, sizeof( _data ) );
+		}
+		pActorDead( unsigned char* stream, unsigned int len ) : pObjectUpdateDefault( stream, len )
+		{
+			deconstruct( &_data, sizeof( _data ) );
+		}
+
+		pActorDead( const pActorDead& );
+		pActorDead& operator=( const pActorDead& );
 };
 
 /* ************************************** */

@@ -87,7 +87,14 @@ void Bethesda::CommandHandler( signed int key, vector<double>& info, double resu
 				break;
 
 			case Functions::Func_GetDead:
-				break;
+                {
+                    vector<FactoryObject> objects = GameFactory::GetMultiple(vector<unsigned int>{getFrom<double, unsigned int>(info.at(1)), PLAYER_REFERENCE});
+                    Game::GetDead( objects, result );
+                    break;
+                }
+
+            case Functions::Func_Kill:
+                break;
 
 			case Functions::Func_MoveTo:
 				break;
@@ -153,8 +160,8 @@ void Bethesda::CommandHandler( signed int key, vector<double>& info, double resu
 
 			case Fallout3::Functions::Func_Load:
 			case FalloutNV::Functions::Func_Load:
-                Game::FutureSet<bool>( data, true );
                 Game::LoadEnvironment();
+                Game::FutureSet<bool>( data, true );
 				break;
 
 			case Fallout3::Functions::Func_SetName:
