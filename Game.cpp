@@ -234,9 +234,9 @@ void Game::LoadEnvironment()
                     NewObject(reference);
                     break;
 
-                case ID_ITEM:
-                    NewItem(reference);
-                    break;
+                //case ID_ITEM: // don't create items of containers
+                    //NewItem(reference);
+                    //break;
 
                 case ID_CONTAINER:
                     NewContainer(reference);

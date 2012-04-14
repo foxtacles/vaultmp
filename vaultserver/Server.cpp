@@ -63,6 +63,9 @@ NetworkResponse Server::LoadGame( RakNetGUID guid )
     {
         Object* object = vaultcast<Object>(*it);
 
+        if (vaultcast<Item>(*it))
+            continue; // FIXME, this is to not send items in a container
+
         pDefault* packet = object->toPacket();
         response.push_back( Network::CreateResponse( packet,
                             ( unsigned char ) HIGH_PRIORITY,
