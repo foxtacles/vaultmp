@@ -30,12 +30,17 @@ static const unsigned FalloutNVpatch_delegator_src = 0x0086B3E3;
 static const unsigned FalloutNVpatch_delegator_dest = 0x0086E649;
 static const unsigned FalloutNVpatch_delegatorCall_src = 0x0086E64A;
 static const unsigned FalloutNVpatch_delegatorCall_dest = ( unsigned ) &BethesdaDelegator;
+static const unsigned FalloutNVpatch_noRespawn_NOP = 0x00851304; // 2x NOP
+static const unsigned FalloutNVpatch_noRespawn_jmp = 0x0093FF83;
 
 static const unsigned Fallout3patch_PlayGroup = 0x0045F704;
 static const unsigned Fallout3patch_delegator_src = 0x006EEC86;
 static const unsigned Fallout3patch_delegator_dest = 0x006EDBD9;
 static const unsigned Fallout3patch_delegatorCall_src = 0x006EDBDA;
 static const unsigned Fallout3patch_delegatorCall_dest = ( unsigned ) &BethesdaDelegator;
+static const unsigned Fallout3patch_noRespawn_NOP = 0x006D5965; // 2x NOP
+static const unsigned Fallout3patch_noRespawn_jmp_src = 0x0078B230;
+static const unsigned Fallout3patch_noRespawn_jmp_dest = 0x0078B2B9;
 
 // Those snippets are from FOSE, thanks
 
@@ -630,9 +635,12 @@ void PatchGame( HINSTANCE& silverlock )
 				SafeWrite8( Fallout3patch_delegator_dest, 0x51 ); // PUSH ECX
 				SafeWrite8( Fallout3patch_delegatorCall_src + 5, 0x59 ); // POP ECX
 				SafeWrite8( Fallout3patch_PlayGroup, 0xEB ); // JMP SHORT
+				SafeWrite8( Fallout3patch_noRespawn_NOP, 0x90); // NOP
+				SafeWrite8( Fallout3patch_noRespawn_NOP + 1, 0x90); // NOP
 
 				WriteRelCall( Fallout3patch_delegatorCall_src, Fallout3patch_delegatorCall_dest );
 				WriteRelCall( Fallout3patch_delegator_src, Fallout3patch_delegator_dest );
+				WriteRelJump( Fallout3patch_noRespawn_jmp_src, Fallout3patch_noRespawn_jmp_dest );
 
 				break;
 			}
@@ -645,6 +653,9 @@ void PatchGame( HINSTANCE& silverlock )
 				SafeWrite8( FalloutNVpatch_delegator_dest, 0x51 ); // PUSH ECX
 				SafeWrite8( FalloutNVpatch_delegatorCall_src + 5, 0x59 ); // POP ECX
 				SafeWrite8( FalloutNVpatch_PlayGroup, 0xEB ); // JMP SHORT
+				SafeWrite8( FalloutNVpatch_noRespawn_NOP, 0x90); // NOP
+				SafeWrite8( FalloutNVpatch_noRespawn_NOP + 1, 0x90); // NOP
+				SafeWrite8( FalloutNVpatch_noRespawn_jmp, 0xEB ); // JMP SHORT
 
 				WriteRelCall( FalloutNVpatch_delegatorCall_src, FalloutNVpatch_delegatorCall_dest );
 				WriteRelCall( FalloutNVpatch_delegator_src, FalloutNVpatch_delegator_dest );

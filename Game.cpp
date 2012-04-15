@@ -120,7 +120,7 @@ void Game::Startup()
 		Interface::SetupCommand( "GetActorState" );
 
 		ParamContainer param_GetParentCell;
-		param_GetParentCell.push_back( Player::CreateFunctor( 0x00000000 ) );
+		param_GetParentCell.push_back( Player::CreateFunctor( FLAG_ALIVE ) );
 		Interface::DefineNative( "GetParentCell", param_GetParentCell );
 		Interface::SetupCommand( "GetParentCell", 30 );
 
