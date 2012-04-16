@@ -371,8 +371,6 @@
 		<Unit filename="..\Value.h" />
 		<Unit filename="..\VaultException.cpp" />
 		<Unit filename="..\VaultException.h" />
-		<Unit filename="..\VaultFunctor.cpp" />
-		<Unit filename="..\VaultFunctor.h" />
 		<Unit filename="..\iniparser\dictionary.c">
 			<Option compilerVar="CC" />
 		</Unit>
