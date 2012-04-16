@@ -60,7 +60,7 @@ class Game
 		/**
 		 * \brief Loads a savegame
 		 */
-		static void LoadGame( string savegame );
+		static void LoadGame( string savegame = string() );
 		/**
 		 * \brief Loads the environment after savegame load
 		 */
@@ -68,27 +68,27 @@ class Game
 		/**
 		 * \brief Creates a new Object
 		 */
-		static void NewObject( FactoryObject reference );
+		static void NewObject( FactoryObject& reference );
 		/**
 		 * \brief Creates a new Item
 		 */
-		static void NewItem( FactoryObject reference );
+		static void NewItem( FactoryObject& reference );
 		/**
 		 * \brief Creates a new Container
 		 */
-		static void NewContainer( FactoryObject reference );
+		static void NewContainer( FactoryObject& reference );
 		/**
 		 * \brief Creates a new Actor
 		 */
-		static void NewActor( FactoryObject reference );
+		static void NewActor( FactoryObject& reference );
 		/**
 		 * \brief Creates a new Player
 		 */
-		static void NewPlayer( FactoryObject reference );
+		static void NewPlayer( FactoryObject& reference );
 		/**
 		 * \brief Removes an Object from the game
 		 */
-		static void RemoveObject( FactoryObject& reference );
+		static void RemoveObject( FactoryObject reference );
 		/**
 		 * \brief Places an Object in-game
 		 */
@@ -198,7 +198,7 @@ class Game
 		/**
 		 * \brief Network function to handle Actor death
 		 */
-		static void net_SetActorDead( FactoryObject reference, bool dead );
+		static void net_SetActorDead( FactoryObject& reference, bool dead );
 
         /**
          * Interface functions
@@ -219,7 +219,7 @@ class Game
 		/**
 		 * \brief Handles GetDead command result
 		 */
-		static void GetDead( vector<FactoryObject>& reference, bool dead );
+		static void GetDead( vector<FactoryObject> reference, bool dead );
 		/**
 		 * \brief Handles GetActorValue command result
 		 */

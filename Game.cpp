@@ -185,7 +185,15 @@ template void Game::FutureSet(Lockable* data, bool t);
 
 void Game::LoadGame( string savegame )
 {
-	Utils::RemoveExtension( savegame );
+    static string last_savegame;
+
+    if (savegame.empty())
+        savegame = last_savegame;
+    else
+    {
+        Utils::RemoveExtension( savegame );
+        last_savegame = savegame;
+    }
 
     Value<bool>* store = new Value<bool>;
     signed int key = store->Lock( true );
@@ -264,7 +272,7 @@ void Game::LoadEnvironment()
     Interface::EndDynamic();
 }
 
-void Game::NewObject( FactoryObject reference )
+void Game::NewObject( FactoryObject& reference )
 {
 	Object* object = vaultcast<Object>(reference);
 
@@ -274,6 +282,8 @@ void Game::NewObject( FactoryObject reference )
         signed int key = store->Lock( true );
 
         PlaceAtMe(PLAYER_REFERENCE, object->GetBase(), 1, key);
+
+        GameFactory::LeaveReference(reference);
 
         unsigned int refID;
 
@@ -286,6 +296,9 @@ void Game::NewObject( FactoryObject reference )
             delete store;
             throw VaultException( "Object creation with baseID %08X and NetworkID %lld failed (%s)", object->GetBase(), object->GetNetworkID(), e.what() );
         }
+
+        reference = GameFactory::GetObject(refID);
+        object = vaultcast<Object>(reference);
 
         object->SetReference(refID);
         delete store;
@@ -303,14 +316,14 @@ void Game::NewObject( FactoryObject reference )
 	// maybe more
 }
 
-void Game::NewItem( FactoryObject reference )
+void Game::NewItem( FactoryObject& reference )
 {
     NewObject(reference);
 
     // set condition
 }
 
-void Game::NewContainer( FactoryObject reference )
+void Game::NewContainer( FactoryObject& reference )
 {
     NewObject(reference);
     RemoveAllItems(reference);
@@ -329,7 +342,7 @@ void Game::NewContainer( FactoryObject reference )
     }
 }
 
-void Game::NewActor( FactoryObject reference )
+void Game::NewActor( FactoryObject& reference )
 {
     NewObject(reference);
     NewContainer(reference);
@@ -348,7 +361,7 @@ void Game::NewActor( FactoryObject reference )
     SetActorMovingAnimation(reference);
 }
 
-void Game::NewPlayer( FactoryObject reference )
+void Game::NewPlayer( FactoryObject& reference )
 {
     NewObject(reference);
     NewContainer(reference);
@@ -357,7 +370,7 @@ void Game::NewPlayer( FactoryObject reference )
     // ...
 }
 
-void Game::RemoveObject( FactoryObject& reference )
+void Game::RemoveObject( FactoryObject reference )
 {
     Object* object = vaultcast<Object>(reference);
 
@@ -950,7 +963,7 @@ void Game::net_SetActorState( FactoryObject reference, unsigned char index, unsi
 	}
 }
 
-void Game::net_SetActorDead( FactoryObject reference, bool dead )
+void Game::net_SetActorDead( FactoryObject& reference, bool dead )
 {
 	Actor* actor = vaultcast<Actor>( reference );
 
@@ -972,6 +985,11 @@ void Game::net_SetActorDead( FactoryObject reference, bool dead )
             RemoveObject(reference);
             actor->SetReference(0x00000000);
             NewActor(reference);
+        }
+        else
+        {
+            GameFactory::LeaveReference(reference);
+            Game::LoadGame();
         }
     }
 }
@@ -1062,7 +1080,7 @@ void Game::GetParentCell( vector<FactoryObject> reference, unsigned int cell )
 	}
 }
 
-void Game::GetDead( vector<FactoryObject>& reference, bool dead )
+void Game::GetDead( vector<FactoryObject> reference, bool dead )
 {
 	Actor* actor = vaultcast<Actor>( reference[0] );
 
@@ -1094,13 +1112,6 @@ void Game::GetDead( vector<FactoryObject>& reference, bool dead )
 								   CHANNEL_GAME,
 								   server ) );
 		Network::Queue( response );
-
-        if (actor == self && !dead)
-        {
-            GameFactory::LeaveReference(reference[0]);
-            GameFactory::LeaveReference(reference[1]);
-            Game::LoadEnvironment();
-        }
     }
 }
 
