@@ -142,6 +142,7 @@ NetworkResponse NetworkClient::ProcessPacket( Packet* data )
                                 Bethesda::Initialize();
                                 Game::Initialize();
                                 Game::LoadGame( Utils::FileOnly( Bethesda::savegame.first.c_str() ) );
+                                Game::LoadEnvironment();
 
                                 response = NetworkClient::ProcessEvent( ID_EVENT_GAME_STARTED );
                                 break;

@@ -160,7 +160,6 @@ void Bethesda::CommandHandler( signed int key, vector<double>& info, double resu
 
 			case Fallout3::Functions::Func_Load:
 			case FalloutNV::Functions::Func_Load:
-                Game::LoadEnvironment();
                 Game::FutureSet<bool>( data, true );
 				break;
 

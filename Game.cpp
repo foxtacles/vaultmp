@@ -225,9 +225,11 @@ void Game::LoadGame( string savegame )
 void Game::LoadEnvironment()
 {
 	vector<FactoryObject> reference = GameFactory::GetObjectTypes(ALL_OBJECTS);
-	vector<FactoryObject>::iterator it;
+	vector<FactoryObject>::reverse_iterator it;
 
-    for (it = reference.begin(); it != reference.end(); GameFactory::LeaveReference(*it), ++it)
+    // reverse iteration: prevent concurrency issues due to possible unlock / relock in NewObject
+
+    for (it = reference.rbegin(); it != reference.rend(); GameFactory::LeaveReference(*it), ++it)
     {
         FactoryObject& reference = *it;
 
@@ -990,6 +992,7 @@ void Game::net_SetActorDead( FactoryObject& reference, bool dead )
         {
             GameFactory::LeaveReference(reference);
             Game::LoadGame();
+            Game::LoadEnvironment();
         }
     }
 }
