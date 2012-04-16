@@ -332,15 +332,14 @@ void Game::NewContainer( FactoryObject& reference )
 
     Container* container = vaultcast<Container>(reference);
     vector<FactoryObject> items = GameFactory::GetMultiple(vector<NetworkID>(container->GetItemList().begin(), container->GetItemList().end()));
-    vector<FactoryObject>::iterator it;
 
-    for (it = items.begin(); it != items.end(); ++it)
+    for (FactoryObject& _item : items)
     {
-        AddItem(vector<FactoryObject>{reference, *it});
-        Item* item = vaultcast<Item>(*it);
+        AddItem(vector<FactoryObject>{reference, _item});
+        Item* item = vaultcast<Item>(_item);
 
         if (item->GetItemEquipped())
-            EquipItem(vector<FactoryObject>{reference, *it});
+            EquipItem(vector<FactoryObject>{reference, _item});
     }
 }
 
@@ -350,12 +349,11 @@ void Game::NewActor( FactoryObject& reference )
     NewContainer(reference);
 
     vector<unsigned char> values = API::RetrieveAllValues();
-    vector<unsigned char>::iterator it;
 
-    for (it = values.begin(); it != values.end(); ++it)
+    for (unsigned char& value : values)
     {
-        SetActorValue(reference, true, *it);
-        SetActorValue(reference, false, *it);
+        SetActorValue(reference, true, value);
+        SetActorValue(reference, false, value);
     }
 
     SetActorAlerted(reference);
@@ -879,21 +877,20 @@ void Game::net_ContainerUpdate( FactoryObject reference, ContainerDiff diff )
     signed int key = result->Lock(true);
 
     GameDiff gamediff = container->ApplyDiff(diff);
-    GameDiff::iterator it;
 
-    for (it = gamediff.begin(); it != gamediff.end(); ++it)
+    for (pair<unsigned int, Diff>& diff : gamediff)
     {
-        if (it->second.equipped)
+        if (diff.second.equipped)
         {
-            if (it->second.equipped > 0)
-                EquipItem(reference, it->first, true, true, result->Lock(true));
-            else if (it->second.equipped < 0)
-                UnequipItem(reference, it->first, true, true, result->Lock(true));
+            if (diff.second.equipped > 0)
+                EquipItem(reference, diff.first, true, true, result->Lock(true));
+            else if (diff.second.equipped < 0)
+                UnequipItem(reference, diff.first, true, true, result->Lock(true));
         }
-        else if (it->second.count > 0)
-            AddItem(reference, it->first, it->second.count, it->second.condition, true, result->Lock(true));
-        else if (it->second.count < 0)
-            RemoveItem(reference, it->first, abs(it->second.count), true, result->Lock(true));
+        else if (diff.second.count > 0)
+            AddItem(reference, diff.first, diff.second.count, diff.second.condition, true, result->Lock(true));
+        else if (diff.second.count < 0)
+            RemoveItem(reference, diff.first, abs(diff.second.count), true, result->Lock(true));
         //else
             // new condition, can't handle yet
     }

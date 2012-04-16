@@ -74,10 +74,8 @@ void Interface::Terminate()
         if (hCommandThreadSend.joinable())
             hCommandThreadSend.join();
 
-        Native::iterator it;
-
-		for ( it = natives.begin(); it != natives.end(); ++it )
-			FreeContainer( it->second );
+		for ( pair<const string, ParamContainer>& native : natives )
+			FreeContainer( native.second );
 
 		static_cmdlist.clear();
 		dynamic_cmdlist.clear();
@@ -119,10 +117,8 @@ void Interface::EndSetup()
     vector<unsigned int> priorities;
     priorities.reserve(priorityMap.size());
 
-    PriorityMap::iterator it;
-
-    for (it = priorityMap.begin(); it != priorityMap.end(); ++it)
-        priorities.push_back(it->first);
+    for (pair<const unsigned int, Native::iterator>& priority : priorityMap)
+        priorities.push_back(priority.first);
 
     vector<unsigned int>::iterator it2 = unique(priorities.begin(), priorities.end());
     priorities.resize(it2 - priorities.begin());
@@ -136,9 +132,9 @@ void Interface::EndSetup()
     {
         list<Native::iterator> content = list<Native::iterator>();
 
-        for (it = priorityMap.begin(); it != priorityMap.end(); ++it)
-            if (((i + 1) % it->first) == 0)
-                content.push_back(it->second);
+        for (pair<const unsigned int, Native::iterator>& priority : priorityMap)
+            if (((i + 1) % priority.first) == 0)
+                content.push_back(priority.second);
 
         static_cmdlist.push_back(content);
     }
@@ -299,10 +295,9 @@ void Interface::CommandThreadReceive()
 				if ( code == PIPE_OP_RETURN || code == PIPE_OP_RETURN_BIG )
 				{
 					vector<CommandResult> result = API::Translate( buffer );
-					vector<CommandResult>::iterator it;
 
-					for ( it = result.begin(); it != result.end(); ++it )
-						resultHandler( it->first.first.first, it->first.first.second, it->first.second, it->second );
+					for ( CommandResult& _result : result )
+						resultHandler( _result.first.first.first, _result.first.first.second, _result.first.second, _result.second );
 				}
 
 				else if ( code == PIPE_SYS_WAKEUP )
