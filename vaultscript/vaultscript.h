@@ -41,6 +41,8 @@ namespace vaultmp
 	static const Index MAX_PLAYER_NAME      =   16;
 	static const Index MAX_PASSWORD_SIZE    =   16;
 
+	static const Interval DEFAULT_PLAYER_RESPAWN    =   8000;
+
 };
 
 extern "C" {

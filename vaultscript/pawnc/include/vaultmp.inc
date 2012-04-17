@@ -10,6 +10,8 @@
 #define MAX_PLAYER_NAME		16
 #define MAX_PASSWORD_SIZE	16
 
+#define DEFAULT_PLAYER_RESPAWN	8000
+
 // Callbacks
 
 forward OnSpawn(ID);
