@@ -52,7 +52,7 @@ Base VAULTSCRIPT OnPlayerRequestGame( ID player )
 
 void VAULTSCRIPT OnSpawn( ID object )
 {
-    printf("spawn\n");
+
 }
 
 void VAULTSCRIPT OnCellChange( ID object, Cell cell )
