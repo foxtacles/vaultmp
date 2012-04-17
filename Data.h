@@ -13,11 +13,13 @@
 #include "VaultException.h"
 #include "VaultFunctor.h"
 
-template <typename K, typename V>
+// map, multimap
+
+template <template<class, class, class, class> class T, typename K, typename V, typename C, typename A>
 inline
-static typename map<K, V>::iterator SAFE_FIND(map<K, V>& a, K b)
+static typename T<K, V, C, A>::iterator SAFE_FIND(T<K, V, C, A>& a, K b)
 {
-    typename map<K, V>::iterator c = a.find(b);
+    typename T<K, V, C, A>::iterator c = a.find(b);
 
     if (c != a.end())
         return c;
@@ -25,11 +27,37 @@ static typename map<K, V>::iterator SAFE_FIND(map<K, V>& a, K b)
     throw VaultException("Value %02X not defined in database", b);
 }
 
-template <typename K, typename V>
+template <template<class, class, class, class> class T, typename K, typename V, typename C, typename A>
 inline
-static typename map<K, V>::const_iterator SAFE_FIND(const map<K, V>& a, K b)
+static typename T<K, V, C, A>::const_iterator SAFE_FIND(const T<K, V, C, A>& a, K b)
 {
-    typename map<K, V>::const_iterator c = a.find(b);
+    typename T<K, V, C, A>::const_iterator c = a.find(b);
+
+    if (c != a.end())
+        return c;
+
+    throw VaultException("Value %02X not defined in database", b);
+}
+
+// unordered_map, unordered_multimap
+
+template <template<class, class, class, class, class> class T, typename K, typename V, typename H, typename P, typename A>
+inline
+static typename T<K, V, H, P, A>::iterator SAFE_FIND(T<K, V, H, P, A>& a, K b)
+{
+    typename T<K, V, H, P, A>::iterator c = a.find(b);
+
+    if (c != a.end())
+        return c;
+
+    throw VaultException("Value %02X not defined in database", b);
+}
+
+template <template<class, class, class, class, class> class T, typename K, typename V, typename H, typename P, typename A>
+inline
+static typename T<K, V, H, P, A>::const_iterator SAFE_FIND(const T<K, V, H, P, A>& a, K b)
+{
+    typename T<K, V, H, P, A>::const_iterator c = a.find(b);
 
     if (c != a.end())
         return c;

@@ -40,9 +40,9 @@ class Object : public Reference
 #endif
 
 		Value<string> object_Name;
-		map<unsigned char, Value<double> > object_Game_Pos;
-		map<unsigned char, Value<double> > object_Network_Pos;
-		map<unsigned char, Value<double> > object_Angle;
+		unordered_map<unsigned char, Value<double> > object_Game_Pos;
+		unordered_map<unsigned char, Value<double> > object_Network_Pos;
+		unordered_map<unsigned char, Value<double> > object_Angle;
 		Value<unsigned int> cell_Game;
 		Value<unsigned int> cell_Network;
 		Value<bool> state_Enabled;

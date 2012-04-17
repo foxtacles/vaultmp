@@ -54,8 +54,8 @@ class Actor : public Container
 
 		Database::const_iterator data;
 
-		map<unsigned char, Value<double> > actor_Values;
-		map<unsigned char, Value<double> > actor_BaseValues;
+		unordered_map<unsigned char, Value<double> > actor_Values;
+		unordered_map<unsigned char, Value<double> > actor_BaseValues;
 		Value<unsigned char> anim_Moving;
 		Value<unsigned char> state_MovingXY;
 		Value<bool> state_Alerted;

@@ -39,7 +39,7 @@ class Player : public Actor
 
         static unsigned int default_respawn;
 
-		map<unsigned char, pair<Value<unsigned char>, Value<bool> > > player_Controls;
+		unordered_map<unsigned char, pair<Value<unsigned char>, Value<bool> > > player_Controls;
 		Value<unsigned int> player_Respawn;
 
         void initialize();
