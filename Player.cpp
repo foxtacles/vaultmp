@@ -2,6 +2,8 @@
 
 using namespace std;
 
+unsigned int Player::default_respawn = DEFAULT_PLAYER_RESPAWN;
+
 #ifdef VAULTMP_DEBUG
 Debug* Player::debug = NULL;
 #endif
@@ -45,7 +47,7 @@ void Player::initialize()
 	for ( it = data.begin(); it != data.end(); ++it )
 		player_Controls.insert( pair<unsigned char, pair<Value<unsigned char>, Value<bool> > >( *it, pair<Value<unsigned char>, Value<bool> >( Value<unsigned char>(), Value<bool>( true ) ) ) );
 
-    player_Respawn.set(DEFAULT_PLAYER_RESPAWN);
+    player_Respawn.set(default_respawn);
 }
 
 #ifdef VAULTMP_DEBUG
@@ -57,6 +59,11 @@ void Player::SetDebugHandler( Debug* debug )
 		debug->Print( "Attached debug handler to Player class", true );
 }
 #endif
+
+void Player::SetRespawn(unsigned int respawn)
+{
+    default_respawn = respawn;
+}
 
 const Parameter Player::CreateFunctor( unsigned int flags, NetworkID player )
 {

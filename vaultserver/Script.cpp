@@ -62,6 +62,8 @@ Script::Script( char* path )
 		SetScriptFunction( "AxisToString", &API::RetrieveAxis_Reverse );
 		SetScriptFunction( "AnimToString", &API::RetrieveAnim_Reverse );
 
+		SetScriptFunction( "SetRespawn", &Script::SetRespawn );
+
 		SetScriptFunction( "GetReference", &Script::GetReference );
 		SetScriptFunction( "GetBase", &Script::GetBase );
 		SetScriptFunction( "GetName", &Script::GetName );
@@ -82,6 +84,8 @@ Script::Script( char* path )
         SetScriptFunction( "RemoveAllItems", &Script::RemoveAllItems );
 		SetScriptFunction( "SetActorValue", &Script::SetActorValue );
 		SetScriptFunction( "SetActorBaseValue", &Script::SetActorBaseValue );
+
+		SetScriptFunction( "SetPlayerRespawn", &Script::SetPlayerRespawn );
 
 		exec();
 	}
@@ -545,6 +549,11 @@ bool Script::OnClientAuthenticate( string name, string pwd )
 	return result;
 }
 
+void Script::SetRespawn(unsigned int respawn)
+{
+    Player::SetRespawn(respawn);
+}
+
 unsigned int Script::GetReference( NetworkID id )
 {
 	unsigned int value = 0;
@@ -854,4 +863,13 @@ void Script::SetActorBaseValue( NetworkID id, unsigned char index, double value 
             Network::Queue(response);
 	    }
 	}
+}
+
+void Script::SetPlayerRespawn( NetworkID id, unsigned int respawn )
+{
+    FactoryObject reference = GameFactory::GetObject( id );
+    Player* player = vaultcast<Player>( reference );
+
+    if (player)
+        player->SetPlayerRespawn(respawn);
 }

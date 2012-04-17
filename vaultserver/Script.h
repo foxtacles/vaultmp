@@ -99,6 +99,8 @@ class Script
 		static unsigned int OnPlayerRequestGame( FactoryObject reference );
 		static bool OnClientAuthenticate( string name, string pwd );
 
+        static void SetRespawn(unsigned int respawn);
+
 		static unsigned int GetReference( NetworkID id );
 		static unsigned int GetBase( NetworkID id );
 		static string GetName( NetworkID id );
@@ -119,6 +121,8 @@ class Script
         static void RemoveAllItems( NetworkID id );
 		static void SetActorValue( NetworkID id, unsigned char index, double value );
 		static void SetActorBaseValue( NetworkID id, unsigned char index, double value );
+
+		static void SetPlayerRespawn( NetworkID id, unsigned int respawn );
 
 };
 

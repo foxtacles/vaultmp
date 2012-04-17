@@ -37,6 +37,8 @@ class Player : public Actor
 		static Debug* debug;
 #endif
 
+        static unsigned int default_respawn;
+
 		map<unsigned char, pair<Value<unsigned char>, Value<bool> > > player_Controls;
 		Value<unsigned int> player_Respawn;
 
@@ -53,11 +55,9 @@ class Player : public Actor
 	public:
 
 		/**
-		 * \brief Retrieves all Players
-		 *
-		 * The function obtains a lock for every Player. You have to manually release the obtained STL vector of Player pointers via GameFactory::LeaveReference
+		 * \brief Sets the default respawn time
 		 */
-		static vector<Player*> GetPlayerList();
+		static void SetRespawn(unsigned int respawn);
 
 		/**
 		 * \brief Creates a Parameter containing a VaultFunctor initialized with the given flags

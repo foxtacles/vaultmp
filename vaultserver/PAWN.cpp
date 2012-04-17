@@ -35,6 +35,8 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"AxisToString", PAWN::vaultmp_AxisToString},
 	{"AnimToString", PAWN::vaultmp_AnimToString},
 
+	{"SetRespawn", PAWN::vaultmp_SetRespawn},
+
 	{"GetReference", PAWN::vaultmp_GetReference},
 	{"GetBase", PAWN::vaultmp_GetBase},
 	{"GetName", PAWN::vaultmp_GetName},
@@ -55,6 +57,8 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
     {"RemoveAllItems", PAWN::vaultmp_RemoveAllItems},
     {"SetActorValue", PAWN::vaultmp_SetActorValue},
     {"SetActorBaseValue", PAWN::vaultmp_SetActorBaseValue},
+
+	{"SetPlayerRespawn", PAWN::vaultmp_SetPlayerRespawn},
 
 	{0, 0}
 };
@@ -389,6 +393,17 @@ cell PAWN::vaultmp_AnimToString( AMX* amx, const cell* params )
 	return i;
 }
 
+cell PAWN::vaultmp_SetRespawn( AMX* amx, const cell* params )
+{
+	cell i = 1, respawn;
+
+	respawn = params[1];
+
+    Script::SetRespawn(respawn);
+
+	return i;
+}
+
 cell PAWN::vaultmp_GetReference( AMX* amx, const cell* params )
 {
 	cell i = 1, id;
@@ -650,6 +665,18 @@ cell PAWN::vaultmp_SetActorBaseValue( AMX* amx, const cell* params )
 	value = amx_ctof(params[3]);
 
     Script::SetActorBaseValue(id, index, value);
+
+	return i;
+}
+
+cell PAWN::vaultmp_SetPlayerRespawn( AMX* amx, const cell* params )
+{
+	cell i = 1, id, respawn;
+
+	id = params[1];
+	respawn = params[2];
+
+    Script::SetPlayerRespawn(id, respawn);
 
 	return i;
 }

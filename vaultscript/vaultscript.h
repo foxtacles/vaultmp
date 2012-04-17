@@ -76,6 +76,8 @@ extern "C" {
 	VAULTSCRIPT std::string ( *AxisToString )( vaultmp::Index );
 	VAULTSCRIPT std::string ( *AnimToString )( vaultmp::Index );
 
+    VAULTSCRIPT void ( *SetRespawn )( vaultmp::Interval );
+
 	VAULTSCRIPT vaultmp::Reference ( *GetReference )( vaultmp::ID );
 	VAULTSCRIPT vaultmp::Base ( *GetBase )( vaultmp::ID );
 	VAULTSCRIPT std::string ( *GetName )( vaultmp::ID );
@@ -96,5 +98,7 @@ extern "C" {
     VAULTSCRIPT void ( *RemoveAllItems )( vaultmp::ID );
 	VAULTSCRIPT void ( *SetActorValue )( vaultmp::ID, vaultmp::Index, vaultmp::Value );
 	VAULTSCRIPT void ( *SetActorBaseValue )( vaultmp::ID, vaultmp::Index, vaultmp::Value );
+
+	VAULTSCRIPT void ( *SetPlayerRespawn )( vaultmp::ID, vaultmp::Interval );
 
 }
