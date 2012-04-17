@@ -10,9 +10,32 @@
 #include "RakNet/RakString.h"
 #include "RakNet/MessageIdentifiers.h"
 
+#include "VaultException.h"
 #include "VaultFunctor.h"
 
-#define SAFE_FIND(a,b) ((a.find(b) == a.end()) ? throw VaultException("Value %02X not defined in database", b) : a.find(b))
+template <typename K, typename V>
+inline
+static typename map<K, V>::iterator SAFE_FIND(map<K, V>& a, K b)
+{
+    typename map<K, V>::iterator c = a.find(b);
+
+    if (c != a.end())
+        return c;
+
+    throw VaultException("Value %02X not defined in database", b);
+}
+
+template <typename K, typename V>
+inline
+static typename map<K, V>::const_iterator SAFE_FIND(const map<K, V>& a, K b)
+{
+    typename map<K, V>::const_iterator c = a.find(b);
+
+    if (c != a.end())
+        return c;
+
+    throw VaultException("Value %02X not defined in database", b);
+}
 
 static const unsigned int PLAYER_REFERENCE  = 0x00000014;
 static const unsigned int PLAYER_BASE       = 0x00000007;
