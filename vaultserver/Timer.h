@@ -33,6 +33,7 @@ class Timer : public ScriptFunction, public NetworkIDObject
 		bool markdelete;
 
 		static map<NetworkID, Timer*> timers;
+		static NetworkID last_timer;
 		static unsigned int msecs();
 
 	public:
@@ -46,6 +47,10 @@ class Timer : public ScriptFunction, public NetworkIDObject
 		 * Calls timer functions
 		 */
 		static void GlobalTick();
+		/**
+		 * \brief Returns the NetworkID of the latest timer
+		 */
+		static NetworkID LastTimer();
 		/**
 		 * \brief Terminates a timer
 		 */

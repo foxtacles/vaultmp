@@ -268,6 +268,9 @@ NetworkID Script::CreateTimerPAWNEx( ScriptFuncPAWN timer, AMX* amx, unsigned in
 
 void Script::KillTimer( NetworkID id )
 {
+    if (!id)
+        id = Timer::LastTimer();
+
 	Timer::Terminate( id );
 }
 
@@ -297,6 +300,27 @@ unsigned long long Script::CallPublic( string name, ... )
 unsigned long long Script::CallPublicPAWN( string name, const vector<boost::any>& args )
 {
 	return Public::Call( name, args );
+}
+
+unsigned long long Script::Timer_Respawn(NetworkID id)
+{
+    try
+    {
+        GameFactory::GetObject(id);
+    }
+    catch (...) { return 0; } // Player has already left the server
+
+    pDefault* packet = PacketFactory::CreatePacket( ID_UPDATE_DEAD, id, true );
+    NetworkResponse response = Network::CompleteResponse( Network::CreateResponse( packet,
+                                                    ( unsigned char ) HIGH_PRIORITY,
+                                                    ( unsigned char ) RELIABLE_ORDERED,
+                                                    CHANNEL_GAME,
+                                                    Client::GetClientFromPlayer(id)->GetGUID() ) );
+    Network::Queue(response);
+
+    KillTimer();
+
+    return 1;
 }
 
 void Script::OnSpawn( FactoryObject reference )

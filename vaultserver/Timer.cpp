@@ -1,6 +1,7 @@
 #include "Timer.h"
 
 map<NetworkID, Timer*> Timer::timers;
+NetworkID Timer::last_timer = 0;
 
 Timer::Timer( ScriptFunc timer, string def, vector<boost::any> args, unsigned int interval ) : markdelete( false ), ms( msecs() ), interval( interval ), args( args ), ScriptFunction( timer, def )
 {
@@ -43,12 +44,18 @@ void Timer::GlobalTick()
 
 		if ( ( msecs() - timer->ms ) > timer->interval )
 		{
+		    last_timer = it->first;
 			timer->Call( timer->args );
 			timer->ms = msecs();
 		}
 
 		++it;
 	}
+}
+
+NetworkID Timer::LastTimer()
+{
+    return last_timer;
 }
 
 void Timer::Terminate( NetworkID id )

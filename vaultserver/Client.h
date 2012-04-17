@@ -51,6 +51,10 @@ class Client
 		 */
 		static Client* GetClientFromID( unsigned int id );
 		/**
+		 * \brief Given the NetworkID, returns the Client
+		 */
+		static Client* GetClientFromPlayer( NetworkID id );
+		/**
 		 * \brief Returns a STL vector containing every RakNetGUID
 		 *
 		 * except (optional, Client*) - excludes a RakNetGUID from the result

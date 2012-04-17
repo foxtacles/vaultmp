@@ -14,6 +14,8 @@
 #include "Debug.h"
 #endif
 
+#define DEFAULT_PLAYER_RESPAWN  8000
+
 const unsigned int FLAG_MOVCONTROLS      = FLAG_NOTALERTED << 1;
 
 using namespace std;
@@ -36,6 +38,7 @@ class Player : public Actor
 #endif
 
 		map<unsigned char, pair<Value<unsigned char>, Value<bool> > > player_Controls;
+		Value<unsigned int> player_Respawn;
 
         void initialize();
 
@@ -76,6 +79,10 @@ class Player : public Actor
 		 * \brief Given a control code, returns its enabled state
 		 */
 		bool GetPlayerControlEnabled( unsigned char control ) const;
+		/**
+		 * \brief Returns the Player's respawn time
+		 */
+		unsigned int GetPlayerRespawn() const;
 
 		/**
 		 * \brief Associates a key to the Player's control code
@@ -85,6 +92,10 @@ class Player : public Actor
 		 * \brief Sets the enabled state of the given control code
 		 */
 		Lockable* SetPlayerControlEnabled( unsigned char control, bool state );
+		/**
+		 * \brief Sets the respawn time
+		 */
+		Lockable* SetPlayerRespawn( unsigned int respawn );
 
 		/**
 		 * \brief For network transfer

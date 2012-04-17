@@ -44,6 +44,8 @@ void Player::initialize()
 
 	for ( it = data.begin(); it != data.end(); ++it )
 		player_Controls.insert( pair<unsigned char, pair<Value<unsigned char>, Value<bool> > >( *it, pair<Value<unsigned char>, Value<bool> >( Value<unsigned char>(), Value<bool>( true ) ) ) );
+
+    player_Respawn.set(DEFAULT_PLAYER_RESPAWN);
 }
 
 #ifdef VAULTMP_DEBUG
@@ -69,6 +71,11 @@ unsigned char Player::GetPlayerControl( unsigned char control ) const
 bool Player::GetPlayerControlEnabled( unsigned char control ) const
 {
 	return SAFE_FIND( player_Controls, control )->second.second.get();
+}
+
+unsigned int Player::GetPlayerRespawn() const
+{
+    return player_Respawn.get();
 }
 
 Lockable* Player::SetPlayerControl( unsigned char control, unsigned char key )
@@ -109,6 +116,24 @@ Lockable* Player::SetPlayerControlEnabled( unsigned char control, bool state )
 #endif
 
 	return &data;
+}
+
+Lockable* Player::SetPlayerRespawn( unsigned int respawn )
+{
+	if ( player_Respawn.get() == respawn )
+		return NULL;
+
+	if ( !player_Respawn.set( respawn ) )
+		return NULL;
+
+#ifdef VAULTMP_DEBUG
+
+	if ( debug != NULL )
+		debug->PrintFormat( "Player respawn time was set to %d (ref: %08X)", true, respawn, this->GetReference() );
+
+#endif
+
+	return &player_Respawn;
 }
 
 pDefault* Player::toPacket()

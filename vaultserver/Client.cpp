@@ -54,6 +54,17 @@ Client* Client::GetClientFromID( unsigned int ID )
 	return NULL;
 }
 
+Client* Client::GetClientFromPlayer( NetworkID id )
+{
+	map<RakNetGUID, Client*>::iterator it;
+
+	for ( it = clients.begin(); it != clients.end(); ++it )
+		if ( it->second->GetPlayer() == id )
+			return it->second;
+
+	return NULL;
+}
+
 vector<RakNetGUID> Client::GetNetworkList( Client* except )
 {
 	vector<RakNetGUID> network;

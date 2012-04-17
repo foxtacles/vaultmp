@@ -990,6 +990,14 @@ void Game::net_SetActorDead( FactoryObject& reference, bool dead )
             GameFactory::LeaveReference(reference);
             Game::LoadGame();
             Game::LoadEnvironment();
+
+            pDefault* packet = PacketFactory::CreatePacket( ID_UPDATE_DEAD, actor->GetNetworkID(), dead );
+            NetworkResponse response = Network::CompleteResponse( Network::CreateResponse( packet,
+                                       ( unsigned char ) HIGH_PRIORITY,
+                                       ( unsigned char ) RELIABLE_ORDERED,
+                                       CHANNEL_GAME,
+                                       server ) );
+            Network::Queue( response );
         }
     }
 }
