@@ -308,9 +308,9 @@ unsigned long long Script::Timer_Respawn(NetworkID id)
     {
         GameFactory::GetObject(id);
     }
-    catch (...) { return 0; } // Player has already left the server
+    catch (...) { KillTimer(); return 0; } // Player has already left the server
 
-    pDefault* packet = PacketFactory::CreatePacket( ID_UPDATE_DEAD, id, true );
+    pDefault* packet = PacketFactory::CreatePacket( ID_UPDATE_DEAD, id, false );
     NetworkResponse response = Network::CompleteResponse( Network::CreateResponse( packet,
                                                     ( unsigned char ) HIGH_PRIORITY,
                                                     ( unsigned char ) RELIABLE_ORDERED,
