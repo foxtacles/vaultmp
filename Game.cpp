@@ -975,10 +975,8 @@ void Game::net_SetActorDead( FactoryObject& reference, bool dead )
 
     if (result)
     {
-        signed int key = result->Lock(true);
-
         if (dead)
-            KillActor(reference, key);
+            KillActor(reference, result->Lock(true));
         else if (actor->GetReference() != PLAYER_REFERENCE)
         {
             RemoveObject(reference);
@@ -987,11 +985,12 @@ void Game::net_SetActorDead( FactoryObject& reference, bool dead )
         }
         else
         {
+            NetworkID id = actor->GetNetworkID();
             GameFactory::LeaveReference(reference);
             Game::LoadGame();
             Game::LoadEnvironment();
 
-            pDefault* packet = PacketFactory::CreatePacket( ID_UPDATE_DEAD, actor->GetNetworkID(), dead );
+            pDefault* packet = PacketFactory::CreatePacket( ID_UPDATE_DEAD, id, dead );
             NetworkResponse response = Network::CompleteResponse( Network::CreateResponse( packet,
                                        ( unsigned char ) HIGH_PRIORITY,
                                        ( unsigned char ) RELIABLE_ORDERED,
