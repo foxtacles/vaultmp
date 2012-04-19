@@ -7,7 +7,17 @@
 
 using namespace std;
 
+// FOSE
+enum eEmotion {
+	happy	= 0,
+	sad		= 1,
+	neutral = 2,
+	pain	= 3
+};
+
 typedef void ( *CallCommand )( void*, void*, void*, void*, void*, void*, void*, void* );
+typedef bool (* QueueUIMessage_Fallout3)(const char* msg, unsigned int emotion, const char* ddsPath, const char* soundName, float msgTime);
+typedef bool (* QueueUIMessage_FalloutNV)(const char* msg, unsigned int emotion, const char* ddsPath, const char* soundName, float msgTime, char unk);
 typedef unsigned int ( *LookupForm )( unsigned int );
 typedef unsigned int ( *LookupFunc )( unsigned int );
 
@@ -16,6 +26,8 @@ static PipeServer pipeServer;
 static PipeClient pipeClient;
 static LookupForm FormLookup;
 static LookupFunc FuncLookup;
+static QueueUIMessage_Fallout3 QueueMessage_Fallout3;;
+static QueueUIMessage_FalloutNV QueueMessage_FalloutNV;
 
 static void PatchGame( HINSTANCE& silverlock );
 static void BethesdaDelegator();
@@ -324,6 +336,19 @@ bool vaultfunction( void* reference, void* result, void* args, unsigned short op
 				return true;
 			}
 
+		case 0xE003: // UIMessage - queue UI message
+			{
+				ZeroMemory( result, sizeof( double ) );
+				const char* data = ((char*) args) + 2; // skip length
+
+                if (game & FALLOUT3)
+                    QueueMessage_Fallout3(data, 0, NULL, NULL, 2.0); // add more later
+                else
+                    QueueMessage_FalloutNV(data, 0, NULL, NULL, 2.0, 0); // add more later
+
+				break;
+			}
+
 		default:
 			break;
 	}
@@ -619,7 +644,7 @@ void PatchGame( HINSTANCE& silverlock )
 	else if ( strstr( curdir, "FalloutNV.exe" ) )
 	{
 		game = NEWVEGAS;
-		silverlock = LoadLibrary( "nvse_1_1.dll" );
+		silverlock = LoadLibrary( "nvse_1_4.dll" );
 	}
 
 	if ( silverlock == NULL )
@@ -631,6 +656,7 @@ void PatchGame( HINSTANCE& silverlock )
 			{
 				FormLookup = ( LookupForm ) LOOKUP_FORM_FALLOUT3;
 				FuncLookup = ( LookupFunc ) LOOKUP_FUNC_FALLOUT3;
+                QueueMessage_Fallout3 = ( QueueUIMessage_Fallout3 ) QUEUE_UI_MESSAGE_FALLOUT3;
 
 				SafeWrite8( Fallout3patch_delegator_dest, 0x51 ); // PUSH ECX
 				SafeWrite8( Fallout3patch_delegatorCall_src + 5, 0x59 ); // POP ECX
@@ -649,6 +675,7 @@ void PatchGame( HINSTANCE& silverlock )
 			{
 				FormLookup = ( LookupForm ) LOOKUP_FORM_NEWVEGAS;
 				FuncLookup = ( LookupFunc ) LOOKUP_FUNC_NEWVEGAS;
+                QueueMessage_FalloutNV = ( QueueUIMessage_FalloutNV ) QUEUE_UI_MESSAGE_NEWVEGAS;
 
 				SafeWrite8( FalloutNVpatch_delegator_dest, 0x51 ); // PUSH ECX
 				SafeWrite8( FalloutNVpatch_delegatorCall_src + 5, 0x59 ); // POP ECX

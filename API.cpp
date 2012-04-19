@@ -48,21 +48,13 @@ struct API::op_Arg2
 	unsigned short unk2; // varies but not read
 	unsigned short numargs; // number of arguments passed
 	double param1;
-	double param2;
-	double param3;
-	double param4;
-	double param5;
-	double param6;
+	double more[16];
 
 	op_Arg2()
 	{
 		unk1 = 0x0001001C; // this is when we operate on a reference (via console)
 		param1 = 0x0000000000000000;
-		param2 = 0x0000000000000000;
-		param3 = 0x0000000000000000;
-		param4 = 0x0000000000000000;
-		param5 = 0x0000000000000000;
-		param6 = 0x0000000000000000;
+        ZeroMemory(more, sizeof(more));
 	}
 };
 
@@ -404,6 +396,7 @@ void API::Initialize( unsigned char game )
 	DefineFunction( "MarkForDelete", "r", Fallout::Func_MarkForDelete, FALLOUT_GAMES );
 	DefineFunction( "IsAnimPlaying", "rG", Fallout::Func_IsAnimPlaying, FALLOUT_GAMES );
 	DefineFunction( "ScanContainer", "r", Fallout::Func_ScanContainer, FALLOUT_GAMES );
+	DefineFunction( "UIMessage", "s", Fallout::Func_UIMessage, FALLOUT_GAMES );
 
 	DefineFunction( "Load", "$s", Fallout3::Func_Load, FALLOUT3 );
 	DefineFunction( "SetName", "rsB", Fallout3::Func_SetName, FALLOUT3 );
@@ -712,8 +705,8 @@ vector<double> API::ParseCommand( char* cmd, const char* def, op_default* result
 					{
 						unsigned short length = ( unsigned short ) strlen( tokenizer );
 
-						if ( length > 31 )
-							throw VaultException( "API::ParseCommand string argument exceeds the limit of 32 characters", tokenizer );
+						if ( length > 63 )
+							throw VaultException( "API::ParseCommand string argument exceeds the limit of 64 characters", tokenizer );
 
 						*reinterpret_cast<unsigned short*>(arg2_pos) = length;
 						memcpy( arg2_pos + sizeof(unsigned short), tokenizer, length +  sizeof(unsigned char) );

@@ -328,14 +328,14 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR cmdline,
 
 		if ( checksum == NEWVEGAS_EN_VER14_STEAM )
 		{
-			filecheck = fopen( "nvse_1_1.dll", "rb" );
+			filecheck = fopen( "nvse_1_4.dll", "rb" );
 
 			if ( filecheck != NULL )
 			{
 				fclose( filecheck );
-				Utils::GenerateChecksum( "nvse_1_1.dll", checksum, checksum_real );
+				Utils::GenerateChecksum( "nvse_1_4.dll", checksum, checksum_real );
 
-				if ( checksum_real == NVSE_VER0209 )
+				if ( checksum_real == NVSE_VER0212 )
 				{
 					games |= NEWVEGAS;
 				}

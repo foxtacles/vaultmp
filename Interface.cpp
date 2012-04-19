@@ -311,6 +311,8 @@ void Interface::CommandThreadReceive()
 
 #endif
 				}
+				else if ( code == PIPE_ERROR_CLOSE )
+                    throw VaultException( "Error in vaultmp.dll" );
 
 				else if ( code )
 					throw VaultException( "Unknown pipe code identifier %02X", code );

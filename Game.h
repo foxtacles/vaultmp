@@ -66,6 +66,10 @@ class Game
 		 */
 		static void LoadEnvironment();
 		/**
+		 * \brief Display a Fallout UI message
+		 */
+		static void UIMessage(string message);
+		/**
 		 * \brief Creates a new Object
 		 */
 		static void NewObject( FactoryObject& reference );

@@ -69,6 +69,7 @@ void Game::Initialize()
     Interface::DefineCommand( "IsAnimPlaying", "%0.IsAnimPlaying %1" );
     Interface::DefineCommand( "MarkForDelete", "%0.MarkForDelete" );
     Interface::DefineCommand( "ScanContainer", "%0.ScanContainer" );
+    Interface::DefineCommand( "UIMessage", "UIMessage %0" );
 
 	Interface::DefineCommand( "GetActorState", "%0.GetActorState %1" );
 	Interface::DefineCommand( "GetActorStateNotSelf", "%0.GetActorState", "GetActorState" );
@@ -267,6 +268,17 @@ void Game::LoadEnvironment()
     ParamContainer param_GetControl;
     param_GetControl.push_back( BuildParameter( API::RetrieveAllControls() ) );
     Interface::ExecuteCommand( "GetControl", param_GetControl );
+
+    Interface::EndDynamic();
+}
+
+void Game::UIMessage(string message)
+{
+    Interface::StartDynamic();
+
+    ParamContainer param_UIMessage;
+    param_UIMessage.push_back( BuildParameter( message ) ); // max 64 chars
+    Interface::ExecuteCommand( "UIMessage", param_UIMessage );
 
     Interface::EndDynamic();
 }

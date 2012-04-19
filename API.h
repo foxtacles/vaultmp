@@ -128,6 +128,7 @@ namespace Values
 			Func_IsAnimPlaying              = 0x1128,
 
 			Func_ScanContainer              = 0x0002 | VAULTFUNCTION,
+			Func_UIMessage                  = 0x0003 | VAULTFUNCTION,
 		};
 
 		/**

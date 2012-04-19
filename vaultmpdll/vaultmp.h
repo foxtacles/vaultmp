@@ -6,6 +6,7 @@
 
 static const unsigned int LOOKUP_FORM_FALLOUT3        = 0x00455190; // Credit goes to FOSE
 static const unsigned int LOOKUP_FUNC_FALLOUT3        = 0x00519AF0;
+static const unsigned int QUEUE_UI_MESSAGE_FALLOUT3   = 0x0061B850; // Credit goes to FOSE
 static const unsigned int ALERTED_STATE_FALLOUT3      = 0x006F6C70;
 static const unsigned int SNEAKING_STATE_FALLOUT3     = 0x006F58B0;
 static const unsigned int ITEM_COUNT_FALLOUT3         = 0x004E85E0;
@@ -21,6 +22,7 @@ static const unsigned int ITEM_UNK3_FALLOUT3          = 0x01090A78;
 
 static const unsigned int LOOKUP_FORM_NEWVEGAS        = 0x004839C0; // Credit goes to NVSE
 static const unsigned int LOOKUP_FUNC_NEWVEGAS        = 0x005B1120;
+static const unsigned int QUEUE_UI_MESSAGE_NEWVEGAS   = 0x007052F0; // Credit goes to NVSE
 static const unsigned int ALERTED_STATE_NEWVEGAS      = 0x008A16D0;
 static const unsigned int SNEAKING_STATE_NEWVEGAS     = 0x004997B0;
 static const unsigned int ITEM_COUNT_NEWVEGAS         = 0x00575590;
