@@ -532,7 +532,7 @@ void Game::SetAngle( FactoryObject reference )
 			AdjustZAngle( value, 45.0 );
 	}
 
-	param_SetAngle.push_back( BuildParameter( object->GetAngle(Axis_Z) ) );
+	param_SetAngle.push_back( BuildParameter( value ) );
 	Interface::ExecuteCommand( "SetAngle", param_SetAngle );
 
 	Interface::EndDynamic();
