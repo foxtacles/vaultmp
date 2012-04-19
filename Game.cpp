@@ -224,14 +224,11 @@ void Game::LoadGame( string savegame )
 
 void Game::LoadEnvironment()
 {
-	vector<FactoryObject> reference = GameFactory::GetObjectTypes(ALL_OBJECTS);
-	vector<FactoryObject>::reverse_iterator it;
+	vector<NetworkID> reference = GameFactory::GetIDObjectTypes(ALL_OBJECTS);
 
-    // reverse iteration: prevent concurrency issues due to possible unlock / relock in NewObject
-
-    for (it = reference.rbegin(); it != reference.rend(); GameFactory::LeaveReference(*it), ++it)
+    for (NetworkID& id : reference)
     {
-        FactoryObject& reference = *it;
+        FactoryObject reference = GameFactory::GetObject(id);
 
         if ((*reference)->GetReference() != PLAYER_REFERENCE)
         {
@@ -285,6 +282,7 @@ void Game::NewObject( FactoryObject& reference )
 
         PlaceAtMe(PLAYER_REFERENCE, object->GetBase(), 1, key);
 
+        NetworkID id = object->GetNetworkID();
         GameFactory::LeaveReference(reference);
 
         unsigned int refID;
@@ -299,7 +297,7 @@ void Game::NewObject( FactoryObject& reference )
             throw VaultException( "Object creation with baseID %08X and NetworkID %lld failed (%s)", object->GetBase(), object->GetNetworkID(), e.what() );
         }
 
-        reference = GameFactory::GetObject(refID);
+        reference = GameFactory::GetObject(id);
         object = vaultcast<Object>(reference);
 
         object->SetReference(refID);
@@ -345,7 +343,6 @@ void Game::NewContainer( FactoryObject& reference )
 
 void Game::NewActor( FactoryObject& reference )
 {
-    NewObject(reference);
     NewContainer(reference);
 
     vector<unsigned char> values = API::RetrieveAllValues();
@@ -363,8 +360,6 @@ void Game::NewActor( FactoryObject& reference )
 
 void Game::NewPlayer( FactoryObject& reference )
 {
-    NewObject(reference);
-    NewContainer(reference);
     NewActor(reference);
 
     // ...

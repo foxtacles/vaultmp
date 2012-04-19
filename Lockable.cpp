@@ -143,7 +143,7 @@ signed int Lockable::Lock( bool flat )
 #ifdef VAULTMP_DEBUG
 
 	if ( debug != NULL )
-		debug->PrintFormat( "%08X has been locked with key %08X", true, this, next_key );
+		debug->PrintFormat( "%08X (%s) has been locked with key %08X", true, this, typeid(*this).name(), next_key );
 
 #endif
 
@@ -180,7 +180,7 @@ Lockable* Lockable::Unlock( signed int key )
 #ifdef VAULTMP_DEBUG
 
 		if ( debug != NULL )
-			debug->PrintFormat( "%08X has been unlocked with key %08X", true, this, key );
+			debug->PrintFormat( "%08X (%s) has been unlocked with key %08X", true, this, typeid(*this).name(), key );
 
 #endif
 

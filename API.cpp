@@ -1033,7 +1033,8 @@ CommandParsed API::Translate( multimap<string, string>& cmd, signed int key )
         strcpy(content, it->second.c_str());
 
         op_default result;
-		vector<double> command = ParseCommand( content, func.first.c_str(), &result, func.second );
+
+        vector<double> command = ParseCommand( content, func.first.c_str(), &result, func.second );
 		unsigned char* data = BuildCommandStream(command, key, reinterpret_cast<unsigned char*>(&result), sizeof(op_default));
 		stream.push_back( data );
 	}

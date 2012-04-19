@@ -347,9 +347,9 @@ vector<string> ActorFunctor::operator()()
 
 			else if ( flags & FLAG_NOTALERTED && actor->GetActorAlerted() )
 				continue;
-		}
 
-		result.push_back( Utils::LongToHex( refID ) );
+            result.push_back( Utils::LongToHex( refID ) );
+		}
 	}
 
 	_next( result );

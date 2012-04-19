@@ -113,6 +113,10 @@ class GameFactory
 		 */
 		static vector<FactoryObject> GetObjectTypes( unsigned char type );
 		/**
+		 * \brief Returns the NetworkID's of all References of a given type
+		 */
+		static vector<NetworkID> GetIDObjectTypes( unsigned char type );
+		/**
 		 * \brief Invalidates a Reference held by a FactoryObject
 		 */
 		static void LeaveReference( FactoryObject& reference );

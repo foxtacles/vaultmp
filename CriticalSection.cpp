@@ -90,7 +90,7 @@ CriticalSection* CriticalSection::StartSession()
 	}
 	else
 #ifdef VAULTMP_DEBUG
-		throw VaultException( "Thread %s could not enter CriticalSection object %08X, timeout of %dms reached (%s)", thread_id().c_str(), this, CS_TIMEOUT, typeid( *this ).name() );
+		throw VaultException( "Thread %s could not enter CriticalSection object %08X, timeout of %dms reached (%s), %d locks", thread_id().c_str(), this, CS_TIMEOUT, typeid( *this ).name(), this->locks );
 #else
 		throw VaultException( "Could not enter CriticalSection object %08X, timeout of %dms reached (%s)", this, CS_TIMEOUT, typeid( *this ).name() );
 #endif
@@ -122,3 +122,10 @@ void CriticalSection::Finalize() // must be called by the thread which wants to 
 	EndSession();
 }
 
+#ifdef VAULTMP_DEBUG
+void CriticalSection::PrintStatus()
+{
+    if ( debug != NULL )
+        debug->PrintFormat( "CriticalSection object %08X (%s) has %d locks, status call by thread %s", true, this, typeid( *this ).name(), this->locks, thread_id().c_str() );
+}
+#endif

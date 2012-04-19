@@ -222,9 +222,9 @@ vector<string> PlayerFunctor::operator()()
 
 				else if ( flags & FLAG_NOTALERTED && player->GetActorAlerted() )
 					continue;
-			}
 
-			result.push_back( Utils::LongToHex( refID ) );
+                result.push_back( Utils::LongToHex( refID ) );
+			}
 		}
 	}
 

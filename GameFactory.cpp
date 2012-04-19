@@ -64,6 +64,21 @@ vector<FactoryObject> GameFactory::GetObjectTypes( unsigned char type )
 	return result;
 }
 
+vector<NetworkID> GameFactory::GetIDObjectTypes( unsigned char type )
+{
+	vector<NetworkID> result;
+	ReferenceList::iterator it;
+
+	cs.StartSession();
+	ReferenceList copy = instances;
+	cs.EndSession();
+
+	for ( it = copy.begin(); it != copy.end() && ( it->second & type ); ++it )
+		result.push_back( it->first->GetNetworkID() );
+
+	return result;
+}
+
 FactoryObject GameFactory::GetObject( NetworkID id )
 {
 	cs.StartSession();
@@ -349,7 +364,7 @@ void GameFactory::DestroyAllInstances()
 #ifdef VAULTMP_DEBUG
 
 		if ( debug != NULL )
-			debug->PrintFormat( "Reference %08X with base %08X and NetworkID %lld (type: %s) to be destructed", true, instance.first->GetReference(), instance.first->GetBase(), instance.first->GetNetworkID(), typeid( *( instance.first ) ).name() );
+			debug->PrintFormat( "Reference %08X with base %08X and NetworkID %lld (type: %s) to be destructed (%08X)", true, instance.first->GetReference(), instance.first->GetBase(), instance.first->GetNetworkID(), typeid( *( instance.first ) ).name(), instance.first );
 
 #endif
 

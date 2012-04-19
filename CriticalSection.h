@@ -46,6 +46,7 @@ class CriticalSection
 #ifdef VAULTMP_DEBUG
         static string thread_id(thread&);
         static string thread_id();
+        void PrintStatus();
 		void SetDebugHandler( Debug* debug );
 #endif
 
