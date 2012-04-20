@@ -7,6 +7,7 @@
 #include "Network.h"
 #include "VaultException.h"
 
+#include <future>
 #include <chrono>
 
 /**
@@ -52,6 +53,12 @@ class Game
 		 */
         template <typename T>
 		static void FutureSet( Lockable* data, T t );
+		/**
+		 * \brief Async task execution
+		 */
+        static void AsyncTasks();
+        template <typename F, typename... Values>
+		static void AsyncTasks( F&& future, Values&&... futures );
 
         /**
          * Game functions
@@ -203,6 +210,20 @@ class Game
 		 * \brief Network function to handle Actor death
 		 */
 		static void net_SetActorDead( FactoryObject& reference, bool dead );
+
+        /**
+         * Async task functions
+         */
+
+		/**
+		 * \brief SetRestrained async
+		 */
+        static void async_SetRestrained( chrono::milliseconds ms, NetworkID id, bool restrained );
+
+		/**
+		 * \brief SetAlert async
+		 */
+        static void async_SetAlert( chrono::milliseconds ms, NetworkID id, signed int key = 0 );
 
         /**
          * Interface functions

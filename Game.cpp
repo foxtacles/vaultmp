@@ -184,6 +184,18 @@ void Game::FutureSet( Lockable* data, T t )
 template void Game::FutureSet(Lockable* data, unsigned int t);
 template void Game::FutureSet(Lockable* data, bool t);
 
+void Game::AsyncTasks()
+{
+
+}
+
+template <typename F, typename... Values>
+void Game::AsyncTasks( F&& future, Values&&... futures )
+{
+    future.wait();
+    AsyncTasks(futures...);
+}
+
 void Game::LoadGame( string savegame )
 {
     static string last_savegame;
@@ -943,8 +955,9 @@ void Game::net_SetActorState( FactoryObject reference, unsigned char index, unsi
 	{
 		SetRestrained( reference, false );
 		signed int key = result->Lock( true );
-        SetActorAlerted(reference, key);
-        SetRestrained(reference, true);
+        thread t(AsyncTasks<future<void>, future<void>>, async(launch::deferred, async_SetAlert, chrono::milliseconds(500), actor->GetNetworkID(), key),
+                                                         async(launch::deferred, async_SetRestrained, chrono::milliseconds(500), actor->GetNetworkID(), true));
+        t.detach();
     }
 
 	result = actor->SetActorSneaking( sneaking );
@@ -1006,6 +1019,18 @@ void Game::net_SetActorDead( FactoryObject& reference, bool dead )
             Network::Queue( response );
         }
     }
+}
+
+void Game::async_SetRestrained( chrono::milliseconds ms, NetworkID id, bool restrained )
+{
+    this_thread::sleep_for(ms);
+    SetRestrained(GameFactory::GetObject(id), restrained);
+}
+
+void Game::async_SetAlert( chrono::milliseconds ms, NetworkID id, signed int key )
+{
+    this_thread::sleep_for(ms);
+    SetActorAlerted(GameFactory::GetObject(id), key);
 }
 
 void Game::GetPos( FactoryObject reference, unsigned char axis, double value )
