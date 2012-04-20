@@ -3,6 +3,7 @@
 
 #include <string>
 #include <list>
+#include <future>
 #include <vector>
 #include <map>
 
@@ -53,6 +54,7 @@ namespace Data
 	typedef list<Parameter> ParamContainer;
 	typedef const map<const unsigned int, const char*> Database;
 	typedef map<const unsigned char, const unsigned char> IndexLookup;
+	typedef pair<future<void>, chrono::milliseconds> AsyncPack;
 
     template <typename R, typename T>
     inline static R storeIn(T t) { R r; *reinterpret_cast<T*>(&r) = t; return r; }

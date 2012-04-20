@@ -57,8 +57,8 @@ class Game
 		 * \brief Async task execution
 		 */
         static void AsyncTasks();
-        template <typename F, typename... Values>
-		static void AsyncTasks( F&& future, Values&&... futures );
+        template <typename A, typename... Values>
+		static void AsyncTasks( A&& async, Values&&... more );
 
         /**
          * Game functions
@@ -218,12 +218,12 @@ class Game
 		/**
 		 * \brief SetRestrained async
 		 */
-        static void async_SetRestrained( chrono::milliseconds ms, NetworkID id, bool restrained );
+        static void async_SetRestrained( NetworkID id, bool restrained );
 
 		/**
 		 * \brief SetAlert async
 		 */
-        static void async_SetAlert( chrono::milliseconds ms, NetworkID id, signed int key = 0 );
+        static void async_SetAlert( NetworkID id, signed int key = 0 );
 
         /**
          * Interface functions
