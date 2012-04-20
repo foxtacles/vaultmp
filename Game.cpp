@@ -335,7 +335,6 @@ void Game::NewObject( FactoryObject& reference )
     }
 
 	SetName( reference );
-	SetRestrained( reference, true );
 	SetPos(reference);
 	SetAngle(reference);
 
@@ -382,6 +381,7 @@ void Game::NewActor( FactoryObject& reference )
     SetActorAlerted(reference);
     SetActorSneaking(reference);
     SetActorMovingAnimation(reference);
+	SetRestrained(reference, true);
 }
 
 void Game::NewPlayer( FactoryObject& reference )
@@ -957,8 +957,8 @@ void Game::net_SetActorState( FactoryObject reference, unsigned char index, unsi
 	{
 		SetRestrained( reference, false );
 		signed int key = result->Lock( true );
-        thread t(AsyncTasks<AsyncPack, AsyncPack>,  AsyncPack(async(launch::deferred, async_SetAlert, actor->GetNetworkID(), key), chrono::milliseconds(500)),
-                                                    AsyncPack(async(launch::deferred, async_SetRestrained, actor->GetNetworkID(), true), chrono::milliseconds(500)));
+        thread t(AsyncTasks<AsyncPack, AsyncPack>,  AsyncPack(async(launch::deferred, async_SetActorAlerted(), actor->GetNetworkID(), key), chrono::milliseconds(500)),
+                                                    AsyncPack(async(launch::deferred, async_SetRestrained(), actor->GetNetworkID(), true), chrono::milliseconds(500)));
         t.detach();
     }
 
@@ -1023,14 +1023,30 @@ void Game::net_SetActorDead( FactoryObject& reference, bool dead )
     }
 }
 
-void Game::async_SetRestrained( NetworkID id, bool restrained )
+inline
+const function<void(NetworkID, bool)> Game::async_SetRestrained()
 {
-    SetRestrained(GameFactory::GetObject(id), restrained);
+    return [](NetworkID id, bool restrained)
+    {
+        try
+        {
+            SetRestrained(GameFactory::GetObject(id), restrained);
+        }
+        catch (...) {}
+    };
 }
 
-void Game::async_SetAlert( NetworkID id, signed int key )
+inline
+const function<void(NetworkID, signed int)> Game::async_SetActorAlerted()
 {
-    SetActorAlerted(GameFactory::GetObject(id), key);
+    return [](NetworkID id, signed int key)
+    {
+        try
+        {
+            SetActorAlerted(GameFactory::GetObject(id), key);
+        }
+        catch (...) {}
+    };
 }
 
 void Game::GetPos( FactoryObject reference, unsigned char axis, double value )
