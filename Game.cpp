@@ -957,8 +957,8 @@ void Game::net_SetActorState( FactoryObject reference, unsigned char index, unsi
 	{
 		SetRestrained( reference, false );
 		signed int key = result->Lock( true );
-        thread t(AsyncTasks<AsyncPack, AsyncPack>,  AsyncPack(async(launch::deferred, async_SetActorAlerted, actor->GetNetworkID(), key), chrono::milliseconds(500)),
-                                                    AsyncPack(async(launch::deferred, async_SetRestrained, actor->GetNetworkID(), true), chrono::milliseconds(500)));
+        thread t(AsyncTasks<AsyncPack, AsyncPack>,  AsyncPack(async(launch::deferred, async_SetActorAlerted, actor->GetNetworkID(), key), chrono::milliseconds(20)),
+                                                    AsyncPack(async(launch::deferred, async_SetRestrained, actor->GetNetworkID(), true), chrono::milliseconds(100)));
         t.detach();
     }
 
