@@ -52,7 +52,7 @@ class FactoryObject;
 class GameFactory
 {
 	private:
-		GameFactory();
+		GameFactory() = delete;
 
 #ifdef VAULTMP_DEBUG
 		static Debug* debug;
@@ -190,6 +190,10 @@ class FactoryObject
 		{
 			if ( reference ) reference->StartSession();
 		};
+		FactoryObject( FactoryObject&& p ) : reference( p.reference )
+		{
+            p.reference = NULL;
+		};
 		FactoryObject& operator= ( FactoryObject const& p )
 		{
 			if ( this != &p )
@@ -205,6 +209,20 @@ class FactoryObject
 
 			return *this;
 		};
+        FactoryObject& operator= ( FactoryObject&& p )
+        {
+			if ( this != &p )
+			{
+				if ( reference )
+					reference->EndSession();
+
+				reference = p.reference;
+
+                p.reference = NULL;
+			}
+
+			return *this;
+        };
 
 		Reference* operator* ()
 		{

@@ -8,11 +8,6 @@ unsigned char GameFactory::game = 0x00;
 Debug* GameFactory::debug;
 #endif
 
-GameFactory::GameFactory()
-{
-
-}
-
 void GameFactory::Initialize( unsigned char game )
 {
 	GameFactory::game = game;
