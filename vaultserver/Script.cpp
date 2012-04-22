@@ -64,6 +64,7 @@ Script::Script( char* path )
 
 		SetScriptFunction( "SetRespawn", &Script::SetRespawn );
 		SetScriptFunction( "IsValid", &Script::IsValid );
+		SetScriptFunction( "IsObject", &Script::IsObject );
         SetScriptFunction( "IsItem", &Script::IsItem );
         SetScriptFunction( "IsContainer", &Script::IsContainer );
         SetScriptFunction( "IsActor", &Script::IsActor );
@@ -563,6 +564,11 @@ void Script::SetRespawn(unsigned int respawn)
 bool Script::IsValid( NetworkID id )
 {
     return GameFactory::GetType(id);
+}
+
+bool Script::IsObject( NetworkID id )
+{
+    return (GameFactory::GetType(id) & ALL_OBJECTS);
 }
 
 bool Script::IsItem( NetworkID id )

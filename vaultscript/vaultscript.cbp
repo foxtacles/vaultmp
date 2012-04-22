@@ -40,6 +40,9 @@
 				</Linker>
 			</Target>
 		</Build>
+		<Compiler>
+			<Add option="-std=gnu++0x" />
+		</Compiler>
 		<Linker>
 			<Add option="-static" />
 		</Linker>

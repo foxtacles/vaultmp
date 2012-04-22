@@ -108,6 +108,7 @@ extern "C" {
 
     VAULTSCRIPT vaultmp::Void ( *SetRespawn )( vaultmp::Interval );
     VAULTSCRIPT vaultmp::State ( *IsValid )( vaultmp::ID );
+    VAULTSCRIPT vaultmp::State ( *IsObject )( vaultmp::ID );
     VAULTSCRIPT vaultmp::State ( *IsItem )( vaultmp::ID );
     VAULTSCRIPT vaultmp::State ( *IsContainer )( vaultmp::ID );
     VAULTSCRIPT vaultmp::State ( *IsActor )( vaultmp::ID );

@@ -101,6 +101,7 @@ class Script
 
         static void SetRespawn(unsigned int respawn);
 		static bool IsValid( NetworkID id );
+		static bool IsObject( NetworkID id );
 		static bool IsItem( NetworkID id );
 		static bool IsContainer( NetworkID id );
 		static bool IsActor( NetworkID id );

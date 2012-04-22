@@ -67,6 +67,7 @@ native AnimToString(index, value{});
 
 native SetRespawn(interval);
 native IsValid(ID);
+native IsObject(ID);
 native IsItem(ID);
 native IsContainer(ID);
 native IsActor(ID);

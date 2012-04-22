@@ -37,6 +37,7 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 
 	{"SetRespawn", PAWN::vaultmp_SetRespawn},
 	{"IsValid", PAWN::vaultmp_IsValid},
+	{"IsObject", PAWN::vaultmp_IsObject},
 	{"IsItem", PAWN::vaultmp_IsItem},
 	{"IsContainer", PAWN::vaultmp_IsContainer},
 	{"IsActor", PAWN::vaultmp_IsActor},
@@ -371,6 +372,11 @@ cell PAWN::vaultmp_SetRespawn( AMX* amx, const cell* params )
 cell PAWN::vaultmp_IsValid( AMX* amx, const cell* params )
 {
     return Script::IsValid(params[1]);
+}
+
+cell PAWN::vaultmp_IsObject( AMX* amx, const cell* params )
+{
+    return Script::IsObject(params[1]);
 }
 
 cell PAWN::vaultmp_IsItem( AMX* amx, const cell* params )

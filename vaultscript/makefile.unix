@@ -12,7 +12,7 @@ LD = g++
 WINDRES = windres
 
 INC = 
-CFLAGS = 
+CFLAGS = -std=gnu++0x
 RESINC = 
 LIBDIR = 
 LIB = 

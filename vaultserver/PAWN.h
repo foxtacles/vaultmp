@@ -28,7 +28,7 @@ class PAWN
 
 		PAWN();
 
-		static AMX_NATIVE_INFO vaultmp_functions[41];
+		static AMX_NATIVE_INFO vaultmp_functions[42];
 
 		static cell vaultmp_timestamp( AMX* amx, const cell* params );
 		static cell vaultmp_CreateTimer( AMX* amx, const cell* params );
@@ -48,6 +48,7 @@ class PAWN
 
 		static cell vaultmp_SetRespawn( AMX* amx, const cell* params );
 		static cell vaultmp_IsValid( AMX* amx, const cell* params );
+		static cell vaultmp_IsObject( AMX* amx, const cell* params );
 		static cell vaultmp_IsItem( AMX* amx, const cell* params );
 		static cell vaultmp_IsContainer( AMX* amx, const cell* params );
 		static cell vaultmp_IsActor( AMX* amx, const cell* params );
