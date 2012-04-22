@@ -66,12 +66,12 @@ native AxisToString(index, value{});
 native AnimToString(index, value{});
 
 native SetRespawn(interval);
-native IsValid(ID);
-native IsObject(ID);
-native IsItem(ID);
-native IsContainer(ID);
-native IsActor(ID);
-native IsPlayer(ID);
+native Bool:IsValid(ID);
+native Bool:IsObject(ID);
+native Bool:IsItem(ID);
+native Bool:IsContainer(ID);
+native Bool:IsActor(ID);
+native Bool:IsPlayer(ID);
 
 native GetType(ID);
 native GetReference(ID);
