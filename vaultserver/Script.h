@@ -100,6 +100,11 @@ class Script
 		static bool OnClientAuthenticate( string name, string pwd );
 
         static void SetRespawn(unsigned int respawn);
+		static bool IsValid( NetworkID id );
+		static bool IsItem( NetworkID id );
+		static bool IsContainer( NetworkID id );
+		static bool IsActor( NetworkID id );
+		static bool IsPlayer( NetworkID id );
 
 		static unsigned int GetReference( NetworkID id );
 		static unsigned int GetBase( NetworkID id );

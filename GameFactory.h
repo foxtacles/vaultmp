@@ -107,7 +107,15 @@ class GameFactory
 		/**
 		 * \brief Returns the type of the given Reference
 		 */
-		static unsigned char GetType( Reference* reference );
+		static unsigned char GetType( Reference* reference ) noexcept;
+		/**
+		 * \brief Returns the type of the given NetworkID
+		 */
+		static unsigned char GetType( NetworkID id ) noexcept;
+		/**
+		 * \brief Returns the type of the given reference ID
+		 */
+		static unsigned char GetType( unsigned int refID ) noexcept;
 		/**
 		 * \brief Obtains a lock on all References of a given type
 		 */
@@ -208,35 +216,35 @@ class FactoryObject
   * \brief Tries to cast an instance pointer
   */
 template <typename T>
-T* vaultcast( Reference* reference );
+T* vaultcast( Reference* reference ) noexcept;
 template <>
-inline Object* vaultcast( Reference* reference )
+inline Object* vaultcast( Reference* reference ) noexcept
 {
 	return reinterpret_cast<Object*>( reference );
 };
 template <>
-inline Item* vaultcast( Reference* reference )
+inline Item* vaultcast( Reference* reference ) noexcept
 {
 	if ( GameFactory::GetType( reference ) & ID_ITEM ) return reinterpret_cast<Item*>( reference );
 
 	else return NULL;
 };
 template <>
-inline Container* vaultcast( Reference* reference )
+inline Container* vaultcast( Reference* reference ) noexcept
 {
 	if ( GameFactory::GetType( reference ) & ALL_CONTAINERS ) return reinterpret_cast<Container*>( reference );
 
 	else return NULL;
 };
 template <>
-inline Actor* vaultcast( Reference* reference )
+inline Actor* vaultcast( Reference* reference ) noexcept
 {
 	if ( GameFactory::GetType( reference ) & ALL_ACTORS ) return reinterpret_cast<Actor*>( reference );
 
 	else return NULL;
 };
 template <>
-inline Player* vaultcast( Reference* reference )
+inline Player* vaultcast( Reference* reference ) noexcept
 {
 	if ( GameFactory::GetType( reference ) & ID_PLAYER ) return reinterpret_cast<Player*>( reference );
 
@@ -246,7 +254,7 @@ inline Player* vaultcast( Reference* reference )
   * \brief Tries to cast the instance pointer of a FactoryObject
   */
 template <typename T>
-inline T* vaultcast( FactoryObject& object )
+inline T* vaultcast( FactoryObject& object ) noexcept
 {
 	return vaultcast<T>( *object );
 };

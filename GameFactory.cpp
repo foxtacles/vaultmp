@@ -204,7 +204,7 @@ void GameFactory::LeaveReference( FactoryObject& reference )
 	reference.reference = NULL;
 }
 
-unsigned char GameFactory::GetType( Reference* reference )
+unsigned char GameFactory::GetType( Reference* reference ) noexcept
 {
 	ReferenceList::iterator it;
 
@@ -212,6 +212,30 @@ unsigned char GameFactory::GetType( Reference* reference )
 	unsigned char type;
 	it = instances.find( reference );
 	type = ( it != instances.end() ? it->second : 0x00 );
+	cs.EndSession();
+
+	return type;
+}
+
+unsigned char GameFactory::GetType( NetworkID id ) noexcept
+{
+	cs.StartSession();
+	Reference* reference = Network::Manager()->GET_OBJECT_FROM_ID<Reference*>( id );
+	unsigned char type = GetType(reference);
+	cs.EndSession();
+
+	return type;
+}
+
+unsigned char GameFactory::GetType( unsigned int refID ) noexcept
+{
+	cs.StartSession();
+	unsigned char type;
+	try
+	{
+	    type = GetType(LookupNetworkID(refID));
+	}
+	catch (...) { type = 0x00; }
 	cs.EndSession();
 
 	return type;

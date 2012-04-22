@@ -2,15 +2,34 @@
 
 // Constants
 
-#define FALLOUT3                0x01
-#define NEWVEGAS                (FALLOUT3 << 1)
-#define FALLOUT_GAMES		(FALLOUT3 | NEWVEGAS)
-#define ALL_GAMES		FALLOUT_GAMES
+const Index: {
 
-#define MAX_PLAYER_NAME		16
-#define MAX_PASSWORD_SIZE	16
+        FALLOUT3            =   0x00000001,
+        NEWVEGAS            =   0x00000010,
+        FALLOUT_GAMES       =   FALLOUT3 | NEWVEGAS,
+        ALL_GAMES           =   FALLOUT_GAMES,
 
-#define DEFAULT_PLAYER_RESPAWN	8000
+        MAX_PLAYER_NAME     =   16,
+        MAX_PASSWORD_SIZE   =   16,
+
+}
+
+const Type: {
+
+        ID_REFERENCE        =   0x00000001,
+        ID_OBJECT           =   0x00000010,
+        ID_ITEM             =   0x00000100,
+        ID_CONTAINER        =   0x00001000,
+        ID_ACTOR            =   0x00010000,
+        ID_PLAYER           =   0x00100000,
+
+        ALL_OBJECTS         =   ( ID_OBJECT | ID_ITEM | ID_CONTAINER | ID_ACTOR | ID_PLAYER ),
+        ALL_CONTAINERS      =   ( ID_CONTAINER | ID_ACTOR | ID_PLAYER ),
+        ALL_ACTORS          =   ( ID_ACTOR | ID_PLAYER ),
+
+}
+
+const DEFAULT_PLAYER_RESPAWN = 8000;
 
 // Callbacks
 
@@ -47,7 +66,13 @@ native AxisToString(index, value{});
 native AnimToString(index, value{});
 
 native SetRespawn(interval);
+native IsValid(ID);
+native IsItem(ID);
+native IsContainer(ID);
+native IsActor(ID);
+native IsPlayer(ID);
 
+native GetType(ID);
 native GetReference(ID);
 native GetBase(ID);
 native GetName(ID, name{});

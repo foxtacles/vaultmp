@@ -4,6 +4,7 @@
  */
 
 #include <string>
+#include <cstdint>
 
 #ifndef __WIN32__
 #ifndef __cdecl
@@ -17,74 +18,107 @@
 namespace vaultmp
 {
 
-	typedef unsigned char Index; // 1 byte
-	typedef unsigned char Reason; // 1 byte
-	typedef bool State; // 1 byte
-	typedef unsigned int Reference; // 4 byte
-	typedef unsigned int Base; // 4 byte
-	typedef unsigned int Cell; // 4 byte
-	typedef unsigned int UCount; // 4 byte
-	typedef signed int Count; // 4 byte
-	typedef unsigned int Interval; // 4 byte
-	typedef unsigned long long ID; // 8 byte
-	typedef unsigned long long Timer; // 8 byte
-	typedef unsigned long long Result; // 8 byte
-	typedef double Value; // 8 byte
+    enum Reason : uint8_t;
 
+    enum State : bool {
+        True    =   true,
+        False   =   false,
+    };
+
+    enum Reference : uint32_t;
+    enum Base : uint32_t;
+	enum Cell : uint32_t;
+	enum UCount : uint32_t;
+	enum Count : int32_t;
+
+	enum Interval : uint32_t {
+        DEFAULT_PLAYER_RESPAWN  =   8000,
+	};
+
+	enum ID : uint64_t;
+	enum Timer : uint64_t;
+	enum Result : uint64_t;
+
+    typedef void Void;
+    typedef double Value;
 	typedef Result ( __cdecl *Function )();
+	typedef std::string String;
 
-	static const Index FALLOUT3             =   0x01;
-	static const Index NEWVEGAS             =   FALLOUT3 << 1;
-	static const Index FALLOUT_GAMES        =   FALLOUT3 | NEWVEGAS;
-	static const Index ALL_GAMES            =   FALLOUT_GAMES;
+	enum class Index : uint8_t {
 
-	static const Index MAX_PLAYER_NAME      =   16;
-	static const Index MAX_PASSWORD_SIZE    =   16;
+        FALLOUT3            =   0x01,
+        NEWVEGAS            =   FALLOUT3 << 1,
+        FALLOUT_GAMES       =   FALLOUT3 | NEWVEGAS,
+        ALL_GAMES           =   FALLOUT_GAMES,
 
-	static const Interval DEFAULT_PLAYER_RESPAWN    =   8000;
+        MAX_PLAYER_NAME     =   16,
+        MAX_PASSWORD_SIZE   =   16,
+
+	};
+
+    enum class Type : uint8_t {
+
+        ID_REFERENCE        =   0x01,
+        ID_OBJECT           =   ID_REFERENCE << 1,
+        ID_ITEM             =   ID_OBJECT << 1,
+        ID_CONTAINER        =   ID_ITEM << 1,
+        ID_ACTOR            =   ID_CONTAINER << 1,
+        ID_PLAYER           =   ID_ACTOR << 1,
+
+        ALL_OBJECTS         =   ( ID_OBJECT | ID_ITEM | ID_CONTAINER | ID_ACTOR | ID_PLAYER ),
+        ALL_CONTAINERS      =   ( ID_CONTAINER | ID_ACTOR | ID_PLAYER ),
+        ALL_ACTORS          =   ( ID_ACTOR | ID_PLAYER ),
+
+    };
 
 };
 
 extern "C" {
-	VAULTSCRIPT void exec();
+	VAULTSCRIPT vaultmp::Void exec();
 
-	VAULTSCRIPT void OnSpawn( vaultmp::ID );
-	VAULTSCRIPT void OnCellChange( vaultmp::ID, vaultmp::Cell );
-	VAULTSCRIPT void OnContainerItemChange( vaultmp::ID, vaultmp::Base, vaultmp::Count, vaultmp::Value );
-	VAULTSCRIPT void OnActorValueChange( vaultmp::ID, vaultmp::Index, vaultmp::Value );
-	VAULTSCRIPT void OnActorBaseValueChange( vaultmp::ID, vaultmp::Index, vaultmp::Value );
-	VAULTSCRIPT void OnActorAlert( vaultmp::ID, vaultmp::State );
-	VAULTSCRIPT void OnActorSneak( vaultmp::ID, vaultmp::State );
-	VAULTSCRIPT void OnActorDeath( vaultmp::ID );
-	VAULTSCRIPT void OnActorEquipItem( vaultmp::ID, vaultmp::Base, vaultmp::Value );
-	VAULTSCRIPT void OnActorUnequipItem( vaultmp::ID, vaultmp::Base, vaultmp::Value );
-	VAULTSCRIPT void OnPlayerDisconnect( vaultmp::ID, vaultmp::Reason );
+	VAULTSCRIPT vaultmp::Void OnSpawn( vaultmp::ID );
+	VAULTSCRIPT vaultmp::Void OnCellChange( vaultmp::ID, vaultmp::Cell );
+	VAULTSCRIPT vaultmp::Void OnContainerItemChange( vaultmp::ID, vaultmp::Base, vaultmp::Count, vaultmp::Value );
+	VAULTSCRIPT vaultmp::Void OnActorValueChange( vaultmp::ID, vaultmp::Index, vaultmp::Value );
+	VAULTSCRIPT vaultmp::Void OnActorBaseValueChange( vaultmp::ID, vaultmp::Index, vaultmp::Value );
+	VAULTSCRIPT vaultmp::Void OnActorAlert( vaultmp::ID, vaultmp::State );
+	VAULTSCRIPT vaultmp::Void OnActorSneak( vaultmp::ID, vaultmp::State );
+	VAULTSCRIPT vaultmp::Void OnActorDeath( vaultmp::ID );
+	VAULTSCRIPT vaultmp::Void OnActorEquipItem( vaultmp::ID, vaultmp::Base, vaultmp::Value );
+	VAULTSCRIPT vaultmp::Void OnActorUnequipItem( vaultmp::ID, vaultmp::Base, vaultmp::Value );
+	VAULTSCRIPT vaultmp::Void OnPlayerDisconnect( vaultmp::ID, vaultmp::Reason );
 	VAULTSCRIPT vaultmp::Base OnPlayerRequestGame( vaultmp::ID );
-    VAULTSCRIPT bool OnClientAuthenticate( std::string, std::string );
+    VAULTSCRIPT vaultmp::State OnClientAuthenticate( vaultmp::String, vaultmp::String );
 
-	VAULTSCRIPT void ( *timestamp )();
+	VAULTSCRIPT vaultmp::Void ( *timestamp )();
 	VAULTSCRIPT vaultmp::Timer ( *CreateTimer )( vaultmp::Function, vaultmp::Interval );
-	VAULTSCRIPT vaultmp::Timer ( *CreateTimerEx )( vaultmp::Function, vaultmp::Interval, std::string, ... );
-	VAULTSCRIPT void ( *KillTimer )( vaultmp::Timer );
-	VAULTSCRIPT void ( *MakePublic )( vaultmp::Function, std::string, std::string );
-	VAULTSCRIPT vaultmp::Result ( *CallPublic )( std::string, ... );
+	VAULTSCRIPT vaultmp::Timer ( *CreateTimerEx )( vaultmp::Function, vaultmp::Interval, vaultmp::String, ... );
+	VAULTSCRIPT vaultmp::Void ( *KillTimer )( vaultmp::Timer );
+	VAULTSCRIPT vaultmp::Void ( *MakePublic )( vaultmp::Function, vaultmp::String, vaultmp::String );
+	VAULTSCRIPT vaultmp::Result ( *CallPublic )( vaultmp::String, ... );
 
-	VAULTSCRIPT void ( *SetServerName )( std::string );
-	VAULTSCRIPT void ( *SetServerMap )( std::string );
-	VAULTSCRIPT void ( *SetServerRule )( std::string, std::string );
+	VAULTSCRIPT vaultmp::Void ( *SetServerName )( vaultmp::String );
+	VAULTSCRIPT vaultmp::Void ( *SetServerMap )( vaultmp::String );
+	VAULTSCRIPT vaultmp::Void ( *SetServerRule )( vaultmp::String, vaultmp::String );
 	VAULTSCRIPT vaultmp::Index ( *GetGameCode )();
 
-	VAULTSCRIPT std::string ( *ValueToString )( vaultmp::Index );
-	VAULTSCRIPT std::string ( *AxisToString )( vaultmp::Index );
-	VAULTSCRIPT std::string ( *AnimToString )( vaultmp::Index );
+	VAULTSCRIPT vaultmp::String ( *ValueToString )( vaultmp::Index );
+	VAULTSCRIPT vaultmp::String ( *AxisToString )( vaultmp::Index );
+	VAULTSCRIPT vaultmp::String ( *AnimToString )( vaultmp::Index );
 
-    VAULTSCRIPT void ( *SetRespawn )( vaultmp::Interval );
+    VAULTSCRIPT vaultmp::Void ( *SetRespawn )( vaultmp::Interval );
+    VAULTSCRIPT vaultmp::State ( *IsValid )( vaultmp::ID );
+    VAULTSCRIPT vaultmp::State ( *IsItem )( vaultmp::ID );
+    VAULTSCRIPT vaultmp::State ( *IsContainer )( vaultmp::ID );
+    VAULTSCRIPT vaultmp::State ( *IsActor )( vaultmp::ID );
+    VAULTSCRIPT vaultmp::State ( *IsPlayer )( vaultmp::ID );
 
+    VAULTSCRIPT vaultmp::Type ( *GetType )( vaultmp::ID );
 	VAULTSCRIPT vaultmp::Reference ( *GetReference )( vaultmp::ID );
 	VAULTSCRIPT vaultmp::Base ( *GetBase )( vaultmp::ID );
-	VAULTSCRIPT std::string ( *GetName )( vaultmp::ID );
-	VAULTSCRIPT void ( *GetPos )( vaultmp::ID, vaultmp::Value&, vaultmp::Value&, vaultmp::Value& );
-	VAULTSCRIPT void ( *GetAngle )( vaultmp::ID, vaultmp::Value&, vaultmp::Value&, vaultmp::Value& );
+	VAULTSCRIPT vaultmp::String ( *GetName )( vaultmp::ID );
+	VAULTSCRIPT vaultmp::Void ( *GetPos )( vaultmp::ID, vaultmp::Value&, vaultmp::Value&, vaultmp::Value& );
+	VAULTSCRIPT vaultmp::Void ( *GetAngle )( vaultmp::ID, vaultmp::Value&, vaultmp::Value&, vaultmp::Value& );
 	VAULTSCRIPT vaultmp::Cell ( *GetCell )( vaultmp::ID );
 	VAULTSCRIPT vaultmp::UCount ( *GetContainerItemCount )( vaultmp::ID, vaultmp::Base );
 	VAULTSCRIPT vaultmp::Value ( *GetActorValue )( vaultmp::ID, vaultmp::Index );
@@ -95,12 +129,12 @@ extern "C" {
 	VAULTSCRIPT vaultmp::State ( *GetActorDead )( vaultmp::ID );
 	VAULTSCRIPT vaultmp::State ( *IsActorJumping )( vaultmp::ID );
 
-    VAULTSCRIPT void ( *AddItem )( vaultmp::ID, vaultmp::Base, vaultmp::UCount, vaultmp::Value );
+    VAULTSCRIPT vaultmp::Void ( *AddItem )( vaultmp::ID, vaultmp::Base, vaultmp::UCount, vaultmp::Value );
     VAULTSCRIPT vaultmp::UCount ( *RemoveItem )( vaultmp::ID, vaultmp::Base, vaultmp::UCount );
-    VAULTSCRIPT void ( *RemoveAllItems )( vaultmp::ID );
-	VAULTSCRIPT void ( *SetActorValue )( vaultmp::ID, vaultmp::Index, vaultmp::Value );
-	VAULTSCRIPT void ( *SetActorBaseValue )( vaultmp::ID, vaultmp::Index, vaultmp::Value );
+    VAULTSCRIPT vaultmp::Void ( *RemoveAllItems )( vaultmp::ID );
+	VAULTSCRIPT vaultmp::Void ( *SetActorValue )( vaultmp::ID, vaultmp::Index, vaultmp::Value );
+	VAULTSCRIPT vaultmp::Void ( *SetActorBaseValue )( vaultmp::ID, vaultmp::Index, vaultmp::Value );
 
-	VAULTSCRIPT void ( *SetPlayerRespawn )( vaultmp::ID, vaultmp::Interval );
+	VAULTSCRIPT vaultmp::Void ( *SetPlayerRespawn )( vaultmp::ID, vaultmp::Interval );
 
 }

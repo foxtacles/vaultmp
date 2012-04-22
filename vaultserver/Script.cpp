@@ -63,7 +63,13 @@ Script::Script( char* path )
 		SetScriptFunction( "AnimToString", &API::RetrieveAnim_Reverse );
 
 		SetScriptFunction( "SetRespawn", &Script::SetRespawn );
+		SetScriptFunction( "IsValid", &Script::IsValid );
+        SetScriptFunction( "IsItem", &Script::IsItem );
+        SetScriptFunction( "IsContainer", &Script::IsContainer );
+        SetScriptFunction( "IsActor", &Script::IsActor );
+        SetScriptFunction( "IsPlayer", &Script::IsPlayer );
 
+        SetScriptFunction( "GetType", (unsigned char (*)(NetworkID)) &GameFactory::GetType );
 		SetScriptFunction( "GetReference", &Script::GetReference );
 		SetScriptFunction( "GetBase", &Script::GetBase );
 		SetScriptFunction( "GetName", &Script::GetName );
@@ -552,6 +558,31 @@ bool Script::OnClientAuthenticate( string name, string pwd )
 void Script::SetRespawn(unsigned int respawn)
 {
     Player::SetRespawn(respawn);
+}
+
+bool Script::IsValid( NetworkID id )
+{
+    return GameFactory::GetType(id);
+}
+
+bool Script::IsItem( NetworkID id )
+{
+    return (GameFactory::GetType(id) & ID_ITEM);
+}
+
+bool Script::IsContainer( NetworkID id )
+{
+    return (GameFactory::GetType(id) & ALL_CONTAINERS);
+}
+
+bool Script::IsActor( NetworkID id )
+{
+    return (GameFactory::GetType(id) & ALL_ACTORS);
+}
+
+bool Script::IsPlayer( NetworkID id )
+{
+    return (GameFactory::GetType(id) & ID_PLAYER);
 }
 
 unsigned int Script::GetReference( NetworkID id )
