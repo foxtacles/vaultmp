@@ -20,15 +20,15 @@ class ServerEntry
 		int ping;
 		unsigned char game;
 
-		ServerEntry& operator=( const ServerEntry& );
+		ServerEntry& operator=(const ServerEntry&);
 
 	public:
-		void SetServerName( string name );
-		void SetServerMap( string map );
-		void SetServerRule( string rule, string value );
-		void SetServerPlayers( pair<int, int> players );
-		void SetServerPing( int ping );
-		void SetGame( unsigned char game );
+		void SetServerName(string name);
+		void SetServerMap(string map);
+		void SetServerRule(string rule, string value);
+		void SetServerPlayers(pair<int, int> players);
+		void SetServerPing(int ping);
+		void SetGame(unsigned char game);
 
 		string GetServerName();
 		string GetServerMap();
@@ -37,8 +37,8 @@ class ServerEntry
 		int GetServerPing();
 		unsigned char GetGame();
 
-		ServerEntry( unsigned char game );
-		ServerEntry( string name, string map, pair<int, int> players, int ping, unsigned char game );
+		ServerEntry(unsigned char game);
+		ServerEntry(string name, string map, pair<int, int> players, int ping, unsigned char game);
 };
 
 #endif

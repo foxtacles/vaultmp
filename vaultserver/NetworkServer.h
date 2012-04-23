@@ -23,7 +23,7 @@ class NetworkServer : public Network
 	public:
 
 #ifdef VAULTMP_DEBUG
-		static void SetDebugHandler( Debug* debug );
+		static void SetDebugHandler(Debug* debug);
 #endif
 
 		/**
@@ -31,13 +31,13 @@ class NetworkServer : public Network
 		 *
 		 * Returns a NetworkResponse to send to the client(s)
 		 */
-		static NetworkResponse ProcessEvent( unsigned char id );
+		static NetworkResponse ProcessEvent(unsigned char id);
 		/**
 		 * \brief Processes a packet from a client
 		 *
 		 * Returns a NetworkResponse to send to the client(s)
 		 */
-		static NetworkResponse ProcessPacket( Packet* data );
+		static NetworkResponse ProcessPacket(Packet* data);
 
 };
 

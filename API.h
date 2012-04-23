@@ -364,17 +364,17 @@ class API
 		static CommandQueue queue;
 		static unsigned char game;
 
-		static void DefineFunction( string name, string def, unsigned short opcode, unsigned char games );
-		static void DefineValueString( string name, unsigned char value, unsigned char games );
-		static void DefineAxisString( string name, unsigned char axis, unsigned char games );
-		static void DefineAnimString( string name, unsigned char anim, unsigned char games );
-		static void DefineControl( unsigned char control, unsigned char games );
+		static void DefineFunction(string name, string def, unsigned short opcode, unsigned char games);
+		static void DefineValueString(string name, unsigned char value, unsigned char games);
+		static void DefineAxisString(string name, unsigned char axis, unsigned char games);
+		static void DefineAnimString(string name, unsigned char anim, unsigned char games);
+		static void DefineControl(unsigned char control, unsigned char games);
 
-		static unsigned long ExtractReference( const char* reference );
-		static pair<string, unsigned short> RetrieveFunction( string name );
+		static unsigned long ExtractReference(const char* reference);
+		static pair<string, unsigned short> RetrieveFunction(string name);
 		static unsigned char* BuildCommandStream(vector<double>& info, signed int key, unsigned char* command, unsigned int size);
 
-		static vector<double> ParseCommand( char* cmd, const char* def, op_default* result, unsigned short opcode );
+		static vector<double> ParseCommand(char* cmd, const char* def, op_default* result, unsigned short opcode);
 
 #ifdef VAULTMP_DEBUG
 		static Debug* debug;
@@ -386,7 +386,7 @@ class API
 		 * \brief Checks whether a certain function is available in the current API environment
 		 */
 
-		static bool AnnounceFunction( string name );
+		static bool AnnounceFunction(string name);
 
 		/**
 		 * \brief Translates commands to a stream of bytes
@@ -396,7 +396,7 @@ class API
 		 * Returns a STL vector containing the parsed commands (allocated on the heap; you are required to free them when you don't need them anymore).
 		 */
 
-		static CommandParsed Translate( multimap<string, string>& cmd, signed int key = 0 );
+		static CommandParsed Translate(multimap<string, string>& cmd, signed int key = 0);
 
 		/**
 		 * \brief Translates a result from vaultmp DLL
@@ -409,21 +409,21 @@ class API
 		 * vector<double> is the argument list of the executed command; the first element is always the opcode of the function
 		 */
 
-		static vector<CommandResult> Translate( unsigned char* stream );
+		static vector<CommandResult> Translate(unsigned char* stream);
 
 		API();
 
 	public:
 
 #ifdef VAULTMP_DEBUG
-		static void SetDebugHandler( Debug* debug );
+		static void SetDebugHandler(Debug* debug);
 #endif
 
 		/**
 		 * \brief Initializes the API for the given game code. Must be called before the API can be used
 		 */
 
-		static void Initialize( unsigned char game );
+		static void Initialize(unsigned char game);
 
 		/**
 		 * \brief Must be called when you are finished with the current API environment.
@@ -435,31 +435,31 @@ class API
 		/**
 		 * \brief Given the string representation of an actor value, returns the hex code. 0xFF indicates an error
 		 */
-		static unsigned char RetrieveValue( char* value );
+		static unsigned char RetrieveValue(char* value);
 		/**
 		 * \brief Given the string representation of an axis value, returns the hex code. 0xFF indicates an error
 		 */
-		static unsigned char RetrieveAxis( char* axis );
+		static unsigned char RetrieveAxis(char* axis);
 		/**
 		 * \brief Given the string representation of an animation value, returns the hex code. 0xFF indicates an error
 		 */
-		static unsigned char RetrieveAnim( char* anim );
+		static unsigned char RetrieveAnim(char* anim);
 		/**
 		 * \brief Returns true if the given value is a valid control code
 		 */
-		static bool IsControl( unsigned char control );
+		static bool IsControl(unsigned char control);
 		/**
 		 * \brief Given the hex code of an actor value, returns the string representation. An empty string indicates an error
 		 */
-		static string RetrieveValue_Reverse( unsigned char value );
+		static string RetrieveValue_Reverse(unsigned char value);
 		/**
 		 * \brief Given the hex code of an axis value, returns the string representation. An empty string indicates an error
 		 */
-		static string RetrieveAxis_Reverse( unsigned char axis );
+		static string RetrieveAxis_Reverse(unsigned char axis);
 		/**
 		 * \brief Given the hex code of an animation value, returns the string representation. An empty string indicates an error
 		 */
-		static string RetrieveAnim_Reverse( unsigned char anim );
+		static string RetrieveAnim_Reverse(unsigned char anim);
 		/**
 		 * \brief Returns a STL vector containing every available actor value hex code
 		 */

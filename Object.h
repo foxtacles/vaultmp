@@ -47,18 +47,18 @@ class Object : public Reference
 		Value<unsigned int> cell_Network;
 		Value<bool> state_Enabled;
 
-		Object( const Object& );
-		Object& operator=( const Object& );
+		Object(const Object&);
+		Object& operator=(const Object&);
 
 	protected:
-		Object( unsigned int refID, unsigned int baseID );
+		Object(unsigned int refID, unsigned int baseID);
 		Object(const pDefault* packet);
 		Object(pDefault* packet);
 		virtual ~Object();
 
 	public:
 #ifdef VAULTMP_DEBUG
-		static void SetDebugHandler( Debug* debug );
+		static void SetDebugHandler(Debug* debug);
 #endif
 
 		/**
@@ -76,15 +76,15 @@ class Object : public Reference
 		/**
 		 * \brief Retrieves the Object's game coordinate on the specified axis (axis value hex code)
 		 */
-		double GetGamePos( unsigned char axis ) const;
+		double GetGamePos(unsigned char axis) const;
 		/**
 		 * \brief Retrieves the Object's network coordinate on the specified axis (axis value hex code)
 		 */
-		double GetNetworkPos( unsigned char axis ) const;
+		double GetNetworkPos(unsigned char axis) const;
 		/**
 		 * \brief Retrieves the Object's angle on the specified axis (axis value hex code)
 		 */
-		double GetAngle( unsigned char axis ) const;
+		double GetAngle(unsigned char axis) const;
 		/**
 		 * \brief Retrieves the Object's enabled state
 		 */
@@ -105,45 +105,45 @@ class Object : public Reference
 		/**
 		 * \brief Sets the Object's name
 		 */
-		Lockable* SetName( string name );
+		Lockable* SetName(string name);
 		/**
 		 * \brief Sets the Object's game coordiante on the specified axis (axis value hex code)
 		 */
-		Lockable* SetGamePos( unsigned char axis, double pos );
+		Lockable* SetGamePos(unsigned char axis, double pos);
 		/**
 		 * \brief Sets the Object's network coordiante on the specified axis (axis value hex code)
 		 */
-		Lockable* SetNetworkPos( unsigned char axis, double pos );
+		Lockable* SetNetworkPos(unsigned char axis, double pos);
 		/**
 		 * \brief Sets the Object's angle on the specified axis (axis value hex code)
 		 */
-		Lockable* SetAngle( unsigned char axis, double angle );
+		Lockable* SetAngle(unsigned char axis, double angle);
 		/**
 		 * \brief Sets the Object's enabled state
 		 */
-		Lockable* SetEnabled( bool state );
+		Lockable* SetEnabled(bool state);
 		/**
 		 * \brief Sets the Object's game cell
 		 */
-		Lockable* SetGameCell( unsigned int cell );
+		Lockable* SetGameCell(unsigned int cell);
 		/**
 		 * \brief Sets the Object's network cell
 		 */
-		Lockable* SetNetworkCell( unsigned int cell );
+		Lockable* SetNetworkCell(unsigned int cell);
 
 		/**
 		 * \brief Returns true if the Object is in a given range
 		 */
-		bool IsNearPoint( double X, double Y, double Z, double R ) const;
+		bool IsNearPoint(double X, double Y, double Z, double R) const;
 		/**
 		 * \brief Returns true if the Object's coordinate sepcified by axis (axis value hex code) is in a given range
 		 */
-		bool IsCoordinateInRange( unsigned char axis, double value, double R ) const;
+		bool IsCoordinateInRange(unsigned char axis, double value, double R) const;
 
 		/**
 		 * \brief For network transfer
 		 */
-        virtual pDefault* toPacket();
+		virtual pDefault* toPacket();
 };
 
 #endif

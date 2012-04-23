@@ -38,8 +38,8 @@ class Timer : public ScriptFunction, public NetworkIDObject
 
 	public:
 
-		Timer( ScriptFunc timer, string def, vector<boost::any> args, unsigned int interval );
-		Timer( ScriptFuncPAWN timer, AMX* amx, string def, vector<boost::any> args, unsigned int interval );
+		Timer(ScriptFunc timer, string def, vector<boost::any> args, unsigned int interval);
+		Timer(ScriptFuncPAWN timer, AMX* amx, string def, vector<boost::any> args, unsigned int interval);
 
 		/**
 		 * \brief Called from the dedicated server main thread
@@ -54,7 +54,7 @@ class Timer : public ScriptFunction, public NetworkIDObject
 		/**
 		 * \brief Terminates a timer
 		 */
-		static void Terminate( NetworkID id );
+		static void Terminate(NetworkID id);
 		/**
 		 * \brief Terminates all timers
 		 */

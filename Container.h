@@ -56,21 +56,21 @@ class Container : public Object
 		static Debug* debug;
 #endif
 
-		static bool Item_sort( NetworkID id, NetworkID id2 );
-		static bool Diff_sort( pair<unsigned int, Diff> diff, pair<unsigned int, Diff> diff2 );
+		static bool Item_sort(NetworkID id, NetworkID id2);
+		static bool Diff_sort(pair<unsigned int, Diff> diff, pair<unsigned int, Diff> diff2);
 
 		list<NetworkID> container;
 		Value<bool> flag_Lock;
 
 		StripCopy Strip() const;
 
-        void initialize();
+		void initialize();
 
-		Container( const Container& );
-		Container& operator=( const Container& );
+		Container(const Container&);
+		Container& operator=(const Container&);
 
 	protected:
-		Container( unsigned int refID, unsigned int baseID );
+		Container(unsigned int refID, unsigned int baseID);
 		Container(const pDefault* packet);
 		Container(pDefault* packet);
 		virtual ~Container();
@@ -78,32 +78,32 @@ class Container : public Object
 	public:
 
 #ifdef VAULTMP_DEBUG
-		static void SetDebugHandler( Debug* debug );
+		static void SetDebugHandler(Debug* debug);
 #endif
 
-		void AddItem( NetworkID id );
-		ContainerDiff AddItem( unsigned int baseID, unsigned int count, double condition ) const;
-		void RemoveItem( NetworkID id );
-		ContainerDiff RemoveItem( unsigned int baseID, unsigned int count ) const;
+		void AddItem(NetworkID id);
+		ContainerDiff AddItem(unsigned int baseID, unsigned int count, double condition) const;
+		void RemoveItem(NetworkID id);
+		ContainerDiff RemoveItem(unsigned int baseID, unsigned int count) const;
 		ContainerDiff RemoveAllItems() const;
 
-		ContainerDiff Compare( NetworkID id ) const;
-		GameDiff ApplyDiff( ContainerDiff& diff );
-		static void FreeDiff( ContainerDiff& diff );
+		ContainerDiff Compare(NetworkID id) const;
+		GameDiff ApplyDiff(ContainerDiff& diff);
+		static void FreeDiff(ContainerDiff& diff);
 
-        Lockable* getLock();
+		Lockable* getLock();
 		bool IsEmpty() const;
 		void PrintContainer() const;
 		unsigned int GetItemCount(unsigned int baseID) const;
 		const list<NetworkID>& GetItemList() const;
 
-        void FlushContainer();
+		void FlushContainer();
 		NetworkID Copy() const;
 
 		/**
 		 * \brief For network transfer
 		 */
-        virtual pDefault* toPacket();
+		virtual pDefault* toPacket();
 };
 
 #endif

@@ -8,30 +8,30 @@ void InputThread()
 
 	do
 	{
-		fgets( input, 64, stdin );
+		fgets(input, 64, stdin);
 
-		if ( strlen( input ) > 0 && input[strlen( input ) - 1] == '\n' ) input[strlen( input ) - 1] = '\0';
+		if (strlen(input) > 0 && input[strlen(input) - 1] == '\n') input[strlen(input) - 1] = '\0';
 
 	}
-	while ( strcmp( input, "exit" ) != 0 );
+	while (strcmp(input, "exit") != 0);
 
 	MasterServer::TerminateThread();
 }
 
 int main()
 {
-	printf( "Vault-Tec MasterServer %s \n----------------------------------------------------------\n", MASTER_VERSION );
+	printf("Vault-Tec MasterServer %s \n----------------------------------------------------------\n", MASTER_VERSION);
 
 	Utils::timestamp();
-	printf( "Initializing RakNet...\n" );
+	printf("Initializing RakNet...\n");
 
 	thread hMasterThread = MasterServer::InitalizeRakNet();
-    thread hInputThread = thread(InputThread);
+	thread hInputThread = thread(InputThread);
 
-    hMasterThread.join();
+	hMasterThread.join();
 
-    if (hInputThread.joinable())
-        hInputThread.join();
+	if (hInputThread.joinable())
+		hInputThread.join();
 
 	return 0;
 }

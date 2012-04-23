@@ -1,57 +1,57 @@
 #include "Debug.h"
 
-Debug::Debug( char* module )
+Debug::Debug(char* module)
 {
 	char buf[32];
-	GetTimeFormat( buf, sizeof( buf ), true );
+	GetTimeFormat(buf, sizeof(buf), true);
 
 	this->logfile = module;
 	this->logfile += "_";
 	this->logfile += buf;
 	this->logfile += ".log";
 
-	this->vaultmplog = fopen( logfile.c_str(), "w" );
+	this->vaultmplog = fopen(logfile.c_str(), "w");
 }
 
 Debug::~Debug()
 {
-	if ( this->vaultmplog != NULL )
+	if (this->vaultmplog != NULL)
 	{
-		this->Print( ( char* ) "-----------------------------------------------------------------------------------------------------", false );
-		this->Print( ( char* ) "END OF LOG", false );
+		this->Print((char*) "-----------------------------------------------------------------------------------------------------", false);
+		this->Print((char*) "END OF LOG", false);
 
-		fclose( vaultmplog );
+		fclose(vaultmplog);
 	}
 }
 
-void Debug::GetTimeFormat( char* buf, int size, bool file )
+void Debug::GetTimeFormat(char* buf, int size, bool file)
 {
 	time_t ltime;
-	ltime = time( NULL );
+	ltime = time(NULL);
 
-	tm* local = localtime( &ltime );
+	tm* local = localtime(&ltime);
 	char timeformat[32];
-	snprintf( timeformat, sizeof( timeformat ), "%d%c%02d%c%02d%c%02d%c%02d%c%02d", local->tm_year + 1900, '-', local->tm_mon + 1, '-', local->tm_mday, file ? '_' : ' ', local->tm_hour, file ? '-' : ':', local->tm_min, file ? '-' : ':', local->tm_sec );
+	snprintf(timeformat, sizeof(timeformat), "%d%c%02d%c%02d%c%02d%c%02d%c%02d", local->tm_year + 1900, '-', local->tm_mon + 1, '-', local->tm_mday, file ? '_' : ' ', local->tm_hour, file ? '-' : ':', local->tm_min, file ? '-' : ':', local->tm_sec);
 
-	if ( size > strlen( timeformat ) )
-		strcpy( buf, timeformat );
+	if (size > strlen(timeformat))
+		strcpy(buf, timeformat);
 }
 
-void Debug::Print( const char* text, bool timestamp )
+void Debug::Print(const char* text, bool timestamp)
 {
 	StartSession();
 
-	if ( vaultmplog == NULL )
-        return;
+	if (vaultmplog == NULL)
+		return;
 
-	if ( timestamp )
+	if (timestamp)
 	{
 		char buf[32];
-		GetTimeFormat( buf, sizeof( buf ), false );
-		fprintf( this->vaultmplog, "[%s] ", buf );
+		GetTimeFormat(buf, sizeof(buf), false);
+		fprintf(this->vaultmplog, "[%s] ", buf);
 	}
 
-    /*
+	/*
 	char* lpMsgBuf;
 
 	if( FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, GetLastError(), MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ), ( LPTSTR ) &lpMsgBuf, 0, NULL ) )
@@ -60,40 +60,40 @@ void Debug::Print( const char* text, bool timestamp )
 	}
 	*/
 
-	fwrite( text, sizeof( char ), strlen( text ), this->vaultmplog );
-	fputc( ( int ) '\n', this->vaultmplog );
+	fwrite(text, sizeof(char), strlen(text), this->vaultmplog);
+	fputc((int) '\n', this->vaultmplog);
 
 	EndSession();
 }
 
-void Debug::PrintFormat( const char* format, bool timestamp, ... )
+void Debug::PrintFormat(const char* format, bool timestamp, ...)
 {
 	char text[256];
-	ZeroMemory( text, sizeof( text ) );
+	ZeroMemory(text, sizeof(text));
 
 	va_list args;
-	va_start( args, timestamp );
-	vsnprintf( text, sizeof( text ), format, args );
-	va_end( args );
+	va_start(args, timestamp);
+	vsnprintf(text, sizeof(text), format, args);
+	va_end(args);
 
-	Print( text, timestamp );
+	Print(text, timestamp);
 }
 
 void Debug::PrintSystem()
 {
 	StartSession();
 
-	FILE* systeminfo = popen( "systeminfo", "r" );
+	FILE* systeminfo = popen("systeminfo", "r");
 
-	if ( systeminfo == NULL )
-        return;
+	if (systeminfo == NULL)
+		return;
 
 	char buf[2048];
 
-	while ( fgets( buf, sizeof( buf ), systeminfo ) != NULL )
-		fwrite( buf, sizeof( char ), strlen( buf ), this->vaultmplog );
+	while (fgets(buf, sizeof(buf), systeminfo) != NULL)
+		fwrite(buf, sizeof(char), strlen(buf), this->vaultmplog);
 
-	pclose( systeminfo );
+	pclose(systeminfo);
 
 	EndSession();
 }

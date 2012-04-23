@@ -29,13 +29,13 @@ class Reference : public CriticalSection, public NetworkIDObject
 
 		static IndexLookup Mods;
 
-		Reference( const Reference& );
-		Reference& operator=( const Reference& );
+		Reference(const Reference&);
+		Reference& operator=(const Reference&);
 
 	protected:
-		static unsigned int ResolveIndex( unsigned int baseID );
+		static unsigned int ResolveIndex(unsigned int baseID);
 
-		Reference( unsigned int refID, unsigned int baseID );
+		Reference(unsigned int refID, unsigned int baseID);
 		virtual ~Reference();
 
 	public:
@@ -56,11 +56,11 @@ class Reference : public CriticalSection, public NetworkIDObject
 		/**
 		 * \brief Sets the Reference's reference ID
 		 */
-		Lockable* SetReference( unsigned int refID );
+		Lockable* SetReference(unsigned int refID);
 		/**
 		 * \brief Sets the Reference's base ID
 		 */
-		Lockable* SetBase( unsigned int baseID );
+		Lockable* SetBase(unsigned int baseID);
 
 		/**
 		 * \brief Returns a constant Parameter used to pass the reference ID of this Reference to the Interface
@@ -74,7 +74,7 @@ class Reference : public CriticalSection, public NetworkIDObject
 		/**
 		 * \brief For network transfer
 		 */
-        virtual pDefault* toPacket() = 0;
+		virtual pDefault* toPacket() = 0;
 };
 
 #endif

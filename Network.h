@@ -48,7 +48,7 @@ class Network
 		 * channel sepcifies the RakNet channel to send this packet on
 		 * targets is a STL vector containing RakNetGUID's
 		 */
-		static SingleResponse CreateResponse( pDefault* packet, unsigned char priority, unsigned char reliability, unsigned char channel, vector<RakNetGUID> targets );
+		static SingleResponse CreateResponse(pDefault* packet, unsigned char priority, unsigned char reliability, unsigned char channel, vector<RakNetGUID> targets);
 		/**
 		 * \brief Creates a SingleResponse given a single network target
 		 *
@@ -58,20 +58,20 @@ class Network
 		 * channel sepcifies the RakNet channel to send this packet on
 		 * target is a RakNetGUID
 		 */
-		static SingleResponse CreateResponse( pDefault* packet, unsigned char priority, unsigned char reliability, unsigned char channel, RakNetGUID target );
+		static SingleResponse CreateResponse(pDefault* packet, unsigned char priority, unsigned char reliability, unsigned char channel, RakNetGUID target);
 		/**
 		 * \brief Creates a NetworkResponse from a SingleResponse
 		 *
 		 * The returned NetworkResponse can be used with Dispatch
 		 */
-		static NetworkResponse CompleteResponse( SingleResponse response );
+		static NetworkResponse CompleteResponse(SingleResponse response);
 
 		/**
 		 * \brief Sends a NetworkResponse over RakPeerInterface peer
 		 *
 		 * This function effectively deallocates the packets inside the NetworkResponse
 		 */
-		static void Dispatch( RakPeerInterface* peer, NetworkResponse& response );
+		static void Dispatch(RakPeerInterface* peer, NetworkResponse& response);
 		/**
 		 * \brief Returns a pointer to the static NetworkIDManager
 		 *
@@ -85,7 +85,7 @@ class Network
 		/**
 		 * \brief Queues a NetworkResponse
 		 */
-		static void Queue( NetworkResponse response );
+		static void Queue(NetworkResponse response);
 		/**
 		 * \brief Toggles dequeueing
 		 */

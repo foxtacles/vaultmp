@@ -29,12 +29,12 @@ class VaultException : public exception
 		static Debug* debug;
 #endif
 
-		VaultException& operator=( const VaultException& );
+		VaultException& operator=(const VaultException&);
 
 	public:
 
-		VaultException( string error );
-		VaultException( const char* format, ... );
+		VaultException(string error);
+		VaultException(const char* format, ...);
 		virtual ~VaultException() throw() {}
 
 		/**
@@ -49,7 +49,7 @@ class VaultException : public exception
 		virtual const char* what() const throw();
 
 #ifdef VAULTMP_DEBUG
-		static void SetDebugHandler( Debug* debug );
+		static void SetDebugHandler(Debug* debug);
 		static void FinalizeDebug();
 #endif
 

@@ -62,13 +62,13 @@ class Actor : public Container
 		Value<bool> state_Sneaking;
 		Value<bool> state_Dead;
 
-        void initialize();
+		void initialize();
 
-		Actor( const Actor& );
-		Actor& operator=( const Actor& );
+		Actor(const Actor&);
+		Actor& operator=(const Actor&);
 
 	protected:
-		Actor( unsigned int refID, unsigned int baseID );
+		Actor(unsigned int refID, unsigned int baseID);
 		Actor(const pDefault* packet);
 		Actor(pDefault* packet);
 		virtual ~Actor();
@@ -87,20 +87,20 @@ class Actor : public Container
 		 *
 		 * Used to pass Actor references matching the provided flags to the Interface
 		 */
-		static const Parameter CreateFunctor( unsigned int flags );
+		static const Parameter CreateFunctor(unsigned int flags);
 
 #ifdef VAULTMP_DEBUG
-		static void SetDebugHandler( Debug* debug );
+		static void SetDebugHandler(Debug* debug);
 #endif
 
 		/**
 		 * \brief Retrieves the Actor's actor value specified by index (actor value hex code)
 		 */
-		double GetActorValue( unsigned char index ) const;
+		double GetActorValue(unsigned char index) const;
 		/**
 		 * \brief Retrieves the Actor's base actor value specified by index (actor value hex code)
 		 */
-		double GetActorBaseValue( unsigned char index ) const;
+		double GetActorBaseValue(unsigned char index) const;
 		/**
 		 * \brief Retrieves the Actor's moving animation
 		 */
@@ -129,15 +129,15 @@ class Actor : public Container
 		/**
 		 * \brief Sets the Actor's actor value specified by index (actor value hex code)
 		 */
-		Lockable* SetActorValue( unsigned char index, double value );
+		Lockable* SetActorValue(unsigned char index, double value);
 		/**
 		 * \brief Sets the Actor's base actor value specified by index (actor value hex code)
 		 */
-		Lockable* SetActorBaseValue( unsigned char index, double value );
+		Lockable* SetActorBaseValue(unsigned char index, double value);
 		/**
 		 * \brief Sets the Actor's moving animation
 		 */
-		Lockable* SetActorMovingAnimation( unsigned char index );
+		Lockable* SetActorMovingAnimation(unsigned char index);
 		/**
 		 * \brief Sets the Actor's moving state
 		 *
@@ -145,19 +145,19 @@ class Actor : public Container
 		 * 0x01 - the actor moves ForwardLeft / BackwardRight
 		 * 0x02 - the actor moves ForwardRight / BackwardLeft
 		 */
-		Lockable* SetActorMovingXY( unsigned char moving );
+		Lockable* SetActorMovingXY(unsigned char moving);
 		/**
 		 * \brief Sets the Actor's alerted state
 		 */
-		Lockable* SetActorAlerted( bool state );
+		Lockable* SetActorAlerted(bool state);
 		/**
 		 * \brief Sets the Actor's sneaking state
 		 */
-		Lockable* SetActorSneaking( bool state );
+		Lockable* SetActorSneaking(bool state);
 		/**
 		 * \brief Sets the Actor's dead state
 		 */
-		Lockable* SetActorDead( bool state );
+		Lockable* SetActorDead(bool state);
 
 		/**
 		 * \brief Returns true if the Actor is jumping
@@ -167,13 +167,13 @@ class Actor : public Container
 		/**
 		 * \brief For network transfer
 		 */
-        virtual pDefault* toPacket();
+		virtual pDefault* toPacket();
 };
 
 class ActorFunctor : public VaultFunctor
 {
 	public:
-		ActorFunctor( unsigned int flags ) : VaultFunctor( flags ) {};
+		ActorFunctor(unsigned int flags) : VaultFunctor(flags) {};
 		virtual ~ActorFunctor();
 
 		virtual vector<string> operator()();

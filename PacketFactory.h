@@ -27,10 +27,10 @@ enum
 	ID_GAME_END,
 	ID_GAME_MESSAGE,
 
-    ID_OBJECT_NEW,
-    ID_ITEM_NEW,
-    ID_CONTAINER_NEW,
-    ID_ACTOR_NEW,
+	ID_OBJECT_NEW,
+	ID_ITEM_NEW,
+	ID_CONTAINER_NEW,
+	ID_ACTOR_NEW,
 	ID_PLAYER_NEW,
 
 	ID_OBJECT_REMOVE,
@@ -70,17 +70,17 @@ class PacketFactory
 		PacketFactory();
 
 	public:
-		static pDefault* CreatePacket( unsigned char type, ... );
+		static pDefault* CreatePacket(unsigned char type, ...);
 
-		static pDefault* CreatePacket( unsigned char* stream, unsigned int len );
+		static pDefault* CreatePacket(unsigned char* stream, unsigned int len);
 
-		static void Access( const pDefault* packet, ... );
+		static void Access(const pDefault* packet, ...);
 
-		static NetworkID ExtractNetworkID( const pDefault* packet);
+		static NetworkID ExtractNetworkID(const pDefault* packet);
 
-		static unsigned int ExtractReference( const pDefault* packet);
+		static unsigned int ExtractReference(const pDefault* packet);
 
-		static unsigned int ExtractBase( const pDefault* packet);
+		static unsigned int ExtractBase(const pDefault* packet);
 
 		static const unsigned char* ExtractRawData(const pDefault* packet);
 

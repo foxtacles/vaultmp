@@ -35,7 +35,7 @@ class Lockable
 		static map<signed int, Lockable*> keymap;
 		static CriticalSection cs;
 
-		static signed int NextKey( bool flat );
+		static signed int NextKey(bool flat);
 
 		list<signed int> locks;
 
@@ -43,13 +43,13 @@ class Lockable
 		static Debug* debug;
 #endif
 
-		Lockable& operator=( const Lockable& );
+		Lockable& operator=(const Lockable&);
 
 	protected:
 
 		Lockable();
-		Lockable(Lockable&&) = default;
-		Lockable& operator=(Lockable&&) = default;
+		Lockable(Lockable &&) = default;
+		Lockable& operator=(Lockable &&) = default;
 		virtual ~Lockable();
 
 	public:
@@ -63,7 +63,7 @@ class Lockable
 		 *
 		 * Returns a pointer to the unlocked object if successful.
 		 */
-		static Lockable* BlindUnlock( signed int key );
+		static Lockable* BlindUnlock(signed int key);
 
 		/**
 		 * \brief Locks this object
@@ -74,7 +74,7 @@ class Lockable
 		 * if flat = true, the key is necessary to remove this lock.
 		 * if flat = false, the key can be used to remove all locks (regardless of their types) from this object
 		 */
-		signed int Lock( bool flat );
+		signed int Lock(bool flat);
 		/**
 		 * \brief Unlocks this object
 		 *
@@ -83,7 +83,7 @@ class Lockable
 		 * If the given key is of type "flat", the corresponding lock will be removed (the object may get unlocked)
 		 * If the given key is of type "deep" (non-flat), the object will be unlocked and all locks will be removed from it
 		 */
-		Lockable* Unlock( signed int key );
+		Lockable* Unlock(signed int key);
 		/**
 		 * \brief Checks if this object is locked
 		 *
@@ -92,7 +92,7 @@ class Lockable
 		bool IsLocked() const;
 
 #ifdef VAULTMP_DEBUG
-		static void SetDebugHandler( Debug* debug );
+		static void SetDebugHandler(Debug* debug);
 #endif
 
 };

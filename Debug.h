@@ -22,17 +22,17 @@ class Debug : private CriticalSection
 		string logfile;
 		FILE* vaultmplog;
 
-		static void GetTimeFormat( char* buf, int size, bool file );
+		static void GetTimeFormat(char* buf, int size, bool file);
 
-		Debug( const Debug& );
-		Debug& operator=( const Debug& );
+		Debug(const Debug&);
+		Debug& operator=(const Debug&);
 
 	public:
-		Debug( char* module );
+		Debug(char* module);
 		~Debug();
 
-		void Print( const char* text, bool timestamp );
-		void PrintFormat( const char* format, bool timestamp, ... );
+		void Print(const char* text, bool timestamp);
+		void PrintFormat(const char* format, bool timestamp, ...);
 		void PrintSystem();
 
 };

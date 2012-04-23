@@ -45,9 +45,9 @@ class Interface : public API
 		static bool endThread;
 		static bool wakeup;
 		static bool initialized;
-        static thread hCommandThreadReceive;
-        static thread hCommandThreadSend;
-        static PriorityMap priorityMap;
+		static thread hCommandThreadReceive;
+		static thread hCommandThreadSend;
+		static PriorityMap priorityMap;
 		static StaticCommandList static_cmdlist;
 		static DynamicCommandList dynamic_cmdlist;
 		static PipeClient* pipeServer;
@@ -60,9 +60,9 @@ class Interface : public API
 		static unordered_map<string, string> alias;
 		static Native natives;
 
-        static Native::iterator DefineNativeInternal(string name, ParamContainer);
-        static void ExecuteCommand(Native::iterator it, signed int key);
-        static multimap<string, string> Evaluate(Native::iterator _it);
+		static Native::iterator DefineNativeInternal(string name, ParamContainer);
+		static void ExecuteCommand(Native::iterator it, signed int key);
+		static multimap<string, string> Evaluate(Native::iterator _it);
 
 		static void CommandThreadReceive();
 		static void CommandThreadSend();
@@ -80,7 +80,7 @@ class Interface : public API
 		 *
 		 * Takes a ResultHandler function pointer and the game code
 		 */
-		static bool Initialize( ResultHandler, unsigned char game );
+		static bool Initialize(ResultHandler, unsigned char game);
 		/**
 		 * \brief Terminates the Interface
 		 */
@@ -126,14 +126,14 @@ class Interface : public API
 		 *
 		 * Example: DefineCommand("GetPos", "%0.GetPos %1");
 		 */
-		static void DefineCommand( string name, string def, string real = string() );
+		static void DefineCommand(string name, string def, string real = string());
 		/**
 		 * \brief Defines a native for an existing command
 		 *
 		 * name refers to an existing command.
 		 * param is a ParamContainer which is a STL list of Parameter's
 		 */
-		static void DefineNative( string name, ParamContainer param );
+		static void DefineNative(string name, ParamContainer param);
 		/**
 		 * \brief Executes a command in an indefinite loop until Terminate gets called
 		 *
@@ -142,7 +142,7 @@ class Interface : public API
 		 *
 		 * A native must be defined for the given command.
 		 */
-		static void SetupCommand( string name, unsigned int priority = 1 );
+		static void SetupCommand(string name, unsigned int priority = 1);
 		/**
 		 * \brief Executes a command once
 		 *
@@ -150,10 +150,10 @@ class Interface : public API
 		 * see DefineNative for a short explanation of ParamContainer
 		 * key (optional) - a signed key (usually from the Lockable class) which is to later identify this command
 		 */
-		static void ExecuteCommand( string name, ParamContainer, signed int key = 0 );
+		static void ExecuteCommand(string name, ParamContainer, signed int key = 0);
 
 #ifdef VAULTMP_DEBUG
-		static void SetDebugHandler( Debug* debug );
+		static void SetDebugHandler(Debug* debug);
 #endif
 };
 

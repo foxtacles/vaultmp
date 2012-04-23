@@ -37,18 +37,18 @@ class Player : public Actor
 		static Debug* debug;
 #endif
 
-        static unsigned int default_respawn;
+		static unsigned int default_respawn;
 
 		unordered_map<unsigned char, pair<Value<unsigned char>, Value<bool> > > player_Controls;
 		Value<unsigned int> player_Respawn;
 
-        void initialize();
+		void initialize();
 
-		Player( const Player& );
-		Player& operator=( const Player& );
+		Player(const Player&);
+		Player& operator=(const Player&);
 
 	protected:
-		Player( unsigned int refID, unsigned int baseID );
+		Player(unsigned int refID, unsigned int baseID);
 		Player(const pDefault* packet);
 		virtual ~Player();
 
@@ -65,20 +65,20 @@ class Player : public Actor
 		 * Used to pass Player references matching the provided flags to the Interface
 		 * Can also be used to pass data of a given Player to the Interface
 		 */
-		static const Parameter CreateFunctor( unsigned int flags, NetworkID player = 0 );
+		static const Parameter CreateFunctor(unsigned int flags, NetworkID player = 0);
 
 #ifdef VAULTMP_DEBUG
-		static void SetDebugHandler( Debug* debug );
+		static void SetDebugHandler(Debug* debug);
 #endif
 
 		/**
 		 * \brief Retrieves the key associated to the Player's control
 		 */
-		unsigned char GetPlayerControl( unsigned char control ) const;
+		unsigned char GetPlayerControl(unsigned char control) const;
 		/**
 		 * \brief Given a control code, returns its enabled state
 		 */
-		bool GetPlayerControlEnabled( unsigned char control ) const;
+		bool GetPlayerControlEnabled(unsigned char control) const;
 		/**
 		 * \brief Returns the Player's respawn time
 		 */
@@ -87,20 +87,20 @@ class Player : public Actor
 		/**
 		 * \brief Associates a key to the Player's control code
 		 */
-		Lockable* SetPlayerControl( unsigned char control, unsigned char key );
+		Lockable* SetPlayerControl(unsigned char control, unsigned char key);
 		/**
 		 * \brief Sets the enabled state of the given control code
 		 */
-		Lockable* SetPlayerControlEnabled( unsigned char control, bool state );
+		Lockable* SetPlayerControlEnabled(unsigned char control, bool state);
 		/**
 		 * \brief Sets the respawn time
 		 */
-		Lockable* SetPlayerRespawn( unsigned int respawn );
+		Lockable* SetPlayerRespawn(unsigned int respawn);
 
 		/**
 		 * \brief For network transfer
 		 */
-        virtual pDefault* toPacket();
+		virtual pDefault* toPacket();
 };
 
 class PlayerFunctor : public VaultFunctor
@@ -109,7 +109,7 @@ class PlayerFunctor : public VaultFunctor
 		NetworkID player;
 
 	public:
-		PlayerFunctor( unsigned int flags, NetworkID player ) : player( player ), VaultFunctor( flags ) {};
+		PlayerFunctor(unsigned int flags, NetworkID player) : player(player), VaultFunctor(flags) {};
 		virtual ~PlayerFunctor();
 
 		virtual vector<string> operator()();

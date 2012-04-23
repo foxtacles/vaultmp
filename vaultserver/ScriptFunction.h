@@ -9,7 +9,7 @@
 
 using namespace std;
 
-typedef unsigned long long ( *ScriptFunc )();
+typedef unsigned long long(*ScriptFunc)();
 typedef string ScriptFuncPAWN;
 
 class ScriptFunction
@@ -23,10 +23,10 @@ class ScriptFunction
 		string def;
 		bool pawn;
 
-		ScriptFunction( ScriptFunc fCpp, string def );
-		ScriptFunction( ScriptFuncPAWN fPawn, AMX* amx, string def );
+		ScriptFunction(ScriptFunc fCpp, string def);
+		ScriptFunction(ScriptFuncPAWN fPawn, AMX* amx, string def);
 
-		unsigned long long Call( const vector<boost::any>& args );
+		unsigned long long Call(const vector<boost::any>& args);
 
 };
 

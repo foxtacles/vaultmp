@@ -18,16 +18,16 @@ class VaultFunctor
 {
 	private:
 		VaultFunctor* next;
-		vector<string>( *func )();
+		vector<string>(*func)();
 
 	protected:
 		unsigned int flags;
-		void _next( vector<string>& result );
-		VaultFunctor( unsigned int flags );
+		void _next(vector<string>& result);
+		VaultFunctor(unsigned int flags);
 
 	public:
 		VaultFunctor();
-		VaultFunctor( vector<string>( *func )() );
+		VaultFunctor(vector<string>(*func)());
 		virtual ~VaultFunctor();
 
 		/**
@@ -36,7 +36,7 @@ class VaultFunctor
 		 * This is to build a chain of functors
 		 * Returns the connected VaultFunctor on success
 		 */
-		VaultFunctor* connect( VaultFunctor* next );
+		VaultFunctor* connect(VaultFunctor* next);
 		/**
 		 * \brief The functor call
 		 */

@@ -70,8 +70,8 @@ class Dedicated
 		static bool query;
 		static bool fileserve;
 
-		static void Announce( bool announce );
-		static void Query( Packet* packet );
+		static void Announce(bool announce);
+		static void Query(Packet* packet);
 		static TimeMS announcetime;
 		static SystemAddress master;
 		static ServerEntry* self;
@@ -99,13 +99,13 @@ class Dedicated
 		 * fileserver - enable / disable file downloading from this server
 		 * fileslots - the maximum amount of file downloading connections
 		 */
-		static std::thread InitializeServer( int port, int connections, char* announce, bool query, bool fileserve, int fileslots );
+		static std::thread InitializeServer(int port, int connections, char* announce, bool query, bool fileserve, int fileslots);
 		/**
 		 * \brief Sets the ServerEntry of the dedicated server
 		 *
 		 * A ServerEntry contains information about the game, the players and a set of rules / values
 		 */
-		static void SetServerEntry( ServerEntry* self );
+		static void SetServerEntry(ServerEntry* self);
 		/**
 		 * \brief Sets the Savegame of the dedicated server
 		 *
@@ -113,7 +113,7 @@ class Dedicated
 		 * string is the relative path to the savegame
 		 * unsigned int is the CRC32 of the savegame
 		 */
-		static void SetSavegame( Savegame savegame );
+		static void SetSavegame(Savegame savegame);
 		/**
 		 * \brief Sets the ModList of the dedicated server
 		 *
@@ -121,7 +121,7 @@ class Dedicated
 		 * string is the relative path to the modfile
 		 * unsigned int is the CRC32 of the modfile
 		 */
-		static void SetModfiles( ModList modfiles );
+		static void SetModfiles(ModList modfiles);
 		/**
 		 * \brief Terminates the dedicated server thread
 		 */
@@ -130,15 +130,15 @@ class Dedicated
 		/**
 		 * \brief Sets the server name
 		 */
-		static void SetServerName( string name );
+		static void SetServerName(string name);
 		/**
 		 * \brief Sets the server map
 		 */
-		static void SetServerMap( string map );
+		static void SetServerMap(string map);
 		/**
 		 * \brief Defines a server rule
 		 */
-		static void SetServerRule( string rule, string value );
+		static void SetServerRule(string rule, string value);
 		/**
 		 * \brief Returns the game code of the dedicated server
 		 */

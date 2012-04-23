@@ -27,17 +27,17 @@ class Client
 		unsigned int ID;
 		NetworkID player;
 
-		Client( const Client& );
-		Client& operator=( const Client& );
+		Client(const Client&);
+		Client& operator=(const Client&);
 
 	public:
-		Client( RakNetGUID guid, NetworkID player );
+		Client(RakNetGUID guid, NetworkID player);
 		~Client();
 
 		/**
 		 * \brief Sets the maximum amount of connected clients. This should be called in the initial startup procedure of the server
 		 */
-		static void SetMaximumClients( unsigned int clients );
+		static void SetMaximumClients(unsigned int clients);
 		/**
 		 * \brief Returns the amount of connected clients
 		 */
@@ -45,27 +45,27 @@ class Client
 		/**
 		 * \brief Given the RakNetGUID, returns the Client
 		 */
-		static Client* GetClientFromGUID( RakNetGUID guid );
+		static Client* GetClientFromGUID(RakNetGUID guid);
 		/**
 		 * \brief Given the ID, returns the Client
 		 */
-		static Client* GetClientFromID( unsigned int id );
+		static Client* GetClientFromID(unsigned int id);
 		/**
 		 * \brief Given the NetworkID, returns the Client
 		 */
-		static Client* GetClientFromPlayer( NetworkID id );
+		static Client* GetClientFromPlayer(NetworkID id);
 		/**
 		 * \brief Returns a STL vector containing every RakNetGUID
 		 *
 		 * except (optional, Client*) - excludes a RakNetGUID from the result
 		 */
-		static vector<RakNetGUID> GetNetworkList( Client* except = NULL );
+		static vector<RakNetGUID> GetNetworkList(Client* except = NULL);
 		/**
 		 * \brief Returns a STL vector containing every RakNetGUID
 		 *
 		 * except (optional, RakNetGUID) - excludes a RakNetGUID from the result
 		 */
-		static vector<RakNetGUID> GetNetworkList( RakNetGUID except = UNASSIGNED_RAKNET_GUID );
+		static vector<RakNetGUID> GetNetworkList(RakNetGUID except = UNASSIGNED_RAKNET_GUID);
 
 		/**
 		 * \brief Returns the RakNetGUID

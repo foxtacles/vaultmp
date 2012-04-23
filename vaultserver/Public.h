@@ -29,17 +29,17 @@ class Public : public ScriptFunction
 
 	public:
 
-		Public( ScriptFunc _public, string name, string def );
-		Public( ScriptFuncPAWN _public, AMX* amx, string name, string def );
+		Public(ScriptFunc _public, string name, string def);
+		Public(ScriptFuncPAWN _public, AMX* amx, string name, string def);
 
 		/**
 		 * \brief Calls a public
 		 */
-		static unsigned long long Call( string name, const vector<boost::any>& args );
+		static unsigned long long Call(string name, const vector<boost::any>& args);
 		/**
 		 * \brief Retrieves the definition of a public
 		 */
-		static string GetDefinition( string name );
+		static string GetDefinition(string name);
 		/**
 		 * \brief Deletes all publics
 		 */

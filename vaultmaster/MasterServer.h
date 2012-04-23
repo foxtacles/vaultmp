@@ -38,7 +38,7 @@ class MasterServer
 		static SocketDescriptor* sockdescr;
 
 		static ServerMap serverList;
-		static void RemoveServer( SystemAddress addr );
+		static void RemoveServer(SystemAddress addr);
 
 		static void MasterThread();
 		static bool thread;

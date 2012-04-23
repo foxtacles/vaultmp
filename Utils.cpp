@@ -3,72 +3,72 @@
 void Utils::timestamp()
 {
 	time_t ltime;
-	ltime = time( NULL );
+	ltime = time(NULL);
 	char t[32];
-	snprintf( t, sizeof( t ), "[%s", asctime( localtime( &ltime ) ) );
-	char* newline = strchr( t, '\n' );
+	snprintf(t, sizeof(t), "[%s", asctime(localtime(&ltime)));
+	char* newline = strchr(t, '\n');
 	*newline = ']';
-	strcat( t, " " );
-	printf( t );
+	strcat(t, " ");
+	printf(t);
 }
 
-bool Utils::DoubleCompare( double a, double b, double epsilon )
+bool Utils::DoubleCompare(double a, double b, double epsilon)
 {
-	return fabs( a - b ) < epsilon;
+	return fabs(a - b) < epsilon;
 }
 
-string Utils::LongToHex( unsigned int value )
+string Utils::LongToHex(unsigned int value)
 {
 	char str[16];
-	snprintf( str, sizeof( str ), "%08X", value );
-	return string( str );
+	snprintf(str, sizeof(str), "%08X", value);
+	return string(str);
 }
 
-string& Utils::str_replace( string& source, const char* find, const char* replace )
+string& Utils::str_replace(string& source, const char* find, const char* replace)
 {
-   unsigned int find_len = strlen(find);
-   unsigned int replace_len = strlen(replace);
-   unsigned int pos = 0;
+	unsigned int find_len = strlen(find);
+	unsigned int replace_len = strlen(replace);
+	unsigned int pos = 0;
 
-   while ((pos = source.find(find, pos)) != string::npos)
-   {
-      source.replace(pos, find_len, replace);
-      pos += replace_len;
-   }
+	while ((pos = source.find(find, pos)) != string::npos)
+	{
+		source.replace(pos, find_len, replace);
+		pos += replace_len;
+	}
 
-   return source;
+	return source;
 }
 
-string& Utils::RemoveExtension( string& file )
+string& Utils::RemoveExtension(string& file)
 {
-	unsigned int pos = file.find_last_of( '.' );
+	unsigned int pos = file.find_last_of('.');
 
-	if ( pos )
-		file = file.substr( 0, pos );
+	if (pos)
+		file = file.substr(0, pos);
 
 	return file;
 }
 
-const char* Utils::FileOnly( const char* path )
+const char* Utils::FileOnly(const char* path)
 {
 	const char* tmp = path;
 	const char* end = path;
 
-	for ( tmp; ( tmp = strpbrk( tmp, "\\/" ) ) != NULL; end = tmp++ );
+	for (tmp; (tmp = strpbrk(tmp, "\\/")) != NULL; end = tmp++);
 
 	return ++end;
 }
 
-unsigned int Utils::FileLength( const char* file )
+unsigned int Utils::FileLength(const char* file)
 {
-	FILE* _file = fopen( file, "rb" );
+	FILE* _file = fopen(file, "rb");
 
-	if ( !_file )
+	if (!_file)
 		return 0;
 
-	fseek( _file, 0, SEEK_END );
-	unsigned int size = ftell( _file );
-	fclose( _file );
+	fseek(_file, 0, SEEK_END);
+	unsigned int size = ftell(_file);
+	fclose(_file);
 
 	return size;
 }
@@ -78,9 +78,9 @@ unsigned int Utils::FileLength( const char* file )
     */
 
 #ifdef __WIN32__
-BOOL Utils::GenerateChecksum( const string& szFilename,
-							  DWORD& dwExistingChecksum,
-							  DWORD& dwChecksum )
+BOOL Utils::GenerateChecksum(const string& szFilename,
+							 DWORD& dwExistingChecksum,
+							 DWORD& dwChecksum)
 {
 	HANDLE hFile = INVALID_HANDLE_VALUE;
 	HANDLE hFileMapping = NULL;
@@ -90,28 +90,28 @@ BOOL Utils::GenerateChecksum( const string& szFilename,
 	DWORD dwCheckSum; // Calculated Checksum
 
 	/////////////////////////////////////////////////////////////
-	hFile = CreateFile( szFilename.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0 );
+	hFile = CreateFile(szFilename.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
-	if ( INVALID_HANDLE_VALUE == hFile ||
-			NULL == hFile )
+	if (INVALID_HANDLE_VALUE == hFile ||
+			NULL == hFile)
 	{
 		return false;
 	}
 
 	/////////////////////////////////////////////////////////////
-	hFileMapping = CreateFileMapping( hFile, NULL,
-									  PAGE_READONLY, 0, 0, NULL );
+	hFileMapping = CreateFileMapping(hFile, NULL,
+									 PAGE_READONLY, 0, 0, NULL);
 
-	if ( NULL == hFileMapping )
+	if (NULL == hFileMapping)
 	{
 		return false;
 	}
 
 	/////////////////////////////////////////////////////////////
-	pBaseAddress = MapViewOfFile( hFileMapping,
-								  FILE_MAP_READ, 0, 0, 0 );
+	pBaseAddress = MapViewOfFile(hFileMapping,
+								 FILE_MAP_READ, 0, 0, 0);
 
-	if ( NULL == pBaseAddress )
+	if (NULL == pBaseAddress)
 	{
 		return false;
 	}
@@ -120,26 +120,26 @@ BOOL Utils::GenerateChecksum( const string& szFilename,
 	DWORD dwSize = 0;
 	LARGE_INTEGER liSize = { 0, 0 };
 
-	if( TRUE == GetFileSizeEx( hFile, &liSize ) )
+	if (TRUE == GetFileSizeEx(hFile, &liSize))
 	{
 		dwSize = liSize.LowPart;
 	}
 
-	SetLastError( ERROR_SUCCESS );
+	SetLastError(ERROR_SUCCESS);
 
 	/////////////////////////////////////////////////////////////
 	PIMAGE_NT_HEADERS pNTHeaders = CheckSumMappedFile(
-									   pBaseAddress, dwSize, &dwHeaderSum, &dwCheckSum );
+									   pBaseAddress, dwSize, &dwHeaderSum, &dwCheckSum);
 
-	if( NULL != pNTHeaders )
+	if (NULL != pNTHeaders)
 	{
 		dwExistingChecksum = dwHeaderSum;
 		dwChecksum = dwCheckSum;
 	}
 
 	/////////////////////////////////////////////////////////////
-	UnmapViewOfFile( pBaseAddress );
-	CloseHandle( hFile );
+	UnmapViewOfFile(pBaseAddress);
+	CloseHandle(hFile);
 
 	return TRUE;
 }
@@ -199,12 +199,12 @@ static unsigned int crc_32_tab[] =   /* CRC polynomial 0xedb88320 */
 	0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
 };
 
-unsigned int Utils::updateCRC32( unsigned char ch, unsigned int crc )
+unsigned int Utils::updateCRC32(unsigned char ch, unsigned int crc)
 {
-	return UPDC32( ch, crc );
+	return UPDC32(ch, crc);
 }
 
-bool Utils::crc32file( char* name, unsigned int* crc )
+bool Utils::crc32file(char* name, unsigned int* crc)
 {
 	FILE* fin;
 	unsigned int oldcrc32;
@@ -214,38 +214,38 @@ bool Utils::crc32file( char* name, unsigned int* crc )
 	oldcrc32 = 0xFFFFFFFF;
 	charcnt = 0;
 
-	if ( ( fin = fopen( name, "rb" ) ) == NULL )
+	if ((fin = fopen(name, "rb")) == NULL)
 	{
 		return false;
 	}
 
-	while ( ( c = getc( fin ) ) != EOF )
+	while ((c = getc(fin)) != EOF)
 	{
 		++charcnt;
-		oldcrc32 = UPDC32( c, oldcrc32 );
+		oldcrc32 = UPDC32(c, oldcrc32);
 	}
 
-	if ( ferror( fin ) )
+	if (ferror(fin))
 	{
 		charcnt = -1;
 	}
 
-	fclose( fin );
+	fclose(fin);
 
 	*crc = oldcrc32 = ~oldcrc32;
 
 	return true;
 }
 
-unsigned int Utils::crc32buf( char* buf, size_t len )
+unsigned int Utils::crc32buf(char* buf, size_t len)
 {
 	unsigned int oldcrc32;
 
 	oldcrc32 = 0xFFFFFFFF;
 
-	for ( ; len; --len, ++buf )
+	for (; len; --len, ++buf)
 	{
-		oldcrc32 = UPDC32( *buf, oldcrc32 );
+		oldcrc32 = UPDC32(*buf, oldcrc32);
 	}
 
 	return ~oldcrc32;

@@ -23,7 +23,7 @@ class CriticalSection
 {
 
 	private:
-        recursive_timed_mutex cs;
+		recursive_timed_mutex cs;
 
 #ifdef VAULTMP_DEBUG
 		Debug* debug;
@@ -32,8 +32,8 @@ class CriticalSection
 		bool finalize;
 		unsigned int locks;
 
-		CriticalSection( const CriticalSection& );
-		CriticalSection& operator=( const CriticalSection& );
+		CriticalSection(const CriticalSection&);
+		CriticalSection& operator=(const CriticalSection&);
 
 	public:
 		CriticalSection();
@@ -44,10 +44,10 @@ class CriticalSection
 		void Finalize();
 
 #ifdef VAULTMP_DEBUG
-        static string thread_id(thread&);
-        static string thread_id();
-        void PrintStatus();
-		void SetDebugHandler( Debug* debug );
+		static string thread_id(thread&);
+		static string thread_id();
+		void PrintStatus();
+		void SetDebugHandler(Debug* debug);
 #endif
 
 };

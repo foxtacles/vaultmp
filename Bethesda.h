@@ -66,12 +66,12 @@ class Bethesda
 		/**
 		 * \brief Handles translated command results from the game
 		 */
-		static void CommandHandler( signed int key, vector<double>& info, double result, bool error );
+		static void CommandHandler(signed int key, vector<double>& info, double result, bool error);
 
 		/**
 		 * \brief Lookup the ID of a given process name
 		 */
-		static DWORD lookupProgramID( const char process[] );
+		static DWORD lookupProgramID(const char process[]);
 #ifdef VAULTMP_DEBUG
 		static Debug* debug;
 #endif
@@ -82,6 +82,6 @@ class Bethesda
 		/**
 		 * \brief Initializes Vault-Tec Multiplayer Mod
 		 */
-		static void InitializeVaultMP( RakPeerInterface* peer, SystemAddress server, string name, string pwd, unsigned char game );
+		static void InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, string name, string pwd, unsigned char game);
 
 };

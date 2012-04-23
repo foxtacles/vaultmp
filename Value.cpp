@@ -12,7 +12,7 @@ Value<T>::Value()
 }
 
 template <typename T>
-Value<T>::Value( T t ) : value( t )
+Value<T>::Value(T t) : value(t)
 {
 
 }
@@ -31,19 +31,19 @@ Value<T>::~Value()
 
 #ifdef VAULTMP_DEBUG
 template <typename T>
-void Value<T>::SetDebugHandler( Debug* debug )
+void Value<T>::SetDebugHandler(Debug* debug)
 {
 	Value::debug = debug;
 
-	if ( debug != NULL )
-		debug->Print( "Attached debug handler to Value class", true );
+	if (debug != NULL)
+		debug->Print("Attached debug handler to Value class", true);
 }
 #endif
 
 template <typename T>
-bool Value<T>::set( T value )
+bool Value<T>::set(T value)
 {
-	if ( this->IsLocked() )
+	if (this->IsLocked())
 		return false;
 
 	this->value = value;
@@ -60,7 +60,7 @@ T Value<T>::get() const
 template <typename T>
 bool Value<T>::set_promise()
 {
-    this->async.set_value(this->get());
+	this->async.set_value(this->get());
 
 	return true;
 }
@@ -68,11 +68,11 @@ bool Value<T>::set_promise()
 template <typename T>
 T Value<T>::get_future(chrono::milliseconds timeout)
 {
-    future<T> f = this->async.get_future();
+	future<T> f = this->async.get_future();
 
 	if (timeout > chrono::milliseconds(0))
-        if (f.wait_for(timeout) == future_status::timeout)
-            throw VaultException("Timeout of %d reached for future value retrieval", timeout.count());
+		if (f.wait_for(timeout) == future_status::timeout)
+			throw VaultException("Timeout of %d reached for future value retrieval", timeout.count());
 
 	T value = f.get();
 	this->async = promise<T>();

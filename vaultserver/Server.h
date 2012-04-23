@@ -32,55 +32,55 @@ class Server
 		/**
 		 * \brief Authenticates a client
 		 */
-		static NetworkResponse Authenticate( RakNetGUID guid, string name, string pwd );
+		static NetworkResponse Authenticate(RakNetGUID guid, string name, string pwd);
 		/**
 		 * \brief Sends the game world data
 		 */
-		static NetworkResponse LoadGame( RakNetGUID guid );
+		static NetworkResponse LoadGame(RakNetGUID guid);
 		/**
 		 * \brief Creates a new Player
 		 */
-		static NetworkResponse NewPlayer( RakNetGUID guid, NetworkID id );
+		static NetworkResponse NewPlayer(RakNetGUID guid, NetworkID id);
 		/**
 		 * \brief Disconnects a client
 		 */
-		static NetworkResponse Disconnect( RakNetGUID guid, unsigned char reason );
+		static NetworkResponse Disconnect(RakNetGUID guid, unsigned char reason);
 
 		/**
 		 * \brief Handles GetPos network packet
 		 */
-		static NetworkResponse GetPos( RakNetGUID guid, FactoryObject reference, double X, double Y, double Z );
+		static NetworkResponse GetPos(RakNetGUID guid, FactoryObject reference, double X, double Y, double Z);
 		/**
 		 * \brief Handles GetAngle network packet
 		 */
-		static NetworkResponse GetAngle( RakNetGUID guid, FactoryObject reference, unsigned char axis, double value );
+		static NetworkResponse GetAngle(RakNetGUID guid, FactoryObject reference, unsigned char axis, double value);
 		/**
 		 * \brief Handles cell network packet
 		 */
-		static NetworkResponse GetCell( RakNetGUID guid, FactoryObject reference, unsigned int cell );
+		static NetworkResponse GetCell(RakNetGUID guid, FactoryObject reference, unsigned int cell);
 		/**
 		 * \brief Handles container update network packet
 		 */
-		static NetworkResponse GetContainerUpdate( RakNetGUID guid, FactoryObject reference, ContainerDiff diff );
+		static NetworkResponse GetContainerUpdate(RakNetGUID guid, FactoryObject reference, ContainerDiff diff);
 		/**
 		 * \brief Handles actor value network packet
 		 */
-		static NetworkResponse GetActorValue( RakNetGUID guid, FactoryObject reference, bool base, unsigned char index, double value );
+		static NetworkResponse GetActorValue(RakNetGUID guid, FactoryObject reference, bool base, unsigned char index, double value);
 		/**
 		 * \brief Handles actor state network packet
 		 */
-		static NetworkResponse GetActorState( RakNetGUID guid, FactoryObject reference, unsigned char index, unsigned char moving, bool alerted, bool sneaking );
+		static NetworkResponse GetActorState(RakNetGUID guid, FactoryObject reference, unsigned char index, unsigned char moving, bool alerted, bool sneaking);
 		/**
 		 * \brief Handles actor dead network packet
 		 */
-		static NetworkResponse GetActorDead( RakNetGUID guid, FactoryObject reference, bool dead );
+		static NetworkResponse GetActorDead(RakNetGUID guid, FactoryObject reference, bool dead);
 		/**
 		 * \brief Handles player control network packet
 		 */
-		static NetworkResponse GetPlayerControl( RakNetGUID guid, FactoryObject reference, unsigned char control, unsigned char key );
+		static NetworkResponse GetPlayerControl(RakNetGUID guid, FactoryObject reference, unsigned char control, unsigned char key);
 
 #ifdef VAULTMP_DEBUG
-		static void SetDebugHandler( Debug* debug );
+		static void SetDebugHandler(Debug* debug);
 #endif
 };
 

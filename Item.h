@@ -34,36 +34,36 @@ class Item : public Object
 		Value<double> item_Condition;
 		Value<bool> state_Equipped;
 
-        void initialize();
+		void initialize();
 
-		Item( const Item& );
-		Item& operator=( const Item& );
+		Item(const Item&);
+		Item& operator=(const Item&);
 
 	protected:
-		Item( unsigned int refID, unsigned int baseID );
+		Item(unsigned int refID, unsigned int baseID);
 		Item(const pDefault* packet);
-        Item(pDefault* packet);
+		Item(pDefault* packet);
 		virtual ~Item();
 
 	public:
 #ifdef VAULTMP_DEBUG
-		static void SetDebugHandler( Debug* debug );
+		static void SetDebugHandler(Debug* debug);
 #endif
 
 		unsigned int GetItemCount() const;
 		double GetItemCondition() const;
 		bool GetItemEquipped() const;
 
-		bool SetItemCount( unsigned int count );
-		bool SetItemCondition( double condition );
-		bool SetItemEquipped( bool state );
+		bool SetItemCount(unsigned int count);
+		bool SetItemCondition(double condition);
+		bool SetItemEquipped(bool state);
 
 		NetworkID Copy() const;
 
 		/**
 		 * \brief For network transfer
 		 */
-        virtual pDefault* toPacket();
+		virtual pDefault* toPacket();
 };
 
 #endif

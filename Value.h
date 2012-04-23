@@ -34,20 +34,20 @@ class Value : public Lockable
 		static Debug* debug;
 #endif
 
-		Value& operator=( const Value& );
+		Value& operator=(const Value&);
 
 	public:
 
 		Value();
-		Value( T t );
-		Value(Value&&) = default;
-		Value& operator=(Value&&) = default;
+		Value(T t);
+		Value(Value &&) = default;
+		Value& operator=(Value &&) = default;
 		virtual ~Value();
 
 		/**
 		 * \brief Sets the value
 		 */
-		bool set( T value );
+		bool set(T value);
 		/**
 		 * \brief Gets the value
 		 */
@@ -63,7 +63,7 @@ class Value : public Lockable
 
 
 #ifdef VAULTMP_DEBUG
-		static void SetDebugHandler( Debug* debug );
+		static void SetDebugHandler(Debug* debug);
 #endif
 
 };
