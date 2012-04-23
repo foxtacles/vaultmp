@@ -242,7 +242,7 @@ void Game::LoadEnvironment()
 {
 	vector<NetworkID> reference = GameFactory::GetIDObjectTypes(ALL_OBJECTS);
 
-for (NetworkID & id : reference)
+	for (NetworkID & id : reference)
 	{
 		FactoryObject reference = GameFactory::GetObject(id);
 
@@ -357,7 +357,7 @@ void Game::NewContainer(FactoryObject& reference)
 	Container* container = vaultcast<Container>(reference);
 	vector<FactoryObject> items = GameFactory::GetMultiple(vector<NetworkID>(container->GetItemList().begin(), container->GetItemList().end()));
 
-for (FactoryObject & _item : items)
+	for (FactoryObject & _item : items)
 	{
 		AddItem(vector<FactoryObject> {reference, _item});
 		Item* item = vaultcast<Item>(_item);
@@ -373,7 +373,7 @@ void Game::NewActor(FactoryObject& reference)
 
 	vector<unsigned char> values = API::RetrieveAllValues();
 
-for (unsigned char & value : values)
+	for (unsigned char & value : values)
 	{
 		SetActorValue(reference, true, value);
 		SetActorValue(reference, false, value);
@@ -900,7 +900,7 @@ void Game::net_ContainerUpdate(FactoryObject reference, ContainerDiff diff)
 
 	GameDiff gamediff = container->ApplyDiff(diff);
 
-for (pair<unsigned int, Diff>& diff : gamediff)
+	for (pair<unsigned int, Diff>& diff : gamediff)
 	{
 		if (diff.second.equipped)
 		{

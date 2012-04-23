@@ -74,7 +74,7 @@ void Interface::Terminate()
 		if (hCommandThreadSend.joinable())
 			hCommandThreadSend.join();
 
-	for (pair<const string, ParamContainer>& native : natives)
+		for (pair<const string, ParamContainer>& native : natives)
 			FreeContainer(native.second);
 
 		static_cmdlist.clear();
@@ -117,7 +117,7 @@ void Interface::EndSetup()
 	vector<unsigned int> priorities;
 	priorities.reserve(priorityMap.size());
 
-for (pair<const unsigned int, Native::iterator>& priority : priorityMap)
+	for (pair<const unsigned int, Native::iterator>& priority : priorityMap)
 		priorities.push_back(priority.first);
 
 	vector<unsigned int>::iterator it2 = unique(priorities.begin(), priorities.end());
@@ -136,6 +136,7 @@ for (pair<const unsigned int, Native::iterator>& priority : priorityMap)
 			x %= y;
 		}
 	};
+
 	auto lcm = [ = ](int x, int y)
 	{
 		int temp = gcd(x, y);
@@ -148,7 +149,7 @@ for (pair<const unsigned int, Native::iterator>& priority : priorityMap)
 	{
 		list<Native::iterator> content = list<Native::iterator>();
 
-	for (pair<const unsigned int, Native::iterator>& priority : priorityMap)
+		for (pair<const unsigned int, Native::iterator>& priority : priorityMap)
 			if (((i + 1) % priority.first) == 0)
 				content.push_back(priority.second);
 
@@ -312,7 +313,7 @@ void Interface::CommandThreadReceive()
 				{
 					vector<CommandResult> result = API::Translate(buffer);
 
-				for (CommandResult & _result : result)
+					for (CommandResult & _result : result)
 						resultHandler(_result.first.first.first, _result.first.first.second, _result.first.second, _result.second);
 				}
 
