@@ -250,14 +250,14 @@ multimap<string, string> Interface::Evaluate(Native::iterator _it)
         {
             string cmd = def;
 
-            for ( int j = 0; j < lsize; j++ )
+            for ( unsigned int j = 0; j < lsize; ++j )
             {
-                unsigned int idx = ( ( int ) ( i / mult[j] ) ) % lists.at( j )->first.size();
+                unsigned int idx = ( ( unsigned int ) ( i / mult[j] ) ) % lists.at( j )->first.size();
 
                 char token[4];
                 snprintf( token, sizeof( token ), "%%%d", j );
 
-                cmd.replace( cmd.find( token ), strlen( token ), lists.at( j )->first.at( idx ) );
+                cmd.replace( cmd.find( token ), strlen( token ), Utils::str_replace(lists.at( j )->first.at( idx ), " ", "|" ));
             }
 
             result.insert( pair<string, string>( name, cmd ) );

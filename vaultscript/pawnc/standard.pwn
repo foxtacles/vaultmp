@@ -41,7 +41,14 @@ public OnPlayerRequestGame(ID)
 
 public OnSpawn(ID)
 {
+    if (IsPlayer(ID))
+    {
+        new message{MAX_MESSAGE_LENGTH};
+        GetName(ID, message);
 
+        strformat(message, sizeof(message), true, "Hello, %s!", message);
+        UIMessage(ID, message);
+    }
 }
 
 public OnCellChange(ID, cell)

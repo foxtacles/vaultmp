@@ -31,6 +31,7 @@ class Utils
 		static void timestamp();
 		static bool DoubleCompare( double a, double b, double epsilon );
 		static string LongToHex( unsigned int value );
+		static string& str_replace(string& source, const char* find, const char* replace);
 		static string& RemoveExtension( string& file );
 		static const char* FileOnly( const char* path );
 		static unsigned int FileLength( const char* file );

@@ -58,7 +58,8 @@ Base VAULTSCRIPT OnPlayerRequestGame( ID player )
 
 Void VAULTSCRIPT OnSpawn( ID object )
 {
-
+    if (IsPlayer(object))
+        UIMessage(object, String("Hello, ") + GetName(object) + "!");
 }
 
 Void VAULTSCRIPT OnCellChange( ID object, Cell cell )

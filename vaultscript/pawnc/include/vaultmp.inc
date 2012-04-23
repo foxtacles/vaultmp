@@ -11,6 +11,7 @@ const Index: {
 
         MAX_PLAYER_NAME     =   16,
         MAX_PASSWORD_SIZE   =   16,
+        MAX_MESSAGE_LENGTH  =   64,
 
 }
 
@@ -65,6 +66,7 @@ native ValueToString(index, value{});
 native AxisToString(index, value{});
 native AnimToString(index, value{});
 
+native UIMessage(ID, const message{});
 native SetRespawn(interval);
 native Bool:IsValid(ID);
 native Bool:IsObject(ID);

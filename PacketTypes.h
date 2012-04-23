@@ -470,6 +470,27 @@ class pGameEnd : public pGameDefault
 		pGameEnd& operator=( const pGameEnd& );
 };
 
+class pGameMessage : public pGameDefault
+{
+		friend class PacketFactory;
+
+	private:
+        char message[MAX_MESSAGE_LENGTH];
+
+		pGameMessage( const char* message ) : pGameDefault( ID_GAME_MESSAGE )
+		{
+			strncpy( this->message, message, sizeof( this->message ) );
+			construct( this->message, sizeof( this->message ) );
+		}
+		pGameMessage( const unsigned char* stream, unsigned int len ) : pGameDefault( stream, len )
+		{
+			deconstruct( this->message, sizeof( this->message ) );
+		}
+
+		pGameMessage( const pGameMessage& );
+		pGameMessage& operator=( const pGameMessage& );
+};
+
 /* ************************************** */
 
 #pragma pack(push, 1)

@@ -11,8 +11,8 @@ pDefault* PacketFactory::CreatePacket( unsigned char type, ... )
     {
         case ID_GAME_AUTH:
         {
-            char* name = va_arg( args, char* );
-            char* pwd = va_arg( args, char* );
+            const char* name = va_arg( args, const char* );
+            const char* pwd = va_arg( args, const char* );
             packet = new pGameAuth( name, pwd );
             break;
         }
@@ -25,7 +25,7 @@ pDefault* PacketFactory::CreatePacket( unsigned char type, ... )
 
         case ID_GAME_MOD:
         {
-            char* modfile = va_arg( args, char* );
+            const char* modfile = va_arg( args, const char* );
             unsigned int crc = va_arg( args, unsigned int );
             packet = new pGameMod( modfile, crc );
             break;
@@ -33,7 +33,7 @@ pDefault* PacketFactory::CreatePacket( unsigned char type, ... )
 
         case ID_GAME_START:
         {
-            char* savegame = va_arg( args, char* );
+            const char* savegame = va_arg( args, const char* );
             unsigned int crc = va_arg( args, unsigned int );
             packet = new pGameStart( savegame, crc );
             break;
@@ -43,6 +43,13 @@ pDefault* PacketFactory::CreatePacket( unsigned char type, ... )
         {
             unsigned char reason = ( unsigned char ) va_arg( args, unsigned int );
             packet = new pGameEnd( reason );
+            break;
+        }
+
+        case ID_GAME_MESSAGE:
+        {
+            const char* message = va_arg( args, const char* );
+            packet = new pGameMessage( message );
             break;
         }
 
@@ -219,6 +226,10 @@ pDefault* PacketFactory::CreatePacket( unsigned char* stream, unsigned int len )
             packet = new pGameEnd( stream, len );
             break;
 
+        case ID_GAME_MESSAGE:
+            packet = new pGameMessage( stream, len );
+            break;
+
         case ID_OBJECT_NEW:
             packet = new pObjectNew( stream, len );
             break;
@@ -349,6 +360,14 @@ void PacketFactory::Access( const pDefault* packet, ... )
                 const pGameEnd* data = dynamic_cast<const pGameEnd*>( packet );
                 unsigned char* reason = va_arg( args, unsigned char* );
                 *reason = data->reason.type;
+                break;
+            }
+
+            case ID_GAME_MESSAGE:
+            {
+                const pGameMessage* data = dynamic_cast<const pGameMessage*>( packet );
+                char* message = va_arg( args, char* );
+                strncpy( message, data->message, sizeof( data->message ) );
                 break;
             }
 

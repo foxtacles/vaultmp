@@ -62,6 +62,7 @@ Script::Script( char* path )
 		SetScriptFunction( "AxisToString", &API::RetrieveAxis_Reverse );
 		SetScriptFunction( "AnimToString", &API::RetrieveAnim_Reverse );
 
+        SetScriptFunction( "UIMessage", &Script::UIMessage );
 		SetScriptFunction( "SetRespawn", &Script::SetRespawn );
 		SetScriptFunction( "IsValid", &Script::IsValid );
 		SetScriptFunction( "IsObject", &Script::IsObject );
@@ -554,6 +555,36 @@ bool Script::OnClientAuthenticate( string name, string pwd )
 	}
 
 	return result;
+}
+
+bool Script::UIMessage(NetworkID id, string message)
+{
+    if (message.length() > MAX_MESSAGE_LENGTH)
+        message.resize(MAX_MESSAGE_LENGTH);
+
+    if (id)
+    {
+        try
+        {
+            if (!vaultcast<Player>(*GameFactory::GetObject(id)))
+                return false;
+        }
+        catch (...)
+        {
+            return false;
+        }
+    }
+
+    NetworkResponse response;
+    pDefault* packet = PacketFactory::CreatePacket( ID_GAME_MESSAGE, message.c_str() );
+    response = Network::CompleteResponse( Network::CreateResponse( packet,
+                                        ( unsigned char ) HIGH_PRIORITY,
+                                        ( unsigned char ) RELIABLE_ORDERED,
+                                        CHANNEL_GAME,
+                                        id ? vector<RakNetGUID>{Client::GetClientFromPlayer(id)->GetGUID()} : Client::GetNetworkList( NULL ) ) );
+    Network::Queue(response);
+
+    return true;
 }
 
 void Script::SetRespawn(unsigned int respawn)

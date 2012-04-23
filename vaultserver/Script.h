@@ -99,6 +99,7 @@ class Script
 		static unsigned int OnPlayerRequestGame( FactoryObject reference );
 		static bool OnClientAuthenticate( string name, string pwd );
 
+        static bool UIMessage(NetworkID id, string message);
         static void SetRespawn(unsigned int respawn);
 		static bool IsValid( NetworkID id );
 		static bool IsObject( NetworkID id );

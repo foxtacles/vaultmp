@@ -703,13 +703,16 @@ vector<double> API::ParseCommand( char* cmd, const char* def, op_default* result
 
 				case 's': // String
 					{
-						unsigned short length = ( unsigned short ) strlen( tokenizer );
+					    string str(tokenizer);
+					    Utils::str_replace(str, "|", " ");
+
+						unsigned short length = ( unsigned short ) str.length();
 
 						if ( length > 63 )
-							throw VaultException( "API::ParseCommand string argument exceeds the limit of 64 characters", tokenizer );
+							throw VaultException( "API::ParseCommand string argument exceeds the limit of 64 characters" );
 
 						*reinterpret_cast<unsigned short*>(arg2_pos) = length;
-						memcpy( arg2_pos + sizeof(unsigned short), tokenizer, length +  sizeof(unsigned char) );
+						memcpy( arg2_pos + sizeof(unsigned short), str.c_str(), length +  sizeof(unsigned char) );
 						result_data.push_back(0); // Don't pass on string for now
 						arg2_pos += sizeof(unsigned short);
 						arg2_pos += length;
@@ -788,7 +791,7 @@ void API::DefineControl( unsigned char control, unsigned char games )
 		controls.insert( control );
 }
 
-unsigned long API::ExtractReference( char* reference )
+unsigned long API::ExtractReference( const char* reference )
 {
 	unsigned long reference_value;
 

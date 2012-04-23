@@ -53,6 +53,7 @@ namespace vaultmp
 
         MAX_PLAYER_NAME     =   16,
         MAX_PASSWORD_SIZE   =   16,
+        MAX_MESSAGE_LENGTH  =   64,
 
 	};
 
@@ -106,6 +107,7 @@ extern "C" {
 	VAULTSCRIPT vaultmp::String ( *AxisToString )( vaultmp::Index );
 	VAULTSCRIPT vaultmp::String ( *AnimToString )( vaultmp::Index );
 
+    VAULTSCRIPT vaultmp::State ( *UIMessage )( vaultmp::ID, vaultmp::String );
     VAULTSCRIPT vaultmp::Void ( *SetRespawn )( vaultmp::Interval );
     VAULTSCRIPT vaultmp::State ( *IsValid )( vaultmp::ID );
     VAULTSCRIPT vaultmp::State ( *IsObject )( vaultmp::ID );
