@@ -13,7 +13,8 @@
 
 void InputThread()
 {
-	char input[64];
+	char input[256];
+	string cmd;
 
 	do
 	{
@@ -21,16 +22,52 @@ void InputThread()
 
 		if ( strlen( input ) > 0 && input[strlen( input ) - 1] == '\n' ) input[strlen( input ) - 1] = '\0';
 
-		/* char* command = strtok(input, " ");
-		char* param = strtok(NULL, " ");
+        char* tok = strtok(input, " ");
 
-		if (param != NULL)
-		{
-		    if (strcmp(command, "connections") == 0)
-		        Dedicated::SetServerConnections(atoi(param));
-		} */
+        if (!tok)
+            continue;
 
-	} while ( strcmp( input, "exit" ) != 0 );
+        cmd = string(tok);
+
+        if (!strcmp(cmd.c_str(), "ls"))
+        {
+            vector<RakNetGUID> clients = Client::GetNetworkList(NULL);
+
+            for (RakNetGUID& guid : clients)
+            {
+                Client* client = Client::GetClientFromGUID(guid);
+
+                if (client)
+                {
+                    try
+                    {
+                        unsigned int id = client->GetID();
+                        printf("client ID: %d, player name: %s\n", id, vaultcast<Player>(*GameFactory::GetObject(client->GetPlayer()))->GetName().c_str());
+                    }
+                    catch (...) {}
+                }
+            }
+        }
+        else if (!strcmp(cmd.c_str(), "msg"))
+        {
+            char* _id = strtok(NULL, " ");
+
+            if (_id)
+            {
+                unsigned int id = atoi(_id);
+                Client* client = Client::GetClientFromID(id);
+
+                if (client)
+                {
+                    char* msg = _id + strlen(_id) + 1;
+
+                    if (strlen(msg))
+                        Script::UIMessage(client->GetPlayer(), string(msg));
+                }
+            }
+        }
+
+	} while ( strcmp( cmd.c_str(), "exit" ) != 0 );
 
 	Dedicated::TerminateThread();
 }
