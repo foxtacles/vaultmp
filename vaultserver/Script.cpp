@@ -92,6 +92,7 @@ Script::Script( char* path )
         SetScriptFunction( "RemoveAllItems", &Script::RemoveAllItems );
 		SetScriptFunction( "SetActorValue", &Script::SetActorValue );
 		SetScriptFunction( "SetActorBaseValue", &Script::SetActorBaseValue );
+		SetScriptFunction( "KillActor", &Script::KillActor );
 
 		SetScriptFunction( "SetPlayerRespawn", &Script::SetPlayerRespawn );
 
@@ -929,6 +930,34 @@ void Script::SetActorBaseValue( NetworkID id, unsigned char index, double value 
 											  CHANNEL_GAME,
 											  Client::GetNetworkList( NULL ) ) );
             Network::Queue(response);
+	    }
+	}
+}
+
+void Script::KillActor( NetworkID id )
+{
+	FactoryObject reference = GameFactory::GetObject( id );
+	Actor* actor = vaultcast<Actor>( reference );
+
+	if ( actor )
+	{
+	    if (actor->SetActorDead(true))
+	    {
+	        NetworkResponse response;
+            pDefault* packet = PacketFactory::CreatePacket( ID_UPDATE_DEAD, actor->GetNetworkID(), true );
+            response = Network::CompleteResponse( Network::CreateResponse( packet,
+											  ( unsigned char ) HIGH_PRIORITY,
+											  ( unsigned char ) RELIABLE_ORDERED,
+											  CHANNEL_GAME,
+											  Client::GetNetworkList( NULL ) ) );
+            Network::Queue(response);
+
+            Script::OnActorDeath(reference);
+
+            Player* player = vaultcast<Player>(actor);
+
+            if (player)
+                Script::CreateTimerEx(reinterpret_cast<ScriptFunc>(&Script::Timer_Respawn), player->GetPlayerRespawn(), "l", player->GetNetworkID());
 	    }
 	}
 }

@@ -128,6 +128,7 @@ class Script
         static void RemoveAllItems( NetworkID id );
 		static void SetActorValue( NetworkID id, unsigned char index, double value );
 		static void SetActorBaseValue( NetworkID id, unsigned char index, double value );
+		static void KillActor( NetworkID id );
 
 		static void SetPlayerRespawn( NetworkID id, unsigned int respawn );
 

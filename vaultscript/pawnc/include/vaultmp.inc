@@ -66,7 +66,7 @@ native ValueToString(index, value{});
 native AxisToString(index, value{});
 native AnimToString(index, value{});
 
-native UIMessage(ID, const message{});
+native Bool:UIMessage(ID, const message{});
 native SetRespawn(interval);
 native Bool:IsValid(ID);
 native Bool:IsObject(ID);
@@ -96,5 +96,6 @@ native RemoveItem(ID, base, count);
 native RemoveAllItems(ID);
 native SetActorValue(ID, index, Float:value);
 native SetActorBaseValue(ID, index, Float:value);
+native KillActor(ID);
 
 native SetPlayerRespawn(ID, interval);

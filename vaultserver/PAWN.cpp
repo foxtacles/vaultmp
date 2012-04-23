@@ -65,6 +65,7 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
     {"RemoveAllItems", PAWN::vaultmp_RemoveAllItems},
     {"SetActorValue", PAWN::vaultmp_SetActorValue},
     {"SetActorBaseValue", PAWN::vaultmp_SetActorBaseValue},
+    {"KillActor", PAWN::vaultmp_KillActor},
 
 	{"SetPlayerRespawn", PAWN::vaultmp_SetPlayerRespawn},
 
@@ -553,6 +554,12 @@ cell PAWN::vaultmp_SetActorValue( AMX* amx, const cell* params )
 cell PAWN::vaultmp_SetActorBaseValue( AMX* amx, const cell* params )
 {
     Script::SetActorBaseValue(params[1], params[2], amx_ctof(params[3]));
+	return 1;
+}
+
+cell PAWN::vaultmp_KillActor( AMX* amx, const cell* params )
+{
+    Script::KillActor(params[1]);
 	return 1;
 }
 

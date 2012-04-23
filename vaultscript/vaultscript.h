@@ -137,6 +137,7 @@ extern "C" {
     VAULTSCRIPT vaultmp::Void ( *RemoveAllItems )( vaultmp::ID );
 	VAULTSCRIPT vaultmp::Void ( *SetActorValue )( vaultmp::ID, vaultmp::Index, vaultmp::Value );
 	VAULTSCRIPT vaultmp::Void ( *SetActorBaseValue )( vaultmp::ID, vaultmp::Index, vaultmp::Value );
+	VAULTSCRIPT vaultmp::Void ( *KillActor )( vaultmp::ID );
 
 	VAULTSCRIPT vaultmp::Void ( *SetPlayerRespawn )( vaultmp::ID, vaultmp::Interval );
 
