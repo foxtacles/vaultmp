@@ -20,7 +20,8 @@ void InputThread()
 	{
 		fgets( input, sizeof( input ), stdin );
 
-		if ( strlen( input ) > 0 && input[strlen( input ) - 1] == '\n' ) input[strlen( input ) - 1] = '\0';
+		if ( strlen( input ) > 0 && input[strlen( input ) - 1] == '\n' )
+            input[strlen( input ) - 1] = '\0';
 
         char* tok = strtok(input, " ");
 
@@ -48,7 +49,7 @@ void InputThread()
                 }
             }
         }
-        else if (!strcmp(cmd.c_str(), "msg"))
+        else if (!strcmp(cmd.c_str(), "uimsg"))
         {
             char* _id = strtok(NULL, " ");
 
