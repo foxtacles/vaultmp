@@ -11,7 +11,7 @@ void Object::SetDebugHandler(Debug* debug)
 {
 	Object::debug = debug;
 
-	if (debug != NULL)
+	if (debug)
 		debug->Print("Attached debug handler to Object class", true);
 }
 #endif
@@ -116,7 +116,7 @@ Lockable* Object::SetName(string name)
 
 #ifdef VAULTMP_DEBUG
 
-	if (debug != NULL)
+	if (debug)
 		debug->PrintFormat("Object name was set to %s (ref: %08X)", true, this->object_Name.get().c_str(), this->GetReference());
 
 #endif
@@ -138,7 +138,7 @@ Lockable* Object::SetGamePos(unsigned char axis, double pos)
 
 #ifdef VAULTMP_DEBUG
 
-		if (debug != NULL)
+		if (debug)
 			debug->PrintFormat("Object game %s-pos was set to %f (ref: %08X)", true, API::RetrieveAxis_Reverse(axis).c_str(), (float) pos, this->GetReference());
 
 #endif
@@ -162,7 +162,7 @@ Lockable* Object::SetNetworkPos(unsigned char axis, double pos)
 
 #ifdef VAULTMP_DEBUG
 
-		if (debug != NULL)
+		if (debug)
 			debug->PrintFormat("Object network %s-pos was set to %f (ref: %08X)", true, API::RetrieveAxis_Reverse(axis).c_str(), (float) pos, this->GetReference());
 
 #endif
@@ -186,7 +186,7 @@ Lockable* Object::SetAngle(unsigned char axis, double angle)
 
 #ifdef VAULTMP_DEBUG
 
-		if (debug != NULL)
+		if (debug)
 			debug->PrintFormat("Object %s-angle was set to %f (ref: %08X)", true, API::RetrieveAxis_Reverse(axis).c_str(), (float) angle, this->GetReference());
 
 #endif
@@ -206,7 +206,7 @@ Lockable* Object::SetEnabled(bool state)
 
 #ifdef VAULTMP_DEBUG
 
-	if (debug != NULL)
+	if (debug)
 		debug->PrintFormat("Object enabled state was set to %d (ref: %08X)", true, (int) state, this->GetReference());
 
 #endif
@@ -226,7 +226,7 @@ Lockable* Object::SetGameCell(unsigned int cell)
 
 #ifdef VAULTMP_DEBUG
 
-		if (debug != NULL)
+		if (debug)
 			debug->PrintFormat("Object game cell was set to %08X (ref: %08X)", true, cell, this->GetReference());
 
 #endif
@@ -248,7 +248,7 @@ Lockable* Object::SetNetworkCell(unsigned int cell)
 
 #ifdef VAULTMP_DEBUG
 
-		if (debug != NULL)
+		if (debug)
 			debug->PrintFormat("Object network cell was set to %08X (ref: %08X)", true, cell, this->GetReference());
 
 #endif

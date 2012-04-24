@@ -14,7 +14,7 @@ void Game::SetDebugHandler(Debug* debug)
 {
 	Game::debug = debug;
 
-	if (debug != NULL)
+	if (debug)
 		debug->Print("Attached debug handler to Game class", true);
 }
 #endif

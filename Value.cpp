@@ -35,7 +35,7 @@ void Value<T>::SetDebugHandler(Debug* debug)
 {
 	Value::debug = debug;
 
-	if (debug != NULL)
+	if (debug)
 		debug->Print("Attached debug handler to Value class", true);
 }
 #endif

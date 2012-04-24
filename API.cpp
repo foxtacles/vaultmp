@@ -428,7 +428,7 @@ void API::SetDebugHandler(Debug* debug)
 {
 	API::debug = debug;
 
-	if (debug != NULL)
+	if (debug)
 		debug->Print("Attached debug handler to API class", true);
 }
 #endif
@@ -973,7 +973,7 @@ bool API::AnnounceFunction(string name)
 
 #ifdef VAULTMP_DEBUG
 
-	if (debug != NULL)
+	if (debug)
 		debug->PrintFormat("API function %s not found or not supported by the game", true, name.c_str());
 
 #endif
@@ -1017,7 +1017,7 @@ CommandParsed API::Translate(multimap<string, string>& cmd, signed int key)
 		{
 #ifdef VAULTMP_DEBUG
 
-			if (debug != NULL)
+			if (debug)
 				debug->PrintFormat("API was not able to find function %s", true, name.c_str());
 
 #endif
@@ -1051,7 +1051,7 @@ vector<CommandResult> API::Translate(unsigned char* stream)
 	{
 #ifdef VAULTMP_DEBUG
 
-		if (debug != NULL)
+		if (debug)
 			debug->PrintFormat("API did not retrieve the result of command with CRC32 %08X (opcode %04hX)", true, queue.back().first.first, getFrom<double, unsigned short>(queue.back().first.second.at(0)));
 
 #endif
@@ -1070,7 +1070,7 @@ vector<CommandResult> API::Translate(unsigned char* stream)
 	{
 #ifdef VAULTMP_DEBUG
 
-		if (debug != NULL)
+		if (debug)
 			debug->PrintFormat("API could not find a stored command with CRC32 %08X (queue is empty)", true, r);
 
 #endif

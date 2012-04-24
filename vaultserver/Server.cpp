@@ -9,7 +9,7 @@ void Server::SetDebugHandler(Debug* debug)
 {
 	Server::debug = debug;
 
-	if (debug != NULL)
+	if (debug)
 		debug->Print("Attached debug handler to Server class", true);
 }
 #endif

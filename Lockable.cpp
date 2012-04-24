@@ -14,7 +14,7 @@ void Lockable::SetDebugHandler(Debug* debug)
 {
 	Lockable::debug = debug;
 
-	if (debug != NULL)
+	if (debug)
 		debug->Print("Attached debug handler to Lockable class", true);
 }
 #endif
@@ -115,7 +115,7 @@ Lockable* Lockable::BlindUnlock(signed int key)
 
 #ifdef VAULTMP_DEBUG
 
-	if (debug != NULL)
+	if (debug)
 		debug->PrintFormat("Key %08X did not unlock anything", true, key);
 
 #endif
@@ -142,7 +142,7 @@ signed int Lockable::Lock(bool flat)
 
 #ifdef VAULTMP_DEBUG
 
-	if (debug != NULL)
+	if (debug)
 		debug->PrintFormat("%08X (%s) has been locked with key %08X", true, this, typeid(*this).name(), next_key);
 
 #endif
@@ -179,7 +179,7 @@ Lockable* Lockable::Unlock(signed int key)
 
 #ifdef VAULTMP_DEBUG
 
-		if (debug != NULL)
+		if (debug)
 			debug->PrintFormat("%08X (%s) has been unlocked with key %08X", true, this, typeid(*this).name(), key);
 
 #endif
@@ -190,7 +190,7 @@ Lockable* Lockable::Unlock(signed int key)
 
 #ifdef VAULTMP_DEBUG
 
-	if (debug != NULL)
+	if (debug)
 		debug->PrintFormat("%08X is still locked", true, this, key);
 
 #endif

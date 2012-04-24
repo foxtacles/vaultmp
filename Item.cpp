@@ -10,7 +10,7 @@ void Item::SetDebugHandler(Debug* debug)
 {
 	Item::debug = debug;
 
-	if (debug != NULL)
+	if (debug)
 		debug->Print("Attached debug handler to Item class", true);
 }
 #endif
@@ -83,7 +83,7 @@ bool Item::SetItemCount(unsigned int count)
 
 #ifdef VAULTMP_DEBUG
 
-	if (debug != NULL)
+	if (debug)
 		debug->PrintFormat("Item count was set to %d (ref: %08X)", true, count, this->GetReference());
 
 #endif
@@ -99,7 +99,7 @@ bool Item::SetItemCondition(double condition)
 
 #ifdef VAULTMP_DEBUG
 
-	if (debug != NULL)
+	if (debug)
 		debug->PrintFormat("Item condition was set to %f (ref: %08X)", true, (float) condition, this->GetReference());
 
 #endif
@@ -115,7 +115,7 @@ bool Item::SetItemEquipped(bool state)
 
 #ifdef VAULTMP_DEBUG
 
-	if (debug != NULL)
+	if (debug)
 		debug->PrintFormat("Item equipped state was set to %d (ref: %08X)", true, (int) state, this->GetReference());
 
 #endif

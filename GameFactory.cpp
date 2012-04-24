@@ -28,7 +28,7 @@ void GameFactory::Initialize(unsigned char game)
 
 #ifdef VAULTMP_DEBUG
 
-	if (debug != NULL)
+	if (debug)
 		debug->PrintFormat("Found %d items in the database", true, Container::Items->size());
 
 #endif
@@ -39,7 +39,7 @@ void GameFactory::SetDebugHandler(Debug* debug)
 {
 	GameFactory::debug = debug;
 
-	if (debug != NULL)
+	if (debug)
 		debug->Print("Attached debug handler to GameFactory class", true);
 }
 #endif
@@ -444,7 +444,7 @@ void GameFactory::DestroyAllInstances()
 
 #ifdef VAULTMP_DEBUG
 
-		if (debug != NULL)
+		if (debug)
 			debug->PrintFormat("Reference %08X with base %08X and NetworkID %lld (type: %s) to be destructed (%08X)", true, instance.first->GetReference(), instance.first->GetBase(), instance.first->GetNetworkID(), typeid(*(instance.first)).name(), instance.first);
 
 #endif
@@ -495,7 +495,7 @@ NetworkID GameFactory::DestroyInstance(FactoryObject& reference)
 
 #ifdef VAULTMP_DEBUG
 
-	if (debug != NULL)
+	if (debug)
 		debug->PrintFormat("Reference %08X with base %08X and NetworkID %lld (type: %s) to be destructed", true, _reference->GetReference(), _reference->GetBase(), _reference->GetNetworkID(), typeid(*_reference).name());
 
 #endif

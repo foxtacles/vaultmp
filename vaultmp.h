@@ -23,22 +23,16 @@ static const unsigned int NVSE_VER0212                 =   0x0006B1BB;
 static const unsigned int VAULTMP_DLL                  =   0x0003D5E4;
 static const unsigned int XLIVE_PATCH                  =   0x0000D57E;
 
-/*
-#define CREDITS \
-	"Vault-Tec Multiplayer Mod is an Open-Source project.\n\
-\n\
-code: Recycler (www.brickster.net)\n\
-network: RakNet (www.jenkinssoftware.com)\n\
-scripting: The PAWN language (www.compuphase.com)\n\
-music: uFMOD (ufmod.sourceforge.net)\n\
-\n\
-Greetings fly out to:\n\
-mqidx, benG, ArminSeiko\n\
-\n\
-Thanks to everyone who contributed :-)\n\
-\n\
+#define CREDITSSTR "code: Recycler\n\
+graphics: benG\n\
+vaultgui: Houstin\n\
+network engine: RakNet\n\
+scripting: PAWN language\n\
+music player: uFMOD\n\n\
+Special thanks: Volumed, Farlo, Genocyber, J1Games, NeoPhoenix, Tomo, Aleksander, FOSE/NVSE team\n\n\
+Thanks a lot for your contributions and/or support!\n\n\
+www.brickster.net\n\
 www.vaultmp.com"
-*/
 
 static const unsigned char FALLOUT3             =   0x01;
 static const unsigned char NEWVEGAS             =   FALLOUT3 << 1;

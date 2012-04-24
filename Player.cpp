@@ -33,7 +33,7 @@ Player::~Player()
 {
 #ifdef VAULTMP_DEBUG
 
-	if (debug != NULL)
+	if (debug)
 		debug->PrintFormat("Player object destroyed (ref: %08X)", true, GetReference());
 
 #endif
@@ -55,7 +55,7 @@ void Player::SetDebugHandler(Debug* debug)
 {
 	Player::debug = debug;
 
-	if (debug != NULL)
+	if (debug)
 		debug->Print("Attached debug handler to Player class", true);
 }
 #endif
@@ -97,7 +97,7 @@ Lockable* Player::SetPlayerControl(unsigned char control, unsigned char key)
 
 #ifdef VAULTMP_DEBUG
 
-	if (debug != NULL)
+	if (debug)
 		debug->PrintFormat("Player control code %02X was associated with key %02X (ref: %08X)", true, control, key, this->GetReference());
 
 #endif
@@ -117,7 +117,7 @@ Lockable* Player::SetPlayerControlEnabled(unsigned char control, bool state)
 
 #ifdef VAULTMP_DEBUG
 
-	if (debug != NULL)
+	if (debug)
 		debug->PrintFormat("Player control code %02X enabled state was set to %d (ref: %08X)", true, control, (int) state, this->GetReference());
 
 #endif
@@ -135,7 +135,7 @@ Lockable* Player::SetPlayerRespawn(unsigned int respawn)
 
 #ifdef VAULTMP_DEBUG
 
-	if (debug != NULL)
+	if (debug)
 		debug->PrintFormat("Player respawn time was set to %d (ref: %08X)", true, respawn, this->GetReference());
 
 #endif

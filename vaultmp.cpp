@@ -1,10 +1,13 @@
+#include "vaultmp.h"
+
 #include <winsock2.h>
 #include <shlwapi.h>
 #include <shlobj.h>
 #include <commctrl.h>
 #include <map>
+#include <chrono>
+#include <thread>
 
-#include "vaultmp.h"
 #include "Bethesda.h"
 #include "ServerEntry.h"
 #include "Data.h"
@@ -39,24 +42,25 @@
 #define IDC_STATIC2             2005
 #define IDC_STATIC3             2006
 #define IDC_STATIC4             2007
-#define IDC_GRID0               2008
-#define IDC_GRID1               2009
-#define IDC_CHECK0              2010
-#define IDC_BUTTON0             2011
-#define IDC_BUTTON1             2012
-#define IDC_BUTTON2             2013
-#define IDC_BUTTON3             2014
-#define IDC_BUTTON4             2015
-#define IDC_EDIT0               2016
-#define IDC_EDIT1               2017
-#define IDC_EDIT3               2018
-#define IDC_PROGRESS0           2019
+#define IDC_STATIC5             2008
+#define IDC_GRID0               2009
+#define IDC_GRID1               2010
+#define IDC_CHECK0              2011
+#define IDC_BUTTON0             2012
+#define IDC_BUTTON1             2013
+#define IDC_BUTTON2             2014
+#define IDC_BUTTON3             2015
+#define IDC_BUTTON4             2016
+#define IDC_EDIT0               2017
+#define IDC_EDIT1               2018
+#define IDC_EDIT3               2019
+#define IDC_PROGRESS0           2020
 
 #define CHIPTUNE                3000
 #define CHIPTUNE2               4000
 #define ICON_MAIN               5000
 #define POWERED                 6000
-#define CREDITS                 7000
+#define CREDITS                7000
 
 using namespace RakNet;
 using namespace Data;
@@ -64,7 +68,7 @@ using namespace std;
 
 HINSTANCE instance;
 HANDLE global_mutex;
-HFONT hFont;
+HFONT hFont, hFont2;
 HWND wndmain;
 HWND wndsortcur;
 HWND wndchiptune;
@@ -72,11 +76,15 @@ HWND wndlistview;
 HWND wndlistview2;
 HWND wndprogressbar;
 HWND wndsync;
+HWND wndcredits;
 HDC hdc, hdcMem;
 HBITMAP hBitmap, hBitmap2;
 BITMAP bitmap, bitmap2;
 PAINTSTRUCT ps;
 BOOL sort_flag;
+
+RECT rect;
+thread creditstext;
 
 bool credits = false;
 list<HWND> elements;
@@ -405,6 +413,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR cmdline, 
 	}
 
 	hFont = CreateFont(-11, 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Verdana");
+	hFont2 = CreateFont(-9, 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Lucida Console");
 	wndmain = CreateMainWindow();
 
 	return MessageLoop();
@@ -559,6 +568,15 @@ void CreateWindowContent(HWND parent)
 	wnd = CreateWindowEx(0x00000000, "Static", "Password", 0x50000300, 554, 354, 57, 24, parent, (HMENU) IDC_STATIC3, instance, NULL);
 	elements.push_back(wnd);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
+
+	wnd = CreateWindowEx(WS_EX_TRANSPARENT, "Static", "", 0x50000300 & ~(WS_VISIBLE | SS_CENTERIMAGE), 30, 80, 134, 254, parent, (HMENU) IDC_STATIC5, instance, NULL);
+	wndcredits = wnd;
+	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont2, TRUE);
+
+	rect.left = 30;
+	rect.top = 80;
+	rect.right = 164;
+	rect.bottom = 334;
 }
 
 int RegisterClasses()
@@ -678,6 +696,85 @@ int CALLBACK CompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 		return (stricmp(buf, buf2) * -1);
 }
 
+void UpdateText(string str)
+{
+	SetWindowText(wndcredits, str.c_str());
+	InvalidateRect(wndmain, &rect, FALSE);
+}
+
+void WriteText(string& str, unsigned int start, unsigned int end)
+{
+	unsigned int counter = start;
+
+	while (credits && counter != end)
+	{
+		this_thread::sleep_for(chrono::milliseconds(100));
+		UpdateText(str.substr(0, counter + 1) + (counter % 3 ? "" : "_"));
+		++counter;
+	}
+}
+
+void PauseText(string& str, unsigned int ticks)
+{
+	unsigned int counter = 0;
+
+	while (credits && counter < ticks)
+	{
+		this_thread::sleep_for(chrono::milliseconds(300));
+		UpdateText(str + (counter % 2 ? "" : "_"));
+		++counter;
+	}
+}
+
+void CreditsText()
+{
+	unsigned int len = 0;
+
+	string ctext("");
+	UpdateText(ctext);
+
+	PauseText(ctext, 8);
+
+	ctext.append("The Brickster.net Group");
+	WriteText(ctext, len, ctext.length());
+	len = ctext.length();
+
+	PauseText(ctext, 8);
+	ctext.append("\n");
+
+	PauseText(ctext, 4);
+
+	ctext.append("from left to right:");
+	WriteText(ctext, len, ctext.length());
+	len = ctext.length();
+
+	PauseText(ctext, 4);
+
+	ctext.append(" benG, mqidx, Recycler, portWine\n\n");
+	WriteText(ctext, len, ctext.length());
+	len = ctext.length();
+
+	PauseText(ctext, 8);
+
+	ctext.append("presents:");
+	WriteText(ctext, len, ctext.length());
+	len = ctext.length();
+
+	PauseText(ctext, 4);
+
+	ctext.append("\nVault-Tec Multiplayer Mod");
+	WriteText(ctext, len, ctext.length());
+	len = ctext.length();
+
+	PauseText(ctext, 8);
+
+	ctext.append("\n\n" + string(CREDITSSTR));
+	WriteText(ctext, len, ctext.length());
+	len = ctext.length();
+
+	PauseText(ctext, 4096);
+}
+
 LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	bool update = false;
@@ -710,12 +807,27 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 			else
 			{
 				SelectObject(hdcMem, hBitmap2);
-				BitBlt(hdc, 13, 310, bitmap2.bmWidth, bitmap2.bmHeight, hdcMem, 0, 0, SRCCOPY);
+				BitBlt(hdc, 0, 0, bitmap2.bmWidth, bitmap2.bmHeight, hdcMem, 0, 0, SRCCOPY);
 			}
 
 			DeleteDC(hdcMem);
 			EndPaint(hwnd, &ps);
 			break;
+
+		case WM_CTLCOLORSTATIC:
+		{
+			if (credits)
+			{
+				HDC texthdc = (HDC) wParam;
+				HWND hwndtext = (HWND) lParam;
+
+				SetBkMode ( texthdc, TRANSPARENT );
+
+				HBRUSH hbr = (HBRUSH) GetStockObject( NULL_BRUSH );
+				return (LRESULT) hbr;
+			}
+			break;
+		}
 
 		case WM_SIZE:
 			if (wParam == SIZE_MINIMIZED)
@@ -1080,19 +1192,30 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 						for (it = elements.begin(); it != elements.end(); ++it)
 							ShowWindow(*it, SW_HIDE);
 
+						ShowWindow(wndcredits, SW_SHOW);
+
 						if (!SendMessage(wndchiptune, BM_GETCHECK, 0, 0))
 							uFMOD_PlaySong(MAKEINTRESOURCE(CHIPTUNE2), GetModuleHandle(NULL), XM_RESOURCE);
+
+						credits = true;
+
+						creditstext = thread(CreditsText);
+						creditstext.detach();
 					}
 					else
 					{
+						ShowWindow(wndcredits, SW_HIDE);
+
 						for (it = elements.begin(); it != elements.end(); ++it)
 							ShowWindow(*it, SW_SHOWNOACTIVATE);
 
 						if (!SendMessage(wndchiptune, BM_GETCHECK, 0, 0))
 							uFMOD_StopSong();
+
+						credits = false;
 					}
 
-					credits = !credits;
+					InvalidateRect(wndmain, NULL, TRUE);
 					break;
 				}
 

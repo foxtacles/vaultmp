@@ -12,7 +12,7 @@ void Container::SetDebugHandler(Debug* debug)
 {
 	Container::debug = debug;
 
-	if (debug != NULL)
+	if (debug)
 		debug->Print("Attached debug handler to Container class", true);
 }
 #endif
@@ -432,7 +432,7 @@ void Container::PrintContainer() const
 {
 #ifdef VAULTMP_DEBUG
 
-	if (debug != NULL)
+	if (debug)
 	{
 		list<NetworkID>::const_iterator it;
 

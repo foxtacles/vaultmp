@@ -10,7 +10,7 @@ VaultException::VaultException(string error)
 
 #ifdef VAULTMP_DEBUG
 
-	if (debug != NULL)
+	if (debug)
 		debug->Print(error.c_str(), true);
 
 #endif
@@ -30,7 +30,7 @@ VaultException::VaultException(const char* format, ...)
 
 #ifdef VAULTMP_DEBUG
 
-	if (debug != NULL)
+	if (debug)
 		debug->Print(text, true);
 
 #endif
@@ -41,13 +41,13 @@ void VaultException::SetDebugHandler(Debug* debug)
 {
 	VaultException::debug = debug;
 
-	if (debug != NULL)
+	if (debug)
 		debug->Print("Attached debug handler to VaultException class", true);
 }
 
 void VaultException::FinalizeDebug()
 {
-	if (debug != NULL)
+	if (debug)
 		delete debug;
 
 	debug = NULL;

@@ -94,7 +94,7 @@ void Interface::SetDebugHandler(Debug* debug)
 {
 	Interface::debug = debug;
 
-	if (debug != NULL)
+	if (debug)
 		debug->Print("Attached debug handler to Interface class", true);
 }
 #endif
@@ -323,7 +323,7 @@ void Interface::CommandThreadReceive()
 
 #ifdef VAULTMP_DEBUG
 
-					if (debug != NULL)
+					if (debug)
 						debug->Print("vaultmp process waked up (game patched)", true);
 
 #endif
@@ -354,7 +354,7 @@ void Interface::CommandThreadReceive()
 
 #ifdef VAULTMP_DEBUG
 
-		if (debug != NULL)
+		if (debug)
 			debug->Print("Receive thread is going to terminate (ERROR)", true);
 
 #endif
@@ -364,7 +364,7 @@ void Interface::CommandThreadReceive()
 
 #ifdef VAULTMP_DEBUG
 
-	if (debug != NULL)
+	if (debug)
 		debug->Print("Receive thread is going to terminate", true);
 
 #endif
@@ -477,7 +477,7 @@ void Interface::CommandThreadSend()
 
 #ifdef VAULTMP_DEBUG
 
-		if (debug != NULL)
+		if (debug)
 			debug->Print("Send thread is going to terminate (ERROR)", true);
 
 #endif

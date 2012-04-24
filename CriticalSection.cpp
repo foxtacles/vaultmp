@@ -58,7 +58,7 @@ void CriticalSection::SetDebugHandler(Debug* debug)
 {
 	this->debug = debug;
 
-	if (debug != NULL)
+	if (debug)
 		debug->PrintFormat("Attached debug handler to CriticalSection object %08X (%s)", true, this, typeid(*this).name());
 }
 #endif
@@ -76,7 +76,7 @@ CriticalSection* CriticalSection::StartSession()
 
 #ifdef VAULTMP_DEBUG
 
-		if (debug != NULL)
+		if (debug)
 			debug->PrintFormat("CriticalSection object %08X (%s) locked by thread %s", true, this, typeid(*this).name(), thread_id().c_str());
 
 #endif
@@ -113,7 +113,7 @@ void CriticalSection::EndSession()
 
 #ifdef VAULTMP_DEBUG
 
-	if (debug != NULL)
+	if (debug)
 		debug->PrintFormat("CriticalSection object %08X (%s) unlocked by thread %s", true, this, typeid(*this).name(), thread_id().c_str());
 
 #endif
@@ -128,7 +128,7 @@ void CriticalSection::Finalize() // must be called by the thread which wants to 
 #ifdef VAULTMP_DEBUG
 void CriticalSection::PrintStatus()
 {
-	if (debug != NULL)
+	if (debug)
 		debug->PrintFormat("CriticalSection object %08X (%s) has %d locks, status call by thread %s", true, this, typeid(*this).name(), this->locks, thread_id().c_str());
 }
 #endif

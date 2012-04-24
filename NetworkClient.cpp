@@ -11,7 +11,7 @@ void NetworkClient::SetDebugHandler(Debug* debug)
 {
 	NetworkClient::debug = debug;
 
-	if (debug != NULL)
+	if (debug)
 		debug->Print("Attached debug handler to NetworkClient class", true);
 }
 #endif

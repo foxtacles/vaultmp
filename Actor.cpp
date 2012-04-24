@@ -80,7 +80,7 @@ void Actor::initialize()
 
 #ifdef VAULTMP_DEBUG
 
-	if (debug != NULL)
+	if (debug)
 		debug->PrintFormat("New actor object created (ref: %08X)", true, this->GetReference());
 
 #endif
@@ -91,7 +91,7 @@ void Actor::SetDebugHandler(Debug* debug)
 {
 	Actor::debug = debug;
 
-	if (debug != NULL)
+	if (debug)
 		debug->Print("Attached debug handler to Actor class", true);
 }
 #endif
@@ -156,7 +156,7 @@ Lockable* Actor::SetActorValue(unsigned char index, double value)
 
 #ifdef VAULTMP_DEBUG
 
-	if (debug != NULL)
+	if (debug)
 		debug->PrintFormat("Actor value %s was set to %f (ref: %08X)", true, API::RetrieveValue_Reverse(index).c_str(), (float) value, this->GetReference());
 
 #endif
@@ -176,7 +176,7 @@ Lockable* Actor::SetActorBaseValue(unsigned char index, double value)
 
 #ifdef VAULTMP_DEBUG
 
-	if (debug != NULL)
+	if (debug)
 		debug->PrintFormat("Actor base value %s was set to %f (ref: %08X)", true, API::RetrieveValue_Reverse(index).c_str(), (float) value, this->GetReference());
 
 #endif
@@ -199,7 +199,7 @@ Lockable* Actor::SetActorMovingAnimation(unsigned char index)
 
 #ifdef VAULTMP_DEBUG
 
-	if (debug != NULL)
+	if (debug)
 		debug->PrintFormat("Actor moving animation was set to %s (ref: %08X)", true,  anim.c_str(), this->GetReference());
 
 #endif
@@ -217,7 +217,7 @@ Lockable* Actor::SetActorMovingXY(unsigned char moving)
 
 #ifdef VAULTMP_DEBUG
 
-	if (debug != NULL)
+	if (debug)
 		debug->PrintFormat("Actor moving state was set to %02X (ref: %08X)", true, moving, this->GetReference());
 
 #endif
@@ -235,7 +235,7 @@ Lockable* Actor::SetActorAlerted(bool state)
 
 #ifdef VAULTMP_DEBUG
 
-	if (debug != NULL)
+	if (debug)
 		debug->PrintFormat("Actor alerted state was set to %d (ref: %08X)", true, (int) state, this->GetReference());
 
 #endif
@@ -253,7 +253,7 @@ Lockable* Actor::SetActorSneaking(bool state)
 
 #ifdef VAULTMP_DEBUG
 
-	if (debug != NULL)
+	if (debug)
 		debug->PrintFormat("Actor sneaking state was set to %d (ref: %08X)", true, (int) state, this->GetReference());
 
 #endif
@@ -271,7 +271,7 @@ Lockable* Actor::SetActorDead(bool state)
 
 #ifdef VAULTMP_DEBUG
 
-	if (debug != NULL)
+	if (debug)
 		debug->PrintFormat("Actor dead state was set to %d (ref: %08X)", true, (int) state, this->GetReference());
 
 #endif

@@ -10,7 +10,7 @@ void NetworkServer::SetDebugHandler(Debug* debug)
 {
 	NetworkServer::debug = debug;
 
-	if (debug != NULL)
+	if (debug)
 		debug->Print("Attached debug handler to Network class", true);
 }
 #endif
