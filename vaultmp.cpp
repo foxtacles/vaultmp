@@ -702,13 +702,13 @@ void UpdateText(string str)
 	InvalidateRect(wndmain, &rect, FALSE);
 }
 
-void WriteText(string& str, unsigned int start, unsigned int end)
+void WriteText(string& str, unsigned int start, unsigned int end, unsigned int t = 100)
 {
 	unsigned int counter = start;
 
 	while (credits && counter != end)
 	{
-		this_thread::sleep_for(chrono::milliseconds(100));
+		this_thread::sleep_for(chrono::milliseconds(t));
 		UpdateText(str.substr(0, counter + 1) + (counter % 3 ? "" : "_"));
 		++counter;
 	}
@@ -728,51 +728,65 @@ void PauseText(string& str, unsigned int ticks)
 
 void CreditsText()
 {
-	unsigned int len = 0;
+	while (credits)
+	{
+		unsigned int len = 0;
 
-	string ctext("");
-	UpdateText(ctext);
+		string ctext("");
+		UpdateText(ctext);
 
-	PauseText(ctext, 8);
+		PauseText(ctext, 8);
 
-	ctext.append("The Brickster.net Group");
-	WriteText(ctext, len, ctext.length());
-	len = ctext.length();
+		ctext.append("The Brickster.net Group");
+		WriteText(ctext, len, ctext.length());
+		len = ctext.length();
 
-	PauseText(ctext, 8);
-	ctext.append("\n");
+		PauseText(ctext, 8);
+		ctext.append("\n");
 
-	PauseText(ctext, 4);
+		PauseText(ctext, 4);
 
-	ctext.append("from left to right:");
-	WriteText(ctext, len, ctext.length());
-	len = ctext.length();
+		ctext.append("from left to right:");
+		WriteText(ctext, len, ctext.length());
+		len = ctext.length();
 
-	PauseText(ctext, 4);
+		PauseText(ctext, 4);
 
-	ctext.append(" benG, mqidx, Recycler, portWine\n\n");
-	WriteText(ctext, len, ctext.length());
-	len = ctext.length();
+		ctext.append(" benG, mqidx, Recycler, portWine\n\n");
+		WriteText(ctext, len, ctext.length());
+		len = ctext.length();
 
-	PauseText(ctext, 8);
+		PauseText(ctext, 8);
 
-	ctext.append("presents:");
-	WriteText(ctext, len, ctext.length());
-	len = ctext.length();
+		ctext.append("presents:");
+		WriteText(ctext, len, ctext.length());
+		len = ctext.length();
 
-	PauseText(ctext, 4);
+		PauseText(ctext, 4);
 
-	ctext.append("\nVault-Tec Multiplayer Mod");
-	WriteText(ctext, len, ctext.length());
-	len = ctext.length();
+		ctext.append("\nVault-Tec Multiplayer Mod");
+		WriteText(ctext, len, ctext.length());
+		len = ctext.length();
 
-	PauseText(ctext, 8);
+		PauseText(ctext, 8);
 
-	ctext.append("\n\n" + string(CREDITSSTR));
-	WriteText(ctext, len, ctext.length());
-	len = ctext.length();
+		ctext.append("\n\n" + string(CREDITSSTR));
+		WriteText(ctext, len, ctext.length());
+		len = ctext.length();
 
-	PauseText(ctext, 4096);
+		PauseText(ctext, 64);
+
+		ctext.append("\n\n       ^__^      ");
+		WriteText(ctext, len, ctext.length());
+		len = ctext.length();
+
+		PauseText(ctext, 32);
+
+		ctext.append("\n.......................");
+		WriteText(ctext, len, ctext.length(), 330);
+
+		PauseText(ctext, 8);
+	}
 }
 
 LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)

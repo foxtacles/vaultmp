@@ -6,6 +6,6 @@
 
 ICON_MAIN      ICON    DISCARDABLE   vaultmp.ico
 CHIPTUNE       RCDATA  DISCARDABLE   the_wasteland.xm
-CHIPTUNE2      RCDATA  DISCARDABLE   broken.xm
+CHIPTUNE2      RCDATA  DISCARDABLE   deep.xm
 POWERED        BITMAP  DISCARDABLE   powered.bmp
 CREDITS        BITMAP  DISCARDABLE   credits.bmp
