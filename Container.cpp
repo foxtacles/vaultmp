@@ -175,11 +175,10 @@ void Container::RemoveItem(NetworkID id)
 ContainerDiff Container::RemoveItem(unsigned int baseID, unsigned int count) const
 {
 	ContainerDiff diff;
-	list<NetworkID>::const_iterator it;
 
-	for (it = container.begin(); it != container.end(); ++it)
+	for (const NetworkID& id : container)
 	{
-		FactoryObject _reference = GameFactory::GetObject(*it);
+		FactoryObject _reference = GameFactory::GetObject(id);
 		Item* item = vaultcast<Item>(_reference);
 
 		if (item->GetBase() == baseID)
@@ -206,6 +205,55 @@ ContainerDiff Container::RemoveAllItems() const
 {
 	ContainerDiff diff;
 	diff.first = this->container;
+	return diff;
+}
+
+ContainerDiff Container::EquipItem(unsigned int baseID) const
+{
+	ContainerDiff diff;
+
+	if (!IsEquipped(baseID))
+	{
+		for (const NetworkID& id : container)
+		{
+			FactoryObject _reference = GameFactory::GetObject(id);
+			Item* item = vaultcast<Item>(_reference);
+
+			if (item->GetBase() == baseID)
+			{
+				diff.first.push_back(id);
+
+				FactoryObject _item = GameFactory::GetObject(item->Copy());
+				Item* _copy = vaultcast<Item>(_item);
+				_copy->SetItemEquipped(true);
+				diff.second.push_back(_copy->GetNetworkID());
+
+				return diff;
+			}
+		}
+	}
+
+	return diff;
+}
+
+ContainerDiff Container::UnequipItem(unsigned int baseID) const
+{
+	ContainerDiff diff;
+	NetworkID id = IsEquipped(baseID);
+
+	if (id)
+	{
+		FactoryObject _reference = GameFactory::GetObject(id);
+		Item* item = vaultcast<Item>(_reference);
+
+		diff.first.push_back(id);
+
+		FactoryObject _item = GameFactory::GetObject(item->Copy());
+		Item* _copy = vaultcast<Item>(_item);
+		_copy->SetItemEquipped(false);
+		diff.second.push_back(_copy->GetNetworkID());
+	}
+
 	return diff;
 }
 
@@ -283,6 +331,20 @@ ContainerDiff Container::Compare(NetworkID id) const
 	GameFactory::DestroyInstance(_self);
 	GameFactory::DestroyInstance(_compare);
 	return diff;
+}
+
+NetworkID Container::IsEquipped(unsigned int baseID) const
+{
+	for (const NetworkID& id : container)
+	{
+		FactoryObject _reference = GameFactory::GetObject(id);
+		Item* item = vaultcast<Item>(_reference);
+
+		if (item->GetBase() == baseID && item->GetItemEquipped())
+			return id;
+	}
+
+	return 0;
 }
 
 GameDiff Container::ApplyDiff(ContainerDiff& diff)

@@ -86,8 +86,11 @@ class Container : public Object
 		void RemoveItem(NetworkID id);
 		ContainerDiff RemoveItem(unsigned int baseID, unsigned int count) const;
 		ContainerDiff RemoveAllItems() const;
+		ContainerDiff EquipItem(unsigned int baseID) const;
+		ContainerDiff UnequipItem(unsigned int baseID) const;
 
 		ContainerDiff Compare(NetworkID id) const;
+		NetworkID IsEquipped(unsigned int baseID) const;
 		GameDiff ApplyDiff(ContainerDiff& diff);
 		static void FreeDiff(ContainerDiff& diff);
 

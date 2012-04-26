@@ -34,10 +34,9 @@ namespace vaultmp
 		uint32_t;
 	enum Cell :
 		uint32_t;
-	enum UCount :
-		uint32_t;
-	enum Count :
-		int32_t;
+
+	typedef uint32_t UCount;
+	typedef int32_t Count;
 
 	enum Interval :
 		uint32_t
@@ -152,6 +151,8 @@ extern "C" {
 	VAULTSCRIPT vaultmp::Void (*RemoveAllItems)(vaultmp::ID);
 	VAULTSCRIPT vaultmp::Void (*SetActorValue)(vaultmp::ID, vaultmp::Index, vaultmp::Value);
 	VAULTSCRIPT vaultmp::Void (*SetActorBaseValue)(vaultmp::ID, vaultmp::Index, vaultmp::Value);
+	VAULTSCRIPT vaultmp::State (*EquipItem)(vaultmp::ID, vaultmp::Base);
+	VAULTSCRIPT vaultmp::State (*UnequipItem)(vaultmp::ID, vaultmp::Base);
 	VAULTSCRIPT vaultmp::Void (*KillActor)(vaultmp::ID);
 
 	VAULTSCRIPT vaultmp::Void (*SetPlayerRespawn)(vaultmp::ID, vaultmp::Interval);

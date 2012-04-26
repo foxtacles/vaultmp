@@ -59,7 +59,17 @@ Base VAULTSCRIPT OnPlayerRequestGame(ID player)
 Void VAULTSCRIPT OnSpawn(ID object)
 {
 	if (IsPlayer(object))
+	{
 		UIMessage(object, String("Hello, ") + GetName(object) + "!");
+
+		Base pipboy = (Base) 0x00015038;
+
+		if (GetContainerItemCount(object, pipboy) == 0)
+		{
+			AddItem(object, pipboy, 1, 100.0);
+			EquipItem(object, pipboy);
+		}
+	}
 }
 
 Void VAULTSCRIPT OnCellChange(ID object, Cell cell)

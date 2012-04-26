@@ -92,6 +92,8 @@ Script::Script(char* path)
 		SetScriptFunction("RemoveAllItems", &Script::RemoveAllItems);
 		SetScriptFunction("SetActorValue", &Script::SetActorValue);
 		SetScriptFunction("SetActorBaseValue", &Script::SetActorBaseValue);
+		SetScriptFunction("EquipItem", &Script::EquipItem);
+		SetScriptFunction("UnequipItem", &Script::UnequipItem);
 		SetScriptFunction("KillActor", &Script::KillActor);
 
 		SetScriptFunction("SetPlayerRespawn", &Script::SetPlayerRespawn);
@@ -936,6 +938,60 @@ void Script::SetActorBaseValue(NetworkID id, unsigned char index, double value)
 			Network::Queue(response);
 		}
 	}
+}
+
+bool Script::EquipItem(NetworkID id, unsigned int baseID)
+{
+	FactoryObject reference = GameFactory::GetObject(id);
+	Actor* actor = vaultcast<Actor>(reference);
+
+	if (actor)
+	{
+		ContainerDiff diff = actor->EquipItem(baseID);
+
+		if (!diff.first.empty() || !diff.second.empty())
+		{
+			pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_CONTAINER, id, &diff);
+			NetworkResponse response = Network::CompleteResponse(Network::CreateResponse(packet,
+																						 (unsigned char) HIGH_PRIORITY,
+																						 (unsigned char) RELIABLE_ORDERED,
+																						 CHANNEL_GAME,
+																						 Client::GetNetworkList(NULL)));
+			Network::Queue(response);
+
+			actor->ApplyDiff(diff);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool Script::UnequipItem(NetworkID id, unsigned int baseID)
+{
+	FactoryObject reference = GameFactory::GetObject(id);
+	Actor* actor = vaultcast<Actor>(reference);
+
+	if (actor)
+	{
+		ContainerDiff diff = actor->UnequipItem(baseID);
+
+		if (!diff.first.empty() || !diff.second.empty())
+		{
+			pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_CONTAINER, id, &diff);
+			NetworkResponse response = Network::CompleteResponse(Network::CreateResponse(packet,
+																						 (unsigned char) HIGH_PRIORITY,
+																						 (unsigned char) RELIABLE_ORDERED,
+																						 CHANNEL_GAME,
+																						 Client::GetNetworkList(NULL)));
+			Network::Queue(response);
+
+			actor->ApplyDiff(diff);
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void Script::KillActor(NetworkID id)

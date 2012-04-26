@@ -65,6 +65,8 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"RemoveAllItems", PAWN::vaultmp_RemoveAllItems},
 	{"SetActorValue", PAWN::vaultmp_SetActorValue},
 	{"SetActorBaseValue", PAWN::vaultmp_SetActorBaseValue},
+	{"EquipItem", PAWN::vaultmp_EquipItem},
+	{"UnequipItem", PAWN::vaultmp_UnequipItem},
 	{"KillActor", PAWN::vaultmp_KillActor},
 
 	{"SetPlayerRespawn", PAWN::vaultmp_SetPlayerRespawn},
@@ -555,6 +557,16 @@ cell PAWN::vaultmp_SetActorBaseValue(AMX* amx, const cell* params)
 {
 	Script::SetActorBaseValue(params[1], params[2], amx_ctof(params[3]));
 	return 1;
+}
+
+cell PAWN::vaultmp_EquipItem(AMX* amx, const cell* params)
+{
+	return Script::EquipItem(params[1], params[2]);
+}
+
+cell PAWN::vaultmp_UnequipItem(AMX* amx, const cell* params)
+{
+	return Script::UnequipItem(params[1], params[2]);
 }
 
 cell PAWN::vaultmp_KillActor(AMX* amx, const cell* params)

@@ -96,6 +96,8 @@ native RemoveItem(ID, base, count);
 native RemoveAllItems(ID);
 native SetActorValue(ID, index, Float:value);
 native SetActorBaseValue(ID, index, Float:value);
+native Bool:EquipItem(ID, base);
+native Bool:UnequipItem(ID, base);
 native KillActor(ID);
 
 native SetPlayerRespawn(ID, interval);

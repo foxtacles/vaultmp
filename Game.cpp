@@ -885,7 +885,7 @@ void Game::net_SetCell(vector<FactoryObject> reference, unsigned int cell)
 	}
 }
 
-void Game::net_ContainerUpdate(FactoryObject reference, ContainerDiff diff)
+void Game::net_ContainerUpdate(FactoryObject& reference, ContainerDiff diff)
 {
 	Container* container = vaultcast<Container>(reference);
 
@@ -894,7 +894,14 @@ void Game::net_ContainerUpdate(FactoryObject reference, ContainerDiff diff)
 
 	Lockable* result;
 
+	// cleaner solution here
+
+	NetworkID id = container->GetNetworkID();
+	GameFactory::LeaveReference(reference);
+
 	while (!(result = container->getLock()));
+
+	reference = GameFactory::GetObject(id);
 
 	signed int key = result->Lock(true);
 
