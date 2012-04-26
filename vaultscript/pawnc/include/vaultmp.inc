@@ -27,7 +27,7 @@ const Type: {
 }
 
 const Interval: {
-	DEFAULT_PLAYER_RESPAWN 	= 8000;
+	DEFAULT_PLAYER_RESPAWN 	= 8000,
 }
 
 // Callbacks
