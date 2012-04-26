@@ -3,7 +3,6 @@
 // Constants
 
 const Index: {
-
         FALLOUT3            =   0x00000001,
         NEWVEGAS            =   0x00000010,
         FALLOUT_GAMES       =   FALLOUT3 | NEWVEGAS,
@@ -12,11 +11,9 @@ const Index: {
         MAX_PLAYER_NAME     =   16,
         MAX_PASSWORD_SIZE   =   16,
         MAX_MESSAGE_LENGTH  =   64,
-
 }
 
 const Type: {
-
         ID_REFERENCE        =   0x00000001,
         ID_OBJECT           =   0x00000010,
         ID_ITEM             =   0x00000100,
@@ -24,13 +21,14 @@ const Type: {
         ID_ACTOR            =   0x00010000,
         ID_PLAYER           =   0x00100000,
 
-        ALL_OBJECTS         =   ( ID_OBJECT | ID_ITEM | ID_CONTAINER | ID_ACTOR | ID_PLAYER ),
-        ALL_CONTAINERS      =   ( ID_CONTAINER | ID_ACTOR | ID_PLAYER ),
-        ALL_ACTORS          =   ( ID_ACTOR | ID_PLAYER ),
-
+        ALL_OBJECTS         =   (ID_OBJECT | ID_ITEM | ID_CONTAINER | ID_ACTOR | ID_PLAYER),
+        ALL_CONTAINERS      =   (ID_CONTAINER | ID_ACTOR | ID_PLAYER),
+        ALL_ACTORS          =   (ID_ACTOR | ID_PLAYER),
 }
 
-const DEFAULT_PLAYER_RESPAWN = 8000;
+const Interval: {
+	DEFAULT_PLAYER_RESPAWN 	= 8000;
+}
 
 // Callbacks
 
