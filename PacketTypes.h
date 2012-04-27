@@ -513,6 +513,8 @@ struct _pItemNew
 	unsigned int count;
 	double condition;
 	bool equipped;
+	bool silent;
+	bool stick;
 };
 #pragma pack(pop)
 
@@ -564,12 +566,14 @@ class pItemNew : public pObjectNewDefault
 	private:
 		_pItemNew _data;
 
-		pItemNew(const pDefault* _data_pObjectNew, unsigned int count, double condition, bool equipped) : pObjectNewDefault(ID_ITEM_NEW, PacketFactory::ExtractReference(_data_pObjectNew), PacketFactory::ExtractBase(_data_pObjectNew), PacketFactory::ExtractNetworkID(_data_pObjectNew))
+		pItemNew(const pDefault* _data_pObjectNew, unsigned int count, double condition, bool equipped, bool silent, bool stick) : pObjectNewDefault(ID_ITEM_NEW, PacketFactory::ExtractReference(_data_pObjectNew), PacketFactory::ExtractBase(_data_pObjectNew), PacketFactory::ExtractNetworkID(_data_pObjectNew))
 		{
 			memcpy(&this->_data._data_pObjectNew, PacketFactory::ExtractRawData(_data_pObjectNew), pObjectNew::data_length());
 			_data.count = count;
 			_data.condition = condition;
 			_data.equipped = equipped;
+			_data.silent = silent;
+			_data.stick = stick;
 			construct(&_data, sizeof(_data));
 		}
 		pItemNew(NetworkID id, unsigned int refID, unsigned int baseID, _pItemNew& data) : pObjectNewDefault(ID_ITEM_NEW, refID, baseID, id)

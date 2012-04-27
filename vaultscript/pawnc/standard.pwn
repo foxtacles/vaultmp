@@ -55,8 +55,8 @@ public OnSpawn(ID)
 
 		if (GetContainerItemCount(ID, pipboy) == 0)
 		{
-			AddItem(ID, pipboy, 1, 100.0);
-			EquipItem(ID, pipboy);
+			AddItem(ID, pipboy, 1, 100.0, Bool:true);
+			EquipItem(ID, pipboy, Bool:true, Bool:true);
 		}
 	}
 }

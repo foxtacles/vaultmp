@@ -149,12 +149,13 @@ void Container::AddItem(NetworkID id)
 		throw VaultException("Object with reference %08X is not an Item", (*reference)->GetReference());
 }
 
-ContainerDiff Container::AddItem(unsigned int baseID, unsigned int count, double condition) const
+ContainerDiff Container::AddItem(unsigned int baseID, unsigned int count, double condition, bool silent) const
 {
 	FactoryObject _item = GameFactory::GetObject(GameFactory::CreateInstance(ID_ITEM, baseID));
 	Item* item = vaultcast<Item>(_item);
 	item->SetItemCount(count);
 	item->SetItemCondition(condition);
+	item->SetItemSilent(silent);
 
 	ContainerDiff diff;
 	diff.second.push_back(item->GetNetworkID());
@@ -172,17 +173,19 @@ void Container::RemoveItem(NetworkID id)
 	container.erase(it);
 }
 
-ContainerDiff Container::RemoveItem(unsigned int baseID, unsigned int count) const
+ContainerDiff Container::RemoveItem(unsigned int baseID, unsigned int count, bool silent) const
 {
 	ContainerDiff diff;
+	list<NetworkID>::const_iterator it;
 
-	for (const NetworkID& id : container)
+	for (it = container.begin(); it != container.end() && count; ++it)
 	{
-		FactoryObject _reference = GameFactory::GetObject(id);
+		FactoryObject _reference = GameFactory::GetObject(*it);
 		Item* item = vaultcast<Item>(_reference);
 
 		if (item->GetBase() == baseID)
 		{
+			item->SetItemSilent(silent);
 			diff.first.push_back(item->GetNetworkID());
 
 			if (item->GetItemCount() > count)
@@ -190,6 +193,7 @@ ContainerDiff Container::RemoveItem(unsigned int baseID, unsigned int count) con
 				FactoryObject _item = GameFactory::GetObject(item->Copy());
 				Item* _copy = vaultcast<Item>(_item);
 				_copy->SetItemCount(_copy->GetItemCount() - count);
+				_copy->SetItemSilent(silent);
 				diff.second.push_back(_copy->GetNetworkID());
 				return diff;
 			}
@@ -208,7 +212,7 @@ ContainerDiff Container::RemoveAllItems() const
 	return diff;
 }
 
-ContainerDiff Container::EquipItem(unsigned int baseID) const
+ContainerDiff Container::EquipItem(unsigned int baseID, bool silent, bool stick) const
 {
 	ContainerDiff diff;
 
@@ -226,6 +230,8 @@ ContainerDiff Container::EquipItem(unsigned int baseID) const
 				FactoryObject _item = GameFactory::GetObject(item->Copy());
 				Item* _copy = vaultcast<Item>(_item);
 				_copy->SetItemEquipped(true);
+				_copy->SetItemSilent(silent);
+				_copy->SetItemStick(stick);
 				diff.second.push_back(_copy->GetNetworkID());
 
 				return diff;
@@ -236,7 +242,7 @@ ContainerDiff Container::EquipItem(unsigned int baseID) const
 	return diff;
 }
 
-ContainerDiff Container::UnequipItem(unsigned int baseID) const
+ContainerDiff Container::UnequipItem(unsigned int baseID, bool silent, bool stick) const
 {
 	ContainerDiff diff;
 	NetworkID id = IsEquipped(baseID);
@@ -251,6 +257,8 @@ ContainerDiff Container::UnequipItem(unsigned int baseID) const
 		FactoryObject _item = GameFactory::GetObject(item->Copy());
 		Item* _copy = vaultcast<Item>(_item);
 		_copy->SetItemEquipped(false);
+		_copy->SetItemSilent(silent);
+		_copy->SetItemStick(stick);
 		diff.second.push_back(_copy->GetNetworkID());
 	}
 
@@ -365,6 +373,8 @@ GameDiff Container::ApplyDiff(ContainerDiff& diff)
 
 		_diff->count -= iDelete->GetItemCount();
 		_diff->equipped -= iDelete->GetItemEquipped();
+		_diff->silent = iDelete->GetItemSilent();
+		_diff->stick = iDelete->GetItemStick();
 
 		this->RemoveItem(*it);
 		GameFactory::DestroyInstance(_iDelete);
@@ -398,6 +408,8 @@ GameDiff Container::ApplyDiff(ContainerDiff& diff)
 			{
 				_diff->count += iNew->GetItemCount();
 				_diff->condition = iNew->GetItemCondition();
+				_diff->silent = iNew->GetItemSilent();
+				_diff->stick = iNew->GetItemStick();
 
 				if (iNew->GetItemEquipped())
 					_diff->equipped = 1;
@@ -410,6 +422,8 @@ GameDiff Container::ApplyDiff(ContainerDiff& diff)
 			_result.count = iNew->GetItemCount();
 			_result.condition = iNew->GetItemCondition();
 			_result.equipped = iNew->GetItemEquipped();
+			_result.silent = iNew->GetItemSilent();
+			_result.stick = iNew->GetItemStick();
 			result.push_back(pair<unsigned int, Diff>(iNew->GetBase(), _result));
 		}
 

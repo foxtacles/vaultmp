@@ -137,13 +137,13 @@ class Script
 		static bool GetActorDead(NetworkID id);
 		static bool IsActorJumping(NetworkID id);
 
-		static void AddItem(NetworkID id, unsigned int baseID, unsigned int count, double condition);
-		static unsigned int RemoveItem(NetworkID id, unsigned int baseID, unsigned int count);
+		static void AddItem(NetworkID id, unsigned int baseID, unsigned int count, double condition, bool silent);
+		static unsigned int RemoveItem(NetworkID id, unsigned int baseID, unsigned int count, bool silent);
 		static void RemoveAllItems(NetworkID id);
 		static void SetActorValue(NetworkID id, unsigned char index, double value);
 		static void SetActorBaseValue(NetworkID id, unsigned char index, double value);
-		static bool EquipItem(NetworkID id, unsigned int baseID);
-		static bool UnequipItem(NetworkID id, unsigned int baseID);
+		static bool EquipItem(NetworkID id, unsigned int baseID, bool silent, bool stick);
+		static bool UnequipItem(NetworkID id, unsigned int baseID, bool silent, bool stick);
 		static void KillActor(NetworkID id);
 
 		static void SetPlayerRespawn(NetworkID id, unsigned int respawn);

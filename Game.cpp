@@ -357,7 +357,7 @@ void Game::NewContainer(FactoryObject& reference)
 	Container* container = vaultcast<Container>(reference);
 	vector<FactoryObject> items = GameFactory::GetMultiple(vector<NetworkID>(container->GetItemList().begin(), container->GetItemList().end()));
 
-	for (FactoryObject & _item : items)
+	for (FactoryObject& _item : items)
 	{
 		AddItem(vector<FactoryObject> {reference, _item});
 		Item* item = vaultcast<Item>(_item);
@@ -685,14 +685,14 @@ void Game::KillActor(FactoryObject reference, signed int key)
 	Interface::EndDynamic();
 }
 
-void Game::AddItem(vector<FactoryObject> reference, bool silent, signed int key)
+void Game::AddItem(vector<FactoryObject> reference, signed int key)
 {
 	Item* item = vaultcast<Item>(reference[1]);
 
 	if (!item)
 		throw VaultException("Object with reference %08X is not an Item", (*reference[1])->GetReference());
 
-	AddItem(reference[0], item->GetBase(), item->GetItemCount(), item->GetItemCondition(), silent, key);
+	AddItem(reference[0], item->GetBase(), item->GetItemCount(), item->GetItemCondition(), item->GetItemSilent(), key);
 }
 
 void Game::AddItem(FactoryObject reference, unsigned int baseID, unsigned int count, double condition, bool silent, signed int key)
@@ -730,14 +730,14 @@ void Game::AddItem(FactoryObject reference, unsigned int baseID, unsigned int co
 	Interface::EndDynamic();
 }
 
-void Game::RemoveItem(vector<FactoryObject> reference, bool silent, signed int key)
+void Game::RemoveItem(vector<FactoryObject> reference, signed int key)
 {
 	Item* item = vaultcast<Item>(reference[1]);
 
 	if (!item)
 		throw VaultException("Object with reference %08X is not an Item", (*reference[1])->GetReference());
 
-	RemoveItem(reference[0], item->GetBase(), item->GetItemCount(), silent, key);
+	RemoveItem(reference[0], item->GetBase(), item->GetItemCount(), item->GetItemSilent(), key);
 }
 
 void Game::RemoveItem(FactoryObject reference, unsigned int baseID, unsigned int count, bool silent, signed int key)
@@ -777,17 +777,17 @@ void Game::RemoveAllItems(FactoryObject reference, signed int key)
 	Interface::EndDynamic();
 }
 
-void Game::EquipItem(vector<FactoryObject> reference, bool stick, bool silent, signed int key)
+void Game::EquipItem(vector<FactoryObject> reference, signed int key)
 {
 	Item* item = vaultcast<Item>(reference[1]);
 
 	if (!item)
 		throw VaultException("Object with reference %08X is not an Item", (*reference[1])->GetReference());
 
-	RemoveItem(reference[0], item->GetBase(), stick, silent, key);
+	RemoveItem(reference[0], item->GetBase(), item->GetItemSilent(), item->GetItemStick(), key);
 }
 
-void Game::EquipItem(FactoryObject reference, unsigned int baseID, bool stick, bool silent, signed int key)
+void Game::EquipItem(FactoryObject reference, unsigned int baseID, bool silent, bool stick, signed int key)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -807,17 +807,17 @@ void Game::EquipItem(FactoryObject reference, unsigned int baseID, bool stick, b
 	Interface::EndDynamic();
 }
 
-void Game::UnequipItem(vector<FactoryObject> reference, bool stick, bool silent, signed int key)
+void Game::UnequipItem(vector<FactoryObject> reference, signed int key)
 {
 	Item* item = vaultcast<Item>(reference[1]);
 
 	if (!item)
 		throw VaultException("Object with reference %08X is not an Item", (*reference[1])->GetReference());
 
-	RemoveItem(reference[0], item->GetBase(), stick, silent, key);
+	RemoveItem(reference[0], item->GetBase(), item->GetItemSilent(), item->GetItemStick(), key);
 }
 
-void Game::UnequipItem(FactoryObject reference, unsigned int baseID, bool stick, bool silent, signed int key)
+void Game::UnequipItem(FactoryObject reference, unsigned int baseID, bool silent, bool stick, signed int key)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -912,14 +912,14 @@ void Game::net_ContainerUpdate(FactoryObject& reference, ContainerDiff diff)
 		if (diff.second.equipped)
 		{
 			if (diff.second.equipped > 0)
-				EquipItem(reference, diff.first, true, true, result->Lock(true));
+				EquipItem(reference, diff.first, diff.second.silent, diff.second.stick, result->Lock(true));
 			else if (diff.second.equipped < 0)
-				UnequipItem(reference, diff.first, true, true, result->Lock(true));
+				UnequipItem(reference, diff.first, diff.second.silent, diff.second.stick, result->Lock(true));
 		}
 		else if (diff.second.count > 0)
-			AddItem(reference, diff.first, diff.second.count, diff.second.condition, true, result->Lock(true));
+			AddItem(reference, diff.first, diff.second.count, diff.second.condition, diff.second.silent, result->Lock(true));
 		else if (diff.second.count < 0)
-			RemoveItem(reference, diff.first, abs(diff.second.count), true, result->Lock(true));
+			RemoveItem(reference, diff.first, abs(diff.second.count), diff.second.silent, result->Lock(true));
 
 		//else
 		// new condition, can't handle yet

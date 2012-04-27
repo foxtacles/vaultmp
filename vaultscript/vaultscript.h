@@ -131,13 +131,13 @@ extern "C" {
 	VAULTSCRIPT vaultmp::State (*GetActorDead)(vaultmp::ID);
 	VAULTSCRIPT vaultmp::State (*IsActorJumping)(vaultmp::ID);
 
-	VAULTSCRIPT vaultmp::Void (*AddItem)(vaultmp::ID, vaultmp::Base, vaultmp::UCount, vaultmp::Value);
-	VAULTSCRIPT vaultmp::UCount (*RemoveItem)(vaultmp::ID, vaultmp::Base, vaultmp::UCount);
+	VAULTSCRIPT vaultmp::Void (*AddItem)(vaultmp::ID, vaultmp::Base, vaultmp::UCount, vaultmp::Value, vaultmp::State);
+	VAULTSCRIPT vaultmp::UCount (*RemoveItem)(vaultmp::ID, vaultmp::Base, vaultmp::UCount, vaultmp::State);
 	VAULTSCRIPT vaultmp::Void (*RemoveAllItems)(vaultmp::ID);
 	VAULTSCRIPT vaultmp::Void (*SetActorValue)(vaultmp::ID, vaultmp::Index, vaultmp::Value);
 	VAULTSCRIPT vaultmp::Void (*SetActorBaseValue)(vaultmp::ID, vaultmp::Index, vaultmp::Value);
-	VAULTSCRIPT vaultmp::State (*EquipItem)(vaultmp::ID, vaultmp::Base);
-	VAULTSCRIPT vaultmp::State (*UnequipItem)(vaultmp::ID, vaultmp::Base);
+	VAULTSCRIPT vaultmp::State (*EquipItem)(vaultmp::ID, vaultmp::Base, vaultmp::State, vaultmp::State);
+	VAULTSCRIPT vaultmp::State (*UnequipItem)(vaultmp::ID, vaultmp::Base, vaultmp::State, vaultmp::State);
 	VAULTSCRIPT vaultmp::Void (*KillActor)(vaultmp::ID);
 
 	VAULTSCRIPT vaultmp::Void (*SetPlayerRespawn)(vaultmp::ID, vaultmp::Interval);

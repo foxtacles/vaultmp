@@ -77,7 +77,9 @@ pDefault* PacketFactory::CreatePacket(unsigned char type, ...)
 			unsigned int count = va_arg(args, unsigned int);
 			double condition = va_arg(args, double);
 			bool equipped = (bool) va_arg(args, unsigned int);
-			packet = new pItemNew(pObjectNew, count, condition, equipped);
+			bool silent = (bool) va_arg(args, unsigned int);
+			bool stick = (bool) va_arg(args, unsigned int);
+			packet = new pItemNew(pObjectNew, count, condition, equipped, silent, stick);
 			break;
 		}
 
@@ -407,9 +409,13 @@ void PacketFactory::Access(const pDefault* packet, ...)
 				unsigned int* count = va_arg(args, unsigned int*);
 				double* condition = va_arg(args, double*);
 				bool* equipped = va_arg(args, bool*);
+				bool* silent = va_arg(args, bool*);
+				bool* stick = va_arg(args, bool*);
 				*count = data->_data.count;
 				*condition = data->_data.condition;
 				*equipped = data->_data.equipped;
+				*silent = data->_data.silent;
+				*stick = data->_data.stick;
 				break;
 			}
 

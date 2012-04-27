@@ -66,8 +66,8 @@ Void VAULTSCRIPT OnSpawn(ID object)
 
 		if (GetContainerItemCount(object, pipboy) == 0)
 		{
-			AddItem(object, pipboy, 1, 100.0);
-			EquipItem(object, pipboy);
+			AddItem(object, pipboy, 1, 100.0, True);
+			EquipItem(object, pipboy, True, True);
 		}
 	}
 }

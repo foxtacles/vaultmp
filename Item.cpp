@@ -26,13 +26,15 @@ Item::Item(const pDefault* packet) : Object(PacketFactory::ExtractPartial(packet
 
 	unsigned int count;
 	double condition;
-	bool equipped;
+	bool equipped, silent, stick;
 
-	PacketFactory::Access(packet, &count, &condition, &equipped);
+	PacketFactory::Access(packet, &count, &condition, &equipped, &silent, &stick);
 
 	this->SetItemCount(count);
 	this->SetItemCondition(condition);
 	this->SetItemEquipped(equipped);
+	this->SetItemSilent(silent);
+	this->SetItemStick(stick);
 }
 
 Item::Item(pDefault* packet) : Item(reinterpret_cast<const pDefault*>(packet))
@@ -71,6 +73,16 @@ double Item::GetItemCondition() const
 bool Item::GetItemEquipped() const
 {
 	return this->state_Equipped.get();
+}
+
+bool Item::GetItemSilent() const
+{
+	return this->flag_Silent.get();
+}
+
+bool Item::GetItemStick() const
+{
+	return this->flag_Stick.get();
 }
 
 bool Item::SetItemCount(unsigned int count)
@@ -123,6 +135,42 @@ bool Item::SetItemEquipped(bool state)
 	return true;
 }
 
+bool Item::SetItemSilent(bool silent)
+{
+	if (this->flag_Silent.get() == silent)
+		return false;
+
+	if (!this->flag_Silent.set(silent))
+		return false;
+
+#ifdef VAULTMP_DEBUG
+
+	if (debug)
+		debug->PrintFormat("Item silent flag was set to %d (ref: %08X)", true, (int) silent, this->GetReference());
+
+#endif
+
+	return true;
+}
+
+bool Item::SetItemStick(bool stick)
+{
+	if (this->flag_Stick.get() == stick)
+		return false;
+
+	if (!this->flag_Stick.set(stick))
+		return false;
+
+#ifdef VAULTMP_DEBUG
+
+	if (debug)
+		debug->PrintFormat("Item stick flag was set to %d (ref: %08X)", true, (int) stick, this->GetReference());
+
+#endif
+
+	return true;
+}
+
 NetworkID Item::Copy() const
 {
 	FactoryObject reference = GameFactory::GetObject(GameFactory::CreateInstance(ID_ITEM, 0x00000000, this->GetBase()));
@@ -131,6 +179,8 @@ NetworkID Item::Copy() const
 	item->SetItemCount(this->GetItemCount());
 	item->SetItemCondition(this->GetItemCondition());
 	item->SetItemEquipped(this->GetItemEquipped());
+	item->SetItemSilent(this->GetItemSilent());
+	item->SetItemStick(this->GetItemStick());
 
 	return item->GetNetworkID();
 }
@@ -139,7 +189,7 @@ pDefault* Item::toPacket()
 {
 	pDefault* pObjectNew = Object::toPacket();
 
-	pDefault* packet = PacketFactory::CreatePacket(ID_ITEM_NEW, pObjectNew, this->GetItemCount(), this->GetItemCondition(), this->GetItemEquipped());
+	pDefault* packet = PacketFactory::CreatePacket(ID_ITEM_NEW, pObjectNew, this->GetItemCount(), this->GetItemCondition(), this->GetItemEquipped(), this->GetItemSilent(), this->GetItemStick());
 
 	PacketFactory::FreePacket(pObjectNew);
 

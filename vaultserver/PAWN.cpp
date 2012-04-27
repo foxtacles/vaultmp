@@ -532,13 +532,13 @@ cell PAWN::vaultmp_IsActorJumping(AMX* amx, const cell* params)
 
 cell PAWN::vaultmp_AddItem(AMX* amx, const cell* params)
 {
-	Script::AddItem(params[1], params[2], params[3], amx_ctof(params[4]));
+	Script::AddItem(params[1], params[2], params[3], amx_ctof(params[4]), params[5]);
 	return 1;
 }
 
 cell PAWN::vaultmp_RemoveItem(AMX* amx, const cell* params)
 {
-	return Script::RemoveItem(params[1], params[2], params[3]);
+	return Script::RemoveItem(params[1], params[2], params[3], params[4]);
 }
 
 cell PAWN::vaultmp_RemoveAllItems(AMX* amx, const cell* params)
@@ -561,12 +561,12 @@ cell PAWN::vaultmp_SetActorBaseValue(AMX* amx, const cell* params)
 
 cell PAWN::vaultmp_EquipItem(AMX* amx, const cell* params)
 {
-	return Script::EquipItem(params[1], params[2]);
+	return Script::EquipItem(params[1], params[2], params[3], params[4]);
 }
 
 cell PAWN::vaultmp_UnequipItem(AMX* amx, const cell* params)
 {
-	return Script::UnequipItem(params[1], params[2]);
+	return Script::UnequipItem(params[1], params[2], params[3], params[4]);
 }
 
 cell PAWN::vaultmp_KillActor(AMX* amx, const cell* params)

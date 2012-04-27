@@ -15,12 +15,16 @@ struct Diff
 	signed int count;
 	double condition;
 	signed int equipped;
+	bool silent;
+	bool stick;
 
 	Diff()
 	{
 		count = 0;
 		condition = 0.00;
 		equipped = 0;
+		silent = false;
+		stick = false;
 	}
 };
 
@@ -82,12 +86,12 @@ class Container : public Object
 #endif
 
 		void AddItem(NetworkID id);
-		ContainerDiff AddItem(unsigned int baseID, unsigned int count, double condition) const;
+		ContainerDiff AddItem(unsigned int baseID, unsigned int count, double condition, bool silent) const;
 		void RemoveItem(NetworkID id);
-		ContainerDiff RemoveItem(unsigned int baseID, unsigned int count) const;
+		ContainerDiff RemoveItem(unsigned int baseID, unsigned int count, bool silent) const;
 		ContainerDiff RemoveAllItems() const;
-		ContainerDiff EquipItem(unsigned int baseID) const;
-		ContainerDiff UnequipItem(unsigned int baseID) const;
+		ContainerDiff EquipItem(unsigned int baseID, bool silent, bool stick) const;
+		ContainerDiff UnequipItem(unsigned int baseID, bool silent, bool stick) const;
 
 		ContainerDiff Compare(NetworkID id) const;
 		NetworkID IsEquipped(unsigned int baseID) const;

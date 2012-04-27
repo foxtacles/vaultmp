@@ -33,6 +33,8 @@ class Item : public Object
 		Value<unsigned int> item_Count;
 		Value<double> item_Condition;
 		Value<bool> state_Equipped;
+		Value<bool> flag_Silent;
+		Value<bool> flag_Stick;
 
 		void initialize();
 
@@ -53,10 +55,14 @@ class Item : public Object
 		unsigned int GetItemCount() const;
 		double GetItemCondition() const;
 		bool GetItemEquipped() const;
+		bool GetItemSilent() const;
+		bool GetItemStick() const;
 
 		bool SetItemCount(unsigned int count);
 		bool SetItemCondition(double condition);
 		bool SetItemEquipped(bool state);
+		bool SetItemSilent(bool silent);
+		bool SetItemStick(bool stick);
 
 		NetworkID Copy() const;
 

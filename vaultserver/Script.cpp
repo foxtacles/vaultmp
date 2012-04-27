@@ -819,7 +819,7 @@ bool Script::IsActorJumping(NetworkID id)
 	return state;
 }
 
-void Script::AddItem(NetworkID id, unsigned int baseID, unsigned int count, double condition)
+void Script::AddItem(NetworkID id, unsigned int baseID, unsigned int count, double condition, bool silent)
 {
 	FactoryObject reference = GameFactory::GetObject(id);
 	Container* container = vaultcast<Container>(reference);
@@ -828,7 +828,7 @@ void Script::AddItem(NetworkID id, unsigned int baseID, unsigned int count, doub
 	{
 		// validate baseID, or put validation in Item constructor
 
-		ContainerDiff diff = container->AddItem(baseID, count, condition);
+		ContainerDiff diff = container->AddItem(baseID, count, condition, silent);
 
 		pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_CONTAINER, id, &diff);
 		NetworkResponse response = Network::CompleteResponse(Network::CreateResponse(packet,
@@ -842,7 +842,7 @@ void Script::AddItem(NetworkID id, unsigned int baseID, unsigned int count, doub
 	}
 }
 
-unsigned int Script::RemoveItem(NetworkID id, unsigned int baseID, unsigned int count)
+unsigned int Script::RemoveItem(NetworkID id, unsigned int baseID, unsigned int count, bool silent)
 {
 	FactoryObject reference = GameFactory::GetObject(id);
 	Container* container = vaultcast<Container>(reference);
@@ -853,7 +853,7 @@ unsigned int Script::RemoveItem(NetworkID id, unsigned int baseID, unsigned int 
 	{
 		// validate baseID, or put validation in Item constructor
 
-		ContainerDiff diff = container->RemoveItem(baseID, count);
+		ContainerDiff diff = container->RemoveItem(baseID, count, silent);
 
 		if (!diff.first.empty() || !diff.second.empty())
 		{
@@ -940,14 +940,14 @@ void Script::SetActorBaseValue(NetworkID id, unsigned char index, double value)
 	}
 }
 
-bool Script::EquipItem(NetworkID id, unsigned int baseID)
+bool Script::EquipItem(NetworkID id, unsigned int baseID, bool silent, bool stick)
 {
 	FactoryObject reference = GameFactory::GetObject(id);
 	Actor* actor = vaultcast<Actor>(reference);
 
 	if (actor)
 	{
-		ContainerDiff diff = actor->EquipItem(baseID);
+		ContainerDiff diff = actor->EquipItem(baseID, silent, stick);
 
 		if (!diff.first.empty() || !diff.second.empty())
 		{
@@ -967,14 +967,14 @@ bool Script::EquipItem(NetworkID id, unsigned int baseID)
 	return false;
 }
 
-bool Script::UnequipItem(NetworkID id, unsigned int baseID)
+bool Script::UnequipItem(NetworkID id, unsigned int baseID, bool silent, bool stick)
 {
 	FactoryObject reference = GameFactory::GetObject(id);
 	Actor* actor = vaultcast<Actor>(reference);
 
 	if (actor)
 	{
-		ContainerDiff diff = actor->UnequipItem(baseID);
+		ContainerDiff diff = actor->UnequipItem(baseID, silent, stick);
 
 		if (!diff.first.empty() || !diff.second.empty())
 		{

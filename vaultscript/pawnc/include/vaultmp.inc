@@ -89,13 +89,13 @@ native Bool:GetActorSneaking(ID);
 native Bool:GetActorDead(ID);
 native Bool:IsActorJumping(ID);
 
-native AddItem(ID, base, count, Float:value);
-native RemoveItem(ID, base, count);
+native AddItem(ID, base, count, Float:value, Bool:silent);
+native RemoveItem(ID, base, count, Bool:silent);
 native RemoveAllItems(ID);
 native SetActorValue(ID, index, Float:value);
 native SetActorBaseValue(ID, index, Float:value);
-native Bool:EquipItem(ID, base);
-native Bool:UnequipItem(ID, base);
+native Bool:EquipItem(ID, base, Bool:silent, Bool:stick);
+native Bool:UnequipItem(ID, base, Bool:silent, Bool:stick);
 native KillActor(ID);
 
 native SetPlayerRespawn(ID, interval);

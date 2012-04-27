@@ -774,15 +774,25 @@ void CreditsText()
 		WriteText(ctext, len, ctext.length());
 		len = ctext.length();
 
-		PauseText(ctext, 64);
+		PauseText(ctext, 48);
 
 		ctext.append("\n\n       ^__^      ");
 		WriteText(ctext, len, ctext.length());
 		len = ctext.length();
 
-		PauseText(ctext, 32);
+		PauseText(ctext, 16);
 
 		ctext.append("\n.......................");
+		WriteText(ctext, len, ctext.length(), 330);
+
+		PauseText(ctext, 8);
+
+		len = 0;
+		ctext = string(MESSAGESTR);
+		WriteText(ctext, len, ctext.length());
+		len = ctext.length();
+
+		ctext.append("\n\nrecycler@brickster.net\nirc.brickster.net #brickster\n\n");
 		WriteText(ctext, len, ctext.length(), 330);
 
 		PauseText(ctext, 8);
@@ -803,9 +813,11 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 			GetObject(hBitmap, sizeof(BITMAP), &bitmap);
 			GetObject(hBitmap2, sizeof(BITMAP), &bitmap2);
 
-			if (strlen(player_name) > 0) SetDlgItemText(hwnd, IDC_EDIT0, player_name);
+			if (*player_name)
+				SetDlgItemText(hwnd, IDC_EDIT0, player_name);
 
-			if (strlen(server_name) > 0) SetDlgItemText(hwnd, IDC_EDIT3, server_name);
+			if (*server_name)
+				SetDlgItemText(hwnd, IDC_EDIT3, server_name);
 
 			break;
 
