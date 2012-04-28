@@ -82,6 +82,7 @@ Script::Script(char* path)
 		SetScriptFunction("GetPos", &Script::GetPos);
 		SetScriptFunction("GetAngle", &Script::GetAngle);
 		SetScriptFunction("GetCell", &Script::GetCell);
+		SetScriptFunction("IsNearPoint", &Script::IsNearPoint);
 		SetScriptFunction("GetContainerItemCount", &Script::GetContainerItemCount);
 		SetScriptFunction("GetActorValue", &Script::GetActorValue);
 		SetScriptFunction("GetActorBaseValue", &Script::GetActorBaseValue);
@@ -717,6 +718,18 @@ unsigned int Script::GetCell(NetworkID id)
 		value = object->GetNetworkCell();
 
 	return value;
+}
+
+
+bool Script::IsNearPoint(NetworkID id, double X, double Y, double Z, double R)
+{
+	FactoryObject reference = GameFactory::GetObject(id);
+	Object* object = vaultcast<Object>(reference);
+
+	if (object)
+		return object->IsNearPoint(X, Y, Z, R);
+
+	return false;
 }
 
 unsigned int Script::GetContainerItemCount(NetworkID id, unsigned int baseID)

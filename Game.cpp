@@ -1067,7 +1067,7 @@ void Game::GetPos(FactoryObject reference, unsigned char axis, double value)
 	Object* object = vaultcast<Object>(reference);
 	bool result = (bool) object->SetGamePos(axis, value);
 
-	if (result && axis == Axis_Z && object->GetReference() == PLAYER_REFERENCE)
+	if (result && object->GetReference() == PLAYER_REFERENCE)
 	{
 		pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_POS, object->GetNetworkID(), object->GetGamePos(Axis_X), object->GetGamePos(Axis_Y), object->GetGamePos(Axis_Z));
 		NetworkResponse response = Network::CompleteResponse(Network::CreateResponse(packet,

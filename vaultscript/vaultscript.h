@@ -136,6 +136,7 @@ extern "C" {
 	VAULTSCRIPT vaultmp::Void (*GetPos)(vaultmp::ID, vaultmp::Value&, vaultmp::Value&, vaultmp::Value&);
 	VAULTSCRIPT vaultmp::Void (*GetAngle)(vaultmp::ID, vaultmp::Value&, vaultmp::Value&, vaultmp::Value&);
 	VAULTSCRIPT vaultmp::Cell (*GetCell)(vaultmp::ID);
+	VAULTSCRIPT vaultmp::State (*IsNearPoint)(vaultmp::ID, vaultmp::Value, vaultmp::Value, vaultmp::Value, vaultmp::Value);
 	VAULTSCRIPT vaultmp::UCount (*GetContainerItemCount)(vaultmp::ID, vaultmp::Base);
 	VAULTSCRIPT vaultmp::Value (*GetActorValue)(vaultmp::ID, vaultmp::Index);
 	VAULTSCRIPT vaultmp::Value (*GetActorBaseValue)(vaultmp::ID, vaultmp::Index);

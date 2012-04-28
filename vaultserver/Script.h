@@ -128,6 +128,7 @@ class Script
 		static void GetPos(NetworkID id, double& X, double& Y, double& Z);
 		static void GetAngle(NetworkID id, double& X, double& Y, double& Z);
 		static unsigned int GetCell(NetworkID id);
+		static bool IsNearPoint(NetworkID id, double X, double Y, double Z, double R);
 		static unsigned int GetContainerItemCount(NetworkID id, unsigned int baseID);
 		static double GetActorValue(NetworkID id, unsigned char index);
 		static double GetActorBaseValue(NetworkID id, unsigned char index);

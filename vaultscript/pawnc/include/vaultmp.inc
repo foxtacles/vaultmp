@@ -84,6 +84,7 @@ native GetName(ID, name{});
 native GetPos(ID, &Float:X, &Float:Y, &Float:Z);
 native GetAngle(ID, &Float:X, &Float:Y, &Float:Z);
 native GetCell(ID);
+native Bool:IsNearPoint(ID, Float:X, Float:Y, Float:Z, Float:R);
 native GetContainerItemCount(ID, base);
 native Float:GetActorValue(ID, index);
 native Float:GetActorBaseValue(ID, index);

@@ -28,7 +28,7 @@ class PAWN
 
 		PAWN();
 
-		static AMX_NATIVE_INFO vaultmp_functions[50];
+		static AMX_NATIVE_INFO vaultmp_functions[51];
 
 		static cell vaultmp_timestamp(AMX* amx, const cell* params);
 		static cell vaultmp_CreateTimer(AMX* amx, const cell* params);
@@ -66,6 +66,7 @@ class PAWN
 		static cell vaultmp_GetPos(AMX* amx, const cell* params);
 		static cell vaultmp_GetAngle(AMX* amx, const cell* params);
 		static cell vaultmp_GetCell(AMX* amx, const cell* params);
+		static cell vaultmp_IsNearPoint(AMX* amx, const cell* params);
 		static cell vaultmp_GetContainerItemCount(AMX* amx, const cell* params);
 		static cell vaultmp_GetActorValue(AMX* amx, const cell* params);
 		static cell vaultmp_GetActorBaseValue(AMX* amx, const cell* params);

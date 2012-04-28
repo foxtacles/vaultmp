@@ -147,6 +147,10 @@ NetworkResponse Server::GetPos(RakNetGUID guid, FactoryObject reference, double 
 
 	if (result)
 	{
+		object->SetGamePos(Axis_X, X);
+		object->SetGamePos(Axis_Y, Y);
+		object->SetGamePos(Axis_Z, Z);
+
 		pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_POS, object->GetNetworkID(), X, Y, Z);
 		response = Network::CompleteResponse(Network::CreateResponse(packet,
 																	 (unsigned char) HIGH_PRIORITY,
@@ -185,6 +189,8 @@ NetworkResponse Server::GetCell(RakNetGUID guid, FactoryObject reference, unsign
 
 	if (result)
 	{
+		object->SetGameCell(cell);
+
 		pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_CELL, object->GetNetworkID(), cell);
 		response = Network::CompleteResponse(Network::CreateResponse(packet,
 																	 (unsigned char) HIGH_PRIORITY,

@@ -260,7 +260,7 @@ Lockable* Object::SetNetworkCell(unsigned int cell)
 
 bool Object::IsNearPoint(double X, double Y, double Z, double R) const
 {
-	return (sqrt((abs(GetGamePos(Axis_X) - X) * abs(GetGamePos(Axis_X) - X)) + ((GetGamePos(Axis_Y) - Y) * abs(GetGamePos(Axis_Y) - Y)) + ((GetGamePos(Axis_Z) - Z) * abs(GetGamePos(Axis_Z) - Z))) <= R);
+	return (sqrt((abs(GetGamePos(Axis_X) - X) * abs(GetGamePos(Axis_X) - X)) + (abs(GetGamePos(Axis_Y) - Y) * abs(GetGamePos(Axis_Y) - Y)) + (abs(GetGamePos(Axis_Z) - Z) * abs(GetGamePos(Axis_Z) - Z))) <= R);
 }
 
 bool Object::IsCoordinateInRange(unsigned char axis, double pos, double R) const
