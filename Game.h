@@ -220,11 +220,11 @@ class Game
 		 */
 		static const function<void(NetworkID, bool)> async_SetRestrained;
 		/**
-		 * \brief SetAlert async
+		 * \brief SetActorAlerted async
 		 */
 		static const function<void(NetworkID, signed int)> async_SetActorAlerted;
 		/**
-		 * \brief SetAlert async
+		 * \brief SetActorSneaking async
 		 */
 		static const function<void(NetworkID, signed int)> async_SetActorSneaking;
 
