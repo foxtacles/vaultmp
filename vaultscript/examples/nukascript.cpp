@@ -27,7 +27,7 @@ Result VAULTSCRIPT NukaArea()
 		}
 	}
 
-    return (Result) 0;
+	return (Result) 0;
 }
 
 Void VAULTSCRIPT exec()

@@ -375,7 +375,7 @@ void Game::NewActor(FactoryObject& reference)
 
 	vector<unsigned char> values = API::RetrieveAllValues();
 
-	for (unsigned char & value : values)
+	for (unsigned char& value : values)
 	{
 		SetActorValue(reference, true, value);
 		SetActorValue(reference, false, value);

@@ -121,7 +121,7 @@ vector<FactoryObject> GameFactory::GetMultiple(const vector<NetworkID>& objects)
 
 	try
 	{
-		for (const NetworkID & id : objects)
+		for (const NetworkID& id : objects)
 		{
 			Reference* reference = Network::Manager()->GET_OBJECT_FROM_ID<Reference*>(id);
 
@@ -159,7 +159,7 @@ vector<FactoryObject> GameFactory::GetMultiple(const vector<unsigned int>& objec
 
 	try
 	{
-		for (const NetworkID & id : objects)
+		for (const NetworkID& id : objects)
 		{
 			for (it = instances.begin(); it != instances.end() && it->first->GetReference() != id; ++it);
 
