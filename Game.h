@@ -219,11 +219,14 @@ class Game
 		 * \brief SetRestrained async
 		 */
 		static const function<void(NetworkID, bool)> async_SetRestrained;
-
 		/**
 		 * \brief SetAlert async
 		 */
 		static const function<void(NetworkID, signed int)> async_SetActorAlerted;
+		/**
+		 * \brief SetAlert async
+		 */
+		static const function<void(NetworkID, signed int)> async_SetActorSneaking;
 
 		/**
 		 * Interface functions

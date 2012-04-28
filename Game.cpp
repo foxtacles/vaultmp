@@ -362,6 +362,8 @@ void Game::NewContainer(FactoryObject& reference)
 		AddItem(vector<FactoryObject> {reference, _item});
 		Item* item = vaultcast<Item>(_item);
 
+		//debug->PrintFormat("ID: %lld, %s, %08X, %d, %d, %d, %d", true, item->GetNetworkID(), item->GetName().c_str(), item->GetBase(), (int)item->GetItemEquipped(), (int)item->GetItemSilent(), (int)item->GetItemStick(), item->GetItemCount());
+
 		if (item->GetItemEquipped())
 			EquipItem(vector<FactoryObject> {reference, _item});
 	}
@@ -784,7 +786,7 @@ void Game::EquipItem(vector<FactoryObject> reference, signed int key)
 	if (!item)
 		throw VaultException("Object with reference %08X is not an Item", (*reference[1])->GetReference());
 
-	RemoveItem(reference[0], item->GetBase(), item->GetItemSilent(), item->GetItemStick(), key);
+	EquipItem(reference[0], item->GetBase(), item->GetItemSilent(), item->GetItemStick(), key);
 }
 
 void Game::EquipItem(FactoryObject reference, unsigned int baseID, bool silent, bool stick, signed int key)
@@ -814,7 +816,7 @@ void Game::UnequipItem(vector<FactoryObject> reference, signed int key)
 	if (!item)
 		throw VaultException("Object with reference %08X is not an Item", (*reference[1])->GetReference());
 
-	RemoveItem(reference[0], item->GetBase(), item->GetItemSilent(), item->GetItemStick(), key);
+	UnequipItem(reference[0], item->GetBase(), item->GetItemSilent(), item->GetItemStick(), key);
 }
 
 void Game::UnequipItem(FactoryObject reference, unsigned int baseID, bool silent, bool stick, signed int key)
@@ -977,8 +979,9 @@ void Game::net_SetActorState(FactoryObject reference, unsigned char index, unsig
 	{
 		SetRestrained(reference, false);
 		signed int key = result->Lock(true);
-		SetActorSneaking(reference, key);
-		SetRestrained(reference, true);
+		thread t(AsyncTasks<AsyncPack, AsyncPack>,  AsyncPack(async(launch::deferred, async_SetActorSneaking, actor->GetNetworkID(), key), chrono::milliseconds(20)),
+				 AsyncPack(async(launch::deferred, async_SetRestrained, actor->GetNetworkID(), true), chrono::milliseconds(100)));
+		t.detach();
 	}
 
 	result = actor->SetActorMovingAnimation(index);
@@ -1046,6 +1049,15 @@ const function<void(NetworkID, signed int)> Game::async_SetActorAlerted = [](Net
 	try
 	{
 		SetActorAlerted(GameFactory::GetObject(id), key);
+	}
+	catch (...) {}
+};
+
+const function<void(NetworkID, signed int)> Game::async_SetActorSneaking = [](NetworkID id, signed int key)
+{
+	try
+	{
+		SetActorSneaking(GameFactory::GetObject(id), key);
 	}
 	catch (...) {}
 };

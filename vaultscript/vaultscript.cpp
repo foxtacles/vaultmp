@@ -25,7 +25,7 @@ Void VAULTSCRIPT exec()
 	}
 }
 
-State VAULTSCRIPT OnClientAuthenticate(string name, string pwd)
+State VAULTSCRIPT OnClientAuthenticate(String name, String pwd)
 {
 	return True;
 }

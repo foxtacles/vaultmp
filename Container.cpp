@@ -33,7 +33,7 @@ Container::Container(const pDefault* packet) : Object(PacketFactory::ExtractPart
 
 	for (it = items.begin(); it != items.end(); ++it)
 	{
-		NetworkID id = GameFactory::CreateKnownInstance(ID_ITEM_NEW, *it);
+		NetworkID id = GameFactory::CreateKnownInstance(ID_ITEM, *it);
 		this->AddItem(id);
 		PacketFactory::FreePacket(*it);
 	}
