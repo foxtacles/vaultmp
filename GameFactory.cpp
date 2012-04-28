@@ -2,6 +2,7 @@
 
 CriticalSection GameFactory::cs;
 ReferenceList GameFactory::instances;
+ReferenceCount GameFactory::typecount;
 unsigned char GameFactory::game = 0x00;
 
 #ifdef VAULTMP_DEBUG
@@ -44,9 +45,10 @@ void GameFactory::SetDebugHandler(Debug* debug)
 }
 #endif
 
-vector<FactoryObject> GameFactory::GetObjectTypes(unsigned char type)
+vector<FactoryObject> GameFactory::GetObjectTypes(unsigned char type) noexcept
 {
 	vector<FactoryObject> result;
+	result.reserve(typecount[type]);
 	ReferenceList::iterator it;
 
 	cs.StartSession();
@@ -61,9 +63,10 @@ vector<FactoryObject> GameFactory::GetObjectTypes(unsigned char type)
 	return result;
 }
 
-vector<NetworkID> GameFactory::GetIDObjectTypes(unsigned char type)
+vector<NetworkID> GameFactory::GetIDObjectTypes(unsigned char type) noexcept
 {
 	vector<NetworkID> result;
+	result.reserve(typecount[type]);
 	ReferenceList::iterator it;
 
 	cs.StartSession();
@@ -76,6 +79,11 @@ vector<NetworkID> GameFactory::GetIDObjectTypes(unsigned char type)
 		result.push_back(it->first->GetNetworkID());
 
 	return result;
+}
+
+unsigned int GameFactory::GetObjectCount(unsigned char type) noexcept
+{
+	return typecount[type];
 }
 
 FactoryObject GameFactory::GetObject(NetworkID id)
@@ -198,7 +206,6 @@ NetworkID GameFactory::LookupNetworkID(unsigned int refID)
 	try
 	{
 		for (it = instances.begin(); it != instances.end() && it->first->GetReference() != refID; ++it);
-
 		id = (it != instances.end() ? it->first->GetNetworkID() : throw VaultException("Unknown object with reference %08X", refID));
 	}
 	catch (...)
@@ -325,6 +332,8 @@ NetworkID GameFactory::CreateInstance(unsigned char type, unsigned int refID, un
 			throw VaultException("Unknown type identifier %X", type);
 	}
 
+	++typecount[type];
+
 	NetworkID id = reference->GetNetworkID();
 
 	cs.StartSession();
@@ -374,6 +383,8 @@ void GameFactory::CreateKnownInstance(unsigned char type, NetworkID id, unsigned
 			throw VaultException("Unknown type identifier %X", type);
 	}
 
+	++typecount[type];
+
 	reference->SetNetworkID(id);
 
 	cs.StartSession();
@@ -421,6 +432,8 @@ NetworkID GameFactory::CreateKnownInstance(unsigned char type, const pDefault* p
 			throw VaultException("Unknown type identifier %X", type);
 	}
 
+	++typecount[type];
+
 	NetworkID id = PacketFactory::ExtractNetworkID(packet);
 	reference->SetNetworkID(id);
 
@@ -459,6 +472,7 @@ void GameFactory::DestroyAllInstances()
 	}
 
 	instances.clear();
+	typecount.clear();
 
 	cs.EndSession();
 
@@ -506,7 +520,10 @@ NetworkID GameFactory::DestroyInstance(FactoryObject& reference)
 	it = instances.find(_reference);
 
 	if (it != instances.end())
+	{
+		--typecount[it->second];
 		instances.erase(it);
+	}
 
 	cs.EndSession();
 

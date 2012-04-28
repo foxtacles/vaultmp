@@ -6,9 +6,9 @@ using namespace std;
 
 RakPeerInterface* Dedicated::peer;
 SocketDescriptor* Dedicated::sockdescr;
-int Dedicated::port;
-int Dedicated::fileslots;
-int Dedicated::connections;
+unsigned int Dedicated::port;
+unsigned int Dedicated::fileslots;
+unsigned int Dedicated::connections;
 char* Dedicated::announce;
 bool Dedicated::query;
 bool Dedicated::fileserve;
@@ -46,6 +46,16 @@ void Dedicated::SetServerRule(string rule, string value)
 unsigned char Dedicated::GetGameCode()
 {
 	return self->GetGame();
+}
+
+unsigned int Dedicated::GetCurrentPlayers()
+{
+	return self->GetServerPlayers().first;
+}
+
+unsigned int Dedicated::GetMaximumPlayers()
+{
+	return self->GetServerPlayers().second;
 }
 
 void Dedicated::Announce(bool announce)
@@ -364,7 +374,7 @@ void Dedicated::DedicatedThread()
 #endif
 }
 
-std::thread Dedicated::InitializeServer(int port, int connections, char* announce, bool query, bool fileserve, int fileslots)
+std::thread Dedicated::InitializeServer(unsigned int port, unsigned int connections, char* announce, bool query, bool fileserve, unsigned int fileslots)
 {
 	std::thread hDedicatedThread;
 

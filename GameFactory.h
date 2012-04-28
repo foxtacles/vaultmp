@@ -2,6 +2,7 @@
 #define GAMEFACTORY_H
 
 #include <map>
+#include <unordered_map>
 #include <list>
 #include <typeinfo>
 
@@ -40,6 +41,7 @@ const unsigned char ALL_CONTAINERS      = (ID_CONTAINER | ID_ACTOR | ID_PLAYER);
 const unsigned char ALL_ACTORS          = (ID_ACTOR | ID_PLAYER);
 
 typedef map<Reference*, unsigned char> ReferenceList;
+typedef unordered_map<unsigned char, unsigned int> ReferenceCount;
 
 using namespace std;
 
@@ -60,6 +62,7 @@ class GameFactory
 
 		static CriticalSection cs;
 		static ReferenceList instances;
+		static ReferenceCount typecount;
 		static unsigned char game;
 
 	public:
@@ -119,11 +122,15 @@ class GameFactory
 		/**
 		 * \brief Obtains a lock on all References of a given type
 		 */
-		static vector<FactoryObject> GetObjectTypes(unsigned char type);
+		static vector<FactoryObject> GetObjectTypes(unsigned char type) noexcept;
 		/**
 		 * \brief Returns the NetworkID's of all References of a given type
 		 */
-		static vector<NetworkID> GetIDObjectTypes(unsigned char type);
+		static vector<NetworkID> GetIDObjectTypes(unsigned char type) noexcept;
+		/**
+		 * \brief Counts the amount of References of a given type
+		 */
+		static unsigned int GetObjectCount(unsigned char type) noexcept;
 		/**
 		 * \brief Invalidates a Reference held by a FactoryObject
 		 */

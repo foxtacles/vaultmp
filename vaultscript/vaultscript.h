@@ -4,6 +4,9 @@
  */
 
 #include <string>
+#include <vector>
+#include <unordered_set>
+#include <unordered_map>
 #include <cstdint>
 
 #ifndef __WIN32__
@@ -41,10 +44,17 @@ namespace vaultmp
 	enum Timer : uint64_t;
 	enum Result : uint64_t;
 
+	struct _hash_ID { inline size_t operator() (const ID& x) const { return std::hash<uint64_t>()((uint64_t) x); }};
+
 	typedef void Void;
 	typedef double Value;
 	typedef Result(__cdecl* Function)();
 	typedef std::string String;
+	typedef std::vector<ID> IDVector;
+	typedef std::unordered_set<ID, _hash_ID> IDSet;
+
+	template <typename V>
+	using IDHash = std::unordered_map<ID, V, _hash_ID>;
 
 	enum class Index : uint8_t
 	{
@@ -101,6 +111,8 @@ extern "C" {
 	VAULTSCRIPT vaultmp::Void (*SetServerMap)(vaultmp::String);
 	VAULTSCRIPT vaultmp::Void (*SetServerRule)(vaultmp::String, vaultmp::String);
 	VAULTSCRIPT vaultmp::Index (*GetGameCode)();
+	VAULTSCRIPT vaultmp::UCount (*GetMaximumPlayers)();
+	VAULTSCRIPT vaultmp::UCount (*GetCurrentPlayers)();
 
 	VAULTSCRIPT vaultmp::String (*ValueToString)(vaultmp::Index);
 	VAULTSCRIPT vaultmp::String (*AxisToString)(vaultmp::Index);
@@ -114,8 +126,10 @@ extern "C" {
 	VAULTSCRIPT vaultmp::State (*IsContainer)(vaultmp::ID);
 	VAULTSCRIPT vaultmp::State (*IsActor)(vaultmp::ID);
 	VAULTSCRIPT vaultmp::State (*IsPlayer)(vaultmp::ID);
-
 	VAULTSCRIPT vaultmp::Type (*GetType)(vaultmp::ID);
+	VAULTSCRIPT vaultmp::UCount (*GetCount)(vaultmp::Type);
+	VAULTSCRIPT vaultmp::IDVector (*GetList)(vaultmp::Type);
+
 	VAULTSCRIPT vaultmp::Reference (*GetReference)(vaultmp::ID);
 	VAULTSCRIPT vaultmp::Base (*GetBase)(vaultmp::ID);
 	VAULTSCRIPT vaultmp::String (*GetName)(vaultmp::ID);

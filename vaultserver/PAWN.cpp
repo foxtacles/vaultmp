@@ -30,6 +30,8 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"SetServerMap", PAWN::vaultmp_SetServerMap},
 	{"SetServerRule", PAWN::vaultmp_SetServerRule},
 	{"GetGameCode", PAWN::vaultmp_GetGameCode},
+	{"GetMaximumPlayers", PAWN::vaultmp_GetMaximumPlayers},
+	{"GetCurrentPlayers", PAWN::vaultmp_GetCurrentPlayers},
 
 	{"ValueToString", PAWN::vaultmp_ValueToString},
 	{"AxisToString", PAWN::vaultmp_AxisToString},
@@ -43,8 +45,10 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"IsContainer", PAWN::vaultmp_IsContainer},
 	{"IsActor", PAWN::vaultmp_IsActor},
 	{"IsPlayer", PAWN::vaultmp_IsPlayer},
-
 	{"GetType", PAWN::vaultmp_GetType},
+	{"GetCount", PAWN::vaultmp_GetCount},
+	{"GetList", PAWN::vaultmp_GetList},
+
 	{"GetReference", PAWN::vaultmp_GetReference},
 	{"GetBase", PAWN::vaultmp_GetBase},
 	{"GetName", PAWN::vaultmp_GetName},
@@ -322,6 +326,16 @@ cell PAWN::vaultmp_GetGameCode(AMX* amx, const cell* params)
 	return Dedicated::GetGameCode();
 }
 
+cell PAWN::vaultmp_GetMaximumPlayers(AMX* amx, const cell* params)
+{
+	return Dedicated::GetMaximumPlayers();
+}
+
+cell PAWN::vaultmp_GetCurrentPlayers(AMX* amx, const cell* params)
+{
+	return Dedicated::GetCurrentPlayers();
+}
+
 cell PAWN::vaultmp_ValueToString(AMX* amx, const cell* params)
 {
 	string value = API::RetrieveValue_Reverse(params[1]);
@@ -420,6 +434,26 @@ cell PAWN::vaultmp_IsPlayer(AMX* amx, const cell* params)
 cell PAWN::vaultmp_GetType(AMX* amx, const cell* params)
 {
 	return GameFactory::GetType((NetworkID) params[1]);
+}
+
+cell PAWN::vaultmp_GetCount(AMX* amx, const cell* params)
+{
+	return GameFactory::GetObjectCount(params[1]);
+}
+
+cell PAWN::vaultmp_GetList(AMX* amx, const cell* params)
+{
+	vector<NetworkID> reference = GameFactory::GetIDObjectTypes(params[1]);
+	cell* dest = amx_Address(amx, params[2]);
+	unsigned int i = 0;
+
+	for (const NetworkID& id : reference)
+	{
+		dest[i] = id;
+		++i;
+	}
+
+	return reference.size();
 }
 
 cell PAWN::vaultmp_GetReference(AMX* amx, const cell* params)

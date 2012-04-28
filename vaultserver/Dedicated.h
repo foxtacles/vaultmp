@@ -63,9 +63,9 @@ class Dedicated
 		static RakPeerInterface* peer;
 		static SocketDescriptor* sockdescr;
 
-		static int port;
-		static int fileslots;
-		static int connections;
+		static unsigned int port;
+		static unsigned int fileslots;
+		static unsigned int connections;
 		static char* announce;
 		static bool query;
 		static bool fileserve;
@@ -99,7 +99,7 @@ class Dedicated
 		 * fileserver - enable / disable file downloading from this server
 		 * fileslots - the maximum amount of file downloading connections
 		 */
-		static std::thread InitializeServer(int port, int connections, char* announce, bool query, bool fileserve, int fileslots);
+		static std::thread InitializeServer(unsigned int port, unsigned int connections, char* announce, bool query, bool fileserve, unsigned int fileslots);
 		/**
 		 * \brief Sets the ServerEntry of the dedicated server
 		 *
@@ -143,6 +143,14 @@ class Dedicated
 		 * \brief Returns the game code of the dedicated server
 		 */
 		static unsigned char GetGameCode();
+		/**
+		 * \brief Returns the current number of player connections
+		 */
+		static unsigned int GetCurrentPlayers();
+		/**
+		 * \brief Returns the maximum number of player connections
+		 */
+		static unsigned int GetMaximumPlayers();
 
 		//static void SetServerConnections(int connections);
 

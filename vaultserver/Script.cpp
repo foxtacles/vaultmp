@@ -57,6 +57,8 @@ Script::Script(char* path)
 		SetScriptFunction("SetServerMap", &Dedicated::SetServerMap);
 		SetScriptFunction("SetServerRule", &Dedicated::SetServerRule);
 		SetScriptFunction("GetGameCode", &Dedicated::GetGameCode);
+		SetScriptFunction("GetMaximumPlayers", &Dedicated::GetMaximumPlayers);
+		SetScriptFunction("GetCurrentPlayers", &Dedicated::GetCurrentPlayers);
 
 		SetScriptFunction("ValueToString", &API::RetrieveValue_Reverse);
 		SetScriptFunction("AxisToString", &API::RetrieveAxis_Reverse);
@@ -70,8 +72,10 @@ Script::Script(char* path)
 		SetScriptFunction("IsContainer", &Script::IsContainer);
 		SetScriptFunction("IsActor", &Script::IsActor);
 		SetScriptFunction("IsPlayer", &Script::IsPlayer);
-
 		SetScriptFunction("GetType", (unsigned char(*)(NetworkID)) &GameFactory::GetType);
+		SetScriptFunction("GetCount", &GameFactory::GetObjectCount);
+		SetScriptFunction("GetList", &GameFactory::GetIDObjectTypes);
+
 		SetScriptFunction("GetReference", &Script::GetReference);
 		SetScriptFunction("GetBase", &Script::GetBase);
 		SetScriptFunction("GetName", &Script::GetName);

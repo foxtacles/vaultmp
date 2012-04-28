@@ -28,7 +28,7 @@ class PAWN
 
 		PAWN();
 
-		static AMX_NATIVE_INFO vaultmp_functions[46];
+		static AMX_NATIVE_INFO vaultmp_functions[50];
 
 		static cell vaultmp_timestamp(AMX* amx, const cell* params);
 		static cell vaultmp_CreateTimer(AMX* amx, const cell* params);
@@ -41,6 +41,8 @@ class PAWN
 		static cell vaultmp_SetServerMap(AMX* amx, const cell* params);
 		static cell vaultmp_SetServerRule(AMX* amx, const cell* params);
 		static cell vaultmp_GetGameCode(AMX* amx, const cell* params);
+		static cell vaultmp_GetMaximumPlayers(AMX* amx, const cell* params);
+		static cell vaultmp_GetCurrentPlayers(AMX* amx, const cell* params);
 
 		static cell vaultmp_ValueToString(AMX* amx, const cell* params);
 		static cell vaultmp_AxisToString(AMX* amx, const cell* params);
@@ -54,6 +56,8 @@ class PAWN
 		static cell vaultmp_IsContainer(AMX* amx, const cell* params);
 		static cell vaultmp_IsActor(AMX* amx, const cell* params);
 		static cell vaultmp_IsPlayer(AMX* amx, const cell* params);
+		static cell vaultmp_GetCount(AMX* amx, const cell* params);
+		static cell vaultmp_GetList(AMX* amx, const cell* params);
 
 		static cell vaultmp_GetType(AMX* amx, const cell* params);
 		static cell vaultmp_GetReference(AMX* amx, const cell* params);
