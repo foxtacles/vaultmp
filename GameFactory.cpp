@@ -53,12 +53,10 @@ vector<FactoryObject> GameFactory::GetObjectTypes(unsigned char type) noexcept
 
 	cs.StartSession();
 
-	ReferenceList copy = instances;
+	for (it = instances.begin(); it != instances.end() && (it->second & type); ++it)
+		result.push_back(FactoryObject(it->first));
 
 	cs.EndSession();
-
-	for (it = copy.begin(); it != copy.end() && (it->second & type); ++it)
-		result.push_back(FactoryObject(it->first));
 
 	return result;
 }
@@ -71,16 +69,15 @@ vector<NetworkID> GameFactory::GetIDObjectTypes(unsigned char type) noexcept
 
 	cs.StartSession();
 
-	ReferenceList copy = instances;
+	for (it = instances.begin(); it != instances.end() && (it->second & type); ++it)
+		result.push_back(it->first->GetNetworkID());
 
 	cs.EndSession();
-
-	for (it = copy.begin(); it != copy.end() && (it->second & type); ++it)
-		result.push_back(it->first->GetNetworkID());
 
 	return result;
 }
 
+inline
 unsigned int GameFactory::GetObjectCount(unsigned char type) noexcept
 {
 	return typecount[type];
@@ -107,7 +104,6 @@ FactoryObject GameFactory::GetObject(unsigned int refID)
 	cs.StartSession();
 
 	for (it = instances.begin(); it != instances.end() && it->first->GetReference() != refID; ++it);
-
 	Reference* reference = (it != instances.end() ? it->first : NULL);
 
 	cs.EndSession();
@@ -149,7 +145,7 @@ vector<FactoryObject> GameFactory::GetMultiple(const vector<NetworkID>& objects)
 
 	cs.EndSession();
 
-	for (pair<Reference * const, unsigned int>& reference : sort)
+	for (const pair<Reference*, unsigned int>& reference : sort)
 		result[reference.second] = FactoryObject(reference.first);
 
 	return result;
@@ -189,7 +185,7 @@ vector<FactoryObject> GameFactory::GetMultiple(const vector<unsigned int>& objec
 
 	cs.EndSession();
 
-	for (pair<Reference * const, unsigned int>& reference : sort)
+	for (const pair<Reference*, unsigned int>& reference : sort)
 		result[reference.second] = FactoryObject(reference.first);
 
 	return result;
@@ -197,11 +193,10 @@ vector<FactoryObject> GameFactory::GetMultiple(const vector<unsigned int>& objec
 
 NetworkID GameFactory::LookupNetworkID(unsigned int refID)
 {
+	NetworkID id;
 	ReferenceList::iterator it;
 
 	cs.StartSession();
-
-	NetworkID id;
 
 	try
 	{
@@ -221,9 +216,9 @@ NetworkID GameFactory::LookupNetworkID(unsigned int refID)
 
 unsigned int GameFactory::LookupRefID(NetworkID id)
 {
-	cs.StartSession();
-
 	unsigned int refID;
+
+	cs.StartSession();
 
 	try
 	{
@@ -281,9 +276,9 @@ unsigned char GameFactory::GetType(NetworkID id) noexcept
 
 unsigned char GameFactory::GetType(unsigned int refID) noexcept
 {
-	cs.StartSession();
-
 	unsigned char type;
+
+	cs.StartSession();
 
 	try
 	{

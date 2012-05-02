@@ -435,7 +435,7 @@ void API::SetDebugHandler(Debug* debug)
 
 vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result, unsigned short opcode)
 {
-	vector<double> result_data = vector<double>();
+	vector<double> result_data;
 
 	if (*cmd == 0x00 || *def == 0x00 || opcode == 0x00)
 		throw VaultException("Invalid call to API::ParseCommand, one or more arguments are NULL (%s, %s, %04X)", cmd, def, opcode);
@@ -1005,33 +1005,30 @@ unsigned char* API::BuildCommandStream(vector<double>& info, unsigned int key, u
 CommandParsed API::Translate(multimap<string, string>& cmd, unsigned int key)
 {
 	CommandParsed stream;
-	multimap<string, string>::iterator it;
 
-	for (it = cmd.begin(); it != cmd.end(); ++it)
+	for (const pair<string, string>& command : cmd)
 	{
-		string name = it->first;
-		multimap<string, pair<string, unsigned short> >::iterator it2;
-		pair<string, unsigned short> func = RetrieveFunction(name);
+		pair<string, unsigned short> func = RetrieveFunction(command.first);
 
 		if (func.first.empty())
 		{
 #ifdef VAULTMP_DEBUG
 
 			if (debug)
-				debug->PrintFormat("API was not able to find function %s", true, name.c_str());
+				debug->PrintFormat("API was not able to find function %s", true, command.first.c_str());
 
 #endif
 			continue;
 		}
 
-		char content[it->second.length() + 1];
+		char content[command.second.length() + 1];
 		ZeroMemory(content, sizeof(content));
-		strcpy(content, it->second.c_str());
+		strcpy(content, command.second.c_str());
 
 		op_default result;
 
-		vector<double> command = ParseCommand(content, func.first.c_str(), &result, func.second);
-		unsigned char* data = BuildCommandStream(command, key, reinterpret_cast<unsigned char*>(&result), sizeof(op_default));
+		vector<double> parsed = ParseCommand(content, func.first.c_str(), &result, func.second);
+		unsigned char* data = BuildCommandStream(parsed, key, reinterpret_cast<unsigned char*>(&result), sizeof(op_default));
 		stream.push_back(data);
 	}
 
@@ -1052,7 +1049,7 @@ vector<CommandResult> API::Translate(unsigned char* stream)
 #ifdef VAULTMP_DEBUG
 
 		if (debug)
-			debug->PrintFormat("API did not retrieve the result of command with CRC32 %08X (opcode %04hX)", true, queue.back().first.first, getFrom<double, unsigned short>(queue.back().first.second.at(0)));
+			debug->PrintFormat("API did not retrieve the result of command with identifier %08X (opcode %04hX)", true, queue.back().first.first, getFrom<double, unsigned short>(queue.back().first.second.at(0)));
 
 #endif
 
@@ -1071,7 +1068,7 @@ vector<CommandResult> API::Translate(unsigned char* stream)
 #ifdef VAULTMP_DEBUG
 
 		if (debug)
-			debug->PrintFormat("API could not find a stored command with CRC32 %08X (queue is empty)", true, r);
+			debug->PrintFormat("API could not find a stored command with identifier %08X (queue is empty)", true, r);
 
 #endif
 		return result;
