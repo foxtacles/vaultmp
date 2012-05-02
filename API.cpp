@@ -981,7 +981,7 @@ bool API::AnnounceFunction(string name)
 	return false;
 }
 
-unsigned char* API::BuildCommandStream(vector<double>& info, signed int key, unsigned char* command, unsigned int size)
+unsigned char* API::BuildCommandStream(vector<double>& info, unsigned int key, unsigned char* command, unsigned int size)
 {
 	unsigned char* data = new unsigned char[PIPE_LENGTH];
 	ZeroMemory(data, sizeof(data));
@@ -997,12 +997,12 @@ unsigned char* API::BuildCommandStream(vector<double>& info, signed int key, uns
 
 	unsigned int r = rand();
 	*reinterpret_cast<unsigned int*>(data + 1) = r;
-	queue.push_front(pair<pair<unsigned int, vector<double> >, signed int>(pair<unsigned int, vector<double> >(r, info), key));
+	queue.push_front(pair<pair<unsigned int, vector<double> >, unsigned int>(pair<unsigned int, vector<double> >(r, info), key));
 
 	return data;
 }
 
-CommandParsed API::Translate(multimap<string, string>& cmd, signed int key)
+CommandParsed API::Translate(multimap<string, string>& cmd, unsigned int key)
 {
 	CommandParsed stream;
 	multimap<string, string>::iterator it;

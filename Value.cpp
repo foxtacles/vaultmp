@@ -5,30 +5,6 @@ template <typename T>
 Debug* Value<T>::debug = NULL;
 #endif
 
-template <typename T>
-Value<T>::Value()
-{
-	value = 0;
-}
-
-template <typename T>
-Value<T>::Value(T t) : value(t)
-{
-
-}
-
-template <>
-Value<string>::Value()
-{
-	value = "";
-}
-
-template <typename T>
-Value<T>::~Value()
-{
-
-}
-
 #ifdef VAULTMP_DEBUG
 template <typename T>
 void Value<T>::SetDebugHandler(Debug* debug)
@@ -52,6 +28,7 @@ bool Value<T>::set(T value)
 }
 
 template <typename T>
+inline
 T Value<T>::get() const
 {
 	return value;

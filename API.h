@@ -26,11 +26,11 @@ using namespace std;
 using namespace Data;
 
 typedef vector<unsigned char*> CommandParsed;
-typedef pair<pair<pair<signed int, vector<double>>, double>, bool> CommandResult;
+typedef pair<pair<pair<unsigned int, vector<double>>, double>, bool> CommandResult;
 typedef unordered_map<string, pair<string, unsigned short>> FunctionMap;
 typedef unordered_map<string, unsigned char> ValueMap;
 typedef set<unsigned char> ValueList;
-typedef deque<pair<pair<unsigned int, vector<double>>, signed int>> CommandQueue;
+typedef deque<pair<pair<unsigned int, vector<double>>, unsigned int>> CommandQueue;
 
 /*
  * \brief This namespace contains hexadecimal representations of the games data
@@ -372,7 +372,7 @@ class API
 
 		static unsigned long ExtractReference(const char* reference);
 		static pair<string, unsigned short> RetrieveFunction(string name);
-		static unsigned char* BuildCommandStream(vector<double>& info, signed int key, unsigned char* command, unsigned int size);
+		static unsigned char* BuildCommandStream(vector<double>& info, unsigned int key, unsigned char* command, unsigned int size);
 
 		static vector<double> ParseCommand(char* cmd, const char* def, op_default* result, unsigned short opcode);
 
@@ -396,7 +396,7 @@ class API
 		 * Returns a STL vector containing the parsed commands (allocated on the heap; you are required to free them when you don't need them anymore).
 		 */
 
-		static CommandParsed Translate(multimap<string, string>& cmd, signed int key = 0);
+		static CommandParsed Translate(multimap<string, string>& cmd, unsigned int key = 0);
 
 		/**
 		 * \brief Translates a result from vaultmp DLL

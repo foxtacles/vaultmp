@@ -38,11 +38,11 @@ class Value : public Lockable
 
 	public:
 
-		Value();
-		Value(T t);
+		Value() : value(T()) {};
+		Value(T t) : value(t) {};
 		Value(Value &&) = default;
 		Value& operator=(Value &&) = default;
-		virtual ~Value();
+		virtual ~Value() {}
 
 		/**
 		 * \brief Sets the value

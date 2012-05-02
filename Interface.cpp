@@ -196,7 +196,7 @@ Native::iterator Interface::DefineNativeInternal(string name, ParamContainer par
 	return natives.insert(pair<string, ParamContainer>(name, param));
 }
 
-void Interface::ExecuteCommand(Native::iterator it, signed int key)
+void Interface::ExecuteCommand(Native::iterator it, unsigned int key)
 {
 	if (it == natives.end())
 		throw VaultException("Native definition not found");
@@ -214,7 +214,7 @@ void Interface::SetupCommand(string name, unsigned int priority)
 	priorityMap.insert(pair<unsigned int, Native::iterator>(priority, it));
 }
 
-void Interface::ExecuteCommand(string name, ParamContainer param, signed int key)
+void Interface::ExecuteCommand(string name, ParamContainer param, unsigned int key)
 {
 	ExecuteCommand(DefineNativeInternal(name, param), key);
 }

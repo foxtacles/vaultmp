@@ -61,7 +61,7 @@ class Interface : public API
 		static Native natives;
 
 		static Native::iterator DefineNativeInternal(string name, ParamContainer);
-		static void ExecuteCommand(Native::iterator it, signed int key);
+		static void ExecuteCommand(Native::iterator it, unsigned int key);
 		static multimap<string, string> Evaluate(Native::iterator _it);
 
 		static void CommandThreadReceive();
@@ -150,7 +150,7 @@ class Interface : public API
 		 * see DefineNative for a short explanation of ParamContainer
 		 * key (optional) - a signed key (usually from the Lockable class) which is to later identify this command
 		 */
-		static void ExecuteCommand(string name, ParamContainer, signed int key = 0);
+		static void ExecuteCommand(string name, ParamContainer, unsigned int key = 0);
 
 #ifdef VAULTMP_DEBUG
 		static void SetDebugHandler(Debug* debug);

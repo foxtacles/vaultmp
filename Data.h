@@ -49,7 +49,7 @@ using namespace RakNet;
 namespace Data
 {
 
-	typedef void (*ResultHandler)(signed int, vector<double>&, double, bool);
+	typedef void (*ResultHandler)(unsigned int, vector<double>&, double, bool);
 	typedef pair<vector<string>, VaultFunctor*> Parameter;
 	typedef list<Parameter> ParamContainer;
 	typedef const map<const unsigned int, const char*> Database;

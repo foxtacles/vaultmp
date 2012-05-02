@@ -1,8 +1,8 @@
 #ifndef LOCKABLE_H
 #define LOCKABLE_H
 
-#include <map>
-#include <list>
+#include <unordered_map>
+#include <unordered_set>
 #include <string>
 #include <algorithm>
 #include <climits>
@@ -14,9 +14,6 @@
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"
 #endif
-
-#define ISFLAT(key) (key > 0x00)
-#define ISDEEP(key) (key < 0x00)
 
 using namespace std;
 
@@ -30,14 +27,13 @@ class Lockable
 {
 
 	private:
-		static signed int flat_key;
-		static signed int deep_key;
-		static map<signed int, Lockable*> keymap;
+		static unsigned int key;
+		static unordered_map<unsigned int, Lockable*> keymap;
 		static CriticalSection cs;
 
-		static signed int NextKey(bool flat);
+		static unsigned int NextKey();
 
-		list<signed int> locks;
+		unordered_set<unsigned int> locks;
 
 #ifdef VAULTMP_DEBUG
 		static Debug* debug;
@@ -47,15 +43,15 @@ class Lockable
 
 	protected:
 
-		Lockable();
+		Lockable() = default;
 		Lockable(Lockable &&) = default;
 		Lockable& operator=(Lockable &&) = default;
-		virtual ~Lockable();
+		virtual ~Lockable() {};
 
 	public:
 
 		/**
-		 * \brief Resets the class to its initial stays and releases all locks
+		 * \brief Resets the class to its initial state and releases all locks
 		 */
 		static void Reset();
 		/**
@@ -63,27 +59,20 @@ class Lockable
 		 *
 		 * Returns a pointer to the unlocked object if successful.
 		 */
-		static Lockable* BlindUnlock(signed int key);
+		static Lockable* BlindUnlock(unsigned int key);
 
 		/**
 		 * \brief Locks this object
 		 *
 		 * Returns a key on success.
-		 *
-		 * flat specifies the type of the lock.
-		 * if flat = true, the key is necessary to remove this lock.
-		 * if flat = false, the key can be used to remove all locks (regardless of their types) from this object
 		 */
-		signed int Lock(bool flat);
+		unsigned int Lock();
 		/**
 		 * \brief Unlocks this object
 		 *
 		 * Returns the object on success
-		 *
-		 * If the given key is of type "flat", the corresponding lock will be removed (the object may get unlocked)
-		 * If the given key is of type "deep" (non-flat), the object will be unlocked and all locks will be removed from it
 		 */
-		Lockable* Unlock(signed int key);
+		Lockable* Unlock(unsigned int key);
 		/**
 		 * \brief Checks if this object is locked
 		 *

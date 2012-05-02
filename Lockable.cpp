@@ -1,8 +1,7 @@
 #include "Lockable.h"
 
-signed int Lockable::flat_key = 0x00 + 0x01;
-signed int Lockable::deep_key = 0x00 - 0x01;
-map<signed int, Lockable*> Lockable::keymap;
+unsigned int Lockable::key = 0x01;
+unordered_map<unsigned int, Lockable*> Lockable::keymap;
 CriticalSection Lockable::cs;
 
 #ifdef VAULTMP_DEBUG
@@ -19,72 +18,30 @@ void Lockable::SetDebugHandler(Debug* debug)
 }
 #endif
 
-Lockable::Lockable()
+unsigned int Lockable::NextKey()
 {
-
-}
-
-Lockable::~Lockable()
-{
-
-}
-
-signed int Lockable::NextKey(bool flat)
-{
-	signed int next_key;
+	unsigned int next_key;
 
 	cs.StartSession();
 
-	switch (flat)
+	unsigned int temp_key = key;
+
+	while (keymap.find(temp_key) != keymap.end())
 	{
-		case true:
+		if (temp_key == UINT_MAX)
+			temp_key = 0x01;
+		else
+			++temp_key;
+
+		if (temp_key == key)
 		{
-			signed int temp_key = flat_key;
-
-			while (keymap.find(temp_key) != keymap.end())
-			{
-				if (temp_key == INT_MAX)
-					temp_key = 0x00 + 0x01;
-
-				else
-					temp_key++;
-
-				if (temp_key == flat_key)
-				{
-					cs.EndSession();
-					throw VaultException("Lockable class ran out of flat keys");
-				}
-			}
-
-			next_key = temp_key;
-			flat_key = (temp_key == INT_MAX ? (0x00 + 0x01) : (temp_key + 0x01));
-			break;
-		}
-
-		case false:
-		{
-			signed int temp_key = deep_key;
-
-			while (keymap.find(temp_key) != keymap.end())
-			{
-				if (temp_key == INT_MIN)
-					temp_key = 0x00 - 0x01;
-
-				else
-					temp_key--;
-
-				if (temp_key == deep_key)
-				{
-					cs.EndSession();
-					throw VaultException("Lockable class ran out of deep keys");
-				}
-			}
-
-			next_key = temp_key;
-			deep_key = (temp_key == INT_MIN ? (0x00 - 0x01) : (temp_key - 0x01));
-			break;
+			cs.EndSession();
+			throw VaultException("Lockable class ran out of keys");
 		}
 	}
+
+	next_key = temp_key;
+	key = (temp_key == UINT_MAX ? (0x01) : (temp_key + 0x01));
 
 	cs.EndSession();
 
@@ -94,33 +51,36 @@ signed int Lockable::NextKey(bool flat)
 void Lockable::Reset()
 {
 	keymap.clear();
-	flat_key = 0x00 + 0x01;
-	deep_key = 0x00 - 0x01;
+	key = 0x01;
 }
 
-Lockable* Lockable::BlindUnlock(signed int key)
+Lockable* Lockable::BlindUnlock(unsigned int key)
 {
-	map<signed int, Lockable*>::iterator it;
-	map<signed int, Lockable*> keymap_copy = keymap;
+	Lockable* locked;
 
-	for (it = keymap_copy.begin(); it != keymap_copy.end(); ++it)
+	cs.StartSession();
+
+	try
 	{
-		Lockable* locked = it->second->Unlock(it->first);
-
-		if (locked != NULL)
-		{
-			return locked;
-		}
+		locked = keymap.at(key)->Unlock(key);
 	}
+	catch (...)
+	{
+		cs.EndSession();
 
 #ifdef VAULTMP_DEBUG
 
-	if (debug)
-		debug->PrintFormat("Key %08X did not unlock anything", true, key);
+		if (debug)
+			debug->PrintFormat("Key %08X did not unlock anything", true, key);
 
 #endif
 
-	return NULL;
+		return NULL;
+	}
+
+	cs.EndSession();
+
+	return locked;
 }
 
 bool Lockable::IsLocked() const
@@ -128,16 +88,16 @@ bool Lockable::IsLocked() const
 	return locks.size();
 }
 
-signed int Lockable::Lock(bool flat)
+unsigned int Lockable::Lock()
 {
-	signed int next_key = NextKey(flat);
+	unsigned int next_key = NextKey();
 
 	if (next_key == 0x00)
 		return next_key;
 
 	cs.StartSession();
-	locks.push_back(next_key);
-	keymap.insert(pair<signed int, Lockable*>(next_key, this));
+	locks.insert(next_key);
+	keymap.insert(pair<unsigned int, Lockable*>(next_key, this));
 	cs.EndSession();
 
 #ifdef VAULTMP_DEBUG
@@ -150,31 +110,17 @@ signed int Lockable::Lock(bool flat)
 	return next_key;
 }
 
-Lockable* Lockable::Unlock(signed int key)
+Lockable* Lockable::Unlock(unsigned int key)
 {
 	if (!IsLocked())
 		return this;
 
-	if (find(locks.begin(), locks.end(), key) != locks.end())
+	if (locks.count(key))
 	{
+		locks.erase(key);
+
 		cs.StartSession();
-
-		if (ISDEEP(key))
-		{
-			list<signed int>::iterator it;
-
-			for (it = locks.begin(); it != locks.end(); ++it)
-				keymap.erase(*it);
-
-			locks.clear();
-		}
-
-		else
-		{
-			keymap.erase(key);
-			locks.remove(key);
-		}
-
+		keymap.erase(key);
 		cs.EndSession();
 
 #ifdef VAULTMP_DEBUG
@@ -184,14 +130,13 @@ Lockable* Lockable::Unlock(signed int key)
 
 #endif
 
-		if (!IsLocked())
-			return this;
+		return this;
 	}
 
 #ifdef VAULTMP_DEBUG
 
 	if (debug)
-		debug->PrintFormat("%08X is still locked", true, this, key);
+		debug->PrintFormat("%08X is still locked (key used: %08X)", true, this, key);
 
 #endif
 

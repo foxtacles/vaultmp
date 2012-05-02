@@ -103,8 +103,8 @@ class Game
 		/**
 		 * \brief Places an Object in-game
 		 */
-		static void PlaceAtMe(FactoryObject reference, unsigned int baseID, unsigned int count, signed int key = 0);
-		static void PlaceAtMe(unsigned int refID, unsigned int baseID, unsigned int count, signed int key = 0);
+		static void PlaceAtMe(FactoryObject reference, unsigned int baseID, unsigned int count, unsigned int key = 0);
+		static void PlaceAtMe(unsigned int refID, unsigned int baseID, unsigned int count, unsigned int key = 0);
 		/**
 		 * \brief Enables / Disables an Object
 		 */
@@ -132,51 +132,51 @@ class Game
 		/**
 		 * \brief Moves an Object to another Object
 		 */
-		static void MoveTo(vector<FactoryObject> reference, bool cell = false, signed int key = 0);
+		static void MoveTo(vector<FactoryObject> reference, bool cell = false, unsigned int key = 0);
 		/**
 		 * \brief Sets an actor value of an Actor
 		 */
-		static void SetActorValue(FactoryObject reference, bool base, unsigned char index, signed int key = 0);
+		static void SetActorValue(FactoryObject reference, bool base, unsigned char index, unsigned int key = 0);
 		/**
 		 * \brief Sets the sneaking state of an Actor
 		 */
-		static void SetActorSneaking(FactoryObject reference, signed int key = 0);
+		static void SetActorSneaking(FactoryObject reference, unsigned int key = 0);
 		/**
 		 * \brief Sets the alerted state of an Actor
 		 */
-		static void SetActorAlerted(FactoryObject reference, signed int key = 0);
+		static void SetActorAlerted(FactoryObject reference, unsigned int key = 0);
 		/**
 		 * \brief Sets the moving animation of an Actor
 		 */
-		static void SetActorMovingAnimation(FactoryObject reference, signed int key = 0);
+		static void SetActorMovingAnimation(FactoryObject reference, unsigned int key = 0);
 		/**
 		 * \brief Kills an Actor
 		 */
-		static void KillActor(FactoryObject reference, signed int key = 0);
+		static void KillActor(FactoryObject reference, unsigned int key = 0);
 		/**
 		 * \brief Adds an Item to a Container
 		 */
-		static void AddItem(vector<FactoryObject> reference, signed int key = 0);
-		static void AddItem(FactoryObject reference, unsigned int baseID, unsigned int count, double condition, bool silent = false, signed int key = 0);
+		static void AddItem(vector<FactoryObject> reference, unsigned int key = 0);
+		static void AddItem(FactoryObject reference, unsigned int baseID, unsigned int count, double condition, bool silent = false, unsigned int key = 0);
 		/**
 		 * \brief Removes an Item from a Container
 		 */
-		static void RemoveItem(vector<FactoryObject> reference, signed int key = 0);
-		static void RemoveItem(FactoryObject reference, unsigned int baseID, unsigned int count, bool silent = false, signed int key = 0);
+		static void RemoveItem(vector<FactoryObject> reference, unsigned int key = 0);
+		static void RemoveItem(FactoryObject reference, unsigned int baseID, unsigned int count, bool silent = false, unsigned int key = 0);
 		/**
 		 * \brief Removes all items from a Container
 		 */
-		static void RemoveAllItems(FactoryObject reference, signed int key = 0);
+		static void RemoveAllItems(FactoryObject reference, unsigned int key = 0);
 		/**
 		 * \brief Makes an Actor equip an Item
 		 */
-		static void EquipItem(vector<FactoryObject> reference, signed int key = 0);
-		static void EquipItem(FactoryObject reference, unsigned int baseID, bool silent = false, bool stick = false, signed int key = 0);
+		static void EquipItem(vector<FactoryObject> reference, unsigned int key = 0);
+		static void EquipItem(FactoryObject reference, unsigned int baseID, bool silent = false, bool stick = false, unsigned int key = 0);
 		/**
 		 * \brief Makes an Actor unequip an Item
 		 */
-		static void UnequipItem(vector<FactoryObject> reference, signed int key = 0);
-		static void UnequipItem(FactoryObject reference, unsigned int baseID, bool silent = false, bool stick = false, signed int key = 0);
+		static void UnequipItem(vector<FactoryObject> reference, unsigned int key = 0);
+		static void UnequipItem(FactoryObject reference, unsigned int baseID, bool silent = false, bool stick = false, unsigned int key = 0);
 
 		/**
 		 * Network functions

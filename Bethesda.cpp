@@ -16,7 +16,7 @@ char Bethesda::module[32];
 Debug* Bethesda::debug;
 #endif
 
-void Bethesda::CommandHandler(signed int key, vector<double>& info, double result, bool error)
+void Bethesda::CommandHandler(unsigned int key, vector<double>& info, double result, bool error)
 {
 	using namespace Values;
 	unsigned short opcode = getFrom<double, unsigned short>(info.at(0));

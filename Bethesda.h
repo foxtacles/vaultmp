@@ -66,7 +66,7 @@ class Bethesda
 		/**
 		 * \brief Handles translated command results from the game
 		 */
-		static void CommandHandler(signed int key, vector<double>& info, double result, bool error);
+		static void CommandHandler(unsigned int key, vector<double>& info, double result, bool error);
 
 		/**
 		 * \brief Lookup the ID of a given process name
