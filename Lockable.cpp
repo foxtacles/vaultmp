@@ -21,9 +21,6 @@ void Lockable::SetDebugHandler(Debug* debug)
 unsigned int Lockable::NextKey()
 {
 	unsigned int next_key;
-
-	cs.StartSession();
-
 	unsigned int temp_key = key;
 
 	while (keymap.find(temp_key) != keymap.end())
@@ -34,16 +31,11 @@ unsigned int Lockable::NextKey()
 			++temp_key;
 
 		if (temp_key == key)
-		{
-			cs.EndSession();
 			throw VaultException("Lockable class ran out of keys");
-		}
 	}
 
 	next_key = temp_key;
 	key = (temp_key == UINT_MAX ? (0x01) : (temp_key + 0x01));
-
-	cs.EndSession();
 
 	return next_key;
 }
@@ -90,14 +82,23 @@ bool Lockable::IsLocked() const
 
 unsigned int Lockable::Lock()
 {
-	unsigned int next_key = NextKey();
-
-	if (next_key == 0x00)
-		return next_key;
-
 	cs.StartSession();
+
+	unsigned int next_key;
+
+	try
+	{
+		next_key = NextKey();
+	}
+	catch (...)
+	{
+		cs.EndSession();
+		throw;
+	}
+
 	locks.insert(next_key);
 	keymap.insert(pair<unsigned int, Lockable*>(next_key, this));
+
 	cs.EndSession();
 
 #ifdef VAULTMP_DEBUG
