@@ -14,30 +14,6 @@
 #include "VaultException.h"
 #include "VaultFunctor.h"
 
-template <template<typename K, typename... Values> class T, typename K, typename... Values>
-inline
-static typename T<K, Values...>::iterator SAFE_FIND(T<K, Values...>& a, K b)
-{
-	typename T<K, Values...>::iterator c = a.find(b);
-
-	if (c != a.end())
-		return c;
-
-	throw VaultException("Value %02X not defined in database", b);
-}
-
-template <template<typename K, typename... Values> class T, typename K, typename... Values>
-inline
-static typename T<K, Values...>::const_iterator SAFE_FIND(const T<K, Values...>& a, K b)
-{
-	typename T<K, Values...>::const_iterator c = a.find(b);
-
-	if (c != a.end())
-		return c;
-
-	throw VaultException("Value %02X not defined in database", b);
-}
-
 static const unsigned int PLAYER_REFERENCE  = 0x00000014;
 static const unsigned int PLAYER_BASE       = 0x00000007;
 

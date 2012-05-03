@@ -23,25 +23,6 @@ static const unsigned int NVSE_VER0212                 =   0x0006B1BB;
 static const unsigned int VAULTMP_DLL                  =   0x00032EBF;
 static const unsigned int XLIVE_PATCH                  =   0x0000D57E;
 
-#define CREDITSSTR "code: Recycler\n\
-graphics: benG\n\
-vaultgui: Houstin\n\
-network engine: RakNet\n\
-scripting: PAWN language\n\
-music player: uFMOD\n\n\
-Special thanks: Volumed, Farlo, Genocyber, J1Games, NeoPhoenix, Tomo, Aleksander, FOSE/NVSE team\n\n\
-Thanks a lot for your contributions and/or support!\n\n\
-www.brickster.net\n\
-www.vaultmp.com"
-
-#define MESSAGESTR "We are a team of young computer enthusiasts, dedicated to \
-programming, composing and creating other kinds of digital art.\n\n\
-We are always looking for more talents! If you have some kickass skill, \
-true dedication with regard to your field of interest and share the spirit \
-of free access to knowledge and information, we'd love to invite you to a \
-IRC chat session. Together we can create even bigger and more awesome stuff, I'm \
-sure!"
-
 static const unsigned char FALLOUT3             =   0x01;
 static const unsigned char NEWVEGAS             =   FALLOUT3 << 1;
 static const unsigned char FALLOUT_GAMES        =   FALLOUT3 | NEWVEGAS;

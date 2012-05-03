@@ -50,17 +50,14 @@
 #define IDC_BUTTON1             2013
 #define IDC_BUTTON2             2014
 #define IDC_BUTTON3             2015
-#define IDC_BUTTON4             2016
 #define IDC_EDIT0               2017
 #define IDC_EDIT1               2018
 #define IDC_EDIT3               2019
 #define IDC_PROGRESS0           2020
 
 #define CHIPTUNE                3000
-#define CHIPTUNE2               4000
 #define ICON_MAIN               5000
 #define POWERED                 6000
-#define CREDITS                7000
 
 using namespace RakNet;
 using namespace Data;
@@ -68,7 +65,7 @@ using namespace std;
 
 HINSTANCE instance;
 HANDLE global_mutex;
-HFONT hFont, hFont2;
+HFONT hFont;
 HWND wndmain;
 HWND wndsortcur;
 HWND wndchiptune;
@@ -76,18 +73,11 @@ HWND wndlistview;
 HWND wndlistview2;
 HWND wndprogressbar;
 HWND wndsync;
-HWND wndcredits;
 HDC hdc, hdcMem;
-HBITMAP hBitmap, hBitmap2;
-BITMAP bitmap, bitmap2;
+HBITMAP hBitmap;
+BITMAP bitmap;
 PAINTSTRUCT ps;
 BOOL sort_flag;
-
-RECT rect;
-thread creditstext;
-
-bool credits = false;
-list<HWND> elements;
 
 RakPeerInterface* peer;
 SocketDescriptor* sockdescr;
@@ -413,7 +403,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR cmdline, 
 	}
 
 	hFont = CreateFont(-11, 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Verdana");
-	hFont2 = CreateFont(-9, 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Lucida Console");
 	wndmain = CreateMainWindow();
 
 	return MessageLoop();
@@ -451,15 +440,12 @@ void CreateWindowContent(HWND parent)
 	col.fmt = LVCFMT_LEFT;
 
 	wnd = CreateWindowEx(0x00000000, "Button", "Server details", 0x50020007, 543, 0, 229, 214, parent, (HMENU) IDC_GROUP0, instance, NULL);
-	elements.push_back(wnd);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
 	wnd = CreateWindowEx(0x00000000, "Button", "Vault-Tec Multiplayer Controls", 0x50020007, 543, 218, 229, 190, parent, (HMENU) IDC_GROUP1, instance, NULL);
-	elements.push_back(wnd);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
 	wnd = CreateWindowEx(0x00000200, "SysListView32", "", 0x50010005 | LVS_SINGLESEL | LVS_SHOWSELALWAYS, 6, 6, 531, 285, parent, (HMENU) IDC_GRID0, instance, NULL);
-	elements.push_back(wnd);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 	SendMessage(wnd, (LVM_FIRST + 54), 0, 64 | 32);
 	wndlistview = wnd;
@@ -485,7 +471,6 @@ void CreateWindowContent(HWND parent)
 	SendMessage(wnd, LVM_INSERTCOLUMN, 3, (LPARAM) &col);
 
 	wnd = CreateWindowEx(0x00000200, "SysListView32", "", 0x50010001, 553, 19, 210, 157, parent, (HMENU) IDC_GRID1, instance, NULL);
-	elements.push_back(wnd);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 	wndlistview2 = wnd;
 
@@ -500,83 +485,55 @@ void CreateWindowContent(HWND parent)
 	SendMessage(wnd, LVM_INSERTCOLUMN, 1, (LPARAM) &col);
 
 	wnd = CreateWindowEx(0x00000000, "msctls_progress32", "", 0x50000000, 553, 184, 210, 16, parent, (HMENU) IDC_PROGRESS0, instance, NULL);
-	elements.push_back(wnd);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 	wndprogressbar = wnd;
 
 	wnd = CreateWindowEx(0x00000000, "Static", "Fallout is a trademark of Bethesda Softworks LLC in the U.S. and/or other countries.", 0x5000030C, 12, 374, 531, 18, parent, (HMENU) IDC_STATIC0, instance, NULL);
-	elements.push_back(wnd);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
 	wnd = CreateWindowEx(0x00000000, "Static", "Vault-Tec Multiplayer Mod is not affliated with Bethesda Softworks LLC.", 0x50000300, 12, 392, 531, 18, parent, (HMENU) IDC_STATIC1, instance, NULL);
-	elements.push_back(wnd);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
 	wnd = CreateWindowEx(0x00000000, "Button", "Powered by", 0x50020007, 6, 294, 531, 78, parent, (HMENU) IDC_GROUP2, instance, NULL);
-	elements.push_back(wnd);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
 	wnd = CreateWindowEx(0x00000000, "Button", "mantronix - the wasteland", 0x50010003, 555, 374, 174, 32, parent, (HMENU) IDC_CHECK0, instance, NULL);
-	elements.push_back(wnd);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 	wndchiptune = wnd;
 
-	wnd = CreateWindowEx(0x00000000, "Button", "", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_ICON, 730, 380, 34, 20, parent, (HMENU) IDC_BUTTON4, instance, NULL);
-	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
-	SendMessage(wnd, BM_SETIMAGE, IMAGE_ICON, (LPARAM) LoadIcon(instance, MAKEINTRESOURCE(ICON_MAIN)));
-
 	wnd = CreateWindowEx(0x00000000, "Button", "Join Server", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 555, 239, 100, 25, parent, (HMENU) IDC_BUTTON0, instance, NULL);
-	elements.push_back(wnd);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
 	wnd = CreateWindowEx(0x00000000, "Button", "Update Server", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 660, 239, 100, 25, parent, (HMENU) IDC_BUTTON1, instance, NULL);
-	elements.push_back(wnd);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
 	wnd = CreateWindowEx(0x00000000, "Button", "Master Query", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 555, 272, 100, 25, parent, (HMENU) IDC_BUTTON2, instance, NULL);
-	elements.push_back(wnd);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
 	wnd = CreateWindowEx(0x00000000, "Button", "Synchronize", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 660, 272, 100, 25, parent, (HMENU) IDC_BUTTON3, instance, NULL);
-	elements.push_back(wnd);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 	wndsync = wnd;
 
 	wnd = CreateWindowEx(0x00000200, "Edit", "vaultmp.com", 0x50010080, 611, 305, 146, 20, parent, (HMENU) IDC_EDIT3, instance, NULL);
-	elements.push_back(wnd);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 	SendMessage(wnd, EM_SETLIMITTEXT, (WPARAM) MAX_MASTER_SERVER, 0);
 
 	wnd = CreateWindowEx(0x00000200, "Edit", "", 0x50010080, 611, 331, 146, 20, parent, (HMENU) IDC_EDIT0, instance, NULL);
-	elements.push_back(wnd);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 	SendMessage(wnd, EM_SETLIMITTEXT, (WPARAM) MAX_PLAYER_NAME, 0);
 
 	wnd = CreateWindowEx(0x00000200, "Edit", "", 0x500100A0, 611, 357, 146, 20, parent, (HMENU) IDC_EDIT1, instance, NULL);
-	elements.push_back(wnd);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 	SendMessage(wnd, EM_SETLIMITTEXT, (WPARAM) MAX_PASSWORD_SIZE, 0);
 
 	wnd = CreateWindowEx(0x00000000, "Static", "Master", 0x50000300, 570, 302, 38, 24, parent, (HMENU) IDC_STATIC4, instance, NULL);
-	elements.push_back(wnd);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
 	wnd = CreateWindowEx(0x00000000, "Static", "Name", 0x50000300, 575, 328, 35, 24, parent, (HMENU) IDC_STATIC2, instance, NULL);
-	elements.push_back(wnd);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
 	wnd = CreateWindowEx(0x00000000, "Static", "Password", 0x50000300, 554, 354, 57, 24, parent, (HMENU) IDC_STATIC3, instance, NULL);
-	elements.push_back(wnd);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
-
-	wnd = CreateWindowEx(WS_EX_TRANSPARENT, "Static", "", 0x50000300 & ~(WS_VISIBLE | SS_CENTERIMAGE), 30, 80, 134, 254, parent, (HMENU) IDC_STATIC5, instance, NULL);
-	wndcredits = wnd;
-	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont2, TRUE);
-
-	rect.left = 30;
-	rect.top = 80;
-	rect.right = 164;
-	rect.bottom = 334;
 }
 
 int RegisterClasses()
@@ -626,7 +583,6 @@ void CleanUp()
 	RakPeerInterface::DestroyInstance(peer);
 	iniparser_freedict(config);
 	CloseHandle(global_mutex);
-	elements.clear();
 }
 
 int Create2ColItem(HWND hwndList, char* text1, char* text2)
@@ -696,109 +652,6 @@ int CALLBACK CompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 		return (stricmp(buf, buf2) * -1);
 }
 
-void UpdateText(string str)
-{
-	SetWindowText(wndcredits, str.c_str());
-	InvalidateRect(wndmain, &rect, FALSE);
-}
-
-void WriteText(string& str, unsigned int start, unsigned int end, unsigned int t = 100)
-{
-	unsigned int counter = start;
-
-	while (credits && counter != end)
-	{
-		this_thread::sleep_for(chrono::milliseconds(t));
-		UpdateText(str.substr(0, counter + 1) + (counter % 3 ? "" : "_"));
-		++counter;
-	}
-}
-
-void PauseText(string& str, unsigned int ticks)
-{
-	unsigned int counter = 0;
-
-	while (credits && counter < ticks)
-	{
-		this_thread::sleep_for(chrono::milliseconds(300));
-		UpdateText(str + (counter % 2 ? "" : "_"));
-		++counter;
-	}
-}
-
-void CreditsText()
-{
-	while (credits)
-	{
-		unsigned int len = 0;
-
-		string ctext("");
-		UpdateText(ctext);
-
-		PauseText(ctext, 8);
-
-		ctext.append("The Brickster.net Group");
-		WriteText(ctext, len, ctext.length());
-		len = ctext.length();
-
-		PauseText(ctext, 8);
-		ctext.append("\n");
-
-		PauseText(ctext, 4);
-
-		ctext.append("from left to right:");
-		WriteText(ctext, len, ctext.length());
-		len = ctext.length();
-
-		PauseText(ctext, 4);
-
-		ctext.append(" benG, mqidx, Recycler, portWine\n\n");
-		WriteText(ctext, len, ctext.length());
-		len = ctext.length();
-
-		PauseText(ctext, 8);
-
-		ctext.append("presents:");
-		WriteText(ctext, len, ctext.length());
-		len = ctext.length();
-
-		PauseText(ctext, 4);
-
-		ctext.append("\nVault-Tec Multiplayer Mod");
-		WriteText(ctext, len, ctext.length());
-		len = ctext.length();
-
-		PauseText(ctext, 8);
-
-		ctext.append("\n\n" + string(CREDITSSTR));
-		WriteText(ctext, len, ctext.length());
-		len = ctext.length();
-
-		PauseText(ctext, 48);
-
-		ctext.append("\n\n       ^__^      ");
-		WriteText(ctext, len, ctext.length());
-		len = ctext.length();
-
-		PauseText(ctext, 16);
-
-		ctext.append("\n.......................");
-		WriteText(ctext, len, ctext.length(), 330);
-
-		PauseText(ctext, 8);
-
-		len = 0;
-		ctext = string(MESSAGESTR);
-		WriteText(ctext, len, ctext.length());
-		len = ctext.length();
-
-		ctext.append("\n\nrecycler@brickster.net\nirc.brickster.net #brickster\n\n");
-		WriteText(ctext, len, ctext.length(), 330);
-
-		PauseText(ctext, 8);
-	}
-}
-
 LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	bool update = false;
@@ -809,9 +662,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 			CreateWindowContent(hwnd);
 			RefreshServerList();
 			hBitmap = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(POWERED));
-			hBitmap2 = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(CREDITS));
 			GetObject(hBitmap, sizeof(BITMAP), &bitmap);
-			GetObject(hBitmap2, sizeof(BITMAP), &bitmap2);
 
 			if (*player_name)
 				SetDlgItemText(hwnd, IDC_EDIT0, player_name);
@@ -825,35 +676,12 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 			hdc = BeginPaint(hwnd, &ps);
 			hdcMem = CreateCompatibleDC(hdc);
 
-			if (!credits)
-			{
-				SelectObject(hdcMem, hBitmap);
-				BitBlt(hdc, 13, 310, bitmap.bmWidth, bitmap.bmHeight, hdcMem, 0, 0, SRCCOPY);
-			}
-			else
-			{
-				SelectObject(hdcMem, hBitmap2);
-				BitBlt(hdc, 0, 0, bitmap2.bmWidth, bitmap2.bmHeight, hdcMem, 0, 0, SRCCOPY);
-			}
+			SelectObject(hdcMem, hBitmap);
+			BitBlt(hdc, 13, 310, bitmap.bmWidth, bitmap.bmHeight, hdcMem, 0, 0, SRCCOPY);
 
 			DeleteDC(hdcMem);
 			EndPaint(hwnd, &ps);
 			break;
-
-		case WM_CTLCOLORSTATIC:
-		{
-			if (credits)
-			{
-				HDC texthdc = (HDC) wParam;
-				HWND hwndtext = (HWND) lParam;
-
-				SetBkMode ( texthdc, TRANSPARENT );
-
-				HBRUSH hbr = (HBRUSH) GetStockObject( NULL_BRUSH );
-				return (LRESULT) hbr;
-			}
-			break;
-		}
 
 		case WM_SIZE:
 			if (wParam == SIZE_MINIMIZED)
@@ -1207,43 +1035,6 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 					RefreshServerList();
 					break;
-
-				case IDC_BUTTON4:
-				{
-					//MessageBox( NULL, CREDITS, "vaultmp credits", MB_OK | MB_ICONINFORMATION | MB_TOPMOST | MB_TASKMODAL );
-					list<HWND>::iterator it;
-
-					if (!credits)
-					{
-						for (it = elements.begin(); it != elements.end(); ++it)
-							ShowWindow(*it, SW_HIDE);
-
-						ShowWindow(wndcredits, SW_SHOW);
-
-						if (!SendMessage(wndchiptune, BM_GETCHECK, 0, 0))
-							uFMOD_PlaySong(MAKEINTRESOURCE(CHIPTUNE2), GetModuleHandle(NULL), XM_RESOURCE);
-
-						credits = true;
-
-						creditstext = thread(CreditsText);
-						creditstext.detach();
-					}
-					else
-					{
-						ShowWindow(wndcredits, SW_HIDE);
-
-						for (it = elements.begin(); it != elements.end(); ++it)
-							ShowWindow(*it, SW_SHOWNOACTIVATE);
-
-						if (!SendMessage(wndchiptune, BM_GETCHECK, 0, 0))
-							uFMOD_StopSong();
-
-						credits = false;
-					}
-
-					InvalidateRect(wndmain, NULL, TRUE);
-					break;
-				}
 
 				case IDC_BUTTON3:
 				{

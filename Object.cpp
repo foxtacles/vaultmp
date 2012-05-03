@@ -78,17 +78,17 @@ string Object::GetName() const
 
 double Object::GetGamePos(unsigned char axis) const
 {
-	return SAFE_FIND(object_Game_Pos, axis)->second.get();
+	return object_Game_Pos.at(axis).get();
 }
 
 double Object::GetNetworkPos(unsigned char axis) const
 {
-	return SAFE_FIND(object_Network_Pos, axis)->second.get();
+	return object_Network_Pos.at(axis).get();
 }
 
 double Object::GetAngle(unsigned char axis) const
 {
-	return SAFE_FIND(object_Angle, axis)->second.get();
+	return object_Angle.at(axis).get();
 }
 
 bool Object::GetEnabled() const
@@ -126,7 +126,7 @@ Lockable* Object::SetName(string name)
 
 Lockable* Object::SetGamePos(unsigned char axis, double pos)
 {
-	Value<double>& data = SAFE_FIND(this->object_Game_Pos, axis)->second;
+	Value<double>& data = this->object_Game_Pos.at(axis);
 
 	if (Utils::DoubleCompare(data.get(), pos, 0.01))
 		return NULL;
@@ -150,7 +150,7 @@ Lockable* Object::SetGamePos(unsigned char axis, double pos)
 
 Lockable* Object::SetNetworkPos(unsigned char axis, double pos)
 {
-	Value<double>& data = SAFE_FIND(this->object_Network_Pos, axis)->second;
+	Value<double>& data = this->object_Network_Pos.at(axis);
 
 	if (Utils::DoubleCompare(data.get(), pos, 0.01))
 		return NULL;
@@ -174,7 +174,7 @@ Lockable* Object::SetNetworkPos(unsigned char axis, double pos)
 
 Lockable* Object::SetAngle(unsigned char axis, double angle)
 {
-	Value<double>& data = SAFE_FIND(this->object_Angle, axis)->second;
+	Value<double>& data = this->object_Angle.at(axis);
 
 	if (Utils::DoubleCompare(data.get(), angle, 0.01))
 		return NULL;

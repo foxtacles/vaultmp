@@ -77,7 +77,6 @@ vector<NetworkID> GameFactory::GetIDObjectTypes(unsigned char type) noexcept
 	return result;
 }
 
-inline
 unsigned int GameFactory::GetObjectCount(unsigned char type) noexcept
 {
 	return typecount[type];

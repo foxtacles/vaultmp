@@ -72,12 +72,12 @@ const Parameter Player::CreateFunctor(unsigned int flags, NetworkID player)
 
 unsigned char Player::GetPlayerControl(unsigned char control) const
 {
-	return SAFE_FIND(player_Controls, control)->second.first.get();
+	return player_Controls.at(control).first.get();
 }
 
 bool Player::GetPlayerControlEnabled(unsigned char control) const
 {
-	return SAFE_FIND(player_Controls, control)->second.second.get();
+	return player_Controls.at(control).second.get();
 }
 
 unsigned int Player::GetPlayerRespawn() const
@@ -87,7 +87,7 @@ unsigned int Player::GetPlayerRespawn() const
 
 Lockable* Player::SetPlayerControl(unsigned char control, unsigned char key)
 {
-	Value<unsigned char>& data = SAFE_FIND(this->player_Controls, control)->second.first;
+	Value<unsigned char>& data = this->player_Controls.at(control).first;
 
 	if (data.get() == key)
 		return NULL;
@@ -107,7 +107,7 @@ Lockable* Player::SetPlayerControl(unsigned char control, unsigned char key)
 
 Lockable* Player::SetPlayerControlEnabled(unsigned char control, bool state)
 {
-	Value<bool>& data = SAFE_FIND(this->player_Controls, control)->second.second;
+	Value<bool>& data = this->player_Controls.at(control).second;
 
 	if (data.get() == state)
 		return NULL;

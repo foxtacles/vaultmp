@@ -242,7 +242,7 @@ void Game::LoadEnvironment()
 {
 	vector<NetworkID> reference = GameFactory::GetIDObjectTypes(ALL_OBJECTS);
 
-	for (NetworkID & id : reference)
+	for (NetworkID& id : reference)
 	{
 		FactoryObject reference = GameFactory::GetObject(id);
 

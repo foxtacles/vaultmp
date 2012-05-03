@@ -1,11 +1,7 @@
 #define CHIPTUNE                3000
-#define CHIPTUNE2               4000
 #define ICON_MAIN               5000
 #define POWERED                 6000
-#define CREDITS                 7000
 
 ICON_MAIN      ICON    DISCARDABLE   vaultmp.ico
 CHIPTUNE       RCDATA  DISCARDABLE   the_wasteland.xm
-CHIPTUNE2      RCDATA  DISCARDABLE   toilet3.xm
 POWERED        BITMAP  DISCARDABLE   powered.bmp
-CREDITS        BITMAP  DISCARDABLE   credits.bmp

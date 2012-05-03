@@ -111,12 +111,12 @@ const Parameter Actor::CreateFunctor(unsigned int flags)
 
 double Actor::GetActorValue(unsigned char index) const
 {
-	return SAFE_FIND(actor_Values, index)->second.get();
+	return actor_Values.at(index).get();
 }
 
 double Actor::GetActorBaseValue(unsigned char index) const
 {
-	return SAFE_FIND(actor_BaseValues, index)->second.get();
+	return actor_BaseValues.at(index).get();
 }
 
 unsigned char Actor::GetActorMovingAnimation() const
@@ -146,7 +146,7 @@ bool Actor::GetActorDead() const
 
 Lockable* Actor::SetActorValue(unsigned char index, double value)
 {
-	Value<double>& data = SAFE_FIND(this->actor_Values, index)->second;
+	Value<double>& data = this->actor_Values.at(index);
 
 	if (Utils::DoubleCompare(data.get(), value, 0.01))
 		return NULL;
@@ -166,7 +166,7 @@ Lockable* Actor::SetActorValue(unsigned char index, double value)
 
 Lockable* Actor::SetActorBaseValue(unsigned char index, double value)
 {
-	Value<double>& data = SAFE_FIND(this->actor_BaseValues, index)->second;
+	Value<double>& data = this->actor_BaseValues.at(index);
 
 	if (Utils::DoubleCompare(data.get(), value, 0.01))
 		return NULL;
