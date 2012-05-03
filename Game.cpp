@@ -229,7 +229,7 @@ void Game::LoadGame(string savegame)
 
 	try
 	{
-		ready = store.get()->get_future(chrono::seconds(15));
+		ready = store.get()->get_future(chrono::seconds(60));
 	}
 	catch (exception& e)
 	{
