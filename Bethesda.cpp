@@ -28,16 +28,29 @@ void Bethesda::CommandHandler(unsigned int key, vector<double>& info, double res
 #endif
 
 		Lockable* data = NULL;
+		weak_ptr<Lockable> shared;
 
 		if (key)
-			data = Lockable::BlindUnlock(key);
+		{
+			switch (opcode)
+			{
+				case Fallout3::Functions::Func_Load:
+				case FalloutNV::Functions::Func_Load:
+				case Functions::Func_PlaceAtMe:
+					shared = Lockable::Poll(key);
+					break;
+
+				default:
+					data = Lockable::Retrieve(key);
+			}
+		}
 
 		FactoryObject reference, self;
 
 		switch (opcode)
 		{
 			case Functions::Func_PlaceAtMe:
-				Game::FutureSet<unsigned int>(data, getFrom<double, unsigned int>(result));
+				Game::FutureSet<unsigned int>(shared, getFrom<double, unsigned int>(result));
 				break;
 
 			case Functions::Func_GetPos:
@@ -163,7 +176,7 @@ void Bethesda::CommandHandler(unsigned int key, vector<double>& info, double res
 
 			case Fallout3::Functions::Func_Load:
 			case FalloutNV::Functions::Func_Load:
-				Game::FutureSet<bool>(data, true);
+				Game::FutureSet<bool>(shared, true);
 				break;
 
 			case Fallout3::Functions::Func_SetName:

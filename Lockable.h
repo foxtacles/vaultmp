@@ -6,6 +6,7 @@
 #include <string>
 #include <algorithm>
 #include <climits>
+#include <memory>
 
 #include "vaultmp.h"
 #include "CriticalSection.h"
@@ -29,6 +30,7 @@ class Lockable
 	private:
 		static unsigned int key;
 		static unordered_map<unsigned int, Lockable*> keymap;
+		static unordered_map<unsigned int, weak_ptr<Lockable>> sharemap;
 		static CriticalSection cs;
 
 		static unsigned int NextKey();
@@ -59,7 +61,13 @@ class Lockable
 		 *
 		 * Returns a pointer to the unlocked object if successful.
 		 */
-		static Lockable* BlindUnlock(unsigned int key);
+		static Lockable* Retrieve(unsigned int key);
+		/**
+		 * \brief Tries to obtain the weak pointer identified by key
+		 *
+		 * Returns a weak_ptr to the object if successful.
+		 */
+		static weak_ptr<Lockable> Poll(unsigned int key);
 
 		/**
 		 * \brief Locks this object
@@ -73,6 +81,12 @@ class Lockable
 		 * Returns the object on success
 		 */
 		Lockable* Unlock(unsigned int key);
+		/**
+		 * \brief Shares an object
+		 *
+		 * Returns a key on success.
+		 */
+		static unsigned int Share(const shared_ptr<Lockable>& share);
 		/**
 		 * \brief Checks if this object is locked
 		 *

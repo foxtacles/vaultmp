@@ -168,21 +168,24 @@ void Game::Startup()
 }
 
 template <typename T>
-void Game::FutureSet(Lockable* data, T t)
+void Game::FutureSet(weak_ptr<Lockable> data, T t)
 {
-	if (data == NULL)
-		throw VaultException("Could not relocate reference storage");
+	shared_ptr<Lockable> shared = data.lock();
+	Lockable* locked = shared.get();
 
-	Value<T>* store = dynamic_cast<Value<T>*>(data);
+	if (locked == NULL)
+		throw VaultException("Storage has expired");
+
+	Value<T>* store = dynamic_cast<Value<T>*>(locked);
 
 	if (store == NULL)
-		throw VaultException("Reference storage is corrupted");
+		throw VaultException("Storage is corrupted");
 
 	store->set(t);
 	store->set_promise();
 }
-template void Game::FutureSet(Lockable* data, unsigned int t);
-template void Game::FutureSet(Lockable* data, bool t);
+template void Game::FutureSet(weak_ptr<Lockable> data, unsigned int t);
+template void Game::FutureSet(weak_ptr<Lockable> data, bool t);
 
 void Game::AsyncTasks()
 {
@@ -211,8 +214,8 @@ void Game::LoadGame(string savegame)
 		last_savegame = savegame;
 	}
 
-	Value<bool>* store = new Value<bool>;
-	unsigned int key = store->Lock();
+	shared_ptr<Value<bool>> store(new Value<bool>);
+	unsigned int key = Lockable::Share(store);
 
 	Interface::StartDynamic();
 
@@ -226,15 +229,13 @@ void Game::LoadGame(string savegame)
 
 	try
 	{
-		ready = store->get_future(chrono::seconds(15));
+		ready = store.get()->get_future(chrono::seconds(15));
 	}
 	catch (exception& e)
 	{
-		delete store;
 		throw VaultException("Loading of savegame %s failed (%s)", savegame.c_str(), e.what());
 	}
 
-	delete store;
 	// ready state
 }
 
@@ -304,8 +305,8 @@ void Game::NewObject(FactoryObject& reference)
 
 	if (!object->GetReference())
 	{
-		Value<unsigned int>* store = new Value<unsigned int>;
-		unsigned int key = store->Lock();
+		shared_ptr<Value<unsigned int>> store(new Value<unsigned int>);
+		unsigned int key = Lockable::Share(store);
 
 		PlaceAtMe(PLAYER_REFERENCE, object->GetBase(), 1, key);
 
@@ -316,11 +317,10 @@ void Game::NewObject(FactoryObject& reference)
 
 		try
 		{
-			refID = store->get_future(chrono::seconds(15));
+			refID = store.get()->get_future(chrono::seconds(15));
 		}
 		catch (exception& e)
 		{
-			delete store;
 			throw VaultException("Object creation with baseID %08X and NetworkID %lld failed (%s)", object->GetBase(), object->GetNetworkID(), e.what());
 		}
 
@@ -328,7 +328,6 @@ void Game::NewObject(FactoryObject& reference)
 		object = vaultcast<Object>(reference);
 
 		object->SetReference(refID);
-		delete store;
 	}
 	else
 	{

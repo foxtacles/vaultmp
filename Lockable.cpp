@@ -2,6 +2,7 @@
 
 unsigned int Lockable::key = 0x01;
 unordered_map<unsigned int, Lockable*> Lockable::keymap;
+unordered_map<unsigned int, weak_ptr<Lockable>> Lockable::sharemap;
 CriticalSection Lockable::cs;
 
 #ifdef VAULTMP_DEBUG
@@ -46,7 +47,7 @@ void Lockable::Reset()
 	key = 0x01;
 }
 
-Lockable* Lockable::BlindUnlock(unsigned int key)
+Lockable* Lockable::Retrieve(unsigned int key)
 {
 	Lockable* locked;
 
@@ -59,20 +60,35 @@ Lockable* Lockable::BlindUnlock(unsigned int key)
 	catch (...)
 	{
 		cs.EndSession();
-
-#ifdef VAULTMP_DEBUG
-
-		if (debug)
-			debug->PrintFormat("Key %08X did not unlock anything", true, key);
-
-#endif
-
-		return NULL;
+		throw VaultException("Key %08X did not unlock anything", key);
 	}
 
 	cs.EndSession();
 
 	return locked;
+}
+
+weak_ptr<Lockable> Lockable::Poll(unsigned int key)
+{
+	weak_ptr<Lockable> shared;
+
+	cs.StartSession();
+
+	try
+	{
+		shared = sharemap.at(key);
+		keymap.erase(key);
+		sharemap.erase(key);
+	}
+	catch (...)
+	{
+		cs.EndSession();
+		throw VaultException("Key %08X did not share anything", key);
+	}
+
+	cs.EndSession();
+
+	return shared;
 }
 
 bool Lockable::IsLocked() const
@@ -143,3 +159,35 @@ Lockable* Lockable::Unlock(unsigned int key)
 
 	return NULL;
 }
+
+unsigned int Lockable::Share(const shared_ptr<Lockable>& share)
+{
+	cs.StartSession();
+
+	unsigned int next_key;
+
+	try
+	{
+		next_key = NextKey();
+	}
+	catch (...)
+	{
+		cs.EndSession();
+		throw;
+	}
+
+	sharemap.insert(pair<unsigned int, weak_ptr<Lockable>>(next_key, weak_ptr<Lockable>(share)));
+	keymap.insert(pair<unsigned int, Lockable*>(next_key, share.get()));
+
+	cs.EndSession();
+
+#ifdef VAULTMP_DEBUG
+
+	if (debug)
+		debug->PrintFormat("%08X (%s) has been shared with key %08X", true, share.get(), typeid(*(share.get())).name(), next_key);
+
+#endif
+
+	return next_key;
+}
+

@@ -9,6 +9,7 @@
 
 #include <future>
 #include <chrono>
+#include <memory>
 
 /**
  * \brief Client game code, using the Interface to execute commands and communicate with the game
@@ -52,7 +53,7 @@ class Game
 		 * \brief Future set
 		 */
 		template <typename T>
-		static void FutureSet(Lockable* data, T t);
+		static void FutureSet(weak_ptr<Lockable> data, T t);
 		/**
 		 * \brief Async task execution
 		 */
