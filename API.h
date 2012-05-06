@@ -392,7 +392,7 @@ class API
 		 * \brief Translates commands to a stream of bytes
 		 *
 		 * Takes a STL multimap as an argument (key is the function name, value is the command to parse).
-		 * Also takes an optional signed key (usually comes from the Lockable extension class) which will automatically associated with each parsed command.
+		 * Also takes an optional unsigned key (usually comes from the Lockable extension class) which will automatically associated with each parsed command.
 		 * Returns a STL vector containing the parsed commands (allocated on the heap; you are required to free them when you don't need them anymore).
 		 */
 
@@ -402,10 +402,10 @@ class API
 		 * \brief Translates a result from vaultmp DLL
 		 *
 		 * Given the retrieved byte stream, will attempt to translate it to CommandResult's.
-		 * CommandResult is of the form pair<pair<pair<signed int, vector<double> >, double>, bool>
+		 * CommandResult is of the form pair<pair<pair<unsigned int, vector<double> >, double>, bool>
 		 * bool indicates if the command was successful.
 		 * double is the result value of the command.
-		 * signed int is the key provided to the corresponding Translate call.
+		 * unsigned int is the key provided to the corresponding Translate call.
 		 * vector<double> is the argument list of the executed command; the first element is always the opcode of the function
 		 */
 

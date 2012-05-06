@@ -63,6 +63,18 @@ Object::~Object()
 
 }
 
+inline
+bool Object::IsValidCoordinate(double C)
+{
+	return (C != 2048.0 && C != 128.0 && C != 0.0);
+}
+
+inline
+bool Object::IsValidAngle(double A)
+{
+	return (A >= 0.0 && A <= 360.0);
+}
+
 const Parameter& Object::Param_Axis()
 {
 	if (param_Axis.first.empty())
@@ -131,7 +143,7 @@ Lockable* Object::SetGamePos(unsigned char axis, double pos)
 	if (Utils::DoubleCompare(data.get(), pos, 0.01))
 		return NULL;
 
-	if ((pos != 2048.0 && pos != 128.0 && pos != 0.0))
+	if (IsValidCoordinate(pos))
 	{
 		if (!data.set(pos))
 			return NULL;
@@ -155,7 +167,7 @@ Lockable* Object::SetNetworkPos(unsigned char axis, double pos)
 	if (Utils::DoubleCompare(data.get(), pos, 0.01))
 		return NULL;
 
-	if ((pos != 2048.0 && pos != 128.0 && pos != 0.0))
+	if (IsValidCoordinate(pos))
 	{
 		if (!data.set(pos))
 			return NULL;
@@ -179,7 +191,7 @@ Lockable* Object::SetAngle(unsigned char axis, double angle)
 	if (Utils::DoubleCompare(data.get(), angle, 0.01))
 		return NULL;
 
-	if ((angle != 2048.0 && angle != 128.0 && angle != 0.0))
+	if (IsValidAngle(angle))
 	{
 		if (!data.set(angle))
 			return NULL;
@@ -266,6 +278,15 @@ bool Object::IsNearPoint(double X, double Y, double Z, double R) const
 bool Object::IsCoordinateInRange(unsigned char axis, double pos, double R) const
 {
 	return (GetGamePos(axis) > (pos - R) && GetGamePos(axis) < (pos + R));
+}
+
+bool Object::HasValidCoordinates() const
+{
+	for (const pair<const unsigned char, Value<double>>& pos : object_Network_Pos)
+		if (!IsValidCoordinate(pos.second.get()))
+			return false;
+
+	return true;
 }
 
 pDefault* Object::toPacket()

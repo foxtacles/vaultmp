@@ -47,6 +47,9 @@ class Object : public Reference
 		Value<unsigned int> cell_Network;
 		Value<bool> state_Enabled;
 
+		static bool IsValidCoordinate(double C);
+		static bool IsValidAngle(double A);
+
 		Object(const Object&);
 		Object& operator=(const Object&);
 
@@ -139,6 +142,10 @@ class Object : public Reference
 		 * \brief Returns true if the Object's coordinate sepcified by axis (axis value hex code) is in a given range
 		 */
 		bool IsCoordinateInRange(unsigned char axis, double value, double R) const;
+		/**
+		 * \brief Returns true if the Object's network coordinates are valid
+		 */
+		bool HasValidCoordinates() const;
 
 		/**
 		 * \brief For network transfer

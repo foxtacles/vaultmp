@@ -500,6 +500,9 @@ void Game::SetPos(FactoryObject reference)
 {
 	Object* object = vaultcast<Object>(reference);
 
+	if (!object->HasValidCoordinates())
+		return;
+
 	Lockable* key = NULL;
 
 	Interface::StartDynamic();
