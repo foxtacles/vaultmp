@@ -1,0 +1,12 @@
+boost
+RakNet/other
+
+*.depend
+*.layout
+*.a
+*.def
+*.exe
+*.dll
+*.workspace
+obj
+.objs

@@ -1,0 +1,28 @@
+body {
+    background: #000 url(img/fallout3bg.jpg) no-repeat top center;
+}
+
+a {
+    color: #556D8C;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.youtube {
+    width: 560px;
+    height: 760px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+}
+
+.footer {
+    color: #999999;
+    font-family: tahoma, sans-serif;
+    font-size: 10px;
+    line-height: 12px;
+    text-align: center;
+}
