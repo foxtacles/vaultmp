@@ -141,11 +141,11 @@ class Game
 		/**
 		 * \brief Sets the sneaking state of an Actor
 		 */
-		static void SetActorSneaking(FactoryObject reference, unsigned int key = 0);
+		static thread SetActorSneaking(FactoryObject reference, unsigned int key = 0);
 		/**
 		 * \brief Sets the alerted state of an Actor
 		 */
-		static void SetActorAlerted(FactoryObject reference, unsigned int key = 0);
+		static thread SetActorAlerted(FactoryObject reference, unsigned int key = 0);
 		/**
 		 * \brief Sets the moving animation of an Actor
 		 */
@@ -211,23 +211,6 @@ class Game
 		 * \brief Network function to handle Actor death
 		 */
 		static void net_SetActorDead(FactoryObject& reference, bool dead);
-
-		/**
-		 * Async task functions
-		 */
-
-		/**
-		 * \brief SetRestrained async
-		 */
-		static const function<void(NetworkID, bool)> async_SetRestrained;
-		/**
-		 * \brief SetActorAlerted async
-		 */
-		static const function<void(NetworkID, signed int)> async_SetActorAlerted;
-		/**
-		 * \brief SetActorSneaking async
-		 */
-		static const function<void(NetworkID, signed int)> async_SetActorSneaking;
 
 		/**
 		 * Interface functions

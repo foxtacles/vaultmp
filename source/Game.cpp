@@ -372,6 +372,8 @@ void Game::NewActor(FactoryObject& reference)
 {
 	NewContainer(reference);
 
+	SetRestrained(reference, true);
+
 	vector<unsigned char> values = API::RetrieveAllValues();
 
 	for (unsigned char& value : values)
@@ -380,10 +382,16 @@ void Game::NewActor(FactoryObject& reference)
 		SetActorValue(reference, false, value);
 	}
 
-	SetActorAlerted(reference);
-	SetActorSneaking(reference);
-	SetActorMovingAnimation(reference);
-	SetRestrained(reference, true);
+	Actor* actor = vaultcast<Actor>(reference);
+
+	if (actor->GetActorAlerted())
+		SetActorAlerted(reference).join();
+
+	if (actor->GetActorSneaking())
+		SetActorSneaking(reference).join();
+
+	if (actor->GetActorMovingAnimation() != AnimGroup_Idle)
+		SetActorMovingAnimation(reference);
 }
 
 void Game::NewPlayer(FactoryObject& reference)
@@ -621,38 +629,94 @@ void Game::SetActorValue(FactoryObject reference, bool base, unsigned char index
 	Interface::EndDynamic();
 }
 
-void Game::SetActorSneaking(FactoryObject reference, unsigned int key)
+thread Game::SetActorSneaking(FactoryObject reference, unsigned int key)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
 	if (!actor)
 		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
 
-	Interface::StartDynamic();
+	SetRestrained(reference, false);
 
-	ParamContainer param_SetForceSneak;
-	param_SetForceSneak.push_back(actor->GetReferenceParam());
-	param_SetForceSneak.push_back(actor->GetActorSneaking() ? Data::Param_True : Data::Param_False);
-	Interface::ExecuteCommand("SetForceSneak", param_SetForceSneak, key);
+	NetworkID id = actor->GetNetworkID();
+	thread t(AsyncTasks<AsyncPack, AsyncPack>,
 
-	Interface::EndDynamic();
+	AsyncPack(async(launch::deferred, [](NetworkID id, unsigned int key)
+	{
+		try
+		{
+			FactoryObject reference = GameFactory::GetObject(id);
+			Actor* actor = vaultcast<Actor>(reference);
+
+			Interface::StartDynamic();
+
+			ParamContainer param_SetForceSneak;
+			param_SetForceSneak.push_back(actor->GetReferenceParam());
+			param_SetForceSneak.push_back(actor->GetActorSneaking() ? Data::Param_True : Data::Param_False);
+			Interface::ExecuteCommand("SetForceSneak", param_SetForceSneak, key);
+
+			Interface::EndDynamic();
+		}
+		catch (...) {}
+	}, id, key), chrono::milliseconds(20)),
+
+	AsyncPack(async(launch::deferred, [](NetworkID id)
+	{
+		try
+		{
+			FactoryObject reference = GameFactory::GetObject(id);
+			SetRestrained(reference, true);
+		}
+		catch (...) {}
+	}, id), chrono::milliseconds(100)));
+
+	return t;
 }
 
-void Game::SetActorAlerted(FactoryObject reference, unsigned int key)
+thread Game::SetActorAlerted(FactoryObject reference, unsigned int key)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
 	if (!actor)
 		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
 
-	Interface::StartDynamic();
+	// really need to introduce restrained state in Actor class
 
-	ParamContainer param_SetAlert;
-	param_SetAlert.push_back(actor->GetReferenceParam());
-	param_SetAlert.push_back(actor->GetActorAlerted() ? Data::Param_True : Data::Param_False);
-	Interface::ExecuteCommand("SetAlert", param_SetAlert, key);
+	SetRestrained(reference, false);
 
-	Interface::EndDynamic();
+	NetworkID id = actor->GetNetworkID();
+	thread t(AsyncTasks<AsyncPack, AsyncPack>,
+
+	AsyncPack(async(launch::deferred, [](NetworkID id, unsigned int key)
+	{
+		try
+		{
+			FactoryObject reference = GameFactory::GetObject(id);
+			Actor* actor = vaultcast<Actor>(reference);
+
+			Interface::StartDynamic();
+
+			ParamContainer param_SetAlert;
+			param_SetAlert.push_back(actor->GetReferenceParam());
+			param_SetAlert.push_back(actor->GetActorAlerted() ? Data::Param_True : Data::Param_False);
+			Interface::ExecuteCommand("SetAlert", param_SetAlert, key);
+
+			Interface::EndDynamic();
+		}
+		catch (...) {}
+	}, id, key), chrono::milliseconds(20)),
+
+	AsyncPack(async(launch::deferred, [](NetworkID id)
+	{
+		try
+		{
+			FactoryObject reference = GameFactory::GetObject(id);
+			SetRestrained(reference, true);
+		}
+		catch (...) {}
+	}, id), chrono::milliseconds(100)));
+
+	return t;
 }
 
 void Game::SetActorMovingAnimation(FactoryObject reference, unsigned int key)
@@ -967,31 +1031,18 @@ void Game::net_SetActorState(FactoryObject reference, unsigned char index, unsig
 	result = actor->SetActorAlerted(alerted);
 
 	if (result && actor->GetEnabled())
-	{
-		SetRestrained(reference, false);
-		unsigned int key = result->Lock();
-		thread t(AsyncTasks<AsyncPack, AsyncPack>,  AsyncPack(async(launch::deferred, async_SetActorAlerted, actor->GetNetworkID(), key), chrono::milliseconds(20)),
-				 AsyncPack(async(launch::deferred, async_SetRestrained, actor->GetNetworkID(), true), chrono::milliseconds(100)));
-		t.detach();
-	}
+		SetActorAlerted(reference, result->Lock()).detach();
 
 	result = actor->SetActorSneaking(sneaking);
 
 	if (result && actor->GetEnabled())
-	{
-		SetRestrained(reference, false);
-		unsigned int key = result->Lock();
-		thread t(AsyncTasks<AsyncPack, AsyncPack>,  AsyncPack(async(launch::deferred, async_SetActorSneaking, actor->GetNetworkID(), key), chrono::milliseconds(20)),
-				 AsyncPack(async(launch::deferred, async_SetRestrained, actor->GetNetworkID(), true), chrono::milliseconds(100)));
-		t.detach();
-	}
+		SetActorSneaking(reference, result->Lock()).detach();
 
 	result = actor->SetActorMovingAnimation(index);
 
 	if (result && actor->GetEnabled())
 	{
-		unsigned int key = result->Lock();
-		SetActorMovingAnimation(reference, key);
+		SetActorMovingAnimation(reference, result->Lock());
 
 		if (index == AnimGroup_Idle)
 			SetPos(reference);
@@ -1036,33 +1087,6 @@ void Game::net_SetActorDead(FactoryObject& reference, bool dead)
 		}
 	}
 }
-
-const function<void(NetworkID, bool)> Game::async_SetRestrained = [](NetworkID id, bool restrained)
-{
-	try
-	{
-		SetRestrained(GameFactory::GetObject(id), restrained);
-	}
-	catch (...) {}
-};
-
-const function<void(NetworkID, signed int)> Game::async_SetActorAlerted = [](NetworkID id, unsigned int key)
-{
-	try
-	{
-		SetActorAlerted(GameFactory::GetObject(id), key);
-	}
-	catch (...) {}
-};
-
-const function<void(NetworkID, signed int)> Game::async_SetActorSneaking = [](NetworkID id, unsigned int key)
-{
-	try
-	{
-		SetActorSneaking(GameFactory::GetObject(id), key);
-	}
-	catch (...) {}
-};
 
 void Game::GetPos(FactoryObject reference, unsigned char axis, double value)
 {
