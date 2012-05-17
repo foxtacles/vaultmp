@@ -39,7 +39,7 @@ Actor::Actor(const pDefault* packet) : Container(PacketFactory::ExtractPartial(p
 	this->SetActorDead(dead);
 }
 
-Actor::Actor(pDefault* packet) : Actor(reinterpret_cast<const pDefault*>(packet))
+Actor::Actor(pDefault* packet) : Actor(static_cast<const pDefault*>(packet))
 {
 	PacketFactory::FreePacket(packet);
 }

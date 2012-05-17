@@ -53,7 +53,7 @@ Object::Object(const pDefault* packet) : Object(PacketFactory::ExtractReference(
 	this->SetEnabled(enabled);
 }
 
-Object::Object(pDefault* packet) : Object(reinterpret_cast<const pDefault*>(packet))
+Object::Object(pDefault* packet) : Object(static_cast<const pDefault*>(packet))
 {
 	PacketFactory::FreePacket(packet);
 }

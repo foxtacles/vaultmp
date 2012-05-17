@@ -39,7 +39,7 @@ Container::Container(const pDefault* packet) : Object(PacketFactory::ExtractPart
 	}
 }
 
-Container::Container(pDefault* packet) : Container(reinterpret_cast<const pDefault*>(packet))
+Container::Container(pDefault* packet) : Container(static_cast<const pDefault*>(packet))
 {
 	PacketFactory::FreePacket(packet);
 }

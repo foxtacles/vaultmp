@@ -37,7 +37,7 @@ Item::Item(const pDefault* packet) : Object(PacketFactory::ExtractPartial(packet
 	this->SetItemStick(stick);
 }
 
-Item::Item(pDefault* packet) : Item(reinterpret_cast<const pDefault*>(packet))
+Item::Item(pDefault* packet) : Item(static_cast<const pDefault*>(packet))
 {
 	PacketFactory::FreePacket(packet);
 }

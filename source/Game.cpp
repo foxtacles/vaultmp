@@ -187,6 +187,7 @@ void Game::FutureSet(weak_ptr<Lockable> data, T t)
 template void Game::FutureSet(weak_ptr<Lockable> data, unsigned int t);
 template void Game::FutureSet(weak_ptr<Lockable> data, bool t);
 
+inline
 void Game::AsyncTasks()
 {
 
