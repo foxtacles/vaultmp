@@ -19,9 +19,10 @@ using namespace Data;
  * Data specific to References are a reference ID, a base ID and a NetworkID
  */
 
-class Reference : public CriticalSection, public NetworkIDObject
+class Reference : private CriticalSection, public NetworkIDObject
 {
 		friend class GameFactory;
+		friend class FactoryObject;
 
 	private:
 		Value<unsigned int> refID;
