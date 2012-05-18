@@ -51,7 +51,7 @@ class Value : public Lockable
 		/**
 		 * \brief Gets the value
 		 */
-		T get() const;
+		T get() const { return value; };
 		/**
 		 * \brief Sets the current value as promise
 		 */

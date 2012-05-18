@@ -18,14 +18,13 @@ void Object::SetDebugHandler(Debug* debug)
 
 Object::Object(unsigned int refID, unsigned int baseID) : Reference(refID, baseID)
 {
-	vector<unsigned char>::iterator it;
 	vector<unsigned char> data = API::RetrieveAllAxis();
 
-	for (it = data.begin(); it != data.end(); ++it)
+	for (unsigned char _data : data)
 	{
-		object_Game_Pos.insert(pair<unsigned char, Value<double> >(*it, Value<double>()));
-		object_Network_Pos.insert(pair<unsigned char, Value<double> >(*it, Value<double>()));
-		object_Angle.insert(pair<unsigned char, Value<double> >(*it, Value<double>()));
+		object_Game_Pos.insert(pair<unsigned char, Value<double> >(_data, Value<double>()));
+		object_Network_Pos.insert(pair<unsigned char, Value<double> >(_data, Value<double>()));
+		object_Angle.insert(pair<unsigned char, Value<double> >(_data, Value<double>()));
 	}
 }
 
@@ -120,154 +119,52 @@ unsigned int Object::GetNetworkCell() const
 
 Lockable* Object::SetName(string name)
 {
-	if (this->object_Name.get() == name)
-		return NULL;
-
-	if (!this->object_Name.set(name))
-		return NULL;
-
-#ifdef VAULTMP_DEBUG
-
-	if (debug)
-		debug->PrintFormat("Object name was set to %s (ref: %08X)", true, this->object_Name.get().c_str(), this->GetReference());
-
-#endif
-
-	return &this->object_Name;
+	return SetObjectValue(this->object_Name, name);
 }
 
 Lockable* Object::SetGamePos(unsigned char axis, double pos)
 {
-	Value<double>& data = this->object_Game_Pos.at(axis);
-
-	if (Utils::DoubleCompare(data.get(), pos, 0.01))
+	if (!IsValidCoordinate(pos))
 		return NULL;
 
-	if (IsValidCoordinate(pos))
-	{
-		if (!data.set(pos))
-			return NULL;
-
-#ifdef VAULTMP_DEBUG
-
-		if (debug)
-			debug->PrintFormat("Object game %s-pos was set to %f (ref: %08X)", true, API::RetrieveAxis_Reverse(axis).c_str(), (float) pos, this->GetReference());
-
-#endif
-		return &data;
-	}
-
-	return NULL;
+	return SetObjectValue(this->object_Game_Pos.at(axis), pos);
 }
 
 Lockable* Object::SetNetworkPos(unsigned char axis, double pos)
 {
-	Value<double>& data = this->object_Network_Pos.at(axis);
-
-	if (Utils::DoubleCompare(data.get(), pos, 0.01))
+	if (!IsValidCoordinate(pos))
 		return NULL;
 
-	if (IsValidCoordinate(pos))
-	{
-		if (!data.set(pos))
-			return NULL;
-
-#ifdef VAULTMP_DEBUG
-
-		if (debug)
-			debug->PrintFormat("Object network %s-pos was set to %f (ref: %08X)", true, API::RetrieveAxis_Reverse(axis).c_str(), (float) pos, this->GetReference());
-
-#endif
-		return &data;
-	}
-
-	return NULL;
+	return SetObjectValue(this->object_Network_Pos.at(axis), pos);
 }
 
 Lockable* Object::SetAngle(unsigned char axis, double angle)
 {
-	Value<double>& data = this->object_Angle.at(axis);
-
-	if (Utils::DoubleCompare(data.get(), angle, 0.01))
+	if (!IsValidAngle(angle))
 		return NULL;
 
-	if (IsValidAngle(angle))
-	{
-		if (!data.set(angle))
-			return NULL;
-
-#ifdef VAULTMP_DEBUG
-
-		if (debug)
-			debug->PrintFormat("Object %s-angle was set to %f (ref: %08X)", true, API::RetrieveAxis_Reverse(axis).c_str(), (float) angle, this->GetReference());
-
-#endif
-		return &data;
-	}
-
-	return NULL;
+	return SetObjectValue(this->object_Angle.at(axis), angle);
 }
 
 Lockable* Object::SetEnabled(bool state)
 {
-	if (this->state_Enabled.get() == state)
-		return NULL;
-
-	if (!this->state_Enabled.set(state))
-		return NULL;
-
-#ifdef VAULTMP_DEBUG
-
-	if (debug)
-		debug->PrintFormat("Object enabled state was set to %d (ref: %08X)", true, (int) state, this->GetReference());
-
-#endif
-
-	return &this->state_Enabled;
+	return SetObjectValue(this->state_Enabled, state);
 }
 
 Lockable* Object::SetGameCell(unsigned int cell)
 {
-	if (this->cell_Game.get() == cell)
+	if (!cell)
 		return NULL;
 
-	if (cell != 0x00000000)
-	{
-		if (!this->cell_Game.set(cell))
-			return NULL;
-
-#ifdef VAULTMP_DEBUG
-
-		if (debug)
-			debug->PrintFormat("Object game cell was set to %08X (ref: %08X)", true, cell, this->GetReference());
-
-#endif
-		return &this->cell_Game;
-	}
-
-	return NULL;
+	return SetObjectValue(this->cell_Game, cell);
 }
 
 Lockable* Object::SetNetworkCell(unsigned int cell)
 {
-	if (this->cell_Network.get() == cell)
+	if (!cell)
 		return NULL;
 
-	if (cell != 0x00000000)
-	{
-		if (!this->cell_Network.set(cell))
-			return NULL;
-
-#ifdef VAULTMP_DEBUG
-
-		if (debug)
-			debug->PrintFormat("Object network cell was set to %08X (ref: %08X)", true, cell, this->GetReference());
-
-#endif
-		return &this->cell_Network;
-	}
-
-	return NULL;
+	return SetObjectValue(this->cell_Network, cell);
 }
 
 bool Object::IsNearPoint(double X, double Y, double Z, double R) const

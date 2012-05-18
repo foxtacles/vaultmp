@@ -18,14 +18,13 @@ Player::Player(const pDefault* packet) : Actor(PacketFactory::ExtractPartial(pac
 	initialize();
 
 	map<unsigned char, pair<unsigned char, bool> > controls;
-	map<unsigned char, pair<unsigned char, bool> >::iterator it;
 
 	PacketFactory::Access(packet, &controls);
 
-	for (it = controls.begin(); it != controls.end(); ++it)
+	for (const pair<unsigned char, pair<unsigned char, bool> >& control : controls)
 	{
-		this->SetPlayerControl(it->first, it->second.first);
-		this->SetPlayerControlEnabled(it->first, it->second.second);
+		this->SetPlayerControl(control.first, control.second.first);
+		this->SetPlayerControlEnabled(control.first, control.second.second);
 	}
 }
 
@@ -41,11 +40,10 @@ Player::~Player()
 
 void Player::initialize()
 {
-	vector<unsigned char>::iterator it;
 	vector<unsigned char> data = API::RetrieveAllControls();
 
-	for (it = data.begin(); it != data.end(); ++it)
-		player_Controls.insert(pair<unsigned char, pair<Value<unsigned char>, Value<bool> > >(*it, pair<Value<unsigned char>, Value<bool> >(Value<unsigned char>(), Value<bool>(true))));
+	for (unsigned char _data : data)
+		player_Controls.insert(pair<unsigned char, pair<Value<unsigned char>, Value<bool> > >(_data, pair<Value<unsigned char>, Value<bool> >(Value<unsigned char>(), Value<bool>(true))));
 
 	player_Respawn.set(default_respawn);
 }
@@ -87,70 +85,26 @@ unsigned int Player::GetPlayerRespawn() const
 
 Lockable* Player::SetPlayerControl(unsigned char control, unsigned char key)
 {
-	Value<unsigned char>& data = this->player_Controls.at(control).first;
-
-	if (data.get() == key)
-		return NULL;
-
-	if (!data.set(key))
-		return NULL;
-
-#ifdef VAULTMP_DEBUG
-
-	if (debug)
-		debug->PrintFormat("Player control code %02X was associated with key %02X (ref: %08X)", true, control, key, this->GetReference());
-
-#endif
-
-	return &data;
+	return SetObjectValue(this->player_Controls.at(control).first, key);
 }
 
 Lockable* Player::SetPlayerControlEnabled(unsigned char control, bool state)
 {
-	Value<bool>& data = this->player_Controls.at(control).second;
-
-	if (data.get() == state)
-		return NULL;
-
-	if (!data.set(state))
-		return NULL;
-
-#ifdef VAULTMP_DEBUG
-
-	if (debug)
-		debug->PrintFormat("Player control code %02X enabled state was set to %d (ref: %08X)", true, control, (int) state, this->GetReference());
-
-#endif
-
-	return &data;
+	return SetObjectValue(this->player_Controls.at(control).second, state);
 }
 
 Lockable* Player::SetPlayerRespawn(unsigned int respawn)
 {
-	if (player_Respawn.get() == respawn)
-		return NULL;
-
-	if (!player_Respawn.set(respawn))
-		return NULL;
-
-#ifdef VAULTMP_DEBUG
-
-	if (debug)
-		debug->PrintFormat("Player respawn time was set to %d (ref: %08X)", true, respawn, this->GetReference());
-
-#endif
-
-	return &player_Respawn;
+	return SetObjectValue(this->player_Respawn, respawn);
 }
 
 pDefault* Player::toPacket()
 {
-	vector<unsigned char>::iterator it;
 	vector<unsigned char> data = API::RetrieveAllControls();
 	map<unsigned char, pair<unsigned char, bool> > controls;
 
-	for (it = data.begin(); it != data.end(); ++it)
-		controls.insert(pair<unsigned char, pair<unsigned char, bool> >(*it, pair<unsigned char, bool>(this->GetPlayerControl(*it), this->GetPlayerControlEnabled(*it))));
+	for (unsigned char _data : data)
+		controls.insert(pair<unsigned char, pair<unsigned char, bool> >(_data, pair<unsigned char, bool>(this->GetPlayerControl(_data), this->GetPlayerControlEnabled(_data))));
 
 	pDefault* pActorNew = Actor::toPacket();
 

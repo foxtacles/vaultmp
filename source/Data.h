@@ -45,11 +45,13 @@ namespace Data
 		return *reinterpret_cast<T*>(&r);
 	}
 
+	inline
 	static Parameter BuildParameter(string param)
 	{
 		return Parameter(vector<string> {param}, NULL);
 	}
 
+	inline
 	static Parameter BuildParameter(vector<string> params)
 	{
 		return Parameter(params, NULL);

@@ -28,26 +28,51 @@ unsigned int Reference::ResolveIndex(unsigned int baseID)
 	return baseID;
 }
 
+template <typename T>
+Lockable* Reference::SetObjectValue(Value<T>& dest, T value)
+{
+	if (dest.get() == value)
+		return NULL;
+
+	if (!dest.set(value))
+		return NULL;
+
+#ifdef VAULTMP_DEBUG
+
+#endif
+
+	return &dest;
+}
+
+template <>
+Lockable* Reference::SetObjectValue(Value<double>& dest, double value)
+{
+	if (Utils::DoubleCompare(dest.get(), value, 0.0001))
+		return NULL;
+
+	if (!dest.set(value))
+		return NULL;
+
+#ifdef VAULTMP_DEBUG
+
+#endif
+
+	return &dest;
+}
+
+template Lockable* Reference::SetObjectValue(Value<unsigned int>& dest, unsigned int value);
+template Lockable* Reference::SetObjectValue(Value<unsigned char>& dest, unsigned char value);
+template Lockable* Reference::SetObjectValue(Value<bool>& dest, bool value);
+template Lockable* Reference::SetObjectValue(Value<string>& dest, string value);
+
 Lockable* Reference::SetReference(unsigned int refID)
 {
-	if (this->refID.get() == refID)
-		return NULL;
-
-	if (!this->refID.set(refID))
-		return NULL;
-
-	return &this->refID;
+	return SetObjectValue(this->refID, refID);
 }
 
 Lockable* Reference::SetBase(unsigned int baseID)
 {
-	if (this->baseID.get() == baseID)
-		return NULL;
-
-	if (!this->baseID.set(baseID))
-		return NULL;
-
-	return &this->baseID;
+	return SetObjectValue(this->baseID, baseID);
 }
 
 unsigned int Reference::GetReference() const
@@ -64,14 +89,4 @@ bool Reference::IsPersistent() const
 {
 	unsigned int refID = GetReference();
 	return !(refID & 0xFF000000) && refID;
-}
-
-const Parameter Reference::GetReferenceParam() const
-{
-	return Parameter(vector<string> {Utils::LongToHex(refID.get())}, NULL);
-}
-
-const Parameter Reference::GetBaseParam() const
-{
-	return Parameter(vector<string> {Utils::LongToHex(baseID.get())}, NULL);
 }

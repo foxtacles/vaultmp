@@ -30,11 +30,14 @@ class Reference : private CriticalSection, public NetworkIDObject
 
 		static IndexLookup Mods;
 
-		Reference(const Reference&);
-		Reference& operator=(const Reference&);
+		Reference(const Reference&) = delete;
+		Reference& operator=(const Reference&) = delete;
 
 	protected:
 		static unsigned int ResolveIndex(unsigned int baseID);
+
+		template <typename T>
+		static Lockable* SetObjectValue(Value<T>& dest, T value);
 
 		Reference(unsigned int refID, unsigned int baseID);
 		virtual ~Reference();
@@ -66,11 +69,17 @@ class Reference : private CriticalSection, public NetworkIDObject
 		/**
 		 * \brief Returns a constant Parameter used to pass the reference ID of this Reference to the Interface
 		 */
-		const Parameter GetReferenceParam() const;
+		const Parameter GetReferenceParam() const
+		{
+			return Parameter(vector<string> {Utils::LongToHex(refID.get())}, NULL);
+		};
 		/**
 		 * \brief Returns a constant Parameter used to pass the base ID of this Reference to the Interface
 		 */
-		const Parameter GetBaseParam() const;
+		const Parameter GetBaseParam() const
+		{
+			return Parameter(vector<string> {Utils::LongToHex(baseID.get())}, NULL);
+		};
 
 		/**
 		 * \brief For network transfer

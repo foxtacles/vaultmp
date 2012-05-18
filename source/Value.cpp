@@ -28,13 +28,6 @@ bool Value<T>::set(T value)
 }
 
 template <typename T>
-inline
-T Value<T>::get() const
-{
-	return value;
-}
-
-template <typename T>
 bool Value<T>::set_promise()
 {
 	this->async.set_value(this->get());

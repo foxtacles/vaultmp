@@ -51,13 +51,12 @@ Actor::~Actor()
 
 void Actor::initialize()
 {
-	vector<unsigned char>::iterator it;
 	vector<unsigned char> data = API::RetrieveAllValues();
 
-	for (it = data.begin(); it != data.end(); ++it)
+	for (unsigned char _data : data)
 	{
-		actor_Values.insert(pair<unsigned char, Value<double> >(*it, Value<double>()));
-		actor_BaseValues.insert(pair<unsigned char, Value<double> >(*it, Value<double>()));
+		actor_Values.insert(pair<unsigned char, Value<double> >(_data, Value<double>()));
+		actor_BaseValues.insert(pair<unsigned char, Value<double> >(_data, Value<double>()));
 	}
 
 	if (Actor::Actors)
@@ -146,42 +145,12 @@ bool Actor::GetActorDead() const
 
 Lockable* Actor::SetActorValue(unsigned char index, double value)
 {
-	Value<double>& data = this->actor_Values.at(index);
-
-	if (Utils::DoubleCompare(data.get(), value, 0.01))
-		return NULL;
-
-	if (!data.set(value))
-		return NULL;
-
-#ifdef VAULTMP_DEBUG
-
-	if (debug)
-		debug->PrintFormat("Actor value %s was set to %f (ref: %08X)", true, API::RetrieveValue_Reverse(index).c_str(), (float) value, this->GetReference());
-
-#endif
-
-	return &data;
+	return SetObjectValue(this->actor_Values.at(index), value);
 }
 
 Lockable* Actor::SetActorBaseValue(unsigned char index, double value)
 {
-	Value<double>& data = this->actor_BaseValues.at(index);
-
-	if (Utils::DoubleCompare(data.get(), value, 0.01))
-		return NULL;
-
-	if (!data.set(value))
-		return NULL;
-
-#ifdef VAULTMP_DEBUG
-
-	if (debug)
-		debug->PrintFormat("Actor base value %s was set to %f (ref: %08X)", true, API::RetrieveValue_Reverse(index).c_str(), (float) value, this->GetReference());
-
-#endif
-
-	return &data;
+	return SetObjectValue(this->actor_BaseValues.at(index), value);
 }
 
 Lockable* Actor::SetActorMovingAnimation(unsigned char index)
@@ -191,92 +160,27 @@ Lockable* Actor::SetActorMovingAnimation(unsigned char index)
 	if (anim.empty())
 		throw VaultException("Value %02X not defined in database", index);
 
-	if (anim_Moving.get() == index)
-		return NULL;
-
-	if (!anim_Moving.set(index))
-		return NULL;
-
-#ifdef VAULTMP_DEBUG
-
-	if (debug)
-		debug->PrintFormat("Actor moving animation was set to %s (ref: %08X)", true,  anim.c_str(), this->GetReference());
-
-#endif
-
-	return &anim_Moving;
+	return SetObjectValue(this->anim_Moving, index);
 }
 
 Lockable* Actor::SetActorMovingXY(unsigned char moving)
 {
-	if (this->state_MovingXY.get() == moving)
-		return NULL;
-
-	if (!this->state_MovingXY.set(moving))
-		return NULL;
-
-#ifdef VAULTMP_DEBUG
-
-	if (debug)
-		debug->PrintFormat("Actor moving state was set to %02X (ref: %08X)", true, moving, this->GetReference());
-
-#endif
-
-	return &this->state_MovingXY;
+	return SetObjectValue(this->state_MovingXY, moving);
 }
 
 Lockable* Actor::SetActorAlerted(bool state)
 {
-	if (this->state_Alerted.get() == state)
-		return NULL;
-
-	if (!this->state_Alerted.set(state))
-		return NULL;
-
-#ifdef VAULTMP_DEBUG
-
-	if (debug)
-		debug->PrintFormat("Actor alerted state was set to %d (ref: %08X)", true, (int) state, this->GetReference());
-
-#endif
-
-	return &this->state_Alerted;
+	return SetObjectValue(this->state_Alerted, state);
 }
 
 Lockable* Actor::SetActorSneaking(bool state)
 {
-	if (this->state_Sneaking.get() == state)
-		return NULL;
-
-	if (!this->state_Sneaking.set(state))
-		return NULL;
-
-#ifdef VAULTMP_DEBUG
-
-	if (debug)
-		debug->PrintFormat("Actor sneaking state was set to %d (ref: %08X)", true, (int) state, this->GetReference());
-
-#endif
-
-	return &this->state_Sneaking;
+	return SetObjectValue(this->state_Sneaking, state);
 }
 
 Lockable* Actor::SetActorDead(bool state)
 {
-	if (this->state_Dead.get() == state)
-		return NULL;
-
-	if (!this->state_Dead.set(state))
-		return NULL;
-
-#ifdef VAULTMP_DEBUG
-
-	if (debug)
-		debug->PrintFormat("Actor dead state was set to %d (ref: %08X)", true, (int) state, this->GetReference());
-
-#endif
-
-	return &this->state_Dead;
+	return SetObjectValue(this->state_Dead, state);
 }
 
 bool Actor::IsActorJumping() const
@@ -294,14 +198,13 @@ bool Actor::IsActorJumping() const
 
 pDefault* Actor::toPacket()
 {
-	vector<unsigned char>::iterator it;
 	vector<unsigned char> data = API::RetrieveAllValues();
 	map<unsigned char, double> values, baseValues;
 
-	for (it = data.begin(); it != data.end(); ++it)
+	for (unsigned char _data : data)
 	{
-		values.insert(pair<unsigned char, double>(*it, this->GetActorValue(*it)));
-		baseValues.insert(pair<unsigned char, double>(*it, this->GetActorBaseValue(*it)));
+		values.insert(pair<unsigned char, double>(_data, this->GetActorValue(_data)));
+		baseValues.insert(pair<unsigned char, double>(_data, this->GetActorBaseValue(_data)));
 	}
 
 	pDefault* pContainerNew = Container::toPacket();

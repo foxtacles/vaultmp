@@ -85,90 +85,29 @@ bool Item::GetItemStick() const
 	return this->flag_Stick.get();
 }
 
-bool Item::SetItemCount(unsigned int count)
+Lockable* Item::SetItemCount(unsigned int count)
 {
-	if (this->item_Count.get() == count)
-		return false;
-
-	if (!this->item_Count.set(count))
-		return false;
-
-#ifdef VAULTMP_DEBUG
-
-	if (debug)
-		debug->PrintFormat("Item count was set to %d (ref: %08X)", true, count, this->GetReference());
-
-#endif
+	return SetObjectValue(this->item_Count, count);
 }
 
-bool Item::SetItemCondition(double condition)
+Lockable* Item::SetItemCondition(double condition)
 {
-	if (this->item_Condition.get() == condition)
-		return false;
-
-	if (!this->item_Condition.set(condition))
-		return false;
-
-#ifdef VAULTMP_DEBUG
-
-	if (debug)
-		debug->PrintFormat("Item condition was set to %f (ref: %08X)", true, (float) condition, this->GetReference());
-
-#endif
+	return SetObjectValue(this->item_Condition, condition);
 }
 
-bool Item::SetItemEquipped(bool state)
+Lockable* Item::SetItemEquipped(bool state)
 {
-	if (this->state_Equipped.get() == state)
-		return false;
-
-	if (!this->state_Equipped.set(state))
-		return false;
-
-#ifdef VAULTMP_DEBUG
-
-	if (debug)
-		debug->PrintFormat("Item equipped state was set to %d (ref: %08X)", true, (int) state, this->GetReference());
-
-#endif
-
-	return true;
+	return SetObjectValue(this->state_Equipped, state);
 }
 
-bool Item::SetItemSilent(bool silent)
+Lockable* Item::SetItemSilent(bool silent)
 {
-	if (this->flag_Silent.get() == silent)
-		return false;
-
-	if (!this->flag_Silent.set(silent))
-		return false;
-
-#ifdef VAULTMP_DEBUG
-
-	if (debug)
-		debug->PrintFormat("Item silent flag was set to %d (ref: %08X)", true, (int) silent, this->GetReference());
-
-#endif
-
-	return true;
+	return SetObjectValue(this->flag_Silent, silent);
 }
 
-bool Item::SetItemStick(bool stick)
+Lockable* Item::SetItemStick(bool stick)
 {
-	if (this->flag_Stick.get() == stick)
-		return false;
-
-	if (!this->flag_Stick.set(stick))
-		return false;
-
-#ifdef VAULTMP_DEBUG
-
-	if (debug)
-		debug->PrintFormat("Item stick flag was set to %d (ref: %08X)", true, (int) stick, this->GetReference());
-
-#endif
-
-	return true;
+	return SetObjectValue(this->flag_Stick, stick);
 }
 
 NetworkID Item::Copy() const

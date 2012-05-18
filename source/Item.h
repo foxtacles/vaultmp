@@ -58,11 +58,11 @@ class Item : public Object
 		bool GetItemSilent() const;
 		bool GetItemStick() const;
 
-		bool SetItemCount(unsigned int count);
-		bool SetItemCondition(double condition);
-		bool SetItemEquipped(bool state);
-		bool SetItemSilent(bool silent);
-		bool SetItemStick(bool stick);
+		Lockable* SetItemCount(unsigned int count);
+		Lockable* SetItemCondition(double condition);
+		Lockable* SetItemEquipped(bool state);
+		Lockable* SetItemSilent(bool silent);
+		Lockable* SetItemStick(bool stick);
 
 		NetworkID Copy() const;
 
