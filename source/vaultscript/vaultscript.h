@@ -46,7 +46,7 @@ namespace vaultmp {
 	typedef uint8_t Reason;
 	typedef uint8_t Index;
 	typedef uint8_t Type;
-	typedef uint32_t State;
+	typedef uint8_t State;
 	typedef uint32_t Reference;
 	typedef uint32_t Base;
 	typedef uint32_t Cell;
@@ -78,28 +78,28 @@ namespace vaultmp {
 	#define ALL_CONTAINERS		(ID_CONTAINER | ID_ACTOR | ID_PLAYER)
 	#define ALL_ACTORS			(ID_ACTOR | ID_PLAYER)
 #else
-	enum Reason _CPP(: uint8_t);
+	enum Reason : uint8_t;
 
-	enum State _CPP(: bool)
+	enum State : bool
 	{
-		True    =   _CPP(true) _C(1),
-		False   =   _CPP(false) _C(0),
+		True    =   true,
+		False   =   false
 	};
 
-	enum Reference _CPP(: uint32_t);
-	enum Base _CPP(: uint32_t);
-	enum Cell _CPP(: uint32_t);
+	enum Reference : uint32_t;
+	enum Base : uint32_t;
+	enum Cell : uint32_t;
 
-	enum Interval _CPP(: uint32_t)
+	enum Interval : uint32_t
 	{
 		DEFAULT_PLAYER_RESPAWN  =   8000,
 	};
 
-	enum ID _CPP(: uint64_t);
-	enum Timer _CPP(: uint64_t);
-	enum Result _CPP(: uint64_t);
+	enum ID : uint64_t;
+	enum Timer : uint64_t;
+	enum Result : uint64_t;
 
-	enum _CPP(class) Index _CPP(: uint8_t)
+	enum class Index : uint8_t
 	{
 		FALLOUT3            =   0x01,
 		NEWVEGAS            =   FALLOUT3 << 1,
@@ -111,7 +111,7 @@ namespace vaultmp {
 		MAX_MESSAGE_LENGTH  =   64,
 	};
 
-	enum _CPP(class) Type _CPP(: uint8_t)
+	enum class Type : uint8_t
 	{
 		ID_REFERENCE        =   0x01,
 		ID_OBJECT           =   ID_REFERENCE << 1,
