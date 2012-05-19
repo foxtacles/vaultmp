@@ -144,7 +144,7 @@ namespace vaultmp {
 	#define RawArray(type)		RawArray<type>
 
 	template <typename... Types>
-	using Function = Result (__cdecl*)(Types...);
+	using Function = Result (__cdecl*)(Types...) noexcept;
 
 	#define RawFunction(types) 	Function<types>
 }
@@ -153,78 +153,78 @@ namespace vaultmp {
 _CPP(extern "C" {)
 	VAULTVAR VAULTSPACE RawChar vaultprefix = VAULTPREFIX_C;
 
-	VAULTSCRIPT VAULTSPACE Void exec();
+	VAULTSCRIPT VAULTSPACE Void exec() _CPP(noexcept);
 
-	VAULTSCRIPT VAULTSPACE Void OnSpawn(VAULTSPACE ID);
-	VAULTSCRIPT VAULTSPACE Void OnCellChange(VAULTSPACE ID, VAULTSPACE Cell);
-	VAULTSCRIPT VAULTSPACE Void OnContainerItemChange(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE Count, VAULTSPACE Value);
-	VAULTSCRIPT VAULTSPACE Void OnActorValueChange(VAULTSPACE ID, VAULTSPACE Index, VAULTSPACE Value);
-	VAULTSCRIPT VAULTSPACE Void OnActorBaseValueChange(VAULTSPACE ID, VAULTSPACE Index, VAULTSPACE Value);
-	VAULTSCRIPT VAULTSPACE Void OnActorAlert(VAULTSPACE ID, VAULTSPACE State);
-	VAULTSCRIPT VAULTSPACE Void OnActorSneak(VAULTSPACE ID, VAULTSPACE State);
-	VAULTSCRIPT VAULTSPACE Void OnActorDeath(VAULTSPACE ID);
-	VAULTSCRIPT VAULTSPACE Void OnActorEquipItem(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE Value);
-	VAULTSCRIPT VAULTSPACE Void OnActorUnequipItem(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE Value);
-	VAULTSCRIPT VAULTSPACE Void OnPlayerDisconnect(VAULTSPACE ID, VAULTSPACE Reason);
-	VAULTSCRIPT VAULTSPACE Base OnPlayerRequestGame(VAULTSPACE ID);
-	VAULTSCRIPT VAULTSPACE State OnClientAuthenticate(VAULTSPACE cRawString, VAULTSPACE cRawString);
+	VAULTSCRIPT VAULTSPACE Void OnSpawn(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void OnCellChange(VAULTSPACE ID, VAULTSPACE Cell) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void OnContainerItemChange(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE Count, VAULTSPACE Value) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void OnActorValueChange(VAULTSPACE ID, VAULTSPACE Index, VAULTSPACE Value) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void OnActorBaseValueChange(VAULTSPACE ID, VAULTSPACE Index, VAULTSPACE Value) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void OnActorAlert(VAULTSPACE ID, VAULTSPACE State) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void OnActorSneak(VAULTSPACE ID, VAULTSPACE State) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void OnActorDeath(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void OnActorEquipItem(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE Value) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void OnActorUnequipItem(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE Value) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void OnPlayerDisconnect(VAULTSPACE ID, VAULTSPACE Reason) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Base OnPlayerRequestGame(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State OnClientAuthenticate(VAULTSPACE cRawString, VAULTSPACE cRawString) _CPP(noexcept);
 
-	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(timestamp))();
-	VAULTSCRIPT VAULTSPACE Timer (*VAULTPREFIX(CreateTimer))(VAULTSPACE RawFunction(), VAULTSPACE Interval);
-	VAULTSCRIPT VAULTSPACE Timer (*VAULTPREFIX(CreateTimerEx))(VAULTSPACE RawFunction(), VAULTSPACE Interval, VAULTSPACE cRawString, ...);
-	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(KillTimer))(VAULTSPACE Timer);
-	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(MakePublic))(VAULTSPACE RawFunction(), VAULTSPACE cRawString, VAULTSPACE cRawString);
-	VAULTSCRIPT VAULTSPACE Result (*VAULTPREFIX(CallPublic))(VAULTSPACE cRawString, ...);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(timestamp))() _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Timer (*VAULTPREFIX(CreateTimer))(VAULTSPACE RawFunction(), VAULTSPACE Interval) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Timer (*VAULTPREFIX(CreateTimerEx))(VAULTSPACE RawFunction(), VAULTSPACE Interval, VAULTSPACE cRawString, ...) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(KillTimer))(VAULTSPACE Timer) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(MakePublic))(VAULTSPACE RawFunction(), VAULTSPACE cRawString, VAULTSPACE cRawString) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Result (*VAULTPREFIX(CallPublic))(VAULTSPACE cRawString, ...) _CPP(noexcept);
 
-	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(SetServerName))(VAULTSPACE cRawString);
-	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(SetServerMap))(VAULTSPACE cRawString);
-	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(SetServerRule))(VAULTSPACE cRawString, VAULTSPACE cRawString);
-	VAULTSCRIPT VAULTSPACE Index (*VAULTPREFIX(GetGameCode))();
-	VAULTSCRIPT VAULTSPACE UCount (*VAULTPREFIX(GetMaximumPlayers))();
-	VAULTSCRIPT VAULTSPACE UCount (*VAULTPREFIX(GetCurrentPlayers))();
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(SetServerName))(VAULTSPACE cRawString) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(SetServerMap))(VAULTSPACE cRawString) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(SetServerRule))(VAULTSPACE cRawString, VAULTSPACE cRawString) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Index (*VAULTPREFIX(GetGameCode))() _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE UCount (*VAULTPREFIX(GetMaximumPlayers))() _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE UCount (*VAULTPREFIX(GetCurrentPlayers))() _CPP(noexcept);
 
-	VAULTSCRIPT VAULTSPACE cRawString (*VAULTPREFIX(ValueToString))(VAULTSPACE Index);
-	VAULTSCRIPT VAULTSPACE cRawString (*VAULTPREFIX(AxisToString))(VAULTSPACE Index);
-	VAULTSCRIPT VAULTSPACE cRawString (*VAULTPREFIX(AnimToString))(VAULTSPACE Index);
+	VAULTSCRIPT VAULTSPACE cRawString (*VAULTPREFIX(ValueToString))(VAULTSPACE Index) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE cRawString (*VAULTPREFIX(AxisToString))(VAULTSPACE Index) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE cRawString (*VAULTPREFIX(AnimToString))(VAULTSPACE Index) _CPP(noexcept);
 
-	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(UIMessage))(VAULTSPACE ID, VAULTSPACE cRawString);
-	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(SetRespawn))(VAULTSPACE Interval);
-	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(IsValid))(VAULTSPACE ID);
-	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(IsObject))(VAULTSPACE ID);
-	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(IsItem))(VAULTSPACE ID);
-	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(IsContainer))(VAULTSPACE ID);
-	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(IsActor))(VAULTSPACE ID);
-	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(IsPlayer))(VAULTSPACE ID);
-	VAULTSCRIPT VAULTSPACE Type (*VAULTPREFIX(GetType))(VAULTSPACE ID);
-	VAULTSCRIPT VAULTSPACE UCount (*VAULTPREFIX(GetCount))(VAULTSPACE Type);
-	VAULTSCRIPT VAULTSPACE UCount (*VAULTPREFIX(GetList))(VAULTSPACE Type, VAULTSPACE RawArray(VAULTSPACE ID)*);
+	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(UIMessage))(VAULTSPACE ID, VAULTSPACE cRawString) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(SetRespawn))(VAULTSPACE Interval) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(IsValid))(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(IsObject))(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(IsItem))(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(IsContainer))(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(IsActor))(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(IsPlayer))(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Type (*VAULTPREFIX(GetType))(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE UCount (*VAULTPREFIX(GetCount))(VAULTSPACE Type) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE UCount (*VAULTPREFIX(GetList))(VAULTSPACE Type, VAULTSPACE RawArray(VAULTSPACE ID)*) _CPP(noexcept);
 
-	VAULTSCRIPT VAULTSPACE Reference (*VAULTPREFIX(GetReference))(VAULTSPACE ID);
-	VAULTSCRIPT VAULTSPACE Base (*VAULTPREFIX(GetBase))(VAULTSPACE ID);
-	VAULTSCRIPT VAULTSPACE cRawString (*VAULTPREFIX(GetName))(VAULTSPACE ID);
-	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(GetPos))(VAULTSPACE ID, VAULTSPACE Value*, VAULTSPACE Value*, VAULTSPACE Value*);
-	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(GetAngle))(VAULTSPACE ID, VAULTSPACE Value*, VAULTSPACE Value*, VAULTSPACE Value*);
-	VAULTSCRIPT VAULTSPACE Cell (*VAULTPREFIX(GetCell))(VAULTSPACE ID);
-	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(IsNearPoint))(VAULTSPACE ID, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value);
-	VAULTSCRIPT VAULTSPACE UCount (*VAULTPREFIX(GetContainerItemCount))(VAULTSPACE ID, VAULTSPACE Base);
-	VAULTSCRIPT VAULTSPACE Value (*VAULTPREFIX(GetActorValue))(VAULTSPACE ID, VAULTSPACE Index);
-	VAULTSCRIPT VAULTSPACE Value (*VAULTPREFIX(GetActorBaseValue))(VAULTSPACE ID, VAULTSPACE Index);
-	VAULTSCRIPT VAULTSPACE Index (*VAULTPREFIX(GetActorMovingAnimation))(VAULTSPACE ID);
-	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(GetActorAlerted))(VAULTSPACE ID);
-	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(GetActorSneaking))(VAULTSPACE ID);
-	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(GetActorDead))(VAULTSPACE ID);
-	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(IsActorJumping))(VAULTSPACE ID);
+	VAULTSCRIPT VAULTSPACE Reference (*VAULTPREFIX(GetReference))(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Base (*VAULTPREFIX(GetBase))(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE cRawString (*VAULTPREFIX(GetName))(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(GetPos))(VAULTSPACE ID, VAULTSPACE Value*, VAULTSPACE Value*, VAULTSPACE Value*) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(GetAngle))(VAULTSPACE ID, VAULTSPACE Value*, VAULTSPACE Value*, VAULTSPACE Value*) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Cell (*VAULTPREFIX(GetCell))(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(IsNearPoint))(VAULTSPACE ID, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE UCount (*VAULTPREFIX(GetContainerItemCount))(VAULTSPACE ID, VAULTSPACE Base) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Value (*VAULTPREFIX(GetActorValue))(VAULTSPACE ID, VAULTSPACE Index) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Value (*VAULTPREFIX(GetActorBaseValue))(VAULTSPACE ID, VAULTSPACE Index) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Index (*VAULTPREFIX(GetActorMovingAnimation))(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(GetActorAlerted))(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(GetActorSneaking))(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(GetActorDead))(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(IsActorJumping))(VAULTSPACE ID) _CPP(noexcept);
 
-	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(AddItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE UCount, VAULTSPACE Value, VAULTSPACE State);
-	VAULTSCRIPT VAULTSPACE UCount (*VAULTPREFIX(RemoveItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE UCount, VAULTSPACE State);
-	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(RemoveAllItems))(VAULTSPACE ID);
-	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(SetActorValue))(VAULTSPACE ID, VAULTSPACE Index, VAULTSPACE Value);
-	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(SetActorBaseValue))(VAULTSPACE ID, VAULTSPACE Index, VAULTSPACE Value);
-	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(EquipItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE State, VAULTSPACE State);
-	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(UnequipItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE State, VAULTSPACE State);
-	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(KillActor))(VAULTSPACE ID);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(AddItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE UCount, VAULTSPACE Value, VAULTSPACE State) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE UCount (*VAULTPREFIX(RemoveItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE UCount, VAULTSPACE State) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(RemoveAllItems))(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(SetActorValue))(VAULTSPACE ID, VAULTSPACE Index, VAULTSPACE Value) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(SetActorBaseValue))(VAULTSPACE ID, VAULTSPACE Index, VAULTSPACE Value) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(EquipItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE State, VAULTSPACE State) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(UnequipItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE State, VAULTSPACE State) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(KillActor))(VAULTSPACE ID) _CPP(noexcept);
 
-	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(SetPlayerRespawn))(VAULTSPACE ID, VAULTSPACE Interval);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(SetPlayerRespawn))(VAULTSPACE ID, VAULTSPACE Interval) _CPP(noexcept);
 _CPP(})
 
 #ifdef __cplusplus
@@ -267,53 +267,53 @@ namespace vaultmp
 		TypeChar<typeof(Types), sizeof(Types)>::value...
 	};
 
-	VAULTFUNCTION Void timestamp() { return VAULTPREFIX(timestamp)(); }
-	VAULTFUNCTION Timer CreateTimer(Function<> function, Interval interval) { return VAULTPREFIX(CreateTimer)(function, interval); }
+	VAULTFUNCTION Void timestamp() noexcept { return VAULTPREFIX(timestamp)(); }
+	VAULTFUNCTION Timer CreateTimer(Function<> function, Interval interval) noexcept { return VAULTPREFIX(CreateTimer)(function, interval); }
 
 	template<typename... Types>
-	VAULTFUNCTION Timer CreateTimer(Result (*function)(Types...), Interval interval, Types... values)
+	VAULTFUNCTION Timer CreateTimer(Function<Types...> function, Interval interval, Types... values) noexcept
 	{
 		cRawString types = TypeString<Types...>::value;
 		return VAULTPREFIX(CreateTimerEx)(reinterpret_cast<Function<>>(function), interval, types, values...);
 	}
 
-	VAULTFUNCTION Void KillTimer(Timer timer = (Timer) 0) { return VAULTPREFIX(KillTimer)(timer); }
+	VAULTFUNCTION Void KillTimer(Timer timer = (Timer) 0) noexcept { return VAULTPREFIX(KillTimer)(timer); }
 
 	template<typename... Types>
-	VAULTFUNCTION Void MakePublic(Result (*function)(Types...), String name)
+	VAULTFUNCTION Void MakePublic(Function<Types...> function, String name) noexcept
 	{
 		cRawString types = TypeString<Types...>::value;
 		return VAULTPREFIX(MakePublic)(reinterpret_cast<Function<>>(function), name.c_str(), types);
 	}
 
 	template<typename... Types>
-	VAULTFUNCTION Result CallPublic(String name, Types... values)
+	VAULTFUNCTION Result CallPublic(String name, Types... values) noexcept
 	{
 		return VAULTPREFIX(CallPublic)(name.c_str(), values...);
 	}
 
-	VAULTFUNCTION Void SetServerName(String name) { return VAULTPREFIX(SetServerName)(name.c_str()); }
-	VAULTFUNCTION Void SetServerMap(String map) { return VAULTPREFIX(SetServerMap)(map.c_str()); }
-	VAULTFUNCTION Void SetServerRule(String key, String value) { return VAULTPREFIX(SetServerRule)(key.c_str(), value.c_str()); }
-	VAULTFUNCTION Index GetGameCode() { return VAULTPREFIX(GetGameCode)(); }
-	VAULTFUNCTION UCount GetMaximumPlayers() { return VAULTPREFIX(GetMaximumPlayers)(); }
-	VAULTFUNCTION UCount GetCurrentPlayers() { return VAULTPREFIX(GetCurrentPlayers)(); }
+	VAULTFUNCTION Void SetServerName(String name) noexcept { return VAULTPREFIX(SetServerName)(name.c_str()); }
+	VAULTFUNCTION Void SetServerMap(String map) noexcept { return VAULTPREFIX(SetServerMap)(map.c_str()); }
+	VAULTFUNCTION Void SetServerRule(String key, String value) noexcept { return VAULTPREFIX(SetServerRule)(key.c_str(), value.c_str()); }
+	VAULTFUNCTION Index GetGameCode() noexcept { return VAULTPREFIX(GetGameCode)(); }
+	VAULTFUNCTION UCount GetMaximumPlayers() noexcept { return VAULTPREFIX(GetMaximumPlayers)(); }
+	VAULTFUNCTION UCount GetCurrentPlayers() noexcept { return VAULTPREFIX(GetCurrentPlayers)(); }
 
-	VAULTFUNCTION String ValueToString(Index index) { return String(VAULTPREFIX(ValueToString)(index)); }
-	VAULTFUNCTION String AxisToString(Index index) { return String(VAULTPREFIX(AxisToString)(index)); }
-	VAULTFUNCTION String AnimToString(Index index) { return String(VAULTPREFIX(AnimToString)(index)); }
+	VAULTFUNCTION String ValueToString(Index index) noexcept { return String(VAULTPREFIX(ValueToString)(index)); }
+	VAULTFUNCTION String AxisToString(Index index) noexcept { return String(VAULTPREFIX(AxisToString)(index)); }
+	VAULTFUNCTION String AnimToString(Index index) noexcept { return String(VAULTPREFIX(AnimToString)(index)); }
 
-	VAULTFUNCTION State UIMessage(ID id, String message) { return VAULTPREFIX(UIMessage)(id, message.c_str()); }
-	VAULTFUNCTION Void SetRespawn(Interval interval) { return VAULTPREFIX(SetRespawn)(interval); }
-	VAULTFUNCTION State IsValid(ID id) { return VAULTPREFIX(IsValid)(id); }
-	VAULTFUNCTION State IsObject(ID id) { return VAULTPREFIX(IsObject)(id); }
-	VAULTFUNCTION State IsItem(ID id) { return VAULTPREFIX(IsItem)(id); }
-	VAULTFUNCTION State IsContainer(ID id) { return VAULTPREFIX(IsContainer)(id); }
-	VAULTFUNCTION State IsActor(ID id) { return VAULTPREFIX(IsActor)(id); }
-	VAULTFUNCTION State IsPlayer(ID id) { return VAULTPREFIX(IsPlayer)(id); }
-	VAULTFUNCTION Type GetType(ID id) { return VAULTPREFIX(GetType)(id); }
-	VAULTFUNCTION UCount GetCount(Type type) { return VAULTPREFIX(GetCount)(type); }
-	VAULTFUNCTION IDVector GetList(Type type)
+	VAULTFUNCTION State UIMessage(ID id, String message) noexcept { return VAULTPREFIX(UIMessage)(id, message.c_str()); }
+	VAULTFUNCTION Void SetRespawn(Interval interval) noexcept { return VAULTPREFIX(SetRespawn)(interval); }
+	VAULTFUNCTION State IsValid(ID id) noexcept { return VAULTPREFIX(IsValid)(id); }
+	VAULTFUNCTION State IsObject(ID id) noexcept { return VAULTPREFIX(IsObject)(id); }
+	VAULTFUNCTION State IsItem(ID id) noexcept { return VAULTPREFIX(IsItem)(id); }
+	VAULTFUNCTION State IsContainer(ID id) noexcept { return VAULTPREFIX(IsContainer)(id); }
+	VAULTFUNCTION State IsActor(ID id) noexcept { return VAULTPREFIX(IsActor)(id); }
+	VAULTFUNCTION State IsPlayer(ID id) noexcept { return VAULTPREFIX(IsPlayer)(id); }
+	VAULTFUNCTION Type GetType(ID id) noexcept { return VAULTPREFIX(GetType)(id); }
+	VAULTFUNCTION UCount GetCount(Type type) noexcept { return VAULTPREFIX(GetCount)(type); }
+	VAULTFUNCTION IDVector GetList(Type type) noexcept
 	{
 		RawArray<ID> data;
 		UCount size = VAULTPREFIX(GetList)(type, &data);

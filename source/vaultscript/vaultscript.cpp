@@ -3,11 +3,11 @@
 
 using namespace vaultmp;
 
-Result bla(int, ID , int, IDVector*) {
+Result bla(int, ID , int, IDVector*) _CPP(noexcept) {
 	return Result();
 }
 
-Void VAULTSCRIPT exec()
+Void VAULTSCRIPT exec() _CPP(noexcept)
 {
 	IDVector* p = NULL;
 	CreateTimer<int, ID, int, IDVector*>(bla, (Interval) 123, 123, (ID)123, 123, p);
@@ -31,18 +31,19 @@ Void VAULTSCRIPT exec()
 	}
 }
 
-State VAULTSCRIPT OnClientAuthenticate(String name, String pwd)
+State VAULTSCRIPT OnClientAuthenticate(String name, String pwd) _CPP(noexcept)
 {
 	return True;
 }
 
-Void VAULTSCRIPT OnPlayerDisconnect(ID player, Reason reason)
+Void VAULTSCRIPT OnPlayerDisconnect(ID player, Reason reason) _CPP(noexcept)
 {
 
 }
 
-Base VAULTSCRIPT OnPlayerRequestGame(ID player)
+Base VAULTSCRIPT OnPlayerRequestGame(ID player) _CPP(noexcept)
 {
+	throw std::exception();
 	Base base = (Base) 0x00000000;
 
 	switch (_GetGameCode())
@@ -62,7 +63,7 @@ Base VAULTSCRIPT OnPlayerRequestGame(ID player)
 	return base;
 }
 
-Void VAULTSCRIPT OnSpawn(ID object)
+Void VAULTSCRIPT OnSpawn(ID object) _CPP(noexcept)
 {
 	if (_IsPlayer(object))
 	{
@@ -78,47 +79,47 @@ Void VAULTSCRIPT OnSpawn(ID object)
 	}
 }
 
-Void VAULTSCRIPT OnCellChange(ID object, Cell cell)
+Void VAULTSCRIPT OnCellChange(ID object, Cell cell) _CPP(noexcept)
 {
 
 }
 
-Void VAULTSCRIPT OnContainerItemChange(ID container, Base base, Count count, Value value)
+Void VAULTSCRIPT OnContainerItemChange(ID container, Base base, Count count, Value value) _CPP(noexcept)
 {
 
 }
 
-Void VAULTSCRIPT OnActorValueChange(ID actor, Index index, Value value)
+Void VAULTSCRIPT OnActorValueChange(ID actor, Index index, Value value) _CPP(noexcept)
 {
 
 }
 
-Void VAULTSCRIPT OnActorBaseValueChange(ID actor, Index index, Value value)
+Void VAULTSCRIPT OnActorBaseValueChange(ID actor, Index index, Value value) _CPP(noexcept)
 {
 
 }
 
-Void VAULTSCRIPT OnActorAlert(ID actor, State alerted)
+Void VAULTSCRIPT OnActorAlert(ID actor, State alerted) _CPP(noexcept)
 {
 
 }
 
-Void VAULTSCRIPT OnActorSneak(ID actor, State sneaking)
+Void VAULTSCRIPT OnActorSneak(ID actor, State sneaking) _CPP(noexcept)
 {
 
 }
 
-Void VAULTSCRIPT OnActorDeath(ID actor)
+Void VAULTSCRIPT OnActorDeath(ID actor) _CPP(noexcept)
 {
 
 }
 
-Void VAULTSCRIPT OnActorEquipItem(ID actor, Base base, Value value)
+Void VAULTSCRIPT OnActorEquipItem(ID actor, Base base, Value value) _CPP(noexcept)
 {
 
 }
 
-Void VAULTSCRIPT OnActorUnequipItem(ID actor, Base base, Value value)
+Void VAULTSCRIPT OnActorUnequipItem(ID actor, Base base, Value value) _CPP(noexcept)
 {
 
 }
