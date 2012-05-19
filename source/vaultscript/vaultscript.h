@@ -3,71 +3,103 @@
  *  Don't change anything here
  */
 
-#include <string>
-#include <vector>
-#include <unordered_set>
-#include <unordered_map>
-#include <cstdint>
+#ifdef __cplusplus
+	#include <string>
+	#include <vector>
+	#include <unordered_set>
+	#include <unordered_map>
+	#include <cstdint>
+	#define VAULTFUNCTION inline static
+	#define VAULTPREFIX(name) _##name
+	#define VAULTSPACE vaultmp::
+	#define _CPP(expr) expr
+	#define _C(expr)
+#else
+	#include <stdint.h>
+	#define VAULTPREFIX(name) name
+	#define VAULTSPACE
+	#define _CPP(expr)
+	#define _C(expr) expr
+#endif
 
 #ifndef __WIN32__
-#ifndef __cdecl
-#define __cdecl __attribute__((__cdecl__))
-#endif
-#define VAULTSCRIPT __attribute__ ((__visibility__("default"))) __cdecl
+	#ifndef __cdecl
+		#define __cdecl __attribute__((__cdecl__))
+	#endif
+	#define VAULTSCRIPT __attribute__ ((__visibility__("default"))) __cdecl
 #else
-#define VAULTSCRIPT __declspec(dllexport) __cdecl
+	#define VAULTSCRIPT __declspec(dllexport) __cdecl
 #endif
 
-#define VAULTFUNCTION inline static
-
-namespace vaultmp
-{
-	enum Reason : uint8_t;
-
-	enum State : bool
-	{
-		True    =   true,
-		False   =   false,
-	};
-
-	enum Reference : uint32_t;
-	enum Base : uint32_t;
-	enum Cell : uint32_t;
-
-	typedef uint32_t UCount;
-	typedef int32_t Count;
-
-	enum Interval : uint32_t
-	{
-		DEFAULT_PLAYER_RESPAWN  =   8000,
-	};
-
-	enum ID : uint64_t;
-	enum Timer : uint64_t;
-	enum Result : uint64_t;
-
-	struct _hash_ID { inline size_t operator() (const ID& x) const { return std::hash<uint64_t>()((uint64_t) x); }};
-
+_CPP(
+namespace vaultmp {
+)
 	typedef void Void;
-	typedef double Value;
-	typedef std::string String;
 	typedef char* RawString;
 	typedef char RawChar;
 	typedef const char* cRawString;
 	typedef const char cRawChar;
-	typedef std::vector<ID> IDVector;
-	typedef std::unordered_set<ID, _hash_ID> IDSet;
+	typedef int32_t Count;
+	typedef uint32_t UCount;
+	typedef double Value;
+#ifndef __cplusplus
+	typedef uint8_t Reason;
+	typedef uint8_t Index;
+	typedef uint8_t Type;
+	typedef uint32_t State;
+	typedef uint32_t Reference;
+	typedef uint32_t Base;
+	typedef uint32_t Cell;
+	typedef uint32_t Interval;
+	typedef uint64_t ID;
+	typedef uint64_t Timer;
+	typedef uint64_t Result;
 
-	template <typename V>
-	using IDHash = std::unordered_map<ID, V, _hash_ID>;
+	#define RawFunction(types)  Result (__cdecl*)(types)
+	#define RawArray(type)		type*
 
-	template <typename T>
-	using RawArray = T*;
+	#define FALLOUT3			(0x01)
+	#define NEWVEGAS			(FALLOUT3 << 1)
+	#define FALLOUT_GAMES		(FALLOUT3 | NEWVEGAS)
+	#define ALL_GAMES			(FALLOUT_GAMES)
 
-	template <typename... Types>
-	using Function = Result (__cdecl*)(Types...);
+	#define MAX_PLAYER_NAME		(16)
+	#define MAX_PASSWORD_SIZE	(16)
+	#define MAX_MESSAGE_LENGTH	(64)
 
-	enum class Index : uint8_t
+	#define ID_REFERENCE		(0x01)
+	#define ID_OBJECT			(ID_REFERENCE << 1)
+	#define ID_ITEM				(ID_OBJECT << 1)
+	#define ID_CONTAINER		(ID_ITEM << 1)
+	#define ID_ACTOR			(ID_CONTAINER << 1)
+	#define ID_PLAYER			(ID_ACTOR << 1)
+
+	#define ALL_OBJECTS			(ID_OBJECT | ID_ITEM | ID_CONTAINER | ID_ACTOR | ID_PLAYER)
+	#define ALL_CONTAINERS		(ID_CONTAINER | ID_ACTOR | ID_PLAYER)
+	#define ALL_ACTORS			(ID_ACTOR | ID_PLAYER)
+#else
+	enum Reason _CPP(: uint8_t);
+
+	enum State _CPP(: bool)
+	{
+		True    =   _CPP(true) _C(1),
+		False   =   _CPP(false) _C(0),
+	};
+
+	enum Reference _CPP(: uint32_t);
+	enum Base _CPP(: uint32_t);
+	enum Cell _CPP(: uint32_t);
+
+	enum Interval _CPP(: uint32_t)
+	{
+		DEFAULT_PLAYER_RESPAWN  =   8000,
+	};
+
+	enum ID _CPP(: uint64_t);
+	enum Timer _CPP(: uint64_t);
+	enum Result _CPP(: uint64_t);
+
+	enum _CPP(class) Index _CPP(: uint8_t)
 	{
 		FALLOUT3            =   0x01,
 		NEWVEGAS            =   FALLOUT3 << 1,
@@ -79,7 +111,7 @@ namespace vaultmp
 		MAX_MESSAGE_LENGTH  =   64,
 	};
 
-	enum class Type : uint8_t
+	enum _CPP(class) Type _CPP(: uint8_t)
 	{
 		ID_REFERENCE        =   0x01,
 		ID_OBJECT           =   ID_REFERENCE << 1,
@@ -88,88 +120,108 @@ namespace vaultmp
 		ID_ACTOR            =   ID_CONTAINER << 1,
 		ID_PLAYER           =   ID_ACTOR << 1,
 
-		ALL_OBJECTS         = (ID_OBJECT | ID_ITEM | ID_CONTAINER | ID_ACTOR | ID_PLAYER),
-		ALL_CONTAINERS      = (ID_CONTAINER | ID_ACTOR | ID_PLAYER),
-		ALL_ACTORS          = (ID_ACTOR | ID_PLAYER),
+		ALL_OBJECTS         = 	(ID_OBJECT | ID_ITEM | ID_CONTAINER | ID_ACTOR | ID_PLAYER),
+		ALL_CONTAINERS      = 	(ID_CONTAINER | ID_ACTOR | ID_PLAYER),
+		ALL_ACTORS          = 	(ID_ACTOR | ID_PLAYER),
 	};
-};
 
-extern "C" {
-	VAULTSCRIPT vaultmp::Void exec();
+	struct _hash_ID { inline size_t operator() (const ID& x) const { return std::hash<uint64_t>()((uint64_t) x); }};
 
-	VAULTSCRIPT vaultmp::Void OnSpawn(vaultmp::ID);
-	VAULTSCRIPT vaultmp::Void OnCellChange(vaultmp::ID, vaultmp::Cell);
-	VAULTSCRIPT vaultmp::Void OnContainerItemChange(vaultmp::ID, vaultmp::Base, vaultmp::Count, vaultmp::Value);
-	VAULTSCRIPT vaultmp::Void OnActorValueChange(vaultmp::ID, vaultmp::Index, vaultmp::Value);
-	VAULTSCRIPT vaultmp::Void OnActorBaseValueChange(vaultmp::ID, vaultmp::Index, vaultmp::Value);
-	VAULTSCRIPT vaultmp::Void OnActorAlert(vaultmp::ID, vaultmp::State);
-	VAULTSCRIPT vaultmp::Void OnActorSneak(vaultmp::ID, vaultmp::State);
-	VAULTSCRIPT vaultmp::Void OnActorDeath(vaultmp::ID);
-	VAULTSCRIPT vaultmp::Void OnActorEquipItem(vaultmp::ID, vaultmp::Base, vaultmp::Value);
-	VAULTSCRIPT vaultmp::Void OnActorUnequipItem(vaultmp::ID, vaultmp::Base, vaultmp::Value);
-	VAULTSCRIPT vaultmp::Void OnPlayerDisconnect(vaultmp::ID, vaultmp::Reason);
-	VAULTSCRIPT vaultmp::Base OnPlayerRequestGame(vaultmp::ID);
-	VAULTSCRIPT vaultmp::State OnClientAuthenticate(vaultmp::cRawString, vaultmp::cRawString);
+	typedef std::string String;
+	typedef std::vector<ID> IDVector;
+	typedef std::unordered_set<ID, _hash_ID> IDSet;
 
-	VAULTSCRIPT vaultmp::Void (*_timestamp)();
-	VAULTSCRIPT vaultmp::Timer (*_CreateTimer)(vaultmp::Function<>, vaultmp::Interval);
-	VAULTSCRIPT vaultmp::Timer (*_CreateTimerEx)(vaultmp::Function<>, vaultmp::Interval, vaultmp::cRawString, ...);
-	VAULTSCRIPT vaultmp::Void (*_KillTimer)(vaultmp::Timer);
-	VAULTSCRIPT vaultmp::Void (*_MakePublic)(vaultmp::Function<>, vaultmp::cRawString, vaultmp::cRawString);
-	VAULTSCRIPT vaultmp::Result (*_CallPublic)(vaultmp::cRawString, ...);
+	template <typename V>
+	using IDHash = std::unordered_map<ID, V, _hash_ID>;
 
-	VAULTSCRIPT vaultmp::Void (*_SetServerName)(vaultmp::cRawString);
-	VAULTSCRIPT vaultmp::Void (*_SetServerMap)(vaultmp::cRawString);
-	VAULTSCRIPT vaultmp::Void (*_SetServerRule)(vaultmp::cRawString, vaultmp::cRawString);
-	VAULTSCRIPT vaultmp::Index (*_GetGameCode)();
-	VAULTSCRIPT vaultmp::UCount (*_GetMaximumPlayers)();
-	VAULTSCRIPT vaultmp::UCount (*_GetCurrentPlayers)();
+	template <typename T>
+	using RawArray = T*;
 
-	VAULTSCRIPT vaultmp::cRawString (*_ValueToString)(vaultmp::Index);
-	VAULTSCRIPT vaultmp::cRawString (*_AxisToString)(vaultmp::Index);
-	VAULTSCRIPT vaultmp::cRawString (*_AnimToString)(vaultmp::Index);
+	#define RawArray(type)		RawArray<type>
 
-	VAULTSCRIPT vaultmp::State (*_UIMessage)(vaultmp::ID, vaultmp::cRawString);
-	VAULTSCRIPT vaultmp::Void (*_SetRespawn)(vaultmp::Interval);
-	VAULTSCRIPT vaultmp::State (*_IsValid)(vaultmp::ID);
-	VAULTSCRIPT vaultmp::State (*_IsObject)(vaultmp::ID);
-	VAULTSCRIPT vaultmp::State (*_IsItem)(vaultmp::ID);
-	VAULTSCRIPT vaultmp::State (*_IsContainer)(vaultmp::ID);
-	VAULTSCRIPT vaultmp::State (*_IsActor)(vaultmp::ID);
-	VAULTSCRIPT vaultmp::State (*_IsPlayer)(vaultmp::ID);
-	VAULTSCRIPT vaultmp::Type (*_GetType)(vaultmp::ID);
-	VAULTSCRIPT vaultmp::UCount (*_GetCount)(vaultmp::Type);
-	VAULTSCRIPT vaultmp::UCount (*_GetList)(vaultmp::Type, vaultmp::RawArray<vaultmp::ID>*);
+	template <typename... Types>
+	using Function = Result (__cdecl*)(Types...);
 
-	VAULTSCRIPT vaultmp::Reference (*_GetReference)(vaultmp::ID);
-	VAULTSCRIPT vaultmp::Base (*_GetBase)(vaultmp::ID);
-	VAULTSCRIPT vaultmp::cRawString (*_GetName)(vaultmp::ID);
-	VAULTSCRIPT vaultmp::Void (*_GetPos)(vaultmp::ID, vaultmp::Value&, vaultmp::Value&, vaultmp::Value&);
-	VAULTSCRIPT vaultmp::Void (*_GetAngle)(vaultmp::ID, vaultmp::Value&, vaultmp::Value&, vaultmp::Value&);
-	VAULTSCRIPT vaultmp::Cell (*_GetCell)(vaultmp::ID);
-	VAULTSCRIPT vaultmp::State (*_IsNearPoint)(vaultmp::ID, vaultmp::Value, vaultmp::Value, vaultmp::Value, vaultmp::Value);
-	VAULTSCRIPT vaultmp::UCount (*_GetContainerItemCount)(vaultmp::ID, vaultmp::Base);
-	VAULTSCRIPT vaultmp::Value (*_GetActorValue)(vaultmp::ID, vaultmp::Index);
-	VAULTSCRIPT vaultmp::Value (*_GetActorBaseValue)(vaultmp::ID, vaultmp::Index);
-	VAULTSCRIPT vaultmp::Index (*_GetActorMovingAnimation)(vaultmp::ID);
-	VAULTSCRIPT vaultmp::State (*_GetActorAlerted)(vaultmp::ID);
-	VAULTSCRIPT vaultmp::State (*_GetActorSneaking)(vaultmp::ID);
-	VAULTSCRIPT vaultmp::State (*_GetActorDead)(vaultmp::ID);
-	VAULTSCRIPT vaultmp::State (*_IsActorJumping)(vaultmp::ID);
-
-	VAULTSCRIPT vaultmp::Void (*_AddItem)(vaultmp::ID, vaultmp::Base, vaultmp::UCount, vaultmp::Value, vaultmp::State);
-	VAULTSCRIPT vaultmp::UCount (*_RemoveItem)(vaultmp::ID, vaultmp::Base, vaultmp::UCount, vaultmp::State);
-	VAULTSCRIPT vaultmp::Void (*_RemoveAllItems)(vaultmp::ID);
-	VAULTSCRIPT vaultmp::Void (*_SetActorValue)(vaultmp::ID, vaultmp::Index, vaultmp::Value);
-	VAULTSCRIPT vaultmp::Void (*_SetActorBaseValue)(vaultmp::ID, vaultmp::Index, vaultmp::Value);
-	VAULTSCRIPT vaultmp::State (*_EquipItem)(vaultmp::ID, vaultmp::Base, vaultmp::State, vaultmp::State);
-	VAULTSCRIPT vaultmp::State (*_UnequipItem)(vaultmp::ID, vaultmp::Base, vaultmp::State, vaultmp::State);
-	VAULTSCRIPT vaultmp::Void (*_KillActor)(vaultmp::ID);
-
-	VAULTSCRIPT vaultmp::Void (*_SetPlayerRespawn)(vaultmp::ID, vaultmp::Interval);
-
+	#define RawFunction(types) 	Function<types>
 }
+#endif
 
+_CPP(extern "C" {)
+	VAULTSCRIPT VAULTSPACE Void exec();
+
+	VAULTSCRIPT VAULTSPACE Void OnSpawn(VAULTSPACE ID);
+	VAULTSCRIPT VAULTSPACE Void OnCellChange(VAULTSPACE ID, VAULTSPACE Cell);
+	VAULTSCRIPT VAULTSPACE Void OnContainerItemChange(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE Count, VAULTSPACE Value);
+	VAULTSCRIPT VAULTSPACE Void OnActorValueChange(VAULTSPACE ID, VAULTSPACE Index, VAULTSPACE Value);
+	VAULTSCRIPT VAULTSPACE Void OnActorBaseValueChange(VAULTSPACE ID, VAULTSPACE Index, VAULTSPACE Value);
+	VAULTSCRIPT VAULTSPACE Void OnActorAlert(VAULTSPACE ID, VAULTSPACE State);
+	VAULTSCRIPT VAULTSPACE Void OnActorSneak(VAULTSPACE ID, VAULTSPACE State);
+	VAULTSCRIPT VAULTSPACE Void OnActorDeath(VAULTSPACE ID);
+	VAULTSCRIPT VAULTSPACE Void OnActorEquipItem(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE Value);
+	VAULTSCRIPT VAULTSPACE Void OnActorUnequipItem(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE Value);
+	VAULTSCRIPT VAULTSPACE Void OnPlayerDisconnect(VAULTSPACE ID, VAULTSPACE Reason);
+	VAULTSCRIPT VAULTSPACE Base OnPlayerRequestGame(VAULTSPACE ID);
+	VAULTSCRIPT VAULTSPACE State OnClientAuthenticate(VAULTSPACE cRawString, VAULTSPACE cRawString);
+
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(timestamp))();
+	VAULTSCRIPT VAULTSPACE Timer (*VAULTPREFIX(CreateTimer))(VAULTSPACE RawFunction(), VAULTSPACE Interval);
+	VAULTSCRIPT VAULTSPACE Timer (*VAULTPREFIX(CreateTimerEx))(VAULTSPACE RawFunction(), VAULTSPACE Interval, VAULTSPACE cRawString, ...);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(KillTimer))(VAULTSPACE Timer);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(MakePublic))(VAULTSPACE RawFunction(), VAULTSPACE cRawString, VAULTSPACE cRawString);
+	VAULTSCRIPT VAULTSPACE Result (*VAULTPREFIX(CallPublic))(VAULTSPACE cRawString, ...);
+
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(SetServerName))(VAULTSPACE cRawString);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(SetServerMap))(VAULTSPACE cRawString);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(SetServerRule))(VAULTSPACE cRawString, VAULTSPACE cRawString);
+	VAULTSCRIPT VAULTSPACE Index (*VAULTPREFIX(GetGameCode))();
+	VAULTSCRIPT VAULTSPACE UCount (*VAULTPREFIX(GetMaximumPlayers))();
+	VAULTSCRIPT VAULTSPACE UCount (*VAULTPREFIX(GetCurrentPlayers))();
+
+	VAULTSCRIPT VAULTSPACE cRawString (*VAULTPREFIX(ValueToString))(VAULTSPACE Index);
+	VAULTSCRIPT VAULTSPACE cRawString (*VAULTPREFIX(AxisToString))(VAULTSPACE Index);
+	VAULTSCRIPT VAULTSPACE cRawString (*VAULTPREFIX(AnimToString))(VAULTSPACE Index);
+
+	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(UIMessage))(VAULTSPACE ID, VAULTSPACE cRawString);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(SetRespawn))(VAULTSPACE Interval);
+	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(IsValid))(VAULTSPACE ID);
+	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(IsObject))(VAULTSPACE ID);
+	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(IsItem))(VAULTSPACE ID);
+	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(IsContainer))(VAULTSPACE ID);
+	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(IsActor))(VAULTSPACE ID);
+	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(IsPlayer))(VAULTSPACE ID);
+	VAULTSCRIPT VAULTSPACE Type (*VAULTPREFIX(GetType))(VAULTSPACE ID);
+	VAULTSCRIPT VAULTSPACE UCount (*VAULTPREFIX(GetCount))(VAULTSPACE Type);
+	VAULTSCRIPT VAULTSPACE UCount (*VAULTPREFIX(GetList))(VAULTSPACE Type, VAULTSPACE RawArray(VAULTSPACE ID)*);
+
+	VAULTSCRIPT VAULTSPACE Reference (*VAULTPREFIX(GetReference))(VAULTSPACE ID);
+	VAULTSCRIPT VAULTSPACE Base (*VAULTPREFIX(GetBase))(VAULTSPACE ID);
+	VAULTSCRIPT VAULTSPACE cRawString (*VAULTPREFIX(GetName))(VAULTSPACE ID);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(GetPos))(VAULTSPACE ID, VAULTSPACE Value*, VAULTSPACE Value*, VAULTSPACE Value*);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(GetAngle))(VAULTSPACE ID, VAULTSPACE Value*, VAULTSPACE Value*, VAULTSPACE Value*);
+	VAULTSCRIPT VAULTSPACE Cell (*VAULTPREFIX(GetCell))(VAULTSPACE ID);
+	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(IsNearPoint))(VAULTSPACE ID, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value);
+	VAULTSCRIPT VAULTSPACE UCount (*VAULTPREFIX(GetContainerItemCount))(VAULTSPACE ID, VAULTSPACE Base);
+	VAULTSCRIPT VAULTSPACE Value (*VAULTPREFIX(GetActorValue))(VAULTSPACE ID, VAULTSPACE Index);
+	VAULTSCRIPT VAULTSPACE Value (*VAULTPREFIX(GetActorBaseValue))(VAULTSPACE ID, VAULTSPACE Index);
+	VAULTSCRIPT VAULTSPACE Index (*VAULTPREFIX(GetActorMovingAnimation))(VAULTSPACE ID);
+	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(GetActorAlerted))(VAULTSPACE ID);
+	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(GetActorSneaking))(VAULTSPACE ID);
+	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(GetActorDead))(VAULTSPACE ID);
+	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(IsActorJumping))(VAULTSPACE ID);
+
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(AddItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE UCount, VAULTSPACE Value, VAULTSPACE State);
+	VAULTSCRIPT VAULTSPACE UCount (*VAULTPREFIX(RemoveItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE UCount, VAULTSPACE State);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(RemoveAllItems))(VAULTSPACE ID);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(SetActorValue))(VAULTSPACE ID, VAULTSPACE Index, VAULTSPACE Value);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(SetActorBaseValue))(VAULTSPACE ID, VAULTSPACE Index, VAULTSPACE Value);
+	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(EquipItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE State, VAULTSPACE State);
+	VAULTSCRIPT VAULTSPACE State (*VAULTPREFIX(UnequipItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE State, VAULTSPACE State);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(KillActor))(VAULTSPACE ID);
+
+	VAULTSCRIPT VAULTSPACE Void (*VAULTPREFIX(SetPlayerRespawn))(VAULTSPACE ID, VAULTSPACE Interval);
+_CPP(})
+
+#ifdef __cplusplus
 namespace vaultmp
 {
 	template<typename T, size_t t>
@@ -210,13 +262,41 @@ namespace vaultmp
 	};
 
 	VAULTFUNCTION Void timestamp() { _timestamp(); }
-	VAULTFUNCTION Timer CreateTimer(Function<> F, Interval I) { return _CreateTimer(F, I); }
+	VAULTFUNCTION Timer CreateTimer(Function<> function, Interval interval) { return _CreateTimer(function, interval); }
 
 	template<typename... Types>
-	VAULTFUNCTION Timer CreateTimer(Result (*F)(Types...), Interval I, Types... t)
+	VAULTFUNCTION Timer CreateTimer(Result (*function)(Types...), Interval interval, Types... values)
 	{
-		cRawString w = TypeString<Types...>::value;
-		return _CreateTimerEx(reinterpret_cast<Function<>>(F), I, w, t...);
+		cRawString types = TypeString<Types...>::value;
+		return _CreateTimerEx(reinterpret_cast<Function<>>(function), interval, types, values...);
 	}
 
+	VAULTFUNCTION Void KillTimer(Timer timer = (Timer) 0) { _KillTimer(timer); }
+
+	template<typename... Types>
+	VAULTFUNCTION Void MakePublic(Result (*function)(Types...), String name)
+	{
+		cRawString types = TypeString<Types...>::value;
+		_MakePublic(reinterpret_cast<Function<>>(function), name.c_str(), types);
+	}
+
+	template<typename... Types>
+	VAULTFUNCTION Result CallPublic(String name, Types... values)
+	{
+		return _CallPublic(name.c_str(), values...);
+	}
+
+	VAULTFUNCTION Void SetServerName(String name) { _SetServerName(name.c_str()); }
+	VAULTFUNCTION Void SetServerMap(String map) { _SetServerMap(map.c_str()); }
+	VAULTFUNCTION Void SetServerRule(String key, String value) { _SetServerRule(key.c_str(), value.c_str()); }
+	VAULTFUNCTION Index GetGameCode() { return _GetGameCode(); }
+	VAULTFUNCTION UCount GetMaximumPlayers() { return _GetMaximumPlayers(); }
+	VAULTFUNCTION UCount GetCurrentPlayers() { return _GetCurrentPlayers(); }
+
+	VAULTFUNCTION String ValueToString(Index index) { return String(_ValueToString(index)); }
+	VAULTFUNCTION String AxisToString(Index index) { return String(_AxisToString(index)); }
+	VAULTFUNCTION String AnimToString(Index index) { return String(_AnimToString(index)); }
+
 }
+#endif
+
