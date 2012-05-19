@@ -11,12 +11,14 @@
 	#include <cstdint>
 	#define VAULTFUNCTION inline static
 	#define VAULTPREFIX(name) _##name
+	#define VAULTPREFIX_C '_'
 	#define VAULTSPACE vaultmp::
 	#define _CPP(expr) expr
 	#define _C(expr)
 #else
 	#include <stdint.h>
 	#define VAULTPREFIX(name) name
+	#define VAULTPREFIX_C '\0'
 	#define VAULTSPACE
 	#define _CPP(expr)
 	#define _C(expr) expr
@@ -26,9 +28,11 @@
 	#ifndef __cdecl
 		#define __cdecl __attribute__((__cdecl__))
 	#endif
-	#define VAULTSCRIPT __attribute__ ((__visibility__("default"))) __cdecl
+	#define VAULTVAR __attribute__ ((__visibility__("default")))
+	#define VAULTSCRIPT VAULTVAR __cdecl
 #else
-	#define VAULTSCRIPT __declspec(dllexport) __cdecl
+	#define VAULTVAR __declspec(dllexport)
+	#define VAULTSCRIPT VAULTVAR __cdecl
 #endif
 
 _CPP(
@@ -147,6 +151,8 @@ namespace vaultmp {
 #endif
 
 _CPP(extern "C" {)
+	VAULTVAR VAULTSPACE RawChar vaultprefix = VAULTPREFIX_C;
+
 	VAULTSCRIPT VAULTSPACE Void exec();
 
 	VAULTSCRIPT VAULTSPACE Void OnSpawn(VAULTSPACE ID);
@@ -261,42 +267,58 @@ namespace vaultmp
 		TypeChar<typeof(Types), sizeof(Types)>::value...
 	};
 
-	VAULTFUNCTION Void timestamp() { _timestamp(); }
-	VAULTFUNCTION Timer CreateTimer(Function<> function, Interval interval) { return _CreateTimer(function, interval); }
+	VAULTFUNCTION Void timestamp() { return VAULTPREFIX(timestamp)(); }
+	VAULTFUNCTION Timer CreateTimer(Function<> function, Interval interval) { return VAULTPREFIX(CreateTimer)(function, interval); }
 
 	template<typename... Types>
 	VAULTFUNCTION Timer CreateTimer(Result (*function)(Types...), Interval interval, Types... values)
 	{
 		cRawString types = TypeString<Types...>::value;
-		return _CreateTimerEx(reinterpret_cast<Function<>>(function), interval, types, values...);
+		return VAULTPREFIX(CreateTimerEx)(reinterpret_cast<Function<>>(function), interval, types, values...);
 	}
 
-	VAULTFUNCTION Void KillTimer(Timer timer = (Timer) 0) { _KillTimer(timer); }
+	VAULTFUNCTION Void KillTimer(Timer timer = (Timer) 0) { return VAULTPREFIX(KillTimer)(timer); }
 
 	template<typename... Types>
 	VAULTFUNCTION Void MakePublic(Result (*function)(Types...), String name)
 	{
 		cRawString types = TypeString<Types...>::value;
-		_MakePublic(reinterpret_cast<Function<>>(function), name.c_str(), types);
+		return VAULTPREFIX(MakePublic)(reinterpret_cast<Function<>>(function), name.c_str(), types);
 	}
 
 	template<typename... Types>
 	VAULTFUNCTION Result CallPublic(String name, Types... values)
 	{
-		return _CallPublic(name.c_str(), values...);
+		return VAULTPREFIX(CallPublic)(name.c_str(), values...);
 	}
 
-	VAULTFUNCTION Void SetServerName(String name) { _SetServerName(name.c_str()); }
-	VAULTFUNCTION Void SetServerMap(String map) { _SetServerMap(map.c_str()); }
-	VAULTFUNCTION Void SetServerRule(String key, String value) { _SetServerRule(key.c_str(), value.c_str()); }
-	VAULTFUNCTION Index GetGameCode() { return _GetGameCode(); }
-	VAULTFUNCTION UCount GetMaximumPlayers() { return _GetMaximumPlayers(); }
-	VAULTFUNCTION UCount GetCurrentPlayers() { return _GetCurrentPlayers(); }
+	VAULTFUNCTION Void SetServerName(String name) { return VAULTPREFIX(SetServerName)(name.c_str()); }
+	VAULTFUNCTION Void SetServerMap(String map) { return VAULTPREFIX(SetServerMap)(map.c_str()); }
+	VAULTFUNCTION Void SetServerRule(String key, String value) { return VAULTPREFIX(SetServerRule)(key.c_str(), value.c_str()); }
+	VAULTFUNCTION Index GetGameCode() { return VAULTPREFIX(GetGameCode)(); }
+	VAULTFUNCTION UCount GetMaximumPlayers() { return VAULTPREFIX(GetMaximumPlayers)(); }
+	VAULTFUNCTION UCount GetCurrentPlayers() { return VAULTPREFIX(GetCurrentPlayers)(); }
 
-	VAULTFUNCTION String ValueToString(Index index) { return String(_ValueToString(index)); }
-	VAULTFUNCTION String AxisToString(Index index) { return String(_AxisToString(index)); }
-	VAULTFUNCTION String AnimToString(Index index) { return String(_AnimToString(index)); }
+	VAULTFUNCTION String ValueToString(Index index) { return String(VAULTPREFIX(ValueToString)(index)); }
+	VAULTFUNCTION String AxisToString(Index index) { return String(VAULTPREFIX(AxisToString)(index)); }
+	VAULTFUNCTION String AnimToString(Index index) { return String(VAULTPREFIX(AnimToString)(index)); }
 
+	VAULTFUNCTION State UIMessage(ID id, String message) { return VAULTPREFIX(UIMessage)(id, message.c_str()); }
+	VAULTFUNCTION Void SetRespawn(Interval interval) { return VAULTPREFIX(SetRespawn)(interval); }
+	VAULTFUNCTION State IsValid(ID id) { return VAULTPREFIX(IsValid)(id); }
+	VAULTFUNCTION State IsObject(ID id) { return VAULTPREFIX(IsObject)(id); }
+	VAULTFUNCTION State IsItem(ID id) { return VAULTPREFIX(IsItem)(id); }
+	VAULTFUNCTION State IsContainer(ID id) { return VAULTPREFIX(IsContainer)(id); }
+	VAULTFUNCTION State IsActor(ID id) { return VAULTPREFIX(IsActor)(id); }
+	VAULTFUNCTION State IsPlayer(ID id) { return VAULTPREFIX(IsPlayer)(id); }
+	VAULTFUNCTION Type GetType(ID id) { return VAULTPREFIX(GetType)(id); }
+	VAULTFUNCTION UCount GetCount(Type type) { return VAULTPREFIX(GetCount)(type); }
+	VAULTFUNCTION IDVector GetList(Type type)
+	{
+		RawArray<ID> data;
+		UCount size = VAULTPREFIX(GetList)(type, &data);
+		return IDVector(data, data + size);
+	}
 }
 #endif
 
