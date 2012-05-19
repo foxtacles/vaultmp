@@ -146,7 +146,6 @@ class Script
 		static bool EquipItem(NetworkID id, unsigned int baseID, bool silent, bool stick);
 		static bool UnequipItem(NetworkID id, unsigned int baseID, bool silent, bool stick);
 		static void KillActor(NetworkID id);
-
 		static void SetPlayerRespawn(NetworkID id, unsigned int respawn);
 
 };

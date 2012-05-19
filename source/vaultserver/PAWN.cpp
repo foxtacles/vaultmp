@@ -73,7 +73,6 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"EquipItem", PAWN::vaultmp_EquipItem},
 	{"UnequipItem", PAWN::vaultmp_UnequipItem},
 	{"KillActor", PAWN::vaultmp_KillActor},
-
 	{"SetPlayerRespawn", PAWN::vaultmp_SetPlayerRespawn},
 
 	{0, 0}

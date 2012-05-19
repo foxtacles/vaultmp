@@ -84,7 +84,6 @@ class PAWN
 		static cell vaultmp_EquipItem(AMX* amx, const cell* params);
 		static cell vaultmp_UnequipItem(AMX* amx, const cell* params);
 		static cell vaultmp_KillActor(AMX* amx, const cell* params);
-
 		static cell vaultmp_SetPlayerRespawn(AMX* amx, const cell* params);
 
 	public:

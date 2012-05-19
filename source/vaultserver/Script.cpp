@@ -100,7 +100,6 @@ Script::Script(char* path)
 		SetScriptFunction("EquipItem", &Script::EquipItem);
 		SetScriptFunction("UnequipItem", &Script::UnequipItem);
 		SetScriptFunction("KillActor", &Script::KillActor);
-
 		SetScriptFunction("SetPlayerRespawn", &Script::SetPlayerRespawn);
 
 		exec();

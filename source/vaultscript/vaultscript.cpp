@@ -3,27 +3,20 @@
 
 using namespace vaultmp;
 
-Result bla(int, ID , int, IDVector*) _CPP(noexcept) {
-	return Result();
-}
-
 Void VAULTSCRIPT exec() _CPP(noexcept)
 {
-	IDVector* p = NULL;
-	CreateTimer<int, ID, int, IDVector*>(bla, (Interval) 123, 123, (ID)123, 123, p);
-
 	std::printf("My first C++ vaultscript <3\n");
-	_SetServerName("vaultmp 0.1a server");
-	_SetServerRule("website", "vaultmp.com");
+	SetServerName("vaultmp 0.1a server");
+	SetServerRule("website", "vaultmp.com");
 
-	switch (_GetGameCode())
+	switch (GetGameCode())
 	{
 		case Index::FALLOUT3:
-			_SetServerMap("the wasteland");
+			SetServerMap("the wasteland");
 			break;
 
 		case Index::NEWVEGAS:
-			_SetServerMap("mojave desert");
+			SetServerMap("mojave desert");
 			break;
 
 		default:
@@ -43,10 +36,9 @@ Void VAULTSCRIPT OnPlayerDisconnect(ID player, Reason reason) _CPP(noexcept)
 
 Base VAULTSCRIPT OnPlayerRequestGame(ID player) _CPP(noexcept)
 {
-	throw std::exception();
 	Base base = (Base) 0x00000000;
 
-	switch (_GetGameCode())
+	switch (GetGameCode())
 	{
 		case Index::FALLOUT3:
 			base = (Base) 0x00030D82; // Carter
@@ -65,16 +57,16 @@ Base VAULTSCRIPT OnPlayerRequestGame(ID player) _CPP(noexcept)
 
 Void VAULTSCRIPT OnSpawn(ID object) _CPP(noexcept)
 {
-	if (_IsPlayer(object))
+	if (IsPlayer(object))
 	{
-		//_UIMessage(object, String("Hello, ") + _GetName(object) + "!");
+		UIMessage(object, String("Hello, ") + GetName(object) + "!");
 
 		Base pipboy = (Base) 0x00015038;
 
-		if (_GetContainerItemCount(object, pipboy) == 0)
+		if (GetContainerItemCount(object, pipboy) == 0)
 		{
-			_AddItem(object, pipboy, 1, 100.0, True);
-			_EquipItem(object, pipboy, True, True);
+			AddItem(object, pipboy);
+			EquipItem(object, pipboy);
 		}
 	}
 }
