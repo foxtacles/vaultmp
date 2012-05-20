@@ -21,11 +21,11 @@
 #include "../VaultException.h"
 
 #ifdef __WIN32__
-#define GetScriptCallback(a,b) (b = (decltype(b)) GetProcAddress((HINSTANCE)this->handle,a))
-#define SetScriptFunction(a,b) *((unsigned int*)(GetProcAddress((HINSTANCE)this->handle,a)?GetProcAddress((HINSTANCE)this->handle,a):throw VaultException("Script function pointer not found: %s", a)))=(unsigned int)b;
+#define GetScript(a,b) (b = (decltype(b)) GetProcAddress((HINSTANCE)this->handle,a))
+#define SetScript(a,b) *((decltype(b)*)(GetProcAddress((HINSTANCE)this->handle,a)?GetProcAddress((HINSTANCE)this->handle,a):throw VaultException("Script variable not found: %s", a)))=b;
 #else
-#define GetScriptCallback(a,b) (b = (decltype(b)) dlsym(this->handle,a))
-#define SetScriptFunction(a,b) *((unsigned int*)(dlsym(this->handle,a)?dlsym(this->handle,a):throw VaultException("Script function pointer not found: %s", a)))=(unsigned int)b;
+#define GetScript(a,b) (b = (decltype(b)) dlsym(this->handle,a))
+#define SetScript(a,b) *((decltype(b)*)(dlsym(this->handle,a)?dlsym(this->handle,a):throw VaultException("Script function pointer not found: %s", a)))=b;
 #endif
 
 using namespace std;
@@ -51,34 +51,21 @@ class Script
 		void* handle;
 		bool cpp_script;
 
-		typedef void (*fexec)();
-		fexec exec;
-		typedef void (*fOnSpawn)(NetworkID);
-		fOnSpawn _OnSpawn;
-		typedef void (*fOnCellChange)(NetworkID, unsigned int);
-		fOnCellChange _OnCellChange;
-		typedef void (*fOnContainerItemChange)(NetworkID, unsigned int, signed int, double);
-		fOnContainerItemChange _OnContainerItemChange;
-		typedef void (*fOnActorValueChange)(NetworkID, unsigned char, double);
-		fOnActorValueChange _OnActorValueChange;
-		typedef void (*fOnActorBaseValueChange)(NetworkID, unsigned char, double);
-		fOnActorBaseValueChange _OnActorBaseValueChange;
-		typedef void (*fOnActorAlert)(NetworkID, bool);
-		fOnActorAlert _OnActorAlert;
-		typedef void (*fOnActorSneak)(NetworkID, bool);
-		fOnActorSneak _OnActorSneak;
-		typedef void (*fOnActorDeath)(NetworkID);
-		fOnActorDeath _OnActorDeath;
-		typedef void (*fOnActorEquipItem)(NetworkID, unsigned int, double);
-		fOnActorEquipItem _OnActorEquipItem;
-		typedef void (*fOnActorUnequipItem)(NetworkID, unsigned int, double);
-		fOnActorUnequipItem _OnActorUnequipItem;
-		typedef void (*fOnPlayerDisconnect)(NetworkID, unsigned char);
-		fOnPlayerDisconnect _OnPlayerDisconnect;
-		typedef unsigned int (*fOnPlayerRequestGame)(NetworkID);
-		fOnPlayerRequestGame _OnPlayerRequestGame;
-		typedef bool (*fOnClientAuthenticate)(string, string);
-		fOnClientAuthenticate _OnClientAuthenticate;
+		const char* vaultprefix;
+		void (*fexec)();
+		void (*fOnSpawn)(NetworkID);
+		void (*fOnCellChange)(NetworkID, unsigned int);
+		void (*fOnContainerItemChange)(NetworkID, unsigned int, signed int, double);
+		void (*fOnActorValueChange)(NetworkID, unsigned char, double);
+		void (*fOnActorBaseValueChange)(NetworkID, unsigned char, double);
+		void (*fOnActorAlert)(NetworkID, bool);
+		void (*fOnActorSneak)(NetworkID, bool);
+		void (*fOnActorDeath)(NetworkID);
+		void (*fOnActorEquipItem)(NetworkID, unsigned int, double);
+		void (*fOnActorUnequipItem)(NetworkID, unsigned int, double);
+		void (*fOnPlayerDisconnect)(NetworkID, unsigned char);
+		unsigned int (*fOnPlayerRequestGame)(NetworkID);
+		bool (*fOnClientAuthenticate)(string, string);
 
 		Script(const Script&);
 		Script& operator=(const Script&);
@@ -89,14 +76,14 @@ class Script
 		static void UnloadScripts();
 
 		static NetworkID CreateTimer(ScriptFunc timer, unsigned int interval);
-		static NetworkID CreateTimerEx(ScriptFunc timer, unsigned int interval, string def, ...);
+		static NetworkID CreateTimerEx(ScriptFunc timer, unsigned int interval, const char* def, ...);
 		static NetworkID CreateTimerPAWN(ScriptFuncPAWN timer, AMX* amx, unsigned int interval);
-		static NetworkID CreateTimerPAWNEx(ScriptFuncPAWN timer, AMX* amx, unsigned int interval, string def, const vector<boost::any>& args);
+		static NetworkID CreateTimerPAWNEx(ScriptFuncPAWN timer, AMX* amx, unsigned int interval, const char* def, const vector<boost::any>& args);
 		static void KillTimer(NetworkID id = 0);
-		static void MakePublic(ScriptFunc _public, string name, string def);
-		static void MakePublicPAWN(ScriptFuncPAWN _public, AMX* amx, string name, string def);
-		static unsigned long long CallPublic(string name, ...);
-		static unsigned long long CallPublicPAWN(string name, const vector<boost::any>& args);
+		static void MakePublic(ScriptFunc _public, const char* name, const char* def);
+		static void MakePublicPAWN(ScriptFuncPAWN _public, AMX* amx, const char* name, const char* def);
+		static unsigned long long CallPublic(const char* name, ...);
+		static unsigned long long CallPublicPAWN(const char* name, const vector<boost::any>& args);
 
 		static unsigned long long Timer_Respawn(NetworkID id);
 
@@ -113,7 +100,11 @@ class Script
 		static unsigned int OnPlayerRequestGame(FactoryObject reference);
 		static bool OnClientAuthenticate(string name, string pwd);
 
-		static bool UIMessage(NetworkID id, string message);
+		static const char* ValueToString(unsigned char index);
+		static const char* AxisToString(unsigned char index);
+		static const char* AnimToString(unsigned char index);
+
+		static bool UIMessage(NetworkID id, const char* message);
 		static void SetRespawn(unsigned int respawn);
 		static bool IsValid(NetworkID id);
 		static bool IsObject(NetworkID id);
@@ -121,12 +112,13 @@ class Script
 		static bool IsContainer(NetworkID id);
 		static bool IsActor(NetworkID id);
 		static bool IsPlayer(NetworkID id);
+		static unsigned int GetList(unsigned char type, NetworkID** data);
 
 		static unsigned int GetReference(NetworkID id);
 		static unsigned int GetBase(NetworkID id);
-		static string GetName(NetworkID id);
-		static void GetPos(NetworkID id, double& X, double& Y, double& Z);
-		static void GetAngle(NetworkID id, double& X, double& Y, double& Z);
+		static const char* GetName(NetworkID id);
+		static void GetPos(NetworkID id, double* X, double* Y, double* Z);
+		static void GetAngle(NetworkID id, double* X, double* Y, double* Z);
 		static unsigned int GetCell(NetworkID id);
 		static bool IsNearPoint(NetworkID id, double X, double Y, double Z, double R);
 		static unsigned int GetContainerItemCount(NetworkID id, unsigned int baseID);

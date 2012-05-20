@@ -7,6 +7,7 @@ RakNet/other
 *.def
 *.exe
 *.dll
+*.log
 *.workspace
 obj
 .objs

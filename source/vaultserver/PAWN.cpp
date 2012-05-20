@@ -100,7 +100,7 @@ cell PAWN::vaultmp_CreateTimer(AMX* amx, const cell* params)
 
 	amx_GetString(name, source, 0, UNLIMITED);
 
-	return Script::CreateTimerPAWN(string(name), amx, params[2]);
+	return Script::CreateTimerPAWN(name, amx, params[2]);
 }
 
 cell PAWN::vaultmp_CreateTimerEx(AMX* amx, const cell* params)
@@ -164,7 +164,7 @@ cell PAWN::vaultmp_CreateTimerEx(AMX* amx, const cell* params)
 		}
 	}
 
-	return Script::CreateTimerPAWNEx(string(name), amx, params[2], string(def), args);
+	return Script::CreateTimerPAWNEx(name, amx, params[2], def, args);
 }
 
 cell PAWN::vaultmp_KillTimer(AMX* amx, const cell* params)
@@ -196,7 +196,7 @@ cell PAWN::vaultmp_MakePublic(AMX* amx, const cell* params)
 
 	amx_GetString(def, source, 0, UNLIMITED);
 
-	Script::MakePublicPAWN(string(real), amx, string(name), string(def));
+	Script::MakePublicPAWN(real, amx, name, def);
 
 	return 1;
 }
@@ -264,7 +264,7 @@ cell PAWN::vaultmp_CallPublic(AMX* amx, const cell* params)
 		}
 	}
 
-	return Script::CallPublicPAWN(string(name), args);
+	return Script::CallPublicPAWN(name, args);
 }
 
 cell PAWN::vaultmp_SetServerName(AMX* amx, const cell* params)
@@ -278,7 +278,7 @@ cell PAWN::vaultmp_SetServerName(AMX* amx, const cell* params)
 
 	amx_GetString(name, source, 0, UNLIMITED);
 
-	Dedicated::SetServerName(string(name));
+	Dedicated::SetServerName(name);
 
 	return 1;
 }
@@ -294,7 +294,7 @@ cell PAWN::vaultmp_SetServerMap(AMX* amx, const cell* params)
 
 	amx_GetString(map, source, 0, UNLIMITED);
 
-	Dedicated::SetServerMap(string(map));
+	Dedicated::SetServerMap(map);
 
 	return 1;
 }
@@ -316,7 +316,7 @@ cell PAWN::vaultmp_SetServerRule(AMX* amx, const cell* params)
 	amx_GetString(rule, source, 0, UNLIMITED);
 	amx_GetString(value, source2, 0, UNLIMITED);
 
-	Dedicated::SetServerRule(string(rule), string(value));
+	Dedicated::SetServerRule(rule, value);
 
 	return 1;
 }
@@ -392,7 +392,7 @@ cell PAWN::vaultmp_UIMessage(AMX* amx, const cell* params)
 
 	amx_GetString(message, source, 0, UNLIMITED);
 
-	return Script::UIMessage(params[1], string(message));
+	return Script::UIMessage(params[1], message);
 }
 
 cell PAWN::vaultmp_SetRespawn(AMX* amx, const cell* params)
@@ -491,7 +491,7 @@ cell PAWN::vaultmp_GetPos(AMX* amx, const cell* params)
 
 	double dX, dY, dZ;
 
-	Script::GetPos(params[1], dX, dY, dZ);
+	Script::GetPos(params[1], &dX, &dY, &dZ);
 	*X = amx_ftoc(dX);
 	*Y = amx_ftoc(dY);
 	*Z = amx_ftoc(dZ);
@@ -509,7 +509,7 @@ cell PAWN::vaultmp_GetAngle(AMX* amx, const cell* params)
 
 	double dX, dY, dZ;
 
-	Script::GetAngle(params[1], dX, dY, dZ);
+	Script::GetAngle(params[1], &dX, &dY, &dZ);
 	*X = amx_ftoc(dX);
 	*Y = amx_ftoc(dY);
 	*Z = amx_ftoc(dZ);

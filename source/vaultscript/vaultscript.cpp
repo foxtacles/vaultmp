@@ -3,7 +3,7 @@
 
 using namespace vaultmp;
 
-Void VAULTSCRIPT exec() _CPP(noexcept)
+Void VAULTSCRIPT exec() noexcept
 {
 	std::printf("My first C++ vaultscript <3\n");
 	SetServerName("vaultmp 0.1a server");
@@ -24,28 +24,28 @@ Void VAULTSCRIPT exec() _CPP(noexcept)
 	}
 }
 
-State VAULTSCRIPT OnClientAuthenticate(String name, String pwd) _CPP(noexcept)
+State VAULTSCRIPT OnClientAuthenticate(String name, String pwd) noexcept
 {
 	return True;
 }
 
-Void VAULTSCRIPT OnPlayerDisconnect(ID player, Reason reason) _CPP(noexcept)
+Void VAULTSCRIPT OnPlayerDisconnect(ID player, Reason reason) noexcept
 {
 
 }
 
-Base VAULTSCRIPT OnPlayerRequestGame(ID player) _CPP(noexcept)
+Base VAULTSCRIPT OnPlayerRequestGame(ID player) noexcept
 {
-	Base base = (Base) 0x00000000;
+	Base base = static_cast<Base>(0);
 
 	switch (GetGameCode())
 	{
 		case Index::FALLOUT3:
-			base = (Base) 0x00030D82; // Carter
+			base = static_cast<Base>(0x00030D82); // Carter
 			break;
 
 		case Index::NEWVEGAS:
-			base = (Base) 0x0010C0BE; // Jessup
+			base = static_cast<Base>(0x0010C0BE); // Jessup
 			break;
 
 		default:
@@ -55,15 +55,15 @@ Base VAULTSCRIPT OnPlayerRequestGame(ID player) _CPP(noexcept)
 	return base;
 }
 
-Void VAULTSCRIPT OnSpawn(ID object) _CPP(noexcept)
+Void VAULTSCRIPT OnSpawn(ID object) noexcept
 {
 	Player player(object);
 
 	if (player)
 	{
-		player.UIMessage(String("Hello, ") + player.GetName() + "!");
+		player.UIMessage("Hello, " + player.GetName() + "!");
 
-		Base pipboy = (Base) 0x00015038;
+		Base pipboy = static_cast<Base>(0x00015038);
 
 		if (player.GetContainerItemCount(pipboy) == 0)
 		{
@@ -73,47 +73,47 @@ Void VAULTSCRIPT OnSpawn(ID object) _CPP(noexcept)
 	}
 }
 
-Void VAULTSCRIPT OnCellChange(ID object, Cell cell) _CPP(noexcept)
+Void VAULTSCRIPT OnCellChange(ID object, Cell cell) noexcept
 {
 
 }
 
-Void VAULTSCRIPT OnContainerItemChange(ID container, Base base, Count count, Value value) _CPP(noexcept)
+Void VAULTSCRIPT OnContainerItemChange(ID container, Base base, Count count, Value value) noexcept
 {
 
 }
 
-Void VAULTSCRIPT OnActorValueChange(ID actor, Index index, Value value) _CPP(noexcept)
+Void VAULTSCRIPT OnActorValueChange(ID actor, Index index, Value value) noexcept
 {
 
 }
 
-Void VAULTSCRIPT OnActorBaseValueChange(ID actor, Index index, Value value) _CPP(noexcept)
+Void VAULTSCRIPT OnActorBaseValueChange(ID actor, Index index, Value value) noexcept
 {
 
 }
 
-Void VAULTSCRIPT OnActorAlert(ID actor, State alerted) _CPP(noexcept)
+Void VAULTSCRIPT OnActorAlert(ID actor, State alerted) noexcept
 {
 
 }
 
-Void VAULTSCRIPT OnActorSneak(ID actor, State sneaking) _CPP(noexcept)
+Void VAULTSCRIPT OnActorSneak(ID actor, State sneaking) noexcept
 {
 
 }
 
-Void VAULTSCRIPT OnActorDeath(ID actor) _CPP(noexcept)
+Void VAULTSCRIPT OnActorDeath(ID actor) noexcept
 {
 
 }
 
-Void VAULTSCRIPT OnActorEquipItem(ID actor, Base base, Value value) _CPP(noexcept)
+Void VAULTSCRIPT OnActorEquipItem(ID actor, Base base, Value value) noexcept
 {
 
 }
 
-Void VAULTSCRIPT OnActorUnequipItem(ID actor, Base base, Value value) _CPP(noexcept)
+Void VAULTSCRIPT OnActorUnequipItem(ID actor, Base base, Value value) noexcept
 {
 
 }

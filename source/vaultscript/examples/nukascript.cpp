@@ -1,14 +1,13 @@
 #include "../vaultscript.h"
 #include <cstdio>
 
-using namespace std;
 using namespace vaultmp;
 
 Base nuka = (Base) 0x0001519E;
 Value area[] = {-12630.32, -15715.93, -12728.72, -15834.46};
 IDSet player_nuka;
 
-Result VAULTSCRIPT NukaArea()
+Result VAULTSCRIPT NukaArea() noexcept
 {
 	IDVector players = GetList(Type::ID_PLAYER);
 
@@ -31,25 +30,25 @@ Result VAULTSCRIPT NukaArea()
 	return (Result) 0;
 }
 
-Void VAULTSCRIPT exec()
+Void VAULTSCRIPT exec() noexcept
 {
 	if (GetGameCode() != Index::FALLOUT3)
 	{
 		printf("NukaScript is for Fallout 3 only!\n");
-		terminate();
+		std::terminate();
 	}
 
-	CreateTimer(&NukaArea, (Interval) 500);
+	CreateTimer(NukaArea, (Interval) 500);
 
 	printf("NukaScript for Fallout 3 loaded\n");
 }
 
-Void VAULTSCRIPT OnPlayerDisconnect(ID player, Reason reason)
+Void VAULTSCRIPT OnPlayerDisconnect(ID player, Reason reason) noexcept
 {
 	player_nuka.erase(player);
 }
 
-Void VAULTSCRIPT OnSpawn(ID object)
+Void VAULTSCRIPT OnSpawn(ID object) noexcept
 {
 	player_nuka.erase(object);
 }

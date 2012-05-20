@@ -27,82 +27,85 @@ Script::Script(char* path)
 		this->cpp_script = true;
 		scripts.push_back(this);
 
-		GetScriptCallback("exec", exec);
+		GetScript("exec", fexec);
 
-		if (!exec)
+		if (!fexec)
 			throw VaultException("Could not find exec() callback in: %s", path);
 
-		GetScriptCallback("OnSpawn", _OnSpawn);
-		GetScriptCallback("OnCellChange", _OnCellChange);
-		GetScriptCallback("OnContainerItemChange", _OnContainerItemChange);
-		GetScriptCallback("OnActorValueChange", _OnActorValueChange);
-		GetScriptCallback("OnActorBaseValueChange", _OnActorBaseValueChange);
-		GetScriptCallback("OnActorAlert", _OnActorAlert);
-		GetScriptCallback("OnActorSneak", _OnActorSneak);
-		GetScriptCallback("OnActorDeath", _OnActorDeath);
-		GetScriptCallback("OnActorEquipItem", _OnActorEquipItem);
-		GetScriptCallback("OnActorUnequipItem", _OnActorUnequipItem);
-		GetScriptCallback("OnPlayerDisconnect", _OnPlayerDisconnect);
-		GetScriptCallback("OnPlayerRequestGame", _OnPlayerRequestGame);
-		GetScriptCallback("OnClientAuthenticate", _OnClientAuthenticate);
+		GetScript("vaultprefix", vaultprefix);
+		string vpf(vaultprefix);
 
-		SetScriptFunction("timestamp", &Utils::timestamp);
-		SetScriptFunction("CreateTimer", &Script::CreateTimer);
-		SetScriptFunction("CreateTimerEx", &Script::CreateTimerEx);
-		SetScriptFunction("KillTimer", &Script::KillTimer);
-		SetScriptFunction("MakePublic", &Script::MakePublic);
-		SetScriptFunction("CallPublic", &Script::CallPublic);
+		GetScript("OnSpawn", fOnSpawn);
+		GetScript("OnCellChange", fOnCellChange);
+		GetScript("OnContainerItemChange", fOnContainerItemChange);
+		GetScript("OnActorValueChange", fOnActorValueChange);
+		GetScript("OnActorBaseValueChange", fOnActorBaseValueChange);
+		GetScript("OnActorAlert", fOnActorAlert);
+		GetScript("OnActorSneak", fOnActorSneak);
+		GetScript("OnActorDeath", fOnActorDeath);
+		GetScript("OnActorEquipItem", fOnActorEquipItem);
+		GetScript("OnActorUnequipItem", fOnActorUnequipItem);
+		GetScript("OnPlayerDisconnect", fOnPlayerDisconnect);
+		GetScript("OnPlayerRequestGame", fOnPlayerRequestGame);
+		GetScript("OnClientAuthenticate", fOnClientAuthenticate);
 
-		SetScriptFunction("SetServerName", &Dedicated::SetServerName);
-		SetScriptFunction("SetServerMap", &Dedicated::SetServerMap);
-		SetScriptFunction("SetServerRule", &Dedicated::SetServerRule);
-		SetScriptFunction("GetGameCode", &Dedicated::GetGameCode);
-		SetScriptFunction("GetMaximumPlayers", &Dedicated::GetMaximumPlayers);
-		SetScriptFunction("GetCurrentPlayers", &Dedicated::GetCurrentPlayers);
+		SetScript(string(vpf + "timestamp").c_str(), &Utils::timestamp);
+		SetScript(string(vpf + "CreateTimer").c_str(), &Script::CreateTimer);
+		SetScript(string(vpf + "CreateTimerEx").c_str(), &Script::CreateTimerEx);
+		SetScript(string(vpf + "KillTimer").c_str(), &Script::KillTimer);
+		SetScript(string(vpf + "MakePublic").c_str(), &Script::MakePublic);
+		SetScript(string(vpf + "CallPublic").c_str(), &Script::CallPublic);
 
-		SetScriptFunction("ValueToString", &API::RetrieveValue_Reverse);
-		SetScriptFunction("AxisToString", &API::RetrieveAxis_Reverse);
-		SetScriptFunction("AnimToString", &API::RetrieveAnim_Reverse);
+		SetScript(string(vpf + "SetServerName").c_str(), &Dedicated::SetServerName);
+		SetScript(string(vpf + "SetServerMap").c_str(), &Dedicated::SetServerMap);
+		SetScript(string(vpf + "SetServerRule").c_str(), &Dedicated::SetServerRule);
+		SetScript(string(vpf + "GetGameCode").c_str(), &Dedicated::GetGameCode);
+		SetScript(string(vpf + "GetMaximumPlayers").c_str(), &Dedicated::GetMaximumPlayers);
+		SetScript(string(vpf + "GetCurrentPlayers").c_str(), &Dedicated::GetCurrentPlayers);
 
-		SetScriptFunction("UIMessage", &Script::UIMessage);
-		SetScriptFunction("SetRespawn", &Script::SetRespawn);
-		SetScriptFunction("IsValid", &Script::IsValid);
-		SetScriptFunction("IsObject", &Script::IsObject);
-		SetScriptFunction("IsItem", &Script::IsItem);
-		SetScriptFunction("IsContainer", &Script::IsContainer);
-		SetScriptFunction("IsActor", &Script::IsActor);
-		SetScriptFunction("IsPlayer", &Script::IsPlayer);
-		SetScriptFunction("GetType", (unsigned char(*)(NetworkID)) &GameFactory::GetType);
-		SetScriptFunction("GetCount", &GameFactory::GetObjectCount);
-		SetScriptFunction("GetList", &GameFactory::GetIDObjectTypes);
+		SetScript(string(vpf + "ValueToString").c_str(), &Script::ValueToString);
+		SetScript(string(vpf + "AxisToString").c_str(), &Script::AxisToString);
+		SetScript(string(vpf + "AnimToString").c_str(), &Script::AnimToString);
 
-		SetScriptFunction("GetReference", &Script::GetReference);
-		SetScriptFunction("GetBase", &Script::GetBase);
-		SetScriptFunction("GetName", &Script::GetName);
-		SetScriptFunction("GetPos", &Script::GetPos);
-		SetScriptFunction("GetAngle", &Script::GetAngle);
-		SetScriptFunction("GetCell", &Script::GetCell);
-		SetScriptFunction("IsNearPoint", &Script::IsNearPoint);
-		SetScriptFunction("GetContainerItemCount", &Script::GetContainerItemCount);
-		SetScriptFunction("GetActorValue", &Script::GetActorValue);
-		SetScriptFunction("GetActorBaseValue", &Script::GetActorBaseValue);
-		SetScriptFunction("GetActorMovingAnimation", &Script::GetActorMovingAnimation);
-		SetScriptFunction("GetActorAlerted", &Script::GetActorAlerted);
-		SetScriptFunction("GetActorSneaking", &Script::GetActorSneaking);
-		SetScriptFunction("GetActorDead", &Script::GetActorDead);
-		SetScriptFunction("IsActorJumping", &Script::IsActorJumping);
+		SetScript(string(vpf + "UIMessage").c_str(), &Script::UIMessage);
+		SetScript(string(vpf + "SetRespawn").c_str(), &Script::SetRespawn);
+		SetScript(string(vpf + "IsValid").c_str(), &Script::IsValid);
+		SetScript(string(vpf + "IsObject").c_str(), &Script::IsObject);
+		SetScript(string(vpf + "IsItem").c_str(), &Script::IsItem);
+		SetScript(string(vpf + "IsContainer").c_str(), &Script::IsContainer);
+		SetScript(string(vpf + "IsActor").c_str(), &Script::IsActor);
+		SetScript(string(vpf + "IsPlayer").c_str(), &Script::IsPlayer);
+		SetScript(string(vpf + "GetType").c_str(), (unsigned char(*)(NetworkID)) &GameFactory::GetType);
+		SetScript(string(vpf + "GetCount").c_str(), &GameFactory::GetObjectCount);
+		SetScript(string(vpf + "GetList").c_str(), &Script::GetList);
 
-		SetScriptFunction("AddItem", &Script::AddItem);
-		SetScriptFunction("RemoveItem", &Script::RemoveItem);
-		SetScriptFunction("RemoveAllItems", &Script::RemoveAllItems);
-		SetScriptFunction("SetActorValue", &Script::SetActorValue);
-		SetScriptFunction("SetActorBaseValue", &Script::SetActorBaseValue);
-		SetScriptFunction("EquipItem", &Script::EquipItem);
-		SetScriptFunction("UnequipItem", &Script::UnequipItem);
-		SetScriptFunction("KillActor", &Script::KillActor);
-		SetScriptFunction("SetPlayerRespawn", &Script::SetPlayerRespawn);
+		SetScript(string(vpf + "GetReference").c_str(), &Script::GetReference);
+		SetScript(string(vpf + "GetBase").c_str(), &Script::GetBase);
+		SetScript(string(vpf + "GetName").c_str(), &Script::GetName);
+		SetScript(string(vpf + "GetPos").c_str(), &Script::GetPos);
+		SetScript(string(vpf + "GetAngle").c_str(), &Script::GetAngle);
+		SetScript(string(vpf + "GetCell").c_str(), &Script::GetCell);
+		SetScript(string(vpf + "IsNearPoint").c_str(), &Script::IsNearPoint);
+		SetScript(string(vpf + "GetContainerItemCount").c_str(), &Script::GetContainerItemCount);
+		SetScript(string(vpf + "GetActorValue").c_str(), &Script::GetActorValue);
+		SetScript(string(vpf + "GetActorBaseValue").c_str(), &Script::GetActorBaseValue);
+		SetScript(string(vpf + "GetActorMovingAnimation").c_str(), &Script::GetActorMovingAnimation);
+		SetScript(string(vpf + "GetActorAlerted").c_str(), &Script::GetActorAlerted);
+		SetScript(string(vpf + "GetActorSneaking").c_str(), &Script::GetActorSneaking);
+		SetScript(string(vpf + "GetActorDead").c_str(), &Script::GetActorDead);
+		SetScript(string(vpf + "IsActorJumping").c_str(), &Script::IsActorJumping);
 
-		exec();
+		SetScript(string(vpf + "AddItem").c_str(), &Script::AddItem);
+		SetScript(string(vpf + "RemoveItem").c_str(), &Script::RemoveItem);
+		SetScript(string(vpf + "RemoveAllItems").c_str(), &Script::RemoveAllItems);
+		SetScript(string(vpf + "SetActorValue").c_str(), &Script::SetActorValue);
+		SetScript(string(vpf + "SetActorBaseValue").c_str(), &Script::SetActorBaseValue);
+		SetScript(string(vpf + "EquipItem").c_str(), &Script::EquipItem);
+		SetScript(string(vpf + "UnequipItem").c_str(), &Script::UnequipItem);
+		SetScript(string(vpf + "KillActor").c_str(), &Script::KillActor);
+		SetScript(string(vpf + "SetPlayerRespawn").c_str(), &Script::SetPlayerRespawn);
+
+		fexec();
 	}
 
 	else if (strstr(path, ".amx"))
@@ -202,14 +205,13 @@ void Script::UnloadScripts()
 
 void Script::GetArguments(vector<boost::any>& params, va_list args, string def)
 {
-	string::iterator it;
 	params.reserve(def.length());
 
 	try
 	{
-		for (it = def.begin(); it != def.end(); ++it)
+		for (char c : def)
 		{
-			switch (*it)
+			switch (c)
 			{
 				case 'i':
 				{
@@ -242,7 +244,7 @@ void Script::GetArguments(vector<boost::any>& params, va_list args, string def)
 				}
 
 				default:
-					throw VaultException("C++ call: Unknown argument identifier %02X", *it);
+					throw VaultException("C++ call: Unknown argument identifier %02X", c);
 			}
 		}
 	}
@@ -260,7 +262,7 @@ NetworkID Script::CreateTimer(ScriptFunc timer, unsigned int interval)
 	return t->GetNetworkID();
 }
 
-NetworkID Script::CreateTimerEx(ScriptFunc timer, unsigned int interval, string def, ...)
+NetworkID Script::CreateTimerEx(ScriptFunc timer, unsigned int interval, const char* def, ...)
 {
 	vector<boost::any> params;
 
@@ -279,9 +281,9 @@ NetworkID Script::CreateTimerPAWN(ScriptFuncPAWN timer, AMX* amx, unsigned int i
 	return t->GetNetworkID();
 }
 
-NetworkID Script::CreateTimerPAWNEx(ScriptFuncPAWN timer, AMX* amx, unsigned int interval, string def, const vector<boost::any>& args)
+NetworkID Script::CreateTimerPAWNEx(ScriptFuncPAWN timer, AMX* amx, unsigned int interval, const char* def, const vector<boost::any>& args)
 {
-	Timer* t = new Timer(timer, amx, def, args, interval);
+	Timer* t = new Timer(timer, amx, string(def), args, interval);
 	return t->GetNetworkID();
 }
 
@@ -293,17 +295,17 @@ void Script::KillTimer(NetworkID id)
 	Timer::Terminate(id);
 }
 
-void Script::MakePublic(ScriptFunc _public, string name, string def)
+void Script::MakePublic(ScriptFunc _public, const char* name, const char* def)
 {
-	new Public(_public, name, def);
+	new Public(_public, string(name), string(def));
 }
 
-void Script::MakePublicPAWN(ScriptFuncPAWN _public, AMX* amx, string name, string def)
+void Script::MakePublicPAWN(ScriptFuncPAWN _public, AMX* amx, const char* name, const char* def)
 {
-	new Public(_public, amx, name, def);
+	new Public(_public, amx, string(name), string(def));
 }
 
-unsigned long long Script::CallPublic(string name, ...)
+unsigned long long Script::CallPublic(const char* name, ...)
 {
 	vector<boost::any> params;
 	string def = Public::GetDefinition(name);
@@ -316,7 +318,7 @@ unsigned long long Script::CallPublic(string name, ...)
 	return Public::Call(name, params);
 }
 
-unsigned long long Script::CallPublicPAWN(string name, const vector<boost::any>& args)
+unsigned long long Script::CallPublicPAWN(const char* name, const vector<boost::any>& args)
 {
 	return Public::Call(name, args);
 }
@@ -355,8 +357,8 @@ void Script::OnSpawn(FactoryObject reference)
 	{
 		if ((*it)->cpp_script)
 		{
-			if ((*it)->_OnSpawn)
-				(*it)->_OnSpawn(id);
+			if ((*it)->fOnSpawn)
+				(*it)->fOnSpawn(id);
 		}
 		else if (PAWN::IsCallbackPresent((AMX*)(*it)->handle, "OnSpawn"))
 			PAWN::Call((AMX*)(*it)->handle, "OnSpawn", "l", 0, id);
@@ -372,8 +374,8 @@ void Script::OnCellChange(FactoryObject reference, unsigned int cell)
 	{
 		if ((*it)->cpp_script)
 		{
-			if ((*it)->_OnCellChange)
-				(*it)->_OnCellChange(id, cell);
+			if ((*it)->fOnCellChange)
+				(*it)->fOnCellChange(id, cell);
 		}
 		else if (PAWN::IsCallbackPresent((AMX*)(*it)->handle, "OnCellChange"))
 			PAWN::Call((AMX*)(*it)->handle, "OnCellChange", "il", 0, cell, id);
@@ -389,8 +391,8 @@ void Script::OnContainerItemChange(FactoryObject reference, unsigned int baseID,
 	{
 		if ((*it)->cpp_script)
 		{
-			if ((*it)->_OnContainerItemChange)
-				(*it)->_OnContainerItemChange(id, baseID, count, condition);
+			if ((*it)->fOnContainerItemChange)
+				(*it)->fOnContainerItemChange(id, baseID, count, condition);
 		}
 		else if (PAWN::IsCallbackPresent((AMX*)(*it)->handle, "OnContainerItemChange"))
 			PAWN::Call((AMX*)(*it)->handle, "OnContainerItemChange", "fiil", 0, condition, count, baseID, id);
@@ -408,11 +410,11 @@ void Script::OnActorValueChange(FactoryObject reference, unsigned char index, bo
 		{
 			if (base)
 			{
-				if ((*it)->_OnActorBaseValueChange)
-					(*it)->_OnActorBaseValueChange(id, index, value);
+				if ((*it)->fOnActorBaseValueChange)
+					(*it)->fOnActorBaseValueChange(id, index, value);
 			}
-			else if ((*it)->_OnActorValueChange)
-				(*it)->_OnActorValueChange(id, index, value);
+			else if ((*it)->fOnActorValueChange)
+				(*it)->fOnActorValueChange(id, index, value);
 		}
 		else
 		{
@@ -436,8 +438,8 @@ void Script::OnActorAlert(FactoryObject reference, bool alerted)
 	{
 		if ((*it)->cpp_script)
 		{
-			if ((*it)->_OnActorAlert)
-				(*it)->_OnActorAlert(id, alerted);
+			if ((*it)->fOnActorAlert)
+				(*it)->fOnActorAlert(id, alerted);
 		}
 		else if (PAWN::IsCallbackPresent((AMX*)(*it)->handle, "OnActorAlert"))
 			PAWN::Call((AMX*)(*it)->handle, "OnActorAlert", "il", 0, (unsigned int) alerted, id);
@@ -453,8 +455,8 @@ void Script::OnActorSneak(FactoryObject reference, bool sneaking)
 	{
 		if ((*it)->cpp_script)
 		{
-			if ((*it)->_OnActorSneak)
-				(*it)->_OnActorSneak(id, sneaking);
+			if ((*it)->fOnActorSneak)
+				(*it)->fOnActorSneak(id, sneaking);
 		}
 		else if (PAWN::IsCallbackPresent((AMX*)(*it)->handle, "OnActorSneak"))
 			PAWN::Call((AMX*)(*it)->handle, "OnActorSneak", "il", 0, (unsigned int) sneaking, id);
@@ -470,8 +472,8 @@ void Script::OnActorDeath(FactoryObject reference)
 	{
 		if ((*it)->cpp_script)
 		{
-			if ((*it)->_OnActorDeath)
-				(*it)->_OnActorDeath(id);
+			if ((*it)->fOnActorDeath)
+				(*it)->fOnActorDeath(id);
 		}
 		else if (PAWN::IsCallbackPresent((AMX*)(*it)->handle, "OnActorDeath"))
 			PAWN::Call((AMX*)(*it)->handle, "OnActorDeath", "l", 0, id);
@@ -487,8 +489,8 @@ void Script::OnActorEquipItem(FactoryObject reference, unsigned int baseID, doub
 	{
 		if ((*it)->cpp_script)
 		{
-			if ((*it)->_OnActorEquipItem)
-				(*it)->_OnActorEquipItem(id, baseID, condition);
+			if ((*it)->fOnActorEquipItem)
+				(*it)->fOnActorEquipItem(id, baseID, condition);
 		}
 		else if (PAWN::IsCallbackPresent((AMX*)(*it)->handle, "OnActorEquipItem"))
 			PAWN::Call((AMX*)(*it)->handle, "OnActorEquipItem", "fil", 0, condition, baseID, id);
@@ -504,8 +506,8 @@ void Script::OnActorUnequipItem(FactoryObject reference, unsigned int baseID, do
 	{
 		if ((*it)->cpp_script)
 		{
-			if ((*it)->_OnActorUnequipItem)
-				(*it)->_OnActorUnequipItem(id, baseID, condition);
+			if ((*it)->fOnActorUnequipItem)
+				(*it)->fOnActorUnequipItem(id, baseID, condition);
 		}
 		else if (PAWN::IsCallbackPresent((AMX*)(*it)->handle, "OnActorUnequipItem"))
 			PAWN::Call((AMX*)(*it)->handle, "OnActorUnequipItem", "fil", 0, condition, baseID, id);
@@ -521,8 +523,8 @@ void Script::OnPlayerDisconnect(FactoryObject reference, unsigned char reason)
 	{
 		if ((*it)->cpp_script)
 		{
-			if ((*it)->_OnPlayerDisconnect)
-				(*it)->_OnPlayerDisconnect(id, reason);
+			if ((*it)->fOnPlayerDisconnect)
+				(*it)->fOnPlayerDisconnect(id, reason);
 		}
 		else if (PAWN::IsCallbackPresent((AMX*)(*it)->handle, "OnPlayerDisconnect"))
 			PAWN::Call((AMX*)(*it)->handle, "OnPlayerDisconnect", "il", 0, (unsigned int) reason, id);
@@ -539,8 +541,8 @@ unsigned int Script::OnPlayerRequestGame(FactoryObject reference)
 	{
 		if ((*it)->cpp_script)
 		{
-			if ((*it)->_OnPlayerRequestGame)
-				result = (*it)->_OnPlayerRequestGame(id);
+			if ((*it)->fOnPlayerRequestGame)
+				result = (*it)->fOnPlayerRequestGame(id);
 		}
 		else if (PAWN::IsCallbackPresent((AMX*)(*it)->handle, "OnPlayerRequestGame"))
 			result = (unsigned int) PAWN::Call((AMX*)(*it)->handle, "OnPlayerRequestGame", "l", 0, id);
@@ -558,8 +560,8 @@ bool Script::OnClientAuthenticate(string name, string pwd)
 	{
 		if ((*it)->cpp_script)
 		{
-			if ((*it)->_OnClientAuthenticate)
-				result = (*it)->_OnClientAuthenticate(name, pwd);
+			if ((*it)->fOnClientAuthenticate)
+				result = (*it)->fOnClientAuthenticate(name.c_str(), pwd.c_str());
 		}
 		else if (PAWN::IsCallbackPresent((AMX*)(*it)->handle, "OnClientAuthenticate"))
 			result = (bool) PAWN::Call((AMX*)(*it)->handle, "OnClientAuthenticate", "ss", 0, pwd.c_str(), name.c_str());
@@ -568,10 +570,33 @@ bool Script::OnClientAuthenticate(string name, string pwd)
 	return result;
 }
 
-bool Script::UIMessage(NetworkID id, string message)
+const char* Script::ValueToString(unsigned char index)
 {
-	if (message.length() > MAX_MESSAGE_LENGTH)
-		message.resize(MAX_MESSAGE_LENGTH);
+	static string value;
+	value = API::RetrieveValue_Reverse(index);
+	return value.c_str();
+}
+
+const char* Script::AxisToString(unsigned char index)
+{
+	static string axis;
+	axis = API::RetrieveAxis_Reverse(index);
+	return axis.c_str();
+}
+
+const char* Script::AnimToString(unsigned char index)
+{
+	static string anim;
+	anim = API::RetrieveAnim_Reverse(index);
+	return anim.c_str();
+}
+
+bool Script::UIMessage(NetworkID id, const char* message)
+{
+	string _message(message);
+
+	if (_message.length() > MAX_MESSAGE_LENGTH)
+		_message.resize(MAX_MESSAGE_LENGTH);
 
 	if (id)
 	{
@@ -587,7 +612,7 @@ bool Script::UIMessage(NetworkID id, string message)
 	}
 
 	NetworkResponse response;
-	pDefault* packet = PacketFactory::CreatePacket(ID_GAME_MESSAGE, message.c_str());
+	pDefault* packet = PacketFactory::CreatePacket(ID_GAME_MESSAGE, _message.c_str());
 	response = Network::CompleteResponse(Network::CreateResponse(packet,
 																 (unsigned char) HIGH_PRIORITY,
 																 (unsigned char) RELIABLE_ORDERED,
@@ -633,6 +658,14 @@ bool Script::IsPlayer(NetworkID id)
 	return (GameFactory::GetType(id) & ID_PLAYER);
 }
 
+unsigned int Script::GetList(unsigned char type, NetworkID** data)
+{
+	static vector<NetworkID> _data;
+	_data = GameFactory::GetIDObjectTypes(type);
+	*data = &_data.front();
+	return _data.size();
+}
+
 unsigned int Script::GetReference(NetworkID id)
 {
 	unsigned int value = 0;
@@ -659,9 +692,9 @@ unsigned int Script::GetBase(NetworkID id)
 	return value;
 }
 
-string Script::GetName(NetworkID id)
+const char* Script::GetName(NetworkID id)
 {
-	string name = "";
+	static string name;
 
 	FactoryObject reference = GameFactory::GetObject(id);
 	Object* object = vaultcast<Object>(reference);
@@ -669,40 +702,40 @@ string Script::GetName(NetworkID id)
 	if (object)
 		name = object->GetName();
 
-	return name;
+	return name.c_str();
 }
 
-void Script::GetPos(NetworkID id, double& X, double& Y, double& Z)
+void Script::GetPos(NetworkID id, double* X, double* Y, double* Z)
 {
-	X = 0.00;
-	Y = 0.00;
-	Z = 0.00;
+	*X = 0.00;
+	*Y = 0.00;
+	*Z = 0.00;
 
 	FactoryObject reference = GameFactory::GetObject(id);
 	Object* object = vaultcast<Object>(reference);
 
 	if (object)
 	{
-		X = object->GetNetworkPos(Axis_X);
-		Y = object->GetNetworkPos(Axis_Y);
-		Z = object->GetNetworkPos(Axis_Z);
+		*X = object->GetNetworkPos(Axis_X);
+		*Y = object->GetNetworkPos(Axis_Y);
+		*Z = object->GetNetworkPos(Axis_Z);
 	}
 }
 
-void Script::GetAngle(NetworkID id, double& X, double& Y, double& Z)
+void Script::GetAngle(NetworkID id, double* X, double* Y, double* Z)
 {
-	X = 0.00;
-	Y = 0.00;
-	Z = 0.00;
+	*X = 0.00;
+	*Y = 0.00;
+	*Z = 0.00;
 
 	FactoryObject reference = GameFactory::GetObject(id);
 	Object* object = vaultcast<Object>(reference);
 
 	if (object)
 	{
-		X = object->GetAngle(Axis_X);
-		Y = object->GetAngle(Axis_Y);
-		Z = object->GetAngle(Axis_Z);
+		*X = object->GetAngle(Axis_X);
+		*Y = object->GetAngle(Axis_Y);
+		*Z = object->GetAngle(Axis_Z);
 	}
 }
 
@@ -718,7 +751,6 @@ unsigned int Script::GetCell(NetworkID id)
 
 	return value;
 }
-
 
 bool Script::IsNearPoint(NetworkID id, double X, double Y, double Z, double R)
 {

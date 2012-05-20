@@ -130,15 +130,15 @@ class Dedicated
 		/**
 		 * \brief Sets the server name
 		 */
-		static void SetServerName(string name);
+		static void SetServerName(const char* name);
 		/**
 		 * \brief Sets the server map
 		 */
-		static void SetServerMap(string map);
+		static void SetServerMap(const char* map);
 		/**
 		 * \brief Defines a server rule
 		 */
-		static void SetServerRule(string rule, string value);
+		static void SetServerRule(const char* rule, const char* value);
 		/**
 		 * \brief Returns the game code of the dedicated server
 		 */

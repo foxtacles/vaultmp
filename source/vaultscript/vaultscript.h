@@ -358,10 +358,10 @@ namespace vaultmp
 
 		public:
 			State IsValid() const noexcept { return id ? True : False; }
-			explicit operator bool() const { return IsValid(); }
-			explicit operator State() const { return IsValid(); }
-			bool operator==(const Reference& R) const { return IsValid() && this->id == R.id; }
-			bool operator!=(const Reference& R) const { return !operator==(R); }
+			explicit operator bool() const noexcept { return IsValid(); }
+			explicit operator State() const noexcept { return IsValid(); }
+			bool operator==(const Reference& R) const noexcept { return IsValid() && this->id == R.id; }
+			bool operator!=(const Reference& R) const noexcept { return !operator==(R); }
 
 			ID GetID() const noexcept { return id; }
 			Ref GetReference() const noexcept { return refID; }
@@ -436,13 +436,13 @@ namespace vaultmp
 			Actor(ID id) noexcept : Container(vaultmp::IsActor(id) ? id : static_cast<ID>(0), Type::ID_ACTOR) {}
 			virtual ~Actor() noexcept {}
 
-			Value GetActorValue(Index index) noexcept { return vaultmp::GetActorValue(id, index); }
-			Value GetActorBaseValue(Index index) noexcept { return vaultmp::GetActorBaseValue(id, index); }
-			Index GetActorMovingAnimation() noexcept { return vaultmp::GetActorMovingAnimation(id); }
-			State GetActorAlerted() noexcept { return vaultmp::GetActorAlerted(id); }
-			State GetActorSneaking() noexcept { return vaultmp::GetActorSneaking(id); }
-			State GetActorDead() noexcept { return vaultmp::GetActorDead(id); }
-			State IsActorJumping() noexcept { return vaultmp::IsActorJumping(id); }
+			Value GetActorValue(Index index) const noexcept { return vaultmp::GetActorValue(id, index); }
+			Value GetActorBaseValue(Index index) const noexcept { return vaultmp::GetActorBaseValue(id, index); }
+			Index GetActorMovingAnimation() const noexcept { return vaultmp::GetActorMovingAnimation(id); }
+			State GetActorAlerted() const noexcept { return vaultmp::GetActorAlerted(id); }
+			State GetActorSneaking() const noexcept { return vaultmp::GetActorSneaking(id); }
+			State GetActorDead() const noexcept { return vaultmp::GetActorDead(id); }
+			State IsActorJumping() const noexcept { return vaultmp::IsActorJumping(id); }
 
 			Void SetActorValue(Index index, Value value) noexcept { return vaultmp::SetActorValue(id, index, value); }
 			Void SetActorBaseValue(Index index, Value value) noexcept { return vaultmp::SetActorBaseValue(id, index, value); }
