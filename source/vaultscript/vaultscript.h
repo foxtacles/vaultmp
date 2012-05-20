@@ -90,7 +90,7 @@ namespace vaultmp {
 		False   =   false
 	};
 
-	enum Reference : uint32_t;
+	enum Ref : uint32_t;
 	enum Base : uint32_t;
 	enum Cell : uint32_t;
 
@@ -199,7 +199,7 @@ _CPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetCount))(VAULTSPACE Type) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetList))(VAULTSPACE Type, VAULTSPACE RawArray(VAULTSPACE ID)*) _CPP(noexcept);
 
-	VAULTSCRIPT VAULTSPACE Reference (*VAULTAPI(GetReference))(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Ref (*VAULTAPI(GetReference))(VAULTSPACE ID) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Base (*VAULTAPI(GetBase))(VAULTSPACE ID) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE cRawString (*VAULTAPI(GetName))(VAULTSPACE ID) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(GetPos))(VAULTSPACE ID, VAULTSPACE Value*, VAULTSPACE Value*, VAULTSPACE Value*) _CPP(noexcept);
@@ -320,7 +320,7 @@ namespace vaultmp
 		return IDVector(data, data + size);
 	}
 
-	VAULTFUNCTION Reference GetReference(ID id) noexcept { return VAULTAPI(GetReference)(id); }
+	VAULTFUNCTION Ref GetReference(ID id) noexcept { return VAULTAPI(GetReference)(id); }
 	VAULTFUNCTION Base GetBase(ID id) noexcept { return VAULTAPI(GetBase)(id); }
 	VAULTFUNCTION String GetName(ID id) noexcept { return String(VAULTAPI(GetName)(id)); }
 	VAULTFUNCTION Void GetPos(ID id, Value& X, Value& Y, Value& Z) noexcept { return VAULTAPI(GetPos)(id, &X, &Y, &Z); }
@@ -346,6 +346,92 @@ namespace vaultmp
 	VAULTFUNCTION Void KillActor(ID id) noexcept { return VAULTAPI(KillActor)(id); }
 	VAULTFUNCTION Void SetPlayerRespawn(ID id, Interval interval) noexcept { return VAULTAPI(SetPlayerRespawn)(id, interval); }
 
+	class Reference {
+		protected:
+			ID id;
+			Ref refID;
+			Base baseID;
+			Type type;
+
+			Reference(ID id, Type type) noexcept : id(id), refID(id ? vaultmp::GetReference(id) : static_cast<Ref>(0)), baseID(id ? vaultmp::GetBase(id) : static_cast<Base>(0)), type(type) {}
+			virtual ~Reference() noexcept {}
+
+		public:
+			State IsValid() noexcept { return id ? True : False; }
+
+			ID GetID() noexcept { return id; }
+			Ref GetReference() noexcept { return refID; }
+			Base GetBase() noexcept { return baseID; }
+			Type GetType() noexcept { return type; }
+
+			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_REFERENCE); }
+			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_REFERENCE); }
+	};
+
+	class Object : public Reference {
+		protected:
+			Object(ID id, Type type) noexcept : Reference(id, type) {}
+
+		public:
+			Object(ID id) noexcept : Reference(vaultmp::IsObject(id) ? id : static_cast<ID>(0), Type::ID_OBJECT) {}
+			virtual ~Object() noexcept {}
+
+			String GetName() noexcept { return vaultmp::GetName(id); }
+			Void GetPos(Value& X, Value& Y, Value& Z) noexcept { return vaultmp::GetPos(id, X, Y, Z); }
+			Void GetAngle(Value& X, Value& Y, Value& Z) noexcept { return vaultmp::GetAngle(id, X, Y, Z); }
+			Cell GetCell() noexcept { return vaultmp::GetCell(id); }
+			State IsNearPoint(Value& X, Value& Y, Value& Z, Value& R) noexcept { return vaultmp::IsNearPoint(id, X, Y, Z, R); }
+
+			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_OBJECT); }
+			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_OBJECT); }
+	};
+
+	class Item : public Object {
+		protected:
+			Item(ID id, Type type) noexcept : Object(id, type) {}
+
+		public:
+			Item(ID id) noexcept : Object(vaultmp::IsItem(id) ? id : static_cast<ID>(0), Type::ID_ITEM) {}
+			virtual ~Item() noexcept {}
+
+			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_ITEM); }
+			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_ITEM); }
+	};
+
+	class Container : public Object {
+		protected:
+			Container(ID id, Type type) noexcept : Object(id, type) {}
+
+		public:
+			Container(ID id) noexcept : Object(vaultmp::IsContainer(id) ? id : static_cast<ID>(0), Type::ID_CONTAINER) {}
+			virtual ~Container() noexcept {}
+
+			UCount GetContainerItemCount(Base base = static_cast<Base>(0)) noexcept { return vaultmp::GetContainerItemCount(id, base); }
+
+			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_CONTAINER); }
+			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_CONTAINER); }
+	};
+
+	class Actor : public Container {
+		protected:
+			Actor(ID id, Type type) noexcept : Container(id, type) {}
+
+		public:
+			Actor(ID id) noexcept : Container(vaultmp::IsActor(id) ? id : static_cast<ID>(0), Type::ID_ACTOR) {}
+			virtual ~Actor() noexcept {}
+
+			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_ACTOR); }
+			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_ACTOR); }
+	};
+
+	class Player : public Actor {
+		public:
+			Player(ID id) noexcept : Actor(vaultmp::IsPlayer(id) ? id : static_cast<ID>(0), Type::ID_PLAYER) {}
+			virtual ~Player() noexcept {}
+
+			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_PLAYER); }
+			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_PLAYER); }
+	};
 }
 #endif
 
