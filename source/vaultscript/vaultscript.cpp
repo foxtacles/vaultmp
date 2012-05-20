@@ -57,16 +57,18 @@ Base VAULTSCRIPT OnPlayerRequestGame(ID player) _CPP(noexcept)
 
 Void VAULTSCRIPT OnSpawn(ID object) _CPP(noexcept)
 {
-	if (IsPlayer(object))
+	Player player(object);
+
+	if (player)
 	{
-		UIMessage(object, String("Hello, ") + GetName(object) + "!");
+		player.UIMessage(String("Hello, ") + player.GetName() + "!");
 
 		Base pipboy = (Base) 0x00015038;
 
-		if (GetContainerItemCount(object, pipboy) == 0)
+		if (player.GetContainerItemCount(pipboy) == 0)
 		{
-			AddItem(object, pipboy);
-			EquipItem(object, pipboy);
+			player.AddItem(pipboy);
+			player.EquipItem(pipboy);
 		}
 	}
 }
