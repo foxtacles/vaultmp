@@ -1,7 +1,6 @@
 #include "../vaultscript.h"
 #include <cstdio>
 
-using namespace std;
 using namespace vaultmp;
 
 Base _9mm = (Base) 0x000E3778;
@@ -9,7 +8,7 @@ Value spot[] = {-102.76, -398.82, 3458.55};
 Value angle[] = {93.0, 134.0};
 IDSet player_barrel;
 
-Result VAULTSCRIPT BarrelSpot()
+Result VAULTSCRIPT BarrelSpot() noexcept
 {
 	IDVector players = GetList(Type::ID_PLAYER);
 
@@ -32,12 +31,12 @@ Result VAULTSCRIPT BarrelSpot()
 	return (Result) 0;
 }
 
-Void VAULTSCRIPT exec()
+Void VAULTSCRIPT exec() noexcept
 {
 	if (GetGameCode() != Index::NEWVEGAS)
 	{
 		printf("BarrelScript is for Fallout: New Vegas only!\n");
-		terminate();
+		std::terminate();
 	}
 
 	CreateTimer(&BarrelSpot, (Interval) 500);
@@ -45,12 +44,12 @@ Void VAULTSCRIPT exec()
 	printf("BarrelScript for Fallout: New Vegas loaded\n");
 }
 
-Void VAULTSCRIPT OnPlayerDisconnect(ID player, Reason reason)
+Void VAULTSCRIPT OnPlayerDisconnect(ID player, Reason reason) noexcept
 {
 	player_barrel.erase(player);
 }
 
-Void VAULTSCRIPT OnSpawn(ID object)
+Void VAULTSCRIPT OnSpawn(ID object) noexcept
 {
 	player_barrel.erase(object);
 }

@@ -28,17 +28,17 @@ void Dedicated::TerminateThread()
 	thread = false;
 }
 
-void Dedicated::SetServerName(string name)
+void Dedicated::SetServerName(const char* name)
 {
 	self->SetServerName(name);
 }
 
-void Dedicated::SetServerMap(string map)
+void Dedicated::SetServerMap(const char* map)
 {
 	self->SetServerMap(map);
 }
 
-void Dedicated::SetServerRule(string rule, string value)
+void Dedicated::SetServerRule(const char* rule, const char* value)
 {
 	self->SetServerRule(rule, value);
 }

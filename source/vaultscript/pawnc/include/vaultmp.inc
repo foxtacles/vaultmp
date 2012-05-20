@@ -102,5 +102,4 @@ native SetActorBaseValue(ID, index, Float:value);
 native Bool:EquipItem(ID, base, Bool:silent, Bool:stick);
 native Bool:UnequipItem(ID, base, Bool:silent, Bool:stick);
 native KillActor(ID);
-
 native SetPlayerRespawn(ID, interval);

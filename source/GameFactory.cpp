@@ -57,8 +57,9 @@ vector<FactoryObject> GameFactory::GetObjectTypes(unsigned char type) noexcept
 
 	cs.EndSession();
 
-	for (it = copy.begin(); it != copy.end() && (it->second & type); ++it)
-		result.push_back(FactoryObject(it->first));
+	for (it = copy.begin(); it != copy.end(); ++it)
+		if (it->second & type)
+			result.push_back(FactoryObject(it->first));
 
 	return result;
 }
@@ -75,8 +76,9 @@ vector<NetworkID> GameFactory::GetIDObjectTypes(unsigned char type) noexcept
 
 	cs.EndSession();
 
-	for (it = copy.begin(); it != copy.end() && (it->second & type); ++it)
-		result.push_back(it->first->GetNetworkID());
+	for (it = copy.begin(); it != copy.end(); ++it)
+		if (it->second & type)
+			result.push_back(it->first->GetNetworkID());
 
 	return result;
 }
