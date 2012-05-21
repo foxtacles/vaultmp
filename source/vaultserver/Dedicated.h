@@ -66,7 +66,7 @@ class Dedicated
 		static unsigned int port;
 		static unsigned int fileslots;
 		static unsigned int connections;
-		static char* announce;
+		static const char* announce;
 		static bool query;
 		static bool fileserve;
 
@@ -99,7 +99,7 @@ class Dedicated
 		 * fileserver - enable / disable file downloading from this server
 		 * fileslots - the maximum amount of file downloading connections
 		 */
-		static std::thread InitializeServer(unsigned int port, unsigned int connections, char* announce, bool query, bool fileserve, unsigned int fileslots);
+		static std::thread InitializeServer(unsigned int port, unsigned int connections, const char* announce, bool query, bool fileserve, unsigned int fileslots);
 		/**
 		 * \brief Sets the ServerEntry of the dedicated server
 		 *

@@ -9,7 +9,7 @@ SocketDescriptor* Dedicated::sockdescr;
 unsigned int Dedicated::port;
 unsigned int Dedicated::fileslots;
 unsigned int Dedicated::connections;
-char* Dedicated::announce;
+const char* Dedicated::announce;
 bool Dedicated::query;
 bool Dedicated::fileserve;
 SystemAddress Dedicated::master;
@@ -249,9 +249,11 @@ void Dedicated::DedicatedThread()
 
 	if (announce)
 	{
+		char buf[strlen(announce) + 1];
+		strcpy(buf, announce);
 		peer->Startup(connections + 1, sockdescr, 1, THREAD_PRIORITY_NORMAL);
 		peer->SetMaximumIncomingConnections(connections);
-		master.SetBinaryAddress(strtok(announce, ":"));
+		master.SetBinaryAddress(strtok(buf, ":"));
 		char* cport = strtok(NULL, ":");
 		master.SetPort(cport != NULL ? atoi(cport) : RAKNET_MASTER_STANDARD_PORT);
 		peer->Connect(master.ToString(false), master.GetPort(), MASTER_VERSION, sizeof(MASTER_VERSION), 0, 0, 3, 500, 0);
@@ -374,7 +376,7 @@ void Dedicated::DedicatedThread()
 #endif
 }
 
-std::thread Dedicated::InitializeServer(unsigned int port, unsigned int connections, char* announce, bool query, bool fileserve, unsigned int fileslots)
+std::thread Dedicated::InitializeServer(unsigned int port, unsigned int connections, const char* announce, bool query, bool fileserve, unsigned int fileslots)
 {
 	std::thread hDedicatedThread;
 

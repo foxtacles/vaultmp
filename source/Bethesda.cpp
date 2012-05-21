@@ -9,6 +9,8 @@ unsigned char Bethesda::game = 0x00;
 bool Bethesda::initialized = false;
 string Bethesda::password = "";
 Savegame Bethesda::savegame;
+bool Bethesda::multiinst = false;
+DWORD Bethesda::process = 0;
 ModList Bethesda::modfiles;
 char Bethesda::module[32];
 
@@ -332,7 +334,7 @@ void Bethesda::Initialize()
 
 	fclose(plugins);
 
-	if (lookupProgramID(module) == 0)
+	if (Bethesda::multiinst || lookupProgramID(module) == 0)
 	{
 		STARTUPINFO si;
 		PROCESS_INFORMATION pi;
@@ -347,6 +349,8 @@ void Bethesda::Initialize()
 
 		if (CreateProcess(module, NULL, NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi))
 		{
+			Bethesda::process = pi.dwProcessId;
+
 			CloseHandle(si.hStdInput);
 			CloseHandle(si.hStdOutput);
 			CloseHandle(si.hStdError);
@@ -428,22 +432,35 @@ void Bethesda::Initialize()
 		throw VaultException("Either Fallout 3 or Fallout: New Vegas is already runnning");
 }
 
-void Bethesda::Terminate()
+void Bethesda::Terminate(RakPeerInterface* peer)
 {
-	DWORD id;
+	this_thread::sleep_for(chrono::milliseconds(200));
+	Packet* packet = NULL;
 
-	if (*module && (id = Bethesda::lookupProgramID(module)))
+	while (packet = peer->Receive())
+		peer->DeallocatePacket(packet); // disconnection notification might still arrive
+
+	Interface::Terminate();
+	GameFactory::DestroyAllInstances();
+	API::Terminate();
+
+	if (initialized)
 	{
-		HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, 0, id);
-		TerminateProcess(hProcess, 0);
-		CloseHandle(hProcess);
+		HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, 0, Bethesda::process);
+
+		if (hProcess)
+		{
+			TerminateProcess(hProcess, 0);
+			CloseHandle(hProcess);
+		}
 	}
 }
 
-void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, string name, string pwd, unsigned char game)
+void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, string name, string pwd, unsigned char game, bool multiinst)
 {
 	Bethesda::game = game;
 	Bethesda::password = pwd;
+	Bethesda::multiinst = multiinst;
 	Bethesda::savegame = Savegame();
 	Bethesda::modfiles.clear();
 	ZeroMemory(module, sizeof(module));
@@ -480,7 +497,6 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
 	self->SetEnabled(true);
 	self->SetName(name);
 	GameFactory::LeaveReference(reference);
-	self = NULL; // lets make sure that we dont use this by accident somewhere (old version code did so)
 
 	Network::Flush();
 	Network::ToggleDequeue(true);
@@ -523,12 +539,15 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
 					}
 				}
 
+				if (!query)
+					throw VaultException("Server closed connection");
+
 				if (initialized && !Interface::IsAvailable())
 				{
 					NetworkResponse response = NetworkClient::ProcessEvent(ID_EVENT_INTERFACE_LOST);
 					Network::Dispatch(peer, response);
 					peer->CloseConnection(server, true, CHANNEL_SYSTEM, HIGH_PRIORITY);
-					throw VaultException("Lost connection to interface");
+					query = false;
 				}
 
 				this_thread::sleep_for(chrono::milliseconds(1));
@@ -541,15 +560,7 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
 
 	catch (...)
 	{
-		this_thread::sleep_for(chrono::milliseconds(200));
-		Packet* packet = NULL;
-
-		while (packet = peer->Receive()) peer->DeallocatePacket(packet);     // disconnection notification might still arrive
-
-		Interface::Terminate();
-		GameFactory::DestroyAllInstances();
-		API::Terminate();
-		Bethesda::Terminate();
+		Bethesda::Terminate(peer);
 
 #ifdef VAULTMP_DEBUG
 		debug->Print("Network thread is going to terminate (ERROR)", true);
@@ -557,10 +568,7 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
 		throw;
 	}
 
-	Interface::Terminate();
-	GameFactory::DestroyAllInstances();
-	API::Terminate();
-	Bethesda::Terminate();
+	Bethesda::Terminate(peer);
 
 #ifdef VAULTMP_DEBUG
 	debug->Print("Network thread is going to terminate (no error occured)", true);

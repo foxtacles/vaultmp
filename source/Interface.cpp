@@ -313,7 +313,7 @@ void Interface::CommandThreadReceive()
 				{
 					vector<CommandResult> result = API::Translate(buffer);
 
-					for (CommandResult & _result : result)
+					for (CommandResult& _result : result)
 						resultHandler(_result.first.first.first, _result.first.first.second, _result.first.second, _result.second);
 				}
 
@@ -329,8 +329,10 @@ void Interface::CommandThreadReceive()
 #endif
 				}
 				else if (code == PIPE_ERROR_CLOSE)
-					throw VaultException("Error in vaultmp.dll");
-
+				{
+					if (!endThread)
+						throw VaultException("Error in vaultmp.dll");
+				}
 				else if (code)
 					throw VaultException("Unknown pipe code identifier %02X", code);
 			}
@@ -481,5 +483,12 @@ void Interface::CommandThreadSend()
 			debug->Print("Send thread is going to terminate (ERROR)", true);
 
 #endif
+	}
+
+	if (wakeup)
+	{
+		unsigned char buffer[PIPE_LENGTH];
+		buffer[0] = PIPE_ERROR_CLOSE;
+		pipeServer->Send(buffer);
 	}
 }

@@ -527,20 +527,12 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 
 	unsigned char buffer[PIPE_LENGTH];
 	unsigned char code;
-	ZeroMemory(buffer, sizeof(buffer));
 
 	buffer[0] = PIPE_SYS_WAKEUP;
 	pipeClient.Send(buffer);
 
 	Sleep(3000);
 	PatchGame(silverlock);
-
-	if (DLLerror)
-	{
-		ZeroMemory(buffer, sizeof(buffer));
-		buffer[0] = PIPE_ERROR_CLOSE;
-		pipeClient.Send(buffer);
-	}
 
 	while (!DLLerror)
 	{
@@ -580,11 +572,7 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 					}
 
 					else
-					{
-						buffer[0] = PIPE_ERROR_CLOSE;
-						pipeClient.Send(buffer);
 						DLLerror = true;
-					}
 				}
 
 				if (!DLLerror)
@@ -617,13 +605,10 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 		}
 	}
 
-	if (vaultgui != NULL)
-		FreeLibrary(vaultgui);
+	buffer[0] = PIPE_ERROR_CLOSE;
+	pipeClient.Send(buffer);
 
-	if (silverlock != NULL)
-		FreeLibrary(silverlock);
-
-	return ((DWORD) data);
+	return ((DWORD) 0);
 }
 
 void PatchGame(HINSTANCE& silverlock)

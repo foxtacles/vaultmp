@@ -87,8 +87,9 @@ ServerMap serverList;
 
 SystemAddress* selectedServer = NULL;
 dictionary* config = NULL;
-char* player_name;
-char* server_name;
+const char* player_name;
+const char* server_name;
+bool multiinst;
 unsigned char games;
 
 HWND CreateMainWindow();
@@ -374,13 +375,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR cmdline, 
 	RegisterClasses();
 	InitRakNet();
 
-	config = iniparser_load((char*) "vaultmp.ini");
-	player_name = iniparser_getstring(config, (char*) "general:name", (char*) "");
-	server_name = iniparser_getstring(config, (char*) "general:master", (char*) "");
-	char* servers = iniparser_getstring(config, (char*) "general:servers", (char*) "");
+	config = iniparser_load("vaultmp.ini");
+	player_name = iniparser_getstring(config, "general:name", "");
+	server_name = iniparser_getstring(config, "general:master", "");
+	multiinst = (bool) iniparser_getboolean(config, "general:multiinst", 0);
+	const char* servers = iniparser_getstring(config,  "general:servers", "");
 
 	char* token;
-	token = strtok(servers, ",");
+	char buf[strlen(servers) + 1];
+	strcpy(buf, servers);
+	token = strtok(buf, ",");
 
 	while (token != NULL)
 	{
@@ -737,7 +741,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 							try
 							{
-								Bethesda::InitializeVaultMP(peer, addr, string(name), string(pwd), game);
+								Bethesda::InitializeVaultMP(peer, addr, string(name), string(pwd), game, multiinst);
 							}
 
 							catch (std::exception& e)

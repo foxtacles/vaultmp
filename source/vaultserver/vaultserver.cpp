@@ -99,29 +99,29 @@ int main(int argc, char* argv[])
 	int fileslots;
 	bool query;
 	bool files;
-	char* announce;
-	char* scripts;
-	char* mods;
-	char* savegame;
+	const char* announce;
+	const char* scripts;
+	const char* mods;
+	const char* savegame;
 
-	dictionary* config = iniparser_load(argc > 1 ? argv[1] : (char*) "vaultserver.ini");
+	dictionary* config = iniparser_load(argc > 1 ? argv[1] : "vaultserver.ini");
 
-	char* game_str = iniparser_getstring(config, (char*) "general:game", (char*) "fallout3");
+	const char* game_str = iniparser_getstring(config, "general:game", "fallout3");
 
 	if (stricmp(game_str, "newvegas") == 0)
 		game = NEWVEGAS;
 	else
 		game = FALLOUT3;
 
-	port = iniparser_getint(config, (char*) "general:port", RAKNET_STANDARD_PORT);
-	players = iniparser_getint(config, (char*) "general:players", RAKNET_STANDARD_CONNECTIONS);
-	query = (bool) iniparser_getboolean(config, (char*) "general:query", 1);
-	files = (bool) iniparser_getboolean(config, (char*) "general:fileserve", 0);
-	fileslots = iniparser_getint(config, (char*) "general:fileslots", 8);
-	announce = iniparser_getstring(config, (char*) "general:master", (char*) "vaultmp.com");
-	savegame = iniparser_getstring(config, (char*) "general:save", (char*) "default.fos");
-	scripts = iniparser_getstring(config, (char*) "scripts:scripts", (char*) "standard.amx");
-	mods = iniparser_getstring(config, (char*) "mods:mods", (char*) "");
+	port = iniparser_getint(config, "general:port", RAKNET_STANDARD_PORT);
+	players = iniparser_getint(config, "general:players", RAKNET_STANDARD_CONNECTIONS);
+	query = (bool) iniparser_getboolean(config, "general:query", 1);
+	files = (bool) iniparser_getboolean(config, "general:fileserve", 0);
+	fileslots = iniparser_getint(config, "general:fileslots", 8);
+	announce = iniparser_getstring(config, "general:master", "vaultmp.com");
+	savegame = iniparser_getstring(config, "general:save", "default.fos");
+	scripts = iniparser_getstring(config, "scripts:scripts", "standard.amx");
+	mods = iniparser_getstring(config, "mods:mods", "");
 
 	ServerEntry* self = new ServerEntry(game);
 	self->SetServerRule("version", DEDICATED_VERSION);
@@ -165,7 +165,9 @@ int main(int argc, char* argv[])
 
 		Dedicated::SetSavegame(Savegame(string(savegame), crc));
 
-		char* token = strtok(mods, ",");
+		char buf[strlen(mods) + 1];
+		strcpy(buf, mods);
+		char* token = strtok(buf, ",");
 		ModList modfiles;
 
 		while (token != NULL)
