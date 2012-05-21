@@ -81,10 +81,9 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
-					<Add option="-lws2_32" />
-					<Add option="-lwinmm" />
-					<Add option="-lm" />
-					<Add option="-limagehlp" />
+					<Add option="-ldl" />
+					<Add option="-lncurses" />
+					<Add option="-lpthread" />
 					<Add option="-static" />
 				</Linker>
 			</Target>
