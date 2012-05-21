@@ -39,7 +39,6 @@
 		</Build>
 		<Compiler>
 			<Add option="-std=gnu++0x" />
-			<Add option="-fpermissive" />
 			<Add directory="." />
 		</Compiler>
 		<Linker>

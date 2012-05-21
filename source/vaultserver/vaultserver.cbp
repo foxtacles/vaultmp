@@ -78,19 +78,19 @@
 					<Add option="-O2" />
 					<Add option="-Wredundant-decls" />
 					<Add option="-Wunreachable-code" />
-					<Add directory="amx\linux" />
 				</Compiler>
 				<Linker>
-					<Add option="-ldl" />
-					<Add option="-lncurses" />
-					<Add option="-lpthread" />
+					<Add option="-s" />
+					<Add option="-lws2_32" />
+					<Add option="-lwinmm" />
+					<Add option="-lm" />
+					<Add option="-limagehlp" />
 					<Add option="-static" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-std=gnu++0x" />
-			<Add option="-fpermissive" />
 			<Add directory=".." />
 		</Compiler>
 		<Unit filename="..\API.cpp" />

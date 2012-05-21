@@ -338,10 +338,6 @@ void Bethesda::Initialize()
 	{
 		STARTUPINFO si;
 		PROCESS_INFORMATION pi;
-		HANDLE hRemoteThread;
-		HINSTANCE hDll;
-		fLoadLibrary pLoadLibrary;
-		LPVOID remote;
 
 		ZeroMemory(&si, sizeof(si));
 		ZeroMemory(&pi, sizeof(pi));
@@ -349,6 +345,11 @@ void Bethesda::Initialize()
 
 		if (CreateProcess(module, NULL, NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi))
 		{
+			HANDLE hRemoteThread;
+			HINSTANCE hDll;
+			fLoadLibrary pLoadLibrary;
+			LPVOID remote;
+
 			Bethesda::process = pi.dwProcessId;
 
 			CloseHandle(si.hStdInput);
