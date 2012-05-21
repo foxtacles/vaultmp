@@ -120,7 +120,7 @@ int main(int argc, char* argv[])
 	fileslots = iniparser_getint(config, "general:fileslots", 8);
 	announce = iniparser_getstring(config, "general:master", "vaultmp.com");
 	savegame = iniparser_getstring(config, "general:save", "default.fos");
-	scripts = iniparser_getstring(config, "scripts:scripts", "standard.amx");
+	scripts = iniparser_getstring(config, "scripts:scripts", "");
 	mods = iniparser_getstring(config, "mods:mods", "");
 
 	ServerEntry* self = new ServerEntry(game);
