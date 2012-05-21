@@ -25,8 +25,8 @@ NetworkResponse NetworkServer::ProcessEvent(unsigned char id)
 		{
 			pDefault* packet = PacketFactory::CreatePacket(ID_GAME_END, ID_REASON_ERROR);
 			response = Network::CompleteResponse(Network::CreateResponse(packet,
-																		 (unsigned char) HIGH_PRIORITY,
-																		 (unsigned char) RELIABLE_ORDERED,
+																		 HIGH_PRIORITY,
+																		 RELIABLE_ORDERED,
 																		 CHANNEL_GAME,
 																		 Client::GetNetworkList(NULL)));
 			break;

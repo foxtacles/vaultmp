@@ -10,13 +10,15 @@
 #include "CriticalSection.h"
 
 #include <vector>
+#include <tuple>
 #include <deque>
 
 using namespace RakNet;
 
 class pDefault;
 
-typedef pair<pair<pDefault*, vector<unsigned char> >, vector<RakNetGUID> > SingleResponse;
+typedef tuple<PacketPriority, PacketReliability, unsigned char> PacketDescriptor;
+typedef pair<pair<pDefault*, PacketDescriptor>, vector<RakNetGUID>> SingleResponse;
 typedef vector<SingleResponse> NetworkResponse;
 typedef deque<NetworkResponse> NetworkQueue;
 
@@ -48,7 +50,7 @@ class Network
 		 * channel sepcifies the RakNet channel to send this packet on
 		 * targets is a STL vector containing RakNetGUID's
 		 */
-		static SingleResponse CreateResponse(pDefault* packet, unsigned char priority, unsigned char reliability, unsigned char channel, vector<RakNetGUID> targets);
+		static SingleResponse CreateResponse(pDefault* packet, PacketPriority priority, PacketReliability reliability, unsigned char channel, vector<RakNetGUID> targets);
 		/**
 		 * \brief Creates a SingleResponse given a single network target
 		 *
@@ -58,7 +60,7 @@ class Network
 		 * channel sepcifies the RakNet channel to send this packet on
 		 * target is a RakNetGUID
 		 */
-		static SingleResponse CreateResponse(pDefault* packet, unsigned char priority, unsigned char reliability, unsigned char channel, RakNetGUID target);
+		static SingleResponse CreateResponse(pDefault* packet, PacketPriority priority, PacketReliability reliability, unsigned char channel, RakNetGUID target);
 		/**
 		 * \brief Creates a NetworkResponse from a SingleResponse
 		 *

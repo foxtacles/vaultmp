@@ -82,8 +82,8 @@ NetworkResponse Game::Authenticate(string password)
 	Player* self = vaultcast<Player>(reference);
 	pDefault* packet = PacketFactory::CreatePacket(ID_GAME_AUTH, self->GetName().c_str(), password.c_str());
 	response = Network::CompleteResponse(Network::CreateResponse(packet,
-																 (unsigned char) HIGH_PRIORITY,
-																 (unsigned char) RELIABLE_ORDERED,
+																 HIGH_PRIORITY,
+																 RELIABLE_ORDERED,
 																 CHANNEL_GAME,
 																 server));
 	return response;
@@ -1078,8 +1078,8 @@ void Game::net_SetActorDead(FactoryObject& reference, bool dead)
 
 			pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_DEAD, id, dead);
 			NetworkResponse response = Network::CompleteResponse(Network::CreateResponse(packet,
-																						 (unsigned char) HIGH_PRIORITY,
-																						 (unsigned char) RELIABLE_ORDERED,
+																						 HIGH_PRIORITY,
+																						 RELIABLE_ORDERED,
 																						 CHANNEL_GAME,
 																						 server));
 			Network::Queue(response);
@@ -1096,8 +1096,8 @@ void Game::GetPos(FactoryObject reference, unsigned char axis, double value)
 	{
 		pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_POS, object->GetNetworkID(), object->GetGamePos(Axis_X), object->GetGamePos(Axis_Y), object->GetGamePos(Axis_Z));
 		NetworkResponse response = Network::CompleteResponse(Network::CreateResponse(packet,
-																					 (unsigned char) HIGH_PRIORITY,
-																					 (unsigned char) RELIABLE_SEQUENCED,
+																					 HIGH_PRIORITY,
+																					 RELIABLE_SEQUENCED,
 																					 CHANNEL_GAME,
 																					 server));
 		Network::Queue(response);
@@ -1113,8 +1113,8 @@ void Game::GetAngle(FactoryObject reference, unsigned char axis, double value)
 	{
 		pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_ANGLE, object->GetNetworkID(), axis, value);
 		NetworkResponse response = Network::CompleteResponse(Network::CreateResponse(packet,
-																					 (unsigned char) HIGH_PRIORITY,
-																					 (unsigned char) RELIABLE_SEQUENCED,
+																					 HIGH_PRIORITY,
+																					 RELIABLE_SEQUENCED,
 																					 CHANNEL_GAME,
 																					 server));
 		Network::Queue(response);
@@ -1165,8 +1165,8 @@ void Game::GetParentCell(vector<FactoryObject> reference, unsigned int cell)
 	{
 		pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_CELL, object->GetNetworkID(), cell);
 		NetworkResponse response = Network::CompleteResponse(Network::CreateResponse(packet,
-																					 (unsigned char) HIGH_PRIORITY,
-																					 (unsigned char) RELIABLE_SEQUENCED,
+																					 HIGH_PRIORITY,
+																					 RELIABLE_SEQUENCED,
 																					 CHANNEL_GAME,
 																					 server));
 		Network::Queue(response);
@@ -1200,8 +1200,8 @@ void Game::GetDead(vector<FactoryObject> reference, bool dead)
 	{
 		pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_DEAD, actor->GetNetworkID(), dead);
 		NetworkResponse response = Network::CompleteResponse(Network::CreateResponse(packet,
-																					 (unsigned char) HIGH_PRIORITY,
-																					 (unsigned char) RELIABLE_ORDERED,
+																					 HIGH_PRIORITY,
+																					 RELIABLE_ORDERED,
 																					 CHANNEL_GAME,
 																					 server));
 		Network::Queue(response);
@@ -1227,8 +1227,8 @@ void Game::GetActorValue(FactoryObject reference, bool base, unsigned char index
 	{
 		pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_VALUE, actor->GetNetworkID(), base, index, value);
 		NetworkResponse response = Network::CompleteResponse(Network::CreateResponse(packet,
-																					 (unsigned char) HIGH_PRIORITY,
-																					 (unsigned char) RELIABLE_ORDERED,
+																					 HIGH_PRIORITY,
+																					 RELIABLE_ORDERED,
 																					 CHANNEL_GAME,
 																					 server));
 		Network::Queue(response);
@@ -1253,8 +1253,8 @@ void Game::GetActorState(FactoryObject reference, unsigned char index, unsigned 
 	{
 		pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_STATE, actor->GetNetworkID(), index, moving, alerted, sneaking);
 		NetworkResponse response = Network::CompleteResponse(Network::CreateResponse(packet,
-																					 (unsigned char) HIGH_PRIORITY,
-																					 (unsigned char) RELIABLE_ORDERED,
+																					 HIGH_PRIORITY,
+																					 RELIABLE_ORDERED,
 																					 CHANNEL_GAME,
 																					 server));
 		Network::Queue(response);
@@ -1276,8 +1276,8 @@ void Game::GetControl(FactoryObject reference, unsigned char control, unsigned c
 	{
 		pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_CONTROL, player->GetNetworkID(), control, key);
 		NetworkResponse response = Network::CompleteResponse(Network::CreateResponse(packet,
-																					 (unsigned char) HIGH_PRIORITY,
-																					 (unsigned char) RELIABLE_ORDERED,
+																					 HIGH_PRIORITY,
+																					 RELIABLE_ORDERED,
 																					 CHANNEL_GAME,
 																					 server));
 		Network::Queue(response);
@@ -1329,8 +1329,8 @@ void Game::ScanContainer(FactoryObject reference, vector<unsigned char>& data)
 		{
 			pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_CONTAINER, container->GetNetworkID(), &diff);
 			NetworkResponse response = Network::CompleteResponse(Network::CreateResponse(packet,
-																						 (unsigned char) HIGH_PRIORITY,
-																						 (unsigned char) RELIABLE_ORDERED,
+																						 HIGH_PRIORITY,
+																						 RELIABLE_ORDERED,
 																						 CHANNEL_GAME,
 																						 server));
 			Network::Queue(response);

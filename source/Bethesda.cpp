@@ -513,7 +513,7 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
 			{
 				NetworkResponse response;
 
-				while ((response = Network::Next()).size())
+				while (!(response = Network::Next()).empty())
 					Network::Dispatch(peer, response);
 
 				for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())

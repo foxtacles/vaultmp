@@ -337,8 +337,8 @@ unsigned long long Script::Timer_Respawn(NetworkID id)
 
 	pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_DEAD, id, false);
 	NetworkResponse response = Network::CompleteResponse(Network::CreateResponse(packet,
-																				 (unsigned char) HIGH_PRIORITY,
-																				 (unsigned char) RELIABLE_ORDERED,
+																				 HIGH_PRIORITY,
+																				 RELIABLE_ORDERED,
 																				 CHANNEL_GAME,
 																				 Client::GetClientFromPlayer(id)->GetGUID()));
 	Network::Queue(response);
@@ -614,8 +614,8 @@ bool Script::UIMessage(NetworkID id, const char* message)
 	NetworkResponse response;
 	pDefault* packet = PacketFactory::CreatePacket(ID_GAME_MESSAGE, _message.c_str());
 	response = Network::CompleteResponse(Network::CreateResponse(packet,
-																 (unsigned char) HIGH_PRIORITY,
-																 (unsigned char) RELIABLE_ORDERED,
+																 HIGH_PRIORITY,
+																 RELIABLE_ORDERED,
 																 CHANNEL_GAME,
 																 id ? vector<RakNetGUID> {Client::GetClientFromPlayer(id)->GetGUID()} : Client::GetNetworkList(NULL)));
 	Network::Queue(response);
@@ -880,8 +880,8 @@ void Script::AddItem(NetworkID id, unsigned int baseID, unsigned int count, doub
 
 		pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_CONTAINER, id, &diff);
 		NetworkResponse response = Network::CompleteResponse(Network::CreateResponse(packet,
-																					 (unsigned char) HIGH_PRIORITY,
-																					 (unsigned char) RELIABLE_ORDERED,
+																					 HIGH_PRIORITY,
+																					 RELIABLE_ORDERED,
 																					 CHANNEL_GAME,
 																					 Client::GetNetworkList(NULL)));
 		Network::Queue(response);
@@ -907,8 +907,8 @@ unsigned int Script::RemoveItem(NetworkID id, unsigned int baseID, unsigned int 
 		{
 			pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_CONTAINER, id, &diff);
 			NetworkResponse response = Network::CompleteResponse(Network::CreateResponse(packet,
-																						 (unsigned char) HIGH_PRIORITY,
-																						 (unsigned char) RELIABLE_ORDERED,
+																						 HIGH_PRIORITY,
+																						 RELIABLE_ORDERED,
 																						 CHANNEL_GAME,
 																						 Client::GetNetworkList(NULL)));
 			Network::Queue(response);
@@ -935,8 +935,8 @@ void Script::RemoveAllItems(NetworkID id)
 		{
 			pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_CONTAINER, id, &diff);
 			NetworkResponse response = Network::CompleteResponse(Network::CreateResponse(packet,
-																						 (unsigned char) HIGH_PRIORITY,
-																						 (unsigned char) RELIABLE_ORDERED,
+																						 HIGH_PRIORITY,
+																						 RELIABLE_ORDERED,
 																						 CHANNEL_GAME,
 																						 Client::GetNetworkList(NULL)));
 			Network::Queue(response);
@@ -958,8 +958,8 @@ void Script::SetActorValue(NetworkID id, unsigned char index, double value)
 			NetworkResponse response;
 			pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_VALUE, actor->GetNetworkID(), false, index, value);
 			response = Network::CompleteResponse(Network::CreateResponse(packet,
-																		 (unsigned char) HIGH_PRIORITY,
-																		 (unsigned char) RELIABLE_ORDERED,
+																		 HIGH_PRIORITY,
+																		 RELIABLE_ORDERED,
 																		 CHANNEL_GAME,
 																		 Client::GetNetworkList(NULL)));
 			Network::Queue(response);
@@ -979,8 +979,8 @@ void Script::SetActorBaseValue(NetworkID id, unsigned char index, double value)
 			NetworkResponse response;
 			pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_VALUE, actor->GetNetworkID(), true, index, value);
 			response = Network::CompleteResponse(Network::CreateResponse(packet,
-																		 (unsigned char) HIGH_PRIORITY,
-																		 (unsigned char) RELIABLE_ORDERED,
+																		 HIGH_PRIORITY,
+																		 RELIABLE_ORDERED,
 																		 CHANNEL_GAME,
 																		 Client::GetNetworkList(NULL)));
 			Network::Queue(response);
@@ -1001,8 +1001,8 @@ bool Script::EquipItem(NetworkID id, unsigned int baseID, bool silent, bool stic
 		{
 			pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_CONTAINER, id, &diff);
 			NetworkResponse response = Network::CompleteResponse(Network::CreateResponse(packet,
-																						 (unsigned char) HIGH_PRIORITY,
-																						 (unsigned char) RELIABLE_ORDERED,
+																						 HIGH_PRIORITY,
+																						 RELIABLE_ORDERED,
 																						 CHANNEL_GAME,
 																						 Client::GetNetworkList(NULL)));
 			Network::Queue(response);
@@ -1028,8 +1028,8 @@ bool Script::UnequipItem(NetworkID id, unsigned int baseID, bool silent, bool st
 		{
 			pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_CONTAINER, id, &diff);
 			NetworkResponse response = Network::CompleteResponse(Network::CreateResponse(packet,
-																						 (unsigned char) HIGH_PRIORITY,
-																						 (unsigned char) RELIABLE_ORDERED,
+																						 HIGH_PRIORITY,
+																						 RELIABLE_ORDERED,
 																						 CHANNEL_GAME,
 																						 Client::GetNetworkList(NULL)));
 			Network::Queue(response);
@@ -1054,8 +1054,8 @@ void Script::KillActor(NetworkID id)
 			NetworkResponse response;
 			pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_DEAD, actor->GetNetworkID(), true);
 			response = Network::CompleteResponse(Network::CreateResponse(packet,
-																		 (unsigned char) HIGH_PRIORITY,
-																		 (unsigned char) RELIABLE_ORDERED,
+																		 HIGH_PRIORITY,
+																		 RELIABLE_ORDERED,
 																		 CHANNEL_GAME,
 																		 Client::GetNetworkList(NULL)));
 			Network::Queue(response);
