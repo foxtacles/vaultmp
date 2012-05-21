@@ -78,6 +78,7 @@
 					<Add option="-O2" />
 					<Add option="-Wredundant-decls" />
 					<Add option="-Wunreachable-code" />
+					<Add directory="amx\linux" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />

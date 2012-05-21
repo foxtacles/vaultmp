@@ -1,16 +1,16 @@
 #include "VaultFunctor.h"
 
-VaultFunctor::VaultFunctor() : func(NULL), next(NULL)
+VaultFunctor::VaultFunctor() : next(NULL), func(NULL)
 {
 
 }
 
-VaultFunctor::VaultFunctor(unsigned int flags) : flags(flags), func(NULL), next(NULL)
+VaultFunctor::VaultFunctor(unsigned int flags) : next(NULL), func(NULL), flags(flags)
 {
 
 }
 
-VaultFunctor::VaultFunctor(vector<string>(*func)()) : func(func), next(NULL)
+VaultFunctor::VaultFunctor(vector<string>(*func)()) : next(NULL), func(func)
 {
 
 }

@@ -122,7 +122,7 @@ void seDebugPrivilege()
 
 void MinimizeToTray(HWND hwnd)
 {
-	NOTIFYICONDATA nid = {0};
+	NOTIFYICONDATA nid;
 
 	ZeroMemory(&nid, sizeof(NOTIFYICONDATA));
 	nid.cbSize = sizeof(NOTIFYICONDATA);
@@ -140,7 +140,7 @@ void MinimizeToTray(HWND hwnd)
 
 void Maximize(HWND hwnd)
 {
-	NOTIFYICONDATA nid = {0};
+	NOTIFYICONDATA nid;
 
 	ZeroMemory(&nid, sizeof(NOTIFYICONDATA));
 	nid.cbSize = sizeof(NOTIFYICONDATA);
@@ -234,13 +234,12 @@ class FileServer : public FileListTransferCBInterface
 					 fps->onFileStruct->numberOfFilesInThisSet,
 					 fps->onFileStruct->fileName,
 					 fps->onFileStruct->byteLengthOfThisFile,
-					 fps->onFileStruct->byteLengthOfThisSet,
-					 fps->firstDataChunk);
+					 fps->onFileStruct->byteLengthOfThisSet);
 
 			SetWindowText(wndmain, wndtitle);
 		}
 
-		virtual bool OnDownloadComplete(DownloadCompleteStruct* dcs)
+		virtual bool OnDownloadComplete(DownloadCompleteStruct*)
 		{
 			char wndtitle[sizeof(CLIENT_VERSION) + 64];
 			snprintf(wndtitle, sizeof(wndtitle), "Vault-Tec Multiplayer Mod %s (FOR TESTING PURPOSES ONLY)", CLIENT_VERSION);
@@ -251,7 +250,7 @@ class FileServer : public FileListTransferCBInterface
 
 } transferCallback;
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR cmdline, int show)
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 {
 #ifdef VAULTMP_DEBUG
 
@@ -391,7 +390,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR cmdline, 
 		SystemAddress addr;
 		char* port;
 
-		if (port = strchr(token, ':'))
+		if ((port = strchr(token, ':')))
 		{
 			*port = '\0';
 			addr.SetPort(atoi(port + 1));
@@ -591,7 +590,8 @@ void CleanUp()
 
 int Create2ColItem(HWND hwndList, char* text1, char* text2)
 {
-	LVITEM lvi = {0};
+	LVITEM lvi;
+	ZeroMemory(&lvi, sizeof(lvi));
 	int ret;
 	lvi.mask = LVIF_TEXT;
 	lvi.pszText = text1;
@@ -605,7 +605,8 @@ int Create2ColItem(HWND hwndList, char* text1, char* text2)
 
 int Create4ColItem(HWND hwndList, const SystemAddress* addr, char* text1, char* text2, char* text3, char* text4)
 {
-	LVITEM lvi = {0};
+	LVITEM lvi;
+	ZeroMemory(&lvi, sizeof(lvi));
 	int ret;
 	lvi.mask = LVIF_TEXT | LVIF_PARAM;
 	lvi.pszText = text1;
@@ -854,7 +855,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 											SendMessage(wndprogressbar, PBM_SETRANGE, 0, MAKELONG(0, size));
 											SendMessage(wndprogressbar, PBM_SETSTEP, 1, 0);
 
-											for (int i = 0; i < size; i++)
+											for (unsigned int i = 0; i < size; i++)
 											{
 												SystemAddress addr;
 												RakString name, map;

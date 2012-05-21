@@ -21,7 +21,7 @@ CriticalSection Interface::dynamic_cs;
 Debug* Interface::debug;
 #endif
 
-bool Interface::Initialize(ResultHandler resultHandler, unsigned char game)
+bool Interface::Initialize(ResultHandler resultHandler)
 {
 	if (!initialized)
 	{
@@ -307,7 +307,6 @@ void Interface::CommandThreadReceive()
 
 				pipeClient->Receive(buffer);
 				code = buffer[0];
-				unsigned char* content = buffer + 1;
 
 				if (code == PIPE_OP_RETURN || code == PIPE_OP_RETURN_BIG)
 				{

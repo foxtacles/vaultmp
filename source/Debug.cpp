@@ -24,7 +24,7 @@ Debug::~Debug()
 	}
 }
 
-void Debug::GetTimeFormat(char* buf, int size, bool file)
+void Debug::GetTimeFormat(char* buf, unsigned int size, bool file)
 {
 	time_t ltime;
 	ltime = time(NULL);

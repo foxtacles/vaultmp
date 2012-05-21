@@ -246,7 +246,7 @@ namespace Values
 			ControlCode_Quickload           = 26,
 			ControlCode_Grab                = 27,
 		};
-	};
+	}
 
 	/**
 	 * \brief Data specific to Fallout 3
@@ -289,7 +289,7 @@ namespace Values
 			AnimGroup_JumpLandLeft          = 0xB5,
 			AnimGroup_JumpLandRight         = 0xB6,
 		};
-	};
+	}
 
 	/**
 	 * \brief Data specific to New Vegas
@@ -332,8 +332,8 @@ namespace Values
 			AnimGroup_JumpLandLeft          = 0xF3,
 			AnimGroup_JumpLandRight         = 0xF4,
 		};
-	};
-};
+	}
+}
 
 /**
  * \brief The programming interface to the game

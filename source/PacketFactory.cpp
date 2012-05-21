@@ -333,7 +333,7 @@ void PacketFactory::Access(const pDefault* packet, ...)
 
 			case ID_GAME_LOAD:
 			{
-				const pGameLoad* data = dynamic_cast<const pGameLoad*>(packet);
+				//const pGameLoad* data = dynamic_cast<const pGameLoad*>(packet);
 				break;
 			}
 
@@ -429,7 +429,7 @@ void PacketFactory::Access(const pDefault* packet, ...)
 				unsigned int size = *reinterpret_cast<unsigned int*>(&data->_data[pObjectNew::data_length()]);
 				unsigned int at = pObjectNew::data_length() + sizeof(unsigned int);
 
-				for (int i = 0; i < size; ++i, at += length)
+				for (unsigned int i = 0; i < size; ++i, at += length)
 				{
 					pItemNew* item = new pItemNew(&data->_data[at], length);
 					_pItemNew->push_back(item);
@@ -455,10 +455,10 @@ void PacketFactory::Access(const pDefault* packet, ...)
 				unsigned int size = *reinterpret_cast<unsigned int*>(&data->_data[pContainerNew::data_length(data->_data)]);
 				unsigned int at = pContainerNew::data_length(data->_data) + sizeof(unsigned int);
 
-				for (int i = 0; i < size; ++i, at += length)
+				for (unsigned int i = 0; i < size; ++i, at += length)
 					values->insert(pair<unsigned char, double>(*reinterpret_cast<unsigned char*>(&data->_data[at]), *reinterpret_cast<double*>(&data->_data[at + sizeof(unsigned char)])));
 
-				for (int i = 0; i < size; ++i, at += length)
+				for (unsigned int i = 0; i < size; ++i, at += length)
 					baseValues->insert(pair<unsigned char, double>(*reinterpret_cast<unsigned char*>(&data->_data[at]), *reinterpret_cast<double*>(&data->_data[at + sizeof(unsigned char)])));
 
 				*moving = *reinterpret_cast<unsigned char*>(&data->_data[at]);
@@ -487,7 +487,7 @@ void PacketFactory::Access(const pDefault* packet, ...)
 				unsigned int size = *reinterpret_cast<unsigned int*>(&data->_data[pActorNew::data_length(data->_data)]);
 				unsigned int at = pActorNew::data_length(data->_data) + sizeof(unsigned int);
 
-				for (int i = 0; i < size; ++i, at += length)
+				for (unsigned int i = 0; i < size; ++i, at += length)
 					controls->insert(pair<unsigned char, pair<unsigned char, bool> >(*reinterpret_cast<unsigned char*>(&data->_data[at]), pair<unsigned char, bool>(*reinterpret_cast<double*>(&data->_data[at + sizeof(unsigned char)]), *reinterpret_cast<double*>(&data->_data[at + (sizeof(unsigned char) * 2)]))));
 
 				break;
@@ -560,14 +560,14 @@ void PacketFactory::Access(const pDefault* packet, ...)
 						unsigned int size = *reinterpret_cast<unsigned int*>(&update->_data[0]);
 						unsigned int at = sizeof(unsigned int);
 
-						for (int i = 0; i < size; ++i, at += length)
+						for (unsigned int i = 0; i < size; ++i, at += length)
 							diff->first.push_back(*reinterpret_cast<NetworkID*>(&update->_data[at]));
 
 						length = pItemNew::as_packet_length();
 						size = *reinterpret_cast<unsigned int*>(&update->_data[at]);
 						at += sizeof(unsigned int);
 
-						for (int i = 0; i < size; ++i, at += length)
+						for (unsigned int i = 0; i < size; ++i, at += length)
 						{
 							pItemNew* item = new pItemNew(&update->_data[at], length);
 							NetworkID id = GameFactory::CreateKnownInstance(ID_ITEM, item);

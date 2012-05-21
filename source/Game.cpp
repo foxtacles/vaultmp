@@ -226,11 +226,9 @@ void Game::LoadGame(string savegame)
 
 	Interface::EndDynamic();
 
-	bool ready;
-
 	try
 	{
-		ready = store.get()->get_future(chrono::seconds(60));
+		store.get()->get_future(chrono::seconds(60));
 	}
 	catch (exception& e)
 	{
@@ -1295,7 +1293,7 @@ void Game::ScanContainer(FactoryObject reference, vector<unsigned char>& data)
 
 	Lockable* result;
 
-	if (result = container->getLock())
+	if ((result = container->getLock()))
 	{
 		unsigned int key = result->Lock();
 

@@ -246,35 +246,35 @@ template <>
 inline Object* vaultcast(Reference* reference) noexcept
 {
 	return reinterpret_cast<Object*>(reference);
-};
+}
 template <>
 inline Item* vaultcast(Reference* reference) noexcept
 {
 	if (GameFactory::GetType(reference) & ID_ITEM) return reinterpret_cast<Item*>(reference);
 
 	else return NULL;
-};
+}
 template <>
 inline Container* vaultcast(Reference* reference) noexcept
 {
 	if (GameFactory::GetType(reference) & ALL_CONTAINERS) return reinterpret_cast<Container*>(reference);
 
 	else return NULL;
-};
+}
 template <>
 inline Actor* vaultcast(Reference* reference) noexcept
 {
 	if (GameFactory::GetType(reference) & ALL_ACTORS) return reinterpret_cast<Actor*>(reference);
 
 	else return NULL;
-};
+}
 template <>
 inline Player* vaultcast(Reference* reference) noexcept
 {
 	if (GameFactory::GetType(reference) & ID_PLAYER) return reinterpret_cast<Player*>(reference);
 
 	else return NULL;
-};
+}
 /**
   * \brief Tries to cast the instance pointer of a FactoryObject
   */
@@ -282,6 +282,6 @@ template <typename T>
 inline T* vaultcast(FactoryObject& object) noexcept
 {
 	return vaultcast<T>(*object);
-};
+}
 
 #endif

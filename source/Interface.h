@@ -80,7 +80,7 @@ class Interface : public API
 		 *
 		 * Takes a ResultHandler function pointer and the game code
 		 */
-		static bool Initialize(ResultHandler, unsigned char game);
+		static bool Initialize(ResultHandler);
 		/**
 		 * \brief Terminates the Interface
 		 */

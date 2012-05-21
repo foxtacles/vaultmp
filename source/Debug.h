@@ -22,7 +22,7 @@ class Debug : private CriticalSection
 		string logfile;
 		FILE* vaultmplog;
 
-		static void GetTimeFormat(char* buf, int size, bool file);
+		static void GetTimeFormat(char* buf, unsigned int size, bool file);
 
 		Debug(const Debug&);
 		Debug& operator=(const Debug&);

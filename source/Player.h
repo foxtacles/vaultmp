@@ -109,7 +109,7 @@ class PlayerFunctor : public VaultFunctor
 		NetworkID player;
 
 	public:
-		PlayerFunctor(unsigned int flags, NetworkID player) : player(player), VaultFunctor(flags) {};
+		PlayerFunctor(unsigned int flags, NetworkID player) : VaultFunctor(flags), player(player) {};
 		virtual ~PlayerFunctor();
 
 		virtual vector<string> operator()();

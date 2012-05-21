@@ -29,7 +29,7 @@ void Bethesda::CommandHandler(unsigned int key, vector<double>& info, double res
 		//debug->PrintFormat("Executing command %04hX on reference %08X, key %08X", true, opcode, info.size() > 1 ? getFrom<double, unsigned int>(info.at(1)) : 0, key);
 #endif
 
-		Lockable* data = NULL;
+		Lockable* data;
 		weak_ptr<Lockable> shared;
 
 		if (key)
@@ -398,7 +398,7 @@ void Bethesda::Initialize()
 
 			try
 			{
-				Interface::Initialize(&CommandHandler, Bethesda::game);
+				Interface::Initialize(&CommandHandler);
 
 				chrono::steady_clock::time_point till = chrono::steady_clock::now() + chrono::milliseconds(5000);
 
@@ -438,7 +438,7 @@ void Bethesda::Terminate(RakPeerInterface* peer)
 	this_thread::sleep_for(chrono::milliseconds(200));
 	Packet* packet = NULL;
 
-	while (packet = peer->Receive())
+	while ((packet = peer->Receive()))
 		peer->DeallocatePacket(packet); // disconnection notification might still arrive
 
 	Interface::Terminate();
