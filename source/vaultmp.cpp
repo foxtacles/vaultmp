@@ -13,8 +13,8 @@
 #include "Data.h"
 #include "VaultException.h"
 #include "ufmod.h"
-#include "iniparser/dictionary.c"
-#include "iniparser/iniparser.c"
+#include "iniparser/src/dictionary.c"
+#include "iniparser/src/iniparser.c"
 
 #include "RakNet/RakPeerInterface.h"
 #include "RakNet/PacketizedTCP.h"

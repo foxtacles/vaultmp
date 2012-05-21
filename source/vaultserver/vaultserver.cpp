@@ -8,8 +8,8 @@
 #include "Dedicated.h"
 #include "Script.h"
 #include "../Utils.h"
-#include "../iniparser/dictionary.c"
-#include "../iniparser/iniparser.c"
+#include "../iniparser/src/dictionary.c"
+#include "../iniparser/src/iniparser.c"
 
 void InputThread()
 {
