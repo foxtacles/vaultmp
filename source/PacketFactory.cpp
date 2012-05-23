@@ -732,6 +732,5 @@ pDefault* PacketFactory::ExtractPartial(const pDefault* packet)
 
 void PacketFactory::FreePacket(pDefault* packet)
 {
-	if (packet)
-		delete packet;
+	delete packet;
 }
