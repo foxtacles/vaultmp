@@ -106,8 +106,8 @@ class Player : public Actor
 class PlayerFunctor : public ActorFunctor
 {
 	public:
-		PlayerFunctor(unsigned int flags, NetworkID id) : ActorFunctor(flags, id) {};
-		virtual ~PlayerFunctor();
+		PlayerFunctor(unsigned int flags, NetworkID id) : ActorFunctor(flags, id) {}
+		virtual ~PlayerFunctor() {}
 
 		virtual vector<string> operator()();
 		virtual bool filter(Reference* reference);

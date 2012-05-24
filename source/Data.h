@@ -36,7 +36,7 @@ namespace Data
 		public:
 			virtual ~_Parameter() {}
 
-			virtual const vector<string>& get() = 0;
+			virtual const vector<string>& get() const = 0;
 	};
 
 	class RawParameter : public _Parameter {
@@ -64,30 +64,34 @@ namespace Data
 				return vector<string>{Utils::toString(str)};
 			}
 
+			static vector<string> make(bool str)
+			{
+				return vector<string>{str ? "1" : "0"};
+			}
+
 		public:
 			RawParameter(string str) : data(vector<string>{str}) {}
 			RawParameter(vector<string> str) : data(str) {}
 			RawParameter(const vector<unsigned char>& str) : data(make(str)) {}
 			RawParameter(unsigned int str) : data(make(str)) {}
 			RawParameter(double str) : data(make(str)) {}
-
-			virtual const vector<string>& get() { return data; }
-
+			RawParameter(bool str) : data(make(str)) {}
 			virtual ~RawParameter() {}
+
+			virtual const vector<string>& get() const { return data; }
 	};
 
 	class FuncParameter : public _Parameter {
 
 		private:
-			vector<string> data;
+			mutable vector<string> data;
 			shared_ptr<VaultFunctor> func;
 
 		public:
 			FuncParameter(shared_ptr<VaultFunctor> func) : func(func) {}
-
-			virtual const vector<string>& get() { data = (*func.get())(); return data; }
-
 			virtual ~FuncParameter() {}
+
+			virtual const vector<string>& get() const { if (data.empty()) data = (*func.get())(); return data; }
 	};
 
 	class Parameter {
@@ -99,11 +103,12 @@ namespace Data
 		public:
 			Parameter(RawParameter& param) : param(new RawParameter(param)) {}
 			Parameter(FuncParameter& param) : param(new FuncParameter(param)) {}
-
 			Parameter(const RawParameter& param) : const_param(&param) {}
 			Parameter(const FuncParameter& param) : const_param(&param) {}
+
 			~Parameter() = default;
 
+			const vector<string>& get() const { return const_param ? const_param->get() : param->get(); }
 	};
 
 	typedef list<Parameter> ParamContainer;
@@ -123,9 +128,6 @@ namespace Data
 	{
 		return *reinterpret_cast<T*>(&r);
 	}
-
-	static const RawParameter Param_True(1u);
-	static const RawParameter Param_False(0u);
 
 	enum
 	{

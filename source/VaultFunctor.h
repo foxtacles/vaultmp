@@ -24,7 +24,6 @@ class VaultFunctor
 
 	public:
 		VaultFunctor() : next(NULL) {}
-		VaultFunctor(vector<string>(*func)()) : next(NULL) {}
 		virtual ~VaultFunctor();
 
 		/**

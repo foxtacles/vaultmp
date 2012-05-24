@@ -479,13 +479,13 @@ void GameFactory::DestroyAllInstances()
 
 	// Cleanup classes
 
-	Object::param_Axis.first.clear();
+	Object::param_Axis = RawParameter(vector<string>());
 
 	Container::Items = NULL;
 
 	Actor::Actors = NULL;
 	Actor::Creatures = NULL;
-	Actor::param_ActorValues.first.clear();
+	Actor::param_ActorValues = RawParameter(vector<string>());
 
 	Lockable::Reset();
 }

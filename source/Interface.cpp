@@ -221,7 +221,7 @@ multimap<string, string> Interface::Evaluate(Native::iterator _it)
 	unordered_map<string, string>::iterator al = alias.find(_it->first);
 	string name = (al != alias.end() ? al->second : _it->first);
 	string def = defs.find(name)->second;
-	ParamContainer param = _it->second; // copy...maybe change function to operate on reference
+	ParamContainer& param = _it->second;
 
 	multimap<string, string> result;
 	ParamContainer::reverse_iterator it;
@@ -244,20 +244,14 @@ multimap<string, string> Interface::Evaluate(Native::iterator _it)
 			if (def.find(token) == string::npos)
 				return result;
 
-			vector<string> params;
-			shared_ptr<VaultFunctor> getParams = it->second;
+			const vector<string>& params = it->get();
 
-			if (getParams)
-				params = (*getParams)();
-
-			if (!params.empty())
-				it->first.insert(it->first.end(), params.begin(), params.end());
-			else if (it->first.empty())
+			if (params.empty())
 				return result;
 
 			mult.insert(mult.begin(), rsize);
 			lists.insert(lists.begin(), it);
-			rsize *= it->first.size();
+			rsize *= it->get().size();
 		}
 
 		for (i = 0; i < rsize; ++i)
@@ -266,12 +260,12 @@ multimap<string, string> Interface::Evaluate(Native::iterator _it)
 
 			for (unsigned int j = 0; j < lsize; ++j)
 			{
-				unsigned int idx = ((unsigned int)(i / mult[j])) % lists.at(j)->first.size();
+				unsigned int idx = ((unsigned int)(i / mult[j])) % lists.at(j)->get().size();
 
 				char token[4];
 				snprintf(token, sizeof(token), "%%%d", j);
 
-				cmd.replace(cmd.find(token), strlen(token), Utils::str_replace(lists.at(j)->first.at(idx), " ", "|"));
+				cmd.replace(cmd.find(token), strlen(token), Utils::str_replace(lists.at(j)->get().at(idx), " ", "|"));
 			}
 
 			result.insert(pair<string, string>(name, cmd));

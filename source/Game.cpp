@@ -124,33 +124,23 @@ void Game::Startup()
 	Interface::DefineNative("GetDead", container);
 	Interface::SetupCommand("GetDead", 30);
 
-	vector<string> healthValues;
-
-	healthValues.push_back(API::RetrieveValue_Reverse(Fallout::ActorVal_Health));
-	healthValues.push_back(API::RetrieveValue_Reverse(Fallout::ActorVal_Head));
-	healthValues.push_back(API::RetrieveValue_Reverse(Fallout::ActorVal_Torso));
-	healthValues.push_back(API::RetrieveValue_Reverse(Fallout::ActorVal_LeftArm));
-	healthValues.push_back(API::RetrieveValue_Reverse(Fallout::ActorVal_RightArm));
-	healthValues.push_back(API::RetrieveValue_Reverse(Fallout::ActorVal_LeftLeg));
-	healthValues.push_back(API::RetrieveValue_Reverse(Fallout::ActorVal_RightLeg));
-
-	ParamContainer param_GetActorValue_Health;
-	//param_GetActorValue_Health.push_back(Player::Param_EnabledPlayers);
-	param_GetActorValue_Health.push_back(self->GetReferenceParam());
-	param_GetActorValue_Health.push_back(BuildParameter(healthValues));
-	Interface::DefineNative("GetActorValueHealth", param_GetActorValue_Health);
+	container = ParamContainer{self->GetReferenceParam(), RawParameter(vector<string>{
+		API::RetrieveValue_Reverse(Fallout::ActorVal_Health),
+		API::RetrieveValue_Reverse(Fallout::ActorVal_Head),
+		API::RetrieveValue_Reverse(Fallout::ActorVal_Torso),
+		API::RetrieveValue_Reverse(Fallout::ActorVal_LeftArm),
+		API::RetrieveValue_Reverse(Fallout::ActorVal_RightArm),
+		API::RetrieveValue_Reverse(Fallout::ActorVal_LeftLeg),
+		API::RetrieveValue_Reverse(Fallout::ActorVal_RightLeg)})};
+	Interface::DefineNative("GetActorValueHealth", container);
 	Interface::SetupCommand("GetActorValueHealth", 30);
 
-	ParamContainer param_GetActorValue;
-	param_GetActorValue.push_back(self->GetReferenceParam());
-	param_GetActorValue.push_back(Actor::Param_ActorValues());   // we could exclude health values here
-	Interface::DefineNative("GetActorValue", param_GetActorValue);
+	// we could exclude health values here
+	container = ParamContainer{self->GetReferenceParam(), Actor::Param_ActorValues()};
+	Interface::DefineNative("GetActorValue", container);
 	Interface::SetupCommand("GetActorValue", 100);
 
-	ParamContainer param_GetBaseActorValue;
-	param_GetBaseActorValue.push_back(self->GetReferenceParam());
-	param_GetBaseActorValue.push_back(Actor::Param_ActorValues());
-	Interface::DefineNative("GetBaseActorValue", param_GetBaseActorValue);
+	Interface::DefineNative("GetBaseActorValue", container);
 	Interface::SetupCommand("GetBaseActorValue", 200);
 
 	Interface::EndSetup();
@@ -209,9 +199,7 @@ void Game::LoadGame(string savegame)
 
 	Interface::StartDynamic();
 
-	ParamContainer param_Load;
-	param_Load.push_back(BuildParameter(savegame));
-	Interface::ExecuteCommand("Load", param_Load, key);
+	Interface::ExecuteCommand("Load", ParamContainer{RawParameter(savegame)}, key);
 
 	Interface::EndDynamic();
 
@@ -269,9 +257,7 @@ void Game::LoadEnvironment()
 
 	Interface::StartDynamic();
 
-	ParamContainer param_GetControl;
-	param_GetControl.push_back(BuildParameter(API::RetrieveAllControls()));
-	Interface::ExecuteCommand("GetControl", param_GetControl);
+	Interface::ExecuteCommand("GetControl", ParamContainer{RawParameter(API::RetrieveAllControls())});
 
 	Interface::EndDynamic();
 }
@@ -280,9 +266,7 @@ void Game::UIMessage(string message)
 {
 	Interface::StartDynamic();
 
-	ParamContainer param_UIMessage;
-	param_UIMessage.push_back(BuildParameter(message));     // max 64 chars
-	Interface::ExecuteCommand("UIMessage", param_UIMessage);
+	Interface::ExecuteCommand("UIMessage", ParamContainer{RawParameter(message)});
 
 	Interface::EndDynamic();
 }
@@ -398,9 +382,7 @@ void Game::RemoveObject(FactoryObject reference)
 
 	Interface::StartDynamic();
 
-	ParamContainer param_MarkForDelete;
-	param_MarkForDelete.push_back(object->GetReferenceParam());
-	Interface::ExecuteCommand("MarkForDelete", param_MarkForDelete);
+	Interface::ExecuteCommand("MarkForDelete", ParamContainer{object->GetReferenceParam()});
 
 	Interface::EndDynamic();
 }
@@ -419,11 +401,7 @@ void Game::PlaceAtMe(unsigned int refID, unsigned int baseID, unsigned int count
 {
 	Interface::StartDynamic();
 
-	ParamContainer param_PlaceAtMe;
-	param_PlaceAtMe.push_back(BuildParameter(Utils::LongToHex(refID)));
-	param_PlaceAtMe.push_back(BuildParameter(Utils::LongToHex(baseID)));
-	param_PlaceAtMe.push_back(BuildParameter(count));
-	Interface::ExecuteCommand("PlaceAtMe", param_PlaceAtMe, key);
+	Interface::ExecuteCommand("PlaceAtMe", ParamContainer{RawParameter(refID), RawParameter(baseID), RawParameter(count)}, key);
 
 	Interface::EndDynamic();
 }
@@ -435,19 +413,9 @@ void Game::ToggleEnabled(FactoryObject reference)
 	Interface::StartDynamic();
 
 	if (object->GetEnabled())
-	{
-		ParamContainer param_Enable;
-		param_Enable.push_back(object->GetReferenceParam());
-		param_Enable.push_back(Data::Param_True);
-		Interface::ExecuteCommand("Enable", param_Enable);
-	}
+		Interface::ExecuteCommand("Enable", ParamContainer{object->GetReferenceParam(), RawParameter(true)});
 	else
-	{
-		ParamContainer param_Disable;
-		param_Disable.push_back(object->GetReferenceParam());
-		param_Disable.push_back(Data::Param_False);
-		Interface::ExecuteCommand("Disable", param_Disable);
-	}
+		Interface::ExecuteCommand("Disable", ParamContainer{object->GetReferenceParam(), RawParameter(false)});
 
 	Interface::EndDynamic();
 }
@@ -465,10 +433,7 @@ void Game::SetName(FactoryObject reference)
 
 	Interface::StartDynamic();
 
-	ParamContainer param_SetName;
-	param_SetName.push_back(object->GetReferenceParam());
-	param_SetName.push_back(BuildParameter(object->GetName()));
-	Interface::ExecuteCommand("SetName", param_SetName);
+	Interface::ExecuteCommand("SetName", ParamContainer{object->GetReferenceParam(), RawParameter(object->GetName())});
 
 	Interface::EndDynamic();
 }
@@ -484,10 +449,7 @@ void Game::SetRestrained(FactoryObject reference, bool restrained)
 
 	Interface::StartDynamic();
 
-	ParamContainer param_SetRestrained;
-	param_SetRestrained.push_back(actor->GetReferenceParam());
-	param_SetRestrained.push_back(restrained ? Data::Param_True : Data::Param_False);
-	Interface::ExecuteCommand("SetRestrained", param_SetRestrained);
+	Interface::ExecuteCommand("SetRestrained", ParamContainer{actor->GetReferenceParam(), RawParameter(restrained)});
 
 	Interface::EndDynamic();
 }
@@ -505,27 +467,15 @@ void Game::SetPos(FactoryObject reference)
 
 	key = object->SetGamePos(Axis_X, object->GetNetworkPos(Axis_X));
 
-	ParamContainer param_SetPos;
-	param_SetPos.push_back(object->GetReferenceParam());
-	param_SetPos.push_back(BuildParameter(API::RetrieveAxis_Reverse(Axis_X)));
-	param_SetPos.push_back(BuildParameter(object->GetNetworkPos(Axis_X)));
-	Interface::ExecuteCommand("SetPos", param_SetPos, key ? key->Lock() : 0);
+	Interface::ExecuteCommand("SetPos", ParamContainer{object->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_X)), RawParameter(object->GetNetworkPos(Axis_X))}, key ? key->Lock() : 0);
 
 	key = object->SetGamePos(Axis_Y, object->GetNetworkPos(Axis_Y));
 
-	param_SetPos.clear();
-	param_SetPos.push_back(object->GetReferenceParam());
-	param_SetPos.push_back(BuildParameter(API::RetrieveAxis_Reverse(Axis_Y)));
-	param_SetPos.push_back(BuildParameter(object->GetNetworkPos(Axis_Y)));
-	Interface::ExecuteCommand("SetPos", param_SetPos, key ? key->Lock() : 0);
+	Interface::ExecuteCommand("SetPos", ParamContainer{object->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_Y)), RawParameter(object->GetNetworkPos(Axis_Y))}, key ? key->Lock() : 0);
 
 	key = object->SetGamePos(Axis_Z, object->GetNetworkPos(Axis_Z));
 
-	param_SetPos.clear();
-	param_SetPos.push_back(object->GetReferenceParam());
-	param_SetPos.push_back(BuildParameter(API::RetrieveAxis_Reverse(Axis_Z)));
-	param_SetPos.push_back(BuildParameter(object->GetNetworkPos(Axis_Z)));
-	Interface::ExecuteCommand("SetPos", param_SetPos, key ? key->Lock() : 0);
+	Interface::ExecuteCommand("SetPos", ParamContainer{object->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_Z)), RawParameter(object->GetNetworkPos(Axis_Z))}, key ? key->Lock() : 0);
 
 	Interface::EndDynamic();
 }
@@ -536,16 +486,7 @@ void Game::SetAngle(FactoryObject reference)
 
 	Interface::StartDynamic();
 
-	ParamContainer param_SetAngle;
-	param_SetAngle.push_back(object->GetReferenceParam());
-	param_SetAngle.push_back(BuildParameter(API::RetrieveAxis_Reverse(Axis_X)));
-	param_SetAngle.push_back(BuildParameter(object->GetAngle(Axis_X)));
-	Interface::ExecuteCommand("SetAngle", param_SetAngle);
-
-	param_SetAngle.clear();
-
-	param_SetAngle.push_back(object->GetReferenceParam());
-	param_SetAngle.push_back(BuildParameter(API::RetrieveAxis_Reverse(Axis_Z)));
+	Interface::ExecuteCommand("SetAngle", ParamContainer{object->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_X)), RawParameter(object->GetAngle(Axis_X))});
 
 	double value = object->GetAngle(Axis_Z);
 	Actor* actor = vaultcast<Actor>(object);
@@ -559,8 +500,7 @@ void Game::SetAngle(FactoryObject reference)
 			AdjustZAngle(value, 45.0);
 	}
 
-	param_SetAngle.push_back(BuildParameter(value));
-	Interface::ExecuteCommand("SetAngle", param_SetAngle);
+	Interface::ExecuteCommand("SetAngle", ParamContainer{object->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_Z)), RawParameter(value)});
 
 	Interface::EndDynamic();
 }
@@ -572,15 +512,13 @@ void Game::MoveTo(vector<FactoryObject> reference, bool cell, unsigned int key)
 
 	Interface::StartDynamic();
 
-	ParamContainer param_MoveTo;
-	param_MoveTo.push_back(object->GetReferenceParam());
-	param_MoveTo.push_back(object2->GetReferenceParam());
+	ParamContainer param_MoveTo{object->GetReferenceParam(), object2->GetReferenceParam()};
 
 	if (cell)
 	{
-		param_MoveTo.push_back(BuildParameter(object->GetNetworkPos(Axis_X) - object2->GetNetworkPos(Axis_X)));
-		param_MoveTo.push_back(BuildParameter(object->GetNetworkPos(Axis_Y) - object2->GetNetworkPos(Axis_Y)));
-		param_MoveTo.push_back(BuildParameter(object->GetNetworkPos(Axis_Z) - object2->GetNetworkPos(Axis_Z)));
+		param_MoveTo.push_back(RawParameter(object->GetNetworkPos(Axis_X) - object2->GetNetworkPos(Axis_X)));
+		param_MoveTo.push_back(RawParameter(object->GetNetworkPos(Axis_Y) - object2->GetNetworkPos(Axis_Y)));
+		param_MoveTo.push_back(RawParameter(object->GetNetworkPos(Axis_Z) - object2->GetNetworkPos(Axis_Z)));
 	}
 
 	Interface::ExecuteCommand("MoveTo", param_MoveTo, key);
@@ -598,21 +536,9 @@ void Game::SetActorValue(FactoryObject reference, bool base, unsigned char index
 	Interface::StartDynamic();
 
 	if (base)
-	{
-		ParamContainer param_SetActorValue;
-		param_SetActorValue.push_back(actor->GetReferenceParam());
-		param_SetActorValue.push_back(BuildParameter(API::RetrieveValue_Reverse(index)));
-		param_SetActorValue.push_back(BuildParameter(actor->GetActorBaseValue(index)));
-		Interface::ExecuteCommand("SetActorValue", param_SetActorValue, key);
-	}
+		Interface::ExecuteCommand("SetActorValue", ParamContainer{actor->GetReferenceParam(), RawParameter(API::RetrieveValue_Reverse(index)), RawParameter(actor->GetActorBaseValue(index))}, key);
 	else
-	{
-		ParamContainer param_ForceActorValue;
-		param_ForceActorValue.push_back(actor->GetReferenceParam());
-		param_ForceActorValue.push_back(BuildParameter(API::RetrieveValue_Reverse(index)));
-		param_ForceActorValue.push_back(BuildParameter(actor->GetActorValue(index)));
-		Interface::ExecuteCommand("ForceActorValue", param_ForceActorValue, key);
-	}
+		Interface::ExecuteCommand("ForceActorValue", ParamContainer{actor->GetReferenceParam(), RawParameter(API::RetrieveValue_Reverse(index)), RawParameter(actor->GetActorValue(index))}, key);
 
 	Interface::EndDynamic();
 }
@@ -638,10 +564,7 @@ thread Game::SetActorSneaking(FactoryObject reference, unsigned int key)
 
 			Interface::StartDynamic();
 
-			ParamContainer param_SetForceSneak;
-			param_SetForceSneak.push_back(actor->GetReferenceParam());
-			param_SetForceSneak.push_back(actor->GetActorSneaking() ? Data::Param_True : Data::Param_False);
-			Interface::ExecuteCommand("SetForceSneak", param_SetForceSneak, key);
+			Interface::ExecuteCommand("SetForceSneak", ParamContainer{actor->GetReferenceParam(), RawParameter(actor->GetActorSneaking())}, key);
 
 			Interface::EndDynamic();
 		}
@@ -684,10 +607,7 @@ thread Game::SetActorAlerted(FactoryObject reference, unsigned int key)
 
 			Interface::StartDynamic();
 
-			ParamContainer param_SetAlert;
-			param_SetAlert.push_back(actor->GetReferenceParam());
-			param_SetAlert.push_back(actor->GetActorAlerted() ? Data::Param_True : Data::Param_False);
-			Interface::ExecuteCommand("SetAlert", param_SetAlert, key);
+			Interface::ExecuteCommand("SetAlert", ParamContainer{actor->GetReferenceParam(), RawParameter(actor->GetActorAlerted())}, key);
 
 			Interface::EndDynamic();
 		}
@@ -716,11 +636,7 @@ void Game::SetActorMovingAnimation(FactoryObject reference, unsigned int key)
 
 	Interface::StartDynamic();
 
-	ParamContainer param_PlayGroup;
-	param_PlayGroup.push_back(actor->GetReferenceParam());
-	param_PlayGroup.push_back(BuildParameter(API::RetrieveAnim_Reverse(actor->GetActorMovingAnimation())));
-	param_PlayGroup.push_back(Data::Param_True);
-	Interface::ExecuteCommand("PlayGroup", param_PlayGroup, key);
+	Interface::ExecuteCommand("PlayGroup", ParamContainer{actor->GetReferenceParam(), RawParameter(API::RetrieveAnim_Reverse(actor->GetActorMovingAnimation())), RawParameter(true)}, key);
 
 	Interface::EndDynamic();
 }
@@ -734,9 +650,7 @@ void Game::KillActor(FactoryObject reference, unsigned int key)
 
 	Interface::StartDynamic();
 
-	ParamContainer param_Kill;
-	param_Kill.push_back(actor->GetReferenceParam());
-	Interface::ExecuteCommand("Kill", param_Kill, key);
+	Interface::ExecuteCommand("Kill", ParamContainer{actor->GetReferenceParam()}, key);
 
 	Interface::EndDynamic();
 }
@@ -760,28 +674,7 @@ void Game::AddItem(FactoryObject reference, unsigned int baseID, unsigned int co
 
 	Interface::StartDynamic();
 
-	/*if (!condition || Utils::DoubleCompare(condition, 100.0, 0.01))
-	{
-	    ParamContainer param_AddItem;
-	    param_AddItem.push_back( container->GetReferenceParam() );
-	    param_AddItem.push_back( BuildParameter(Utils::LongToHex(baseID)) );
-	    param_AddItem.push_back( BuildParameter(count) );
-	    param_AddItem.push_back( silent ? Data::Param_True : Data::Param_False );
-
-	    Interface::ExecuteCommand( "AddItem", param_AddItem, key);
-	}
-	else
-	{*/
-	// AddItemHealthPercent doesn't has the "equip best stuff"-bug
-	ParamContainer param_AddItemHealthPercent;
-	param_AddItemHealthPercent.push_back(container->GetReferenceParam());
-	param_AddItemHealthPercent.push_back(BuildParameter(Utils::LongToHex(baseID)));
-	param_AddItemHealthPercent.push_back(BuildParameter(count));
-	param_AddItemHealthPercent.push_back(BuildParameter(condition / 100));
-	param_AddItemHealthPercent.push_back(silent ? Data::Param_True : Data::Param_False);
-
-	Interface::ExecuteCommand("AddItemHealthPercent", param_AddItemHealthPercent, key);
-	//}
+	Interface::ExecuteCommand("AddItemHealthPercent", ParamContainer{container->GetReferenceParam(), RawParameter(baseID), RawParameter(count), RawParameter(condition / 100), RawParameter(silent)}, key);
 
 	Interface::EndDynamic();
 }
@@ -805,13 +698,7 @@ void Game::RemoveItem(FactoryObject reference, unsigned int baseID, unsigned int
 
 	Interface::StartDynamic();
 
-	ParamContainer param_RemoveItem;
-	param_RemoveItem.push_back(container->GetReferenceParam());
-	param_RemoveItem.push_back(BuildParameter(Utils::LongToHex(baseID)));
-	param_RemoveItem.push_back(BuildParameter(count));
-	param_RemoveItem.push_back(silent ? Data::Param_True : Data::Param_False);
-
-	Interface::ExecuteCommand("RemoveItem", param_RemoveItem, key);
+	Interface::ExecuteCommand("RemoveItem", ParamContainer{container->GetReferenceParam(), RawParameter(baseID), RawParameter(count), RawParameter(silent)}, key);
 
 	Interface::EndDynamic();
 }
@@ -825,10 +712,7 @@ void Game::RemoveAllItems(FactoryObject reference, unsigned int key)
 
 	Interface::StartDynamic();
 
-	ParamContainer param_RemoveAllItems;
-	param_RemoveAllItems.push_back(container->GetReferenceParam());
-
-	Interface::ExecuteCommand("RemoveAllItems", param_RemoveAllItems, key);
+	Interface::ExecuteCommand("RemoveAllItems", ParamContainer{container->GetReferenceParam()}, key);
 
 	Interface::EndDynamic();
 }
@@ -852,13 +736,7 @@ void Game::EquipItem(FactoryObject reference, unsigned int baseID, bool silent, 
 
 	Interface::StartDynamic();
 
-	ParamContainer param_EquipItem;
-	param_EquipItem.push_back(actor->GetReferenceParam());
-	param_EquipItem.push_back(BuildParameter(Utils::LongToHex(baseID)));
-	param_EquipItem.push_back(stick ? Data::Param_True : Data::Param_False);
-	param_EquipItem.push_back(silent ? Data::Param_True : Data::Param_False);
-
-	Interface::ExecuteCommand("EquipItem", param_EquipItem, key);
+	Interface::ExecuteCommand("EquipItem", ParamContainer{actor->GetReferenceParam(), RawParameter(baseID), RawParameter(stick), RawParameter(silent)}, key);
 
 	Interface::EndDynamic();
 }
@@ -882,13 +760,7 @@ void Game::UnequipItem(FactoryObject reference, unsigned int baseID, bool silent
 
 	Interface::StartDynamic();
 
-	ParamContainer param_UnequipItem;
-	param_UnequipItem.push_back(actor->GetReferenceParam());
-	param_UnequipItem.push_back(BuildParameter(Utils::LongToHex(baseID)));
-	param_UnequipItem.push_back(stick ? Data::Param_True : Data::Param_False);
-	param_UnequipItem.push_back(silent ? Data::Param_True : Data::Param_False);
-
-	Interface::ExecuteCommand("UnequipItem", param_UnequipItem, key);
+	Interface::ExecuteCommand("UnequipItem", ParamContainer{actor->GetReferenceParam(), RawParameter(baseID), RawParameter(stick), RawParameter(silent)}, key);
 
 	Interface::EndDynamic();
 }

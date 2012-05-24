@@ -1,6 +1,6 @@
 #include "Object.h"
 
-Parameter Object::param_Axis = Parameter(vector<string>(), NULL);
+RawParameter Object::param_Axis = RawParameter(vector<string>());
 
 #ifdef VAULTMP_DEBUG
 Debug* Object::debug;
@@ -70,14 +70,14 @@ bool Object::IsValidCoordinate(double C)
 
 inline
 bool Object::IsValidAngle(double A)
-{s
+{
 	return (A >= 0.0 && A <= 360.0);
 }
 
 const RawParameter& Object::Param_Axis()
 {
-	if (param_Axis.first.empty())
-		param_Axis.first = API::RetrieveAllAxis_Reverse();
+	if (param_Axis.get().empty())
+		param_Axis = API::RetrieveAllAxis_Reverse();
 
 	return param_Axis;
 }

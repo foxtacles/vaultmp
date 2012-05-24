@@ -18,8 +18,7 @@
 #include "API.h"
 #include "PacketFactory.h"
 
-const unsigned int FLAG_NOTSELF         = FLAG_DISABLED << 1;
-const unsigned int FLAG_ALIVE           = FLAG_NOTSELF << 1;
+const unsigned int FLAG_ALIVE           = FLAG_BASE << 1;
 const unsigned int FLAG_DEAD            = FLAG_ALIVE << 1;
 const unsigned int FLAG_ISALERTED       = FLAG_DEAD << 1;
 const unsigned int FLAG_NOTALERTED      = FLAG_ISALERTED << 1;
@@ -174,8 +173,8 @@ class Actor : public Container
 class ActorFunctor : public ObjectFunctor
 {
 	public:
-		ActorFunctor(unsigned int flags, NetworkID id) : ObjectFunctor(flags, id) {};
-		virtual ~ActorFunctor();
+		ActorFunctor(unsigned int flags, NetworkID id) : ObjectFunctor(flags, id) {}
+		virtual ~ActorFunctor() {}
 
 		virtual vector<string> operator()();
 		virtual bool filter(Reference* reference);

@@ -94,8 +94,8 @@ class ReferenceFunctor : public VaultFunctor
 		NetworkID id;
 
 	protected:
-		ReferenceFunctor(unsigned int flags, NetworkID id) : VaultFunctor(), _flags(flags), id(id) {};
-		virtual ~ReferenceFunctor();
+		ReferenceFunctor(unsigned int flags, NetworkID id) : VaultFunctor(), _flags(flags), id(id) {}
+		virtual ~ReferenceFunctor() {}
 
 		virtual bool filter(Reference* reference) = 0;
 

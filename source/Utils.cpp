@@ -38,19 +38,21 @@ string Utils::toString(double value)
 	return string(str);
 }
 
-string& Utils::str_replace(string& source, const char* find, const char* replace)
+string Utils::str_replace(const string& source, const char* find, const char* replace)
 {
 	unsigned int find_len = strlen(find);
 	unsigned int replace_len = strlen(replace);
 	unsigned int pos = 0;
 
-	while ((pos = source.find(find, pos)) != string::npos)
+	string dest = source;
+
+	while ((pos = dest.find(find, pos)) != string::npos)
 	{
-		source.replace(pos, find_len, replace);
+		dest.replace(pos, find_len, replace);
 		pos += replace_len;
 	}
 
-	return source;
+	return dest;
 }
 
 string& Utils::RemoveExtension(string& file)
