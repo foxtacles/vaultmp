@@ -37,6 +37,7 @@ namespace Data
 			virtual ~_Parameter() {}
 
 			virtual const vector<string>& get() const = 0;
+			virtual void reset() = 0;
 	};
 
 	class RawParameter : public _Parameter {
@@ -79,19 +80,32 @@ namespace Data
 			virtual ~RawParameter() {}
 
 			virtual const vector<string>& get() const { return data; }
+			virtual void reset() {}
 	};
 
 	class FuncParameter : public _Parameter {
 
 		private:
-			mutable vector<string> data;
 			shared_ptr<VaultFunctor> func;
+			mutable vector<string> data;
+			mutable bool initialized;
 
 		public:
-			FuncParameter(shared_ptr<VaultFunctor> func) : func(func) {}
+			FuncParameter(shared_ptr<VaultFunctor> func) : func(func), initialized(false) {}
 			virtual ~FuncParameter() {}
 
-			virtual const vector<string>& get() const { if (data.empty()) data = (*func.get())(); return data; }
+			virtual const vector<string>& get() const
+			{
+				if (!initialized)
+				{
+					data = (*func.get())();
+					initialized = true;
+				}
+
+				return data;
+			}
+
+			virtual void reset() { initialized = false; }
 	};
 
 	class Parameter {
@@ -109,6 +123,7 @@ namespace Data
 			~Parameter() = default;
 
 			const vector<string>& get() const { return const_param ? const_param->get() : param->get(); }
+			void reset() { if (!const_param) param->reset(); }
 	};
 
 	typedef list<Parameter> ParamContainer;

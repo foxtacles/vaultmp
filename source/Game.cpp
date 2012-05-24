@@ -96,47 +96,39 @@ void Game::Startup()
 
 	Interface::StartSetup();
 
-	ParamContainer container{self->GetReferenceParam(), Object::Param_Axis()};
-	Interface::DefineNative("GetPos", container);
+	Interface::DefineNative("GetPos", ParamContainer{self->GetReferenceParam(), Object::Param_Axis()});
 	Interface::SetupCommand("GetPos");
 
-	container = ParamContainer{Player::CreateFunctor(FLAG_ENABLED | FLAG_NOTSELF | FLAG_ALIVE), Object::Param_Axis()};
-	Interface::DefineNative("GetPosNotSelf", container);
+	Interface::DefineNative("GetPosNotSelf", ParamContainer{Player::CreateFunctor(FLAG_ENABLED | FLAG_NOTSELF | FLAG_ALIVE), Object::Param_Axis()});
 	Interface::SetupCommand("GetPosNotSelf", 30);
 
-	container = ParamContainer{self->GetReferenceParam(), RawParameter(vector<string> {API::RetrieveAxis_Reverse(Axis_X), API::RetrieveAxis_Reverse(Axis_Z)})};
-	Interface::DefineNative("GetAngle", container);
+	Interface::DefineNative("GetAngle", ParamContainer{self->GetReferenceParam(), RawParameter(vector<string> {API::RetrieveAxis_Reverse(Axis_X), API::RetrieveAxis_Reverse(Axis_Z)})});
 	Interface::SetupCommand("GetAngle");
 
-	container = ParamContainer{self->GetReferenceParam(), Player::CreateFunctor(FLAG_MOVCONTROLS, self->GetNetworkID())};
-	Interface::DefineNative("GetActorState", container);
+	Interface::DefineNative("GetActorState", ParamContainer{self->GetReferenceParam(), Player::CreateFunctor(FLAG_MOVCONTROLS, self->GetNetworkID())});
 	Interface::SetupCommand("GetActorState");
 
-	container = ParamContainer{Player::CreateFunctor(FLAG_ALIVE)};
-	Interface::DefineNative("GetParentCell", container);
+	Interface::DefineNative("GetParentCell", ParamContainer{Player::CreateFunctor(FLAG_ALIVE)});
 	Interface::SetupCommand("GetParentCell", 30);
 
-	container = ParamContainer{self->GetReferenceParam()};
-	Interface::DefineNative("ScanContainer", container);
+	Interface::DefineNative("ScanContainer", ParamContainer{self->GetReferenceParam()});
 	Interface::SetupCommand("ScanContainer", 50);
 
-	container = ParamContainer{Player::CreateFunctor(FLAG_ENABLED | FLAG_ALIVE)};
-	Interface::DefineNative("GetDead", container);
+	Interface::DefineNative("GetDead", ParamContainer{Player::CreateFunctor(FLAG_ENABLED | FLAG_ALIVE)});
 	Interface::SetupCommand("GetDead", 30);
 
-	container = ParamContainer{self->GetReferenceParam(), RawParameter(vector<string>{
+	Interface::DefineNative("GetActorValueHealth", ParamContainer{self->GetReferenceParam(), RawParameter(vector<string>{
 		API::RetrieveValue_Reverse(Fallout::ActorVal_Health),
 		API::RetrieveValue_Reverse(Fallout::ActorVal_Head),
 		API::RetrieveValue_Reverse(Fallout::ActorVal_Torso),
 		API::RetrieveValue_Reverse(Fallout::ActorVal_LeftArm),
 		API::RetrieveValue_Reverse(Fallout::ActorVal_RightArm),
 		API::RetrieveValue_Reverse(Fallout::ActorVal_LeftLeg),
-		API::RetrieveValue_Reverse(Fallout::ActorVal_RightLeg)})};
-	Interface::DefineNative("GetActorValueHealth", container);
+		API::RetrieveValue_Reverse(Fallout::ActorVal_RightLeg)})});
 	Interface::SetupCommand("GetActorValueHealth", 30);
 
 	// we could exclude health values here
-	container = ParamContainer{self->GetReferenceParam(), Actor::Param_ActorValues()};
+	ParamContainer container = ParamContainer{self->GetReferenceParam(), Actor::Param_ActorValues()};
 	Interface::DefineNative("GetActorValue", container);
 	Interface::SetupCommand("GetActorValue", 100);
 

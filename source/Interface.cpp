@@ -244,6 +244,7 @@ multimap<string, string> Interface::Evaluate(Native::iterator _it)
 			if (def.find(token) == string::npos)
 				return result;
 
+			it->reset(); // reset to initial state (important for functors)
 			const vector<string>& params = it->get();
 
 			if (params.empty())
@@ -251,7 +252,7 @@ multimap<string, string> Interface::Evaluate(Native::iterator _it)
 
 			mult.insert(mult.begin(), rsize);
 			lists.insert(lists.begin(), it);
-			rsize *= it->get().size();
+			rsize *= params.size();
 		}
 
 		for (i = 0; i < rsize; ++i)
