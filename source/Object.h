@@ -33,7 +33,7 @@ class Object : public Reference
 		friend class GameFactory;
 
 	private:
-		static Parameter param_Axis;
+		static RawParameter param_Axis;
 
 #ifdef VAULTMP_DEBUG
 		static Debug* debug;
@@ -70,7 +70,7 @@ class Object : public Reference
 		 * Used to pass axis values to the Interface
 		 */
 
-		static const Parameter& Param_Axis();
+		static const RawParameter& Param_Axis();
 
 		/**
 		 * \brief Retrieves the Object's name
@@ -151,6 +151,16 @@ class Object : public Reference
 		 * \brief For network transfer
 		 */
 		virtual pDefault* toPacket();
+};
+
+class ObjectFunctor : public ReferenceFunctor
+{
+	public:
+		ObjectFunctor(unsigned int flags, NetworkID id) : ReferenceFunctor(flags, id) {};
+		virtual ~ObjectFunctor();
+
+		virtual vector<string> operator()();
+		virtual bool filter(Reference* reference);
 };
 
 #endif

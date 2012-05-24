@@ -370,7 +370,6 @@ class API
 		static void DefineAnimString(string name, unsigned char anim, unsigned char games);
 		static void DefineControl(unsigned char control, unsigned char games);
 
-		static unsigned long ExtractReference(const char* reference);
 		static pair<string, unsigned short> RetrieveFunction(string name);
 		static unsigned char* BuildCommandStream(vector<double>& info, unsigned int key, unsigned char* command, unsigned int size);
 

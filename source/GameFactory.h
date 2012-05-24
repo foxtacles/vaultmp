@@ -181,23 +181,27 @@ class FactoryObject
 		friend class GameFactory;
 
 	private:
+		Reference* reference;
+
 		FactoryObject(Reference* reference) : reference(reference)
 		{
-			if (!(reference = (Reference*) reference->StartSession())) throw VaultException("Unknown object %08X", reference);
+			if (!(reference = reinterpret_cast<Reference*>(reference->StartSession())))
+				throw VaultException("Unknown object %08X", reference);
 		};
-		Reference* reference;
 
 	public:
 		FactoryObject() : reference(NULL) {};
 		~FactoryObject()
 		{
-			if (reference) reference->EndSession();
+			if (reference)
+				reference->EndSession();
 		};
 		FactoryObject(FactoryObject const& p) : reference(p.reference)
 		{
-			if (reference) reference->StartSession();
+			if (reference)
+				reference->StartSession();
 		};
-		FactoryObject(FactoryObject && p) : reference(p.reference)
+		FactoryObject(FactoryObject&& p) : reference(p.reference)
 		{
 			p.reference = NULL;
 		};
@@ -216,7 +220,7 @@ class FactoryObject
 
 			return *this;
 		};
-		FactoryObject& operator= (FactoryObject && p)
+		FactoryObject& operator= (FactoryObject&& p)
 		{
 			if (this != &p)
 			{
@@ -250,30 +254,34 @@ inline Object* vaultcast(Reference* reference) noexcept
 template <>
 inline Item* vaultcast(Reference* reference) noexcept
 {
-	if (GameFactory::GetType(reference) & ID_ITEM) return reinterpret_cast<Item*>(reference);
-
-	else return NULL;
+	if (GameFactory::GetType(reference) & ID_ITEM)
+		return reinterpret_cast<Item*>(reference);
+	else
+		return NULL;
 }
 template <>
 inline Container* vaultcast(Reference* reference) noexcept
 {
-	if (GameFactory::GetType(reference) & ALL_CONTAINERS) return reinterpret_cast<Container*>(reference);
-
-	else return NULL;
+	if (GameFactory::GetType(reference) & ALL_CONTAINERS)
+		return reinterpret_cast<Container*>(reference);
+	else
+		return NULL;
 }
 template <>
 inline Actor* vaultcast(Reference* reference) noexcept
 {
-	if (GameFactory::GetType(reference) & ALL_ACTORS) return reinterpret_cast<Actor*>(reference);
-
-	else return NULL;
+	if (GameFactory::GetType(reference) & ALL_ACTORS)
+		return reinterpret_cast<Actor*>(reference);
+	else
+		return NULL;
 }
 template <>
 inline Player* vaultcast(Reference* reference) noexcept
 {
-	if (GameFactory::GetType(reference) & ID_PLAYER) return reinterpret_cast<Player*>(reference);
-
-	else return NULL;
+	if (GameFactory::GetType(reference) & ID_PLAYER)
+		return reinterpret_cast<Player*>(reference);
+	else
+		return NULL;
 }
 /**
   * \brief Tries to cast the instance pointer of a FactoryObject

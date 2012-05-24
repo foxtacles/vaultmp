@@ -63,9 +63,9 @@ void Player::SetRespawn(unsigned int respawn)
 	default_respawn = respawn;
 }
 
-const Parameter Player::CreateFunctor(unsigned int flags, NetworkID player)
+FuncParameter Player::CreateFunctor(unsigned int flags, NetworkID id)
 {
-	return Parameter(vector<string>(), new PlayerFunctor(flags, player));
+	return FuncParameter(shared_ptr<VaultFunctor>(new PlayerFunctor(flags, id)));
 }
 
 unsigned char Player::GetPlayerControl(unsigned char control) const
@@ -118,14 +118,17 @@ pDefault* Player::toPacket()
 vector<string> PlayerFunctor::operator()()
 {
 	vector<string> result;
+	NetworkID id = get();
 
-	if (this->player)
+	if (id)
 	{
-		FactoryObject reference = GameFactory::GetObject(this->player);
+		FactoryObject reference = GameFactory::GetObject(id);
 		Player* player = vaultcast<Player>(reference);
 
 		if (player)
 		{
+			unsigned int flags = this->flags();
+
 			if (flags & FLAG_MOVCONTROLS)
 			{
 				unsigned int forward, backward, left, right;
@@ -137,49 +140,19 @@ vector<string> PlayerFunctor::operator()()
 
 				unsigned int movcontrols = (right | (left << 8) | (backward << 16) | (forward << 24));
 
-				char value[64];
-				snprintf(value, sizeof(value), "%d", movcontrols);
-				result.push_back(string(value));
+				result.push_back(Utils::toString(movcontrols));
 			}
 		}
 	}
-
 	else
 	{
 		vector<FactoryObject>::iterator it;
-		vector<FactoryObject> playerlist = GameFactory::GetObjectTypes(ID_PLAYER);
+		vector<FactoryObject> references = GameFactory::GetObjectTypes(ID_PLAYER);
+		unsigned int refID;
 
-		for (it = playerlist.begin(); it != playerlist.end(); GameFactory::LeaveReference(*it), ++it)
-		{
-			Player* player = vaultcast<Player>(*it);
-			unsigned int refID = player->GetReference();
-
-			if (refID != 0x00000000)
-			{
-				if (flags& FLAG_NOTSELF && refID == PLAYER_REFERENCE)
-					continue;
-
-				if (flags & FLAG_ENABLED && !player->GetEnabled())
-					continue;
-
-				else if (flags & FLAG_DISABLED && player->GetEnabled())
-					continue;
-
-				if (flags & FLAG_ALIVE && player->GetActorDead())
-					continue;
-
-				else if (flags & FLAG_DEAD && !player->GetActorDead())
-					continue;
-
-				if (flags & FLAG_ISALERTED && !player->GetActorAlerted())
-					continue;
-
-				else if (flags & FLAG_NOTALERTED && player->GetActorAlerted())
-					continue;
-
-				result.push_back(Utils::LongToHex(refID));
-			}
-		}
+		for (it = references.begin(); it != references.end(); GameFactory::LeaveReference(*it), ++it)
+			if ((refID = (**it)->GetReference()) && !filter(**it))
+				result.push_back(Utils::toString(refID));
 	}
 
 	_next(result);
@@ -187,7 +160,12 @@ vector<string> PlayerFunctor::operator()()
 	return result;
 }
 
-PlayerFunctor::~PlayerFunctor()
+bool PlayerFunctor::filter(Reference* reference)
 {
+	if (ActorFunctor::filter(reference))
+		return true;
 
+	Player* player = vaultcast<Player>(reference);
+
+	return false;
 }

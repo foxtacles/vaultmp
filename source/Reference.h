@@ -69,22 +69,38 @@ class Reference : private CriticalSection, public NetworkIDObject
 		/**
 		 * \brief Returns a constant Parameter used to pass the reference ID of this Reference to the Interface
 		 */
-		const Parameter GetReferenceParam() const
+		RawParameter GetReferenceParam() const
 		{
-			return Parameter(vector<string> {Utils::LongToHex(refID.get())}, NULL);
+			return RawParameter(refID.get());
 		};
 		/**
 		 * \brief Returns a constant Parameter used to pass the base ID of this Reference to the Interface
 		 */
-		const Parameter GetBaseParam() const
+		RawParameter GetBaseParam() const
 		{
-			return Parameter(vector<string> {Utils::LongToHex(baseID.get())}, NULL);
+			return RawParameter(baseID.get());
 		};
 
 		/**
 		 * \brief For network transfer
 		 */
 		virtual pDefault* toPacket() = 0;
+};
+
+class ReferenceFunctor : public VaultFunctor
+{
+	private:
+		unsigned int _flags;
+		NetworkID id;
+
+	protected:
+		ReferenceFunctor(unsigned int flags, NetworkID id) : VaultFunctor(), _flags(flags), id(id) {};
+		virtual ~ReferenceFunctor();
+
+		virtual bool filter(Reference* reference) = 0;
+
+		unsigned int flags() { return _flags; }
+		NetworkID get() { return id; }
 };
 
 #endif

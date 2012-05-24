@@ -11,6 +11,7 @@
 #include "RakNet/RakString.h"
 #include "RakNet/MessageIdentifiers.h"
 
+#include "Utils.h"
 #include "VaultException.h"
 #include "VaultFunctor.h"
 
@@ -26,7 +27,85 @@ namespace Data
 {
 
 	typedef void (*ResultHandler)(unsigned int, vector<double>&, double, bool);
-	typedef pair<vector<string>, VaultFunctor*> Parameter;
+
+	class _Parameter {
+
+		protected:
+			_Parameter() = default;
+
+		public:
+			virtual ~_Parameter() {}
+
+			virtual const vector<string>& get() = 0;
+	};
+
+	class RawParameter : public _Parameter {
+
+		private:
+			vector<string> data;
+
+			static vector<string> make(const vector<unsigned char>& str)
+			{
+				vector<string> convert;
+
+				for (unsigned char param : str)
+					convert.push_back(Utils::toString(param));
+
+				return convert;
+			}
+
+			static vector<string> make(unsigned int str)
+			{
+				return vector<string>{Utils::toString(str)};
+			}
+
+			static vector<string> make(double str)
+			{
+				return vector<string>{Utils::toString(str)};
+			}
+
+		public:
+			RawParameter(string str) : data(vector<string>{str}) {}
+			RawParameter(vector<string> str) : data(str) {}
+			RawParameter(const vector<unsigned char>& str) : data(make(str)) {}
+			RawParameter(unsigned int str) : data(make(str)) {}
+			RawParameter(double str) : data(make(str)) {}
+
+			virtual const vector<string>& get() { return data; }
+
+			virtual ~RawParameter() {}
+	};
+
+	class FuncParameter : public _Parameter {
+
+		private:
+			vector<string> data;
+			shared_ptr<VaultFunctor> func;
+
+		public:
+			FuncParameter(shared_ptr<VaultFunctor> func) : func(func) {}
+
+			virtual const vector<string>& get() { data = (*func.get())(); return data; }
+
+			virtual ~FuncParameter() {}
+	};
+
+	class Parameter {
+
+		private:
+			shared_ptr<_Parameter> param;
+			const _Parameter* const_param = NULL;
+
+		public:
+			Parameter(RawParameter& param) : param(new RawParameter(param)) {}
+			Parameter(FuncParameter& param) : param(new FuncParameter(param)) {}
+
+			Parameter(const RawParameter& param) : const_param(&param) {}
+			Parameter(const FuncParameter& param) : const_param(&param) {}
+			~Parameter() = default;
+
+	};
+
 	typedef list<Parameter> ParamContainer;
 	typedef const map<const unsigned int, const char*> Database;
 	typedef map<const unsigned char, const unsigned char> IndexLookup;
@@ -45,58 +124,8 @@ namespace Data
 		return *reinterpret_cast<T*>(&r);
 	}
 
-	inline
-	static Parameter BuildParameter(string param)
-	{
-		return Parameter(vector<string> {param}, NULL);
-	}
-
-	inline
-	static Parameter BuildParameter(vector<string> params)
-	{
-		return Parameter(params, NULL);
-	}
-
-	static Parameter BuildParameter(vector<unsigned char> params)
-	{
-		vector<unsigned char>::iterator it;
-		vector<string> convert;
-
-		for (it = params.begin(); it != params.end(); ++it)
-		{
-			char value[64];
-			snprintf(value, sizeof(value), "%d", *it);
-			convert.push_back(string(value));
-		}
-
-		return BuildParameter(convert);
-	}
-
-	static Parameter BuildParameter(unsigned int param)
-	{
-		char value[64];
-		snprintf(value, sizeof(value), "%d", param);
-		return BuildParameter(string(value));
-	}
-
-	static Parameter BuildParameter(double param)
-	{
-		char value[64];
-		snprintf(value, sizeof(value), "%f", param);
-		return BuildParameter(string(value));
-	}
-
-	static const Parameter Param_True = Parameter(vector<string> {"1"}, NULL);
-	static const Parameter Param_False = Parameter(vector<string> {"0"}, NULL);
-
-	static void FreeContainer(ParamContainer& param)
-	{
-		ParamContainer::iterator it;
-
-		for (it = param.begin(); it != param.end(); ++it)
-			if (it->second)
-				delete it->second;
-	}
+	static const RawParameter Param_True(1u);
+	static const RawParameter Param_False(0u);
 
 	enum
 	{

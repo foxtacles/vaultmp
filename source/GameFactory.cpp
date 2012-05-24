@@ -121,15 +121,15 @@ FactoryObject GameFactory::GetObject(unsigned int refID)
 
 vector<FactoryObject> GameFactory::GetMultiple(const vector<NetworkID>& objects)
 {
-	vector<FactoryObject> result;
-	result.resize(objects.size(), FactoryObject());
+	vector<FactoryObject> result(objects.size());
 	multimap<Reference*, unsigned int> sort;
-	unsigned int i = 0;
 
 	cs.StartSession();
 
 	try
 	{
+		unsigned int i = 0;
+
 		for (const NetworkID& id : objects)
 		{
 			Reference* reference = Network::Manager()->GET_OBJECT_FROM_ID<Reference*>(id);
@@ -158,16 +158,16 @@ vector<FactoryObject> GameFactory::GetMultiple(const vector<NetworkID>& objects)
 
 vector<FactoryObject> GameFactory::GetMultiple(const vector<unsigned int>& objects)
 {
-	vector<FactoryObject> result;
-	result.resize(objects.size(), FactoryObject());
+	vector<FactoryObject> result(objects.size());
 	multimap<Reference*, unsigned int> sort;
-	ReferenceList::iterator it;
-	unsigned int i = 0;
 
 	cs.StartSession();
 
 	try
 	{
+		ReferenceList::iterator it;
+		unsigned int i = 0;
+
 		for (const NetworkID& id : objects)
 		{
 			for (it = instances.begin(); it != instances.end() && it->first->GetReference() != id; ++it);
@@ -199,12 +199,13 @@ vector<FactoryObject> GameFactory::GetMultiple(const vector<unsigned int>& objec
 NetworkID GameFactory::LookupNetworkID(unsigned int refID)
 {
 	NetworkID id;
-	ReferenceList::iterator it;
 
 	cs.StartSession();
 
 	try
 	{
+		ReferenceList::iterator it;
+
 		for (it = instances.begin(); it != instances.end() && it->first->GetReference() != refID; ++it);
 		id = (it != instances.end() ? it->first->GetNetworkID() : throw VaultException("Unknown object with reference %08X", refID));
 	}
@@ -450,7 +451,7 @@ void GameFactory::DestroyAllInstances()
 {
 	cs.StartSession();
 
-	for (pair<Reference * const, unsigned char>& instance : instances)
+	for (pair<Reference* const, unsigned char>& instance : instances)
 	{
 		if (instance.second & ALL_CONTAINERS)
 			vaultcast<Container>(instance.first)->container.clear();
@@ -462,7 +463,7 @@ void GameFactory::DestroyAllInstances()
 
 #endif
 
-		Reference* reference = (Reference*) instance.first->StartSession();
+		Reference* reference = reinterpret_cast<Reference*>(instance.first->StartSession());
 
 		if (reference)
 		{
@@ -477,8 +478,6 @@ void GameFactory::DestroyAllInstances()
 	cs.EndSession();
 
 	// Cleanup classes
-
-	game = 0x00;
 
 	Object::param_Axis.first.clear();
 
@@ -516,8 +515,7 @@ NetworkID GameFactory::DestroyInstance(FactoryObject& reference)
 
 	cs.StartSession();
 
-	ReferenceList::iterator it;
-	it = instances.find(_reference);
+	ReferenceList::iterator it = instances.find(_reference);
 
 	if (it != instances.end())
 	{

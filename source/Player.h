@@ -65,7 +65,7 @@ class Player : public Actor
 		 * Used to pass Player references matching the provided flags to the Interface
 		 * Can also be used to pass data of a given Player to the Interface
 		 */
-		static const Parameter CreateFunctor(unsigned int flags, NetworkID player = 0);
+		static FuncParameter CreateFunctor(unsigned int flags, NetworkID id = 0);
 
 #ifdef VAULTMP_DEBUG
 		static void SetDebugHandler(Debug* debug);
@@ -103,16 +103,14 @@ class Player : public Actor
 		virtual pDefault* toPacket();
 };
 
-class PlayerFunctor : public VaultFunctor
+class PlayerFunctor : public ActorFunctor
 {
-	private:
-		NetworkID player;
-
 	public:
-		PlayerFunctor(unsigned int flags, NetworkID player) : VaultFunctor(flags), player(player) {};
+		PlayerFunctor(unsigned int flags, NetworkID id) : ActorFunctor(flags, id) {};
 		virtual ~PlayerFunctor();
 
 		virtual vector<string> operator()();
+		virtual bool filter(Reference* reference);
 };
 
 #endif

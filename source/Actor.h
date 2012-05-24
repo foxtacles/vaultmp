@@ -46,7 +46,7 @@ class Actor : public Container
 		static Database* Actors;
 		static Database* Creatures;
 
-		static Parameter param_ActorValues;
+		static RawParameter param_ActorValues;
 
 #ifdef VAULTMP_DEBUG
 		static Debug* debug;
@@ -80,14 +80,15 @@ class Actor : public Container
 		 *
 		 * Used to pass actor values to the Interface
 		 */
-		static const Parameter& Param_ActorValues();
+		static const RawParameter& Param_ActorValues();
 
 		/**
 		 * \brief Creates a Parameter containing a VaultFunctor initialized with the given flags
 		 *
 		 * Used to pass Actor references matching the provided flags to the Interface
+		 * Can also be used to pass data of a given Actor to the Interface
 		 */
-		static const Parameter CreateFunctor(unsigned int flags);
+		static FuncParameter CreateFunctor(unsigned int flags, NetworkID id = 0);
 
 #ifdef VAULTMP_DEBUG
 		static void SetDebugHandler(Debug* debug);
@@ -170,13 +171,14 @@ class Actor : public Container
 		virtual pDefault* toPacket();
 };
 
-class ActorFunctor : public VaultFunctor
+class ActorFunctor : public ObjectFunctor
 {
 	public:
-		ActorFunctor(unsigned int flags) : VaultFunctor(flags) {};
+		ActorFunctor(unsigned int flags, NetworkID id) : ObjectFunctor(flags, id) {};
 		virtual ~ActorFunctor();
 
 		virtual vector<string> operator()();
+		virtual bool filter(Reference* reference);
 };
 
 #endif

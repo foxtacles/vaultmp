@@ -465,7 +465,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 			if (tokenizer == NULL)
 				throw VaultException("API::ParseCommand expected a reference base operand, which could not be found");
 
-			reference = ExtractReference(tokenizer);
+			reference = strtoul(tokenizer, NULL, 0);
 
 			if (reference == 0x00)
 				throw VaultException("API::ParseCommand reference base operand is NULL (%s, %s, %04X)", _cmd.c_str(), def, opcode);
@@ -618,15 +618,15 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 				case 'x': // Control code
 				case 'i': // Integer
 				{
-					int integer = atoi(tokenizer);
+					unsigned int integer = strtoul(tokenizer, NULL, 0);
 
 					if (tolower(type) == 'x' && !IsControl((unsigned char) integer))
 						throw VaultException("API::ParseCommand could not find a control code for input %s", tokenizer);
 
 					*reinterpret_cast<unsigned char*>(arg2_pos) = 0x6E;
-					*reinterpret_cast<int*>(arg2_pos + sizeof(unsigned char)) = integer;
-					result_data.push_back(storeIn<double, int>(integer));
-					arg2_pos += sizeof(unsigned char) + sizeof(int);
+					*reinterpret_cast<unsigned int*>(arg2_pos + sizeof(unsigned char)) = integer;
+					result_data.push_back(storeIn<double, unsigned int>(integer));
+					arg2_pos += sizeof(unsigned char) + sizeof(unsigned int);
 					break;
 				}
 
@@ -650,7 +650,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 					if (refparam != 0x00)   // We don't support more than one refparam yet
 						throw VaultException("API::ParseCommand does only support one reference argument up until now");
 
-					refparam = ExtractReference(tokenizer);
+					refparam = strtoul(tokenizer, NULL, 0);
 
 					if (!refparam)
 						throw VaultException("API::ParseCommand reference argument is NULL");
@@ -789,15 +789,6 @@ void API::DefineControl(unsigned char control, unsigned char games)
 {
 	if (games & game)
 		controls.insert(control);
-}
-
-unsigned long API::ExtractReference(const char* reference)
-{
-	unsigned long reference_value;
-
-	reference_value = strtoul(reference, NULL, 16);
-
-	return reference_value;
 }
 
 unsigned char API::RetrieveValue(char* value)

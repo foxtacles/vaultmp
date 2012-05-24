@@ -17,10 +17,24 @@ bool Utils::DoubleCompare(double a, double b, double epsilon)
 	return fabs(a - b) < epsilon;
 }
 
-string Utils::LongToHex(unsigned int value)
+string Utils::toString(unsigned int value)
 {
 	char str[16];
-	snprintf(str, sizeof(str), "%08X", value);
+	snprintf(str, sizeof(str), "%d", value);
+	return string(str);
+}
+
+string Utils::toString(unsigned char value)
+{
+	char str[4];
+	snprintf(str, sizeof(str), "%d", value);
+	return string(str);
+}
+
+string Utils::toString(double value)
+{
+	char str[16];
+	snprintf(str, sizeof(str), "%f", value);
 	return string(str);
 }
 

@@ -70,11 +70,11 @@ bool Object::IsValidCoordinate(double C)
 
 inline
 bool Object::IsValidAngle(double A)
-{
+{s
 	return (A >= 0.0 && A <= 360.0);
 }
 
-const Parameter& Object::Param_Axis()
+const RawParameter& Object::Param_Axis()
 {
 	if (param_Axis.first.empty())
 		param_Axis.first = API::RetrieveAllAxis_Reverse();
@@ -193,4 +193,57 @@ pDefault* Object::toPacket()
 												   this->GetAngle(Values::Axis_X), this->GetAngle(Values::Axis_Y), this->GetAngle(Values::Axis_Z), this->GetNetworkCell(), this->GetEnabled());
 
 	return packet;
+}
+
+vector<string> ObjectFunctor::operator()()
+{
+	vector<string> result;
+	NetworkID id = get();
+
+	if (id)
+	{
+		FactoryObject reference = GameFactory::GetObject(id);
+		Reference* object = vaultcast<Object>(reference);
+
+		if (object)
+		{
+			unsigned int flags = this->flags();
+
+			if (flags & FLAG_REFERENCE)
+				result.push_back(Utils::toString(object->GetReference()));
+			else if (flags & FLAG_BASE)
+				result.push_back(Utils::toString(object->GetBase()));
+		}
+	}
+	else
+	{
+		vector<FactoryObject>::iterator it;
+		vector<FactoryObject> references = GameFactory::GetObjectTypes(ID_OBJECT);
+		unsigned int refID;
+
+		for (it = references.begin(); it != references.end(); GameFactory::LeaveReference(*it), ++it)
+			if ((refID = (**it)->GetReference()) && !filter(**it))
+				result.push_back(Utils::toString(refID));
+	}
+
+	_next(result);
+
+	return result;
+}
+
+bool ObjectFunctor::filter(Reference* reference)
+{
+	Object* object = vaultcast<Object>(reference);
+	unsigned int flags = this->flags();
+
+	if (flags & FLAG_NOTSELF && object->GetReference() == PLAYER_REFERENCE)
+		return true;
+
+	if (flags & FLAG_ENABLED && !object->GetEnabled())
+		return true;
+
+	else if (flags & FLAG_DISABLED && object->GetEnabled())
+		return true;
+
+	return false;
 }

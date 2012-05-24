@@ -1,24 +1,8 @@
 #include "VaultFunctor.h"
 
-VaultFunctor::VaultFunctor() : next(NULL), func(NULL)
-{
-
-}
-
-VaultFunctor::VaultFunctor(unsigned int flags) : next(NULL), func(NULL), flags(flags)
-{
-
-}
-
-VaultFunctor::VaultFunctor(vector<string>(*func)()) : next(NULL), func(func)
-{
-
-}
-
 VaultFunctor::~VaultFunctor()
 {
-	if (this->next)
-		delete next;
+	delete this->next;
 }
 
 void VaultFunctor::_next(vector<string>& result)
@@ -39,15 +23,4 @@ VaultFunctor* VaultFunctor::connect(VaultFunctor* next)
 
 	else
 		return NULL;
-}
-
-inline vector<string> VaultFunctor::operator()()
-{
-	vector<string> result;
-
-	if (func)
-		result = func();
-
-	_next(result);
-	return result;
 }

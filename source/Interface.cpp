@@ -74,9 +74,6 @@ void Interface::Terminate()
 		if (hCommandThreadSend.joinable())
 			hCommandThreadSend.join();
 
-		for (pair<const string, ParamContainer>& native : natives)
-			FreeContainer(native.second);
-
 		static_cmdlist.clear();
 		dynamic_cmdlist.clear();
 		priorityMap.clear();
@@ -248,7 +245,7 @@ multimap<string, string> Interface::Evaluate(Native::iterator _it)
 				return result;
 
 			vector<string> params;
-			VaultFunctor* getParams = it->second;
+			shared_ptr<VaultFunctor> getParams = it->second;
 
 			if (getParams)
 				params = (*getParams)();
@@ -296,11 +293,11 @@ void Interface::CommandThreadReceive()
 
 		while (!pipeServer->ConnectToServer() && !endThread);
 
-		unsigned char buffer[PIPE_LENGTH];
-		unsigned char code;
-
 		if (!endThread)
 		{
+			unsigned char buffer[PIPE_LENGTH];
+			unsigned char code;
+
 			do
 			{
 				ZeroMemory(buffer, sizeof(buffer));
@@ -386,7 +383,7 @@ void Interface::CommandThreadSend()
 
 			static_cs.StartSession();
 
-			for (it = static_cmdlist.begin(); (it != static_cmdlist.end() || dynamic_cmdlist.size()) && !endThread; ++it)
+			for (it = static_cmdlist.begin(); (it != static_cmdlist.end() || !dynamic_cmdlist.empty()) && !endThread; ++it)
 			{
 				if (it != static_cmdlist.end())
 				{
@@ -451,7 +448,6 @@ void Interface::CommandThreadSend()
 						}
 					}
 
-					FreeContainer(it3->first->second);
 					natives.erase(it3->first);
 				}
 

@@ -18,16 +18,13 @@ class VaultFunctor
 {
 	private:
 		VaultFunctor* next;
-		vector<string>(*func)();
 
 	protected:
-		unsigned int flags;
 		void _next(vector<string>& result);
-		VaultFunctor(unsigned int flags);
 
 	public:
-		VaultFunctor();
-		VaultFunctor(vector<string>(*func)());
+		VaultFunctor() : next(NULL) {}
+		VaultFunctor(vector<string>(*func)()) : next(NULL) {}
 		virtual ~VaultFunctor();
 
 		/**
@@ -40,7 +37,7 @@ class VaultFunctor
 		/**
 		 * \brief The functor call
 		 */
-		virtual vector<string> operator()();
+		virtual vector<string> operator()() = 0;
 
 };
 
