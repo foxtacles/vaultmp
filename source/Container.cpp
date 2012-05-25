@@ -27,15 +27,14 @@ Container::Container(const pDefault* packet) : Object(PacketFactory::ExtractPart
 	initialize();
 
 	list<pDefault*> items;
-	list<pDefault*>::iterator it;
 
 	PacketFactory::Access(packet, &items);
 
-	for (it = items.begin(); it != items.end(); ++it)
+	for (pDefault* _packet : items)
 	{
-		NetworkID id = GameFactory::CreateKnownInstance(ID_ITEM, *it);
+		NetworkID id = GameFactory::CreateKnownInstance(ID_ITEM, _packet);
 		this->AddItem(id);
-		PacketFactory::FreePacket(*it);
+		PacketFactory::FreePacket(_packet);
 	}
 }
 
@@ -360,12 +359,9 @@ GameDiff Container::ApplyDiff(ContainerDiff& diff)
 	GameDiff result;
 	map<unsigned int, Diff> assoc_delete;
 
-	list<NetworkID>::iterator it;
-	map<unsigned int, Diff>::iterator it2;
-
-	for (it = diff.first.begin(); it != diff.first.end(); ++it)
+	for (NetworkID& id : diff.first)
 	{
-		FactoryObject _iDelete = GameFactory::GetObject(*it);
+		FactoryObject _iDelete = GameFactory::GetObject(id);
 		Item* iDelete = vaultcast<Item>(_iDelete);
 
 		Diff* _diff = NULL;
@@ -376,21 +372,21 @@ GameDiff Container::ApplyDiff(ContainerDiff& diff)
 		_diff->silent = iDelete->GetItemSilent();
 		_diff->stick = iDelete->GetItemStick();
 
-		this->RemoveItem(*it);
+		this->RemoveItem(id);
 		GameFactory::DestroyInstance(_iDelete);
 	}
 
-	for (it = diff.second.begin(); it != diff.second.end(); ++it)
+	for (NetworkID& id : diff.second)
 	{
-		FactoryObject _iNew = GameFactory::GetObject(*it);
+		FactoryObject _iNew = GameFactory::GetObject(id);
 		Item* iNew = vaultcast<Item>(_iNew);
 
 		Diff* _diff = NULL;
-		it2 = assoc_delete.find(iNew->GetBase());
+		map<unsigned int, Diff>::iterator it = assoc_delete.find(iNew->GetBase());
 
-		if (it2 != assoc_delete.end())
+		if (it != assoc_delete.end())
 		{
-			_diff = &it2->second;
+			_diff = &it->second;
 
 			if (iNew->GetItemEquipped() && _diff->equipped == -1)
 			{
@@ -427,15 +423,15 @@ GameDiff Container::ApplyDiff(ContainerDiff& diff)
 			result.push_back(pair<unsigned int, Diff>(iNew->GetBase(), _result));
 		}
 
-		this->AddItem(*it);
+		this->AddItem(id);
 	}
 
-	for (it2 = assoc_delete.begin(); it2 != assoc_delete.end(); ++it2)
+	for (const pair<unsigned int, Diff>& _diff : assoc_delete)
 	{
-		if (it2->second.count == 0 && it2->second.equipped == 0)
+		if (_diff.second.count == 0 && _diff.second.equipped == 0)
 			continue;
 
-		result.push_back(pair<unsigned int, Diff>(*it2));
+		result.push_back(pair<unsigned int, Diff>(_diff));
 	}
 
 	result.sort(Diff_sort);
@@ -446,11 +442,9 @@ GameDiff Container::ApplyDiff(ContainerDiff& diff)
 
 void FreeDiff(ContainerDiff& diff)
 {
-	list<NetworkID>::iterator it;
-
-	for (it = diff.second.begin(); it != diff.second.end(); ++it)
+	for (NetworkID& id : diff.second)
 	{
-		FactoryObject _item = GameFactory::GetObject(*it);
+		FactoryObject _item = GameFactory::GetObject(id);
 		GameFactory::DestroyInstance(_item);
 	}
 
@@ -462,11 +456,10 @@ NetworkID Container::Copy() const
 {
 	FactoryObject reference = GameFactory::GetObject(GameFactory::CreateInstance(ID_CONTAINER, 0x00000000, this->GetBase()));
 	Container* container = vaultcast<Container>(reference);
-	list<NetworkID>::const_iterator it;
 
-	for (it = this->container.begin(); it != this->container.end(); ++it)
+	for (const NetworkID& id : this->container)
 	{
-		FactoryObject _reference = GameFactory::GetObject(*it);
+		FactoryObject _reference = GameFactory::GetObject(id);
 		Item* item = vaultcast<Item>(_reference);
 		container->container.push_back(item->Copy());
 	}
@@ -490,11 +483,10 @@ bool Container::IsEmpty() const
 unsigned int Container::GetItemCount(unsigned int baseID) const
 {
 	unsigned int count = 0;
-	list<NetworkID>::const_iterator it;
 
-	for (it = container.begin(); it != container.end(); ++it)
+	for (const NetworkID& id : container)
 	{
-		FactoryObject _reference = GameFactory::GetObject(*it);
+		FactoryObject _reference = GameFactory::GetObject(id);
 		Item* item = vaultcast<Item>(_reference);
 
 		if (!baseID || item->GetBase() == baseID)
@@ -510,13 +502,11 @@ void Container::PrintContainer() const
 
 	if (debug)
 	{
-		list<NetworkID>::const_iterator it;
-
 		debug->PrintFormat("Content of container %08X (%s):", true, this->GetBase(), this->GetName().c_str());
 
-		for (it = this->container.begin(); it != this->container.end(); ++it)
+		for (const NetworkID& id : container)
 		{
-			FactoryObject _reference = GameFactory::GetObject(*it);
+			FactoryObject _reference = GameFactory::GetObject(id);
 			Item* item = vaultcast<Item>(_reference);
 			debug->PrintFormat("%d of %s (%08X), condition %f, equipped state %d", true, item->GetItemCount(), item->GetName().c_str(), item->GetBase(), (float) item->GetItemCondition(), (int) item->GetItemEquipped());
 		}
@@ -527,11 +517,9 @@ void Container::PrintContainer() const
 
 void Container::FlushContainer()
 {
-	list<NetworkID>::iterator it;
-
-	for (it = container.begin(); it != container.end(); ++it)
+	for (NetworkID& id : container)
 	{
-		FactoryObject _reference = GameFactory::GetObject(*it);
+		FactoryObject _reference = GameFactory::GetObject(id);
 		GameFactory::DestroyInstance(_reference);
 	}
 
@@ -545,12 +533,11 @@ const list<NetworkID>& Container::GetItemList() const
 
 pDefault* Container::toPacket()
 {
-	list<NetworkID>::iterator it;
 	list<pDefault*> items;
 
-	for (it = container.begin(); it != container.end(); ++it)
+	for (NetworkID& id : container)
 	{
-		FactoryObject _reference = GameFactory::GetObject(*it);
+		FactoryObject _reference = GameFactory::GetObject(id);
 		Item* item = vaultcast<Item>(_reference);
 		items.push_back(item->toPacket());
 	}
@@ -559,10 +546,8 @@ pDefault* Container::toPacket()
 
 	pDefault* packet = PacketFactory::CreatePacket(ID_CONTAINER_NEW, pObjectNew, &items);
 
-	list<pDefault*>::iterator it2;
-
-	for (it2 = items.begin(); it2 != items.end(); ++it2)
-		PacketFactory::FreePacket(*it2);
+	for (pDefault* _packet : items)
+		PacketFactory::FreePacket(_packet);
 
 	PacketFactory::FreePacket(pObjectNew);
 

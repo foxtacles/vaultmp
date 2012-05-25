@@ -21,7 +21,7 @@ Player::Player(const pDefault* packet) : Actor(PacketFactory::ExtractPartial(pac
 
 	PacketFactory::Access(packet, &controls);
 
-	for (const pair<unsigned char, pair<unsigned char, bool> >& control : controls)
+	for (const pair<unsigned char, pair<unsigned char, bool>>& control : controls)
 	{
 		this->SetPlayerControl(control.first, control.second.first);
 		this->SetPlayerControlEnabled(control.first, control.second.second);
