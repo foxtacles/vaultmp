@@ -39,9 +39,9 @@ Actor::Actor(const pDefault* packet) : Container(PacketFactory::ExtractPartial(p
 	this->SetActorDead(dead);
 }
 
-Actor::Actor(pDefault* packet) : Actor(static_cast<const pDefault*>(packet))
+Actor::Actor(pPacket&& packet) : Actor(static_cast<const pDefault*>(packet.get()))
 {
-	PacketFactory::FreePacket(packet);
+
 }
 
 Actor::~Actor()
@@ -196,7 +196,7 @@ bool Actor::IsActorJumping() const
 								   || (anim >= FalloutNV::AnimGroup_JumpLandForward && anim <= FalloutNV::AnimGroup_JumpLandRight))));
 }
 
-pDefault* Actor::toPacket()
+pPacket Actor::toPacket()
 {
 	vector<unsigned char> data = API::RetrieveAllValues();
 	map<unsigned char, double> values, baseValues;
@@ -207,12 +207,8 @@ pDefault* Actor::toPacket()
 		baseValues.insert(pair<unsigned char, double>(_data, this->GetActorBaseValue(_data)));
 	}
 
-	pDefault* pContainerNew = Container::toPacket();
-
-	pDefault* packet = PacketFactory::CreatePacket(ID_ACTOR_NEW, pContainerNew, &values, &baseValues, this->GetActorMovingAnimation(), this->GetActorMovingXY(),
-												   this->GetActorAlerted(), this->GetActorSneaking(), this->GetActorDead());
-
-	PacketFactory::FreePacket(pContainerNew);
+	pPacket pContainerNew = Container::toPacket();
+	pPacket packet = PacketFactory::CreatePacket(ID_ACTOR_NEW, pContainerNew.get(), &values, &baseValues, this->GetActorMovingAnimation(), this->GetActorMovingXY(), this->GetActorAlerted(), this->GetActorSneaking(), this->GetActorDead());
 
 	return packet;
 }

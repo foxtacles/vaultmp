@@ -21,32 +21,22 @@ NetworkResponse Server::Authenticate(RakNetGUID guid, string name, string pwd)
 
 	if (result)
 	{
-		for (ModList::iterator it = Dedicated::modfiles.begin(); it != Dedicated::modfiles.end(); ++it)
+		for (const pair<string, unsigned int>& mod : Dedicated::modfiles)
 		{
-			pDefault* packet = PacketFactory::CreatePacket(ID_GAME_MOD, it->first.c_str(), it->second);
-			response.push_back(Network::CreateResponse(packet,
-													   HIGH_PRIORITY,
-													   RELIABLE_ORDERED,
-													   CHANNEL_GAME,
-													   guid));
+			response.push_back(Network::CreateResponse(
+				PacketFactory::CreatePacket(ID_GAME_MOD, mod.first.c_str(), mod.second),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 		}
 
-		pDefault* packet = PacketFactory::CreatePacket(ID_GAME_START, Dedicated::savegame.first.c_str(), Dedicated::savegame.second);
-		response.push_back(Network::CreateResponse(packet,
-												   HIGH_PRIORITY,
-												   RELIABLE_ORDERED,
-												   CHANNEL_GAME,
-												   guid));
+		response.push_back(Network::CreateResponse(
+			PacketFactory::CreatePacket(ID_GAME_START, Dedicated::savegame.first.c_str(), Dedicated::savegame.second),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
-
 	else
 	{
-		pDefault* packet = PacketFactory::CreatePacket(ID_GAME_END, ID_REASON_DENIED);
-		response = Network::CompleteResponse(Network::CreateResponse(packet,
-																	 HIGH_PRIORITY,
-																	 RELIABLE_ORDERED,
-																	 CHANNEL_GAME,
-																	 guid));
+		response.push_back(Network::CreateResponse(
+			PacketFactory::CreatePacket(ID_GAME_END, ID_REASON_DENIED),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 
 	return response;
@@ -66,27 +56,20 @@ NetworkResponse Server::LoadGame(RakNetGUID guid)
 		if (vaultcast<Item>(*it))
 			continue; // FIXME, this is to not send items in a container
 
-		pDefault* packet = object->toPacket();
-		response.push_back(Network::CreateResponse(packet,
-												   HIGH_PRIORITY,
-												   RELIABLE_ORDERED,
-												   CHANNEL_GAME,
-												   guid));
+		response.push_back(Network::CreateResponse(
+			object->toPacket(),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 
-	pDefault* packet = PacketFactory::CreatePacket(ID_GAME_LOAD);
-	response.push_back(Network::CreateResponse(packet,
-											   HIGH_PRIORITY,
-											   RELIABLE_ORDERED,
-											   CHANNEL_GAME,
-											   guid));
+	response.push_back(Network::CreateResponse(
+		PacketFactory::CreatePacket(ID_GAME_LOAD),
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 
 	return response;
 }
 
 NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 {
-	NetworkResponse response;
 	FactoryObject _player = GameFactory::GetObject(id);
 	Player* player = vaultcast<Player>(_player);
 
@@ -101,16 +84,14 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 	player->SetReference(0x00000000);
 	player->SetBase(result);
 
-	pDefault* packet = player->toPacket();
-	response.push_back(Network::CreateResponse(packet,
-											   HIGH_PRIORITY,
-											   RELIABLE_ORDERED,
-											   CHANNEL_GAME,
-											   Client::GetNetworkList(client)));
+	SingleResponse response[] = {Network::CreateResponse(
+		player->toPacket(),
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(client))
+	};
 
 	Script::OnSpawn(_player);
 
-	return response;
+	return NetworkResponse{make_move_iterator(begin(response)), make_move_iterator(end(response))};
 }
 
 NetworkResponse Server::Disconnect(RakNetGUID guid, unsigned char reason)
@@ -126,12 +107,9 @@ NetworkResponse Server::Disconnect(RakNetGUID guid, unsigned char reason)
 
 		NetworkID id = GameFactory::DestroyInstance(reference);
 
-		pDefault* packet = PacketFactory::CreatePacket(ID_OBJECT_REMOVE, id);
-		response = Network::CompleteResponse(Network::CreateResponse(packet,
-																	 HIGH_PRIORITY,
-																	 RELIABLE_ORDERED,
-																	 CHANNEL_GAME,
-																	 Client::GetNetworkList(NULL)));
+		response.push_back(Network::CreateResponse(
+			PacketFactory::CreatePacket(ID_OBJECT_REMOVE, id),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(NULL)));
 
 		Dedicated::self->SetServerPlayers(pair<int, int>(Client::GetClientCount(), Dedicated::connections));
 	}
@@ -151,12 +129,9 @@ NetworkResponse Server::GetPos(RakNetGUID guid, FactoryObject reference, double 
 		object->SetGamePos(Axis_Y, Y);
 		object->SetGamePos(Axis_Z, Z);
 
-		pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_POS, object->GetNetworkID(), X, Y, Z);
-		response = Network::CompleteResponse(Network::CreateResponse(packet,
-																	 HIGH_PRIORITY,
-																	 RELIABLE_SEQUENCED,
-																	 CHANNEL_GAME,
-																	 Client::GetNetworkList(guid)));
+		response.push_back(Network::CreateResponse(
+			PacketFactory::CreatePacket(ID_UPDATE_POS, object->GetNetworkID(), X, Y, Z),
+			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 	}
 
 	return response;
@@ -168,14 +143,11 @@ NetworkResponse Server::GetAngle(RakNetGUID guid, FactoryObject reference, unsig
 	Object* object = vaultcast<Object>(reference);
 	bool result = (bool) object->SetAngle(axis, value);
 
-	if (result && axis != Axis_X)
+	if (result)
 	{
-		pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_ANGLE, object->GetNetworkID(), axis, value);
-		response = Network::CompleteResponse(Network::CreateResponse(packet,
-																	 HIGH_PRIORITY,
-																	 RELIABLE_SEQUENCED,
-																	 CHANNEL_GAME,
-																	 Client::GetNetworkList(guid)));
+		response.push_back(Network::CreateResponse(
+			PacketFactory::CreatePacket(ID_UPDATE_ANGLE, object->GetNetworkID(), axis, value),
+			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 	}
 
 	return response;
@@ -191,12 +163,9 @@ NetworkResponse Server::GetCell(RakNetGUID guid, FactoryObject reference, unsign
 	{
 		object->SetGameCell(cell);
 
-		pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_CELL, object->GetNetworkID(), cell);
-		response = Network::CompleteResponse(Network::CreateResponse(packet,
-																	 HIGH_PRIORITY,
-																	 RELIABLE_SEQUENCED,
-																	 CHANNEL_GAME,
-																	 Client::GetNetworkList(guid)));
+		response.push_back(Network::CreateResponse(
+			PacketFactory::CreatePacket(ID_UPDATE_CELL, object->GetNetworkID(), cell),
+			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
 		Script::OnCellChange(reference, cell);
 	}
@@ -211,32 +180,27 @@ NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, FactoryObject refere
 	if (!container)
 		throw VaultException("Object with reference %08X is not a Container", (*reference)->GetReference());
 
-	NetworkResponse response;
-
-	pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_CONTAINER, container->GetNetworkID(), &diff);
-	response = Network::CompleteResponse(Network::CreateResponse(packet,
-																 HIGH_PRIORITY,
-																 RELIABLE_SEQUENCED,
-																 CHANNEL_GAME,
-																 Client::GetNetworkList(guid)));
+	SingleResponse response[] = {Network::CreateResponse(
+		PacketFactory::CreatePacket(ID_UPDATE_CONTAINER, container->GetNetworkID(), &diff),
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid))
+	};
 
 	GameDiff gamediff = container->ApplyDiff(diff);
-	GameDiff::iterator it;
 
-	for (it = gamediff.begin(); it != gamediff.end(); ++it)
+	for (const pair<unsigned int, Diff>& _diff : gamediff)
 	{
-		if (it->second.equipped)
+		if (_diff.second.equipped)
 		{
-			if (it->second.equipped > 0)
-				Script::OnActorEquipItem(reference, it->first, it->second.condition);
-			else if (it->second.equipped < 0)
-				Script::OnActorUnequipItem(reference, it->first, it->second.condition);
+			if (_diff.second.equipped > 0)
+				Script::OnActorEquipItem(reference, _diff.first, _diff.second.condition);
+			else if (_diff.second.equipped < 0)
+				Script::OnActorUnequipItem(reference, _diff.first, _diff.second.condition);
 		}
 		else
-			Script::OnContainerItemChange(reference, it->first, it->second.count, it->second.condition);
+			Script::OnContainerItemChange(reference, _diff.first, _diff.second.count, _diff.second.condition);
 	}
 
-	return response;
+	return NetworkResponse{make_move_iterator(begin(response)), make_move_iterator(end(response))};
 }
 
 NetworkResponse Server::GetActorValue(RakNetGUID guid, FactoryObject reference, bool base, unsigned char index, double value)
@@ -257,12 +221,9 @@ NetworkResponse Server::GetActorValue(RakNetGUID guid, FactoryObject reference, 
 
 	if (result)
 	{
-		pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_VALUE, actor->GetNetworkID(), base, index, value);
-		response = Network::CompleteResponse(Network::CreateResponse(packet,
-																	 HIGH_PRIORITY,
-																	 RELIABLE_ORDERED,
-																	 CHANNEL_GAME,
-																	 Client::GetNetworkList(guid)));
+		response.push_back(Network::CreateResponse(
+			PacketFactory::CreatePacket(ID_UPDATE_VALUE, actor->GetNetworkID(), base, index, value),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
 		Script::OnActorValueChange(reference, index, base, value);
 	}
@@ -286,12 +247,9 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, FactoryObject reference, 
 
 	if (result)
 	{
-		pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_STATE, actor->GetNetworkID(), index, moving, alerted, sneaking);
-		response = Network::CompleteResponse(Network::CreateResponse(packet,
-																	 HIGH_PRIORITY,
-																	 RELIABLE_ORDERED,
-																	 CHANNEL_GAME,
-																	 Client::GetNetworkList(guid)));
+		response.push_back(Network::CreateResponse(
+			PacketFactory::CreatePacket(ID_UPDATE_STATE, actor->GetNetworkID(), index, moving, alerted, sneaking),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
 		if (_alerted)
 			Script::OnActorAlert(reference, alerted);
@@ -317,12 +275,9 @@ NetworkResponse Server::GetActorDead(RakNetGUID guid, FactoryObject reference, b
 
 	if (result)
 	{
-		pDefault* packet = PacketFactory::CreatePacket(ID_UPDATE_DEAD, actor->GetNetworkID(), dead);
-		response = Network::CompleteResponse(Network::CreateResponse(packet,
-																	 HIGH_PRIORITY,
-																	 RELIABLE_ORDERED,
-																	 CHANNEL_GAME,
-																	 Client::GetNetworkList(guid)));
+		response.push_back(Network::CreateResponse(
+			PacketFactory::CreatePacket(ID_UPDATE_DEAD, actor->GetNetworkID(), dead),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
 		if (dead)
 		{

@@ -1,7 +1,7 @@
 #include "PacketFactory.h"
 #include "PacketTypes.h"
 
-pDefault* PacketFactory::CreatePacket(unsigned char type, ...)
+pPacket PacketFactory::CreatePacket(unsigned char type, ...)
 {
 	va_list args;
 	va_start(args, type);
@@ -199,10 +199,10 @@ pDefault* PacketFactory::CreatePacket(unsigned char type, ...)
 
 	va_end(args);
 
-	return packet;
+	return pPacket(packet, FreePacket);
 }
 
-pDefault* PacketFactory::CreatePacket(unsigned char* stream, unsigned int len)
+pPacket PacketFactory::CreatePacket(unsigned char* stream, unsigned int len)
 {
 	pDefault* packet;
 
@@ -309,7 +309,7 @@ pDefault* PacketFactory::CreatePacket(unsigned char* stream, unsigned int len)
 			throw VaultException("Unhandled packet type %d", (int) stream[0]);
 	}
 
-	return packet;
+	return pPacket(packet, FreePacket);
 }
 
 void PacketFactory::Access(const pDefault* packet, ...)
@@ -691,43 +691,47 @@ const unsigned char* PacketFactory::ExtractRawData(const pDefault* packet)
 		default:
 			throw VaultException("Unhandled packet type %d", (int) packet->type.type);
 	}
-
-	return NULL;
 }
 
-pDefault* PacketFactory::ExtractPartial(const pDefault* packet)
+pPacket PacketFactory::ExtractPartial(const pDefault* packet)
 {
+	pDefault* _packet;
+
 	switch (packet->type.type)
 	{
 		case ID_ITEM_NEW:
 		{
 			const pItemNew* data = dynamic_cast<const pItemNew*>(packet);
-			return new pObjectNew(data->id, data->refID, data->baseID, data->_data._data_pObjectNew);
+			_packet = new pObjectNew(data->id, data->refID, data->baseID, data->_data._data_pObjectNew);
+			break;
 		}
 
 		case ID_CONTAINER_NEW:
 		{
 			const pContainerNew* data = dynamic_cast<const pContainerNew*>(packet);
-			return new pObjectNew(data->id, data->refID, data->baseID, *reinterpret_cast<_pObjectNew*>(data->_data));
+			_packet = new pObjectNew(data->id, data->refID, data->baseID, *reinterpret_cast<_pObjectNew*>(data->_data));
+			break;
 		}
 
 		case ID_ACTOR_NEW:
 		{
 			const pActorNew* data = dynamic_cast<const pActorNew*>(packet);
-			return new pContainerNew(data->id, data->refID, data->baseID, data->_data);
+			_packet = new pContainerNew(data->id, data->refID, data->baseID, data->_data);
+			break;
 		}
 
 		case ID_PLAYER_NEW:
 		{
 			const pPlayerNew* data = dynamic_cast<const pPlayerNew*>(packet);
-			return new pActorNew(data->id, data->refID, data->baseID, data->_data);
+			_packet = new pActorNew(data->id, data->refID, data->baseID, data->_data);
+			break;
 		}
 
 		default:
 			throw VaultException("Unhandled packet type %d", (int) packet->type.type);
 	}
 
-	return NULL;
+	return pPacket(_packet, FreePacket);
 }
 
 void PacketFactory::FreePacket(pDefault* packet)

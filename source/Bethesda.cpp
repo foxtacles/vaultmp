@@ -487,6 +487,7 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
 	Player::SetDebugHandler(debug);
 	Game::SetDebugHandler(debug);
 	GameFactory::SetDebugHandler(debug);
+	//Network::SetDebugHandler(debug);
 #endif
 
 	GameFactory::Initialize(game);
@@ -511,10 +512,7 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
 
 			while (query)
 			{
-				NetworkResponse response;
-
-				while (!(response = Network::Next()).empty())
-					Network::Dispatch(peer, response);
+				while (Network::Dispatch(peer));
 
 				for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
 				{
@@ -526,15 +524,12 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
 
 					try
 					{
-						response = NetworkClient::ProcessPacket(packet);
-						Network::Dispatch(peer, response);
+						Network::Dispatch(peer, NetworkClient::ProcessPacket(packet));
 					}
-
 					catch (...)
 					{
 						peer->DeallocatePacket(packet);
-						response = NetworkClient::ProcessEvent(ID_EVENT_CLIENT_ERROR);
-						Network::Dispatch(peer, response);
+						Network::Dispatch(peer, NetworkClient::ProcessEvent(ID_EVENT_CLIENT_ERROR));
 						peer->CloseConnection(server, true, CHANNEL_SYSTEM, HIGH_PRIORITY);
 						throw;
 					}
@@ -545,8 +540,7 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
 
 				if (initialized && !Interface::IsAvailable())
 				{
-					NetworkResponse response = NetworkClient::ProcessEvent(ID_EVENT_INTERFACE_LOST);
-					Network::Dispatch(peer, response);
+					Network::Dispatch(peer, NetworkClient::ProcessEvent(ID_EVENT_INTERFACE_LOST));
 					peer->CloseConnection(server, true, CHANNEL_SYSTEM, HIGH_PRIORITY);
 					query = false;
 				}

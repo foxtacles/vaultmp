@@ -52,9 +52,9 @@ Object::Object(const pDefault* packet) : Object(PacketFactory::ExtractReference(
 	this->SetEnabled(enabled);
 }
 
-Object::Object(pDefault* packet) : Object(static_cast<const pDefault*>(packet))
+Object::Object(pPacket&& packet) : Object(static_cast<const pDefault*>(packet.get()))
 {
-	PacketFactory::FreePacket(packet);
+
 }
 
 Object::~Object()
@@ -186,9 +186,9 @@ bool Object::HasValidCoordinates() const
 	return true;
 }
 
-pDefault* Object::toPacket()
+pPacket Object::toPacket()
 {
-	pDefault* packet = PacketFactory::CreatePacket(ID_OBJECT_NEW, this->GetNetworkID(), this->GetReference(), this->GetBase(),
+	pPacket packet = PacketFactory::CreatePacket(ID_OBJECT_NEW, this->GetNetworkID(), this->GetReference(), this->GetBase(),
 												   this->GetName().c_str(), this->GetNetworkPos(Values::Axis_X), this->GetNetworkPos(Values::Axis_Y), this->GetNetworkPos(Values::Axis_Z),
 												   this->GetAngle(Values::Axis_X), this->GetAngle(Values::Axis_Y), this->GetAngle(Values::Axis_Z), this->GetNetworkCell(), this->GetEnabled());
 

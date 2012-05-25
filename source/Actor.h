@@ -69,7 +69,7 @@ class Actor : public Container
 	protected:
 		Actor(unsigned int refID, unsigned int baseID);
 		Actor(const pDefault* packet);
-		Actor(pDefault* packet);
+		Actor(pPacket&& packet);
 		virtual ~Actor();
 
 	public:
@@ -167,7 +167,7 @@ class Actor : public Container
 		/**
 		 * \brief For network transfer
 		 */
-		virtual pDefault* toPacket();
+		virtual pPacket toPacket();
 };
 
 class ActorFunctor : public ObjectFunctor

@@ -969,12 +969,10 @@ class pContainerUpdate : public pObjectUpdateDefault
 				FactoryObject _item = GameFactory::GetObject(*it);
 				Item* item = vaultcast<Item>(_item);
 
-				pDefault* packet = item->toPacket();
+				pPacket packet = item->toPacket();
 
 				memcpy(&this->_data[at], packet->get(), length2);
 				at += length2;
-
-				PacketFactory::FreePacket(packet);
 			}
 
 			construct(_data, mem);

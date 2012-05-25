@@ -59,7 +59,7 @@ class Object : public Reference
 	protected:
 		Object(unsigned int refID, unsigned int baseID);
 		Object(const pDefault* packet);
-		Object(pDefault* packet);
+		Object(pPacket&& packet);
 		virtual ~Object();
 
 	public:
@@ -153,7 +153,7 @@ class Object : public Reference
 		/**
 		 * \brief For network transfer
 		 */
-		virtual pDefault* toPacket();
+		virtual pPacket toPacket();
 };
 
 class ObjectFunctor : public ReferenceFunctor

@@ -38,9 +38,9 @@ Container::Container(const pDefault* packet) : Object(PacketFactory::ExtractPart
 	}
 }
 
-Container::Container(pDefault* packet) : Container(static_cast<const pDefault*>(packet))
+Container::Container(pPacket&& packet) : Container(static_cast<const pDefault*>(packet.get()))
 {
-	PacketFactory::FreePacket(packet);
+
 }
 
 Container::~Container()
@@ -531,9 +531,9 @@ const list<NetworkID>& Container::GetItemList() const
 	return container;
 }
 
-pDefault* Container::toPacket()
+pPacket Container::toPacket()
 {
-	list<pDefault*> items;
+	list<pPacket> items;
 
 	for (NetworkID& id : container)
 	{
@@ -542,14 +542,8 @@ pDefault* Container::toPacket()
 		items.push_back(item->toPacket());
 	}
 
-	pDefault* pObjectNew = Object::toPacket();
-
-	pDefault* packet = PacketFactory::CreatePacket(ID_CONTAINER_NEW, pObjectNew, &items);
-
-	for (pDefault* _packet : items)
-		PacketFactory::FreePacket(_packet);
-
-	PacketFactory::FreePacket(pObjectNew);
+	pPacket pObjectNew = Object::toPacket();
+	pPacket packet = PacketFactory::CreatePacket(ID_CONTAINER_NEW, pObjectNew.get(), &items);
 
 	return packet;
 }

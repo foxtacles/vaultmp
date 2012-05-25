@@ -6,80 +6,89 @@ NetworkQueue Network::queue;
 CriticalSection Network::cs;
 bool Network::dequeue = true;
 
-SingleResponse Network::CreateResponse(pDefault* packet, PacketPriority priority, PacketReliability reliability, unsigned char channel, vector<RakNetGUID> targets)
+#ifdef VAULTMP_DEBUG
+Debug* Network::debug = NULL;
+#endif
+
+#ifdef VAULTMP_DEBUG
+void Network::SetDebugHandler(Debug* debug)
 {
-	return SingleResponse(pair<pDefault*, PacketDescriptor>(packet, PacketDescriptor(priority, reliability, channel)), targets);
+	Network::debug = debug;
+
+	if (debug)
+		debug->Print("Attached debug handler to Network class", true);
+}
+#endif
+
+SingleResponse Network::CreateResponse(pPacket&& packet, PacketPriority priority, PacketReliability reliability, unsigned char channel, vector<RakNetGUID> targets)
+{
+	return SingleResponse(pair<pPacket, PacketDescriptor>(move(packet), PacketDescriptor(priority, reliability, channel)), targets);
 }
 
-SingleResponse Network::CreateResponse(pDefault* packet, PacketPriority priority, PacketReliability reliability, unsigned char channel, RakNetGUID target)
+SingleResponse Network::CreateResponse(pPacket&& packet, PacketPriority priority, PacketReliability reliability, unsigned char channel, RakNetGUID target)
 {
-	return CreateResponse(packet, priority, reliability, channel, vector<RakNetGUID>{target});
+	return SingleResponse(pair<pPacket, PacketDescriptor>(move(packet), PacketDescriptor(priority, reliability, channel)), vector<RakNetGUID>{target});
 }
 
-NetworkResponse Network::CompleteResponse(SingleResponse response)
-{
-	return NetworkResponse{response};
-}
-
-void Network::Dispatch(RakPeerInterface* peer, NetworkResponse& response)
+void Network::Dispatch(RakPeerInterface* peer, NetworkResponse&& response)
 {
 	if (peer == NULL)
 		throw VaultException("RakPeerInterface is NULL");
 
 	for (SingleResponse& s : response)
 	{
+#ifdef VAULTMP_DEBUG
+		if (debug)
+			debug->PrintFormat("Sending packet of type %s, length %d, type %d", true, typeid(*s.first.first).name(), s.first.first->length(), *s.first.first->get());
+#endif
+
 		for (RakNetGUID& guid : s.second)
 			peer->Send(reinterpret_cast<const char*>(s.first.first->get()), s.first.first->length(), get<0>(s.first.second), get<1>(s.first.second), get<2>(s.first.second), guid, false);
-
-		PacketFactory::FreePacket(s.first.first);
 	}
 }
 
-NetworkIDManager* Network::Manager()
+bool Network::Dispatch(RakPeerInterface* peer)
 {
-	return &manager;
-}
+	if (queue.empty() || !dequeue)
+		return false;
 
-NetworkResponse Network::Next()
-{
-	NetworkResponse response;
+	if (peer == NULL)
+		throw VaultException("RakPeerInterface is NULL");
 
-	if (!queue.empty() && dequeue)
+	cs.StartSession();
+
+	const NetworkResponse& response = queue.back();
+
+	for (const SingleResponse& s : response)
 	{
-		cs.StartSession();
+#ifdef VAULTMP_DEBUG
+		if (debug)
+			debug->PrintFormat("Sending packet of type %s, length %d, type %d", true, typeid(*s.first.first).name(), s.first.first->length(), *s.first.first->get());
+#endif
 
-		response = queue.back();
-		queue.pop_back();
-
-		cs.EndSession();
+		for (const RakNetGUID& guid : s.second)
+			peer->Send(reinterpret_cast<const char*>(s.first.first->get()), s.first.first->length(), get<0>(s.first.second), get<1>(s.first.second), get<2>(s.first.second), guid, false);
 	}
 
-	return response;
+	queue.pop_back();
+
+	cs.EndSession();
+
+	return true;
 }
 
-void Network::Queue(NetworkResponse response)
+void Network::Queue(NetworkResponse&& response)
 {
 	cs.StartSession();
 
-	queue.push_front(response);
+	queue.push_front(move(response));
 
 	cs.EndSession();
-}
-
-void Network::ToggleDequeue(bool toggle)
-{
-	Network::dequeue = toggle;
 }
 
 void Network::Flush()
 {
 	cs.StartSession();
-
-	for (NetworkResponse& n : queue)
-	{
-		for (SingleResponse& s : n)
-			PacketFactory::FreePacket(s.first.first);
-	}
 
 	queue.clear();
 

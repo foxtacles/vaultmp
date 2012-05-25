@@ -37,7 +37,7 @@ class CriticalSection
 
 	public:
 		CriticalSection();
-		~CriticalSection();
+		virtual ~CriticalSection();
 
 		CriticalSection* StartSession();
 		void EndSession();

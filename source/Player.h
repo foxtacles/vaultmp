@@ -100,7 +100,7 @@ class Player : public Actor
 		/**
 		 * \brief For network transfer
 		 */
-		virtual pDefault* toPacket();
+		virtual pPacket toPacket();
 };
 
 class PlayerFunctor : public ActorFunctor

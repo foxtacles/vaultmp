@@ -44,7 +44,7 @@ class Item : public Object
 	protected:
 		Item(unsigned int refID, unsigned int baseID);
 		Item(const pDefault* packet);
-		Item(pDefault* packet);
+		Item(pPacket&& packet);
 		virtual ~Item();
 
 	public:
@@ -69,7 +69,7 @@ class Item : public Object
 		/**
 		 * \brief For network transfer
 		 */
-		virtual pDefault* toPacket();
+		virtual pPacket toPacket();
 };
 
 #endif

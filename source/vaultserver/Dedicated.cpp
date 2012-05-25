@@ -297,10 +297,7 @@ void Dedicated::DedicatedThread()
 	{
 		while (thread)
 		{
-			NetworkResponse response;
-
-			while (!(response = Network::Next()).empty())
-				Network::Dispatch(peer, response);
+			while (Network::Dispatch(peer));
 
 			for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
 			{
@@ -311,25 +308,24 @@ void Dedicated::DedicatedThread()
 				{
 					try
 					{
-						response = NetworkServer::ProcessPacket(packet);
+						NetworkResponse response = NetworkServer::ProcessPacket(packet);
 
 						vector<RakNetGUID> closures;
 
-						for (NetworkResponse::iterator it = response.begin(); it != response.end(); ++it)
-							if (*it->first.first->get() == ID_GAME_END)
-								closures.insert(closures.end(), it->second.begin(), it->second.end());
+						for (const SingleResponse& _response : response)
+							if (*_response.first.first->get() == ID_GAME_END)
+								closures.insert(closures.end(), _response.second.begin(), _response.second.end());
 
-						Network::Dispatch(peer, response);
+						Network::Dispatch(peer, move(response));
 
-						for (vector<RakNetGUID>::iterator it = closures.begin(); it != closures.end(); ++it)
-							peer->CloseConnection(*it, true, CHANNEL_SYSTEM, HIGH_PRIORITY);
+						for (RakNetGUID& guid : closures)
+							peer->CloseConnection(guid, true, CHANNEL_SYSTEM, HIGH_PRIORITY);
 					}
 
 					catch (...)
 					{
 						peer->DeallocatePacket(packet);
-						response = NetworkServer::ProcessEvent(ID_EVENT_SERVER_ERROR);
-						Network::Dispatch(peer, response);
+						Network::Dispatch(peer, NetworkServer::ProcessEvent(ID_EVENT_SERVER_ERROR));
 						throw;
 					}
 				}

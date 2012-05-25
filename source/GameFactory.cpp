@@ -48,11 +48,11 @@ void GameFactory::SetDebugHandler(Debug* debug)
 vector<FactoryObject> GameFactory::GetObjectTypes(unsigned char type) noexcept
 {
 	vector<FactoryObject> result;
-	result.reserve(typecount[type]);
 	ReferenceList::iterator it;
 
 	cs.StartSession();
 
+	result.reserve(typecount[type]);
 	ReferenceList copy = instances;
 
 	cs.EndSession();
@@ -67,11 +67,11 @@ vector<FactoryObject> GameFactory::GetObjectTypes(unsigned char type) noexcept
 vector<NetworkID> GameFactory::GetIDObjectTypes(unsigned char type) noexcept
 {
 	vector<NetworkID> result;
-	result.reserve(typecount[type]);
 	ReferenceList::iterator it;
 
 	cs.StartSession();
 
+	result.reserve(typecount[type]);
 	ReferenceList copy = instances;
 
 	cs.EndSession();
@@ -85,7 +85,13 @@ vector<NetworkID> GameFactory::GetIDObjectTypes(unsigned char type) noexcept
 
 unsigned int GameFactory::GetObjectCount(unsigned char type) noexcept
 {
-	return typecount[type];
+	cs.StartSession();
+
+	unsigned int count = typecount[type];
+
+	cs.EndSession();
+
+	return count;
 }
 
 FactoryObject GameFactory::GetObject(NetworkID id)
@@ -333,12 +339,11 @@ NetworkID GameFactory::CreateInstance(unsigned char type, unsigned int refID, un
 			throw VaultException("Unknown type identifier %X", type);
 	}
 
-	++typecount[type];
-
 	NetworkID id = reference->GetNetworkID();
 
 	cs.StartSession();
 
+	++typecount[type];
 	instances.insert(pair<Reference*, unsigned char>(reference, type));
 
 	cs.EndSession();
@@ -384,12 +389,11 @@ void GameFactory::CreateKnownInstance(unsigned char type, NetworkID id, unsigned
 			throw VaultException("Unknown type identifier %X", type);
 	}
 
-	++typecount[type];
-
 	reference->SetNetworkID(id);
 
 	cs.StartSession();
 
+	++typecount[type];
 	instances.insert(pair<Reference*, unsigned char>(reference, type));
 
 	cs.EndSession();
@@ -433,13 +437,12 @@ NetworkID GameFactory::CreateKnownInstance(unsigned char type, const pDefault* p
 			throw VaultException("Unknown type identifier %X", type);
 	}
 
-	++typecount[type];
-
 	NetworkID id = PacketFactory::ExtractNetworkID(packet);
 	reference->SetNetworkID(id);
 
 	cs.StartSession();
 
+	++typecount[type];
 	instances.insert(pair<Reference*, unsigned char>(reference, type));
 
 	cs.EndSession();
@@ -454,7 +457,7 @@ void GameFactory::DestroyAllInstances()
 	for (pair<Reference* const, unsigned char>& instance : instances)
 	{
 		if (instance.second & ALL_CONTAINERS)
-			vaultcast<Container>(instance.first)->container.clear();
+			reinterpret_cast<Container*>(instance.first)->container.clear();
 
 #ifdef VAULTMP_DEBUG
 

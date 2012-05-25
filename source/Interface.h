@@ -60,7 +60,7 @@ class Interface : public API
 		static unordered_map<string, string> alias;
 		static Native natives;
 
-		static Native::iterator DefineNativeInternal(string name, ParamContainer);
+		static Native::iterator DefineNativeInternal(string name, const ParamContainer&);
 		static void ExecuteCommand(Native::iterator it, unsigned int key);
 		static multimap<string, string> Evaluate(Native::iterator _it);
 
@@ -133,7 +133,7 @@ class Interface : public API
 		 * name refers to an existing command.
 		 * param is a ParamContainer which is a STL list of Parameter's
 		 */
-		static void DefineNative(string name, ParamContainer param);
+		static void DefineNative(string name, const ParamContainer& param);
 		/**
 		 * \brief Executes a command in an indefinite loop until Terminate gets called
 		 *
@@ -150,7 +150,7 @@ class Interface : public API
 		 * see DefineNative for a short explanation of ParamContainer
 		 * key (optional) - a signed key (usually from the Lockable class) which is to later identify this command
 		 */
-		static void ExecuteCommand(string name, ParamContainer, unsigned int key = 0);
+		static void ExecuteCommand(string name, const ParamContainer&, unsigned int key = 0);
 
 #ifdef VAULTMP_DEBUG
 		static void SetDebugHandler(Debug* debug);

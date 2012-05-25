@@ -37,9 +37,9 @@ Item::Item(const pDefault* packet) : Object(PacketFactory::ExtractPartial(packet
 	this->SetItemStick(stick);
 }
 
-Item::Item(pDefault* packet) : Item(static_cast<const pDefault*>(packet))
+Item::Item(pPacket&& packet) : Item(static_cast<const pDefault*>(packet.get()))
 {
-	PacketFactory::FreePacket(packet);
+
 }
 
 Item::~Item()
@@ -124,13 +124,10 @@ NetworkID Item::Copy() const
 	return item->GetNetworkID();
 }
 
-pDefault* Item::toPacket()
+pPacket Item::toPacket()
 {
-	pDefault* pObjectNew = Object::toPacket();
-
-	pDefault* packet = PacketFactory::CreatePacket(ID_ITEM_NEW, pObjectNew, this->GetItemCount(), this->GetItemCondition(), this->GetItemEquipped(), this->GetItemSilent(), this->GetItemStick());
-
-	PacketFactory::FreePacket(pObjectNew);
+	pPacket pObjectNew = Object::toPacket();
+	pPacket packet = PacketFactory::CreatePacket(ID_ITEM_NEW, pObjectNew.get(), this->GetItemCount(), this->GetItemCondition(), this->GetItemEquipped(), this->GetItemSilent(), this->GetItemStick());
 
 	return packet;
 }

@@ -47,7 +47,7 @@ using namespace Data;
 using namespace std;
 
 typedef pair<string, unsigned int> Savegame;
-typedef vector<pair<string, unsigned int> > ModList;
+typedef vector<pair<string, unsigned int>> ModList;
 
 /**
  * \brief The main class of the dedicated server

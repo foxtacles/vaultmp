@@ -98,19 +98,16 @@ Lockable* Player::SetPlayerRespawn(unsigned int respawn)
 	return SetObjectValue(this->player_Respawn, respawn);
 }
 
-pDefault* Player::toPacket()
+pPacket Player::toPacket()
 {
 	vector<unsigned char> data = API::RetrieveAllControls();
-	map<unsigned char, pair<unsigned char, bool> > controls;
+	map<unsigned char, pair<unsigned char, bool>> controls;
 
 	for (unsigned char _data : data)
 		controls.insert(pair<unsigned char, pair<unsigned char, bool> >(_data, pair<unsigned char, bool>(this->GetPlayerControl(_data), this->GetPlayerControlEnabled(_data))));
 
-	pDefault* pActorNew = Actor::toPacket();
-
-	pDefault* packet = PacketFactory::CreatePacket(ID_PLAYER_NEW, pActorNew, &controls);
-
-	PacketFactory::FreePacket(pActorNew);
+	pPacket pActorNew = Actor::toPacket();
+	pPacket packet = PacketFactory::CreatePacket(ID_PLAYER_NEW, pActorNew.get(), &controls);
 
 	return packet;
 }

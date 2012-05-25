@@ -177,12 +177,12 @@ void Interface::DefineCommand(string name, string def, string real)
 	defs.insert(pair<string, string>(name, def));
 }
 
-void Interface::DefineNative(string name, ParamContainer param)
+void Interface::DefineNative(string name, const ParamContainer& param)
 {
 	DefineNativeInternal(name, param);
 }
 
-Native::iterator Interface::DefineNativeInternal(string name, ParamContainer param)
+Native::iterator Interface::DefineNativeInternal(string name, const ParamContainer& param)
 {
 	unordered_map<string, string>::iterator it;
 	it = defs.find(name);
@@ -211,7 +211,7 @@ void Interface::SetupCommand(string name, unsigned int priority)
 	priorityMap.insert(pair<unsigned int, Native::iterator>(priority, it));
 }
 
-void Interface::ExecuteCommand(string name, ParamContainer param, unsigned int key)
+void Interface::ExecuteCommand(string name, const ParamContainer& param, unsigned int key)
 {
 	ExecuteCommand(DefineNativeInternal(name, param), key);
 }
@@ -224,7 +224,6 @@ multimap<string, string> Interface::Evaluate(Native::iterator _it)
 	ParamContainer& param = _it->second;
 
 	multimap<string, string> result;
-	ParamContainer::reverse_iterator it;
 
 	if (!param.empty())
 	{
@@ -233,6 +232,7 @@ multimap<string, string> Interface::Evaluate(Native::iterator _it)
 		unsigned int lsize = param.size();
 		vector<unsigned int> mult;
 		vector<ParamContainer::reverse_iterator> lists;
+		ParamContainer::reverse_iterator it;
 		mult.reserve(lsize);
 		lists.reserve(lsize);
 

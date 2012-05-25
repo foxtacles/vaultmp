@@ -28,9 +28,9 @@ struct Diff
 	}
 };
 
-typedef pair<list<NetworkID>, list<NetworkID> > ContainerDiff;
-typedef list<pair<unsigned int, Diff> > GameDiff;
-typedef pair<NetworkID, map<NetworkID, list<NetworkID> > > StripCopy;
+typedef pair<list<NetworkID>, list<NetworkID>> ContainerDiff;
+typedef list<pair<unsigned int, Diff>> GameDiff;
+typedef pair<NetworkID, map<NetworkID, list<NetworkID>>> StripCopy;
 
 #include "vaultmp.h"
 #include "Data.h"
@@ -76,7 +76,7 @@ class Container : public Object
 	protected:
 		Container(unsigned int refID, unsigned int baseID);
 		Container(const pDefault* packet);
-		Container(pDefault* packet);
+		Container(pPacket&& packet);
 		virtual ~Container();
 
 	public:
@@ -110,7 +110,7 @@ class Container : public Object
 		/**
 		 * \brief For network transfer
 		 */
-		virtual pDefault* toPacket();
+		virtual pPacket toPacket();
 };
 
 #endif

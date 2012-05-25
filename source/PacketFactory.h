@@ -64,15 +64,17 @@ enum
 
 class pDefault;
 
+typedef unique_ptr<pDefault, void(*)(pDefault*)> pPacket;
+
 class PacketFactory
 {
 	private:
 		PacketFactory();
 
 	public:
-		static pDefault* CreatePacket(unsigned char type, ...);
+		static pPacket CreatePacket(unsigned char type, ...);
 
-		static pDefault* CreatePacket(unsigned char* stream, unsigned int len);
+		static pPacket CreatePacket(unsigned char* stream, unsigned int len);
 
 		static void Access(const pDefault* packet, ...);
 
@@ -84,7 +86,7 @@ class PacketFactory
 
 		static const unsigned char* ExtractRawData(const pDefault* packet);
 
-		static pDefault* ExtractPartial(const pDefault* packet);
+		static pPacket ExtractPartial(const pDefault* packet);
 
 		static void FreePacket(pDefault* packet);
 };
