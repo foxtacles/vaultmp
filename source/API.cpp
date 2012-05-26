@@ -703,8 +703,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 
 				case 's': // String
 				{
-					string str(tokenizer);
-					Utils::str_replace(str, "|", " ");
+					string str = Utils::str_replace(tokenizer, "|", " ");
 
 					unsigned short length = (unsigned short) str.length();
 

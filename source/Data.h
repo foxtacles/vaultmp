@@ -114,9 +114,6 @@ namespace Data
 			const _Parameter* const_param = NULL;
 
 		public:
-			// move constructors to the rescue
-			// otherwise temporaries would be passed to the const ctors
-
 			Parameter(RawParameter& param) : param(new RawParameter(param)) {}
 			Parameter(RawParameter&& param) : param(new RawParameter(param)) {}
 			Parameter(FuncParameter& param) : param(new FuncParameter(param)) {}
