@@ -91,7 +91,7 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 
 	Script::OnSpawn(_player);
 
-	return NetworkResponse{make_move_iterator(begin(response)), make_move_iterator(end(response))};
+	return NetworkResponse(make_move_iterator(begin(response)), make_move_iterator(end(response)));
 }
 
 NetworkResponse Server::Disconnect(RakNetGUID guid, unsigned char reason)
@@ -200,7 +200,7 @@ NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, FactoryObject refere
 			Script::OnContainerItemChange(reference, _diff.first, _diff.second.count, _diff.second.condition);
 	}
 
-	return NetworkResponse{make_move_iterator(begin(response)), make_move_iterator(end(response))};
+	return NetworkResponse(make_move_iterator(begin(response)), make_move_iterator(end(response)));
 }
 
 NetworkResponse Server::GetActorValue(RakNetGUID guid, FactoryObject reference, bool base, unsigned char index, double value)

@@ -22,26 +22,18 @@ NetworkResponse NetworkClient::ProcessEvent(unsigned char id)
 	{
 		case ID_EVENT_CLIENT_ERROR:
 		case ID_EVENT_INTERFACE_LOST:
-		{
-			SingleResponse response[] = {Network::CreateResponse(
+			return NetworkResponse{Network::CreateResponse(
 				PacketFactory::CreatePacket(ID_GAME_END, ID_REASON_ERROR),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Game::server)
 			};
 
-			return NetworkResponse{make_move_iterator(begin(response)), make_move_iterator(end(response))};
-		}
-
 		case ID_EVENT_GAME_STARTED:
-		{
 			Network::ToggleDequeue(false);
 
-			SingleResponse response[] = {Network::CreateResponse(
+			return NetworkResponse{Network::CreateResponse(
 				PacketFactory::CreatePacket(ID_GAME_LOAD),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Game::server)
 			};
-
-			return NetworkResponse{make_move_iterator(begin(response)), make_move_iterator(end(response))};
-		}
 
 		case ID_EVENT_GAME_LOADED:
 		{
@@ -50,12 +42,10 @@ NetworkResponse NetworkClient::ProcessEvent(unsigned char id)
 			FactoryObject reference = GameFactory::GetObject(PLAYER_REFERENCE);
 			Player* self = vaultcast<Player>(reference);
 
-			SingleResponse response[] = {Network::CreateResponse(
+			return NetworkResponse{Network::CreateResponse(
 				self->toPacket(),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Game::server)
 			};
-
-			return NetworkResponse{make_move_iterator(begin(response)), make_move_iterator(end(response))};
 		}
 
 		default:

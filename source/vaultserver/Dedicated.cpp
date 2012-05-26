@@ -313,8 +313,8 @@ void Dedicated::DedicatedThread()
 						vector<RakNetGUID> closures;
 
 						for (const SingleResponse& _response : response)
-							if (*_response.first.first->get() == ID_GAME_END)
-								closures.insert(closures.end(), _response.second.begin(), _response.second.end());
+							if (*_response.get_packet()->get() == ID_GAME_END)
+								closures.insert(closures.end(), _response.get_targets().begin(), _response.get_targets().end());
 
 						Network::Dispatch(peer, move(response));
 

@@ -80,12 +80,10 @@ NetworkResponse Game::Authenticate(string password)
 	FactoryObject reference = GameFactory::GetObject(PLAYER_REFERENCE);
 	Player* self = vaultcast<Player>(reference);
 
-	SingleResponse response[] = {Network::CreateResponse(
+	return NetworkResponse{Network::CreateResponse(
 		PacketFactory::CreatePacket(ID_GAME_AUTH, self->GetName().c_str(), password.c_str()),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 	};
-
-	return NetworkResponse(make_move_iterator(begin(response)), make_move_iterator(end(response)));
 }
 
 void Game::Startup()
@@ -927,12 +925,10 @@ void Game::net_SetActorDead(FactoryObject& reference, bool dead)
 			Game::LoadGame();
 			Game::LoadEnvironment();
 
-			SingleResponse response[] = {Network::CreateResponse(
+			Network::Queue(NetworkResponse{Network::CreateResponse(
 				PacketFactory::CreatePacket(ID_UPDATE_DEAD, id, dead),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
-			};
-
-			Network::Queue(NetworkResponse{make_move_iterator(begin(response)), make_move_iterator(end(response))});
+			});
 		}
 	}
 }
@@ -943,14 +939,10 @@ void Game::GetPos(FactoryObject reference, unsigned char axis, double value)
 	bool result = (bool) object->SetGamePos(axis, value);
 
 	if (result && object->GetReference() == PLAYER_REFERENCE)
-	{
-		SingleResponse response[] = {Network::CreateResponse(
+		Network::Queue(NetworkResponse{Network::CreateResponse(
 			PacketFactory::CreatePacket(ID_UPDATE_POS, object->GetNetworkID(), object->GetGamePos(Axis_X), object->GetGamePos(Axis_Y), object->GetGamePos(Axis_Z)),
 			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, server)
-		};
-
-		Network::Queue(NetworkResponse{make_move_iterator(begin(response)), make_move_iterator(end(response))});
-	}
+		});
 }
 
 void Game::GetAngle(FactoryObject reference, unsigned char axis, double value)
@@ -959,14 +951,10 @@ void Game::GetAngle(FactoryObject reference, unsigned char axis, double value)
 	bool result = (bool) object->SetAngle(axis, value);
 
 	if (result)
-	{
-		SingleResponse response[] = {Network::CreateResponse(
+		Network::Queue(NetworkResponse{Network::CreateResponse(
 			PacketFactory::CreatePacket(ID_UPDATE_ANGLE, object->GetNetworkID(), axis, value),
 			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, server)
-		};
-
-		Network::Queue(NetworkResponse{make_move_iterator(begin(response)), make_move_iterator(end(response))});
-	}
+		});
 }
 
 void Game::GetParentCell(vector<FactoryObject> reference, unsigned int cell)
@@ -1010,14 +998,10 @@ void Game::GetParentCell(vector<FactoryObject> reference, unsigned int cell)
 	}
 
 	if (result && object == self)
-	{
-		SingleResponse response[] = {Network::CreateResponse(
+		Network::Queue(NetworkResponse{Network::CreateResponse(
 			PacketFactory::CreatePacket(ID_UPDATE_CELL, object->GetNetworkID(), cell),
 			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, server)
-		};
-
-		Network::Queue(NetworkResponse{make_move_iterator(begin(response)), make_move_iterator(end(response))});
-	}
+		});
 }
 
 void Game::GetDead(vector<FactoryObject> reference, bool dead)
@@ -1044,14 +1028,10 @@ void Game::GetDead(vector<FactoryObject> reference, bool dead)
 	result = (bool) actor->SetActorDead(dead);
 
 	if (result)
-	{
-		SingleResponse response[] = {Network::CreateResponse(
+		Network::Queue(NetworkResponse{Network::CreateResponse(
 			PacketFactory::CreatePacket(ID_UPDATE_DEAD, actor->GetNetworkID(), dead),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
-		};
-
-		Network::Queue(NetworkResponse{make_move_iterator(begin(response)), make_move_iterator(end(response))});
-	}
+		});
 }
 
 void Game::GetActorValue(FactoryObject reference, bool base, unsigned char index, double value)
@@ -1070,14 +1050,10 @@ void Game::GetActorValue(FactoryObject reference, bool base, unsigned char index
 		result = (bool) actor->SetActorValue(index, value);
 
 	if (result)
-	{
-		SingleResponse response[] = {Network::CreateResponse(
+		Network::Queue(NetworkResponse{Network::CreateResponse(
 			PacketFactory::CreatePacket(ID_UPDATE_VALUE, actor->GetNetworkID(), base, index, value),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
-		};
-
-		Network::Queue(NetworkResponse{make_move_iterator(begin(response)), make_move_iterator(end(response))});
-	}
+		});
 }
 
 void Game::GetActorState(FactoryObject reference, unsigned char index, unsigned char moving, bool alerted, bool sneaking)
@@ -1095,14 +1071,10 @@ void Game::GetActorState(FactoryObject reference, unsigned char index, unsigned 
 	result = ((bool) actor->SetActorMovingAnimation(index) | (bool) actor->SetActorMovingXY(moving) | (bool) actor->SetActorAlerted(alerted) | (bool) actor->SetActorSneaking(sneaking));
 
 	if (result)
-	{
-		SingleResponse response[] = {Network::CreateResponse(
+		Network::Queue(NetworkResponse{Network::CreateResponse(
 			PacketFactory::CreatePacket(ID_UPDATE_STATE, actor->GetNetworkID(), index, moving, alerted, sneaking),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
-		};
-
-		Network::Queue(NetworkResponse{make_move_iterator(begin(response)), make_move_iterator(end(response))});
-	}
+		});
 }
 
 void Game::GetControl(FactoryObject reference, unsigned char control, unsigned char key)
@@ -1117,14 +1089,10 @@ void Game::GetControl(FactoryObject reference, unsigned char control, unsigned c
 	result = (bool) player->SetPlayerControl(control, key);
 
 	if (result)
-	{
-		SingleResponse response[] = {Network::CreateResponse(
+		Network::Queue(NetworkResponse{Network::CreateResponse(
 			PacketFactory::CreatePacket(ID_UPDATE_CONTROL, player->GetNetworkID(), control, key),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
-		};
-
-		Network::Queue(NetworkResponse{make_move_iterator(begin(response)), make_move_iterator(end(response))});
-	}
+		});
 }
 
 void Game::ScanContainer(FactoryObject reference, vector<unsigned char>& data)
@@ -1170,12 +1138,10 @@ void Game::ScanContainer(FactoryObject reference, vector<unsigned char>& data)
 
 		if (!diff.first.empty() || !diff.second.empty())
 		{
-			SingleResponse response[] = {Network::CreateResponse(
+			Network::Queue(NetworkResponse{Network::CreateResponse(
 				PacketFactory::CreatePacket(ID_UPDATE_CONTAINER, container->GetNetworkID(), &diff),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
-			};
-
-			Network::Queue(NetworkResponse{make_move_iterator(begin(response)), make_move_iterator(end(response))});
+			});
 
 			container->ApplyDiff(diff);
 		}

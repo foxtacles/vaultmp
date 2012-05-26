@@ -16,11 +16,6 @@
 
 using namespace RakNet;
 
-typedef tuple<PacketPriority, PacketReliability, unsigned char> PacketDescriptor;
-typedef pair<pair<pPacket, PacketDescriptor>, vector<RakNetGUID>> SingleResponse;
-typedef vector<SingleResponse> NetworkResponse;
-typedef deque<NetworkResponse> NetworkQueue;
-
 /**
  * \brief The Network class provides basic facilities to create, send and queue packets
  *
@@ -29,13 +24,45 @@ typedef deque<NetworkResponse> NetworkQueue;
 
 class Network
 {
-	private:
+	typedef tuple<PacketPriority, PacketReliability, unsigned char> PacketDescriptor;
 
-		Network();
+	public:
+		class SingleResponse {
+
+			friend class Network;
+
+			private:
+				pPacket packet;
+				PacketDescriptor descriptor;
+				vector<RakNetGUID> targets;
+
+				SingleResponse(pPacket&& packet, PacketDescriptor descriptor, const vector<RakNetGUID>& targets) : packet(move(packet)), descriptor(descriptor), targets(targets) {}
+				SingleResponse(pPacket&& packet, PacketDescriptor descriptor, RakNetGUID target) : packet(move(packet)), descriptor(descriptor), targets(vector<RakNetGUID>{target}) {}
+
+			public:
+				~SingleResponse() = default;
+
+				SingleResponse(SingleResponse&&) = default;
+				SingleResponse& operator= (SingleResponse&&) = default;
+
+				// hack: initializer lists reference static memory... this ctor enables moving the packet
+				// NOT A COPY CTOR
+				SingleResponse(const SingleResponse& response) : SingleResponse(move(const_cast<SingleResponse&>(response))) {}
+
+				const vector<RakNetGUID>& get_targets() const { return targets; }
+				const pDefault* get_packet() const { return packet.get(); }
+		};
+
+		typedef vector<SingleResponse> NetworkResponse;
+
+	private:
+		Network() = delete;
 
 #ifdef VAULTMP_DEBUG
 		static Debug* debug;
 #endif
+
+		typedef deque<NetworkResponse> NetworkQueue;
 
 		static NetworkIDManager manager;
 		static NetworkQueue queue;
@@ -53,7 +80,7 @@ class Network
 		 * channel sepcifies the RakNet channel to send this packet on
 		 * targets is a STL vector containing RakNetGUID's
 		 */
-		static SingleResponse CreateResponse(pPacket&& packet, PacketPriority priority, PacketReliability reliability, unsigned char channel, vector<RakNetGUID> targets);
+		static SingleResponse CreateResponse(pPacket&& packet, PacketPriority priority, PacketReliability reliability, unsigned char channel, const vector<RakNetGUID>& targets);
 		/**
 		 * \brief Creates a SingleResponse given a single network target
 		 *
@@ -99,5 +126,8 @@ class Network
 		static void SetDebugHandler(Debug* debug);
 #endif
 };
+
+using NetworkResponse = Network::NetworkResponse;
+using SingleResponse = Network::SingleResponse;
 
 #endif

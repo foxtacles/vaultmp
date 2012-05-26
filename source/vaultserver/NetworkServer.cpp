@@ -20,14 +20,10 @@ NetworkResponse NetworkServer::ProcessEvent(unsigned char id)
 	switch (id)
 	{
 		case ID_EVENT_SERVER_ERROR:
-		{
-			SingleResponse response[] = {Network::CreateResponse(
+			return NetworkResponse{Network::CreateResponse(
 				PacketFactory::CreatePacket(ID_GAME_END, ID_REASON_ERROR),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(NULL))
 			};
-
-			return NetworkResponse{make_move_iterator(begin(response)), make_move_iterator(end(response))};
-		}
 
 		default:
 			throw VaultException("Unhandled event type %d", id);

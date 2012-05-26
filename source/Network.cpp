@@ -2,7 +2,7 @@
 #include "PacketTypes.h"
 
 NetworkIDManager Network::manager;
-NetworkQueue Network::queue;
+Network::NetworkQueue Network::queue;
 CriticalSection Network::cs;
 bool Network::dequeue = true;
 
@@ -20,14 +20,14 @@ void Network::SetDebugHandler(Debug* debug)
 }
 #endif
 
-SingleResponse Network::CreateResponse(pPacket&& packet, PacketPriority priority, PacketReliability reliability, unsigned char channel, vector<RakNetGUID> targets)
+Network::SingleResponse Network::CreateResponse(pPacket&& packet, PacketPriority priority, PacketReliability reliability, unsigned char channel, const vector<RakNetGUID>& targets)
 {
-	return SingleResponse(pair<pPacket, PacketDescriptor>(move(packet), PacketDescriptor(priority, reliability, channel)), targets);
+	return SingleResponse(move(packet), PacketDescriptor(priority, reliability, channel), targets);
 }
 
-SingleResponse Network::CreateResponse(pPacket&& packet, PacketPriority priority, PacketReliability reliability, unsigned char channel, RakNetGUID target)
+Network::SingleResponse Network::CreateResponse(pPacket&& packet, PacketPriority priority, PacketReliability reliability, unsigned char channel, RakNetGUID target)
 {
-	return SingleResponse(pair<pPacket, PacketDescriptor>(move(packet), PacketDescriptor(priority, reliability, channel)), vector<RakNetGUID>{target});
+	return SingleResponse(move(packet), PacketDescriptor(priority, reliability, channel), vector<RakNetGUID>{target});
 }
 
 void Network::Dispatch(RakPeerInterface* peer, NetworkResponse&& response)
@@ -39,11 +39,11 @@ void Network::Dispatch(RakPeerInterface* peer, NetworkResponse&& response)
 	{
 #ifdef VAULTMP_DEBUG
 		if (debug)
-			debug->PrintFormat("Sending packet of type %s, length %d, type %d", true, typeid(*s.first.first).name(), s.first.first->length(), *s.first.first->get());
+			debug->PrintFormat("Sending packet of type %s, length %d, type %d", true, typeid(*s.packet).name(), s.packet->length(), *s.packet->get());
 #endif
 
-		for (RakNetGUID& guid : s.second)
-			peer->Send(reinterpret_cast<const char*>(s.first.first->get()), s.first.first->length(), get<0>(s.first.second), get<1>(s.first.second), get<2>(s.first.second), guid, false);
+		for (RakNetGUID& guid : s.targets)
+			peer->Send(reinterpret_cast<const char*>(s.packet->get()), s.packet->length(), get<0>(s.descriptor), get<1>(s.descriptor), get<2>(s.descriptor), guid, false);
 	}
 }
 
@@ -63,11 +63,11 @@ bool Network::Dispatch(RakPeerInterface* peer)
 	{
 #ifdef VAULTMP_DEBUG
 		if (debug)
-			debug->PrintFormat("Sending packet of type %s, length %d, type %d", true, typeid(*s.first.first).name(), s.first.first->length(), *s.first.first->get());
+			debug->PrintFormat("Sending packet of type %s, length %d, type %d", true, typeid(*s.packet).name(), s.packet->length(), *s.packet->get());
 #endif
 
-		for (const RakNetGUID& guid : s.second)
-			peer->Send(reinterpret_cast<const char*>(s.first.first->get()), s.first.first->length(), get<0>(s.first.second), get<1>(s.first.second), get<2>(s.first.second), guid, false);
+		for (const RakNetGUID& guid : s.targets)
+			peer->Send(reinterpret_cast<const char*>(s.packet->get()), s.packet->length(), get<0>(s.descriptor), get<1>(s.descriptor), get<2>(s.descriptor), guid, false);
 	}
 
 	queue.pop_back();

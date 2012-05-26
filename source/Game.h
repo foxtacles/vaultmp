@@ -24,7 +24,7 @@ class Game
 
 	private:
 
-		Game();
+		Game() = delete;
 
 #ifdef VAULTMP_DEBUG
 		static Debug* debug;
