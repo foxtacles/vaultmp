@@ -177,12 +177,12 @@ void Interface::DefineCommand(string name, string def, string real)
 	defs.insert(pair<string, string>(name, def));
 }
 
-void Interface::DefineNative(string name, const ParamContainer& param)
+void Interface::DefineNative(string name, ParamContainer&& param)
 {
-	DefineNativeInternal(name, param);
+	DefineNativeInternal(name, move(param));
 }
 
-Native::iterator Interface::DefineNativeInternal(string name, const ParamContainer& param)
+Native::iterator Interface::DefineNativeInternal(string name, ParamContainer&& param)
 {
 	unordered_map<string, string>::iterator it;
 	it = defs.find(name);
@@ -211,9 +211,9 @@ void Interface::SetupCommand(string name, unsigned int priority)
 	priorityMap.insert(pair<unsigned int, Native::iterator>(priority, it));
 }
 
-void Interface::ExecuteCommand(string name, const ParamContainer& param, unsigned int key)
+void Interface::ExecuteCommand(string name, ParamContainer&& param, unsigned int key)
 {
-	ExecuteCommand(DefineNativeInternal(name, param), key);
+	ExecuteCommand(DefineNativeInternal(name, move(param)), key);
 }
 
 multimap<string, string> Interface::Evaluate(Native::iterator _it)
@@ -231,10 +231,8 @@ multimap<string, string> Interface::Evaluate(Native::iterator _it)
 		unsigned int rsize = 1;
 		unsigned int lsize = param.size();
 		vector<unsigned int> mult;
-		vector<ParamContainer::reverse_iterator> lists;
 		ParamContainer::reverse_iterator it;
 		mult.reserve(lsize);
-		lists.reserve(lsize);
 
 		for (it = param.rbegin(); it != param.rend(); ++it, ++i)
 		{
@@ -251,7 +249,6 @@ multimap<string, string> Interface::Evaluate(Native::iterator _it)
 				return result;
 
 			mult.insert(mult.begin(), rsize);
-			lists.insert(lists.begin(), it);
 			rsize *= params.size();
 		}
 
@@ -261,12 +258,12 @@ multimap<string, string> Interface::Evaluate(Native::iterator _it)
 
 			for (unsigned int j = 0; j < lsize; ++j)
 			{
-				unsigned int idx = ((unsigned int)(i / mult[j])) % lists.at(j)->get().size();
+				unsigned int idx = ((unsigned int)(i / mult[j])) % param[j].get().size();
 
 				char token[4];
 				snprintf(token, sizeof(token), "%%%d", j);
 
-				cmd.replace(cmd.find(token), strlen(token), Utils::str_replace(lists.at(j)->get().at(idx), " ", "|"));
+				cmd.replace(cmd.find(token), strlen(token), Utils::str_replace(param[j].get()[idx], " ", "|"));
 			}
 
 			result.insert(pair<string, string>(name, cmd));

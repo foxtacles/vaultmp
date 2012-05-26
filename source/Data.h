@@ -31,12 +31,14 @@ namespace Data
 
 		protected:
 			_Parameter() = default;
+			_Parameter(_Parameter&&) = default;
+			_Parameter& operator= (_Parameter&&) = default;
 
 		public:
 			virtual ~_Parameter() {}
 
 			virtual const vector<string>& get() const = 0;
-			virtual void reset() = 0;
+			virtual void reset() const = 0;
 	};
 
 	class RawParameter : public _Parameter {
@@ -71,26 +73,30 @@ namespace Data
 
 		public:
 			RawParameter(string str) : data(vector<string>{str}) {}
-			RawParameter(vector<string> str) : data(str) {}
+			RawParameter(const vector<string>& str) : data(str) {}
 			RawParameter(const vector<unsigned char>& str) : data(make(str)) {}
 			RawParameter(unsigned int str) : data(make(str)) {}
 			RawParameter(double str) : data(make(str)) {}
 			RawParameter(bool str) : data(make(str)) {}
+			RawParameter(RawParameter&&) = default;
+			RawParameter& operator= (RawParameter&&) = default;
 			virtual ~RawParameter() {}
 
 			virtual const vector<string>& get() const { return data; }
-			virtual void reset() {}
+			virtual void reset() const {}
 	};
 
 	class FuncParameter : public _Parameter {
 
 		private:
-			shared_ptr<VaultFunctor> func;
+			unique_ptr<VaultFunctor> func;
 			mutable vector<string> data;
 			mutable bool initialized;
 
 		public:
-			FuncParameter(shared_ptr<VaultFunctor> func) : func(func), initialized(false) {}
+			FuncParameter(unique_ptr<VaultFunctor>&& func) : func(move(func)), initialized(false) {}
+			FuncParameter(FuncParameter&&) = default;
+			FuncParameter& operator= (FuncParameter&&) = default;
 			virtual ~FuncParameter() {}
 
 			virtual const vector<string>& get() const
@@ -104,30 +110,37 @@ namespace Data
 				return data;
 			}
 
-			virtual void reset() { initialized = false; }
+			virtual void reset() const { initialized = false; }
 	};
 
 	class Parameter {
 
 		private:
-			shared_ptr<_Parameter> param;
-			const _Parameter* const_param = NULL;
+			unique_ptr<const _Parameter, void(*)(const _Parameter*)> param;
+
+			static void no_delete(const _Parameter* param) {}
+			static void def_delete(const _Parameter* param) { delete param; }
 
 		public:
-			Parameter(RawParameter& param) : param(new RawParameter(param)) {}
-			Parameter(RawParameter&& param) : param(new RawParameter(param)) {}
-			Parameter(FuncParameter& param) : param(new FuncParameter(param)) {}
-			Parameter(FuncParameter&& param) : param(new FuncParameter(param)) {}
-			Parameter(const RawParameter& param) : const_param(&param) {}
-			Parameter(const FuncParameter& param) : const_param(&param) {}
+			Parameter(RawParameter&& param) : param(new RawParameter(move(param)), def_delete) {}
+			Parameter(FuncParameter&& param) : param(new FuncParameter(move(param)), def_delete) {}
+			Parameter(const RawParameter& param) : param(&param, no_delete) {}
+			Parameter(const FuncParameter& param) : param(&param, no_delete) {}
+
+			Parameter(Parameter&&) = default;
+			Parameter& operator= (Parameter&&) = default;
+
+			// hack: initializer lists reference static memory... this ctor enables moving the unique_ptr
+			// NOT A COPY CTOR
+			Parameter(const Parameter& param) : Parameter(move(const_cast<Parameter&>(param))) {}
 
 			~Parameter() = default;
 
-			const vector<string>& get() const { return const_param ? const_param->get() : param->get(); }
-			void reset() { if (!const_param) param->reset(); }
+			const vector<string>& get() const { return param->get(); }
+			void reset() { param->reset(); }
 	};
 
-	typedef list<Parameter> ParamContainer;
+	typedef vector<Parameter> ParamContainer;
 	typedef const map<const unsigned int, const char*> Database;
 	typedef map<const unsigned char, const unsigned char> IndexLookup;
 	typedef pair<future<void>, chrono::milliseconds> AsyncPack;

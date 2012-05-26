@@ -196,7 +196,7 @@ class FactoryObject
 			if (reference)
 				reference->EndSession();
 		};
-		FactoryObject(FactoryObject const& p) : reference(p.reference)
+		FactoryObject(const FactoryObject& p) : reference(p.reference)
 		{
 			if (reference)
 				reference->StartSession();
@@ -205,7 +205,7 @@ class FactoryObject
 		{
 			p.reference = NULL;
 		};
-		FactoryObject& operator= (FactoryObject const& p)
+		FactoryObject& operator= (const FactoryObject& p)
 		{
 			if (this != &p)
 			{
