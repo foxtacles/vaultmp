@@ -973,21 +973,18 @@ bool API::AnnounceFunction(string name)
 
 unsigned char* API::BuildCommandStream(vector<double>& info, unsigned int key, unsigned char* command, unsigned int size)
 {
+	if (size + 5 > PIPE_LENGTH)
+		throw VaultException("Error in API class; command size (%d bytes) exceeds the pipe length of %d bytes", size + 5, PIPE_LENGTH);
+
 	unsigned char* data = new unsigned char[PIPE_LENGTH];
 	ZeroMemory(data, sizeof(data));
 	data[0] = PIPE_OP_COMMAND;
-
-	if (size + 5 > PIPE_LENGTH)
-	{
-		delete[] data;
-		throw VaultException("Error in API class; command size (%d bytes) exceeds the pipe length of %d bytes", size + 5, PIPE_LENGTH);
-	}
 
 	memcpy(data + 5, command, size);
 
 	unsigned int r = rand();
 	*reinterpret_cast<unsigned int*>(data + 1) = r;
-	queue.push_front(pair<pair<unsigned int, vector<double> >, unsigned int>(pair<unsigned int, vector<double> >(r, info), key));
+	queue.push_front(pair<pair<unsigned int, vector<double>>, unsigned int>(pair<unsigned int, vector<double>>(r, info), key));
 
 	return data;
 }
@@ -1019,7 +1016,7 @@ CommandParsed API::Translate(multimap<string, string>& cmd, unsigned int key)
 
 		vector<double> parsed = ParseCommand(content, func.first.c_str(), &result, func.second);
 		unsigned char* data = BuildCommandStream(parsed, key, reinterpret_cast<unsigned char*>(&result), sizeof(op_default));
-		stream.push_back(data);
+		stream.push_back(unique_ptr<unsigned char[]>(data));
 	}
 
 	return stream;

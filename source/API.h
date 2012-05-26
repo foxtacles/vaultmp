@@ -25,7 +25,7 @@
 using namespace std;
 using namespace Data;
 
-typedef vector<unsigned char*> CommandParsed;
+typedef vector<unique_ptr<unsigned char[]>> CommandParsed;
 typedef pair<pair<pair<unsigned int, vector<double>>, double>, bool> CommandResult;
 typedef unordered_map<string, pair<string, unsigned short>> FunctionMap;
 typedef unordered_map<string, unsigned char> ValueMap;

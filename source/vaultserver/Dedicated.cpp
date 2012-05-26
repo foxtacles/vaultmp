@@ -318,6 +318,8 @@ void Dedicated::DedicatedThread()
 
 						Network::Dispatch(peer, move(response));
 
+						while (Network::Dispatch(peer));
+
 						for (RakNetGUID& guid : closures)
 							peer->CloseConnection(guid, true, CHANNEL_SYSTEM, HIGH_PRIORITY);
 					}

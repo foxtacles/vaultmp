@@ -386,26 +386,13 @@ void Interface::CommandThreadSend()
 					{
 						multimap<string, string> cmd = Interface::Evaluate(*it2);
 
-						if (cmd.size() != 0)
+						if (!cmd.empty())
 						{
 							CommandParsed stream = API::Translate(cmd);
+							CommandParsed::iterator it;
 
-							if (stream.size() != 0)
-							{
-								CommandParsed::iterator it;
-
-								for (it = stream.begin(); it != stream.end() && !endThread; ++it)
-								{
-									unsigned char* content = *it;
-									pipeServer->Send(content);
-								}
-
-								for (it = stream.begin(); it != stream.end(); ++it)
-								{
-									unsigned char* content = *it;
-									delete[] content;
-								}
-							}
+							for (it = stream.begin(); it != stream.end() && !endThread; ++it)
+								pipeServer->Send(it->get());
 						}
 					}
 				}
@@ -418,26 +405,13 @@ void Interface::CommandThreadSend()
 				{
 					multimap<string, string> cmd = Interface::Evaluate(it3->first);
 
-					if (cmd.size() != 0)
+					if (!cmd.empty())
 					{
 						CommandParsed stream = API::Translate(cmd, it3->second);
+						CommandParsed::iterator it;
 
-						if (stream.size() != 0)
-						{
-							CommandParsed::iterator it;
-
-							for (it = stream.begin(); it != stream.end() && !endThread; ++it)
-							{
-								unsigned char* content = *it;
-								pipeServer->Send(content);
-							}
-
-							for (it = stream.begin(); it != stream.end(); ++it)
-							{
-								unsigned char* content = *it;
-								delete[] content;
-							}
-						}
+						for (it = stream.begin(); it != stream.end() && !endThread; ++it)
+							pipeServer->Send(it->get());
 					}
 
 					natives.erase(it3->first);
