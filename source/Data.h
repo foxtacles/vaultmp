@@ -31,6 +31,8 @@ namespace Data
 
 		protected:
 			_Parameter() = default;
+			_Parameter(_Parameter&&) = default;
+			_Parameter& operator= (_Parameter&&) = default;
 
 		public:
 			virtual ~_Parameter() {}
@@ -76,6 +78,8 @@ namespace Data
 			RawParameter(unsigned int str) : data(make(str)) {}
 			RawParameter(double str) : data(make(str)) {}
 			RawParameter(bool str) : data(make(str)) {}
+			RawParameter(RawParameter&&) = default;
+			RawParameter& operator= (RawParameter&&) = default;
 			virtual ~RawParameter() {}
 
 			virtual const vector<string>& get() const { return data; }
@@ -85,12 +89,14 @@ namespace Data
 	class FuncParameter : public _Parameter {
 
 		private:
-			shared_ptr<VaultFunctor> func;
+			unique_ptr<VaultFunctor> func;
 			mutable vector<string> data;
 			mutable bool initialized;
 
 		public:
-			FuncParameter(shared_ptr<VaultFunctor> func) : func(func), initialized(false) {}
+			FuncParameter(unique_ptr<VaultFunctor>&& func) : func(move(func)), initialized(false) {}
+			FuncParameter(FuncParameter&&) = default;
+			FuncParameter& operator= (FuncParameter&&) = default;
 			virtual ~FuncParameter() {}
 
 			virtual const vector<string>& get() const
@@ -110,19 +116,18 @@ namespace Data
 	class Parameter {
 
 		private:
-			shared_ptr<_Parameter> param;
+			unique_ptr<_Parameter> param;
 			const _Parameter* const_param = NULL;
 
 		public:
-			// move constructors to the rescue
-			// otherwise temporaries would be passed to the const ctors
-
-			Parameter(RawParameter& param) : param(new RawParameter(param)) {}
-			Parameter(RawParameter&& param) : param(new RawParameter(param)) {}
-			Parameter(FuncParameter& param) : param(new FuncParameter(param)) {}
-			Parameter(FuncParameter&& param) : param(new FuncParameter(param)) {}
+			Parameter(RawParameter&& param) : param(new RawParameter(move(param))) {}
+			Parameter(FuncParameter&& param) : param(new FuncParameter(move(param))) {}
 			Parameter(const RawParameter& param) : const_param(&param) {}
 			Parameter(const FuncParameter& param) : const_param(&param) {}
+
+			// HACK
+			// initializer lists reference static memory... this ctor enables moving the unique_ptr
+			Parameter(const Parameter& param) : param(move(const_cast<unique_ptr<_Parameter>&>(param.param))), const_param(param.const_param) {}
 
 			~Parameter() = default;
 

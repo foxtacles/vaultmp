@@ -105,7 +105,7 @@ const RawParameter& Actor::Param_ActorValues()
 
 FuncParameter Actor::CreateFunctor(unsigned int flags, NetworkID id)
 {
-	return FuncParameter(shared_ptr<VaultFunctor>(new ActorFunctor(flags, id)));
+	return FuncParameter(unique_ptr<VaultFunctor>(new ActorFunctor(flags, id)));
 }
 
 double Actor::GetActorValue(unsigned char index) const

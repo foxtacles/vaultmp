@@ -127,11 +127,10 @@ void Game::Startup()
 	Interface::SetupCommand("GetActorValueHealth", 30);
 
 	// we could exclude health values here
-	ParamContainer container = ParamContainer{self->GetReferenceParam(), Actor::Param_ActorValues()};
-	Interface::DefineNative("GetActorValue", container);
+	Interface::DefineNative("GetActorValue", ParamContainer{self->GetReferenceParam(), Actor::Param_ActorValues()});
 	Interface::SetupCommand("GetActorValue", 100);
 
-	Interface::DefineNative("GetBaseActorValue", container);
+	Interface::DefineNative("GetBaseActorValue", ParamContainer{self->GetReferenceParam(), Actor::Param_ActorValues()});
 	Interface::SetupCommand("GetBaseActorValue", 200);
 
 	Interface::EndSetup();
@@ -512,7 +511,7 @@ void Game::MoveTo(vector<FactoryObject> reference, bool cell, unsigned int key)
 		param_MoveTo.push_back(RawParameter(object->GetNetworkPos(Axis_Z) - object2->GetNetworkPos(Axis_Z)));
 	}
 
-	Interface::ExecuteCommand("MoveTo", param_MoveTo, key);
+	Interface::ExecuteCommand("MoveTo", move(param_MoveTo), key);
 
 	Interface::EndDynamic();
 }

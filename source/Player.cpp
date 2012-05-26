@@ -65,7 +65,7 @@ void Player::SetRespawn(unsigned int respawn)
 
 FuncParameter Player::CreateFunctor(unsigned int flags, NetworkID id)
 {
-	return FuncParameter(shared_ptr<VaultFunctor>(new PlayerFunctor(flags, id)));
+	return FuncParameter(unique_ptr<VaultFunctor>(new PlayerFunctor(flags, id)));
 }
 
 unsigned char Player::GetPlayerControl(unsigned char control) const
