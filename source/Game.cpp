@@ -30,51 +30,6 @@ void Game::AdjustZAngle(double& Z, double diff)
 		Z += 360.0;
 }
 
-void Game::Initialize()
-{
-	Interface::DefineCommand("GetPos", "%0.GetPos %1");
-	Interface::DefineCommand("GetPosNotSelf", "%0.GetPos %1", "GetPos");
-	Interface::DefineCommand("SetPos", "%0.SetPos %1 %2");
-	Interface::DefineCommand("GetAngle", "%0.GetAngle %1");
-	Interface::DefineCommand("SetAngle", "%0.SetAngle %1 %2");
-	Interface::DefineCommand("GetParentCell", "%0.GetParentCell");
-	Interface::DefineCommand("GetControl", "GetControl %0");
-	Interface::DefineCommand("GetBaseActorValue", "%0.GetBaseActorValue %1");
-	Interface::DefineCommand("SetActorValue", "%0.SetActorValue %1 %2");
-	Interface::DefineCommand("ForceActorValue", "%0.ForceActorValue %1 %2");
-	Interface::DefineCommand("GetActorValue", "%0.GetActorValue %1");
-	Interface::DefineCommand("GetActorValueHealth", "%0.GetActorValue %1", "GetActorValue");
-	Interface::DefineCommand("GetDead", "%0.GetDead");
-	Interface::DefineCommand("Enable", "%0.Enable %1");
-	Interface::DefineCommand("Disable", "%0.Disable %1");
-	Interface::DefineCommand("MoveTo", "%0.MoveTo %1 %2 %3 %4");
-	Interface::DefineCommand("SetRestrained", "%0.SetRestrained %1");
-	Interface::DefineCommand("PlayGroup", "%0.PlayGroup %1 %2");
-	Interface::DefineCommand("SetAlert", "%0.SetAlert %1");
-	Interface::DefineCommand("SetForceSneak", "%0.SetForceSneak %1");
-	Interface::DefineCommand("SetName", "%0.SetName %1");
-	Interface::DefineCommand("EquipItem", "%0.EquipItem %1 %2 %3");
-	Interface::DefineCommand("UnequipItem", "%0.UnequipItem %1 %2 %3");
-	Interface::DefineCommand("AddItem", "%0.AddItem %1 %2 %3");
-	Interface::DefineCommand("AddItemHealthPercent", "%0.AddItemHealthPercent %1 %2 %3 %4");
-	Interface::DefineCommand("RemoveItem", "%0.RemoveItem %1 %2 %3");
-	Interface::DefineCommand("RemoveAllItems", "%0.RemoveAllItems");
-	Interface::DefineCommand("MoveAllItems", "%0.RemoveAllItems %1 %2", "RemoveAllItems");
-	Interface::DefineCommand("Kill", "%0.Kill");
-	Interface::DefineCommand("KillActor", "%0.Kill %1 %2 %3", "Kill");
-	Interface::DefineCommand("PlaceAtMe", "%0.PlaceAtMe %1 %2");
-	Interface::DefineCommand("Load", "Load %0");
-
-	Interface::DefineCommand("IsMoving", "%0.IsMoving");
-	Interface::DefineCommand("IsAnimPlaying", "%0.IsAnimPlaying %1");
-	Interface::DefineCommand("MarkForDelete", "%0.MarkForDelete");
-	Interface::DefineCommand("ScanContainer", "%0.ScanContainer");
-	Interface::DefineCommand("UIMessage", "UIMessage %0");
-
-	Interface::DefineCommand("GetActorState", "%0.GetActorState %1");
-	Interface::DefineCommand("GetActorStateNotSelf", "%0.GetActorState", "GetActorState");
-}
-
 NetworkResponse Game::Authenticate(string password)
 {
 	FactoryObject reference = GameFactory::GetObject(PLAYER_REFERENCE);
@@ -93,43 +48,25 @@ void Game::Startup()
 
 	Interface::StartSetup();
 
-	Interface::DefineNative("GetPos", ParamContainer{self->GetReferenceParam(), Object::Param_Axis()});
-	Interface::SetupCommand("GetPos");
-
-	Interface::DefineNative("GetPosNotSelf", ParamContainer{Player::CreateFunctor(FLAG_ENABLED | FLAG_NOTSELF | FLAG_ALIVE), Object::Param_Axis()});
-	Interface::SetupCommand("GetPosNotSelf", 30);
-
-	Interface::DefineNative("GetAngle", ParamContainer{self->GetReferenceParam(), RawParameter(vector<string> {API::RetrieveAxis_Reverse(Axis_X), API::RetrieveAxis_Reverse(Axis_Z)})});
-	Interface::SetupCommand("GetAngle");
-
-	Interface::DefineNative("GetActorState", ParamContainer{self->GetReferenceParam(), Player::CreateFunctor(FLAG_MOVCONTROLS, self->GetNetworkID())});
-	Interface::SetupCommand("GetActorState");
-
-	Interface::DefineNative("GetParentCell", ParamContainer{Player::CreateFunctor(FLAG_ALIVE)});
-	Interface::SetupCommand("GetParentCell", 30);
-
-	Interface::DefineNative("ScanContainer", ParamContainer{self->GetReferenceParam()});
-	Interface::SetupCommand("ScanContainer", 50);
-
-	Interface::DefineNative("GetDead", ParamContainer{Player::CreateFunctor(FLAG_ENABLED | FLAG_ALIVE)});
-	Interface::SetupCommand("GetDead", 30);
-
-	Interface::DefineNative("GetActorValueHealth", ParamContainer{self->GetReferenceParam(), RawParameter(vector<string>{
+	Interface::SetupCommand("GetPos", ParamContainer{self->GetReferenceParam(), Object::Param_Axis()});
+	Interface::SetupCommand("GetPos", ParamContainer{Player::CreateFunctor(FLAG_ENABLED | FLAG_NOTSELF | FLAG_ALIVE), Object::Param_Axis()}, 30);
+	Interface::SetupCommand("GetAngle", ParamContainer{self->GetReferenceParam(), RawParameter(vector<string> {API::RetrieveAxis_Reverse(Axis_X), API::RetrieveAxis_Reverse(Axis_Z)})});
+	Interface::SetupCommand("GetActorState", ParamContainer{self->GetReferenceParam(), Player::CreateFunctor(FLAG_MOVCONTROLS, self->GetNetworkID())});
+	Interface::SetupCommand("GetParentCell", ParamContainer{Player::CreateFunctor(FLAG_ALIVE)}, 30);
+	Interface::SetupCommand("ScanContainer", ParamContainer{self->GetReferenceParam()}, 50);
+	Interface::SetupCommand("GetDead", ParamContainer{Player::CreateFunctor(FLAG_ENABLED | FLAG_ALIVE)}, 30);
+	Interface::SetupCommand("GetActorValueHealth", ParamContainer{self->GetReferenceParam(), RawParameter(vector<string>{
 		API::RetrieveValue_Reverse(Fallout::ActorVal_Health),
 		API::RetrieveValue_Reverse(Fallout::ActorVal_Head),
 		API::RetrieveValue_Reverse(Fallout::ActorVal_Torso),
 		API::RetrieveValue_Reverse(Fallout::ActorVal_LeftArm),
 		API::RetrieveValue_Reverse(Fallout::ActorVal_RightArm),
 		API::RetrieveValue_Reverse(Fallout::ActorVal_LeftLeg),
-		API::RetrieveValue_Reverse(Fallout::ActorVal_RightLeg)})});
-	Interface::SetupCommand("GetActorValueHealth", 30);
+		API::RetrieveValue_Reverse(Fallout::ActorVal_RightLeg)})}, 30);
 
 	// we could exclude health values here
-	Interface::DefineNative("GetActorValue", ParamContainer{self->GetReferenceParam(), Actor::Param_ActorValues()});
-	Interface::SetupCommand("GetActorValue", 100);
-
-	Interface::DefineNative("GetBaseActorValue", ParamContainer{self->GetReferenceParam(), Actor::Param_ActorValues()});
-	Interface::SetupCommand("GetBaseActorValue", 200);
+	Interface::SetupCommand("GetActorValue", ParamContainer{self->GetReferenceParam(), Actor::Param_ActorValues()}, 100);
+	Interface::SetupCommand("GetBaseActorValue", ParamContainer{self->GetReferenceParam(), Actor::Param_ActorValues()}, 200);
 
 	Interface::EndSetup();
 }

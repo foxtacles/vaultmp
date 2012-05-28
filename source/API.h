@@ -390,12 +390,12 @@ class API
 		/**
 		 * \brief Translates commands to a stream of bytes
 		 *
-		 * Takes a STL multimap as an argument (key is the function name, value is the command to parse).
+		 * Takes a STL vector as an argument
 		 * Also takes an optional unsigned key (usually comes from the Lockable extension class) which will automatically associated with each parsed command.
 		 * Returns a STL vector containing the parsed commands (allocated on the heap; you are required to free them when you don't need them anymore).
 		 */
 
-		static CommandParsed Translate(multimap<string, string>& cmd, unsigned int key = 0);
+		static CommandParsed Translate(const vector<string>& cmd, unsigned int key = 0);
 
 		/**
 		 * \brief Translates a result from vaultmp DLL
@@ -410,7 +410,7 @@ class API
 
 		static vector<CommandResult> Translate(unsigned char* stream);
 
-		API();
+		API() = delete;
 
 	public:
 

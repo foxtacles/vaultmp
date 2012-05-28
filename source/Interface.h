@@ -29,8 +29,8 @@ using namespace Data;
 
 typedef unordered_multimap<string, ParamContainer> Native;
 typedef multimap<unsigned int, Native::iterator> PriorityMap;
-typedef list<list<Native::iterator>> StaticCommandList;
-typedef list<pair<Native::iterator, signed int>> DynamicCommandList;
+typedef vector<vector<Native::iterator>> StaticCommandList;
+typedef list<pair<Native::iterator, unsigned int>> DynamicCommandList;
 
 /**
  * \brief Provides facilities to execute engine commands, connects with the game process and is responsible for sending / retrieving game data
@@ -55,14 +55,9 @@ class Interface : public API
 		static ResultHandler resultHandler;
 		static CriticalSection static_cs;
 		static CriticalSection dynamic_cs;
-
-		static unordered_map<string, string> defs;
-		static unordered_map<string, string> alias;
 		static Native natives;
 
-		static Native::iterator DefineNativeInternal(string name, ParamContainer&&);
-		static void ExecuteCommand(Native::iterator it, unsigned int key);
-		static multimap<string, string> Evaluate(Native::iterator _it);
+		static vector<string> Evaluate(Native::iterator _it);
 
 		static void CommandThreadReceive();
 		static void CommandThreadSend();
@@ -116,33 +111,14 @@ class Interface : public API
 		 */
 		static void EndDynamic();
 
-
 		/**
-		 * \brief Defines an Interface command
+		 * \brief Setups a command
 		 *
-		 * name is the string which will be associated with this command; it must be known to the API
-		 * def is the function template definition with n-placeholders
-		 * real is an optional string to specifiy that this command is an alias; in this case, real is the name of an already existing command and name is the alias
-		 *
-		 * Example: DefineCommand("GetPos", "%0.GetPos %1");
-		 */
-		static void DefineCommand(string name, string def, string real = string());
-		/**
-		 * \brief Defines a native for an existing command
-		 *
-		 * name refers to an existing command.
+		 * name refers to the API command
 		 * param is a ParamContainer which is a STL list of Parameter's
-		 */
-		static void DefineNative(string name, ParamContainer&& param);
-		/**
-		 * \brief Executes a command in an indefinite loop until Terminate gets called
-		 *
-		 * name refers to an existing command.
 		 * priority (optional) - the lower this variable, the higher is the priority
-		 *
-		 * A native must be defined for the given command.
 		 */
-		static void SetupCommand(string name, unsigned int priority = 1);
+		static void SetupCommand(string name, ParamContainer&& param, unsigned int priority = 1);
 		/**
 		 * \brief Executes a command once
 		 *

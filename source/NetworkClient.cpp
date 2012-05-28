@@ -125,7 +125,6 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					Bethesda::savegame = Savegame(string(savegame), crc);
 
 					Bethesda::Initialize();
-					Game::Initialize();
 					Game::LoadGame(Utils::FileOnly(Bethesda::savegame.first.c_str()));
 					Game::LoadEnvironment();
 

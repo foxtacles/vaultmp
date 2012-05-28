@@ -38,10 +38,6 @@ class Game
 	public:
 
 		/**
-		 * \brief Initializes the Game class
-		 */
-		static void Initialize();
-		/**
 		 * \brief Builds an authenticate packet for the server
 		 */
 		static NetworkResponse Authenticate(string password);
