@@ -613,7 +613,7 @@ class pContainerNew : public pObjectNewDefault
 	private:
 		unsigned char* _data;
 
-		pContainerNew(const pDefault* _data_pObjectNew, list<const pDefault*>& _data_pItemNew) : pObjectNewDefault(ID_CONTAINER_NEW, PacketFactory::ExtractReference(_data_pObjectNew), PacketFactory::ExtractBase(_data_pObjectNew), PacketFactory::ExtractNetworkID(_data_pObjectNew))
+		pContainerNew(const pDefault* _data_pObjectNew, vector<pPacket>& _data_pItemNew) : pObjectNewDefault(ID_CONTAINER_NEW, PacketFactory::ExtractReference(_data_pObjectNew), PacketFactory::ExtractBase(_data_pObjectNew), PacketFactory::ExtractNetworkID(_data_pObjectNew))
 		{
 			unsigned int at = 0;
 			unsigned int length = pItemNew::as_packet_length();
@@ -629,11 +629,11 @@ class pContainerNew : public pObjectNewDefault
 
 			if (size > 0)
 			{
-				list<const pDefault*>::const_iterator it;
+				vector<pPacket>::const_iterator it;
 
 				for (it = _data_pItemNew.begin(); it != _data_pItemNew.end(); ++it, at += length)
 				{
-					const pDefault* packet = *it;
+					const pDefault* packet = it->get();
 
 					if (packet->length() != length)
 					{

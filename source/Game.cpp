@@ -55,7 +55,7 @@ void Game::Startup()
 	Interface::SetupCommand("GetParentCell", ParamContainer{Player::CreateFunctor(FLAG_ALIVE)}, 30);
 	Interface::SetupCommand("ScanContainer", ParamContainer{self->GetReferenceParam()}, 50);
 	Interface::SetupCommand("GetDead", ParamContainer{Player::CreateFunctor(FLAG_ENABLED | FLAG_ALIVE)}, 30);
-	Interface::SetupCommand("GetActorValueHealth", ParamContainer{self->GetReferenceParam(), RawParameter(vector<string>{
+	Interface::SetupCommand("GetActorValue", ParamContainer{self->GetReferenceParam(), RawParameter(vector<string>{
 		API::RetrieveValue_Reverse(Fallout::ActorVal_Health),
 		API::RetrieveValue_Reverse(Fallout::ActorVal_Head),
 		API::RetrieveValue_Reverse(Fallout::ActorVal_Torso),

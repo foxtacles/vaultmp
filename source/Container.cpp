@@ -26,15 +26,14 @@ Container::Container(const pDefault* packet) : Object(PacketFactory::ExtractPart
 {
 	initialize();
 
-	list<pDefault*> items;
+	vector<pPacket> items;
 
 	PacketFactory::Access(packet, &items);
 
-	for (pDefault* _packet : items)
+	for (pPacket& _packet : items)
 	{
-		NetworkID id = GameFactory::CreateKnownInstance(ID_ITEM, _packet);
+		NetworkID id = GameFactory::CreateKnownInstance(ID_ITEM, _packet.get());
 		this->AddItem(id);
-		PacketFactory::FreePacket(_packet);
 	}
 }
 
@@ -533,7 +532,8 @@ const list<NetworkID>& Container::GetItemList() const
 
 pPacket Container::toPacket()
 {
-	list<pPacket> items;
+	vector<pPacket> items;
+	items.reserve(container.size());
 
 	for (NetworkID& id : container)
 	{

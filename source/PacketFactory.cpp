@@ -86,7 +86,7 @@ pPacket PacketFactory::CreatePacket(unsigned char type, ...)
 		case ID_CONTAINER_NEW:
 		{
 			const pDefault* pObjectNew = va_arg(args, pDefault*);
-			list<const pDefault*>* pItemNew = va_arg(args, list<const pDefault*>*);
+			vector<pPacket>* pItemNew = va_arg(args, vector<pPacket>*);
 			packet = new pContainerNew(pObjectNew, *pItemNew);
 			break;
 		}
@@ -422,18 +422,16 @@ void PacketFactory::Access(const pDefault* packet, ...)
 			case ID_CONTAINER_NEW:
 			{
 				const pContainerNew* data = dynamic_cast<const pContainerNew*>(packet);
-				list<pDefault*>* _pItemNew = va_arg(args, list<pDefault*>*);
+				vector<pPacket>* _pItemNew = va_arg(args, vector<pPacket>*);
 
 				_pItemNew->clear();
 				unsigned int length = pItemNew::as_packet_length();
 				unsigned int size = *reinterpret_cast<unsigned int*>(&data->_data[pObjectNew::data_length()]);
 				unsigned int at = pObjectNew::data_length() + sizeof(unsigned int);
 
+				_pItemNew->reserve(size);
 				for (unsigned int i = 0; i < size; ++i, at += length)
-				{
-					pItemNew* item = new pItemNew(&data->_data[at], length);
-					_pItemNew->push_back(item);
-				}
+					_pItemNew->push_back(pPacket(new pItemNew(&data->_data[at], length), FreePacket));
 
 				break;
 			}

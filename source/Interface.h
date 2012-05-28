@@ -66,7 +66,7 @@ class Interface : public API
 		static Debug* debug;
 #endif
 
-		Interface();
+		Interface() = delete;
 
 	public:
 
