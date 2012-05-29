@@ -51,7 +51,7 @@ bool Interface::Initialize(ResultHandler resultHandler)
 #ifdef VAULTMP_DEBUG
 		//static_cs.SetDebugHandler(debug);
 		//dynamic_cs.SetDebugHandler(debug);
-		//debug->PrintFormat("Threads %s %s %p %p", true, CriticalSection::thread_id(hCommandThreadReceive).c_str(), CriticalSection::thread_id(hCommandThreadSend).c_str(), &static_cs, &dynamic_cs);
+		debug->PrintFormat("Threads %s %s %p %p", true, CriticalSection::thread_id(hCommandThreadReceive).c_str(), CriticalSection::thread_id(hCommandThreadSend).c_str(), &static_cs, &dynamic_cs);
 #endif
 
 		return true;

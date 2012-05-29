@@ -31,6 +31,7 @@ namespace Data
 
 		protected:
 			_Parameter() = default;
+			_Parameter(const _Parameter&) = default;
 			_Parameter(_Parameter&&) = default;
 			_Parameter& operator= (_Parameter&&) = default;
 
@@ -78,6 +79,7 @@ namespace Data
 			RawParameter(unsigned int str) : data(make(str)) {}
 			RawParameter(double str) : data(make(str)) {}
 			RawParameter(bool str) : data(make(str)) {}
+			RawParameter(const RawParameter&) = default;
 			RawParameter(RawParameter&&) = default;
 			RawParameter& operator= (RawParameter&&) = default;
 			virtual ~RawParameter() {}
@@ -122,6 +124,7 @@ namespace Data
 			static void def_delete(const _Parameter* param) { delete param; }
 
 		public:
+			Parameter(RawParameter& param) : param(new RawParameter(param), def_delete) {}
 			Parameter(RawParameter&& param) : param(new RawParameter(move(param)), def_delete) {}
 			Parameter(FuncParameter&& param) : param(new FuncParameter(move(param)), def_delete) {}
 			Parameter(const RawParameter& param) : param(&param, no_delete) {}

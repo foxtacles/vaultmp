@@ -46,16 +46,22 @@ void Game::Startup()
 	FactoryObject reference = GameFactory::GetObject(PLAYER_REFERENCE);
 	Player* self = vaultcast<Player>(reference);
 
+	RawParameter self_ref = self->GetReferenceParam();
+	NetworkID id = self->GetNetworkID();
+
+	// solve deadlock with static_cmdlist / GetControl send & receive on player object
+	GameFactory::LeaveReference(reference);
+
 	Interface::StartSetup();
 
-	Interface::SetupCommand("GetPos", ParamContainer{self->GetReferenceParam(), Object::Param_Axis()});
+	Interface::SetupCommand("GetPos", ParamContainer{self_ref, Object::Param_Axis()});
 	Interface::SetupCommand("GetPos", ParamContainer{Player::CreateFunctor(FLAG_ENABLED | FLAG_NOTSELF | FLAG_ALIVE), Object::Param_Axis()}, 30);
-	Interface::SetupCommand("GetAngle", ParamContainer{self->GetReferenceParam(), RawParameter(vector<string> {API::RetrieveAxis_Reverse(Axis_X), API::RetrieveAxis_Reverse(Axis_Z)})});
-	Interface::SetupCommand("GetActorState", ParamContainer{self->GetReferenceParam(), Player::CreateFunctor(FLAG_MOVCONTROLS, self->GetNetworkID())});
+	Interface::SetupCommand("GetAngle", ParamContainer{self_ref, RawParameter(vector<string> {API::RetrieveAxis_Reverse(Axis_X), API::RetrieveAxis_Reverse(Axis_Z)})});
+	Interface::SetupCommand("GetActorState", ParamContainer{self_ref, Player::CreateFunctor(FLAG_MOVCONTROLS, id)});
 	Interface::SetupCommand("GetParentCell", ParamContainer{Player::CreateFunctor(FLAG_ALIVE)}, 30);
-	Interface::SetupCommand("ScanContainer", ParamContainer{self->GetReferenceParam()}, 50);
+	Interface::SetupCommand("ScanContainer", ParamContainer{self_ref}, 50);
 	Interface::SetupCommand("GetDead", ParamContainer{Player::CreateFunctor(FLAG_ENABLED | FLAG_ALIVE)}, 30);
-	Interface::SetupCommand("GetActorValue", ParamContainer{self->GetReferenceParam(), RawParameter(vector<string>{
+	Interface::SetupCommand("GetActorValue", ParamContainer{self_ref, RawParameter(vector<string>{
 		API::RetrieveValue_Reverse(Fallout::ActorVal_Health),
 		API::RetrieveValue_Reverse(Fallout::ActorVal_Head),
 		API::RetrieveValue_Reverse(Fallout::ActorVal_Torso),
@@ -65,8 +71,8 @@ void Game::Startup()
 		API::RetrieveValue_Reverse(Fallout::ActorVal_RightLeg)})}, 30);
 
 	// we could exclude health values here
-	Interface::SetupCommand("GetActorValue", ParamContainer{self->GetReferenceParam(), Actor::Param_ActorValues()}, 100);
-	Interface::SetupCommand("GetBaseActorValue", ParamContainer{self->GetReferenceParam(), Actor::Param_ActorValues()}, 200);
+	Interface::SetupCommand("GetActorValue", ParamContainer{self_ref, Actor::Param_ActorValues()}, 100);
+	Interface::SetupCommand("GetBaseActorValue", ParamContainer{self_ref, Actor::Param_ActorValues()}, 200);
 
 	Interface::EndSetup();
 }
@@ -358,7 +364,7 @@ void Game::SetName(FactoryObject reference)
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("SetName", ParamContainer{object->GetReferenceParam(), RawParameter(object->GetName())});
+	Interface::ExecuteCommand("SetName", ParamContainer{object->GetReferenceParam(), RawParameter(name)});
 
 	Interface::EndDynamic();
 }
