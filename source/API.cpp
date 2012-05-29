@@ -940,7 +940,7 @@ bool API::AnnounceFunction(string name)
 	return false;
 }
 
-unsigned char* API::BuildCommandStream(vector<double>& info, unsigned int key, unsigned char* command, unsigned int size)
+unsigned char* API::BuildCommandStream(const vector<double>& info, unsigned int key, unsigned char* command, unsigned int size)
 {
 	if (size + 5 > PIPE_LENGTH)
 		throw VaultException("Error in API class; command size (%d bytes) exceeds the pipe length of %d bytes", size + 5, PIPE_LENGTH);

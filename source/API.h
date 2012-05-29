@@ -371,7 +371,7 @@ class API
 		static void DefineControl(unsigned char control, unsigned char games);
 
 		static pair<string, unsigned short> RetrieveFunction(string name);
-		static unsigned char* BuildCommandStream(vector<double>& info, unsigned int key, unsigned char* command, unsigned int size);
+		static unsigned char* BuildCommandStream(const vector<double>& info, unsigned int key, unsigned char* command, unsigned int size);
 
 		static vector<double> ParseCommand(char* cmd, const char* def, op_default* result, unsigned short opcode);
 
