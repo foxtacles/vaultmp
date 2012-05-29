@@ -30,7 +30,7 @@ using namespace Data;
 typedef unordered_multimap<string, ParamContainer> Native;
 typedef multimap<unsigned int, Native::iterator> PriorityMap;
 typedef vector<vector<Native::iterator>> StaticCommandList;
-typedef list<pair<Native::iterator, unsigned int>> DynamicCommandList;
+typedef deque<pair<Native::iterator, unsigned int>> DynamicCommandList;
 
 /**
  * \brief Provides facilities to execute engine commands, connects with the game process and is responsible for sending / retrieving game data

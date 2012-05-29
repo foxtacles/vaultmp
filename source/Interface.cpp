@@ -347,6 +347,8 @@ void Interface::CommandThreadSend()
 
 				for (it3 = dynamic_cmdlist.begin(); it3 != dynamic_cmdlist.end() && !endThread; it3 = dynamic_cmdlist.erase(it3))
 				{
+					dynamic_cs.EndSession();
+
 					vector<string> cmd = Interface::Evaluate(it3->first);
 
 					if (!cmd.empty())
@@ -359,6 +361,8 @@ void Interface::CommandThreadSend()
 					}
 
 					natives.erase(it3->first);
+
+					dynamic_cs.StartSession();
 				}
 
 				dynamic_cs.EndSession();
