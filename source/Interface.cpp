@@ -345,7 +345,7 @@ void Interface::CommandThreadSend()
 
 				DynamicCommandList::iterator it3;
 
-				for (it3 = dynamic_cmdlist.begin(); it3 != dynamic_cmdlist.end() && !endThread; it3 = dynamic_cmdlist.erase(it3))
+				for (it3 = dynamic_cmdlist.begin(); it3 != dynamic_cmdlist.end() && !endThread; natives.erase(it3->first), it3 = dynamic_cmdlist.erase(it3))
 				{
 					dynamic_cs.EndSession();
 
@@ -359,8 +359,6 @@ void Interface::CommandThreadSend()
 						for (it = stream.begin(); it != stream.end() && !endThread; ++it)
 							pipeServer->Send(it->get());
 					}
-
-					natives.erase(it3->first);
 
 					dynamic_cs.StartSession();
 				}
