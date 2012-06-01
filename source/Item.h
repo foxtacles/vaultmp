@@ -28,7 +28,7 @@ class Item : public Object
 		static Debug* debug;
 #endif
 
-		Database::const_iterator data;
+		LegacyDatabase::const_iterator data;
 
 		Value<unsigned int> item_Count;
 		Value<double> item_Condition;

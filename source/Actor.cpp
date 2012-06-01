@@ -3,8 +3,6 @@
 using namespace Values;
 
 RawParameter Actor::param_ActorValues = RawParameter(vector<string>());
-Database* Actor::Actors = NULL;
-Database* Actor::Creatures = NULL;
 
 #ifdef VAULTMP_DEBUG
 Debug* Actor::debug;
@@ -57,24 +55,6 @@ void Actor::initialize()
 	{
 		actor_Values.insert(pair<unsigned char, Value<double> >(_data, Value<double>()));
 		actor_BaseValues.insert(pair<unsigned char, Value<double> >(_data, Value<double>()));
-	}
-
-	if (Actor::Actors)
-	{
-		unsigned int baseID = this->GetBase();
-		this->data = Actor::Actors->find(baseID);
-
-		if (this->data == Actor::Actors->end())
-			this->data = Actor::Actors->find(Reference::ResolveIndex(baseID));
-
-		if (this->data == Actor::Actors->end())
-			this->data = Actor::Creatures->find(baseID);
-
-		if (this->data == Actor::Creatures->end())
-			this->data = Actor::Creatures->find(Reference::ResolveIndex(baseID));
-
-		if (this->data != Actor::Actors->end() && this->data != Actor::Creatures->end())
-			this->SetName(string(this->data->second));
 	}
 
 #ifdef VAULTMP_DEBUG

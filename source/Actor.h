@@ -36,25 +36,14 @@ class Actor : public Container
 		friend class GameFactory;
 
 	private:
-		static Database Fallout3Actors;
-		static Database FalloutNVActors;
-
-		static Database Fallout3Creatures;
-		static Database FalloutNVCreatures;
-
-		static Database* Actors;
-		static Database* Creatures;
-
 		static RawParameter param_ActorValues;
 
 #ifdef VAULTMP_DEBUG
 		static Debug* debug;
 #endif
 
-		Database::const_iterator data;
-
-		unordered_map<unsigned char, Value<double> > actor_Values;
-		unordered_map<unsigned char, Value<double> > actor_BaseValues;
+		unordered_map<unsigned char, Value<double>> actor_Values;
+		unordered_map<unsigned char, Value<double>> actor_BaseValues;
 		Value<unsigned char> anim_Moving;
 		Value<unsigned char> state_MovingXY;
 		Value<bool> state_Alerted;

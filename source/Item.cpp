@@ -53,9 +53,6 @@ void Item::initialize()
 
 	data = Container::Items->find(baseID);
 
-	if (data == Container::Items->end())
-		data = Container::Items->find(Reference::ResolveIndex(baseID));
-
 	if (data != Container::Items->end())
 		this->SetName(string(data->second));
 }

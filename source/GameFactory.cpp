@@ -486,8 +486,6 @@ void GameFactory::DestroyAllInstances()
 
 	Container::Items = NULL;
 
-	Actor::Actors = NULL;
-	Actor::Creatures = NULL;
 	Actor::param_ActorValues = RawParameter(vector<string>());
 
 	Lockable::Reset();

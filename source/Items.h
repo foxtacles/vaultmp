@@ -3,7 +3,7 @@
 
 // Databases contributed by Stan, Houstin (www.vaultmp.com)
 
-Database Container::Fallout3Items =
+LegacyDatabase Container::Fallout3Items =
 {
 	/* DLCs:
 	 * E0 - Mothership Zeta
@@ -1207,7 +1207,7 @@ Database Container::Fallout3Items =
 
 };
 
-Database Container::FalloutNVItems =
+LegacyDatabase Container::FalloutNVItems =
 {
 	/* DLCs:
 	 * E0 - Honest Hearts

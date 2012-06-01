@@ -1,7 +1,5 @@
 #include "Reference.h"
 
-IndexLookup Reference::Mods;
-
 Reference::Reference(unsigned int refID, unsigned int baseID)
 {
 	this->refID.set(refID);
@@ -17,6 +15,7 @@ Reference::~Reference()
 
 }
 
+/*
 unsigned int Reference::ResolveIndex(unsigned int baseID)
 {
 	unsigned char idx = (unsigned char)(((unsigned int)(baseID & 0xFF000000)) >> 24);
@@ -27,6 +26,7 @@ unsigned int Reference::ResolveIndex(unsigned int baseID)
 
 	return baseID;
 }
+*/
 
 template <typename T>
 Lockable* Reference::SetObjectValue(Value<T>& dest, T value)

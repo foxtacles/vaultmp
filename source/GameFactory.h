@@ -18,6 +18,10 @@
 
 #include "Reference.h"
 
+#ifdef VAULTSERVER
+#include "vaultserver/Database.h"
+#endif
+
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"
 #endif
@@ -205,7 +209,7 @@ class FactoryObject
 		{
 			p.reference = NULL;
 		};
-		FactoryObject& operator= (const FactoryObject& p)
+		FactoryObject& operator=(const FactoryObject& p)
 		{
 			if (this != &p)
 			{
@@ -220,7 +224,7 @@ class FactoryObject
 
 			return *this;
 		};
-		FactoryObject& operator= (FactoryObject&& p)
+		FactoryObject& operator=(FactoryObject&& p)
 		{
 			if (this != &p)
 			{

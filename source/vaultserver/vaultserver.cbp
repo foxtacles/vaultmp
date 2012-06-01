@@ -91,13 +91,13 @@
 		</Build>
 		<Compiler>
 			<Add option="-std=gnu++0x" />
+			<Add option="-DVAULTSERVER" />
 			<Add directory=".." />
 		</Compiler>
 		<Unit filename="..\API.cpp" />
 		<Unit filename="..\API.h" />
 		<Unit filename="..\Actor.cpp" />
 		<Unit filename="..\Actor.h" />
-		<Unit filename="..\Actors.h" />
 		<Unit filename="..\Container.cpp" />
 		<Unit filename="..\Container.h" />
 		<Unit filename="..\CriticalSection.cpp" />
@@ -384,6 +384,8 @@
 		<Unit filename="..\vaultmp.h" />
 		<Unit filename="Client.cpp" />
 		<Unit filename="Client.h" />
+		<Unit filename="Database.cpp" />
+		<Unit filename="Database.h" />
 		<Unit filename="Dedicated.cpp" />
 		<Unit filename="Dedicated.h" />
 		<Unit filename="NetworkServer.cpp" />
@@ -410,6 +412,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="amx\amxaux.h" />
+		<Unit filename="sqlite\sqlite3.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="sqlite\sqlite3.h" />
 		<Unit filename="vaultserver.cpp" />
 		<Unit filename="vaultserver.h" />
 		<Extensions>

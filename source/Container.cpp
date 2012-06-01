@@ -1,7 +1,7 @@
 #include "Container.h"
 #include "Items.h"
 
-Database* Container::Items = NULL;
+LegacyDatabase* Container::Items = NULL;
 
 #ifdef VAULTMP_DEBUG
 Debug* Container::debug;

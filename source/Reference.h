@@ -29,13 +29,11 @@ class Reference : private CriticalSection, public NetworkIDObject
 		Value<unsigned int> refID;
 		Value<unsigned int> baseID;
 
-		static IndexLookup Mods;
-
 		Reference(const Reference&) = delete;
 		Reference& operator=(const Reference&) = delete;
 
 	protected:
-		static unsigned int ResolveIndex(unsigned int baseID);
+		//static unsigned int ResolveIndex(unsigned int baseID);
 
 		template <typename T>
 		static Lockable* SetObjectValue(Value<T>& dest, T value);
