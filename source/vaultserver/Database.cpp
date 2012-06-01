@@ -21,13 +21,25 @@ Database::Database(string file, string table)
 
 Database::~Database()
 {
-	sqlite3_close(db);
+
 }
 
-pair<string, unsigned char> Database::Lookup(unsigned int baseID)
+const Database::Record& Database::Lookup(unsigned int baseID)
 {
 	unordered_map<unsigned int, Record>::iterator it = data.find(baseID);
 
 	if (it != data.end())
-		return make_pair(it->second.name, it->second.dlc);
+		return it->second;
+
+	throw VaultException("No database record with baseID %08X found", baseID);
+}
+
+const Database::Record& Database::GetRecordNotIn(const unordered_set<unsigned int>& _set)
+{
+	unordered_map<unsigned int, Record>::iterator it = find_if_not(data.begin(), data.end(), [&](const pair<unsigned int, Record>& data) { return _set.count(data.first); });
+
+	if (it != data.end())
+		return it->second;
+
+	throw VaultException("No database record found which is not in the given set");
 }

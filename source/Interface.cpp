@@ -26,12 +26,6 @@ bool Interface::Initialize(ResultHandler resultHandler)
 		endThread = false;
 		wakeup = false;
 
-		if (pipeServer != NULL)
-			delete pipeServer;
-
-		if (pipeClient != NULL)
-			delete pipeClient;
-
 		Interface::resultHandler = resultHandler;
 
 		pipeClient = new PipeServer();
@@ -76,6 +70,9 @@ void Interface::Terminate()
 		dynamic_cmdlist.clear();
 		priorityMap.clear();
 		natives.clear();
+
+		delete pipeServer;
+		delete pipeClient;
 
 		initialized = false;
 	}

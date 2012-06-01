@@ -5,7 +5,9 @@
 #include <winsock2.h>
 #endif
 
+#include <algorithm>
 #include <unordered_map>
+#include <unordered_set>
 
 #include "vaultmp.h"
 #include "vaultserver.h"
@@ -30,20 +32,17 @@ class Database
 
 		struct Record {
 			string name;
-			unsigned char dlc;
 
-			Record(string name, unsigned char dlc) : name(name), dlc(dlc) {}
+			Record(string name) : name(name) {}
 		};
 
-		sqlite3* db;
 		unordered_map<unsigned int, Record> data;
 
 		Database(string file, string table);
-		Database(const Database&) = delete;
-		Database& operator=(const Database&) = delete;
 		~Database();
 
-		pair<string, unsigned char> Lookup(unsigned int baseID);
+		const Record& Lookup(unsigned int baseID);
+		const Record& GetRecordNotIn(const unordered_set<unsigned int>& _set);
 
 	public:
 
