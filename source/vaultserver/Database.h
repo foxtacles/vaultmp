@@ -8,10 +8,12 @@
 #include <algorithm>
 #include <unordered_map>
 #include <unordered_set>
+#include <io.h>
 
 #include "vaultmp.h"
 #include "vaultserver.h"
 #include "Debug.h"
+#include "VaultException.h"
 
 #include "sqlite/sqlite3.h"
 
@@ -25,26 +27,27 @@ class Database
 {
 		friend class GameFactory;
 
+	public:
+		struct Record {
+			unsigned int baseID;
+			string name;
+
+			Record(unsigned int baseID, string name) : baseID(baseID), name(name) {}
+		};
+
 	private:
 #ifdef VAULTMP_DEBUG
 		static Debug* debug;
 #endif
-
-		struct Record {
-			string name;
-
-			Record(string name) : name(name) {}
-		};
 
 		unordered_map<unsigned int, Record> data;
 
 		Database(string file, string table);
 		~Database();
 
+	public:
 		const Record& Lookup(unsigned int baseID);
 		const Record& GetRecordNotIn(const unordered_set<unsigned int>& _set);
-
-	public:
 
 #ifdef VAULTMP_DEBUG
 		static void SetDebugHandler(Debug* debug);

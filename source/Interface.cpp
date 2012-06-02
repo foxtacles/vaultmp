@@ -36,6 +36,8 @@ bool Interface::Initialize(ResultHandler resultHandler)
 
 		if (!hCommandThreadReceive.joinable() || !hCommandThreadSend.joinable())
 		{
+			delete pipeServer;
+			delete pipeClient;
 			endThread = true;
 			return false;
 		}

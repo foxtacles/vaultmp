@@ -19,6 +19,7 @@
 #include "Reference.h"
 
 #ifdef VAULTSERVER
+#include "vaultserver/vaultserver.h"
 #include "vaultserver/Database.h"
 #endif
 

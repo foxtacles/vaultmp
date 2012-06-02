@@ -269,7 +269,7 @@ void Dedicated::DedicatedThread()
 #ifdef VAULTMP_DEBUG
 	Debug* debug = new Debug((char*) "vaultserver");
 	Dedicated::debug = debug;
-	debug->PrintFormat("Vault-Tec Multiplayer Mod Dedicated server debug log (%s)", false, DEDICATED_VERSION);
+	debug->PrintFormat("Vault-Tec Multiplayer Mod dedicated server debug log (%s)", false, DEDICATED_VERSION);
 	debug->PrintFormat("Local host: %s (game: %s)", false, peer->GetMyBoundAddress().ToString(), self->GetGame() == FALLOUT3 ? (char*) "Fallout 3" : (char*) "Fallout New Vegas");
 	debug->Print("Visit www.vaultmp.com for help and upload this log if you experience problems with the mod.", false);
 	debug->Print("-----------------------------------------------------------------------------------------------------", false);

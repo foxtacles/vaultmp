@@ -18,6 +18,10 @@
 #include "API.h"
 #include "PacketFactory.h"
 
+#ifdef VAULTSERVER
+#include "vaultserver/Database.h"
+#endif
+
 const unsigned int FLAG_ALIVE           = FLAG_BASE << 1;
 const unsigned int FLAG_DEAD            = FLAG_ALIVE << 1;
 const unsigned int FLAG_ISALERTED       = FLAG_DEAD << 1;
@@ -40,6 +44,11 @@ class Actor : public Container
 
 #ifdef VAULTMP_DEBUG
 		static Debug* debug;
+#endif
+
+#ifdef VAULTSERVER
+		static Database* dbActors;
+		static Database* dbCreatures;
 #endif
 
 		unordered_map<unsigned char, Value<double>> actor_Values;

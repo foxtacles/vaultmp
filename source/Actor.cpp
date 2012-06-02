@@ -8,6 +8,11 @@ RawParameter Actor::param_ActorValues = RawParameter(vector<string>());
 Debug* Actor::debug;
 #endif
 
+#ifdef VAULTSERVER
+Database* Actor::dbActors = NULL;
+Database* Actor::dbCreatures = NULL;
+#endif
+
 Actor::Actor(unsigned int refID, unsigned int baseID) : Container(refID, baseID)
 {
 	initialize();
@@ -53,9 +58,28 @@ void Actor::initialize()
 
 	for (unsigned char _data : data)
 	{
-		actor_Values.insert(pair<unsigned char, Value<double> >(_data, Value<double>()));
-		actor_BaseValues.insert(pair<unsigned char, Value<double> >(_data, Value<double>()));
+		actor_Values.insert(pair<unsigned char, Value<double>>(_data, Value<double>()));
+		actor_BaseValues.insert(pair<unsigned char, Value<double>>(_data, Value<double>()));
 	}
+
+#ifdef VAULTSERVER
+
+	try
+	{
+		const Database::Record& record = dbActors->Lookup(this->GetBase());
+
+		if (this->GetName().empty())
+			this->SetName(record.name);
+	}
+	catch (...)
+	{
+		const Database::Record& record = dbCreatures->Lookup(this->GetBase());
+
+		if (this->GetName().empty())
+			this->SetName(record.name);
+	}
+
+#endif
 
 #ifdef VAULTMP_DEBUG
 

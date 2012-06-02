@@ -128,7 +128,7 @@ int main(int argc, char* argv[])
 	Dedicated::SetServerEntry(self);
 
 	char base[MAX_PATH];
-	getcwd(base, sizeof(base));
+	_getcwd(base, sizeof(base));
 
 	try
 	{

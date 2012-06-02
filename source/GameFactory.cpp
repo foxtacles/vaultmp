@@ -13,18 +13,39 @@ void GameFactory::Initialize(unsigned char game)
 {
 	GameFactory::game = game;
 
-	switch (game)
+	try
 	{
-		case FALLOUT3:
-			Container::Items = &Container::Fallout3Items;
-			break;
+		switch (game)
+		{
+			case FALLOUT3:
+				Container::Items = &Container::Fallout3Items;
 
-		case NEWVEGAS:
-			Container::Items = &Container::FalloutNVItems;
-			break;
+#ifdef VAULTSERVER
+				Actor::dbActors = new Database(DB_FALLOUT3, "actors");
+				Actor::dbCreatures = new Database(DB_FALLOUT3, "creatures");
+#endif
+				break;
 
-		default:
-			throw VaultException("Bad game ID %08X", game);
+			case NEWVEGAS:
+				Container::Items = &Container::FalloutNVItems;
+
+	#ifdef VAULTSERVER
+				Actor::dbActors = new Database(DB_NEWVEGAS, "actors");
+				Actor::dbCreatures = new Database(DB_NEWVEGAS, "creatures");
+	#endif
+				break;
+
+			default:
+				throw VaultException("Bad game ID %08X", game);
+		}
+	}
+	catch (...)
+	{
+#ifdef VAULTSERVER
+		delete Actor::dbActors;
+		delete Actor::dbCreatures;
+#endif
+		throw;
 	}
 
 #ifdef VAULTMP_DEBUG
@@ -485,6 +506,11 @@ void GameFactory::DestroyAllInstances()
 	Object::param_Axis = RawParameter(vector<string>());
 
 	Container::Items = NULL;
+
+#ifdef VAULTSERVER
+	delete Actor::dbActors;
+	delete Actor::dbCreatures;
+#endif
 
 	Actor::param_ActorValues = RawParameter(vector<string>());
 
