@@ -63,7 +63,11 @@ class Reference : private CriticalSection, public NetworkIDObject
 		/**
 		 * \brief Sets the Reference's base ID
 		 */
+#ifdef VAULTSERVER
+		virtual Lockable* SetBase(unsigned int baseID);
+#else
 		Lockable* SetBase(unsigned int baseID);
+#endif
 
 		/**
 		 * \brief Returns a constant Parameter used to pass the reference ID of this Reference to the Interface

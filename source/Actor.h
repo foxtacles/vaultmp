@@ -157,6 +157,13 @@ class Actor : public Container
 		 */
 		Lockable* SetActorDead(bool state);
 
+#ifdef VAULTSERVER
+		/**
+		 * \brief Sets the Actor's base ID
+		 */
+		virtual Lockable* SetBase(unsigned int baseID);
+#endif
+
 		/**
 		 * \brief Returns true if the Actor is jumping
 		 */

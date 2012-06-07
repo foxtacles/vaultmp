@@ -187,6 +187,28 @@ Lockable* Actor::SetActorDead(bool state)
 	return SetObjectValue(this->state_Dead, state);
 }
 
+#ifdef VAULTSERVER
+Lockable* Actor::SetBase(unsigned int baseID)
+{
+	try
+	{
+		const Database::Record& record = dbActors->Lookup(baseID);
+
+		if (this->GetName().empty())
+			this->SetName(record.name);
+	}
+	catch (...)
+	{
+		const Database::Record& record = dbCreatures->Lookup(baseID);
+
+		if (this->GetName().empty())
+			this->SetName(record.name);
+	}
+
+	return Reference::SetBase(baseID);
+}
+#endif
+
 bool Actor::IsActorJumping() const
 {
 	unsigned char anim = this->GetActorMovingAnimation();
