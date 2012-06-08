@@ -9,4 +9,8 @@
 #define DB_FALLOUT3 "fallout3.sqlite3"
 #define DB_NEWVEGAS "newvegas.sqlite3"
 
+#ifndef MAX_PATH
+#define MAX_PATH PATH_MAX
+#endif
+
 #endif

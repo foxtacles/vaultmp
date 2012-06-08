@@ -38,10 +38,6 @@
 #define RAKNET_MASTER_RATE              2000
 #define RAKNET_MASTER_STANDARD_PORT     1660
 
-#ifndef MAX_PATH
-#define MAX_PATH PATH_MAX
-#endif
-
 using namespace RakNet;
 using namespace Data;
 using namespace std;

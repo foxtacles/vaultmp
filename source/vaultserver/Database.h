@@ -3,12 +3,12 @@
 
 #ifdef __WIN32__
 #include <winsock2.h>
+#include <io.h>
 #endif
 
 #include <algorithm>
 #include <unordered_map>
 #include <unordered_set>
-#include <io.h>
 
 #include "vaultmp.h"
 #include "vaultserver.h"
