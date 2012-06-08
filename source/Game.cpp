@@ -237,6 +237,8 @@ void Game::NewObject(FactoryObject& reference)
 		// existing objects
 	}
 
+	MoveTo(vector<FactoryObject>{reference, reference});
+
 	SetName(reference);
 	SetPos(reference);
 	SetAngle(reference);
