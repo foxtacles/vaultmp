@@ -34,7 +34,7 @@ void InputThread()
 		{
 			vector<RakNetGUID> clients = Client::GetNetworkList(NULL);
 
-			for (RakNetGUID & guid : clients)
+			for (RakNetGUID& guid : clients)
 			{
 				Client* client = Client::GetClientFromGUID(guid);
 

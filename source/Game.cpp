@@ -237,10 +237,8 @@ void Game::NewObject(FactoryObject& reference)
 		// existing objects
 	}
 
-	MoveTo(vector<FactoryObject>{reference, reference});
-
 	SetName(reference);
-	SetPos(reference);
+	//SetPos(reference);
 	SetAngle(reference);
 
 	// maybe more
@@ -304,6 +302,21 @@ void Game::NewPlayer(FactoryObject& reference)
 	NewActor(reference);
 
 	// ...
+
+/*
+thread t(AsyncTasks<AsyncPack>,
+	AsyncPack(async(launch::deferred, [](unsigned int r)
+	{
+		try
+		{
+	ParamContainer param_MoveTo{RawParameter(r),RawParameter(PLAYER_REFERENCE) };
+
+	Interface::ExecuteCommand("MoveTo", move(param_MoveTo));
+		}
+		catch (...) {}
+	}, (*reference)->GetReference()), chrono::milliseconds(1000)));
+	t.detach();
+	*/
 }
 
 void Game::RemoveObject(FactoryObject reference)
