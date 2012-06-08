@@ -13,4 +13,8 @@
 #define MAX_PATH PATH_MAX
 #endif
 
+#ifndef __WIN32__
+#define _getcwd getcwd
+#endif
+
 #endif

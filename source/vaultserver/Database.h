@@ -5,7 +5,8 @@
 #include <winsock2.h>
 #include <io.h>
 #else
-#include <limits.h>
+#include <climits>
+#include <unistd.h>
 #endif
 
 #include <algorithm>
