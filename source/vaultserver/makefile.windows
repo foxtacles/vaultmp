@@ -205,7 +205,7 @@ $(OBJDIR_DEBUG)\\Server.o: Server.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Server.cpp -o $(OBJDIR_DEBUG)\\Server.o
 
 $(OBJDIR_DEBUG)\\ScriptFunction.o: ScriptFunction.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ScriptFunction.cpp -o $(OBJDIR_DEBUG)\\ScriptFunction.o
+	$(CXX) $(CFLAGS_DEBUG) -masm=intel $(INC_DEBUG) -c ScriptFunction.cpp -o $(OBJDIR_DEBUG)\\ScriptFunction.o
 
 $(OBJDIR_DEBUG)\\Script.o: Script.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Script.cpp -o $(OBJDIR_DEBUG)\\Script.o
@@ -610,7 +610,7 @@ $(OBJDIR_RELEASE)\\Server.o: Server.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Server.cpp -o $(OBJDIR_RELEASE)\\Server.o
 
 $(OBJDIR_RELEASE)\\ScriptFunction.o: ScriptFunction.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ScriptFunction.cpp -o $(OBJDIR_RELEASE)\\ScriptFunction.o
+	$(CXX) $(CFLAGS_RELEASE) -masm=intel $(INC_RELEASE) -c ScriptFunction.cpp -o $(OBJDIR_RELEASE)\\ScriptFunction.o
 
 $(OBJDIR_RELEASE)\\Script.o: Script.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Script.cpp -o $(OBJDIR_RELEASE)\\Script.o
