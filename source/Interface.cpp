@@ -342,17 +342,17 @@ void Interface::CommandThreadSend()
 
 				dynamic_cs.StartSession();
 
-				DynamicCommandList::iterator it3;
-
-				for (it3 = dynamic_cmdlist.begin(); it3 != dynamic_cmdlist.end() && !endThread; natives.erase(it3->first), it3 = dynamic_cmdlist.erase(it3))
+				for (; !dynamic_cmdlist.empty() && !endThread; natives.erase(dynamic_cmdlist.front().first), dynamic_cmdlist.pop_front())
 				{
 					dynamic_cs.EndSession();
 
-					vector<string> cmd = Interface::Evaluate(it3->first);
+					pair<Native::iterator, unsigned int>& dynamic = dynamic_cmdlist.front();
+
+					vector<string> cmd = Interface::Evaluate(dynamic.first);
 
 					if (!cmd.empty())
 					{
-						CommandParsed stream = API::Translate(cmd, it3->second);
+						CommandParsed stream = API::Translate(cmd, dynamic.second);
 						CommandParsed::iterator it;
 
 						for (it = stream.begin(); it != stream.end() && !endThread; ++it)

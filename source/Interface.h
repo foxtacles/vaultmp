@@ -123,7 +123,6 @@ class Interface : public API
 		 * \brief Executes a command once
 		 *
 		 * name refers to an existing command
-		 * see DefineNative for a short explanation of ParamContainer
 		 * key (optional) - a signed key (usually from the Lockable class) which is to later identify this command
 		 */
 		static void ExecuteCommand(string name, ParamContainer&&, unsigned int key = 0);
