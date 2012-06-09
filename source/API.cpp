@@ -948,7 +948,7 @@ bool API::AnnounceFunction(string name)
 	return false;
 }
 
-unsigned char* API::BuildCommandStream(const vector<double>& info, unsigned int key, unsigned char* command, unsigned int size)
+unsigned char* API::BuildCommandStream(vector<double>&& info, unsigned int key, unsigned char* command, unsigned int size)
 {
 	if (size + 5 > PIPE_LENGTH)
 		throw VaultException("Error in API class; command size (%d bytes) exceeds the pipe length of %d bytes", size + 5, PIPE_LENGTH);
@@ -961,7 +961,7 @@ unsigned char* API::BuildCommandStream(const vector<double>& info, unsigned int 
 
 	unsigned int r = rand();
 	*reinterpret_cast<unsigned int*>(data + 1) = r;
-	queue.push_front(pair<pair<unsigned int, vector<double>>, unsigned int>(pair<unsigned int, vector<double>>(r, info), key));
+	queue.push_front(make_tuple(r, move(info), key));
 
 	return data;
 }
@@ -992,7 +992,7 @@ CommandParsed API::Translate(const vector<string>& cmd, unsigned int key)
 		op_default result;
 
 		vector<double> parsed = ParseCommand(content, func.first.c_str(), &result, func.second);
-		unsigned char* data = BuildCommandStream(parsed, key, reinterpret_cast<unsigned char*>(&result), sizeof(op_default));
+		unsigned char* data = BuildCommandStream(move(parsed), key, reinterpret_cast<unsigned char*>(&result), sizeof(op_default));
 		stream.push_back(unique_ptr<unsigned char[]>(data));
 	}
 
@@ -1010,20 +1010,25 @@ vector<CommandResult> API::Translate(unsigned char* stream)
 	{
 		unsigned int r = *reinterpret_cast<unsigned int*>(stream + 1);
 
-		while (!queue.empty() && queue.back().first.first != r)
+		while (!queue.empty() && get<0>(queue.back()) != r)
 		{
+			auto element = queue.back();
+
 	#ifdef VAULTMP_DEBUG
 
 			if (debug)
-				debug->PrintFormat("API did not retrieve the result of command with identifier %08X (opcode %04hX)", true, queue.back().first.first, getFrom<double, unsigned short>(queue.back().first.second.at(0)));
+				debug->PrintFormat("API did not retrieve the result of command with identifier %08X (opcode %04hX)", true, get<0>(element), getFrom<double, unsigned short>(get<1>(element).at(0)));
 
 	#endif
 
 			result.push_back(CommandResult());
-			result.back().first.first.first = queue.back().second;
-			result.back().first.first.second.swap(queue.back().first.second);
-			result.back().first.second = 0;
-			result.back().second = true;
+
+			auto _result = result.back();
+
+			get<0>(_result) = get<2>(element);
+			get<1>(_result).swap(get<1>(element));
+			get<2>(_result) = 0;
+			get<3>(_result) = true;
 
 			queue.pop_back();
 		}
@@ -1042,15 +1047,18 @@ vector<CommandResult> API::Translate(unsigned char* stream)
 
 	result.push_back(CommandResult());
 
+	auto _result = result.back();
+
 	if (stream[0] != PIPE_OP_RETURN_RAW)
 	{
-		result.back().first.first.first = queue.back().second;
-		result.back().first.first.second.swap(queue.back().first.second);
+		auto element = queue.back();
+		get<0>(_result) = get<2>(element);
+		get<1>(_result).swap(get<1>(element));
 	}
 	else
 	{
-		result.back().first.first.first = 0x00000000;
-		result.back().first.first.second.push_back(storeIn<double, unsigned short>(*reinterpret_cast<unsigned short*>(stream + 1)));
+		get<0>(_result) = 0x00000000;
+		get<1>(_result).push_back(storeIn<double, unsigned short>(*reinterpret_cast<unsigned short*>(stream + 1)));
 	}
 
 	unsigned char* data = stream + 5;
@@ -1060,12 +1068,12 @@ vector<CommandResult> API::Translate(unsigned char* stream)
 		unsigned int length = *reinterpret_cast<unsigned int*>(data);
 		data += sizeof(unsigned int);
 		vector<unsigned char>* big = new vector<unsigned char>(data, data + length);
-		result.back().first.second = storeIn<double, vector<unsigned char>*>(big);
+		get<2>(_result) = storeIn<double, vector<unsigned char>*>(big);
 	}
 	else
-		result.back().first.second = *reinterpret_cast<double*>(data);
+		get<2>(_result) = *reinterpret_cast<double*>(data);
 
-	result.back().second = false;
+	get<3>(_result) = false;
 
 	queue.pop_back();
 

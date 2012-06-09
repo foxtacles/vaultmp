@@ -244,7 +244,7 @@ void Interface::CommandThreadReceive()
 					vector<CommandResult> result = API::Translate(buffer);
 
 					for (CommandResult& _result : result)
-						resultHandler(_result.first.first.first, _result.first.first.second, _result.first.second, _result.second);
+						resultHandler(get<0>(_result), get<1>(_result), get<2>(_result), get<3>(_result));
 				}
 				else if (code == PIPE_SYS_WAKEUP)
 				{
