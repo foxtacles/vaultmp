@@ -17,8 +17,8 @@ enum eEmotion
 };
 
 typedef void (*CallCommand)(void*, void*, void*, void*, void*, void*, void*, void*);
-typedef bool (* QueueUIMessage_Fallout3)(const char* msg, unsigned int emotion, const char* ddsPath, const char* soundName, float msgTime);
-typedef bool (* QueueUIMessage_FalloutNV)(const char* msg, unsigned int emotion, const char* ddsPath, const char* soundName, float msgTime, char unk);
+typedef bool (*QueueUIMessage_Fallout3)(const char* msg, unsigned int emotion, const char* ddsPath, const char* soundName, float msgTime);
+typedef bool (*QueueUIMessage_FalloutNV)(const char* msg, unsigned int emotion, const char* ddsPath, const char* soundName, float msgTime, char unk);
 typedef unsigned int (*LookupForm)(unsigned int);
 typedef unsigned int (*LookupFunc)(unsigned int);
 
@@ -119,7 +119,7 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 {
 	switch (opcode)
 	{
-		case 0xE001: // GetActorState - returns the actors animations, alerted / sneaking state
+		case 0x0001 | VAULTFUNCTION: // GetActorState - returns the actors animations, alerted / sneaking state
 		{
 			ZeroMemory(result, sizeof(double));
 			unsigned char* data;
@@ -203,7 +203,17 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 			break;
 		}
 
-		case 0xE002: // ScanContainer - Returns a containers content including baseID, amount, condition, equipped state
+		case 0x0002 | VAULTFUNCTION: // Chat - Print chat message
+		{
+			ZeroMemory(result, sizeof(double));
+			const char* data = ((char*) args) + 2; // skip length
+
+
+
+			break;
+		}
+
+		case 0x0003 | VAULTFUNCTION: // ScanContainer - Returns a containers content including baseID, amount, condition, equipped state
 		{
 			ZeroMemory(result, sizeof(double));
 
@@ -226,7 +236,7 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 				vector<unsigned char> container;
 				container.reserve(size);
 
-				for (int i = 0; i < count; ++i)
+				for (unsigned int i = 0; i < count; ++i)
 				{
 					unsigned int item;
 
@@ -337,7 +347,7 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 			return true;
 		}
 
-		case 0xE003: // UIMessage - queue UI message
+		case 0x0004 | VAULTFUNCTION: // UIMessage - Queue UI message
 		{
 			ZeroMemory(result, sizeof(double));
 			const char* data = ((char*) args) + 2; // skip length
@@ -393,7 +403,7 @@ void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
 	unsigned int base = (unsigned) arg4;
 
 	unsigned int** param1 = (unsigned int**)(base + 0x44);
-	unsigned int** * param2 = (unsigned int***)(base + 0x48);
+	unsigned int*** param2 = (unsigned int***)(base + 0x48);
 
 	if (*param2 == 0x00000000)
 	{
@@ -401,12 +411,12 @@ void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
 		param2 = (unsigned int***)(base + 0x44);
 	}
 
-	*param1 = (unsigned int*)((unsigned) * param1 + base);
-	*param2 = (unsigned int**)((unsigned) * param2 + base);
-	** param2 = (unsigned int*)((unsigned)** param2 + base);
+	*param1 = (unsigned int*)((unsigned) *param1 + base);
+	*param2 = (unsigned int**)((unsigned) *param2 + base);
+	**param2 = (unsigned int*)((unsigned) **param2 + base);
 
-	unsigned int param1_ref = *((unsigned int*)(((unsigned) * param1) + 0x08));
-	unsigned int param2_ref = *((unsigned int*)(((unsigned)** param2) + 0x08));
+	unsigned int param1_ref = *((unsigned int*)(((unsigned) *param1) + 0x08));
+	unsigned int param2_ref = *((unsigned int*)(((unsigned) **param2) + 0x08));
 
 	if (param1_ref != 0x00)
 	{
@@ -440,7 +450,7 @@ void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
 		if (function == 0x00)
 			return;
 
-		void* callAddr = (void*) * ((unsigned int*)(function + 0x18));
+		void* callAddr = (void*) *((unsigned int*)(function + 0x18));
 
 		if (callAddr == 0x00)
 			return;
@@ -452,7 +462,7 @@ void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
 			delegated.push_back(args.at(0));
 			delegated.push_back(args.at(1));
 			delegated.push_back((void*) reference);
-			delegated.push_back((void*) * ((unsigned int*) args.at(3)));
+			delegated.push_back((void*) *((unsigned int*) args.at(3)));
 			delegated.push_back(args.at(4));
 			delegated.push_back((void*) &arg4);
 			delegated.push_back(args.at(6));
@@ -510,12 +520,11 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 	vaultgui = LoadLibrary("vaultgui.dll");
 
 	if (vaultgui != NULL)
+		DLLerror = true;
+	else
 	{
 
 	}
-
-	/*else
-	    DLLerror = true;*/
 
 	pipeClient.SetPipeAttributes("BethesdaClient", PIPE_LENGTH);
 
@@ -547,20 +556,19 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 			case PIPE_OP_COMMAND:
 			{
 				vector<void*> args;
-				args.clear();
 				args.reserve(8);
 
 				unsigned int r = *((unsigned int*) content);
 				content += 4;
 
-				bool delegate_flag = (bool) * content;
+				bool delegate_flag = (bool) *content;
 				content += 1;
 
-				for (int i = 0; i < 8; i++)
+				for (unsigned int i = 0; i < 8; ++i)
 				{
 					unsigned char size = *content;
 
-					if (size != 0)
+					if (size)
 					{
 						unsigned char* arg = new unsigned char[size];
 						++content;
@@ -578,19 +586,10 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 				if (!DLLerror)
 					ExecuteCommand(args, r, delegate_flag);
 
-				for (int i = 0; i < args.size(); i++)
+				for (unsigned int i = 0; i < args.size(); ++i)
 				{
 					unsigned char* arg = (unsigned char*) args[i];
 					delete[] arg;
-				}
-
-				break;
-			}
-
-			case PIPE_GUI_MESSAGE:
-			{
-				if (vaultgui != NULL)
-				{
 				}
 
 				break;

@@ -108,6 +108,7 @@ namespace Values
 		Func_SetForceSneak              = 0x10D3,
 
 		Func_GetActorState              = 0x0001 | VAULTFUNCTION,
+		Func_Chat						= 0x0002 | VAULTFUNCTION,
 	};
 
 	/**
@@ -127,8 +128,8 @@ namespace Values
 			Func_MarkForDelete              = 0x11BB,
 			Func_IsAnimPlaying              = 0x1128,
 
-			Func_ScanContainer              = 0x0002 | VAULTFUNCTION,
-			Func_UIMessage                  = 0x0003 | VAULTFUNCTION,
+			Func_ScanContainer              = 0x0003 | VAULTFUNCTION,
+			Func_UIMessage                  = 0x0004 | VAULTFUNCTION,
 		};
 
 		/**

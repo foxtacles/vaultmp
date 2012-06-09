@@ -42,8 +42,8 @@ static const unsigned char PIPE_SYS_WAKEUP      =   0x01;
 static const unsigned char PIPE_OP_COMMAND      =   0x02;
 static const unsigned char PIPE_OP_RETURN       =   0x03;
 static const unsigned char PIPE_OP_RETURN_BIG   =   0x04;
-static const unsigned char PIPE_ERROR_CLOSE     =   0x05;
-static const unsigned char PIPE_GUI_MESSAGE     =   0x06;
+static const unsigned char PIPE_OP_RETURN_RAW	=	0x05;
+static const unsigned char PIPE_ERROR_CLOSE     =   0x06;
 
 static const unsigned int RAKNET_FILE_SERVER    =   1550;
 static const unsigned char RAKNET_FILE_RDY      =   0x01;

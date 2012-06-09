@@ -30,6 +30,204 @@ void Game::AdjustZAngle(double& Z, double diff)
 		Z += 360.0;
 }
 
+void Game::CommandHandler(unsigned int key, const vector<double>& info, double result, bool error)
+{
+	using namespace Values;
+	unsigned short opcode = getFrom<double, unsigned short>(info.at(0));
+
+	if (!error)
+	{
+#ifdef VAULTMP_DEBUG
+		//debug->PrintFormat("Executing command %04hX on reference %08X, key %08X", true, opcode, info.size() > 1 ? getFrom<double, unsigned int>(info.at(1)) : 0, key);
+#endif
+
+		Lockable* data;
+		weak_ptr<Lockable> shared;
+
+		if (key)
+		{
+			switch (opcode)
+			{
+				case Fallout3::Functions::Func_Load:
+				case FalloutNV::Functions::Func_Load:
+				case Functions::Func_PlaceAtMe:
+					shared = Lockable::Poll(key);
+					break;
+
+				default:
+					data = Lockable::Retrieve(key);
+			}
+		}
+
+		FactoryObject reference, self;
+
+		switch (opcode)
+		{
+			case Functions::Func_PlaceAtMe:
+				FutureSet<unsigned int>(shared, getFrom<double, unsigned int>(result));
+				break;
+
+			case Functions::Func_GetPos:
+				reference = GameFactory::GetObject(getFrom<double, unsigned int>(info.at(1)));
+				GetPos(reference, getFrom<double, unsigned char>(info.at(2)), result);
+				break;
+
+			case Functions::Func_SetPos:
+				break;
+
+			case Functions::Func_GetAngle:
+				reference = GameFactory::GetObject(getFrom<double, unsigned int>(info.at(1)));
+				GetAngle(reference, getFrom<double, unsigned char>(info.at(2)), result);
+				break;
+
+			case Functions::Func_SetAngle:
+				break;
+
+			case Functions::Func_GetActorValue:
+				reference = GameFactory::GetObject(getFrom<double, unsigned int>(info.at(1)));
+				Game::GetActorValue(reference, false, getFrom<double, unsigned char>(info.at(2)), result);
+				break;
+
+			case Functions::Func_ForceActorValue:
+				break;
+
+			case Functions::Func_GetBaseActorValue:
+				reference = GameFactory::GetObject(getFrom<double, unsigned int>(info.at(1)));
+				GetActorValue(reference, true, getFrom<double, unsigned char>(info.at(2)), result);
+				break;
+
+			case Functions::Func_SetActorValue:
+				break;
+
+			case Functions::Func_GetActorState:
+			{
+				reference = GameFactory::GetObject(getFrom<double, unsigned int>(info.at(1)));
+				GetActorState(reference,
+									*reinterpret_cast<unsigned char*>(((unsigned) &result) + 4),
+									*reinterpret_cast<unsigned char*>(((unsigned) &result) + 5),
+									*reinterpret_cast<bool*>(&result),
+									*reinterpret_cast<bool*>(((unsigned) &result) + 1));
+				break;
+			}
+
+			case Functions::Func_PlayGroup:
+				break;
+
+			case Functions::Func_GetDead:
+			{
+				vector<FactoryObject> objects = GameFactory::GetMultiple(vector<unsigned int> {getFrom<double, unsigned int>(info.at(1)), PLAYER_REFERENCE});
+				GetDead(objects, result);
+				break;
+			}
+
+			case Functions::Func_Kill:
+				break;
+
+			case Functions::Func_MoveTo:
+				break;
+
+			case Functions::Func_Enable:
+				break;
+
+			case Functions::Func_Disable:
+				break;
+
+			case Functions::Func_SetRestrained:
+				break;
+
+			case Functions::Func_SetAlert:
+				break;
+
+			case Functions::Func_SetForceSneak:
+				break;
+
+			case Functions::Func_AddItem:
+				break;
+
+			case Functions::Func_AddItemHealthPercent:
+				break;
+
+			case Functions::Func_RemoveItem:
+				break;
+
+			case Functions::Func_RemoveAllItems:
+				break;
+
+			case Functions::Func_EquipItem:
+				break;
+
+			case Functions::Func_UnequipItem:
+				break;
+
+			case Functions::Func_Chat:
+			{
+				vector<unsigned char>* data = getFrom<double, vector<unsigned char>*>(result);
+				GetMessage(reinterpret_cast<char*>(&data[0]));
+				delete data;
+				break;
+			}
+
+			case Fallout::Functions::Func_MarkForDelete:
+				break;
+
+			case Fallout::Functions::Func_ScanContainer:
+			{
+				reference = GameFactory::GetObject(getFrom<double, unsigned int>(info.at(1)));
+				vector<unsigned char>* data = getFrom<double, vector<unsigned char>*>(result);
+				ScanContainer(reference, *data);
+				delete data;
+				break;
+			}
+
+			case Fallout::Functions::Func_UIMessage:
+				break;
+
+			case Fallout3::Functions::Func_GetParentCell:
+			case FalloutNV::Functions::Func_GetParentCell:
+			{
+				vector<FactoryObject> objects = GameFactory::GetMultiple(vector<unsigned int> {getFrom<double, unsigned int>(info.at(1)), PLAYER_REFERENCE});
+				GetParentCell(objects, getFrom<double, unsigned int>(result));
+				break;
+			}
+
+			case Fallout3::Functions::Func_GetControl:
+			case FalloutNV::Functions::Func_GetControl:
+				self = GameFactory::GetObject(PLAYER_REFERENCE);
+				GetControl(self, getFrom<double, int>(info.at(1)), result);
+				break;
+
+			case Fallout3::Functions::Func_Load:
+			case FalloutNV::Functions::Func_Load:
+				FutureSet<bool>(shared, true);
+				break;
+
+			case Fallout3::Functions::Func_SetName:
+			case FalloutNV::Functions::Func_SetName:
+				break;
+
+			default:
+				throw VaultException("Unhandled function %04hX", opcode);
+		}
+	}
+
+	else
+	{
+#ifdef VAULTMP_DEBUG
+		debug->PrintFormat("Command %04hX failed", true, opcode);
+#endif
+
+		switch (opcode)
+		{
+			case Functions::Func_PlaceAtMe:
+				PlaceAtMe(getFrom<double, unsigned int>(info.at(1)), getFrom<double, unsigned int>(info.at(2)), getFrom<double, unsigned int>(info.at(3)), key);
+				break;
+
+			default:
+				break;
+		}
+	}
+}
+
 NetworkResponse Game::Authenticate(string password)
 {
 	FactoryObject reference = GameFactory::GetObject(PLAYER_REFERENCE);
@@ -1108,4 +1306,12 @@ void Game::ScanContainer(FactoryObject reference, vector<unsigned char>& data)
 
 		result->Unlock(key);
 	}
+}
+
+void Game::GetMessage(string message)
+{
+	if (message.empty())
+		return;
+
+
 }

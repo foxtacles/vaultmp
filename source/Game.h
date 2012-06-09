@@ -14,7 +14,7 @@
 /**
  * \brief Client game code, using the Interface to execute commands and communicate with the game
  *
- * Used by the command result handler and the NetworkClient class, also creates and queues packets
+ * Has the command result handler and uses the NetworkClient class, also creates and queues packets
  */
 
 class Game
@@ -37,6 +37,10 @@ class Game
 
 	public:
 
+		/**
+		 * \brief Handles translated command results from the game
+		 */
+		static void CommandHandler(unsigned int key, const vector<double>& info, double result, bool error);
 		/**
 		 * \brief Builds an authenticate packet for the server
 		 */
@@ -244,6 +248,10 @@ class Game
 		 * \brief Handles ScanContainer command result
 		 */
 		static void ScanContainer(FactoryObject reference, vector<unsigned char>& data);
+		/**
+		 * \brief Handles GUI message
+		 */
+		static void GetMessage(string message);
 
 #ifdef VAULTMP_DEBUG
 		static void SetDebugHandler(Debug* debug);

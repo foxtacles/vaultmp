@@ -34,7 +34,7 @@ using namespace Data;
 using namespace std;
 
 typedef pair<string, unsigned int> Savegame;
-typedef vector<pair<string, unsigned int> > ModList;
+typedef vector<pair<string, unsigned int>> ModList;
 
 /**
  * \brief Starting point to run a vaultmp game
@@ -66,11 +66,6 @@ class Bethesda
 		static void Terminate(RakPeerInterface* peer);
 
 		/**
-		 * \brief Handles translated command results from the game
-		 */
-		static void CommandHandler(unsigned int key, vector<double>& info, double result, bool error);
-
-		/**
 		 * \brief Lookup the ID of a given process name
 		 */
 		static DWORD lookupProgramID(const char process[]);
@@ -78,7 +73,7 @@ class Bethesda
 		static Debug* debug;
 #endif
 
-		Bethesda();
+		Bethesda() = delete;
 	public:
 
 		/**

@@ -31,6 +31,7 @@ struct API::op_Arg1
 	char* type4;
 	unsigned int unk7;
 	unsigned int unk8;
+	double more[2];
 
 	op_Arg1()
 	{
@@ -38,6 +39,7 @@ struct API::op_Arg1
 		type2 = 0x00000000;
 		type3 = 0x00000000;
 		type4 = 0x00000000;
+		ZeroMemory(more, sizeof(more));
 	}
 };
 
@@ -377,7 +379,8 @@ void API::Initialize(unsigned char game)
 	DefineFunction("RemoveAllItems", "rCI", Func_RemoveAllItems, ALL_GAMES);
 	DefineFunction("GetCombatTarget", "r", Func_GetCombatTarget, ALL_GAMES);
 	DefineFunction("SetForceSneak", "ri", Func_SetForceSneak, ALL_GAMES);
-	DefineFunction("GetActorState", "rI", Func_GetActorState, ALL_GAMES);   // vaultfunction
+	DefineFunction("GetActorState", "rI", Func_GetActorState, ALL_GAMES);
+	DefineFunction("Chat", "s", Func_Chat, ALL_GAMES);
 
 	DefineFunction("Enable", "rI", Func_Enable, FALLOUT_GAMES);
 	DefineFunction("Disable", "rI", Func_Disable, FALLOUT_GAMES);
@@ -437,7 +440,9 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 	string _cmd(cmd);
 
 	char* arg1_pos = reinterpret_cast<char*>(&result->arg1.unk1);
+	char* arg1_end = reinterpret_cast<char*>(&result->arg1) + result->size_arg1;
 	char* arg2_pos = reinterpret_cast<char*>(&result->arg2.param1);
+	char* arg2_end = reinterpret_cast<char*>(&result->arg2) + result->size_arg2;
 	unsigned short* _opcode = &result->arg2.opcode;
 	unsigned short* _numargs = &result->arg2.numargs;
 
@@ -480,7 +485,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 	unsigned short numargs = 0x00;
 	unsigned int refparam = 0x00;
 
-	while (*def != '\0' && numargs < 4)   // We don't support more than 4 args yet
+	while (*def)
 	{
 		char type = *def++;
 
@@ -684,9 +689,6 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 
 				unsigned short length = (unsigned short) str.length();
 
-				if (length > 63)
-					throw VaultException("API::ParseCommand string argument exceeds the limit of 64 characters");
-
 				*reinterpret_cast<unsigned short*>(arg2_pos) = length;
 				memcpy(arg2_pos + sizeof(unsigned short), str.c_str(), length +  sizeof(unsigned char));
 				result_data.push_back(0); // Don't pass on string for now
@@ -698,6 +700,12 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 			default:
 				throw VaultException("API::ParseCommand could not recognize argument identifier %02X", (unsigned int) tolower(type));
 		}
+
+		if (reinterpret_cast<unsigned int>(arg1_end) - reinterpret_cast<unsigned int>(arg1_pos) < 0)
+			throw VaultException("API::ParseCommand argument #1 size overrun while processing %s", _cmd.c_str());
+
+		if (reinterpret_cast<unsigned int>(arg2_end) - reinterpret_cast<unsigned int>(arg2_pos) < 0)
+			throw VaultException("API::ParseCommand argument #2 size overrun while processing %s", _cmd.c_str());
 
 		++numargs;
 	}
@@ -993,55 +1001,69 @@ CommandParsed API::Translate(const vector<string>& cmd, unsigned int key)
 
 vector<CommandResult> API::Translate(unsigned char* stream)
 {
-	if (stream[0] != PIPE_OP_RETURN && stream[0] != PIPE_OP_RETURN_BIG)
+	if (stream[0] != PIPE_OP_RETURN && stream[0] != PIPE_OP_RETURN_BIG && stream[0] != PIPE_OP_RETURN_RAW)
 		throw VaultException("API could not recognize stream identifier %02X", stream[0]);
 
 	vector<CommandResult> result;
-	unsigned int r = *reinterpret_cast<unsigned int*>(stream + 1);
 
-	while (!queue.empty() && queue.back().first.first != r)
+	if (stream[0] != PIPE_OP_RETURN_RAW)
 	{
-#ifdef VAULTMP_DEBUG
+		unsigned int r = *reinterpret_cast<unsigned int*>(stream + 1);
 
-		if (debug)
-			debug->PrintFormat("API did not retrieve the result of command with identifier %08X (opcode %04hX)", true, queue.back().first.first, getFrom<double, unsigned short>(queue.back().first.second.at(0)));
+		while (!queue.empty() && queue.back().first.first != r)
+		{
+	#ifdef VAULTMP_DEBUG
 
-#endif
+			if (debug)
+				debug->PrintFormat("API did not retrieve the result of command with identifier %08X (opcode %04hX)", true, queue.back().first.first, getFrom<double, unsigned short>(queue.back().first.second.at(0)));
 
-		double zero = 0x0000000000000000;
-		result.push_back(CommandResult());
-		result.back().first.first.first = queue.back().second;
-		result.back().first.first.second = queue.back().first.second;
-		result.back().first.second = zero;
-		result.back().second = true;
+	#endif
 
-		queue.pop_back();
-	}
+			result.push_back(CommandResult());
+			result.back().first.first.first = queue.back().second;
+			result.back().first.first.second.swap(queue.back().first.second);
+			result.back().first.second = 0;
+			result.back().second = true;
 
-	if (queue.empty())
-	{
-#ifdef VAULTMP_DEBUG
+			queue.pop_back();
+		}
 
-		if (debug)
-			debug->PrintFormat("API could not find a stored command with identifier %08X (queue is empty)", true, r);
+		if (queue.empty())
+		{
+	#ifdef VAULTMP_DEBUG
 
-#endif
-		return result;
+			if (debug)
+				debug->PrintFormat("API could not find a stored command with identifier %08X (queue is empty)", true, r);
+
+	#endif
+			return result;
+		}
 	}
 
 	result.push_back(CommandResult());
-	result.back().first.first.first = queue.back().second;
-	result.back().first.first.second = queue.back().first.second;
 
-	if (stream[0] == PIPE_OP_RETURN_BIG)
+	if (stream[0] != PIPE_OP_RETURN_RAW)
 	{
-		unsigned int length = *reinterpret_cast<unsigned int*>(stream + 5);
-		unsigned char* data = reinterpret_cast<unsigned char*>(stream + 9);
+		result.back().first.first.first = queue.back().second;
+		result.back().first.first.second.swap(queue.back().first.second);
+	}
+	else
+	{
+		result.back().first.first.first = 0x00000000;
+		result.back().first.first.second.push_back(storeIn<double, unsigned short>(*reinterpret_cast<unsigned short*>(stream + 1)));
+	}
+
+	unsigned char* data = stream + 5;
+
+	if (stream[0] != PIPE_OP_RETURN)
+	{
+		unsigned int length = *reinterpret_cast<unsigned int*>(data);
+		data += sizeof(unsigned int);
 		vector<unsigned char>* big = new vector<unsigned char>(data, data + length);
 		result.back().first.second = storeIn<double, vector<unsigned char>*>(big);
 	}
 	else
-		result.back().first.second = *reinterpret_cast<double*>(stream + 5);
+		result.back().first.second = *reinterpret_cast<double*>(data);
 
 	result.back().second = false;
 

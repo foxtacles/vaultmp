@@ -230,6 +230,7 @@ void Interface::CommandThreadReceive()
 		{
 			unsigned char buffer[PIPE_LENGTH];
 			unsigned char code;
+			unsigned char* content = buffer + 1;
 
 			do
 			{
@@ -238,14 +239,13 @@ void Interface::CommandThreadReceive()
 				pipeClient->Receive(buffer);
 				code = buffer[0];
 
-				if (code == PIPE_OP_RETURN || code == PIPE_OP_RETURN_BIG)
+				if (code == PIPE_OP_RETURN || code == PIPE_OP_RETURN_BIG || code == PIPE_OP_RETURN_RAW)
 				{
 					vector<CommandResult> result = API::Translate(buffer);
 
 					for (CommandResult& _result : result)
 						resultHandler(_result.first.first.first, _result.first.first.second, _result.first.second, _result.second);
 				}
-
 				else if (code == PIPE_SYS_WAKEUP)
 				{
 					wakeup = true;

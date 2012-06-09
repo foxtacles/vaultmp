@@ -25,7 +25,7 @@ using namespace RakNet;
 
 namespace Data
 {
-	typedef void (*ResultHandler)(unsigned int, vector<double>&, double, bool);
+	typedef void (*ResultHandler)(unsigned int, const vector<double>&, double, bool);
 
 	class _Parameter {
 
