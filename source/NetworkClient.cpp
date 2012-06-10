@@ -170,7 +170,16 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					char message[MAX_MESSAGE_LENGTH + 1];
 					ZeroMemory(message, sizeof(message));
 					PacketFactory::Access(packet, message);
-					Game::UIMessage(string(message));
+					Game::net_UIMessage(message);
+					break;
+				}
+
+				case ID_GAME_CHAT:
+				{
+					char message[MAX_CHAT_LENGTH + 1];
+					ZeroMemory(message, sizeof(message));
+					PacketFactory::Access(packet, message);
+					Game::net_ChatMessage(message);
 					break;
 				}
 
@@ -230,7 +239,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				{
 					switch (data->data[1])
 					{
-							case ID_UPDATE_POS:
+						case ID_UPDATE_POS:
 						{
 							NetworkID id;
 							double X, Y, Z;

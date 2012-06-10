@@ -53,6 +53,13 @@ pPacket PacketFactory::CreatePacket(unsigned char type, ...)
 			break;
 		}
 
+		case ID_GAME_CHAT:
+		{
+			const char* message = va_arg(args, const char*);
+			packet = new pGameChat(message);
+			break;
+		}
+
 		case ID_OBJECT_NEW:
 		{
 			NetworkID id = va_arg(args, NetworkID);
@@ -232,6 +239,10 @@ pPacket PacketFactory::CreatePacket(unsigned char* stream, unsigned int len)
 			packet = new pGameMessage(stream, len);
 			break;
 
+		case ID_GAME_CHAT:
+			packet = new pGameChat(stream, len);
+			break;
+
 		case ID_OBJECT_NEW:
 			packet = new pObjectNew(stream, len);
 			break;
@@ -368,6 +379,14 @@ void PacketFactory::Access(const pDefault* packet, ...)
 			case ID_GAME_MESSAGE:
 			{
 				const pGameMessage* data = dynamic_cast<const pGameMessage*>(packet);
+				char* message = va_arg(args, char*);
+				strncpy(message, data->message, sizeof(data->message));
+				break;
+			}
+
+			case ID_GAME_CHAT:
+			{
+				const pGameChat* data = dynamic_cast<const pGameChat*>(packet);
 				char* message = va_arg(args, char*);
 				strncpy(message, data->message, sizeof(data->message));
 				break;

@@ -78,6 +78,10 @@ class Game
 		 */
 		static void UIMessage(string message);
 		/**
+		 * \brief Display a GUI chat message
+		 */
+		static void ChatMessage(string message);
+		/**
 		 * \brief Creates a new Object
 		 */
 		static void NewObject(FactoryObject& reference);
@@ -211,6 +215,14 @@ class Game
 		 * \brief Network function to handle Actor death
 		 */
 		static void net_SetActorDead(FactoryObject& reference, bool dead);
+		/**
+		 * \brief Network function to handle UI message
+		 */
+		static void net_UIMessage(string message);
+		/**
+		 * \brief Network function to handle chat message
+		 */
+		static void net_ChatMessage(string message);
 
 		/**
 		 * Interface functions

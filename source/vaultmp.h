@@ -34,6 +34,7 @@ static const unsigned int MAX_MASTER_SERVER     =   32;
 static const unsigned int MAX_SAVEGAME_FILE     =   64;
 static const unsigned int MAX_MOD_FILE          =   64;
 static const unsigned int MAX_MESSAGE_LENGTH    =   64;
+static const unsigned int MAX_CHAT_LENGTH		=	128;
 
 static const unsigned short VAULTFUNCTION       =   0xE000;
 

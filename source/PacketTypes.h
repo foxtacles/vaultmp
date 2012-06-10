@@ -491,6 +491,27 @@ class pGameMessage : public pGameDefault
 		pGameMessage& operator=(const pGameMessage&);
 };
 
+class pGameChat : public pGameDefault
+{
+		friend class PacketFactory;
+
+	private:
+		char message[MAX_CHAT_LENGTH];
+
+		pGameChat(const char* message) : pGameDefault(ID_GAME_CHAT)
+		{
+			strncpy(this->message, message, sizeof(this->message));
+			construct(this->message, sizeof(this->message));
+		}
+		pGameChat(const unsigned char* stream, unsigned int len) : pGameDefault(stream, len)
+		{
+			deconstruct(this->message, sizeof(this->message));
+		}
+
+		pGameChat(const pGameChat&);
+		pGameChat& operator=(const pGameChat&);
+};
+
 /* ************************************** */
 
 #pragma pack(push, 1)

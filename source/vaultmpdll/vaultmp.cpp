@@ -519,7 +519,7 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 
 	vaultgui = LoadLibrary("vaultgui.dll");
 
-	if (vaultgui != NULL)
+	if (vaultgui == NULL)
 		DLLerror = true;
 	else
 	{

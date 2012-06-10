@@ -380,7 +380,7 @@ void API::Initialize(unsigned char game)
 	DefineFunction("GetCombatTarget", "r", Func_GetCombatTarget, ALL_GAMES);
 	DefineFunction("SetForceSneak", "ri", Func_SetForceSneak, ALL_GAMES);
 	DefineFunction("GetActorState", "rI", Func_GetActorState, ALL_GAMES);
-	DefineFunction("Chat", "s", Func_Chat, ALL_GAMES);
+	DefineFunction("ChatMessage", "s", Func_Chat, ALL_GAMES);
 
 	DefineFunction("Enable", "rI", Func_Enable, FALLOUT_GAMES);
 	DefineFunction("Disable", "rI", Func_Disable, FALLOUT_GAMES);

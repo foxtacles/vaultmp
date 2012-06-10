@@ -47,7 +47,8 @@ bool Interface::Initialize(ResultHandler resultHandler)
 #ifdef VAULTMP_DEBUG
 		//static_cs.SetDebugHandler(debug);
 		//dynamic_cs.SetDebugHandler(debug);
-		debug->PrintFormat("Threads %s %s %p %p", true, CriticalSection::thread_id(hCommandThreadReceive).c_str(), CriticalSection::thread_id(hCommandThreadSend).c_str(), &static_cs, &dynamic_cs);
+		if (debug)
+			debug->PrintFormat("Threads %s %s %p %p", true, CriticalSection::thread_id(hCommandThreadReceive).c_str(), CriticalSection::thread_id(hCommandThreadSend).c_str(), &static_cs, &dynamic_cs);
 #endif
 
 		return true;
@@ -230,7 +231,6 @@ void Interface::CommandThreadReceive()
 		{
 			unsigned char buffer[PIPE_LENGTH];
 			unsigned char code;
-			unsigned char* content = buffer + 1;
 
 			do
 			{
@@ -289,16 +289,7 @@ void Interface::CommandThreadReceive()
 			debug->Print("Receive thread is going to terminate (ERROR)", true);
 
 #endif
-
-		endThread = true;
 	}
-
-#ifdef VAULTMP_DEBUG
-
-	if (debug)
-		debug->Print("Receive thread is going to terminate", true);
-
-#endif
 
 	endThread = true;
 }
@@ -346,7 +337,7 @@ void Interface::CommandThreadSend()
 				{
 					dynamic_cs.EndSession();
 
-					pair<Native::iterator, unsigned int>& dynamic = dynamic_cmdlist.front();
+					auto dynamic = dynamic_cmdlist.front();
 
 					vector<string> cmd = Interface::Evaluate(dynamic.first);
 
@@ -397,4 +388,6 @@ void Interface::CommandThreadSend()
 		buffer[0] = PIPE_ERROR_CLOSE;
 		pipeServer->Send(buffer);
 	}
+
+	endThread = true;
 }

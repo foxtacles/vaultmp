@@ -32,7 +32,6 @@ void Game::AdjustZAngle(double& Z, double diff)
 
 void Game::CommandHandler(unsigned int key, const vector<double>& info, double result, bool error)
 {
-	using namespace Values;
 	unsigned short opcode = getFrom<double, unsigned short>(info.at(0));
 
 	if (!error)
@@ -213,7 +212,8 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 	else
 	{
 #ifdef VAULTMP_DEBUG
-		debug->PrintFormat("Command %04hX failed", true, opcode);
+		if (debug)
+			debug->PrintFormat("Command %04hX failed", true, opcode);
 #endif
 
 		switch (opcode)
@@ -396,6 +396,15 @@ void Game::UIMessage(string message)
 	Interface::StartDynamic();
 
 	Interface::ExecuteCommand("UIMessage", ParamContainer{RawParameter(message)});
+
+	Interface::EndDynamic();
+}
+
+void Game::ChatMessage(string message)
+{
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("ChatMessage", ParamContainer{RawParameter(message)});
 
 	Interface::EndDynamic();
 }
@@ -1089,6 +1098,16 @@ void Game::net_SetActorDead(FactoryObject& reference, bool dead)
 	}
 }
 
+void Game::net_UIMessage(string message)
+{
+	UIMessage(message);
+}
+
+void Game::net_ChatMessage(string message)
+{
+	ChatMessage(message);
+}
+
 void Game::GetPos(FactoryObject reference, unsigned char axis, double value)
 {
 	Object* object = vaultcast<Object>(reference);
@@ -1313,5 +1332,11 @@ void Game::GetMessage(string message)
 	if (message.empty())
 		return;
 
+	if (message.length() > MAX_CHAT_LENGTH)
+		message.resize(MAX_CHAT_LENGTH);
 
+	Network::Queue(NetworkResponse{Network::CreateResponse(
+		PacketFactory::CreatePacket(ID_GAME_CHAT, message.c_str()),
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+	});
 }
