@@ -41,6 +41,11 @@ public OnPlayerRequestGame(ID)
 	return base;
 }
 
+public OnPlayerChat(ID, message{})
+{
+	return 1;
+}
+
 public OnSpawn(ID)
 {
 	if (IsPlayer(ID))

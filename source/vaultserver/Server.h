@@ -78,6 +78,10 @@ class Server
 		 * \brief Handles player control network packet
 		 */
 		static NetworkResponse GetPlayerControl(RakNetGUID guid, FactoryObject reference, unsigned char control, unsigned char key);
+		/**
+		 * \brief Handles player chat message network packet
+		 */
+		static NetworkResponse ChatMessage(RakNetGUID guid, string message);
 
 #ifdef VAULTMP_DEBUG
 		static void SetDebugHandler(Debug* debug);

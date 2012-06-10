@@ -314,3 +314,28 @@ NetworkResponse Server::GetPlayerControl(RakNetGUID guid, FactoryObject referenc
 
 	return response;
 }
+
+NetworkResponse Server::ChatMessage(RakNetGUID guid, string message)
+{
+	Client* client = Client::GetClientFromGUID(guid);
+
+	FactoryObject reference = GameFactory::GetObject(client->GetPlayer());
+
+	Player* player = vaultcast<Player>(reference);
+
+	if (!player)
+		throw VaultException("Object with reference %08X is not a Player", (*reference)->GetReference());
+
+	NetworkResponse response;
+
+	bool result = Script::OnPlayerChat(reference, message);
+
+	if (result && !message.empty())
+	{
+		response.push_back(Network::CreateResponse(
+			PacketFactory::CreatePacket(ID_GAME_CHAT, message.c_str()),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(NULL)));
+	}
+
+	return response;
+}

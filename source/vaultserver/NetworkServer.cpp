@@ -115,13 +115,22 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					char pwd[MAX_PASSWORD_SIZE + 1];
 					ZeroMemory(pwd, sizeof(pwd));
 					PacketFactory::Access(packet, name, pwd);
-					response = Server::Authenticate(data->guid, string(name), string(pwd));
+					response = Server::Authenticate(data->guid, name, pwd);
 					break;
 				}
 
 				case ID_GAME_LOAD:
 				{
 					response = Server::LoadGame(data->guid);
+					break;
+				}
+
+				case ID_GAME_CHAT:
+				{
+					char message[MAX_CHAT_LENGTH + 1];
+					ZeroMemory(message, sizeof(message));
+					PacketFactory::Access(packet, message);
+					response = Server::ChatMessage(data->guid, message);
 					break;
 				}
 

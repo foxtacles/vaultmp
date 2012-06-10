@@ -55,6 +55,11 @@ Base VAULTSCRIPT OnPlayerRequestGame(ID player) noexcept
 	return base;
 }
 
+State VAULTSCRIPT OnPlayerChat(ID player, RawString message) noexcept
+{
+	return True;
+}
+
 Void VAULTSCRIPT OnSpawn(ID object) noexcept
 {
 	Player player(object);

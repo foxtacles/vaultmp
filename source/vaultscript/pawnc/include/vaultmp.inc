@@ -44,6 +44,7 @@ forward OnActorEquipItem(ID, base, Float:value);
 forward OnActorUnequipItem(ID, base, Float:value);
 forward OnPlayerDisconnect(ID, reason);
 forward OnPlayerRequestGame(ID);
+forward OnPlayerChat(ID, message{});
 forward OnClientAuthenticate(const name{}, const pwd{});
 
 // Functions

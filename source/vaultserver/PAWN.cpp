@@ -732,7 +732,7 @@ cell PAWN::Call(AMX* amx, const char* name, const char* argl, int buf, ...)
 		}
 
 		if (!strings.empty())
-			amx_Release(amx, strings.at(0).first);
+			amx_Release(amx, strings[0].first);
 	}
 
 	catch (...)
@@ -740,7 +740,7 @@ cell PAWN::Call(AMX* amx, const char* name, const char* argl, int buf, ...)
 		va_end(args);
 
 		if (!strings.empty())
-			amx_Release(amx, strings.at(0).first);
+			amx_Release(amx, strings[0].first);
 
 		throw;
 	}
