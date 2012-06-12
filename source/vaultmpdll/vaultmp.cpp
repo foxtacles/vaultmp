@@ -21,12 +21,16 @@ typedef bool (*QueueUIMessage_Fallout3)(const char* msg, unsigned int emotion, c
 typedef bool (*QueueUIMessage_FalloutNV)(const char* msg, unsigned int emotion, const char* ddsPath, const char* soundName, float msgTime, char unk);
 typedef unsigned int (*LookupForm)(unsigned int);
 typedef unsigned int (*LookupFunc)(unsigned int);
+typedef void (*Chatbox_AddToChat)(const char*);
+typedef const char* (*Chatbox_GetQueue)();
 
 static HANDLE hProc;
 static PipeServer pipeServer;
 static PipeClient pipeClient;
 static LookupForm FormLookup;
 static LookupFunc FuncLookup;
+static Chatbox_AddToChat AddToChat;
+static Chatbox_GetQueue GetQueue;
 static QueueUIMessage_Fallout3 QueueMessage_Fallout3;;
 static QueueUIMessage_FalloutNV QueueMessage_FalloutNV;
 
@@ -207,9 +211,7 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 		{
 			ZeroMemory(result, sizeof(double));
 			const char* data = ((char*) args) + 2; // skip length
-
-
-
+			AddToChat(data);
 			break;
 		}
 
@@ -523,7 +525,11 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 		DLLerror = true;
 	else
 	{
+		AddToChat = reinterpret_cast<Chatbox_AddToChat>(GetProcAddress(vaultgui, "Chatbox_AddToChat"));
+		GetQueue = reinterpret_cast<Chatbox_GetQueue>(GetProcAddress(vaultgui, "Chatbox_GetQueue"));
 
+		if (!AddToChat || !GetQueue)
+			DLLerror = true;
 	}
 
 	pipeClient.SetPipeAttributes("BethesdaClient", PIPE_LENGTH);
@@ -601,6 +607,18 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 
 				break;
 			}
+		}
+
+		string chat(GetQueue());
+
+		if (!chat.empty())
+		{
+			buffer[0] = PIPE_OP_RETURN_RAW;
+			*reinterpret_cast<unsigned int*>(buffer + 1) = 0x0002 | VAULTFUNCTION;
+			*reinterpret_cast<unsigned int*>(buffer + 5) = chat.length();
+			memcpy(buffer + 9, chat.c_str(), chat.length());
+
+			pipeClient.Send(buffer);
 		}
 	}
 

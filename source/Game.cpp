@@ -160,9 +160,12 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 
 			case Functions::Func_Chat:
 			{
-				vector<unsigned char>* data = getFrom<double, vector<unsigned char>*>(result);
-				GetMessage(reinterpret_cast<char*>(&data[0]));
-				delete data;
+				if (!result)
+					break;
+
+				vector<unsigned char>& data = *getFrom<double, vector<unsigned char>*>(result);
+				GetMessage(string(reinterpret_cast<char*>(&data[0]), data.size()));
+				delete &data;
 				break;
 			}
 
@@ -391,7 +394,7 @@ void Game::LoadEnvironment()
 	Interface::EndDynamic();
 }
 
-void Game::UIMessage(string message)
+void Game::UIMessage(string& message)
 {
 	Interface::StartDynamic();
 
@@ -400,7 +403,7 @@ void Game::UIMessage(string message)
 	Interface::EndDynamic();
 }
 
-void Game::ChatMessage(string message)
+void Game::ChatMessage(string& message)
 {
 	Interface::StartDynamic();
 

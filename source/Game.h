@@ -76,11 +76,11 @@ class Game
 		/**
 		 * \brief Display a Fallout UI message
 		 */
-		static void UIMessage(string message);
+		static void UIMessage(string& message);
 		/**
 		 * \brief Display a GUI chat message
 		 */
-		static void ChatMessage(string message);
+		static void ChatMessage(string& message);
 		/**
 		 * \brief Creates a new Object
 		 */

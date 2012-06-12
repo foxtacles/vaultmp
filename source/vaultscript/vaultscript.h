@@ -1,3 +1,6 @@
+#ifndef VAULTSCRIPT_H
+#define VAULTSCRIPT_H
+
 /*
  *  vaultscript.h
  *  Don't change anything here
@@ -70,6 +73,7 @@ namespace vaultmp {
 	#define MAX_PLAYER_NAME		(16)
 	#define MAX_PASSWORD_SIZE	(16)
 	#define MAX_MESSAGE_LENGTH	(64)
+	#define MAX_CHAT_LENGTH		(128)
 
 	#define ID_REFERENCE		(0x01)
 	#define ID_OBJECT			(ID_REFERENCE << 1)
@@ -113,6 +117,7 @@ namespace vaultmp {
 		MAX_PLAYER_NAME     =   16,
 		MAX_PASSWORD_SIZE   =   16,
 		MAX_MESSAGE_LENGTH  =   64,
+		MAX_CHAT_LENGTH		=	128,
 	};
 
 	enum class Type : uint8_t
@@ -469,3 +474,4 @@ namespace vaultmp
 }
 #endif
 
+#endif

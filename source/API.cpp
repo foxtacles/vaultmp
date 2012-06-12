@@ -1012,7 +1012,7 @@ vector<CommandResult> API::Translate(unsigned char* stream)
 
 		while (!queue.empty() && get<0>(queue.back()) != r)
 		{
-			auto element = queue.back();
+			auto& element = queue.back();
 
 	#ifdef VAULTMP_DEBUG
 
@@ -1023,7 +1023,7 @@ vector<CommandResult> API::Translate(unsigned char* stream)
 
 			result.push_back(CommandResult());
 
-			auto _result = result.back();
+			auto& _result = result.back();
 
 			get<0>(_result) = get<2>(element);
 			get<1>(_result).swap(get<1>(element));
@@ -1047,18 +1047,18 @@ vector<CommandResult> API::Translate(unsigned char* stream)
 
 	result.push_back(CommandResult());
 
-	auto _result = result.back();
+	auto& _result = result.back();
 
 	if (stream[0] != PIPE_OP_RETURN_RAW)
 	{
-		auto element = queue.back();
+		auto& element = queue.back();
 		get<0>(_result) = get<2>(element);
 		get<1>(_result).swap(get<1>(element));
 	}
 	else
 	{
 		get<0>(_result) = 0x00000000;
-		get<1>(_result).push_back(storeIn<double, unsigned short>(*reinterpret_cast<unsigned short*>(stream + 1)));
+		get<1>(_result).push_back(storeIn<double, unsigned short>(*reinterpret_cast<unsigned int*>(stream + 1)));
 	}
 
 	unsigned char* data = stream + 5;
@@ -1075,7 +1075,8 @@ vector<CommandResult> API::Translate(unsigned char* stream)
 
 	get<3>(_result) = false;
 
-	queue.pop_back();
+	if (stream[0] != PIPE_OP_RETURN_RAW)
+		queue.pop_back();
 
 	return result;
 }
