@@ -22,6 +22,10 @@
 #include "vaultserver/Database.h"
 #endif
 
+#ifdef VAULTMP_DEBUG
+#include "Debug.h"
+#endif
+
 const unsigned int FLAG_ALIVE           = FLAG_BASE << 1;
 const unsigned int FLAG_DEAD            = FLAG_ALIVE << 1;
 const unsigned int FLAG_ISALERTED       = FLAG_DEAD << 1;

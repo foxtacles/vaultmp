@@ -9,6 +9,10 @@
 #include "Value.h"
 #include "Object.h"
 
+#ifdef VAULTSERVER
+#include "vaultserver/Database.h"
+#endif
+
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"
 #endif
@@ -28,7 +32,9 @@ class Item : public Object
 		static Debug* debug;
 #endif
 
-		LegacyDatabase::const_iterator data;
+#ifdef VAULTSERVER
+		static Database* dbItems;
+#endif
 
 		Value<unsigned int> item_Count;
 		Value<double> item_Condition;
@@ -65,6 +71,13 @@ class Item : public Object
 		Lockable* SetItemStick(bool stick);
 
 		NetworkID Copy() const;
+
+#ifdef VAULTSERVER
+		/**
+		 * \brief Sets the Item's base ID
+		 */
+		virtual Lockable* SetBase(unsigned int baseID);
+#endif
 
 		/**
 		 * \brief For network transfer

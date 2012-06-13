@@ -51,10 +51,6 @@ class Container : public Object
 		friend class Item;
 
 	private:
-		static LegacyDatabase Fallout3Items;
-		static LegacyDatabase FalloutNVItems;
-
-		static LegacyDatabase* Items;
 
 #ifdef VAULTMP_DEBUG
 		static Debug* debug;

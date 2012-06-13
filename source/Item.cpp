@@ -5,6 +5,10 @@
 Debug* Item::debug;
 #endif
 
+#ifdef VAULTSERVER
+Database* Item::dbItems = NULL;
+#endif
+
 #ifdef VAULTMP_DEBUG
 void Item::SetDebugHandler(Debug* debug)
 {
@@ -49,12 +53,16 @@ Item::~Item()
 
 void Item::initialize()
 {
+#ifdef VAULTSERVER
+
 	unsigned int baseID = this->GetBase();
 
-	data = Container::Items->find(baseID);
+	const Database::Record& record = dbItems->Lookup(baseID);
 
-	if (data != Container::Items->end())
-		this->SetName(string(data->second));
+	if (this->GetName().empty())
+		this->SetName(record.description);
+
+#endif
 }
 
 unsigned int Item::GetItemCount() const
@@ -120,6 +128,18 @@ NetworkID Item::Copy() const
 
 	return item->GetNetworkID();
 }
+
+#ifdef VAULTSERVER
+Lockable* Item::SetBase(unsigned int baseID)
+{
+	const Database::Record& record = dbItems->Lookup(baseID);
+
+	if (this->GetName().empty())
+		this->SetName(record.description);
+
+	return Reference::SetBase(baseID);
+}
+#endif
 
 pPacket Item::toPacket()
 {

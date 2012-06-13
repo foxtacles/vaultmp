@@ -13,26 +13,22 @@ void GameFactory::Initialize(unsigned char game)
 {
 	GameFactory::game = game;
 
+#ifdef VAULTSERVER
+
 	try
 	{
 		switch (game)
 		{
 			case FALLOUT3:
-				Container::Items = &Container::Fallout3Items;
-
-#ifdef VAULTSERVER
-				Actor::dbActors = new Database(DB_FALLOUT3, "actors");
-				Actor::dbCreatures = new Database(DB_FALLOUT3, "creatures");
-#endif
+				Actor::dbActors = new Database(DB_FALLOUT3, {"NPC_"});
+				Actor::dbCreatures = new Database(DB_FALLOUT3, {"CREA"});
+				Item::dbItems = new Database(DB_FALLOUT3, {"ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "ENCH", "KEYM", "MISC", "NOTE", "PROJ", "WEAP"});
 				break;
 
 			case NEWVEGAS:
-				Container::Items = &Container::FalloutNVItems;
-
-	#ifdef VAULTSERVER
-				Actor::dbActors = new Database(DB_NEWVEGAS, "actors");
-				Actor::dbCreatures = new Database(DB_NEWVEGAS, "creatures");
-	#endif
+				Actor::dbActors = new Database(DB_NEWVEGAS, {"NPC_"});
+				Actor::dbCreatures = new Database(DB_NEWVEGAS, {"CREA"});
+				Item::dbItems = new Database(DB_NEWVEGAS, {"ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "CCRD", "CDCK", "CHIP", "CMNY", "ENCH", "IMOD", "KEYM", "MISC", "NOTE", "PROJ", "RCPE", "WEAP"});
 				break;
 
 			default:
@@ -41,17 +37,10 @@ void GameFactory::Initialize(unsigned char game)
 	}
 	catch (...)
 	{
-#ifdef VAULTSERVER
 		delete Actor::dbActors;
 		delete Actor::dbCreatures;
-#endif
 		throw;
 	}
-
-#ifdef VAULTMP_DEBUG
-
-	if (debug)
-		debug->PrintFormat("Found %d items in the database", true, Container::Items->size());
 
 #endif
 }
@@ -505,11 +494,10 @@ void GameFactory::DestroyAllInstances()
 
 	Object::param_Axis = RawParameter(vector<string>());
 
-	Container::Items = NULL;
-
 #ifdef VAULTSERVER
 	delete Actor::dbActors;
 	delete Actor::dbCreatures;
+	delete Item::dbItems;
 #endif
 
 	Actor::param_ActorValues = RawParameter(vector<string>());

@@ -71,7 +71,6 @@
 		<Unit filename="Interface.h" />
 		<Unit filename="Item.cpp" />
 		<Unit filename="Item.h" />
-		<Unit filename="Items.h" />
 		<Unit filename="Lockable.cpp" />
 		<Unit filename="Lockable.h" />
 		<Unit filename="Network.cpp" />

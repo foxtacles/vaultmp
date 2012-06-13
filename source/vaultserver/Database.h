@@ -34,8 +34,9 @@ class Database
 		struct Record {
 			unsigned int baseID;
 			string name;
+			string description;
 
-			Record(unsigned int baseID, string name) : baseID(baseID), name(name) {}
+			Record(unsigned int baseID, const string& name, const string& description) : baseID(baseID), name(name), description(description) {}
 		};
 
 	private:
@@ -45,7 +46,7 @@ class Database
 
 		unordered_map<unsigned int, Record> data;
 
-		Database(string file, string table);
+		Database(const string& file, const vector<string>& table);
 		~Database();
 
 	public:

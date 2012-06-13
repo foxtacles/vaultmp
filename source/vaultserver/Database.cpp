@@ -14,7 +14,7 @@ void Database::SetDebugHandler(Debug* debug)
 }
 #endif
 
-Database::Database(string file, string table)
+Database::Database(const string& file, const vector<string>& table)
 {
 	char base[MAX_PATH];
 	_getcwd(base, sizeof(base));
@@ -30,50 +30,55 @@ Database::Database(string file, string table)
 		throw VaultException("Could not open SQLite3 database: %s", sqlite3_errmsg(db));
 	}
 
-	sqlite3_stmt* stmt;
-	string query = "SELECT * FROM " + table;
-
-	if (sqlite3_prepare_v2(db, query.c_str(), query.length() + 1, &stmt, NULL) != SQLITE_OK)
+	for (const string& _table : table)
 	{
-		sqlite3_close(db);
-		throw VaultException("Could not prepare query: %s", sqlite3_errmsg(db));
-	}
+		sqlite3_stmt* stmt;
+		string query = "SELECT * FROM " + _table;
 
-	int ret = sqlite3_step(stmt);
+		if (sqlite3_prepare_v2(db, query.c_str(), query.length() + 1, &stmt, NULL) != SQLITE_OK)
+		{
+			sqlite3_close(db);
+			throw VaultException("Could not prepare query: %s", sqlite3_errmsg(db));
+		}
 
-	if (sqlite3_column_count(stmt) != 3)
-	{
-		sqlite3_finalize(stmt);
-		sqlite3_close(db);
-		throw VaultException("Malformed input database: %s", _file);
-	}
+		int ret = sqlite3_step(stmt);
 
-	if (ret == SQLITE_DONE)
-	{
-		sqlite3_finalize(stmt);
-		sqlite3_close(db);
-		return;
-	}
-
-	do
-	{
-		if (ret != SQLITE_ROW)
+		if (sqlite3_column_count(stmt) != 4)
 		{
 			sqlite3_finalize(stmt);
 			sqlite3_close(db);
-			throw VaultException("Failed processing query: %s", sqlite3_errmsg(db));
+			throw VaultException("Malformed input database: %s", _file);
 		}
 
-		unsigned int baseID = sqlite3_column_int(stmt, 0);
-		const unsigned char* name = sqlite3_column_text(stmt, 1);
-		unsigned int dlc = sqlite3_column_int(stmt, 2) - 1;
+		if (ret == SQLITE_DONE)
+		{
+			sqlite3_finalize(stmt);
+			sqlite3_close(db);
+			return;
+		}
 
-		baseID = (baseID & 0x00FFFFFF) | (dlc << 24);
+		do
+		{
+			if (ret != SQLITE_ROW)
+			{
+				sqlite3_finalize(stmt);
+				sqlite3_close(db);
+				throw VaultException("Failed processing query: %s", sqlite3_errmsg(db));
+			}
 
-		data.insert(make_pair(baseID, Record(baseID, reinterpret_cast<const char*>(name))));
-	} while ((ret = sqlite3_step(stmt)) != SQLITE_DONE);
+			unsigned int baseID = sqlite3_column_int(stmt, 0);
+			const unsigned char* name = sqlite3_column_text(stmt, 1);
+			const unsigned char* description = sqlite3_column_text(stmt, 2);
+			unsigned int dlc = sqlite3_column_int(stmt, 3);
 
-	sqlite3_finalize(stmt);
+			baseID = (baseID & 0x00FFFFFF) | (dlc << 24);
+
+			data.insert(make_pair(baseID, Record(baseID, reinterpret_cast<const char*>(name), reinterpret_cast<const char*>(description))));
+		} while ((ret = sqlite3_step(stmt)) != SQLITE_DONE);
+
+		sqlite3_finalize(stmt);
+	}
+
 	sqlite3_close(db);
 
 #ifdef VAULTMP_DEBUG

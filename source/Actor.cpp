@@ -64,19 +64,21 @@ void Actor::initialize()
 
 #ifdef VAULTSERVER
 
+	unsigned int baseID = this->GetBase();
+
 	try
 	{
-		const Database::Record& record = dbActors->Lookup(this->GetBase());
+		const Database::Record& record = dbActors->Lookup(baseID);
 
 		if (this->GetName().empty())
-			this->SetName(record.name);
+			this->SetName(record.description);
 	}
 	catch (...)
 	{
-		const Database::Record& record = dbCreatures->Lookup(this->GetBase());
+		const Database::Record& record = dbCreatures->Lookup(baseID);
 
 		if (this->GetName().empty())
-			this->SetName(record.name);
+			this->SetName(record.description);
 	}
 
 #endif

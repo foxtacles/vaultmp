@@ -144,7 +144,6 @@ namespace Data
 	};
 
 	typedef vector<Parameter> ParamContainer;
-	typedef const map<const unsigned int, const char*> LegacyDatabase;
 	typedef pair<future<void>, chrono::milliseconds> AsyncPack;
 
 	template <typename R, typename T>
