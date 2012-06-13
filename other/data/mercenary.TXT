@@ -1,0 +1,3 @@
+FormID: 001735E1	PreordArmorMetal	ARMO	 	Lightweight Metal Armor
+FormID: 001735E4	WeapPreordGrenadeRifle	WEAP	 	Mercenary's Grenade Rifle
+FormID: 00174776	PreorderMessageInventoryMercenary	MESG	 	Mercenary Pack

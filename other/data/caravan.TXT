@@ -1,0 +1,3 @@
+FormID: 001735E0	PreordArmorLeather	ARMO	 	Lightweight Leather Armor
+FormID: 001735E3	WeapPreordCaravanShotgun	WEAP	 	Sturdy Caravan Shotgun
+FormID: 00174775	PreorderMessageInventoryCaravan	MESG	 	Caravan Pack

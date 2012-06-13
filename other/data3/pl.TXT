@@ -1,0 +1,895 @@
+FormID: 0000003C	Wasteland	WRLD	 	Wasteland
+FormID: 0100494F	DLC04zTestSeaCave	CELL	 	Sea Cave
+FormID: 010049CD	DLC04zTestSeaCave02	CELL	 	Sea Cave Test 2
+FormID: 01004E2D	DLC04BlackhallManor01	CELL	 	Blackhall Manor
+FormID: 01004FC1	DLC04MDoorSmL01Hidden	DOOR	 	Door
+FormID: 01005846	DLC04MQ01	QUST	 	The Local Flavor
+FormID: 01005847	DLC04MQ02	QUST	 	Walking With Spirits
+FormID: 01005848	DLC04MQ03	QUST	 	Hearing Voices
+FormID: 01005849	DLC04MQ04	QUST	 	Thought Control
+FormID: 0100584A	DLC04MQ05a	QUST	 	A Meeting Of The Minds
+FormID: 0100584B	DLC04MQ05b	QUST	 	A Meeting Of The Minds
+FormID: 01005A26	DLC04MQ04TempControl	ACTI	 	Temporary Quest Controller
+FormID: 01005A2A	DLC04TempControlMessageBox	MESG	 	Choose Your Own Adventure
+FormID: 01005A2D	DLC04MQ04ExplosionControl	ACTI	 	Temporary Explosion Controller
+FormID: 01005A30	DLC04FakeMansionExplosion	EXPL	 	Nuke Explosion
+FormID: 01005A31	DLC04MQ04BrainContactTrigger	ACTI	 	Temporary Quest Controller
+FormID: 01005A33	DLC04MQ04BrainContactControl	ACTI	 	Temporary Quest Controller
+FormID: 01005A38	DLC04TheBrain	TACT	 	The Brain
+FormID: 01005A39	DLC04TheBrainNPC	NPC_	 	The Brain
+FormID: 01005B6F	DLC04FF05ContactLocker	CONT	 	Locker
+FormID: 01005B71	DLC04FF05holoPassword	NOTE	 	Box 1207 - Spy's Audio Password
+FormID: 01005B72	DLC04FF05LockerKey	KEYM	 	Locker Key
+FormID: 01005B94	DLC04FF05BankingTeller	TACT	 	Voice-Activated Security System
+FormID: 01006634	DLC04Tobar	NPC_	 	Tobar the Ferryman
+FormID: 01006635	DLC04Nadine	NPC_	 	Nadine
+FormID: 01006636	DLC04Catherine	NPC_	 	Catherine
+FormID: 01006637	DLC04Jackson	NPC_	 	Jackson
+FormID: 01006646	DLC04DesmondDog01	CREA	 	Freki
+FormID: 0100664D	DLC04PortaShelter01	ACTI	 	Pulowski Preservation Shelter
+FormID: 01006AB1	DLC04FF05WantedPosterACTIVATOR	ACTI	 	Wanted; Person of Interest
+FormID: 01006AB2	DLC04FF05SelfDestructSwitch	ACTI	 	Self-Destruct Switch
+FormID: 01006AB3	DLC04FF05agentKrumfolzTerminal	TERM	 	DIA Officer's Terminal
+FormID: 01006AB4	DLC04HatSlasherMask	ARMO	 	Pint-Sized Slasher Mask
+FormID: 01006AB5	DLC04FF05corpseYang	CONT	 	C8: Yang, Wan
+FormID: 01006AB6	DLC04FF05DentalRecord	MISC	 	Sub Self-Destruct Codes
+FormID: 01006AB7	DLC04WeapToyKnife	WEAP	 	Toy Knife
+FormID: 01006AB8	DLC04FF05FieldReport	NOTE	 	USN DIA Field Report
+FormID: 01006AB9	DLC04FF05WantedPoster	NOTE	 	Wanted Person: Yang, W.
+FormID: 01006ABA	DLC04FF05holoDebriefing	NOTE	 	Espionage Debriefing
+FormID: 01006B62	DLC04FF05sunkenSubMSG01	MESG	 	Chinese Submarine
+FormID: 01006BE4	DLC04LighthouseDoor	DOOR	 	Door
+FormID: 01006BF3	DLC04CrBrainDefenseTurret	CREA	 	Mark I Turret
+FormID: 01006BF5	DLC04BrainPowerBox01	ACTI	 	Power Junction
+FormID: 01007030	DLC04PungaSeedPod	ACTI	 	Punga Seed Pods
+FormID: 010072DA	DLC04zTestDuchessGambitCabin	CELL	 	Duchess Gambit Cabin
+FormID: 010072F7	DLC04DuchessGambitKey	KEYM	 	Duchess Gambit Key
+FormID: 010072F8	DLC04CatherineMessage	NOTE	 	Note to Nadine
+FormID: 0100731C	DLC04DuchessToWastelandMessage	MESG	 	Begin Trip to Capital Wasteland
+FormID: 0100731D	DLC04DuchessToPointMessage	MESG	 	Begin Trip to Point Lookout
+FormID: 0100731E	DLC04StartMessage	MESG	 	Point Lookout
+FormID: 0100731F	DLC04SpyTunnel	CELL	 	Runoff Pipe
+FormID: 01007323	DLC04SpyBunker	CELL	 	Chinese Intelligence Bunker
+FormID: 0100732C	DLC04FF05aviaryButton	ACTI	 	Recessed Panel
+FormID: 0100732D	DLC04FF05safehouseTerminal	TERM	 	Safehouse Terminal
+FormID: 0100732E	DLC04FF05Protectron	CREA	 	Protectron
+FormID: 0100732F	DLC04FF05holoExtraction	NOTE	 	Spy Extraction Details
+FormID: 010073B7	DLC04FF05extractionTerminal	TERM	 	Extraction Terminal
+FormID: 01007473	DLC04WeapShotgun	WEAP	 	Double-Barrel Shotgun
+FormID: 01008101	DLC04DuchessNoTravel	MESG	 	Cannot Travel
+FormID: 0100811D	DLC04ShackGrower	CELL	 	Run-down Shack
+FormID: 0100811E	DLC04ShackHardwareStore	CELL	 	Haley's Hardware
+FormID: 0100811F	DLC04ShackTrapper	CELL	 	Trapper's Shack
+FormID: 01008120	DLC04ShackMoonshiner	CELL	 	Moonshiner Shack
+FormID: 01008121	DLC04MotelRoom1D	CELL	 	Room 1D
+FormID: 01008122	DLC04Mine02	CELL	 	Miner's Rest
+FormID: 01008123	DLC04Mine01	CELL	 	Herzog Mine
+FormID: 01008125	DLC04surveyHole03	CELL	 	Excavated Muck Hole
+FormID: 01008126	DLC04surveyHole02	CELL	 	Excavated Muck Hole
+FormID: 0100815A	DLC04Kenny	NPC_	 	Kenny
+FormID: 0100815C	DLC04FF04	QUST	 	Latchkey Kenny
+FormID: 010082B5	DLC04WeapShovel	WEAP	 	Shovel
+FormID: 01008329	DLC04MQ05DoorTrigger02	ACTI	 	Gas Valve
+FormID: 0100832E	DLC04DesmondGlasses	ARMO	 	Desmond's Eyeglasses
+FormID: 01008330	DLC04BrainTriggerBox	ACTI	 	Gas Valve
+FormID: 0100838F	DLC04WeapAxe	WEAP	 	Axe
+FormID: 0100845B	DLC04CapitalDuchessTravelActivator	ACTI	 	Passenger Cot
+FormID: 010084A1	DLC04Jammer	MISC	 	Cogwave Jammer
+FormID: 01008807	DLC04CrSwampGhoul	CREA	 	Swamp Ghoul
+FormID: 01008853	DLC04Mine03	CELL	 	Blackdamp Shaft
+FormID: 01008868	DLC04FF04KennyBear	MISC	 	Kenny-Bear
+FormID: 010088DE	DLC04WeapRifle	WEAP	 	Lever-Action Rifle
+FormID: 01009278	DLC04MDoorBig01Cathedral	DOOR	 	Door
+FormID: 0100927B	DLC04CathedralTalker	TACT	 	Tribal Resident
+FormID: 0100927D	DLC04Jimson	NPC_	 	Jimson
+FormID: 0100927F	DLC04CathedralIntercom	TACT	 	Intercom
+FormID: 0100928B	DLC04SeaCave	CELL	 	Sea Cave
+FormID: 010094CD	DLC04SeaCaveShallowWATER	WATR	 	Terrible Water
+FormID: 0100951C	DLC04SeaCaveLadderDOOR	DOOR	 	Ladder
+FormID: 0100951D	DLC04WellTopDOOR	DOOR	 	Well
+FormID: 01009537	DLC04SeaCaveHiddenChest	CONT	 	Chest
+FormID: 01009547	DLC04SeaCaveDummyTRIG	ACTI	 	Gas Valve
+FormID: 0100954A	DLC04FakeForceSmallNudge	EXPL	 	Large Explosion
+FormID: 0100977F	DLC04Lab01	CELL	 	Underground Lab
+FormID: 01009B39	DLC04CoastalGrotto02	CELL	 	Plik's Safari
+FormID: 01009B5A	DLC04FF06Host	NPC_	 	Plik
+FormID: 01009B5E	DLC04FF06	QUST	 	Plik's Safari
+FormID: 01009BF8	DLC04FF06Hunter01	NPC_	 	Rip Smithy
+FormID: 01009BFD	DLC04FF06startSwitch	ACTI	 	Switch
+FormID: 01009BFE	DLC04FF06Hunter02	NPC_	 	Jacob Humboldt
+FormID: 01009C09	DLC04FF06GhoulPassive	CREA	 	Swamp Ghoul
+FormID: 0100A23E	WaterTypeDLC04SeaCave	WATR	 	TestGrantWater
+FormID: 0100A276	DLC04MQ04Compactor	ACTI	 	Trash Compactor
+FormID: 0100A543	DLC04ShackDoorBasement01	DOOR	 	Shack Door
+FormID: 0100A545	DLC04ShackDoor01	DOOR	 	Storm Door
+FormID: 0100A56C	DLC04crSwamplurkQueen	CREA	 	Swamplurk
+FormID: 0100A860	DLC04TheBrainHolo	TACT	 	Holographic Projection
+FormID: 0100A862	DLC04Woodrose	NPC_	 	Woodrose
+FormID: 0100A864	DLC04Croatoa	NPC_	 	Croatoa
+FormID: 0100A866	DLC04TribalFriendlyFaction	FACT	 	Point Lookout Tribals
+FormID: 0100A868	DLC04HenbaneNote	NOTE	 	Note to Nadine
+FormID: 0100A869	DLC04SeaCaveKey	KEYM	 	Sea Cave Key
+FormID: 0100A86C	DLC04SeaCaveTrigger02REF	ACTI	 	Gas Valve
+FormID: 0100A87A	DLC04PungaSeeds	MISC	 	Punga Seeds
+FormID: 0100A888	DLC04MansionLODEffect	EXPL	 	Mansion LOD Effect
+FormID: 0100A88A	DLC04MansionLODBook	MISC	 	The Great House of Lod
+FormID: 0100A88C	DLC4Bog	WRLD	 	Sacred Bog
+FormID: 0100AC48	DLC04Cathgate	DOOR	 	Gate
+FormID: 0100AD4F	DLC04LabEntranceTurretTerminal	TERM	 	Security Control Terminal
+FormID: 0100AD52	DLC04LabTrapComputer	ACTI	 	Security Terminal
+FormID: 0100ADAE	DLC04LabProtectron	CREA	 	Protectron
+FormID: 0100ADB3	DLC04ProtetcronStatue02	ACTI	 	Protectron
+FormID: 0100ADF4	DLC04LabBrainMachineSwitch	ACTI	 	Switch
+FormID: 0100AE12	DLC04LabProtectronDisplay01	MSTT	 	Protectron
+FormID: 0100AE13	DLC04LabProtectronDisplay02	MSTT	 	Protectron
+FormID: 0100AE14	DLC04LabProtectronDisplay03	MSTT	 	Protectron
+FormID: 0100AE24	DLC04LabProtectronActive	CREA	 	Protectron
+FormID: 0100AFDB	DLC04TestBall	MSTT	 	Ball
+FormID: 0100AFDC	DLC04MedicalTent01	CELL	 	Marcella's Tent
+FormID: 0100B001	DLC04crSwamplurk	CREA	 	Mirelurk
+FormID: 0100B03E	DLC04MQ04CompactorMessage	MESG	 	Trash Compactor
+FormID: 0100B03F	DLC04MQ04CompactorMessageNO	MESG	 	Trash Compactor
+FormID: 0100B040	DLC04MQ04CompactorMessageDONE	MESG	 	Trash Compactor
+FormID: 0100B045	DLC04RitualSiteBasement	CELL	 	Burned-Out Basement
+FormID: 0100B31F	DLC04BogNukaQuantum	MISC	 	Nuka-Cola Quantum
+FormID: 0100B32C	DLC04BogMomSkeleton	MSTT	 	Mom
+FormID: 0100B36A	DLC04BogBobbleAgilityMessage	MESG	 	Found Bobblehead
+FormID: 0100B36F	DLC04BogBobbleCharismaMessage	MESG	 	Found Bobblehead
+FormID: 0100B3C7	DLC04MQ04FerrisWheelMessage	MESG	 	Ferris Wheel
+FormID: 0100B3C8	DLC04MQ04FerrisWheelMessageDONE	MESG	 	Ferris Wheel
+FormID: 0100B3C9	DLC04MQ04FerrisWheelMessageNO	MESG	 	Ferris Wheel
+FormID: 0100B431	DLC04OutfitTobar	ARMO	 	Grifter's Fit
+FormID: 0100B58A	DLC04ShackTrapperBasement	CELL	 	Cellar
+FormID: 0100B5E7	DLC04StartNote	NOTE	 	Point Lookout
+FormID: 0100B5E8	DLC04BoatTicket	MISC	 	Riverboat Ticket
+FormID: 0100B5ED	DLC04LookoutDuchessTravelActivator	ACTI	 	Passenger Cot
+FormID: 0100B72F	DLC04ManBlock01KillTRIG	ACTI	 	Gas Valve
+FormID: 0100B766	DLC04Man2ndFloorHoleSwapTRIG	ACTI	 	Gas Valve
+FormID: 0100B76A	DLC04Man1stFloorHoleSwapTRIG	ACTI	 	Gas Valve
+FormID: 0100B785	DLC04ManBaseFloorHoleTRIG	ACTI	 	Gas Valve
+FormID: 0100B7AA	DLC04ManDoorPreBreak	DOOR	 	Door
+FormID: 0100B7BC	DLC04MQ02LDSeq02Spawn01Trig	ACTI	 	Gas Valve
+FormID: 0100B7F5	DLC04ManIntercom01	TACT	 	Intercom
+FormID: 0100B84E	DLC04TheBrainDummy	TACT	 	The Brain
+FormID: 0100B850	DLC04LabProtectronBrain	CREA	 	Protectron
+FormID: 0100B852	DLC04MQ05DoorTrigger01	ACTI	 	Gas Valve
+FormID: 0100B85A	DLC04SteamboatInt01	CELL	 	Engine Room
+FormID: 0100B85B	DLC04ShackDoorAnim01	DOOR	 	Door
+FormID: 0100BF1A	DLC04CampShackTorture	CELL	 	Interrogation Room A
+FormID: 0100BF1D	DLC04CampShackTorture02	CELL	 	Interrogation Room B
+FormID: 0100C079	DLC04BogBobbleAGI	ACTI	 	Bobblehead - Agility
+FormID: 0100C07B	DLC04BogBobbleCHA	ACTI	 	Bobblehead - Charisma
+FormID: 0100C08A	DLC04BogBobblePER	ACTI	 	Bobblehead - Perception
+FormID: 0100C08B	DLC04BogBobblePerceptionMessage	MESG	 	Found Bobblehead
+FormID: 0100C0B0	DLC04Mudhole01	DOOR	 	Ladder
+FormID: 0100C1C1	DLC04MQ05DoorSwitch01	ACTI	 	Switch
+FormID: 0100C1C2	DLC04MQ05LabDoor	DOOR	 	Door
+FormID: 0100C1C3	DLC04MicrowaveEmitter	WEAP	 	Microwave Emitter
+FormID: 0100C1C4	DLC04MQ05RewardKey	KEYM	 	Reward Vault Key
+FormID: 0100C1E7	DLC04DesmondDog03	CREA	 	Geri
+FormID: 0100C1EB	DLC04PetDogFaction	FACT	 	Reward Dog Faction
+FormID: 0100C2B4	DLC04Submarine	CELL	 	SSN-37-1A
+FormID: 0100C2B7	DLC04PilotSpeaker	NPC_	 	Dead Pilot
+FormID: 0100C2B8	DLC04BlackBoxNote	NOTE	 	Blackbox Recording
+FormID: 0100C2BA	DLC04BlackboxContainer	CONT	 	Blackbox Recorder
+FormID: 0100C509	DLC04headscar	ARMO	 	Scar
+FormID: 0100C5C5	DLC04FF05NukeExplosionDummy	ACTI	 	Fake Explosion Object
+FormID: 0100C5CF	DLC04BogEntranceMarkerREF	MAPM	 	Sacred Bog Entrance
+FormID: 0100C5D0	DLC04ArkDoveMarkerREF	MAPM	 	Ark & Dove Resting Grounds
+FormID: 0100C5D3	DLC04SeatubMarker	MAPM	 	Wrecked Seatub
+FormID: 0100C5D4	DLC04MotelMapMarker	MAPM	 	The Homestead Motel
+FormID: 0100C5D5	DLC04RazedLodgeMarkerREF	MAPM	 	Razed Lodge
+FormID: 0100C5D7	DLC04DuchessGambitMarkerREF	MAPM	 	Point Lookout Pier
+FormID: 0100C5D8	DLC04HerzogMarkerREF	MAPM	 	Herzog Mine
+FormID: 0100C5D9	DLC04CoastalGrottoMapMarker	MAPM	 	Coastal Grotto
+FormID: 0100C5E5	DLC04FF05SubTerminal	TERM	 	Submarine Operations Terminal
+FormID: 0100C5E8	DLC04FF05SubMarkerREF	MAPM	 	Sub Recovery Site
+FormID: 0100C5EF	DLC04FF05ExplosionDummy	ACTI	 	Fake Explosion Object
+FormID: 0100C6F1	DLC04BogDoor01	DOOR	 	Door
+FormID: 0100C6FD	DLC04MQ05AccessCard	MISC	 	Lab Access Card
+FormID: 0100C6FE	DLC04MedicalTent04	CELL	 	Administration Tent
+FormID: 0100C6FF	DLC04MedicalTent03	CELL	 	Medical Tent
+FormID: 0100C700	DLC04MedicalTent02	CELL	 	Medical Tent
+FormID: 0100C828	DLC04Bank	CELL	 	People's Bank of Point Lookout
+FormID: 0100C9C2	DLC04CagedSwamplurk	CREA	 	Mirelurk
+FormID: 0100CC61	DLC04BrainJarPlayer01	MISC	 	Lump of Brain
+FormID: 0100CC63	DLC04MorgueDrawerEMPTY	CONT	 	Vacant Remains Locker
+FormID: 0100CE01	DLC04FF05holoContacttext	NOTE	 	Contact Tape
+FormID: 0100CE21	DLC04MirelurkEggClutchCont01a	CONT	 	Mirelurk Egg Clutch
+FormID: 0100CE22	DLC04MirelurkEggClutchCont02a	CONT	 	Mirelurk Egg Clutch
+FormID: 0100CF0E	DLC04WorldBorder	REGN	 	Point Lookout
+FormID: 0100D01A	DLC04NoPodMessage	MESG	 	Punga Seed
+FormID: 0100D02E	DLC04FlashBulbExplosion	EXPL	 	Flash
+FormID: 0100D030	DLC04BarrelPushExplosion	EXPL	 	Frag Explosion
+FormID: 0100D036	DLC04FakeForce700r400	EXPL	 	Force
+FormID: 0100D1E4	DLC04BioGasGrenade	WEAP	 	Bio-Gas Canister
+FormID: 0100D1E5	DLC04BioGasGrenadeProjectile	PROJ	 	Bio-Gase Grenade
+FormID: 0100D1EA	DLC04EnchBioGasCloud	ENCH	 	Poison Gas
+FormID: 0100D1EB	DLC04BioGasGrenadeEffect	MGEF	 	Poison Gas Damage
+FormID: 0100D1F6	DLC04BaseballProjectile	PROJ	 	Baseball
+FormID: 0100D1F7	DLC04BaseballExplosion	EXPL	 	Fake Explosion (medium)
+FormID: 0100D1F8	DLC04EnchBaseball	ENCH	 	Fast Ball
+FormID: 0100D1F9	DLC04PerkSuperiorDefender	SPEL	 	Superior Defender
+FormID: 0100D1FA	DLC04SuperiorDefender	PERK	 	Superior Defender
+FormID: 0100D1FB	DLC04SwingForTheFences	PERK	 	Swing For The Fences
+FormID: 0100D1FD	DLC04GrayMatters	PERK	 	Gray Matters
+FormID: 0100D1FE	DLC04FF06GhoulEcology	PERK	 	Ghoul Ecology
+FormID: 0100D1FF	DLC04FF05photograph	NOTE	 	Wan Yang (photo file)
+FormID: 0100D200	DLC04FF05wantedPosterMSG	MESG	 	Wanted Poster
+FormID: 0100D21C	DLC04MorgueDrawerSkeleton	ACTI	 	Morgue Drawer
+FormID: 0100D21D	DLC04MorgueDrawerSkeletonNoJaw	ACTI	 	Morgue Drawer
+FormID: 0100D3B2	DLC04TrapPitchingMachine	ACTI	 	Pitching Machine
+FormID: 0100D3B4	DLC04TrapGrenadeFragProjectile	PROJ	 	Frag Grenade
+FormID: 0100D3B5	DLC04TrapWeapGrenadeFrag	WEAP	 	Frag Grenade
+FormID: 0100D5A7	DLC04EnchFertilizerShovel	ENCH	 	Fertilizer Shovel
+FormID: 0100D5A8	DLC04WeapUniqueFertilizerShovel	WEAP	 	Fertilizer Shovel
+FormID: 0100D5AA	DLC04DynermiteProjectile	PROJ	 	Dynermite
+FormID: 0100D5AB	DLC04DynermiteExplosion	EXPL	 	Dynermite Explosion
+FormID: 0100D5B2	DLC04PasTrustyFishingAidProjectile	PROJ	 	Pa's Trusty Fishing Aid
+FormID: 0100D5B3	DLC04WeapUniquePasFishingAid	WEAP	 	Pa's Fishing Aid
+FormID: 0100D5BB	DLC04EnchClothingDesmondGlasses	ENCH	 	Desmond Glasses
+FormID: 0100D5BD	DLC04LabGoggles	ARMO	 	Lab Goggles
+FormID: 0100D5BE	DLC04EnchClothingLabGoggles	ENCH	 	Lab Goggles
+FormID: 0100D5C0	DLC04OutfitWorkmansCoveralls	ARMO	 	Workman's Coveralls
+FormID: 0100D5C1	DLC04EnchClothingWorkmansCoveralls	ENCH	 	Workman's Coveralls
+FormID: 0100D5D7	DLC04LabRobobrainSentry	CREA	 	Robobrain Sentry
+FormID: 0100D5D9	DLC04LabRoundRoomPrimaryTerminalOLD	ACTI	 	Primary Lab Terminal
+FormID: 0100D5DA	DLC04LabRoundRoomBypassTerminalOLD	ACTI	 	Security Bypass Terminal
+FormID: 0100D5DD	DLC04LabRoundRoomPrimaryTerminal	TERM	 	Primary Lab Terminal
+FormID: 0100D5DF	DLC04LabRoundRoomBypassTerminal	TERM	 	Security Bypass Terminal
+FormID: 0100D5E1	DLC04LabClearanceLevelAOLD	KEYM	 	Security Clearance: Alpha
+FormID: 0100D5E2	DLC04LabClearanceLevelA	NOTE	 	Level Alpha Security Badge
+FormID: 0100D6AF	DLC04CampMorgue	CELL	 	Morgue
+FormID: 0100D701	DLC04CrematorySwitch	ACTI	 	Electrical Switch
+FormID: 0100D709	DLC04MorgueDrawer01	CONT	 	TD-0831: Cheng, A
+FormID: 0100D70A	DLC04FF05MorgueDrawerYang	ACTI	 	TD-0181: Yang, Wan
+FormID: 0100D70B	DLC04MorgueDrawer02	CONT	 	TD-0204: Shen, Mei
+FormID: 0100D70C	DLC04FF05MorgueDrawerYangContainerVersion	CONT	 	TD-0181: Yang, Wan
+FormID: 0100D70F	DLC04FF05MorgueDrawerYangMSG	MESG	 	Remains of Agent Wan Yang
+FormID: 0100D74F	DLC04ArmorTribal	ARMO	 	Tribal Garb
+FormID: 0100D750	DLC04TribalMelee1FD	NPC_	 	Tribal
+FormID: 0100D751	DLC04TribalMelee1MA	NPC_	 	Tribal
+FormID: 0100D752	DLC04TribalMelee1MB	NPC_	 	Tribal
+FormID: 0100D753	DLC04TribalMelee1MC	NPC_	 	Tribal
+FormID: 0100D754	DLC04TribalMelee1MD	NPC_	 	Tribal
+FormID: 0100D755	DLC04TribalMelee2FATemplate	NPC_	 	Tribal
+FormID: 0100D756	DLC04TribalMelee2FB	NPC_	 	Tribal
+FormID: 0100D757	DLC04TribalMelee2FC	NPC_	 	Tribal
+FormID: 0100D758	DLC04TribalMelee2FD	NPC_	 	Tribal
+FormID: 0100D759	DLC04TribalMelee2MA	NPC_	 	Tribal
+FormID: 0100D75A	DLC04TribalMelee2MB	NPC_	 	Tribal
+FormID: 0100D75B	DLC04TribalMelee2MC	NPC_	 	Tribal
+FormID: 0100D75C	DLC04TribalMelee2MD	NPC_	 	Tribal
+FormID: 0100D75D	DLC04TribalMelee3FATemplate	NPC_	 	Tribal
+FormID: 0100D75E	DLC04TribalMelee3FB	NPC_	 	Tribal
+FormID: 0100D75F	DLC04TribalMelee3FC	NPC_	 	Tribal
+FormID: 0100D760	DLC04TribalMelee3FD	NPC_	 	Tribal
+FormID: 0100D761	DLC04TribalMelee3MA	NPC_	 	Tribal
+FormID: 0100D762	DLC04TribalMelee3MB	NPC_	 	Tribal
+FormID: 0100D763	DLC04TribalMelee3MC	NPC_	 	Tribal
+FormID: 0100D764	DLC04TribalMelee3MD	NPC_	 	Tribal
+FormID: 0100D765	DLC04TribalMelee4FATemplate	NPC_	 	Tribal
+FormID: 0100D766	DLC04TribalMelee4FB	NPC_	 	Tribal
+FormID: 0100D767	DLC04TribalMelee4FC	NPC_	 	Tribal
+FormID: 0100D768	DLC04TribalMelee4FD	NPC_	 	Tribal
+FormID: 0100D769	DLC04TribalMelee4MA	NPC_	 	Tribal
+FormID: 0100D76A	DLC04TribalMelee4MB	NPC_	 	Tribal
+FormID: 0100D76B	DLC04TribalMelee4MC	NPC_	 	Tribal
+FormID: 0100D76C	DLC04TribalMelee4MD	NPC_	 	Tribal
+FormID: 0100D76D	DLC04TribalMelee5FATemplate	NPC_	 	Tribal
+FormID: 0100D76E	DLC04TribalMelee5FB	NPC_	 	Tribal
+FormID: 0100D76F	DLC04TribalMelee5FC	NPC_	 	Tribal
+FormID: 0100D770	DLC04TribalMelee5FD	NPC_	 	Tribal
+FormID: 0100D771	DLC04TribalMelee5MA	NPC_	 	Tribal
+FormID: 0100D772	DLC04TribalMelee5MB	NPC_	 	Tribal
+FormID: 0100D773	DLC04TribalMelee5MC	NPC_	 	Tribal
+FormID: 0100D774	DLC04TribalMelee5MD	NPC_	 	Tribal
+FormID: 0100D775	DLC04TribalRanged1FAFTEMPLATE	NPC_	 	Tribal
+FormID: 0100D776	DLC04TribalRanged1FB	NPC_	 	Tribal
+FormID: 0100D777	DLC04TribalRanged1FC	NPC_	 	Tribal
+FormID: 0100D778	DLC04TribalRanged1FD	NPC_	 	Tribal
+FormID: 0100D779	DLC04TribalRanged1MA	NPC_	 	Tribal
+FormID: 0100D77A	DLC04TribalRanged1MB	NPC_	 	Tribal
+FormID: 0100D77B	DLC04TribalRanged1MC	NPC_	 	Tribal
+FormID: 0100D77C	DLC04TribalRanged1MD	NPC_	 	Tribal
+FormID: 0100D77D	DLC04TribalRanged2FATemplate	NPC_	 	Tribal
+FormID: 0100D77E	DLC04TribalRanged2FB	NPC_	 	Tribal
+FormID: 0100D77F	DLC04TribalRanged2FC	NPC_	 	Tribal
+FormID: 0100D780	DLC04TribalRanged2FD	NPC_	 	Tribal
+FormID: 0100D781	DLC04TribalRanged2MA	NPC_	 	Tribal
+FormID: 0100D782	DLC04TribalRanged2MB	NPC_	 	Tribal
+FormID: 0100D783	DLC04TribalRanged2MC	NPC_	 	Tribal
+FormID: 0100D784	DLC04TribalRanged2MD	NPC_	 	Tribal
+FormID: 0100D785	DLC04TribalRanged3FATemplate	NPC_	 	Tribal
+FormID: 0100D786	DLC04TribalRanged3FB	NPC_	 	Tribal
+FormID: 0100D787	DLC04TribalRanged3FC	NPC_	 	Tribal
+FormID: 0100D788	DLC04TribalRanged3FD	NPC_	 	Tribal
+FormID: 0100D789	DLC04TribalRanged3MA	NPC_	 	Tribal
+FormID: 0100D78A	DLC04TribalRanged3MB	NPC_	 	Tribal
+FormID: 0100D78B	DLC04TribalRanged3MC	NPC_	 	Tribal
+FormID: 0100D78C	DLC04TribalRanged3MD	NPC_	 	Tribal
+FormID: 0100D78D	DLC04TribalRanged4FATemplate	NPC_	 	Tribal
+FormID: 0100D78E	DLC04TribalRanged4FB	NPC_	 	Tribal
+FormID: 0100D78F	DLC04TribalRanged4FC	NPC_	 	Tribal
+FormID: 0100D790	DLC04TribalRanged4FD	NPC_	 	Tribal
+FormID: 0100D791	DLC04TribalRanged4MA	NPC_	 	Tribal
+FormID: 0100D792	DLC04TribalRanged4MB	NPC_	 	Tribal
+FormID: 0100D793	DLC04TribalRanged4MC	NPC_	 	Tribal
+FormID: 0100D794	DLC04TribalRanged4MD	NPC_	 	Tribal
+FormID: 0100D795	DLC04TribalRanged5FATemplate	NPC_	 	Tribal
+FormID: 0100D796	DLC04TribalRanged5FB	NPC_	 	Tribal
+FormID: 0100D797	DLC04TribalRanged5FC	NPC_	 	Tribal
+FormID: 0100D798	DLC04TribalRanged5FD	NPC_	 	Tribal
+FormID: 0100D799	DLC04TribalRanged5MA	NPC_	 	Tribal
+FormID: 0100D79A	DLC04TribalRanged5MB	NPC_	 	Tribal
+FormID: 0100D79B	DLC04TribalRanged5MC	NPC_	 	Tribal
+FormID: 0100D79C	DLC04TribalRanged5MD	NPC_	 	Tribal
+FormID: 0100D79D	DLC04TribalMelee1FAFTEMPLATE	NPC_	 	Tribal
+FormID: 0100D79E	DLC04TribalMelee1FB	NPC_	 	Tribal
+FormID: 0100D79F	DLC04TribalMelee1FC	NPC_	 	Tribal
+FormID: 0100D85B	DLC04Wheelchair01	FURN	 	Wheelchair
+FormID: 0100D971	DLC04Recruiter	CELL	 	Recruitment Station
+FormID: 0100D972	DLC04FF05SafetyDepositBoxDoor	ACTI	 	Safety Deposit Box
+FormID: 0100D976	DLC04FF05BankMemo01	NOTE	 	Security Updates
+FormID: 0100D977	DLC04FF05BankMemo02	NOTE	 	National Security Update
+FormID: 0100D978	DLC04FF05BankMemo03	NOTE	 	Shift Close Notes
+FormID: 0100D979	DLC04FF05BankTellerTerminal	TERM	 	Terminal
+FormID: 0100DA2F	DLC04SwamplurkMissile	WEAP	 	Radioactive Spit
+FormID: 0100DA30	DLC04AmmoSwamplurkSpit	AMMO	 	Missile
+FormID: 0100DA65	DLC04LawnChair01	FURN	 	Lawn Chair
+FormID: 0100DAAE	DLC04FakeForce5r100	EXPL	 	Force
+FormID: 0100DCF7	DLC04NorthSwitch	ACTI	 	North
+FormID: 0100DCF8	DLC04SouthSwitch	ACTI	 	South
+FormID: 0100DCF9	DLC04EastSwitch	ACTI	 	East
+FormID: 0100DCFA	DLC04WestSwitch	ACTI	 	West
+FormID: 0100DD3C	DLC04LighthouseLightMech01	ACTI	 	Lighthouse Mechanism
+FormID: 0100DD5B	DLC04FakeForceBall250	EXPL	 	Large Explosion
+FormID: 0100DD6F	DLC04ManFakeMediumExplosion	EXPL	 	Fake Explosion (medium)
+FormID: 0100DE01	DLC04HatConfederate	ARMO	 	Confederate Hat
+FormID: 0100DE09	DLC04FF05AviarySequence	NOTE	 	Sequence Note - Aviary Spy Bunker
+FormID: 0100DE12	DLC04FF05SpyGlasses	ARMO	 	Cryptochromatic Spectacles
+FormID: 0100DE18	DLC04FF05Luggage	CONT	 	Luggage Case
+FormID: 0100DE1B	DLC04PilgrimLandingMarkerREF	MAPM	 	Pilgrim's Landing
+FormID: 0100DE1C	DLC04DoveMarkerREF	MAPM	 	Dove Delta
+FormID: 0100DE1D	DLC04VelmasMarkerREF	MAPM	 	Beachview Campsite
+FormID: 0100DE1E	DLC04PlayhouseMarkerREF	MAPM	 	Lil' Tyke Playhouse
+FormID: 0100DE1F	DLC04TrashHeapMarkerREF	MAPM	 	Trash Heap
+FormID: 0100DF1D	DLC04LabDoorSm01	DOOR	 	Door
+FormID: 0100DF23	DLC04CampPipe01	CELL	 	Septic Tunnel Access
+FormID: 0100E00E	DLC04muckLauncher	ACTI	 	TEST!
+FormID: 0100E011	DLC04muckNudge	EXPL	 	Large Explosion
+FormID: 0100E013	DLC04MuckProjectile	PROJ	 	Methane Bubble
+FormID: 0100E015	DLC04muckLobber	WEAP	 	Muck Lobber
+FormID: 0100E0B4	DLC04MeditationSit	FURN	 	Rstrained Sit
+FormID: 0100E0DC	DLC04RiverboatLandingMapMarker	MAPM	 	Riverboat Landing
+FormID: 0100E197	DLC04LabClearanceLevelB	NOTE	 	Level Beta Security Badge
+FormID: 0100E198	DLC04LabSecurityHallBypassTerminal	TERM	 	Security Bypass Terminal
+FormID: 0100E1A1	DLC04LabRoundRoomRobobrainSentry	CREA	 	Robobrain Sentry
+FormID: 0100E1EA	DLC04ExecutionHolotape	NOTE	 	Smuggler Confession
+FormID: 0100E1FC	DLC04BrainJarPlayerActivator	ACTI	 	Familiar Piece of Brain
+FormID: 0100E1FE	DLC04PlayerBrainMessage	MESG	 	Gray Matter
+FormID: 0100E235	DLC04BogCorpseAmata	NPC_	 	Amata
+FormID: 0100E23E	DLC04BogCorpseSimms	NPC_	 	Lucas Simms
+FormID: 0100E272	DLC04BogBobbleINT	ACTI	 	Bobblehead - Intelligence
+FormID: 0100E273	DLC04BogBobbleIntelligenceMessage	MESG	 	Found Bobblehead
+FormID: 0100E27A	DLC04BogCorpseElderLyons	NPC_	 	Elder Lyons
+FormID: 0100E27B	DLC04BogCorpseMoiraBrown	NPC_	 	Moira Brown
+FormID: 0100E27C	DLC04Barge	CELL	 	Belowdecks
+FormID: 0100E27D	DLC04BargeHatch	DOOR	 	Hatch
+FormID: 0100E301	DLC04FF02MarcellaKey	KEYM	 	Marcella's Safe Key
+FormID: 0100E302	DLC04FF02MarcellaSafe	CONT	 	Marcella's Medical Supplies
+FormID: 0100E3B5	DLC04FF02DunwichMSG02	MESG	 	Dunwich Obelisk
+FormID: 0100E3E6	DLC04BanditRanged5MD	NPC_	 	Smuggler
+FormID: 0100E3E7	DLC04BanditRanged5MC	NPC_	 	Smuggler
+FormID: 0100E3E8	DLC04BanditRanged5MB	NPC_	 	Smuggler
+FormID: 0100E3E9	DLC04BanditRanged5MA	NPC_	 	Smuggler
+FormID: 0100E3EA	DLC04BanditRanged5FD	NPC_	 	Smuggler
+FormID: 0100E3EB	DLC04BanditRanged5FC	NPC_	 	Smuggler
+FormID: 0100E3EC	DLC04BanditRanged5FB	NPC_	 	Smuggler
+FormID: 0100E3ED	DLC04BanditRanged5FAFTEMPLATE	NPC_	 	Smuggler
+FormID: 0100E3EE	DLC04BanditRanged4MD	NPC_	 	Smuggler
+FormID: 0100E3EF	DLC04BanditRanged4MC	NPC_	 	Smuggler
+FormID: 0100E3F0	DLC04BanditRanged4MB	NPC_	 	Smuggler
+FormID: 0100E3F1	DLC04BanditRanged4MA	NPC_	 	Smuggler
+FormID: 0100E3F2	DLC04BanditRanged4FD	NPC_	 	Smuggler
+FormID: 0100E3F3	DLC04BanditRanged4FC	NPC_	 	Smuggler
+FormID: 0100E3F4	DLC04BanditRanged4FB	NPC_	 	Smuggler
+FormID: 0100E3F5	DLC04BanditRanged4FAFTEMPLATE	NPC_	 	Smuggler
+FormID: 0100E3F6	DLC04BanditRanged3MD	NPC_	 	Smuggler
+FormID: 0100E3F7	DLC04BanditRanged3MC	NPC_	 	Smuggler
+FormID: 0100E3F8	DLC04BanditRanged3MB	NPC_	 	Smuggler
+FormID: 0100E3F9	DLC04BanditRanged3MA	NPC_	 	Smuggler
+FormID: 0100E3FA	DLC04BanditRanged3FD	NPC_	 	Smuggler
+FormID: 0100E3FB	DLC04BanditRanged3FC	NPC_	 	Smuggler
+FormID: 0100E3FC	DLC04BanditRanged3FB	NPC_	 	Smuggler
+FormID: 0100E3FD	DLC04BanditRanged3FAFTEMPLATE	NPC_	 	Smuggler
+FormID: 0100E3FE	DLC04BanditRanged2MD	NPC_	 	Smuggler
+FormID: 0100E3FF	DLC04BanditRanged2MC	NPC_	 	Smuggler
+FormID: 0100E400	DLC04BanditRanged2MB	NPC_	 	Smuggler
+FormID: 0100E401	DLC04BanditRanged2MA	NPC_	 	Smuggler
+FormID: 0100E402	DLC04BanditRanged2FD	NPC_	 	Smuggler
+FormID: 0100E403	DLC04BanditRanged2FC	NPC_	 	Smuggler
+FormID: 0100E404	DLC04BanditRanged2FB	NPC_	 	Smuggler
+FormID: 0100E405	DLC04BanditRanged2FAFTEMPLATE	NPC_	 	Smuggler
+FormID: 0100E406	DLC04BanditRanged1MD	NPC_	 	Smuggler
+FormID: 0100E407	DLC04BanditRanged1MC	NPC_	 	Smuggler
+FormID: 0100E408	DLC04BanditRanged1MB	NPC_	 	Smuggler
+FormID: 0100E409	DLC04BanditRanged1MA	NPC_	 	Smuggler
+FormID: 0100E40A	DLC04BanditRanged1FD	NPC_	 	Smuggler
+FormID: 0100E40B	DLC04BanditRanged1FC	NPC_	 	Smuggler
+FormID: 0100E40C	DLC04BanditRanged1FB	NPC_	 	Smuggler
+FormID: 0100E40D	DLC04BanditMelee5MD	NPC_	 	Smuggler
+FormID: 0100E40E	DLC04BanditMelee5MC	NPC_	 	Smuggler
+FormID: 0100E40F	DLC04BanditMelee5MB	NPC_	 	Smuggler
+FormID: 0100E410	DLC04BanditMelee5MA	NPC_	 	Smuggler
+FormID: 0100E411	DLC04BanditMelee4MD	NPC_	 	Smuggler
+FormID: 0100E412	DLC04BanditMelee4MC	NPC_	 	Smuggler
+FormID: 0100E413	DLC04BanditMelee4MB	NPC_	 	Smuggler
+FormID: 0100E414	DLC04BanditMelee4MA	NPC_	 	Smuggler
+FormID: 0100E415	DLC04BanditMelee3MD	NPC_	 	Smuggler
+FormID: 0100E416	DLC04BanditMelee3MC	NPC_	 	Smuggler
+FormID: 0100E417	DLC04BanditMelee3MB	NPC_	 	Smuggler
+FormID: 0100E418	DLC04BanditMelee3MA	NPC_	 	Smuggler
+FormID: 0100E419	DLC04BanditMelee2MD	NPC_	 	Smuggler
+FormID: 0100E41A	DLC04BanditMelee2MC	NPC_	 	Smuggler
+FormID: 0100E41B	DLC04BanditMelee2MB	NPC_	 	Smuggler
+FormID: 0100E41C	DLC04BanditMelee2MA	NPC_	 	Smuggler
+FormID: 0100E41D	DLC04BanditMelee1MD	NPC_	 	Smuggler
+FormID: 0100E41E	DLC04BanditMelee1MC	NPC_	 	Smuggler
+FormID: 0100E41F	DLC04BanditMelee1MB	NPC_	 	Smuggler
+FormID: 0100E420	DLC04BanditMelee1MA	NPC_	 	Smuggler
+FormID: 0100E421	DLC04BanditRanged1FAFTEMPLATE	NPC_	 	Smuggler
+FormID: 0100E422	DLC04BanditMelee1FAFTEMPLATE	NPC_	 	Smuggler
+FormID: 0100E423	DLC04BanditMelee5FD	NPC_	 	Smuggler
+FormID: 0100E424	DLC04BanditMelee5FC	NPC_	 	Smuggler
+FormID: 0100E425	DLC04BanditMelee5FB	NPC_	 	Smuggler
+FormID: 0100E426	DLC04BanditMelee5FAFTEMPLATE	NPC_	 	Smuggler
+FormID: 0100E427	DLC04BanditMelee4FD	NPC_	 	Smuggler
+FormID: 0100E428	DLC04BanditMelee4FC	NPC_	 	Smuggler
+FormID: 0100E429	DLC04BanditMelee4FB	NPC_	 	Smuggler
+FormID: 0100E42A	DLC04BanditMelee4FAFTEMPLATE	NPC_	 	Smuggler
+FormID: 0100E42B	DLC04BanditMelee3FD	NPC_	 	Smuggler
+FormID: 0100E42C	DLC04BanditMelee3FC	NPC_	 	Smuggler
+FormID: 0100E42D	DLC04BanditMelee3FB	NPC_	 	Smuggler
+FormID: 0100E42E	DLC04BanditMelee3FAFTEMPLATE	NPC_	 	Smuggler
+FormID: 0100E42F	DLC04BanditMelee2FD	NPC_	 	Smuggler
+FormID: 0100E430	DLC04BanditMelee2FC	NPC_	 	Smuggler
+FormID: 0100E431	DLC04BanditMelee2FB	NPC_	 	Smuggler
+FormID: 0100E432	DLC04BanditMelee2FAFTEMPLATE	NPC_	 	Smuggler
+FormID: 0100E433	DLC04BanditMelee1FD	NPC_	 	Smuggler
+FormID: 0100E434	DLC04BanditMelee1FC	NPC_	 	Smuggler
+FormID: 0100E435	DLC04BanditMelee1FB	NPC_	 	Smuggler
+FormID: 0100E437	DLC04PungaLight01	ACTI	 	Punga Experiment
+FormID: 0100E4CD	DLC04SafetyDepositBox	CONT	 	Safety Deposit Box
+FormID: 0100E4CE	DLC04SafetyDepositBox02	CONT	 	Bank Deposit Box
+FormID: 0100E574	DLC04LawnChair01Folded	MSTT	 	Lawn Chair
+FormID: 0100E755	DLC04ReliefPamphlet	NOTE	 	New Plague Pamphlet
+FormID: 0100E756	DLC04ReliefTerminal	TERM	 	Terminal
+FormID: 0100E758	DLC04ReliefTerminalSub	TERM	 	Terminal
+FormID: 0100E759	DLC04ReliefMission	NOTE	 	A Greater Goodness Mission
+FormID: 0100E75A	DLC04reliefLog01	NOTE	 	Unit Leader Log
+FormID: 0100E75B	DLC04reliefLog02	NOTE	 	Unit Leader Log
+FormID: 0100E75C	DLC04reliefLog03	NOTE	 	Unit Leader Log
+FormID: 0100E75D	DLC04reliefLog04	NOTE	 	Unit Leader Log
+FormID: 0100E75F	DLC04ReliefPamphletSigns	NOTE	 	New Plague Pamphlet
+FormID: 0100E760	DLC04ReliefPamphletSymptoms	NOTE	 	New Plague Pamphlet
+FormID: 0100E761	DLC04ReliefPamphletProtect	NOTE	 	New Plague Pamphlet
+FormID: 0100E762	DLC04ReliefPamphletRegister	NOTE	 	New Plague Pamphlet
+FormID: 0100E763	DLC04ReliefTerminalPamphlet	TERM	 	Terminal
+FormID: 0100E76C	DLC04FF01rewardSafe	CONT	 	Expedition Supplies
+FormID: 0100E76D	DLC04FF01ByssheTerminalSub	TERM	 	Bysshe Co. Terminal
+FormID: 0100E76E	DLC04crSwampFolk1Ranged	CREA	 	Scrapper
+FormID: 0100E76F	DLC04crSwampFolk3Ranged	CREA	 	Creeper
+FormID: 0100E770	DLC04crSwampFolk5Melee	CREA	 	Bruiser
+FormID: 0100E771	DLC04crSwampFolk2Ranged	CREA	 	Brawler
+FormID: 0100E773	DLC04FF01subNote01	NOTE	 	Mission Parameters
+FormID: 0100E77B	DLC04MansionExplosion	EXPL	 	Mansion Explosion
+FormID: 0100E793	DLC04CampShackBunkhouse02	CELL	 	Bunkhouse B
+FormID: 0100E794	DLC04CampShackBunkhouse01	CELL	 	Bunkhouse A
+FormID: 0100E795	DLC04MotelOffice	CELL	 	Homestead Motel Office
+FormID: 0100E796	DLC04MotelRoom1G	CELL	 	Room 1G
+FormID: 0100E797	DLC04MotelRoom1K	CELL	 	Room 1K
+FormID: 0100E798	DLC04CampOffices	CELL	 	Administration
+FormID: 0100E91D	DLC04BogEntrance	CELL	 	Bog Entrance
+FormID: 0100EA7C	DLC04Panada	NPC_	 	Panada
+FormID: 0100EA7D	DLC04Haley	NPC_	 	Haley
+FormID: 0100EA7E	DLC04StoreProtectron	CREA	 	Protectron
+FormID: 0100EA7F	DLC04CrProtectron	CREA	 	Protectron
+FormID: 0100EA81	DLC04BoardwalkVendorMapMarkerREF	MAPM	 	House of Wares
+FormID: 0100EA9A	DLC04FF01subNote02	NOTE	 	Mission Parameters
+FormID: 0100ECF8	DLC04FF06MemberCard	MISC	 	Safari Membership Card
+FormID: 0100ECF9	DLC04CrYaoGuai	CREA	 	Ruzka
+FormID: 0100ED0B	DLC04FF03StillRepairFailMSG	MESG	 	Marguerite's Still
+FormID: 0100ED0C	DLC04FF03StillRepairDoneMSG	MESG	 	Marguerite's Still
+FormID: 0100ED0F	DLC04WeapUniqueDismemberer	WEAP	 	The Dismemberer
+FormID: 0100ED10	DLC04DismembererMagicEffect	MGEF	 	Dismember
+FormID: 0100ED11	DLC04DismembererEffect	SPEL	 	Dismember
+FormID: 0100ED12	DLC04EnchDismemberer	ENCH	 	Dismemberer
+FormID: 0100ED14	DLC04WeapUniqueRewardRifle	WEAP	 	Backwater Rifle
+FormID: 0100ED1C	DLC04BeachLooseSand	ACTI	 	Loose Pile Of Sand
+FormID: 0100ED1E	DLC04DigExplosion	EXPL	 	Dig Explosion
+FormID: 0100ED26	DLC04BogBobbleLCK	ACTI	 	Bobblehead - Luck
+FormID: 0100ED27	DLC04BogBobbleLuckMessage	MESG	 	Found Bobblehead
+FormID: 0100ED2A	DLC04BogBobbleSTR	ACTI	 	Bobblehead - Strength
+FormID: 0100ED2B	DLC04BogBobbleStrengthMessage	MESG	 	Found Bobblehead
+FormID: 0100ED2E	DLC04BogBobbleEND	ACTI	 	Bobblehead - Endurance
+FormID: 0100ED2F	DLC04BogBobbleEnduranceMessage	MESG	 	Found Bobblehead
+FormID: 0100ED92	DLC04FF04KennyBearActivator	ACTI	 	Kenny Bear
+FormID: 0100F037	DLC04KennyEntranceMapMarker	MAPM	 	Kenny's Cave
+FormID: 0100F05A	DLC04Lighthouse	CELL	 	Lighthouse
+FormID: 0100F0CC	DLC04HotelSuitCase01	CONT	 	Suitcase
+FormID: 0100F28F	DLC04CoastalGrotto01	CELL	 	Coastal Grotto
+FormID: 0100F2DC	DLC04ShackDoorInterior01	DOOR	 	Storm Door
+FormID: 0100F2F2	DLC04ShackCabinet01Door	DOOR	 	Cabinet
+FormID: 0100F2F6	DLC04ShackCabinet01DoorSingle	DOOR	 	Cabinet
+FormID: 0100F316	DLC04LabTerminalHistory	TERM	 	Terminal
+FormID: 0100F31C	DLC04LabTerminalArchive	TERM	 	Terminal
+FormID: 0100F31D	DLC04LabTerminalExperement	TERM	 	Terminal
+FormID: 0100F38F	DLC04EnchSwamplurkSpit	ENCH	 	Swamplurk Spit Poison
+FormID: 0100F390	DLC04SwamplurkPoison	SPEL	 	Radiation Poison
+FormID: 0100F391	DLC04SwamplurkSpitProjectile	PROJ	 	Centaur Spit
+FormID: 0100F3C7	DLC04TribalFriendlyFD	NPC_	 	Tribal
+FormID: 0100F3C8	DLC04TribalFriendlyFC	NPC_	 	Tribal
+FormID: 0100F3C9	DLC04TribalFriendlyMA	NPC_	 	Tribal
+FormID: 0100F3CA	DLC04TribalFriendlyMB	NPC_	 	Tribal
+FormID: 0100F3CB	DLC04TribalFriendlyMC	NPC_	 	Tribal
+FormID: 0100F3CC	DLC04TribalFriendlyMD	NPC_	 	Tribal
+FormID: 0100F3CD	DLC04TribalFriendlyFATEMPLATE	NPC_	 	Tribal
+FormID: 0100F3CE	DLC04TribalFriendlyFB	NPC_	 	Tribal
+FormID: 0100F3DC	DLC04MQ01PerkAdded	MESG	 	Superior Defender
+FormID: 0100F3DD	DLC04MQ02PerkAdded	MESG	 	Punga Power!
+FormID: 0100F754	DLC04BeachDiggerNote	NOTE	 	For Ozwaldo
+FormID: 0100F759	DLC04BeachTreasureChest	CONT	 	Footlocker
+FormID: 0100F795	DLC04LvlTwigbag	NPC_	 	Twigbag
+FormID: 0100F7A8	DLC04crSwamplurkDead	CREA	 	Mirelurk
+FormID: 0100F8AB	DLC04BlackhallManor02	CELL	 	Basement
+FormID: 0100F8DE	DLC04BanditExecuted01	NPC_	 	Smuggler
+FormID: 0100F8DF	DLC04BanditExecutioner01	NPC_	 	Smuggler
+FormID: 0100F928	DLC04FF04NavalCot01R	FURN	 	Cot
+FormID: 0100F939	DLC04FF02graveyard	QUST	 	graveyard for unused topics
+FormID: 0100F9C7	DLC04ElectricalSwitchBoatTest	ACTI	 	Boat Test
+FormID: 0100F9F3	DLC04MisterBurke	NPC_	 	Mister Break
+FormID: 0100FAE2	DLC04BlackhallManorSwampFolk03DEAD	CREA	 	Creeper
+FormID: 0100FBF7	DLC04FF02DunwichExplosion	EXPL	 	Flash
+FormID: 0100FC29	DLC04FF02MarcellaHolo	NOTE	 	Marcella's Last Words
+FormID: 0100FC2A	DLC04FF02MarcellaEntry01	NOTE	 	Marcella's Journal - Obadiah
+FormID: 0100FC2B	DLC04FF02MarcellaTerminal	TERM	 	Marcella's Terminal
+FormID: 0100FC2E	DLC04MirelurkEcology	PERK	 	Mirelurk Ecology
+FormID: 0100FC2F	DLC04MirelurkEcologyBook	BOOK	 	Marsh Hunting Tips Vol IV: Mirelurks
+FormID: 0100FC30	DLC04GhoulEcologyBook	BOOK	 	10 Indisputable Rules On Ghouls
+FormID: 0100FC34	DLC04MirelurkEcologyPerkAdded	MESG	 	Mirelurk Ecology
+FormID: 0100FC35	DLC04GhoulEcologyPerkAdded	MESG	 	Ghoul Ecology
+FormID: 0100FCAD	DLC04crSwamplurkDeadBearTrap	CREA	 	Mirelurk
+FormID: 0100FCDE	DLC04Room1GKEY	KEYM	 	Homestead Room 1G Key
+FormID: 0100FCDF	DLC04Room1KKEY	KEYM	 	Homestead Room 1K Key
+FormID: 0100FCF2	DLC04zTestMarkiepoo	CELL	 	Poo's Test Cell
+FormID: 0101004F	DLC04FF02MarcellaSpeaker	TACT	 	Speaker
+FormID: 01010050	DLC04FF02MarcellaTerminalSub	TERM	 	Marcella's Terminal
+FormID: 01010051	DLC04FF02MarcellaEntry02	NOTE	 	Marcella's Journal - Tobar
+FormID: 01010052	DLC04FF02MarcellaEntry03	NOTE	 	Marcella's Journal - Tribals
+FormID: 01010286	DLC04ShovelingMarker	FURN	 	Loose Pile Of Dirt
+FormID: 01010300	AfricanAmericanTribal	RACE	 	African American
+FormID: 01010301	AsianTribal	RACE	 	Asian
+FormID: 01010302	CaucasianTribal	RACE	 	Caucasian
+FormID: 01010303	HispanicTribal	RACE	 	Hispanic
+FormID: 0101030F	DLC04FerrisWheelWheel	ACTI	 	Ferris Wheel
+FormID: 01010346	DLC04CrDogVicious	CREA	 	Vicious Dog
+FormID: 0101034B	DLC04CrBloatFly	CREA	 	Bloatfly
+FormID: 0101034D	DLC04CrMoleRat	CREA	 	Mole Rat
+FormID: 0101039F	DLC04BogCorpseDeadSettler	NPC_	 	Dead Settler
+FormID: 010105D0	DLC04BogFatManNukeExplosion	EXPL	 	Nuke Explosion
+FormID: 010105D8	DLC04FF05fuseBoxFailureMSG	MESG	 	Circuit Box
+FormID: 010105D9	DLC04FF05fuseBoxMSG	MESG	 	Circuit Box
+FormID: 010105E1	DLC04FF05FuseBox	ACTI	 	Circuit Box
+FormID: 010105E7	DLC04FF05radVentFailureMSG	MESG	 	Radiation-Emitting Vent
+FormID: 010105E8	DLC04FF05radVentMSG	MESG	 	Radiation-Emitting Vent
+FormID: 010105EB	DLC04FF05RadiationVent	ACTI	 	Ventilator Duct
+FormID: 01010644	DLC04FF05campNote02	NOTE	 	USN DIA Field Report
+FormID: 01010645	DLC04FF05campNote01	NOTE	 	USN DIA Field Report
+FormID: 01010646	DLC04FF05photographTermRez	NOTE	 	Wan Yang (photo file)
+FormID: 01010647	DLC04FF05campNote05	NOTE	 	USN DIA Field Report
+FormID: 01010648	DLC04FF05campNote04	NOTE	 	USN DIA Field Report
+FormID: 01010649	DLC04FF05campNote03	NOTE	 	USN DIA Field Report
+FormID: 0101064A	DLC04FF05campTerminal	TERM	 	Terminal
+FormID: 0101064B	DLC04FF05campTerminalsubArchives	TERM	 	Terminal
+FormID: 0101064C	DLC04FF05campTerminalsubOps	TERM	 	Terminal
+FormID: 0101064D	DLC04FF05campTerminalsubInterrogations	TERM	 	Terminal
+FormID: 010106AD	DLC04CrFeralGhoul4A	CREA	 	Feral Ghoul Reaver
+FormID: 010106AF	DLC04FeralGhoulPoison	SPEL	 	Radiation Poison
+FormID: 010106B0	DLC04GhoulGrenade	WEAP	 	Radioactive Gore
+FormID: 010106B1	DLC04GoreExplosionGlow	EXPL	 	Toxic Gore Explosion
+FormID: 010106B2	DLC04GoreProjectile	PROJ	 	Radioactive Gore
+FormID: 010106B3	DLC04ReaverGlowEffect	MGEF	 	Radioactive Burning
+FormID: 010107B9	DLC04crSwampFolk1Melee	CREA	 	Scrapper
+FormID: 010107BA	DLC04crSwampFolk2Melee	CREA	 	Brawler
+FormID: 010107BB	DLC04crSwampFolk3Melee	CREA	 	Creeper
+FormID: 010107BC	DLC04crSwampFolk4Melee	CREA	 	Tracker
+FormID: 010107CB	DLC04BurialMound01Cont	CONT	 	Burial Mound
+FormID: 010107CC	DLC04BurialMound02Cont	CONT	 	Burial Mound
+FormID: 010107CD	DLC04BurialMound03Cont	CONT	 	Burial Mound
+FormID: 010107CE	DLC04DeskOfficeCornerMetal	CONT	 	Desk
+FormID: 010107CF	DLC04DeskOfficeMetal	CONT	 	Desk
+FormID: 010107D0	DLC04Dumpster02	CONT	 	Trash Bin
+FormID: 010107D1	DLC04FilingCabinet	CONT	 	Filing Cabinet
+FormID: 010107D2	DLC04FilingCabinetBunch01	CONT	 	Filing Cabinets
+FormID: 010107D3	DLC04FilingCabinetBunch02	CONT	 	Filing Cabinets
+FormID: 010107D4	DLC04FilingCabinetBunch03	CONT	 	Filing Cabinets
+FormID: 010107D5	DLC04FilingCabinetBunch04	CONT	 	Filing Cabinets
+FormID: 010107D6	DLC04Footlocker01	CONT	 	Footlocker
+FormID: 010107D7	DLC04Footlocker01Liquor	CONT	 	Footlocker
+FormID: 010107D8	DLC04Footlocker01Household	CONT	 	Footlocker
+FormID: 010107D9	DLC04Footlocker01Toys	CONT	 	Toy Box
+FormID: 010107DA	DLC04GarbageCanUrban01	CONT	 	Garbage Can
+FormID: 010107DB	DLC04GarbageCanUrban02	CONT	 	Garbage Can
+FormID: 010107DC	DLC04GarbageCanUrban03	CONT	 	Garbage Can
+FormID: 010107DD	DLC04GenericSafe01	CONT	 	Safe
+FormID: 010107DE	DLC04GenericSafeFloor01	CONT	 	Floor Safe
+FormID: 010107DF	DLC04GenericSafeWall01	CONT	 	Wall Safe
+FormID: 010107E0	DLC04HollowRockContainer	CONT	 	Hollowed-Out Rock
+FormID: 010107E1	DLC04HotelDesk01	CONT	 	Desk
+FormID: 010107E2	DLC04HotelWardrobe01	CONT	 	Wardrobe
+FormID: 010107E3	DLC04LiquorCabinet	CONT	 	Cabinet
+FormID: 010107E4	DLC04Locker01Factory	CONT	 	Locker
+FormID: 010107E5	DLC04Locker01Hospital	CONT	 	Locker
+FormID: 010107E6	DLC04Locker01Military	CONT	 	Locker
+FormID: 010107E7	DLC04Locker01Office	CONT	 	Locker
+FormID: 010107E8	DLC04LockerCabinet02	CONT	 	Cabinet
+FormID: 010107E9	DLC04LootDrugKit	CONT	 	First Aid Box
+FormID: 010107EA	DLC04LootCashRegister	CONT	 	Cash Register
+FormID: 010107EB	DLC04LootDrugKitLock	CONT	 	First Aid Box
+FormID: 010107EC	DLC04LootFirstAidKit	CONT	 	First Aid Box
+FormID: 010107ED	DLC04LootFirstAidKitLock	CONT	 	First Aid Box
+FormID: 010107EE	DLC04LootFootlocker01HouseholdLock	CONT	 	Footlocker
+FormID: 010107EF	DLC04LootFootlockerFactoryLock	CONT	 	Personal Footlocker
+FormID: 010107F0	DLC04LootFootlockerHouseholdLock	CONT	 	Personal Footlocker
+FormID: 010107F1	DLC04LootFootlockerMilitaryLock	CONT	 	Personal Footlocker
+FormID: 010107F2	DLC04LootFootlockerOfficeLock	CONT	 	Personal Footlocker
+FormID: 010107F3	DLC04LootGrenadeFrag	CONT	 	Grenade Box
+FormID: 010107F4	DLC04LootGrenadePlasma	CONT	 	Grenade Box
+FormID: 010107F5	DLC04LootGrenadePulse	CONT	 	Grenade Box
+FormID: 010107F6	DLC04LootGunCabinetMetalAPistolLaser	CONT	 	Gun Cabinet
+FormID: 010107F7	DLC04LootGunCabinetMetalAPistolsAll	CONT	 	Gun Cabinet
+FormID: 010107F8	DLC04LootGunCabinetMetalAPistolsGunpowder	CONT	 	Gun Cabinet
+FormID: 010107F9	DLC04LootGunCabinetMetalARiflesAll	CONT	 	Gun Cabinet
+FormID: 010107FA	DLC04LootGunCabinetMetalARiflesGunpowder	CONT	 	Gun Cabinet
+FormID: 010107FB	DLC04LootGunCabinetMetalBPistolLaser	CONT	 	Gun Cabinet
+FormID: 010107FC	DLC04LootGunCabinetMetalBPistolsAll	CONT	 	Gun Cabinet
+FormID: 010107FD	DLC04LootGunCabinetMetalBPistolsGunpowder	CONT	 	Gun Cabinet
+FormID: 010107FE	DLC04LootGunCabinetMetalBRiflesAll	CONT	 	Gun Cabinet
+FormID: 010107FF	DLC04LootGunCabinetMetalBRiflesGunpowder	CONT	 	Gun Cabinet
+FormID: 01010800	DLC04LootGunCabinetMetalPistolLaser	CONT	 	Cabinet
+FormID: 01010801	DLC04LootGunCabinetMetalRifleLaser	CONT	 	Cabinet
+FormID: 01010802	DLC04LootGunCabinetWoodPistolLaser	CONT	 	Cabinet
+FormID: 01010803	DLC04LootGunCabinetWoodPistolsAll	CONT	 	Cabinet
+FormID: 01010804	DLC04LootGunCabinetWoodPistolsGunpowder	CONT	 	Cabinet
+FormID: 01010805	DLC04LootGunCabinetWoodRifleLaser	CONT	 	Cabinet
+FormID: 01010806	DLC04LootGunCabinetWoodRiflesAll	CONT	 	Cabinet
+FormID: 01010807	DLC04LootGunCabinetWoodRiflesGunpowder	CONT	 	Cabinet
+FormID: 01010808	DLC04LootGunCaseChineseAssaultRifle	CONT	 	Gun Case
+FormID: 01010809	DLC04LootGunCaseChinesePistol	CONT	 	Gun Case
+FormID: 0101080A	DLC04LootGunCaseFlamer	CONT	 	Gun Case
+FormID: 0101080B	DLC04LootGunCaseGatlingLaser	CONT	 	Gun Case
+FormID: 0101080C	DLC04LootGunCaseHuntingRifle	CONT	 	Gun Case
+FormID: 0101080D	DLC04LootGunCaseLaserPistol	CONT	 	Gun Case
+FormID: 0101080E	DLC04LootGunCaseLaserRifle	CONT	 	Gun Case
+FormID: 0101080F	DLC04LootGunCaseMiniGun	CONT	 	Gun Case
+FormID: 01010810	DLC04LootGunCaseMissileLauncher	CONT	 	Gun Case
+FormID: 01010811	DLC04LootMineFrag	CONT	 	Mine Box
+FormID: 01010812	DLC04LootMineFragLOCK	CONT	 	Mine Box
+FormID: 01010813	DLC04LootMinePlasma	CONT	 	Mine Box
+FormID: 01010814	DLC04LootMinePlasmaEnclave	CONT	 	Mine Box
+FormID: 01010815	DLC04LootMinePulse	CONT	 	Mine Box
+FormID: 01010816	DLC04LootMineRND	CONT	 	Mine Box
+FormID: 01010817	DLC04LootSafeDrugDealer	CONT	 	Safe
+FormID: 01010818	DLC04LootSafeFactory	CONT	 	Safe
+FormID: 01010819	DLC04LootSafeFloorFactory	CONT	 	Safe
+FormID: 0101081A	DLC04LootSafeFloorHospital	CONT	 	Safe
+FormID: 0101081B	DLC04LootSafeFloorHousehold	CONT	 	Safe
+FormID: 0101081C	DLC04LootSafeFloorMilitary	CONT	 	Safe
+FormID: 0101081D	DLC04LootSafeFloorOffice	CONT	 	Safe
+FormID: 0101081E	DLC04LootSafeHospital	CONT	 	Safe
+FormID: 0101081F	DLC04LootSafeHousehold	CONT	 	Safe
+FormID: 01010820	DLC04LootSafeMilitary	CONT	 	Safe
+FormID: 01010821	DLC04LootSafeOffice	CONT	 	Safe
+FormID: 01010822	DLC04LootSafeWallFactory	CONT	 	Safe
+FormID: 01010823	DLC04LootSafeWallHospital	CONT	 	Safe
+FormID: 01010824	DLC04LootSafeWallHousehold	CONT	 	Safe
+FormID: 01010825	DLC04LootSafeWallMilitary	CONT	 	Safe
+FormID: 01010826	DLC04LootSafeWallOffice	CONT	 	Safe
+FormID: 01010827	DLC04lootUrbanGarbageCan	CONT	 	Garbage Can
+FormID: 01010828	DLC04MailboxDestroyed	CONT	 	Mailbox
+FormID: 01010829	DLC04MailboxDestroyedSmallGuns	CONT	 	Mailbox
+FormID: 0101082A	DLC04MailboxDestroyedUnarmed	CONT	 	Mailbox
+FormID: 0101082B	DLC04MetalBin01	CONT	 	Bin
+FormID: 0101082C	DLC04MetalBox01Commercial	CONT	 	Metal Box
+FormID: 0101082D	DLC04MetalBox01Factory	CONT	 	Metal Box
+FormID: 0101082E	DLC04MetalBox01Hospital	CONT	 	Metal Box
+FormID: 0101082F	DLC04MetalBox01Household	CONT	 	Metal Box
+FormID: 01010830	DLC04MetalBox01Library	CONT	 	Metal Box
+FormID: 01010831	DLC04MetalBox01Metro	CONT	 	Metal Box
+FormID: 01010832	DLC04MetalBox01Military	CONT	 	Metal Box
+FormID: 01010833	DLC04MetalBox01Office	CONT	 	Metal Box
+FormID: 01010834	DLC04MetalBox01School	CONT	 	Metal Box
+FormID: 01010835	DLC04MirelurkEggClutchCont01	CONT	 	Mirelurk Egg Clutch
+FormID: 01010836	DLC04MirelurkEggClutchCont02	CONT	 	Mirelurk Egg Clutch
+FormID: 01010837	DLC04MirelurkEggClutchCont03	CONT	 	Mirelurk Egg Clutch
+FormID: 01010838	DLC04MirelurkEggCont	CONT	 	Mirelurk Egg
+FormID: 01010839	DLC04NukaVendingMachine	CONT	 	Vending Machine
+FormID: 0101083A	DLC04NukaVendingMachineClean	CONT	 	Pristine Vending Machine
+FormID: 0101083B	DLC04OasisSack01	CONT	 	Sack
+FormID: 0101083C	DLC04OvenRangeClean01	CONT	 	Oven
+FormID: 0101083D	DLC04OvenRangeDirty01	CONT	 	Oven
+FormID: 0101083E	DLC04RefrigeratorMirelurk	CONT	 	Refrigerator
+FormID: 0101083F	DLC04RefrigeratorWithFood	CONT	 	Refrigerator
+FormID: 01010840	DLC04RefrigeratorWithLiquor	CONT	 	Refrigerator
+FormID: 01010841	DLC04SchoolDeskRuined01	CONT	 	Ruined School Desk
+FormID: 01010842	DLC04SteamerTrunk01	CONT	 	Trunk
+FormID: 01010843	DLC04SuitCase02	CONT	 	Suitcase
+FormID: 01010844	DLC04ToolboxContainer	CONT	 	Toolbox
+FormID: 01010845	DLC04ToolCabinet	CONT	 	Tool Cabinet
+FormID: 01010846	DLC04ToolCabinetMetal	CONT	 	Tool Cabinet
+FormID: 0101098A	DLC04WeapRitualKnife	WEAP	 	Ritual Knife
+FormID: 010109D5	DLC04EnchSlasherMask	ENCH	 	Slasher Mask
+FormID: 010109D8	DLC04FF05AviaryPuzzleBase	ACTI	 	Pedestal
+FormID: 01010A3F	DLC04FF01SampleSiteLocker	CONT	 	Footlocker
+FormID: 01010A4B	DLC04FF05speakerNPC	NPC_	 	Used for Dialogue Only
+FormID: 01010A4C	DLC04FF05holoPasswordAlt01	NOTE	 	Box 1191 - Password Backup
+FormID: 01010A4D	DLC04FF05holoPasswordAlt02	NOTE	 	Box 1213 - Bern's Voice
+FormID: 01010A4F	DLC04FF05BankManagerDesk	CONT	 	Loan Officer's Desk
+FormID: 01010A65	DLC04SafetyDepositBox1213	CONT	 	Safety Deposit Box
+FormID: 01010A66	DLC04SafetyDepositBox1191	CONT	 	Safety Deposit Box
+FormID: 01010A83	DLC04	CELL	 	dummy cell
+FormID: 01010AAC	DLC04FF02DunwichMSG01	MESG	 	Dunwich Obelisk
+FormID: 01010AAE	DLC04FF02DunwichObelisk	ACTI	 	Obelisk
+FormID: 01010AB6	DLC04zzCave02	CELL	 	Cave
+FormID: 01010AB8	DLC04zzCave01	CELL	 	Cave
+FormID: 01010AB9	DLC04zzBasement	CELL	 	Basement
+FormID: 01010ABA	DLC04zzCellar	CELL	 	Cellar
+FormID: 01010ABB	DLC04zzShack02	CELL	 	Shack
+FormID: 01010ABC	DLC04zzShop02	CELL	 	Vacant Shop
+FormID: 01010ABD	DLC04zzCafe01	CELL	 	Cafe
+FormID: 01010ABE	DLC04zzShack01	CELL	 	Shack
+FormID: 01010ABF	DLC04zzShop01	CELL	 	Abandoned Shop
+FormID: 01010AC0	DLC04zzWarehouse	CELL	 	Warehouse
+FormID: 01010AC1	DLC04PanicRoom	CELL	 	Panic Room
+FormID: 01010AC5	DLC04FF02MarcellaDiary02	NOTE	 	Marcella's Journal - Leaving CommonWealth?
+FormID: 01010AC6	DLC04FF02MarcellaDiary01	NOTE	 	Marcella's Journal - The Pitt?
+FormID: 01010AC7	DLC04FF02MarcellaDiary03	NOTE	 	Marcella's Journal - Capital Wasteland
+FormID: 01010AC8	DLC04FF02MarcellaTerminalSubJourno	TERM	 	Marcella's Terminal
+FormID: 01010AC9	DLC04MonumentPlaqueMSG	MESG	 	Coastal Monument
+FormID: 01010ACB	DLC04MonumentPlaque	ACTI	 	Inscribed Plaque
+FormID: 01010ACC	DLC04HardwareLetter	NOTE	 	Holotape Note
+FormID: 01010ADD	DLC04IntroCrDogVicious	CREA	 	Vicious Dog
+FormID: 01010BC3	DLC04FishingPole	MISC	 	Fishing Pole
+FormID: 01010BC5	DLC04LighthouseBulb	MISC	 	Lighthouse Bulb
+FormID: 01010BCF	DLC04ToolboxContainerLUNCH	CONT	 	Lunch Box
+FormID: 01010BFC	DLC04FF02MarcellaDEAD	NPC_	 	Marcella
+FormID: 01010BFF	DLC04FF02MarcellaPlayerEntry	NOTE	 	Marcella's Journal - Player
+FormID: 01010C27	DLC04DeadCrMirelurk1	CREA	 	Mirelurk
+FormID: 01010EEE	DLC04VendorChestsCell	CELL	 	Buried Vendor Chests
+FormID: 01010EF0	DLC04VendorContainerPanada	CONT	 	Madam Panada's Wares
+FormID: 01010EF2	DLC04VendorContainerHaley	CONT	 	Haley's Inventory
+FormID: 01010EF3	DLC04HaleyVendorKey	KEYM	 	Haley's Inventory Key
+FormID: 01010EF4	DLC04PanadaVendorKey	KEYM	 	Panada's Inventory Key
+FormID: 01011094	DLC04MQ02PerkAddedalt01	MESG	 	Punga Power!
+FormID: 01011095	DLC04MQ02PerkAddedalt02	MESG	 	Punga Power!
+FormID: 01011096	DLC04PungaPoweralt01	PERK	 	Punga Power!
+FormID: 01011097	DLC04PungaPoweralt02	PERK	 	Punga Power!
+FormID: 01011098	DLC04staticShotgunScrapper	CREA	 	Scrapper
+FormID: 010110D1	DLC04Coffin01ClosedCont	CONT	 	Coffin
+FormID: 010110D4	testheadscar	ARMO	 	Scar
+FormID: 01011136	DLC04HeadscarNote	NOTE	 	Head Scar Treatment
+FormID: 0101115C	DLC04crSwampFolk1MeleeNoRespawn	CREA	 	Scrapper
+FormID: 0101115D	DLC04crSwampFolk1RangedNoRespawn	CREA	 	Scrapper
+FormID: 0101115E	DLC04crSwampFolk2MeleeNoRespawn	CREA	 	Brawler
+FormID: 0101115F	DLC04crSwampFolk2RangedNoRespawn	CREA	 	Brawler
+FormID: 01011160	DLC04crSwampFolk3MeleeNoRespawn	CREA	 	Creeper
+FormID: 01011161	DLC04crSwampFolk3RangedNoRespawn	CREA	 	Creeper
+FormID: 01011162	DLC04crSwampFolk4MeleeNoRespawn	CREA	 	Tracker
+FormID: 01011163	DLC04crSwampFolk5MeleeNoRespawn	CREA	 	Bruiser
+FormID: 0101116D	DLC04FF06PliksJournal	MISC	 	Plik's Journal
+FormID: 01011187	DLC04FF06PlikNotesMSG	MESG	 	Plik's Field Journal
+FormID: 01011188	DLC04FF06PerkMSG	MESG	 	Ghoul Ecology Perk
+FormID: 0101123A	DLC04ArmorTribalGloveRight	ARMA	 	TribalGloveRight
+FormID: 0101123B	DLC04ArmorTribalGloveLeft	ARMA	 	TribalGloveLeft
+FormID: 010113EE	DLC04LightHouseLODBeam	EXPL	 	Lighthouse LOD Effect
+FormID: 01011403	DLC04BogTeddyBear	MISC	 	Teddy Bear
+FormID: 010116F6	DLC04BogHallucinationGhoul	CREA	 	Swamp Ghoul
+FormID: 01011709	LockerEnclave01Hospital	CONT	 	Locker
+FormID: 0101170A	LockerEnclave01Household	CONT	 	Locker
+FormID: 0101170B	LockerEnclave01Military	CONT	 	Locker
+FormID: 01011823	DLC04ManWingBlockFX01	ACTI	 	Marks Test
+FormID: 0101182C	DLC04ManWingBlockFX02	ACTI	 	Marks test too
+FormID: 0101183D	DLC04LabDoorSm01MinUse	DOOR	 	Door
+FormID: 01011C9A	DLC04LighthouseSwitch01	ACTI	 	Beacon Switch
+FormID: 01011CA5	DLC04BogMusicStartTRIG	ACTI	 	Gas Valve
+FormID: 01011CBE	DLC04MansionSmokeLODEffect	EXPL	 	Mansion LOD Effect
+FormID: 01011D44	DLC04LargePungaSeedMarker	FURN	 	.
+FormID: 010125F5	DLC04WeapKnifeNonPlayable	WEAP	 	Knife
+FormID: 010125F6	DLC04WeapKnifeCombatNonPlayable	WEAP	 	Combat Knife
+FormID: 010125F7	DLC04WeapTireIronNonPlayable	WEAP	 	Tire Iron
+FormID: 010125F8	DLC04WeapLeadPipeNonPlayable	WEAP	 	Lead Pipe
+FormID: 010125F9	DLC04WeapHuntingRifleNonPlayable	WEAP	 	Hunting Rifle
+FormID: 010125FA	DLC04WeapBaseballBatNonPlayable	WEAP	 	Baseball Bat
+FormID: 010125FB	DLC04WeapBBGunNonPlayable	WEAP	 	BB Gun
+FormID: 01012C3B	DLC04zTestDar	CELL	 	Duchess Gambit Cabin
+FormID: 01012C63	DLC04DarMuckNudge	EXPL	 	Large Explosion
+FormID: 01012C64	DLC04MuckBubbleQuest	QUST	 	DLC04MuckBubbleQuest
+FormID: 01012CBF	DLC04ManBaseFloorHoleSoundTRIG	ACTI	 	Gas Valve
+FormID: 01012D9F	DLC04ManKillWingTRIG	ACTI	 	Gas Valve
+FormID: 00017F50	DunwichBuilding03	CELL	 	Virulent Underchambers
+FormID: 01000802	DLC4Pointlookout	WRLD	 	Point Lookout
+FormID: 01002881	DLC04Mansion01	CELL	 	Calvert Mansion
+FormID: 01002CD7	DLC04zTestMansion01	CELL	 	Test Mansion Cell
+FormID: 01002EDF	DLC04surveyHole01	CELL	 	Excavated Muck Hole
+FormID: 01002EFE	DLC04zTestJoel	CELL	 	Joel's Test Cell
+FormID: 01002F17	DLC04FF01ByssheTerminal	TERM	 	Bysshe Co. Terminal
+FormID: 01002F18	DLC04FF01	QUST	 	An Antique Land
+FormID: 01002F1B	DLC04FF01holoNote01	NOTE	 	Soil Survey Tape #1
+FormID: 01002F1C	DLC04FF01holoNote02	NOTE	 	Soil Survey Tape #2
+FormID: 01002F1D	DLC04FF01holoNote03	NOTE	 	Soil Survey Tape #3
+FormID: 01002F25	DLC04Ladder	DOOR	 	Ladder
+FormID: 01002F3E	DLC04FF02ObadiahBlackhall	NPC_	 	Obadiah Blackhall
+FormID: 01002F42	DLC04FF02Marcella	NPC_	 	Marcella
+FormID: 01002F46	DLC04FF02Book	MISC	 	The Krivbeknih
+FormID: 01002F47	DLC04FF02	QUST	 	The Dark Heart of Blackhall
+FormID: 01002F77	DLC04MDoorSmL01	DOOR	 	Door
+FormID: 01002F78	DLC04MDoorBig01	DOOR	 	Door
+FormID: 010030D5	DLC04FF02ObadiahLetter	NOTE	 	Obadiah's Letter to Marcella
+FormID: 01003149	DLC04FF02Altar	ACTI	 	Ceremonial Lectern
+FormID: 0100314A	DLC04FF02AltarMSG01	MESG	 	The Ceremonial Lectern
+FormID: 0100314C	DLC04FF02AltarMSG02	MESG	 	The Ceremonial Lectern
+FormID: 0100314E	DLC04FF02MurderSceneMSG	MESG	 	Murder!
+FormID: 0100359E	DLC04ManMasterTrig	ACTI	 	Gas Valve
+FormID: 010035B4	DLC04Desmond	NPC_	 	Desmond
+FormID: 010035B8	DLC04ManStage01Start02	ACTI	 	Gas Valve
+FormID: 010035BF	DLC04MQ02LD	QUST	 	Defending The Mansion
+FormID: 010035D3	DLC04ManStage01Start01a	ACTI	 	Gas Valve
+FormID: 010035D7	DLC04ManStage01Start01b	ACTI	 	Gas Valve
+FormID: 010035F9	DLC04MQ02LDSeq01Spawn03MakeRag	ACTI	 	Gas Valve
+FormID: 010035FD	DLC04MQ02LDSeq01Spawn04Trig	ACTI	 	Gas Valve
+FormID: 0100360B	DLC04MQ02LDSeq01Spawn05Trig	ACTI	 	Gas Valve
+FormID: 0100362A	DLC04MQ02LDSeq01Block	ACTI	 	Block Entry
+FormID: 01003631	DLC04MQ02LDSeq01Spawn03TableTrig	ACTI	 	Gas Valve
+FormID: 01003745	DLC04BoardwalkBench01	FURN	 	Bench
+FormID: 01003746	DLC04BoardwalkBench02	FURN	 	Bench
+FormID: 01003747	DLC04BoardwalkBench03	FURN	 	Bench
+FormID: 01003DBE	DLC04MDoorSmL03	DOOR	 	Door
+FormID: 01003DBF	DLC04MDoorSmL02	DOOR	 	Door
+FormID: 01003F2C	DLC04FF01speakerNPC	NPC_	 	Used for Dialogue Only
+FormID: 01003F2D	DLC04FF01MissionNote	NOTE	 	Mission Parameters
+FormID: 01003F6E	DLC04FF03Marguerite	NPC_	 	Marguerite
+FormID: 01003F70	DLC04FF03	QUST	 	A Spoonful of Whiskey
+FormID: 01003FA3	DLC04Yeast	MISC	 	Yeast
+FormID: 01003FC6	DLC04PungaWild	ALCH	 	Wild Punga Fruit
+FormID: 01003FE4	DLC04FF03Still	ACTI	 	Moonshine Still
+FormID: 01003FE7	DLC04FF03StillRepairMSG	MESG	 	Marguerite's Still
+FormID: 01003FE9	DLC04PungaRefined	ALCH	 	Refined Punga Fruit
+FormID: 010040AC	DLC04Cathedral01	CELL	 	Ark & Dove Cathedral
+FormID: 010041FB	DLC04FerrisWheelBeaconHolder	ACTI	 	Beacon Goes Here
+FormID: 010041FE	DLC04FerrisWheelControlPanel	ACTI	 	Ferris Wheel Controls
+FormID: 0100421F	DLC04Pew01	FURN	 	Pew
+FormID: 0100422C	DLC04FF03rewardFridge	CONT	 	Refrigerator
+FormID: 0100422D	DLC04FF03Moonshine	ALCH	 	Moonshine
+FormID: 01004269	DLC04PungaPlant01	ACTI	 	Wild Punga
+FormID: 0100426A	DLC04PungaPlant02	ACTI	 	Punga Fruit Plant
+FormID: 0100426D	DLC04PungaPlantRefined01	ACTI	 	Punga Fruit Plant
+FormID: 0100426E	DLC04PungaPlantRefined02	ACTI	 	Punga Fruit Plant
+FormID: 0100436E	DLC04FF05	QUST	 	The Velvet Curtain
+FormID: 01004370	DLC04FF05holoContact	NOTE	 	Contact Tape
+FormID: 01004377	DLC04CalvertMansionMarkerREF	MAPM	 	Calvert Mansion
+FormID: 01004378	DLC04CathedralMarkerREF	MAPM	 	The Ark & Dove Cathedral
+FormID: 01004379	DLC04JetCrashMarker	MAPM	 	Jet Crash Site
+FormID: 0100437A	DLC04TurtledoveMarkerREF	MAPM	 	Turtledove Detention Camp
+FormID: 0100437B	DLC04OfieMarkerREF	MAPM	 	Ofie Clan Plot
+FormID: 0100437C	DLC04LighthouseMarkerREF	MAPM	 	Point Lookout Lighthouse
+FormID: 0100437D	MedicalTentMarker	MAPM	 	Disaster Relief Outpost
+FormID: 0100437E	DLC04OzyMapMarker	MAPM	 	USS Ozymandias
+FormID: 0100437F	RitualSiteMarker	MAPM	 	Ritual Site
+FormID: 01004380	DLC04GrowShackMarkerREF	MAPM	 	Grower's Shack
+FormID: 01004381	DLC04HaleyHardwareMarkerREF	MAPM	 	Haley's Hardware
+FormID: 01004382	DLC04MargeMarkerREF	MAPM	 	Marguerite's Shack
+FormID: 01004383	DLC04TrapperShackMarkerREF	MAPM	 	Trapper's Shack
+FormID: 01004384	DLC04FloodedSinkholeMarkerREF	MAPM	 	Flooded Sinkhole
+FormID: 01004386	DLC04TruckWreckMarkerREF	MAPM	 	Truck Wreckage
+FormID: 01004387	DLC04BlackhallMarkerREF	MAPM	 	Blackhall Manor

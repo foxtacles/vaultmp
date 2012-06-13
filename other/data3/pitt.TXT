@@ -1,0 +1,485 @@
+FormID: 0000003C	Wasteland	WRLD	 	Wasteland
+FormID: 01004CD7	DLC01TrainTunnel	CELL	 	Pitt Tunnel
+FormID: 0100504F	DLC01SteelMillExtTrogEnablerTrigger	ACTI	 	Gas Valve
+FormID: 01005208	DLC01Slop	ALCH	 	Slop
+FormID: 010054DA	 	MAPM	 	Pitt Steelyard
+FormID: 010054DB	DLC01TrainYardMapMARKER	MAPM	 	Pitt Train Yard
+FormID: 010054DC	DLC01PittBridgeMapMarker	MAPM	 	The Pitt Bridge
+FormID: 010054DD	 	MAPM	 	Pitt Downtown
+FormID: 010054DE	 	MAPM	 	Pitt Uptown
+FormID: 010054DF	DLC01HavenMapMarkerREF	MAPM	 	Haven
+FormID: 010054FA	DLC01LvlRadioTowerRaiderGun	NPC_	 	Pitt Raider
+FormID: 010054FD	DLC01RadioTowerSceneTrigger	ACTI	 	Gas Valve
+FormID: 01005526	DLC01ConvSlave	QUST	 	Slave Conversation System
+FormID: 01005527	DLC01SlaveConvFaction	FACT	 	Slave Conversation Faction
+FormID: 01005951	DLC01Q3SceneTrigger	ACTI	 	Ashur Scene Trigger
+FormID: 01005CEB	DLC01Press	ACTI	 	Steel Press
+FormID: 01005D33	AudioTemplateTrog	CREA	 	AudioTemplateTrog
+FormID: 01005FB9	DLC01SteelyardKey	KEYM	 	Steelyard Gate Key
+FormID: 01005FBA	DLC01MideaNote	NOTE	 	Wernher's Note to Midea
+FormID: 01005FBB	DLC01MideaNoteItem	MISC	 	Wernher's Note to Midea
+FormID: 01005FD1	DLCPittEntranceGate01	DOOR	 	Gate
+FormID: 0100602C	DLC01zUptownApt	CELL	 	Abandoned Apartments
+FormID: 01006163	DLC01WernherPostAmbushTrigger	ACTI	 	Gas Valve
+FormID: 01006166	DLC01Mex	NPC_	 	Mex
+FormID: 01006169	DLC01FrontGateEnterTrigger	ACTI	 	Gas Valve
+FormID: 0100619F	DLC01SteelPlateActivator	ACTI	 	Steel Ingot
+FormID: 010062A4	DLC01RaiderConvFaction	FACT	 	Raider Conversation Faction
+FormID: 010062A5	DLC01ConvRaider	QUST	 	Pitt Raider Conversation System
+FormID: 01006327	DLCPittEntranceDoor01	DOOR	 	Gate
+FormID: 01006334	DLC01SlaveCampToPittDoor	DOOR	 	Door
+FormID: 01006336	DLC01Conveyor	ACTI	 	Conveyor
+FormID: 0100633E	DLC01RaiderNoPlayerDialogue	FACT	 	Does not enter dialogue with player
+FormID: 01006355	DLC01PowerPlant	CELL	 	Pitt Underground
+FormID: 0100682C	DLC01FF006SlaveA	NPC_	 	Pitt Slave
+FormID: 0100682E	DLC01FFFloorSitMarker	FURN	 	Floor Sit
+FormID: 01006837	DLC01FF006SlaveC	NPC_	 	Pitt Slave
+FormID: 01006838	DLC01FF006SlaveB	NPC_	 	Pitt Slave
+FormID: 01006840	DLC01FF006Guard	NPC_	 	Guard
+FormID: 01006852	DLCPittArmorPowerAshur	ARMO	 	Ashur's Power Armor
+FormID: 010068B9	DLC01MideaHutToMarketSquare	DOOR	 	Door
+FormID: 0100691E	DLC01PPTerminalScare01	TERM	 	Broken Terminal
+FormID: 01006BA2	DLCPittFlint01	MSTT	 	Flint
+FormID: 01006BA3	DLCPittShovel01	MSTT	 	Shovel
+FormID: 01006BA4	DLCPittWeldingGun01	MSTT	 	Welding Gun
+FormID: 01006BE9	DLC01TerminalPowerShutOff	TERM	 	Uptown Floodlight Controls
+FormID: 01006C18	DLC01RaiderDead02	NPC_	 	Pitt Slave
+FormID: 01006C1D	DLC01TrogDEAD	CREA	 	Trog
+FormID: 01006C30	DLC01Q3MideaMeetingTrigger	ACTI	 	Midea Meeting Trigger
+FormID: 010071AD	DLC01ArenaCombatant01c	NPC_	 	Slave Fighter
+FormID: 010071AE	DLC01ArenaCombatant01a	NPC_	 	Slave Fighter
+FormID: 010071AF	DLC01ArenaCombatant01b	NPC_	 	Slave Fighter
+FormID: 010071B0	DLC01ArenaCombatant03b	NPC_	 	Raider Fighter
+FormID: 010071B1	DLC01ArenaCombatant03c	NPC_	 	Raider Fighter
+FormID: 010071C0	DLC01PlayerItemContainer02	CONT	 	Footlocker
+FormID: 01007352	DLC01TravelToDCNoBabyMessagebox	MESG	 	The Road Ahead
+FormID: 01007354	DLC01BoosterShot	PERK	 	Booster Shot
+FormID: 01007355	DLC01BoosterShotAbility	SPEL	 	Booster Shot
+FormID: 01007356	DLC01MillAmmoNote	NOTE	 	Ammo Mill Instructions
+FormID: 0100736A	DLC01MillAmmoContainer	CONT	 	Materials Bin
+FormID: 01007370	DLC01MillAmmoInstructions	NOTE	 	Ammo Mill Instructions
+FormID: 0100737C	DLC01WeapInfiltrator	WEAP	 	Infiltrator
+FormID: 010073E8	DLC01AutoAxpert	PERK	 	Auto Axpert
+FormID: 010073E9	DLC01PittFighterAbility	SPEL	 	Pitt Fighter
+FormID: 010073EA	DLC01PittFighter	PERK	 	Pitt Fighter
+FormID: 010073EC	DLC01TravelToDCMessageboxNO	MESG	 	The Road Ahead
+FormID: 0100787A	DLC01Conveyor02	ACTI	 	Conveyor
+FormID: 01007D69	DLC01DowntownTerminal01	TERM	 	DPW Mail Terminal
+FormID: 01007D70	DLC01DowntownTerminal02	TERM	 	DPW Mail Terminal
+FormID: 01007D79	DLC01DCSlavePenJumpInTrigger	ACTI	 	Gas Valve
+FormID: 01007D7D	DLC01TunnelHandcartDC	ACTI	 	Hand Cart
+FormID: 01007D7E	DLC01TunnelMessage	MESG	 	Travel
+FormID: 01007D87	DLC01TowerEntrance	CELL	 	Haven Entrance
+FormID: 01007EC2	DLC01LvWildmenGunPatrolCasual	NPC_	 	Wildman
+FormID: 01007F3C	DLC01SandraTerminalx	TERM	 	Research Computer
+FormID: 01007F3D	DLC01SafeAshur	CONT	 	Safe
+FormID: 01007F3E	DLC01Raider1GunAAFTEMPLATE	NPC_	 	Pitt Raider
+FormID: 01007F3F	DLC01Raider1GunAAM	NPC_	 	Pitt Raider
+FormID: 01007F40	DLC01Raider1GunAF	NPC_	 	Pitt Raider
+FormID: 01007F41	DLC01Raider1GunAM	NPC_	 	Pitt Raider
+FormID: 01007F42	DLC01Raider1GunCF	NPC_	 	Pitt Raider
+FormID: 01007F43	DLC01Raider1GunCM	NPC_	 	Pitt Raider
+FormID: 01007F44	DLC01Raider1GunHF	NPC_	 	Pitt Raider
+FormID: 01007F45	DLC01Raider1GunHM	NPC_	 	Pitt Raider
+FormID: 01007F46	dlc01Raider1MeleeAAFTEMPLATE	NPC_	 	Pitt Raider
+FormID: 01007F47	dlc01Raider1MeleeAAM	NPC_	 	Pitt Raider
+FormID: 01007F48	dlc01Raider1MeleeAF	NPC_	 	Pitt Raider
+FormID: 01007F49	dlc01Raider1MeleeAM	NPC_	 	Pitt Raider
+FormID: 01007F4A	dlc01Raider1MeleeCF	NPC_	 	Pitt Raider
+FormID: 01007F4B	dlc01Raider1MeleeCM	NPC_	 	Pitt Raider
+FormID: 01007F4C	dlc01Raider1MeleeHF	NPC_	 	Pitt Raider
+FormID: 01007F4D	dlc01Raider1MeleeHM	NPC_	 	Pitt Raider
+FormID: 01007F4E	dlc01Raider1RifleAAFTEMPLATE	NPC_	 	Pitt Raider
+FormID: 01007F4F	dlc01Raider1RifleAAM	NPC_	 	Pitt Raider
+FormID: 01007F50	dlc01Raider1RifleAF	NPC_	 	Pitt Raider
+FormID: 01007F51	dlc01Raider1RifleAM	NPC_	 	Pitt Raider
+FormID: 01007F52	dlc01Raider1RifleCF	NPC_	 	Pitt Raider
+FormID: 01007F53	dlc01Raider1RifleCM	NPC_	 	Pitt Raider
+FormID: 01007F54	dlc01Raider1RifleHF	NPC_	 	Pitt Raider
+FormID: 01007F55	dlc01Raider1RifleHM	NPC_	 	Pitt Raider
+FormID: 01007F56	dlc01Raider2SpecialAAFTEMPLATE	NPC_	 	Pitt Raider
+FormID: 01007F57	dlc01Raider2SpecialAF	NPC_	 	Pitt Raider
+FormID: 01007F58	dlc01Raider2SpecialCF	NPC_	 	Pitt Raider
+FormID: 01007F59	dlc01Raider2SpecialHF	NPC_	 	Pitt Raider
+FormID: 01007F5A	dlc01Raider2SpecialAAM	NPC_	 	Pitt Raider
+FormID: 01007F5B	dlc01Raider2SpecialAM	NPC_	 	Pitt Raider
+FormID: 01007F5C	dlc01Raider2SpecialCM	NPC_	 	Pitt Raider
+FormID: 01007F5D	dlc01Raider2SpecialHM	NPC_	 	Pitt Raider
+FormID: 01007F5E	dlc01Raider2GunAAFTEMPLATE	NPC_	 	Pitt Raider
+FormID: 01007F5F	dlc01Raider2GunAAM	NPC_	 	Pitt Raider
+FormID: 01007F60	dlc01Raider2GunAF	NPC_	 	Pitt Raider
+FormID: 01007F61	dlc01Raider2GunAM	NPC_	 	Pitt Raider
+FormID: 01007F62	dlc01Raider2GunCF	NPC_	 	Pitt Raider
+FormID: 01007F63	dlc01Raider2GunCM	NPC_	 	Pitt Raider
+FormID: 01007F64	dlc01Raider2GunHF	NPC_	 	Pitt Raider
+FormID: 01007F65	dlc01Raider2GunHM	NPC_	 	Pitt Raider
+FormID: 01007F66	DLC01Raider2MeleeAAFTEMPLATE	NPC_	 	Pitt Raider
+FormID: 01007F67	DLC01Raider2MeleeAAM	NPC_	 	Pitt Raider
+FormID: 01007F68	DLC01Raider2MeleeAF	NPC_	 	Pitt Raider
+FormID: 01007F69	DLC01Raider2MeleeAM	NPC_	 	Pitt Raider
+FormID: 01007F6A	DLC01Raider2MeleeCF	NPC_	 	Pitt Raider
+FormID: 01007F6B	DLC01Raider2MeleeCM	NPC_	 	Pitt Raider
+FormID: 01007F6C	DLC01Raider2MeleeHF	NPC_	 	Pitt Raider
+FormID: 01007F6D	DLC01Raider2MeleeHM	NPC_	 	Pitt Raider
+FormID: 01007F6E	DLC01Raider2RifleAAFTEMPLATE	NPC_	 	Pitt Raider
+FormID: 01007F6F	DLC01Raider2RifleAAM	NPC_	 	Pitt Raider
+FormID: 01007F70	DLC01Raider2RifleAF	NPC_	 	Pitt Raider
+FormID: 01007F71	DLC01Raider2RifleAM	NPC_	 	Pitt Raider
+FormID: 01007F72	DLC01Raider2RifleCF	NPC_	 	Pitt Raider
+FormID: 01007F73	DLC01Raider2RifleCM	NPC_	 	Pitt Raider
+FormID: 01007F74	DLC01Raider2RifleHF	NPC_	 	Pitt Raider
+FormID: 01007F75	DLC01Raider2RifleHM	NPC_	 	Pitt Raider
+FormID: 01007F76	DLC01Raider3GunAAFTEMPLATE	NPC_	 	Pitt Raider
+FormID: 01007F77	DLC01Raider3GunAAM	NPC_	 	Pitt Raider
+FormID: 01007F78	DLC01Raider3GunAF	NPC_	 	Pitt Raider
+FormID: 01007F79	DLC01Raider3GunAM	NPC_	 	Pitt Raider
+FormID: 01007F7A	DLC01Raider3GunCF	NPC_	 	Pitt Raider
+FormID: 01007F7B	DLC01Raider3GunCM	NPC_	 	Pitt Raider
+FormID: 01007F7C	DLC01Raider3GunHF	NPC_	 	Pitt Raider
+FormID: 01007F7D	DLC01Raider3GunHM	NPC_	 	Pitt Raider
+FormID: 01007F7E	DLC01Raider3MeleeAAFTEMPLATE	NPC_	 	Pitt Raider
+FormID: 01007F7F	DLC01Raider3MeleeAAM	NPC_	 	Pitt Raider
+FormID: 01007F80	DLC01Raider3MeleeAF	NPC_	 	Pitt Raider
+FormID: 01007F81	DLC01Raider3MeleeAM	NPC_	 	Pitt Raider
+FormID: 01007F82	DLC01Raider3MeleeCF	NPC_	 	Pitt Raider
+FormID: 01007F83	DLC01Raider3MeleeCM	NPC_	 	Pitt Raider
+FormID: 01007F84	DLC01Raider3MeleeHF	NPC_	 	Pitt Raider
+FormID: 01007F85	DLC01Raider3MeleeHM	NPC_	 	Pitt Raider
+FormID: 01007F86	DLC01Raider3SpecialAAM	NPC_	 	Pitt Raider
+FormID: 01007F87	DLC01Raider3SpecialAM	NPC_	 	Pitt Raider
+FormID: 01007F88	DLC01Raider3SpecialCM	NPC_	 	Pitt Raider
+FormID: 01007F89	DLC01Raider3SpecialHM	NPC_	 	Pitt Raider
+FormID: 01007F8A	DLC01Raider3SpecialAAFTEMPLATE	NPC_	 	Pitt Raider
+FormID: 01007F8B	DLC01Raider3SpecialAF	NPC_	 	Pitt Raider
+FormID: 01007F8C	DLC01Raider3SpecialCF	NPC_	 	Pitt Raider
+FormID: 01007F8D	DLC01Raider3SpecialHF	NPC_	 	Pitt Raider
+FormID: 01007F8E	DLC01Raider3RifleAAFTEMPLATE	NPC_	 	Pitt Raider
+FormID: 01007F8F	DLC01Raider3RifleAAM	NPC_	 	Pitt Raider
+FormID: 01007F90	DLC01Raider3RifleAF	NPC_	 	Pitt Raider
+FormID: 01007F91	DLC01Raider3RifleAM	NPC_	 	Pitt Raider
+FormID: 01007F92	DLC01Raider3RifleCF	NPC_	 	Pitt Raider
+FormID: 01007F93	DLC01Raider3RifleCM	NPC_	 	Pitt Raider
+FormID: 01007F94	DLC01Raider3RifleHF	NPC_	 	Pitt Raider
+FormID: 01007F95	DLC01Raider3RifleHM	NPC_	 	Pitt Raider
+FormID: 01007F97	DLC01SlaveAAF1TEMPLATE	NPC_	 	Pitt Slave
+FormID: 01007F98	DLC01SlaveAAM1	NPC_	 	Pitt Slave
+FormID: 01007F99	DLC01SlaveAF1	NPC_	 	Pitt Slave
+FormID: 01007F9A	DLC01SlaveAM1	NPC_	 	Pitt Slave
+FormID: 01007F9B	DLC01SlaveCF1	NPC_	 	Pitt Slave
+FormID: 01007F9C	DLC01SlaveCM1	NPC_	 	Pitt Slave
+FormID: 01007F9D	DLC01SlaveHF1	NPC_	 	Pitt Slave
+FormID: 01007F9E	DLC01SlaveHM1	NPC_	 	Pitt Slave
+FormID: 01007F9F	DLC01SlaveAAF2	NPC_	 	Pitt Slave
+FormID: 01007FA0	DLC01SlaveAAM2	NPC_	 	Pitt Slave
+FormID: 01007FA1	DLC01SlaveAF2	NPC_	 	Pitt Slave
+FormID: 01007FA2	DLC01SlaveAM2	NPC_	 	Pitt Slave
+FormID: 01007FA3	DLC01SlaveCF2	NPC_	 	Pitt Slave
+FormID: 01007FA4	DLC01SlaveCM2	NPC_	 	Pitt Slave
+FormID: 01007FA5	DLC01SlaveHF2	NPC_	 	Pitt Slave
+FormID: 01007FA6	DLC01SlaveHM2	NPC_	 	Pitt Slave
+FormID: 01007FC1	DLC01AshurKey	KEYM	 	Ashur's Key
+FormID: 01007FC5	DLC01ArmorRaiderHelmet	ARMO	 	Supervisor Helmet
+FormID: 010080A3	DLC01SandraTerminal	TERM	 	Research Computer
+FormID: 010080A5	DLC01TrogResearch	NOTE	 	Trog Research
+FormID: 010080A6	DLC01CureResearch	NOTE	 	Cure Research
+FormID: 010080AA	DLC01SupplyPlant	CELL	 	Supply Plant
+FormID: 01008886	DLC01AshurDoor2	DOOR	 	Door
+FormID: 01008B8A	DLC01HelmetWelders	ARMO	 	Welder's Mask
+FormID: 01009366	DLC01ChineseSafeFloor01	CONT	 	Floor Safe
+FormID: 01009383	DLC01ArmorMetal	ARMO	 	Gamma Shield Armor
+FormID: 01009384	DLC01LvlSurvivorGunLead	NPC_	 	Wildman
+FormID: 01009385	DLC01RaiderDeadLead	NPC_	 	Pitt Raider
+FormID: 01009411	DLC01LvlWildmenMeleeCoward	NPC_	 	Wildman
+FormID: 01009416	DLC01LvlWildmenGunLead	NPC_	 	Wildman
+FormID: 0100944E	DLC01LvlWildmenMeleeDEAD	NPC_	 	Wildman
+FormID: 0100948A	DLC01SupplyPlantUtlDoor01	DOOR	 	Door
+FormID: 010094AA	DLC01EnchMetalArmorLead	ENCH	 	Lead-Lined Armor
+FormID: 01009AC1	DLC01SlaveOutfit2	ARMO	 	Worn Slave Outfit
+FormID: 01009ACB	DLC01SlaveDeadPen	NPC_	 	Pitt Slave
+FormID: 01009AFD	DLC01OffDoorHotelSmL01Minimal	DOOR	 	Door
+FormID: 01009B51	DLC01HolderWastelanderAAF	NPC_	 	Wastelander
+FormID: 01009B52	DLC01HolderWastelanderAAM	NPC_	 	Wastelander
+FormID: 01009B53	DLC01HolderWastelanderAF	NPC_	 	Wastelander
+FormID: 01009B54	DLC01HolderWastelanderAM	NPC_	 	Wastelander
+FormID: 01009F44	DLC01TestJeffQuest	CELL	 	Abandoned Area
+FormID: 01009F4A	DLC01WildBillDead	NPC_	 	Wild Bill
+FormID: 01009F4B	DLC01Milly	NPC_	 	Milly
+FormID: 01009F4C	DLC01WildBillNote	NOTE	 	Note from Wild Bill
+FormID: 0100A358	DLC01FFLD	QUST	 	Find Wild Bill
+FormID: 0100A395	DLC01Raidertime	WRLD	 	test01raiders
+FormID: 0100A397	TestLiz01	NPC_	 	Test Liz
+FormID: 0100A398	DLC01ArmorRaider2	ARMO	 	Raider Paingiver Armor
+FormID: 0100A399	TestLiz02	NPC_	 	Test Liz
+FormID: 0100A39A	DLC01ArmorRaider3	ARMO	 	Raider Throwdown Armor
+FormID: 0100A39B	DLC01ArmorRaider5	ARMO	 	Raider Ordinance Armor
+FormID: 0100A39C	TestLiz03	NPC_	 	Test Liz
+FormID: 0100A39D	DLC01ArmorRaider4	ARMO	 	Raider Commando Armor
+FormID: 0100A3A0	TestLiz04	NPC_	 	Test Liz
+FormID: 0100A3A4	TestLiz01m	NPC_	 	Test Liz
+FormID: 0100A3A5	TestLiz04m	NPC_	 	Test Liz
+FormID: 0100A453	DLC01testProtectron	CREA	 	Protectron
+FormID: 0100A5F8	DLC01PowerPlantKey	KEYM	 	Power Plant Key
+FormID: 0100A608	DLC01SlaveDead02	NPC_	 	Pitt Slave
+FormID: 0100A60A	DLC01TunnelHandcartPitt	ACTI	 	Hand Cart
+FormID: 0100A678	DLC01GateSpeakers	TACT	 	Loud Speakers
+FormID: 0100A681	TestLiz03m	NPC_	 	Test Liz
+FormID: 0100A683	TestLiz02m	NPC_	 	Test Liz
+FormID: 0100A688	DLC01Everett	NPC_	 	Everett
+FormID: 0100A71E	DLC01HavenInsideTrigger	ACTI	 	Haven Inside Trigger
+FormID: 0100A73F	DLC01DowntownAmbushControl	ACTI	 	Gas Valve
+FormID: 0100A742	DLC01DowntownAmbushMessageBox	MESG	 	OH NO!
+FormID: 0100A7C0	DLC01AshurGuard	NPC_	 	Pitt Raider
+FormID: 0100A7C3	DLC01CrTrog2	CREA	 	Trog
+FormID: 0100A7CA	DLC01SupplyPlantTerminal01	TERM	 	Terminal
+FormID: 0100A7CB	DLC01WeapUniqueBill32CalPistol	WEAP	 	Wild Bill's Sidearm
+FormID: 0100A828	DLC01ConcealedSwitchblade	MISC	 	Concealed Switchblade
+FormID: 0100A829	DLC01ConcealedPistol	MISC	 	Concealed .32 Pistol
+FormID: 0100A849	DLC01GenericFactoryProtectron	CREA	 	Factory Protectron
+FormID: 0100A84A	DLC01DeadProtectron	CREA	 	Factory Protectron
+FormID: 0100A84B	DLC01genericProtectronTerminal01	TERM	 	Automated Maintenence
+FormID: 0100A84D	DLC01ProtectronPodFailsafeTrig	ACTI	 	Gas Valve
+FormID: 0100A84E	DLC01PowerPlantPodSwitch01	ACTI	 	Switch
+FormID: 0100A861	DLC01BabyKidnapMessageBox	MESG	 	Baby Marie
+FormID: 0100A862	DLC01HavenExitTrigger	ACTI	 	Haven Exit Trigger
+FormID: 0100A8ED	DLC01MinerRightGlove	ARMA	 	Miner Right Glove
+FormID: 0100A8EE	DLC01MinerLeftGlove	ARMA	 	Miner Left Glove
+FormID: 0100A939	DLC01SteelyardProtectronTerminal01	TERM	 	Automated Maintenence
+FormID: 0100A93A	DLC01SupplyPlantTerminal02	TERM	 	Terminal
+FormID: 0100A93B	DLC01GenericFactoryProtectron02	CREA	 	Factory Protectron
+FormID: 0100A93C	DLC01SteelyardProtectron	CREA	 	Factory Protectron
+FormID: 0100A98F	DLC01ArenaWeaponsLocker	CONT	 	Locker
+FormID: 0100AA36	DLC01CrTrog3	CREA	 	Trog Brute
+FormID: 0100AA37	DLC01CrTrog4	CREA	 	Trog Savage
+FormID: 0100AA38	DLC01CrTrog1	CREA	 	Trog Fledgling
+FormID: 0100AA63	DLC01LightsOutChainActivatorDisable	ACTI	 	Switch
+FormID: 0100AA8A	DLC01AshurTerminal	TERM	 	Turret Control System
+FormID: 0100AB6D	DLC01StashVent	CONT	 	Hidden Vent Stash
+FormID: 0100AB6E	DLC01StashHydrant	CONT	 	Broken Hydrant
+FormID: 0100AB6F	DLC01StashEngineBlock	CONT	 	Engine Block
+FormID: 0100AB70	DLC01StashTV	CONT	 	Broken TV
+FormID: 0100AB89	DLC01PittDisease	SPEL	 	Pitt Rot
+FormID: 0100AB8B	DLC01TrogAttackEffect	MGEF	 	Script Effect
+FormID: 0100AB97	DLC01AshurNote1Item	NOTE	 	Diary 1: To Marie
+FormID: 0100AB98	DLC01AshurNote2Item	NOTE	 	Diary 2: The Scourge
+FormID: 0100AB99	DLC01AshurNote3Item	NOTE	 	Diary 3: The Mill
+FormID: 0100AB9A	DLC01AshurNote4Item	NOTE	 	Diary 4: The Cure
+FormID: 0100B12E	DLC01AshurSpeakers	TACT	 	Pitt Broadcast
+FormID: 0100B130	DLC01AshurBroadcast	TACT	 	Loud Speakers
+FormID: 0100B131	DLC01AshurBroadcastRadio	ACTI	 	Loud Speaker
+FormID: 0100B161	DLC01FF007Slave	NPC_	 	Pitt Slave
+FormID: 0100B182	DLC01FF007Gate	DOOR	 	Gate
+FormID: 0100B35B	DLC01FF008Guard	NPC_	 	Guard
+FormID: 0100B381	DLC01FF008SlaveHurt	NPC_	 	Pitt Slave
+FormID: 0100B385	DLC01FF008MedicineMessage	MESG	 	Injured Slave
+FormID: 0100B386	DLC01FF008MedicineLowMessage	MESG	 	Injured Slave
+FormID: 0100B3C8	DLC01MideaCrib	ACTI	 	Crib
+FormID: 0100B3CB	DLC01MideaBabyNote	NOTE	 	Toys Wanted for Marie
+FormID: 0100B3CC	DLC01SandraBabyNote	NOTE	 	Toys Wanted for Marie
+FormID: 0100B480	DLC01FXWorldSpace	WRLD	 	Worldsapce for FX region data
+FormID: 0100B4AF	DLC01EnchClothingWorkerWear	ENCH	 	Wasteland Outfit
+FormID: 0100B4B0	DLC01EnchFiltrationHelmet	ENCH	 	Air Filtration
+FormID: 0100B4B1	DLC01UniqueFiltrationHelmet	ARMO	 	Filtration Helmet
+FormID: 0100B4B2	DLC01UniqueWorkerOutfit	ARMO	 	Laborer Outfit
+FormID: 0100B4B3	DLC01UniqueWeapSteelKnuckles	WEAP	 	Steel Knuckles
+FormID: 0100B4B4	DLC01FFCollectionNote	NOTE	 	Steel for the Mill
+FormID: 0100B509	DLC01EnchPowerArmorAshur	ENCH	 	Pitt Power Armor
+FormID: 0100B50A	DLC01EnchClothingBombshell	ENCH	 	Bombshell Armor
+FormID: 0100B50B	DLC01EnchClothingLeather	ENCH	 	Leather Rebel
+FormID: 0100B50C	DLC01EnchArmorMetal	ENCH	 	Heavy Metal Armor
+FormID: 0100B50D	DLC01EnchPowerArmorTribal	ENCH	 	Tribal Power Armor
+FormID: 0100B50E	DLC01UniqueRaiderArmor03	ARMO	 	Leather Rebel
+FormID: 0100B50F	DLC01UniqueArmorPowerTribal	ARMO	 	Tribal Power Armor
+FormID: 0100B510	DLC01UniqueRaiderArmor04	ARMO	 	Bombshell Armor
+FormID: 0100B511	DLC01UniqueRaiderArmor02	ARMO	 	Metal Master Armor
+FormID: 0100B512	DLC01UniqueWeapInfiltrator	WEAP	 	Perforator
+FormID: 0100B513	DLC01UniqueWeapLaserRifle	WEAP	 	Metal Blaster
+FormID: 0100B514	DLC01UniqueWeapAutoAxe	WEAP	 	The Mauler
+FormID: 0100B534	DLC01556mmBulletSilencedProjectile	PROJ	 	5.56mm Bullet
+FormID: 0100B593	DLC01FF003ConspiratorB	NPC_	 	Pitt Slave
+FormID: 0100B594	DLC01FF003ConspiratorC	NPC_	 	Pitt Slave
+FormID: 0100B5E9	DLC01VendorContainerFriday	CONT	 	Friday's Supply Locker
+FormID: 0100B5EA	DLC01VendorContainerHarris	CONT	 	Harris' Supply Locker
+FormID: 0100B5EB	DLC01FridayVendorKey	KEYM	 	Friday's Supply Key
+FormID: 0100B5EC	DLC01HarrisVendorKey	KEYM	 	Harris' Supply Key
+FormID: 0100B5F1	DLC01VendorChestsCell	CELL	 	Dummy Cell
+FormID: 0100B643	DLC01WeapSteelSaw	WEAP	 	Steel Saw
+FormID: 0100B646	DLC01CombatSlaveAAF1TEMPLATE	NPC_	 	Pitt Slave
+FormID: 0100B647	DLC01CombatSlaveAAM1	NPC_	 	Pitt Slave
+FormID: 0100B648	DLC01CombatSlaveAF1	NPC_	 	Pitt Slave
+FormID: 0100B649	DLC01CombatSlaveAM1	NPC_	 	Pitt Slave
+FormID: 0100B64A	DLC01CombatSlaveCF1	NPC_	 	Pitt Slave
+FormID: 0100B64B	DLC01CombatSlaveCM1	NPC_	 	Pitt Slave
+FormID: 0100B64C	DLC01CombatSlaveHF1	NPC_	 	Pitt Slave
+FormID: 0100B64D	DLC01CombatSlaveHM1	NPC_	 	Pitt Slave
+FormID: 0100B64E	DLC01CombatSlaveAAF2TEMPLATE	NPC_	 	Pitt Slave
+FormID: 0100B64F	DLC01CombatSlaveAAM2	NPC_	 	Pitt Slave
+FormID: 0100B650	DLC01CombatSlaveAF2	NPC_	 	Pitt Slave
+FormID: 0100B651	DLC01CombatSlaveAM2	NPC_	 	Pitt Slave
+FormID: 0100B652	DLC01CombatSlaveCF2	NPC_	 	Pitt Slave
+FormID: 0100B653	DLC01CombatSlaveCM2	NPC_	 	Pitt Slave
+FormID: 0100B654	DLC01CombatSlaveHF2	NPC_	 	Pitt Slave
+FormID: 0100B655	DLC01CombatSlaveHM2	NPC_	 	Pitt Slave
+FormID: 0100B656	DLC01CombatSlaveAAF3TEMPLATE	NPC_	 	Pitt Slave
+FormID: 0100B657	DLC01CombatSlaveAAM3	NPC_	 	Pitt Slave
+FormID: 0100B658	DLC01CombatSlaveAF3	NPC_	 	Pitt Slave
+FormID: 0100B659	DLC01CombatSlaveAM3	NPC_	 	Pitt Slave
+FormID: 0100B65A	DLC01CombatSlaveCF3	NPC_	 	Pitt Slave
+FormID: 0100B65B	DLC01CombatSlaveCM3	NPC_	 	Pitt Slave
+FormID: 0100B65C	DLC01CombatSlaveHF3	NPC_	 	Pitt Slave
+FormID: 0100B65D	DLC01CombatSlaveHM3	NPC_	 	Pitt Slave
+FormID: 0100B66C	DLC01UniqueWeapManOpener	WEAP	 	Man Opener
+FormID: 0100B718	DLC01HotelBedQueenLeft	FURN	 	Queen Sized Bed
+FormID: 0100B749	DLC01BedMattress01FloorR	FURN	 	Bed
+FormID: 0100B74B	DLC01WernherWeap44MagnumScoped	WEAP	 	Scoped .44 Magnum
+FormID: 0100B74D	DLC01OffDoorHotelSmL01MideaHutExterior	DOOR	 	Door
+FormID: 0100B780	DLC01PerkAutoAxpertMessageBox	MESG	 	Perk Added
+FormID: 0100B782	DLC01PerkPittFighterMessageBox	MESG	 	Perk Added
+FormID: 0100B784	DLC01PerkBoosterShotMessageBox	MESG	 	Perk Added
+FormID: 0100B846	DLC01ProtectronPodFailsafeTrig03	ACTI	 	Gas Valve
+FormID: 0100B849	DLC01ProtectronPodFailsafeTrig04	ACTI	 	Gas Valve
+FormID: 0100B84C	DLC01ProtectronPodFailsafeTrig02	ACTI	 	Gas Valve
+FormID: 01000801	DLC01ESMCreatorNPC	NPC_	 	Wastelander
+FormID: 01000879	DLC01RadioStation	TACT	 	Wernher's Distress Signal
+FormID: 0100087A	DLC01SlaveOutfit	ARMO	 	Tattered Slave Outfit
+FormID: 010008C0	DLC01PittWorld	WRLD	 	The Pitt
+FormID: 010009A8	DLC01DownloadMessage	MESG	 	Into The Pitt
+FormID: 01000D91	DLC01MarketSquare	WRLD	 	Downtown
+FormID: 01000F0C	DLC01tFredWorld	WRLD	 	FredTestWorld
+FormID: 01000F1F	DLC01testSlaveGuard02	NPC_	 	Slave Guard
+FormID: 01000F20	DLC01Ashur	NPC_	 	Ashur
+FormID: 01000F21	DLC01Sandra	NPC_	 	Sandra
+FormID: 01000F22	DLC01testSlaveGuard01	NPC_	 	Slave Guard
+FormID: 01000F35	DLC01AshurCrib	ACTI	 	Marie's Crib
+FormID: 01000F37	DLC01LightControl	ACTI	 	Haven Light Control Relay
+FormID: 01000F39	DLC01Baby	MISC	 	Baby
+FormID: 01000F3C	DLC01MideaHut	CELL	 	Midea's Quarters
+FormID: 01000F3D	DLC01WernherCrib	ACTI	 	Crib
+FormID: 01000F3E	DLC01WernherHideout	CELL	 	Wernher's Hideout
+FormID: 01001046	DLC01Shady1	NPC_	 	Billy McShady
+FormID: 01001070	DLC01AmbushStartTRIG	ACTI	 	Gas Valve
+FormID: 01001074	DLC01AmbushControlTRIG	ACTI	 	Gas Valve
+FormID: 01001082	DLC01Wernher	NPC_	 	Wernher
+FormID: 0100108B	DLC01Quest02	QUST	 	Unsafe Working Conditions
+FormID: 0100108C	DLC01Quest01	QUST	 	Into The Pitt
+FormID: 0100108D	DLC01Quest03	QUST	 	Free Labor
+FormID: 0100109B	DLC01Midea	NPC_	 	Midea
+FormID: 010010E3	DLCPittTestPurkey	CELL	 	Mango power!
+FormID: 010011A9	DLC01SteelMillExterior	WRLD	 	The Steelyard
+FormID: 010011AA	DLC01Haven	WRLD	 	Uptown
+FormID: 010011AB	DLC01SteelMill02	CELL	 	Abandoned Area
+FormID: 010011AC	DLC01SteelMill01	CELL	 	The Mill
+FormID: 010011AD	DLC01AshurPalace	CELL	 	Haven
+FormID: 01001338	DLC01SteelMill04	CELL	 	The Hole
+FormID: 01001339	DLC01DONOTUSESteelMill03	CELL	 	Arena Waiting Room
+FormID: 01001555	DLC01BridgeSlaveEscapeTRIG	ACTI	 	Gas Valve
+FormID: 01001557	DLC01BridgeEscapeSlavesTemplate	NPC_	 	Pitt Slave
+FormID: 01001558	DLC01BridgeEscapeSlave01	NPC_	 	Pitt Slave
+FormID: 0100155F	DLC01BridgeEscapeSlave02	NPC_	 	Pitt Slave
+FormID: 01001561	DLC01BridgeEscapeSlave03	NPC_	 	Pitt Slave
+FormID: 01001578	DLC01BridgeEscapeSlave04	NPC_	 	Pitt Slave
+FormID: 010015DE	DLC01RaiderCheckpointFaction	FACT	 	Raiders at Bridge Checkpoint
+FormID: 01001681	DLC01TravelToPittMessagebox	MESG	 	Travel
+FormID: 01001866	DLC01AshurIntercom	TACT	 	Intercom
+FormID: 0100194C	DLCPittTestJCha	CELL	 	Test Cell
+FormID: 01001961	DLCPittJChaTestNPC	NPC_	 	TestPerson
+FormID: 010021EF	DLC01TravelToDCMessagebox	MESG	 	The Road Ahead
+FormID: 0100220A	DLC01LvlSlaveWasteland	NPC_	 	Slave
+FormID: 01002210	DLC01DCSlavePenKey	KEYM	 	Slave Pen Key
+FormID: 01002211	DLC01Ramsey	NPC_	 	Ramsey
+FormID: 0100221D	DLC01RadioTowerMapMarker	MAPM	 	Radio Tower
+FormID: 0100221E	DLC01RadioTunnelMapMarker	MAPM	 	Train Tunnel
+FormID: 010027CF	DLC01ArenaToArenaWaitingRoom	DOOR	 	Drainage Grate
+FormID: 010028F4	DLCPittEyeBlueMut	EYES	 	Blue
+FormID: 010028F5	DLCPittEyeDarkBrownMut	EYES	 	Dark Brown
+FormID: 010028F6	DLCPittEyeDefaultMut	EYES	 	Hazel
+FormID: 010028F7	DLCPittEyeGreenMut	EYES	 	Green
+FormID: 010028F8	DLC01TestHiuLaiFC	NPC_	 	DLC01TestHiuLaiFC
+FormID: 010028F9	DLC01TestHiuLaiMC	NPC_	 	DLC01TestHiuLaiMC
+FormID: 010028FA	DLC01TestHiuLaiMAA	NPC_	 	DLC01TestHiuLaiMAA
+FormID: 010028FB	DLC01TestHiuLaiMH	NPC_	 	DLC01TestHiuLaiMH
+FormID: 010028FC	DLC01TestHiuLaiMA	NPC_	 	DLC01TestHiuLaiMA
+FormID: 010028FD	DLCPittAfricanAmericanMut	RACE	 	African American
+FormID: 010028FE	DLCPittCaucasianMut	RACE	 	Caucasian
+FormID: 010028FF	DLCPittAsianMut	RACE	 	Asian
+FormID: 01002900	DLCPittHispanicMut	RACE	 	Hispanic
+FormID: 0100293A	DLC01FF003ConspiratorLookout	NPC_	 	Pitt Slave
+FormID: 0100293B	DLC01FF003ConspiratorLeader	NPC_	 	Pitt Slave
+FormID: 0100293C	DLC01FF002Victim	NPC_	 	Pitt Slave
+FormID: 0100293D	DLC01FF001Thief	NPC_	 	Pitt Slave
+FormID: 0100293E	DLC01FF003ConspiratorA	NPC_	 	Pitt Slave
+FormID: 01002940	DLC01FF004TaskMaster	NPC_	 	Slave Master
+FormID: 01002941	DLC01FF001Guard	NPC_	 	Pitt Raider
+FormID: 01002944	DLC01FF002Guard	NPC_	 	Pitt Raider
+FormID: 010029B8	DLC01FF	QUST	 	Free Form Game Play
+FormID: 010029EA	DLC01WaterHeal0Death	SPEL	 	Deadly Water
+FormID: 010029EE	DLCPittArenaPipe01	DOOR	 	Rusty Gate
+FormID: 01002A0D	DLC01AshurDoor1	DOOR	 	Door
+FormID: 01002A55	DLCPittJChaTestNPC02	NPC_	 	TestPerson02
+FormID: 01002A57	DLCPittJChaTestNPC03	NPC_	 	TestPerson03
+FormID: 01002BD7	DLC01Prosper	NPC_	 	Prosper
+FormID: 01002BD8	DLC01DCSlavePenGate	DOOR	 	Slave Pen Gate
+FormID: 01002BDB	DLC01SlaveDead	NPC_	 	Pitt Slave
+FormID: 01002BE1	DLCPittTestStreetTrog	CREA	 	TestStreetTrog
+FormID: 01002BE2	DLC01TestTrog	WRLD	 	TrogWorld
+FormID: 01002E21	DLC01FF001Guard2	NPC_	 	Pitt Raider
+FormID: 01002E44	DLC01MarketSquareGateTrigger	ACTI	 	Gas Valve
+FormID: 01002E45	DLC01PittArrivalTrigger	ACTI	 	Gas Valve
+FormID: 01002E46	DLC01PlayerItemContainer	CONT	 	Footlocker
+FormID: 01002E47	DLC01MarketSquareGate	DOOR	 	Gate
+FormID: 01002E4F	DLC01TravelToPittMessageboxNO	MESG	 	Travel
+FormID: 010032DB	DLC01AshurSpeechTRIG	ACTI	 	Gas Valve
+FormID: 010032DC	DLC01ArenaControlAct	ACTI	 	Gas Valve
+FormID: 010032DD	DLC01ArmorRaider1	ARMO	 	Raider Iconoclast Armor
+FormID: 010032DE	DLC01SteelPlate	MISC	 	Steel Ingot
+FormID: 010032E1	DLC01WeapAutoAxe	WEAP	 	Auto Axe
+FormID: 010032E3	DLC01AmmoIngots	AMMO	 	Ingots
+FormID: 010032E4	DLC01Faydra	NPC_	 	Faydra
+FormID: 010032E5	DLC01RaiderDead	NPC_	 	Pitt Slave
+FormID: 010032E6	DLC01ArenaCombatant03a	NPC_	 	Gruber
+FormID: 010032F7	DLC01ArenaCombatant02a	NPC_	 	John Bear
+FormID: 010032F8	DLC01ArenaCombatant02b	NPC_	 	Grudd Bear
+FormID: 01003300	DLC01Krenshaw	NPC_	 	Krenshaw
+FormID: 01003303	DLC01BridgeRadTrigger01	ACTI	 	Gas Valve
+FormID: 01003433	DLC01FF005Slave	NPC_	 	Pitt Slave
+FormID: 01003435	DLC01FF005Guard	NPC_	 	Pitt Raider
+FormID: 0100350C	DLC01TESTFeralGhoul	CREA	 	Feral Ghoul
+FormID: 010035C8	DLC01LoudSpeakersDUPLICATE000	TACT	 	Pitt Broadcast
+FormID: 010035D3	DLC01IngotProjectile	PROJ	 	RailSpikeProjectile
+FormID: 0100375A	DLC01CombatRaiders	FACT	 	Pitt Raiders (main Raider faction)
+FormID: 0100375B	DLC01CombatSlaves	FACT	 	Pitt Slaves
+FormID: 010038A8	DLC01ArenaAnnouncer	NPC_	 	Arena Announcer
+FormID: 010038BE	DLC01BridgeMoleRat01	CREA	 	Mole Rat
+FormID: 010038C7	DLC01BridgeDog01	CREA	 	Vicious Dog
+FormID: 010038C9	DLC01BridgeDog02	CREA	 	Vicious Dog
+FormID: 010039C8	DLC01Scrambler	MISC	 	Scrambler
+FormID: 010039C9	DLC01Beth	NPC_	 	Beth
+FormID: 010039D1	DLC01QuestFailedNoBabyMESSAGE	MESG	 	Quest Failed
+FormID: 010039D2	DLC01QuestFailedBabyMESSAGE	MESG	 	Quest Failed
+FormID: 010039FB	DLCPittScfDoor	DOOR	 	Gate
+FormID: 01003A4A	DLC01DCSlaveGateTrigger	ACTI	 	Gas Valve
+FormID: 01003E2D	DLC01Adan	NPC_	 	Adan
+FormID: 01003E2E	DLC01Brand	NPC_	 	Brand
+FormID: 01003E2F	DLC01Kai	NPC_	 	Kai
+FormID: 01003E48	DLC01Marco	NPC_	 	Marco
+FormID: 01003E49	DLC01Nola	NPC_	 	Nola
+FormID: 01003E4B	DLC01Bingo	NPC_	 	Bingo
+FormID: 01003E4C	DLC01Bone	NPC_	 	Bone
+FormID: 01003E4D	DLC01Friday	NPC_	 	Friday
+FormID: 01003E4E	DLC01Harris	NPC_	 	Harris
+FormID: 01003E4F	DLC01Hammer	NPC_	 	Hammer
+FormID: 01003E50	DLC01Spook	NPC_	 	Spook
+FormID: 01003E51	DLC01Jackson	NPC_	 	Jackson
+FormID: 01003E52	DLC01TroubleMan	NPC_	 	Trouble Man
+FormID: 01004054	DLC01SteelMillTerminal01	TERM	 	Rotary Press Terminal
+FormID: 010040CC	DLC01MillAmmoTerminal	TERM	 	Ammo Press Terminal
+FormID: 01004138	DLC01Lulu	NPC_	 	Lulu
+FormID: 01004139	DLC01Vikia	NPC_	 	Vikia
+FormID: 0100413A	DLC01Squill	NPC_	 	Squill
+FormID: 0100413B	DLC01Phantom	NPC_	 	Phantom
+FormID: 0100413C	DLC01Duke	NPC_	 	Duke
+FormID: 0100413D	DLC01ODog	NPC_	 	O-Dog
+FormID: 0100413E	DLC01Reddup	NPC_	 	Reddup
+FormID: 0100413F	DLC01Mona	NPC_	 	Mona
+FormID: 01004148	DLC01LvlWildmenGun	NPC_	 	Wildman
+FormID: 01004149	DLC01LvlWildmenMelee	NPC_	 	Wildman
+FormID: 01004602	DLC01TalkingRaiderFaction	FACT	 	Pitt Raiders (minor npcs)

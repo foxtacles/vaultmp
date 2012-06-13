@@ -1,0 +1,246 @@
+FormID: 00121154	WeapNVRechargerRifle	WEAP	 	Recharger Rifle
+FormID: 00004330	WeapGrenadeFrag	WEAP	 	Frag Grenade
+FormID: 0000434F	Weap10mmPistol	WEAP	 	10mm Pistol
+FormID: 00167AC9	VLootSackVendorWastelandT2Mojave	CONT	 	Sack
+FormID: 00167ACA	VLootSackVendorWatelandT3RSAid	CONT	 	Sack
+FormID: 00167ACB	VLootSackVendorWastelandT2RSPros	CONT	 	Sack
+FormID: 00167ACC	VLootSackVendorWastelandT3RS	CONT	 	Sack
+FormID: 00167ACD	VLootSackVendorWastelandT2RS	CONT	 	Sack
+FormID: 00108BED	TestMentats	CELL	 	Mentats Test Level
+FormID: 0008EAE7	NVVendorChestsCell	CELL	 	New Vegas Buried Vendor Chests
+FormID: 01000800	WeapNVDLC00Faderator	WEAP	 	The Faderator
+FormID: 01000802	NVDLC05WeapNVRechargerPistolUnique	WEAP	 	MF Hyperbreeder Alpha (GRA)
+FormID: 01000803	NVDLC05WeapGatlingLaserUnique	WEAP	 	Sprtel-Wood 9700 (GRA)
+FormID: 01000804	NVDLC05WeapFatmanUnique	WEAP	 	Esther (GRA)
+FormID: 01000805	NVDLC05WeapNV127mmPistolUnique	WEAP	 	Li'l Devil (GRA)
+FormID: 01000806	NVDLC05WeapNVLightMachineGunUnique	WEAP	 	Bozar (GRA)
+FormID: 01000807	NVDLC05WeapNVRebarClubUnique	WEAP	 	Nuka-Breaker (GRA)
+FormID: 01000808	NVDLC05WeapNVMantisGauntletUnique	WEAP	 	Embrace of the Mantis King! (GRA)
+FormID: 01000809	NVDLC05WeapNVBallisticFistUnique	WEAP	 	Two-Step Goodbye (GRA)
+FormID: 0100080A	NVDLC05WeapNVPlasmaCasterUnique	WEAP	 	The Smitty Special (GRA)
+FormID: 0100080B	NVDLC05WeapFlamerUnique	WEAP	 	Cleansing Flame (GRA)
+FormID: 0100080C	NVDLC05WeapHuntingRifleUnique	WEAP	 	Paciencia (GRA)
+FormID: 0100080D	NVDLC05Weap10mmSubmachineGunUnique	WEAP	 	Sleepytyme (GRA)
+FormID: 0100080E	NVDLC05WeapNVBrushGunUnique	WEAP	 	Medicine Stick (GRA)
+FormID: 0100080F	NVDLC05WeapShishkebabUnique	WEAP	 	Gehenna (GRA)
+FormID: 01000810	NVDLC05WeapPowerFistUnique	WEAP	 	Greased Lightning (GRA)
+FormID: 01000811	NVDLC05WeapNVTimeBombCustom	WEAP	 	Time Bomb, High Yield (Mad Bomber) (GRA)
+FormID: 01000812	NVDLC05WeapNVBattleRifleCustom	WEAP	 	Battle Rifle (GRA)
+FormID: 01000813	NVDLC05WeapNV556mmPistolCustom	WEAP	 	5.56mm Pistol (GRA)
+FormID: 01000814	NVDLC05WeapGrenadeTin	WEAP	 	Tin Grenade (Mad Bomber) (GRA)
+FormID: 01000815	NVDLC05WeapMineFat	WEAP	 	Fat Mine (Mad Bomber) (GRA)
+FormID: 01000817	NVDLC05WeapKatanaCustom	WEAP	 	Katana (GRA)
+FormID: 01000818	NVDLC05WeapGrenadeNuka	WEAP	 	Nuka-Grenade (Mad Bomber) (GRA)
+FormID: 0100081A	NVDLC05GrenadeNukaProjectile	PROJ	 	Nuka Grenade
+FormID: 0100081B	NVDLC05Weap25mmGrenadeAPWCustom	WEAP	 	25mm Grenade APW (GRA)
+FormID: 0100081C	NVDLC05MFCGrenadeProjectile	PROJ	 	MFC Grenade
+FormID: 01000822	NVDLC05ModNV127mmSMGLaserSight	IMOD	 	12.7mm SMG Laser Sight
+FormID: 01000823	NVDLC05ModNV127mmSMGStackedMagazine	IMOD	 	12.7mm SMG Stacked Magazine
+FormID: 01000824	NVDLC05ModNV127mmSMGSuppressor	IMOD	 	12.7mm SMG Suppressor
+FormID: 01000825	NVDLC05ModNV25mmGrenadeAPWExpandedDrum	IMOD	 	25mm G. APW Exp. Drum
+FormID: 01000826	NVDLC05ModNV25mmGrenadeAPWLongBarrel	IMOD	 	25mm G. APW Long Barrel
+FormID: 01000827	NVDLC05ModNV25mmGrenadeAPWUpgradedInternals	IMOD	 	25mm G. APW Upgraded Int.
+FormID: 01000828	NVDLC05ModNVAntiMaterielRifleCarbonFiberParts	IMOD	 	Anti-Mat. Rifle CF Parts
+FormID: 01000829	NVDLC05ModNVAntiMaterielRifleCustomBolt	IMOD	 	Anti-Mat. Rifle Custom Bolt
+FormID: 0100082A	NVDLC05ModNVAntiMaterielRifleSuppressor	IMOD	 	Anti-Mat. Rifle Suppressor
+FormID: 0100082B	NVDLC05ModNVAssaultCarbineExtendedMags	IMOD	 	Assault Carb. Ext. Mags
+FormID: 0100082C	NVDLC05ModNVAssaultCarbineForgedReceiver	IMOD	 	Assault Carb. Forged Receiver
+FormID: 0100082D	NVDLC05ModNVAssaultCarbineLightBolt	IMOD	 	Assault Carb. Light Bolt
+FormID: 0100082E	NVDLC05ModNVBaseballBatCorkCore	IMOD	 	Baseball Bat Cork Core
+FormID: 0100082F	NVDLC05ModNVBaseballBatMapleBody	IMOD	 	Baseball Bat Maple Body
+FormID: 01000830	NVDLC05ModNVBaseballBatNails	IMOD	 	Baseball Bat Nails
+FormID: 01000831	NVDLC05ModNVChainsawAlloyFrame	IMOD	 	Chainsaw Alloy Frame
+FormID: 01000832	NVDLC05ModNVChainsawCarbideTeeth	IMOD	 	Chainsaw Carbide Teeth
+FormID: 01000833	NVDLC05ModNVChainsawHeavyDutyChain	IMOD	 	Chainsaw HD Chain
+FormID: 01000834	NVDLC05ModNVHuntingRevolverMatchBarrel	IMOD	 	Hunting Rev. Match Barrel
+FormID: 01000836	NVDLC05ModNVHuntingRevolverSixShotCylinder	IMOD	 	Hunting Rev. 6-Shot Cylinder
+FormID: 01000837	NVDLC05ModNVKatanaAuthenticBlade	IMOD	 	Katana Authentic Blade
+FormID: 01000838	NVDLC05ModNVKatanaBalancedGrip	IMOD	 	Katana Balanced Grip
+FormID: 01000839	NVDLC05ModNVKatanaProtectiveSheath	IMOD	 	Katana Protective Sheath
+FormID: 0100083A	NVDLC05ModNVLaserPistolCombatSights	IMOD	 	Laser Pistol Combat Sights
+FormID: 0100083B	NVDLC05ModNVLaserPistolFocusOptics	IMOD	 	Laser Pistol Focus Optics
+FormID: 0100083C	NVDLC05ModNVLaserPistolRecycler	IMOD	 	Laser Pistol Recycler
+FormID: 0100083D	NVDLC05ModNVPlasmaDefenderHighCapTerminal	IMOD	 	Plasma Def. Hi-Cap Terminal
+FormID: 0100083E	NVDLC05ModNVPlasmaDefenderScope	IMOD	 	Plasma Def. Scope
+FormID: 0100083F	NVDLC05ModNVPlasmaDefenderSheathStabilizer	IMOD	 	Plasma Def. Sheath Stabilizer
+FormID: 01000840	NVDLC05ModNVPlasmaPistolHighEnergyIonizer	IMOD	 	Plas. Pistol Hi-Energy Ionizer
+FormID: 01000841	NVDLC05ModNVPlasmaPistolMagneticAccelerator	IMOD	 	Plas. Pistol Mag. Accelerator
+FormID: 01000842	NVDLC05ModNVPlasmaPistolRecycler	IMOD	 	Plas. Pistol Recycler
+FormID: 01000843	NVDLC05ModNVPowerFistChromedTubes	IMOD	 	Power Fist Chromed Tubes
+FormID: 01000844	NVDLC05ModNVPowerFistHighCapValves	IMOD	 	Power Fist Hi-Cap Valves
+FormID: 01000845	NVDLC05ModNVPowerFistPortedChambers	IMOD	 	Power Fist Ported Chambers
+FormID: 01000846	NVDLC05ModNVRipperCarbideTeeth	IMOD	 	Ripper Carbide Teeth
+FormID: 01000847	NVDLC05ModNVRipperHeavyDutyChain	IMOD	 	Ripper HD Chain
+FormID: 01000849	NVDLC05ModNVTriBeamLaserRifleFocusOptics	IMOD	 	Tri-beam LR Focus Optics
+FormID: 0100084A	NVDLC05ModNVTriBeamLaserRifleHDCapacitors	IMOD	 	Tri-beam LR HD Caps
+FormID: 0100084B	NVDLC05ModNVTriBeamLaserRifleHighCapTerminal	IMOD	 	Tri-beam LR Hi-Cap Terminal
+FormID: 0100084C	NVDLC05WeapBaseballBatCustom	WEAP	 	Baseball Bat (GRA)
+FormID: 0100084D	NVDLC05WeapLaserPistolCustom	WEAP	 	Laser Pistol (GRA)
+FormID: 0100084E	NVDLC05WeapNV127mmSubmachineGunCustom	WEAP	 	12.7mm Submachine Gun (GRA)
+FormID: 0100084F	NVDLC05WeapNVAntiMaterielRifleCustom	WEAP	 	Anti-Materiel Rifle (GRA)
+FormID: 01000850	NVDLC05WeapNVAssaultCarbineCustom	WEAP	 	Assault Carbine (GRA)
+FormID: 01000851	NVDLC05WeapNVChainsawCustom	WEAP	 	Chainsaw (GRA)
+FormID: 01000852	NVDLC05WeapNVHuntingRevolverCustom	WEAP	 	Hunting Revolver (GRA)
+FormID: 01000853	NVDLC05WeapNVPlasmaDefenderCustom	WEAP	 	Plasma Defender (GRA)
+FormID: 01000854	NVDLC05WeapNVTriBeamLaserRifleCustom	WEAP	 	Tri-beam Laser Rifle (GRA)
+FormID: 01000855	NVDLC05WeapPlasmaPistolCustom	WEAP	 	Plasma Pistol (GRA)
+FormID: 01000856	NVDLC05WeapPowerFistCustom	WEAP	 	Power Fist (GRA)
+FormID: 01000857	NVDLC05WeapRipperCustom	WEAP	 	Ripper (GRA)
+FormID: 0100085B	NVDLC05Ammo50MGExplosive	AMMO	 	.50 MG, Explosive (GRA)
+FormID: 0100085C	NVDLC05Ammo20GaPulseSlug	AMMO	 	20 Gauge, Pulse Slug (GRA)
+FormID: 0100085D	NVDLC05Ammo12GaPulseSlug	AMMO	 	12 Gauge, Pulse Slug (GRA)
+FormID: 0100085E	NVDLC05Ammo12GaFlechette	AMMO	 	12 Gauge, Flechette (GRA)
+FormID: 0100085F	NVDLC05Ammo12GaDragonsBreath	AMMO	 	12 Gauge, Dragon's Breath (GRA)
+FormID: 01000860	NVDLC05Ammo20Ga30Buck	AMMO	 	20 Gauge, 3/0 Buck (GRA)
+FormID: 01000861	NVDLC05Ammo12Ga40Buck	AMMO	 	12 Gauge, 4/0 Buck (GRA)
+FormID: 01000862	NVDLC05Ammo12Ga40BuckMagnum	AMMO	 	12 Gauge, 4/0 Buck Mag. (Hand Loader) (GRA)
+FormID: 01000863	NVDLC05Ammo20Ga30BuckMagnum	AMMO	 	20 Gauge, 3/0 Buck Mag. (Hand Loader) (GRA)
+FormID: 01000865	NVDLC05AmmoMissileHive	AMMO	 	Missile, Hive (GRA)
+FormID: 01000866	NVDLC05AmmoFatMansLowYield	AMMO	 	Mini Nuke, Low Yield (GRA)
+FormID: 01000867	NVDLC05AmmoFatMansTimed	AMMO	 	Mini Nuke, Timed (GRA)
+FormID: 01000868	NVDLC05AmmoFatMansBigKid	AMMO	 	Mini Nuke, Big Kid (GRA)
+FormID: 01000869	NVDLC05Ammo25mmGrenadeTimed	AMMO	 	25mm Grenade, Timed (GRA)
+FormID: 0100086A	NVDLC05Ammo25mmGrenadePulse	AMMO	 	25mm Grenade, Pulse (GRA)
+FormID: 0100086B	NVDLC05Ammo25mmGrenadePlasma	AMMO	 	25mm Grenade, Plasma (GRA)
+FormID: 0100086D	NVDLC05Ammo40mmGrenadePulse	AMMO	 	40mm Grenade, Pulse (GRA)
+FormID: 0100086E	NVDLC05Ammo40mmGrenadePlasma	AMMO	 	40mm Grenade, Plasma (GRA)
+FormID: 0100086F	NVDLC05Ammo556mmMatchHandLoad	AMMO	 	5.56mm, Match (Hand Load) (GRA)
+FormID: 01000870	NVDLC05Ammo9mmJHPHandLoad	AMMO	 	9mm, JHP (Hand Load) (GRA)
+FormID: 01000871	NVDLC05Ammo5mmJSPHandLoad	AMMO	 	5mm, JSP (Hand Load) (GRA)
+FormID: 01000872	NVDLC05AmmoSmallEnergyCellOptimized	AMMO	 	Energy Cell, Optimized (Vigilant Recycler) (GRA)
+FormID: 01000873	NVDLC05AmmoMicroFusionCellOptimized	AMMO	 	Microfusion Cell, Optimized (Vigilant Recycler) (GRA)
+FormID: 01000874	NVDLC05AmmoElectronChargePackOptimized	AMMO	 	Electron Charge Pack, Optimized (Vigilant Recycler) (GRA)
+FormID: 01000875	NVDLC05AmmoFlamerFuelOptimized	AMMO	 	Flamer Fuel, Optimized (Vigilant Recycler) (GRA)
+FormID: 01000876	NVDLC05ARMAMantisKing	ARMA	 	NVDLC05ARMAMantisKing
+FormID: 01000888	NVDLC05DummyKatana	ENCH	 	Katana Dummy Effect
+FormID: 01000892	NVDLC05CleansingFlameProjectile	PROJ	 	Cleansing Flame
+FormID: 01000893	NVDLC05EnchCleansingFlameEffect	ENCH	 	Cleansing Flame
+FormID: 010008C8	NVDLC05WeapGrenadeMFC	WEAP	 	MFC Grenade (Mad Bomber) (GRA)
+FormID: 010008C9	NVDLC05WeapMineMFCCluster	WEAP	 	MFC Cluster (Mad Bomber) (GRA)
+FormID: 010008EE	NVDLC05FatMineExplosion	EXPL	 	Fat Mine Explosion
+FormID: 010008EF	NVDLC05FatMineProjectile	PROJ	 	Fat Mine
+FormID: 010008FD	ARMABallisticFistUnique	ARMA	 	ARMABallisticFistUnique
+FormID: 010008FE	NVDLC05TinGrenadeProjectile	PROJ	 	Tin Grenade
+FormID: 01000901	NVDLC05AmmoEffectFlechetteDTReduction	AMEF	 	Flechette DT Reduction
+FormID: 01000902	NVDLC05AmmoEffectMagnumDTReduction	AMEF	 	Dam. Thresh. Reduction
+FormID: 01000903	NVDLC05AmmoEffectMagnumDamageBonus	AMEF	 	Magnum Damage Bonus
+FormID: 01000904	NVDLC05AmmoEffectMagnumConditionPenalty	AMEF	 	Magnum COND Penalty
+FormID: 01000906	NVDLC05DragonsBreathBBProjectile	PROJ	 	Dragon's Breath BB Pellet
+FormID: 01000908	NVDLC0525mmGrenadeProjectilePlasma	PROJ	 	25mm Grenade, Plasma
+FormID: 01000909	NVDLC0525mmGrenadeExplosionPlasma	EXPL	 	25mm Grenade Explosion, Plasma
+FormID: 0100090A	NVDLC0540mmGrenadeExplosionPlasma	EXPL	 	40mm Grenade Explosion, Plasma
+FormID: 0100090B	NVDLC0540mmGrenadeProjectilePlasma	PROJ	 	40mm Grenade, Plasma
+FormID: 0100090C	NVDLC0540mmGrenadeExplosionPulse	EXPL	 	40mm Grenade Explosion, Pulse
+FormID: 0100090D	NVDLC0525mmGrenadeExplosionPulse	EXPL	 	25mm Grenade Explosion, Pulse
+FormID: 0100090E	NVDLC0540mmGrenadeProjectilePulse	PROJ	 	40mm Grenade, Pulse
+FormID: 0100090F	NVDLC0525mmGrenadeProjectilePulse	PROJ	 	25mm Grenade, Pulse
+FormID: 01000910	NVDLC05EMP40mm	ENCH	 	40mm Electromagnetic Pulse
+FormID: 01000911	NVDLC05EMP25mm	ENCH	 	25mm Electromagnetic Pulse
+FormID: 01000912	NVDLC0525mmGrenadeProjectileTimed	PROJ	 	25mm Grenade, Timed
+FormID: 01000913	NVDLC05FatManProjectileTimed	PROJ	 	Mini Nuke, Timed
+FormID: 01000914	NVDLC0550MGExplosiveExplosion	EXPL	 	.50 MG Explosive Explosion
+FormID: 01000915	NVDLC0550MGExplosivetProjectile	PROJ	 	.50MG Explosive
+FormID: 01000916	NVDLC05FatManBigKidExplosion	EXPL	 	Big Kid Nuke Explosion
+FormID: 01000917	NVDLC05FatManLowYieldExplosion	EXPL	 	Low Yield Nuke Explosion
+FormID: 01000918	NVDLC05FatManBigKid	PROJ	 	Mini Nuke, Big Kid
+FormID: 01000919	NVDLC05FatManLowYield	PROJ	 	Mini Nuke, Low Yield
+FormID: 0100091A	NVDLC05AmmoEffectMatchDamageBonus	AMEF	 	Damage Bonus
+FormID: 0100091B	NVDLC05AmmoEffectMatchSpreadReduction	AMEF	 	Spread Reduction
+FormID: 0100091C	NVDLC05AmmoEffectJSPConditionPenalty	AMEF	 	COND Decay Increase
+FormID: 0100091D	NVDLC05AmmoEffectJSPDamageBonus	AMEF	 	Damage Bonus
+FormID: 0100091E	NVDLC05AmmoEffectJHPDamageBonus	AMEF	 	Damage Bonus
+FormID: 0100091F	NVDLC05AmmoEffectJHPDTPenalty	AMEF	 	Dam. Thresh. Increase
+FormID: 01000921	NVDLC05MissileExplosionHive	EXPL	 	Missile Explosion, Hive
+FormID: 01000922	NVDLC05MissileProjectileHive	PROJ	 	Missile, Hive
+FormID: 01000923	NVDLC05AmmoEffectOptimizedConditionPenalty	AMEF	 	COND Decay Increase
+FormID: 01000924	NVDLC05AmmoEffectOptimizedDamageBonus	AMEF	 	Damage Bonus
+FormID: 01000925	NVDLC05AmmoEffectOptimizedDTBypass	AMEF	 	DT Bypass
+FormID: 01000926	NVDLC05RecipeElectronChargePackOptimized	RCPE	 	Electron Charge Pack, Optimized (GRA)
+FormID: 01000927	NVDLC05RecipeMicroFusionCellOptimized	RCPE	 	Microfusion Cell, Optimized (GRA)
+FormID: 01000928	NVDLC05RecipeSmallEnergyCellOptimized	RCPE	 	Energy Cell, Optimized (GRA)
+FormID: 01000929	NVDLC05RecipeFlamerFuelOptimized	RCPE	 	Flamer Fuel, Optimized (GRA)
+FormID: 0100092A	NVDLC05Recipe556mmHandLoad	RCPE	 	5.56mm, Match Hand Load (GRA)
+FormID: 0100092B	NVDLC05Recipe9mmHandLoad	RCPE	 	9mm, JHP Hand Load (GRA)
+FormID: 0100092C	NVDLC05Recipe5mmHandLoad	RCPE	 	5mm, JSP Hand Load (GRA)
+FormID: 0100092D	NVDLC05AmmoEffectJSPDTReduction	AMEF	 	Dam. Thresh. Reduction
+FormID: 0100092E	NVDLC05MadBomber	PERK	 	Mad Bomber
+FormID: 0100092F	NVDLC05RecipeFatMine	RCPE	 	Fat Mine (GRA)
+FormID: 01000930	NVDLC05RecipeMFCGrenade	RCPE	 	MFC Grenade (GRA)
+FormID: 01000931	NVDLC05RecipeMFCCluster	RCPE	 	MFC Cluster (GRA)
+FormID: 01000932	NVDLC05RecipeNukaGrenade	RCPE	 	Nuka-Grenade (GRA)
+FormID: 01000933	NVDLC05RecipeTimeBombHighYield	RCPE	 	Time Bomb, High Yield (GRA)
+FormID: 01000934	NVDLC05RecipePowderChargeEfficient	RCPE	 	Powder Charge, Efficient (GRA)
+FormID: 01000935	NVDLC05RecipeBottlecapMineEfficient	RCPE	 	Bottlecap Mine, Efficient (GRA)
+FormID: 01000936	NVDLC05RecipeTinGrenade	RCPE	 	Tin Grenade (GRA)
+FormID: 01000938	NVDLC05GrenadeTinExplosion	EXPL	 	Tin Grenade Explosion
+FormID: 01000939	NVDLC05Recipe20Ga30BuckMagnum	RCPE	 	20 Ga., 3/0 Buck Mag. Hand Load (GRA)
+FormID: 0100093A	NVDLC05Recipe12Ga40BuckMagnum	RCPE	 	12 Ga., 4/0 Buck Mag. Hand Load (GRA)
+FormID: 0100093C	NVDLC05MQ00	QUST	 	Quest to Set-Up Gun Runner's Arsenal
+FormID: 0100093D	NVDLC05LoadMessage02	MESG	 	Gun Runners' Arsenal
+FormID: 0100093E	NVDLC05LoadMessage01	MESG	 	Gun Runners' Arsenal
+FormID: 01000948	NVDLC05ChallengeMasterOfTheArsenal	CHAL	 	(GRA) Master of the Arsenal
+FormID: 01000949	NVDLC0512GaPulseSlugProjectile	PROJ	 	12 Ga. Pulse Slug
+FormID: 0100094A	NVDLC0520GaPulseSlugProjectile	PROJ	 	20 Ga. Pulse Slug
+FormID: 0100094B	NVDLC0512GaFlechetteProjectile	PROJ	 	12 Ga. Flechette
+FormID: 0100095E	NVDLC05VendortronFaction	FACT	 	Gun Runner Vendortron Faction
+FormID: 01000A09	NVDLC05AmmoFatMansTinyTots	AMMO	 	Mini Nuke, Tiny Tots (GRA)
+FormID: 01000A0A	NVDLC05FatManTinyTotsExplosion	EXPL	 	Tiny Tots Nuke Explosion
+FormID: 01000A0B	NVDLC05FatManTinyTots	PROJ	 	Mini Nuke, Tiny Tots
+FormID: 01000A0E	NVDLC05AmmoEffectFatMansTinyTotsSpreadIncrease	AMEF	 	Tiny Tots Spread Increase
+FormID: 01000A17	ModTestSuppress	IMOD	 	Mod Test Supress
+FormID: 01000A18	ModTest	WEAP	 	ModTest
+FormID: 01000A20	NVDLC05AmmoEffectMissileHiveSpreadIncrease	AMEF	 	Hive Missile Spread Increase
+FormID: 01000A2B	NVDLC05Ammo127mmJHPHandLoad	AMMO	 	12.7mm Round (Hand Load) (GRA)
+FormID: 01000A2C	NVDLC05Recipe127mmHandLoad	RCPE	 	12.7mm, JHP Hand Load (GRA)
+FormID: 01000A33	NVDLC05EstherBaseEffectName	MGEF	 	+10 DT, +25 Rad. Resist
+FormID: 01000A34	NVDLC05EstherBonusActorEffect	SPEL	 	Esther Bonuses
+FormID: 01000A36	NVDLC05DummyEsther	ENCH	 	Esther Dummy Effect
+FormID: 01000A38	NVDLC05TwoStepGoodbyeEffect	MGEF	 	Two-Step Goodbye
+FormID: 01000A39	NVDLC05TwoStepGoodbyeFXSpell	SPEL	 	Explosion Death
+FormID: 01000A3A	NVDLC05TwoStepGoodbyeExplosion	EXPL	 	Two-Step Goodbye Explosion
+FormID: 01000A3B	NVDLC05DummyNVRedCriticalDamage	MGEF	 	Reduced Critical Damage
+FormID: 01000A3C	NVDLC05DummyNVTwoStepExplosion	MGEF	 	Crit Kill = Boom!
+FormID: 01000A3D	NVDLC05DummyTwoStepGoodbye	ENCH	 	Two-Step Goodbye Dummy Effect
+FormID: 01000A49	NVDLC05ChallengeNyahSee	CHAL	 	(GRA) Nyah! See? **
+FormID: 01000A4A	NVDLC05ChallengeHistoricalPropriety	CHAL	 	(GRA) Historical Propriety **
+FormID: 01000A4B	NVDLC05ChallengeDeathclawProHunter	CHAL	 	(GRA) Deathclaw Pro Hunter ***
+FormID: 01000A4C	NVDLC05ChallengeTalkAboutOwned	CHAL	 	(GRA) Talk About Owned **
+FormID: 01000A4D	NVDLC05ChallengeWhiteLineNightmare	CHAL	 	(GRA) White Line Nightmare **
+FormID: 01000A4E	NVDLC05ChallengeOverkill	CHAL	 	(GRA) Overkill *
+FormID: 01000A50	NVDLC05ChallengeYouDontBelong	CHAL	 	(GRA) You Don't Belong In This World! *
+FormID: 01000A51	NVDLC05ChallengeNeNeNeNe	CHAL	 	(GRA) Ne Ne Ne Ne... *
+FormID: 01000A53	NVDLC05ChallengeCuriosAndRelics	CHAL	 	(GRA) Curios and Relics
+FormID: 01000A54	NVDLC05ChallengeAgainstAllTyrants	CHAL	 	(GRA) Against All Tyrants ***
+FormID: 01000A58	NVDLC05ChallengeArmedForBear	CHAL	 	(GRA) Armed For Bear ***
+FormID: 01000A5A	NVDLC05ChallengeASlaveObeys	CHAL	 	(GRA) A Slave Obeys *
+FormID: 01000A5D	NVDLC05ChallengeTheSameCouldBeSaid	CHAL	 	(GRA) The Same Could Be Said of All Religious Weapons *
+FormID: 01000A60	NVDLC05ChallengeCrackerjackTiming	CHAL	 	(GRA) Crackerjack Timing ***
+FormID: 01000A63	NVDLC05ChallengeManMachineInterface	CHAL	 	(GRA) Man-Machine Interface ***
+FormID: 01000A65	NVDLC05ChallengeVault13sRevenge	CHAL	 	(GRA) Vault 13's Revenge **
+FormID: 01000A67	NVDLC05ChallengeBenefitOrAHazard	CHAL	 	(GRA) Benefit Or a Hazard *
+FormID: 01000A68	NVDLC05ChallengeSicSemperTyrannis	CHAL	 	(GRA) Sic Semper Tyrannis **
+FormID: 01000A6A	NVDLC05ChallengeEvenAGodKingCanBleed	CHAL	 	(GRA) Even a God-King Can Bleed **
+FormID: 01000A6C	NVDLC05ChallengeDyinAintMuchOfALiving	CHAL	 	(GRA) Dyin' Ain't Much of a Living **
+FormID: 01000A81	NVDLC05DummyNVIgnoresDRDT	MGEF	 	Ignores DR/DT
+FormID: 01000A82	NVDLC05DummyNVFasterAttack	MGEF	 	Faster Attack
+FormID: 01000A83	NVDLC05DummyChainsaw	ENCH	 	Chainsaw Dummy Effect
+FormID: 01000A84	NVDLC05DummyPowerFistUnique	ENCH	 	Greased Lightning Dummy Effect
+FormID: 01000A87	ARMANVDLC05GreasePowerfist	ARMA	 	ARMAGreaseLightining
+FormID: 01000A8D	NVDLC05DummyNukaBreaker	ENCH	 	Nuka-Breaker Dummy Effect
+FormID: 01000A8E	NVDLC05EnchGehennaEffect	ENCH	 	Burning
+FormID: 01000A8F	NVDLC05MineMFCGrenaderExplosion	EXPL	 	MFC Explosion
+FormID: 01000A90	NVDLC05MineMFCClusterExplosion2	EXPL	 	MFC Explosion
+FormID: 01000A91	NVDLC05MFCMineClusterProjectile2	PROJ	 	MFC Cluster Mine
+FormID: 01000AB2	NVDLC05FlamerShaderEffect	MGEF	 	Flamer Fire Damage
+FormID: 01000AB7	NVDLC05DummyNVSilent	MGEF	 	Silent
+FormID: 01000AB8	NVDLC05DummySleepytyme	ENCH	 	Sleepytyme Dummy Effect
+FormID: 01000AB9	NVDLC05TimeBombHighYieldExplosion	EXPL	 	Time Bomb Explosion
+FormID: 01000ABA	NVDLC05TimeBombHighYieldProjectile	PROJ	 	Armed Time Bomb
+FormID: 01000ABB	NVDLC05AmmoEffectFlechetteDAMReduction	AMEF	 	Flechette DAM Reduction
+FormID: 01000ABE	NVDLC05DragonsBreathActorEffect	SPEL	 	BurningNormal
+FormID: 01000ABF	NVDLC05AmmoEffectDragonsBreathDAMReduction	AMEF	 	Dragons Breath DAM Reduction
+FormID: 01000AC1	NVDLC05BoomerVendorFaction	FACT	 	Boomer Vendor Faction
+FormID: 01000AC3	NVDLC05WeapFatmanCustom	WEAP	 	Fat Man (GRA)
+FormID: 01000AC5	NVDLC05AmmoEffectPulseSlugDAMReduction	AMEF	 	Pulse Slug DAM Reduction
+FormID: 0013D532	TimeBombExplosion	EXPL	 	Time Bomb Explosion
+FormID: 0013D533	TimeBombProjectile	PROJ	 	Armed Time Bomb

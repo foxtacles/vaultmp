@@ -1,0 +1,3 @@
+FormID: 001674D2	PreorderMessageInventoryTribal	MESG	 	Tribal Pack
+FormID: 001735E2	PreordArmorTribalRaiding	ARMO	 	Tribal Raiding Armor
+FormID: 001735E5	WeapPreordMachete	WEAP	 	Broad Machete

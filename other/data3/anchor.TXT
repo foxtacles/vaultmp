@@ -1,0 +1,527 @@
+FormID: 0000003C	Wasteland	WRLD	 	Wasteland
+FormID: 010047DD	DLC02GlacierCave	CELL	 	Cave Outpost
+FormID: 01004A4F	DLC02FF006SoldierHeadExplode	NPC_	 	American Soldier
+FormID: 01004A52	DLC02FF006SoldierWarn	NPC_	 	American Soldier
+FormID: 01004AAF	DLC02VSSTerminal01	TERM	 	VSS ResearchTerminal
+FormID: 01004AB0	DLC02VSSTerminal01SubMenu	TERM	 	VSS ResearchTerminal
+FormID: 01004AB1	DLC02VSSTerminalReport1	NOTE	 	Progress Report 0540
+FormID: 01004AB2	DLC02VSSTerminalReport2	NOTE	 	Progress Report 0540
+FormID: 01004AB4	DLC02PowerArmorFatMan	NPC_	 	Power Armored Soldier
+FormID: 01004CF5	dlc02ChinesePatrollerDEAD	NPC_	 	Chinese Soldier
+FormID: 01004D26	DLC02DeadParaTrooper01	NPC_	 	Dead U.S. Paratrooper
+FormID: 01004D2B	DLC02GaussProjectile	PROJ	 	Gauss Slug
+FormID: 01004DAD	testPhilElectricSword	WEAP	 	Electric Sword
+FormID: 01004DAE	DLC02EnchShockSword	ENCH	 	Shock Damage
+FormID: 01004DAF	testPhilElectricSwordAEffect	MGEF	 	Electric Sword A Effect
+FormID: 01004DD3	DLC02FF006Sniper	NPC_	 	Chinese Sniper
+FormID: 01004DE4	DLC02BaseOutcast1	NPC_	 	Brotherhood Outcast
+FormID: 01004DE5	DLC02BaseOutcast2	NPC_	 	Brotherhood Outcast
+FormID: 01004DE6	DLC02BaseOutcast3	NPC_	 	Brotherhood Outcast
+FormID: 01004E11	DLC02ParaTrooper01	NPC_	 	U.S. Paratrooper
+FormID: 01004E13	DLC02ParaSceneTRIG	ACTI	 	Gas Valve
+FormID: 01004E29	DLC02ParaSceneMoveToTRIG	ACTI	 	Gas Valve
+FormID: 01004EA0	DLC02GaussImpactExplosion	EXPL	 	Robot Limb Explosion
+FormID: 01004F75	DLC02FF002Intel	MISC	 	Chinese Intel
+FormID: 01004F78	DLC02FF002Captor	NPC_	 	Chinese Soldier
+FormID: 01005000	DLC02StrikeTeamFaction1Point	FACT	 	1 Point Strike Team Member
+FormID: 01005001	DLC02StrikeTeamFaction2Points	FACT	 	2 Point Strike Team Member
+FormID: 01005002	DLC02StrikeTeamFaction3Points	FACT	 	3 Point Strike Team Member
+FormID: 01005003	DLC02StrikeTeamFaction4Points	FACT	 	4 Point Strike Team Member
+FormID: 01005013	DLC02StrikeTeamRobotSentryBot1Template	CREA	 	Strike Team Sentry Bot
+FormID: 0100501A	DLC02StrikeTeamAR1BTemplate	NPC_	 	Strike Team Infantryman
+FormID: 0100501B	DLC02StrikeTeamAR1CTemplate	NPC_	 	Strike Team Infantryman
+FormID: 0100501C	DLC02StrikeTeamAR1DTemplate	NPC_	 	Strike Team Infantryman
+FormID: 0100501D	DLC02StrikeTeamGR1BTemplate	NPC_	 	Strike Team Grenadier
+FormID: 0100501E	DLC02StrikeTeamGR1CTemplate	NPC_	 	Strike Team Grenadier
+FormID: 0100501F	DLC02StrikeTeamGR1DTemplate	NPC_	 	Strike Team Grenadier
+FormID: 01005020	DLC02StrikeTeamMU1BTemplate	NPC_	 	Strike Team Missile Unit
+FormID: 01005021	DLC02StrikeTeamMU1CTemplate	NPC_	 	Strike Team Missile Unit
+FormID: 01005022	DLC02StrikeTeamMU1DTemplate	NPC_	 	Strike Team Missile Unit
+FormID: 01005023	DLC02StrikeTeamSN1BTemplate	NPC_	 	Strike Team Sniper
+FormID: 01005024	DLC02StrikeTeamSN1CTemplate	NPC_	 	Strike Team Sniper
+FormID: 01005025	DLC02StrikeTeamSN1DTemplate	NPC_	 	Strike Team Sniper
+FormID: 01005658	DLC02FF010Captive	NPC_	 	Chinese Soldier
+FormID: 010058D6	DLC02TEMPArtilleryBase	CELL	 	Chinese Artillery Outpost
+FormID: 010068AD	DLC02ArtyBaseCavern	CREA	 	Chimera Tank
+FormID: 010068C0	DLC02ArtyBaseDisableAll	ACTI	 	Gas Valve
+FormID: 0100742F	DLC02OutfitOutcastScribe	ARMO	 	Outcast Scribe Robe
+FormID: 01007514	DLCAnchGunBatteryControlBox01	ACTI	 	Controller
+FormID: 01007654	DLC02CarpetBombExplosion	EXPL	 	Carpet Bomb Explosion
+FormID: 0100766A	DLC02Voices	QUST	 	DLC02 Voices Quest
+FormID: 01007BBF	DLC02ArtilleryGunA	ACTI	 	Controller
+FormID: 01007BC1	DLC02ArtilleryGunB	ACTI	 	Controller
+FormID: 01007BC3	DLC02ArtilleryGunC	ACTI	 	Controller
+FormID: 01007CF2	DLC02CorpseDump	CELL	 	Command Tent
+FormID: 01007DA5	DLCAnchUtlDoor010000	DOOR	 	Door
+FormID: 01007DA6	DLCAnchUtlDoorBg010000	DOOR	 	Door
+FormID: 01008236	testPhilSmokeGrenade	WEAP	 	Smoke Grenade
+FormID: 01008237	testPhilSmokeGrenadeEffect	MGEF	 	Smoke Grenade
+FormID: 01008238	testPhilEnchSmokeGrenade	ENCH	 	Smoke Grenade Effect
+FormID: 01008239	testPhilSmokeGrenadeExplosion	EXPL	 	Frag Explosion
+FormID: 0100823A	testPhilSmokeGrenadeProjectile	PROJ	 	Frag Grenade
+FormID: 01008290	DLC02AmmoBox	ACTI	 	Ammo Crate
+FormID: 01008434	DLC02ChineseSoldier2	NPC_	 	Chinese Soldier
+FormID: 01008435	DLC02ChineseSoldier3	NPC_	 	Chinese Soldier
+FormID: 01008436	DLC02ChineseSoldier4	NPC_	 	Chinese Soldier
+FormID: 01008437	DLC02ChineseSoldier5	NPC_	 	Chinese Soldier
+FormID: 01008442	DLC02AmericanFlamer2	NPC_	 	American Inferno Unit
+FormID: 01008443	DLC02AmericanFlamer3	NPC_	 	American Inferno Unit
+FormID: 01008444	DLC02AmericanFlamer4	NPC_	 	American Inferno Unit
+FormID: 01008445	DLC02AmericanFlamer5	NPC_	 	American Inferno Unit
+FormID: 01008446	DLC02AmericanMissileLauncher2	NPC_	 	American Launcher
+FormID: 01008447	DLC02AmericanMissileLauncher3	NPC_	 	American Launcher
+FormID: 01008448	DLC02AmericanMissileLauncher4	NPC_	 	American Launcher
+FormID: 01008449	DLC02AmericanMissileLauncher5	NPC_	 	American Launcher
+FormID: 0100844A	DLC02AmericanSniper2	NPC_	 	American Sniper
+FormID: 0100844B	DLC02AmericanSniper3	NPC_	 	American Sniper
+FormID: 0100844C	DLC02AmericanSniper4	NPC_	 	American Sniper
+FormID: 0100844D	DLC02AmericanSniper5	NPC_	 	American Sniper
+FormID: 0100844E	DLC02AmericanSoldier2	NPC_	 	American Soldier
+FormID: 0100844F	DLC02AmericanSoldier3	NPC_	 	American Soldier
+FormID: 01008450	DLC02AmericanSoldier4	NPC_	 	American Soldier
+FormID: 01008451	DLC02AmericanSoldier5	NPC_	 	American Soldier
+FormID: 01008452	DLC02ChineseFlamer2	NPC_	 	Chinese Inferno Unit
+FormID: 01008453	DLC02ChineseFlamer3	NPC_	 	Chinese Inferno Unit
+FormID: 01008454	DLC02ChineseFlamer4	NPC_	 	Chinese Inferno Unit
+FormID: 01008455	DLC02ChineseFlamer5	NPC_	 	Chinese Inferno Unit
+FormID: 01008456	DLC02ChineseMissileLauncher2	NPC_	 	Chinese Launcher
+FormID: 01008457	DLC02ChineseMissileLauncher3	NPC_	 	Chinese Launcher
+FormID: 01008458	DLC02ChineseMissileLauncher4	NPC_	 	Chinese Launcher
+FormID: 01008459	DLC02ChineseMissileLauncher5	NPC_	 	Chinese Launcher
+FormID: 0100845A	DLC02ChineseSniper2	NPC_	 	Chinese Sniper
+FormID: 0100845B	DLC02ChineseSniper3	NPC_	 	Chinese Sniper
+FormID: 0100845C	DLC02ChineseSniper4	NPC_	 	Chinese Sniper
+FormID: 0100845D	DLC02ChineseSniper5	NPC_	 	Chinese Sniper
+FormID: 010084BA	DLCAnchChineseGloveL	ARMA	 	DLCAnchWhiteGloveL
+FormID: 010084BB	DLCAnchChineseGloveR	ARMA	 	DLCAnchWhiteGloveR
+FormID: 01008854	DLC02LargeExplosion	EXPL	 	Artillery Explosion
+FormID: 01008CB4	DLCCrTurret02Outcast	CREA	 	Mark IV Turret
+FormID: 01008CB5	DLC02VSSSecureAccessTerminal	TERM	 	Secure Access Terminal
+FormID: 01008CBE	DLC02StrikeTeamAR2A	NPC_	 	Strike Team Infantryman
+FormID: 01008CBF	DLC02StrikeTeamAR2B	NPC_	 	Strike Team Infantryman
+FormID: 01008CC0	DLC02StrikeTeamAR2C	NPC_	 	Strike Team Infantryman
+FormID: 01008CC1	DLC02StrikeTeamAR2D	NPC_	 	Strike Team Infantryman
+FormID: 01008CC2	DLC02StrikeTeamAR3A	NPC_	 	Strike Team Infantryman
+FormID: 01008CC3	DLC02StrikeTeamAR3B	NPC_	 	Strike Team Infantryman
+FormID: 01008CC4	DLC02StrikeTeamAR3C	NPC_	 	Strike Team Infantryman
+FormID: 01008CC5	DLC02StrikeTeamAR3D	NPC_	 	Strike Team Infantryman
+FormID: 01008CC6	DLC02StrikeTeamAR4A	NPC_	 	Strike Team Infantryman
+FormID: 01008CC7	DLC02StrikeTeamAR4B	NPC_	 	Strike Team Infantryman
+FormID: 01008CC8	DLC02StrikeTeamAR4C	NPC_	 	Strike Team Infantryman
+FormID: 01008CC9	DLC02StrikeTeamAR4D	NPC_	 	Strike Team Infantryman
+FormID: 01008CCA	DLC02StrikeTeamAR5A	NPC_	 	Strike Team Infantryman
+FormID: 01008CCB	DLC02StrikeTeamAR5B	NPC_	 	Strike Team Infantryman
+FormID: 01008CCC	DLC02StrikeTeamAR5C	NPC_	 	Strike Team Infantryman
+FormID: 01008CCD	DLC02StrikeTeamAR5D	NPC_	 	Strike Team Infantryman
+FormID: 01008CCE	DLC02StrikeTeamGR2A	NPC_	 	Strike Team Grenadier
+FormID: 01008CCF	DLC02StrikeTeamGR2C	NPC_	 	Strike Team Grenadier
+FormID: 01008CD0	DLC02StrikeTeamGR2B	NPC_	 	Strike Team Grenadier
+FormID: 01008CD1	DLC02StrikeTeamGR2D	NPC_	 	Strike Team Grenadier
+FormID: 01008CD2	DLC02StrikeTeamGR3A	NPC_	 	Strike Team Grenadier
+FormID: 01008CD3	DLC02StrikeTeamGR3B	NPC_	 	Strike Team Grenadier
+FormID: 01008CD4	DLC02StrikeTeamGR3C	NPC_	 	Strike Team Grenadier
+FormID: 01008CD5	DLC02StrikeTeamGR3D	NPC_	 	Strike Team Grenadier
+FormID: 01008CD6	DLC02StrikeTeamGR4A	NPC_	 	Strike Team Grenadier
+FormID: 01008CD7	DLC02StrikeTeamGR4B	NPC_	 	Strike Team Grenadier
+FormID: 01008CD8	DLC02StrikeTeamGR4C	NPC_	 	Strike Team Grenadier
+FormID: 01008CD9	DLC02StrikeTeamGR4D	NPC_	 	Strike Team Grenadier
+FormID: 01008CDA	DLC02StrikeTeamGR5A	NPC_	 	Strike Team Grenadier
+FormID: 01008CDB	DLC02StrikeTeamGR5B	NPC_	 	Strike Team Grenadier
+FormID: 01008CDC	DLC02StrikeTeamGR5C	NPC_	 	Strike Team Grenadier
+FormID: 01008CDD	DLC02StrikeTeamGR5D	NPC_	 	Strike Team Grenadier
+FormID: 01008CDE	DLC02StrikeTeamGutsy2	CREA	 	Strike Team Mister Gutsy
+FormID: 01008CDF	DLC02StrikeTeamGutsy3	CREA	 	Strike Team Mister Gutsy
+FormID: 01008CE0	DLC02StrikeTeamGutsy4	CREA	 	Strike Team Mister Gutsy
+FormID: 01008CE1	DLC02StrikeTeamGutsy5	CREA	 	Strike Team Mister Gutsy
+FormID: 01008CE2	DLC02StrikeTeamMU2A	NPC_	 	Strike Team Missile Unit
+FormID: 01008CE3	DLC02StrikeTeamMU2B	NPC_	 	Strike Team Missile Unit
+FormID: 01008CE4	DLC02StrikeTeamMU2C	NPC_	 	Strike Team Missile Unit
+FormID: 01008CE5	DLC02StrikeTeamMU2D	NPC_	 	Strike Team Missile Unit
+FormID: 01008CE6	DLC02StrikeTeamMU3A	NPC_	 	Strike Team Missile Unit
+FormID: 01008CE7	DLC02StrikeTeamMU3B	NPC_	 	Strike Team Missile Unit
+FormID: 01008CE8	DLC02StrikeTeamMU3C	NPC_	 	Strike Team Missile Unit
+FormID: 01008CE9	DLC02StrikeTeamMU3D	NPC_	 	Strike Team Missile Unit
+FormID: 01008CEA	DLC02StrikeTeamMU4A	NPC_	 	Strike Team Missile Unit
+FormID: 01008CEB	DLC02StrikeTeamMU4B	NPC_	 	Strike Team Missile Unit
+FormID: 01008CEC	DLC02StrikeTeamMU4C	NPC_	 	Strike Team Missile Unit
+FormID: 01008CED	DLC02StrikeTeamMU4D	NPC_	 	Strike Team Missile Unit
+FormID: 01008CEE	DLC02StrikeTeamMU5A	NPC_	 	Strike Team Missile Unit
+FormID: 01008CEF	DLC02StrikeTeamMU5B	NPC_	 	Strike Team Missile Unit
+FormID: 01008CF0	DLC02StrikeTeamMU5C	NPC_	 	Strike Team Missile Unit
+FormID: 01008CF1	DLC02StrikeTeamMU5D	NPC_	 	Strike Team Missile Unit
+FormID: 01008CF2	DLC02StrikeTeamRobotSentryBot2	CREA	 	Strike Team Sentry Bot
+FormID: 01008CF3	DLC02StrikeTeamRobotSentryBot3	CREA	 	Strike Team Sentry Bot
+FormID: 01008CF4	DLC02StrikeTeamRobotSentryBot4	CREA	 	Strike Team Sentry Bot
+FormID: 01008CF5	DLC02StrikeTeamRobotSentryBot5	CREA	 	Strike Team Sentry Bot
+FormID: 01008CF6	DLC02StrikeTeamSN2A	NPC_	 	Strike Team Sniper
+FormID: 01008CF7	DLC02StrikeTeamSN2B	NPC_	 	Strike Team Sniper
+FormID: 01008CF8	DLC02StrikeTeamSN2C	NPC_	 	Strike Team Sniper
+FormID: 01008CF9	DLC02StrikeTeamSN2D	NPC_	 	Strike Team Sniper
+FormID: 01008CFA	DLC02StrikeTeamSN3A	NPC_	 	Strike Team Sniper
+FormID: 01008CFB	DLC02StrikeTeamSN3B	NPC_	 	Strike Team Sniper
+FormID: 01008CFC	DLC02StrikeTeamSN3C	NPC_	 	Strike Team Sniper
+FormID: 01008CFD	DLC02StrikeTeamSN3D	NPC_	 	Strike Team Sniper
+FormID: 01008CFE	DLC02StrikeTeamSN4A	NPC_	 	Strike Team Sniper
+FormID: 01008CFF	DLC02StrikeTeamSN4B	NPC_	 	Strike Team Sniper
+FormID: 01008D00	DLC02StrikeTeamSN4C	NPC_	 	Strike Team Sniper
+FormID: 01008D01	DLC02StrikeTeamSN4D	NPC_	 	Strike Team Sniper
+FormID: 01008D02	DLC02StrikeTeamSN5A	NPC_	 	Strike Team Sniper
+FormID: 01008D03	DLC02StrikeTeamSN5B	NPC_	 	Strike Team Sniper
+FormID: 01008D04	DLC02StrikeTeamSN5C	NPC_	 	Strike Team Sniper
+FormID: 01008D05	DLC02StrikeTeamSN5D	NPC_	 	Strike Team Sniper
+FormID: 010091B4	DLC02ArtyBaseCrimsonDragoon01	NPC_	 	Crimson Dragoon
+FormID: 010091E4	DLC02VertibirdExplosion	EXPL	 	Nuke Explosion
+FormID: 01009849	DLCAnchCreaturesChimeraIceCamp01	CREA	 	Chimera Tank
+FormID: 01009A8D	DLCAnchCreaturesChimeraFuelDepot	CREA	 	Chimera Tank
+FormID: 01009BD1	DLC02Infantry	CLAS	 	Infantry
+FormID: 0100A03F	DLC02HealthKit	ACTI	 	Health Kit
+FormID: 0100A044	DLC02TEMPSgtMontgomery	NPC_	 	Sergeant Benjamin Montgomery
+FormID: 0100A085	DLC02ArtyBaseCrimsonDragoon02	NPC_	 	Crimson Dragoon
+FormID: 0100A088	DLC02ArtyBaseCrimsonDragoon03	NPC_	 	Crimson Dragoon
+FormID: 0100A0EC	DLC02OutfitJumpsuitArmy	ARMO	 	Army Mechanic Jumpsuit
+FormID: 0100A0EE	DLC02ArmyJumpsuitGloveR	ARMA	 	Army Jumpsuit Right Glove
+FormID: 0100A0EF	DLC02ArmyJumpsuitGloveL	ARMA	 	Army Jumpsuit Left Glove
+FormID: 0100A4C6	DLC02ElevAboveSwitch	ACTI	 	Switch
+FormID: 0100A4D9	DLC02BombFlareEFFECT	MGEF	 	Bomber Flare
+FormID: 0100A4DC	DLC02BombFlarePROJ	PROJ	 	Bomb Flare
+FormID: 0100A4DD	DLC02BombFlare	WEAP	 	Signal Flare
+FormID: 0100A4DF	DLC02TestGun	WEAP	 	Test Gun
+FormID: 0100A4E0	DLC02SpiderMine	CREA	 	Spider Drone
+FormID: 0100A4EC	DLC02TurretFloorChinese	CREA	 	Mark II Turret
+FormID: 0100A683	DLC02GunBatteryExplosion	EXPL	 	Fuel Tank Explosion
+FormID: 0100A6C0	DLC02ArmorSimSuit	ARMO	 	Neural Interface Suit
+FormID: 0100AACC	DLC02WeapMontgomeryAssaultRifle	WEAP	 	Assault Rifle
+FormID: 0100AB27	DLC02TurretCeiling2500	CREA	 	Mark I Turret
+FormID: 0100AC64	DLC02ChimeraLaserProjectile	PROJ	 	Laser Beam
+FormID: 0100AD30	DLC02FF007PatientSittingA	NPC_	 	American Soldier
+FormID: 0100AD38	DLC02FF007PatientSleepingA	NPC_	 	American Soldier
+FormID: 0100AD4E	DLC02TurretCeiling2048	CREA	 	Mark I Turret
+FormID: 0100AD7B	DLC02OutfitArmyGeneral	ARMO	 	General Chase's Overcoat
+FormID: 0100AF66	DLC02GaussKnockdownEffect	MGEF	 	Knockdown
+FormID: 0100AF68	DLC02KnockdownEffect	SPEL	 	Knockdown
+FormID: 0100AF7D	DLC02WeapHIGHDMGChineseAssaultRifle	WEAP	 	Chinese Assault Rifle
+FormID: 0100B14A	DLC02HiddenGenDoor01	DOOR	 	Door
+FormID: 0100B4AA	DLC02FF008MechanicA	NPC_	 	American Grease-Monkey
+FormID: 0100B4B7	DLC02FF008Soldier	NPC_	 	American T51-B Unit
+FormID: 0100B4DA	DLC02FF004Briefcase	ACTI	 	Intel
+FormID: 0100B4DC	DLC02FF004IntelMessage	MESG	 	Well done soldier!
+FormID: 0100B4EA	DLC02zCliffs02	CELL	 	Field Storage
+FormID: 0100B4EB	DLC02zCliffs01	CELL	 	Field Storage
+FormID: 0100B501	DLC02ChineseIntelTerminal01	TERM	 	Chinese Terminal
+FormID: 0100B554	DLC02WeapShockSword	WEAP	 	Jingwei's Shocksword
+FormID: 0100B567	DLC02AudioHolotapes	QUST	 	Anchorage Holotape Infos
+FormID: 0100B568	DLC02HolotapeMountain1	NOTE	 	Holotape - Goodbye
+FormID: 0100B569	DLC02HolotapeMountain2	NOTE	 	Holotape - Invasion
+FormID: 0100B56A	DLC02HolotapeMountain3	NOTE	 	Holotape - Bombardment
+FormID: 0100B56B	DLC02HolotapeMountain4	NOTE	 	Holotape - Overrun
+FormID: 0100B56C	DLC02HolotapeAnch1	NOTE	 	Holotape - I'm Okay
+FormID: 0100B56D	DLC02HolotapeAnch2	NOTE	 	Holotape - Psycho
+FormID: 0100B56E	DLC02FF007Doctor	NPC_	 	Doctor Adami
+FormID: 0100B5FB	DLC02PowerArmorFatManREDSHIRT	NPC_	 	Power Armored Soldier
+FormID: 0100B603	DLC02OA4PowerArmorRedShirtTrig	ACTI	 	Gas Valve
+FormID: 0100B66C	DLC02ChimeraLobberExplosion	EXPL	 	Missile Explosion
+FormID: 0100B94C	DLC02zEndGlacierCave	CELL	 	Cave Passage
+FormID: 0100BA28	DLC02StrikeTeamOff	QUST	 	DLC02StrikeTeamOff
+FormID: 0100BB28	DLC02ArmorSimSuit2	ARMO	 	Neural Interface Suit
+FormID: 0100BC37	testPhilSnowHelmet	ARMO	 	Combat Helmet
+FormID: 0100BC3D	DLC02PowerArmorFatManFried	NPC_	 	Power Armored Soldier
+FormID: 0100BD74	 	MAPM	 	Outcast Outpost
+FormID: 0100BD75	 	MAPM	 	Cliffs
+FormID: 0100BD76	 	MAPM	 	Artillery Overlook Entrance
+FormID: 0100BD77	 	MAPM	 	Artillery Overlook
+FormID: 0100BD78	 	MAPM	 	Battlefield Trenches
+FormID: 0100BD91	DLC02StartMessage	MESG	 	Alert!
+FormID: 0100BE30	DLC02MinePulseExplosion	EXPL	 	EMP Explosion
+FormID: 0100BE37	testPhilElectricSwordA	WEAP	 	Electric Sword A Electrocute Crit Knockdown
+FormID: 0100BE38	testPhilElectricSwordB	WEAP	 	Electric Sword Damage Multiply
+FormID: 0100BE39	enchTestPhilElectricSwordB	ENCH	 	Electric Sword
+FormID: 0100BE3A	testPhilElectricSwordBEffect	MGEF	 	Electric Sword B Effect
+FormID: 0100BEB5	testphilShockSwordStack	WEAP	 	Jingwei's Shocksword Stack
+FormID: 0100BF70	DLC02CovertOps	PERK	 	Covert Ops
+FormID: 0100BF71	DLC02PerkCovertOpsAbility	SPEL	 	Covert Ops
+FormID: 0100BF9C	DLC02ChineseDialogue	QUST	 	Chinese Combat Dialogue
+FormID: 0100BFF0	DLC02EnchClothingChaseCoat	ENCH	 	General Chase's Coat
+FormID: 0100C03E	DLC02RequisitionWarningMessage	MESG	 	Attention!
+FormID: 0100C052	DLC02ChimeraExplosion	EXPL	 	Large Explosion
+FormID: 0100C063	DLC02SpiderCrateParachute	ACTI	 	Chinese Fortification Cache
+FormID: 0100C067	DLC02ChineseIntelNote01	NOTE	 	Transcribed Chinese Correspondence
+FormID: 0100C068	DLC02ProtocolNote01	NOTE	 	12.1a
+FormID: 0100C069	DLC02ProtocolNote02	NOTE	 	12.1b
+FormID: 0100C06A	DLC02ProtocolNote03	NOTE	 	12.1c
+FormID: 0100C06B	DLC02ArtilleryProtocolTerminal	TERM	 	American Artillery Protocols
+FormID: 0100C06C	DLC02Weap10mmPistolWasteland	WEAP	 	10mm Alloy Steel Pistol
+FormID: 0100C06D	DLC02Weap10mmPistolSilencedWasteland	WEAP	 	Silenced 10mm Alloy Steel Pistol
+FormID: 0100C06E	DLC02WeapAssaultRifleWasteland	WEAP	 	Alloy Steel Assault Rifle
+FormID: 0100C06F	DLC02Weap10mmSubmachineGunWasteland	WEAP	 	10mm Alloy Steel Submachine Gun
+FormID: 0100C070	DLC02WeapChineseAssaultRifleWasteland	WEAP	 	Chinese Dragoon Assault Rifle
+FormID: 0100C071	DLC02WeapChinesePistolWasteland	WEAP	 	Chinese Dragoon Pistol
+FormID: 0100C07B	DLC02WeapKnifeCombatWasteland	WEAP	 	Trench Knife
+FormID: 0100C07C	DLC02WeapShockSwordWasteland	WEAP	 	Jingwei's Shocksword
+FormID: 0100C07D	DLC02WeapGaussRifleWasteland	WEAP	 	Gauss Rifle
+FormID: 0100C0E0	DLC02FF003MechanicB	NPC_	 	American Grease-Monkey
+FormID: 0100C0E1	DLC02FF003MechanicC	NPC_	 	American Grease-Monkey
+FormID: 0100C0E2	DLC02FF007PatientSittingB	NPC_	 	American Soldier
+FormID: 0100C0E3	DLC02FF007PatientSleepingB	NPC_	 	American Soldier
+FormID: 0100C0E4	DLC02FF007PatientSleepingC	NPC_	 	American Soldier
+FormID: 0100C0E5	DLC02FF008MechanicB	NPC_	 	American Grease-Monkey
+FormID: 0100C0E6	DLC02FF008MechanicC	NPC_	 	American Grease-Monkey
+FormID: 0100C0F1	DLC02testText	CELL	 	Joel's Test Text Cell
+FormID: 0100C153	DLC02ChineseIntelNote02	NOTE	 	Chinese Bulletin: spider drones
+FormID: 0100C154	DLC02ChineseIntelNote03	NOTE	 	Chinese Intelligence Report: Liberty Prime
+FormID: 0100C155	DLC02ChineseIntelNote04	NOTE	 	Chinese Intelligence Report: T-51b Deployment
+FormID: 0100C159	DLC02ChineseIntelTerminal02	TERM	 	Chinese Terminal
+FormID: 0100C15A	DLC02ChineseIntelTerminal03	TERM	 	Chinese Terminal
+FormID: 0100C15B	DLC02ChineseIntelTerminal04	TERM	 	Chinese Terminal
+FormID: 0100C15C	DLC02AmericanIntelNote01	NOTE	 	American Intelligence Report
+FormID: 0100C15F	DLC02AmericanIntelTerminal01	TERM	 	Compromised Terminal
+FormID: 0100C161	DLC02CapturedHackerTerminal	TERM	 	Hacked Terminal
+FormID: 0100C162	DLC02HackersLogNote01	NOTE	 	Log of User Actions
+FormID: 0100C163	DLC02VoiceActor01	NPC_	 	Voice Actor NPC 1
+FormID: 0100C164	DLC02VoiceActor02	NPC_	 	Voice Actor NPC 2
+FormID: 0100C166	DLC02UseGaryFromBaseGame	NPC_	 	Voice Actor NPC 3 (Gary)
+FormID: 0100C169	DLC02WeapOverlookCannon	WEAP	 	Fat Man
+FormID: 0100C16A	DLC02OverlookCannonProjectile	PROJ	 	Cannon
+FormID: 0100C16B	DLC02ChineseDogIceCamp	CREA	 	Guard Dog
+FormID: 0100C188	DLC02FF009Photographer	NPC_	 	American War Correspondent
+FormID: 0100C189	DLC02ArmorChineseWasteland	ARMO	 	Chinese Jumpsuit
+FormID: 0100C18A	DLC02ArmorChineseHelmetWasteland	ARMO	 	Chinese Commando Hat
+FormID: 0100C18B	DLC02ArmorCombatSnowWasteland	ARMO	 	Winterized Combat Armor
+FormID: 0100C18C	DLC02ArmorCombatSnowHelmetWasteland	ARMO	 	Winterized Combat Helmet
+FormID: 0100C18D	DLC02ArmorPowerT51bWasteland	ARMO	 	Winterized T-51b Power Armor
+FormID: 0100C18E	DLC02ArmorPowerT51bHelmetWasteland	ARMO	 	Winterized T-51b Power Helmet
+FormID: 0100C18F	DLC02ArmorStealthWasteland	ARMO	 	Chinese Stealth Armor
+FormID: 0100C190	DLC02ArmorStealthHelmetWasteland	ARMO	 	Chinese Stealth Helmet
+FormID: 0100C198	DLCAnchTentDoorLoadAmerican	DOOR	 	Door
+FormID: 0100C1C8	DLC02ArmorChineseGeneralHelmet	ARMO	 	Chinese General Hat
+FormID: 0100C1CA	DLC02ArmorChineseGeneral	ARMO	 	Chinese Jumpsuit
+FormID: 0100C1CE	DLC02SniperRifleACTIVATOR	ACTI	 	Sniper Rifle
+FormID: 0100C320	DLC02BobbyPin	ACTI	 	Bobby Pin
+FormID: 0100C321	DLC02StealthBoy	ACTI	 	Stealth Boy
+FormID: 0100C333	DLC02AudioPlayback01	TACT	 	Playback Audio
+FormID: 0100C337	DLC02AudiotapeVoice01	NPC_	 	Audiotape Voice 1
+FormID: 0100C338	DLC02AudiotapeVoice02	NPC_	 	Audiotape Voice 2
+FormID: 0100C339	DLC02AudiotapeVoice03Gary	NPC_	 	Audiotape Voice Gary
+FormID: 0100C35F	DLC02LockPickACTIVATOR	ACTI	 	Bobby Pin
+FormID: 0100C362	DLC02ChineseAssaultRifleACTIVATOR	ACTI	 	Chinese Assault Rifle
+FormID: 0100C364	DLC02GrenadeFragACTIVATOR	ACTI	 	Frag Grenade
+FormID: 0100C366	DLC02StealthBoyACTIVATOR	ACTI	 	Stealth Boy
+FormID: 0100C369	DLC02Name	MESG	 	Sergeant Benjamin Montgomery
+FormID: 0100C38D	DLC02ShockSwordDamageEffect	MGEF	 	Test Phil Shock Damage
+FormID: 0100C38E	testphilShockSwordDOT	WEAP	 	Jingwei's Shocksword DOT
+FormID: 0100C3C8	DLC02GuardOutcast1	NPC_	 	Brotherhood Outcast
+FormID: 0100C487	DLC02ChineseGateTurret	CREA	 	Mark II Turret
+FormID: 0100C488	DLC02FatmanStopCombat	ACTI	 	Gas Valve
+FormID: 0100C48E	DLC02FatmanStartCombatTrig	ACTI	 	Gas Valve
+FormID: 0100C48F	DLC02FatmanStartCombat	ACTI	 	Gas Valve
+FormID: 0100C523	DLC02HolotapeGaryInterrogationNote	NOTE	 	Interrogation Log
+FormID: 0100C524	DLC02OverheardHolotape01	NOTE	 	Resconstructed Audio Log 40.26
+FormID: 0100C525	DLC02OverheardHolotape02	NOTE	 	Resconstructed Audio Log 11.38
+FormID: 0100C526	DLC02OverheardHolotape03	NOTE	 	Resconstructed Audio Log 31.13
+FormID: 0100C527	DLC02OverheardHolotape04	NOTE	 	Resconstructed Audio Log 13.13
+FormID: 0100C6F0	DLC02WeapPowerFist	WEAP	 	Power Fist
+FormID: 0100C700	DLC02ChineseDogMines	CREA	 	Guard Dog
+FormID: 0100C788	DLCAnchGenElecSwitch04	ACTI	 	Switch
+FormID: 0100C7BC	DLC02HealthDispenser01	ACTI	 	Health Dispenser
+FormID: 0100C7BF	DLC02HealthDispenser02	ACTI	 	Health Dispenser
+FormID: 0100C7C2	DLC02WeapShotgunCombat	WEAP	 	Combat Shotgun
+FormID: 0100C89C	DLC02TestDaryl	CELL	 	Command Tent
+FormID: 0100C89F	DLC02MineFragACTIVATOR	ACTI	 	Frag Mine
+FormID: 0100C8C1	DLC02MicroFusionACTIVATOR	ACTI	 	Microfusion Cell
+FormID: 0100C8C7	DLC02MissileACTIVATOR	ACTI	 	Missile
+FormID: 0100C8C9	DLC02PsychoACTIVATOR	ACTI	 	Psycho
+FormID: 0100CAA9	DLC02MinefieldSwitch	ACTI	 	Switch
+FormID: 0100CB28	DLC02GunBatteryImpactExplosion	EXPL	 	Gun Battery Impact
+FormID: 0100CB32	DLCAnchAmmoDispenser01	ACTI	 	Ammo Dispenser
+FormID: 0100CB42	DLCAnchOffDoorRedL01	DOOR	 	Door
+FormID: 0100CBA2	DLC02OA3LoadOut01Desc	NOTE	 	Close Assault Package
+FormID: 0100CBA3	DLC02OA3LoadOut02Desc	NOTE	 	Fire Team Package
+FormID: 0100CBA4	DLC02OA3LoadOut03Desc	NOTE	 	Heavy Weapons Package
+FormID: 0100CBA5	DLC02OA3LoadOut04Desc	NOTE	 	Sniper Package
+FormID: 0100CBA7	DLCAnchChineseStealthGloveL	ARMA	 	DLCAnchWhiteStealthGloveL
+FormID: 0100CBA8	DLCAnchChineseStealthGloveR	ARMA	 	DLCAnchWhiteStealthGloveR
+FormID: 0100CBD2	DLCAnchCLFenceGateRoad01	DOOR	 	Gate
+FormID: 0100CBEA	DLC02ChineseHQAmericanPowerArmor	NPC_	 	Power Armored Soldier
+FormID: 0100CBF4	testPhilDLC02GeneralJingwei	NPC_	 	General Jingwei
+FormID: 0100CBF8	DLC02FF002CaptiveExecuted	NPC_	 	American Soldier
+FormID: 0100CBFC	DLC02WeapLaserRifle	WEAP	 	Laser Rifle
+FormID: 0100CC26	DLC02EnchStealthArmor	ENCH	 	Stealth Armor
+FormID: 0100CC28	DLC02StealthArmorEnchantmentEffect	MGEF	 	Stealth Armor Enchantment Effect
+FormID: 0100CC64	DLC02OffDoorBigMetal01	DOOR	 	Door
+FormID: 0100CC65	DLC02OffDoorMetalSmL01	DOOR	 	Door
+FormID: 0100CC66	DLC02OffDoorBigMetal01ExteriorPEN	DOOR	 	Door
+FormID: 0100CC68	AudioTemplateMineSpider	CREA	 	AudioTemplateMineSpider
+FormID: 0100CC6C	DLC02	CELL	 	Dummy Cell
+FormID: 0100CC76	DLC02ChineseHQAmericanPowerArmorMelee	NPC_	 	Power Armored Soldier
+FormID: 0100CCF7	DLC02ChineseHQAmericanPowerArmorGauss	NPC_	 	Power Armored Soldier
+FormID: 0100CDDE	DLC02ArmorCombatHelmet	ARMO	 	Combat Helmet
+FormID: 0100CDE3	DLC02CarpetBombExplosionPlayerBlock	EXPL	 	Carpet Bomb Explosion
+FormID: 0100CDE7	DLC02VaultSuit108	ARMO	 	Vault 108 Jumpsuit
+FormID: 0100CEA1	DLC02StrikeTeamRobotDismissMessage	MESG	 	Emergency Robot Command Override
+FormID: 0100CEAC	DLC02ChineseHQDoor	DOOR	 	Door
+FormID: 0100CEE5	DLC02FatmanDistanceCheckTRIG	ACTI	 	Gas Valve
+FormID: 0100CF04	DLC02ArmorStealthHelmett	ARMA	 	Chinese Stealth Armor Helmet
+FormID: 0100CF05	DLC02ArmorStealthHelmettWasteland	ARMA	 	Chinese Stealth Armor Helmet
+FormID: 0100CF2D	DLCAnchCreaturesChimeraBLOCKER	CREA	 	Chimera Tank
+FormID: 0100CF2E	DLCAnchChimeraLaserCanonBLOCKER	WEAP	 	Test Tank Laser
+FormID: 0100CF2F	DLC02ControlBoxExplosion	EXPL	 	Frag Explosion
+FormID: 00014BE2	tLandscape	WRLD	 	TestLandscape
+FormID: 01000804	DLC02BaileysCrossroads	WRLD	 	Bailey's Crossroads
+FormID: 010009B3	 	MAPM	 	Bailey's Crossroads Metro
+FormID: 010009BE	DLC02OA1	QUST	 	Aiding the Outcasts
+FormID: 010009BF	DLC02OA2	QUST	 	The Guns of Anchorage
+FormID: 010009C0	DLC02OA3	QUST	 	Paving the Way
+FormID: 010009C1	DLC02GeneralChase	NPC_	 	General Chase
+FormID: 010009C2	DLC02SgtMontgomery	NPC_	 	Sergeant Benjamin Montgomery
+FormID: 010009C3	DLC02LtMorgan	NPC_	 	Lieutenant Morgan
+FormID: 01000BF2	DLC02Glacier	WRLD	 	Anchorage Cliffs
+FormID: 01000E21	DLC02OutcastFaction	FACT	 	DLC02 Outcast Faction
+FormID: 01000E22	DLC02SpecialistOlin	NPC_	 	Specialist Olin
+FormID: 01000E23	DLC02ProtectorMcGraw	NPC_	 	Protector McGraw
+FormID: 01000E24	DLC02DefenderSibley	NPC_	 	Defender Sibley
+FormID: 01000E26	DLC02DefenderMorrill	NPC_	 	Defender Morrill
+FormID: 01000E27	DLC02Overlook	WRLD	 	Artillery Overlook
+FormID: 01000E28	DLC02AnchorageBattle	WRLD	 	Anchorage
+FormID: 01000E29	DLC02ArtilleryBase	CELL	 	Chinese Artillery Outpost
+FormID: 0100129A	 	MAPM	 	Listening Post
+FormID: 0100129B	 	MAPM	 	Chimera Armor Depot
+FormID: 010012A8	 	MAPM	 	Chinese Forward Camp Delta
+FormID: 010012AE	 	MAPM	 	Abandoned Mining Town
+FormID: 010012B4	 	MAPM	 	Chinese Pulse Field
+FormID: 010012B8	DLC02VSS01	CELL	 	Outcast Outpost
+FormID: 010013B4	DLC02VSSElevatorTerminal	TERM	 	Elevator Control
+FormID: 010013FA	DLC02RadioOutcast	QUST	 	Outcast Distress Call
+FormID: 010013FB	DLC02OutcastRadio	ACTI	 	Ham Radio
+FormID: 010013FD	DLC02OutcastRadioSignal	TACT	 	Outcast Distress Signal
+FormID: 01001411	DLC02CommandTent	CELL	 	Command Tent
+FormID: 010014F6	DLC02OA4	QUST	 	Operation: Anchorage!
+FormID: 010015F3	DLC02Charges	MISC	 	Explosive Charges
+FormID: 010015F5	TestPhil	CELL	 	Command Tent
+FormID: 0100160E	testPhilStealthArmorHelmet	ARMO	 	Stealth Recon Helmet
+FormID: 0100160F	testPhilStealthArmor	ARMO	 	Stealth Recon Armor
+FormID: 01001616	testPhilGaussRifle	WEAP	 	Gauss Rifle
+FormID: 01001618	testPhilEnchGauss	ENCH	 	Gauss Effect
+FormID: 01001619	testPhilGaussEffect	MGEF	 	Gauss Effect
+FormID: 0100161A	testPhilGaussProjectile	PROJ	 	Laser Beam
+FormID: 0100161B	DLC02ChineseHQ	WRLD	 	Chinese HQ
+FormID: 01001876	 	MAPM	 	Chinese Occupied Refinery
+FormID: 010018A6	DLC02SimActivator	ACTI	 	Simulation Pod
+FormID: 010018A7	DLC02SimChair	FURN	 	Chair
+FormID: 010018AA	DLC02PlayerContainer	CONT	 	Metal Box
+FormID: 010018CF	DLC02ElectricalSwitch	ACTI	 	Electrical Switch
+FormID: 010018D2	DLC02GeneralJingwei	NPC_	 	General Jingwei
+FormID: 010019AB	DLC02SimExitFX	ACTI	 	EXIT
+FormID: 010019EB	DLC02ExplosiveChargePlanted	ACTI	 	Explosive Charge
+FormID: 010019EC	DLC02ExplosiveChargeUnarmed	ACTI	 	Explosive Charge
+FormID: 010019F5	DLC02ChimeraDepot	CELL	 	Chimera Depot
+FormID: 010019F6	DLC02CommCenter	CELL	 	Listening Post
+FormID: 01001F08	DLC02ArmorPowerT51bHelmet	ARMO	 	Winterized T-51b Power Helmet
+FormID: 01001F09	DLC02ArmorPowerT51b	ARMO	 	Winterized T-51b Power Armor
+FormID: 01001F0A	DLCAnchSnowBotMG	CREA	 	Sentry Bot
+FormID: 01001F0B	DLCAnchSnowGutsy	CREA	 	Mister Gutsy
+FormID: 01001F0C	DLCAnchSnowBotGL	CREA	 	Sentry Bot
+FormID: 010020B4	DLC02ArtilleryGunAOLD	ACTI	 	Artillery Gun
+FormID: 010020B5	DLC02ArtilleryGunBOLD	ACTI	 	Artillery Gun
+FormID: 010020B6	DLC02ArtilleryGunCOLD	ACTI	 	Artillery Gun
+FormID: 010020D7	tLandscapeDUPLICATE000	WRLD	 	TestLandscape
+FormID: 01002144	DLCAnchTentDoorLoad01	DOOR	 	Door
+FormID: 01002233	DLC02OAFin	QUST	 	DLC02 Post-Quest
+FormID: 010024A0	DLC02OA3PattersonTerminal	TERM	 	Patterson's Terminal
+FormID: 010024A1	DLC02OA3RequisitionTerminal	TERM	 	Requisition Terminal
+FormID: 010024ED	testPhilWorkBench	ACTI	 	Phil's Work Bench
+FormID: 010024EF	testPhilSchematicsTrenchKnifeItem	MISC	 	Schematics - Trench Knife
+FormID: 010024F1	SchematicsTrenchKnifeNote	NOTE	 	Schematics - Trench Knife
+FormID: 010026BB	DLCAnchJChaTestCell	CELL	 	JCha Test Cell
+FormID: 01002738	DLC02zcBaileysToWasteland	CELL	 	Bailey's Crossroads Metro
+FormID: 0100293B	DLC02ListeningPostCrimsonDragoon	NPC_	 	Crimson Dragoon
+FormID: 01002944	DLC02ListeningPostChineseTechnician	NPC_	 	Chinese Technician
+FormID: 01002969	testPhilRegenArmor	ARMO	 	Sim Regen Armor
+FormID: 01002972	testPhilWeap10mmPistolSilenced	WEAP	 	No Ammo Silenced 10mm Pistol
+FormID: 01002984	DLC02AmericanEndBattle1	NPC_	 	Power Armored Soldier
+FormID: 01002985	DLC02AmericanEndBattle2	NPC_	 	Power Armored Soldier
+FormID: 010029A5	DLC02OA3CommandTentDoor	DOOR	 	Door
+FormID: 010029BD	DLC02OA3PattersonTerminalDesc	TERM	 	Patterson's Terminal
+FormID: 010029BE	DLC02OA3PattersonsTerminalUnitDesc01	NOTE	 	Infantryman
+FormID: 010029BF	DLC02OA3PattersonsTerminalUnitDesc02	NOTE	 	Grenadier
+FormID: 010029C0	DLC02OA3PattersonsTerminalUnitDesc03	NOTE	 	Missile Unit
+FormID: 010029C1	DLC02OA3PattersonsTerminalUnitDesc04	NOTE	 	Sniper
+FormID: 010029C2	DLC02OA3PattersonsTerminalUnitDesc05	NOTE	 	Mister Gutsy
+FormID: 010029C3	DLC02OA3PattersonsTerminalUnitDesc06	NOTE	 	Sentry Bot
+FormID: 010029C8	DLC02RecruitmentMarker	MISC	 	Recruitment Marker
+FormID: 010029CA	DLC02OA3PattersonTerminalUnit03	TERM	 	Patterson's Terminal
+FormID: 010029CC	DLC02OA3PattersonTerminalSure	TERM	 	Patterson's Terminal
+FormID: 010029CD	DLC02Gary23	NPC_	 	Gary 23
+FormID: 01002D01	DLC02StrikeTeamGutsy1Template	CREA	 	Strike Team Mister Gutsy
+FormID: 01002D04	DLC02StrikeTeamAR1ATemplate	NPC_	 	Strike Team Infantryman
+FormID: 01002D05	DLC02StrikeTeamGR1ATemplate	NPC_	 	Strike Team Grenadier
+FormID: 01002D06	DLC02StrikeTeamMU1ATemplate	NPC_	 	Strike Team Missile Unit
+FormID: 01002D07	DLC02StrikeTeamSN1ATemplate	NPC_	 	Strike Team Sniper
+FormID: 01002D09	DLC02StrikeTeamFaction	FACT	 	Strike Team Faction
+FormID: 01002D0A	DLC02StrikeTeam	QUST	 	Strike Team Quest
+FormID: 01002D0C	 	MAPM	 	U.S. Army Field Headquarters
+FormID: 01002D22	DLC02FieldHQQuartermaster	NPC_	 	Quartermaster
+FormID: 01002D89	tLandscapeDUPLICATE001	WRLD	 	TestLandscape
+FormID: 01002DF1	DLC02ConvOutcast	QUST	 	Outcast Conversation System
+FormID: 01002F2C	DLC02RequisitionHoloCloseAssault	MISC	 	Close Assault Requisition Holo
+FormID: 01002F2D	DLC02RequisitionHoloFireTeam	MISC	 	Fire Team Requisition Holo
+FormID: 01002F2E	DLC02RequisitionHoloHeavyWeapon	MISC	 	Heavy Weapons Requisition Holo
+FormID: 01002F2F	DLC02RequisitionHoloSniper	MISC	 	Sniper Requisition Holo
+FormID: 01002F32	DLC02FuelTankExplosion	EXPL	 	Fuel Tank Explosion
+FormID: 01002F38	DLC02FuelTankPanelA	ACTI	 	Chimera Depot Fuel Tank A
+FormID: 01002F39	DLC02FuelTankPanelB	ACTI	 	Chimera Depot Fuel Tank B
+FormID: 0100301F	DLCAnchCreaturesChimera	CREA	 	Chimera Tank
+FormID: 01003387	DLC02TestChimera	CREA	 	Chimera AutoTank
+FormID: 01003473	testPhilOutfitPeepers	ARMO	 	The Peepers
+FormID: 0100347A	AudioTemplateChimera	CREA	 	AudioTemplateChimera
+FormID: 01003489	DLC02FF001Soldier	NPC_	 	American Soldier
+FormID: 010034DA	DLC02FF	QUST	 	DLC02FF
+FormID: 0100362D	DLC02ConvSoldier	QUST	 	Soldier Conversation System
+FormID: 0100362E	DLC02SoldierTalkFaction	FACT	 	Soldier Conversation Faction
+FormID: 01003A02	DLC02ArmorStealth	ARMO	 	Chinese Stealth Armor
+FormID: 01003A03	DLC02ArmorStealthHelmet	ARMO	 	Chinese Stealth Helmet
+FormID: 01003A04	DLC02WeapGaussRifle	WEAP	 	Gauss Rifle
+FormID: 01003AF9	DLC02ArmorCombatSnow	ARMO	 	Winterized Combat Armor
+FormID: 01003AFA	DLCAnchWhiteGloveL	ARMA	 	DLCAnchWhiteGloveL
+FormID: 01003AFB	DLCAnchWhiteGloveR	ARMA	 	DLCAnchWhiteGloveR
+FormID: 01003AFC	DLC02ArmorCombatSnowHelmet	ARMO	 	Winterized Combat Helmet
+FormID: 01003BFB	DLCAnchChimeraLaserCanon	WEAP	 	Test Tank Laser
+FormID: 01003CC2	DLC02ChineseSoldier1TEMPLATE	NPC_	 	Chinese Soldier
+FormID: 01003CC3	DLC02ChineseSniper1TEMPLATE	NPC_	 	Chinese Sniper
+FormID: 01003CC4	DLC02ChineseFlamer1TEMPLATE	NPC_	 	Chinese Inferno Unit
+FormID: 01003CC5	DLC02ChineseMissileLauncher1TEMPLATE	NPC_	 	Chinese Launcher
+FormID: 01003CC6	DLC02ChineseTEMPLATEBASE	NPC_	 	Chinese Soldier
+FormID: 01003CCB	DLC02AmericanSoldier1TEMPLATE	NPC_	 	American Soldier
+FormID: 01003CCC	DLC02AmericanSniper1TEMPLATE	NPC_	 	American Sniper
+FormID: 01003CCD	DLC02AmericanFlamer1TEMPLATE	NPC_	 	American Inferno Unit
+FormID: 01003CCE	DLC02AmericanMissileLauncher1TEMPLATE	NPC_	 	American Launcher
+FormID: 01003E13	ChimeraTankProjectile	PROJ	 	Chimera Tank Projectile
+FormID: 01003E21	DLCAnchChimeraLobber	WEAP	 	Test Tank Laser
+FormID: 01003EC7	DLC02ElevDoor	DOOR	 	Freight Elevator
+FormID: 01003EC9	DLC02ElevSwitch	ACTI	 	Elevator Switch
+FormID: 01003ED6	DLC02FF002CaptiveMarker	FURN	 	Restrained Sit
+FormID: 01003ED7	DLC02FF002Captive	NPC_	 	American Soldier
+FormID: 01003F39	DLC02ArmorChineseHelmet	ARMO	 	Chinese Commando Hat
+FormID: 01003F3A	DLC02ArmorChinese	ARMO	 	Chinese Jumpsuit
+FormID: 01003F3E	DLC02WeapAssaultRifle	WEAP	 	Assault Rifle
+FormID: 01003F3F	DLC02WeapChineseAssaultRifle	WEAP	 	Chinese Assault Rifle
+FormID: 01003F40	DLC02WeapChineseOfficerSword	WEAP	 	Chinese Officer's Sword
+FormID: 01003F41	DLC02WeapChinesePistol	WEAP	 	Chinese Pistol
+FormID: 01003F42	DLC02WeapFlamer	WEAP	 	Flamer
+FormID: 01003F43	DLC02WeapGrenadeFrag	WEAP	 	Frag Grenade
+FormID: 01003F44	DLC02WeapKnifeCombat	WEAP	 	Trench Knife
+FormID: 01003F45	DLC02WeapMineFrag	WEAP	 	Frag Mine
+FormID: 01003F46	DLC02WeapMissileLauncher	WEAP	 	Missile Launcher
+FormID: 01003F47	DLC02WeapMinigun	WEAP	 	Minigun
+FormID: 01003F48	DLC02WeapSniperRifle	WEAP	 	Sniper Rifle
+FormID: 01003F49	DLC02Weap10mmPistol	WEAP	 	10mm Pistol
+FormID: 01003F4A	DLC02Weap10mmPistolSilenced	WEAP	 	Silenced 10mm Pistol
+FormID: 01003F72	DLC02Weap10mmSubmachineGun	WEAP	 	10mm Submachine Gun
+FormID: 01004394	DLC02BombingRunTestMessage	MESG	 	Look out!
+FormID: 01004395	DLC02BombingRunExplosion	EXPL	 	Large Explosion
+FormID: 01004398	dlc02testchinesedeath	NPC_	 	Chinese Soldier
+FormID: 010043AA	TestDLCAnchUtility	CELL	 	Test Utility
+FormID: 010043E5	DLCAnchCot01R	FURN	 	Army Cot
+FormID: 010043E6	DLCAnchCot01L	FURN	 	Army Cot
+FormID: 010043F2	DLC02CombatAmericanFaction	FACT	 	Anchorage Sim Combat -- American Faction
+FormID: 0100450C	DLC02FF003MechanicA	NPC_	 	American Grease-Monkey
+FormID: 01004520	DLC02FF005Soldier	NPC_	 	American Soldier
+FormID: 0100452B	DLCAnchT51DisplayArmor01	ACTI	 	T-51b

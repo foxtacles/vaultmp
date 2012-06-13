@@ -1,0 +1,1402 @@
+FormID: 0100469D	NVDLC01CasHotelDoorSmL01	DOOR	 	Door
+FormID: 0100469E	NVDLC01CasHotelDoorSmL02	DOOR	 	Door
+FormID: 0100469F	NVDLC01CasHotelDoorSmL03a	DOOR	 	Door
+FormID: 010046A0	NVDLC01CasHotelDoorSmR01	DOOR	 	Door
+FormID: 010046A1	NVDLC01CasHotelDoorSmR02	DOOR	 	Door
+FormID: 010046A2	NVDLC01CasHotelDoorSmR03a	DOOR	 	Door
+FormID: 010046A3	NVDLC01CasHotelDoorSmStatic	DOOR	 	Door
+FormID: 010046A4	NVDLC01CasHotelDoorSmStaticA	DOOR	 	Door
+FormID: 010046A5	NVDLC01TheaterIntDoor01	DOOR	 	Door
+FormID: 010046A6	NVDLC01TheaterIntWideDoor	DOOR	 	Door
+FormID: 010046A7	NVDLC01TheaterMainDoor01	DOOR	 	Door
+FormID: 010046A8	NVDLC01ToTheaterDoor01	DOOR	 	Door
+FormID: 010046A9	NVDLC01TheaterBackDoorSmR03a	DOOR	 	Door
+FormID: 010046AA	NVDLC01TheaterVeraDoorSmL01	DOOR	 	Vera's Dressing Room Door
+FormID: 010046AB	NVDLC01TheaterDeanDoorSmL01	DOOR	 	Dean's Dressing Room Door
+FormID: 010046AC	NVDLC01Theater	CELL	 	The Tampico
+FormID: 010049B1	NVDLC01ClinicSecurityTerminal	TERM	 	Clinic Security Terminal
+FormID: 010049C3	NVDLC01HoloRifleProjectile	PROJ	 	Laser Beam
+FormID: 010049C4	FogTestRoom	CELL	 	New Vegas Steel
+FormID: 01004F04	NVDLC01TheaterVeraKey	KEYM	 	Vera's Backstage Key
+FormID: 01004F05	NVDLC01HologramVaultMale	NPC_	 	Hologram
+FormID: 01004F06	NVDLC01HologramTheaterMale	NPC_	 	Hologram
+FormID: 01004F07	NVDLC01SpeakerTheaterTerminal	TERM	 	Ambient Audio Control
+FormID: 01004F08	NVDLC01TheaterDeanFirstTrigger	ACTI	 	Start the Show
+FormID: 01004F0A	NVDLC01HologramRegen	SPEL	 	Hologram Regeneration
+FormID: 01004F0B	NVDLC01HologramSuitNeutralEffect	ENCH	 	Hologram Suit-ness
+FormID: 01004F0E	NVDLC01HologramClass	CLAS	 	Hologram
+FormID: 01005131	NVDLC01CrGhostHarvesterWT	CREA	 	Ghost Harvester
+FormID: 01005229	NVDLC01MQ00	QUST	 	Sierra Madre Grand Opening!
+FormID: 01005232	NVDLC01ClinicDesk01	CONT	 	Desk
+FormID: 01005233	NVDLC01ClinicKey	KEYM	 	Clinic Basement Key
+FormID: 01005235	NVDLC01ClinicChristinePanel	ACTI	 	Auto-Doc Control Panel
+FormID: 01005236	NVDLC01ClinicChristinePanelMsg	MESG	 	Auto-Doc
+FormID: 01005239	NVDLC01ClinicAutoDoc	ACTI	 	Mark IX Auto-Doc
+FormID: 01005259	NVDLC01RadioStartON	ACTI	 	Radio
+FormID: 00020D72	DrinkFireHydrant01Avg	ACTI	 	Fire Hydrant
+FormID: 00020D73	DrinkFireHydrant03Purified	ACTI	 	Fire Hydrant
+FormID: 0100545C	NVDLC01HologramCodeHolder	ACTI	 	Direct the Show
+FormID: 000A11F5	DEADWastelanderHM	NPC_	 	Wastelander
+FormID: 0100581A	nvdlc01elijahsrobe	ARMO	 	Father Elijah's Robes
+FormID: 01005D0E	NVDLC01FollowerCell	CELL	 	NV DLC01 Follower Cell
+FormID: 01005D13	NVDLC01HireTrigger	ACTI	 	Gas Valve
+FormID: 01005D14	NVDLC01FireTrigger	ACTI	 	Gas Valve
+FormID: 01005DCB	NVDLC01HoloSupport	QUST	 	Scripting Support for Hologram Features
+FormID: 01006093	NVDLC01HologramSuitesStarlet	NPC_	 	Hologram
+FormID: 01006094	NVDLC01HologramFemaleTemplate	NPC_	 	Hologram
+FormID: 010062AF	NVDLC01HoloVaultTerminalC	TERM	 	Hologram Control
+FormID: 010062B0	NVDLC01HoloVaultTerminalB	TERM	 	Hologram Control
+FormID: 010062B2	NVDLC01DownloadMessage	MESG	 	Sierra Madre Grand Opening!
+FormID: 010062B3	NVDLC01RadioStation	TACT	 	Sierra Madre Broadcast
+FormID: 0100636C	NVDLC01CasinoHoloCodeHolder	ACTI	 	Casino Teaching Holograms
+FormID: 0100636D	NVDLC01HoloCasinoTerminalA	TERM	 	Hologram Control
+FormID: 0100636E	NVDLC01HoloCasinoTerminalC	TERM	 	Hologram Control
+FormID: 0100636F	NVDLC01HoloCasinoTerminalB	TERM	 	Security Management Control Terminal
+FormID: 01006370	NVDLC01HologramCasinoMale	NPC_	 	Hologram
+FormID: 01006371	NVDLC01CasinoSecurityMemo	NOTE	 	NVDLC01CasinoSecurityMemo
+FormID: 0100654E	NVDLC01PoliceStationTerminal01	TERM	 	Terminal
+FormID: 0100661D	NVDLC01SuitesCentralTerminal	TERM	 	Maintenance Network Terminal
+FormID: 0100661E	NVDLC01PassEntertainer	MISC	 	Entertainer Pass
+FormID: 0100661F	NVDLC01PassMaintenance	MISC	 	Maintenance Pass
+FormID: 01006620	NVDLC01SuitesStarletBed	FURN	 	Bed
+FormID: 01006621	NVDLC01MaintenanceKey	KEYM	 	Maintenance Pass
+FormID: 01006622	NVDLC01SuitesKey	KEYM	 	Suites Maintenance Key
+FormID: 01006623	NVDLC01EntertainerKey	KEYM	 	Entertainer Pass Key
+FormID: 010066A0	NVDLC01HologramVilla	NPC_	 	Hologram
+FormID: 0100680E	NVDLC01GasValveRepair	ACTI	 	Gas Valve
+FormID: 010069A9	NVDLC01KnifeSpearProjectile	PROJ	 	Spear Projectile
+FormID: 010069C8	NVDLC01HoloBaseTerminal	TERM	 	Hologram Control
+FormID: 01006C14	NVDLC01SuitesKey4	KEYM	 	Suite Key P04
+FormID: 01006C15	NVDLC01SuitesKey6	KEYM	 	Suite Key P06
+FormID: 01006C16	NVDLC01SuitesKey5	KEYM	 	Suite Key P05
+FormID: 01006C17	NVDLC01SuitesVeraKey	KEYM	 	Vera's Key
+FormID: 01006C18	NVDLC01SuitesKey2	KEYM	 	Suite Key P02
+FormID: 01006C19	NVDLC01SuitesKey3	KEYM	 	Suite Key P03
+FormID: 01006C1A	NVDLC01DresserRustyLow	CONT	 	Dresser
+FormID: 01006CA3	NVDLC01Toolbox	CELL	 	Level Design Toolbox Cell
+FormID: 01006CA6	NVDLC01RadioSphereTrigger	ACTI	 	Gas Valve
+FormID: 01006CAE	NVDLC01SpeakerShutdownTermWALL0Unlocked	TERM	 	Terminal
+FormID: 01006CAF	NVDLC01SpeakerShutdownTermWALL0VeryEasy	TERM	 	Terminal
+FormID: 01006CB0	NVDLC01SpeakerShutdownTermWALL1Easy	TERM	 	Terminal
+FormID: 01006CB1	NVDLC01SpeakerShutdownTermWALL2Average	TERM	 	Terminal
+FormID: 01006CB2	NVDLC01SpeakerShutdownTermWALL3Hard	TERM	 	Terminal
+FormID: 01006CB3	NVDLC01SpeakerShutdownTermWALL4VeryHard	TERM	 	Terminal
+FormID: 01006CB4	NVDLC01SpeakerShutdownTermDESK0Unlocked	TERM	 	Terminal
+FormID: 01006CB5	NVDLC01SpeakerShutdownTermDESK0VeryEasy	TERM	 	Terminal
+FormID: 01006CB6	NVDLC01SpeakerShutdownTermDESK1Easy	TERM	 	Terminal
+FormID: 01006CB7	NVDLC01SpeakerShutdownTermDESK2Average	TERM	 	Terminal
+FormID: 01006CB8	NVDLC01SpeakerShutdownTermDESK3Hard	TERM	 	Terminal
+FormID: 01006CB9	NVDLC01SpeakerShutdownTermDESK4VeryHard	TERM	 	Terminal
+FormID: 01006E8D	NVDLC01RadioStationSpeakers	TACT	 	Bomb Collar Speakers
+FormID: 01006E8F	NVDLC01ExplosiveCollar	ARMO	 	Dead Money Collar
+FormID: 01006E93	NVDLC01BombCollarQuest	QUST	 	Bomb Collar Quest
+FormID: 01006E94	NVDLC01Radio	ACTI	 	Radio
+FormID: 01006E98	NVDLC01CollarTestConsole	ACTI	 	Collar Test Console
+FormID: 01006E9E	NVDLC01SpeakerINV	ACTI	 	Speaker
+FormID: 01006EC4	NVDLC01HologramEmitterEasyMsg	MESG	 	Hologram Emitter
+FormID: 01006ED3	NVDLC01VaultHoloTrigger01	ACTI	 	Start the Show
+FormID: 01006ED6	nvdlc01starletclean	ARMO	 	Vera's Outfit
+FormID: 01006ED7	nvdlc01starlewig	ARMO	 	Starlet Wig
+FormID: 01006ED8	nvdlc01Scarlethologramoutfit	ARMO	 	Scarlet hologramoutfit
+FormID: 01006ED9	NVDLC01StarletHologram	NPC_	 	Starlet Hologram
+FormID: 01006EDA	NVDLC01Starlet	NPC_	 	Starlet
+FormID: 01006EDB	NVDLC01WestTownS	WRLD	 	Puesta del Sol South
+FormID: 01007401	NVDLC01HoloEmitterA	ACTI	 	Hologram Emitter
+FormID: 01007402	NVDLC01HoloEmitterC	ACTI	 	Hologram Emitter
+FormID: 01007403	NVDLC01HoloEmitterB	ACTI	 	Hologram Emitter
+FormID: 010076BA	NVDLC01VillaDean	WRLD	 	Residential District
+FormID: 00143FDF	IrradiatedYumYumDeviledEggs	ALCH	 	Irr. YumYum D. Eggs
+FormID: 00143FE6	IrradiatedBlamcoMacandCheese	ALCH	 	Irr. Mac & Cheese
+FormID: 00143FE7	IrradiatedInstaMash	ALCH	 	Irradiated InstaMash
+FormID: 00143FE9	IrradiatedDandyBoyApples	ALCH	 	Irr. Dandy Boy Apples
+FormID: 00143FEA	IrradiatedFancyLadsSnackCakes	ALCH	 	Irr. Fancy Lads
+FormID: 00143FEC	IrradiatedPorkNBeans	ALCH	 	Irr. Pork N' Beans
+FormID: 00143FED	IrradiatedPotatoCrisps	ALCH	 	Irr. Potato Crisps
+FormID: 00143FEE	IrradiatedSalisburySteak	ALCH	 	Irr. Salisbury Steak
+FormID: 00143FEF	IrradiatedScotch	ALCH	 	Irradiated Scotch
+FormID: 00143FF0	IrradiatedSugarBombs01	ALCH	 	Irr. Sugar Bombs
+FormID: 01008A2E	NVDLC01SignalInterference	PERK	 	Signal Interference
+FormID: 01008A2F	NVDLC01UncleanLiving	PERK	 	Unclean Living
+FormID: 01008BB5	NVDLC01VaultMainSecurityTerminal	TERM	 	Vault Security Terminal
+FormID: 01008BB6	NVDLC01VaultAltSecurityTerminal	TERM	 	Vault Security Terminal
+FormID: 01008BCC	NVDLC01ClinicBasementTerminal	TERM	 	Clinic Power Status Terminal
+FormID: 01008BCD	NVDLC01ClinicBasmentNote01	NOTE	 	Power Status
+FormID: 01008BCE	NVDLC01ClinicBasmentNote02	NOTE	 	Power Status
+FormID: 01008F98	NVDLC01SpeakerVaultTerminalUnlocked	TERM	 	Terminal
+FormID: 01008FBF	NVDLC01WTNorth	CELL	 	Ruined Building
+FormID: 01008FC2	NVDLC01PatrolTrigger	ACTI	 	West Town Patrol Packages
+FormID: 01008FC4	NVDLC01CrGhostSeekerWT	CREA	 	Ghost Seeker
+FormID: 01008FC5	NVDLC01WTSouth	CELL	 	Ruined Store
+FormID: 01009174	NVDLC01WTSupport	QUST	 	NVDLC01WTSupport
+FormID: 010091C4	NVDLC01RegenDean	SPEL	 	Dean's Regeneration
+FormID: 01009237	NVDLC01PassMaintenanceNote	NOTE	 	Sierra Madre Maintenance Pass
+FormID: 01009238	NVDLC01PassEntertainerNote	NOTE	 	Sierra Madre Entertainer Pass
+FormID: 01009239	NVDLC01PassSuitesSecurity	MISC	 	Suites Security Pass
+FormID: 0100923A	NVDLC01ChristineFaction	FACT	 	Christine Faction
+FormID: 0100923B	NVDLC01SuitesFaction	FACT	 	Suites Holograms
+FormID: 0100923D	NVDLC01VillaHologramTerminal02	TERM	 	Hologram Control Terminal 02
+FormID: 0100923F	NVDLC01VillaHologramTerminal01	TERM	 	Hologram Control Terminal 01
+FormID: 01009252	NVDLC01HologramSecurityFaction	FACT	 	Hologram Security Faction
+FormID: 01009253	NVDLC01HologramFriendFaction	FACT	 	Hologram Friend Faction
+FormID: 01009254	NVDLC01HologramFaction	FACT	 	Hologram Generic Faction
+FormID: 01009255	NVDLC01HologramWarningEffect	MGEF	 	Hologram Warning
+FormID: 01009257	NVDLC01HoloWarnSpell	SPEL	 	Hologram Warning
+FormID: 01009258	NVDLC01HologramFriendTemplate	NPC_	 	Hologram
+FormID: 010092EF	NVDLC01WeapHolorifle	WEAP	 	Holorifle
+FormID: 010094E8	NVDLC01VillaChristine	WRLD	 	Medical District
+FormID: 001658BA	MedicalClinicAutoDoc	ACTI	 	Mk I Auto-Doc
+FormID: 0100A4F0	NVDLC01ClinicAutoDocMsg	MESG	 	Auto-Doc
+FormID: 0100A53B	NVDLC01HologramStopTrigger	ACTI	 	Stop the Show
+FormID: 0100A56B	NVDLC01VaultSecurityFaction	FACT	 	Vault Security Faction
+FormID: 0100A56C	NVDLC01TurretVault	CREA	 	The Vault Security Turret
+FormID: 0100A59C	NVDLC01LobbyCodeHolder	ACTI	 	Lobby Code Holder
+FormID: 0100A59D	NVDLC01CasinoSwitchCodeBox	ACTI	 	Casino Switch Code Box
+FormID: 0100A59E	NVDLC01CasinoSwitch01	ACTI	 	Electrical Switch
+FormID: 0100A59F	NVDLC01HoloLobbyTerminalA	TERM	 	Receptionist Terminal
+FormID: 0100A5A1	NVDLC01CasOff	KEYM	 	Sierra Madre Office Key
+FormID: 0100A5A2	NVDLC01CasinoPasscode01	NOTE	 	Casino Security Passcode
+FormID: 0100A7A9	NVDLC01WeapAutomaticRifle	WEAP	 	Automatic Rifle
+FormID: 0100A7C5	NVDLC01ClinicDesk02	CONT	 	Desk
+FormID: 0100A845	NVDLC01SuitesPasswordNote	NOTE	 	Suites Password Reminder
+FormID: 0100A846	NVDLC01SuitesSecurityPassword	MISC	 	Suites Security Password Note
+FormID: 0100A847	NVDLC01TrapTripwire	ACTI	 	Tripwire
+FormID: 0100ABE1	NVDLC01VaultMainInfoTerminal	TERM	 	Vault Control Terminal
+FormID: 0100ABEC	NVDLC01VendingArtDeco	ACTI	 	Vending Machine
+FormID: 00166C03	musCtrlGnrcCreepy	ALOC	 	musCtrlGnrcCreepy
+FormID: 0100AD74	NVDLC01CrHologramTemplate	CREA	 	Hologram
+FormID: 0100AD78	NVDLC01HologramBeam	WEAP	 	Hologram Beam
+FormID: 0100AD8E	NVDLC01SuitesBrokenIntercomMsg	MESG	 	Broken Intercom
+FormID: 0100AD99	NVDLC01SuitesIntercom	TACT	 	Broken Intercom
+FormID: 0100AD9A	NVDLC01SuitesBarkActivator	ACTI	 	Christine Intercom Bark Activator
+FormID: 0100ADBE	NVDLC01Narrator	NPC_	 	Narrator
+FormID: 0100ADC4	NVDLC01DogGalaTrigger	ACTI	 	Dog Gala Trigger
+FormID: 0100AE26	NVDLC01VaultCodeHolder	ACTI	 	Direct End Game Show
+FormID: 0100AE28	NVDLC01ElijahFaction	FACT	 	Father Elijah Faction
+FormID: 0100AE29	NVDLC01DeanGalaTrigger	ACTI	 	Dean Gala Trigger
+FormID: 0100AE2C	NVDLC01ChristineGalaTrigger	ACTI	 	Christine Gala Trigger
+FormID: 0100AE2F	NVDLC01FilingCabinetCasino	CONT	 	Filing Cabinet
+FormID: 0100AE30	NVDLC01StarletHologramLobby	NPC_	 	Starlet Hologram
+FormID: 0100AE31	NVDLC01CashiersKey	KEYM	 	Cashier's Key
+FormID: 0100AE71	NVDLC01WTTunnel	CELL	 	Service Route
+FormID: 0100AE73	NVDLC01VistaWestherVolume	ACTI	 	Set Vista Weather
+FormID: 0100B042	NVDLC01CrHologramTemplateFriendFemale	CREA	 	Hologram
+FormID: 0100B043	NVDLC01CrHologramVilla	CREA	 	Hologram
+FormID: 0100B044	NVDLC01CrHologramVaultMale	CREA	 	Hologram
+FormID: 0100B045	NVDLC01CrHologramTheaterMale	CREA	 	Hologram
+FormID: 0100B046	NVDLC01CrHologramStarlet	CREA	 	Starlet Hologram
+FormID: 0100B047	NVDLC01CrHologramTemplateFemale	CREA	 	Hologram
+FormID: 0100B048	NVDLC01CrHologramTemplateFriend	CREA	 	Hologram
+FormID: 0100B049	NVDLC01CrHologramClinic	CREA	 	Hologram
+FormID: 0100B04A	NVDLC01CrHologramCasinoMale	CREA	 	Hologram
+FormID: 0100B050	NVDLC01EastTownN	WRLD	 	Salida del Sol North
+FormID: 001673D6	ScotchGood	ALCH	 	Jake Juice
+FormID: 0100BA6A	NVDLC01bedBothSides	FURN	 	Bed
+FormID: 0100BA6B	NVDLC01bedRight	FURN	 	Bed
+FormID: 0100BA6C	NVDLC01bedLeft	FURN	 	Bed
+FormID: 0100BB19	HologramPulseGunProjectile	PROJ	 	Laser Beam
+FormID: 0100BBC2	NVDLC01WeapPolicePistol	WEAP	 	Police Pistol
+FormID: 00167BCC	VLootSafeGen02	CONT	 	Safe
+FormID: 0100BCD6	NVDLC01LockerPoliceStation	CONT	 	Locker
+FormID: 0100BCD7	NVDLC01LockerPoliceStationC4	CONT	 	Locker
+FormID: 0100BCD9	NVDLC01ElijahNote01	NOTE	 	Prisoner Commands
+FormID: 0100BCDA	NVDLC01ElijahNote02	NOTE	 	Message From Elijah: Gala Event
+FormID: 0100BCF7	NVDLC01DeskPoliceStation01	CONT	 	Desk
+FormID: 0100BCF8	NVDLC01DeskPoliceStation02	CONT	 	Desk
+FormID: 0100BCFD	NVDLC01PoliceStationTerminal02	TERM	 	Police Chief's Terminal
+FormID: 0100BD07	ARMABearTrapFist	ARMA	 	ARMABearTrapFfist
+FormID: 0100BD09	NVDLC01WeapSpaceAgeKnife	WEAP	 	Cosmic Knife
+FormID: 0100BE21	NVDLC01VaultTurretCodeHolder	ACTI	 	Turrets Counter
+FormID: 0100BE28	NVDLC01WTMid	CELL	 	Ruined Cafe
+FormID: 0100BFBC	NVDLC01VaultAltSecurityWarnTerminal	TERM	 	Vault Security Terminal
+FormID: 0100BFBD	NVDLC01VaultSecurityProtocolNote	NOTE	 	Vault Security Protocols
+FormID: 0100BFC7	NVDLC01HologramFriendCasino	NPC_	 	Hologram
+FormID: 0100C10B	NVDLC01GalaActivator	ACTI	 	Fireworks Control Panel
+FormID: 0100C10F	NVDLC01LockerPoliceStationPistol	CONT	 	Locker
+FormID: 0100C14B	NVDLC01VaultMainDoorWarnTerminal	TERM	 	Vault Door Terminal
+FormID: 0100C14C	NVDLC01VaultMainDoorTerminal	TERM	 	Vault Door Terminal
+FormID: 0100C14D	NVDLC01VaultMainDoorSealTrigger	ACTI	 	Seal The Vault
+FormID: 0100C150	NVDLC01VaultDoor	DOOR	 	Vault Door
+FormID: 0100C258	NVDLC01CrGhostTrapperETSpecial	CREA	 	Ghost Trapper
+FormID: 0100C45C	NVDLC01GasBombProjectile	PROJ	 	Gas Bomb
+FormID: 0100C45D	NVDLC01weapgasbomb	WEAP	 	Gas Bomb
+FormID: 0100C4CF	NVDLC01RouletteTable	ACTI	 	Roulette Table
+FormID: 0100C4D0	NVDLC01HologramCashierCasino	NPC_	 	Hologram
+FormID: 0100C4D4	NVDLC01CasinoComps	QUST	 	NVDLC01CasinoComps
+FormID: 0100C4D6	SierraMadreCasinoData	CSNO	 	Sierra Madre
+FormID: 0100C4F5	NVDLC01DeanFaction	FACT	 	Dean Faction
+FormID: 0100C4F6	NVDLC01DogFaction	FACT	 	Dog and God Faction
+FormID: 0100C4F7	NVDLC01ToxicCloudTest	CELL	 	Test Cell For Traps
+FormID: 0100C543	NVDLC01ToxicCloud	QUST	 	Script Functionality for Toxic Clouds
+FormID: 0100C54E	NVDLC01TrapBearTrap	ACTI	 	Bear Trap
+FormID: 0100C54F	NVDLC01SuitesStarletSafe	CONT	 	Vera's Safe
+FormID: 0100C596	NVDLC01VaultPlayerSafeTrigger	ACTI	 	Player Safe Zone
+FormID: 0100C59C	NVDLC01VillaTravelTrigger	ACTI	 	Transition to Villa
+FormID: 0100C669	NVDLC01LockerPoliceStationShotgun	CONT	 	Locker
+FormID: 0100C66A	NVDLC01WeapNV9mmPistolDean	WEAP	 	9mm Pistol
+FormID: 0100C66D	NVDLC01CrGhostTrapperVilla	CREA	 	Ghost Trapper
+FormID: 0100C6FD	NVDLC01TSKitLadder	DOOR	 	Ladder
+FormID: 0100C737	NVDLC01StarVanishTrigger	ACTI	 	NVDLC01StarVanishTrigger
+FormID: 0100C824	NVDLC01StarletCorpse	NPC_	 	Starlet
+FormID: 0100C825	NVDLC01SuitesStarletDesk	CONT	 	Vera's Desk
+FormID: 0100C826	NVDLC01SuitesStarletTerminal	TERM	 	Vera's Computer Terminal
+FormID: 0100C827	NVDLC01SuitesAutoDoc	ACTI	 	Mk I Auto-Doc
+FormID: 0100C828	NVDLC01SuitesSurgeryReadyActivator	ACTI	 	Christine Surgery Ready Activator
+FormID: 0100C829	NVDLC01SuitesChristineConvActivator	ACTI	 	Christine Intercom Bark Activator
+FormID: 0100C840	NVDLC01ClinicNote01a	NOTE	 	Dispenser Codes
+FormID: 0100C841	NVDLC01ClinicTerminal01	TERM	 	Terminal
+FormID: 0100CDB1	NVDLC01GhostPeopleMeat	ALCH	 	Ghost People Flesh
+FormID: 0100CDB2	NVDLC01CrSupermutantDogTest	CREA	 	Dog Script Test Dude
+FormID: 0100CDB3	NVDLC01DogFoodTest	NPC_	 	Tasteee Morsel
+FormID: 0100CDB4	NVDLC01VaultTurret03Laser	WEAP	 	Laser
+FormID: 0100CDB5	NVDLC01VaultTurret02Laser	WEAP	 	Laser
+FormID: 0100CDB6	NVDLC01VaultTurret01Laser	WEAP	 	Laser
+FormID: 0100CDBC	NVDLC01DogAttackFaction	FACT	 	Dog Eats Enemies
+FormID: 0100CDE2	NVDLC01VaultPlayerBlocksTrigger	ACTI	 	Player Block Zone
+FormID: 00108BED	TestMentats	CELL	 	Mentats Test Level
+FormID: 0100CEDE	NVDLC01KillSpell	SPEL	 	Kill
+FormID: 0100CEDF	NVDLC01ElijahVaultTalkingActivator	TACT	 	Vault's Security Intercom
+FormID: 0100CF6C	NVDLC01Gala02	CELL	 	Puesta del Sol Switching Station
+FormID: 0100D4A8	NVDLC01ElijahLastWords	PERK	 	Elijah's Last Words
+FormID: 0100D4A9	NVDLC01ElijahRamblings	PERK	 	Elijah's Ramblings
+FormID: 0100D4C9	NVDLC01CrGhostTrapperET	CREA	 	Ghost Trapper
+FormID: 0100D4E6	NVDLC01AntiGhostFaction	FACT	 	AntiGhost Faction
+FormID: 0100D758	 	MAPM	 	Puesta del Sol
+FormID: 0100D7E6	NVDLC01OfficeSafeTerminal	TERM	 	Cashier's Terminal
+FormID: 0100D7E9	NVDLC01SMGate	DOOR	 	Gate
+FormID: 0100D7EB	NVDLC01CrHologramCasinoFriend	CREA	 	Hologram
+FormID: 0100D8D5	NVDLC01wtGala01Terminal	TERM	 	Security Station
+FormID: 0100D95A	NVDLC01BlackjackTable	ACTI	 	Blackjack Table
+FormID: 0100D95B	NVDLC01CrGhostSeekerLob	CREA	 	Ghost Seeker
+FormID: 0100D95C	NVDLC01CrGhostTrapperLob	CREA	 	Ghost Trapper
+FormID: 0100D95D	NVDLC01CrGhostHarvesterLob	CREA	 	Ghost Harvester
+FormID: 000293A9	SalisburySteak	ALCH	 	Salisbury Steak
+FormID: 0100DACC	NVDLC01VaultTechCloudNote	NOTE	 	Sierra Madre Cloud Tech
+FormID: 0100DACD	NVDLC01VaultTechHoloNote	NOTE	 	Sierra Madre Hologram Tech
+FormID: 0100DACE	NVDLC01VaultTechReplicatorNote	NOTE	 	Sierra Madre Replicator Tech
+FormID: 0100DACF	NVDLC01VaultMaintDoor	DOOR	 	Maintenance Door
+FormID: 0100DAD0	NVDLC01VaultFounderBody	CONT	 	The Founder's Remains
+FormID: 0100DAD1	NVDLC01VaultMaintenanceTerminal	TERM	 	Vault Maintenance Access Terminal
+FormID: 0100DAD2	NVDLC01VaultMainInfoDownloadTerminal	TERM	 	Vault Control Terminal
+FormID: 0100DAEE	NVDLC01TSKitDoor	DOOR	 	Door
+FormID: 0100DDAE	NVDLC01HotelDesk01Low	CONT	 	Desk
+FormID: 0100DDAF	NVDLC01HotelDesk01Med	CONT	 	Desk
+FormID: 0100DDB0	NVDLC01HotelDesk01High	CONT	 	Desk
+FormID: 0100DDB1	NVDLC01HotelDesk01Locked	CONT	 	Desk
+FormID: 0100DDB2	NVDLC01HotelWardrobe01Low	CONT	 	Wardrobe
+FormID: 0100DDB3	NVDLC01HotelWardrobe01Med	CONT	 	Wardrobe
+FormID: 0100DDB4	NVDLC01HotelWardrobe01High	CONT	 	Wardrobe
+FormID: 0100DDB5	NVDLC01HotelWardrobe01Locked	CONT	 	Wardrobe
+FormID: 0100DDB6	NVDLC01RefrigeratorWithFoodLow	CONT	 	Refrigerator
+FormID: 0100DDB7	NVDLC01RefrigeratorWithFoodMed	CONT	 	Refrigerator
+FormID: 0100DDB8	NVDLC01RefrigeratorWithFoodHigh	CONT	 	Refrigerator
+FormID: 0100DDBA	NVDLC01LootFirstAidKitNVMED	CONT	 	First Aid Box
+FormID: 0100DDBB	NVDLC01LootFirstAidKitNVHigh	CONT	 	First Aid Box
+FormID: 0100DDBC	NVDLC01LootFirstAidKitNVLow	CONT	 	First Aid Box
+FormID: 0100DDBD	NVDLC01DeskOfficeMetalNVLow	CONT	 	Desk
+FormID: 0100DDBE	NVDLC01DeskOfficeMetalNVMed	CONT	 	Desk
+FormID: 0100DDBF	NVDLC01DeskOfficeMetalNVHigh	CONT	 	Desk
+FormID: 0100DDC0	NVDLC01DeskOfficeMetalNVLocked	CONT	 	Desk
+FormID: 0100DDC1	NVDLC01FilingCabinetBunch01Low	CONT	 	Filing Cabinets
+FormID: 0100DDC2	NVDLC01FilingCabinetBunch01Med	CONT	 	Filing Cabinets
+FormID: 0100DDC3	NVDLC01FilingCabinetBunch01High	CONT	 	Filing Cabinets
+FormID: 0100DDC4	NVDLC01FilingCabinetBunch01Locked	CONT	 	Filing Cabinets
+FormID: 0100DDC5	NVDLC01ToolCabinetLow	CONT	 	Tool Cabinet
+FormID: 0100DDC6	NVDLC01ToolCabinetMed	CONT	 	Tool Cabinet
+FormID: 0100DDC7	NVDLC01ToolCabinetHigh	CONT	 	Tool Cabinet
+FormID: 0100DDC8	NVDLC01ToolCabinetLocked	CONT	 	Tool Cabinet
+FormID: 0100DDC9	NVDLC01DeskOfficeCornerMetalNVLow	CONT	 	Desk
+FormID: 0100DDCA	NVDLC01DeskOfficeCornerMetalNVMed	CONT	 	Desk
+FormID: 0100DDCB	NVDLC01DeskOfficeCornerMetalNVHigh	CONT	 	Desk
+FormID: 0100DDCC	NVDLC01FilingCabinetLow	CONT	 	Filing Cabinet
+FormID: 0100DDCD	NVDLC01FilingCabinetMed	CONT	 	Filing Cabinet
+FormID: 0100DDCE	NVDLC01FilingCabinetHigh	CONT	 	Filing Cabinet
+FormID: 0100DDCF	NVDLC01GenericSafe01Low	CONT	 	Safe
+FormID: 0100DDD0	NVDLC01GenericSafe01Med	CONT	 	Safe
+FormID: 0100DDD1	NVDLC01GenericSafe01High	CONT	 	Safe
+FormID: 0100DDD3	NVDLC01DeskOfficeCornerMetalNVLocked	CONT	 	Desk
+FormID: 0100DDD4	NVDLC01FilingCabinetLocked	CONT	 	Filing Cabinet
+FormID: 0100DDD5	NVDLC01GenericSafeFloor01Low	CONT	 	Floor Safe
+FormID: 0100DDD6	NVDLC01GenericSafeFloor01Med	CONT	 	Floor Safe
+FormID: 0100DDD7	NVDLC01GenericSafeFloor01High	CONT	 	Floor Safe
+FormID: 0100DDD8	NVDLC01MetalBox01Low	CONT	 	Metal Box
+FormID: 0100DDD9	NVDLC01MetalBox01Med	CONT	 	Metal Box
+FormID: 0100DDDA	NVDLC01MetalBox01High	CONT	 	Metal Box
+FormID: 0100DDDB	NVDLC01MetalBox01Locked	CONT	 	Metal Box
+FormID: 0100DDDC	NVDLC01RefrigeratorWithFoodNEWLow	CONT	 	Refrigerator
+FormID: 0100DDDD	NVDLC01RefrigeratorWithFoodNEWMed	CONT	 	Refrigerator
+FormID: 0100DDDE	NVDLC01RefrigeratorWithFoodNEWHigh	CONT	 	Refrigerator
+FormID: 0100DDDF	NVDLC01ToolboxContainerLow	CONT	 	Toolbox
+FormID: 0100DDE0	NVDLC01ToolboxContainerMed	CONT	 	Toolbox
+FormID: 0100DDE1	NVDLC01ToolboxContainerHigh	CONT	 	Toolbox
+FormID: 0100DDE2	NVDLC01SuitCase01Low	CONT	 	Suitcase
+FormID: 0100DDE3	NVDLC01SuitCase01Med	CONT	 	Suitcase
+FormID: 0100DDE4	NVDLC01SuitCase01High	CONT	 	Suitcase
+FormID: 0100DDE5	NVDLC01DeskWoodTopR01ContainerLow	CONT	 	Desk
+FormID: 0100DDE6	NVDLC01DeskWoodTopR01ContainerMed	CONT	 	Desk
+FormID: 0100DDE7	NVDLC01DeskWoodTopR01ContainerHigh	CONT	 	Desk
+FormID: 0100DDE8	NVDLC01DeskWoodTopR01ContainerLocked	CONT	 	Desk
+FormID: 0100DDE9	NVDLC01DresserAbandonedLow	CONT	 	Dresser
+FormID: 0100DDEA	NVDLC01DresserAbandonedMed	CONT	 	Dresser
+FormID: 0100DDEB	NVDLC01DresserAbandonedHigh	CONT	 	Dresser
+FormID: 0100DDEC	NVDLC01DresserAbandonedLocked	CONT	 	Dresser
+FormID: 0100DDED	NVDLC01FilingCabinetBunch02NVLow	CONT	 	Filing Cabinets
+FormID: 0100DDEE	NVDLC01FilingCabinetBunch02NVMed	CONT	 	Filing Cabinets
+FormID: 0100DDEF	NVDLC01FilingCabinetBunch02NVHigh	CONT	 	Filing Cabinets
+FormID: 0100DDF0	NVDLC01FilingCabinetNVLow	CONT	 	Filing Cabinet
+FormID: 0100DDF1	NVDLC01FilingCabinetNVMed	CONT	 	Filing Cabinet
+FormID: 0100DDF2	NVDLC01FilingCabinetNVHigh	CONT	 	Filing Cabinet
+FormID: 0100DDF3	NVDLC01FilingCabinetBunch02NVLocked	CONT	 	Filing Cabinets
+FormID: 0100DDF4	NVDLC01FilingCabinetNVLocked	CONT	 	Filing Cabinet
+FormID: 0100DDF5	NVDLC01FilingCabinetBunch03NVLow	CONT	 	Filing Cabinets
+FormID: 0100DDF6	NVDLC01FilingCabinetBunch03NVMed	CONT	 	Filing Cabinets
+FormID: 0100DDF7	NVDLC01FilingCabinetBunch03NVHigh	CONT	 	Filing Cabinets
+FormID: 0100DDF8	NVDLC01FilingCabinetBunch03NVLocked	CONT	 	Filing Cabinets
+FormID: 0100DDF9	NVDLC01FilingCabinetBunch04NVLow	CONT	 	Filing Cabinets
+FormID: 0100DDFA	NVDLC01FilingCabinetBunch04NVMed	CONT	 	Filing Cabinets
+FormID: 0100DDFB	NVDLC01FilingCabinetBunch04NVHigh	CONT	 	Filing Cabinets
+FormID: 0100DDFC	NVDLC01DresserRustyMed	CONT	 	Dresser
+FormID: 0100DDFD	NVDLC01DresserRustyHigh	CONT	 	Dresser
+FormID: 0100DDFE	NVDLC01DresserRustyLocked	CONT	 	Dresser
+FormID: 0100DDFF	NVDLC01OvenRangeDirty01Low	CONT	 	Oven
+FormID: 0100DE00	NVDLC01OvenRangeDirty01Med	CONT	 	Oven
+FormID: 0100DE01	NVDLC01OvenRangeDirty01High	CONT	 	Oven
+FormID: 0100DE03	NVDLC01LootGunCabinetMetalAPistolLaserLow	CONT	 	Gun Cabinet
+FormID: 0100DE04	NVDLC01LootGunCabinetMetalAPistolsAllLocked	CONT	 	Gun Cabinet
+FormID: 0100DE05	NVDLC01LootGunCabinetMetalAPistolsGunpowder	CONT	 	Gun Cabinet
+FormID: 0100DE0F	NVDLC01LootGunCabinetMetalAPistolLaserMed	CONT	 	Gun Cabinet
+FormID: 0100DE10	NVDLC01LootGunCabinetMetalAPistolLaserHigh	CONT	 	Gun Cabinet
+FormID: 0100DE11	NVDLC01LootGunCabinetMetalAPistolsAllLow	CONT	 	Gun Cabinet
+FormID: 0100DE12	NVDLC01LootGunCabinetMetalAPistolsAllMed	CONT	 	Gun Cabinet
+FormID: 0100DE13	NVDLC01LootGunCabinetMetalAPistolsAllHigh	CONT	 	Gun Cabinet
+FormID: 0100DE17	NVDLC01LootGunCabinetMetalAPistolLaserLocked	CONT	 	Gun Cabinet
+FormID: 0100DE19	NVDLC01LootGunCabinetMetalARiflesAllMed	CONT	 	Gun Cabinet
+FormID: 0100DE33	NVDLC01VDresser01Low	CONT	 	Dresser
+FormID: 0100DE34	NVDLC01VDresser01Med	CONT	 	Dresser
+FormID: 0100DE35	NVDLC01VDresser01High	CONT	 	Dresser
+FormID: 0100DE36	NVDLC01VDresser01Locked	CONT	 	Dresser
+FormID: 0100DE37	NVDLC01LootCashRegisterNVLow	CONT	 	Cash Register
+FormID: 0100DE38	NVDLC01LootCashRegisterNVMed	CONT	 	Cash Register
+FormID: 0100DE39	NVDLC01LootCashRegisterNVHigh	CONT	 	Cash Register
+FormID: 0100DE3A	NVDLC01LootCashRegisterNVLocked	CONT	 	Cash Register
+FormID: 0100DE3B	NVDLC01SuitCase01Locked	CONT	 	Suitcase
+FormID: 0100DFCF	NVDLC01DogCommandNote	NOTE	 	Dog Command Tape
+FormID: 0100DFD1	NVDLC01DogBarkTrigger	ACTI	 	Dog's Bark Trigger
+FormID: 0100DFEA	NVDLC01SuitesSecurityTerminal	TERM	 	Security Control Panel
+FormID: 0100DFEB	NVDLC01RestaurantIntercom	TACT	 	Intercom
+FormID: 0100E1B7	NVDLC01Stealthsuit	ARMO	 	Assassin Suit
+FormID: 0100E1DE	NVDLC01Slot01	ACTI	 	Slot Machine
+FormID: 0100E1E0	NVDLC01ToolCabinetMetalLow	CONT	 	Tool Cabinet
+FormID: 0100E1E1	NVDLC01ToolCabinetMetalMed	CONT	 	Tool Cabinet
+FormID: 0100E1E2	NVDLC01CrHologramCasinoFriendBD	CREA	 	Hologram
+FormID: 0100E1E3	NVDLC01CrHologramCasinoFriendRD	CREA	 	Hologram
+FormID: 0100E208	NVDLC01SlotsMsg	MESG	 	Sierra Madre Jackpot
+FormID: 0100E27E	NVDLC01SuitesBigDoor01	DOOR	 	Door
+FormID: 0100E27F	NVDLC01SuitesSmallDoor01	DOOR	 	Door
+FormID: 0100E280	NVDLC01SuitesSmallDoor02	DOOR	 	Door
+FormID: 0100E2AA	NVDLC01VaultKillTrigger	ACTI	 	Kill Player
+FormID: 0100E2C0	NVDLC01VaultMainDoor	DOOR	 	Vault Door
+FormID: 0100E2CD	NVDLC01Gala02Ebox	ACTI	 	Electric Box
+FormID: 0100E2CE	NVDLC01Gala02InitialTerminalON	TERM	 	Terminal
+FormID: 0100E2CF	NVDLC01Gala02ToxicCloudTerminal	TERM	 	Ventilation Control System
+FormID: 0100E2D0	NVDLC01Gala02MidRoomTerminal	TERM	 	Terminal
+FormID: 0100E2D1	NVDLC01Gala02InitialDoor	DOOR	 	Door
+FormID: 0100E2D2	NVDLC01Gala02Fuse	MISC	 	Electric Box Fuse
+FormID: 0100E3F0	NVDLC01SierraMadreArmor	ARMO	 	Sierra Madre Armor
+FormID: 0100E3F1	NVDLC01SierraMadreHelmet	ARMO	 	Sierra Madre Helmet
+FormID: 0100E40D	NVDLC01PoliceStationBasement	CELL	 	Villa Police Station Basement
+FormID: 0100E413	NVDLC01God	CREA	 	God
+FormID: 0100E424	NVDLC01HamRadio	ACTI	 	Ham Radio
+FormID: 0100E426	NVDLC01HamRadioON	ACTI	 	Ham Radio
+FormID: 0100E474	NVDLC01TSKitGate01	DOOR	 	Gate
+FormID: 0100E47A	NVDLC01TurretWALL3Hard	TERM	 	Turret Control System
+FormID: 0100E4C1	NVDLC01SuitesSecurityLocker	CONT	 	Security Locker
+FormID: 0100E4C2	NVDLC01SuitesSecurityLocker2	CONT	 	Locker
+FormID: 0100E4CD	NVDLC01PoliceNote01a	NOTE	 	Sinclair Visit
+FormID: 0100E4E7	NVDLC01GodBarkActivator	ACTI	 	God Basement Bark Activator
+FormID: 0100E545	NVDLC01wtCrowdControlN01	ACTI	 	WT Crowd Control
+FormID: 0100E546	NVDLC01wtCrowdControlN02	ACTI	 	WT Crowd Control
+FormID: 0100E547	NVDLC01wtFountainTerminal	TERM	 	Terminal
+FormID: 0100E548	NVDLC01wtHackedTerminal	TERM	 	Terminal
+FormID: 0100E549	NVDLC01GarbageCanUrban03Med	CONT	 	Garbage Can
+FormID: 0100E54A	NVDLC01GarbageCanUrban03High	CONT	 	Garbage Can
+FormID: 0100E54B	NVDLC01GarbageCanUrban02Low	CONT	 	Garbage Can
+FormID: 0100E54C	NVDLC01GarbageCanUrban02Med	CONT	 	Garbage Can
+FormID: 0100E54D	NVDLC01GarbageCanUrban02High	CONT	 	Garbage Can
+FormID: 0100E54E	NVDLC01GarbageCanUrban03Low	CONT	 	Garbage Can
+FormID: 0100E54F	NVDLC01HologramGenericFriendly	NPC_	 	Hologram
+FormID: 0100E551	 	MAPM	 	Switching Station
+FormID: 0100E799	NVDLC01stealthTest	CELL	 	Stealth Courtyard
+FormID: 0100E7C8	NVDLC01StarletVoiceFragment01	NOTE	 	Vera Keyes' [QUOTE]Let the Bright Tomorrow in[QUOTE] Song
+FormID: 0100E7C9	NVDLC01StarletVoiceFragment02	NOTE	 	Vera Keyes' [QUOTE]Go to the Faraway[QUOTE] Song
+FormID: 0100E7CA	NVDLC01StarletVoiceFragment03	NOTE	 	Vera Keyes' [QUOTE]Begin Again[QUOTE] Song
+FormID: 0100E7CB	NVDLC01ElevatorSuitesLevel	DOOR	 	Vault Elevator
+FormID: 0100E7CD	NVDLC01ElevatorCodePassMsg	MESG	 	Sierra Madre's Vault Security
+FormID: 0100E7CE	NVDLC01ElevatorUnlockedMsg	MESG	 	Vault Elevator Unlocked
+FormID: 0100E7DE	NVDLC01CrGhostHarvesterET	CREA	 	Ghost Harvester
+FormID: 0100E7DF	NVDLC01CrGhostSeekerET	CREA	 	Ghost Seeker
+FormID: 0100E87B	NVDLC01LightTouch	PERK	 	Light Touch
+FormID: 0100E87D	NVDLC01AmmoBoxLow	CONT	 	Ammunition Box
+FormID: 0100E87E	NVDLC01AmmoBoxMed	CONT	 	Ammunition Box
+FormID: 0100E87F	NVDLC01AmmoBoxHigh	CONT	 	Ammunition Box
+FormID: 0100E880	NVDLC01AmmoBoxLocked	CONT	 	Ammunition Box
+FormID: 0100E882	NVDLC01GlobalToxicDamage	QUST	 	Script Functionality for Global Toxic Damage
+FormID: 0100E89C	NVDLC01StarletKnockdownEffect	MGEF	 	StarletKnockdownEffect
+FormID: 0100E89F	NVDLC01StarletWrapsObjEffect	ENCH	 	Starlet's Fury
+FormID: 0100E8A0	NVDLC01TheaterCodeHolder	ACTI	 	Direct Theater Scene
+FormID: 0100E8A1	NVDLC01TheaterStageDoorSmL01	DOOR	 	Stage Door
+FormID: 0100E8A4	NVDLC01WeapStarletFists	WEAP	 	Starlet's Hand Wraps
+FormID: 0100E8A5	NVDLC01TheaterVera02Key	KEYM	 	Vera's Master Key
+FormID: 0100E98F	NVDLC01bedqueenL	FURN	 	Bed
+FormID: 0100E990	NVDLC01bedqueenR	FURN	 	Bed
+FormID: 0100E9DF	NVDLC01wtPlanterTerminal	TERM	 	Terminal
+FormID: 0100E9E0	NVDLC01CrGhostSeekerWTNorth	CREA	 	Ghost Seeker
+FormID: 0100E9E1	NVDLC01CrGhostHarvesterWTSouth	CREA	 	Ghost Harvester
+FormID: 0100E9E2	NVDLC01CrGhostSeekerWTSouth	CREA	 	Ghost Seeker
+FormID: 0100E9E3	NVDLC01CrGhostHarvesterWTNorth	CREA	 	Ghost Harvester
+FormID: 0100E9E4	NVDLC01CrGhostHarvesterWTGala01	CREA	 	Ghost Harvester
+FormID: 0100E9F5	NVDLC01TheaterProjector	ACTI	 	Holotape Projector
+FormID: 0100E9F6	NVDLC01TheaterDeanHolotapeNote	NOTE	 	Dean Domino's [QUOTE]Saw Her Yesterday[QUOTE] Song
+FormID: 0100E9F8	NVDLC01ETGateTerminal01	TERM	 	Gate Control Terminal
+FormID: 0100E9FB	NVDLC01CrGhostSeekerETDG	CREA	 	Ghost Seeker
+FormID: 0100E9FC	NVDLC01CrGhostTrapperETDG	CREA	 	Ghost Trapper
+FormID: 0100E9FD	NVDLC01CrHologramETFriend	CREA	 	Hologram
+FormID: 0100EB95	NVDLC01TableClosedMessage	MESG	 	Sierra Madre Closed
+FormID: 0100EC92	NVDLC01Gala02ElevatorTopsideDoor	ACTI	 	Elevator to Switching Station
+FormID: 0100EC93	NVDLC01Gala02ElevatorDoor	ACTI	 	Elevator
+FormID: 0100EC94	NVDLC01Gala02FinalRoomUnlockedTerminal	TERM	 	Terminal
+FormID: 0100EC95	NVDLC01Gala02InitialRoomEnnisTerminal	TERM	 	Ennis's Terminal
+FormID: 0100EC96	NVDLC01Gala02FinalRoomRemoteTerminal	TERM	 	Remote Maintenance Terminal
+FormID: 0100EC97	NVDLC01Gala02Locker	CONT	 	Locker
+FormID: 0100EC98	NVDLC01Gala02LockedLocker	CONT	 	Ennis's Locker
+FormID: 0100EC99	NVDLC01Gala02ElevatorControl	DOOR	 	Elevator
+FormID: 0100EC9B	NVDLC01Gala02Key	KEYM	 	Ennis's Key
+FormID: 0100EC9E	NVDLC01Gala02EnnisTerminalFromNote	NOTE	 	Remote Maintenance Terminal Password
+FormID: 0100EC9F	NVDLC01Gala02EnnisLockerNote	NOTE	 	Ennis's Note
+FormID: 0100ECF2	NVDLC01WAHDDead	NPC_	 	White Arrow Heart Dude
+FormID: 0100ED40	NVDLC01LootGunsFootlockerPistosAllLow	CONT	 	Gun Case
+FormID: 0100ED4A	NVDLC01TheaterProjectorBlock02Msg	MESG	 	Sierra Madre's Theater Projector
+FormID: 0100ED4B	NVDLC01TheaterRecorderMsg	MESG	 	Sierra Madre's Theater Recorder
+FormID: 0100ED4C	NVDLC01TheaterProjectorBlockMsg	MESG	 	Sierra Madre's Theater Projector
+FormID: 0100ED51	NVDLC01StarletVoiceFragment04	NOTE	 	Spliced Holotape
+FormID: 0100ED52	NVDLC01TheaterTapeRecorder	ACTI	 	Holotape Recorder
+FormID: 0100ED59	NVDLC01StarletHolotape01	MISC	 	Vera Keyes' [QUOTE]Let the Bright Tomorrow in[QUOTE]
+FormID: 0100ED5A	NVDLC01StarletHolotape02	MISC	 	Vera Keyes' [QUOTE]Go to the Faraway[QUOTE]
+FormID: 0100ED5B	NVDLC01StarletHolotape03	MISC	 	Vera Keyes' [QUOTE]Begin Again[QUOTE]
+FormID: 0100ED5C	NVDLC01DeanHolotape01	MISC	 	Dean Domino's [QUOTE]Saw Her Yesterday[QUOTE]
+FormID: 0100ED5D	NVDLC01StarletHolotape04	MISC	 	Spliced Holotape
+FormID: 0100EF0D	NVDLC01SpeakerExplosion	EXPL	 	Speaker Explosion
+FormID: 0100EF0F	NVDLC01TheaterDeanKey	KEYM	 	Dean's Safe Key
+FormID: 0100EF10	NVDLC01TheaterDeanSafe01	CONT	 	Dean's Safe
+FormID: 0100EF12	NVDLC01LobbyTheaterDoor	DOOR	 	Tampico Theater Door
+FormID: 0100EF16	NVDLC01deanoutfit	ARMO	 	Dean's Tuxedo
+FormID: 0100EF17	NVDLC01deanGlasses	ARMO	 	Dean's Glasses
+FormID: 0100EF18	nvdlc01starletHologramoutfit	ARMO	 	Starlet Hologram Outfit
+FormID: 0100EF19	NVDLC01ETNorthEnbalming	MISC	 	Embalming Fluid
+FormID: 0100EFC9	NVDLC01VentContainerMed	CONT	 	Vent
+FormID: 0100EFCB	NVDLC01PlayerEquipmentContainer	CONT	 	Equipment Storage
+FormID: 0100F216	NVDLC01InShiningArmor	PERK	 	In Shining Armor
+FormID: 0100F218	NVDLC01AndStayBack	PERK	 	And Stay Back
+FormID: 0100F224	NVDLC01DeanBarkTrigger	ACTI	 	Dean Bark Trigger
+FormID: 0100F227	NVDLC01DeanPlayerChair	FURN	 	Ruined Chair
+FormID: 0100F229	NVDLC01RadioDean	ACTI	 	Radio
+FormID: 0100F2B7	NVDLC01RadioDog	QUST	 	Dog's Collar Radio
+FormID: 0100F2B8	NVDLC01RadioChristine	QUST	 	Christine's Collar Radio
+FormID: 0100F2B9	NVDLC01RadioDeanQuest	QUST	 	Dean's Collar Radio
+FormID: 0100F2BA	NVDLC01RadioCasino	QUST	 	Vera Radio Dialogue
+FormID: 0100F2BB	NVDLC01RadioElijah	QUST	 	Elijah's Collar Radio
+FormID: 0100F2BC	NVDLC01RadioCell	CELL	 	Debug Cell
+FormID: 0100F2C2	NVDLC01RadioStationDog	TACT	 	631.08Hz ULF
+FormID: 0100F2C3	NVDLC01RadioStationChristine	TACT	 	372.12Hz ULF
+FormID: 0100F2C4	NVDLC01RadioStationDean	TACT	 	546.14Hz ULF
+FormID: 0100F2C5	NVDLC01RadioStationElijah	TACT	 	743.00Hz ULF
+FormID: 0100F2CA	NVDLC01HoloCasinoTerminalBHost	TERM	 	Security Management Control Terminal
+FormID: 0100F2CB	NVDLC01HoloCasinoTerminalCHost	TERM	 	Hologram Control
+FormID: 0100F2CC	NVDLC01HoloCasinoTerminalAHost	TERM	 	Hologram Control
+FormID: 0100F2DD	NVDLC01GhostHarvesterRemains	MISC	 	Ghost Harvester Remains
+FormID: 0100F2DE	NVDLC01CrGhostHarvesterETDogEat	CREA	 	Ghost Harvester
+FormID: 0100F2DF	NVDLC01ETNorthKey	KEYM	 	Salida del Sol House Key
+FormID: 0100F379	NVDLC01LobbytoRestaurantDoor	DOOR	 	Cantina Madrid Door
+FormID: 0100F37A	NVDLC01LobbytoSuitesDoor	DOOR	 	Suites Elevator
+FormID: 0100F37B	NVDLC01RestaurantInteriorDoor	DOOR	 	Door
+FormID: 0100F37C	NVDLC01SuiteInteriorElevator	DOOR	 	Elevator
+FormID: 0100F383	NVDLC01VaultAltSecurityProtocolTerminal	TERM	 	Vault Security Terminal
+FormID: 0100F384	NVDLC01LootGunsFootlockerPistosAllVault	CONT	 	Gun Case
+FormID: 0100F385	NVDLC01LootGunCabinetMetalAVaultWeapons	CONT	 	Gun Cabinet
+FormID: 0100F386	NVDLC01VaultEntry01Door01	DOOR	 	Door
+FormID: 0100F387	NVDLC01VaultEntry02Door01	DOOR	 	Door
+FormID: 0100F3A4	NVDLC01deadmanjumpsuit	ARMO	 	Dead Money Jumpsuit
+FormID: 0100F3B1	NVDLC01StarletHologramVilla	NPC_	 	Starlet Hologram
+FormID: 0100F3B4	NVDLC01VentContainerLow	CONT	 	Vent
+FormID: 0100F3B5	NVDLC01VentContainerHigh	CONT	 	Vent
+FormID: 0100F3B7	NVDLC01ForemansKey	KEYM	 	Foreman's Key
+FormID: 0100F3F7	NVDLC01ElijahBarkTown	QUST	 	Elijah Signal Established
+FormID: 0100F3F8	NVDLC01HoloFireImmunity	SPEL	 	Immune to Fire
+FormID: 0100F408	 	MAPM	 	Salida Switching Station
+FormID: 0100F40A	 	MAPM	 	Salida del Sol
+FormID: 0100F40D	NVDLC01HologramCasinoMaleRD	NPC_	 	Hologram
+FormID: 0100F41E	NVDLC01LoadedMsg	MESG	 	Dead Money Loaded
+FormID: 0100F41F	NVDLC01StealthTestCodeBox	ACTI	 	Stealth Test Patrol Packages
+FormID: 0100F8FE	NVDLC01MapNorthCourtyardRegion	REGN	 	Salida del Sol Courtyard
+FormID: 0100F96F	NVDLC01OldWorldGourmet	PERK	 	Old World Gourmet
+FormID: 0100F973	NVDLC01ElijahBarkCasino	QUST	 	Elijah Signal Re-Established
+FormID: 0100FB6A	NVDLC01JunkRounds	PERK	 	Junk Rounds
+FormID: 0100FB6B	AmmoEffectJunkRoundsConditionPenalty	AMEF	 	Junk Rounds COND Penalty
+FormID: 0100FB6C	Ammo10mmJunkRounds	AMMO	 	10mm Round (Junk)
+FormID: 0100FB6D	Ammo127mmJunkRounds	AMMO	 	12.7mm Round (Junk)
+FormID: 0100FB6E	Ammo12GaJunkRounds	AMMO	 	12 Gauge Round (Junk)
+FormID: 0100FB6F	Ammo20GaJunkRounds	AMMO	 	20 Gauge Round (Junk)
+FormID: 0100FB70	AmmoEffectJunkRoundsDamageReduction	AMEF	 	Damage Reduction
+FormID: 0100FB71	Ammo22LRJunkRounds	AMMO	 	.22LR Round (Junk)
+FormID: 0100FB72	Ammo308JunkRounds	AMMO	 	.308 Round (Junk)
+FormID: 0100FB73	Ammo357MagnumJunkRounds	AMMO	 	.357 Magnum Round (Junk)
+FormID: 0100FB74	Ammo44magnumJunkRounds	AMMO	 	.44 Magnum Round (Junk)
+FormID: 0100FB75	Ammo4570JunkRounds	AMMO	 	.45-70 Gov't (Junk)
+FormID: 0100FB76	Ammo50MGJunkRounds	AMMO	 	.50 MG (Junk)
+FormID: 0100FB77	Ammo556mmJunkRounds	AMMO	 	5.56mm Round (Junk)
+FormID: 0100FB78	Ammo5mmJunkRounds	AMMO	 	5mm Round (Junk)
+FormID: 0100FB79	Ammo9mmJunkRounds	AMMO	 	9mm Round (Junk)
+FormID: 0100FB7A	RecipeNVDLC0110mmJunkRounds	RCPE	 	10mm Round (Junk)
+FormID: 0100FB7B	RecipeNVDLC0112GaJunkRounds	RCPE	 	12 Ga. Buckshot (Junk)
+FormID: 0100FB7C	RecipeNVDLC0120GaJunkRounds	RCPE	 	20 Ga. Buckshot (Junk)
+FormID: 0100FB7D	RecipeNVDLC01308JunkRounds	RCPE	 	.308 Round (Junk)
+FormID: 0100FB7E	RecipeNVDLC01357MagnumJunkRounds	RCPE	 	.357 Magnum Round (Junk)
+FormID: 0100FB7F	RecipeNVDLC0144MagnumJunkRounds	RCPE	 	.44 Magnum Round (Junk)
+FormID: 0100FB80	RecipeNVDLC014570GovtJunkRounds	RCPE	 	.45-70 Gov't Round (Junk)
+FormID: 0100FB81	RecipeNVDLC0150MGJunkRounds	RCPE	 	.50 MG Round (Junk)
+FormID: 0100FB82	RecipeNVDLC01556mmJunkRounds	RCPE	 	5.56mm Round (Junk)
+FormID: 0100FB83	RecipeNVDLC015mmJunkRounds	RCPE	 	5mm Round (Junk)
+FormID: 0100FB84	RecipeNVDLC019mmJunkRounds	RCPE	 	9mm Round (Junk)
+FormID: 0100FB8F	NVDLC01HologramStarletFaction	FACT	 	Hologram Starlet Faction
+FormID: 0100FB90	NVDLC01StarletElectricEffect	MGEF	 	StarletElectricEffect
+FormID: 0100FD8C	NVDLC01ComputerChairR	FURN	 	Chair
+FormID: 0100FD8D	NVDLC01ComputerChairL	FURN	 	Chair
+FormID: 0100FD8E	NVDLC01ChairF	FURN	 	Chair
+FormID: 0100FD8F	NVDLC01ChairR	FURN	 	Chair
+FormID: 0100FD90	NVDLC01ChairL	FURN	 	Chair
+FormID: 0100FD91	NVDLC01SofaF	FURN	 	Sofa
+FormID: 0100FDA7	NVDLC01HologramBeamStarlet	WEAP	 	Hologram Beam
+FormID: 0100FDA8	NVDLC01HologramFlickerEffect	MGEF	 	Hologram Flickering
+FormID: 0100FDA9	NVDLC01HologramFlickerSpell	SPEL	 	Hologram Flicker
+FormID: 0100FDD9	 	MAPM	 	Campanas del Sol
+FormID: 0100FE1C	NVDLC01HologramFadeOutEffect	MGEF	 	Hologram Fade Out
+FormID: 0100FE1D	NVDLC01HologramFadeInEffect	MGEF	 	Hologram Fade In
+FormID: 0100FE20	NVDLC01HologramFlickerInSpell	SPEL	 	Hologram Flicker In
+FormID: 0100FE21	NVDLC01HologramFlickerOutSpell	SPEL	 	Hologram Flicker Out
+FormID: 0100FE22	NVDLC01CrHologramDean	CREA	 	Dean Hologram
+FormID: 0100FE2B	NVDLC01ToolCabinetMetalMedCasino	CONT	 	Tool Cabinet
+FormID: 0100FE2F	NVDLC01CasinoCompsMessage	MESG	 	Complimentary Gift Waiting
+FormID: 0100FE50	NVDLC01HologramDean	NPC_	 	Dean Hologram
+FormID: 0100FE77	NVDLC01SuitesSecurityPassNote	NOTE	 	Suites Security Pass
+FormID: 0100FE78	NVDLC01SuitesStarletChair	FURN	 	Chair
+FormID: 0100FE7A	NVDLC01DresserSuitesMed	CONT	 	Dresser
+FormID: 0100FE7B	NVDLC01DresserSuitesStarlet	CONT	 	Vera's Dresser
+FormID: 0100FE7C	NVDLC01SuitesFinalMedicalCabinet	CONT	 	Medical Supply Cabinet
+FormID: 0100FE7D	NVDLC01SuitesChipsSuitCase	CONT	 	Suitcase
+FormID: 0100FE80	NVDLC01Snowglobe	MISC	 	Snow Globe - Sierra Madre
+FormID: 0100FE8F	NVDLC01ETCourtyardKey	KEYM	 	Salida del Sol Courtyard Key
+FormID: 0100FFA5	NVDLC01TSKitDoor02	DOOR	 	Door
+FormID: 0100FFD5	NVDLC01VerasPartituresActivator	ACTI	 	Vera's Partitures
+FormID: 0100FFD6	NVDLC01VeraPartitures	MISC	 	Vera's Partitures
+FormID: 0100FFD7	NVDLC01VeraPartiturKey	KEYM	 	Backstage Key
+FormID: 0100FFE5	NVDLC01TheaterProjectorPlayMsg	MESG	 	Sierra Madre's Theater Projector
+FormID: 0100FFE6	NVDLC01TheaterVeraPartiturMsg	MESG	 	Object Found
+FormID: 0101009C	NVDLC01ElijahMedicalTrigger	ACTI	 	Elijah Medical District Bark Trigger
+FormID: 0101009F	NVDLC01ElijahResidentialTrigger	ACTI	 	Elijah Residential Bark
+FormID: 010100A2	NVDLC01ElijahEastTownTrigger	ACTI	 	Elijah East Town Trigger
+FormID: 010100A6	NVDLC01ElijahWestTownTrigger	ACTI	 	Elijah West Town Trigger
+FormID: 01010113	NVDLC01DresserSuitesMetalArmor	CONT	 	Dresser
+FormID: 01010114	NVDLC01SuitesSecurityLocker3	CONT	 	Security Locker
+FormID: 01010115	NVDLC01SuitesFilingCabinet	CONT	 	Filing Cabinet
+FormID: 01010116	NVDLC01SuitesSecurityDesk	CONT	 	Desk
+FormID: 01010117	NVDLC01SuitesSecurityLocker5	CONT	 	Locker
+FormID: 01010118	NVDLC01SuitesSecurityLocker4	CONT	 	Locker
+FormID: 01010119	NVDLC01SuitesSuitCase	CONT	 	Suitcase
+FormID: 0101011A	NVDLC01SuitesGarbageCanLockpicks	CONT	 	Garbage Can
+FormID: 01010123	NVDLC01HotelCupboard01Empty	CONT	 	Cupboard
+FormID: 01010211	NVDLC01SuitesSuitCase02	CONT	 	Suitcase
+FormID: 01010212	NVDLC01SuitesGarbageCan01	CONT	 	Garbage Can
+FormID: 01010213	NVDLC01SuitesLootSafeWall2	CONT	 	Safe
+FormID: 01010214	NVDLC01SuitesLootSafeWall	CONT	 	Safe
+FormID: 01010215	NVDLC01SuitesSecurityFootlocker	CONT	 	Personal Footlocker
+FormID: 01010216	NVDLC01HotelDesk02	CONT	 	Desk
+FormID: 01010217	NVDLC01HotelDesk01	CONT	 	Desk
+FormID: 0101021A	 	MAPM	 	Police Station
+FormID: 0101021B	NVDLC01VillaFountainMarkerRef	MAPM	 	Villa Fountain
+FormID: 0101021C	 	MAPM	 	Residential District
+FormID: 0101021F	 	MAPM	 	Medical District
+FormID: 01010220	 	MAPM	 	Puesta del Sol
+FormID: 01010221	 	MAPM	 	Salida del Sol
+FormID: 0101025A	NVDLC01CasinoCompsHugeMessage	MESG	 	Complimentary Gift Waiting
+FormID: 010102C7	TestSeanMap	CELL	 	Fancy Time Fun Place
+FormID: 01010395	NVDLC01SierraMadreMartini	ALCH	 	Sierra Madre Martini
+FormID: 0101039A	NVDLC01GhostHunter	PERK	 	Ghost Hunter
+FormID: 0101039B	NVDLC01CoinOperator	PERK	 	Coin Operator
+FormID: 0101039C	RecipeNVDLC01CoinOperator	RCPE	 	Sierra Madre Slugs
+FormID: 0101039D	RecipeNVDLC01SierraMadreMartini	RCPE	 	Sierra Madre Martini
+FormID: 0101039E	NVDLC01SierraMadreMartiniPerk	PERK	 	Sierra Madre Martini
+FormID: 0101039F	RecipeNVDLC01FinalComp	RCPE	 	Free Chips
+FormID: 010103A0	NVDLC01VendingMachineRecipes	RCCT	 	Sierra Madre Vending Machine
+FormID: 010103A2	RecipeNVDLC01VendingDoctorsBag	RCPE	 	Doctor's Bag
+FormID: 010103A3	RecipeNVDLC01VendingStimpak	RCPE	 	Stimpak
+FormID: 010103A4	RecipeNVDLC01VendingWeaponRepairKit	RCPE	 	Weapon Repair Kit
+FormID: 010103A5	RecipeNVDLC01VendingMacAndCheese	RCPE	 	Blamco Mac and Cheese
+FormID: 010103A6	RecipeNVDLC01VendingDandyBoyApples	RCPE	 	Dandy Boy Apples
+FormID: 010103A7	RecipeNVDLC01VendingSnackCakes	RCPE	 	Fancy Lads Snack Cakes
+FormID: 010103A8	RecipeNVDLC01VendingInstaMash	RCPE	 	Insta-Mash
+FormID: 010103A9	RecipeNVDLC01VendingJunkFood	RCPE	 	Junk Food
+FormID: 010103AA	RecipeNVDLC01VendingPorkNBeans	RCPE	 	Pork N Beans
+FormID: 010103AB	RecipeNVDLC01VendingPotatoCrisps	RCPE	 	Potato Crisps
+FormID: 010103AC	RecipeNVDLC01VendingSalisburySteak	RCPE	 	Salisbury Steak
+FormID: 010103AD	RecipeNVDLC01VendingSugarBombs	RCPE	 	Sugar Bombs
+FormID: 010103AE	RecipeNVDLC01VendingDeviledEggs	RCPE	 	Yum Yum Deviled Eggs
+FormID: 010103B0	NVDLC01AchievementSouvenirAficionado	CHAL	 	Sierra Madre Souvenir Aficionado
+FormID: 010103B2	NVDLC01ChallengeBigWinner	CHAL	 	Big Winner
+FormID: 010103B4	NVDLC01ChallengeGhostEaterHarvester	CHAL	 	Ghost Eater - Harvesters
+FormID: 010103B5	NVDLC01ChallengeGhostEaterSeeker	CHAL	 	Ghost Eater - Seekers
+FormID: 010103B6	NVDLC01ChallengeGhostEaterTrapper	CHAL	 	Ghost Eater - Trappers
+FormID: 01010416	NVDLC01ResetBarkTrigger	ACTI	 	Reset Bark Trigger
+FormID: 0101041C	NVDLC01LootFootlockerARiflesAllLow	CONT	 	Footlocker
+FormID: 01010440	NVDLC01HologramEmitterAverageMsg	MESG	 	Hologram Emitter
+FormID: 01010441	NVDLC01HologramEmitterHardMsg	MESG	 	Hologram Emitter
+FormID: 01010442	NVDLC01HologramEmitterVeryHardMsg	MESG	 	Hologram Emitter
+FormID: 01010443	NVDLC01HologramEmitterNoSkillMsg	MESG	 	Hologram Emitter
+FormID: 01010589	NVDLC01WeapSpaceAgeKnifeHeated	WEAP	 	Cosmic Knife Super-Heated
+FormID: 01010622	NVDLC01KitchenOfficeDesk	CONT	 	Restaurant Manager Desk
+FormID: 01010623	NVDLC01KitchenMaintLocker	CONT	 	Maintenance Locker
+FormID: 01010624	NVDLC01KitchenOfficeTerminal	TERM	 	Cafe Madrid Terminal
+FormID: 01010626	NVDLC01KitchenGasValve	ACTI	 	Gas Valve
+FormID: 0101063F	NVDLC01TheaterBackDoorLLocked	DOOR	 	Backstage Door
+FormID: 01010640	NVDLC01TheaterBackDoorRLocked	DOOR	 	Backstage Door
+FormID: 01010641	NVDLC01GenericSafeWall01High	CONT	 	Wall Safe
+FormID: 01010647	NVDLC01Corpse	MSTT	 	Corpse
+FormID: 0101067F	nvdlc01Deanhologramoutfit	ARMO	 	Dean's Hologram Outfit
+FormID: 010107F6	NVDLC01ETNGalaGauntletGhostTrigger	ACTI	 	Gas Valve
+FormID: 0014C723	BoulderCityWorld	WRLD	 	Boulder City Ruins
+FormID: 010108EA	NVDLC01StarletPartitures	NOTE	 	Vera Keyes' Partitures
+FormID: 0101092B	NVDLC01TheaterTampicoShowsNote	NOTE	 	The Tampico's Grand Opening Shows!
+FormID: 0101092C	NVDLC01TheaterSecurityProtocolNote	NOTE	 	The Tampico's Performance Protocols
+FormID: 0101092D	NVDLC01TheaterEmergencyDoorSmR03a	DOOR	 	Emergency Exit Door
+FormID: 0101092E	NVDLC01TheaterStageTerminal	TERM	 	The Tampico's Stage Terminal
+FormID: 0101092F	NVDLC01TheaterDeskTerminal	TERM	 	Tampico's Front Desk Terminal
+FormID: 0101096C	RecipeNVDLC01GasBomb	RCPE	 	Gas Bomb
+FormID: 0101096D	RecipeNVDLC01KnifeSpear	RCPE	 	Knife Spear
+FormID: 0101096E	RecipeNVDLC01VendingCigarettePack	RCPE	 	Pack of Cigarettes
+FormID: 0101096F	RecipeNVDLC01CloudKissWeak	RCPE	 	Cloud Kiss (Weak)
+FormID: 01010970	RecipeNVDLC01CloudKissStrong	RCPE	 	Cloud Kiss (Potent)
+FormID: 01010971	RecipeNVDLC01CloudKissLethal	RCPE	 	Cloud Kiss (Lethal)
+FormID: 01010972	RecipeNVDLC01SpaceAgeKnifeClean	RCPE	 	Cosmic Knife (Clean)
+FormID: 01010973	RecipeNVDLC01KnifeSpearSpaceAge	RCPE	 	Cosmic Knife Spear
+FormID: 01010975	RecipeNVDLC01SpaceAgeKnifeHeated	RCPE	 	Cosmic Knife (Super Heated)
+FormID: 01010977	NVDLC01TheaterFrontDeskTerminalPassword	NOTE	 	Tampico's Front Desk Terminal Password
+FormID: 0008C551	SugarBombs01	ALCH	 	Sugar Bombs
+FormID: 0008C554	DandyBoyApples	ALCH	 	Dandy Boy Apples
+FormID: 0008C556	BlamcoMacandCheese	ALCH	 	Blamco Mac & Cheese
+FormID: 0008C558	InstaMash	ALCH	 	InstaMash
+FormID: 0008C55A	FancyLadsSnackCakes	ALCH	 	Fancy Lads Snacks
+FormID: 0008C55C	YumYumDeviledEggs	ALCH	 	YumYum Deviled Eggs
+FormID: 0008C55E	PorkNBeans	ALCH	 	Pork N' Beans
+FormID: 0008C562	PotatoCrisps	ALCH	 	Potato Crisps
+FormID: 010109C1	AmmoEffectNVDLC01HologramDTReduction	AMEF	 	Dam. Thresh. Reduction
+FormID: 010109C4	AmmoNVDLC01SmallEnergyCellHologram	AMMO	 	Energy Cell
+FormID: 010109C9	NVDLC01TheaterStageControlsTerminal	TERM	 	The Tampico's Stage Terminal
+FormID: 010109CA	NVDLC01TheaterFrontDeskMessage	NOTE	 	John K. Lester: [QUOTE]I'm on my way![QUOTE]
+FormID: 010109EF	NVDLC01TheaterEntertainerPasscodeNote	NOTE	 	Tampico's Stage Manager Passcode
+FormID: 010109F2	NVDLC01SierraMadreArmorReinforced	ARMO	 	Sierra Madre Armor, Reinforced
+FormID: 010109F3	NVDLC01SierraMadreHelmetReinforced	ARMO	 	Sierra Madre Helmet, Reinforced
+FormID: 010109F5	NVDLC01SpeakerINVOff	ACTI	 	Speaker
+FormID: 010109FF	NVDLC01Slideshow	CELL	 	Dead Money Narration
+FormID: 01010A10	NVDLC01SlideShowTrigger	ACTI	 	NVDLC01 Slideshow Trigger
+FormID: 01010A20	NVDLC01ETNGGGSwitch01Trigger	ACTI	 	Gas Valve
+FormID: 01010A21	NVDLC01ETNGGGSwitch02Trigger	ACTI	 	Gas Valve
+FormID: 01010A69	NVDLC01PreWarMeat	ALCH	 	Pre-War Steak
+FormID: 01010A6A	NVDLC01RestaurantKitchenDoor	DOOR	 	Emergency Door
+FormID: 01010ABF	DrinkSinkMetal01Avg	ACTI	 	Sink
+FormID: 01010ADA	NVDLC01DummyCosmicKnife	ENCH	 	Limb Damage Dummy Effect
+FormID: 01010ADF	NVDLC01DogEatBoost	SPEL	 	Tasty Morsel Boost
+FormID: 01010AF7	NVDLC01DeanBarkActivateTrigger	ACTI	 	Dean Bark Activate Trigger
+FormID: 01010B46	NVDLC01KitchenManagerKey	KEYM	 	Sierra Madre Emergency Maintenance Key
+FormID: 01010B47	NVDLC01KitchenBackDoor	DOOR	 	Emergency Door
+FormID: 01010BAA	NVDLC01TheaterStageTerminalMsg	MESG	 	Stage Manager's Terminal
+FormID: 01010BAB	NVDLC01TheaterStageTerminal02Msg	MESG	 	Stage Manager's Terminal
+FormID: 01010BFD	NVDLC01ClinicBarkTrigger	ACTI	 	Clinic Companion Bark Trigger
+FormID: 01010DCB	NVDLC01LobbyElijahBark01	ACTI	 	LobbyElijahBark01
+FormID: 01010DCC	NVDLC01OffDoorMetalLobby	DOOR	 	Office Door
+FormID: 01010DCD	NVDLC01OffDoorSmL01Casino	DOOR	 	Cashier's Office Door
+FormID: 01010DD6	NVDLC01KitchenBackIntDoor	DOOR	 	Emergency Door
+FormID: 01010E06	NVDLC01GhostSpawnTrigger01	ACTI	 	Gas Valve
+FormID: 01010E07	NVDLC01GhostSpawnTrigger02	ACTI	 	Gas Valve
+FormID: 01010E08	NVDLC01GhostSpawnDisable	ACTI	 	Gas Valve
+FormID: 01010E86	NVDLC01BunkerTerminal01	TERM	 	Terminal
+FormID: 01010E88	NVDLC01BunkerRadio	ACTI	 	Radio
+FormID: 01010E8C	NVDLC01BunkerTerminal02	TERM	 	Terminal
+FormID: 01010EB2	NVDLC01ChallengePoisoner	CHAL	 	Kiss of Death
+FormID: 01010EC0	NVDLC01RegenDean03	SPEL	 	Dean's Regeneration
+FormID: 01010EC1	NVDLC01RegenDean02	SPEL	 	Dean's Regeneration
+FormID: 01010ECB	NVDLC01HologramFriendFemaleTheater	NPC_	 	Hologram
+FormID: 01010ECC	NVDLC01HologramFriendTheater	NPC_	 	Hologram
+FormID: 01010ECD	NVDLC01HologramFriendFemaleTemplate	NPC_	 	Hologram
+FormID: 01010ED5	NVDLC01HologramFriendCodeHolder	ACTI	 	Direct the Show
+FormID: 01010EF1	NVDLC01TrapFaction	FACT	 	Trap Faction
+FormID: 01010EF2	NVDLC01TrapPressurePlate	ACTI	 	Pressure Plate
+FormID: 01010EF7	NVDLC01GhostSpawnTrigger03	ACTI	 	Gas Valve
+FormID: 01010F5C	NVDLC01ClinicElijahBark01Trigger	ACTI	 	Clinic Elijah Bark Trigger
+FormID: 01010F61	NVDLC01ClinicElijahBark02Trigger	ACTI	 	Clinic Elijah Bark Trigger
+FormID: 01010F63	NVDLC01VillaElijahTrigger	ACTI	 	Villa Elijah Bark Trigger
+FormID: 01011021	NVDLC01CasinoElijahBarkTrigger	ACTI	 	NVDLC01CasinoElijahBark
+FormID: 01011022	NVDLC01DuffleBagCasino	CONT	 	Security Guard Bag
+FormID: 01011024	NVDLC01LootGunCabinetCasinoPistolLaserMed	CONT	 	Gun Cabinet
+FormID: 010111BF	NVDLC01TheaterDeanBark04Trigger	ACTI	 	Dean Barks
+FormID: 010111C0	NVDLC01TheaterDeanBark03Trigger	ACTI	 	Dean Barks
+FormID: 010111C1	NVDLC01TheaterDeanBark02Trigger	ACTI	 	Dean Barks
+FormID: 010111C2	NVDLC01TheaterDeanBark01Trigger	ACTI	 	Dean Barks
+FormID: 01011219	NVDLC01CraftingOven	ACTI	 	Electric Hot Plate
+FormID: 01011236	NVDLC01SierraMadreChip	CHIP	 	Sierra Madre Chip
+FormID: 01011343	NVDLC01CrGhostSeekerDEAD	CREA	 	Ghost Seeker
+FormID: 010113FA	NVDLC01ElevatorLockedMsg	MESG	 	Vault Elevator Locked
+FormID: 010113FB	NVDLC01ElevatorCodeInfoMsg	MESG	 	Object Inspected
+FormID: 01011407	NVDLC01SuitesElijahElevatorTrigger	ACTI	 	Elijah's Signal Transmission
+FormID: 01011408	NVDLC01SuitesVaultIntercom	ACTI	 	Vault Elevator Microphone
+FormID: 0101140B	NVDLC01WeapDemoCharge	WEAP	 	Demolition Charge
+FormID: 01011468	NVDLC01HeavyWeight	PERK	 	Heavyweight
+FormID: 01011469	NVDLC01Hobbler	PERK	 	Hobbler
+FormID: 01011476	NVDLC01VendingBarkTrigger	ACTI	 	Companion Vending Machine Bark
+FormID: 010116D6	NVDLC01CrHologramStarletSuites	CREA	 	Starlet Hologram
+FormID: 010116D7	NVDLC01KitchenMeatLocker	CONT	 	Meat Locker
+FormID: 010116D8	NVDLC01KitchenToolCabinetMetalMed	CONT	 	Tool Cabinet
+FormID: 010116D9	NVDLC01GarbageCanKitchenHigh	CONT	 	Garbage Can
+FormID: 010116DA	NVDLC01GarbageCanKitchen01High	CONT	 	Garbage Can
+FormID: 010116DB	NVDLC01KitchenCabinet	CONT	 	Kitchen Cabinet
+FormID: 010117E9	NVDLC01WeapKnifeSpearGhost1	WEAP	 	Knife Spear
+FormID: 010117EA	NVDLC01WeapKnifeSpearGhost10	WEAP	 	Knife Spear
+FormID: 010117EB	NVDLC01WeapKnifeSpearGhost20	WEAP	 	Knife Spear
+FormID: 010117EC	NVDLC01WeapKnifeSpearGhost30	WEAP	 	Knife Spear
+FormID: 010117ED	NVDLC01WeapKnifeSpearGhost40	WEAP	 	Knife Spear
+FormID: 010117EE	NVDLC01WeapKnifeSpearGhost50	WEAP	 	Knife Spear
+FormID: 010117F0	NVDLC01WeapBearTrapFistGhost1	WEAP	 	Bear Trap Fist
+FormID: 010117F1	NVDLC01WeapBearTrapFistGhost10	WEAP	 	Bear Trap Fist
+FormID: 010117F2	NVDLC01WeapBearTrapFistGhost20	WEAP	 	Bear Trap Fist
+FormID: 010117F3	NVDLC01WeapBearTrapFistGhost30	WEAP	 	Bear Trap Fist
+FormID: 010117F4	NVDLC01WeapBearTrapFistGhost40	WEAP	 	Bear Trap Fist
+FormID: 010117F5	NVDLC01WeapBearTrapFistGhost50	WEAP	 	Bear Trap Fist
+FormID: 010117F7	NVDLC01WeapThrowingSpearGhost1	WEAP	 	Throwing Knife Spear
+FormID: 010117F8	NVDLC01WeapThrowingSpearGhost10	WEAP	 	Throwing Knife Spear
+FormID: 010117F9	NVDLC01WeapThrowingSpearGhost20	WEAP	 	Throwing Knife Spear
+FormID: 010117FA	NVDLC01WeapThrowingSpearGhost30	WEAP	 	Throwing Knife Spear
+FormID: 010117FB	NVDLC01WeapThrowingSpearGhost40	WEAP	 	Throwing Knife Spear
+FormID: 010117FC	NVDLC01WeapThrowingSpearGhost50	WEAP	 	Throwing Knife Spear
+FormID: 010117FE	NVDLC01CrGhostHarvesterHealth01	CREA	 	Ghost
+FormID: 010117FF	NVDLC01CrGhostHarvesterHealth10	CREA	 	Ghost
+FormID: 01011800	NVDLC01CrGhostHarvesterHealth20	CREA	 	Ghost
+FormID: 01011801	NVDLC01CrGhostHarvesterHealth30	CREA	 	Ghost
+FormID: 01011802	NVDLC01CrGhostHarvesterHealth40	CREA	 	Ghost
+FormID: 01011803	NVDLC01CrGhostHarvesterHealth50	CREA	 	Ghost
+FormID: 01011804	NVDLC01CrGhostSeekerHealth01	CREA	 	Ghost
+FormID: 01011805	NVDLC01CrGhostSeekerHealth10	CREA	 	Ghost
+FormID: 01011806	NVDLC01CrGhostSeekerHealth20	CREA	 	Ghost
+FormID: 01011807	NVDLC01CrGhostSeekerHealth30	CREA	 	Ghost
+FormID: 01011808	NVDLC01CrGhostSeekerHealth40	CREA	 	Ghost
+FormID: 01011809	NVDLC01CrGhostSeekerHealth50	CREA	 	Ghost
+FormID: 0101180A	NVDLC01CrGhostTrapperHealth01	CREA	 	Ghost
+FormID: 0101180B	NVDLC01CrGhostTrapperHealth10	CREA	 	Ghost
+FormID: 0101180C	NVDLC01CrGhostTrapperHealth20	CREA	 	Ghost
+FormID: 0101180D	NVDLC01CrGhostTrapperHealth30	CREA	 	Ghost
+FormID: 0101180E	NVDLC01CrGhostTrapperHealth40	CREA	 	Ghost
+FormID: 0101180F	NVDLC01CrGhostTrapperHealth50	CREA	 	Ghost
+FormID: 010118F8	NVDLC01Gala02FirstDoorBarkTrigger	ACTI	 	Gas Valve
+FormID: 010118F9	NVDLC01Gala02ExitingCloudBarkTrigger	ACTI	 	Gas Valve
+FormID: 010118FA	NVDLC01Gala02EnteringCloudBarkTrigger	ACTI	 	Gas Valve
+FormID: 010118FB	NVDLC01Gala02CloudTerminalBarkTrigger	ACTI	 	Gas Valve
+FormID: 010118FC	NVDLC01Gala02BrokenCatwalkBarkTrigger	ACTI	 	Gas Valve
+FormID: 010118FE	NVDLC01Gala02HeadlessCorpse	NPC_	 	Corpse
+FormID: 0101190B	NVDLC01ElevatorUnlockedPasswordMsg	MESG	 	Vault Elevator Unlocked!
+FormID: 010119DB	NVDLC01ElijahsFootlocker	CONT	 	Brotherhood Footlocker
+FormID: 010119DC	NVDLC01ElijahHolomessage	NOTE	 	Elijah's Holomessage
+FormID: 010119EB	NVDLC01CasInaccessibleDoorBig01	DOOR	 	Sealed Door
+FormID: 01011A43	NVDLC01SuitesElijahSecondUpTrigger	ACTI	 	Elijah's Signal Transmission
+FormID: 01011A44	NVDLC01SuitesElijahFirstUpTrigger	ACTI	 	Elijah's Signal Transmission
+FormID: 01011A47	NVDLC01DemoProjectile	PROJ	 	Armed Demo Charge
+FormID: 01011A84	NVDLC01DeanSecretStash	CONT	 	Dean's Secret Stash
+FormID: 01011ADA	NVDLC01Gala02EnterElijahBarkTrigger	ACTI	 	Gas Valve
+FormID: 01011ADB	NVDLC01Gala02ChristineJumpBarkTrigger	ACTI	 	Gas Valve
+FormID: 01011ADC	NVDLC01Gala02ElijahCloudBarkTrigger	ACTI	 	Gas Valve
+FormID: 01011ADD	NVDLC01FireHoseBox	CONT	 	Fire Hose Box
+FormID: 01011AFE	NVDLC01ElijahOfficeTrigger	ACTI	 	Elijah OfficeTrigger
+FormID: 01011AFF	NVDLC01LobbyIntercom	TACT	 	Intercom
+FormID: 01011B00	NVDLC01OfficeIntercom	TACT	 	Intercom
+FormID: 01011B01	NVDLC01CasinoSmallDoor01	DOOR	 	Door
+FormID: 01011B02	NVDLC01SecurityMemo02	NOTE	 	Sierra Madre Security Memo 2
+FormID: 01011B03	NVDLC01SecurityMemo01	NOTE	 	Sierra Madre Security Memo
+FormID: 01011B11	NVDLC01ElijahBarkLobby	QUST	 	Lobby Casino Support Quest
+FormID: 01011B27	NVDLC01ChallengeDeansSecretStash	CHAL	 	Dean's Secret Stash
+FormID: 01011B28	NVDLC01ChallengeDeanSecretStash	MESG	 	Secret Stash Found!
+FormID: 01011B29	NVDLC01VendingSuperStims	NOTE	 	Vending Machine Code - [QUOTE]Super Stimpak[QUOTE]
+FormID: 01011B2A	NVDLC01VendingPolicePistol	NOTE	 	Vending Machine Code - [QUOTE]Police Pistol[QUOTE]
+FormID: 01011B2B	NVDLC01VendingDemoCharge	NOTE	 	Vending Machine Code - [QUOTE]Demolition Charge[QUOTE]
+FormID: 01011B2C	NVDLC01VendingPolicePistolAmmo	NOTE	 	Vending Machine Code - [QUOTE].357 Magnum Rounds[QUOTE]
+FormID: 01011B2D	NVDLC01VendingAutoRifleAmmo	NOTE	 	Vending Machine Code - [QUOTE].308 Rifle Rounds[QUOTE]
+FormID: 01011B2E	NVDLC01VendingRadAway	NOTE	 	Vending Machine Code - [QUOTE]RadAway[QUOTE]
+FormID: 01011B2F	NVDLC01VendingRadX	NOTE	 	Vending Machine Code - [QUOTE]Rad-X[QUOTE]
+FormID: 01011B30	NVDLC01VendingWeapRepairKit	NOTE	 	Vending Machine Code - [QUOTE]Weapon Repair Kit[QUOTE]
+FormID: 01011B31	NVDLC01VendingSteady	NOTE	 	Vending Machine Code - [QUOTE]Steady[QUOTE]
+FormID: 01011B32	NVDLC01VendingRebound	NOTE	 	Vending Machine Code - [QUOTE]Rebound[QUOTE]
+FormID: 01011B33	NVDLC01VendingBuffout	NOTE	 	Vending Machine Code - [QUOTE]Buffout[QUOTE]
+FormID: 01011B34	NVDLC01VendingMentats	NOTE	 	Vending Machine Code - [QUOTE]Mentats[QUOTE]
+FormID: 01011B35	NVDLC01VendingWine	NOTE	 	Vending Machine Code - [QUOTE]Wine[QUOTE]
+FormID: 01011B36	NVDLC01VendingScotch	NOTE	 	Vending Machine Code - [QUOTE]Scotch[QUOTE]
+FormID: 01011B37	NVDLC01VendingVodka	NOTE	 	Vending Machine Code - [QUOTE]Vodka[QUOTE]
+FormID: 01011B38	RecipeNVDLC01VendingSuperStimpak	RCPE	 	Super Stimpak
+FormID: 01011B39	RecipeNVDLC01Vending357MagnumRounds	RCPE	 	.357 Magnum Rounds
+FormID: 01011B3A	RecipeNVDLC01Vending308RifleRounds	RCPE	 	.308 Rifle Rounds
+FormID: 01011B3B	RecipeNVDLC01VendingDemoCharge	RCPE	 	Demolition Charge
+FormID: 01011B3C	RecipeNVDLC01VendingRadAway	RCPE	 	RadAway
+FormID: 01011B3D	RecipeNVDLC01VendingRadX	RCPE	 	Rad-X
+FormID: 01011B3E	RecipeNVDLC01VendingSteady	RCPE	 	Steady
+FormID: 01011B3F	RecipeNVDLC01VendingRebound	RCPE	 	Rebound
+FormID: 01011B40	RecipeNVDLC01VendingBuffout	RCPE	 	Buffout
+FormID: 01011B41	RecipeNVDLC01VendingMentats	RCPE	 	Mentats
+FormID: 01011B42	RecipeNVDLC01VendingWine	RCPE	 	Wine
+FormID: 01011B43	RecipeNVDLC01VendingScotch	RCPE	 	Scotch
+FormID: 01011B44	RecipeNVDLC01VendingVodka	RCPE	 	Vodka
+FormID: 01011B8B	NVDLC01CasinoOffDoorMetalSmL01	DOOR	 	Door
+FormID: 01011BC4	NVDLC01ETDogGalaBarkTrigger	ACTI	 	Dog near gala bark trigger
+FormID: 01011BC7	NVDLC01ETDeanGasBarkTrigger	ACTI	 	Gas Valve
+FormID: 01011C0E	NVDLC01TheaterElijahFirstUpTrigger	ACTI	 	Elijah's Signal Transmission
+FormID: 01011C11	NVDLC01TheaterElijahTapeUpTrigger	ACTI	 	Elijah's Signal Transmission
+FormID: 01011C34	NVDLC01KitchenElijahFirstUpTrigger	ACTI	 	Elijah's Signal Transmission
+FormID: 01011C35	NVDLC01KitchenElijahTapeUpTrigger	ACTI	 	Elijah's Signal Transmission
+FormID: 01011C36	NVDLC01SuitesElijahTapeUpTrigger	ACTI	 	Elijah's Signal Transmission
+FormID: 01011C37	NVDLC01ElevatorFumbledMsg	MESG	 	Vault Elevator Locked
+FormID: 01011D29	NVDLC01DresserMed	CONT	 	Dresser
+FormID: 01011D2A	NVDLC01NightstandMed	CONT	 	Night Stand
+FormID: 01011D2B	NVDLC01DresserLow	CONT	 	Dresser
+FormID: 01011D2C	NVDLC01DresserHigh	CONT	 	Dresser
+FormID: 01011D2D	NVDLC01DeskArtDecoMed	CONT	 	Desk
+FormID: 01011D2E	NVDLC01DeskArtDecoLow	CONT	 	Desk
+FormID: 01011D2F	NVDLC01Bench01	FURN	 	Bench
+FormID: 01011D6E	NVDLC01VaultMainInfoDownload03Terminal	TERM	 	Vault Control Terminal
+FormID: 01011D6F	NVDLC01VaultMainInfoDownload02Terminal	TERM	 	Vault Control Terminal
+FormID: 01011D70	NVDLC01VaultMainInfoDownload01Terminal	TERM	 	Vault Control Terminal
+FormID: 01011DB1	NVDLC01SMGateMojave	DOOR	 	Gate
+FormID: 01011DDF	NVDLC01CloudResidue	ACTI	 	Cloud Residue
+FormID: 01011DE0	NVDLC01CRJar	MISC	 	Jar of Cloud Residue
+FormID: 01011DFF	NVDLC01VendingMedX	NOTE	 	Vending Machine Code - [QUOTE]Med-X[QUOTE]
+FormID: 01011F2B	NVDLC01ChallengeAuthorityIssues	CHAL	 	Authority Issues
+FormID: 01011F2D	NVDLC01AchievementAssembleCrew	CHAL	 	Assemble Your Crew
+FormID: 01011F2F	NVDLC01AchievementHavingABall	CHAL	 	Having a Ball
+FormID: 01011F30	NVDLC01AchievementCashOut	CHAL	 	Cash Out
+FormID: 01011F31	NVDLC01AchievementSafetyDepositBox	CHAL	 	Safety Deposit Box
+FormID: 01011F34	NVDLC01ChallengeAllForOne	CHAL	 	All For One
+FormID: 01011F35	NVDLC01ChallengeLooseEnds	CHAL	 	Loose Ends
+FormID: 01011F36	RecipeNVDLC01ReturnCigarettePack	RCPE	 	[Return] Cigarette (Pack)
+FormID: 01011F37	RecipeNVDLC01ReturnCigaretteCarton	RCPE	 	[Return] Cigarette (Carton)
+FormID: 01011F38	NVDLC01CrGhostVer	CREA	 	Ghost
+FormID: 01011F4C	NVDLC01RadioElijahActivator	ACTI	 	Elijah Radio Activation Volume
+FormID: 01011F66	NVDLC01ClinicAutoDocChristine	ACTI	 	Malfunctioning Auto-Doc
+FormID: 01011F82	NVDLC01DeskArtDecoHigh	CONT	 	Desk
+FormID: 01011F83	NVDLC01NightstandLow	CONT	 	Dresser
+FormID: 01011F84	NVDLC01NightstandHigh	CONT	 	Dresser
+FormID: 01012083	NVDLC01ElijahClass	CLAS	 	Tech Merlin
+FormID: 01012084	NVDLC01VaultSinclairBag	CONT	 	Sinclair's Bag
+FormID: 010120A6	NVDLC01CrHologramStarletVilla	CREA	 	Starlet Hologram
+FormID: 010120A8	NVDLC01GhostBarkTrigger	ACTI	 	Ghost Bark Trigger
+FormID: 010120AD	NVDLC01CrGhostHarvesterVilla	CREA	 	Ghost Harvester
+FormID: 010120B6	NVDLC01ClinicTerminal02	TERM	 	Terminal
+FormID: 010120B8	NVDLC01ClinicNote02a	NOTE	 	Puesta del Sol Switching Station Gas Leak
+FormID: 010120B9	NVDLC01ClinicNote02b	NOTE	 	Safety Suits Arrived
+FormID: 010120BC	NVDLC01ClinicTerminal03	TERM	 	Terminal
+FormID: 010120BD	NVDLC01ClinicNote03	NOTE	 	Exhaustion
+FormID: 010120C0	NVDLC01ClinicTerminal04	TERM	 	Terminal
+FormID: 010120C1	NVDLC01ClinicTerminal05	TERM	 	Terminal
+FormID: 010120C2	NVDLC01ClinicNote04	NOTE	 	Appointment Calendar
+FormID: 010120C3	NVDLC01ClinicNote05a	NOTE	 	Appointment Calendar
+FormID: 010120C4	NVDLC01ClinicNote05b	NOTE	 	Unpleasant Visit
+FormID: 010120C5	NVDLC01ClinicChiefDoctorDoor	DOOR	 	Door to Chief Physician's Office
+FormID: 010120C8	NVDLC01GalaDialogueActivator	TACT	 	Gala Event Control Panel
+FormID: 01012173	NVDLC01OffDoorMetalSmL01	DOOR	 	Door
+FormID: 01012174	NVDLC01OffDoorMetalSmR01	DOOR	 	Door
+FormID: 01012175	NVDLC01OffDoorSmL01	DOOR	 	Door
+FormID: 01012176	NVDLC01OffDoorSmR01	DOOR	 	Door
+FormID: 010121E5	NVDLC01TSKitDoor03	DOOR	 	Door
+FormID: 010121FB	NVDLC01CasinoOfficeTerminal	TERM	 	Security Office Terminal
+FormID: 010121FC	NVDLC01CasinoOfficeTerminal02	TERM	 	Security Office Terminal
+FormID: 010121FD	NVDLC01ProtocolsNote	NOTE	 	Notes on Emergency Protocols
+FormID: 010121FE	NVDLC01SecurityMeetingNote	NOTE	 	Security Measure Meeting
+FormID: 01012208	NVDLC01WeapKnifeSpearClean	WEAP	 	Knife Spear Clean
+FormID: 01012209	NVDLC01WeapSpaceAgeKnifeClean	WEAP	 	Cosmic Knife Clean
+FormID: 0101220E	NVDLC01PoliceStationTerminal03	TERM	 	Terminal
+FormID: 01012210	NVDLC01PoliceNote01b	NOTE	 	Holding Cell
+FormID: 01012211	NVDLC01PoliceNote01c	NOTE	 	Communications
+FormID: 01012212	NVDLC01PoliceNote02a	NOTE	 	Prohibited Items
+FormID: 01012213	NVDLC01PoliceNote02b	NOTE	 	Security System Installation
+FormID: 01012214	NVDLC01PoliceNote03a	NOTE	 	Inventory
+FormID: 01012215	NVDLC01PoliceNote03b	NOTE	 	Dispenser Report
+FormID: 01012265	NVDLC01VaultCollarCodeHolder	ACTI	 	Bomb Collar Counter
+FormID: 01012266	NVDLC01VaultPlayerTroubleTrigger	ACTI	 	Player Trouble Zone
+FormID: 0101226D	NVDLC01DogGalaDiagram	ACTI	 	Electrical Diagram
+FormID: 0101226E	NVDLC01DogGalaElectricalSwitch	ACTI	 	Corroded Electrical Switch
+FormID: 01012277	NVDLC01wtContractsTerminal	TERM	 	Terminal
+FormID: 01012278	NVDLC01wtPromotionTerminal	TERM	 	Terminal
+FormID: 01012279	NVDLC01wtSpecialOrdersTerminal	TERM	 	Terminal
+FormID: 0101227A	NVDLC01wtDamnRaidTerminal	TERM	 	Terminal
+FormID: 0101227B	NVDLC01wtSurveySchedulesTerminal	TERM	 	Terminal
+FormID: 0101227C	NVDLC01wtVisitTerminal	TERM	 	Terminal
+FormID: 0101227D	NVDLC01wtSpecialOrdersNote	NOTE	 	Special Orders
+FormID: 0101227E	NVDLC01wtStainedNote	NOTE	 	Stained Note
+FormID: 0101227F	NVDLC01wtShipmentInvoiceNote	NOTE	 	Shipment Invoice
+FormID: 01012280	NVDLC01wtJournalNote	NOTE	 	Journal
+FormID: 01012281	NVDLC01wtSurveySchedulesNote	NOTE	 	Survey Schedules
+FormID: 01012282	NVDLC01wtVisitNote	NOTE	 	Visit
+FormID: 01012283	NVDLC01wtContractsNote	NOTE	 	Contracts
+FormID: 01012284	NVDLC01wtPromotionNote	NOTE	 	Promotion
+FormID: 01012285	NVDLC01wtChatNote	NOTE	 	Chat
+FormID: 01012286	NVDLC01wtDamnRaidNote	NOTE	 	Damn Raid
+FormID: 01012287	NVDLC01wtMoreExplosivesNote	NOTE	 	More Explosives
+FormID: 010122A2	NVDLC01PoliceStationTerminal04	TERM	 	Terminal
+FormID: 010122A5	NVDLC01PoliceNote04a	NOTE	 	Vending Machine Installation
+FormID: 010122A6	NVDLC01PoliceNote04b	NOTE	 	Search and Seizure
+FormID: 010122A7	NVDLC01PoliceNote04c	NOTE	 	No More Parking Tickets
+FormID: 010123E5	NVDLC01ChristineSpeakerDialogueTrigger	ACTI	 	Christine Speaker Dialogue Trigger
+FormID: 01012500	NVDLC01VendingArtDecoOFF	ACTI	 	Vending Machine
+FormID: 01012502	NVDLC01CraftingRepairMsg	MESG	 	Repair Vending Machine
+FormID: 01012504	NVDLC01CraftingFixedMsg	MESG	 	Vending Machine
+FormID: 01012505	NVDLC01CraftingNoSkillMsg	MESG	 	Repair Vending Machine Failure
+FormID: 01012509	NVDLC01HologramFriendFemaleBartender	NPC_	 	Hologram
+FormID: 0101250D	RecipeNVDLC01ReturnCasualwearA	RCPE	 	[Return] Casualwear
+FormID: 0101250E	RecipeNVDLC01ReturnSpringwearA	RCPE	 	[Return] Spring Outfit
+FormID: 0101250F	RecipeNVDLC01ReturnCasualwearB	RCPE	 	[Return] Relaxedwear
+FormID: 01012510	RecipeNVDLC01ReturnCasualDirtyA	RCPE	 	[Return] Casualwear (Soiled)
+FormID: 01012511	RecipeNVDLC01ReturnCasualDirtyB	RCPE	 	[Return] Relaxedwear (Soiled)
+FormID: 01012512	RecipeNVDLC01ReturnSpringwearB	RCPE	 	[Return] Parkstroller Outfit
+FormID: 01012513	RecipeNVDLC01ReturnSpringDirtyA	RCPE	 	[Return] Spring Outfit (Soiled)
+FormID: 01012514	RecipeNVDLC01ReturnSpringDirtyB	RCPE	 	[Return] Parkstroller Outfit (Soiled)
+FormID: 01012515	RecipeNVDLC01ReturnHatFedora	RCPE	 	[Return] Hat, Fedora
+FormID: 01012516	RecipeNVDLC01ReturnSecurityArmor	RCPE	 	[Return] SA Security Armor
+FormID: 01012517	RecipeNVDLC01ReturnSecurityArmorAdv	RCPE	 	[Return] SA Security Armor, Reinforced
+FormID: 01012518	RecipeNVDLC01ReturnSecurityHelmet	RCPE	 	[Return] SA Security Helmet
+FormID: 01012519	RecipeNVDLC01ReturnSecurityHelmetAdv	RCPE	 	[Return] SA Security Helmet, Reinforced
+FormID: 0101255A	NVDLC01Gala02CornerRoomTerminal	TERM	 	Terminal
+FormID: 0101255B	NVDLC01Gala02GasLeakNote	NOTE	 	Gas Leak
+FormID: 0101255C	NVDLC01Gala02SecondShiftNote	NOTE	 	Second Shifts
+FormID: 0101255D	NVDLC01Gala02SuitsAreHereNote	NOTE	 	Suits are Here
+FormID: 0101255E	NVDLC01Gala02MaintenanceReportNote	NOTE	 	Maintenance Report
+FormID: 0101255F	NVDLC01Gala02SuitDamageNote	NOTE	 	Suit Damage
+FormID: 0101266A	NVDLC01VaultExplosionTrigger01	ACTI	 	Fireworks!
+FormID: 010126B0	NVDLC01VaultExplosion	EXPL	 	Vault Fluff Explosion
+FormID: 010126D2	NVDLC01ElijahMojaveBarkTrigger	ACTI	 	Elijah Mojave Bark Trigger
+FormID: 010126D8	NVDLC01ElijahCasinoGateBarkTrigger	ACTI	 	Elijah Casino Gate Bark Trigger
+FormID: 010126DB	NVDLC01ETPersonalLog01	TERM	 	Terminal
+FormID: 010126DC	NVDLC01ETPersonalLog02	TERM	 	Terminal
+FormID: 010126DD	NVDLC01ETStatusReport	TERM	 	Terminal
+FormID: 010126DE	NVDLC01ETInfrastructure	TERM	 	Terminal
+FormID: 010126DF	NVDLC01ETInfrastructureNote	NOTE	 	Infrastructure
+FormID: 010126E0	NVDLC01ETPersonalLog02Note	NOTE	 	Personal Log
+FormID: 010126E1	NVDLC01ETJournalNote	NOTE	 	Journal Page
+FormID: 010126E2	NVDLC01ETTornJournalNote	NOTE	 	Torn Journal Page
+FormID: 010126E3	NVDLC01ETStainedPageNote	NOTE	 	Stained Page
+FormID: 010126E4	NVDLC01ETStatusReportNote	NOTE	 	Status Report
+FormID: 010126E5	NVDLC01ETPersonalLog01Note	NOTE	 	Personal Log
+FormID: 010127AB	NVDLC01HoloVendor	QUST	 	Hologram Vendor Quest
+FormID: 010127AE	NVDLC01CrHologramTemplateVendor	CREA	 	Hologram Vendor
+FormID: 010127AF	NVDLC01CrHologramVendor	CREA	 	Hologram Vendor
+FormID: 010127B0	NVDLC01HoloVendorContainer	CONT	 	Hologram Vendor Container
+FormID: 010127F6	NVDLC01WTChristineTerrifiedSoundBarkTrigger	ACTI	 	Gas Valve
+FormID: 01012804	ModNVDLC01AutoRifleUpgradedInternals	IMOD	 	Auto. Rifle Upgr. Internals
+FormID: 01012805	ModNVDLC01HolorifleReinforced	IMOD	 	Holorifle Reinf. Components
+FormID: 01012806	ModNVDLC01BearTrapFistHeavyDutySprings	IMOD	 	Bear Trap Fist HD Springs
+FormID: 01012807	RecipeNVDLC01VendingModAutoRifle	RCPE	 	[Mod] Automatic Rifle Upgraded Internals
+FormID: 01012808	RecipeNVDLC01VendingModHoloRifle	RCPE	 	[Mod] Holorifle Reinforced Components
+FormID: 01012809	RecipeNVDLC01VendingModBearTrapFist	RCPE	 	[Mod] Bear Trap Fist Heavy Duty Springs
+FormID: 01012BAF	NVDLC01GodTapeActivator	ACTI	 	God Basement Tape Activator
+FormID: 01012BD7	NVDLC01TravelToSierraMadreMsg	MESG	 	Dead Money
+FormID: 01012BD8	NVDLC01BunkerDoor	DOOR	 	Door
+FormID: 01012BF2	NVDLC01musCtrlVaultEndGame	ALOC	 	musCtrlVaultEndGame
+FormID: 01012BFB	NVDLC1WeapShotgunChristine50	WEAP	 	Sawed-Off Shotgun
+FormID: 01012BFC	NVDLC1WeapShotgunChristine40	WEAP	 	Sawed-Off Shotgun
+FormID: 01012BFD	NVDLC1WeapShotgunChristine30	WEAP	 	Sawed-Off Shotgun
+FormID: 01012BFE	NVDLC1WeapShotgunChristine20	WEAP	 	Sawed-Off Shotgun
+FormID: 01012BFF	NVDLC1WeapShotgunChristine10	WEAP	 	Sawed-Off Shotgun
+FormID: 01012C00	NVDLC1WeapShotgunChristine1	WEAP	 	Sawed-Off Shotgun
+FormID: 01012C01	NVDLC01StealthsuitEffect	ENCH	 	Stealth Suit
+FormID: 01012C29	NVDLC01HeatedKnifeEffectSpell	SPEL	 	BurningNormalSkin
+FormID: 01012C2A	NVDLC01HeatedKnifeBurnEffect	SPEL	 	BurningNormal
+FormID: 01012C2D	NVDLC01HeatedKnifeFireEffect	ENCH	 	Burning
+FormID: 01012C2F	NVDLC01HeatedKnifeSmokingEffect	SPEL	 	BurningNormal
+FormID: 01012C30	NVDLC01HeatedSpaceAgeKnifeCritEffect	MGEF	 	Heated Knife Crit Effect
+FormID: 01012C38	NVDLC01GhostSight	ALCH	 	Ghost Sight
+FormID: 01012C3B	GhostSightBaseEffect	MGEF	 	Ghost Sight Vision
+FormID: 01012C3C	RecipeNVDLC01GhostSight	RCPE	 	Ghost Sight
+FormID: 01012C8B	NVDLC01SMMartini	MISC	 	Sierra Madre Martini
+FormID: 01012C99	NVDLC01Gala02Turret01	CREA	 	Mark II Turret
+FormID: 01012CB0	NVDLC01WeapNV9mmPistolDean10plus	WEAP	 	9mm Pistol
+FormID: 01012CB1	NVDLC01WeapNV9mmPistolDean20	WEAP	 	9mm Pistol
+FormID: 01012CB2	NVDLC01WeapNV9mmPistolDean30	WEAP	 	9mm Pistol
+FormID: 01012CB3	NVDLC01WeapNV9mmPistolDean40	WEAP	 	9mm Pistol
+FormID: 01012CB4	NVDLC01WeapNV9mmPistolDean50	WEAP	 	9mm Pistol
+FormID: 0002E6E4	HotelDoor01	DOOR	 	Door
+FormID: 01012E45	NVDLC01DeanVaultTalkingActivator	TACT	 	Dean Voice Activator
+FormID: 01012E46	NVDLC01ChristineVaultTalkingActivator	TACT	 	Christine Voice Activator
+FormID: 01012E47	NVDLC01HoloLobbyTerminalAMusic	TERM	 	Music Control
+FormID: 01012E48	NVDLC01StarletMusicFragment02	NOTE	 	Vera Keyes' [QUOTE]Let the Bright Tomorrow in[QUOTE] Song (II)
+FormID: 01012E49	NVDLC01StarletMusicFragment03	NOTE	 	Vera Keyes' [QUOTE]Let the Bright Tomorrow in[QUOTE] Song (III)
+FormID: 01012E4A	NVDLC01StarletMusicFragment01	NOTE	 	Vera Keyes' [QUOTE]Let the Bright Tomorrow in[QUOTE] Song (I)
+FormID: 01012EA5	NVDLC01RadioAMBMusic	QUST	 	DLC01 Ambient Music
+FormID: 01012EA7	NVDLC01RadioStationAMBMusic	TACT	 	Sierra Madre Ambient Music
+FormID: 01012F3C	NVDLC01CloudKissStrong	ALCH	 	Cloud Kiss (Potent)
+FormID: 01012F3D	NVDLC01CloudKissWeak	ALCH	 	Cloud Kiss (Weak)
+FormID: 01012F3E	NVDLC01CloudKissLethal	ALCH	 	Cloud Kiss (Lethal)
+FormID: 01012F53	NVDLC01VendReturnSAArmor	NOTE	 	Vending Machine Code - [QUOTE]Return SA Armor[QUOTE]
+FormID: 01012F54	RecipeNVDLC01VendingMedX	RCPE	 	Med-X
+FormID: 01012F55	NVDLC01VendingStimpak	NOTE	 	Vending Machine Code - [QUOTE]Stimpak[QUOTE]
+FormID: 01012F56	NVDLC01VendReturnOutfitItem	NOTE	 	Vending Machine Code - [QUOTE]Return Outfit Item[QUOTE]
+FormID: 01012F60	NVDLC01WTElijahHolorifleBarkTrigger	ACTI	 	Gas Valve
+FormID: 01012F6B	NVDLC01RadioSpeakers	QUST	 	Bomb Collar Audio
+FormID: 01012F8A	NVDLC01SuitesKitchenFirstAidKit	CONT	 	First Aid Box
+FormID: 01012FB1	NVDLC01ChallengeWholeSadStory	CHAL	 	The Whole Sad Story
+FormID: 01012FB2	NVDLC01ChallengeThingsToCome	CHAL	 	Things to Come!
+FormID: 01012FB3	NVDLC01ChallengeHistorysSake	CHAL	 	History's Sake
+FormID: 0101302E	NVDLC01HologramFriendCodeHolder2	ACTI	 	Direct the Show Part Two
+FormID: 01013093	NVDLC01CraftingBox	CONT	 	Metal Box
+FormID: 01013242	NVDLC01MetalBox01Crafting	CONT	 	Metal Box
+FormID: 010132D4	NVDLC01VaultMainTurretTerminal	TERM	 	Vault Turret Terminal
+FormID: 010132D5	NVDLC01StarletAuditionTape01	MISC	 	Vera Keyes' Audition
+FormID: 010132D6	NVDLC01DeanHolotape02	MISC	 	Dean Domino's Blackmail Tape
+FormID: 010132D7	NVDLC01VaultTurretPasswordNote	NOTE	 	Vault Turret Terminal Password
+FormID: 010132D8	NVDLC01StarletAudition01Note	NOTE	 	Vera Keyes' Audition
+FormID: 010132D9	NVDLC01DeanBlackmailTapeNote	NOTE	 	Dean Domino's Blackmail Evidence
+FormID: 01013329	NVDLC01VendingModAutoRifle	NOTE	 	Vending Machine Code - [QUOTE]Automatic Rifle - Upgraded Internals[QUOTE]
+FormID: 0101332A	NVDLC01VendingModHoloRifle	NOTE	 	Vending Machine Code - [QUOTE]Hologram Rifle - Reinforced Components[QUOTE]
+FormID: 0101332B	NVDLC01VendingModBearTrapFist	NOTE	 	Vending Machine Code - [QUOTE]Bear Trap Fist - Heavy Duty Springs[QUOTE]
+FormID: 01013367	NVDLC01HologramBaseEffect2	MGEF	 	Hologram Image 2
+FormID: 01013368	NVDLC01HologramNeutralSpell2	SPEL	 	Hologram Neutral 2
+FormID: 0101336B	NVDLC01Gala02SampleLocker	CONT	 	Locker
+FormID: 0101336C	NVDLC01Gala02SampleNoteLocker	CONT	 	Locker
+FormID: 0101336D	NVDLC01Gala02CMDead	NPC_	 	Corpse
+FormID: 0101336E	NVDLC01Gala02SampleNote	NOTE	 	Toxic Samples
+FormID: 010133DF	NVDLC01BombCollarExplosion	EXPL	 	Bomb Collar Explosion
+FormID: 010133E4	NVDLC01CrHologramWTFriend	CREA	 	Hologram
+FormID: 01013404	NVDLC01TravelToMojaveMsg	MESG	 	Gate to Mojave Wasteland
+FormID: 0101340B	NVDLC01ElijahsMailbox	CONT	 	Dropbox
+FormID: 0101340D	NVDLC01ChipReward	QUST	 	Chip Reward Quest
+FormID: 0101340F	NVDLC01SuitesAutoDocMsg	MESG	 	Auto-Doc
+FormID: 01013410	NVDLC01SuitesVeraMedNote	NOTE	 	Vera Keyes' Medical Report
+FormID: 01013469	NVDLC01CardSpades10SM	CCRD	 	10 of Spades - Sierra Madre
+FormID: 010134A2	NVDLC01CardSpades2SM	CCRD	 	2 of Spades - Sierra Madre
+FormID: 010134A3	NVDLC01CardSpades3SM	CCRD	 	3 of Spades - Sierra Madre
+FormID: 010134A4	NVDLC01CardSpades4SM	CCRD	 	4 of Spades - Sierra Madre
+FormID: 010134A5	NVDLC01CardSpades5SM	CCRD	 	5 of Spades - Sierra Madre
+FormID: 010134A6	NVDLC01CardSpades6SM	CCRD	 	6 of Spades - Sierra Madre
+FormID: 010134A7	NVDLC01CardSpades7SM	CCRD	 	7 of Spades - Sierra Madre
+FormID: 010134A8	NVDLC01CardSpades8SM	CCRD	 	8 of Spades - Sierra Madre
+FormID: 010134A9	NVDLC01CardSpades9SM	CCRD	 	9 of Spades - Sierra Madre
+FormID: 010134AA	NVDLC01CardSpadesAceSM	CCRD	 	Ace of Spades - Sierra Madre
+FormID: 010134AB	NVDLC01CardSpadesJackSM	CCRD	 	Jack of Spades - Sierra Madre
+FormID: 010134AC	NVDLC01CardSpadesKingSM	CCRD	 	King of Spades - Sierra Madre
+FormID: 010134AD	NVDLC01CardSpadesQueenSM	CCRD	 	Queen of Spades - Sierra Madre
+FormID: 010134AE	NVDLC01CardClubs10SM	CCRD	 	10 of Clubs - Sierra Madre
+FormID: 010134AF	NVDLC01CardClubs2SM	CCRD	 	2 of Clubs - Sierra Madre
+FormID: 010134B0	NVDLC01CardClubs3SM	CCRD	 	3 of Clubs - Sierra Madre
+FormID: 010134B1	NVDLC01CardClubs4SM	CCRD	 	4 of Clubs - Sierra Madre
+FormID: 010134B2	NVDLC01CardClubs5SM	CCRD	 	5 of Clubs - Sierra Madre
+FormID: 010134B3	NVDLC01CardClubs6SM	CCRD	 	6 of Clubs - Sierra Madre
+FormID: 010134B4	NVDLC01CardClubs7SM	CCRD	 	7 of Clubs - Sierra Madre
+FormID: 010134B5	NVDLC01CardClubs8SM	CCRD	 	8 of Clubs - Sierra Madre
+FormID: 010134B6	NVDLC01CardClubs9SM	CCRD	 	9 of Clubs - Sierra Madre
+FormID: 010134B7	NVDLC01CardClubsAceSM	CCRD	 	Ace of Clubs - Sierra Madre
+FormID: 010134B8	NVDLC01CardClubsJackSM	CCRD	 	Jack of Clubs - Sierra Madre
+FormID: 010134B9	NVDLC01CardClubsKingSM	CCRD	 	King of Clubs - Sierra Madre
+FormID: 010134BA	NVDLC01CardClubsQueenSM	CCRD	 	Queen of Clubs - Sierra Madre
+FormID: 010134D2	NVDLC01CardHearts10SM	CCRD	 	10 of Hearts - Sierra Madre
+FormID: 010134D3	NVDLC01CardHearts2SM	CCRD	 	2 of Hearts - Sierra Madre
+FormID: 010134D4	NVDLC01CardHearts3SM	CCRD	 	3 of Hearts - Sierra Madre
+FormID: 010134D5	NVDLC01CardHearts4SM	CCRD	 	4 of Hearts - Sierra Madre
+FormID: 010134D6	NVDLC01CardHearts5SM	CCRD	 	5 of Hearts - Sierra Madre
+FormID: 010134D7	NVDLC01CardHearts6SM	CCRD	 	6 of Hearts - Sierra Madre
+FormID: 010134D8	NVDLC01CardHearts7SM	CCRD	 	7 of Hearts - Sierra Madre
+FormID: 010134D9	NVDLC01CardHearts8SM	CCRD	 	8 of Hearts - Sierra Madre
+FormID: 010134DA	NVDLC01CardHearts9SM	CCRD	 	9 of Hearts - Sierra Madre
+FormID: 010134DB	NVDLC01CardHeartsAceSM	CCRD	 	Ace of Hearts - Sierra Madre
+FormID: 010134DC	NVDLC01CardHeartsJackSM	CCRD	 	Jack of Hearts - Sierra Madre
+FormID: 010134DD	NVDLC01CardHeartsKingSM	CCRD	 	King of Hearts - Sierra Madre
+FormID: 010134DE	NVDLC01CardHeartsQueenSM	CCRD	 	Queen of Hearts - Sierra Madre
+FormID: 010134DF	NVDLC01CardDiamonds10SM	CCRD	 	10 of Diamonds - Sierra Madre
+FormID: 010134E0	NVDLC01CardDiamonds2SM	CCRD	 	2 of Diamonds - Sierra Madre
+FormID: 010134E1	NVDLC01CardDiamonds3SM	CCRD	 	3 of Diamonds - Sierra Madre
+FormID: 010134E2	NVDLC01CardDiamonds4SM	CCRD	 	4 of Diamonds - Sierra Madre
+FormID: 010134E3	NVDLC01CardDiamonds5SM	CCRD	 	5 of Diamonds - Sierra Madre
+FormID: 010134E4	NVDLC01CardDiamonds6SM	CCRD	 	6 of Diamonds - Sierra Madre
+FormID: 010134E5	NVDLC01CardDiamonds7SM	CCRD	 	7 of Diamonds - Sierra Madre
+FormID: 010134E6	NVDLC01CardDiamonds8SM	CCRD	 	8 of Diamonds - Sierra Madre
+FormID: 010134E7	NVDLC01CardDiamonds9SM	CCRD	 	9 of Diamonds - Sierra Madre
+FormID: 010134E8	NVDLC01CardDiamondsAceSM	CCRD	 	Ace of Diamonds - Sierra Madre
+FormID: 010134E9	NVDLC01CardDiamondsJackSM	CCRD	 	Jack of Diamonds - Sierra Madre
+FormID: 010134EA	NVDLC01CardDiamondsKingSM	CCRD	 	King of Diamonds - Sierra Madre
+FormID: 010134EB	NVDLC01CardDiamondsQueenSM	CCRD	 	Queen of Diamonds - Sierra Madre
+FormID: 010134EC	NVDLC01CardJoker01SM	CCRD	 	Joker 1 - Sierra Madre
+FormID: 010134ED	NVDLC01CardJoker02SM	CCRD	 	Joker 2 - Sierra Madre
+FormID: 010134FB	NVDLC01ChallengeDeadMansHand	CHAL	 	Dead Man's Hand
+FormID: 0101352D	NVDLC01ChallengeSouvenirCollector	CHAL	 	Sierra Madre Souvenir Collector
+FormID: 01013531	nvdlc01starletSkeleton	ARMO	 	Starlet Skeleton
+FormID: 01013532	NVDLC01StarletSkeletonBase	NPC_	 	Vera's Skeleton
+FormID: 01013533	nvdlc01starletSkelDress	ARMO	 	Starlet Skeleton Dress
+FormID: 0101354E	NVDLC01SuitesKitchenDoor	DOOR	 	Emergency Door
+FormID: 0101354F	NVDLC01SuitesEmergencyDoor	DOOR	 	Emergency Door
+FormID: 01013550	NVDLC01SuitesEmergencyTerminal	TERM	 	Emergency Network Terminal
+FormID: 01013551	NVDLC01SuitesGasValve	ACTI	 	Gas Valve
+FormID: 0101367B	NVDLC01ResidencesWoodenCrateContainer	CONT	 	Wooden Crate
+FormID: 010136F4	NVDLC01ETJournalMisc	MISC	 	Journal
+FormID: 010136F5	NVDLC01ETStainedPageMisc	MISC	 	Stained Page
+FormID: 010136F6	NVDLC01ETTornJournalMisc	MISC	 	Torn Journal
+FormID: 01013750	NVDLC01Holograms01Note	NOTE	 	Hologram: Installation and Maintenance 1.1
+FormID: 01013751	NVDLC01Holograms02Note	NOTE	 	Hologram: Service Protocols 2.3
+FormID: 01013752	NVDLC01Holograms03Note	NOTE	 	Hologram: Security Protocols 2.4
+FormID: 01013753	NVDLC01Holograms04Note	NOTE	 	Hologram: Addendum: Appearance 2.4.1
+FormID: 01013754	NVDLC01Holograms05Note	NOTE	 	Hologram: Security Protocols 2.5
+FormID: 01013755	NVDLC01Holograms06Note	NOTE	 	Hologram: Threat Detection 2.6
+FormID: 01013756	NVDLC01Holograms07Note	NOTE	 	Hologram: Threat Response 2.6.2
+FormID: 01013757	NVDLC01Holograms08Note	NOTE	 	Hologram: Security Patrols 2.7
+FormID: 01013758	NVDLC01Holograms09Note	NOTE	 	Hologram: Hologram Emitters 5.0
+FormID: 01013759	NVDLC01Holograms10Note	NOTE	 	Hologram: Maintenance 8.3
+FormID: 0101375A	NVDLC01Holograms11Note	NOTE	 	Sinclair: E.B.E
+FormID: 01013780	NVDLC01HoloEmitterVendor	ACTI	 	Hologram Emitter
+FormID: 010137BC	musSetINCDLC1	MSET	 	musSetINCHostile
+FormID: 01013856	NVDLC01ElijahSuitesIntercom	TACT	 	Broken Intercom
+FormID: 01013857	NVDLC01ElijahTheaterTalkingActivator	TACT	 	Broken Intercom
+FormID: 01013858	NVDLC01ElijahRestaurantIntercom	TACT	 	Broken Intercom
+FormID: 0101385D	NVDLC01BrokenIntercomMsg	MESG	 	Broken Intercom
+FormID: 01013867	NVDLC01KitchenElijahSecondUpTrigger	ACTI	 	Elijah's Signal Transmission
+FormID: 01013893	NVDLC01VaultElevatorWarnProtocolNote	NOTE	 	Warning: Elevator Protocols
+FormID: 01013894	NVDLC01VaultWorkerNote	NOTE	 	Worker's Note
+FormID: 01013896	NVDLC01VaultSecurityWarnProtocolNote	NOTE	 	Vault Security Protocols
+FormID: 01013897	NVDLC01VaultVera01Note	NOTE	 	Extracted Holotape
+FormID: 0101389B	NVDLC01VaultVera02Note	NOTE	 	Vera
+FormID: 0101389C	NVDLC01VaultMainInfoVeraTerminal	TERM	 	Vera
+FormID: 0101389D	NVDLC01VaultDean01Note	NOTE	 	Sinclair's Personal Accounts
+FormID: 010138A7	NVDLC01VaultMainInfoDeanTerminal	TERM	 	Mr. Sinclair's Personal Accounts
+FormID: 010138A8	NVDLC01ElijahsChemistrySet	ACTI	 	Elijah's Chemistry Set
+FormID: 010138A9	NVDLC01ElijahsChemistrySetMsg	MESG	 	Chemistry Set
+FormID: 010138C2	NVDLC01KitchenCabinetCrafting	CONT	 	Kitchen Cabinet
+FormID: 010138C7	NVDLC01VendingMachineMsg	MESG	 	Vending Machine
+FormID: 010138C8	RecipeNVDLC01Extra01	RCPE	 	Surprise Food
+FormID: 010138C9	RecipeNVDLC01Extra02	RCPE	 	Surprise Food
+FormID: 010138CA	RecipeNVDLC01Extra03	RCPE	 	Surprise Aid Item
+FormID: 010138CB	RecipeNVDLC01Extra04	RCPE	 	Surprise Aid Item
+FormID: 010138CC	RecipeNVDLC01Extra05	RCPE	 	Strange Chem
+FormID: 010138CD	RecipeNVDLC01Extra06	RCPE	 	Strange Chem
+FormID: 010138DD	NVDLC01Radroach01	CREA	 	Radroach
+FormID: 010138DE	NVDLC01Radroach02	CREA	 	Radroach
+FormID: 010138DF	NVDLC01Radroach03	CREA	 	Radroach
+FormID: 010138E5	NVDLC01KitchenTheseKnivesNote	NOTE	 	These Knives!
+FormID: 010138E6	NVDLC01KitchenAnotherShipmentNote	NOTE	 	Another Shipment?
+FormID: 010138E7	NVDLC01KitchenTooHotNote	NOTE	 	Too Hot!
+FormID: 010138E8	NVDLC01RecipeSuperHeatedKnifeNote	NOTE	 	Recipe: Super-Heated Knife!
+FormID: 010138E9	NVDLC01KitchenOfficeTerminalKnives	TERM	 	Cafe Madrid Terminal
+FormID: 010138EA	NVDLC01AmmoExtra01	CONT	 	Ammunition Box
+FormID: 010138EB	NVDLC01AmmoExtra02	CONT	 	Ammunition Box
+FormID: 010138EC	NVDLC01DeskArtDecoExtra01	CONT	 	Desk
+FormID: 010138ED	NVDLC01DeskArtDecoExtra02	CONT	 	Desk
+FormID: 010138EE	NVDLC01DeskOfficeMetalExtra01	CONT	 	Desk
+FormID: 010138EF	NVDLC01DeskOfficeMetalExtra02	CONT	 	Desk
+FormID: 010138F0	NVDLC01DresserExtra01	CONT	 	Dresser
+FormID: 010138F1	NVDLC01DresserExtra02	CONT	 	Dresser
+FormID: 010138F2	NVDLC01FilingCabinetBunchExtra01	CONT	 	Filing Cabinets
+FormID: 010138F3	NVDLC01FilingCabinetBunchExtra02	CONT	 	Filing Cabinets
+FormID: 010138F4	NVDLC01GarbageCanExtra01	CONT	 	Garbage Can
+FormID: 010138F5	NVDLC01GarbageCanExtra02	CONT	 	Garbage Can
+FormID: 010138F6	NVDLC01GenericSafeExtra01	CONT	 	Safe
+FormID: 010138F7	NVDLC01GenericSafeExtra02	CONT	 	Safe
+FormID: 010138F8	NVDLC01HotelDeskExtra01	CONT	 	Desk
+FormID: 010138F9	NVDLC01HotelDeskExtra02	CONT	 	Desk
+FormID: 010138FA	NVDLC01HotelWardrobeExtra01	CONT	 	Wardrobe
+FormID: 010138FB	NVDLC01HotelWardrobeExtra02	CONT	 	Wardrobe
+FormID: 010138FC	NVDLC01KitchenCabinetExtra01	CONT	 	Kitchen Cabinet
+FormID: 010138FD	NVDLC01KitchenCabinetExtra02	CONT	 	Kitchen Cabinet
+FormID: 010138FE	NVDLC01LockerExtra01	CONT	 	Locker
+FormID: 010138FF	NVDLC01LockerExtra02	CONT	 	Locker
+FormID: 01013900	NVDLC01LootCashRegisterExtra01	CONT	 	Cash Register
+FormID: 01013901	NVDLC01LootCashRegisterExtra03	CONT	 	Cash Register
+FormID: 01013902	NVDLC01LootFirstAidKitExtra01	CONT	 	First Aid Box
+FormID: 01013903	NVDLC01LootFirstAidKitVault	CONT	 	First Aid Box
+FormID: 01013908	NVDLC01MetalBoxExtra01	CONT	 	Metal Box
+FormID: 01013909	NVDLC01MetalBoxExtra02	CONT	 	Metal Box
+FormID: 0101390A	NVDLC01NightstandExtra01	CONT	 	Night Stand
+FormID: 0101390B	NVDLC01OvenRangeDirtyExtra01	CONT	 	Oven
+FormID: 0101390C	NVDLC01RefrigeratorExtra01	CONT	 	Refrigerator
+FormID: 0101390D	NVDLC01SuitCaseExtra01	CONT	 	Suitcase
+FormID: 0101390E	NVDLC01SuitCaseVault	CONT	 	Suitcase
+FormID: 0101390F	NVDLC01ToolboxContainerExtra01	CONT	 	Toolbox
+FormID: 01013910	NVDLC01ToolboxContainerExtra02	CONT	 	Toolbox
+FormID: 01013911	NVDLC01ExtraDoor01	DOOR	 	Door
+FormID: 01013912	NVDLC01ExtraDoor02	DOOR	 	Door
+FormID: 01013913	NVDLC01ExtraDoor03	DOOR	 	Door
+FormID: 01013914	NVDLC01FakeBunkerReturnDoor	DOOR	 	Door
+FormID: 0101393A	NVDLC01VaultTurretBox	ACTI	 	Turret Defense Electric Generator
+FormID: 0101393C	NVDLC01VaultTurretGeneratorMsg	MESG	 	Turret Defense Electric Generator
+FormID: 0101393E	NVDLC01VaultTurretGeneratorMWMsg	MESG	 	Turret Defense Electric Generator
+FormID: 0101393F	NVDLC01VaultTurretGeneratorUMsg	MESG	 	Turret Defense Electric Generator
+FormID: 01013941	NVDLC01VaultGeneratorExplosion	EXPL	 	Speaker Explosion
+FormID: 0101399E	NVDLC01HeadlessCorpseContainer1	CONT	 	Corpse
+FormID: 010139A0	NVDLC01HeadlessCorpseContainer2	CONT	 	Corpse
+FormID: 010139A1	NVDLC01HeadlessCorpseContainer3	CONT	 	Corpse
+FormID: 010139BF	NVDLC01VaultElijahScreen	ACTI	 	Vault Elijah Screen
+FormID: 010139C4	NVDLC01DrinkUrinal01Avg	ACTI	 	Urinal
+FormID: 010139CC	NVDLC01DrinkUrinal03Purified	ACTI	 	Urinal
+FormID: 010139D6	NVDLC01GarbageCanUrban02	CONT	 	Garbage Can
+FormID: 010139D9	NVDLC01GarbageCanUrban01	CONT	 	Garbage Can
+FormID: 010139DC	NVDLC01GlobalToxicBarkTrigger	ACTI	 	Elijah Global Toxic Bark
+FormID: 010139DF	NVDLC01MQ01a	QUST	 	Find Collar 8: [QUOTE]Dog[QUOTE]
+FormID: 010139E0	NVDLC01MQ01b	QUST	 	Find Collar 14: Dean Domino
+FormID: 010139E1	NVDLC01MQ01c	QUST	 	Find Collar 12: Christine
+FormID: 010139E3	NVDLC01ChristineClass	CLAS	 	Tech Wizard
+FormID: 010139E4	NVDLC01DeanClass	CLAS	 	Lounge Lizard
+FormID: 010139FA	NVDLC01HoloEmitterA25	ACTI	 	Hologram Emitter
+FormID: 010139FB	NVDLC01HoloEmitterA50	ACTI	 	Hologram Emitter
+FormID: 010139FC	NVDLC01HoloEmitterA75	ACTI	 	Hologram Emitter
+FormID: 010139FD	NVDLC01HoloEmitterB25	ACTI	 	Hologram Emitter
+FormID: 010139FE	NVDLC01HoloEmitterB50	ACTI	 	Hologram Emitter
+FormID: 010139FF	NVDLC01HoloEmitterB75	ACTI	 	Hologram Emitter
+FormID: 01013A00	NVDLC01HoloEmitterC25	ACTI	 	Hologram Emitter
+FormID: 01013A01	NVDLC01HoloEmitterC50	ACTI	 	Hologram Emitter
+FormID: 01013A02	NVDLC01HoloEmitterC75	ACTI	 	Hologram Emitter
+FormID: 01013A03	NVDLC01MQ03a	QUST	 	Put the Beast Down
+FormID: 01013A04	NVDLC01MQ02c	QUST	 	Mixed Signals
+FormID: 01013A05	NVDLC01EnableElijahTrigger	ACTI	 	Enable Elijah Trigger
+FormID: 01013A3F	NVDLC01MQ02a	QUST	 	Fires in the Sky
+FormID: 01013A40	NVDLC01MQ02b	QUST	 	Strike Up the Band
+FormID: 01013A42	NVDLC01ElijahTalkingActivator	TACT	 	Father Elijah
+FormID: 01013A43	NVDLC01MQ03b	QUST	 	Curtain Call at the Tampico
+FormID: 01013A44	NVDLC01MQ03c	QUST	 	Last Luxuries
+FormID: 01013A5E	NVDLC01ElijahProjector	ACTI	 	Elijah Projector
+FormID: 01013A6C	NVDLC01ExtraDoor04	DOOR	 	Door
+FormID: 01013A6D	NVDLC01ExtraDoor05	DOOR	 	Door
+FormID: 01013A6E	NVDLC01ExtraDoor06	DOOR	 	Door
+FormID: 01013A7B	NVDLC01PostChristineEnemyEnableTrigger	ACTI	 	Post-Christine Enemy Enable Trigger
+FormID: 01013A7C	NVDLC01PoliceStationDoorTrigger	ACTI	 	Gas Valve
+FormID: 01013AA5	NVDLC01EnemyTest	QUST	 	DLC01 Enemy Test
+FormID: 01013AA6	NVDLC01CasinoToLobby	DOOR	 	Casino Door
+FormID: 01013B13	NVDLC01CasinoFinalComp	NOTE	 	Sierra Madre - Complimentary Voucher
+FormID: 01013B19	NVDLC01Gala02MercNote	NOTE	 	See you in hell asshole
+FormID: 01013B1A	ModNVDLC01HolorifleFocusOptics	IMOD	 	Holorifle Focus Optics
+FormID: 01013B1B	NVDLC01VendingModHoloRifle02	NOTE	 	Vending Machine Code - [QUOTE]Hologram Rifle - Focusing Lense[QUOTE]
+FormID: 01013B1C	RecipeNVDLC01VendingModHoloRifle02	RCPE	 	[Mod] Holorifle Focus Optics
+FormID: 01013B20	ModNVDLC01HolorifleAdvancedCalibration	IMOD	 	Holorifle Adv. Calibration
+FormID: 01013B21	NVDLC01VendingModHoloRifle03	NOTE	 	Vending Machine Code - [QUOTE]Hologram Rifle - Advanced Calibration[QUOTE]
+FormID: 01013B23	RecipeNVDLC01VendingModHoloRifle03	RCPE	 	[Mod] Holorifle Advanced Calibration
+FormID: 01013B26	NVDLC01InMyFootsteps	PERK	 	In My Footsteps
+FormID: 01013B31	NVDLC01SpeakerShutdownTermDESK2AverageET	TERM	 	Terminal
+FormID: 01013B32	NVDLC01SpeakerShutdownTermDESK1EasyGala02	TERM	 	Terminal
+FormID: 01013B33	NVDLC01Gala02Note00	NOTE	 	Power Status
+FormID: 01013B34	NVDLC01Gala02Note01	NOTE	 	Power Status
+FormID: 01013B35	NVDLC01Gala02Note02	NOTE	 	Power Status
+FormID: 01013B36	NVDLC01Gala02Note03	NOTE	 	Power Status
+FormID: 01013B37	NVDLC01Gala02Note04	NOTE	 	Power Status
+FormID: 01013B38	NVDLC01EastTownNote02	NOTE	 	Power Status
+FormID: 01013B39	NVDLC01EastTownNote01	NOTE	 	Power Status
+FormID: 01013B3C	NVDLC01FinalCompVoucher	MISC	 	Complimentary Voucher
+FormID: 01013B3D	NVDLC01ETVentilationNote01	NOTE	 	Ventilation System
+FormID: 01013B3E	NVDLC01ETVentilationNote02	NOTE	 	Ventilation System
+FormID: 01013B43	NVDLC01SuitesNote01	NOTE	 	Power Status
+FormID: 01013B44	NVDLC01SuitesNote02	NOTE	 	Power Status
+FormID: 01013B45	NVDLC01TheaterNote01	NOTE	 	Power Status
+FormID: 01013B46	NVDLC01TheaterNote02	NOTE	 	Power Status
+FormID: 01013B4E	NVDLC01SierraMadreGateMsg	MESG	 	Gate to the Sierra Madre Casino
+FormID: 01013B52	NVDLC01ClinicSecurityTerminalSub	TERM	 	Clinic Security Terminal
+FormID: 01013B53	NVDLC01ClinicSecurityTerminalSubB	TERM	 	Clinic Security Terminal
+FormID: 01013C18	NVDLC01MQ03d	QUST	 	Wake Up the Sierra Madre
+FormID: 01013C1B	NVDLC01MQ03aEscapeTrigger	ACTI	 	Kitchen Escape Trigger
+FormID: 01013C64	NVFollowerFireTrigger	ACTI	 	New Vegas Companion Fire Trigger
+FormID: 01013C66	NVDLC01SuitesEscapeTrigger	ACTI	 	Suites Escape Trigger
+FormID: 01013C69	NVDLC01MQ01d	QUST	 	Return to the Fountain
+FormID: 01013C6E	NVDLC01ScareHarvesterActivateTrigger	ACTI	 	Gas Valve
+FormID: 01013C6F	NVDLC01InitialHarvesterTrigger	ACTI	 	Gas Valve
+FormID: 01013C70	NVDLC01ScareHarvesterDisableTrigger	ACTI	 	Gas Valve
+FormID: 01013C71	NVDLC01InitialHarvesterVilla	CREA	 	Ghost Harvester
+FormID: 01013C72	NVDLC01ScareHarvester01	CREA	 	Ghost Harvester
+FormID: 01013C87	NVDLC01ElijahFountainActivator	ACTI	 	Father Elijah
+FormID: 01013D5F	NVDLC01NamedActorDog	MESG	 	Dog
+FormID: 01013D60	NVDLC01NamedActorGod	MESG	 	God
+FormID: 01013D90	NVDLC01WorshipBreakingTrigger	ACTI	 	Gas Valve
+FormID: 01013D91	NVDLC01HologramWorshipTrigger	ACTI	 	Gas Valve
+FormID: 01013D92	NVDLC01CrGhostHarvesterVilla02	CREA	 	Ghost Harvester
+FormID: 01013D99	NVDLC01EnchClothingStarletDress	ENCH	 	Nightwear
+FormID: 01013D9A	NVDLC01GhostGasBombExplosion	EXPL	 	Ghost Gas Bomb Explosion
+FormID: 01013EB1	NVDLC01WeapGaussRifleElijah01	WEAP	 	Gauss Rifle
+FormID: 01013EB2	NVDLC01WeapGaussRifleElijah10	WEAP	 	Gauss Rifle
+FormID: 01013EB3	NVDLC01WeapGaussRifleElijah20	WEAP	 	Gauss Rifle
+FormID: 01013EB4	NVDLC01WeapGaussRifleElijah30	WEAP	 	Gauss Rifle
+FormID: 01013EB5	NVDLC01WeapGaussRifleElijah40	WEAP	 	Gauss Rifle
+FormID: 01013EB6	NVDLC01WeapGaussRifleElijah50	WEAP	 	Gauss Rifle
+FormID: 01013F5D	NVDLC01RadioElijahSpeaker	ACTI	 	Radio
+FormID: 01013F71	NVDLC01GoldBar	MISC	 	Gold Bar
+FormID: 01013F78	NVDLC01TheaterEscapeTrigger	ACTI	 	Theater Escape Trigger
+FormID: 01013FB2	NVDLC01ReturnEquipmentTrigger	ACTI	 	Return Player Equipment Trigger
+FormID: 01013FC3	NVDLC01PSElijahIntercom	TACT	 	Father Elijah
+FormID: 01013FD1	NVDLC01RadioStationDeanMusic	TACT	 	Dean Ambient Music
+FormID: 01013FF2	NVDLC01HolorifleDamageBaseEffect	MGEF	 	Holorifle Damage
+FormID: 01013FF3	NVDLC01HolorifleObjectEffect	ENCH	 	Holorifle AoE
+FormID: 01013FF5	NVDLC01SuitesNoSleepTrigger	ACTI	 	Suites No Sleep Trigger
+FormID: 01013FFB	NVDLC01FollowerGhostBarkTrigger	ACTI	 	Follower Ghost Bark Trigger
+FormID: 01014015	NVDLC01trapShotgun	ACTI	 	Rigged Shotgun
+FormID: 01014016	NVDLC01SprungTrapBearTrap	ACTI	 	Bear Trap
+FormID: 01014024	NVDLC01StopGodBasementBarkTrigger	ACTI	 	Stop God Basement Bark Trigger
+FormID: 0101405E	NVDLC01TheaterDeanFootlocker	CONT	 	Gun Case
+FormID: 0101406C	NVDLC01TheaterKeyTrigger	ACTI	 	Theater Key Trigger
+FormID: 0101406E	NVDLC01ChristineWaitTrigger	ACTI	 	Christine Wait Trigger
+FormID: 01014077	NVDLC01GotDogTapeTrigger	ACTI	 	Got Dog Tape Trigger
+FormID: 01014088	NVDLC01ChristineOutfit	ARMO	 	Wasteland Doctor Fatigues
+FormID: 00031DAC	HereandNow	PERK	 	Here and Now
+FormID: 00032C74	Vodka	ALCH	 	Vodka
+FormID: 0003359C	JunkFood	ALCH	 	Junk Food
+FormID: 0003404A	Wine	ALCH	 	Wine
+FormID: 001555FD	SLBoSBunkerINT	CELL	 	Brotherhood of Steel Bunker
+FormID: 000151A1	Scotch	ALCH	 	Scotch
+FormID: 001558AA	AbandonedBoSBunkerMarker	MAPM	 	Abandoned BoS Bunker
+FormID: 00019CF5	OffDoorMetalSmL01	DOOR	 	Door
+FormID: 000DA726	WastelandNV	WRLD	 	Mojave Wasteland
+FormID: 01000800	WeapNVDLC00Faderator	WEAP	 	The Faderator
+FormID: 01000802	NVDLC01TestMap01	WRLD	 	Villa
+FormID: 01000BAC	NVDLC01Villa	WRLD	 	Villa
+FormID: 01000BAD	NVDLC01CrGhost	CREA	 	Ghost
+FormID: 01000FBE	NVDLC01WeapKnifeSpear	WEAP	 	Knife Spear
+FormID: 01000FBF	NVDLC01MQ01	QUST	 	MQ01 Master Quest
+FormID: 01000FC0	NVDLC01MQ02	QUST	 	Trigger the Gala Event
+FormID: 01000FC1	NVDLC01MQ03	QUST	 	Heist of the Centuries
+FormID: 01000FC2	NVDLC01ClinicBasement	CELL	 	Villa Clinic Basement
+FormID: 01000FD0	NVDLC01PrefabRestrooms	CELL	 	Restrooms
+FormID: 01001198	NVDLC01GhostFaction	FACT	 	Ghost People Faction
+FormID: 01001199	NVDLC01CrGhostHarvester	CREA	 	Ghost Harvester
+FormID: 0100119A	NVDLC01CrGhostSeeker	CREA	 	Ghost Seeker
+FormID: 0100119B	NVDLC01CrGhostTrapper	CREA	 	Ghost Trapper
+FormID: 0100119C	NVDLC01GhostGasBombProjectile	PROJ	 	Gas Tank
+FormID: 0100119D	NVDLC01WeapBearTrapFist	WEAP	 	Bear Trap Fist
+FormID: 0100119E	NVDLC01WeapThrowingKnifeSpear	WEAP	 	Throwing Knife Spear
+FormID: 0100119F	NVDLC01WeapGhostGasBomb	WEAP	 	Gas Tank
+FormID: 010011A0	NVDLC01Casino	CELL	 	Sierra Madre Casino
+FormID: 010012C1	NVDLC01ClinicMainFloor	CELL	 	Villa Clinic
+FormID: 010012FD	NVDLC01Followers	QUST	 	DLC01 Followers
+FormID: 010012FE	NVDLC01Dean	NPC_	 	Dean Domino
+FormID: 010012FF	NVDLC01Christine	NPC_	 	Christine
+FormID: 01001300	NVDLC01Elijah	NPC_	 	Father Elijah
+FormID: 01001301	NVDLC01Dog	CREA	 	Dog
+FormID: 01001302	NVDLC01DeanDialogue	QUST	 	Dean Dialogue
+FormID: 01001303	NVDLC01ChristineDialogue	QUST	 	Christine Dialogue
+FormID: 01001304	NVDLC01DogDialogue	QUST	 	Dog/God Dialogue
+FormID: 01001305	NVDLC01ElijahDialogue	QUST	 	Father Elijah Dialogue
+FormID: 0100130C	NVDLC01FountainTrigger	ACTI	 	NVDLC01FountainTrigger
+FormID: 01001311	NVDLC01DebugGalaTrigger	ACTI	 	Debug Gala Trigger
+FormID: 01001315	NVDLC01WestTownN	WRLD	 	Puesta del Sol North
+FormID: 0100277F	NVDLC01Lobby	CELL	 	Sierra Madre Lobby
+FormID: 010029DA	HoloTestCodeHolder	ACTI	 	Direct the Show
+FormID: 010029DB	NVDLC01ElevatorVaultLevel	DOOR	 	Vault Elevator
+FormID: 010029E1	NVDLC01HologramMaleTemplate	NPC_	 	Hologram
+FormID: 010029E4	NVDLC01Vault	CELL	 	Sierra Madre Vault
+FormID: 0007EA25	WeapNVGrenadeLauncher	WEAP	 	Grenade Launcher
+FormID: 0100307B	nvdlc01hologramoutfit	ARMO	 	hologramoutfit
+FormID: 01003080	NVDLC01PoliceStation	CELL	 	Villa Police Station
+FormID: 01003446	NVDLC01HologramBaseEffect	MGEF	 	Hologram Image
+FormID: 01003513	NVDLC01HologramNeutralSpell	SPEL	 	Hologram Neutral
+FormID: 01003514	NVDLC01HoloVaultTerminalA	TERM	 	Hologram Control
+FormID: 01003515	NVDLC01SierraMadreEntryTrigger	ACTI	 	Sierra Madre Entry Trigger
+FormID: 01003575	NVDLC01EastTownS	WRLD	 	Salida del Sol South
+FormID: 0100359E	NVDLC01PrefabBuildingInteriors	CELL	 	VDLC01 Prefab Building Interiors
+FormID: 010038DE	NVDLC01Suites	CELL	 	Executive Suites
+FormID: 010038DF	NVDLC01Restaurant	CELL	 	Cantina Madrid

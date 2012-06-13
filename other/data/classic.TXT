@@ -1,0 +1,6 @@
+FormID: 001735D1	PreordArmorVault13Armored	ARMO	 	Armored Vault 13 Jumpsuit
+FormID: 001735D2	PreordVaultCanteen	MISC	 	Vault 13 Canteen
+FormID: 001735D4	WeapPreord10mmPistol	WEAP	 	Weathered 10mm Pistol
+FormID: 00174092	PreordVault13CanteenHeal	SPEL	 	Vault 13 Canteen Effect
+FormID: 00174095	PreordVault13CanteenQuest	QUST	 	PreordVault13CanteenQuest
+FormID: 00174777	PreorderMessageInventoryClassic	MESG	 	Classic Pack

@@ -1,0 +1,517 @@
+FormID: 010046A8	DLC05SpaceWalkRepairNode	ACTI	 	Repair Node
+FormID: 0000003C	Wasteland	WRLD	 	Wasteland
+FormID: 01004710	DLC05SpaceDecompressionEndTrig	ACTI	 	Gas Valve
+FormID: 01004713	DLC05SpaceBridge01MasTrig	ACTI	 	Gas Valve
+FormID: 01004716	DLC05SpaceWalk01TalkTrig01	ACTI	 	Gas Valve
+FormID: 0100471A	DLC05SpaceWalk01DecompressionTrig	ACTI	 	Gas Valve
+FormID: 0100471C	DLC05SpaceWalkUpdateObjective01TRIG	ACTI	 	Gas Valve
+FormID: 01004721	DLC05SpaceWalk03MasTrig	ACTI	 	Gas Valve
+FormID: 010047BD	DLC05sewer02	CELL	 	Waste Disposal
+FormID: 0100481F	DLC05DeathRayHub02	CELL	 	Death Ray Control
+FormID: 01004820	DLC05DeathRayHub01	CELL	 	Death Ray Hub
+FormID: 0100493C	DLC05DeathRayPos01Button	ACTI	 	Control
+FormID: 0100493D	DLC05DeathRayChargeButton	ACTI	 	Control
+FormID: 0100493E	DLC05DeathRayFireButton	ACTI	 	Control
+FormID: 01004940	DLC05DeathRayPos02Button	ACTI	 	Control
+FormID: 0100499D	DLC05SteamSallyTACT	TACT	 	Intercom
+FormID: 010049FA	DLC05DeathRayQ	QUST	 	Death Ray
+FormID: 010049FB	DLC05DeathRayDialogue10Trig	ACTI	 	Gas Valve
+FormID: 010049FF	DLC05DeathRayDialogue20Trig	ACTI	 	Gas Valve
+FormID: 01004A12	DLC05ExLab03	CELL	 	Experimentation Lab
+FormID: 01004A13	DLC05ExLab04	CELL	 	Biological Research
+FormID: 01004A14	DLC05ExLab02	CELL	 	Weapons Lab
+FormID: 01004BED	DLC05BrahminExperiment01	CREA	 	Brahmin
+FormID: 01004BFC	DLC05BrahminExperiment02	CREA	 	Brahmin
+FormID: 01004BFE	DLC05BrahminExperiment03	CREA	 	Brahmin
+FormID: 01004C09	DLC05EXLabTeleControl	ACTI	 	Teleporter Control
+FormID: 01004C13	DLC05WeapAlienRifleActivator01	ACTI	 	Alien Test Rifle 01
+FormID: 01004C18	DLC05ExLabWeaponFireControl	ACTI	 	Test Weapon
+FormID: 01004E1A	DLC05Conversations	QUST	 	DLC05 NPC Conversations
+FormID: 01004E3D	DLC05AlienBed	ACTI	 	Stasis Chamber
+FormID: 01004E48	DLC05BridgeIntercom	TACT	 	Intercom
+FormID: 01004E4A	DLC05BridgeIntercomTelepad	TACT	 	Intercom
+FormID: 01004E65	DLC05MZ3CoreTeleporterMessage	MESG	 	Teleporter Inactive!
+FormID: 01004E67	DLC05EngineCoreDoor	DOOR	 	Teleportation Matrix
+FormID: 01004E69	DLC05MZ3CoreTeleporterControl	ACTI	 	Control
+FormID: 01004E77	DLC05BridgeIntercomShields	TACT	 	Intercom
+FormID: 01004E78	DLC05BridgeIntercomDeathRay	TACT	 	Intercom
+FormID: 01004E79	DLC05BridgeIntercomLiving	TACT	 	Intercom
+FormID: 0100511E	DLC05TESTcrAlien2HR	CREA	 	Alien
+FormID: 0100511F	DLC05TESTcrAlien1HMelee	CREA	 	Alien
+FormID: 010055D9	DLC05TeleportTestAlien	CREA	 	Alien
+FormID: 01005620	DLC05CryoElliotSayGenTRIG	ACTI	 	Gas Valve
+FormID: 01005634	DLC05CryoElliotFreezeTRIG	ACTI	 	Gas Valve
+FormID: 0100563C	DLC05CryoElliotTaunt01Trig	ACTI	 	Gas Valve
+FormID: 01005668	DLC05TESTcrAlien2HRALWAYSOUT	CREA	 	Alien
+FormID: 0100585D	DLC05AlienMaintenanceRobot	CREA	 	Support Drone
+FormID: 010058B0	DLC05MZ3Viewscreen	TACT	 	Alien Viewscreen
+FormID: 010058C9	DLC05CrRobot1MeleeTemplate	CREA	 	Support Drone
+FormID: 010058CA	DLC05CrRobot2Melee	CREA	 	Support Drone
+FormID: 010058CB	DLC05CrRobot3Melee	CREA	 	Support Drone
+FormID: 010058CE	DLC05RobotFaction	FACT	 	Alien Robot Faction
+FormID: 010058CF	DLC05crTurret2	CREA	 	Turret
+FormID: 010058D0	DLC05crTurret3	CREA	 	Turret
+FormID: 010058D1	DLC05crTurret1	CREA	 	Turret
+FormID: 010058D4	DLC05crAbomination1Template	CREA	 	Abomination
+FormID: 010058D5	DLC05crAbomination2	CREA	 	Abomination
+FormID: 010058D6	DLC05crAbomination3	CREA	 	Abomination
+FormID: 010058D9	DLC05AbominationFaction	FACT	 	Abomination Faction
+FormID: 010058E1	DLC05CrRobot1RangedTemplate	CREA	 	Guardian Drone
+FormID: 010058E2	DLC05CrRobot2Ranged	CREA	 	Guardian Drone
+FormID: 010058E3	DLC05CrRobot3Ranged	CREA	 	Guardian Drone
+FormID: 010058EB	DLC05AstronautSuit	ARMO	 	Spacesuit
+FormID: 010059BA	DLC05SpaceDecompressionSwitch01	ACTI	 	Switch
+FormID: 010059BC	DLC05DeathInSpaceMessage	MESG	 	Death In Space
+FormID: 010059C3	DLC05DecompressionDoor01aMessage	MESG	 	Room Must Be Pressurized
+FormID: 010059C4	DLC05DecompressionDoor01	DOOR	 	Door
+FormID: 010059C6	DLC05DecompressionDoor01bMessage	MESG	 	Room is Pressurized
+FormID: 010059C9	DLC05SpaceWalkLoudSpeaker	TACT	 	Speaker
+FormID: 01005AAE	DLC05SpaceDecompressionSwitch02	ACTI	 	Switch
+FormID: 01005AB0	DLC05DecompressionDoor02	DOOR	 	Door
+FormID: 01005AF4	DLC05BridgeControl	ACTI	 	Fire Control
+FormID: 01005C13	DLC05ShockVolumeSwitch	ACTI	 	Control
+FormID: 01005C70	DLC05FF01	QUST	 	Steerage Rats
+FormID: 01005C75	DLC05FF01sallyBarkPoint	TACT	 	Intercom
+FormID: 01005C86	DLC05CryoFreezeRoomAlien01	CREA	 	Alien
+FormID: 01005CC3	DLC05WeapAlienWarningMessage	MESG	 	Alien Weapon Notification
+FormID: 01005E6D	DLC05Container01	CONT	 	Container
+FormID: 01005EDF	DLC05BridgeShieldControl	ACTI	 	Shield Controller
+FormID: 01005EE0	DLC05BridgeJammerControl	ACTI	 	Jammer Control
+FormID: 01005EE9	DLC05CryoSwitchFreezeScene	ACTI	 	Switch
+FormID: 01006036	DLC05CryoTrapMAIN	ACTI	 	Gas Valve
+FormID: 010060A3	DLC05HealArch01	ACTI	 	Healing Archway
+FormID: 01006315	DLC05WeapRechargeStationCooldownMessage	MESG	 	Station Recharging
+FormID: 010066F0	DLC05TESTcrAlien1HP	CREA	 	Alien
+FormID: 010066F4	DLC05WeapRepairContainer	CONT	 	Alien Recycler
+FormID: 010066F7	DLC05MZ1AnimationAlien1	CREA	 	Alien
+FormID: 010066F8	DLC05MZ1AnimationAlien2	CREA	 	Alien
+FormID: 010066F9	DLC05MZ1AnimationAlien3	CREA	 	Alien
+FormID: 01006813	DLC05HealingArchHealPlayerMessage	MESG	 	Restored
+FormID: 01006814	DLC05HealingArchHealWeaponMessage	MESG	 	Restored
+FormID: 01006815	DLC05HealingArchCoolDownMessage	MESG	 	Device Recharging
+FormID: 01006871	DLC05ClawNPC	NPC_	 	Wastelander
+FormID: 010068E1	DLC05MZ1AlienHCMelee	CREA	 	Alien
+FormID: 01006934	DLC05AlienArmorSpellEffect	MGEF	 	Inertia Suppression Field
+FormID: 0100693C	SamuraiGloveL	ARMA	 	Metal Armor Left Glove
+FormID: 0100693D	SamuraiGloveR	ARMA	 	Metal Armor Right Glove
+FormID: 0100693F	DLC05SamuraiHelmet	ARMO	 	Samurai Helmet
+FormID: 01006940	DLC05SamuraiArmor	ARMO	 	Samurai Armor
+FormID: 01006BE3	DLC05AlienEpoxy	ALCH	 	Alien Epoxy
+FormID: 01006BE4	DLC05AlienEpoxyEffect	MGEF	 	Alien Epoxy Effect
+FormID: 01006BF2	DLC05TestAlienCHairFront	FURN	 	Chair
+FormID: 01006BF4	DLC05GeneratorCoolantSwitch	ACTI	 	Core Coolant Switch
+FormID: 01006C58	DLC05CryoSoldierRoomTrig	ACTI	 	Gas Valve
+FormID: 01006C6B	DLC05CryoDaniel	NPC_	 	Sergeant Daniels
+FormID: 01006C6C	DLC05CryoBecket	NPC_	 	Private Beckett
+FormID: 01006C75	DLC05CryoSquadSwitch	ACTI	 	Switch
+FormID: 01006D13	DLC05HangarBossDoorControl	ACTI	 	Control
+FormID: 01006DB1	DLC05GeneratorMainSwitch	ACTI	 	Control
+FormID: 01006E1E	DLC05weapPaulsonsRevolverNonPlayable	WEAP	 	Paulson's Revolver
+FormID: 01006E1F	DLC05crAlienDeadA	CREA	 	Alien
+FormID: 01006E20	DLC05crAlienDeadB	CREA	 	Alien
+FormID: 01006E21	DLC05crAlienDeadC	CREA	 	Alien
+FormID: 01006E22	DLC05CoreSceneAlien	CREA	 	Alien
+FormID: 01006FC0	DLC05WeapMineCryo	WEAP	 	Cryo Mine
+FormID: 01006FC1	DLC05CryoMineProjectile	PROJ	 	CryoMine
+FormID: 01007125	DLC05YaoGuaiDEAD	CREA	 	Yao Guai
+FormID: 01007238	DLC05AlienRifleProjectile	PROJ	 	Energy Beam
+FormID: 01007274	DLC05MZDoorSm01CoreScene	DOOR	 	Door
+FormID: 0100738A	DLC05MZExtPanelActivator01	ACTI	 	Exposed Panel
+FormID: 01007392	DLC05MZExtPanelActivator02	ACTI	 	Exposed Panel
+FormID: 01007397	DLC05sewer01	CELL	 	Maintenance Level
+FormID: 01007408	DLC05FF01cartTrig	ACTI	 	Gas Valve
+FormID: 01007413	DLC05FF01cartShake	EXPL	 	Force
+FormID: 0100742E	DLC05AlienArmorSpell	SPEL	 	Inertia Suppression
+FormID: 0100742F	DLC05AlienArmorSpellBurst	SPEL	 	Inertia Suppression Burst
+FormID: 01007434	DLC05AlienPistolProjectile	PROJ	 	Energy Beam
+FormID: 01007436	DLC05WeapShockBaton	MGEF	 	Alien Shock Baton Damage
+FormID: 01007437	DLC05EnchShockBaton	ENCH	 	Shck Baton Damage
+FormID: 0100743F	DLC05SpaceWalkLevitateTrig	ACTI	 	Gas Valve
+FormID: 01007444	DLC05SpaceFloatToDeathTRIG	ACTI	 	Gas Valve
+FormID: 0100744E	DLC05FloatInSpaceMarker	FURN	 	.
+FormID: 010076C9	DLC05RobotCannonMineProjectile	PROJ	 	Energy Ball
+FormID: 010079A0	DLC05TestNPC02	NPC_	 	DLC05TestNPC
+FormID: 01007A03	DLC05ERoomGasTrapControl	ACTI	 	Release Control
+FormID: 01007A6B	DLC05AlienBiogel	ALCH	 	Alien Biogel
+FormID: 01007A6C	DLC05AlienBiogelAdapted	ALCH	 	Adapted Biogel
+FormID: 01007B81	DLC05SpaceWalkEnableDeathTriggerTRIG	ACTI	 	Gas Valve
+FormID: 01007B86	DLC05SpaceWaterHackWater	WATR	 	TestGrantWater
+FormID: 01007BA1	DLC05WeapRobotCannonNonPlayer	WEAP	 	Drone Cannon
+FormID: 01007BA2	DLC05RobotCannonProjectileNonPlayer	PROJ	 	Energy Ball
+FormID: 01007C1D	DLC05DeathRayGenCoolantSwitch	ACTI	 	Core Coolant Switch
+FormID: 01007E2A	DLC05MZ3LabTeleporterControl	ACTI	 	Control
+FormID: 01007E2B	DLC05LabTeleportDoor	DOOR	 	Teleportation Matrix
+FormID: 01007E2D	DLC05MZ3TeleporterUpdateTrigger	ACTI	 	Gas Valve
+FormID: 01007E4A	DLC05EnclaveOfficer	NPC_	 	Enclave Officer
+FormID: 01007E4C	DLC05HoldingCellEnclaveContainer	CONT	 	Container
+FormID: 01007E4D	DLC05HoldingCellsRaider	NPC_	 	Raider
+FormID: 01007E4F	DLC05HoldingCellRaiderContainer	CONT	 	Container
+FormID: 01007E50	DLC05RCSecurity	NPC_	 	Rivet City Security
+FormID: 01007E5E	DLC05LabTeleporterDoor	DOOR	 	Teleportation Matrix
+FormID: 01007E5F	DLC05BridgeTeleporterDoor	DOOR	 	Teleportation Matrix
+FormID: 01007E63	DLC05MZ3BridgeTeleporterControl	ACTI	 	Control
+FormID: 01007EBD	DLC05FF01cartLurch	EXPL	 	Force
+FormID: 010080B5	DLC05WeapKatana	WEAP	 	Katana
+FormID: 010081BD	DLC05TESTAbomination	CREA	 	Abomination
+FormID: 01008248	DLC05MZSpaceWalkDoor	DOOR	 	Airlock Door
+FormID: 0100824A	DLC05SpaceDoorMessage	MESG	 	Death In Space
+FormID: 0100829F	DLC05weapPaulsonsRevolver	WEAP	 	Paulson's Revolver
+FormID: 010082CA	DLC05AlienDoorControlEASY	ACTI	 	Door Controls
+FormID: 010082CD	DLC05AlienDoorControlHARD	ACTI	 	Door Controls
+FormID: 010082CF	DLC05AlienDoorControlAVERAGE	ACTI	 	Door Controls
+FormID: 010082D1	DLC05AlienDoorControlVERYHARD	ACTI	 	Door Controls
+FormID: 01008507	DLC05TelepadActivator	ACTI	 	Teleportation Matrix
+FormID: 010085FB	DLC05StasisControlPanel	ACTI	 	Stasis Controls
+FormID: 01008865	testAlienMaintenanceRobotInPod	CREA	 	Metro Protectron
+FormID: 01008EC7	DLC05ResearchLab	CELL	 	Research Lab
+FormID: 010098EF	DLC05SquadRheems	NPC_	 	Corporal Rheems
+FormID: 010098F0	DLC05SquadMears	NPC_	 	Private Mears
+FormID: 010098F1	DLC05SquadSpurlock	NPC_	 	Corporal Spurlock
+FormID: 01009920	DLC05TeleporterDoorScripted01	DOOR	 	Teleportation Matrix
+FormID: 01009921	DLC05TeleporterDoorScripted02	DOOR	 	Teleportation Matrix
+FormID: 01009922	DLC05TeleporterDoorScripted04	DOOR	 	Teleportation Matrix
+FormID: 01009923	DLC05TeleporterDoorScripted05	DOOR	 	Teleportation Matrix
+FormID: 01009924	DLC05TeleporterDoorScripted06	DOOR	 	Teleportation Matrix
+FormID: 01009942	DLC05TESTWeapDroidLaser1HP	WEAP	 	Hand Laser
+FormID: 01009952	DLC05MZ1SomahDoorTrigger	ACTI	 	Gas Valve
+FormID: 0100997A	DLC05RobotPod	ACTI	 	Drone Pod
+FormID: 01009A08	DLC05HoloNPC1	NPC_	 	Andrew Endicott
+FormID: 01009A09	DLC05HoloNPC2	NPC_	 	Vin
+FormID: 01009A0A	DLC05HoloNPC3	NPC_	 	Dr. Morrison Rand
+FormID: 01009A0B	DLC05HoloNPC4	NPC_	 	Madeline Wallace
+FormID: 01009A0C	DLC05CaptiveHolotape01	NOTE	 	Alien Captive Recorded Log 1
+FormID: 01009A0D	DLC05CaptiveHolotape02	NOTE	 	Alien Captive Recorded Log 2
+FormID: 01009A0E	DLC05CaptiveHolotape03	NOTE	 	Alien Captive Recorded Log 3
+FormID: 01009A0F	DLC05CaptiveHolotape04	NOTE	 	Alien Captive Recorded Log 4
+FormID: 01009A32	DLC05TurretGunCeiling01	WEAP	 	Turret Gun
+FormID: 01009A36	DLC05RobotControlItem	MISC	 	Drone Control Device
+FormID: 01009C70	DLC05TestJeffB02	CELL	 	Cargo Hold
+FormID: 0100A2A6	DLC05TESTcrAlien1red	CREA	 	Alien
+FormID: 0100A2A8	DLC05TESTcrAlien1Captain	CREA	 	Alien
+FormID: 0100A5FF	DLC05RobotPodOpen	ACTI	 	Drone Pod
+FormID: 0100A672	DLC05TestChild	NPC_	 	DLC05TestNPC
+FormID: 0100A6C7	DLC05CargoTestSubjectMale	NPC_	 	Test Subject
+FormID: 0100A6C8	DLC05CargoTestSubjectFemale	NPC_	 	Test Subject
+FormID: 0100A752	DLC05Post	QUST	 	Post-Quest Dialogue
+FormID: 0100A753	DLC05ExtraButton0	ACTI	 	Control
+FormID: 0100A755	DLC05ExtraButton1	ACTI	 	Control
+FormID: 0100A757	DLC05ExtraButton2	ACTI	 	Control
+FormID: 0100A759	DLC05ExtraButton3	ACTI	 	Control
+FormID: 0100A75B	DLC05ExtraButton4	ACTI	 	Control
+FormID: 0100A75D	DLC05ExtraButton5	ACTI	 	Control
+FormID: 0100A75F	DLC05ExtraButton6	ACTI	 	Control
+FormID: 0100A761	DLC05ExtraButton7	ACTI	 	Control
+FormID: 0100A763	DLC05ExtraButton8	ACTI	 	Control
+FormID: 0100A765	DLC05ExtraButton9	ACTI	 	Control
+FormID: 0100A76B	DLC05DeathRayMoving	MESG	 	The Death Ray is Moving
+FormID: 0100A76C	DLC05DeathRayFiring	MESG	 	The Death Ray is Firing
+FormID: 0100A76D	DLC05DeathRayInPosition	MESG	 	The Death Ray is in Position
+FormID: 0100A76E	DLC05DeathRayCharged	MESG	 	The Death Ray is Fully Charged
+FormID: 0100A772	DLC05AlienControllerAsm	ACTI	 	Alien Controller
+FormID: 0100A77C	DLC05PodMapMarker	MAPM	 	Alien Homing Beacon
+FormID: 0100A77D	DLC05WeapRobotCannonUnique	WEAP	 	Drone Cannon Ex-B
+FormID: 0100A77E	DLC05WeapRifleUnique	WEAP	 	Destabilizer
+FormID: 0100A77F	DLC05WeapPistolUnique	WEAP	 	Atomic Pulverizer
+FormID: 0100A840	DLC05PowerControl	ACTI	 	Power Distribution
+FormID: 0100A841	DLC05BridgePowerControl	ACTI	 	Power Distribution
+FormID: 0100A84C	DLC05Widget	MISC	 	Widget
+FormID: 0100A84E	DLC05AlienGizmo	MISC	 	Gizmo
+FormID: 0100A850	DLC05AlienTool	MISC	 	Tool
+FormID: 0100A852	DLC05AlienDoodad	MISC	 	Doodad
+FormID: 0100A854	DLC05AlienThingamabon	MISC	 	Thingamabob
+FormID: 0100A856	DLC05AlienAppliance	MISC	 	Appliance
+FormID: 0100A858	DLC05AlienContraption	MISC	 	Contraption
+FormID: 0100A85A	DLC05AlienDevice	MISC	 	Device
+FormID: 0100A85C	DLC05AlienMaterial	MISC	 	Unidentified Material
+FormID: 0100A85E	DLC05AlienMechanism	MISC	 	Mechanism
+FormID: 0100A88A	DLC05HoloControl	ACTI	 	Control
+FormID: 0100A88D	DLC05CaptiveHolotape05	NOTE	 	Alien Captive Recorded Log 5
+FormID: 0100A88E	DLC05CaptiveHolotape06	NOTE	 	Alien Captive Recorded Log 6
+FormID: 0100A88F	DLC05CaptiveHolotape07	NOTE	 	Alien Captive Recorded Log 7
+FormID: 0100A890	DLC05CaptiveHolotape08	NOTE	 	Alien Captive Recorded Log 8
+FormID: 0100A89C	DLC05FF01Brahmin	CREA	 	Brahmin
+FormID: 0100A8CB	DLC05AstronautLeftGlove	ARMA	 	Astronaut Suit Left Glove
+FormID: 0100A8CC	DLC05AstronautRightGlove	ARMA	 	Space Suit Right Glove
+FormID: 0100A8CD	DLC05AlienBiogelRandomEffect	MGEF	 	Biochemical Anomaly
+FormID: 0100A8CF	DLC05BioGelRandom3	SPEL	 	Biochemical Anomaly
+FormID: 0100A8D0	DLC05BioGelRandom2	SPEL	 	Biochemical Anomaly
+FormID: 0100A8D1	DLC05BioGelRandom4	SPEL	 	Biochemical Anomaly
+FormID: 0100A8D2	DLC05BioGelRandom5	SPEL	 	Biochemical Anomaly
+FormID: 0100A8D3	DLC05BioGelRandom6	SPEL	 	Biochemical Anomaly
+FormID: 0100A8D4	DLC05BioGelRandom7	SPEL	 	Biochemical Anomaly
+FormID: 0100A8D5	DLC05BioGelRandom8	SPEL	 	Biochemical Anomaly
+FormID: 0100A8D6	DLC05BioGelRandom9	SPEL	 	Biochemical Anomaly
+FormID: 0100A8D7	DLC05BioGelRandom0	SPEL	 	Biochemical Anomaly
+FormID: 0100A8D8	DLC05BioGelRandom1	SPEL	 	Biochemical Anomaly
+FormID: 0100A8D9	DLC05AlienBioGelMessage	MESG	 	Biochemical Anomaly
+FormID: 0100A8DA	DLC05FXBeamMeUp	MSTT	 	Beam Up FX
+FormID: 0100A8DE	DLC05Container03	CONT	 	Container
+FormID: 0100A8DF	DLC05Container02	CONT	 	Container
+FormID: 0100A8E0	DLC05Container04	CONT	 	Container
+FormID: 0100A8E1	DLC05Container05	CONT	 	Container
+FormID: 0100A8E2	DLC05Container06	CONT	 	Container
+FormID: 0100A8E3	DLC05Container07	CONT	 	Container
+FormID: 0100A8E4	DLC05Container08	CONT	 	Container
+FormID: 0100A8E5	DLC05Container09	CONT	 	Container
+FormID: 0100A8E6	DLC05Container10	CONT	 	Container
+FormID: 0100A92C	DLC05BridgeGeneratorControl	ACTI	 	Generator Control
+FormID: 0100A94C	DLC05CrAlienNONHOSTILE	CREA	 	Alien Worker
+FormID: 0100A98D	DLC05HomingBeacn	DOOR	 	Alien Homing Beacon
+FormID: 0100A9A1	DLC05ArmorCombatMedic	ARMO	 	Winterized Medic Armor
+FormID: 0100A9A2	DLC05ArmorCombatHelmet	ARMO	 	Winterized Medic Helmet
+FormID: 0100A9A5	DLC05AstronautHelmet	ARMA	 	Spacesuit Helmet
+FormID: 0100A9A6	DLC05WeapBatonB	WEAP	 	Shock Baton
+FormID: 0100A9A7	DLC05WeapBatonC	WEAP	 	Shock Baton
+FormID: 0100A9A8	DLC05WeapPistolB	WEAP	 	Alien Atomizer
+FormID: 0100A9A9	DLC05WeapPistolC	WEAP	 	Alien Atomizer
+FormID: 0100A9AA	DLC05WeapRifleB	WEAP	 	Alien Disintegrator
+FormID: 0100A9AB	DLC05WeapRifleC	WEAP	 	Alien Disintegrator
+FormID: 0100A9AC	DLC05WeapRobotCannonNonPlayerB	WEAP	 	Drone Cannon
+FormID: 0100A9AD	DLC05WeapRobotCannonNonPlayerC	WEAP	 	Drone Cannon
+FormID: 0100A9AE	DLC05crAbomination6	CREA	 	Abomination
+FormID: 0100A9AF	DLC05crTurret4	CREA	 	Turret
+FormID: 0100A9B0	DLC05crTurret5	CREA	 	Turret
+FormID: 0100A9B1	DLC05crTurret6	CREA	 	Turret
+FormID: 0100A9B2	DLC05CrRobot4Melee	CREA	 	Support Drone
+FormID: 0100A9B3	DLC05CrRobot5Melee	CREA	 	Support Drone
+FormID: 0100A9B4	DLC05CrRobot6Melee	CREA	 	Support Drone
+FormID: 0100A9B5	DLC05CrRobot4Ranged	CREA	 	Guardian Drone
+FormID: 0100A9B6	DLC05CrRobot5Ranged	CREA	 	Guardian Drone
+FormID: 0100A9B7	DLC05CrRobot6Ranged	CREA	 	Guardian Drone
+FormID: 0100A9B8	DLC05crAlien4GunB	CREA	 	Alien
+FormID: 0100A9B9	DLC05crAlien5GunB	CREA	 	Alien
+FormID: 0100A9BA	DLC05crAlien6GunB	CREA	 	Alien
+FormID: 0100A9BB	DLC05crAlien1GunC	CREA	 	Alien
+FormID: 0100A9BC	DLC05crAlien2GunC	CREA	 	Alien
+FormID: 0100A9BD	DLC05crAlien3GunC	CREA	 	Alien
+FormID: 0100A9BE	DLC05crAlien4GunC	CREA	 	Alien
+FormID: 0100A9BF	DLC05crAlien5GunC	CREA	 	Alien
+FormID: 0100A9C0	DLC05crAlien6GunC	CREA	 	Alien
+FormID: 0100A9C1	DLC05crAlien1MeleeC	CREA	 	Alien
+FormID: 0100A9C2	DLC05crAlien2MeleeC	CREA	 	Alien
+FormID: 0100A9C3	DLC05crAlien3MeleeC	CREA	 	Alien
+FormID: 0100A9C4	DLC05crAlien4MeleeC	CREA	 	Alien
+FormID: 0100A9C5	DLC05crAlien5MeleeC	CREA	 	Alien
+FormID: 0100A9C6	DLC05crAlien6MeleeC	CREA	 	Alien
+FormID: 0100A9C7	DLC05crAlien3GunB	CREA	 	Alien
+FormID: 0100A9C8	DLC05crAlien3MeleeB	CREA	 	Alien
+FormID: 0100A9C9	DLC05crAlien4MeleeB	CREA	 	Alien
+FormID: 0100A9CA	DLC05crAlien5MeleeB	CREA	 	Alien
+FormID: 0100A9CB	DLC05crAlien6MeleeB	CREA	 	Alien
+FormID: 0100A9CC	DLC05crAlien4GunATemplate	CREA	 	Alien
+FormID: 0100A9CD	DLC05crAlien5GunATemplate	CREA	 	Alien
+FormID: 0100A9CE	DLC05crAlien4MeleeATemplate	CREA	 	Alien
+FormID: 0100A9CF	DLC05crAlien5MeleeATemplate	CREA	 	Alien
+FormID: 0100A9D0	DLC05crAlien6GunATemplate	CREA	 	Alien
+FormID: 0100A9D1	DLC05crAlien6MeleeATemplate	CREA	 	Alien
+FormID: 0100A9D2	DLC05crAbomination4	CREA	 	Abomination
+FormID: 0100A9D3	DLC05crAbomination5	CREA	 	Abomination
+FormID: 0100A9DD	DLC05WeapCaptainsSideArm	WEAP	 	Captain's Sidearm
+FormID: 0100A9DE	DLC05WorkBench	ACTI	 	Work Bench
+FormID: 0100A9E0	DLC05AlienGemstone	MISC	 	Gemstone
+FormID: 0100A9E3	DLC05AlienImager	MISC	 	Imager
+FormID: 0100A9E5	DLC05AlienCrystal	MISC	 	Crystal
+FormID: 0100A9E6	DLC05AlienCrystalLarge	MISC	 	Large Alien Crystal
+FormID: 0100A9E9	DLC05AlienCrystalSmall	MISC	 	Small Alien Crystal
+FormID: 0100A9EC	DLC05AlienGemstoneLarge	MISC	 	Large Gemstone
+FormID: 0100A9ED	DLC05AlienGemstoneSmall	MISC	 	Small Gemstone
+FormID: 0100A9EF	DLC05HealingArchHealPlayerPartialMessage	MESG	 	Restored
+FormID: 0100A9F2	DLC05TelepadActivatorDummy	ACTI	 	Teleportation Matrix
+FormID: 0100AA15	DLC05CrushingMachineLong	MSTT	 	Crushing Machine
+FormID: 0100AA22	DLC05Captain	CREA	 	Alien Captain
+FormID: 0100AA24	DLC05CaptainsChair	FURN	 	Captain's Chair
+FormID: 0100AA26	DLC05EscapeHatch	DOOR	 	Hatch
+FormID: 0100AAA6	DLC05CryoPodSwitch	ACTI	 	Switch
+FormID: 0100AAA8	DLC05CryoPodSwitchOFF	ACTI	 	Switch
+FormID: 0100AACA	DLC05TeleporterDoorMinUseHidden	DOOR	 	Teleportation Matrix
+FormID: 0100AB6D	DLC05GeneralChasesOvercoat	ARMO	 	General Chase's Overcoat
+FormID: 0100AB6E	DLC05ChasesCoat	ENCH	 	Chase's Coat Effect
+FormID: 0100AB6F	DLC05MedicArmorEffect	ENCH	 	Medic Armor Effect
+FormID: 0100AB70	DLC05PaulsonsOutfitEffect	ENCH	 	Paulson's Outfit Effect
+FormID: 0100AB71	DLC05SamuraiArmorEffect	ENCH	 	Samurai Armor Effect
+FormID: 0100AB72	DLC05ReidUnderwoodsTerminal	TERM	 	Reid Underwood's Terminal
+FormID: 0100AB74	DLC05CaptiveHolotape09	NOTE	 	Alien Captive Recorded Log 9
+FormID: 0100AB75	DLC05CaptiveHolotape10	NOTE	 	Alien Captive Recorded Log 10
+FormID: 0100AB76	DLC05CaptiveHolotape11	NOTE	 	Alien Captive Recorded Log 11
+FormID: 0100AB77	DLC05CaptiveHolotape12	NOTE	 	Alien Captive Recorded Log 12
+FormID: 0100AB78	DLC05CaptiveHolotape13	NOTE	 	Alien Captive Recorded Log 13
+FormID: 0100AB79	DLC05CaptiveHolotape14	NOTE	 	Alien Captive Recorded Log 14
+FormID: 0100AB7A	DLC05CaptiveHolotape15	NOTE	 	Alien Captive Recorded Log 15
+FormID: 0100AB7B	DLC05CaptiveHolotape16	NOTE	 	Alien Captive Recorded Log 16
+FormID: 0100AB7C	DLC05AnchorageHolotape	NOTE	 	Anchorage Quartermaster Shipment
+FormID: 0100AB7D	DLC05CaptiveHolotape17	NOTE	 	Alien Captive Recorded Log 17
+FormID: 0100AB7E	DLC05CaptiveHolotape18	NOTE	 	Alien Captive Recorded Log 18
+FormID: 0100AB7F	DLC05CaptiveHolotape19	NOTE	 	Alien Captive Recorded Log 19
+FormID: 0100AB80	DLC05CaptiveHolotape20	NOTE	 	Alien Captive Recorded Log 20
+FormID: 0100AB86	DLC05WeapUniquePlasmaPistol	WEAP	 	MPLX Novasurge
+FormID: 0100AB88	DLC05MPLXPistolNote	NOTE	 	MPLX [QUOTE]Novasurge[QUOTE] Prototype Plasma Pistol
+FormID: 0100AB8A	DLC05UnderwoodSafe	CONT	 	Underwood's Safe
+FormID: 0100ABB0	DLC05Xenotech	PERK	 	Xenotech Expert
+FormID: 0100ABB1	DLC05AnchorageFootlocker	CONT	 	Military Footlocker
+FormID: 0100ABC5	DLC05CaptiveHolotape21	NOTE	 	Alien Captive Recorded Log 21
+FormID: 0100ABC6	DLC05CaptiveHolotape22	NOTE	 	Alien Captive Recorded Log 22
+FormID: 0100AC04	DLC05CaptiveHolotape23	NOTE	 	Alien Captive Recorded Log 23
+FormID: 0100AC05	DLC05CaptiveHolotape24	NOTE	 	Alien Captive Recorded Log 24
+FormID: 0100AC06	DLC05CaptiveHolotape25	NOTE	 	Alien Captive Recorded Log 25
+FormID: 0100AC0F	DLC05BridgeEnemyShipExplosion	EXPL	 	Nuke Explosion
+FormID: 0100AC10	DLC05ZetaLaserLevel1	WEAP	 	Liberty Laser
+FormID: 0100AC11	DLC05ZetaLaserLevel2	WEAP	 	Liberty Laser
+FormID: 0100AC12	DLC05ZetaLaserLevel3	WEAP	 	Liberty Laser
+FormID: 0100AD56	DLC05LvlRobotRangedPodExLab	CREA	 	Experimental Weapons Drone
+FormID: 0100AE49	DLC05CaptainChair01	FURN	 	Command Chair
+FormID: 0100B27C	DLC05CryoDeadNPC01	NPC_	 	Wastelander
+FormID: 0100B27D	DLC05CryoDeadNPC02	NPC_	 	Wastelander
+FormID: 0100B531	DLC05testCoreOverhaul	CELL	 	Engineering Core
+FormID: 0100BB63	DLC05SpacesuitHelmet	ARMO	 	Astronaut Helmet
+FormID: 0100BCEF	DLC05ZetaLaser01Projectile	PROJ	 	Laser Beam
+FormID: 0100BCF0	DLC05ZetaLaser02Projectile	PROJ	 	Laser Beam
+FormID: 0100BCF1	DLC05ZetaLaser03Projectile	PROJ	 	Laser Beam
+FormID: 0100BCFB	DLC05ZetaDeathExplosion	EXPL	 	Nuke Explosion
+FormID: 0100BD02	DLC05ZetaEnemyLaserLevel1	WEAP	 	Liberty Laser
+FormID: 0100BD03	DLC05ZetaEnemyLaser01Projectile	PROJ	 	Laser Beam
+FormID: 0100BDFC	DLC05ButtercupToy	MISC	 	Buttercup Toy
+FormID: 0100BDFE	DLC05ZetaEnemyLaserLevel3	WEAP	 	Liberty Laser
+FormID: 0100C043	DLC05ZetaEnemyLaser02Projectile	PROJ	 	Laser Beam
+FormID: 0100C044	DLC05ZetaEnemyLaser03Projectile	PROJ	 	Laser Beam
+FormID: 0100C04A	DLC05ZetaEnemyLaserLevel2	WEAP	 	Liberty Laser
+FormID: 0100C0C8	DLC05ExLabAlienResearcher	CREA	 	Alien Worker
+FormID: 0100C2F9	DLC05AbominationDEAD	CREA	 	Abomination
+FormID: 0100C357	DLC05UpdateCoreStageTRIG	ACTI	 	Gas Valve
+FormID: 0100C476	DLC05MZDoorBig01CoreScene	DOOR	 	Door
+FormID: 0100C477	DLC05TeleporterDoorCoreScene	DOOR	 	Teleportation Matrix
+FormID: 0100C481	DLC05TeleDart01	ACTI	 	Teleport Dart
+FormID: 0100C48C	DLC05BridgeWastelandDoor	DOOR	 	Teleportation Matrix
+FormID: 0100C4CB	DLC05crAlienCaptain	CREA	 	Alien
+FormID: 0100C4E4	DLC05crAlien1Captain	CREA	 	Alien
+FormID: 0100C8DE	DLC05WasteTeleporterDoor	DOOR	 	Teleportation Matrix
+FormID: 0100C8DF	DLC05PerkMessage	MESG	 	Xenotech Expert Perk Added
+FormID: 0100C96D	DLC05GeneralCoat	ARMO	 	Colonel Autumn's Uniform
+FormID: 0100C96F	DLC05Medals	ARMA	 	General's Medals
+FormID: 0100C9FF	DLC05crAlienGuard2HRTemplate	CREA	 	Alien
+FormID: 0100CA00	DLC05crAlienGuard1HPTemplate	CREA	 	Alien
+FormID: 0100D13E	DLC05KnockDownPlayer	EXPL	 	Force
+FormID: 0100D2D4	DLC05TeleportOutBaseEffect	MGEF	 	Teleport Out
+FormID: 0100D2D5	DLC05TeleportInBaseEffect	MGEF	 	Teleport In
+FormID: 0100D2D6	DLC05TeleportBaseEffect	MGEF	 	Teleport
+FormID: 0100D2D7	DLC05TeleportGlowBaseEffect	MGEF	 	Teleport Glow
+FormID: 0100D2E3	DLC05TestAlienTeleporter	CREA	 	Alien
+FormID: 0100D74C	DLC05SomahClass	CLAS	 	Somah's Class
+FormID: 0100D82D	DLC05DeathRayLaserLevel1	WEAP	 	Liberty Laser
+FormID: 0100D82E	DLC05DeathRayLaser01Projectile	PROJ	 	Laser Beam
+FormID: 0100D830	DLC05DeathRayLaserSpace	WEAP	 	Liberty Laser
+FormID: 0100D831	DLC05DeathRayLaserSpaceProjectile	PROJ	 	Laser Beam
+FormID: 0100D832	DLC05DeathRayLaser02Projectile	PROJ	 	Laser Beam
+FormID: 0100D833	DLC05DeathRayLaserLevel2	WEAP	 	Liberty Laser
+FormID: 0100D835	DLC05DeathRayShake	EXPL	 	Force
+FormID: 0100D882	AudioTemplateDLC05RobotDrone	CREA	 	AudioTemplateDLC05RobotDrone
+FormID: 0100DB3C	DLC05RobotFriendMoveTrigger	ACTI	 	Gas Valve
+FormID: 0100DB91	DLC05ParalysisFX	MGEF	 	Ice
+FormID: 0100DB92	DLC05ParalyzeOnceBaseEffect	MGEF	 	Paralyze
+FormID: 0100DB93	DLC05ParalyzeOnce	SPEL	 	Paralyze1
+FormID: 0100DB97	AudioTemplateAbomination	CREA	 	AudioTemplateAbomination
+FormID: 01000802	DLC05MZ1	QUST	 	Not of This World
+FormID: 01000803	DLC05MZ2	QUST	 	Among the Stars
+FormID: 01000804	DLC05MZ3	QUST	 	This Galaxy Ain't Big Enough...
+FormID: 01000831	testPhilSpaceWaterType	WATR	 	TestGrantWater
+FormID: 0100083B	DLC05WeapSamuraiSword	WEAP	 	Samurai's Sword
+FormID: 0100083D	DLC05WeapBaton	WEAP	 	Shock Baton
+FormID: 0100083F	DLC05WeapPistol	WEAP	 	Alien Atomizer
+FormID: 01000842	DLC05WeapRifle	WEAP	 	Alien Disintegrator
+FormID: 01000845	DLC05WeapRobotCannon	WEAP	 	Drone Cannon
+FormID: 01000856	DLC05MZDoorBig01	DOOR	 	Door
+FormID: 01000969	DLC05Sally	NPC_	 	Sally
+FormID: 0100096A	DLC05Somah	NPC_	 	Somah
+FormID: 0100096B	DLC05Tercorien	NPC_	 	Elliott Tercorien
+FormID: 0100096E	DLC05StartMessage	MESG	 	Mothership Zeta
+FormID: 0100096F	DLC05HoldingCells	CELL	 	Holding Cells
+FormID: 0100098B	DLC05CargoHold	CELL	 	Cargo Hold
+FormID: 0100098C	DLC05TestRepairBay	CELL	 	Repair Bay
+FormID: 01000EF8	DLC05LivingQuarters	CELL	 	Living Quarters
+FormID: 01000F8C	DLC05AlienWorm	ALCH	 	Alien Worm Food
+FormID: 01000F8D	DLC05AlienSquid	ALCH	 	Alien Squid Food
+FormID: 01000F94	DLC05testJesse	CELL	 	Hangar
+FormID: 01000F95	DLC05Hangar	CELL	 	Hangar
+FormID: 01000F96	DLC05RobotAssembly	CELL	 	Robot Assembly
+FormID: 01001600	DLC05TeleporterDoor	DOOR	 	Teleportation Matrix
+FormID: 0100160C	DLC05AmmoAlien	AMMO	 	Alien Power Module
+FormID: 0100160D	DLC05WeapRechargeStation	ACTI	 	Alien Weapon Recharge Station
+FormID: 01001616	DLC05CryoLab01	CELL	 	Cryo Lab
+FormID: 01001F47	DLC05CryoTrap	ACTI	 	Gas Valve
+FormID: 01001F4A	DLC05Paralysis	MGEF	 	Paralysis
+FormID: 01001F4B	DLC05CryoParalyze	SPEL	 	Paralyze
+FormID: 01001F4C	DLC05CryoKnockout	MGEF	 	DLC05CryoKnockout
+FormID: 01001F52	DLC05AlienController	ACTI	 	Control
+FormID: 01001F74	dlc05AlienControllerMine	PROJ	 	Alien Controller
+FormID: 01001FAF	DLC05TESTcrAlien1	CREA	 	Alien
+FormID: 0100293E	DLC05PlayerContainer	CONT	 	Container
+FormID: 01002945	DLC05AlienSwitchEnable	ACTI	 	Switch
+FormID: 01002A70	DLC05CryoGrenadeProjectile	PROJ	 	CryoGrenadeProjectile
+FormID: 01002A71	DLC05WeapGrenadeCryo	WEAP	 	Cryo Grenade
+FormID: 01002A73	DLC05EnchCryoGrenade	ENCH	 	Cryo Freeze
+FormID: 01002EDA	DLC05CryoLabDeathclawTRIG	ACTI	 	Gas Valve
+FormID: 01002FCE	DLC05Bridge	CELL	 	The Bridge
+FormID: 01002FCF	DLC05ExLab01	CELL	 	Observation Deck
+FormID: 01002FD1	DLC05SpaceBridge02	CELL	 	Space Walk
+FormID: 01002FD2	DLC05EngineCore	CELL	 	Engineering Core
+FormID: 01002FD3	DLC05Steamworks	CELL	 	Steamworks
+FormID: 010032FB	DLC05Paulson	NPC_	 	Paulson
+FormID: 010032FC	DLC05Samurai	NPC_	 	Toshiro Kago
+FormID: 01003302	DLC05DeadAstronaut	NPC_	 	Colonel Hartigan
+FormID: 01003305	DLC05PaulsonsHat	ARMO	 	Sheriff's Hat
+FormID: 01003306	DLC05PaulsonsOutfit	ARMO	 	Paulson's Outfit
+FormID: 0100330E	DLC05HoldingCellActivator	ACTI	 	Release Mechanism
+FormID: 01003325	testportableCoverProjectile	PROJ	 	Portable Cover
+FormID: 01003326	testPortableCover	WEAP	 	Portable Cover
+FormID: 01003327	testPortableCoverExplosion	EXPL	 	Portable Cover Explosion
+FormID: 01003392	DLC05Asm	QUST	 	Robot Assembly Scripting/Staging Support Quest
+FormID: 010033ED	DLC05StasisControls	ACTI	 	Stasis Controls
+FormID: 01003416	DLC05AlienCHair01L	FURN	 	Chair
+FormID: 01003418	DLC05AlienDialogue	QUST	 	Alien Dialogue
+FormID: 01003419	DLC05Generic	QUST	 	Generic Dialogue
+FormID: 010034DA	DLC05TESTcrAlien2	CREA	 	Alien
+FormID: 010034DB	DLC05TESTcrAlien3	CREA	 	Alien
+FormID: 010034DD	DLC05EngineRoom	CELL	 	Engine Room
+FormID: 0100370A	DLC05GeneratorSwitch01	ACTI	 	Bumper Switch
+FormID: 01003721	DLC05CryoLab02	CELL	 	Cryo Storage
+FormID: 0100372E	DLC05BigDoorWithEffects	DOOR	 	Door
+FormID: 010039BA	DLC05ConveyorMachine	ACTI	 	Conveyor Machine
+FormID: 010039C6	DLC05AssemblySwitch	ACTI	 	Electronics Access Panel
+FormID: 01003BFB	DLC05MZDoorSm01	DOOR	 	Door
+FormID: 01003C46	DLC05AlienFaction	FACT	 	Alien Faction
+FormID: 01003C52	DLC05WeapSpanner	WEAP	 	Spanner
+FormID: 01003C54	DLC05WeapBatonUnique	WEAP	 	Electro-Suppressor
+FormID: 01003C55	FaceSmashEffect	SPEL	 	Face Smash
+FormID: 01003C57	DLC05FaceSmasherMagicEffect	MGEF	 	FaceSmashedEffect
+FormID: 01003C65	DLC05crAlien1GunATemplate	CREA	 	Alien
+FormID: 01003C66	DLC05crAlien1GunB	CREA	 	Alien
+FormID: 01003C6C	DLC05crAlien2GunATemplate	CREA	 	Alien
+FormID: 01003C6D	DLC05crAlien2GunB	CREA	 	Alien
+FormID: 01003C6F	DLC05crAlien3GunATemplate	CREA	 	Alien
+FormID: 01003C79	DLC05crAlien1MeleeATemplate	CREA	 	Alien
+FormID: 01003C7A	DLC05crAlien1MeleeB	CREA	 	Alien
+FormID: 01003C7C	DLC05crAlien2MeleeATemplate	CREA	 	Alien
+FormID: 01003C7D	DLC05crAlien2MeleeB	CREA	 	Alien
+FormID: 01003C7F	DLC05crAlien3MeleeATemplate	CREA	 	Alien
+FormID: 01003CAD	DLC05MZ3DeathRaySwitch	ACTI	 	Death Ray Switch
+FormID: 01003CB8	DLC05CryoQ	QUST	 	Cryo Lab
+FormID: 01003CB9	DLC05CryoLab01MasTrig	ACTI	 	Gas Valve
+FormID: 01003CC4	DLC05CryoFreezeRoomTrig	ACTI	 	Gas Valve
+FormID: 01003CCE	DLC05CryoParalyzeLONG	SPEL	 	Paralyze
+FormID: 01003F1E	DLC05AlienRadioBeacon	TACT	 	Recon Craft Theta Beacon
+FormID: 01003F27	DLC05AlienCHair01R	FURN	 	Chair
+FormID: 01003F3E	DLC05BumperExplosion	EXPL	 	Bumper Blast
+FormID: 01003F3F	DLC05BumperSwitch	ACTI	 	Pylon Control
+FormID: 01003F43	DLC05HangarSpawnSwitch	ACTI	 	Spawns some guys
+FormID: 01003F7B	DLC05EnchFaceSmasher	ENCH	 	Face Smash
+FormID: 01003FC8	DLC05TESTcrAlienTalk	CREA	 	Alien
+FormID: 010040A2	DLC05MZ1AlienGuard	CREA	 	Alien
+FormID: 010041A8	DLC05Control01	ACTI	 	Control
+FormID: 010041AC	DLC05Terminal01	ACTI	 	Terminal
+FormID: 010041AF	DLC05Control02	ACTI	 	Control
+FormID: 010041CC	DLC05HQ	QUST	 	Hangar Scripting/Staging Support Quest
+FormID: 010041E0	DLC05HangarTeleSwitch	ACTI	 	Control
+FormID: 01004212	DLC05SpaceWalk02MasTrig	ACTI	 	Gas Valve
+FormID: 0100422E	DLC05SpaceWalkQ	QUST	 	Space Walk
+FormID: 01004230	DLC05CryoLab02MasTrig	ACTI	 	Gas Valve
+FormID: 01004249	DLC05AlienArmorSpellFlareEffect	MGEF	 	Inertia Suppression Field Flare
+FormID: 0100428E	DLC05SpaceBridge01	CELL	 	Decompression Chamber

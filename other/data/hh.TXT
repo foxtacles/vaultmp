@@ -1,0 +1,1058 @@
+FormID: 0100683B	NVDLC02ZionCanyon	WRLD	 	Zion Canyon
+FormID: 01008884	ThreeMarysMarker	MAPM	 	Three Marys
+FormID: 01008885	SouthernPassageMapMarker	MAPM	 	Southern Passage
+FormID: 01008886	EasternVirginMapMarker	MAPM	 	Dead Horses Camp
+FormID: 01008887	PineCreekMapMarker	MAPM	 	Pine Creek Tunnel
+FormID: 01008889	TheNarrowsMapMarker	MAPM	 	Sorrows Camp
+FormID: 01008891	NVDLC02MQ00	QUST	 	Happy Trails Expedition
+FormID: 01008892	NVDLC02MQ02	QUST	 	Supply Train
+FormID: 01008893	NVDLC02MQ01	QUST	 	Arrival at Zion
+FormID: 01008894	NVDLC02MQ03	QUST	 	The Grand Staircase
+FormID: 01008897	NVDLC02InvisibleCaveDoorEnter	DOOR	 	Entrance
+FormID: 01008899	NVDLC02PrefabCaves	CELL	 	PREFAB CAVES
+FormID: 01008A33	NVDLC02LoadMessage01	MESG	 	Happy Trails Expedition
+FormID: 01008A34	NVDLC02LoadMessage02	MESG	 	Honest Hearts Loaded
+FormID: 01008A36	NVDLC02MQ04	QUST	 	Crush the White Legs
+FormID: 01008A37	NVDLC02MQ05	QUST	 	Flight from Zion
+FormID: 01008A38	NVDLC02Daniel	NPC_	 	Daniel
+FormID: 01008A39	NVDLC02Joshua	NPC_	 	Joshua Graham
+FormID: 01008A3A	NVDLC02SaltUponWounds	NPC_	 	Salt-Upon-Wounds
+FormID: 01008A3E	NVDLC02NarrowsAbandoned	CELL	 	Sweet Flower Cave
+FormID: 01008A3F	NVDLC02Survivalist01	CELL	 	Stone Bones Cave
+FormID: 01008A40	NVDLC02NarrowsTunnel	CELL	 	Crossroad Cavern
+FormID: 01008A41	NVDLC02NarrowsSorrows	CELL	 	Half Mouse Cave
+FormID: 01008A43	NVDLC02NarrowsWhiteLegs	CELL	 	Glass Chime Cave
+FormID: 01008E17	ModNVDLC0245AutoPistolHDSlide	IMOD	 	.45 AP HD Slide
+FormID: 01008E18	ModNVDLC0245AutoPistolSilencer	IMOD	 	.45 AP Silencer
+FormID: 01008E1A	NVDLC02Weap45AutoPistol	WEAP	 	.45 Auto Pistol
+FormID: 01008E1C	NVDLC023MarysCave	CELL	 	Three Marys' Caverns
+FormID: 01008EA5	NVDLC02EasternVirginSurvivalistCave	CELL	 	Fallen Rock Cave
+FormID: 01008EA6	NVDLC02EasternVirginAngelCave	CELL	 	Angel Cave
+FormID: 010093C0	NVDLC02EasternVirginTrigger	ACTI	 	Eastern Virgin Trigger
+FormID: 010093C3	NVDLC02Compass	MISC	 	Compass
+FormID: 010093C4	NVDLC02WalkieTalkie	MISC	 	Walkie-Talkie
+FormID: 010093C6	NVDLC02DebugBox	CONT	 	Debug Box
+FormID: 010093C8	NVDLC02PlayerStartTrigger	ACTI	 	Player Start Trigger
+FormID: 010093CB	BighornBluffMapMarker	MAPM	 	Bighorn Bluff
+FormID: 010093CC	NVDLC02BighornBluffTrigger	ACTI	 	Bighorn Bluff Trigger
+FormID: 010093D0	NVDLC02PineCreekTrigger	ACTI	 	Pine Creek Trigger
+FormID: 010093D2	VirginRiverMapMarker	MAPM	 	Virgin River
+FormID: 010093D3	NVDLC02VirginRiverTrigger	ACTI	 	Virgin River Trigger
+FormID: 010093D9	NVDLC02WhiteLegsTribalMQ04	NPC_	 	White Legs Bone-Breaker
+FormID: 01009425	NVDLC02ZionStore	CELL	 	General Store
+FormID: 01009426	NVDLC02ZionStation	CELL	 	Ranger Station
+FormID: 01009427	NVDLC02ZionLodge	CELL	 	Fishing Lodge
+FormID: 0100946D	NVDLC02ZionStoreOutDoor	DOOR	 	Door
+FormID: 0100946E	NVDLC02ZionStoreDoor	DOOR	 	Door
+FormID: 0100947B	NVDLC02Ammo45Auto	AMMO	 	.45 Auto
+FormID: 0100947C	SorrowCacasian	RACE	 	SorrowsBase
+FormID: 0100947D	NVDLC02SorrowCM	NPC_	 	Sorrows Tribal
+FormID: 0100947E	SorrowAfricanAmerican	RACE	 	Sorrow African American
+FormID: 0100947F	NVDLC02SorrowAM	NPC_	 	Sorrows Tribal
+FormID: 01009480	NVDLC02SorrowAAM	NPC_	 	Sorrows Tribal
+FormID: 01009481	DeadHorseAfricanAmerican	RACE	 	Sorrow African American
+FormID: 01009482	NVDLC02DeadhorseAAM	NPC_	 	Dead Horse Tribal
+FormID: 01009483	DeadHorseCaucasian	RACE	 	Deadhorse Caucasian
+FormID: 01009484	NVDLC02DeadHorseCM	NPC_	 	Dead Horse Tribal
+FormID: 01009485	WhiteLegsAfricanAmerican	RACE	 	WhiteLegs African American
+FormID: 01009486	WhitelegsCacasians	RACE	 	WhiteLegs Caucasian
+FormID: 01009487	NVDLC02WhiteLegAAM	NPC_	 	White Legs Tribal
+FormID: 01009488	NVDLC02WhiteLegCM	NPC_	 	White Legs Tribal
+FormID: 010094B7	NVDLC02SacredDaturaPlantLarge	ACTI	 	Sacred Datura
+FormID: 010094B8	NVDLC02SacredDaturaPlant	ACTI	 	Sacred Datura
+FormID: 010094B9	NVDLC02SorrowShaman	NPC_	 	White Bird
+FormID: 010094BA	NVDLC02GhostOfShe	CREA	 	The Ghost of She
+FormID: 010094BB	NVDLC02SacredDaturaRoot	ALCH	 	Sacred Datura Root
+FormID: 010094C3	NVDLC02MS01	QUST	 	Rite of Passage
+FormID: 010094CA	NVDLC02SorrowAAMF	NPC_	 	Sorrows Tribal
+FormID: 010094CB	NVDLC02DeadhorseAAMF	NPC_	 	Dead Horse Tribal
+FormID: 010094CC	NVDLC02DeadHorseCMF	NPC_	 	Dead Horse Tribal
+FormID: 010094CD	NVDLC02WhiteLegAAMF	NPC_	 	White Legs Tribal
+FormID: 010094CE	NVDLC02WhiteLegCMF	NPC_	 	White Legs Tribal
+FormID: 010094CF	NVDLC02SorrowCMF	NPC_	 	Sorrows Tribal
+FormID: 010094D0	NVDLC02FollowsChalk	NPC_	 	Follows-Chalk
+FormID: 010094D2	PatriarchsCampgroundMarker	MAPM	 	Patriarchs' Campground
+FormID: 010094D3	RangerStationMapMarker	MAPM	 	Zion Ranger Station
+FormID: 010094D4	SorrowsForkCampgroundMarker	MAPM	 	Sorrows Fork Campground
+FormID: 010094D5	ZionFishingLodgeMarker	MAPM	 	Zion Fishing Lodge
+FormID: 010094D6	VirginForkCampgroundMarker	MAPM	 	Virgin Fork Campground
+FormID: 010094D7	 	MAPM	 	Ranger Substation Peregrine
+FormID: 010094D9	NVDLC02BusMapMarker	MAPM	 	Crashed Scout Bus
+FormID: 010094FB	 	MAPM	 	Ranger Substation Eagle
+FormID: 010094FC	 	MAPM	 	Ranger Substation Osprey
+FormID: 010094FD	GhostOfSheDenMapMarker	MAPM	 	Ghost Den
+FormID: 010094FE	CrossroadCavernMapMarker	MAPM	 	Crossroad Cavern
+FormID: 010094FF	ThreeMarysCaveMarker	MAPM	 	Three Marys Cavern
+FormID: 01009500	CourtForkOverlookMarker	MAPM	 	Court Fork Overlook
+FormID: 01009501	EastForkCampgroundMarker	MAPM	 	North Fork Campground
+FormID: 01009502	 	MAPM	 	Zion Valley Welcome Booth
+FormID: 010095E7	NVDLC02RockSlideTrigger	ACTI	 	RockSlideTrigger
+FormID: 01009660	WhiteLegsCampMarker	MAPM	 	White Legs Camp
+FormID: 01009665	NVDLC02WakingCloud	NPC_	 	Waking Cloud
+FormID: 010096D2	NVDLC02PineCreekTunnelTrigger	ACTI	 	Pine Creek Tunnel Trigger
+FormID: 010096D7	NVDLC02WhiteLegsTribalMQ05a1	NPC_	 	White Legs Bone-Breaker
+FormID: 010096DC	NVDLC02SorrowMQ05	NPC_	 	Captive Sorrows Tribal
+FormID: 0100971D	NVDLC02NarrowsWhiteBird	CELL	 	White Bird's Cave
+FormID: 010098E7	WhiteBirdsCaveMapMarker	MAPM	 	White Bird's Cave
+FormID: 010098E8	 	MAPM	 	Sweet Flower Cave
+FormID: 010098E9	HalfMouseCaveMapMarker	MAPM	 	Half Mouse Cave
+FormID: 010098EA	StoneBonesCaveMapMarker	MAPM	 	Stone Bones Cave
+FormID: 010098EB	 	MAPM	 	Fallen Rock Cave
+FormID: 01009909	NVDLC02RecipeDaturaRootPoison	RCPE	 	Dark Datura
+FormID: 0100990A	NVDLC02DarkDatura	ALCH	 	Dark Datura
+FormID: 01009946	NVDLC02Campfire01	ACTI	 	Campfire
+FormID: 01009947	NVDLC02Campfire02	ACTI	 	Campfire
+FormID: 01009948	NVDLC02SacredDaturaPoisonEffect	MGEF	 	Sacred Datura Poison
+FormID: 0100994B	NVDLC02SacredDaturaPoison	SPEL	 	Poison
+FormID: 0100994C	NVDLC02GhostofShePaw	MISC	 	Ghost of She's Paw
+FormID: 0100996A	ModNVDLC0245AutoSubmachinegunCompensator	IMOD	 	.45 Auto SMG Comp.
+FormID: 0100996B	ModNVDLC0245AutoSubmachinegunDrums	IMOD	 	.45 Auto SMG Drums
+FormID: 0100996C	NVDLC02Weap45AutoSubmachineGun	WEAP	 	.45 Auto Submachine Gun
+FormID: 010099AC	NVDLC02SaltUponWoundsTrigger	ACTI	 	Salt Upon Wounds Trigger
+FormID: 010099C3	NVDLC02WhiteLegsVictim01	NPC_	 	White Legs Pain-Maker
+FormID: 010099C7	NVDLC02DeadHorse3M	NPC_	 	Dead Horse Warrior
+FormID: 010099CC	NVDLC02Massacre01Trigger	ACTI	 	Massacre01 Trigger
+FormID: 01009B5A	NVDLC02Enc	QUST	 	Encounters Master Script
+FormID: 01009B7C	NVDLC02CrTier3GiantMantisMed	CREA	 	Zion Mantis
+FormID: 01009B7D	NVDLC02CrTier4GiantMantisLarge	CREA	 	Giant Zion Mantis
+FormID: 01009B7E	NVDLC02CrTier2GiantMantisSmall	CREA	 	Zion Mantis Nymph
+FormID: 01009B80	NVDLC02EncCodeHolder	ACTI	 	Direct The Show
+FormID: 01009B8D	NVDLC02DeskOfficeCornerMetalLOW	CONT	 	Desk
+FormID: 01009B8E	NVDLC02DeskOfficeMetalLOW	CONT	 	Desk
+FormID: 01009B8F	NVDLC02FilingCabinetBunch01LOW	CONT	 	Filing Cabinets
+FormID: 01009DBE	NVDLC02Weap45AutoPistolUnique	WEAP	 	A Light Shining in Darkness
+FormID: 01009E68	NVDLC02RangerTerminal	TERM	 	Terminal
+FormID: 01009E6A	NVDLC02Ammo45AutoHollowPoint	AMMO	 	.45 Auto, Hollow Point
+FormID: 01009E6B	NVDLC02Ammo45AutoP	AMMO	 	.45 Auto, +P
+FormID: 01009E6C	NVDLC02Ammo45Super	AMMO	 	.45 Super (Hand Load)
+FormID: 01009E6D	AmmoEffect45SuperConditionPenalty	AMEF	 	COND Decay Increase
+FormID: 01009E6E	AmmoEffect45SuperDamageBonus	AMEF	 	Damage Bonus
+FormID: 01009E6F	AmmoEffect45SuperDTReduction	AMEF	 	Dam. Thresh. Reduction
+FormID: 01009E71	NVDLC02Case45Auto	MISC	 	Case, .45 Auto
+FormID: 01009E72	NVDLC02BoxCase45Auto	MISC	 	Case Box, 10mm
+FormID: 01009E74	NVDLC02Recipe45Auto	RCPE	 	.45 Auto Round
+FormID: 01009E75	NVDLC02Recipe45Super	RCPE	 	.45 Super Hand Load
+FormID: 01009E76	NVDLC02Recipe45AutoP	RCPE	 	.45 Auto +P Round
+FormID: 01009E7B	NVDLC02Jed	NPC_	 	Jed Masterson
+FormID: 01009EBD	NVDLC02GrandStaircaseNote	NOTE	 	Grand Staircase Topographical Map
+FormID: 01009EBE	NVDLC02ShippingCrate	CONT	 	Happy Trails Shipping Crate
+FormID: 01009ECC	NVDLC02Massacre02Trigger	ACTI	 	Massacre02 Trigger
+FormID: 01009F3E	NVDLC02CrTier0Raven	CREA	 	Raven
+FormID: 01009F3F	NVDLC02CrTier1AntWorkerMed	CREA	 	Giant Worker Ant
+FormID: 01009F40	NVDLC02CrTier1BarkScorpionMed	CREA	 	Bark Scorpion
+FormID: 01009F41	NVDLC02CrTier1BarkScorpionPackMed	CREA	 	Bark Scorpion Hunter
+FormID: 01009F42	NVDLC02CrTier1BigHornerSmall	CREA	 	Bighorner Calf
+FormID: 01009F43	NVDLC02CrTier1BloatFlyMed	CREA	 	Bloatfly
+FormID: 01009F44	NVDLC02CrTier1CoyoteDenMother	CREA	 	Coyote Den Mother
+FormID: 01009F45	NVDLC02CrTier1CoyoteMed	CREA	 	Coyote
+FormID: 01009F46	NVDLC02CrTier1CoyoteSmall	CREA	 	Coyote Pup
+FormID: 01009F47	NVDLC02CrTier1DogLarge	CREA	 	Large Dog
+FormID: 01009F48	NVDLC02CrTier1DogMed	CREA	 	Dog
+FormID: 01009F49	NVDLC02CrTier1DogWildLarge	CREA	 	Large Wild Dog
+FormID: 01009F4A	NVDLC02CrTier1DogWildMed	CREA	 	Wild Dog
+FormID: 01009F4B	NVDLC02CrTier1GeckoSmall	CREA	 	Young Gecko
+FormID: 01009F4C	NVDLC02CrTier1GiantRatMed	CREA	 	Giant Rat
+FormID: 01009F4D	NVDLC02CrTier1GiantRatSmall	CREA	 	Giant Rat Pup
+FormID: 01009F4E	NVDLC02CrTier1MoleRatMed	CREA	 	Mole Rat
+FormID: 01009F4F	NVDLC02CrTier1MoleRatSmall	CREA	 	Mole Rat Pup
+FormID: 01009F50	NVDLC02CrTier1RadscorpionSmall	CREA	 	Small Radscorpion
+FormID: 01009F51	NVDLC02CrTier2AntSoldierMed	CREA	 	Giant Soldier Ant
+FormID: 01009F52	NVDLC02CrTier2BigHornerMed	CREA	 	Bighorner
+FormID: 01009F53	NVDLC02CrTier2GeckoMed	CREA	 	Gecko
+FormID: 01009F54	NVDLC02CrTier3GreenGeckoSmall	CREA	 	Young Green Gecko
+FormID: 01009F55	NVDLC02CrTier2MoleRatLarge	CREA	 	Mole Rat
+FormID: 01009F56	NVDLC02CrTier2RadscorpionMed	CREA	 	Radscorpion
+FormID: 01009F57	NVDLC02CrTier3BigHornerLarge	CREA	 	Bighorner Bull
+FormID: 01009F58	NVDLC02CrTier3CazadorSmall	CREA	 	Young Cazador
+FormID: 01009F59	NVDLC02CrTier3GiantAntQueen	CREA	 	Giant Ant Queen
+FormID: 01009F5A	NVDLC02CrTier3GiantRadscorpionMed	CREA	 	Giant Radscorpion
+FormID: 01009F5B	NVDLC02CrTier4YaoGuaiMed	CREA	 	Yao Guai
+FormID: 01009F5C	NVDLC02CrTier4CazadorMed	CREA	 	Cazador
+FormID: 01009F5D	NVDLC02CrTier4GreenGeckoMed	CREA	 	Green Gecko
+FormID: 01009F5E	NVDLC02CrTier2SporeCarrierFD	CREA	 	Spore Carrier Runt
+FormID: 01009F5F	NVDLC02CrTier2SporeCarrierFU	CREA	 	Spore Carrier Runt
+FormID: 01009F60	NVDLC02CrTier3SporeCarrierFD2	CREA	 	Spore Carrier
+FormID: 01009F61	NVDLC02CrTier3SporeCarrierFU2	CREA	 	Spore Carrier
+FormID: 01009F62	NVDLC02CrTier4SporeCarrierFD3	CREA	 	Spore Carrier Brute
+FormID: 01009F63	NVDLC02CrTier4SporeCarrierFU3	CREA	 	Spore Carrier Brute
+FormID: 01009F64	NVDLC02CrTier2SporePlant	CREA	 	Spore Plant
+FormID: 01009F65	NVDLC02CrTier3SporePlant	CREA	 	Giant Spore Plant
+FormID: 01009F66	NVDLC02HappyTrailsCaravanFaction	FACT	 	Happy Trails Caravan Faction
+FormID: 01009FE2	NVDLC02HireTrigger	ACTI	 	Follower Hire Trigger
+FormID: 01009FE6	NVDLC02FireTrigger	ACTI	 	Follower Fire Trigger
+FormID: 01009FEF	NVDLC02SorrowOutfit	ARMO	 	Sorrows Adorned Outfit
+FormID: 01009FF0	NVDLC02SorrowOutfit2	ARMO	 	Sorrows Outfit
+FormID: 01009FF1	NVDLC02WakingCloudOutfit	ARMO	 	Waking Cloud's Outfit
+FormID: 0100A110	NVDLC02JedRadioTA	TACT	 	Happy Trails Expedition Broadcast
+FormID: 0100A2E9	NVDLC02EncListCodeHolder	ACTI	 	Choose The Show
+FormID: 0100A362	NVDLC02Massacre03Trigger	ACTI	 	Massacre03 Trigger
+FormID: 0100A38B	NVDLC02ARMASaltWound	ARMA	 	NVDLC02ARMASaltWound
+FormID: 0100A38D	NVDLC02WeapPowerFistUnique	WEAP	 	Salt-Upon-Wounds' Power Fist
+FormID: 0100A3B9	NVDLC02MS02	QUST	 	Bighorners of the Eastern Virgin
+FormID: 0100A3BA	NVDLC02ZionEncInt	CELL	 	Zion Encounters Cell
+FormID: 0100A3DF	NVDLC02Danieloutfit	ARMO	 	Daniel's Outfit
+FormID: 0100A3E0	NVDLC02Danielhat	ARMO	 	Daniel's Hat
+FormID: 0100A3E1	NVDLC02CrYaoGuai	CREA	 	Yao Guai
+FormID: 0100A3E2	NVDLC02EVBighornerSmall	CREA	 	Mountain Bighorner Calf
+FormID: 0100A3E3	NVDLC02EVBighornerMed	CREA	 	Mountain Bighorner
+FormID: 0100A3E4	NVDLC02EVBigHornerLarge	CREA	 	Mountain Bighorner Bull
+FormID: 0100A3E5	NVDLC02EVBighornerSpecial01	CREA	 	Lost Mountain Bighorner Calf
+FormID: 0100A3E6	NVDLC02EVBighornerSpecial02	CREA	 	Mountain Bighorner Mother
+FormID: 0100A3F4	NVDLC02SorrowNarrowsCave	NPC_	 	Sorrows Tribal
+FormID: 0100A4A2	NVDLC02WhiteLegsFaction	FACT	 	White Legs
+FormID: 0100A4A3	NVDLC02WhiteLegsAggressiveFaction	FACT	 	White Legs Enemy of Player
+FormID: 0100A4A5	NVDLC023MarysBattleTrigger	ACTI	 	Marys Battle Trigger
+FormID: 0100A4A6	NVDLC02WhiteLeg3MAAM	NPC_	 	White Legs Pain-Maker
+FormID: 0100A4A7	NVDLC02WhiteLeg3MCM	NPC_	 	White Legs Bone-Breaker
+FormID: 0100A4A8	NVDLC02WhiteLeg3MAAMF	NPC_	 	White Legs Light-Bringer
+FormID: 0100A4A9	NVDLC02WhiteLeg3MCMF	NPC_	 	White Legs Pain-Maker
+FormID: 0100A4AA	NVDLC02WhiteLeg3MSCMF	NPC_	 	White Legs Storm-Drummer
+FormID: 0100A4AB	NVDLC02WhiteLeg3SMAAMF	NPC_	 	White Legs Storm-Drummer
+FormID: 0100A538	NVDLC02DeadHorseClass	CLAS	 	Dead Horse Tribal
+FormID: 0100A539	NVDLC02SorrowClass	CLAS	 	Sorrows Tribal
+FormID: 0100A53A	NVDLC02WhiteLegClass	CLAS	 	White Legs Tribal
+FormID: 0100A60E	NVDLC02WhiteLegNarrows	NPC_	 	White Legs Tribal
+FormID: 0100A639	NVDLC02WhiteLeg3MAAMState01	NPC_	 	White Legs Storm-Drummer
+FormID: 0100A63A	NVDLC02WhiteLeg3MCMFState01	NPC_	 	White Legs Light-Bringer
+FormID: 0100A63B	NVDLC02WhiteLeg3MCMState01	NPC_	 	White Legs Pain-Maker
+FormID: 0100A63C	NVDLC02WhiteLeg3MAAMFState01	NPC_	 	White Legs Bone-Breaker
+FormID: 0100A66F	NVDLC02MojaveDoor	DOOR	 	Journey to Northern Passage Cave
+FormID: 0100A672	NVDLC02HealingPowderNote	NOTE	 	Sorrows Healing Powder Supply
+FormID: 0100A6AC	NVDLC02GrandStaircaseMapNote	NOTE	 	Grand Staircase Map
+FormID: 0100A7C3	NVDLC02JedBarkTrigger	ACTI	 	Jed Bark Trigger
+FormID: 0100A7C9	NVDLC02AmbushAvoidedTrigger	ACTI	 	Gas Valve
+FormID: 0100A7EB	NVDLC02JoshuaGrahamOutfitNPC	ARMO	 	Joshua Graham's Armor (NPC)
+FormID: 0100A7EC	NVDLC02JoshuaGrahamOutfit	ARMO	 	Joshua Graham's Armor
+FormID: 0100A82C	NVDLC02JoshGrahamGlove	ARMA	 	JoshuaGrahamGloves
+FormID: 0100A82D	NVDLC02ArmorJGrahamHeadwrap	ARMO	 	Joshua Graham's Headwrap (NPC)
+FormID: 0100A84A	NVDLC02WhiteLegTotem	MISC	 	White Legs War Totem
+FormID: 0100A854	NVDLC02WhiteLegsSapperMQ03	NPC_	 	White Legs Sapper
+FormID: 0100A866	NVDLC023MarysCaveBox	ACTI	 	3 Marys Cave Code Box
+FormID: 0100A925	NVDLC02SorrowsFaction	FACT	 	Sorrows Faction
+FormID: 0100A926	NVDLC02DeadHorseFaction	FACT	 	Dead Horse Faction
+FormID: 0100A927	NVDLC02ExplosivesCrateMED	CONT	 	Explosives Crate
+FormID: 0100A928	NVDLC02ExplosivesCrateLOW	CONT	 	Explosives Crate
+FormID: 0100A929	NDLC02MetalBoxMED	CONT	 	Crate
+FormID: 0100A92A	NDLC02MetalBoxLOW	CONT	 	Crate
+FormID: 0100A92B	NVDLC02ReinforcedBoxMED	CONT	 	Crate
+FormID: 0100A92C	NVDLC02ReinforcedBoxLOW	CONT	 	Crate
+FormID: 0100A92D	NVDLC02SackMED	CONT	 	Sack
+FormID: 0100A92E	NVDLC02SackLOW	CONT	 	Sack
+FormID: 0100A92F	NVDLC02CrateLOW	CONT	 	Crate
+FormID: 0100A930	NVDLC02CrateMED	CONT	 	Crate
+FormID: 0100A931	NVDLC02WoodenCrateContainerMED	CONT	 	Wooden Crate
+FormID: 0100A932	NVDLC02WoodenCrateContainerLOW	CONT	 	Wooden Crate
+FormID: 0100A933	NVDLC02WhiteLegDEAD	NPC_	 	Dead White Legs Tribal
+FormID: 0100A934	NVDLC02DeadHorseNarrowsNightShift	NPC_	 	Dead Horse Tribal
+FormID: 0100A935	NVDLC02CrTier2GeckoNarrows	CREA	 	Gecko
+FormID: 0100AAD5	NVDLC02WhiteLegCMPool	NPC_	 	White Legs Bone-Breaker
+FormID: 0100AAD6	NVDLC02WhiteLegAAMFPool	NPC_	 	White Legs Pain-Maker
+FormID: 0100AAD7	NVDLC02WhiteLegCMFPool	NPC_	 	White Legs Storm-Drummer
+FormID: 0100AAEF	NVDLC02BrokenCompass	MISC	 	Broken Compass
+FormID: 0100AAF6	NVDLC02LodgeFootlocker	CONT	 	Emergency Supply Locker
+FormID: 0100AAF9	NVDLC02StoreDesk	CONT	 	Desk
+FormID: 0100AAFB	NVDLC02StoreDeskKey	KEYM	 	General Store Desk Key
+FormID: 0100AB01	NVDLC02BrokenCompassMsg	MESG	 	Broken Compass
+FormID: 0100AB02	NVDLC02BrokenWalkieTalkieMsg	MESG	 	Broken Walkie-Talkie
+FormID: 0100AB04	NVDLC02BrokenCompassPartsMsg	MESG	 	Broken Compass
+FormID: 0100AB05	NVDLC02BrokenWalkieTalkiePartsMsg	MESG	 	Broken Walkie-Talkie
+FormID: 0100AB06	NVDLC02RepairCombatMsg	MESG	 	You're In Combat!
+FormID: 0100AB63	NVDLC02CrateHIGH	CONT	 	Crate
+FormID: 0100AB64	NVDLC02DeskOfficeCornerMetalMED	CONT	 	Desk
+FormID: 0100AB65	NVDLC02DeskOfficeCornerMetalHIGH	CONT	 	Desk
+FormID: 0100AB66	NVDLC02DeskOfficeCornerMetalLOCKED	CONT	 	Desk
+FormID: 0100AB67	NVDLC02DeskOfficeMetalMED	CONT	 	Desk
+FormID: 0100AB68	NVDLC02DeskOfficeMetalHIGH	CONT	 	Desk
+FormID: 0100AB69	NVDLC02DeskOfficeMetalLOCKED	CONT	 	Desk
+FormID: 0100AB6A	NVDLC02ExplosivesCrateHIGH	CONT	 	Explosives Crate
+FormID: 0100AB6B	NVDLC02ExplosivesCrateLOCKED	CONT	 	Explosives Crate
+FormID: 0100AB6C	NVDLC02FilingCabinetBunch01MED	CONT	 	Filing Cabinets
+FormID: 0100AB6D	NVDLC02FilingCabinetBunch01HIGH	CONT	 	Filing Cabinets
+FormID: 0100AB6E	NVDLC02FilingCabinetBunch01LOCKED	CONT	 	Filing Cabinets
+FormID: 0100AB6F	NVDLC02ReinforcedBoxHIGH	CONT	 	Crate
+FormID: 0100AB70	NVDLC02ReinforcedBoxLOCKED	CONT	 	Crate
+FormID: 0100AB71	NVDLC02SackHIGH	CONT	 	Sack
+FormID: 0100AB72	NVDLC02WoodenCrateContainerHIGH	CONT	 	Wooden Crate
+FormID: 0100AB73	NVDLC02HollowRockContainerLOW	CONT	 	Hollowed-Out Rock
+FormID: 0100AB74	NVDLC02HollowRockContainerMED	CONT	 	Hollowed-Out Rock
+FormID: 0100AB75	NVDLC02HollowRockContainerHIGH	CONT	 	Hollowed-Out Rock
+FormID: 0100AB76	NVDLC02AntRefusePile04aLOW	CONT	 	Ant Refuse Pile
+FormID: 0100AB77	NVDLC02AntRefusePile04aMED	CONT	 	Ant Refuse Pile
+FormID: 0100AB78	NVDLC02AntRefusePile04aHIGH	CONT	 	Ant Refuse Pile
+FormID: 0100AB79	NVDLC02FootlockerLOW	CONT	 	Footlocker
+FormID: 0100AB7A	NVDLC02FootlockerMED	CONT	 	Footlocker
+FormID: 0100AB7B	NVDLC02FootlockerHIGH	CONT	 	Footlocker
+FormID: 0100AB7C	NVDLC02MetalBox01LOW	CONT	 	Metal Box
+FormID: 0100AB7D	NVDLC02MetalBox01MED	CONT	 	Metal Box
+FormID: 0100AB7E	NVDLC02MetalBox01HIGH	CONT	 	Metal Box
+FormID: 0100AB7F	NVDLC02LootFirstAidKitLOW	CONT	 	First Aid Box
+FormID: 0100AB80	NVDLC02LootFirstAidKitMED	CONT	 	First Aid Box
+FormID: 0100AB81	NVDLC02LootFirstAidKitHIGH	CONT	 	First Aid Box
+FormID: 0100AB82	NVDLC02Grave01ContLOW	CONT	 	Grave
+FormID: 0100AB83	NVDLC02Grave01ContMED	CONT	 	Grave
+FormID: 0100AB84	NVDLC02Grave01ContHIGH	CONT	 	Grave
+FormID: 0100AB85	NVDLC02LootAmmoBoxLOW	CONT	 	Ammunition Box
+FormID: 0100AB86	NVDLC02LootAmmoBoxMED	CONT	 	Ammunition Box
+FormID: 0100AB87	NVDLC02LootAmmoBoxHIGH	CONT	 	Ammunition Box
+FormID: 0100AB88	NVDLC02ToolboxLOW	CONT	 	Toolbox
+FormID: 0100AB89	NVDLC02ToolboxMED	CONT	 	Toolbox
+FormID: 0100AB8A	NVDLC02ToolboxHIGH	CONT	 	Toolbox
+FormID: 0100AB8B	NVDLC02DuffleBagLOW	CONT	 	Duffle Bag
+FormID: 0100AB8C	NVDLC02DuffleBagMED	CONT	 	Duffle Bag
+FormID: 0100AB8D	NVDLC02DuffleBagHIGH	CONT	 	Duffle Bag
+FormID: 0100AB8E	NVDLC02LootFilingCabinetLOW	CONT	 	Filing Cabinet
+FormID: 0100AB8F	NVDLC02LootFilingCabinetMED	CONT	 	Filing Cabinet
+FormID: 0100AB90	NVDLC02LootFilingCabinetHIGH	CONT	 	Filing Cabinet
+FormID: 0100AB91	NVDLC02HollowLogLOW	CONT	 	Hollow Log
+FormID: 0100AB92	NVDLC02HollowLogMED	CONT	 	Hollow Log
+FormID: 0100AB93	NVDLC02HollowLogHIGH	CONT	 	Hollow Log
+FormID: 0100AB94	NVDLC02AntRefusePile02aLOW	CONT	 	Ant Refuse Pile
+FormID: 0100AB95	NVDLC02AntRefusePile02aMED	CONT	 	Ant Refuse Pile
+FormID: 0100AB96	NVDLC02AntRefusePile02aHIGH	CONT	 	Ant Refuse Pile
+FormID: 0100AB97	NVDLC02SuitcaseLOW	CONT	 	Suitcase
+FormID: 0100AB98	NVDLC02SuitcaseMED	CONT	 	Suitcase
+FormID: 0100AB99	NVDLC02SuitcaseHIGH	CONT	 	Suitcase
+FormID: 00166B58	NVWoodenCrateContainer	CONT	 	Wooden Crate
+FormID: 00166C06	musCtrlGnrcIndustrial	ALOC	 	musCtrlGnrcIndustrial
+FormID: 0100AD9A	NVDLC02SuitcaseLOCKED	CONT	 	Suitcase
+FormID: 0100AD9B	NVDLC02ToolboxLOCKED	CONT	 	Toolbox
+FormID: 0100AD9C	NVDLC02MetalBox01LOCKED	CONT	 	Metal Box
+FormID: 0100AD9D	NVDLC02LootFirstAidKitLOCKED	CONT	 	First Aid Box
+FormID: 0100AD9E	NVDLC02LootAmmoBoxLOCKED	CONT	 	Ammunition Box
+FormID: 0100AD9F	NVDLC02FootlockerLOCKED	CONT	 	Footlocker
+FormID: 0100AE29	NVDLC02Whiteleg01	ARMO	 	White Legs Hide Armor
+FormID: 0100AE2A	NVDLC02Whiteleg02	ARMO	 	White Legs Outfit
+FormID: 0100AE9A	NVDLC02MQ03MineDetector	ACTI	 	Mine Detector
+FormID: 0100AE9C	NVDLC02MQ06	QUST	 	Chaos in Zion
+FormID: 0100AE9F	NVDLC02ZionMap	MISC	 	Zion Canyon Map
+FormID: 0100AECC	NVDLC02DeadHorseCMF3M	NPC_	 	Dead Horse Disciple of Canaan
+FormID: 0100AECD	NVDLC02DeadHorseCM3M	NPC_	 	Dead Horse Stalker
+FormID: 0100B1CC	NVDLC02ExplosivesCrateHIGHLocked	CONT	 	Explosives Crate
+FormID: 0100B246	GlassChimeCaveMapMarker	MAPM	 	Glass Chime Cave
+FormID: 0100B256	NVDLC02DeadHorseNarrowsDayShift	NPC_	 	Dead Horse Tribal
+FormID: 0100B279	NVDLC02TestNPCs	CELL	 	Test Cell For NPCs
+FormID: 0100B2F3	NVDLC02HomeOnTheRange	PERK	 	Home on the Range
+FormID: 0100B2F4	NVDLC02EyeForEye	PERK	 	Eye For Eye
+FormID: 0100B2F5	NVDLC02WayOfTheCanaanite	PERK	 	Way of the Canaanite
+FormID: 0100B2F6	NVDLC02WellStackedCairns	PERK	 	Well-Stacked Cairns
+FormID: 0100B2F7	NVDLC02QuietAsTheWaters	PERK	 	Quiet as the Waters
+FormID: 0100B2F9	NVDLC02ChallengeSurvivalistsBounty	CHAL	 	Survivalist's Bounty
+FormID: 0100B2FA	NVDLC02AchievementRememberedZion	CHAL	 	When We Remembered Zion
+FormID: 0100B2FB	NVDLC02AchievementRestoreOurFortunes	CHAL	 	Restore Our Fortunes
+FormID: 0100B2FC	NVDLC02AchievementInAForeignLand	CHAL	 	In a Foreign Land
+FormID: 0100B2FD	NVDLC02AchievementODaughterOfBabylon	CHAL	 	O Daughter of Babylon
+FormID: 0100B2FE	NVDLC02AchievementHandForgetItsSkill	CHAL	 	May my Hand Forget its Skill
+FormID: 0100B2FF	NVDLC02QuietWatersPerkEffect	SPEL	 	Quiet as the Waters Perk Effect
+FormID: 0100B353	NVDLC02MQ03BearTrap	ACTI	 	Bear Trap
+FormID: 0100B390	NVDLC02ChallengeYaoGuaiHunter	CHAL	 	Yao Guai Hunter
+FormID: 0100B3CE	AngelCaveMapMarkerREF	MAPM	 	Angel Cave
+FormID: 0100B3CF	EasternVirginMarker	MAPM	 	Eastern Virgin
+FormID: 0100B3D8	NVDLC02MarysFollowTriggerEnd	ACTI	 	Marys Follow Trigger 2
+FormID: 0100B3D9	NVDLC02MarysFollowTrigger	ACTI	 	Marys Follow Trigger
+FormID: 0100B3DA	NVDLC02DeadhorseAAMF3MFollower	NPC_	 	Dead Horse Tribal
+FormID: 0100B3DB	NVDLC02DeadHorseCMF3MFollower	NPC_	 	Dead Horse Disciple of Canaan
+FormID: 0100B3DC	NVDLC02DeadhorseAAM3MFollower	NPC_	 	Dead Horse Disciple of Canaan
+FormID: 0100B42C	NVDLC02CrMantisFaction	FACT	 	Giant Mantis Faction
+FormID: 0100B42D	NVDLC02CrGeckoFaction	FACT	 	Gecko Faction
+FormID: 0100B42E	NVDLC02PlayerFaction	FACT	 	NVDLC02 Player Faction
+FormID: 0100B435	NVDLC02Saltwounds	ARMO	 	Salt-Upon-Wounds' Helmet
+FormID: 0100B44B	NVDLC02CrAntFaction	FACT	 	Ants
+FormID: 0100B44C	NVDLC02CrDogFaction	FACT	 	Dogs
+FormID: 0100B44D	NVDLC02CrMoleRatFaction	FACT	 	Mole rats
+FormID: 0100B44E	NVDLC02CrRadscorpionFaction	FACT	 	Radscorpions
+FormID: 0100B44F	NVDLC02CrRavenFaction	FACT	 	Raven Faction
+FormID: 0100B450	NVDLC02CrSporeFaction	FACT	 	Spore Plant Faction
+FormID: 0100B451	NVDLC02CrBigHornerFaction	FACT	 	Big Horner Faction
+FormID: 0100B452	NVDLC02CrCazadorFaction	FACT	 	Cazador Faction
+FormID: 0100B453	NVDLC02CrCoyoteFaction	FACT	 	Coyote Faction
+FormID: 0100B454	NVDLC02CrGiantRadscorpionFaction	FACT	 	Giant Radscorpion Faction
+FormID: 0100B455	NVDLC02CrGiantRatFaction	FACT	 	Giant Rat Faction
+FormID: 0100B456	NVDLC02CrVoidCritterFaction	FACT	 	Faction for Void Creatures Used in Chanced Spawns
+FormID: 0100B457	NVDLC02CrYaoGuaiFaction	FACT	 	Yao Guai
+FormID: 0100B458	NVDLC02CrGreenGeckoFaction	FACT	 	Gecko Faction
+FormID: 0100B459	NVDLC02CrBloatflyFaction	FACT	 	Bloatfly Faction
+FormID: 0100B4AC	NVDLC02DuffleBagFORCHALLENGE	CONT	 	Survival Cache
+FormID: 0100B4CB	NVDLC02MQ05FadeTrigger	ACTI	 	Gas Valve
+FormID: 0100B4CC	NVDLC02SorrowMQ05b	NPC_	 	Sorrows Tribal
+FormID: 0100B4CF	NVDLC02SorrowMQ05c	NPC_	 	Sorrows Tribal
+FormID: 0100B4D0	NVDLC02MQ05bDancingFlame	NPC_	 	Dancing Flame
+FormID: 0100B4D1	NVDLC02MQ05c	QUST	 	Optional: Retake the Bridge
+FormID: 0100B4D2	NVDLC02MQ05b	QUST	 	Optional: Sanctity of the Dead
+FormID: 0100B4D3	NVDLC02MQ05a	QUST	 	Optional: Prisoners of War
+FormID: 0100B5EA	NVDLC02FollowsChalkTest	NPC_	 	Follows-Chalk
+FormID: 0100B624	NVDLC02CrTier3YaoGuaiSmall	CREA	 	Yao Guai Cub
+FormID: 0100B652	NVDLC02MQ05cDisableTrigger	ACTI	 	Gas Valve
+FormID: 0100B656	NVDLC02MQ05bDisableTrigger	ACTI	 	Gas Valve
+FormID: 0100B65C	NVDLC02MQ05aDisableTrigger	ACTI	 	Gas Valve
+FormID: 0100B666	NVDLC02MQ05CodeHolder	ACTI	 	MQ03 Objective Controller
+FormID: 0100B6A2	NVDLC02PineCreekEscape01	ACTI	 	1st trigger
+FormID: 0100B6A3	NVDLC02SorrowPineCreek	NPC_	 	Sorrows Tribal
+FormID: 0100B6A4	NVDLC02SorrowDEAD	NPC_	 	Dead Sorrows Tribal
+FormID: 0100B753	NVDLC02PineCreekEscape02	ACTI	 	2nd trigger
+FormID: 0100B755	NVDLC02ZionYaoGuaiCave	CELL	 	Yao Guai Cave
+FormID: 0100B7A3	NVDLC02EVSurvivalistTerminal	TERM	 	Terminal
+FormID: 0100B7A5	NVDLC02DeadhorseEVGuard01	NPC_	 	Dead Horse Warrior
+FormID: 0100B7A6	NVDLC02DeadHorseEVGuard02	NPC_	 	Dead Horse Warrior
+FormID: 0100B7A7	NVDLC02DeadhorseEV01	NPC_	 	Dead Horse Warrior
+FormID: 0100B7A8	NVDLC02DeadhorseEV02	NPC_	 	Dead Horse Warrior
+FormID: 0100B7A9	NVDLC02DeadHorseEV03	NPC_	 	Dead Horse Stalker
+FormID: 0100B7AA	NVDLC02DeadHorseEV04	NPC_	 	Dead Horse Stalker
+FormID: 0100BB45	NVDLC02NarrowsEnableTrigger02	ACTI	 	Enable Geckos above Sorrows Pond
+FormID: 0100BB46	NVDLC02NarrowsEnableTrigger01	ACTI	 	Enable Geckos above Dead Hose Camp
+FormID: 0100BB93	NVDLC02ZionSCaveW	CELL	 	Morning Glory Cave
+FormID: 0100BB94	NVDLC02ZionSCaveS	CELL	 	Two Skies Cave
+FormID: 0100BCB2	NVDLC02MapEasternVirgin	REGN	 	Eastern Virgin
+FormID: 0100BCB4	NVDLC02WeapFireBomb	WEAP	 	Fire Bomb
+FormID: 0100BCB5	NVDLC02WeapWarClub	WEAP	 	War Club
+FormID: 0100BCB6	NVDLC02WeapTomahawk	WEAP	 	Tomahawk
+FormID: 0100BCB7	NVDLC02WeapYaoGuaiGauntlet	WEAP	 	Yao Guai Gauntlet
+FormID: 0100BCB8	NVDLC02WeapYaoGuaiGauntletUnique	WEAP	 	She's Embrace
+FormID: 0100BCB9	NVDLC02TheNarrowsRegion	REGN	 	The Narrows
+FormID: 0100BF1C	NVDLC02ZionSporeCave	CELL	 	Cueva Guarache
+FormID: 0100BF33	 	MAPM	 	Survivalist's Cache
+FormID: 0100BF34	CuevadelaRamaNegraMarker	MAPM	 	Stalkers' Camp
+FormID: 0100BF35	TwoSkiesCaveMarker	MAPM	 	Two Skies Cave
+FormID: 0100BF36	 	MAPM	 	Yao Guai Cave
+FormID: 0100BF37	MorningGloryMapMarker	MAPM	 	Morning Glory Cave
+FormID: 0100BF38	CuevaGuaracheMarker	MAPM	 	Cueva Guarache
+FormID: 0100C626	NVDLC02WeapComplianceRegulator	WEAP	 	Compliance Regulator
+FormID: 0100C7C0	NVDLC02MQ03a	QUST	 	The Advance Scouts
+FormID: 0100C7C1	NVDLC02MQ03b	QUST	 	The Treacherous Road
+FormID: 0100C7C2	NVDLC02MQ03c	QUST	 	River Monsters
+FormID: 0100C7C3	NVDLC02C4Marker	ACTI	 	Explosives Marker
+FormID: 0100C7D1	NVDLC02MQ03cCaveTrigger	ACTI	 	Gas Valve
+FormID: 0100C7D3	NVDLC02MQ03cDetonationTrigger	ACTI	 	Gas Valve
+FormID: 0100C7D6	NVDLC02MQ03cExplosion	EXPL	 	Cave Explosion
+FormID: 0100C7E6	AerieCaveMarker	MAPM	 	Aerie Survivalist Cache
+FormID: 0100C975	AntBurrowMarker	MAPM	 	Ant Burrow
+FormID: 0100C977	NVDLC02MapTheThreeMarysRegion	REGN	 	The Three Marys
+FormID: 0100C980	NVDLC02LodgeCabinet	CONT	 	Cabinet
+FormID: 0100C981	NVDLC02LodgeCabinetKey	KEYM	 	Fishing Lodge Cabinet Key
+FormID: 0100C988	NVDLC02RecipeCompass	RCPE	 	Compass
+FormID: 0100CA4B	NVDLC02Massacre01bTrigger	ACTI	 	Massacre01 Trigger
+FormID: 0100CA52	NVDLC02MQ02RepairMessage	MESG	 	How to Fix Stuff
+FormID: 0100CC05	ModNVDLC02WarClubCasing	IMOD	 	War Club Casings
+FormID: 0100CC06	ModNVDLC02WarClubHonors	IMOD	 	War Club Honors
+FormID: 0100CC5A	NVDLC02MQ04Timer	QUST	 	Timer for NVDLC02MQ04
+FormID: 0100CC78	NVDLC02CaveSurvDoor01	DOOR	 	Door
+FormID: 0100CC84	NVDLC02BearTrap	ACTI	 	Bear Trap
+FormID: 0100CCB3	NVDLC02DuffleBagMEDSCaveWKey	CONT	 	Duffle Bag
+FormID: 0100CCBA	NVDLC02ZionSCaveWKey	KEYM	 	Morning Glory's Cache Key
+FormID: 0100CCED	NVDLC02BindWeapon	MGEF	 	Bind Weapon
+FormID: 0100CCEE	NVDLC02RestoreSightAndLimbs	MGEF	 	Heal PER and Limb Damage
+FormID: 0100CCEF	NVDLC02CureParalysis	MGEF	 	Cure Paralysis
+FormID: 0100CCF0	NVDLC02WeapBindRitualMessage	MGEF	 	Weapon Bind Ritual Message
+FormID: 0100CCF1	NVDLC02WeapBindRitualISFX	MGEF	 	Weapon Binding Ritual ISFX
+FormID: 0100CCF4	NVDLC02Daturana	ALCH	 	Daturana
+FormID: 0100CCF5	NVDLC02WeapBindRitual	ALCH	 	Weapon Binding Ritual
+FormID: 0100CCF6	NVDLC02DaturaHide	ALCH	 	Datura Hide
+FormID: 0100CCFA	NVDLC02WeapBindRitualMSG	MESG	 	        Weapon Binding Ritual         
+FormID: 0100CCFB	NVDLC02RecipeWeaponBindingRitual	RCPE	 	Weapon Binding Ritual
+FormID: 0100CCFC	NVDLC02RecipeDaturana	RCPE	 	Daturana
+FormID: 0100CCFD	NVDLC02RecipeDaturaHide	RCPE	 	Datura Hide
+FormID: 00108BED	TestMentats	CELL	 	Mentats Test Level
+FormID: 0100D066	NVDLC02SuitcaseScout	CONT	 	Suitcase
+FormID: 0100D103	NVDLC02ChalkHeadress	ARMO	 	Chalk's Headdress
+FormID: 0100D26D	OldRockvilleBridgeMarker	MAPM	 	Old Rockville Bridge
+FormID: 0100D26E	 	MAPM	 	East Fork Bridge
+FormID: 0100D28D	NVDLC02ZionSCaveSElectricDoorTerminal	TERM	 	Terminal
+FormID: 0100D28F	NVDLC02ZionSCaveSGenerator	ACTI	 	Electric Generator
+FormID: 0100D297	NVDLC02ZionSCaveSElectricGeneratorMsg	MESG	 	Electricity Generator
+FormID: 0100D298	NVDLC02ZionSCaveSElectricDoorTerminal02	TERM	 	Terminal
+FormID: 0100D299	NVDLC02ZionSCaveSElectricGeneratorUMsg	MESG	 	Electricity Generator
+FormID: 0100D29A	NVDLC02ZionSCaveSElectricGeneratorMWMsg	MESG	 	Electricity Generator
+FormID: 0100D29B	NVDLC02ElectricGeneratorExplosion	EXPL	 	Generator Explosion
+FormID: 0100D326	NVDLC02ZionSCaveSLogTerminal01	TERM	 	Terminal
+FormID: 0100D32E	NVDLC02ZionSCaveSElectricWire	ACTI	 	Electric Generator Wiring
+FormID: 0100D331	NVDLC02ZionSCaveSElectricSwitchMsg	MESG	 	Electricity Generator Wiring
+FormID: 0100D332	NVDLC02ZionSCaveSElectricSwitchRMsg	MESG	 	Electricity Generator Wiring
+FormID: 0100D4C0	NVDLC02ZionSCaveNLogTerminal01	TERM	 	Terminal
+FormID: 0100D4C1	NVDLC02ZionSCaveWLogTerminal01	TERM	 	Terminal
+FormID: 0100D4C8	 	MAPM	 	Red Rapids Docks
+FormID: 0100D4C9	TheBendBridgeMarker	MAPM	 	The Bend Bridge
+FormID: 0100D4CA	 	MAPM	 	Wind Wall Docks
+FormID: 0100D4CB	 	MAPM	 	Clear Water Docks
+FormID: 0100D4CC	ZionGeneralStoreMarker	MAPM	 	General Store
+FormID: 0100D4CD	EastForkBridgeMarker	MAPM	 	North Fork Bridge
+FormID: 0100D4CE	 	MAPM	 	Sun Sentinels
+FormID: 0100D4CF	 	MAPM	 	The Aerie
+FormID: 0100D50A	 	MAPM	 	Burial Mounds
+FormID: 0100D663	NVDLC02CrGreenGecko	CREA	 	Green Gecko
+FormID: 0100D665	ARMANVDLC02YaoGuaiGuantlet	ARMA	 	ARMANVDLC02YaoGuaiGuantlet
+FormID: 0100D675	CaterpillarsMoundMarker	MAPM	 	Caterpillar's Mound
+FormID: 0100D684	PerkWellStackedCairns	SPEL	 	Companion Perk
+FormID: 0100D696	NVDLC02GrandStaircaseMap	MISC	 	Grand Staircase Map Holotape
+FormID: 0100D699	NVDLC02JedDeathMessage	MESG	 	Jed's Dead, Baby!
+FormID: 0100D925	NVDLC02Survivalist2077Note01	NOTE	 	Year: 2077
+FormID: 0100D926	NVDLC02Survivalist2078Note01	NOTE	 	Year: 2078
+FormID: 0100D927	NVDLC02Survivalist2083Note01	NOTE	 	Year: 2083
+FormID: 0100D928	NVDLC02Survivalist2084Note01	NOTE	 	Year: 2084
+FormID: 0100D929	NVDLC02Survivalist2095Note01	NOTE	 	Year: 2095
+FormID: 0100D92A	NVDLC02Survivalist2096Note01	NOTE	 	Year: 2096
+FormID: 0100D92B	NVDLC02Survivalist2096Note02	NOTE	 	Year: 2096 (II)
+FormID: 0100D92C	NVDLC02Survivalist2097Note01	NOTE	 	Year: 2097
+FormID: 0100D92D	NVDLC02Survivalist2100Note01	NOTE	 	Year: 2100
+FormID: 0100D92E	NVDLC02Survivalist2101Note01	NOTE	 	Year: 2101
+FormID: 0100D92F	NVDLC02Survivalist2108Note01	NOTE	 	Year: 2108
+FormID: 0100D930	NVDLC02Survivalist2113Note01	NOTE	 	Year: 2113
+FormID: 0100D931	NVDLC02Survivalist2123Note01	NOTE	 	Year: 2123
+FormID: 0100D932	NVDLC02Survivalist2124Note01	NOTE	 	Year: 2124
+FormID: 0100DA3F	NVDLC02DeadHorseStalker	ARMO	 	Dead Horses Stalker Armor
+FormID: 0100DA46	NVDLC02Sorrow3MDead	NPC_	 	Sorrows Tribal
+FormID: 0100DA47	NVDLC02DeadHorse3MDEAD	NPC_	 	Dead Horse Tribal
+FormID: 0100DAAF	NVDLC02WakingCloudAggroMessage	MESG	 	Waking Cloud Smash!
+FormID: 0100DB1B	NVDLC02ClayPot02Empty	CONT	 	Clay Pot
+FormID: 0100DB1C	NVDLC02ClayPot01Empty	CONT	 	Clay Pot
+FormID: 0100DD6B	 	MAPM	 	The Spine
+FormID: 0100DD6C	NVDLC02CrTier5GreenGeckoLarge	CREA	 	Giant Green Gecko
+FormID: 0100DD6D	NVDLC02CrTier5SporeCarrierFD4	CREA	 	Spore Carrier Beast
+FormID: 0100DD6E	NVDLC02CrTier5YaoGuaiLarge	CREA	 	Giant Yao Guai
+FormID: 0100DD6F	NVDLC02CrTier5CazadorLarge	CREA	 	Giant Cazador
+FormID: 0100DD70	NVDLC02GreenGeckoPoison	SPEL	 	Green Gecko Poison
+FormID: 0100DD72	NVDLC02GreenGeckoPoisonEffect	MGEF	 	Green Gecko Poison
+FormID: 0100DD73	NVDLC02FirebombProjectile	PROJ	 	Lit Firebomb
+FormID: 0100DD79	NVDLC02WeapServiceRifleUnique	WEAP	 	Survivalist's Rifle
+FormID: 0100DDA7	NVDLC02JoshuaVendor	CONT	 	Crate
+FormID: 0100DDA8	NVDLC02VendorChestCell	CELL	 	Vendor Chest Cell
+FormID: 0100DFEF	NVDLC02FloorSitCrossMarker	FURN	 	Floor Sit Crossed Legs
+FormID: 0100E6E2	musSetINCDLC2	MSET	 	musSetINCHostile
+FormID: 0100E6E3	NVDLC02WeapEVMockCombat	WEAP	 	War Club
+FormID: 0100E6F6	NVDLC02ShamanFaction	FACT	 	Shaman Animation Faction
+FormID: 0100E74B	NVDLC02RadioMessage	QUST	 	Happy Trails Radio Broadcast
+FormID: 0100E862	NVDLC02Eve	QUST	 	Events Master Script
+FormID: 0100E866	NVDLC02EveListCodeHolder	ACTI	 	Choose The Show
+FormID: 0100E869	NVDLC02EveCodeHolder	ACTI	 	Direct The Show
+FormID: 0100E886	NVDLC02DeadHorseAnimTest	NPC_	 	Dead Horse Tribal
+FormID: 0100E887	NVDLC02DeadHorseAnimTestShaman	NPC_	 	Dead Horse Tribal
+FormID: 0100E88C	NVDLC02Whiteleghair	ARMO	 	Whiteleghair
+FormID: 0100E8E8	NVDLC02EnchClothingJoshuaGraham	ENCH	 	J. Graham's Armor
+FormID: 0100E8EA	NVDLC02EnchClothingDeadHorseStalker	ENCH	 	Dead Horse Outfit
+FormID: 0100E8EB	NVDLC02EnchClothingWhiteLegsOutfit	ENCH	 	White Legs Outfit
+FormID: 0100E8EC	NVDLC02EnchClothingSorrowsOutfit	ENCH	 	Sorrows Outfit
+FormID: 0100E8ED	NVDLC02WeapTomahawkProjectile	PROJ	 	Tomahawk Projectile
+FormID: 0100E8EE	NVDLC02WeapWarClubFollowsChalk	WEAP	 	Follows-Chalk's War Club
+FormID: 0100E8EF	NVDLC02Weap45AutoPistolFollowsChalk	WEAP	 	Follows-Chalk's .45 Auto Pistol
+FormID: 0100E8F0	NVDLC02WeapYaoGuaiGauntletWakingCloud	WEAP	 	Waking Cloud's Yao Guai Gauntlet
+FormID: 0100E8FE	NVDLC02FollowsChalkTeleportTrigger	ACTI	 	Gas Valve
+FormID: 0100E926	NVDLC02FootlockerReloadingCRAFTING	CONT	 	Reloading Bench Footlocker
+FormID: 0100E927	NVDLC02SackCampfireCRAFTING	CONT	 	Campfire Sack
+FormID: 0100E928	NVDLC02ReinforcedBoxWorkbenchCRAFTING	CONT	 	Workbench Crate
+FormID: 0100E929	NVDLC02ClayPot02FRUITGRAIN	CONT	 	Clay Pot
+FormID: 0100E92A	NVDLC02ClayPot01FRUITGRAIN	CONT	 	Clay Pot
+FormID: 0100E92B	NVDLC02ClayPot02INGREDIENTS	CONT	 	Clay Pot
+FormID: 0100E92C	NVDLC02ClayPot02HEALING	CONT	 	Clay Pot
+FormID: 0100E92D	NVDLC02ClayPot01HEALING	CONT	 	Clay Pot
+FormID: 0100E92E	NVDLC02ClayPot01INGREDIENTS	CONT	 	Clay Pot
+FormID: 0100E931	NVDLC02DeadHorseEV05	NPC_	 	Dead Horse Disciple of Canaan
+FormID: 0100E932	NVDLC02DeadHorseEV06	NPC_	 	Dead Horse Disciple of Canaan
+FormID: 0100EB78	NVDLC02WhiteLegTypeStormDrummerFem01	NPC_	 	White Legs Storm-Drummer
+FormID: 0100EB79	NVDLC02WhiteLegTypePainMakerFem02	NPC_	 	White Legs Pain-Maker
+FormID: 0100EB7A	NVDLC02WhiteLegTypePainMakerFem01	NPC_	 	White Legs Pain-Maker
+FormID: 0100EB7B	NVDLC02WhiteLegTypeLightBringerFem02	NPC_	 	White Legs Light-Bringer
+FormID: 0100EB7C	NVDLC02WhiteLegTypeLightBringerFem01	NPC_	 	White Legs Light-Bringer
+FormID: 0100EB7D	NVDLC02WhiteLegTypeBoneBreakerFem02	NPC_	 	White Legs Bone-Breaker
+FormID: 0100EB7E	NVDLC02WhiteLegTypePainMaker02	NPC_	 	White Legs Pain-Maker
+FormID: 0100EB7F	NVDLC02WhiteLegTypePainMaker01	NPC_	 	White Legs Pain-Maker
+FormID: 0100EB80	NVDLC02WhiteLegTypeLightBringer02	NPC_	 	White Legs Light-Bringer
+FormID: 0100EB81	NVDLC02WhiteLegTypeLightBringer01	NPC_	 	White Legs Light-Bringer
+FormID: 0100EB82	NVDLC02WhiteLegTypeBoneBreaker02	NPC_	 	White Legs Bone-Breaker
+FormID: 0100EB83	NVDLC02WhiteLegTypeBoneBreaker01	NPC_	 	White Legs Bone-Breaker
+FormID: 0100EBCF	NVDLC02EveSpawnSorrow	NPC_	 	Sorrows Tribal
+FormID: 0100EBD0	NVDLC02EveSorrowFem05	NPC_	 	Sorrows Tribal
+FormID: 0100EBD1	NVDLC02EveSorrowFem04	NPC_	 	Sorrows Tribal
+FormID: 0100EBD2	NVDLC02EveSorrowFem03	NPC_	 	Sorrows Tribal
+FormID: 0100EBD3	NVDLC02EveSorrowFem02	NPC_	 	Sorrows Tribal
+FormID: 0100EBD4	NVDLC02EveSorrowFem01	NPC_	 	Sorrows Tribal
+FormID: 0100EBD5	NVDLC02EveSorrow05	NPC_	 	Sorrows Tribal
+FormID: 0100EBD6	NVDLC02EveSorrow04	NPC_	 	Sorrows Tribal
+FormID: 0100EBD7	NVDLC02EveSorrow03	NPC_	 	Sorrows Tribal
+FormID: 0100EBD8	NVDLC02EveSorrow02	NPC_	 	Sorrows Tribal
+FormID: 0100EBD9	NVDLC02EveSorrow01	NPC_	 	Sorrows Tribal
+FormID: 0100EBDA	NVDLC02DeadHorseTypeWarriorFem02	NPC_	 	Dead Horse Warrior
+FormID: 0100EBDB	NVDLC02DeadHorseTypeWarriorFem01	NPC_	 	Dead Horse Warrior
+FormID: 0100EBDC	NVDLC02DeadHorseTypeStalkerFem02	NPC_	 	Dead Horse Stalker
+FormID: 0100EBDD	NVDLC02DeadHorseTypeStalkerFem01	NPC_	 	Dead Horse Stalker
+FormID: 0100EBDE	NVDLC02DeadHorseTypeDiscipleFem02	NPC_	 	Dead Horse Disciple of Canaan
+FormID: 0100EBDF	NVDLC02DeadHorseTypeWarrior02	NPC_	 	Dead Horse Warrior
+FormID: 0100EBE0	NVDLC02DeadHorseTypeWarrior01	NPC_	 	Dead Horse Warrior
+FormID: 0100EBE1	NVDLC02DeadHorseTypeStalker02	NPC_	 	Dead Horse Stalker
+FormID: 0100EBE2	NVDLC02DeadHorseTypeStalker01	NPC_	 	Dead Horse Stalker
+FormID: 0100EBE3	NVDLC02DeadHorseTypeDisciple02	NPC_	 	Dead Horse Disciple of Canaan
+FormID: 0100ECBE	NVDLC02ParkRangerHat	ARMO	 	Park Ranger Hat
+FormID: 0100EDF5	NVDLC02SnowGlobe	MISC	 	Snow Globe - Zion National Park
+FormID: 0100EEAE	NVDLC02SorrowMarysFollower	NPC_	 	Sorrows Tribal
+FormID: 0100F07B	NVDLC02GreenGeckoSpitProjectile	PROJ	 	Green Gecko Spit
+FormID: 0100F07F	NVDLC02CrTier3GreenGeckoSmallRanged	CREA	 	Young Green Gecko
+FormID: 0100F080	NVDLC02CrGreenGeckoRanged	CREA	 	Green Gecko
+FormID: 0100F081	NVDLC02CrTier5GreenGeckoLargeRanged	CREA	 	Giant Green Gecko
+FormID: 0100F082	NVDLC02CrTier4GreenGeckoMedRanged	CREA	 	Green Gecko
+FormID: 0100F083	NVDLC02WhiteLegTypeStormDrummerFem	NPC_	 	White Legs Storm-Drummer
+FormID: 0100F084	NVDLC02WhiteLegTypePainMakerFem	NPC_	 	White Legs Pain-Maker
+FormID: 0100F085	NVDLC02WhiteLegTypeLightBringerFem	NPC_	 	White Legs Light-Bringer
+FormID: 0100F086	NVDLC02WhiteLegTypeBoneBreakerFem	NPC_	 	White Legs Bone-Breaker
+FormID: 0100F087	NVDLC02DeadHorseTypeWarriorFem	NPC_	 	Dead Horse Warrior
+FormID: 0100F088	NVDLC02DeadHorseTypeStalkerFem	NPC_	 	Dead Horse Stalker
+FormID: 0100F089	NVDLC02DeadHorseTypeDiscipleFem	NPC_	 	Dead Horse Disciple of Canaan
+FormID: 0100F08A	NVDLC02DeadHorseTypeDisciple	NPC_	 	Dead Horse Disciple of Canaan
+FormID: 0100F08B	NVDLC02DeadHorseTypeWarrior	NPC_	 	Dead Horse Warrior
+FormID: 0100F08C	NVDLC02DeadHorseTypeStalker	NPC_	 	Dead Horse Stalker
+FormID: 0100F08D	NVDLC02WhiteLegTypeStormDrummer	NPC_	 	White Legs Storm-Drummer
+FormID: 0100F08E	NVDLC02WhiteLegTypePainMaker	NPC_	 	White Legs Pain-Maker
+FormID: 0100F08F	NVDLC02WhiteLegTypeLightBringer	NPC_	 	White Legs Light-Bringer
+FormID: 0100F090	NVDLC02WhiteLegTypeBoneBreaker	NPC_	 	White Legs Bone-Breaker
+FormID: 0100F091	NVDLC02WeapGreenGeckoSpit	WEAP	 	Green Gecko Spit
+FormID: 0100F093	NVDLC02Sorrow3M	NPC_	 	Sorrows Tribal
+FormID: 0100F19B	NVDLC02HappyTrailsCaravanGuardAF	NPC_	 	Happy Trails Caravan Guard
+FormID: 0100F19C	NVDLC02HappyTrailsCaravanGuardCM	NPC_	 	Happy Trails Caravan Guard
+FormID: 0100F19D	NVDLC02Ricky	NPC_	 	Ricky
+FormID: 0100F19E	NVDLC02Stella	NPC_	 	Stella
+FormID: 0100F1B7	NVDLC02BoneBreakerDT	SPEL	 	Bone Breaker DT
+FormID: 0100F1C9	NVDLC02WhiteLegTypeBoneBreakerFem01	NPC_	 	White Legs Bone-Breaker
+FormID: 0100F1CA	NVDLC02WhiteLegTypeStormDrummer01	NPC_	 	White Legs Storm-Drummer
+FormID: 0100F1CB	NVDLC02WhiteLegTypeStormDrummer02	NPC_	 	White Legs Storm-Drummer
+FormID: 0100F1CC	NVDLC02WhiteLegTypeStormDrummerFem02	NPC_	 	White Legs Storm-Drummer
+FormID: 0100F1CD	NVDLC02DeadHorseTypeDisciple01	NPC_	 	Dead Horse Disciple of Canaan
+FormID: 0100F1CE	NVDLC02DeadHorseTypeDiscipleFem01	NPC_	 	Dead Horse Disciple of Canaan
+FormID: 0100F1D8	NVDLC02WeapWarClubLvl2	WEAP	 	War Club
+FormID: 0100F1D9	NVDLC02WeapWarClubLvl3	WEAP	 	War Club
+FormID: 0100F1DA	NVDLC02WeapWarClubLvl4	WEAP	 	War Club
+FormID: 0100F1DB	NVDLC02WeapWarClubLvl5	WEAP	 	War Club
+FormID: 0100F1E1	NVDLC02WeapWarClubLvl1	WEAP	 	War Club
+FormID: 0100F1E6	NVDLC02DiscipleDT	SPEL	 	Bone Breaker DT
+FormID: 0100F1E7	NVDLC02WhiteLeg3WeapState01	NPC_	 	White Legs Storm-Drummer
+FormID: 0100F232	NVDLC02CrWhiteLegMongrel	FACT	 	White Leg Mongrel Faction
+FormID: 0100F233	NVDLC02SporeCarrierBurstMagicEffect	MGEF	 	Spore Carrier Burst Magic Effect
+FormID: 0100F235	NVDLC02SporeCarrierBurstAttack	SPEL	 	Spore Carrier Burst Attack
+FormID: 0100F236	NVDLC02WeapSporePlantSpitMissileLvl2	WEAP	 	Spore Spit
+FormID: 0100F237	NVDLC02WeapSporePlantSpitMissile	WEAP	 	Spore Spit
+FormID: 0100F238	NVDLC02CrTier3WhiteLegMongrel	CREA	 	Large White Leg Mongrel
+FormID: 0100F23A	NVDLC02CrTier2WhiteLegMongrel	CREA	 	White Leg Mongrel
+FormID: 0100F24A	NVDLC02DeadHorseWarriorClass	CLAS	 	Dead Horse Disciple
+FormID: 0100F24B	NVDLC02DeadHorseStalkerClass	CLAS	 	Dead Horse Disciple
+FormID: 0100F24C	NVDLC02DeadHorseDiscipleClass	CLAS	 	Dead Horse Disciple
+FormID: 0100F24D	NVDLC02WhiteLegLightBringerClass	CLAS	 	White Legs Light Bringer
+FormID: 0100F24E	NVDLC02WhiteLegPainMakerClass	CLAS	 	White Legs Pain Maker
+FormID: 0100F24F	NVDLC02WhiteLegBoneBreakerClass	CLAS	 	White Legs Bone Breaker
+FormID: 0100F250	NVDLC02WhiteLegStormDrummerClass	CLAS	 	White Legs Storm Drummer
+FormID: 0100F2BA	NVDLC02MQ04JoshuaTeleportTrigger	ACTI	 	Set up for MQ04 finale
+FormID: 0100F2C6	NVDLC02MQ04FinaleTrigger	ACTI	 	Finale Trigger
+FormID: 0100F2C8	NVDLC02MQ04Timer2	QUST	 	Second timer for MQ04 finale
+FormID: 0100F2FB	NVdlc02tomahawkrProjectiletest	PROJ	 	Spear Projectile
+FormID: 0100F304	NVDLC02MQ03d	QUST	 	Gathering Storms
+FormID: 0100F368	NVDLC02DuffleBagSurvivalistDude	CONT	 	The Survivalist's Duffle Bag
+FormID: 0100F370	NVDLC02WhiteLegTotemActivator	ACTI	 	White Legs War Totem
+FormID: 0100F371	NVDLC02LodgeCabinetKeyMessage	MESG	 	You Found a Key!
+FormID: 0100F373	NVDLC02StoreDeskKeyMessage	MESG	 	You Found a Key!
+FormID: 0100F374	NVDLC02MorningGloryKeyMessage	MESG	 	You Found a Key!
+FormID: 0100F378	NVDLC02CaveSurvDoor02	DOOR	 	Door
+FormID: 0100F37A	NVDLC02SorrowJFollower	NPC_	 	Sorrows Tribal
+FormID: 0100F37B	NVDLC02DeadHorseJFollower	NPC_	 	Dead Horse Stalker
+FormID: 0100F386	NVDLC02WhiteLegsTribalMQ01b2	NPC_	 	White Legs Pain-Maker
+FormID: 0100F387	NVDLC02WhiteLegsTribalMQ01a2	NPC_	 	White Legs Pain-Maker
+FormID: 0100F38D	NVDLC02WhiteLegsTribalMQ03c	NPC_	 	White Legs Bone-Breaker
+FormID: 0100F38E	NVDLC02WhiteLegsTribalMQ03d	NPC_	 	White Legs Light-Bringer
+FormID: 0100F39D	NVDLC02NarrowsSurvivalistTerminal	TERM	 	Terminal
+FormID: 0100F3F4	NVDLC02FollowsChalkLogBarkTrigger	ACTI	 	Gas Valve
+FormID: 0100F400	NVDLC02RecipeConversionFissionBATtoSEC	RCPE	 	Conversion, Fission Battery to SEC
+FormID: 0100F411	NVDLC02DialogueStella	QUST	 	NVDLC02 Stella's Dialogue
+FormID: 0100F454	NVDLC02DialogueRicky	QUST	 	NVDLC02 Ricky's Dialogue
+FormID: 0100F4A0	NVDLC02CrateOldWorldMED	CONT	 	Crate
+FormID: 0100F4AD	NVDLC02LootGunsHouseCabinetT2	CONT	 	Gun Cabinet
+FormID: 0100F4BD	NVDLC02LootClothesHouseCabinet01Old	CONT	 	Dresser
+FormID: 0100F4E6	NVDLC02LootGunsFootlocker01Ranger	CONT	 	Gun Case
+FormID: 0100F57D	NVDLC02LootExplosivesCrateXXXTier4Hi	CONT	 	Explosives Crate
+FormID: 0100F57E	NVDLC02LootGunsSack01DeadHorse	CONT	 	Sack
+FormID: 0100F57F	NVDLC02DuffleBagHIGHVault22	CONT	 	Duffle Bag
+FormID: 0100F582	 	MAPM	 	Dagger's Point
+FormID: 0100F672	 	MAPM	 	Vault 22 Dwellers' Guard Camp
+FormID: 0100F673	NVDLC02CrateEmpty	CONT	 	Crate
+FormID: 0100F674	NVDLC02CrateMedVault22	CONT	 	Crate
+FormID: 0100F675	NVDLC02TribalsFaction	FACT	 	DLC02 Tribals Faction
+FormID: 0100F677	NVDLC02Grunt	PERK	 	Grunt
+FormID: 0100F679	NVDLC02TribalWisdom	PERK	 	Tribal Wisdom
+FormID: 0100F67A	NVDLC02PerkTribalWisdomPoisonResistance	SPEL	 	Poison Resistance
+FormID: 0100F67B	NVDLC02SneeringImperialist	PERK	 	Sneering Imperialist
+FormID: 0100F67C	NVDLC02FightThePower	PERK	 	Fight the Power!
+FormID: 0100F6EE	NVDLC02MQ02a	QUST	 	Roadside Attraction
+FormID: 0100F6EF	NVDLC02MQ02b	QUST	 	Gone Fishin'
+FormID: 0100F6F0	NVDLC02MQ02c	QUST	 	Tourist Trap
+FormID: 0100F6F1	NVDLC02MedicalSupplyKit	MISC	 	Medical Supply Kit
+FormID: 0100F6FD	NVDLC02MedicalKitMessage	MESG	 	Contaminated Medical Supply Kit
+FormID: 0100F6FE	NVDLC02MedicalSupplyKitActivator	ACTI	 	Contaminated Medical Supply Kit
+FormID: 0100F6FF	NVDLC02MedicalKitPartsMessage	MESG	 	Contaminated Medical Supply Kit
+FormID: 0100F700	NVDLC02MedicalKitBoozeMessage	MESG	 	Contaminated Medical Supply Kit
+FormID: 0100F701	NVDLC02MedicalKitTakeMessage	MESG	 	Salvaging Medical Kits
+FormID: 0100F702	NVDLC02BrokenMedicalSupplyKit	MISC	 	Contaminated Medical Supply Kit
+FormID: 0100F707	NVDLC02RecipeMedicalSupplyKit	RCPE	 	Medical Supply Kit
+FormID: 0100F708	NVDLC02MQ02d	QUST	 	Deliverer of Sorrows
+FormID: 0100F70D	NVDLC02XPCalculator	QUST	 	XP Calculator for DLC02
+FormID: 0100F7A3	NVDLC02CompRegParalysisAE	SPEL	 	Compliance Regulator Paralysis
+FormID: 0100F7A4	NVDLC02CompRegParalysisBE	MGEF	 	ComplianceRegulatorParalysisFX
+FormID: 0100F7A5	ParalyzeSelf	MGEF	 	Paralyze Self
+FormID: 0100F7A7	BeamLaserCompRegProjectile	PROJ	 	Laser Beam
+FormID: 0100F82B	NVDLC02ToolboxHIGHRangerProd	CONT	 	Toolbox
+FormID: 0100F848	NVDLC02GreenGeckoEgg	MISC	 	Green Gecko Egg
+FormID: 0100F84B	NVDLC02GeckoGreenHide	MISC	 	Green Gecko Hide
+FormID: 0100F85D	NVDLC02LilScoutLunch	MISC	 	Li'l Scout Lunch Box
+FormID: 0100F863	NVDLC02ZionStoreTerminal	TERM	 	Terminal
+FormID: 0100F869	NVDLC02FollowsChalkPineCreekBarkTrigger	ACTI	 	Gas Valve
+FormID: 0100F86D	NVDLC02FollowsChalkNarrowsBarkTrigger	ACTI	 	Gas Valve
+FormID: 0100F871	NVDLC02FollowsChalkMarysBarkTrigger	ACTI	 	Gas Valve
+FormID: 0100F874	NVDLC02FollowsChalkTabooBarkTrigger	ACTI	 	Gas Valve
+FormID: 0100F879	NVDLC02EncSpecialSporeCamp02Trigger	ACTI	 	Start The Show
+FormID: 0100F87A	NVDLC02CrTier2SporeCarrierFDNR	CREA	 	Spore Carrier Runt
+FormID: 0100F87B	NVDLC02CrTier2SporePlantNR	CREA	 	Spore Plant
+FormID: 0100F87C	NVDLC02CrTier3SporeCarrierFD2NR	CREA	 	Spore Carrier
+FormID: 0100F87D	NVDLC02CrTier3SporePlantNR	CREA	 	Giant Spore Plant
+FormID: 0100F87E	NVDLC02CrTier4SporeCarrierFD3NR	CREA	 	Spore Carrier Brute
+FormID: 0100F87F	NVDLC02CrTier5SporeCarrierFD4NR	CREA	 	Spore Carrier Beast
+FormID: 0100F8A0	NVDLC02WWTwoBearsTrigger	ACTI	 	Start The Show
+FormID: 0100F8A9	NVDLC02DeadHorseWW	NPC_	 	Two-Bears-High-Fiving
+FormID: 0100F8AA	NVDLC02CrateOldWorldLOW	CONT	 	Crate
+FormID: 0100F8C7	NVDLC02JoshuaGrahamLeaveForceGreetTrigger	ACTI	 	Gas Valve
+FormID: 0100F8CB	NVDLC02MQ05JoshuaForceGreetTrigger	ACTI	 	Gas Valve
+FormID: 0100F8CF	NVDLC02AmbushTrigger	ACTI	 	NVDLC02 Ambush Trigger
+FormID: 0100F8D4	NVDLC02MQ05SUWTrigger	ACTI	 	Gas Valve
+FormID: 0100F8F3	NVDLC02JoshuaGrahamLeaveForceGreetTriggerDUPLICATE000	ACTI	 	Gas Valve
+FormID: 0100F8F4	NVDLC02AmbushTriggerDUPLICATE000	ACTI	 	NVDLC02 Ambush Trigger
+FormID: 0100F8F5	NVDLC02MQ05SUWTriggerDUPLICATE000	ACTI	 	Gas Valve
+FormID: 0100F8F6	NVDLC02MQ05JoshuaForceGreetTriggerDUPLICATE000	ACTI	 	Gas Valve
+FormID: 0100F915	NVDLC02DarkDaturaPoisonEffect	MGEF	 	Dark Datura Poison
+FormID: 0100F916	NVDLC02EnchNPCWeapDarkDaturaPoison	ENCH	 	Poison
+FormID: 0100F917	NVDLC02EnchNPCWeapCleaverDaturaPoison	ENCH	 	Poison
+FormID: 0100F918	NVDLC02EnchNPCWeapFlameDaturaPoison	ENCH	 	Poison
+FormID: 0100F919	NVDLC02WeapNPCFireaxePoison	WEAP	 	Poisoned Fire Axe
+FormID: 0100F91A	NVDLC02WeapNPCHatchetPoison	WEAP	 	Poisoned Hatchet
+FormID: 0100F91B	NVDLC02WeapNPCMachetePoison	WEAP	 	Poisoned Machete
+FormID: 0100F91C	NVDLC02WeapNPCCleaverPoison	WEAP	 	Poisoned Cleaver
+FormID: 0100F91D	NVDLC02WeapNPCShishkebabPoison	WEAP	 	Poisoned Shishkebab
+FormID: 0100F91E	NVDLC02WeapThrowingSpearPoison	WEAP	 	Poisoned Throwing Spear
+FormID: 0100F948	NVDLC02Antivenom	ALCH	 	Datura Antivenom
+FormID: 0100F94A	NVDLC02AntivenomEffect	MGEF	 	Cure Poison
+FormID: 0100FB5E	NVDLC02DestroyingAngel	CLAS	 	Destroying Angel
+FormID: 0100FB63	NVDLC02SorrowsGenericDialogue	QUST	 	Sorrows Generic Dialogue
+FormID: 0100FB64	NVDLC02WhiteLegsGenericDialogue	QUST	 	White Legs Generic Dialogue
+FormID: 0100FB65	NVDLC02DeadHorseGenericDialogue	QUST	 	Dead Horse Generic Dialogue
+FormID: 01010007	NVDLC02ZionArrivalCodeHolder	ACTI	 	Direct The Show
+FormID: 01010046	NVDLC02WhiteLegsTribalMQ01c	NPC_	 	White Legs Pain-Maker
+FormID: 01010050	NVDLC02WhiteLegsTribalMQ01f	NPC_	 	White Legs Pain-Maker
+FormID: 01010064	NVDLC02WhiteLegsTribalMQ01g	NPC_	 	White Legs Pain-Maker
+FormID: 010100F9	NVDLC02vHDRockslideExplosion	EXPL	 	HooverDam Explosion
+FormID: 01010124	NVDLC02SlideShow	CELL	 	Endgame
+FormID: 01010132	NVDLC02SlideShowTrigger	ACTI	 	NVDLC02 Slide Show Trigger
+FormID: 01010135	NVDLC02Narrator	NPC_	 	Bob from Accounting
+FormID: 01010149	NVDLC02WhiteLegsTribalMQ01g2	NPC_	 	White Legs Storm-Drummer
+FormID: 0101014A	NVDLC02WhiteLegsTribalMQ01h	NPC_	 	White Legs Storm-Drummer
+FormID: 0101014B	NVDLC02ZionArrivalFailSafeTrigger	ACTI	 	Adjust The Show
+FormID: 0101014E	NVDLC02CrCaravanBrahminPack	CREA	 	Brahmin
+FormID: 010101B9	NVDLC02ZionDoor	DOOR	 	Journey to Zion Valley
+FormID: 01010241	NVDLC02HappyTrailsCaravanGuardCM2	NPC_	 	Happy Trails Caravan Guard
+FormID: 01010295	NVDLC02CrateHIGHDeadHorseWeapon	CONT	 	Crate
+FormID: 0101031A	NVDLC02WeapNVDetonatorPineCreek	WEAP	 	Detonator
+FormID: 0101033F	NVDLC02DummyCriticalParalysisBE	MGEF	 	Critical Strike Paralysis (10s)
+FormID: 01010340	NVDLC02DummyCritParalysisOE	ENCH	 	Dummy Crit Paralysis Effect
+FormID: 01010342	NVDLC02DrinkToiletMetalR	ACTI	 	Toilet
+FormID: 01010343	NVDLC02JoshuaBenchSitMarker	FURN	 	Bench Sit
+FormID: 01010729	NVDLC02ScriptureMiscItem	MISC	 	Scripture
+FormID: 010108A3	NVDLC02InvisibleCaveDoorExit	DOOR	 	Exit
+FormID: 010108A7	NVDLC02MQ02MedKitRepairMessage	MESG	 	How to Fix Stuff
+FormID: 010108C4	NVDLC02BrokenCompassActivator	ACTI	 	Broken Compass
+FormID: 010108C7	NVDLC02Weap45AutoPistolUniqueNPC	WEAP	 	A Light Shining in Darkness
+FormID: 010108C8	NVDLC02FloorSleepBigHornerHideR	FURN	 	Bighorner Hide Bed
+FormID: 01010946	NVDLC02WeapThrowingSpearWakingCloud	WEAP	 	Throwing Spear
+FormID: 01010947	NVDLC02JoshuaYoung	NPC_	 	Joshua Graham
+FormID: 01010948	NVDLC02CaesarYounger	NPC_	 	Caesar
+FormID: 01010B60	NVDLC02GhostOfSheDupe	CREA	 	The Ghost of She
+FormID: 01010B9D	NVDLC02GhostOfSheGlowEffect	MGEF	 	Ghost On Fire!
+FormID: 01010BCB	NVDLC02RickyDisableTrigger	ACTI	 	Gas Valve
+FormID: 01010BEA	NVDLC02FollowsChalkClass	CLAS	 	Follows-Chalk Class
+FormID: 01010BEB	NVDLC02EnchSaltUponWoundsPowerFistEffect	ENCH	 	Bleeding
+FormID: 01010BEF	NVDLC02WeapNVDetonatorMQ03	WEAP	 	Mining Detonator
+FormID: 01010BF5	NVDLC02WhiteLegsTribalMQ04a	NPC_	 	White Legs Bone-Breaker
+FormID: 01010BF6	NVDLC02WhiteLegsTribalMQ04b	NPC_	 	White Legs Bone-Breaker
+FormID: 01010C11	NVDLC02Vault22Note01	NOTE	 	BEWARE - A VENGEFUL SPIRIT STALKS THESE CANYONS
+FormID: 01010C14	NVDLC02FloorSleepBigHornerHideL	FURN	 	Bighorner Hide Bed
+FormID: 01010C25	NVDLC02MQ07	QUST	 	Departing Paradise
+FormID: 01010C2B	NVDLC02DuffleBagHIGHVault22Note	CONT	 	Duffle Bag
+FormID: 01010C68	NVDLC02FollowsChalkGuideBark1Trigger	ACTI	 	Gas Valve
+FormID: 01010C69	NVDLC02FollowsChalkGuideBark2Trigger	ACTI	 	Gas Valve
+FormID: 01010C6A	NVDLC02FollowsChalkGuideBarkWrongWayTrigger	ACTI	 	Gas Valve
+FormID: 01010C6B	NVDLC02FollowsChalkGuideBark3Trigger	ACTI	 	Gas Valve
+FormID: 01010C6C	NVDLC02FollowsChalkGuideBark4Trigger	ACTI	 	Gas Valve
+FormID: 01010C6D	NVDLC02FollowsChalkGuideBark5Trigger	ACTI	 	Gas Valve
+FormID: 01010C6E	NVDLC02FollowsChalkGuideBark6Trigger	ACTI	 	Gas Valve
+FormID: 01010C6F	NVDLC02FollowsChalkGuideBark7Trigger	ACTI	 	Gas Valve
+FormID: 01010C70	NVDLC02FollowsChalkGuideBark8Trigger	ACTI	 	Gas Valve
+FormID: 01010C71	NVDLC02ArmorDesertRangerCombat	ARMO	 	Desert Ranger Combat Armor
+FormID: 01010C72	NVDLC02DanielVendor	CONT	 	Crate
+FormID: 01010C81	NVDLC02FollowersBanter	QUST	 	Followers' random banter controller.
+FormID: 01010C82	NVDLC02MS04	QUST	 	A Family Affair
+FormID: 01010C83	NVDLC02MS03	QUST	 	Civilized Man's Burden
+FormID: 01010CAF	NVDLC02SpawnSpecialMQ02Crawlie	CREA	 	Bark Scorpion Hunter
+FormID: 01010CB0	NVDLC02FollowsChalkAerieBarkTrigger	ACTI	 	Gas Valve
+FormID: 01010CB1	NVDLC02FollowsChalkBusBarkTrigger	ACTI	 	Gas Valve
+FormID: 01010CB2	SCNNVDLC02FollowsChalkPlaneBarkTriggerSCRIPT	ACTI	 	Gas Valve
+FormID: 01010CB3	NVDLC02FollowsChalkEasternVirginBarkTrigger	ACTI	 	Gas Valve
+FormID: 01010CB4	NVDLC02FollowsChalkVault22BarkTrigger	ACTI	 	Gas Valve
+FormID: 01010CB5	NVDLC02FollowsChalkCampgroundBarkTrigger	ACTI	 	Gas Valve
+FormID: 01010CB6	NVDLC02FollowsChalkAntBurrowBarkTrigger	ACTI	 	Gas Valve
+FormID: 01010CB7	SCNNVDLC02FollowsChalkOverlookBarkTriggerSCRIPT	ACTI	 	Gas Valve
+FormID: 01010CD8	NVDLC02EnchClothingChalkHeadress	ENCH	 	Chalk's Headdress
+FormID: 01010CD9	NVDLC02RecipeBreakdown45Auto	RCPE	 	Breakdown .45 Auto
+FormID: 01010CDA	NVDLC02EnchClothingDanielsHat	ENCH	 	Daniel's Hat
+FormID: 01010CEA	NVDLC02WhiteLegMQ01Victim	NPC_	 	White Legs Storm-Drummer
+FormID: 01010CEB	NVDLC02WakingCloudBurialMoundsBarkTrigger	ACTI	 	Gas Valve
+FormID: 01010CEC	NVDLC02WakingCloudDocksBarkTrigger	ACTI	 	Gas Valve
+FormID: 01010CED	NVDLC02WakingCloudGhostofSheBarkTrigger	ACTI	 	Gas Valve
+FormID: 01010D1E	NVDLC02WhiteLegsGuardMQ03	NPC_	 	White Legs Storm-Drummer
+FormID: 01010D5D	NVDLC02ZionArrivalBridgeAvoidTrigger	ACTI	 	Adjust The Show
+FormID: 01010D74	NVDLC02MedicalKitNoQuestMessage	MESG	 	Contaminated Medical Supply Kit
+FormID: 01010D75	NVDLC02BrokenCompassNoQuestMsg	MESG	 	Broken Compass
+FormID: 01010D96	NVDLC02MQ05Timer2	QUST	 	Fade control for MQ05 climac
+FormID: 01010D99	NVDLC02MQ03ExplosivesFake	MISC	 	Mining Explosives
+FormID: 01010D9B	NVDLC02CaravanDeathMessage	MESG	 	Caravaneer's Dead, Baby!
+FormID: 01010D9C	NVDLC02SackEVHiddenSkel	CONT	 	Sack
+FormID: 01010D9F	NVDLC02CrSpecialGreenGeckoIntro01	CREA	 	Green Gecko
+FormID: 01010DA8	NVDLC02YaoGuaiIntroCodeHolder	ACTI	 	Direct The Show
+FormID: 01010DAC	NVDLC02CrSpecialYaoGuaiIntro01	CREA	 	Giant Yao Guai
+FormID: 01010DE7	NVDLC02SackOldWorldHIGH	CONT	 	Sack
+FormID: 01010DE9	NVDLC02PWSackHIGH	CONT	 	Sack
+FormID: 01010DEC	NVDLC02PWSackMED	CONT	 	Sack
+FormID: 01010DEE	NVDLC02PWSackLOW	CONT	 	Sack
+FormID: 01010DEF	NVDLC02SuitcaseOldWorldHIGH	CONT	 	Suitcase
+FormID: 01010E1A	NVDLC02SackWhiteLegs	CONT	 	Sack
+FormID: 01010E1B	NVDLC02SackSorrows	CONT	 	Sack
+FormID: 01010E1C	NVDLC02SackDeadHorses	CONT	 	Sack
+FormID: 01010E1F	NVDLC02Weap45AutoPistolUniqueMelee	WEAP	 	Joshua's Pistol Whippin' .45
+FormID: 01010E5D	NVDLC02WeapNVMantisGauntletPoison	WEAP	 	Poisoned Mantis Gauntlet
+FormID: 01010E5E	NVDLC02WeapBladedGauntletPoison	WEAP	 	Poisoned Bladed Gauntlet
+FormID: 01010E5F	NVDLC02EnchNPCWeapRazorDaturaPoison	ENCH	 	Poison
+FormID: 01010E60	NVDLC02EnchNPCWeapKnifeDaturaPoison	ENCH	 	Poison
+FormID: 01010EA8	NVDLC02WhiteLegKeyMessage	MESG	 	You Found a Key!
+FormID: 01010EA9	NVDLC02SorrowsPrisonerFaction	FACT	 	Sorrows Prisoner Faction
+FormID: 01010EAA	NVDLC02SorrowPineCreekWave03	NPC_	 	Sorrows Tribal
+FormID: 01010EAD	NVDLC02MQ05SUWDisableTrigger	ACTI	 	Gas Valve
+FormID: 01010EB0	NVDLC02MQ05aPrisonKey	KEYM	 	White Leg Key
+FormID: 01010EB2	NVDLC02MQ05aDoor	DOOR	 	Cell Door
+FormID: 01010EB4	NVDLC02MQ04ForceGreetQuest	QUST	 	Force greet quest for end of MQ04.
+FormID: 01010EB6	NVDLC02LunchboxActivator	ACTI	 	Li'l Scout Lunchbox
+FormID: 01010EFD	NVDLC02CrSpecialYaoGuaiIntro02	CREA	 	Yao Guai Cub
+FormID: 01010EFE	NVDLC02EncSafeGuardTrigger	ACTI	 	Start The Show
+FormID: 01010F00	NVDLC02CrYaoGuaiIntroFaction	FACT	 	Yao Guai Intro Faction
+FormID: 01010F01	NVDLC02CompanionHealSpell	SPEL	 	HealthBoost
+FormID: 01010FBC	NVDLC02MQ04ZionWLEnc	QUST	 	Zion encounter scripting for NVDLC02MQ04
+FormID: 01011039	NVDLC02WakingCloudSurvivalistCaveBarkTrigger	ACTI	 	Gas Valve
+FormID: 0101103C	NVDLC02HealingPoultice	ALCH	 	Healing Poultice
+FormID: 0101103D	NVDLC02RecipeHealingPoultice	RCPE	 	Healing Poultice
+FormID: 01011078	 	MAPM	 	The Red Gate
+FormID: 010110FC	NVDLC02GeckoGreenHideTanned	MISC	 	Tanned Green Gecko Hide
+FormID: 010110FD	NVDLC02RecipeGeckoGreenHideTanned	RCPE	 	Tanned Green Gecko Hide
+FormID: 010110FE	NVDLC02ArmorLeatherGecko	ARMO	 	Gecko-Backed Leather Armor
+FormID: 010110FF	NVDLC02EnchArmorLeatherGecko	ENCH	 	Gecko Armor
+FormID: 01011100	NVDLC02ArmorMetalGecko	ARMO	 	Gecko-Backed Metal Armor
+FormID: 01011101	NVDLC02EnchArmorMetalGecko	ENCH	 	Gecko Armor
+FormID: 01011102	NVDLC02ArmorMetalReinforcedGecko	ARMO	 	Gecko-Backed Metal Armor, Reinforced
+FormID: 01011103	NVDLC02ArmorLeatherReinforcedGecko	ARMO	 	Gecko-Backed Leather Armor, Reinforced
+FormID: 01011104	NVDLC02RecipeArmorLeatherGecko	RCPE	 	Gecko-Backed Leather Armor
+FormID: 01011105	NVDLC02RecipeArmorLeatherReinforcedGecko	RCPE	 	Gecko-Backed Leather Armor, Reinforced
+FormID: 01011106	NVDLC02RecipeArmorMetalGecko	RCPE	 	Gecko-Backed Metal Armor
+FormID: 01011107	NVDLC02RecipeArmorMetalReinforcedGecko	RCPE	 	Gecko-Backed Metal Armor, Reinforced
+FormID: 01011108	NVDLC02RecipeDaturaAntivenom	RCPE	 	Datura Antivenom
+FormID: 0101110A	NVDLC02BloodShield	ALCH	 	Blood Shield
+FormID: 0101110B	NVDLC02RecipeBloodShield	RCPE	 	Blood Shield
+FormID: 0101110C	NVDLC02RecipeHomebrewedNukaCola	RCPE	 	Homebrewed Nuka-Cola
+FormID: 0101110D	NVDLC02RecipeHomebrewedSS	RCPE	 	Homebrewed Sunset Sarsaparilla
+FormID: 01011110	NVDLC02RecipeWastelandTequila	RCPE	 	Wasteland Tequila
+FormID: 01011111	NVDLC02WastelandTequila	ALCH	 	Wasteland Tequila
+FormID: 01011112	NVDLC02BlackCoffee	ALCH	 	Black Coffee
+FormID: 01011113	NVDLC02RecipeBlackCoffee	RCPE	 	Black Coffee
+FormID: 01011114	NVDLC02RecipeMealsToMetal	RCPE	 	Meals-to-Metal
+FormID: 01011115	NVDLC02RecipeCookeryToMetal	RCPE	 	Cookery-to-Metal
+FormID: 01011160	NVDLC02FollowsChalkMuralBarkTrigger	ACTI	 	Gas Valve
+FormID: 01011161	NVDLC02NarrowsFastTravelEnabler	ACTI	 	Gas Valve
+FormID: 01011162	NVDLC02FollowsChalkTabooMarksBarkTrigger	ACTI	 	Gas Valve
+FormID: 01011163	NVDLC02StoreNote1	NOTE	 	Re: Shipping Error
+FormID: 01011164	NVDLC02StoreNote3	NOTE	 	Re: Shipping Problems (AGAIN!)
+FormID: 01011165	NVDLC02StoreNote2	NOTE	 	Re: Bus Tour?
+FormID: 01011181	NVDLC02ZionArrivalForceStartTrigger	ACTI	 	Adjust The Show
+FormID: 0101118C	NVDLC02ClayPot01zGen01	CONT	 	Clay Pot
+FormID: 0101118D	NVDLC02ClayPot01zGen02	CONT	 	Clay Pot
+FormID: 0101118E	NVDLC02ClayPot01zGen03	CONT	 	Clay Pot
+FormID: 0101118F	NVDLC02ClayPot02zGen01	CONT	 	Clay Pot
+FormID: 01011190	NVDLC02ClayPot02zGen02	CONT	 	Clay Pot
+FormID: 01011191	NVDLC02ClayPot02zGen03	CONT	 	Clay Pot
+FormID: 01011192	NVDLC02CratezGen01	CONT	 	Crate
+FormID: 01011193	NVDLC02CratezGen02	CONT	 	Crate
+FormID: 01011194	NVDLC02CratezGen03	CONT	 	Crate
+FormID: 01011195	NVDLC02CratezGen04	CONT	 	Crate
+FormID: 01011196	NVDLC02CratezGen05	CONT	 	Crate
+FormID: 01011197	NVDLC02DeskOfficeCornerMetalzGen01	CONT	 	Desk
+FormID: 01011198	NVDLC02DeskOfficeCornerMetalzGen02	CONT	 	Desk
+FormID: 01011199	NVDLC02DeskOfficeCornerMetalzGen03	CONT	 	Desk
+FormID: 0101119A	NVDLC02DeskOfficeMetalzGen01	CONT	 	Desk
+FormID: 0101119B	NVDLC02DeskOfficeMetalzGen02	CONT	 	Desk
+FormID: 0101119C	NVDLC02DeskOfficeMetalzGen03	CONT	 	Desk
+FormID: 0101119D	NVDLC02DuffleBagzGen01	CONT	 	Duffle Bag
+FormID: 0101119E	NVDLC02DuffleBagzGen02	CONT	 	Duffle Bag
+FormID: 0101119F	NVDLC02DuffleBagzGen03	CONT	 	Duffle Bag
+FormID: 010111A0	NVDLC02DuffleBagzGen04	CONT	 	Duffle Bag
+FormID: 010111A1	NVDLC02DuffleBagzGen05	CONT	 	Duffle Bag
+FormID: 010111A2	NVDLC02ExplosivesCratezGen01	CONT	 	Explosives Crate
+FormID: 010111A3	NVDLC02ExplosivesCratezGen02	CONT	 	Explosives Crate
+FormID: 010111A4	NVDLC02ExplosivesCratezGen03	CONT	 	Explosives Crate
+FormID: 010111A5	NVDLC02ExplosivesCratezGen04	CONT	 	Explosives Crate
+FormID: 010111A6	NVDLC02ExplosivesCratezGen05	CONT	 	Explosives Crate
+FormID: 010111A7	NVDLC02FilingCabinetBunch01zGen01	CONT	 	Filing Cabinets
+FormID: 010111A8	NVDLC02FilingCabinetBunch01zGen02	CONT	 	Filing Cabinets
+FormID: 010111A9	NVDLC02FilingCabinetBunch01zGen03	CONT	 	Filing Cabinets
+FormID: 010111AA	NVDLC02FootlockerzGen01	CONT	 	Footlocker
+FormID: 010111AB	NVDLC02FootlockerzGen02	CONT	 	Footlocker
+FormID: 010111AC	NVDLC02FootlockerzGen03	CONT	 	Footlocker
+FormID: 010111AD	NVDLC02FootlockerzGen04	CONT	 	Footlocker
+FormID: 010111AE	NVDLC02FootlockerzGen05	CONT	 	Footlocker
+FormID: 010111AF	NVDLC02Grave01ContzGen01	CONT	 	Grave
+FormID: 010111B0	NVDLC02Grave01ContzGen02	CONT	 	Grave
+FormID: 010111B1	NVDLC02Grave01ContzGen03	CONT	 	Grave
+FormID: 010111B2	NVDLC02Grave03ContzGen01	CONT	 	Grave
+FormID: 010111B3	NVDLC02Grave02ContzGen01	CONT	 	Grave
+FormID: 010111B4	NVDLC02Grave02ContzGen02	CONT	 	Grave
+FormID: 010111B5	NVDLC02Grave02ContzGen03	CONT	 	Grave
+FormID: 010111B6	NVDLC02Grave03ContzGen02	CONT	 	Grave
+FormID: 010111B7	NVDLC02Grave03ContzGen03	CONT	 	Grave
+FormID: 010111B8	NVDLC02HollowLogzGen01	CONT	 	Hollow Log
+FormID: 010111B9	NVDLC02HollowLogzGen02	CONT	 	Hollow Log
+FormID: 010111BA	NVDLC02HollowLogzGen03	CONT	 	Hollow Log
+FormID: 010111BB	NVDLC02HollowLogzGen04	CONT	 	Hollow Log
+FormID: 010111BC	NVDLC02HollowLogzGen05	CONT	 	Hollow Log
+FormID: 010111BD	NVDLC02HollowRockContzGen01	CONT	 	Hollowed-Out Rock
+FormID: 010111BE	NVDLC02HollowRockContzGen02	CONT	 	Hollowed-Out Rock
+FormID: 010111BF	NVDLC02HollowRockContzGen03	CONT	 	Hollowed-Out Rock
+FormID: 010111C0	NVDLC02LootAmmoBoxzGen01	CONT	 	Ammunition Box
+FormID: 010111C1	NVDLC02LootAmmoBoxzGen02	CONT	 	Ammunition Box
+FormID: 010111C2	NVDLC02LootAmmoBoxzGen03	CONT	 	Ammunition Box
+FormID: 010111C3	NVDLC02LootAmmoBoxzGen04	CONT	 	Ammunition Box
+FormID: 010111C4	NVDLC02LootAmmoBoxzGen05	CONT	 	Ammunition Box
+FormID: 010111C5	NVDLC02LootAmmoBox02zGen01	CONT	 	Ammunition Box
+FormID: 010111C6	NVDLC02LootAmmoBox02zGen02	CONT	 	Ammunition Box
+FormID: 010111C7	NVDLC02LootAmmoBox02zGen03	CONT	 	Ammunition Box
+FormID: 010111C8	NVDLC02LootAmmoBox02zGen04	CONT	 	Ammunition Box
+FormID: 010111C9	NVDLC02LootAmmoBox02zGen05	CONT	 	Ammunition Box
+FormID: 010111CA	NVDLC02LootAmmoBox02zGen06	CONT	 	Ammunition Box
+FormID: 010111CB	NVDLC02LootAmmoBox02zGen07	CONT	 	Ammunition Box
+FormID: 010111CC	NVDLC02LootClothesHouseCabinet01OldzGen01	CONT	 	Dresser
+FormID: 010111CD	NVDLC02LootClothesHouseCabinet01OldzGen02	CONT	 	Dresser
+FormID: 010111CE	NVDLC02LootClothesHouseCabinet01OldzGen03	CONT	 	Dresser
+FormID: 010111CF	NVDLC02LootFilingCabinetzGen01	CONT	 	Filing Cabinet
+FormID: 010111D0	NVDLC02LootFilingCabinetzGen02	CONT	 	Filing Cabinet
+FormID: 010111D1	NVDLC02LootFilingCabinetzGen03	CONT	 	Filing Cabinet
+FormID: 010111D2	NVDLC02LootFirstAidKitzGen01	CONT	 	First Aid Box
+FormID: 010111D3	NVDLC02LootFirstAidKitzGen02	CONT	 	First Aid Box
+FormID: 010111D4	NVDLC02LootFirstAidKitzGen03	CONT	 	First Aid Box
+FormID: 010111D5	NVDLC02LootFirstAidKitzGen04	CONT	 	First Aid Box
+FormID: 010111D6	NVDLC02LootFirstAidKitzGen05	CONT	 	First Aid Box
+FormID: 010111D7	NVDLC02LootGunsFootlocker01zGen01	CONT	 	Gun Case
+FormID: 010111D8	NVDLC02LootGunsFootlocker01zGen02	CONT	 	Gun Case
+FormID: 010111D9	NVDLC02LootGunsFootlocker01zGen03	CONT	 	Gun Case
+FormID: 010111DA	NVDLC02LootGunsFootlocker01zGen04	CONT	 	Gun Case
+FormID: 010111DB	NVDLC02LootGunsFootlocker01zGen05	CONT	 	Gun Case
+FormID: 010111DC	NVDLC02LootGunsHouseCabinetzGen01	CONT	 	Gun Cabinet
+FormID: 010111DD	NVDLC02LootGunsHouseCabinetzGen02	CONT	 	Gun Cabinet
+FormID: 010111DE	NVDLC02LootGunsHouseCabinetzGen03	CONT	 	Gun Cabinet
+FormID: 010111DF	NVDLC02MetalBox01zGen01	CONT	 	Metal Box
+FormID: 010111E0	NVDLC02MetalBox01zGen02	CONT	 	Metal Box
+FormID: 010111E1	NVDLC02MetalBox01zGen03	CONT	 	Metal Box
+FormID: 010111E2	NVDLC02MetalBox01zGen04	CONT	 	Metal Box
+FormID: 010111E3	NVDLC02MetalBox01zGen05	CONT	 	Metal Box
+FormID: 010111E4	NVDLC02SackzGen01	CONT	 	Sack
+FormID: 010111E5	NVDLC02SackzGen02	CONT	 	Sack
+FormID: 010111E6	NVDLC02SackzGen03	CONT	 	Sack
+FormID: 010111E7	NVDLC02SackzGen04	CONT	 	Sack
+FormID: 010111E8	NVDLC02SackzGen05	CONT	 	Sack
+FormID: 010111E9	NVDLC02ReinforcedBoxzGen01	CONT	 	Crate
+FormID: 010111EA	NVDLC02ReinforcedBoxzGen02	CONT	 	Crate
+FormID: 010111EB	NVDLC02ReinforcedBoxzGen03	CONT	 	Crate
+FormID: 010111EC	NVDLC02SackCampfireCRAFTINGzGen01	CONT	 	Campfire Sack
+FormID: 010111ED	NVDLC02SackCampfireCRAFTINGzGen02	CONT	 	Campfire Sack
+FormID: 010111EE	NVDLC02SackCampfireCRAFTINGzGen03	CONT	 	Campfire Sack
+FormID: 010111EF	NVDLC02ShippingCratezGen01	CONT	 	Happy Trails Shipping Crate
+FormID: 010111F0	NVDLC02ShippingCratezGen02	CONT	 	Happy Trails Shipping Crate
+FormID: 010111F1	NVDLC02ShippingCratezGen03	CONT	 	Happy Trails Shipping Crate
+FormID: 010111F2	NVDLC02SuitcasezGen01	CONT	 	Suitcase
+FormID: 010111F3	NVDLC02SuitcasezGen02	CONT	 	Suitcase
+FormID: 010111F4	NVDLC02SuitcasezGen03	CONT	 	Suitcase
+FormID: 010111F5	NVDLC02ToolboxzGen01	CONT	 	Toolbox
+FormID: 010111F6	NVDLC02ToolboxzGen02	CONT	 	Toolbox
+FormID: 010111F7	NVDLC02ToolboxzGen03	CONT	 	Toolbox
+FormID: 010111F8	NVDLC02WoodenCrateContainerzGen01	CONT	 	Wooden Crate
+FormID: 010111F9	NVDLC02WoodenCrateContainerzGen02	CONT	 	Wooden Crate
+FormID: 010111FA	NVDLC02WoodenCrateContainerzGen03	CONT	 	Wooden Crate
+FormID: 010111FB	NVDLC02ToolboxzGen04	CONT	 	Toolbox
+FormID: 010111FC	NVDLC02ToolboxzGen05	CONT	 	Toolbox
+FormID: 010111FD	NVDLC02CrateTechGen01	CONT	 	Vault Footlocker
+FormID: 010111FE	NVDLC02CrateTechGen02	CONT	 	Vault Footlocker
+FormID: 010111FF	NVDLC02CrateTechGen03	CONT	 	Vault Footlocker
+FormID: 01011200	NVDLC02DuffleBagzGen06	CONT	 	Duffle Bag
+FormID: 01011201	NVDLC02DuffleBagzGen07	CONT	 	Duffle Bag
+FormID: 01011202	NVDLC02SporeCarrierSap	ALCH	 	Spore Carrier Sap
+FormID: 01011203	NVDLC02NoWaitMsg	MESG	 	Warning!
+FormID: 01011205	NVDLC02BlackCoffeeAddCup	MGEF	 	Black Coffee Add Cup Effect
+FormID: 01011207	NVDLC02DogHideBelt	RCPE	 	Dog Hide Belt
+FormID: 01011208	NVDLC02CoyoteHideBelt	RCPE	 	Coyote Hide Belt
+FormID: 01011209	NVDLC02GeckoHideBelt	RCPE	 	Gecko Hide Belt
+FormID: 0101120A	NVDLC02FireGeckoHideBelt	RCPE	 	Fire Gecko Hide Belt
+FormID: 0101120B	NVDLC02GoldenGeckoHideBelt	RCPE	 	Golden Gecko Hide Belt
+FormID: 0101120C	NVDLC02GreenGeckoHideBelt	RCPE	 	Green Gecko Hide Belt
+FormID: 0101124D	NVDLC02HelmetDesertRangerCombat	ARMO	 	Desert Ranger Combat Helmet
+FormID: 010112F5	NVDLC02CompassModule	MISC	 	Compass Sensor Module
+FormID: 010112F6	NVDLC02ReduceIntelligenceHostileBE	MGEF	 	Reduced Intelligence
+FormID: 010112F8	CaveFungusPlant	ACTI	 	Cave Fungus
+FormID: 010112F9	NVDLC02WastelandTequilaLarge	ALCH	 	Large Wasteland Tequila
+FormID: 010112FC	NVDLC02RecipeWastelandTequilaLarge	RCPE	 	Large Wasteland Tequila
+FormID: 01011300	NVDLC02AntivenomEffectNoMessage	MGEF	 	Cure Poison No Message
+FormID: 01011304	NVDLC02CraftingOven01	ACTI	 	Hot Plate
+FormID: 0101146C	NVDLC02NorthernPassageDoor	DOOR	 	Entrance
+FormID: 01011470	NVDLC02NorthernPassageDoorEnter	DOOR	 	Entrance
+FormID: 010114F2	NVDLC02TrapFaction	FACT	 	NVDLC02TrapFaction
+FormID: 010114F6	NVDLC02TrapTripwire01	ACTI	 	Tripwire
+FormID: 010114F7	NVDLC02TrapPressurePlate	ACTI	 	Pressure Plate
+FormID: 01011523	NVDLC02FollowsChalkBighornerFaction	FACT	 	Faction to keep FC from attacking Bighorners
+FormID: 010115D0	NVDLC02NorthernPassageExitDoor	DOOR	 	Door
+FormID: 01011601	NVDLC02EncToggleCodeHolder	ACTI	 	Toggle The Show
+FormID: 01011673	NVDLC02ZionArrivalWaitWarnCodeHolder	ACTI	 	Hold The Show
+FormID: 010116AB	NVDLC02CrSpecialYaoGuaiSmall05	CREA	 	Yao Guai Cub
+FormID: 010116AC	NVDLC02CrSpecialYaoGuaiSmall10	CREA	 	Yao Guai Cub
+FormID: 010116AD	NVDLC02CrSpecialYaoGuaiMed18	CREA	 	Yao Guai
+FormID: 010116DF	NVDLC02MQ04MarkerTrigger	ACTI	 	Gas Valve
+FormID: 010116F3	NVDLC02DeadHorseStalkerFollowsChalk	ARMO	 	Dead Horses Stalker Armor
+FormID: 010116F4	NVDLC02ChalkHeadressNPC	ARMO	 	Chalk's Headdress
+FormID: 0101170C	NVDLC02ZionArrivalRickyBarkTrigger	ACTI	 	Barkie
+FormID: 0101170D	NVDLC02ZionArrivalStellaBarkTrigger	ACTI	 	Barkie
+FormID: 0101172E	NVDLC02BoneBreakersFaction	FACT	 	White Leg Pain Makers
+FormID: 0101172F	NVDLC02PainMakersFaction	FACT	 	White Leg Pain Makers
+FormID: 01011730	NVDLC02DarkDaturaAttackSpell	SPEL	 	Datura Poison Attack
+FormID: 01011732	NVDLC02DarkDaturaAttackEffect	MGEF	 	Dark Datura Poisoned Attack
+FormID: 01011733	NVDLC02DarkDaturaPoison	SPEL	 	Poison
+FormID: 01011752	NVDLC02FloorSitReadMarker	FURN	 	Floor Sit
+FormID: 01011756	NVDLC02NPCWeaponFaction	FACT	 	NPC-Only Weapon Users
+FormID: 010117AB	NVDLC02DeathTracker	QUST	 	Tracker for starting MQ06 if key NPCs die.
+FormID: 010117D4	NVDLC02MQ03cMSG	MESG	 	Explosives are Always Handy
+FormID: 010117D6	NVDLC02YaoGuaiIntroForceTrigger	ACTI	 	Adjust The Show
+FormID: 010117E9	NVDLC02MQ05TunnelMSG	MESG	 	Collapsing the Tunnel
+FormID: 010117EA	NVDLC02EnchClothingDanielsOutfit	ENCH	 	Daniel's Outfit
+FormID: 010117EB	NVDLC02EnchClothingSaltUponWoundsHelmet	ENCH	 	SUW's Helmet
+FormID: 010117EE	NVDLC02EnchClothingParkRangerHat	ENCH	 	Park Ranger Hat
+FormID: 010117F2	NVDLC02GhostOfSheShaderCodeHolder	ACTI	 	Shader Tyme
+FormID: 010117F3	NVDLC02GhostOfSheCub	CREA	 	Yao Guai Cub
+FormID: 01011800	NVDLC02SideQuestWarningMSG	MESG	 	No Going Back!
+FormID: 01011968	NVDLC02MQ05ZionWLEnc	QUST	 	Zion Encounter Scripting for NVDLC02MQ05
+FormID: 01011981	NVDLC02JoshGrahamGloveL	ARMA	 	JoshuaGrahamGloves
+FormID: 01011983	NVDLC02EndingMarkerTrigger	ACTI	 	Ending Marker Trigger
+FormID: 0101198F	NVDLC02MQ05PeaceCodeHolder	ACTI	 	Gas Valve
+FormID: 010119A0	NVDLC02EncSpecialSporeCamp01Trigger	ACTI	 	Start The Show
+FormID: 010119C7	NVDLC02JoshuaNarrowsForceGreetTrigger	ACTI	 	Gas Valve
+FormID: 00031DAC	HereandNow	PERK	 	Here and Now
+FormID: 001524B3	WeapNVMantisGauntlet	WEAP	 	Mantis Gauntlet
+FormID: 00157A92	NorthernPassageINT	CELL	 	Northern Passage
+FormID: 00038E0C	CaveFungus	ALCH	 	Cave Fungus
+FormID: 000DA726	WastelandNV	WRLD	 	Mojave Wasteland
+FormID: 01000800	WeapNVDLC00Faderator	WEAP	 	The Faderator

@@ -1,0 +1,1237 @@
+FormID: 01004687	NVDLC04Snowglobe	MISC	 	Snow Globe - Lonesome Road
+FormID: 01004689	NVDLC04Tunneler01	CREA	 	Tunneler
+FormID: 0100468B	NVDLC04LootTEMP	CONT	 	Swag Bag
+FormID: 010046C3	NVDLC04WeapGrenadeRifleRED	WEAP	 	Red Victory Grenade Rifle
+FormID: 010046C4	NVDLC04WeapGrenadeRifleBLUE	WEAP	 	Great Bear Grenade Rifle
+FormID: 010046C7	NVDLC04WeapBowieKnife	WEAP	 	Bowie Knife
+FormID: 010046E8	NVDLC04SiloBlastDoorControls	ACTI	 	Silo Blast Door Controls
+FormID: 01004C35	NVDLC04WeapGrenadeFlashBang	WEAP	 	Flash Bang
+FormID: 01004C36	NVDLC04WeapFlashBangGrenadeProjectile	PROJ	 	Flash Bang Grenade
+FormID: 01004C3C	NVDLC04WeapRedGlare	WEAP	 	Red Glare
+FormID: 01004C3F	NVDLC04Tunneler20	CREA	 	Tunneler
+FormID: 01004C40	NVDLC04Tunneler30	CREA	 	Tunneler
+FormID: 01004C41	NVDLC04Tunneler40	CREA	 	Tunneler
+FormID: 01004C42	NVDLC04Tunneler50	CREA	 	Tunneler
+FormID: 01004C45	NVDLC04TunnelerAmbusher01	CREA	 	Tunneler
+FormID: 01004C47	NVDLC04TunnelerAmbusher20	CREA	 	Tunneler
+FormID: 01004C48	NVDLC04TunnelerAmbusher30	CREA	 	Tunneler
+FormID: 01004C49	NVDLC04TunnelerAmbusher40	CREA	 	Tunneler
+FormID: 01004C4A	NVDLC04TunnelerAmbusher50	CREA	 	Tunneler
+FormID: 01004C4E	NVDLC04weapflaregun	WEAP	 	Flare Gun
+FormID: 01004CDA	NVDLC04EDE	CREA	 	ED-E
+FormID: 01004CDB	NVDLC04DialogueEDE	QUST	 	Lonesome Road ED-E Dialogue
+FormID: 01004D57	NVDLC04WeapFlareGunEnch	ENCH	 	Burninate All the Peoples
+FormID: 01004D5D	NVDLC04DivideVistaWorld	WRLD	 	The Divide
+FormID: 010073E3	NVDLC04WeapFlareGunProjectile	PROJ	 	Flare
+FormID: 010073E6	NVDLC04DummyFlareGunEffect	MGEF	 	Frightens Abominations
+FormID: 0100747A	NVDLC04WeapFlareGunAreaEnch	ENCH	 	Area Flare Effect
+FormID: 01007480	NVDLC04WeapFlareGunAreaEffect	MGEF	 	NVDLC04WeapFlareGunAreaEffect
+FormID: 01007481	NVDLC04WeapGrenadeFlashBangEnch	ENCH	 	Flash Bang
+FormID: 01007482	NVDLC04WeapGrenadeFlashBangEffect	MGEF	 	VDLC04WeapGrenadeFlashBangEffect
+FormID: 01007484	NVDLC04FlashBangExplosion	EXPL	 	Flash Explosion
+FormID: 01007486	NVDLC04Warhead	ACTI	 	Warhead
+FormID: 0100748A	NVDLC04LargeExplosion	EXPL	 	Nuke Explosion
+FormID: 01007499	NVDLC04DummyFlashBangEffect	MGEF	 	Stuns or Dazes Enemies
+FormID: 0100749A	NVDLC04TerminalSilo01UtilityRoomEnter	TERM	 	Maintenance Access Level Three
+FormID: 0100749B	NVDLC04TerminalSilo01FirstRobots	TERM	 	Security Control Level Two
+FormID: 0100766B	NVDLC04WeapArcWelder	WEAP	 	Arc Welder
+FormID: 0100766C	NVDLC04TunnelerFaction	FACT	 	NVDLC04 Tunneler Faction
+FormID: 0100766F	NVDLC04BeamSonicDetonatorProjectile	PROJ	 	Laser Beam
+FormID: 01007670	NVDLC04WeapSonicDetonator	WEAP	 	Laser Detonator
+FormID: 010076A9	NVDLC04WeapEDEArcWelder	WEAP	 	ED-E Arc Welder
+FormID: 010076DB	NVDLC04ArmorDusterUlyssesNPC	ARMO	 	Ulysses' Duster
+FormID: 010076DC	NVDLC04HelmetUlysessNPC	ARMO	 	Ulysses' Mask
+FormID: 010076DD	NVDLC04HelmetBreathingMask	ARMO	 	Breathing Mask
+FormID: 010076DE	NVDLC04ArmorDusterUlyssesOW	ARMO	 	Ulysses' Duster
+FormID: 010076E0	NVDLC04WeapFlagpole	WEAP	 	Old Glory
+FormID: 010076E3	NVDLC04WeapSatchelCharge	WEAP	 	Satchel Charge
+FormID: 010076E9	NVDLC04SatchelChargeProjectile	PROJ	 	Satchel Charge
+FormID: 010076F9	NVDLC04DivideMunicipalMapMarkerREF	MAPM	 	Third Street Municipal Building
+FormID: 010076FB	NVDLC04UlyssesTempleMarkerREF	MAPM	 	Ulysses' Temple
+FormID: 010076FC	NVDLC04DivideSunstoneMapMarkerREF	MAPM	 	Sunstone Tower Roof
+FormID: 0100792B	NVDLC04DivideSLSewers	CELL	 	Municipal Sewers
+FormID: 01007933	NVDLC04PipesDoor01	DOOR	 	Sewer Grate
+FormID: 01007935	NVDLC04CaveMapRegion	REGN	 	Cave of the Abaddon
+FormID: 01007956	NVDLC04DivideBoxwoodMapMarkerREF	MAPM	 	Boxwood Hotel Roof
+FormID: 01007957	NVDLC04DivideCaveMarkerREF	MAPM	 	Cave of the Abaddon
+FormID: 01007962	NVDLC04UlyssesCombatBarks	QUST	 	Ulysses Combat Barks
+FormID: 01007B8F	NVDLC04ToolboxContainer	CONT	 	Toolbox
+FormID: 01007B90	NVDLC04LockerVaultR01MED	CONT	 	Locker
+FormID: 01007B91	NVDLC04DeskOfficeCornerMetalLOW	CONT	 	Desk
+FormID: 01007B92	NVDLC04FilingCabinetLOW	CONT	 	Filing Cabinet
+FormID: 01007B93	NVDLC04DivideSLWaterPlant	CELL	 	Wastewater Treatment Plant
+FormID: 01007C3B	NVDCL04DivideWastewaterMapMarkerREF	MAPM	 	Wastewater Treatment Plant
+FormID: 01007D22	NVDLC04DeathclawBoss	CREA	 	Rawr
+FormID: 01007DAD	NVDLC04DivideRumble	EXPL	 	Divide Rumble
+FormID: 01007DAE	NVDLC04DivideCaveInRumble	EXPL	 	Divide Rumble
+FormID: 01007DB2	NVDLC04HotelWardrobe01LOW	CONT	 	Wardrobe
+FormID: 01007DD6	NVDLC04DeskOfficeMetalLOW	CONT	 	Desk
+FormID: 01007E45	NVDLC04OvenRangeDirty	CONT	 	Oven
+FormID: 01007E46	NVDLC04FridgeLOW	CONT	 	Refrigerator
+FormID: 01007E47	NVDLC04NukaVendingMachine	CONT	 	Vending Machine
+FormID: 01007E48	NVDLC04DivideJournal01	NOTE	 	Pvt. Foster's Personal Journal
+FormID: 01007F26	NVDLC04Silo01FromVistaDoor	DOOR	 	Door
+FormID: 01007F27	NVDLC04DivideVistaSiloDoor	DOOR	 	Door
+FormID: 010083A0	NVDLC04HighRoadMapMarker01REF	MAPM	 	High Road Entrance
+FormID: 010083CD	NVDLC04Silo02MapMarkerREF	MAPM	 	Ashton Silo Control Station
+FormID: 010083D7	MarkedMenGhoul	RACE	 	Ghoul
+FormID: 01008468	NVDLC04Silo01ReactorDoor	DOOR	 	Door
+FormID: 0100846D	NVDLC04CollapsedBuildingDoor	DOOR	 	Door
+FormID: 01008470	NVDLC04Silo1EDETrigger01	ACTI	 	EDE Powers Silo
+FormID: 0100847C	NVDLC04DivideTempleMaint	CELL	 	Maintenance and Storage
+FormID: 01008684	NVDLC04RedGlareMissileProjectile	PROJ	 	Red Glare Missile
+FormID: 01008688	NVDLC04UlyssesTempleDoor01	DOOR	 	Door
+FormID: 0100868D	NVDLC04LaunchControlActivator	ACTI	 	Control Station
+FormID: 01008690	NVDLC04MQ01cTrigger	ACTI	 	Gas Valve
+FormID: 01008692	NVDLC04Silo02LockdownMSG	MESG	 	Silo Door Sealed
+FormID: 010086C9	NVDLC04CrDeathClawYoung20	CREA	 	Young Deathclaw
+FormID: 010086CA	NVDLC04CrDeathClaw20	CREA	 	Deathclaw
+FormID: 010086CB	NVDLC04CrDeathClawAlpha20	CREA	 	Deathclaw Alpha Male
+FormID: 010086CC	NVDLC04TunnelerBrute01	CREA	 	Hulking Tunneler
+FormID: 010086CE	NVDLC04TunnelerBrute20	CREA	 	Hulking Tunneler
+FormID: 010086CF	NVDLC04TunnelerBrute30	CREA	 	Hulking Tunneler
+FormID: 010086D0	NVDLC04TunnelerBrute40	CREA	 	Hulking Tunneler
+FormID: 010086D1	NVDLC04TunnelerBrute50	CREA	 	Hulking Tunneler
+FormID: 010086D4	NVDLC04TunnelerVenom01	CREA	 	Venomous Tunneler
+FormID: 010086D6	NVDLC04TunnelerVenom20	CREA	 	Venomous Tunneler
+FormID: 010086D7	NVDLC04TunnelerVenom30	CREA	 	Venomous Tunneler
+FormID: 010086D8	NVDLC04TunnelerVenom40	CREA	 	Venomous Tunneler
+FormID: 010086D9	NVDLC04TunnelerVenom50	CREA	 	Venomous Tunneler
+FormID: 010086DC	NVDLC04TunnelerBoss	CREA	 	Tunneler Queen
+FormID: 010086DD	NVDLC04CrMoleRat20	CREA	 	Mole Rat
+FormID: 010086DE	NVDLC04CrMoleRatPup20	CREA	 	Mole Rat Pup
+FormID: 010086DF	NVDLC04CrSentryBotGLArmy01	CREA	 	Sentry Bot
+FormID: 010086E0	NVDLC04CrSentryBotMGArmy01	CREA	 	Sentry Bot
+FormID: 010086E1	NVDLC04CrSentryBotGLArmy30	CREA	 	Sentry Bot
+FormID: 010086E2	NVDLC04CrSentryBotGLArmy20	CREA	 	Sentry Bot
+FormID: 010086E3	NVDLC04CrSentryBotGLArmy40	CREA	 	Sentry Bot
+FormID: 010086E4	NVDLC04CrSentryBotGLArmy50	CREA	 	Sentry Bot
+FormID: 010086E5	NVDLC04CrSentryBotMGArmy20	CREA	 	Sentry Bot
+FormID: 010086E6	NVDLC04CrSentryBotMGArmy30	CREA	 	Sentry Bot
+FormID: 010086E7	NVDLC04CrSentryBotMGArmy40	CREA	 	Sentry Bot
+FormID: 010086E8	NVDLC04CrSentryBotMGArmy50	CREA	 	Sentry Bot
+FormID: 010086ED	NVDLC04MarkedMenTEMPLATE	NPC_	 	Marked Men
+FormID: 010086EE	NVDLC04MarkedMenScout	NPC_	 	Marked Men Scout
+FormID: 010086EF	NVDLC04MarkedMenHunter	NPC_	 	Marked Men Hunter
+FormID: 010086F0	NVDLC04MarkedMenRavager	NPC_	 	Marked Men Ravager
+FormID: 010086F1	NVDLC04MarkedMenMarauder	NPC_	 	Marked Men Marauder
+FormID: 010086F2	NVDLC04MarkedMenHunterBoss	NPC_	 	Blister
+FormID: 010086F3	NVDLC04MarkedMenMarauderBoss	NPC_	 	Beast
+FormID: 010086F4	NVDLC04MarkedMenRavagerBoss	NPC_	 	Bonesaw
+FormID: 010086F5	NVDLC04MarkedMenScoutBoss	NPC_	 	Blade
+FormID: 010086F6	NVDLC04CrTurretMarkII20	CREA	 	Mark II Turret
+FormID: 010086F7	NVDLC04CrTurretMarkIV20	CREA	 	Mark IV Turret
+FormID: 010086F8	NVDLC04CrTurretMarkVI20	CREA	 	Mark VI Turret
+FormID: 010087E0	NVDLC04UlyssesTrigger1	ACTI	 	Road01 Ulysses EDE Trigger
+FormID: 010087E3	NVDLC04UlyssesTrigger2	ACTI	 	Gas Valve
+FormID: 010087FD	NVDLC04EDEUpgrade01SuitCase	CONT	 	Security Briefcase
+FormID: 01008802	NVDLC04DivideMarkedMenMarauder	NPC_	 	Marked Men Marauder
+FormID: 01008803	NVDLC04DivideMarkedMenHunter	NPC_	 	Marked Men Hunter
+FormID: 01008804	NVDLC04DivideMarkedMenRavager	NPC_	 	Marked Men Ravager
+FormID: 01008805	NVDLC04DivideMarkedMenScout	NPC_	 	Marked Men Scout
+FormID: 01008855	NVDLC04ArmorRiotGear	ARMO	 	Riot Gear
+FormID: 01008856	NVDLC04HelmetRiotGear	ARMO	 	Riot Gear Helmet
+FormID: 01008857	NVDLC04ArmorRiotGearCustom	ARMO	 	Advanced Riot Gear
+FormID: 01008858	NVDLC04WeapSMMG	WEAP	 	Shoulder Mounted Machine Gun
+FormID: 01008859	NVDLC04HelmetRiotGearCustom	ARMO	 	Advanced Riot Gear Helmet
+FormID: 0100885A	NVDLC04HelmetRiotGearUnique	ARMO	 	Elite Riot Gear Helmet
+FormID: 0100885B	NVDLC04ArmorRiotGearUnique	ARMO	 	Elite Riot Gear
+FormID: 01008861	NVDLC04LootAmmoSatchelCharge	CONT	 	Satchel Charge Box
+FormID: 01008869	NVDLC04LootAmmoSatchelChargeLOCKED	CONT	 	Satchel Charge Box
+FormID: 010088E3	NVDLC04SLaserDetonatorCase	CONT	 	High-Tech Gun Case
+FormID: 0100891D	NVDLC04Road01ExitCodeHolder	ACTI	 	Direct the Show
+FormID: 0100894B	NVDLC04Silo01MainExitDoor	DOOR	 	Door
+FormID: 0100894C	NVDLC04TerminalSilo01Mainframe	TERM	 	Mainframe Terminal
+FormID: 0100894D	NVDLC04Silo01Floor02AwakenBotTrigger	ACTI	 	Awaken Bot
+FormID: 0100894E	NVDLC04Silo01MainframeONOFF	ACTI	 	Hopeville Silo Mainframe Controls
+FormID: 0100894F	NVDLC04Silo1EDEMainframeActivateTrigger	ACTI	 	EDE AddScriptPackage Trigger
+FormID: 01008954	NVDLC04Silo01SecurityTurretFaction	FACT	 	Hopeville Silo Security Faction
+FormID: 01008955	NVDLC04Silo01SecurityBotFaction	FACT	 	Hopeville Silo Security Faction
+FormID: 01008959	NVDLC04FilingCabinetMED	CONT	 	Filing Cabinet
+FormID: 0100895A	NVDLC04FilingCabinetHIGH	CONT	 	Filing Cabinet
+FormID: 0100895B	NVDLC04FilingCabinetLOCKED	CONT	 	Filing Cabinet
+FormID: 0100895C	NVDLC04FridgeMED	CONT	 	Refrigerator
+FormID: 0100895D	NVDLC04FridgeHIGH	CONT	 	Refrigerator
+FormID: 0100895E	NVDLC04HotelWardrobe01MED	CONT	 	Wardrobe
+FormID: 0100895F	NVDLC04HotelWardrobe01HIGH	CONT	 	Wardrobe
+FormID: 01008960	NVDLC04HotelWardrobe01LOCKED	CONT	 	Wardrobe
+FormID: 01008961	NVDLC04LockerVaultR01LOW	CONT	 	Locker
+FormID: 01008962	NVDLC04LockerVaultR01HIGH	CONT	 	Locker
+FormID: 01008963	NVDLC04LockerVaultR01LOCKED	CONT	 	Locker
+FormID: 01008964	NVDLC04MetalBox01LOW	CONT	 	Metal Box
+FormID: 01008965	NVDLC04MetalBox01MED	CONT	 	Metal Box
+FormID: 01008966	NVDLC04MetalBox01HIGH	CONT	 	Metal Box
+FormID: 01008967	NVDLC04MetalBox01LOCK	CONT	 	Metal Box
+FormID: 01008968	NVDLC04SackLOW	CONT	 	Sack
+FormID: 01008969	NVDLC04SackMED	CONT	 	Sack
+FormID: 0100896A	NVDLC04SackHIGH	CONT	 	Sack
+FormID: 0100896B	NVDLC04LootDufflebagMED	CONT	 	Duffle Bag
+FormID: 0100896C	NVDLC04LootDufflebagLOW	CONT	 	Duffle Bag
+FormID: 0100896D	NVDLC04LootDufflebagHIGH	CONT	 	Duffle Bag
+FormID: 0100896E	NVDLC04DivideDuffle01	CONT	 	Duffle Bag
+FormID: 0100896F	NVDLC04DeskOfficeCornerMetalMED	CONT	 	Desk
+FormID: 01008970	NVDLC04DeskOfficeCornerMetalHIGH	CONT	 	Desk
+FormID: 01008971	NVDLC04DeskOfficeCornerMetalLOCKED	CONT	 	Desk
+FormID: 01008972	NVDLC04DeskOfficeMetalMED	CONT	 	Desk
+FormID: 01008973	NVDLC04DeskOfficeMetalHIGH	CONT	 	Desk
+FormID: 01008974	NVDLC04DeskOfficeMetalLOCKED	CONT	 	Desk
+FormID: 01008976	NVDLC04DivideMoleRatSmall	CREA	 	Mole Rat Pup
+FormID: 01008978	NVDLC04DivideMoleRatMed	CREA	 	Mole Rat
+FormID: 0100899C	NVDLC04DivideMarkedMenScoutD01	NPC_	 	Marked Men Scout
+FormID: 0100899D	NVDLC04DivideMarkedMenHunterD01	NPC_	 	Marked Men Hunter
+FormID: 010089E7	NVDLC04Road01MarkedMenMarauder	NPC_	 	Marked Men Hunter
+FormID: 010089E8	NVDLC04Road01CampBossMarkedMenRavager	NPC_	 	Marked Men Ravager
+FormID: 010089E9	NVDLC04Road01CampBossMarkedMenScout	NPC_	 	Marked Men Scout
+FormID: 010089EA	NVDLC04Road01CampBossMarkedMenHunter	NPC_	 	Marked Men Hunter
+FormID: 010089EB	NVDLC04Road01MarkedMenRavager	NPC_	 	Marked Men Ravager
+FormID: 010089EC	NVDLC04Road01MarkedMenHunter	NPC_	 	Marked Men Hunter
+FormID: 010089ED	NVDLC04Road01Camp01MarkedMenRavager	NPC_	 	Marked Men Ravager
+FormID: 010089EE	NVDLC04Road01Camp01MarkedMenHunter	NPC_	 	Marked Men Hunter
+FormID: 010089EF	NVDLC04Road01Camp01MarkedMenScout	NPC_	 	Marked Men Scout
+FormID: 010089F0	NVDLC04Road01MarkedMenScout	NPC_	 	Marked Men Scout
+FormID: 010089F1	NVDLC04Road01MMCamp01GuardsAwakenTrigger	ACTI	 	Awaken Guard Duadz
+FormID: 010089F2	NVDLC04Road01Camp01CodeHolder	ACTI	 	Direct the Show
+FormID: 010089F3	NVDLC04Road01MMCamp01Scout01AwakenTrigger	ACTI	 	Awaken Scout Dood
+FormID: 01008B03	NVDLC04ArmorMarkedMenTrooper	ARMO	 	Marked Trooper Armor
+FormID: 01008B04	NVDLC04ArmorMarkedMenScout	ARMO	 	Marked Scout Armor
+FormID: 01008B05	NVDLC04WeapBladeWest	WEAP	 	Blade of the West
+FormID: 01008BA5	NVDLC04Silo01RevealCodeHolder	ACTI	 	Direct the Show
+FormID: 01008CB9	NVDLC04WeapIndustrialHand	WEAP	 	Industrial Hand
+FormID: 01008D65	NVDLC04LootEyebotBroken	CONT	 	Broken Eyebot
+FormID: 01008E0E	NVDLC04Silo01CodeHolder	ACTI	 	Direct Silo Show
+FormID: 01008EF0	NVDLC04Road01EDEWarheadRevealTrigger	ACTI	 	Start the Show
+FormID: 01008EF1	NVDLC04Road01StartCodeHolder	ACTI	 	Direct Hopeville Show
+FormID: 01008EFF	NVDLC04OutfitUSMilitaryGeneral	ARMO	 	US Army General Outfit
+FormID: 01008F00	NVDLC04ArmorUSArmyCombatArmor	ARMO	 	US Army Combat Armor
+FormID: 01008F5F	NVDLC04TempleMaintenanceTerminal	TERM	 	Maintenance Terminal
+FormID: 01008F60	NVDLC04TempleMaintenanceTerminal02	TERM	 	Maintenance Terminal
+FormID: 01008FA7	NVDLC04DivideSniperWarhead01	ACTI	 	Warhead
+FormID: 01008FA8	NVDLC04DivideSniperWarhead03	ACTI	 	Warhead
+FormID: 01008FA9	NVDLC04DivideSniperWarhead02	ACTI	 	Warhead
+FormID: 01008FE7	NVDLC04Road01MidCodeHolder	ACTI	 	Direct Hopeville Show
+FormID: 01008FE8	NVDLC04Road01MMCamp02Scout01AwakenTrigger	ACTI	 	Awaken Scout Dood
+FormID: 01009075	NVDLC04Silo02TerminalTEMP	TERM	 	ED-E Access Point
+FormID: 01009078	NVDLC04DivideMarkedMenScoutSniper	NPC_	 	Marked Men Scout
+FormID: 010090A3	NVDLC04Silo01DeadMarkedMenRavager	NPC_	 	Marked Men Ravager
+FormID: 010090A6	NVDLC04CrSentryBotMGArmySilo01DeadBot	CREA	 	Sentry Bot
+FormID: 010090AA	NVDLC04Silo01DeadMarkedMenScout	NPC_	 	Marked Men Scout
+FormID: 010090B0	NVDLC04Silo01DeadMarkedMenHunter	NPC_	 	Marked Men Hunter
+FormID: 010090F7	NVDLC04Road01BunkerMapMarkerREF	MAPM	 	Hopeville Missile Silo Bunker
+FormID: 010090F8	NVDLC04Road01BaseWestMapMarkerREF	MAPM	 	Hopeville Missile Base - West Entrance
+FormID: 010090F9	NVDLC04Road01BaseEastMapMarkerREF	MAPM	 	Hopeville Missile Base - East Entrance
+FormID: 010090FA	NVDLC04Road01HQMapMarkerREF	MAPM	 	Hopeville Missile Base Headquarters
+FormID: 010090FB	NVDLC04Road01Camp01MapMarkerREF	MAPM	 	Marked Men Camp
+FormID: 010090FC	NVDLC04Road01BossCampMapMarkerREF	MAPM	 	Marked Men Base
+FormID: 010090FD	NVDLC04Road01Camp02MapMarkerREF	MAPM	 	Marked Men Guard Outpost
+FormID: 010090FE	NVDLC04Road01Camp03MapMarkerREF	MAPM	 	Marked Men Supply Outpost
+FormID: 010090FF	NVDLC04Road01BaseLoadMapMarkerREF	MAPM	 	Hopeville Missile Base - Loading Station
+FormID: 01009100	NVDLC04Road01TunnelMapMarkerREF	MAPM	 	Collapsed Overpass Tunnel Entrance
+FormID: 01009108	NVDLC04DivideDuffle02	CONT	 	Duffle Bag
+FormID: 01009109	NVDLC04DivideMarkedMenRavagerRespawn	NPC_	 	Marked Men Ravager
+FormID: 0100910A	NVDLC04DivideMarkedMenScoutRespawn	NPC_	 	Marked Men Scout
+FormID: 0100910B	NVDLC04DivideMarkedMenHunterRespawn	NPC_	 	Marked Men Hunter
+FormID: 0100910C	NVDLC04DivideMarkedMenMarauderRespawn	NPC_	 	Marked Men Marauder
+FormID: 0100910D	NVDLC04DivideJournal02	NOTE	 	Mission Report
+FormID: 01009142	NVDLC04DVworldWreckageMapMarkerREF	MAPM	 	Pass to Canyon Wreckage
+FormID: 01009143	NVDLC04DVWorldBunkerMapMarkerREF	MAPM	 	Hopeville Silo Bunker Entrance
+FormID: 01009144	NVDLC04WarheadSide	ACTI	 	Warhead
+FormID: 01009149	NVDLC04EyebotRepair20	CREA	 	Repair Eyebot
+FormID: 0100914A	NVDLC04EyebotMedical20	CREA	 	Medical Eyebot
+FormID: 0100917B	NVDLC04FungalPurgative	ALCH	 	Fiery Purgative
+FormID: 0100917C	NVDLC04AutoInjectStimpak	ALCH	 	Auto-Inject Stimpak
+FormID: 0100917D	NVDLC04AutoInjectSuperStimpak	ALCH	 	Auto-Inject Super Stimpak
+FormID: 0100917E	NVDLC04MRE	ALCH	 	MRE
+FormID: 0100917F	NVDLC04Tourniquet	ALCH	 	Snakebite Tourniquet
+FormID: 01009180	NVDLC04RushingWater	ALCH	 	Rushing Water
+FormID: 01009230	NVDLC04SlideShow	CELL	 	Slide Show Theatre Room
+FormID: 0100923B	NVDLC04SlideShowTrigger	ACTI	 	SlideShow Trigger
+FormID: 0100923E	NVDLC04Narrator	NPC_	 	Bill the Tax Collector
+FormID: 01009253	NVDLC04ArmorDusterCourier	ARMO	 	Courier Duster
+FormID: 01009254	NVDLC04ArmorDusterLegion	ARMO	 	Courier Duster
+FormID: 01009255	NVDLC04ArmorDusterNCR	ARMO	 	Courier Duster
+FormID: 01009257	NVDLC04ArmorDusterOldWorld	ARMO	 	Courier Duster
+FormID: 01009258	ModNVDLC04RedGlareFarSighting	IMOD	 	Red Glare Far Sighting
+FormID: 01009259	ModNVDLC04RedGlareAlphaStrike	IMOD	 	Red Glare Alpha Strike
+FormID: 0100925A	ModNVDLC04SMMGRecoilCompensator	IMOD	 	SMMG Recoil Compensator
+FormID: 0100925B	ModNVDLC04SMMGMechanicalUpgrade	IMOD	 	SMMG Mechanical Upgrade
+FormID: 0100925C	ModNVDLC04SMMGExtendedMag	IMOD	 	SMMG Extended Magazine
+FormID: 0100925D	ModNVDLC04RedGlareAutoLauncher	IMOD	 	Red Glare Auto Launcher
+FormID: 0100925E	NVDLC04WeapNailGun	WEAP	 	H&H Tools Nail Gun
+FormID: 0100925F	AmmoNVDLC04RocketIncendiary	AMMO	 	Rocket, Incendiary
+FormID: 01009261	AmmoNVDLC04Nails	AMMO	 	Nails
+FormID: 01009262	AmmoNVDLC04Rocket	AMMO	 	Rocket
+FormID: 01009263	AmmoNVDLC04RocketHE	AMMO	 	Rocket, High Explosive
+FormID: 01009264	RecipeNVDLC04Tourniquet	RCPE	 	Snakebite Tourniquet
+FormID: 01009265	RecipeNVDLC04FungalPurgative	RCPE	 	Fiery Purgative
+FormID: 01009266	RecipeNVDLC04RocketAmmo	RCPE	 	Rocket Ammo
+FormID: 01009267	RecipeNVDLC04Stimpak	RCPE	 	Auto-Inject Stimpak
+FormID: 01009268	RecipeNVDLC04SuperStimpak	RCPE	 	Auto-Inject Super Stimpak
+FormID: 01009269	RecipeNVDLC04BitterDrink	RCPE	 	Bitter Drink
+FormID: 0100926A	RecipeNVDLC04RushingWater	RCPE	 	Rushing Water
+FormID: 010092E8	NVDLC04ArmorMarkedMenTribal	ARMO	 	Marked Tribal Armor
+FormID: 010092E9	NVDLC04ArmorMarkedMenPatrol	ARMO	 	Marked Patrol Armor
+FormID: 010092EA	NVDLC04HelmetLegateHelm	ARMO	 	Marked Beast Tribal Helmet
+FormID: 010092EB	NVDLC04MarkedMentest01	NPC_	 	datest
+FormID: 010092EC	NVDLC04MMRangerGloveL	ARMA	 	NVDLC04MMRangerGloveL
+FormID: 010092ED	NVDLC04MMRangerGloveR	ARMA	 	NVDLC04MMRangerGloveR
+FormID: 010092EF	NVDLC04Silo01SecurityCodeLvl02	NOTE	 	Hopeville Silo - 2nd Level Security Code
+FormID: 010092F0	NVDLC04Silo01SecurityCodeLvl01	NOTE	 	Hopeville Silo - 1st Level Security Code
+FormID: 010092F1	NVDLC04DeskOfficeMetalSilo01Lvl2SecurityCode	CONT	 	Desk
+FormID: 010092F3	NVDLC04DeskOfficeMetalSilo01Lvl1SecurityCode	CONT	 	Desk
+FormID: 010092F6	NVDLC04TerminalSilo01SecuritySentry	TERM	 	Base Commander's Terminal
+FormID: 010092F7	NVDLC04TerminalSilo01SecurityTurret	TERM	 	Turret Security Terminal
+FormID: 010092FB	NVDLC04Silo01TerminalSecurityTurretMSG	MESG	 	Hopeville Silo Turret Security Terminal
+FormID: 010092FC	NVDLC04Silo01MainframeMSG	MESG	 	Hopeville Silo Mainframe
+FormID: 010092FD	NVDLC04Silo01MainframeMSG02	MESG	 	Hopeville Silo Mainframe
+FormID: 010092FE	NVDLC04Silo01MainframeAccessMSG	MESG	 	Hopeville Silo Mainframe
+FormID: 010092FF	NVDLC04Silo01MainframeOpenMSG	MESG	 	Hopeville Silo Mainframe
+FormID: 01009300	NVDLC04Silo01MainframeEDEMSG	MESG	 	ED-E Connected to Silo's Mainframe
+FormID: 01009301	NVDLC04Silo01MaintenanceBot01	ACTI	 	Maintenance Bot
+FormID: 01009302	NVDLC04Silo01MaintenanceBot02	ACTI	 	Maintenance Bot
+FormID: 0100930D	NVDLC04Silo01SiloShaftDoorLow	DOOR	 	Door
+FormID: 0100930F	NVDLC04TunnelerHide	MISC	 	Tunneler Hide
+FormID: 0100931A	NVDLC04ToolCabinetMetal	CONT	 	Tool Cabinet
+FormID: 0100931B	NVDLC04ToolboxStash	CONT	 	Toolbox
+FormID: 0100931C	NVDLC04FilingCabinetBunch04	CONT	 	Filing Cabinets
+FormID: 0100931D	NVDLC04FireHoseBox	CONT	 	Fire Hose Box
+FormID: 0100931E	NVDLC04GarbageCanUrban03	CONT	 	Garbage Can
+FormID: 0100931F	NVDLC04FilingCabinetBunch02	CONT	 	Filing Cabinets
+FormID: 01009321	NVDLC04DeskWoodTopRusty	CONT	 	Desk
+FormID: 01009322	NVDLC04GarbageCanUrban02	CONT	 	Garbage Can
+FormID: 01009323	NVDLC04GarbageCanUrban01	CONT	 	Garbage Can
+FormID: 0100935F	NVDLC04RedGlareMissileExplosion	EXPL	 	Red Glare Missile Explosion
+FormID: 0100936C	NVDLC04DivideEastCampMarkedMenScout	NPC_	 	Marked Men Scout
+FormID: 0100936D	NVDLC04DivideEastCampMarkedMenRavager	NPC_	 	Marked Men Ravager
+FormID: 0100936F	NVDLC04DivideEastCampMarkedMenHunter	NPC_	 	Marked Men Hunter
+FormID: 01009383	NVDLC04TempleEyebotControl01	ACTI	 	Eyebot Control Console
+FormID: 01009384	NVDLC04TempleEyebotControl02	ACTI	 	Eyebot Control Console
+FormID: 0100938A	NVDLC04EyebotSpawnExplosion	EXPL	 	Eyebot Spawn Explosion
+FormID: 0100938B	NVDLC04TempleEyebotControlMsgR00	MESG	 	Eyebot Control Station
+FormID: 01009418	NVDLC04CrDeathClawTunnel	CREA	 	Deathclaw
+FormID: 01009419	NVDLC04TunnelTunnelerScare	CREA	 	Tunneler
+FormID: 0100941A	NVDLC04Silo01BowieKnifeCodeHolder	ACTI	 	Bowie Knife Fun
+FormID: 0100941B	NVDLC04TunnelTunnelerScareTrigger	ACTI	 	Awaken Tunneler
+FormID: 0100941C	NVDLC04TunnelSoundScareTrigger	ACTI	 	Creep Out
+FormID: 0100941D	NVDLC04TunnelCodeHolder	ACTI	 	Direct the Show
+FormID: 01009457	NVDLC04TunnelTunnelerScare02	CREA	 	Hulking Tunneler
+FormID: 01009493	NVDLC04TunnelSoundScare02Trigger	ACTI	 	Creep Out
+FormID: 01009494	NVDLC04TunnelSoundCreepTrigger	ACTI	 	Creep Out
+FormID: 01009495	NVDLC04TunnelFinaleTrigger	ACTI	 	Creep Out
+FormID: 0100949A	NVDLC04TempleBattleFaction	FACT	 	Ulysses Temple Battle Faction
+FormID: 0100949B	NVDLC04TempleMarkedMenRavager01	NPC_	 	Marked Men Ravager
+FormID: 0100949C	NVDLC04TempleMarkedMenScout01	NPC_	 	Marked Men Scout
+FormID: 0100949D	NVDLC04TempleMarkedMenHunter01	NPC_	 	Marked Men Hunter
+FormID: 010094EF	NVDLC04WarheadMSG	MESG	 	Warhead
+FormID: 010094F8	NVDLC04FootlockerIndustrialHand	CONT	 	Footlocker
+FormID: 01009504	NVDLC04Road02InterchangeMapMarkerREF	MAPM	 	Ruined Highway Interchange
+FormID: 01009507	NVDLC04Junction7MapMarkerREF	MAPM	 	Junction 7 Rest Stop
+FormID: 01009508	NVDLC04Silo01PowerEDEMSG	MESG	 	ED-E Connected to Silo's Mainframe
+FormID: 0100950C	NVDLC04EDEAccessPoint	ACTI	 	ED-E Access Point
+FormID: 0100950E	NVDLC04CrDeathClawYoung01	CREA	 	Young Deathclaw
+FormID: 0100950F	NVDLC04CrDeathClawYoung30	CREA	 	Young Deathclaw
+FormID: 01009510	NVDLC04CrDeathClawYoung40	CREA	 	Young Deathclaw
+FormID: 01009511	NVDLC04CrDeathClawYoung50	CREA	 	Young Deathclaw
+FormID: 01009512	NVDLC04CrDeathClaw01	CREA	 	Deathclaw
+FormID: 01009513	NVDLC04CrDeathClaw30	CREA	 	Deathclaw
+FormID: 01009514	NVDLC04CrDeathClaw40	CREA	 	Deathclaw
+FormID: 01009515	NVDLC04CrDeathClaw50	CREA	 	Deathclaw
+FormID: 01009516	NVDLC04CrDeathClawYoungLVL	CREA	 	Young Deathclaw
+FormID: 0100951A	NVDLC04CrMoleRatPup01	CREA	 	Mole Rat Pup
+FormID: 0100951B	NVDLC04CrMoleRatPup30	CREA	 	Mole Rat Pup
+FormID: 0100951C	NVDLC04CrMoleRatPup40	CREA	 	Mole Rat Pup
+FormID: 0100951D	NVDLC04CrMoleRatPup50	CREA	 	Mole Rat Pup
+FormID: 0100951E	NVDLC04CrMoleRatPupLVL	CREA	 	Mole Rat Pup
+FormID: 01009520	NVDLC04CrDeathClawAlpha01	CREA	 	Deathclaw Alpha Male
+FormID: 01009521	NVDLC04CrDeathClawAlpha30	CREA	 	Deathclaw Alpha Male
+FormID: 01009522	NVDLC04CrDeathClawAlpha40	CREA	 	Deathclaw Alpha Male
+FormID: 01009523	NVDLC04CrDeathClawAlpha50	CREA	 	Deathclaw Alpha Male
+FormID: 01009524	NVDLC04CrDeathClawAlphaLVL	CREA	 	Deathclaw Alpha Male
+FormID: 01009526	NVDLC04CrMoleRat01	CREA	 	Mole Rat
+FormID: 01009527	NVDLC04CrMoleRat30	CREA	 	Mole Rat
+FormID: 01009528	NVDLC04CrMoleRat40	CREA	 	Mole Rat
+FormID: 01009529	NVDLC04CrMoleRat50	CREA	 	Mole Rat
+FormID: 0100952A	NVDLC04CrMoleRatLVL	CREA	 	Mole Rat
+FormID: 0100952C	NVDLC04CrTurretMarkII01	CREA	 	Mark II Turret
+FormID: 0100952D	NVDLC04CrTurretMarkII30	CREA	 	Mark II Turret
+FormID: 0100952E	NVDLC04CrTurretMarkII40	CREA	 	Mark II Turret
+FormID: 0100952F	NVDLC04CrTurretMarkII50	CREA	 	Mark II Turret
+FormID: 01009531	NVDLC04CrTurretMarkIV01	CREA	 	Mark IV Turret
+FormID: 01009532	NVDLC04CrTurretMarkIV30	CREA	 	Mark IV Turret
+FormID: 01009533	NVDLC04CrTurretMarkIV40	CREA	 	Mark IV Turret
+FormID: 01009534	NVDLC04CrTurretMarkIV50	CREA	 	Mark IV Turret
+FormID: 01009535	NVDLC04CrTurretMarkVI01	CREA	 	Mark VI Turret
+FormID: 01009536	NVDLC04CrTurretMarkVI30	CREA	 	Mark VI Turret
+FormID: 01009537	NVDLC04CrTurretMarkVI40	CREA	 	Mark VI Turret
+FormID: 01009538	NVDLC04CrTurretMarkVI50	CREA	 	Mark VI Turret
+FormID: 01009693	NVDLC04TempleEyebotFaction	FACT	 	Eyebot faction for friendly eyebots
+FormID: 01009695	NVDLC04TempleEyebotControlMsgR01	MESG	 	Eyebot Control Station
+FormID: 01009696	NVDLC04TempleEyebotControlMsgR02	MESG	 	Eyebot Control Station
+FormID: 01009697	NVDLC04TempleEyebotControlMsgR03	MESG	 	Eyebot Control Station
+FormID: 01009698	NVDLC04TempleEyebotControlMsgL00	MESG	 	Eyebot Control Station
+FormID: 01009699	NVDLC04TempleEyebotControlMsgL01	MESG	 	Eyebot Control Station
+FormID: 0100969A	NVDLC04TempleEyebotControlMsgL02	MESG	 	Eyebot Control Station
+FormID: 0100969B	NVDLC04TempleEyebotControlMsgL03	MESG	 	Eyebot Control Station
+FormID: 0100973E	NVDLC04Silo02ElevatorExplosionBig	EXPL	 	Tunnel Explosion
+FormID: 0100974A	NVDLC04Silo02ElevatorExplosionsCodeHolder	ACTI	 	Direct Elevator Explosions
+FormID: 0100974B	NVDLC04Silo02ElevatorCodeHolder	ACTI	 	Direct Elevator Show
+FormID: 01009750	NVDLC04WeapFlagpoleNPC20	WEAP	 	Old Glory
+FormID: 01009751	NVDLC04WeapFlagpoleNPC30	WEAP	 	Old Glory
+FormID: 01009752	NVDLC04WeapFlagpoleNPC40	WEAP	 	Old Glory
+FormID: 01009753	NVDLC04WeapFlagpoleNPC50	WEAP	 	Old Glory
+FormID: 010097A5	NVDLC04Road02MarkedMenScout	NPC_	 	Marked Men Scout
+FormID: 010097A8	NVDLC04Road02MarkedMenMarauder	NPC_	 	Marked Men Marauder
+FormID: 01009810	NVDLC04Road02DeathClawDEAD	CREA	 	Deathclaw
+FormID: 01009815	NVDLC04Road02MarkedMenSurvivor	NPC_	 	Marked Men Scout
+FormID: 010098ED	NVDLC04MetalBox01LOWFT	CONT	 	Metal Box
+FormID: 010098F5	NVDLC04GarbageCanUrban03FT	CONT	 	Garbage Can
+FormID: 010099A6	NVDLC04Road01Region	REGN	 	Hopeville
+FormID: 010099A8	NVDLC04WeapUlyssesEyebotGun	WEAP	 	Energy Zap
+FormID: 010099F0	NVDLC04TurretMarkIILaser2HR20	WEAP	 	Laser
+FormID: 010099F1	NVDLC04TurretMarkIILaser2HR30	WEAP	 	Laser
+FormID: 010099F2	NVDLC04TurretMarkIILaser2HR40	WEAP	 	Laser
+FormID: 010099F3	NVDLC04TurretMarkIILaser2HR50	WEAP	 	Laser
+FormID: 010099F4	NVDLC04TurretMarkIVLaser2HR20	WEAP	 	Laser
+FormID: 010099F5	NVDLC04TurretMarkIVLaser2HR30	WEAP	 	Laser
+FormID: 010099F6	NVDLC04TurretMarkIVLaser2HR40	WEAP	 	Laser
+FormID: 010099F7	NVDLC04TurretMarkIVLaser2HR50	WEAP	 	Laser
+FormID: 010099F8	NVDLC04TurretMarkVILaser2HR20	WEAP	 	Laser
+FormID: 010099F9	NVDLC04TurretMarkVILaser2HR30	WEAP	 	Laser
+FormID: 010099FA	NVDLC04TurretMarkVILaser2HR40	WEAP	 	Laser
+FormID: 010099FB	NVDLC04TurretMarkVILaser2HR50	WEAP	 	Laser
+FormID: 010099FF	NVDLC04Silo02EntranceTrigger	ACTI	 	Gas Valve
+FormID: 01009A00	NVDLC04TempleMarkedMenMarauder01	NPC_	 	Marked Men Marauder
+FormID: 01009A01	NVDLC04EyebotMaintenance	NOTE	 	Eyebot Maintenance
+FormID: 01009A0C	NVDLC04ReloadMessage	MESG	 	Death
+FormID: 01009A38	NVDLC04LootEyebot	CONT	 	Destroyed Eyebot
+FormID: 01009A47	NVDLC04LootTruckCrateGeneric	CONT	 	Caravan Crate
+FormID: 01009A4F	NVDLC04LootDumpsterRecycling	CONT	 	Dumpster
+FormID: 01009AE2	NVDLC04SentryBotGatling2HH20	WEAP	 	SentryBot Laser Gatling
+FormID: 01009AE3	NVDLC04SentryBotGatling2HH30	WEAP	 	SentryBot Laser Gatling
+FormID: 01009AE4	NVDLC04SentryBotGatling2HH40	WEAP	 	SentryBot Laser Gatling
+FormID: 01009AE5	NVDLC04SentryBotGatling2HH50	WEAP	 	SentryBot Laser Gatling
+FormID: 01009AE7	NVDLC04SentryBotMissileLauncher2HL20	WEAP	 	Missile Launcher
+FormID: 01009AE8	NVDLC04SentryBotMissileLauncher2HL30	WEAP	 	Missile Launcher
+FormID: 01009AE9	NVDLC04SentryBotMissileLauncher2HL40	WEAP	 	Missile Launcher
+FormID: 01009AEA	NVDLC04SentryBotMissileLauncher2HL50	WEAP	 	Missile Launcher
+FormID: 01009AEC	NVDLC04SentryBotMinigun2HR20	WEAP	 	SentryBot Minigun
+FormID: 01009AED	NVDLC04SentryBotMinigun2HR30	WEAP	 	SentryBot Minigun
+FormID: 01009AEE	NVDLC04SentryBotMinigun2HR40	WEAP	 	SentryBot Minigun
+FormID: 01009AEF	NVDLC04SentryBotMinigun2HR50	WEAP	 	SentryBot Minigun
+FormID: 01009AF2	NVDLC04LootTruckCrateAmmo100	CONT	 	Military Shipping Crate
+FormID: 01009AF3	NVDLC04LootTruckCrateMRE	CONT	 	Military Shipping Crate
+FormID: 01009AF4	NVDLC04LootTruckCrateAmmoALL	CONT	 	Military Shipping Crate
+FormID: 01009AF5	NVDLC04LootAmmoBoxEnergy	CONT	 	Ammunition Box
+FormID: 01009AF6	NVDLC04LootAmmoBoxGuns	CONT	 	Ammunition Box
+FormID: 01009AF7	NVDLC04LootTruckCrateNuka	CONT	 	Shipping Crate
+FormID: 01009C2C	NVDLC04Silo2ElevatorControls	ACTI	 	Ashton Silo Lift Controls
+FormID: 01009C91	NVDLC04Silo01MaintenanceDoor	DOOR	 	Door
+FormID: 01009C93	NVDLC04TempleMaintenanceDoor	DOOR	 	Door
+FormID: 01009C94	NVDLC04TempleLaunchTerminal	ACTI	 	Missile Launch Terminal
+FormID: 01009C95	NVDLC04TempleLaunchMSG	MESG	 	Launch Control Terminal
+FormID: 01009C96	NVDLC04TempleLaunchCodesMSG	MESG	 	Launch Control Terminal
+FormID: 01009C98	NVDLC04TempleNCRConfirmMSG	MESG	 	Launch Control Terminal
+FormID: 01009C99	NVDLC04TempleCaesarConfirmMSG	MESG	 	Launch Control Terminal
+FormID: 01009C9E	NVDLC04Silo02LaunchExplosionBig	EXPL	 	Tunnel Explosion
+FormID: 01009C9F	NVDLC04Silo02LaunchExplosionSmall	EXPL	 	Tunnel Explosion
+FormID: 01009CAA	NVDLC04DivideSLWasteDisposal	CELL	 	Waste Disposal Station
+FormID: 01009CAB	NVDLC04SLBasement	CELL	 	Basement
+FormID: 01009CAC	NVDLC04SLHopeVilleWomensBarracks	CELL	 	Hopeville Women's Barracks
+FormID: 01009CAD	NVDLC04SLArmory01	CELL	 	Hopeville Armory
+FormID: 01009CAE	NVDLC04SLHopeVilleMensBarracks	CELL	 	Hopeville Men's Barracks
+FormID: 01009FEA	NVDLC04DyingBreathNote	ACTI	 	Dying Breath Note
+FormID: 01009FEB	NVDLC04DyingBreathPaper	MISC	 	Note
+FormID: 0100A19C	NVDLC04SLWasteDisposalNote	NOTE	 	For whoever finds this....
+FormID: 0100A1A8	NVDLC04SuitCase	CONT	 	Suitcase
+FormID: 0100A206	NVDLC04LootTruckCrateMRE75	CONT	 	Military Shipping Crate
+FormID: 0100A207	NVDLC04LootTruckCrateAmmo75	CONT	 	Military Shipping Crate
+FormID: 0100A208	NVDLC04LootAmmoBoxElectronChargePacksLock	CONT	 	Ammunition Box
+FormID: 0100A209	NVDLC04LootCraftingStationContainer	CONT	 	Metal Box
+FormID: 0100A20A	NVDLC04LootCraftingStationContainerLead	CONT	 	Metal Box
+FormID: 0100A20B	NVDLC04LootCraftingStationContainerLOCKED	CONT	 	Metal Box
+FormID: 0100A20C	NVDLC04LootTruckCrateAmmoRockets100	CONT	 	Military Shipping Crate
+FormID: 0100A20D	NVDLC04FootlockerStrippedStuff	CONT	 	Footlocker
+FormID: 0100A20E	NVDLC04LootTruckCrateFood	CONT	 	Military Shipping Crate
+FormID: 0100A20F	NVDLC04LootMetalBoxFood	CONT	 	Damaged Shipping Crate
+FormID: 0100A210	NVDLC04LootCraftingFootlockerFood	CONT	 	Footlocker
+FormID: 0100A211	NVDLC04LootFirstAidKit	CONT	 	First Aid Box
+FormID: 0100A2CB	NVDLC04DivideWaterPlantTerminal	TERM	 	Manager's Terminal
+FormID: 0100A2CC	NVDLC04DivideGovtTerminal	TERM	 	Office of the Treasurer Terminal
+FormID: 0100A2CD	NVDLC04DivideAptTerminal	TERM	 	Jackie's Computer
+FormID: 0100A2CE	NVDLC04DivideCaveSuitCase	CONT	 	Suitcase
+FormID: 0100A2CF	NVDLC04DivideJournal03	NOTE	 	Sunflower Summers' Diary
+FormID: 0100A2D0	NVDLC04DivideGovtNote01	NOTE	 	Report
+FormID: 0100A2D1	NVDLC04DivideGovtNote02	NOTE	 	Inter-Office Email
+FormID: 0100A2D2	NVDLC04DivideWaterPlant01	NOTE	 	Wastewater Note
+FormID: 0100A2D3	NVDLC04DivideWaterPlant02	NOTE	 	Re: Wastewater Note
+FormID: 0100A2D4	NVDLC04DivideApartmentNote01	NOTE	 	Noise
+FormID: 0100A2D5	NVDLC04DivideApartmentNote02	NOTE	 	Earthquakes
+FormID: 0100A2D6	NVDLC04DivideApartmentNote03	NOTE	 	Earthquakes Part 2
+FormID: 0100A32B	NVDLC04TunnelSoundScare03Trigger	ACTI	 	Creep Out
+FormID: 0100A372	NVDLC04LootTruckCrateSS	CONT	 	Shipping Crate
+FormID: 0100A386	NVDLC04Road02DeathclawTrigger	ACTI	 	Road 02 Deathclaw Trigger
+FormID: 0100A544	NVDLC04BowieKnifeVATSAE	SPEL	 	Dirt-Nap
+FormID: 0100A546	NVDLC04DummyStealthVATSBE	MGEF	 	Stealth VATS Takedown
+FormID: 0100A547	NVDLC04BowieKnifeVATSBE	MGEF	 	Dirt-Nap
+FormID: 0100A548	NVDLC04BowieKnifeOE	ENCH	 	Bowie Knife
+FormID: 0100A54C	NVDLC04IncreaseSkillSneakItemBE	MGEF	 	Increased Sneak
+FormID: 0100A562	NVDLC04UlyssesKnockdownEffect	MGEF	 	NVDLC04UIyssesKnockdownEffect
+FormID: 0100A566	NVDLC04UlyssesFlagPoleEnch	ENCH	 	Ulysses' Pride
+FormID: 0100A583	NVDLC04SuitCase02	CONT	 	Suitcase
+FormID: 0100A584	NVDLC04SuitCaseAddict	CONT	 	Suitcase
+FormID: 0100A585	NVDLC04LootSmallCrateFood	CONT	 	Dirty Crate
+FormID: 0100A586	NVDLC04LootMetalBoxFood02	CONT	 	Damaged Shipping Crate
+FormID: 0100A587	NVDLC04LootFootlockerSurvivalist	CONT	 	Survivor's Footlocker
+FormID: 0100A588	NVDLC04LootMetalBoxLead01	CONT	 	Lead-Lined Metal Box
+FormID: 0100A589	NVDLC04LootMetalBoxLead02	CONT	 	Lead-Lined Metal Box
+FormID: 0100A58A	NVDLC04LootTruckCrateHealing	CONT	 	Military Shipping Crate
+FormID: 0100A58B	NVDLC04LootFootlockerOfficeLock	CONT	 	Personal Footlocker
+FormID: 0100A58C	NVDLC04LootCraftingPartsCabinet	CONT	 	Parts Cabinet
+FormID: 0100A58D	NVDLC04LootFridgeRoad02Beer	CONT	 	Broken Refrigerator
+FormID: 0100A5F8	NVDLC04ChallengeNostalgia	CHAL	 	Nostalgia
+FormID: 0100A5F9	NVDLC04ChallengeMostLikelyTo	CHAL	 	Most Likely To...
+FormID: 0100A5FA	NVDLC04ChallengeUlyssesOdyssey	CHAL	 	Ulysses' Odyssey
+FormID: 0100A5FC	NVDLC04AchievementEDECATED	CHAL	 	ED-Ecated
+FormID: 0100A5FD	NVDLC04AchievementDoomedtoRepeat	CHAL	 	Condemned to Repeat It
+FormID: 0100A5FE	NVDLC04AchievementHometownHero	CHAL	 	Hometown Hero
+FormID: 0100A5FF	NVDLC04ChallengeEndsoftheEarth	CHAL	 	Ends of the Earth
+FormID: 0100A600	NVDLC04ChallengeTheCouriersMile	CHAL	 	The Courier's Mile
+FormID: 0100A601	NVDLC04AchievementRocketsRedGlare	CHAL	 	Rocket's Red Glare
+FormID: 0100A602	NVDLC04CamaraderEPerk	PERK	 	Camarader-E
+FormID: 0100A604	NVDLC04AchievementWarheadHunter	CHAL	 	Warhead Hunter
+FormID: 0100A605	NVDLC04BowieKnifeUniqueOE	ENCH	 	Blood-Nap
+FormID: 0100A606	NVDLC04WeapBowieKnifeUnique	WEAP	 	Blood-Nap
+FormID: 0100A60C	NVDLC04DummyBonusSneakBE	MGEF	 	Bonus Critical Damage, Sneak +10
+FormID: 0100A60D	NVDLC04LootSilo02DeskMagazine	CONT	 	Desk
+FormID: 0100A60E	NVDLC04LootCraftingStationLocker	CONT	 	Supply Cabinet
+FormID: 0100A60F	NVDLC04LootCraftingStationContainer02	CONT	 	Metal Box
+FormID: 0100A610	NVDLC04LootNukeMetalBox02	CONT	 	Metal Box
+FormID: 0100A66F	NVDLC04LootDivideStartFilingCabinetLOCKED	CONT	 	Filing Cabinet
+FormID: 0100A671	NVDLC04WallSafe	CONT	 	Wall Safe
+FormID: 0100A673	NVDLC04UlyssesGrenadeTrigger	ACTI	 	NVDLC04 Ulysses Grenade Trigger
+FormID: 0100A679	NVDLC04UlyssesClass	CLAS	 	Ulysses Class
+FormID: 0100A691	NVDLC04TempleMarkedMenBomber01	NPC_	 	Marked Men Scout
+FormID: 0100A6B5	NVDLC04TempleEyebotControlMsgL04	MESG	 	Eyebot Control Station
+FormID: 0100A6B6	NVDLC04TempleEyebotControlMsgR04	MESG	 	Eyebot Control Station
+FormID: 0100A6DC	NVDLC04LonesomeRoadPerk	PERK	 	Lonesome Road
+FormID: 0100A6DD	NVDLC04MarkedPerk	PERK	 	Marked
+FormID: 0100A6DE	NVDLC04CertifiedTechPerk	PERK	 	Certified Tech
+FormID: 0100A6DF	NVDLC04BroadDaylightPerk	PERK	 	Broad Daylight
+FormID: 0100A6E8	NVDLC04LootDuffleBagTier2Adventurer	CONT	 	Adventurer's Pack
+FormID: 0100A6E9	NVDLC04LootFilingCabinetDivideStartLOCKED	CONT	 	Filing Cabinet
+FormID: 0100A6EA	NVDLC04LootAmmoBoxFlashbangs	CONT	 	Ammunition Box
+FormID: 0100A6EB	NVDLC04LootAmmoBoxRockets	CONT	 	Ammunition Box
+FormID: 0100A6EC	NVDLC04LootEyebotBrokenDivideEast	CONT	 	Destroyed Eyebot
+FormID: 0100A6ED	NVDLC04LootDividePhysicianDesk	CONT	 	Physician's Desk
+FormID: 0100A6EE	NVDLC04LootDivideCabinetBunch	CONT	 	Filing Cabinets
+FormID: 0100A749	NVDLC04AintLikeThatNowPerk	PERK	 	Ain't Like That Now
+FormID: 0100A771	NVDLC04LootFilingCabinetDivideLOCKED	CONT	 	Filing Cabinet
+FormID: 0100A7BF	NVDLC04EDEReleaseExplosion	EXPL	 	Life Spark
+FormID: 0100A7CF	NVDLC04Silo01MaintenanceAccessNote	NOTE	 	Hopeville Silo - Maintenance Access Status
+FormID: 0100A7D0	NVDLC04Silo01Level02SecurityNote	NOTE	 	Hopeville Silo - Security Log - Second Level
+FormID: 0100A7D1	NVDLC04Silo01MaintenanceAccess02Note	NOTE	 	Hopeville Silo - Maintenance Status
+FormID: 0100A7D2	NVDLC04TerminalSilo01EDERelease	TERM	 	Maintenance Bot Control
+FormID: 0100A7D3	NVDLC04Silo01EDEReleaseCodeHolder	ACTI	 	Direct EDE's Release Show
+FormID: 0100A7D8	NVDLC04TempleMarkedMenBomber02	NPC_	 	Marked Men Scout
+FormID: 0100A7D9	NVDLC04TempleMarkedMenHunter02	NPC_	 	Marked Men Hunter
+FormID: 0100A7DA	NVDLC04TempleMarkedMenMarauder02	NPC_	 	Marked Men Marauder
+FormID: 0100A7DB	NVDLC04TempleMarkedMenRavager02	NPC_	 	Marked Men Ravager
+FormID: 0100A826	NVDLC04TrapLaserTripwire	ACTI	 	Laser Tripwire
+FormID: 0100A82A	NVDLC04TrapLaserTripwireEmitter	ACTI	 	Laser Tripwire Emitter
+FormID: 0100A861	NVDLC04RestoreHealth	MGEF	 	Restore Health to Ulysses
+FormID: 0100A864	NVDLC04WeapUlyssesEyebotHealGun	WEAP	 	Heal Zap
+FormID: 0100A865	AmmoNVDLC04EyebotHeal	AMMO	 	Healing Ammo
+FormID: 0100A870	NVDLC04EDECommissary	ACTI	 	Commissary Terminal
+FormID: 0100A873	NVDLC04Merchant	NPC_	 	Commissary
+FormID: 0100A874	NVDLC04MerchantClass	CLAS	 	Merchant Class
+FormID: 0100A8DF	NVDLC04WarheadNukeExplosion	EXPL	 	Warhead Explosion
+FormID: 0100A905	NVDLC04Road01MM03StashKey	KEYM	 	Warehouse Stash Key
+FormID: 0100A906	NVDLC04Road01PostMarkedMenHunter	NPC_	 	Marked Men Hunter
+FormID: 0100A907	NVDLC04Road01PostMarkedMenScout	NPC_	 	Marked Men Scout
+FormID: 0100A908	NVDLC04Road01PostMarkedMenRavager	NPC_	 	Marked Men Ravager
+FormID: 0100A909	NVDLC04Road01PostMarkedMenMarauder	NPC_	 	Marked Men Marauder
+FormID: 0100A90A	NVDLC04LootCraftingStationContainerRoad01MM03	CONT	 	Metal Box
+FormID: 0100A90B	NVDLC04Silo01Floor01AwakenBotTrigger	ACTI	 	Awaken Bot
+FormID: 0100A962	NVDLC04UDomeTempleDoor	DOOR	 	Door
+FormID: 0100A9ED	NVDLC04NukeNCR	WRLD	 	Long 15
+FormID: 0100AA01	NVDLC04NukeLegion	WRLD	 	Dry Wells
+FormID: 0100AA02	NVDLC04NukeSilo2	WRLD	 	Courier's Mile
+FormID: 0100AB4C	NVDLC04VendorContainerCommissary	CONT	 	Commissary Inventory
+FormID: 0100AB52	NVDLC04EDECommissaryAccessTrigger	ACTI	 	Gas Valve
+FormID: 0100AB55	NVDLC04WeapEDEUnlockZapper	WEAP	 	ED-E Arc Welder
+FormID: 0100AC53	NVDLC04TempleMMScoutAshPile	CONT	 	Ash Pile
+FormID: 0100AC54	NVDLC04TempleMMRavagerAshPile	CONT	 	Ash Pile
+FormID: 0100AC55	NVDLC04TempleMMBomberAshPile	CONT	 	Ash Pile
+FormID: 0100AC56	NVDLC04TempleMMHunterAshPile	CONT	 	Ash Pile
+FormID: 0100AC57	NVDLC04TempleMMMarauderAshPile	CONT	 	Ash Pile
+FormID: 0100AC58	NVDLC04PipesDoor02	DOOR	 	Sewer Grate
+FormID: 00166BEF	musSetOldFO1CityOfLostAngeles	MSET	 	musSetOldFO1CityOfLostAngeles
+FormID: 00166C04	musCtrlGnrcDangerous	ALOC	 	musCtrlGnrcDangerous
+FormID: 00166C0A	musCtrlGnrcRural	ALOC	 	musCtrlGnrcRural
+FormID: 00166C0C	musCtrlGnrcTwisted	ALOC	 	musCtrlGnrcTwisted
+FormID: 00166C0E	musCtrlGnrcSubtleCreepy	ALOC	 	musCtrlGnrcSubtleCreepy
+FormID: 0100AC94	NVDLC04TunnelDeathclawRushTrigger	ACTI	 	Run Deathclaw Run
+FormID: 0100AD0E	NVDLC04Tunneler	CREA	 	Tunneler
+FormID: 0100AD11	NVDLC04Silo02ElevatorExplosionSpecial	EXPL	 	Tunnel Explosion
+FormID: 0100AD12	NVDLC04Silo02ElevTunnelerVictim	CREA	 	Tunneler
+FormID: 0100AD19	NVDLC04TempleMarkedMenScout02	NPC_	 	Marked Men Scout
+FormID: 0100AD4A	NVDLC04EDEFinaleQuest	QUST	 	Script quest for ED-E's climactic sacrifice.
+FormID: 0100AD4B	NVDLC04EDEZapExplosion	EXPL	 	Missile Explosion
+FormID: 0100AD4C	NVDLC04UnlockZapperProjectile	PROJ	 	Missile
+FormID: 0100B06D	NVDLC04UlyssesPackageMSG	MESG	 	A Final Delivery
+FormID: 0100B06E	NVDLC04UlyssesLootTrigger	ACTI	 	Ulysses Loot Trigger
+FormID: 0100B341	NVDLC04CaveDivideDoorDUPLICATE000	DOOR	 	Exit
+FormID: 0100B343	NVDLC04Road01DoorDUPLICATE000	DOOR	 	Door
+FormID: 0100B3E4	NVDLC04Silo02ElevTunnelerVictim02	CREA	 	Tunneler
+FormID: 0100B3E5	NVDLC04Silo02LiftTunnelerFaction	FACT	 	NVDLC04 Silo02 Lift Tunneler Faction
+FormID: 00167381	musCtrlGnrcNCRCamp	ALOC	 	musCtrlGnrcNCRCamp
+FormID: 0100B4EC	NVDLC04WarheadExplosion	EXPL	 	Nuke Explosion
+FormID: 0100B4F2	NVDLC04NailProjectile	PROJ	 	Nail
+FormID: 00167482	DamageSkillGuns	MGEF	 	Damage Guns
+FormID: 00167483	DamageSkillExplosives	MGEF	 	Damage Explosives
+FormID: 00167484	DamageSkillEnergyWeapons	MGEF	 	Damage Energy Weapons
+FormID: 00167485	DamageSkillMeleeWeapons	MGEF	 	Damage Melee Weapons
+FormID: 00167486	DamageSkillUnarmed	MGEF	 	Damage Unarmed
+FormID: 0100B648	NVDLC04Road02TunnelerTrigger	ACTI	 	Tunneler Spawn Trigger
+FormID: 0100B658	NVDLC04TempleKillTrigger	ACTI	 	Temple Kill Trigger
+FormID: 0100B659	NVDLC04TempleUlyssesFootlocker	CONT	 	Ulysses' Footlocker
+FormID: 0100B6BF	NVDLC04Silo02Explosion	EXPL	 	Tunnel Explosion
+FormID: 0100B6C1	NVDLC04WearArcWelderEffectEnch	ENCH	 	Electrocution
+FormID: 0100B6FE	NVDLC04CommissaryNote	NOTE	 	Commissaries Locked Down
+FormID: 0100B8F6	NVDLC04EDECommissaryDirty	ACTI	 	Commissary Terminal
+FormID: 0100B997	NVDLC04MissileExplosion	EXPL	 	Missile Explosion
+FormID: 0100B999	NVDLC04MissileExplosionTimer	QUST	 	Missile Explosion Timer
+FormID: 0100B99D	NVDLC04TempleRepairPodTerminal	TERM	 	Repair Pod Terminal
+FormID: 0100B9F0	NVDLC04DivideGovtNote03	NOTE	 	Inter-Office Email
+FormID: 0100B9FD	NVDLC04shackdoorbasement01DOOR	DOOR	 	Door
+FormID: 0100BBE9	NVDLC04EDEUpgrade	MISC	 	Eyebot Upgrade Circuit Board
+FormID: 0100BCFA	NVDLC04Road01MMCamp03CodeHolder	ACTI	 	Direct the Show
+FormID: 0100BD34	NVDLC04AudioHolotapes	QUST	 	Holotape Infos
+FormID: 0100BD35	NVDLC04AudioLogTrooper01	NPC_	 	NCR Trooper
+FormID: 0100BD37	NVDLC04AudioLogTrooper03	NPC_	 	Trooper Gleeson
+FormID: 0100BD38	NVDLC04AudioLogTrooperNote01	NOTE	 	NCR Ranger Action Report
+FormID: 0100BD39	NVDLC04AudioLogTrooperNote02	NOTE	 	NCR Ranger Action Report - Addendum
+FormID: 0100BD3A	NVDLC04AudioLogTrooperNote03	NOTE	 	NCR Radio Distress Beacon
+FormID: 0100BE00	NVDLC04TempleRumble	EXPL	 	Temple Rumble
+FormID: 0100BEFA	NVDLC04WWSeymour	MSTT	 	Seymour
+FormID: 0100BF02	NVDLC04TempleNukeAllConfirmMSG	MESG	 	Launch Control Terminal
+FormID: 0100BF03	NVDLC04MQ04	QUST	 	The Apocalypse
+FormID: 0100BFA2	NVDLC04LootDufflebagNCRAudioLog	CONT	 	Duffle Bag
+FormID: 0100C005	NVDLC04DeadNCRRangerVeteran	NPC_	 	NCR Trooper
+FormID: 0100C02D	NVDLC04Road01Door	DOOR	 	Door
+FormID: 0100C02E	NVDLC04ToolboxContainerRoad01ArmoryKey	CONT	 	Toolbox
+FormID: 0100C02F	NVDLC04Road01ServiceKey	KEYM	 	Base Service Gate Key
+FormID: 0100C12F	NVDLC04DivideGovtTerminalWW	TERM	 	Office of the Treasurer Terminal
+FormID: 0100C130	NVDLC04DivideDuffle04	CONT	 	Duffle Bag
+FormID: 0100C131	NVDLC04DivideDuffle03	CONT	 	Duffle Bag
+FormID: 0100C143	RecipeNVDLC04SatchelCharge	RCPE	 	Satchel Charge
+FormID: 0100C1EE	NVDLC04EDEMissileLaunchTrigger	ACTI	 	Gas Valve
+FormID: 0100C1F7	NVDLC04NukeLegionCenturion	NPC_	 	Gaius Magnus
+FormID: 0100C1F9	NVDLC04NukeLegionLegionaryRange	NPC_	 	Irradiated Legionary Veteran
+FormID: 0100C1FE	NVDLC04NukeLegionLegionaryMelee	NPC_	 	Irradiated Legionary Prime
+FormID: 0100C1FF	NVDLC04NukeLegionExplorerRange	NPC_	 	Irradiated Legion Explorer
+FormID: 0100C204	NVDLC04NukeLegionExplorerMelee	NPC_	 	Irradiated Legion Explorer
+FormID: 0100C205	NVDLC04LegionExplorerClass	CLAS	 	Legion Explorer
+FormID: 0100C229	NVDLC04TempleExplosion	EXPL	 	Tunnel Explosion
+FormID: 0100C22D	NVDLC04DeathclawNuked	CREA	 	Irradiated Deathclaw
+FormID: 0100C24E	NVDLC04ThoughtYouForDeadPerk	PERK	 	Thought You Died
+FormID: 0100C24F	NVDLC04JustLuckyImAlivePerk	PERK	 	Just Lucky I'm Alive
+FormID: 0100C250	NVDLC04BurdenToBearPerk	PERK	 	Burden to Bear
+FormID: 0100C251	NVDLC04RoughinItPerk	PERK	 	Roughin' It
+FormID: 0100C252	NVDLC04AlertnessPerk	PERK	 	Alertness
+FormID: 0100C253	NVDLC04VoraciousReaderPerk	PERK	 	Voracious Reader
+FormID: 0100C254	NVDLC04WalkerInstinctPerk	PERK	 	Walker Instinct
+FormID: 0100C255	NVDLC04IrradiatedBeautyPerk	PERK	 	Irradiated Beauty
+FormID: 0100C256	NVDLC04LessonsLearnedPerk	PERK	 	Lessons Learned
+FormID: 0100C258	NVDLC04TunnelRunnerPerk	PERK	 	Tunnel Runner
+FormID: 0100C259	NVDLC04ScourgeOfTheEastPerk	PERK	 	Scourge of the East
+FormID: 0100C25A	NVDLC04DeadMansBurdenPerk	PERK	 	Dead Man's Burden
+FormID: 0100C25B	NVDLC04BearSlayerPerk	PERK	 	The Bear-Slayer
+FormID: 0100C25C	NVDLC04DivideSurvivorPerk	PERK	 	Divide Survivor
+FormID: 0100C2D8	NVDLC04SloMoEffect	SPEL	 	Slo-Mo for DLC04 Finale
+FormID: 0100C30B	NVDLC04Achievements	QUST	 	NVDLC04Achievements
+FormID: 0100C30F	NVDLC04NukeSilo2Marauder	NPC_	 	Irradiated Marked Men Marauder
+FormID: 0100C312	NVDLC04NukeSilo2Ravager	NPC_	 	Irradiated Marked Men Ravager
+FormID: 0100C346	NVDLC04DeadNCRVeteranPowerArmor	NPC_	 	NCR Heavy Trooper
+FormID: 0100C34B	NVDLC04NukeSilo2Hunter	NPC_	 	Irradiated Marked Men Hunter
+FormID: 0100C34C	NVDLC04NukeSilo2Scout	NPC_	 	Irradiated Marked Men Scout
+FormID: 0100C364	NVDLC04CarSmallNukeExplosion	EXPL	 	Nuke Explosion
+FormID: 0100C3B3	NVDLC4DummyLaserDetonatorDamage	MGEF	 	Detonates Warheads
+FormID: 0100C3B4	NVDLC04DummyLaserDetonator	ENCH	 	Laser Detonator Dummy Effect
+FormID: 0100C42A	NVDLC04AintLikeThatNowPerkEffect	SPEL	 	Ain't Like That Now
+FormID: 0100C42B	NVDLC04AlertnessPerkEffect	SPEL	 	Alertness
+FormID: 0100C42C	NVDLC04CertifiedTechPerkEffect	SPEL	 	Certified Tech
+FormID: 0100C42F	RecipeNVDLC04RocketHEAmmo	RCPE	 	High-Explosive Rocket Ammo
+FormID: 0100C431	NVDLC04JustLuckyImAlivePerkEffect	SPEL	 	Just Lucky I'm Alive
+FormID: 0100C432	NVDLC04BroadDaylightPerkEffect	SPEL	 	Broad Daylight
+FormID: 0100C433	NVDLC04IrradiatedBeautyPerkEffect	SPEL	 	Irradiated Beauty
+FormID: 0100C465	NVDLC04musCtrlGnrcTwisted	ALOC	 	NVDLC04musCtrlGnrcTwisted
+FormID: 0100C467	NVDLC04musCtrlGnrcNerve	ALOC	 	NVDLC04musCtrlGnrcTwisted
+FormID: 0100C46B	NVDLC04NukedLegionBoat	ACTI	 	Boat to Nuked Legion Encampment
+FormID: 0100C46D	NVDLC04NukedLegionMapMarkerREF	MAPM	 	Dry Wells
+FormID: 0100C470	NVDLC04CCBoatMarkerREF	MAPM	 	Boat to Dry Wells
+FormID: 0100C471	NVDLC04NukedNCRGate	DOOR	 	Gate
+FormID: 0100C473	NVDLC04NukedNCRGateMapMarkerREF	MAPM	 	Gate to Long 15
+FormID: 0100C474	NVDLC04NukedNCRMapMarkerREF	MAPM	 	Long 15
+FormID: 0100C475	NVDLC04NukedLegionMSG	MESG	 	The Fires of Armageddon
+FormID: 0100C476	NVDLC04NukedNCRMSG	MESG	 	The Fires of Armageddon
+FormID: 0100C477	NVDLC04NukedBothMSG	MESG	 	The Fires of Armageddon
+FormID: 0100C47C	NVDLC04NukedNoOneMSG	MESG	 	The Fires of Armageddon
+FormID: 0100C47E	NVDLC04CouriersMileDoor	DOOR	 	Door
+FormID: 0100C481	NVDLC04NukedSilo2MapMarkerREF	MAPM	 	The Courier's Mile
+FormID: 0100C482	NVDLC04NukedSilo2DoorMapMarkerREF	MAPM	 	Path to the Courier's Mile
+FormID: 0100C485	NVDLC04NukeSilo2MSG	MESG	 	Courier's Mile
+FormID: 0100C534	NVDLC04LonesomeRoadPerkMSG	MESG	 	Perk gained: Lonesome Road
+FormID: 0100C535	NVDLC04EndgameLootChest	CONT	 	Footlocker
+FormID: 0100C60F	NVDLC04RedGlareStatic	ACTI	 	Red Glare
+FormID: 0100C61D	NVDLC04TerminalSilo01HydraulicsRoomEnter	TERM	 	Hydraulics Access Level Three
+FormID: 0100C61E	NVDLC04TerminalSilo01Bots01RoomEnter	TERM	 	Sentry Security Access Level One
+FormID: 0100C61F	NVDLC04CamaraderECompanionPerk	PERK	 	Camarader-E
+FormID: 0100C620	NVDLC04Road01ArmoryAccessNote	NOTE	 	Hopeville Base - Armory Access Codes
+FormID: 0100C621	NVDLC04TerminalRoad01Armory	TERM	 	Armory Access Terminal
+FormID: 0100C627	NVDLC04MetalBox01HIGHRoad01Key	CONT	 	Metal Box
+FormID: 0100C64C	NVDLC04SafeRoad01HQLock	CONT	 	Safe
+FormID: 0100C64F	AudioTemplateRobotEde	CREA	 	AudioTemplateRobotEde
+FormID: 0100C716	NVDLC04ArmorLegateCustom	ARMO	 	Armor of the 87th Tribe
+FormID: 0100C717	NVDLC04ArmorPowerNCRScorched	ARMO	 	Scorched Sierra Power Armor
+FormID: 0100C718	NVDLC04WalkerInstinctPerkEffect	SPEL	 	Walker Instinct
+FormID: 0100C719	NVDLC04ThoughtYouForDeadPerkEffect	SPEL	 	Thought You Died
+FormID: 0100C741	NVDLC04InvisibleCaveDoor	DOOR	 	Door
+FormID: 0100C76B	NVDLC04Silo01MaintBotExplosion	EXPL	 	Maintenance Eyebot Explosion
+FormID: 0100C7DF	NVDLC04BlankMagazineMISC	MISC	 	Blank Magazine
+FormID: 0100C7E0	RecipeNVDLC04MagazineBarter	RCPE	 	Salesman Weekly Skill Magazine
+FormID: 0100C7E1	RecipeNVDLC04MagazineCritical	RCPE	 	True Police Stories Skill Magazine
+FormID: 0100C7E2	RecipeNVDLC04MagazineEnergyWeapons	RCPE	 	Future Weapons Today Skill Magazine
+FormID: 0100C7E3	RecipeNVDLC04MagazineExplosives	RCPE	 	Patriot's Cookbook Skill Magazine
+FormID: 0100C7E4	RecipeNVDLC04MagazineGuns	RCPE	 	Milsurp Review Skill Magazine
+FormID: 0100C7E5	RecipeNVDLC04MagazineLockpick	RCPE	 	Locksmith's Reader Skill Magazine
+FormID: 0100C7E6	RecipeNVDLC04MagazineMedicine	RCPE	 	Today's Physician Skill Magazine
+FormID: 0100C7E7	RecipeNVDLC04MagazineMeleeWeapons	RCPE	 	Tæles of Chivalrie Skill Magazine
+FormID: 0100C7E8	RecipeNVDLC04MagazineRepair	RCPE	 	Fixin' Things Skill Magazine
+FormID: 0100C7E9	RecipeNVDLC04MagazineScience	RCPE	 	Programmer's Digest Skill Magazine
+FormID: 0100C7EA	RecipeNVDLC04MagazineSneak	RCPE	 	¡La Fantoma! Skill Magazine
+FormID: 0100C7EB	RecipeNVDLC04MagazineSpeech	RCPE	 	Meeting People Skill Magazine
+FormID: 0100C7EC	RecipeNVDLC04MagazineSurvival	RCPE	 	Lad's Life Skill Magazine
+FormID: 0100C7ED	RecipeNVDLC04MagazineUnarmed	RCPE	 	Boxing Times Skill Magazine
+FormID: 0100C7F2	NVDLC04EndgameNoReturnMSG	MESG	 	Ulysses
+FormID: 0100C7F4	NVDLC04SunstoneTriggerREF	ACTI	 	Gas Valve
+FormID: 0100C7F8	NVDLC04MaintenanceTrigger	ACTI	 	Gas Valve
+FormID: 0100C828	NVDLC04SLWasteDisposalTrigger	ACTI	 	Waste Disposal Station Trigger
+FormID: 0100C82E	NVDLC04DivideSLWasteDisposalTT	ACTI	 	NVDLC04DivideTrigger2
+FormID: 0100C836	NVDLC04ToolCabinetMetalSilo01	CONT	 	Tool Cabinet
+FormID: 0100C837	NVDLC04ToolCabinetMetal2Silo01	CONT	 	Tool Cabinet
+FormID: 0100C838	NVDLC04ToolCabinetMetal2	CONT	 	Tool Cabinet
+FormID: 0100C839	NVDLC04TerminalSilo02DoorLock	TERM	 	Terminal
+FormID: 0100C83A	NVDLC04TempleMaintenanceDoorLock	TERM	 	Terminal
+FormID: 0100C848	NVDLC04LootAmmoBoxGunsMarkedMen	CONT	 	Ammunition Box
+FormID: 0100C859	NVDLC04Road02MarkedMenRavager	NPC_	 	Marked Men Ravager
+FormID: 0100C865	NVDLC04LootAmmoBoxWithAmmoFlareGun	CONT	 	Ammunition Box
+FormID: 0100C89B	NVDLC04LootDuffleBagAdventurerWaste	CONT	 	Adventurer's Pack
+FormID: 0100C89C	NVDLC04LootEmergencyKitWaste	CONT	 	Emergency Kit
+FormID: 0100C89D	NVDLC04LootMetalBoxLeadWaste	CONT	 	Lead-Lined Metal Box
+FormID: 0100C89E	NVDLC04LootEmergencyKitRawr	CONT	 	Emergency Kit
+FormID: 0100C89F	NVDLC04HotelWardrobeEmpty	CONT	 	Wardrobe
+FormID: 0100C8A0	NVDLC04LootHotelWardrobe04	CONT	 	Wardrobe
+FormID: 0100C8A1	NVDLC04LootHotelWardrobe03	CONT	 	Wardrobe
+FormID: 0100C8A2	NVDLC04LootHotelWardrobe02	CONT	 	Wardrobe
+FormID: 0100C8A3	NVDLC04LootHotelWardrobe01	CONT	 	Wardrobe
+FormID: 0100C8A4	NVDLC04ToolboxContainerEmpty	CONT	 	Toolbox
+FormID: 0100C8A5	NVDLC04ToolboxContainer04	CONT	 	Toolbox
+FormID: 0100C8A6	NVDLC04ToolboxContainer03	CONT	 	Toolbox
+FormID: 0100C8A7	NVDLC04ToolboxContainer02	CONT	 	Toolbox
+FormID: 0100C8A8	NVDLC04ToolboxContainer01	CONT	 	Toolbox
+FormID: 0100C8A9	NVDLC04SuitCaseEmpty	CONT	 	Suitcase
+FormID: 0100C8AA	NVDLC04SuitCase04	CONT	 	Suitcase
+FormID: 0100C8AB	NVDLC04SuitCase03	CONT	 	Suitcase
+FormID: 0100C8AC	NVDLC04SuitCase01	CONT	 	Suitcase
+FormID: 0100C8AD	NVDLC04LootCraftingStationLockerEmpty	CONT	 	Supply Cabinet
+FormID: 0100C8AE	NVDLC04LootCraftingStationLocker04	CONT	 	Supply Cabinet
+FormID: 0100C8AF	NVDLC04LootCraftingStationLocker03	CONT	 	Supply Cabinet
+FormID: 0100C8B0	NVDLC04LootCraftingStationLocker02	CONT	 	Supply Cabinet
+FormID: 0100C8B1	NVDLC04LootCraftingStationLocker01	CONT	 	Supply Cabinet
+FormID: 0100C8B2	NVDLC04LootFootlockerSurvivalist05	CONT	 	Survivor's Footlocker
+FormID: 0100C8B3	NVDLC04LootFootlockerSurvivalist04	CONT	 	Survivor's Footlocker
+FormID: 0100C8B4	NVDLC04LootFootlockerSurvivalist03	CONT	 	Survivor's Footlocker
+FormID: 0100C8B5	NVDLC04LootFootlockerSurvivalist02	CONT	 	Survivor's Footlocker
+FormID: 0100C8B6	NVDLC04LootFootlockerSurvivalist01	CONT	 	Survivor's Footlocker
+FormID: 0100C8B7	NVDLC04ToolCabinetMetalEmpty	CONT	 	Tool Cabinet
+FormID: 0100C8B8	NVDLC04ToolCabinetMetal04	CONT	 	Tool Cabinet
+FormID: 0100C8B9	NVDLC04ToolCabinetMetal03	CONT	 	Tool Cabinet
+FormID: 0100C8BA	NVDLC04ToolCabinetMetal02	CONT	 	Tool Cabinet
+FormID: 0100C8BB	NVDLC04ToolCabinetMetal01	CONT	 	Tool Cabinet
+FormID: 0100C8BC	NVDLC04LootEmergencyKit01	CONT	 	Emergency Kit
+FormID: 0100C8BD	NVDLC04LootEmergencyKit02	CONT	 	Emergency Kit
+FormID: 0100C8BE	NVDLC04LootNukeEmergencyKit01	CONT	 	Emergency Kit
+FormID: 0100C8BF	NVDLC04LootNukeEmergencyKit02	CONT	 	Emergency Kit
+FormID: 0100C8C0	NVDLC04LootEmergencyKitEmpty	CONT	 	Emergency Kit
+FormID: 0100C8C1	NVDLC04LootAmmoSatchelChargeEmpty	CONT	 	Satchel Charge Box
+FormID: 0100C8C2	NVDLC04LootAmmoSatchelCharge04	CONT	 	Satchel Charge Box
+FormID: 0100C8C3	NVDLC04LootAmmoSatchelCharge03	CONT	 	Satchel Charge Box
+FormID: 0100C8C4	NVDLC04LootAmmoSatchelCharge02	CONT	 	Satchel Charge Box
+FormID: 0100C8C5	NVDLC04LootAmmoSatchelCharge01	CONT	 	Satchel Charge Box
+FormID: 0100C8C6	NVDLC04LootSafeWallEmpty	CONT	 	Wall Safe
+FormID: 0100C8C7	NVDLC04LootSafeWall04	CONT	 	Wall Safe
+FormID: 0100C8C8	NVDLC04LootSafeWall03	CONT	 	Wall Safe
+FormID: 0100C8C9	NVDLC04LootSafeWall02	CONT	 	Wall Safe
+FormID: 0100C8CA	NVDLC04LootSafeWall01	CONT	 	Wall Safe
+FormID: 0100C8CB	NVDLC04LootSafeFloor01	CONT	 	Floor Safe
+FormID: 0100C8CC	NVDLC04LootSafeFloor02	CONT	 	Floor Safe
+FormID: 0100C8CD	NVDLC04LootSafeFloor03	CONT	 	Floor Safe
+FormID: 0100C8CE	NVDLC04LootSafeFloor04	CONT	 	Floor Safe
+FormID: 0100C8CF	NVDLC04LootSafeFloorEmpty	CONT	 	Floor Safe
+FormID: 0100C8D0	NVDLC04LootSafeEmpty	CONT	 	Safe
+FormID: 0100C8D1	NVDLC04LootSafe04	CONT	 	Safe
+FormID: 0100C8D2	NVDLC04LootSafe03	CONT	 	Safe
+FormID: 0100C8D3	NVDLC04LootSafe02	CONT	 	Safe
+FormID: 0100C8D4	NVDLC04LootSafe01	CONT	 	Safe
+FormID: 0100C8D5	NVDLC04LootSackEmpty	CONT	 	Sack
+FormID: 0100C8D6	NVDLC04LootSack04	CONT	 	Sack
+FormID: 0100C8D7	NVDLC04LootSack03	CONT	 	Sack
+FormID: 0100C8D8	NVDLC04LootSack02	CONT	 	Sack
+FormID: 0100C8D9	NVDLC04LootSack01	CONT	 	Sack
+FormID: 0100C8DA	NVDLC04FridgeEmpty	CONT	 	Refrigerator
+FormID: 0100C8DB	NVDLC04LootFridge04	CONT	 	Refrigerator
+FormID: 0100C8DC	NVDLC04LootFridge03	CONT	 	Refrigerator
+FormID: 0100C8DD	NVDLC04LootFridge02	CONT	 	Refrigerator
+FormID: 0100C8DE	NVDLC04LootFridge01	CONT	 	Refrigerator
+FormID: 0100C8DF	NVDLC04LootBLUEGrenadeRifle	CONT	 	Gun Case
+FormID: 0100C8E0	NVDLC04LootREDGrenadeRifle	CONT	 	Gun Case
+FormID: 0100C8E1	NVDLC04LootDividePhysicianDesk03	CONT	 	Physician's Desk
+FormID: 0100C8E2	NVDLC04LootDividePhysicianDesk02	CONT	 	Physician's Desk
+FormID: 0100C8E3	NVDLC04LootDividePhysicianDesk01	CONT	 	Physician's Desk
+FormID: 0100C8E4	NVDLC04LootFootlockerOfficeLock05	CONT	 	Personal Footlocker
+FormID: 0100C8E5	NVDLC04LootFootlockerOfficeLock04	CONT	 	Personal Footlocker
+FormID: 0100C8E6	NVDLC04LootFootlockerOfficeLock03	CONT	 	Personal Footlocker
+FormID: 0100C8E7	NVDLC04LootFootlockerOfficeLock02	CONT	 	Personal Footlocker
+FormID: 0100C8E8	NVDLC04LootFootlockerOfficeLock01	CONT	 	Personal Footlocker
+FormID: 0100C8E9	NVDLC04LootCraftingPartsCabinet05	CONT	 	Parts Cabinet
+FormID: 0100C8EA	NVDLC04LootCraftingPartsCabinet04	CONT	 	Parts Cabinet
+FormID: 0100C8EB	NVDLC04LootCraftingPartsCabinet03	CONT	 	Parts Cabinet
+FormID: 0100C8EC	NVDLC04LootCraftingPartsCabinet02	CONT	 	Parts Cabinet
+FormID: 0100C8ED	NVDLC04LootCraftingPartsCabinet01	CONT	 	Parts Cabinet
+FormID: 0100C8EE	NVDLC04OvenRangeDirtyEmpty	CONT	 	Oven
+FormID: 0100C8EF	NVDLC04OvenRangeDirty04	CONT	 	Oven
+FormID: 0100C8F0	NVDLC04OvenRangeDirty03	CONT	 	Oven
+FormID: 0100C8F1	NVDLC04OvenRangeDirty02	CONT	 	Oven
+FormID: 0100C8F2	NVDLC04OvenRangeDirty01	CONT	 	Oven
+FormID: 0100C8F3	NVDLC04LootReloadingBenchContainer02	CONT	 	Metal Box
+FormID: 0100C8F4	NVDLC04LootReloadingBenchContainer01	CONT	 	Metal Box
+FormID: 0100C8F5	NVDLC04LootHotPlateContainer02	CONT	 	Metal Box
+FormID: 0100C8F6	NVDLC04LootHotPlateContainer01	CONT	 	Metal Box
+FormID: 0100C8F7	NVDLC04LootNukeMetalBox01	CONT	 	Metal Box
+FormID: 0100C8F8	NVDLC04LootCampfireContainer01	CONT	 	Metal Box
+FormID: 0100C8F9	NVDLC04LootCampfireContainer	CONT	 	Metal Box
+FormID: 0100C8FA	NVDLC04LootHotPlateContainer	CONT	 	Metal Box
+FormID: 0100C8FB	NVDLC04LootReloadingBenchContainer	CONT	 	Metal Box
+FormID: 0100C8FC	NVDLC04LootTruckCrateEmpty	CONT	 	Military Shipping Crate
+FormID: 0100C8FD	NVDLC04LootTruckCrate04	CONT	 	Military Shipping Crate
+FormID: 0100C8FE	NVDLC04LootTruckCrate03	CONT	 	Military Shipping Crate
+FormID: 0100C8FF	NVDLC04LootNukeTruckCrate01	CONT	 	Military Shipping Crate
+FormID: 0100C900	NVDLC04LootTruckCrate01	CONT	 	Military Shipping Crate
+FormID: 0100C901	NVDLC04MetalBoxEmpty	CONT	 	Metal Box
+FormID: 0100C902	NVDLC04MetalBox04	CONT	 	Metal Box
+FormID: 0100C903	NVDLC04MetalBox03	CONT	 	Metal Box
+FormID: 0100C904	NVDLC04MetalBox02	CONT	 	Metal Box
+FormID: 0100C905	NVDLC04MetalBox01	CONT	 	Metal Box
+FormID: 0100C906	NVDLC04LockerMilitaryEmpty	CONT	 	Locker
+FormID: 0100C907	NVDLC04LootLockerVault04	CONT	 	Locker
+FormID: 0100C908	NVDLC04LootLockerVault03	CONT	 	Locker
+FormID: 0100C909	NVDLC04LootLockerVault02	CONT	 	Locker
+FormID: 0100C90A	NVDLC04LootLockerVault01	CONT	 	Locker
+FormID: 0100C90B	NVDLC04LootNukeMetalBoxLead01	CONT	 	Lead-Lined Metal Box
+FormID: 0100C90C	NVDLC04LootNukeMetalBoxLead02	CONT	 	Lead-Lined Metal Box
+FormID: 0100C90D	NVDLC04LootMetalBoxLead03	CONT	 	Lead-Lined Metal Box
+FormID: 0100C90E	NVDLC04LootNukeGunCaseHighTech01	CONT	 	High-Tech Gun Case
+FormID: 0100C90F	NVDLC04LootNukeGunCaseHighTech02	CONT	 	High-Tech Gun Case
+FormID: 0100C910	NVDLC04LootGunCaseHighTech03	CONT	 	High-Tech Gun Case
+FormID: 0100C911	NVDLC04LootGunCaseHighTech02	CONT	 	High-Tech Gun Case
+FormID: 0100C912	NVDLC04LootGunCaseHighTech01	CONT	 	High-Tech Gun Case
+FormID: 0100C913	NVDLC04GarbageCanUrbanEmpty	CONT	 	Garbage Can
+FormID: 0100C914	NVDLC04GarbageCanUrban04	CONT	 	Garbage Can
+FormID: 0100C915	NVDLC04LootFootlockerEmpty	CONT	 	Footlocker
+FormID: 0100C916	NVDLC04LootFootlocker04	CONT	 	Footlocker
+FormID: 0100C917	NVDLC04LootFootlocker02	CONT	 	Footlocker
+FormID: 0100C918	NVDLC04LootFootlocker03	CONT	 	Footlocker
+FormID: 0100C919	NVDLC04LootFootlocker01	CONT	 	Footlocker
+FormID: 0100C91A	NVDLC04LootFirstAidKitNVEmpty	CONT	 	First Aid Box
+FormID: 0100C91B	NVDLC04LootFirstAidKitNV04	CONT	 	First Aid Box
+FormID: 0100C91C	NVDLC04LootFirstAidKitNV03	CONT	 	First Aid Box
+FormID: 0100C91D	NVDLC04LootFirstAidKitNV02	CONT	 	First Aid Box
+FormID: 0100C91E	NVDLC04LootFirstAidKitNV01	CONT	 	First Aid Box
+FormID: 0100C91F	NVDLC04FireHoseBoxEmpty	CONT	 	Fire Hose Box
+FormID: 0100C920	NVDLC04FireHoseBox04	CONT	 	Fire Hose Box
+FormID: 0100C921	NVDLC04FireHoseBox03	CONT	 	Fire Hose Box
+FormID: 0100C922	NVDLC04FireHoseBox02	CONT	 	Fire Hose Box
+FormID: 0100C923	NVDLC04FireHoseBox01	CONT	 	Fire Hose Box
+FormID: 0100C924	NVDLC04FilingCabinetBunchEmpty	CONT	 	Filing Cabinets
+FormID: 0100C925	NVDLC04FilingCabinetBunch03	CONT	 	Filing Cabinets
+FormID: 0100C926	NVDLC04FilingCabinetBunch01	CONT	 	Filing Cabinets
+FormID: 0100C927	NVDLC04FilingCabinetEmpty	CONT	 	Filing Cabinet
+FormID: 0100C928	NVDLC04FilingCabinet04	CONT	 	Filing Cabinet
+FormID: 0100C929	NVDLC04FilingCabinet03	CONT	 	Filing Cabinet
+FormID: 0100C92A	NVDLC04FilingCabinet02	CONT	 	Filing Cabinet
+FormID: 0100C92B	NVDLC04FilingCabinet01	CONT	 	Filing Cabinet
+FormID: 0100C92C	NVDLC04LootDufflebagEmpty	CONT	 	Duffle Bag
+FormID: 0100C92D	NVDLC04LootDufflebag04	CONT	 	Duffle Bag
+FormID: 0100C92E	NVDLC04LootDufflebag03	CONT	 	Duffle Bag
+FormID: 0100C92F	NVDLC04LootDufflebag02	CONT	 	Duffle Bag
+FormID: 0100C930	NVDLC04LootDufflebag01	CONT	 	Duffle Bag
+FormID: 0100C931	NVDLC04LootSmallCrateEmpty	CONT	 	Dirty Crate
+FormID: 0100C932	NVDLC04LootNukeSmallCrate01	CONT	 	Dirty Crate
+FormID: 0100C933	NVDLC04LootNukeSmallCrate02	CONT	 	Dirty Crate
+FormID: 0100C934	NVDLC04LootSmallCrate02	CONT	 	Dirty Crate
+FormID: 0100C935	NVDLC04LootSmallCrate01	CONT	 	Dirty Crate
+FormID: 0100C936	NVDLC04LootEyebotDestroyed05	CONT	 	Destroyed Eyebot
+FormID: 0100C937	NVDLC04LootEyebotDestroyed04	CONT	 	Destroyed Eyebot
+FormID: 0100C938	NVDLC04LootEyebotDestroyed03	CONT	 	Destroyed Eyebot
+FormID: 0100C939	NVDLC04LootEyebotDestroyed02	CONT	 	Destroyed Eyebot
+FormID: 0100C93A	NVDLC04LootEyebotDestroyed01	CONT	 	Destroyed Eyebot
+FormID: 0100C93B	NVDLC04DeskWoodTopRustyEmpty	CONT	 	Desk
+FormID: 0100C93C	NVDLC04DeskWoodTopRusty04	CONT	 	Desk
+FormID: 0100C93D	NVDLC04DeskWoodTopRusty03	CONT	 	Desk
+FormID: 0100C93E	NVDLC04DeskWoodTopRusty02	CONT	 	Desk
+FormID: 0100C93F	NVDLC04DeskWoodTopRusty01	CONT	 	Desk
+FormID: 0100C940	NVDLC04DeskOfficeMetalEmpty	CONT	 	Desk
+FormID: 0100C941	NVDLC04DeskOfficeMetal04	CONT	 	Desk
+FormID: 0100C942	NVDLC04DeskOfficeMetal03	CONT	 	Desk
+FormID: 0100C943	NVDLC04DeskOfficeMetal02	CONT	 	Desk
+FormID: 0100C944	NVDLC04DeskOfficeMetal01	CONT	 	Desk
+FormID: 0100C945	NVDLC04DeskOfficeCornerMetalEmpty	CONT	 	Desk
+FormID: 0100C946	NVDLC04DeskOfficeCornerMetal04	CONT	 	Desk
+FormID: 0100C947	NVDLC04DeskOfficeCornerMetal03	CONT	 	Desk
+FormID: 0100C948	NVDLC04DeskOfficeCornerMetal02	CONT	 	Desk
+FormID: 0100C949	NVDLC04DeskOfficeCornerMetal01	CONT	 	Desk
+FormID: 0100C94A	NVDLC04LootCrateShippingDamaged05	CONT	 	Damaged Shipping Crate
+FormID: 0100C94B	NVDLC04LootCrateShippingDamaged04	CONT	 	Damaged Shipping Crate
+FormID: 0100C94C	NVDLC04LootCrateShippingDamaged03	CONT	 	Damaged Shipping Crate
+FormID: 0100C94D	NVDLC04LootCrateShippingDamaged02	CONT	 	Damaged Shipping Crate
+FormID: 0100C94E	NVDLC04LootCrateShippingDamaged01	CONT	 	Damaged Shipping Crate
+FormID: 0100C94F	NVDLC04LootTruckCrateCaravanEmpty	CONT	 	Caravan Crate
+FormID: 0100C950	NVDLC04LootTruckCrateCaravan04	CONT	 	Caravan Crate
+FormID: 0100C951	NVDLC04LootTruckCrateCaravan03	CONT	 	Caravan Crate
+FormID: 0100C952	NVDLC04LootTruckCrateCaravan02	CONT	 	Caravan Crate
+FormID: 0100C953	NVDLC04LootTruckCrateCaravan01	CONT	 	Caravan Crate
+FormID: 0100C954	NVDLC04LootFridgeBroken05	CONT	 	Broken Refrigerator
+FormID: 0100C955	NVDLC04LootFridgeBroken04	CONT	 	Broken Refrigerator
+FormID: 0100C956	NVDLC04LootFridgeBroken03	CONT	 	Broken Refrigerator
+FormID: 0100C957	NVDLC04LootFridgeBroken02	CONT	 	Broken Refrigerator
+FormID: 0100C958	NVDLC04LootFridgeBroken01	CONT	 	Broken Refrigerator
+FormID: 0100C959	NVDLC04LootEyebotBroken05	CONT	 	Broken Eyebot
+FormID: 0100C95A	NVDLC04LootEyebotBroken04	CONT	 	Broken Eyebot
+FormID: 0100C95B	NVDLC04LootEyebotBroken03	CONT	 	Broken Eyebot
+FormID: 0100C95C	NVDLC04LootEyebotBroken02	CONT	 	Broken Eyebot
+FormID: 0100C95D	NVDLC04LootEyebotBroken01	CONT	 	Broken Eyebot
+FormID: 0100C95E	NVDLC04LootAshPileEmpty	CONT	 	Ash Pile
+FormID: 0100C95F	NVDLC04LootNukeAshPile01	CONT	 	Ash Pile
+FormID: 0100C960	NVDLC04LootNukeAshPile02	CONT	 	Ash Pile
+FormID: 0100C961	NVDLC04LootAshPile02	CONT	 	Ash Pile
+FormID: 0100C962	NVDLC04LootAshPile01	CONT	 	Ash Pile
+FormID: 0100C963	NVDLC04LootAmmoBoxEmpty	CONT	 	Ammunition Box
+FormID: 0100C964	NVDLC04LootNukeAmmoBox01	CONT	 	Ammunition Box
+FormID: 0100C965	NVDLC04LootNukeAmmoBox02	CONT	 	Ammunition Box
+FormID: 0100C966	NVDLC04LootAmmoBox02	CONT	 	Ammunition Box
+FormID: 0100C967	NVDLC04LootAmmoBox01	CONT	 	Ammunition Box
+FormID: 0100C968	NVDLC04LootDuffleBagAdventurer05	CONT	 	Adventurer's Pack
+FormID: 0100C969	NVDLC04LootDuffleBagAdventurer04	CONT	 	Adventurer's Pack
+FormID: 0100C96A	NVDLC04LootDuffleBagAdventurer03	CONT	 	Adventurer's Pack
+FormID: 0100C96B	NVDLC04LootDuffleBagAdventurer02	CONT	 	Adventurer's Pack
+FormID: 0100C96C	NVDLC04LootDuffleBagAdventurer01	CONT	 	Adventurer's Pack
+FormID: 0100C96D	NVDLC04SuitCaseRawr	CONT	 	Suitcase
+FormID: 0100C9C0	NVDLC04HelmetMarkedBeast	ARMO	 	Marked Beast Helmet
+FormID: 0100C9C1	NVDLC04HelmetMarkedBeastEyes	ARMO	 	Marked Beast Eyes Helmet
+FormID: 0100C9C2	NVDLC04HelmetMarkedBeastFace	ARMO	 	Marked Beast Face Helmet
+FormID: 0100C9CE	NVDLC04CraftingCampfireContainer	CONT	 	Metal Box
+FormID: 0100C9CF	NVDLC04CraftingReloadingBenchContainer	CONT	 	Metal Box
+FormID: 0100C9D0	NVDLC04CraftingWorkBenchContainer	CONT	 	Metal Box
+FormID: 0100C9D1	NVDLC04LootWorkBenchContainer	CONT	 	Metal Box
+FormID: 0100C9D2	NVDLC04MarkedMenMarauderClass	CLAS	 	Marked Men Marauder
+FormID: 0100C9D3	NVDLC04Road02Crate	CONT	 	Military Shipping Crate
+FormID: 0100C9D5	NVDLC04Road02MarkedMenHunter	NPC_	 	Marked Men Hunter
+FormID: 0100CA57	NVDLC04LootAmmoBox308	CONT	 	Ammunition Box
+FormID: 0100CA79	NVDLC04EDETempleRevealCodeHolder	ACTI	 	Gas Valve
+FormID: 0100CA7A	NVDLC04ChallengeRALPHIE	CHAL	 	Feel Like a Kid Again
+FormID: 0100CA7D	NVDLC04DeathclawHandUnique	MISC	 	Rawr's Talon
+FormID: 0100CA7E	NVDLC04EyebotMaintenance01	NOTE	 	Eyebot Maintenance
+FormID: 0100CA7F	NVDLC04RecipeFistofRawrWildWasteland	RCPE	 	Fist of the North Rawr
+FormID: 0100CA80	NVDLC04RecipeFistofRawr	RCPE	 	Fist of Rawr
+FormID: 0100CA88	NVDLC04WeapDeathclawGauntletUniqueWildWasteland	WEAP	 	Fist of the North Rawr
+FormID: 0100CA89	NVDLC04WeapDeathclawGauntletUnique	WEAP	 	Fist of Rawr
+FormID: 0100CAA0	NVDLC04ChineseGrenadeLauncherNote	NOTE	 	[QUOTE]Missing[QUOTE] shipment
+FormID: 0100CAA1	NVDLC0440mmGrenadeExplosionCustom	EXPL	 	40mm Grenade Explosion
+FormID: 0100CAA2	NVDLC0440mmGrenadeProjectileCustom	PROJ	 	40mm Grenade
+FormID: 0100CAFA	NVDLC04LootAmmoBoxAmmoFlareGun	CONT	 	Ammunition Box
+FormID: 0100CB76	NVDLC04Silo02DoorSwapCodeHolder	ACTI	 	No More Lift For U
+FormID: 0100CB77	NVDLC04Silo01WelcomeDoorTrigger	ACTI	 	Welcome to Silo01
+FormID: 0100CB78	NVDLC04Road02ToSilo02Door	DOOR	 	Door
+FormID: 0100CB79	NVDLC04Silo02ToRoad02Door	DOOR	 	Door
+FormID: 0100CBBF	NVDLC04BoxAmmoRocketCanister	MISC	 	Rocket Canister
+FormID: 0100CBD3	NVDLC04AutoDoc	ACTI	 	Auto-Doc
+FormID: 0100CCA7	NVDLC04ArmorUSMilitaryGeneralOE	ENCH	 	General's Influence
+FormID: 0100CCB7	NVDLC04ToolboxLiquor	CONT	 	Toolbox
+FormID: 0100CCB8	NVDLC04ToolboxContainerWithGun	CONT	 	Toolbox
+FormID: 0100CCB9	NVDLC04ToolboxChems	CONT	 	Toolbox
+FormID: 0100CCBA	NVDLC04LootTruckCrateMinesPulse100	CONT	 	Military Shipping Crate
+FormID: 0100CCBB	NVDLC04LootTruckCrateMinesPlasma100	CONT	 	Military Shipping Crate
+FormID: 0100CCBC	NVDLC04LootTruckCrateMinesFrag100	CONT	 	Military Shipping Crate
+FormID: 0100CCBD	NVDLC04LootTruckCrateMines100	CONT	 	Military Shipping Crate
+FormID: 0100CCBE	NVDLC04LootTruckCrateGrenadesPulse100	CONT	 	Military Shipping Crate
+FormID: 0100CCBF	NVDLC04LootTruckCrateGrenadesPlasma100	CONT	 	Military Shipping Crate
+FormID: 0100CCC0	NVDLC04LootTruckCrateGrenadesIncendiary100	CONT	 	Military Shipping Crate
+FormID: 0100CCC1	NVDLC04LootTruckCrateGrenadesFrag100	CONT	 	Military Shipping Crate
+FormID: 0100CCC2	NVDLC04LootTruckCrateGrenades100	CONT	 	Military Shipping Crate
+FormID: 0100CCC3	NVDLC04LootSafeFloorSilo02Rubble	CONT	 	Floor Safe
+FormID: 0100CCC9	NVDLC04LootAmmoBoxElectronChargePacks	CONT	 	Ammunition Box
+FormID: 0100CCCA	NVDLC04LootAmmoBox308LOCK	CONT	 	Ammunition Box
+FormID: 0100CD4A	NVDLC04EDEHireTrigger	ACTI	 	Gas Valve
+FormID: 0100CD4C	NVDLC04RoughinItClosePipBoyMSG	MESG	 	Lights Out!
+FormID: 0100CD4E	NVDLC04RoughinItOutsideOnlyMSG	MESG	 	That's not Roughin' It!
+FormID: 0100CD50	NVDLC04RoughinItBedrollKitMSG	MESG	 	Roughin' It! Bedroll Kit
+FormID: 0100CD51	NVDLC04RoughinItBedrollKit	ALCH	 	Roughin' It! Bedroll Kit
+FormID: 0100CD53	NVDLC04PortableSleepMenuBE	MGEF	 	Portable Bedroll
+FormID: 0100CD6F	NVDLC04AudioLogUlyssesBigMT1	NOTE	 	Ulysses Log: Y-17.15
+FormID: 0100CD70	NVDLC04AudioLogUlyssesBigMT2	NOTE	 	Ulysses Log: Y-17.16
+FormID: 0100CD71	NVDLC04AudioLogUlyssesBigMT3	NOTE	 	Ulysses Log: Y-17.17
+FormID: 0100CD72	NVDLC04AudioLogUlyssesWhiteLegs1	NOTE	 	Ulysses Log: Y-17.21
+FormID: 0100CD73	NVDLC04AudioLogUlyssesWhiteLegs2	NOTE	 	Ulysses Log: Y-17.22
+FormID: 0100CD90	NVDLC04AudioLogUlyssessFinalMsg	NOTE	 	Ulysses' Final Message
+FormID: 0100CD93	NVDLC04AudioLogUlyssesWhiteLegs3	NOTE	 	Ulysses Log: Y-17.23
+FormID: 0100CDB0	NVDLC04UlyssesVistaCodeHolder	ACTI	 	Direct the Show
+FormID: 0100CDCD	NVDLC04StimpakEffect	SPEL	 	Stimpak Effect
+FormID: 0100CDCE	NVDLC04AutoInjectQuest	QUST	 	Auto-Inject Quest
+FormID: 0100CDD0	NVDLC04DummyAutoInjectStimpak	MGEF	 	Automatic Use At 50% Health
+FormID: 0100CDD1	NVDLC04DummyAutoInjectSuperStimpak	MGEF	 	Automatic Use At 25% Health
+FormID: 0100CDD2	NVDLC04SuperStimpakEffect	SPEL	 	Super Stimpak Effect
+FormID: 00108BED	TestMentats	CELL	 	Mentats Test Level
+FormID: 0100CEE4	NVDLC04MarkedMenRadHeal	SPEL	 	Radiation Healing
+FormID: 0100CEE5	NVDLC04MarkedMenRadResist	SPEL	 	Radiation Resistance
+FormID: 0100CEE6	RecipeNVDLC04ConversionBlankMagToBook	RCPE	 	Conversion, Blank Magazine to Book
+FormID: 0100CEE9	NVDLC04RushingWaterBE	MGEF	 	Rushing Water
+FormID: 0100CEEB	NVDLC04ArmorUlyssesMaskOE	ENCH	 	Ulysses' Mask
+FormID: 0100CEEC	NVDLC04HelmetBreathingMaskUnique	ARMO	 	Ulysses' Mask
+FormID: 0100CF1C	NVDLC04NukeLegionSwimTrigger	ACTI	 	NVDLC04 Nuke Legion Swim Trigger
+FormID: 0100CF38	RecipeNVDLC04ConversionMissileToRocket	RCPE	 	Conversion, Missile to Rocket
+FormID: 0100CF39	NVDLC04BitterDrinkRecipeNOTE	NOTE	 	Bitter Drink Recipe
+FormID: 0100CF86	NVDLC04NukeNCRGlowingGhoul20	CREA	 	Glowing Trooper Ghoul
+FormID: 0100CFE0	DLC04EDEArcExplosionSmall	EXPL	 	Missile Explosion
+FormID: 0100CFE2	DLC04EDEProjectile	PROJ	 	Missile
+FormID: 0100CFF0	NVDLC04BlankMagazinePickupMSG	MESG	 	Hey, Voracious Reader!
+FormID: 0100D006	NVDLC04DivideSupport	QUST	 	Divide Support Quest
+FormID: 0100D032	NVDLC04Skeleton	ARMO	 	Skeleton
+FormID: 0100D034	NVDLC04SkeletonHandL	ARMA	 	SkeletonHandL
+FormID: 0100D035	NVDLC04SkeletonHandR	ARMA	 	SkeletonHandR
+FormID: 0100D036	NVDLC04SkeletonHead	ARMO	 	Skeleton Head
+FormID: 0100D067	NVDLC04TourniquetEffect	SPEL	 	Tourniquet Effect
+FormID: 0100D069	NVDLC04DummyTourniquet	MGEF	 	Automatic Use
+FormID: 0100D0B5	NVDLC04Road02CrowsNestMapMarkerREF	MAPM	 	The Crow's Nest
+FormID: 0100D101	NVDLC04LootFirstAidKitLock	CONT	 	First Aid Box
+FormID: 0100D103	NVDLC04ArmorDusterCourierOE	ENCH	 	Blackjack
+FormID: 0100D104	NVDLC04ArmorDusterLegionOE	ENCH	 	Fighting Chance
+FormID: 0100D105	NVDLC04ArmorDusterNCROE	ENCH	 	The Great Bear
+FormID: 0100D106	NVDLC04ArmorDusterOldWorldOE	ENCH	 	Old World Justice
+FormID: 0100D107	NVDLC04ArmorDusterUlyssesOE	ENCH	 	Ulysses' Duster
+FormID: 0100D119	NVDLC04DivideWasteDisposalMapMarkerREF	MAPM	 	Waste Disposal Station
+FormID: 0100D12A	NVDLC04EDETerminalLever	ACTI	 	Terminal Lever
+FormID: 0100D1A3	NVDLC04Skeleton01	NPC_	 	Marked Men Hunter
+FormID: 0100D1A4	NVDLC04DeadGeneral	NPC_	 	General Martin Retslaf
+FormID: 0100D1AA	NVDLC04DeadSniper	NPC_	 	NCR Riot Control
+FormID: 0100D1AE	NVDLC04DeadSniper02	NPC_	 	NCR Riot Control
+FormID: 0100D1BA	NVDLC04LockerArmorLOCKED	CONT	 	Locker
+FormID: 0100D1BC	NVDLC04LockerArmor	CONT	 	Locker
+FormID: 0100D1BE	NVDLC04LockerRiotArmor	CONT	 	Locker
+FormID: 0100D1D7	NVDLC04LockerRiotArmorLocked	CONT	 	Locker
+FormID: 0100D211	NVDLC04MarkedMenCorpse02Container	CONT	 	Dead Marked Man
+FormID: 0100D212	NVDLC04MarkedMenCorpse01Container	CONT	 	Dead Marked Man
+FormID: 0100D213	NVDLC04MarkedMenCorpse03Container	CONT	 	Dead Marked Man
+FormID: 0100D229	NVDLC04ArmorMarkedPatrolOE	ENCH	 	Marked Patrol
+FormID: 0100D22A	NVDLC04ArmorMarkedTrooperOE	ENCH	 	Marked Trooper
+FormID: 0100D22B	NVDLC04ArmorMarkedScoutOE	ENCH	 	Marked Scout
+FormID: 0100D22C	NVDLC04ArmorMarkedTribalOE	ENCH	 	Marked Tribal
+FormID: 0100D271	NVDLC04DivideRumbleNoSound	EXPL	 	Divide Rumble
+FormID: 0100D273	NVDLC04NukeLegionCrate	CONT	 	Tribute Crate
+FormID: 0100D275	NVDLC04ArmorRiotGearOE	ENCH	 	Riot Geared
+FormID: 0100D276	NVDLC04ArmorRiotGearCustomOE	ENCH	 	Riot Response
+FormID: 0100D277	NVDLC04ArmorRiotGearUniqueOE	ENCH	 	Riot's Ruin
+FormID: 0100D278	NVDLC04AmmoMissileRobot	AMMO	 	Missile
+FormID: 0100D279	NVDLC04MissileRobotProjectile	PROJ	 	Missile
+FormID: 0100D27A	NVDLC04MissileRobotExplosion	EXPL	 	Missile Explosion
+FormID: 0100D2A9	NVDLC04NukeLegionCrateKey	KEYM	 	Tribute Crate Key
+FormID: 0100D2AD	NVDLC04RedNightvisionBE	MGEF	 	Sneak Sight
+FormID: 0100D2AE	NVDLC04DummySneakSightBE	MGEF	 	Sneak Sight
+FormID: 0100D2AF	NVDLC04HelmetRiotGearOE	ENCH	 	Red Eye
+FormID: 0100D2B0	NVDLC04HelmetRiotGearCustomOE	ENCH	 	Red Vision
+FormID: 0100D2B1	NVDLC04HelmetRiotGearUniqueOE	ENCH	 	Red Scare
+FormID: 0100D2B3	NVDLC04Road01WomenBarracksCodeHolder	ACTI	 	Direct the Show
+FormID: 0100D2DA	NVDLC04EDETerminalLeverLaunch	ACTI	 	Terminal Lever
+FormID: 0100D2DB	NVDLC04EDETerminalLeverTemple	ACTI	 	Terminal Lever
+FormID: 0100D2DE	NVDLC04FootlockerMilitaryLOW	CONT	 	Footlocker
+FormID: 0100D2E4	NVDLC04LockerMilitary	CONT	 	Locker
+FormID: 0100D2E7	NVDLC04LockerMilitaryLock	CONT	 	Locker
+FormID: 0100D308	NVDLC04LootAmmoBox10mm	CONT	 	Ammunition Box
+FormID: 0100D311	NVDLC04Whitley	NPC_	 	Whitley
+FormID: 0100D312	NVDLC04Dad	NPC_	 	The Father
+FormID: 0100D313	NVDLC04Announcer	NPC_	 	Announcer
+FormID: 0100D314	NVDLC04Howard	NPC_	 	Dr. Howard
+FormID: 0100D315	NVDLC04Kid	NPC_	 	The Child
+FormID: 0100D33A	NVDLC04HelmetMarkedBeastOE	ENCH	 	Beast Helm
+FormID: 0100D33B	NVDLC04HelmetMarkedBeastEyesOE	ENCH	 	Beast Eyes
+FormID: 0100D33C	NVDLC04HelmetMarkedBeastFaceOE	ENCH	 	Beast Face
+FormID: 0100D33D	NVDLC04HelmetMarkedBeastTribalOE	ENCH	 	Tribe of the Beast
+FormID: 0100D354	NVDLC04FootlockerMilitaryMED	CONT	 	Footlocker
+FormID: 0100D355	NVDLC04FootlockerMilitaryHIGH	CONT	 	Footlocker
+FormID: 0100D356	NVDLC04FootlockerMilitaryEmpty	CONT	 	Footlocker
+FormID: 0100D357	NVDLC04ArmorPowerNCRScorchedOE	ENCH	 	Sierra Power Armor
+FormID: 0100D358	NVDLC04ArmorLegateCustomOE	ENCH	 	87th Tribal Ways
+FormID: 0100D359	NVDLC04RegenEffect	MGEF	 	Regeneration
+FormID: 0100D35A	NVDLC04ArmorUSArmyCombatOE	ENCH	 	Superior Training
+FormID: 0100D35B	NVDLC04DecreasedEMPResistance	MGEF	 	EMP Vulnerability
+FormID: 0100D35C	NVDLC04ArmorBreathingMaskOE	ENCH	 	Breathing Mask
+FormID: 0100D4AD	NVDLC04EnchEDEArcEffect	ENCH	 	Electrocution
+FormID: 0100D4E1	NVDLC04RoughinItBedrollNoPhysics	MISC	 	Roughin' It! Bedroll Kit
+FormID: 0100D4E3	NVDLC04EDENoMines	PERK	 	Light Step
+FormID: 0100D5C3	NVDLC04DeathclawBossDead	CREA	 	Rawr
+FormID: 0100D5CF	AmmoNVDLC04NailsCustom	AMMO	 	Flechettes
+FormID: 0100D63C	NVDLC04MarkedMenPerceptionPenalty	SPEL	 	Marked Men Perception Penalty
+FormID: 0100D6B3	NVDLC04AmmoEffectNailsDTReduction	AMEF	 	Dam. Thresh. Reduction
+FormID: 0100D6C3	NVDLC04WWSeymour01	MISC	 	Seymour
+FormID: 0100D754	RecipeNVDLC04NailsAmmo	RCPE	 	Nails
+FormID: 0100D783	NVDLC04Divide2Ambush01	ACTI	 	Gas Valve
+FormID: 0100D784	NVDLC04DivideBladeGrenade	ACTI	 	Gas Valve
+FormID: 0100D785	NVDLC04Divide2Ambush02	ACTI	 	Gas Valve
+FormID: 0100D786	NVDLC04Divide2MarkedMenScout	NPC_	 	Marked Men Scout
+FormID: 0100D787	NVDLC04Divide2MarkedMenHunter	NPC_	 	Marked Men Hunter
+FormID: 0100D788	NVDLC04Divide2MarkedMenRavager	NPC_	 	Marked Men Ravager
+FormID: 0100D789	NVDLC04Divide2MarkedMenMarauder	NPC_	 	Marked Men Marauder
+FormID: 0100D793	NVDLC04LaserDetonatorActivator	ACTI	 	Laser Detonator
+FormID: 0100D7AE	NVDLC04TempleMMExplosion	EXPL	 	Temple Marked Men Explosion
+FormID: 0100D84E	NVDLC04LevelWarningMSG	MESG	 	Lonesome Road
+FormID: 0100D89F	NVDLC04NukeNCRHeavyTrooper	NPC_	 	Irradiated Heavy Trooper
+FormID: 0100D8BB	NVDLC04EyebotRepair30	CREA	 	Repair Eyebot
+FormID: 0100D8BC	NVDLC04EyebotRepair40	CREA	 	Repair Eyebot
+FormID: 0100D8BD	NVDLC04EyebotRepair50	CREA	 	Repair Eyebot
+FormID: 0100D8C0	NVDLC04EyebotMedical30	CREA	 	Medical Eyebot
+FormID: 0100D8C1	NVDLC04EyebotMedical40	CREA	 	Medical Eyebot
+FormID: 0100D8C2	NVDLC04EyebotMedical50	CREA	 	Medical Eyebot
+FormID: 0100D8C4	NVDLC04NukeNCRGlowingGhoul30	CREA	 	Glowing Trooper Ghoul
+FormID: 0100D8C5	NVDLC04NukeNCRGlowingGhoul40	CREA	 	Glowing Trooper Ghoul
+FormID: 0100D8C6	NVDLC04NukeNCRGlowingGhoul50	CREA	 	Glowing Trooper Ghoul
+FormID: 0100D8F4	NVDLC04Silo01MainframeCodesMSG	MESG	 	Hopeville Silo Mainframe
+FormID: 0100D8FC	NVDLC04NukeNCRColonel	NPC_	 	Irradiated Heavy Trooper
+FormID: 0100D90F	NVDLC04SunstoneWave2Trigger	ACTI	 	Sunstone Wave 2 Trigger
+FormID: 0100D95C	NVDLC04Road01MMRushEVPTrigger	ACTI	 	Snap out of it
+FormID: 0100D96F	NVDLC04FlashBangNOTE	NOTE	 	Bravo Team Mission Orders
+FormID: 0100D970	NVDLC04RoadTunnelDeadTrooper01	NPC_	 	NCR Trooper
+FormID: 0100D971	NVDLC04RoadTunnelDeadTrooper02	NPC_	 	NCR Trooper
+FormID: 0100D973	NVDLC04RoadTunnelDeadTrooper03	NPC_	 	NCR Ranger
+FormID: 0100D977	NVDLC04CommissaryNote02	NOTE	 	Commissary Reminder
+FormID: 0100D984	NVDLC04DummyRushingWater	MGEF	 	+50% Attack Speed
+FormID: 0100D99A	NVDLC04NukeNCRHeavyTrooperBoss	NPC_	 	Colonel Royez
+FormID: 0100DAEB	NVDLC04TempleMarkedMenHunter01Weak	NPC_	 	Marked Men Hunter
+FormID: 0100DAEC	NVDLC04TempleMarkedMenScout01Weak	NPC_	 	Marked Men Scout
+FormID: 0100DAED	NVDLC04TempleMarkedMenScout02Weak	NPC_	 	Marked Men Scout
+FormID: 0100DAEE	NVDLC04TempleMarkedMenMarauder02Weak	NPC_	 	Marked Men Marauder
+FormID: 0100DAEF	NVDLC04TempleMarkedMenRavager02Weak	NPC_	 	Marked Men Ravager
+FormID: 0100DAF1	NVDLC04TempleMarkedMenRavager01Weak	NPC_	 	Marked Men Ravager
+FormID: 0100DAF3	NVDLC04TempleMarkedMenMarauder01Weak	NPC_	 	Marked Men Marauder
+FormID: 0100DAFA	NVDLC04TempleMarkedMenBomber01Weak	NPC_	 	Marked Men Scout
+FormID: 0100DAFB	NVDLC04TempleMarkedMenBomber02Weak	NPC_	 	Marked Men Scout
+FormID: 0100DAFC	NVDLC04TempleMarkedMenHunter02Weak	NPC_	 	Marked Men Hunter
+FormID: 0100DB04	NVDLC04ArcWelderProjectile	PROJ	 	Electricity
+FormID: 0100DBE7	NVDLC04MarkedMenHunterClass	CLAS	 	Marked Men Hunter
+FormID: 0100DBE8	NVDLC04MarkedMenScoutClass	CLAS	 	Marked Men Scout
+FormID: 0100DBE9	NVDLC04MarkedMenRavagerClass	CLAS	 	Marked Men Ravager
+FormID: 0100DBEA	NVDLC04MarkedMenBeastClass	CLAS	 	Marked Men Marauder
+FormID: 0100DBEE	NVDLC04ArcWelderExplosion	EXPL	 	Missile Explosion
+FormID: 0100DBF0	NVDLC04FlashBangExplosionNoDMG	EXPL	 	Flash Explosion
+FormID: 0100DBF1	NVDLC04UlyssesTrigger4	ACTI	 	Road01 Ulysses EDE Trigger
+FormID: 0100DBF6	NVDLC04CamaraderETimerEffect	MGEF	 	ED-E Timer
+FormID: 0100DC00	NVDLC04TunnelerPoisonExplosion	EXPL	 	Tunneler Death Explosion
+FormID: 0100DC03	NVDLC04TunnelerPoisonDeathEnch	ENCH	 	Area Poison Effect
+FormID: 0100DC07	NVDLC04DummyNailGunSilent	MGEF	 	Silent
+FormID: 0100DC08	NVDLC04NailGunOE	ENCH	 	Silent
+FormID: 0100DC37	NVDLC04UlyssesFake	NPC_	 	Ulysses
+FormID: 0100DC5D	NVDLC04TunnelerPoison	SPEL	 	Poison
+FormID: 0100DC5E	NVDLC04TunnelerPoisonEffect	MGEF	 	Tunneler Poison
+FormID: 0100DC64	NVDLC04RALPHIEPosterActivator	ACTI	 	RALPHIE Poster
+FormID: 0100DCC7	NVDLC04WeapFlareResistEffect	MGEF	 	NVDLC04WeapFlareResistEffect
+FormID: 0100DCC8	NVDLC04WeapFlareResistSpell	SPEL	 	Flare Resist
+FormID: 0100DCDA	NVDLC04SatchelChargeExplosion	EXPL	 	Frag Explosion
+FormID: 0100DDC4	NVDLC04TunnelCodeSupport	ACTI	 	Support the Show
+FormID: 0100DDD1	NVDLC04Road02AmbushTrigger	ACTI	 	Deathclaw Ambush Trigger
+FormID: 0100DEAB	NVDLC04RadHealFood	ALCH	 	DEBUG RAD FOOD
+FormID: 0100DEB5	NVDLC04Silo01PowerUseLeverMSG	MESG	 	Silo Blast Door Controls
+FormID: 0100DEB6	NVDLC04AshtonLaunchUseLeverMSG	MESG	 	Control Station
+FormID: 0100DEB9	NVDLC04TunnelerFriendFaction	FACT	 	NVDLC04 Tunneler Faction
+FormID: 0100DEC7	NVDLC04BowieKnifeUniqueAE	SPEL	 	Blood-Nap Bonuses
+FormID: 0100DEC8	NVDLC04SiloUtlDoor	DOOR	 	Door
+FormID: 0100DEE2	NVDLC04TunnelerAlt	CREA	 	Tunneler
+FormID: 0100DF1D	NVDLC04DummyIgnoresDTDR	MGEF	 	Ignores DT/DR
+FormID: 0100DF1E	NVDLC04DummyIgnoreDTDREffect	ENCH	 	Ignores DT/DR Dummy Effect
+FormID: 0100DF3E	NVDLC04DummyFistRawr	ENCH	 	Dummy Fist of * Rawr Effect
+FormID: 0100DF49	NVDLC04FlashbangAbilitiesMSG	MESG	 	Flash Bang
+FormID: 0100DF4A	NVDLC04FlashbangAbilitiesNote	NOTE	 	Flash Bang Information
+FormID: 0100DF65	NVDLC04EnhancedSensors	PERK	 	Enhanced Sensors
+FormID: 0100DFB1	NVDLC04TunnelerKnockdownEffect	MGEF	 	NVDLC04TunnelerKnockdownEffect
+FormID: 0100DFD8	NVDLC04RedGlareMissileProjectileIncendiary	PROJ	 	Red Glare Missile
+FormID: 0100DFD9	NVDLC04RedGlareMissileProjectileHE	PROJ	 	Red Glare Missile
+FormID: 0100DFDA	NVDLC04RedGlareMissileExplosionIncendiary	EXPL	 	Red Glare Missile Explosion
+FormID: 0100DFDB	NVDLC04RedGlareMissileExplosionHE	EXPL	 	Red Glare Missile Explosion
+FormID: 0100DFDC	NVDLC04EnchRedGlareRocketIncendiaryEffect	ENCH	 	Burning
+FormID: 0100DFE3	RecipeNVDLC04RocketIncendiaryAmmo	RCPE	 	Incendiary Rocket Ammo
+FormID: 0100E0F7	NVDLC04Road01MMBossCampRavagerAttackTrigger	ACTI	 	Snap out of it
+FormID: 0100E105	NVDLC04BowieKnifeUniqueStatic	ACTI	 	Blood-Nap
+FormID: 0100E107	RecipeNVDLC04BreakdownRocket	RCPE	 	Breakdown Rocket
+FormID: 0100E10A	NVDLC04Silo02Floor01AwakenBotTrigger	ACTI	 	Awaken Bot
+FormID: 0100E11B	NVDLC04BladeOfTheWestKnockdownEffect	MGEF	 	NVDLC04BladeOfTheWestKnockdownEffect
+FormID: 0100E1F7	NVDLC04WeapTrailCarbineNoDrop	WEAP	 	Trail Carbine
+FormID: 0010BEEA	FreesideWorld	WRLD	 	Freeside
+FormID: 0012D94D	FreesideNorthWorld	WRLD	 	Freeside
+FormID: 000CDA5C	HVWeapPlasmaRifleWeak	WEAP	 	Plasma Rifle
+FormID: 00090A6A	WeapNVGrenadeMachinegun	WEAP	 	Grenade Machinegun
+FormID: 00157F7E	CanyonWreckageMapMarker	MAPM	 	Canyon Wreckage
+FormID: 000DA726	WastelandNV	WRLD	 	Mojave Wasteland
+FormID: 01000800	WeapNVDLC00Faderator	WEAP	 	The Faderator
+FormID: 0013DE6F	BigHornerKnockdownEffect	MGEF	 	BigHornerKnockdownEffect
+FormID: 01002866	NVDLC04Road01World	WRLD	 	The Lonesome Road
+FormID: 010028AE	NVDLC04Silo02	CELL	 	Ashton Missile Silo
+FormID: 01002ADF	NVDLC04Silo01	CELL	 	Hopeville Missile Silo
+FormID: 01002C7E	NVDLC04DivideWorld	WRLD	 	The Divide
+FormID: 01002F73	NVDLC04Road02World	WRLD	 	The High Road
+FormID: 010031BE	NVDLC04Silo2Elevator	CELL	 	Ashton Missile Silo Lift
+FormID: 01003218	NVDLC04Silo1ElevatorTrigger	ACTI	 	NVDLC04Silo1ElevatorTrigger
+FormID: 01003603	NVDLC04MQ00	QUST	 	The Reunion
+FormID: 01003605	NVDLC04LoadMessage01	MESG	 	The Reunion
+FormID: 01003606	NVDLC04LoadMessage02	MESG	 	Lonesome Road Loaded
+FormID: 0100360E	NVDLC04XPCalculator	QUST	 	DLC04 XP Calculator
+FormID: 0100360F	NVDLC04MQ01	QUST	 	The Job
+FormID: 01003610	NVDLC04MQ02	QUST	 	The Divide
+FormID: 01003613	NVDLC04MQ02a	QUST	 	The Tunnelers
+FormID: 01003615	NVDLC04MQ03b	QUST	 	The End
+FormID: 01003616	NVDLC04MQ03a	QUST	 	The Courier
+FormID: 01003617	NVDLC04MQ01a	QUST	 	The Silo
+FormID: 010039E3	NVDLC04MQ01c	QUST	 	The Launch
+FormID: 010039E5	NVDLC04CompanionMSG	MESG	 	Lonesome Road
+FormID: 010039E7	NVDLC04Road1Door	DOOR	 	Door
+FormID: 010039EA	NVDLC04WreckageDoor	DOOR	 	Door
+FormID: 010039EC	NVDLC04MojaveDoor	DOOR	 	Door
+FormID: 010039ED	NVDLC04Road2Door	DOOR	 	Door
+FormID: 010039F0	NVDLC04Silo1Door	DOOR	 	Door
+FormID: 010039F2	NVDLC04Road01ToTunnelDoor	DOOR	 	Door
+FormID: 010039F5	NVDLC04Silo2Door	DOOR	 	Door
+FormID: 010039FA	NVDLC04DivideDoor	DOOR	 	Door
+FormID: 01003BEA	NVDLC04DivideCaveBldg	CELL	 	Buried Buildings
+FormID: 01003BEB	NVDLC04DivideStartBldg	CELL	 	Sunstone Tower
+FormID: 01003CAA	NVDLC04DivideUlyssesTemple	CELL	 	Ulysses' Temple
+FormID: 01003E28	NVDLC04MQ02aTrigger	ACTI	 	Gas Valve
+FormID: 01003E2B	NVDLC04DivideDoor2	DOOR	 	Door
+FormID: 01003E2D	NVDLC04UlyssesTempleDoor02	DOOR	 	Door
+FormID: 01003E30	NVDLC04Silo02LaunchCode	NOTE	 	Silo Network Security Codes
+FormID: 01003E36	NVDLC04UltDoor01	DOOR	 	Door
+FormID: 01003E38	NVDLC04DeskSilo01BaseCommander	CONT	 	Base Commander's Desk
+FormID: 01003E40	NVDLC04Ulysses	NPC_	 	Ulysses
+FormID: 01003E44	NVDLC04DialogueUlysses	QUST	 	Ulysses' Dialogue
+FormID: 01003E49	NVDLC04UlyssesTempleExitDoor	DOOR	 	Door
+FormID: 01003E4B	NVDLC04RoadHQ	CELL	 	Hopeville Missile Base HQ
+FormID: 01003EAB	NVDLC04RoadTunnel	CELL	 	Collapsed Overpass Tunnel
+FormID: 01003EAC	NVDLC04Road01MilitaryGateTerminal	TERM	 	Gate Terminal
+FormID: 010045A8	NVDLC04TunnelerTest	CREA	 	Tunneler
+FormID: 0100466C	NVDLC04RoadTunnelDoor02	DOOR	 	Enter
+FormID: 0100466D	NVDLC04RoadTunnelDoor01	DOOR	 	Enter

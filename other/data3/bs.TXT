@@ -1,0 +1,741 @@
+FormID: 0000003C	Wasteland	WRLD	 	Wasteland
+FormID: 010049A3	DLC03MetroRideSwitch02	ACTI	 	Metro Console
+FormID: 010049AA	DLC03MetroRideEndSwitch	ACTI	 	Metro Console
+FormID: 010049D2	DLC03TurretHallSecurityTerminal	TERM	 	Security Terminal
+FormID: 010049DC	DLC03PowerWorksTurretHallSwitch01	ACTI	 	Emergency Electrical Switch
+FormID: 010049DE	DLC03PowerworksTurretHallTurret	CREA	 	Mark VI Turret
+FormID: 010049F0	DLC03PowerWorksRadiationTrap	ACTI	 	Emitter
+FormID: 010049FD	DLC03PowerworksRadHallTerminal	TERM	 	Remote Vent Terminal
+FormID: 01004A05	DLC03AFBArtillerySwitch01	ACTI	 	Artillery Switch
+FormID: 01004A06	DLC03Sector03Terminal01	TERM	 	Turret Control System
+FormID: 01004A0D	DLC03AFBArtilleryNote01	NOTE	 	Sector 2 Artillery Note
+FormID: 01004C16	DLC03EncounterADOutcastA1	CREA	 	Sentry Bot
+FormID: 01004C19	DLC03EncounterADOutcastA2	NPC_	 	Brotherhood Outcast
+FormID: 01004C1A	DLC03EncounterADOutcastA3	NPC_	 	Brotherhood Outcast
+FormID: 01004C67	DLC03NuclearAnomalyEffect	MGEF	 	Nuclear Anomoly
+FormID: 01004C69	DLC03NuclearAnomalyAbility	SPEL	 	Nuclear Anomaly
+FormID: 01004C6B	DLC03AlmostPerfect	PERK	 	Almost Perfect
+FormID: 01004C6C	DLC03NuclearAnomaly	PERK	 	Nuclear Anomaly
+FormID: 01004C6D	DLC03DevilsHighway	PERK	 	Devil's Highway
+FormID: 01004C6E	DLC03KarmicRebalance	PERK	 	Karmic Rebalance
+FormID: 01004C6F	DLC03EscalatorToHeaven	PERK	 	Escalator to Heaven
+FormID: 01004C71	DLC03QuantumChemist	PERK	 	Quantum Chemist
+FormID: 01004C75	DLC03WQ03	QUST	 	Holy Water
+FormID: 01004C76	DLC03WQ03BrotherGerard	NPC_	 	Brother Gerard
+FormID: 01004C77	DLC03WQ03MotherCurie	NPC_	 	Mother Curie III
+FormID: 01004C7A	DLC03WQ03WaterHoly	ALCH	 	Holy Water
+FormID: 01004C7B	DLC03GhoulHideout	CELL	 	Museum Authority
+FormID: 000207A1	CitadelBRing	CELL	 	Citadel - B Ring
+FormID: 000207A2	CitadelARing	CELL	 	Citadel - A Ring
+FormID: 00000A71	Jericho	NPC_	 	Jericho
+FormID: 00000A74	MegatonWorld	WRLD	 	Megaton
+FormID: 0100522A	DLC03ExplodingBarrel01	MSTT	 	Explosive Barrel
+FormID: 0100522D	DLC03GhoulGrenade	WEAP	 	Radioactive Gore
+FormID: 01005325	DLC03EnclaveReport	NOTE	 	Deathclaw Officer's Report
+FormID: 01005326	DLC03EnclaveOrders	NOTE	 	Deathclaw Outpost Orders
+FormID: 01005327	DLC03EnclaveCampTerminal	TERM	 	Enclave Field Research Terminal
+FormID: 01005337	DLC03CrBrahminPackWater	CREA	 	Brahmin
+FormID: 01005559	DLC03Vertibird02	CELL	 	Vertibird Interior
+FormID: 01005561	DLC03AFBEnclaveBaseVertibird01	ACTI	 	Vertibird
+FormID: 01005566	DLC03AFBControlTowerVertibird01	ACTI	 	Vertibird
+FormID: 01005568	DLC03ChairVertibird01Player	FURN	 	Jump Seat
+FormID: 01005685	DLC03ScribeVallincourt	NPC_	 	Scribe Vallincourt
+FormID: 01005686	DLC03Tristan	NPC_	 	Paladin Tristan
+FormID: 01005687	DLC03TeslaCoil	MISC	 	Tesla Coil
+FormID: 010056B7	DLC03PrimeSequenceTurret02EnclaveAlt	CREA	 	Mark VI Turret
+FormID: 010056BC	DLC03DeadMirelurk01	CREA	 	Mirelurk
+FormID: 010056BD	DLC03DeadMirelurk02	CREA	 	Mirelurk
+FormID: 01005705	DLC03TeslaCoil01	ACTI	 	Tesla Coil
+FormID: 01005709	DLC03Vertibird03	CELL	 	Vertibird Interior
+FormID: 0100571F	DLC03CitadelVertibird02	ACTI	 	Vertibird
+FormID: 01005728	DLC03CitadelVertibird01	ACTI	 	Vertibird
+FormID: 01005730	DLC03RelayStatBoSCommandoFlamer	NPC_	 	Brotherhood of Steel Paladin
+FormID: 01005731	DLC03RelayStatBoSCommandoSoldier	NPC_	 	Brotherhood of Steel Paladin
+FormID: 01005732	DLC03RelayStatBoSCommandoCommander	NPC_	 	Brotherhood of Steel Paladin
+FormID: 010057BE	DLC03LvlEnclaveSquad01	NPC_	 	Enclave Squad Sigma
+FormID: 01005800	DLC03SentryBotMGEnclaveBroken	CREA	 	Sentry Bot
+FormID: 01005806	DLC03MisterGutsyEnclaveBroken	CREA	 	Mister Gutsy
+FormID: 01005815	DLC03EncounterPPDeadMirelurk02	CREA	 	Mirelurk
+FormID: 01005818	DLC03LaserShotgun	WEAP	 	Tri-beam Laser Rifle
+FormID: 01005828	DLC03GoreProjectile	PROJ	 	Radioactive Gore
+FormID: 01005829	DLC03GoreExplosionGlow	EXPL	 	Toxic Gore Explosion
+FormID: 01005C1A	DLC03WQ02GhoulC	NPC_	 	Underworld Resident
+FormID: 01005C1B	DLC03WQ02GhoulD	NPC_	 	Underworld Resident
+FormID: 01005C1C	DLC03WQ02GhoulA	NPC_	 	Underworld Resident
+FormID: 01005C1D	DLC03WQ02GhoulB	NPC_	 	Underworld Resident
+FormID: 01005C3B	DLC03ChairVertibird01a	FURN	 	Jump Seat
+FormID: 01005C49	DLC03AFBFight02EnclaveMissileFodder01	NPC_	 	Enclave Soldier
+FormID: 01005C4A	DLC03AFBFight02EnclaveMissileFodder02	NPC_	 	Enclave Soldier
+FormID: 01005C4B	DLC03AFBFight02EnclaveMissileFodder03	NPC_	 	Enclave Soldier
+FormID: 01005C4C	DLC03AFBFight02EnclaveGatlingFodder01	NPC_	 	Enclave Soldier
+FormID: 01005C4D	DLC03AFBFight02EnclaveGatlingFodder02	NPC_	 	Enclave Soldier
+FormID: 01005C4E	DLC03AFBFight02EnclaveGatlingFodder03	NPC_	 	Enclave Soldier
+FormID: 01005C53	DLC03AFBFight02BoSMinigunFodder01	NPC_	 	Brotherhood of Steel Paladin
+FormID: 01005C54	DLC03AFBFight02BoSMissileFodder01	NPC_	 	Brotherhood of Steel Paladin
+FormID: 01005C56	DLC03AFBFight02BoSMinigunFodder02	NPC_	 	Brotherhood of Steel Paladin
+FormID: 01005C57	DLC03AFBFight02BoSMinigunFodder03	NPC_	 	Brotherhood of Steel Paladin
+FormID: 01005C58	DLC03AFBFight02BoSMissileFodder02	NPC_	 	Brotherhood of Steel Paladin
+FormID: 01005C59	DLC03AFBFight02BoSMissileFodder03	NPC_	 	Brotherhood of Steel Paladin
+FormID: 01005D89	DLC03AFBTeslaCannonCrate	CONT	 	Resupply Crate
+FormID: 01005DD1	DLC03ControlTowerTerminal	TERM	 	Enclave Field Research Terminal
+FormID: 01005E0F	DLC03WQ02HideoutMarker	MAPM	 	Museum Authority Building
+FormID: 01006225	DLC03ShockEffect	MGEF	 	Shock Effect
+FormID: 01006227	DLC03TrapFieldShockEffect	SPEL	 	FieldShockEffect
+FormID: 01006231	DLC03EnclaveBase	QUST	 	Enclave Base Background Quest
+FormID: 01006247	DLC03VertibirdRumble	EXPL	 	Vertibird Rumble
+FormID: 01006249	DLC03CellarDoor	DOOR	 	Cellar Door
+FormID: 0100626E	DLC03CrSuperMutant4GatlingLaserA	CREA	 	Super Mutant Overlord
+FormID: 0100626F	DLC03NuclearAnomalyExplosion	EXPL	 	Nuke Explosion
+FormID: 0100641C	DLC03PresMetroPowerBox	ACTI	 	Power Box
+FormID: 0100641E	DLC03PresMetroFuse	MISC	 	Main Fuse
+FormID: 010064A1	DLC03PresMetroProtectronDEAD	CREA	 	Protectron
+FormID: 010064A3	DLC03PresMetroGhoul01DEAD	CREA	 	Feral Ghoul
+FormID: 010064A5	DLC03PresMetroGhoul02DEAD	CREA	 	Feral Ghoul
+FormID: 010064AA	DLC03PresMetroDoDamage01	ACTI	 	Gas Valve
+FormID: 00021EBE	CrMisterGutsyEnclave	CREA	 	Mister Gutsy
+FormID: 010064B6	DLC03PresMetroGhoulWave01Trig	ACTI	 	Gas Valve
+FormID: 010064D6	DLC03PresMetroLvlRobotBoss	CREA	 	Presidential Metro Sentinal Unit
+FormID: 010064FE	DLC03WQ03Rosa	NPC_	 	Rosa
+FormID: 010064FF	DLC03WQ03HolyWaterPamphlet	NOTE	 	Holy Water Pamphlet
+FormID: 01006517	DLC03WQ03WaterBeggar01	NPC_	 	Water Beggar
+FormID: 01006520	DLC03WQ03SunOfAtom	CREA	 	Atom's Champion
+FormID: 0100652A	DLC03PresMetroDoor01door	DOOR	 	Metro Doors
+FormID: 01006530	DLC03SignalScrambler	MISC	 	Deathclaw Control Scrambler
+FormID: 01006717	DLC03FFELD03Holotape	NOTE	 	Wastelander Holotape #1
+FormID: 01006718	DLC03FFELD02Holotape	NOTE	 	Talon Company Merc Log #1
+FormID: 01006719	DLC03CrBrahminPackWaterDEAD	CREA	 	Brahmin
+FormID: 0100671A	DLC03WastelanderAAF3	NPC_	 	Wastelander
+FormID: 0100671B	DLC03WastelanderCF3	NPC_	 	Wastelander
+FormID: 0100671C	DLC03WastelanderAF	NPC_	 	Wastelander
+FormID: 0100671D	DLC03FemaleVoice3	NPC_	 	Wastelander
+FormID: 0100671E	DLC03FemaleVoice2	NPC_	 	Wastelander
+FormID: 0100671F	DLC03FemaleVoice1	NPC_	 	Wastelander
+FormID: 01006720	DLC03MaleVoice3	NPC_	 	Wastelander
+FormID: 01006721	DLC03MaleVoice2	NPC_	 	Wastelander
+FormID: 01006722	DLC03MaleVoice1	NPC_	 	Wastelander
+FormID: 01006725	DLC03WeapTeslaCannon	WEAP	 	Tesla Cannon
+FormID: 01006726	DLC03FFELD000	CELL	 	Dummy Cell
+FormID: 0100674D	DLC03JuryStRaiders	CELL	 	Hank's Electrical Supply
+FormID: 010068B9	DLC03WhiteFlagBroadcast	SPEL	 	Enclave Eyebot Broadcast
+FormID: 010068BA	DLC03WhiteFlagEyebot	CREA	 	Enclave Eyebot
+FormID: 010068BB	DLC03WhiteFlagBroadcastEffect	MGEF	 	White Flag Broadcast Effect
+FormID: 010068BC	DLC03WhiteFlagRadio	TACT	 	White Flag Radio
+FormID: 010068BF	DLC03Stiggs	NPC_	 	Stiggs
+FormID: 010068C3	DLC03LvlEnclaveSquad01Leader	NPC_	 	Enclave Sigma Leader
+FormID: 010068DA	DLC03AFBArtillerySwitch02	ACTI	 	Artillery Switch
+FormID: 010068E3	DLC03AFBArtilleryNote02	NOTE	 	Sector 1 Artillery Note
+FormID: 01006957	DLC03WQ01BanditBodyGuardB	NPC_	 	Bandit
+FormID: 01006958	DLC03WQ01BanditBodyGuardC	NPC_	 	Bandit
+FormID: 01006959	DLC03WQ01BanditB	NPC_	 	Bandit
+FormID: 0100695A	DLC03WQ01BanditC	NPC_	 	Bandit
+FormID: 00022486	RadioGalaxyNewsQuest	QUST	 	Galaxy News Radio
+FormID: 01006BDC	DLC03PresMetroDeadProtectron	CREA	 	Protectron
+FormID: 01006C15	DLC03PresMetroTrain1Door	DOOR	 	Metro Doors
+FormID: 01006DF0	DLC03CrlDoor01	DOOR	 	Door
+FormID: 01006EB1	DLC03WQ03ApostlesFaction	FACT	 	Apostles of the Eternal Light
+FormID: 01006F5F	DLC03WQ02GuardA	NPC_	 	Ghoul Guard
+FormID: 01006F60	DLC03WQ02GuardB	NPC_	 	Ghoul Guard
+FormID: 01006F61	DLC03WQ02GuardC	NPC_	 	Ghoul Guard
+FormID: 01006F62	DLC03WQ02AquaCura	ALCH	 	Aqua Cura
+FormID: 010071E6	DLC03WQ03MonasteryKey	KEYM	 	Monastery Key
+FormID: 0100725D	DLC03LibertyPrimeHulkExplosion	EXPL	 	Prime Explosion
+FormID: 0100725E	DLC03KnifeSwitch01	ACTI	 	Knife Switch
+FormID: 01007267	DLC03PowerworksRadHallTerminalAH	TERM	 	Remote Access Research Terminal
+FormID: 01007268	DLC03PowerworksRadHallTerminalBC	TERM	 	Remote Access Research Terminal
+FormID: 0100726A	DLC03PowerworksRadHallTerminalFG	TERM	 	Remote Access Research Terminal
+FormID: 0100726B	DLC03PowerworksRadHallTerminalDE	TERM	 	Remote Access Research Terminal
+FormID: 0100726C	DLC03PowerworksZMachineTerminal	TERM	 	Remote Access Research Terminal
+FormID: 01007296	DLC03PowerWorksZMachineFailSwitch	ACTI	 	Emergency Switch
+FormID: 0100729F	DLC03EnclaveTowerCommsTerminal	TERM	 	Communications Terminal
+FormID: 010072D2	DLC03PresMetroComputerAlarmTrig	ACTI	 	Gas Valve
+FormID: 010072DD	DLC03WQScientistB	NPC_	 	Project Purity Scientist
+FormID: 010072EA	DLC03PresMetroRandAnnounceTrig01	ACTI	 	Intercom Trigger
+FormID: 010072ED	DLC03WQScientistD	NPC_	 	Project Purity Scientist
+FormID: 010072EE	DLC03WQScientistC	NPC_	 	Project Purity Scientist
+FormID: 01007311	DLC03HangarWallsDoor01	DOOR	 	Cage Door
+FormID: 01007313	DLC03WQScientistATemplate	NPC_	 	Project Purity Scientist
+FormID: 0100731E	DLC03RaiderSilo	CELL	 	Silo
+FormID: 01007391	DLC03FireControlTerminal	TERM	 	Satellite Uplink Terminal
+FormID: 01007394	DLC03FireControlTerminal01	TERM	 	Fire Control
+FormID: 01007395	DLC03FireControlTerminal02	TERM	 	Fire Control
+FormID: 01007396	DLC03FireControlTerminal03	TERM	 	Fire Control
+FormID: 01007397	DLC03FireControlTerminal04	TERM	 	Fire Control
+FormID: 0100739A	DLC03Powerworks03	CELL	 	Old Olney S. Wilson Building
+FormID: 010074C3	DLC03PowerWorksCargoRoomTerminal	TERM	 	Automated Control Terminal
+FormID: 01007567	DLC03WallExplosion	EXPL	 	Prime Explosion
+FormID: 010075E9	DLC03ReaverGlowEffect	MGEF	 	Radioactive Burning
+FormID: 0100769C	DLC03EnchFlamerEffect	ENCH	 	Burning
+FormID: 00023226	MetroCenter07	CELL	 	Museum Station
+FormID: 01007B2F	DLC03ScatterBeam	PROJ	 	Laser Beam
+FormID: 000035D3	zcChevyToVernon	CELL	 	Metro Junction
+FormID: 000035D4	zcArlingtonToWasteland	CELL	 	Arlington/Wasteland Metro
+FormID: 01007D96	DLC03HangarWallsDeathclawDoor02	DOOR	 	Cage Door
+FormID: 01007D97	DLC03HangarWallsDeathclawDoor04	DOOR	 	Cage Door
+FormID: 01007D99	DLC03HangarWallsDeathclawDoor01	DOOR	 	Cage Door
+FormID: 01007D9A	DLC03HangarWallsDeathclawDoor03	DOOR	 	Cage Door
+FormID: 01007D9B	DLC03AFBEnclave1GunCMDEAD	NPC_	 	Enclave Soldier
+FormID: 01007D9D	DLC03LDAFBEnclave01Holotape	NOTE	 	Enclave Soldier Log #1
+FormID: 01007E34	DLC03WQ03Apostle01	NPC_	 	Novice
+FormID: 01007E35	DLC03WQ03Apostle02	NPC_	 	Wastelander
+FormID: 01007E36	DLC03WQ03CrGlowingApostle	CREA	 	Sun of Atom
+FormID: 01007F82	DLC03LibertyPrimeBombProjectileSpecial	PROJ	 	DLC03LibertyPrimeBombProjectileSpecial
+FormID: 01007F83	DLC03LibertyPrimeNukeExplosionSpecial	EXPL	 	Nuke Explosion
+FormID: 01007FED	DLC03CrMisterGutsyEnclave	CREA	 	Mister Gutsy
+FormID: 01007FEE	DLC03CrProtectronEnclave	CREA	 	Protectron
+FormID: 01007FEF	DLC03CrRobobrainEnclave	CREA	 	Robobrain
+FormID: 01007FF0	DLC03CrSentryBotGLEnclave	CREA	 	Sentry Bot
+FormID: 01007FF1	DLC03CrSentryBotMGEnclave	CREA	 	Sentry Bot
+FormID: 01008049	DLC03AFBCrSentryBotGLArmyDEAD	CREA	 	Sentry Bot
+FormID: 0100804A	DLC03AFBCrRobobrainArmyDEAD	CREA	 	Robobrain
+FormID: 0100804B	DLC03AFBCrProtectronArmyDEAD	CREA	 	Protectron
+FormID: 00003A2E	MegatonClinic	CELL	 	Megaton Clinic
+FormID: 0100817C	DLC03DialoguePresidentialMetro	QUST	 	DLC03 Presidential Metro Dialogue
+FormID: 01008189	DLC03VertibirdCanyon01	MSTT	 	Vertibird
+FormID: 010081DE	DLC03AFBEnclaveCrateContainer01	CONT	 	Enclave Crate
+FormID: 010081DF	DLC03AFBEnclaveScientistCFHolotape	NPC_	 	Enclave Scientist
+FormID: 010081E2	DLC03AFBCrateKey01	KEYM	 	Fuel Stash Conatiner Key
+FormID: 010081E3	DLC03LDAFBEnclave02Holotape	NOTE	 	Flamer Fuel Stash Holotape
+FormID: 0100836D	DLC03EncounterRCSecurity03	NPC_	 	Rivet City Security
+FormID: 0100837B	DLC03BS00	QUST	 	DLC03 Transition Dialogue
+FormID: 0100887A	DLC03CrlLoadDoorExt01	DOOR	 	Door
+FormID: 0100887B	DLC03CrlLoadHatchExt01	DOOR	 	Hatch
+FormID: 01008893	DLC03LvlEnclaveArmoryBoss	NPC_	 	Armory Master
+FormID: 01008895	DLC03UniqueGatlingLaser	WEAP	 	Precision Gatling Laser
+FormID: 010088B5	DLC03ArmorUniqueReconHelmet	ARMO	 	Composite Recon Helmet
+FormID: 010088BB	DLC03ShockHammerEffect	SPEL	 	HammerShockEffect
+FormID: 010088BC	DLC03ShockHammerBaseEffect	MGEF	 	Shock Hammer Effect
+FormID: 010088BD	DLC03ShockDamage	MGEF	 	Shock Damage
+FormID: 010088BE	DLC03EnchShockHammer	ENCH	 	Shocked
+FormID: 010088BF	DLC03WeapShockHammer	WEAP	 	Discharge Hammer
+FormID: 010088E7	DLC03SurgicalMask	ARMO	 	Surgical Mask
+FormID: 010088E8	DLC03LabCoat	ARMO	 	Lab Coat
+FormID: 010088E9	DLC03LvlEnclaveDoctor	NPC_	 	Enclave Doctor
+FormID: 010088F3	DLC03SentryBotGLArmory	CREA	 	Sentry Bot
+FormID: 01008A0F	DLC03zAFB01	CELL	 	Factory
+FormID: 01008C72	DLC03PostQuest	QUST	 	DLC03 Post Quest Handling
+FormID: 01008CBB	DLC03RobotControlMainframe	TERM	 	Robot Control Mainframe
+FormID: 01008CBD	DLC03SentryBotGLEnclaveMB	CREA	 	Sentry Bot
+FormID: 01008CC0	DLC03MisterGutsyEnclaveMB	CREA	 	Mister Gutsy
+FormID: 01008CCE	DLC03EnclaveBaseRobotFaction	FACT	 	DLC03 Enclave Base Robots
+FormID: 01008CCF	DLC03CrTurret04EnclaveMB	CREA	 	Mark VIII Turret
+FormID: 01008CD3	DLC03SentryBotMGEnclaveMB	CREA	 	Sentry Bot
+FormID: 01008CE0	DLC03AFBBoSGunPatrolWeapDrawn01	NPC_	 	Brotherhood of Steel Knight
+FormID: 01008CE1	DLC03AFBBoSGunPatrolWeapDrawn02	NPC_	 	Brotherhood of Steel Paladin
+FormID: 010090D7	DLC03ControlTowerTurretTerminal01	TERM	 	Turret Control System
+FormID: 010091B1	DLC03UniqueFlamer	WEAP	 	Rapid-Torch Flamer
+FormID: 010091B3	DLC03UniqueFlamer02	WEAP	 	Slo-Burn Flamer
+FormID: 010091BB	DLC03LootAlienBlasterEnclave	CONT	 	Gun Case
+FormID: 010091BC	DLC03LockerEnclaveStealth	CONT	 	Locker
+FormID: 010091D5	DLC03EncounterPPCBrotherhood2	NPC_	 	Brotherhood of Steel Scribe
+FormID: 010091D9	DLC03WQ01LepelletierDeadMsg	MESG	 	Protecting the Water Way
+FormID: 00024D6C	UnderworldChopShop	CELL	 	The Chop Shop
+FormID: 0100944E	DLC03WhiteHousePlazaMapMarker	MAPM	 	White House Plaza
+FormID: 0100944F	DLC03LvlEnclaveScientistDClaw	NPC_	 	Enclave Scientist
+FormID: 0100946A	DLC03LvlEnclaveScientistDClawNoScript	NPC_	 	Enclave Scientist
+FormID: 0100946B	DLC03DeathClawEnclaveBase	CREA	 	Deathclaw
+FormID: 0100946C	DLC03EnclaveBaseDClawFaction	FACT	 	DLC03 Enclave Base Deathclaws
+FormID: 01009514	DLC03MainDoorOpen	ACTI	 	Access Panel
+FormID: 01009517	DLC03PowerworksRadHallTerminalWall	TERM	 	Automated Control Terminal
+FormID: 0100953E	DLC03EnclaveOfficerMBKey	NPC_	 	Security Officer
+FormID: 0100953F	DLC03MBKeyCard	KEYM	 	High Clearance Keycard
+FormID: 01009541	DLC03SecurityTerminalMB	TERM	 	Security Terminal
+FormID: 01009542	DLC03EnclaveRadio	ACTI	 	Enclave Radio
+FormID: 01009579	DLC03PresMetroRandAnnounceTrig02	ACTI	 	Intercom Trigger
+FormID: 0100957A	DLC03PresMetroRandAnnounceTrig03	ACTI	 	Intercom Trigger
+FormID: 010095B0	DLC03PresMetroRandAnnounceTrig04	ACTI	 	Intercom Trigger
+FormID: 010095B1	DLC03PresMetroRandAnnounceTrig05	ACTI	 	Intercom Trigger
+FormID: 010095C3	DLC03zCitadelPit	CELL	 	Citadel Armory
+FormID: 010095C4	DLC03zCitadelArmoryDoor	DOOR	 	Armory Door
+FormID: 010095C5	DLC03BrotherhoodOfSteel1GunHMDEAD	NPC_	 	Brotherhood of Steel Initiate
+FormID: 010095C6	DLC03CitadelArmoryKey	KEYM	 	Armory Key
+FormID: 00045219	zDCWorld03	CELL	 	Collapsed Car Tunnel
+FormID: 010097A1	testPhilSwitchSequence	ACTI	 	Electrical Switch
+FormID: 0100980D	DLC03PuppiesEffect	SPEL	 	Health Boost
+FormID: 01009968	DLC03WQ02GriffonDeadMsg	MESG	 	The Amazing Aqua Cura!
+FormID: 01009979	DLC03PowerWorksControlManifest	NOTE	 	Control Manifest
+FormID: 0100997A	DLC03PowerWorksAlphaCellEntry01	NOTE	 	Alpha Cell Entry 01
+FormID: 01009997	DLC03PresMetroRobotTALKFaction	FACT	 	Dialogue Faction for Pres Metro Bots
+FormID: 01009A5A	DLC03PrMetroColTrainTRIG	ACTI	 	Gas Valve
+FormID: 01009A5F	DLC03FakeForce100r1000	EXPL	 	Force
+FormID: 01009AD4	DLC03FieldPanelExplosion	EXPL	 	Test Explosion
+FormID: 01009AD5	DLC03ForceFieldControlPanelDummy	ACTI	 	Repulsion Field Control Panel
+FormID: 01009AE1	DLC03SentryBotMGEnclaveStiggs	CREA	 	Sparky
+FormID: 01009AE3	DLC03MisterGutsyStiggs	CREA	 	Hoover
+FormID: 01009B87	DLC03MargotDoor	DOOR	 	Door
+FormID: 01009B89	DLC03MargotHelloTrigger	ACTI	 	Margot Hello Trigger
+FormID: 01009F95	DLC03SuperMutantBlood	MISC	 	Super Mutant Blood Sample
+FormID: 000A5C6C	CrRobobrainArmy	CREA	 	Robobrain
+FormID: 0100A107	DLC03Powerworks02	CELL	 	Old Olney Underground
+FormID: 0100A502	testPhilDemoWeapShotgunCombat	WEAP	 	Combat Shotgun
+FormID: 0100A66D	DLC03PrimeSequenceTurret02EnclaveHighHP	CREA	 	Mark VI Turret
+FormID: 0100A675	DLC03BoSOrders	NOTE	 	Orders
+FormID: 0100A954	DLC03SarahLyonsVertibird02	NPC_	 	Sentinel Lyons
+FormID: 0100A955	DLC03SarahLyonsVertibird01	NPC_	 	Sentinel Lyons
+FormID: 0100A956	DLC03SarahLyonsVertibird03	NPC_	 	Sentinel Lyons
+FormID: 0100AD89	DLC03CrRadscorpion3Albino	CREA	 	Albino Radscorpion
+FormID: 0100ADC8	testPhilGrenadeLauncher	WEAP	 	Grenade Launcher
+FormID: 0006698C	WithdrawalAlcohol	SPEL	 	Alcohol Withdrawal
+FormID: 0100AEF1	 	MAPM	 	Adams Storage Facility
+FormID: 0100AEF6	 	MAPM	 	Adams Air Force Base Entrance
+FormID: 0100AEF7	 	MAPM	 	Adams Air Traffic Control Tower
+FormID: 0100B02D	DLC03RadScorpion3Poison	SPEL	 	Poison
+FormID: 0100B171	DLC03WQ02WigCabinet	CONT	 	Cabinet
+FormID: 0100B172	DLC03WQ02Note	NOTE	 	Griffon's Bottling Instructions
+FormID: 0100B36D	DLC03WQ03WaterHolyEffect	MGEF	 	DLC03WQ03HolyWaterEffect
+FormID: 0100B393	DLC03TeslaCannonExplosionSmall	EXPL	 	Missile Explosion
+FormID: 0100B394	DLC03EnchTeslaEffect	ENCH	 	Electrocution
+FormID: 0100B395	DLC03TeslaMagicEffect	MGEF	 	Electrocution
+FormID: 0100B397	DLC03TeslaElecDamage	MGEF	 	Tesla Electric Damage
+FormID: 0100B398	DLC03EnchTeslaBombEffect	ENCH	 	Electrocution
+FormID: 0100B399	DLC03TeslaBombMagicEffect	MGEF	 	Electrocution Bomb
+FormID: 0100B39E	DLC03GhoulWint	NPC_	 	Wint
+FormID: 0100B39F	DLC03GhoulKidd	NPC_	 	Kidd
+FormID: 0100B400	DLC03TidalBasinWaterEffect	SPEL	 	Tidal Basin Water
+FormID: 0100B40B	DLC03CitadelArmoryTerminal01	TERM	 	Armory 089A Terminal
+FormID: 0100B40C	DLC03CitadelArmoryTerminal02	TERM	 	Callahan's Terminal
+FormID: 0100B412	DLC03PresMetroAutosave01b	ACTI	 	Gas Valve
+FormID: 0100B413	DLC03PresMetroAutosave01	ACTI	 	Gas Valve
+FormID: 0100B414	DLC03PresMetroAutosave02b	ACTI	 	Gas Valve
+FormID: 0100B7F9	DLC03PPurityKeypadEnter	ACTI	 	Enter
+FormID: 0100B7FC	DLC03CitadelArmoryItem01	NOTE	 	Item 908774
+FormID: 0100B7FD	DLC03CitadelArmoryItem02	NOTE	 	Item 908775
+FormID: 0100B7FE	DLC03CitadelArmoryItem03	NOTE	 	Item 908776
+FormID: 0100B7FF	DLC03CitadelArmoryItem04	NOTE	 	Item 908776
+FormID: 0100B800	DLC03CitadelArmoryPenta01	NOTE	 	Incident Report 08-07-07
+FormID: 0100B801	DLC03CitadelArmoryPenta02	NOTE	 	Incident Report 08-16-07
+FormID: 0100B802	DLC03CitadelArmoryPenta03	NOTE	 	Incident Report 08-22-07
+FormID: 0100B804	DLC03CallahanSafe	CONT	 	Callahan's Safe
+FormID: 0100B806	DLC03WeapUniqueCallahansMagnum	WEAP	 	Callahan's Magnum
+FormID: 0100B81E	DLC03WQ03MotherCurieGhoul	CREA	 	Mother Curie III
+FormID: 0100B822	DLC03WQ03MonasteryMapMarker	MAPM	 	Holy Light Monastery
+FormID: 0100B823	DLC03WQ03BrotherGerardGhoul	NPC_	 	Brother Gerard
+FormID: 0100B82A	DLC03FEVWaterEffect	MGEF	 	FEV Water Effect
+FormID: 0100B953	DLC03MuseumAuthorityTerminal	TERM	 	Museum Authority Workstation
+FormID: 0100B954	DLC03MuseumAuthorityNote01	NOTE	 	Museum Authority Log MA-0089
+FormID: 0100B955	DLC03MuseumAuthorityNote02	NOTE	 	Museum Authority Log MA-0089
+FormID: 0100B956	DLC03MuseumAuthorityNote03	NOTE	 	Museum Authority Log MA-0089
+FormID: 0100B957	DLC03NN01	NOTE	 	Sorry, My Darling
+FormID: 0100B958	DLC03AudioVoiceNN	NPC_	 	Audio Only NPC
+FormID: 0100B95B	DLC03NNSuitcase	CONT	 	Suitcase
+FormID: 0100B95E	DLC03LagBolt	NPC_	 	Lag-Bolt
+FormID: 0100B95F	DLC03LagBoltsCombatTalonArmor	ARMO	 	Lag-Bolt's Combat Armor
+FormID: 0100B960	DLC03LagBoltsGlasses	ARMO	 	Lag-Bolt's Shades
+FormID: 0100B961	DLC03LagBoltsArmorEffect	ENCH	 	Lag-Bolt's Armor
+FormID: 0100B962	DLC03LagBoltsShadesEffect	ENCH	 	Lag-Bolt's Shades
+FormID: 0100B963	DLC03NNEffect	ENCH	 	Naughty Nightfun
+FormID: 0100B964	DLC03VeryNaughtyNightwear	ARMO	 	All-Nighter Nightwear
+FormID: 0100B965	DLC03NNSuitcaseKey	KEYM	 	Lag-Bolt's Suitcase Key
+FormID: 0100B968	DLC03LagBoltNote	NOTE	 	Lag-Bolt's Note
+FormID: 0100B969	DLC03WQTerminalMain	TERM	 	Bigsley's Terminal
+FormID: 0100B96A	DLC03WQTerminalSubMissionLogs	TERM	 	Bigsley's Terminal
+FormID: 0100B96B	DLC03WQTerminalSubPersonalLogs1	TERM	 	Bigsley's Terminal
+FormID: 0100B96C	DLC03WQTerminalSubPersonalLogs2	TERM	 	Bigsley's Terminal
+FormID: 0100B96D	DLC03WQTerminalSubPersonalLogs4	TERM	 	Bigsley's Terminal
+FormID: 0100B96E	DLC03WQTerminalSubPersonalLogs3	TERM	 	Bigsley's Terminal
+FormID: 0100B96F	DLC03WQNoteMissionBigTown	NOTE	 	Big Town Mission Report
+FormID: 0100B970	DLC03WQNoteMissionMegatonMegExists	NOTE	 	Megaton Mission Report
+FormID: 0100B971	DLC03WQNoteRivetCity	NOTE	 	Rivet City Mission Report
+FormID: 0100B972	DLC03WQNotePersonalLog1	NOTE	 	Entry 1
+FormID: 0100B973	DLC03WQNotePersonalLog2	NOTE	 	Entry 2
+FormID: 0100B974	DLC03WQNotePersonalLog3	NOTE	 	Entry 3
+FormID: 0100B975	DLC03WQNotePersonalLog4	NOTE	 	Entry 4
+FormID: 0100B976	DLC03WQNotePersonalLog5	NOTE	 	Entry 5
+FormID: 0100B977	DLC03WQNotePersonalLog6	NOTE	 	Entry 6
+FormID: 0100B978	DLC03WQNotePersonalLog7	NOTE	 	Entry 7
+FormID: 0100B979	DLC03WQNotePersonalLog8	NOTE	 	Entry 8
+FormID: 0100B97A	DLC03WQNotePersonalLog9	NOTE	 	Entry 9
+FormID: 0100B97B	DLC03WQNotePersonalLog10	NOTE	 	Entry 10
+FormID: 0100B97C	DLC03WQNotePersonalLog11MegExists	NOTE	 	Entry 11
+FormID: 0100B97D	DLC03WQNoteMissionsMegNoExists	NOTE	 	Current Missions
+FormID: 0100B97E	DLC03WQNotePersonalLog12	NOTE	 	Entry 12
+FormID: 0100B97F	DLC03WQNotePersonalLog13	NOTE	 	Entry 13
+FormID: 0100B980	DLC03WQNotePersonalLog14	NOTE	 	Entry 14
+FormID: 0100B981	DLC03WQNotePersonalLog15	NOTE	 	Entry 15
+FormID: 0100B982	DLC03WQNotePersonalLog16	NOTE	 	Entry 16
+FormID: 0100B983	DLC03WQNotePersonalLog17MegGone	NOTE	 	Entry 17
+FormID: 0100B984	DLC03WQNoteMissionsMegExists	NOTE	 	Current Missions
+FormID: 0100B985	DLC03WQNotePettyCash	NOTE	 	Petty Cash
+FormID: 0100B986	DLC03WQNoteRequitions	NOTE	 	Available Requisitions
+FormID: 0100B9B4	DLC03PresmetroTerminal01	TERM	 	Maintenance Department Terminal
+FormID: 0100BB31	DLC03WQWaterDriverA	NPC_	 	Water Caravan Driver
+FormID: 0100BB32	DLC03WQWaterDriverB	NPC_	 	Water Caravan Driver
+FormID: 0100BB36	DLC03WQWaterBrahmin	CREA	 	Brahmin
+FormID: 0100BBA1	DLC03StartMessage	MESG	 	Broken Steel Loaded
+FormID: 0100BBB2	DLC03FEVUnderworldGhoulA	NPC_	 	Underworld Resident
+FormID: 0100BBB4	DLC03FEVUnderworldGhoulB	NPC_	 	Underworld Resident
+FormID: 0100BBB6	DLC03FEVUnderworldGhoulC	NPC_	 	Underworld Resident
+FormID: 0100BBBB	DLC03FEVUnderworldGhoulD	NPC_	 	Underworld Resident
+FormID: 0100BBC0	DLC03WQFEVPatientFaction	FACT	 	People sick with FEV
+FormID: 0100BCA8	DLC03FEVMegatonSettlerA	NPC_	 	Megaton Settler
+FormID: 0100BCA9	DLC03FEVMegatonSettlerB	NPC_	 	Megaton Settler
+FormID: 0100BCAA	DLC03FEVMegatonSettlerC	NPC_	 	Megaton Settler
+FormID: 0100BCB2	DLC03WQFEVRivetCityPatientA	NPC_	 	Patient
+FormID: 0100BCB5	DLC03WQFEVRivetCityPatientB	NPC_	 	Patient
+FormID: 0100BCB8	DLC03WQFEVRivetCityPatientC	NPC_	 	Patient
+FormID: 0100BD6C	DLC03EnclaveTowerUnlockTerminal	TERM	 	Security Terminal
+FormID: 0100BD7D	DLC03GhoulBadger	NPC_	 	Badger
+FormID: 0100BD7E	DLC03GhoulSanders	NPC_	 	Sanders
+FormID: 0100BD7F	DLC03GhoulConnelly	NPC_	 	Connelly
+FormID: 0100BD80	DLC03GhoulCarl	NPC_	 	Carl
+FormID: 0100BD81	DLC03GhoulDunbar	NPC_	 	Dunbar
+FormID: 0100BD82	DLC03DunbarNote	NOTE	 	Dunbar's Note
+FormID: 0100BE00	DLC03PowerworksSewerLidExit01	DOOR	 	Manhole
+FormID: 0100C473	DLC03CrawlerExplosion	EXPL	 	Large Explosion
+FormID: 0100C530	DLC03PowerworksFakeForceBall01	EXPL	 	Large Explosion
+FormID: 00027F65	Butch	NPC_	 	Butch
+FormID: 0100C5B9	DLC03RocklandMapMarker	MAPM	 	Rockland Car Tunnel
+FormID: 0100C74C	DLC03PresMetroBackDoor	DOOR	 	Door
+FormID: 0100C915	DLC03EnclavePlatformDead	NPC_	 	Enclave Soldier
+FormID: 0100CA6E	DLC03WoodenCrate01TeslaResupply	CONT	 	Resupply Crate
+FormID: 0100CF2F	DLC03ZCarTunnelScribeB	NPC_	 	Brotherhood of Steel Scribe
+FormID: 0100CF30	DLC03EnclaveCarTunnelDead1	NPC_	 	Enclave Soldier
+FormID: 0100CF31	DLC03EnclaveCarTunnelDead2	NPC_	 	Enclave Soldier
+FormID: 0100CF32	DLC03ZCarTunnelScribeC	NPC_	 	Brotherhood of Steel Scribe
+FormID: 0100CF33	DLC03EnclaveCarTunnelDeadLooted1	NPC_	 	Enclave Soldier
+FormID: 0100CF34	DLC03EnclaveCarTunnelDeadLooted2	NPC_	 	Enclave Soldier
+FormID: 0100CF35	DLC03EnclaveCarTunnelDeadWorkBench	NPC_	 	Enclave Soldier
+FormID: 0100CF36	DLC03ZCarTunnelScribeA	NPC_	 	Brotherhood of Steel Scribe
+FormID: 0100CF37	DLC03zCarTunnelTurret	CREA	 	Mark VI Turret
+FormID: 0100D2F2	DLC03OrbitalStrikeShakeExplosionLarge	EXPL	 	DLC03 Fake Explosion
+FormID: 0100D412	DLC03OrbitalStrikeShakeExplosionMed	EXPL	 	DLC03 Fake Explosion
+FormID: 0100D413	DLC03OrbitalStrikeShakeExplosionSmall	EXPL	 	DLC03 Fake Explosion
+FormID: 0100D416	DLC03AFBFight02BoSTeslaFodder01	NPC_	 	Brotherhood of Steel Paladin
+FormID: 0100D417	DLC03AFBFight02BoSTeslaFodder02	NPC_	 	Brotherhood of Steel Paladin
+FormID: 0100D418	DLC03AFBFight02BoSTeslaFodder03	NPC_	 	Brotherhood of Steel Paladin
+FormID: 0100D419	DLC03AFBBoSTeslaFodder01	NPC_	 	Brotherhood of Steel Paladin
+FormID: 0100D41A	DLC03AFBBoSTeslaFodder02	NPC_	 	Brotherhood of Steel Paladin
+FormID: 0100D41B	DLC03AFBBoSTeslaFodder03	NPC_	 	Brotherhood of Steel Paladin
+FormID: 0100D42F	DLC03RelayStatNoRespawnEnclave2FlamerVar	NPC_	 	Enclave Soldier
+FormID: 0100D434	DLC03AFBEnclaveNapalmFodder01	NPC_	 	Enclave Soldier
+FormID: 0100D435	DLC03AFBFight02EnclaveNapalmFodder01	NPC_	 	Enclave Soldier
+FormID: 0100D436	DLC03AFBFight02EnclaveNapalmFodder02	NPC_	 	Enclave Soldier
+FormID: 0100D437	DLC03AFBFight02EnclaveNapalmFodder03	NPC_	 	Enclave Soldier
+FormID: 0100D438	DLC03AFBEnclaveNapalmFodder02	NPC_	 	Enclave Soldier
+FormID: 0100D439	DLC03AFBEnclaveNapalmFodder03	NPC_	 	Enclave Soldier
+FormID: 0100D473	DLC03PresMetroWithinSecurityRangeTRIG	ACTI	 	Gas Valve
+FormID: 0100D48D	DLC03TeslaChainProjectile	PROJ	 	Missile
+FormID: 0100D48E	DLC03WeapTeslaChainEffect	WEAP	 	Tesla Cannon
+FormID: 0100D4EF	DLC03TeslaCannonExplosionSmall02	EXPL	 	Missile Explosion
+FormID: 0100D4F0	DLC03TeslaCannonExplosionSmall03	EXPL	 	Missile Explosion
+FormID: 0100D4F1	DLC03TeslaCannonExplosionSmall04	EXPL	 	Missile Explosion
+FormID: 0100D4F5	DLC03TeslaChainProjectile02	PROJ	 	Missile
+FormID: 0100D4F6	DLC03TeslaChainProjectile03	PROJ	 	Missile
+FormID: 0100D4F7	DLC03TeslaChainProjectile04	PROJ	 	Missile
+FormID: 0100D4F8	DLC03WeapTeslaChainEffect02	WEAP	 	Tesla Cannon
+FormID: 0100D4F9	DLC03WeapTeslaChainEffect03	WEAP	 	Tesla Cannon
+FormID: 0100D4FA	DLC03WeapTeslaChainEffect04	WEAP	 	Tesla Cannon
+FormID: 0100D4FF	DLC03WeapSuperSledge	WEAP	 	Super Sledge
+FormID: 0100D50F	DLC03PresidentialMetroLoudspeaker	ACTI	 	Archives Intercom
+FormID: 0006A772	FFEU255Dogmeat	CREA	 	Dogmeat
+FormID: 000CAFDF	zJuryStreetGrocer	CELL	 	Gold Ribbon Grocers
+FormID: 0002AFAF	Underworld9thCircle	CELL	 	The Ninth Circle
+FormID: 0006B538	WeapUniqueMS18Minigun	WEAP	 	Eugene
+FormID: 000ABBE4	MQ11AutumnLaserPistol	WEAP	 	Col. Autumn's Laser Pistol
+FormID: 0004F4E1	OldOlney01	CELL	 	Olney Sewers
+FormID: 0002F69E	HubrisComics03	CELL	 	Hubris Comics Utility Tunnels
+FormID: 0002F69F	HubrisComics02	CELL	 	Hubris Comics Printing
+FormID: 00031DAC	HereandNow	PERK	 	Here and Now
+FormID: 000B25B5	fortBannTalonCompanyHead	NPC_	 	Commander Jabsco
+FormID: 000526C7	zWastelandSewer01	CELL	 	Sewer
+FormID: 00032DEE	Radiation200	SPEL	 	Minor Rad Poison.
+FormID: 00033B0B	FriendshipMetroUtility	CELL	 	Farragut West Station
+FormID: 00033E0E	zDCint11b	CELL	 	La Maison Beauregard Lobby
+FormID: 0009426E	RL3Follower	CREA	 	Sergeant RL-3
+FormID: 00074EB2	MuseumAmericanEntrance	CELL	 	Museum of History Entrance
+FormID: 00014E91	MQ11	QUST	 	Take it Back!
+FormID: 00014E93	MQA	QUST	 	Project Impurity
+FormID: 00014E9E	MS11	QUST	 	The Power of the Atom
+FormID: 00015145	CitadelWorld	WRLD	 	The Citadel Courtyard
+FormID: 00015157	CitadelLab	CELL	 	Citadel - Laboratory
+FormID: 000156A2	Clover	NPC_	 	Clover
+FormID: 000156E4	ElderLyons	NPC_	 	Elder Lyons
+FormID: 000156E5	StarPaladinCross	NPC_	 	Star Paladin Cross
+FormID: 000156EA	ScribeRothchild	NPC_	 	Scribe Rothchild
+FormID: 000156F6	Charon	NPC_	 	Charon
+FormID: 00095B7A	CapitolBuilding01b	CELL	 	Capitol Building East Entrance
+FormID: 00076DA3	zDCint08b	CELL	 	Utility
+FormID: 00076E3F	 	MAPM	 	White House
+FormID: 00016DA1	WarringtonStation02	CELL	 	Warrington Station
+FormID: 00016DA2	WarringtonStation01	CELL	 	Warrington Tunnels
+FormID: 00017E14	IrradiatedSewer01	CELL	 	Irradiated Metro
+FormID: 00017F50	DunwichBuilding03	CELL	 	Virulent Underchambers
+FormID: 00017F51	DunwichBuilding02	CELL	 	Forsaken Dunwich Ruins
+FormID: 00017F52	DunwichBuilding01	CELL	 	Dunwich Building
+FormID: 00018520	PPurity01	CELL	 	Jefferson Memorial Rotunda
+FormID: 00018521	PPurity02	CELL	 	Jefferson Museum and Gift Shop
+FormID: 00018527	Vault87a	CELL	 	Test Labs
+FormID: 00018DE6	DCworld01	WRLD	 	Chevy Chase
+FormID: 00019FBB	RCUpperDeckMid	CELL	 	Upper Deck
+FormID: 0001A264	DCworld12	WRLD	 	Seward Square
+FormID: 0001A265	DCworld10	WRLD	 	L'Enfant Plaza
+FormID: 0001A266	DCworld09	WRLD	 	The Mall
+FormID: 0001A267	DCworld08	WRLD	 	Pennsylvania Avenue
+FormID: 0001A26A	DCworld05	WRLD	 	Takoma Park
+FormID: 0001A26C	DCworld03	WRLD	 	Dupont Circle
+FormID: 0001A271	HazmatDisposal01	CELL	 	Hazmat Disposal Site L5
+FormID: 0001A276	HubrisComics01	CELL	 	Hubris Comics Publishing
+FormID: 0001A285	MetroCenter03	CELL	 	Freedom Street Station
+FormID: 0001A28C	MetroCenter01	CELL	 	Metro Central
+FormID: 0005A7DB	zLenfantCapitolPost	CELL	 	Office
+FormID: 0005B436	WilhelmsWharfMapMarker	MAPM	 	Wilhelm's Wharf
+FormID: 000BC4C2	zcArlingtonToFalls	CELL	 	Arlington/Falls Church Metro
+FormID: 000BC4C3	zcPennAveToSeward	CELL	 	Penn. Ave/Seward Sq. Metro
+FormID: 01000801	DLC03CreatorQuest	QUST	 	DLC03CreatorQuest
+FormID: 01000802	DLC03BS1	QUST	 	Death From Above
+FormID: 01000803	DLC03AdamsAFB	WRLD	 	Adams Air Force Base
+FormID: 01000804	DLC03Vertibird01	CELL	 	Vertibird Interior
+FormID: 01000805	DLC03EnclaveTower	CELL	 	Satellite Control Tower
+FormID: 01000806	DLC03EnclaveBase01	CELL	 	Mobile Base Crawler
+FormID: 01000807	DLC03PresMetro02	CELL	 	Presidential Metro
+FormID: 01000808	DLC03PresMetro01	CELL	 	Presidential Sub Level
+FormID: 01000809	DLC03RelayStation02	CELL	 	Relay Station
+FormID: 01000909	DLC03BoSKnightGreeter	NPC_	 	Brotherhood of Steel Knight
+FormID: 01000913	DLC03RelayStation01	CELL	 	Satellite Facility
+FormID: 010009DD	DLC03SarahLyons	NPC_	 	Sentinel Lyons
+FormID: 01000AFD	DLC03BS2	QUST	 	Shock Value
+FormID: 01000B0D	DLC03RelayStation	WRLD	 	Satellite Relay Station
+FormID: 01000D5C	DLC03RelayTerminal	TERM	 	Satellite Uplink Terminal
+FormID: 01000D69	DLC03MetroRideSwitch01	ACTI	 	Metro Console
+FormID: 000BCC4D	CagedDeathclawEnclave	CREA	 	Deathclaw
+FormID: 0100101C	DLC03TurretGunCeiling04	WEAP	 	Turret Gun
+FormID: 0100101D	DLC03Turret04Laser2HR	WEAP	 	Laser
+FormID: 0100101E	DLC03Enclave4GunAAFTEMPLATE	NPC_	 	Enclave Soldier
+FormID: 0100101F	DLC03Enclave4GunAAM	NPC_	 	Enclave Soldier
+FormID: 01001020	DLC03Enclave4GunAF	NPC_	 	Enclave Soldier
+FormID: 01001021	DLC03Enclave4GunAM	NPC_	 	Enclave Soldier
+FormID: 01001022	DLC03Enclave4GunCF	NPC_	 	Enclave Soldier
+FormID: 01001023	DLC03Enclave4GunCM	NPC_	 	Enclave Soldier
+FormID: 01001024	DLC03Enclave4GunHF	NPC_	 	Enclave Soldier
+FormID: 01001025	DLC03Enclave4GunHM	NPC_	 	Enclave Soldier
+FormID: 01001026	DLC03Enclave4BigGunAAFTEMPLATE	NPC_	 	Enclave Soldier
+FormID: 01001027	DLC03Enclave4BigGunAAM	NPC_	 	Enclave Soldier
+FormID: 01001028	DLC03Enclave4BigGunAF	NPC_	 	Enclave Soldier
+FormID: 01001029	DLC03Enclave4BigGunAM	NPC_	 	Enclave Soldier
+FormID: 0100102A	DLC03Enclave4BigGunCF	NPC_	 	Enclave Soldier
+FormID: 0100102B	DLC03Enclave4BigGunCM	NPC_	 	Enclave Soldier
+FormID: 0100102C	DLC03Enclave4BigGunHF	NPC_	 	Enclave Soldier
+FormID: 0100102D	DLC03Enclave4BigGunHM	NPC_	 	Enclave Soldier
+FormID: 0100102E	DLC03Talon4GunAAMTEMPLATE	NPC_	 	Talon Company Merc
+FormID: 0100102F	DLC03Talon4GunAM	NPC_	 	Talon Company Merc
+FormID: 01001030	DLC03Talon4GunCM	NPC_	 	Talon Company Merc
+FormID: 01001031	DLC03Talon4GunHM	NPC_	 	Talon Company Merc
+FormID: 01001032	DLC03Talon4MeleeAAMTEMPLATE	NPC_	 	Talon Company Merc
+FormID: 01001033	DLC03Talon4MeleeAM	NPC_	 	Talon Company Merc
+FormID: 01001034	DLC03Talon4MeleeCM	NPC_	 	Talon Company Merc
+FormID: 01001035	DLC03Talon4MeleeHM	NPC_	 	Talon Company Merc
+FormID: 01001036	DLC03Talon4SniperAAMTEMPLATE	NPC_	 	Talon Company Merc
+FormID: 01001037	DLC03Talon4SniperAM	NPC_	 	Talon Company Merc
+FormID: 01001038	DLC03Talon4SniperCM	NPC_	 	Talon Company Merc
+FormID: 01001039	DLC03Talon4SniperHM	NPC_	 	Talon Company Merc
+FormID: 0100103A	DLC03Talon4MissileAAMTEMPLATE	NPC_	 	Talon Company Merc
+FormID: 0100103B	DLC03Talon4MissileAM	NPC_	 	Talon Company Merc
+FormID: 0100103C	DLC03Talon4MissileCM	NPC_	 	Talon Company Merc
+FormID: 0100103D	DLC03Talon4MissileHM	NPC_	 	Talon Company Merc
+FormID: 0100103E	DLC03CrFeralGhoul4A	CREA	 	Feral Ghoul Reaver
+FormID: 0100103F	DLC03CrTurretCeiling04	CREA	 	Mark VII Turret
+FormID: 01001040	DLC03CrTurret04	CREA	 	Mark VIII Turret
+FormID: 01001041	DLC03CrSuperMutant4GunA	CREA	 	Super Mutant Overlord
+FormID: 01001042	DLC03CrSuperMutant4MeleeA	CREA	 	Super Mutant Overlord
+FormID: 01001043	DLC03CrTurretCeiling04Enclave	CREA	 	Mark VII Turret
+FormID: 01001044	DLC03CrTurretCeiling04Outcast	CREA	 	Mark VII Turret
+FormID: 01001045	DLC03CrTurretCeiling04Steel	CREA	 	Mark VII Turret
+FormID: 01001047	DLC03CrSuperMutant4MissileLauncherA	CREA	 	Super Mutant Overlord
+FormID: 0100104F	DLC03AquaPura	ALCH	 	Aqua Pura
+FormID: 0100107C	DLC03EnchEnclaveArmorHelmet	ENCH	 	Enclave Helm
+FormID: 0100107D	DLC03TeslaCannonEMP	ENCH	 	Electromagnetic Pulse
+FormID: 0100107E	DLC03EnchEnclaveArmor	ENCH	 	Enclave Armor
+FormID: 0100107F	DLC03FeralGhoulPoison	SPEL	 	Radiation Poison
+FormID: 01001080	DLC03ArmorEnclaveHelmet	ARMO	 	Enclave Hellfire Helmet
+FormID: 01001081	DLC03ArmorEnclave	ARMO	 	Enclave Hellfire Armor
+FormID: 01001082	DLC03LootGunCaseTeslaCannonEnclave	CONT	 	Gun Case
+FormID: 01001083	DLC03LootGunCaseNapalmThrowerEnclave	CONT	 	Gun Case
+FormID: 01001084	DLC03WeapHeavyIncinerator	WEAP	 	Heavy Incinerator
+FormID: 0100108E	DLC03NoWeakness	PERK	 	No Weakness
+FormID: 0100108F	DLC03EnclaveArmorRightHand	ARMA	 	enclave armor glove right
+FormID: 01001090	DLC03EnclaveArmorLeftHand	ARMA	 	enclave armor glove left
+FormID: 010011AA	DLC03CrateAquaPuraRespawn	CONT	 	Aqua-Pura Crate
+FormID: 010011AB	DLC03Encounters	QUST	 	DLC03Encounters
+FormID: 010011AD	DLC03BS3	QUST	 	Who Dares Wins
+FormID: 010011B3	DLC03RadAbsorb	MGEF	 	Rad Absorption
+FormID: 010011B4	DLC03APRegen	MGEF	 	AP Regeneration
+FormID: 010011B7	DLC03PerkRadAbsorb	SPEL	 	Rad Regeneration
+FormID: 010011B8	DLC03PerkNervesOfSteel	SPEL	 	Nerves of Steel
+FormID: 010011BD	DLC03RadAbsorption	PERK	 	Rad Absorption
+FormID: 010011BE	DLC03Warmonger	PERK	 	Warmonger
+FormID: 010011BF	DLC03PartyBoy	PERK	 	Party Boy
+FormID: 010011C0	DLC03PartyGirl	PERK	 	Party Girl
+FormID: 010011C1	DLC03RadTolerance	PERK	 	Rad Tolerance
+FormID: 010011C2	DLC03NervesOfSteel	PERK	 	Nerves of Steel
+FormID: 010011C3	DLC03EnclaveBase02	CELL	 	Launch Platform Base
+FormID: 0001CCA1	ProjectPurityDanielAgincourt	NPC_	 	Daniel Agincourt
+FormID: 0001CCA3	ProjectPurityAlexDargon	NPC_	 	Alex Dargon
+FormID: 010013AF	DLC03EncounterRCSecurity01	NPC_	 	Rivet City Security
+FormID: 010013B2	DLC03EncounterRCBrahmin	CREA	 	Brahmin
+FormID: 010013BA	DLC03EncounterRCSecurity02	NPC_	 	Rivet City Security
+FormID: 010013C3	DLC03IncineratorProjectile	PROJ	 	Flame Glob
+FormID: 010013C5	TESTPPurity01COPY	CELL	 	Jefferson Memorial Rotunda
+FormID: 01001490	zDLC03CarTunnel	CELL	 	Rockland Car Tunnel
+FormID: 0001CF72	CrDeathClawEnclave	CREA	 	Deathclaw
+FormID: 0001CF74	CrRobobrainEnclave	CREA	 	Robobrain
+FormID: 0001CF75	CrSentryBotGLEnclave	CREA	 	Sentry Bot
+FormID: 0001CF89	CrRobobrain	CREA	 	Robobrain
+FormID: 0001CF8B	CrProtectronEnclave	CREA	 	Protectron
+FormID: 0003D34E	MQ08Fawkes	CREA	 	Fawkes
+FormID: 0001D430	MQ01SarahLyons	NPC_	 	Sentinel Lyons
+FormID: 0001D44E	MQ01Vargas	NPC_	 	Paladin Vargas
+FormID: 01001B5D	DLC03WallsDoubleDoor01	DOOR	 	Door
+FormID: 01001B65	DLC03CitadelWorld	WRLD	 	The Citadel Courtyard
+FormID: 01001D2C	DLC03EncounterRCFaction	FACT	 	DLC03 Encounter RC dialogue faction
+FormID: 01001D2D	DLC03EncounterRCKey	KEYM	 	Water Crate Key
+FormID: 01001D2E	DLC03EncounterRCCrimeFaction	FACT	 	DLC03 Encounter RC ownership faction
+FormID: 01001D2F	DLC03EncounterPPDeadMirelurk01	CREA	 	Mirelurk
+FormID: 01001D3A	DLC03EncounterPPBrotherhood1	NPC_	 	Brotherhood of Steel Initiate
+FormID: 01001D3E	DLC03EncounterPPBrotherhood2	NPC_	 	Brotherhood of Steel Initiate
+FormID: 01001FCC	DLC03LibertyPrime	CREA	 	Liberty Prime
+FormID: 01002092	DLC03EncounterPPDyingMirelurk	CREA	 	Mirelurk
+FormID: 0100223C	DLC03CrDeathClaw	CREA	 	Deathclaw
+FormID: 01002480	DLC03ArmorTeslaPowerShock	ARMO	 	Tesla Resonance Armor
+FormID: 0001DEB0	PPurity03	CELL	 	Memorial Sub-Basement
+FormID: 010024C9	DLC03AFBBoSMissileFodder03	NPC_	 	Brotherhood of Steel Paladin
+FormID: 010024CA	DLC03AFBBoSMissileFodder02	NPC_	 	Brotherhood of Steel Paladin
+FormID: 010024CD	DLC03AFBBoSMissileFodder01	NPC_	 	Brotherhood of Steel Paladin
+FormID: 000BE2EB	CitadelLibertyPrimeTerminal	TERM	 	Liberty Prime Operations
+FormID: 0100262E	DLC03CrTurret04Steel	CREA	 	Mark VIII Turret
+FormID: 0100262F	DLC03CrTurret04Enclave	CREA	 	Mark VIII Turret
+FormID: 01002630	DLC03CrTurret04Outcast	CREA	 	Mark VIII Turret
+FormID: 01002631	DLC03EntranceTerminal01	TERM	 	Turret Control System
+FormID: 0100264C	DLC03EncounterMegBrotherhood1	NPC_	 	Brotherhood of Steel Knight
+FormID: 0100264D	DLC03EncounterMegBrotherhood2	NPC_	 	Brotherhood of Steel Paladin
+FormID: 0100264E	DLC03EncounterMegScavenger	NPC_	 	Scavenger
+FormID: 0100264F	DLC03EncounterMegSettler01	NPC_	 	Megaton Settler
+FormID: 01002650	DLC03EncounterMegSettler02	NPC_	 	Megaton Settler
+FormID: 01002651	DLC03EncounterMegBrahmin	CREA	 	Brahmin
+FormID: 0100266C	DLC03Margot	TACT	 	M.A.R.Go.T.
+FormID: 0100267D	DLC03EncounterMegSettler03	NPC_	 	Megaton Settler
+FormID: 010026FE	DLC03TeslaCannonProjectile	PROJ	 	Missile
+FormID: 010026FF	testPhilTeslaCannon	WEAP	 	Tesla Cannon
+FormID: 01002700	DLC03TeslaCannonExplosion	EXPL	 	Missile Explosion
+FormID: 0100275E	DLC03EncounterBOSAllyFaction	FACT	 	DLC03 BOS allies (put BOS and scavengers in it)
+FormID: 01002762	DLC03EncounterTPRaider01	NPC_	 	Raider
+FormID: 01002763	DLC03EncounterTPBrotherhood02	NPC_	 	Brotherhood of Steel Paladin
+FormID: 01002764	DLC03EncounterTPScavenger	NPC_	 	Scavenger
+FormID: 01002766	DLC03EncounterTPBrotherhood01	NPC_	 	Brotherhood of Steel Knight
+FormID: 01002767	DLC03EncounterTPBrahmin	CREA	 	Brahmin
+FormID: 01002782	DLC03Enclave4NapalmAAFTEMPLATE	NPC_	 	Enclave Hellfire Trooper
+FormID: 01002783	DLC03Enclave4NapalmAAM	NPC_	 	Enclave Hellfire Trooper
+FormID: 01002784	DLC03Enclave4NapalmAF	NPC_	 	Enclave Hellfire Trooper
+FormID: 01002785	DLC03Enclave4NapalmAM	NPC_	 	Enclave Hellfire Trooper
+FormID: 01002786	DLC03Enclave4NapalmCF	NPC_	 	Enclave Hellfire Trooper
+FormID: 01002787	DLC03Enclave4NapalmCM	NPC_	 	Enclave Hellfire Trooper
+FormID: 01002788	DLC03Enclave4NapalmHF	NPC_	 	Enclave Hellfire Trooper
+FormID: 01002789	DLC03Enclave4NapalmHM	NPC_	 	Enclave Hellfire Trooper
+FormID: 010027EA	DLC03ForceFieldControlPanel	ACTI	 	Repulsion Field Control Panel
+FormID: 010027F4	DLC03NQlvl	QUST	 	DLC03 non-quest
+FormID: 01002928	DLC03Sector01Terminal01	TERM	 	Turret Control System
+FormID: 01002929	DLC03Sector02Terminal01	TERM	 	Turret Control System
+FormID: 0100292B	DLC03AFBVertibird02	MSTT	 	Vertibird
+FormID: 0100292C	DLC03VertibirdMissileLauncher	WEAP	 	Vertibird Missile Launcher
+FormID: 0100292D	DLC03AFBEnclaveMissileFodder03	NPC_	 	Enclave Soldier
+FormID: 0100292E	DLC03AFBBoSMinigunFodder01	NPC_	 	Brotherhood of Steel Paladin
+FormID: 0100292F	DLC03AFBEnclaveGatlingFodder01	NPC_	 	Enclave Soldier
+FormID: 01002930	DLC03AFBEnclaveGatlingFodder02	NPC_	 	Enclave Soldier
+FormID: 01002931	DLC03AFBEnclaveGatlingFodder03	NPC_	 	Enclave Soldier
+FormID: 01002932	DLC03AFBBoSMinigunFodder02	NPC_	 	Brotherhood of Steel Paladin
+FormID: 01002933	DLC03AFBBoSMinigunFodder03	NPC_	 	Brotherhood of Steel Paladin
+FormID: 01002937	DLC03AFBEnclaveMissileFodder01	NPC_	 	Enclave Soldier
+FormID: 01002938	DLC03AFBEnclaveMissileFodder02	NPC_	 	Enclave Soldier
+FormID: 010029A7	DLC03LibertyPrimeHulkTorso01	MSTT	 	Liberty Prime
+FormID: 01002D29	DLC03RadiationTrap01	ACTI	 	Radiation Trap
+FormID: 01002D2D	DLC03WarehouseTraps	CELL	 	Traps Warehouse
+FormID: 01002D93	DLC03EnclaveBase02DClawFieldTerminal	TERM	 	Deathclaw Research Terminal
+FormID: 01002DC0	DLC03BS1KnightGuard1	NPC_	 	Brotherhood of Steel Knight
+FormID: 01002DC4	DLC03ConvCitadel	QUST	 	DLC03 Citadel Conversations
+FormID: 01002DC6	DLC03LibertyPrimeHulkHead01	TACT	 	Liberty Prime
+FormID: 01002E06	DLC03CrateAquaPura	CONT	 	Aqua-Pura Crate
+FormID: 01002E07	DLC03EncounterFBBrotherhoodB01	NPC_	 	Brotherhood of Steel Knight
+FormID: 01002E08	DLC03EncounterFBBrotherhoodB02	NPC_	 	Brotherhood of Steel Paladin
+FormID: 01002E09	DLC03EncounterFBBrotherhoodB03	NPC_	 	Brotherhood of Steel Paladin
+FormID: 01002E0A	DLC03EncounterFBBrotherhoodA04	NPC_	 	Paladin Jensen
+FormID: 01002E0B	DLC03EncounterFBBrotherhoodA01	NPC_	 	Brotherhood of Steel Knight
+FormID: 01002E0C	DLC03EncounterFBBrotherhoodA02	NPC_	 	Brotherhood of Steel Paladin
+FormID: 01002E0D	DLC03EncounterFBBrotherhoodA03	NPC_	 	Brotherhood of Steel Paladin
+FormID: 01002E0E	DLC03EncounterFBBrahmin	CREA	 	Brahmin
+FormID: 01002E25	DLC03TestTony	CELL	 	Test Tony
+FormID: 01002E8E	DLC03SenateID	MISC	 	Senate Employee ID
+FormID: 01002E90	DLC03EnclaveBase02DClawControlTerminal	TERM	 	Deathclaw Control Terminal
+FormID: 01003070	DLC03RadiationBoxFX	MSTT	 	Radiation Box Emiiter
+FormID: 010031C9	DLC03OrbitalStrikeExplosion	EXPL	 	Large Explosion
+FormID: 010031E4	DLC03PresMetroDoor01	ACTI	 	Metro Door
+FormID: 010031FE	DLC03CrateAquaPuraEmpty	CONT	 	Aqua-Pura Crate
+FormID: 010031FF	DLC03EncounterEMTrapCorpse	NPC_	 	Wastelander
+FormID: 01003210	DLC03Freshmeat	MESG	 	Dogmeat's Puppy
+FormID: 01003211	DLC03Puppies	PERK	 	Puppies!
+FormID: 01003213	DLC03DeepSleep	PERK	 	Deep Sleep
+FormID: 01003383	DLC03AudioHolotapes	QUST	 	Audio Holotapes for DLC03
+FormID: 0100341A	DLC03EncounterBTSecurity01	NPC_	 	Rivet City Security
+FormID: 0100341B	DLC03EncounterBTSecurity02	NPC_	 	Rivet City Security
+FormID: 0100341C	DLC03EncounterBTBrahmin	CREA	 	Brahmin
+FormID: 0100341F	DLC03EncounterBTScavenger	NPC_	 	Scavenger
+FormID: 0100349B	DLC03OrbitalStrikeExploRock	EXPL	 	Large Explosion
+FormID: 0100349C	DLC03OrbitalStrikeExploPrime	EXPL	 	Large Explosion
+FormID: 01003580	testPhilCLightning	WEAP	 	Lightning Gun
+FormID: 01003583	testPhilLightningProjectile1	PROJ	 	Laser Beam
+FormID: 01003584	testPhilLightningExplosion1	EXPL	 	Chain Lightning Explosion
+FormID: 010035A1	DLC03Powerworks01	CELL	 	Olney Powerworks
+FormID: 01003728	DLC03EncounterPPCScavenger	NPC_	 	Scavenger
+FormID: 0100372A	DLC03EncounterPPCBrahmin	CREA	 	Brahmin
+FormID: 0100372F	DLC03EncounterPPCSecurity01	NPC_	 	Rivet City Security
+FormID: 01003730	DLC03EncounterPPCSecurity02	NPC_	 	Rivet City Security
+FormID: 01003734	DLC03EncounterPPCBrotherhood1	NPC_	 	Brotherhood of Steel Knight
+FormID: 0100373B	DLC03TestWQ	CELL	 	Test Water Quest
+FormID: 0100382D	DLC03Bigsley	NPC_	 	Scribe Bigsley
+FormID: 0100384E	DLC03WQScribeATemplate	NPC_	 	Brotherhood of Steel Scribe
+FormID: 0100384F	DLC03WQScribeB	NPC_	 	Brotherhood of Steel Scribe
+FormID: 01003850	DLC03WQScribeC	NPC_	 	Brotherhood of Steel Scribe
+FormID: 01003851	DLC03WQScribeD	NPC_	 	Brotherhood of Steel Scribe
+FormID: 01003890	DLC03BS1TelemetryNote	NOTE	 	Encrypted Telemetry Data
+FormID: 01003894	DLC03CagedDeathclawEnclave	CREA	 	Deathclaw
+FormID: 01003895	DLC03EnclaveDeathclawFaction	FACT	 	DLC03 Enclave Deathclaw Faction
+FormID: 010038DF	DLC03DeathClawPenDoor01	DOOR	 	Door
+FormID: 010039DD	DLC03AFBDeathclawTerminal04	TERM	 	Deathclaw Pen Door Terminal
+FormID: 010039DE	DLC03AFBDeathclawTerminal01	TERM	 	Deathclaw Pen Door Terminal
+FormID: 010039DF	DLC03AFBDeathclawTerminal03	TERM	 	Deathclaw Pen Door Terminal
+FormID: 010039E0	DLC03AFBDeathclawTerminal02	TERM	 	Deathclaw Pen Door Terminal
+FormID: 010039E1	DLC03DeathClawPenDoor04	DOOR	 	Door
+FormID: 010039E2	DLC03DeathClawPenDoor03	DOOR	 	Door
+FormID: 010039E3	DLC03DeathClawPenDoor02	DOOR	 	Door
+FormID: 01003A21	DLC03EternalGlowBasement	CELL	 	Eternal Light Monastery
+FormID: 01003A3D	dlc03testghoul	CREA	 	Feral Ghoul
+FormID: 01003A51	DLC03PresMetroAnimated	ACTI	 	DLC03PresMetro
+FormID: 01003B33	DLC03WQ01Brahmin	CREA	 	Brahmin
+FormID: 01003B37	DLC03WQ01Note	NOTE	 	New Meeting Place
+FormID: 01003B38	DLC03WQ01Guard2	NPC_	 	Officer Lorin
+FormID: 01003B39	DLC03WQ01BanditBodyGuardA	NPC_	 	Bandit
+FormID: 01003B3A	DLC03SplitJack	NPC_	 	Split Jack
+FormID: 01003B3B	DLC03WQ01Guard1	NPC_	 	Officer Davis
+FormID: 01003B3C	DLC03Lepelletier	NPC_	 	Officer Lepelletier
+FormID: 01003B3D	DLC03WQ01BanditA	NPC_	 	Bandit
+FormID: 01003B3E	DLC03WQ01CaravanDriver	NPC_	 	Water Caravan Driver
+FormID: 01003B42	DLC03WQ01	QUST	 	Protecting the Water Way
+FormID: 01003B64	DLC03Griffon	NPC_	 	Griffon
+FormID: 01003B66	DLC03WQ02Wig	ARMO	 	Wig
+FormID: 01003B67	DLC03WQ02	QUST	 	The Amazing Aqua Cura!
+FormID: 01003B6D	DLC03AFBVertibirdGun	WEAP	 	Vertibird Gun
+FormID: 01003CC5	DLC03LibertyPrimeWeapBombSPECIAL	WEAP	 	LibertyPrimeWeapBomb
+FormID: 01003CE5	DLC03PrimeSequenceTurret02Enclave	CREA	 	Mark VI Turret
+FormID: 01003D63	DLC03PPurity03	CELL	 	Memorial Sub-Basement
+FormID: 01003D64	DLC03PPurity02	CELL	 	Jefferson Museum and Gift Shop
+FormID: 0005F9D1	CrSentryBotMGEnclave	CREA	 	Sentry Bot
+FormID: 000BFE4A	FFEnclaveCamp24TraineeAM	NPC_	 	Enclave Soldier
+FormID: 000BFE4B	FFEnclaveCamp24TraineeCM	NPC_	 	Enclave Soldier
+FormID: 000BFE4C	FFEnclaveCamp24TraineeHF	NPC_	 	Enclave Soldier
+FormID: 010043A0	DLC03PP02DoortoRotunda	DOOR	 	Door
+FormID: 010043A1	DLC03PurityGratetoPumpControl	DOOR	 	Grate
+FormID: 010043A2	DLC03PPSideDoor01	DOOR	 	Door
+FormID: 01004418	DLC03AirControlStairs01	CELL	 	Air Control Tower
+FormID: 0100445B	DLC03ChairVertibird01	FURN	 	Jump Seat
+FormID: 0100445D	DLC03ChairVertibird02	FURN	 	Pilot Seat
+FormID: 0100452A	DLC03PresMetro03	CELL	 	Adams AFB Metro Exit
+FormID: 010045B0	DLC03AirlockControl1	ACTI	 	Airlock Control
+FormID: 010045B1	DLC03TaftSewerLidExit01	DOOR	 	Manhole
+FormID: 010045B2	DLC03PPurity01	CELL	 	Jefferson Memorial Rotunda
