@@ -22,16 +22,6 @@ void ExitInstance() ;
 
 #define DB(a) 	std::ofstream d;d.open("C:\\Users\\PC\\Desktop\\debug.txt",std::ios::app);  d<<a<<std::endl;d.flush();d.close();
 
-int (__cdecl *sub_5B7660)(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8)=(int (__cdecl *)(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8))0x5B7660;
-
-int __cdecl HookedFW(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8)
-{
-	{DB("FW("<<std::hex<<"0x"<<a1<<",0x"<<a2<<",0x"<<a3<<",0x"<<a4<<",0x"<<a5<<",0x"<<a6<<",0x"<<a7<<",0x"<<a8<<")");}
-	int tmp=sub_5B7660(a1,a2,a3,a4,a5,a6,a7,a8);
-	
-
-	return tmp;
-}
 
 
 BOOL APIENTRY DllMain( HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)

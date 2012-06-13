@@ -8,13 +8,19 @@ using namespace std;
 class GUI
 {
 private:
-	string lines[10];
+	string lines[50];
 	string writingText;
 	ID3DXFont* g_font;
 	LPD3DXSPRITE sprite;
 	LPDIRECT3DTEXTURE9 gTexture;
 	bool visible;
 	bool locked;
+	float sizeMult;
+	int scrollOffset;
+
+	IDirect3DDevice9 *b_device;
+	int b_fontSize;
+	string b_fontFamily;
 	
 public:
 	queue <string> q;
@@ -27,6 +33,10 @@ public:
 	void AddLine(string);
 	void AddToQueue(string);
 	void SetWriting(string);
+	void ScrollDown();
+	void ScrollUp();
+	float GetSize();
+	void SetSize(float);
 
 	void Think();
 

@@ -87,6 +87,7 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
                     // Process a tab. 
                      
                     break; 
+				
  
                 case 0x0D: 
                     
@@ -99,6 +100,8 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 						gl_pmyIDirect3DDevice9->chatbox.Unlock();
 						chatbox_text="";
 						gl_pmyIDirect3DDevice9->chatbox.SetWriting("");
+
+						
 					}
                      
                     break; 
@@ -119,6 +122,27 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 			}
 			
 		break;
+
+		case WM_KEYDOWN:
+
+			switch((char)wparam)
+			{
+				case VK_PRIOR:
+					gl_pmyIDirect3DDevice9->chatbox.ScrollUp();
+					break;
+
+				case VK_NEXT:
+					gl_pmyIDirect3DDevice9->chatbox.ScrollDown();
+					break;
+				case VK_ADD:
+					gl_pmyIDirect3DDevice9->chatbox.SetSize(gl_pmyIDirect3DDevice9->chatbox.GetSize()+0.1);
+					break;
+				case VK_SUBTRACT:
+					gl_pmyIDirect3DDevice9->chatbox.SetSize(gl_pmyIDirect3DDevice9->chatbox.GetSize()-0.1);
+					break;
+			}
+
+			break;
 
 	}
 	return WindowProcedure_Original(hwnd,message,wparam,lparam);
