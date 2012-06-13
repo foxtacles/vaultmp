@@ -66,19 +66,22 @@ void Actor::initialize()
 
 	unsigned int baseID = this->GetBase();
 
-	try
+	if (baseID != PLAYER_BASE)
 	{
-		const Database::Record& record = dbActors->Lookup(baseID);
+		try
+		{
+			const Database::Record& record = dbActors->Lookup(baseID);
 
-		if (this->GetName().empty())
-			this->SetName(record.description);
-	}
-	catch (...)
-	{
-		const Database::Record& record = dbCreatures->Lookup(baseID);
+			if (this->GetName().empty())
+				this->SetName(record.description);
+		}
+		catch (...)
+		{
+			const Database::Record& record = dbCreatures->Lookup(baseID);
 
-		if (this->GetName().empty())
-			this->SetName(record.description);
+			if (this->GetName().empty())
+				this->SetName(record.description);
+		}
 	}
 
 #endif

@@ -60,8 +60,7 @@ class pDefault
 	public:
 		virtual ~pDefault()
 		{
-			if (stream)
-				delete[] stream;
+			delete[] stream;
 		};
 
 		const unsigned char* get() const
@@ -573,7 +572,6 @@ class pObjectNew : public pObjectNewDefault
 		pObjectNew& operator=(const pObjectNew&);
 
 	public:
-		inline
 		static unsigned int data_length()
 		{
 			return sizeof(_pObjectNew);
@@ -611,7 +609,6 @@ class pItemNew : public pObjectNewDefault
 		pItemNew& operator=(const pItemNew&);
 
 	public:
-		inline
 		static unsigned int data_length()
 		{
 			return sizeof(_pItemNew);
@@ -619,7 +616,6 @@ class pItemNew : public pObjectNewDefault
 
 		// I need a design solution for that
 
-		inline
 		static unsigned int as_packet_length()
 		{
 			return sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int) + sizeof(_pItemNew);
