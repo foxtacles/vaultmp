@@ -571,8 +571,7 @@ cell PAWN::vaultmp_IsActorJumping(AMX* amx, const cell* params)
 
 cell PAWN::vaultmp_AddItem(AMX* amx, const cell* params)
 {
-	Script::AddItem(params[1], params[2], params[3], amx_ctof(params[4]), params[5]);
-	return 1;
+	return Script::AddItem(params[1], params[2], params[3], amx_ctof(params[4]), params[5]);
 }
 
 cell PAWN::vaultmp_RemoveItem(AMX* amx, const cell* params)

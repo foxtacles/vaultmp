@@ -221,7 +221,7 @@ _CPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetActorDead))(VAULTSPACE ID) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsActorJumping))(VAULTSPACE ID) _CPP(noexcept);
 
-	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(AddItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE UCount, VAULTSPACE Value, VAULTSPACE State) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(AddItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE UCount, VAULTSPACE Value, VAULTSPACE State) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(RemoveItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE UCount, VAULTSPACE State) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(RemoveAllItems))(VAULTSPACE ID) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetActorValue))(VAULTSPACE ID, VAULTSPACE Index, VAULTSPACE Value) _CPP(noexcept);
@@ -342,7 +342,7 @@ namespace vaultmp
 	VAULTFUNCTION State GetActorDead(ID id) noexcept { return VAULTAPI(GetActorDead)(id); }
 	VAULTFUNCTION State IsActorJumping(ID id) noexcept { return VAULTAPI(IsActorJumping)(id); }
 
-	VAULTFUNCTION Void AddItem(ID id, Base base, UCount count = 1, Value condition = 100.0, State silent = True) noexcept { return VAULTAPI(AddItem)(id, base, count, condition, silent); }
+	VAULTFUNCTION State AddItem(ID id, Base base, UCount count = 1, Value condition = 100.0, State silent = True) noexcept { return VAULTAPI(AddItem)(id, base, count, condition, silent); }
 	VAULTFUNCTION UCount RemoveItem(ID id, Base base, UCount count = 1, State silent = True) noexcept { return VAULTAPI(RemoveItem)(id, base, count, silent); }
 	VAULTFUNCTION Void RemoveAllItems(ID id) noexcept { return VAULTAPI(RemoveAllItems)(id); }
 	VAULTFUNCTION Void SetActorValue(ID id, Index index, Value value) noexcept { return VAULTAPI(SetActorValue)(id, index, value); }
@@ -426,7 +426,7 @@ namespace vaultmp
 
 			UCount GetContainerItemCount(Base base = static_cast<Base>(0)) const noexcept { return vaultmp::GetContainerItemCount(id, base); }
 
-			Void AddItem(Base base, UCount count = 1, Value condition = 100.0, State silent = True) noexcept { return vaultmp::AddItem(id, base, count, condition, silent); }
+			State AddItem(Base base, UCount count = 1, Value condition = 100.0, State silent = True) noexcept { return vaultmp::AddItem(id, base, count, condition, silent); }
 			UCount RemoveItem(Base base, UCount count = 1, State silent = True) noexcept { return vaultmp::RemoveItem(id, base, count, silent); }
 			Void RemoveAllItems() noexcept { return vaultmp::RemoveAllItems(id); }
 
