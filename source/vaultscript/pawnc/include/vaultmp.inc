@@ -69,6 +69,7 @@ native AxisToString(index, value{});
 native AnimToString(index, value{});
 
 native Bool:UIMessage(ID, const message{});
+native Bool:ChatMessage(ID, const message{});
 native SetRespawn(interval);
 native Bool:IsValid(ID);
 native Bool:IsObject(ID);

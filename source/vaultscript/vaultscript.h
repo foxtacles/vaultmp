@@ -194,6 +194,7 @@ _CPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE cRawString (*VAULTAPI(AnimToString))(VAULTSPACE Index) _CPP(noexcept);
 
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(UIMessage))(VAULTSPACE ID, VAULTSPACE cRawString) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(ChatMessage))(VAULTSPACE ID, VAULTSPACE cRawString) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetRespawn))(VAULTSPACE Interval) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsValid))(VAULTSPACE ID) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsObject))(VAULTSPACE ID) _CPP(noexcept);
@@ -310,6 +311,8 @@ namespace vaultmp
 
 	VAULTFUNCTION State UIMessage(ID id, String message) noexcept { return VAULTAPI(UIMessage)(id, message.c_str()); }
 	VAULTFUNCTION State UIMessage(String message) noexcept { return VAULTAPI(UIMessage)(static_cast<ID>(0), message.c_str()); }
+	VAULTFUNCTION State ChatMessage(ID id, String message) noexcept { return VAULTAPI(ChatMessage)(id, message.c_str()); }
+	VAULTFUNCTION State ChatMessage(String message) noexcept { return VAULTAPI(ChatMessage)(static_cast<ID>(0), message.c_str()); }
 	VAULTFUNCTION Void SetRespawn(Interval interval) noexcept { return VAULTAPI(SetRespawn)(interval); }
 	VAULTFUNCTION State IsValid(ID id) noexcept { return VAULTAPI(IsValid)(id); }
 	VAULTFUNCTION State IsObject(ID id) noexcept { return VAULTAPI(IsObject)(id); }
@@ -467,10 +470,26 @@ namespace vaultmp
 
 			Void SetPlayerRespawn(Interval interval) noexcept { return vaultmp::SetPlayerRespawn(id, interval); }
 			State UIMessage(String message) noexcept { return vaultmp::UIMessage(id, message); }
+			State ChatMessage(String message) noexcept { return vaultmp::ChatMessage(id, message); }
+
+			Player& operator<<(const String& message)
+			{
+				ChatMessage(message);
+				return *this;
+			}
 
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_PLAYER); }
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_PLAYER); }
 	};
+
+	class _Chat {
+		public:
+			_Chat& operator<<(const String& message)
+			{
+				ChatMessage(message);
+				return *this;
+			}
+	} Chat;
 }
 #endif
 

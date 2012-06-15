@@ -107,6 +107,7 @@ class Script
 		static const char* AnimToString(unsigned char index);
 
 		static bool UIMessage(NetworkID id, const char* message);
+		static bool ChatMessage(NetworkID id, const char* message);
 		static void SetRespawn(unsigned int respawn);
 		static bool IsValid(NetworkID id);
 		static bool IsObject(NetworkID id);

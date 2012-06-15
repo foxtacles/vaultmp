@@ -38,6 +38,7 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"AnimToString", PAWN::vaultmp_AnimToString},
 
 	{"UIMessage", PAWN::vaultmp_UIMessage},
+	{"ChatMessage", PAWN::vaultmp_ChatMessage},
 	{"SetRespawn", PAWN::vaultmp_SetRespawn},
 	{"IsValid", PAWN::vaultmp_IsValid},
 	{"IsObject", PAWN::vaultmp_IsObject},
@@ -393,6 +394,20 @@ cell PAWN::vaultmp_UIMessage(AMX* amx, const cell* params)
 	amx_GetString(message, source, 0, UNLIMITED);
 
 	return Script::UIMessage(params[1], message);
+}
+
+cell PAWN::vaultmp_ChatMessage(AMX* amx, const cell* params)
+{
+	int len;
+	cell* source;
+
+	source = amx_Address(amx, params[2]);
+	amx_StrLen(source, &len);
+	char message[len + 1];
+
+	amx_GetString(message, source, 0, UNLIMITED);
+
+	return Script::ChatMessage(params[1], message);
 }
 
 cell PAWN::vaultmp_SetRespawn(AMX* amx, const cell* params)

@@ -69,6 +69,7 @@ Script::Script(char* path)
 		SetScript(string(vpf + "AnimToString").c_str(), &Script::AnimToString);
 
 		SetScript(string(vpf + "UIMessage").c_str(), &Script::UIMessage);
+		SetScript(string(vpf + "ChatMessage").c_str(), &Script::ChatMessage);
 		SetScript(string(vpf + "SetRespawn").c_str(), &Script::SetRespawn);
 		SetScript(string(vpf + "IsValid").c_str(), &Script::IsValid);
 		SetScript(string(vpf + "IsObject").c_str(), &Script::IsObject);
@@ -628,6 +629,34 @@ bool Script::UIMessage(NetworkID id, const char* message)
 	return true;
 }
 
+bool Script::ChatMessage(NetworkID id, const char* message)
+{
+	string _message(message);
+
+	if (_message.length() > MAX_CHAT_LENGTH)
+		_message.resize(MAX_CHAT_LENGTH);
+
+	if (id)
+	{
+		try
+		{
+			if (!vaultcast<Player>(*GameFactory::GetObject(id)))
+				return false;
+		}
+		catch (...)
+		{
+			return false;
+		}
+	}
+
+	Network::Queue(NetworkResponse{Network::CreateResponse(
+		PacketFactory::CreatePacket(ID_GAME_CHAT, _message.c_str()),
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, id ? vector<RakNetGUID>{Client::GetClientFromPlayer(id)->GetGUID()} : Client::GetNetworkList(NULL))
+	});
+
+	return true;
+}
+
 void Script::SetRespawn(unsigned int respawn)
 {
 	Player::SetRespawn(respawn);
@@ -1002,28 +1031,29 @@ bool Script::IsActorJumping(NetworkID id)
 
 bool Script::AddItem(NetworkID id, unsigned int baseID, unsigned int count, double condition, bool silent)
 {
-	try
+	if (count)
 	{
-		FactoryObject reference = GameFactory::GetObject(id);
-		Container* container = vaultcast<Container>(reference);
-
-		if (container && count)
+		try
 		{
-			// validate baseID, or put validation in Item constructor
+			FactoryObject reference = GameFactory::GetObject(id);
+			Container* container = vaultcast<Container>(reference);
 
-			ContainerDiff diff = container->AddItem(baseID, count, condition, silent);
+			if (container)
+			{
+				ContainerDiff diff = container->AddItem(baseID, count, condition, silent);
 
-			Network::Queue(NetworkResponse{Network::CreateResponse(
-				PacketFactory::CreatePacket(ID_UPDATE_CONTAINER, id, &diff),
-				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(NULL))
-			});
+				Network::Queue(NetworkResponse{Network::CreateResponse(
+					PacketFactory::CreatePacket(ID_UPDATE_CONTAINER, id, &diff),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(NULL))
+				});
 
-			container->ApplyDiff(diff);
+				container->ApplyDiff(diff);
 
-			return true;
+				return true;
+			}
 		}
+		catch (...) {}
 	}
-	catch (...) {}
 
 	return false;
 }
@@ -1032,31 +1062,32 @@ unsigned int Script::RemoveItem(NetworkID id, unsigned int baseID, unsigned int 
 {
 	unsigned int removed = 0;
 
-	try
+	if (count)
 	{
-		FactoryObject reference = GameFactory::GetObject(id);
-		Container* container = vaultcast<Container>(reference);
-
-		if (container && count)
+		try
 		{
-			// validate baseID, or put validation in Item constructor
+			FactoryObject reference = GameFactory::GetObject(id);
+			Container* container = vaultcast<Container>(reference);
 
-			ContainerDiff diff = container->RemoveItem(baseID, count, silent);
-
-			if (!diff.first.empty() || !diff.second.empty())
+			if (container)
 			{
-				Network::Queue(NetworkResponse{Network::CreateResponse(
-					PacketFactory::CreatePacket(ID_UPDATE_CONTAINER, id, &diff),
-					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(NULL))
-				});
+				ContainerDiff diff = container->RemoveItem(baseID, count, silent);
 
-				GameDiff gamediff = container->ApplyDiff(diff);
+				if (!diff.first.empty() || !diff.second.empty())
+				{
+					Network::Queue(NetworkResponse{Network::CreateResponse(
+						PacketFactory::CreatePacket(ID_UPDATE_CONTAINER, id, &diff),
+						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(NULL))
+					});
 
-				removed = abs(gamediff.front().second.count);
+					GameDiff gamediff = container->ApplyDiff(diff);
+
+					removed = abs(gamediff.front().second.count);
+				}
 			}
 		}
+		catch (...) {}
 	}
-	catch (...) {}
 
 	return removed;
 }
