@@ -14,7 +14,12 @@ function import($file,$dlc)
 		$id=hexdec(trim(str_replace("FormID: ","",$id)));
 		createTable($tb);
 		$description=trim($description);
-		$db->exec("insert into $tb (baseID,name,description,dlc) values ('$id','$name','$description','$dlc')");
+                $prep = $db->prepare("insert into $tb (baseID,name,description,dlc) values (?, ?, ?, ?)");
+                if ($prep === FALSE) {
+			echo "Fail: " . $id;
+			continue;
+		}
+		$prep->execute(array($id, $name, $description, $dlc));
 	}
 }
 
@@ -24,7 +29,7 @@ function createTable($tb)
 	$db->exec("CREATE TABLE $tb (baseID integer(11) PRIMARY KEY,name varchar(128),description varchar(128),dlc integer(11))");
 }
 
-$db = new PDO('sqlite:/home/recycler/www/newvegas.sqlite');
+$db = new PDO('sqlite:newvegas.sqlite');
 if(!$db)
 {
     die("Errore Sqlite");

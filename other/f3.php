@@ -14,7 +14,12 @@ function import($file,$dlc)
 		$id=hexdec(trim(str_replace("FormID: ","",$id)));
 		createTable($tb);
 		$description=trim($description);
-		$db->exec("insert into $tb (baseID,name,description,dlc) values ('$id','$name','$description','$dlc')");
+                $prep = $db->prepare("insert into $tb (baseID,name,description,dlc) values (?, ?, ?, ?)");
+                if ($prep === FALSE) {
+			echo "Fail: " . $id;
+			continue;
+		}
+		$prep->execute(array($id, $name, $description, $dlc));
 	}
 }
 
