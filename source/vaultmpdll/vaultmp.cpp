@@ -38,6 +38,12 @@ static void PatchGame(HINSTANCE& silverlock);
 static void BethesdaDelegator();
 static vector<void*> delegated;
 
+typedef void (__stdcall * _GetSystemTimeAsFileTime)(LPFILETIME * fileTime);
+static _GetSystemTimeAsFileTime GetSystemTimeAsFileTime_Original = NULL;
+static _GetSystemTimeAsFileTime * _GetSystemTimeAsFileTime_IAT = NULL;
+static HINSTANCE silverlock = NULL;
+static HINSTANCE vaultgui = NULL;
+
 static bool delegate = false;
 static bool DLLerror = false;
 static unsigned char game = 0x00;
@@ -59,7 +65,7 @@ static const unsigned Fallout3patch_noRespawn_NOP = 0x006D5965; // 2x NOP
 static const unsigned Fallout3patch_noRespawn_jmp_src = 0x0078B230;
 static const unsigned Fallout3patch_noRespawn_jmp_dest = 0x0078B2B9;
 
-// Those snippets are from FOSE, thanks
+// Those snippets / functions are from FOSE / NVSE, thanks
 
 void SafeWrite8(unsigned int addr, unsigned int data)
 {
@@ -107,6 +113,52 @@ void WriteRelCall(unsigned int jumpSrc, unsigned int jumpTgt)
 {
 	SafeWrite8(jumpSrc, 0xE8);
 	SafeWrite32(jumpSrc + 1, jumpTgt - jumpSrc - 1 - 4);
+}
+
+void * GetIATAddr(unsigned char * base, const char * searchDllName, const char * searchImportName)
+{
+	IMAGE_DOS_HEADER		* dosHeader = (IMAGE_DOS_HEADER *)base;
+	IMAGE_NT_HEADERS		* ntHeader = (IMAGE_NT_HEADERS *)(base + dosHeader->e_lfanew);
+	IMAGE_IMPORT_DESCRIPTOR	* importTable =
+		(IMAGE_IMPORT_DESCRIPTOR *)(base + ntHeader->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress);
+
+	for(; importTable->Characteristics; ++importTable)
+	{
+		const char	* dllName = (const char *)(base + importTable->Name);
+
+		if(!_stricmp(dllName, searchDllName))
+		{
+			// found the dll
+
+			IMAGE_THUNK_DATA	* thunkData = (IMAGE_THUNK_DATA *)(base + importTable->OriginalFirstThunk);
+			unsigned int				* iat = (unsigned int *)(base + importTable->FirstThunk);
+
+			for(; thunkData->u1.Ordinal; ++thunkData, ++iat)
+			{
+				if(!IMAGE_SNAP_BY_ORDINAL(thunkData->u1.Ordinal))
+				{
+					IMAGE_IMPORT_BY_NAME	* importInfo = (IMAGE_IMPORT_BY_NAME *)(base + thunkData->u1.AddressOfData);
+
+					if(!_stricmp((char *)importInfo->Name, searchImportName))
+					{
+						// found the import
+						return iat;
+					}
+				}
+			}
+
+			return NULL;
+		}
+	}
+
+	return NULL;
+}
+
+void __stdcall GetSystemTimeAsFileTime_Hook(LPFILETIME * fileTime)
+{
+	PatchGame(silverlock);
+
+	GetSystemTimeAsFileTime_Original(fileTime);
 }
 
 void BethesdaDelegator()
@@ -516,9 +568,6 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 {
 	/* Loading and initalizing vaultgui.dll */
 
-	HINSTANCE vaultgui = NULL;
-	HINSTANCE silverlock = NULL;
-
 	vaultgui = LoadLibrary("vaultgui.dll");
 
 	if (vaultgui == NULL)
@@ -541,20 +590,38 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 	pipeServer.ConnectToServer();
 
 	unsigned char buffer[PIPE_LENGTH];
-	unsigned char code;
+	pipeClient.Receive(buffer);
+
+	// The special Steam hook by NVSE
+	if (buffer[0])
+	{
+		unsigned int oldProtect;
+		_GetSystemTimeAsFileTime_IAT = (_GetSystemTimeAsFileTime *)GetIATAddr((unsigned char *)GetModuleHandle(NULL), "kernel32.dll", "GetSystemTimeAsFileTime");
+		if(_GetSystemTimeAsFileTime_IAT)
+		{
+			VirtualProtect((void *)_GetSystemTimeAsFileTime_IAT, 4, PAGE_EXECUTE_READWRITE, (DWORD*) &oldProtect);
+			GetSystemTimeAsFileTime_Original = *_GetSystemTimeAsFileTime_IAT;
+			*_GetSystemTimeAsFileTime_IAT = GetSystemTimeAsFileTime_Hook;
+			unsigned int junk;
+			VirtualProtect((void *)_GetSystemTimeAsFileTime_IAT, 4, oldProtect, (DWORD*) &junk);
+		}
+		else
+			DLLerror = true;
+	}
+	else
+		PatchGame(silverlock);
 
 	buffer[0] = PIPE_SYS_WAKEUP;
 	pipeClient.Send(buffer);
 
 	Sleep(3000);
-	PatchGame(silverlock);
 
 	while (!DLLerror)
 	{
 		ZeroMemory(buffer, sizeof(buffer));
 
 		pipeServer.Receive(buffer);
-		code = buffer[0];
+		unsigned char code = buffer[0];
 		unsigned char* content = buffer + 1;
 
 		switch (code)

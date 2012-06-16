@@ -93,7 +93,7 @@ weak_ptr<Lockable> Lockable::Poll(unsigned int key)
 
 bool Lockable::IsLocked() const
 {
-	return locks.size();
+	return !locks.empty();
 }
 
 unsigned int Lockable::Lock()

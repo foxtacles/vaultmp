@@ -472,7 +472,7 @@ namespace vaultmp
 			State UIMessage(String message) noexcept { return vaultmp::UIMessage(id, message); }
 			State ChatMessage(String message) noexcept { return vaultmp::ChatMessage(id, message); }
 
-			Player& operator<<(const String& message)
+			Player& operator<<(const String& message) noexcept
 			{
 				ChatMessage(message);
 				return *this;
@@ -484,7 +484,7 @@ namespace vaultmp
 
 	class _Chat {
 		public:
-			_Chat& operator<<(const String& message)
+			_Chat& operator<<(const String& message) noexcept
 			{
 				ChatMessage(message);
 				return *this;

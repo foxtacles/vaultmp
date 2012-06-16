@@ -10,6 +10,7 @@ bool Bethesda::initialized = false;
 string Bethesda::password = "";
 Savegame Bethesda::savegame;
 bool Bethesda::multiinst = false;
+bool Bethesda::steam = false;
 DWORD Bethesda::process = 0;
 ModList Bethesda::modfiles;
 char Bethesda::module[32];
@@ -208,7 +209,7 @@ void Bethesda::Initialize()
 
 			try
 			{
-				Interface::Initialize(&Game::CommandHandler);
+				Interface::Initialize(&Game::CommandHandler, Bethesda::steam);
 
 				chrono::steady_clock::time_point till = chrono::steady_clock::now() + chrono::milliseconds(5000);
 
@@ -267,11 +268,12 @@ void Bethesda::Terminate(RakPeerInterface* peer)
 	}
 }
 
-void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, string name, string pwd, unsigned char game, bool multiinst)
+void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, string name, string pwd, unsigned char game, bool multiinst, bool steam)
 {
 	Bethesda::game = game;
 	Bethesda::password = pwd;
 	Bethesda::multiinst = multiinst;
+	Bethesda::steam = steam;
 	Bethesda::savegame = Savegame();
 	Bethesda::modfiles.clear();
 	ZeroMemory(module, sizeof(module));

@@ -268,6 +268,8 @@ namespace Values
 			Func_GetFirstRef                = 0x14AF,
 			Func_GetNextRef                 = 0x14B0,
 			Func_GetControl                 = 0x144E,
+			Func_EnableControl				= 0x145E,
+			Func_DisableControl				= 0x145D,
 		};
 
 		/**
@@ -311,6 +313,8 @@ namespace Values
 			Func_GetFirstRef                = 0x1471,
 			Func_GetNextRef                 = 0x1472,
 			Func_GetControl                 = 0x145D,
+			Func_EnableControl				= 0x1463,
+			Func_DisableControl				= 0x1462,
 		};
 
 		/**

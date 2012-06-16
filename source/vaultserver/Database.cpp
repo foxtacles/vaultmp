@@ -71,7 +71,8 @@ Database::Database(const string& file, const vector<string>& table)
 			const unsigned char* description = sqlite3_column_text(stmt, 2);
 			unsigned int dlc = sqlite3_column_int(stmt, 3);
 
-			baseID = (baseID & 0x00FFFFFF) | (dlc << 24);
+			if (baseID & 0xFF000000)
+				baseID = (baseID & 0x00FFFFFF) | (dlc << 24);
 
 			data.insert(make_pair(baseID, Record(baseID, reinterpret_cast<const char*>(name), reinterpret_cast<const char*>(description))));
 		} while ((ret = sqlite3_step(stmt)) != SQLITE_DONE);

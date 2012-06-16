@@ -19,7 +19,7 @@ CriticalSection Interface::dynamic_cs;
 Debug* Interface::debug;
 #endif
 
-bool Interface::Initialize(ResultHandler resultHandler)
+bool Interface::Initialize(ResultHandler resultHandler, bool steam)
 {
 	if (!initialized)
 	{
@@ -31,7 +31,7 @@ bool Interface::Initialize(ResultHandler resultHandler)
 		pipeClient = new PipeServer();
 		pipeServer = new PipeClient();
 
-		hCommandThreadReceive = thread(CommandThreadReceive);
+		hCommandThreadReceive = thread(CommandThreadReceive, steam);
 		hCommandThreadSend = thread(CommandThreadSend);
 
 		if (!hCommandThreadReceive.joinable() || !hCommandThreadSend.joinable())
@@ -215,7 +215,7 @@ vector<string> Interface::Evaluate(Native::iterator _it)
 	return result;
 }
 
-void Interface::CommandThreadReceive()
+void Interface::CommandThreadReceive(bool steam)
 {
 	try
 	{
@@ -227,9 +227,13 @@ void Interface::CommandThreadReceive()
 
 		while (!pipeServer->ConnectToServer() && !endThread);
 
+		unsigned char buffer[PIPE_LENGTH];
+
+		buffer[0] = steam;
+		pipeClient->Send(buffer);
+
 		if (!endThread)
 		{
-			unsigned char buffer[PIPE_LENGTH];
 			unsigned char code;
 
 			do

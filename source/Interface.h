@@ -59,7 +59,7 @@ class Interface : public API
 
 		static vector<string> Evaluate(Native::iterator _it);
 
-		static void CommandThreadReceive();
+		static void CommandThreadReceive(bool steam);
 		static void CommandThreadSend();
 
 #ifdef VAULTMP_DEBUG
@@ -75,7 +75,7 @@ class Interface : public API
 		 *
 		 * Takes a ResultHandler function pointer and the game code
 		 */
-		static bool Initialize(ResultHandler);
+		static bool Initialize(ResultHandler, bool steam);
 		/**
 		 * \brief Terminates the Interface
 		 */

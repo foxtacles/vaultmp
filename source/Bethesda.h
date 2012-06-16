@@ -49,6 +49,7 @@ class Bethesda
 		static unsigned char game;
 		static string password;
 		static bool multiinst;
+		static bool steam;
 		static Savegame savegame;
 		static ModList modfiles;
 		static DWORD process;
@@ -79,6 +80,6 @@ class Bethesda
 		/**
 		 * \brief Initializes Vault-Tec Multiplayer Mod
 		 */
-		static void InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, string name, string pwd, unsigned char game, bool multiinst);
+		static void InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, string name, string pwd, unsigned char game, bool multiinst, bool steam);
 
 };

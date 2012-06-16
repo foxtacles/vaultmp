@@ -90,6 +90,7 @@ dictionary* config = NULL;
 const char* player_name;
 const char* server_name;
 bool multiinst;
+bool steam;
 unsigned char games;
 
 HWND CreateMainWindow();
@@ -326,6 +327,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 
 		if (checksum == NEWVEGAS_EN_VER14_STEAM)
 		{
+			steam = (checksum_real == NEWVEGAS_EN_VER14_STEAM);
+
 			filecheck = fopen("nvse_1_4.dll", "rb");
 
 			if (filecheck != NULL)
@@ -742,7 +745,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 							try
 							{
-								Bethesda::InitializeVaultMP(peer, addr, string(name), string(pwd), game, multiinst);
+								Bethesda::InitializeVaultMP(peer, addr, string(name), string(pwd), game, multiinst, game == NEWVEGAS ? steam : false);
 							}
 
 							catch (std::exception& e)

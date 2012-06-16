@@ -192,8 +192,17 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 			}
 
-			case Fallout3::Functions::Func_GetControl:
+			case Fallout3::Functions::Func_EnableControl:
+			case FalloutNV::Functions::Func_EnableControl:
+				break;
+
+			case FalloutNV::Functions::Func_DisableControl:
+				break;
+
 			case FalloutNV::Functions::Func_GetControl:
+				if (game == FALLOUT3) // Fallout3::Functions::Func_DisableControl
+					break;
+			case Fallout3::Functions::Func_GetControl:
 				self = GameFactory::GetObject(PLAYER_REFERENCE);
 				GetControl(self, getFrom<double, int>(info.at(1)), result);
 				break;
@@ -250,8 +259,18 @@ void Game::Startup()
 	RawParameter self_ref = self->GetReferenceParam();
 	NetworkID id = self->GetNetworkID();
 
-	// solve deadlock with static_cmdlist / GetControl send & receive on player object
 	GameFactory::LeaveReference(reference);
+
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("GetControl", ParamContainer{RawParameter(API::RetrieveAllControls())});
+	Interface::ExecuteCommand("DisableControl", ParamContainer{RawParameter(vector<unsigned char>{
+		Fallout::ControlCodes::ControlCode_Quickload,
+		Fallout::ControlCodes::ControlCode_Quicksave,
+		Fallout::ControlCodes::ControlCode_VATS,
+		Fallout::ControlCodes::ControlCode_Rest})});
+
+	Interface::EndDynamic();
 
 	Interface::StartSetup();
 
@@ -386,12 +405,6 @@ void Game::LoadEnvironment()
 		else
 			SetName(reference);
 	}
-
-	Interface::StartDynamic();
-
-	Interface::ExecuteCommand("GetControl", ParamContainer{RawParameter(API::RetrieveAllControls())});
-
-	Interface::EndDynamic();
 }
 
 void Game::UIMessage(string& message)

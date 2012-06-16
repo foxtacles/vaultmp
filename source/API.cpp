@@ -402,6 +402,8 @@ void API::Initialize(unsigned char game)
 	DefineFunction("GetFirstRef", "III", Fallout3::Func_GetFirstRef, FALLOUT3);
 	DefineFunction("GetNextRef", "", Fallout3::Func_GetNextRef, FALLOUT3);
 	DefineFunction("GetControl", "x", Fallout3::Func_GetControl, FALLOUT3);
+	DefineFunction("EnableControl", "x", Fallout3::Func_EnableControl, FALLOUT3);
+	DefineFunction("DisableControl", "x", Fallout3::Func_DisableControl, FALLOUT3);
 
 	DefineFunction("Load", "$s", FalloutNV::Func_Load, NEWVEGAS);
 	DefineFunction("SetName", "rsB", FalloutNV::Func_SetName, NEWVEGAS);
@@ -409,6 +411,8 @@ void API::Initialize(unsigned char game)
 	DefineFunction("GetFirstRef", "III", FalloutNV::Func_GetFirstRef, NEWVEGAS);
 	DefineFunction("GetNextRef", "", FalloutNV::Func_GetNextRef, NEWVEGAS);
 	DefineFunction("GetControl", "x", FalloutNV::Func_GetControl, NEWVEGAS);
+	DefineFunction("EnableControl", "x", FalloutNV::Func_EnableControl, NEWVEGAS);
+	DefineFunction("DisableControl", "x", FalloutNV::Func_DisableControl, NEWVEGAS);
 }
 
 void API::Terminate()
