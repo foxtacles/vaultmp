@@ -330,6 +330,8 @@
 		<Unit filename="Reference.h" />
 		<Unit filename="ServerEntry.cpp" />
 		<Unit filename="ServerEntry.h" />
+		<Unit filename="Shared.cpp" />
+		<Unit filename="Shared.h" />
 		<Unit filename="Utils.cpp" />
 		<Unit filename="Utils.h" />
 		<Unit filename="Value.cpp" />

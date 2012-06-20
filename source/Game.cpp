@@ -306,7 +306,7 @@ void Game::FutureSet(weak_ptr<Lockable> data, T t)
 	if (locked == NULL)
 		throw VaultException("Storage has expired");
 
-	Value<T>* store = dynamic_cast<Value<T>*>(locked);
+	Shared<T>* store = dynamic_cast<Shared<T>*>(locked);
 
 	if (store == NULL)
 		throw VaultException("Storage is corrupted");
@@ -345,7 +345,7 @@ void Game::LoadGame(string savegame)
 		last_savegame = savegame;
 	}
 
-	shared_ptr<Value<bool>> store(new Value<bool>);
+	shared_ptr<Shared<bool>> store(new Shared<bool>);
 	unsigned int key = Lockable::Share(store);
 
 	Interface::StartDynamic();
@@ -431,7 +431,7 @@ void Game::NewObject(FactoryObject& reference)
 
 	if (!object->GetReference())
 	{
-		shared_ptr<Value<unsigned int>> store(new Value<unsigned int>);
+		shared_ptr<Shared<unsigned int>> store(new Shared<unsigned int>);
 		unsigned int key = Lockable::Share(store);
 
 		PlaceAtMe(PLAYER_REFERENCE, object->GetBase(), 1, key);

@@ -5,6 +5,7 @@
 #include "Interface.h"
 #include "Player.h"
 #include "Network.h"
+#include "Shared.h"
 #include "VaultException.h"
 
 #include <future>
