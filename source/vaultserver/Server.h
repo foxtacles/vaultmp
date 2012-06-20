@@ -69,7 +69,7 @@ class Server
 		/**
 		 * \brief Handles actor state network packet
 		 */
-		static NetworkResponse GetActorState(RakNetGUID guid, FactoryObject reference, unsigned char index, unsigned char moving, bool alerted, bool sneaking);
+		static NetworkResponse GetActorState(RakNetGUID guid, FactoryObject reference, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking);
 		/**
 		 * \brief Handles actor dead network packet
 		 */

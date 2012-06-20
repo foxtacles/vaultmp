@@ -236,6 +236,32 @@ void API::Initialize(unsigned char game)
 	DefineAnimString("DodgeRight", AnimGroup_DodgeRight, ALL_GAMES);
 	DefineAnimString("TurnLeft", AnimGroup_TurnLeft, ALL_GAMES);
 	DefineAnimString("TurnRight", AnimGroup_TurnRight, ALL_GAMES);
+	DefineAnimString("Aim", AnimGroup_Aim, ALL_GAMES);
+	DefineAnimString("AimUp", AnimGroup_AimUp, ALL_GAMES);
+	DefineAnimString("AimDown", AnimGroup_AimDown, ALL_GAMES);
+	DefineAnimString("AimIS", AnimGroup_AimIS, ALL_GAMES);
+	DefineAnimString("AimISUp", AnimGroup_AimISUp, ALL_GAMES);
+	DefineAnimString("AimISDown", AnimGroup_AimISDown, ALL_GAMES);
+	DefineAnimString("AttackLeft", AnimGroup_AttackLeft, ALL_GAMES);
+	DefineAnimString("AttackLeftUp", AnimGroup_AttackLeftUp, ALL_GAMES);
+	DefineAnimString("AttackLeftDown", AnimGroup_AttackLeftDown, ALL_GAMES);
+	DefineAnimString("AttackLeftIS", AnimGroup_AttackLeftIS, ALL_GAMES);
+	DefineAnimString("AttackLeftISUp", AnimGroup_AttackLeftISUp, ALL_GAMES);
+	DefineAnimString("AttackLeftISDown", AnimGroup_AttackLeftISDown, ALL_GAMES);
+	DefineAnimString("AttackRight", AnimGroup_AttackRight, ALL_GAMES);
+	DefineAnimString("AttackRightUp", AnimGroup_AttackRightUp, ALL_GAMES);
+	DefineAnimString("AttackRightDown", AnimGroup_AttackRightDown, ALL_GAMES);
+	DefineAnimString("AttackRightIS", AnimGroup_AttackRightIS, ALL_GAMES);
+	DefineAnimString("AttackRightISUp", AnimGroup_AttackRightISUp, ALL_GAMES);
+	DefineAnimString("AttackRightISDown", AnimGroup_AttackRightISDown, ALL_GAMES);
+	DefineAnimString("AttackPower", AnimGroup_AttackPower, ALL_GAMES);
+	DefineAnimString("AttackForwardPower", AnimGroup_AttackForwardPower, ALL_GAMES);
+	DefineAnimString("AttackBackPower", AnimGroup_AttackBackPower, ALL_GAMES);
+	DefineAnimString("AttackLeftPower", AnimGroup_AttackLeftPower, ALL_GAMES);
+	DefineAnimString("AttackRightPower", AnimGroup_AttackRightPower, ALL_GAMES);
+	DefineAnimString("Holster", AnimGroup_Holster, ALL_GAMES);
+	DefineAnimString("Equip", AnimGroup_Equip, ALL_GAMES);
+	DefineAnimString("Unequip", AnimGroup_Unequip, ALL_GAMES);
 
 	DefineAnimString("JumpStart", Fallout3::AnimGroup_JumpStart, FALLOUT3);
 	DefineAnimString("JumpLoop", Fallout3::AnimGroup_JumpLoop, FALLOUT3);
@@ -248,6 +274,7 @@ void API::Initialize(unsigned char game)
 	DefineAnimString("JumpLandBackward", Fallout3::AnimGroup_JumpLandBackward, FALLOUT3);
 	DefineAnimString("JumpLandLeft", Fallout3::AnimGroup_JumpLandLeft, FALLOUT3);
 	DefineAnimString("JumpLandRight", Fallout3::AnimGroup_JumpLandRight, FALLOUT3);
+	DefineAnimString("BlockIdle", Fallout3::AnimGroup_BlockIdle, FALLOUT3);
 
 	DefineAnimString("JumpStart", FalloutNV::AnimGroup_JumpStart, NEWVEGAS);
 	DefineAnimString("JumpLoop", FalloutNV::AnimGroup_JumpLoop, NEWVEGAS);
@@ -260,6 +287,7 @@ void API::Initialize(unsigned char game)
 	DefineAnimString("JumpLandBackward", FalloutNV::AnimGroup_JumpLandBackward, NEWVEGAS);
 	DefineAnimString("JumpLandLeft", FalloutNV::AnimGroup_JumpLandLeft, NEWVEGAS);
 	DefineAnimString("JumpLandRight", FalloutNV::AnimGroup_JumpLandRight, NEWVEGAS);
+	DefineAnimString("BlockIdle", FalloutNV::AnimGroup_BlockIdle, NEWVEGAS);
 
 	DefineValueString("Aggression", ActorVal_Aggression, FALLOUT_GAMES);
 	DefineValueString("Confidence", ActorVal_Confidence, FALLOUT_GAMES);

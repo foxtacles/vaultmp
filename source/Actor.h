@@ -59,6 +59,7 @@ class Actor : public Container
 		unordered_map<unsigned char, Value<double>> actor_BaseValues;
 		Value<unsigned char> anim_Moving;
 		Value<unsigned char> state_MovingXY;
+		Value<unsigned char> anim_Weapon;
 		Value<bool> state_Alerted;
 		Value<bool> state_Sneaking;
 		Value<bool> state_Dead;
@@ -116,6 +117,10 @@ class Actor : public Container
 		 */
 		unsigned char GetActorMovingXY() const;
 		/**
+		 * \brief Retrieves the Actor's weapon animation
+		 */
+		unsigned char GetActorWeaponAnimation() const;
+		/**
 		 * \brief Retrieves the Actor's alerted state
 		 */
 		bool GetActorAlerted() const;
@@ -148,6 +153,10 @@ class Actor : public Container
 		 * 0x02 - the actor moves ForwardRight / BackwardLeft
 		 */
 		Lockable* SetActorMovingXY(unsigned char moving);
+		/**
+		 * \brief Sets the Actor's weapon animation
+		 */
+		Lockable* SetActorWeaponAnimation(unsigned char index);
 		/**
 		 * \brief Sets the Actor's alerted state
 		 */

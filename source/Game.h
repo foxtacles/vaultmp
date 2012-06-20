@@ -156,6 +156,10 @@ class Game
 		 */
 		static void SetActorMovingAnimation(FactoryObject reference, unsigned int key = 0);
 		/**
+		 * \brief Sets the weapon animation of an Actor
+		 */
+		static void SetActorWeaponAnimation(FactoryObject reference, unsigned int key = 0);
+		/**
 		 * \brief Kills an Actor
 		 */
 		static void KillActor(FactoryObject reference, unsigned int key = 0);
@@ -211,7 +215,7 @@ class Game
 		/**
 		 * \brief Network function to handle Actor state
 		 */
-		static void net_SetActorState(FactoryObject reference, unsigned char index, unsigned char moving, bool alerted, bool sneaking);
+		static void net_SetActorState(FactoryObject reference, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking);
 		/**
 		 * \brief Network function to handle Actor death
 		 */
@@ -252,7 +256,7 @@ class Game
 		/**
 		 * \brief Handles GetActorState command result
 		 */
-		static void GetActorState(FactoryObject reference, unsigned char index, unsigned char moving, bool alerted, bool sneaking);
+		static void GetActorState(FactoryObject reference, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking);
 		/**
 		 * \brief Handles GetControl command result
 		 */

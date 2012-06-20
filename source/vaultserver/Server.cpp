@@ -231,7 +231,7 @@ NetworkResponse Server::GetActorValue(RakNetGUID guid, FactoryObject reference, 
 	return response;
 }
 
-NetworkResponse Server::GetActorState(RakNetGUID guid, FactoryObject reference, unsigned char index, unsigned char moving, bool alerted, bool sneaking)
+NetworkResponse Server::GetActorState(RakNetGUID guid, FactoryObject reference, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -243,12 +243,14 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, FactoryObject reference, 
 
 	_alerted = (bool) actor->SetActorAlerted(alerted);
 	_sneaking = (bool) actor->SetActorSneaking(sneaking);
-	result = ((bool) actor->SetActorMovingAnimation(index) | (bool) actor->SetActorMovingXY(moving) | _alerted | _sneaking);
+	result = ((bool) actor->SetActorMovingAnimation(moving) | (bool) actor->SetActorMovingXY(movingxy) | (bool) actor->SetActorWeaponAnimation(weapon) | _alerted | _sneaking);
 
 	if (result)
 	{
+		printf("%s %02X\n", API::RetrieveAnim_Reverse(weapon).c_str(), weapon);
+
 		response.push_back(Network::CreateResponse(
-			PacketFactory::CreatePacket(ID_UPDATE_STATE, actor->GetNetworkID(), index, moving, alerted, sneaking),
+			PacketFactory::CreatePacket(ID_UPDATE_STATE, actor->GetNetworkID(), moving, movingxy, weapon, alerted, sneaking),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
 		if (_alerted)

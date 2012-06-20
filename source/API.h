@@ -68,6 +68,9 @@ namespace Values
 		AnimGroup_AimIS					= 0x14,
 		AnimGroup_AimISUp				= 0x15,
 		AnimGroup_AimISDown				= 0x16,
+		AnimGroup_Holster				= 0x17,
+		AnimGroup_Equip					= 0x18,
+		AnimGroup_Unequip				= 0x19,
 
 		AnimGroup_AttackLeft			= 0x1A,
 		AnimGroup_AttackLeftUp			= 0x1B,

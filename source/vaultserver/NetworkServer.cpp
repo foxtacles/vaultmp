@@ -212,13 +212,14 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 						case ID_UPDATE_STATE:
 						{
 							NetworkID id;
-							unsigned char index;
 							unsigned char moving;
+							unsigned char movingxy;
+							unsigned char weapon;
 							bool alerted;
 							bool sneaking;
-							PacketFactory::Access(packet, &id, &index, &moving, &alerted, &sneaking);
+							PacketFactory::Access(packet, &id, &moving, &movingxy, &weapon, &alerted, &sneaking);
 							FactoryObject reference = GameFactory::GetObject(id);
-							response = Server::GetActorState(data->guid, reference, index, moving, alerted, sneaking);
+							response = Server::GetActorState(data->guid, reference, moving, movingxy, weapon, alerted, sneaking);
 							break;
 						}
 

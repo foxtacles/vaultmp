@@ -24,10 +24,10 @@ Actor::Actor(const pDefault* packet) : Container(PacketFactory::ExtractPartial(p
 
 	map<unsigned char, double> values, baseValues;
 	map<unsigned char, double>::iterator it, it2;
-	unsigned char moving, moving_xy;
+	unsigned char moving, movingxy, weapon;
 	bool alerted, sneaking, dead;
 
-	PacketFactory::Access(packet, &values, &baseValues, &moving, &moving_xy, &alerted, &sneaking, &dead);
+	PacketFactory::Access(packet, &values, &baseValues, &moving, &movingxy, &weapon, &alerted, &sneaking, &dead);
 
 	for (it = values.begin(), it2 = baseValues.begin(); it != values.end() && it2 != baseValues.end(); ++it, ++it2)
 	{
@@ -36,7 +36,8 @@ Actor::Actor(const pDefault* packet) : Container(PacketFactory::ExtractPartial(p
 	}
 
 	this->SetActorMovingAnimation(moving);
-	this->SetActorMovingXY(moving_xy);
+	this->SetActorMovingXY(movingxy);
+	this->SetActorWeaponAnimation(weapon);
 	this->SetActorAlerted(alerted);
 	this->SetActorSneaking(sneaking);
 	this->SetActorDead(dead);
@@ -137,6 +138,11 @@ unsigned char Actor::GetActorMovingXY() const
 	return state_MovingXY.get();
 }
 
+unsigned char Actor::GetActorWeaponAnimation() const
+{
+	return anim_Weapon.get();
+}
+
 bool Actor::GetActorAlerted() const
 {
 	return state_Alerted.get();
@@ -175,6 +181,16 @@ Lockable* Actor::SetActorMovingAnimation(unsigned char index)
 Lockable* Actor::SetActorMovingXY(unsigned char moving)
 {
 	return SetObjectValue(this->state_MovingXY, moving);
+}
+
+Lockable* Actor::SetActorWeaponAnimation(unsigned char index)
+{
+	string anim = API::RetrieveAnim_Reverse(index);
+
+	if (anim.empty())
+		throw VaultException("Value %02X not defined in database", index);
+
+	return SetObjectValue(this->anim_Weapon, index);
 }
 
 Lockable* Actor::SetActorAlerted(bool state)

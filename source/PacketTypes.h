@@ -1022,8 +1022,9 @@ struct _pActorValue
 
 struct _pActorState
 {
-	unsigned char index;
 	unsigned char moving;
+	unsigned char movingxy;
+	unsigned char weapon;
 	bool alerted;
 	bool sneaking;
 };
@@ -1064,10 +1065,11 @@ class pActorState : public pObjectUpdateDefault
 	private:
 		_pActorState _data;
 
-		pActorState(NetworkID id, unsigned char index, unsigned char moving, bool alerted, bool sneaking) : pObjectUpdateDefault(ID_ACTOR_UPDATE, ID_UPDATE_STATE, id)
+		pActorState(NetworkID id, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking) : pObjectUpdateDefault(ID_ACTOR_UPDATE, ID_UPDATE_STATE, id)
 		{
-			_data.index = index;
 			_data.moving = moving;
+			_data.movingxy = movingxy;
+			_data.weapon = weapon;
 			_data.alerted = alerted;
 			_data.sneaking = sneaking;
 			construct(&_data, sizeof(_data));

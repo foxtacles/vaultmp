@@ -175,11 +175,12 @@ pPacket PacketFactory::CreatePacket(unsigned char type, ...)
 		case ID_UPDATE_STATE:
 		{
 			NetworkID id = va_arg(args, NetworkID);
-			unsigned char index = (unsigned char) va_arg(args, unsigned int);
 			unsigned char moving = (unsigned char) va_arg(args, unsigned int);
+			unsigned char movingxy = (unsigned char) va_arg(args, unsigned int);
+			unsigned char weapon = (unsigned char) va_arg(args, unsigned int);
 			bool alerted = (bool) va_arg(args, unsigned int);
 			bool sneaking = (bool) va_arg(args, unsigned int);
-			packet = new pActorState(id, index, moving, alerted, sneaking);
+			packet = new pActorState(id, moving, movingxy, weapon, alerted, sneaking);
 			break;
 		}
 
@@ -613,13 +614,15 @@ void PacketFactory::Access(const pDefault* packet, ...)
 					{
 						const pActorState* update = dynamic_cast<const pActorState*>(data);
 						NetworkID* id = va_arg(args, NetworkID*);
-						unsigned char* index = va_arg(args, unsigned char*);
 						unsigned char* moving = va_arg(args, unsigned char*);
+						unsigned char* movingxy = va_arg(args, unsigned char*);
+						unsigned char* weapon = va_arg(args, unsigned char*);
 						bool* alerted = va_arg(args, bool*);
 						bool* sneaking = va_arg(args, bool*);
 						*id = update->id;
-						*index = update->_data.index;
 						*moving = update->_data.moving;
+						*movingxy = update->_data.movingxy;
+						*weapon = update->_data.weapon;
 						*alerted = update->_data.alerted;
 						*sneaking = update->_data.sneaking;
 						break;

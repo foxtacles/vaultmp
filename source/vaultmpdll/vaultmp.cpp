@@ -192,10 +192,11 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 
 			if (data != NULL)
 			{
-				unsigned char alerted, sneaking, running;
+				unsigned char alerted, sneaking, moving, weapon;
 
-				// weapon anim fallout: 0x54, idle: 0x50
-				running = *(data + 0x4E);
+				// idle: 0x50
+				moving = *(data + 0x4E);
+				weapon = *(data + 0x54);
 
 				// EDX being used by the callee
 				asm(
@@ -224,7 +225,8 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 
 				memcpy(result, &alerted, 1);
 				memcpy((void*)((unsigned) result + 1), &sneaking, 1);
-				memcpy((void*)((unsigned) result + 4), &running, 1);
+				memcpy((void*)((unsigned) result + 4), &moving, 1);
+				memcpy((void*)((unsigned) result + 6), &weapon, 1);
 
 				// This detection is unreliable; i.e. what when the player holds Forward/Backward/Left/Right all together for some reason?
 				unsigned char* _args = (unsigned char*) args;

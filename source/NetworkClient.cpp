@@ -295,13 +295,14 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 						case ID_UPDATE_STATE:
 						{
 							NetworkID id;
-							unsigned char index;
 							unsigned char moving;
+							unsigned char movingxy;
+							unsigned char weapon;
 							bool alerted;
 							bool sneaking;
-							PacketFactory::Access(packet, &id, &index, &moving, &alerted, &sneaking);
+							PacketFactory::Access(packet, &id, &moving, &movingxy, &weapon, &alerted, &sneaking);
 							FactoryObject reference = GameFactory::GetObject(id);
-							Game::net_SetActorState(reference, index, moving, alerted, sneaking);
+							Game::net_SetActorState(reference, moving, movingxy, weapon, alerted, sneaking);
 							break;
 						}
 

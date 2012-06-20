@@ -104,6 +104,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				GetActorState(reference,
 									*reinterpret_cast<unsigned char*>(((unsigned) &result) + 4),
 									*reinterpret_cast<unsigned char*>(((unsigned) &result) + 5),
+									*reinterpret_cast<unsigned char*>(((unsigned) &result) + 6),
 									*reinterpret_cast<bool*>(&result),
 									*reinterpret_cast<bool*>(((unsigned) &result) + 1));
 				break;
@@ -518,6 +519,9 @@ void Game::NewActor(FactoryObject& reference)
 
 	if (actor->GetActorMovingAnimation() != AnimGroup_Idle)
 		SetActorMovingAnimation(reference);
+
+	if (actor->GetActorWeaponAnimation() != AnimGroup_Idle)
+		SetActorWeaponAnimation(reference);
 }
 
 void Game::NewPlayer(FactoryObject& reference)
@@ -810,6 +814,20 @@ void Game::SetActorMovingAnimation(FactoryObject reference, unsigned int key)
 	Interface::EndDynamic();
 }
 
+void Game::SetActorWeaponAnimation(FactoryObject reference, unsigned int key)
+{
+	Actor* actor = vaultcast<Actor>(reference);
+
+	if (!actor)
+		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("PlayGroup", ParamContainer{actor->GetReferenceParam(), RawParameter(API::RetrieveAnim_Reverse(actor->GetActorWeaponAnimation())), RawParameter(true)}, key);
+
+	Interface::EndDynamic();
+}
+
 void Game::KillActor(FactoryObject reference, unsigned int key)
 {
 	Actor* actor = vaultcast<Actor>(reference);
@@ -1043,7 +1061,7 @@ void Game::net_SetActorValue(FactoryObject reference, bool base, unsigned char i
 		SetActorValue(reference, base, index, result->Lock());
 }
 
-void Game::net_SetActorState(FactoryObject reference, unsigned char index, unsigned char moving, bool alerted, bool sneaking)
+void Game::net_SetActorState(FactoryObject reference, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -1052,7 +1070,7 @@ void Game::net_SetActorState(FactoryObject reference, unsigned char index, unsig
 
 	Lockable* result;
 
-	result = actor->SetActorMovingXY(moving);
+	result = actor->SetActorMovingXY(movingxy);
 
 	if (result && actor->GetEnabled())
 		SetAngle(reference);
@@ -1067,15 +1085,20 @@ void Game::net_SetActorState(FactoryObject reference, unsigned char index, unsig
 	if (result && actor->GetEnabled())
 		SetActorSneaking(reference, result->Lock()).detach();
 
-	result = actor->SetActorMovingAnimation(index);
+	result = actor->SetActorMovingAnimation(moving);
 
 	if (result && actor->GetEnabled())
 	{
 		SetActorMovingAnimation(reference, result->Lock());
 
-		if (index == AnimGroup_Idle)
+		if (moving == AnimGroup_Idle)
 			SetPos(reference);
 	}
+
+	result = actor->SetActorWeaponAnimation(weapon);
+
+	if (result && actor->GetEnabled() && alerted && weapon != AnimGroup_Idle && weapon != AnimGroup_Aim && weapon != AnimGroup_Equip && weapon != AnimGroup_Unequip && weapon != AnimGroup_Holster)
+		SetActorWeaponAnimation(reference, result->Lock());
 }
 
 void Game::net_SetActorDead(FactoryObject& reference, bool dead)
@@ -1247,7 +1270,7 @@ void Game::GetActorValue(FactoryObject reference, bool base, unsigned char index
 		});
 }
 
-void Game::GetActorState(FactoryObject reference, unsigned char index, unsigned char moving, bool alerted, bool sneaking)
+void Game::GetActorState(FactoryObject reference, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking)
 {
 	Actor* actor  = vaultcast<Actor>(reference);
 
@@ -1256,14 +1279,17 @@ void Game::GetActorState(FactoryObject reference, unsigned char index, unsigned 
 
 	bool result;
 
-	if (index == 0xFF)
-		index = AnimGroup_Idle;
+	if (moving == 0xFF)
+		moving = AnimGroup_Idle;
 
-	result = ((bool) actor->SetActorMovingAnimation(index) | (bool) actor->SetActorMovingXY(moving) | (bool) actor->SetActorAlerted(alerted) | (bool) actor->SetActorSneaking(sneaking));
+	if (weapon == 0xFF)
+		weapon = AnimGroup_Idle;
+
+	result = ((bool) actor->SetActorMovingAnimation(moving) | (bool) actor->SetActorMovingXY(movingxy) | (bool) actor->SetActorWeaponAnimation(weapon) | (bool) actor->SetActorAlerted(alerted) | (bool) actor->SetActorSneaking(sneaking));
 
 	if (result)
 		Network::Queue(NetworkResponse{Network::CreateResponse(
-			PacketFactory::CreatePacket(ID_UPDATE_STATE, actor->GetNetworkID(), index, moving, alerted, sneaking),
+			PacketFactory::CreatePacket(ID_UPDATE_STATE, actor->GetNetworkID(), moving, movingxy, weapon, alerted, sneaking),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 		});
 }
