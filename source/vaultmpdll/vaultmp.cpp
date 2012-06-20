@@ -194,6 +194,7 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 			{
 				unsigned char alerted, sneaking, running;
 
+				// weapon anim fallout: 0x54, idle: 0x50
 				running = *(data + 0x4E);
 
 				// EDX being used by the callee

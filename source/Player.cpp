@@ -130,10 +130,10 @@ vector<string> PlayerFunctor::operator()()
 			{
 				unsigned int forward, backward, left, right;
 
-				forward = player->GetPlayerControl(Values::Fallout::ControlCode_Forward);
-				backward = player->GetPlayerControl(Values::Fallout::ControlCode_Backward);
-				left = player->GetPlayerControl(Values::Fallout::ControlCode_Left);
-				right = player->GetPlayerControl(Values::Fallout::ControlCode_Right);
+				forward = player->GetPlayerControl(Values::ControlCode_Forward);
+				backward = player->GetPlayerControl(Values::ControlCode_Backward);
+				left = player->GetPlayerControl(Values::ControlCode_Left);
+				right = player->GetPlayerControl(Values::ControlCode_Right);
 
 				unsigned int movcontrols = (right | (left << 8) | (backward << 16) | (forward << 24));
 

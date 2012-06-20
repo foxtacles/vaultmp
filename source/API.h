@@ -62,6 +62,31 @@ namespace Values
 		AnimGroup_DodgeRight            = 0x0E,
 		AnimGroup_TurnLeft              = 0x0F,
 		AnimGroup_TurnRight             = 0x10,
+		AnimGroup_Aim 					= 0x11,
+		AnimGroup_AimUp              	= 0x12,
+		AnimGroup_AimDown              	= 0x13,
+		AnimGroup_AimIS					= 0x14,
+		AnimGroup_AimISUp				= 0x15,
+		AnimGroup_AimISDown				= 0x16,
+
+		AnimGroup_AttackLeft			= 0x1A,
+		AnimGroup_AttackLeftUp			= 0x1B,
+		AnimGroup_AttackLeftDown		= 0x1C,
+		AnimGroup_AttackLeftIS			= 0x1D,
+		AnimGroup_AttackLeftISUp		= 0x1E,
+		AnimGroup_AttackLeftISDown		= 0x1E,
+		AnimGroup_AttackRight			= 0x20,
+		AnimGroup_AttackRightUp			= 0x21,
+		AnimGroup_AttackRightDown		= 0x22,
+		AnimGroup_AttackRightIS			= 0x23,
+		AnimGroup_AttackRightISUp		= 0x24,
+		AnimGroup_AttackRightISDown		= 0x25,
+
+		AnimGroup_AttackPower			= 0x5C,
+		AnimGroup_AttackForwardPower	= 0x5D,
+		AnimGroup_AttackBackPower		= 0x5E,
+		AnimGroup_AttackLeftPower		= 0x5F,
+		AnimGroup_AttackRightPower		= 0x60,
 	};
 
 	/**
@@ -106,148 +131,123 @@ namespace Values
 		Func_Kill                       = 0x108B,
 		Func_GetCombatTarget            = 0x10E8,
 		Func_SetForceSneak              = 0x10D3,
+		Func_IsMoving                   = 0x1019,
+		Func_MarkForDelete              = 0x11BB,
+		Func_IsAnimPlaying              = 0x1128,
 
 		Func_GetActorState              = 0x0001 | VAULTFUNCTION,
 		Func_Chat						= 0x0002 | VAULTFUNCTION,
+		Func_ScanContainer              = 0x0003 | VAULTFUNCTION,
+		Func_UIMessage                  = 0x0004 | VAULTFUNCTION,
 	};
 
-	/**
-	 * \brief Data specific to Fallout games
-	 */
-
-	namespace Fallout
+	enum ActorVals
 	{
+		ActorVal_Aggression			    = 0x00,
+		ActorVal_Confidence			    = 0x01,
+		ActorVal_Energy				    = 0x02,
+		ActorVal_Responsibility		    = 0x03,
+		ActorVal_Mood				    = 0x04,
+		ActorVal_Strength			    = 0x05,
+		ActorVal_Perception			    = 0x06,
+		ActorVal_Endurance			    = 0x07,
+		ActorVal_Charisma			    = 0x08,
+		ActorVal_Intelligence		    = 0x09,
+		ActorVal_Agility			    = 0x0A,
+		ActorVal_Luck				    = 0x0B,
+		ActorVal_ActionPoints		    = 0x0C,
+		ActorVal_CarryWeight		    = 0x0D,
+		ActorVal_CritChance			    = 0x0E,
+		ActorVal_HealRate			    = 0x0F,
+		ActorVal_Health				    = 0x10,
+		ActorVal_MeleeDamage		    = 0x11,
+		ActorVal_DamageResistance	    = 0x12,
+		ActorVal_PoisonResistance	    = 0x13,
+		ActorVal_RadResistance		    = 0x14,
+		ActorVal_SpeedMultiplier	    = 0x15,
+		ActorVal_Fatigue			    = 0x16,
+		ActorVal_Karma				    = 0x17,
+		ActorVal_XP					    = 0x18,
+		ActorVal_Head				    = 0x19,
+		ActorVal_Torso				    = 0x1A,
+		ActorVal_LeftArm			    = 0x1B,
+		ActorVal_RightArm			    = 0x1C,
+		ActorVal_LeftLeg			    = 0x1D,
+		ActorVal_RightLeg			    = 0x1E,
+		ActorVal_Brain				    = 0x1F,
+		ActorVal_Barter				    = 0x20,
+		ActorVal_BigGuns			    = 0x21,
+		ActorVal_EnergyWeapons		    = 0x22,
+		ActorVal_Explosives			    = 0x23,
+		ActorVal_Lockpick			    = 0x24,
+		ActorVal_Medicine			    = 0x25,
+		ActorVal_MeleeWeapons		    = 0x26,
+		ActorVal_Repair				    = 0x27,
+		ActorVal_Science			    = 0x28,
+		ActorVal_SmallGuns			    = 0x29,
+		ActorVal_Sneak				    = 0x2A,
+		ActorVal_Speech				    = 0x2B,
+		ActorVal_Throwing			    = 0x2C,
+		ActorVal_Unarmed			    = 0x2D,
+		ActorVal_InventoryWeight	    = 0x2E,
+		ActorVal_Paralysis			    = 0x2F,
+		ActorVal_Invisibility		    = 0x30,
+		ActorVal_Chameleon			    = 0x31,
+		ActorVal_NightEye			    = 0x32,
+		ActorVal_DetectLifeRange	    = 0x33,
+		ActorVal_FireResistance		    = 0x34,
+		ActorVal_WaterBreathing		    = 0x35,
+		ActorVal_RadLevel			    = 0x36,
+		ActorVal_BloodyMess			    = 0x37,
+		ActorVal_UnarmedDamage		    = 0x38,
+		ActorVal_Assistance			    = 0x39,
 
-		/**
-		 * \brief Function opcodes used in Fallout 3 / New Vegas
-		 */
+		ActorVal_EnergyResistance	    = 0x3C,
+		ActorVal_EMPResistance		    = 0x3D,
+		ActorVal_Var1Medical		    = 0x3E,
+		ActorVal_Variable02             = 0x3F,
+		ActorVal_Variable03             = 0x40,
+		ActorVal_Variable04             = 0x41,
+		ActorVal_Variable05             = 0x42,
+		ActorVal_Variable06             = 0x43,
+		ActorVal_Variable07             = 0x44,
+		ActorVal_Variable08             = 0x45,
+		ActorVal_Variable09             = 0x46,
+		ActorVal_Variable10             = 0x47,
+		ActorVal_IgnoreCrippledLimbs    = 0x48,
+	};
 
-		enum Functions
-		{
-			Func_IsMoving                   = 0x1019,
-			Func_MarkForDelete              = 0x11BB,
-			Func_IsAnimPlaying              = 0x1128,
-
-			Func_ScanContainer              = 0x0003 | VAULTFUNCTION,
-			Func_UIMessage                  = 0x0004 | VAULTFUNCTION,
-		};
-
-		/**
-		 * \brief Actor values used in Fallout 3 / New Vegas
-		 */
-
-		enum ActorVals
-		{
-			ActorVal_Aggression			    = 0x00,
-			ActorVal_Confidence			    = 0x01,
-			ActorVal_Energy				    = 0x02,
-			ActorVal_Responsibility		    = 0x03,
-			ActorVal_Mood				    = 0x04,
-			ActorVal_Strength			    = 0x05,
-			ActorVal_Perception			    = 0x06,
-			ActorVal_Endurance			    = 0x07,
-			ActorVal_Charisma			    = 0x08,
-			ActorVal_Intelligence		    = 0x09,
-			ActorVal_Agility			    = 0x0A,
-			ActorVal_Luck				    = 0x0B,
-			ActorVal_ActionPoints		    = 0x0C,
-			ActorVal_CarryWeight		    = 0x0D,
-			ActorVal_CritChance			    = 0x0E,
-			ActorVal_HealRate			    = 0x0F,
-			ActorVal_Health				    = 0x10,
-			ActorVal_MeleeDamage		    = 0x11,
-			ActorVal_DamageResistance	    = 0x12,
-			ActorVal_PoisonResistance	    = 0x13,
-			ActorVal_RadResistance		    = 0x14,
-			ActorVal_SpeedMultiplier	    = 0x15,
-			ActorVal_Fatigue			    = 0x16,
-			ActorVal_Karma				    = 0x17,
-			ActorVal_XP					    = 0x18,
-			ActorVal_Head				    = 0x19,
-			ActorVal_Torso				    = 0x1A,
-			ActorVal_LeftArm			    = 0x1B,
-			ActorVal_RightArm			    = 0x1C,
-			ActorVal_LeftLeg			    = 0x1D,
-			ActorVal_RightLeg			    = 0x1E,
-			ActorVal_Brain				    = 0x1F,
-			ActorVal_Barter				    = 0x20,
-			ActorVal_BigGuns			    = 0x21,
-			ActorVal_EnergyWeapons		    = 0x22,
-			ActorVal_Explosives			    = 0x23,
-			ActorVal_Lockpick			    = 0x24,
-			ActorVal_Medicine			    = 0x25,
-			ActorVal_MeleeWeapons		    = 0x26,
-			ActorVal_Repair				    = 0x27,
-			ActorVal_Science			    = 0x28,
-			ActorVal_SmallGuns			    = 0x29,
-			ActorVal_Sneak				    = 0x2A,
-			ActorVal_Speech				    = 0x2B,
-			ActorVal_Throwing			    = 0x2C,
-			ActorVal_Unarmed			    = 0x2D,
-			ActorVal_InventoryWeight	    = 0x2E,
-			ActorVal_Paralysis			    = 0x2F,
-			ActorVal_Invisibility		    = 0x30,
-			ActorVal_Chameleon			    = 0x31,
-			ActorVal_NightEye			    = 0x32,
-			ActorVal_DetectLifeRange	    = 0x33,
-			ActorVal_FireResistance		    = 0x34,
-			ActorVal_WaterBreathing		    = 0x35,
-			ActorVal_RadLevel			    = 0x36,
-			ActorVal_BloodyMess			    = 0x37,
-			ActorVal_UnarmedDamage		    = 0x38,
-			ActorVal_Assistance			    = 0x39,
-
-			ActorVal_EnergyResistance	    = 0x3C,
-			ActorVal_EMPResistance		    = 0x3D,
-			ActorVal_Var1Medical		    = 0x3E,
-			ActorVal_Variable02             = 0x3F,
-			ActorVal_Variable03             = 0x40,
-			ActorVal_Variable04             = 0x41,
-			ActorVal_Variable05             = 0x42,
-			ActorVal_Variable06             = 0x43,
-			ActorVal_Variable07             = 0x44,
-			ActorVal_Variable08             = 0x45,
-			ActorVal_Variable09             = 0x46,
-			ActorVal_Variable10             = 0x47,
-			ActorVal_IgnoreCrippledLimbs    = 0x48,
-		};
-
-		/**
-		 * \brief Control codes (for script extenders control functions) used in Fallout 3 / New Vegas
-		 */
-
-		enum ControlCodes
-		{
-			ControlCode_Forward             = 0,
-			ControlCode_Backward            = 1,
-			ControlCode_Left                = 2,
-			ControlCode_Right               = 3,
-			ControlCode_Attack              = 4,
-			ControlCode_Activate            = 5,
-			ControlCode_Block               = 6,
-			ControlCode_ReadyItem           = 7,
-			ControlCode_Crouch              = 8,
-			ControlCode_Run                 = 9,
-			ControlCode_AlwaysRun           = 10,
-			ControlCode_AutoMove            = 11,
-			ControlCode_Jump                = 12,
-			ControlCode_TogglePOV           = 13,
-			ControlCode_MenuMode            = 14,
-			ControlCode_Rest                = 15,
-			ControlCode_VATS                = 16,
-			ControlCode_Hotkey1             = 17,
-			ControlCode_Hotkey2             = 18,
-			ControlCode_Hotkey3             = 19,
-			ControlCode_Hotkey4             = 20,
-			ControlCode_Hotkey5             = 21,
-			ControlCode_Hotkey6             = 22,
-			ControlCode_Hotkey7             = 23,
-			ControlCode_Hotkey8             = 24,
-			ControlCode_Quicksave           = 25,
-			ControlCode_Quickload           = 26,
-			ControlCode_Grab                = 27,
-		};
-	}
+	enum ControlCodes
+	{
+		ControlCode_Forward             = 0,
+		ControlCode_Backward            = 1,
+		ControlCode_Left                = 2,
+		ControlCode_Right               = 3,
+		ControlCode_Attack              = 4,
+		ControlCode_Activate            = 5,
+		ControlCode_Block               = 6,
+		ControlCode_ReadyItem           = 7,
+		ControlCode_Crouch              = 8,
+		ControlCode_Run                 = 9,
+		ControlCode_AlwaysRun           = 10,
+		ControlCode_AutoMove            = 11,
+		ControlCode_Jump                = 12,
+		ControlCode_TogglePOV           = 13,
+		ControlCode_MenuMode            = 14,
+		ControlCode_Rest                = 15,
+		ControlCode_VATS                = 16,
+		ControlCode_Hotkey1             = 17,
+		ControlCode_Hotkey2             = 18,
+		ControlCode_Hotkey3             = 19,
+		ControlCode_Hotkey4             = 20,
+		ControlCode_Hotkey5             = 21,
+		ControlCode_Hotkey6             = 22,
+		ControlCode_Hotkey7             = 23,
+		ControlCode_Hotkey8             = 24,
+		ControlCode_Quicksave           = 25,
+		ControlCode_Quickload           = 26,
+		ControlCode_Grab                = 27,
+	};
 
 	/**
 	 * \brief Data specific to Fallout 3
@@ -291,6 +291,8 @@ namespace Values
 			AnimGroup_JumpLandBackward      = 0xB4,
 			AnimGroup_JumpLandLeft          = 0xB5,
 			AnimGroup_JumpLandRight         = 0xB6,
+
+			AnimGroup_BlockIdle				= 0x8B,
 		};
 	}
 
@@ -336,6 +338,8 @@ namespace Values
 			AnimGroup_JumpLandBackward      = 0xF2,
 			AnimGroup_JumpLandLeft          = 0xF3,
 			AnimGroup_JumpLandRight         = 0xF4,
+
+			AnimGroup_BlockIdle				= 0xAA,
 		};
 	}
 }

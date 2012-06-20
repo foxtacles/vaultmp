@@ -169,10 +169,10 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 			}
 
-			case Fallout::Functions::Func_MarkForDelete:
+			case Functions::Func_MarkForDelete:
 				break;
 
-			case Fallout::Functions::Func_ScanContainer:
+			case Functions::Func_ScanContainer:
 			{
 				reference = GameFactory::GetObject(getFrom<double, unsigned int>(info.at(1)));
 				vector<unsigned char>* data = getFrom<double, vector<unsigned char>*>(result);
@@ -181,7 +181,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 			}
 
-			case Fallout::Functions::Func_UIMessage:
+			case Functions::Func_UIMessage:
 				break;
 
 			case Fallout3::Functions::Func_GetParentCell:
@@ -265,10 +265,10 @@ void Game::Startup()
 
 	Interface::ExecuteCommand("GetControl", ParamContainer{RawParameter(API::RetrieveAllControls())});
 	Interface::ExecuteCommand("DisableControl", ParamContainer{RawParameter(vector<unsigned char>{
-		Fallout::ControlCodes::ControlCode_Quickload,
-		Fallout::ControlCodes::ControlCode_Quicksave,
-		Fallout::ControlCodes::ControlCode_VATS,
-		Fallout::ControlCodes::ControlCode_Rest})});
+		ControlCodes::ControlCode_Quickload,
+		ControlCodes::ControlCode_Quicksave,
+		ControlCodes::ControlCode_VATS,
+		ControlCodes::ControlCode_Rest})});
 
 	Interface::EndDynamic();
 
@@ -282,13 +282,13 @@ void Game::Startup()
 	Interface::SetupCommand("ScanContainer", ParamContainer{self_ref}, 50);
 	Interface::SetupCommand("GetDead", ParamContainer{Player::CreateFunctor(FLAG_ENABLED | FLAG_ALIVE)}, 30);
 	Interface::SetupCommand("GetActorValue", ParamContainer{self_ref, RawParameter(vector<string>{
-		API::RetrieveValue_Reverse(Fallout::ActorVal_Health),
-		API::RetrieveValue_Reverse(Fallout::ActorVal_Head),
-		API::RetrieveValue_Reverse(Fallout::ActorVal_Torso),
-		API::RetrieveValue_Reverse(Fallout::ActorVal_LeftArm),
-		API::RetrieveValue_Reverse(Fallout::ActorVal_RightArm),
-		API::RetrieveValue_Reverse(Fallout::ActorVal_LeftLeg),
-		API::RetrieveValue_Reverse(Fallout::ActorVal_RightLeg)})}, 30);
+		API::RetrieveValue_Reverse(ActorVal_Health),
+		API::RetrieveValue_Reverse(ActorVal_Head),
+		API::RetrieveValue_Reverse(ActorVal_Torso),
+		API::RetrieveValue_Reverse(ActorVal_LeftArm),
+		API::RetrieveValue_Reverse(ActorVal_RightArm),
+		API::RetrieveValue_Reverse(ActorVal_LeftLeg),
+		API::RetrieveValue_Reverse(ActorVal_RightLeg)})}, 30);
 
 	// we could exclude health values here
 	Interface::SetupCommand("GetActorValue", ParamContainer{self_ref, Actor::Param_ActorValues()}, 100);
