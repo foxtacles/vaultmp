@@ -823,14 +823,9 @@ void Game::SetActorWeaponAnimation(FactoryObject& reference, unsigned int key)
 	if (!actor)
 		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
 
-	unsigned char weapon = actor->GetActorWeaponAnimation();
-
-	if (!actor->GetActorAlerted() || weapon == AnimGroup_Idle || weapon == AnimGroup_Aim || weapon == AnimGroup_Equip || weapon == AnimGroup_Unequip || weapon == AnimGroup_Holster)
-		return;
-
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("PlayGroup", ParamContainer{actor->GetReferenceParam(), RawParameter(API::RetrieveAnim_Reverse(weapon)), RawParameter(true)}, key);
+	Interface::ExecuteCommand("PlayGroup", ParamContainer{actor->GetReferenceParam(), RawParameter(API::RetrieveAnim_Reverse(actor->GetActorWeaponAnimation())), RawParameter(true)}, key);
 
 	Interface::EndDynamic();
 }
@@ -1076,25 +1071,26 @@ void Game::net_SetActorState(FactoryObject& reference, unsigned char moving, uns
 		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
 
 	Lockable* result;
+	bool enabled = actor->GetEnabled();
 
 	result = actor->SetActorMovingXY(movingxy);
 
-	if (result && actor->GetEnabled())
+	if (result && enabled)
 		SetAngle(reference);
 
 	result = actor->SetActorAlerted(alerted);
 
-	if (result && actor->GetEnabled())
+	if (result && enabled)
 		SetActorAlerted(reference, result->Lock()).detach();
 
 	result = actor->SetActorSneaking(sneaking);
 
-	if (result && actor->GetEnabled())
+	if (result && enabled)
 		SetActorSneaking(reference, result->Lock()).detach();
 
 	result = actor->SetActorMovingAnimation(moving);
 
-	if (result && actor->GetEnabled())
+	if (result && enabled)
 	{
 		SetActorMovingAnimation(reference, result->Lock());
 
@@ -1104,7 +1100,7 @@ void Game::net_SetActorState(FactoryObject& reference, unsigned char moving, uns
 
 	result = actor->SetActorWeaponAnimation(weapon);
 
-	if (result && actor->GetEnabled())
+	if (result && enabled && actor->GetActorAlerted() && weapon != AnimGroup_Idle && weapon != AnimGroup_Aim && weapon != AnimGroup_Equip && weapon != AnimGroup_Unequip && weapon != AnimGroup_Holster)
 		SetActorWeaponAnimation(reference, result->Lock());
 }
 
