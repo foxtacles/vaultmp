@@ -296,6 +296,18 @@ namespace Values
 			AnimGroup_JumpLandRight         = 0xB6,
 
 			AnimGroup_BlockIdle				= 0x8B,
+
+			AnimGroup_ReloadA				= 0x8E,
+			AnimGroup_ReloadB				= 0x8F,
+			AnimGroup_ReloadC				= 0x90,
+			AnimGroup_ReloadD				= 0x91,
+			AnimGroup_ReloadE				= 0x92,
+			AnimGroup_ReloadF				= 0x93,
+			AnimGroup_ReloadG				= 0x94,
+			AnimGroup_ReloadH				= 0x95,
+			AnimGroup_ReloadI				= 0x96,
+			AnimGroup_ReloadJ				= 0x97,
+			AnimGroup_ReloadK				= 0x98,
 		};
 	}
 
@@ -343,6 +355,20 @@ namespace Values
 			AnimGroup_JumpLandRight         = 0xF4,
 
 			AnimGroup_BlockIdle				= 0xAA,
+
+			AnimGroup_ReloadA				= 0xB1,
+			AnimGroup_ReloadB				= 0xB2,
+			AnimGroup_ReloadC				= 0xB3,
+			AnimGroup_ReloadD				= 0xB4,
+			AnimGroup_ReloadE				= 0xB5,
+			AnimGroup_ReloadF				= 0xB6,
+			AnimGroup_ReloadG				= 0xB7,
+			AnimGroup_ReloadH				= 0xB8,
+			AnimGroup_ReloadI				= 0xB9,
+			AnimGroup_ReloadJ				= 0xBA,
+			AnimGroup_ReloadK				= 0xBB,
+
+			AnimGroup_ReloadX				= 0xC5,
 		};
 	}
 }

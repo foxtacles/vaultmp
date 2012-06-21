@@ -255,7 +255,7 @@ pPacket Actor::toPacket()
 	}
 
 	pPacket pContainerNew = Container::toPacket();
-	pPacket packet = PacketFactory::CreatePacket(ID_ACTOR_NEW, pContainerNew.get(), &values, &baseValues, this->GetActorMovingAnimation(), this->GetActorMovingXY(), this->GetActorAlerted(), this->GetActorSneaking(), this->GetActorDead());
+	pPacket packet = PacketFactory::CreatePacket(ID_ACTOR_NEW, pContainerNew.get(), &values, &baseValues, this->GetActorMovingAnimation(), this->GetActorMovingXY(), this->GetActorWeaponAnimation(), this->GetActorAlerted(), this->GetActorSneaking(), this->GetActorDead());
 
 	return packet;
 }
