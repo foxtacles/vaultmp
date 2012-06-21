@@ -292,6 +292,7 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
 	NetworkClient::SetDebugHandler(debug);
 	Interface::SetDebugHandler(debug);
 	Lockable::SetDebugHandler(debug);
+	Reference::SetDebugHandler(debug);
 	Object::SetDebugHandler(debug);
 	Item::SetDebugHandler(debug);
 	Container::SetDebugHandler(debug);

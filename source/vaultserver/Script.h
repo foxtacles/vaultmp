@@ -88,18 +88,18 @@ class Script
 
 		static unsigned long long Timer_Respawn(NetworkID id);
 
-		static void OnSpawn(FactoryObject reference);
-		static void OnCellChange(FactoryObject reference, unsigned int cell);
-		static void OnContainerItemChange(FactoryObject reference, unsigned int baseID, signed int count, double condition);
-		static void OnActorValueChange(FactoryObject reference, unsigned char index, bool base, double value);
-		static void OnActorAlert(FactoryObject reference, bool alerted);
-		static void OnActorSneak(FactoryObject reference, bool sneaking);
-		static void OnActorDeath(FactoryObject reference);
-		static void OnActorEquipItem(FactoryObject reference, unsigned int baseID, double condition);
-		static void OnActorUnequipItem(FactoryObject reference, unsigned int baseID, double condition);
-		static void OnPlayerDisconnect(FactoryObject reference, unsigned char reason);
-		static unsigned int OnPlayerRequestGame(FactoryObject reference);
-		static bool OnPlayerChat(FactoryObject reference, string& message);
+		static void OnSpawn(FactoryObject& reference);
+		static void OnCellChange(FactoryObject& reference, unsigned int cell);
+		static void OnContainerItemChange(FactoryObject& reference, unsigned int baseID, signed int count, double condition);
+		static void OnActorValueChange(FactoryObject& reference, unsigned char index, bool base, double value);
+		static void OnActorAlert(FactoryObject& reference, bool alerted);
+		static void OnActorSneak(FactoryObject& reference, bool sneaking);
+		static void OnActorDeath(FactoryObject& reference);
+		static void OnActorEquipItem(FactoryObject& reference, unsigned int baseID, double condition);
+		static void OnActorUnequipItem(FactoryObject& reference, unsigned int baseID, double condition);
+		static void OnPlayerDisconnect(FactoryObject& reference, unsigned char reason);
+		static unsigned int OnPlayerRequestGame(FactoryObject& reference);
+		static bool OnPlayerChat(FactoryObject& reference, string& message);
 		static bool OnClientAuthenticate(string name, string pwd);
 
 		static const char* ValueToString(unsigned char index);

@@ -1,12 +1,16 @@
 #include "Reference.h"
 
+#ifdef VAULTMP_DEBUG
+Debug* Reference::debug;
+#endif
+
 Reference::Reference(unsigned int refID, unsigned int baseID)
 {
 	this->refID.set(refID);
 	this->baseID.set(baseID);
 	this->SetNetworkIDManager(Network::Manager());
 #ifdef VAULTMP_DEBUG
-	//this->ToggleSectionDebug(true);
+	//static_cast<CriticalSection*>(this)->SetDebugHandler(debug);
 #endif
 }
 
@@ -14,6 +18,16 @@ Reference::~Reference()
 {
 
 }
+
+#ifdef VAULTMP_DEBUG
+void Reference::SetDebugHandler(Debug* debug)
+{
+	Reference::debug = debug;
+
+	if (debug)
+		debug->Print("Attached debug handler to Reference class", true);
+}
+#endif
 
 /*
 unsigned int Reference::ResolveIndex(unsigned int baseID)

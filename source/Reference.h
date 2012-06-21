@@ -26,6 +26,10 @@ class Reference : private CriticalSection, public NetworkIDObject
 		friend class FactoryObject;
 
 	private:
+#ifdef VAULTMP_DEBUG
+		static Debug* debug;
+#endif
+
 		Value<unsigned int> refID;
 		Value<unsigned int> baseID;
 
@@ -42,6 +46,10 @@ class Reference : private CriticalSection, public NetworkIDObject
 		virtual ~Reference();
 
 	public:
+
+#ifdef VAULTMP_DEBUG
+		static void SetDebugHandler(Debug* debug);
+#endif
 
 		/**
 		 * \brief Retrieves the Reference's reference ID

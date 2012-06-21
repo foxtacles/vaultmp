@@ -49,35 +49,35 @@ class Server
 		/**
 		 * \brief Handles GetPos network packet
 		 */
-		static NetworkResponse GetPos(RakNetGUID guid, FactoryObject reference, double X, double Y, double Z);
+		static NetworkResponse GetPos(RakNetGUID guid, FactoryObject& reference, double X, double Y, double Z);
 		/**
 		 * \brief Handles GetAngle network packet
 		 */
-		static NetworkResponse GetAngle(RakNetGUID guid, FactoryObject reference, unsigned char axis, double value);
+		static NetworkResponse GetAngle(RakNetGUID guid, FactoryObject& reference, unsigned char axis, double value);
 		/**
 		 * \brief Handles cell network packet
 		 */
-		static NetworkResponse GetCell(RakNetGUID guid, FactoryObject reference, unsigned int cell);
+		static NetworkResponse GetCell(RakNetGUID guid, FactoryObject& reference, unsigned int cell);
 		/**
 		 * \brief Handles container update network packet
 		 */
-		static NetworkResponse GetContainerUpdate(RakNetGUID guid, FactoryObject reference, ContainerDiff diff);
+		static NetworkResponse GetContainerUpdate(RakNetGUID guid, FactoryObject& reference, ContainerDiff diff);
 		/**
 		 * \brief Handles actor value network packet
 		 */
-		static NetworkResponse GetActorValue(RakNetGUID guid, FactoryObject reference, bool base, unsigned char index, double value);
+		static NetworkResponse GetActorValue(RakNetGUID guid, FactoryObject& reference, bool base, unsigned char index, double value);
 		/**
 		 * \brief Handles actor state network packet
 		 */
-		static NetworkResponse GetActorState(RakNetGUID guid, FactoryObject reference, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking);
+		static NetworkResponse GetActorState(RakNetGUID guid, FactoryObject& reference, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking);
 		/**
 		 * \brief Handles actor dead network packet
 		 */
-		static NetworkResponse GetActorDead(RakNetGUID guid, FactoryObject reference, bool dead);
+		static NetworkResponse GetActorDead(RakNetGUID guid, FactoryObject& reference, bool dead);
 		/**
 		 * \brief Handles player control network packet
 		 */
-		static NetworkResponse GetPlayerControl(RakNetGUID guid, FactoryObject reference, unsigned char control, unsigned char key);
+		static NetworkResponse GetPlayerControl(RakNetGUID guid, FactoryObject& reference, unsigned char control, unsigned char key);
 		/**
 		 * \brief Handles player chat message network packet
 		 */

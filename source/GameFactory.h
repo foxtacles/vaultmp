@@ -201,29 +201,13 @@ class FactoryObject
 			if (reference)
 				reference->EndSession();
 		};
-		FactoryObject(const FactoryObject& p) : reference(p.reference)
-		{
-			if (reference)
-				reference->StartSession();
-		};
+
+		FactoryObject(const FactoryObject& p) = delete;
+		FactoryObject& operator=(const FactoryObject& p) = delete;
+
 		FactoryObject(FactoryObject&& p) : reference(p.reference)
 		{
 			p.reference = NULL;
-		};
-		FactoryObject& operator=(const FactoryObject& p)
-		{
-			if (this != &p)
-			{
-				if (reference)
-					reference->EndSession();
-
-				reference = p.reference;
-
-				if (reference)
-					reference->StartSession();
-			}
-
-			return *this;
 		};
 		FactoryObject& operator=(FactoryObject&& p)
 		{

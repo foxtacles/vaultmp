@@ -30,14 +30,17 @@ class CriticalSection
 #endif
 
 		bool finalize;
-		unsigned int locks;
 
 		CriticalSection(const CriticalSection&);
 		CriticalSection& operator=(const CriticalSection&);
 
 	public:
-		CriticalSection();
-		virtual ~CriticalSection();
+#ifdef VAULTMP_DEBUG
+		CriticalSection() : debug(NULL), finalize(false) {}
+#else
+		CriticalSection() : finalize(false) {}
+#endif
+		virtual ~CriticalSection() {}
 
 		CriticalSection* StartSession();
 		void EndSession();

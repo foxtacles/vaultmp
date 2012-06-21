@@ -116,7 +116,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Functions::Func_GetDead:
 			{
 				vector<FactoryObject> objects = GameFactory::GetMultiple(vector<unsigned int> {getFrom<double, unsigned int>(info.at(1)), PLAYER_REFERENCE});
-				GetDead(objects, result);
+				GetDead(objects[0], objects[1], result);
 				break;
 			}
 
@@ -189,7 +189,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case FalloutNV::Functions::Func_GetParentCell:
 			{
 				vector<FactoryObject> objects = GameFactory::GetMultiple(vector<unsigned int> {getFrom<double, unsigned int>(info.at(1)), PLAYER_REFERENCE});
-				GetParentCell(objects, getFrom<double, unsigned int>(result));
+				GetParentCell(objects[0], objects[1], getFrom<double, unsigned int>(result));
 				break;
 			}
 
@@ -485,13 +485,13 @@ void Game::NewContainer(FactoryObject& reference)
 
 	for (FactoryObject& _item : items)
 	{
-		AddItem(vector<FactoryObject> {reference, _item});
+		AddItem(reference, _item);
 		Item* item = vaultcast<Item>(_item);
 
 		//debug->PrintFormat("ID: %lld, %s, %08X, %d, %d, %d, %d", true, item->GetNetworkID(), item->GetName().c_str(), item->GetBase(), (int)item->GetItemEquipped(), (int)item->GetItemSilent(), (int)item->GetItemStick(), item->GetItemCount());
 
 		if (item->GetItemEquipped())
-			EquipItem(vector<FactoryObject> {reference, _item});
+			EquipItem(reference, _item);
 	}
 }
 
@@ -511,11 +511,13 @@ void Game::NewActor(FactoryObject& reference)
 
 	Actor* actor = vaultcast<Actor>(reference);
 
+/*
 	if (actor->GetActorAlerted())
 		SetActorAlerted(reference).join();
 
 	if (actor->GetActorSneaking())
 		SetActorSneaking(reference).join();
+*/
 
 	if (actor->GetActorMovingAnimation() != AnimGroup_Idle)
 		SetActorMovingAnimation(reference);
@@ -546,7 +548,7 @@ thread t(AsyncTasks<AsyncPack>,
 	*/
 }
 
-void Game::RemoveObject(FactoryObject reference)
+void Game::RemoveObject(FactoryObject& reference)
 {
 	Object* object = vaultcast<Object>(reference);
 
@@ -560,7 +562,7 @@ void Game::RemoveObject(FactoryObject reference)
 	Interface::EndDynamic();
 }
 
-void Game::PlaceAtMe(FactoryObject reference, unsigned int baseID, unsigned int count, unsigned int key)
+void Game::PlaceAtMe(FactoryObject& reference, unsigned int baseID, unsigned int count, unsigned int key)
 {
 	Container* container = vaultcast<Container>(reference);
 
@@ -579,7 +581,7 @@ void Game::PlaceAtMe(unsigned int refID, unsigned int baseID, unsigned int count
 	Interface::EndDynamic();
 }
 
-void Game::ToggleEnabled(FactoryObject reference)
+void Game::ToggleEnabled(FactoryObject& reference)
 {
 	Object* object = vaultcast<Object>(reference);
 
@@ -599,7 +601,7 @@ void Game::Delete(FactoryObject& reference)
 	GameFactory::DestroyInstance(reference);
 }
 
-void Game::SetName(FactoryObject reference)
+void Game::SetName(FactoryObject& reference)
 {
 	Object* object = vaultcast<Object>(reference);
 	string name = object->GetName();
@@ -611,7 +613,7 @@ void Game::SetName(FactoryObject reference)
 	Interface::EndDynamic();
 }
 
-void Game::SetRestrained(FactoryObject reference, bool restrained)
+void Game::SetRestrained(FactoryObject& reference, bool restrained)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -627,7 +629,7 @@ void Game::SetRestrained(FactoryObject reference, bool restrained)
 	Interface::EndDynamic();
 }
 
-void Game::SetPos(FactoryObject reference)
+void Game::SetPos(FactoryObject& reference)
 {
 	Object* object = vaultcast<Object>(reference);
 
@@ -653,7 +655,7 @@ void Game::SetPos(FactoryObject reference)
 	Interface::EndDynamic();
 }
 
-void Game::SetAngle(FactoryObject reference)
+void Game::SetAngle(FactoryObject& reference)
 {
 	Object* object = vaultcast<Object>(reference);
 
@@ -678,20 +680,20 @@ void Game::SetAngle(FactoryObject reference)
 	Interface::EndDynamic();
 }
 
-void Game::MoveTo(vector<FactoryObject> reference, bool cell, unsigned int key)
+void Game::MoveTo(FactoryObject& reference, FactoryObject& object, bool cell, unsigned int key)
 {
-	Object* object = vaultcast<Object>(reference[0]);
-	Object* object2 = vaultcast<Object>(reference[1]);
+	Object* _object = vaultcast<Object>(reference);
+	Object* _object2 = vaultcast<Object>(object);
 
 	Interface::StartDynamic();
 
-	ParamContainer param_MoveTo{object->GetReferenceParam(), object2->GetReferenceParam()};
+	ParamContainer param_MoveTo{_object->GetReferenceParam(), _object2->GetReferenceParam()};
 
 	if (cell)
 	{
-		param_MoveTo.push_back(RawParameter(object->GetNetworkPos(Axis_X) - object2->GetNetworkPos(Axis_X)));
-		param_MoveTo.push_back(RawParameter(object->GetNetworkPos(Axis_Y) - object2->GetNetworkPos(Axis_Y)));
-		param_MoveTo.push_back(RawParameter(object->GetNetworkPos(Axis_Z) - object2->GetNetworkPos(Axis_Z)));
+		param_MoveTo.push_back(RawParameter(_object->GetNetworkPos(Axis_X) - _object2->GetNetworkPos(Axis_X)));
+		param_MoveTo.push_back(RawParameter(_object->GetNetworkPos(Axis_Y) - _object2->GetNetworkPos(Axis_Y)));
+		param_MoveTo.push_back(RawParameter(_object->GetNetworkPos(Axis_Z) - _object2->GetNetworkPos(Axis_Z)));
 	}
 
 	Interface::ExecuteCommand("MoveTo", move(param_MoveTo), key);
@@ -699,7 +701,7 @@ void Game::MoveTo(vector<FactoryObject> reference, bool cell, unsigned int key)
 	Interface::EndDynamic();
 }
 
-void Game::SetActorValue(FactoryObject reference, bool base, unsigned char index, unsigned int key)
+void Game::SetActorValue(FactoryObject& reference, bool base, unsigned char index, unsigned int key)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -716,7 +718,7 @@ void Game::SetActorValue(FactoryObject reference, bool base, unsigned char index
 	Interface::EndDynamic();
 }
 
-thread Game::SetActorSneaking(FactoryObject reference, unsigned int key)
+thread Game::SetActorSneaking(FactoryObject& reference, unsigned int key)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -757,7 +759,7 @@ thread Game::SetActorSneaking(FactoryObject reference, unsigned int key)
 	return t;
 }
 
-thread Game::SetActorAlerted(FactoryObject reference, unsigned int key)
+thread Game::SetActorAlerted(FactoryObject& reference, unsigned int key)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -800,7 +802,7 @@ thread Game::SetActorAlerted(FactoryObject reference, unsigned int key)
 	return t;
 }
 
-void Game::SetActorMovingAnimation(FactoryObject reference, unsigned int key)
+void Game::SetActorMovingAnimation(FactoryObject& reference, unsigned int key)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -814,21 +816,26 @@ void Game::SetActorMovingAnimation(FactoryObject reference, unsigned int key)
 	Interface::EndDynamic();
 }
 
-void Game::SetActorWeaponAnimation(FactoryObject reference, unsigned int key)
+void Game::SetActorWeaponAnimation(FactoryObject& reference, unsigned int key)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
 	if (!actor)
 		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
 
+	unsigned char weapon = actor->GetActorWeaponAnimation();
+
+	if (!actor->GetActorAlerted() || weapon == AnimGroup_Idle || weapon == AnimGroup_Aim || weapon == AnimGroup_Equip || weapon == AnimGroup_Unequip || weapon == AnimGroup_Holster)
+		return;
+
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("PlayGroup", ParamContainer{actor->GetReferenceParam(), RawParameter(API::RetrieveAnim_Reverse(actor->GetActorWeaponAnimation())), RawParameter(true)}, key);
+	Interface::ExecuteCommand("PlayGroup", ParamContainer{actor->GetReferenceParam(), RawParameter(API::RetrieveAnim_Reverse(weapon)), RawParameter(true)}, key);
 
 	Interface::EndDynamic();
 }
 
-void Game::KillActor(FactoryObject reference, unsigned int key)
+void Game::KillActor(FactoryObject& reference, unsigned int key)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -842,17 +849,17 @@ void Game::KillActor(FactoryObject reference, unsigned int key)
 	Interface::EndDynamic();
 }
 
-void Game::AddItem(vector<FactoryObject> reference, unsigned int key)
+void Game::AddItem(FactoryObject& reference, FactoryObject& item, unsigned int key)
 {
-	Item* item = vaultcast<Item>(reference[1]);
+	Item* _item = vaultcast<Item>(item);
 
-	if (!item)
-		throw VaultException("Object with reference %08X is not an Item", (*reference[1])->GetReference());
+	if (!_item)
+		throw VaultException("Object with reference %08X is not an Item", (*item)->GetReference());
 
-	AddItem(reference[0], item->GetBase(), item->GetItemCount(), item->GetItemCondition(), item->GetItemSilent(), key);
+	AddItem(reference, _item->GetBase(), _item->GetItemCount(), _item->GetItemCondition(), _item->GetItemSilent(), key);
 }
 
-void Game::AddItem(FactoryObject reference, unsigned int baseID, unsigned int count, double condition, bool silent, unsigned int key)
+void Game::AddItem(FactoryObject& reference, unsigned int baseID, unsigned int count, double condition, bool silent, unsigned int key)
 {
 	Container* container = vaultcast<Container>(reference);
 
@@ -866,17 +873,17 @@ void Game::AddItem(FactoryObject reference, unsigned int baseID, unsigned int co
 	Interface::EndDynamic();
 }
 
-void Game::RemoveItem(vector<FactoryObject> reference, unsigned int key)
+void Game::RemoveItem(FactoryObject& reference, FactoryObject& item, unsigned int key)
 {
-	Item* item = vaultcast<Item>(reference[1]);
+	Item* _item = vaultcast<Item>(item);
 
-	if (!item)
-		throw VaultException("Object with reference %08X is not an Item", (*reference[1])->GetReference());
+	if (!_item)
+		throw VaultException("Object with reference %08X is not an Item", (*item)->GetReference());
 
-	RemoveItem(reference[0], item->GetBase(), item->GetItemCount(), item->GetItemSilent(), key);
+	RemoveItem(reference, _item->GetBase(), _item->GetItemCount(), _item->GetItemSilent(), key);
 }
 
-void Game::RemoveItem(FactoryObject reference, unsigned int baseID, unsigned int count, bool silent, unsigned int key)
+void Game::RemoveItem(FactoryObject& reference, unsigned int baseID, unsigned int count, bool silent, unsigned int key)
 {
 	Container* container = vaultcast<Container>(reference);
 
@@ -890,7 +897,7 @@ void Game::RemoveItem(FactoryObject reference, unsigned int baseID, unsigned int
 	Interface::EndDynamic();
 }
 
-void Game::RemoveAllItems(FactoryObject reference, unsigned int key)
+void Game::RemoveAllItems(FactoryObject& reference, unsigned int key)
 {
 	Container* container = vaultcast<Container>(reference);
 
@@ -904,17 +911,17 @@ void Game::RemoveAllItems(FactoryObject reference, unsigned int key)
 	Interface::EndDynamic();
 }
 
-void Game::EquipItem(vector<FactoryObject> reference, unsigned int key)
+void Game::EquipItem(FactoryObject& reference, FactoryObject& item, unsigned int key)
 {
-	Item* item = vaultcast<Item>(reference[1]);
+	Item* _item = vaultcast<Item>(item);
 
-	if (!item)
-		throw VaultException("Object with reference %08X is not an Item", (*reference[1])->GetReference());
+	if (!_item)
+		throw VaultException("Object with reference %08X is not an Item", (*item)->GetReference());
 
-	EquipItem(reference[0], item->GetBase(), item->GetItemSilent(), item->GetItemStick(), key);
+	EquipItem(reference, _item->GetBase(), _item->GetItemSilent(), _item->GetItemStick(), key);
 }
 
-void Game::EquipItem(FactoryObject reference, unsigned int baseID, bool silent, bool stick, unsigned int key)
+void Game::EquipItem(FactoryObject& reference, unsigned int baseID, bool silent, bool stick, unsigned int key)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -928,17 +935,17 @@ void Game::EquipItem(FactoryObject reference, unsigned int baseID, bool silent, 
 	Interface::EndDynamic();
 }
 
-void Game::UnequipItem(vector<FactoryObject> reference, unsigned int key)
+void Game::UnequipItem(FactoryObject& reference, FactoryObject& item, unsigned int key)
 {
-	Item* item = vaultcast<Item>(reference[1]);
+	Item* _item = vaultcast<Item>(item);
 
-	if (!item)
-		throw VaultException("Object with reference %08X is not an Item", (*reference[1])->GetReference());
+	if (!_item)
+		throw VaultException("Object with reference %08X is not an Item", (*item)->GetReference());
 
-	UnequipItem(reference[0], item->GetBase(), item->GetItemSilent(), item->GetItemStick(), key);
+	UnequipItem(reference, _item->GetBase(), _item->GetItemSilent(), _item->GetItemStick(), key);
 }
 
-void Game::UnequipItem(FactoryObject reference, unsigned int baseID, bool silent, bool stick, unsigned int key)
+void Game::UnequipItem(FactoryObject& reference, unsigned int baseID, bool silent, bool stick, unsigned int key)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -952,7 +959,7 @@ void Game::UnequipItem(FactoryObject reference, unsigned int baseID, bool silent
 	Interface::EndDynamic();
 }
 
-void Game::net_SetPos(FactoryObject reference, double X, double Y, double Z)
+void Game::net_SetPos(FactoryObject& reference, double X, double Y, double Z)
 {
 	Object* object = vaultcast<Object>(reference);
 	bool result = ((bool) object->SetNetworkPos(Axis_X, X) | (bool) object->SetNetworkPos(Axis_Y, Y) | (bool) object->SetNetworkPos(Axis_Z, Z));
@@ -966,7 +973,7 @@ void Game::net_SetPos(FactoryObject reference, double X, double Y, double Z)
 	}
 }
 
-void Game::net_SetAngle(FactoryObject reference, unsigned char axis, double value)
+void Game::net_SetAngle(FactoryObject& reference, unsigned char axis, double value)
 {
 	Object* object = vaultcast<Object>(reference);
 	bool result = (bool) object->SetAngle(axis, value);
@@ -975,13 +982,13 @@ void Game::net_SetAngle(FactoryObject reference, unsigned char axis, double valu
 		SetAngle(reference);
 }
 
-void Game::net_SetCell(vector<FactoryObject> reference, unsigned int cell)
+void Game::net_SetCell(FactoryObject& reference, FactoryObject& player, unsigned int cell)
 {
-	Object* object = vaultcast<Object>(reference[0]);
-	Player* self = vaultcast<Player>(reference[1]);
+	Object* object = vaultcast<Object>(reference);
+	Player* self = vaultcast<Player>(player);
 
 	if (!self)
-		throw VaultException("Object with reference %08X is not a Player", (*reference[1])->GetReference());
+		throw VaultException("Object with reference %08X is not a Player", (*player)->GetReference());
 
 	object->SetNetworkCell(cell);
 
@@ -990,12 +997,12 @@ void Game::net_SetCell(vector<FactoryObject> reference, unsigned int cell)
 		if (object->GetNetworkCell() != self->GetGameCell())
 		{
 			if (object->SetEnabled(false))
-				ToggleEnabled(reference[0]);
+				ToggleEnabled(reference);
 		}
 		else
 		{
 			if (object->SetEnabled(true))
-				ToggleEnabled(reference[0]);
+				ToggleEnabled(reference);
 		}
 	}
 }
@@ -1043,7 +1050,7 @@ void Game::net_ContainerUpdate(FactoryObject& reference, ContainerDiff diff)
 	result->Unlock(key);
 }
 
-void Game::net_SetActorValue(FactoryObject reference, bool base, unsigned char index, double value)
+void Game::net_SetActorValue(FactoryObject& reference, bool base, unsigned char index, double value)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -1061,7 +1068,7 @@ void Game::net_SetActorValue(FactoryObject reference, bool base, unsigned char i
 		SetActorValue(reference, base, index, result->Lock());
 }
 
-void Game::net_SetActorState(FactoryObject reference, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking)
+void Game::net_SetActorState(FactoryObject& reference, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -1097,7 +1104,7 @@ void Game::net_SetActorState(FactoryObject reference, unsigned char moving, unsi
 
 	result = actor->SetActorWeaponAnimation(weapon);
 
-	if (result && actor->GetEnabled() && alerted && weapon != AnimGroup_Idle && weapon != AnimGroup_Aim && weapon != AnimGroup_Equip && weapon != AnimGroup_Unequip && weapon != AnimGroup_Holster)
+	if (result && actor->GetEnabled())
 		SetActorWeaponAnimation(reference, result->Lock());
 }
 
@@ -1147,7 +1154,7 @@ void Game::net_ChatMessage(string message)
 	ChatMessage(message);
 }
 
-void Game::GetPos(FactoryObject reference, unsigned char axis, double value)
+void Game::GetPos(FactoryObject& reference, unsigned char axis, double value)
 {
 	Object* object = vaultcast<Object>(reference);
 	bool result = (bool) object->SetGamePos(axis, value);
@@ -1159,7 +1166,7 @@ void Game::GetPos(FactoryObject reference, unsigned char axis, double value)
 		});
 }
 
-void Game::GetAngle(FactoryObject reference, unsigned char axis, double value)
+void Game::GetAngle(FactoryObject& reference, unsigned char axis, double value)
 {
 	Object* object = vaultcast<Object>(reference);
 	bool result = (bool) object->SetAngle(axis, value);
@@ -1171,27 +1178,27 @@ void Game::GetAngle(FactoryObject reference, unsigned char axis, double value)
 		});
 }
 
-void Game::GetParentCell(vector<FactoryObject> reference, unsigned int cell)
+void Game::GetParentCell(FactoryObject& reference, FactoryObject& player, unsigned int cell)
 {
-	Object* object = vaultcast<Object>(reference[0]);
-	Player* self = vaultcast<Player>(reference[1]);
+	Object* object = vaultcast<Object>(reference);
+	Player* self = vaultcast<Player>(player);
 
 	if (!self)
-		throw VaultException("Object with reference %08X is not a Player", (*reference[1])->GetReference());
+		throw VaultException("Object with reference %08X is not a Player", (*player)->GetReference());
 
 	if (object != self)
 	{
 		if (self->GetGameCell() == object->GetNetworkCell() && object->GetGameCell() != object->GetNetworkCell())
 		{
 			if (object->SetEnabled(true))
-				ToggleEnabled(reference[0]);
+				ToggleEnabled(reference);
 
 			Lockable* result = object->SetGameCell(self->GetGameCell());
 
 			if (result)
-				MoveTo(reference, true, result->Lock());
+				MoveTo(reference, player, true, result->Lock());
 
-			SetAngle(reference[0]);
+			SetAngle(reference);
 		}
 	}
 
@@ -1202,12 +1209,12 @@ void Game::GetParentCell(vector<FactoryObject> reference, unsigned int cell)
 		if (object->GetNetworkCell() != self->GetGameCell())
 		{
 			if (object->SetEnabled(false))
-				ToggleEnabled(reference[0]);
+				ToggleEnabled(reference);
 		}
 		else
 		{
 			if (object->SetEnabled(true))
-				ToggleEnabled(reference[0]);
+				ToggleEnabled(reference);
 		}
 	}
 
@@ -1218,17 +1225,17 @@ void Game::GetParentCell(vector<FactoryObject> reference, unsigned int cell)
 		});
 }
 
-void Game::GetDead(vector<FactoryObject> reference, bool dead)
+void Game::GetDead(FactoryObject& reference, FactoryObject& player, bool dead)
 {
-	Actor* actor = vaultcast<Actor>(reference[0]);
+	Actor* actor = vaultcast<Actor>(reference);
 
 	if (!actor)
-		throw VaultException("Object with reference %08X is not an Actor", (*reference[0])->GetReference());
+		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
 
-	Player* self = vaultcast<Player>(reference[1]);
+	Player* self = vaultcast<Player>(player);
 
 	if (!self)
-		throw VaultException("Object with reference %08X is not a Player", (*reference[1])->GetReference());
+		throw VaultException("Object with reference %08X is not a Player", (*player)->GetReference());
 
 	/*if (actor != self && !self->GetActorAlerted())
 	{
@@ -1248,7 +1255,7 @@ void Game::GetDead(vector<FactoryObject> reference, bool dead)
 		});
 }
 
-void Game::GetActorValue(FactoryObject reference, bool base, unsigned char index, double value)
+void Game::GetActorValue(FactoryObject& reference, bool base, unsigned char index, double value)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -1270,7 +1277,7 @@ void Game::GetActorValue(FactoryObject reference, bool base, unsigned char index
 		});
 }
 
-void Game::GetActorState(FactoryObject reference, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking)
+void Game::GetActorState(FactoryObject& reference, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking)
 {
 	Actor* actor  = vaultcast<Actor>(reference);
 
@@ -1294,7 +1301,7 @@ void Game::GetActorState(FactoryObject reference, unsigned char moving, unsigned
 		});
 }
 
-void Game::GetControl(FactoryObject reference, unsigned char control, unsigned char key)
+void Game::GetControl(FactoryObject& reference, unsigned char control, unsigned char key)
 {
 	Player* player = vaultcast<Player>(reference);
 
@@ -1312,7 +1319,7 @@ void Game::GetControl(FactoryObject reference, unsigned char control, unsigned c
 		});
 }
 
-void Game::ScanContainer(FactoryObject reference, vector<unsigned char>& data)
+void Game::ScanContainer(FactoryObject& reference, vector<unsigned char>& data)
 {
 	Container* container = vaultcast<Container>(reference);
 
