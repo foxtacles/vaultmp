@@ -109,6 +109,8 @@ namespace Values
 
 	enum Functions
 	{
+		Func_CenterOnCell				= 0x0123,
+
 		Func_GetPos                     = 0x1006,
 		Func_SetPos                     = 0x1007,
 		Func_GetAngle                   = 0x1008,

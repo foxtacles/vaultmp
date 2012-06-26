@@ -422,6 +422,7 @@ void API::Initialize(unsigned char game)
 	DefineFunction("IsAnimPlaying", "rG", Func_IsAnimPlaying, FALLOUT_GAMES);
 	DefineFunction("ScanContainer", "r", Func_ScanContainer, FALLOUT_GAMES);
 	DefineFunction("UIMessage", "s", Func_UIMessage, FALLOUT_GAMES);
+	DefineFunction("CenterOnCell", "$s", Func_CenterOnCell, FALLOUT_GAMES);
 
 	DefineFunction("Load", "$s", Fallout3::Func_Load, FALLOUT3);
 	DefineFunction("SetName", "rsB", Fallout3::Func_SetName, FALLOUT3);

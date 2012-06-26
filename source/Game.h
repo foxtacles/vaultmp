@@ -71,6 +71,10 @@ class Game
 		 */
 		static void LoadGame(string savegame = string());
 		/**
+		 * \brief Loads a cell
+		 */
+		static void CenterOnCell(string cell = string());
+		/**
 		 * \brief Loads the environment after savegame load
 		 */
 		static void LoadEnvironment();

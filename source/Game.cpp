@@ -47,6 +47,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 		{
 			switch (opcode)
 			{
+				case Functions::Func_CenterOnCell:
 				case Fallout3::Functions::Func_Load:
 				case FalloutNV::Functions::Func_Load:
 				case Functions::Func_PlaceAtMe:
@@ -208,6 +209,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				GetControl(self, getFrom<double, int>(info.at(1)), result);
 				break;
 
+			case Functions::Func_CenterOnCell:
 			case Fallout3::Functions::Func_Load:
 			case FalloutNV::Functions::Func_Load:
 				FutureSet<bool>(shared, true);
@@ -351,7 +353,7 @@ void Game::LoadGame(string savegame)
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("Load", ParamContainer{RawParameter(savegame)}, key);
+	Interface::ExecuteCommand("LoadGame", ParamContainer{RawParameter(savegame)}, key);
 
 	Interface::EndDynamic();
 
@@ -362,6 +364,36 @@ void Game::LoadGame(string savegame)
 	catch (exception& e)
 	{
 		throw VaultException("Loading of savegame %s failed (%s)", savegame.c_str(), e.what());
+	}
+
+	// ready state
+}
+
+void Game::CenterOnCell(string cell)
+{
+	static string last_cell;
+
+	if (cell.empty())
+		cell = last_cell;
+	else
+		last_cell = cell;
+
+	shared_ptr<Shared<bool>> store(new Shared<bool>);
+	unsigned int key = Lockable::Share(store);
+
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("CenterOnCell", ParamContainer{RawParameter(cell)}, key);
+
+	Interface::EndDynamic();
+
+	try
+	{
+		store.get()->get_future(chrono::seconds(30));
+	}
+	catch (exception& e)
+	{
+		throw VaultException("Loading of cell %s failed (%s)", cell.c_str(), e.what());
 	}
 
 	// ready state
