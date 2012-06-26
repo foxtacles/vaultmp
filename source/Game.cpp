@@ -353,7 +353,7 @@ void Game::LoadGame(string savegame)
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("LoadGame", ParamContainer{RawParameter(savegame)}, key);
+	Interface::ExecuteCommand("Load", ParamContainer{RawParameter(savegame)}, key);
 
 	Interface::EndDynamic();
 
