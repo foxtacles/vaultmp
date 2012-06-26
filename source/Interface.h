@@ -27,11 +27,6 @@
 using namespace std;
 using namespace Data;
 
-typedef unordered_multimap<string, ParamContainer> Native;
-typedef multimap<unsigned int, Native::iterator> PriorityMap;
-typedef vector<vector<Native::iterator>> StaticCommandList;
-typedef deque<pair<Native::iterator, unsigned int>> DynamicCommandList;
-
 /**
  * \brief Provides facilities to execute engine commands, connects with the game process and is responsible for sending / retrieving game data
  *
@@ -40,8 +35,133 @@ typedef deque<pair<Native::iterator, unsigned int>> DynamicCommandList;
 
 class Interface : public API
 {
+	private:
+		class _Parameter {
+
+			protected:
+				_Parameter() = default;
+				_Parameter(const _Parameter&) = default;
+				_Parameter(_Parameter&&) = default;
+				_Parameter& operator= (_Parameter&&) = default;
+
+			public:
+				virtual ~_Parameter() {}
+
+				virtual const vector<string>& get() const = 0;
+				virtual void reset() const = 0;
+		};
+
+	public:
+		class RawParameter : public _Parameter {
+
+			private:
+				vector<string> data;
+
+				static vector<string> make(const vector<unsigned char>& str)
+				{
+					vector<string> convert;
+
+					for (unsigned char param : str)
+						convert.push_back(Utils::toString(param));
+
+					return convert;
+				}
+
+				static vector<string> make(unsigned int str)
+				{
+					return vector<string>{Utils::toString(str)};
+				}
+
+				static vector<string> make(double str)
+				{
+					return vector<string>{Utils::toString(str)};
+				}
+
+				static vector<string> make(bool str)
+				{
+					return vector<string>{str ? "1" : "0"};
+				}
+
+			public:
+				RawParameter(string str) : data(vector<string>{str}) {}
+				RawParameter(const vector<string>& str) : data(str) {}
+				RawParameter(const vector<unsigned char>& str) : data(make(str)) {}
+				RawParameter(unsigned int str) : data(make(str)) {}
+				RawParameter(double str) : data(make(str)) {}
+				RawParameter(bool str) : data(make(str)) {}
+				RawParameter(const RawParameter&) = default;
+				RawParameter(RawParameter&&) = default;
+				RawParameter& operator= (RawParameter&&) = default;
+				virtual ~RawParameter() {}
+
+				virtual const vector<string>& get() const { return data; }
+				virtual void reset() const {}
+		};
+
+		class FuncParameter : public _Parameter {
+
+			private:
+				unique_ptr<VaultFunctor> func;
+				mutable vector<string> data;
+				mutable bool initialized;
+
+			public:
+				FuncParameter(unique_ptr<VaultFunctor>&& func) : func(move(func)), initialized(false) {}
+				FuncParameter(FuncParameter&&) = default;
+				FuncParameter& operator= (FuncParameter&&) = default;
+				virtual ~FuncParameter() {}
+
+				virtual const vector<string>& get() const
+				{
+					if (!initialized)
+					{
+						data = (*func.get())();
+						initialized = true;
+					}
+
+					return data;
+				}
+
+				virtual void reset() const { initialized = false; }
+		};
+
+		class Parameter {
+
+			private:
+				unique_ptr<const _Parameter, void(*)(const _Parameter*)> param;
+
+				static void no_delete(const _Parameter* param) {}
+				static void def_delete(const _Parameter* param) { delete param; }
+
+			public:
+				Parameter(RawParameter& param) : param(new RawParameter(param), def_delete) {}
+				Parameter(RawParameter&& param) : param(new RawParameter(move(param)), def_delete) {}
+				Parameter(FuncParameter&& param) : param(new FuncParameter(move(param)), def_delete) {}
+				Parameter(const RawParameter& param) : param(&param, no_delete) {}
+				Parameter(const FuncParameter& param) : param(&param, no_delete) {}
+
+				Parameter(Parameter&&) = default;
+				Parameter& operator= (Parameter&&) = default;
+
+				// hack: initializer lists reference static memory... this ctor enables moving the unique_ptr
+				// NOT A COPY CTOR
+				Parameter(const Parameter& param) : Parameter(move(const_cast<Parameter&>(param))) {}
+
+				~Parameter() = default;
+
+				const vector<string>& get() const { return param->get(); }
+				void reset() { param->reset(); }
+		};
+
+		typedef vector<Parameter> ParamContainer;
+		typedef void (*ResultHandler)(unsigned int, const vector<double>&, double, bool);
 
 	private:
+		typedef unordered_multimap<string, ParamContainer> Native;
+		typedef multimap<unsigned int, Native::iterator> PriorityMap;
+		typedef vector<vector<Native::iterator>> StaticCommandList;
+		typedef deque<pair<Native::iterator, unsigned int>> DynamicCommandList;
+
 		static bool endThread;
 		static bool wakeup;
 		static bool initialized;
@@ -69,7 +189,6 @@ class Interface : public API
 		Interface() = delete;
 
 	public:
-
 		/**
 		 * \brief Initializes the Interface
 		 *
@@ -131,5 +250,9 @@ class Interface : public API
 		static void SetDebugHandler(Debug* debug);
 #endif
 };
+
+using RawParameter = Interface::RawParameter;
+using FuncParameter = Interface::FuncParameter;
+using ParamContainer = Interface::ParamContainer;
 
 #endif

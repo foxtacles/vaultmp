@@ -2,14 +2,14 @@
 
 PipeClient* Interface::pipeServer;
 PipeServer* Interface::pipeClient;
-ResultHandler Interface::resultHandler;
+Interface::ResultHandler Interface::resultHandler;
 bool Interface::endThread = false;
 bool Interface::wakeup = false;
 bool Interface::initialized = false;
-PriorityMap Interface::priorityMap;
-StaticCommandList Interface::static_cmdlist;
-DynamicCommandList Interface::dynamic_cmdlist;
-Native Interface::natives;
+Interface::PriorityMap Interface::priorityMap;
+Interface::StaticCommandList Interface::static_cmdlist;
+Interface::DynamicCommandList Interface::dynamic_cmdlist;
+Interface::Native Interface::natives;
 thread Interface::hCommandThreadReceive;
 thread Interface::hCommandThreadSend;
 CriticalSection Interface::static_cs;

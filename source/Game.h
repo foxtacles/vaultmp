@@ -24,7 +24,6 @@ class Game
 		friend class Bethesda;
 
 	private:
-
 		Game() = delete;
 
 #ifdef VAULTMP_DEBUG
@@ -36,8 +35,9 @@ class Game
 
 		static void AdjustZAngle(double& Z, double diff);
 
-	public:
+		typedef pair<future<void>, chrono::milliseconds> AsyncPack;
 
+	public:
 		/**
 		 * \brief Handles translated command results from the game
 		 */

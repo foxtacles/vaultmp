@@ -9,6 +9,7 @@
 #include "VaultFunctor.h"
 #include "RakNet/NetworkIDObject.h"
 #include "PacketFactory.h"
+#include "Interface.h"
 
 using namespace std;
 using namespace RakNet;
