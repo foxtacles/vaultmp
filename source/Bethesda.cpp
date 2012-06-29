@@ -8,7 +8,6 @@ typedef HINSTANCE(__stdcall* fLoadLibrary)(char*);
 unsigned char Bethesda::game = 0x00;
 bool Bethesda::initialized = false;
 string Bethesda::password = "";
-Savegame Bethesda::savegame;
 bool Bethesda::multiinst = false;
 bool Bethesda::steam = false;
 DWORD Bethesda::process = 0;
@@ -59,31 +58,8 @@ void Bethesda::Initialize()
 			throw VaultException("Bad game ID %08X", Bethesda::game);
 	}
 
-	TCHAR savefile[MAX_PATH];
-	ZeroMemory(savefile, sizeof(savefile));
-	SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, 0, savefile);   // SHGFP_TYPE_CURRENT
-
-	switch (Bethesda::game)
-	{
-		case FALLOUT3:
-			strcat(savefile, "\\My Games\\Fallout3\\Saves\\");
-			break;
-
-		case NEWVEGAS:
-			strcat(savefile, "\\My Games\\FalloutNV\\Saves\\");
-			break;
-	}
-
-	strcat(savefile, Utils::FileOnly(Bethesda::savegame.first.c_str()));
-	unsigned int crc;
-
-	if (!Utils::crc32file(savefile, &crc))
-		throw VaultException("Could not find savegame file:\n\n%s\n\nAsk the server owner to send you the file or try to Synchronize with the server", savefile);
-
-	if (crc != Bethesda::savegame.second)
-		throw VaultException("Savegame differs from the server version:\n\n%s\n\nAsk the server owner to send you the file or try to Synchronize with the server", savefile);
-
 	TCHAR curdir[MAX_PATH];
+	unsigned int crc;
 	ZeroMemory(curdir, sizeof(curdir));
 	GetModuleFileName(GetModuleHandle(NULL), (LPTSTR) curdir, MAX_PATH);
 	PathRemoveFileSpec(curdir);
@@ -104,21 +80,22 @@ void Bethesda::Initialize()
 			throw VaultException("Modfile differs from the server version:\n\n%s\n\nAsk the server owner to send you the file or try to Synchronize with the server", modfile);
 	}
 
-	ZeroMemory(savefile, sizeof(savefile));
-	SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, savefile);   // SHGFP_TYPE_CURRENT
+	TCHAR pluginsdir[MAX_PATH];
+	ZeroMemory(pluginsdir, sizeof(pluginsdir));
+	SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, pluginsdir);   // SHGFP_TYPE_CURRENT
 
 	switch (Bethesda::game)
 	{
 		case FALLOUT3:
-			strcat(savefile, "\\Fallout3\\plugins.txt");
+			strcat(pluginsdir, "\\Fallout3\\plugins.txt");
 			break;
 
 		case NEWVEGAS:
-			strcat(savefile, "\\FalloutNV\\plugins.txt");
+			strcat(pluginsdir, "\\FalloutNV\\plugins.txt");
 			break;
 	}
 
-	FILE* plugins = fopen(savefile, "w");
+	FILE* plugins = fopen(pluginsdir, "w");
 
 	switch (Bethesda::game)
 	{
@@ -274,7 +251,6 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
 	Bethesda::password = pwd;
 	Bethesda::multiinst = multiinst;
 	Bethesda::steam = steam;
-	Bethesda::savegame = Savegame();
 	Bethesda::modfiles.clear();
 	ZeroMemory(module, sizeof(module));
 	Game::game = game;

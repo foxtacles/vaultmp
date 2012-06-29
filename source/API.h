@@ -453,6 +453,7 @@ class API
 		API() = delete;
 
 	public:
+		static const unsigned char FalloutSavegame[];
 
 #ifdef VAULTMP_DEBUG
 		static void SetDebugHandler(Debug* debug);

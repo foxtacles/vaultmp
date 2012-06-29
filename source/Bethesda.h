@@ -33,7 +33,6 @@ using namespace RakNet;
 using namespace Data;
 using namespace std;
 
-typedef pair<string, unsigned int> Savegame;
 typedef vector<pair<string, unsigned int>> ModList;
 
 /**
@@ -50,7 +49,6 @@ class Bethesda
 		static string password;
 		static bool multiinst;
 		static bool steam;
-		static Savegame savegame;
 		static ModList modfiles;
 		static DWORD process;
 		static char module[32];

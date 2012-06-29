@@ -118,14 +118,12 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					debug->PrintFormat("We were successfully authenticated (%s)", true, data->systemAddress.ToString());
 					debug->Print("Initiating vaultmp game thread...", true);
 #endif
-					char savegame[MAX_SAVEGAME_FILE + 1];
-					ZeroMemory(savegame, sizeof(savegame));
-					unsigned int crc;
-					PacketFactory::Access(packet, savegame, &crc);
-					Bethesda::savegame = Savegame(string(savegame), crc);
+					char cell[MAX_CELL_NAME + 1];
+					ZeroMemory(cell, sizeof(cell));
+					PacketFactory::Access(packet, cell);
 
 					Bethesda::Initialize();
-					Game::LoadGame(Utils::FileOnly(Bethesda::savegame.first.c_str()));
+					Game::CenterOnCell(cell);
 					Game::LoadEnvironment();
 
 					response = NetworkClient::ProcessEvent(ID_EVENT_GAME_STARTED);

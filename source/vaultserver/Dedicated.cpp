@@ -15,7 +15,7 @@ bool Dedicated::fileserve;
 SystemAddress Dedicated::master;
 TimeMS Dedicated::announcetime;
 ServerEntry* Dedicated::self = NULL;
-Savegame Dedicated::savegame;
+string Dedicated::cell;
 ModList Dedicated::modfiles;
 #ifdef VAULTMP_DEBUG
 Debug* Dedicated::debug;
@@ -208,12 +208,9 @@ void Dedicated::FileThread()
 	char file[MAX_PATH];
 	getcwd(dir, sizeof(dir));
 
-	snprintf(file, sizeof(file), "%s/%s/%s", dir, SAVEGAME_PATH, savegame.first.c_str());
-	unsigned int len = Utils::FileLength(file);
-	files.AddFile(savegame.first.c_str(), file, 0, len, len, FileListNodeContext(FILE_SAVEGAME, 0), true);
-
 	ModList::iterator it;
-	int i = 1;
+	unsigned int len;
+	unsigned int i = 1;
 
 	for (it = modfiles.begin(), i; it != modfiles.end(); ++it, i++)
 	{
@@ -259,7 +256,6 @@ void Dedicated::DedicatedThread()
 		peer->Connect(master.ToString(false), master.GetPort(), MASTER_VERSION, sizeof(MASTER_VERSION), 0, 0, 3, 500, 0);
 		announcetime = GetTimeMS();
 	}
-
 	else
 	{
 		peer->Startup(connections, sockdescr, 1, THREAD_PRIORITY_NORMAL);
@@ -401,9 +397,9 @@ void Dedicated::SetServerEntry(ServerEntry* self)
 	Dedicated::self = self;
 }
 
-void Dedicated::SetSavegame(Savegame savegame)
+void Dedicated::SetSpawnCell(const char* cell)
 {
-	Dedicated::savegame = savegame;
+	Dedicated::cell = cell;
 }
 
 void Dedicated::SetModfiles(ModList modfiles)

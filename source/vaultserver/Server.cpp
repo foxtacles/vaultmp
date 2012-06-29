@@ -29,7 +29,7 @@ NetworkResponse Server::Authenticate(RakNetGUID guid, string name, string pwd)
 		}
 
 		response.push_back(Network::CreateResponse(
-			PacketFactory::CreatePacket(ID_GAME_START, Dedicated::savegame.first.c_str(), Dedicated::savegame.second),
+			PacketFactory::CreatePacket(ID_GAME_START, Dedicated::cell.c_str()),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 	else

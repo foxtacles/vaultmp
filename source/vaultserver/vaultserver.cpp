@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
 	const char* announce;
 	const char* scripts;
 	const char* mods;
-	const char* savegame;
+	const char* cell;
 
 	dictionary* config = iniparser_load(argc > 1 ? argv[1] : "vaultserver.ini");
 
@@ -119,13 +119,13 @@ int main(int argc, char* argv[])
 	files = (bool) iniparser_getboolean(config, "general:fileserve", 0);
 	fileslots = iniparser_getint(config, "general:fileslots", 8);
 	announce = iniparser_getstring(config, "general:master", "vaultmp.com");
-	savegame = iniparser_getstring(config, "general:save", "default.fos");
+	cell = iniparser_getstring(config, "general:spawn", game == FALLOUT3 ? "Vault101Exterior" : "Goodsprings");
 	scripts = iniparser_getstring(config, "scripts:scripts", "");
 	mods = iniparser_getstring(config, "mods:mods", "");
 
-	ServerEntry* self = new ServerEntry(game);
-	self->SetServerRule("version", DEDICATED_VERSION);
-	Dedicated::SetServerEntry(self);
+	ServerEntry self(game);
+	self.SetServerRule("version", DEDICATED_VERSION);
+	Dedicated::SetServerEntry(&self);
 
 	char base[MAX_PATH];
 	_getcwd(base, sizeof(base));
@@ -137,7 +137,6 @@ int main(int argc, char* argv[])
 		snprintf(_scripts, sizeof(_scripts), "%s", scripts);
 		Script::LoadScripts(_scripts, base);
 	}
-
 	catch (std::exception& e)
 	{
 		try
@@ -155,20 +154,14 @@ int main(int argc, char* argv[])
 
 	try
 	{
-		char file[MAX_PATH];
-		snprintf(file, sizeof(file), "%s/%s/%s", base, SAVEGAME_PATH, savegame);
-
-		unsigned int crc;
-
-		if (!Utils::crc32file(file, &crc))
-			throw VaultException("Could not find savegame %s in folder %s", savegame, SAVEGAME_PATH);
-
-		Dedicated::SetSavegame(Savegame(string(savegame), crc));
+		Dedicated::SetSpawnCell(cell);
 
 		char buf[strlen(mods) + 1];
 		strcpy(buf, mods);
 		char* token = strtok(buf, ",");
 		ModList modfiles;
+		char file[MAX_PATH];
+		unsigned int crc;
 
 		while (token != NULL)
 		{
@@ -192,7 +185,6 @@ int main(int argc, char* argv[])
 		if (hInputThread.joinable())
 			hInputThread.join();
 	}
-
 	catch (std::exception& e)
 	{
 		try
@@ -200,7 +192,6 @@ int main(int argc, char* argv[])
 			VaultException& vaulterror = dynamic_cast<VaultException&>(e);
 			vaulterror.Console();
 		}
-
 		catch (std::bad_cast& no_vaulterror)
 		{
 			VaultException vaulterror(e.what());
@@ -210,7 +201,6 @@ int main(int argc, char* argv[])
 
 	Script::UnloadScripts();
 	iniparser_freedict(config);
-	delete self;
 
 #ifdef __WIN32__
 	system("PAUSE");

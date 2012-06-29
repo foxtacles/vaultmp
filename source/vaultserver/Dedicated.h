@@ -42,7 +42,6 @@ using namespace RakNet;
 using namespace Data;
 using namespace std;
 
-typedef pair<string, unsigned int> Savegame;
 typedef vector<pair<string, unsigned int>> ModList;
 
 /**
@@ -71,7 +70,7 @@ class Dedicated
 		static TimeMS announcetime;
 		static SystemAddress master;
 		static ServerEntry* self;
-		static Savegame savegame;
+		static string cell;
 		static ModList modfiles;
 
 		static void DedicatedThread();
@@ -103,14 +102,6 @@ class Dedicated
 		 */
 		static void SetServerEntry(ServerEntry* self);
 		/**
-		 * \brief Sets the Savegame of the dedicated server
-		 *
-		 * A Savegame is of the form pair<string, unsigned int>
-		 * string is the relative path to the savegame
-		 * unsigned int is the CRC32 of the savegame
-		 */
-		static void SetSavegame(Savegame savegame);
-		/**
 		 * \brief Sets the ModList of the dedicated server
 		 *
 		 * A ModList is of the form vector<pair<string, unsigned int> >
@@ -135,6 +126,10 @@ class Dedicated
 		 * \brief Defines a server rule
 		 */
 		static void SetServerRule(const char* rule, const char* value);
+		/**
+		 * \brief Sets the default spawn cell for players of the dedicated server
+		 */
+		static void SetSpawnCell(const char* cell);
 		/**
 		 * \brief Returns the game code of the dedicated server
 		 */

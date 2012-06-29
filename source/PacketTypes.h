@@ -356,8 +356,7 @@ struct _pGameAuth
 
 struct _pGameStart
 {
-	char savegame[MAX_SAVEGAME_FILE];
-	unsigned int crc;
+	char cell[MAX_CELL_NAME];
 };
 #pragma pack(pop)
 
@@ -432,11 +431,10 @@ class pGameStart : public pGameDefault
 	private:
 		_pGameStart _data;
 
-		pGameStart(const char* savegame, unsigned int crc) : pGameDefault(ID_GAME_START)
+		pGameStart(const char* cell) : pGameDefault(ID_GAME_START)
 		{
 			ZeroMemory(&_data, sizeof(_data));
-			strncpy(_data.savegame, savegame, sizeof(_data.savegame));
-			_data.crc = crc;
+			strncpy(_data.cell, cell, sizeof(_data.cell));
 			construct(&_data, sizeof(_data));
 		}
 		pGameStart(const unsigned char* stream, unsigned int len) : pGameDefault(stream, len)
@@ -545,7 +543,7 @@ class pObjectNew : public pObjectNewDefault
 	private:
 		_pObjectNew _data;
 
-		pObjectNew(NetworkID id, unsigned int refID, unsigned int baseID, char* name, double X, double Y, double Z, double aX, double aY, double aZ, unsigned int cell, bool enabled) : pObjectNewDefault(ID_OBJECT_NEW, refID, baseID, id)
+		pObjectNew(NetworkID id, unsigned int refID, unsigned int baseID, const char* name, double X, double Y, double Z, double aX, double aY, double aZ, unsigned int cell, bool enabled) : pObjectNewDefault(ID_OBJECT_NEW, refID, baseID, id)
 		{
 			strncpy(this->_data.name, name, sizeof(this->_data.name));
 			_data.X = X;

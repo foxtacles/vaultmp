@@ -172,26 +172,6 @@ class FileServer : public FileListTransferCBInterface
 
 			switch (onFileStruct->context.op)
 			{
-				case FILE_SAVEGAME:
-				{
-					ZeroMemory(file, sizeof(file));
-					SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, 0, file);   // SHGFP_TYPE_CURRENT
-
-					switch (buf->GetGame())
-					{
-						case FALLOUT3:
-							strcat(file, "\\My Games\\Fallout3\\Saves\\");
-							break;
-
-						case NEWVEGAS:
-							strcat(file, "\\My Games\\FalloutNV\\Saves\\");
-							break;
-					}
-
-					strcat(file, Utils::FileOnly(onFileStruct->fileName));
-					break;
-				}
-
 				case FILE_MODFILE:
 				{
 					GetModuleFileName(GetModuleHandle(NULL), (LPTSTR) file, MAX_PATH);
@@ -201,6 +181,9 @@ class FileServer : public FileListTransferCBInterface
 					strcat(file, Utils::FileOnly(onFileStruct->fileName));
 					break;
 				}
+
+				default:
+					return true;
 			}
 
 			FILE* fp = fopen(file, "rb");

@@ -33,9 +33,8 @@ pPacket PacketFactory::CreatePacket(unsigned char type, ...)
 
 		case ID_GAME_START:
 		{
-			const char* savegame = va_arg(args, const char*);
-			unsigned int crc = va_arg(args, unsigned int);
-			packet = new pGameStart(savegame, crc);
+			const char* cell = va_arg(args, const char*);
+			packet = new pGameStart(cell);
 			break;
 		}
 
@@ -65,7 +64,7 @@ pPacket PacketFactory::CreatePacket(unsigned char type, ...)
 			NetworkID id = va_arg(args, NetworkID);
 			unsigned int refID = va_arg(args, unsigned int);
 			unsigned int baseID = va_arg(args, unsigned int);
-			char* name = va_arg(args, char*);
+			const char* name = va_arg(args, char*);
 			double X = va_arg(args, double);
 			double Y = va_arg(args, double);
 			double Z = va_arg(args, double);
@@ -362,10 +361,8 @@ void PacketFactory::Access(const pDefault* packet, ...)
 			case ID_GAME_START:
 			{
 				const pGameStart* data = dynamic_cast<const pGameStart*>(packet);
-				char* savegame = va_arg(args, char*);
-				unsigned int* crc = va_arg(args, unsigned int*);
-				strncpy(savegame, data->_data.savegame, sizeof(data->_data.savegame));
-				*crc = data->_data.crc;
+				char* cell = va_arg(args, char*);
+				strncpy(cell, data->_data.cell, sizeof(data->_data.cell));
 				break;
 			}
 
