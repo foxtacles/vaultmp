@@ -68,7 +68,7 @@ static const unsigned Fallout3patch_noRespawn_jmp_dest = 0x0078B2B9;
 static const unsigned FalloutNVpatch_disableNAM = 0x01018814;
 static const unsigned FalloutNVpatch_pluginsVMP = 0x0108282D;
 
-static const unsigned Fallout3patch_pluginsVMP = 0x00E10FF2; // haven't double-checked
+static const unsigned Fallout3patch_pluginsVMP = 0x00E10FF1;
 
 // Those snippets / functions are from FOSE / NVSE, thanks
 
