@@ -251,14 +251,14 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 					if (((GetAsyncKeyState(MapVirtualKey(forward, 1)) & 0x8000) && (GetAsyncKeyState(MapVirtualKey(left, 1)) & 0x8000))
 							|| ((GetAsyncKeyState(MapVirtualKey(backward, 1)) & 0x8000) && (GetAsyncKeyState(MapVirtualKey(right, 1)) & 0x8000)))
 					{
-						unsigned char type = 0x01; // that equals to a Z-angle correction of -45ï¿½
+						unsigned char type = 0x01; // that equals to a Z-angle correction of -45²
 						memcpy((void*)((unsigned) result + 5), &type, 1);
 					}
 
 					else if (((GetAsyncKeyState(MapVirtualKey(forward, 1)) & 0x8000) && (GetAsyncKeyState(MapVirtualKey(right, 1)) & 0x8000))
 							 || ((GetAsyncKeyState(MapVirtualKey(backward, 1)) & 0x8000) && (GetAsyncKeyState(MapVirtualKey(left, 1)) & 0x8000)))
 					{
-						unsigned char type = 0x02; // that equals to a Z-angle correction of 45ï¿½
+						unsigned char type = 0x02; // that equals to a Z-angle correction of 45²
 						memcpy((void*)((unsigned) result + 5), &type, 1);
 					}
 				}
