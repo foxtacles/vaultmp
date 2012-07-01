@@ -68,7 +68,7 @@ static const unsigned Fallout3patch_noRespawn_jmp_dest = 0x0078B2B9;
 static const unsigned FalloutNVpatch_disableNAM = 0x01018814;
 static const unsigned FalloutNVpatch_pluginsVMP = 0x0108282D;
 
-static const unsigned Fallout3patch_pluginsVMP = 0x00E10FF2; // haven't double-checked
+static const unsigned Fallout3patch_pluginsVMP = 0x00E10FF1;
 
 // Those snippets / functions are from FOSE / NVSE, thanks
 
@@ -251,14 +251,14 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 					if (((GetAsyncKeyState(MapVirtualKey(forward, 1)) & 0x8000) && (GetAsyncKeyState(MapVirtualKey(left, 1)) & 0x8000))
 							|| ((GetAsyncKeyState(MapVirtualKey(backward, 1)) & 0x8000) && (GetAsyncKeyState(MapVirtualKey(right, 1)) & 0x8000)))
 					{
-						unsigned char type = 0x01; // that equals to a Z-angle correction of -45²
+						unsigned char type = 0x01; // that equals to a Z-angle correction of -45ï¿½
 						memcpy((void*)((unsigned) result + 5), &type, 1);
 					}
 
 					else if (((GetAsyncKeyState(MapVirtualKey(forward, 1)) & 0x8000) && (GetAsyncKeyState(MapVirtualKey(right, 1)) & 0x8000))
 							 || ((GetAsyncKeyState(MapVirtualKey(backward, 1)) & 0x8000) && (GetAsyncKeyState(MapVirtualKey(left, 1)) & 0x8000)))
 					{
-						unsigned char type = 0x02; // that equals to a Z-angle correction of 45²
+						unsigned char type = 0x02; // that equals to a Z-angle correction of 45ï¿½
 						memcpy((void*)((unsigned) result + 5), &type, 1);
 					}
 				}
