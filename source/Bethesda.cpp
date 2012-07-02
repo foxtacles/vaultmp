@@ -83,7 +83,7 @@ void Bethesda::Initialize()
 	if (crc != Bethesda::savegame.second)
 		throw VaultException("Savegame differs from the server version:\n\n%s\n\nAsk the server owner to send you the file or try to Synchronize with the server", savefile);
 
-	TCHAR curdir[MAX_PATH];
+	TCHAR curdir[MAX_PATH+1];
 	ZeroMemory(curdir, sizeof(curdir));
 	GetModuleFileName(GetModuleHandle(NULL), (LPTSTR) curdir, MAX_PATH);
 	PathRemoveFileSpec(curdir);
@@ -110,11 +110,11 @@ void Bethesda::Initialize()
 	switch (Bethesda::game)
 	{
 		case FALLOUT3:
-			strcat(savefile, "\\Fallout3\\plugins.txt");
+			strcat(savefile, "\\Fallout3\\plugins.vmp");
 			break;
 
 		case NEWVEGAS:
-			strcat(savefile, "\\FalloutNV\\plugins.txt");
+			strcat(savefile, "\\FalloutNV\\plugins.vmp");
 			break;
 	}
 

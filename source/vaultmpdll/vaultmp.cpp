@@ -65,6 +65,11 @@ static const unsigned Fallout3patch_noRespawn_NOP = 0x006D5965; // 2x NOP
 static const unsigned Fallout3patch_noRespawn_jmp_src = 0x0078B230;
 static const unsigned Fallout3patch_noRespawn_jmp_dest = 0x0078B2B9;
 
+static const unsigned FalloutNVpatch_disableNAM = 0x01018814;
+static const unsigned FalloutNVpatch_pluginsVMP = 0x0108282D;
+
+static const unsigned Fallout3patch_pluginsVMP = 0x00E10FF1;
+
 // Those snippets / functions are from FOSE / NVSE, thanks
 
 void SafeWrite8(unsigned int addr, unsigned int data)
@@ -700,7 +705,7 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 
 void PatchGame(HINSTANCE& silverlock)
 {
-	TCHAR curdir[MAX_PATH];
+	TCHAR curdir[MAX_PATH+1];
 	ZeroMemory(curdir, sizeof(curdir));
 	GetModuleFileName(NULL, (LPTSTR) curdir, MAX_PATH);
 
@@ -741,6 +746,8 @@ void PatchGame(HINSTANCE& silverlock)
 			WriteRelCall(Fallout3patch_delegator_src, Fallout3patch_delegator_dest);
 			WriteRelJump(Fallout3patch_noRespawn_jmp_src, Fallout3patch_noRespawn_jmp_dest);
 
+			SafeWrite32(Fallout3patch_pluginsVMP, *(DWORD*)".vmp"); // redirect Plugins.txt
+
 			break;
 		}
 
@@ -759,6 +766,9 @@ void PatchGame(HINSTANCE& silverlock)
 
 			WriteRelCall(FalloutNVpatch_delegatorCall_src, FalloutNVpatch_delegatorCall_dest);
 			WriteRelCall(FalloutNVpatch_delegator_src, FalloutNVpatch_delegator_dest);
+
+			SafeWrite32(FalloutNVpatch_disableNAM, *(DWORD*)".|||"); // disable .NAM files
+			SafeWrite32(FalloutNVpatch_pluginsVMP, *(DWORD*)".vmp"); // redirect Plugins.txt
 
 			break;
 		}
