@@ -90,6 +90,7 @@ dictionary* config = NULL;
 const char* player_name;
 const char* server_name;
 bool multiinst;
+bool memory4gb;
 bool steam;
 unsigned char games;
 
@@ -381,6 +382,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 	player_name = iniparser_getstring(config, "general:name", "");
 	server_name = iniparser_getstring(config, "general:master", "");
 	multiinst = (bool) iniparser_getboolean(config, "general:multiinst", 0);
+	memory4gb = (bool) iniparser_getboolean(config, "general:memory4gb", 1);
 	const char* servers = iniparser_getstring(config,  "general:servers", "");
 
 	char* token;
@@ -745,7 +747,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 							try
 							{
-								Bethesda::InitializeVaultMP(peer, addr, string(name), string(pwd), game, multiinst, game == NEWVEGAS ? steam : false);
+								Bethesda::InitializeVaultMP(peer, addr, string(name), string(pwd), game, multiinst, memory4gb, game == NEWVEGAS ? steam : false);
 							}
 
 							catch (std::exception& e)

@@ -38,6 +38,9 @@ static void PatchGame(HINSTANCE& silverlock);
 static void BethesdaDelegator();
 static vector<void*> delegated;
 
+typedef DWORD (__stdcall * _GetModuleFileNameA)(HMODULE * hModule, LPTSTR * lpFilename, DWORD * nSize);
+static _GetModuleFileNameA GetModuleFileNameA_Original = NULL;
+static _GetModuleFileNameA * _GetModuleFileNameA_IAT = NULL;
 typedef void (__stdcall * _GetSystemTimeAsFileTime)(LPFILETIME * fileTime);
 static _GetSystemTimeAsFileTime GetSystemTimeAsFileTime_Original = NULL;
 static _GetSystemTimeAsFileTime * _GetSystemTimeAsFileTime_IAT = NULL;
@@ -48,14 +51,6 @@ static bool delegate = false;
 static bool DLLerror = false;
 static unsigned char game = 0x00;
 
-static const unsigned FalloutNVpatch_PlayGroup = 0x00494D5C;
-static const unsigned FalloutNVpatch_delegator_src = 0x0086B3E3;
-static const unsigned FalloutNVpatch_delegator_dest = 0x0086E649;
-static const unsigned FalloutNVpatch_delegatorCall_src = 0x0086E64A;
-static const unsigned FalloutNVpatch_delegatorCall_dest = (unsigned)& BethesdaDelegator;
-static const unsigned FalloutNVpatch_noRespawn_NOP = 0x00851304; // 2x NOP
-static const unsigned FalloutNVpatch_noRespawn_jmp = 0x0093FF83;
-
 static const unsigned Fallout3patch_PlayGroup = 0x0045F704;
 static const unsigned Fallout3patch_delegator_src = 0x006EEC86;
 static const unsigned Fallout3patch_delegator_dest = 0x006EDBD9;
@@ -64,11 +59,17 @@ static const unsigned Fallout3patch_delegatorCall_dest = (unsigned)& BethesdaDel
 static const unsigned Fallout3patch_noRespawn_NOP = 0x006D5965; // 2x NOP
 static const unsigned Fallout3patch_noRespawn_jmp_src = 0x0078B230;
 static const unsigned Fallout3patch_noRespawn_jmp_dest = 0x0078B2B9;
+static const unsigned Fallout3patch_pluginsVMP = 0x00E10FF1;
 
+static const unsigned FalloutNVpatch_PlayGroup = 0x00494D5C;
+static const unsigned FalloutNVpatch_delegator_src = 0x0086B3E3;
+static const unsigned FalloutNVpatch_delegator_dest = 0x0086E649;
+static const unsigned FalloutNVpatch_delegatorCall_src = 0x0086E64A;
+static const unsigned FalloutNVpatch_delegatorCall_dest = (unsigned)& BethesdaDelegator;
+static const unsigned FalloutNVpatch_noRespawn_NOP = 0x00851304; // 2x NOP
+static const unsigned FalloutNVpatch_noRespawn_jmp = 0x0093FF83;
 static const unsigned FalloutNVpatch_disableNAM = 0x01018814;
 static const unsigned FalloutNVpatch_pluginsVMP = 0x0108282D;
-
-static const unsigned Fallout3patch_pluginsVMP = 0x00E10FF1;
 
 // Those snippets / functions are from FOSE / NVSE, thanks
 
@@ -157,6 +158,32 @@ void * GetIATAddr(unsigned char * base, const char * searchDllName, const char *
 	}
 
 	return NULL;
+}
+
+// based on Change4GBValue function from fnv4gb_nvse
+void ClearLAAFlag(unsigned char * base)
+{
+	IMAGE_DOS_HEADER    * dosHeader = (IMAGE_DOS_HEADER *)base;
+	IMAGE_NT_HEADERS    * ntHeader = (IMAGE_NT_HEADERS *)(base + dosHeader->e_lfanew);
+	IMAGE_FILE_HEADER   * fileHeader = (IMAGE_FILE_HEADER *)(&ntHeader->FileHeader);
+
+	unsigned int oldProtect;
+
+	VirtualProtect(&fileHeader->Characteristics, sizeof(fileHeader->Characteristics), PAGE_READWRITE, (DWORD*) &oldProtect);
+	//fileHeader->Characteristics |= IMAGE_FILE_LARGE_ADDRESS_AWARE; // set
+	fileHeader->Characteristics &= ~IMAGE_FILE_LARGE_ADDRESS_AWARE; // clear
+	VirtualProtect(&fileHeader->Characteristics, sizeof(fileHeader->Characteristics), oldProtect, (DWORD*) &oldProtect);
+}
+
+DWORD __stdcall GetModuleFileNameA_Hook(HMODULE * hModule, LPTSTR * lpFilename, DWORD * nSize)
+{
+        DWORD ret = GetModuleFileNameA_Original(hModule, lpFilename, nSize);
+        DWORD exe = (DWORD)strstr((char*)lpFilename, ".4gb");
+        if (exe)
+        {
+            SafeWrite32(exe, *(DWORD*)".exe");
+        }
+        return ret;
 }
 
 void __stdcall GetSystemTimeAsFileTime_Hook(LPFILETIME * fileTime)
@@ -574,6 +601,22 @@ void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
 
 DWORD WINAPI vaultmp_pipe(LPVOID data)
 {
+    /* Hook GetModuleFileNameA and clear the LAA flag to trick Steam */
+
+	_GetModuleFileNameA_IAT = (_GetModuleFileNameA *)GetIATAddr((unsigned char *)GetModuleHandle(NULL), "kernel32.dll", "GetModuleFileNameA");
+    if (_GetModuleFileNameA_IAT)
+	{
+	    // yes, this section is really ugly and lacks safety checks
+		GetModuleFileNameA_Original = *_GetModuleFileNameA_IAT + 2;
+		SafeWrite8((DWORD)GetModuleFileNameA_Original - 7, 0xE9); // jmp rel23
+		SafeWrite32((DWORD)GetModuleFileNameA_Original - 6, (DWORD)GetModuleFileNameA_Hook - (DWORD)GetModuleFileNameA_Original - 2);
+		SafeWrite16((DWORD)GetModuleFileNameA_Original - 2, 0xF9EB); // jmp -5
+	}
+	else
+		DLLerror = true;
+
+    ClearLAAFlag((unsigned char *)GetModuleHandle(NULL));
+
 	/* Loading and initalizing vaultgui.dll */
 
 	vaultgui = LoadLibrary("vaultgui.dll");
@@ -603,10 +646,10 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 	// The special Steam hook by NVSE
 	if (buffer[0])
 	{
-		unsigned int oldProtect;
 		_GetSystemTimeAsFileTime_IAT = (_GetSystemTimeAsFileTime *)GetIATAddr((unsigned char *)GetModuleHandle(NULL), "kernel32.dll", "GetSystemTimeAsFileTime");
-		if(_GetSystemTimeAsFileTime_IAT)
+		if (_GetSystemTimeAsFileTime_IAT)
 		{
+            unsigned int oldProtect;
 			VirtualProtect((void *)_GetSystemTimeAsFileTime_IAT, 4, PAGE_EXECUTE_READWRITE, (DWORD*) &oldProtect);
 			GetSystemTimeAsFileTime_Original = *_GetSystemTimeAsFileTime_IAT;
 			*_GetSystemTimeAsFileTime_IAT = GetSystemTimeAsFileTime_Hook;
@@ -713,13 +756,13 @@ void PatchGame(HINSTANCE& silverlock)
 
 	silverlock = NULL;
 
-	if (strstr(curdir, "Fallout3.exe"))
+	if (strstr(curdir, "\\Fallout3.exe"))
 	{
 		game = FALLOUT3;
 		silverlock = LoadLibrary("fose_1_7.dll");
 	}
 
-	else if (strstr(curdir, "FalloutNV.exe"))
+	else if (strstr(curdir, "\\FalloutNV.exe"))
 	{
 		game = NEWVEGAS;
 		silverlock = LoadLibrary("nvse_1_4.dll");

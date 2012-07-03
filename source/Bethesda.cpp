@@ -10,6 +10,7 @@ bool Bethesda::initialized = false;
 string Bethesda::password = "";
 Savegame Bethesda::savegame;
 bool Bethesda::multiinst = false;
+bool Bethesda::memory4gb = true;
 bool Bethesda::steam = false;
 DWORD Bethesda::process = 0;
 ModList Bethesda::modfiles;
@@ -47,12 +48,18 @@ void Bethesda::Initialize()
 	switch (Bethesda::game = game)
 	{
 		case FALLOUT3:
-			strcpy(module, "Fallout3.exe");
+            if (Bethesda::memory4gb)
+                strcpy(module, "Fallout3.4gb");
+            else
+                strcpy(module, "Fallout3.exe");
 			break;
 
 		case NEWVEGAS:
 			SetEnvironmentVariable("SteamAppID", "22380");
-			strcpy(module, "FalloutNV.exe");
+            if (Bethesda::memory4gb)
+                strcpy(module, "FalloutNV.4gb");
+            else
+                strcpy(module, "FalloutNV.exe");
 			break;
 
 		default:
@@ -268,11 +275,12 @@ void Bethesda::Terminate(RakPeerInterface* peer)
 	}
 }
 
-void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, string name, string pwd, unsigned char game, bool multiinst, bool steam)
+void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, string name, string pwd, unsigned char game, bool multiinst, bool memory4gb, bool steam)
 {
 	Bethesda::game = game;
 	Bethesda::password = pwd;
 	Bethesda::multiinst = multiinst;
+	Bethesda::memory4gb = memory4gb;
 	Bethesda::steam = steam;
 	Bethesda::savegame = Savegame();
 	Bethesda::modfiles.clear();
