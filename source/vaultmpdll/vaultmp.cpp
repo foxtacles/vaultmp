@@ -163,9 +163,9 @@ void * GetIATAddr(unsigned char * base, const char * searchDllName, const char *
 // based on Change4GBValue function from fnv4gb_nvse
 void ClearLAAFlag(unsigned char * base)
 {
-	IMAGE_DOS_HEADER    * dosHeader = (IMAGE_DOS_HEADER *)base;
-	IMAGE_NT_HEADERS    * ntHeader = (IMAGE_NT_HEADERS *)(base + dosHeader->e_lfanew);
-	IMAGE_FILE_HEADER   * fileHeader = (IMAGE_FILE_HEADER *)(&ntHeader->FileHeader);
+	IMAGE_DOS_HEADER	* dosHeader = (IMAGE_DOS_HEADER *)base;
+	IMAGE_NT_HEADERS	* ntHeader = (IMAGE_NT_HEADERS *)(base + dosHeader->e_lfanew);
+	IMAGE_FILE_HEADER	* fileHeader = (IMAGE_FILE_HEADER *)(&ntHeader->FileHeader);
 
 	unsigned int oldProtect;
 
@@ -177,13 +177,13 @@ void ClearLAAFlag(unsigned char * base)
 
 DWORD __stdcall GetModuleFileNameA_Hook(HMODULE * hModule, LPTSTR * lpFilename, DWORD * nSize)
 {
-        DWORD ret = GetModuleFileNameA_Original(hModule, lpFilename, nSize);
-        DWORD exe = (DWORD)strstr((char*)lpFilename, ".4gb");
-        if (exe)
-        {
-            SafeWrite32(exe, *(DWORD*)".exe");
-        }
-        return ret;
+	DWORD ret = GetModuleFileNameA_Original(hModule, lpFilename, nSize);
+	DWORD exe = (DWORD)strstr((char*)lpFilename, ".4gb");
+	if (exe)
+	{
+		SafeWrite32(exe, *(DWORD*)".exe");
+	}
+	return ret;
 }
 
 void __stdcall GetSystemTimeAsFileTime_Hook(LPFILETIME * fileTime)
@@ -601,12 +601,12 @@ void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
 
 DWORD WINAPI vaultmp_pipe(LPVOID data)
 {
-    /* Hook GetModuleFileNameA and clear the LAA flag to trick Steam */
+	/* Hook GetModuleFileNameA and clear the LAA flag to trick Steam */
 
 	_GetModuleFileNameA_IAT = (_GetModuleFileNameA *)GetIATAddr((unsigned char *)GetModuleHandle(NULL), "kernel32.dll", "GetModuleFileNameA");
-    if (_GetModuleFileNameA_IAT)
+	if (_GetModuleFileNameA_IAT)
 	{
-	    // yes, this section is really ugly and lacks safety checks
+		// yes, this section is really ugly and lacks safety checks
 		GetModuleFileNameA_Original = *_GetModuleFileNameA_IAT + 2;
 		SafeWrite8((DWORD)GetModuleFileNameA_Original - 7, 0xE9); // jmp rel23
 		SafeWrite32((DWORD)GetModuleFileNameA_Original - 6, (DWORD)GetModuleFileNameA_Hook - (DWORD)GetModuleFileNameA_Original - 2);
@@ -615,7 +615,7 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 	else
 		DLLerror = true;
 
-    ClearLAAFlag((unsigned char *)GetModuleHandle(NULL));
+	ClearLAAFlag((unsigned char *)GetModuleHandle(NULL));
 
 	/* Loading and initalizing vaultgui.dll */
 
@@ -649,12 +649,11 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 		_GetSystemTimeAsFileTime_IAT = (_GetSystemTimeAsFileTime *)GetIATAddr((unsigned char *)GetModuleHandle(NULL), "kernel32.dll", "GetSystemTimeAsFileTime");
 		if (_GetSystemTimeAsFileTime_IAT)
 		{
-            unsigned int oldProtect;
+			unsigned int oldProtect;
 			VirtualProtect((void *)_GetSystemTimeAsFileTime_IAT, 4, PAGE_EXECUTE_READWRITE, (DWORD*) &oldProtect);
 			GetSystemTimeAsFileTime_Original = *_GetSystemTimeAsFileTime_IAT;
 			*_GetSystemTimeAsFileTime_IAT = GetSystemTimeAsFileTime_Hook;
-			unsigned int junk;
-			VirtualProtect((void *)_GetSystemTimeAsFileTime_IAT, 4, oldProtect, (DWORD*) &junk);
+			VirtualProtect((void *)_GetSystemTimeAsFileTime_IAT, 4, oldProtect, (DWORD*) &oldProtect);
 		}
 		else
 			DLLerror = true;

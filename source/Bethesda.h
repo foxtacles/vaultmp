@@ -49,7 +49,7 @@ class Bethesda
 		static unsigned char game;
 		static string password;
 		static bool multiinst;
-        static bool memory4gb;
+		static bool memory4gb;
 		static bool steam;
 		static Savegame savegame;
 		static ModList modfiles;

@@ -48,18 +48,18 @@ void Bethesda::Initialize()
 	switch (Bethesda::game = game)
 	{
 		case FALLOUT3:
-            if (Bethesda::memory4gb)
-                strcpy(module, "Fallout3.4gb");
-            else
-                strcpy(module, "Fallout3.exe");
+			if (Bethesda::memory4gb)
+				strcpy(module, "Fallout3.4gb");
+			else
+				strcpy(module, "Fallout3.exe");
 			break;
 
 		case NEWVEGAS:
 			SetEnvironmentVariable("SteamAppID", "22380");
-            if (Bethesda::memory4gb)
-                strcpy(module, "FalloutNV.4gb");
-            else
-                strcpy(module, "FalloutNV.exe");
+			if (Bethesda::memory4gb)
+				strcpy(module, "FalloutNV.4gb");
+			else
+				strcpy(module, "FalloutNV.exe");
 			break;
 
 		default:
