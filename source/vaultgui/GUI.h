@@ -2,13 +2,14 @@
 #include <d3dx9.h>
 #include <string>
 #include <queue>
+#include "GUIText.h"
 
 using namespace std;
 
 class GUI
 {
 private:
-	string lines[50];
+	GUIText* lines[50];
 	string writingText;
 	ID3DXFont* g_font;
 	LPD3DXSPRITE sprite;
