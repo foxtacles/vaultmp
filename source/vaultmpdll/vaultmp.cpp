@@ -175,11 +175,30 @@ void ClearLAAFlag(unsigned char * base)
 	VirtualProtect(&fileHeader->Characteristics, sizeof(fileHeader->Characteristics), oldProtect, (DWORD*) &oldProtect);
 }
 
+//void __attribute__ ((optimize ("permissive"))) Hotpatch(DWORD* func_orig, DWORD* func_hook)
+void Hotpatch(DWORD* func_orig, DWORD* func_hook)
+{
+	// 0xFF8B == mov edi, edi == hotpatch prologue
+	// 0xF9EB == jmp short -5 == formerly modified
+	if (*((unsigned short*)   ((DWORD)*func_orig    )) == 0xFF8B     \
+	&& (*((unsigned int*)     ((DWORD)*func_orig - 5)) == 0x90909090 \
+	||  *((unsigned int*)     ((DWORD)*func_orig - 5)) == 0xCCCCCCCC))
+	{
+		unsigned int oldProtect;
+		VirtualProtect((void*)((DWORD)*func_orig - 5), 9, PAGE_EXECUTE_READWRITE, (DWORD*) &oldProtect);
+		*((unsigned char*)    ((DWORD)*func_orig - 5)) = 0xE9; // jmp rel32
+		*((unsigned int*)     ((DWORD)*func_orig - 4)) = (DWORD)func_hook - (DWORD)*func_orig;
+		*((unsigned short*)   ((DWORD)*func_orig    )) = 0xF9EB; // jmp short -5
+		VirtualProtect((void*)((DWORD)*func_orig - 5), 9, oldProtect, (DWORD*) &oldProtect);
+		*func_orig += 2; // this is why the function wants a pointer to a variable
+	}
+}
+
 DWORD __stdcall GetModuleFileNameA_Hook(HMODULE * hModule, LPTSTR * lpFilename, DWORD * nSize)
 {
 	DWORD ret = GetModuleFileNameA_Original(hModule, lpFilename, nSize);
 	DWORD exe = (DWORD)strstr((char*)lpFilename, ".4gb");
-	if (exe)
+	if (exe)// && *((unsigned char*)((DWORD)exe + 4)) == 0)
 	{
 		SafeWrite32(exe, *(DWORD*)".exe");
 	}
@@ -606,11 +625,8 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 	_GetModuleFileNameA_IAT = (_GetModuleFileNameA *)GetIATAddr((unsigned char *)GetModuleHandle(NULL), "kernel32.dll", "GetModuleFileNameA");
 	if (_GetModuleFileNameA_IAT)
 	{
-		// yes, this section is really ugly and lacks safety checks
-		GetModuleFileNameA_Original = *_GetModuleFileNameA_IAT + 2;
-		SafeWrite8((DWORD)GetModuleFileNameA_Original - 7, 0xE9); // jmp rel23
-		SafeWrite32((DWORD)GetModuleFileNameA_Original - 6, (DWORD)GetModuleFileNameA_Hook - (DWORD)GetModuleFileNameA_Original - 2);
-		SafeWrite16((DWORD)GetModuleFileNameA_Original - 2, 0xF9EB); // jmp -5
+		GetModuleFileNameA_Original = *_GetModuleFileNameA_IAT;
+		Hotpatch((DWORD*)&GetModuleFileNameA_Original, (DWORD*)&GetModuleFileNameA_Hook);
 	}
 	else
 		DLLerror = true;
