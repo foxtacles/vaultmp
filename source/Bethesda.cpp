@@ -87,11 +87,11 @@ void Bethesda::Initialize()
 	switch (Bethesda::game)
 	{
 		case FALLOUT3:
-			strcat(savefile, "\\Fallout3\\plugins.vmp");
+			strcat(pluginsdir, "\\Fallout3\\plugins.vmp");
 			break;
 
 		case NEWVEGAS:
-			strcat(savefile, "\\FalloutNV\\plugins.vmp");
+			strcat(pluginsdir, "\\FalloutNV\\plugins.vmp");
 			break;
 	}
 
