@@ -6,6 +6,8 @@ GUI::GUI()
 	locked=false;
 	sizeMult=1.0;
 	scrollOffset=0;
+	for(int i=0;i<sizeof(lines)/sizeof(GUIText*);i++)
+		lines[i]=NULL;
 }
 
 GUI::~GUI()
@@ -76,11 +78,16 @@ void GUI::Show(bool v)
 
 void GUI::AddLine(string s)
 {
+	if(lines[49])
+	{
+		delete lines[49];
+		lines[49]=0;
+	}
 	for(int i=48;i>=0;i--)
 	{
 		lines[i+1]=lines[i];
 	}
-	lines[0]=s;
+	lines[0]=new GUIText((char*)s.c_str(),g_font);
 }
 
 void GUI::AddToQueue(string a)
@@ -180,11 +187,13 @@ void GUI::Draw(IDirect3DDevice9* d)
 
 	for(int i=0;i<10;i++)
 	{
-		string t=lines[i+(scrollOffset*10)];
+		GUIText *t=lines[i+(scrollOffset*10)];
 
-		RECT font_rect;
+		/*RECT font_rect;
 		SetRect(&font_rect,15+(15*sizeMult),15+(18*sizeMult)+(((9-i)*20)*sizeMult),200,32);
-		g_font->DrawText(NULL,t.c_str(),-1,&font_rect,DT_LEFT|DT_NOCLIP,0xFF000000);
+		g_font->DrawText(NULL,t.c_str(),-1,&font_rect,DT_LEFT|DT_NOCLIP,0xFF000000);*/
+		if(t)
+			t->Draw(15+(15*sizeMult),15+(18*sizeMult)+(((9-i)*20)*sizeMult));
 	}
 
 	string t=writingText;

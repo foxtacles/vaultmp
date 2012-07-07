@@ -58,7 +58,7 @@ void Bethesda::Initialize()
 			throw VaultException("Bad game ID %08X", Bethesda::game);
 	}
 
-	TCHAR curdir[MAX_PATH];
+	TCHAR curdir[MAX_PATH+1];
 	unsigned int crc;
 	ZeroMemory(curdir, sizeof(curdir));
 	GetModuleFileName(GetModuleHandle(NULL), (LPTSTR) curdir, MAX_PATH);
@@ -87,11 +87,11 @@ void Bethesda::Initialize()
 	switch (Bethesda::game)
 	{
 		case FALLOUT3:
-			strcat(pluginsdir, "\\Fallout3\\plugins.txt");
+			strcat(savefile, "\\Fallout3\\plugins.vmp");
 			break;
 
 		case NEWVEGAS:
-			strcat(pluginsdir, "\\FalloutNV\\plugins.txt");
+			strcat(savefile, "\\FalloutNV\\plugins.vmp");
 			break;
 	}
 
