@@ -68,7 +68,7 @@ void Bethesda::Initialize()
 
 	for (ModList::iterator it = modfiles.begin(); it != modfiles.end(); ++it)
 	{
-		TCHAR modfile[MAX_PATH];
+		TCHAR modfile[MAX_PATH+1];
 		ZeroMemory(modfile, sizeof(modfile));
 		strcat(modfile, curdir);
 		strcat(modfile, it->first.c_str());
@@ -80,7 +80,7 @@ void Bethesda::Initialize()
 			throw VaultException("Modfile differs from the server version:\n\n%s\n\nAsk the server owner to send you the file or try to Synchronize with the server", modfile);
 	}
 
-	TCHAR pluginsdir[MAX_PATH];
+	TCHAR pluginsdir[MAX_PATH+1];
 	ZeroMemory(pluginsdir, sizeof(pluginsdir));
 	SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, pluginsdir);   // SHGFP_TYPE_CURRENT
 
