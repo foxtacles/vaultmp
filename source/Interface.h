@@ -3,8 +3,11 @@
 
 #include "vaultmp.h"
 
+#ifndef VAULTSERVER
 #include <winsock2.h>
 #include <tlhelp32.h>
+#endif
+
 #include <string>
 #include <list>
 #include <map>
@@ -18,7 +21,13 @@
 #include "API.h"
 #include "CriticalSection.h"
 #include "Data.h"
+
+#ifndef VAULTSERVER
 #include "Pipe.h"
+#else
+class PipeServer;
+class PipeClient;
+#endif
 
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"
