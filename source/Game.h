@@ -156,6 +156,10 @@ class Game
 		 */
 		static thread SetActorAlerted(FactoryObject& reference, unsigned int key = 0);
 		/**
+		 * \brief Plays an animation on an Actor
+		 */
+		static void SetActorAnimation(FactoryObject& reference, unsigned char anim, unsigned int key = 0);
+		/**
 		 * \brief Sets the moving animation of an Actor
 		 */
 		static void SetActorMovingAnimation(FactoryObject& reference, unsigned int key = 0);

@@ -834,7 +834,7 @@ thread Game::SetActorAlerted(FactoryObject& reference, unsigned int key)
 	return t;
 }
 
-void Game::SetActorMovingAnimation(FactoryObject& reference, unsigned int key)
+void Game::SetActorAnimation(FactoryObject& reference, unsigned char anim, unsigned int key)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -843,9 +843,19 @@ void Game::SetActorMovingAnimation(FactoryObject& reference, unsigned int key)
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("PlayGroup", ParamContainer{actor->GetReferenceParam(), RawParameter(API::RetrieveAnim_Reverse(actor->GetActorMovingAnimation())), RawParameter(true)}, key);
+	Interface::ExecuteCommand("PlayGroup", ParamContainer{actor->GetReferenceParam(), RawParameter(API::RetrieveAnim_Reverse(anim)), RawParameter(true)}, key);
 
 	Interface::EndDynamic();
+}
+
+void Game::SetActorMovingAnimation(FactoryObject& reference, unsigned int key)
+{
+	Actor* actor = vaultcast<Actor>(reference);
+
+	if (!actor)
+		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+
+	SetActorAnimation(reference, actor->GetActorMovingAnimation(), key);
 }
 
 void Game::SetActorWeaponAnimation(FactoryObject& reference, unsigned int key)
@@ -855,11 +865,7 @@ void Game::SetActorWeaponAnimation(FactoryObject& reference, unsigned int key)
 	if (!actor)
 		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
 
-	Interface::StartDynamic();
-
-	Interface::ExecuteCommand("PlayGroup", ParamContainer{actor->GetReferenceParam(), RawParameter(API::RetrieveAnim_Reverse(actor->GetActorWeaponAnimation())), RawParameter(true)}, key);
-
-	Interface::EndDynamic();
+	SetActorAnimation(reference, actor->GetActorWeaponAnimation(), key);
 }
 
 void Game::KillActor(FactoryObject& reference, unsigned int key)
@@ -1006,7 +1012,20 @@ void Game::net_SetAngle(FactoryObject& reference, unsigned char axis, double val
 	bool result = (bool) object->SetAngle(axis, value);
 
 	if (result && object->GetEnabled())
+	{
 		SetAngle(reference);
+
+		if (axis == Axis_X)
+		{
+			Actor* actor = vaultcast<Actor>(object);
+
+			if (actor && actor->GetActorWeaponAnimation() == AnimGroup_AimIS)
+			{
+				SetActorAnimation(reference, AnimGroup_AimISDown);
+				SetActorAnimation(reference, AnimGroup_AimISUp);
+			}
+		}
+	}
 }
 
 void Game::net_SetCell(FactoryObject& reference, FactoryObject& player, unsigned int cell)
@@ -1130,10 +1149,19 @@ void Game::net_SetActorState(FactoryObject& reference, unsigned char moving, uns
 			SetPos(reference);
 	}
 
+	unsigned char prev_weapon = actor->GetActorWeaponAnimation();
 	result = actor->SetActorWeaponAnimation(weapon);
 
-	if (result && enabled && actor->GetActorAlerted() && weapon != AnimGroup_Idle && weapon != AnimGroup_Aim && weapon != AnimGroup_Equip && weapon != AnimGroup_Unequip && weapon != AnimGroup_Holster)
+	if (result && enabled && actor->GetActorAlerted() && weapon != AnimGroup_Idle && weapon != AnimGroup_Equip && weapon != AnimGroup_Unequip && weapon != AnimGroup_Holster)
+	{
+		if (weapon == AnimGroup_Aim && prev_weapon == AnimGroup_AimIS)
+		{
+			SetActorAnimation(reference, AnimGroup_AimDown);
+			SetActorAnimation(reference, AnimGroup_AimUp);
+		}
+
 		SetActorWeaponAnimation(reference, result->Lock());
+	}
 }
 
 void Game::net_SetActorDead(FactoryObject& reference, bool dead)
