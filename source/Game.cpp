@@ -160,6 +160,9 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Functions::Func_UnequipItem:
 				break;
 
+			case Functions::Func_FireWeapon:
+				break;
+
 			case Functions::Func_Chat:
 			{
 				if (!result)
