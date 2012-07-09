@@ -139,6 +139,7 @@ namespace Values
 		Func_IsMoving                   = 0x1019,
 		Func_MarkForDelete              = 0x11BB,
 		Func_IsAnimPlaying              = 0x1128,
+		Func_FireWeapon					= 0x11E2,
 
 		Func_GetActorState              = 0x0001 | VAULTFUNCTION,
 		Func_Chat						= 0x0002 | VAULTFUNCTION,

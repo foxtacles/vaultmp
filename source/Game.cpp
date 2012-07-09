@@ -882,6 +882,20 @@ void Game::KillActor(FactoryObject& reference, unsigned int key)
 	Interface::EndDynamic();
 }
 
+void Game::FireWeapon(FactoryObject& reference, unsigned int weapon, unsigned int key)
+{
+	Actor* actor = vaultcast<Actor>(reference);
+
+	if (!actor)
+		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("FireWeapon", ParamContainer{actor->GetReferenceParam(), RawParameter(weapon)}, key);
+
+	Interface::EndDynamic();
+}
+
 void Game::AddItem(FactoryObject& reference, FactoryObject& item, unsigned int key)
 {
 	Item* _item = vaultcast<Item>(item);
@@ -1152,7 +1166,8 @@ void Game::net_SetActorState(FactoryObject& reference, unsigned char moving, uns
 	unsigned char prev_weapon = actor->GetActorWeaponAnimation();
 	result = actor->SetActorWeaponAnimation(weapon);
 
-	if (result && enabled && actor->GetActorAlerted() && weapon != AnimGroup_Idle && weapon != AnimGroup_Equip && weapon != AnimGroup_Unequip && weapon != AnimGroup_Holster)
+	if (result && enabled && actor->GetActorAlerted() && weapon != AnimGroup_Idle && weapon != AnimGroup_Equip && weapon != AnimGroup_Unequip && weapon != AnimGroup_Holster &&
+		weapon != AnimGroup_AttackLeftIS && weapon != AnimGroup_AttackRightIS && (weapon != AnimGroup_Aim || prev_weapon == AnimGroup_AimIS))
 	{
 		if (weapon == AnimGroup_Aim && prev_weapon == AnimGroup_AimIS)
 		{
@@ -1161,6 +1176,12 @@ void Game::net_SetActorState(FactoryObject& reference, unsigned char moving, uns
 		}
 
 		SetActorWeaponAnimation(reference, result->Lock());
+
+		if (weapon == AnimGroup_AimIS)
+		{
+			SetActorAnimation(reference, AnimGroup_AimISDown);
+			SetActorAnimation(reference, AnimGroup_AimISUp);
+		}
 	}
 }
 
@@ -1198,6 +1219,16 @@ void Game::net_SetActorDead(FactoryObject& reference, bool dead)
 			});
 		}
 	}
+}
+
+void Game::net_FireWeapon(FactoryObject& reference, unsigned int weapon)
+{
+	Actor* actor = vaultcast<Actor>(reference);
+
+	if (!actor)
+		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+
+	FireWeapon(reference, weapon);
 }
 
 void Game::net_UIMessage(string message)

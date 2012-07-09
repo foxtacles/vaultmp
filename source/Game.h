@@ -172,6 +172,10 @@ class Game
 		 */
 		static void KillActor(FactoryObject& reference, unsigned int key = 0);
 		/**
+		 * \brief Makes an Actor fire a weapon
+		 */
+		static void FireWeapon(FactoryObject& reference, unsigned int weapon, unsigned int key = 0);
+		/**
 		 * \brief Adds an Item to a Container
 		 */
 		static void AddItem(FactoryObject& reference, FactoryObject& item, unsigned int key = 0);
@@ -228,6 +232,10 @@ class Game
 		 * \brief Network function to handle Actor death
 		 */
 		static void net_SetActorDead(FactoryObject& reference, bool dead);
+		/**
+		 * \brief Network function to handle Actor fire weapon
+		 */
+		static void net_FireWeapon(FactoryObject& reference, unsigned int weapon);
 		/**
 		 * \brief Network function to handle UI message
 		 */

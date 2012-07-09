@@ -4,6 +4,8 @@
 Debug* Server::debug = NULL;
 #endif
 
+using namespace Values;
+
 #ifdef VAULTMP_DEBUG
 void Server::SetDebugHandler(Debug* debug)
 {
@@ -239,17 +241,59 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, FactoryObject& reference,
 		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
 
 	NetworkResponse response;
-	bool result, _alerted, _sneaking;
+	bool result, _alerted, _sneaking, _weapon;
 
 	_alerted = (bool) actor->SetActorAlerted(alerted);
 	_sneaking = (bool) actor->SetActorSneaking(sneaking);
-	result = ((bool) actor->SetActorMovingAnimation(moving) | (bool) actor->SetActorMovingXY(movingxy) | (bool) actor->SetActorWeaponAnimation(weapon) | _alerted | _sneaking);
+	_weapon = (bool) actor->SetActorWeaponAnimation(weapon);
+	result = ((bool) actor->SetActorMovingAnimation(moving) | (bool) actor->SetActorMovingXY(movingxy) | _weapon | _alerted | _sneaking);
 
 	if (result)
 	{
 		response.push_back(Network::CreateResponse(
 			PacketFactory::CreatePacket(ID_UPDATE_STATE, actor->GetNetworkID(), moving, movingxy, weapon, alerted, sneaking),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
+
+		if (_weapon)
+		{
+			if (weapon >= AnimGroup_AttackPower && weapon <= AnimGroup_AttackRightPower)
+			{
+				// heavy punch
+				// OnActorPunch
+			}
+			else if (weapon >= AnimGroup_AttackLeft && weapon <= AnimGroup_AttackRightISDown)
+			{
+				list<NetworkID> weapons = actor->GetItemTypes("WEAP");
+				unsigned int baseID = 0x00000000;
+
+				// this won't reliably work if the actor has equipped more than one weapon
+				for (NetworkID& weapon : weapons)
+				{
+					FactoryObject _reference = GameFactory::GetObject(weapon);
+					Item* item = vaultcast<Item>(_reference);
+
+					if (item->GetItemEquipped())
+					{
+						baseID = item->GetBase();
+						break;
+					}
+				}
+
+				if (baseID)
+				{
+					response.push_back(Network::CreateResponse(
+						PacketFactory::CreatePacket(ID_UPDATE_FIREWEAPON, actor->GetNetworkID(), baseID),
+						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
+
+					// OnActorFireWeapon
+				}
+				else
+				{
+					// Normal punch
+					// OnActorPunch
+				}
+			}
+		}
 
 		if (_alerted)
 			Script::OnActorAlert(reference, alerted);

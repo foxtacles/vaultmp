@@ -192,6 +192,14 @@ pPacket PacketFactory::CreatePacket(unsigned char type, ...)
 			break;
 		}
 
+		case ID_UPDATE_FIREWEAPON:
+		{
+			NetworkID id = va_arg(args, NetworkID);
+			unsigned int weapon = va_arg(args, unsigned int);
+			packet = new pActorFireweapon(id, weapon);
+			break;
+		}
+
 		case ID_UPDATE_CONTROL:
 		{
 			NetworkID id = va_arg(args, NetworkID);
@@ -304,6 +312,10 @@ pPacket PacketFactory::CreatePacket(unsigned char* stream, unsigned int len)
 
 				case ID_UPDATE_DEAD:
 					packet = new pActorDead(stream, len);
+					break;
+
+				case ID_UPDATE_FIREWEAPON:
+					packet = new pActorFireweapon(stream, len);
 					break;
 
 				case ID_UPDATE_CONTROL:
@@ -635,6 +647,16 @@ void PacketFactory::Access(const pDefault* packet, ...)
 						bool* dead = va_arg(args, bool*);
 						*id = update->id;
 						*dead = update->_data.dead;
+						break;
+					}
+
+					case ID_UPDATE_FIREWEAPON:
+					{
+						const pActorFireweapon* update = dynamic_cast<const pActorFireweapon*>(data);
+						NetworkID* id = va_arg(args, NetworkID*);
+						unsigned int* weapon = va_arg(args, unsigned int*);
+						*id = update->id;
+						*weapon = update->_data.weapon;
 						break;
 					}
 
