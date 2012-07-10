@@ -96,8 +96,8 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 					{
 						chatting=false;
 						gl_pmyIDirect3DDevice9->chatbox.Lock();
-						//gl_pmyIDirect3DDevice9->chatbox.AddToQueue(chatbox_text);
-						gl_pmyIDirect3DDevice9->chatbox.AddLine(chatbox_text);
+						gl_pmyIDirect3DDevice9->chatbox.AddToQueue(chatbox_text);
+						//gl_pmyIDirect3DDevice9->chatbox.AddLine(chatbox_text);
 						gl_pmyIDirect3DDevice9->chatbox.Unlock();
 						chatbox_text="";
 						gl_pmyIDirect3DDevice9->chatbox.SetWriting("");
