@@ -2,12 +2,15 @@
 
 namespace ESMLoader
 {
+	vector<standardRecord> recordPointers;
 
-	vector<CRecord*> records;
+	vector<RECORD_NPC> NPCList;
+	vector<RECORD_WEAP> WeaponList;
+	vector<RECORD_AMMO> AmmoList;
+	
+	int indent=0;
 
-	void ParseGroup(char** cursor,CGroup* grp);
-
-	int ae_load_file_to_memory(const char *filename, char **result) 
+	int load_file_to_memory(const char *filename, char **result) 
 	{ 
 		int size = 0;
 		FILE *f = fopen(filename, "rb");
@@ -30,137 +33,236 @@ namespace ESMLoader
 		return size;
 	}
 
-	void ParseSubRecord(CField* f,CRecord *r)
+	char* LoopSubRecord(char* ptr,int parent)
 	{
-		char* tmp=f->GetType();
-		if(strncmp(tmp,"EDID",4)==0)
+
+		if(strncmp(ptr,"EDID",4)==0)
 		{
-			strcpy(r->editorID,f->GetDataStart());
+			if(sizeof((recordPointers[parent]).EDID)<(*(unsigned short*)(ptr+4)))
+				cout<<"Editor ID overflow!"<<endl;
+			else
+				strncpy((recordPointers[parent]).EDID,ptr+6,*(unsigned short*)(ptr+4));
 		}
-		else if(strncmp(tmp,"NAME",4)==0)
+
+		if(strncmp(ptr,"FULL",4)==0)
 		{
-			memcpy(&r->paramFormID,f->GetDataStart(),4);
+			if(sizeof((recordPointers[parent]).FULL)<(*(unsigned short*)(ptr+4)))
+				cout<<"Full Name overflow!("<<*(unsigned short*)(ptr+4)<<")"<<endl;
+			else
+				strncpy((recordPointers[parent]).FULL,ptr+6,*(unsigned short*)(ptr+4));
 		}
-		else if(strncmp(tmp,"DATA",4)==0&&(strncmp(r->GetType(),"REFR",4)==0||strncmp(r->GetType(),"ACHR",4)==0))
-		{
-			//It's a refr, save the coords
-			memcpy(r->pos,f->GetDataStart(),12);
-		}
-		else if(strncmp(tmp,"XCLC",4)==0)
-		{
-			//It's a refr, save the coords
-			memcpy(r->grid,f->GetDataStart(),8);
-		}
+
+		if(strncmp(ptr,"XCLC",4)==0)
+			memcpy((recordPointers[parent]).XCLC,ptr+6,8);
+
+		if(strncmp(ptr,"MNAM",4)==0)
+			memcpy(&((recordPointers[parent]).MNAM),ptr+6,16);
+
+		if(strncmp(ptr,"ONAM",4)==0)
+			memcpy(&((recordPointers[parent]).ONAM),ptr+6,(sizeof(float)*3));
+
+		return ptr+*(unsigned short*)(ptr+4)+6;
 	}
 
-	void ParseRecord(char** cursor,CRecord* r)
+	char* LoopRECORD(char* pt,int deep,int pparent)
 	{
-			while((*cursor)<r->GetDataEnd())
-			{
-				//Check if is a record
-				if((*cursor)[0]=='W'&&(*cursor)[1]=='R'&&(*cursor)[2]=='L'&&(*cursor)[3]=='D')
-				{
-					CRecord p;
-					p.Load(*cursor);
-					(*cursor)+=sizeof(Record);
-	#ifdef DUMP
-					p.Dump();
-	#endif
-					ParseRecord(cursor,&p);
-				}
-				else
-				{
-					CField f;
-					f.Load(*cursor);
-	#ifdef DUMP
-					f.Dump();
-	#endif
-					(*cursor)+=f.Size();
+		standardRecord tmp;
+		tmp.EDID[0]=0;
+		tmp.FULL[0]=0;
+		recordPointers.push_back(tmp);
 
-					ParseSubRecord(&f,r);
-				}
-			}
-	}
+		
 
-	void ParseGroup(char** cursor,CGroup* grp)
-	{
-		while((*cursor)<grp->GetDataEnd())
+
+		int current=recordPointers.size()-1;
+		(recordPointers[current]).type=RECORD_RECORD;
+		(recordPointers[current]).groupType=-1;
+		(recordPointers[current]).parent=pparent;
+		(recordPointers[current]).start=pt;
+
+		(recordPointers[current]).EDID[0]=0;
+		(recordPointers[current]).FULL[0]=0;
+		(recordPointers[current]).formID=*(int*)(pt+12);
+
+		memset(&(recordPointers[current]).MNAM,0,sizeof((recordPointers[current]).MNAM));
+
+		(recordPointers[current]).end=(recordPointers[current]).start+(*(int*)(pt+4))+24;
+
+		//Check if compressed or not
+		int flags=*(int*)((recordPointers[current]).start+8);
+		if(flags&0x00040000)
 		{
-			//If is a group, don't read the records
-			if(((*cursor)[0]=='G'&&(*cursor)[1]=='R'&&(*cursor)[2]=='U'&&(*cursor)[3]=='P'))
-			{
-				//cout<<"----GRUP Record"<<endl;
-				//cin.get();
-				CGroup p;
-				p.Load(*cursor);
-				(*cursor)+=sizeof(Group);
-	#ifdef DUMP
-				p.Dump();
-	#endif
-				ParseGroup(cursor,&p);
-				//cout<<"----GRUP Record end"<<endl;
-				//cin.get();
-			}
+			//Compressed! Let's decompress and parse it....
+			static char buffer[1*1000*1000];	//1MB should be fine!
+			int sizeDecompressed=*(int*)((recordPointers[current]).start+24);
+			int compressedLength=(*(int*)(pt+4))-4;
+			if(sizeDecompressed>sizeof(buffer))
+				cout<<"Error, buffer too short"<<endl;
 			else
 			{
-				CRecord *r=new CRecord();
-				r->Load(*cursor);
-				(*cursor)+=sizeof(Record);
-	#ifdef DUMP
-				r->Dump();
-	#endif
-				if(r->DataCompressed()||strncmp("WRLD",r->GetType(),4)==0)
+				char* ppp=buffer;
+				char* pppEnd=buffer+sizeDecompressed;
+
+				int sizeOfBuffer=sizeof(buffer);
+
+				uncompress((Bytef *)buffer,(uLongf *)&sizeOfBuffer,(Bytef *)(recordPointers[current]).start+24+4,(uLongf)compressedLength);
+
+				while(ppp<pppEnd)
 				{
-					(*cursor)-=sizeof(Record);
-					(*cursor)+=r->Size();
-					//cout<<"Compressed data"<<endl;
-					continue;
+					if(strncmp("OFST",ppp,4)==0)
+						break;
+					ppp=LoopSubRecord(ppp,current);
 				}
-				ParseRecord(cursor,r);
-				records.push_back(r);
+			}
+		}
+		else
+		{
+		
+			char* ppp=(recordPointers[current]).start+24;
+			{
+				while(ppp<(recordPointers[current]).end)
+				{
+					if(strncmp("OFST",ppp,4)==0)
+						break;
+					ppp=LoopSubRecord(ppp,current);
+				}
+			}
+
+		}
+
+		return (recordPointers[current]).end;
+	}
+
+	char* LoopGRUP(char* pt,int deep,int pparent)
+	{
+		standardRecord tmp;
+		recordPointers.push_back(tmp);
+
+		int current=recordPointers.size()-1;
+
+		(recordPointers[current]).parent=pparent;
+
+		(recordPointers[current]).groupType=*(int*)(pt+12);
+
+		(recordPointers[current]).start=pt;
+		if(pt[0]=='G'&&pt[1]=='R'&&pt[2]=='U'&&pt[3]=='P')
+		{
+			(recordPointers[current]).end=(recordPointers[current]).start+(*(int*)(pt+4));
+			deep=0;
+			(recordPointers[current]).type=RECORD_GROUP;
+		}
+		else
+		{
+			cout<<"ERROR!!!"<<endl;
+		}
+
+		{
+			char* ppp=(recordPointers[current]).start+24;
+
+			{
+				//Record!
+				while(ppp<(recordPointers[current]).end)
+				{
+					if(ppp[0]=='G'&&ppp[1]=='R'&&ppp[2]=='U'&&ppp[3]=='P')
+					{
+						//return sr->end-sr->start;
+						ppp=LoopGRUP(ppp,1,current);
+					}
+					else
+						ppp=LoopRECORD(ppp,1,current);
+
+				}
+			}
+		}
+		return (recordPointers[current]).end;
+	}
+
+	void ParseLoadedData()
+	{
+		for(int i=0;i<recordPointers.size();i++)
+		{
+			char* type=recordPointers[i].start;
+
+			if(strncmp(type,"NPC_",4)==0||strncmp(type,"LVLN",4)==0)
+			{
+				RECORD_NPC tmp;
+				strcpy(tmp.editorID,recordPointers[i].EDID);
+				strcpy(tmp.fullName,recordPointers[i].FULL);
+				tmp.formID=recordPointers[i].formID;
+
+				NPCList.push_back(tmp);
+			}
+			
+			if(strncmp(type,"WEAP",4)==0)
+			{
+				RECORD_WEAP tmp;
+				strcpy(tmp.editorID,recordPointers[i].EDID);
+				strcpy(tmp.fullName,recordPointers[i].FULL);
+				tmp.formID=recordPointers[i].formID;
+
+				WeaponList.push_back(tmp);
+			}
+
+			if(strncmp(type,"AMMO",4)==0)
+			{
+				RECORD_AMMO tmp;
+				strcpy(tmp.editorID,recordPointers[i].EDID);
+				strcpy(tmp.fullName,recordPointers[i].FULL);
+				tmp.formID=recordPointers[i].formID;
+
+				AmmoList.push_back(tmp);
+			}
+
+			if(strncmp(type,"WRLD",4)==0)
+			{
+				//If it's a wrld record, next element is a group containing all his the cells :)
+				int k=i+1;
+				char* start=recordPointers[k].start;
+				char* end=recordPointers[k].end;
+
+				//Looking for world childs
+
+				for(int j=k+1;j<recordPointers.size()&&recordPointers[j].end<end;j++)
+				{
+					if(recordPointers[j].type==RECORD_RECORD)
+					{
+						char *r=recordPointers[j].start;
+						if(strncmp(r,"CELL",4)==0)
+						{
+						
+						}
+					}
+				}
+
 			}
 		}
 	}
 
 	void Load(char* f)
 	{
+		vector<standardRecord> emptyVector;
+
 		//Load file in memory
 		int size=0;
 		char *ptr=0;
 		char* cursor=0;
-		size=ae_load_file_to_memory(f,&ptr);
+		size=load_file_to_memory(f,&ptr);
 		cursor=ptr;
 
 		if(size>0&&ptr!=0)
 		{
-			//First Part of the file is a Record
-			CRecord header;
-			header.Load(ptr);
-	#ifdef DUMP
-			header.Dump();
-	#endif
-			cursor+=header.Size();
+			cursor=ptr+24+(*(int*)(ptr+4));
 			while(cursor<(ptr+size))
-			{
-				CGroup grp;
-				grp.Load(cursor);
-	#ifdef DUMP
-				grp.Dump();
-	#endif
-				cursor=grp.GetDataStart();
-				ParseGroup(&cursor,&grp);
-			}
+				cursor=LoopGRUP(cursor,0,0);
 		}
 
+		ParseLoadedData();
+
 		delete ptr;
-	}
-	
-	void Unload()
-	{
-		for(int i=0;i<records.size();i++)
-		{
-			delete records[i];
-		}
+
+		//Trick to clear used ram by the vector
+		recordPointers.swap(emptyVector);
+		recordPointers.clear();
 	}
 
 };
