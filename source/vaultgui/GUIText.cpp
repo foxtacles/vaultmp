@@ -112,6 +112,7 @@ GUIText::GUIText( char* s , ID3DXFont* f )
 		//TODO:Calculate top offset for line breaks
 		textChunks[i].offsetY=0;
 	}
+
 	DEBUG("TextChunks:"<<textChunks.size()<<"("<<textChunks[0].start<<" - "<<textChunks[0].end<<")")
 }
 

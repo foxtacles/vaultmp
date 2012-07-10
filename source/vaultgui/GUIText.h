@@ -21,6 +21,8 @@ class GUIText
 	char str[200];
 	vector<GUIColorChunk> textChunks;
 	ID3DXFont* font;
+
+	string overflowingText;
 public:
 	GUIText(char*,ID3DXFont*);
 	~GUIText();
