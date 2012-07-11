@@ -32,7 +32,7 @@ GUIText::GUIText( char* s , ID3DXFont* f )
 					GUIColorChunk tmp;
 					tmp.color=colorsHex[k];
 					tmp.start=lastIndex;
-					tmp.end=i-1;
+					tmp.end=i;
 					lastIndex=strlen(colorsName[k])+1+i;
 					done=true;
 					textChunks.push_back((tmp));
@@ -50,12 +50,12 @@ GUIText::GUIText( char* s , ID3DXFont* f )
 					GUIColorChunk tmp;
 					tmp.color=predefinedColorsHex[str[i+1]-'0'];
 					tmp.start=lastIndex;
-					tmp.end=i-1;
+					tmp.end=i;
 					lastIndex=i+1+1;
 					textChunks.push_back((tmp));
 				}
 			else
-				if(strlen(str+i)>3&&IsHex(str[i+1])&&IsHex(str[i+2])&&IsHex(str[i+3])&&!IsHex(str[i+4]))
+				if(strlen(str+i)>3&&IsHex(str[i+1])&&IsHex(str[i+2])&&IsHex(str[i+3]))
 				{
 					//3 byte hex colors
 					int color=0xFF000000;
@@ -81,7 +81,7 @@ GUIText::GUIText( char* s , ID3DXFont* f )
 					GUIColorChunk tmp;
 					tmp.color=color;
 					tmp.start=lastIndex;
-					tmp.end=i-1;
+					tmp.end=i;
 					lastIndex=i+4;
 					textChunks.push_back((tmp));
 				}
@@ -119,7 +119,14 @@ GUIText::GUIText( char* s , ID3DXFont* f )
 		if(i>0)
 		{
 			strncpy(tmp,str+textChunks[i-1].start,textChunks[i-1].end-textChunks[i-1].start);
-			font->DrawTextA(NULL,tmp,-1,&font_rect,DT_CALCRECT|DT_LEFT|DT_TOP,textChunks[i].color);
+			if(tmp[textChunks[i-1].end-textChunks[i-1].start-1]==' ')
+			{
+				tmp[textChunks[i-1].end-textChunks[i-1].start-1]='_';
+				font->DrawTextA(NULL,tmp,-1,&font_rect,DT_CALCRECT|DT_LEFT|DT_TOP,textChunks[i].color);
+				tmp[textChunks[i-1].end-textChunks[i-1].start-1]=' ';
+			}
+			else
+				font->DrawTextA(NULL,tmp,-1,&font_rect,DT_CALCRECT|DT_LEFT|DT_TOP,textChunks[i].color);
 
 			textChunks[i].offsetX=textChunks[i-1].offsetX+font_rect.right;
 		}
