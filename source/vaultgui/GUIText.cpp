@@ -44,7 +44,7 @@ GUIText::GUIText( char* s , ID3DXFont* f )
 
 			}
 			else
-				if(IsHex(str[i+1])&&!IsHex(str[i+2]))
+				if(strlen(str+i)>2&&IsHex(str[i+1])&&!IsHex(str[i+2]))
 				{
 					//Predefined colors (1,2,3 etc.)
 					GUIColorChunk tmp;
@@ -55,14 +55,35 @@ GUIText::GUIText( char* s , ID3DXFont* f )
 					textChunks.push_back((tmp));
 				}
 			else
-				if(IsHex(str[i+1])&&IsHex(str[i+2])&&IsHex(str[i+3])&&!IsHex(str[i+4]))
+				if(strlen(str+i)>3&&IsHex(str[i+1])&&IsHex(str[i+2])&&IsHex(str[i+3])&&!IsHex(str[i+4]))
 				{
 					//3 byte hex colors
-					/*GUIColorChunk tmp;
-					tmp.color=predefinedColorsHex[str[i+1]-'0'];
+					int color=0xFF000000;
+					for(int k=0;k<3;k++)
+					{
+						char c=str[i+k+1];
+						int val=0;
+						if(c>='0'&&c<='9')
+							val=c-'0';
+						else if(c>='A'&&c<='F')
+						{
+							val=c-'A'+10;
+						}
+						else if(c>='a'&&c<='f')
+						{
+							val=c-'a'+10;
+						}
+						val=val+(val<<4);
+
+						color|=(val<<((2-k)*8));
+					}
+					
+					GUIColorChunk tmp;
+					tmp.color=color;
 					tmp.start=lastIndex;
 					tmp.end=i-1;
-					lastIndex=i+1+1;*/
+					lastIndex=i+4;
+					textChunks.push_back((tmp));
 				}
 		}
 	}
