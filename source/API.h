@@ -359,6 +359,11 @@ namespace Values
 
 			AnimGroup_BlockIdle				= 0xAA,
 
+			AnimGroup_ReloadWStart			= 0xAD,
+			AnimGroup_ReloadXStart			= 0xAE,
+			AnimGroup_ReloadYStart			= 0xAF,
+			AnimGroup_ReloadZStart			= 0xB0,
+
 			AnimGroup_ReloadA				= 0xB1,
 			AnimGroup_ReloadB				= 0xB2,
 			AnimGroup_ReloadC				= 0xB3,
@@ -370,8 +375,18 @@ namespace Values
 			AnimGroup_ReloadI				= 0xB9,
 			AnimGroup_ReloadJ				= 0xBA,
 			AnimGroup_ReloadK				= 0xBB,
-
+			AnimGroup_ReloadL				= 0xBC,
+			AnimGroup_ReloadM				= 0xBD,
+			AnimGroup_ReloadN				= 0xBE,
+			AnimGroup_ReloadO				= 0xBF,
+			AnimGroup_ReloadP				= 0xC0,
+			AnimGroup_ReloadQ				= 0xC1,
+			AnimGroup_ReloadR				= 0xC2,
+			AnimGroup_ReloadS				= 0xC3,
+			AnimGroup_ReloadW				= 0xC4,
 			AnimGroup_ReloadX				= 0xC5,
+			AnimGroup_ReloadY				= 0xC6,
+			AnimGroup_ReloadZ				= 0xC7,
 		};
 	}
 }
