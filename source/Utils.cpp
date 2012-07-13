@@ -17,6 +17,13 @@ bool Utils::DoubleCompare(double a, double b, double epsilon)
 	return fabs(a - b) < epsilon;
 }
 
+string Utils::toString(signed int value)
+{
+	char str[16];
+	snprintf(str, sizeof(str), "%d", value);
+	return string(str);
+}
+
 string Utils::toString(unsigned int value)
 {
 	char str[16];

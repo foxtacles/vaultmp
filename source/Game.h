@@ -71,9 +71,17 @@ class Game
 		 */
 		static void LoadGame(string savegame = string());
 		/**
-		 * \brief Loads a cell
+		 * \brief Loads an interior cell
 		 */
 		static void CenterOnCell(string cell = string());
+		/**
+		 * \brief Loads a exterior cell
+		 */
+		static void CenterOnExterior(signed int x, signed int y);
+		/**
+		 * \brief Loads a worldspace and exterior cell
+		 */
+		static void CenterOnWorld(unsigned int baseID, signed int x, signed int y);
 		/**
 		 * \brief Loads the environment after savegame load
 		 */
@@ -81,11 +89,11 @@ class Game
 		/**
 		 * \brief Display a Fallout UI message
 		 */
-		static void UIMessage(string& message);
+		static void UIMessage(const string& message);
 		/**
 		 * \brief Display a GUI chat message
 		 */
-		static void ChatMessage(string& message);
+		static void ChatMessage(const string& message);
 		/**
 		 * \brief Creates a new Object
 		 */

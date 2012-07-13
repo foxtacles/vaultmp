@@ -110,6 +110,7 @@ namespace Values
 	enum Functions
 	{
 		Func_CenterOnCell				= 0x0123,
+		Func_CenterOnExterior			= 0x0127,
 
 		Func_GetPos                     = 0x1006,
 		Func_SetPos                     = 0x1007,
@@ -269,6 +270,8 @@ namespace Values
 		enum Functions
 		{
 			Func_Load                       = 0x014F,
+			Func_CenterOnWorld				= 0x0143,
+
 			Func_SetName                    = 0x1485,
 			Func_GetParentCell              = 0x1495,
 			Func_GetFirstRef                = 0x14AF,
@@ -328,6 +331,8 @@ namespace Values
 		enum Functions
 		{
 			Func_Load                       = 0x014E,
+			Func_CenterOnWorld				= 0x0142,
+
 			Func_SetName                    = 0x144C,
 			Func_GetParentCell              = 0x146D,
 			Func_GetFirstRef                = 0x1471,

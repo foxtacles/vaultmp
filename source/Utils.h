@@ -25,6 +25,7 @@ class Utils
 	public:
 		static void timestamp();
 		static bool DoubleCompare(double a, double b, double epsilon);
+		static string toString(signed int value);
 		static string toString(unsigned int value);
 		static string toString(unsigned char value);
 		static string toString(double value);

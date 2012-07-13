@@ -76,6 +76,11 @@ class Interface : public API
 					return convert;
 				}
 
+				static vector<string> make(signed int str)
+				{
+					return vector<string>{Utils::toString(str)};
+				}
+
 				static vector<string> make(unsigned int str)
 				{
 					return vector<string>{Utils::toString(str)};
@@ -95,6 +100,7 @@ class Interface : public API
 				RawParameter(string str) : data(vector<string>{str}) {}
 				RawParameter(const vector<string>& str) : data(str) {}
 				RawParameter(const vector<unsigned char>& str) : data(make(str)) {}
+				RawParameter(signed int str) : data(make(str)) {}
 				RawParameter(unsigned int str) : data(make(str)) {}
 				RawParameter(double str) : data(make(str)) {}
 				RawParameter(bool str) : data(make(str)) {}

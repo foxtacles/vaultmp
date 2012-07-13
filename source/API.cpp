@@ -462,8 +462,10 @@ void API::Initialize(unsigned char game)
 	DefineFunction("ScanContainer", "r", Func_ScanContainer, FALLOUT_GAMES);
 	DefineFunction("UIMessage", "s", Func_UIMessage, FALLOUT_GAMES);
 	DefineFunction("CenterOnCell", "$s", Func_CenterOnCell, FALLOUT_GAMES);
+	DefineFunction("CenterOnExterior", "$ii", Func_CenterOnExterior, FALLOUT_GAMES);
 
 	DefineFunction("Load", "$s", Fallout3::Func_Load, FALLOUT3);
+	DefineFunction("CenterOnWorld", "$wii", Fallout3::Func_CenterOnWorld, FALLOUT3);
 	DefineFunction("SetName", "rsB", Fallout3::Func_SetName, FALLOUT3);
 	DefineFunction("GetParentCell", "r", Fallout3::Func_GetParentCell, FALLOUT3);
 	DefineFunction("GetFirstRef", "III", Fallout3::Func_GetFirstRef, FALLOUT3);
@@ -473,6 +475,7 @@ void API::Initialize(unsigned char game)
 	DefineFunction("DisableControl", "x", Fallout3::Func_DisableControl, FALLOUT3);
 
 	DefineFunction("Load", "$s", FalloutNV::Func_Load, NEWVEGAS);
+	DefineFunction("CenterOnWorld", "$wii", FalloutNV::Func_CenterOnWorld, NEWVEGAS);
 	DefineFunction("SetName", "rsB", FalloutNV::Func_SetName, NEWVEGAS);
 	DefineFunction("GetParentCell", "r", FalloutNV::Func_GetParentCell, NEWVEGAS);
 	DefineFunction("GetFirstRef", "III", FalloutNV::Func_GetFirstRef, NEWVEGAS);
@@ -570,8 +573,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 				break;
 		}
 
-		if (isupper(type))
-			*reinterpret_cast<unsigned int*>(arg1_pos + 4) = 0x00000001;
+		*reinterpret_cast<unsigned int*>(arg1_pos + 4) = isupper(type) ? 0x00000001 : 0x00000000;
 
 		unsigned int typecode;
 
@@ -622,6 +624,10 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 				typecode = 0x0000001A;
 				break;
 
+			case 'w': // Container
+				typecode = 0x0000001B;
+				break;
+
 			case 'k': // Object ID base item
 				typecode = 0x00000032;
 				break;
@@ -658,6 +664,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 			j (Object ID item, 2 byte, 0x72, stream) - 0x00000003
 			k (Object ID base item, 2 byte, 0x72, stream) - 0x00000032
 			c (Container, 2 byte, 0x72, stream) - 0x0000001A
+			w (World space, 2 byte, 0x72, stream) - 0x0000001B
 			q (Actor, 2 byte, 0x72, stream) - 0x00000006
 			s (String, 2 byte, length, followed by chars) - 0x00000000
 			x (Control code, 4 byte, 0x6E) - 0x00000001
@@ -699,6 +706,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 			case 'o': // Object Reference ID
 			case 'q': // Actor
 			case 'c': // Container
+			case 'w': // World space
 			{
 				if (refparam != 0x00)   // We don't support more than one refparam yet
 					throw VaultException("API::ParseCommand does only support one reference argument up until now");
@@ -787,6 +795,8 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 	{
 		result->arg5.numargs++;
 		result->arg5.param1_reference = reference;
+
+		// this is totally incomplete, but I don't think it matters (afaik)
 
 		if (reference == PLAYER_REFERENCE)
 			result->arg5.param1_unk2 = 0x00060006;

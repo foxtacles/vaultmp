@@ -48,6 +48,9 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			switch (opcode)
 			{
 				case Functions::Func_CenterOnCell:
+				case Functions::Func_CenterOnExterior:
+				case Fallout3::Functions::Func_CenterOnWorld:
+				case FalloutNV::Functions::Func_CenterOnWorld:
 				case Fallout3::Functions::Func_Load:
 				case FalloutNV::Functions::Func_Load:
 				case Functions::Func_PlaceAtMe:
@@ -213,6 +216,9 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 
 			case Functions::Func_CenterOnCell:
+			case Functions::Func_CenterOnExterior:
+			case Fallout3::Functions::Func_CenterOnWorld:
+			case FalloutNV::Functions::Func_CenterOnWorld:
 			case Fallout3::Functions::Func_Load:
 			case FalloutNV::Functions::Func_Load:
 				FutureSet<bool>(shared, true);
@@ -402,6 +408,52 @@ void Game::CenterOnCell(string cell)
 	// ready state
 }
 
+void Game::CenterOnExterior(signed int x, signed int y)
+{
+	shared_ptr<Shared<bool>> store(new Shared<bool>);
+	unsigned int key = Lockable::Share(store);
+
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("CenterOnExterior", ParamContainer{RawParameter(x), RawParameter(y)}, key);
+
+	Interface::EndDynamic();
+
+	try
+	{
+		store.get()->get_future(chrono::seconds(30));
+	}
+	catch (exception& e)
+	{
+		throw VaultException("Loading of cell (%d,%d) failed (%s)", x, y, e.what());
+	}
+
+	// ready state
+}
+
+void Game::CenterOnWorld(unsigned int baseID, signed int x, signed int y)
+{
+	shared_ptr<Shared<bool>> store(new Shared<bool>);
+	unsigned int key = Lockable::Share(store);
+
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("CenterOnWorld", ParamContainer{RawParameter(baseID), RawParameter(x), RawParameter(y)}, key);
+
+	Interface::EndDynamic();
+
+	try
+	{
+		store.get()->get_future(chrono::seconds(30));
+	}
+	catch (exception& e)
+	{
+		throw VaultException("Loading of world (%08X,%d,%d) failed (%s)", baseID, x, y, e.what());
+	}
+
+	// ready state
+}
+
 void Game::LoadEnvironment()
 {
 	vector<NetworkID> reference = GameFactory::GetIDObjectTypes(ALL_OBJECTS);
@@ -443,7 +495,7 @@ void Game::LoadEnvironment()
 	}
 }
 
-void Game::UIMessage(string& message)
+void Game::UIMessage(const string& message)
 {
 	Interface::StartDynamic();
 
@@ -452,7 +504,7 @@ void Game::UIMessage(string& message)
 	Interface::EndDynamic();
 }
 
-void Game::ChatMessage(string& message)
+void Game::ChatMessage(const string& message)
 {
 	Interface::StartDynamic();
 
