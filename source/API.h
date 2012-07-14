@@ -33,7 +33,7 @@ typedef unordered_map<string, unsigned char> ValueMap;
 typedef set<unsigned char> ValueList;
 
 /*
- * \brief This namespace contains hexadecimal representations of the games data
+ * \brief This namespace contains key data of the game
  */
 
 namespace Values
@@ -110,6 +110,7 @@ namespace Values
 	enum Functions
 	{
 		Func_CenterOnCell				= 0x0123,
+		Func_CenterOnExterior			= 0x0127,
 
 		Func_GetPos                     = 0x1006,
 		Func_SetPos                     = 0x1007,
@@ -139,6 +140,7 @@ namespace Values
 		Func_IsMoving                   = 0x1019,
 		Func_MarkForDelete              = 0x11BB,
 		Func_IsAnimPlaying              = 0x1128,
+		Func_FireWeapon					= 0x11E2,
 
 		Func_GetActorState              = 0x0001 | VAULTFUNCTION,
 		Func_Chat						= 0x0002 | VAULTFUNCTION,
@@ -268,6 +270,8 @@ namespace Values
 		enum Functions
 		{
 			Func_Load                       = 0x014F,
+			Func_CenterOnWorld				= 0x0143,
+
 			Func_SetName                    = 0x1485,
 			Func_GetParentCell              = 0x1495,
 			Func_GetFirstRef                = 0x14AF,
@@ -327,6 +331,8 @@ namespace Values
 		enum Functions
 		{
 			Func_Load                       = 0x014E,
+			Func_CenterOnWorld				= 0x0142,
+
 			Func_SetName                    = 0x144C,
 			Func_GetParentCell              = 0x146D,
 			Func_GetFirstRef                = 0x1471,
@@ -358,6 +364,11 @@ namespace Values
 
 			AnimGroup_BlockIdle				= 0xAA,
 
+			AnimGroup_ReloadWStart			= 0xAD,
+			AnimGroup_ReloadXStart			= 0xAE,
+			AnimGroup_ReloadYStart			= 0xAF,
+			AnimGroup_ReloadZStart			= 0xB0,
+
 			AnimGroup_ReloadA				= 0xB1,
 			AnimGroup_ReloadB				= 0xB2,
 			AnimGroup_ReloadC				= 0xB3,
@@ -369,8 +380,18 @@ namespace Values
 			AnimGroup_ReloadI				= 0xB9,
 			AnimGroup_ReloadJ				= 0xBA,
 			AnimGroup_ReloadK				= 0xBB,
-
+			AnimGroup_ReloadL				= 0xBC,
+			AnimGroup_ReloadM				= 0xBD,
+			AnimGroup_ReloadN				= 0xBE,
+			AnimGroup_ReloadO				= 0xBF,
+			AnimGroup_ReloadP				= 0xC0,
+			AnimGroup_ReloadQ				= 0xC1,
+			AnimGroup_ReloadR				= 0xC2,
+			AnimGroup_ReloadS				= 0xC3,
+			AnimGroup_ReloadW				= 0xC4,
 			AnimGroup_ReloadX				= 0xC5,
+			AnimGroup_ReloadY				= 0xC6,
+			AnimGroup_ReloadZ				= 0xC7,
 		};
 	}
 }

@@ -14,7 +14,7 @@ void Database::SetDebugHandler(Debug* debug)
 }
 #endif
 
-Database::Database(const string& file, const vector<string>& table)
+Database::Database(const string& file, const vector<string>& types)
 {
 	char base[MAX_PATH];
 	_getcwd(base, sizeof(base));
@@ -30,10 +30,10 @@ Database::Database(const string& file, const vector<string>& table)
 		throw VaultException("Could not open SQLite3 database: %s", sqlite3_errmsg(db));
 	}
 
-	for (const string& _table : table)
+	for (const string& type : types)
 	{
 		sqlite3_stmt* stmt;
-		string query = "SELECT * FROM " + _table;
+		string query = "SELECT * FROM " + type;
 
 		if (sqlite3_prepare_v2(db, query.c_str(), query.length() + 1, &stmt, NULL) != SQLITE_OK)
 		{
@@ -71,10 +71,9 @@ Database::Database(const string& file, const vector<string>& table)
 			const unsigned char* description = sqlite3_column_text(stmt, 2);
 			unsigned int dlc = sqlite3_column_int(stmt, 3);
 
-			if (baseID & 0xFF000000)
-				baseID = (baseID & 0x00FFFFFF) | (dlc << 24);
+			baseID = (baseID & 0x00FFFFFF) | (dlc << 24);
 
-			data.insert(make_pair(baseID, Record(baseID, reinterpret_cast<const char*>(name), reinterpret_cast<const char*>(description))));
+			data.insert(make_pair(baseID, Record(baseID, reinterpret_cast<const char*>(name), reinterpret_cast<const char*>(description), type)));
 		} while ((ret = sqlite3_step(stmt)) != SQLITE_DONE);
 
 		sqlite3_finalize(stmt);

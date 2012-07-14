@@ -111,7 +111,7 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 
 				if(chatting)
 				{
-					if(chatbox_text.length()<70)
+					if(chatbox_text.length()<120)
 						chatbox_text+=(char)wparam;
 					gl_pmyIDirect3DDevice9->chatbox.SetWriting(chatbox_text);
 				}

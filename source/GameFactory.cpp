@@ -39,6 +39,7 @@ void GameFactory::Initialize(unsigned char game)
 	{
 		delete Actor::dbActors;
 		delete Actor::dbCreatures;
+		delete Item::dbItems;
 		throw;
 	}
 

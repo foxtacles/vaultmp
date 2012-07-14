@@ -24,8 +24,8 @@ class pDefault
 		friend class PacketFactory;
 
 	private:
-		pDefault(const pDefault&);
-		pDefault& operator=(const pDefault&);
+		pDefault(const pDefault&) = delete;
+		pDefault& operator=(const pDefault&) = delete;
 
 	protected:
 		pDefault(unsigned char type)
@@ -83,10 +83,6 @@ class pGameDefault : public pDefault
 {
 		friend class PacketFactory;
 
-	private:
-		pGameDefault(const pGameDefault&);
-		pGameDefault& operator=(const pGameDefault&);
-
 	protected:
 		pGameDefault(unsigned char type) : pDefault(type)
 		{
@@ -137,10 +133,6 @@ class pGameDefault : public pDefault
 class pObjectDefault : public pDefault
 {
 		friend class PacketFactory;
-
-	private:
-		pObjectDefault(const pObjectDefault&);
-		pObjectDefault& operator=(const pObjectDefault&);
 
 	protected:
 		pObjectDefault(unsigned char type, NetworkID id) : pDefault(type)
@@ -199,10 +191,6 @@ class pObjectDefault : public pDefault
 class pObjectNewDefault : public pObjectDefault
 {
 		friend class PacketFactory;
-
-	private:
-		pObjectNewDefault(const pObjectNewDefault&);
-		pObjectNewDefault& operator=(const pObjectNewDefault&);
 
 	protected:
 		pObjectNewDefault(unsigned char type, unsigned int refID, unsigned int baseID, NetworkID id) : pObjectDefault(type, id)
@@ -272,10 +260,6 @@ class pObjectNewDefault : public pObjectDefault
 class pObjectUpdateDefault : public pObjectDefault
 {
 		friend class PacketFactory;
-
-	private:
-		pObjectUpdateDefault(const pObjectUpdateDefault&);
-		pObjectUpdateDefault& operator=(const pObjectUpdateDefault&);
 
 	protected:
 		pObjectUpdateDefault(unsigned char type, unsigned char sub_type, NetworkID id) : pObjectDefault(type, id)
@@ -378,9 +362,6 @@ class pGameAuth : public pGameDefault
 		{
 			deconstruct(&_data, sizeof(_data));
 		}
-
-		pGameAuth(const pGameAuth&);
-		pGameAuth& operator=(const pGameAuth&);
 };
 
 class pGameLoad : public pGameDefault
@@ -396,9 +377,6 @@ class pGameLoad : public pGameDefault
 		{
 			deconstruct();
 		}
-
-		pGameLoad(const pGameLoad&);
-		pGameLoad& operator=(const pGameLoad&);
 };
 
 class pGameMod : public pGameDefault
@@ -419,9 +397,6 @@ class pGameMod : public pGameDefault
 		{
 			deconstruct(&_data, sizeof(_data));
 		}
-
-		pGameMod(const pGameMod&);
-		pGameMod& operator=(const pGameMod&);
 };
 
 class pGameStart : public pGameDefault
@@ -441,9 +416,6 @@ class pGameStart : public pGameDefault
 		{
 			deconstruct(&_data, sizeof(_data));
 		}
-
-		pGameStart(const pGameStart&);
-		pGameStart& operator=(const pGameStart&);
 };
 
 class pGameEnd : public pGameDefault
@@ -462,9 +434,6 @@ class pGameEnd : public pGameDefault
 		{
 			deconstruct(&reason, sizeof(reason));
 		}
-
-		pGameEnd(const pGameEnd&);
-		pGameEnd& operator=(const pGameEnd&);
 };
 
 class pGameMessage : public pGameDefault
@@ -483,9 +452,6 @@ class pGameMessage : public pGameDefault
 		{
 			deconstruct(this->message, sizeof(this->message));
 		}
-
-		pGameMessage(const pGameMessage&);
-		pGameMessage& operator=(const pGameMessage&);
 };
 
 class pGameChat : public pGameDefault
@@ -504,9 +470,6 @@ class pGameChat : public pGameDefault
 		{
 			deconstruct(this->message, sizeof(this->message));
 		}
-
-		pGameChat(const pGameChat&);
-		pGameChat& operator=(const pGameChat&);
 };
 
 /* ************************************** */
@@ -566,9 +529,6 @@ class pObjectNew : public pObjectNewDefault
 			deconstruct(&_data, sizeof(_data));
 		}
 
-		pObjectNew(const pObjectNew&);
-		pObjectNew& operator=(const pObjectNew&);
-
 	public:
 		static unsigned int data_length()
 		{
@@ -603,9 +563,6 @@ class pItemNew : public pObjectNewDefault
 			deconstruct(&_data, sizeof(_data));
 		}
 
-		pItemNew(const pItemNew&);
-		pItemNew& operator=(const pItemNew&);
-
 	public:
 		static unsigned int data_length()
 		{
@@ -618,7 +575,6 @@ class pItemNew : public pObjectNewDefault
 		{
 			return sizeof(pTypeSpecifier) + sizeof(NetworkID) + sizeof(unsigned int) + sizeof(unsigned int) + sizeof(_pItemNew);
 		}
-
 };
 
 class pContainerNew : public pObjectNewDefault
@@ -681,9 +637,6 @@ class pContainerNew : public pObjectNewDefault
 		{
 			delete[] _data;
 		}
-
-		pContainerNew(const pContainerNew&);
-		pContainerNew& operator=(const pContainerNew&);
 
 	public:
 		static unsigned int data_length(const unsigned char* data)
@@ -776,9 +729,6 @@ class pActorNew : public pObjectNewDefault
 			delete[] _data;
 		}
 
-		pActorNew(const pActorNew&);
-		pActorNew& operator=(const pActorNew&);
-
 	public:
 		static unsigned int data_length(const unsigned char* data)
 		{
@@ -838,9 +788,6 @@ class pPlayerNew : public pObjectNewDefault
 		{
 			delete[] _data;
 		}
-
-		pPlayerNew(const pPlayerNew&);
-		pPlayerNew& operator=(const pPlayerNew&);
 };
 
 class pObjectRemove : public pObjectDefault
@@ -856,9 +803,6 @@ class pObjectRemove : public pObjectDefault
 		{
 			deconstruct();
 		}
-
-		pObjectRemove(const pObjectRemove&);
-		pObjectRemove& operator=(const pObjectRemove&);
 };
 
 /* ************************************** */
@@ -896,9 +840,6 @@ class pObjectPos : public pObjectUpdateDefault
 		{
 			deconstruct(&_data, sizeof(_data));
 		}
-
-		pObjectPos(const pObjectPos&);
-		pObjectPos& operator=(const pObjectPos&);
 };
 
 class pObjectAngle : public pObjectUpdateDefault
@@ -918,9 +859,6 @@ class pObjectAngle : public pObjectUpdateDefault
 		{
 			deconstruct(&_data, sizeof(_data));
 		}
-
-		pObjectAngle(const pObjectAngle&);
-		pObjectAngle& operator=(const pObjectAngle&);
 };
 
 class pObjectCell : public pObjectUpdateDefault
@@ -939,9 +877,6 @@ class pObjectCell : public pObjectUpdateDefault
 		{
 			deconstruct(&this->cell, sizeof(this->cell));
 		}
-
-		pObjectCell(const pObjectCell&);
-		pObjectCell& operator=(const pObjectCell&);
 };
 
 /* ************************************** */
@@ -1003,9 +938,6 @@ class pContainerUpdate : public pObjectUpdateDefault
 		{
 			delete[] _data;
 		}
-
-		pContainerUpdate(const pContainerUpdate&);
-		pContainerUpdate& operator=(const pContainerUpdate&);
 };
 
 /* ************************************** */
@@ -1031,6 +963,11 @@ struct _pActorDead
 {
 	bool dead;
 };
+
+struct _pActorFireweapon
+{
+	unsigned int weapon;
+};
 #pragma pack(pop)
 
 class pActorValue : public pObjectUpdateDefault
@@ -1051,9 +988,6 @@ class pActorValue : public pObjectUpdateDefault
 		{
 			deconstruct(&_data, sizeof(_data));
 		}
-
-		pActorValue(const pActorValue&);
-		pActorValue& operator=(const pActorValue&);
 };
 
 class pActorState : public pObjectUpdateDefault
@@ -1076,9 +1010,6 @@ class pActorState : public pObjectUpdateDefault
 		{
 			deconstruct(&_data, sizeof(_data));
 		}
-
-		pActorState(const pActorState&);
-		pActorState& operator=(const pActorState&);
 };
 
 class pActorDead : public pObjectUpdateDefault
@@ -1097,9 +1028,24 @@ class pActorDead : public pObjectUpdateDefault
 		{
 			deconstruct(&_data, sizeof(_data));
 		}
+};
 
-		pActorDead(const pActorDead&);
-		pActorDead& operator=(const pActorDead&);
+class pActorFireweapon : public pObjectUpdateDefault
+{
+		friend class PacketFactory;
+
+	private:
+		_pActorFireweapon _data;
+
+		pActorFireweapon(NetworkID id, unsigned int weapon) : pObjectUpdateDefault(ID_ACTOR_UPDATE, ID_UPDATE_FIREWEAPON, id)
+		{
+			_data.weapon = weapon;
+			construct(&_data, sizeof(_data));
+		}
+		pActorFireweapon(unsigned char* stream, unsigned int len) : pObjectUpdateDefault(stream, len)
+		{
+			deconstruct(&_data, sizeof(_data));
+		}
 };
 
 /* ************************************** */
@@ -1129,9 +1075,6 @@ class pPlayerControl : public pObjectUpdateDefault
 		{
 			deconstruct(&_data, sizeof(_data));
 		}
-
-		pPlayerControl(const pPlayerControl&);
-		pPlayerControl& operator=(const pPlayerControl&);
 };
 
 #endif

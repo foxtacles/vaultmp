@@ -297,6 +297,17 @@ void API::Initialize(unsigned char game)
 	DefineAnimString("JumpLandLeft", Fallout3::AnimGroup_JumpLandLeft, FALLOUT3);
 	DefineAnimString("JumpLandRight", Fallout3::AnimGroup_JumpLandRight, FALLOUT3);
 	DefineAnimString("BlockIdle", Fallout3::AnimGroup_BlockIdle, FALLOUT3);
+	DefineAnimString("ReloadA", Fallout3::AnimGroup_ReloadA, FALLOUT3);
+	DefineAnimString("ReloadB", Fallout3::AnimGroup_ReloadB, FALLOUT3);
+	DefineAnimString("ReloadC", Fallout3::AnimGroup_ReloadC, FALLOUT3);
+	DefineAnimString("ReloadD", Fallout3::AnimGroup_ReloadD, FALLOUT3);
+	DefineAnimString("ReloadE", Fallout3::AnimGroup_ReloadE, FALLOUT3);
+	DefineAnimString("ReloadF", Fallout3::AnimGroup_ReloadF, FALLOUT3);
+	DefineAnimString("ReloadG", Fallout3::AnimGroup_ReloadG, FALLOUT3);
+	DefineAnimString("ReloadH", Fallout3::AnimGroup_ReloadH, FALLOUT3);
+	DefineAnimString("ReloadI", Fallout3::AnimGroup_ReloadI, FALLOUT3);
+	DefineAnimString("ReloadJ", Fallout3::AnimGroup_ReloadJ, FALLOUT3);
+	DefineAnimString("ReloadK", Fallout3::AnimGroup_ReloadK, FALLOUT3);
 
 	DefineAnimString("JumpStart", FalloutNV::AnimGroup_JumpStart, NEWVEGAS);
 	DefineAnimString("JumpLoop", FalloutNV::AnimGroup_JumpLoop, NEWVEGAS);
@@ -310,6 +321,33 @@ void API::Initialize(unsigned char game)
 	DefineAnimString("JumpLandLeft", FalloutNV::AnimGroup_JumpLandLeft, NEWVEGAS);
 	DefineAnimString("JumpLandRight", FalloutNV::AnimGroup_JumpLandRight, NEWVEGAS);
 	DefineAnimString("BlockIdle", FalloutNV::AnimGroup_BlockIdle, NEWVEGAS);
+	DefineAnimString("ReloadWStart", FalloutNV::AnimGroup_ReloadWStart, NEWVEGAS);
+	DefineAnimString("ReloadXStart", FalloutNV::AnimGroup_ReloadXStart, NEWVEGAS);
+	DefineAnimString("ReloadYStart", FalloutNV::AnimGroup_ReloadYStart, NEWVEGAS);
+	DefineAnimString("ReloadZStart", FalloutNV::AnimGroup_ReloadZStart, NEWVEGAS);
+	DefineAnimString("ReloadA", FalloutNV::AnimGroup_ReloadA, NEWVEGAS);
+	DefineAnimString("ReloadB", FalloutNV::AnimGroup_ReloadB, NEWVEGAS);
+	DefineAnimString("ReloadC", FalloutNV::AnimGroup_ReloadC, NEWVEGAS);
+	DefineAnimString("ReloadD", FalloutNV::AnimGroup_ReloadD, NEWVEGAS);
+	DefineAnimString("ReloadE", FalloutNV::AnimGroup_ReloadE, NEWVEGAS);
+	DefineAnimString("ReloadF", FalloutNV::AnimGroup_ReloadF, NEWVEGAS);
+	DefineAnimString("ReloadG", FalloutNV::AnimGroup_ReloadG, NEWVEGAS);
+	DefineAnimString("ReloadH", FalloutNV::AnimGroup_ReloadH, NEWVEGAS);
+	DefineAnimString("ReloadI", FalloutNV::AnimGroup_ReloadI, NEWVEGAS);
+	DefineAnimString("ReloadJ", FalloutNV::AnimGroup_ReloadJ, NEWVEGAS);
+	DefineAnimString("ReloadK", FalloutNV::AnimGroup_ReloadK, NEWVEGAS);
+	DefineAnimString("ReloadL", FalloutNV::AnimGroup_ReloadL, NEWVEGAS);
+	DefineAnimString("ReloadM", FalloutNV::AnimGroup_ReloadM, NEWVEGAS);
+	DefineAnimString("ReloadN", FalloutNV::AnimGroup_ReloadN, NEWVEGAS);
+	DefineAnimString("ReloadO", FalloutNV::AnimGroup_ReloadO, NEWVEGAS);
+	DefineAnimString("ReloadP", FalloutNV::AnimGroup_ReloadP, NEWVEGAS);
+	DefineAnimString("ReloadQ", FalloutNV::AnimGroup_ReloadQ, NEWVEGAS);
+	DefineAnimString("ReloadR", FalloutNV::AnimGroup_ReloadR, NEWVEGAS);
+	DefineAnimString("ReloadS", FalloutNV::AnimGroup_ReloadS, NEWVEGAS);
+	DefineAnimString("ReloadW", FalloutNV::AnimGroup_ReloadW, NEWVEGAS);
+	DefineAnimString("ReloadX", FalloutNV::AnimGroup_ReloadX, NEWVEGAS);
+	DefineAnimString("ReloadY", FalloutNV::AnimGroup_ReloadY, NEWVEGAS);
+	DefineAnimString("ReloadZ", FalloutNV::AnimGroup_ReloadZ, NEWVEGAS);
 
 	DefineValueString("Aggression", ActorVal_Aggression, FALLOUT_GAMES);
 	DefineValueString("Confidence", ActorVal_Confidence, FALLOUT_GAMES);
@@ -442,11 +480,14 @@ void API::Initialize(unsigned char game)
 	DefineFunction("IsMoving", "r", Func_IsMoving, FALLOUT_GAMES);
 	DefineFunction("MarkForDelete", "r", Func_MarkForDelete, FALLOUT_GAMES);
 	DefineFunction("IsAnimPlaying", "rG", Func_IsAnimPlaying, FALLOUT_GAMES);
+	DefineFunction("FireWeapon", "rb", Func_FireWeapon, FALLOUT_GAMES);
 	DefineFunction("ScanContainer", "r", Func_ScanContainer, FALLOUT_GAMES);
 	DefineFunction("UIMessage", "s", Func_UIMessage, FALLOUT_GAMES);
 	DefineFunction("CenterOnCell", "$s", Func_CenterOnCell, FALLOUT_GAMES);
+	DefineFunction("CenterOnExterior", "$ii", Func_CenterOnExterior, FALLOUT_GAMES);
 
 	DefineFunction("Load", "$s", Fallout3::Func_Load, FALLOUT3);
+	DefineFunction("CenterOnWorld", "$wii", Fallout3::Func_CenterOnWorld, FALLOUT3);
 	DefineFunction("SetName", "rsB", Fallout3::Func_SetName, FALLOUT3);
 	DefineFunction("GetParentCell", "r", Fallout3::Func_GetParentCell, FALLOUT3);
 	DefineFunction("GetFirstRef", "III", Fallout3::Func_GetFirstRef, FALLOUT3);
@@ -456,6 +497,7 @@ void API::Initialize(unsigned char game)
 	DefineFunction("DisableControl", "x", Fallout3::Func_DisableControl, FALLOUT3);
 
 	DefineFunction("Load", "$s", FalloutNV::Func_Load, NEWVEGAS);
+	DefineFunction("CenterOnWorld", "$wii", FalloutNV::Func_CenterOnWorld, NEWVEGAS);
 	DefineFunction("SetName", "rsB", FalloutNV::Func_SetName, NEWVEGAS);
 	DefineFunction("GetParentCell", "r", FalloutNV::Func_GetParentCell, NEWVEGAS);
 	DefineFunction("GetFirstRef", "III", FalloutNV::Func_GetFirstRef, NEWVEGAS);
@@ -553,8 +595,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 				break;
 		}
 
-		if (isupper(type))
-			*reinterpret_cast<unsigned int*>(arg1_pos + 4) = 0x00000001;
+		*reinterpret_cast<unsigned int*>(arg1_pos + 4) = isupper(type) ? 0x00000001 : 0x00000000;
 
 		unsigned int typecode;
 
@@ -605,6 +646,10 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 				typecode = 0x0000001A;
 				break;
 
+			case 'w': // Container
+				typecode = 0x0000001B;
+				break;
+
 			case 'k': // Object ID base item
 				typecode = 0x00000032;
 				break;
@@ -641,6 +686,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 			j (Object ID item, 2 byte, 0x72, stream) - 0x00000003
 			k (Object ID base item, 2 byte, 0x72, stream) - 0x00000032
 			c (Container, 2 byte, 0x72, stream) - 0x0000001A
+			w (World space, 2 byte, 0x72, stream) - 0x0000001B
 			q (Actor, 2 byte, 0x72, stream) - 0x00000006
 			s (String, 2 byte, length, followed by chars) - 0x00000000
 			x (Control code, 4 byte, 0x6E) - 0x00000001
@@ -682,6 +728,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 			case 'o': // Object Reference ID
 			case 'q': // Actor
 			case 'c': // Container
+			case 'w': // World space
 			{
 				if (refparam != 0x00)   // We don't support more than one refparam yet
 					throw VaultException("API::ParseCommand does only support one reference argument up until now");
@@ -692,7 +739,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 					throw VaultException("API::ParseCommand reference argument is NULL");
 
 				*reinterpret_cast<unsigned char*>(arg2_pos) = 0x72;
-				*reinterpret_cast<unsigned short*>(arg2_pos + sizeof(unsigned char)) = (refparam == reference) ? 0x0001 : 0x0002;
+				*reinterpret_cast<unsigned short*>(arg2_pos + sizeof(unsigned char)) = (!reference || refparam == reference) ? 0x0001 : 0x0002;
 				result_data.push_back(storeIn<double, unsigned int>(refparam));
 				arg2_pos += sizeof(unsigned char) + sizeof(unsigned short);
 				break;
@@ -766,25 +813,30 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 
 	*_numargs = numargs;
 
-	if (reference != 0x00)
+	unsigned int first_ref = reference ? reference : refparam;
+	unsigned int second_ref = refparam;
+
+	if (first_ref)
 	{
 		result->arg5.numargs++;
-		result->arg5.param1_reference = reference;
+		result->arg5.param1_reference = first_ref;
 
-		if (reference == PLAYER_REFERENCE)
+		// this is totally incomplete, but I don't think it matters (afaik)
+
+		if (first_ref == PLAYER_REFERENCE)
 			result->arg5.param1_unk2 = 0x00060006;
 		else
-			result->arg5.param1_unk2 = (reference & 0xFF000000) == 0xFF000000 ? 0x00060006 : 0x00050005;
+			result->arg5.param1_unk2 = (first_ref & 0xFF000000) == 0xFF000000 ? 0x00060006 : 0x00050005;
 
-		if (reference != refparam && refparam != 0x00)
+		if (second_ref != 0x00 && first_ref != second_ref)
 		{
 			result->arg5.numargs++;
-			result->arg5.param2_reference = refparam;
+			result->arg5.param2_reference = second_ref;
 
-			if (refparam == PLAYER_REFERENCE)
+			if (second_ref == PLAYER_REFERENCE)
 				result->arg5.param2_unk2 = 0x00060006;
 			else
-				result->arg5.param2_unk2 = (refparam & 0xFF000000) == 0xFF000000 ? 0x00060006 : 0x00050005;
+				result->arg5.param2_unk2 = (second_ref & 0xFF000000) == 0xFF000000 ? 0x00060006 : 0x00050005;
 		}
 	}
 

@@ -32,7 +32,7 @@ GUIText::GUIText( char* s , ID3DXFont* f )
 					GUIColorChunk tmp;
 					tmp.color=colorsHex[k];
 					tmp.start=lastIndex;
-					tmp.end=i-1;
+					tmp.end=i;
 					lastIndex=strlen(colorsName[k])+1+i;
 					done=true;
 					textChunks.push_back((tmp));
@@ -44,25 +44,46 @@ GUIText::GUIText( char* s , ID3DXFont* f )
 
 			}
 			else
-				if(IsHex(str[i+1])&&!IsHex(str[i+2]))
+				if(strlen(str+i)>2&&IsHex(str[i+1])&&!IsHex(str[i+2]))
 				{
 					//Predefined colors (1,2,3 etc.)
 					GUIColorChunk tmp;
 					tmp.color=predefinedColorsHex[str[i+1]-'0'];
 					tmp.start=lastIndex;
-					tmp.end=i-1;
+					tmp.end=i;
 					lastIndex=i+1+1;
 					textChunks.push_back((tmp));
 				}
 			else
-				if(IsHex(str[i+1])&&IsHex(str[i+2])&&IsHex(str[i+3])&&!IsHex(str[i+4]))
+				if(strlen(str+i)>3&&IsHex(str[i+1])&&IsHex(str[i+2])&&IsHex(str[i+3]))
 				{
 					//3 byte hex colors
-					/*GUIColorChunk tmp;
-					tmp.color=predefinedColorsHex[str[i+1]-'0'];
+					int color=0xFF000000;
+					for(int k=0;k<3;k++)
+					{
+						char c=str[i+k+1];
+						int val=0;
+						if(c>='0'&&c<='9')
+							val=c-'0';
+						else if(c>='A'&&c<='F')
+						{
+							val=c-'A'+10;
+						}
+						else if(c>='a'&&c<='f')
+						{
+							val=c-'a'+10;
+						}
+						val=val+(val<<4);
+
+						color|=(val<<((2-k)*8));
+					}
+					
+					GUIColorChunk tmp;
+					tmp.color=color;
 					tmp.start=lastIndex;
-					tmp.end=i-1;
-					lastIndex=i+1+1;*/
+					tmp.end=i;
+					lastIndex=i+4;
+					textChunks.push_back((tmp));
 				}
 		}
 	}
@@ -98,7 +119,14 @@ GUIText::GUIText( char* s , ID3DXFont* f )
 		if(i>0)
 		{
 			strncpy(tmp,str+textChunks[i-1].start,textChunks[i-1].end-textChunks[i-1].start);
-			font->DrawTextA(NULL,tmp,-1,&font_rect,DT_CALCRECT|DT_LEFT|DT_TOP,textChunks[i].color);
+			if(tmp[textChunks[i-1].end-textChunks[i-1].start-1]==' ')
+			{
+				tmp[textChunks[i-1].end-textChunks[i-1].start-1]='_';
+				font->DrawTextA(NULL,tmp,-1,&font_rect,DT_CALCRECT|DT_LEFT|DT_TOP,textChunks[i].color);
+				tmp[textChunks[i-1].end-textChunks[i-1].start-1]=' ';
+			}
+			else
+				font->DrawTextA(NULL,tmp,-1,&font_rect,DT_CALCRECT|DT_LEFT|DT_TOP,textChunks[i].color);
 
 			textChunks[i].offsetX=textChunks[i-1].offsetX+font_rect.right;
 		}
@@ -112,6 +140,7 @@ GUIText::GUIText( char* s , ID3DXFont* f )
 		//TODO:Calculate top offset for line breaks
 		textChunks[i].offsetY=0;
 	}
+
 	DEBUG("TextChunks:"<<textChunks.size()<<"("<<textChunks[0].start<<" - "<<textChunks[0].end<<")")
 }
 

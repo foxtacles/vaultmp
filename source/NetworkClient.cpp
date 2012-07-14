@@ -314,6 +314,16 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 							break;
 						}
 
+						case ID_UPDATE_FIREWEAPON:
+						{
+							NetworkID id;
+							unsigned int weapon;
+							PacketFactory::Access(packet, &id, &weapon);
+							FactoryObject reference = GameFactory::GetObject(id);
+							Game::net_FireWeapon(reference, weapon);
+							break;
+						}
+
 						default:
 							throw VaultException("Unhandled object update packet type %d", (int) data->data[1]);
 					}

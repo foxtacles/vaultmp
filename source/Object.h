@@ -51,7 +51,7 @@ class Object : public Reference
 		Value<bool> state_Enabled;
 
 		static bool IsValidCoordinate(double C);
-		static bool IsValidAngle(double A);
+		static bool IsValidAngle(unsigned char axis, double A);
 
 		Object(const Object&);
 		Object& operator=(const Object&);

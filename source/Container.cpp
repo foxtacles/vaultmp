@@ -527,6 +527,25 @@ const list<NetworkID>& Container::GetItemList() const
 	return container;
 }
 
+#ifdef VAULTSERVER
+list<NetworkID> Container::GetItemTypes(string type) const
+{
+	list<NetworkID> result;
+
+	for (const NetworkID& id : container)
+	{
+		FactoryObject _reference = GameFactory::GetObject(id);
+		Item* item = vaultcast<Item>(_reference);
+		const Database::Record& record = Item::dbItems->Lookup(item->GetBase());
+
+		if (record.type.compare(type) == 0)
+			result.push_back(id);
+	}
+
+	return result;
+}
+#endif
+
 pPacket Container::toPacket()
 {
 	vector<pPacket> items;

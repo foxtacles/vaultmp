@@ -87,7 +87,30 @@ void GUI::AddLine(string s)
 	{
 		lines[i+1]=lines[i];
 	}
-	lines[0]=new GUIText((char*)s.c_str(),g_font);
+	
+	if(s.length()>86)
+	{
+		string line1="",line2="";
+		for(int i=80;i>40;i++)
+		{
+			if(s[i]==' ')
+			{
+				line1=s.substr(0,i);
+				line2=s.substr(i);
+				break;
+			}
+		}
+		if(line1=="")
+		{
+			line1=s.substr(0,85);
+			line2=s.substr(85);
+		}
+		lines[0]=new GUIText((char*)line1.c_str(),g_font);
+		AddLine(line2);
+	}
+	else
+		lines[0]=new GUIText((char*)s.c_str(),g_font);
+
 }
 
 void GUI::AddToQueue(string a)
@@ -198,9 +221,27 @@ void GUI::Draw(IDirect3DDevice9* d)
 
 	string t=writingText;
 
-	RECT font_rect;
-	SetRect(&font_rect,15+(15*sizeMult),15+(246*sizeMult),200,32);
-	g_font->DrawText(NULL,t.c_str(),-1,&font_rect,DT_LEFT|DT_NOCLIP,0xFF000000);
+	//Calculate if size > 580
+	{
+
+		RECT font_rect;
+		SetRect(&font_rect,0,0,0,0);
+		g_font->DrawText(NULL,t.c_str(),-1,&font_rect,DT_LEFT|DT_CALCRECT,0xFF000000);
+		if(font_rect.right>580)
+		{
+			RECT font_rect;
+			SetRect(&font_rect,15+(15*sizeMult),15+(246*sizeMult),15+(15*sizeMult)+580,15+(246*sizeMult)+32);
+			g_font->DrawText(NULL,t.c_str(),-1,&font_rect,DT_RIGHT,0xFF000000);
+		}
+		else
+		{
+			RECT font_rect;
+			SetRect(&font_rect,15+(15*sizeMult),15+(246*sizeMult),15+(15*sizeMult)+580,15+(246*sizeMult)+32);
+			g_font->DrawText(NULL,t.c_str(),-1,&font_rect,DT_LEFT,0xFF000000);
+		}
+	}
+	
+	
 }
 
 float GUI::GetSize()

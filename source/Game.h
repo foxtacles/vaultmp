@@ -71,9 +71,17 @@ class Game
 		 */
 		static void LoadGame(string savegame = string());
 		/**
-		 * \brief Loads a cell
+		 * \brief Loads an interior cell
 		 */
 		static void CenterOnCell(string cell = string());
+		/**
+		 * \brief Loads a exterior cell
+		 */
+		static void CenterOnExterior(signed int x, signed int y);
+		/**
+		 * \brief Loads a worldspace and exterior cell
+		 */
+		static void CenterOnWorld(unsigned int baseID, signed int x, signed int y);
 		/**
 		 * \brief Loads the environment after savegame load
 		 */
@@ -81,11 +89,11 @@ class Game
 		/**
 		 * \brief Display a Fallout UI message
 		 */
-		static void UIMessage(string& message);
+		static void UIMessage(const string& message);
 		/**
 		 * \brief Display a GUI chat message
 		 */
-		static void ChatMessage(string& message);
+		static void ChatMessage(const string& message);
 		/**
 		 * \brief Creates a new Object
 		 */
@@ -156,6 +164,10 @@ class Game
 		 */
 		static thread SetActorAlerted(FactoryObject& reference, unsigned int key = 0);
 		/**
+		 * \brief Plays an animation on an Actor
+		 */
+		static void SetActorAnimation(FactoryObject& reference, unsigned char anim, unsigned int key = 0);
+		/**
 		 * \brief Sets the moving animation of an Actor
 		 */
 		static void SetActorMovingAnimation(FactoryObject& reference, unsigned int key = 0);
@@ -167,6 +179,10 @@ class Game
 		 * \brief Kills an Actor
 		 */
 		static void KillActor(FactoryObject& reference, unsigned int key = 0);
+		/**
+		 * \brief Makes an Actor fire a weapon
+		 */
+		static void FireWeapon(FactoryObject& reference, unsigned int weapon, unsigned int key = 0);
 		/**
 		 * \brief Adds an Item to a Container
 		 */
@@ -225,13 +241,17 @@ class Game
 		 */
 		static void net_SetActorDead(FactoryObject& reference, bool dead);
 		/**
+		 * \brief Network function to handle Actor fire weapon
+		 */
+		static void net_FireWeapon(FactoryObject& reference, unsigned int weapon);
+		/**
 		 * \brief Network function to handle UI message
 		 */
-		static void net_UIMessage(string message);
+		static void net_UIMessage(const string& message);
 		/**
 		 * \brief Network function to handle chat message
 		 */
-		static void net_ChatMessage(string message);
+		static void net_ChatMessage(const string& message);
 
 		/**
 		 * Interface functions

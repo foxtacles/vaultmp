@@ -69,9 +69,9 @@ bool Object::IsValidCoordinate(double C)
 }
 
 inline
-bool Object::IsValidAngle(double A)
+bool Object::IsValidAngle(unsigned char axis, double A)
 {
-	return (A >= 0.0 && A <= 360.0);
+	return (axis == Axis_Z ? (A >= 0.0 && A <= 360.0) : (A >= -90.0 && A <= 90.0));
 }
 
 const RawParameter& Object::Param_Axis()
@@ -140,7 +140,7 @@ Lockable* Object::SetNetworkPos(unsigned char axis, double pos)
 
 Lockable* Object::SetAngle(unsigned char axis, double angle)
 {
-	if (!IsValidAngle(angle))
+	if (!IsValidAngle(axis, angle))
 		return NULL;
 
 	return SetObjectValue(this->object_Angle.at(axis), angle);

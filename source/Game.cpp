@@ -48,6 +48,9 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			switch (opcode)
 			{
 				case Functions::Func_CenterOnCell:
+				case Functions::Func_CenterOnExterior:
+				case Fallout3::Functions::Func_CenterOnWorld:
+				case FalloutNV::Functions::Func_CenterOnWorld:
 				case Fallout3::Functions::Func_Load:
 				case FalloutNV::Functions::Func_Load:
 				case Functions::Func_PlaceAtMe:
@@ -160,6 +163,9 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Functions::Func_UnequipItem:
 				break;
 
+			case Functions::Func_FireWeapon:
+				break;
+
 			case Functions::Func_Chat:
 			{
 				if (!result)
@@ -210,6 +216,9 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 
 			case Functions::Func_CenterOnCell:
+			case Functions::Func_CenterOnExterior:
+			case Fallout3::Functions::Func_CenterOnWorld:
+			case FalloutNV::Functions::Func_CenterOnWorld:
 			case Fallout3::Functions::Func_Load:
 			case FalloutNV::Functions::Func_Load:
 				FutureSet<bool>(shared, true);
@@ -399,6 +408,52 @@ void Game::CenterOnCell(string cell)
 	// ready state
 }
 
+void Game::CenterOnExterior(signed int x, signed int y)
+{
+	shared_ptr<Shared<bool>> store(new Shared<bool>);
+	unsigned int key = Lockable::Share(store);
+
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("CenterOnExterior", ParamContainer{RawParameter(x), RawParameter(y)}, key);
+
+	Interface::EndDynamic();
+
+	try
+	{
+		store.get()->get_future(chrono::seconds(30));
+	}
+	catch (exception& e)
+	{
+		throw VaultException("Loading of cell (%d,%d) failed (%s)", x, y, e.what());
+	}
+
+	// ready state
+}
+
+void Game::CenterOnWorld(unsigned int baseID, signed int x, signed int y)
+{
+	shared_ptr<Shared<bool>> store(new Shared<bool>);
+	unsigned int key = Lockable::Share(store);
+
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("CenterOnWorld", ParamContainer{RawParameter(baseID), RawParameter(x), RawParameter(y)}, key);
+
+	Interface::EndDynamic();
+
+	try
+	{
+		store.get()->get_future(chrono::seconds(30));
+	}
+	catch (exception& e)
+	{
+		throw VaultException("Loading of world (%08X,%d,%d) failed (%s)", baseID, x, y, e.what());
+	}
+
+	// ready state
+}
+
 void Game::LoadEnvironment()
 {
 	vector<NetworkID> reference = GameFactory::GetIDObjectTypes(ALL_OBJECTS);
@@ -440,7 +495,7 @@ void Game::LoadEnvironment()
 	}
 }
 
-void Game::UIMessage(string& message)
+void Game::UIMessage(const string& message)
 {
 	Interface::StartDynamic();
 
@@ -449,7 +504,7 @@ void Game::UIMessage(string& message)
 	Interface::EndDynamic();
 }
 
-void Game::ChatMessage(string& message)
+void Game::ChatMessage(const string& message)
 {
 	Interface::StartDynamic();
 
@@ -834,7 +889,7 @@ thread Game::SetActorAlerted(FactoryObject& reference, unsigned int key)
 	return t;
 }
 
-void Game::SetActorMovingAnimation(FactoryObject& reference, unsigned int key)
+void Game::SetActorAnimation(FactoryObject& reference, unsigned char anim, unsigned int key)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -843,9 +898,19 @@ void Game::SetActorMovingAnimation(FactoryObject& reference, unsigned int key)
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("PlayGroup", ParamContainer{actor->GetReferenceParam(), RawParameter(API::RetrieveAnim_Reverse(actor->GetActorMovingAnimation())), RawParameter(true)}, key);
+	Interface::ExecuteCommand("PlayGroup", ParamContainer{actor->GetReferenceParam(), RawParameter(API::RetrieveAnim_Reverse(anim)), RawParameter(true)}, key);
 
 	Interface::EndDynamic();
+}
+
+void Game::SetActorMovingAnimation(FactoryObject& reference, unsigned int key)
+{
+	Actor* actor = vaultcast<Actor>(reference);
+
+	if (!actor)
+		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+
+	SetActorAnimation(reference, actor->GetActorMovingAnimation(), key);
 }
 
 void Game::SetActorWeaponAnimation(FactoryObject& reference, unsigned int key)
@@ -855,11 +920,7 @@ void Game::SetActorWeaponAnimation(FactoryObject& reference, unsigned int key)
 	if (!actor)
 		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
 
-	Interface::StartDynamic();
-
-	Interface::ExecuteCommand("PlayGroup", ParamContainer{actor->GetReferenceParam(), RawParameter(API::RetrieveAnim_Reverse(actor->GetActorWeaponAnimation())), RawParameter(true)}, key);
-
-	Interface::EndDynamic();
+	SetActorAnimation(reference, actor->GetActorWeaponAnimation(), key);
 }
 
 void Game::KillActor(FactoryObject& reference, unsigned int key)
@@ -872,6 +933,20 @@ void Game::KillActor(FactoryObject& reference, unsigned int key)
 	Interface::StartDynamic();
 
 	Interface::ExecuteCommand("Kill", ParamContainer{actor->GetReferenceParam()}, key);
+
+	Interface::EndDynamic();
+}
+
+void Game::FireWeapon(FactoryObject& reference, unsigned int weapon, unsigned int key)
+{
+	Actor* actor = vaultcast<Actor>(reference);
+
+	if (!actor)
+		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("FireWeapon", ParamContainer{actor->GetReferenceParam(), RawParameter(weapon)}, key);
 
 	Interface::EndDynamic();
 }
@@ -1006,7 +1081,20 @@ void Game::net_SetAngle(FactoryObject& reference, unsigned char axis, double val
 	bool result = (bool) object->SetAngle(axis, value);
 
 	if (result && object->GetEnabled())
+	{
 		SetAngle(reference);
+
+		if (axis == Axis_X)
+		{
+			Actor* actor = vaultcast<Actor>(object);
+
+			if (actor && actor->GetActorWeaponAnimation() == AnimGroup_AimIS)
+			{
+				SetActorAnimation(reference, AnimGroup_AimISDown);
+				SetActorAnimation(reference, AnimGroup_AimISUp);
+			}
+		}
+	}
 }
 
 void Game::net_SetCell(FactoryObject& reference, FactoryObject& player, unsigned int cell)
@@ -1130,10 +1218,26 @@ void Game::net_SetActorState(FactoryObject& reference, unsigned char moving, uns
 			SetPos(reference);
 	}
 
+	unsigned char prev_weapon = actor->GetActorWeaponAnimation();
 	result = actor->SetActorWeaponAnimation(weapon);
 
-	if (result && enabled && actor->GetActorAlerted() && weapon != AnimGroup_Idle && weapon != AnimGroup_Aim && weapon != AnimGroup_Equip && weapon != AnimGroup_Unequip && weapon != AnimGroup_Holster)
+	if (result && enabled && actor->GetActorAlerted() && weapon != AnimGroup_Idle && weapon != AnimGroup_Equip && weapon != AnimGroup_Unequip && weapon != AnimGroup_Holster &&
+		weapon != AnimGroup_AttackLeftIS && weapon != AnimGroup_AttackRightIS && (weapon != AnimGroup_Aim || prev_weapon == AnimGroup_AimIS))
+	{
+		if (weapon == AnimGroup_Aim && prev_weapon == AnimGroup_AimIS)
+		{
+			SetActorAnimation(reference, AnimGroup_AimDown);
+			SetActorAnimation(reference, AnimGroup_AimUp);
+		}
+
 		SetActorWeaponAnimation(reference, result->Lock());
+
+		if (weapon == AnimGroup_AimIS)
+		{
+			SetActorAnimation(reference, AnimGroup_AimISDown);
+			SetActorAnimation(reference, AnimGroup_AimISUp);
+		}
+	}
 }
 
 void Game::net_SetActorDead(FactoryObject& reference, bool dead)
@@ -1172,12 +1276,22 @@ void Game::net_SetActorDead(FactoryObject& reference, bool dead)
 	}
 }
 
-void Game::net_UIMessage(string message)
+void Game::net_FireWeapon(FactoryObject& reference, unsigned int weapon)
+{
+	Actor* actor = vaultcast<Actor>(reference);
+
+	if (!actor)
+		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+
+	FireWeapon(reference, weapon);
+}
+
+void Game::net_UIMessage(const string& message)
 {
 	UIMessage(message);
 }
 
-void Game::net_ChatMessage(string message)
+void Game::net_ChatMessage(const string& message)
 {
 	ChatMessage(message);
 }

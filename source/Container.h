@@ -100,6 +100,10 @@ class Container : public Object
 		unsigned int GetItemCount(unsigned int baseID) const;
 		const list<NetworkID>& GetItemList() const;
 
+#ifdef VAULTSERVER
+		list<NetworkID> GetItemTypes(string type) const;
+#endif
+
 		void FlushContainer();
 		NetworkID Copy() const;
 

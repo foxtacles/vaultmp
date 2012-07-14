@@ -2,6 +2,7 @@
 
 function import($file,$dlc)
 {
+	$res = 0;
 	global $db;
 	$f=file_get_contents($file);
 	if($f===FALSE)
@@ -19,14 +20,17 @@ function import($file,$dlc)
 			echo "Fail: " . $id;
 			continue;
 		}
-		$prep->execute(array($id, $name, $description, $dlc));
+		$r = $prep->execute(array($id, $name, $description, $dlc));
+if ($r)
+$res++;
 	}
+return $res;
 }
 
 function createTable($tb)
 {
 	global $db;
-	$db->exec("CREATE TABLE $tb (baseID integer(11) PRIMARY KEY,name varchar(128),description varchar(128),dlc integer(11))");
+	$db->exec("CREATE TABLE $tb (baseID integer(11),name varchar(128),description varchar(128),dlc integer(11))");
 }
 
 $db = new PDO('sqlite:newvegas.sqlite');
@@ -35,17 +39,20 @@ if(!$db)
     die("Errore Sqlite");
 }
 
-import("data/base.TXT",0);
-import("data/dm.TXT",1);
-import("data/hh.TXT",2);
-import("data/owb.TXT",3);
-import("data/lone.TXT",4);
-import("data/gun.TXT",5);
+$dat = 0;
+$dat += import("data/base.TXT",0);
+$dat += import("data/dm.TXT",1);
+$dat += import("data/hh.TXT",2);
+$dat += import("data/owb.TXT",3);
+$dat += import("data/lone.TXT",4);
+$dat += import("data/gun.TXT",5);
 
-import("data/classic.TXT",6);
-import("data/caravan.TXT",7);
-import("data/tribal.TXT",8);
-import("data/mercenary.TXT",9);
+$dat += import("data/classic.TXT",6);
+$dat += import("data/caravan.TXT",7);
+$dat += import("data/tribal.TXT",8);
+$dat += import("data/mercenary.TXT",9);
+
+echo "Imported " . $dat;
 
 //Remove duplicates
 $arr=array("");
