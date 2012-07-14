@@ -488,13 +488,6 @@ void GameFactory::DestroyAllInstances()
 	// Cleanup classes
 
 	Object::param_Axis = RawParameter(vector<string>());
-
-#ifdef VAULTSERVER
-	dbActors.clear();
-	dbCreatures.clear();
-	dbItems.clear();
-#endif
-
 	Actor::param_ActorValues = RawParameter(vector<string>());
 
 	Lockable::Reset();

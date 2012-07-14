@@ -26,6 +26,8 @@ Database<T>::Database()
 template <typename T>
 unsigned int Database<T>::initialize(const string& file, const vector<string>& tables)
 {
+	data.clear();
+
 	char base[MAX_PATH];
 	_getcwd(base, sizeof(base));
 
@@ -92,12 +94,6 @@ unsigned int Database<T>::initialize(const string& file, const vector<string>& t
 #endif
 
 	return data.size();
-}
-
-template <typename T>
-void Database<T>::clear()
-{
-	data.clear();
 }
 
 template <typename T>

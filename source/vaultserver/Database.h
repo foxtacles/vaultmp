@@ -40,7 +40,6 @@ class Database
 		~Database();
 
 		unsigned int initialize(const string& file, const vector<string>& tables);
-		void clear();
 
 	public:
 #ifdef VAULTMP_DEBUG
