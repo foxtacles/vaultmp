@@ -21,6 +21,7 @@
 #ifdef VAULTSERVER
 #include "vaultserver/vaultserver.h"
 #include "vaultserver/Database.h"
+#include "vaultserver/Record.h"
 #endif
 
 #ifdef VAULTMP_DEBUG
@@ -69,6 +70,12 @@ class GameFactory
 		static ReferenceList instances;
 		static ReferenceCount typecount;
 		static unsigned char game;
+
+#ifdef VAULTSERVER
+		static Database<Record> dbActors;
+		static Database<Record> dbCreatures;
+		static Database<Record> dbItems;
+#endif
 
 	public:
 

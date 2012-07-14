@@ -9,40 +9,34 @@ unsigned char GameFactory::game = 0x00;
 Debug* GameFactory::debug;
 #endif
 
+#ifdef VAULTSERVER
+Database<Record> GameFactory::dbActors;
+Database<Record> GameFactory::dbCreatures;
+Database<Record> GameFactory::dbItems;
+#endif
+
 void GameFactory::Initialize(unsigned char game)
 {
 	GameFactory::game = game;
 
 #ifdef VAULTSERVER
-
-	try
+	switch (game)
 	{
-		switch (game)
-		{
-			case FALLOUT3:
-				Actor::dbActors = new Database(DB_FALLOUT3, {"NPC_"});
-				Actor::dbCreatures = new Database(DB_FALLOUT3, {"CREA"});
-				Item::dbItems = new Database(DB_FALLOUT3, {"ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "ENCH", "KEYM", "MISC", "NOTE", "PROJ", "WEAP"});
-				break;
+		case FALLOUT3:
+			dbActors.initialize(DB_FALLOUT3, {"NPC_"});
+			dbCreatures.initialize(DB_FALLOUT3, {"CREA"});
+			dbItems.initialize(DB_FALLOUT3, {"ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "ENCH", "KEYM", "MISC", "NOTE", "PROJ", "WEAP"});
+			break;
 
-			case NEWVEGAS:
-				Actor::dbActors = new Database(DB_NEWVEGAS, {"NPC_"});
-				Actor::dbCreatures = new Database(DB_NEWVEGAS, {"CREA"});
-				Item::dbItems = new Database(DB_NEWVEGAS, {"ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "CCRD", "CDCK", "CHIP", "CMNY", "ENCH", "IMOD", "KEYM", "MISC", "NOTE", "PROJ", "RCPE", "WEAP"});
-				break;
+		case NEWVEGAS:
+			dbActors.initialize(DB_NEWVEGAS, {"NPC_"});
+			dbCreatures.initialize(DB_NEWVEGAS, {"CREA"});
+			dbItems.initialize(DB_NEWVEGAS, {"ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "CCRD", "CDCK", "CHIP", "CMNY", "ENCH", "IMOD", "KEYM", "MISC", "NOTE", "PROJ", "RCPE", "WEAP"});
+			break;
 
-			default:
-				throw VaultException("Bad game ID %08X", game);
-		}
+		default:
+			throw VaultException("Bad game ID %08X", game);
 	}
-	catch (...)
-	{
-		delete Actor::dbActors;
-		delete Actor::dbCreatures;
-		delete Item::dbItems;
-		throw;
-	}
-
 #endif
 }
 
@@ -496,9 +490,9 @@ void GameFactory::DestroyAllInstances()
 	Object::param_Axis = RawParameter(vector<string>());
 
 #ifdef VAULTSERVER
-	delete Actor::dbActors;
-	delete Actor::dbCreatures;
-	delete Item::dbItems;
+	dbActors.clear();
+	dbCreatures.clear();
+	dbItems.clear();
 #endif
 
 	Actor::param_ActorValues = RawParameter(vector<string>());

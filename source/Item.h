@@ -32,10 +32,6 @@ class Item : public Object
 		static Debug* debug;
 #endif
 
-#ifdef VAULTSERVER
-		static Database* dbItems;
-#endif
-
 		Value<unsigned int> item_Count;
 		Value<double> item_Condition;
 		Value<bool> state_Equipped;

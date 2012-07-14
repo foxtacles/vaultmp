@@ -8,11 +8,6 @@ RawParameter Actor::param_ActorValues = RawParameter(vector<string>());
 Debug* Actor::debug;
 #endif
 
-#ifdef VAULTSERVER
-Database* Actor::dbActors = NULL;
-Database* Actor::dbCreatures = NULL;
-#endif
-
 Actor::Actor(unsigned int refID, unsigned int baseID) : Container(refID, baseID)
 {
 	initialize();
@@ -71,17 +66,17 @@ void Actor::initialize()
 	{
 		try
 		{
-			const Database::Record& record = dbActors->Lookup(baseID);
+			const Record& record = Record::Lookup(baseID);
 
 			if (this->GetName().empty())
-				this->SetName(record.description);
+				this->SetName(record.GetDescription());
 		}
 		catch (...)
 		{
-			const Database::Record& record = dbCreatures->Lookup(baseID);
+			const Record& record = Record::Lookup(baseID);
 
 			if (this->GetName().empty())
-				this->SetName(record.description);
+				this->SetName(record.GetDescription());
 		}
 	}
 
@@ -213,17 +208,17 @@ Lockable* Actor::SetBase(unsigned int baseID)
 {
 	try
 	{
-		const Database::Record& record = dbActors->Lookup(baseID);
+		const Record& record = Record::Lookup(baseID);
 
 		if (this->GetName().empty())
-			this->SetName(record.name);
+			this->SetName(record.GetDescription());
 	}
 	catch (...)
 	{
-		const Database::Record& record = dbCreatures->Lookup(baseID);
+		const Record& record = Record::Lookup(baseID);
 
 		if (this->GetName().empty())
-			this->SetName(record.name);
+			this->SetName(record.GetDescription());
 	}
 
 	return Reference::SetBase(baseID);

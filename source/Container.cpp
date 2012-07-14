@@ -536,9 +536,9 @@ list<NetworkID> Container::GetItemTypes(string type) const
 	{
 		FactoryObject _reference = GameFactory::GetObject(id);
 		Item* item = vaultcast<Item>(_reference);
-		const Database::Record& record = Item::dbItems->Lookup(item->GetBase());
+		const Record& record = Record::Lookup(item->GetBase());
 
-		if (record.type.compare(type) == 0)
+		if (record.GetType().compare(type) == 0)
 			result.push_back(id);
 	}
 

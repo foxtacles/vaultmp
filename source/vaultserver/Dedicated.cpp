@@ -271,7 +271,7 @@ void Dedicated::DedicatedThread()
 	debug->Print("-----------------------------------------------------------------------------------------------------", false);
 	//debug->PrintSystem();
 	API::SetDebugHandler(debug);
-	Database::SetDebugHandler(debug);
+	Database<Record>::SetDebugHandler(debug);
 	VaultException::SetDebugHandler(debug);
 	NetworkServer::SetDebugHandler(debug);
 	Lockable::SetDebugHandler(debug);

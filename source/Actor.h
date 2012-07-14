@@ -50,11 +50,6 @@ class Actor : public Container
 		static Debug* debug;
 #endif
 
-#ifdef VAULTSERVER
-		static Database* dbActors;
-		static Database* dbCreatures;
-#endif
-
 		unordered_map<unsigned char, Value<double>> actor_Values;
 		unordered_map<unsigned char, Value<double>> actor_BaseValues;
 		Value<unsigned char> anim_Moving;

@@ -9,9 +9,7 @@
 #include <unistd.h>
 #endif
 
-#include <algorithm>
-#include <unordered_map>
-#include <unordered_set>
+#include <vector>
 
 #include "vaultmp.h"
 #include "vaultserver.h"
@@ -23,37 +21,28 @@
 using namespace std;
 
 /**
- * \brief Used to access vaultmp SQLite databases
+ * \brief Used to access vaultmp SQLite3 databases
  */
 
+template<typename T>
 class Database
 {
 		friend class GameFactory;
-
-	public:
-		struct Record {
-			unsigned int baseID;
-			string name;
-			string description;
-			string type;
-
-			Record(unsigned int baseID, const string& name, const string& description, const string& type) : baseID(baseID), name(name), description(description), type(type) {}
-		};
 
 	private:
 #ifdef VAULTMP_DEBUG
 		static Debug* debug;
 #endif
 
-		unordered_map<unsigned int, Record> data;
+		vector<T> data;
 
-		Database(const string& file, const vector<string>& types);
+		Database();
 		~Database();
 
-	public:
-		const Record& Lookup(unsigned int baseID);
-		const Record& GetRecordNotIn(const unordered_set<unsigned int>& _set);
+		unsigned int initialize(const string& file, const vector<string>& tables);
+		void clear();
 
+	public:
 #ifdef VAULTMP_DEBUG
 		static void SetDebugHandler(Debug* debug);
 #endif
