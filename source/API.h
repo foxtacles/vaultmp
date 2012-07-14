@@ -33,7 +33,7 @@ typedef unordered_map<string, unsigned char> ValueMap;
 typedef set<unsigned char> ValueList;
 
 /*
- * \brief This namespace contains hexadecimal representations of the games data
+ * \brief This namespace contains key data of the game
  */
 
 namespace Values

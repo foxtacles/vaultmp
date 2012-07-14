@@ -717,7 +717,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 					throw VaultException("API::ParseCommand reference argument is NULL");
 
 				*reinterpret_cast<unsigned char*>(arg2_pos) = 0x72;
-				*reinterpret_cast<unsigned short*>(arg2_pos + sizeof(unsigned char)) = (refparam == reference) ? 0x0001 : 0x0002;
+				*reinterpret_cast<unsigned short*>(arg2_pos + sizeof(unsigned char)) = (!reference || refparam == reference) ? 0x0001 : 0x0002;
 				result_data.push_back(storeIn<double, unsigned int>(refparam));
 				arg2_pos += sizeof(unsigned char) + sizeof(unsigned short);
 				break;
@@ -791,27 +791,30 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 
 	*_numargs = numargs;
 
-	if (reference != 0x00)
+	unsigned int first_ref = reference ? reference : refparam;
+	unsigned int second_ref = refparam;
+
+	if (first_ref)
 	{
 		result->arg5.numargs++;
-		result->arg5.param1_reference = reference;
+		result->arg5.param1_reference = first_ref;
 
 		// this is totally incomplete, but I don't think it matters (afaik)
 
-		if (reference == PLAYER_REFERENCE)
+		if (first_ref == PLAYER_REFERENCE)
 			result->arg5.param1_unk2 = 0x00060006;
 		else
-			result->arg5.param1_unk2 = (reference & 0xFF000000) == 0xFF000000 ? 0x00060006 : 0x00050005;
+			result->arg5.param1_unk2 = (first_ref & 0xFF000000) == 0xFF000000 ? 0x00060006 : 0x00050005;
 
-		if (reference != refparam && refparam != 0x00)
+		if (second_ref != 0x00 && first_ref != second_ref)
 		{
 			result->arg5.numargs++;
-			result->arg5.param2_reference = refparam;
+			result->arg5.param2_reference = second_ref;
 
-			if (refparam == PLAYER_REFERENCE)
+			if (second_ref == PLAYER_REFERENCE)
 				result->arg5.param2_unk2 = 0x00060006;
 			else
-				result->arg5.param2_unk2 = (refparam & 0xFF000000) == 0xFF000000 ? 0x00060006 : 0x00050005;
+				result->arg5.param2_unk2 = (second_ref & 0xFF000000) == 0xFF000000 ? 0x00060006 : 0x00050005;
 		}
 	}
 

@@ -1286,12 +1286,12 @@ void Game::net_FireWeapon(FactoryObject& reference, unsigned int weapon)
 	FireWeapon(reference, weapon);
 }
 
-void Game::net_UIMessage(string message)
+void Game::net_UIMessage(const string& message)
 {
 	UIMessage(message);
 }
 
-void Game::net_ChatMessage(string message)
+void Game::net_ChatMessage(const string& message)
 {
 	ChatMessage(message);
 }

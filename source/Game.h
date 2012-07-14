@@ -247,11 +247,11 @@ class Game
 		/**
 		 * \brief Network function to handle UI message
 		 */
-		static void net_UIMessage(string message);
+		static void net_UIMessage(const string& message);
 		/**
 		 * \brief Network function to handle chat message
 		 */
-		static void net_ChatMessage(string message);
+		static void net_ChatMessage(const string& message);
 
 		/**
 		 * Interface functions
