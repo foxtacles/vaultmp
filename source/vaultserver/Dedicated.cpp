@@ -295,12 +295,10 @@ void Dedicated::DedicatedThread()
 	{
 		try
 		{
-			// check if valid exterior
 			Cell::Lookup(cell);
 		}
 		catch (...)
 		{
-			// else, check if valid interior
 			const Record& record = Record::Lookup(cell);
 
 			if (record.GetType().compare("CELL"))
