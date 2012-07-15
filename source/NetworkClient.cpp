@@ -322,7 +322,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
 						case ID_UPDATE_EXTERIOR:
 						{
-							unsigned int baseID, x, y;
+							unsigned int baseID;
+							signed int x, y;
 							PacketFactory::Access(packet, &id, &baseID, &x, &y);
 							Game::CenterOnWorld(baseID, x, y);
 							break;

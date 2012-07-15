@@ -219,8 +219,8 @@ pPacket PacketFactory::CreatePacket(unsigned char type, ...)
 		{
 			NetworkID id = va_arg(args, NetworkID);
 			unsigned int baseID = va_arg(args, unsigned int);
-			unsigned int x = va_arg(args, unsigned int);
-			unsigned int y = va_arg(args, unsigned int);
+			signed int x = va_arg(args, signed int);
+			signed int y = va_arg(args, signed int);
 			packet = new pPlayerExterior(id, baseID, x, y);
 			break;
 		}
@@ -706,8 +706,8 @@ void PacketFactory::Access(const pDefault* packet, ...)
 						const pPlayerExterior* update = dynamic_cast<const pPlayerExterior*>(packet);
 						NetworkID* id = va_arg(args, NetworkID*);
 						unsigned int* baseID = va_arg(args, unsigned int*);
-						unsigned int* x = va_arg(args, unsigned int*);
-						unsigned int* y = va_arg(args, unsigned int*);
+						signed int* x = va_arg(args, signed int*);
+						signed int* y = va_arg(args, signed int*);
 						*id = update->id;
 						*baseID = update->_data.baseID;
 						*x = update->_data.x;
