@@ -118,12 +118,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					debug->PrintFormat("We were successfully authenticated (%s)", true, data->systemAddress.ToString());
 					debug->Print("Initiating vaultmp game thread...", true);
 #endif
-					char cell[MAX_CELL_NAME + 1];
-					ZeroMemory(cell, sizeof(cell));
-					PacketFactory::Access(packet, cell);
 
 					Bethesda::Initialize();
-					Game::CenterOnCell(cell);
 					Game::LoadEnvironment();
 
 					response = NetworkClient::ProcessEvent(ID_EVENT_GAME_STARTED);
@@ -235,11 +231,12 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				case ID_ACTOR_UPDATE:
 				case ID_PLAYER_UPDATE:
 				{
+					NetworkID id;
+
 					switch (data->data[1])
 					{
 						case ID_UPDATE_POS:
 						{
-							NetworkID id;
 							double X, Y, Z;
 							PacketFactory::Access(packet, &id, &X, &Y, &Z);
 							FactoryObject reference = GameFactory::GetObject(id);
@@ -249,7 +246,6 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
 						case ID_UPDATE_ANGLE:
 						{
-							NetworkID id;
 							unsigned char axis;
 							double value;
 							PacketFactory::Access(packet, &id, &axis, &value);
@@ -260,7 +256,6 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
 						case ID_UPDATE_CELL:
 						{
-							NetworkID id;
 							unsigned int cell;
 							PacketFactory::Access(packet, &id, &cell);
 							vector<FactoryObject> reference = GameFactory::GetMultiple(vector<unsigned int> {GameFactory::LookupRefID(id), PLAYER_REFERENCE});
@@ -270,7 +265,6 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
 						case ID_UPDATE_CONTAINER:
 						{
-							NetworkID id;
 							ContainerDiff diff;
 							PacketFactory::Access(packet, &id, &diff);
 							FactoryObject reference = GameFactory::GetObject(id);
@@ -280,7 +274,6 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
 						case ID_UPDATE_VALUE:
 						{
-							NetworkID id;
 							bool base;
 							unsigned char index;
 							double value;
@@ -292,12 +285,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
 						case ID_UPDATE_STATE:
 						{
-							NetworkID id;
-							unsigned char moving;
-							unsigned char movingxy;
-							unsigned char weapon;
-							bool alerted;
-							bool sneaking;
+							unsigned char moving, movingxy, weapon;
+							bool alerted, sneaking;
 							PacketFactory::Access(packet, &id, &moving, &movingxy, &weapon, &alerted, &sneaking);
 							FactoryObject reference = GameFactory::GetObject(id);
 							Game::net_SetActorState(reference, moving, movingxy, weapon, alerted, sneaking);
@@ -306,7 +295,6 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
 						case ID_UPDATE_DEAD:
 						{
-							NetworkID id;
 							bool dead;
 							PacketFactory::Access(packet, &id, &dead);
 							FactoryObject reference = GameFactory::GetObject(id);
@@ -316,11 +304,27 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
 						case ID_UPDATE_FIREWEAPON:
 						{
-							NetworkID id;
 							unsigned int weapon;
 							PacketFactory::Access(packet, &id, &weapon);
 							FactoryObject reference = GameFactory::GetObject(id);
 							Game::net_FireWeapon(reference, weapon);
+							break;
+						}
+
+						case ID_UPDATE_INTERIOR:
+						{
+							char cell[MAX_CELL_NAME + 1];
+							ZeroMemory(cell, sizeof(cell));
+							PacketFactory::Access(packet, &id, cell);
+							Game::CenterOnCell(cell);
+							break;
+						}
+
+						case ID_UPDATE_EXTERIOR:
+						{
+							unsigned int baseID, x, y;
+							PacketFactory::Access(packet, &id, &baseID, &x, &y);
+							Game::CenterOnWorld(baseID, x, y);
 							break;
 						}
 

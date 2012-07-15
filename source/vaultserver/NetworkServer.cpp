@@ -154,11 +154,12 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 				case ID_ACTOR_UPDATE:
 				case ID_PLAYER_UPDATE:
 				{
+					NetworkID id;
+
 					switch (data->data[1])
 					{
 						case ID_UPDATE_POS:
 						{
-							NetworkID id;
 							double X, Y, Z;
 							PacketFactory::Access(packet, &id, &X, &Y, &Z);
 							FactoryObject reference = GameFactory::GetObject(id);
@@ -168,7 +169,6 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 
 						case ID_UPDATE_ANGLE:
 						{
-							NetworkID id;
 							unsigned char axis;
 							double value;
 							PacketFactory::Access(packet, &id, &axis, &value);
@@ -179,7 +179,6 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 
 						case ID_UPDATE_CELL:
 						{
-							NetworkID id;
 							unsigned int cell;
 							PacketFactory::Access(packet, &id, &cell);
 							FactoryObject reference = GameFactory::GetObject(id);
@@ -189,7 +188,6 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 
 						case ID_UPDATE_CONTAINER:
 						{
-							NetworkID id;
 							ContainerDiff diff;
 							PacketFactory::Access(packet, &id, &diff);
 							FactoryObject reference = GameFactory::GetObject(id);
@@ -199,7 +197,6 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 
 						case ID_UPDATE_VALUE:
 						{
-							NetworkID id;
 							bool base;
 							unsigned char index;
 							double value;
@@ -211,12 +208,8 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 
 						case ID_UPDATE_STATE:
 						{
-							NetworkID id;
-							unsigned char moving;
-							unsigned char movingxy;
-							unsigned char weapon;
-							bool alerted;
-							bool sneaking;
+							unsigned char moving, movingxy, weapon;
+							bool alerted, sneaking;
 							PacketFactory::Access(packet, &id, &moving, &movingxy, &weapon, &alerted, &sneaking);
 							FactoryObject reference = GameFactory::GetObject(id);
 							response = Server::GetActorState(data->guid, reference, moving, movingxy, weapon, alerted, sneaking);
@@ -225,7 +218,6 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 
 						case ID_UPDATE_DEAD:
 						{
-							NetworkID id;
 							bool dead;
 							PacketFactory::Access(packet, &id, &dead);
 							FactoryObject reference = GameFactory::GetObject(id);
@@ -235,9 +227,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 
 						case ID_UPDATE_CONTROL:
 						{
-							NetworkID id;
-							unsigned char control;
-							unsigned char key;
+							unsigned char control, key;
 							PacketFactory::Access(packet, &id, &control, &key);
 							FactoryObject reference = GameFactory::GetObject(id);
 							response = Server::GetPlayerControl(data->guid, reference, control, key);

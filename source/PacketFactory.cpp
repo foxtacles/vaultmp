@@ -33,8 +33,7 @@ pPacket PacketFactory::CreatePacket(unsigned char type, ...)
 
 		case ID_GAME_START:
 		{
-			const char* cell = va_arg(args, const char*);
-			packet = new pGameStart(cell);
+			packet = new pGameStart();
 			break;
 		}
 
@@ -208,6 +207,24 @@ pPacket PacketFactory::CreatePacket(unsigned char type, ...)
 			break;
 		}
 
+		case ID_UPDATE_INTERIOR:
+		{
+			NetworkID id = va_arg(args, NetworkID);
+			const char* cell = va_arg(args, const char*);
+			packet = new pPlayerInterior(id, cell);
+			break;
+		}
+
+		case ID_UPDATE_EXTERIOR:
+		{
+			NetworkID id = va_arg(args, NetworkID);
+			unsigned int baseID = va_arg(args, unsigned int);
+			unsigned int x = va_arg(args, unsigned int);
+			unsigned int y = va_arg(args, unsigned int);
+			packet = new pPlayerExterior(id, baseID, x, y);
+			break;
+		}
+
 		default:
 			throw VaultException("Unhandled packet type %d", (int) type);
 	}
@@ -321,6 +338,14 @@ pPacket PacketFactory::CreatePacket(unsigned char* stream, unsigned int len)
 					packet = new pPlayerControl(stream, len);
 					break;
 
+				case ID_UPDATE_INTERIOR:
+					packet = new pPlayerInterior(stream, len);
+					break;
+
+				case ID_UPDATE_EXTERIOR:
+					packet = new pPlayerExterior(stream, len);
+					break;
+
 				default:
 					throw VaultException("Unhandled object update packet type %d", (int) stream[1]);
 			}
@@ -372,9 +397,6 @@ void PacketFactory::Access(const pDefault* packet, ...)
 
 			case ID_GAME_START:
 			{
-				const pGameStart* data = dynamic_cast<const pGameStart*>(packet);
-				char* cell = va_arg(args, char*);
-				strncpy(cell, data->_data.cell, sizeof(data->_data.cell));
 				break;
 			}
 
@@ -666,6 +688,30 @@ void PacketFactory::Access(const pDefault* packet, ...)
 						*id = update->id;
 						*control = update->_data.control;
 						*key = update->_data.key;
+						break;
+					}
+
+					case ID_UPDATE_INTERIOR:
+					{
+						const pPlayerInterior* update = dynamic_cast<const pPlayerInterior*>(packet);
+						NetworkID* id = va_arg(args, NetworkID*);
+						char* cell = va_arg(args, char*);
+						*id = update->id;
+						strncpy(cell, update->_data.cell, sizeof(update->_data.cell));
+						break;
+					}
+
+					case ID_UPDATE_EXTERIOR:
+					{
+						const pPlayerExterior* update = dynamic_cast<const pPlayerExterior*>(packet);
+						NetworkID* id = va_arg(args, NetworkID*);
+						unsigned int* baseID = va_arg(args, unsigned int*);
+						unsigned int* x = va_arg(args, unsigned int*);
+						unsigned int* y = va_arg(args, unsigned int*);
+						*id = update->id;
+						*baseID = update->_data.baseID;
+						*x = update->_data.x;
+						*y = update->_data.y;
 						break;
 					}
 				}

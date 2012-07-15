@@ -337,11 +337,6 @@ struct _pGameAuth
 	char name[MAX_PLAYER_NAME];
 	char pwd[MAX_PASSWORD_SIZE];
 };
-
-struct _pGameStart
-{
-	char cell[MAX_CELL_NAME];
-};
 #pragma pack(pop)
 
 class pGameAuth : public pGameDefault
@@ -353,7 +348,6 @@ class pGameAuth : public pGameDefault
 
 		pGameAuth(const char* name, const char* pwd) : pGameDefault(ID_GAME_AUTH)
 		{
-			ZeroMemory(&_data, sizeof(_data));
 			strncpy(_data.name, name, sizeof(_data.name));
 			strncpy(_data.pwd, pwd, sizeof(_data.pwd));
 			construct(&_data, sizeof(_data));
@@ -388,7 +382,6 @@ class pGameMod : public pGameDefault
 
 		pGameMod(const char* modfile, unsigned int crc) : pGameDefault(ID_GAME_MOD)
 		{
-			ZeroMemory(&_data, sizeof(_data));
 			strncpy(_data.modfile, modfile, sizeof(_data.modfile));
 			_data.crc = crc;
 			construct(&_data, sizeof(_data));
@@ -404,17 +397,13 @@ class pGameStart : public pGameDefault
 		friend class PacketFactory;
 
 	private:
-		_pGameStart _data;
-
-		pGameStart(const char* cell) : pGameDefault(ID_GAME_START)
+		pGameStart() : pGameDefault(ID_GAME_START)
 		{
-			ZeroMemory(&_data, sizeof(_data));
-			strncpy(_data.cell, cell, sizeof(_data.cell));
-			construct(&_data, sizeof(_data));
+			construct();
 		}
 		pGameStart(const unsigned char* stream, unsigned int len) : pGameDefault(stream, len)
 		{
-			deconstruct(&_data, sizeof(_data));
+			deconstruct();
 		}
 };
 
@@ -1056,6 +1045,18 @@ struct _pPlayerControl
 	unsigned char control;
 	unsigned char key;
 };
+
+struct _pPlayerInterior
+{
+	char cell[MAX_CELL_NAME];
+};
+
+struct _pPlayerExterior
+{
+	unsigned int baseID;
+	signed int x;
+	signed int y;
+};
 #pragma pack(pop)
 
 class pPlayerControl : public pObjectUpdateDefault
@@ -1072,6 +1073,44 @@ class pPlayerControl : public pObjectUpdateDefault
 			construct(&_data, sizeof(_data));
 		}
 		pPlayerControl(unsigned char* stream, unsigned int len) : pObjectUpdateDefault(stream, len)
+		{
+			deconstruct(&_data, sizeof(_data));
+		}
+};
+
+class pPlayerInterior : public pObjectUpdateDefault
+{
+		friend class PacketFactory;
+
+	private:
+		_pPlayerInterior _data;
+
+		pPlayerInterior(NetworkID id, const char* cell) : pObjectUpdateDefault(ID_PLAYER_UPDATE, ID_UPDATE_INTERIOR, id)
+		{
+			strncpy(_data.cell, cell, sizeof(_data.cell));
+			construct(&_data, sizeof(_data));
+		}
+		pPlayerInterior(unsigned char* stream, unsigned int len) : pObjectUpdateDefault(stream, len)
+		{
+			deconstruct(&_data, sizeof(_data));
+		}
+};
+
+class pPlayerExterior : public pObjectUpdateDefault
+{
+		friend class PacketFactory;
+
+	private:
+		_pPlayerExterior _data;
+
+		pPlayerExterior(NetworkID id, unsigned int baseID, signed int x, signed int y) : pObjectUpdateDefault(ID_PLAYER_UPDATE, ID_UPDATE_EXTERIOR, id)
+		{
+			_data.baseID = baseID;
+			_data.x = x;
+			_data.y = y;
+			construct(&_data, sizeof(_data));
+		}
+		pPlayerExterior(unsigned char* stream, unsigned int len) : pObjectUpdateDefault(stream, len)
 		{
 			deconstruct(&_data, sizeof(_data));
 		}
