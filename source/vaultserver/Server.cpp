@@ -31,7 +31,7 @@ NetworkResponse Server::Authenticate(RakNetGUID guid, string name, string pwd)
 		}
 
 		response.push_back(Network::CreateResponse(
-			PacketFactory::CreatePacket(ID_GAME_START, Dedicated::cell.c_str()),
+			PacketFactory::CreatePacket(ID_GAME_START),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 	else

@@ -22,6 +22,7 @@
 #include "vaultserver/vaultserver.h"
 #include "vaultserver/Database.h"
 #include "vaultserver/Record.h"
+#include "vaultserver/Cell.h"
 #endif
 
 #ifdef VAULTMP_DEBUG
@@ -72,9 +73,8 @@ class GameFactory
 		static unsigned char game;
 
 #ifdef VAULTSERVER
-		static Database<Record> dbActors;
-		static Database<Record> dbCreatures;
-		static Database<Record> dbItems;
+		static Database<Record> dbRecords;
+		static Database<Cell> dbCells;
 #endif
 
 	public:
@@ -209,8 +209,8 @@ class FactoryObject
 				reference->EndSession();
 		};
 
-		FactoryObject(const FactoryObject& p) = delete;
-		FactoryObject& operator=(const FactoryObject& p) = delete;
+		FactoryObject(const FactoryObject&) = delete;
+		FactoryObject& operator=(const FactoryObject&) = delete;
 
 		FactoryObject(FactoryObject&& p) : reference(p.reference)
 		{

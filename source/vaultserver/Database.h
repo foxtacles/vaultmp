@@ -9,6 +9,7 @@
 #include <unistd.h>
 #endif
 
+#include <list>
 #include <vector>
 
 #include "vaultmp.h"
@@ -34,7 +35,7 @@ class Database
 		static Debug* debug;
 #endif
 
-		vector<T> data;
+		list<T> data;
 
 		Database();
 		~Database();

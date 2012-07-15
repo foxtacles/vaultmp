@@ -15,7 +15,7 @@ bool Dedicated::fileserve;
 SystemAddress Dedicated::master;
 TimeMS Dedicated::announcetime;
 ServerEntry* Dedicated::self = NULL;
-string Dedicated::cell;
+unsigned int Dedicated::cell;
 ModList Dedicated::modfiles;
 #ifdef VAULTMP_DEBUG
 Debug* Dedicated::debug;
@@ -272,6 +272,7 @@ void Dedicated::DedicatedThread()
 	//debug->PrintSystem();
 	API::SetDebugHandler(debug);
 	Database<Record>::SetDebugHandler(debug);
+	Database<Cell>::SetDebugHandler(debug);
 	VaultException::SetDebugHandler(debug);
 	NetworkServer::SetDebugHandler(debug);
 	Lockable::SetDebugHandler(debug);
@@ -292,6 +293,20 @@ void Dedicated::DedicatedThread()
 
 	try
 	{
+		try
+		{
+			// check if valid exterior
+			Cell::Lookup(cell);
+		}
+		catch (...)
+		{
+			// else, check if valid interior
+			const Record& record = Record::Lookup(cell);
+
+			if (record.GetType().compare("CELL"))
+				throw VaultException("%08X is not a valid cell", cell);
+		}
+
 		while (thread)
 		{
 			while (Network::Dispatch(peer));
@@ -341,7 +356,6 @@ void Dedicated::DedicatedThread()
 			}
 		}
 	}
-
 	catch (std::exception& e)
 	{
 		try
@@ -397,7 +411,7 @@ void Dedicated::SetServerEntry(ServerEntry* self)
 	Dedicated::self = self;
 }
 
-void Dedicated::SetSpawnCell(const char* cell)
+void Dedicated::SetSpawnCell(unsigned int cell)
 {
 	Dedicated::cell = cell;
 }

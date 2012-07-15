@@ -94,15 +94,15 @@ int main(int argc, char* argv[])
 #endif
 
 	unsigned char game;
-	int port;
-	int players;
-	int fileslots;
+	unsigned int port;
+	unsigned int players;
+	unsigned int fileslots;
 	bool query;
 	bool files;
 	const char* announce;
 	const char* scripts;
 	const char* mods;
-	const char* cell;
+	unsigned int cell;
 
 	dictionary* config = iniparser_load(argc > 1 ? argv[1] : "vaultserver.ini");
 
@@ -119,7 +119,7 @@ int main(int argc, char* argv[])
 	files = (bool) iniparser_getboolean(config, "general:fileserve", 0);
 	fileslots = iniparser_getint(config, "general:fileslots", 8);
 	announce = iniparser_getstring(config, "general:master", "vaultmp.com");
-	cell = iniparser_getstring(config, "general:spawn", game == FALLOUT3 ? "Vault101Exterior" : "Goodsprings");
+	cell = iniparser_getint(config, "general:spawn", game == FALLOUT3 ? 0x10C1 : 0x15E63); // Vault101Exterior and Goodsprings
 	scripts = iniparser_getstring(config, "scripts:scripts", "");
 	mods = iniparser_getstring(config, "mods:mods", "");
 

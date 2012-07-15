@@ -70,7 +70,7 @@ class Dedicated
 		static TimeMS announcetime;
 		static SystemAddress master;
 		static ServerEntry* self;
-		static string cell;
+		static unsigned int cell;
 		static ModList modfiles;
 
 		static void DedicatedThread();
@@ -129,7 +129,7 @@ class Dedicated
 		/**
 		 * \brief Sets the default spawn cell for players of the dedicated server
 		 */
-		static void SetSpawnCell(const char* cell);
+		static void SetSpawnCell(unsigned int cell);
 		/**
 		 * \brief Returns the game code of the dedicated server
 		 */

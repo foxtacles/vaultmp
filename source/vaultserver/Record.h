@@ -19,8 +19,6 @@ using namespace std;
 
 class Record
 {
-		friend class Database<Record>;
-
 	private:
 		static unordered_map<unsigned int, const Record*> data;
 
@@ -29,7 +27,10 @@ class Record
 		string description;
 		string type;
 
-		Record(const string& table, sqlite3_stmt* stmt);
+		Record(const Record&) = delete;
+		Record& operator=(const Record& p) = delete;
+		Record(Record&&) = delete;
+		Record& operator=(Record&&) = delete;
 
 	public:
 		static const Record& Lookup(unsigned int baseID);
@@ -40,6 +41,7 @@ class Record
 		const string& GetDescription() const;
 		const string& GetType() const;
 
+		Record(const string& table, sqlite3_stmt* stmt);
 		~Record();
 };
 

@@ -381,6 +381,8 @@
 		</Unit>
 		<Unit filename="..\iniparser\src\iniparser.h" />
 		<Unit filename="..\vaultmp.h" />
+		<Unit filename="Cell.cpp" />
+		<Unit filename="Cell.h" />
 		<Unit filename="Client.cpp" />
 		<Unit filename="Client.h" />
 		<Unit filename="Database.cpp" />

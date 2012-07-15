@@ -1,5 +1,6 @@
 #include "Database.h"
 #include "Record.h"
+#include "Cell.h"
 
 #ifdef VAULTMP_DEBUG
 template <typename T>
@@ -73,7 +74,7 @@ unsigned int Database<T>::initialize(const string& file, const vector<string>& t
 
 			try
 			{
-				data.push_back(T(table, stmt));
+				data.emplace_back(table, stmt);
 			}
 			catch (...)
 			{
@@ -103,3 +104,4 @@ Database<T>::~Database()
 }
 
 template class Database<Record>;
+template class Database<Cell>;
