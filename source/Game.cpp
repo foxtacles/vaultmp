@@ -751,7 +751,7 @@ void Game::SetAngle(FactoryObject& reference)
 	Interface::ExecuteCommand("SetAngle", ParamContainer{object->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_X)), RawParameter(object->GetAngle(Axis_X))});
 
 	double value = object->GetAngle(Axis_Z);
-	Actor* actor = vaultcast<Actor>(object);
+	Actor* actor = vaultcast<Actor>(reference);
 
 	if (actor)
 	{
@@ -1068,7 +1068,7 @@ void Game::net_SetPos(FactoryObject& reference, double X, double Y, double Z)
 
 	if (result && object->GetEnabled())
 	{
-		Actor* actor = vaultcast<Actor>(object);   // maybe we should consider items, too (they have physics)
+		Actor* actor = vaultcast<Actor>(reference);   // maybe we should consider items, too (they have physics)
 
 		if (actor == NULL || (!actor->IsNearPoint(object->GetNetworkPos(Axis_X), object->GetNetworkPos(Axis_Y), object->GetNetworkPos(Axis_Z), 200.0) && actor->GetActorMovingAnimation() == AnimGroup_Idle) || actor->IsActorJumping())
 			SetPos(reference);
@@ -1086,7 +1086,7 @@ void Game::net_SetAngle(FactoryObject& reference, unsigned char axis, double val
 
 		if (axis == Axis_X)
 		{
-			Actor* actor = vaultcast<Actor>(object);
+			Actor* actor = vaultcast<Actor>(reference);
 
 			if (actor && actor->GetActorWeaponAnimation() == AnimGroup_AimIS)
 			{
@@ -1298,14 +1298,25 @@ void Game::net_ChatMessage(const string& message)
 
 void Game::GetPos(FactoryObject& reference, unsigned char axis, double value)
 {
+	static bool update = false;
+
 	Object* object = vaultcast<Object>(reference);
 	bool result = (bool) object->SetGamePos(axis, value);
 
-	if (result && object->GetReference() == PLAYER_REFERENCE)
-		Network::Queue(NetworkResponse{Network::CreateResponse(
-			PacketFactory::CreatePacket(ID_UPDATE_POS, object->GetNetworkID(), object->GetGamePos(Axis_X), object->GetGamePos(Axis_Y), object->GetGamePos(Axis_Z)),
-			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, server)
-		});
+	if (object->GetReference() == PLAYER_REFERENCE)
+	{
+		update |= result;
+
+		if (axis == Axis_Z && update)
+		{
+			update = false;
+
+			Network::Queue(NetworkResponse{Network::CreateResponse(
+				PacketFactory::CreatePacket(ID_UPDATE_POS, object->GetNetworkID(), object->GetGamePos(Axis_X), object->GetGamePos(Axis_Y), object->GetGamePos(Axis_Z)),
+				HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, server)
+			});
+		}
+	}
 }
 
 void Game::GetAngle(FactoryObject& reference, unsigned char axis, double value)

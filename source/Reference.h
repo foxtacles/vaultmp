@@ -21,6 +21,8 @@ using namespace Data;
  * Data specific to References are a reference ID, a base ID and a NetworkID
  */
 
+class FactoryObject;
+
 class Reference : private CriticalSection, public NetworkIDObject
 {
 		friend class GameFactory;
@@ -109,7 +111,7 @@ class ReferenceFunctor : public VaultFunctor
 		ReferenceFunctor(unsigned int flags, NetworkID id) : VaultFunctor(), _flags(flags), id(id) {}
 		virtual ~ReferenceFunctor() {}
 
-		virtual bool filter(Reference* reference) = 0;
+		virtual bool filter(FactoryObject& reference) = 0;
 
 		unsigned int flags() { return _flags; }
 		NetworkID get() { return id; }

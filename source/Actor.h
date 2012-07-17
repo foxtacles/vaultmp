@@ -190,7 +190,7 @@ class ActorFunctor : public ObjectFunctor
 		virtual ~ActorFunctor() {}
 
 		virtual vector<string> operator()();
-		virtual bool filter(Reference* reference);
+		virtual bool filter(FactoryObject& reference);
 };
 
 #endif

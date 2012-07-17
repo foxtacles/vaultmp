@@ -148,7 +148,7 @@ vector<string> PlayerFunctor::operator()()
 		unsigned int refID;
 
 		for (it = references.begin(); it != references.end(); GameFactory::LeaveReference(*it), ++it)
-			if ((refID = (**it)->GetReference()) && !filter(**it))
+			if ((refID = (**it)->GetReference()) && !filter(*it))
 				result.push_back(Utils::toString(refID));
 	}
 
@@ -157,7 +157,7 @@ vector<string> PlayerFunctor::operator()()
 	return result;
 }
 
-bool PlayerFunctor::filter(Reference* reference)
+bool PlayerFunctor::filter(FactoryObject& reference)
 {
 	if (ActorFunctor::filter(reference))
 		return true;

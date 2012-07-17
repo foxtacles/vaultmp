@@ -222,7 +222,7 @@ vector<string> ObjectFunctor::operator()()
 		unsigned int refID;
 
 		for (it = references.begin(); it != references.end(); GameFactory::LeaveReference(*it), ++it)
-			if ((refID = (**it)->GetReference()) && !filter(**it))
+			if ((refID = (**it)->GetReference()) && !filter(*it))
 				result.push_back(Utils::toString(refID));
 	}
 
@@ -231,7 +231,7 @@ vector<string> ObjectFunctor::operator()()
 	return result;
 }
 
-bool ObjectFunctor::filter(Reference* reference)
+bool ObjectFunctor::filter(FactoryObject& reference)
 {
 	Object* object = vaultcast<Object>(reference);
 	unsigned int flags = this->flags();

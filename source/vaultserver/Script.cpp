@@ -612,7 +612,7 @@ bool Script::UIMessage(NetworkID id, const char* message)
 	{
 		try
 		{
-			if (!vaultcast<Player>(*GameFactory::GetObject(id)))
+			if (!vaultcast<Player>(GameFactory::GetObject(id)))
 				return false;
 		}
 		catch (...)
@@ -640,7 +640,7 @@ bool Script::ChatMessage(NetworkID id, const char* message)
 	{
 		try
 		{
-			if (!vaultcast<Player>(*GameFactory::GetObject(id)))
+			if (!vaultcast<Player>(GameFactory::GetObject(id)))
 				return false;
 		}
 		catch (...)
@@ -1251,7 +1251,7 @@ void Script::KillActor(NetworkID id)
 
 			Script::OnActorDeath(reference);
 
-			Player* player = vaultcast<Player>(actor);
+			Player* player = vaultcast<Player>(reference);
 
 			if (player)
 				Script::CreateTimerEx(reinterpret_cast<ScriptFunc>(&Script::Timer_Respawn), player->GetPlayerRespawn(), "l", player->GetNetworkID());

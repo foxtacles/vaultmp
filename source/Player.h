@@ -110,7 +110,7 @@ class PlayerFunctor : public ActorFunctor
 		virtual ~PlayerFunctor() {}
 
 		virtual vector<string> operator()();
-		virtual bool filter(Reference* reference);
+		virtual bool filter(FactoryObject& reference);
 };
 
 #endif
