@@ -29,6 +29,9 @@ unsigned int Database<T>::initialize(const string& file, const vector<string>& t
 {
 	data.clear();
 
+	if (tables.empty())
+		return 0;
+
 	char base[MAX_PATH];
 	_getcwd(base, sizeof(base));
 
@@ -43,10 +46,41 @@ unsigned int Database<T>::initialize(const string& file, const vector<string>& t
 		throw VaultException("Could not open SQLite3 database: %s", sqlite3_errmsg(db));
 	}
 
+	sqlite3_stmt* stmt;
+	string query = "SELECT (0) ";
+
+	for (const string& table : tables)
+		query += "+ (SELECT COUNT(*) FROM " + table + ")";
+
+	if (sqlite3_prepare_v2(db, query.c_str(), query.length() + 1, &stmt, NULL) != SQLITE_OK)
+	{
+		sqlite3_close(db);
+		throw VaultException("Could not prepare query: %s", sqlite3_errmsg(db));
+	}
+
+	int ret = sqlite3_step(stmt);
+
+	if (ret != SQLITE_ROW)
+	{
+		sqlite3_finalize(stmt);
+		sqlite3_close(db);
+		throw VaultException("Could not determine count of tables: %s", query.c_str());
+	}
+
+	unsigned int count = sqlite3_column_int(stmt, 0);
+	sqlite3_finalize(stmt);
+
+	if (!count)
+	{
+		sqlite3_close(db);
+		return 0;
+	}
+
+	data.reserve(count);
+
 	for (const string& table : tables)
 	{
-		sqlite3_stmt* stmt;
-		string query = "SELECT * FROM " + table;
+		query = "SELECT * FROM " + table;
 
 		if (sqlite3_prepare_v2(db, query.c_str(), query.length() + 1, &stmt, NULL) != SQLITE_OK)
 		{
@@ -59,8 +93,7 @@ unsigned int Database<T>::initialize(const string& file, const vector<string>& t
 		if (ret == SQLITE_DONE)
 		{
 			sqlite3_finalize(stmt);
-			sqlite3_close(db);
-			return 0;
+			continue;
 		}
 
 		do

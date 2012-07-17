@@ -34,8 +34,6 @@ class Cell
 
 		Cell(const Cell&) = delete;
 		Cell& operator=(const Cell& p) = delete;
-		Cell(Cell&&) = delete;
-		Cell& operator=(Cell&&) = delete;
 
 	public:
 		static const Cell& Lookup(unsigned int baseID);
@@ -48,6 +46,9 @@ class Cell
 		const string& GetName() const;
 
 		Cell(const string& table, sqlite3_stmt* stmt);
+		// must never be called. only defined because vector requires it
+		Cell(Cell&&) { terminate(); }
+		Cell& operator=(Cell&&) = delete;
 		~Cell();
 };
 

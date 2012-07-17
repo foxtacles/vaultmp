@@ -35,7 +35,7 @@ class Database
 		static Debug* debug;
 #endif
 
-		list<T> data;
+		vector<T> data;
 
 		Database();
 		~Database();

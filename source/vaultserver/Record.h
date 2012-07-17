@@ -29,8 +29,6 @@ class Record
 
 		Record(const Record&) = delete;
 		Record& operator=(const Record& p) = delete;
-		Record(Record&&) = delete;
-		Record& operator=(Record&&) = delete;
 
 	public:
 		static const Record& Lookup(unsigned int baseID);
@@ -42,6 +40,9 @@ class Record
 		const string& GetType() const;
 
 		Record(const string& table, sqlite3_stmt* stmt);
+		// must never be called. only defined because vector requires it
+		Record(Record&&) { terminate(); }
+		Record& operator=(Record&&) = delete;
 		~Record();
 };
 

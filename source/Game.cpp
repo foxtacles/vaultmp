@@ -357,7 +357,7 @@ void Game::LoadGame(string savegame)
 		last_savegame = savegame;
 	}
 
-	shared_ptr<Shared<bool>> store(new Shared<bool>);
+	shared_ptr<Shared<bool>> store = make_shared<Shared<bool>>();
 	unsigned int key = Lockable::Share(store);
 
 	Interface::StartDynamic();
@@ -387,7 +387,7 @@ void Game::CenterOnCell(string cell)
 	else
 		last_cell = cell;
 
-	shared_ptr<Shared<bool>> store(new Shared<bool>);
+	shared_ptr<Shared<bool>> store = make_shared<Shared<bool>>();
 	unsigned int key = Lockable::Share(store);
 
 	Interface::StartDynamic();
@@ -410,7 +410,7 @@ void Game::CenterOnCell(string cell)
 
 void Game::CenterOnExterior(signed int x, signed int y)
 {
-	shared_ptr<Shared<bool>> store(new Shared<bool>);
+	shared_ptr<Shared<bool>> store = make_shared<Shared<bool>>();
 	unsigned int key = Lockable::Share(store);
 
 	Interface::StartDynamic();
@@ -433,7 +433,7 @@ void Game::CenterOnExterior(signed int x, signed int y)
 
 void Game::CenterOnWorld(unsigned int baseID, signed int x, signed int y)
 {
-	shared_ptr<Shared<bool>> store(new Shared<bool>);
+	shared_ptr<Shared<bool>> store = make_shared<Shared<bool>>();
 	unsigned int key = Lockable::Share(store);
 
 	Interface::StartDynamic();
@@ -519,7 +519,7 @@ void Game::NewObject(FactoryObject& reference)
 
 	if (!object->GetReference())
 	{
-		shared_ptr<Shared<unsigned int>> store(new Shared<unsigned int>);
+		shared_ptr<Shared<unsigned int>> store = make_shared<Shared<unsigned int>>();
 		unsigned int key = Lockable::Share(store);
 
 		PlaceAtMe(PLAYER_REFERENCE, object->GetBase(), 1, key);
