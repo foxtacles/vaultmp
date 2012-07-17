@@ -157,7 +157,7 @@ Lockable* Lockable::Unlock(unsigned int key)
 
 #endif
 
-	return NULL;
+	return nullptr;
 }
 
 unsigned int Lockable::Share(const shared_ptr<Lockable>& share)

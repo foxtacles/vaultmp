@@ -2,7 +2,7 @@
 
 #ifdef VAULTMP_DEBUG
 template <typename T>
-Debug* Value<T>::debug = NULL;
+Debug* Value<T>::debug = nullptr;
 #endif
 
 #ifdef VAULTMP_DEBUG

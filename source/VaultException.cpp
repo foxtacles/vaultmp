@@ -1,7 +1,7 @@
 #include "VaultException.h"
 
 #ifdef VAULTMP_DEBUG
-Debug* VaultException::debug = NULL;
+Debug* VaultException::debug = nullptr;
 #endif
 
 VaultException::VaultException(string error)
@@ -50,14 +50,14 @@ void VaultException::FinalizeDebug()
 	if (debug)
 		delete debug;
 
-	debug = NULL;
+	debug = nullptr;
 }
 #endif
 
 void VaultException::Message()
 {
 #ifdef __WIN32__
-	MessageBox(NULL, error.c_str(), "Fatal error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
+	MessageBox(nullptr, error.c_str(), "Fatal error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
 #endif
 }
 

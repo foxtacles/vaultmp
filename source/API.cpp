@@ -34,7 +34,7 @@ const unsigned char API::FalloutSavegame[] =
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x7C};
 
 #ifdef VAULTMP_DEBUG
-Debug* API::debug = NULL;
+Debug* API::debug = nullptr;
 #endif
 
 #pragma pack(push, 1)
@@ -235,7 +235,7 @@ struct API::op_default
 void API::Initialize(unsigned char game)
 {
 	API::game = game;
-	srand(time(NULL));
+	srand(time(nullptr));
 
 	DefineAxisString("X", Axis_X, ALL_GAMES);
 	DefineAxisString("Y", Axis_Y, ALL_GAMES);
@@ -542,7 +542,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 	unsigned short* _opcode = &result->arg2.opcode;
 	unsigned short* _numargs = &result->arg2.numargs;
 
-	char* tokenizer = NULL;
+	char* tokenizer = nullptr;
 	unsigned int reference = 0x00;
 	result_data.push_back(storeIn<double, unsigned short>(opcode));
 
@@ -551,12 +551,12 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 
 	if (*def == 'r')
 	{
-		tokenizer = strtok(NULL, " ");
+		tokenizer = strtok(nullptr, " ");
 
-		if (tokenizer == NULL)
+		if (tokenizer == nullptr)
 			throw VaultException("API::ParseCommand expected a reference base operand, which could not be found");
 
-		reference = strtoul(tokenizer, NULL, 0);
+		reference = strtoul(tokenizer, nullptr, 0);
 
 		if (reference == 0x00)
 			throw VaultException("API::ParseCommand reference base operand is NULL (%s, %s, %04X)", _cmd.c_str(), def, opcode);
@@ -662,12 +662,12 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 
 		arg1_pos += 0x0C;
 
-		if (tokenizer != NULL)
-			tokenizer = strtok(NULL, " ");
+		if (tokenizer != nullptr)
+			tokenizer = strtok(nullptr, " ");
 		else
 			continue;
 
-		if (tokenizer == NULL)
+		if (tokenizer == nullptr)
 		{
 			if (isupper(type))
 				continue;
@@ -700,7 +700,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 			case 'x': // Control code
 			case 'i': // Integer
 			{
-				unsigned int integer = strtoul(tokenizer, NULL, 0);
+				unsigned int integer = strtoul(tokenizer, nullptr, 0);
 
 				if (tolower(type) == 'x' && !IsControl((unsigned char) integer))
 					throw VaultException("API::ParseCommand could not find a control code for input %s", tokenizer);
@@ -733,7 +733,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 				if (refparam != 0x00)   // We don't support more than one refparam yet
 					throw VaultException("API::ParseCommand does only support one reference argument up until now");
 
-				refparam = strtoul(tokenizer, NULL, 0);
+				refparam = strtoul(tokenizer, nullptr, 0);
 
 				if (!refparam)
 					throw VaultException("API::ParseCommand reference argument is NULL");

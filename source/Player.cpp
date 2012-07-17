@@ -5,7 +5,7 @@ using namespace std;
 unsigned int Player::default_respawn = DEFAULT_PLAYER_RESPAWN;
 
 #ifdef VAULTMP_DEBUG
-Debug* Player::debug = NULL;
+Debug* Player::debug = nullptr;
 #endif
 
 Player::Player(unsigned int refID, unsigned int baseID) : Actor(refID, baseID)

@@ -6,7 +6,7 @@ Pipe::Pipe()
 {
 	this->name = "pipe";
 	this->size = 0;
-	this->pipe = NULL;
+	this->pipe = nullptr;
 }
 
 Pipe::~Pipe()
@@ -29,7 +29,7 @@ unsigned int Pipe::Send(unsigned char* stream)
 
 	memcpy(buffer, stream, sizeof(buffer));
 
-	if (!WriteFile(this->pipe, &buffer, this->size, &dwActuallyWritten, NULL))
+	if (!WriteFile(this->pipe, &buffer, this->size, &dwActuallyWritten, nullptr))
 		return 0;
 
 	else
@@ -51,7 +51,7 @@ void Pipe::Receive(unsigned char* stream)
 
 	DWORD dwActuallyRead;
 
-	if (!ReadFile(this->pipe, &buffer, this->size, &dwActuallyRead, NULL))
+	if (!ReadFile(this->pipe, &buffer, this->size, &dwActuallyRead, nullptr))
 		return;
 
 	memcpy(stream, buffer, sizeof(buffer));
@@ -62,7 +62,7 @@ bool PipeServer::CreateServer()
 	if (this->size == 0)
 		return false;
 
-	this->pipe = CreateNamedPipe(this->name.c_str(), PIPE_ACCESS_DUPLEX, PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE | PIPE_WAIT, PIPE_UNLIMITED_INSTANCES, this->size, this->size, 0, NULL);
+	this->pipe = CreateNamedPipe(this->name.c_str(), PIPE_ACCESS_DUPLEX, PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE | PIPE_WAIT, PIPE_UNLIMITED_INSTANCES, this->size, this->size, 0, nullptr);
 
 	if (this->pipe == INVALID_HANDLE_VALUE)
 		return false;
@@ -75,7 +75,7 @@ bool PipeServer::ConnectToServer()
 	if (this->pipe == INVALID_HANDLE_VALUE)
 		return false;
 
-	if (ConnectNamedPipe(this->pipe, NULL))
+	if (ConnectNamedPipe(this->pipe, nullptr))
 		return true;
 
 	return false;
@@ -88,7 +88,7 @@ bool PipeClient::ConnectToServer()
 
 	while (true)
 	{
-		this->pipe = CreateFile(this->name.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+		this->pipe = CreateFile(this->name.c_str(), GENERIC_READ | GENERIC_WRITE, 0, nullptr, OPEN_EXISTING, 0, nullptr);
 
 		if (this->pipe != INVALID_HANDLE_VALUE)
 			break;
@@ -102,7 +102,7 @@ bool PipeClient::ConnectToServer()
 
 	DWORD dwMode = PIPE_READMODE_MESSAGE;
 
-	if (!SetNamedPipeHandleState(this->pipe, &dwMode, NULL, NULL))
+	if (!SetNamedPipeHandleState(this->pipe, &dwMode, nullptr, nullptr))
 		return false;
 
 	return true;

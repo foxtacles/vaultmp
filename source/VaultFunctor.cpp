@@ -22,5 +22,5 @@ VaultFunctor* VaultFunctor::connect(VaultFunctor* next)
 		return (this->next = next);
 
 	else
-		return NULL;
+		return nullptr;
 }

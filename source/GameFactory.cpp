@@ -129,7 +129,7 @@ FactoryObject GameFactory::GetObject(unsigned int refID)
 	}
 	else
 	{
-		reference = NULL;
+		reference = nullptr;
 		type = 0x00;
 	}
 
@@ -249,7 +249,7 @@ unsigned int GameFactory::LookupRefID(NetworkID id)
 	try
 	{
 		Reference* reference = Network::Manager()->GET_OBJECT_FROM_ID<Reference*>(id);
-		refID = (reference != NULL ? reference->GetReference() : throw VaultException("Unknown object with NetworkID %lld", id));
+		refID = (reference != nullptr ? reference->GetReference() : throw VaultException("Unknown object with NetworkID %lld", id));
 	}
 	catch (...)
 	{
@@ -270,7 +270,7 @@ void GameFactory::LeaveReference(FactoryObject& reference)
 		throw VaultException("GameFactory::LeaveReference Reference is NULL");
 
 	_reference->EndSession();
-	reference.reference = NULL;
+	reference.reference = nullptr;
 	reference.type = 0x00;
 }
 
@@ -540,7 +540,7 @@ NetworkID GameFactory::DestroyInstance(FactoryObject& reference)
 
 	_reference->Finalize();
 	delete _reference; // this throws
-	reference.reference = NULL;
+	reference.reference = nullptr;
 	reference.type = 0x00;
 
 	return id;

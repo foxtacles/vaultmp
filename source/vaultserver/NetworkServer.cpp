@@ -2,7 +2,7 @@
 #include "Dedicated.h"
 
 #ifdef VAULTMP_DEBUG
-Debug* NetworkServer::debug = NULL;
+Debug* NetworkServer::debug = nullptr;
 #endif
 
 #ifdef VAULTMP_DEBUG
@@ -22,7 +22,7 @@ NetworkResponse NetworkServer::ProcessEvent(unsigned char id)
 		case ID_EVENT_SERVER_ERROR:
 			return NetworkResponse{Network::CreateResponse(
 				PacketFactory::CreatePacket(ID_GAME_END, ID_REASON_ERROR),
-				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(NULL))
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 			};
 
 		default:

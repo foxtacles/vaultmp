@@ -14,7 +14,7 @@ bool Dedicated::query;
 bool Dedicated::fileserve;
 SystemAddress Dedicated::master;
 TimeMS Dedicated::announcetime;
-ServerEntry* Dedicated::self = NULL;
+ServerEntry* Dedicated::self = nullptr;
 unsigned int Dedicated::cell;
 ModList Dedicated::modfiles;
 #ifdef VAULTMP_DEBUG
@@ -251,8 +251,8 @@ void Dedicated::DedicatedThread()
 		peer->Startup(connections + 1, sockdescr, 1, THREAD_PRIORITY_NORMAL);
 		peer->SetMaximumIncomingConnections(connections);
 		master.SetBinaryAddress(strtok(buf, ":"));
-		char* cport = strtok(NULL, ":");
-		master.SetPort(cport != NULL ? atoi(cport) : RAKNET_MASTER_STANDARD_PORT);
+		char* cport = strtok(nullptr, ":");
+		master.SetPort(cport != nullptr ? atoi(cport) : RAKNET_MASTER_STANDARD_PORT);
 		peer->Connect(master.ToString(false), master.GetPort(), MASTER_VERSION, sizeof(MASTER_VERSION), 0, 0, 3, 500, 0);
 		announcetime = GetTimeMS();
 	}
@@ -390,7 +390,7 @@ std::thread Dedicated::InitializeServer(unsigned int port, unsigned int connecti
 	thread = true;
 	Dedicated::port = port ? port : RAKNET_STANDARD_PORT;
 	Dedicated::connections = connections ? connections : RAKNET_STANDARD_CONNECTIONS;
-	Dedicated::announce = strlen(announce) ? announce : NULL;
+	Dedicated::announce = strlen(announce) ? announce : nullptr;
 	Dedicated::query = query;
 	Dedicated::fileserve = fileserve;
 	Dedicated::fileslots = fileslots;

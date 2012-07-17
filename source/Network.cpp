@@ -7,7 +7,7 @@ CriticalSection Network::cs;
 bool Network::dequeue = true;
 
 #ifdef VAULTMP_DEBUG
-Debug* Network::debug = NULL;
+Debug* Network::debug = nullptr;
 #endif
 
 #ifdef VAULTMP_DEBUG
@@ -32,7 +32,7 @@ Network::SingleResponse Network::CreateResponse(pPacket&& packet, PacketPriority
 
 void Network::Dispatch(RakPeerInterface* peer, NetworkResponse&& response)
 {
-	if (peer == NULL)
+	if (peer == nullptr)
 		throw VaultException("RakPeerInterface is NULL");
 
 	for (SingleResponse& s : response)
@@ -52,7 +52,7 @@ bool Network::Dispatch(RakPeerInterface* peer)
 	if (queue.empty() || !dequeue)
 		return false;
 
-	if (peer == NULL)
+	if (peer == nullptr)
 		throw VaultException("RakPeerInterface is NULL");
 
 	cs.StartSession();

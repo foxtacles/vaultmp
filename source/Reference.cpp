@@ -46,10 +46,10 @@ template <typename T>
 Lockable* Reference::SetObjectValue(Value<T>& dest, T value)
 {
 	if (dest.get() == value)
-		return NULL;
+		return nullptr;
 
 	if (!dest.set(value))
-		return NULL;
+		return nullptr;
 
 #ifdef VAULTMP_DEBUG
 
@@ -62,10 +62,10 @@ template <>
 Lockable* Reference::SetObjectValue(Value<double>& dest, double value)
 {
 	if (Utils::DoubleCompare(dest.get(), value, 0.0001))
-		return NULL;
+		return nullptr;
 
 	if (!dest.set(value))
-		return NULL;
+		return nullptr;
 
 #ifdef VAULTMP_DEBUG
 

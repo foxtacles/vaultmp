@@ -61,7 +61,7 @@ void Bethesda::Initialize()
 	TCHAR curdir[MAX_PATH+1];
 	unsigned int crc;
 	ZeroMemory(curdir, sizeof(curdir));
-	GetModuleFileName(GetModuleHandle(NULL), (LPTSTR) curdir, MAX_PATH);
+	GetModuleFileName(GetModuleHandle(nullptr), (LPTSTR) curdir, MAX_PATH);
 	PathRemoveFileSpec(curdir);
 
 	strcat(curdir, "\\Data\\");
@@ -82,7 +82,7 @@ void Bethesda::Initialize()
 
 	TCHAR pluginsdir[MAX_PATH+1];
 	ZeroMemory(pluginsdir, sizeof(pluginsdir));
-	SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, pluginsdir);   // SHGFP_TYPE_CURRENT
+	SHGetFolderPath(nullptr, CSIDL_LOCAL_APPDATA, nullptr, 0, pluginsdir);   // SHGFP_TYPE_CURRENT
 
 	switch (Bethesda::game)
 	{
@@ -131,7 +131,7 @@ void Bethesda::Initialize()
 		ZeroMemory(&pi, sizeof(pi));
 		si.cb = sizeof(si);
 
-		if (CreateProcess(module, NULL, NULL, NULL, FALSE, CREATE_SUSPENDED, NULL, NULL, &si, &pi))
+		if (CreateProcess(module, nullptr, nullptr, nullptr, FALSE, CREATE_SUSPENDED, nullptr, nullptr, &si, &pi))
 		{
 			HANDLE hRemoteThread;
 			HINSTANCE hDll;
@@ -144,7 +144,7 @@ void Bethesda::Initialize()
 			CloseHandle(si.hStdOutput);
 			CloseHandle(si.hStdError);
 
-			GetModuleFileName(GetModuleHandle(NULL), (LPTSTR) curdir, MAX_PATH);
+			GetModuleFileName(GetModuleHandle(nullptr), (LPTSTR) curdir, MAX_PATH);
 			PathRemoveFileSpec(curdir);
 			strcat(curdir, "\\vaultmp.dll");
 			unsigned int size = strlen(curdir) + 1;
@@ -152,7 +152,7 @@ void Bethesda::Initialize()
 			hDll = LoadLibrary("kernel32.dll");
 			pLoadLibrary = (fLoadLibrary) GetProcAddress(hDll, "LoadLibraryA");     // TODO: GetRemoteProcAddress
 
-			if ((remote = VirtualAllocEx(pi.hProcess, 0, size, MEM_COMMIT, PAGE_READWRITE)) == NULL)
+			if ((remote = VirtualAllocEx(pi.hProcess, 0, size, MEM_COMMIT, PAGE_READWRITE)) == nullptr)
 			{
 				VirtualFreeEx(pi.hProcess, remote, size, MEM_RELEASE);
 				CloseHandle(pi.hThread);
@@ -160,7 +160,7 @@ void Bethesda::Initialize()
 				throw VaultException("Couldn't allocate memory in remote process");
 			}
 
-			if (WriteProcessMemory(pi.hProcess, remote, curdir, size, NULL) == false)
+			if (WriteProcessMemory(pi.hProcess, remote, curdir, size, nullptr) == false)
 			{
 				VirtualFreeEx(pi.hProcess, remote, size, MEM_RELEASE);
 				CloseHandle(pi.hThread);
@@ -168,7 +168,7 @@ void Bethesda::Initialize()
 				throw VaultException("Couldn't write memory in remote process");
 			}
 
-			if ((hRemoteThread = CreateRemoteThread(pi.hProcess, NULL, 0, (LPTHREAD_START_ROUTINE) pLoadLibrary, remote, 0, 0)) == NULL)
+			if ((hRemoteThread = CreateRemoteThread(pi.hProcess, nullptr, 0, (LPTHREAD_START_ROUTINE) pLoadLibrary, remote, 0, 0)) == nullptr)
 			{
 				VirtualFreeEx(pi.hProcess, remote, size, MEM_RELEASE);
 				CloseHandle(pi.hThread);
@@ -224,7 +224,7 @@ void Bethesda::Initialize()
 void Bethesda::Terminate(RakPeerInterface* peer)
 {
 	this_thread::sleep_for(chrono::milliseconds(200));
-	Packet* packet = NULL;
+	Packet* packet = nullptr;
 
 	while ((packet = peer->Receive()))
 		peer->DeallocatePacket(packet); // disconnection notification might still arrive

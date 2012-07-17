@@ -40,7 +40,7 @@ Client* Client::GetClientFromGUID(RakNetGUID guid)
 	if (it != clients.end())
 		return it->second;
 
-	return NULL;
+	return nullptr;
 }
 
 Client* Client::GetClientFromID(unsigned int ID)
@@ -51,7 +51,7 @@ Client* Client::GetClientFromID(unsigned int ID)
 		if (it->second->GetID() == ID)
 			return it->second;
 
-	return NULL;
+	return nullptr;
 }
 
 Client* Client::GetClientFromPlayer(NetworkID id)
@@ -62,7 +62,7 @@ Client* Client::GetClientFromPlayer(NetworkID id)
 		if (it->second->GetPlayer() == id)
 			return it->second;
 
-	return NULL;
+	return nullptr;
 }
 
 vector<RakNetGUID> Client::GetNetworkList(Client* except)

@@ -89,7 +89,7 @@ class Dedicated
 		 *
 		 * port - the port to run the server on
 		 * connections - the maximum amount of player connections
-		 * announce - whether the server should announce himself to a MasterServer, can be NULL
+		 * announce - whether the server should announce himself to a MasterServer, can be nullptr
 		 * query - enable / disable direct query
 		 * fileserver - enable / disable file downloading from this server
 		 * fileslots - the maximum amount of file downloading connections

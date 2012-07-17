@@ -23,7 +23,7 @@ class VaultFunctor
 		void _next(vector<string>& result);
 
 	public:
-		VaultFunctor() : next(NULL) {}
+		VaultFunctor() : next(nullptr) {}
 		virtual ~VaultFunctor();
 
 		/**

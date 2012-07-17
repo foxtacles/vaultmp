@@ -765,7 +765,7 @@ cell PAWN::Call(AMX* amx, const char* name, const char* argl, int buf, ...)
 cell PAWN::Call(AMX* amx, const char* name, const char* argl, const vector<boost::any>& args)
 {
 	cell ret = 0;
-	cell* str = NULL;
+	cell* str = nullptr;
 
 	try
 	{

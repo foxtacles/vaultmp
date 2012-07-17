@@ -6,21 +6,21 @@ Script::Script(char* path)
 {
 	FILE* file = fopen(path, "rb");
 
-	if (file == NULL)
+	if (file == nullptr)
 		throw VaultException("Script not found: %s", path);
 
 	fclose(file);
 
 	if (strstr(path, ".dll") || strstr(path, ".so"))
 	{
-		void* handle = NULL;
+		void* handle = nullptr;
 #ifdef __WIN32__
 		handle = LoadLibrary(path);
 #else
 		handle = dlopen(path, RTLD_LAZY);
 #endif
 
-		if (handle == NULL)
+		if (handle == nullptr)
 			throw VaultException("Was not able to load C++ script: %s", path);
 
 		this->handle = handle;
@@ -121,7 +121,7 @@ Script::Script(char* path)
 		cell ret = 0;
 		int err = 0;
 
-		err = PAWN::LoadProgram(vaultscript, path, NULL);
+		err = PAWN::LoadProgram(vaultscript, path, nullptr);
 
 		if (err != AMX_ERR_NONE)
 			throw VaultException("PAWN script %s error (%d): \"%s\"", path, err, aux_StrError(err));
@@ -173,7 +173,7 @@ void Script::LoadScripts(char* scripts, char* base)
 
 	try
 	{
-		while (token != NULL)
+		while (token != nullptr)
 		{
 #ifdef __WIN32__
 			Script* script = new Script(token);
@@ -182,7 +182,7 @@ void Script::LoadScripts(char* scripts, char* base)
 			snprintf(path, sizeof(path), "%s/%s", base, token);
 			Script* script = new Script(path);
 #endif
-			token = strtok(NULL, ",");
+			token = strtok(nullptr, ",");
 		}
 	}
 
@@ -623,7 +623,7 @@ bool Script::UIMessage(NetworkID id, const char* message)
 
 	Network::Queue(NetworkResponse{Network::CreateResponse(
 		PacketFactory::CreatePacket(ID_GAME_MESSAGE, _message.c_str()),
-		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, id ? vector<RakNetGUID>{Client::GetClientFromPlayer(id)->GetGUID()} : Client::GetNetworkList(NULL))
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, id ? vector<RakNetGUID>{Client::GetClientFromPlayer(id)->GetGUID()} : Client::GetNetworkList(nullptr))
 	});
 
 	return true;
@@ -651,7 +651,7 @@ bool Script::ChatMessage(NetworkID id, const char* message)
 
 	Network::Queue(NetworkResponse{Network::CreateResponse(
 		PacketFactory::CreatePacket(ID_GAME_CHAT, _message.c_str()),
-		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, id ? vector<RakNetGUID>{Client::GetClientFromPlayer(id)->GetGUID()} : Client::GetNetworkList(NULL))
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, id ? vector<RakNetGUID>{Client::GetClientFromPlayer(id)->GetGUID()} : Client::GetNetworkList(nullptr))
 	});
 
 	return true;
@@ -1044,7 +1044,7 @@ bool Script::AddItem(NetworkID id, unsigned int baseID, unsigned int count, doub
 
 				Network::Queue(NetworkResponse{Network::CreateResponse(
 					PacketFactory::CreatePacket(ID_UPDATE_CONTAINER, id, &diff),
-					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(NULL))
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 				});
 
 				container->ApplyDiff(diff);
@@ -1077,7 +1077,7 @@ unsigned int Script::RemoveItem(NetworkID id, unsigned int baseID, unsigned int 
 				{
 					Network::Queue(NetworkResponse{Network::CreateResponse(
 						PacketFactory::CreatePacket(ID_UPDATE_CONTAINER, id, &diff),
-						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(NULL))
+						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 					});
 
 					GameDiff gamediff = container->ApplyDiff(diff);
@@ -1107,7 +1107,7 @@ void Script::RemoveAllItems(NetworkID id)
 			{
 				Network::Queue(NetworkResponse{Network::CreateResponse(
 					PacketFactory::CreatePacket(ID_UPDATE_CONTAINER, id, &diff),
-					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(NULL))
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 				});
 
 				container->ApplyDiff(diff);
@@ -1129,7 +1129,7 @@ void Script::SetActorValue(NetworkID id, unsigned char index, double value)
 			if (actor->SetActorValue(index, value))
 				Network::Queue(NetworkResponse{Network::CreateResponse(
 					PacketFactory::CreatePacket(ID_UPDATE_VALUE, actor->GetNetworkID(), false, index, value),
-					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(NULL))
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 				});
 		}
 	}
@@ -1148,7 +1148,7 @@ void Script::SetActorBaseValue(NetworkID id, unsigned char index, double value)
 			if (actor->SetActorBaseValue(index, value))
 				Network::Queue(NetworkResponse{Network::CreateResponse(
 					PacketFactory::CreatePacket(ID_UPDATE_VALUE, actor->GetNetworkID(), true, index, value),
-					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(NULL))
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 				});
 		}
 	}
@@ -1178,7 +1178,7 @@ bool Script::EquipItem(NetworkID id, unsigned int baseID, bool silent, bool stic
 		{
 			Network::Queue(NetworkResponse{Network::CreateResponse(
 				PacketFactory::CreatePacket(ID_UPDATE_CONTAINER, id, &diff),
-				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(NULL))
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 			});
 
 			actor->ApplyDiff(diff);
@@ -1213,7 +1213,7 @@ bool Script::UnequipItem(NetworkID id, unsigned int baseID, bool silent, bool st
 		{
 			Network::Queue(NetworkResponse{Network::CreateResponse(
 				PacketFactory::CreatePacket(ID_UPDATE_CONTAINER, id, &diff),
-				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(NULL))
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 			});
 
 			actor->ApplyDiff(diff);
@@ -1246,7 +1246,7 @@ void Script::KillActor(NetworkID id)
 		{
 			Network::Queue(NetworkResponse{Network::CreateResponse(
 				PacketFactory::CreatePacket(ID_UPDATE_DEAD, actor->GetNetworkID(), true),
-				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(NULL))
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 			});
 
 			Script::OnActorDeath(reference);

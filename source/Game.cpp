@@ -4,7 +4,7 @@ unsigned char Game::game = 0x00;
 RakNetGUID Game::server;
 
 #ifdef VAULTMP_DEBUG
-Debug* Game::debug = NULL;
+Debug* Game::debug = nullptr;
 #endif
 
 using namespace Values;
@@ -315,12 +315,12 @@ void Game::FutureSet(weak_ptr<Lockable> data, T t)
 	shared_ptr<Lockable> shared = data.lock();
 	Lockable* locked = shared.get();
 
-	if (locked == NULL)
+	if (locked == nullptr)
 		throw VaultException("Storage has expired");
 
 	Shared<T>* store = dynamic_cast<Shared<T>*>(locked);
 
-	if (store == NULL)
+	if (store == nullptr)
 		throw VaultException("Storage is corrupted");
 
 	store->set(t);
@@ -723,7 +723,7 @@ void Game::SetPos(FactoryObject& reference)
 	if (!object->HasValidCoordinates())
 		return;
 
-	Lockable* key = NULL;
+	Lockable* key = nullptr;
 
 	Interface::StartDynamic();
 
@@ -1070,7 +1070,7 @@ void Game::net_SetPos(FactoryObject& reference, double X, double Y, double Z)
 	{
 		Actor* actor = vaultcast<Actor>(reference);   // maybe we should consider items, too (they have physics)
 
-		if (actor == NULL || (!actor->IsNearPoint(object->GetNetworkPos(Axis_X), object->GetNetworkPos(Axis_Y), object->GetNetworkPos(Axis_Z), 200.0) && actor->GetActorMovingAnimation() == AnimGroup_Idle) || actor->IsActorJumping())
+		if (actor == nullptr || (!actor->IsNearPoint(object->GetNetworkPos(Axis_X), object->GetNetworkPos(Axis_Y), object->GetNetworkPos(Axis_Z), 200.0) && actor->GetActorMovingAnimation() == AnimGroup_Idle) || actor->IsActorJumping())
 			SetPos(reference);
 	}
 }

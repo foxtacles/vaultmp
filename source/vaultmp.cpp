@@ -85,8 +85,8 @@ SocketDescriptor* sockdescr;
 typedef map<SystemAddress, ServerEntry> ServerMap;
 ServerMap serverList;
 
-SystemAddress* selectedServer = NULL;
-dictionary* config = NULL;
+SystemAddress* selectedServer = nullptr;
+dictionary* config = nullptr;
 const char* player_name;
 const char* server_name;
 bool multiinst;
@@ -131,7 +131,7 @@ void MinimizeToTray(HWND hwnd)
 	nid.uID = ICON_MAIN;
 	nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 	nid.uCallbackMessage = MSG_MINTRAYICON;
-	nid.hIcon = (HICON) LoadImage(GetModuleHandle(NULL), MAKEINTRESOURCE(ICON_MAIN), IMAGE_ICON, 16, 16, 0);
+	nid.hIcon = (HICON) LoadImage(GetModuleHandle(nullptr), MAKEINTRESOURCE(ICON_MAIN), IMAGE_ICON, 16, 16, 0);
 	strcpy(nid.szTip, "Vault-Tec Multiplayer Mod");
 
 	Shell_NotifyIcon(NIM_ADD, &nid);
@@ -174,7 +174,7 @@ class FileServer : public FileListTransferCBInterface
 			{
 				case FILE_MODFILE:
 				{
-					GetModuleFileName(GetModuleHandle(NULL), (LPTSTR) file, MAX_PATH);
+					GetModuleFileName(GetModuleHandle(nullptr), (LPTSTR) file, MAX_PATH);
 					PathRemoveFileSpec(file);
 
 					strcat(file, "\\Data\\");
@@ -188,13 +188,13 @@ class FileServer : public FileListTransferCBInterface
 
 			FILE* fp = fopen(file, "rb");
 
-			if (fp != NULL)
+			if (fp != nullptr)
 			{
 				fclose(fp);
 
 				char msg[256];
 				snprintf(msg, sizeof(msg), "%s\n\nalready exists. Do you want to overwrite it?", file);
-				int result = MessageBox(NULL, msg, "Attention", MB_YESNO | MB_ICONWARNING | MB_TOPMOST | MB_TASKMODAL);
+				int result = MessageBox(nullptr, msg, "Attention", MB_YESNO | MB_ICONWARNING | MB_TOPMOST | MB_TASKMODAL);
 
 				if (result == IDNO)
 				{
@@ -228,7 +228,7 @@ class FileServer : public FileListTransferCBInterface
 			char wndtitle[sizeof(CLIENT_VERSION) + 64];
 			snprintf(wndtitle, sizeof(wndtitle), "Vault-Tec Multiplayer Mod %s (FOR TESTING PURPOSES ONLY)", CLIENT_VERSION);
 			SetWindowText(wndmain, wndtitle);
-			buf = NULL;
+			buf = nullptr;
 			return false;
 		}
 
@@ -238,22 +238,22 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 {
 #ifdef VAULTMP_DEBUG
 
-	if (LoadLibrary("exchndl.dll") == NULL)
-		return MessageBox(NULL, "Could not find exchndl.dll!", "Error", MB_OK | MB_ICONERROR);
+	if (LoadLibrary("exchndl.dll") == nullptr)
+		return MessageBox(nullptr, "Could not find exchndl.dll!", "Error", MB_OK | MB_ICONERROR);
 
 #endif
 
-	global_mutex = CreateMutex(NULL, TRUE, "vaultmp");
+	global_mutex = CreateMutex(nullptr, TRUE, "vaultmp");
 
 	if (GetLastError() == ERROR_ALREADY_EXISTS)
-		return MessageBox(NULL, "Vault-Tec Multiplayer Mod is already running!", "Error", MB_OK | MB_ICONERROR);
+		return MessageBox(nullptr, "Vault-Tec Multiplayer Mod is already running!", "Error", MB_OK | MB_ICONERROR);
 
-	FILE* filecheck = NULL;
+	FILE* filecheck = nullptr;
 	DWORD checksum, checksum_real;
 
 	filecheck = fopen("Fallout3.exe", "rb");
 
-	if (filecheck != NULL)
+	if (filecheck != nullptr)
 	{
 		fclose(filecheck);
 		Utils::GenerateChecksum("Fallout3.exe", checksum, checksum_real);
@@ -262,7 +262,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 		{
 			filecheck = fopen("fose_1_7.dll", "rb");
 
-			if (filecheck != NULL)
+			if (filecheck != nullptr)
 			{
 				fclose(filecheck);
 				Utils::GenerateChecksum("fose_1_7.dll", checksum, checksum_real);
@@ -271,7 +271,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 				{
 					filecheck = fopen("xlive.dll", "rb");
 
-					if (filecheck != NULL)
+					if (filecheck != nullptr)
 					{
 						fclose(filecheck);
 						Utils::GenerateChecksum("xlive.dll", checksum, checksum_real);
@@ -282,28 +282,28 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 						}
 
 						else
-							return MessageBox(NULL, "xlive.dll is unpatched!", "Error", MB_OK | MB_ICONERROR);
+							return MessageBox(nullptr, "xlive.dll is unpatched!", "Error", MB_OK | MB_ICONERROR);
 					}
 
 					else
-						return MessageBox(NULL, "xlive.dll is missing!", "Error", MB_OK | MB_ICONERROR);
+						return MessageBox(nullptr, "xlive.dll is missing!", "Error", MB_OK | MB_ICONERROR);
 				}
 
 				else
-					return MessageBox(NULL, "Your FOSE version is probably outdated!\nhttp://fose.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
+					return MessageBox(nullptr, "Your FOSE version is probably outdated!\nhttp://fose.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
 			}
 
 			else
-				return MessageBox(NULL, "Could not find FOSE!\nhttp://fose.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
+				return MessageBox(nullptr, "Could not find FOSE!\nhttp://fose.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
 		}
 
 		else
-			return MessageBox(NULL, "Your version of Fallout 3 is not supported!", "Error", MB_OK | MB_ICONERROR);
+			return MessageBox(nullptr, "Your version of Fallout 3 is not supported!", "Error", MB_OK | MB_ICONERROR);
 	}
 
 	filecheck = fopen("FalloutNV.exe", "rb");
 
-	if (filecheck != NULL)
+	if (filecheck != nullptr)
 	{
 		fclose(filecheck);
 		Utils::GenerateChecksum("FalloutNV.exe", checksum, checksum_real);
@@ -314,7 +314,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 
 			filecheck = fopen("nvse_1_4.dll", "rb");
 
-			if (filecheck != NULL)
+			if (filecheck != nullptr)
 			{
 				fclose(filecheck);
 				Utils::GenerateChecksum("nvse_1_4.dll", checksum, checksum_real);
@@ -325,23 +325,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 				}
 
 				else
-					return MessageBox(NULL, "Your NVSE version is probably outdated!\nhttp://nvse.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
+					return MessageBox(nullptr, "Your NVSE version is probably outdated!\nhttp://nvse.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
 			}
 
 			else
-				return MessageBox(NULL, "Could not find NVSE!\nhttp://nvse.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
+				return MessageBox(nullptr, "Could not find NVSE!\nhttp://nvse.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
 		}
 
 		else
-			return MessageBox(NULL, "Your version of Fallout: New Vegas is not supported!", "Error", MB_OK | MB_ICONERROR);
+			return MessageBox(nullptr, "Your version of Fallout: New Vegas is not supported!", "Error", MB_OK | MB_ICONERROR);
 	}
 
 	if (!games)
-		return MessageBox(NULL, "Could not find either Fallout 3 or Fallout: New Vegas!", "Error", MB_OK | MB_ICONERROR);
+		return MessageBox(nullptr, "Could not find either Fallout 3 or Fallout: New Vegas!", "Error", MB_OK | MB_ICONERROR);
 
 	filecheck = fopen("vaultmp.dll", "rb");
 
-	if (filecheck != NULL)
+	if (filecheck != nullptr)
 	{
 		fclose(filecheck);
 		Utils::GenerateChecksum("vaultmp.dll", checksum, checksum_real);
@@ -351,7 +351,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 	}
 
 	else
-		return MessageBox(NULL, "Could not find vaultmp.dll!", "Error", MB_OK | MB_ICONERROR);
+		return MessageBox(nullptr, "Could not find vaultmp.dll!", "Error", MB_OK | MB_ICONERROR);
 
 	instance = hInstance;
 
@@ -371,7 +371,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 	strcpy(buf, servers);
 	token = strtok(buf, ",");
 
-	while (token != NULL)
+	while (token != nullptr)
 	{
 		SystemAddress addr;
 		char* port;
@@ -388,7 +388,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 
 		serverList.insert(pair<SystemAddress, ServerEntry>(addr, entry));
 
-		token = strtok(NULL, ",");
+		token = strtok(nullptr, ",");
 	}
 
 	hFont = CreateFont(-11, 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Verdana");
@@ -402,7 +402,7 @@ HWND CreateMainWindow()
 	HWND wnd;
 	char wndtitle[sizeof(CLIENT_VERSION) + 64];
 	snprintf(wndtitle, sizeof(wndtitle), "Vault-Tec Multiplayer Mod %s (FOR TESTING PURPOSES ONLY)", CLIENT_VERSION);
-	wnd = CreateWindowEx(0, WND_CLASS_NAME, wndtitle, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, (GetSystemMetrics(SM_CXSCREEN) / 2) - 392, (GetSystemMetrics(SM_CYSCREEN) / 2) - 221, 785, 442, HWND_DESKTOP, NULL, instance, NULL);
+	wnd = CreateWindowEx(0, WND_CLASS_NAME, wndtitle, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, (GetSystemMetrics(SM_CXSCREEN) / 2) - 392, (GetSystemMetrics(SM_CYSCREEN) / 2) - 221, 785, 442, HWND_DESKTOP, nullptr, instance, nullptr);
 	ShowWindow(wnd, SW_SHOWNORMAL);
 	UpdateWindow(wnd);
 	return wnd;
@@ -428,13 +428,13 @@ void CreateWindowContent(HWND parent)
 	col.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt = LVCFMT_LEFT;
 
-	wnd = CreateWindowEx(0x00000000, "Button", "Server details", 0x50020007, 543, 0, 229, 214, parent, (HMENU) IDC_GROUP0, instance, NULL);
+	wnd = CreateWindowEx(0x00000000, "Button", "Server details", 0x50020007, 543, 0, 229, 214, parent, (HMENU) IDC_GROUP0, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
-	wnd = CreateWindowEx(0x00000000, "Button", "Vault-Tec Multiplayer Controls", 0x50020007, 543, 218, 229, 190, parent, (HMENU) IDC_GROUP1, instance, NULL);
+	wnd = CreateWindowEx(0x00000000, "Button", "Vault-Tec Multiplayer Controls", 0x50020007, 543, 218, 229, 190, parent, (HMENU) IDC_GROUP1, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
-	wnd = CreateWindowEx(0x00000200, "SysListView32", "", 0x50010005 | LVS_SINGLESEL | LVS_SHOWSELALWAYS, 6, 6, 531, 285, parent, (HMENU) IDC_GRID0, instance, NULL);
+	wnd = CreateWindowEx(0x00000200, "SysListView32", "", 0x50010005 | LVS_SINGLESEL | LVS_SHOWSELALWAYS, 6, 6, 531, 285, parent, (HMENU) IDC_GRID0, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 	SendMessage(wnd, (LVM_FIRST + 54), 0, 64 | 32);
 	wndlistview = wnd;
@@ -459,7 +459,7 @@ void CreateWindowContent(HWND parent)
 	col.iSubItem = 3;
 	SendMessage(wnd, LVM_INSERTCOLUMN, 3, (LPARAM) &col);
 
-	wnd = CreateWindowEx(0x00000200, "SysListView32", "", 0x50010001, 553, 19, 210, 157, parent, (HMENU) IDC_GRID1, instance, NULL);
+	wnd = CreateWindowEx(0x00000200, "SysListView32", "", 0x50010001, 553, 19, 210, 157, parent, (HMENU) IDC_GRID1, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 	wndlistview2 = wnd;
 
@@ -473,55 +473,55 @@ void CreateWindowContent(HWND parent)
 	col.iSubItem = 1;
 	SendMessage(wnd, LVM_INSERTCOLUMN, 1, (LPARAM) &col);
 
-	wnd = CreateWindowEx(0x00000000, "msctls_progress32", "", 0x50000000, 553, 184, 210, 16, parent, (HMENU) IDC_PROGRESS0, instance, NULL);
+	wnd = CreateWindowEx(0x00000000, "msctls_progress32", "", 0x50000000, 553, 184, 210, 16, parent, (HMENU) IDC_PROGRESS0, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 	wndprogressbar = wnd;
 
-	wnd = CreateWindowEx(0x00000000, "Static", "Fallout is a trademark of Bethesda Softworks LLC in the U.S. and/or other countries.", 0x5000030C, 12, 374, 531, 18, parent, (HMENU) IDC_STATIC0, instance, NULL);
+	wnd = CreateWindowEx(0x00000000, "Static", "Fallout is a trademark of Bethesda Softworks LLC in the U.S. and/or other countries.", 0x5000030C, 12, 374, 531, 18, parent, (HMENU) IDC_STATIC0, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
-	wnd = CreateWindowEx(0x00000000, "Static", "Vault-Tec Multiplayer Mod is not affliated with Bethesda Softworks LLC.", 0x50000300, 12, 392, 531, 18, parent, (HMENU) IDC_STATIC1, instance, NULL);
+	wnd = CreateWindowEx(0x00000000, "Static", "Vault-Tec Multiplayer Mod is not affliated with Bethesda Softworks LLC.", 0x50000300, 12, 392, 531, 18, parent, (HMENU) IDC_STATIC1, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
-	wnd = CreateWindowEx(0x00000000, "Button", "Powered by", 0x50020007, 6, 294, 531, 78, parent, (HMENU) IDC_GROUP2, instance, NULL);
+	wnd = CreateWindowEx(0x00000000, "Button", "Powered by", 0x50020007, 6, 294, 531, 78, parent, (HMENU) IDC_GROUP2, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
-	wnd = CreateWindowEx(0x00000000, "Button", "mantronix - the wasteland", 0x50010003, 555, 374, 174, 32, parent, (HMENU) IDC_CHECK0, instance, NULL);
+	wnd = CreateWindowEx(0x00000000, "Button", "mantronix - the wasteland", 0x50010003, 555, 374, 174, 32, parent, (HMENU) IDC_CHECK0, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 	wndchiptune = wnd;
 
-	wnd = CreateWindowEx(0x00000000, "Button", "Join Server", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 555, 239, 100, 25, parent, (HMENU) IDC_BUTTON0, instance, NULL);
+	wnd = CreateWindowEx(0x00000000, "Button", "Join Server", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 555, 239, 100, 25, parent, (HMENU) IDC_BUTTON0, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
-	wnd = CreateWindowEx(0x00000000, "Button", "Update Server", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 660, 239, 100, 25, parent, (HMENU) IDC_BUTTON1, instance, NULL);
+	wnd = CreateWindowEx(0x00000000, "Button", "Update Server", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 660, 239, 100, 25, parent, (HMENU) IDC_BUTTON1, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
-	wnd = CreateWindowEx(0x00000000, "Button", "Master Query", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 555, 272, 100, 25, parent, (HMENU) IDC_BUTTON2, instance, NULL);
+	wnd = CreateWindowEx(0x00000000, "Button", "Master Query", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 555, 272, 100, 25, parent, (HMENU) IDC_BUTTON2, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
-	wnd = CreateWindowEx(0x00000000, "Button", "Synchronize", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 660, 272, 100, 25, parent, (HMENU) IDC_BUTTON3, instance, NULL);
+	wnd = CreateWindowEx(0x00000000, "Button", "Synchronize", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 660, 272, 100, 25, parent, (HMENU) IDC_BUTTON3, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 	wndsync = wnd;
 
-	wnd = CreateWindowEx(0x00000200, "Edit", "vaultmp.com", 0x50010080, 611, 305, 146, 20, parent, (HMENU) IDC_EDIT3, instance, NULL);
+	wnd = CreateWindowEx(0x00000200, "Edit", "vaultmp.com", 0x50010080, 611, 305, 146, 20, parent, (HMENU) IDC_EDIT3, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 	SendMessage(wnd, EM_SETLIMITTEXT, (WPARAM) MAX_MASTER_SERVER, 0);
 
-	wnd = CreateWindowEx(0x00000200, "Edit", "", 0x50010080, 611, 331, 146, 20, parent, (HMENU) IDC_EDIT0, instance, NULL);
+	wnd = CreateWindowEx(0x00000200, "Edit", "", 0x50010080, 611, 331, 146, 20, parent, (HMENU) IDC_EDIT0, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 	SendMessage(wnd, EM_SETLIMITTEXT, (WPARAM) MAX_PLAYER_NAME, 0);
 
-	wnd = CreateWindowEx(0x00000200, "Edit", "", 0x500100A0, 611, 357, 146, 20, parent, (HMENU) IDC_EDIT1, instance, NULL);
+	wnd = CreateWindowEx(0x00000200, "Edit", "", 0x500100A0, 611, 357, 146, 20, parent, (HMENU) IDC_EDIT1, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 	SendMessage(wnd, EM_SETLIMITTEXT, (WPARAM) MAX_PASSWORD_SIZE, 0);
 
-	wnd = CreateWindowEx(0x00000000, "Static", "Master", 0x50000300, 570, 302, 38, 24, parent, (HMENU) IDC_STATIC4, instance, NULL);
+	wnd = CreateWindowEx(0x00000000, "Static", "Master", 0x50000300, 570, 302, 38, 24, parent, (HMENU) IDC_STATIC4, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
-	wnd = CreateWindowEx(0x00000000, "Static", "Name", 0x50000300, 575, 328, 35, 24, parent, (HMENU) IDC_STATIC2, instance, NULL);
+	wnd = CreateWindowEx(0x00000000, "Static", "Name", 0x50000300, 575, 328, 35, 24, parent, (HMENU) IDC_STATIC2, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
-	wnd = CreateWindowEx(0x00000000, "Static", "Password", 0x50000300, 554, 354, 57, 24, parent, (HMENU) IDC_STATIC3, instance, NULL);
+	wnd = CreateWindowEx(0x00000000, "Static", "Password", 0x50000300, 554, 354, 57, 24, parent, (HMENU) IDC_STATIC3, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 }
 
@@ -536,8 +536,8 @@ int RegisterClasses()
 	wc.cbSize = sizeof(WNDCLASSEX);
 	wc.hIcon = LoadIcon(instance, MAKEINTRESOURCE(ICON_MAIN));
 	wc.hIconSm = LoadIcon(instance, MAKEINTRESOURCE(ICON_MAIN));
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wc.lpszMenuName = NULL;
+	wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
+	wc.lpszMenuName = nullptr;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
 
@@ -550,7 +550,7 @@ int MessageLoop()
 {
 	MSG msg;
 
-	while (GetMessage(&msg, NULL, 0, 0))
+	while (GetMessage(&msg, nullptr, 0, 0))
 	{
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
@@ -613,7 +613,7 @@ void RefreshServerList()
 {
 	SendMessage(wndlistview, LVM_DELETEALLITEMS, 0, 0);
 	SendMessage(wndlistview2, LVM_DELETEALLITEMS, 0, 0);
-	selectedServer = NULL;
+	selectedServer = nullptr;
 
 	for (map<SystemAddress, ServerEntry>::iterator i = serverList.begin(); i != serverList.end(); ++i)
 	{
@@ -652,7 +652,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 		case WM_CREATE:
 			CreateWindowContent(hwnd);
 			RefreshServerList();
-			hBitmap = LoadBitmap(GetModuleHandle(NULL), MAKEINTRESOURCE(POWERED));
+			hBitmap = LoadBitmap(GetModuleHandle(nullptr), MAKEINTRESOURCE(POWERED));
 			GetObject(hBitmap, sizeof(BITMAP), &bitmap);
 
 			if (*player_name)
@@ -687,7 +687,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 					if (peer->NumberOfConnections() == 0)
 					{
-						if (selectedServer != NULL)
+						if (selectedServer != nullptr)
 						{
 							SystemAddress addr = *selectedServer;
 							char name[MAX_PLAYER_NAME], pwd[MAX_PASSWORD_SIZE];
@@ -696,7 +696,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 							if (strlen(name) < 3)
 							{
-								MessageBox(NULL, "Please sepcify a player name of at least 3 characters.", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
+								MessageBox(nullptr, "Please sepcify a player name of at least 3 characters.", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
 								break;
 							}
 
@@ -710,11 +710,11 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 								switch (game)
 								{
 									case FALLOUT3:
-										MessageBox(NULL, "Could not find Fallout3.exe!", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
+										MessageBox(nullptr, "Could not find Fallout3.exe!", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
 										break;
 
 									case NEWVEGAS:
-										MessageBox(NULL, "Could not find FalloutNV.exe!", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
+										MessageBox(nullptr, "Could not find FalloutNV.exe!", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
 										break;
 
 									default:
@@ -752,14 +752,14 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 							Maximize(hwnd);
 
-							selectedServer = NULL;
+							selectedServer = nullptr;
 						}
 					}
 
 					break;
 
 				case IDC_BUTTON1:
-					if (selectedServer != NULL)
+					if (selectedServer != nullptr)
 						update = true;
 
 					else break;
@@ -786,8 +786,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 						else
 						{
 							master.SetBinaryAddress(strtok(maddr, ":"));
-							char* cport = strtok(NULL, ":");
-							master.SetPort(cport != NULL ? atoi(cport) : RAKNET_MASTER_PORT);
+							char* cport = strtok(nullptr, ":");
+							master.SetPort(cport != nullptr ? atoi(cport) : RAKNET_MASTER_PORT);
 						}
 
 						if (peer->Connect(master.ToString(false), master.GetPort(), MASTER_VERSION, sizeof(MASTER_VERSION), 0, 0, 3, 100, 0) == CONNECTION_ATTEMPT_STARTED)
@@ -1005,9 +1005,9 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 										}
 
 										case ID_INVALID_PASSWORD:
-											if (update) MessageBox(NULL, "MasterServer version mismatch.\nPlease download the most recent binaries from www.vaultmp.com", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
+											if (update) MessageBox(nullptr, "MasterServer version mismatch.\nPlease download the most recent binaries from www.vaultmp.com", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
 
-											else MessageBox(NULL, "Dedicated server version mismatch.\nPlease download the most recent binaries from www.vaultmp.com", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
+											else MessageBox(nullptr, "Dedicated server version mismatch.\nPlease download the most recent binaries from www.vaultmp.com", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
 
 										case ID_DISCONNECTION_NOTIFICATION:
 										case ID_CONNECTION_BANNED:
@@ -1031,11 +1031,11 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					/* RakNet File Transfer */
 
-					if (selectedServer != NULL && serverList.find(*selectedServer)->second.GetGame())
+					if (selectedServer != nullptr && serverList.find(*selectedServer)->second.GetGame())
 					{
 						EnableWindow(wndsync, 0);
 
-						int result = MessageBox(NULL, "This function downloads files (savegames, mods etc.) from the server. vaultmp has no control of which files get downloaded; this is up to the server configuration. Files will be placed in the \"Saves\" or \"Data\" folder of the appropiate game. Do NOT continue if you do not trust the server!", "Attention", MB_OKCANCEL | MB_ICONWARNING | MB_TOPMOST | MB_TASKMODAL);
+						int result = MessageBox(nullptr, "This function downloads files (savegames, mods etc.) from the server. vaultmp has no control of which files get downloaded; this is up to the server configuration. Files will be placed in the \"Saves\" or \"Data\" folder of the appropiate game. Do NOT continue if you do not trust the server!", "Attention", MB_OKCANCEL | MB_ICONWARNING | MB_TOPMOST | MB_TASKMODAL);
 
 						if (result == IDCANCEL)
 						{
@@ -1051,7 +1051,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 						if (server == UNASSIGNED_SYSTEM_ADDRESS)
 						{
-							MessageBox(NULL, "Could not establish a connection to the fileserver. The server probably has file downloading disabled or its number of maximum parallel connections reached.", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
+							MessageBox(nullptr, "Could not establish a connection to the fileserver. The server probably has file downloading disabled or its number of maximum parallel connections reached.", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
 							EnableWindow(wndsync, 1);
 							break;
 						}
@@ -1073,7 +1073,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 						EnableWindow(wndsync, 1);
 
-						MessageBox(NULL, "Successfully synchronized with the server!", "Success", MB_OK | MB_ICONINFORMATION | MB_TOPMOST | MB_TASKMODAL);
+						MessageBox(nullptr, "Successfully synchronized with the server!", "Success", MB_OK | MB_ICONINFORMATION | MB_TOPMOST | MB_TASKMODAL);
 					}
 
 					break;
@@ -1081,7 +1081,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 				case IDC_CHECK0:
 					if (SendMessage(wndchiptune, BM_GETCHECK, 0, 0))
-						uFMOD_PlaySong(MAKEINTRESOURCE(CHIPTUNE), GetModuleHandle(NULL), XM_RESOURCE);
+						uFMOD_PlaySong(MAKEINTRESOURCE(CHIPTUNE), GetModuleHandle(nullptr), XM_RESOURCE);
 
 					else
 						uFMOD_StopSong();

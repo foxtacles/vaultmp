@@ -2,7 +2,7 @@
 
 #ifdef VAULTMP_DEBUG
 template <typename T>
-Debug* Shared<T>::debug = NULL;
+Debug* Shared<T>::debug = nullptr;
 #endif
 
 #ifdef VAULTMP_DEBUG

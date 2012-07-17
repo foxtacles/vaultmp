@@ -36,7 +36,7 @@ class CriticalSection
 
 	public:
 #ifdef VAULTMP_DEBUG
-		CriticalSection() : debug(NULL), finalize(false) {}
+		CriticalSection() : debug(nullptr), finalize(false) {}
 #else
 		CriticalSection() : finalize(false) {}
 #endif

@@ -3,7 +3,7 @@
 #include "Game.h"
 
 #ifdef VAULTMP_DEBUG
-Debug* NetworkClient::debug = NULL;
+Debug* NetworkClient::debug = nullptr;
 #endif
 
 #ifdef VAULTMP_DEBUG

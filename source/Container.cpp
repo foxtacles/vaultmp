@@ -360,7 +360,7 @@ GameDiff Container::ApplyDiff(ContainerDiff& diff)
 		FactoryObject _iDelete = GameFactory::GetObject(id);
 		Item* iDelete = vaultcast<Item>(_iDelete);
 
-		Diff* _diff = NULL;
+		Diff* _diff = nullptr;
 		_diff = &assoc_delete.insert(pair<unsigned int, Diff>(iDelete->GetBase(), Diff())).first->second;
 
 		_diff->count -= iDelete->GetItemCount();
@@ -377,7 +377,7 @@ GameDiff Container::ApplyDiff(ContainerDiff& diff)
 		FactoryObject _iNew = GameFactory::GetObject(id);
 		Item* iNew = vaultcast<Item>(_iNew);
 
-		Diff* _diff = NULL;
+		Diff* _diff = nullptr;
 		map<unsigned int, Diff>::iterator it = assoc_delete.find(iNew->GetBase());
 
 		if (it != assoc_delete.end())
@@ -466,7 +466,7 @@ NetworkID Container::Copy() const
 Lockable* Container::getLock()
 {
 	if (flag_Lock.IsLocked())
-		return NULL;
+		return nullptr;
 
 	return &flag_Lock;
 }

@@ -1,7 +1,7 @@
 #include "Server.h"
 
 #ifdef VAULTMP_DEBUG
-Debug* Server::debug = NULL;
+Debug* Server::debug = nullptr;
 #endif
 
 using namespace Values;
@@ -118,7 +118,7 @@ NetworkResponse Server::Disconnect(RakNetGUID guid, unsigned char reason)
 	NetworkResponse response;
 	Client* client = Client::GetClientFromGUID(guid);
 
-	if (client != NULL)
+	if (client != nullptr)
 	{
 		FactoryObject reference = GameFactory::GetObject(client->GetPlayer());
 		Script::OnPlayerDisconnect(reference, reason);
@@ -128,7 +128,7 @@ NetworkResponse Server::Disconnect(RakNetGUID guid, unsigned char reason)
 
 		response.push_back(Network::CreateResponse(
 			PacketFactory::CreatePacket(ID_OBJECT_REMOVE, id),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(NULL)));
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr)));
 
 		Dedicated::self->SetServerPlayers(pair<int, int>(Client::GetClientCount(), Dedicated::connections));
 	}
@@ -395,7 +395,7 @@ NetworkResponse Server::ChatMessage(RakNetGUID guid, string message)
 	{
 		response.push_back(Network::CreateResponse(
 			PacketFactory::CreatePacket(ID_GAME_CHAT, message.c_str()),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(NULL)));
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr)));
 	}
 
 	return response;

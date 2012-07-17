@@ -3,7 +3,7 @@
 void Utils::timestamp()
 {
 	time_t ltime;
-	ltime = time(NULL);
+	ltime = time(nullptr);
 	char t[32];
 	snprintf(t, sizeof(t), "[%s", asctime(localtime(&ltime)));
 	char* newline = strchr(t, '\n');
@@ -77,7 +77,7 @@ const char* Utils::FileOnly(const char* path)
 	const char* tmp = path;
 	const char* end = path;
 
-	for (tmp; (tmp = strpbrk(tmp, "\\/")) != NULL; end = tmp++);
+	for (tmp; (tmp = strpbrk(tmp, "\\/")) != nullptr; end = tmp++);
 
 	return ++end;
 }
@@ -106,26 +106,26 @@ BOOL Utils::GenerateChecksum(const string& szFilename,
 							 DWORD& dwChecksum)
 {
 	HANDLE hFile = INVALID_HANDLE_VALUE;
-	HANDLE hFileMapping = NULL;
-	PVOID pBaseAddress = NULL;
+	HANDLE hFileMapping = nullptr;
+	PVOID pBaseAddress = nullptr;
 	DWORD dwFileLength = 0;
 	DWORD dwHeaderSum; // Checksum as stated by Header
 	DWORD dwCheckSum; // Calculated Checksum
 
 	/////////////////////////////////////////////////////////////
-	hFile = CreateFile(szFilename.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	hFile = CreateFile(szFilename.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
 	if (INVALID_HANDLE_VALUE == hFile ||
-			NULL == hFile)
+			nullptr == hFile)
 	{
 		return false;
 	}
 
 	/////////////////////////////////////////////////////////////
-	hFileMapping = CreateFileMapping(hFile, NULL,
-									 PAGE_READONLY, 0, 0, NULL);
+	hFileMapping = CreateFileMapping(hFile, nullptr,
+									 PAGE_READONLY, 0, 0, nullptr);
 
-	if (NULL == hFileMapping)
+	if (nullptr == hFileMapping)
 	{
 		return false;
 	}
@@ -134,7 +134,7 @@ BOOL Utils::GenerateChecksum(const string& szFilename,
 	pBaseAddress = MapViewOfFile(hFileMapping,
 								 FILE_MAP_READ, 0, 0, 0);
 
-	if (NULL == pBaseAddress)
+	if (nullptr == pBaseAddress)
 	{
 		return false;
 	}
@@ -154,7 +154,7 @@ BOOL Utils::GenerateChecksum(const string& szFilename,
 	PIMAGE_NT_HEADERS pNTHeaders = CheckSumMappedFile(
 									   pBaseAddress, dwSize, &dwHeaderSum, &dwCheckSum);
 
-	if (NULL != pNTHeaders)
+	if (nullptr != pNTHeaders)
 	{
 		dwExistingChecksum = dwHeaderSum;
 		dwChecksum = dwCheckSum;
@@ -237,7 +237,7 @@ bool Utils::crc32file(char* name, unsigned int* crc)
 	oldcrc32 = 0xFFFFFFFF;
 	charcnt = 0;
 
-	if ((fin = fopen(name, "rb")) == NULL)
+	if ((fin = fopen(name, "rb")) == nullptr)
 	{
 		return false;
 	}

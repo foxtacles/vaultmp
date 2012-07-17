@@ -23,7 +23,7 @@ Timer::~Timer()
 unsigned int Timer::msecs()
 {
 	timeval t;
-	gettimeofday(&t, NULL);
+	gettimeofday(&t, nullptr);
 	return (unsigned int)((t.tv_sec * 1000) + (t.tv_usec / 1000));
 }
 

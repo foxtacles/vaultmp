@@ -32,7 +32,7 @@ void InputThread()
 
 		if (!strcmp(cmd.c_str(), "ls"))
 		{
-			vector<RakNetGUID> clients = Client::GetNetworkList(NULL);
+			vector<RakNetGUID> clients = Client::GetNetworkList(nullptr);
 
 			for (RakNetGUID& guid : clients)
 			{
@@ -51,7 +51,7 @@ void InputThread()
 		}
 		else if (!strcmp(cmd.c_str(), "uimsg"))
 		{
-			char* _id = strtok(NULL, " ");
+			char* _id = strtok(nullptr, " ");
 
 			if (_id)
 			{
@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
 #ifdef VAULTMP_DEBUG
 #ifdef __WIN32__
 
-	if (LoadLibrary("exchndl.dll") == NULL)
+	if (LoadLibrary("exchndl.dll") == nullptr)
 		return 0;
 
 #else
@@ -163,7 +163,7 @@ int main(int argc, char* argv[])
 		char file[MAX_PATH];
 		unsigned int crc;
 
-		while (token != NULL)
+		while (token != nullptr)
 		{
 			snprintf(file, sizeof(file), "%s/%s/%s", base, MODFILES_PATH, token);
 
@@ -172,7 +172,7 @@ int main(int argc, char* argv[])
 
 			modfiles.push_back(pair<string, unsigned int>(string(token), crc));
 
-			token = strtok(NULL, ",");
+			token = strtok(nullptr, ",");
 		}
 
 		Dedicated::SetModfiles(modfiles);

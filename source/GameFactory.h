@@ -206,7 +206,7 @@ class FactoryObject
 		};
 
 	public:
-		FactoryObject() : reference(NULL), type(0x00) {};
+		FactoryObject() : reference(nullptr), type(0x00) {};
 		~FactoryObject()
 		{
 			if (reference)
@@ -218,7 +218,7 @@ class FactoryObject
 
 		FactoryObject(FactoryObject&& p) : reference(p.reference), type(p.type)
 		{
-			p.reference = NULL;
+			p.reference = nullptr;
 			p.type = 0x00;
 		};
 		FactoryObject& operator=(FactoryObject&& p)
@@ -231,7 +231,7 @@ class FactoryObject
 				reference = p.reference;
 				type = p.type;
 
-				p.reference = NULL;
+				p.reference = nullptr;
 				p.type = 0x00;
 			}
 
@@ -260,7 +260,7 @@ inline Item* vaultcast(const FactoryObject& object) noexcept
 	if (object.type & ID_ITEM)
 		return reinterpret_cast<Item*>(object.reference);
 	else
-		return NULL;
+		return nullptr;
 }
 template <>
 inline Container* vaultcast(const FactoryObject& object) noexcept
@@ -268,7 +268,7 @@ inline Container* vaultcast(const FactoryObject& object) noexcept
 	if (object.type & ALL_CONTAINERS)
 		return reinterpret_cast<Container*>(object.reference);
 	else
-		return NULL;
+		return nullptr;
 }
 template <>
 inline Actor* vaultcast(const FactoryObject& object) noexcept
@@ -276,7 +276,7 @@ inline Actor* vaultcast(const FactoryObject& object) noexcept
 	if (object.type & ALL_ACTORS)
 		return reinterpret_cast<Actor*>(object.reference);
 	else
-		return NULL;
+		return nullptr;
 }
 template <>
 inline Player* vaultcast(const FactoryObject& object) noexcept
@@ -284,7 +284,7 @@ inline Player* vaultcast(const FactoryObject& object) noexcept
 	if (object.type & ID_PLAYER)
 		return reinterpret_cast<Player*>(object.reference);
 	else
-		return NULL;
+		return nullptr;
 }
 
 #endif

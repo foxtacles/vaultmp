@@ -125,7 +125,7 @@ Lockable* Object::SetName(string name)
 Lockable* Object::SetGamePos(unsigned char axis, double pos)
 {
 	if (!IsValidCoordinate(pos))
-		return NULL;
+		return nullptr;
 
 	return SetObjectValue(this->object_Game_Pos.at(axis), pos);
 }
@@ -133,7 +133,7 @@ Lockable* Object::SetGamePos(unsigned char axis, double pos)
 Lockable* Object::SetNetworkPos(unsigned char axis, double pos)
 {
 	if (!IsValidCoordinate(pos))
-		return NULL;
+		return nullptr;
 
 	return SetObjectValue(this->object_Network_Pos.at(axis), pos);
 }
@@ -141,7 +141,7 @@ Lockable* Object::SetNetworkPos(unsigned char axis, double pos)
 Lockable* Object::SetAngle(unsigned char axis, double angle)
 {
 	if (!IsValidAngle(axis, angle))
-		return NULL;
+		return nullptr;
 
 	return SetObjectValue(this->object_Angle.at(axis), angle);
 }
@@ -154,7 +154,7 @@ Lockable* Object::SetEnabled(bool state)
 Lockable* Object::SetGameCell(unsigned int cell)
 {
 	if (!cell)
-		return NULL;
+		return nullptr;
 
 	return SetObjectValue(this->cell_Game, cell);
 }
@@ -162,7 +162,7 @@ Lockable* Object::SetGameCell(unsigned int cell)
 Lockable* Object::SetNetworkCell(unsigned int cell)
 {
 	if (!cell)
-		return NULL;
+		return nullptr;
 
 	return SetObjectValue(this->cell_Network, cell);
 }

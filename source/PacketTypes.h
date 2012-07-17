@@ -31,7 +31,7 @@ class pDefault
 		pDefault(unsigned char type)
 		{
 			this->type.type = type;
-			this->stream = NULL;
+			this->stream = nullptr;
 			this->len = 0;
 			base();
 		};
@@ -99,7 +99,7 @@ class pGameDefault : public pDefault
 
 		};
 
-		virtual void construct(void* super = NULL, unsigned int len = 0)
+		virtual void construct(void* super = nullptr, unsigned int len = 0)
 		{
 			if (!stream)
 			{
@@ -113,7 +113,7 @@ class pGameDefault : public pDefault
 			}
 		};
 
-		virtual void deconstruct(void* super = NULL, unsigned int len = 0)
+		virtual void deconstruct(void* super = nullptr, unsigned int len = 0)
 		{
 			if (stream)
 			{
@@ -153,7 +153,7 @@ class pObjectDefault : public pDefault
 			base_len += sizeof(NetworkID);
 		};
 
-		virtual void construct(void* super = NULL, unsigned int len = 0)
+		virtual void construct(void* super = nullptr, unsigned int len = 0)
 		{
 			if (!stream)
 			{
@@ -169,7 +169,7 @@ class pObjectDefault : public pDefault
 			}
 		};
 
-		virtual void deconstruct(void* super = NULL, unsigned int len = 0)
+		virtual void deconstruct(void* super = nullptr, unsigned int len = 0)
 		{
 			if (stream)
 			{
@@ -214,7 +214,7 @@ class pObjectNewDefault : public pObjectDefault
 			base_len += sizeof(unsigned int);
 		};
 
-		virtual void construct(void* super = NULL, unsigned int len = 0)
+		virtual void construct(void* super = nullptr, unsigned int len = 0)
 		{
 			if (!stream)
 			{
@@ -234,7 +234,7 @@ class pObjectNewDefault : public pObjectDefault
 			}
 		};
 
-		virtual void deconstruct(void* super = NULL, unsigned int len = 0)
+		virtual void deconstruct(void* super = nullptr, unsigned int len = 0)
 		{
 			if (stream)
 			{
@@ -280,7 +280,7 @@ class pObjectUpdateDefault : public pObjectDefault
 			base_len += sizeof(pTypeSpecifier);
 		};
 
-		virtual void construct(void* super = NULL, unsigned int len = 0)
+		virtual void construct(void* super = nullptr, unsigned int len = 0)
 		{
 			if (!stream)
 			{
@@ -298,7 +298,7 @@ class pObjectUpdateDefault : public pObjectDefault
 			}
 		};
 
-		virtual void deconstruct(void* super = NULL, unsigned int len = 0)
+		virtual void deconstruct(void* super = nullptr, unsigned int len = 0)
 		{
 			if (stream)
 			{

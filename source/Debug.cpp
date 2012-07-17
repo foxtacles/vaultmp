@@ -15,7 +15,7 @@ Debug::Debug(char* module)
 
 Debug::~Debug()
 {
-	if (this->vaultmplog != NULL)
+	if (this->vaultmplog != nullptr)
 	{
 		this->Print((char*) "-----------------------------------------------------------------------------------------------------", false);
 		this->Print((char*) "END OF LOG", false);
@@ -27,7 +27,7 @@ Debug::~Debug()
 void Debug::GetTimeFormat(char* buf, unsigned int size, bool file)
 {
 	time_t ltime;
-	ltime = time(NULL);
+	ltime = time(nullptr);
 
 	tm* local = localtime(&ltime);
 	char timeformat[32];
@@ -41,7 +41,7 @@ void Debug::Print(const char* text, bool timestamp)
 {
 	StartSession();
 
-	if (vaultmplog == NULL)
+	if (vaultmplog == nullptr)
 		return;
 
 	if (timestamp)
@@ -85,12 +85,12 @@ void Debug::PrintSystem()
 
 	FILE* systeminfo = popen("systeminfo", "r");
 
-	if (systeminfo == NULL)
+	if (systeminfo == nullptr)
 		return;
 
 	char buf[2048];
 
-	while (fgets(buf, sizeof(buf), systeminfo) != NULL)
+	while (fgets(buf, sizeof(buf), systeminfo) != nullptr)
 		fwrite(buf, sizeof(char), strlen(buf), this->vaultmplog);
 
 	pclose(systeminfo);

@@ -36,7 +36,7 @@ void CriticalSection::SetDebugHandler(Debug* debug)
 CriticalSection* CriticalSection::StartSession()
 {
 	if (finalize)
-		return NULL;
+		return nullptr;
 
 	bool success = cs.try_lock_for(chrono::milliseconds(CS_TIMEOUT));
 
@@ -55,7 +55,7 @@ CriticalSection* CriticalSection::StartSession()
 		if (success)
 			cs.unlock();
 
-		return NULL;
+		return nullptr;
 	}
 	else
 #ifdef VAULTMP_DEBUG

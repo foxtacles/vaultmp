@@ -59,7 +59,7 @@ class Client
 		 *
 		 * except (optional, Client*) - excludes a RakNetGUID from the result
 		 */
-		static vector<RakNetGUID> GetNetworkList(Client* except = NULL);
+		static vector<RakNetGUID> GetNetworkList(Client* except = nullptr);
 		/**
 		 * \brief Returns a STL vector containing every RakNetGUID
 		 *

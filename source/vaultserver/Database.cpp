@@ -4,7 +4,7 @@
 
 #ifdef VAULTMP_DEBUG
 template <typename T>
-Debug* Database<T>::debug = NULL;
+Debug* Database<T>::debug = nullptr;
 #endif
 
 #ifdef VAULTMP_DEBUG
@@ -40,7 +40,7 @@ unsigned int Database<T>::initialize(const string& file, const vector<string>& t
 
 	sqlite3* db;
 
-	if (sqlite3_open_v2(_file, &db, SQLITE_OPEN_READONLY, NULL) != SQLITE_OK)
+	if (sqlite3_open_v2(_file, &db, SQLITE_OPEN_READONLY, nullptr) != SQLITE_OK)
 	{
 		sqlite3_close(db);
 		throw VaultException("Could not open SQLite3 database: %s", sqlite3_errmsg(db));
@@ -52,7 +52,7 @@ unsigned int Database<T>::initialize(const string& file, const vector<string>& t
 	for (const string& table : tables)
 		query += "+ (SELECT COUNT(*) FROM " + table + ")";
 
-	if (sqlite3_prepare_v2(db, query.c_str(), query.length() + 1, &stmt, NULL) != SQLITE_OK)
+	if (sqlite3_prepare_v2(db, query.c_str(), query.length() + 1, &stmt, nullptr) != SQLITE_OK)
 	{
 		sqlite3_close(db);
 		throw VaultException("Could not prepare query: %s", sqlite3_errmsg(db));
@@ -82,7 +82,7 @@ unsigned int Database<T>::initialize(const string& file, const vector<string>& t
 	{
 		query = "SELECT * FROM " + table;
 
-		if (sqlite3_prepare_v2(db, query.c_str(), query.length() + 1, &stmt, NULL) != SQLITE_OK)
+		if (sqlite3_prepare_v2(db, query.c_str(), query.length() + 1, &stmt, nullptr) != SQLITE_OK)
 		{
 			sqlite3_close(db);
 			throw VaultException("Could not prepare query: %s", sqlite3_errmsg(db));
