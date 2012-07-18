@@ -179,7 +179,7 @@ bool Object::IsCoordinateInRange(unsigned char axis, double pos, double R) const
 
 bool Object::HasValidCoordinates() const
 {
-	for (const pair<const unsigned char, Value<double>>& pos : object_Network_Pos)
+	for (const auto& pos : object_Network_Pos)
 		if (!IsValidCoordinate(pos.second.get()))
 			return false;
 

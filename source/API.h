@@ -104,6 +104,44 @@ namespace Values
 	};
 
 	/**
+	 * \brief Limb values
+	 */
+
+	enum Limbs
+	{
+		Torso							= 0,
+		Head1							= 1,
+		Head2							= 2,
+		LeftArm1						= 3,
+		LeftArm2						= 4,
+		RightArm1						= 5,
+		RightArm2						= 6,
+		LeftLeg1						= 7,
+		LeftLeg2						= 8,
+		LeftLeg3						= 9,
+		RightLeg1						= 10,
+		RightLeg2						= 11,
+		RightLeg3						= 12,
+		Brain							= 13,
+		Weapon							= 14,
+	};
+
+	/**
+	 * \brief Cause of death values
+	 */
+
+	enum Death
+	{
+		Explosion						= 0,
+		Gun								= 2,
+		BluntWeapon						= 3,
+		HandToHand						= 4,
+		ObjectImpact					= 5,
+		Poison							= 6,
+		Radiation						= 7,
+	};
+
+	/**
 	 * \brief Function opcodes
 	 */
 
@@ -141,6 +179,8 @@ namespace Values
 		Func_MarkForDelete              = 0x11BB,
 		Func_IsAnimPlaying              = 0x1128,
 		Func_FireWeapon					= 0x11E2,
+		Func_GetCauseofDeath			= 0x118D,
+		Func_IsLimbGone					= 0x118E,
 
 		Func_GetActorState              = 0x0001 | VAULTFUNCTION,
 		Func_Chat						= 0x0002 | VAULTFUNCTION,
