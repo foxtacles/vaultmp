@@ -177,8 +177,8 @@ class Interface : public API
 		typedef vector<vector<Native::iterator>> StaticCommandList;
 		typedef deque<pair<Native::iterator, unsigned int>> DynamicCommandList;
 
-		static bool endThread;
-		static bool wakeup;
+		static atomic<bool> endThread;
+		static atomic<bool> wakeup;
 		static bool initialized;
 		static thread hCommandThreadReceive;
 		static thread hCommandThreadSend;

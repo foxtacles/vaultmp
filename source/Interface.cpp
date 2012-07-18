@@ -3,9 +3,9 @@
 PipeClient* Interface::pipeServer;
 PipeServer* Interface::pipeClient;
 Interface::ResultHandler Interface::resultHandler;
-bool Interface::endThread = false;
-bool Interface::wakeup = false;
-bool Interface::initialized = false;
+atomic<bool> Interface::endThread;
+atomic<bool> Interface::wakeup;
+bool Interface::initialized;
 Interface::PriorityMap Interface::priorityMap;
 Interface::StaticCommandList Interface::static_cmdlist;
 Interface::DynamicCommandList Interface::dynamic_cmdlist;
@@ -109,11 +109,11 @@ void Interface::EndSetup()
 	vector<unsigned int> priorities;
 	priorities.reserve(priorityMap.size());
 
-	for (const pair<unsigned int, Native::iterator>& priority : priorityMap)
+	for (const auto& priority : priorityMap)
 		priorities.push_back(priority.first);
 
-	vector<unsigned int>::iterator it2 = unique(priorities.begin(), priorities.end());
-	priorities.resize(it2 - priorities.begin());
+	auto it = unique(priorities.begin(), priorities.end());
+	priorities.resize(it - priorities.begin());
 
 	auto gcd = [](unsigned int x, unsigned int y)
 	{
@@ -143,7 +143,7 @@ void Interface::EndSetup()
 	{
 		vector<Native::iterator> content;
 
-		for (const pair<unsigned int, Native::iterator>& priority : priorityMap)
+		for (const auto& priority : priorityMap)
 			if (((i + 1) % priority.first) == 0)
 				content.push_back(priority.second);
 
@@ -272,8 +272,7 @@ void Interface::CommandThreadReceive(bool steam)
 			while (code && code != PIPE_ERROR_CLOSE && !endThread);
 		}
 	}
-
-	catch (std::exception& e)
+	catch (exception& e)
 	{
 		try
 		{
@@ -281,7 +280,7 @@ void Interface::CommandThreadReceive(bool steam)
 			vaulterror.Message();
 		}
 
-		catch (std::bad_cast& no_vaulterror)
+		catch (bad_cast& no_vaulterror)
 		{
 			VaultException vaulterror(e.what());
 			vaulterror.Message();
@@ -307,27 +306,23 @@ void Interface::CommandThreadSend()
 
 		while (!endThread)
 		{
-			StaticCommandList::iterator it;
-
 			static_cs.StartSession();
 
-			for (it = static_cmdlist.begin(); (it != static_cmdlist.end() || !dynamic_cmdlist.empty()) && !endThread;)
+			for (auto it = static_cmdlist.begin(); (it != static_cmdlist.end() || !dynamic_cmdlist.empty()) && !endThread;)
 			{
 				if (it != static_cmdlist.end())
 				{
-					vector<Native::iterator>::iterator it2;
-					vector<Native::iterator>& next_list = *it;
+					const auto& next_list = *it;
 
-					for (it2 = next_list.begin(); it2 != next_list.end() && !endThread; ++it2)
+					for (auto it = next_list.begin(); it != next_list.end() && !endThread; ++it)
 					{
-						vector<string> cmd = Interface::Evaluate(*it2);
+						vector<string> cmd = Interface::Evaluate(*it);
 
 						if (!cmd.empty())
 						{
 							CommandParsed stream = API::Translate(cmd);
-							CommandParsed::iterator it;
 
-							for (it = stream.begin(); it != stream.end() && !endThread; ++it)
+							for (auto it = stream.begin(); it != stream.end() && !endThread; ++it)
 								pipeServer->Send(it->get());
 						}
 					}
@@ -341,16 +336,15 @@ void Interface::CommandThreadSend()
 				{
 					dynamic_cs.EndSession();
 
-					auto dynamic = dynamic_cmdlist.front();
+					const auto& dynamic = dynamic_cmdlist.front();
 
 					vector<string> cmd = Interface::Evaluate(dynamic.first);
 
 					if (!cmd.empty())
 					{
 						CommandParsed stream = API::Translate(cmd, dynamic.second);
-						CommandParsed::iterator it;
 
-						for (it = stream.begin(); it != stream.end() && !endThread; ++it)
+						for (auto it = stream.begin(); it != stream.end() && !endThread; ++it)
 							pipeServer->Send(it->get());
 					}
 
@@ -365,14 +359,14 @@ void Interface::CommandThreadSend()
 			static_cs.EndSession();
 		}
 	}
-	catch (std::exception& e)
+	catch (exception& e)
 	{
 		try
 		{
 			VaultException& vaulterror = dynamic_cast<VaultException&>(e);
 			vaulterror.Message();
 		}
-		catch (std::bad_cast& no_vaulterror)
+		catch (bad_cast& no_vaulterror)
 		{
 			VaultException vaulterror(e.what());
 			vaulterror.Message();
