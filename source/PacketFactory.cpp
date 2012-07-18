@@ -186,7 +186,9 @@ pPacket PacketFactory::CreatePacket(unsigned char type, ...)
 		{
 			NetworkID id = va_arg(args, NetworkID);
 			bool dead = (bool) va_arg(args, unsigned int);
-			packet = new pActorDead(id, dead);
+			unsigned short limbs = static_cast<unsigned short>(va_arg(args, unsigned int));
+			signed char cause = static_cast<signed char>(va_arg(args, signed int));
+			packet = new pActorDead(id, dead, limbs, cause);
 			break;
 		}
 
@@ -664,8 +666,12 @@ void PacketFactory::Access(const pDefault* packet, ...)
 						const pActorDead* update = dynamic_cast<const pActorDead*>(data);
 						NetworkID* id = va_arg(args, NetworkID*);
 						bool* dead = va_arg(args, bool*);
+						unsigned short* limbs = va_arg(args, unsigned short*);
+						signed char* cause = va_arg(args, signed char*);
 						*id = update->id;
 						*dead = update->_data.dead;
+						*limbs = update->_data.limbs;
+						*cause = update->_data.cause;
 						break;
 					}
 

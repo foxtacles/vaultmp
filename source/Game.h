@@ -54,13 +54,13 @@ class Game
 		 * \brief Future set
 		 */
 		template <typename T>
-		static void FutureSet(weak_ptr<Lockable> data, T t);
+		static void FutureSet(const weak_ptr<Lockable>& data, T t);
 		/**
 		 * \brief Async task execution
 		 */
 		static void AsyncTasks();
 		template <typename A, typename... Values>
-		static void AsyncTasks(A && async, Values && ... more);
+		static void AsyncTasks(A&& async, Values&& ... more);
 
 		/**
 		 * Game functions
@@ -178,7 +178,7 @@ class Game
 		/**
 		 * \brief Kills an Actor
 		 */
-		static void KillActor(FactoryObject& reference, unsigned int key = 0);
+		static void KillActor(FactoryObject& reference, unsigned short limbs, signed char cause, unsigned int key = 0);
 		/**
 		 * \brief Makes an Actor fire a weapon
 		 */
@@ -239,7 +239,7 @@ class Game
 		/**
 		 * \brief Network function to handle Actor death
 		 */
-		static void net_SetActorDead(FactoryObject& reference, bool dead);
+		static void net_SetActorDead(FactoryObject& reference, bool dead, unsigned short limbs, signed char cause);
 		/**
 		 * \brief Network function to handle Actor fire weapon
 		 */
@@ -273,6 +273,10 @@ class Game
 		 * \brief Handles GetDead command result
 		 */
 		static void GetDead(FactoryObject& reference, FactoryObject& actor, bool dead);
+		/**
+		 * \brief Handles IsLimbGone command result
+		 */
+		static void IsLimbGone(unsigned int key, unsigned char limb, bool gone);
 		/**
 		 * \brief Handles GetActorValue command result
 		 */

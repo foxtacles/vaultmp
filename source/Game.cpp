@@ -47,13 +47,14 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 		{
 			switch (opcode)
 			{
-				case Functions::Func_CenterOnCell:
-				case Functions::Func_CenterOnExterior:
-				case Fallout3::Functions::Func_CenterOnWorld:
-				case FalloutNV::Functions::Func_CenterOnWorld:
-				case Fallout3::Functions::Func_Load:
-				case FalloutNV::Functions::Func_Load:
-				case Functions::Func_PlaceAtMe:
+				case Func_CenterOnCell:
+				case Func_CenterOnExterior:
+				case Fallout3::Func_CenterOnWorld:
+				case FalloutNV::Func_CenterOnWorld:
+				case Fallout3::Func_Load:
+				case FalloutNV::Func_Load:
+				case Func_PlaceAtMe:
+				case Func_GetCauseofDeath:
 					shared = Lockable::Poll(key);
 					break;
 
@@ -66,43 +67,43 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 
 		switch (opcode)
 		{
-			case Functions::Func_PlaceAtMe:
+			case Func_PlaceAtMe:
 				FutureSet<unsigned int>(shared, getFrom<double, unsigned int>(result));
 				break;
 
-			case Functions::Func_GetPos:
+			case Func_GetPos:
 				reference = GameFactory::GetObject(getFrom<double, unsigned int>(info.at(1)));
 				GetPos(reference, getFrom<double, unsigned char>(info.at(2)), result);
 				break;
 
-			case Functions::Func_SetPos:
+			case Func_SetPos:
 				break;
 
-			case Functions::Func_GetAngle:
+			case Func_GetAngle:
 				reference = GameFactory::GetObject(getFrom<double, unsigned int>(info.at(1)));
 				GetAngle(reference, getFrom<double, unsigned char>(info.at(2)), result);
 				break;
 
-			case Functions::Func_SetAngle:
+			case Func_SetAngle:
 				break;
 
-			case Functions::Func_GetActorValue:
+			case Func_GetActorValue:
 				reference = GameFactory::GetObject(getFrom<double, unsigned int>(info.at(1)));
 				Game::GetActorValue(reference, false, getFrom<double, unsigned char>(info.at(2)), result);
 				break;
 
-			case Functions::Func_ForceActorValue:
+			case Func_ForceActorValue:
 				break;
 
-			case Functions::Func_GetBaseActorValue:
+			case Func_GetBaseActorValue:
 				reference = GameFactory::GetObject(getFrom<double, unsigned int>(info.at(1)));
 				GetActorValue(reference, true, getFrom<double, unsigned char>(info.at(2)), result);
 				break;
 
-			case Functions::Func_SetActorValue:
+			case Func_SetActorValue:
 				break;
 
-			case Functions::Func_GetActorState:
+			case Func_GetActorState:
 			{
 				reference = GameFactory::GetObject(getFrom<double, unsigned int>(info.at(1)));
 				GetActorState(reference,
@@ -114,59 +115,67 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 			}
 
-			case Functions::Func_PlayGroup:
+			case Func_PlayGroup:
 				break;
 
-			case Functions::Func_GetDead:
+			case Func_GetDead:
 			{
-				vector<FactoryObject> objects = GameFactory::GetMultiple(vector<unsigned int> {getFrom<double, unsigned int>(info.at(1)), PLAYER_REFERENCE});
+				vector<FactoryObject> objects = GameFactory::GetMultiple(vector<unsigned int>{getFrom<double, unsigned int>(info.at(1)), PLAYER_REFERENCE});
 				GetDead(objects[0], objects[1], result);
 				break;
 			}
 
-			case Functions::Func_Kill:
+			case Func_IsLimbGone:
+				IsLimbGone(key, getFrom<double, unsigned int>(info.at(2)), result);
 				break;
 
-			case Functions::Func_MoveTo:
+			case Func_GetCauseofDeath:
+				FutureSet<signed char>(shared, result);
 				break;
 
-			case Functions::Func_Enable:
+			case Func_Kill:
 				break;
 
-			case Functions::Func_Disable:
+			case Func_MoveTo:
 				break;
 
-			case Functions::Func_SetRestrained:
+			case Func_Enable:
 				break;
 
-			case Functions::Func_SetAlert:
+			case Func_Disable:
 				break;
 
-			case Functions::Func_SetForceSneak:
+			case Func_SetRestrained:
 				break;
 
-			case Functions::Func_AddItem:
+			case Func_SetAlert:
 				break;
 
-			case Functions::Func_AddItemHealthPercent:
+			case Func_SetForceSneak:
 				break;
 
-			case Functions::Func_RemoveItem:
+			case Func_AddItem:
 				break;
 
-			case Functions::Func_RemoveAllItems:
+			case Func_AddItemHealthPercent:
 				break;
 
-			case Functions::Func_EquipItem:
+			case Func_RemoveItem:
 				break;
 
-			case Functions::Func_UnequipItem:
+			case Func_RemoveAllItems:
 				break;
 
-			case Functions::Func_FireWeapon:
+			case Func_EquipItem:
 				break;
 
-			case Functions::Func_Chat:
+			case Func_UnequipItem:
+				break;
+
+			case Func_FireWeapon:
+				break;
+
+			case Func_Chat:
 			{
 				if (!result)
 					break;
@@ -177,10 +186,10 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 			}
 
-			case Functions::Func_MarkForDelete:
+			case Func_MarkForDelete:
 				break;
 
-			case Functions::Func_ScanContainer:
+			case Func_ScanContainer:
 			{
 				reference = GameFactory::GetObject(getFrom<double, unsigned int>(info.at(1)));
 				vector<unsigned char>* data = getFrom<double, vector<unsigned char>*>(result);
@@ -189,43 +198,43 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 			}
 
-			case Functions::Func_UIMessage:
+			case Func_UIMessage:
 				break;
 
-			case Fallout3::Functions::Func_GetParentCell:
-			case FalloutNV::Functions::Func_GetParentCell:
+			case Fallout3::Func_GetParentCell:
+			case FalloutNV::Func_GetParentCell:
 			{
 				vector<FactoryObject> objects = GameFactory::GetMultiple(vector<unsigned int> {getFrom<double, unsigned int>(info.at(1)), PLAYER_REFERENCE});
 				GetParentCell(objects[0], objects[1], getFrom<double, unsigned int>(result));
 				break;
 			}
 
-			case Fallout3::Functions::Func_EnableControl:
-			case FalloutNV::Functions::Func_EnableControl:
+			case Fallout3::Func_EnableControl:
+			case FalloutNV::Func_EnableControl:
 				break;
 
-			case FalloutNV::Functions::Func_DisableControl:
+			case FalloutNV::Func_DisableControl:
 				break;
 
-			case FalloutNV::Functions::Func_GetControl:
-				if (game == FALLOUT3) // Fallout3::Functions::Func_DisableControl
+			case FalloutNV::Func_GetControl:
+				if (game == FALLOUT3) // Fallout3::Func_DisableControl
 					break;
-			case Fallout3::Functions::Func_GetControl:
+			case Fallout3::Func_GetControl:
 				self = GameFactory::GetObject(PLAYER_REFERENCE);
 				GetControl(self, getFrom<double, int>(info.at(1)), result);
 				break;
 
-			case Functions::Func_CenterOnCell:
-			case Functions::Func_CenterOnExterior:
-			case Fallout3::Functions::Func_CenterOnWorld:
-			case FalloutNV::Functions::Func_CenterOnWorld:
-			case Fallout3::Functions::Func_Load:
-			case FalloutNV::Functions::Func_Load:
+			case Func_CenterOnCell:
+			case Func_CenterOnExterior:
+			case Fallout3::Func_CenterOnWorld:
+			case FalloutNV::Func_CenterOnWorld:
+			case Fallout3::Func_Load:
+			case FalloutNV::Func_Load:
 				FutureSet<bool>(shared, true);
 				break;
 
-			case Fallout3::Functions::Func_SetName:
-			case FalloutNV::Functions::Func_SetName:
+			case Fallout3::Func_SetName:
+			case FalloutNV::Func_SetName:
 				break;
 
 			default:
@@ -242,7 +251,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 
 		switch (opcode)
 		{
-			case Functions::Func_PlaceAtMe:
+			case Func_PlaceAtMe:
 				PlaceAtMe(getFrom<double, unsigned int>(info.at(1)), getFrom<double, unsigned int>(info.at(2)), getFrom<double, unsigned int>(info.at(3)), key);
 				break;
 
@@ -310,7 +319,7 @@ void Game::Startup()
 }
 
 template <typename T>
-void Game::FutureSet(weak_ptr<Lockable> data, T t)
+void Game::FutureSet(const weak_ptr<Lockable>& data, T t)
 {
 	shared_ptr<Lockable> shared = data.lock();
 	Lockable* locked = shared.get();
@@ -326,8 +335,8 @@ void Game::FutureSet(weak_ptr<Lockable> data, T t)
 	store->set(t);
 	store->set_promise();
 }
-template void Game::FutureSet(weak_ptr<Lockable> data, unsigned int t);
-template void Game::FutureSet(weak_ptr<Lockable> data, bool t);
+template void Game::FutureSet(const weak_ptr<Lockable>& data, unsigned int t);
+template void Game::FutureSet(const weak_ptr<Lockable>& data, bool t);
 
 inline
 void Game::AsyncTasks()
@@ -336,7 +345,7 @@ void Game::AsyncTasks()
 }
 
 template <typename A, typename... Values>
-void Game::AsyncTasks(A && async, Values && ... more)
+void Game::AsyncTasks(A&& async, Values&& ... more)
 {
 	if (async.second > chrono::milliseconds(0))
 		this_thread::sleep_for(async.second);
@@ -923,7 +932,7 @@ void Game::SetActorWeaponAnimation(FactoryObject& reference, unsigned int key)
 	SetActorAnimation(reference, actor->GetActorWeaponAnimation(), key);
 }
 
-void Game::KillActor(FactoryObject& reference, unsigned int key)
+void Game::KillActor(FactoryObject& reference, unsigned short limbs, signed char cause, unsigned int key)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -932,7 +941,15 @@ void Game::KillActor(FactoryObject& reference, unsigned int key)
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("Kill", ParamContainer{actor->GetReferenceParam()}, key);
+	// maybe add valid killer later
+	if (limbs)
+	{
+		for (unsigned int i = 1; i <= limbs; i <<= 1)
+			if (limbs & i)
+				Interface::ExecuteCommand("Kill", ParamContainer{actor->GetReferenceParam(), actor->GetReferenceParam(), RawParameter(static_cast<unsigned int>(i / 2)), RawParameter(cause)}, ((i << 1) > limbs) ? key : 0x00);
+	}
+	else
+		Interface::ExecuteCommand("Kill", ParamContainer{actor->GetReferenceParam(), actor->GetReferenceParam(), RawParameter(Limb_None), RawParameter(cause)}, key);
 
 	Interface::EndDynamic();
 }
@@ -1240,7 +1257,7 @@ void Game::net_SetActorState(FactoryObject& reference, unsigned char moving, uns
 	}
 }
 
-void Game::net_SetActorDead(FactoryObject& reference, bool dead)
+void Game::net_SetActorDead(FactoryObject& reference, bool dead, unsigned short limbs, signed char cause)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -1254,7 +1271,7 @@ void Game::net_SetActorDead(FactoryObject& reference, bool dead)
 	if (result)
 	{
 		if (dead)
-			KillActor(reference, result->Lock());
+			KillActor(reference, limbs, cause, result->Lock());
 		else if (actor->GetReference() != PLAYER_REFERENCE)
 		{
 			RemoveObject(reference);
@@ -1265,11 +1282,11 @@ void Game::net_SetActorDead(FactoryObject& reference, bool dead)
 		{
 			NetworkID id = actor->GetNetworkID();
 			GameFactory::LeaveReference(reference);
-			Game::LoadGame();
+			//Game::LoadGame();
 			Game::LoadEnvironment();
 
 			Network::Queue(NetworkResponse{Network::CreateResponse(
-				PacketFactory::CreatePacket(ID_UPDATE_DEAD, id, dead),
+				PacketFactory::CreatePacket(ID_UPDATE_DEAD, id, false, 0, 0),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 			});
 		}
@@ -1402,10 +1419,119 @@ void Game::GetDead(FactoryObject& reference, FactoryObject& player, bool dead)
 	result = (bool) actor->SetActorDead(dead);
 
 	if (result)
-		Network::Queue(NetworkResponse{Network::CreateResponse(
-			PacketFactory::CreatePacket(ID_UPDATE_DEAD, actor->GetNetworkID(), dead),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
-		});
+	{
+		if (dead)
+		{
+			thread t(AsyncTasks<AsyncPack>,
+
+			AsyncPack(async(launch::deferred, [](NetworkID id)
+			{
+				try
+				{
+					unsigned int refID;
+
+					{
+						FactoryObject reference = GameFactory::GetObject(id);
+						Actor* actor = vaultcast<Actor>(reference);
+						refID = actor->GetReference();
+					}
+
+					unsigned int key;
+					unsigned short limbs;
+					signed char cause;
+
+					{
+						shared_ptr<Shared<unsigned short>> store = make_shared<Shared<unsigned short>>();
+						key = Lockable::Share(store);
+
+						Interface::StartDynamic();
+
+						Interface::ExecuteCommand("IsLimbGone", ParamContainer{RawParameter(refID), RawParameter(vector<unsigned char>{
+							Limb_Torso,
+							Limb_Head1,
+							Limb_Head2,
+							Limb_LeftArm1,
+							Limb_LeftArm2,
+							Limb_RightArm1,
+							Limb_RightArm2,
+							Limb_LeftLeg1,
+							Limb_LeftLeg2,
+							Limb_LeftLeg3,
+							Limb_RightLeg1,
+							Limb_RightLeg2,
+							Limb_RightLeg3,
+							Limb_Brain,
+							Limb_Weapon})}, key);
+
+						Interface::EndDynamic();
+
+						try
+						{
+							limbs = store.get()->get_future(chrono::seconds(5));
+						}
+						catch (exception& e)
+						{
+							throw VaultException("Obtaining of limb data of %08X failed (%s)", refID, e.what());
+						}
+					}
+
+					{
+						shared_ptr<Shared<signed char>> store = make_shared<Shared<signed char>>();
+						key = Lockable::Share(store);
+
+						Interface::StartDynamic();
+
+						Interface::ExecuteCommand("GetCauseofDeath", ParamContainer{RawParameter(refID)}, key);
+
+						Interface::EndDynamic();
+
+						try
+						{
+							cause = store.get()->get_future(chrono::seconds(5));
+						}
+						catch (exception& e)
+						{
+							throw VaultException("Obtaining of cause of death of %08X failed (%s)", refID, e.what());
+						}
+					}
+
+					Network::Queue(NetworkResponse{Network::CreateResponse(
+						PacketFactory::CreatePacket(ID_UPDATE_DEAD, id, true, limbs, cause),
+						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+					});
+				}
+				catch (...) {}
+			}, actor->GetNetworkID()), chrono::milliseconds(0)));
+
+			t.detach();
+		}
+		else
+		{
+			Network::Queue(NetworkResponse{Network::CreateResponse(
+				PacketFactory::CreatePacket(ID_UPDATE_DEAD, actor->GetNetworkID(), false, 0, 0),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+			});
+		}
+	}
+}
+
+void Game::IsLimbGone(unsigned int key, unsigned char limb, bool gone)
+{
+	shared_ptr<Lockable> shared = Lockable::Poll(key, limb == Limb_Weapon).lock();
+	Lockable* locked = shared.get();
+
+	if (locked == nullptr)
+		throw VaultException("Storage has expired");
+
+	Shared<unsigned short>* store = dynamic_cast<Shared<unsigned short>*>(locked);
+
+	if (store == nullptr)
+		throw VaultException("Storage is corrupted");
+
+	store->set(store->get() | (static_cast<unsigned short>(gone) << limb));
+
+	if (limb == Limb_Weapon)
+		store->set_promise();
 }
 
 void Game::GetActorValue(FactoryObject& reference, bool base, unsigned char index, double value)
@@ -1419,7 +1545,6 @@ void Game::GetActorValue(FactoryObject& reference, bool base, unsigned char inde
 
 	if (base)
 		result = (bool) actor->SetActorBaseValue(index, value);
-
 	else
 		result = (bool) actor->SetActorValue(index, value);
 

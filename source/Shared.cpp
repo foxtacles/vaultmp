@@ -40,4 +40,6 @@ T Shared<T>::get_future(chrono::milliseconds timeout)
 }
 
 template class Shared<unsigned int>;
+template class Shared<unsigned short>;
+template class Shared<signed char>;
 template class Shared<bool>;

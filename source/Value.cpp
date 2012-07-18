@@ -29,6 +29,8 @@ bool Value<T>::set(T value)
 
 template class Value<unsigned int>;
 template class Value<unsigned char>;
+template class Value<unsigned short>;
+template class Value<signed char>;
 template class Value<bool>;
 template class Value<double>;
 template class Value<string>;

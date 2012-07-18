@@ -951,6 +951,8 @@ struct _pActorState
 struct _pActorDead
 {
 	bool dead;
+	unsigned short limbs;
+	signed char cause;
 };
 
 struct _pActorFireweapon
@@ -1008,9 +1010,11 @@ class pActorDead : public pObjectUpdateDefault
 	private:
 		_pActorDead _data;
 
-		pActorDead(NetworkID id, bool dead) : pObjectUpdateDefault(ID_ACTOR_UPDATE, ID_UPDATE_DEAD, id)
+		pActorDead(NetworkID id, bool dead, unsigned short limbs, signed char cause) : pObjectUpdateDefault(ID_ACTOR_UPDATE, ID_UPDATE_DEAD, id)
 		{
 			_data.dead = dead;
+			_data.limbs = limbs;
+			_data.cause = cause;
 			construct(&_data, sizeof(_data));
 		}
 		pActorDead(unsigned char* stream, unsigned int len) : pObjectUpdateDefault(stream, len)

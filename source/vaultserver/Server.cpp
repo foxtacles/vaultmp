@@ -50,7 +50,7 @@ NetworkResponse Server::LoadGame(RakNetGUID guid)
 
 	try
 	{
-		const Cell& cell = Cell::Lookup(Dedicated::cell);
+		const Cell& cell = Cell::Lookup(Player::GetSpawnCell());
 
 		response.push_back(Network::CreateResponse(
 			PacketFactory::CreatePacket(ID_UPDATE_EXTERIOR, static_cast<NetworkID>(0), cell.GetWorld(), cell.GetX(), cell.GetY()),
@@ -58,7 +58,7 @@ NetworkResponse Server::LoadGame(RakNetGUID guid)
 	}
 	catch (...)
 	{
-		const Record& record = Record::Lookup(Dedicated::cell);
+		const Record& record = Record::Lookup(Player::GetSpawnCell());
 
 		response.push_back(Network::CreateResponse(
 			PacketFactory::CreatePacket(ID_UPDATE_INTERIOR, static_cast<NetworkID>(0), record.GetName().c_str()),
@@ -322,7 +322,7 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, FactoryObject& reference,
 	return response;
 }
 
-NetworkResponse Server::GetActorDead(RakNetGUID guid, FactoryObject& reference, bool dead)
+NetworkResponse Server::GetActorDead(RakNetGUID guid, FactoryObject& reference, bool dead, unsigned short limbs, signed char cause)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -337,7 +337,7 @@ NetworkResponse Server::GetActorDead(RakNetGUID guid, FactoryObject& reference, 
 	if (result)
 	{
 		response.push_back(Network::CreateResponse(
-			PacketFactory::CreatePacket(ID_UPDATE_DEAD, actor->GetNetworkID(), dead),
+			PacketFactory::CreatePacket(ID_UPDATE_DEAD, actor->GetNetworkID(), dead, limbs, cause),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
 		if (dead)

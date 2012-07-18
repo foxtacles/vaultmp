@@ -109,21 +109,22 @@ namespace Values
 
 	enum Limbs
 	{
-		Torso							= 0,
-		Head1							= 1,
-		Head2							= 2,
-		LeftArm1						= 3,
-		LeftArm2						= 4,
-		RightArm1						= 5,
-		RightArm2						= 6,
-		LeftLeg1						= 7,
-		LeftLeg2						= 8,
-		LeftLeg3						= 9,
-		RightLeg1						= 10,
-		RightLeg2						= 11,
-		RightLeg3						= 12,
-		Brain							= 13,
-		Weapon							= 14,
+		Limb_None						= -1,
+		Limb_Torso						= 0,
+		Limb_Head1						= 1,
+		Limb_Head2						= 2,
+		Limb_LeftArm1					= 3,
+		Limb_LeftArm2					= 4,
+		Limb_RightArm1					= 5,
+		Limb_RightArm2					= 6,
+		Limb_LeftLeg1					= 7,
+		Limb_LeftLeg2					= 8,
+		Limb_LeftLeg3					= 9,
+		Limb_RightLeg1					= 10,
+		Limb_RightLeg2					= 11,
+		Limb_RightLeg3					= 12,
+		Limb_Brain						= 13,
+		Limb_Weapon						= 14,
 	};
 
 	/**
@@ -132,13 +133,14 @@ namespace Values
 
 	enum Death
 	{
-		Explosion						= 0,
-		Gun								= 2,
-		BluntWeapon						= 3,
-		HandToHand						= 4,
-		ObjectImpact					= 5,
-		Poison							= 6,
-		Radiation						= 7,
+		Death_None						= -1,
+		Death_Explosion					= 0,
+		Death_Gun						= 2,
+		Death_BluntWeapon				= 3,
+		Death_HandToHand				= 4,
+		Death_ObjectImpact				= 5,
+		Death_Poison					= 6,
+		Death_Radiation					= 7,
 	};
 
 	/**

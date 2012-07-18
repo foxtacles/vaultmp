@@ -205,7 +205,7 @@ vector<string> Interface::Evaluate(Native::iterator _it)
 
 		for (unsigned int j = 0; j < lsize; ++j)
 		{
-			unsigned int idx = ((unsigned int)(i / mult[j])) % param[j].get().size();
+			unsigned int idx = static_cast<unsigned int>(i / mult[j]) % param[j].get().size();
 			cmd += " " + Utils::str_replace(param[j].get()[idx], " ", "|");
 		}
 

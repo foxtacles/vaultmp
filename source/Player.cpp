@@ -2,7 +2,10 @@
 
 using namespace std;
 
+#ifdef VAULTSERVER
 unsigned int Player::default_respawn = DEFAULT_PLAYER_RESPAWN;
+unsigned int Player::default_cell;
+#endif
 
 #ifdef VAULTMP_DEBUG
 Debug* Player::debug = nullptr;
@@ -17,11 +20,11 @@ Player::Player(const pDefault* packet) : Actor(PacketFactory::ExtractPartial(pac
 {
 	initialize();
 
-	map<unsigned char, pair<unsigned char, bool> > controls;
+	map<unsigned char, pair<unsigned char, bool>> controls;
 
 	PacketFactory::Access(packet, &controls);
 
-	for (const pair<unsigned char, pair<unsigned char, bool>>& control : controls)
+	for (const auto& control : controls)
 	{
 		this->SetPlayerControl(control.first, control.second.first);
 		this->SetPlayerControlEnabled(control.first, control.second.second);
@@ -43,9 +46,12 @@ void Player::initialize()
 	vector<unsigned char> data = API::RetrieveAllControls();
 
 	for (unsigned char _data : data)
-		player_Controls.insert(pair<unsigned char, pair<Value<unsigned char>, Value<bool> > >(_data, pair<Value<unsigned char>, Value<bool> >(Value<unsigned char>(), Value<bool>(true))));
+		player_Controls.insert(make_pair(_data, make_pair(Value<unsigned char>(), Value<bool>(true))));
 
+#ifdef VAULTSERVER
 	player_Respawn.set(default_respawn);
+	player_Cell.set(default_cell);
+#endif
 }
 
 #ifdef VAULTMP_DEBUG
@@ -58,10 +64,27 @@ void Player::SetDebugHandler(Debug* debug)
 }
 #endif
 
+#ifdef VAULTSERVER
+unsigned int Player::GetRespawn()
+{
+	return default_respawn;
+}
+
+unsigned int Player::GetSpawnCell()
+{
+	return default_cell;
+}
+
 void Player::SetRespawn(unsigned int respawn)
 {
 	default_respawn = respawn;
 }
+
+void Player::SetSpawnCell(unsigned int cell)
+{
+	default_cell = cell;
+}
+#endif
 
 FuncParameter Player::CreateFunctor(unsigned int flags, NetworkID id)
 {
@@ -78,10 +101,17 @@ bool Player::GetPlayerControlEnabled(unsigned char control) const
 	return player_Controls.at(control).second.get();
 }
 
+#ifdef VAULTSERVER
 unsigned int Player::GetPlayerRespawn() const
 {
 	return player_Respawn.get();
 }
+
+unsigned int Player::GetPlayerSpawnCell() const
+{
+	return player_Cell.get();
+}
+#endif
 
 Lockable* Player::SetPlayerControl(unsigned char control, unsigned char key)
 {
@@ -93,10 +123,17 @@ Lockable* Player::SetPlayerControlEnabled(unsigned char control, bool state)
 	return SetObjectValue(this->player_Controls.at(control).second, state);
 }
 
+#ifdef VAULTSERVER
 Lockable* Player::SetPlayerRespawn(unsigned int respawn)
 {
 	return SetObjectValue(this->player_Respawn, respawn);
 }
+
+Lockable* Player::SetPlayerSpawnCell(unsigned int cell)
+{
+	return SetObjectValue(this->player_Cell, cell);
+}
+#endif
 
 pPacket Player::toPacket()
 {
@@ -104,7 +141,7 @@ pPacket Player::toPacket()
 	map<unsigned char, pair<unsigned char, bool>> controls;
 
 	for (unsigned char _data : data)
-		controls.insert(pair<unsigned char, pair<unsigned char, bool> >(_data, pair<unsigned char, bool>(this->GetPlayerControl(_data), this->GetPlayerControlEnabled(_data))));
+		controls.insert(make_pair(_data, make_pair(this->GetPlayerControl(_data), this->GetPlayerControlEnabled(_data))));
 
 	pPacket pActorNew = Actor::toPacket();
 	pPacket packet = PacketFactory::CreatePacket(ID_PLAYER_NEW, pActorNew.get(), &controls);

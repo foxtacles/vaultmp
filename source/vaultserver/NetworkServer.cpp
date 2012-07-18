@@ -219,9 +219,11 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 						case ID_UPDATE_DEAD:
 						{
 							bool dead;
-							PacketFactory::Access(packet, &id, &dead);
+							unsigned short limbs;
+							signed char cause;
+							PacketFactory::Access(packet, &id, &dead, &limbs, &cause);
 							FactoryObject reference = GameFactory::GetObject(id);
-							response = Server::GetActorDead(data->guid, reference, dead);
+							response = Server::GetActorDead(data->guid, reference, dead, limbs, cause);
 							break;
 						}
 

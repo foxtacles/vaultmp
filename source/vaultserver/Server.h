@@ -73,7 +73,7 @@ class Server
 		/**
 		 * \brief Handles actor dead network packet
 		 */
-		static NetworkResponse GetActorDead(RakNetGUID guid, FactoryObject& reference, bool dead);
+		static NetworkResponse GetActorDead(RakNetGUID guid, FactoryObject& reference, bool dead, unsigned short limbs, signed char cause);
 		/**
 		 * \brief Handles player control network packet
 		 */

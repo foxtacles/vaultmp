@@ -325,9 +325,11 @@ unsigned long long Script::CallPublicPAWN(const char* name, const vector<boost::
 
 unsigned long long Script::Timer_Respawn(NetworkID id)
 {
+	FactoryObject reference;
+
 	try
 	{
-		GameFactory::GetObject(id);
+		reference = GameFactory::GetObject(id);
 	}
 	catch (...)
 	{
@@ -335,10 +337,34 @@ unsigned long long Script::Timer_Respawn(NetworkID id)
 		return 0;
 	}
 
-	Network::Queue(NetworkResponse{Network::CreateResponse(
-		PacketFactory::CreatePacket(ID_UPDATE_DEAD, id, false),
-		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
-	});
+	Player* player = vaultcast<Player>(reference);
+	RakNetGUID guid = Client::GetClientFromPlayer(id)->GetGUID();
+
+	NetworkResponse response{Network::CreateResponse(
+		PacketFactory::CreatePacket(ID_UPDATE_DEAD, id, false, 0, 0),
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid)
+	};
+
+	unsigned int _cell = player->GetSpawnCell();
+
+	try
+	{
+		const Cell& cell = Cell::Lookup(_cell);
+
+		response.push_back(Network::CreateResponse(
+			PacketFactory::CreatePacket(ID_UPDATE_EXTERIOR, static_cast<NetworkID>(0), cell.GetWorld(), cell.GetX(), cell.GetY()),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+	}
+	catch (...)
+	{
+		const Record& record = Record::Lookup(_cell);
+
+		response.push_back(Network::CreateResponse(
+			PacketFactory::CreatePacket(ID_UPDATE_INTERIOR, static_cast<NetworkID>(0), record.GetName().c_str()),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+	}
+
+	Network::Queue(move(response));
 
 	KillTimer();
 
@@ -1245,7 +1271,7 @@ void Script::KillActor(NetworkID id)
 		if (actor->SetActorDead(true))
 		{
 			Network::Queue(NetworkResponse{Network::CreateResponse(
-				PacketFactory::CreatePacket(ID_UPDATE_DEAD, actor->GetNetworkID(), true),
+				PacketFactory::CreatePacket(ID_UPDATE_DEAD, actor->GetNetworkID(), true, 0, 0),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 			});
 

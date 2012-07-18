@@ -68,7 +68,7 @@ Lockable* Lockable::Retrieve(unsigned int key)
 	return locked;
 }
 
-weak_ptr<Lockable> Lockable::Poll(unsigned int key)
+weak_ptr<Lockable> Lockable::Poll(unsigned int key, bool remove)
 {
 	weak_ptr<Lockable> shared;
 
@@ -77,8 +77,12 @@ weak_ptr<Lockable> Lockable::Poll(unsigned int key)
 	try
 	{
 		shared = sharemap.at(key);
-		keymap.erase(key);
-		sharemap.erase(key);
+
+		if (remove)
+		{
+			keymap.erase(key);
+			sharemap.erase(key);
+		}
 	}
 	catch (...)
 	{

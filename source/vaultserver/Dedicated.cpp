@@ -305,6 +305,8 @@ void Dedicated::DedicatedThread()
 				throw VaultException("%08X is not a valid cell", cell);
 		}
 
+		Player::SetSpawnCell(cell);
+
 		while (thread)
 		{
 			while (Network::Dispatch(peer));

@@ -14,8 +14,6 @@
 #include "Debug.h"
 #endif
 
-#define DEFAULT_PLAYER_RESPAWN  8000
-
 const unsigned int FLAG_MOVCONTROLS      = FLAG_NOTALERTED << 1;
 
 using namespace std;
@@ -37,10 +35,15 @@ class Player : public Actor
 		static Debug* debug;
 #endif
 
+#ifdef VAULTSERVER
 		static unsigned int default_respawn;
+		static unsigned int default_cell;
 
-		unordered_map<unsigned char, pair<Value<unsigned char>, Value<bool> > > player_Controls;
 		Value<unsigned int> player_Respawn;
+		Value<unsigned int> player_Cell;
+#endif
+
+		unordered_map<unsigned char, pair<Value<unsigned char>, Value<bool>>> player_Controls;
 
 		void initialize();
 
@@ -54,10 +57,26 @@ class Player : public Actor
 
 	public:
 
+#ifdef VAULTSERVER
+		static const unsigned int DEFAULT_PLAYER_RESPAWN = 8000;
+
+		/**
+		 * \brief Gets the default respawn time
+		 */
+		static unsigned int GetRespawn();
+		/**
+		 * \brief Gets the default spawn cell
+		 */
+		static unsigned int GetSpawnCell();
 		/**
 		 * \brief Sets the default respawn time
 		 */
 		static void SetRespawn(unsigned int respawn);
+		/**
+		 * \brief Sets the default spawn cell
+		 */
+		static void SetSpawnCell(unsigned int cell);
+#endif
 
 		/**
 		 * \brief Creates a Parameter containing a VaultFunctor initialized with the given flags
@@ -79,10 +98,16 @@ class Player : public Actor
 		 * \brief Given a control code, returns its enabled state
 		 */
 		bool GetPlayerControlEnabled(unsigned char control) const;
+#ifdef VAULTSERVER
 		/**
 		 * \brief Returns the Player's respawn time
 		 */
 		unsigned int GetPlayerRespawn() const;
+		/**
+		 * \brief Returns the Player's spawn cell
+		 */
+		unsigned int GetPlayerSpawnCell() const;
+#endif
 
 		/**
 		 * \brief Associates a key to the Player's control code
@@ -92,10 +117,16 @@ class Player : public Actor
 		 * \brief Sets the enabled state of the given control code
 		 */
 		Lockable* SetPlayerControlEnabled(unsigned char control, bool state);
+#ifdef VAULTSERVER
 		/**
 		 * \brief Sets the respawn time
 		 */
 		Lockable* SetPlayerRespawn(unsigned int respawn);
+		/**
+		 * \brief Sets the spawn cell
+		 */
+		Lockable* SetPlayerSpawnCell(unsigned int cell);
+#endif
 
 		/**
 		 * \brief For network transfer

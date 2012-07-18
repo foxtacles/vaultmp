@@ -67,7 +67,7 @@ class Lockable
 		 *
 		 * Returns a weak_ptr to the object if successful.
 		 */
-		static weak_ptr<Lockable> Poll(unsigned int key);
+		static weak_ptr<Lockable> Poll(unsigned int key, bool remove = true);
 
 		/**
 		 * \brief Locks this object
