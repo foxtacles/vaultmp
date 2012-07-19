@@ -105,7 +105,7 @@ namespace vaultmp {
 
 	enum Interval : uint32_t
 	{
-		DEFAULT_PLAYER_RESPAWN  =   8000,
+		DEFAULT_PLAYER_RESPAWN  =	8000,
 	};
 
 	enum ID : uint64_t;
@@ -114,29 +114,29 @@ namespace vaultmp {
 
 	enum class Index : uint8_t
 	{
-		FALLOUT3            =   0x01,
-		NEWVEGAS            =   FALLOUT3 << 1,
-		FALLOUT_GAMES       =   FALLOUT3 | NEWVEGAS,
-		ALL_GAMES           =   FALLOUT_GAMES,
+		FALLOUT3            =	0x01,
+		NEWVEGAS            =	FALLOUT3 << 1,
+		FALLOUT_GAMES       =	FALLOUT3 | NEWVEGAS,
+		ALL_GAMES           =	FALLOUT_GAMES,
 
-		MAX_PLAYER_NAME     =   16,
-		MAX_PASSWORD_SIZE   =   16,
-		MAX_MESSAGE_LENGTH  =   64,
+		MAX_PLAYER_NAME     =	16,
+		MAX_PASSWORD_SIZE   =	16,
+		MAX_MESSAGE_LENGTH  =	64,
 		MAX_CHAT_LENGTH		=	128,
 	};
 
 	enum class Type : uint8_t
 	{
-		ID_REFERENCE        =  	0x01,
-		ID_OBJECT           =   ID_REFERENCE << 1,
-		ID_ITEM             =   ID_OBJECT << 1,
-		ID_CONTAINER        =   ID_ITEM << 1,
-		ID_ACTOR            =   ID_CONTAINER << 1,
-		ID_PLAYER           =   ID_ACTOR << 1,
+		ID_REFERENCE        =	0x01,
+		ID_OBJECT           =	ID_REFERENCE << 1,
+		ID_ITEM             =	ID_OBJECT << 1,
+		ID_CONTAINER        =	ID_ITEM << 1,
+		ID_ACTOR            =	ID_CONTAINER << 1,
+		ID_PLAYER           =	ID_ACTOR << 1,
 
-		ALL_OBJECTS         = 	(ID_OBJECT | ID_ITEM | ID_CONTAINER | ID_ACTOR | ID_PLAYER),
-		ALL_CONTAINERS      = 	(ID_CONTAINER | ID_ACTOR | ID_PLAYER),
-		ALL_ACTORS          = 	(ID_ACTOR | ID_PLAYER),
+		ALL_OBJECTS         =	(ID_OBJECT | ID_ITEM | ID_CONTAINER | ID_ACTOR | ID_PLAYER),
+		ALL_CONTAINERS      =	(ID_CONTAINER | ID_ACTOR | ID_PLAYER),
+		ALL_ACTORS          =	(ID_ACTOR | ID_PLAYER),
 	};
 
 	enum class Limb : uint16_t
