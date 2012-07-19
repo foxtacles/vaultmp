@@ -49,12 +49,12 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			{
 				case Func_CenterOnCell:
 				case Func_CenterOnExterior:
+				case Func_PlaceAtMe:
+				case Func_GetCauseofDeath:
 				case Fallout3::Func_CenterOnWorld:
 				case FalloutNV::Func_CenterOnWorld:
 				case Fallout3::Func_Load:
 				case FalloutNV::Func_Load:
-				case Func_PlaceAtMe:
-				case Func_GetCauseofDeath:
 					shared = Lockable::Poll(key);
 					break;
 

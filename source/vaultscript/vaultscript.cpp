@@ -108,7 +108,7 @@ Void VAULTSCRIPT OnActorSneak(ID actor, State sneaking) noexcept
 
 }
 
-Void VAULTSCRIPT OnActorDeath(ID actor) noexcept
+Void VAULTSCRIPT OnActorDeath(ID actor, Limb limbs, Death cause) noexcept
 {
 
 }

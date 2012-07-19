@@ -480,7 +480,7 @@ void Script::OnActorSneak(FactoryObject& reference, bool sneaking)
 	}
 }
 
-void Script::OnActorDeath(FactoryObject& reference)
+void Script::OnActorDeath(FactoryObject& reference, unsigned short limbs, signed char cause)
 {
 	NetworkID id = (*reference)->GetNetworkID();
 
@@ -489,10 +489,10 @@ void Script::OnActorDeath(FactoryObject& reference)
 		if (script->cpp_script)
 		{
 			if (script->fOnActorDeath)
-				script->fOnActorDeath(id);
+				script->fOnActorDeath(id, limbs, cause);
 		}
 		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnActorDeath"))
-			PAWN::Call((AMX*)script->handle, "OnActorDeath", "l", 0, id);
+			PAWN::Call((AMX*)script->handle, "OnActorDeath", "iil", 0, cause, limbs, id);
 	}
 }
 
@@ -1251,7 +1251,7 @@ bool Script::UnequipItem(NetworkID id, unsigned int baseID, bool silent, bool st
 	return false;
 }
 
-void Script::KillActor(NetworkID id)
+void Script::KillActor(NetworkID id, unsigned short limbs, signed char cause)
 {
 	FactoryObject reference;
 
@@ -1271,11 +1271,11 @@ void Script::KillActor(NetworkID id)
 		if (actor->SetActorDead(true))
 		{
 			Network::Queue(NetworkResponse{Network::CreateResponse(
-				PacketFactory::CreatePacket(ID_UPDATE_DEAD, actor->GetNetworkID(), true, 0, 0),
+				PacketFactory::CreatePacket(ID_UPDATE_DEAD, actor->GetNetworkID(), true, limbs, cause),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 			});
 
-			Script::OnActorDeath(reference);
+			Script::OnActorDeath(reference, limbs, cause);
 
 			Player* player = vaultcast<Player>(reference);
 

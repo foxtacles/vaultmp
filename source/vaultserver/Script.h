@@ -60,7 +60,7 @@ class Script
 		void (*fOnActorBaseValueChange)(NetworkID, unsigned char, double);
 		void (*fOnActorAlert)(NetworkID, bool);
 		void (*fOnActorSneak)(NetworkID, bool);
-		void (*fOnActorDeath)(NetworkID);
+		void (*fOnActorDeath)(NetworkID, unsigned short, signed char);
 		void (*fOnActorEquipItem)(NetworkID, unsigned int, double);
 		void (*fOnActorUnequipItem)(NetworkID, unsigned int, double);
 		void (*fOnPlayerDisconnect)(NetworkID, unsigned char);
@@ -94,7 +94,7 @@ class Script
 		static void OnActorValueChange(FactoryObject& reference, unsigned char index, bool base, double value);
 		static void OnActorAlert(FactoryObject& reference, bool alerted);
 		static void OnActorSneak(FactoryObject& reference, bool sneaking);
-		static void OnActorDeath(FactoryObject& reference);
+		static void OnActorDeath(FactoryObject& reference, unsigned short limbs, signed char cause);
 		static void OnActorEquipItem(FactoryObject& reference, unsigned int baseID, double condition);
 		static void OnActorUnequipItem(FactoryObject& reference, unsigned int baseID, double condition);
 		static void OnPlayerDisconnect(FactoryObject& reference, unsigned char reason);
@@ -140,7 +140,7 @@ class Script
 		static void SetActorBaseValue(NetworkID id, unsigned char index, double value);
 		static bool EquipItem(NetworkID id, unsigned int baseID, bool silent, bool stick);
 		static bool UnequipItem(NetworkID id, unsigned int baseID, bool silent, bool stick);
-		static void KillActor(NetworkID id);
+		static void KillActor(NetworkID id, unsigned short limbs, signed char cause);
 		static void SetPlayerRespawn(NetworkID id, unsigned int respawn);
 
 };

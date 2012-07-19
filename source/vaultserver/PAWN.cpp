@@ -624,7 +624,7 @@ cell PAWN::vaultmp_UnequipItem(AMX* amx, const cell* params)
 
 cell PAWN::vaultmp_KillActor(AMX* amx, const cell* params)
 {
-	Script::KillActor(params[1]);
+	Script::KillActor(params[1], params[2], params[3]);
 	return 1;
 }
 

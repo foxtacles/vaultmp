@@ -342,7 +342,7 @@ NetworkResponse Server::GetActorDead(RakNetGUID guid, FactoryObject& reference, 
 
 		if (dead)
 		{
-			Script::OnActorDeath(reference);
+			Script::OnActorDeath(reference, limbs, cause);
 
 			Player* player = vaultcast<Player>(reference);
 

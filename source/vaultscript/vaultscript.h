@@ -6,6 +6,11 @@
  *  Don't change anything here
  */
 
+/*
+ *	TODO
+ *	add limbs/death values to C API
+ */
+
 #ifdef __cplusplus
 	#include <string>
 	#include <vector>
@@ -122,7 +127,7 @@ namespace vaultmp {
 
 	enum class Type : uint8_t
 	{
-		ID_REFERENCE        =   0x01,
+		ID_REFERENCE        =  	0x01,
 		ID_OBJECT           =   ID_REFERENCE << 1,
 		ID_ITEM             =   ID_OBJECT << 1,
 		ID_CONTAINER        =   ID_ITEM << 1,
@@ -132,6 +137,49 @@ namespace vaultmp {
 		ALL_OBJECTS         = 	(ID_OBJECT | ID_ITEM | ID_CONTAINER | ID_ACTOR | ID_PLAYER),
 		ALL_CONTAINERS      = 	(ID_CONTAINER | ID_ACTOR | ID_PLAYER),
 		ALL_ACTORS          = 	(ID_ACTOR | ID_PLAYER),
+	};
+
+	enum class Limb : uint16_t
+	{
+		None				=	0x0000,
+		Torso				=	0x0001,
+		Head1				=	Torso << 1,
+		Head2				= 	Head1 << 1,
+		LeftArm1			= 	Head2 << 1,
+		LeftArm2			= 	LeftArm1 << 1,
+		RightArm1			= 	LeftArm2 << 1,
+		RightArm2			= 	RightArm1 << 1,
+		LeftLeg1			=  	RightArm2 << 1,
+		LeftLeg2			= 	LeftLeg1 << 1,
+		LeftLeg3			= 	LeftLeg2 << 1,
+		RightLeg1			= 	LeftLeg3 << 1,
+		RightLeg2			= 	RightLeg1 << 1,
+		RightLeg3			= 	RightLeg2 << 1,
+		Brain				= 	RightLeg3 << 1,
+		Weapon				= 	Brain << 1,
+
+		TORSO				=	(Torso),
+		HEAD				=	(Head1 | Head2),
+		LEFT_ARM			=	(LeftArm1 | LeftArm2),
+		RIGHT_ARM			=	(RightArm1 | RightArm2),
+		LEFT_LEG			=	(LeftLeg1 | LeftLeg2 | LeftLeg3),
+		RIGHT_LEG			=	(RightLeg1 | RightLeg2 | RightLeg3),
+		BRAIN				=	(Brain),
+		WEAPON				=	(Weapon),
+
+		ALL_LIMBS			= 	(TORSO | HEAD | LEFT_ARM | RIGHT_ARM | LEFT_LEG | RIGHT_LEG | BRAIN | WEAPON),
+	};
+
+	enum class Death : int8_t
+	{
+		None				= 	-1,
+		Explosion			= 	0,
+		Gun					= 	2,
+		BluntWeapon			= 	3,
+		HandToHand			= 	4,
+		ObjectImpact		= 	5,
+		Poison				= 	6,
+		Radiation			= 	7,
 	};
 
 	struct _hash_ID { inline size_t operator() (const ID& x) const { return std::hash<uint64_t>()((uint64_t) x); }};
@@ -167,7 +215,7 @@ _CPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE Void OnActorBaseValueChange(VAULTSPACE ID, VAULTSPACE Index, VAULTSPACE Value) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void OnActorAlert(VAULTSPACE ID, VAULTSPACE State) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void OnActorSneak(VAULTSPACE ID, VAULTSPACE State) _CPP(noexcept);
-	VAULTSCRIPT VAULTSPACE Void OnActorDeath(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void OnActorDeath(VAULTSPACE ID, VAULTSPACE Limb, VAULTSPACE Death) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void OnActorEquipItem(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE Value) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void OnActorUnequipItem(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE Value) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void OnPlayerDisconnect(VAULTSPACE ID, VAULTSPACE Reason) _CPP(noexcept);
@@ -229,7 +277,7 @@ _CPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetActorBaseValue))(VAULTSPACE ID, VAULTSPACE Index, VAULTSPACE Value) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(EquipItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE State, VAULTSPACE State) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(UnequipItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE State, VAULTSPACE State) _CPP(noexcept);
-	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(KillActor))(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(KillActor))(VAULTSPACE ID, VAULTSPACE Limb, VAULTSPACE Death) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetPlayerRespawn))(VAULTSPACE ID, VAULTSPACE Interval) _CPP(noexcept);
 _CPP(})
 
@@ -352,7 +400,7 @@ namespace vaultmp
 	VAULTFUNCTION Void SetActorBaseValue(ID id, Index index, Value value) noexcept { return VAULTAPI(SetActorBaseValue)(id, index, value); }
 	VAULTFUNCTION State EquipItem(ID id, Base base, State silent = True, State stick = True) noexcept { return VAULTAPI(EquipItem)(id, base, silent, stick); }
 	VAULTFUNCTION State UnequipItem(ID id, Base base, State silent = True, State stick = True) noexcept { return VAULTAPI(UnequipItem)(id, base, silent, stick); }
-	VAULTFUNCTION Void KillActor(ID id) noexcept { return VAULTAPI(KillActor)(id); }
+	VAULTFUNCTION Void KillActor(ID id, Limb limbs = Limb::None, Death cause = Death::None) noexcept { return VAULTAPI(KillActor)(id, limbs, cause); }
 	VAULTFUNCTION Void SetPlayerRespawn(ID id, Interval interval) noexcept { return VAULTAPI(SetPlayerRespawn)(id, interval); }
 
 	class Reference {
@@ -457,7 +505,7 @@ namespace vaultmp
 			Void SetActorBaseValue(Index index, Value value) noexcept { return vaultmp::SetActorBaseValue(id, index, value); }
 			State EquipItem(Base base, State silent = True, State stick = True) noexcept { return vaultmp::EquipItem(id, base, silent, stick); }
 			State UnequipItem(Base base, State silent = True, State stick = True) noexcept { return vaultmp::UnequipItem(id, base, silent, stick); }
-			Void KillActor() noexcept { return vaultmp::KillActor(id); }
+			Void KillActor(Limb limbs = Limb::None, Death cause = Death::None) noexcept { return vaultmp::KillActor(id, limbs, cause); }
 
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_ACTOR); }
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_ACTOR); }

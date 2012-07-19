@@ -96,7 +96,7 @@ public OnActorSneak(ID, Bool: sneaking)
 
 }
 
-public OnActorDeath(ID)
+public OnActorDeath(ID, Limb: limbs, Death: cause)
 {
 
 }
