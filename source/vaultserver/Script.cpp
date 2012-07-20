@@ -23,133 +23,152 @@ Script::Script(char* path)
 		if (handle == nullptr)
 			throw VaultException("Was not able to load C++ script: %s", path);
 
-		this->handle = handle;
-		this->cpp_script = true;
-		scripts.push_back(this);
+		try
+		{
+			this->handle = handle;
+			this->cpp_script = true;
 
-		GetScript("exec", fexec);
+			GetScript("exec", fexec);
 
-		if (!fexec)
-			throw VaultException("Could not find exec() callback in: %s", path);
+			if (!fexec)
+				throw VaultException("Could not find exec() callback in: %s", path);
 
-		GetScript("vaultprefix", vaultprefix);
-		string vpf(vaultprefix);
+			GetScript("vaultprefix", vaultprefix);
+			string vpf(vaultprefix);
 
-		GetScript("OnSpawn", fOnSpawn);
-		GetScript("OnCellChange", fOnCellChange);
-		GetScript("OnContainerItemChange", fOnContainerItemChange);
-		GetScript("OnActorValueChange", fOnActorValueChange);
-		GetScript("OnActorBaseValueChange", fOnActorBaseValueChange);
-		GetScript("OnActorAlert", fOnActorAlert);
-		GetScript("OnActorSneak", fOnActorSneak);
-		GetScript("OnActorDeath", fOnActorDeath);
-		GetScript("OnActorEquipItem", fOnActorEquipItem);
-		GetScript("OnActorUnequipItem", fOnActorUnequipItem);
-		GetScript("OnPlayerDisconnect", fOnPlayerDisconnect);
-		GetScript("OnPlayerRequestGame", fOnPlayerRequestGame);
-		GetScript("OnPlayerChat", fOnPlayerChat);
-		GetScript("OnClientAuthenticate", fOnClientAuthenticate);
+			GetScript("OnSpawn", fOnSpawn);
+			GetScript("OnCellChange", fOnCellChange);
+			GetScript("OnContainerItemChange", fOnContainerItemChange);
+			GetScript("OnActorValueChange", fOnActorValueChange);
+			GetScript("OnActorBaseValueChange", fOnActorBaseValueChange);
+			GetScript("OnActorAlert", fOnActorAlert);
+			GetScript("OnActorSneak", fOnActorSneak);
+			GetScript("OnActorDeath", fOnActorDeath);
+			GetScript("OnActorEquipItem", fOnActorEquipItem);
+			GetScript("OnActorUnequipItem", fOnActorUnequipItem);
+			GetScript("OnPlayerDisconnect", fOnPlayerDisconnect);
+			GetScript("OnPlayerRequestGame", fOnPlayerRequestGame);
+			GetScript("OnPlayerChat", fOnPlayerChat);
+			GetScript("OnClientAuthenticate", fOnClientAuthenticate);
 
-		SetScript(string(vpf + "timestamp").c_str(), &Utils::timestamp);
-		SetScript(string(vpf + "CreateTimer").c_str(), &Script::CreateTimer);
-		SetScript(string(vpf + "CreateTimerEx").c_str(), &Script::CreateTimerEx);
-		SetScript(string(vpf + "KillTimer").c_str(), &Script::KillTimer);
-		SetScript(string(vpf + "MakePublic").c_str(), &Script::MakePublic);
-		SetScript(string(vpf + "CallPublic").c_str(), &Script::CallPublic);
+			SetScript(string(vpf + "timestamp").c_str(), &Utils::timestamp);
+			SetScript(string(vpf + "CreateTimer").c_str(), &Script::CreateTimer);
+			SetScript(string(vpf + "CreateTimerEx").c_str(), &Script::CreateTimerEx);
+			SetScript(string(vpf + "KillTimer").c_str(), &Script::KillTimer);
+			SetScript(string(vpf + "MakePublic").c_str(), &Script::MakePublic);
+			SetScript(string(vpf + "CallPublic").c_str(), &Script::CallPublic);
 
-		SetScript(string(vpf + "SetServerName").c_str(), &Dedicated::SetServerName);
-		SetScript(string(vpf + "SetServerMap").c_str(), &Dedicated::SetServerMap);
-		SetScript(string(vpf + "SetServerRule").c_str(), &Dedicated::SetServerRule);
-		SetScript(string(vpf + "GetGameCode").c_str(), &Dedicated::GetGameCode);
-		SetScript(string(vpf + "GetMaximumPlayers").c_str(), &Dedicated::GetMaximumPlayers);
-		SetScript(string(vpf + "GetCurrentPlayers").c_str(), &Dedicated::GetCurrentPlayers);
+			SetScript(string(vpf + "SetServerName").c_str(), &Dedicated::SetServerName);
+			SetScript(string(vpf + "SetServerMap").c_str(), &Dedicated::SetServerMap);
+			SetScript(string(vpf + "SetServerRule").c_str(), &Dedicated::SetServerRule);
+			SetScript(string(vpf + "GetGameCode").c_str(), &Dedicated::GetGameCode);
+			SetScript(string(vpf + "GetMaximumPlayers").c_str(), &Dedicated::GetMaximumPlayers);
+			SetScript(string(vpf + "GetCurrentPlayers").c_str(), &Dedicated::GetCurrentPlayers);
 
-		SetScript(string(vpf + "ValueToString").c_str(), &Script::ValueToString);
-		SetScript(string(vpf + "AxisToString").c_str(), &Script::AxisToString);
-		SetScript(string(vpf + "AnimToString").c_str(), &Script::AnimToString);
+			SetScript(string(vpf + "ValueToString").c_str(), &Script::ValueToString);
+			SetScript(string(vpf + "AxisToString").c_str(), &Script::AxisToString);
+			SetScript(string(vpf + "AnimToString").c_str(), &Script::AnimToString);
 
-		SetScript(string(vpf + "UIMessage").c_str(), &Script::UIMessage);
-		SetScript(string(vpf + "ChatMessage").c_str(), &Script::ChatMessage);
-		SetScript(string(vpf + "SetRespawn").c_str(), &Script::SetRespawn);
-		SetScript(string(vpf + "SetSpawnCell").c_str(), &Script::SetSpawnCell);
-		SetScript(string(vpf + "IsValid").c_str(), &Script::IsValid);
-		SetScript(string(vpf + "IsObject").c_str(), &Script::IsObject);
-		SetScript(string(vpf + "IsItem").c_str(), &Script::IsItem);
-		SetScript(string(vpf + "IsContainer").c_str(), &Script::IsContainer);
-		SetScript(string(vpf + "IsActor").c_str(), &Script::IsActor);
-		SetScript(string(vpf + "IsPlayer").c_str(), &Script::IsPlayer);
-		SetScript(string(vpf + "IsCell").c_str(), &Cell::IsValidCell);
-		SetScript(string(vpf + "IsInterior").c_str(), &Script::IsInterior);
-		SetScript(string(vpf + "GetType").c_str(), (unsigned char(*)(NetworkID)) &GameFactory::GetType);
-		SetScript(string(vpf + "GetCount").c_str(), &GameFactory::GetObjectCount);
-		SetScript(string(vpf + "GetList").c_str(), &Script::GetList);
+			SetScript(string(vpf + "UIMessage").c_str(), &Script::UIMessage);
+			SetScript(string(vpf + "ChatMessage").c_str(), &Script::ChatMessage);
+			SetScript(string(vpf + "SetRespawn").c_str(), &Script::SetRespawn);
+			SetScript(string(vpf + "SetSpawnCell").c_str(), &Script::SetSpawnCell);
+			SetScript(string(vpf + "IsValid").c_str(), &Script::IsValid);
+			SetScript(string(vpf + "IsObject").c_str(), &Script::IsObject);
+			SetScript(string(vpf + "IsItem").c_str(), &Script::IsItem);
+			SetScript(string(vpf + "IsContainer").c_str(), &Script::IsContainer);
+			SetScript(string(vpf + "IsActor").c_str(), &Script::IsActor);
+			SetScript(string(vpf + "IsPlayer").c_str(), &Script::IsPlayer);
+			SetScript(string(vpf + "IsCell").c_str(), &Cell::IsValidCell);
+			SetScript(string(vpf + "IsInterior").c_str(), &Script::IsInterior);
+			SetScript(string(vpf + "GetType").c_str(), (unsigned char(*)(NetworkID)) &GameFactory::GetType);
+			SetScript(string(vpf + "GetCount").c_str(), &GameFactory::GetObjectCount);
+			SetScript(string(vpf + "GetList").c_str(), &Script::GetList);
 
-		SetScript(string(vpf + "GetReference").c_str(), &Script::GetReference);
-		SetScript(string(vpf + "GetBase").c_str(), &Script::GetBase);
-		SetScript(string(vpf + "GetName").c_str(), &Script::GetName);
-		SetScript(string(vpf + "GetPos").c_str(), &Script::GetPos);
-		SetScript(string(vpf + "GetAngle").c_str(), &Script::GetAngle);
-		SetScript(string(vpf + "GetCell").c_str(), &Script::GetCell);
-		SetScript(string(vpf + "IsNearPoint").c_str(), &Script::IsNearPoint);
-		SetScript(string(vpf + "GetContainerItemCount").c_str(), &Script::GetContainerItemCount);
-		SetScript(string(vpf + "GetActorValue").c_str(), &Script::GetActorValue);
-		SetScript(string(vpf + "GetActorBaseValue").c_str(), &Script::GetActorBaseValue);
-		SetScript(string(vpf + "GetActorMovingAnimation").c_str(), &Script::GetActorMovingAnimation);
-		SetScript(string(vpf + "GetActorAlerted").c_str(), &Script::GetActorAlerted);
-		SetScript(string(vpf + "GetActorSneaking").c_str(), &Script::GetActorSneaking);
-		SetScript(string(vpf + "GetActorDead").c_str(), &Script::GetActorDead);
-		SetScript(string(vpf + "IsActorJumping").c_str(), &Script::IsActorJumping);
+			SetScript(string(vpf + "GetReference").c_str(), &Script::GetReference);
+			SetScript(string(vpf + "GetBase").c_str(), &Script::GetBase);
+			SetScript(string(vpf + "GetName").c_str(), &Script::GetName);
+			SetScript(string(vpf + "GetPos").c_str(), &Script::GetPos);
+			SetScript(string(vpf + "GetAngle").c_str(), &Script::GetAngle);
+			SetScript(string(vpf + "GetCell").c_str(), &Script::GetCell);
+			SetScript(string(vpf + "IsNearPoint").c_str(), &Script::IsNearPoint);
+			SetScript(string(vpf + "GetContainerItemCount").c_str(), &Script::GetContainerItemCount);
+			SetScript(string(vpf + "GetActorValue").c_str(), &Script::GetActorValue);
+			SetScript(string(vpf + "GetActorBaseValue").c_str(), &Script::GetActorBaseValue);
+			SetScript(string(vpf + "GetActorMovingAnimation").c_str(), &Script::GetActorMovingAnimation);
+			SetScript(string(vpf + "GetActorAlerted").c_str(), &Script::GetActorAlerted);
+			SetScript(string(vpf + "GetActorSneaking").c_str(), &Script::GetActorSneaking);
+			SetScript(string(vpf + "GetActorDead").c_str(), &Script::GetActorDead);
+			SetScript(string(vpf + "IsActorJumping").c_str(), &Script::IsActorJumping);
 
-		SetScript(string(vpf + "SetPos").c_str(), &Script::SetPos);
-		SetScript(string(vpf + "SetCell").c_str(), &Script::SetCell);
-		SetScript(string(vpf + "AddItem").c_str(), &Script::AddItem);
-		SetScript(string(vpf + "RemoveItem").c_str(), &Script::RemoveItem);
-		SetScript(string(vpf + "RemoveAllItems").c_str(), &Script::RemoveAllItems);
-		SetScript(string(vpf + "SetActorValue").c_str(), &Script::SetActorValue);
-		SetScript(string(vpf + "SetActorBaseValue").c_str(), &Script::SetActorBaseValue);
-		SetScript(string(vpf + "EquipItem").c_str(), &Script::EquipItem);
-		SetScript(string(vpf + "UnequipItem").c_str(), &Script::UnequipItem);
-		SetScript(string(vpf + "KillActor").c_str(), &Script::KillActor);
-		SetScript(string(vpf + "SetPlayerRespawn").c_str(), &Script::SetPlayerRespawn);
-		SetScript(string(vpf + "SetPlayerSpawnCell").c_str(), &Script::SetPlayerSpawnCell);
+			SetScript(string(vpf + "SetPos").c_str(), &Script::SetPos);
+			SetScript(string(vpf + "SetCell").c_str(), &Script::SetCell);
+			SetScript(string(vpf + "AddItem").c_str(), &Script::AddItem);
+			SetScript(string(vpf + "RemoveItem").c_str(), &Script::RemoveItem);
+			SetScript(string(vpf + "RemoveAllItems").c_str(), &Script::RemoveAllItems);
+			SetScript(string(vpf + "SetActorValue").c_str(), &Script::SetActorValue);
+			SetScript(string(vpf + "SetActorBaseValue").c_str(), &Script::SetActorBaseValue);
+			SetScript(string(vpf + "EquipItem").c_str(), &Script::EquipItem);
+			SetScript(string(vpf + "UnequipItem").c_str(), &Script::UnequipItem);
+			SetScript(string(vpf + "KillActor").c_str(), &Script::KillActor);
+			SetScript(string(vpf + "SetPlayerRespawn").c_str(), &Script::SetPlayerRespawn);
+			SetScript(string(vpf + "SetPlayerSpawnCell").c_str(), &Script::SetPlayerSpawnCell);
 
-		fexec();
+			fexec();
+		}
+		catch (...)
+		{
+#ifdef __WIN32__
+			FreeLibrary((HINSTANCE) handle);
+#else
+			dlclose(handle);
+#endif
+			throw;
+		}
 	}
-
 	else if (strstr(path, ".amx"))
 	{
-		AMX* vaultscript = new AMX();
+		AMX* vaultscript;
 
-		this->handle = (void*) vaultscript;
-		this->cpp_script = false;
-		scripts.push_back(this);
+		try
+		{
+			vaultscript = new AMX();
 
-		cell ret = 0;
-		int err = 0;
+			this->handle = reinterpret_cast<void*>(vaultscript);
+			this->cpp_script = false;
 
-		err = PAWN::LoadProgram(vaultscript, path, nullptr);
+			cell ret = 0;
+			int err = 0;
 
-		if (err != AMX_ERR_NONE)
-			throw VaultException("PAWN script %s error (%d): \"%s\"", path, err, aux_StrError(err));
+			err = PAWN::LoadProgram(vaultscript, path, nullptr);
 
-		PAWN::CoreInit(vaultscript);
-		PAWN::ConsoleInit(vaultscript);
-		PAWN::FloatInit(vaultscript);
-		PAWN::StringInit(vaultscript);
-		PAWN::FileInit(vaultscript);
-		PAWN::TimeInit(vaultscript);
+			if (err != AMX_ERR_NONE)
+				throw VaultException("PAWN script %s error (%d): \"%s\"", path, err, aux_StrError(err));
 
-		err = PAWN::RegisterVaultmpFunctions(vaultscript);
+			PAWN::CoreInit(vaultscript);
+			PAWN::ConsoleInit(vaultscript);
+			PAWN::FloatInit(vaultscript);
+			PAWN::StringInit(vaultscript);
+			PAWN::FileInit(vaultscript);
+			PAWN::TimeInit(vaultscript);
 
-		if (err != AMX_ERR_NONE)
-			throw VaultException("PAWN script %s error (%d): \"%s\"", path, err, aux_StrError(err));
+			err = PAWN::RegisterVaultmpFunctions(vaultscript);
 
-		err = PAWN::Exec(vaultscript, &ret, AMX_EXEC_MAIN);
+			if (err != AMX_ERR_NONE)
+				throw VaultException("PAWN script %s error (%d): \"%s\"", path, err, aux_StrError(err));
 
-		if (err != AMX_ERR_NONE)
-			throw VaultException("PAWN script %s error (%d): \"%s\"", path, err, aux_StrError(err));
+			err = PAWN::Exec(vaultscript, &ret, AMX_EXEC_MAIN);
+
+			if (err != AMX_ERR_NONE)
+				throw VaultException("PAWN script %s error (%d): \"%s\"", path, err, aux_StrError(err));
+		}
+		catch (...)
+		{
+			PAWN::FreeProgram(vaultscript);
+			delete vaultscript;
+			throw;
+		}
 	}
-
 	else
 		throw VaultException("Script type not recognized: %s", path);
 }
@@ -164,10 +183,9 @@ Script::~Script()
 		dlclose(this->handle);
 #endif
 	}
-
 	else
 	{
-		AMX* vaultscript = (AMX*) this->handle;
+		AMX* vaultscript = reinterpret_cast<AMX*>(this->handle);
 		PAWN::FreeProgram(vaultscript);
 		delete vaultscript;
 	}
@@ -187,11 +205,11 @@ void Script::LoadScripts(char* scripts, char* base)
 			char path[MAX_PATH];
 			snprintf(path, sizeof(path), "%s/%s", base, token);
 			Script* script = new Script(path);
+			scripts.push_back(script);
 #endif
 			token = strtok(nullptr, ",");
 		}
 	}
-
 	catch (...)
 	{
 		UnloadScripts();

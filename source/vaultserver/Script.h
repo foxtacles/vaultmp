@@ -40,7 +40,6 @@ using namespace Values;
 class Script
 {
 	private:
-
 		Script(char* path);
 		~Script();
 
@@ -68,11 +67,10 @@ class Script
 		bool (*fOnPlayerChat)(NetworkID, char*);
 		bool (*fOnClientAuthenticate)(string, string);
 
-		Script(const Script&);
-		Script& operator=(const Script&);
+		Script(const Script&) = delete;
+		Script& operator=(const Script&) = delete;
 
 	public:
-
 		static void LoadScripts(char* scripts, char* base);
 		static void UnloadScripts();
 
