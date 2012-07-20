@@ -6,11 +6,6 @@
  *  Don't change anything here
  */
 
-/*
- *	TODO
- *	add limbs/death values to C API
- */
-
 #ifdef __cplusplus
 	#include <string>
 	#include <vector>
@@ -54,65 +49,8 @@ namespace vaultmp {
 	typedef int32_t Count;
 	typedef uint32_t UCount;
 	typedef double Value;
-#ifndef __cplusplus
-	typedef uint8_t Reason;
-	typedef uint8_t Index;
-	typedef uint8_t Type;
-	typedef uint8_t State;
-	typedef uint32_t Reference;
-	typedef uint32_t Base;
-	typedef uint32_t Cell;
-	typedef uint32_t Interval;
-	typedef uint64_t ID;
-	typedef uint64_t Timer;
-	typedef uint64_t Result;
 
-	#define RawFunction(types)  Result (__cdecl*)(types)
-	#define RawArray(type)		type*
-
-	#define FALLOUT3			(0x01)
-	#define NEWVEGAS			(FALLOUT3 << 1)
-	#define FALLOUT_GAMES		(FALLOUT3 | NEWVEGAS)
-	#define ALL_GAMES			(FALLOUT_GAMES)
-
-	#define MAX_PLAYER_NAME		(16)
-	#define MAX_PASSWORD_SIZE	(16)
-	#define MAX_MESSAGE_LENGTH	(64)
-	#define MAX_CHAT_LENGTH		(128)
-
-	#define ID_REFERENCE		(0x01)
-	#define ID_OBJECT			(ID_REFERENCE << 1)
-	#define ID_ITEM				(ID_OBJECT << 1)
-	#define ID_CONTAINER		(ID_ITEM << 1)
-	#define ID_ACTOR			(ID_CONTAINER << 1)
-	#define ID_PLAYER			(ID_ACTOR << 1)
-
-	#define ALL_OBJECTS			(ID_OBJECT | ID_ITEM | ID_CONTAINER | ID_ACTOR | ID_PLAYER)
-	#define ALL_CONTAINERS		(ID_CONTAINER | ID_ACTOR | ID_PLAYER)
-	#define ALL_ACTORS			(ID_ACTOR | ID_PLAYER)
-#else
-	enum Reason : uint8_t;
-
-	enum State : bool
-	{
-		True    =   true,
-		False   =   false
-	};
-
-	enum Ref : uint32_t;
-	enum Base : uint32_t;
-	enum Cell : uint32_t;
-
-	enum Interval : uint32_t
-	{
-		DEFAULT_PLAYER_RESPAWN  =	8000,
-	};
-
-	enum ID : uint64_t;
-	enum Timer : uint64_t;
-	enum Result : uint64_t;
-
-	enum class Index : uint8_t
+	enum _CPP(class) Index _CPP(: uint8_t)
 	{
 		FALLOUT3            =	0x01,
 		NEWVEGAS            =	FALLOUT3 << 1,
@@ -125,7 +63,7 @@ namespace vaultmp {
 		MAX_CHAT_LENGTH		=	128,
 	};
 
-	enum class Type : uint8_t
+	enum _CPP(class) Type _CPP(: uint8_t)
 	{
 		ID_REFERENCE        =	0x01,
 		ID_OBJECT           =	ID_REFERENCE << 1,
@@ -139,9 +77,9 @@ namespace vaultmp {
 		ALL_ACTORS          =	(ID_ACTOR | ID_PLAYER),
 	};
 
-	enum class Limb : uint16_t
+	enum _CPP(class) Limb _CPP(: uint16_t)
 	{
-		None				=	0x0000,
+		_CPP(None)_C(None_) =	0x0000,
 		Torso				=	0x0001,
 		Head1				=	Torso << 1,
 		Head2				=	Head1 << 1,
@@ -170,7 +108,7 @@ namespace vaultmp {
 		ALL_LIMBS			=	(TORSO | HEAD | LEFT_ARM | RIGHT_ARM | LEFT_LEG | RIGHT_LEG | BRAIN | WEAPON),
 	};
 
-	enum class Death : int8_t
+	enum _CPP(class) Death _CPP(: int8_t)
 	{
 		None				=	-1,
 		Explosion			=	0,
@@ -181,6 +119,43 @@ namespace vaultmp {
 		Poison				=	6,
 		Radiation			=	7,
 	};
+
+	enum Interval _CPP(: uint32_t)
+	{
+		DEFAULT_PLAYER_RESPAWN  =	8000,
+	};
+#ifndef __cplusplus
+	typedef int8_t Death;
+	typedef uint8_t Reason;
+	typedef uint8_t Index;
+	typedef uint8_t Type;
+	typedef uint8_t State;
+	typedef uint16_t Limb;
+	typedef uint32_t Ref;
+	typedef uint32_t Base;
+	typedef uint32_t Cell;
+	typedef uint32_t Interval;
+	typedef uint64_t ID;
+	typedef uint64_t Timer;
+	typedef uint64_t Result;
+
+	#define RawFunction(types)  Result (__cdecl*)(types)
+	#define RawArray(type)		type*
+#else
+	enum Reason : uint8_t;
+
+	enum State : bool
+	{
+		True    =   true,
+		False   =   false
+	};
+
+	enum Ref : uint32_t;
+	enum Base : uint32_t;
+	enum Cell : uint32_t;
+	enum ID : uint64_t;
+	enum Timer : uint64_t;
+	enum Result : uint64_t;
 
 	struct _hash_ID { inline size_t operator() (const ID& x) const { return std::hash<uint64_t>()((uint64_t) x); }};
 
