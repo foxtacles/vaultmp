@@ -116,6 +116,7 @@ class Script
 		static bool IsContainer(NetworkID id);
 		static bool IsActor(NetworkID id);
 		static bool IsPlayer(NetworkID id);
+		static bool IsInterior(unsigned int cell);
 		static unsigned int GetList(unsigned char type, NetworkID** data);
 
 		static unsigned int GetReference(NetworkID id);

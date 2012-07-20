@@ -78,6 +78,8 @@ Script::Script(char* path)
 		SetScript(string(vpf + "IsContainer").c_str(), &Script::IsContainer);
 		SetScript(string(vpf + "IsActor").c_str(), &Script::IsActor);
 		SetScript(string(vpf + "IsPlayer").c_str(), &Script::IsPlayer);
+		SetScript(string(vpf + "IsCell").c_str(), &Cell::IsValidCell);
+		SetScript(string(vpf + "IsInterior").c_str(), &Script::IsInterior);
 		SetScript(string(vpf + "GetType").c_str(), (unsigned char(*)(NetworkID)) &GameFactory::GetType);
 		SetScript(string(vpf + "GetCount").c_str(), &GameFactory::GetObjectCount);
 		SetScript(string(vpf + "GetList").c_str(), &Script::GetList);
@@ -726,6 +728,23 @@ bool Script::IsActor(NetworkID id)
 bool Script::IsPlayer(NetworkID id)
 {
 	return (GameFactory::GetType(id) & ID_PLAYER);
+}
+
+bool Script::IsInterior(unsigned int cell)
+{
+	try
+	{
+		const Record& record = Record::Lookup(cell);
+
+		if (record.GetType().compare("CELL"))
+			return false;
+	}
+	catch (...)
+	{
+		return false;
+	}
+
+	return true;
 }
 
 unsigned int Script::GetList(unsigned char type, NetworkID** data)

@@ -47,6 +47,8 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"IsContainer", PAWN::vaultmp_IsContainer},
 	{"IsActor", PAWN::vaultmp_IsActor},
 	{"IsPlayer", PAWN::vaultmp_IsPlayer},
+	{"IsCell", PAWN::vaultmp_IsCell},
+	{"IsInterior", PAWN::vaultmp_IsInterior},
 	{"GetType", PAWN::vaultmp_GetType},
 	{"GetCount", PAWN::vaultmp_GetCount},
 	{"GetList", PAWN::vaultmp_GetList},
@@ -454,6 +456,16 @@ cell PAWN::vaultmp_IsActor(AMX* amx, const cell* params)
 cell PAWN::vaultmp_IsPlayer(AMX* amx, const cell* params)
 {
 	return Script::IsPlayer(params[1]);
+}
+
+cell PAWN::vaultmp_IsCell(AMX* amx, const cell* params)
+{
+	return Cell::IsValidCell(params[1]);
+}
+
+cell PAWN::vaultmp_IsInterior(AMX* amx, const cell* params)
+{
+	return Script::IsInterior(params[1]);
 }
 
 cell PAWN::vaultmp_GetType(AMX* amx, const cell* params)

@@ -119,6 +119,8 @@ native Bool:IsItem(ID);
 native Bool:IsContainer(ID);
 native Bool:IsActor(ID);
 native Bool:IsPlayer(ID);
+native Bool:IsCell(cell);
+native Bool:IsInterior(cell);
 native Type:GetType(ID);
 native GetCount(Type:type);
 native GetList(Type:type, id[]);

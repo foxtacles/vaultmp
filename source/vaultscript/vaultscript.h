@@ -226,6 +226,8 @@ _CPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsContainer))(VAULTSPACE ID) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsActor))(VAULTSPACE ID) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsPlayer))(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsCell))(VAULTSPACE Cell) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsInterior))(VAULTSPACE Cell) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Type (*VAULTAPI(GetType))(VAULTSPACE ID) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetCount))(VAULTSPACE Type) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetList))(VAULTSPACE Type, VAULTSPACE RawArray(VAULTSPACE ID)*) _CPP(noexcept);
@@ -348,6 +350,8 @@ namespace vaultmp
 	VAULTFUNCTION State IsContainer(ID id) noexcept { return VAULTAPI(IsContainer)(id); }
 	VAULTFUNCTION State IsActor(ID id) noexcept { return VAULTAPI(IsActor)(id); }
 	VAULTFUNCTION State IsPlayer(ID id) noexcept { return VAULTAPI(IsPlayer)(id); }
+	VAULTFUNCTION State IsCell(Cell cell) noexcept { return VAULTAPI(IsCell)(cell); }
+	VAULTFUNCTION State IsInterior(Cell cell) noexcept { return VAULTAPI(IsInterior)(cell); }
 	VAULTFUNCTION Type GetType(ID id) noexcept { return VAULTAPI(GetType)(id); }
 	VAULTFUNCTION UCount GetCount(Type type) noexcept { return VAULTAPI(GetCount)(type); }
 	VAULTFUNCTION IDVector GetList(Type type) noexcept
