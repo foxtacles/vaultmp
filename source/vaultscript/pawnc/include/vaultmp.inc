@@ -122,6 +122,7 @@ native Bool:IsPlayer(ID);
 native Bool:IsCell(cell);
 native Bool:IsInterior(cell);
 native Type:GetType(ID);
+native GetConnection(ID);
 native GetCount(Type:type);
 native GetList(Type:type, id[]);
 
@@ -140,6 +141,8 @@ native Bool:GetActorAlerted(ID);
 native Bool:GetActorSneaking(ID);
 native Bool:GetActorDead(ID);
 native Bool:IsActorJumping(ID);
+native GetPlayerRespawn(ID);
+native GetPlayerSpawnCell(ID);
 
 native Bool:SetPos(ID, Float:X, Float:Y, Float:Z);
 native Bool:SetCell(ID, cell, Float:X = 0.00, Float:Y = 0.00, Float:Z = 0.00);

@@ -50,6 +50,7 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"IsCell", PAWN::vaultmp_IsCell},
 	{"IsInterior", PAWN::vaultmp_IsInterior},
 	{"GetType", PAWN::vaultmp_GetType},
+	{"GetConnection", PAWN::vaultmp_GetConnection},
 	{"GetCount", PAWN::vaultmp_GetCount},
 	{"GetList", PAWN::vaultmp_GetList},
 
@@ -68,6 +69,8 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"GetActorSneaking", PAWN::vaultmp_GetActorSneaking},
 	{"GetActorDead", PAWN::vaultmp_GetActorDead},
 	{"IsActorJumping", PAWN::vaultmp_IsActorJumping},
+	{"GetPlayerRespawn", PAWN::vaultmp_GetPlayerRespawn},
+	{"GetPlayerSpawnCell", PAWN::vaultmp_GetPlayerSpawnCell},
 
 	{"SetPos", PAWN::vaultmp_SetPos},
 	{"SetCell", PAWN::vaultmp_SetCell},
@@ -470,7 +473,12 @@ cell PAWN::vaultmp_IsInterior(AMX* amx, const cell* params)
 
 cell PAWN::vaultmp_GetType(AMX* amx, const cell* params)
 {
-	return GameFactory::GetType((NetworkID) params[1]);
+	return GameFactory::GetType(static_cast<NetworkID>(params[1]));
+}
+
+cell PAWN::vaultmp_GetConnection(AMX* amx, const cell* params)
+{
+	return Script::GetConnection(params[1]);
 }
 
 cell PAWN::vaultmp_GetCount(AMX* amx, const cell* params)
@@ -604,6 +612,16 @@ cell PAWN::vaultmp_GetActorDead(AMX* amx, const cell* params)
 cell PAWN::vaultmp_IsActorJumping(AMX* amx, const cell* params)
 {
 	return Script::IsActorJumping(params[1]);
+}
+
+cell PAWN::vaultmp_GetPlayerRespawn(AMX* amx, const cell* params)
+{
+	return Script::GetPlayerRespawn(params[1]);
+}
+
+cell PAWN::vaultmp_GetPlayerSpawnCell(AMX* amx, const cell* params)
+{
+	return Script::GetPlayerSpawnCell(params[1]);
 }
 
 cell PAWN::vaultmp_SetPos(AMX* amx, const cell* params)

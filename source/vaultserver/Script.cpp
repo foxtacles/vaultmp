@@ -11,7 +11,11 @@ Script::Script(char* path)
 
 	fclose(file);
 
-	if (strstr(path, ".dll") || strstr(path, ".so"))
+#ifdef __WIN32__
+	if (strstr(path, ".dll"))
+#else
+	if (strstr(path, ".so"))
+#endif
 	{
 		void* handle = nullptr;
 #ifdef __WIN32__
@@ -82,6 +86,7 @@ Script::Script(char* path)
 			SetScript(string(vpf + "IsCell").c_str(), &Cell::IsValidCell);
 			SetScript(string(vpf + "IsInterior").c_str(), &Script::IsInterior);
 			SetScript(string(vpf + "GetType").c_str(), (unsigned char(*)(NetworkID)) &GameFactory::GetType);
+			SetScript(string(vpf + "GetConnection").c_str(), &Script::GetConnection);
 			SetScript(string(vpf + "GetCount").c_str(), &GameFactory::GetObjectCount);
 			SetScript(string(vpf + "GetList").c_str(), &Script::GetList);
 
@@ -100,6 +105,8 @@ Script::Script(char* path)
 			SetScript(string(vpf + "GetActorSneaking").c_str(), &Script::GetActorSneaking);
 			SetScript(string(vpf + "GetActorDead").c_str(), &Script::GetActorDead);
 			SetScript(string(vpf + "IsActorJumping").c_str(), &Script::IsActorJumping);
+			SetScript(string(vpf + "GetPlayerRespawn").c_str(), &Script::GetPlayerRespawn);
+			SetScript(string(vpf + "GetPlayerSpawnCell").c_str(), &Script::GetPlayerSpawnCell);
 
 			SetScript(string(vpf + "SetPos").c_str(), &Script::SetPos);
 			SetScript(string(vpf + "SetCell").c_str(), &Script::SetCell);
@@ -765,6 +772,17 @@ bool Script::IsInterior(unsigned int cell)
 	return true;
 }
 
+unsigned int Script::GetConnection(NetworkID id)
+{
+	unsigned int value = UINT_MAX;
+	Client* client = Client::GetClientFromPlayer(id);
+
+	if (client)
+		value = client->GetID();
+
+	return value;
+}
+
 unsigned int Script::GetList(unsigned char type, NetworkID** data)
 {
 	static vector<NetworkID> _data;
@@ -1100,6 +1118,50 @@ bool Script::IsActorJumping(NetworkID id)
 		state = actor->IsActorJumping();
 
 	return state;
+}
+
+unsigned int Script::GetPlayerRespawn(NetworkID id)
+{
+	unsigned int value = 0;
+	FactoryObject reference;
+
+	try
+	{
+		reference = GameFactory::GetObject(id);
+	}
+	catch (...)
+	{
+		return value;
+	}
+
+	Player* player = vaultcast<Player>(reference);
+
+	if (player)
+		value = player->GetPlayerRespawn();
+
+	return value;
+}
+
+unsigned int Script::GetPlayerSpawnCell(NetworkID id)
+{
+	unsigned int value = 0;
+	FactoryObject reference;
+
+	try
+	{
+		reference = GameFactory::GetObject(id);
+	}
+	catch (...)
+	{
+		return value;
+	}
+
+	Player* player = vaultcast<Player>(reference);
+
+	if (player)
+		value = player->GetPlayerSpawnCell();
+
+	return value;
 }
 
 bool Script::SetPos(NetworkID id, double X, double Y, double Z)

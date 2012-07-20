@@ -115,6 +115,7 @@ class Script
 		static bool IsActor(NetworkID id);
 		static bool IsPlayer(NetworkID id);
 		static bool IsInterior(unsigned int cell);
+		static unsigned int GetConnection(NetworkID id);
 		static unsigned int GetList(unsigned char type, NetworkID** data);
 
 		static unsigned int GetReference(NetworkID id);
@@ -132,6 +133,8 @@ class Script
 		static bool GetActorSneaking(NetworkID id);
 		static bool GetActorDead(NetworkID id);
 		static bool IsActorJumping(NetworkID id);
+		static unsigned int GetPlayerRespawn(NetworkID id);
+		static unsigned int GetPlayerSpawnCell(NetworkID id);
 
 		static bool SetPos(NetworkID id, double X, double Y, double Z);
 		static bool SetCell(NetworkID id, unsigned int cell, double X, double Y, double Z);

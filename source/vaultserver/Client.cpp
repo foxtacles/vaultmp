@@ -23,7 +23,7 @@ Client::~Client()
 
 void Client::SetMaximumClients(unsigned int clients)
 {
-	for (int i = clients - 1; i >= 0; i--)
+	for (unsigned int i = clients - 1; i >= 0; --i)
 		clientID.push(i);
 }
 
