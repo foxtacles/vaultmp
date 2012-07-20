@@ -133,6 +133,8 @@ class Script
 		static bool GetActorDead(NetworkID id);
 		static bool IsActorJumping(NetworkID id);
 
+		static bool SetPos(NetworkID id, double X, double Y, double Z);
+		static bool SetCell(NetworkID id, unsigned int cell, double X, double Y, double Z);
 		static bool AddItem(NetworkID id, unsigned int baseID, unsigned int count, double condition, bool silent);
 		static unsigned int RemoveItem(NetworkID id, unsigned int baseID, unsigned int count, bool silent);
 		static void RemoveAllItems(NetworkID id);

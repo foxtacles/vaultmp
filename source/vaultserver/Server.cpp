@@ -23,7 +23,7 @@ NetworkResponse Server::Authenticate(RakNetGUID guid, string name, string pwd)
 
 	if (result)
 	{
-		for (const pair<string, unsigned int>& mod : Dedicated::modfiles)
+		for (const auto& mod : Dedicated::modfiles)
 		{
 			response.push_back(Network::CreateResponse(
 				PacketFactory::CreatePacket(ID_GAME_MOD, mod.first.c_str(), mod.second),
@@ -206,7 +206,7 @@ NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, FactoryObject& refer
 
 	GameDiff gamediff = container->ApplyDiff(diff);
 
-	for (const pair<unsigned int, Diff>& _diff : gamediff)
+	for (const auto& _diff : gamediff)
 	{
 		if (_diff.second.equipped)
 		{

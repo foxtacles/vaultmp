@@ -66,6 +66,8 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"GetActorDead", PAWN::vaultmp_GetActorDead},
 	{"IsActorJumping", PAWN::vaultmp_IsActorJumping},
 
+	{"SetPos", PAWN::vaultmp_SetPos},
+	{"SetCell", PAWN::vaultmp_SetCell},
 	{"AddItem", PAWN::vaultmp_AddItem},
 	{"RemoveItem", PAWN::vaultmp_RemoveItem},
 	{"RemoveAllItems", PAWN::vaultmp_RemoveAllItems},
@@ -582,6 +584,16 @@ cell PAWN::vaultmp_GetActorDead(AMX* amx, const cell* params)
 cell PAWN::vaultmp_IsActorJumping(AMX* amx, const cell* params)
 {
 	return Script::IsActorJumping(params[1]);
+}
+
+cell PAWN::vaultmp_SetPos(AMX* amx, const cell* params)
+{
+	return Script::SetPos(params[1], amx_ctof(params[2]), amx_ctof(params[3]), amx_ctof(params[4]));
+}
+
+cell PAWN::vaultmp_SetCell(AMX* amx, const cell* params)
+{
+	return Script::SetCell(params[1], params[2], amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
 }
 
 cell PAWN::vaultmp_AddItem(AMX* amx, const cell* params)

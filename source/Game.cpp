@@ -1328,8 +1328,16 @@ void Game::GetPos(FactoryObject& reference, unsigned char axis, double value)
 		{
 			update = false;
 
+			double X = object->GetGamePos(Axis_X);
+			double Y = object->GetGamePos(Axis_Y);
+			double Z = object->GetGamePos(Axis_Z);
+
+			object->SetNetworkPos(Axis_X, X);
+			object->SetNetworkPos(Axis_Y, Y);
+			object->SetNetworkPos(Axis_Z, Z);
+
 			Network::Queue(NetworkResponse{Network::CreateResponse(
-				PacketFactory::CreatePacket(ID_UPDATE_POS, object->GetNetworkID(), object->GetGamePos(Axis_X), object->GetGamePos(Axis_Y), object->GetGamePos(Axis_Z)),
+				PacketFactory::CreatePacket(ID_UPDATE_POS, object->GetNetworkID(), X, Y, Z),
 				HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, server)
 			});
 		}

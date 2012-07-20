@@ -37,6 +37,7 @@ class Cell
 
 	public:
 		static const Cell& Lookup(unsigned int baseID);
+		static const Cell& Lookup(const Cell& cell, double X, double Y);
 		static const Cell& Lookup(unsigned int world, double X, double Y);
 
 		unsigned int GetBase() const;
