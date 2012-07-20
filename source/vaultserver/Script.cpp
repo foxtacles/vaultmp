@@ -71,6 +71,7 @@ Script::Script(char* path)
 		SetScript(string(vpf + "UIMessage").c_str(), &Script::UIMessage);
 		SetScript(string(vpf + "ChatMessage").c_str(), &Script::ChatMessage);
 		SetScript(string(vpf + "SetRespawn").c_str(), &Script::SetRespawn);
+		SetScript(string(vpf + "SetSpawnCell").c_str(), &Script::SetSpawnCell);
 		SetScript(string(vpf + "IsValid").c_str(), &Script::IsValid);
 		SetScript(string(vpf + "IsObject").c_str(), &Script::IsObject);
 		SetScript(string(vpf + "IsItem").c_str(), &Script::IsItem);
@@ -108,6 +109,7 @@ Script::Script(char* path)
 		SetScript(string(vpf + "UnequipItem").c_str(), &Script::UnequipItem);
 		SetScript(string(vpf + "KillActor").c_str(), &Script::KillActor);
 		SetScript(string(vpf + "SetPlayerRespawn").c_str(), &Script::SetPlayerRespawn);
+		SetScript(string(vpf + "SetPlayerSpawnCell").c_str(), &Script::SetPlayerSpawnCell);
 
 		fexec();
 	}
@@ -690,6 +692,12 @@ void Script::SetRespawn(unsigned int respawn)
 	Player::SetRespawn(respawn);
 }
 
+void Script::SetSpawnCell(unsigned int cell)
+{
+	if (Cell::IsValidCell(cell))
+		Player::SetSpawnCell(cell);
+}
+
 bool Script::IsValid(NetworkID id)
 {
 	return GameFactory::GetType(id);
@@ -1079,7 +1087,10 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 	{
 		try
 		{
-			Record::Lookup(cell);
+			const Record& record = Record::Lookup(cell);
+
+			if (record.GetType().compare("CELL"))
+				return state;
 		}
 		catch (...)
 		{
@@ -1167,6 +1178,9 @@ bool Script::SetCell(NetworkID id, unsigned int cell, double X, double Y, double
 		try
 		{
 			new_interior = &Record::Lookup(cell);
+
+			if (new_interior->GetType().compare("CELL"))
+				return state;
 		}
 		catch (...)
 		{
@@ -1222,7 +1236,7 @@ bool Script::SetCell(NetworkID id, unsigned int cell, double X, double Y, double
 	else
 		cell = 0x00000000;
 
-	if (update_pos && object->SetNetworkPos(Axis_X, X) || object->SetNetworkPos(Axis_Y, Y) || object->SetNetworkPos(Axis_Z, Z))
+	if (update_pos && (object->SetNetworkPos(Axis_X, X) || object->SetNetworkPos(Axis_Y, Y) || object->SetNetworkPos(Axis_Z, Z)))
 	{
 		object->SetGamePos(Axis_X, X);
 		object->SetGamePos(Axis_Y, Y);
@@ -1492,4 +1506,23 @@ void Script::SetPlayerRespawn(NetworkID id, unsigned int respawn)
 
 	if (player)
 		player->SetPlayerRespawn(respawn);
+}
+
+void Script::SetPlayerSpawnCell(NetworkID id, unsigned int cell)
+{
+	FactoryObject reference;
+
+	try
+	{
+		reference = GameFactory::GetObject(id);
+	}
+	catch (...)
+	{
+		return;
+	}
+
+	Player* player = vaultcast<Player>(reference);
+
+	if (player && Cell::IsValidCell(cell))
+		player->SetPlayerSpawnCell(cell);
 }

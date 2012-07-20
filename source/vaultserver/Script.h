@@ -109,6 +109,7 @@ class Script
 		static bool UIMessage(NetworkID id, const char* message);
 		static bool ChatMessage(NetworkID id, const char* message);
 		static void SetRespawn(unsigned int respawn);
+		static void SetSpawnCell(unsigned int cell);
 		static bool IsValid(NetworkID id);
 		static bool IsObject(NetworkID id);
 		static bool IsItem(NetworkID id);
@@ -144,6 +145,7 @@ class Script
 		static bool UnequipItem(NetworkID id, unsigned int baseID, bool silent, bool stick);
 		static void KillActor(NetworkID id, unsigned short limbs, signed char cause);
 		static void SetPlayerRespawn(NetworkID id, unsigned int respawn);
+		static void SetPlayerSpawnCell(NetworkID id, unsigned int cell);
 
 };
 

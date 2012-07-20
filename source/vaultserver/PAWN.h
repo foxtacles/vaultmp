@@ -28,7 +28,7 @@ class PAWN
 
 		PAWN();
 
-		static AMX_NATIVE_INFO vaultmp_functions[54];
+		static AMX_NATIVE_INFO vaultmp_functions[56];
 
 		static cell vaultmp_timestamp(AMX* amx, const cell* params);
 		static cell vaultmp_CreateTimer(AMX* amx, const cell* params);
@@ -51,6 +51,7 @@ class PAWN
 		static cell vaultmp_UIMessage(AMX* amx, const cell* params);
 		static cell vaultmp_ChatMessage(AMX* amx, const cell* params);
 		static cell vaultmp_SetRespawn(AMX* amx, const cell* params);
+		static cell vaultmp_SetSpawnCell(AMX* amx, const cell* params);
 		static cell vaultmp_IsValid(AMX* amx, const cell* params);
 		static cell vaultmp_IsObject(AMX* amx, const cell* params);
 		static cell vaultmp_IsItem(AMX* amx, const cell* params);
@@ -88,6 +89,7 @@ class PAWN
 		static cell vaultmp_UnequipItem(AMX* amx, const cell* params);
 		static cell vaultmp_KillActor(AMX* amx, const cell* params);
 		static cell vaultmp_SetPlayerRespawn(AMX* amx, const cell* params);
+		static cell vaultmp_SetPlayerSpawnCell(AMX* amx, const cell* params);
 
 	public:
 		static int LoadProgram(AMX* amx, char* filename, void* memblock);

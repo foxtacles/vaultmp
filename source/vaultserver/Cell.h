@@ -9,6 +9,7 @@
 #include "vaultmp.h"
 #include "vaultserver.h"
 #include "Database.h"
+#include "Record.h"
 
 #include "sqlite/sqlite3.h"
 
@@ -39,6 +40,7 @@ class Cell
 		static const Cell& Lookup(unsigned int baseID);
 		static const Cell& Lookup(const Cell& cell, double X, double Y);
 		static const Cell& Lookup(unsigned int world, double X, double Y);
+		static bool IsValidCell(unsigned int baseID);
 
 		unsigned int GetBase() const;
 		unsigned int GetWorld() const;

@@ -112,6 +112,7 @@ native AnimToString(index, value{});
 native Bool:UIMessage(ID, const message{});
 native Bool:ChatMessage(ID, const message{});
 native SetRespawn(interval);
+native SetSpawnCell(cell);
 native Bool:IsValid(ID);
 native Bool:IsObject(ID);
 native Bool:IsItem(ID);
@@ -149,3 +150,4 @@ native Bool:EquipItem(ID, base, Bool:silent = Bool:true, Bool:stick = Bool:true)
 native Bool:UnequipItem(ID, base, Bool:silent = Bool:true, Bool:stick = Bool:true);
 native KillActor(ID, Limb:limbs = Limb:None_, Death:cause = Death:None);
 native SetPlayerRespawn(ID, interval);
+native SetPlayerSpawnCell(ID, cell);

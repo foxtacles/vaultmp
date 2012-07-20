@@ -293,17 +293,8 @@ void Dedicated::DedicatedThread()
 
 	try
 	{
-		try
-		{
-			Cell::Lookup(cell);
-		}
-		catch (...)
-		{
-			const Record& record = Record::Lookup(cell);
-
-			if (record.GetType().compare("CELL"))
-				throw VaultException("%08X is not a valid cell", cell);
-		}
+		if (!Cell::IsValidCell(cell))
+			throw VaultException("%08X is not a valid cell", cell);
 
 		Player::SetSpawnCell(cell);
 

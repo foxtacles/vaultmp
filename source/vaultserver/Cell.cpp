@@ -54,6 +54,30 @@ const Cell& Cell::Lookup(unsigned int world, double X, double Y)
 	throw VaultException("No cell with coordinates (%f, %f) in world %08X found", static_cast<float>(X), static_cast<float>(Y), world);
 }
 
+bool Cell::IsValidCell(unsigned int baseID)
+{
+	try
+	{
+		try
+		{
+			Cell::Lookup(baseID);
+		}
+		catch (...)
+		{
+			const Record& record = Record::Lookup(baseID);
+
+			if (record.GetType().compare("CELL"))
+				return false;
+		}
+	}
+	catch (...)
+	{
+		return false;
+	}
+
+	return true;
+}
+
 unsigned int Cell::GetBase() const
 {
 	return baseID;

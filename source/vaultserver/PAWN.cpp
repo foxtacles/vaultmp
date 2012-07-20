@@ -40,6 +40,7 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"UIMessage", PAWN::vaultmp_UIMessage},
 	{"ChatMessage", PAWN::vaultmp_ChatMessage},
 	{"SetRespawn", PAWN::vaultmp_SetRespawn},
+	{"SetSpawnCell", PAWN::vaultmp_SetSpawnCell},
 	{"IsValid", PAWN::vaultmp_IsValid},
 	{"IsObject", PAWN::vaultmp_IsObject},
 	{"IsItem", PAWN::vaultmp_IsItem},
@@ -77,6 +78,7 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"UnequipItem", PAWN::vaultmp_UnequipItem},
 	{"KillActor", PAWN::vaultmp_KillActor},
 	{"SetPlayerRespawn", PAWN::vaultmp_SetPlayerRespawn},
+	{"SetPlayerSpawnCell", PAWN::vaultmp_SetPlayerSpawnCell},
 
 	{0, 0}
 };
@@ -418,6 +420,12 @@ cell PAWN::vaultmp_SetRespawn(AMX* amx, const cell* params)
 	return 1;
 }
 
+cell PAWN::vaultmp_SetSpawnCell(AMX* amx, const cell* params)
+{
+	Script::SetSpawnCell(params[1]);
+	return 1;
+}
+
 cell PAWN::vaultmp_IsValid(AMX* amx, const cell* params)
 {
 	return Script::IsValid(params[1]);
@@ -643,6 +651,12 @@ cell PAWN::vaultmp_KillActor(AMX* amx, const cell* params)
 cell PAWN::vaultmp_SetPlayerRespawn(AMX* amx, const cell* params)
 {
 	Script::SetPlayerRespawn(params[1], params[2]);
+	return 1;
+}
+
+cell PAWN::vaultmp_SetPlayerSpawnCell(AMX* amx, const cell* params)
+{
+	Script::SetPlayerSpawnCell(params[1], params[2]);
 	return 1;
 }
 
