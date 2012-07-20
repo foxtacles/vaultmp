@@ -1092,6 +1092,7 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 	}
 
 	NetworkResponse response;
+	unsigned int _new_cell = 0x00000000;
 
 	if (object->SetNetworkPos(Axis_X, X) || object->SetNetworkPos(Axis_Y, Y) || object->SetNetworkPos(Axis_Z, Z))
 	{
@@ -1103,7 +1104,7 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 
 		if (new_cell)
 		{
-			unsigned int _new_cell = new_cell->GetBase();
+			_new_cell = new_cell->GetBase();
 
 			if (object->SetNetworkCell(_new_cell))
 			{
@@ -1122,6 +1123,8 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 					);
 				}
 			}
+			else
+				_new_cell = 0x00000000;
 		}
 
 		response.push_back(Network::CreateResponse(
@@ -1133,6 +1136,9 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 
 		state = true;
 	}
+
+	if (_new_cell)
+		Script::OnCellChange(reference, _new_cell);
 
 	return state;
 }
@@ -1183,14 +1189,13 @@ bool Script::SetCell(NetworkID id, unsigned int cell, double X, double Y, double
 	NetworkResponse response;
 
 	Player* player = vaultcast<Player>(reference);
-	unsigned int new_cell = new_interior ? new_interior->GetBase() : new_exterior->GetBase();
 
-	if (object->SetNetworkCell(new_cell))
+	if (object->SetNetworkCell(cell))
 	{
-		object->SetGameCell(new_cell);
+		object->SetGameCell(cell);
 
 		response.push_back(Network::CreateResponse(
-			PacketFactory::CreatePacket(ID_UPDATE_CELL, id, new_cell),
+			PacketFactory::CreatePacket(ID_UPDATE_CELL, id, cell),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		);
 
@@ -1214,6 +1219,8 @@ bool Script::SetCell(NetworkID id, unsigned int cell, double X, double Y, double
 
 		state = true;
 	}
+	else
+		cell = 0x00000000;
 
 	if (update_pos && object->SetNetworkPos(Axis_X, X) || object->SetNetworkPos(Axis_Y, Y) || object->SetNetworkPos(Axis_Z, Z))
 	{
@@ -1231,6 +1238,9 @@ bool Script::SetCell(NetworkID id, unsigned int cell, double X, double Y, double
 
 	if (state)
 		Network::Queue(move(response));
+
+	if (cell)
+		Script::OnCellChange(reference, cell);
 
 	return state;
 }
