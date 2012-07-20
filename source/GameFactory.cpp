@@ -61,7 +61,7 @@ vector<FactoryObject> GameFactory::GetObjectTypes(unsigned char type) noexcept
 
 	for (it = copy.begin(); it != copy.end(); ++it)
 		if (it->second & type)
-			result.push_back(FactoryObject(it->first, type));
+			result.push_back(FactoryObject(it->first, it->second));
 
 	return result;
 }
