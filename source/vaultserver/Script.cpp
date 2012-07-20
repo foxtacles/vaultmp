@@ -212,8 +212,8 @@ void Script::LoadScripts(char* scripts, char* base)
 			char path[MAX_PATH];
 			snprintf(path, sizeof(path), "%s/%s", base, token);
 			Script* script = new Script(path);
-			scripts.push_back(script);
 #endif
+			Script::scripts.push_back(script);
 			token = strtok(nullptr, ",");
 		}
 	}
