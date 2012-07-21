@@ -119,7 +119,7 @@ int main(int argc, char* argv[])
 	files = (bool) iniparser_getboolean(config, "general:fileserve", 0);
 	fileslots = iniparser_getint(config, "general:fileslots", 8);
 	announce = iniparser_getstring(config, "general:master", "vaultmp.com");
-	cell = iniparser_getint(config, "general:spawn", game == FALLOUT3 ? 0x000010C1 : 0x00015E63); // Vault101Exterior and Goodsprings
+	cell = iniparser_getint(config, "general:spawn", game == FALLOUT3 ? 0x000010C1 : 0x000DAEBB); // Vault101Exterior and Goodsprings
 	scripts = iniparser_getstring(config, "scripts:scripts", "");
 	mods = iniparser_getstring(config, "mods:mods", "");
 
