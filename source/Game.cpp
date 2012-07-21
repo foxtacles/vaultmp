@@ -476,15 +476,17 @@ void Game::LoadEnvironment()
 			if (!(*reference)->IsPersistent())
 				(*reference)->SetReference(0x00000000);
 
-			switch (GameFactory::GetType(*reference))
+			unsigned char type = GameFactory::GetType(*reference);
+
+			switch (type)
 			{
 				case ID_OBJECT:
 					NewObject(reference);
 					break;
 
-					//case ID_ITEM: // don't create items of containers
+				case ID_ITEM: // don't create items of containers
 					//NewItem(reference);
-					//break;
+					break;
 
 				case ID_CONTAINER:
 					NewContainer(reference);
@@ -497,6 +499,9 @@ void Game::LoadEnvironment()
 				case ID_PLAYER:
 					NewPlayer(reference);
 					break;
+
+				default:
+					throw VaultException("Can't create object of unknown type %02X", type);
 			}
 		}
 		else
@@ -1161,7 +1166,7 @@ void Game::net_ContainerUpdate(FactoryObject& reference, ContainerDiff diff)
 
 	GameDiff gamediff = container->ApplyDiff(diff);
 
-	for (pair<unsigned int, Diff>& diff : gamediff)
+	for (const auto& diff : gamediff)
 	{
 		if (diff.second.equipped)
 		{

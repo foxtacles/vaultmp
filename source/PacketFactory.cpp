@@ -102,11 +102,12 @@ pPacket PacketFactory::CreatePacket(unsigned char type, ...)
 			map<unsigned char, double>* values = (map<unsigned char, double>*) va_arg(args, void*); // compile error when placing map<unsigned char, double>* as 2nd argument?
 			map<unsigned char, double>* baseValues = (map<unsigned char, double>*) va_arg(args, void*);
 			unsigned char moving = (unsigned char) va_arg(args, unsigned int);
-			unsigned char moving_xy = (unsigned char) va_arg(args, unsigned int);
+			unsigned char movingxy = (unsigned char) va_arg(args, unsigned int);
+			unsigned char weapon = (unsigned char) va_arg(args, unsigned int);
 			bool alerted = (bool) va_arg(args, unsigned int);
 			bool sneaking = (bool) va_arg(args, unsigned int);
 			bool dead = (bool) va_arg(args, unsigned int);
-			packet = new pActorNew(pContainerNew, *values, *baseValues, moving, moving_xy, alerted, sneaking, dead);
+			packet = new pActorNew(pContainerNew, *values, *baseValues, moving, movingxy, weapon, alerted, sneaking, dead);
 			break;
 		}
 
@@ -495,7 +496,8 @@ void PacketFactory::Access(const pDefault* packet, ...)
 				map<unsigned char, double>* values = (map<unsigned char, double>*) va_arg(args, void*);
 				map<unsigned char, double>* baseValues = (map<unsigned char, double>*) va_arg(args, void*);
 				unsigned char* moving = va_arg(args, unsigned char*);
-				unsigned char* moving_xy = va_arg(args, unsigned char*);
+				unsigned char* movingxy = va_arg(args, unsigned char*);
+				unsigned char* weapon = va_arg(args, unsigned char*);
 				bool* alerted = va_arg(args, bool*);
 				bool* sneaking = va_arg(args, bool*);
 				bool* dead = va_arg(args, bool*);
@@ -507,15 +509,18 @@ void PacketFactory::Access(const pDefault* packet, ...)
 				unsigned int at = pContainerNew::data_length(data->_data) + sizeof(unsigned int);
 
 				for (unsigned int i = 0; i < size; ++i, at += length)
-					values->insert(pair<unsigned char, double>(*reinterpret_cast<unsigned char*>(&data->_data[at]), *reinterpret_cast<double*>(&data->_data[at + sizeof(unsigned char)])));
+					values->insert(make_pair(*reinterpret_cast<unsigned char*>(&data->_data[at]), *reinterpret_cast<double*>(&data->_data[at + sizeof(unsigned char)])));
 
 				for (unsigned int i = 0; i < size; ++i, at += length)
-					baseValues->insert(pair<unsigned char, double>(*reinterpret_cast<unsigned char*>(&data->_data[at]), *reinterpret_cast<double*>(&data->_data[at + sizeof(unsigned char)])));
+					baseValues->insert(make_pair(*reinterpret_cast<unsigned char*>(&data->_data[at]), *reinterpret_cast<double*>(&data->_data[at + sizeof(unsigned char)])));
 
 				*moving = *reinterpret_cast<unsigned char*>(&data->_data[at]);
 				at += sizeof(unsigned char);
 
-				*moving_xy = *reinterpret_cast<unsigned char*>(&data->_data[at]);
+				*movingxy = *reinterpret_cast<unsigned char*>(&data->_data[at]);
+				at += sizeof(unsigned char);
+
+				*weapon = *reinterpret_cast<unsigned char*>(&data->_data[at]);
 				at += sizeof(unsigned char);
 
 				*alerted = *reinterpret_cast<bool*>(&data->_data[at]);

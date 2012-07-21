@@ -645,7 +645,7 @@ class pActorNew : public pObjectNewDefault
 	private:
 		unsigned char* _data;
 
-		pActorNew(const pDefault* _data_pContainerNew, map<unsigned char, double>& values, map<unsigned char, double>& baseValues, unsigned char moving, unsigned char moving_xy, bool alerted, bool sneaking, bool dead) : pObjectNewDefault(ID_ACTOR_NEW, PacketFactory::ExtractReference(_data_pContainerNew), PacketFactory::ExtractBase(_data_pContainerNew), PacketFactory::ExtractNetworkID(_data_pContainerNew))
+		pActorNew(const pDefault* _data_pContainerNew, const map<unsigned char, double>& values, const map<unsigned char, double>& baseValues, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking, bool dead) : pObjectNewDefault(ID_ACTOR_NEW, PacketFactory::ExtractReference(_data_pContainerNew), PacketFactory::ExtractBase(_data_pContainerNew), PacketFactory::ExtractNetworkID(_data_pContainerNew))
 		{
 			unsigned int at = 0;
 			unsigned int length = sizeof(unsigned char) + sizeof(double);
@@ -655,7 +655,7 @@ class pActorNew : public pObjectNewDefault
 
 			unsigned int size = values.size();
 			unsigned int container_length = pContainerNew::data_length(PacketFactory::ExtractRawData(_data_pContainerNew));
-			unsigned int mem = container_length + (length * size * 2) + sizeof(unsigned int) + (sizeof(unsigned char) * 2) + (sizeof(bool) * 3);
+			unsigned int mem = container_length + (length * size * 2) + sizeof(unsigned int) + (sizeof(unsigned char) * 3) + (sizeof(bool) * 3);
 			_data = new unsigned char[mem];
 
 			memcpy(&this->_data[0], PacketFactory::ExtractRawData(_data_pContainerNew), container_length);
@@ -666,7 +666,7 @@ class pActorNew : public pObjectNewDefault
 
 			if (size > 0)
 			{
-				map<unsigned char, double>::iterator it;
+				map<unsigned char, double>::const_iterator it;
 
 				for (it = values.begin(); it != values.end(); ++it, at += length)
 				{
@@ -684,7 +684,10 @@ class pActorNew : public pObjectNewDefault
 			memcpy(&_data[at], &moving, sizeof(unsigned char));
 			at += sizeof(unsigned char);
 
-			memcpy(&_data[at], &moving_xy, sizeof(unsigned char));
+			memcpy(&_data[at], &movingxy, sizeof(unsigned char));
+			at += sizeof(unsigned char);
+
+			memcpy(&_data[at], &weapon, sizeof(unsigned char));
 			at += sizeof(unsigned char);
 
 			memcpy(&_data[at], &alerted, sizeof(bool));
@@ -724,7 +727,7 @@ class pActorNew : public pObjectNewDefault
 			unsigned int mem = pContainerNew::data_length(data);
 			unsigned int length = sizeof(unsigned char) + sizeof(double);
 			unsigned int size = *reinterpret_cast<const unsigned int*>(&data[mem]);
-			mem += (length * size * 2) + sizeof(unsigned int) + (sizeof(unsigned char) * 2) + (sizeof(bool) * 3);;
+			mem += (length * size * 2) + sizeof(unsigned int) + (sizeof(unsigned char) * 3) + (sizeof(bool) * 3);;
 
 			return mem;
 		}
