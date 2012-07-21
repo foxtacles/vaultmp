@@ -18,7 +18,7 @@ enum
 	ID_EVENT_CLOSE_RECEIVED,
 };
 
-enum
+enum class pTypes : unsigned char
 {
 	ID_GAME_AUTH = ID_GAME_FIRST,
 	ID_GAME_LOAD,
@@ -40,10 +40,7 @@ enum
 	ID_CONTAINER_UPDATE,
 	ID_ACTOR_UPDATE,
 	ID_PLAYER_UPDATE,
-};
 
-enum
-{
 	ID_UPDATE_POS,
 	ID_UPDATE_ANGLE,
 	ID_UPDATE_CELL,
@@ -55,11 +52,8 @@ enum
 	ID_UPDATE_CONTROL,
 	ID_UPDATE_INTERIOR,
 	ID_UPDATE_EXTERIOR,
-};
 
-enum
-{
-	ID_REASON_KICK = 0,
+	ID_REASON_KICK,
 	ID_REASON_BAN,
 	ID_REASON_ERROR,
 	ID_REASON_DENIED,
@@ -73,10 +67,16 @@ typedef unique_ptr<pDefault, void(*)(pDefault*)> pPacket;
 class PacketFactory
 {
 	private:
-		PacketFactory();
+		PacketFactory() = delete;
+
+		template<pTypes type, typename... Args>
+		struct _CreatePacket {
+			static pPacket CreatePacket(Args...);
+		};
 
 	public:
-		static pPacket CreatePacket(unsigned char type, ...);
+		template<pTypes type, typename... Args>
+		static pPacket CreatePacket(Args... args) { return _CreatePacket<type, Args...>::CreatePacket(forward<Args>(args)...); };
 
 		static pPacket CreatePacket(unsigned char* stream, unsigned int len);
 

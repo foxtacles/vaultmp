@@ -34,7 +34,7 @@ const unsigned char API::FalloutSavegame[] =
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x7C};
 
 #ifdef VAULTMP_DEBUG
-Debug* API::debug = nullptr;
+Debug* API::debug;
 #endif
 
 #pragma pack(push, 1)

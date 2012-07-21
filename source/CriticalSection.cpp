@@ -38,7 +38,8 @@ CriticalSection* CriticalSection::StartSession()
 	if (finalize)
 		return nullptr;
 
-	bool success = cs.try_lock_for(chrono::milliseconds(CS_TIMEOUT));
+	bool success = true;
+	cs.lock();
 
 	if (success && !finalize)
 	{

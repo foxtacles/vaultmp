@@ -1,4 +1,6 @@
 #include "Object.h"
+#include "Container.h"
+#include "PacketTypes.h"
 
 RawParameter Object::param_Axis = RawParameter(vector<string>());
 
@@ -22,9 +24,9 @@ Object::Object(unsigned int refID, unsigned int baseID) : Reference(refID, baseI
 
 	for (unsigned char _data : data)
 	{
-		object_Game_Pos.insert(pair<unsigned char, Value<double> >(_data, Value<double>()));
-		object_Network_Pos.insert(pair<unsigned char, Value<double> >(_data, Value<double>()));
-		object_Angle.insert(pair<unsigned char, Value<double> >(_data, Value<double>()));
+		object_Game_Pos.insert(make_pair(_data, Value<double>()));
+		object_Network_Pos.insert(make_pair(_data, Value<double>()));
+		object_Angle.insert(make_pair(_data, Value<double>()));
 	}
 }
 
@@ -188,7 +190,7 @@ bool Object::HasValidCoordinates() const
 
 pPacket Object::toPacket()
 {
-	pPacket packet = PacketFactory::CreatePacket(ID_OBJECT_NEW, this->GetNetworkID(), this->GetReference(), this->GetBase(),
+	pPacket packet = PacketFactory::CreatePacket<pTypes::ID_OBJECT_NEW>(this->GetNetworkID(), this->GetReference(), this->GetBase(),
 												   this->GetName().c_str(), this->GetNetworkPos(Values::Axis_X), this->GetNetworkPos(Values::Axis_Y), this->GetNetworkPos(Values::Axis_Z),
 												   this->GetAngle(Values::Axis_X), this->GetAngle(Values::Axis_Y), this->GetAngle(Values::Axis_Z), this->GetNetworkCell(), this->GetEnabled());
 

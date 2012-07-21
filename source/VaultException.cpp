@@ -1,7 +1,7 @@
 #include "VaultException.h"
 
 #ifdef VAULTMP_DEBUG
-Debug* VaultException::debug = nullptr;
+Debug* VaultException::debug;
 #endif
 
 VaultException::VaultException(string error)

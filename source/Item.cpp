@@ -1,5 +1,6 @@
 #include "Item.h"
 #include "Container.h"
+#include "PacketTypes.h"
 
 #ifdef VAULTMP_DEBUG
 Debug* Item::debug;
@@ -50,14 +51,12 @@ Item::~Item()
 void Item::initialize()
 {
 #ifdef VAULTSERVER
-
 	unsigned int baseID = this->GetBase();
 
 	const Record& record = Record::Lookup(baseID);
 
 	if (this->GetName().empty())
 		this->SetName(record.GetDescription());
-
 #endif
 }
 
@@ -140,7 +139,7 @@ Lockable* Item::SetBase(unsigned int baseID)
 pPacket Item::toPacket()
 {
 	pPacket pObjectNew = Object::toPacket();
-	pPacket packet = PacketFactory::CreatePacket(ID_ITEM_NEW, pObjectNew.get(), this->GetItemCount(), this->GetItemCondition(), this->GetItemEquipped(), this->GetItemSilent(), this->GetItemStick());
+	pPacket packet = PacketFactory::CreatePacket<pTypes::ID_ITEM_NEW>(pObjectNew.get(), this->GetItemCount(), this->GetItemCondition(), this->GetItemEquipped(), this->GetItemSilent(), this->GetItemStick());
 
 	return packet;
 }

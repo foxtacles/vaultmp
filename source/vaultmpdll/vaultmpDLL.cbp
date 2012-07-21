@@ -20,7 +20,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-O2" />
-			<Add option="-masm=intel" />
+			<Add option="-std=gnu++0x -masm=intel" />
 			<Add option="-DBUILDING_DLL=1" />
 		</Compiler>
 		<Linker>

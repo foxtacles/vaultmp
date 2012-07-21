@@ -7,7 +7,7 @@ CriticalSection Network::cs;
 bool Network::dequeue = true;
 
 #ifdef VAULTMP_DEBUG
-Debug* Network::debug = nullptr;
+Debug* Network::debug;
 #endif
 
 #ifdef VAULTMP_DEBUG

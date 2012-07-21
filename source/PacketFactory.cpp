@@ -1,351 +1,115 @@
 #include "PacketFactory.h"
 #include "PacketTypes.h"
 
-pPacket PacketFactory::CreatePacket(unsigned char type, ...)
-{
-	va_list args;
-	va_start(args, type);
-	pDefault* packet;
-
-	switch (type)
-	{
-		case ID_GAME_AUTH:
-		{
-			const char* name = va_arg(args, const char*);
-			const char* pwd = va_arg(args, const char*);
-			packet = new pGameAuth(name, pwd);
-			break;
-		}
-
-		case ID_GAME_LOAD:
-		{
-			packet = new pGameLoad();
-			break;
-		}
-
-		case ID_GAME_MOD:
-		{
-			const char* modfile = va_arg(args, const char*);
-			unsigned int crc = va_arg(args, unsigned int);
-			packet = new pGameMod(modfile, crc);
-			break;
-		}
-
-		case ID_GAME_START:
-		{
-			packet = new pGameStart();
-			break;
-		}
-
-		case ID_GAME_END:
-		{
-			unsigned char reason = (unsigned char) va_arg(args, unsigned int);
-			packet = new pGameEnd(reason);
-			break;
-		}
-
-		case ID_GAME_MESSAGE:
-		{
-			const char* message = va_arg(args, const char*);
-			packet = new pGameMessage(message);
-			break;
-		}
-
-		case ID_GAME_CHAT:
-		{
-			const char* message = va_arg(args, const char*);
-			packet = new pGameChat(message);
-			break;
-		}
-
-		case ID_OBJECT_NEW:
-		{
-			NetworkID id = va_arg(args, NetworkID);
-			unsigned int refID = va_arg(args, unsigned int);
-			unsigned int baseID = va_arg(args, unsigned int);
-			const char* name = va_arg(args, char*);
-			double X = va_arg(args, double);
-			double Y = va_arg(args, double);
-			double Z = va_arg(args, double);
-			double aX = va_arg(args, double);
-			double aY = va_arg(args, double);
-			double aZ = va_arg(args, double);
-			unsigned int cell = va_arg(args, unsigned int);
-			bool enabled = (bool) va_arg(args, unsigned int);
-			packet = new pObjectNew(id, refID, baseID, name, X, Y, Z, aX, aY, aZ, cell, enabled);
-			break;
-		}
-
-		case ID_ITEM_NEW:
-		{
-			const pDefault* pObjectNew = va_arg(args, pDefault*);
-			unsigned int count = va_arg(args, unsigned int);
-			double condition = va_arg(args, double);
-			bool equipped = (bool) va_arg(args, unsigned int);
-			bool silent = (bool) va_arg(args, unsigned int);
-			bool stick = (bool) va_arg(args, unsigned int);
-			packet = new pItemNew(pObjectNew, count, condition, equipped, silent, stick);
-			break;
-		}
-
-		case ID_CONTAINER_NEW:
-		{
-			const pDefault* pObjectNew = va_arg(args, pDefault*);
-			vector<pPacket>* pItemNew = va_arg(args, vector<pPacket>*);
-			packet = new pContainerNew(pObjectNew, *pItemNew);
-			break;
-		}
-
-		case ID_ACTOR_NEW:
-		{
-			const pDefault* pContainerNew = va_arg(args, pDefault*);
-			map<unsigned char, double>* values = (map<unsigned char, double>*) va_arg(args, void*); // compile error when placing map<unsigned char, double>* as 2nd argument?
-			map<unsigned char, double>* baseValues = (map<unsigned char, double>*) va_arg(args, void*);
-			unsigned char moving = (unsigned char) va_arg(args, unsigned int);
-			unsigned char movingxy = (unsigned char) va_arg(args, unsigned int);
-			unsigned char weapon = (unsigned char) va_arg(args, unsigned int);
-			bool alerted = (bool) va_arg(args, unsigned int);
-			bool sneaking = (bool) va_arg(args, unsigned int);
-			bool dead = (bool) va_arg(args, unsigned int);
-			packet = new pActorNew(pContainerNew, *values, *baseValues, moving, movingxy, weapon, alerted, sneaking, dead);
-			break;
-		}
-
-		case ID_PLAYER_NEW:
-		{
-			const pDefault* pActorNew = va_arg(args, pDefault*);
-			map<unsigned char, pair<unsigned char, bool> >* controls = (map<unsigned char, pair<unsigned char, bool> >*) va_arg(args, void*);
-			packet = new pPlayerNew(pActorNew, *controls);
-			break;
-		}
-
-		case ID_OBJECT_REMOVE:
-		{
-			NetworkID id = va_arg(args, NetworkID);
-			packet = new pObjectRemove(id);
-			break;
-		}
-
-		case ID_UPDATE_POS:
-		{
-			NetworkID id = va_arg(args, NetworkID);
-			double X = va_arg(args, double);
-			double Y = va_arg(args, double);
-			double Z = va_arg(args, double);
-			packet = new pObjectPos(id, X, Y, Z);
-			break;
-		}
-
-		case ID_UPDATE_ANGLE:
-		{
-			NetworkID id = va_arg(args, NetworkID);
-			unsigned char axis = (unsigned char) va_arg(args, unsigned int);
-			double value = va_arg(args, double);
-			packet = new pObjectAngle(id, axis, value);
-			break;
-		}
-
-		case ID_UPDATE_CELL:
-		{
-			NetworkID id = va_arg(args, NetworkID);
-			unsigned int cell = va_arg(args, unsigned int);
-			packet = new pObjectCell(id, cell);
-			break;
-		}
-
-		case ID_UPDATE_CONTAINER:
-		{
-			NetworkID id = va_arg(args, NetworkID);
-			const ContainerDiff* diff = va_arg(args, ContainerDiff*);
-			packet = new pContainerUpdate(id, *diff);
-			break;
-		}
-
-		case ID_UPDATE_VALUE:
-		{
-			NetworkID id = va_arg(args, NetworkID);
-			bool base = (bool) va_arg(args, unsigned int);
-			unsigned char index = (unsigned char) va_arg(args, unsigned int);
-			double value = va_arg(args, double);
-			packet = new pActorValue(id, base, index, value);
-			break;
-		}
-
-		case ID_UPDATE_STATE:
-		{
-			NetworkID id = va_arg(args, NetworkID);
-			unsigned char moving = (unsigned char) va_arg(args, unsigned int);
-			unsigned char movingxy = (unsigned char) va_arg(args, unsigned int);
-			unsigned char weapon = (unsigned char) va_arg(args, unsigned int);
-			bool alerted = (bool) va_arg(args, unsigned int);
-			bool sneaking = (bool) va_arg(args, unsigned int);
-			packet = new pActorState(id, moving, movingxy, weapon, alerted, sneaking);
-			break;
-		}
-
-		case ID_UPDATE_DEAD:
-		{
-			NetworkID id = va_arg(args, NetworkID);
-			bool dead = (bool) va_arg(args, unsigned int);
-			unsigned short limbs = static_cast<unsigned short>(va_arg(args, unsigned int));
-			signed char cause = static_cast<signed char>(va_arg(args, signed int));
-			packet = new pActorDead(id, dead, limbs, cause);
-			break;
-		}
-
-		case ID_UPDATE_FIREWEAPON:
-		{
-			NetworkID id = va_arg(args, NetworkID);
-			unsigned int weapon = va_arg(args, unsigned int);
-			packet = new pActorFireweapon(id, weapon);
-			break;
-		}
-
-		case ID_UPDATE_CONTROL:
-		{
-			NetworkID id = va_arg(args, NetworkID);
-			unsigned char control = (unsigned char) va_arg(args, unsigned int);
-			unsigned char key = (unsigned char) va_arg(args, unsigned int);
-			packet = new pPlayerControl(id, control, key);
-			break;
-		}
-
-		case ID_UPDATE_INTERIOR:
-		{
-			NetworkID id = va_arg(args, NetworkID);
-			const char* cell = va_arg(args, const char*);
-			packet = new pPlayerInterior(id, cell);
-			break;
-		}
-
-		case ID_UPDATE_EXTERIOR:
-		{
-			NetworkID id = va_arg(args, NetworkID);
-			unsigned int baseID = va_arg(args, unsigned int);
-			signed int x = va_arg(args, signed int);
-			signed int y = va_arg(args, signed int);
-			packet = new pPlayerExterior(id, baseID, x, y);
-			break;
-		}
-
-		default:
-			throw VaultException("Unhandled packet type %d", (int) type);
-	}
-
-	va_end(args);
-
-	return pPacket(packet, FreePacket);
-}
-
 pPacket PacketFactory::CreatePacket(unsigned char* stream, unsigned int len)
 {
 	pDefault* packet;
 
-	switch (stream[0])
+	switch (static_cast<pTypes>(stream[0]))
 	{
-		case ID_GAME_AUTH:
+		case pTypes::ID_GAME_AUTH:
 			packet = new pGameAuth(stream, len);
 			break;
 
-		case ID_GAME_LOAD:
+		case pTypes::ID_GAME_LOAD:
 			packet = new pGameLoad(stream, len);
 			break;
 
-		case ID_GAME_MOD:
+		case pTypes::ID_GAME_MOD:
 			packet = new pGameMod(stream, len);
 			break;
 
-		case ID_GAME_START:
+		case pTypes::ID_GAME_START:
 			packet = new pGameStart(stream, len);
 			break;
 
-		case ID_GAME_END:
+		case pTypes::ID_GAME_END:
 			packet = new pGameEnd(stream, len);
 			break;
 
-		case ID_GAME_MESSAGE:
+		case pTypes::ID_GAME_MESSAGE:
 			packet = new pGameMessage(stream, len);
 			break;
 
-		case ID_GAME_CHAT:
+		case pTypes::ID_GAME_CHAT:
 			packet = new pGameChat(stream, len);
 			break;
 
-		case ID_OBJECT_NEW:
+		case pTypes::ID_OBJECT_NEW:
 			packet = new pObjectNew(stream, len);
 			break;
 
-		case ID_ITEM_NEW:
+		case pTypes::ID_ITEM_NEW:
 			packet = new pItemNew(stream, len);
 			break;
 
-		case ID_CONTAINER_NEW:
+		case pTypes::ID_CONTAINER_NEW:
 			packet = new pContainerNew(stream, len);
 			break;
 
-		case ID_ACTOR_NEW:
+		case pTypes::ID_ACTOR_NEW:
 			packet = new pActorNew(stream, len);
 			break;
 
-		case ID_PLAYER_NEW:
+		case pTypes::ID_PLAYER_NEW:
 			packet = new pPlayerNew(stream, len);
 			break;
 
-		case ID_OBJECT_REMOVE:
+		case pTypes::ID_OBJECT_REMOVE:
 			packet = new pObjectRemove(stream, len);
 			break;
 
-		case ID_OBJECT_UPDATE:
-		case ID_CONTAINER_UPDATE:
-		case ID_ACTOR_UPDATE:
-		case ID_PLAYER_UPDATE:
+		case pTypes::ID_OBJECT_UPDATE:
+		case pTypes::ID_CONTAINER_UPDATE:
+		case pTypes::ID_ACTOR_UPDATE:
+		case pTypes::ID_PLAYER_UPDATE:
 		{
 			if (len < 2)
 				throw VaultException("Incomplete object packet type %d", (int) stream[0]);
 
-			switch (stream[1])
+			switch (static_cast<pTypes>(stream[1]))
 			{
-				case ID_UPDATE_POS:
+				case pTypes::ID_UPDATE_POS:
 					packet = new pObjectPos(stream, len);
 					break;
 
-				case ID_UPDATE_ANGLE:
+				case pTypes::ID_UPDATE_ANGLE:
 					packet = new pObjectAngle(stream, len);
 					break;
 
-				case ID_UPDATE_CELL:
+				case pTypes::ID_UPDATE_CELL:
 					packet = new pObjectCell(stream, len);
 					break;
 
-				case ID_UPDATE_CONTAINER:
+				case pTypes::ID_UPDATE_CONTAINER:
 					packet = new pContainerUpdate(stream, len);
 					break;
 
-				case ID_UPDATE_VALUE:
+				case pTypes::ID_UPDATE_VALUE:
 					packet = new pActorValue(stream, len);
 					break;
 
-				case ID_UPDATE_STATE:
+				case pTypes::ID_UPDATE_STATE:
 					packet = new pActorState(stream, len);
 					break;
 
-				case ID_UPDATE_DEAD:
+				case pTypes::ID_UPDATE_DEAD:
 					packet = new pActorDead(stream, len);
 					break;
 
-				case ID_UPDATE_FIREWEAPON:
+				case pTypes::ID_UPDATE_FIREWEAPON:
 					packet = new pActorFireweapon(stream, len);
 					break;
 
-				case ID_UPDATE_CONTROL:
+				case pTypes::ID_UPDATE_CONTROL:
 					packet = new pPlayerControl(stream, len);
 					break;
 
-				case ID_UPDATE_INTERIOR:
+				case pTypes::ID_UPDATE_INTERIOR:
 					packet = new pPlayerInterior(stream, len);
 					break;
 
-				case ID_UPDATE_EXTERIOR:
+				case pTypes::ID_UPDATE_EXTERIOR:
 					packet = new pPlayerExterior(stream, len);
 					break;
 
@@ -372,7 +136,7 @@ void PacketFactory::Access(const pDefault* packet, ...)
 	{
 		switch (packet->type.type)
 		{
-			case ID_GAME_AUTH:
+			case pTypes::ID_GAME_AUTH:
 			{
 				const pGameAuth* data = dynamic_cast<const pGameAuth*>(packet);
 				char* name = va_arg(args, char*);
@@ -382,13 +146,13 @@ void PacketFactory::Access(const pDefault* packet, ...)
 				break;
 			}
 
-			case ID_GAME_LOAD:
+			case pTypes::ID_GAME_LOAD:
 			{
 				//const pGameLoad* data = dynamic_cast<const pGameLoad*>(packet);
 				break;
 			}
 
-			case ID_GAME_MOD:
+			case pTypes::ID_GAME_MOD:
 			{
 				const pGameMod* data = dynamic_cast<const pGameMod*>(packet);
 				char* modfile = va_arg(args, char*);
@@ -398,20 +162,20 @@ void PacketFactory::Access(const pDefault* packet, ...)
 				break;
 			}
 
-			case ID_GAME_START:
+			case pTypes::ID_GAME_START:
 			{
 				break;
 			}
 
-			case ID_GAME_END:
+			case pTypes::ID_GAME_END:
 			{
 				const pGameEnd* data = dynamic_cast<const pGameEnd*>(packet);
-				unsigned char* reason = va_arg(args, unsigned char*);
+				pTypes* reason = va_arg(args, pTypes*);
 				*reason = data->reason.type;
 				break;
 			}
 
-			case ID_GAME_MESSAGE:
+			case pTypes::ID_GAME_MESSAGE:
 			{
 				const pGameMessage* data = dynamic_cast<const pGameMessage*>(packet);
 				char* message = va_arg(args, char*);
@@ -419,7 +183,7 @@ void PacketFactory::Access(const pDefault* packet, ...)
 				break;
 			}
 
-			case ID_GAME_CHAT:
+			case pTypes::ID_GAME_CHAT:
 			{
 				const pGameChat* data = dynamic_cast<const pGameChat*>(packet);
 				char* message = va_arg(args, char*);
@@ -427,7 +191,7 @@ void PacketFactory::Access(const pDefault* packet, ...)
 				break;
 			}
 
-			case ID_OBJECT_NEW:
+			case pTypes::ID_OBJECT_NEW:
 			{
 				const pObjectNew* data = dynamic_cast<const pObjectNew*>(packet);
 				NetworkID* id = va_arg(args, NetworkID*);
@@ -457,7 +221,7 @@ void PacketFactory::Access(const pDefault* packet, ...)
 				break;
 			}
 
-			case ID_ITEM_NEW:
+			case pTypes::ID_ITEM_NEW:
 			{
 				const pItemNew* data = dynamic_cast<const pItemNew*>(packet);
 				unsigned int* count = va_arg(args, unsigned int*);
@@ -473,7 +237,7 @@ void PacketFactory::Access(const pDefault* packet, ...)
 				break;
 			}
 
-			case ID_CONTAINER_NEW:
+			case pTypes::ID_CONTAINER_NEW:
 			{
 				const pContainerNew* data = dynamic_cast<const pContainerNew*>(packet);
 				vector<pPacket>* _pItemNew = va_arg(args, vector<pPacket>*);
@@ -490,7 +254,7 @@ void PacketFactory::Access(const pDefault* packet, ...)
 				break;
 			}
 
-			case ID_ACTOR_NEW:
+			case pTypes::ID_ACTOR_NEW:
 			{
 				const pActorNew* data = dynamic_cast<const pActorNew*>(packet);
 				map<unsigned char, double>* values = (map<unsigned char, double>*) va_arg(args, void*);
@@ -533,7 +297,7 @@ void PacketFactory::Access(const pDefault* packet, ...)
 				break;
 			}
 
-			case ID_PLAYER_NEW:
+			case pTypes::ID_PLAYER_NEW:
 			{
 				const pPlayerNew* data = dynamic_cast<const pPlayerNew*>(packet);
 				map<unsigned char, pair<unsigned char, bool> >* controls = (map<unsigned char, pair<unsigned char, bool> >*) va_arg(args, void*);
@@ -549,7 +313,7 @@ void PacketFactory::Access(const pDefault* packet, ...)
 				break;
 			}
 
-			case ID_OBJECT_REMOVE:
+			case pTypes::ID_OBJECT_REMOVE:
 			{
 				const pObjectRemove* data = dynamic_cast<const pObjectRemove*>(packet);
 				NetworkID* id = va_arg(args, NetworkID*);
@@ -557,16 +321,16 @@ void PacketFactory::Access(const pDefault* packet, ...)
 				break;
 			}
 
-			case ID_OBJECT_UPDATE:
-			case ID_CONTAINER_UPDATE:
-			case ID_ACTOR_UPDATE:
-			case ID_PLAYER_UPDATE:
+			case pTypes::ID_OBJECT_UPDATE:
+			case pTypes::ID_CONTAINER_UPDATE:
+			case pTypes::ID_ACTOR_UPDATE:
+			case pTypes::ID_PLAYER_UPDATE:
 			{
 				const pObjectUpdateDefault* data = dynamic_cast<const pObjectUpdateDefault*>(packet);
 
 				switch (data->sub_type.type)
 				{
-					case ID_UPDATE_POS:
+					case pTypes::ID_UPDATE_POS:
 					{
 						const pObjectPos* update = dynamic_cast<const pObjectPos*>(data);
 						NetworkID* id = va_arg(args, NetworkID*);
@@ -580,7 +344,7 @@ void PacketFactory::Access(const pDefault* packet, ...)
 						break;
 					}
 
-					case ID_UPDATE_ANGLE:
+					case pTypes::ID_UPDATE_ANGLE:
 					{
 						const pObjectAngle* update = dynamic_cast<const pObjectAngle*>(data);
 						NetworkID* id = va_arg(args, NetworkID*);
@@ -592,7 +356,7 @@ void PacketFactory::Access(const pDefault* packet, ...)
 						break;
 					}
 
-					case ID_UPDATE_CELL:
+					case pTypes::ID_UPDATE_CELL:
 					{
 						const pObjectCell* update = dynamic_cast<const pObjectCell*>(data);
 						NetworkID* id = va_arg(args, NetworkID*);
@@ -602,7 +366,7 @@ void PacketFactory::Access(const pDefault* packet, ...)
 						break;
 					}
 
-					case ID_UPDATE_CONTAINER:
+					case pTypes::ID_UPDATE_CONTAINER:
 					{
 						const pContainerUpdate* update = dynamic_cast<const pContainerUpdate*>(data);
 						NetworkID* id = va_arg(args, NetworkID*);
@@ -634,7 +398,7 @@ void PacketFactory::Access(const pDefault* packet, ...)
 						break;
 					}
 
-					case ID_UPDATE_VALUE:
+					case pTypes::ID_UPDATE_VALUE:
 					{
 						const pActorValue* update = dynamic_cast<const pActorValue*>(data);
 						NetworkID* id = va_arg(args, NetworkID*);
@@ -648,7 +412,7 @@ void PacketFactory::Access(const pDefault* packet, ...)
 						break;
 					}
 
-					case ID_UPDATE_STATE:
+					case pTypes::ID_UPDATE_STATE:
 					{
 						const pActorState* update = dynamic_cast<const pActorState*>(data);
 						NetworkID* id = va_arg(args, NetworkID*);
@@ -666,7 +430,7 @@ void PacketFactory::Access(const pDefault* packet, ...)
 						break;
 					}
 
-					case ID_UPDATE_DEAD:
+					case pTypes::ID_UPDATE_DEAD:
 					{
 						const pActorDead* update = dynamic_cast<const pActorDead*>(data);
 						NetworkID* id = va_arg(args, NetworkID*);
@@ -680,7 +444,7 @@ void PacketFactory::Access(const pDefault* packet, ...)
 						break;
 					}
 
-					case ID_UPDATE_FIREWEAPON:
+					case pTypes::ID_UPDATE_FIREWEAPON:
 					{
 						const pActorFireweapon* update = dynamic_cast<const pActorFireweapon*>(data);
 						NetworkID* id = va_arg(args, NetworkID*);
@@ -690,7 +454,7 @@ void PacketFactory::Access(const pDefault* packet, ...)
 						break;
 					}
 
-					case ID_UPDATE_CONTROL:
+					case pTypes::ID_UPDATE_CONTROL:
 					{
 						const pPlayerControl* update = dynamic_cast<const pPlayerControl*>(data);
 						NetworkID* id = va_arg(args, NetworkID*);
@@ -702,7 +466,7 @@ void PacketFactory::Access(const pDefault* packet, ...)
 						break;
 					}
 
-					case ID_UPDATE_INTERIOR:
+					case pTypes::ID_UPDATE_INTERIOR:
 					{
 						const pPlayerInterior* update = dynamic_cast<const pPlayerInterior*>(packet);
 						NetworkID* id = va_arg(args, NetworkID*);
@@ -712,7 +476,7 @@ void PacketFactory::Access(const pDefault* packet, ...)
 						break;
 					}
 
-					case ID_UPDATE_EXTERIOR:
+					case pTypes::ID_UPDATE_EXTERIOR:
 					{
 						const pPlayerExterior* update = dynamic_cast<const pPlayerExterior*>(packet);
 						NetworkID* id = va_arg(args, NetworkID*);
@@ -766,19 +530,19 @@ const unsigned char* PacketFactory::ExtractRawData(const pDefault* packet)
 {
 	switch (packet->type.type)
 	{
-		case ID_OBJECT_NEW:
+		case pTypes::ID_OBJECT_NEW:
 		{
 			const pObjectNew* data = dynamic_cast<const pObjectNew*>(packet);
 			return reinterpret_cast<const unsigned char*>(&data->_data);
 		}
 
-		case ID_CONTAINER_NEW:
+		case pTypes::ID_CONTAINER_NEW:
 		{
 			const pContainerNew* data = dynamic_cast<const pContainerNew*>(packet);
 			return reinterpret_cast<const unsigned char*>(data->_data);
 		}
 
-		case ID_ACTOR_NEW:
+		case pTypes::ID_ACTOR_NEW:
 		{
 			const pActorNew* data = dynamic_cast<const pActorNew*>(packet);
 			return reinterpret_cast<const unsigned char*>(data->_data);
@@ -795,28 +559,28 @@ pPacket PacketFactory::ExtractPartial(const pDefault* packet)
 
 	switch (packet->type.type)
 	{
-		case ID_ITEM_NEW:
+		case pTypes::ID_ITEM_NEW:
 		{
 			const pItemNew* data = dynamic_cast<const pItemNew*>(packet);
 			_packet = new pObjectNew(data->id, data->refID, data->baseID, data->_data._data_pObjectNew);
 			break;
 		}
 
-		case ID_CONTAINER_NEW:
+		case pTypes::ID_CONTAINER_NEW:
 		{
 			const pContainerNew* data = dynamic_cast<const pContainerNew*>(packet);
 			_packet = new pObjectNew(data->id, data->refID, data->baseID, *reinterpret_cast<_pObjectNew*>(data->_data));
 			break;
 		}
 
-		case ID_ACTOR_NEW:
+		case pTypes::ID_ACTOR_NEW:
 		{
 			const pActorNew* data = dynamic_cast<const pActorNew*>(packet);
 			_packet = new pContainerNew(data->id, data->refID, data->baseID, data->_data);
 			break;
 		}
 
-		case ID_PLAYER_NEW:
+		case pTypes::ID_PLAYER_NEW:
 		{
 			const pPlayerNew* data = dynamic_cast<const pPlayerNew*>(packet);
 			_packet = new pActorNew(data->id, data->refID, data->baseID, data->_data);

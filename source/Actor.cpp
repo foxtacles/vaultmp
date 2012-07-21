@@ -1,4 +1,5 @@
 #include "Actor.h"
+#include "PacketTypes.h"
 
 using namespace Values;
 
@@ -59,27 +60,15 @@ void Actor::initialize()
 	}
 
 #ifdef VAULTSERVER
-
 	unsigned int baseID = this->GetBase();
 
 	if (baseID != PLAYER_BASE)
 	{
-		try
-		{
-			const Record& record = Record::Lookup(baseID);
+		const Record& record = Record::Lookup(baseID);
 
-			if (this->GetName().empty())
-				this->SetName(record.GetDescription());
-		}
-		catch (...)
-		{
-			const Record& record = Record::Lookup(baseID);
-
-			if (this->GetName().empty())
-				this->SetName(record.GetDescription());
-		}
+		if (this->GetName().empty())
+			this->SetName(record.GetDescription());
 	}
-
 #endif
 
 #ifdef VAULTMP_DEBUG
@@ -206,20 +195,10 @@ Lockable* Actor::SetActorDead(bool state)
 #ifdef VAULTSERVER
 Lockable* Actor::SetBase(unsigned int baseID)
 {
-	try
-	{
-		const Record& record = Record::Lookup(baseID);
+	const Record& record = Record::Lookup(baseID);
 
-		if (this->GetName().empty())
-			this->SetName(record.GetDescription());
-	}
-	catch (...)
-	{
-		const Record& record = Record::Lookup(baseID);
-
-		if (this->GetName().empty())
-			this->SetName(record.GetDescription());
-	}
+	if (this->GetName().empty())
+		this->SetName(record.GetDescription());
 
 	return Reference::SetBase(baseID);
 }
@@ -250,7 +229,7 @@ pPacket Actor::toPacket()
 	}
 
 	pPacket pContainerNew = Container::toPacket();
-	pPacket packet = PacketFactory::CreatePacket(ID_ACTOR_NEW, pContainerNew.get(), &values, &baseValues, this->GetActorMovingAnimation(), this->GetActorMovingXY(), this->GetActorWeaponAnimation(), this->GetActorAlerted(), this->GetActorSneaking(), this->GetActorDead());
+	pPacket packet = PacketFactory::CreatePacket<pTypes::ID_ACTOR_NEW>(pContainerNew.get(), values, baseValues, this->GetActorMovingAnimation(), this->GetActorMovingXY(), this->GetActorWeaponAnimation(), this->GetActorAlerted(), this->GetActorSneaking(), this->GetActorDead());
 
 	return packet;
 }

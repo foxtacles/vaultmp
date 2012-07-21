@@ -1,9 +1,10 @@
 #include "NetworkClient.h"
 #include "Bethesda.h"
 #include "Game.h"
+#include "PacketTypes.h"
 
 #ifdef VAULTMP_DEBUG
-Debug* NetworkClient::debug = nullptr;
+Debug* NetworkClient::debug;
 #endif
 
 #ifdef VAULTMP_DEBUG
@@ -23,7 +24,7 @@ NetworkResponse NetworkClient::ProcessEvent(unsigned char id)
 		case ID_EVENT_CLIENT_ERROR:
 		case ID_EVENT_INTERFACE_LOST:
 			return NetworkResponse{Network::CreateResponse(
-				PacketFactory::CreatePacket(ID_GAME_END, ID_REASON_ERROR),
+				PacketFactory::CreatePacket<pTypes::ID_GAME_END>(pTypes::ID_REASON_ERROR),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Game::server)
 			};
 
@@ -31,7 +32,7 @@ NetworkResponse NetworkClient::ProcessEvent(unsigned char id)
 			Network::ToggleDequeue(false);
 
 			return NetworkResponse{Network::CreateResponse(
-				PacketFactory::CreatePacket(ID_GAME_LOAD),
+				PacketFactory::CreatePacket<pTypes::ID_GAME_LOAD>(),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Game::server)
 			};
 
@@ -100,9 +101,9 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 			pPacket _packet = PacketFactory::CreatePacket(data->data, data->length);
 			const pDefault* packet = _packet.get();
 
-			switch (data->data[0])
+			switch (static_cast<pTypes>(data->data[0]))
 			{
-				case ID_GAME_MOD:
+				case pTypes::ID_GAME_MOD:
 				{
 					char modfile[MAX_MOD_FILE + 1];
 					ZeroMemory(modfile, sizeof(modfile));
@@ -112,7 +113,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
-				case ID_GAME_START:
+				case pTypes::ID_GAME_START:
 				{
 #ifdef VAULTMP_DEBUG
 					debug->PrintFormat("We were successfully authenticated (%s)", true, data->systemAddress.ToString());
@@ -126,40 +127,40 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
-				case ID_GAME_LOAD:
+				case pTypes::ID_GAME_LOAD:
 				{
 					Game::Startup();
 					response = NetworkClient::ProcessEvent(ID_EVENT_GAME_LOADED);
 					break;
 				}
 
-				case ID_GAME_END:
+				case pTypes::ID_GAME_END:
 				{
-					unsigned char reason;
+					pTypes reason;
 					PacketFactory::Access(packet, &reason);
 
 					switch (reason)
 					{
-						case ID_REASON_KICK:
+						case pTypes::ID_REASON_KICK:
 							throw VaultException("You have been kicked from the server");
 
-						case ID_REASON_BAN:
+						case pTypes::ID_REASON_BAN:
 							throw VaultException("You have been banned from the server");
 
-						case ID_REASON_ERROR:
+						case pTypes::ID_REASON_ERROR:
 							throw VaultException("The server encountered an internal error");
 
-						case ID_REASON_DENIED:
+						case pTypes::ID_REASON_DENIED:
 							throw VaultException("Your authentication has been denied");
 
-						case ID_REASON_NONE:
+						case pTypes::ID_REASON_NONE:
 							break;
 					}
 
 					break;
 				}
 
-				case ID_GAME_MESSAGE:
+				case pTypes::ID_GAME_MESSAGE:
 				{
 					char message[MAX_MESSAGE_LENGTH + 1];
 					ZeroMemory(message, sizeof(message));
@@ -168,7 +169,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
-				case ID_GAME_CHAT:
+				case pTypes::ID_GAME_CHAT:
 				{
 					char message[MAX_CHAT_LENGTH + 1];
 					ZeroMemory(message, sizeof(message));
@@ -177,7 +178,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
-				case ID_OBJECT_NEW:
+				case pTypes::ID_OBJECT_NEW:
 				{
 					NetworkID id = GameFactory::CreateKnownInstance(ID_OBJECT, packet);
 					FactoryObject reference = GameFactory::GetObject(id);
@@ -185,7 +186,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
-				case ID_ITEM_NEW:
+				case pTypes::ID_ITEM_NEW:
 				{
 					NetworkID id = GameFactory::CreateKnownInstance(ID_ITEM, packet);
 					FactoryObject reference = GameFactory::GetObject(id);
@@ -193,7 +194,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
-				case ID_CONTAINER_NEW:
+				case pTypes::ID_CONTAINER_NEW:
 				{
 					NetworkID id = GameFactory::CreateKnownInstance(ID_CONTAINER, packet);
 					FactoryObject reference = GameFactory::GetObject(id);
@@ -201,7 +202,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
-				case ID_ACTOR_NEW:
+				case pTypes::ID_ACTOR_NEW:
 				{
 					NetworkID id = GameFactory::CreateKnownInstance(ID_ACTOR, packet);
 					FactoryObject reference = GameFactory::GetObject(id);
@@ -209,7 +210,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
-				case ID_PLAYER_NEW:
+				case pTypes::ID_PLAYER_NEW:
 				{
 					NetworkID id = GameFactory::CreateKnownInstance(ID_PLAYER, packet);
 					FactoryObject reference = GameFactory::GetObject(id);
@@ -217,7 +218,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
-				case ID_OBJECT_REMOVE:
+				case pTypes::ID_OBJECT_REMOVE:
 				{
 					NetworkID id;
 					PacketFactory::Access(packet, &id);
@@ -226,16 +227,16 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
-				case ID_OBJECT_UPDATE:
-				case ID_CONTAINER_UPDATE:
-				case ID_ACTOR_UPDATE:
-				case ID_PLAYER_UPDATE:
+				case pTypes::ID_OBJECT_UPDATE:
+				case pTypes::ID_CONTAINER_UPDATE:
+				case pTypes::ID_ACTOR_UPDATE:
+				case pTypes::ID_PLAYER_UPDATE:
 				{
 					NetworkID id;
 
-					switch (data->data[1])
+					switch (static_cast<pTypes>(data->data[1]))
 					{
-						case ID_UPDATE_POS:
+						case pTypes::ID_UPDATE_POS:
 						{
 							double X, Y, Z;
 							PacketFactory::Access(packet, &id, &X, &Y, &Z);
@@ -244,7 +245,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 							break;
 						}
 
-						case ID_UPDATE_ANGLE:
+						case pTypes::ID_UPDATE_ANGLE:
 						{
 							unsigned char axis;
 							double value;
@@ -254,7 +255,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 							break;
 						}
 
-						case ID_UPDATE_CELL:
+						case pTypes::ID_UPDATE_CELL:
 						{
 							unsigned int cell;
 							PacketFactory::Access(packet, &id, &cell);
@@ -263,7 +264,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 							break;
 						}
 
-						case ID_UPDATE_CONTAINER:
+						case pTypes::ID_UPDATE_CONTAINER:
 						{
 							ContainerDiff diff;
 							PacketFactory::Access(packet, &id, &diff);
@@ -272,7 +273,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 							break;
 						}
 
-						case ID_UPDATE_VALUE:
+						case pTypes::ID_UPDATE_VALUE:
 						{
 							bool base;
 							unsigned char index;
@@ -283,7 +284,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 							break;
 						}
 
-						case ID_UPDATE_STATE:
+						case pTypes::ID_UPDATE_STATE:
 						{
 							unsigned char moving, movingxy, weapon;
 							bool alerted, sneaking;
@@ -293,7 +294,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 							break;
 						}
 
-						case ID_UPDATE_DEAD:
+						case pTypes::ID_UPDATE_DEAD:
 						{
 							bool dead;
 							unsigned short limbs;
@@ -304,7 +305,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 							break;
 						}
 
-						case ID_UPDATE_FIREWEAPON:
+						case pTypes::ID_UPDATE_FIREWEAPON:
 						{
 							unsigned int weapon;
 							PacketFactory::Access(packet, &id, &weapon);
@@ -313,7 +314,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 							break;
 						}
 
-						case ID_UPDATE_INTERIOR:
+						case pTypes::ID_UPDATE_INTERIOR:
 						{
 							char cell[MAX_CELL_NAME + 1];
 							ZeroMemory(cell, sizeof(cell));
@@ -322,7 +323,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 							break;
 						}
 
-						case ID_UPDATE_EXTERIOR:
+						case pTypes::ID_UPDATE_EXTERIOR:
 						{
 							unsigned int baseID;
 							signed int x, y;

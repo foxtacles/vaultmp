@@ -1,10 +1,6 @@
 #ifndef VAULTMP_H
 #define VAULTMP_H
 
-#ifndef _GLIBCXX_USE_NANOSLEEP
-#define _GLIBCXX_USE_NANOSLEEP // remove that
-#endif
-
 #ifndef THREAD_PRIORITY_NORMAL
 #define THREAD_PRIORITY_NORMAL 1000
 #endif

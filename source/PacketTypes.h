@@ -15,7 +15,7 @@
 #pragma pack(push, 1)
 struct pTypeSpecifier
 {
-	unsigned char type;
+	pTypes type;
 };
 #pragma pack(pop)
 
@@ -28,7 +28,7 @@ class pDefault
 		pDefault& operator=(const pDefault&) = delete;
 
 	protected:
-		pDefault(unsigned char type)
+		pDefault(pTypes type)
 		{
 			this->type.type = type;
 			this->stream = nullptr;
@@ -84,7 +84,7 @@ class pGameDefault : public pDefault
 		friend class PacketFactory;
 
 	protected:
-		pGameDefault(unsigned char type) : pDefault(type)
+		pGameDefault(pTypes type) : pDefault(type)
 		{
 			base();
 		};
@@ -135,7 +135,7 @@ class pObjectDefault : public pDefault
 		friend class PacketFactory;
 
 	protected:
-		pObjectDefault(unsigned char type, NetworkID id) : pDefault(type)
+		pObjectDefault(pTypes type, NetworkID id) : pDefault(type)
 		{
 			this->id = id;
 			base();
@@ -193,7 +193,7 @@ class pObjectNewDefault : public pObjectDefault
 		friend class PacketFactory;
 
 	protected:
-		pObjectNewDefault(unsigned char type, unsigned int refID, unsigned int baseID, NetworkID id) : pObjectDefault(type, id)
+		pObjectNewDefault(pTypes type, unsigned int refID, unsigned int baseID, NetworkID id) : pObjectDefault(type, id)
 		{
 			this->refID = refID;
 			this->baseID = baseID;
@@ -262,7 +262,7 @@ class pObjectUpdateDefault : public pObjectDefault
 		friend class PacketFactory;
 
 	protected:
-		pObjectUpdateDefault(unsigned char type, unsigned char sub_type, NetworkID id) : pObjectDefault(type, id)
+		pObjectUpdateDefault(pTypes type, pTypes sub_type, NetworkID id) : pObjectDefault(type, id)
 		{
 			this->sub_type.type = sub_type;
 			base();
@@ -346,7 +346,7 @@ class pGameAuth : public pGameDefault
 	private:
 		_pGameAuth _data;
 
-		pGameAuth(const char* name, const char* pwd) : pGameDefault(ID_GAME_AUTH)
+		pGameAuth(const char* name, const char* pwd) : pGameDefault(pTypes::ID_GAME_AUTH)
 		{
 			strncpy(_data.name, name, sizeof(_data.name));
 			strncpy(_data.pwd, pwd, sizeof(_data.pwd));
@@ -363,7 +363,7 @@ class pGameLoad : public pGameDefault
 		friend class PacketFactory;
 
 	private:
-		pGameLoad() : pGameDefault(ID_GAME_LOAD)
+		pGameLoad() : pGameDefault(pTypes::ID_GAME_LOAD)
 		{
 			construct();
 		}
@@ -380,7 +380,7 @@ class pGameMod : public pGameDefault
 	private:
 		_pGameMod _data;
 
-		pGameMod(const char* modfile, unsigned int crc) : pGameDefault(ID_GAME_MOD)
+		pGameMod(const char* modfile, unsigned int crc) : pGameDefault(pTypes::ID_GAME_MOD)
 		{
 			strncpy(_data.modfile, modfile, sizeof(_data.modfile));
 			_data.crc = crc;
@@ -397,7 +397,7 @@ class pGameStart : public pGameDefault
 		friend class PacketFactory;
 
 	private:
-		pGameStart() : pGameDefault(ID_GAME_START)
+		pGameStart() : pGameDefault(pTypes::ID_GAME_START)
 		{
 			construct();
 		}
@@ -414,7 +414,7 @@ class pGameEnd : public pGameDefault
 	private:
 		pTypeSpecifier reason;
 
-		pGameEnd(unsigned char _reason) : pGameDefault(ID_GAME_END)
+		pGameEnd(pTypes _reason) : pGameDefault(pTypes::ID_GAME_END)
 		{
 			reason.type = _reason;
 			construct(&reason, sizeof(reason));
@@ -432,7 +432,7 @@ class pGameMessage : public pGameDefault
 	private:
 		char message[MAX_MESSAGE_LENGTH];
 
-		pGameMessage(const char* message) : pGameDefault(ID_GAME_MESSAGE)
+		pGameMessage(const char* message) : pGameDefault(pTypes::ID_GAME_MESSAGE)
 		{
 			strncpy(this->message, message, sizeof(this->message));
 			construct(this->message, sizeof(this->message));
@@ -450,7 +450,7 @@ class pGameChat : public pGameDefault
 	private:
 		char message[MAX_CHAT_LENGTH];
 
-		pGameChat(const char* message) : pGameDefault(ID_GAME_CHAT)
+		pGameChat(const char* message) : pGameDefault(pTypes::ID_GAME_CHAT)
 		{
 			strncpy(this->message, message, sizeof(this->message));
 			construct(this->message, sizeof(this->message));
@@ -495,7 +495,7 @@ class pObjectNew : public pObjectNewDefault
 	private:
 		_pObjectNew _data;
 
-		pObjectNew(NetworkID id, unsigned int refID, unsigned int baseID, const char* name, double X, double Y, double Z, double aX, double aY, double aZ, unsigned int cell, bool enabled) : pObjectNewDefault(ID_OBJECT_NEW, refID, baseID, id)
+		pObjectNew(NetworkID id, unsigned int refID, unsigned int baseID, const char* name, double X, double Y, double Z, double aX, double aY, double aZ, unsigned int cell, bool enabled) : pObjectNewDefault(pTypes::ID_OBJECT_NEW, refID, baseID, id)
 		{
 			strncpy(this->_data.name, name, sizeof(this->_data.name));
 			_data.X = X;
@@ -508,7 +508,7 @@ class pObjectNew : public pObjectNewDefault
 			_data.enabled = enabled;
 			construct(&_data, sizeof(_data));
 		}
-		pObjectNew(NetworkID id, unsigned int refID, unsigned int baseID, const _pObjectNew& data) : pObjectNewDefault(ID_OBJECT_NEW, refID, baseID, id)
+		pObjectNew(NetworkID id, unsigned int refID, unsigned int baseID, const _pObjectNew& data) : pObjectNewDefault(pTypes::ID_OBJECT_NEW, refID, baseID, id)
 		{
 			_data = data;
 			construct(&_data, sizeof(_data));
@@ -532,7 +532,7 @@ class pItemNew : public pObjectNewDefault
 	private:
 		_pItemNew _data;
 
-		pItemNew(const pDefault* _data_pObjectNew, unsigned int count, double condition, bool equipped, bool silent, bool stick) : pObjectNewDefault(ID_ITEM_NEW, PacketFactory::ExtractReference(_data_pObjectNew), PacketFactory::ExtractBase(_data_pObjectNew), PacketFactory::ExtractNetworkID(_data_pObjectNew))
+		pItemNew(const pDefault* _data_pObjectNew, unsigned int count, double condition, bool equipped, bool silent, bool stick) : pObjectNewDefault(pTypes::ID_ITEM_NEW, PacketFactory::ExtractReference(_data_pObjectNew), PacketFactory::ExtractBase(_data_pObjectNew), PacketFactory::ExtractNetworkID(_data_pObjectNew))
 		{
 			memcpy(&this->_data._data_pObjectNew, PacketFactory::ExtractRawData(_data_pObjectNew), pObjectNew::data_length());
 			_data.count = count;
@@ -542,7 +542,7 @@ class pItemNew : public pObjectNewDefault
 			_data.stick = stick;
 			construct(&_data, sizeof(_data));
 		}
-		pItemNew(NetworkID id, unsigned int refID, unsigned int baseID, _pItemNew& data) : pObjectNewDefault(ID_ITEM_NEW, refID, baseID, id)
+		pItemNew(NetworkID id, unsigned int refID, unsigned int baseID, _pItemNew& data) : pObjectNewDefault(pTypes::ID_ITEM_NEW, refID, baseID, id)
 		{
 			_data = data;
 			construct(&_data, sizeof(_data));
@@ -573,7 +573,7 @@ class pContainerNew : public pObjectNewDefault
 	private:
 		unsigned char* _data;
 
-		pContainerNew(const pDefault* _data_pObjectNew, vector<pPacket>& _data_pItemNew) : pObjectNewDefault(ID_CONTAINER_NEW, PacketFactory::ExtractReference(_data_pObjectNew), PacketFactory::ExtractBase(_data_pObjectNew), PacketFactory::ExtractNetworkID(_data_pObjectNew))
+		pContainerNew(const pDefault* _data_pObjectNew, const vector<pPacket>& _data_pItemNew) : pObjectNewDefault(pTypes::ID_CONTAINER_NEW, PacketFactory::ExtractReference(_data_pObjectNew), PacketFactory::ExtractBase(_data_pObjectNew), PacketFactory::ExtractNetworkID(_data_pObjectNew))
 		{
 			unsigned int at = 0;
 			unsigned int length = pItemNew::as_packet_length();
@@ -607,7 +607,7 @@ class pContainerNew : public pObjectNewDefault
 
 			construct(_data, mem);
 		}
-		pContainerNew(NetworkID id, unsigned int refID, unsigned int baseID, const unsigned char* data) : pObjectNewDefault(ID_CONTAINER_NEW, refID, baseID, id)
+		pContainerNew(NetworkID id, unsigned int refID, unsigned int baseID, const unsigned char* data) : pObjectNewDefault(pTypes::ID_CONTAINER_NEW, refID, baseID, id)
 		{
 			unsigned int mem = pContainerNew::data_length(data);
 			_data = new unsigned char[mem];
@@ -645,7 +645,7 @@ class pActorNew : public pObjectNewDefault
 	private:
 		unsigned char* _data;
 
-		pActorNew(const pDefault* _data_pContainerNew, const map<unsigned char, double>& values, const map<unsigned char, double>& baseValues, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking, bool dead) : pObjectNewDefault(ID_ACTOR_NEW, PacketFactory::ExtractReference(_data_pContainerNew), PacketFactory::ExtractBase(_data_pContainerNew), PacketFactory::ExtractNetworkID(_data_pContainerNew))
+		pActorNew(const pDefault* _data_pContainerNew, const map<unsigned char, double>& values, const map<unsigned char, double>& baseValues, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking, bool dead) : pObjectNewDefault(pTypes::ID_ACTOR_NEW, PacketFactory::ExtractReference(_data_pContainerNew), PacketFactory::ExtractBase(_data_pContainerNew), PacketFactory::ExtractNetworkID(_data_pContainerNew))
 		{
 			unsigned int at = 0;
 			unsigned int length = sizeof(unsigned char) + sizeof(double);
@@ -701,7 +701,7 @@ class pActorNew : public pObjectNewDefault
 
 			construct(_data, mem);
 		}
-		pActorNew(NetworkID id, unsigned int refID, unsigned int baseID, const unsigned char* data) : pObjectNewDefault(ID_ACTOR_NEW, refID, baseID, id)
+		pActorNew(NetworkID id, unsigned int refID, unsigned int baseID, const unsigned char* data) : pObjectNewDefault(pTypes::ID_ACTOR_NEW, refID, baseID, id)
 		{
 			unsigned int mem = pActorNew::data_length(data);
 			_data = new unsigned char[mem];
@@ -740,7 +740,7 @@ class pPlayerNew : public pObjectNewDefault
 	private:
 		unsigned char* _data;
 
-		pPlayerNew(const pDefault* _data_pActorNew, map<unsigned char, pair<unsigned char, bool> >& controls) : pObjectNewDefault(ID_PLAYER_NEW, PacketFactory::ExtractReference(_data_pActorNew), PacketFactory::ExtractBase(_data_pActorNew), PacketFactory::ExtractNetworkID(_data_pActorNew))
+		pPlayerNew(const pDefault* _data_pActorNew, const map<unsigned char, pair<unsigned char, bool>>& controls) : pObjectNewDefault(pTypes::ID_PLAYER_NEW, PacketFactory::ExtractReference(_data_pActorNew), PacketFactory::ExtractBase(_data_pActorNew), PacketFactory::ExtractNetworkID(_data_pActorNew))
 		{
 			unsigned int at = 0;
 			unsigned int length = sizeof(unsigned char) + sizeof(unsigned char) + sizeof(bool);
@@ -757,7 +757,7 @@ class pPlayerNew : public pObjectNewDefault
 
 			if (size > 0)
 			{
-				map<unsigned char, pair<unsigned char, bool> >::iterator it;
+				map<unsigned char, pair<unsigned char, bool>>::const_iterator it;
 
 				for (it = controls.begin(); it != controls.end(); ++it, at += length)
 				{
@@ -787,7 +787,7 @@ class pObjectRemove : public pObjectDefault
 		friend class PacketFactory;
 
 	private:
-		pObjectRemove(NetworkID id) : pObjectDefault(ID_OBJECT_REMOVE, id)
+		pObjectRemove(NetworkID id) : pObjectDefault(pTypes::ID_OBJECT_REMOVE, id)
 		{
 			construct();
 		}
@@ -821,7 +821,7 @@ class pObjectPos : public pObjectUpdateDefault
 	private:
 		_pObjectPos _data;
 
-		pObjectPos(NetworkID id, double X, double Y, double Z) : pObjectUpdateDefault(ID_OBJECT_UPDATE, ID_UPDATE_POS, id)
+		pObjectPos(NetworkID id, double X, double Y, double Z) : pObjectUpdateDefault(pTypes::ID_OBJECT_UPDATE, pTypes::ID_UPDATE_POS, id)
 		{
 			_data.X = X;
 			_data.Y = Y;
@@ -841,7 +841,7 @@ class pObjectAngle : public pObjectUpdateDefault
 	private:
 		_pObjectAngle _data;
 
-		pObjectAngle(NetworkID id, unsigned char axis, double value) : pObjectUpdateDefault(ID_OBJECT_UPDATE, ID_UPDATE_ANGLE, id)
+		pObjectAngle(NetworkID id, unsigned char axis, double value) : pObjectUpdateDefault(pTypes::ID_OBJECT_UPDATE, pTypes::ID_UPDATE_ANGLE, id)
 		{
 			_data.axis = axis;
 			_data.value = value;
@@ -860,7 +860,7 @@ class pObjectCell : public pObjectUpdateDefault
 	private:
 		unsigned int cell;
 
-		pObjectCell(NetworkID id, unsigned int cell) : pObjectUpdateDefault(ID_OBJECT_UPDATE, ID_UPDATE_CELL, id)
+		pObjectCell(NetworkID id, unsigned int cell) : pObjectUpdateDefault(pTypes::ID_OBJECT_UPDATE, pTypes::ID_UPDATE_CELL, id)
 		{
 			this->cell = cell;
 			construct(&this->cell, sizeof(this->cell));
@@ -880,7 +880,7 @@ class pContainerUpdate : public pObjectUpdateDefault
 	private:
 		unsigned char* _data;
 
-		pContainerUpdate(NetworkID id, const ContainerDiff& diff) : pObjectUpdateDefault(ID_CONTAINER_UPDATE, ID_UPDATE_CONTAINER, id)
+		pContainerUpdate(NetworkID id, const ContainerDiff& diff) : pObjectUpdateDefault(pTypes::ID_CONTAINER_UPDATE, pTypes::ID_UPDATE_CONTAINER, id)
 		{
 			unsigned int at = 0;
 			unsigned int length = sizeof(NetworkID);
@@ -971,7 +971,7 @@ class pActorValue : public pObjectUpdateDefault
 	private:
 		_pActorValue _data;
 
-		pActorValue(NetworkID id, bool base, unsigned char index, double value) : pObjectUpdateDefault(ID_ACTOR_UPDATE, ID_UPDATE_VALUE, id)
+		pActorValue(NetworkID id, bool base, unsigned char index, double value) : pObjectUpdateDefault(pTypes::ID_ACTOR_UPDATE, pTypes::ID_UPDATE_VALUE, id)
 		{
 			_data.base = base;
 			_data.index = index;
@@ -991,7 +991,7 @@ class pActorState : public pObjectUpdateDefault
 	private:
 		_pActorState _data;
 
-		pActorState(NetworkID id, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking) : pObjectUpdateDefault(ID_ACTOR_UPDATE, ID_UPDATE_STATE, id)
+		pActorState(NetworkID id, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking) : pObjectUpdateDefault(pTypes::ID_ACTOR_UPDATE, pTypes::ID_UPDATE_STATE, id)
 		{
 			_data.moving = moving;
 			_data.movingxy = movingxy;
@@ -1013,7 +1013,7 @@ class pActorDead : public pObjectUpdateDefault
 	private:
 		_pActorDead _data;
 
-		pActorDead(NetworkID id, bool dead, unsigned short limbs, signed char cause) : pObjectUpdateDefault(ID_ACTOR_UPDATE, ID_UPDATE_DEAD, id)
+		pActorDead(NetworkID id, bool dead, unsigned short limbs, signed char cause) : pObjectUpdateDefault(pTypes::ID_ACTOR_UPDATE, pTypes::ID_UPDATE_DEAD, id)
 		{
 			_data.dead = dead;
 			_data.limbs = limbs;
@@ -1033,7 +1033,7 @@ class pActorFireweapon : public pObjectUpdateDefault
 	private:
 		_pActorFireweapon _data;
 
-		pActorFireweapon(NetworkID id, unsigned int weapon) : pObjectUpdateDefault(ID_ACTOR_UPDATE, ID_UPDATE_FIREWEAPON, id)
+		pActorFireweapon(NetworkID id, unsigned int weapon) : pObjectUpdateDefault(pTypes::ID_ACTOR_UPDATE, pTypes::ID_UPDATE_FIREWEAPON, id)
 		{
 			_data.weapon = weapon;
 			construct(&_data, sizeof(_data));
@@ -1073,7 +1073,7 @@ class pPlayerControl : public pObjectUpdateDefault
 	private:
 		_pPlayerControl _data;
 
-		pPlayerControl(NetworkID id, unsigned char control, unsigned char key) : pObjectUpdateDefault(ID_PLAYER_UPDATE, ID_UPDATE_CONTROL, id)
+		pPlayerControl(NetworkID id, unsigned char control, unsigned char key) : pObjectUpdateDefault(pTypes::ID_PLAYER_UPDATE, pTypes::ID_UPDATE_CONTROL, id)
 		{
 			_data.control = control;
 			_data.key = key;
@@ -1092,7 +1092,7 @@ class pPlayerInterior : public pObjectUpdateDefault
 	private:
 		_pPlayerInterior _data;
 
-		pPlayerInterior(NetworkID id, const char* cell) : pObjectUpdateDefault(ID_PLAYER_UPDATE, ID_UPDATE_INTERIOR, id)
+		pPlayerInterior(NetworkID id, const char* cell) : pObjectUpdateDefault(pTypes::ID_PLAYER_UPDATE, pTypes::ID_UPDATE_INTERIOR, id)
 		{
 			strncpy(_data.cell, cell, sizeof(_data.cell));
 			construct(&_data, sizeof(_data));
@@ -1110,7 +1110,7 @@ class pPlayerExterior : public pObjectUpdateDefault
 	private:
 		_pPlayerExterior _data;
 
-		pPlayerExterior(NetworkID id, unsigned int baseID, signed int x, signed int y) : pObjectUpdateDefault(ID_PLAYER_UPDATE, ID_UPDATE_EXTERIOR, id)
+		pPlayerExterior(NetworkID id, unsigned int baseID, signed int x, signed int y) : pObjectUpdateDefault(pTypes::ID_PLAYER_UPDATE, pTypes::ID_UPDATE_EXTERIOR, id)
 		{
 			_data.baseID = baseID;
 			_data.x = x;
@@ -1121,6 +1121,174 @@ class pPlayerExterior : public pObjectUpdateDefault
 		{
 			deconstruct(&_data, sizeof(_data));
 		}
+};
+
+template<typename... Args>
+struct PacketFactory::_CreatePacket<pTypes::ID_GAME_AUTH, Args...> {
+	static pPacket CreatePacket(Args... args) {
+		return pPacket(new pGameAuth(args...), FreePacket);
+	}
+};
+
+template<>
+struct PacketFactory::_CreatePacket<pTypes::ID_GAME_LOAD> {
+	static pPacket CreatePacket() {
+		return pPacket(new pGameLoad(), FreePacket);
+	}
+};
+
+template<typename... Args>
+struct PacketFactory::_CreatePacket<pTypes::ID_GAME_MOD, Args...> {
+	static pPacket CreatePacket(Args... args) {
+		return pPacket(new pGameMod(args...), FreePacket);
+	}
+};
+
+template<>
+struct PacketFactory::_CreatePacket<pTypes::ID_GAME_START> {
+	static pPacket CreatePacket() {
+		return pPacket(new pGameStart(), FreePacket);
+	}
+};
+
+template<typename... Args>
+struct PacketFactory::_CreatePacket<pTypes::ID_GAME_END, Args...> {
+	static pPacket CreatePacket(Args... args) {
+		return pPacket(new pGameEnd(args...), FreePacket);
+	}
+};
+
+template<typename... Args>
+struct PacketFactory::_CreatePacket<pTypes::ID_GAME_MESSAGE, Args...> {
+	static pPacket CreatePacket(Args... args) {
+		return pPacket(new pGameMessage(args...), FreePacket);
+	}
+};
+
+template<typename... Args>
+struct PacketFactory::_CreatePacket<pTypes::ID_GAME_CHAT, Args...> {
+	static pPacket CreatePacket(Args... args) {
+		return pPacket(new pGameChat(args...), FreePacket);
+	}
+};
+
+template<typename... Args>
+struct PacketFactory::_CreatePacket<pTypes::ID_OBJECT_NEW, Args...> {
+	static pPacket CreatePacket(Args... args) {
+		return pPacket(new pObjectNew(args...), FreePacket);
+	}
+};
+
+template<typename... Args>
+struct PacketFactory::_CreatePacket<pTypes::ID_ITEM_NEW, Args...> {
+	static pPacket CreatePacket(Args... args) {
+		return pPacket(new pItemNew(args...), FreePacket);
+	}
+};
+
+template<typename... Args>
+struct PacketFactory::_CreatePacket<pTypes::ID_CONTAINER_NEW, Args...> {
+	static pPacket CreatePacket(Args... args) {
+		return pPacket(new pContainerNew(args...), FreePacket);
+	}
+};
+
+template<typename... Args>
+struct PacketFactory::_CreatePacket<pTypes::ID_ACTOR_NEW, Args...> {
+	static pPacket CreatePacket(Args... args) {
+		return pPacket(new pActorNew(args...), FreePacket);
+	}
+};
+
+template<typename... Args>
+struct PacketFactory::_CreatePacket<pTypes::ID_PLAYER_NEW, Args...> {
+	static pPacket CreatePacket(Args... args) {
+		return pPacket(new pPlayerNew(args...), FreePacket);
+	}
+};
+
+template<typename... Args>
+struct PacketFactory::_CreatePacket<pTypes::ID_OBJECT_REMOVE, Args...> {
+	static pPacket CreatePacket(Args... args) {
+		return pPacket(new pObjectRemove(args...), FreePacket);
+	}
+};
+
+template<typename... Args>
+struct PacketFactory::_CreatePacket<pTypes::ID_UPDATE_POS, Args...> {
+	static pPacket CreatePacket(Args... args) {
+		return pPacket(new pObjectPos(args...), FreePacket);
+	}
+};
+
+template<typename... Args>
+struct PacketFactory::_CreatePacket<pTypes::ID_UPDATE_ANGLE, Args...> {
+	static pPacket CreatePacket(Args... args) {
+		return pPacket(new pObjectAngle(args...), FreePacket);
+	}
+};
+
+template<typename... Args>
+struct PacketFactory::_CreatePacket<pTypes::ID_UPDATE_CELL, Args...> {
+	static pPacket CreatePacket(Args... args) {
+		return pPacket(new pObjectCell(args...), FreePacket);
+	}
+};
+
+template<typename... Args>
+struct PacketFactory::_CreatePacket<pTypes::ID_UPDATE_CONTAINER, Args...> {
+	static pPacket CreatePacket(Args... args) {
+		return pPacket(new pContainerUpdate(args...), FreePacket);
+	}
+};
+
+template<typename... Args>
+struct PacketFactory::_CreatePacket<pTypes::ID_UPDATE_VALUE, Args...> {
+	static pPacket CreatePacket(Args... args) {
+		return pPacket(new pActorValue(args...), FreePacket);
+	}
+};
+
+template<typename... Args>
+struct PacketFactory::_CreatePacket<pTypes::ID_UPDATE_STATE, Args...> {
+	static pPacket CreatePacket(Args... args) {
+		return pPacket(new pActorState(args...), FreePacket);
+	}
+};
+
+template<typename... Args>
+struct PacketFactory::_CreatePacket<pTypes::ID_UPDATE_DEAD, Args...> {
+	static pPacket CreatePacket(Args... args) {
+		return pPacket(new pActorDead(args...), FreePacket);
+	}
+};
+
+template<typename... Args>
+struct PacketFactory::_CreatePacket<pTypes::ID_UPDATE_FIREWEAPON, Args...> {
+	static pPacket CreatePacket(Args... args) {
+		return pPacket(new pActorFireweapon(args...), FreePacket);
+	}
+};
+
+template<typename... Args>
+struct PacketFactory::_CreatePacket<pTypes::ID_UPDATE_CONTROL, Args...> {
+	static pPacket CreatePacket(Args... args) {
+		return pPacket(new pPlayerControl(args...), FreePacket);
+	}
+};
+
+template<typename... Args>
+struct PacketFactory::_CreatePacket<pTypes::ID_UPDATE_INTERIOR, Args...> {
+	static pPacket CreatePacket(Args... args) {
+		return pPacket(new pPlayerInterior(args...), FreePacket);
+	}
+};
+
+template<typename... Args>
+struct PacketFactory::_CreatePacket<pTypes::ID_UPDATE_EXTERIOR, Args...> {
+	static pPacket CreatePacket(Args... args) {
+		return pPacket(new pPlayerExterior(args...), FreePacket);
+	}
 };
 
 #endif

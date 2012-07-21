@@ -1,4 +1,5 @@
 #include "Container.h"
+#include "PacketTypes.h"
 
 #ifdef VAULTMP_DEBUG
 Debug* Container::debug;
@@ -559,7 +560,7 @@ pPacket Container::toPacket()
 	}
 
 	pPacket pObjectNew = Object::toPacket();
-	pPacket packet = PacketFactory::CreatePacket(ID_CONTAINER_NEW, pObjectNew.get(), &items);
+	pPacket packet = PacketFactory::CreatePacket<pTypes::ID_CONTAINER_NEW>(pObjectNew.get(), move(items));
 
 	return packet;
 }

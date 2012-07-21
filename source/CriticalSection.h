@@ -21,7 +21,6 @@ using namespace std;
 
 class CriticalSection
 {
-
 	private:
 		recursive_timed_mutex cs;
 

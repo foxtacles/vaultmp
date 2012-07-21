@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "PacketTypes.h"
 
 using namespace std;
 
@@ -8,7 +9,7 @@ unsigned int Player::default_cell;
 #endif
 
 #ifdef VAULTMP_DEBUG
-Debug* Player::debug = nullptr;
+Debug* Player::debug;
 #endif
 
 Player::Player(unsigned int refID, unsigned int baseID) : Actor(refID, baseID)
@@ -144,7 +145,7 @@ pPacket Player::toPacket()
 		controls.insert(make_pair(_data, make_pair(this->GetPlayerControl(_data), this->GetPlayerControlEnabled(_data))));
 
 	pPacket pActorNew = Actor::toPacket();
-	pPacket packet = PacketFactory::CreatePacket(ID_PLAYER_NEW, pActorNew.get(), &controls);
+	pPacket packet = PacketFactory::CreatePacket<pTypes::ID_PLAYER_NEW>(pActorNew.get(), controls);
 
 	return packet;
 }

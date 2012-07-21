@@ -247,14 +247,14 @@ class FactoryObject
 /**
   * \brief Tries to cast the instance pointer of a FactoryObject
   */
-template <typename T>
+template<typename T>
 T* vaultcast(const FactoryObject& object) noexcept;
-template <>
+template<>
 inline Object* vaultcast(const FactoryObject& object) noexcept
 {
 	return reinterpret_cast<Object*>(object.reference);
 }
-template <>
+template<>
 inline Item* vaultcast(const FactoryObject& object) noexcept
 {
 	if (object.type & ID_ITEM)
@@ -262,7 +262,7 @@ inline Item* vaultcast(const FactoryObject& object) noexcept
 	else
 		return nullptr;
 }
-template <>
+template<>
 inline Container* vaultcast(const FactoryObject& object) noexcept
 {
 	if (object.type & ALL_CONTAINERS)
@@ -270,7 +270,7 @@ inline Container* vaultcast(const FactoryObject& object) noexcept
 	else
 		return nullptr;
 }
-template <>
+template<>
 inline Actor* vaultcast(const FactoryObject& object) noexcept
 {
 	if (object.type & ALL_ACTORS)
@@ -278,7 +278,7 @@ inline Actor* vaultcast(const FactoryObject& object) noexcept
 	else
 		return nullptr;
 }
-template <>
+template<>
 inline Player* vaultcast(const FactoryObject& object) noexcept
 {
 	if (object.type & ID_PLAYER)
