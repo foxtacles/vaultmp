@@ -372,7 +372,7 @@ unsigned long long Script::Timer_Respawn(NetworkID id)
 	RakNetGUID guid = Client::GetClientFromPlayer(id)->GetGUID();
 
 	NetworkResponse response{Network::CreateResponse(
-		PacketFactory::CreatePacket(ID_UPDATE_DEAD, id, false, 0, 0),
+		PacketFactory::Create<pTypes::ID_UPDATE_DEAD>(id, false, 0, 0),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid)
 	};
 
@@ -383,7 +383,7 @@ unsigned long long Script::Timer_Respawn(NetworkID id)
 		const Cell& cell = Cell::Lookup(_cell);
 
 		response.push_back(Network::CreateResponse(
-			PacketFactory::CreatePacket(ID_UPDATE_EXTERIOR, static_cast<NetworkID>(0), cell.GetWorld(), cell.GetX(), cell.GetY()),
+			PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, cell.GetWorld(), cell.GetX(), cell.GetY()),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 	catch (...)
@@ -391,7 +391,7 @@ unsigned long long Script::Timer_Respawn(NetworkID id)
 		const Record& record = Record::Lookup(_cell);
 
 		response.push_back(Network::CreateResponse(
-			PacketFactory::CreatePacket(ID_UPDATE_INTERIOR, static_cast<NetworkID>(0), record.GetName().c_str()),
+			PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(id, record.GetName().c_str()),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 
@@ -559,7 +559,7 @@ void Script::OnActorUnequipItem(FactoryObject& reference, unsigned int baseID, d
 	}
 }
 
-void Script::OnPlayerDisconnect(FactoryObject& reference, unsigned char reason)
+void Script::OnPlayerDisconnect(FactoryObject& reference, pTypes reason)
 {
 	NetworkID id = (*reference)->GetNetworkID();
 
@@ -679,7 +679,7 @@ bool Script::UIMessage(NetworkID id, const char* message)
 	}
 
 	Network::Queue(NetworkResponse{Network::CreateResponse(
-		PacketFactory::CreatePacket(ID_GAME_MESSAGE, _message.c_str()),
+		PacketFactory::Create<pTypes::ID_GAME_MESSAGE>(_message),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, id ? vector<RakNetGUID>{Client::GetClientFromPlayer(id)->GetGUID()} : Client::GetNetworkList(nullptr))
 	});
 
@@ -707,7 +707,7 @@ bool Script::ChatMessage(NetworkID id, const char* message)
 	}
 
 	Network::Queue(NetworkResponse{Network::CreateResponse(
-		PacketFactory::CreatePacket(ID_GAME_CHAT, _message.c_str()),
+		PacketFactory::Create<pTypes::ID_GAME_CHAT>(_message),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, id ? vector<RakNetGUID>{Client::GetClientFromPlayer(id)->GetGUID()} : Client::GetNetworkList(nullptr))
 	});
 
@@ -1221,14 +1221,14 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 				object->SetGameCell(_new_cell);
 
 				response.push_back(Network::CreateResponse(
-					PacketFactory::CreatePacket(ID_UPDATE_CELL, id, new_cell),
+					PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, _new_cell),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 				);
 
 				if (player)
 				{
 					response.push_back(Network::CreateResponse(
-						PacketFactory::CreatePacket(ID_UPDATE_EXTERIOR, id, new_cell->GetWorld(), new_cell->GetX(), new_cell->GetY()),
+						PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, new_cell->GetWorld(), new_cell->GetX(), new_cell->GetY()),
 						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
 					);
 				}
@@ -1238,7 +1238,7 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 		}
 
 		response.push_back(Network::CreateResponse(
-			PacketFactory::CreatePacket(ID_UPDATE_POS, id, X, Y, Z),
+			PacketFactory::Create<pTypes::ID_UPDATE_POS>(id, X, Y, Z),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		);
 
@@ -1308,7 +1308,7 @@ bool Script::SetCell(NetworkID id, unsigned int cell, double X, double Y, double
 		object->SetGameCell(cell);
 
 		response.push_back(Network::CreateResponse(
-			PacketFactory::CreatePacket(ID_UPDATE_CELL, id, cell),
+			PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, cell),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		);
 
@@ -1317,14 +1317,14 @@ bool Script::SetCell(NetworkID id, unsigned int cell, double X, double Y, double
 			if (new_interior)
 			{
 				response.push_back(Network::CreateResponse(
-					PacketFactory::CreatePacket(ID_UPDATE_INTERIOR, id, new_interior->GetName().c_str()),
+					PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(id, new_interior->GetName().c_str()),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
 				);
 			}
 			else
 			{
 				response.push_back(Network::CreateResponse(
-					PacketFactory::CreatePacket(ID_UPDATE_EXTERIOR, id, new_exterior->GetWorld(), new_exterior->GetX(), new_exterior->GetY()),
+					PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, new_exterior->GetWorld(), new_exterior->GetX(), new_exterior->GetY()),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
 				);
 			}
@@ -1342,7 +1342,7 @@ bool Script::SetCell(NetworkID id, unsigned int cell, double X, double Y, double
 		object->SetGamePos(Axis_Z, Z);
 
 		response.push_back(Network::CreateResponse(
-			PacketFactory::CreatePacket(ID_UPDATE_POS, id, X, Y, Z),
+			PacketFactory::Create<pTypes::ID_UPDATE_POS>(id, X, Y, Z),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		);
 
@@ -1372,7 +1372,7 @@ bool Script::AddItem(NetworkID id, unsigned int baseID, unsigned int count, doub
 				ContainerDiff diff = container->AddItem(baseID, count, condition, silent);
 
 				Network::Queue(NetworkResponse{Network::CreateResponse(
-					PacketFactory::CreatePacket(ID_UPDATE_CONTAINER, id, &diff),
+					PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff)),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 				});
 
@@ -1405,7 +1405,7 @@ unsigned int Script::RemoveItem(NetworkID id, unsigned int baseID, unsigned int 
 				if (!diff.first.empty() || !diff.second.empty())
 				{
 					Network::Queue(NetworkResponse{Network::CreateResponse(
-						PacketFactory::CreatePacket(ID_UPDATE_CONTAINER, id, &diff),
+						PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff)),
 						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 					});
 
@@ -1435,7 +1435,7 @@ void Script::RemoveAllItems(NetworkID id)
 			if (!diff.first.empty() || !diff.second.empty())
 			{
 				Network::Queue(NetworkResponse{Network::CreateResponse(
-					PacketFactory::CreatePacket(ID_UPDATE_CONTAINER, id, &diff),
+					PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff)),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 				});
 
@@ -1457,7 +1457,7 @@ void Script::SetActorValue(NetworkID id, unsigned char index, double value)
 		{
 			if (actor->SetActorValue(index, value))
 				Network::Queue(NetworkResponse{Network::CreateResponse(
-					PacketFactory::CreatePacket(ID_UPDATE_VALUE, actor->GetNetworkID(), false, index, value),
+					PacketFactory::Create<pTypes::ID_UPDATE_VALUE>(actor->GetNetworkID(), false, index, value),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 				});
 		}
@@ -1476,7 +1476,7 @@ void Script::SetActorBaseValue(NetworkID id, unsigned char index, double value)
 		{
 			if (actor->SetActorBaseValue(index, value))
 				Network::Queue(NetworkResponse{Network::CreateResponse(
-					PacketFactory::CreatePacket(ID_UPDATE_VALUE, actor->GetNetworkID(), true, index, value),
+					PacketFactory::Create<pTypes::ID_UPDATE_VALUE>(actor->GetNetworkID(), true, index, value),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 				});
 		}
@@ -1506,7 +1506,7 @@ bool Script::EquipItem(NetworkID id, unsigned int baseID, bool silent, bool stic
 		if (!diff.first.empty() || !diff.second.empty())
 		{
 			Network::Queue(NetworkResponse{Network::CreateResponse(
-				PacketFactory::CreatePacket(ID_UPDATE_CONTAINER, id, &diff),
+				PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff)),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 			});
 
@@ -1541,7 +1541,7 @@ bool Script::UnequipItem(NetworkID id, unsigned int baseID, bool silent, bool st
 		if (!diff.first.empty() || !diff.second.empty())
 		{
 			Network::Queue(NetworkResponse{Network::CreateResponse(
-				PacketFactory::CreatePacket(ID_UPDATE_CONTAINER, id, &diff),
+				PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff)),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 			});
 
@@ -1574,7 +1574,7 @@ void Script::KillActor(NetworkID id, unsigned short limbs, signed char cause)
 		if (actor->SetActorDead(true))
 		{
 			Network::Queue(NetworkResponse{Network::CreateResponse(
-				PacketFactory::CreatePacket(ID_UPDATE_DEAD, actor->GetNetworkID(), true, limbs, cause),
+				PacketFactory::Create<pTypes::ID_UPDATE_DEAD>(actor->GetNetworkID(), true, limbs, cause),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 			});
 

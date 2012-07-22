@@ -163,7 +163,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				{
 					string message;
 					PacketFactory::Access<pTypes::ID_GAME_MESSAGE>(packet, message);
-					Game::net_UIMessage(message);
+					Game::net_UIMessage(move(message));
 					break;
 				}
 
@@ -171,7 +171,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				{
 					string message;
 					PacketFactory::Access<pTypes::ID_GAME_CHAT>(packet, message);
-					Game::net_ChatMessage(message);
+					Game::net_ChatMessage(move(message));
 					break;
 				}
 

@@ -78,7 +78,7 @@ class Item : public Object
 		/**
 		 * \brief For network transfer
 		 */
-		virtual pPacket toPacket();
+		virtual pPacket toPacket() const;
 };
 
 #endif

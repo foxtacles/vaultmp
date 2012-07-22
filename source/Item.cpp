@@ -136,7 +136,7 @@ Lockable* Item::SetBase(unsigned int baseID)
 }
 #endif
 
-pPacket Item::toPacket()
+pPacket Item::toPacket() const
 {
 	pPacket pObjectNew = Object::toPacket();
 	pPacket packet = PacketFactory::Create<pTypes::ID_ITEM_NEW>(pObjectNew.get(), this->GetItemCount(), this->GetItemCondition(), this->GetItemEquipped(), this->GetItemSilent(), this->GetItemStick());

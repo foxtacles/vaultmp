@@ -316,7 +316,7 @@ void Dedicated::DedicatedThread()
 						vector<RakNetGUID> closures;
 
 						for (const SingleResponse& _response : response)
-							if (*_response.get_packet()->get() == ID_GAME_END)
+							if (static_cast<pTypes>(*_response.get_packet()->get()) == pTypes::ID_GAME_END)
 								closures.insert(closures.end(), _response.get_targets().begin(), _response.get_targets().end());
 
 						Network::Dispatch(peer, move(response));

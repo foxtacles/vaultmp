@@ -257,7 +257,7 @@ class Interface : public API
 		 * \brief Executes a command once
 		 *
 		 * name refers to an existing command
-		 * key (optional) - a signed key (usually from the Lockable class) which is to later identify this command
+		 * key (optional) - a key (usually from the Lockable class) which is to later identify this command
 		 */
 		static void ExecuteCommand(string name, ParamContainer&&, unsigned int key = 0);
 

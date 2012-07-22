@@ -180,7 +180,7 @@ class Actor : public Container
 		/**
 		 * \brief For network transfer
 		 */
-		virtual pPacket toPacket();
+		virtual pPacket toPacket() const;
 };
 
 class ActorFunctor : public ObjectFunctor

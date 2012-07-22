@@ -136,7 +136,7 @@ Lockable* Player::SetPlayerSpawnCell(unsigned int cell)
 }
 #endif
 
-pPacket Player::toPacket()
+pPacket Player::toPacket() const
 {
 	vector<unsigned char> data = API::RetrieveAllControls();
 	map<unsigned char, pair<unsigned char, bool>> controls;

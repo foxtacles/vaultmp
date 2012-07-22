@@ -3,7 +3,6 @@
 
 #include "Dedicated.h"
 #include "Client.h"
-#include "../PacketTypes.h"
 #include "../Player.h"
 #include "../Network.h"
 #include "../VaultException.h"
@@ -44,7 +43,7 @@ class Server
 		/**
 		 * \brief Disconnects a client
 		 */
-		static NetworkResponse Disconnect(RakNetGUID guid, unsigned char reason);
+		static NetworkResponse Disconnect(RakNetGUID guid, pTypes reason);
 
 		/**
 		 * \brief Handles GetPos network packet
@@ -61,7 +60,7 @@ class Server
 		/**
 		 * \brief Handles container update network packet
 		 */
-		static NetworkResponse GetContainerUpdate(RakNetGUID guid, FactoryObject& reference, ContainerDiff diff);
+		static NetworkResponse GetContainerUpdate(RakNetGUID guid, FactoryObject& reference, const pair<list<NetworkID>, vector<pPacket>>& _diff);
 		/**
 		 * \brief Handles actor value network packet
 		 */

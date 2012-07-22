@@ -153,7 +153,7 @@ class Object : public Reference
 		/**
 		 * \brief For network transfer
 		 */
-		virtual pPacket toPacket();
+		virtual pPacket toPacket() const;
 };
 
 class ObjectFunctor : public ReferenceFunctor

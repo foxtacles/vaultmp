@@ -98,7 +98,7 @@ class Reference : private CriticalSection, public NetworkIDObject
 		/**
 		 * \brief For network transfer
 		 */
-		virtual pPacket toPacket() = 0;
+		virtual pPacket toPacket() const = 0;
 };
 
 class ReferenceFunctor : public VaultFunctor

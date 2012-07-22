@@ -29,6 +29,7 @@ struct Diff
 };
 
 typedef pair<list<NetworkID>, list<NetworkID>> ContainerDiff;
+typedef pair<list<NetworkID>, vector<pPacket>> ContainerDiffNet;
 typedef list<pair<unsigned int, Diff>> GameDiff;
 typedef pair<NetworkID, map<NetworkID, list<NetworkID>>> StripCopy;
 
@@ -76,7 +77,6 @@ class Container : public Object
 		virtual ~Container();
 
 	public:
-
 #ifdef VAULTMP_DEBUG
 		static void SetDebugHandler(Debug* debug);
 #endif
@@ -92,6 +92,9 @@ class Container : public Object
 		ContainerDiff Compare(NetworkID id) const;
 		NetworkID IsEquipped(unsigned int baseID) const;
 		GameDiff ApplyDiff(ContainerDiff& diff);
+
+		static ContainerDiff ToContainerDiff(const ContainerDiffNet& diff);
+		static ContainerDiffNet ToNetDiff(const ContainerDiff& diff);
 		static void FreeDiff(ContainerDiff& diff);
 
 		Lockable* getLock();
@@ -110,7 +113,7 @@ class Container : public Object
 		/**
 		 * \brief For network transfer
 		 */
-		virtual pPacket toPacket();
+		virtual pPacket toPacket() const;
 };
 
 #endif

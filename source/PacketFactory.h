@@ -440,7 +440,7 @@ class pGameAuth : public pGameDefault
 			deconstruct(&_data, sizeof(_data));
 		}
 
-		void access(string& name, string& pwd)
+		void access(string& name, string& pwd) const
 		{
 			name.assign(_data.name, find(_data.name, _data.name + sizeof(_data.name), 0));
 			pwd.assign(_data.pwd, find(_data.pwd, _data.pwd + sizeof(_data.pwd), 0));
@@ -502,9 +502,9 @@ class pGameMod : public pGameDefault
 	private:
 		_pGameMod _data;
 
-		pGameMod(const char* modfile, unsigned int crc) : pGameDefault(pTypes::ID_GAME_MOD)
+		pGameMod(const string& modfile, unsigned int crc) : pGameDefault(pTypes::ID_GAME_MOD)
 		{
-			strncpy(_data.modfile, modfile, sizeof(_data.modfile));
+			strncpy(_data.modfile, modfile.c_str(), sizeof(_data.modfile));
 			_data.crc = crc;
 			construct(&_data, sizeof(_data));
 		}
@@ -612,9 +612,9 @@ class pGameMessage : public pGameDefault
 	private:
 		char message[MAX_MESSAGE_LENGTH];
 
-		pGameMessage(const char* message) : pGameDefault(pTypes::ID_GAME_MESSAGE)
+		pGameMessage(const string& message) : pGameDefault(pTypes::ID_GAME_MESSAGE)
 		{
-			strncpy(this->message, message, sizeof(this->message));
+			strncpy(this->message, message.c_str(), sizeof(this->message));
 			construct(this->message, sizeof(this->message));
 		}
 		pGameMessage(const unsigned char* stream, unsigned int len) : pGameDefault(stream, len)
@@ -649,9 +649,9 @@ class pGameChat : public pGameDefault
 	private:
 		char message[MAX_CHAT_LENGTH];
 
-		pGameChat(const char* message) : pGameDefault(pTypes::ID_GAME_CHAT)
+		pGameChat(const string& message) : pGameDefault(pTypes::ID_GAME_CHAT)
 		{
-			strncpy(this->message, message, sizeof(this->message));
+			strncpy(this->message, message.c_str(), sizeof(this->message));
 			construct(this->message, sizeof(this->message));
 		}
 		pGameChat(const unsigned char* stream, unsigned int len) : pGameDefault(stream, len)

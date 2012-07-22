@@ -131,7 +131,7 @@ void Interface::EndSetup()
 		}
 	};
 
-	auto lcm = [=](int x, int y)
+	auto lcm = [=](unsigned int x, unsigned int y)
 	{
 		unsigned int temp = gcd(x, y);
 		return temp ? (x / temp * y) : 0;

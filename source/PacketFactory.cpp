@@ -167,7 +167,7 @@ const unsigned char* PacketFactory::ExtractRawData(const pDefault* packet)
 		}
 
 		default:
-			throw VaultException("Unhandled packet type %d", (int) packet->type.type);
+			throw VaultException("Unhandled packet type %d", packet->type.type);
 	}
 }
 
@@ -206,7 +206,7 @@ pPacket PacketFactory::ExtractPartial(const pDefault* packet)
 		}
 
 		default:
-			throw VaultException("Unhandled packet type %d", (int) packet->type.type);
+			throw VaultException("Unhandled packet type %d", packet->type.type);
 	}
 
 	return pPacket(_packet, FreePacket);

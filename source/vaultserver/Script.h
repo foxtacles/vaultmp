@@ -62,7 +62,7 @@ class Script
 		void (*fOnActorDeath)(NetworkID, unsigned short, signed char);
 		void (*fOnActorEquipItem)(NetworkID, unsigned int, double);
 		void (*fOnActorUnequipItem)(NetworkID, unsigned int, double);
-		void (*fOnPlayerDisconnect)(NetworkID, unsigned char);
+		void (*fOnPlayerDisconnect)(NetworkID, pTypes);
 		unsigned int (*fOnPlayerRequestGame)(NetworkID);
 		bool (*fOnPlayerChat)(NetworkID, char*);
 		bool (*fOnClientAuthenticate)(string, string);
@@ -95,7 +95,7 @@ class Script
 		static void OnActorDeath(FactoryObject& reference, unsigned short limbs, signed char cause);
 		static void OnActorEquipItem(FactoryObject& reference, unsigned int baseID, double condition);
 		static void OnActorUnequipItem(FactoryObject& reference, unsigned int baseID, double condition);
-		static void OnPlayerDisconnect(FactoryObject& reference, unsigned char reason);
+		static void OnPlayerDisconnect(FactoryObject& reference, pTypes reason);
 		static unsigned int OnPlayerRequestGame(FactoryObject& reference);
 		static bool OnPlayerChat(FactoryObject& reference, string& message);
 		static bool OnClientAuthenticate(string name, string pwd);

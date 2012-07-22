@@ -131,7 +131,7 @@ class Player : public Actor
 		/**
 		 * \brief For network transfer
 		 */
-		virtual pPacket toPacket();
+		virtual pPacket toPacket() const;
 };
 
 class PlayerFunctor : public ActorFunctor

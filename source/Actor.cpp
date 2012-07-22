@@ -217,7 +217,7 @@ bool Actor::IsActorJumping() const
 								   || (anim >= FalloutNV::AnimGroup_JumpLandForward && anim <= FalloutNV::AnimGroup_JumpLandRight))));
 }
 
-pPacket Actor::toPacket()
+pPacket Actor::toPacket() const
 {
 	vector<unsigned char> data = API::RetrieveAllValues();
 	map<unsigned char, double> values, baseValues;

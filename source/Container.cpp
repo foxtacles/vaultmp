@@ -28,7 +28,7 @@ Container::Container(const pDefault* packet) : Object(PacketFactory::ExtractPart
 
 	PacketFactory::Access<pTypes::ID_CONTAINER_NEW>(packet, items);
 
-	for (pPacket& _packet : items)
+	for (const pPacket& _packet : items)
 	{
 		NetworkID id = GameFactory::CreateKnownInstance(ID_ITEM, _packet.get());
 		this->AddItem(id);
@@ -437,6 +437,29 @@ GameDiff Container::ApplyDiff(ContainerDiff& diff)
 	return result;
 }
 
+ContainerDiff Container::ToContainerDiff(const ContainerDiffNet& diff)
+{
+	ContainerDiff _diff(make_pair(diff.first, list<NetworkID>()));
+
+	for (const auto& packet : diff.second)
+		_diff.second.emplace_back(GameFactory::CreateKnownInstance(ID_ITEM, packet.get()));
+
+	return _diff;
+}
+
+ContainerDiffNet Container::ToNetDiff(const ContainerDiff& diff)
+{
+	ContainerDiffNet _diff(make_pair(diff.first, vector<pPacket>()));
+
+	for (const auto& id : diff.second)
+	{
+		FactoryObject item = GameFactory::GetObject(id);
+		_diff.second.emplace_back(vaultcast<Item>(item)->toPacket());
+	}
+
+	return _diff;
+}
+
 void FreeDiff(ContainerDiff& diff)
 {
 	for (NetworkID& id : diff.second)
@@ -547,12 +570,12 @@ list<NetworkID> Container::GetItemTypes(string type) const
 }
 #endif
 
-pPacket Container::toPacket()
+pPacket Container::toPacket() const
 {
 	vector<pPacket> items;
 	items.reserve(container.size());
 
-	for (NetworkID& id : container)
+	for (const NetworkID& id : container)
 	{
 		FactoryObject _reference = GameFactory::GetObject(id);
 		Item* item = vaultcast<Item>(_reference);

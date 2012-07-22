@@ -32,9 +32,6 @@ Network::SingleResponse Network::CreateResponse(pPacket&& packet, PacketPriority
 
 void Network::Dispatch(RakPeerInterface* peer, NetworkResponse&& response)
 {
-	if (peer == nullptr)
-		throw VaultException("RakPeerInterface is NULL");
-
 	for (SingleResponse& s : response)
 	{
 #ifdef VAULTMP_DEBUG
@@ -51,9 +48,6 @@ bool Network::Dispatch(RakPeerInterface* peer)
 {
 	if (queue.empty() || !dequeue)
 		return false;
-
-	if (peer == nullptr)
-		throw VaultException("RakPeerInterface is NULL");
 
 	cs.StartSession();
 

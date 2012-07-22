@@ -1156,11 +1156,7 @@ void Game::net_ContainerUpdate(FactoryObject& reference, const pair<list<Network
 
 	// cleaner solution here
 
-	ContainerDiff diff(make_pair(move(_diff.first), list<NetworkID>()));
-
-	for (const auto& packet : _diff.second)
-		diff.second.emplace_back(GameFactory::CreateKnownInstance(ID_ITEM, packet.get()));
-
+	ContainerDiff diff = Container::ToContainerDiff(_diff);
 	NetworkID id = container->GetNetworkID();
 	GameFactory::LeaveReference(reference);
 
@@ -1659,16 +1655,8 @@ void Game::ScanContainer(FactoryObject& reference, vector<unsigned char>& data)
 
 		if (!diff.first.empty() || !diff.second.empty())
 		{
-			pair<list<NetworkID>, vector<pPacket>> _diff(make_pair(diff.first, vector<pPacket>()));
-
-			for (const auto& id : diff.second)
-			{
-				FactoryObject item = GameFactory::GetObject(id);
-				_diff.second.emplace_back(vaultcast<Item>(item)->toPacket());
-			}
-
 			Network::Queue(NetworkResponse{Network::CreateResponse(
-				PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(container->GetNetworkID(), _diff),
+				PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(container->GetNetworkID(), Container::ToNetDiff(diff)),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 			});
 
