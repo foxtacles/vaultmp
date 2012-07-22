@@ -80,7 +80,7 @@ class PacketFactory
 
 	public:
 		template<pTypes type, typename... Args>
-		inline static pPacket Create(const Args&... args) { return _Create<type, Args...>::Create(forward<const Args&>(args)...); };
+		inline static pPacket Create(Args&&... args) { return _Create<type, Args...>::Create(forward<Args>(args)...); };
 
 		template<pTypes type, typename... Args>
 		inline static void Access(const pDefault* packet, Args&... args) { _Access<type, Args...>::Access(packet, forward<Args&>(args)...); };
@@ -449,8 +449,8 @@ class pGameAuth : public pGameDefault
 
 template<typename... Args>
 struct PacketFactory::_Create<pTypes::ID_GAME_AUTH, Args...> {
-	inline static pPacket Create(const Args&... args) {
-		return pPacket(new pGameAuth(forward<const Args&>(args)...), FreePacket);
+	inline static pPacket Create(Args&&... args) {
+		return pPacket(new pGameAuth(forward<Args>(args)...), FreePacket);
 	}
 };
 
@@ -522,8 +522,8 @@ class pGameMod : public pGameDefault
 
 template<typename... Args>
 struct PacketFactory::_Create<pTypes::ID_GAME_MOD, Args...> {
-	inline static pPacket Create(const Args&... args) {
-		return pPacket(new pGameMod(forward<const Args&>(args)...), FreePacket);
+	inline static pPacket Create(Args&&... args) {
+		return pPacket(new pGameMod(forward<Args>(args)...), FreePacket);
 	}
 };
 
@@ -593,8 +593,8 @@ class pGameEnd : public pGameDefault
 
 template<typename... Args>
 struct PacketFactory::_Create<pTypes::ID_GAME_END, Args...> {
-	inline static pPacket Create(const Args&... args) {
-		return pPacket(new pGameEnd(forward<const Args&>(args)...), FreePacket);
+	inline static pPacket Create(Args&&... args) {
+		return pPacket(new pGameEnd(forward<Args>(args)...), FreePacket);
 	}
 };
 
@@ -630,8 +630,8 @@ class pGameMessage : public pGameDefault
 
 template<typename... Args>
 struct PacketFactory::_Create<pTypes::ID_GAME_MESSAGE, Args...> {
-	inline static pPacket Create(const Args&... args) {
-		return pPacket(new pGameMessage(forward<const Args&>(args)...), FreePacket);
+	inline static pPacket Create(Args&&... args) {
+		return pPacket(new pGameMessage(forward<Args>(args)...), FreePacket);
 	}
 };
 
@@ -667,8 +667,8 @@ class pGameChat : public pGameDefault
 
 template<typename... Args>
 struct PacketFactory::_Create<pTypes::ID_GAME_CHAT, Args...> {
-	inline static pPacket Create(const Args&... args) {
-		return pPacket(new pGameChat(forward<const Args&>(args)...), FreePacket);
+	inline static pPacket Create(Args&&... args) {
+		return pPacket(new pGameChat(forward<Args>(args)...), FreePacket);
 	}
 };
 
@@ -761,8 +761,8 @@ class pObjectNew : public pObjectNewDefault
 
 template<typename... Args>
 struct PacketFactory::_Create<pTypes::ID_OBJECT_NEW, Args...> {
-	inline static pPacket Create(const Args&... args) {
-		return pPacket(new pObjectNew(forward<const Args&>(args)...), FreePacket);
+	inline static pPacket Create(Args&&... args) {
+		return pPacket(new pObjectNew(forward<Args>(args)...), FreePacket);
 	}
 };
 
@@ -827,8 +827,8 @@ class pItemNew : public pObjectNewDefault
 
 template<typename... Args>
 struct PacketFactory::_Create<pTypes::ID_ITEM_NEW, Args...> {
-	inline static pPacket Create(const Args&... args) {
-		return pPacket(new pItemNew(forward<const Args&>(args)...), FreePacket);
+	inline static pPacket Create(Args&&... args) {
+		return pPacket(new pItemNew(forward<Args>(args)...), FreePacket);
 	}
 };
 
@@ -909,7 +909,7 @@ class pContainerNew : public pObjectNewDefault
 
 			_pItemNew.reserve(size);
 			for (unsigned int i = 0; i < size; ++i, at += length)
-				_pItemNew.push_back(pPacket(new pItemNew(&_data[at], length), PacketFactory::FreePacket));
+				_pItemNew.emplace_back(new pItemNew(&_data[at], length), PacketFactory::FreePacket);
 		}
 
 	public:
@@ -925,8 +925,8 @@ class pContainerNew : public pObjectNewDefault
 
 template<typename... Args>
 struct PacketFactory::_Create<pTypes::ID_CONTAINER_NEW, Args...> {
-	inline static pPacket Create(const Args&... args) {
-		return pPacket(new pContainerNew(forward<const Args&>(args)...), FreePacket);
+	inline static pPacket Create(Args&&... args) {
+		return pPacket(new pContainerNew(forward<Args>(args)...), FreePacket);
 	}
 };
 
@@ -1066,8 +1066,8 @@ class pActorNew : public pObjectNewDefault
 
 template<typename... Args>
 struct PacketFactory::_Create<pTypes::ID_ACTOR_NEW, Args...> {
-	inline static pPacket Create(const Args&... args) {
-		return pPacket(new pActorNew(forward<const Args&>(args)...), FreePacket);
+	inline static pPacket Create(Args&&... args) {
+		return pPacket(new pActorNew(forward<Args>(args)...), FreePacket);
 	}
 };
 
@@ -1140,8 +1140,8 @@ class pPlayerNew : public pObjectNewDefault
 
 template<typename... Args>
 struct PacketFactory::_Create<pTypes::ID_PLAYER_NEW, Args...> {
-	inline static pPacket Create(const Args&... args) {
-		return pPacket(new pPlayerNew(forward<const Args&>(args)...), FreePacket);
+	inline static pPacket Create(Args&&... args) {
+		return pPacket(new pPlayerNew(forward<Args>(args)...), FreePacket);
 	}
 };
 
@@ -1174,8 +1174,8 @@ class pObjectRemove : public pObjectDefault
 
 template<typename... Args>
 struct PacketFactory::_Create<pTypes::ID_OBJECT_REMOVE, Args...> {
-	inline static pPacket Create(const Args&... args) {
-		return pPacket(new pObjectRemove(forward<const Args&>(args)...), FreePacket);
+	inline static pPacket Create(Args&&... args) {
+		return pPacket(new pObjectRemove(forward<Args>(args)...), FreePacket);
 	}
 };
 
@@ -1233,8 +1233,8 @@ class pObjectPos : public pObjectUpdateDefault
 
 template<typename... Args>
 struct PacketFactory::_Create<pTypes::ID_UPDATE_POS, Args...> {
-	inline static pPacket Create(const Args&... args) {
-		return pPacket(new pObjectPos(forward<const Args&>(args)...), FreePacket);
+	inline static pPacket Create(Args&&... args) {
+		return pPacket(new pObjectPos(forward<Args>(args)...), FreePacket);
 	}
 };
 
@@ -1273,8 +1273,8 @@ class pObjectAngle : public pObjectUpdateDefault
 
 template<typename... Args>
 struct PacketFactory::_Create<pTypes::ID_UPDATE_ANGLE, Args...> {
-	inline static pPacket Create(const Args&... args) {
-		return pPacket(new pObjectAngle(forward<const Args&>(args)...), FreePacket);
+	inline static pPacket Create(Args&&... args) {
+		return pPacket(new pObjectAngle(forward<Args>(args)...), FreePacket);
 	}
 };
 
@@ -1311,8 +1311,8 @@ class pObjectCell : public pObjectUpdateDefault
 
 template<typename... Args>
 struct PacketFactory::_Create<pTypes::ID_UPDATE_CELL, Args...> {
-	inline static pPacket Create(const Args&... args) {
-		return pPacket(new pObjectCell(forward<const Args&>(args)...), FreePacket);
+	inline static pPacket Create(Args&&... args) {
+		return pPacket(new pObjectCell(forward<Args>(args)...), FreePacket);
 	}
 };
 
@@ -1387,21 +1387,21 @@ class pContainerUpdate : public pObjectUpdateDefault
 			unsigned int at = sizeof(unsigned int);
 
 			for (unsigned int i = 0; i < size; ++i, at += length)
-				diff.first.push_back(*reinterpret_cast<NetworkID*>(&_data[at]));
+				diff.first.emplace_back(*reinterpret_cast<NetworkID*>(&_data[at]));
 
 			length = pItemNew::as_packet_length();
 			size = *reinterpret_cast<unsigned int*>(&_data[at]);
 			at += sizeof(unsigned int);
 
 			for (unsigned int i = 0; i < size; ++i, at += length)
-				diff.second.push_back(pPacket(new pItemNew(&_data[at], length), PacketFactory::FreePacket));
+				diff.second.emplace_back(new pItemNew(&_data[at], length), PacketFactory::FreePacket);
 		}
 };
 
 template<typename... Args>
 struct PacketFactory::_Create<pTypes::ID_UPDATE_CONTAINER, Args...> {
-	inline static pPacket Create(const Args&... args) {
-		return pPacket(new pContainerUpdate(forward<const Args&>(args)...), FreePacket);
+	inline static pPacket Create(Args&&... args) {
+		return pPacket(new pContainerUpdate(forward<Args>(args)...), FreePacket);
 	}
 };
 
@@ -1474,8 +1474,8 @@ class pActorValue : public pObjectUpdateDefault
 
 template<typename... Args>
 struct PacketFactory::_Create<pTypes::ID_UPDATE_VALUE, Args...> {
-	inline static pPacket Create(const Args&... args) {
-		return pPacket(new pActorValue(forward<const Args&>(args)...), FreePacket);
+	inline static pPacket Create(Args&&... args) {
+		return pPacket(new pActorValue(forward<Args>(args)...), FreePacket);
 	}
 };
 
@@ -1520,8 +1520,8 @@ class pActorState : public pObjectUpdateDefault
 
 template<typename... Args>
 struct PacketFactory::_Create<pTypes::ID_UPDATE_STATE, Args...> {
-	inline static pPacket Create(const Args&... args) {
-		return pPacket(new pActorState(forward<const Args&>(args)...), FreePacket);
+	inline static pPacket Create(Args&&... args) {
+		return pPacket(new pActorState(forward<Args>(args)...), FreePacket);
 	}
 };
 
@@ -1562,8 +1562,8 @@ class pActorDead : public pObjectUpdateDefault
 
 template<typename... Args>
 struct PacketFactory::_Create<pTypes::ID_UPDATE_DEAD, Args...> {
-	inline static pPacket Create(const Args&... args) {
-		return pPacket(new pActorDead(forward<const Args&>(args)...), FreePacket);
+	inline static pPacket Create(Args&&... args) {
+		return pPacket(new pActorDead(forward<Args>(args)...), FreePacket);
 	}
 };
 
@@ -1600,8 +1600,8 @@ class pActorFireweapon : public pObjectUpdateDefault
 
 template<typename... Args>
 struct PacketFactory::_Create<pTypes::ID_UPDATE_FIREWEAPON, Args...> {
-	inline static pPacket Create(const Args&... args) {
-		return pPacket(new pActorFireweapon(forward<const Args&>(args)...), FreePacket);
+	inline static pPacket Create(Args&&... args) {
+		return pPacket(new pActorFireweapon(forward<Args>(args)...), FreePacket);
 	}
 };
 
@@ -1662,8 +1662,8 @@ class pPlayerControl : public pObjectUpdateDefault
 
 template<typename... Args>
 struct PacketFactory::_Create<pTypes::ID_UPDATE_CONTROL, Args...> {
-	inline static pPacket Create(const Args&... args) {
-		return pPacket(new pPlayerControl(forward<const Args&>(args)...), FreePacket);
+	inline static pPacket Create(Args&&... args) {
+		return pPacket(new pPlayerControl(forward<Args>(args)...), FreePacket);
 	}
 };
 
@@ -1700,8 +1700,8 @@ class pPlayerInterior : public pObjectUpdateDefault
 
 template<typename... Args>
 struct PacketFactory::_Create<pTypes::ID_UPDATE_INTERIOR, Args...> {
-	inline static pPacket Create(const Args&... args) {
-		return pPacket(new pPlayerInterior(forward<const Args&>(args)...), FreePacket);
+	inline static pPacket Create(Args&&... args) {
+		return pPacket(new pPlayerInterior(forward<Args>(args)...), FreePacket);
 	}
 };
 
@@ -1742,8 +1742,8 @@ class pPlayerExterior : public pObjectUpdateDefault
 
 template<typename... Args>
 struct PacketFactory::_Create<pTypes::ID_UPDATE_EXTERIOR, Args...> {
-	inline static pPacket Create(const Args&... args) {
-		return pPacket(new pPlayerExterior(forward<const Args&>(args)...), FreePacket);
+	inline static pPacket Create(Args&&... args) {
+		return pPacket(new pPlayerExterior(forward<Args>(args)...), FreePacket);
 	}
 };
 

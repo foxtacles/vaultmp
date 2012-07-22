@@ -793,9 +793,9 @@ void Game::MoveTo(FactoryObject& reference, FactoryObject& object, bool cell, un
 
 	if (cell)
 	{
-		param_MoveTo.push_back(RawParameter(_object->GetNetworkPos(Axis_X) - _object2->GetNetworkPos(Axis_X)));
-		param_MoveTo.push_back(RawParameter(_object->GetNetworkPos(Axis_Y) - _object2->GetNetworkPos(Axis_Y)));
-		param_MoveTo.push_back(RawParameter(_object->GetNetworkPos(Axis_Z) - _object2->GetNetworkPos(Axis_Z)));
+		param_MoveTo.emplace_back(_object->GetNetworkPos(Axis_X) - _object2->GetNetworkPos(Axis_X));
+		param_MoveTo.emplace_back(_object->GetNetworkPos(Axis_Y) - _object2->GetNetworkPos(Axis_Y));
+		param_MoveTo.emplace_back(_object->GetNetworkPos(Axis_Z) - _object2->GetNetworkPos(Axis_Z));
 	}
 
 	Interface::ExecuteCommand("MoveTo", move(param_MoveTo), key);
@@ -1159,7 +1159,7 @@ void Game::net_ContainerUpdate(FactoryObject& reference, const pair<list<Network
 	ContainerDiff diff(make_pair(move(_diff.first), list<NetworkID>()));
 
 	for (const auto& packet : _diff.second)
-		diff.second.push_back(GameFactory::CreateKnownInstance(ID_ITEM, packet.get()));
+		diff.second.emplace_back(GameFactory::CreateKnownInstance(ID_ITEM, packet.get()));
 
 	NetworkID id = container->GetNetworkID();
 	GameFactory::LeaveReference(reference);
@@ -1664,7 +1664,7 @@ void Game::ScanContainer(FactoryObject& reference, vector<unsigned char>& data)
 			for (const auto& id : diff.second)
 			{
 				FactoryObject item = GameFactory::GetObject(id);
-				_diff.second.push_back(vaultcast<Item>(item)->toPacket());
+				_diff.second.emplace_back(vaultcast<Item>(item)->toPacket());
 			}
 
 			Network::Queue(NetworkResponse{Network::CreateResponse(

@@ -110,7 +110,7 @@ void Interface::EndSetup()
 	priorities.reserve(priorityMap.size());
 
 	for (const auto& priority : priorityMap)
-		priorities.push_back(priority.first);
+		priorities.emplace_back(priority.first);
 
 	auto it = unique(priorities.begin(), priorities.end());
 	priorities.resize(it - priorities.begin());
@@ -145,9 +145,9 @@ void Interface::EndSetup()
 
 		for (const auto& priority : priorityMap)
 			if (((i + 1) % priority.first) == 0)
-				content.push_back(priority.second);
+				content.emplace_back(priority.second);
 
-		static_cmdlist.push_back(move(content));
+		static_cmdlist.emplace_back(move(content));
 	}
 
 	static_cs.EndSession();
@@ -170,7 +170,7 @@ void Interface::SetupCommand(string name, ParamContainer&& param, unsigned int p
 
 void Interface::ExecuteCommand(string name, ParamContainer&& param, unsigned int key)
 {
-	dynamic_cmdlist.push_back(make_pair(natives.insert(make_pair(name, move(param))), key));
+	dynamic_cmdlist.emplace_back(natives.insert(make_pair(name, move(param))), key);
 }
 
 vector<string> Interface::Evaluate(Native::iterator _it)
@@ -209,7 +209,7 @@ vector<string> Interface::Evaluate(Native::iterator _it)
 			cmd += " " + Utils::str_replace(param[j].get()[idx], " ", "|");
 		}
 
-		result.push_back(cmd);
+		result.emplace_back(cmd);
 	}
 
 	return result;

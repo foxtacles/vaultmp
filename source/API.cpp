@@ -546,7 +546,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 
 	char* tokenizer = nullptr;
 	unsigned int reference = 0x00;
-	result_data.push_back(storeIn<double, unsigned short>(opcode));
+	result_data.emplace_back(storeIn<double, unsigned short>(opcode));
 
 	// Skip the function name
 	tokenizer = strtok(cmd, " ");
@@ -564,7 +564,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 			throw VaultException("API::ParseCommand reference base operand is NULL (%s, %s, %04X)", _cmd.c_str(), def, opcode);
 
 		result->arg3.reference = reference;
-		result_data.push_back(storeIn<double, unsigned int>(reference));
+		result_data.emplace_back(storeIn<double, unsigned int>(reference));
 		++def;
 	}
 	else
@@ -709,7 +709,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 
 				*reinterpret_cast<unsigned char*>(arg2_pos) = 0x6E;
 				*reinterpret_cast<unsigned int*>(arg2_pos + sizeof(unsigned char)) = integer;
-				result_data.push_back(storeIn<double, unsigned int>(integer));
+				result_data.emplace_back(storeIn<double, unsigned int>(integer));
 				arg2_pos += sizeof(unsigned char) + sizeof(unsigned int);
 				break;
 			}
@@ -719,7 +719,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 				double floating = atof(tokenizer);
 				*reinterpret_cast<unsigned char*>(arg2_pos) = 0x7A;
 				*reinterpret_cast<double*>(arg2_pos + sizeof(unsigned char)) = floating;
-				result_data.push_back(floating);
+				result_data.emplace_back(floating);
 				arg2_pos += sizeof(unsigned char) + sizeof(double);
 				break;
 			}
@@ -742,7 +742,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 
 				*reinterpret_cast<unsigned char*>(arg2_pos) = 0x72;
 				*reinterpret_cast<unsigned short*>(arg2_pos + sizeof(unsigned char)) = (!reference || refparam == reference) ? 0x0001 : 0x0002;
-				result_data.push_back(storeIn<double, unsigned int>(refparam));
+				result_data.emplace_back(storeIn<double, unsigned int>(refparam));
 				arg2_pos += sizeof(unsigned char) + sizeof(unsigned short);
 				break;
 			}
@@ -755,7 +755,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 					throw VaultException("API::ParseCommand could not find an Actor Value identifier for input %s", tokenizer);
 
 				*reinterpret_cast<unsigned short*>(arg2_pos) = (unsigned short) value;
-				result_data.push_back(storeIn<double, unsigned short>(value));
+				result_data.emplace_back(storeIn<double, unsigned short>(value));
 				arg2_pos += sizeof(unsigned short);
 				break;
 			}
@@ -768,7 +768,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 					throw VaultException("API::ParseCommand could not find an Axis identifier for input %s", tokenizer);
 
 				*reinterpret_cast<unsigned char*>(arg2_pos) = axis;
-				result_data.push_back(storeIn<double, unsigned char>(axis));
+				result_data.emplace_back(storeIn<double, unsigned char>(axis));
 				arg2_pos += sizeof(unsigned char);
 				break;
 			}
@@ -781,7 +781,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 					throw VaultException("API::ParseCommand could not find an Animation identifier for input %s", tokenizer);
 
 				*reinterpret_cast<unsigned short*>(arg2_pos) = (unsigned short) anim;
-				result_data.push_back(storeIn<double, unsigned short>(anim));
+				result_data.emplace_back(storeIn<double, unsigned short>(anim));
 				arg2_pos += sizeof(unsigned short);
 				break;
 			}
@@ -794,7 +794,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 
 				*reinterpret_cast<unsigned short*>(arg2_pos) = length;
 				memcpy(arg2_pos + sizeof(unsigned short), str.c_str(), length +  sizeof(unsigned char));
-				result_data.push_back(0); // Don't pass on string for now
+				result_data.emplace_back(0); // Don't pass on string for now
 				arg2_pos += sizeof(unsigned short);
 				arg2_pos += length;
 				break;
@@ -955,7 +955,7 @@ vector<unsigned char> API::RetrieveAllValues()
 	ValueMap::iterator it;
 
 	for (it = values.begin(); it != values.end(); ++it)
-		result.push_back(it->second);
+		result.emplace_back(it->second);
 
 	return result;
 }
@@ -966,7 +966,7 @@ vector<unsigned char> API::RetrieveAllAxis()
 	ValueMap::iterator it;
 
 	for (it = axis.begin(); it != axis.end(); ++it)
-		result.push_back(it->second);
+		result.emplace_back(it->second);
 
 	return result;
 }
@@ -977,7 +977,7 @@ vector<unsigned char> API::RetrieveAllAnims()
 	ValueMap::iterator it;
 
 	for (it = anims.begin(); it != anims.end(); ++it)
-		result.push_back(it->second);
+		result.emplace_back(it->second);
 
 	return result;
 }
@@ -988,7 +988,7 @@ vector<unsigned char> API::RetrieveAllControls()
 	ValueList::iterator it;
 
 	for (it = controls.begin(); it != controls.end(); ++it)
-		result.push_back(*it);
+		result.emplace_back(*it);
 
 	return result;
 }
@@ -999,7 +999,7 @@ vector<string> API::RetrieveAllValues_Reverse()
 	ValueMap::iterator it;
 
 	for (it = values.begin(); it != values.end(); ++it)
-		result.push_back(it->first);
+		result.emplace_back(it->first);
 
 	return result;
 }
@@ -1010,7 +1010,7 @@ vector<string> API::RetrieveAllAxis_Reverse()
 	ValueMap::iterator it;
 
 	for (it = axis.begin(); it != axis.end(); ++it)
-		result.push_back(it->first);
+		result.emplace_back(it->first);
 
 	return result;
 }
@@ -1021,7 +1021,7 @@ vector<string> API::RetrieveAllAnims_Reverse()
 	ValueMap::iterator it;
 
 	for (it = anims.begin(); it != anims.end(); ++it)
-		result.push_back(it->first);
+		result.emplace_back(it->first);
 
 	return result;
 }
@@ -1069,7 +1069,7 @@ unsigned char* API::BuildCommandStream(vector<double>&& info, unsigned int key, 
 
 	unsigned int r = rand();
 	*reinterpret_cast<unsigned int*>(data + 1) = r;
-	queue.push_front(make_tuple(r, move(info), key));
+	queue.emplace_front(r, move(info), key);
 
 	return data;
 }
@@ -1101,7 +1101,7 @@ CommandParsed API::Translate(const vector<string>& cmd, unsigned int key)
 
 		vector<double> parsed = ParseCommand(content, func.first.c_str(), &result, func.second);
 		unsigned char* data = BuildCommandStream(move(parsed), key, reinterpret_cast<unsigned char*>(&result), sizeof(op_default));
-		stream.push_back(unique_ptr<unsigned char[]>(data));
+		stream.emplace_back(data);
 	}
 
 	return stream;
@@ -1129,7 +1129,7 @@ vector<CommandResult> API::Translate(unsigned char* stream)
 
 	#endif
 
-			result.push_back(CommandResult());
+			result.emplace_back();
 
 			auto& _result = result.back();
 
@@ -1153,7 +1153,7 @@ vector<CommandResult> API::Translate(unsigned char* stream)
 		}
 	}
 
-	result.push_back(CommandResult());
+	result.emplace_back();
 
 	auto& _result = result.back();
 
@@ -1166,7 +1166,7 @@ vector<CommandResult> API::Translate(unsigned char* stream)
 	else
 	{
 		get<0>(_result) = 0x00000000;
-		get<1>(_result).push_back(storeIn<double, unsigned short>(*reinterpret_cast<unsigned int*>(stream + 1)));
+		get<1>(_result).emplace_back(storeIn<double, unsigned short>(*reinterpret_cast<unsigned int*>(stream + 1)));
 	}
 
 	unsigned char* data = stream + 5;

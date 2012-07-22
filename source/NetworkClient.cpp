@@ -108,7 +108,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					string modfile;
 					unsigned int crc;
 					PacketFactory::Access<pTypes::ID_GAME_MOD>(packet, modfile, crc);
-					Bethesda::modfiles.push_back(make_pair(move(modfile), crc));
+					Bethesda::modfiles.emplace_back(move(modfile), crc);
 					break;
 				}
 

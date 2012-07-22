@@ -175,7 +175,7 @@ vector<string> PlayerFunctor::operator()()
 
 				unsigned int movcontrols = (right | (left << 8) | (backward << 16) | (forward << 24));
 
-				result.push_back(Utils::toString(movcontrols));
+				result.emplace_back(Utils::toString(movcontrols));
 			}
 		}
 	}
@@ -187,7 +187,7 @@ vector<string> PlayerFunctor::operator()()
 
 		for (it = references.begin(); it != references.end(); GameFactory::LeaveReference(*it), ++it)
 			if ((refID = (**it)->GetReference()) && !filter(*it))
-				result.push_back(Utils::toString(refID));
+				result.emplace_back(Utils::toString(refID));
 	}
 
 	_next(result);

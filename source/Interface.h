@@ -71,7 +71,7 @@ class Interface : public API
 					vector<string> convert;
 
 					for (unsigned char param : str)
-						convert.push_back(Utils::toString(param));
+						convert.emplace_back(Utils::toString(param));
 
 					return convert;
 				}

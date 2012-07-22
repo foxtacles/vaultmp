@@ -253,7 +253,7 @@ vector<string> ActorFunctor::operator()()
 
 		for (it = references.begin(); it != references.end(); GameFactory::LeaveReference(*it), ++it)
 			if ((refID = (**it)->GetReference()) && !filter(*it))
-				result.push_back(Utils::toString(refID));
+				result.emplace_back(Utils::toString(refID));
 	}
 
 	_next(result);

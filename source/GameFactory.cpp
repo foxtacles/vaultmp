@@ -61,7 +61,7 @@ vector<FactoryObject> GameFactory::GetObjectTypes(unsigned char type) noexcept
 
 	for (it = copy.begin(); it != copy.end(); ++it)
 		if (it->second & type)
-			result.push_back(FactoryObject(it->first, it->second));
+			result.emplace_back(FactoryObject(it->first, it->second));
 
 	return result;
 }
@@ -80,7 +80,7 @@ vector<NetworkID> GameFactory::GetIDObjectTypes(unsigned char type) noexcept
 
 	for (it = copy.begin(); it != copy.end(); ++it)
 		if (it->second & type)
-			result.push_back(it->first->GetNetworkID());
+			result.emplace_back(it->first->GetNetworkID());
 
 	return result;
 }

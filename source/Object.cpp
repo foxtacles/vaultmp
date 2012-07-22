@@ -211,9 +211,9 @@ vector<string> ObjectFunctor::operator()()
 			unsigned int flags = this->flags();
 
 			if (flags & FLAG_REFERENCE)
-				result.push_back(Utils::toString(object->GetReference()));
+				result.emplace_back(Utils::toString(object->GetReference()));
 			else if (flags & FLAG_BASE)
-				result.push_back(Utils::toString(object->GetBase()));
+				result.emplace_back(Utils::toString(object->GetBase()));
 		}
 	}
 	else
@@ -224,7 +224,7 @@ vector<string> ObjectFunctor::operator()()
 
 		for (it = references.begin(); it != references.end(); GameFactory::LeaveReference(*it), ++it)
 			if ((refID = (**it)->GetReference()) && !filter(*it))
-				result.push_back(Utils::toString(refID));
+				result.emplace_back(Utils::toString(refID));
 	}
 
 	_next(result);

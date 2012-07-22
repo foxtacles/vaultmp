@@ -81,7 +81,7 @@ void Network::Queue(NetworkResponse&& response)
 {
 	cs.StartSession();
 
-	queue.push_front(move(response));
+	queue.emplace_front(move(response));
 
 	cs.EndSession();
 }
