@@ -408,7 +408,7 @@ void Game::CenterOnCell(string cell)
 
 	try
 	{
-		store.get()->get_future(chrono::seconds(30));
+		store.get()->get_future(chrono::seconds(60));
 	}
 	catch (exception& e)
 	{
@@ -431,7 +431,7 @@ void Game::CenterOnExterior(signed int x, signed int y)
 
 	try
 	{
-		store.get()->get_future(chrono::seconds(30));
+		store.get()->get_future(chrono::seconds(60));
 	}
 	catch (exception& e)
 	{
@@ -454,7 +454,7 @@ void Game::CenterOnWorld(unsigned int baseID, signed int x, signed int y)
 
 	try
 	{
-		store.get()->get_future(chrono::seconds(30));
+		store.get()->get_future(chrono::seconds(60));
 	}
 	catch (exception& e)
 	{
