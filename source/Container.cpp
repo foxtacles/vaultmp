@@ -1,5 +1,5 @@
 #include "Container.h"
-#include "PacketTypes.h"
+#include "PacketFactory.h"
 
 #ifdef VAULTMP_DEBUG
 Debug* Container::debug;
@@ -26,7 +26,7 @@ Container::Container(const pDefault* packet) : Object(PacketFactory::ExtractPart
 
 	vector<pPacket> items;
 
-	PacketFactory::Access(packet, &items);
+	PacketFactory::Access<pTypes::ID_CONTAINER_NEW>(packet, items);
 
 	for (pPacket& _packet : items)
 	{
@@ -560,7 +560,7 @@ pPacket Container::toPacket()
 	}
 
 	pPacket pObjectNew = Object::toPacket();
-	pPacket packet = PacketFactory::CreatePacket<pTypes::ID_CONTAINER_NEW>(pObjectNew.get(), move(items));
+	pPacket packet = PacketFactory::Create<pTypes::ID_CONTAINER_NEW>(pObjectNew.get(), move(items));
 
 	return packet;
 }

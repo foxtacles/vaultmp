@@ -1,6 +1,6 @@
 #include "Object.h"
 #include "Container.h"
-#include "PacketTypes.h"
+#include "PacketFactory.h"
 
 RawParameter Object::param_Axis = RawParameter(vector<string>());
 
@@ -34,16 +34,15 @@ Object::Object(const pDefault* packet) : Object(PacketFactory::ExtractReference(
 {
 	NetworkID id;
 	unsigned int refID, baseID;
-	char name[MAX_PLAYER_NAME + 1];
-	ZeroMemory(name, sizeof(name));
+	string name;
 	double X, Y, Z, aX, aY, aZ;
 	unsigned int cell;
 	bool enabled;
 
-	PacketFactory::Access(packet, &id, &refID, &baseID, name, &X, &Y, &Z, &aX, &aY, &aZ, &cell, &enabled);
+	PacketFactory::Access<pTypes::ID_OBJECT_NEW>(packet, id, refID, baseID, name, X, Y, Z, aX, aY, aZ, cell, enabled);
 
 	// NetworkID set by GameFactory, refID and baseID in constructor
-	this->SetName(string(name));
+	this->SetName(move(name));
 	this->SetNetworkPos(Axis_X, X);
 	this->SetNetworkPos(Axis_Y, Y);
 	this->SetNetworkPos(Axis_Z, Z);
@@ -190,7 +189,7 @@ bool Object::HasValidCoordinates() const
 
 pPacket Object::toPacket()
 {
-	pPacket packet = PacketFactory::CreatePacket<pTypes::ID_OBJECT_NEW>(this->GetNetworkID(), this->GetReference(), this->GetBase(),
+	pPacket packet = PacketFactory::Create<pTypes::ID_OBJECT_NEW>(this->GetNetworkID(), this->GetReference(), this->GetBase(),
 												   this->GetName().c_str(), this->GetNetworkPos(Values::Axis_X), this->GetNetworkPos(Values::Axis_Y), this->GetNetworkPos(Values::Axis_Z),
 												   this->GetAngle(Values::Axis_X), this->GetAngle(Values::Axis_Y), this->GetAngle(Values::Axis_Z), this->GetNetworkCell(), this->GetEnabled());
 

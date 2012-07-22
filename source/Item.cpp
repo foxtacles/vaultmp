@@ -1,6 +1,6 @@
 #include "Item.h"
 #include "Container.h"
-#include "PacketTypes.h"
+#include "PacketFactory.h"
 
 #ifdef VAULTMP_DEBUG
 Debug* Item::debug;
@@ -29,7 +29,7 @@ Item::Item(const pDefault* packet) : Object(PacketFactory::ExtractPartial(packet
 	double condition;
 	bool equipped, silent, stick;
 
-	PacketFactory::Access(packet, &count, &condition, &equipped, &silent, &stick);
+	PacketFactory::Access<pTypes::ID_ITEM_NEW>(packet, count, condition, equipped, silent, stick);
 
 	this->SetItemCount(count);
 	this->SetItemCondition(condition);
@@ -139,7 +139,7 @@ Lockable* Item::SetBase(unsigned int baseID)
 pPacket Item::toPacket()
 {
 	pPacket pObjectNew = Object::toPacket();
-	pPacket packet = PacketFactory::CreatePacket<pTypes::ID_ITEM_NEW>(pObjectNew.get(), this->GetItemCount(), this->GetItemCondition(), this->GetItemEquipped(), this->GetItemSilent(), this->GetItemStick());
+	pPacket packet = PacketFactory::Create<pTypes::ID_ITEM_NEW>(pObjectNew.get(), this->GetItemCount(), this->GetItemCondition(), this->GetItemEquipped(), this->GetItemSilent(), this->GetItemStick());
 
 	return packet;
 }

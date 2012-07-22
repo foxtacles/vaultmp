@@ -1,5 +1,5 @@
 #include "Game.h"
-#include "PacketTypes.h"
+#include "PacketFactory.h"
 
 unsigned char Game::game = 0x00;
 RakNetGUID Game::server;
@@ -268,7 +268,7 @@ NetworkResponse Game::Authenticate(string password)
 	Player* self = vaultcast<Player>(reference);
 
 	return NetworkResponse{Network::CreateResponse(
-		PacketFactory::CreatePacket<pTypes::ID_GAME_AUTH>(self->GetName().c_str(), password.c_str()),
+		PacketFactory::Create<pTypes::ID_GAME_AUTH>(self->GetName().c_str(), password.c_str()),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 	};
 }
@@ -1145,7 +1145,7 @@ void Game::net_SetCell(FactoryObject& reference, FactoryObject& player, unsigned
 	}
 }
 
-void Game::net_ContainerUpdate(FactoryObject& reference, ContainerDiff diff)
+void Game::net_ContainerUpdate(FactoryObject& reference, const pair<list<NetworkID>, vector<pPacket>>& _diff)
 {
 	Container* container = vaultcast<Container>(reference);
 
@@ -1155,6 +1155,11 @@ void Game::net_ContainerUpdate(FactoryObject& reference, ContainerDiff diff)
 	Lockable* result;
 
 	// cleaner solution here
+
+	ContainerDiff diff(make_pair(move(_diff.first), list<NetworkID>()));
+
+	for (const auto& packet : _diff.second)
+		diff.second.push_back(GameFactory::CreateKnownInstance(ID_ITEM, packet.get()));
 
 	NetworkID id = container->GetNetworkID();
 	GameFactory::LeaveReference(reference);
@@ -1292,7 +1297,7 @@ void Game::net_SetActorDead(FactoryObject& reference, bool dead, unsigned short 
 			Game::LoadEnvironment();
 
 			Network::Queue(NetworkResponse{Network::CreateResponse(
-				PacketFactory::CreatePacket<pTypes::ID_UPDATE_DEAD>(id, false, 0, 0),
+				PacketFactory::Create<pTypes::ID_UPDATE_DEAD>(id, false, 0, 0),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 			});
 		}
@@ -1343,7 +1348,7 @@ void Game::GetPos(FactoryObject& reference, unsigned char axis, double value)
 			object->SetNetworkPos(Axis_Z, Z);
 
 			Network::Queue(NetworkResponse{Network::CreateResponse(
-				PacketFactory::CreatePacket<pTypes::ID_UPDATE_POS>(object->GetNetworkID(), X, Y, Z),
+				PacketFactory::Create<pTypes::ID_UPDATE_POS>(object->GetNetworkID(), X, Y, Z),
 				HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, server)
 			});
 		}
@@ -1357,7 +1362,7 @@ void Game::GetAngle(FactoryObject& reference, unsigned char axis, double value)
 
 	if (result)
 		Network::Queue(NetworkResponse{Network::CreateResponse(
-			PacketFactory::CreatePacket<pTypes::ID_UPDATE_ANGLE>(object->GetNetworkID(), axis, value),
+			PacketFactory::Create<pTypes::ID_UPDATE_ANGLE>(object->GetNetworkID(), axis, value),
 			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, server)
 		});
 }
@@ -1404,7 +1409,7 @@ void Game::GetParentCell(FactoryObject& reference, FactoryObject& player, unsign
 
 	if (result && object == self)
 		Network::Queue(NetworkResponse{Network::CreateResponse(
-			PacketFactory::CreatePacket<pTypes::ID_UPDATE_CELL>(object->GetNetworkID(), cell),
+			PacketFactory::Create<pTypes::ID_UPDATE_CELL>(object->GetNetworkID(), cell),
 			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, server)
 		});
 }
@@ -1510,7 +1515,7 @@ void Game::GetDead(FactoryObject& reference, FactoryObject& player, bool dead)
 					}
 
 					Network::Queue(NetworkResponse{Network::CreateResponse(
-						PacketFactory::CreatePacket<pTypes::ID_UPDATE_DEAD>(id, true, limbs, cause),
+						PacketFactory::Create<pTypes::ID_UPDATE_DEAD>(id, true, limbs, cause),
 						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 					});
 				}
@@ -1522,7 +1527,7 @@ void Game::GetDead(FactoryObject& reference, FactoryObject& player, bool dead)
 		else
 		{
 			Network::Queue(NetworkResponse{Network::CreateResponse(
-				PacketFactory::CreatePacket<pTypes::ID_UPDATE_DEAD>(actor->GetNetworkID(), false, 0, 0),
+				PacketFactory::Create<pTypes::ID_UPDATE_DEAD>(actor->GetNetworkID(), false, 0, 0),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 			});
 		}
@@ -1564,7 +1569,7 @@ void Game::GetActorValue(FactoryObject& reference, bool base, unsigned char inde
 
 	if (result)
 		Network::Queue(NetworkResponse{Network::CreateResponse(
-			PacketFactory::CreatePacket<pTypes::ID_UPDATE_VALUE>(actor->GetNetworkID(), base, index, value),
+			PacketFactory::Create<pTypes::ID_UPDATE_VALUE>(actor->GetNetworkID(), base, index, value),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 		});
 }
@@ -1588,7 +1593,7 @@ void Game::GetActorState(FactoryObject& reference, unsigned char moving, unsigne
 
 	if (result)
 		Network::Queue(NetworkResponse{Network::CreateResponse(
-			PacketFactory::CreatePacket<pTypes::ID_UPDATE_STATE>(actor->GetNetworkID(), moving, movingxy, weapon, alerted, sneaking),
+			PacketFactory::Create<pTypes::ID_UPDATE_STATE>(actor->GetNetworkID(), moving, movingxy, weapon, alerted, sneaking),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 		});
 }
@@ -1606,7 +1611,7 @@ void Game::GetControl(FactoryObject& reference, unsigned char control, unsigned 
 
 	if (result)
 		Network::Queue(NetworkResponse{Network::CreateResponse(
-			PacketFactory::CreatePacket<pTypes::ID_UPDATE_CONTROL>(player->GetNetworkID(), control, key),
+			PacketFactory::Create<pTypes::ID_UPDATE_CONTROL>(player->GetNetworkID(), control, key),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 		});
 }
@@ -1645,7 +1650,7 @@ void Game::ScanContainer(FactoryObject& reference, vector<unsigned char>& data)
 			FactoryObject _item = GameFactory::GetObject(GameFactory::CreateInstance(ID_ITEM, items[i].baseID));
 			Item* item = vaultcast<Item>(_item);
 			item->SetItemCount(items[i].amount);
-			item->SetItemEquipped((bool) items[i].equipped);
+			item->SetItemEquipped(static_cast<bool>(items[i].equipped));
 			item->SetItemCondition(items[i].condition);
 			temp->AddItem(item->GetNetworkID());
 		}
@@ -1654,8 +1659,16 @@ void Game::ScanContainer(FactoryObject& reference, vector<unsigned char>& data)
 
 		if (!diff.first.empty() || !diff.second.empty())
 		{
+			pair<list<NetworkID>, vector<pPacket>> _diff(make_pair(diff.first, vector<pPacket>()));
+
+			for (const auto& id : diff.second)
+			{
+				FactoryObject item = GameFactory::GetObject(id);
+				_diff.second.push_back(vaultcast<Item>(item)->toPacket());
+			}
+
 			Network::Queue(NetworkResponse{Network::CreateResponse(
-				PacketFactory::CreatePacket<pTypes::ID_UPDATE_CONTAINER>(container->GetNetworkID(), diff),
+				PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(container->GetNetworkID(), _diff),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 			});
 
@@ -1677,7 +1690,7 @@ void Game::GetMessage(string message)
 		message.resize(MAX_CHAT_LENGTH);
 
 	Network::Queue(NetworkResponse{Network::CreateResponse(
-		PacketFactory::CreatePacket<pTypes::ID_GAME_CHAT>(message.c_str()),
+		PacketFactory::Create<pTypes::ID_GAME_CHAT>(message.c_str()),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 	});
 }

@@ -1,5 +1,5 @@
 #include "Actor.h"
-#include "PacketTypes.h"
+#include "PacketFactory.h"
 
 using namespace Values;
 
@@ -23,7 +23,7 @@ Actor::Actor(const pDefault* packet) : Container(PacketFactory::ExtractPartial(p
 	unsigned char moving, movingxy, weapon;
 	bool alerted, sneaking, dead;
 
-	PacketFactory::Access(packet, &values, &baseValues, &moving, &movingxy, &weapon, &alerted, &sneaking, &dead);
+	PacketFactory::Access<pTypes::ID_ACTOR_NEW>(packet, values, baseValues, moving, movingxy, weapon, alerted, sneaking, dead);
 
 	for (it = values.begin(), it2 = baseValues.begin(); it != values.end() && it2 != baseValues.end(); ++it, ++it2)
 	{
@@ -229,7 +229,7 @@ pPacket Actor::toPacket()
 	}
 
 	pPacket pContainerNew = Container::toPacket();
-	pPacket packet = PacketFactory::CreatePacket<pTypes::ID_ACTOR_NEW>(pContainerNew.get(), values, baseValues, this->GetActorMovingAnimation(), this->GetActorMovingXY(), this->GetActorWeaponAnimation(), this->GetActorAlerted(), this->GetActorSneaking(), this->GetActorDead());
+	pPacket packet = PacketFactory::Create<pTypes::ID_ACTOR_NEW>(pContainerNew.get(), values, baseValues, this->GetActorMovingAnimation(), this->GetActorMovingXY(), this->GetActorWeaponAnimation(), this->GetActorAlerted(), this->GetActorSneaking(), this->GetActorDead());
 
 	return packet;
 }

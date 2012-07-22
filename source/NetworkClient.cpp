@@ -1,7 +1,7 @@
 #include "NetworkClient.h"
 #include "Bethesda.h"
 #include "Game.h"
-#include "PacketTypes.h"
+#include "PacketFactory.h"
 
 #ifdef VAULTMP_DEBUG
 Debug* NetworkClient::debug;
@@ -24,7 +24,7 @@ NetworkResponse NetworkClient::ProcessEvent(unsigned char id)
 		case ID_EVENT_CLIENT_ERROR:
 		case ID_EVENT_INTERFACE_LOST:
 			return NetworkResponse{Network::CreateResponse(
-				PacketFactory::CreatePacket<pTypes::ID_GAME_END>(pTypes::ID_REASON_ERROR),
+				PacketFactory::Create<pTypes::ID_GAME_END>(pTypes::ID_REASON_ERROR),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Game::server)
 			};
 
@@ -32,7 +32,7 @@ NetworkResponse NetworkClient::ProcessEvent(unsigned char id)
 			Network::ToggleDequeue(false);
 
 			return NetworkResponse{Network::CreateResponse(
-				PacketFactory::CreatePacket<pTypes::ID_GAME_LOAD>(),
+				PacketFactory::Create<pTypes::ID_GAME_LOAD>(),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Game::server)
 			};
 
@@ -98,18 +98,17 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
 		default:
 		{
-			pPacket _packet = PacketFactory::CreatePacket(data->data, data->length);
+			pPacket _packet = PacketFactory::Init(data->data, data->length);
 			const pDefault* packet = _packet.get();
 
 			switch (static_cast<pTypes>(data->data[0]))
 			{
 				case pTypes::ID_GAME_MOD:
 				{
-					char modfile[MAX_MOD_FILE + 1];
-					ZeroMemory(modfile, sizeof(modfile));
+					string modfile;
 					unsigned int crc;
-					PacketFactory::Access(packet, modfile, &crc);
-					Bethesda::modfiles.push_back(pair<string, unsigned int>(string(modfile), crc));
+					PacketFactory::Access<pTypes::ID_GAME_MOD>(packet, modfile, crc);
+					Bethesda::modfiles.push_back(make_pair(move(modfile), crc));
 					break;
 				}
 
@@ -137,7 +136,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				case pTypes::ID_GAME_END:
 				{
 					pTypes reason;
-					PacketFactory::Access(packet, &reason);
+					PacketFactory::Access<pTypes::ID_GAME_END>(packet, reason);
 
 					switch (reason)
 					{
@@ -162,18 +161,16 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
 				case pTypes::ID_GAME_MESSAGE:
 				{
-					char message[MAX_MESSAGE_LENGTH + 1];
-					ZeroMemory(message, sizeof(message));
-					PacketFactory::Access(packet, message);
+					string message;
+					PacketFactory::Access<pTypes::ID_GAME_MESSAGE>(packet, message);
 					Game::net_UIMessage(message);
 					break;
 				}
 
 				case pTypes::ID_GAME_CHAT:
 				{
-					char message[MAX_CHAT_LENGTH + 1];
-					ZeroMemory(message, sizeof(message));
-					PacketFactory::Access(packet, message);
+					string message;
+					PacketFactory::Access<pTypes::ID_GAME_CHAT>(packet, message);
 					Game::net_ChatMessage(message);
 					break;
 				}
@@ -221,7 +218,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				case pTypes::ID_OBJECT_REMOVE:
 				{
 					NetworkID id;
-					PacketFactory::Access(packet, &id);
+					PacketFactory::Access<pTypes::ID_OBJECT_REMOVE>(packet, id);
 					FactoryObject reference = GameFactory::GetObject(id);
 					Game::Delete(reference);
 					break;
@@ -239,7 +236,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 						case pTypes::ID_UPDATE_POS:
 						{
 							double X, Y, Z;
-							PacketFactory::Access(packet, &id, &X, &Y, &Z);
+							PacketFactory::Access<pTypes::ID_UPDATE_POS>(packet, id, X, Y, Z);
 							FactoryObject reference = GameFactory::GetObject(id);
 							Game::net_SetPos(reference, X, Y, Z);
 							break;
@@ -249,7 +246,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 						{
 							unsigned char axis;
 							double value;
-							PacketFactory::Access(packet, &id, &axis, &value);
+							PacketFactory::Access<pTypes::ID_UPDATE_ANGLE>(packet, id, axis, value);
 							FactoryObject reference = GameFactory::GetObject(id);
 							Game::net_SetAngle(reference, axis, value);
 							break;
@@ -258,7 +255,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 						case pTypes::ID_UPDATE_CELL:
 						{
 							unsigned int cell;
-							PacketFactory::Access(packet, &id, &cell);
+							PacketFactory::Access<pTypes::ID_UPDATE_CELL>(packet, id, cell);
 							vector<FactoryObject> reference = GameFactory::GetMultiple(vector<unsigned int> {GameFactory::LookupRefID(id), PLAYER_REFERENCE});
 							Game::net_SetCell(reference[0], reference[1], cell);
 							break;
@@ -266,8 +263,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
 						case pTypes::ID_UPDATE_CONTAINER:
 						{
-							ContainerDiff diff;
-							PacketFactory::Access(packet, &id, &diff);
+							pair<list<NetworkID>, vector<pPacket>> diff;
+							PacketFactory::Access<pTypes::ID_UPDATE_CONTAINER>(packet, id, diff);
 							FactoryObject reference = GameFactory::GetObject(id);
 							Game::net_ContainerUpdate(reference, diff);
 							break;
@@ -278,7 +275,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 							bool base;
 							unsigned char index;
 							double value;
-							PacketFactory::Access(packet, &id, &base, &index, &value);
+							PacketFactory::Access<pTypes::ID_UPDATE_VALUE>(packet, id, base, index, value);
 							FactoryObject reference = GameFactory::GetObject(id);
 							Game::net_SetActorValue(reference, base, index, value);
 							break;
@@ -288,7 +285,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 						{
 							unsigned char moving, movingxy, weapon;
 							bool alerted, sneaking;
-							PacketFactory::Access(packet, &id, &moving, &movingxy, &weapon, &alerted, &sneaking);
+							PacketFactory::Access<pTypes::ID_UPDATE_STATE>(packet, id, moving, movingxy, weapon, alerted, sneaking);
 							FactoryObject reference = GameFactory::GetObject(id);
 							Game::net_SetActorState(reference, moving, movingxy, weapon, alerted, sneaking);
 							break;
@@ -299,7 +296,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 							bool dead;
 							unsigned short limbs;
 							signed char cause;
-							PacketFactory::Access(packet, &id, &dead, &limbs, &cause);
+							PacketFactory::Access<pTypes::ID_UPDATE_DEAD>(packet, id, dead, limbs, cause);
 							FactoryObject reference = GameFactory::GetObject(id);
 							Game::net_SetActorDead(reference, dead, limbs, cause);
 							break;
@@ -308,7 +305,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 						case pTypes::ID_UPDATE_FIREWEAPON:
 						{
 							unsigned int weapon;
-							PacketFactory::Access(packet, &id, &weapon);
+							PacketFactory::Access<pTypes::ID_UPDATE_FIREWEAPON>(packet, id, weapon);
 							FactoryObject reference = GameFactory::GetObject(id);
 							Game::net_FireWeapon(reference, weapon);
 							break;
@@ -316,9 +313,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
 						case pTypes::ID_UPDATE_INTERIOR:
 						{
-							char cell[MAX_CELL_NAME + 1];
-							ZeroMemory(cell, sizeof(cell));
-							PacketFactory::Access(packet, &id, cell);
+							string cell;
+							PacketFactory::Access<pTypes::ID_UPDATE_INTERIOR>(packet, id, cell);
 							Game::CenterOnCell(cell);
 							break;
 						}
@@ -327,20 +323,20 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 						{
 							unsigned int baseID;
 							signed int x, y;
-							PacketFactory::Access(packet, &id, &baseID, &x, &y);
+							PacketFactory::Access<pTypes::ID_UPDATE_EXTERIOR>(packet, id, baseID, x, y);
 							Game::CenterOnWorld(baseID, x, y);
 							break;
 						}
 
 						default:
-							throw VaultException("Unhandled object update packet type %d", (int) data->data[1]);
+							throw VaultException("Unhandled object update packet type %d", data->data[1]);
 					}
 
 					break;
 				}
 
 				default:
-					throw VaultException("Unhandled packet type %d", (int) data->data[0]);
+					throw VaultException("Unhandled packet type %d", data->data[0]);
 			}
 		}
 	}

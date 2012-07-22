@@ -227,7 +227,7 @@ class Game
 		/**
 		 * \brief Network function to handle Container update
 		 */
-		static void net_ContainerUpdate(FactoryObject& reference, ContainerDiff diff);
+		static void net_ContainerUpdate(FactoryObject& reference, const pair<list<NetworkID>, vector<pPacket>>& _diff);
 		/**
 		 * \brief Network function to handle Actor value
 		 */

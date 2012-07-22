@@ -1,5 +1,5 @@
 #include "Network.h"
-#include "PacketTypes.h"
+#include "PacketFactory.h"
 
 NetworkIDManager Network::manager;
 Network::NetworkQueue Network::queue;

@@ -1,5 +1,5 @@
 #include "Player.h"
-#include "PacketTypes.h"
+#include "PacketFactory.h"
 
 using namespace std;
 
@@ -23,7 +23,7 @@ Player::Player(const pDefault* packet) : Actor(PacketFactory::ExtractPartial(pac
 
 	map<unsigned char, pair<unsigned char, bool>> controls;
 
-	PacketFactory::Access(packet, &controls);
+	PacketFactory::Access<pTypes::ID_PLAYER_NEW>(packet, controls);
 
 	for (const auto& control : controls)
 	{
@@ -145,7 +145,7 @@ pPacket Player::toPacket()
 		controls.insert(make_pair(_data, make_pair(this->GetPlayerControl(_data), this->GetPlayerControlEnabled(_data))));
 
 	pPacket pActorNew = Actor::toPacket();
-	pPacket packet = PacketFactory::CreatePacket<pTypes::ID_PLAYER_NEW>(pActorNew.get(), controls);
+	pPacket packet = PacketFactory::Create<pTypes::ID_PLAYER_NEW>(pActorNew.get(), controls);
 
 	return packet;
 }
