@@ -4,6 +4,7 @@
 *.def
 *.exe
 *.dll
+*.so
 *.workspace
 obj
 .objs

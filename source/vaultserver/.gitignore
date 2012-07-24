@@ -2,12 +2,16 @@ files
 mods
 savegames
 
+vaultserver
+vaultserverd
+
 *.depend
 *.layout
 *.a
 *.def
 *.exe
 *.dll
+*.so
 *.log
 *.workspace
 obj
