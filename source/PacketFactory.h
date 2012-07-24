@@ -1358,7 +1358,7 @@ class pContainerUpdate : public pObjectUpdateDefault
 
 			for (auto it = diff.second.begin(); it != diff.second.end(); ++it)
 			{
-				memcpy(&this->_data[at], it->get(), length2);
+				memcpy(&this->_data[at], it->get()->get(), length2);
 				at += length2;
 			}
 
