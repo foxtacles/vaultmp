@@ -43,9 +43,9 @@ class Object : public Reference
 #endif
 
 		Value<string> object_Name;
-		unordered_map<unsigned char, Value<double> > object_Game_Pos;
-		unordered_map<unsigned char, Value<double> > object_Network_Pos;
-		unordered_map<unsigned char, Value<double> > object_Angle;
+		unordered_map<unsigned char, Value<double>> object_Game_Pos;
+		unordered_map<unsigned char, Value<double>> object_Network_Pos;
+		unordered_map<unsigned char, Value<double>> object_Angle;
 		Value<unsigned int> cell_Game;
 		Value<unsigned int> cell_Network;
 		Value<bool> state_Enabled;
@@ -53,13 +53,14 @@ class Object : public Reference
 		static bool IsValidCoordinate(double C);
 		static bool IsValidAngle(unsigned char axis, double A);
 
+		void initialize();
+
 		Object(const Object&);
 		Object& operator=(const Object&);
 
 	protected:
 		Object(unsigned int refID, unsigned int baseID);
 		Object(const pDefault* packet);
-		Object(pPacket&& packet);
 		virtual ~Object();
 
 	public:

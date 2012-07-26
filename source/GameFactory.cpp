@@ -452,8 +452,7 @@ NetworkID GameFactory::CreateKnownInstance(unsigned char type, const pDefault* p
 			throw VaultException("Unknown type identifier %X", type);
 	}
 
-	NetworkID id = PacketFactory::ExtractNetworkID(packet);
-	reference->SetNetworkID(id);
+	NetworkID id = reference->GetNetworkID();
 
 	cs.StartSession();
 

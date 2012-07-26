@@ -20,18 +20,16 @@ void Object::SetDebugHandler(Debug* debug)
 
 Object::Object(unsigned int refID, unsigned int baseID) : Reference(refID, baseID)
 {
-	vector<unsigned char> data = API::RetrieveAllAxis();
-
-	for (unsigned char _data : data)
-	{
-		object_Game_Pos.insert(make_pair(_data, Value<double>()));
-		object_Network_Pos.insert(make_pair(_data, Value<double>()));
-		object_Angle.insert(make_pair(_data, Value<double>()));
-	}
+	initialize();
 }
 
-Object::Object(const pDefault* packet) : Object(PacketFactory::ExtractReference(packet), PacketFactory::ExtractBase(packet))
+Object::Object(const pDefault* packet) : Reference(0x00000000, 0x00000000)
 {
+	initialize();
+
+	for (unsigned int i = 0; i < packet->length(); ++i)
+		debug->PrintFormat("%02X", false, packet->get()[i]);
+
 	NetworkID id;
 	unsigned int refID, baseID;
 	string name;
@@ -41,7 +39,9 @@ Object::Object(const pDefault* packet) : Object(PacketFactory::ExtractReference(
 
 	PacketFactory::Access<pTypes::ID_OBJECT_NEW>(packet, id, refID, baseID, name, X, Y, Z, aX, aY, aZ, cell, enabled);
 
-	// NetworkID set by GameFactory, refID and baseID in constructor
+	this->SetNetworkID(id);
+	this->SetReference(refID);
+	this->SetBase(baseID);
 	this->SetName(move(name));
 	this->SetNetworkPos(Axis_X, X);
 	this->SetNetworkPos(Axis_Y, Y);
@@ -53,14 +53,21 @@ Object::Object(const pDefault* packet) : Object(PacketFactory::ExtractReference(
 	this->SetEnabled(enabled);
 }
 
-Object::Object(pPacket&& packet) : Object(static_cast<const pDefault*>(packet.get()))
+Object::~Object()
 {
 
 }
 
-Object::~Object()
+void Object::initialize()
 {
+	vector<unsigned char> data = API::RetrieveAllAxis();
 
+	for (unsigned char _data : data)
+	{
+		object_Game_Pos.insert(make_pair(_data, Value<double>()));
+		object_Network_Pos.insert(make_pair(_data, Value<double>()));
+		object_Angle.insert(make_pair(_data, Value<double>()));
+	}
 }
 
 inline

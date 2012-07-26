@@ -224,114 +224,108 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
-				case pTypes::ID_OBJECT_UPDATE:
-				case pTypes::ID_CONTAINER_UPDATE:
-				case pTypes::ID_ACTOR_UPDATE:
-				case pTypes::ID_PLAYER_UPDATE:
+				case pTypes::ID_UPDATE_POS:
 				{
 					NetworkID id;
+					double X, Y, Z;
+					PacketFactory::Access<pTypes::ID_UPDATE_POS>(packet, id, X, Y, Z);
+					FactoryObject reference = GameFactory::GetObject(id);
+					Game::net_SetPos(reference, X, Y, Z);
+					break;
+				}
 
-					switch (static_cast<pTypes>(data->data[1]))
-					{
-						case pTypes::ID_UPDATE_POS:
-						{
-							double X, Y, Z;
-							PacketFactory::Access<pTypes::ID_UPDATE_POS>(packet, id, X, Y, Z);
-							FactoryObject reference = GameFactory::GetObject(id);
-							Game::net_SetPos(reference, X, Y, Z);
-							break;
-						}
+				case pTypes::ID_UPDATE_ANGLE:
+				{
+					NetworkID id;
+					unsigned char axis;
+					double value;
+					PacketFactory::Access<pTypes::ID_UPDATE_ANGLE>(packet, id, axis, value);
+					FactoryObject reference = GameFactory::GetObject(id);
+					Game::net_SetAngle(reference, axis, value);
+					break;
+				}
 
-						case pTypes::ID_UPDATE_ANGLE:
-						{
-							unsigned char axis;
-							double value;
-							PacketFactory::Access<pTypes::ID_UPDATE_ANGLE>(packet, id, axis, value);
-							FactoryObject reference = GameFactory::GetObject(id);
-							Game::net_SetAngle(reference, axis, value);
-							break;
-						}
+				case pTypes::ID_UPDATE_CELL:
+				{
+					NetworkID id;
+					unsigned int cell;
+					PacketFactory::Access<pTypes::ID_UPDATE_CELL>(packet, id, cell);
+					vector<FactoryObject> reference = GameFactory::GetMultiple(vector<unsigned int> {GameFactory::LookupRefID(id), PLAYER_REFERENCE});
+					Game::net_SetCell(reference[0], reference[1], cell);
+					break;
+				}
 
-						case pTypes::ID_UPDATE_CELL:
-						{
-							unsigned int cell;
-							PacketFactory::Access<pTypes::ID_UPDATE_CELL>(packet, id, cell);
-							vector<FactoryObject> reference = GameFactory::GetMultiple(vector<unsigned int> {GameFactory::LookupRefID(id), PLAYER_REFERENCE});
-							Game::net_SetCell(reference[0], reference[1], cell);
-							break;
-						}
+				case pTypes::ID_UPDATE_CONTAINER:
+				{
+					NetworkID id;
+					pair<list<NetworkID>, vector<pPacket>> diff;
+					PacketFactory::Access<pTypes::ID_UPDATE_CONTAINER>(packet, id, diff);
+					FactoryObject reference = GameFactory::GetObject(id);
+					Game::net_ContainerUpdate(reference, diff);
+					break;
+				}
 
-						case pTypes::ID_UPDATE_CONTAINER:
-						{
-							pair<list<NetworkID>, vector<pPacket>> diff;
-							PacketFactory::Access<pTypes::ID_UPDATE_CONTAINER>(packet, id, diff);
-							FactoryObject reference = GameFactory::GetObject(id);
-							Game::net_ContainerUpdate(reference, diff);
-							break;
-						}
+				case pTypes::ID_UPDATE_VALUE:
+				{
+					NetworkID id;
+					bool base;
+					unsigned char index;
+					double value;
+					PacketFactory::Access<pTypes::ID_UPDATE_VALUE>(packet, id, base, index, value);
+					FactoryObject reference = GameFactory::GetObject(id);
+					Game::net_SetActorValue(reference, base, index, value);
+					break;
+				}
 
-						case pTypes::ID_UPDATE_VALUE:
-						{
-							bool base;
-							unsigned char index;
-							double value;
-							PacketFactory::Access<pTypes::ID_UPDATE_VALUE>(packet, id, base, index, value);
-							FactoryObject reference = GameFactory::GetObject(id);
-							Game::net_SetActorValue(reference, base, index, value);
-							break;
-						}
+				case pTypes::ID_UPDATE_STATE:
+				{
+					NetworkID id;
+					unsigned char moving, movingxy, weapon;
+					bool alerted, sneaking;
+					PacketFactory::Access<pTypes::ID_UPDATE_STATE>(packet, id, moving, movingxy, weapon, alerted, sneaking);
+					FactoryObject reference = GameFactory::GetObject(id);
+					Game::net_SetActorState(reference, moving, movingxy, weapon, alerted, sneaking);
+					break;
+				}
 
-						case pTypes::ID_UPDATE_STATE:
-						{
-							unsigned char moving, movingxy, weapon;
-							bool alerted, sneaking;
-							PacketFactory::Access<pTypes::ID_UPDATE_STATE>(packet, id, moving, movingxy, weapon, alerted, sneaking);
-							FactoryObject reference = GameFactory::GetObject(id);
-							Game::net_SetActorState(reference, moving, movingxy, weapon, alerted, sneaking);
-							break;
-						}
+				case pTypes::ID_UPDATE_DEAD:
+				{
+					NetworkID id;
+					bool dead;
+					unsigned short limbs;
+					signed char cause;
+					PacketFactory::Access<pTypes::ID_UPDATE_DEAD>(packet, id, dead, limbs, cause);
+					FactoryObject reference = GameFactory::GetObject(id);
+					Game::net_SetActorDead(reference, dead, limbs, cause);
+					break;
+				}
 
-						case pTypes::ID_UPDATE_DEAD:
-						{
-							bool dead;
-							unsigned short limbs;
-							signed char cause;
-							PacketFactory::Access<pTypes::ID_UPDATE_DEAD>(packet, id, dead, limbs, cause);
-							FactoryObject reference = GameFactory::GetObject(id);
-							Game::net_SetActorDead(reference, dead, limbs, cause);
-							break;
-						}
+				case pTypes::ID_UPDATE_FIREWEAPON:
+				{
+					NetworkID id;
+					unsigned int weapon;
+					PacketFactory::Access<pTypes::ID_UPDATE_FIREWEAPON>(packet, id, weapon);
+					FactoryObject reference = GameFactory::GetObject(id);
+					Game::net_FireWeapon(reference, weapon);
+					break;
+				}
 
-						case pTypes::ID_UPDATE_FIREWEAPON:
-						{
-							unsigned int weapon;
-							PacketFactory::Access<pTypes::ID_UPDATE_FIREWEAPON>(packet, id, weapon);
-							FactoryObject reference = GameFactory::GetObject(id);
-							Game::net_FireWeapon(reference, weapon);
-							break;
-						}
+				case pTypes::ID_UPDATE_INTERIOR:
+				{
+					NetworkID id;
+					string cell;
+					PacketFactory::Access<pTypes::ID_UPDATE_INTERIOR>(packet, id, cell);
+					Game::CenterOnCell(cell);
+					break;
+				}
 
-						case pTypes::ID_UPDATE_INTERIOR:
-						{
-							string cell;
-							PacketFactory::Access<pTypes::ID_UPDATE_INTERIOR>(packet, id, cell);
-							Game::CenterOnCell(cell);
-							break;
-						}
-
-						case pTypes::ID_UPDATE_EXTERIOR:
-						{
-							unsigned int baseID;
-							signed int x, y;
-							PacketFactory::Access<pTypes::ID_UPDATE_EXTERIOR>(packet, id, baseID, x, y);
-							Game::CenterOnWorld(baseID, x, y);
-							break;
-						}
-
-						default:
-							throw VaultException("Unhandled object update packet type %d", data->data[1]);
-					}
-
+				case pTypes::ID_UPDATE_EXTERIOR:
+				{
+					NetworkID id;
+					unsigned int baseID;
+					signed int x, y;
+					PacketFactory::Access<pTypes::ID_UPDATE_EXTERIOR>(packet, id, baseID, x, y);
+					Game::CenterOnWorld(baseID, x, y);
 					break;
 				}
 

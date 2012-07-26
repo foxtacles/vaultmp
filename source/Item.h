@@ -46,7 +46,6 @@ class Item : public Object
 	protected:
 		Item(unsigned int refID, unsigned int baseID);
 		Item(const pDefault* packet);
-		Item(pPacket&& packet);
 		virtual ~Item();
 
 	public:

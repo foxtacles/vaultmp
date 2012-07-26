@@ -73,7 +73,6 @@ class Container : public Object
 	protected:
 		Container(unsigned int refID, unsigned int baseID);
 		Container(const pDefault* packet);
-		Container(pPacket&& packet);
 		virtual ~Container();
 
 	public:

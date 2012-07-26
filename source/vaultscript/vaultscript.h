@@ -418,14 +418,6 @@ namespace vaultmp
 			Base GetBase() const noexcept { return baseID; }
 			Type GetType() const noexcept { return type; }
 
-			State Revalidate() noexcept
-			{
-				if (id && vaultmp::IsValid(id))
-					return True;
-				id = static_cast<ID>(0);
-				return False;
-			}
-
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_REFERENCE); }
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_REFERENCE); }
 	};

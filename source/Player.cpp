@@ -17,7 +17,7 @@ Player::Player(unsigned int refID, unsigned int baseID) : Actor(refID, baseID)
 	initialize();
 }
 
-Player::Player(const pDefault* packet) : Actor(PacketFactory::ExtractPartial(packet))
+Player::Player(const pDefault* packet) : Actor(packet)
 {
 	initialize();
 
@@ -145,7 +145,7 @@ pPacket Player::toPacket() const
 		controls.insert(make_pair(_data, make_pair(this->GetPlayerControl(_data), this->GetPlayerControlEnabled(_data))));
 
 	pPacket pActorNew = Actor::toPacket();
-	pPacket packet = PacketFactory::Create<pTypes::ID_PLAYER_NEW>(pActorNew.get(), controls);
+	pPacket packet = PacketFactory::Create<pTypes::ID_PLAYER_NEW>(pActorNew, controls);
 
 	return packet;
 }

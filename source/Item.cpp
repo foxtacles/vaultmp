@@ -21,7 +21,7 @@ Item::Item(unsigned int refID, unsigned int baseID) : Object(refID, baseID)
 	initialize();
 }
 
-Item::Item(const pDefault* packet) : Object(PacketFactory::ExtractPartial(packet))
+Item::Item(const pDefault* packet) : Object(packet)
 {
 	initialize();
 
@@ -36,11 +36,6 @@ Item::Item(const pDefault* packet) : Object(PacketFactory::ExtractPartial(packet
 	this->SetItemEquipped(equipped);
 	this->SetItemSilent(silent);
 	this->SetItemStick(stick);
-}
-
-Item::Item(pPacket&& packet) : Item(static_cast<const pDefault*>(packet.get()))
-{
-
 }
 
 Item::~Item()
@@ -139,7 +134,7 @@ Lockable* Item::SetBase(unsigned int baseID)
 pPacket Item::toPacket() const
 {
 	pPacket pObjectNew = Object::toPacket();
-	pPacket packet = PacketFactory::Create<pTypes::ID_ITEM_NEW>(pObjectNew.get(), this->GetItemCount(), this->GetItemCondition(), this->GetItemEquipped(), this->GetItemSilent(), this->GetItemStick());
+	pPacket packet = PacketFactory::Create<pTypes::ID_ITEM_NEW>(pObjectNew, this->GetItemCount(), this->GetItemCondition(), this->GetItemEquipped(), this->GetItemSilent(), this->GetItemStick());
 
 	return packet;
 }

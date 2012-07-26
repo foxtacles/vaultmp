@@ -20,7 +20,7 @@ Container::Container(unsigned int refID, unsigned int baseID) : Object(refID, ba
 	initialize();
 }
 
-Container::Container(const pDefault* packet) : Object(PacketFactory::ExtractPartial(packet))
+Container::Container(const pDefault* packet) : Object(packet)
 {
 	initialize();
 
@@ -33,11 +33,6 @@ Container::Container(const pDefault* packet) : Object(PacketFactory::ExtractPart
 		NetworkID id = GameFactory::CreateKnownInstance(ID_ITEM, _packet.get());
 		this->AddItem(id);
 	}
-}
-
-Container::Container(pPacket&& packet) : Container(static_cast<const pDefault*>(packet.get()))
-{
-
 }
 
 Container::~Container()
@@ -583,7 +578,7 @@ pPacket Container::toPacket() const
 	}
 
 	pPacket pObjectNew = Object::toPacket();
-	pPacket packet = PacketFactory::Create<pTypes::ID_CONTAINER_NEW>(pObjectNew.get(), move(items));
+	pPacket packet = PacketFactory::Create<pTypes::ID_CONTAINER_NEW>(pObjectNew, move(items));
 
 	return packet;
 }

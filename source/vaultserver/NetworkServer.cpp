@@ -106,6 +106,8 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 			pPacket _packet = PacketFactory::Init(data->data, data->length);
 			const pDefault* packet = _packet.get();
 
+			debug->PrintFormat("%s", true, typeid(*packet).name());
+
 			switch (static_cast<pTypes>(data->data[0]))
 			{
 				case pTypes::ID_GAME_AUTH:
@@ -145,97 +147,89 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					break;
 				}
 
-				case pTypes::ID_OBJECT_UPDATE:
-				case pTypes::ID_CONTAINER_UPDATE:
-				case pTypes::ID_ACTOR_UPDATE:
-				case pTypes::ID_PLAYER_UPDATE:
+				case pTypes::ID_UPDATE_POS:
 				{
 					NetworkID id;
+					double X, Y, Z;
+					PacketFactory::Access<pTypes::ID_UPDATE_POS>(packet, id, X, Y, Z);
+					FactoryObject reference = GameFactory::GetObject(id);
+					response = Server::GetPos(data->guid, reference, X, Y, Z);
+					break;
+				}
 
-					switch (static_cast<pTypes>(data->data[1]))
-					{
-						case pTypes::ID_UPDATE_POS:
-						{
-							double X, Y, Z;
-							PacketFactory::Access<pTypes::ID_UPDATE_POS>(packet, id, X, Y, Z);
-							FactoryObject reference = GameFactory::GetObject(id);
-							response = Server::GetPos(data->guid, reference, X, Y, Z);
-							break;
-						}
+				case pTypes::ID_UPDATE_ANGLE:
+				{
+					NetworkID id;
+					unsigned char axis;
+					double value;
+					PacketFactory::Access<pTypes::ID_UPDATE_ANGLE>(packet, id, axis, value);
+					FactoryObject reference = GameFactory::GetObject(id);
+					response = Server::GetAngle(data->guid, reference, axis, value);
+					break;
+				}
 
-						case pTypes::ID_UPDATE_ANGLE:
-						{
-							unsigned char axis;
-							double value;
-							PacketFactory::Access<pTypes::ID_UPDATE_ANGLE>(packet, id, axis, value);
-							FactoryObject reference = GameFactory::GetObject(id);
-							response = Server::GetAngle(data->guid, reference, axis, value);
-							break;
-						}
+				case pTypes::ID_UPDATE_CELL:
+				{
+					NetworkID id;
+					unsigned int cell;
+					PacketFactory::Access<pTypes::ID_UPDATE_CELL>(packet, id, cell);
+					FactoryObject reference = GameFactory::GetObject(id);
+					response = Server::GetCell(data->guid, reference, cell);
+					break;
+				}
 
-						case pTypes::ID_UPDATE_CELL:
-						{
-							unsigned int cell;
-							PacketFactory::Access<pTypes::ID_UPDATE_CELL>(packet, id, cell);
-							FactoryObject reference = GameFactory::GetObject(id);
-							response = Server::GetCell(data->guid, reference, cell);
-							break;
-						}
+				case pTypes::ID_UPDATE_CONTAINER:
+				{
+					NetworkID id;
+					pair<list<NetworkID>, vector<pPacket>> diff;
+					PacketFactory::Access<pTypes::ID_UPDATE_CONTAINER>(packet, id, diff);
+					FactoryObject reference = GameFactory::GetObject(id);
+					response = Server::GetContainerUpdate(data->guid, reference, diff);
+					break;
+				}
 
-						case pTypes::ID_UPDATE_CONTAINER:
-						{
-							pair<list<NetworkID>, vector<pPacket>> diff;
-							PacketFactory::Access<pTypes::ID_UPDATE_CONTAINER>(packet, id, diff);
-							FactoryObject reference = GameFactory::GetObject(id);
-							response = Server::GetContainerUpdate(data->guid, reference, diff);
-							break;
-						}
+				case pTypes::ID_UPDATE_VALUE:
+				{
+					NetworkID id;
+					bool base;
+					unsigned char index;
+					double value;
+					PacketFactory::Access<pTypes::ID_UPDATE_VALUE>(packet, id, base, index, value);
+					FactoryObject reference = GameFactory::GetObject(id);
+					response = Server::GetActorValue(data->guid, reference, base, index, value);
+					break;
+				}
 
-						case pTypes::ID_UPDATE_VALUE:
-						{
-							bool base;
-							unsigned char index;
-							double value;
-							PacketFactory::Access<pTypes::ID_UPDATE_VALUE>(packet, id, base, index, value);
-							FactoryObject reference = GameFactory::GetObject(id);
-							response = Server::GetActorValue(data->guid, reference, base, index, value);
-							break;
-						}
+				case pTypes::ID_UPDATE_STATE:
+				{
+					NetworkID id;
+					unsigned char moving, movingxy, weapon;
+					bool alerted, sneaking;
+					PacketFactory::Access<pTypes::ID_UPDATE_STATE>(packet, id, moving, movingxy, weapon, alerted, sneaking);
+					FactoryObject reference = GameFactory::GetObject(id);
+					response = Server::GetActorState(data->guid, reference, moving, movingxy, weapon, alerted, sneaking);
+					break;
+				}
 
-						case pTypes::ID_UPDATE_STATE:
-						{
-							unsigned char moving, movingxy, weapon;
-							bool alerted, sneaking;
-							PacketFactory::Access<pTypes::ID_UPDATE_STATE>(packet, id, moving, movingxy, weapon, alerted, sneaking);
-							FactoryObject reference = GameFactory::GetObject(id);
-							response = Server::GetActorState(data->guid, reference, moving, movingxy, weapon, alerted, sneaking);
-							break;
-						}
+				case pTypes::ID_UPDATE_DEAD:
+				{
+					NetworkID id;
+					bool dead;
+					unsigned short limbs;
+					signed char cause;
+					PacketFactory::Access<pTypes::ID_UPDATE_DEAD>(packet, id, dead, limbs, cause);
+					FactoryObject reference = GameFactory::GetObject(id);
+					response = Server::GetActorDead(data->guid, reference, dead, limbs, cause);
+					break;
+				}
 
-						case pTypes::ID_UPDATE_DEAD:
-						{
-							bool dead;
-							unsigned short limbs;
-							signed char cause;
-							PacketFactory::Access<pTypes::ID_UPDATE_DEAD>(packet, id, dead, limbs, cause);
-							FactoryObject reference = GameFactory::GetObject(id);
-							response = Server::GetActorDead(data->guid, reference, dead, limbs, cause);
-							break;
-						}
-
-						case pTypes::ID_UPDATE_CONTROL:
-						{
-							unsigned char control, key;
-							PacketFactory::Access<pTypes::ID_UPDATE_CONTROL>(packet, id, control, key);
-							FactoryObject reference = GameFactory::GetObject(id);
-							response = Server::GetPlayerControl(data->guid, reference, control, key);
-							break;
-						}
-
-						default:
-							throw VaultException("Unhandled object update packet type %d", data->data[1]);
-					}
-
+				case pTypes::ID_UPDATE_CONTROL:
+				{
+					NetworkID id;
+					unsigned char control, key;
+					PacketFactory::Access<pTypes::ID_UPDATE_CONTROL>(packet, id, control, key);
+					FactoryObject reference = GameFactory::GetObject(id);
+					response = Server::GetPlayerControl(data->guid, reference, control, key);
 					break;
 				}
 

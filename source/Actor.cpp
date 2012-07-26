@@ -14,7 +14,7 @@ Actor::Actor(unsigned int refID, unsigned int baseID) : Container(refID, baseID)
 	initialize();
 }
 
-Actor::Actor(const pDefault* packet) : Container(PacketFactory::ExtractPartial(packet))
+Actor::Actor(const pDefault* packet) : Container(packet)
 {
 	initialize();
 
@@ -37,11 +37,6 @@ Actor::Actor(const pDefault* packet) : Container(PacketFactory::ExtractPartial(p
 	this->SetActorAlerted(alerted);
 	this->SetActorSneaking(sneaking);
 	this->SetActorDead(dead);
-}
-
-Actor::Actor(pPacket&& packet) : Actor(static_cast<const pDefault*>(packet.get()))
-{
-
 }
 
 Actor::~Actor()
@@ -229,7 +224,7 @@ pPacket Actor::toPacket() const
 	}
 
 	pPacket pContainerNew = Container::toPacket();
-	pPacket packet = PacketFactory::Create<pTypes::ID_ACTOR_NEW>(pContainerNew.get(), values, baseValues, this->GetActorMovingAnimation(), this->GetActorMovingXY(), this->GetActorWeaponAnimation(), this->GetActorAlerted(), this->GetActorSneaking(), this->GetActorDead());
+	pPacket packet = PacketFactory::Create<pTypes::ID_ACTOR_NEW>(pContainerNew, values, baseValues, this->GetActorMovingAnimation(), this->GetActorMovingXY(), this->GetActorWeaponAnimation(), this->GetActorAlerted(), this->GetActorSneaking(), this->GetActorDead());
 
 	return packet;
 }
