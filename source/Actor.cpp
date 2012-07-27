@@ -14,7 +14,7 @@ Actor::Actor(unsigned int refID, unsigned int baseID) : Container(refID, baseID)
 	initialize();
 }
 
-Actor::Actor(const pDefault* packet) : Container(packet)
+Actor::Actor(const pDefault* packet) : Container(PacketFactory::Pop<pPacket>(packet))
 {
 	initialize();
 
@@ -37,6 +37,11 @@ Actor::Actor(const pDefault* packet) : Container(packet)
 	this->SetActorAlerted(alerted);
 	this->SetActorSneaking(sneaking);
 	this->SetActorDead(dead);
+}
+
+Actor::Actor(pPacket&& packet) : Actor(packet.get())
+{
+
 }
 
 Actor::~Actor()

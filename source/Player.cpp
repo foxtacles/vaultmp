@@ -17,7 +17,7 @@ Player::Player(unsigned int refID, unsigned int baseID) : Actor(refID, baseID)
 	initialize();
 }
 
-Player::Player(const pDefault* packet) : Actor(packet)
+Player::Player(const pDefault* packet) : Actor(PacketFactory::Pop<pPacket>(packet))
 {
 	initialize();
 

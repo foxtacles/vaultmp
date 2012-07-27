@@ -67,6 +67,7 @@ class Actor : public Container
 	protected:
 		Actor(unsigned int refID, unsigned int baseID);
 		Actor(const pDefault* packet);
+		Actor(pPacket&& packet);
 		virtual ~Actor();
 
 	public:

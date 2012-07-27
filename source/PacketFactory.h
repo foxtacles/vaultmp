@@ -78,6 +78,8 @@ class PacketFactory
 		inline static pPacket Create(Args&&... args) { return _Create<type, Args...>::Create(forward<Args>(args)...); };
 		template<pTypes type, typename... Args>
 		inline static void Access(const pDefault* packet, Args&... args) { _Access<type, Args...>::Access(packet, forward<Args&>(args)...); };
+		template<typename T>
+		inline static T Pop(const pDefault* packet);
 
 		template<typename T>
 		inline static const T* packet_cast(const pDefault* packet);
@@ -409,6 +411,11 @@ template<typename... T>
 void pDefault::pack_tuple(tuple<T...>& arg, tuple_count<0>) const
 {
 	_deconstruct(std::get<0>(arg));
+}
+
+template<typename T>
+inline T PacketFactory::Pop(const pDefault* packet) {
+	return packet->deconstruct_single<T>();
 }
 
 class pObjectDefault : public pDefault

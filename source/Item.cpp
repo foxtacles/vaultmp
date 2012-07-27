@@ -21,7 +21,7 @@ Item::Item(unsigned int refID, unsigned int baseID) : Object(refID, baseID)
 	initialize();
 }
 
-Item::Item(const pDefault* packet) : Object(packet)
+Item::Item(const pDefault* packet) : Object(PacketFactory::Pop<pPacket>(packet))
 {
 	initialize();
 

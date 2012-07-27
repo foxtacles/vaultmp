@@ -27,9 +27,6 @@ Object::Object(const pDefault* packet) : Reference(0x00000000, 0x00000000)
 {
 	initialize();
 
-	for (unsigned int i = 0; i < packet->length(); ++i)
-		debug->PrintFormat("%02X", false, packet->get()[i]);
-
 	NetworkID id;
 	unsigned int refID, baseID;
 	string name;
@@ -51,6 +48,11 @@ Object::Object(const pDefault* packet) : Reference(0x00000000, 0x00000000)
 	this->SetAngle(Axis_Z, aZ);
 	this->SetNetworkCell(cell);
 	this->SetEnabled(enabled);
+}
+
+Object::Object(pPacket&& packet) : Object(packet.get())
+{
+
 }
 
 Object::~Object()

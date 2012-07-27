@@ -20,7 +20,7 @@ Container::Container(unsigned int refID, unsigned int baseID) : Object(refID, ba
 	initialize();
 }
 
-Container::Container(const pDefault* packet) : Object(packet)
+Container::Container(const pDefault* packet) : Object(PacketFactory::Pop<pPacket>(packet))
 {
 	initialize();
 
@@ -33,6 +33,11 @@ Container::Container(const pDefault* packet) : Object(packet)
 		NetworkID id = GameFactory::CreateKnownInstance(ID_ITEM, _packet.get());
 		this->AddItem(id);
 	}
+}
+
+Container::Container(pPacket&& packet) : Container(packet.get())
+{
+
 }
 
 Container::~Container()
