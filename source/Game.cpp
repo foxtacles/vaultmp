@@ -268,7 +268,7 @@ NetworkResponse Game::Authenticate(string password)
 	Player* self = vaultcast<Player>(reference);
 
 	return NetworkResponse{Network::CreateResponse(
-		PacketFactory::Create<pTypes::ID_GAME_AUTH>(self->GetName().c_str(), password.c_str()),
+		PacketFactory::Create<pTypes::ID_GAME_AUTH>(self->GetName(), password),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 	};
 }
@@ -1678,7 +1678,7 @@ void Game::GetMessage(string message)
 		message.resize(MAX_CHAT_LENGTH);
 
 	Network::Queue(NetworkResponse{Network::CreateResponse(
-		PacketFactory::Create<pTypes::ID_GAME_CHAT>(message.c_str()),
+		PacketFactory::Create<pTypes::ID_GAME_CHAT>(message),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 	});
 }

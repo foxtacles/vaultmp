@@ -61,7 +61,7 @@ NetworkResponse Server::LoadGame(RakNetGUID guid)
 		const Record& record = Record::Lookup(Player::GetSpawnCell());
 
 		response.push_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(0, record.GetName().c_str()),
+			PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(0, record.GetName()),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 

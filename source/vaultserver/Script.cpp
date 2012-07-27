@@ -391,7 +391,7 @@ unsigned long long Script::Timer_Respawn(NetworkID id)
 		const Record& record = Record::Lookup(_cell);
 
 		response.push_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(id, record.GetName().c_str()),
+			PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(id, record.GetName()),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 
@@ -1317,7 +1317,7 @@ bool Script::SetCell(NetworkID id, unsigned int cell, double X, double Y, double
 			if (new_interior)
 			{
 				response.push_back(Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(id, new_interior->GetName().c_str()),
+					PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(id, new_interior->GetName()),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
 				);
 			}
