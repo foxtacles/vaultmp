@@ -9,10 +9,11 @@ VaultException::VaultException(string error)
 	this->error = error;
 
 #ifdef VAULTMP_DEBUG
-
 	if (debug)
+	{
 		debug->Print(error.c_str(), true);
-
+		stacktrace();
+	}
 #endif
 }
 
@@ -29,10 +30,11 @@ VaultException::VaultException(const char* format, ...)
 	this->error = string(text);
 
 #ifdef VAULTMP_DEBUG
-
 	if (debug)
+	{
 		debug->Print(text, true);
-
+		stacktrace();
+	}
 #endif
 }
 
@@ -43,6 +45,20 @@ void VaultException::SetDebugHandler(Debug* debug)
 
 	if (debug)
 		debug->Print("Attached debug handler to VaultException class", true);
+}
+
+void VaultException::stacktrace()
+{
+	if (debug)
+	{
+		dbg::stack st;
+		ostringstream stream;
+
+		for (const auto& frame : st)
+			stream << frame << "\n";
+
+		debug->Print(stream.str().c_str(), false);
+	}
 }
 
 void VaultException::FinalizeDebug()

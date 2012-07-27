@@ -12,6 +12,11 @@
 #include "vaultmp.h"
 #include "Debug.h"
 
+#ifdef VAULTMP_DEBUG
+#include "dbg/stack.hpp"
+#include <ostream>
+#endif
+
 using namespace std;
 
 /**
@@ -27,12 +32,12 @@ class VaultException : public exception
 
 #ifdef VAULTMP_DEBUG
 		static Debug* debug;
+		static void stacktrace();
 #endif
 
-		VaultException& operator=(const VaultException&);
+		VaultException& operator=(const VaultException&) = delete;
 
 	public:
-
 		VaultException(string error);
 		VaultException(const char* format, ...);
 		virtual ~VaultException() throw() {}

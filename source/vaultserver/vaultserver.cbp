@@ -25,6 +25,8 @@
 					<Add option="-lwinmm" />
 					<Add option="-lm" />
 					<Add option="-limagehlp" />
+					<Add option="-lbfd" />
+					<Add option="-liberty" />
 					<Add option="-static" />
 				</Linker>
 			</Target>
@@ -93,6 +95,7 @@
 			<Add option="-std=gnu++0x" />
 			<Add option="-DVAULTSERVER" />
 			<Add directory=".." />
+			<Add directory="..\stack_trace\include" />
 		</Compiler>
 		<Unit filename="..\API.cpp" />
 		<Unit filename="..\API.h" />
@@ -380,6 +383,14 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\iniparser\src\iniparser.h" />
+		<Unit filename="..\stack_trace\include\dbg\stack.hpp">
+			<Option target="Debug" />
+			<Option target="DebugUnix" />
+		</Unit>
+		<Unit filename="..\stack_trace\src\stack.cpp">
+			<Option target="Debug" />
+			<Option target="DebugUnix" />
+		</Unit>
 		<Unit filename="..\vaultmp.h" />
 		<Unit filename="Cell.cpp" />
 		<Unit filename="Cell.h" />

@@ -6,864 +6,870 @@ AR = ar
 LD = g++
 WINDRES = windres
 
-INC =  -I..
+INC =  -I.. -Iamx/linux
 CFLAGS =  -std=gnu++0x -DVAULTSERVER -m32
 RESINC = 
 LIBDIR = 
 LIB = 
 LDFLAGS = -m32 -ldl -lncurses -lpthread
 
-INC_DEBUGUNIX =  $(INC) -Iamx/linux
-CFLAGS_DEBUGUNIX =  $(CFLAGS) -Wredundant-decls -Wunreachable-code -gstabs -DVAULTMP_DEBUG
-RESINC_DEBUGUNIX =  $(RESINC)
-RCFLAGS_DEBUGUNIX =  $(RCFLAGS)
-LIBDIR_DEBUGUNIX =  $(LIBDIR)
-LIB_DEBUGUNIX = $(LIB)
-LDFLAGS_DEBUGUNIX =  $(LDFLAGS)
-OBJDIR_DEBUGUNIX = .objs/DebugUnix
-DEP_DEBUGUNIX = 
-OUT_DEBUGUNIX = vaultserverd
+INC_DEBUG =  $(INC) -I../stack_trace/include
+CFLAGS_DEBUG =  $(CFLAGS) -Wredundant-decls -Wunreachable-code -gstabs -rdynamic -DVAULTMP_DEBUG
+RESINC_DEBUG =  $(RESINC)
+RCFLAGS_DEBUG =  $(RCFLAGS)
+LIBDIR_DEBUG =  $(LIBDIR)
+LIB_DEBUG = $(LIB)
+LDFLAGS_DEBUG =  $(LDFLAGS)
+OBJDIR_DEBUG = .objs/debug
+DEP_DEBUG = 
+OUT_DEBUG = vaultserverd
 
-INC_RELEASEUNIX =  $(INC) -Iamx/linux
-CFLAGS_RELEASEUNIX =  $(CFLAGS) -O2 -Wredundant-decls -Wunreachable-code
-RESINC_RELEASEUNIX =  $(RESINC)
-RCFLAGS_RELEASEUNIX =  $(RCFLAGS)
-LIBDIR_RELEASEUNIX =  $(LIBDIR)
-LIB_RELEASEUNIX = $(LIB)
-LDFLAGS_RELEASEUNIX =  $(LDFLAGS) -s
-OBJDIR_RELEASEUNIX = .objs/ReleaseUnix
-DEP_RELEASEUNIX = 
-OUT_RELEASEUNIX = vaultserver
+INC_RELEASE =  $(INC) 
+CFLAGS_RELEASE =  $(CFLAGS) -O2 -Wredundant-decls -Wunreachable-code
+RESINC_RELEASE =  $(RESINC)
+RCFLAGS_RELEASE =  $(RCFLAGS)
+LIBDIR_RELEASE =  $(LIBDIR)
+LIB_RELEASE = $(LIB)
+LDFLAGS_RELEASE =  $(LDFLAGS) -s
+OBJDIR_RELEASE = .objs/release
+DEP_RELEASE = 
+OUT_RELEASE = vaultserver
 
-OBJ_DEBUGUNIX = $(OBJDIR_DEBUGUNIX)/../RakNet/SignaledEvent.o $(OBJDIR_DEBUGUNIX)/../RakNet/SendToThread.o $(OBJDIR_DEBUGUNIX)/../RakNet/SecureHandshake.o $(OBJDIR_DEBUGUNIX)/../RakNet/SHA1.o $(OBJDIR_DEBUGUNIX)/../RakNet/Router2.o $(OBJDIR_DEBUGUNIX)/../RakNet/ReplicaManager3.o $(OBJDIR_DEBUGUNIX)/../RakNet/ReliabilityLayer.o $(OBJDIR_DEBUGUNIX)/../RakNet/ReadyEvent.o $(OBJDIR_DEBUGUNIX)/../RakNet/TelnetTransport.o $(OBJDIR_DEBUGUNIX)/../RakNet/TeamBalancer.o $(OBJDIR_DEBUGUNIX)/../RakNet/TableSerializer.o $(OBJDIR_DEBUGUNIX)/../RakNet/TCPInterface.o $(OBJDIR_DEBUGUNIX)/../RakNet/SuperFastHash.o $(OBJDIR_DEBUGUNIX)/../RakNet/StringTable.o $(OBJDIR_DEBUGUNIX)/../RakNet/StringCompressor.o $(OBJDIR_DEBUGUNIX)/../RakNet/SocketLayer.o $(OBJDIR_DEBUGUNIX)/../RakNet/SimpleMutex.o $(OBJDIR_DEBUGUNIX)/../RakNet/RakNetStatistics.o $(OBJDIR_DEBUGUNIX)/../RakNet/RakNetSocket.o $(OBJDIR_DEBUGUNIX)/../RakNet/RakNetCommandParser.o $(OBJDIR_DEBUGUNIX)/../RakNet/RakMemoryOverride.o $(OBJDIR_DEBUGUNIX)/../RakNet/Rackspace.o $(OBJDIR_DEBUGUNIX)/../RakNet/RPC4Plugin.o $(OBJDIR_DEBUGUNIX)/../RakNet/PluginInterface2.o $(OBJDIR_DEBUGUNIX)/../RakNet/Rand.o $(OBJDIR_DEBUGUNIX)/../RakNet/RakWString.o $(OBJDIR_DEBUGUNIX)/../RakNet/RakThread.o $(OBJDIR_DEBUGUNIX)/../RakNet/RakString.o $(OBJDIR_DEBUGUNIX)/../RakNet/RakSleep.o $(OBJDIR_DEBUGUNIX)/../RakNet/RakPeer.o $(OBJDIR_DEBUGUNIX)/../RakNet/RakNetTypes.o $(OBJDIR_DEBUGUNIX)/../RakNet/RakNetTransport2.o $(OBJDIR_DEBUGUNIX)/NetworkServer.o $(OBJDIR_DEBUGUNIX)/Dedicated.o $(OBJDIR_DEBUGUNIX)/Database.o $(OBJDIR_DEBUGUNIX)/Cell.o $(OBJDIR_DEBUGUNIX)/Client.o $(OBJDIR_DEBUGUNIX)/../iniparser/src/iniparser.o $(OBJDIR_DEBUGUNIX)/../iniparser/src/dictionary.o $(OBJDIR_DEBUGUNIX)/../VaultFunctor.o $(OBJDIR_DEBUGUNIX)/../VaultException.o $(OBJDIR_DEBUGUNIX)/../Value.o $(OBJDIR_DEBUGUNIX)/vaultserver.o $(OBJDIR_DEBUGUNIX)/sqlite/sqlite3.o $(OBJDIR_DEBUGUNIX)/amx/amxaux.o $(OBJDIR_DEBUGUNIX)/amx/amx.o $(OBJDIR_DEBUGUNIX)/Timer.o $(OBJDIR_DEBUGUNIX)/Server.o $(OBJDIR_DEBUGUNIX)/ScriptFunction.o $(OBJDIR_DEBUGUNIX)/Script.o $(OBJDIR_DEBUGUNIX)/Record.o $(OBJDIR_DEBUGUNIX)/Public.o $(OBJDIR_DEBUGUNIX)/PAWN.o $(OBJDIR_DEBUGUNIX)/../RakNet/VariableListDeltaTracker.o $(OBJDIR_DEBUGUNIX)/../RakNet/VariableDeltaSerializer.o $(OBJDIR_DEBUGUNIX)/../RakNet/UDPProxyServer.o $(OBJDIR_DEBUGUNIX)/../RakNet/UDPProxyCoordinator.o $(OBJDIR_DEBUGUNIX)/../RakNet/UDPProxyClient.o $(OBJDIR_DEBUGUNIX)/../RakNet/UDPForwarder.o $(OBJDIR_DEBUGUNIX)/../RakNet/TwoWayAuthentication.o $(OBJDIR_DEBUGUNIX)/../RakNet/ThreadsafePacketLogger.o $(OBJDIR_DEBUGUNIX)/../Utils.o $(OBJDIR_DEBUGUNIX)/../ServerEntry.o $(OBJDIR_DEBUGUNIX)/../Reference.o $(OBJDIR_DEBUGUNIX)/../RakNet/rdlmalloc.o $(OBJDIR_DEBUGUNIX)/../RakNet/gettimeofday.o $(OBJDIR_DEBUGUNIX)/../RakNet/_FindFirst.o $(OBJDIR_DEBUGUNIX)/../RakNet/WSAStartupSingleton.o $(OBJDIR_DEBUGUNIX)/../RakNet/VariadicSQLParser.o $(OBJDIR_DEBUGUNIX)/../RakNet/DS_HuffmanEncodingTree.o $(OBJDIR_DEBUGUNIX)/../RakNet/DS_ByteQueue.o $(OBJDIR_DEBUGUNIX)/../RakNet/DS_BytePool.o $(OBJDIR_DEBUGUNIX)/../RakNet/ConsoleServer.o $(OBJDIR_DEBUGUNIX)/../RakNet/ConnectionGraph2.o $(OBJDIR_DEBUGUNIX)/../RakNet/CommandParserInterface.o $(OBJDIR_DEBUGUNIX)/../RakNet/CloudServer.o $(OBJDIR_DEBUGUNIX)/../RakNet/CloudCommon.o $(OBJDIR_DEBUGUNIX)/../RakNet/DataCompressor.o $(OBJDIR_DEBUGUNIX)/../RakNet/DS_Table.o $(OBJDIR_DEBUGUNIX)/../Network.o $(OBJDIR_DEBUGUNIX)/../Lockable.o $(OBJDIR_DEBUGUNIX)/../Item.o $(OBJDIR_DEBUGUNIX)/../GameFactory.o $(OBJDIR_DEBUGUNIX)/../Debug.o $(OBJDIR_DEBUGUNIX)/../CriticalSection.o $(OBJDIR_DEBUGUNIX)/../Container.o $(OBJDIR_DEBUGUNIX)/../Actor.o $(OBJDIR_DEBUGUNIX)/../API.o $(OBJDIR_DEBUGUNIX)/../RakNet/CloudClient.o $(OBJDIR_DEBUGUNIX)/../RakNet/CheckSum.o $(OBJDIR_DEBUGUNIX)/../RakNet/CCRakNetUDT.o $(OBJDIR_DEBUGUNIX)/../RakNet/CCRakNetSlidingWindow.o $(OBJDIR_DEBUGUNIX)/../RakNet/BitStream.o $(OBJDIR_DEBUGUNIX)/../Player.o $(OBJDIR_DEBUGUNIX)/../PacketFactory.o $(OBJDIR_DEBUGUNIX)/../Object.o $(OBJDIR_DEBUGUNIX)/../RakNet/NatTypeDetectionServer.o $(OBJDIR_DEBUGUNIX)/../RakNet/NatTypeDetectionCommon.o $(OBJDIR_DEBUGUNIX)/../RakNet/NatTypeDetectionClient.o $(OBJDIR_DEBUGUNIX)/../RakNet/NatPunchthroughServer.o $(OBJDIR_DEBUGUNIX)/../RakNet/NatPunchthroughClient.o $(OBJDIR_DEBUGUNIX)/../RakNet/MessageFilter.o $(OBJDIR_DEBUGUNIX)/../RakNet/LogCommandParser.o $(OBJDIR_DEBUGUNIX)/../RakNet/LocklessTypes.o $(OBJDIR_DEBUGUNIX)/../RakNet/LinuxStrings.o $(OBJDIR_DEBUGUNIX)/../RakNet/PacketizedTCP.o $(OBJDIR_DEBUGUNIX)/../RakNet/PacketOutputWindowLogger.o $(OBJDIR_DEBUGUNIX)/../RakNet/PacketLogger.o $(OBJDIR_DEBUGUNIX)/../RakNet/PacketFileLogger.o $(OBJDIR_DEBUGUNIX)/../RakNet/PacketConsoleLogger.o $(OBJDIR_DEBUGUNIX)/../RakNet/NetworkIDObject.o $(OBJDIR_DEBUGUNIX)/../RakNet/NetworkIDManager.o $(OBJDIR_DEBUGUNIX)/../RakNet/FileOperations.o $(OBJDIR_DEBUGUNIX)/../RakNet/FileListTransfer.o $(OBJDIR_DEBUGUNIX)/../RakNet/FileList.o $(OBJDIR_DEBUGUNIX)/../RakNet/EpochTimeToString.o $(OBJDIR_DEBUGUNIX)/../RakNet/EncodeClassName.o $(OBJDIR_DEBUGUNIX)/../RakNet/EmailSender.o $(OBJDIR_DEBUGUNIX)/../RakNet/DynDNS.o $(OBJDIR_DEBUGUNIX)/../RakNet/DirectoryDeltaTransfer.o $(OBJDIR_DEBUGUNIX)/../RakNet/Itoa.o $(OBJDIR_DEBUGUNIX)/../RakNet/IncrementalReadInterface.o $(OBJDIR_DEBUGUNIX)/../RakNet/HTTPConnection.o $(OBJDIR_DEBUGUNIX)/../RakNet/GridSectorizer.o $(OBJDIR_DEBUGUNIX)/../RakNet/Gets.o $(OBJDIR_DEBUGUNIX)/../RakNet/Getche.o $(OBJDIR_DEBUGUNIX)/../RakNet/GetTime.o $(OBJDIR_DEBUGUNIX)/../RakNet/FullyConnectedMesh2.o $(OBJDIR_DEBUGUNIX)/../RakNet/FormatString.o
+OBJ_DEBUG = $(OBJDIR_DEBUG)/../RakNet/SignaledEvent.o $(OBJDIR_DEBUG)/../RakNet/SendToThread.o $(OBJDIR_DEBUG)/../RakNet/SecureHandshake.o $(OBJDIR_DEBUG)/../RakNet/SHA1.o $(OBJDIR_DEBUG)/../RakNet/Router2.o $(OBJDIR_DEBUG)/../RakNet/ReplicaManager3.o $(OBJDIR_DEBUG)/../RakNet/ReliabilityLayer.o $(OBJDIR_DEBUG)/../RakNet/ReadyEvent.o $(OBJDIR_DEBUG)/../RakNet/TelnetTransport.o $(OBJDIR_DEBUG)/../RakNet/TeamBalancer.o $(OBJDIR_DEBUG)/../RakNet/TableSerializer.o $(OBJDIR_DEBUG)/../RakNet/TCPInterface.o $(OBJDIR_DEBUG)/../RakNet/SuperFastHash.o $(OBJDIR_DEBUG)/../RakNet/StringTable.o $(OBJDIR_DEBUG)/../RakNet/StringCompressor.o $(OBJDIR_DEBUG)/../RakNet/SocketLayer.o $(OBJDIR_DEBUG)/../RakNet/SimpleMutex.o $(OBJDIR_DEBUG)/../RakNet/RakNetStatistics.o $(OBJDIR_DEBUG)/../RakNet/RakNetSocket.o $(OBJDIR_DEBUG)/../RakNet/RakNetCommandParser.o $(OBJDIR_DEBUG)/../RakNet/RakMemoryOverride.o $(OBJDIR_DEBUG)/../RakNet/Rackspace.o $(OBJDIR_DEBUG)/../RakNet/RPC4Plugin.o $(OBJDIR_DEBUG)/../RakNet/PluginInterface2.o $(OBJDIR_DEBUG)/../RakNet/Rand.o $(OBJDIR_DEBUG)/../RakNet/RakWString.o $(OBJDIR_DEBUG)/../RakNet/RakThread.o $(OBJDIR_DEBUG)/../RakNet/RakString.o $(OBJDIR_DEBUG)/../RakNet/RakSleep.o $(OBJDIR_DEBUG)/../RakNet/RakPeer.o $(OBJDIR_DEBUG)/../RakNet/RakNetTypes.o $(OBJDIR_DEBUG)/../RakNet/RakNetTransport2.o $(OBJDIR_DEBUG)/NetworkServer.o $(OBJDIR_DEBUG)/Dedicated.o $(OBJDIR_DEBUG)/Database.o $(OBJDIR_DEBUG)/Cell.o $(OBJDIR_DEBUG)/Client.o 
+$(OBJDIR_DEBUG)/../stack_trace/src/stack.o $(OBJDIR_DEBUG)/../iniparser/src/iniparser.o $(OBJDIR_DEBUG)/../iniparser/src/dictionary.o
+$(OBJDIR_DEBUG)/../VaultFunctor.o $(OBJDIR_DEBUG)/../VaultException.o $(OBJDIR_DEBUG)/../Value.o $(OBJDIR_DEBUG)/vaultserver.o $(OBJDIR_DEBUG)/sqlite/sqlite3.o $(OBJDIR_DEBUG)/amx/amxaux.o $(OBJDIR_DEBUG)/amx/amx.o $(OBJDIR_DEBUG)/Timer.o $(OBJDIR_DEBUG)/Server.o $(OBJDIR_DEBUG)/ScriptFunction.o $(OBJDIR_DEBUG)/Script.o $(OBJDIR_DEBUG)/Record.o $(OBJDIR_DEBUG)/Public.o $(OBJDIR_DEBUG)/PAWN.o $(OBJDIR_DEBUG)/../RakNet/VariableListDeltaTracker.o $(OBJDIR_DEBUG)/../RakNet/VariableDeltaSerializer.o $(OBJDIR_DEBUG)/../RakNet/UDPProxyServer.o $(OBJDIR_DEBUG)/../RakNet/UDPProxyCoordinator.o $(OBJDIR_DEBUG)/../RakNet/UDPProxyClient.o $(OBJDIR_DEBUG)/../RakNet/UDPForwarder.o $(OBJDIR_DEBUG)/../RakNet/TwoWayAuthentication.o $(OBJDIR_DEBUG)/../RakNet/ThreadsafePacketLogger.o $(OBJDIR_DEBUG)/../Utils.o $(OBJDIR_DEBUG)/../ServerEntry.o $(OBJDIR_DEBUG)/../Reference.o $(OBJDIR_DEBUG)/../RakNet/rdlmalloc.o $(OBJDIR_DEBUG)/../RakNet/gettimeofday.o $(OBJDIR_DEBUG)/../RakNet/_FindFirst.o $(OBJDIR_DEBUG)/../RakNet/WSAStartupSingleton.o $(OBJDIR_DEBUG)/../RakNet/VariadicSQLParser.o $(OBJDIR_DEBUG)/../RakNet/DS_HuffmanEncodingTree.o $(OBJDIR_DEBUG)/../RakNet/DS_ByteQueue.o $(OBJDIR_DEBUG)/../RakNet/DS_BytePool.o $(OBJDIR_DEBUG)/../RakNet/ConsoleServer.o $(OBJDIR_DEBUG)/../RakNet/ConnectionGraph2.o $(OBJDIR_DEBUG)/../RakNet/CommandParserInterface.o $(OBJDIR_DEBUG)/../RakNet/CloudServer.o $(OBJDIR_DEBUG)/../RakNet/CloudCommon.o $(OBJDIR_DEBUG)/../RakNet/DataCompressor.o $(OBJDIR_DEBUG)/../RakNet/DS_Table.o $(OBJDIR_DEBUG)/../Network.o $(OBJDIR_DEBUG)/../Lockable.o $(OBJDIR_DEBUG)/../Item.o $(OBJDIR_DEBUG)/../GameFactory.o $(OBJDIR_DEBUG)/../Debug.o $(OBJDIR_DEBUG)/../CriticalSection.o $(OBJDIR_DEBUG)/../Container.o $(OBJDIR_DEBUG)/../Actor.o $(OBJDIR_DEBUG)/../API.o $(OBJDIR_DEBUG)/../RakNet/CloudClient.o $(OBJDIR_DEBUG)/../RakNet/CheckSum.o $(OBJDIR_DEBUG)/../RakNet/CCRakNetUDT.o $(OBJDIR_DEBUG)/../RakNet/CCRakNetSlidingWindow.o $(OBJDIR_DEBUG)/../RakNet/BitStream.o $(OBJDIR_DEBUG)/../Player.o $(OBJDIR_DEBUG)/../PacketFactory.o $(OBJDIR_DEBUG)/../Object.o $(OBJDIR_DEBUG)/../RakNet/NatTypeDetectionServer.o $(OBJDIR_DEBUG)/../RakNet/NatTypeDetectionCommon.o $(OBJDIR_DEBUG)/../RakNet/NatTypeDetectionClient.o $(OBJDIR_DEBUG)/../RakNet/NatPunchthroughServer.o $(OBJDIR_DEBUG)/../RakNet/NatPunchthroughClient.o $(OBJDIR_DEBUG)/../RakNet/MessageFilter.o $(OBJDIR_DEBUG)/../RakNet/LogCommandParser.o $(OBJDIR_DEBUG)/../RakNet/LocklessTypes.o $(OBJDIR_DEBUG)/../RakNet/LinuxStrings.o $(OBJDIR_DEBUG)/../RakNet/PacketizedTCP.o $(OBJDIR_DEBUG)/../RakNet/PacketOutputWindowLogger.o $(OBJDIR_DEBUG)/../RakNet/PacketLogger.o $(OBJDIR_DEBUG)/../RakNet/PacketFileLogger.o $(OBJDIR_DEBUG)/../RakNet/PacketConsoleLogger.o $(OBJDIR_DEBUG)/../RakNet/NetworkIDObject.o $(OBJDIR_DEBUG)/../RakNet/NetworkIDManager.o $(OBJDIR_DEBUG)/../RakNet/FileOperations.o $(OBJDIR_DEBUG)/../RakNet/FileListTransfer.o $(OBJDIR_DEBUG)/../RakNet/FileList.o $(OBJDIR_DEBUG)/../RakNet/EpochTimeToString.o $(OBJDIR_DEBUG)/../RakNet/EncodeClassName.o $(OBJDIR_DEBUG)/../RakNet/EmailSender.o $(OBJDIR_DEBUG)/../RakNet/DynDNS.o $(OBJDIR_DEBUG)/../RakNet/DirectoryDeltaTransfer.o $(OBJDIR_DEBUG)/../RakNet/Itoa.o $(OBJDIR_DEBUG)/../RakNet/IncrementalReadInterface.o $(OBJDIR_DEBUG)/../RakNet/HTTPConnection.o $(OBJDIR_DEBUG)/../RakNet/GridSectorizer.o $(OBJDIR_DEBUG)/../RakNet/Gets.o $(OBJDIR_DEBUG)/../RakNet/Getche.o $(OBJDIR_DEBUG)/../RakNet/GetTime.o $(OBJDIR_DEBUG)/../RakNet/FullyConnectedMesh2.o $(OBJDIR_DEBUG)/../RakNet/FormatString.o
 
-OBJ_RELEASEUNIX = $(OBJDIR_RELEASEUNIX)/../RakNet/SignaledEvent.o $(OBJDIR_RELEASEUNIX)/../RakNet/SendToThread.o $(OBJDIR_RELEASEUNIX)/../RakNet/SecureHandshake.o $(OBJDIR_RELEASEUNIX)/../RakNet/SHA1.o $(OBJDIR_RELEASEUNIX)/../RakNet/Router2.o $(OBJDIR_RELEASEUNIX)/../RakNet/ReplicaManager3.o $(OBJDIR_RELEASEUNIX)/../RakNet/ReliabilityLayer.o $(OBJDIR_RELEASEUNIX)/../RakNet/ReadyEvent.o $(OBJDIR_RELEASEUNIX)/../RakNet/TelnetTransport.o $(OBJDIR_RELEASEUNIX)/../RakNet/TeamBalancer.o $(OBJDIR_RELEASEUNIX)/../RakNet/TableSerializer.o $(OBJDIR_RELEASEUNIX)/../RakNet/TCPInterface.o $(OBJDIR_RELEASEUNIX)/../RakNet/SuperFastHash.o $(OBJDIR_RELEASEUNIX)/../RakNet/StringTable.o $(OBJDIR_RELEASEUNIX)/../RakNet/StringCompressor.o $(OBJDIR_RELEASEUNIX)/../RakNet/SocketLayer.o $(OBJDIR_RELEASEUNIX)/../RakNet/SimpleMutex.o $(OBJDIR_RELEASEUNIX)/../RakNet/RakNetStatistics.o $(OBJDIR_RELEASEUNIX)/../RakNet/RakNetSocket.o $(OBJDIR_RELEASEUNIX)/../RakNet/RakNetCommandParser.o $(OBJDIR_RELEASEUNIX)/../RakNet/RakMemoryOverride.o $(OBJDIR_RELEASEUNIX)/../RakNet/Rackspace.o $(OBJDIR_RELEASEUNIX)/../RakNet/RPC4Plugin.o $(OBJDIR_RELEASEUNIX)/../RakNet/PluginInterface2.o $(OBJDIR_RELEASEUNIX)/../RakNet/Rand.o $(OBJDIR_RELEASEUNIX)/../RakNet/RakWString.o $(OBJDIR_RELEASEUNIX)/../RakNet/RakThread.o $(OBJDIR_RELEASEUNIX)/../RakNet/RakString.o $(OBJDIR_RELEASEUNIX)/../RakNet/RakSleep.o $(OBJDIR_RELEASEUNIX)/../RakNet/RakPeer.o $(OBJDIR_RELEASEUNIX)/../RakNet/RakNetTypes.o $(OBJDIR_RELEASEUNIX)/../RakNet/RakNetTransport2.o $(OBJDIR_RELEASEUNIX)/NetworkServer.o $(OBJDIR_RELEASEUNIX)/Dedicated.o $(OBJDIR_RELEASEUNIX)/Database.o $(OBJDIR_RELEASEUNIX)/Client.o $(OBJDIR_RELEASEUNIX)/Cell.o$(OBJDIR_RELEASEUNIX)/../iniparser/src/iniparser.o $(OBJDIR_RELEASEUNIX)/../iniparser/src/dictionary.o $(OBJDIR_RELEASEUNIX)/../VaultFunctor.o $(OBJDIR_RELEASEUNIX)/../VaultException.o $(OBJDIR_RELEASEUNIX)/../Value.o $(OBJDIR_RELEASEUNIX)/vaultserver.o $(OBJDIR_RELEASEUNIX)/sqlite/sqlite3.o $(OBJDIR_RELEASEUNIX)/amx/amxaux.o $(OBJDIR_RELEASEUNIX)/amx/amx.o $(OBJDIR_RELEASEUNIX)/Timer.o $(OBJDIR_RELEASEUNIX)/Server.o $(OBJDIR_RELEASEUNIX)/ScriptFunction.o $(OBJDIR_RELEASEUNIX)/Script.o $(OBJDIR_RELEASEUNIX)/Record.o $(OBJDIR_RELEASEUNIX)/Public.o $(OBJDIR_RELEASEUNIX)/PAWN.o $(OBJDIR_RELEASEUNIX)/../RakNet/VariableListDeltaTracker.o $(OBJDIR_RELEASEUNIX)/../RakNet/VariableDeltaSerializer.o $(OBJDIR_RELEASEUNIX)/../RakNet/UDPProxyServer.o $(OBJDIR_RELEASEUNIX)/../RakNet/UDPProxyCoordinator.o $(OBJDIR_RELEASEUNIX)/../RakNet/UDPProxyClient.o $(OBJDIR_RELEASEUNIX)/../RakNet/UDPForwarder.o $(OBJDIR_RELEASEUNIX)/../RakNet/TwoWayAuthentication.o $(OBJDIR_RELEASEUNIX)/../RakNet/ThreadsafePacketLogger.o $(OBJDIR_RELEASEUNIX)/../Utils.o $(OBJDIR_RELEASEUNIX)/../ServerEntry.o $(OBJDIR_RELEASEUNIX)/../Reference.o $(OBJDIR_RELEASEUNIX)/../RakNet/rdlmalloc.o $(OBJDIR_RELEASEUNIX)/../RakNet/gettimeofday.o $(OBJDIR_RELEASEUNIX)/../RakNet/_FindFirst.o $(OBJDIR_RELEASEUNIX)/../RakNet/WSAStartupSingleton.o $(OBJDIR_RELEASEUNIX)/../RakNet/VariadicSQLParser.o $(OBJDIR_RELEASEUNIX)/../RakNet/DS_HuffmanEncodingTree.o $(OBJDIR_RELEASEUNIX)/../RakNet/DS_ByteQueue.o $(OBJDIR_RELEASEUNIX)/../RakNet/DS_BytePool.o $(OBJDIR_RELEASEUNIX)/../RakNet/ConsoleServer.o $(OBJDIR_RELEASEUNIX)/../RakNet/ConnectionGraph2.o $(OBJDIR_RELEASEUNIX)/../RakNet/CommandParserInterface.o $(OBJDIR_RELEASEUNIX)/../RakNet/CloudServer.o $(OBJDIR_RELEASEUNIX)/../RakNet/CloudCommon.o $(OBJDIR_RELEASEUNIX)/../RakNet/DataCompressor.o $(OBJDIR_RELEASEUNIX)/../RakNet/DS_Table.o $(OBJDIR_RELEASEUNIX)/../Network.o $(OBJDIR_RELEASEUNIX)/../Lockable.o $(OBJDIR_RELEASEUNIX)/../Item.o $(OBJDIR_RELEASEUNIX)/../GameFactory.o $(OBJDIR_RELEASEUNIX)/../Debug.o $(OBJDIR_RELEASEUNIX)/../CriticalSection.o $(OBJDIR_RELEASEUNIX)/../Container.o $(OBJDIR_RELEASEUNIX)/../Actor.o $(OBJDIR_RELEASEUNIX)/../API.o $(OBJDIR_RELEASEUNIX)/../RakNet/CloudClient.o $(OBJDIR_RELEASEUNIX)/../RakNet/CheckSum.o $(OBJDIR_RELEASEUNIX)/../RakNet/CCRakNetUDT.o $(OBJDIR_RELEASEUNIX)/../RakNet/CCRakNetSlidingWindow.o $(OBJDIR_RELEASEUNIX)/../RakNet/BitStream.o $(OBJDIR_RELEASEUNIX)/../Player.o $(OBJDIR_RELEASEUNIX)/../PacketFactory.o $(OBJDIR_RELEASEUNIX)/../Object.o $(OBJDIR_RELEASEUNIX)/../RakNet/NatTypeDetectionServer.o $(OBJDIR_RELEASEUNIX)/../RakNet/NatTypeDetectionCommon.o $(OBJDIR_RELEASEUNIX)/../RakNet/NatTypeDetectionClient.o $(OBJDIR_RELEASEUNIX)/../RakNet/NatPunchthroughServer.o $(OBJDIR_RELEASEUNIX)/../RakNet/NatPunchthroughClient.o $(OBJDIR_RELEASEUNIX)/../RakNet/MessageFilter.o $(OBJDIR_RELEASEUNIX)/../RakNet/LogCommandParser.o $(OBJDIR_RELEASEUNIX)/../RakNet/LocklessTypes.o $(OBJDIR_RELEASEUNIX)/../RakNet/LinuxStrings.o $(OBJDIR_RELEASEUNIX)/../RakNet/PacketizedTCP.o $(OBJDIR_RELEASEUNIX)/../RakNet/PacketOutputWindowLogger.o $(OBJDIR_RELEASEUNIX)/../RakNet/PacketLogger.o $(OBJDIR_RELEASEUNIX)/../RakNet/PacketFileLogger.o $(OBJDIR_RELEASEUNIX)/../RakNet/PacketConsoleLogger.o $(OBJDIR_RELEASEUNIX)/../RakNet/NetworkIDObject.o $(OBJDIR_RELEASEUNIX)/../RakNet/NetworkIDManager.o $(OBJDIR_RELEASEUNIX)/../RakNet/FileOperations.o $(OBJDIR_RELEASEUNIX)/../RakNet/FileListTransfer.o $(OBJDIR_RELEASEUNIX)/../RakNet/FileList.o $(OBJDIR_RELEASEUNIX)/../RakNet/EpochTimeToString.o $(OBJDIR_RELEASEUNIX)/../RakNet/EncodeClassName.o $(OBJDIR_RELEASEUNIX)/../RakNet/EmailSender.o $(OBJDIR_RELEASEUNIX)/../RakNet/DynDNS.o $(OBJDIR_RELEASEUNIX)/../RakNet/DirectoryDeltaTransfer.o $(OBJDIR_RELEASEUNIX)/../RakNet/Itoa.o $(OBJDIR_RELEASEUNIX)/../RakNet/IncrementalReadInterface.o $(OBJDIR_RELEASEUNIX)/../RakNet/HTTPConnection.o $(OBJDIR_RELEASEUNIX)/../RakNet/GridSectorizer.o $(OBJDIR_RELEASEUNIX)/../RakNet/Gets.o $(OBJDIR_RELEASEUNIX)/../RakNet/Getche.o $(OBJDIR_RELEASEUNIX)/../RakNet/GetTime.o $(OBJDIR_RELEASEUNIX)/../RakNet/FullyConnectedMesh2.o $(OBJDIR_RELEASEUNIX)/../RakNet/FormatString.o
+OBJ_RELEASE = $(OBJDIR_RELEASE)/../RakNet/SignaledEvent.o $(OBJDIR_RELEASE)/../RakNet/SendToThread.o $(OBJDIR_RELEASE)/../RakNet/SecureHandshake.o $(OBJDIR_RELEASE)/../RakNet/SHA1.o $(OBJDIR_RELEASE)/../RakNet/Router2.o $(OBJDIR_RELEASE)/../RakNet/ReplicaManager3.o $(OBJDIR_RELEASE)/../RakNet/ReliabilityLayer.o $(OBJDIR_RELEASE)/../RakNet/ReadyEvent.o $(OBJDIR_RELEASE)/../RakNet/TelnetTransport.o $(OBJDIR_RELEASE)/../RakNet/TeamBalancer.o $(OBJDIR_RELEASE)/../RakNet/TableSerializer.o $(OBJDIR_RELEASE)/../RakNet/TCPInterface.o $(OBJDIR_RELEASE)/../RakNet/SuperFastHash.o $(OBJDIR_RELEASE)/../RakNet/StringTable.o $(OBJDIR_RELEASE)/../RakNet/StringCompressor.o $(OBJDIR_RELEASE)/../RakNet/SocketLayer.o $(OBJDIR_RELEASE)/../RakNet/SimpleMutex.o $(OBJDIR_RELEASE)/../RakNet/RakNetStatistics.o $(OBJDIR_RELEASE)/../RakNet/RakNetSocket.o $(OBJDIR_RELEASE)/../RakNet/RakNetCommandParser.o $(OBJDIR_RELEASE)/../RakNet/RakMemoryOverride.o $(OBJDIR_RELEASE)/../RakNet/Rackspace.o $(OBJDIR_RELEASE)/../RakNet/RPC4Plugin.o $(OBJDIR_RELEASE)/../RakNet/PluginInterface2.o $(OBJDIR_RELEASE)/../RakNet/Rand.o $(OBJDIR_RELEASE)/../RakNet/RakWString.o $(OBJDIR_RELEASE)/../RakNet/RakThread.o $(OBJDIR_RELEASE)/../RakNet/RakString.o $(OBJDIR_RELEASE)/../RakNet/RakSleep.o $(OBJDIR_RELEASE)/../RakNet/RakPeer.o $(OBJDIR_RELEASE)/../RakNet/RakNetTypes.o $(OBJDIR_RELEASE)/../RakNet/RakNetTransport2.o $(OBJDIR_RELEASE)/NetworkServer.o $(OBJDIR_RELEASE)/Dedicated.o $(OBJDIR_RELEASE)/Database.o $(OBJDIR_RELEASE)/Client.o $(OBJDIR_RELEASE)/Cell.o$(OBJDIR_RELEASE)/../iniparser/src/iniparser.o $(OBJDIR_RELEASE)/../iniparser/src/dictionary.o $(OBJDIR_RELEASE)/../VaultFunctor.o $(OBJDIR_RELEASE)/../VaultException.o $(OBJDIR_RELEASE)/../Value.o $(OBJDIR_RELEASE)/vaultserver.o $(OBJDIR_RELEASE)/sqlite/sqlite3.o $(OBJDIR_RELEASE)/amx/amxaux.o $(OBJDIR_RELEASE)/amx/amx.o $(OBJDIR_RELEASE)/Timer.o $(OBJDIR_RELEASE)/Server.o $(OBJDIR_RELEASE)/ScriptFunction.o $(OBJDIR_RELEASE)/Script.o $(OBJDIR_RELEASE)/Record.o $(OBJDIR_RELEASE)/Public.o $(OBJDIR_RELEASE)/PAWN.o $(OBJDIR_RELEASE)/../RakNet/VariableListDeltaTracker.o $(OBJDIR_RELEASE)/../RakNet/VariableDeltaSerializer.o $(OBJDIR_RELEASE)/../RakNet/UDPProxyServer.o $(OBJDIR_RELEASE)/../RakNet/UDPProxyCoordinator.o $(OBJDIR_RELEASE)/../RakNet/UDPProxyClient.o $(OBJDIR_RELEASE)/../RakNet/UDPForwarder.o $(OBJDIR_RELEASE)/../RakNet/TwoWayAuthentication.o $(OBJDIR_RELEASE)/../RakNet/ThreadsafePacketLogger.o $(OBJDIR_RELEASE)/../Utils.o $(OBJDIR_RELEASE)/../ServerEntry.o $(OBJDIR_RELEASE)/../Reference.o $(OBJDIR_RELEASE)/../RakNet/rdlmalloc.o $(OBJDIR_RELEASE)/../RakNet/gettimeofday.o $(OBJDIR_RELEASE)/../RakNet/_FindFirst.o $(OBJDIR_RELEASE)/../RakNet/WSAStartupSingleton.o $(OBJDIR_RELEASE)/../RakNet/VariadicSQLParser.o $(OBJDIR_RELEASE)/../RakNet/DS_HuffmanEncodingTree.o $(OBJDIR_RELEASE)/../RakNet/DS_ByteQueue.o $(OBJDIR_RELEASE)/../RakNet/DS_BytePool.o $(OBJDIR_RELEASE)/../RakNet/ConsoleServer.o $(OBJDIR_RELEASE)/../RakNet/ConnectionGraph2.o $(OBJDIR_RELEASE)/../RakNet/CommandParserInterface.o $(OBJDIR_RELEASE)/../RakNet/CloudServer.o $(OBJDIR_RELEASE)/../RakNet/CloudCommon.o $(OBJDIR_RELEASE)/../RakNet/DataCompressor.o $(OBJDIR_RELEASE)/../RakNet/DS_Table.o $(OBJDIR_RELEASE)/../Network.o $(OBJDIR_RELEASE)/../Lockable.o $(OBJDIR_RELEASE)/../Item.o $(OBJDIR_RELEASE)/../GameFactory.o $(OBJDIR_RELEASE)/../Debug.o $(OBJDIR_RELEASE)/../CriticalSection.o $(OBJDIR_RELEASE)/../Container.o $(OBJDIR_RELEASE)/../Actor.o $(OBJDIR_RELEASE)/../API.o $(OBJDIR_RELEASE)/../RakNet/CloudClient.o $(OBJDIR_RELEASE)/../RakNet/CheckSum.o $(OBJDIR_RELEASE)/../RakNet/CCRakNetUDT.o $(OBJDIR_RELEASE)/../RakNet/CCRakNetSlidingWindow.o $(OBJDIR_RELEASE)/../RakNet/BitStream.o $(OBJDIR_RELEASE)/../Player.o $(OBJDIR_RELEASE)/../PacketFactory.o $(OBJDIR_RELEASE)/../Object.o $(OBJDIR_RELEASE)/../RakNet/NatTypeDetectionServer.o $(OBJDIR_RELEASE)/../RakNet/NatTypeDetectionCommon.o $(OBJDIR_RELEASE)/../RakNet/NatTypeDetectionClient.o $(OBJDIR_RELEASE)/../RakNet/NatPunchthroughServer.o $(OBJDIR_RELEASE)/../RakNet/NatPunchthroughClient.o $(OBJDIR_RELEASE)/../RakNet/MessageFilter.o $(OBJDIR_RELEASE)/../RakNet/LogCommandParser.o $(OBJDIR_RELEASE)/../RakNet/LocklessTypes.o $(OBJDIR_RELEASE)/../RakNet/LinuxStrings.o $(OBJDIR_RELEASE)/../RakNet/PacketizedTCP.o $(OBJDIR_RELEASE)/../RakNet/PacketOutputWindowLogger.o $(OBJDIR_RELEASE)/../RakNet/PacketLogger.o $(OBJDIR_RELEASE)/../RakNet/PacketFileLogger.o $(OBJDIR_RELEASE)/../RakNet/PacketConsoleLogger.o $(OBJDIR_RELEASE)/../RakNet/NetworkIDObject.o $(OBJDIR_RELEASE)/../RakNet/NetworkIDManager.o $(OBJDIR_RELEASE)/../RakNet/FileOperations.o $(OBJDIR_RELEASE)/../RakNet/FileListTransfer.o $(OBJDIR_RELEASE)/../RakNet/FileList.o $(OBJDIR_RELEASE)/../RakNet/EpochTimeToString.o $(OBJDIR_RELEASE)/../RakNet/EncodeClassName.o $(OBJDIR_RELEASE)/../RakNet/EmailSender.o $(OBJDIR_RELEASE)/../RakNet/DynDNS.o $(OBJDIR_RELEASE)/../RakNet/DirectoryDeltaTransfer.o $(OBJDIR_RELEASE)/../RakNet/Itoa.o $(OBJDIR_RELEASE)/../RakNet/IncrementalReadInterface.o $(OBJDIR_RELEASE)/../RakNet/HTTPConnection.o $(OBJDIR_RELEASE)/../RakNet/GridSectorizer.o $(OBJDIR_RELEASE)/../RakNet/Gets.o $(OBJDIR_RELEASE)/../RakNet/Getche.o $(OBJDIR_RELEASE)/../RakNet/GetTime.o $(OBJDIR_RELEASE)/../RakNet/FullyConnectedMesh2.o $(OBJDIR_RELEASE)/../RakNet/FormatString.o
 
-all: debugunix releaseunix
+all: debug release
 
-clean: clean_debugunix clean_releaseunix
+clean: clean_debug clean_release
 
-before_debugunix: 
-	test -d $(OBJDIR_DEBUGUNIX)/../RakNet || mkdir -p $(OBJDIR_DEBUGUNIX)/../RakNet
-	test -d $(OBJDIR_DEBUGUNIX) || mkdir -p $(OBJDIR_DEBUGUNIX)
-	test -d $(OBJDIR_DEBUGUNIX)/../iniparser/src || mkdir -p $(OBJDIR_DEBUGUNIX)/../iniparser/src
-	test -d $(OBJDIR_DEBUGUNIX)/.. || mkdir -p $(OBJDIR_DEBUGUNIX)/..
-	test -d $(OBJDIR_DEBUGUNIX)/sqlite || mkdir -p $(OBJDIR_DEBUGUNIX)/sqlite
-	test -d $(OBJDIR_DEBUGUNIX)/amx || mkdir -p $(OBJDIR_DEBUGUNIX)/amx
+before_debug: 
+	test -d $(OBJDIR_DEBUG)/../RakNet || mkdir -p $(OBJDIR_DEBUG)/../RakNet
+	test -d $(OBJDIR_DEBUG) || mkdir -p $(OBJDIR_DEBUG)
+	test -d $(OBJDIR_DEBUG)/../stack_trace/src || mkdir -p $(OBJDIR_DEBUG)/../stack_trace/src
+	test -d $(OBJDIR_DEBUG)/../iniparser/src || mkdir -p $(OBJDIR_DEBUG)/../iniparser/src
+	test -d $(OBJDIR_DEBUG)/.. || mkdir -p $(OBJDIR_DEBUG)/..
+	test -d $(OBJDIR_DEBUG)/sqlite || mkdir -p $(OBJDIR_DEBUG)/sqlite
+	test -d $(OBJDIR_DEBUG)/amx || mkdir -p $(OBJDIR_DEBUG)/amx
 
-after_debugunix: 
+after_debug: 
 
-debugunix: before_debugunix out_debugunix after_debugunix
+debug: before_debug out_debug after_debug
 
-out_debugunix: $(OBJ_DEBUGUNIX) $(DEP_DEBUGUNIX)
-	$(LD) $(LDFLAGS_DEBUGUNIX) $(LIBDIR_DEBUGUNIX) $(OBJ_DEBUGUNIX) $(LIB_DEBUGUNIX) -o $(OUT_DEBUGUNIX)
+out_debug: $(OBJ_DEBUG) $(DEP_DEBUG)
+	$(LD) $(LDFLAGS_DEBUG) $(LIBDIR_DEBUG) $(OBJ_DEBUG) $(LIB_DEBUG) -o $(OUT_DEBUG)
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/SignaledEvent.o: ../RakNet/SignaledEvent.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/SignaledEvent.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/SignaledEvent.o
+$(OBJDIR_DEBUG)/../RakNet/SignaledEvent.o: ../RakNet/SignaledEvent.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/SignaledEvent.cpp -o $(OBJDIR_DEBUG)/../RakNet/SignaledEvent.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/SendToThread.o: ../RakNet/SendToThread.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/SendToThread.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/SendToThread.o
+$(OBJDIR_DEBUG)/../RakNet/SendToThread.o: ../RakNet/SendToThread.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/SendToThread.cpp -o $(OBJDIR_DEBUG)/../RakNet/SendToThread.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/SecureHandshake.o: ../RakNet/SecureHandshake.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/SecureHandshake.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/SecureHandshake.o
+$(OBJDIR_DEBUG)/../RakNet/SecureHandshake.o: ../RakNet/SecureHandshake.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/SecureHandshake.cpp -o $(OBJDIR_DEBUG)/../RakNet/SecureHandshake.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/SHA1.o: ../RakNet/SHA1.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/SHA1.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/SHA1.o
+$(OBJDIR_DEBUG)/../RakNet/SHA1.o: ../RakNet/SHA1.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/SHA1.cpp -o $(OBJDIR_DEBUG)/../RakNet/SHA1.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/Router2.o: ../RakNet/Router2.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/Router2.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/Router2.o
+$(OBJDIR_DEBUG)/../RakNet/Router2.o: ../RakNet/Router2.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/Router2.cpp -o $(OBJDIR_DEBUG)/../RakNet/Router2.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/ReplicaManager3.o: ../RakNet/ReplicaManager3.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/ReplicaManager3.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/ReplicaManager3.o
+$(OBJDIR_DEBUG)/../RakNet/ReplicaManager3.o: ../RakNet/ReplicaManager3.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/ReplicaManager3.cpp -o $(OBJDIR_DEBUG)/../RakNet/ReplicaManager3.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/ReliabilityLayer.o: ../RakNet/ReliabilityLayer.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/ReliabilityLayer.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/ReliabilityLayer.o
+$(OBJDIR_DEBUG)/../RakNet/ReliabilityLayer.o: ../RakNet/ReliabilityLayer.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/ReliabilityLayer.cpp -o $(OBJDIR_DEBUG)/../RakNet/ReliabilityLayer.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/ReadyEvent.o: ../RakNet/ReadyEvent.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/ReadyEvent.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/ReadyEvent.o
+$(OBJDIR_DEBUG)/../RakNet/ReadyEvent.o: ../RakNet/ReadyEvent.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/ReadyEvent.cpp -o $(OBJDIR_DEBUG)/../RakNet/ReadyEvent.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/TelnetTransport.o: ../RakNet/TelnetTransport.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/TelnetTransport.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/TelnetTransport.o
+$(OBJDIR_DEBUG)/../RakNet/TelnetTransport.o: ../RakNet/TelnetTransport.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/TelnetTransport.cpp -o $(OBJDIR_DEBUG)/../RakNet/TelnetTransport.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/TeamBalancer.o: ../RakNet/TeamBalancer.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/TeamBalancer.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/TeamBalancer.o
+$(OBJDIR_DEBUG)/../RakNet/TeamBalancer.o: ../RakNet/TeamBalancer.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/TeamBalancer.cpp -o $(OBJDIR_DEBUG)/../RakNet/TeamBalancer.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/TableSerializer.o: ../RakNet/TableSerializer.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/TableSerializer.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/TableSerializer.o
+$(OBJDIR_DEBUG)/../RakNet/TableSerializer.o: ../RakNet/TableSerializer.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/TableSerializer.cpp -o $(OBJDIR_DEBUG)/../RakNet/TableSerializer.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/TCPInterface.o: ../RakNet/TCPInterface.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/TCPInterface.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/TCPInterface.o
+$(OBJDIR_DEBUG)/../RakNet/TCPInterface.o: ../RakNet/TCPInterface.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/TCPInterface.cpp -o $(OBJDIR_DEBUG)/../RakNet/TCPInterface.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/SuperFastHash.o: ../RakNet/SuperFastHash.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/SuperFastHash.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/SuperFastHash.o
+$(OBJDIR_DEBUG)/../RakNet/SuperFastHash.o: ../RakNet/SuperFastHash.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/SuperFastHash.cpp -o $(OBJDIR_DEBUG)/../RakNet/SuperFastHash.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/StringTable.o: ../RakNet/StringTable.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/StringTable.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/StringTable.o
+$(OBJDIR_DEBUG)/../RakNet/StringTable.o: ../RakNet/StringTable.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/StringTable.cpp -o $(OBJDIR_DEBUG)/../RakNet/StringTable.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/StringCompressor.o: ../RakNet/StringCompressor.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/StringCompressor.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/StringCompressor.o
+$(OBJDIR_DEBUG)/../RakNet/StringCompressor.o: ../RakNet/StringCompressor.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/StringCompressor.cpp -o $(OBJDIR_DEBUG)/../RakNet/StringCompressor.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/SocketLayer.o: ../RakNet/SocketLayer.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/SocketLayer.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/SocketLayer.o
+$(OBJDIR_DEBUG)/../RakNet/SocketLayer.o: ../RakNet/SocketLayer.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/SocketLayer.cpp -o $(OBJDIR_DEBUG)/../RakNet/SocketLayer.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/SimpleMutex.o: ../RakNet/SimpleMutex.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/SimpleMutex.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/SimpleMutex.o
+$(OBJDIR_DEBUG)/../RakNet/SimpleMutex.o: ../RakNet/SimpleMutex.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/SimpleMutex.cpp -o $(OBJDIR_DEBUG)/../RakNet/SimpleMutex.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/RakNetStatistics.o: ../RakNet/RakNetStatistics.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/RakNetStatistics.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/RakNetStatistics.o
+$(OBJDIR_DEBUG)/../RakNet/RakNetStatistics.o: ../RakNet/RakNetStatistics.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/RakNetStatistics.cpp -o $(OBJDIR_DEBUG)/../RakNet/RakNetStatistics.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/RakNetSocket.o: ../RakNet/RakNetSocket.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/RakNetSocket.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/RakNetSocket.o
+$(OBJDIR_DEBUG)/../RakNet/RakNetSocket.o: ../RakNet/RakNetSocket.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/RakNetSocket.cpp -o $(OBJDIR_DEBUG)/../RakNet/RakNetSocket.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/RakNetCommandParser.o: ../RakNet/RakNetCommandParser.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/RakNetCommandParser.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/RakNetCommandParser.o
+$(OBJDIR_DEBUG)/../RakNet/RakNetCommandParser.o: ../RakNet/RakNetCommandParser.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/RakNetCommandParser.cpp -o $(OBJDIR_DEBUG)/../RakNet/RakNetCommandParser.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/RakMemoryOverride.o: ../RakNet/RakMemoryOverride.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/RakMemoryOverride.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/RakMemoryOverride.o
+$(OBJDIR_DEBUG)/../RakNet/RakMemoryOverride.o: ../RakNet/RakMemoryOverride.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/RakMemoryOverride.cpp -o $(OBJDIR_DEBUG)/../RakNet/RakMemoryOverride.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/Rackspace.o: ../RakNet/Rackspace.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/Rackspace.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/Rackspace.o
+$(OBJDIR_DEBUG)/../RakNet/Rackspace.o: ../RakNet/Rackspace.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/Rackspace.cpp -o $(OBJDIR_DEBUG)/../RakNet/Rackspace.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/RPC4Plugin.o: ../RakNet/RPC4Plugin.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/RPC4Plugin.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/RPC4Plugin.o
+$(OBJDIR_DEBUG)/../RakNet/RPC4Plugin.o: ../RakNet/RPC4Plugin.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/RPC4Plugin.cpp -o $(OBJDIR_DEBUG)/../RakNet/RPC4Plugin.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/PluginInterface2.o: ../RakNet/PluginInterface2.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/PluginInterface2.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/PluginInterface2.o
+$(OBJDIR_DEBUG)/../RakNet/PluginInterface2.o: ../RakNet/PluginInterface2.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/PluginInterface2.cpp -o $(OBJDIR_DEBUG)/../RakNet/PluginInterface2.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/Rand.o: ../RakNet/Rand.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/Rand.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/Rand.o
+$(OBJDIR_DEBUG)/../RakNet/Rand.o: ../RakNet/Rand.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/Rand.cpp -o $(OBJDIR_DEBUG)/../RakNet/Rand.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/RakWString.o: ../RakNet/RakWString.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/RakWString.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/RakWString.o
+$(OBJDIR_DEBUG)/../RakNet/RakWString.o: ../RakNet/RakWString.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/RakWString.cpp -o $(OBJDIR_DEBUG)/../RakNet/RakWString.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/RakThread.o: ../RakNet/RakThread.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/RakThread.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/RakThread.o
+$(OBJDIR_DEBUG)/../RakNet/RakThread.o: ../RakNet/RakThread.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/RakThread.cpp -o $(OBJDIR_DEBUG)/../RakNet/RakThread.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/RakString.o: ../RakNet/RakString.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/RakString.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/RakString.o
+$(OBJDIR_DEBUG)/../RakNet/RakString.o: ../RakNet/RakString.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/RakString.cpp -o $(OBJDIR_DEBUG)/../RakNet/RakString.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/RakSleep.o: ../RakNet/RakSleep.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/RakSleep.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/RakSleep.o
+$(OBJDIR_DEBUG)/../RakNet/RakSleep.o: ../RakNet/RakSleep.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/RakSleep.cpp -o $(OBJDIR_DEBUG)/../RakNet/RakSleep.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/RakPeer.o: ../RakNet/RakPeer.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/RakPeer.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/RakPeer.o
+$(OBJDIR_DEBUG)/../RakNet/RakPeer.o: ../RakNet/RakPeer.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/RakPeer.cpp -o $(OBJDIR_DEBUG)/../RakNet/RakPeer.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/RakNetTypes.o: ../RakNet/RakNetTypes.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/RakNetTypes.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/RakNetTypes.o
+$(OBJDIR_DEBUG)/../RakNet/RakNetTypes.o: ../RakNet/RakNetTypes.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/RakNetTypes.cpp -o $(OBJDIR_DEBUG)/../RakNet/RakNetTypes.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/RakNetTransport2.o: ../RakNet/RakNetTransport2.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/RakNetTransport2.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/RakNetTransport2.o
+$(OBJDIR_DEBUG)/../RakNet/RakNetTransport2.o: ../RakNet/RakNetTransport2.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/RakNetTransport2.cpp -o $(OBJDIR_DEBUG)/../RakNet/RakNetTransport2.o
 
-$(OBJDIR_DEBUGUNIX)/NetworkServer.o: NetworkServer.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c NetworkServer.cpp -o $(OBJDIR_DEBUGUNIX)/NetworkServer.o
+$(OBJDIR_DEBUG)/NetworkServer.o: NetworkServer.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c NetworkServer.cpp -o $(OBJDIR_DEBUG)/NetworkServer.o
 
-$(OBJDIR_DEBUGUNIX)/Dedicated.o: Dedicated.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c Dedicated.cpp -o $(OBJDIR_DEBUGUNIX)/Dedicated.o
+$(OBJDIR_DEBUG)/Dedicated.o: Dedicated.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Dedicated.cpp -o $(OBJDIR_DEBUG)/Dedicated.o
 
-$(OBJDIR_DEBUGUNIX)/Database.o: Database.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c Database.cpp -o $(OBJDIR_DEBUGUNIX)/Database.o
+$(OBJDIR_DEBUG)/Database.o: Database.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Database.cpp -o $(OBJDIR_DEBUG)/Database.o
 
-$(OBJDIR_DEBUGUNIX)/Client.o: Client.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c Client.cpp -o $(OBJDIR_DEBUGUNIX)/Client.o
+$(OBJDIR_DEBUG)/Client.o: Client.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Client.cpp -o $(OBJDIR_DEBUG)/Client.o
 
-$(OBJDIR_DEBUGUNIX)/Cell.o: Cell.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c Cell.cpp -o $(OBJDIR_DEBUGUNIX)/Cell.o
+$(OBJDIR_DEBUG)/Cell.o: Cell.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Cell.cpp -o $(OBJDIR_DEBUG)/Cell.o
 
-$(OBJDIR_DEBUGUNIX)/../iniparser/src/iniparser.o: ../iniparser/src/iniparser.c
-	$(CC) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../iniparser/src/iniparser.c -o $(OBJDIR_DEBUGUNIX)/../iniparser/src/iniparser.o
+$(OBJDIR_DEBUG)/../stack_trace/src/stack.o: ../stack_trace/src/stack.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../stack_trace/src/stack.cpp -o $(OBJDIR_DEBUG)/../stack_trace/src/stack.o
 
-$(OBJDIR_DEBUGUNIX)/../iniparser/src/dictionary.o: ../iniparser/src/dictionary.c
-	$(CC) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../iniparser/src/dictionary.c -o $(OBJDIR_DEBUGUNIX)/../iniparser/src/dictionary.o
+$(OBJDIR_DEBUG)/../iniparser/src/iniparser.o: ../iniparser/src/iniparser.c
+	$(CC) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../iniparser/src/iniparser.c -o $(OBJDIR_DEBUG)/../iniparser/src/iniparser.o
 
-$(OBJDIR_DEBUGUNIX)/../VaultFunctor.o: ../VaultFunctor.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../VaultFunctor.cpp -o $(OBJDIR_DEBUGUNIX)/../VaultFunctor.o
+$(OBJDIR_DEBUG)/../iniparser/src/dictionary.o: ../iniparser/src/dictionary.c
+	$(CC) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../iniparser/src/dictionary.c -o $(OBJDIR_DEBUG)/../iniparser/src/dictionary.o
 
-$(OBJDIR_DEBUGUNIX)/../VaultException.o: ../VaultException.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../VaultException.cpp -o $(OBJDIR_DEBUGUNIX)/../VaultException.o
+$(OBJDIR_DEBUG)/../VaultFunctor.o: ../VaultFunctor.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../VaultFunctor.cpp -o $(OBJDIR_DEBUG)/../VaultFunctor.o
 
-$(OBJDIR_DEBUGUNIX)/../Value.o: ../Value.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../Value.cpp -o $(OBJDIR_DEBUGUNIX)/../Value.o
+$(OBJDIR_DEBUG)/../VaultException.o: ../VaultException.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../VaultException.cpp -o $(OBJDIR_DEBUG)/../VaultException.o
 
-$(OBJDIR_DEBUGUNIX)/vaultserver.o: vaultserver.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c vaultserver.cpp -o $(OBJDIR_DEBUGUNIX)/vaultserver.o
+$(OBJDIR_DEBUG)/../Value.o: ../Value.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../Value.cpp -o $(OBJDIR_DEBUG)/../Value.o
 
-$(OBJDIR_DEBUGUNIX)/sqlite/sqlite3.o: sqlite/sqlite3.c
-	$(CC) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c sqlite/sqlite3.c -o $(OBJDIR_DEBUGUNIX)/sqlite/sqlite3.o
+$(OBJDIR_DEBUG)/vaultserver.o: vaultserver.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c vaultserver.cpp -o $(OBJDIR_DEBUG)/vaultserver.o
 
-$(OBJDIR_DEBUGUNIX)/amx/amxaux.o: amx/amxaux.c
-	$(CC) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c amx/amxaux.c -o $(OBJDIR_DEBUGUNIX)/amx/amxaux.o
+$(OBJDIR_DEBUG)/sqlite/sqlite3.o: sqlite/sqlite3.c
+	$(CC) $(CFLAGS_DEBUG) $(INC_DEBUG) -c sqlite/sqlite3.c -o $(OBJDIR_DEBUG)/sqlite/sqlite3.o
 
-$(OBJDIR_DEBUGUNIX)/amx/amx.o: amx/amx.c
-	$(CC) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c amx/amx.c -o $(OBJDIR_DEBUGUNIX)/amx/amx.o
+$(OBJDIR_DEBUG)/amx/amxaux.o: amx/amxaux.c
+	$(CC) $(CFLAGS_DEBUG) $(INC_DEBUG) -c amx/amxaux.c -o $(OBJDIR_DEBUG)/amx/amxaux.o
 
-$(OBJDIR_DEBUGUNIX)/Timer.o: Timer.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c Timer.cpp -o $(OBJDIR_DEBUGUNIX)/Timer.o
+$(OBJDIR_DEBUG)/amx/amx.o: amx/amx.c
+	$(CC) $(CFLAGS_DEBUG) $(INC_DEBUG) -c amx/amx.c -o $(OBJDIR_DEBUG)/amx/amx.o
 
-$(OBJDIR_DEBUGUNIX)/Server.o: Server.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c Server.cpp -o $(OBJDIR_DEBUGUNIX)/Server.o
+$(OBJDIR_DEBUG)/Timer.o: Timer.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Timer.cpp -o $(OBJDIR_DEBUG)/Timer.o
 
-$(OBJDIR_DEBUGUNIX)/ScriptFunction.o: ScriptFunction.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) -masm=intel $(INC_DEBUGUNIX) -c ScriptFunction.cpp -o $(OBJDIR_DEBUGUNIX)/ScriptFunction.o
+$(OBJDIR_DEBUG)/Server.o: Server.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Server.cpp -o $(OBJDIR_DEBUG)/Server.o
 
-$(OBJDIR_DEBUGUNIX)/Script.o: Script.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c Script.cpp -o $(OBJDIR_DEBUGUNIX)/Script.o
+$(OBJDIR_DEBUG)/ScriptFunction.o: ScriptFunction.cpp
+	$(CXX) $(CFLAGS_DEBUG) -masm=intel $(INC_DEBUG) -c ScriptFunction.cpp -o $(OBJDIR_DEBUG)/ScriptFunction.o
 
-$(OBJDIR_DEBUGUNIX)/Record.o: Record.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c Record.cpp -o $(OBJDIR_DEBUGUNIX)/Record.o
+$(OBJDIR_DEBUG)/Script.o: Script.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Script.cpp -o $(OBJDIR_DEBUG)/Script.o
 
-$(OBJDIR_DEBUGUNIX)/Public.o: Public.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c Public.cpp -o $(OBJDIR_DEBUGUNIX)/Public.o
+$(OBJDIR_DEBUG)/Record.o: Record.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Record.cpp -o $(OBJDIR_DEBUG)/Record.o
 
-$(OBJDIR_DEBUGUNIX)/PAWN.o: PAWN.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c PAWN.cpp -o $(OBJDIR_DEBUGUNIX)/PAWN.o
+$(OBJDIR_DEBUG)/Public.o: Public.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Public.cpp -o $(OBJDIR_DEBUG)/Public.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/VariableListDeltaTracker.o: ../RakNet/VariableListDeltaTracker.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/VariableListDeltaTracker.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/VariableListDeltaTracker.o
+$(OBJDIR_DEBUG)/PAWN.o: PAWN.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c PAWN.cpp -o $(OBJDIR_DEBUG)/PAWN.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/VariableDeltaSerializer.o: ../RakNet/VariableDeltaSerializer.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/VariableDeltaSerializer.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/VariableDeltaSerializer.o
+$(OBJDIR_DEBUG)/../RakNet/VariableListDeltaTracker.o: ../RakNet/VariableListDeltaTracker.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/VariableListDeltaTracker.cpp -o $(OBJDIR_DEBUG)/../RakNet/VariableListDeltaTracker.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/UDPProxyServer.o: ../RakNet/UDPProxyServer.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/UDPProxyServer.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/UDPProxyServer.o
+$(OBJDIR_DEBUG)/../RakNet/VariableDeltaSerializer.o: ../RakNet/VariableDeltaSerializer.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/VariableDeltaSerializer.cpp -o $(OBJDIR_DEBUG)/../RakNet/VariableDeltaSerializer.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/UDPProxyCoordinator.o: ../RakNet/UDPProxyCoordinator.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/UDPProxyCoordinator.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/UDPProxyCoordinator.o
+$(OBJDIR_DEBUG)/../RakNet/UDPProxyServer.o: ../RakNet/UDPProxyServer.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/UDPProxyServer.cpp -o $(OBJDIR_DEBUG)/../RakNet/UDPProxyServer.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/UDPProxyClient.o: ../RakNet/UDPProxyClient.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/UDPProxyClient.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/UDPProxyClient.o
+$(OBJDIR_DEBUG)/../RakNet/UDPProxyCoordinator.o: ../RakNet/UDPProxyCoordinator.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/UDPProxyCoordinator.cpp -o $(OBJDIR_DEBUG)/../RakNet/UDPProxyCoordinator.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/UDPForwarder.o: ../RakNet/UDPForwarder.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/UDPForwarder.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/UDPForwarder.o
+$(OBJDIR_DEBUG)/../RakNet/UDPProxyClient.o: ../RakNet/UDPProxyClient.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/UDPProxyClient.cpp -o $(OBJDIR_DEBUG)/../RakNet/UDPProxyClient.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/TwoWayAuthentication.o: ../RakNet/TwoWayAuthentication.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/TwoWayAuthentication.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/TwoWayAuthentication.o
+$(OBJDIR_DEBUG)/../RakNet/UDPForwarder.o: ../RakNet/UDPForwarder.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/UDPForwarder.cpp -o $(OBJDIR_DEBUG)/../RakNet/UDPForwarder.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/ThreadsafePacketLogger.o: ../RakNet/ThreadsafePacketLogger.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/ThreadsafePacketLogger.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/ThreadsafePacketLogger.o
+$(OBJDIR_DEBUG)/../RakNet/TwoWayAuthentication.o: ../RakNet/TwoWayAuthentication.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/TwoWayAuthentication.cpp -o $(OBJDIR_DEBUG)/../RakNet/TwoWayAuthentication.o
 
-$(OBJDIR_DEBUGUNIX)/../Utils.o: ../Utils.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../Utils.cpp -o $(OBJDIR_DEBUGUNIX)/../Utils.o
+$(OBJDIR_DEBUG)/../RakNet/ThreadsafePacketLogger.o: ../RakNet/ThreadsafePacketLogger.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/ThreadsafePacketLogger.cpp -o $(OBJDIR_DEBUG)/../RakNet/ThreadsafePacketLogger.o
 
-$(OBJDIR_DEBUGUNIX)/../ServerEntry.o: ../ServerEntry.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../ServerEntry.cpp -o $(OBJDIR_DEBUGUNIX)/../ServerEntry.o
+$(OBJDIR_DEBUG)/../Utils.o: ../Utils.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../Utils.cpp -o $(OBJDIR_DEBUG)/../Utils.o
 
-$(OBJDIR_DEBUGUNIX)/../Reference.o: ../Reference.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../Reference.cpp -o $(OBJDIR_DEBUGUNIX)/../Reference.o
+$(OBJDIR_DEBUG)/../ServerEntry.o: ../ServerEntry.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../ServerEntry.cpp -o $(OBJDIR_DEBUG)/../ServerEntry.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/rdlmalloc.o: ../RakNet/rdlmalloc.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/rdlmalloc.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/rdlmalloc.o
+$(OBJDIR_DEBUG)/../Reference.o: ../Reference.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../Reference.cpp -o $(OBJDIR_DEBUG)/../Reference.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/gettimeofday.o: ../RakNet/gettimeofday.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/gettimeofday.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/gettimeofday.o
+$(OBJDIR_DEBUG)/../RakNet/rdlmalloc.o: ../RakNet/rdlmalloc.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/rdlmalloc.cpp -o $(OBJDIR_DEBUG)/../RakNet/rdlmalloc.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/_FindFirst.o: ../RakNet/_FindFirst.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/_FindFirst.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/_FindFirst.o
+$(OBJDIR_DEBUG)/../RakNet/gettimeofday.o: ../RakNet/gettimeofday.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/gettimeofday.cpp -o $(OBJDIR_DEBUG)/../RakNet/gettimeofday.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/WSAStartupSingleton.o: ../RakNet/WSAStartupSingleton.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/WSAStartupSingleton.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/WSAStartupSingleton.o
+$(OBJDIR_DEBUG)/../RakNet/_FindFirst.o: ../RakNet/_FindFirst.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/_FindFirst.cpp -o $(OBJDIR_DEBUG)/../RakNet/_FindFirst.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/VariadicSQLParser.o: ../RakNet/VariadicSQLParser.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/VariadicSQLParser.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/VariadicSQLParser.o
+$(OBJDIR_DEBUG)/../RakNet/WSAStartupSingleton.o: ../RakNet/WSAStartupSingleton.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/WSAStartupSingleton.cpp -o $(OBJDIR_DEBUG)/../RakNet/WSAStartupSingleton.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/DS_HuffmanEncodingTree.o: ../RakNet/DS_HuffmanEncodingTree.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/DS_HuffmanEncodingTree.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/DS_HuffmanEncodingTree.o
+$(OBJDIR_DEBUG)/../RakNet/VariadicSQLParser.o: ../RakNet/VariadicSQLParser.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/VariadicSQLParser.cpp -o $(OBJDIR_DEBUG)/../RakNet/VariadicSQLParser.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/DS_ByteQueue.o: ../RakNet/DS_ByteQueue.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/DS_ByteQueue.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/DS_ByteQueue.o
+$(OBJDIR_DEBUG)/../RakNet/DS_HuffmanEncodingTree.o: ../RakNet/DS_HuffmanEncodingTree.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/DS_HuffmanEncodingTree.cpp -o $(OBJDIR_DEBUG)/../RakNet/DS_HuffmanEncodingTree.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/DS_BytePool.o: ../RakNet/DS_BytePool.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/DS_BytePool.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/DS_BytePool.o
+$(OBJDIR_DEBUG)/../RakNet/DS_ByteQueue.o: ../RakNet/DS_ByteQueue.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/DS_ByteQueue.cpp -o $(OBJDIR_DEBUG)/../RakNet/DS_ByteQueue.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/ConsoleServer.o: ../RakNet/ConsoleServer.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/ConsoleServer.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/ConsoleServer.o
+$(OBJDIR_DEBUG)/../RakNet/DS_BytePool.o: ../RakNet/DS_BytePool.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/DS_BytePool.cpp -o $(OBJDIR_DEBUG)/../RakNet/DS_BytePool.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/ConnectionGraph2.o: ../RakNet/ConnectionGraph2.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/ConnectionGraph2.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/ConnectionGraph2.o
+$(OBJDIR_DEBUG)/../RakNet/ConsoleServer.o: ../RakNet/ConsoleServer.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/ConsoleServer.cpp -o $(OBJDIR_DEBUG)/../RakNet/ConsoleServer.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/CommandParserInterface.o: ../RakNet/CommandParserInterface.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/CommandParserInterface.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/CommandParserInterface.o
+$(OBJDIR_DEBUG)/../RakNet/ConnectionGraph2.o: ../RakNet/ConnectionGraph2.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/ConnectionGraph2.cpp -o $(OBJDIR_DEBUG)/../RakNet/ConnectionGraph2.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/CloudServer.o: ../RakNet/CloudServer.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/CloudServer.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/CloudServer.o
+$(OBJDIR_DEBUG)/../RakNet/CommandParserInterface.o: ../RakNet/CommandParserInterface.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/CommandParserInterface.cpp -o $(OBJDIR_DEBUG)/../RakNet/CommandParserInterface.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/CloudCommon.o: ../RakNet/CloudCommon.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/CloudCommon.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/CloudCommon.o
+$(OBJDIR_DEBUG)/../RakNet/CloudServer.o: ../RakNet/CloudServer.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/CloudServer.cpp -o $(OBJDIR_DEBUG)/../RakNet/CloudServer.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/DataCompressor.o: ../RakNet/DataCompressor.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/DataCompressor.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/DataCompressor.o
+$(OBJDIR_DEBUG)/../RakNet/CloudCommon.o: ../RakNet/CloudCommon.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/CloudCommon.cpp -o $(OBJDIR_DEBUG)/../RakNet/CloudCommon.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/DS_Table.o: ../RakNet/DS_Table.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/DS_Table.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/DS_Table.o
+$(OBJDIR_DEBUG)/../RakNet/DataCompressor.o: ../RakNet/DataCompressor.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/DataCompressor.cpp -o $(OBJDIR_DEBUG)/../RakNet/DataCompressor.o
 
-$(OBJDIR_DEBUGUNIX)/../Network.o: ../Network.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../Network.cpp -o $(OBJDIR_DEBUGUNIX)/../Network.o
+$(OBJDIR_DEBUG)/../RakNet/DS_Table.o: ../RakNet/DS_Table.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/DS_Table.cpp -o $(OBJDIR_DEBUG)/../RakNet/DS_Table.o
 
-$(OBJDIR_DEBUGUNIX)/../Lockable.o: ../Lockable.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../Lockable.cpp -o $(OBJDIR_DEBUGUNIX)/../Lockable.o
+$(OBJDIR_DEBUG)/../Network.o: ../Network.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../Network.cpp -o $(OBJDIR_DEBUG)/../Network.o
 
-$(OBJDIR_DEBUGUNIX)/../Item.o: ../Item.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../Item.cpp -o $(OBJDIR_DEBUGUNIX)/../Item.o
+$(OBJDIR_DEBUG)/../Lockable.o: ../Lockable.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../Lockable.cpp -o $(OBJDIR_DEBUG)/../Lockable.o
 
-$(OBJDIR_DEBUGUNIX)/../GameFactory.o: ../GameFactory.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../GameFactory.cpp -o $(OBJDIR_DEBUGUNIX)/../GameFactory.o
+$(OBJDIR_DEBUG)/../Item.o: ../Item.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../Item.cpp -o $(OBJDIR_DEBUG)/../Item.o
 
-$(OBJDIR_DEBUGUNIX)/../Debug.o: ../Debug.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../Debug.cpp -o $(OBJDIR_DEBUGUNIX)/../Debug.o
+$(OBJDIR_DEBUG)/../GameFactory.o: ../GameFactory.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../GameFactory.cpp -o $(OBJDIR_DEBUG)/../GameFactory.o
 
-$(OBJDIR_DEBUGUNIX)/../CriticalSection.o: ../CriticalSection.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../CriticalSection.cpp -o $(OBJDIR_DEBUGUNIX)/../CriticalSection.o
+$(OBJDIR_DEBUG)/../Debug.o: ../Debug.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../Debug.cpp -o $(OBJDIR_DEBUG)/../Debug.o
 
-$(OBJDIR_DEBUGUNIX)/../Container.o: ../Container.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../Container.cpp -o $(OBJDIR_DEBUGUNIX)/../Container.o
+$(OBJDIR_DEBUG)/../CriticalSection.o: ../CriticalSection.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../CriticalSection.cpp -o $(OBJDIR_DEBUG)/../CriticalSection.o
 
-$(OBJDIR_DEBUGUNIX)/../Actor.o: ../Actor.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../Actor.cpp -o $(OBJDIR_DEBUGUNIX)/../Actor.o
+$(OBJDIR_DEBUG)/../Container.o: ../Container.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../Container.cpp -o $(OBJDIR_DEBUG)/../Container.o
 
-$(OBJDIR_DEBUGUNIX)/../API.o: ../API.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../API.cpp -o $(OBJDIR_DEBUGUNIX)/../API.o
+$(OBJDIR_DEBUG)/../Actor.o: ../Actor.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../Actor.cpp -o $(OBJDIR_DEBUG)/../Actor.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/CloudClient.o: ../RakNet/CloudClient.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/CloudClient.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/CloudClient.o
+$(OBJDIR_DEBUG)/../API.o: ../API.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../API.cpp -o $(OBJDIR_DEBUG)/../API.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/CheckSum.o: ../RakNet/CheckSum.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/CheckSum.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/CheckSum.o
+$(OBJDIR_DEBUG)/../RakNet/CloudClient.o: ../RakNet/CloudClient.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/CloudClient.cpp -o $(OBJDIR_DEBUG)/../RakNet/CloudClient.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/CCRakNetUDT.o: ../RakNet/CCRakNetUDT.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/CCRakNetUDT.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/CCRakNetUDT.o
+$(OBJDIR_DEBUG)/../RakNet/CheckSum.o: ../RakNet/CheckSum.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/CheckSum.cpp -o $(OBJDIR_DEBUG)/../RakNet/CheckSum.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/CCRakNetSlidingWindow.o: ../RakNet/CCRakNetSlidingWindow.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/CCRakNetSlidingWindow.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/CCRakNetSlidingWindow.o
+$(OBJDIR_DEBUG)/../RakNet/CCRakNetUDT.o: ../RakNet/CCRakNetUDT.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/CCRakNetUDT.cpp -o $(OBJDIR_DEBUG)/../RakNet/CCRakNetUDT.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/BitStream.o: ../RakNet/BitStream.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/BitStream.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/BitStream.o
+$(OBJDIR_DEBUG)/../RakNet/CCRakNetSlidingWindow.o: ../RakNet/CCRakNetSlidingWindow.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/CCRakNetSlidingWindow.cpp -o $(OBJDIR_DEBUG)/../RakNet/CCRakNetSlidingWindow.o
 
-$(OBJDIR_DEBUGUNIX)/../Player.o: ../Player.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../Player.cpp -o $(OBJDIR_DEBUGUNIX)/../Player.o
+$(OBJDIR_DEBUG)/../RakNet/BitStream.o: ../RakNet/BitStream.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/BitStream.cpp -o $(OBJDIR_DEBUG)/../RakNet/BitStream.o
 
-$(OBJDIR_DEBUGUNIX)/../PacketFactory.o: ../PacketFactory.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../PacketFactory.cpp -o $(OBJDIR_DEBUGUNIX)/../PacketFactory.o
+$(OBJDIR_DEBUG)/../Player.o: ../Player.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../Player.cpp -o $(OBJDIR_DEBUG)/../Player.o
 
-$(OBJDIR_DEBUGUNIX)/../Object.o: ../Object.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../Object.cpp -o $(OBJDIR_DEBUGUNIX)/../Object.o
+$(OBJDIR_DEBUG)/../PacketFactory.o: ../PacketFactory.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../PacketFactory.cpp -o $(OBJDIR_DEBUG)/../PacketFactory.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/NatTypeDetectionServer.o: ../RakNet/NatTypeDetectionServer.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/NatTypeDetectionServer.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/NatTypeDetectionServer.o
+$(OBJDIR_DEBUG)/../Object.o: ../Object.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../Object.cpp -o $(OBJDIR_DEBUG)/../Object.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/NatTypeDetectionCommon.o: ../RakNet/NatTypeDetectionCommon.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/NatTypeDetectionCommon.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/NatTypeDetectionCommon.o
+$(OBJDIR_DEBUG)/../RakNet/NatTypeDetectionServer.o: ../RakNet/NatTypeDetectionServer.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/NatTypeDetectionServer.cpp -o $(OBJDIR_DEBUG)/../RakNet/NatTypeDetectionServer.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/NatTypeDetectionClient.o: ../RakNet/NatTypeDetectionClient.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/NatTypeDetectionClient.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/NatTypeDetectionClient.o
+$(OBJDIR_DEBUG)/../RakNet/NatTypeDetectionCommon.o: ../RakNet/NatTypeDetectionCommon.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/NatTypeDetectionCommon.cpp -o $(OBJDIR_DEBUG)/../RakNet/NatTypeDetectionCommon.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/NatPunchthroughServer.o: ../RakNet/NatPunchthroughServer.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/NatPunchthroughServer.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/NatPunchthroughServer.o
+$(OBJDIR_DEBUG)/../RakNet/NatTypeDetectionClient.o: ../RakNet/NatTypeDetectionClient.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/NatTypeDetectionClient.cpp -o $(OBJDIR_DEBUG)/../RakNet/NatTypeDetectionClient.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/NatPunchthroughClient.o: ../RakNet/NatPunchthroughClient.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/NatPunchthroughClient.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/NatPunchthroughClient.o
+$(OBJDIR_DEBUG)/../RakNet/NatPunchthroughServer.o: ../RakNet/NatPunchthroughServer.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/NatPunchthroughServer.cpp -o $(OBJDIR_DEBUG)/../RakNet/NatPunchthroughServer.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/MessageFilter.o: ../RakNet/MessageFilter.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/MessageFilter.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/MessageFilter.o
+$(OBJDIR_DEBUG)/../RakNet/NatPunchthroughClient.o: ../RakNet/NatPunchthroughClient.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/NatPunchthroughClient.cpp -o $(OBJDIR_DEBUG)/../RakNet/NatPunchthroughClient.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/LogCommandParser.o: ../RakNet/LogCommandParser.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/LogCommandParser.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/LogCommandParser.o
+$(OBJDIR_DEBUG)/../RakNet/MessageFilter.o: ../RakNet/MessageFilter.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/MessageFilter.cpp -o $(OBJDIR_DEBUG)/../RakNet/MessageFilter.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/LocklessTypes.o: ../RakNet/LocklessTypes.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/LocklessTypes.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/LocklessTypes.o
+$(OBJDIR_DEBUG)/../RakNet/LogCommandParser.o: ../RakNet/LogCommandParser.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/LogCommandParser.cpp -o $(OBJDIR_DEBUG)/../RakNet/LogCommandParser.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/LinuxStrings.o: ../RakNet/LinuxStrings.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/LinuxStrings.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/LinuxStrings.o
+$(OBJDIR_DEBUG)/../RakNet/LocklessTypes.o: ../RakNet/LocklessTypes.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/LocklessTypes.cpp -o $(OBJDIR_DEBUG)/../RakNet/LocklessTypes.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/PacketizedTCP.o: ../RakNet/PacketizedTCP.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/PacketizedTCP.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/PacketizedTCP.o
+$(OBJDIR_DEBUG)/../RakNet/LinuxStrings.o: ../RakNet/LinuxStrings.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/LinuxStrings.cpp -o $(OBJDIR_DEBUG)/../RakNet/LinuxStrings.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/PacketOutputWindowLogger.o: ../RakNet/PacketOutputWindowLogger.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/PacketOutputWindowLogger.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/PacketOutputWindowLogger.o
+$(OBJDIR_DEBUG)/../RakNet/PacketizedTCP.o: ../RakNet/PacketizedTCP.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/PacketizedTCP.cpp -o $(OBJDIR_DEBUG)/../RakNet/PacketizedTCP.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/PacketLogger.o: ../RakNet/PacketLogger.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/PacketLogger.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/PacketLogger.o
+$(OBJDIR_DEBUG)/../RakNet/PacketOutputWindowLogger.o: ../RakNet/PacketOutputWindowLogger.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/PacketOutputWindowLogger.cpp -o $(OBJDIR_DEBUG)/../RakNet/PacketOutputWindowLogger.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/PacketFileLogger.o: ../RakNet/PacketFileLogger.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/PacketFileLogger.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/PacketFileLogger.o
+$(OBJDIR_DEBUG)/../RakNet/PacketLogger.o: ../RakNet/PacketLogger.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/PacketLogger.cpp -o $(OBJDIR_DEBUG)/../RakNet/PacketLogger.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/PacketConsoleLogger.o: ../RakNet/PacketConsoleLogger.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/PacketConsoleLogger.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/PacketConsoleLogger.o
+$(OBJDIR_DEBUG)/../RakNet/PacketFileLogger.o: ../RakNet/PacketFileLogger.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/PacketFileLogger.cpp -o $(OBJDIR_DEBUG)/../RakNet/PacketFileLogger.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/NetworkIDObject.o: ../RakNet/NetworkIDObject.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/NetworkIDObject.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/NetworkIDObject.o
+$(OBJDIR_DEBUG)/../RakNet/PacketConsoleLogger.o: ../RakNet/PacketConsoleLogger.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/PacketConsoleLogger.cpp -o $(OBJDIR_DEBUG)/../RakNet/PacketConsoleLogger.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/NetworkIDManager.o: ../RakNet/NetworkIDManager.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/NetworkIDManager.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/NetworkIDManager.o
+$(OBJDIR_DEBUG)/../RakNet/NetworkIDObject.o: ../RakNet/NetworkIDObject.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/NetworkIDObject.cpp -o $(OBJDIR_DEBUG)/../RakNet/NetworkIDObject.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/FileOperations.o: ../RakNet/FileOperations.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/FileOperations.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/FileOperations.o
+$(OBJDIR_DEBUG)/../RakNet/NetworkIDManager.o: ../RakNet/NetworkIDManager.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/NetworkIDManager.cpp -o $(OBJDIR_DEBUG)/../RakNet/NetworkIDManager.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/FileListTransfer.o: ../RakNet/FileListTransfer.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/FileListTransfer.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/FileListTransfer.o
+$(OBJDIR_DEBUG)/../RakNet/FileOperations.o: ../RakNet/FileOperations.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/FileOperations.cpp -o $(OBJDIR_DEBUG)/../RakNet/FileOperations.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/FileList.o: ../RakNet/FileList.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/FileList.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/FileList.o
+$(OBJDIR_DEBUG)/../RakNet/FileListTransfer.o: ../RakNet/FileListTransfer.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/FileListTransfer.cpp -o $(OBJDIR_DEBUG)/../RakNet/FileListTransfer.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/EpochTimeToString.o: ../RakNet/EpochTimeToString.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/EpochTimeToString.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/EpochTimeToString.o
+$(OBJDIR_DEBUG)/../RakNet/FileList.o: ../RakNet/FileList.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/FileList.cpp -o $(OBJDIR_DEBUG)/../RakNet/FileList.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/EncodeClassName.o: ../RakNet/EncodeClassName.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/EncodeClassName.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/EncodeClassName.o
+$(OBJDIR_DEBUG)/../RakNet/EpochTimeToString.o: ../RakNet/EpochTimeToString.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/EpochTimeToString.cpp -o $(OBJDIR_DEBUG)/../RakNet/EpochTimeToString.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/EmailSender.o: ../RakNet/EmailSender.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/EmailSender.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/EmailSender.o
+$(OBJDIR_DEBUG)/../RakNet/EncodeClassName.o: ../RakNet/EncodeClassName.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/EncodeClassName.cpp -o $(OBJDIR_DEBUG)/../RakNet/EncodeClassName.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/DynDNS.o: ../RakNet/DynDNS.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/DynDNS.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/DynDNS.o
+$(OBJDIR_DEBUG)/../RakNet/EmailSender.o: ../RakNet/EmailSender.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/EmailSender.cpp -o $(OBJDIR_DEBUG)/../RakNet/EmailSender.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/DirectoryDeltaTransfer.o: ../RakNet/DirectoryDeltaTransfer.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/DirectoryDeltaTransfer.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/DirectoryDeltaTransfer.o
+$(OBJDIR_DEBUG)/../RakNet/DynDNS.o: ../RakNet/DynDNS.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/DynDNS.cpp -o $(OBJDIR_DEBUG)/../RakNet/DynDNS.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/Itoa.o: ../RakNet/Itoa.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/Itoa.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/Itoa.o
+$(OBJDIR_DEBUG)/../RakNet/DirectoryDeltaTransfer.o: ../RakNet/DirectoryDeltaTransfer.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/DirectoryDeltaTransfer.cpp -o $(OBJDIR_DEBUG)/../RakNet/DirectoryDeltaTransfer.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/IncrementalReadInterface.o: ../RakNet/IncrementalReadInterface.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/IncrementalReadInterface.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/IncrementalReadInterface.o
+$(OBJDIR_DEBUG)/../RakNet/Itoa.o: ../RakNet/Itoa.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/Itoa.cpp -o $(OBJDIR_DEBUG)/../RakNet/Itoa.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/HTTPConnection.o: ../RakNet/HTTPConnection.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/HTTPConnection.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/HTTPConnection.o
+$(OBJDIR_DEBUG)/../RakNet/IncrementalReadInterface.o: ../RakNet/IncrementalReadInterface.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/IncrementalReadInterface.cpp -o $(OBJDIR_DEBUG)/../RakNet/IncrementalReadInterface.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/GridSectorizer.o: ../RakNet/GridSectorizer.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/GridSectorizer.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/GridSectorizer.o
+$(OBJDIR_DEBUG)/../RakNet/HTTPConnection.o: ../RakNet/HTTPConnection.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/HTTPConnection.cpp -o $(OBJDIR_DEBUG)/../RakNet/HTTPConnection.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/Gets.o: ../RakNet/Gets.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/Gets.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/Gets.o
+$(OBJDIR_DEBUG)/../RakNet/GridSectorizer.o: ../RakNet/GridSectorizer.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/GridSectorizer.cpp -o $(OBJDIR_DEBUG)/../RakNet/GridSectorizer.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/Getche.o: ../RakNet/Getche.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/Getche.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/Getche.o
+$(OBJDIR_DEBUG)/../RakNet/Gets.o: ../RakNet/Gets.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/Gets.cpp -o $(OBJDIR_DEBUG)/../RakNet/Gets.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/GetTime.o: ../RakNet/GetTime.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/GetTime.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/GetTime.o
+$(OBJDIR_DEBUG)/../RakNet/Getche.o: ../RakNet/Getche.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/Getche.cpp -o $(OBJDIR_DEBUG)/../RakNet/Getche.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/FullyConnectedMesh2.o: ../RakNet/FullyConnectedMesh2.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/FullyConnectedMesh2.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/FullyConnectedMesh2.o
+$(OBJDIR_DEBUG)/../RakNet/GetTime.o: ../RakNet/GetTime.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/GetTime.cpp -o $(OBJDIR_DEBUG)/../RakNet/GetTime.o
 
-$(OBJDIR_DEBUGUNIX)/../RakNet/FormatString.o: ../RakNet/FormatString.cpp
-	$(CXX) $(CFLAGS_DEBUGUNIX) $(INC_DEBUGUNIX) -c ../RakNet/FormatString.cpp -o $(OBJDIR_DEBUGUNIX)/../RakNet/FormatString.o
+$(OBJDIR_DEBUG)/../RakNet/FullyConnectedMesh2.o: ../RakNet/FullyConnectedMesh2.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/FullyConnectedMesh2.cpp -o $(OBJDIR_DEBUG)/../RakNet/FullyConnectedMesh2.o
 
-clean_debugunix: 
-	rm -f $(OBJ_DEBUGUNIX) $(OUT_DEBUGUNIX)
-	rm -rf $(OBJDIR_DEBUGUNIX)/../RakNet
-	rm -rf $(OBJDIR_DEBUGUNIX)
-	rm -rf $(OBJDIR_DEBUGUNIX)/../iniparser/src
-	rm -rf $(OBJDIR_DEBUGUNIX)/..
-	rm -rf $(OBJDIR_DEBUGUNIX)/sqlite
-	rm -rf $(OBJDIR_DEBUGUNIX)/amx
+$(OBJDIR_DEBUG)/../RakNet/FormatString.o: ../RakNet/FormatString.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../RakNet/FormatString.cpp -o $(OBJDIR_DEBUG)/../RakNet/FormatString.o
 
-before_releaseunix: 
-	test -d $(OBJDIR_RELEASEUNIX)/../RakNet || mkdir -p $(OBJDIR_RELEASEUNIX)/../RakNet
-	test -d $(OBJDIR_RELEASEUNIX) || mkdir -p $(OBJDIR_RELEASEUNIX)
-	test -d $(OBJDIR_RELEASEUNIX)/../iniparser/src || mkdir -p $(OBJDIR_RELEASEUNIX)/../iniparser/src
-	test -d $(OBJDIR_RELEASEUNIX)/.. || mkdir -p $(OBJDIR_RELEASEUNIX)/..
-	test -d $(OBJDIR_RELEASEUNIX)/sqlite || mkdir -p $(OBJDIR_RELEASEUNIX)/sqlite
-	test -d $(OBJDIR_RELEASEUNIX)/amx || mkdir -p $(OBJDIR_RELEASEUNIX)/amx
+clean_debug: 
+	rm -f $(OBJ_DEBUG) $(OUT_DEBUG)
+	rm -rf $(OBJDIR_DEBUG)/../RakNet
+	rm -rf $(OBJDIR_DEBUG)
+	rm -rf $(OBJDIR_DEBUG)/../iniparser/src
+	rm -rf $(OBJDIR_DEBUG)/..
+	rm -rf $(OBJDIR_DEBUG)/sqlite
+	rm -rf $(OBJDIR_DEBUG)/amx
 
-after_releaseunix: 
+before_release: 
+	test -d $(OBJDIR_RELEASE)/../RakNet || mkdir -p $(OBJDIR_RELEASE)/../RakNet
+	test -d $(OBJDIR_RELEASE) || mkdir -p $(OBJDIR_RELEASE)
+	test -d $(OBJDIR_RELEASE)/../iniparser/src || mkdir -p $(OBJDIR_RELEASE)/../iniparser/src
+	test -d $(OBJDIR_RELEASE)/.. || mkdir -p $(OBJDIR_RELEASE)/..
+	test -d $(OBJDIR_RELEASE)/sqlite || mkdir -p $(OBJDIR_RELEASE)/sqlite
+	test -d $(OBJDIR_RELEASE)/amx || mkdir -p $(OBJDIR_RELEASE)/amx
 
-releaseunix: before_releaseunix out_releaseunix after_releaseunix
+after_release: 
 
-out_releaseunix: $(OBJ_RELEASEUNIX) $(DEP_RELEASEUNIX)
-	$(LD) $(LDFLAGS_RELEASEUNIX) $(LIBDIR_RELEASEUNIX) $(OBJ_RELEASEUNIX) $(LIB_RELEASEUNIX) -o $(OUT_RELEASEUNIX)
+release: before_release out_release after_release
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/SignaledEvent.o: ../RakNet/SignaledEvent.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/SignaledEvent.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/SignaledEvent.o
+out_release: $(OBJ_RELEASE) $(DEP_RELEASE)
+	$(LD) $(LDFLAGS_RELEASE) $(LIBDIR_RELEASE) $(OBJ_RELEASE) $(LIB_RELEASE) -o $(OUT_RELEASE)
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/SendToThread.o: ../RakNet/SendToThread.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/SendToThread.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/SendToThread.o
+$(OBJDIR_RELEASE)/../RakNet/SignaledEvent.o: ../RakNet/SignaledEvent.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/SignaledEvent.cpp -o $(OBJDIR_RELEASE)/../RakNet/SignaledEvent.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/SecureHandshake.o: ../RakNet/SecureHandshake.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/SecureHandshake.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/SecureHandshake.o
+$(OBJDIR_RELEASE)/../RakNet/SendToThread.o: ../RakNet/SendToThread.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/SendToThread.cpp -o $(OBJDIR_RELEASE)/../RakNet/SendToThread.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/SHA1.o: ../RakNet/SHA1.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/SHA1.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/SHA1.o
+$(OBJDIR_RELEASE)/../RakNet/SecureHandshake.o: ../RakNet/SecureHandshake.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/SecureHandshake.cpp -o $(OBJDIR_RELEASE)/../RakNet/SecureHandshake.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/Router2.o: ../RakNet/Router2.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/Router2.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/Router2.o
+$(OBJDIR_RELEASE)/../RakNet/SHA1.o: ../RakNet/SHA1.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/SHA1.cpp -o $(OBJDIR_RELEASE)/../RakNet/SHA1.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/ReplicaManager3.o: ../RakNet/ReplicaManager3.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/ReplicaManager3.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/ReplicaManager3.o
+$(OBJDIR_RELEASE)/../RakNet/Router2.o: ../RakNet/Router2.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/Router2.cpp -o $(OBJDIR_RELEASE)/../RakNet/Router2.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/ReliabilityLayer.o: ../RakNet/ReliabilityLayer.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/ReliabilityLayer.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/ReliabilityLayer.o
+$(OBJDIR_RELEASE)/../RakNet/ReplicaManager3.o: ../RakNet/ReplicaManager3.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/ReplicaManager3.cpp -o $(OBJDIR_RELEASE)/../RakNet/ReplicaManager3.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/ReadyEvent.o: ../RakNet/ReadyEvent.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/ReadyEvent.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/ReadyEvent.o
+$(OBJDIR_RELEASE)/../RakNet/ReliabilityLayer.o: ../RakNet/ReliabilityLayer.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/ReliabilityLayer.cpp -o $(OBJDIR_RELEASE)/../RakNet/ReliabilityLayer.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/TelnetTransport.o: ../RakNet/TelnetTransport.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/TelnetTransport.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/TelnetTransport.o
+$(OBJDIR_RELEASE)/../RakNet/ReadyEvent.o: ../RakNet/ReadyEvent.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/ReadyEvent.cpp -o $(OBJDIR_RELEASE)/../RakNet/ReadyEvent.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/TeamBalancer.o: ../RakNet/TeamBalancer.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/TeamBalancer.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/TeamBalancer.o
+$(OBJDIR_RELEASE)/../RakNet/TelnetTransport.o: ../RakNet/TelnetTransport.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/TelnetTransport.cpp -o $(OBJDIR_RELEASE)/../RakNet/TelnetTransport.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/TableSerializer.o: ../RakNet/TableSerializer.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/TableSerializer.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/TableSerializer.o
+$(OBJDIR_RELEASE)/../RakNet/TeamBalancer.o: ../RakNet/TeamBalancer.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/TeamBalancer.cpp -o $(OBJDIR_RELEASE)/../RakNet/TeamBalancer.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/TCPInterface.o: ../RakNet/TCPInterface.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/TCPInterface.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/TCPInterface.o
+$(OBJDIR_RELEASE)/../RakNet/TableSerializer.o: ../RakNet/TableSerializer.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/TableSerializer.cpp -o $(OBJDIR_RELEASE)/../RakNet/TableSerializer.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/SuperFastHash.o: ../RakNet/SuperFastHash.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/SuperFastHash.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/SuperFastHash.o
+$(OBJDIR_RELEASE)/../RakNet/TCPInterface.o: ../RakNet/TCPInterface.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/TCPInterface.cpp -o $(OBJDIR_RELEASE)/../RakNet/TCPInterface.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/StringTable.o: ../RakNet/StringTable.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/StringTable.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/StringTable.o
+$(OBJDIR_RELEASE)/../RakNet/SuperFastHash.o: ../RakNet/SuperFastHash.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/SuperFastHash.cpp -o $(OBJDIR_RELEASE)/../RakNet/SuperFastHash.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/StringCompressor.o: ../RakNet/StringCompressor.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/StringCompressor.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/StringCompressor.o
+$(OBJDIR_RELEASE)/../RakNet/StringTable.o: ../RakNet/StringTable.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/StringTable.cpp -o $(OBJDIR_RELEASE)/../RakNet/StringTable.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/SocketLayer.o: ../RakNet/SocketLayer.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/SocketLayer.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/SocketLayer.o
+$(OBJDIR_RELEASE)/../RakNet/StringCompressor.o: ../RakNet/StringCompressor.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/StringCompressor.cpp -o $(OBJDIR_RELEASE)/../RakNet/StringCompressor.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/SimpleMutex.o: ../RakNet/SimpleMutex.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/SimpleMutex.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/SimpleMutex.o
+$(OBJDIR_RELEASE)/../RakNet/SocketLayer.o: ../RakNet/SocketLayer.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/SocketLayer.cpp -o $(OBJDIR_RELEASE)/../RakNet/SocketLayer.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/RakNetStatistics.o: ../RakNet/RakNetStatistics.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/RakNetStatistics.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/RakNetStatistics.o
+$(OBJDIR_RELEASE)/../RakNet/SimpleMutex.o: ../RakNet/SimpleMutex.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/SimpleMutex.cpp -o $(OBJDIR_RELEASE)/../RakNet/SimpleMutex.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/RakNetSocket.o: ../RakNet/RakNetSocket.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/RakNetSocket.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/RakNetSocket.o
+$(OBJDIR_RELEASE)/../RakNet/RakNetStatistics.o: ../RakNet/RakNetStatistics.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/RakNetStatistics.cpp -o $(OBJDIR_RELEASE)/../RakNet/RakNetStatistics.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/RakNetCommandParser.o: ../RakNet/RakNetCommandParser.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/RakNetCommandParser.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/RakNetCommandParser.o
+$(OBJDIR_RELEASE)/../RakNet/RakNetSocket.o: ../RakNet/RakNetSocket.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/RakNetSocket.cpp -o $(OBJDIR_RELEASE)/../RakNet/RakNetSocket.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/RakMemoryOverride.o: ../RakNet/RakMemoryOverride.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/RakMemoryOverride.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/RakMemoryOverride.o
+$(OBJDIR_RELEASE)/../RakNet/RakNetCommandParser.o: ../RakNet/RakNetCommandParser.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/RakNetCommandParser.cpp -o $(OBJDIR_RELEASE)/../RakNet/RakNetCommandParser.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/Rackspace.o: ../RakNet/Rackspace.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/Rackspace.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/Rackspace.o
+$(OBJDIR_RELEASE)/../RakNet/RakMemoryOverride.o: ../RakNet/RakMemoryOverride.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/RakMemoryOverride.cpp -o $(OBJDIR_RELEASE)/../RakNet/RakMemoryOverride.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/RPC4Plugin.o: ../RakNet/RPC4Plugin.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/RPC4Plugin.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/RPC4Plugin.o
+$(OBJDIR_RELEASE)/../RakNet/Rackspace.o: ../RakNet/Rackspace.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/Rackspace.cpp -o $(OBJDIR_RELEASE)/../RakNet/Rackspace.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/PluginInterface2.o: ../RakNet/PluginInterface2.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/PluginInterface2.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/PluginInterface2.o
+$(OBJDIR_RELEASE)/../RakNet/RPC4Plugin.o: ../RakNet/RPC4Plugin.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/RPC4Plugin.cpp -o $(OBJDIR_RELEASE)/../RakNet/RPC4Plugin.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/Rand.o: ../RakNet/Rand.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/Rand.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/Rand.o
+$(OBJDIR_RELEASE)/../RakNet/PluginInterface2.o: ../RakNet/PluginInterface2.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/PluginInterface2.cpp -o $(OBJDIR_RELEASE)/../RakNet/PluginInterface2.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/RakWString.o: ../RakNet/RakWString.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/RakWString.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/RakWString.o
+$(OBJDIR_RELEASE)/../RakNet/Rand.o: ../RakNet/Rand.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/Rand.cpp -o $(OBJDIR_RELEASE)/../RakNet/Rand.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/RakThread.o: ../RakNet/RakThread.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/RakThread.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/RakThread.o
+$(OBJDIR_RELEASE)/../RakNet/RakWString.o: ../RakNet/RakWString.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/RakWString.cpp -o $(OBJDIR_RELEASE)/../RakNet/RakWString.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/RakString.o: ../RakNet/RakString.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/RakString.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/RakString.o
+$(OBJDIR_RELEASE)/../RakNet/RakThread.o: ../RakNet/RakThread.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/RakThread.cpp -o $(OBJDIR_RELEASE)/../RakNet/RakThread.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/RakSleep.o: ../RakNet/RakSleep.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/RakSleep.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/RakSleep.o
+$(OBJDIR_RELEASE)/../RakNet/RakString.o: ../RakNet/RakString.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/RakString.cpp -o $(OBJDIR_RELEASE)/../RakNet/RakString.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/RakPeer.o: ../RakNet/RakPeer.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/RakPeer.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/RakPeer.o
+$(OBJDIR_RELEASE)/../RakNet/RakSleep.o: ../RakNet/RakSleep.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/RakSleep.cpp -o $(OBJDIR_RELEASE)/../RakNet/RakSleep.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/RakNetTypes.o: ../RakNet/RakNetTypes.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/RakNetTypes.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/RakNetTypes.o
+$(OBJDIR_RELEASE)/../RakNet/RakPeer.o: ../RakNet/RakPeer.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/RakPeer.cpp -o $(OBJDIR_RELEASE)/../RakNet/RakPeer.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/RakNetTransport2.o: ../RakNet/RakNetTransport2.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/RakNetTransport2.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/RakNetTransport2.o
+$(OBJDIR_RELEASE)/../RakNet/RakNetTypes.o: ../RakNet/RakNetTypes.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/RakNetTypes.cpp -o $(OBJDIR_RELEASE)/../RakNet/RakNetTypes.o
 
-$(OBJDIR_RELEASEUNIX)/NetworkServer.o: NetworkServer.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c NetworkServer.cpp -o $(OBJDIR_RELEASEUNIX)/NetworkServer.o
+$(OBJDIR_RELEASE)/../RakNet/RakNetTransport2.o: ../RakNet/RakNetTransport2.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/RakNetTransport2.cpp -o $(OBJDIR_RELEASE)/../RakNet/RakNetTransport2.o
 
-$(OBJDIR_RELEASEUNIX)/Dedicated.o: Dedicated.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c Dedicated.cpp -o $(OBJDIR_RELEASEUNIX)/Dedicated.o
+$(OBJDIR_RELEASE)/NetworkServer.o: NetworkServer.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c NetworkServer.cpp -o $(OBJDIR_RELEASE)/NetworkServer.o
 
-$(OBJDIR_RELEASEUNIX)/Database.o: Database.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c Database.cpp -o $(OBJDIR_RELEASEUNIX)/Database.o
+$(OBJDIR_RELEASE)/Dedicated.o: Dedicated.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Dedicated.cpp -o $(OBJDIR_RELEASE)/Dedicated.o
 
-$(OBJDIR_RELEASEUNIX)/Client.o: Client.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c Client.cpp -o $(OBJDIR_RELEASEUNIX)/Client.o
+$(OBJDIR_RELEASE)/Database.o: Database.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Database.cpp -o $(OBJDIR_RELEASE)/Database.o
 
-$(OBJDIR_RELEASEUNIX)/Cell.o: Cell.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c Cell.cpp -o $(OBJDIR_RELEASEUNIX)/Cell.o
+$(OBJDIR_RELEASE)/Client.o: Client.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Client.cpp -o $(OBJDIR_RELEASE)/Client.o
 
-$(OBJDIR_RELEASEUNIX)/../iniparser/src/iniparser.o: ../iniparser/src/iniparser.c
-	$(CC) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../iniparser/src/iniparser.c -o $(OBJDIR_RELEASEUNIX)/../iniparser/src/iniparser.o
+$(OBJDIR_RELEASE)/Cell.o: Cell.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Cell.cpp -o $(OBJDIR_RELEASE)/Cell.o
 
-$(OBJDIR_RELEASEUNIX)/../iniparser/src/dictionary.o: ../iniparser/src/dictionary.c
-	$(CC) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../iniparser/src/dictionary.c -o $(OBJDIR_RELEASEUNIX)/../iniparser/src/dictionary.o
+$(OBJDIR_RELEASE)/../iniparser/src/iniparser.o: ../iniparser/src/iniparser.c
+	$(CC) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../iniparser/src/iniparser.c -o $(OBJDIR_RELEASE)/../iniparser/src/iniparser.o
 
-$(OBJDIR_RELEASEUNIX)/../VaultFunctor.o: ../VaultFunctor.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../VaultFunctor.cpp -o $(OBJDIR_RELEASEUNIX)/../VaultFunctor.o
+$(OBJDIR_RELEASE)/../iniparser/src/dictionary.o: ../iniparser/src/dictionary.c
+	$(CC) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../iniparser/src/dictionary.c -o $(OBJDIR_RELEASE)/../iniparser/src/dictionary.o
 
-$(OBJDIR_RELEASEUNIX)/../VaultException.o: ../VaultException.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../VaultException.cpp -o $(OBJDIR_RELEASEUNIX)/../VaultException.o
+$(OBJDIR_RELEASE)/../VaultFunctor.o: ../VaultFunctor.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../VaultFunctor.cpp -o $(OBJDIR_RELEASE)/../VaultFunctor.o
 
-$(OBJDIR_RELEASEUNIX)/../Value.o: ../Value.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../Value.cpp -o $(OBJDIR_RELEASEUNIX)/../Value.o
+$(OBJDIR_RELEASE)/../VaultException.o: ../VaultException.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../VaultException.cpp -o $(OBJDIR_RELEASE)/../VaultException.o
 
-$(OBJDIR_RELEASEUNIX)/vaultserver.o: vaultserver.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c vaultserver.cpp -o $(OBJDIR_RELEASEUNIX)/vaultserver.o
+$(OBJDIR_RELEASE)/../Value.o: ../Value.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../Value.cpp -o $(OBJDIR_RELEASE)/../Value.o
 
-$(OBJDIR_RELEASEUNIX)/sqlite/sqlite3.o: sqlite/sqlite3.c
-	$(CC) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c sqlite/sqlite3.c -o $(OBJDIR_RELEASEUNIX)/sqlite/sqlite3.o
+$(OBJDIR_RELEASE)/vaultserver.o: vaultserver.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c vaultserver.cpp -o $(OBJDIR_RELEASE)/vaultserver.o
 
-$(OBJDIR_RELEASEUNIX)/amx/amxaux.o: amx/amxaux.c
-	$(CC) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c amx/amxaux.c -o $(OBJDIR_RELEASEUNIX)/amx/amxaux.o
+$(OBJDIR_RELEASE)/sqlite/sqlite3.o: sqlite/sqlite3.c
+	$(CC) $(CFLAGS_RELEASE) $(INC_RELEASE) -c sqlite/sqlite3.c -o $(OBJDIR_RELEASE)/sqlite/sqlite3.o
 
-$(OBJDIR_RELEASEUNIX)/amx/amx.o: amx/amx.c
-	$(CC) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c amx/amx.c -o $(OBJDIR_RELEASEUNIX)/amx/amx.o
+$(OBJDIR_RELEASE)/amx/amxaux.o: amx/amxaux.c
+	$(CC) $(CFLAGS_RELEASE) $(INC_RELEASE) -c amx/amxaux.c -o $(OBJDIR_RELEASE)/amx/amxaux.o
 
-$(OBJDIR_RELEASEUNIX)/Timer.o: Timer.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c Timer.cpp -o $(OBJDIR_RELEASEUNIX)/Timer.o
+$(OBJDIR_RELEASE)/amx/amx.o: amx/amx.c
+	$(CC) $(CFLAGS_RELEASE) $(INC_RELEASE) -c amx/amx.c -o $(OBJDIR_RELEASE)/amx/amx.o
 
-$(OBJDIR_RELEASEUNIX)/Server.o: Server.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c Server.cpp -o $(OBJDIR_RELEASEUNIX)/Server.o
+$(OBJDIR_RELEASE)/Timer.o: Timer.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Timer.cpp -o $(OBJDIR_RELEASE)/Timer.o
 
-$(OBJDIR_RELEASEUNIX)/ScriptFunction.o: ScriptFunction.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) -masm=intel $(INC_RELEASEUNIX) -c ScriptFunction.cpp -o $(OBJDIR_RELEASEUNIX)/ScriptFunction.o
+$(OBJDIR_RELEASE)/Server.o: Server.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Server.cpp -o $(OBJDIR_RELEASE)/Server.o
 
-$(OBJDIR_RELEASEUNIX)/Script.o: Script.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c Script.cpp -o $(OBJDIR_RELEASEUNIX)/Script.o
+$(OBJDIR_RELEASE)/ScriptFunction.o: ScriptFunction.cpp
+	$(CXX) $(CFLAGS_RELEASE) -masm=intel $(INC_RELEASE) -c ScriptFunction.cpp -o $(OBJDIR_RELEASE)/ScriptFunction.o
 
-$(OBJDIR_RELEASEUNIX)/Record.o: Record.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c Record.cpp -o $(OBJDIR_RELEASEUNIX)/Record.o
+$(OBJDIR_RELEASE)/Script.o: Script.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Script.cpp -o $(OBJDIR_RELEASE)/Script.o
 
-$(OBJDIR_RELEASEUNIX)/Public.o: Public.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c Public.cpp -o $(OBJDIR_RELEASEUNIX)/Public.o
+$(OBJDIR_RELEASE)/Record.o: Record.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Record.cpp -o $(OBJDIR_RELEASE)/Record.o
 
-$(OBJDIR_RELEASEUNIX)/PAWN.o: PAWN.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c PAWN.cpp -o $(OBJDIR_RELEASEUNIX)/PAWN.o
+$(OBJDIR_RELEASE)/Public.o: Public.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Public.cpp -o $(OBJDIR_RELEASE)/Public.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/VariableListDeltaTracker.o: ../RakNet/VariableListDeltaTracker.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/VariableListDeltaTracker.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/VariableListDeltaTracker.o
+$(OBJDIR_RELEASE)/PAWN.o: PAWN.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c PAWN.cpp -o $(OBJDIR_RELEASE)/PAWN.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/VariableDeltaSerializer.o: ../RakNet/VariableDeltaSerializer.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/VariableDeltaSerializer.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/VariableDeltaSerializer.o
+$(OBJDIR_RELEASE)/../RakNet/VariableListDeltaTracker.o: ../RakNet/VariableListDeltaTracker.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/VariableListDeltaTracker.cpp -o $(OBJDIR_RELEASE)/../RakNet/VariableListDeltaTracker.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/UDPProxyServer.o: ../RakNet/UDPProxyServer.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/UDPProxyServer.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/UDPProxyServer.o
+$(OBJDIR_RELEASE)/../RakNet/VariableDeltaSerializer.o: ../RakNet/VariableDeltaSerializer.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/VariableDeltaSerializer.cpp -o $(OBJDIR_RELEASE)/../RakNet/VariableDeltaSerializer.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/UDPProxyCoordinator.o: ../RakNet/UDPProxyCoordinator.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/UDPProxyCoordinator.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/UDPProxyCoordinator.o
+$(OBJDIR_RELEASE)/../RakNet/UDPProxyServer.o: ../RakNet/UDPProxyServer.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/UDPProxyServer.cpp -o $(OBJDIR_RELEASE)/../RakNet/UDPProxyServer.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/UDPProxyClient.o: ../RakNet/UDPProxyClient.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/UDPProxyClient.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/UDPProxyClient.o
+$(OBJDIR_RELEASE)/../RakNet/UDPProxyCoordinator.o: ../RakNet/UDPProxyCoordinator.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/UDPProxyCoordinator.cpp -o $(OBJDIR_RELEASE)/../RakNet/UDPProxyCoordinator.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/UDPForwarder.o: ../RakNet/UDPForwarder.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/UDPForwarder.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/UDPForwarder.o
+$(OBJDIR_RELEASE)/../RakNet/UDPProxyClient.o: ../RakNet/UDPProxyClient.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/UDPProxyClient.cpp -o $(OBJDIR_RELEASE)/../RakNet/UDPProxyClient.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/TwoWayAuthentication.o: ../RakNet/TwoWayAuthentication.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/TwoWayAuthentication.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/TwoWayAuthentication.o
+$(OBJDIR_RELEASE)/../RakNet/UDPForwarder.o: ../RakNet/UDPForwarder.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/UDPForwarder.cpp -o $(OBJDIR_RELEASE)/../RakNet/UDPForwarder.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/ThreadsafePacketLogger.o: ../RakNet/ThreadsafePacketLogger.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/ThreadsafePacketLogger.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/ThreadsafePacketLogger.o
+$(OBJDIR_RELEASE)/../RakNet/TwoWayAuthentication.o: ../RakNet/TwoWayAuthentication.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/TwoWayAuthentication.cpp -o $(OBJDIR_RELEASE)/../RakNet/TwoWayAuthentication.o
 
-$(OBJDIR_RELEASEUNIX)/../Utils.o: ../Utils.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../Utils.cpp -o $(OBJDIR_RELEASEUNIX)/../Utils.o
+$(OBJDIR_RELEASE)/../RakNet/ThreadsafePacketLogger.o: ../RakNet/ThreadsafePacketLogger.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/ThreadsafePacketLogger.cpp -o $(OBJDIR_RELEASE)/../RakNet/ThreadsafePacketLogger.o
 
-$(OBJDIR_RELEASEUNIX)/../ServerEntry.o: ../ServerEntry.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../ServerEntry.cpp -o $(OBJDIR_RELEASEUNIX)/../ServerEntry.o
+$(OBJDIR_RELEASE)/../Utils.o: ../Utils.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../Utils.cpp -o $(OBJDIR_RELEASE)/../Utils.o
 
-$(OBJDIR_RELEASEUNIX)/../Reference.o: ../Reference.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../Reference.cpp -o $(OBJDIR_RELEASEUNIX)/../Reference.o
+$(OBJDIR_RELEASE)/../ServerEntry.o: ../ServerEntry.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../ServerEntry.cpp -o $(OBJDIR_RELEASE)/../ServerEntry.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/rdlmalloc.o: ../RakNet/rdlmalloc.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/rdlmalloc.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/rdlmalloc.o
+$(OBJDIR_RELEASE)/../Reference.o: ../Reference.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../Reference.cpp -o $(OBJDIR_RELEASE)/../Reference.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/gettimeofday.o: ../RakNet/gettimeofday.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/gettimeofday.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/gettimeofday.o
+$(OBJDIR_RELEASE)/../RakNet/rdlmalloc.o: ../RakNet/rdlmalloc.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/rdlmalloc.cpp -o $(OBJDIR_RELEASE)/../RakNet/rdlmalloc.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/_FindFirst.o: ../RakNet/_FindFirst.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/_FindFirst.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/_FindFirst.o
+$(OBJDIR_RELEASE)/../RakNet/gettimeofday.o: ../RakNet/gettimeofday.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/gettimeofday.cpp -o $(OBJDIR_RELEASE)/../RakNet/gettimeofday.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/WSAStartupSingleton.o: ../RakNet/WSAStartupSingleton.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/WSAStartupSingleton.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/WSAStartupSingleton.o
+$(OBJDIR_RELEASE)/../RakNet/_FindFirst.o: ../RakNet/_FindFirst.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/_FindFirst.cpp -o $(OBJDIR_RELEASE)/../RakNet/_FindFirst.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/VariadicSQLParser.o: ../RakNet/VariadicSQLParser.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/VariadicSQLParser.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/VariadicSQLParser.o
+$(OBJDIR_RELEASE)/../RakNet/WSAStartupSingleton.o: ../RakNet/WSAStartupSingleton.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/WSAStartupSingleton.cpp -o $(OBJDIR_RELEASE)/../RakNet/WSAStartupSingleton.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/DS_HuffmanEncodingTree.o: ../RakNet/DS_HuffmanEncodingTree.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/DS_HuffmanEncodingTree.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/DS_HuffmanEncodingTree.o
+$(OBJDIR_RELEASE)/../RakNet/VariadicSQLParser.o: ../RakNet/VariadicSQLParser.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/VariadicSQLParser.cpp -o $(OBJDIR_RELEASE)/../RakNet/VariadicSQLParser.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/DS_ByteQueue.o: ../RakNet/DS_ByteQueue.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/DS_ByteQueue.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/DS_ByteQueue.o
+$(OBJDIR_RELEASE)/../RakNet/DS_HuffmanEncodingTree.o: ../RakNet/DS_HuffmanEncodingTree.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/DS_HuffmanEncodingTree.cpp -o $(OBJDIR_RELEASE)/../RakNet/DS_HuffmanEncodingTree.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/DS_BytePool.o: ../RakNet/DS_BytePool.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/DS_BytePool.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/DS_BytePool.o
+$(OBJDIR_RELEASE)/../RakNet/DS_ByteQueue.o: ../RakNet/DS_ByteQueue.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/DS_ByteQueue.cpp -o $(OBJDIR_RELEASE)/../RakNet/DS_ByteQueue.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/ConsoleServer.o: ../RakNet/ConsoleServer.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/ConsoleServer.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/ConsoleServer.o
+$(OBJDIR_RELEASE)/../RakNet/DS_BytePool.o: ../RakNet/DS_BytePool.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/DS_BytePool.cpp -o $(OBJDIR_RELEASE)/../RakNet/DS_BytePool.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/ConnectionGraph2.o: ../RakNet/ConnectionGraph2.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/ConnectionGraph2.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/ConnectionGraph2.o
+$(OBJDIR_RELEASE)/../RakNet/ConsoleServer.o: ../RakNet/ConsoleServer.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/ConsoleServer.cpp -o $(OBJDIR_RELEASE)/../RakNet/ConsoleServer.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/CommandParserInterface.o: ../RakNet/CommandParserInterface.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/CommandParserInterface.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/CommandParserInterface.o
+$(OBJDIR_RELEASE)/../RakNet/ConnectionGraph2.o: ../RakNet/ConnectionGraph2.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/ConnectionGraph2.cpp -o $(OBJDIR_RELEASE)/../RakNet/ConnectionGraph2.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/CloudServer.o: ../RakNet/CloudServer.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/CloudServer.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/CloudServer.o
+$(OBJDIR_RELEASE)/../RakNet/CommandParserInterface.o: ../RakNet/CommandParserInterface.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/CommandParserInterface.cpp -o $(OBJDIR_RELEASE)/../RakNet/CommandParserInterface.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/CloudCommon.o: ../RakNet/CloudCommon.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/CloudCommon.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/CloudCommon.o
+$(OBJDIR_RELEASE)/../RakNet/CloudServer.o: ../RakNet/CloudServer.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/CloudServer.cpp -o $(OBJDIR_RELEASE)/../RakNet/CloudServer.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/DataCompressor.o: ../RakNet/DataCompressor.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/DataCompressor.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/DataCompressor.o
+$(OBJDIR_RELEASE)/../RakNet/CloudCommon.o: ../RakNet/CloudCommon.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/CloudCommon.cpp -o $(OBJDIR_RELEASE)/../RakNet/CloudCommon.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/DS_Table.o: ../RakNet/DS_Table.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/DS_Table.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/DS_Table.o
+$(OBJDIR_RELEASE)/../RakNet/DataCompressor.o: ../RakNet/DataCompressor.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/DataCompressor.cpp -o $(OBJDIR_RELEASE)/../RakNet/DataCompressor.o
 
-$(OBJDIR_RELEASEUNIX)/../Network.o: ../Network.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../Network.cpp -o $(OBJDIR_RELEASEUNIX)/../Network.o
+$(OBJDIR_RELEASE)/../RakNet/DS_Table.o: ../RakNet/DS_Table.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/DS_Table.cpp -o $(OBJDIR_RELEASE)/../RakNet/DS_Table.o
 
-$(OBJDIR_RELEASEUNIX)/../Lockable.o: ../Lockable.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../Lockable.cpp -o $(OBJDIR_RELEASEUNIX)/../Lockable.o
+$(OBJDIR_RELEASE)/../Network.o: ../Network.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../Network.cpp -o $(OBJDIR_RELEASE)/../Network.o
 
-$(OBJDIR_RELEASEUNIX)/../Item.o: ../Item.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../Item.cpp -o $(OBJDIR_RELEASEUNIX)/../Item.o
+$(OBJDIR_RELEASE)/../Lockable.o: ../Lockable.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../Lockable.cpp -o $(OBJDIR_RELEASE)/../Lockable.o
 
-$(OBJDIR_RELEASEUNIX)/../GameFactory.o: ../GameFactory.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../GameFactory.cpp -o $(OBJDIR_RELEASEUNIX)/../GameFactory.o
+$(OBJDIR_RELEASE)/../Item.o: ../Item.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../Item.cpp -o $(OBJDIR_RELEASE)/../Item.o
 
-$(OBJDIR_RELEASEUNIX)/../Debug.o: ../Debug.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../Debug.cpp -o $(OBJDIR_RELEASEUNIX)/../Debug.o
+$(OBJDIR_RELEASE)/../GameFactory.o: ../GameFactory.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../GameFactory.cpp -o $(OBJDIR_RELEASE)/../GameFactory.o
 
-$(OBJDIR_RELEASEUNIX)/../CriticalSection.o: ../CriticalSection.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../CriticalSection.cpp -o $(OBJDIR_RELEASEUNIX)/../CriticalSection.o
+$(OBJDIR_RELEASE)/../Debug.o: ../Debug.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../Debug.cpp -o $(OBJDIR_RELEASE)/../Debug.o
 
-$(OBJDIR_RELEASEUNIX)/../Container.o: ../Container.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../Container.cpp -o $(OBJDIR_RELEASEUNIX)/../Container.o
+$(OBJDIR_RELEASE)/../CriticalSection.o: ../CriticalSection.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../CriticalSection.cpp -o $(OBJDIR_RELEASE)/../CriticalSection.o
 
-$(OBJDIR_RELEASEUNIX)/../Actor.o: ../Actor.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../Actor.cpp -o $(OBJDIR_RELEASEUNIX)/../Actor.o
+$(OBJDIR_RELEASE)/../Container.o: ../Container.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../Container.cpp -o $(OBJDIR_RELEASE)/../Container.o
 
-$(OBJDIR_RELEASEUNIX)/../API.o: ../API.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../API.cpp -o $(OBJDIR_RELEASEUNIX)/../API.o
+$(OBJDIR_RELEASE)/../Actor.o: ../Actor.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../Actor.cpp -o $(OBJDIR_RELEASE)/../Actor.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/CloudClient.o: ../RakNet/CloudClient.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/CloudClient.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/CloudClient.o
+$(OBJDIR_RELEASE)/../API.o: ../API.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../API.cpp -o $(OBJDIR_RELEASE)/../API.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/CheckSum.o: ../RakNet/CheckSum.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/CheckSum.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/CheckSum.o
+$(OBJDIR_RELEASE)/../RakNet/CloudClient.o: ../RakNet/CloudClient.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/CloudClient.cpp -o $(OBJDIR_RELEASE)/../RakNet/CloudClient.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/CCRakNetUDT.o: ../RakNet/CCRakNetUDT.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/CCRakNetUDT.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/CCRakNetUDT.o
+$(OBJDIR_RELEASE)/../RakNet/CheckSum.o: ../RakNet/CheckSum.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/CheckSum.cpp -o $(OBJDIR_RELEASE)/../RakNet/CheckSum.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/CCRakNetSlidingWindow.o: ../RakNet/CCRakNetSlidingWindow.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/CCRakNetSlidingWindow.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/CCRakNetSlidingWindow.o
+$(OBJDIR_RELEASE)/../RakNet/CCRakNetUDT.o: ../RakNet/CCRakNetUDT.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/CCRakNetUDT.cpp -o $(OBJDIR_RELEASE)/../RakNet/CCRakNetUDT.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/BitStream.o: ../RakNet/BitStream.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/BitStream.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/BitStream.o
+$(OBJDIR_RELEASE)/../RakNet/CCRakNetSlidingWindow.o: ../RakNet/CCRakNetSlidingWindow.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/CCRakNetSlidingWindow.cpp -o $(OBJDIR_RELEASE)/../RakNet/CCRakNetSlidingWindow.o
 
-$(OBJDIR_RELEASEUNIX)/../Player.o: ../Player.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../Player.cpp -o $(OBJDIR_RELEASEUNIX)/../Player.o
+$(OBJDIR_RELEASE)/../RakNet/BitStream.o: ../RakNet/BitStream.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/BitStream.cpp -o $(OBJDIR_RELEASE)/../RakNet/BitStream.o
 
-$(OBJDIR_RELEASEUNIX)/../PacketFactory.o: ../PacketFactory.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../PacketFactory.cpp -o $(OBJDIR_RELEASEUNIX)/../PacketFactory.o
+$(OBJDIR_RELEASE)/../Player.o: ../Player.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../Player.cpp -o $(OBJDIR_RELEASE)/../Player.o
 
-$(OBJDIR_RELEASEUNIX)/../Object.o: ../Object.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../Object.cpp -o $(OBJDIR_RELEASEUNIX)/../Object.o
+$(OBJDIR_RELEASE)/../PacketFactory.o: ../PacketFactory.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../PacketFactory.cpp -o $(OBJDIR_RELEASE)/../PacketFactory.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/NatTypeDetectionServer.o: ../RakNet/NatTypeDetectionServer.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/NatTypeDetectionServer.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/NatTypeDetectionServer.o
+$(OBJDIR_RELEASE)/../Object.o: ../Object.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../Object.cpp -o $(OBJDIR_RELEASE)/../Object.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/NatTypeDetectionCommon.o: ../RakNet/NatTypeDetectionCommon.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/NatTypeDetectionCommon.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/NatTypeDetectionCommon.o
+$(OBJDIR_RELEASE)/../RakNet/NatTypeDetectionServer.o: ../RakNet/NatTypeDetectionServer.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/NatTypeDetectionServer.cpp -o $(OBJDIR_RELEASE)/../RakNet/NatTypeDetectionServer.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/NatTypeDetectionClient.o: ../RakNet/NatTypeDetectionClient.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/NatTypeDetectionClient.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/NatTypeDetectionClient.o
+$(OBJDIR_RELEASE)/../RakNet/NatTypeDetectionCommon.o: ../RakNet/NatTypeDetectionCommon.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/NatTypeDetectionCommon.cpp -o $(OBJDIR_RELEASE)/../RakNet/NatTypeDetectionCommon.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/NatPunchthroughServer.o: ../RakNet/NatPunchthroughServer.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/NatPunchthroughServer.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/NatPunchthroughServer.o
+$(OBJDIR_RELEASE)/../RakNet/NatTypeDetectionClient.o: ../RakNet/NatTypeDetectionClient.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/NatTypeDetectionClient.cpp -o $(OBJDIR_RELEASE)/../RakNet/NatTypeDetectionClient.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/NatPunchthroughClient.o: ../RakNet/NatPunchthroughClient.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/NatPunchthroughClient.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/NatPunchthroughClient.o
+$(OBJDIR_RELEASE)/../RakNet/NatPunchthroughServer.o: ../RakNet/NatPunchthroughServer.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/NatPunchthroughServer.cpp -o $(OBJDIR_RELEASE)/../RakNet/NatPunchthroughServer.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/MessageFilter.o: ../RakNet/MessageFilter.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/MessageFilter.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/MessageFilter.o
+$(OBJDIR_RELEASE)/../RakNet/NatPunchthroughClient.o: ../RakNet/NatPunchthroughClient.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/NatPunchthroughClient.cpp -o $(OBJDIR_RELEASE)/../RakNet/NatPunchthroughClient.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/LogCommandParser.o: ../RakNet/LogCommandParser.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/LogCommandParser.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/LogCommandParser.o
+$(OBJDIR_RELEASE)/../RakNet/MessageFilter.o: ../RakNet/MessageFilter.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/MessageFilter.cpp -o $(OBJDIR_RELEASE)/../RakNet/MessageFilter.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/LocklessTypes.o: ../RakNet/LocklessTypes.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/LocklessTypes.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/LocklessTypes.o
+$(OBJDIR_RELEASE)/../RakNet/LogCommandParser.o: ../RakNet/LogCommandParser.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/LogCommandParser.cpp -o $(OBJDIR_RELEASE)/../RakNet/LogCommandParser.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/LinuxStrings.o: ../RakNet/LinuxStrings.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/LinuxStrings.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/LinuxStrings.o
+$(OBJDIR_RELEASE)/../RakNet/LocklessTypes.o: ../RakNet/LocklessTypes.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/LocklessTypes.cpp -o $(OBJDIR_RELEASE)/../RakNet/LocklessTypes.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/PacketizedTCP.o: ../RakNet/PacketizedTCP.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/PacketizedTCP.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/PacketizedTCP.o
+$(OBJDIR_RELEASE)/../RakNet/LinuxStrings.o: ../RakNet/LinuxStrings.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/LinuxStrings.cpp -o $(OBJDIR_RELEASE)/../RakNet/LinuxStrings.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/PacketOutputWindowLogger.o: ../RakNet/PacketOutputWindowLogger.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/PacketOutputWindowLogger.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/PacketOutputWindowLogger.o
+$(OBJDIR_RELEASE)/../RakNet/PacketizedTCP.o: ../RakNet/PacketizedTCP.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/PacketizedTCP.cpp -o $(OBJDIR_RELEASE)/../RakNet/PacketizedTCP.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/PacketLogger.o: ../RakNet/PacketLogger.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/PacketLogger.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/PacketLogger.o
+$(OBJDIR_RELEASE)/../RakNet/PacketOutputWindowLogger.o: ../RakNet/PacketOutputWindowLogger.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/PacketOutputWindowLogger.cpp -o $(OBJDIR_RELEASE)/../RakNet/PacketOutputWindowLogger.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/PacketFileLogger.o: ../RakNet/PacketFileLogger.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/PacketFileLogger.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/PacketFileLogger.o
+$(OBJDIR_RELEASE)/../RakNet/PacketLogger.o: ../RakNet/PacketLogger.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/PacketLogger.cpp -o $(OBJDIR_RELEASE)/../RakNet/PacketLogger.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/PacketConsoleLogger.o: ../RakNet/PacketConsoleLogger.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/PacketConsoleLogger.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/PacketConsoleLogger.o
+$(OBJDIR_RELEASE)/../RakNet/PacketFileLogger.o: ../RakNet/PacketFileLogger.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/PacketFileLogger.cpp -o $(OBJDIR_RELEASE)/../RakNet/PacketFileLogger.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/NetworkIDObject.o: ../RakNet/NetworkIDObject.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/NetworkIDObject.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/NetworkIDObject.o
+$(OBJDIR_RELEASE)/../RakNet/PacketConsoleLogger.o: ../RakNet/PacketConsoleLogger.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/PacketConsoleLogger.cpp -o $(OBJDIR_RELEASE)/../RakNet/PacketConsoleLogger.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/NetworkIDManager.o: ../RakNet/NetworkIDManager.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/NetworkIDManager.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/NetworkIDManager.o
+$(OBJDIR_RELEASE)/../RakNet/NetworkIDObject.o: ../RakNet/NetworkIDObject.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/NetworkIDObject.cpp -o $(OBJDIR_RELEASE)/../RakNet/NetworkIDObject.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/FileOperations.o: ../RakNet/FileOperations.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/FileOperations.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/FileOperations.o
+$(OBJDIR_RELEASE)/../RakNet/NetworkIDManager.o: ../RakNet/NetworkIDManager.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/NetworkIDManager.cpp -o $(OBJDIR_RELEASE)/../RakNet/NetworkIDManager.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/FileListTransfer.o: ../RakNet/FileListTransfer.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/FileListTransfer.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/FileListTransfer.o
+$(OBJDIR_RELEASE)/../RakNet/FileOperations.o: ../RakNet/FileOperations.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/FileOperations.cpp -o $(OBJDIR_RELEASE)/../RakNet/FileOperations.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/FileList.o: ../RakNet/FileList.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/FileList.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/FileList.o
+$(OBJDIR_RELEASE)/../RakNet/FileListTransfer.o: ../RakNet/FileListTransfer.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/FileListTransfer.cpp -o $(OBJDIR_RELEASE)/../RakNet/FileListTransfer.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/EpochTimeToString.o: ../RakNet/EpochTimeToString.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/EpochTimeToString.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/EpochTimeToString.o
+$(OBJDIR_RELEASE)/../RakNet/FileList.o: ../RakNet/FileList.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/FileList.cpp -o $(OBJDIR_RELEASE)/../RakNet/FileList.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/EncodeClassName.o: ../RakNet/EncodeClassName.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/EncodeClassName.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/EncodeClassName.o
+$(OBJDIR_RELEASE)/../RakNet/EpochTimeToString.o: ../RakNet/EpochTimeToString.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/EpochTimeToString.cpp -o $(OBJDIR_RELEASE)/../RakNet/EpochTimeToString.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/EmailSender.o: ../RakNet/EmailSender.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/EmailSender.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/EmailSender.o
+$(OBJDIR_RELEASE)/../RakNet/EncodeClassName.o: ../RakNet/EncodeClassName.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/EncodeClassName.cpp -o $(OBJDIR_RELEASE)/../RakNet/EncodeClassName.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/DynDNS.o: ../RakNet/DynDNS.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/DynDNS.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/DynDNS.o
+$(OBJDIR_RELEASE)/../RakNet/EmailSender.o: ../RakNet/EmailSender.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/EmailSender.cpp -o $(OBJDIR_RELEASE)/../RakNet/EmailSender.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/DirectoryDeltaTransfer.o: ../RakNet/DirectoryDeltaTransfer.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/DirectoryDeltaTransfer.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/DirectoryDeltaTransfer.o
+$(OBJDIR_RELEASE)/../RakNet/DynDNS.o: ../RakNet/DynDNS.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/DynDNS.cpp -o $(OBJDIR_RELEASE)/../RakNet/DynDNS.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/Itoa.o: ../RakNet/Itoa.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/Itoa.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/Itoa.o
+$(OBJDIR_RELEASE)/../RakNet/DirectoryDeltaTransfer.o: ../RakNet/DirectoryDeltaTransfer.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/DirectoryDeltaTransfer.cpp -o $(OBJDIR_RELEASE)/../RakNet/DirectoryDeltaTransfer.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/IncrementalReadInterface.o: ../RakNet/IncrementalReadInterface.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/IncrementalReadInterface.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/IncrementalReadInterface.o
+$(OBJDIR_RELEASE)/../RakNet/Itoa.o: ../RakNet/Itoa.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/Itoa.cpp -o $(OBJDIR_RELEASE)/../RakNet/Itoa.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/HTTPConnection.o: ../RakNet/HTTPConnection.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/HTTPConnection.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/HTTPConnection.o
+$(OBJDIR_RELEASE)/../RakNet/IncrementalReadInterface.o: ../RakNet/IncrementalReadInterface.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/IncrementalReadInterface.cpp -o $(OBJDIR_RELEASE)/../RakNet/IncrementalReadInterface.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/GridSectorizer.o: ../RakNet/GridSectorizer.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/GridSectorizer.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/GridSectorizer.o
+$(OBJDIR_RELEASE)/../RakNet/HTTPConnection.o: ../RakNet/HTTPConnection.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/HTTPConnection.cpp -o $(OBJDIR_RELEASE)/../RakNet/HTTPConnection.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/Gets.o: ../RakNet/Gets.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/Gets.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/Gets.o
+$(OBJDIR_RELEASE)/../RakNet/GridSectorizer.o: ../RakNet/GridSectorizer.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/GridSectorizer.cpp -o $(OBJDIR_RELEASE)/../RakNet/GridSectorizer.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/Getche.o: ../RakNet/Getche.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/Getche.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/Getche.o
+$(OBJDIR_RELEASE)/../RakNet/Gets.o: ../RakNet/Gets.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/Gets.cpp -o $(OBJDIR_RELEASE)/../RakNet/Gets.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/GetTime.o: ../RakNet/GetTime.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/GetTime.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/GetTime.o
+$(OBJDIR_RELEASE)/../RakNet/Getche.o: ../RakNet/Getche.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/Getche.cpp -o $(OBJDIR_RELEASE)/../RakNet/Getche.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/FullyConnectedMesh2.o: ../RakNet/FullyConnectedMesh2.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/FullyConnectedMesh2.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/FullyConnectedMesh2.o
+$(OBJDIR_RELEASE)/../RakNet/GetTime.o: ../RakNet/GetTime.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/GetTime.cpp -o $(OBJDIR_RELEASE)/../RakNet/GetTime.o
 
-$(OBJDIR_RELEASEUNIX)/../RakNet/FormatString.o: ../RakNet/FormatString.cpp
-	$(CXX) $(CFLAGS_RELEASEUNIX) $(INC_RELEASEUNIX) -c ../RakNet/FormatString.cpp -o $(OBJDIR_RELEASEUNIX)/../RakNet/FormatString.o
+$(OBJDIR_RELEASE)/../RakNet/FullyConnectedMesh2.o: ../RakNet/FullyConnectedMesh2.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/FullyConnectedMesh2.cpp -o $(OBJDIR_RELEASE)/../RakNet/FullyConnectedMesh2.o
 
-clean_releaseunix: 
-	rm -f $(OBJ_RELEASEUNIX) $(OUT_RELEASEUNIX)
-	rm -rf $(OBJDIR_RELEASEUNIX)/../RakNet
-	rm -rf $(OBJDIR_RELEASEUNIX)
-	rm -rf $(OBJDIR_RELEASEUNIX)/../iniparser/src
-	rm -rf $(OBJDIR_RELEASEUNIX)/..
-	rm -rf $(OBJDIR_RELEASEUNIX)/sqlite
-	rm -rf $(OBJDIR_RELEASEUNIX)/amx
+$(OBJDIR_RELEASE)/../RakNet/FormatString.o: ../RakNet/FormatString.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../RakNet/FormatString.cpp -o $(OBJDIR_RELEASE)/../RakNet/FormatString.o
 
-.PHONY: before_debugunix after_debugunix clean_debugunix before_releaseunix after_releaseunix clean_releaseunix
+clean_release: 
+	rm -f $(OBJ_RELEASE) $(OUT_RELEASE)
+	rm -rf $(OBJDIR_RELEASE)/../RakNet
+	rm -rf $(OBJDIR_RELEASE)
+	rm -rf $(OBJDIR_RELEASE)/../iniparser/src
+	rm -rf $(OBJDIR_RELEASE)/..
+	rm -rf $(OBJDIR_RELEASE)/sqlite
+	rm -rf $(OBJDIR_RELEASE)/amx
+
+.PHONY: before_debug after_debug clean_debug before_release after_release clean_release
 

@@ -20,6 +20,10 @@
 					<Add option="-gstabs" />
 					<Add option="-DVAULTMP_DEBUG" />
 				</Compiler>
+				<Linker>
+					<Add option="-lbfd" />
+					<Add option="-liberty" />
+				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option platforms="Windows;" />
@@ -40,6 +44,7 @@
 		<Compiler>
 			<Add option="-std=gnu++0x" />
 			<Add directory="." />
+			<Add directory="stack_trace\include" />
 		</Compiler>
 		<Linker>
 			<Add option="ufmod.obj" />
@@ -347,6 +352,12 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="iniparser\src\iniparser.h" />
+		<Unit filename="stack_trace\include\dbg\stack.hpp">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="stack_trace\src\stack.cpp">
+			<Option target="Debug" />
+		</Unit>
 		<Unit filename="ufmod.h" />
 		<Unit filename="vaultmp.cpp" />
 		<Unit filename="vaultmp.h" />

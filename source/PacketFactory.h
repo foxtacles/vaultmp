@@ -114,10 +114,10 @@ class pDefault
 	protected:
 		pDefault(pTypes type) : location(0), type(type)
 		{
-			_construct(type);
+			construct(type);
 		}
 
-		pDefault(const unsigned char* stream, unsigned int len) : data(vector<unsigned char>(stream, stream + len)), location(sizeof(pTypes))
+		pDefault(const unsigned char* stream, unsigned int len) : data(stream, stream + len), location(sizeof(pTypes))
 		{
 
 		}
@@ -125,53 +125,53 @@ class pDefault
 		pTypes type;
 
 		template<typename T, typename... Args>
-		void _construct(const T&, const Args&...);
-		void _construct() {}
+		void construct(const T&, const Args&...);
+		void construct() {}
 
 		template<typename... Args>
-		void _construct(const pPacket&, const Args&...);
+		void construct(const pPacket&, const Args&...);
 
 		template<typename... Args>
-		void _construct(const string&, const Args&...);
+		void construct(const string&, const Args&...);
 
 		template<typename T, typename... Args>
-		void _construct(const vector<T>&, const Args&...);
+		void construct(const vector<T>&, const Args&...);
 
 		template<typename T, typename... Args>
-		void _construct(const list<T>&, const Args&...);
+		void construct(const list<T>&, const Args&...);
 
 		template<typename K, typename V, typename... Args>
-		void _construct(const map<K, V>&, const Args&...);
+		void construct(const map<K, V>&, const Args&...);
 
 		template<typename T1, typename T2, typename... Args>
-		void _construct(const pair<T1, T2>&, const Args&...);
+		void construct(const pair<T1, T2>&, const Args&...);
 
 		template<typename... T, typename... Args>
-		void _construct(const tuple<T...>&, const Args&...);
+		void construct(const tuple<T...>&, const Args&...);
 
 		template<typename T, typename... Args>
-		void _deconstruct(T&, Args&...) const;
+		void deconstruct(T&, Args&...) const;
 		template<typename T>
 		T deconstruct_single() const;
-		void _deconstruct() const {}
+		void deconstruct() const {}
 
 		template<typename... Args>
-		void _deconstruct(string&, Args&...) const;
+		void deconstruct(string&, Args&...) const;
 
 		template<typename T, typename... Args>
-		void _deconstruct(vector<T>&, Args&...) const;
+		void deconstruct(vector<T>&, Args&...) const;
 
 		template<typename T, typename... Args>
-		void _deconstruct(list<T>&, Args&...) const;
+		void deconstruct(list<T>&, Args&...) const;
 
 		template<typename K, typename V, typename... Args>
-		void _deconstruct(map<K, V>&, Args&...) const;
+		void deconstruct(map<K, V>&, Args&...) const;
 
 		template<typename T1, typename T2, typename... Args>
-		void _deconstruct(pair<T1, T2>&, Args&...) const;
+		void deconstruct(pair<T1, T2>&, Args&...) const;
 
 		template<typename... T, typename... Args>
-		void _deconstruct(tuple<T...>&, Args&...) const;
+		void deconstruct(tuple<T...>&, Args&...) const;
 
 	public:
 		virtual ~pDefault()
@@ -191,101 +191,101 @@ class pDefault
 };
 
 template<typename T, typename... Args>
-void pDefault::_construct(const T& arg, const Args&... args)
+void pDefault::construct(const T& arg, const Args&... args)
 {
 	// is_trivially_copyable not implemented in GCC as of now
 	static_assert(is_trivial<T>::value, "Type cannot be trivially copied");
 	data.insert(data.end(), reinterpret_cast<const unsigned char*>(&arg), reinterpret_cast<const unsigned char*>(&arg) + sizeof(T));
-	_construct(args...);
+	construct(args...);
 }
 
 template<typename... Args>
-void pDefault::_construct(const pPacket& arg, const Args&... args)
+void pDefault::construct(const pPacket& arg, const Args&... args)
 {
 	const unsigned char* _data = arg.get()->get();
 	unsigned int length = arg.get()->length();
 
-	_construct(length);
+	construct(length);
 	data.insert(data.end(), _data, _data + length);
 
-	_construct(args...);
+	construct(args...);
 }
 
 template<typename... Args>
-void pDefault::_construct(const string& arg, const Args&...args)
+void pDefault::construct(const string& arg, const Args&...args)
 {
 	unsigned int length = arg.length();
 	const unsigned char* str = reinterpret_cast<const unsigned char*>(arg.c_str());
 	data.insert(data.end(), str, str + length + 1);
-	_construct(args...);
+	construct(args...);
 }
 
 template<typename T, typename... Args>
-void pDefault::_construct(const vector<T>& arg, const Args&...args)
+void pDefault::construct(const vector<T>& arg, const Args&...args)
 {
-	_construct(arg.size());
+	construct(arg.size());
 
 	for (const auto& element : arg)
-		_construct(element);
+		construct(element);
 
-	_construct(args...);
+	construct(args...);
 }
 
 template<typename T, typename... Args>
-void pDefault::_construct(const list<T>& arg, const Args&...args)
+void pDefault::construct(const list<T>& arg, const Args&...args)
 {
-	_construct(arg.size());
+	construct(arg.size());
 
 	for (const auto& element : arg)
-		_construct(element);
+		construct(element);
 
-	_construct(args...);
+	construct(args...);
 }
 
 template<typename K, typename V, typename... Args>
-void pDefault::_construct(const map<K, V>& arg, const Args&...args)
+void pDefault::construct(const map<K, V>& arg, const Args&...args)
 {
-	_construct(arg.size());
+	construct(arg.size());
 
 	for (const auto& element : arg)
-		_construct(element);
+		construct(element);
 
-	_construct(args...);
+	construct(args...);
 }
 
 template<typename T1, typename T2, typename... Args>
-void pDefault::_construct(const pair<T1, T2>& arg, const Args&...args)
+void pDefault::construct(const pair<T1, T2>& arg, const Args&...args)
 {
-	_construct(arg.first);
-	_construct(arg.second);
-	_construct(args...);
+	construct(arg.first);
+	construct(arg.second);
+	construct(args...);
 }
 
 template<typename... T, typename... Args>
-void pDefault::_construct(const tuple<T...>& arg, const Args&...args)
+void pDefault::construct(const tuple<T...>& arg, const Args&...args)
 {
 	unpack_tuple(arg, tuple_count<sizeof...(T) - 1>());
-	_construct(args...);
+	construct(args...);
 }
 
 template<typename... T, size_t N>
 void pDefault::unpack_tuple(const tuple<T...>& arg, tuple_count<N>)
 {
-	_construct(std::get<N>(arg));
+	construct(std::get<N>(arg));
 	unpack_tuple(arg, tuple_count<N - 1>());
 }
 
 template<typename... T>
 void pDefault::unpack_tuple(const tuple<T...>& arg, tuple_count<0>)
 {
-	_construct(std::get<0>(arg));
+	construct(std::get<0>(arg));
 }
 
 template<typename T, typename... Args>
-void pDefault::_deconstruct(T& arg, Args&... args) const
+void pDefault::deconstruct(T& arg, Args&... args) const
 {
 	arg = deconstruct_single<T>();
-	_deconstruct(args...);
+	deconstruct(args...);
 }
 
 template<typename T>
@@ -318,7 +318,7 @@ inline pPacket pDefault::deconstruct_single() const
 }
 
 template<typename... Args>
-void pDefault::_deconstruct(string& arg, Args&... args) const
+void pDefault::deconstruct(string& arg, Args&... args) const
 {
 	unsigned int length = strlen(reinterpret_cast<const char*>(&data[location]));
 
@@ -329,11 +329,11 @@ void pDefault::_deconstruct(string& arg, Args&... args) const
 
 	location += length + 1;
 
-	_deconstruct(args...);
+	deconstruct(args...);
 }
 
 template<typename T, typename... Args>
-void pDefault::_deconstruct(vector<T>& arg, Args&... args) const
+void pDefault::deconstruct(vector<T>& arg, Args&... args) const
 {
 	unsigned int size = deconstruct_single<unsigned int>();
 
@@ -343,15 +343,15 @@ void pDefault::_deconstruct(vector<T>& arg, Args&... args) const
 	for (unsigned int i = 0; i < size; ++i)
 	{
 		T data;
-		_deconstruct(data);
+		deconstruct(data);
 		arg.emplace_back(move(data));
 	}
 
-	_deconstruct(args...);
+	deconstruct(args...);
 }
 
 template<typename T, typename... Args>
-void pDefault::_deconstruct(list<T>& arg, Args&... args) const
+void pDefault::deconstruct(list<T>& arg, Args&... args) const
 {
 	unsigned int size = deconstruct_single<unsigned int>();
 
@@ -360,15 +360,15 @@ void pDefault::_deconstruct(list<T>& arg, Args&... args) const
 	for (unsigned int i = 0; i < size; ++i)
 	{
 		T data;
-		_deconstruct(data);
+		deconstruct(data);
 		arg.emplace_back(move(data));
 	}
 
-	_deconstruct(args...);
+	deconstruct(args...);
 }
 
 template<typename K, typename V, typename... Args>
-void pDefault::_deconstruct(map<K, V>& arg, Args&... args) const
+void pDefault::deconstruct(map<K, V>& arg, Args&... args) const
 {
 	unsigned int size = deconstruct_single<unsigned int>();
 
@@ -377,40 +377,40 @@ void pDefault::_deconstruct(map<K, V>& arg, Args&... args) const
 	for (unsigned int i = 0; i < size; ++i)
 	{
 		pair<K, V> data;
-		_deconstruct(data);
+		deconstruct(data);
 		// arg.emplace_hint(arg.end(), move(data));
 		arg.insert(move(data));
 	}
 
-	_deconstruct(args...);
+	deconstruct(args...);
 }
 
 template<typename T1, typename T2, typename... Args>
-void pDefault::_deconstruct(pair<T1, T2>& arg, Args&... args) const
+void pDefault::deconstruct(pair<T1, T2>& arg, Args&... args) const
 {
-	_deconstruct(arg.first);
-	_deconstruct(arg.second);
-	_deconstruct(args...);
+	deconstruct(arg.first);
+	deconstruct(arg.second);
+	deconstruct(args...);
 }
 
 template<typename... T, typename... Args>
-void pDefault::_deconstruct(tuple<T...>& arg, Args&... args) const
+void pDefault::deconstruct(tuple<T...>& arg, Args&... args) const
 {
 	pack_tuple(arg, tuple_count<sizeof...(T) - 1>());
-	_deconstruct(args...);
+	deconstruct(args...);
 }
 
 template<typename... T, size_t N>
 void pDefault::pack_tuple(tuple<T...>& arg, tuple_count<N>) const
 {
-	_deconstruct(std::get<N>(arg));
+	deconstruct(std::get<N>(arg));
 	pack_tuple(arg, tuple_count<N - 1>());
 }
 
 template<typename... T>
 void pDefault::pack_tuple(tuple<T...>& arg, tuple_count<0>) const
 {
-	_deconstruct(std::get<0>(arg));
+	deconstruct(std::get<0>(arg));
 }
 
 template<typename T>
@@ -430,7 +430,7 @@ class pObjectDefault : public pDefault
 
 		pObjectDefault(pTypes type, NetworkID id) : pDefault(type)
 		{
-			_construct(id);
+			construct(id);
 		}
 
 		pObjectDefault(const unsigned char* stream, unsigned int len) : pDefault(stream, len)
@@ -451,7 +451,7 @@ class pObjectNewDefault : public pObjectDefault
 
 		pObjectNewDefault(pTypes type, NetworkID id, unsigned int refID, unsigned int baseID) : pObjectDefault(type, id)
 		{
-			_construct(refID, baseID);
+			construct(refID, baseID);
 		}
 
 		pObjectNewDefault(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
@@ -467,7 +467,7 @@ class pGameAuth : public pDefault
 	private:
 		pGameAuth(const string& name, const string& pwd) : pDefault(pTypes::ID_GAME_AUTH)
 		{
-			_construct(name, pwd);
+			construct(name, pwd);
 		}
 		pGameAuth(const unsigned char* stream, unsigned int len) : pDefault(stream, len)
 		{
@@ -476,7 +476,7 @@ class pGameAuth : public pDefault
 
 		void access(string& name, string& pwd) const
 		{
-			_deconstruct(name, pwd);
+			deconstruct(name, pwd);
 		}
 };
 
@@ -545,7 +545,7 @@ class pGameMod : public pDefault
 	private:
 		pGameMod(const string& modfile, unsigned int crc) : pDefault(pTypes::ID_GAME_MOD)
 		{
-			_construct(modfile, crc);
+			construct(modfile, crc);
 		}
 		pGameMod(const unsigned char* stream, unsigned int len) : pDefault(stream, len)
 		{
@@ -554,7 +554,7 @@ class pGameMod : public pDefault
 
 		void access(string& modfile, unsigned int& crc) const
 		{
-			_deconstruct(modfile, crc);
+			deconstruct(modfile, crc);
 		}
 };
 
@@ -623,7 +623,7 @@ class pGameEnd : public pDefault
 	private:
 		pGameEnd(pTypes reason) : pDefault(pTypes::ID_GAME_END)
 		{
-			_construct(reason);
+			construct(reason);
 		}
 		pGameEnd(const unsigned char* stream, unsigned int len) : pDefault(stream, len)
 		{
@@ -632,7 +632,7 @@ class pGameEnd : public pDefault
 
 		void access(pTypes& reason) const
 		{
-			_deconstruct(reason);
+			deconstruct(reason);
 		}
 };
 
@@ -662,7 +662,7 @@ class pGameMessage : public pDefault
 	private:
 		pGameMessage(const string& message) : pDefault(pTypes::ID_GAME_MESSAGE)
 		{
-			_construct(message);
+			construct(message);
 		}
 		pGameMessage(const unsigned char* stream, unsigned int len) : pDefault(stream, len)
 		{
@@ -671,7 +671,7 @@ class pGameMessage : public pDefault
 
 		void access(string& message) const
 		{
-			_deconstruct(message);
+			deconstruct(message);
 		}
 };
 
@@ -701,7 +701,7 @@ class pGameChat : public pDefault
 	private:
 		pGameChat(const string& message) : pDefault(pTypes::ID_GAME_CHAT)
 		{
-			_construct(message);
+			construct(message);
 		}
 		pGameChat(const unsigned char* stream, unsigned int len) : pDefault(stream, len)
 		{
@@ -710,7 +710,7 @@ class pGameChat : public pDefault
 
 		void access(string& message) const
 		{
-			_deconstruct(message);
+			deconstruct(message);
 		}
 };
 
@@ -740,7 +740,7 @@ class pObjectNew : public pObjectNewDefault
 	private:
 		pObjectNew(NetworkID id, unsigned int refID, unsigned int baseID, const string& name, double X, double Y, double Z, double aX, double aY, double aZ, unsigned int cell, bool enabled) : pObjectNewDefault(pTypes::ID_OBJECT_NEW, id, refID, baseID)
 		{
-			_construct(name, X, Y, Z, aX, aY, aZ, cell, enabled);
+			construct(name, X, Y, Z, aX, aY, aZ, cell, enabled);
 		}
 		pObjectNew(const unsigned char* stream, unsigned int len) : pObjectNewDefault(stream, len)
 		{
@@ -749,7 +749,7 @@ class pObjectNew : public pObjectNewDefault
 
 		void access(NetworkID& id, unsigned int& refID, unsigned int& baseID, string& name, double& X, double& Y, double& Z, double& aX, double& aY, double& aZ, unsigned int& cell, bool& enabled) const
 		{
-			_deconstruct(id, refID, baseID, name, X, Y, Z, aX, aY, aZ, cell, enabled);
+			deconstruct(id, refID, baseID, name, X, Y, Z, aX, aY, aZ, cell, enabled);
 		}
 };
 
@@ -786,7 +786,7 @@ class pItemNew : public pObjectNewDefault
 	private:
 		pItemNew(const pPacket& _pObjectNew, unsigned int count, double condition, bool equipped, bool silent, bool stick) : pObjectNewDefault(pTypes::ID_ITEM_NEW)
 		{
-			_construct(_pObjectNew, count, condition, equipped, silent, stick);
+			construct(_pObjectNew, count, condition, equipped, silent, stick);
 		}
 		pItemNew(const unsigned char* stream, unsigned int len) : pObjectNewDefault(stream, len)
 		{
@@ -795,7 +795,7 @@ class pItemNew : public pObjectNewDefault
 
 		void access(unsigned int& count, double& condition, bool& equipped, bool& silent, bool& stick) const
 		{
-			_deconstruct(count, condition, equipped, silent, stick);
+			deconstruct(count, condition, equipped, silent, stick);
 		}
 };
 
@@ -825,7 +825,7 @@ class pContainerNew : public pObjectNewDefault
 	private:
 		pContainerNew(const pPacket& _pObjectNew, const vector<pPacket>& _pItemNew) : pObjectNewDefault(pTypes::ID_CONTAINER_NEW)
 		{
-			_construct(_pObjectNew, _pItemNew);
+			construct(_pObjectNew, _pItemNew);
 		}
 		pContainerNew(const unsigned char* stream, unsigned int len) : pObjectNewDefault(stream, len)
 		{
@@ -834,7 +834,7 @@ class pContainerNew : public pObjectNewDefault
 
 		void access(vector<pPacket>& _pItemNew) const
 		{
-			_deconstruct(_pItemNew);
+			deconstruct(_pItemNew);
 		}
 };
 
@@ -869,7 +869,7 @@ class pActorNew : public pObjectNewDefault
 	private:
 		pActorNew(const pPacket& _pContainerNew, const map<unsigned char, double>& values, const map<unsigned char, double>& baseValues, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking, bool dead) : pObjectNewDefault(pTypes::ID_ACTOR_NEW)
 		{
-			_construct(_pContainerNew, values, baseValues, moving, movingxy, weapon, alerted, sneaking, dead);
+			construct(_pContainerNew, values, baseValues, moving, movingxy, weapon, alerted, sneaking, dead);
 		}
 		pActorNew(const unsigned char* stream, unsigned int len) : pObjectNewDefault(stream, len)
 		{
@@ -878,7 +878,7 @@ class pActorNew : public pObjectNewDefault
 
 		void access(map<unsigned char, double>& values, map<unsigned char, double>& baseValues, unsigned char& moving, unsigned char& movingxy, unsigned char& weapon, bool& alerted, bool& sneaking, bool& dead) const
 		{
-			_deconstruct(values, baseValues, moving, movingxy, weapon, alerted, sneaking, dead);
+			deconstruct(values, baseValues, moving, movingxy, weapon, alerted, sneaking, dead);
 		}
 };
 
@@ -912,7 +912,7 @@ class pPlayerNew : public pObjectNewDefault
 	private:
 		pPlayerNew(const pPacket& _pActorNew, const map<unsigned char, pair<unsigned char, bool>>& controls) : pObjectNewDefault(pTypes::ID_PLAYER_NEW)
 		{
-			_construct(_pActorNew, controls);
+			construct(_pActorNew, controls);
 		}
 		pPlayerNew(const unsigned char* stream, unsigned int len) : pObjectNewDefault(stream, len)
 		{
@@ -921,7 +921,7 @@ class pPlayerNew : public pObjectNewDefault
 
 		void access(map<unsigned char, pair<unsigned char, bool>>& controls) const
 		{
-			_deconstruct(controls);
+			deconstruct(controls);
 		}
 };
 
@@ -960,7 +960,7 @@ class pObjectRemove : public pObjectDefault
 
 		void access(NetworkID& id) const
 		{
-			_deconstruct(id);
+			deconstruct(id);
 		}
 };
 
@@ -990,7 +990,7 @@ class pObjectPos : public pObjectDefault
 	private:
 		pObjectPos(NetworkID id, double X, double Y, double Z) : pObjectDefault(pTypes::ID_UPDATE_POS, id)
 		{
-			_construct(X, Y, Z);
+			construct(X, Y, Z);
 		}
 		pObjectPos(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
 		{
@@ -999,7 +999,7 @@ class pObjectPos : public pObjectDefault
 
 		void access(NetworkID& id, double& X, double& Y, double& Z) const
 		{
-			_deconstruct(id, X, Y, Z);
+			deconstruct(id, X, Y, Z);
 		}
 };
 
@@ -1029,7 +1029,7 @@ class pObjectAngle : public pObjectDefault
 	private:
 		pObjectAngle(NetworkID id, unsigned char axis, double value) : pObjectDefault(pTypes::ID_UPDATE_ANGLE, id)
 		{
-			_construct(axis, value);
+			construct(axis, value);
 		}
 		pObjectAngle(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
 		{
@@ -1038,7 +1038,7 @@ class pObjectAngle : public pObjectDefault
 
 		void access(NetworkID& id, unsigned char& axis, double& value) const
 		{
-			_deconstruct(id, axis, value);
+			deconstruct(id, axis, value);
 		}
 };
 
@@ -1068,7 +1068,7 @@ class pObjectCell : public pObjectDefault
 	private:
 		pObjectCell(NetworkID id, unsigned int cell) : pObjectDefault(pTypes::ID_UPDATE_CELL, id)
 		{
-			_construct(cell);
+			construct(cell);
 		}
 		pObjectCell(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
 		{
@@ -1077,7 +1077,7 @@ class pObjectCell : public pObjectDefault
 
 		void access(NetworkID& id, unsigned int& cell) const
 		{
-			_deconstruct(id, cell);
+			deconstruct(id, cell);
 		}
 };
 
@@ -1107,7 +1107,7 @@ class pContainerUpdate : public pObjectDefault
 	private:
 		pContainerUpdate(NetworkID id, const pair<list<NetworkID>, vector<pPacket>>& diff) : pObjectDefault(pTypes::ID_UPDATE_CONTAINER, id)
 		{
-			_construct(diff);
+			construct(diff);
 		}
 		pContainerUpdate(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
 		{
@@ -1116,7 +1116,7 @@ class pContainerUpdate : public pObjectDefault
 
 		void access(NetworkID& id, pair<list<NetworkID>, vector<pPacket>>& diff) const
 		{
-			_deconstruct(id, diff);
+			deconstruct(id, diff);
 		}
 };
 
@@ -1146,7 +1146,7 @@ class pActorValue : public pObjectDefault
 	private:
 		pActorValue(NetworkID id, bool base, unsigned char index, double value) : pObjectDefault(pTypes::ID_UPDATE_VALUE, id)
 		{
-			_construct(base, index, value);
+			construct(base, index, value);
 		}
 		pActorValue(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
 		{
@@ -1155,7 +1155,7 @@ class pActorValue : public pObjectDefault
 
 		void access(NetworkID& id, bool& base, unsigned char& index, double& value) const
 		{
-			_deconstruct(id, base, index, value);
+			deconstruct(id, base, index, value);
 		}
 };
 
@@ -1185,7 +1185,7 @@ class pActorState : public pObjectDefault
 	private:
 		pActorState(NetworkID id, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking) : pObjectDefault(pTypes::ID_UPDATE_STATE, id)
 		{
-			_construct(moving, movingxy, weapon, alerted, sneaking);
+			construct(moving, movingxy, weapon, alerted, sneaking);
 		}
 		pActorState(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
 		{
@@ -1194,7 +1194,7 @@ class pActorState : public pObjectDefault
 
 		void access(NetworkID& id, unsigned char& moving, unsigned char& movingxy, unsigned char& weapon, bool& alerted, bool& sneaking) const
 		{
-			_deconstruct(id, moving, movingxy, weapon, alerted, sneaking);
+			deconstruct(id, moving, movingxy, weapon, alerted, sneaking);
 		}
 };
 
@@ -1224,7 +1224,7 @@ class pActorDead : public pObjectDefault
 	private:
 		pActorDead(NetworkID id, bool dead, unsigned short limbs, signed char cause) : pObjectDefault(pTypes::ID_UPDATE_DEAD, id)
 		{
-			_construct(dead, limbs, cause);
+			construct(dead, limbs, cause);
 		}
 		pActorDead(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
 		{
@@ -1233,7 +1233,7 @@ class pActorDead : public pObjectDefault
 
 		void access(NetworkID& id, bool& dead, unsigned short& limbs, signed char& cause) const
 		{
-			_deconstruct(id, dead, limbs, cause);
+			deconstruct(id, dead, limbs, cause);
 		}
 };
 
@@ -1263,7 +1263,7 @@ class pActorFireweapon : public pObjectDefault
 	private:
 		pActorFireweapon(NetworkID id, unsigned int weapon) : pObjectDefault(pTypes::ID_UPDATE_FIREWEAPON, id)
 		{
-			_construct(weapon);
+			construct(weapon);
 		}
 		pActorFireweapon(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
 		{
@@ -1272,7 +1272,7 @@ class pActorFireweapon : public pObjectDefault
 
 		void access(NetworkID& id, unsigned int& weapon) const
 		{
-			_deconstruct(id, weapon);
+			deconstruct(id, weapon);
 		}
 };
 
@@ -1302,7 +1302,7 @@ class pPlayerControl : public pObjectDefault
 	private:
 		pPlayerControl(NetworkID id, unsigned char control, unsigned char key) : pObjectDefault(pTypes::ID_UPDATE_CONTROL, id)
 		{
-			_construct(control, key);
+			construct(control, key);
 		}
 		pPlayerControl(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
 		{
@@ -1311,7 +1311,7 @@ class pPlayerControl : public pObjectDefault
 
 		void access(NetworkID& id, unsigned char& control, unsigned char& key) const
 		{
-			_deconstruct(id, control, key);
+			deconstruct(id, control, key);
 		}
 };
 
@@ -1341,7 +1341,7 @@ class pPlayerInterior : public pObjectDefault
 	private:
 		pPlayerInterior(NetworkID id, const string& cell) : pObjectDefault(pTypes::ID_UPDATE_INTERIOR, id)
 		{
-			_construct(cell);
+			construct(cell);
 		}
 		pPlayerInterior(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
 		{
@@ -1350,7 +1350,7 @@ class pPlayerInterior : public pObjectDefault
 
 		void access(NetworkID& id, string& cell) const
 		{
-			_deconstruct(id, cell);
+			deconstruct(id, cell);
 		}
 };
 
@@ -1380,7 +1380,7 @@ class pPlayerExterior : public pObjectDefault
 	private:
 		pPlayerExterior(NetworkID id, unsigned int baseID, signed int x, signed int y) : pObjectDefault(pTypes::ID_UPDATE_EXTERIOR, id)
 		{
-			_construct(baseID, x, y);
+			construct(baseID, x, y);
 		}
 		pPlayerExterior(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
 		{
@@ -1389,7 +1389,7 @@ class pPlayerExterior : public pObjectDefault
 
 		void access(NetworkID& id, unsigned int& baseID, signed int& x, signed int& y) const
 		{
-			_deconstruct(id, baseID, x, y);
+			deconstruct(id, baseID, x, y);
 		}
 };
 
