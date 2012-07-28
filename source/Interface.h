@@ -97,7 +97,7 @@ class Interface : public API
 				}
 
 			public:
-				RawParameter(string str) : data(vector<string>{str}) {}
+				RawParameter(string str) : data({str}) {}
 				RawParameter(const vector<string>& str) : data(str) {}
 				RawParameter(const vector<unsigned char>& str) : data(make(str)) {}
 				RawParameter(signed int str) : data(make(str)) {}

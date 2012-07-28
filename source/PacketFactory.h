@@ -76,8 +76,10 @@ class PacketFactory
 	public:
 		template<pTypes type, typename... Args>
 		inline static pPacket Create(Args&&... args) { return _Create<type, Args...>::Create(forward<Args>(args)...); };
+
 		template<pTypes type, typename... Args>
 		inline static void Access(const pDefault* packet, Args&... args) { _Access<type, Args...>::Access(packet, forward<Args&>(args)...); };
+
 		template<typename T>
 		inline static T Pop(const pDefault* packet);
 
@@ -195,7 +197,9 @@ void pDefault::construct(const T& arg, const Args&... args)
 {
 	// is_trivially_copyable not implemented in GCC as of now
 	static_assert(is_trivial<T>::value, "Type cannot be trivially copied");
+
 	data.insert(data.end(), reinterpret_cast<const unsigned char*>(&arg), reinterpret_cast<const unsigned char*>(&arg) + sizeof(T));
+
 	construct(args...);
 }
 
@@ -216,7 +220,9 @@ void pDefault::construct(const string& arg, const Args&...args)
 {
 	unsigned int length = arg.length();
 	const unsigned char* str = reinterpret_cast<const unsigned char*>(arg.c_str());
+
 	data.insert(data.end(), str, str + length + 1);
+
 	construct(args...);
 }
 

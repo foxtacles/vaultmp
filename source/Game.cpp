@@ -1629,7 +1629,7 @@ void Game::ScanContainer(FactoryObject& reference, vector<unsigned char>& data)
 		struct ItemInfo
 		{
 			unsigned int baseID;
-			unsigned int amount;
+			unsigned int count;
 			unsigned int equipped;
 			double condition;
 		};
@@ -1645,7 +1645,7 @@ void Game::ScanContainer(FactoryObject& reference, vector<unsigned char>& data)
 		{
 			FactoryObject _item = GameFactory::GetObject(GameFactory::CreateInstance(ID_ITEM, items[i].baseID));
 			Item* item = vaultcast<Item>(_item);
-			item->SetItemCount(items[i].amount);
+			item->SetItemCount(items[i].count);
 			item->SetItemEquipped(static_cast<bool>(items[i].equipped));
 			item->SetItemCondition(items[i].condition);
 			temp->AddItem(item->GetNetworkID());
