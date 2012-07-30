@@ -55,8 +55,9 @@ void Actor::initialize()
 
 	for (unsigned char _data : data)
 	{
-		actor_Values.insert(pair<unsigned char, Value<double>>(_data, Value<double>()));
-		actor_BaseValues.insert(pair<unsigned char, Value<double>>(_data, Value<double>()));
+		// emplace
+		actor_Values.insert(make_pair(_data, Value<double>()));
+		actor_BaseValues.insert(make_pair(_data, Value<double>()));
 	}
 
 #ifdef VAULTSERVER
@@ -224,8 +225,9 @@ pPacket Actor::toPacket() const
 
 	for (unsigned char _data : data)
 	{
-		values.insert(pair<unsigned char, double>(_data, this->GetActorValue(_data)));
-		baseValues.insert(pair<unsigned char, double>(_data, this->GetActorBaseValue(_data)));
+		// emplace
+		values.insert(make_pair(_data, this->GetActorValue(_data)));
+		baseValues.insert(make_pair(_data, this->GetActorBaseValue(_data)));
 	}
 
 	pPacket pContainerNew = Container::toPacket();

@@ -55,14 +55,6 @@ public OnSpawn(ID)
 
 		strformat(message, sizeof(message), true, "Hello, %s!", message);
 		UIMessage(ID, message);
-
-		new pipboy = 0x00015038;
-
-		if (GetContainerItemCount(ID, pipboy) == 0)
-		{
-			AddItem(ID, pipboy, 1, 100.0, Bool:true);
-			EquipItem(ID, pipboy, Bool:true, Bool:true);
-		}
 	}
 }
 

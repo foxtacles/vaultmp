@@ -115,8 +115,8 @@ int main(int argc, char* argv[])
 
 	port = iniparser_getint(config, "general:port", RAKNET_STANDARD_PORT);
 	players = iniparser_getint(config, "general:players", RAKNET_STANDARD_CONNECTIONS);
-	query = (bool) iniparser_getboolean(config, "general:query", 1);
-	files = (bool) iniparser_getboolean(config, "general:fileserve", 0);
+	query = static_cast<bool>(iniparser_getboolean(config, "general:query", 1));
+	files = static_cast<bool>(iniparser_getboolean(config, "general:fileserve", 0));
 	fileslots = iniparser_getint(config, "general:fileslots", 8);
 	announce = iniparser_getstring(config, "general:master", "vaultmp.com");
 	cell = iniparser_getint(config, "general:spawn", game == FALLOUT3 ? 0x000010C1 : 0x000DAEBB); // Vault101Exterior and Goodsprings
@@ -170,7 +170,7 @@ int main(int argc, char* argv[])
 			if (!Utils::crc32file(file, &crc))
 				throw VaultException("Could not find modfile %s in folder %s", token, MODFILES_PATH);
 
-			modfiles.push_back(pair<string, unsigned int>(string(token), crc));
+			modfiles.emplace_back(token, crc);
 
 			token = strtok(nullptr, ",");
 		}

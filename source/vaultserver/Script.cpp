@@ -72,6 +72,7 @@ Script::Script(char* path)
 			SetScript(string(vpf + "ValueToString").c_str(), &Script::ValueToString);
 			SetScript(string(vpf + "AxisToString").c_str(), &Script::AxisToString);
 			SetScript(string(vpf + "AnimToString").c_str(), &Script::AnimToString);
+			SetScript(string(vpf + "BaseToString").c_str(), &Script::BaseToString);
 
 			SetScript(string(vpf + "UIMessage").c_str(), &Script::UIMessage);
 			SetScript(string(vpf + "ChatMessage").c_str(), &Script::ChatMessage);
@@ -213,7 +214,7 @@ void Script::LoadScripts(char* scripts, char* base)
 			snprintf(path, sizeof(path), "%s/%s", base, token);
 			Script* script = new Script(path);
 #endif
-			Script::scripts.push_back(script);
+			Script::scripts.emplace_back(script);
 			token = strtok(nullptr, ",");
 		}
 	}
@@ -246,31 +247,31 @@ void Script::GetArguments(vector<boost::any>& params, va_list args, string def)
 			{
 				case 'i':
 				{
-					params.push_back(va_arg(args, unsigned int));
+					params.emplace_back(va_arg(args, unsigned int));
 					break;
 				}
 
 				case 'l':
 				{
-					params.push_back(va_arg(args, unsigned long long));
+					params.emplace_back(va_arg(args, unsigned long long));
 					break;
 				}
 
 				case 'f':
 				{
-					params.push_back(va_arg(args, double));
+					params.emplace_back(va_arg(args, double));
 					break;
 				}
 
 				case 'p':
 				{
-					params.push_back(va_arg(args, void*));
+					params.emplace_back(va_arg(args, void*));
 					break;
 				}
 
 				case 's':
 				{
-					params.push_back(string(va_arg(args, const char*)));
+					params.emplace_back(va_arg(args, const char*));
 					break;
 				}
 
@@ -382,7 +383,7 @@ unsigned long long Script::Timer_Respawn(NetworkID id)
 	{
 		const Cell& cell = Cell::Lookup(_cell);
 
-		response.push_back(Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, cell.GetWorld(), cell.GetX(), cell.GetY()),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
@@ -390,7 +391,7 @@ unsigned long long Script::Timer_Respawn(NetworkID id)
 	{
 		const Record& record = Record::Lookup(_cell);
 
-		response.push_back(Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(id, record.GetName()),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
@@ -611,7 +612,7 @@ bool Script::OnPlayerChat(FactoryObject& reference, string& message)
 				result = script->fOnPlayerChat(id, _message);
 		}
 		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnPlayerChat"))
-			result = (bool) PAWN::Call((AMX*)script->handle, "OnPlayerChat", "sl", 1, _message, id);
+			result = static_cast<bool>(PAWN::Call((AMX*)script->handle, "OnPlayerChat", "sl", 1, _message, id));
 	}
 
 	message.assign(_message);
@@ -631,7 +632,7 @@ bool Script::OnClientAuthenticate(string name, string pwd)
 				result = script->fOnClientAuthenticate(name.c_str(), pwd.c_str());
 		}
 		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnClientAuthenticate"))
-			result = (bool) PAWN::Call((AMX*)script->handle, "OnClientAuthenticate", "ss", 0, pwd.c_str(), name.c_str());
+			result = static_cast<bool>(PAWN::Call((AMX*)script->handle, "OnClientAuthenticate", "ss", 0, pwd.c_str(), name.c_str()));
 	}
 
 	return result;
@@ -640,22 +641,37 @@ bool Script::OnClientAuthenticate(string name, string pwd)
 const char* Script::ValueToString(unsigned char index)
 {
 	static string value;
-	value = API::RetrieveValue_Reverse(index);
+	value.assign(API::RetrieveValue_Reverse(index));
 	return value.c_str();
 }
 
 const char* Script::AxisToString(unsigned char index)
 {
 	static string axis;
-	axis = API::RetrieveAxis_Reverse(index);
+	axis.assign(API::RetrieveAxis_Reverse(index));
 	return axis.c_str();
 }
 
 const char* Script::AnimToString(unsigned char index)
 {
 	static string anim;
-	anim = API::RetrieveAnim_Reverse(index);
+	anim.assign(API::RetrieveAnim_Reverse(index));
 	return anim.c_str();
+}
+
+const char* Script::BaseToString(unsigned int baseID)
+{
+	static string base;
+	base.clear();
+
+	try
+	{
+		const Record& record = Record::Lookup(baseID);
+		base.assign(record.GetName());
+	}
+	catch (...) {}
+
+	return base.c_str();
 }
 
 bool Script::UIMessage(NetworkID id, const char* message)
@@ -787,7 +803,7 @@ unsigned int Script::GetList(unsigned char type, NetworkID** data)
 {
 	static vector<NetworkID> _data;
 	_data = GameFactory::GetIDObjectTypes(type);
-	*data = &_data.front();
+	*data = &_data[0];
 	return _data.size();
 }
 
@@ -852,7 +868,7 @@ const char* Script::GetName(NetworkID id)
 	Object* object = vaultcast<Object>(reference);
 
 	if (object)
-		name = object->GetName();
+		name.assign(object->GetName());
 
 	return name.c_str();
 }
@@ -1220,14 +1236,14 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 			{
 				object->SetGameCell(_new_cell);
 
-				response.push_back(Network::CreateResponse(
+				response.emplace_back(Network::CreateResponse(
 					PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, _new_cell),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 				);
 
 				if (player)
 				{
-					response.push_back(Network::CreateResponse(
+					response.emplace_back(Network::CreateResponse(
 						PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, new_cell->GetWorld(), new_cell->GetX(), new_cell->GetY()),
 						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
 					);
@@ -1237,7 +1253,7 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 				_new_cell = 0x00000000;
 		}
 
-		response.push_back(Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_POS>(id, X, Y, Z),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		);
@@ -1307,7 +1323,7 @@ bool Script::SetCell(NetworkID id, unsigned int cell, double X, double Y, double
 	{
 		object->SetGameCell(cell);
 
-		response.push_back(Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, cell),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		);
@@ -1316,14 +1332,14 @@ bool Script::SetCell(NetworkID id, unsigned int cell, double X, double Y, double
 		{
 			if (new_interior)
 			{
-				response.push_back(Network::CreateResponse(
+				response.emplace_back(Network::CreateResponse(
 					PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(id, new_interior->GetName()),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
 				);
 			}
 			else
 			{
-				response.push_back(Network::CreateResponse(
+				response.emplace_back(Network::CreateResponse(
 					PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, new_exterior->GetWorld(), new_exterior->GetX(), new_exterior->GetY()),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
 				);
@@ -1341,7 +1357,7 @@ bool Script::SetCell(NetworkID id, unsigned int cell, double X, double Y, double
 		object->SetGamePos(Axis_Y, Y);
 		object->SetGamePos(Axis_Z, Z);
 
-		response.push_back(Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_POS>(id, X, Y, Z),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		);

@@ -24,7 +24,7 @@ Void VAULTSCRIPT exec() noexcept
 	}
 }
 
-State VAULTSCRIPT OnClientAuthenticate(String name, String pwd) noexcept
+State VAULTSCRIPT OnClientAuthenticate(cRawString name, cRawString pwd) noexcept
 {
 	return True;
 }
@@ -65,17 +65,7 @@ Void VAULTSCRIPT OnSpawn(ID object) noexcept
 	Player player(object);
 
 	if (player)
-	{
 		player.UIMessage("Hello, " + player.GetName() + "!");
-
-		Base pipboy = static_cast<Base>(0x00015038);
-
-		if (player.GetContainerItemCount(pipboy) == 0)
-		{
-			player.AddItem(pipboy);
-			player.EquipItem(pipboy);
-		}
-	}
 }
 
 Void VAULTSCRIPT OnCellChange(ID object, Cell cell) noexcept

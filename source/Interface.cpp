@@ -236,7 +236,7 @@ void Interface::CommandThreadReceive(bool steam)
 		{
 			unsigned char code;
 
-			do
+			while (!endThread)
 			{
 				ZeroMemory(buffer, sizeof(buffer));
 
@@ -255,10 +255,8 @@ void Interface::CommandThreadReceive(bool steam)
 					wakeup = true;
 
 #ifdef VAULTMP_DEBUG
-
 					if (debug)
 						debug->Print("vaultmp process waked up (game patched)", true);
-
 #endif
 				}
 				else if (code == PIPE_ERROR_CLOSE)
@@ -268,8 +266,9 @@ void Interface::CommandThreadReceive(bool steam)
 				}
 				else if (code)
 					throw VaultException("Unknown pipe code identifier %02X", code);
+				else
+					endThread = true;
 			}
-			while (code && code != PIPE_ERROR_CLOSE && !endThread);
 		}
 	}
 	catch (exception& e)

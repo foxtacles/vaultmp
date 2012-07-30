@@ -31,7 +31,7 @@ struct Diff
 typedef pair<list<NetworkID>, list<NetworkID>> ContainerDiff;
 typedef pair<list<NetworkID>, vector<pPacket>> ContainerDiffNet;
 typedef list<pair<unsigned int, Diff>> GameDiff;
-typedef pair<NetworkID, map<NetworkID, list<NetworkID>>> StripCopy;
+typedef pair<NetworkID, unordered_map<NetworkID, list<NetworkID>>> StripCopy;
 
 #include "vaultmp.h"
 #include "Data.h"
@@ -58,7 +58,7 @@ class Container : public Object
 #endif
 
 		static bool Item_sort(NetworkID id, NetworkID id2);
-		static bool Diff_sort(pair<unsigned int, Diff> diff, pair<unsigned int, Diff> diff2);
+		static bool Diff_sort(const pair<unsigned int, Diff>& diff, const pair<unsigned int, Diff>& diff2);
 
 		list<NetworkID> container;
 		Value<bool> flag_Lock;

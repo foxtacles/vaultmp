@@ -16,8 +16,8 @@ Cell::Cell(const string& table, sqlite3_stmt* stmt)
 	x = sqlite3_column_int(stmt, 2);
 	y = sqlite3_column_int(stmt, 3);
 
-	cells.insert(make_pair(baseID, this));
-	worlds[world].push_back(this);
+	cells.emplace(baseID, this);
+	worlds[world].emplace_back(this);
 }
 
 Cell::~Cell()

@@ -72,7 +72,7 @@ vector<RakNetGUID> Client::GetNetworkList(Client* except)
 
 	for (it = clients.begin(); it != clients.end(); ++it)
 		if (it->second != except)
-			network.push_back(it->first);
+			network.emplace_back(it->first);
 
 	return network;
 }
@@ -84,7 +84,7 @@ vector<RakNetGUID> Client::GetNetworkList(RakNetGUID except)
 
 	for (it = clients.begin(); it != clients.end(); ++it)
 		if (it->first != except)
-			network.push_back(it->first);
+			network.emplace_back(it->first);
 
 	return network;
 }
