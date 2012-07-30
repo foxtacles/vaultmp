@@ -214,7 +214,7 @@ void Script::LoadScripts(char* scripts, char* base)
 			snprintf(path, sizeof(path), "%s/%s", base, token);
 			Script* script = new Script(path);
 #endif
-			Script::scripts.push_back(script);
+			Script::scripts.emplace_back(script);
 			token = strtok(nullptr, ",");
 		}
 	}
@@ -247,31 +247,31 @@ void Script::GetArguments(vector<boost::any>& params, va_list args, string def)
 			{
 				case 'i':
 				{
-					params.push_back(va_arg(args, unsigned int));
+					params.emplace_back(va_arg(args, unsigned int));
 					break;
 				}
 
 				case 'l':
 				{
-					params.push_back(va_arg(args, unsigned long long));
+					params.emplace_back(va_arg(args, unsigned long long));
 					break;
 				}
 
 				case 'f':
 				{
-					params.push_back(va_arg(args, double));
+					params.emplace_back(va_arg(args, double));
 					break;
 				}
 
 				case 'p':
 				{
-					params.push_back(va_arg(args, void*));
+					params.emplace_back(va_arg(args, void*));
 					break;
 				}
 
 				case 's':
 				{
-					params.push_back(string(va_arg(args, const char*)));
+					params.emplace_back(va_arg(args, const char*));
 					break;
 				}
 
@@ -383,7 +383,7 @@ unsigned long long Script::Timer_Respawn(NetworkID id)
 	{
 		const Cell& cell = Cell::Lookup(_cell);
 
-		response.push_back(Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, cell.GetWorld(), cell.GetX(), cell.GetY()),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
@@ -391,7 +391,7 @@ unsigned long long Script::Timer_Respawn(NetworkID id)
 	{
 		const Record& record = Record::Lookup(_cell);
 
-		response.push_back(Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(id, record.GetName()),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
@@ -612,7 +612,7 @@ bool Script::OnPlayerChat(FactoryObject& reference, string& message)
 				result = script->fOnPlayerChat(id, _message);
 		}
 		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnPlayerChat"))
-			result = (bool) PAWN::Call((AMX*)script->handle, "OnPlayerChat", "sl", 1, _message, id);
+			result = static_cast<bool>(PAWN::Call((AMX*)script->handle, "OnPlayerChat", "sl", 1, _message, id));
 	}
 
 	message.assign(_message);
@@ -632,7 +632,7 @@ bool Script::OnClientAuthenticate(string name, string pwd)
 				result = script->fOnClientAuthenticate(name.c_str(), pwd.c_str());
 		}
 		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnClientAuthenticate"))
-			result = (bool) PAWN::Call((AMX*)script->handle, "OnClientAuthenticate", "ss", 0, pwd.c_str(), name.c_str());
+			result = static_cast<bool>(PAWN::Call((AMX*)script->handle, "OnClientAuthenticate", "ss", 0, pwd.c_str(), name.c_str()));
 	}
 
 	return result;
@@ -1236,14 +1236,14 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 			{
 				object->SetGameCell(_new_cell);
 
-				response.push_back(Network::CreateResponse(
+				response.emplace_back(Network::CreateResponse(
 					PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, _new_cell),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 				);
 
 				if (player)
 				{
-					response.push_back(Network::CreateResponse(
+					response.emplace_back(Network::CreateResponse(
 						PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, new_cell->GetWorld(), new_cell->GetX(), new_cell->GetY()),
 						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
 					);
@@ -1253,7 +1253,7 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 				_new_cell = 0x00000000;
 		}
 
-		response.push_back(Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_POS>(id, X, Y, Z),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		);
@@ -1323,7 +1323,7 @@ bool Script::SetCell(NetworkID id, unsigned int cell, double X, double Y, double
 	{
 		object->SetGameCell(cell);
 
-		response.push_back(Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, cell),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		);
@@ -1332,14 +1332,14 @@ bool Script::SetCell(NetworkID id, unsigned int cell, double X, double Y, double
 		{
 			if (new_interior)
 			{
-				response.push_back(Network::CreateResponse(
+				response.emplace_back(Network::CreateResponse(
 					PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(id, new_interior->GetName()),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
 				);
 			}
 			else
 			{
-				response.push_back(Network::CreateResponse(
+				response.emplace_back(Network::CreateResponse(
 					PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, new_exterior->GetWorld(), new_exterior->GetX(), new_exterior->GetY()),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
 				);
@@ -1357,7 +1357,7 @@ bool Script::SetCell(NetworkID id, unsigned int cell, double X, double Y, double
 		object->SetGamePos(Axis_Y, Y);
 		object->SetGamePos(Axis_Z, Z);
 
-		response.push_back(Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_POS>(id, X, Y, Z),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		);

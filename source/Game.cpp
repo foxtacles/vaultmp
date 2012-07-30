@@ -1087,7 +1087,7 @@ void Game::UnequipItem(FactoryObject& reference, unsigned int baseID, bool silen
 void Game::net_SetPos(FactoryObject& reference, double X, double Y, double Z)
 {
 	Object* object = vaultcast<Object>(reference);
-	bool result = ((bool) object->SetNetworkPos(Axis_X, X) | (bool) object->SetNetworkPos(Axis_Y, Y) | (bool) object->SetNetworkPos(Axis_Z, Z));
+	bool result = (static_cast<bool>(object->SetNetworkPos(Axis_X, X)) | static_cast<bool>(object->SetNetworkPos(Axis_Y, Y)) | static_cast<bool>(object->SetNetworkPos(Axis_Z, Z)));
 
 	if (result && object->GetEnabled())
 	{
@@ -1101,7 +1101,7 @@ void Game::net_SetPos(FactoryObject& reference, double X, double Y, double Z)
 void Game::net_SetAngle(FactoryObject& reference, unsigned char axis, double value)
 {
 	Object* object = vaultcast<Object>(reference);
-	bool result = (bool) object->SetAngle(axis, value);
+	bool result = static_cast<bool>(object->SetAngle(axis, value));
 
 	if (result && object->GetEnabled())
 	{
@@ -1325,7 +1325,7 @@ void Game::GetPos(FactoryObject& reference, unsigned char axis, double value)
 	static bool update = false;
 
 	Object* object = vaultcast<Object>(reference);
-	bool result = (bool) object->SetGamePos(axis, value);
+	bool result = static_cast<bool>(object->SetGamePos(axis, value));
 
 	if (object->GetReference() == PLAYER_REFERENCE)
 	{
@@ -1354,7 +1354,7 @@ void Game::GetPos(FactoryObject& reference, unsigned char axis, double value)
 void Game::GetAngle(FactoryObject& reference, unsigned char axis, double value)
 {
 	Object* object = vaultcast<Object>(reference);
-	bool result = (bool) object->SetAngle(axis, value);
+	bool result = static_cast<bool>(object->SetAngle(axis, value));
 
 	if (result)
 		Network::Queue(NetworkResponse{Network::CreateResponse(
@@ -1387,7 +1387,7 @@ void Game::GetParentCell(FactoryObject& reference, FactoryObject& player, unsign
 		}
 	}
 
-	bool result = (bool) object->SetGameCell(cell);
+	bool result = static_cast<bool>(object->SetGameCell(cell));
 
 	if (object != self)
 	{
@@ -1431,7 +1431,7 @@ void Game::GetDead(FactoryObject& reference, FactoryObject& player, bool dead)
 
 	bool result;
 
-	result = (bool) actor->SetActorDead(dead);
+	result = static_cast<bool>(actor->SetActorDead(dead));
 
 	if (result)
 	{
@@ -1559,9 +1559,9 @@ void Game::GetActorValue(FactoryObject& reference, bool base, unsigned char inde
 	bool result;
 
 	if (base)
-		result = (bool) actor->SetActorBaseValue(index, value);
+		result = static_cast<bool>(actor->SetActorBaseValue(index, value));
 	else
-		result = (bool) actor->SetActorValue(index, value);
+		result = static_cast<bool>(actor->SetActorValue(index, value));
 
 	if (result)
 		Network::Queue(NetworkResponse{Network::CreateResponse(
@@ -1585,7 +1585,7 @@ void Game::GetActorState(FactoryObject& reference, unsigned char moving, unsigne
 	if (weapon == 0xFF)
 		weapon = AnimGroup_Idle;
 
-	result = ((bool) actor->SetActorMovingAnimation(moving) | (bool) actor->SetActorMovingXY(movingxy) | (bool) actor->SetActorWeaponAnimation(weapon) | (bool) actor->SetActorAlerted(alerted) | (bool) actor->SetActorSneaking(sneaking));
+	result = (static_cast<bool>(actor->SetActorMovingAnimation(moving)) | static_cast<bool>(actor->SetActorMovingXY(movingxy)) | static_cast<bool>(actor->SetActorWeaponAnimation(weapon)) | static_cast<bool>(actor->SetActorAlerted(alerted)) | static_cast<bool>(actor->SetActorSneaking(sneaking)));
 
 	if (result)
 		Network::Queue(NetworkResponse{Network::CreateResponse(
@@ -1603,7 +1603,7 @@ void Game::GetControl(FactoryObject& reference, unsigned char control, unsigned 
 
 	bool result;
 
-	result = (bool) player->SetPlayerControl(control, key);
+	result = static_cast<bool>(player->SetPlayerControl(control, key));
 
 	if (result)
 		Network::Queue(NetworkResponse{Network::CreateResponse(

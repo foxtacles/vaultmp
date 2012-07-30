@@ -25,18 +25,18 @@ NetworkResponse Server::Authenticate(RakNetGUID guid, string name, string pwd)
 	{
 		for (const auto& mod : Dedicated::modfiles)
 		{
-			response.push_back(Network::CreateResponse(
+			response.emplace_back(Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_GAME_MOD>(mod.first, mod.second),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 		}
 
-		response.push_back(Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_GAME_START>(),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 	else
 	{
-		response.push_back(Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_GAME_END>(pTypes::ID_REASON_DENIED),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
@@ -52,7 +52,7 @@ NetworkResponse Server::LoadGame(RakNetGUID guid)
 	{
 		const Cell& cell = Cell::Lookup(Player::GetSpawnCell());
 
-		response.push_back(Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(0, cell.GetWorld(), cell.GetX(), cell.GetY()),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
@@ -60,7 +60,7 @@ NetworkResponse Server::LoadGame(RakNetGUID guid)
 	{
 		const Record& record = Record::Lookup(Player::GetSpawnCell());
 
-		response.push_back(Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(0, record.GetName()),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
@@ -75,12 +75,12 @@ NetworkResponse Server::LoadGame(RakNetGUID guid)
 		if (vaultcast<Item>(*it))
 			continue; // FIXME, this is to not send items in a container
 
-		response.push_back(Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			object->toPacket(),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 
-	response.push_back(Network::CreateResponse(
+	response.emplace_back(Network::CreateResponse(
 		PacketFactory::Create<pTypes::ID_GAME_LOAD>(),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 
@@ -126,7 +126,7 @@ NetworkResponse Server::Disconnect(RakNetGUID guid, pTypes reason)
 
 		NetworkID id = GameFactory::DestroyInstance(reference);
 
-		response.push_back(Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_OBJECT_REMOVE>(id),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr)));
 
@@ -140,7 +140,7 @@ NetworkResponse Server::GetPos(RakNetGUID guid, FactoryObject& reference, double
 {
 	NetworkResponse response;
 	Object* object = vaultcast<Object>(reference);
-	bool result = ((bool) object->SetNetworkPos(Axis_X, X) | (bool) object->SetNetworkPos(Axis_Y, Y) | (bool) object->SetNetworkPos(Axis_Z, Z));
+	bool result = (static_cast<bool>(object->SetNetworkPos(Axis_X, X)) | static_cast<bool>(object->SetNetworkPos(Axis_Y, Y)) | static_cast<bool>(object->SetNetworkPos(Axis_Z, Z)));
 
 	if (result)
 	{
@@ -148,7 +148,7 @@ NetworkResponse Server::GetPos(RakNetGUID guid, FactoryObject& reference, double
 		object->SetGamePos(Axis_Y, Y);
 		object->SetGamePos(Axis_Z, Z);
 
-		response.push_back(Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_POS>(object->GetNetworkID(), X, Y, Z),
 			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 	}
@@ -160,11 +160,11 @@ NetworkResponse Server::GetAngle(RakNetGUID guid, FactoryObject& reference, unsi
 {
 	NetworkResponse response;
 	Object* object = vaultcast<Object>(reference);
-	bool result = (bool) object->SetAngle(axis, value);
+	bool result = static_cast<bool>(object->SetAngle(axis, value));
 
 	if (result)
 	{
-		response.push_back(Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_ANGLE>(object->GetNetworkID(), axis, value),
 			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 	}
@@ -176,13 +176,13 @@ NetworkResponse Server::GetCell(RakNetGUID guid, FactoryObject& reference, unsig
 {
 	NetworkResponse response;
 	Object* object = vaultcast<Object>(reference);
-	bool result = (bool) object->SetNetworkCell(cell);
+	bool result = static_cast<bool>(object->SetNetworkCell(cell));
 
 	if (result)
 	{
 		object->SetGameCell(cell);
 
-		response.push_back(Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_CELL>(object->GetNetworkID(), cell),
 			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
@@ -234,14 +234,13 @@ NetworkResponse Server::GetActorValue(RakNetGUID guid, FactoryObject& reference,
 	bool result;
 
 	if (base)
-		result = (bool) actor->SetActorBaseValue(index, value);
-
+		result = static_cast<bool>(actor->SetActorBaseValue(index, value));
 	else
-		result = (bool) actor->SetActorValue(index, value);
+		result = static_cast<bool>(actor->SetActorValue(index, value));
 
 	if (result)
 	{
-		response.push_back(Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_VALUE>(actor->GetNetworkID(), base, index, value),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
@@ -261,14 +260,14 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, FactoryObject& reference,
 	NetworkResponse response;
 	bool result, _alerted, _sneaking, _weapon;
 
-	_alerted = (bool) actor->SetActorAlerted(alerted);
-	_sneaking = (bool) actor->SetActorSneaking(sneaking);
-	_weapon = (bool) actor->SetActorWeaponAnimation(weapon);
-	result = ((bool) actor->SetActorMovingAnimation(moving) | (bool) actor->SetActorMovingXY(movingxy) | _weapon | _alerted | _sneaking);
+	_alerted = static_cast<bool>(actor->SetActorAlerted(alerted));
+	_sneaking = static_cast<bool>(actor->SetActorSneaking(sneaking));
+	_weapon = static_cast<bool>(actor->SetActorWeaponAnimation(weapon));
+	result = (static_cast<bool>(actor->SetActorMovingAnimation(moving)) | static_cast<bool>(actor->SetActorMovingXY(movingxy)) | _weapon | _alerted | _sneaking);
 
 	if (result)
 	{
-		response.push_back(Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_STATE>(actor->GetNetworkID(), moving, movingxy, weapon, alerted, sneaking),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
@@ -299,7 +298,7 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, FactoryObject& reference,
 
 				if (baseID)
 				{
-					response.push_back(Network::CreateResponse(
+					response.emplace_back(Network::CreateResponse(
 						PacketFactory::Create<pTypes::ID_UPDATE_FIREWEAPON>(actor->GetNetworkID(), baseID),
 						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
@@ -333,11 +332,11 @@ NetworkResponse Server::GetActorDead(RakNetGUID guid, FactoryObject& reference, 
 	NetworkResponse response;
 	bool result;
 
-	result = (bool) actor->SetActorDead(dead);
+	result = static_cast<bool>(actor->SetActorDead(dead));
 
 	if (result)
 	{
-		response.push_back(Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_DEAD>(actor->GetNetworkID(), dead, limbs, cause),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
@@ -367,7 +366,7 @@ NetworkResponse Server::GetPlayerControl(RakNetGUID guid, FactoryObject& referen
 	NetworkResponse response;
 	bool result;
 
-	result = (bool) player->SetPlayerControl(control, key);
+	result = static_cast<bool>(player->SetPlayerControl(control, key));
 
 	if (result)
 	{
@@ -394,7 +393,7 @@ NetworkResponse Server::ChatMessage(RakNetGUID guid, string message)
 
 	if (result && !message.empty())
 	{
-		response.push_back(Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_GAME_CHAT>(message),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr)));
 	}

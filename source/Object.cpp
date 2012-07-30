@@ -66,6 +66,7 @@ void Object::initialize()
 
 	for (unsigned char _data : data)
 	{
+		// emplace
 		object_Game_Pos.insert(make_pair(_data, Value<double>()));
 		object_Network_Pos.insert(make_pair(_data, Value<double>()));
 		object_Angle.insert(make_pair(_data, Value<double>()));

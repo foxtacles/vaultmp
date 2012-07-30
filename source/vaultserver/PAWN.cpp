@@ -145,19 +145,19 @@ cell PAWN::vaultmp_CreateTimerEx(AMX* amx, const cell* params)
 		{
 			case 'i':
 			{
-				args.push_back((unsigned int) *data);
+				args.emplace_back((unsigned int) *data);
 				break;
 			}
 
 			case 'l':
 			{
-				args.push_back((unsigned long long) *data);
+				args.emplace_back((unsigned long long) *data);
 				break;
 			}
 
 			case 'f':
 			{
-				args.push_back((double) amx_ctof(*data));
+				args.emplace_back((double) amx_ctof(*data));
 				break;
 			}
 
@@ -166,7 +166,7 @@ cell PAWN::vaultmp_CreateTimerEx(AMX* amx, const cell* params)
 				amx_StrLen(data, &len);
 				char str[len + 1];
 				amx_GetString(str, data, 0, UNLIMITED);
-				args.push_back(string(str));
+				args.emplace_back(string(str));
 				break;
 			}
 
@@ -239,25 +239,25 @@ cell PAWN::vaultmp_CallPublic(AMX* amx, const cell* params)
 		{
 			case 'i':
 			{
-				args.push_back((unsigned int) *data);
+				args.emplace_back((unsigned int) *data);
 				break;
 			}
 
 			case 'l':
 			{
-				args.push_back((unsigned long long) *data);
+				args.emplace_back((unsigned long long) *data);
 				break;
 			}
 
 			case 'f':
 			{
-				args.push_back((double) amx_ctof(*data));
+				args.emplace_back((double) amx_ctof(*data));
 				break;
 			}
 
 			case 'p':
 			{
-				args.push_back((void*) data);
+				args.emplace_back((void*) data);
 				break;
 			}
 
@@ -266,7 +266,7 @@ cell PAWN::vaultmp_CallPublic(AMX* amx, const cell* params)
 				amx_StrLen(data, &len);
 				char str[len + 1];
 				amx_GetString(str, data, 0, UNLIMITED);
-				args.push_back(string(str));
+				args.emplace_back(string(str));
 				break;
 			}
 
@@ -788,7 +788,7 @@ cell PAWN::Call(AMX* amx, const char* name, const char* argl, int buf, ...)
 					char* string = va_arg(args, char*);
 					cell* store;
 					amx_PushString(amx, &store, string, 1, 0);
-					strings.push_back(pair<cell*, char*>(store, string));
+					strings.emplace_back(store, string);
 					break;
 				}
 

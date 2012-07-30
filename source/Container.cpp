@@ -72,7 +72,7 @@ bool Container::Item_sort(NetworkID id, NetworkID id2)
 	return true;
 }
 
-bool Container::Diff_sort(pair<unsigned int, Diff> diff, pair<unsigned int, Diff> diff2)
+bool Container::Diff_sort(const pair<unsigned int, Diff>& diff, const pair<unsigned int, Diff>& diff2)
 {
 	if (diff.second.equipped > diff2.second.equipped)
 		return false;
@@ -93,8 +93,7 @@ StripCopy Container::Strip() const
 
 	for (it = this_container.begin(), it2 = copy->container.begin(); it != this_container.end() && it2 != copy->container.end(); ++it, ++it2)
 	{
-		pair<map<NetworkID, list<NetworkID> >::iterator, bool> it5;
-		it5 = result.second.insert(pair<NetworkID, list<NetworkID> >(*it2, list<NetworkID> {*it}));
+		auto it5 = result.second.emplace(*it2, list<NetworkID>{*it});
 
 		FactoryObject _opt = GameFactory::GetObject(*it2);
 		Item* opt = vaultcast<Item>(_opt);
@@ -119,7 +118,6 @@ StripCopy Container::Strip() const
 					continue;
 				}
 			}
-
 			else
 				break;
 
@@ -140,7 +138,6 @@ void Container::AddItem(NetworkID id)
 		container.emplace_back(id);
 		container.sort(Item_sort);
 	}
-
 	else
 		throw VaultException("Object with reference %08X is not an Item", (*reference)->GetReference());
 }
@@ -161,7 +158,7 @@ ContainerDiff Container::AddItem(unsigned int baseID, unsigned int count, double
 
 void Container::RemoveItem(NetworkID id)
 {
-	list<NetworkID>::iterator it = find(container.begin(), container.end(), id);
+	auto it = find(container.begin(), container.end(), id);
 
 	if (it == container.end())
 		throw VaultException("Unknown Item with NetworkID %lld in Container with reference %08X", id, this->GetReference());
@@ -272,7 +269,7 @@ ContainerDiff Container::Compare(NetworkID id) const
 	ContainerDiff diff;
 
 	StripCopy _strip_self = this->Strip();
-	map<NetworkID, list<NetworkID> >& _strip_assoc = _strip_self.second;
+	unordered_map<NetworkID, list<NetworkID>>& _strip_assoc = _strip_self.second;
 	FactoryObject _self = GameFactory::GetObject(_strip_self.first);
 	FactoryObject _compare = GameFactory::GetObject(container->Strip().first);
 	Container* self = vaultcast<Container>(_self);
@@ -307,7 +304,6 @@ ContainerDiff Container::Compare(NetworkID id) const
 				}
 			}
 		}
-
 		else if (iCompare_base < iSelf_base)   // Item in compare is not existent in self (new / changed)
 		{
 			++it;
@@ -318,12 +314,12 @@ ContainerDiff Container::Compare(NetworkID id) const
 		++it2;
 	}
 
-	for (it = self->container.begin(); it != self->container.end(); ++it)
+	for (const auto& id : self->container)
 	{
-		list<NetworkID>& _delete = _strip_assoc.find(*it)->second;
+		list<NetworkID>& _delete = _strip_assoc.find(id)->second;
 
-		for (it2 = _delete.begin(); it2 != _delete.end(); ++it2)
-			diff.first.emplace_back(*it2);
+		for (const auto& id : _delete)
+			diff.first.emplace_back(id);
 	}
 
 	for (it = compare->container.begin(); it != compare->container.end(); compare->container.erase(it++))
@@ -354,7 +350,7 @@ NetworkID Container::IsEquipped(unsigned int baseID) const
 GameDiff Container::ApplyDiff(ContainerDiff& diff)
 {
 	GameDiff result;
-	map<unsigned int, Diff> assoc_delete;
+	unordered_map<unsigned int, Diff> assoc_delete;
 
 	for (NetworkID& id : diff.first)
 	{
@@ -362,7 +358,7 @@ GameDiff Container::ApplyDiff(ContainerDiff& diff)
 		Item* iDelete = vaultcast<Item>(_iDelete);
 
 		Diff* _diff = nullptr;
-		_diff = &assoc_delete.insert(pair<unsigned int, Diff>(iDelete->GetBase(), Diff())).first->second;
+		_diff = &assoc_delete.emplace(iDelete->GetBase(), Diff()).first->second;
 
 		_diff->count -= iDelete->GetItemCount();
 		_diff->equipped -= iDelete->GetItemEquipped();
@@ -379,7 +375,7 @@ GameDiff Container::ApplyDiff(ContainerDiff& diff)
 		Item* iNew = vaultcast<Item>(_iNew);
 
 		Diff* _diff = nullptr;
-		map<unsigned int, Diff>::iterator it = assoc_delete.find(iNew->GetBase());
+		auto it = assoc_delete.find(iNew->GetBase());
 
 		if (it != assoc_delete.end())
 		{
@@ -423,7 +419,7 @@ GameDiff Container::ApplyDiff(ContainerDiff& diff)
 		this->AddItem(id);
 	}
 
-	for (const pair<unsigned int, Diff>& _diff : assoc_delete)
+	for (const auto& _diff : assoc_delete)
 	{
 		if (_diff.second.count == 0 && _diff.second.equipped == 0)
 			continue;
