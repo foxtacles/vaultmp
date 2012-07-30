@@ -29,23 +29,27 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReser
 		case DLL_PROCESS_ATTACH: {
 			DisableThreadLibraryCalls(hModule);
 			InitializeCriticalSection(&cs_GetQueue);
+
+			ResetLog();
+			SendToLog("DLL Loaded");
+
 			InitInstance(hModule);
 			if(SUCCEEDED(PatchIat(GetModuleHandle(NULL),"kernel32.dll","GetProcAddress",(PVOID)GetProcAddress_Hooked,(PVOID *)&GetProcAddress_Original)))
 			{
-				DBB("GetPRocAddress hook injected");
+				SendToLog("GetPRocAddress hook injected");
 			}
 			else
 			{
-				DBB("GetPRocAddress hook failed");
+				SendToLog("GetPRocAddress hook failed");
 			}
 
 			if(SUCCEEDED(PatchIat(GetModuleHandle(NULL),"user32.dll","RegisterClassA",(PVOID)RegisterClass_Hooked,(PVOID *)&RegisterClass_Original)))
 			{
-				DBB("RegisterClass hook injected");
+				SendToLog("RegisterClass hook injected");
 			}
 			else
 			{
-				DBB("RegisterClass hook failed");
+				SendToLog("RegisterClass hook failed");
 			}
 
 	    case DLL_PROCESS_DETACH: ExitInstance(); break;

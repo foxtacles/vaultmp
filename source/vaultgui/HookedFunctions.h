@@ -4,6 +4,10 @@
 #include "myIDirect3DDevice9.h"
 #include <fstream>
 
+#include <shlwapi.h>
+#pragma comment(lib,"shlwapi.lib")
+#include "shlobj.h"
+
 extern myIDirect3D9*       gl_pmyIDirect3D9;
 extern myIDirect3DDevice9* gl_pmyIDirect3DDevice9;
 extern HINSTANCE           gl_hOriginalDll;

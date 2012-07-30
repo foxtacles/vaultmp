@@ -8,6 +8,7 @@
 
 myIDirect3D9::myIDirect3D9(IDirect3D9 *pOriginal)
 {
+	SendToLog("Creating hooked IDirect3D9 object");
     m_pIDirect3D9 = pOriginal;
 }
 
@@ -17,6 +18,7 @@ myIDirect3D9::~myIDirect3D9(void)
 
 HRESULT  __stdcall myIDirect3D9::QueryInterface(REFIID riid, void** ppvObj)
 {
+	SendToLog("Hooked IDirect3D9 QueryInterface");
     *ppvObj = NULL;
 
 	// call this to increase AddRef at original object
@@ -34,12 +36,15 @@ HRESULT  __stdcall myIDirect3D9::QueryInterface(REFIID riid, void** ppvObj)
 
 ULONG    __stdcall myIDirect3D9::AddRef(void)
 {
+	SendToLog("Hooked IDirect3D9 AddRef");
     return(m_pIDirect3D9->AddRef());
 }
 
 ULONG    __stdcall myIDirect3D9::Release(void)
 {
     extern myIDirect3D9* gl_pmyIDirect3D9;
+
+	SendToLog("Hooked IDirect3D9 Release");
 
 	// call original routine
 	ULONG count = m_pIDirect3D9->Release();
@@ -122,6 +127,7 @@ HMONITOR __stdcall myIDirect3D9::GetAdapterMonitor(UINT Adapter)
 
 HRESULT __stdcall myIDirect3D9::CreateDevice(UINT Adapter,D3DDEVTYPE DeviceType,HWND hFocusWindow,DWORD BehaviorFlags,D3DPRESENT_PARAMETERS* pPresentationParameters,IDirect3DDevice9** ppReturnedDeviceInterface)
 {
+	SendToLog("Hooked IDirect3D9 CreateDevice");
     // global var
 	extern myIDirect3DDevice9* gl_pmyIDirect3DDevice9;
 
@@ -134,6 +140,8 @@ HRESULT __stdcall myIDirect3D9::CreateDevice(UINT Adapter,D3DDEVTYPE DeviceType,
 	
 	// store our pointer (the fake one) for returning it to the calling progam
 	*ppReturnedDeviceInterface = gl_pmyIDirect3DDevice9;
+
+	SendToLog("Hooked IDirect3D9 CreateDevice return");
 
 	return(hres); 
 }

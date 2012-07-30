@@ -9,27 +9,37 @@ extern myIDirect3DDevice9* gl_pmyIDirect3DDevice9;
 
 IDirect3D9* WINAPI Direct3DCreate9_Hooked(UINT SDKVersion)
 {
+	SendToLog("Direct3DCreate9_Hooked called");
 	IDirect3D9* tmp;
 	tmp=(*Direct3DCreate9_Original)(SDKVersion);
 	gl_pmyIDirect3D9 = new myIDirect3D9(tmp);
 	
+	SendToLog("Returning DX Pointer");
+
 	return gl_pmyIDirect3D9;
 }
 
 LONG myFunc(LPEXCEPTION_POINTERS p)
 {
 	//Exception handler
+	//char* exstr=ExceptionToString(p->ExceptionRecord);
+	SendToLog("EXCEPTION!");
+	SendToLog(ExceptionToString(p->ExceptionRecord));
+	system("SendFalloutLog.exe");
+	//Got an exception!
     return EXCEPTION_EXECUTE_HANDLER;
 }
 
 FARPROC WINAPI GetProcAddress_Hooked(HMODULE hModule,LPCSTR lpProcName)
 {
+		SendToLog("GetProcAddress_Hooked called");
 		FARPROC tmp=GetProcAddress_Original(hModule,lpProcName);
 		SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)&myFunc);  
 		DBB("GetProcAddress_Hooked("<<lpProcName<<")");
 		if(strcmp(lpProcName,"Direct3DCreate9")==0)
 		{
 			Direct3DCreate9_Original=(IDirect3D9* (WINAPI *)(UINT SDKVersion))tmp;
+			SendToLog("Returning fake Direct3DCreate9 (hooked function)");
 			return (FARPROC)Direct3DCreate9_Hooked;
 		}
         return tmp;
@@ -39,10 +49,12 @@ ATOM WINAPI RegisterClass_Hooked(
   __in  const WNDCLASS *lpWndClass
 )
 {
+	SendToLog("RegisterClass_Hooked called");
 	WindowProcedure_Original=lpWndClass->lpfnWndProc;
 
 	((WNDCLASS *)lpWndClass)->lpfnWndProc=CustomWindowProcedure;
 
+	SendToLog("Returning RegisterClass_Original");
 	return RegisterClass_Original(lpWndClass);
 }
 
@@ -50,6 +62,8 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 {
 	static string chatbox_text="";
 	static bool chatting=false;
+
+	SendToLog("CustomWindowProcedure called");
 
 	switch(message)
 	{	
@@ -96,6 +110,11 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 					{
 						chatting=false;
 						gl_pmyIDirect3DDevice9->chatbox.Lock();
+						/*if(chatbox_text=="crash")
+						{
+							char* a=0;
+							(*a)=1;
+						}*/
 						gl_pmyIDirect3DDevice9->chatbox.AddToQueue(chatbox_text);
 						//gl_pmyIDirect3DDevice9->chatbox.AddLine(chatbox_text);
 						gl_pmyIDirect3DDevice9->chatbox.Unlock();
