@@ -72,6 +72,7 @@ Script::Script(char* path)
 			SetScript(string(vpf + "ValueToString").c_str(), &Script::ValueToString);
 			SetScript(string(vpf + "AxisToString").c_str(), &Script::AxisToString);
 			SetScript(string(vpf + "AnimToString").c_str(), &Script::AnimToString);
+			SetScript(string(vpf + "BaseToString").c_str(), &Script::BaseToString);
 
 			SetScript(string(vpf + "UIMessage").c_str(), &Script::UIMessage);
 			SetScript(string(vpf + "ChatMessage").c_str(), &Script::ChatMessage);
@@ -640,22 +641,37 @@ bool Script::OnClientAuthenticate(string name, string pwd)
 const char* Script::ValueToString(unsigned char index)
 {
 	static string value;
-	value = API::RetrieveValue_Reverse(index);
+	value.assign(API::RetrieveValue_Reverse(index));
 	return value.c_str();
 }
 
 const char* Script::AxisToString(unsigned char index)
 {
 	static string axis;
-	axis = API::RetrieveAxis_Reverse(index);
+	axis.assign(API::RetrieveAxis_Reverse(index));
 	return axis.c_str();
 }
 
 const char* Script::AnimToString(unsigned char index)
 {
 	static string anim;
-	anim = API::RetrieveAnim_Reverse(index);
+	anim.assign(API::RetrieveAnim_Reverse(index));
 	return anim.c_str();
+}
+
+const char* Script::BaseToString(unsigned int baseID)
+{
+	static string base;
+	base.clear();
+
+	try
+	{
+		const Record& record = Record::Lookup(baseID);
+		base.assign(record.GetName());
+	}
+	catch (...) {}
+
+	return base.c_str();
 }
 
 bool Script::UIMessage(NetworkID id, const char* message)
@@ -787,7 +803,7 @@ unsigned int Script::GetList(unsigned char type, NetworkID** data)
 {
 	static vector<NetworkID> _data;
 	_data = GameFactory::GetIDObjectTypes(type);
-	*data = &_data.front();
+	*data = &_data[0];
 	return _data.size();
 }
 
@@ -852,7 +868,7 @@ const char* Script::GetName(NetworkID id)
 	Object* object = vaultcast<Object>(reference);
 
 	if (object)
-		name = object->GetName();
+		name.assign(object->GetName());
 
 	return name.c_str();
 }

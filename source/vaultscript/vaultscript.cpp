@@ -24,7 +24,7 @@ Void VAULTSCRIPT exec() noexcept
 	}
 }
 
-State VAULTSCRIPT OnClientAuthenticate(String name, String pwd) noexcept
+State VAULTSCRIPT OnClientAuthenticate(cRawString name, cRawString pwd) noexcept
 {
 	return True;
 }

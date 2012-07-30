@@ -36,6 +36,7 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"ValueToString", PAWN::vaultmp_ValueToString},
 	{"AxisToString", PAWN::vaultmp_AxisToString},
 	{"AnimToString", PAWN::vaultmp_AnimToString},
+	{"BaseToString", PAWN::vaultmp_BaseToString},
 
 	{"UIMessage", PAWN::vaultmp_UIMessage},
 	{"ChatMessage", PAWN::vaultmp_ChatMessage},
@@ -384,6 +385,21 @@ cell PAWN::vaultmp_AnimToString(AMX* amx, const cell* params)
 	{
 		cell* dest = amx_Address(amx, params[2]);
 		amx_SetString(dest, anim.c_str(), 1, 0, anim.length() + 1);
+	}
+	else
+		return 0;
+
+	return 1;
+}
+
+cell PAWN::vaultmp_BaseToString(AMX* amx, const cell* params)
+{
+	string base = Script::BaseToString(params[1]);
+
+	if (!base.empty())
+	{
+		cell* dest = amx_Address(amx, params[2]);
+		amx_SetString(dest, base.c_str(), 1, 0, base.length() + 1);
 	}
 	else
 		return 0;

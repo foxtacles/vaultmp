@@ -103,6 +103,7 @@ class Script
 		static const char* ValueToString(unsigned char index);
 		static const char* AxisToString(unsigned char index);
 		static const char* AnimToString(unsigned char index);
+		static const char* BaseToString(unsigned int baseID);
 
 		static bool UIMessage(NetworkID id, const char* message);
 		static bool ChatMessage(NetworkID id, const char* message);
