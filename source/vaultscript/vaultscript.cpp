@@ -57,7 +57,6 @@ Base VAULTSCRIPT OnPlayerRequestGame(ID player) noexcept
 
 State VAULTSCRIPT OnPlayerChat(ID player, RawString message) noexcept
 {
-	AddItem(player, static_cast<Base>(0x207f7));
 	return True;
 }
 
