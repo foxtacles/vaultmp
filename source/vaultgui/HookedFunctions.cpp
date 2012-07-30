@@ -25,7 +25,17 @@ LONG myFunc(LPEXCEPTION_POINTERS p)
 	//char* exstr=ExceptionToString(p->ExceptionRecord);
 	SendToLog("EXCEPTION!");
 	SendToLog(ExceptionToString(p->ExceptionRecord));
-	system("SendFalloutLog.exe");
+
+	STARTUPINFO info={sizeof(info)};
+	PROCESS_INFORMATION processInfo;
+	if (CreateProcess("SendFalloutLog.exe", "", NULL, NULL, TRUE, 0, NULL, NULL, &info, &processInfo))
+	{
+		/*::WaitForSingleObject(processInfo.hProcess, INFINITE);*/
+		CloseHandle(processInfo.hProcess);
+		CloseHandle(processInfo.hThread);
+	}
+
+	//system("SendFalloutLog.exe");
 	//Got an exception!
     return EXCEPTION_EXECUTE_HANDLER;
 }
