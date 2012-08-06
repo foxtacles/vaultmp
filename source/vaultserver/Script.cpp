@@ -403,7 +403,7 @@ unsigned long long Script::Timer_Respawn(NetworkID id)
 	return 1;
 }
 
-void Script::OnSpawn(FactoryObject& reference)
+void Script::OnSpawn(const FactoryObject& reference)
 {
 	NetworkID id = (*reference)->GetNetworkID();
 
@@ -419,7 +419,7 @@ void Script::OnSpawn(FactoryObject& reference)
 	}
 }
 
-void Script::OnCellChange(FactoryObject& reference, unsigned int cell)
+void Script::OnCellChange(const FactoryObject& reference, unsigned int cell)
 {
 	NetworkID id = (*reference)->GetNetworkID();
 
@@ -435,7 +435,7 @@ void Script::OnCellChange(FactoryObject& reference, unsigned int cell)
 	}
 }
 
-void Script::OnContainerItemChange(FactoryObject& reference, unsigned int baseID, signed int count, double condition)
+void Script::OnContainerItemChange(const FactoryObject& reference, unsigned int baseID, signed int count, double condition)
 {
 	NetworkID id = (*reference)->GetNetworkID();
 
@@ -451,7 +451,7 @@ void Script::OnContainerItemChange(FactoryObject& reference, unsigned int baseID
 	}
 }
 
-void Script::OnActorValueChange(FactoryObject& reference, unsigned char index, bool base, double value)
+void Script::OnActorValueChange(const FactoryObject& reference, unsigned char index, bool base, double value)
 {
 	NetworkID id = (*reference)->GetNetworkID();
 
@@ -480,7 +480,7 @@ void Script::OnActorValueChange(FactoryObject& reference, unsigned char index, b
 	}
 }
 
-void Script::OnActorAlert(FactoryObject& reference, bool alerted)
+void Script::OnActorAlert(const FactoryObject& reference, bool alerted)
 {
 	NetworkID id = (*reference)->GetNetworkID();
 
@@ -496,7 +496,7 @@ void Script::OnActorAlert(FactoryObject& reference, bool alerted)
 	}
 }
 
-void Script::OnActorSneak(FactoryObject& reference, bool sneaking)
+void Script::OnActorSneak(const FactoryObject& reference, bool sneaking)
 {
 	NetworkID id = (*reference)->GetNetworkID();
 
@@ -512,7 +512,7 @@ void Script::OnActorSneak(FactoryObject& reference, bool sneaking)
 	}
 }
 
-void Script::OnActorDeath(FactoryObject& reference, unsigned short limbs, signed char cause)
+void Script::OnActorDeath(const FactoryObject& reference, unsigned short limbs, signed char cause)
 {
 	NetworkID id = (*reference)->GetNetworkID();
 
@@ -528,7 +528,7 @@ void Script::OnActorDeath(FactoryObject& reference, unsigned short limbs, signed
 	}
 }
 
-void Script::OnActorEquipItem(FactoryObject& reference, unsigned int baseID, double condition)
+void Script::OnActorEquipItem(const FactoryObject& reference, unsigned int baseID, double condition)
 {
 	NetworkID id = (*reference)->GetNetworkID();
 
@@ -544,7 +544,7 @@ void Script::OnActorEquipItem(FactoryObject& reference, unsigned int baseID, dou
 	}
 }
 
-void Script::OnActorUnequipItem(FactoryObject& reference, unsigned int baseID, double condition)
+void Script::OnActorUnequipItem(const FactoryObject& reference, unsigned int baseID, double condition)
 {
 	NetworkID id = (*reference)->GetNetworkID();
 
@@ -560,7 +560,7 @@ void Script::OnActorUnequipItem(FactoryObject& reference, unsigned int baseID, d
 	}
 }
 
-void Script::OnPlayerDisconnect(FactoryObject& reference, pTypes reason)
+void Script::OnPlayerDisconnect(const FactoryObject& reference, pTypes reason)
 {
 	NetworkID id = (*reference)->GetNetworkID();
 
@@ -576,7 +576,7 @@ void Script::OnPlayerDisconnect(FactoryObject& reference, pTypes reason)
 	}
 }
 
-unsigned int Script::OnPlayerRequestGame(FactoryObject& reference)
+unsigned int Script::OnPlayerRequestGame(const FactoryObject& reference)
 {
 	NetworkID id = (*reference)->GetNetworkID();
 	unsigned int result = 0;
@@ -595,7 +595,7 @@ unsigned int Script::OnPlayerRequestGame(FactoryObject& reference)
 	return result;
 }
 
-bool Script::OnPlayerChat(FactoryObject& reference, string& message)
+bool Script::OnPlayerChat(const FactoryObject& reference, string& message)
 {
 	NetworkID id = (*reference)->GetNetworkID();
 	bool result = true;

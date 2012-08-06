@@ -136,7 +136,7 @@ NetworkResponse Server::Disconnect(RakNetGUID guid, pTypes reason)
 	return response;
 }
 
-NetworkResponse Server::GetPos(RakNetGUID guid, FactoryObject& reference, double X, double Y, double Z)
+NetworkResponse Server::GetPos(RakNetGUID guid, const FactoryObject& reference, double X, double Y, double Z)
 {
 	NetworkResponse response;
 	Object* object = vaultcast<Object>(reference);
@@ -156,7 +156,7 @@ NetworkResponse Server::GetPos(RakNetGUID guid, FactoryObject& reference, double
 	return response;
 }
 
-NetworkResponse Server::GetAngle(RakNetGUID guid, FactoryObject& reference, unsigned char axis, double value)
+NetworkResponse Server::GetAngle(RakNetGUID guid, const FactoryObject& reference, unsigned char axis, double value)
 {
 	NetworkResponse response;
 	Object* object = vaultcast<Object>(reference);
@@ -172,7 +172,7 @@ NetworkResponse Server::GetAngle(RakNetGUID guid, FactoryObject& reference, unsi
 	return response;
 }
 
-NetworkResponse Server::GetCell(RakNetGUID guid, FactoryObject& reference, unsigned int cell)
+NetworkResponse Server::GetCell(RakNetGUID guid, const FactoryObject& reference, unsigned int cell)
 {
 	NetworkResponse response;
 	Object* object = vaultcast<Object>(reference);
@@ -192,7 +192,7 @@ NetworkResponse Server::GetCell(RakNetGUID guid, FactoryObject& reference, unsig
 	return response;
 }
 
-NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, FactoryObject& reference, const pair<list<NetworkID>, vector<pPacket>>& _diff)
+NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, const FactoryObject& reference, const pair<list<NetworkID>, vector<pPacket>>& _diff)
 {
 	Container* container = vaultcast<Container>(reference);
 
@@ -223,7 +223,7 @@ NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, FactoryObject& refer
 	return NetworkResponse(make_move_iterator(begin(response)), make_move_iterator(end(response)));
 }
 
-NetworkResponse Server::GetActorValue(RakNetGUID guid, FactoryObject& reference, bool base, unsigned char index, double value)
+NetworkResponse Server::GetActorValue(RakNetGUID guid, const FactoryObject& reference, bool base, unsigned char index, double value)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -250,7 +250,7 @@ NetworkResponse Server::GetActorValue(RakNetGUID guid, FactoryObject& reference,
 	return response;
 }
 
-NetworkResponse Server::GetActorState(RakNetGUID guid, FactoryObject& reference, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking)
+NetworkResponse Server::GetActorState(RakNetGUID guid, const FactoryObject& reference, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -322,7 +322,7 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, FactoryObject& reference,
 	return response;
 }
 
-NetworkResponse Server::GetActorDead(RakNetGUID guid, FactoryObject& reference, bool dead, unsigned short limbs, signed char cause)
+NetworkResponse Server::GetActorDead(RakNetGUID guid, const FactoryObject& reference, bool dead, unsigned short limbs, signed char cause)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -356,7 +356,7 @@ NetworkResponse Server::GetActorDead(RakNetGUID guid, FactoryObject& reference, 
 	return response;
 }
 
-NetworkResponse Server::GetPlayerControl(RakNetGUID guid, FactoryObject& reference, unsigned char control, unsigned char key)
+NetworkResponse Server::GetPlayerControl(RakNetGUID guid, const FactoryObject& reference, unsigned char control, unsigned char key)
 {
 	Player* player = vaultcast<Player>(reference);
 

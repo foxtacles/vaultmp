@@ -86,18 +86,18 @@ class Script
 
 		static unsigned long long Timer_Respawn(NetworkID id);
 
-		static void OnSpawn(FactoryObject& reference);
-		static void OnCellChange(FactoryObject& reference, unsigned int cell);
-		static void OnContainerItemChange(FactoryObject& reference, unsigned int baseID, signed int count, double condition);
-		static void OnActorValueChange(FactoryObject& reference, unsigned char index, bool base, double value);
-		static void OnActorAlert(FactoryObject& reference, bool alerted);
-		static void OnActorSneak(FactoryObject& reference, bool sneaking);
-		static void OnActorDeath(FactoryObject& reference, unsigned short limbs, signed char cause);
-		static void OnActorEquipItem(FactoryObject& reference, unsigned int baseID, double condition);
-		static void OnActorUnequipItem(FactoryObject& reference, unsigned int baseID, double condition);
-		static void OnPlayerDisconnect(FactoryObject& reference, pTypes reason);
-		static unsigned int OnPlayerRequestGame(FactoryObject& reference);
-		static bool OnPlayerChat(FactoryObject& reference, string& message);
+		static void OnSpawn(const FactoryObject& reference);
+		static void OnCellChange(const FactoryObject& reference, unsigned int cell);
+		static void OnContainerItemChange(const FactoryObject& reference, unsigned int baseID, signed int count, double condition);
+		static void OnActorValueChange(const FactoryObject& reference, unsigned char index, bool base, double value);
+		static void OnActorAlert(const FactoryObject& reference, bool alerted);
+		static void OnActorSneak(const FactoryObject& reference, bool sneaking);
+		static void OnActorDeath(const FactoryObject& reference, unsigned short limbs, signed char cause);
+		static void OnActorEquipItem(const FactoryObject& reference, unsigned int baseID, double condition);
+		static void OnActorUnequipItem(const FactoryObject& reference, unsigned int baseID, double condition);
+		static void OnPlayerDisconnect(const FactoryObject& reference, pTypes reason);
+		static unsigned int OnPlayerRequestGame(const FactoryObject& reference);
+		static bool OnPlayerChat(const FactoryObject& reference, string& message);
 		static bool OnClientAuthenticate(string name, string pwd);
 
 		static const char* ValueToString(unsigned char index);
