@@ -18,13 +18,9 @@ struct Diff
 	bool silent;
 	bool stick;
 
-	Diff()
+	Diff() : count(0), condition(0.00), equipped(0), silent(false), stick(false)
 	{
-		count = 0;
-		condition = 0.00;
-		equipped = 0;
-		silent = false;
-		stick = false;
+
 	}
 };
 

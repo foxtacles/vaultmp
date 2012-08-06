@@ -238,7 +238,7 @@ class FactoryObject
 			return *this;
 		};
 
-		Reference* operator* ()
+		Reference* operator* () const
 		{
 			return reference;
 		}
