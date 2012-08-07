@@ -99,6 +99,10 @@ Script::Script(char* path)
 			SetScript(string(vpf + "GetCell").c_str(), &Script::GetCell);
 			SetScript(string(vpf + "IsNearPoint").c_str(), &Script::IsNearPoint);
 			SetScript(string(vpf + "GetItemCount").c_str(), &Script::GetItemCount);
+			SetScript(string(vpf + "GetItemCondition").c_str(), &Script::GetItemCondition);
+			SetScript(string(vpf + "GetItemEquipped").c_str(), &Script::GetItemEquipped);
+			SetScript(string(vpf + "GetItemSilent").c_str(), &Script::GetItemSilent);
+			SetScript(string(vpf + "GetItemStick").c_str(), &Script::GetItemStick);
 			SetScript(string(vpf + "GetContainerItemCount").c_str(), &Script::GetContainerItemCount);
 			SetScript(string(vpf + "GetActorValue").c_str(), &Script::GetActorValue);
 			SetScript(string(vpf + "GetActorBaseValue").c_str(), &Script::GetActorBaseValue);
@@ -989,6 +993,94 @@ unsigned int Script::GetItemCount(NetworkID id)
 
 	if (item)
 		value = item->GetItemCount();
+
+	return value;
+}
+
+double Script::GetItemCondition(NetworkID id)
+{
+	double value = 0.00;
+	FactoryObject reference;
+
+	try
+	{
+		reference = GameFactory::GetObject(id);
+	}
+	catch (...)
+	{
+		return value;
+	}
+
+	Item* item = vaultcast<Item>(reference);
+
+	if (item)
+		value = item->GetItemCondition();
+
+	return value;
+}
+
+bool Script::GetItemEquipped(NetworkID id)
+{
+	bool value = false;
+	FactoryObject reference;
+
+	try
+	{
+		reference = GameFactory::GetObject(id);
+	}
+	catch (...)
+	{
+		return value;
+	}
+
+	Item* item = vaultcast<Item>(reference);
+
+	if (item)
+		value = item->GetItemEquipped();
+
+	return value;
+}
+
+bool Script::GetItemSilent(NetworkID id)
+{
+	bool value = false;
+	FactoryObject reference;
+
+	try
+	{
+		reference = GameFactory::GetObject(id);
+	}
+	catch (...)
+	{
+		return value;
+	}
+
+	Item* item = vaultcast<Item>(reference);
+
+	if (item)
+		value = item->GetItemSilent();
+
+	return value;
+}
+
+bool Script::GetItemStick(NetworkID id)
+{
+	bool value = false;
+	FactoryObject reference;
+
+	try
+	{
+		reference = GameFactory::GetObject(id);
+	}
+	catch (...)
+	{
+		return value;
+	}
+
+	Item* item = vaultcast<Item>(reference);
+
+	if (item)
+		value = item->GetItemStick();
 
 	return value;
 }

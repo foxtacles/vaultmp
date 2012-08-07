@@ -242,6 +242,10 @@ _CPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE Cell (*VAULTAPI(GetCell))(VAULTSPACE ID) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsNearPoint))(VAULTSPACE ID, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetItemCount))(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Value (*VAULTAPI(GetItemCondition))(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetItemEquipped))(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetItemSilent))(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetItemStick))(VAULTSPACE ID) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetContainerItemCount))(VAULTSPACE ID, VAULTSPACE Base) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Value (*VAULTAPI(GetActorValue))(VAULTSPACE ID, VAULTSPACE Index) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Value (*VAULTAPI(GetActorBaseValue))(VAULTSPACE ID, VAULTSPACE Index) _CPP(noexcept);
@@ -376,6 +380,10 @@ namespace vaultmp
 	VAULTFUNCTION Cell GetCell(ID id) noexcept { return VAULTAPI(GetCell)(id); }
 	VAULTFUNCTION State IsNearPoint(ID id, Value X, Value Y, Value Z, Value R) noexcept { return VAULTAPI(IsNearPoint)(id, X, Y, Z, R); }
 	VAULTFUNCTION UCount GetItemCount(ID id) noexcept { return VAULTAPI(GetItemCount)(id); }
+	VAULTFUNCTION Value GetItemCondition(ID id) noexcept { return VAULTAPI(GetItemCondition)(id); }
+	VAULTFUNCTION State GetItemEquipped(ID id) noexcept { return VAULTAPI(GetItemEquipped)(id); }
+	VAULTFUNCTION State GetItemSilent(ID id) noexcept { return VAULTAPI(GetItemSilent)(id); }
+	VAULTFUNCTION State GetItemStick(ID id) noexcept { return VAULTAPI(GetItemStick)(id); }
 	VAULTFUNCTION UCount GetContainerItemCount(ID id, Base base = static_cast<Base>(0)) noexcept { return VAULTAPI(GetContainerItemCount)(id, base); }
 	VAULTFUNCTION Value GetActorValue(ID id, Index index) noexcept { return VAULTAPI(GetActorValue)(id, index); }
 	VAULTFUNCTION Value GetActorBaseValue(ID id, Index index) noexcept { return VAULTAPI(GetActorBaseValue)(id, index); }
@@ -456,6 +464,10 @@ namespace vaultmp
 			virtual ~Item() noexcept {}
 
 			UCount GetItemCount() const noexcept { return vaultmp::GetItemCount(id); }
+			Value GetItemCondition() const noexcept { return vaultmp::GetItemCondition(id); }
+			State GetItemEquipped() const noexcept { return vaultmp::GetItemEquipped(id); }
+			State GetItemStick() const noexcept { return vaultmp::GetItemStick(id); }
+			State GetItemSilent() const noexcept { return vaultmp::GetItemSilent(id); }
 
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_ITEM); }
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_ITEM); }

@@ -63,6 +63,10 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"GetCell", PAWN::vaultmp_GetCell},
 	{"IsNearPoint", PAWN::vaultmp_IsNearPoint},
 	{"GetItemCount", PAWN::vaultmp_GetItemCount},
+	{"GetItemCondition", PAWN::vaultmp_GetItemCondition},
+	{"GetItemEquipped", PAWN::vaultmp_GetItemEquipped},
+	{"GetItemSilent", PAWN::vaultmp_GetItemSilent},
+	{"GetItemStick", PAWN::vaultmp_GetItemStick},
 	{"GetContainerItemCount", PAWN::vaultmp_GetContainerItemCount},
 	{"GetActorValue", PAWN::vaultmp_GetActorValue},
 	{"GetActorBaseValue", PAWN::vaultmp_GetActorBaseValue},
@@ -592,6 +596,27 @@ cell PAWN::vaultmp_IsNearPoint(AMX* amx, const cell* params)
 cell PAWN::vaultmp_GetItemCount(AMX* amx, const cell* params)
 {
 	return Script::GetItemCount(params[1]);
+}
+
+cell PAWN::vaultmp_GetItemCondition(AMX* amx, const cell* params)
+{
+	double value = Script::GetItemCondition(params[1]);
+	return amx_ftoc(value);
+}
+
+cell PAWN::vaultmp_GetItemEquipped(AMX* amx, const cell* params)
+{
+	return Script::GetItemEquipped(params[1]);
+}
+
+cell PAWN::vaultmp_GetItemSilent(AMX* amx, const cell* params)
+{
+	return Script::GetItemSilent(params[1]);
+}
+
+cell PAWN::vaultmp_GetItemStick(AMX* amx, const cell* params)
+{
+	return Script::GetItemStick(params[1]);
 }
 
 cell PAWN::vaultmp_GetContainerItemCount(AMX* amx, const cell* params)
