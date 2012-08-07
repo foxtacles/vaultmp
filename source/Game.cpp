@@ -540,7 +540,7 @@ void Game::NewObject(FactoryObject& reference)
 		}
 		catch (exception& e)
 		{
-			throw VaultException("Object creation with baseID %08X and NetworkID %lld failed (%s)", object->GetBase(), object->GetNetworkID(), e.what());
+			throw VaultException("Object creation with baseID %08X and NetworkID %llu failed (%s)", object->GetBase(), object->GetNetworkID(), e.what());
 		}
 
 		reference = GameFactory::GetObject(id);
@@ -580,7 +580,7 @@ void Game::NewContainer(FactoryObject& reference)
 		AddItem(reference, _item);
 		Item* item = vaultcast<Item>(_item);
 
-		//debug->PrintFormat("ID: %lld, %s, %08X, %d, %d, %d, %d", true, item->GetNetworkID(), item->GetName().c_str(), item->GetBase(), (int)item->GetItemEquipped(), (int)item->GetItemSilent(), (int)item->GetItemStick(), item->GetItemCount());
+		//debug->PrintFormat("ID: %llu, %s, %08X, %d, %d, %d, %d", true, item->GetNetworkID(), item->GetName().c_str(), item->GetBase(), (int)item->GetItemEquipped(), (int)item->GetItemSilent(), (int)item->GetItemStick(), item->GetItemCount());
 
 		if (item->GetItemEquipped())
 			EquipItem(reference, _item);

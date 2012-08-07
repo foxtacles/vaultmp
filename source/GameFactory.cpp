@@ -106,7 +106,7 @@ FactoryObject GameFactory::GetObject(NetworkID id)
 	cs.EndSession();
 
 	if (!reference)
-		throw VaultException("Unknown object with NetworkID %lld", id);
+		throw VaultException("Unknown object with NetworkID %llu", id);
 
 	return FactoryObject(reference, type);
 }
@@ -157,7 +157,7 @@ vector<FactoryObject> GameFactory::GetMultiple(const vector<NetworkID>& objects)
 			Reference* reference = Network::Manager()->GET_OBJECT_FROM_ID<Reference*>(id);
 
 			if (!reference)
-				throw VaultException("Unknown object with NetworkID %lld", id);
+				throw VaultException("Unknown object with NetworkID %llu", id);
 
 			sort.insert(make_pair(*instances.find(reference), i));
 
@@ -249,7 +249,7 @@ unsigned int GameFactory::LookupRefID(NetworkID id)
 	try
 	{
 		Reference* reference = Network::Manager()->GET_OBJECT_FROM_ID<Reference*>(id);
-		refID = (reference != nullptr ? reference->GetReference() : throw VaultException("Unknown object with NetworkID %lld", id));
+		refID = (reference != nullptr ? reference->GetReference() : throw VaultException("Unknown object with NetworkID %llu", id));
 	}
 	catch (...)
 	{
@@ -476,7 +476,7 @@ void GameFactory::DestroyAllInstances()
 #ifdef VAULTMP_DEBUG
 
 		if (debug)
-			debug->PrintFormat("Reference %08X with base %08X and NetworkID %lld (type: %s) to be destructed (%08X)", true, instance.first->GetReference(), instance.first->GetBase(), instance.first->GetNetworkID(), typeid(*(instance.first)).name(), instance.first);
+			debug->PrintFormat("Reference %08X with base %08X and NetworkID %llu (type: %s) to be destructed (%08X)", true, instance.first->GetReference(), instance.first->GetBase(), instance.first->GetNetworkID(), typeid(*(instance.first)).name(), instance.first);
 
 #endif
 
@@ -521,7 +521,7 @@ NetworkID GameFactory::DestroyInstance(FactoryObject& reference)
 #ifdef VAULTMP_DEBUG
 
 	if (debug)
-		debug->PrintFormat("Reference %08X with base %08X and NetworkID %lld (type: %s) to be destructed", true, _reference->GetReference(), _reference->GetBase(), _reference->GetNetworkID(), typeid(*_reference).name());
+		debug->PrintFormat("Reference %08X with base %08X and NetworkID %llu (type: %s) to be destructed", true, _reference->GetReference(), _reference->GetBase(), _reference->GetNetworkID(), typeid(*_reference).name());
 
 #endif
 

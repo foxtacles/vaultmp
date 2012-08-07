@@ -161,7 +161,7 @@ void Container::RemoveItem(NetworkID id)
 	auto it = find(container.begin(), container.end(), id);
 
 	if (it == container.end())
-		throw VaultException("Unknown Item with NetworkID %lld in Container with reference %08X", id, this->GetReference());
+		throw VaultException("Unknown Item with NetworkID %llu in Container with reference %08X", id, this->GetReference());
 
 	container.erase(it);
 }
