@@ -98,6 +98,7 @@ Script::Script(char* path)
 			SetScript(string(vpf + "GetAngle").c_str(), &Script::GetAngle);
 			SetScript(string(vpf + "GetCell").c_str(), &Script::GetCell);
 			SetScript(string(vpf + "IsNearPoint").c_str(), &Script::IsNearPoint);
+			SetScript(string(vpf + "GetItemCount").c_str(), &Script::GetItemCount);
 			SetScript(string(vpf + "GetContainerItemCount").c_str(), &Script::GetContainerItemCount);
 			SetScript(string(vpf + "GetActorValue").c_str(), &Script::GetActorValue);
 			SetScript(string(vpf + "GetActorBaseValue").c_str(), &Script::GetActorBaseValue);
@@ -968,6 +969,28 @@ bool Script::IsNearPoint(NetworkID id, double X, double Y, double Z, double R)
 		return object->IsNearPoint(X, Y, Z, R);
 
 	return false;
+}
+
+unsigned int Script::GetItemCount(NetworkID id)
+{
+	unsigned int value = 0;
+	FactoryObject reference;
+
+	try
+	{
+		reference = GameFactory::GetObject(id);
+	}
+	catch (...)
+	{
+		return value;
+	}
+
+	Item* item = vaultcast<Item>(reference);
+
+	if (item)
+		value = item->GetItemCount();
+
+	return value;
 }
 
 unsigned int Script::GetContainerItemCount(NetworkID id, unsigned int baseID)

@@ -73,6 +73,7 @@ class PAWN
 		static cell vaultmp_GetAngle(AMX* amx, const cell* params);
 		static cell vaultmp_GetCell(AMX* amx, const cell* params);
 		static cell vaultmp_IsNearPoint(AMX* amx, const cell* params);
+		static cell vaultmp_GetItemCount(AMX* amx, const cell* params);
 		static cell vaultmp_GetContainerItemCount(AMX* amx, const cell* params);
 		static cell vaultmp_GetActorValue(AMX* amx, const cell* params);
 		static cell vaultmp_GetActorBaseValue(AMX* amx, const cell* params);
