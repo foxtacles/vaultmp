@@ -273,6 +273,7 @@ void Dedicated::DedicatedThread()
 	API::SetDebugHandler(debug);
 	Database<Record>::SetDebugHandler(debug);
 	Database<Cell>::SetDebugHandler(debug);
+	Database<Weapon>::SetDebugHandler(debug);
 	VaultException::SetDebugHandler(debug);
 	NetworkServer::SetDebugHandler(debug);
 	Lockable::SetDebugHandler(debug);

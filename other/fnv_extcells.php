@@ -34,7 +34,7 @@ echo $arr[2];
 function createTable($tb)
 {
 	global $db;
-	$db->exec("CREATE TABLE $tb (baseID integer(11),name varchar(128),x integer(11),y integer(11),wrld integer(11),dlc integer(11))");
+	$db->exec("CREATE TABLE $tb (baseID integer,name varchar(128),x integer,y integer,wrld integer,dlc integer)");
 }
 
 $db = new PDO('sqlite:newvegas.sqlite');

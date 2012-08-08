@@ -1,6 +1,7 @@
 #include "Database.h"
 #include "Record.h"
 #include "Cell.h"
+#include "Weapon.h"
 
 #ifdef VAULTMP_DEBUG
 template <typename T>
@@ -138,3 +139,4 @@ Database<T>::~Database()
 
 template class Database<Record>;
 template class Database<Cell>;
+template class Database<Weapon>;

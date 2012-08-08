@@ -418,6 +418,8 @@
 		<Unit filename="Server.h" />
 		<Unit filename="Timer.cpp" />
 		<Unit filename="Timer.h" />
+		<Unit filename="Weapon.cpp" />
+		<Unit filename="Weapon.h" />
 		<Unit filename="amx\amx.c">
 			<Option compilerVar="CC" />
 		</Unit>

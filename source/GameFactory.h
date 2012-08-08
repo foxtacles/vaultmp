@@ -23,6 +23,7 @@
 #include "vaultserver/Database.h"
 #include "vaultserver/Record.h"
 #include "vaultserver/Cell.h"
+#include "vaultserver/Weapon.h"
 #endif
 
 #ifdef VAULTMP_DEBUG
@@ -75,6 +76,7 @@ class GameFactory
 #ifdef VAULTSERVER
 		static Database<Record> dbRecords;
 		static Database<Cell> dbCells;
+		static Database<Weapon> dbWeapons;
 #endif
 
 	public:
