@@ -197,23 +197,11 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 
 			if (data != NULL)
 			{
-				unsigned char alerted, sneaking, moving, weapon;
+				unsigned char sneaking, moving, weapon;
 
 				// idle: 0x50
 				moving = *(data + 0x4E);
 				weapon = *(data + 0x54);
-
-				// EDX being used by the callee
-				asm(
-					"MOV ECX,%1\n"
-					"CALL %2\n"
-					"MOV %0,EAX\n"
-					: "=m"(data)
-					: "m"(reference), "r"((game & FALLOUT3) ? ALERTED_STATE_FALLOUT3 : ALERTED_STATE_NEWVEGAS)
-					: "eax", "ecx", "edx"
-				);
-
-				alerted = ((unsigned) data & 0x00000001);
 
 				asm(
 					"MOV ECX,%1\n"
@@ -228,8 +216,7 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 
 				//sneaking = *( data + 0x4D ) == 0x10 ? 0x01 : 0x00;
 
-				memcpy(result, &alerted, 1);
-				memcpy((void*)((unsigned) result + 1), &sneaking, 1);
+				memcpy(result, &sneaking, 1);
 				memcpy((void*)((unsigned) result + 4), &moving, 1);
 				memcpy((void*)((unsigned) result + 6), &weapon, 1);
 

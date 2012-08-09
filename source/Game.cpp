@@ -111,8 +111,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 									*reinterpret_cast<unsigned char*>(((unsigned) &result) + 4),
 									*reinterpret_cast<unsigned char*>(((unsigned) &result) + 5),
 									*reinterpret_cast<unsigned char*>(((unsigned) &result) + 6),
-									*reinterpret_cast<bool*>(&result),
-									*reinterpret_cast<bool*>(((unsigned) &result) + 1));
+									*reinterpret_cast<unsigned char*>(&result));
 				break;
 			}
 
@@ -1550,7 +1549,7 @@ void Game::GetActorValue(const FactoryObject& reference, bool base, unsigned cha
 		});
 }
 
-void Game::GetActorState(const FactoryObject& reference, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking)
+void Game::GetActorState(const FactoryObject& reference, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool sneaking)
 {
 	Actor* actor  = vaultcast<Actor>(reference);
 
@@ -1565,11 +1564,21 @@ void Game::GetActorState(const FactoryObject& reference, unsigned char moving, u
 	if (weapon == 0xFF)
 		weapon = AnimGroup_Idle;
 
-	result = (static_cast<bool>(actor->SetActorMovingAnimation(moving)) | static_cast<bool>(actor->SetActorMovingXY(movingxy)) | static_cast<bool>(actor->SetActorWeaponAnimation(weapon)) | static_cast<bool>(actor->SetActorAlerted(alerted)) | static_cast<bool>(actor->SetActorSneaking(sneaking)));
+	result = (static_cast<bool>(actor->SetActorMovingAnimation(moving)) | static_cast<bool>(actor->SetActorMovingXY(movingxy)) | static_cast<bool>(actor->SetActorSneaking(sneaking)));
+
+	if (static_cast<bool>(actor->SetActorWeaponAnimation(weapon)))
+	{
+		result = true;
+
+		if (weapon == AnimGroup_Equip)
+			actor->SetActorAlerted(true);
+		else if (weapon == AnimGroup_Unequip)
+			actor->SetActorAlerted(false);
+	}
 
 	if (result)
 		Network::Queue(NetworkResponse{Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_STATE>(actor->GetNetworkID(), moving, movingxy, weapon, alerted, sneaking),
+			PacketFactory::Create<pTypes::ID_UPDATE_STATE>(actor->GetNetworkID(), moving, movingxy, weapon, actor->GetActorAlerted(), sneaking),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 		});
 }

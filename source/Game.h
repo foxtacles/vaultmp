@@ -282,7 +282,7 @@ class Game
 		/**
 		 * \brief Handles GetActorState command result
 		 */
-		static void GetActorState(const FactoryObject& reference, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking);
+		static void GetActorState(const FactoryObject& reference, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool sneaking);
 		/**
 		 * \brief Handles GetControl command result
 		 */
