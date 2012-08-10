@@ -139,7 +139,7 @@ void Container::AddItem(NetworkID id)
 		container.sort(Item_sort);
 	}
 	else
-		throw VaultException("Object with reference %08X is not an Item", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not an Item", reference->GetReference());
 }
 
 ContainerDiff Container::AddItem(unsigned int baseID, unsigned int count, double condition, bool silent) const
@@ -264,7 +264,7 @@ ContainerDiff Container::Compare(NetworkID id) const
 	Container* container = vaultcast<Container>(reference);
 
 	if (!container)
-		throw VaultException("Object with reference %08X is not a Container", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not a Container", reference->GetReference());
 
 	ContainerDiff diff;
 

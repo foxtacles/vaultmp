@@ -197,7 +197,7 @@ NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, const FactoryObject&
 	Container* container = vaultcast<Container>(reference);
 
 	if (!container)
-		throw VaultException("Object with reference %08X is not a Container", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not a Container", reference->GetReference());
 
 	SingleResponse response[] = {Network::CreateResponse(
 		PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(container->GetNetworkID(), _diff),
@@ -228,7 +228,7 @@ NetworkResponse Server::GetActorValue(RakNetGUID guid, const FactoryObject& refe
 	Actor* actor = vaultcast<Actor>(reference);
 
 	if (!actor)
-		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
 	NetworkResponse response;
 	bool result;
@@ -255,7 +255,7 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, const FactoryObject& refe
 	Actor* actor = vaultcast<Actor>(reference);
 
 	if (!actor)
-		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
 	NetworkResponse response;
 	bool result, _alerted, _sneaking, _weapon;
@@ -327,7 +327,7 @@ NetworkResponse Server::GetActorDead(RakNetGUID guid, const FactoryObject& refer
 	Actor* actor = vaultcast<Actor>(reference);
 
 	if (!actor)
-		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
 	NetworkResponse response;
 	bool result;
@@ -361,7 +361,7 @@ NetworkResponse Server::GetPlayerControl(RakNetGUID guid, const FactoryObject& r
 	Player* player = vaultcast<Player>(reference);
 
 	if (!player)
-		throw VaultException("Object with reference %08X is not a Player", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not a Player", reference->GetReference());
 
 	NetworkResponse response;
 	bool result;
@@ -385,7 +385,7 @@ NetworkResponse Server::ChatMessage(RakNetGUID guid, string message)
 	Player* player = vaultcast<Player>(reference);
 
 	if (!player)
-		throw VaultException("Object with reference %08X is not a Player", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not a Player", reference->GetReference());
 
 	NetworkResponse response;
 

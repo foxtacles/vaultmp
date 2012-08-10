@@ -472,12 +472,12 @@ void Game::LoadEnvironment()
 	{
 		FactoryObject reference = GameFactory::GetObject(id);
 
-		if ((*reference)->GetReference() != PLAYER_REFERENCE)
+		if (reference->GetReference() != PLAYER_REFERENCE)
 		{
-			if (!(*reference)->IsPersistent())
-				(*reference)->SetReference(0x00000000);
+			if (!reference->IsPersistent())
+				reference->SetReference(0x00000000);
 
-			unsigned char type = GameFactory::GetType(*reference);
+			unsigned char type = reference.GetType();
 
 			switch (type)
 			{
@@ -647,7 +647,7 @@ thread t(AsyncTasks<AsyncPack>,
 	Interface::ExecuteCommand("MoveTo", move(param_MoveTo));
 		}
 		catch (...) {}
-	}, (*reference)->GetReference()), chrono::milliseconds(1000)));
+	}, reference->GetReference()), chrono::milliseconds(1000)));
 	t.detach();
 	*/
 }
@@ -671,7 +671,7 @@ void Game::PlaceAtMe(const FactoryObject& reference, unsigned int baseID, unsign
 	Container* container = vaultcast<Container>(reference);
 
 	if (!container)
-		throw VaultException("Object with reference %08X is not a Container", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not a Container", reference->GetReference());
 
 	PlaceAtMe(container->GetReference(), baseID, count, key);
 }
@@ -722,7 +722,7 @@ void Game::SetRestrained(const FactoryObject& reference, bool restrained)
 	Actor* actor = vaultcast<Actor>(reference);
 
 	if (!actor)
-		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
 	//bool restrained = actor->GetActorRestrained();
 
@@ -810,7 +810,7 @@ void Game::SetActorValue(const FactoryObject& reference, bool base, unsigned cha
 	Actor* actor = vaultcast<Actor>(reference);
 
 	if (!actor)
-		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
 	Interface::StartDynamic();
 
@@ -827,7 +827,7 @@ function<void()> Game::SetActorSneaking(const FactoryObject& reference, unsigned
 	Actor* actor = vaultcast<Actor>(reference);
 
 	if (!actor)
-		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
 	NetworkID id = actor->GetNetworkID();
 
@@ -865,7 +865,7 @@ function<void()> Game::SetActorAlerted(const FactoryObject& reference, unsigned 
 	Actor* actor = vaultcast<Actor>(reference);
 
 	if (!actor)
-		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
 	// really need to introduce restrained state in Actor class
 
@@ -905,7 +905,7 @@ void Game::SetActorAnimation(const FactoryObject& reference, unsigned char anim,
 	Actor* actor = vaultcast<Actor>(reference);
 
 	if (!actor)
-		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
 	Interface::StartDynamic();
 
@@ -919,7 +919,7 @@ void Game::SetActorMovingAnimation(const FactoryObject& reference, unsigned int 
 	Actor* actor = vaultcast<Actor>(reference);
 
 	if (!actor)
-		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
 	SetActorAnimation(reference, actor->GetActorMovingAnimation(), key);
 }
@@ -929,7 +929,7 @@ void Game::SetActorWeaponAnimation(const FactoryObject& reference, unsigned int 
 	Actor* actor = vaultcast<Actor>(reference);
 
 	if (!actor)
-		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
 	SetActorAnimation(reference, actor->GetActorWeaponAnimation(), key);
 }
@@ -939,7 +939,7 @@ void Game::KillActor(const FactoryObject& reference, unsigned short limbs, signe
 	Actor* actor = vaultcast<Actor>(reference);
 
 	if (!actor)
-		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
 	Interface::StartDynamic();
 
@@ -961,7 +961,7 @@ void Game::FireWeapon(const FactoryObject& reference, unsigned int weapon, unsig
 	Actor* actor = vaultcast<Actor>(reference);
 
 	if (!actor)
-		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
 	Interface::StartDynamic();
 
@@ -975,7 +975,7 @@ void Game::AddItem(const FactoryObject& reference, const FactoryObject& item, un
 	Item* _item = vaultcast<Item>(item);
 
 	if (!_item)
-		throw VaultException("Object with reference %08X is not an Item", (*item)->GetReference());
+		throw VaultException("Object with reference %08X is not an Item", item->GetReference());
 
 	AddItem(reference, _item->GetBase(), _item->GetItemCount(), _item->GetItemCondition(), _item->GetItemSilent(), key);
 }
@@ -985,7 +985,7 @@ void Game::AddItem(const FactoryObject& reference, unsigned int baseID, unsigned
 	Container* container = vaultcast<Container>(reference);
 
 	if (!container)
-		throw VaultException("Object with reference %08X is not a Container", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not a Container", reference->GetReference());
 
 	Interface::StartDynamic();
 
@@ -999,7 +999,7 @@ void Game::RemoveItem(const FactoryObject& reference, const FactoryObject& item,
 	Item* _item = vaultcast<Item>(item);
 
 	if (!_item)
-		throw VaultException("Object with reference %08X is not an Item", (*item)->GetReference());
+		throw VaultException("Object with reference %08X is not an Item", item->GetReference());
 
 	RemoveItem(reference, _item->GetBase(), _item->GetItemCount(), _item->GetItemSilent(), key);
 }
@@ -1009,7 +1009,7 @@ void Game::RemoveItem(const FactoryObject& reference, unsigned int baseID, unsig
 	Container* container = vaultcast<Container>(reference);
 
 	if (!container)
-		throw VaultException("Object with reference %08X is not a Container", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not a Container", reference->GetReference());
 
 	Interface::StartDynamic();
 
@@ -1023,7 +1023,7 @@ void Game::RemoveAllItems(const FactoryObject& reference, unsigned int key)
 	Container* container = vaultcast<Container>(reference);
 
 	if (!container)
-		throw VaultException("Object with reference %08X is not a Container", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not a Container", reference->GetReference());
 
 	Interface::StartDynamic();
 
@@ -1037,7 +1037,7 @@ void Game::RemoveAllItemsEx(FactoryObject& reference)
 	Container* container = vaultcast<Container>(reference);
 
 	if (!container)
-		throw VaultException("Object with reference %08X is not a Container", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not a Container", reference->GetReference());
 
 	shared_ptr<Shared<bool>> store = make_shared<Shared<bool>>();
 	unsigned int key = Lockable::Share(store);
@@ -1068,7 +1068,7 @@ void Game::EquipItem(const FactoryObject& reference, const FactoryObject& item, 
 	Item* _item = vaultcast<Item>(item);
 
 	if (!_item)
-		throw VaultException("Object with reference %08X is not an Item", (*item)->GetReference());
+		throw VaultException("Object with reference %08X is not an Item", item->GetReference());
 
 	EquipItem(reference, _item->GetBase(), _item->GetItemSilent(), _item->GetItemStick(), key);
 }
@@ -1078,7 +1078,7 @@ void Game::EquipItem(const FactoryObject& reference, unsigned int baseID, bool s
 	Actor* actor = vaultcast<Actor>(reference);
 
 	if (!actor)
-		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
 	Interface::StartDynamic();
 
@@ -1092,7 +1092,7 @@ void Game::UnequipItem(const FactoryObject& reference, const FactoryObject& item
 	Item* _item = vaultcast<Item>(item);
 
 	if (!_item)
-		throw VaultException("Object with reference %08X is not an Item", (*item)->GetReference());
+		throw VaultException("Object with reference %08X is not an Item", item->GetReference());
 
 	UnequipItem(reference, _item->GetBase(), _item->GetItemSilent(), _item->GetItemStick(), key);
 }
@@ -1102,7 +1102,7 @@ void Game::UnequipItem(const FactoryObject& reference, unsigned int baseID, bool
 	Actor* actor = vaultcast<Actor>(reference);
 
 	if (!actor)
-		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
 	Interface::StartDynamic();
 
@@ -1153,7 +1153,7 @@ void Game::net_SetCell(const FactoryObject& reference, const FactoryObject& play
 	Player* self = vaultcast<Player>(player);
 
 	if (!self)
-		throw VaultException("Object with reference %08X is not a Player", (*player)->GetReference());
+		throw VaultException("Object with reference %08X is not a Player", player->GetReference());
 
 	object->SetNetworkCell(cell);
 
@@ -1177,7 +1177,7 @@ void Game::net_ContainerUpdate(FactoryObject& reference, const pair<list<Network
 	Container* container = vaultcast<Container>(reference);
 
 	if (!container)
-		throw VaultException("Object with reference %08X is not a Container", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not a Container", reference->GetReference());
 
 	Lockable* result;
 
@@ -1221,7 +1221,7 @@ void Game::net_SetActorValue(const FactoryObject& reference, bool base, unsigned
 	Actor* actor = vaultcast<Actor>(reference);
 
 	if (!actor)
-		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
 	Lockable* result;
 
@@ -1239,7 +1239,7 @@ void Game::net_SetActorState(const FactoryObject& reference, unsigned char movin
 	Actor* actor = vaultcast<Actor>(reference);
 
 	if (!actor)
-		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
 	Lockable* result;
 	bool enabled = actor->GetEnabled();
@@ -1296,7 +1296,7 @@ void Game::net_SetActorDead(FactoryObject& reference, bool dead, unsigned short 
 	Actor* actor = vaultcast<Actor>(reference);
 
 	if (!actor)
-		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
 	Lockable* result;
 
@@ -1332,7 +1332,7 @@ void Game::net_FireWeapon(const FactoryObject& reference, unsigned int weapon)
 	Actor* actor = vaultcast<Actor>(reference);
 
 	if (!actor)
-		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
 	FireWeapon(reference, weapon);
 }
@@ -1396,7 +1396,7 @@ void Game::GetParentCell(const FactoryObject& reference, const FactoryObject& pl
 	Player* self = vaultcast<Player>(player);
 
 	if (!self)
-		throw VaultException("Object with reference %08X is not a Player", (*player)->GetReference());
+		throw VaultException("Object with reference %08X is not a Player", player->GetReference());
 
 	if (object != self)
 	{
@@ -1442,12 +1442,12 @@ void Game::GetDead(const FactoryObject& reference, const FactoryObject& player, 
 	Actor* actor = vaultcast<Actor>(reference);
 
 	if (!actor)
-		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
 	Player* self = vaultcast<Player>(player);
 
 	if (!self)
-		throw VaultException("Object with reference %08X is not a Player", (*player)->GetReference());
+		throw VaultException("Object with reference %08X is not a Player", player->GetReference());
 
 	/*if (actor != self && !self->GetActorAlerted())
 	{
@@ -1579,7 +1579,7 @@ void Game::GetActorValue(const FactoryObject& reference, bool base, unsigned cha
 	Actor* actor = vaultcast<Actor>(reference);
 
 	if (!actor)
-		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
 	bool result;
 
@@ -1600,7 +1600,7 @@ void Game::GetActorState(const FactoryObject& reference, unsigned char moving, u
 	Actor* actor  = vaultcast<Actor>(reference);
 
 	if (!actor)
-		throw VaultException("Object with reference %08X is not an Actor", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
 	bool result;
 
@@ -1634,7 +1634,7 @@ void Game::GetControl(const FactoryObject& reference, unsigned char control, uns
 	Player* player = vaultcast<Player>(reference);
 
 	if (!player)
-		throw VaultException("Object with reference %08X is not a Player", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not a Player", reference->GetReference());
 
 	bool result;
 
@@ -1652,7 +1652,7 @@ void Game::ScanContainer(const FactoryObject& reference, vector<unsigned char>& 
 	Container* container = vaultcast<Container>(reference);
 
 	if (!container)
-		throw VaultException("Object with reference %08X is not a Container", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not a Container", reference->GetReference());
 
 	Lockable* result;
 
@@ -1709,7 +1709,7 @@ void Game::GetRemoveAllItemsEx(const FactoryObject& reference, vector<unsigned c
 	Container* container = vaultcast<Container>(reference);
 
 	if (!container)
-		throw VaultException("Object with reference %08X is not a Container", (*reference)->GetReference());
+		throw VaultException("Object with reference %08X is not a Container", reference->GetReference());
 
 	Lockable* result;
 

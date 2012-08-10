@@ -186,7 +186,7 @@ vector<string> PlayerFunctor::operator()()
 		unsigned int refID;
 
 		for (it = references.begin(); it != references.end(); GameFactory::LeaveReference(*it), ++it)
-			if ((refID = (**it)->GetReference()) && !filter(*it))
+			if ((refID = (*it)->GetReference()) && !filter(*it))
 				result.emplace_back(Utils::toString(refID));
 	}
 

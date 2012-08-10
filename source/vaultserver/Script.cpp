@@ -410,7 +410,7 @@ unsigned long long Script::Timer_Respawn(NetworkID id)
 
 void Script::OnSpawn(const FactoryObject& reference)
 {
-	NetworkID id = (*reference)->GetNetworkID();
+	NetworkID id = reference->GetNetworkID();
 
 	for (Script* script : scripts)
 	{
@@ -426,7 +426,7 @@ void Script::OnSpawn(const FactoryObject& reference)
 
 void Script::OnCellChange(const FactoryObject& reference, unsigned int cell)
 {
-	NetworkID id = (*reference)->GetNetworkID();
+	NetworkID id = reference->GetNetworkID();
 
 	for (Script* script : scripts)
 	{
@@ -442,7 +442,7 @@ void Script::OnCellChange(const FactoryObject& reference, unsigned int cell)
 
 void Script::OnContainerItemChange(const FactoryObject& reference, unsigned int baseID, signed int count, double condition)
 {
-	NetworkID id = (*reference)->GetNetworkID();
+	NetworkID id = reference->GetNetworkID();
 
 	for (Script* script : scripts)
 	{
@@ -458,7 +458,7 @@ void Script::OnContainerItemChange(const FactoryObject& reference, unsigned int 
 
 void Script::OnActorValueChange(const FactoryObject& reference, unsigned char index, bool base, double value)
 {
-	NetworkID id = (*reference)->GetNetworkID();
+	NetworkID id = reference->GetNetworkID();
 
 	for (Script* script : scripts)
 	{
@@ -487,7 +487,7 @@ void Script::OnActorValueChange(const FactoryObject& reference, unsigned char in
 
 void Script::OnActorAlert(const FactoryObject& reference, bool alerted)
 {
-	NetworkID id = (*reference)->GetNetworkID();
+	NetworkID id = reference->GetNetworkID();
 
 	for (Script* script : scripts)
 	{
@@ -503,7 +503,7 @@ void Script::OnActorAlert(const FactoryObject& reference, bool alerted)
 
 void Script::OnActorSneak(const FactoryObject& reference, bool sneaking)
 {
-	NetworkID id = (*reference)->GetNetworkID();
+	NetworkID id = reference->GetNetworkID();
 
 	for (Script* script : scripts)
 	{
@@ -519,7 +519,7 @@ void Script::OnActorSneak(const FactoryObject& reference, bool sneaking)
 
 void Script::OnActorDeath(const FactoryObject& reference, unsigned short limbs, signed char cause)
 {
-	NetworkID id = (*reference)->GetNetworkID();
+	NetworkID id = reference->GetNetworkID();
 
 	for (Script* script : scripts)
 	{
@@ -535,7 +535,7 @@ void Script::OnActorDeath(const FactoryObject& reference, unsigned short limbs, 
 
 void Script::OnActorEquipItem(const FactoryObject& reference, unsigned int baseID, double condition)
 {
-	NetworkID id = (*reference)->GetNetworkID();
+	NetworkID id = reference->GetNetworkID();
 
 	for (Script* script : scripts)
 	{
@@ -551,7 +551,7 @@ void Script::OnActorEquipItem(const FactoryObject& reference, unsigned int baseI
 
 void Script::OnActorUnequipItem(const FactoryObject& reference, unsigned int baseID, double condition)
 {
-	NetworkID id = (*reference)->GetNetworkID();
+	NetworkID id = reference->GetNetworkID();
 
 	for (Script* script : scripts)
 	{
@@ -567,7 +567,7 @@ void Script::OnActorUnequipItem(const FactoryObject& reference, unsigned int bas
 
 void Script::OnPlayerDisconnect(const FactoryObject& reference, pTypes reason)
 {
-	NetworkID id = (*reference)->GetNetworkID();
+	NetworkID id = reference->GetNetworkID();
 
 	for (Script* script : scripts)
 	{
@@ -583,7 +583,7 @@ void Script::OnPlayerDisconnect(const FactoryObject& reference, pTypes reason)
 
 unsigned int Script::OnPlayerRequestGame(const FactoryObject& reference)
 {
-	NetworkID id = (*reference)->GetNetworkID();
+	NetworkID id = reference->GetNetworkID();
 	unsigned int result = 0;
 
 	for (Script* script : scripts)
@@ -602,7 +602,7 @@ unsigned int Script::OnPlayerRequestGame(const FactoryObject& reference)
 
 bool Script::OnPlayerChat(const FactoryObject& reference, string& message)
 {
-	NetworkID id = (*reference)->GetNetworkID();
+	NetworkID id = reference->GetNetworkID();
 	bool result = true;
 
 	char _message[MAX_CHAT_LENGTH + 1];

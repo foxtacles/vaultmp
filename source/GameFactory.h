@@ -79,6 +79,8 @@ class GameFactory
 		static Database<Weapon> dbWeapons;
 #endif
 
+		static unsigned char GetType(Reference* reference) noexcept;
+
 	public:
 
 		static void Initialize(unsigned char game);
@@ -121,10 +123,6 @@ class GameFactory
 		 * \brief Lookup a reference ID
 		 */
 		static unsigned int LookupRefID(NetworkID id);
-		/**
-		 * \brief Returns the type of the given Reference
-		 */
-		static unsigned char GetType(Reference* reference) noexcept;
 		/**
 		 * \brief Returns the type of the given NetworkID
 		 */
@@ -240,7 +238,12 @@ class FactoryObject
 			return *this;
 		};
 
-		Reference* operator* () const
+		unsigned char GetType() const
+		{
+			return type;
+		}
+
+		Reference* operator->() const
 		{
 			return reference;
 		}
