@@ -188,6 +188,7 @@ namespace Values
 		Func_Chat						= 0x0002 | VAULTFUNCTION,
 		Func_ScanContainer              = 0x0003 | VAULTFUNCTION,
 		Func_UIMessage                  = 0x0004 | VAULTFUNCTION,
+		Func_RemoveAllItemsEx			= 0x0005 | VAULTFUNCTION,
 	};
 
 	enum ActorVals

@@ -48,6 +48,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 		{
 			switch (opcode)
 			{
+				case Func_RemoveAllItemsEx:
 				case Func_CenterOnCell:
 				case Func_CenterOnExterior:
 				case Func_PlaceAtMe:
@@ -194,6 +195,16 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				reference = GameFactory::GetObject(getFrom<double, unsigned int>(info.at(1)));
 				vector<unsigned char>* data = getFrom<double, vector<unsigned char>*>(result);
 				ScanContainer(reference, *data);
+				delete data;
+				break;
+			}
+
+			case Func_RemoveAllItemsEx:
+			{
+				reference = GameFactory::GetObject(getFrom<double, unsigned int>(info.at(1)));
+				vector<unsigned char>* data = getFrom<double, vector<unsigned char>*>(result);
+				GetRemoveAllItemsEx(reference, *data);
+				FutureSet<bool>(shared, true);
 				delete data;
 				break;
 			}
@@ -495,7 +506,11 @@ void Game::LoadEnvironment()
 			}
 		}
 		else
+		{
+			// this needs to be promoted to a true NewPlayer call as soon as we have default player initialization
 			SetName(reference);
+			RemoveAllItemsEx(reference);
+		}
 	}
 }
 
@@ -569,7 +584,7 @@ void Game::NewItem(FactoryObject& reference)
 void Game::NewContainer(FactoryObject& reference)
 {
 	NewObject(reference);
-	RemoveAllItems(reference);
+	RemoveAllItemsEx(reference);
 
 	Container* container = vaultcast<Container>(reference);
 	vector<FactoryObject> items = GameFactory::GetMultiple(vector<NetworkID>(container->GetItemList().begin(), container->GetItemList().end()));
@@ -1015,6 +1030,37 @@ void Game::RemoveAllItems(const FactoryObject& reference, unsigned int key)
 	Interface::ExecuteCommand("RemoveAllItems", ParamContainer{container->GetReferenceParam()}, key);
 
 	Interface::EndDynamic();
+}
+
+void Game::RemoveAllItemsEx(FactoryObject& reference)
+{
+	Container* container = vaultcast<Container>(reference);
+
+	if (!container)
+		throw VaultException("Object with reference %08X is not a Container", (*reference)->GetReference());
+
+	shared_ptr<Shared<bool>> store = make_shared<Shared<bool>>();
+	unsigned int key = Lockable::Share(store);
+
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("RemoveAllItemsEx", ParamContainer{container->GetReferenceParam()}, key);
+
+	Interface::EndDynamic();
+
+	NetworkID id = container->GetNetworkID();
+	GameFactory::LeaveReference(reference);
+
+	try
+	{
+		store.get()->get_future(chrono::seconds(5));
+	}
+	catch (exception& e)
+	{
+		throw VaultException("Obtaining of all items of %llu for RemoveAllItemsEx failed (%s)", id, e.what());
+	}
+
+	reference = GameFactory::GetObject(id);
 }
 
 void Game::EquipItem(const FactoryObject& reference, const FactoryObject& item, unsigned int key)
@@ -1656,6 +1702,32 @@ void Game::ScanContainer(const FactoryObject& reference, vector<unsigned char>& 
 
 		result->Unlock(key);
 	}
+}
+
+void Game::GetRemoveAllItemsEx(const FactoryObject& reference, vector<unsigned char>& data)
+{
+	Container* container = vaultcast<Container>(reference);
+
+	if (!container)
+		throw VaultException("Object with reference %08X is not a Container", (*reference)->GetReference());
+
+	Lockable* result;
+
+#pragma pack(push, 1)
+	struct ItemInfo
+	{
+		unsigned int baseID;
+		unsigned int count;
+		unsigned int equipped;
+		double condition;
+	};
+#pragma pack(pop)
+
+	ItemInfo* items = reinterpret_cast<ItemInfo*>(&data[0]);
+	unsigned int count = data.size() / sizeof(ItemInfo);
+
+	for (unsigned int i = 0; i < count; ++i)
+		RemoveItem(reference, items[i].baseID, items[i].count, true);
 }
 
 void Game::GetMessage(string message)

@@ -196,6 +196,10 @@ class Game
 		 */
 		static void RemoveAllItems(const FactoryObject& reference, unsigned int key = 0);
 		/**
+		 * \brief Removes all (including fixed equipment) items from a Container
+		 */
+		static void RemoveAllItemsEx(FactoryObject& reference);
+		/**
 		 * \brief Makes an Actor equip an Item
 		 */
 		static void EquipItem(const FactoryObject& reference, const FactoryObject& item, unsigned int key = 0);
@@ -291,6 +295,10 @@ class Game
 		 * \brief Handles ScanContainer command result
 		 */
 		static void ScanContainer(const FactoryObject& reference, vector<unsigned char>& data);
+		/**
+		 * \brief Handles RemoveAllItemsEx command result
+		 */
+		static void GetRemoveAllItemsEx(const FactoryObject& reference, vector<unsigned char>& data);
 		/**
 		 * \brief Handles GUI message
 		 */

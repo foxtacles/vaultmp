@@ -263,6 +263,7 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 		}
 
 		case 0x0003 | VAULTFUNCTION: // ScanContainer - Returns a containers content including baseID, amount, condition, equipped state
+		case 0x0005 | VAULTFUNCTION: // RemoveAllItemsEx - same functionality, client will use the information for RemoveItem
 		{
 			ZeroMemory(result, sizeof(double));
 

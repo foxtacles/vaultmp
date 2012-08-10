@@ -487,6 +487,7 @@ void API::Initialize(unsigned char game)
 	DefineFunction("UIMessage", "s", Func_UIMessage, FALLOUT_GAMES);
 	DefineFunction("CenterOnCell", "$s", Func_CenterOnCell, FALLOUT_GAMES);
 	DefineFunction("CenterOnExterior", "$ii", Func_CenterOnExterior, FALLOUT_GAMES);
+	DefineFunction("RemoveAllItemsEx", "r", Func_RemoveAllItemsEx, FALLOUT_GAMES);
 
 	DefineFunction("Load", "$s", Fallout3::Func_Load, FALLOUT3);
 	DefineFunction("CenterOnWorld", "$wii", Fallout3::Func_CenterOnWorld, FALLOUT3);
