@@ -1,517 +1,4468 @@
-FormID: 010046A8	DLC05SpaceWalkRepairNode	ACTI	 	Repair Node
-FormID: 0000003C	Wasteland	WRLD	 	Wasteland
-FormID: 01004710	DLC05SpaceDecompressionEndTrig	ACTI	 	Gas Valve
-FormID: 01004713	DLC05SpaceBridge01MasTrig	ACTI	 	Gas Valve
-FormID: 01004716	DLC05SpaceWalk01TalkTrig01	ACTI	 	Gas Valve
-FormID: 0100471A	DLC05SpaceWalk01DecompressionTrig	ACTI	 	Gas Valve
-FormID: 0100471C	DLC05SpaceWalkUpdateObjective01TRIG	ACTI	 	Gas Valve
-FormID: 01004721	DLC05SpaceWalk03MasTrig	ACTI	 	Gas Valve
-FormID: 010047BD	DLC05sewer02	CELL	 	Waste Disposal
-FormID: 0100481F	DLC05DeathRayHub02	CELL	 	Death Ray Control
-FormID: 01004820	DLC05DeathRayHub01	CELL	 	Death Ray Hub
-FormID: 0100493C	DLC05DeathRayPos01Button	ACTI	 	Control
-FormID: 0100493D	DLC05DeathRayChargeButton	ACTI	 	Control
-FormID: 0100493E	DLC05DeathRayFireButton	ACTI	 	Control
-FormID: 01004940	DLC05DeathRayPos02Button	ACTI	 	Control
-FormID: 0100499D	DLC05SteamSallyTACT	TACT	 	Intercom
-FormID: 010049FA	DLC05DeathRayQ	QUST	 	Death Ray
-FormID: 010049FB	DLC05DeathRayDialogue10Trig	ACTI	 	Gas Valve
-FormID: 010049FF	DLC05DeathRayDialogue20Trig	ACTI	 	Gas Valve
-FormID: 01004A12	DLC05ExLab03	CELL	 	Experimentation Lab
-FormID: 01004A13	DLC05ExLab04	CELL	 	Biological Research
-FormID: 01004A14	DLC05ExLab02	CELL	 	Weapons Lab
-FormID: 01004BED	DLC05BrahminExperiment01	CREA	 	Brahmin
-FormID: 01004BFC	DLC05BrahminExperiment02	CREA	 	Brahmin
-FormID: 01004BFE	DLC05BrahminExperiment03	CREA	 	Brahmin
-FormID: 01004C09	DLC05EXLabTeleControl	ACTI	 	Teleporter Control
-FormID: 01004C13	DLC05WeapAlienRifleActivator01	ACTI	 	Alien Test Rifle 01
-FormID: 01004C18	DLC05ExLabWeaponFireControl	ACTI	 	Test Weapon
-FormID: 01004E1A	DLC05Conversations	QUST	 	DLC05 NPC Conversations
-FormID: 01004E3D	DLC05AlienBed	ACTI	 	Stasis Chamber
-FormID: 01004E48	DLC05BridgeIntercom	TACT	 	Intercom
-FormID: 01004E4A	DLC05BridgeIntercomTelepad	TACT	 	Intercom
-FormID: 01004E65	DLC05MZ3CoreTeleporterMessage	MESG	 	Teleporter Inactive!
-FormID: 01004E67	DLC05EngineCoreDoor	DOOR	 	Teleportation Matrix
-FormID: 01004E69	DLC05MZ3CoreTeleporterControl	ACTI	 	Control
-FormID: 01004E77	DLC05BridgeIntercomShields	TACT	 	Intercom
-FormID: 01004E78	DLC05BridgeIntercomDeathRay	TACT	 	Intercom
-FormID: 01004E79	DLC05BridgeIntercomLiving	TACT	 	Intercom
-FormID: 0100511E	DLC05TESTcrAlien2HR	CREA	 	Alien
-FormID: 0100511F	DLC05TESTcrAlien1HMelee	CREA	 	Alien
-FormID: 010055D9	DLC05TeleportTestAlien	CREA	 	Alien
-FormID: 01005620	DLC05CryoElliotSayGenTRIG	ACTI	 	Gas Valve
-FormID: 01005634	DLC05CryoElliotFreezeTRIG	ACTI	 	Gas Valve
-FormID: 0100563C	DLC05CryoElliotTaunt01Trig	ACTI	 	Gas Valve
-FormID: 01005668	DLC05TESTcrAlien2HRALWAYSOUT	CREA	 	Alien
-FormID: 0100585D	DLC05AlienMaintenanceRobot	CREA	 	Support Drone
-FormID: 010058B0	DLC05MZ3Viewscreen	TACT	 	Alien Viewscreen
-FormID: 010058C9	DLC05CrRobot1MeleeTemplate	CREA	 	Support Drone
-FormID: 010058CA	DLC05CrRobot2Melee	CREA	 	Support Drone
-FormID: 010058CB	DLC05CrRobot3Melee	CREA	 	Support Drone
-FormID: 010058CE	DLC05RobotFaction	FACT	 	Alien Robot Faction
-FormID: 010058CF	DLC05crTurret2	CREA	 	Turret
-FormID: 010058D0	DLC05crTurret3	CREA	 	Turret
-FormID: 010058D1	DLC05crTurret1	CREA	 	Turret
-FormID: 010058D4	DLC05crAbomination1Template	CREA	 	Abomination
-FormID: 010058D5	DLC05crAbomination2	CREA	 	Abomination
-FormID: 010058D6	DLC05crAbomination3	CREA	 	Abomination
-FormID: 010058D9	DLC05AbominationFaction	FACT	 	Abomination Faction
-FormID: 010058E1	DLC05CrRobot1RangedTemplate	CREA	 	Guardian Drone
-FormID: 010058E2	DLC05CrRobot2Ranged	CREA	 	Guardian Drone
-FormID: 010058E3	DLC05CrRobot3Ranged	CREA	 	Guardian Drone
-FormID: 010058EB	DLC05AstronautSuit	ARMO	 	Spacesuit
-FormID: 010059BA	DLC05SpaceDecompressionSwitch01	ACTI	 	Switch
-FormID: 010059BC	DLC05DeathInSpaceMessage	MESG	 	Death In Space
-FormID: 010059C3	DLC05DecompressionDoor01aMessage	MESG	 	Room Must Be Pressurized
-FormID: 010059C4	DLC05DecompressionDoor01	DOOR	 	Door
-FormID: 010059C6	DLC05DecompressionDoor01bMessage	MESG	 	Room is Pressurized
-FormID: 010059C9	DLC05SpaceWalkLoudSpeaker	TACT	 	Speaker
-FormID: 01005AAE	DLC05SpaceDecompressionSwitch02	ACTI	 	Switch
-FormID: 01005AB0	DLC05DecompressionDoor02	DOOR	 	Door
-FormID: 01005AF4	DLC05BridgeControl	ACTI	 	Fire Control
-FormID: 01005C13	DLC05ShockVolumeSwitch	ACTI	 	Control
-FormID: 01005C70	DLC05FF01	QUST	 	Steerage Rats
-FormID: 01005C75	DLC05FF01sallyBarkPoint	TACT	 	Intercom
-FormID: 01005C86	DLC05CryoFreezeRoomAlien01	CREA	 	Alien
-FormID: 01005CC3	DLC05WeapAlienWarningMessage	MESG	 	Alien Weapon Notification
-FormID: 01005E6D	DLC05Container01	CONT	 	Container
-FormID: 01005EDF	DLC05BridgeShieldControl	ACTI	 	Shield Controller
-FormID: 01005EE0	DLC05BridgeJammerControl	ACTI	 	Jammer Control
-FormID: 01005EE9	DLC05CryoSwitchFreezeScene	ACTI	 	Switch
-FormID: 01006036	DLC05CryoTrapMAIN	ACTI	 	Gas Valve
-FormID: 010060A3	DLC05HealArch01	ACTI	 	Healing Archway
-FormID: 01006315	DLC05WeapRechargeStationCooldownMessage	MESG	 	Station Recharging
-FormID: 010066F0	DLC05TESTcrAlien1HP	CREA	 	Alien
-FormID: 010066F4	DLC05WeapRepairContainer	CONT	 	Alien Recycler
-FormID: 010066F7	DLC05MZ1AnimationAlien1	CREA	 	Alien
-FormID: 010066F8	DLC05MZ1AnimationAlien2	CREA	 	Alien
-FormID: 010066F9	DLC05MZ1AnimationAlien3	CREA	 	Alien
-FormID: 01006813	DLC05HealingArchHealPlayerMessage	MESG	 	Restored
-FormID: 01006814	DLC05HealingArchHealWeaponMessage	MESG	 	Restored
-FormID: 01006815	DLC05HealingArchCoolDownMessage	MESG	 	Device Recharging
-FormID: 01006871	DLC05ClawNPC	NPC_	 	Wastelander
-FormID: 010068E1	DLC05MZ1AlienHCMelee	CREA	 	Alien
-FormID: 01006934	DLC05AlienArmorSpellEffect	MGEF	 	Inertia Suppression Field
-FormID: 0100693C	SamuraiGloveL	ARMA	 	Metal Armor Left Glove
-FormID: 0100693D	SamuraiGloveR	ARMA	 	Metal Armor Right Glove
-FormID: 0100693F	DLC05SamuraiHelmet	ARMO	 	Samurai Helmet
-FormID: 01006940	DLC05SamuraiArmor	ARMO	 	Samurai Armor
-FormID: 01006BE3	DLC05AlienEpoxy	ALCH	 	Alien Epoxy
-FormID: 01006BE4	DLC05AlienEpoxyEffect	MGEF	 	Alien Epoxy Effect
-FormID: 01006BF2	DLC05TestAlienCHairFront	FURN	 	Chair
-FormID: 01006BF4	DLC05GeneratorCoolantSwitch	ACTI	 	Core Coolant Switch
-FormID: 01006C58	DLC05CryoSoldierRoomTrig	ACTI	 	Gas Valve
-FormID: 01006C6B	DLC05CryoDaniel	NPC_	 	Sergeant Daniels
-FormID: 01006C6C	DLC05CryoBecket	NPC_	 	Private Beckett
-FormID: 01006C75	DLC05CryoSquadSwitch	ACTI	 	Switch
-FormID: 01006D13	DLC05HangarBossDoorControl	ACTI	 	Control
-FormID: 01006DB1	DLC05GeneratorMainSwitch	ACTI	 	Control
-FormID: 01006E1E	DLC05weapPaulsonsRevolverNonPlayable	WEAP	 	Paulson's Revolver
-FormID: 01006E1F	DLC05crAlienDeadA	CREA	 	Alien
-FormID: 01006E20	DLC05crAlienDeadB	CREA	 	Alien
-FormID: 01006E21	DLC05crAlienDeadC	CREA	 	Alien
-FormID: 01006E22	DLC05CoreSceneAlien	CREA	 	Alien
-FormID: 01006FC0	DLC05WeapMineCryo	WEAP	 	Cryo Mine
-FormID: 01006FC1	DLC05CryoMineProjectile	PROJ	 	CryoMine
-FormID: 01007125	DLC05YaoGuaiDEAD	CREA	 	Yao Guai
-FormID: 01007238	DLC05AlienRifleProjectile	PROJ	 	Energy Beam
-FormID: 01007274	DLC05MZDoorSm01CoreScene	DOOR	 	Door
-FormID: 0100738A	DLC05MZExtPanelActivator01	ACTI	 	Exposed Panel
-FormID: 01007392	DLC05MZExtPanelActivator02	ACTI	 	Exposed Panel
-FormID: 01007397	DLC05sewer01	CELL	 	Maintenance Level
-FormID: 01007408	DLC05FF01cartTrig	ACTI	 	Gas Valve
-FormID: 01007413	DLC05FF01cartShake	EXPL	 	Force
-FormID: 0100742E	DLC05AlienArmorSpell	SPEL	 	Inertia Suppression
-FormID: 0100742F	DLC05AlienArmorSpellBurst	SPEL	 	Inertia Suppression Burst
-FormID: 01007434	DLC05AlienPistolProjectile	PROJ	 	Energy Beam
-FormID: 01007436	DLC05WeapShockBaton	MGEF	 	Alien Shock Baton Damage
-FormID: 01007437	DLC05EnchShockBaton	ENCH	 	Shck Baton Damage
-FormID: 0100743F	DLC05SpaceWalkLevitateTrig	ACTI	 	Gas Valve
-FormID: 01007444	DLC05SpaceFloatToDeathTRIG	ACTI	 	Gas Valve
-FormID: 0100744E	DLC05FloatInSpaceMarker	FURN	 	.
-FormID: 010076C9	DLC05RobotCannonMineProjectile	PROJ	 	Energy Ball
-FormID: 010079A0	DLC05TestNPC02	NPC_	 	DLC05TestNPC
-FormID: 01007A03	DLC05ERoomGasTrapControl	ACTI	 	Release Control
-FormID: 01007A6B	DLC05AlienBiogel	ALCH	 	Alien Biogel
-FormID: 01007A6C	DLC05AlienBiogelAdapted	ALCH	 	Adapted Biogel
-FormID: 01007B81	DLC05SpaceWalkEnableDeathTriggerTRIG	ACTI	 	Gas Valve
-FormID: 01007B86	DLC05SpaceWaterHackWater	WATR	 	TestGrantWater
-FormID: 01007BA1	DLC05WeapRobotCannonNonPlayer	WEAP	 	Drone Cannon
-FormID: 01007BA2	DLC05RobotCannonProjectileNonPlayer	PROJ	 	Energy Ball
-FormID: 01007C1D	DLC05DeathRayGenCoolantSwitch	ACTI	 	Core Coolant Switch
-FormID: 01007E2A	DLC05MZ3LabTeleporterControl	ACTI	 	Control
-FormID: 01007E2B	DLC05LabTeleportDoor	DOOR	 	Teleportation Matrix
-FormID: 01007E2D	DLC05MZ3TeleporterUpdateTrigger	ACTI	 	Gas Valve
-FormID: 01007E4A	DLC05EnclaveOfficer	NPC_	 	Enclave Officer
-FormID: 01007E4C	DLC05HoldingCellEnclaveContainer	CONT	 	Container
-FormID: 01007E4D	DLC05HoldingCellsRaider	NPC_	 	Raider
-FormID: 01007E4F	DLC05HoldingCellRaiderContainer	CONT	 	Container
-FormID: 01007E50	DLC05RCSecurity	NPC_	 	Rivet City Security
-FormID: 01007E5E	DLC05LabTeleporterDoor	DOOR	 	Teleportation Matrix
-FormID: 01007E5F	DLC05BridgeTeleporterDoor	DOOR	 	Teleportation Matrix
-FormID: 01007E63	DLC05MZ3BridgeTeleporterControl	ACTI	 	Control
-FormID: 01007EBD	DLC05FF01cartLurch	EXPL	 	Force
-FormID: 010080B5	DLC05WeapKatana	WEAP	 	Katana
-FormID: 010081BD	DLC05TESTAbomination	CREA	 	Abomination
-FormID: 01008248	DLC05MZSpaceWalkDoor	DOOR	 	Airlock Door
-FormID: 0100824A	DLC05SpaceDoorMessage	MESG	 	Death In Space
-FormID: 0100829F	DLC05weapPaulsonsRevolver	WEAP	 	Paulson's Revolver
-FormID: 010082CA	DLC05AlienDoorControlEASY	ACTI	 	Door Controls
-FormID: 010082CD	DLC05AlienDoorControlHARD	ACTI	 	Door Controls
-FormID: 010082CF	DLC05AlienDoorControlAVERAGE	ACTI	 	Door Controls
-FormID: 010082D1	DLC05AlienDoorControlVERYHARD	ACTI	 	Door Controls
-FormID: 01008507	DLC05TelepadActivator	ACTI	 	Teleportation Matrix
-FormID: 010085FB	DLC05StasisControlPanel	ACTI	 	Stasis Controls
-FormID: 01008865	testAlienMaintenanceRobotInPod	CREA	 	Metro Protectron
-FormID: 01008EC7	DLC05ResearchLab	CELL	 	Research Lab
-FormID: 010098EF	DLC05SquadRheems	NPC_	 	Corporal Rheems
-FormID: 010098F0	DLC05SquadMears	NPC_	 	Private Mears
-FormID: 010098F1	DLC05SquadSpurlock	NPC_	 	Corporal Spurlock
-FormID: 01009920	DLC05TeleporterDoorScripted01	DOOR	 	Teleportation Matrix
-FormID: 01009921	DLC05TeleporterDoorScripted02	DOOR	 	Teleportation Matrix
-FormID: 01009922	DLC05TeleporterDoorScripted04	DOOR	 	Teleportation Matrix
-FormID: 01009923	DLC05TeleporterDoorScripted05	DOOR	 	Teleportation Matrix
-FormID: 01009924	DLC05TeleporterDoorScripted06	DOOR	 	Teleportation Matrix
-FormID: 01009942	DLC05TESTWeapDroidLaser1HP	WEAP	 	Hand Laser
-FormID: 01009952	DLC05MZ1SomahDoorTrigger	ACTI	 	Gas Valve
-FormID: 0100997A	DLC05RobotPod	ACTI	 	Drone Pod
-FormID: 01009A08	DLC05HoloNPC1	NPC_	 	Andrew Endicott
-FormID: 01009A09	DLC05HoloNPC2	NPC_	 	Vin
-FormID: 01009A0A	DLC05HoloNPC3	NPC_	 	Dr. Morrison Rand
-FormID: 01009A0B	DLC05HoloNPC4	NPC_	 	Madeline Wallace
-FormID: 01009A0C	DLC05CaptiveHolotape01	NOTE	 	Alien Captive Recorded Log 1
-FormID: 01009A0D	DLC05CaptiveHolotape02	NOTE	 	Alien Captive Recorded Log 2
-FormID: 01009A0E	DLC05CaptiveHolotape03	NOTE	 	Alien Captive Recorded Log 3
-FormID: 01009A0F	DLC05CaptiveHolotape04	NOTE	 	Alien Captive Recorded Log 4
-FormID: 01009A32	DLC05TurretGunCeiling01	WEAP	 	Turret Gun
-FormID: 01009A36	DLC05RobotControlItem	MISC	 	Drone Control Device
-FormID: 01009C70	DLC05TestJeffB02	CELL	 	Cargo Hold
-FormID: 0100A2A6	DLC05TESTcrAlien1red	CREA	 	Alien
-FormID: 0100A2A8	DLC05TESTcrAlien1Captain	CREA	 	Alien
-FormID: 0100A5FF	DLC05RobotPodOpen	ACTI	 	Drone Pod
-FormID: 0100A672	DLC05TestChild	NPC_	 	DLC05TestNPC
-FormID: 0100A6C7	DLC05CargoTestSubjectMale	NPC_	 	Test Subject
-FormID: 0100A6C8	DLC05CargoTestSubjectFemale	NPC_	 	Test Subject
-FormID: 0100A752	DLC05Post	QUST	 	Post-Quest Dialogue
-FormID: 0100A753	DLC05ExtraButton0	ACTI	 	Control
-FormID: 0100A755	DLC05ExtraButton1	ACTI	 	Control
-FormID: 0100A757	DLC05ExtraButton2	ACTI	 	Control
-FormID: 0100A759	DLC05ExtraButton3	ACTI	 	Control
-FormID: 0100A75B	DLC05ExtraButton4	ACTI	 	Control
-FormID: 0100A75D	DLC05ExtraButton5	ACTI	 	Control
-FormID: 0100A75F	DLC05ExtraButton6	ACTI	 	Control
-FormID: 0100A761	DLC05ExtraButton7	ACTI	 	Control
-FormID: 0100A763	DLC05ExtraButton8	ACTI	 	Control
-FormID: 0100A765	DLC05ExtraButton9	ACTI	 	Control
-FormID: 0100A76B	DLC05DeathRayMoving	MESG	 	The Death Ray is Moving
-FormID: 0100A76C	DLC05DeathRayFiring	MESG	 	The Death Ray is Firing
-FormID: 0100A76D	DLC05DeathRayInPosition	MESG	 	The Death Ray is in Position
-FormID: 0100A76E	DLC05DeathRayCharged	MESG	 	The Death Ray is Fully Charged
-FormID: 0100A772	DLC05AlienControllerAsm	ACTI	 	Alien Controller
-FormID: 0100A77C	DLC05PodMapMarker	MAPM	 	Alien Homing Beacon
-FormID: 0100A77D	DLC05WeapRobotCannonUnique	WEAP	 	Drone Cannon Ex-B
-FormID: 0100A77E	DLC05WeapRifleUnique	WEAP	 	Destabilizer
-FormID: 0100A77F	DLC05WeapPistolUnique	WEAP	 	Atomic Pulverizer
-FormID: 0100A840	DLC05PowerControl	ACTI	 	Power Distribution
-FormID: 0100A841	DLC05BridgePowerControl	ACTI	 	Power Distribution
-FormID: 0100A84C	DLC05Widget	MISC	 	Widget
-FormID: 0100A84E	DLC05AlienGizmo	MISC	 	Gizmo
-FormID: 0100A850	DLC05AlienTool	MISC	 	Tool
-FormID: 0100A852	DLC05AlienDoodad	MISC	 	Doodad
-FormID: 0100A854	DLC05AlienThingamabon	MISC	 	Thingamabob
-FormID: 0100A856	DLC05AlienAppliance	MISC	 	Appliance
-FormID: 0100A858	DLC05AlienContraption	MISC	 	Contraption
-FormID: 0100A85A	DLC05AlienDevice	MISC	 	Device
-FormID: 0100A85C	DLC05AlienMaterial	MISC	 	Unidentified Material
-FormID: 0100A85E	DLC05AlienMechanism	MISC	 	Mechanism
-FormID: 0100A88A	DLC05HoloControl	ACTI	 	Control
-FormID: 0100A88D	DLC05CaptiveHolotape05	NOTE	 	Alien Captive Recorded Log 5
-FormID: 0100A88E	DLC05CaptiveHolotape06	NOTE	 	Alien Captive Recorded Log 6
-FormID: 0100A88F	DLC05CaptiveHolotape07	NOTE	 	Alien Captive Recorded Log 7
-FormID: 0100A890	DLC05CaptiveHolotape08	NOTE	 	Alien Captive Recorded Log 8
-FormID: 0100A89C	DLC05FF01Brahmin	CREA	 	Brahmin
-FormID: 0100A8CB	DLC05AstronautLeftGlove	ARMA	 	Astronaut Suit Left Glove
-FormID: 0100A8CC	DLC05AstronautRightGlove	ARMA	 	Space Suit Right Glove
-FormID: 0100A8CD	DLC05AlienBiogelRandomEffect	MGEF	 	Biochemical Anomaly
-FormID: 0100A8CF	DLC05BioGelRandom3	SPEL	 	Biochemical Anomaly
-FormID: 0100A8D0	DLC05BioGelRandom2	SPEL	 	Biochemical Anomaly
-FormID: 0100A8D1	DLC05BioGelRandom4	SPEL	 	Biochemical Anomaly
-FormID: 0100A8D2	DLC05BioGelRandom5	SPEL	 	Biochemical Anomaly
-FormID: 0100A8D3	DLC05BioGelRandom6	SPEL	 	Biochemical Anomaly
-FormID: 0100A8D4	DLC05BioGelRandom7	SPEL	 	Biochemical Anomaly
-FormID: 0100A8D5	DLC05BioGelRandom8	SPEL	 	Biochemical Anomaly
-FormID: 0100A8D6	DLC05BioGelRandom9	SPEL	 	Biochemical Anomaly
-FormID: 0100A8D7	DLC05BioGelRandom0	SPEL	 	Biochemical Anomaly
-FormID: 0100A8D8	DLC05BioGelRandom1	SPEL	 	Biochemical Anomaly
-FormID: 0100A8D9	DLC05AlienBioGelMessage	MESG	 	Biochemical Anomaly
-FormID: 0100A8DA	DLC05FXBeamMeUp	MSTT	 	Beam Up FX
-FormID: 0100A8DE	DLC05Container03	CONT	 	Container
-FormID: 0100A8DF	DLC05Container02	CONT	 	Container
-FormID: 0100A8E0	DLC05Container04	CONT	 	Container
-FormID: 0100A8E1	DLC05Container05	CONT	 	Container
-FormID: 0100A8E2	DLC05Container06	CONT	 	Container
-FormID: 0100A8E3	DLC05Container07	CONT	 	Container
-FormID: 0100A8E4	DLC05Container08	CONT	 	Container
-FormID: 0100A8E5	DLC05Container09	CONT	 	Container
-FormID: 0100A8E6	DLC05Container10	CONT	 	Container
-FormID: 0100A92C	DLC05BridgeGeneratorControl	ACTI	 	Generator Control
-FormID: 0100A94C	DLC05CrAlienNONHOSTILE	CREA	 	Alien Worker
-FormID: 0100A98D	DLC05HomingBeacn	DOOR	 	Alien Homing Beacon
-FormID: 0100A9A1	DLC05ArmorCombatMedic	ARMO	 	Winterized Medic Armor
-FormID: 0100A9A2	DLC05ArmorCombatHelmet	ARMO	 	Winterized Medic Helmet
-FormID: 0100A9A5	DLC05AstronautHelmet	ARMA	 	Spacesuit Helmet
-FormID: 0100A9A6	DLC05WeapBatonB	WEAP	 	Shock Baton
-FormID: 0100A9A7	DLC05WeapBatonC	WEAP	 	Shock Baton
-FormID: 0100A9A8	DLC05WeapPistolB	WEAP	 	Alien Atomizer
-FormID: 0100A9A9	DLC05WeapPistolC	WEAP	 	Alien Atomizer
-FormID: 0100A9AA	DLC05WeapRifleB	WEAP	 	Alien Disintegrator
-FormID: 0100A9AB	DLC05WeapRifleC	WEAP	 	Alien Disintegrator
-FormID: 0100A9AC	DLC05WeapRobotCannonNonPlayerB	WEAP	 	Drone Cannon
-FormID: 0100A9AD	DLC05WeapRobotCannonNonPlayerC	WEAP	 	Drone Cannon
-FormID: 0100A9AE	DLC05crAbomination6	CREA	 	Abomination
-FormID: 0100A9AF	DLC05crTurret4	CREA	 	Turret
-FormID: 0100A9B0	DLC05crTurret5	CREA	 	Turret
-FormID: 0100A9B1	DLC05crTurret6	CREA	 	Turret
-FormID: 0100A9B2	DLC05CrRobot4Melee	CREA	 	Support Drone
-FormID: 0100A9B3	DLC05CrRobot5Melee	CREA	 	Support Drone
-FormID: 0100A9B4	DLC05CrRobot6Melee	CREA	 	Support Drone
-FormID: 0100A9B5	DLC05CrRobot4Ranged	CREA	 	Guardian Drone
-FormID: 0100A9B6	DLC05CrRobot5Ranged	CREA	 	Guardian Drone
-FormID: 0100A9B7	DLC05CrRobot6Ranged	CREA	 	Guardian Drone
-FormID: 0100A9B8	DLC05crAlien4GunB	CREA	 	Alien
-FormID: 0100A9B9	DLC05crAlien5GunB	CREA	 	Alien
-FormID: 0100A9BA	DLC05crAlien6GunB	CREA	 	Alien
-FormID: 0100A9BB	DLC05crAlien1GunC	CREA	 	Alien
-FormID: 0100A9BC	DLC05crAlien2GunC	CREA	 	Alien
-FormID: 0100A9BD	DLC05crAlien3GunC	CREA	 	Alien
-FormID: 0100A9BE	DLC05crAlien4GunC	CREA	 	Alien
-FormID: 0100A9BF	DLC05crAlien5GunC	CREA	 	Alien
-FormID: 0100A9C0	DLC05crAlien6GunC	CREA	 	Alien
-FormID: 0100A9C1	DLC05crAlien1MeleeC	CREA	 	Alien
-FormID: 0100A9C2	DLC05crAlien2MeleeC	CREA	 	Alien
-FormID: 0100A9C3	DLC05crAlien3MeleeC	CREA	 	Alien
-FormID: 0100A9C4	DLC05crAlien4MeleeC	CREA	 	Alien
-FormID: 0100A9C5	DLC05crAlien5MeleeC	CREA	 	Alien
-FormID: 0100A9C6	DLC05crAlien6MeleeC	CREA	 	Alien
-FormID: 0100A9C7	DLC05crAlien3GunB	CREA	 	Alien
-FormID: 0100A9C8	DLC05crAlien3MeleeB	CREA	 	Alien
-FormID: 0100A9C9	DLC05crAlien4MeleeB	CREA	 	Alien
-FormID: 0100A9CA	DLC05crAlien5MeleeB	CREA	 	Alien
-FormID: 0100A9CB	DLC05crAlien6MeleeB	CREA	 	Alien
-FormID: 0100A9CC	DLC05crAlien4GunATemplate	CREA	 	Alien
-FormID: 0100A9CD	DLC05crAlien5GunATemplate	CREA	 	Alien
-FormID: 0100A9CE	DLC05crAlien4MeleeATemplate	CREA	 	Alien
-FormID: 0100A9CF	DLC05crAlien5MeleeATemplate	CREA	 	Alien
-FormID: 0100A9D0	DLC05crAlien6GunATemplate	CREA	 	Alien
-FormID: 0100A9D1	DLC05crAlien6MeleeATemplate	CREA	 	Alien
-FormID: 0100A9D2	DLC05crAbomination4	CREA	 	Abomination
-FormID: 0100A9D3	DLC05crAbomination5	CREA	 	Abomination
-FormID: 0100A9DD	DLC05WeapCaptainsSideArm	WEAP	 	Captain's Sidearm
-FormID: 0100A9DE	DLC05WorkBench	ACTI	 	Work Bench
-FormID: 0100A9E0	DLC05AlienGemstone	MISC	 	Gemstone
-FormID: 0100A9E3	DLC05AlienImager	MISC	 	Imager
-FormID: 0100A9E5	DLC05AlienCrystal	MISC	 	Crystal
-FormID: 0100A9E6	DLC05AlienCrystalLarge	MISC	 	Large Alien Crystal
-FormID: 0100A9E9	DLC05AlienCrystalSmall	MISC	 	Small Alien Crystal
-FormID: 0100A9EC	DLC05AlienGemstoneLarge	MISC	 	Large Gemstone
-FormID: 0100A9ED	DLC05AlienGemstoneSmall	MISC	 	Small Gemstone
-FormID: 0100A9EF	DLC05HealingArchHealPlayerPartialMessage	MESG	 	Restored
-FormID: 0100A9F2	DLC05TelepadActivatorDummy	ACTI	 	Teleportation Matrix
-FormID: 0100AA15	DLC05CrushingMachineLong	MSTT	 	Crushing Machine
-FormID: 0100AA22	DLC05Captain	CREA	 	Alien Captain
-FormID: 0100AA24	DLC05CaptainsChair	FURN	 	Captain's Chair
-FormID: 0100AA26	DLC05EscapeHatch	DOOR	 	Hatch
-FormID: 0100AAA6	DLC05CryoPodSwitch	ACTI	 	Switch
-FormID: 0100AAA8	DLC05CryoPodSwitchOFF	ACTI	 	Switch
-FormID: 0100AACA	DLC05TeleporterDoorMinUseHidden	DOOR	 	Teleportation Matrix
-FormID: 0100AB6D	DLC05GeneralChasesOvercoat	ARMO	 	General Chase's Overcoat
-FormID: 0100AB6E	DLC05ChasesCoat	ENCH	 	Chase's Coat Effect
-FormID: 0100AB6F	DLC05MedicArmorEffect	ENCH	 	Medic Armor Effect
-FormID: 0100AB70	DLC05PaulsonsOutfitEffect	ENCH	 	Paulson's Outfit Effect
-FormID: 0100AB71	DLC05SamuraiArmorEffect	ENCH	 	Samurai Armor Effect
-FormID: 0100AB72	DLC05ReidUnderwoodsTerminal	TERM	 	Reid Underwood's Terminal
-FormID: 0100AB74	DLC05CaptiveHolotape09	NOTE	 	Alien Captive Recorded Log 9
-FormID: 0100AB75	DLC05CaptiveHolotape10	NOTE	 	Alien Captive Recorded Log 10
-FormID: 0100AB76	DLC05CaptiveHolotape11	NOTE	 	Alien Captive Recorded Log 11
-FormID: 0100AB77	DLC05CaptiveHolotape12	NOTE	 	Alien Captive Recorded Log 12
-FormID: 0100AB78	DLC05CaptiveHolotape13	NOTE	 	Alien Captive Recorded Log 13
-FormID: 0100AB79	DLC05CaptiveHolotape14	NOTE	 	Alien Captive Recorded Log 14
-FormID: 0100AB7A	DLC05CaptiveHolotape15	NOTE	 	Alien Captive Recorded Log 15
-FormID: 0100AB7B	DLC05CaptiveHolotape16	NOTE	 	Alien Captive Recorded Log 16
-FormID: 0100AB7C	DLC05AnchorageHolotape	NOTE	 	Anchorage Quartermaster Shipment
-FormID: 0100AB7D	DLC05CaptiveHolotape17	NOTE	 	Alien Captive Recorded Log 17
-FormID: 0100AB7E	DLC05CaptiveHolotape18	NOTE	 	Alien Captive Recorded Log 18
-FormID: 0100AB7F	DLC05CaptiveHolotape19	NOTE	 	Alien Captive Recorded Log 19
-FormID: 0100AB80	DLC05CaptiveHolotape20	NOTE	 	Alien Captive Recorded Log 20
-FormID: 0100AB86	DLC05WeapUniquePlasmaPistol	WEAP	 	MPLX Novasurge
-FormID: 0100AB88	DLC05MPLXPistolNote	NOTE	 	MPLX [QUOTE]Novasurge[QUOTE] Prototype Plasma Pistol
-FormID: 0100AB8A	DLC05UnderwoodSafe	CONT	 	Underwood's Safe
-FormID: 0100ABB0	DLC05Xenotech	PERK	 	Xenotech Expert
-FormID: 0100ABB1	DLC05AnchorageFootlocker	CONT	 	Military Footlocker
-FormID: 0100ABC5	DLC05CaptiveHolotape21	NOTE	 	Alien Captive Recorded Log 21
-FormID: 0100ABC6	DLC05CaptiveHolotape22	NOTE	 	Alien Captive Recorded Log 22
-FormID: 0100AC04	DLC05CaptiveHolotape23	NOTE	 	Alien Captive Recorded Log 23
-FormID: 0100AC05	DLC05CaptiveHolotape24	NOTE	 	Alien Captive Recorded Log 24
-FormID: 0100AC06	DLC05CaptiveHolotape25	NOTE	 	Alien Captive Recorded Log 25
-FormID: 0100AC0F	DLC05BridgeEnemyShipExplosion	EXPL	 	Nuke Explosion
-FormID: 0100AC10	DLC05ZetaLaserLevel1	WEAP	 	Liberty Laser
-FormID: 0100AC11	DLC05ZetaLaserLevel2	WEAP	 	Liberty Laser
-FormID: 0100AC12	DLC05ZetaLaserLevel3	WEAP	 	Liberty Laser
-FormID: 0100AD56	DLC05LvlRobotRangedPodExLab	CREA	 	Experimental Weapons Drone
-FormID: 0100AE49	DLC05CaptainChair01	FURN	 	Command Chair
-FormID: 0100B27C	DLC05CryoDeadNPC01	NPC_	 	Wastelander
-FormID: 0100B27D	DLC05CryoDeadNPC02	NPC_	 	Wastelander
-FormID: 0100B531	DLC05testCoreOverhaul	CELL	 	Engineering Core
-FormID: 0100BB63	DLC05SpacesuitHelmet	ARMO	 	Astronaut Helmet
-FormID: 0100BCEF	DLC05ZetaLaser01Projectile	PROJ	 	Laser Beam
-FormID: 0100BCF0	DLC05ZetaLaser02Projectile	PROJ	 	Laser Beam
-FormID: 0100BCF1	DLC05ZetaLaser03Projectile	PROJ	 	Laser Beam
-FormID: 0100BCFB	DLC05ZetaDeathExplosion	EXPL	 	Nuke Explosion
-FormID: 0100BD02	DLC05ZetaEnemyLaserLevel1	WEAP	 	Liberty Laser
-FormID: 0100BD03	DLC05ZetaEnemyLaser01Projectile	PROJ	 	Laser Beam
-FormID: 0100BDFC	DLC05ButtercupToy	MISC	 	Buttercup Toy
-FormID: 0100BDFE	DLC05ZetaEnemyLaserLevel3	WEAP	 	Liberty Laser
-FormID: 0100C043	DLC05ZetaEnemyLaser02Projectile	PROJ	 	Laser Beam
-FormID: 0100C044	DLC05ZetaEnemyLaser03Projectile	PROJ	 	Laser Beam
-FormID: 0100C04A	DLC05ZetaEnemyLaserLevel2	WEAP	 	Liberty Laser
-FormID: 0100C0C8	DLC05ExLabAlienResearcher	CREA	 	Alien Worker
-FormID: 0100C2F9	DLC05AbominationDEAD	CREA	 	Abomination
-FormID: 0100C357	DLC05UpdateCoreStageTRIG	ACTI	 	Gas Valve
-FormID: 0100C476	DLC05MZDoorBig01CoreScene	DOOR	 	Door
-FormID: 0100C477	DLC05TeleporterDoorCoreScene	DOOR	 	Teleportation Matrix
-FormID: 0100C481	DLC05TeleDart01	ACTI	 	Teleport Dart
-FormID: 0100C48C	DLC05BridgeWastelandDoor	DOOR	 	Teleportation Matrix
-FormID: 0100C4CB	DLC05crAlienCaptain	CREA	 	Alien
-FormID: 0100C4E4	DLC05crAlien1Captain	CREA	 	Alien
-FormID: 0100C8DE	DLC05WasteTeleporterDoor	DOOR	 	Teleportation Matrix
-FormID: 0100C8DF	DLC05PerkMessage	MESG	 	Xenotech Expert Perk Added
-FormID: 0100C96D	DLC05GeneralCoat	ARMO	 	Colonel Autumn's Uniform
-FormID: 0100C96F	DLC05Medals	ARMA	 	General's Medals
-FormID: 0100C9FF	DLC05crAlienGuard2HRTemplate	CREA	 	Alien
-FormID: 0100CA00	DLC05crAlienGuard1HPTemplate	CREA	 	Alien
-FormID: 0100D13E	DLC05KnockDownPlayer	EXPL	 	Force
-FormID: 0100D2D4	DLC05TeleportOutBaseEffect	MGEF	 	Teleport Out
-FormID: 0100D2D5	DLC05TeleportInBaseEffect	MGEF	 	Teleport In
-FormID: 0100D2D6	DLC05TeleportBaseEffect	MGEF	 	Teleport
-FormID: 0100D2D7	DLC05TeleportGlowBaseEffect	MGEF	 	Teleport Glow
-FormID: 0100D2E3	DLC05TestAlienTeleporter	CREA	 	Alien
-FormID: 0100D74C	DLC05SomahClass	CLAS	 	Somah's Class
-FormID: 0100D82D	DLC05DeathRayLaserLevel1	WEAP	 	Liberty Laser
-FormID: 0100D82E	DLC05DeathRayLaser01Projectile	PROJ	 	Laser Beam
-FormID: 0100D830	DLC05DeathRayLaserSpace	WEAP	 	Liberty Laser
-FormID: 0100D831	DLC05DeathRayLaserSpaceProjectile	PROJ	 	Laser Beam
-FormID: 0100D832	DLC05DeathRayLaser02Projectile	PROJ	 	Laser Beam
-FormID: 0100D833	DLC05DeathRayLaserLevel2	WEAP	 	Liberty Laser
-FormID: 0100D835	DLC05DeathRayShake	EXPL	 	Force
-FormID: 0100D882	AudioTemplateDLC05RobotDrone	CREA	 	AudioTemplateDLC05RobotDrone
-FormID: 0100DB3C	DLC05RobotFriendMoveTrigger	ACTI	 	Gas Valve
-FormID: 0100DB91	DLC05ParalysisFX	MGEF	 	Ice
-FormID: 0100DB92	DLC05ParalyzeOnceBaseEffect	MGEF	 	Paralyze
-FormID: 0100DB93	DLC05ParalyzeOnce	SPEL	 	Paralyze1
-FormID: 0100DB97	AudioTemplateAbomination	CREA	 	AudioTemplateAbomination
-FormID: 01000802	DLC05MZ1	QUST	 	Not of This World
-FormID: 01000803	DLC05MZ2	QUST	 	Among the Stars
-FormID: 01000804	DLC05MZ3	QUST	 	This Galaxy Ain't Big Enough...
-FormID: 01000831	testPhilSpaceWaterType	WATR	 	TestGrantWater
-FormID: 0100083B	DLC05WeapSamuraiSword	WEAP	 	Samurai's Sword
-FormID: 0100083D	DLC05WeapBaton	WEAP	 	Shock Baton
-FormID: 0100083F	DLC05WeapPistol	WEAP	 	Alien Atomizer
-FormID: 01000842	DLC05WeapRifle	WEAP	 	Alien Disintegrator
-FormID: 01000845	DLC05WeapRobotCannon	WEAP	 	Drone Cannon
-FormID: 01000856	DLC05MZDoorBig01	DOOR	 	Door
-FormID: 01000969	DLC05Sally	NPC_	 	Sally
-FormID: 0100096A	DLC05Somah	NPC_	 	Somah
-FormID: 0100096B	DLC05Tercorien	NPC_	 	Elliott Tercorien
-FormID: 0100096E	DLC05StartMessage	MESG	 	Mothership Zeta
-FormID: 0100096F	DLC05HoldingCells	CELL	 	Holding Cells
-FormID: 0100098B	DLC05CargoHold	CELL	 	Cargo Hold
-FormID: 0100098C	DLC05TestRepairBay	CELL	 	Repair Bay
-FormID: 01000EF8	DLC05LivingQuarters	CELL	 	Living Quarters
-FormID: 01000F8C	DLC05AlienWorm	ALCH	 	Alien Worm Food
-FormID: 01000F8D	DLC05AlienSquid	ALCH	 	Alien Squid Food
-FormID: 01000F94	DLC05testJesse	CELL	 	Hangar
-FormID: 01000F95	DLC05Hangar	CELL	 	Hangar
-FormID: 01000F96	DLC05RobotAssembly	CELL	 	Robot Assembly
-FormID: 01001600	DLC05TeleporterDoor	DOOR	 	Teleportation Matrix
-FormID: 0100160C	DLC05AmmoAlien	AMMO	 	Alien Power Module
-FormID: 0100160D	DLC05WeapRechargeStation	ACTI	 	Alien Weapon Recharge Station
-FormID: 01001616	DLC05CryoLab01	CELL	 	Cryo Lab
-FormID: 01001F47	DLC05CryoTrap	ACTI	 	Gas Valve
-FormID: 01001F4A	DLC05Paralysis	MGEF	 	Paralysis
-FormID: 01001F4B	DLC05CryoParalyze	SPEL	 	Paralyze
-FormID: 01001F4C	DLC05CryoKnockout	MGEF	 	DLC05CryoKnockout
-FormID: 01001F52	DLC05AlienController	ACTI	 	Control
-FormID: 01001F74	dlc05AlienControllerMine	PROJ	 	Alien Controller
-FormID: 01001FAF	DLC05TESTcrAlien1	CREA	 	Alien
-FormID: 0100293E	DLC05PlayerContainer	CONT	 	Container
-FormID: 01002945	DLC05AlienSwitchEnable	ACTI	 	Switch
-FormID: 01002A70	DLC05CryoGrenadeProjectile	PROJ	 	CryoGrenadeProjectile
-FormID: 01002A71	DLC05WeapGrenadeCryo	WEAP	 	Cryo Grenade
-FormID: 01002A73	DLC05EnchCryoGrenade	ENCH	 	Cryo Freeze
-FormID: 01002EDA	DLC05CryoLabDeathclawTRIG	ACTI	 	Gas Valve
-FormID: 01002FCE	DLC05Bridge	CELL	 	The Bridge
-FormID: 01002FCF	DLC05ExLab01	CELL	 	Observation Deck
-FormID: 01002FD1	DLC05SpaceBridge02	CELL	 	Space Walk
-FormID: 01002FD2	DLC05EngineCore	CELL	 	Engineering Core
-FormID: 01002FD3	DLC05Steamworks	CELL	 	Steamworks
-FormID: 010032FB	DLC05Paulson	NPC_	 	Paulson
-FormID: 010032FC	DLC05Samurai	NPC_	 	Toshiro Kago
-FormID: 01003302	DLC05DeadAstronaut	NPC_	 	Colonel Hartigan
-FormID: 01003305	DLC05PaulsonsHat	ARMO	 	Sheriff's Hat
-FormID: 01003306	DLC05PaulsonsOutfit	ARMO	 	Paulson's Outfit
-FormID: 0100330E	DLC05HoldingCellActivator	ACTI	 	Release Mechanism
-FormID: 01003325	testportableCoverProjectile	PROJ	 	Portable Cover
-FormID: 01003326	testPortableCover	WEAP	 	Portable Cover
-FormID: 01003327	testPortableCoverExplosion	EXPL	 	Portable Cover Explosion
-FormID: 01003392	DLC05Asm	QUST	 	Robot Assembly Scripting/Staging Support Quest
-FormID: 010033ED	DLC05StasisControls	ACTI	 	Stasis Controls
-FormID: 01003416	DLC05AlienCHair01L	FURN	 	Chair
-FormID: 01003418	DLC05AlienDialogue	QUST	 	Alien Dialogue
-FormID: 01003419	DLC05Generic	QUST	 	Generic Dialogue
-FormID: 010034DA	DLC05TESTcrAlien2	CREA	 	Alien
-FormID: 010034DB	DLC05TESTcrAlien3	CREA	 	Alien
-FormID: 010034DD	DLC05EngineRoom	CELL	 	Engine Room
-FormID: 0100370A	DLC05GeneratorSwitch01	ACTI	 	Bumper Switch
-FormID: 01003721	DLC05CryoLab02	CELL	 	Cryo Storage
-FormID: 0100372E	DLC05BigDoorWithEffects	DOOR	 	Door
-FormID: 010039BA	DLC05ConveyorMachine	ACTI	 	Conveyor Machine
-FormID: 010039C6	DLC05AssemblySwitch	ACTI	 	Electronics Access Panel
-FormID: 01003BFB	DLC05MZDoorSm01	DOOR	 	Door
-FormID: 01003C46	DLC05AlienFaction	FACT	 	Alien Faction
-FormID: 01003C52	DLC05WeapSpanner	WEAP	 	Spanner
-FormID: 01003C54	DLC05WeapBatonUnique	WEAP	 	Electro-Suppressor
-FormID: 01003C55	FaceSmashEffect	SPEL	 	Face Smash
-FormID: 01003C57	DLC05FaceSmasherMagicEffect	MGEF	 	FaceSmashedEffect
-FormID: 01003C65	DLC05crAlien1GunATemplate	CREA	 	Alien
-FormID: 01003C66	DLC05crAlien1GunB	CREA	 	Alien
-FormID: 01003C6C	DLC05crAlien2GunATemplate	CREA	 	Alien
-FormID: 01003C6D	DLC05crAlien2GunB	CREA	 	Alien
-FormID: 01003C6F	DLC05crAlien3GunATemplate	CREA	 	Alien
-FormID: 01003C79	DLC05crAlien1MeleeATemplate	CREA	 	Alien
-FormID: 01003C7A	DLC05crAlien1MeleeB	CREA	 	Alien
-FormID: 01003C7C	DLC05crAlien2MeleeATemplate	CREA	 	Alien
-FormID: 01003C7D	DLC05crAlien2MeleeB	CREA	 	Alien
-FormID: 01003C7F	DLC05crAlien3MeleeATemplate	CREA	 	Alien
-FormID: 01003CAD	DLC05MZ3DeathRaySwitch	ACTI	 	Death Ray Switch
-FormID: 01003CB8	DLC05CryoQ	QUST	 	Cryo Lab
-FormID: 01003CB9	DLC05CryoLab01MasTrig	ACTI	 	Gas Valve
-FormID: 01003CC4	DLC05CryoFreezeRoomTrig	ACTI	 	Gas Valve
-FormID: 01003CCE	DLC05CryoParalyzeLONG	SPEL	 	Paralyze
-FormID: 01003F1E	DLC05AlienRadioBeacon	TACT	 	Recon Craft Theta Beacon
-FormID: 01003F27	DLC05AlienCHair01R	FURN	 	Chair
-FormID: 01003F3E	DLC05BumperExplosion	EXPL	 	Bumper Blast
-FormID: 01003F3F	DLC05BumperSwitch	ACTI	 	Pylon Control
-FormID: 01003F43	DLC05HangarSpawnSwitch	ACTI	 	Spawns some guys
-FormID: 01003F7B	DLC05EnchFaceSmasher	ENCH	 	Face Smash
-FormID: 01003FC8	DLC05TESTcrAlienTalk	CREA	 	Alien
-FormID: 010040A2	DLC05MZ1AlienGuard	CREA	 	Alien
-FormID: 010041A8	DLC05Control01	ACTI	 	Control
-FormID: 010041AC	DLC05Terminal01	ACTI	 	Terminal
-FormID: 010041AF	DLC05Control02	ACTI	 	Control
-FormID: 010041CC	DLC05HQ	QUST	 	Hangar Scripting/Staging Support Quest
-FormID: 010041E0	DLC05HangarTeleSwitch	ACTI	 	Control
-FormID: 01004212	DLC05SpaceWalk02MasTrig	ACTI	 	Gas Valve
-FormID: 0100422E	DLC05SpaceWalkQ	QUST	 	Space Walk
-FormID: 01004230	DLC05CryoLab02MasTrig	ACTI	 	Gas Valve
-FormID: 01004249	DLC05AlienArmorSpellFlareEffect	MGEF	 	Inertia Suppression Field Flare
-FormID: 0100428E	DLC05SpaceBridge01	CELL	 	Decompression Chamber
+TXST|0x100cb93|DLC05Blood02Texture|
+TXST|0x100cb8f|DLC05Blood01Texture|
+TXST|0x100c96b|DLC05GeneralsCoat|
+TXST|0x100c376|DLC051stPersonAlienBlasterTexture|
+TXST|0x100bb62|DLC05combatmedichelmet|
+TXST|0x100bb61|DLC05combatmedicmask|
+TXST|0x100bb60|DLC05combatmedicsleeves|
+TXST|0x100a9a4|DLC05combatmedicM|
+TXST|0x100a9a3|DLC05combatmedicF|
+TXST|0x100a2a7|1stPersonDLC05AlienPistolCapTexture|
+TXST|0x1009bbc|DLC05TrashPile|
+TXST|0x100997e|1stPersonDLC05RobotCannonTextureChrome|
+TXST|0x100997d|1stPersonDLC05RobotCannonTexture|
+TXST|0x10080b6|1stPersonDLC05KatanaTexture|
+TXST|0x1006fc3|1stPersonDLC05CryoGernadeTexture|
+TXST|0x1006fc2|1stPersonDLC05CryoMineTexture|
+TXST|0x100685b|1stPersonDLC05AlienPistolTexture|
+TXST|0x100494b|1stPersonDLC05AlienBatonTexture|
+TXST|0x1003f23|1stPersonDLC05AlienRifleTexture|
+GLOB|0x100c8aa|DLC05Wake|
+GLOB|0x100ab73|DLC05Safe|
+GLOB|0x1009c32|DLC05RobotActive|
+GLOB|0x1008ae3|DLC05PaulsonDead|
+GLOB|0x1008ae2|DLC05SomahDead|
+GLOB|0x1008ae1|DLC05TercorienDead|
+GLOB|0x10067f2|DLC05HealingArchCooldown|
+GLOB|0x1006314|DLC05RechargeStationCoolDownTime|
+GLOB|0x1005610|DLC05SomahRepairGo|
+CLAS|0x100d74c|DLC05SomahClass|Somah's Class
+FACT|0x100cb9f|DLC05SamuraiSceneNoCombatFaction|
+FACT|0x100cadd|DLC05AlienNonHostileFaction|
+FACT|0x100ca01|DLC05CryoSquadFaction|
+FACT|0x100c313|DLC05ExLabAbom|
+FACT|0x100bdae|DLC05ExLabTestBotFaction|
+FACT|0x100bd3a|DLC05RobotPodFaction|
+FACT|0x10068df|DLC05NPCFollowerFaction|
+FACT|0x10058d9|DLC05AbominationFaction|Abomination Faction
+FACT|0x10058ce|DLC05RobotFaction|Alien Robot Faction
+FACT|0x1003c46|DLC05AlienFaction|Alien Faction
+SOUN|0x100db96|NPCDLC05AbominationInjured|
+SOUN|0x100db95|NPCDLC05AbominationDeath|
+SOUN|0x100db94|NPCDLC05AbominationAttack|
+SOUN|0x100db8f|OBJDLC05GeneratorStage06LP|
+SOUN|0x100db8e|OBJDLC05GeneratorStage05LP|
+SOUN|0x100db8d|OBJDLC05GeneratorStage04LP|
+SOUN|0x100db8c|OBJDLC05GeneratorStage03LP|
+SOUN|0x100db8b|OBJDLC05GeneratorStage02LP|
+SOUN|0x100db8a|OBJDLC05GeneratorStage01LP|
+SOUN|0x100db89|OBJDLC05GeneratorClose|
+SOUN|0x100db88|QSTDLC05BattleDestroyed|
+SOUN|0x100db87|QSTDLC05BattleHit|
+SOUN|0x100db86|QSTDLC05BattleFire|
+SOUN|0x100db85|QSTDLC05BattleFlyby|
+SOUN|0x100db83|OBJDLC05ProbeButton|
+SOUN|0x100db82|OBJDLC05ProbeAlienC02|
+SOUN|0x100db81|OBJDLC05ProbeAlienC01|
+SOUN|0x100db80|OBJDLC05ProbeAlienB04|
+SOUN|0x100db7f|OBJDLC05ProbeAlienB03|
+SOUN|0x100db7e|OBJDLC05ProbeAlienB02|
+SOUN|0x100db7d|OBJDLC05ProbeAlienB01|
+SOUN|0x100db7c|OBJDLC05ProbeAlienA01|
+SOUN|0x100db5a|AMBDLC05CryoVaporLP|
+SOUN|0x100db59|AMBDLC05CryoBurst|
+SOUN|0x100db4a|DRSDLC05TeledartRun|
+SOUN|0x100db49|DRSDLC05TeledartIdleLP|
+SOUN|0x100db44|OBJDLC05ButtercupLP|
+SOUN|0x100db43|OBJDLC05AssemblyLineLP|
+SOUN|0x100db3f|NPCDLC05AbominationAware|
+SOUN|0x100db3e|NPCDLC05AbominationFootWalkRight|
+SOUN|0x100db3d|NPCDLC05AbominationFootWalkLeft|
+SOUN|0x100db2e|WPNDLC05AlienCannonReload|
+SOUN|0x100db2d|WPNDLC05AlienCannonJam|
+SOUN|0x100db2c|OBJDLC05HamRadioOneSmallStepLP|
+SOUN|0x100db2b|AMBRoomtoneDLC05MothershipMachineBLP|
+SOUN|0x100db22|OBJDLC05DeathRayShutdown|
+SOUN|0x100db21|OBJDLC05TrackballEyeLPM|
+SOUN|0x100db1e|OBJDLC05DeathRayFire|
+SOUN|0x100db1d|OBJDLC05DeathRayIdleLP|
+SOUN|0x100da66|OBJDLC05GeneratorCores|
+SOUN|0x100da65|OBJDLC05GeneratorOpen|
+SOUN|0x100da64|FXExplosionGrenadeCryoHigh|
+SOUN|0x100da63|FSTPartyLand|
+SOUN|0x100da62|FSTPartySneakR|
+SOUN|0x100da61|FSTPartySneakL|
+SOUN|0x100da60|FSTPartyRunR|
+SOUN|0x100da5f|FSTPartyRunL|
+SOUN|0x100da5e|AMBDLC05Dematerialize|
+SOUN|0x100da3c|DRSDLC05HangarClose|
+SOUN|0x100da3b|DRSDLC05HangarOpen|
+SOUN|0x100da3a|AMBDLC05ShootingGalleryFail|
+SOUN|0x100da39|AMBDLC05ShootingGalleryPass|
+SOUN|0x100da38|NPCDLC05RobotDroneUnequip|
+SOUN|0x100da37|NPCDLC05RobotDroneEquip|
+SOUN|0x100da36|NPCDLC05RobotDroneAttackSpin|
+SOUN|0x100da35|NPCDLC05RobotDroneAttackArmPower|
+SOUN|0x100da34|NPCDLC05RobotDroneAttackArm02|
+SOUN|0x100da33|NPCDLC05RobotDroneAttackArm01|
+SOUN|0x100da32|AMBDLC05TractorBeamB|
+SOUN|0x100da31|AMBDLC05TractorBeamA|
+SOUN|0x100d883|NPCDLC05RobotDroneMovementLPM|
+SOUN|0x100d881|NPCDLC05RobotDroneIdleLP|
+SOUN|0x100d880|AMBDLC05Materialize|
+SOUN|0x100d866|OBJDLC05AlienTerminalLP|
+SOUN|0x100d85d|OBJDLC05ClawVoice03|
+SOUN|0x100d85c|OBJDLC05ClawVoice02|
+SOUN|0x100d85b|OBJDLC05ClawVoice01|
+SOUN|0x100d829|QSTDLC05ProbeStruggle|
+SOUN|0x100d74b|FXDLC05AlienPlasmaProjectile|
+SOUN|0x100d716|OBJDLC05ConsoleDLargeLP|
+SOUN|0x100d715|OBJDLC05ConsoleCLargeLP|
+SOUN|0x100d714|DRSDLC05TeleporterIdleLP|
+SOUN|0x100d713|DRSDLC05TeleporterClose|
+SOUN|0x100d712|DRSDLC05TeleporterOpen|
+SOUN|0x100d707|AMBAlienAlarmALP|
+SOUN|0x100d0ca|OBJDLC05ConsoleBLargeLP|
+SOUN|0x100d0c9|OBJDLC05ConsoleALargeLP|
+SOUN|0x100d0c7|AMBRoomtoneDLC05MothershipMachineALP|
+SOUN|0x100cb1c|OBJDLC05DumpsterMoveStop|
+SOUN|0x100cb1b|OBJDLC05DumpsterMoveStart|
+SOUN|0x100cb1a|OBJDLC05DumpsterMoveLP|
+SOUN|0x100cb19|OBJDLC05HealingArchChargingLP|
+SOUN|0x100ca71|OBJDLC05HealingArchHack|
+SOUN|0x100ca70|OBJDLC05HealingArchHealFail|
+SOUN|0x100ca6f|OBJDLC05HealingArchHeal|
+SOUN|0x100ca6e|OBJDLC05HealingArchIdleLP|
+SOUN|0x100ca10|OBJDLC05DumpsterSceneBlack|
+SOUN|0x100ca0f|OBJDLC05Crusher|
+SOUN|0x100c972|NPCHumanDLC05ConsoleHit02|
+SOUN|0x100c971|NPCHumanDLC05ConsoleHit01|
+SOUN|0x100c970|NPCHumanDLC05ConsoleButton|
+SOUN|0x100c8dd|OBJDLC05CryoPodUp|
+SOUN|0x100c8dc|OBJDLC05CryoPodReturn|
+SOUN|0x100c8db|OBJDLC05CryoPodOpen|
+SOUN|0x100c8da|OBJDLC05CryoPodClose|
+SOUN|0x100c8b0|DRSDLC05IrisOpen|
+SOUN|0x100c8af|DRSDLC05ShipHullOpen|
+SOUN|0x100c89f|OBJDLC05ShipExteriorPanel02|
+SOUN|0x100c89e|OBJDLC05ShipExteriorPanel01|
+SOUN|0x100c7b2|NPCHumanDLC05SallyWallRepair|
+SOUN|0x100c7b1|NPCHumanDLC05SallyClimb|
+SOUN|0x100c7a8|OBJDLC05DumpsterScene|
+SOUN|0x100c5f2|OBJDLC05AlienSwitchRotate|
+SOUN|0x100c5f1|OBJDLC05AlienSwitchPress|
+SOUN|0x100c375|OBJDLC05DumpsterDoorSmallOpen|
+SOUN|0x100c374|OBJDLC05DumpsterDoorSmallClose|
+SOUN|0x100c373|OBJDLC05DumpsterDoorLargeClose|
+SOUN|0x100c36d|WPNDLC05AlienCannonIdleLP|
+SOUN|0x100c36c|WPNDLC05AlienCannonFire3D|
+SOUN|0x100c36b|WPNDLC05AlienCannonFire2D|
+SOUN|0x100c36a|OBJDLC05ConsoleCLP|
+SOUN|0x100c369|OBJDLC05ConsoleBLP|
+SOUN|0x100c368|OBJDLC05ConsoleALP|
+SOUN|0x100b424|ITMDLC05AlienEpoxy|
+SOUN|0x100b413|DRSDLC05AlienLarge01Locks|
+SOUN|0x100b412|DRSDLC05AlienLarge01Close|
+SOUN|0x100b411|DRSDLC05AlienLarge01Open|
+SOUN|0x100b329|FSTPartyWalkR|
+SOUN|0x100b328|FSTPartyWalkL|
+SOUN|0x100b323|AMBDLC05ForcefieldDoorSpark|
+SOUN|0x100b320|AMBRoomtoneDLC05SpacewalkLP|
+SOUN|0x100b31d|AMBRoomtoneDLC05MothershipGeneralLP|
+SOUN|0x100b31c|AMBRDLC05MothershipCreaking|
+SOUN|0x100b287|DRSDLC05AlienSmall01Close|
+SOUN|0x100b286|DRSDLC05AlienSmall01Open|
+SOUN|0x100b053|DRSDLC05AlienContainerClose|
+SOUN|0x100b052|DRSDLC05AlienContainerOpen|
+SOUN|0x100b051|DRSDLC05AlienContainerLP|
+SOUN|0x100ae1c|FXMeleeDLC05ShockBatonFlesh|
+SOUN|0x100ae1b|WPNDLC05AlienShockStickIdleLPM|
+SOUN|0x100ade5|AMBDLC05ForcefieldDoorLP|
+SOUN|0x100ad07|AMBDLC05DumpsterCartStop|
+SOUN|0x100ad06|AMBDLC05DumpsterCartStart|
+SOUN|0x100ad05|AMBDLC05DumpsterCartRunLP|
+SOUN|0x100acfb|AMBDLC05SpacesuitBreathingLP|
+SOUN|0x100ac1d|WPNDLC05AlienRifleJam|
+SOUN|0x100ac1c|WPNDLC05AlienRifleReload|
+SOUN|0x100ac0e|WPNDLC05AlienRifleFire3D|
+SOUN|0x100ac0d|WPNDLC05AlienRifleFire2D|
+SOUN|0x100aa0e|NPCDLC05AlienFootRunR|
+SOUN|0x100aa0d|NPCDLC05AlienFootRunL|
+SOUN|0x100aa0c|NPCDLC05AlienFootWalkR|
+SOUN|0x100aa0b|NPCDLC05AlienFootWalkL|
+SOUN|0x100a982|NPCHumanDLC05RepairTeleporter|
+SOUN|0x100a677|OBJDLC05ProbeDrill|
+SOUN|0x100a676|OBJDLC05ProbeArms|
+SOUN|0x100a675|OBJDLC05ProbeRoomLP|
+SOUN|0x100990e|NPCHumanDLC05SallyCrawl|
+SOUN|0x1007019|OBJDLC05ClawClose|
+SOUN|0x1007018|OBJDLC05ClawOpen|
+SOUN|0x1007017|OBJDLC05ClawAscend|
+SOUN|0x1007016|OBJDLC05ClawDescend|
+SOUN|0x1007015|OBJDLC05ClawRunLPM|
+SOUN|0x10046aa|DLC05SpaceWalkRepairBeep|
+SOUN|0x1001f50|DLC05SpaceWalkTestSound|
+ASPC|0x100d0c8|IntDLC05MothershipMachineA|
+ASPC|0x100b322|IntDLC05Spacewalk|
+ASPC|0x100b31f|IntDLC05MothershipGeneral|
+MGEF|0x100db92|DLC05ParalyzeOnceBaseEffect|Paralyze
+MGEF|0x100db91|DLC05ParalysisFX|Ice
+MGEF|0x100d2d7|DLC05TeleportGlowBaseEffect|Teleport Glow
+MGEF|0x100d2d6|DLC05TeleportBaseEffect|Teleport
+MGEF|0x100d2d5|DLC05TeleportInBaseEffect|Teleport In
+MGEF|0x100d2d4|DLC05TeleportOutBaseEffect|Teleport Out
+MGEF|0x100a8cd|DLC05AlienBiogelRandomEffect|Biochemical Anomaly
+MGEF|0x1007436|DLC05WeapShockBaton|Alien Shock Baton Damage
+MGEF|0x1006be4|DLC05AlienEpoxyEffect|Alien Epoxy Effect
+MGEF|0x1006934|DLC05AlienArmorSpellEffect|Inertia Suppression Field
+MGEF|0x1004249|DLC05AlienArmorSpellFlareEffect|Inertia Suppression Field Flare
+MGEF|0x1003c57|DLC05FaceSmasherMagicEffect|FaceSmashedEffect
+MGEF|0x1001f4c|DLC05CryoKnockout|DLC05CryoKnockout
+MGEF|0x1001f4a|DLC05Paralysis|Paralysis
+SCPT|0x100db56|DLC05MZ2NPCTriggerMaintScript|
+SCPT|0x100db3b|DLC05RobotFriendMoveTriggerSCRIPT|
+SCPT|0x100da54|DLC05AlienRadioBeaconScriptDUPLICATE000|
+SCPT|0x100d879|DLC05TriggerExLabGalleryEscapeSCRIPT|
+SCPT|0x100d873|DLC05ExLabSpawnSCRIPT|
+SCPT|0x100d74a|DLC05SteamAlienPatrollersSCRIPT|
+SCPT|0x100d2dd|DLC05TeleportGlowBaseEffectScript|
+SCPT|0x100d2dc|DLC05TeleportTriggerScript|
+SCPT|0x100d2db|DLC05TeleportBaseEffectScript|
+SCPT|0x100d2da|DLC05TeleportInBaseEffectScript|
+SCPT|0x100d2d9|DLC05TeleportOutBaseEffectScript|
+SCPT|0x100d2d8|DLC05TeleporterDoorMasterScript|
+SCPT|0x100d14e|DLC05schematicsWorkbenchScript|
+SCPT|0x100cfbf|DLC05MZDoorBig01SCRIPT|
+SCPT|0x100ce7b|DLC05LQSamuraiBloodBathSCRIPT|
+SCPT|0x100ce65|DLC05HangarTeleSCRIPT|
+SCPT|0x100cd75|DLC05CryoBurstActivatorSCRIPT|
+SCPT|0x100cbdd|DLC05CryoBurstRandomSCRIPT|
+SCPT|0x100cb88|DLC05MZDoorSm01SCRIPT|
+SCPT|0x100cadc|DLC05CrAlienNonHostileScript|
+SCPT|0x100cad1|DLC05TelepadActivatorExLabSCRIPT|
+SCPT|0x100ca74|DLC05ExLabSCRIPT|
+SCPT|0x100ca73|DLC05TriggerExLabGalleryControlSCRIPT|
+SCPT|0x100c9c6|DLC05TestPhilTele|
+SCPT|0x100c9c3|DLC05WeapRobotCannonNonPlayerScript|
+SCPT|0x100c8e0|DLC05WasteTeleporterDoorSCRIPT|
+SCPT|0x100c4f8|DLC05HomingBeaconScript|
+SCPT|0x100c4ac|DLC05GeneratorMainSwitchLinkedSCRIPT|
+SCPT|0x100c48d|DLC05BridgeWastelandDoorSCRIPT|
+SCPT|0x100c358|DLC05UpdateCoreStageTRIGSCRIPT|
+SCPT|0x100c355|DLC05CoreStageControlTrigSCRIPT|
+SCPT|0x100c317|DLC05crusherSCRIPTalternate|
+SCPT|0x100c30e|DLC05TriggerAbominationDisableSCRIPT|
+SCPT|0x100c024|DLC05RobotExLabScript|
+SCPT|0x100c020|DLC05UniqueCannonActivatorSCRIPT|
+SCPT|0x100bdd6|DLC05crusherSCRIPT|
+SCPT|0x100bdad|DLC05RobotPodExLabScript|
+SCPT|0x100bd9b|DLC05TeleporterDoorScripted01SCRIPT|
+SCPT|0x100bd3f|DLC05RobotControlItemSCRIPT|
+SCPT|0x100bd27|DLC05BridgeStarSpinSCRIPT|
+SCPT|0x100bcff|DLC05ZetaDeadSCRIPT|
+SCPT|0x100bcf3|DLC05MarksZetaLaserSCRIPT|
+SCPT|0x100b7e8|DLC05ExLabControl02SCRIPT|
+SCPT|0x100b7d4|DLC05CryoLabInPositionTrigSCRIPT|
+SCPT|0x100b429|DLC05RobotRangedScript|
+SCPT|0x100b423|DLC05TrigHangarKillVolumeTopSCRIPT|
+SCPT|0x100b285|DLC05CryoHandleElliotEventsTrigSCRIPT|
+SCPT|0x100b097|DLC05spaceSuitbreathingSCRIPT|
+SCPT|0x100ade2|DLC05SteamEndSCRIPT|
+SCPT|0x100ad53|DLC05AsmSoloSpawnBScript|
+SCPT|0x100ac1b|DLC05GenericQuestScript|
+SCPT|0x100aac8|DLC05FF01exitTrigSCRIPT|
+SCPT|0x100aaaf|DLC05TrigAsmSomahExplodeTurretSCRIPT|
+SCPT|0x100aaa9|DLC05CryoPodSwitchOFFSCRIPT|
+SCPT|0x100aaa7|DLC05CryoPodSwitchSCRIPT|
+SCPT|0x100a9da|DLC05ClawNPCScript|
+SCPT|0x100a991|DLC05PostTeleporterUpdateTriggerScript|
+SCPT|0x100a98e|DLC05PostQuestScript|
+SCPT|0x100a94f|DLC05SamuraiSwordScript|
+SCPT|0x100a93b|DLC05DeathRayTeleAttackWaveSCRIPT|
+SCPT|0x100a92e|DLC05BridgeGeneratorControlSCRIPT|
+SCPT|0x100a924|DLC05TrigAsmStage7SCRIPT|
+SCPT|0x100a922|DLC05RobotPodRobotSCRIPT|
+SCPT|0x100a8ce|DLC05AlienBiogelRandomEffectScript|
+SCPT|0x100a89b|DLC05FF01brahminSCRIPT|
+SCPT|0x100a88b|DLC05HoloControlScript|
+SCPT|0x100a843|DLC05BridgePowerControlSCRIPT|
+SCPT|0x100a842|DLC05PowerControlSCRIPT|
+SCPT|0x100a777|DLC05TelepadActivatorAsmSCRIPT|
+SCPT|0x100a776|DLC05TrigAsmAlarm2SCRIPT|
+SCPT|0x100a771|DLC05AlienControllerAsmSCRIPT|
+SCPT|0x100a6c5|DLC05CargoButtercupGlow01SCRIPT|
+SCPT|0x100a600|DLC05RobotPodOpenScript|
+SCPT|0x100a5fd|DLC05TrigHangarKillVolumeSCRIPT|
+SCPT|0x1009c7c|DLC05CargoHoldConvTrigger08SCRIPT|
+SCPT|0x1009c7b|DLC05CargoHoldConvTrigger07SCRIPT|
+SCPT|0x1009c7a|DLC05CargoShockTrig02SCRIPT|
+SCPT|0x1009c79|DLC05CargoShockTrig01SCRIPT|
+SCPT|0x1009c6f|DLC05HQCommentTrigger01Script|
+SCPT|0x1009c6c|DLC05AsmGeneratorCommentTriggerScript|
+SCPT|0x1009a38|DLC05RobotPodScript|
+SCPT|0x1009a16|DLC05AsmCommentTrigger01Script|
+SCPT|0x10099fb|DLC05TelepadActivatorHangarSCRIPT|
+SCPT|0x10099e8|DLC05CargoHoldConvTrigger06SCRIPT|
+SCPT|0x10099e7|DLC05CargoHoldConvTrigger05SCRIPT|
+SCPT|0x10099e6|DLC05CargoHoldConvTrigger04SCRIPT|
+SCPT|0x10099e5|DLC05CargoHoldConvTrigger03SCRIPT|
+SCPT|0x10099e4|DLC05CargoHoldConvTrigger02SCRIPT|
+SCPT|0x10099e3|DLC05CargoHoldConvTrigger01SCRIPT|
+SCPT|0x100994f|DLC05HealingArchTriggerScript|
+SCPT|0x1009917|DLC05ERoomSayToSCRIPT|
+SCPT|0x10098ee|DLC05TrigHangarStage101SCRIPT|
+SCPT|0x1008508|DLC05TelepadActivatorSCRIPT|
+SCPT|0x10082cb|DLC05AlienDoorControlSCRIPT|
+SCPT|0x10082c7|DLC05ECorePlayerKillSCRIPT|
+SCPT|0x1008249|DLC05MZSpaceWalkDoorScript|
+SCPT|0x1007fea|DLC05killAliensWithinSCRIPT|
+SCPT|0x1007e64|DLC05BridgeTeleporterControlSCRIPT|
+SCPT|0x1007e60|DLC05BridgeTeleportDoorScript|
+SCPT|0x1007e2f|DLC05MZ3TeleporterUpdateTriggerScript|
+SCPT|0x1007e2c|DLC05LabTeleportDoorScript|
+SCPT|0x1007e29|DLC05LabTeleporterControlSCRIPT|
+SCPT|0x1007d28|DLC05SamuraiScenesScript|
+SCPT|0x1007c8f|DLC05CargoStopTrashDumpTriggerSCRIPT|
+SCPT|0x1007c8e|DLC05CargoBeginTrashDumpTriggerSCRIPT|
+SCPT|0x1007c24|DLC05MZRmGeneratorACTHavokSCRIPT|
+SCPT|0x1007c22|DLC05MZRmGeneratorWin01SCRIPT|
+SCPT|0x1007c1e|DLC05DeathRayGenCoolantSwitchSCRIPT|
+SCPT|0x1007c1c|DLC05DeathRayGeneratorCoreSCRIPT|
+SCPT|0x1007b8a|DLC05MZ3ViewscreenScript|
+SCPT|0x1007b82|DLC05SpaceWalkEnableDeathTriggerTrigSCRIPT|
+SCPT|0x1007a04|DLC05ERoomGasTrapControlSCRIPT|
+SCPT|0x10079e6|DLC05EngineRoomGasTrapSCRIPT|
+SCPT|0x10079aa|DLC05CryoPointOfNoReturnTRIGSCRIPT|
+SCPT|0x100776f|DLC05TrigHangarZoneBSCRIPT|
+SCPT|0x100776e|DLC05TrigHangarZoneCSCRIPT|
+SCPT|0x100776d|DLC05TrigHangarZoneDSCRIPT|
+SCPT|0x100776c|DLC05TrigHangarZoneESCRIPT|
+SCPT|0x1007761|DLC05TrigHangarZoneFSCRIPT|
+SCPT|0x100756a|DLC05ConvScript|
+SCPT|0x1007455|DLC05FF01kickoffSCRIPT|
+SCPT|0x1007446|DLC05SpaceFloatToDeathTRIGSCRIPT|
+SCPT|0x1007441|DLC05SpaceWalkLevitateTrigSCRIPT|
+SCPT|0x1007407|DLC05FF01cartTrigSCRIPT|
+SCPT|0x10073fe|DLC05FF01cartMasterSCRIPT|
+SCPT|0x1007289|DLC05SteamSallyTutorialSCRIPT|
+SCPT|0x1007272|DLC05CoreSceneDoorScript|
+SCPT|0x1007264|DLC05TriggerHangarAnimControlSCRIPT|
+SCPT|0x1007230|DLC05SteamSallyIgnoreSCRIPT|
+SCPT|0x10070a7|DLC05TrigHangarStage25SCRIPT|
+SCPT|0x10070a4|DLC05TrigHangarStage50SCRIPT|
+SCPT|0x100707d|DLC05ActivateOnTriggerScript|
+SCPT|0x1007068|DLC05MZ1SallyCoreTriggerScript|
+SCPT|0x1006e9c|DLC05CoreSceneAlienScript|
+SCPT|0x1006e1d|DLC05CoreSceneScript|
+SCPT|0x1006dd6|DLC05DoorControlSCRIPT|
+SCPT|0x1006db2|DLC05GeneratorMainSwitchSCRIPT|
+SCPT|0x1006d14|DLC05HangarBossDoorControlSCRIPT|
+SCPT|0x1006c7e|DLC05CryoSquadSCRIPT|
+SCPT|0x1006c76|DLC05CryoSquadSwitchSCRIPT|
+SCPT|0x1006c6f|DLC05CryoPodDoorSquadSCRIPT|
+SCPT|0x1006c59|DLC05CryoSoldierRoomTrigSCRIPT|
+SCPT|0x1006bed|DLC05BridgeControlsSCRIPT|
+SCPT|0x1006be5|DLC05AlienEpoxyEffectSCRIPT|
+SCPT|0x1006b34|DLC05AssemblySwitchSCRIPT|
+SCPT|0x1006b22|DLC05MZDoorSmFieldSCRIPT|
+SCPT|0x1006b1d|DLC05TrigHangarStage200SCRIPT|
+SCPT|0x1006af3|DLC05FF01arenaSCRIPT|
+SCPT|0x1006ad1|DLC05ERoomEngineerSCRIPT|
+SCPT|0x1006abd|DLC05ERoomRobotSCRIPT|
+SCPT|0x1006a8a|DLC05LQShieldGunnerSCRIPT|
+SCPT|0x1006937|DLC05AlienScript|
+SCPT|0x1006936|DLC05AlienArmorSpellFlareEffectScript|
+SCPT|0x1006935|DLC05AlienArmorSpellEffectScript|
+SCPT|0x10068e0|DLC05PlayerContainerScript|
+SCPT|0x10066f2|DLC05HealingArchTriggerScriptOLD|
+SCPT|0x10066f1|DLC05WeapRepairContainerScript|
+SCPT|0x10066ef|DLC05AlienTechFunctionsScript|
+SCPT|0x100613d|DLC05ambientShooterSCRIPT|
+SCPT|0x100613c|DLC05FF01SCRIPT|
+SCPT|0x1006035|DLC05CryoTrapMainSCRIPT|
+SCPT|0x1006032|DLC05CryoTrapActSCRIPT|
+SCPT|0x1006030|DLC05CryoTrapSprayJetSCRIPT|
+SCPT|0x1005f07|DLC05MZ2NPCTriggerRobotScript|
+SCPT|0x1005f06|DLC05MZ2NPCTriggerHangarScript|
+SCPT|0x1005f05|DLC05MZ2NPCTriggerCryoScript|
+SCPT|0x1005eea|DLC05CryoSwitchFreezeSceneREFSCRIPT|
+SCPT|0x1005e5f|DLC05GeneratorSCRIPT|
+SCPT|0x1005e4a|DLC05TriggerHangarLeviForceSCRIPT|
+SCPT|0x1005e04|DLC05TriggerHangarSiegeControlSCRIPT|
+SCPT|0x1005e02|DLC05HangarLvlSiegeSCRIPT|
+SCPT|0x1005e00|DLC05HQScript|
+SCPT|0x1005c7f|DLC05DeathRayGeneratorActTRIG|
+SCPT|0x1005c71|DLC05FF01barkPointsSCRIPT|
+SCPT|0x1005c12|DLC05ShockVolumeSwitchSCRIPT|
+SCPT|0x1005c0b|DLC05shockVolumeSCRIPT|
+SCPT|0x1005af5|DLC05BridgeMainControlSCRIPT|
+SCPT|0x1005ab1|DLC05DecompressionDoor02SCRIPT|
+SCPT|0x1005aaf|DLC05SpaceDecompressionSwitch02SCRIPT|
+SCPT|0x10059cb|DLC05DoNothingOnActivate|
+SCPT|0x10059c5|DLC05DecompressionDoor01SCRIPT|
+SCPT|0x10059bb|DLC05SpaceDecompressionSwitch01SCRIPT|
+SCPT|0x10058ec|DLC05SpaceWalkQSCRIPT|
+SCPT|0x100585e|DLC05LivingQWorkerRobotSCRIPT|
+SCPT|0x1005787|testDLC05TeleporterDoorSCRIPT|
+SCPT|0x1005785|DLC05AsmEnemyCSCRIPT|
+SCPT|0x1005783|DLC05AsmEnemyBSCRIPT|
+SCPT|0x100574a|DLC05MZ3ExLabSceneTriggerScript|
+SCPT|0x100563d|DLC05CryoElliotTaunt01TrigSCRIPT|
+SCPT|0x1005635|DLC05CryoElliotFreezeTRIGSCRIPT|
+SCPT|0x1005622|DLC05CryoElliotSayGenTRIGSCRIPT|
+SCPT|0x100561f|DLC05CryoQSCRIPT|
+SCPT|0x10055d7|DLC05TeleportTestSCRIPT|
+SCPT|0x100518c|DLC05CryoPodAnimSCRIPT|
+SCPT|0x1005187|DLC05CryoPodDoorSCRIPT|
+SCPT|0x1005183|DLC05AsmEnemyDSCRIPT|
+SCPT|0x1005177|DLC05TrigAsmPartASCRIPT|
+SCPT|0x1004ff5|DLC05CargoDumpDisableTriggerSCRIPT|
+SCPT|0x1004e6b|DLC05CoreTeleporterControlSCRIPT|
+SCPT|0x1004e66|DLC05EngineCoreDoorSCRIPT|
+SCPT|0x1004e43|DLC05BridgeCrewSCRIPT|
+SCPT|0x1004e41|DLC05BridgeLDSCRIPT|
+SCPT|0x1004e3e|DLC05AlienBedSCRIPT|
+SCPT|0x1004c17|DLC05ExLabWeaponFireControlSCRIPT|
+SCPT|0x1004c08|DLC05EXLabTeleControlSCRIPT|
+SCPT|0x1004a00|DLC05DeathRayDialogue20TrigSCRIPT|
+SCPT|0x10049fd|DLC05DeathRayDialogue10TrigSCRIPT|
+SCPT|0x1004945|DLC05DeathRayPos02ButtonSCRIPT|
+SCPT|0x1004944|DLC05DeathRayFireButtonSCRIPT|
+SCPT|0x1004943|DLC05DeathRayChargeButtonSCRIPT|
+SCPT|0x1004942|DLC05DeathRaySCRIPT|
+SCPT|0x100493f|DLC05DeathRayPos01ButtonSCRIPT|
+SCPT|0x100478b|DLC05TrigHangarEnemyUpstairsSCRIPT|
+SCPT|0x1004722|DLC05SpaceWalk03MasTrigSCRIPT|
+SCPT|0x100471e|DLC05SpaceWalkUpdateObjective01TrigSCRIPT|
+SCPT|0x100471b|DLC05SpaceWalk01DecompressionTrigSCRIPT|
+SCPT|0x1004718|DLC05SpaceWalk01TalkTrig01SCRIPT|
+SCPT|0x1004715|DLC05SpaceBridge01MasTrigSCRIPT|
+SCPT|0x1004712|DLC05SpaceBridge04MasTrigSCRIPT|
+SCPT|0x10046a9|DLC05SpaceWalkRepairNodeSCRIPT|
+SCPT|0x100425f|DLC05ControlSCRIPT|
+SCPT|0x100424e|DLC05SteamQuestStepsSCRIPT|
+SCPT|0x100424b|DLC05SteamworksLDSCRIPT|
+SCPT|0x1004232|DLC05CryoLab02MasTrigSCRIPT|
+SCPT|0x1004214|DLC05SpaceWalk02MasTrigSCRIPT|
+SCPT|0x10041fe|DLC05TrigHangarStage40SCRIPT|
+SCPT|0x10041fb|DLC05TrigHangarStage30SCRIPT|
+SCPT|0x10041f8|DLC05TrigHangarStage20SCRIPT|
+SCPT|0x10041f5|DLC05TrigHangarStage10SCRIPT|
+SCPT|0x10041e1|DLC05HangarTeleSwitchSCRIPT|
+SCPT|0x10041d2|DLC05TrigHangarControlSCRIPT|
+SCPT|0x10041cd|DLC05TriggerCreateDetectionEventSCRIPT|
+SCPT|0x10041b3|DLC05Control02Script|
+SCPT|0x100419e|DLC05AlienShieldSCRIPT|
+SCPT|0x1003f42|DLC05HangarSpawnSwitchSCRIPT|
+SCPT|0x1003f37|DLC05TriggerBumperControlSCRIPT|
+SCPT|0x1003f20|DLC05AlienRadioBeaconSCRIPT|
+SCPT|0x1003cdf|DLC05CryoFreezeRoomAlienSCRIPT|
+SCPT|0x1003cc6|DLC05CryoFreezeRoomSCRIPT|
+SCPT|0x1003cbc|DLC05CryoLab01MasSCRIPT|
+SCPT|0x1003cb1|DLC05MZ3TEMPBridgeTriggerScript|
+SCPT|0x1003cac|DLC05MZ3DeathRaySwitchScript|
+SCPT|0x1003ca8|DLC05SallyScript|
+SCPT|0x1003ca7|DLC05MZ3SallyLabTrigger1Script|
+SCPT|0x1003c58|DLC05FaceSmasherMagicEffectSCRIPT|
+SCPT|0x1003a65|DLC05GeneratorSwitchSCRIPT|
+SCPT|0x10039c7|DLC05ConveyorMachineSCRIPT|
+SCPT|0x10039c5|DLC05TrigAsmPartC02SCRIPT|
+SCPT|0x10039bb|DLC05SomahSCRIPT|
+SCPT|0x10039ac|DLC05MZ3QuestScript|
+SCPT|0x100372f|DLC05BigDoorWithEffectsSCRIPT|
+SCPT|0x100372d|DLC05FXSprayBigDoorSCRIPT|
+SCPT|0x100371f|DLC05AsmRobotEVPSomahOnDeathSCRIPT|
+SCPT|0x1003717|DLC05GeneratorCoreSCRIPT|
+SCPT|0x1003452|DLC05TrigAsmPartBSCRIPT|
+SCPT|0x100344f|DLC05TrigAsmPartDSCRIPT|
+SCPT|0x10033ff|DLC05TrigAsmPartCSCRIPT|
+SCPT|0x10033ef|DLC05StasisControlsScript|
+SCPT|0x10033b1|DLC05TrigAsmAlarm1SCRIPT|
+SCPT|0x10033a8|DLC05AsmSCRIPT|
+SCPT|0x10033a6|DLC05TrigAsmControlSCRIPT|
+SCPT|0x1003385|DLC05NPCAstronautScript|
+SCPT|0x1003384|DLC05NPCTercorienScript|
+SCPT|0x1003383|DLC05NPCSamuraiScript|
+SCPT|0x1003382|DLC05NPCPaulsonScript|
+SCPT|0x1003329|testportableCoverActivatorSCRIPT|
+SCPT|0x1003321|DLC05HoldingCellActivatorScript|
+SCPT|0x100330d|DLC05SallyCellTriggerScript|
+SCPT|0x1003122|DLC05TriggerArmControllerSCRIPT|
+SCPT|0x1002edc|DLC05CryoLabDeathclawTrigSCRIPT|
+SCPT|0x1002947|DLC05ParalysisSCRIPT|
+SCPT|0x1002946|DLC05AlienSwitchEnableREFSCRIPT|
+SCPT|0x1001f65|DLC05WeapAlienScript|
+SCPT|0x1001f53|DLC05AlienControllerSCRIPT|
+SCPT|0x1001f4d|DLC05CryoKnockoutSCRIPT|
+SCPT|0x1001f49|DLC05CryoTrapSCRIPT|
+SCPT|0x100160f|DLC05WeapRechargeStationScript|
+SCPT|0x1001601|DLC05TeleporterDoorSCRIPT|
+SCPT|0x100096d|DLC05MZ1QuestScript|
+SCPT|0x100096c|DLC05MZ2QuestScript|
+SCPT|0x1000830|spaceWalkSCRIPT|
+SCPT|0x1000824|testCryoTriggerSCRIPT|
+SCPT|0x100081f|testCryoSubjectSCRIPT|
+ENCH|0x100ab71|DLC05SamuraiArmorEffect|Samurai Armor Effect
+ENCH|0x100ab70|DLC05PaulsonsOutfitEffect|Paulson's Outfit Effect
+ENCH|0x100ab6f|DLC05MedicArmorEffect|Medic Armor Effect
+ENCH|0x100ab6e|DLC05ChasesCoat|Chase's Coat Effect
+ENCH|0x1007437|DLC05EnchShockBaton|Shck Baton Damage
+ENCH|0x1003f7b|DLC05EnchFaceSmasher|Face Smash
+ENCH|0x1002a73|DLC05EnchCryoGrenade|Cryo Freeze
+SPEL|0x100db93|DLC05ParalyzeOnce|Paralyze1
+SPEL|0x100d2e1|DLC05TeleportGlowSpell|
+SPEL|0x100d2e0|DLC05TeleportSpell|
+SPEL|0x100d2df|DLC05TeleportInSpell|
+SPEL|0x100d2de|DLC05TeleportOutSpell|
+SPEL|0x100c697|DLC05AsmBossSpell|
+SPEL|0x100a8d8|DLC05BioGelRandom1|Biochemical Anomaly
+SPEL|0x100a8d7|DLC05BioGelRandom0|Biochemical Anomaly
+SPEL|0x100a8d6|DLC05BioGelRandom9|Biochemical Anomaly
+SPEL|0x100a8d5|DLC05BioGelRandom8|Biochemical Anomaly
+SPEL|0x100a8d4|DLC05BioGelRandom7|Biochemical Anomaly
+SPEL|0x100a8d3|DLC05BioGelRandom6|Biochemical Anomaly
+SPEL|0x100a8d2|DLC05BioGelRandom5|Biochemical Anomaly
+SPEL|0x100a8d1|DLC05BioGelRandom4|Biochemical Anomaly
+SPEL|0x100a8d0|DLC05BioGelRandom2|Biochemical Anomaly
+SPEL|0x100a8cf|DLC05BioGelRandom3|Biochemical Anomaly
+SPEL|0x100742f|DLC05AlienArmorSpellBurst|Inertia Suppression Burst
+SPEL|0x100742e|DLC05AlienArmorSpell|Inertia Suppression
+SPEL|0x1006dba|DLC05FollowerRegen|
+SPEL|0x1003cce|DLC05CryoParalyzeLONG|Paralyze
+SPEL|0x1003c56|DLC05FaceSmasherSpell|
+SPEL|0x1003c55|FaceSmashEffect|Face Smash
+SPEL|0x1001f4b|DLC05CryoParalyze|Paralyze
+ACTI|0x100db57|DLC05MZ2ReturnTriggerOverride|
+ACTI|0x100db3c|DLC05RobotFriendMoveTrigger|Gas Valve
+ACTI|0x100d87a|DLC05TriggerExLabGalleryEscape|
+ACTI|0x100d749|DLC05SteamAlienPatrollers|
+ACTI|0x100d2e2|DLC05TeleportTrigger|
+ACTI|0x100ce79|DLC05LQSamuraiBloodBath|
+ACTI|0x100cd74|DLC05CryoBurstACTIVATOR|
+ACTI|0x100cbdc|DLC05CryoBurstRandomACT|
+ACTI|0x100cbce|DLC05Projector01|
+ACTI|0x100cb85|DLC05AlienKlaxonRedOff|
+ACTI|0x100cb84|DLC05AlienKlaxonRedOn|
+ACTI|0x100cad7|DLC05Control02WorkBench|
+ACTI|0x100cad6|DLC05AlienWorkBench|
+ACTI|0x100cace|DLC05TelepadActivatorExLab|
+ACTI|0x100ca72|DLC05TriggerExLabGalleryControl|
+ACTI|0x100c4ad|DLC05FXGlowSimpFillRndActivator|
+ACTI|0x100c4ab|DLC05Holo08Activator|
+ACTI|0x100c481|DLC05TeleDart01|Teleport Dart
+ACTI|0x100c357|DLC05UpdateCoreStageTRIG|Gas Valve
+ACTI|0x100c354|DLC05CoreStageControlTRIG|
+ACTI|0x100c318|DLC05CrushingMachineShortACTalternate|
+ACTI|0x100c30f|DLC05TriggerAbominationDisable|
+ACTI|0x100c021|DLC05UniqueCannonActivator|
+ACTI|0x100bdd8|DLC05CrushingMachineShortACT|
+ACTI|0x100bdd7|DLC05CrushingMachineShorterACT|
+ACTI|0x100bdac|DLC05RobotPodExLab|
+ACTI|0x100bd25|DLC05BridgeStarSpin|
+ACTI|0x100bd1c|DLC05Machine03|
+ACTI|0x100bcfe|DLC05ZetaDead01|
+ACTI|0x100bcf4|marksTestScriptRunner|
+ACTI|0x100bb5d|DLC05ConsoleBig01|
+ACTI|0x100bb5c|DLC05Console03|
+ACTI|0x100bb5b|DLC05Console02|
+ACTI|0x100bb5a|DLC05Console01|
+ACTI|0x100bb59|DLC05ConsoleLowBigCorIn02|
+ACTI|0x100bb58|DLC05ConsoleLowBigCorIn01|
+ACTI|0x100bb57|DLC05ConsoleLowBig02|
+ACTI|0x100bb56|DLC05ConsoleLowBig01|
+ACTI|0x100bb55|DLC05ConsoleLow01|
+ACTI|0x100bb54|DLC05ConsoleCeilingBig03|
+ACTI|0x100bb53|DLC05ConsoleCeilingBig02|
+ACTI|0x100bb52|DLC05ConsoleCeilingBig01|
+ACTI|0x100bb51|DLC05ConsoleBig03|
+ACTI|0x100bb50|DLC05ConsoleBig02DUPLICATE000|
+ACTI|0x100bb4f|DLC05MachineBig02|
+ACTI|0x100b7e9|DLC05ExLabControl02|
+ACTI|0x100b7d3|DLC05CryoLabInPositionTrig|
+ACTI|0x100b422|DLC05TrigHangarKillVolumeTop|
+ACTI|0x100b284|DLC05CryoHandleElliotEventsTRIG|
+ACTI|0x100b096|DLC05SpacesuitBreathingDUMMY|
+ACTI|0x100ade1|DLC05SteamEnd|
+ACTI|0x100ad54|DLC05AsmSoloSpawnB|
+ACTI|0x100aac9|DLC05FF01ExitTRIG|
+ACTI|0x100aaae|DLC05TrigAsmSomahExplodeTurret|
+ACTI|0x100aaa8|DLC05CryoPodSwitchOFF|Switch
+ACTI|0x100aaa6|DLC05CryoPodSwitch|Switch
+ACTI|0x100a9f2|DLC05TelepadActivatorDummy|Teleportation Matrix
+ACTI|0x100a9de|DLC05WorkBench|Work Bench
+ACTI|0x100a98f|DLC05PostTeleporterUpdateTrigger|
+ACTI|0x100a93a|DLC05DeathRayTeleAttackWave|
+ACTI|0x100a92c|DLC05BridgeGeneratorControl|Generator Control
+ACTI|0x100a925|DLC05TrigAsmStage7|
+ACTI|0x100a88a|DLC05HoloControl|Control
+ACTI|0x100a86a|DLC05AlienKlaxon|
+ACTI|0x100a841|DLC05BridgePowerControl|Power Distribution
+ACTI|0x100a840|DLC05PowerControl|Power Distribution
+ACTI|0x100a778|DLC05TelepadActivatorAsm|
+ACTI|0x100a775|DLC05TrigAsmAlarm2|
+ACTI|0x100a772|DLC05AlienControllerAsm|Alien Controller
+ACTI|0x100a765|DLC05ExtraButton9|Control
+ACTI|0x100a763|DLC05ExtraButton8|Control
+ACTI|0x100a761|DLC05ExtraButton7|Control
+ACTI|0x100a75f|DLC05ExtraButton6|Control
+ACTI|0x100a75d|DLC05ExtraButton5|Control
+ACTI|0x100a75b|DLC05ExtraButton4|Control
+ACTI|0x100a759|DLC05ExtraButton3|Control
+ACTI|0x100a757|DLC05ExtraButton2|Control
+ACTI|0x100a755|DLC05ExtraButton1|Control
+ACTI|0x100a753|DLC05ExtraButton0|Control
+ACTI|0x100a6c6|DLC05CargoButtercupGlow|
+ACTI|0x100a635|DLC05ButtercupGlow01|
+ACTI|0x100a5ff|DLC05RobotPodOpen|Drone Pod
+ACTI|0x100a5fc|DLC05TrigHangarKillVolume|
+ACTI|0x1009c80|DLC05CargoHoldConvTrigger08|
+ACTI|0x1009c7f|DLC05CargoShockTrig01|
+ACTI|0x1009c7e|DLC05CargoHoldConvTrigger07|
+ACTI|0x1009c7d|DLC05CargoShockTrig02|
+ACTI|0x1009c6d|DLC05HQPaulsonCommentTrigger01|
+ACTI|0x1009c6a|DLC05AsmSomahGeneratorTrigger|
+ACTI|0x1009a14|DLC05AsmCommentTrigger01|
+ACTI|0x10099fa|DLC05TelepadActivatorHangar|
+ACTI|0x10099ee|DLC05CargoHoldConvTrigger06|
+ACTI|0x10099ed|DLC05CargoHoldConvTrigger02|
+ACTI|0x10099ec|DLC05CargoHoldConvTrigger01|
+ACTI|0x10099eb|DLC05CargoHoldConvTrigger05|
+ACTI|0x10099ea|DLC05CargoHoldConvTrigger04|
+ACTI|0x10099e9|DLC05CargoHoldConvTrigger03|
+ACTI|0x100997a|DLC05RobotPod|Drone Pod
+ACTI|0x1009952|DLC05MZ1SomahDoorTrigger|Gas Valve
+ACTI|0x1009910|DLC05ERoomSayTo|
+ACTI|0x10098ed|DLC05TrigHangarStage101|
+ACTI|0x10085fb|DLC05StasisControlPanel|Stasis Controls
+ACTI|0x1008507|DLC05TelepadActivator|Teleportation Matrix
+ACTI|0x10082d1|DLC05AlienDoorControlVERYHARD|Door Controls
+ACTI|0x10082cf|DLC05AlienDoorControlAVERAGE|Door Controls
+ACTI|0x10082cd|DLC05AlienDoorControlHARD|Door Controls
+ACTI|0x10082ca|DLC05AlienDoorControlEASY|Door Controls
+ACTI|0x10082c6|DLC05ECorePlayerKill|
+ACTI|0x1007feb|DLC05killAliensWithinTRIG|
+ACTI|0x1007e63|DLC05MZ3BridgeTeleporterControl|Control
+ACTI|0x1007e2d|DLC05MZ3TeleporterUpdateTrigger|Gas Valve
+ACTI|0x1007e2a|DLC05MZ3LabTeleporterControl|Control
+ACTI|0x1007c91|DLC05CargoStopTrashDumpTrigger|
+ACTI|0x1007c90|DLC05CargoBeginTrashDumpTrigger|
+ACTI|0x1007c1d|DLC05DeathRayGenCoolantSwitch|Core Coolant Switch
+ACTI|0x1007c1b|DLC05DeathRayGeneratorCore|
+ACTI|0x1007b81|DLC05SpaceWalkEnableDeathTriggerTRIG|Gas Valve
+ACTI|0x1007a03|DLC05ERoomGasTrapControl|Release Control
+ACTI|0x10079e5|DLC05EngineRoomGasTrap|
+ACTI|0x10079a9|DLC05CryoPointOfNoReturnTRIG|
+ACTI|0x100776b|DLC05TrigHangarZoneE|
+ACTI|0x100776a|DLC05TrigHangarZoneD|
+ACTI|0x1007769|DLC05TrigHangarZoneC|
+ACTI|0x1007768|DLC05TrigHangarZoneB|
+ACTI|0x1007762|DLC05TrigHangarZoneF|
+ACTI|0x100752e|DLC05MZRmGeneratorWin01|
+ACTI|0x1007456|DLC05FF01kickoffTRIG|
+ACTI|0x1007444|DLC05SpaceFloatToDeathTRIG|Gas Valve
+ACTI|0x100743f|DLC05SpaceWalkLevitateTrig|Gas Valve
+ACTI|0x100740a|DLC05FF01cartMasterDUMMY|
+ACTI|0x1007408|DLC05FF01cartTrig|Gas Valve
+ACTI|0x1007395|DLC05ExtDoorHatch01|
+ACTI|0x1007392|DLC05MZExtPanelActivator02|Exposed Panel
+ACTI|0x100738f|DLC05ExtIrisDoor01|
+ACTI|0x100738a|DLC05MZExtPanelActivator01|Exposed Panel
+ACTI|0x100727c|DLC05SteamSallyTutorial|
+ACTI|0x1007263|DLC05TriggerHangarAnimControl|
+ACTI|0x100722f|DLC05SteamSallyIgnore|
+ACTI|0x10070a6|DLC05TrigHangarStage25|
+ACTI|0x10070a3|DLC05TrigHangarStage50|
+ACTI|0x100707e|DLC05TriggerActivateOnTrigger|
+ACTI|0x1007066|DLC05MZ1SallyCoreTrigger|
+ACTI|0x1007058|DLC05Forcefield|
+ACTI|0x1006db4|DLC05MZRmGeneratorACTHavok|
+ACTI|0x1006db3|DLC05MZRmGeneratorACTDestroyed|
+ACTI|0x1006db1|DLC05GeneratorMainSwitch|Control
+ACTI|0x1006d13|DLC05HangarBossDoorControl|Control
+ACTI|0x1006c75|DLC05CryoSquadSwitch|Switch
+ACTI|0x1006c70|DLC05CryoPodDoorSquadACTIVATOR|
+ACTI|0x1006c58|DLC05CryoSoldierRoomTrig|Gas Valve
+ACTI|0x1006bf4|DLC05GeneratorCoolantSwitch|Core Coolant Switch
+ACTI|0x1006b31|DLC05AssmbLnStationBrk|
+ACTI|0x1006b1c|DLC05TrigHangarStage200|
+ACTI|0x1006af6|DLC05FF01arenaControlTRIG|
+ACTI|0x1006864|DLC05ClawArmPickUp|
+ACTI|0x1006311|DLC05WeapRechargeRifleLocTrigger|
+ACTI|0x1006310|DLC05WeapRechargePistolLocTrigger|
+ACTI|0x100613b|DLC05ambientShooterDummy|
+ACTI|0x10060a3|DLC05HealArch01|Healing Archway
+ACTI|0x1006036|DLC05CryoTrapMAIN|Gas Valve
+ACTI|0x1006031|DLC05CryoTrapACT|
+ACTI|0x100602f|DLC05CryoTrapSprayJet|
+ACTI|0x1005f0a|DLC05MZ2NPCTriggerRobot|
+ACTI|0x1005f08|DLC05MZ2NPCTriggerHang|
+ACTI|0x1005f03|DLC05MZ2NPCTriggerCryo|
+ACTI|0x1005efb|DLC05MZ1TortureDevice|
+ACTI|0x1005ee9|DLC05CryoSwitchFreezeScene|Switch
+ACTI|0x1005ee0|DLC05BridgeJammerControl|Jammer Control
+ACTI|0x1005edf|DLC05BridgeShieldControl|Shield Controller
+ACTI|0x1005e48|DLC05TriggerHangarLeviForce|
+ACTI|0x1005dff|DLC05TriggerHangarSiegeControl|
+ACTI|0x1005cc4|DLC05MZRmGeneratorACTCore|
+ACTI|0x1005c7b|DLC05DeathRayGeneratorACT|
+ACTI|0x1005c72|DLC05FF01barkTrigger|
+ACTI|0x1005c13|DLC05ShockVolumeSwitch|Control
+ACTI|0x1005c0c|DLC05ShockVolumeTrig|
+ACTI|0x1005af4|DLC05BridgeControl|Fire Control
+ACTI|0x1005aae|DLC05SpaceDecompressionSwitch02|Switch
+ACTI|0x10059ba|DLC05SpaceDecompressionSwitch01|Switch
+ACTI|0x10058ed|DLC05RCLightRounded01OFF|
+ACTI|0x1005748|DLC05MZ3ExLabSceneTrigger|
+ACTI|0x100563c|DLC05CryoElliotTaunt01Trig|Gas Valve
+ACTI|0x1005634|DLC05CryoElliotFreezeTRIG|Gas Valve
+ACTI|0x1005620|DLC05CryoElliotSayGenTRIG|Gas Valve
+ACTI|0x10055d8|DLC05TeleportTest|
+ACTI|0x100518b|DLC05CryoPodAnimACTIVATOR|
+ACTI|0x1005186|DLC05CryoPodDoorACTIVATOR|
+ACTI|0x1005178|DLC05TrigAsmPartA|
+ACTI|0x1004ff6|DLC05CargoDumpDisableTrigger|
+ACTI|0x1004e7a|DLC05GravityBumper01|
+ACTI|0x1004e69|DLC05MZ3CoreTeleporterControl|Control
+ACTI|0x1004e3d|DLC05AlienBed|Stasis Chamber
+ACTI|0x1004c18|DLC05ExLabWeaponFireControl|Test Weapon
+ACTI|0x1004c13|DLC05WeapAlienRifleActivator01|Alien Test Rifle 01
+ACTI|0x1004c09|DLC05EXLabTeleControl|Teleporter Control
+ACTI|0x10049ff|DLC05DeathRayDialogue20Trig|Gas Valve
+ACTI|0x10049fb|DLC05DeathRayDialogue10Trig|Gas Valve
+ACTI|0x1004941|DLC05DeathRay|
+ACTI|0x1004940|DLC05DeathRayPos02Button|Control
+ACTI|0x100493e|DLC05DeathRayFireButton|Control
+ACTI|0x100493d|DLC05DeathRayChargeButton|Control
+ACTI|0x100493c|DLC05DeathRayPos01Button|Control
+ACTI|0x100478a|DLC05TrigHangarEnemyUpstairs|
+ACTI|0x1004721|DLC05SpaceWalk03MasTrig|Gas Valve
+ACTI|0x100471c|DLC05SpaceWalkUpdateObjective01TRIG|Gas Valve
+ACTI|0x100471a|DLC05SpaceWalk01DecompressionTrig|Gas Valve
+ACTI|0x1004716|DLC05SpaceWalk01TalkTrig01|Gas Valve
+ACTI|0x1004713|DLC05SpaceBridge01MasTrig|Gas Valve
+ACTI|0x1004710|DLC05SpaceDecompressionEndTrig|Gas Valve
+ACTI|0x10046a8|DLC05SpaceWalkRepairNode|Repair Node
+ACTI|0x100424c|DLC05SteamQuestSteps|
+ACTI|0x1004230|DLC05CryoLab02MasTrig|Gas Valve
+ACTI|0x1004212|DLC05SpaceWalk02MasTrig|Gas Valve
+ACTI|0x10041fd|DLC05TrigHangarStage40|
+ACTI|0x10041fa|DLC05TrigHangarStage30|
+ACTI|0x10041f7|DLC05TrigHangarStage20|
+ACTI|0x10041f4|DLC05TrigHangarStage10|
+ACTI|0x10041e0|DLC05HangarTeleSwitch|Control
+ACTI|0x10041d1|DLC05TrigHangarControl|
+ACTI|0x10041ce|DLC05TriggerCreateDetectionEvent|
+ACTI|0x10041af|DLC05Control02|Control
+ACTI|0x10041ac|DLC05Terminal01|Terminal
+ACTI|0x10041a8|DLC05Control01|Control
+ACTI|0x10041a2|DLC05MZTelepad01|
+ACTI|0x10041a1|DLC05MZDoorSmField01|
+ACTI|0x1003f43|DLC05HangarSpawnSwitch|Spawns some guys
+ACTI|0x1003f3f|DLC05BumperSwitch|Pylon Control
+ACTI|0x1003f35|DLC05TriggerBumperControl|
+ACTI|0x1003cc4|DLC05CryoFreezeRoomTrig|Gas Valve
+ACTI|0x1003cb9|DLC05CryoLab01MasTrig|Gas Valve
+ACTI|0x1003caf|DLC05MZ3TEMPBridgeTrigger|
+ACTI|0x1003cad|DLC05MZ3DeathRaySwitch|Death Ray Switch
+ACTI|0x1003ca5|DLC05MZ3SallyLabTrigger1|
+ACTI|0x10039c6|DLC05AssemblySwitch|Electronics Access Panel
+ACTI|0x10039c4|DLC05TrigAsmPartC02|
+ACTI|0x10039ba|DLC05ConveyorMachine|Conveyor Machine
+ACTI|0x100372c|DLC05FXSprayBigDoor|
+ACTI|0x100370a|DLC05GeneratorSwitch01|Bumper Switch
+ACTI|0x1003709|DLC05MZRmGeneratorACT|
+ACTI|0x1003451|DLC05TrigAsmPartB|
+ACTI|0x100344e|DLC05TrigAsmPartD|
+ACTI|0x10033f9|DLC05TrigAsmPartC|
+ACTI|0x10033ed|DLC05StasisControls|Stasis Controls
+ACTI|0x10033af|DLC05TrigAsmAlarm1|
+ACTI|0x10033a4|DLC05TrigAsmControl|
+ACTI|0x1003328|testportableCoverActivator|
+ACTI|0x100330e|DLC05HoldingCellActivator|Release Mechanism
+ACTI|0x100330b|DLC05SallyCellTrigger|
+ACTI|0x1003120|DLC05TriggerArmController|
+ACTI|0x1002eda|DLC05CryoLabDeathclawTRIG|Gas Valve
+ACTI|0x1002945|DLC05AlienSwitchEnable|Switch
+ACTI|0x100208f|DLC05TriggerDoorOpener|
+ACTI|0x1001f52|DLC05AlienController|Control
+ACTI|0x1001f47|DLC05CryoTrap|Gas Valve
+ACTI|0x100160d|DLC05WeapRechargeStation|Alien Weapon Recharge Station
+ACTI|0x100082d|testSpaceWalk|
+ACTI|0x1000822|testCryoTrigger|
+TACT|0x1005c75|DLC05FF01sallyBarkPoint|Intercom
+TACT|0x10059c9|DLC05SpaceWalkLoudSpeaker|Speaker
+TACT|0x10058b0|DLC05MZ3Viewscreen|Alien Viewscreen
+TACT|0x1004e79|DLC05BridgeIntercomLiving|Intercom
+TACT|0x1004e78|DLC05BridgeIntercomDeathRay|Intercom
+TACT|0x1004e77|DLC05BridgeIntercomShields|Intercom
+TACT|0x1004e4a|DLC05BridgeIntercomTelepad|Intercom
+TACT|0x1004e48|DLC05BridgeIntercom|Intercom
+TACT|0x100499d|DLC05SteamSallyTACT|Intercom
+TACT|0x1003f1e|DLC05AlienRadioBeacon|Recon Craft Theta Beacon
+TERM|0x100ab72|DLC05ReidUnderwoodsTerminal|Reid Underwood's Terminal
+ARMO|0x100c96d|DLC05GeneralCoat|Colonel Autumn's Uniform
+ARMO|0x100bb63|DLC05SpacesuitHelmet|Astronaut Helmet
+ARMO|0x100ab6d|DLC05GeneralChasesOvercoat|General Chase's Overcoat
+ARMO|0x100a9a2|DLC05ArmorCombatHelmet|Winterized Medic Helmet
+ARMO|0x100a9a1|DLC05ArmorCombatMedic|Winterized Medic Armor
+ARMO|0x1006940|DLC05SamuraiArmor|Samurai Armor
+ARMO|0x100693f|DLC05SamuraiHelmet|Samurai Helmet
+ARMO|0x10058eb|DLC05AstronautSuit|Spacesuit
+ARMO|0x1003306|DLC05PaulsonsOutfit|Paulson's Outfit
+ARMO|0x1003305|DLC05PaulsonsHat|Sheriff's Hat
+CONT|0x100abb1|DLC05AnchorageFootlocker|Military Footlocker
+CONT|0x100ab8a|DLC05UnderwoodSafe|Underwood's Safe
+CONT|0x100a8e6|DLC05Container10|Container
+CONT|0x100a8e5|DLC05Container09|Container
+CONT|0x100a8e4|DLC05Container08|Container
+CONT|0x100a8e3|DLC05Container07|Container
+CONT|0x100a8e2|DLC05Container06|Container
+CONT|0x100a8e1|DLC05Container05|Container
+CONT|0x100a8e0|DLC05Container04|Container
+CONT|0x100a8df|DLC05Container02|Container
+CONT|0x100a8de|DLC05Container03|Container
+CONT|0x1007e4f|DLC05HoldingCellRaiderContainer|Container
+CONT|0x1007e4c|DLC05HoldingCellEnclaveContainer|Container
+CONT|0x10066f4|DLC05WeapRepairContainer|Alien Recycler
+CONT|0x1005e6d|DLC05Container01|Container
+CONT|0x100293e|DLC05PlayerContainer|Container
+DOOR|0x100c8de|DLC05WasteTeleporterDoor|Teleportation Matrix
+DOOR|0x100c48c|DLC05BridgeWastelandDoor|Teleportation Matrix
+DOOR|0x100c477|DLC05TeleporterDoorCoreScene|Teleportation Matrix
+DOOR|0x100c476|DLC05MZDoorBig01CoreScene|Door
+DOOR|0x100aaca|DLC05TeleporterDoorMinUseHidden|Teleportation Matrix
+DOOR|0x100aa26|DLC05EscapeHatch|Hatch
+DOOR|0x100a98d|DLC05HomingBeacn|Alien Homing Beacon
+DOOR|0x1009924|DLC05TeleporterDoorScripted06|Teleportation Matrix
+DOOR|0x1009923|DLC05TeleporterDoorScripted05|Teleportation Matrix
+DOOR|0x1009922|DLC05TeleporterDoorScripted04|Teleportation Matrix
+DOOR|0x1009921|DLC05TeleporterDoorScripted02|Teleportation Matrix
+DOOR|0x1009920|DLC05TeleporterDoorScripted01|Teleportation Matrix
+DOOR|0x100824d|DLC05DynColCut01|
+DOOR|0x1008248|DLC05MZSpaceWalkDoor|Airlock Door
+DOOR|0x1007e5f|DLC05BridgeTeleporterDoor|Teleportation Matrix
+DOOR|0x1007e5e|DLC05LabTeleporterDoor|Teleportation Matrix
+DOOR|0x1007e2b|DLC05LabTeleportDoor|Teleportation Matrix
+DOOR|0x1007274|DLC05MZDoorSm01CoreScene|Door
+DOOR|0x1006d9a|DLC05MZDoorSmFieldDown|
+DOOR|0x1006b21|DLC05MZDoorSmFieldSide|
+DOOR|0x1005ab0|DLC05DecompressionDoor02|Door
+DOOR|0x10059c4|DLC05DecompressionDoor01|Door
+DOOR|0x1004e67|DLC05EngineCoreDoor|Teleportation Matrix
+DOOR|0x1003bfb|DLC05MZDoorSm01|Door
+DOOR|0x100372e|DLC05BigDoorWithEffects|Door
+DOOR|0x1001600|DLC05TeleporterDoor|Teleportation Matrix
+DOOR|0x1000856|DLC05MZDoorBig01|Door
+LIGH|0x100d244|DLC05MZLightYellowHot01|
+LIGH|0x100d23e|DLC05MZLightWhiteHot01|
+LIGH|0x100d13b|DLC05ExaminationWhite128|
+LIGH|0x100d070|DLC05MZLightHotness01|
+LIGH|0x100ce55|DLC05MZLightCryo01|
+LIGH|0x100cbb7|DLC05MZLightTHESUN01|
+LIGH|0x100cbad|DLC05TeleporterLight01|
+LIGH|0x100c64c|DLC05MZLightSteamworksViolet01|
+LIGH|0x100c616|DLC05MZLightHolo02|
+LIGH|0x100c4aa|DLC05MZLightGenSwitchHoloSCRIPT|
+LIGH|0x100c483|DLC05MZLightDeathray01|
+LIGH|0x100c0e3|DLC05MZLight03b|
+LIGH|0x100c06d|DLC05MZLightSewer02|
+LIGH|0x100c066|DLC05MZLightSewer01|
+LIGH|0x100b47f|DLC05MZLightAssemblyline01|
+LIGH|0x100b0a6|DLC05MZLightBrightBlue01|
+LIGH|0x100b043|DLC05MZLightHolo01|
+LIGH|0x100ae5e|DLC05MZSpaceLight01|
+LIGH|0x100ae53|DLC05MZLightBridge01|
+LIGH|0x100aca7|DLC05MZLightCargoHold04|
+LIGH|0x100ac2a|DLC05MZLightCargoHold03|
+LIGH|0x100ac20|DLC05MZLightCargoHold02|
+LIGH|0x100ac1f|DLC05MZLightCargoHold01|
+LIGH|0x100ac07|DLC05KlaxonGlow|
+LIGH|0x100a818|DLC05MZLightSteamworks04|
+LIGH|0x100a806|DLC05MZLightSteamworks03|
+LIGH|0x100a7b2|DLC05MZLightSteamworks02|
+LIGH|0x100a7a4|DLC05MZLightSteamworks01|
+LIGH|0x1009c1a|DLC05MZLight09|
+LIGH|0x1009c16|DLC05MZLight08|
+LIGH|0x10087db|DLC05MZLight07|
+LIGH|0x10082d4|DLC05MZLightWhite01|
+LIGH|0x1007d4a|DLC05MZLightEngineCoreWarmDark|
+LIGH|0x1007d49|DLC05MZLightEngineCoreWarm02|
+LIGH|0x1007d48|DLC05MZLightEngineCoreWarm|
+LIGH|0x1007d47|DLC05MZLightEngineCore01|
+LIGH|0x1007b44|DLC05MZLight05|
+LIGH|0x1007b43|DLC05MZLight04|
+LIGH|0x1007b41|DLC05MZSpace01|
+LIGH|0x100756b|DLC05TrainLight01|
+LIGH|0x10041a6|DLC05MZLightTelepad01|
+LIGH|0x1003e46|DLC05MZLightSpace01|
+LIGH|0x100085a|DLC05MZLight03|
+LIGH|0x1000859|DLC05MZLight02|
+LIGH|0x100084d|DLC05MZLight01|
+MISC|0x100bdfc|DLC05ButtercupToy|Buttercup Toy
+MISC|0x100a9ed|DLC05AlienGemstoneSmall|Small Gemstone
+MISC|0x100a9ec|DLC05AlienGemstoneLarge|Large Gemstone
+MISC|0x100a9e9|DLC05AlienCrystalSmall|Small Alien Crystal
+MISC|0x100a9e6|DLC05AlienCrystalLarge|Large Alien Crystal
+MISC|0x100a9e5|DLC05AlienCrystal|Crystal
+MISC|0x100a9e3|DLC05AlienImager|Imager
+MISC|0x100a9e0|DLC05AlienGemstone|Gemstone
+MISC|0x100a85e|DLC05AlienMechanism|Mechanism
+MISC|0x100a85c|DLC05AlienMaterial|Unidentified Material
+MISC|0x100a85a|DLC05AlienDevice|Device
+MISC|0x100a858|DLC05AlienContraption|Contraption
+MISC|0x100a856|DLC05AlienAppliance|Appliance
+MISC|0x100a854|DLC05AlienThingamabon|Thingamabob
+MISC|0x100a852|DLC05AlienDoodad|Doodad
+MISC|0x100a850|DLC05AlienTool|Tool
+MISC|0x100a84e|DLC05AlienGizmo|Gizmo
+MISC|0x100a84c|DLC05Widget|Widget
+MISC|0x1009a36|DLC05RobotControlItem|Drone Control Device
+STAT|0x100d135|DLC05TortureLight|
+STAT|0x100d0da|DLC05HoloGasTrap|
+STAT|0x100d0cd|DLC05HoloCrusher|
+STAT|0x100d0b6|DLC05HoloTerminal|
+STAT|0x100d0b5|DLC05HoloCryoPod|
+STAT|0x100d0ac|DLC05HolocircularDoor|
+STAT|0x100d0ab|DLC05HoloTeleporter|
+STAT|0x100ce61|DLC05spaceDomeCore01|
+STAT|0x100ce5c|DLC05MCRmEndExBig01|
+STAT|0x100ce5b|DLC05MCRmWallHalf01|
+STAT|0x100ce52|DLC05MZRmWallExSmHolo01|
+STAT|0x100cbbb|DLC05MBRmCorInWinL01|
+STAT|0x100cbba|DLC05MBRmCorInWinR01|
+STAT|0x100cb9a|DLC05Blood11|
+STAT|0x100cb99|DLC05Blood10|
+STAT|0x100cb98|DLC05Blood09|
+STAT|0x100cb97|DLC05Blood08|
+STAT|0x100cb96|DLC05Blood07|
+STAT|0x100cb95|DLC05Blood06|
+STAT|0x100cb94|DLC05Blood05|
+STAT|0x100cb92|DLC05Blood04|
+STAT|0x100cb91|DLC05Blood03|
+STAT|0x100cb90|DLC05Blood02|
+STAT|0x100cb8e|DLC05Blood01|
+STAT|0x100cb8d|DLC05AlienTableSideStatic|
+STAT|0x100cb8c|DLC05AlienTableRoundedStatic|
+STAT|0x100cadf|DLC05HoloWeaponsLab|
+STAT|0x100cade|DLC05HoloFire|
+STAT|0x100ca53|DLC05HoloWorkBench|
+STAT|0x100ca50|DLC05HoloRobotActivate|
+STAT|0x100ca4f|DLC05HoloBumpers|
+STAT|0x100ca13|DLC05HoloExpLab|
+STAT|0x100ca0d|DLC05Scratches|
+STAT|0x100c9e6|DLC05CameraEyeRails01|
+STAT|0x100c9d1|DLC05HoloForceField|
+STAT|0x100c9d0|DLC05HoloCargohold|
+STAT|0x100c97a|DLC05HolopowerE050|
+STAT|0x100c979|DLC05HolopowerE075|
+STAT|0x100c978|DLC05HolopowerE100|
+STAT|0x100c977|DLC05HolopowerE025|
+STAT|0x100c973|DLC05HoloSounds|
+STAT|0x100c94c|DLC05Holopower050|
+STAT|0x100c94b|DLC05Holopower075|
+STAT|0x100c94a|DLC05Holopower025|
+STAT|0x100c948|DLC05Holopower100|
+STAT|0x100c942|DLC05Holo13b|
+STAT|0x100c941|DLC05Holo13c|
+STAT|0x100c940|DLC05Holo13a|
+STAT|0x100c92c|DLC05HoloLivingQuarters|
+STAT|0x100c64a|DLC05HoloDeathRay|
+STAT|0x100c63a|DLC05HoloSteam|
+STAT|0x100c639|DLC05HoloEngine|
+STAT|0x100c62c|DLC05HoloHangar|
+STAT|0x100c61e|DLC05HoloEngineCore|
+STAT|0x100c617|FXGlowSimpFillRnd03|
+STAT|0x100c377|DLC051stPersonAlienBlasterClean|
+STAT|0x100c2e8|DLC05DumpsterBackWall|
+STAT|0x100c0da|DLC05HoloRobotAssembly|
+STAT|0x100c0d3|DLC05Holo12c|
+STAT|0x100c0d2|DLC05Holo12b|
+STAT|0x100c0d1|DLC05Holo12a|
+STAT|0x100c028|DLC05CrushingMachineBaseShorter|
+STAT|0x100c026|DLC05HoloCharge|
+STAT|0x100c025|DLC05Holo02|
+STAT|0x100be73|DLC05HoloCryolab|
+STAT|0x100be71|DLC05HoloResearchLab|
+STAT|0x100be70|DLC05HoloGenerator|
+STAT|0x100be6f|DLC05HoloMothership|
+STAT|0x100be6e|DLC05HoloSewer|
+STAT|0x100be6d|DLC05Holo04|
+STAT|0x100bd00|DLC05zetaWindowCollision|
+STAT|0x100b425|DLC05Holo03|
+STAT|0x100b326|DLC05MZHallSm1WayExDblSm01|
+STAT|0x100b0ad|DLC05MZPitCorInPlatform01|
+STAT|0x100b0a8|DLC05MZPitWallPlatform01|
+STAT|0x100b0a7|DLC05MBRmCorInExSmL01|
+STAT|0x100b0a5|DLC05MBRmCorIn01|
+STAT|0x100b0a3|DLC05MBRmWallExBig01|
+STAT|0x100b0a2|DLC05MBRmWallHalf01|
+STAT|0x100b04f|DLC05MZRmWallShrtWinR04|
+STAT|0x100b04e|DLC05MZRmWallShrtWinL04|
+STAT|0x100b045|DLC05MZRmWallHalfVent01|
+STAT|0x100b044|DLC05MZRmEndExBigVent01|
+STAT|0x100ae58|DLC05MZRmWallHalf01|
+STAT|0x100ae57|DLC05MBRmWallExSm01|
+STAT|0x100ae56|DLC05MBRmWall02|
+STAT|0x100ae55|DLC05MBRmWall03|
+STAT|0x100ae54|DLC05MBRmWall01|
+STAT|0x100ae52|DLC05MBRmCorIn02|
+STAT|0x100ae48|DLC05MZRmBridgeDias01|
+STAT|0x100ae47|DLC05MZRmMid4x4Ceiling01|
+STAT|0x100addb|DLC05Crate04|
+STAT|0x100adda|DLC05Crate03|
+STAT|0x100ad39|DLC05GoboPlayerSheilds2|
+STAT|0x100ad38|DLC05GoboPlayerSheilds1|
+STAT|0x100ad37|DLC05GoboEnemySheilds3|
+STAT|0x100ad36|DLC05GoboEnemySheilds2|
+STAT|0x100ad35|DLC05GoboEnemySheilds1|
+STAT|0x100ad34|DLC05GoboWarning|
+STAT|0x100ad33|DLC05GoboShipHealth75|
+STAT|0x100ad32|DLC05GoboShipHealth50|
+STAT|0x100ad31|DLC05GoboShipHealth25|
+STAT|0x100ad30|DLC05GoboScreenBlank|
+STAT|0x100ad2f|DLC05GoboPlayerSheilds3|
+STAT|0x100ad23|DLC05MZDumpsterDoorway|
+STAT|0x100abfb|DLC05Mothership01|
+STAT|0x100aa37|DLC05AssmbLnANIM05static|
+STAT|0x100aa1a|DLC05CrushingMachineBaseLong|
+STAT|0x100aa19|DLC05CrushingMachineBaseShort|
+STAT|0x100a955|DLC05AssmbLnANIM04static|
+STAT|0x100a954|DLC05AssmbLnANIM03static|
+STAT|0x100a953|DLC05AssmbLnANIM02static|
+STAT|0x100a952|DLC05AssmbLnANIM01static|
+STAT|0x100a8e7|DLC05AssmbLnANIM03xxx|
+STAT|0x100a80d|DLC05Light02|
+STAT|0x100a80c|DLC05Light01|
+STAT|0x100a680|DLC05MZPitWallRailShort01|
+STAT|0x100a67e|DLC05MZPitHighObvR01|
+STAT|0x100a67b|DLC05MZPitHighObvL01|
+STAT|0x100a67a|DLC05MZPitHighObvWall01|
+STAT|0x100a679|DLC05MZRmEndExBig01|
+STAT|0x100a636|DLC05MachineSmallTube02|
+STAT|0x1009c35|DLC05MZExtQuartTop04|
+STAT|0x1009c34|DLC05MZExtQuartTop02|
+STAT|0x1009c33|DLC05MZExtQuartTop03|
+STAT|0x1009c1e|DLC05MHPitWallExSm01|
+STAT|0x1009c1c|DLC05MHPitWall01|
+STAT|0x1009c15|DLC05MHPitCorIn01|
+STAT|0x1009976|DLC05ButtercupLegLow01|
+STAT|0x1009975|DLC05ButtercupLeg01|
+STAT|0x1009974|DLC05ButtercupHead01|
+STAT|0x1009973|DLC05ButtercupBody01|
+STAT|0x1008ec6|DLC05MCPitWall01|
+STAT|0x1008ec5|DLC05MCPitCorOut01|
+STAT|0x1008ec4|DLC05MCPitCorIn01|
+STAT|0x1008ec3|DLC05MCPitMid01|
+STAT|0x1008ec2|DLC05MCPitCorInTallL01|
+STAT|0x1008ec1|DLC05MCPitCorInTallR01|
+STAT|0x1008ec0|DLC05MCPitWallTall01|
+STAT|0x1008ebf|DLC05MZPitCorInTallL010000|
+STAT|0x1008ebe|DLC05MCPitWallExSm01|
+STAT|0x1008ebd|DLC05MCRmCorInWinR01|
+STAT|0x1008ebc|DLC05MCRmCorInWinL01|
+STAT|0x1008ebb|DLC05MCRmWall02|
+STAT|0x1008eba|DLC05MCRmCorInExSmR01|
+STAT|0x1008eb9|DLC05MCRmCorInExSmL01|
+STAT|0x1008eb8|DLC05MCRmWallExBig01|
+STAT|0x1008eb7|DLC05MCRmWallExSm01|
+STAT|0x1008eb6|DLC05MCRmCorOut01|
+STAT|0x1008eb5|DLC05MCRmWall03|
+STAT|0x1008eb4|DLC05MCRmCorIn02|
+STAT|0x1008eb2|DLC05MCRmCorIn01|
+STAT|0x1008eb1|DLC05MCRmWall01|
+STAT|0x1008ba4|DLC05GlassButterCupMachineGlass|
+STAT|0x1008ba1|DLC05GlassButterCupMachine01|
+STAT|0x1008b14|DLC05MZShelfStr01|
+STAT|0x1008b13|DLC05MZShelfEndL01|
+STAT|0x1008b12|DLC05MZShelfEndR01|
+STAT|0x1008863|DLC05MUHallSm1WayPort01|
+STAT|0x1008862|DLC05MUHallSmStairs01|
+STAT|0x1008861|DLC05MUHallSmEnd01|
+STAT|0x1008860|DLC05MUHallSm1WayExSm01|
+STAT|0x100885f|DLC05MUHallSm4Way01|
+STAT|0x100885e|DLC05MUHallSm2Way01|
+STAT|0x100885d|DLC05MUHallSm3Way01|
+STAT|0x100885c|DLC05MUHallSmEndExSm01|
+STAT|0x100885b|DLC05MUHallSm1Way01|
+STAT|0x100885a|DLC05MURmCorInWinR01|
+STAT|0x1008858|DLC05TrashHeap06|
+STAT|0x1008854|DLC05TrashHeap05|
+STAT|0x1008850|DLC05TrashHeap04|
+STAT|0x100884b|DLC05TrashHeap03|
+STAT|0x1008849|DLC05TrashHeap02|
+STAT|0x1008847|DLC05TrashHeap01|
+STAT|0x10087f6|DLC05MURmCorInWinL01|
+STAT|0x10087f5|DLC05MURmCorInExSmL01|
+STAT|0x10087f4|DLC05MURmCorInExSmR01|
+STAT|0x10087f3|DLC05MUPitCorInTallR01|
+STAT|0x10087f2|DLC05MUPitCorInTallL01|
+STAT|0x10087f1|DLC05MUPitWallTall02|
+STAT|0x10087f0|DLC05MUPitWallTallCorIn01|
+STAT|0x10087ef|DLC05MUPitWallTallCorOut01|
+STAT|0x10087ee|DLC05MUPitWallTallExSm01|
+STAT|0x10087ed|DLC05MUPitWallTall01|
+STAT|0x10087eb|DLC05MUPitMid01|
+STAT|0x10087ea|DLC05MUPitWallExSm01|
+STAT|0x10087e9|DLC05MUPitCorIn01|
+STAT|0x10087e8|DLC05MUPitCorOut01|
+STAT|0x10087e7|DLC05MUPitWall01|
+STAT|0x10087e6|DLC05MURmWallExBig01|
+STAT|0x10087e5|DLC05MURmWall05|
+STAT|0x10087e4|DLC05MURmWall02|
+STAT|0x10087e2|DLC05MURmCorIn02|
+STAT|0x10087e1|DLC05MURmMidCol01|
+STAT|0x10087e0|DLC05MURmMid01|
+STAT|0x10087df|DLC05MURmWallExSm01|
+STAT|0x10087de|DLC05MURmCorIn01|
+STAT|0x10087dd|DLC05MURmCorOut01|
+STAT|0x10087da|DLC05MURmWall03|
+STAT|0x10087d8|DLC05MURmWall01|
+STAT|0x100856e|DLC05RobotAssemblyPart05|
+STAT|0x100856d|DLC05RobotAssemblyPart04|
+STAT|0x100856c|DLC05RobotAssemblyPart03|
+STAT|0x100856b|DLC05RobotAssemblyPart02|
+STAT|0x100856a|DLC05RobotAssemblyPart01|
+STAT|0x1008569|DLC05MRobotClutterPartHead02|
+STAT|0x1008568|DLC05MRobotClutterPartHead01|
+STAT|0x1008567|DLC05MRobotClutterPartBody02|
+STAT|0x1008566|DLC05MRobotClutterPartBody01|
+STAT|0x1008565|DLC05MRobotClutterPartArm01|
+STAT|0x100829e|1stPersonDLC05PaulsonsRevolver|
+STAT|0x10081dc|DLC05MZRmGeneratorBase01|
+STAT|0x10081c9|DLC05MZRmWall04HullAddOn|
+STAT|0x10080b7|1stPersonDLC05Katana|
+STAT|0x1007d1c|DLC05MZRmWinPillar01|
+STAT|0x1007b54|DLC05MZPitWallTallWinCorInR01|
+STAT|0x1007b52|DLC05MZPitWallTallWinCorInL01|
+STAT|0x1007b4b|DLC05MZPitWallTallWindow01|
+STAT|0x1007a8f|DLC05ShelfSmallSingle01|
+STAT|0x1007a78|DLC05MZRmLowWallCustom01|
+STAT|0x10079bf|DLC05TortureClutter03|
+STAT|0x10079bd|DLC05TortureClutter02|
+STAT|0x10079bb|DLC05TortureClutter01|
+STAT|0x1007520|DLC05MZRmWall06|
+STAT|0x100743a|1stPersonDLC05RobotCannon|
+STAT|0x1007393|DLC05MZExtQuart01Panel|
+STAT|0x100738e|DLC05MZExtHallSmStr02|
+STAT|0x100738d|DLC05MZExtQuart03DoorWay01|
+STAT|0x1007389|DLC05MZExtQuart03Panel|
+STAT|0x1007303|DLC05ColumnPipe01|
+STAT|0x10072a8|DLC05PipeMed1WayCor02|
+STAT|0x10072a5|DLC05PipeMed1WayCor01|
+STAT|0x100723c|DLC05MZclipboard01|
+STAT|0x1007202|DLC05ShelfSingleHall05|
+STAT|0x1007200|DLC05ShelfSingleHall06|
+STAT|0x10071fe|DLC05ShelfSingleHall03|
+STAT|0x1007195|DLC05ShelfSingleHall02|
+STAT|0x1007192|DLC05ShelfSingleHall01|
+STAT|0x100701a|DLC05MZExtCenterTeleport01|
+STAT|0x1006ffc|DLC05MZExtHallSmStr01|
+STAT|0x1006ffb|DLC05MZExtHallSmEnd02|
+STAT|0x1006ffa|DLC05MZExtHallSmEnd01|
+STAT|0x1006fc9|DLC05MZExtHallBigEnd01|
+STAT|0x1006fc8|DLC05MZExtHallBigStr01|
+STAT|0x1006fc7|DLC05MZExtHallBigEnd02|
+STAT|0x1006fc6|DLC05MZExtQuart02|
+STAT|0x1006fc5|DLC05MZExtQuart04|
+STAT|0x1006fc4|DLC05MZExtQuart03|
+STAT|0x1006fbf|1stPersonDLC05CryoMine|
+STAT|0x1006fbe|1stPersonDLC05CryGrenade|
+STAT|0x1006e34|DLC05AssmbLnStationBotLite01|
+STAT|0x1006e33|DLC05TubeCorIn04topxtras|
+STAT|0x1006e32|DLC05TubeCorIn04wires01|
+STAT|0x1006d9c|DLC05HangarCore01|
+STAT|0x1006d9b|DLC05Hangar01|
+STAT|0x1006d1d|DLC05TubeCorIn07|
+STAT|0x1006d1c|DLC05TubeCorIn06|
+STAT|0x1006d1b|DLC05TubeCorIn05|
+STAT|0x1006d1a|DLC05TubeCorIn04|
+STAT|0x1006d19|DLC05TubeCorIn03|
+STAT|0x1006d18|DLC05TubeCorIn02top01|
+STAT|0x1006d17|DLC05TubeCorIn02|
+STAT|0x1006d16|DLC05TubeCorIn01top01|
+STAT|0x1006d15|DLC05TubeCorIn01|
+STAT|0x1006ad7|DLC05Biotank|
+STAT|0x1006920|DLC05ShelfSingle01|
+STAT|0x1006909|DLC05ShelfEndL01|
+STAT|0x1006908|DLC05ShelfEndR01|
+STAT|0x1006905|DLC05ShelfSt01|
+STAT|0x1006901|DLC05RubblePile04|
+STAT|0x10068f5|DLC05RubblePile03|
+STAT|0x10068f0|DLC05RubblePile02|
+STAT|0x10068ec|DLC05RubblePile01|
+STAT|0x100685c|1stPersonDLC05AlienPistol|
+STAT|0x1006843|DLC05AssmbLnStationWires01|
+STAT|0x1006842|DLC05AssmbLnStationPort01|
+STAT|0x1006841|DLC05AssmbLnStationBrk03|
+STAT|0x1006835|DLC05MZExtQuartWin01|
+STAT|0x1006818|DLC05MZExtQuartTop01|
+STAT|0x1006816|DLC05MZExtQuart01|
+STAT|0x100630f|DLC05MZRmLow3WayR01|
+STAT|0x100630c|DLC05AssmbLnCnr01botcap|
+STAT|0x1006308|DLC05AssmbLnANIM06test|
+STAT|0x1006303|DLC05AssmbLnANIM05|
+STAT|0x1006300|DLC05AssmbLnANIM04|
+STAT|0x10062fd|DLC05AssmbLnANIM03|
+STAT|0x10062fb|DLC05AssmbLnANIM02|
+STAT|0x10062e0|DLC05AssmbLnANIM01|
+STAT|0x10062df|DLC05AssmbLnStr01alt04|
+STAT|0x10062de|DLC05AssmbLnStr01alt03|
+STAT|0x10062dd|DLC05AssmbLnStr01alt02|
+STAT|0x10062dc|DLC05AssmbLnEndcap01Skrt01|
+STAT|0x10062db|DLC05AssmbLnEndcap01|
+STAT|0x10062da|DLC05AssmbLnStationBrk01trk|
+STAT|0x10062d9|DLC05AssmbLnStationBrk01Rbl|
+STAT|0x10062d8|DLC05AssmbLnStationBrk02|
+STAT|0x10062d7|DLC05AssmbLnStationMZWall04|
+STAT|0x10062d6|DLC05AssmbLnStationMZWall03|
+STAT|0x10062d5|DLC05AssmbLnStationMZWall02|
+STAT|0x10062d4|DLC05AssmbLnStationMZWall01|
+STAT|0x10062d3|DLC05AssmbLnStationBrk01|
+STAT|0x1005f39|DLC05CryoTrapBase|
+STAT|0x1005f38|DLC05MZPitTrashShoot01|
+STAT|0x1005f37|DLC05MZHallBigEndVent01|
+STAT|0x1005f2a|DLC05MZRmLow1WayEnd01|
+STAT|0x1005f29|DLC05MZRmLow1WayStairs01|
+STAT|0x1005f28|DLC05MZRmLow3Way01|
+STAT|0x1005f27|DLC05MZRmLow2Way01|
+STAT|0x1005f23|DLC05MZRmLow1Way01|
+STAT|0x1005e6b|DLC05TableShort01|
+STAT|0x1005e65|DLC05TableLong01|
+STAT|0x1005b94|DLC05MachineSmallTube01|
+STAT|0x1005b8f|DLC05MZBridgeCircle01|
+STAT|0x1005b7f|DLC05MZPitWallCurve01|
+STAT|0x1005b5a|DLC05MZPitWallGen01|
+STAT|0x1005b59|DLC05MZPitCorInGen01|
+STAT|0x1005b41|DLC05MZBridge2Way02|
+STAT|0x1005b40|DLC05GenGlassBarrier02|
+STAT|0x1005b3e|DLC05MZRmEngineCoreBase01|
+STAT|0x1005b3a|DLC05GenInnerCoreAnim01|
+STAT|0x1005b38|DLC05GenInnerWindow01|
+STAT|0x1005b32|DLC05GenGlassBarrier01|
+STAT|0x1005b06|DLC05Crate02|
+STAT|0x1005afe|DLC05Crate01|
+STAT|0x1005ae7|DLC05CryoCrate|
+STAT|0x1005ae0|DLC05PipeBig3WaySht01|
+STAT|0x1005add|DLC05PipeBigBase01|
+STAT|0x1005ad4|DLC05PipeBig4WayMedSht01|
+STAT|0x1005acc|DLC05PipeBig3WayMedSht01|
+STAT|0x1005acb|DLC05PipeBig1WaySht02|
+STAT|0x1005aca|DLC05PipeBig1WaySht01|
+STAT|0x1005abb|DLC05PipeBig1WayLng01|
+STAT|0x1005aba|DLC05PipeBig2WaySht01|
+STAT|0x10058a1|DLC05MZBridge4Way03|
+STAT|0x100589b|DLC05MZBridgeEnd03|
+STAT|0x100589a|DLC05MZBridge3Way02|
+STAT|0x1005899|DLC05MZBridge4Way02|
+STAT|0x1005890|DLC05MZRmLowWallRail01|
+STAT|0x100588f|DLC05MZRmLowCorInRail01|
+STAT|0x100587a|DLC05MZPitCorInRail01|
+STAT|0x1005879|DLC05MZPitWallRail01|
+STAT|0x1005878|DLC05MZPitCorOutRail01|
+STAT|0x1005875|DLC05ClawRetracted|
+STAT|0x1005873|DLC05ClawHalfExtended|
+STAT|0x1005871|DLC05ClawFullExtended|
+STAT|0x100586f|DLC05ClawTrack|
+STAT|0x100586d|DLC05Claw|
+STAT|0x10055bf|DLC05UFOCrash|
+STAT|0x10054aa|DLC05AssmbLnStation02lites|
+STAT|0x10054a7|DLC05CryopodCapEmpty|
+STAT|0x10054a3|DLC05PipeMed1WayShrt03|
+STAT|0x10054a2|DLC05PipeMed1WayLng03|
+STAT|0x100549c|DLC05PipeMedPipeFree01|
+STAT|0x1005499|DLC05PipeMedBase01|
+STAT|0x1005497|DLC05PipeMed1WayShrt02|
+STAT|0x1005494|DLC05PipeMed1WayLng02|
+STAT|0x1005492|DLC05PipeMedEnd01|
+STAT|0x100548f|DLC05PipeMed3WaySht01|
+STAT|0x100548e|DLC05PipeMed1WayShrt01|
+STAT|0x1005488|DLC05PipeMed2WaySht01|
+STAT|0x1005485|DLC05PipeMed1WayLng01|
+STAT|0x1005472|DLC05RmFloorWindow01|
+STAT|0x100542f|DLC05MZRmEngineCore01|
+STAT|0x1005396|DLC05CryoRackUpperWalls01|
+STAT|0x100538b|DLC05CryoRacklowerwall01|
+STAT|0x1005385|DLC05CryoRackInnMidSingle|
+STAT|0x1005384|DLC05CryoRackInnMidDouble|
+STAT|0x100537d|DLC05CryoRackhigh01|
+STAT|0x1005141|DLC05MZRmWall05|
+STAT|0x1005140|DLC05MZPitWallTall02|
+STAT|0x100513f|DLC05MZRmLowWallStairs01|
+STAT|0x100513c|DLC05Vent01|
+STAT|0x100513a|DLC05MachineSmall02|
+STAT|0x1005134|DLC05MZCeilingCap01|
+STAT|0x100512e|DLC05MachineSmall01|
+STAT|0x100512d|DLC05MachineBig01|
+STAT|0x10050ac|DLC05AssmbLnStation02floor|
+STAT|0x10050ab|DLC05AssmbLnStationBotLite02|
+STAT|0x10050a7|DLC05AssmbLnStation02|
+STAT|0x10050a6|DLC05AssmbLnStation01|
+STAT|0x1004ec3|DLC05MZRmLowMid02|
+STAT|0x1004ebe|DLC05MZRmWall04|
+STAT|0x1004e8d|DLC05MZRmDeathRayCore01|
+STAT|0x1004e7c|DLC05ForceFieldGenerator|
+STAT|0x1004c1b|DLC05CryoRack02|
+STAT|0x1004969|DLC05CryoPodTop01|
+STAT|0x100494e|DLC05CryoPodBase02|
+STAT|0x100494d|DLC05CryopodCap|
+STAT|0x100494a|1stPersonDLC05AlienBaton|
+STAT|0x10047eb|DLC05AssmbLnCnr01Skrt01|
+STAT|0x10047ea|DLC05AssmbLnCnr01Under01|
+STAT|0x10047e9|DLC05AssmbLnRampUp01Skrt01|
+STAT|0x10047e8|DLC05AssmbLnStr02Skrt01|
+STAT|0x10047e7|DLC05AssmbLnStr01Skrt01|
+STAT|0x10047e6|DLC05AssmbLnStr01Under01|
+STAT|0x1004781|DLC05Machine02|
+STAT|0x100428a|DLC05MZRmWinFloor01DeathRay|
+STAT|0x1004265|DLC05ControlStandSm01|
+STAT|0x1004264|DLC05ControlStandBig01|
+STAT|0x1004260|DLC05MZTortureDevice|
+STAT|0x1004234|DLC05CryoPodBase01|
+STAT|0x1003f22|1stPersonDLC05AlienRifle|
+STAT|0x1003e53|DLC05AssmbLnCnr02alt|
+STAT|0x1003e52|DLC05AssmbLnStr01alt|
+STAT|0x1003e51|DLC05AssmbLnStr02alt|
+STAT|0x1003e50|DLC05AssmbLnRampUp01post|
+STAT|0x1003e4f|DLC05AssmbLnStr02post01|
+STAT|0x1003e4e|DLC05AssmbLnRampDwn01|
+STAT|0x1003e4d|DLC05AssmbLnRampUp01|
+STAT|0x1003e4c|DLC05AssmbLnStr02|
+STAT|0x1003e4b|DLC05AssmbLnStr01|
+STAT|0x1003e4a|DLC05AssmbLnCnr01|
+STAT|0x1003e3e|DLC05MZHallSmCurve01|
+STAT|0x1003e3c|DLC05MZHallSm1WayPort01|
+STAT|0x1003d11|DLC05MZRmCorInWinR01|
+STAT|0x1003d0f|DLC05MZRmCorInWinL01|
+STAT|0x1003ca0|DLC05MZPitHighWallCorIn01|
+STAT|0x1003c9f|DLC05MZPitHighWallCorInL01|
+STAT|0x1003c9d|DLC05MZPitHighWallCorOut01|
+STAT|0x1003c9c|DLC05MZPitHighWallCorInR01|
+STAT|0x1003c9b|DLC05MZPitHighWallExSm01|
+STAT|0x1003c9a|DLC05MZPitHighWall01|
+STAT|0x1003c99|DLC05MZPitHighLedgeWallExSm01|
+STAT|0x1003c98|DLC05MZPitHighMid01|
+STAT|0x1003c97|DLC05MZPitHighLedgeWall01|
+STAT|0x1003c96|DLC05MZPitHighLedgeCorOut01|
+STAT|0x1003c95|DLC05MZPitHighLedgeCorIn01|
+STAT|0x1003c53|1stPersonSpanner|
+STAT|0x10039d2|DLC05MZBridgeEnd02|
+STAT|0x10039d1|DLC05MZBridge4Way01|
+STAT|0x10039d0|DLC05MZBridge1WayHalf01|
+STAT|0x10039c9|DLC05MZRmLowCorOut01|
+STAT|0x10039ae|DLC05MZRmGeneratorCon01|
+STAT|0x1003704|DLC05MZRmGenerator01|
+STAT|0x10036d2|DLC05skyTest01|
+STAT|0x10034d8|DLC05MZBridgeSupport01|
+STAT|0x10034d4|DLC05MZBridgeMount01|
+STAT|0x10034d2|DLC05MZBridge3Way01|
+STAT|0x10034ce|DLC05MZBridge2Way01|
+STAT|0x10034cd|DLC05MZBridgeStairs01|
+STAT|0x1003411|DLC05AlienTableStatic|
+STAT|0x100340c|DLC05AlienChairStatic|
+STAT|0x10033bc|DLC05MZRmWinFloor01|
+STAT|0x10033ba|DLC05MZBridge1Way01|
+STAT|0x10033b8|DLC05MZBridgeEnd01|
+STAT|0x10032e1|DLC05Machine01|
+STAT|0x10032e0|DLC05MZRmWall03|
+STAT|0x10031ab|DLC05MZHallBigEnd01|
+STAT|0x10031a9|DLC05MZHallSmEnd01|
+STAT|0x1002fcc|DLC05MZHallBig1Way01|
+STAT|0x1002a7a|DLC05SpaceShipMerc01|
+STAT|0x1001f75|DLC05Buttercup01|
+STAT|0x1000968|DLC05MZHallSm1WayExSm01|
+STAT|0x1000966|DLC05MZHallBig1WayHalfExSm01|
+STAT|0x1000964|DLC05MZHallBig1WayHalf01|
+STAT|0x1000961|DLC05MZHallBig3Way01|
+STAT|0x100095f|DLC05MZPitCorOut01|
+STAT|0x1000950|DLC05MZPitWallTallCorIn01|
+STAT|0x100094f|DLC05MZPitWallTallCorOut01|
+STAT|0x1000947|DLC05MZPitWallTallExSm01|
+STAT|0x1000945|DLC05MZPitCorInTallR01|
+STAT|0x1000942|DLC05MZPitCorInTallL01|
+STAT|0x1000922|DLC05MZPitWallTall01|
+STAT|0x100091d|DLC05MZRmWall02|
+STAT|0x100091c|DLC05MZRmCorInExSmR01|
+STAT|0x1000917|DLC05MZRmCorInExSmL01|
+STAT|0x100090d|DLC05MZHallSmStairs01|
+STAT|0x1000905|DLC05MZHallSm2Way01|
+STAT|0x10008fe|DLC05MZHallSm4Way01|
+STAT|0x10008f6|DLC05MZHallSm3Way01|
+STAT|0x10008ef|DLC05MZHallSmEndExSm01|
+STAT|0x10008ee|DLC05MZRmCorIn02|
+STAT|0x10008e9|DLC05MZPitWallExSm01|
+STAT|0x10008c3|DLC05MZRmWallExSm01|
+STAT|0x10008bf|DLC05MZRmLowCorIn01|
+STAT|0x100089f|DLC05MZRmLowMid01|
+STAT|0x100089e|DLC05MZRmLowWall01|
+STAT|0x100089a|DLC05MZPitMid01|
+STAT|0x100088f|DLC05MZPitCorIn01|
+STAT|0x100087e|DLC05MZPitWall01|
+STAT|0x1000879|DLC05MZRmCorOut01|
+STAT|0x1000874|DLC05MZRmWallExBig01|
+STAT|0x100086f|DLC05MZRmMidCol01|
+STAT|0x100086c|DLC05MZRmCorIn01|
+STAT|0x1000862|DLC05MZRmMid01|
+STAT|0x100085b|DLC05MZRmWall01|
+STAT|0x1000858|DLC05MZHallSm1Way01|
+STAT|0x1000854|DLC05MZHallBigEndExBig01|
+STAT|0x1000847|DLC05MZHallBig2Way01|
+SCOL|0x1007432|DLC05CryolabStorage|
+MSTT|0x100d87f|DLC05spaceDome02alt|
+MSTT|0x100d6c5|DLC05AlienHologramHead|
+MSTT|0x100d097|DLC05FloorSmokeFreezeRoom|
+MSTT|0x100d023|DLC05SmokeWallThinOverFlow|
+MSTT|0x100d01b|DLC05SmokeWallOverflow|
+MSTT|0x100d01a|DLC05SmokeWallThin01|
+MSTT|0x100d019|DLC05SmokeWall01|
+MSTT|0x100cff1|DLC05SmokeColumnSMhalf|
+MSTT|0x100cff0|DLC05SmokeColumnSMhalfTaper01|
+MSTT|0x100cfe0|DLC05SmokeColumnSM|
+MSTT|0x100ce33|DLC05FloorSmokeThin02|
+MSTT|0x100ce32|DLC05FloorSmokeThin01|
+MSTT|0x100ce31|DLC05SmokeStairs01|
+MSTT|0x100ce2a|DLC05FloorSmokeChannelClg|
+MSTT|0x100ce25|DLC05FloorSmokeChannelC|
+MSTT|0x100ce1c|DLC05FloorSmokeChannelEL|
+MSTT|0x100ce1b|DLC05FloorSmokeChannelER|
+MSTT|0x100ce16|DLC05SmokeColumn01|
+MSTT|0x100ce10|DLC05FloorSmokeChannelS|
+MSTT|0x100cbd2|DLC05CryoBurst|
+MSTT|0x100cbb1|DLC05CryopodSmoke|
+MSTT|0x100cba5|DLC05CryoBubbleOver01|
+MSTT|0x100cba3|DLC05CryoSpray01|
+MSTT|0x100ca03|DLC05CameraEye02|
+MSTT|0x100c9e7|DLC05CameraEye01|
+MSTT|0x100c363|DLC05Sun|
+MSTT|0x100c027|DLC05CrushingMachineShorter|
+MSTT|0x100bd1b|DLC05Crystal02|
+MSTT|0x100bd1a|DLC05Crystal01|
+MSTT|0x100bcfc|DLC05ZetaDead|
+MSTT|0x100bcf9|DLC05FXZetaShieldsWindow|
+MSTT|0x100bcf2|DLC05ZetaLaserAim|
+MSTT|0x100b2ad|DLC05RobotClutter06|
+MSTT|0x100b2ac|DLC05RobotClutter05|
+MSTT|0x100b2ab|DLC05RobotClutter04|
+MSTT|0x100b2aa|DLC05RobotClutter03|
+MSTT|0x100b2a9|DLC05RobotClutter02|
+MSTT|0x100b2a8|DLC05RobotClutter01|
+MSTT|0x100adef|DLC05Mothership02|
+MSTT|0x100aa18|DLC05CrushingMachineShort|
+MSTT|0x100aa15|DLC05CrushingMachineLong|Crushing Machine
+MSTT|0x100a8ec|DLC05AssmbLnANIM01robot|
+MSTT|0x100a8eb|DLC05AssmbLnANIM03robot|
+MSTT|0x100a8ea|DLC05AssmbLnANIM05robot|
+MSTT|0x100a8e9|DLC05AssmbLnANIM04robot|
+MSTT|0x100a8e8|DLC05AssmbLnANIM02robot|
+MSTT|0x100a8da|DLC05FXBeamMeUp|Beam Up FX
+MSTT|0x100a6fb|DLC05AlienGlobeBase|
+MSTT|0x100a6f9|DLC05AlienTool09|
+MSTT|0x100a6f7|DLC05AlienGlobe|
+MSTT|0x1009982|DLC05AlienBoxSmall|
+MSTT|0x1009981|DLC05AlienUtensil04|
+MSTT|0x1009980|DLC05AlienUtensil03|
+MSTT|0x100997f|DLC05AlienTool08|
+MSTT|0x1008ec9|DLC05BabyCarriageDirty01|
+MSTT|0x1008ec8|DLC05BarrelToxicWaste|
+MSTT|0x10087fe|DLC05AlienTool07|
+MSTT|0x10087fd|DLC05AlienTool06|
+MSTT|0x10087fc|DLC05AlienTool05|
+MSTT|0x10087fb|DLC05AlienTool04|
+MSTT|0x10087fa|DLC05AlienTool03|
+MSTT|0x10087f9|DLC05AlienTool02|
+MSTT|0x10087f8|DLC05AlienTool01|
+MSTT|0x10081c2|DLC05InhibitorSolution|
+MSTT|0x10081c1|DLC05RobotControl|
+MSTT|0x1007e37|DLC05AlienLamp01|
+MSTT|0x1007d3c|DLC05AlienUtensil02|
+MSTT|0x1007d3b|DLC05AlienUtensil01|
+MSTT|0x100723d|DLC05MZAlienClipboard|
+MSTT|0x100702a|DLC05DumpsterConsole|
+MSTT|0x100701e|DLC05Dumpster01|
+MSTT|0x1006da7|DLC05UFOHubering|
+MSTT|0x1006d9e|DLC05HangarDoors|
+MSTT|0x1006ad6|DLC05Antigravdisk01|
+MSTT|0x1006865|DLC05TestClawArmAnimated|
+MSTT|0x1005f1a|DLC05spaceDome06|
+MSTT|0x1005f19|DLC05spaceDome07|
+MSTT|0x1005f18|DLC05spaceDome08|
+MSTT|0x1005f17|DLC05spaceDome03|
+MSTT|0x1005f16|DLC05spaceDome04|
+MSTT|0x1005f15|DLC05spaceDome05|
+MSTT|0x1005f14|DLC05spaceDome02|
+MSTT|0x1005f12|DLC05SMCryoPod|
+MSTT|0x1005b2f|DLC05ForceFieldGenerator01|
+MSTT|0x1005b2c|fFeildSketch|
+MSTT|0x1005897|DLC05CryoTrap01|
+MSTT|0x1004970|DLC05CryoPodAnimatedDoor|
+MSTT|0x100494f|DLC05CryoPodAnimated|
+MSTT|0x100370d|DLC05CryoPod|
+MSTT|0x10036d8|DLC05spaceWindowCover01|
+MSTT|0x10036d7|DLC05spaceDome01|
+MSTT|0x1003415|DLC05AlienBed02|
+MSTT|0x1000f92|DLC05AlienPlate|
+MSTT|0x1000f90|DLC05AlienGoopPlate|
+PWAT|0x1007b85|DLC05SpaceWalkWaterHack|
+PWAT|0x100082c|testSpace2048x2048|
+FURN|0x100ae49|DLC05CaptainChair01|Command Chair
+FURN|0x100ae45|DLC05SallyWallRepairMarker|
+FURN|0x100ad24|DLC05LeanOnRailMarker|
+FURN|0x100acff|DLC05RailLeanMarker|
+FURN|0x100aa24|DLC05CaptainsChair|Captain's Chair
+FURN|0x100a872|DLC05UsingBridgeConsolesMarker|
+FURN|0x100a671|DLC05SallyUseConsoleMarker|
+FURN|0x100a2a9|DLC05FixingTeleporterMarker|
+FURN|0x1009c2a|DLC05DumpsterRideMarker|
+FURN|0x1008845|DLC05SallyClimbOutOfWindowMarker|
+FURN|0x100828d|DLC05SamuraiSitMarker|
+FURN|0x1007997|DLC05CryPodMarker|
+FURN|0x100744e|DLC05FloatInSpaceMarker|.
+FURN|0x1006db7|DLC05CrawlVentMarker|
+FURN|0x1006bf2|DLC05TestAlienCHairFront|Chair
+FURN|0x1006866|DLC05ClawArmPickUpMarker|
+FURN|0x1003f27|DLC05AlienCHair01R|Chair
+FURN|0x1003416|DLC05AlienCHair01L|Chair
+WEAP|0x100d833|DLC05DeathRayLaserLevel2|Liberty Laser
+WEAP|0x100d830|DLC05DeathRayLaserSpace|Liberty Laser
+WEAP|0x100d82d|DLC05DeathRayLaserLevel1|Liberty Laser
+WEAP|0x100c04a|DLC05ZetaEnemyLaserLevel2|Liberty Laser
+WEAP|0x100bdfe|DLC05ZetaEnemyLaserLevel3|Liberty Laser
+WEAP|0x100bd02|DLC05ZetaEnemyLaserLevel1|Liberty Laser
+WEAP|0x100ac12|DLC05ZetaLaserLevel3|Liberty Laser
+WEAP|0x100ac11|DLC05ZetaLaserLevel2|Liberty Laser
+WEAP|0x100ac10|DLC05ZetaLaserLevel1|Liberty Laser
+WEAP|0x100ab86|DLC05WeapUniquePlasmaPistol|MPLX Novasurge
+WEAP|0x100a9dd|DLC05WeapCaptainsSideArm|Captain's Sidearm
+WEAP|0x100a9ad|DLC05WeapRobotCannonNonPlayerC|Drone Cannon
+WEAP|0x100a9ac|DLC05WeapRobotCannonNonPlayerB|Drone Cannon
+WEAP|0x100a9ab|DLC05WeapRifleC|Alien Disintegrator
+WEAP|0x100a9aa|DLC05WeapRifleB|Alien Disintegrator
+WEAP|0x100a9a9|DLC05WeapPistolC|Alien Atomizer
+WEAP|0x100a9a8|DLC05WeapPistolB|Alien Atomizer
+WEAP|0x100a9a7|DLC05WeapBatonC|Shock Baton
+WEAP|0x100a9a6|DLC05WeapBatonB|Shock Baton
+WEAP|0x100a77f|DLC05WeapPistolUnique|Atomic Pulverizer
+WEAP|0x100a77e|DLC05WeapRifleUnique|Destabilizer
+WEAP|0x100a77d|DLC05WeapRobotCannonUnique|Drone Cannon Ex-B
+WEAP|0x1009a32|DLC05TurretGunCeiling01|Turret Gun
+WEAP|0x1009942|DLC05TESTWeapDroidLaser1HP|Hand Laser
+WEAP|0x100829f|DLC05weapPaulsonsRevolver|Paulson's Revolver
+WEAP|0x10080b5|DLC05WeapKatana|Katana
+WEAP|0x1007ba1|DLC05WeapRobotCannonNonPlayer|Drone Cannon
+WEAP|0x1006fc0|DLC05WeapMineCryo|Cryo Mine
+WEAP|0x1006e1e|DLC05weapPaulsonsRevolverNonPlayable|Paulson's Revolver
+WEAP|0x1006bdc|DLC05WeapClawArm|
+WEAP|0x1003c54|DLC05WeapBatonUnique|Electro-Suppressor
+WEAP|0x1003c52|DLC05WeapSpanner|Spanner
+WEAP|0x1003326|testPortableCover|Portable Cover
+WEAP|0x1002a71|DLC05WeapGrenadeCryo|Cryo Grenade
+WEAP|0x1000845|DLC05WeapRobotCannon|Drone Cannon
+WEAP|0x1000842|DLC05WeapRifle|Alien Disintegrator
+WEAP|0x100083f|DLC05WeapPistol|Alien Atomizer
+WEAP|0x100083d|DLC05WeapBaton|Shock Baton
+WEAP|0x100083b|DLC05WeapSamuraiSword|Samurai's Sword
+AMMO|0x100160c|DLC05AmmoAlien|Alien Power Module
+NPC_|0x100d843|DLC05ExLabWaveSpawn|
+NPC_|0x100b27d|DLC05CryoDeadNPC02|Wastelander
+NPC_|0x100b27c|DLC05CryoDeadNPC01|Wastelander
+NPC_|0x100a6c8|DLC05CargoTestSubjectFemale|Test Subject
+NPC_|0x100a6c7|DLC05CargoTestSubjectMale|Test Subject
+NPC_|0x100a672|DLC05TestChild|DLC05TestNPC
+NPC_|0x1009a0b|DLC05HoloNPC4|Madeline Wallace
+NPC_|0x1009a0a|DLC05HoloNPC3|Dr. Morrison Rand
+NPC_|0x1009a09|DLC05HoloNPC2|Vin
+NPC_|0x1009a08|DLC05HoloNPC1|Andrew Endicott
+NPC_|0x10098f1|DLC05SquadSpurlock|Corporal Spurlock
+NPC_|0x10098f0|DLC05SquadMears|Private Mears
+NPC_|0x10098ef|DLC05SquadRheems|Corporal Rheems
+NPC_|0x1007e50|DLC05RCSecurity|Rivet City Security
+NPC_|0x1007e4d|DLC05HoldingCellsRaider|Raider
+NPC_|0x1007e4a|DLC05EnclaveOfficer|Enclave Officer
+NPC_|0x10079a0|DLC05TestNPC02|DLC05TestNPC
+NPC_|0x1006c6c|DLC05CryoBecket|Private Beckett
+NPC_|0x1006c6b|DLC05CryoDaniel|Sergeant Daniels
+NPC_|0x1006871|DLC05ClawNPC|Wastelander
+NPC_|0x100537a|DLC05CryoRaiderInStasis|
+NPC_|0x1003302|DLC05DeadAstronaut|Colonel Hartigan
+NPC_|0x10032fc|DLC05Samurai|Toshiro Kago
+NPC_|0x10032fb|DLC05Paulson|Paulson
+NPC_|0x100096b|DLC05Tercorien|Elliott Tercorien
+NPC_|0x100096a|DLC05Somah|Somah
+NPC_|0x1000969|DLC05Sally|Sally
+NPC_|0x100081e|testCryoSubject|
+CREA|0x100db97|AudioTemplateAbomination|AudioTemplateAbomination
+CREA|0x100d882|AudioTemplateDLC05RobotDrone|AudioTemplateDLC05RobotDrone
+CREA|0x100d86e|DLC05ExLabWaveSpawnCreature|
+CREA|0x100d2e3|DLC05TestAlienTeleporter|Alien
+CREA|0x100ca00|DLC05crAlienGuard1HPTemplate|Alien
+CREA|0x100c9ff|DLC05crAlienGuard2HRTemplate|Alien
+CREA|0x100c4ee|DLC05LvlRobotMeleeWorks|
+CREA|0x100c4ed|DLC05SteamAlienWorks|
+CREA|0x100c4ec|DLC05LvlAlienGunNoHelmet|
+CREA|0x100c4e4|DLC05crAlien1Captain|Alien
+CREA|0x100c4cb|DLC05crAlienCaptain|Alien
+CREA|0x100c30d|DLC05LvlAbominationExLab03|
+CREA|0x100c30c|DLC05LvlAbominationExLab02|
+CREA|0x100c30b|DLC05LvlAbominationExLab01|
+CREA|0x100c2f9|DLC05AbominationDEAD|Abomination
+CREA|0x100c0c8|DLC05ExLabAlienResearcher|Alien Worker
+CREA|0x100b28a|DLC05AsmAlienGunDBoss|
+CREA|0x100b289|DLC05AsmAlienGunD|
+CREA|0x100b027|DLC05SpaceWalkAlienRunPatrol|
+CREA|0x100ad56|DLC05LvlRobotRangedPodExLab|Experimental Weapons Drone
+CREA|0x100ad55|DLC05LvlRobotRangedPod|
+CREA|0x100aa22|DLC05Captain|Alien Captain
+CREA|0x100a9d3|DLC05crAbomination5|Abomination
+CREA|0x100a9d2|DLC05crAbomination4|Abomination
+CREA|0x100a9d1|DLC05crAlien6MeleeATemplate|Alien
+CREA|0x100a9d0|DLC05crAlien6GunATemplate|Alien
+CREA|0x100a9cf|DLC05crAlien5MeleeATemplate|Alien
+CREA|0x100a9ce|DLC05crAlien4MeleeATemplate|Alien
+CREA|0x100a9cd|DLC05crAlien5GunATemplate|Alien
+CREA|0x100a9cc|DLC05crAlien4GunATemplate|Alien
+CREA|0x100a9cb|DLC05crAlien6MeleeB|Alien
+CREA|0x100a9ca|DLC05crAlien5MeleeB|Alien
+CREA|0x100a9c9|DLC05crAlien4MeleeB|Alien
+CREA|0x100a9c8|DLC05crAlien3MeleeB|Alien
+CREA|0x100a9c7|DLC05crAlien3GunB|Alien
+CREA|0x100a9c6|DLC05crAlien6MeleeC|Alien
+CREA|0x100a9c5|DLC05crAlien5MeleeC|Alien
+CREA|0x100a9c4|DLC05crAlien4MeleeC|Alien
+CREA|0x100a9c3|DLC05crAlien3MeleeC|Alien
+CREA|0x100a9c2|DLC05crAlien2MeleeC|Alien
+CREA|0x100a9c1|DLC05crAlien1MeleeC|Alien
+CREA|0x100a9c0|DLC05crAlien6GunC|Alien
+CREA|0x100a9bf|DLC05crAlien5GunC|Alien
+CREA|0x100a9be|DLC05crAlien4GunC|Alien
+CREA|0x100a9bd|DLC05crAlien3GunC|Alien
+CREA|0x100a9bc|DLC05crAlien2GunC|Alien
+CREA|0x100a9bb|DLC05crAlien1GunC|Alien
+CREA|0x100a9ba|DLC05crAlien6GunB|Alien
+CREA|0x100a9b9|DLC05crAlien5GunB|Alien
+CREA|0x100a9b8|DLC05crAlien4GunB|Alien
+CREA|0x100a9b7|DLC05CrRobot6Ranged|Guardian Drone
+CREA|0x100a9b6|DLC05CrRobot5Ranged|Guardian Drone
+CREA|0x100a9b5|DLC05CrRobot4Ranged|Guardian Drone
+CREA|0x100a9b4|DLC05CrRobot6Melee|Support Drone
+CREA|0x100a9b3|DLC05CrRobot5Melee|Support Drone
+CREA|0x100a9b2|DLC05CrRobot4Melee|Support Drone
+CREA|0x100a9b1|DLC05crTurret6|Turret
+CREA|0x100a9b0|DLC05crTurret5|Turret
+CREA|0x100a9af|DLC05crTurret4|Turret
+CREA|0x100a9ae|DLC05crAbomination6|Abomination
+CREA|0x100a94c|DLC05CrAlienNONHOSTILE|Alien Worker
+CREA|0x100a944|DLC05DeathRayLvlAlienRandom|
+CREA|0x100a93e|DLC05DeathRayLvlAlienRandomSpawn02|
+CREA|0x100a93d|DLC05DeathRayLvlAlienRandomSpawn01|
+CREA|0x100a89c|DLC05FF01Brahmin|Brahmin
+CREA|0x100a602|DLC05LvlRobotMeleePod|
+CREA|0x100a2a8|DLC05TESTcrAlien1Captain|Alien
+CREA|0x100a2a6|DLC05TESTcrAlien1red|Alien
+CREA|0x1009978|DLC05AsmRobotC|
+CREA|0x100990f|DLC05TestABD01|
+CREA|0x1008865|testAlienMaintenanceRobotInPod|Metro Protectron
+CREA|0x10081bd|DLC05TESTAbomination|Abomination
+CREA|0x1007bb9|DLC05LvlAlienGunGuard|
+CREA|0x1007b99|DLC05SteamAlienWalkAndStayExplosion|
+CREA|0x10079d6|DLC05ERoomRobotMelee|
+CREA|0x10079cd|DLC05ERoomEngineerTeleport|
+CREA|0x100775a|DLC05LvlHangarAlienController|
+CREA|0x1007532|DLC05TestMB01|
+CREA|0x100724a|DLC05CryoLvlSupermutantCryoPod|
+CREA|0x1007125|DLC05YaoGuaiDEAD|Yao Guai
+CREA|0x1006e22|DLC05CoreSceneAlien|Alien
+CREA|0x1006e21|DLC05crAlienDeadC|Alien
+CREA|0x1006e20|DLC05crAlienDeadB|Alien
+CREA|0x1006e1f|DLC05crAlienDeadA|Alien
+CREA|0x1006a89|DLC05LQShieldGunner|
+CREA|0x10068e1|DLC05MZ1AlienHCMelee|Alien
+CREA|0x10066f9|DLC05MZ1AnimationAlien3|Alien
+CREA|0x10066f8|DLC05MZ1AnimationAlien2|Alien
+CREA|0x10066f7|DLC05MZ1AnimationAlien1|Alien
+CREA|0x10066f0|DLC05TESTcrAlien1HP|Alien
+CREA|0x1005e42|DLC05HangarLvlSiegeSpecialB|
+CREA|0x1005e41|DLC05HangarLvlSiegeSpecialA|
+CREA|0x1005e01|DLC05HangarLvlSiege|
+CREA|0x1005c86|DLC05CryoFreezeRoomAlien01|Alien
+CREA|0x1005be8|DLC05LvlAlienGunRunToLinkSpawn|
+CREA|0x1005bc4|DLC05LvlAlienMeleeRunToLinkonSpawn|
+CREA|0x10058e7|DLC05LvlRobotRandom|
+CREA|0x10058e4|DLC05LvlRobotRanged|
+CREA|0x10058e3|DLC05CrRobot3Ranged|Guardian Drone
+CREA|0x10058e2|DLC05CrRobot2Ranged|Guardian Drone
+CREA|0x10058e1|DLC05CrRobot1RangedTemplate|Guardian Drone
+CREA|0x10058d8|DLC05LvlAbomination|
+CREA|0x10058d6|DLC05crAbomination3|Abomination
+CREA|0x10058d5|DLC05crAbomination2|Abomination
+CREA|0x10058d4|DLC05crAbomination1Template|Abomination
+CREA|0x10058d1|DLC05crTurret1|Turret
+CREA|0x10058d0|DLC05crTurret3|Turret
+CREA|0x10058cf|DLC05crTurret2|Turret
+CREA|0x10058cd|DLC05LvlRobotMelee|
+CREA|0x10058cb|DLC05CrRobot3Melee|Support Drone
+CREA|0x10058ca|DLC05CrRobot2Melee|Support Drone
+CREA|0x10058c9|DLC05CrRobot1MeleeTemplate|Support Drone
+CREA|0x100586b|DLC05LvlAlienRandom|
+CREA|0x100585d|DLC05AlienMaintenanceRobot|Support Drone
+CREA|0x1005786|DLC05AsmCeilingTurretPartC|
+CREA|0x1005784|DLC05AsmRobotB|
+CREA|0x1005668|DLC05TESTcrAlien2HRALWAYSOUT|Alien
+CREA|0x10055e0|DLC05LvlTurret|
+CREA|0x10055d9|DLC05TeleportTestAlien|Alien
+CREA|0x10055d3|DLC05TESTLvlAlienGun|
+CREA|0x10054d0|DLC05BridgeTeleporter|
+CREA|0x100537c|DLC05CryoGhoulInStasis|
+CREA|0x1005182|DLC05AsmRobotD|
+CREA|0x100511f|DLC05TESTcrAlien1HMelee|Alien
+CREA|0x100511e|DLC05TESTcrAlien2HR|Alien
+CREA|0x1004e42|DLC05BridgeCrew|
+CREA|0x1004bfe|DLC05BrahminExperiment03|Brahmin
+CREA|0x1004bfc|DLC05BrahminExperiment02|Brahmin
+CREA|0x1004bed|DLC05BrahminExperiment01|Brahmin
+CREA|0x10049ab|DLC05SteamAlienStay|
+CREA|0x100498d|DLC05SteamAlienWalkAndStay|
+CREA|0x100498c|DLC05SteamWalkAndStay|
+CREA|0x100419d|testPhilShieldGhoul|
+CREA|0x10040a2|DLC05MZ1AlienGuard|Alien
+CREA|0x1003fc8|DLC05TESTcrAlienTalk|Alien
+CREA|0x1003f63|DLC05ERoomEngineer|
+CREA|0x1003c7f|DLC05crAlien3MeleeATemplate|Alien
+CREA|0x1003c7d|DLC05crAlien2MeleeB|Alien
+CREA|0x1003c7c|DLC05crAlien2MeleeATemplate|Alien
+CREA|0x1003c7a|DLC05crAlien1MeleeB|Alien
+CREA|0x1003c79|DLC05crAlien1MeleeATemplate|Alien
+CREA|0x1003c77|DLC05LvlAlienMelee|
+CREA|0x1003c72|DLC05LvlAlienGun|
+CREA|0x1003c6f|DLC05crAlien3GunATemplate|Alien
+CREA|0x1003c6d|DLC05crAlien2GunB|Alien
+CREA|0x1003c6c|DLC05crAlien2GunATemplate|Alien
+CREA|0x1003c66|DLC05crAlien1GunB|Alien
+CREA|0x1003c65|DLC05crAlien1GunATemplate|Alien
+CREA|0x1003c45|DLC05ERoomRobot|
+CREA|0x1003720|DLC05AsmRobotEVPSomahOnDeath|
+CREA|0x10034db|DLC05TESTcrAlien3|Alien
+CREA|0x10034da|DLC05TESTcrAlien2|Alien
+CREA|0x1001faf|DLC05TESTcrAlien1|Alien
+LVLC|0x100c4eb|DLC05EncAlienGunNoHelmet|
+LVLC|0x100c4ea|DLC05VarAlien1GunNoHelmet|
+LVLC|0x100c4e9|DLC05VarAlien2GunNoHelmet|
+LVLC|0x100c4e8|DLC05VarAlien3GunNoHelmet|
+LVLC|0x100c4e7|DLC05VarAlien4GunNoHelmet|
+LVLC|0x100c4e6|DLC05VarAlien5GunNoHelmet|
+LVLC|0x100c4e5|DLC05VarAlien6GunNoHelmet|
+LVLC|0x100a9d9|DLC05VarAlien6Gun|
+LVLC|0x100a9d8|DLC05VarAlien5Melee|
+LVLC|0x100a9d7|DLC05VarAlien5Gun|
+LVLC|0x100a9d6|DLC05VarAlien4Melee|
+LVLC|0x100a9d5|DLC05VarAlien4Gun|
+LVLC|0x100a9d4|DLC05VarAlien6Melee|
+LVLC|0x10058e6|DLC05EncRobotRandom|
+LVLC|0x10058e5|DLC05EncRobotRanged|
+LVLC|0x10058d7|DLC05EncAbomination|
+LVLC|0x10058d2|DLC05EncTurret|
+LVLC|0x10058cc|DLC05EncRobotMelee|
+LVLC|0x100586c|DLC05EncAlienRandom|
+LVLC|0x1003c78|DLC05EncAlienMelee|
+LVLC|0x1003c76|DLC05VarAlien3Melee|
+LVLC|0x1003c75|DLC05VarAlien2Melee|
+LVLC|0x1003c74|DLC05VarAlien1Melee|
+LVLC|0x1003c6b|DLC05VarAlien3Gun|
+LVLC|0x1003c6a|DLC05VarAlien2Gun|
+LVLC|0x1003c69|DLC05VarAlien1Gun|
+LVLC|0x1003c68|DLC05EncAlienGun|
+ALCH|0x1007a6c|DLC05AlienBiogelAdapted|Adapted Biogel
+ALCH|0x1007a6b|DLC05AlienBiogel|Alien Biogel
+ALCH|0x1006be3|DLC05AlienEpoxy|Alien Epoxy
+ALCH|0x1000f8d|DLC05AlienSquid|Alien Squid Food
+ALCH|0x1000f8c|DLC05AlienWorm|Alien Worm Food
+IDLM|0x100c2fd|DLC05AlienClipboardIdle|
+IDLM|0x1007111|DLC05AlienControlPanelIdleMarker|
+IDLM|0x1005ef9|DLC05MZ1PlayerIdleMarker|
+IDLM|0x1005ef7|DLC05MZ1Alien3IdleMarker|
+IDLM|0x1005ef5|DLC05MZ1Alien2IdleMarker|
+IDLM|0x1005ef3|DLC05MZ1Alien1IdleMarker|
+IDLM|0x1005e64|DLC05AlienLookOverExperimentIdleMarker|
+IDLM|0x1005e62|DLC05AlienCoweringIdleMarker|
+IDLM|0x1005e60|DLC05AlienBangOnWindowIdleMarker|
+IDLM|0x10047df|TestAliensMarkerControlPanel|
+IDLM|0x100409b|TestAliensTalkMarker|
+NOTE|0x100ac06|DLC05CaptiveHolotape25|Alien Captive Recorded Log 25
+NOTE|0x100ac05|DLC05CaptiveHolotape24|Alien Captive Recorded Log 24
+NOTE|0x100ac04|DLC05CaptiveHolotape23|Alien Captive Recorded Log 23
+NOTE|0x100abc6|DLC05CaptiveHolotape22|Alien Captive Recorded Log 22
+NOTE|0x100abc5|DLC05CaptiveHolotape21|Alien Captive Recorded Log 21
+NOTE|0x100ab88|DLC05MPLXPistolNote|MPLX "Novasurge" Prototype Plasma Pistol
+NOTE|0x100ab84|DLC05UnderwoodNote04|
+NOTE|0x100ab83|DLC05UnderwoodNote03|
+NOTE|0x100ab82|DLC05UnderwoodNote02|
+NOTE|0x100ab81|DLC05UnderwoodNote01|
+NOTE|0x100ab80|DLC05CaptiveHolotape20|Alien Captive Recorded Log 20
+NOTE|0x100ab7f|DLC05CaptiveHolotape19|Alien Captive Recorded Log 19
+NOTE|0x100ab7e|DLC05CaptiveHolotape18|Alien Captive Recorded Log 18
+NOTE|0x100ab7d|DLC05CaptiveHolotape17|Alien Captive Recorded Log 17
+NOTE|0x100ab7c|DLC05AnchorageHolotape|Anchorage Quartermaster Shipment
+NOTE|0x100ab7b|DLC05CaptiveHolotape16|Alien Captive Recorded Log 16
+NOTE|0x100ab7a|DLC05CaptiveHolotape15|Alien Captive Recorded Log 15
+NOTE|0x100ab79|DLC05CaptiveHolotape14|Alien Captive Recorded Log 14
+NOTE|0x100ab78|DLC05CaptiveHolotape13|Alien Captive Recorded Log 13
+NOTE|0x100ab77|DLC05CaptiveHolotape12|Alien Captive Recorded Log 12
+NOTE|0x100ab76|DLC05CaptiveHolotape11|Alien Captive Recorded Log 11
+NOTE|0x100ab75|DLC05CaptiveHolotape10|Alien Captive Recorded Log 10
+NOTE|0x100ab74|DLC05CaptiveHolotape09|Alien Captive Recorded Log 9
+NOTE|0x100a890|DLC05CaptiveHolotape08|Alien Captive Recorded Log 8
+NOTE|0x100a88f|DLC05CaptiveHolotape07|Alien Captive Recorded Log 7
+NOTE|0x100a88e|DLC05CaptiveHolotape06|Alien Captive Recorded Log 6
+NOTE|0x100a88d|DLC05CaptiveHolotape05|Alien Captive Recorded Log 5
+NOTE|0x1009a0f|DLC05CaptiveHolotape04|Alien Captive Recorded Log 4
+NOTE|0x1009a0e|DLC05CaptiveHolotape03|Alien Captive Recorded Log 3
+NOTE|0x1009a0d|DLC05CaptiveHolotape02|Alien Captive Recorded Log 2
+NOTE|0x1009a0c|DLC05CaptiveHolotape01|Alien Captive Recorded Log 1
+PROJ|0x100d832|DLC05DeathRayLaser02Projectile|Laser Beam
+PROJ|0x100d831|DLC05DeathRayLaserSpaceProjectile|Laser Beam
+PROJ|0x100d82e|DLC05DeathRayLaser01Projectile|Laser Beam
+PROJ|0x100c044|DLC05ZetaEnemyLaser03Projectile|Laser Beam
+PROJ|0x100c043|DLC05ZetaEnemyLaser02Projectile|Laser Beam
+PROJ|0x100c023|DLC05RobotCannonProjectileUnique|
+PROJ|0x100bd03|DLC05ZetaEnemyLaser01Projectile|Laser Beam
+PROJ|0x100bcf1|DLC05ZetaLaser03Projectile|Laser Beam
+PROJ|0x100bcf0|DLC05ZetaLaser02Projectile|Laser Beam
+PROJ|0x100bcef|DLC05ZetaLaser01Projectile|Laser Beam
+PROJ|0x1007ba2|DLC05RobotCannonProjectileNonPlayer|Energy Ball
+PROJ|0x10076c9|DLC05RobotCannonMineProjectile|Energy Ball
+PROJ|0x1007434|DLC05AlienPistolProjectile|Energy Beam
+PROJ|0x1007238|DLC05AlienRifleProjectile|Energy Beam
+PROJ|0x1006fc1|DLC05CryoMineProjectile|CryoMine
+PROJ|0x1003325|testportableCoverProjectile|Portable Cover
+PROJ|0x1002a70|DLC05CryoGrenadeProjectile|CryoGrenadeProjectile
+PROJ|0x1001f74|dlc05AlienControllerMine|Alien Controller
+LVLI|0x100dba0|DLC05GiveItemsAid25|
+LVLI|0x100cfb8|DLC05DeathItemsAbomination|
+LVLI|0x100cb7e|DLC05GiveItemsWeapons25|
+LVLI|0x100cb7d|DLC05GiveItemsWeapons100|
+LVLI|0x100cb7c|DLC05GiveItemsElliott|
+LVLI|0x100cb7b|DLC05GiveItemsSally|
+LVLI|0x100c7aa|DLC05AmmoAlienClipSmall|
+LVLI|0x100c7a9|DLC05DeathItemRobot|
+LVLI|0x100be6c|DLC05CondWeapRobotCannon|
+LVLI|0x100bdf6|DLC05LvlCrystal100|
+LVLI|0x100bdf5|DLC05ContainerWeapons25|
+LVLI|0x100bdf4|DLC05ContainerWeapons|
+LVLI|0x100bdf3|DLC05LvlCrystal25|
+LVLI|0x100bdf2|DLC05ContainerLoot|
+LVLI|0x100bdf1|DLC05LvlContainerItems|
+LVLI|0x100b09c|DLC05DeathItemAlien|
+LVLI|0x100b091|DLC05AmmoAlienClip|
+LVLI|0x100b090|DLC05AmmoAlien75|
+LVLI|0x10058e0|DLC05WithAmmoAtomizer|
+LVLI|0x10058df|DLC05WithAmmoAlienRifle|
+LVLI|0x10058de|DLC05CondWeapDisintegratorCharge|
+LVLI|0x10058dd|DLC05CondWeapAlienBaton|
+LVLI|0x10058dc|DLC05CondWeapAtomizer|
+LVLI|0x10058db|DLC05LvlWeapAlienMelee|
+LVLI|0x10058da|DLC05LvlWeapAlienRanged|
+REGN|0x100b321|AudioIntDLC05Spacewalk|
+REGN|0x100b31e|AudioIntDLC05MothershipGeneral|
+NAVI|0x14b92||
+CELL|0x10085fc|DLC05TestUtility|
+CELL|0x100107c|DLC05TestJeffB|
+CELL|0x1000f96|DLC05RobotAssembly|Robot Assembly
+ACRE|0x100b2a7|DLC05PodBot02|
+ACRE|0x100b2a4|DLC05PodBot04|
+ACRE|0x100b28d|DLC05PodBot05|
+ACRE|0x100b28c|DLC05PodBot03|
+ACRE|0x100a616|DLC05PodBot01|
+ACRE|0x100a615|DLC05PodBot07|
+ACRE|0x100a601|DLC05PodBot06|
+ACRE|0x1009979||
+ACRE|0x1009977||
+ACRE|0x10039c1|AsmRobotD04|
+ACRE|0x10039c0|AsmRobotD05|
+ACRE|0x10039bf|AsmRobotD06|
+ACRE|0x10039be|AsmRobotD03|
+ACRE|0x10039bd|AsmRobotD02|
+ACRE|0x10039bc|AsmRobotD01|
+ACRE|0x10033ae|AsmRobot01|
+ACRE|0x10033ad|AsmRobot02|
+ACRE|0x10033ac|AsmRobot03|
+ACRE|0x10033ab|AsmRobot04|
+ACRE|0x10033aa|AsmRobot05|
+ACRE|0x10033a9|AsmRobot06|
+ACRE|0x10031a8|RAsmTurretA1|
+ACRE|0x10031a7|RAsmTurretA2|
+ACRE|0x10031a6|RAsmTurretC2|
+ACRE|0x10031a5|RAsmTurretC1|
+ACRE|0x10031a4|RAsmTurretB4|
+ACRE|0x10031a3|RAsmTurretB1|
+ACRE|0x10031a2|RAsmTurretB3|
+ACRE|0x10031a1|RAsmTurretB2|
+NAVM|0x100cb21||
+NAVM|0x100aab6||
+ACRE|0x100c6a3||
+ACRE|0x100c6a2||
+ACRE|0x100c6a1||
+CELL|0x1002fd1|DLC05SpaceBridge02|Space Walk
+ACRE|0x100d6fd|DLC05SpaceWalkAlienInner01REF|
+ACRE|0x100b029|DLC05SpaceWalkAlienInner02REF|
+ACRE|0x100b023|DLC05SpaceWalkAlienInner03REF|
+NAVM|0x100b01f||
+NAVM|0x100b01e||
+NAVM|0x100b01d||
+ACRE|0x100d6fc||
+ACRE|0x100d6fb||
+ACRE|0x100b022||
+CELL|0x1008ec7|DLC05ResearchLab|Research Lab
+ACRE|0x100b42b||
+NAVM|0x1009ba2||
+NAVM|0x1009ba1||
+NAVM|0x1009ba0||
+NAVM|0x1009b9f||
+NAVM|0x1009b9d||
+NAVM|0x1009b9c||
+ACRE|0x100b447||
+ACRE|0x100b444||
+ACRE|0x100a621||
+ACHR|0x100976c||
+ACHR|0x100976b||
+ACHR|0x100976a||
+ACHR|0x1009769||
+ACHR|0x1009768||
+ACRE|0x10094d7||
+ACRE|0x10094d5||
+ACRE|0x10094cd||
+ACRE|0x10094cc||
+ACRE|0x10094c9||
+ACRE|0x10094c8||
+ACRE|0x10094c3||
+ACRE|0x10094c0||
+ACRE|0x10094be||
+ACRE|0x10094bd||
+CELL|0x100d2d3|DLC05TestJonPaul2|
+NAVM|0x100d6c2||
+CELL|0x1007397|DLC05sewer01|Maintenance Level
+ACRE|0x1007eee|DLC05FF01AlienSpawn01|
+ACRE|0x1007427|DLC05set02Alien01|
+ACRE|0x1007426|DLC05set02Alien02|
+ACRE|0x1007425|DLC05set02Alien03|
+NAVM|0x100c31f||
+NAVM|0x100a8ab||
+NAVM|0x1007476||
+ACRE|0x1007ee0||
+ACRE|0x1007edf||
+ACRE|0x1007ede||
+ACRE|0x1007416||
+CELL|0x1000ef8|DLC05LivingQuarters|Living Quarters
+ACRE|0x100c9cb||
+ACRE|0x100c9ca||
+ACRE|0x100c9c8||
+ACRE|0x1006a82|DLC05LQFFShieldGunnerA|
+ACRE|0x1006a81|DLC05LQFFShieldGunnerB|
+ACRE|0x1006a66||
+ACRE|0x100585b|DLC05LQRobotHallA|
+ACRE|0x1005852||
+ACRE|0x100584c||
+ACRE|0x1005849||
+ACRE|0x1005848||
+ACRE|0x1005840||
+ACRE|0x10015dc||
+ACRE|0x10015db||
+NAVM|0x100582a||
+ACRE|0x100ce7d||
+ACRE|0x100ce7c||
+ACRE|0x100c9ce||
+ACRE|0x100c9cd||
+ACRE|0x100c9cc||
+ACRE|0x1007d2f||
+ACRE|0x1007d2c||
+ACRE|0x1007d2d||
+ACRE|0x1007d2b||
+ACRE|0x1007ea4||
+ACRE|0x1007ea3||
+ACRE|0x1007e97||
+ACRE|0x1007e67||
+ACRE|0x1007e66||
+ACRE|0x1006a86||
+ACRE|0x1006a80||
+ACRE|0x100584e||
+ACRE|0x100584d||
+ACRE|0x1005845||
+ACRE|0x1005844||
+ACRE|0x1005842||
+ACRE|0x1005841||
+ACRE|0x100582d||
+ACRE|0x100582c||
+ACRE|0x100582b||
+ACRE|0x1005829||
+ACRE|0x1005828||
+ACRE|0x10015de||
+ACRE|0x10015dd||
+CELL|0x10034dc|DLC05TestAlien|
+NAVM|0x100355c||
+ACRE|0x1003c60||
+ACRE|0x1003c5f||
+ACRE|0x1003c5e||
+ACRE|0x1003c5d||
+ACRE|0x10035c6||
+ACRE|0x10035c5||
+ACRE|0x10035c4||
+CELL|0x1002fd2|DLC05EngineCore|Engineering Core
+ACRE|0x100c516|DLC05EngineCoreStage03AlienSpawn01REF|
+ACRE|0x100c515|DLC05EngineCoreStage03AlienSpawn02REF|
+ACRE|0x1006e2a|DLC05CoreSceneDeadAlienRef|
+ACRE|0x1006e24|DLC05CoreSceneAlienRef|
+ACHR|0x1003308|DLC05TercorienRef|
+ACHR|0x1003307|DLC05SamuraiRef|
+ACHR|0x1003304|DLC05PaulsonRef|
+ACHR|0x1003303|DLC05DeadAstronautRef|
+NAVM|0x100c361||
+NAVM|0x100c35f||
+NAVM|0x100c35e||
+NAVM|0x100c35d||
+NAVM|0x100c35c||
+NAVM|0x100c35b||
+ACRE|0x100c514||
+ACRE|0x100c513||
+ACRE|0x100c512||
+ACRE|0x100c511||
+ACRE|0x100c510||
+CELL|0x1004a12|DLC05ExLab03|Experimentation Lab
+ACHR|0x100c779||
+ACHR|0x100c776||
+ACRE|0x100c30a|DLC05ExLabResearcher02REF|
+ACRE|0x10067b1|Dlc05ExLabAbomA|
+ACRE|0x10067b0|Dlc05ExLabAbomB|
+ACRE|0x10067af|Dlc05ExLabAbomC|
+ACRE|0x10067ac|Dlc05ExLabAbomD|
+ACRE|0x10067ab|Dlc05ExLabAbomE|
+ACRE|0x10067aa|Dlc05ExLabAbomF|
+ACRE|0x100c2fa||
+ACRE|0x100c0c9|DLC05ExLabResearcherREF|
+NAVM|0x1004c0c||
+ACHR|0x100c98f||
+ACRE|0x100c36e||
+ACRE|0x100c309||
+ACRE|0x100c2fb||
+ACRE|0x100c2ed||
+ACRE|0x100c2ec||
+ACRE|0x100c2ea||
+ACRE|0x10067ae||
+ACRE|0x10067ad||
+CELL|0x1006312|DLC05TestJonPaul|
+ACRE|0x100d2e4|DLC05TestAlienTeleporterRef|
+NAVM|0x1007988||
+CELL|0x1003721|DLC05CryoLab02|Cryo Storage
+ACRE|0x100b3d1||
+ACRE|0x100b3cf||
+ACRE|0x100aaa5|DLC05CryoLabSuperMutant04REF|
+ACRE|0x100aaa4|DLC05CryoLabSuperMutant03REF|
+ACRE|0x100378a||
+ACRE|0x1003789||
+ACRE|0x1003788||
+ACRE|0x1003781||
+ACRE|0x100377b||
+ACRE|0x1003775||
+ACRE|0x100376c||
+ACRE|0x1003766||
+ACRE|0x1002d70|DLC05CryoLabSuperMutant02REF|
+ACRE|0x1002d6e|DLC05CryoLabSuperMutant01REF|
+NAVM|0x100be3e||
+ACRE|0x100b3cb||
+ACRE|0x1003779||
+CELL|0x10034dd|DLC05EngineRoom|Engine Room
+ACRE|0x10079c8|DLC05ERRobotRoom0B|
+ACRE|0x10079c7|DLC05ERRobotRoom0A|
+ACRE|0x10079c6|DLC05EREngineer0|
+ACRE|0x1006ad3|DLC05EREngineer4A|
+ACRE|0x1006ad2|DLC05EREngineer2A|
+ACRE|0x1006ac2|DLC05ERRobotRoom4B|
+ACRE|0x1006ac1|DLC05ERRobotRoom4C|
+ACRE|0x1006ac0|DLC05ERRobotRoom4A|
+ACRE|0x1006abf|DLC05EREngineer4|
+ACRE|0x1006abe|DLC05ERRobotRoom5C|
+ACRE|0x1006ab5|DLC05ERRobotRoom1B|
+ACRE|0x1006ab4|DLC05ERRobotRoom1A|
+ACRE|0x1006ab3|DLC05EREngineer1|
+ACRE|0x1006a2b||
+ACRE|0x1006a2a||
+ACRE|0x100695e||
+ACRE|0x100695c||
+ACRE|0x1006946||
+ACRE|0x10040d7|DLC05ERRobotRoom3A|
+ACRE|0x10040d6||
+ACRE|0x10040d5||
+ACRE|0x10040d3|DLC05ERRobotRoom5A|
+ACRE|0x10040d2|DLC05ERRobotRoom5B|
+ACRE|0x10040d1|DLC05EREngineer5|
+ACRE|0x1003f65||
+ACRE|0x1003f64|DLC05ERRobotRoom2B|
+ACRE|0x1003c4e||
+ACRE|0x1003c4d||
+ACRE|0x1003c4c|DLC05ERRobotRoom3B|
+ACRE|0x1003c4b|DLC05EREngineer3|
+ACRE|0x1003c4a|DLC05ERRobotRoom2D|
+ACRE|0x1003c49|DLC05ERRobotRoom2C|
+ACRE|0x1003c48|DLC05EREngineer2|
+ACRE|0x1003c44|DLC05ERRobotRoom2A|
+NAVM|0x1003f7c||
+CELL|0x100098b|DLC05CargoHold|Cargo Hold
+NAVM|0x100cb1d||
+NAVM|0x100a637||
+NAVM|0x1007af2||
+NAVM|0x1004796||
+ACRE|0x100b474||
+ACRE|0x100b470||
+ACRE|0x100b46c||
+ACRE|0x100b466||
+ACRE|0x100b465||
+ACRE|0x1007cdf||
+ACRE|0x10047b4||
+ACRE|0x10047b1||
+ACRE|0x10047ae||
+ACRE|0x10047ab||
+ACRE|0x10047a9||
+ACRE|0x100479f||
+ACRE|0x100479a||
+CELL|0x1002fd3|DLC05Steamworks|Steamworks
+ACRE|0x100a6dc|DLC05SteamWorksRobotB|
+ACRE|0x1005ec9||
+ACRE|0x1005ec8||
+ACRE|0x1005ec7||
+ACRE|0x1005ec2|DLC05SteamWorksEngineerA|
+ACRE|0x1005ec1||
+ACRE|0x1005ebe||
+ACRE|0x1005ebd||
+ACRE|0x1005eb7||
+ACRE|0x1005eb5||
+ACRE|0x1005eb1||
+ACRE|0x1005e8a|DLC05SteamWorksEngineerD|
+ACRE|0x10049d1|DLC05SteamFinalFodder|
+ACRE|0x10049ce|DLC05SteamWorksRobotA|
+ACRE|0x10049cd|DLC05SteamWorksEngineerB|
+ACRE|0x10049ca|DLC05SteamWorksEngineerC|
+ACRE|0x10049c9|DLC05SteamAlienQS55B|
+ACRE|0x10049c8|DLC05SteamAlienQS55A|
+ACRE|0x10049c6||
+ACRE|0x10049c5||
+ACRE|0x10049c3||
+ACRE|0x10049c2||
+ACRE|0x10049c1||
+ACRE|0x10049bf||
+ACRE|0x10049be||
+ACRE|0x10049bd||
+ACRE|0x10049b2||
+ACRE|0x10049b1||
+ACRE|0x10049ad||
+ACRE|0x10049a9|DLC05SteamQS20A|
+ACRE|0x10049a8|DLC05SteamQS20C|
+ACRE|0x10049a7|DLC05SteamQS20B|
+ACRE|0x10049a1|DLC05SteamQS15C|
+ACRE|0x10049a0|DLC05SteamQS15B|
+ACRE|0x100499f|DLC05SteamQS15A|
+ACRE|0x100498b|DLC05SteamQS05A|
+ACRE|0x100498a|DLC05SteamQS05C|
+ACRE|0x1004989|DLC05SteamQS05B|
+NAVM|0x100c4a7||
+NAVM|0x1005dc3||
+ACRE|0x100cb9c||
+ACRE|0x100cb9b||
+ACRE|0x1005ec6||
+ACRE|0x1005ec0||
+ACRE|0x1005ebb||
+ACRE|0x1005eba||
+CELL|0x1000805|DLC05TestPhil|
+ACRE|0x1004247||
+ACRE|0x1004246||
+ACRE|0x1004242||
+NAVM|0x10015fc||
+NAVM|0x10015fb||
+NAVM|0x1000806||
+CELL|0x1001615|DLC05TestDar|
+ACHR|0x100518a||
+ACHR|0x1004e19||
+NAVM|0x1002ed5||
+NAVM|0x1001f4e||
+CELL|0x100481f|DLC05DeathRayHub02|Death Ray Control
+ACRE|0x1005665|DLC05DeathRayControlAlien02REF|
+ACRE|0x1005662|DLC05DeathRayControlAlien04REF|
+ACRE|0x1005660|DLC05DeathRayControlAlien01REF|
+ACRE|0x100565d|DLC05DeathRayControlAlien03REF|
+NAVM|0x100a770||
+NAVM|0x100a76f||
+CELL|0x1004a13|DLC05ExLab04|Biological Research
+ACRE|0x100c99b||
+ACRE|0x100c998||
+NAVM|0x10056b5||
+ACRE|0x100adcf||
+ACRE|0x100adce||
+ACRE|0x100adcd||
+ACRE|0x100adcc||
+ACRE|0x100adcb||
+ACRE|0x100adca||
+ACRE|0x100adc9||
+ACRE|0x100adc8||
+CELL|0x100098c|DLC05TestRepairBay|Repair Bay
+ACHR|0x10027fb||
+ACHR|0x10027f7||
+ACHR|0x10027f4||
+ACHR|0x10027f1||
+ACHR|0x10027e6||
+ACHR|0x10027e5||
+ACHR|0x10027de||
+ACHR|0x10027d9||
+ACHR|0x10027d8||
+ACHR|0x10027d4||
+ACHR|0x10027d3||
+ACHR|0x10027c6||
+ACHR|0x10027c5||
+ACHR|0x10027c4||
+ACHR|0x10027c0||
+ACRE|0x10027b7||
+NAVM|0x1002908||
+CELL|0x1001616|DLC05CryoLab01|Cryo Lab
+ACHR|0x100bd19||
+ACHR|0x100b281|DLC05CryoDeadNPC03REF|
+ACHR|0x100b27e|DLC05CryoDeadNPC02REF|
+ACHR|0x100b27a|DLC05CryoDeadNPC01REF|
+ACRE|0x100aa45||
+ACHR|0x1003cc2|DLC05SquadMearsREF|
+ACHR|0x1003cc1|DLC05SquadSpurlockREF|
+ACHR|0x1006c4f|DLC05CryoDanielREF|
+ACHR|0x1006c4b|DLC05CryoBecketREF|
+ACHR|0x1003760|DLC05CryoFreezeDeadSoldierREF|
+ACRE|0x100536c||
+ACHR|0x100533b||
+ACRE|0x100532a||
+ACRE|0x1005325||
+ACHR|0x100531c||
+ACHR|0x1005317||
+ACRE|0x1005305||
+ACHR|0x1005302||
+ACRE|0x10052fb||
+ACRE|0x10052f6||
+ACRE|0x10052f1||
+ACRE|0x100526e||
+ACRE|0x100526d||
+ACRE|0x1005243||
+ACHR|0x1005241||
+ACRE|0x100375c|DLC05CryoFreezeRoomAlien03REF|
+ACRE|0x100375b|DLC05CryoFreezeRoomAlien02REF|
+ACRE|0x1003753|DLC05CryoFreezeRoomAlien01REF|
+ACRE|0x1003752||
+ACRE|0x100374d||
+ACRE|0x1003748||
+ACRE|0x100373d||
+NAVM|0x100b7c5||
+ACRE|0x100ad65||
+ACRE|0x100ad61||
+ACRE|0x100aa4b||
+ACRE|0x100aa4a||
+CELL|0x1004820|DLC05DeathRayHub01|Death Ray Hub
+ACRE|0x100adc2||
+ACRE|0x100adbd||
+ACRE|0x100adba||
+ACRE|0x100adb7||
+ACRE|0x100adb4||
+ACRE|0x100ad99||
+ACRE|0x1005c85||
+ACRE|0x100565a||
+ACRE|0x1005657||
+ACRE|0x1005654||
+ACRE|0x1005651||
+ACRE|0x100564e||
+ACRE|0x100564b||
+ACRE|0x1005649||
+ACRE|0x1005645||
+NAVM|0x100a95e||
+ACRE|0x100a963||
+ACRE|0x100a95f||
+CELL|0x1004a14|DLC05ExLab02|Weapons Lab
+ACRE|0x100c98b||
+ACRE|0x100c988||
+ACRE|0x100bdb4||
+ACRE|0x100bdb3||
+ACRE|0x100bdb2||
+ACRE|0x100bdb0||
+ACRE|0x100bdaf||
+ACRE|0x100bdab||
+ACRE|0x100bdaa||
+ACRE|0x100bd31||
+ACRE|0x100bd2d||
+ACRE|0x100bd2c||
+ACRE|0x100bd29||
+ACRE|0x100bd28||
+ACRE|0x1008509||
+ACRE|0x1007baf||
+NAVM|0x100cab8||
+NAVM|0x100adc7||
+NAVM|0x1008579||
+ACRE|0x100bd3c||
+ACRE|0x100bd3b||
+ACRE|0x100bd2e||
+ACRE|0x1007bbf||
+ACRE|0x1007bbe||
+ACRE|0x1007bbc||
+ACRE|0x1007bb0||
+ACRE|0x1007bad||
+CELL|0x1007778|DLC05TestMachineCombos|
+NAVM|0x1007779||
+CELL|0x100096f|DLC05HoldingCells|Holding Cells
+ACRE|0x100ce0a||
+ACHR|0x1007e51||
+ACHR|0x1007e4e|DLC05HoldingCellRaiderREF|
+ACHR|0x1007e4b||
+ACHR|0x1006bdb|DLC05ClawNPCRef|
+ACRE|0x10068e3|DLC05MZ1AlienHCMelee2|
+ACRE|0x10068e2|DLC05MZ1AlienHCMelee1|
+ACRE|0x10066fd|DLC05MZ1AnimationAlien3REF|
+ACRE|0x10066fc|DLC05MZ1AnimationAlien2REF|
+ACRE|0x10066fb|DLC05MZ1AnimationAlien1REF|
+ACRE|0x10040a4|DLC05MZ1AlienGuardRef2|
+ACRE|0x10040a3|DLC05MZ1AlienGuardRef1|
+ACHR|0x1000988|DLC05SomahREF|
+ACHR|0x1000987|DLC05SallyREF|
+NAVM|0x100b288||
+NAVM|0x1006bdd||
+CELL|0x10047bd|DLC05sewer02|Waste Disposal
+ACRE|0x10073e6|DLC05FF01MeanieREF|
+ACRE|0x1006b00||
+ACRE|0x1006afe||
+ACRE|0x1006afc||
+ACRE|0x1006afa||
+ACRE|0x1006af9||
+ACRE|0x1006af8||
+ACRE|0x1006af5|FF01arenaAlien02|
+ACRE|0x1006111|FF01arenaAlien04|
+ACRE|0x100610d|FF01arenaAlien03|
+ACRE|0x100610a|FF01arenaAlien01|
+ACRE|0x1006139||
+ACRE|0x1004f0b||
+ACRE|0x1005bf7||
+ACRE|0x1005bea||
+ACRE|0x1005be7||
+ACRE|0x1005bdb||
+NAVM|0x1009b87||
+NAVM|0x1009b86||
+NAVM|0x1009b85||
+NAVM|0x1009b84||
+NAVM|0x1009b83||
+ACRE|0x100c33d||
+ACRE|0x100c33c||
+CELL|0x1007af3|DLC05TestBridge|
+CELL|0x100b531|DLC05testCoreOverhaul|Engineering Core
+ACRE|0x100b619||
+ACRE|0x100b618||
+NAVM|0x100b532||
+CELL|0x10035d0|DLC05TestPoo|
+ACRE|0x10055db||
+ACRE|0x10055da||
+ACRE|0x10036d1||
+ACRE|0x10036d0||
+ACRE|0x10036cf||
+ACRE|0x10036ce||
+CELL|0x1000846|DLC05TestShip|
+CELL|0x1002fce|DLC05Bridge|The Bridge
+ACRE|0x1004e29|DLC05BridgeCrewD|
+ACRE|0x1004e28|DLC05BridgeCrewC|
+ACRE|0x1004e27|DLC05BridgeCrewB|
+ACRE|0x1004e26|DLC05BridgeCrewA|
+ACRE|0x1004e25|DLC05BridgeCaptain|
+NAVM|0x100d85e||
+NAVM|0x1004e3f||
+CELL|0x100428e|DLC05SpaceBridge01|Decompression Chamber
+NAVM|0x1007b78||
+ACRE|0x1007b77||
+ACRE|0x1007b76||
+ACRE|0x1007b75||
+ACRE|0x1007b74||
+CELL|0x1009c70|DLC05TestJeffB02|Cargo Hold
+NAVM|0x100a2a5||
+NAVM|0x100a2a4||
+NAVM|0x100a2a3||
+NAVM|0x100a2a2||
+NAVM|0x100a2a1||
+NAVM|0x100a2a0||
+NAVM|0x100a29f||
+ACRE|0x100a0be||
+ACRE|0x1009e86||
+ACRE|0x1009e85||
+ACRE|0x1009e84||
+ACRE|0x1009e83||
+ACRE|0x1009e82||
+ACRE|0x1009e81||
+ACRE|0x1009e80||
+CELL|0x1000f94|DLC05testJesse|Hangar
+ACRE|0x100bd34||
+ACRE|0x100bd33||
+NAVM|0x100bd37||
+NAVM|0x10021af||
+CELL|0x10067f1|DLC05TestAlienTech|
+NAVM|0x1006812||
+CELL|0x1002fcf|DLC05ExLab01|Observation Deck
+NAVM|0x100ce50||
+NAVM|0x10039e3||
+CELL|0x10033b7|DLC05TestSpace|
+ACHR|0x1004289||
+CELL|0x1003eb1|DLC05TestAlienJuan|
+NAVM|0x1006d5a||
+ACRE|0x1006d59||
+ACRE|0x1006bf1||
+ACRE|0x100566a||
+ACRE|0x1005121||
+ACRE|0x1005120||
+ACRE|0x1003fca||
+ACRE|0x1003fc9||
+CELL|0x1000f95|DLC05Hangar|Hangar
+ACRE|0x100c986||
+ACRE|0x100c984||
+ACRE|0x100c982||
+ACRE|0x100c980||
+ACRE|0x1007759|DLC05LvlHangarAlienControllerREF|
+NAVM|0x1006d6c||
+ACRE|0x1007771||
+ACRE|0x1007770||
+ACRE|0x1007757||
+ACRE|0x1007756||
+ACRE|0x1007755||
+WRLD|0x3c|Wasteland|Wasteland
+CELL|0x2db4||
+CELL|0x15b5|ReconCraftTheta|
+DIAL|0xc8|GREETING|GREETING
+INFO|0x10054b0||
+INFO|0x100aac5||
+INFO|0x1007eb8||
+INFO|0x1007eb9||
+INFO|0x1007e15||
+INFO|0x1007e16||
+INFO|0x1007e17||
+INFO|0x1007e18||
+INFO|0x1007e19||
+INFO|0x1007982||
+INFO|0x1007981||
+INFO|0x100a94b||
+INFO|0x100ab9e||
+INFO|0x1007983||
+INFO|0x1007984||
+INFO|0x1007985||
+INFO|0x10039b2||
+INFO|0x1007eba||
+INFO|0x1007b95||
+INFO|0x100ac16||
+INFO|0x1007b96||
+INFO|0x100a750||
+INFO|0x100aba4||
+INFO|0x100a988||
+INFO|0x100a987||
+INFO|0x100a986||
+INFO|0x100aba5||
+INFO|0x100aba6||
+INFO|0x100a989||
+INFO|0x100abaa||
+INFO|0x100aba7||
+INFO|0x100aba8||
+INFO|0x100aba9||
+INFO|0x100abab||
+INFO|0x100a751||
+INFO|0x100abac||
+INFO|0x10076bd||
+INFO|0x100aba1||
+INFO|0x100aba2||
+INFO|0x100aba3||
+INFO|0x10076be||
+INFO|0x10076bf||
+INFO|0x10076c0||
+INFO|0x10076c1||
+INFO|0x100a8dc||
+INFO|0x100a8dd||
+INFO|0x100397a||
+INFO|0x1008abc||
+INFO|0x1008abd||
+INFO|0x1008abe||
+INFO|0x1005efe||
+INFO|0x100397b||
+INFO|0x100a626||
+INFO|0x100a627||
+INFO|0x100397c||
+INFO|0x1008abf||
+INFO|0x1008ac0||
+INFO|0x1008ac1||
+INFO|0x1005eff||
+INFO|0x100397d||
+INFO|0x100a628||
+INFO|0x100a629||
+INFO|0x100397e||
+INFO|0x1005f00||
+INFO|0x1008ac2||
+INFO|0x1008ac3||
+INFO|0x1008ac4||
+INFO|0x10055fe||
+INFO|0x100a62a||
+INFO|0x100a62b||
+INFO|0x1005f01||
+INFO|0x1008ac5||
+INFO|0x1008ac6||
+INFO|0x100397f||
+INFO|0x100ab9f||
+INFO|0x100aba0||
+INFO|0x1005f02||
+INFO|0x100acfa||
+INFO|0x1003980||
+INFO|0x1003981||
+INFO|0x1007e3c||
+INFO|0x100a886||
+INFO|0x10055cd||
+INFO|0x10055ce||
+INFO|0x10058c4||
+INFO|0x10076c3||
+INFO|0x10076c7||
+INFO|0x1007e21||
+INFO|0x100a73e||
+INFO|0x100a73f||
+INFO|0x100a740||
+INFO|0x100a741||
+INFO|0x100a742||
+INFO|0x100a743||
+INFO|0x100a744||
+INFO|0x100a745||
+INFO|0x1007e22||
+INFO|0x10076c4||
+INFO|0x1003ca3||
+INFO|0x100573f||
+INFO|0x100a746||
+INFO|0x1007e23||
+INFO|0x1005740||
+INFO|0x1007e3f||
+INFO|0x1007e40||
+INFO|0x1007e41||
+INFO|0x1007e42||
+INFO|0x1007e43||
+INFO|0x1007e44||
+INFO|0x1007e45||
+INFO|0x1007e24||
+INFO|0x1007e46||
+INFO|0x1007e47||
+INFO|0x1007e48||
+INFO|0x1007e49||
+INFO|0x1007e25||
+INFO|0x1007e3d||
+INFO|0x1007e3e||
+INFO|0x100a6f5||
+INFO|0x1007e26||
+INFO|0x1007060||
+INFO|0x1007061||
+INFO|0x1007062||
+INFO|0x1007063||
+INFO|0x1007064||
+INFO|0x10076c2||
+INFO|0x1006de3||
+INFO|0x1003417||
+INFO|0x1004e57||
+INFO|0x1006de4||
+INFO|0x100a71b||
+INFO|0x100a71c||
+INFO|0x100a71d||
+INFO|0x1006b10||
+INFO|0x1003e35||
+INFO|0x100683c||
+INFO|0x1006c02||
+INFO|0x1006e59||
+INFO|0x1006e5a||
+INFO|0x1006e5b||
+INFO|0x1006e5c||
+INFO|0x1006e5d||
+INFO|0x1006e5e||
+INFO|0x100683d||
+INFO|0x1001606||
+INFO|0x10033b2||
+INFO|0x1003713||
+INFO|0x2000800||
+DIAL|0xd2|HELLO|HELLO
+INFO|0x100ac14||
+INFO|0x100ac15||
+INFO|0x100ab4f||
+INFO|0x100ab50||
+INFO|0x100ab51||
+INFO|0x100ab52||
+INFO|0x100ab53||
+INFO|0x100ab54||
+INFO|0x100ab55||
+INFO|0x100ab56||
+INFO|0x100ab57||
+INFO|0x100a721||
+INFO|0x100a722||
+INFO|0x100a723||
+INFO|0x100a724||
+INFO|0x100a725||
+INFO|0x100a726||
+INFO|0x1005600||
+INFO|0x1008ac7||
+INFO|0x1008ac8||
+INFO|0x1008ac9||
+INFO|0x1005601||
+INFO|0x1008aca||
+INFO|0x1008acb||
+INFO|0x1008acc||
+INFO|0x1008acd||
+INFO|0x1005602||
+INFO|0x1005603||
+INFO|0x1005604||
+INFO|0x1008ace||
+INFO|0x1008acf||
+INFO|0x1008ad0||
+INFO|0x1005605||
+INFO|0x1005606||
+INFO|0x1008ad1||
+INFO|0x1008ad2||
+INFO|0x1008ad3||
+INFO|0x1008ad4||
+INFO|0x1005607||
+INFO|0x1005608||
+INFO|0x1005609||
+INFO|0x1008ad5||
+INFO|0x1008ad6||
+INFO|0x1008ad7||
+INFO|0x100560a||
+INFO|0x1008ad8||
+INFO|0x1008ad9||
+INFO|0x1008ada||
+INFO|0x1008adb||
+INFO|0x100560b||
+INFO|0x100560c||
+INFO|0x100560d||
+INFO|0x1005efd||
+INFO|0x1008adc||
+INFO|0x1008add||
+INFO|0x100560e||
+INFO|0x1007e57||
+INFO|0x1007e58||
+INFO|0x1007e59||
+INFO|0x100ac03||
+INFO|0x1007e5a||
+INFO|0x1007e5b||
+INFO|0x1007e5c||
+INFO|0x100560f||
+INFO|0x1005412||
+INFO|0x1005413||
+INFO|0x1005414||
+INFO|0x1005415||
+INFO|0x1005416||
+INFO|0x1005417||
+INFO|0x1005418||
+INFO|0x1005419||
+INFO|0x100541a||
+DIAL|0xd4|GOODBYE|I have to go now.
+INFO|0x100ab64||
+INFO|0x100ab94||
+INFO|0x100ab95||
+INFO|0x100ab65||
+INFO|0x100ab66||
+INFO|0x100ab67||
+INFO|0x100ab68||
+INFO|0x100ab69||
+INFO|0x100ab6a||
+INFO|0x1007e20||
+INFO|0x100a727||
+INFO|0x100a728||
+INFO|0x100a729||
+INFO|0x100a72a||
+INFO|0x100a72b||
+INFO|0x100a72c||
+INFO|0x100a72d||
+INFO|0x100a72e||
+INFO|0x100a72f||
+INFO|0x100a730||
+INFO|0x1003984||
+INFO|0x100a62c||
+INFO|0x100a62d||
+INFO|0x1003985||
+INFO|0x100a62e||
+INFO|0x100a62f||
+INFO|0x1003989||
+INFO|0x100a630||
+INFO|0x100a631||
+INFO|0x1003988||
+INFO|0x100a632||
+INFO|0x1003986||
+INFO|0x100a633||
+INFO|0x100a634||
+INFO|0x1003987||
+INFO|0x1007b9c||
+INFO|0x1007e5d||
+INFO|0x1005421||
+INFO|0x1005422||
+INFO|0x1005423||
+INFO|0x1005424||
+INFO|0x100a63e||
+INFO|0x1005425||
+INFO|0x1005426||
+INFO|0x1005427||
+INFO|0x1005428||
+INFO|0x1005429||
+DIAL|0xdc|Attack|Attack
+INFO|0x10036fc||
+INFO|0x10036fd||
+INFO|0x10036fe||
+INFO|0x10036ff||
+INFO|0x1003700||
+INFO|0x10076b9||
+INFO|0x1007986||
+INFO|0x1007995||
+INFO|0x1007996||
+INFO|0x100994c||
+INFO|0x100994d||
+INFO|0x100994e||
+INFO|0x1007be8||
+INFO|0x1007be9||
+INFO|0x1007bea||
+INFO|0x1007beb||
+INFO|0x1007bec||
+INFO|0x1007bed||
+INFO|0x1007bee||
+INFO|0x1007bef||
+INFO|0x1007bf0||
+INFO|0x1007bf1||
+INFO|0x1007bf2||
+INFO|0x1007bf3||
+INFO|0x1007bf4||
+INFO|0x1007bf5||
+INFO|0x1007bf6||
+INFO|0x1007bf7||
+INFO|0x1007bf8||
+INFO|0x1007bf9||
+DIAL|0xdd|Hit|Hit
+INFO|0x10036f7||
+INFO|0x100798d||
+INFO|0x100798e||
+INFO|0x100798f||
+INFO|0x1007990||
+INFO|0x1007991||
+INFO|0x1007992||
+INFO|0x1007993||
+INFO|0x1007994||
+INFO|0x10036f0||
+INFO|0x10036f1||
+INFO|0x10036f2||
+INFO|0x10036f3||
+INFO|0x10036f4||
+INFO|0x10036f5||
+INFO|0x10036f6||
+INFO|0x1009948||
+INFO|0x1009949||
+INFO|0x100994a||
+INFO|0x100994b||
+INFO|0x1007bfa||
+INFO|0x1007bfb||
+INFO|0x1007bfc||
+INFO|0x1007bfd||
+INFO|0x1007bfe||
+INFO|0x1007bff||
+INFO|0x1007c00||
+INFO|0x1007c01||
+INFO|0x1007c02||
+INFO|0x1007c03||
+INFO|0x1007c04||
+INFO|0x1007c05||
+INFO|0x1007c06||
+INFO|0x1007c07||
+INFO|0x1007c08||
+INFO|0x1007c09||
+INFO|0x1007c0a||
+INFO|0x1007c0b||
+DIAL|0xde|Flee|Flee
+INFO|0x10036df||
+INFO|0x10036e0||
+INFO|0x10036e1||
+INFO|0x1007bd3||
+INFO|0x1007bd4||
+INFO|0x1007bd5||
+INFO|0x1007bd6||
+INFO|0x1007bd7||
+INFO|0x1007bd8||
+DIAL|0xe2|AcceptYield|AcceptYield
+INFO|0x1007bc4||
+INFO|0x1007bc5||
+INFO|0x1007bc6||
+DIAL|0xe3|Pickpocket|Pickpocket
+INFO|0x1007c0c||
+INFO|0x1007c0d||
+INFO|0x1007c0e||
+INFO|0x1007c0f||
+INFO|0x1007c10||
+INFO|0x1007c11||
+DIAL|0xe4|Assault|Assault
+INFO|0x1007bcd||
+INFO|0x1007bce||
+INFO|0x1007bcf||
+INFO|0x1007bd0||
+INFO|0x1007bd1||
+INFO|0x1007bd2||
+DIAL|0xe5|Murder|Murder
+DIAL|0xe6|PowerAttack|PowerAttack
+INFO|0x1007bd9||
+INFO|0x1007bda||
+INFO|0x1007bdb||
+INFO|0x1007bdc||
+INFO|0x1007bdd||
+INFO|0x1007bde||
+DIAL|0xec|FireExplosive|FireExplosive
+INFO|0x1007c8b||
+INFO|0x1007c8c||
+INFO|0x1007c8d||
+DIAL|0xed|AvoidThreat|AvoidThreat
+INFO|0x10036e2||
+INFO|0x10036e3||
+INFO|0x10036e4||
+INFO|0x1007bdf||
+INFO|0x1007be0||
+INFO|0x1007be1||
+INFO|0x1007be2||
+INFO|0x1007be3||
+INFO|0x1007be4||
+DIAL|0xee|NormalToCombat|StartCombat
+DIAL|0xef|Death|Death
+INFO|0x10036e5||
+INFO|0x10036e6||
+INFO|0x10036e7||
+INFO|0x10036e8||
+INFO|0x10036e9||
+INFO|0x10036ea||
+INFO|0x10036eb||
+INFO|0x100798a||
+INFO|0x100798b||
+INFO|0x100798c||
+INFO|0x1007bc7||
+INFO|0x1007bc8||
+INFO|0x1007bc9||
+INFO|0x1007bca||
+INFO|0x1007bcb||
+INFO|0x1007bcc||
+DIAL|0xf0|CombatIdleChatter|CombatIdleChatter
+DIAL|0xf3|AlertToCombat|AlertToCombat
+DIAL|0xf4|NormalToAlert|NormalToAlert
+DIAL|0xf5|AlertToNormal|AlertToNormal
+DIAL|0xf6|CombatToNormal|CombatToNormal
+DIAL|0xf7|CombatToLost|CombatToLost
+DIAL|0xf8|LostToNormal|LostToNormal
+DIAL|0xf9|LostToCombat|LostToCombat
+DIAL|0xfd|SpeechChallengeFailure|SpeechChallengeFailure
+INFO|0x100abc3||
+INFO|0x100abeb||
+INFO|0x1006e53||
+DIAL|0x104|AlertIdle|AlertIdle
+DIAL|0x107|LostIdle|LostIdle
+DIAL|0x126|RadioHello|RadioHello
+INFO|0x1003e36||
+INFO|0x1003e37||
+INFO|0x1003e38||
+DIAL|0x1fb51|DeathResponse|DeathResponse
+INFO|0x10036ec||
+INFO|0x10036ed||
+INFO|0x10036ee||
+INFO|0x1007989||
+INFO|0x10036ef||
+INFO|0x1007c12||
+INFO|0x1007c13||
+INFO|0x1007c14||
+INFO|0x1007c15||
+INFO|0x1007c16||
+INFO|0x1007c17||
+DIAL|0x1fb52|AvoidThreatResponse|AvoidThreatResponse
+INFO|0x10036f8||
+INFO|0x10036f9||
+INFO|0x10036fa||
+INFO|0x10036fb||
+INFO|0x1007be5||
+INFO|0x1007be6||
+INFO|0x1007be7||
+DIAL|0x80d81|StartCombatResponse|StartCombatResponse
+DIAL|0x1002911|DLC05MZ1SomahFightC2|No, I'm not going to fight you.
+INFO|0x100293d||
+INFO|0x10039a9||
+DIAL|0x1002912|DLC05MZ1SomahFightC1|Okay, go ahead and hit me.
+INFO|0x1002933||
+DIAL|0x1002913|DLC05MZ1SomahFightB4|Okay, let's give it a try.
+INFO|0x1002935||
+INFO|0x1002936||
+DIAL|0x1002914|DLC05MZ1SomahFightB3|So if I kill you, that'll bring the guards?
+INFO|0x100292b||
+DIAL|0x1002915|DLC05MZ1SomahFightB2|How do I know I can trust you? What if you try to kill me?
+INFO|0x1002934||
+DIAL|0x1002916|DLC05MZ1SomahFightB1|This is stupid. There must be another way out.
+INFO|0x1002930||
+DIAL|0x1002917|DLC05MZ1SomahFight3|You really think this will work?
+INFO|0x1002939||
+DIAL|0x1002918|DLC05MZ1SomahFight2|Okay, so we get out of this cell, and then what?
+INFO|0x1002929||
+DIAL|0x1002919|DLC05MZ1SomahFight1|You're kidding me. That's the best you've got?
+INFO|0x100292d||
+INFO|0x100292e||
+DIAL|0x100291a|DLC05MZ1SomahPlan2|Why don't you tell me what you have in mind, and I'll think it over.
+INFO|0x1002928||
+DIAL|0x100291b|DLC05MZ1SomahPlan1|All right, fine. What's your plan?
+INFO|0x1002938||
+DIAL|0x100291c|DLC05MZ1SomahAdvantage3|You have a plan, or are you just making this up?
+INFO|0x1002927||
+DIAL|0x100291d|DLC05MZ1SomahAdvantage2|What kind of advantage?
+INFO|0x100292f||
+DIAL|0x100291e|DLC05MZ1SomahAdvantage1|I'm not looking for a sidekick, okay? I just want to get out of here.
+INFO|0x100292a||
+DIAL|0x100291f|DLC05MZ1SomahTalk3|What do they want with us?
+INFO|0x100293c||
+DIAL|0x1002920|DLC05MZ1SomahTalk2|Who are you, and why are you in here with me?
+INFO|0x1002932||
+DIAL|0x1002921|DLC05MZ1SomahTalk1|So how do we get out of here?
+INFO|0x100683a||
+INFO|0x100293a||
+INFO|0x100293b||
+DIAL|0x1002922|DLC05MZ1SomahGreet4|I have to get out of here.
+INFO|0x1002926||
+DIAL|0x1002923|DLC05MZ1SomahGreet3|This can't be happening. I mean... aliens?
+INFO|0x100292c||
+DIAL|0x1002924|DLC05MZ1SomahGreet2|Who are you? What are you doing here?
+INFO|0x1002931||
+DIAL|0x1002925|DLC05MZ1SomahGreet1|This has to be a bad dream...
+INFO|0x1002937||
+DIAL|0x1003309|DLC05MZ1SallyRelease|DLC05MZ1SallyRelease
+INFO|0x100330a||
+INFO|0x1009a10||
+INFO|0x1009a11||
+DIAL|0x10036dd|DLC05MZ1SallyGreet1|Okay, kid. Lead the way.
+INFO|0x10036de||
+DIAL|0x100370f|DLC05AsmElliottPartB|DLC05AsmSomahPartB
+DIAL|0x1003710|DLC05AsmSomahTeleFix|DLC05AsmElliottTeleFix
+INFO|0x1003714||
+DIAL|0x1003711|DLC05AsmSomahDark|DLC05AsmElliottDark
+DIAL|0x100393f|DLC05MZ2TLLevelKnow|Do you know anything helpful about the other sections of the ship?
+INFO|0x1003973||
+DIAL|0x1003940|DLC05MZ2TLNeverMind|I think you should remain in the Engineering Core for now.
+INFO|0x100398a||
+INFO|0x100398b||
+INFO|0x100398c||
+DIAL|0x1003941|DLC05MZ2TLHelpHangar|I may need an extra gun in the Hangar Bay. Can you lend a hand?
+INFO|0x1003990||
+INFO|0x1003991||
+INFO|0x1003992||
+DIAL|0x1003942|DLC05MZ2TLHelpAssembly|I need some help in the Robot Assembly area. You in?
+INFO|0x1003998||
+INFO|0x1003999||
+INFO|0x1007bc3||
+INFO|0x100399a||
+DIAL|0x1003943|DLC05MZ2TLHelpCryo|I need to get through the Cryo Labs. Think you can help me?
+INFO|0x1003994||
+INFO|0x1007a6a||
+INFO|0x1003995||
+INFO|0x1003996||
+DIAL|0x1003944|DLC05MZ2TLAbducted|Tell me how you were captured by these aliens.
+INFO|0x1003976||
+INFO|0x1003977||
+INFO|0x1007e56||
+DIAL|0x1003945|DLC05MZ2TLBackground|Can you tell me more about where you're from?
+INFO|0x1003970||
+INFO|0x100abbe||
+INFO|0x1003971||
+INFO|0x1007e55||
+INFO|0x100abec||
+DIAL|0x1003946|DLC05MZ2TercorienGreet15|I swear, if you don't calm down, I'll stuff you back in the freezer!
+INFO|0x1003979||
+DIAL|0x1003947|DLC05MZ2TercorienGreet14|Just relax. Let me see what I can do.
+INFO|0x1003962||
+DIAL|0x1003948|DLC05MZ2TercorienGreet13|Don't worry, we ARE in this together, and I will help you.
+INFO|0x100396c||
+DIAL|0x1003949|DLC05MZ2TercorienGreet12|My guess is the aliens had them for a snack... or worse.
+INFO|0x100398f||
+DIAL|0x100394a|DLC05MZ2TercorienGreet11|Nope.
+INFO|0x1003972||
+DIAL|0x100394b|DLC05MZ2TercorienGreet10|I'm afraid not. All I've found are these people.
+INFO|0x1003961||
+DIAL|0x100394c|DLC05MZ2TercorienGreet09|Fine... I'll just put you back in stasis!
+INFO|0x1003975||
+DIAL|0x100394d|DLC05MZ2TercorienGreet08|I promise you, all I want to do is get off this ship and get back home.
+INFO|0x1003966||
+DIAL|0x100394e|DLC05MZ2TercorienGreet07|If I were with the aliens, the last thing I would have done is release you.
+INFO|0x1003983||
+DIAL|0x100394f|DLC05MZ2TercorienGreet06|Do I look like an alien?
+INFO|0x100396e||
+DIAL|0x1003950|DLC05MZ2TercorienGreet05|You're a doctor and you can't tell from looking at me that I'm no alien?
+INFO|0x100398d||
+DIAL|0x1003951|DLC05MZ2TercorienGreet04|I can promise you I am not an alien. In fact, I was abducted like you.
+INFO|0x100396f||
+DIAL|0x1003952|DLC05MZ2TercorienGreet03|You're a prisoner like the rest of us.
+INFO|0x1003967||
+DIAL|0x1003953|DLC05MZ2TercorienGreet02|Your uniform... it looks familiar, but I can't place it.
+INFO|0x1003997||
+DIAL|0x1003954|DLC05MZ2TercorienGreet01|It's okay, we're not going to hurt you... We're friends.
+INFO|0x1003982||
+DIAL|0x1003955|DLC05MZ2PaulsonGreet12|You want 'em dead and so do I. Let me see what I can do.
+DIAL|0x1003956|DLC05MZ2PaulsonGreet11|Sit tight, and I'll see what I can find out.
+DIAL|0x1003957|DLC05MZ2PaulsonGreet10|Don't worry Paulson, I will help you find your family. Just hang in there.
+DIAL|0x1003958|DLC05MZ2PaulsonGreet09|I don't give guarantees. You want out of here, you stick with me. Period.
+INFO|0x100398e||
+DIAL|0x1003959|DLC05MZ2PaulsonGreet08|If I were working with the aliens, why would I set you free?
+INFO|0x100396d||
+DIAL|0x100395a|DLC05MZ2PaulsonGreet07|Look, all I want to do is work together as a team so we can get home.
+INFO|0x1003969||
+DIAL|0x100395b|DLC05MZ2PaulsonGreet06|I'm not a shit-kicking cowboy, that's for sure.
+INFO|0x1003965||
+DIAL|0x100395c|DLC05MZ2PaulsonGreet05|I'm a human, like you.
+INFO|0x1003978||
+DIAL|0x100395d|DLC05MZ2PaulsonGreet04|I'm trapped on this ship, just like you.
+INFO|0x1003963||
+DIAL|0x100395e|DLC05MZ2PaulsonGreet03|They're called aliens, hayseed.
+INFO|0x1003974||
+DIAL|0x100395f|DLC05MZ2PaulsonGreet02|If you're talking about the aliens, you'll see them soon enough.
+INFO|0x100396a||
+DIAL|0x1003960|DLC05MZ2PaulsonGreet01|The aliens? They're all over the place. That's why I woke you.
+INFO|0x1003964||
+DIAL|0x10039b1|DLC05AsmSomahChoice02Positive|I'm open to suggestions.
+INFO|0x10039b3||
+DIAL|0x1003ca2|DLC05MZ3SallyLabTriggerTopic|DLC05MZ3SallyLabTriggerTopic
+INFO|0x1003ca4||
+INFO|0x100573c||
+DIAL|0x100409e|DLC05MZ1SomahGreet5|Stay back! Stay away from me!
+INFO|0x100409f||
+DIAL|0x100426c|DLC05HQPaulsonButtons01|DLC05HQPaulsonButtons01
+INFO|0x1004274||
+INFO|0x1004275||
+DIAL|0x100426d|DLC05HQPaulsonBumper01|DLC05HQPaulsonBumper01
+INFO|0x1004273||
+DIAL|0x100426e|DLC05HQPaulsonTeleSwitch|DLC05HQPaulsonTeleSwitch
+INFO|0x1004271||
+INFO|0x1004272||
+DIAL|0x100426f|DLC05HQPaulsonTele01|DLC05HQPaulsonTele01
+INFO|0x1004270||
+DIAL|0x1004783|DLC05HQPaulsonEnemyUpstairs|DLC05HQPaulsonEnemyUpstairs
+INFO|0x1004784||
+INFO|0x100a622||
+INFO|0x100a623||
+INFO|0x100a624||
+INFO|0x100a625||
+INFO|0x1004785||
+INFO|0x1004786||
+INFO|0x1004787||
+INFO|0x1004788||
+INFO|0x100710f||
+DIAL|0x10047b7|DLC05MZ1SomahWaitForSally|DLC05MZ1SomahWaitForSally
+INFO|0x1009945||
+INFO|0x10047bb||
+DIAL|0x10047b8|DLC05MZ1SomahAttackGuard|DLC05MZ1SomahAttackGuard
+INFO|0x10047bc||
+DIAL|0x10047b9|DLC05MZ1AlienGuardLine|DLC05MZ1AlienGuardLine
+INFO|0x10047ba||
+DIAL|0x1004974|DLC05SteamSallyFinal|DLC05SteamSallyFinal
+INFO|0x1004982||
+INFO|0x1007278||
+INFO|0x1004983||
+INFO|0x1007279||
+DIAL|0x1004975|DLC05SteamSallyWorks|DLC05SteamSallyWorks
+INFO|0x1004978||
+INFO|0x1004979||
+INFO|0x1005e79||
+INFO|0x100497a||
+INFO|0x100497b||
+INFO|0x100a6d2||
+INFO|0x100497c||
+INFO|0x100a6d3||
+DIAL|0x1004976|DLC05SteamSallyDoor|DLC05SteamSallyDoor
+INFO|0x1004984||
+INFO|0x1004985||
+INFO|0x1004986||
+INFO|0x1004987||
+INFO|0x1004988||
+DIAL|0x1004977|DLC05SteamSallyGuide|DLC05SteamSallyGuide
+INFO|0x100497d||
+INFO|0x100497f||
+INFO|0x1004980||
+INFO|0x1004981||
+DIAL|0x1004e1c|DLC05BridgeInterElliot|Try to page Elliot
+DIAL|0x1004e1d|DLC05BridgeTopicPaulson|DLC05BridgeTopicPaulson
+DIAL|0x1004e1e|DLC05BridgeTopicElliot|DLC05BridgeTopicElliot
+DIAL|0x1004e1f|DLC05BridgeTopicSally|DLC05BridgeTopicSally
+DIAL|0x1004e20|DLC05BridgeTopicSomah|DLC05Bridge
+DIAL|0x1004e4b|DLC05BridgeInterElliotResponse|Page Elliot
+DIAL|0x1004e4d|DLC05BridgeInterDoNothing|Get a move on it!
+INFO|0x1004e72||
+INFO|0x10055cc||
+INFO|0x10058c7||
+INFO|0x10058c8||
+DIAL|0x1004e50|DLC05MZ1SallyGreetB2|Sorry for doubting you. Can you help now?
+INFO|0x1004e54||
+DIAL|0x1004e51|DLC05MZ1SallyGreetB1|How exactly are you going to help?
+INFO|0x1004e55||
+DIAL|0x1004e52|DLC05MZ1SallyGreet3|I think I've got this under control.
+INFO|0x1004e56||
+DIAL|0x1004e53|DLC05MZ1SallyGreet2|You should wait here. It's too dangerous for a little girl.
+INFO|0x1004e58||
+DIAL|0x1004e6f|DLC05BridgeInterPaulsonResponse|Page Paulson
+DIAL|0x1004e70|DLC05BridgeInterSomahResponse|Page Somah
+DIAL|0x1004e71|DLC05BridgeInterSallyResponse|Page Sally
+DIAL|0x1005142|DLC05AsmSomahExploded|DLC05AsmSomahExploded
+INFO|0x1005145||
+DIAL|0x1005143|DLC05AsmSomahChoice01No|Actually, let me head for the controls and you just stay close.
+DIAL|0x1005144|DLC05AsmSomahChoice01Yes|All right, I'll take all the help I can get.
+DIAL|0x10053d7|DLC05ConvTercorienAltResponsesLevel03|DLC05ConvTercorienAltResponsesLevel03
+DIAL|0x10053d8|DLC05ConvTercorienAltResponsesLevel02|DLC05ConvTercorienAltResponsesLevel02
+INFO|0x1005401||
+INFO|0x1005402||
+DIAL|0x10053d9|DLC05ConvTercorienAltResponsesLevel01|DLC05ConvTercorienAltResponsesLevel01
+INFO|0x10053ee||
+INFO|0x10053ef||
+DIAL|0x10053da|DLC05ConvSomahAltResponsesLevel03|DLC05ConvSomahAltResponsesLevel03
+INFO|0x10053ec||
+INFO|0x10053ed||
+DIAL|0x10053db|DLC05ConvSomahAltResponsesLevel02|DLC05ConvSomahAltResponsesLevel02
+INFO|0x100540e||
+INFO|0x100540f||
+DIAL|0x10053dc|DLC05ConvSomahAltResponsesLevel01|DLC05ConvSomahAltResponsesLevel01
+INFO|0x10053f9||
+INFO|0x10053fa||
+DIAL|0x10053dd|DLC05ConvSallyAltResponsesLevel03|DLC05ConvSallyAltResponsesLevel03
+INFO|0x1005406||
+DIAL|0x10053de|DLC05ConvSallyAltResponsesLevel02|DLC05ConvSallyAltResponsesLevel02
+INFO|0x100540c||
+INFO|0x100540d||
+DIAL|0x10053df|DLC05ConvSallyAltResponsesLevel01|DLC05ConvSallyAltResponsesLevel01
+INFO|0x1005407||
+INFO|0x1005408||
+DIAL|0x10053e0|DLC05ConvTercorienResponsesLevel03|DLC05ConvTercorienResponsesLevel03
+INFO|0x1005410||
+INFO|0x1005411||
+DIAL|0x10053e1|DLC05ConvTercorienResponsesLevel02|DLC05ConvTercorienResponsesLevel02
+INFO|0x10053f0||
+INFO|0x10053f1||
+INFO|0x10053f2||
+DIAL|0x10053e2|DLC05ConvTercorienResponsesLevel01|DLC05ConvTercorienResponsesLevel01
+INFO|0x100542c||
+INFO|0x100542d||
+INFO|0x100542e||
+DIAL|0x10053e3|DLC05ConvSallyResponsesLevel03|DLC05ConvSallyResponsesLevel03
+INFO|0x10053f3||
+INFO|0x10053f4||
+INFO|0x10053f5||
+DIAL|0x10053e4|DLC05ConvSallyResponsesLevel02|DLC05ConvSallyResponsesLevel02
+INFO|0x100541e||
+INFO|0x100541f||
+INFO|0x1005420||
+DIAL|0x10053e5|DLC05ConvSallyResponsesLevel01|DLC05ConvSallyResponsesLevel01
+INFO|0x10053fb||
+INFO|0x10053fc||
+INFO|0x10053fd||
+DIAL|0x10053e6|DLC05ConvSomahResponsesLevel03|DLC05ConvSomahResponsesLevel03
+INFO|0x100542a||
+INFO|0x100542b||
+DIAL|0x10053e7|DLC05ConvSomahResponsesLevel02|DLC05ConvSomahResponsesLevel02
+INFO|0x100541b||
+INFO|0x100541c||
+INFO|0x100541d||
+DIAL|0x10053e8|DLC05ConvSomahResponsesLevel01|DLC05ConvSomahResponsesLevel01
+INFO|0x10053f6||
+INFO|0x10053f7||
+INFO|0x10053f8||
+DIAL|0x10053e9|DLC05ConvPaulsonResponsesLevel03|DLC05ConvPaulsonResponsesLevel03
+INFO|0x1005403||
+INFO|0x1005404||
+INFO|0x1005405||
+DIAL|0x10053ea|DLC05ConvPaulsonResponsesLevel02|DLC05ConvPaulsonResponsesLevel02
+INFO|0x1005409||
+INFO|0x100540a||
+INFO|0x100540b||
+DIAL|0x10053eb|DLC05ConvPaulsonResponsesLevel01|DLC05ConvPaulsonResponsesLevel01
+INFO|0x10053fe||
+INFO|0x10053ff||
+INFO|0x1005400||
+DIAL|0x10054af|DLC05BridgeTopicMainScreen|DLC05BridgeTopicMainScreen
+INFO|0x10054b2||
+INFO|0x100ab39||
+INFO|0x100ab3a||
+INFO|0x100ab38||
+INFO|0x10054b3||
+INFO|0x10058b7||
+INFO|0x10058b8||
+DIAL|0x10055c3|DLC05BridgeTopicPaulsonHeal|How are you holding up?
+INFO|0x10055d1||
+DIAL|0x10055c4|DLC05BridgeTopicPaulsonInitial|Would you mind watching our backs?
+INFO|0x10055d0||
+DIAL|0x10055c5|DLC05BridgeTopicSomahHelm|Status report?
+INFO|0x100a936||
+INFO|0x100a937||
+INFO|0x100a938||
+DIAL|0x10055c6|DLC05BridgeTopicSomaInitial|What's this thing do?
+INFO|0x10055cf||
+DIAL|0x10055c7|DLC05BridgeTopicSallyInitial|Can we hit that thing with our death ray?
+INFO|0x10054b1||
+DIAL|0x10055c8|DLC05BrigeTopicSallyDeathRayPrep|How you holding up Sergeant?
+INFO|0x10055cb||
+INFO|0x1005af2||
+DIAL|0x10055c9|DLC05TopicSallyDeathRayPrep|DLC05TopicSallyDeathRayPrep
+DIAL|0x10055e9|DLC05ConvTLTercorienMed|Do you think you'll be able to assist us medically if we need it?
+INFO|0x10055f5||
+INFO|0x10055f6||
+INFO|0x1007a65||
+DIAL|0x10055ea|DLC05ConvTLSomahRepairNo|No way.
+INFO|0x10055ff||
+DIAL|0x10055eb|DLC05ConvTLSomahRepairYes|Fine, I give in. I'll pay.
+INFO|0x10055f4||
+DIAL|0x10055ec|DLC05ConvTLSomahRepair05|No way, Somah. This is ridiculous.
+INFO|0x10055f8||
+DIAL|0x10055ed|DLC05ConvTLSomahRepair04|Yeah, I guess you're right.
+INFO|0x10055f3||
+DIAL|0x10055ee|DLC05ConvTLSomahRepair03|You've got to be kidding me.
+INFO|0x10055fc||
+DIAL|0x10055ef|DLC05ConvTLSomahRepair02|Yeah, fine, whatever. Just take a look.
+INFO|0x10055fd||
+DIAL|0x10055f0|DLC05ConvTLSomahRepair01|Well, given the circumstances, doesn't that seem kind of pointless?
+INFO|0x10055f7||
+DIAL|0x10055f1|DLC05ConvTLSomahRepair|Since you seem so familiar with my gear, do you know how to repair it?
+INFO|0x10055f9||
+INFO|0x10055fb||
+INFO|0x10055fa||
+DIAL|0x1005611|DLC05CryoElliotSpeak|DLC05Cryo
+INFO|0x1005612||
+INFO|0x1005613||
+INFO|0x1005614||
+INFO|0x1005615||
+INFO|0x1005616||
+INFO|0x1005617||
+INFO|0x1005618||
+INFO|0x1005619||
+INFO|0x100561a||
+INFO|0x100561b||
+INFO|0x100561d||
+INFO|0x1006c0e||
+INFO|0x100561e||
+DIAL|0x1005737|DLC05MZ3ExLabSceneOpeningLine|DLC05MZ3ExLabSceneOpeningLine
+INFO|0x1005741||
+INFO|0x1005742||
+INFO|0x1005743||
+DIAL|0x1005738|DLC05MZ3SomahGreet3|I was hoping you'd know what to do next.
+INFO|0x100573d||
+DIAL|0x1005739|DLC05MZ3SomahGreet2|I'm flying by the seat of my pants here.
+INFO|0x100573b||
+DIAL|0x100573a|DLC05MZ3SomahGreet1|Now we take over the ship.
+INFO|0x100573e||
+DIAL|0x10058a5|DLC05MZ3CaptainViewscreenSpeech|DLC05MZ3CaptainViewscreenSpeech
+INFO|0x10058aa||
+INFO|0x10058ab||
+INFO|0x10058ac||
+INFO|0x10058ad||
+INFO|0x10058ae||
+INFO|0x10058af||
+DIAL|0x10058a6|DLC05MZ3ExLabSceneLines|DLC05MZ3ExLabSceneLines
+INFO|0x10058a7||
+INFO|0x1007b88||
+INFO|0x1005d37||
+INFO|0x10058a8||
+INFO|0x10058a9||
+DIAL|0x10058b2|DLC05BridgeEmpHit|DLC05BridgeEmpHit
+INFO|0x10058b4||
+INFO|0x1007030||
+DIAL|0x10058b3|DLC05BridgeAliensInEngineRoom|DLC05BridgeAliensInEngineRoom
+DIAL|0x10058c2|DLC05BridgeTopicElliotShields|How's the jammer holding?
+INFO|0x10058c6||
+DIAL|0x10058c3|DLC05BridgeTopicElliotInitial|What have you got there?
+INFO|0x10058c5||
+DIAL|0x10058e8|DLC05SpaceWalkTopic|DLC05SpaceWalkTopic
+INFO|0x10058e9||
+DIAL|0x1005ae4|DLC05AsmSomahChoice02Negative|Yeah, I can see that. I'll get us through.
+INFO|0x1005ae5||
+DIAL|0x1005ae8|DLC05BridgeTopicDeathRay|DLC05BridgeTopicDeathRay
+INFO|0x1005aeb||
+INFO|0x1005aec||
+DIAL|0x1005ae9|DLC05BridgeTopicShipHealth|DLC05BridgeTopicShipHealth
+INFO|0x1005aef||
+INFO|0x1005af1||
+INFO|0x100703d||
+INFO|0x1007041||
+INFO|0x1007043||
+INFO|0x1007046||
+INFO|0x1005aed||
+INFO|0x1005aee||
+INFO|0x1005af0||
+INFO|0x1006c84||
+INFO|0x100703c||
+INFO|0x100703e||
+INFO|0x100703f||
+INFO|0x1007040||
+INFO|0x1007042||
+INFO|0x1007044||
+INFO|0x1007045||
+INFO|0x1007047||
+DIAL|0x1005bba|DLC05FF01moreBehindYou|DLC05FF01moreBehindYou
+INFO|0x1005bc0||
+DIAL|0x1005bbb|DLC05FF01ambush01c|DLC05FF01ambush01c
+INFO|0x1005bc1||
+DIAL|0x1005bbc|DLC05FF01ambush01|DLC05FF01ambush01
+DIAL|0x1005bbd|DLC05FF01Bark01c|DLC05FF01Bark01c
+INFO|0x1005bc2||
+DIAL|0x1005bbe|DLC05FF01bark01|DLC05FF01bark01
+DIAL|0x1005bbf|FF01bark01|FF01bark01
+DIAL|0x1005d36|DLC05MZ3ExLabDeathRayLines|DLC05MZ3ExLabDeathRayLines
+INFO|0x1005d38||
+INFO|0x1005d39||
+INFO|0x1005d3a||
+INFO|0x1005d3b||
+DIAL|0x10060a5|DLC05FF01AirlockVox01|DLC05FF01AirlockVox01
+INFO|0x10060b3||
+DIAL|0x10060a6|DLC05FF01AirlockVox02|DLC05FF01AirlockVox02
+INFO|0x10060ac||
+DIAL|0x10060a7|DLC05FF01AirlockVox03|DLC05FF01AirlockVox03
+INFO|0x10060ab||
+DIAL|0x10060a8|DLC05FF01AirlockVox04|DLC05FF01AirlockVox04
+INFO|0x10060ae||
+DIAL|0x10060a9|DLC05FF01PreArenaVox|DLC05FF01PreArenaVox
+INFO|0x10060ad||
+DIAL|0x10060aa|DLC05FF01moveForward|DLC05FF01moveForward
+INFO|0x10060af||
+INFO|0x10060b0||
+INFO|0x10060b1||
+INFO|0x10060b2||
+DIAL|0x1006839|DLC05MZ1SomahTalk4|What the hell was that thing? Where are they taking that guy?
+INFO|0x100683b||
+DIAL|0x1006adc|DLC05arenaBetweenWaves|DLC05arenaBetweenWaves
+INFO|0x1006adf||
+DIAL|0x1006add|DLC05FF01SallyAmbushWarning|DLC05FF01SallyAmbushWarning
+INFO|0x1006ae1||
+DIAL|0x1006ade|DLC05FF01PostArenaVox|DLC05FF01PostArenaVox
+INFO|0x1006ae0||
+DIAL|0x1006bf6|DLC05CryoElliotDontPress|DLC05CryoElliotDontPress
+INFO|0x1006c0b||
+DIAL|0x1006bf7|DLC05CryoSquadTalk|DLC05CryoSquadTalk
+INFO|0x1006c07||
+INFO|0x1006c08||
+DIAL|0x1006bf8|DLC05CryoElliotChoiceLeave|We have an objective, soldier! We leave immediately.
+INFO|0x1006c03||
+DIAL|0x1006bf9|DLC05CryoElliotChoiceThink|Let me ask you something before I decide.
+INFO|0x1006c05||
+DIAL|0x1006bfa|DLC05CryoElliotChoice1e|Leave them!  Our objective is to destroy the generator.
+DIAL|0x1006bfb|DLC05CryoElliotChoiceMisery|End it... put them out of their misery.
+INFO|0x1006c06||
+DIAL|0x1006bfc|DLC05CryoElliotChoiceRevive|Revive them and let them fight with us.
+INFO|0x1006c01||
+DIAL|0x1006bfd|DLC05CryoElliotChoice02|We should just put them out of their misery.
+INFO|0x1006c09||
+DIAL|0x1006bfe|DLC05CryoElliotChoice01|How long can they last if you revive them?
+INFO|0x1006c0f||
+DIAL|0x1006bff|DLC05CryoElliotGreet01|DLC05CryoElliotGreet01
+INFO|0x1006c04||
+DIAL|0x1006c00|DLC05CryoElliotFoundSquadSpeak|DLC05CryoElliotFoundSquadSpeak
+INFO|0x100561c||
+INFO|0x1006c10||
+INFO|0x1006c11||
+INFO|0x1006c12||
+INFO|0x1006c13||
+INFO|0x1006c14||
+INFO|0x1006c15||
+INFO|0x1006c16||
+INFO|0x1006c17||
+INFO|0x1006c18||
+INFO|0x1006c19||
+INFO|0x1006c1a||
+INFO|0x1006c1b||
+INFO|0x1006c1c||
+INFO|0x1006c1d||
+DIAL|0x1006c7f|DLC05BridgeElliotDown|DLC05BridgeElliotDown
+INFO|0x1006c81||
+INFO|0x1007031||
+DIAL|0x1006c80|DLC05BridgeTopicPaulsonERoom|Think you can take care of that mess in the engine room?
+DIAL|0x1006da8|DLC05CryoSquadDiesB|DLC05CryoSquadDiesB
+DIAL|0x1006da9|DLC05CryoSquadDiesA|DLC05CryoSquadDies
+DIAL|0x1006daa|DLC05CryoElliotChoice1b2b|Yeah, maybe your right.
+DIAL|0x1006dd7|DLC05MZ1SallyGreetC3|Listen, we're all in danger if we stay here.
+INFO|0x1006de1||
+DIAL|0x1006dd8|DLC05MZ1SallyGreetC2|How did you do that?
+INFO|0x1006ddf||
+DIAL|0x1006dd9|DLC05MZ1SallyGreetC1|Thanks, kid. We're getting out of here -- you want to come with us?
+INFO|0x1006de0||
+DIAL|0x1006dda|DLC05MZ1SomahGreetFree3|I'll take over from here.
+INFO|0x1006ddd||
+DIAL|0x1006ddb|DLC05MZ1SomahGreetFree2|Do you have any idea where we are, or how to get back home?
+INFO|0x1006de2||
+DIAL|0x1006ddc|DLC05MZ1SomahGreetFree1|You're the one with the plan.
+INFO|0x1006dde||
+DIAL|0x1006e15|DLC05CoreScene04|DLC05CoreScene04
+INFO|0x1006e19||
+DIAL|0x1006e16|DLC05CoreScene03|DLC05CoreScene03
+INFO|0x1006e1b||
+DIAL|0x1006e17|DLC05CoreScene02|DLC05CoreScene02
+INFO|0x1006e1c||
+DIAL|0x1006e18|DLC05CoreScene01|DLC05CoreScene01
+INFO|0x1006e1a||
+DIAL|0x1006e4c|DLC05CryoElliotTLLabSealed|Why are we stuck inside the laboratory?
+INFO|0x1006e54||
+INFO|0x1006e55||
+DIAL|0x1006e4d|DLC05CryoWeaponsFound|DLC05CryoWeaponsFound
+INFO|0x1006e56||
+INFO|0x1007242||
+DIAL|0x1006e4e|DLC05CryoElliotChoice04|I think I've decided what we should do.
+INFO|0x1006e58||
+DIAL|0x1006e4f|DLC05CryoElliotChoice03|We should just leave them here. It's too late for them.
+INFO|0x1006e57||
+DIAL|0x1006e50|DLC05CryoElliotChoice0c|DLC05CryoElliotChoice0c
+DIAL|0x1006e51|DLC05CryoElliotChoice0b|DLC05CryoElliotChoice0b
+DIAL|0x1006e52|DLC05CryoElliotChoice0a|
+DIAL|0x1006fbb|DLC05MZ1TLSallyWhereNow|Do you know where we're going?
+INFO|0x10076b7||
+DIAL|0x100702c|DLC05BridgeTopicSallyHelp|DLC05BridgeTopicSallyHelp
+INFO|0x100704d||
+INFO|0x100704f||
+DIAL|0x100702d|DLC05SteamSallyGunTut|DLC05SteamSallyGunTut
+INFO|0x1007277||
+INFO|0x1007049||
+INFO|0x100704c||
+DIAL|0x100702e|DLC05SteamSallyComment|DLC05SteamSallyComment
+INFO|0x1007032||
+INFO|0x1007033||
+INFO|0x1007034||
+INFO|0x1007035||
+INFO|0x1007036||
+DIAL|0x100702f|DLC05SteamSallyIgnored|DLC05SteamSallyIgnored
+INFO|0x1007037||
+INFO|0x1007038||
+INFO|0x1007039||
+INFO|0x100703a||
+INFO|0x100703b||
+DIAL|0x100706e|DLC05HQPaulsonGotYourBack|DLC05HQPaulsonGotYourBack
+INFO|0x1007075||
+DIAL|0x100706f|DLC05HQPaulsonIncoming|DLC05HQPaulsonIncoming
+INFO|0x1007079||
+DIAL|0x1007070|DLC05HQPaulsonGenerator|DLC05HQPaulsonGenerator
+INFO|0x1007074||
+DIAL|0x1007071|DLC05HQPaulsonHole|DLC05HQPaulsonHole
+INFO|0x1007076||
+DIAL|0x1007072|DLC05HangarPaulsonSeesShip|DLC05HangarPaulsonSeesShip
+INFO|0x1007078||
+DIAL|0x1007073|DLC05HangarPaulsonEnemyBehind|DLC05HangarPaulsonEnemyBehind
+INFO|0x1007077||
+DIAL|0x100710d|DLC05HQPaulsonExplodeGenerator|DLC05HQPaulsonExplodeGenerator
+INFO|0x100710e||
+DIAL|0x1007241|DLC05CryoElliotMadAtPlayer|DLC05CryoElliotMadAtPlayer
+INFO|0x1006dad||
+INFO|0x1006e5f||
+INFO|0x10070a8||
+DIAL|0x1007398|DLC05FF01goAwayMeanhead|DLC05FF01goAwayMeanhead
+INFO|0x1007399||
+DIAL|0x100744f|DLC05FF01xcartGetGoing|DLC05FF01xcartGetGoing
+INFO|0x1007452||
+DIAL|0x1007450|DLC05FF01xcartAliensLookout|DLC05FF01aliensLookout
+INFO|0x1007453||
+DIAL|0x1007451|DLC05FF01xcartCows|DLC0FF01cows
+INFO|0x1007454||
+DIAL|0x1007565|DLC05ConvTLTercorienCryoWeapons|Do you think you can make use of that stuff you picked up in the Cryo Labs?
+INFO|0x1007566||
+INFO|0x1007567||
+INFO|0x1007568||
+INFO|0x1007569||
+DIAL|0x10076ac|DLC05MZ3GreetDeathRay3|We need to find out what that was, and put a stop to it.
+INFO|0x10076ba||
+INFO|0x10076bb||
+INFO|0x10076bc||
+DIAL|0x10076ad|DLC05MZ3GreetDeathRay2|I have no idea what he said, but he sounded pretty angry.
+INFO|0x10076b5||
+INFO|0x100a717||
+INFO|0x10076b6||
+DIAL|0x10076ae|DLC05MZ3GreetDeathRay1|What the hell was that?
+INFO|0x10076b2||
+INFO|0x10076b3||
+INFO|0x10076b4||
+DIAL|0x10076af|DLC05MZ1SallyTLWhyAlone|Are you all alone? Where's your family?
+INFO|0x10076b1||
+DIAL|0x10076b0|DLC05MZ1SallyTLHowKnowSoMuch|How do you know so much about this place?
+INFO|0x10076b8||
+DIAL|0x1007975|DLC05MZ2SamuraiGreet07|I found this sword... does it belong to you?
+INFO|0x100a94a||
+DIAL|0x1007976|DLC05MZ2SamuraiGreet06|Yeah, I'm not getting a single word here.
+INFO|0x100797e||
+DIAL|0x1007977|DLC05MZ2SamuraiGreet05|I'm sorry, but I can't understand you.
+INFO|0x1007987||
+DIAL|0x1007978|DLC05MZ2SamuraiGreet04|Oh, great. You don't speak English? This is going to be a waste of time.
+INFO|0x100797f||
+DIAL|0x1007979|DLC05MZ2SamuraiGreet03|Calm down. We're trying to escape. Can you help us?
+INFO|0x100797d||
+DIAL|0x100797a|DLC05MZ2SamuraiGreet02|What? What are you saying?
+INFO|0x100797c||
+DIAL|0x100797b|DLC05MZ2SamuraiGreet01|Hey, are you okay?
+INFO|0x1007980||
+DIAL|0x1007a64|DLC05MZ2TLSamurai|What do you know about this Toshiro Kago guy?
+INFO|0x1007a66||
+INFO|0x100abad||
+INFO|0x100abae||
+INFO|0x1007a67||
+INFO|0x100abaf||
+INFO|0x1007a68||
+INFO|0x1007a69||
+DIAL|0x1007b8b|DLC05SteamSallyTopicPlayerHandle|I'll handle this.
+INFO|0x1007b90||
+DIAL|0x1007b8c|DLC05SteamSallyTopicGoodbye|Don't worry about it.
+INFO|0x1007b92||
+DIAL|0x1007b8d|DLC05SteamSallyTopicGrenadeIdea|How about I distract them, and you hit them from behind with a grenade?
+INFO|0x1007b93||
+DIAL|0x1007b8e|DLC05SteamSallyTopicGrenadePlasma|Take this Plasma Grenade.
+INFO|0x1007b91||
+DIAL|0x1007b8f|DLC05SteamSallyTopicGrenadeFrag|Take this Frag Grenade.
+INFO|0x1007b94||
+DIAL|0x1007e14|DLC05SamuraiMeditateTopic|DLC05SamuraiMeditate
+DIAL|0x1007e1a|DLC05MZ3SallyTeleporter3|You sure this is a good idea?
+INFO|0x1007e1e||
+DIAL|0x1007e1b|DLC05MZ3SallyTeleporter2|Forget the teleporter. Let's just go.
+INFO|0x1007e1d||
+DIAL|0x1007e1c|DLC05MZ3SallyTeleporter1|Okay, you wait here. I'll see if I can find the controls.
+INFO|0x1007e1f||
+DIAL|0x1007ea5|DLC05FF01xwhereWeLanded|What did you get us into this time?
+INFO|0x1007eb3||
+DIAL|0x1007ea6|DLC05FF01xBackUp|Let's go back the way we came.
+INFO|0x1007eb6||
+DIAL|0x1007ea7|DLC05FF01xIamFineNice|I'm all right. How about you?
+INFO|0x1007eb0||
+DIAL|0x1007ea8|DLC05WhereAreWe|DLC05WhereAreWe
+DIAL|0x1007ea9|DLC05FF01xIamFine|I'm fine. No thanks to you.
+INFO|0x1007ebc||
+DIAL|0x1007eaa|DLC05FF01GOODBYE|Let's get back to the core.
+INFO|0x1007eb1||
+INFO|0x1007eb2||
+DIAL|0x1007eab|DLC05FF01retrospective|Thanks for nothing, Sally.
+INFO|0x1007eaf||
+DIAL|0x1007eac|DLC05FF01whatNow|Well, that was... fun.  What now?
+INFO|0x1007eb7||
+DIAL|0x1007ead|DLC05FF01xcartSawUs|DLC05FF01xcartSawUs
+INFO|0x1007eb4||
+DIAL|0x1007eae|DLC05FF01xcartFirstComment|DLC05FF01xcartFirstComment
+INFO|0x1007ebb||
+DIAL|0x100828f|DLC05SamuraiScenesBridgeTopic|DLC05SamuraiScenesBridgeTopic
+INFO|0x1008290||
+INFO|0x1008291||
+INFO|0x1008292||
+INFO|0x1008293||
+INFO|0x1008294||
+INFO|0x1008295||
+INFO|0x1008296||
+INFO|0x1008297||
+INFO|0x1008298||
+INFO|0x1008299||
+INFO|0x100829a||
+INFO|0x100829b||
+INFO|0x100829c||
+INFO|0x100829d||
+DIAL|0x1008ab7|DLC05MZ2TLLevelHelp|You think anything in here can prove useful?
+INFO|0x1008ab8||
+INFO|0x1008ab9||
+INFO|0x1008aba||
+INFO|0x1008abb||
+DIAL|0x10098f4|DLC05ConvERoomEpoxy|DLC05ConvERoomEpoxy
+INFO|0x1009903||
+INFO|0x1009904||
+INFO|0x1009905||
+DIAL|0x10098f5|DLC05ConvERoomEngineGasTrap|DLC05ConvERoomEngineGasTrap
+INFO|0x10098fd||
+INFO|0x10098fe||
+INFO|0x10098ff||
+DIAL|0x10098f6|DLC05ConvERoomEngine|DLC05ConvERoomEngine
+INFO|0x10098fa||
+INFO|0x10098fb||
+INFO|0x10098fc||
+DIAL|0x10098f7|DLC05ConvERoomGasTrap|DLC05ConvERoomGasTrap
+INFO|0x1009909||
+INFO|0x100990a||
+INFO|0x100990b||
+DIAL|0x10098f8|DLC05ConvERoomFilthyStructures|DLC05ConvERoomFilthyStructures
+INFO|0x1009906||
+INFO|0x1009907||
+INFO|0x1009908||
+DIAL|0x10098f9|DLC05ConvERoomFirstRoom|DLC05ConvERoomFirstRoom
+INFO|0x1009900||
+INFO|0x1009901||
+INFO|0x1009902||
+DIAL|0x1009943|DLC05MZ1SomahDoorLine|DLC05MZ1SomahDoorLine
+INFO|0x1009946||
+DIAL|0x1009944|DLC05MZ1SomahInitGreet|DLC05MZ1SomahInitGreet
+INFO|0x1009947||
+DIAL|0x100997b|DLC05AsmSomahInit|DLC05AsmSomahInit
+INFO|0x100997c||
+DIAL|0x10099cb|DLC05ConvCargo06|DLC05ConvCargo06
+INFO|0x10099d4||
+INFO|0x10099d5||
+INFO|0x10099d6||
+DIAL|0x10099cc|DLC05ConvCargo05|DLC05ConvCargo05
+INFO|0x10099da||
+INFO|0x10099db||
+INFO|0x10099dc||
+DIAL|0x10099cd|DLC05ConvCargo04|DLC05ConvCargo04
+INFO|0x10099dd||
+INFO|0x10099de||
+INFO|0x10099df||
+DIAL|0x10099ce|DLC05ConvCargo03|DLC05ConvCargo03
+INFO|0x10099d7||
+INFO|0x10099d8||
+INFO|0x10099d9||
+DIAL|0x10099cf|DLC05ConvCargo02|DLC05ConvCargo02
+INFO|0x10099d1||
+INFO|0x10099d2||
+INFO|0x10099d3||
+DIAL|0x10099d0|DLC05ConvCargo01|DLC05ConvCargo01
+INFO|0x10099e0||
+INFO|0x10099e1||
+INFO|0x10099e2||
+DIAL|0x1009a00|DLC05CaptiveHolo04|DLC05CaptiveHolo4
+INFO|0x1009a07||
+DIAL|0x1009a01|DLC05CaptiveHolo03|DLC05CaptiveHolo3
+INFO|0x1009a04||
+DIAL|0x1009a02|DLC05CaptiveHolo02|DLC05CaptiveHolo2
+INFO|0x1009a06||
+DIAL|0x1009a03|DLC05CaptiveHolo01|DLC05CaptiveHolo1
+INFO|0x1009a05||
+DIAL|0x1009a12|DLC05AsmSomahComment01|DLC05AsmSomahComment01
+INFO|0x1009a13||
+DIAL|0x1009c56|DLC05MZ1SomahPrisonerLine|DLC05MZ1SomahPrisonerLine
+INFO|0x1009c58||
+INFO|0x1009c59||
+INFO|0x1009c5a||
+INFO|0x1009c5b||
+DIAL|0x1009c57|DLC05SteamSallyEncourage|DLC05SteamSallyEncourage
+INFO|0x1009c5c||
+INFO|0x1009c5d||
+DIAL|0x1009c5f|DLC05HQPaulsonComment01|DLC05HQPaulsonComment01
+INFO|0x1009c69||
+DIAL|0x1009c60|DLC05HQPaulsonGeneratorDone|DLC05HQPaulsonGeneratorDone 
+DIAL|0x1009c61|DLC05AsmSomahGeneratorUpComment|DLC05AsmSomahGeneratorUpComment
+INFO|0x1009c68||
+DIAL|0x1009c62|DLC05HQPaulsonGeneratorUpComment|DLC05HQPaulsonGeneratorUpComment
+INFO|0x1009c65||
+DIAL|0x1009c63|DLC05AsmSomahGeneratorComment02|DLC05AsmSomahGeneratorComment02
+INFO|0x1009c66||
+DIAL|0x1009c64|DLC05AsmSomahGeneratorComment01|DLC05AsmSomahGeneratorComment01
+INFO|0x1009c67||
+DIAL|0x1009c71|DLC05ConvCargo08|DLC05ConvCargo08
+INFO|0x1009c73||
+INFO|0x1009c74||
+INFO|0x1009c75||
+DIAL|0x1009c72|DLC05ConvCargo07|DLC05ConvCargo07
+INFO|0x1009c76||
+INFO|0x1009c77||
+INFO|0x1009c78||
+DIAL|0x100a6ee|DLC05ConvSallyGenWalkthruTopic|DLC05ConvSallyGenWalkthruTopic
+INFO|0x100a6f0||
+INFO|0x100a6f1||
+INFO|0x100a6f2||
+INFO|0x100a6f3||
+INFO|0x100a6f4||
+DIAL|0x100a6ef|DLC05ConvTLSallyGenerator|So what are these generators? How do they work?
+INFO|0x100a6f6||
+DIAL|0x100a712|DLC05MZ1SallyCryoTubesGoodbye|Okay, let's talk to the astronaut.
+INFO|0x100a718||
+DIAL|0x100a713|DLC05MZ1SallyCryoTubes3|Why do we need a 'spaceman' to help us?
+INFO|0x100a716||
+DIAL|0x100a714|DLC05MZ1SallyCryoTubes2|Who are these people?
+INFO|0x100a71a||
+DIAL|0x100a715|DLC05MZ1SallyCryoTubes1|What are these things?
+INFO|0x100a719||
+DIAL|0x100a739|DLC05MZ3SallyLabTeleporter3|How are you holding up?
+INFO|0x100a73c||
+DIAL|0x100a73a|DLC05MZ3SallyLabTeleporter2|There's a teleporter to the bridge, but it doesn't work.
+INFO|0x100a747||
+DIAL|0x100a73b|DLC05MZ3SallyLabTeleporter1|So we're here. Now what?
+INFO|0x100a73d||
+DIAL|0x100a749|DLC05PostGreet3|This has been a hell of a ride, hasn't it?
+INFO|0x100a983||
+INFO|0x100ab4e||
+INFO|0x100a984||
+DIAL|0x100a74a|DLC05PostGreet2|What will you do now?
+INFO|0x100a74e||
+INFO|0x100a985||
+INFO|0x100a74f||
+DIAL|0x100a74b|DLC05PostGreet1|Thanks for your help. Couldn't have done it without you.
+INFO|0x100a74c||
+INFO|0x100a98a||
+INFO|0x100a74d||
+DIAL|0x100a877|DLC05CaptiveHolo06|DLC05CaptiveHolo6
+INFO|0x100a882||
+DIAL|0x100a878|DLC05CaptiveHolo05|DLC05CaptiveHolo5
+INFO|0x100a881||
+DIAL|0x100a879|DLC05AstronautHolo1|DLC05AstronautHolo1
+INFO|0x100a885||
+DIAL|0x100a87a|DLC05SamuraiHolo1|DLC05SamuraiHolo1
+INFO|0x100a880||
+DIAL|0x100a87b|DLC05TercorienHolo1|DLC05TercorienHolo1
+INFO|0x100a883||
+DIAL|0x100a87c|DLC05PaulsonHolo1|DLC05NPCHolo1
+INFO|0x100a87f||
+DIAL|0x100a87d|DLC05BridgeAlienMessages|DLC05BridgeAlienMessages
+INFO|0x100a884||
+DIAL|0x100a87e|DLC05BridgeTopicIntro|DLC05BridgeTopicSallyIntro
+INFO|0x100a887||
+INFO|0x100a888||
+INFO|0x100a889||
+DIAL|0x100a897|DLC05FF01xcartUhOh|DLC05FF01xcartUhOh
+INFO|0x100a89a||
+DIAL|0x100a898|DLC05FF01xcartGettingOut|DLC05xcartGettingOut
+INFO|0x100a899||
+DIAL|0x100a8c3|DLC05BridgeTopicSallyCommands|DLC05BridgeTopicSallyCommands
+INFO|0x100a8c4||
+INFO|0x100a996||
+INFO|0x100a8c6||
+INFO|0x100a8c7||
+INFO|0x100a8c8||
+DIAL|0x100a926|DLC05BridgeEMPHitAlt|DLC05BridgeEMPHitAlt
+INFO|0x100a927||
+INFO|0x100a928||
+INFO|0x100a929||
+INFO|0x100a92a||
+DIAL|0x100a932|DLC05BridgeTopicPaulsonRandom|DLC05BridgeTopicPaulsonRandom
+INFO|0x100a939||
+INFO|0x100a997||
+INFO|0x100a998||
+INFO|0x100a999||
+DIAL|0x100a933|DLC05BridgeTopicElliotRandom|DLC05BridgeTopicElliotRandom
+INFO|0x100a99a||
+INFO|0x100a99b||
+INFO|0x100a99c||
+DIAL|0x100a934|DLC05BridgeTopicSomahRandom|DLC05BridgeTopicSomahRandom
+INFO|0x100ab3b||
+INFO|0x100a99d||
+INFO|0x100a99e||
+INFO|0x100a99f||
+DIAL|0x100a935|DLC05BridgeTopicSomahHelmRandom|DLC05BridgeTopicSomahHelmRandom
+DIAL|0x100a950|DLC05CaptiveHolo16|DLC05CaptiveHolo16
+INFO|0x100a951||
+DIAL|0x100a978|DLC05CaptiveHolo10A|DLC05CaptiveHolo10A
+INFO|0x100a97d||
+DIAL|0x100a979|DLC05CaptiveHolo10|DLC05CaptiveHolo10
+INFO|0x100a97f||
+DIAL|0x100a97a|DLC05CaptiveHolo09|DLC05CaptiveHolo09
+INFO|0x100a97e||
+DIAL|0x100a97b|DLC05CaptiveHolo08|DLC05CaptiveHolo08
+INFO|0x100a981||
+DIAL|0x100a97c|DLC05CaptiveHolo07|DLC05CaptiveHolo7
+INFO|0x100a980||
+DIAL|0x100a992|DLC05BridgeTopicSallyRandom|DLC05BridgeTopicSallyRandom
+INFO|0x100a993||
+INFO|0x100a994||
+INFO|0x100a995||
+DIAL|0x100aa2d|DLC05CaptiveHolo15|DLC05CaptiveHolo15
+INFO|0x100aa34||
+DIAL|0x100aa2e|DLC05CaptiveHolo14|DLC05CaptiveHolo14
+INFO|0x100aa36||
+DIAL|0x100aa2f|DLC05CaptiveHolo13|DLC05CaptiveHolo13
+INFO|0x100aa35||
+DIAL|0x100aa30|DLC05CaptiveHolo12|DLC05CaptiveHolo12
+INFO|0x100aa32||
+DIAL|0x100aa31|DLC05CaptiveHolo11|DLC05CaptiveHolo11
+INFO|0x100aa33||
+DIAL|0x100aac1|DLC05FF01yGetOuttaHere|Let's just get out of here.
+INFO|0x100aac6||
+DIAL|0x100aac2|DLC05FF01ySmellsHere|What an incredible smell you've discovered...
+INFO|0x100aac7||
+DIAL|0x100aac3|DLC05FF01yLost|We're lost, aren't we?
+INFO|0x100aac4||
+DIAL|0x100ab3c|DLC05BridgeTopicSomahShipHelp|DLC05BridgeTopicSomahShipHelp
+INFO|0x100ab3f||
+INFO|0x100ab40||
+DIAL|0x100ab3d|DLC05BridgeTopicSallyShipHelp|DLC05BridgeTopicSallyShipHelp
+INFO|0x100ab41||
+INFO|0x100ab42||
+INFO|0x100ab43||
+INFO|0x100ab44||
+DIAL|0x100ab45|DLC05PQTLSallyWhatsUp|How's life in space?
+INFO|0x100ab4a||
+INFO|0x100ab4b||
+INFO|0x100ab4c||
+INFO|0x100ab4d||
+DIAL|0x100ab46|DLC05PQTLWeapon|I could use some more of these alien weapons. Got any?
+INFO|0x100ab58||
+INFO|0x100ab59||
+INFO|0x100ab5a||
+INFO|0x100ab5b||
+INFO|0x100ab5c||
+INFO|0x100ab5d||
+DIAL|0x100ab47|DLC05PQTLReport|Anything to report?
+INFO|0x100ab5e||
+INFO|0x100ab5f||
+INFO|0x100ab60||
+INFO|0x100ab61||
+INFO|0x100ab62||
+INFO|0x100ab63||
+DIAL|0x100ab48|DLC05MZ1SomahPostFight|DLC05MZ1SomahPostFight
+INFO|0x100ab49||
+DIAL|0x100ab6b|DLC05AnchorageCrateHolo01|DLC05AnchorageCrateHolo01
+INFO|0x100ab6c||
+DIAL|0x100ab8d|DLC05MZ2SamuraiSwordFound03|Whoops, sorry. Never mind.
+INFO|0x100ab92||
+DIAL|0x100ab8e|DLC05MZ2SamuraiSwordFound02|I know you can't understand me, but I thought you might want this sword.
+INFO|0x100ab9d||
+DIAL|0x100ab8f|DLC05MZ2SamuraiSwordFound01|I found this sword... Is it yours?
+INFO|0x100ab96||
+DIAL|0x100ab90|DLC05MZ2TLSallyCAHStash|Hey, you've been all over -- do you have any stuff hidden around here?
+INFO|0x100ab93||
+DIAL|0x100ab91|DLC05MZ2TLAlienIntentions|What do you think the aliens want with us?
+INFO|0x100ab97||
+INFO|0x100ab98||
+INFO|0x100ab99||
+INFO|0x100ab9a||
+INFO|0x100ab9b||
+INFO|0x100ab9c||
+DIAL|0x100abb3|DLC05MZ2PaulsonBackgroundNM|Sorry, forget I said anything.
+INFO|0x100abbb||
+DIAL|0x100abb4|DLC05MZ2PaulsonBackgroundSpeech2|I found this recording of you. Do you want to talk about your family?
+INFO|0x100abc1||
+DIAL|0x100abb5|DLC05MZ2PaulsonBackgroundSpeech1|You can talk about what happened to you. It's okay.
+INFO|0x100abbd||
+DIAL|0x100abb6|DLC05MZ2PaulsonBackgroundBW|Oh, come on. You can tell me just about anything. I'll understand.
+INFO|0x100abc2||
+DIAL|0x100abb7|DLC05MZ1SomahClawLine|DLC05MZ1SomahClawLine
+INFO|0x100abbc||
+DIAL|0x100abb8|DLC05MZ1SomahFightB5|If we're lucky, a friend of mine might show up to help.
+INFO|0x100abbf||
+DIAL|0x100abb9|DLC05SomahHolo1|DLC05SomahHolo1
+INFO|0x100abc0||
+DIAL|0x100abba|DLC05CaptiveHolo17|DLC05CaptiveHolo17
+INFO|0x100abc4||
+DIAL|0x100abe6|DLC05MZ2SomahBackgroundSpeech2|I found this recording... Sounds like you regret something you did.
+INFO|0x100abee||
+DIAL|0x100abe7|DLC05MZ2SomahBackgroundSpeech1|There must be a reason you don't want to talk about yourself. What is it?
+INFO|0x100abed||
+DIAL|0x100abe8|DLC05MZ2SomahBackgroundNM|Forget I said anything.
+INFO|0x100abea||
+DIAL|0x100abe9|DLC05MZ2SomahBackgroundLK|Hey, it's okay. You can tell me anything. I won't judge you.
+INFO|0x100abef||
+DIAL|0x100abf0|DLC05PQTLWherePaulson|Where's Paulson?
+INFO|0x100abf5||
+INFO|0x100abf6||
+DIAL|0x100abf1|DLC05TLBridgeDoor|Why can't I use the door to get off the bridge?
+INFO|0x100abf2||
+INFO|0x100abf3||
+INFO|0x100abf4||
+DIAL|0x100abfd|DLC05CaptiveHolo20|DLC05CaptiveHolo20
+INFO|0x100ac02||
+DIAL|0x100abfe|DLC05CaptiveHolo19|DLC05CaptiveHolo19
+INFO|0x100ac01||
+DIAL|0x100abff|DLC05CaptiveHolo18|DLC05CaptiveHolo18
+INFO|0x100ac00||
+DIAL|0x100ac13|her|her
+DIAL|0x100acf6|DLC05SallyVentSay|DLC05SallyVentSay
+INFO|0x100acf9||
+DIAL|0x100acf7|DLC05MZ2TLSallyDoorUnlock|Why can't you do your vent trick and open the door to the decompression chamber?
+INFO|0x100acf8||
+DIAL|0x100b40d|DLC05MZ1GeneratorConversation|DLC05MZ1GeneratorConversation
+INFO|0x100b40e||
+INFO|0x100b40f||
+INFO|0x100b410||
+QUST|0x100cad4|DLC05ExLab|
+QUST|0x100a752|DLC05Post|Post-Quest Dialogue
+QUST|0x1007d27|DLC05SamuraiScenes|
+QUST|0x1006e2b|DLC05CoreScene|
+QUST|0x1005cc2|DLC05AlienTechFunctions|
+QUST|0x1005c70|DLC05FF01|Steerage Rats
+QUST|0x1004e40|DLC05BridgeLD|
+QUST|0x1004e1a|DLC05Conversations|DLC05 NPC Conversations
+QUST|0x10049fa|DLC05DeathRayQ|Death Ray
+QUST|0x100424a|DLC05SteamworksLD|
+QUST|0x100422e|DLC05SpaceWalkQ|Space Walk
+QUST|0x10041cc|DLC05HQ|Hangar Scripting/Staging Support Quest
+QUST|0x1003e39|DLC05AlienBroadcast|
+QUST|0x1003cb8|DLC05CryoQ|Cryo Lab
+QUST|0x1003419|DLC05Generic|Generic Dialogue
+QUST|0x1003418|DLC05AlienDialogue|Alien Dialogue
+QUST|0x1003392|DLC05Asm|Robot Assembly Scripting/Staging Support Quest
+QUST|0x1000804|DLC05MZ3|This Galaxy Ain't Big Enough...
+QUST|0x1000803|DLC05MZ2|Among the Stars
+QUST|0x1000802|DLC05MZ1|Not of This World
+QUST|0x2000801|DLC05CreatorQuest|
+IDLE|0x100c97d|CaptainSitLookLeft|
+IDLE|0x100c97c|CapSitLookRight|
+IDLE|0x100c7b0|DLC05NonSitFurnitureAlien|
+IDLE|0x100c4cd|DynamicIdleCaptainSit|
+IDLE|0x100c4cc|DefaultCaptainSitIdle|
+IDLE|0x100c4c9|CaptainSitA|
+IDLE|0x100c4c8|CaptainChairIdles|
+IDLE|0x100c4c7|CaptainChairForntSit|
+IDLE|0x100c4c6|CaptainSitDown|
+IDLE|0x100c48b|CaptainChairFrontStand|
+IDLE|0x100c48a|CaptainStandUp|
+IDLE|0x100c489|CaptainSittng|
+IDLE|0x100c488|ControlPanel4|
+IDLE|0x100c487|ControlPanel3|
+IDLE|0x100c486|ControlPanel2|
+IDLE|0x100c367|DLC05AlienCower2|
+IDLE|0x100c366|DLC05AlienCower1|
+IDLE|0x100c365|DLC05AlienCowerIdles|
+IDLE|0x100c316|ControlPanel1|
+IDLE|0x100c315|AlienUseConsole|
+IDLE|0x100bd39|AlienDroidTurnedOff|
+IDLE|0x100bb5f|AlienDroidDeactivate|
+IDLE|0x100b03f|LooseDLC051stPersonGetUpFromFall|
+IDLE|0x100ae46|DLC05SallyWallRepairing|
+IDLE|0x100ad27|DLC05LeanOnRailB|
+IDLE|0x100ad26|DLC05LeanOnRailA|
+IDLE|0x100ad25|DLC05LeaningOnRailMarker|
+IDLE|0x100ad04|DLC05WallLeanSpecialIdle|
+IDLE|0x100ad03|DLC05WallLeanExit|
+IDLE|0x100ad02|DLC05WallLeanDynamic|
+IDLE|0x100ad01|DLC05WallLeanEnter|
+IDLE|0x100ad00|DLC05WallLean|
+IDLE|0x100acfe|LooseDLC05DisturbedReactionC|
+IDLE|0x100acfd|LooseDLC05DisturbedReactionB|
+IDLE|0x100acfc|LooseDLC05DisturbedReactionA|
+IDLE|0x100ac0a|AlienBotControler2|
+IDLE|0x100ac09|AlienBotControler1|
+IDLE|0x100aaac|LooseDLC05SomaReactionToClawArm|
+IDLE|0x100a876|DLC05UsingBridgeConsolesC|
+IDLE|0x100a875|DLC05UsingBridgeConsolesB|
+IDLE|0x100a874|DLC05UsingBridgeConsolesA|
+IDLE|0x100a873|DLC05UsingBridgeConsole|
+IDLE|0x100a871|DLC05SallyUseConsoleB|
+IDLE|0x100a870|DLC05SallyUseConsoleADUPLICATE000|
+IDLE|0x100a76a|AlenDroidHitHead|
+IDLE|0x100a769|AlenDroidHitArms|
+IDLE|0x100a768|AlenDroidHitTorso|
+IDLE|0x100a767|AlenDroidHitLegRight|
+IDLE|0x100a766|AlienDroid01HitReactions|
+IDLE|0x100a674|DLC05SallyUsingConsole|
+IDLE|0x100a2aa|DLC05FixingTeleporter|
+IDLE|0x1009c55|DroidSearchRight|
+IDLE|0x1009c54|DroidSearchLeft|
+IDLE|0x1009c50|DroidLookRight|
+IDLE|0x1009c4f|DroidIdleLookLeft|
+IDLE|0x1009c4e|AliensDroid01CommonIdle|
+IDLE|0x1009c2d|LooseDLC051stPersonDumpsterRide|
+IDLE|0x1009c2b|DLC051stPersonDumpsterRide|
+IDLE|0x1009941|DLC05AbGetUpFaceUp|
+IDLE|0x1009940|DLC05AbGetUpFaceDown|
+IDLE|0x100993f|DLC05AbGetUpAnims|
+IDLE|0x100993e|DLC05AbHitTorso|
+IDLE|0x100993d|DLC05AbLegRight|
+IDLE|0x100993c|DLC05AbHitLegLeft|
+IDLE|0x100993b|DLC05AbHitHead|
+IDLE|0x100993a|DLC05AbHitArmRight|
+IDLE|0x1009939|DLC05AbHitArmLeft|
+IDLE|0x1009938|DLC05HitReactions|
+IDLE|0x1009937|DLC05AbUnconscious|
+IDLE|0x1009936|DLC05AbRelaxed|
+IDLE|0x1009935|DLC05AbLookRight|
+IDLE|0x1009934|DLC05AbLookLeft|
+IDLE|0x1009933|DLC05AbDozeOff|
+IDLE|0x1009932|DLC05AbAnalyze|
+IDLE|0x1009931|DLC05AbIdles|
+IDLE|0x1008866|AlienRobotTurnedOff|
+IDLE|0x1008864|AliensRobotDeactivate|
+IDLE|0x1008846|DLC05SallyClimbOutOfWindow|
+IDLE|0x1008578|AlenRobotHitLegRight|
+IDLE|0x1008577|AlienRobotHitTorso|
+IDLE|0x1008576|AlienRobotHitHead|
+IDLE|0x1008575|AlienRobotHitArmLeft|
+IDLE|0x1008574|AlienRobot01HitArmRight|
+IDLE|0x1008573|AlienRobot01HitReactions|
+IDLE|0x1008572|AlienRobot01KnockDownFaceDown|
+IDLE|0x1008571|AliensRobot01KnockDownFaceup|
+IDLE|0x1008570|AliensRobot01KnockedDownIdles|
+IDLE|0x100828e|DLC05SamuraiSitIdle|
+IDLE|0x100828c|DLC05SamuraiSitDynamicIdle|
+IDLE|0x100828b|DLC05SamuraiSitUp|
+IDLE|0x100828a|DLC05SamuraiSitDown|
+IDLE|0x1008289|DLC05SamuraiSit|
+IDLE|0x95513|RestrainedStandUp|
+IDLE|0x95510|RestrainedSitDown|
+IDLE|0x9550f|RestrainedSit|
+IDLE|0x10081c0|LooseDLC051stPersonBeamUp|
+IDLE|0x1007ba4|AliensRobotarims03|
+IDLE|0x1007ba3|AliensRobotarims02|
+IDLE|0x1007b87|AliensRobotarims01|
+IDLE|0x10079ae|AliensRobotLookleft|
+IDLE|0x10079ad|AliensRobotLookRight|
+IDLE|0x10079ac|AliensRobot01CommonIdle|
+IDLE|0x100799f|DLC05CryoPodCowBoyExit|
+IDLE|0x100799e|DLC05CryoPodSamuraiExit|
+IDLE|0x100799d|DLC05CryoPodDefaultExit|
+IDLE|0x100799c|DLC05CryoPodExit|
+IDLE|0x100799b|DLC05CryoPodEnter|
+IDLE|0x100799a|DLC05CryoPodDynamic|
+IDLE|0x1007999|DLC05CryoPodMarker|
+IDLE|0x1007998|DLC05Marker19|
+IDLE|0x52907|ChildBar|
+IDLE|0x20fae|DefaultWallLeanIdle|
+IDLE|0x100744d|DLC05FloatingInSpace|
+IDLE|0x100742d|LooseDLC05FloatInSpace|
+IDLE|0x100706d|AlienCapture1|
+IDLE|0x1007029|LooseDLC051stPersonSpaceLevitate|
+IDLE|0x1006db9|DLC05CrawlIntoVent|
+IDLE|0x1006db8|DLC05NonSitFurniture|
+IDLE|0xab466|CookingStove|
+IDLE|0x3bd8|KnockedDownIdles|
+IDLE|0x1006bf0|AliensSitA|
+IDLE|0x1006b0f|AliensSitB|
+IDLE|0x1006b0e|AlienChairFrontStand|
+IDLE|0x1006b0d|DynamicIdleAliensSit|
+IDLE|0x1006b0c|DefaultAlienSitIdle|
+IDLE|0x1006b0b|CommonChairIdles|
+IDLE|0x1006b0a|AlienStandUp|
+IDLE|0x1006b09|ComChairForntSit|
+IDLE|0x1006b08|AlienSitDown|
+IDLE|0x1006b07|CommonChairSitting|
+IDLE|0x1006b06|AlienSitting|
+IDLE|0x1006870|DLC05ClawArmSpecialIdle|
+IDLE|0x100686f|DLC05ClawArmDynamicIdle|
+IDLE|0x100686e|DLC05ClawArmExit|
+IDLE|0x100686d|DLC05ClawArmEnter|
+IDLE|0x100686c|DLC05ClawArm|
+IDLE|0x100686b|DLC05SittingMarkers|
+IDLE|0x1005ef1|DLC05Alien03ProbeScene|
+IDLE|0x1005ef0|DLC05Alien02ProbeScene|
+IDLE|0x1005eef|DLC05Alien01ProbeScene|
+IDLE|0x1005eee|DLC051stPersonPlayerProbeScene|
+IDLE|0x1005e78|AlienClipboard2|
+IDLE|0x1005e77|AlienClipboard1|
+IDLE|0x1005afd|AlienBangWindow|
+IDLE|0x1005afa|AlienCowering1|
+IDLE|0x1005af9|AlienCowering2|
+IDLE|0x1005af8|AlienIdleLookOverExperiment2|
+IDLE|0x1005af7|AlienLookOverExperiment1|
+IDLE|0x1005758|Alien2HRSalute|
+IDLE|0x1005757|Alien2HRLoiter|
+IDLE|0x100481e|AlienControlPanel4|
+IDLE|0x100481d|AlienControlPanel3|
+IDLE|0x10047e3|AlienControlPanel2|
+IDLE|0x10047e2|AlienControlPanel1|
+IDLE|0x10047e1|AliensTalking3headonly|
+IDLE|0x100409d|Notepadwall1|
+IDLE|0x1003fc5|AliensSalute|
+IDLE|0x1003fc4|AliensFurnitureIdles|
+IDLE|0x1003fc3|AliensTalking2|
+IDLE|0x1003fc2|AliensTalking1|
+IDLE|0x1003fc1|AliensDialogueIdles|
+IDLE|0x1003c06|AliensHitArmRight|
+IDLE|0x1003c05|AliensHitArmLeft|
+IDLE|0x1003c04|AliensHitHead|
+IDLE|0x1003c03|AlensHitLegLeft|
+IDLE|0x1003c02|AlensHitLegRight|
+IDLE|0x1003c01|AliensHitTorso|
+IDLE|0x1003c00|AliensHitReactions|
+IDLE|0x10039a8|AliensLookRight|
+IDLE|0x10039a7|AliensLookLeft|
+IDLE|0x10039a6|AliensCommonIdle|
+IDLE|0x10039a3|AlienKnockDownFaceUp|
+IDLE|0x10039a2|AlienKnockDownFaceDown|
+IDLE|0x10039a1|AlienKnockedDownIdles|
+PACK|0x100dba1|DLC05PostSallySandbox|
+PACK|0x100db9f|DLC05PostTercorienSandboxBridge|
+PACK|0x100da53|DLC05PostTercorienForceGreet|
+PACK|0x100da52|DLC05PostSallyForceGreet|
+PACK|0x100d877|DLC05ExLabSwarmTravelPack|
+PACK|0x100d74d|DLC05EngineCoreSallyCrawlAPostGreet|
+PACK|0x100d6c4|DLC05TestAlienTeleportTravel1|
+PACK|0x100d6c3|DLC05TestAlienTeleportTravel2|
+PACK|0x100ce77|DLC05MZ2SallyHangAtAstronautMarker|
+PACK|0x100cd87|DLC05SamuraiBridgeDefend|
+PACK|0x100cd86|DLC05SamuraiScenesSallyBridgeGreetSamurai|
+PACK|0x100cba2|DLC05SamuraiScenesSallyBridgeOpenDoor|
+PACK|0x100cb87|DLC05MZ1SomahGeneratorTravel|
+PACK|0x100cb80|DLC05EngineCoreSallyCrawlA|
+PACK|0x100cb6a|DLC05EngineCoreSallyCrawl2|
+PACK|0x100cb28|DLC05SamuraiScenesGreetSally|
+PACK|0x100cb27|DLC05SamuraiScenesBridgeBangDoor|
+PACK|0x100cb26|DLC05SamuraiScenesBridgeSally|
+PACK|0x100ca02|DLC05CryoElliotRunFromSquad02|
+PACK|0x100c97b|FindCaptainChair|
+PACK|0x100c8e2|UseAlienBridgeConsoleMaker01|
+PACK|0x100c8e1|DLC05DeadAstronautStart|
+PACK|0x100c8c6|DLC05EngineCoreSallyCrawl|
+PACK|0x100c8ae|DLC05PaulsonWake|
+PACK|0x100c8ad|DLC05PauslonStart|
+PACK|0x100c8ac|DLC05TercorienWake|
+PACK|0x100c8ab|DLC05TercorienStart|
+PACK|0x100c8a9|DLC05SamuraiWake|
+PACK|0x100c8a5|DLC05SamuraiStart|
+PACK|0x100c50f|DLC05EngineCoreStage03PaulsonAlt02|
+PACK|0x100c50e|DLC05EngineCoreStage03PaulsonAlt01|
+PACK|0x100c50d|DLC05EngineCoreStage03SomahAlt01|
+PACK|0x100c50c|DLC05EngineCoreStage03Somah|
+PACK|0x100c50b|DLC05EngineCoreStage03Terc|
+PACK|0x100c506|DLC05EngineCoreStage02PaulsonAlt01|
+PACK|0x100c505|DLC05EngineCoreStage02SomahAlt01|
+PACK|0x100c504|DLC05EngineCoreStage02Terc|
+PACK|0x100c501|DLC05EngineCoreStage01Samurai|
+PACK|0x100c500|DLC05EngineCoreStage01Paulson|
+PACK|0x100c4ff|DLC05EngineCoreStage01PaulsonAlt01|
+PACK|0x100c4fe|DLC05EngineCoreStage01SomahAlt01|
+PACK|0x100c4fd|DLC05EngineCoreStage01Somah|
+PACK|0x100c4fc|DLC05EngineCoreStageSally|
+PACK|0x100c4f7|DLC05SteamAlienWorksPassivePACKAGE|
+PACK|0x100c4f2|DLC05SteamAlienWorksDistractedPACKAGE|
+PACK|0x100c4ca|DLC05CaptainChair|
+PACK|0x100c4a5|DLC05MZ1SomahInitialGreet|
+PACK|0x100c49f|DLC05EngineCoreStage01Terc|
+PACK|0x100c49e|DLC05MZ1SomahStage50Wait|
+PACK|0x100c312|DLC05ExLabRuntoDoor02PACK|
+PACK|0x100c311|DLC05ExLabRuntoDoor03PACK|
+PACK|0x100c308|DLC05AlienExLabResearcherSandbox|
+PACK|0x100be4f|DLC05RobotDefaultWanderEditorLocation512WeaponDrawn|
+PACK|0x100bd32|DLC05PodRobotFollowPlayer|
+PACK|0x100b31a|DLC05AsmBossActivatePod07|
+PACK|0x100b319|DLC05AsmBossActivatePod06|
+PACK|0x100b318|DLC05AsmBossActivatePod05|
+PACK|0x100b317|DLC05AsmBossActivatePod04|
+PACK|0x100b316|DLC05AsmBossActivatePod03|
+PACK|0x100b315|DLC05AsmBossActivatePod02|
+PACK|0x100b314|DLC05AsmBossActivatePod01|
+PACK|0x100b07d|DLC05FF01playerAfterRidePKG|
+PACK|0x100b028|DLC05SpaceWalkAlienPatrolRun|
+PACK|0x100ad28|DLC05TestUseRailMarker|
+PACK|0x100ac1a|DLC05ClawNPCDefault|
+PACK|0x100ac19|DLC05MZ1SomahStage40WaitAtDoor|
+PACK|0x100ac17|DLC05MZ1SomahStage35FollowPlayer|
+PACK|0x100ab37|DLC05FF01initialForceGreeting|
+PACK|0x100a9f5|DLC05ASMSomahFixTeleporter|
+PACK|0x100a94e|DLC05AlienNONHOSTILESandbox|
+PACK|0x100a945|DLC05DeathRayLVLAlienRandomPanic|
+PACK|0x100a942|DLC05DeathRayAlienSpawn02Travel|
+PACK|0x100a941|DLC05DeathRayAlienSpawn01Travel|
+PACK|0x100a8c9|DLC05BridgeSallyFirstQS51|
+PACK|0x100a8c2|DLC05MZ2SallySandboxEngineCore|
+PACK|0x100a8bf|DLC05FF01playerRidePKG|
+PACK|0x100a8be|DLC05FF01brahminTravelToPKG|
+PACK|0x100a8bd|DLC05FF01climbOuttaDumpster|
+PACK|0x100a848|DLC05BridgeSomahFirstQS51|
+PACK|0x100a847|DLC05BridgeElliotFirstQS51|
+PACK|0x100a748|DLC05MZ3Lab04SallyForcegreet|
+PACK|0x100a738|DLC05MZ3Lab04SallyTraveltoMark|
+PACK|0x100a737|DLC05MZ3Lab04TercorienTraveltoMark|
+PACK|0x100a736|DLC05MZ3Lab04PaulsonTraveltoMark|
+PACK|0x100a735|DLC05MZ3Lab04SomahTraveltoMark|
+PACK|0x100a720|DLC05SomahRuntoCore|
+PACK|0x100a71e|DLC05MZ1SallyCoreEscortPlayer|
+PACK|0x100a673|DLC05TestUseConsole|
+PACK|0x100a618|DLC05RobotPodUnconscious|
+PACK|0x100a617|DLC05RobotPodSandbox|
+PACK|0x1009a2e|DLC05SteamAlienStayAggroPACKAGE|
+PACK|0x1008867|DLC05TestAlienRobotNotActive|
+PACK|0x100824b|DLC05PlayerAbductionPackage|
+PACK|0x1008012|DLC05FF01stage46Travel|
+PACK|0x100800e|DLC05FF01greetAfterCrash|
+PACK|0x100800a|DLC05FF01sallyRunToExitPKG|
+PACK|0x1008005|DLC05FF01controlRoomForceGreet|
+PACK|0x1007ff3|DLC05FF01controlRoomPKG|
+PACK|0x1007e53|DLC05RCSecurityPace|
+PACK|0x1007e34|DLC05MZ3ElliottWaitForTeleporter|
+PACK|0x1007e33|DLC05MZ3SomahWaitForTeleporter|
+PACK|0x1007e32|DLC05MZ3PaulsonWaitForTeleporter|
+PACK|0x1007e31|DLC05MZ3SallyWaitForTeleporter|
+PACK|0x1007e30|DLC05MZ3SallyTeleporterUpdateGreetPlayer|
+PACK|0x1007d29|DLC05SamuraiMeditate|
+PACK|0x1007bbd|DLC05AlienGuardPackage|
+PACK|0x1007ba0|DLC05MZ3ViewscreenSallyGreetPlayer|
+PACK|0x1007b9f|DLC05MZ3ViewscreenPaulsonGreetPlayer|
+PACK|0x1007b9e|DLC05MZ3ViewscreenElliottGreetPlayer|
+PACK|0x1007b9d|DLC05MZ3ViewscreenSomahGreetPlayer|
+PACK|0x1007b9a|DLC05SteamAlienWalkAndStayExplosionPACKAGE|
+PACK|0x1007b98|DLC05SteamSallyQS06|
+PACK|0x1007b89|DLC05MZ3SallyTraveltoDoorMarker2|
+PACK|0x10079b6|DLC05MZ3SallyTraveltoDoorMarker1|
+PACK|0x10079ab|DLC05TestMB01Wander|
+PACK|0x10079a1|DLC05TestUseCryoPod|
+PACK|0x1007763|DLC05HangarAlienControllerGuard|
+PACK|0x100775f|DLC05HQPushButtonE|
+PACK|0x100775e|DLC05HQPushButtonD|
+PACK|0x100775d|DLC05HQPushButtonC|
+PACK|0x100775c|DLC05HQPushButtonF|
+PACK|0x100775b|DLC05HQPushButtonB|
+PACK|0x1007448|DLC05SpaceWalkPlayerDeathFloat|
+PACK|0x100743e|DLC05SpaceWalkPlayerLevitate|
+PACK|0x1007429|DLC05FF01SallyCartStandPKG|
+PACK|0x100729f|DLC05SteamSallyQS65|
+PACK|0x1007248|DLC05CryoElliotFindCryoStuff|
+PACK|0x10070fe|DLC05CryoElliotRunFromSquad01|
+PACK|0x10070fc|DLC05ElliotMadSquadDead|
+PACK|0x100706c|DLC05MZ1SallyCoreRuntoTeleMarker|
+PACK|0x100706a|DLC05MZ1SallyCoreRuntoEndMarker|
+PACK|0x1007069|DLC05MZ1SallyCoreForcegreetPlayer1|
+PACK|0x1007027|DLC05CoreScenePaulsonShoot|
+PACK|0x1007026|DLC05CoreSceneSallyBackAway|
+PACK|0x1007024|DLC05MZ1SomahStage30WaitforAliens|
+PACK|0x1007023|DLC05MZ1SomahGetGun|
+PACK|0x1006fbd|DLC05MZ1SallyFollowPlayer|
+PACK|0x1006e31|DLC05CoreSceneSally|
+PACK|0x1006e30|DLC05CoreScenePaulson|
+PACK|0x1006e2f|DLC05CoreSceneAlienStandHere|
+PACK|0x1006e2e|DLC05CoreSceneTercorien|
+PACK|0x1006e2d|DLC05CoreSceneSomah|
+PACK|0x1006e14|DLC05MZ1SallyTestCrawl|
+PACK|0x1006d58|DLC05TestComandChair|
+PACK|0x1006c7d|DLC05ElliotCryoSoldierRoomMark75|
+PACK|0x1006c7c|DLC05CryoSoldierAfterPod02|
+PACK|0x1006c7b|DLC05ElliotCryoSoldierRoomMark70|
+PACK|0x1006c7a|DLC05ElliotCryoSoldierRoomMark65|
+PACK|0x1006c79|DLC05ElliotCryoSoldierRoomMark60|
+PACK|0x1006c78|DLC05ElliotCryoSoldierRoomMark55|
+PACK|0x1006c77|DLC05ElliotCryoSoldierRoomMark50|
+PACK|0x1006c74|DLC05CryoSoldierAfterPodFollow|
+PACK|0x1006c73|DLC05CryoSoldierAfterPod01|
+PACK|0x1006c6a|DLC05ElliotCryoSoldierRoomMark45|
+PACK|0x1006c69|DLC05ElliotCryoSoldierRoomMark40|
+PACK|0x1006c68|DLC05ElliotCryoSoldierRoomMark35|
+PACK|0x1006c67|DLC05ElliotCryoSoldierRoomMark30|
+PACK|0x1006c65|DLC05ElliotCryoSoldierRoomMark20|
+PACK|0x1006c64|DLC05ElliotCryoSoldierRoomMark5|
+PACK|0x1006c63|DLC05ElliotCryoSoldierRoomMark25|
+PACK|0x1006c62|DLC05ElliotCryoSoldierRoomMark15|
+PACK|0x1006c61|DLC05ElliotCryoSoldierRoomMark10|
+PACK|0x1006b1f|DLC05HangarPaulsonGuard|
+PACK|0x10068e4|DLC05MZ1AlienHCMeleeTravelToMarker|
+PACK|0x1006872|DLC05UseClawPickUpMarker|
+PACK|0x100683f|DLC05MZ1SomahClawPackage|
+PACK|0x1006702|DLC05PlayerAnimationScenePackage|
+PACK|0x1006701|DLC05MZ1AnimationAlien3RunScene|
+PACK|0x1006700|DLC05MZ1AnimationAlien2RunScene|
+PACK|0x10066ff|DLC05MZ1AnimationAlien1RunScene|
+PACK|0x10066fe|DLC05MZ1AnimationAlienHoldforScene|
+PACK|0x1005f0e|DLC05TercorienLevelCancel|
+PACK|0x1005f0d|DLC05PaulsonLevelCancel|
+PACK|0x1005f0c|DLC05SomahLevelCancel|
+PACK|0x1005d45|DLC05BridgePaulsonDefend|
+PACK|0x1005755|DLC05MZ3SallyUseCrawlspace1|
+PACK|0x1005752|DLC05MZ3PaulsonExLabFollowPlayer|
+PACK|0x1005751|DLC05MZ3PaulsonExLabSceneMoveToMarker|
+PACK|0x1005750|DLC05MZ3ElliottExLabSceneMoveToMarker|
+PACK|0x100574f|DLC05MZ3SomahExLabSceneMoveToMarker|
+PACK|0x100574e|DLC05MZ3SallyExLabSceneMoveToMarker|
+PACK|0x1005747|DLC05MZ3ElliottExLabFollowPlayer|
+PACK|0x1005746|DLC05MZ3SomahExLabFollowPlayer|
+PACK|0x1005639|DLC05ElliotCryoFreezeMark23|
+PACK|0x1005633|DLC05ElliotCryoFreezeMark35|
+PACK|0x1005632|DLC05ElliotCryoFreezeMark30|
+PACK|0x1005630|DLC05ElliotCryoFreezeMark25|
+PACK|0x100562e|DLC05ElliotCryoFreezeMark20|
+PACK|0x100562c|DLC05ElliotCryoFreezeMark15|
+PACK|0x100562a|DLC05ElliotCryoFreezeMark10|
+PACK|0x1005628|DLC05ElliotCryoFreezeMark5|
+PACK|0x10055d2|DLC05testSandboxWeapDrawn|
+PACK|0x10054e2|DLC05BridgeSomahQS51|
+PACK|0x10054e1|DLC05BridgePaulsonQS51|
+PACK|0x10054e0|DLC05BridgeElliotQS51|
+PACK|0x10054df|DLC05BridgeSallyQS51|
+PACK|0x10054d2|DLC05BridgeAlienTeleporterRun|
+PACK|0x100537b|DLC05CryoFrenzyAfterStasis|
+PACK|0x1005175|DLC05ASMSomahGreetPartA|
+PACK|0x1005174|DLC05ASMSomahHide02|
+PACK|0x1004e6e|DLC05MZ3SallyExLabFollowPlayer|
+PACK|0x1004bfd|DLC05ExLabGoToExperimentMarker03|
+PACK|0x1004bfb|DLC05ExLabGoToExperimentMarker02|
+PACK|0x1004bfa|DLC05ExLabGoToExperimentMarker01|
+PACK|0x10049db|DLC05SteamSallyQS55|
+PACK|0x10049aa|DLC05SteamAlienStayPassivePACKAGE|
+PACK|0x1004999|DLC05SteamSallyQS08|
+PACK|0x1004997|DLC05SteamSallyQS01|
+PACK|0x1004991|DLC05SteamAlienWalkAndStayPACKAGE|
+PACK|0x1004278|DLC05PaulsonHangarGoToButtons|
+PACK|0x10040a9|DLC05MZ1AlienGuardTravelToLinkedRef|
+PACK|0x10040a6|DLC05MZ1AlienGuardHoldatStartMarker|
+PACK|0x10040a1|DLC05MZ1SomahStartPackage|
+PACK|0x100409c|TestAliensTalking|
+PACK|0x1003f52|DLC05HangarRoamPatrolWeaponDrawn|
+PACK|0x1003cde|DLC05CryoFreezePatrol|
+PACK|0x1003ccd|DLC05CryoFreezeRoomIDLE|
+PACK|0x1003ccb|DLC05CryoFreezeRoomRUN|
+PACK|0x1003cc9|DLC05CryoFreezeRoomFLEE|
+PACK|0x1003cbd|DLC05CryoTercFollowPlayer|
+PACK|0x1003ca9|DLC05MZ3SallyUseCrawlspace2|
+PACK|0x10039b7|DLC05ASMSomahGreetPartC|
+PACK|0x10039ab|DLC05MZ1SallyUseCrawlspace1|
+PACK|0x10039a0|DLC05TercorienFollowPlayer|
+PACK|0x100399f|DLC05MZ2SomahSandboxEngineCore|
+PACK|0x100399e|DLC05MZ2SomahFollowPlayer|
+PACK|0x100399d|DLC05PaulsonFollowPlayer|
+PACK|0x100371e|DLC05ASMSomahGreetPartB|
+PACK|0x100371b|DLC05ASMSomahHide01|
+PACK|0x1003716|DLC05ASMSomahGoToTeleporter|
+PACK|0x1003703|DLC05MZ1SallyTravelToDoorMarker|
+PACK|0x1003702|DLC05MZ1SallyInitialForceGreet|
+PACK|0x10035ce|DefaultPatrolRun|
+PACK|0x10033f3|DLC05TercorienSandbox|
+PACK|0x10033f2|DLC05SamuraiSandbox|
+PACK|0x10033f1|DLC05PaulsonSandbox|
+PACK|0x10033b6|DLC05MZ1SomahPostFightForceGreet|
+CSTY|0x10099f9|DLC05AlienCombatDroid|
+CSTY|0x100856f|DLC05AlienMaintenanceBot|
+CSTY|0x1004200|DLC05Alien|
+ANIO|0x100ac0c|DLC05crAlienRobotControler2|
+ANIO|0x100ac0b|DLC05crAlienRobotControler1|
+ANIO|0x100686a|DLC05ClawArmPickUpAnimObject|
+ANIO|0x1006863|DLC05crAlienClipboard2|
+ANIO|0x1006862|DLC05crAlienClipboard1|
+ANIO|0x1006861|DLC05crAlienClipboard|
+WATR|0x1007b86|DLC05SpaceWaterHackWater|TestGrantWater
+WATR|0x1000831|testPhilSpaceWaterType|TestGrantWater
+EFSH|0x100db90|DLC05ThawGrenade|
+EFSH|0x100db26|DLC05ThawCryoExplode|
+EFSH|0x100cffe|DLC05FrozenStasis|
+EFSH|0x100cffd|DLC05ThawSlowStasis|
+EFSH|0x100ce68|DLC05ThawSlowSM|
+EFSH|0x100ce66|DLC05Frozen|
+EFSH|0x100cbb3|DLC05FrozenLite|
+EFSH|0x100cbb0|DLC05ThawSlow|
+EFSH|0x100cbaf|DLC05PodThaw|
+EFSH|0x100cbac|DLC05Thaw|
+EFSH|0x100cbaa|DLC05Freeze|
+EFSH|0x100bcfd|DLC05ZetaDeadFXShader|
+EFSH|0x100bcf8|DLC05ZetaShieldsFXShader|
+EFSH|0x100a8db|DLC05BeamUpFXShader|
+EFSH|0x10099c8|DLC05AlienArmorSpellShader03|
+EFSH|0x10099c7|DLC05AlienArmorSpellShader02|
+EFSH|0x10099c6|DLC05GeneratorImpactFXShader|
+EFSH|0x1007435|DLC05ShockHitFXShader|
+EFSH|0x100693b|DLC05AlienArmorSpellFlareShader|
+EFSH|0x100693a|DLC05AlienArmorSpellShader|
+EFSH|0x10055dd|DLC05teleportLightFXShader|
+EFSH|0x10055dc|DLC05TeleportInFXShader|
+EFSH|0x10055d4|DLC05teleportOutFXShader|
+EFSH|0x1004248|testShieldDisableFXShader|
+EFSH|0x100419f|ShieldDisableFXShader|
+EXPL|0x100d87e|DLC05ZetaDeathRayExplosion02|
+EXPL|0x100d835|DLC05DeathRayShake|Force
+EXPL|0x100d834|DLC05ZetaDeathRayExplosion01|
+EXPL|0x100d13e|DLC05KnockDownPlayer|Force
+EXPL|0x100cbb2|DLC05CryopodSmokeExplosion|
+EXPL|0x100c0c7|DLC05AlienControllerExplosion|
+EXPL|0x100c042|DLC05ZetaLaserExplosion03|
+EXPL|0x100c041|DLC05ZetaLaserExplosion02|
+EXPL|0x100c03f|DLC05ZetaBridgeDamageExplosion03|
+EXPL|0x100c03e|DLC05ZetaBridgeDamageExplosion02|
+EXPL|0x100c02d|DLC05ZetaBridgeDamageExplosion01|
+EXPL|0x100c022|DLC05CannonExplosionUnique|
+EXPL|0x100bd04|DLC05ZetaEnemyLaserExplosion01|
+EXPL|0x100bcfb|DLC05ZetaDeathExplosion|Nuke Explosion
+EXPL|0x100bcf7|DLC05ZetaLaserExplosion01|
+EXPL|0x100ae76|DLC05AsmSExplosion|
+EXPL|0x100ae75|DLC05AsmMExplosion|
+EXPL|0x100ae74|DLC05AsmLExplosion|
+EXPL|0x100ac0f|DLC05BridgeEnemyShipExplosion|Nuke Explosion
+EXPL|0x1007ebd|DLC05FF01cartLurch|Force
+EXPL|0x10076ca|DLC05RobotCannonMineExplosion|
+EXPL|0x1007413|DLC05FF01cartShake|Force
+EXPL|0x1006bf5|DLC05GeneratorExplosion|
+EXPL|0x1006033|DLC05CryoTrapExplosion|
+EXPL|0x1005e49|DLC05FakeForceBallLevi|
+EXPL|0x1003f3e|DLC05BumperExplosion|Bumper Blast
+EXPL|0x1003f3d|DLC05FakeForceBallBumper|
+EXPL|0x1003327|testPortableCoverExplosion|Portable Cover Explosion
+EXPL|0x1002a72|DLC05CryoGrenadeExplosion|
+DEBR|0x100ce67|DLC05FreezeDebrisLG01|
+DEBR|0x100cbab|DLC05FreezeDebris01|
+DEBR|0x100aa21|AlienGoreBits01|
+DEBR|0x10099ca|DLC05AlienArmorGoreBits01|
+DEBR|0x10099c9|DLC05AlienArmorGoreBits02|
+IMGS|0x100d243|DLC05MZISLab|
+IMGS|0x100d06f|DLC05MZISexlab04|
+IMGS|0x100d02d|DLC05MZISexLab01|
+IMGS|0x100c04b|DLC05MZSewer02|
+IMGS|0x100b0a1|DLC05MZISDecompress01|
+IMGS|0x100ae5d|DLC05MZImageSpaceTheFinalFrontier|
+IMGS|0x100ac1e|DLC05MZCargoHold|
+IMGS|0x100a780|DLC05MZSteamworks|
+IMGS|0x100a5fa|DLC05MZImageSpace04|
+IMGS|0x1009c1b|DLC05MZISHoldingCells01|
+IMGS|0x1008eb3|DLC05MZISCryo01|
+IMGS|0x1008164|DLC05MZImageSpace03|
+IMGS|0x1007e13|DLC05MZImageSpace02|
+IMGS|0x1000851|DLC05MZImageSpace01|
+IMAD|0x100db20|DLC05GrenadeCryoISFX|
+IMAD|0x100db1c|DLC05BeamUpISFX|
+IMAD|0x100d87d|DLC05DeathRayRevUpLongISFX|
+IMAD|0x100d837|DLC05DeathRayLiteISFX|
+IMAD|0x100d836|DLC05DeathRayRevUpISFX|
+IMAD|0x100d82c|DLC05DeathRayISFX|
+IMAD|0x100d14d|DLC05AlienBlurISFX|
+IMAD|0x100d13d|DLC05FadeOutButtProbeISFX|
+IMAD|0x100d13c|DLC05AbductionISFX|
+IMAD|0x100d133|DLC05FadeInButtProbeISFX|
+IMAD|0x100c040|DLC05ZetaDeadISFX|
+IMAD|0x100c02b|DLC05ZetaBoosterISFX|
+IMAD|0x100bec9|DLC05TeleportInISFX|
+IMAD|0x100bec8|DLC05TeleportOutISFX|
+IMAD|0x100b08f|DLC05SewerSlamIntoWall|
+IMAD|0x100b08a|DLC05SewerGetUp|
+IMAD|0x100a8c1|DLC05LongBlackout|
+IMAD|0x100a8c0|DLC05SlamToBlack|
+IMAD|0x10085f5|DLC05healArchISFX|
+IMAD|0x10079a4|DLC05SpaceFadeToBlackLong|
+IMAD|0x10079a3|DLC05SpaceFadeToBlack|
+IMAD|0x1007443|DLC05SpaceFadeToWhite|
+IMAD|0x1001605|DLC05FadeToWhiteAndBackISFX|
+FLST|0x100d87c|DLC05AllAlienWeaponsList|
+FLST|0x100ce76|DLC05AlienBatonRepairList|
+FLST|0x100ce75|DLC05AlienRifleRepairList|
+FLST|0x100ce74|DLC05AlienPistolRepairList|
+FLST|0x100ce73|DLC05AlienCannonRepairList|
+FLST|0x100c96e|DLC05GeneralCoatList|
+FLST|0x100b7de|DLC05RobotRangedWeaponList|
+FLST|0x100a8ca|DLC05AstronautList|
+FLST|0x1009a31|DLC05EmbeddedWeapons|
+FLST|0x100693e|OutfitSamuraiList|
+FLST|0x100481b|DLC05AlienWeaponList|
+PERK|0x100abb0|DLC05Xenotech|Xenotech Expert
+BPTD|0x10099f8|DLC05CombatDroid|
+BPTD|0x10081be|DLC05AbominationBodyPartData|
+BPTD|0x1007533|DLC05MaintenanceRobot|
+BPTD|0x10039a4|DLC05AliensBodyPartData|
+ADDN|0x1006db6|DLC05MPSalienEnergyTrail|
+CAMS|0x10079a5|DLC05PlayerDeathInSpace|
+CPTH|0x10079a6|DLC05PlayerSpaceDeath|
+VTYP|0x1006dfd|DLC05NPCFemaleGeneric1|
+VTYP|0x1006dfc|DLC05NPCMaleGeneric3|
+VTYP|0x1006dfb|DLC05NPCMaleGeneric2|
+VTYP|0x1006dfa|DLC05NPCMaleGeneric1|
+VTYP|0x100609b|DLC05Abomination|
+VTYP|0x100609a|DLC05Turret|
+VTYP|0x1006099|DLC05Robot|
+VTYP|0x10034cc|DLC05CreatureAlien|
+VTYP|0x1003301|DLC05NPCUniqueSamurai|
+VTYP|0x1003300|DLC05NPCUniqueSally|
+VTYP|0x10032ff|DLC05NPCUniqueTercorien|
+VTYP|0x10032fe|DLC05NPCUniqueSomah|
+VTYP|0x10032fd|DLC05NPCUniquePaulson|
+IPCT|0x100ae1d|DLC05ShockBatonFleshImpact|
+IPCT|0x1007438|DLC05EnergyImapctAlienSm01|
+IPCT|0x100723a|DLC05EnergyImapctAlien01|
+IPDS|0x100ae1e|DLC05ShockBatonImpactSet|
+IPDS|0x1007439|DLC05EnergyImpactAlienSmDataSet|
+IPDS|0x1007239|DLC05EnergyImpactAlienDataSet|
+ARMA|0x100c96f|DLC05Medals|General's Medals
+ARMA|0x100a9a5|DLC05AstronautHelmet|Spacesuit Helmet
+ARMA|0x100a8cc|DLC05AstronautRightGlove|Space Suit Right Glove
+ARMA|0x100a8cb|DLC05AstronautLeftGlove|Astronaut Suit Left Glove
+ARMA|0x100693d|SamuraiGloveR|Metal Armor Right Glove
+ARMA|0x100693c|SamuraiGloveL|Metal Armor Left Glove
+ECZN|0x100db9e|DLC05WasteDisposal|
+ECZN|0x100d82a|DLC05EngineCoreZone|
+ECZN|0x10058d3|DLC05ZetaZone|
+MESG|0x100c8df|DLC05PerkMessage|Xenotech Expert Perk Added
+MESG|0x100a9f1|DLC05HealingArchOverloadedHealsOneRemainingMessage|
+MESG|0x100a9f0|DLC05HealingArchBurnedOutMessageBox|
+MESG|0x100a9ef|DLC05HealingArchHealPlayerPartialMessage|Restored
+MESG|0x100a9ee|DLC05HealingArchOverloadedHealsRemainingMessage|
+MESG|0x100a9a0|DLC05BridgeJammerOnlineMSG|
+MESG|0x100a92f|DLC05BridgeGeneratorOnlineMSG|
+MESG|0x100a8d9|DLC05AlienBioGelMessage|Biochemical Anomaly
+MESG|0x100a76e|DLC05DeathRayCharged|The Death Ray is Fully Charged
+MESG|0x100a76d|DLC05DeathRayInPosition|The Death Ray is in Position
+MESG|0x100a76c|DLC05DeathRayFiring|The Death Ray is Firing
+MESG|0x100a76b|DLC05DeathRayMoving|The Death Ray is Moving
+MESG|0x1009c5e|DLC05HealingArchBurnedOutMessage|
+MESG|0x1009c52|DLC05AsmAssemblyLowRepair|
+MESG|0x1009c51|DLC05AsmAssemblyHighRepair|
+MESG|0x1009c30|DLC05AsmRobotPodAlreadyActive|
+MESG|0x1009c2f|DLC05AsmRobotPodWithDevice|
+MESG|0x1009c2e|DLC05AsmRobotPodNoDevice|
+MESG|0x1009951|DLC05HealingArchlowskillMessage|
+MESG|0x1009950|DLC05HealingArchOverloadMessage|
+MESG|0x1008ae0|DLC05DeadPaulsonMessage|
+MESG|0x1008adf|DLC05DeadSomahMessage|
+MESG|0x1008ade|DLC05DeadTercorienMessage|
+MESG|0x10082d3|DLC05DoorSealedMessage|
+MESG|0x10082d2|DLC05AlienDoorControlMSG|
+MESG|0x100824a|DLC05SpaceDoorMessage|Death In Space
+MESG|0x1006bef|DLC05JammerControlRunningMSG|
+MESG|0x1006bee|DLC05ShieldControlRunningMSG|
+MESG|0x1006815|DLC05HealingArchCoolDownMessage|Device Recharging
+MESG|0x1006814|DLC05HealingArchHealWeaponMessage|Restored
+MESG|0x1006813|DLC05HealingArchHealPlayerMessage|Restored
+MESG|0x1006315|DLC05WeapRechargeStationCooldownMessage|Station Recharging
+MESG|0x1005d3d|DLC05MZ3TEMPLabMessage2|
+MESG|0x1005cc3|DLC05WeapAlienWarningMessage|Alien Weapon Notification
+MESG|0x1005af6|DLC05BridgeDeathRayOfflineMSG|
+MESG|0x10059c6|DLC05DecompressionDoor01bMessage|Room is Pressurized
+MESG|0x10059c3|DLC05DecompressionDoor01aMessage|Room Must Be Pressurized
+MESG|0x10059bc|DLC05DeathInSpaceMessage|Death In Space
+MESG|0x100585f|DLC05InteractLQWorkerRobotMsg|
+MESG|0x1004e65|DLC05MZ3CoreTeleporterMessage|Teleporter Inactive!
+MESG|0x100499b|DLC05SteamSallyGrenadeMSG|
+MESG|0x100399c|DLC05StasisControlsMessageDone|
+MESG|0x100399b|DLC05StasisControlsMessage|
+MESG|0x1002c64|DLC05InteractLowSkillScienceMsg|
+MESG|0x1001f56|DLC05trapAlienCommTurretMSG|
+MESG|0x1001f54|DLC05trapAlienCommMSG|
+MESG|0x1001602|DLC05TeleporterChargingMSG|
+MESG|0x100096e|DLC05StartMessage|Mothership Zeta
+RGDL|0x10081bf|DLC05AbomRagdoll|
+RGDL|0x10039a5|DLC05Aliens|

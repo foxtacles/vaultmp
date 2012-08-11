@@ -1,3 +1,5 @@
-FormID: 001674D2	PreorderMessageInventoryTribal	MESG	 	Tribal Pack
-FormID: 001735E2	PreordArmorTribalRaiding	ARMO	 	Tribal Raiding Armor
-FormID: 001735E5	WeapPreordMachete	WEAP	 	Broad Machete
+SCPT|0x172a26|VPreorderTribalSCRIPT|
+ARMO|0x1735e2|PreordArmorTribalRaiding|Tribal Raiding Armor
+WEAP|0x1735e5|WeapPreordMachete|Broad Machete
+QUST|0x172a1f|VPreorderTribal|
+MESG|0x1674d2|PreorderMessageInventoryTribal|Tribal Pack

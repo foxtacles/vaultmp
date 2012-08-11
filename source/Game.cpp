@@ -1557,7 +1557,9 @@ void Game::GetDead(const FactoryObject& reference, const FactoryObject& player, 
 
 void Game::IsLimbGone(unsigned int key, unsigned char limb, bool gone)
 {
-	shared_ptr<Lockable> shared = Lockable::Poll(key, limb == Limb_Weapon).lock();
+	bool last_limb = limb == Limb_Weapon;
+
+	shared_ptr<Lockable> shared = Lockable::Poll(key, last_limb).lock();
 	Lockable* locked = shared.get();
 
 	if (locked == nullptr)
@@ -1570,7 +1572,7 @@ void Game::IsLimbGone(unsigned int key, unsigned char limb, bool gone)
 
 	store->set(store->get() | (static_cast<unsigned short>(gone) << limb));
 
-	if (limb == Limb_Weapon)
+	if (last_limb)
 		store->set_promise();
 }
 

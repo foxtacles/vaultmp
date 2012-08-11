@@ -10,11 +10,10 @@ function import($file,$dlc)
 	$c=explode("\n",$f);
 	foreach($c as $t)
 	{
-		list($id,$name,$tb,$pad,$description)=explode("\t",$t);
+		list($tb,$id,$name,$description)=explode("|",$t);
 
-		$id=hexdec(trim(str_replace("FormID: ","",$id)));
+		$id=hexdec($id);
 		createTable($tb);
-		$description=trim($description);
                 $prep = $db->prepare("insert into $tb (baseID,name,description,dlc) values (?, ?, ?, ?)");
                 if ($prep === FALSE) {
 			echo "Fail: " . $id;
@@ -30,7 +29,7 @@ return $res;
 function createTable($tb)
 {
 	global $db;
-	$db->exec("CREATE TABLE $tb (baseID integer(11),name varchar(128),description varchar(128),dlc integer(11))");
+	$db->exec("CREATE TABLE IF NOT EXISTS $tb (baseID integer,name varchar(128),description varchar(128),dlc integer)");
 }
 
 $db = new PDO('sqlite:fallout3.sqlite');

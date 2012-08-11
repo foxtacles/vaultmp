@@ -1,6 +1,19 @@
-FormID: 001735D1	PreordArmorVault13Armored	ARMO	 	Armored Vault 13 Jumpsuit
-FormID: 001735D2	PreordVaultCanteen	MISC	 	Vault 13 Canteen
-FormID: 001735D4	WeapPreord10mmPistol	WEAP	 	Weathered 10mm Pistol
-FormID: 00174092	PreordVault13CanteenHeal	SPEL	 	Vault 13 Canteen Effect
-FormID: 00174095	PreordVault13CanteenQuest	QUST	 	PreordVault13CanteenQuest
-FormID: 00174777	PreorderMessageInventoryClassic	MESG	 	Classic Pack
+TXST|0x1735d0|1stPreord10mmPistol|
+SCPT|0x174091|PreordVault13CanteenScript|
+SCPT|0x172a27|VPreorderClassicSCRIPT|
+SPEL|0x174092|PreordVault13CanteenHeal|Vault 13 Canteen Effect
+ARMO|0x1735d1|PreordArmorVault13Armored|Armored Vault 13 Jumpsuit
+MISC|0x1735d2|PreordVaultCanteen|Vault 13 Canteen
+STAT|0x1735d3|1stPreord10mmpistolTexture|
+STAT|0x1735db|1stPreord10mmPistolSilencedLaserSight|
+STAT|0x1735da|1stPreord10mmPistolSilencedExtendedMag|
+STAT|0x1735d9|1stPreord10mmPistolSilenced|
+STAT|0x1735d8|1stPreord10mmPistolLaserSight|
+STAT|0x1735d7|1stPreord10mmPistolExtendedMagLaserSight|
+STAT|0x1735d6|1stPreord10mmPistolExtendedMag|
+STAT|0x1735d5|1stPreord10mmPistolAllMods|
+WEAP|0x1735d4|WeapPreord10mmPistol|Weathered 10mm Pistol
+QUST|0x174095|PreordVault13CanteenQuest|PreordVault13CanteenQuest
+QUST|0x1674d4|VPreorderClassic|
+MESG|0x174777|PreorderMessageInventoryClassic|Classic Pack
+MESG|0x174096|PreordVault13Canteen|
