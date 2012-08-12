@@ -210,13 +210,63 @@ bool Actor::IsActorJumping() const
 	unsigned char anim = this->GetActorMovingAnimation();
 	unsigned char game = API::GetGameCode();
 
-	return ((game& FALLOUT3 && ((anim >= Fallout3::AnimGroup_JumpStart && anim <= Fallout3::AnimGroup_JumpLand)
+	return ((game & FALLOUT3 && ((anim >= Fallout3::AnimGroup_JumpStart && anim <= Fallout3::AnimGroup_JumpLand)
 								|| (anim >= Fallout3::AnimGroup_JumpLoopForward && anim <= Fallout3::AnimGroup_JumpLoopRight)
 								|| (anim >= Fallout3::AnimGroup_JumpLandForward && anim <= Fallout3::AnimGroup_JumpLandRight)))
-			|| (game& NEWVEGAS && ((anim >= FalloutNV::AnimGroup_JumpStart && anim <= FalloutNV::AnimGroup_JumpLand)
+			|| (game & NEWVEGAS && ((anim >= FalloutNV::AnimGroup_JumpStart && anim <= FalloutNV::AnimGroup_JumpLand)
 								   || (anim >= FalloutNV::AnimGroup_JumpLoopForward && anim <= FalloutNV::AnimGroup_JumpLoopRight)
 								   || (anim >= FalloutNV::AnimGroup_JumpLandForward && anim <= FalloutNV::AnimGroup_JumpLandRight))));
 }
+
+bool Actor::IsActorFiring() const
+{
+	unsigned char anim = this->GetActorWeaponAnimation();
+#ifdef VAULTSERVER
+	return (anim >= AnimGroup_AttackLeft && anim <= AnimGroup_AttackRightISDown && this->GetEquippedWeapon());
+#else
+	return (anim >= AnimGroup_AttackLeft && anim <= AnimGroup_AttackRightISDown);
+#endif
+}
+
+bool Actor::IsActorPunching() const
+{
+	unsigned char anim = this->GetActorWeaponAnimation();
+#ifdef VAULTSERVER
+	return (this->IsActorHeavyPunching() || (anim >= AnimGroup_AttackLeft && anim <= AnimGroup_AttackRightISDown && !this->GetEquippedWeapon()));
+#else
+	return (this->IsActorHeavyPunching() || (anim >= AnimGroup_AttackLeft && anim <= AnimGroup_AttackRightISDown));
+#endif
+}
+
+bool Actor::IsActorHeavyPunching() const
+{
+	unsigned char anim = this->GetActorWeaponAnimation();
+	return (anim >= AnimGroup_AttackPower && anim <= AnimGroup_AttackRightPower);
+}
+
+bool Actor::IsActorAttacking() const
+{
+	return (this->IsActorFiring() || this->IsActorPunching());
+}
+
+#ifdef VAULTSERVER
+unsigned int Actor::GetEquippedWeapon() const
+{
+	list<NetworkID> weapons = this->GetItemTypes("WEAP");
+
+	// this won't reliably work if the actor has equipped more than one weapon
+	for (NetworkID& weapon : weapons)
+	{
+		FactoryObject _reference = GameFactory::GetObject(weapon);
+		Item* item = vaultcast<Item>(_reference);
+
+		if (item->GetItemEquipped())
+			return item->GetBase();
+	}
+
+	return 0x00000000;
+}
+#endif
 
 pPacket Actor::toPacket() const
 {

@@ -1327,7 +1327,7 @@ void Game::net_SetActorDead(FactoryObject& reference, bool dead, unsigned short 
 	}
 }
 
-void Game::net_FireWeapon(const FactoryObject& reference, unsigned int weapon)
+void Game::net_FireWeapon(const FactoryObject& reference, unsigned int weapon, double attacks)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -1335,6 +1335,29 @@ void Game::net_FireWeapon(const FactoryObject& reference, unsigned int weapon)
 		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
 	FireWeapon(reference, weapon);
+	NetworkID id = actor->GetNetworkID();
+
+	AsyncDispatch([=]
+	{
+		try
+		{
+			FactoryObject reference;
+			Actor* actor;
+
+			// attacks: per second
+			auto us = chrono::microseconds(static_cast<unsigned long long>(1000000 / attacks));
+
+			this_thread::sleep_for(us);
+
+			while ((actor = vaultcast<Actor>(reference = GameFactory::GetObject(id))) && actor->IsActorFiring() && actor->IsEquipped(weapon))
+			{
+				FireWeapon(reference, weapon);
+				GameFactory::LeaveReference(reference);
+				this_thread::sleep_for(us);
+			}
+		}
+		catch (...) {}
+	});
 }
 
 void Game::net_UIMessage(const string& message)

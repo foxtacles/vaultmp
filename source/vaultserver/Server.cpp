@@ -273,42 +273,26 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, const FactoryObject& refe
 
 		if (_weapon)
 		{
-			if (weapon >= AnimGroup_AttackPower && weapon <= AnimGroup_AttackRightPower)
+			if (actor->IsActorHeavyPunching())
 			{
 				// heavy punch
 				// OnActorPunch
 			}
-			else if (weapon >= AnimGroup_AttackLeft && weapon <= AnimGroup_AttackRightISDown)
+			else if (actor->IsActorPunching())
 			{
-				list<NetworkID> weapons = actor->GetItemTypes("WEAP");
-				unsigned int baseID = 0x00000000;
+				// Normal punch
+				// OnActorPunch
+			}
+			else if (actor->IsActorFiring())
+			{
+				unsigned int baseID = actor->GetEquippedWeapon();
+				const Weapon& weapon = Weapon::Lookup(baseID);
 
-				// this won't reliably work if the actor has equipped more than one weapon
-				for (NetworkID& weapon : weapons)
-				{
-					FactoryObject _reference = GameFactory::GetObject(weapon);
-					Item* item = vaultcast<Item>(_reference);
+				response.emplace_back(Network::CreateResponse(
+					PacketFactory::Create<pTypes::ID_UPDATE_FIREWEAPON>(actor->GetNetworkID(), baseID, weapon.GetAttacksSec()),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
-					if (item->GetItemEquipped())
-					{
-						baseID = item->GetBase();
-						break;
-					}
-				}
-
-				if (baseID)
-				{
-					response.emplace_back(Network::CreateResponse(
-						PacketFactory::Create<pTypes::ID_UPDATE_FIREWEAPON>(actor->GetNetworkID(), baseID),
-						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
-
-					// OnActorFireWeapon
-				}
-				else
-				{
-					// Normal punch
-					// OnActorPunch
-				}
+				// OnActorFireWeapon
 			}
 		}
 

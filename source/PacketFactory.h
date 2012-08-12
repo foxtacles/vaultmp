@@ -1267,18 +1267,18 @@ class pActorFireweapon : public pObjectDefault
 		friend class PacketFactory;
 
 	private:
-		pActorFireweapon(NetworkID id, unsigned int weapon) : pObjectDefault(pTypes::ID_UPDATE_FIREWEAPON, id)
+		pActorFireweapon(NetworkID id, unsigned int weapon, double attacks) : pObjectDefault(pTypes::ID_UPDATE_FIREWEAPON, id)
 		{
-			construct(weapon);
+			construct(weapon, attacks);
 		}
 		pActorFireweapon(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
 		{
 
 		}
 
-		void access(NetworkID& id, unsigned int& weapon) const
+		void access(NetworkID& id, unsigned int& weapon, double& attacks) const
 		{
-			deconstruct(id, weapon);
+			deconstruct(id, weapon, attacks);
 		}
 };
 

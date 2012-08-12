@@ -176,6 +176,33 @@ class Actor : public Container
 		 * \brief Returns true if the Actor is jumping
 		 */
 		bool IsActorJumping() const;
+		/**
+		 * \brief Returns true if the Actor is firing a weapon
+		 *
+		 *	Only accurate in vaultserver
+		 */
+		bool IsActorFiring() const;
+		/**
+		 * \brief Returns true if the Actor is punching
+		 *
+		 *	Only accurate in vaultserver
+		 */
+		bool IsActorPunching() const;
+		/**
+		 * \brief Returns true if the Actor is punching (heavy)
+		 */
+		bool IsActorHeavyPunching() const;
+		/**
+		 * \brief Returns true if the Actor is attacking
+		 */
+		bool IsActorAttacking() const;
+
+#ifdef VAULTSERVER
+		/**
+		 * \brief Returns the baseID of the Actor's equipped weapon
+		 */
+		unsigned int GetEquippedWeapon() const;
+#endif
 
 		/**
 		 * \brief For network transfer

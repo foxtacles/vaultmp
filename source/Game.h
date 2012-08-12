@@ -245,7 +245,7 @@ class Game
 		/**
 		 * \brief Network function to handle Actor fire weapon
 		 */
-		static void net_FireWeapon(const FactoryObject& reference, unsigned int weapon);
+		static void net_FireWeapon(const FactoryObject& reference, unsigned int weapon, double attacks);
 		/**
 		 * \brief Network function to handle UI message
 		 */

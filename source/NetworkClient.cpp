@@ -304,9 +304,10 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				{
 					NetworkID id;
 					unsigned int weapon;
-					PacketFactory::Access<pTypes::ID_UPDATE_FIREWEAPON>(packet, id, weapon);
+					double attacks;
+					PacketFactory::Access<pTypes::ID_UPDATE_FIREWEAPON>(packet, id, weapon, attacks);
 					FactoryObject reference = GameFactory::GetObject(id);
-					Game::net_FireWeapon(reference, weapon);
+					Game::net_FireWeapon(reference, weapon, attacks);
 					break;
 				}
 
