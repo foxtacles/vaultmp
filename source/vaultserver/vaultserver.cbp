@@ -392,14 +392,14 @@
 			<Option target="DebugUnix" />
 		</Unit>
 		<Unit filename="..\vaultmp.h" />
-		<Unit filename="Cell.cpp" />
-		<Unit filename="Cell.h" />
 		<Unit filename="Client.cpp" />
 		<Unit filename="Client.h" />
 		<Unit filename="Database.cpp" />
 		<Unit filename="Database.h" />
 		<Unit filename="Dedicated.cpp" />
 		<Unit filename="Dedicated.h" />
+		<Unit filename="Exterior.cpp" />
+		<Unit filename="Exterior.h" />
 		<Unit filename="NetworkServer.cpp" />
 		<Unit filename="NetworkServer.h" />
 		<Unit filename="PAWN.cpp" />

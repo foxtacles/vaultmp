@@ -19,13 +19,13 @@ using namespace std;
  * \brief Represents a game exterior cell
  */
 
-class Cell
+class Exterior
 {
 	private:
 		static constexpr double size = 4096.0;
 
-		static unordered_map<unsigned int, const Cell*> cells;
-		static unordered_map<unsigned int, vector<const Cell*>> worlds;
+		static unordered_map<unsigned int, const Exterior*> cells;
+		static unordered_map<unsigned int, vector<const Exterior*>> worlds;
 
 		unsigned int baseID;
 		unsigned int world;
@@ -33,14 +33,13 @@ class Cell
 		signed int y;
 		string name;
 
-		Cell(const Cell&) = delete;
-		Cell& operator=(const Cell& p) = delete;
+		Exterior(const Exterior&) = delete;
+		Exterior& operator=(const Exterior& p) = delete;
 
 	public:
-		static const Cell& Lookup(unsigned int baseID);
-		static const Cell& Lookup(const Cell& cell, double X, double Y);
-		static const Cell& Lookup(unsigned int world, double X, double Y);
-		static bool IsValidCell(unsigned int baseID);
+		static const Exterior& Lookup(unsigned int baseID);
+		static const Exterior& Lookup(const Exterior& cell, double X, double Y);
+		static const Exterior& Lookup(unsigned int world, double X, double Y);
 
 		unsigned int GetBase() const;
 		unsigned int GetWorld() const;
@@ -48,11 +47,11 @@ class Cell
 		signed int GetY() const;
 		const string& GetName() const;
 
-		Cell(const string& table, sqlite3_stmt* stmt);
+		Exterior(const string& table, sqlite3_stmt* stmt);
 		// must never be called. only defined because vector requires it
-		Cell(Cell&&) { terminate(); }
-		Cell& operator=(Cell&&) = delete;
-		~Cell();
+		Exterior(Exterior&&) { terminate(); }
+		Exterior& operator=(Exterior&&) = delete;
+		~Exterior();
 };
 
 #endif

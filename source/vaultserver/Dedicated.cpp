@@ -271,7 +271,7 @@ void Dedicated::DedicatedThread()
 	//debug->PrintSystem();
 	API::SetDebugHandler(debug);
 	Database<Record>::SetDebugHandler(debug);
-	Database<Cell>::SetDebugHandler(debug);
+	Database<Exterior>::SetDebugHandler(debug);
 	Database<Weapon>::SetDebugHandler(debug);
 	VaultException::SetDebugHandler(debug);
 	NetworkServer::SetDebugHandler(debug);
@@ -293,7 +293,7 @@ void Dedicated::DedicatedThread()
 
 	try
 	{
-		if (!Cell::IsValidCell(cell))
+		if (!Record::IsValidCell(cell))
 			throw VaultException("%08X is not a valid cell", cell);
 
 		Player::SetSpawnCell(cell);

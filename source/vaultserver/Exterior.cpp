@@ -1,9 +1,9 @@
-#include "Cell.h"
+#include "Exterior.h"
 
-unordered_map<unsigned int, const Cell*> Cell::cells;
-unordered_map<unsigned int, vector<const Cell*>> Cell::worlds;
+unordered_map<unsigned int, const Exterior*> Exterior::cells;
+unordered_map<unsigned int, vector<const Exterior*>> Exterior::worlds;
 
-Cell::Cell(const string& table, sqlite3_stmt* stmt)
+Exterior::Exterior(const string& table, sqlite3_stmt* stmt)
 {
 	if (sqlite3_column_count(stmt) != 6)
 		throw VaultException("Malformed input database (cells): %s", table.c_str());
@@ -18,17 +18,20 @@ Cell::Cell(const string& table, sqlite3_stmt* stmt)
 
 	cells.emplace(baseID, this);
 	worlds[world].emplace_back(this);
+
+	//All exteriors are also CELLs
+	//const Record& record = Record::Lookup(baseID, "CELL");
 }
 
-Cell::~Cell()
+Exterior::~Exterior()
 {
 	cells.erase(baseID);
 	worlds[world].erase(find(worlds[world].begin(), worlds[world].end(), this));
 }
 
-const Cell& Cell::Lookup(unsigned int baseID)
+const Exterior& Exterior::Lookup(unsigned int baseID)
 {
-	unordered_map<unsigned int, const Cell*>::iterator it = cells.find(baseID);
+	unordered_map<unsigned int, const Exterior*>::iterator it = cells.find(baseID);
 
 	if (it != cells.end())
 		return *it->second;
@@ -36,17 +39,17 @@ const Cell& Cell::Lookup(unsigned int baseID)
 	throw VaultException("No cell with baseID %08X found", baseID);
 }
 
-const Cell& Cell::Lookup(const Cell& cell, double X, double Y)
+const Exterior& Exterior::Lookup(const Exterior& cell, double X, double Y)
 {
 	return Lookup(cell.GetWorld(), X, Y);
 }
 
-const Cell& Cell::Lookup(unsigned int world, double X, double Y)
+const Exterior& Exterior::Lookup(unsigned int world, double X, double Y)
 {
 	signed int x = floor(X / size);
 	signed int y = floor(Y / size);
 
-	vector<const Cell*>::iterator it = find_if(worlds[world].begin(), worlds[world].end(), [=](const Cell* cell) { return cell->x == x && cell->y == y; });
+	vector<const Exterior*>::iterator it = find_if(worlds[world].begin(), worlds[world].end(), [=](const Exterior* cell) { return cell->x == x && cell->y == y; });
 
 	if (it != worlds[world].end())
 		return **it;
@@ -54,51 +57,27 @@ const Cell& Cell::Lookup(unsigned int world, double X, double Y)
 	throw VaultException("No cell with coordinates (%f, %f) in world %08X found", static_cast<float>(X), static_cast<float>(Y), world);
 }
 
-bool Cell::IsValidCell(unsigned int baseID)
-{
-	try
-	{
-		try
-		{
-			Cell::Lookup(baseID);
-		}
-		catch (...)
-		{
-			const Record& record = Record::Lookup(baseID);
-
-			if (record.GetType().compare("CELL"))
-				return false;
-		}
-	}
-	catch (...)
-	{
-		return false;
-	}
-
-	return true;
-}
-
-unsigned int Cell::GetBase() const
+unsigned int Exterior::GetBase() const
 {
 	return baseID;
 }
 
-unsigned int Cell::GetWorld() const
+unsigned int Exterior::GetWorld() const
 {
 	return world;
 }
 
-signed int Cell::GetX() const
+signed int Exterior::GetX() const
 {
 	return x;
 }
 
-signed int Cell::GetY() const
+signed int Exterior::GetY() const
 {
 	return y;
 }
 
-const string& Cell::GetName() const
+const string& Exterior::GetName() const
 {
 	return name;
 }

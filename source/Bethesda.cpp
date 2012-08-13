@@ -208,21 +208,24 @@ void Bethesda::Initialize()
 			CloseHandle(pi.hThread);
 			CloseHandle(pi.hProcess);
 
-			this_thread::sleep_for(chrono::milliseconds(5000));
+			this_thread::sleep_for(chrono::seconds(5));
 
 			initialized = true;
 		}
-
 		else
 			throw VaultException("Failed creating the game process");
 	}
-
 	else
 		throw VaultException("Either Fallout 3 or Fallout: New Vegas is already runnning");
 }
 
 void Bethesda::Terminate(RakPeerInterface* peer)
 {
+#ifdef VAULTMP_DEBUG
+	if (debug)
+		debug->Print("Terminate called...", true);
+#endif
+
 	this_thread::sleep_for(chrono::milliseconds(200));
 	Packet* packet = nullptr;
 

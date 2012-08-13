@@ -48,7 +48,7 @@ void Item::initialize()
 #ifdef VAULTSERVER
 	unsigned int baseID = this->GetBase();
 
-	const Record& record = Record::Lookup(baseID);
+	const Record& record = Record::Lookup(baseID, vector<string>{"CREA", "ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "CCRD", "CDCK", "CHIP", "CMNY", "ENCH", "IMOD", "KEYM", "MISC", "NOTE", "RCPE", "WEAP"});
 
 	if (this->GetName().empty())
 		this->SetName(record.GetDescription());
@@ -122,7 +122,7 @@ NetworkID Item::Copy() const
 #ifdef VAULTSERVER
 Lockable* Item::SetBase(unsigned int baseID)
 {
-	const Record& record = Record::Lookup(baseID);
+	const Record& record = Record::Lookup(baseID, vector<string>{"CREA", "ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "CCRD", "CDCK", "CHIP", "CMNY", "ENCH", "IMOD", "KEYM", "MISC", "NOTE", "RCPE", "WEAP"});
 
 	if (this->GetName().empty())
 		this->SetName(record.GetDescription());

@@ -22,7 +22,7 @@
 #include "vaultserver/vaultserver.h"
 #include "vaultserver/Database.h"
 #include "vaultserver/Record.h"
-#include "vaultserver/Cell.h"
+#include "vaultserver/Exterior.h"
 #include "vaultserver/Weapon.h"
 #endif
 
@@ -75,7 +75,7 @@ class GameFactory
 
 #ifdef VAULTSERVER
 		static Database<Record> dbRecords;
-		static Database<Cell> dbCells;
+		static Database<Exterior> dbExteriors;
 		static Database<Weapon> dbWeapons;
 #endif
 

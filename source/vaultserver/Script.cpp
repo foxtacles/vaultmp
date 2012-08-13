@@ -84,7 +84,7 @@ Script::Script(char* path)
 			SetScript(string(vpf + "IsContainer").c_str(), &Script::IsContainer);
 			SetScript(string(vpf + "IsActor").c_str(), &Script::IsActor);
 			SetScript(string(vpf + "IsPlayer").c_str(), &Script::IsPlayer);
-			SetScript(string(vpf + "IsCell").c_str(), &Cell::IsValidCell);
+			SetScript(string(vpf + "IsCell").c_str(), &Record::IsValidCell);
 			SetScript(string(vpf + "IsInterior").c_str(), &Script::IsInterior);
 			SetScript(string(vpf + "GetType").c_str(), (unsigned char(*)(NetworkID)) &GameFactory::GetType);
 			SetScript(string(vpf + "GetConnection").c_str(), &Script::GetConnection);
@@ -386,7 +386,7 @@ unsigned long long Script::Timer_Respawn(NetworkID id)
 
 	try
 	{
-		const Cell& cell = Cell::Lookup(_cell);
+		const Exterior& cell = Exterior::Lookup(_cell);
 
 		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, cell.GetWorld(), cell.GetX(), cell.GetY()),
@@ -394,7 +394,7 @@ unsigned long long Script::Timer_Respawn(NetworkID id)
 	}
 	catch (...)
 	{
-		const Record& record = Record::Lookup(_cell);
+		const Record& record = Record::Lookup(_cell, "CELL");
 
 		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(id, record.GetName()),
@@ -671,7 +671,7 @@ const char* Script::BaseToString(unsigned int baseID)
 
 	try
 	{
-		const Record& record = Record::Lookup(baseID);
+		const Record& record = Record::LookupGlobal(baseID);
 		base.assign(record.GetName());
 	}
 	catch (...) {}
@@ -742,7 +742,7 @@ void Script::SetRespawn(unsigned int respawn)
 
 void Script::SetSpawnCell(unsigned int cell)
 {
-	if (Cell::IsValidCell(cell))
+	if (Record::IsValidCell(cell))
 		Player::SetSpawnCell(cell);
 }
 
@@ -780,17 +780,21 @@ bool Script::IsInterior(unsigned int cell)
 {
 	try
 	{
-		const Record& record = Record::Lookup(cell);
-
-		if (record.GetType().compare("CELL"))
-			return false;
+		const Exterior& _cell = Exterior::Lookup(cell);
+		return false;
 	}
 	catch (...)
 	{
-		return false;
+		try
+		{
+			const Record& record = Record::Lookup(cell, "CELL");
+			return true;
+		}
+		catch (...)
+		{
+			return false;
+		}
 	}
-
-	return true;
 }
 
 unsigned int Script::GetConnection(NetworkID id)
@@ -1311,26 +1315,13 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 
 	Object* object = vaultcast<Object>(reference);
 	unsigned int cell = object->GetNetworkCell();
-	const Cell* new_cell = nullptr;
+	const Exterior* new_cell = nullptr;
 
 	try
 	{
-		try
-		{
-			const Record& record = Record::Lookup(cell);
-
-			if (record.GetType().compare("CELL"))
-				return state;
-		}
-		catch (...)
-		{
-			new_cell = &Cell::Lookup(Cell::Lookup(cell), X, Y);
-		}
+		new_cell = &Exterior::Lookup(Exterior::Lookup(cell), X, Y);
 	}
-	catch (...)
-	{
-		return state;
-	}
+	catch (...) {}
 
 	NetworkResponse response;
 	unsigned int _new_cell = 0x00000000;
@@ -1401,28 +1392,25 @@ bool Script::SetCell(NetworkID id, unsigned int cell, double X, double Y, double
 	Object* object = vaultcast<Object>(reference);
 	bool update_pos = X != 0.00 && Y != 0.00 && Z != 0.00;
 	const Record* new_interior = nullptr;
-	const Cell* new_exterior = nullptr;
+	const Exterior* new_exterior = nullptr;
 
 	try
 	{
 		try
 		{
-			new_interior = &Record::Lookup(cell);
+			if (update_pos)
+			{
+				new_exterior = &Exterior::Lookup(Exterior::Lookup(cell), X, Y);
 
-			if (new_interior->GetType().compare("CELL"))
-				return state;
+				if (new_exterior->GetBase() != cell)
+					return state;
+			}
+			else
+				new_exterior = &Exterior::Lookup(cell);
 		}
 		catch (...)
 		{
-			if (update_pos)
-			{
-				new_exterior = &Cell::Lookup(Cell::Lookup(cell), X, Y);
-
-				if (new_exterior->GetBase() != cell)
-					throw VaultException("Coordinates (%f, %f, %f) not in cell %08X", X, Y, Z, cell);
-			}
-			else
-				new_exterior = &Cell::Lookup(cell);
+			new_interior = &Record::Lookup(cell, "CELL");
 		}
 	}
 	catch (...)
@@ -1753,6 +1741,6 @@ void Script::SetPlayerSpawnCell(NetworkID id, unsigned int cell)
 
 	Player* player = vaultcast<Player>(reference);
 
-	if (player && Cell::IsValidCell(cell))
+	if (player && Record::IsValidCell(cell))
 		player->SetPlayerSpawnCell(cell);
 }

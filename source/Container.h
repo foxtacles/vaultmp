@@ -99,7 +99,7 @@ class Container : public Object
 		const list<NetworkID>& GetItemList() const;
 
 #ifdef VAULTSERVER
-		list<NetworkID> GetItemTypes(string type) const;
+		list<NetworkID> GetItemTypes(const string& type) const;
 #endif
 
 		void FlushContainer();

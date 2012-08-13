@@ -65,7 +65,7 @@ void Actor::initialize()
 
 	if (baseID != PLAYER_BASE)
 	{
-		const Record& record = Record::Lookup(baseID);
+		const Record& record = Record::Lookup(baseID, vector<string>{"NPC_", "CREA"});
 
 		if (this->GetName().empty())
 			this->SetName(record.GetDescription());
@@ -196,7 +196,7 @@ Lockable* Actor::SetActorDead(bool state)
 #ifdef VAULTSERVER
 Lockable* Actor::SetBase(unsigned int baseID)
 {
-	const Record& record = Record::Lookup(baseID);
+	const Record& record = Record::Lookup(baseID, vector<string>{"NPC_", "CREA"});
 
 	if (this->GetName().empty())
 		this->SetName(record.GetDescription());

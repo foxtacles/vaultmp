@@ -20,7 +20,7 @@ using namespace std;
 class Record
 {
 	private:
-		static unordered_map<unsigned int, const Record*> data;
+		static unordered_multimap<unsigned int, const Record*> data;
 
 		unsigned int baseID;
 		string name;
@@ -31,8 +31,12 @@ class Record
 		Record& operator=(const Record& p) = delete;
 
 	public:
-		static const Record& Lookup(unsigned int baseID);
+		static const Record& Lookup(unsigned int baseID, const string& type);
+		static const Record& Lookup(unsigned int baseID, const vector<string>& types);
+		static const Record& LookupGlobal(unsigned int baseID);
 		static const Record& GetRecordNotIn(const unordered_set<unsigned int>& _set);
+
+		static bool IsValidCell(unsigned int baseID);
 
 		unsigned int GetBase() const;
 		const string& GetName() const;

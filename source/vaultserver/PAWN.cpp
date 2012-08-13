@@ -484,7 +484,7 @@ cell PAWN::vaultmp_IsPlayer(AMX* amx, const cell* params)
 
 cell PAWN::vaultmp_IsCell(AMX* amx, const cell* params)
 {
-	return Cell::IsValidCell(params[1]);
+	return Record::IsValidCell(params[1]);
 }
 
 cell PAWN::vaultmp_IsInterior(AMX* amx, const cell* params)

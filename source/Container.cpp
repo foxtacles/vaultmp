@@ -548,7 +548,7 @@ const list<NetworkID>& Container::GetItemList() const
 }
 
 #ifdef VAULTSERVER
-list<NetworkID> Container::GetItemTypes(string type) const
+list<NetworkID> Container::GetItemTypes(const string& type) const
 {
 	list<NetworkID> result;
 
@@ -556,10 +556,13 @@ list<NetworkID> Container::GetItemTypes(string type) const
 	{
 		FactoryObject _reference = GameFactory::GetObject(id);
 		Item* item = vaultcast<Item>(_reference);
-		const Record& record = Record::Lookup(item->GetBase());
 
-		if (record.GetType().compare(type) == 0)
+		try
+		{
+			const Record& record = Record::Lookup(item->GetBase(), type);
 			result.emplace_back(id);
+		}
+		catch (...) {}
 	}
 
 	return result;

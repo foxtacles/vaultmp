@@ -11,7 +11,7 @@ Debug* GameFactory::debug;
 
 #ifdef VAULTSERVER
 Database<Record> GameFactory::dbRecords;
-Database<Cell> GameFactory::dbCells;
+Database<Exterior> GameFactory::dbExteriors;
 Database<Weapon> GameFactory::dbWeapons;
 #endif
 
@@ -23,14 +23,14 @@ void GameFactory::Initialize(unsigned char game)
 	switch (game)
 	{
 		case FALLOUT3:
-			dbRecords.initialize(DB_FALLOUT3, {"NPC_", "CREA", "ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "ENCH", "KEYM", "MISC", "NOTE", "PROJ", "WEAP", "CELL"});
-			dbCells.initialize(DB_FALLOUT3, {"exteriors"});
+			dbRecords.initialize(DB_FALLOUT3, {"NPC_", "CREA", "ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "ENCH", "KEYM", "MISC", "NOTE", "WEAP", "CELL"});
+			dbExteriors.initialize(DB_FALLOUT3, {"exteriors"});
 			dbWeapons.initialize(DB_FALLOUT3, {"weapons"});
 			break;
 
 		case NEWVEGAS:
-			dbRecords.initialize(DB_NEWVEGAS, {"NPC_", "CREA", "ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "CCRD", "CDCK", "CHIP", "CMNY", "ENCH", "IMOD", "KEYM", "MISC", "NOTE", "PROJ", "RCPE", "WEAP", "CELL"});
-			dbCells.initialize(DB_NEWVEGAS, {"exteriors"});
+			dbRecords.initialize(DB_NEWVEGAS, {"NPC_", "CREA", "ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "CCRD", "CDCK", "CHIP", "CMNY", "ENCH", "IMOD", "KEYM", "MISC", "NOTE", "RCPE", "WEAP", "CELL"});
+			dbExteriors.initialize(DB_NEWVEGAS, {"exteriors"});
 			dbWeapons.initialize(DB_NEWVEGAS, {"weapons"});
 			break;
 
