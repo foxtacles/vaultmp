@@ -38,7 +38,6 @@ class Exterior
 
 	public:
 		static const Exterior& Lookup(unsigned int baseID);
-		static const Exterior& Lookup(const Exterior& cell, double X, double Y);
 		static const Exterior& Lookup(unsigned int world, double X, double Y);
 
 		unsigned int GetBase() const;

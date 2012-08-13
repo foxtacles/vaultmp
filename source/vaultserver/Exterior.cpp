@@ -39,11 +39,6 @@ const Exterior& Exterior::Lookup(unsigned int baseID)
 	throw VaultException("No cell with baseID %08X found", baseID);
 }
 
-const Exterior& Exterior::Lookup(const Exterior& cell, double X, double Y)
-{
-	return Lookup(cell.GetWorld(), X, Y);
-}
-
 const Exterior& Exterior::Lookup(unsigned int world, double X, double Y)
 {
 	signed int x = floor(X / size);

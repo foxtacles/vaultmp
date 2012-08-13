@@ -1319,9 +1319,18 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 
 	try
 	{
-		new_cell = &Exterior::Lookup(Exterior::Lookup(cell), X, Y);
+		unsigned int world = Exterior::Lookup(cell).GetWorld();
+
+		try
+		{
+			new_cell = &Exterior::Lookup(world, X, Y);
+		}
+		catch (...)
+		{
+			return state;
+		}
 	}
-	catch (...) {}
+	catch (...) {} // interior, can't check pos (yet? which are the bounds of interiors?)
 
 	NetworkResponse response;
 	unsigned int _new_cell = 0x00000000;
@@ -1396,26 +1405,35 @@ bool Script::SetCell(NetworkID id, unsigned int cell, double X, double Y, double
 
 	try
 	{
-		try
+		if (update_pos)
 		{
-			if (update_pos)
+			unsigned int world = Exterior::Lookup(cell).GetWorld();
+
+			try
 			{
-				new_exterior = &Exterior::Lookup(Exterior::Lookup(cell), X, Y);
+				new_exterior = &Exterior::Lookup(world, X, Y);
 
 				if (new_exterior->GetBase() != cell)
 					return state;
 			}
-			else
-				new_exterior = &Exterior::Lookup(cell);
+			catch (...)
+			{
+				return state;
+			}
 		}
-		catch (...)
-		{
-			new_interior = &Record::Lookup(cell, "CELL");
-		}
+		else
+			new_exterior = &Exterior::Lookup(cell);
 	}
 	catch (...)
 	{
-		return state;
+		try
+		{
+			new_interior = &Record::Lookup(cell, "CELL");
+		}
+		catch (...)
+		{
+			return state;
+		}
 	}
 
 	NetworkResponse response;
