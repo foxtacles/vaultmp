@@ -39,7 +39,6 @@
 #define RAKNET_MASTER_STANDARD_PORT     1660
 
 using namespace RakNet;
-using namespace Data;
 using namespace std;
 
 typedef vector<pair<string, unsigned int>> ModList;

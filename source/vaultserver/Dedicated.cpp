@@ -1,7 +1,6 @@
 #include "Dedicated.h"
 
 using namespace RakNet;
-using namespace Data;
 using namespace std;
 
 RakPeerInterface* Dedicated::peer;

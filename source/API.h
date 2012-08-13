@@ -23,7 +23,6 @@
 #endif
 
 using namespace std;
-using namespace Data;
 
 typedef vector<unique_ptr<unsigned char[]>> CommandParsed;
 typedef tuple<unsigned int, vector<double>, double, bool> CommandResult;

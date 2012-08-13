@@ -17,7 +17,6 @@
 #include "Debug.h"
 #endif
 
-using namespace Data;
 using namespace std;
 
 class Container;

@@ -21,7 +21,7 @@ enum
 
 enum class pTypes : unsigned char
 {
-	ID_GAME_AUTH = Data::ID_GAME_FIRST,
+	ID_GAME_AUTH = ID_GAME_FIRST,
 	ID_GAME_LOAD,
 	ID_GAME_MOD,
 	ID_GAME_START,

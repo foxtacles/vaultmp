@@ -13,7 +13,6 @@
 
 using namespace std;
 using namespace RakNet;
-using namespace Data;
 
 /**
  * \brief The base class for all in-game types

@@ -21,7 +21,6 @@ const unsigned int FLAG_NOTSELF         = FLAG_DISABLED << 1;
 const unsigned int FLAG_REFERENCE		= FLAG_NOTSELF << 1;
 const unsigned int FLAG_BASE			= FLAG_REFERENCE << 1;
 
-using namespace Data;
 using namespace Values;
 using namespace std;
 

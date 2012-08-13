@@ -60,7 +60,6 @@
 #define POWERED                 6000
 
 using namespace RakNet;
-using namespace Data;
 using namespace std;
 
 HINSTANCE instance;

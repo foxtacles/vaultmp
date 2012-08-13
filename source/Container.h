@@ -39,7 +39,6 @@ typedef pair<NetworkID, unordered_map<NetworkID, list<NetworkID>>> StripCopy;
 #include "Debug.h"
 #endif
 
-using namespace Data;
 using namespace std;
 
 class Container : public Object

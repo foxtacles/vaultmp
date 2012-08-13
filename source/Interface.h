@@ -34,7 +34,6 @@ class PipeClient;
 #endif
 
 using namespace std;
-using namespace Data;
 
 /**
  * \brief Provides facilities to execute engine commands, connects with the game process and is responsible for sending / retrieving game data
