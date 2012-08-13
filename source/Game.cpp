@@ -1273,7 +1273,7 @@ void Game::net_SetActorState(const FactoryObject& reference, unsigned char movin
 	result = actor->SetActorWeaponAnimation(weapon);
 
 	if (result && enabled && actor->GetActorAlerted() && weapon != AnimGroup_Idle && weapon != AnimGroup_Equip && weapon != AnimGroup_Unequip && weapon != AnimGroup_Holster &&
-		weapon != AnimGroup_AttackLeftIS && weapon != AnimGroup_AttackRightIS && (weapon != AnimGroup_Aim || prev_weapon == AnimGroup_AimIS))
+		(weapon != AnimGroup_Aim || prev_weapon == AnimGroup_AimIS))
 	{
 		if (weapon == AnimGroup_Aim && prev_weapon == AnimGroup_AimIS)
 		{

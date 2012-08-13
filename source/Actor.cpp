@@ -222,9 +222,9 @@ bool Actor::IsActorFiring() const
 {
 	unsigned char anim = this->GetActorWeaponAnimation();
 #ifdef VAULTSERVER
-	return (anim >= AnimGroup_AttackLeft && anim <= AnimGroup_AttackRightISDown && this->GetEquippedWeapon());
+	return (anim >= AnimGroup_AttackLeft && anim <= AnimGroup_AttackSpin2ISDown && this->GetEquippedWeapon());
 #else
-	return (anim >= AnimGroup_AttackLeft && anim <= AnimGroup_AttackRightISDown);
+	return (anim >= AnimGroup_AttackLeft && anim <= AnimGroup_AttackSpin2ISDown);
 #endif
 }
 
@@ -232,9 +232,9 @@ bool Actor::IsActorPunching() const
 {
 	unsigned char anim = this->GetActorWeaponAnimation();
 #ifdef VAULTSERVER
-	return (this->IsActorHeavyPunching() || (anim >= AnimGroup_AttackLeft && anim <= AnimGroup_AttackRightISDown && !this->GetEquippedWeapon()));
+	return (this->IsActorHeavyPunching() || (anim >= AnimGroup_AttackLeft && anim <= AnimGroup_AttackSpin2ISDown && !this->GetEquippedWeapon()));
 #else
-	return (this->IsActorHeavyPunching() || (anim >= AnimGroup_AttackLeft && anim <= AnimGroup_AttackRightISDown));
+	return (this->IsActorHeavyPunching() || (anim >= AnimGroup_AttackLeft && anim <= AnimGroup_AttackSpin2ISDown));
 #endif
 }
 
