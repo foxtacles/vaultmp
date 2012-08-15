@@ -7,12 +7,21 @@ Weapon::Weapon(const string& table, sqlite3_stmt* stmt)
 	if (sqlite3_column_count(stmt) != 5)
 		throw VaultException("Malformed input database (weapons): %s", table.c_str());
 
-	unsigned int dlc = static_cast<unsigned int>(sqlite3_column_int(stmt, 4)) << 24;
+	unsigned char dlc = static_cast<unsigned char>(sqlite3_column_int(stmt, 4));
+	// if DLC enabled
 
-	baseID = (static_cast<unsigned int>(sqlite3_column_int(stmt, 0)) & 0x00FFFFFF) | dlc;
+	baseID = static_cast<unsigned int>(sqlite3_column_int(stmt, 0));
 	damage = sqlite3_column_double(stmt, 1);
 	reload = sqlite3_column_double(stmt, 2);
 	attacks = sqlite3_column_double(stmt, 3);
+
+	if (baseID & 0xFF000000)
+	{
+		baseID &= 0x00FFFFFF;
+		baseID |= (static_cast<unsigned int>(dlc) << 24);
+	}
+	else
+		weapons.erase(baseID);
 
 	weapons.emplace(baseID, this);
 }

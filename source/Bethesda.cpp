@@ -310,7 +310,6 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
 				{
 					if (packet->data[0] == ID_DISCONNECTION_NOTIFICATION)
 						query = false;
-
 					else if (packet->data[0] == ID_CONNECTION_REQUEST_ACCEPTED)
 						Game::server = peer->GetGuidFromSystemAddress(server);
 
@@ -340,11 +339,9 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
 				this_thread::sleep_for(chrono::milliseconds(1));
 			}
 		}
-
 		else
 			throw VaultException("Could not establish connection to server");
 	}
-
 	catch (...)
 	{
 		Bethesda::Terminate(peer);

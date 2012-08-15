@@ -278,7 +278,6 @@ void Interface::CommandThreadReceive(bool steam)
 			VaultException& vaulterror = dynamic_cast<VaultException&>(e);
 			vaulterror.Message();
 		}
-
 		catch (bad_cast& no_vaulterror)
 		{
 			VaultException vaulterror(e.what());

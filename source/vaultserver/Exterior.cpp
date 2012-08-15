@@ -8,13 +8,31 @@ Exterior::Exterior(const string& table, sqlite3_stmt* stmt)
 	if (sqlite3_column_count(stmt) != 6)
 		throw VaultException("Malformed input database (cells): %s", table.c_str());
 
-	unsigned int dlc = static_cast<unsigned int>(sqlite3_column_int(stmt, 5)) << 24;
+	unsigned char dlc = static_cast<unsigned char>(sqlite3_column_int(stmt, 5));
+	// if DLC enabled
 
-	baseID = (static_cast<unsigned int>(sqlite3_column_int(stmt, 0)) & 0x00FFFFFF) | dlc;
-	world = (static_cast<unsigned int>(sqlite3_column_int(stmt, 4)) & 0x00FFFFFF) | dlc;
+	baseID = static_cast<unsigned int>(sqlite3_column_int(stmt, 0));
+	world = static_cast<unsigned int>(sqlite3_column_int(stmt, 4));
 	name = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
 	x = sqlite3_column_int(stmt, 2);
 	y = sqlite3_column_int(stmt, 3);
+
+	if (world & 0xFF000000)
+	{
+		world &= 0x00FFFFFF;
+		world |= (static_cast<unsigned int>(dlc) << 24);
+	}
+
+	if (baseID & 0xFF000000)
+	{
+		baseID &= 0x00FFFFFF;
+		baseID |= (static_cast<unsigned int>(dlc) << 24);
+	}
+	else
+	{
+		cells.erase(baseID);
+		worlds[world].erase(remove_if(worlds[world].begin(), worlds[world].end(), [=](const Exterior* cell) { return cell->GetBase() == baseID; }), worlds[world].end());
+	}
 
 	cells.emplace(baseID, this);
 	worlds[world].emplace_back(this);
@@ -26,7 +44,11 @@ Exterior::Exterior(const string& table, sqlite3_stmt* stmt)
 Exterior::~Exterior()
 {
 	cells.erase(baseID);
-	worlds[world].erase(find(worlds[world].begin(), worlds[world].end(), this));
+
+	auto it = find(worlds[world].begin(), worlds[world].end(), this);
+
+	if (it != worlds[world].end())
+		worlds[world].erase(it);
 }
 
 const Exterior& Exterior::Lookup(unsigned int baseID)

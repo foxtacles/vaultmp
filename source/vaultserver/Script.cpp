@@ -671,7 +671,7 @@ const char* Script::BaseToString(unsigned int baseID)
 
 	try
 	{
-		const Record& record = Record::LookupGlobal(baseID);
+		const Record& record = Record::Lookup(baseID);
 		base.assign(record.GetName());
 	}
 	catch (...) {}
