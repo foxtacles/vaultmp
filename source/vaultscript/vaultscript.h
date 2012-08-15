@@ -315,7 +315,7 @@ namespace vaultmp
 	VAULTFUNCTION Timer CreateTimer(Function<> function, Interval interval) noexcept { return VAULTAPI(CreateTimer)(function, interval); }
 
 	template<typename... Types>
-	VAULTFUNCTION Timer CreateTimer(Function<Types...> function, Interval interval, Types... values) noexcept
+	VAULTFUNCTION Timer CreateTimerEx(Function<Types...> function, Interval interval, Types... values) noexcept
 	{
 		cRawString types = TypeString<Types...>::value;
 		return VAULTAPI(CreateTimerEx)(reinterpret_cast<Function<>>(function), interval, types, values...);
