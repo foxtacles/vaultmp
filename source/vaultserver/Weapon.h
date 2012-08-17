@@ -23,7 +23,9 @@ class Weapon
 		unsigned int baseID;
 		double damage;
 		double reload;
-		double attacks;
+		double rate;
+		bool automatic;
+		unsigned int ammo;
 
 		Weapon(const Weapon&) = delete;
 		Weapon& operator=(const Weapon& p) = delete;
@@ -34,7 +36,9 @@ class Weapon
 		unsigned int GetBase() const;
 		double GetDamage() const;
 		double GetReloadTime() const;
-		double GetAttacksSec() const;
+		double GetFireRate() const;
+		bool IsAutomatic() const;
+		unsigned int GetAmmo() const;
 
 		Weapon(const string& table, sqlite3_stmt* stmt);
 		// must never be called. only defined because vector requires it

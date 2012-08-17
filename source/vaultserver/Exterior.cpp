@@ -8,8 +8,10 @@ Exterior::Exterior(const string& table, sqlite3_stmt* stmt)
 	if (sqlite3_column_count(stmt) != 6)
 		throw VaultException("Malformed input database (cells): %s", table.c_str());
 
-	unsigned char dlc = static_cast<unsigned char>(sqlite3_column_int(stmt, 5));
+	unsigned int dlc = static_cast<unsigned int>(sqlite3_column_int(stmt, 5));
 	// if DLC enabled
+
+	dlc <<= 24;
 
 	baseID = static_cast<unsigned int>(sqlite3_column_int(stmt, 0));
 	world = static_cast<unsigned int>(sqlite3_column_int(stmt, 4));
@@ -20,13 +22,13 @@ Exterior::Exterior(const string& table, sqlite3_stmt* stmt)
 	if (world & 0xFF000000)
 	{
 		world &= 0x00FFFFFF;
-		world |= (static_cast<unsigned int>(dlc) << 24);
+		world |= dlc;
 	}
 
 	if (baseID & 0xFF000000)
 	{
 		baseID &= 0x00FFFFFF;
-		baseID |= (static_cast<unsigned int>(dlc) << 24);
+		baseID |= dlc;
 	}
 	else
 	{

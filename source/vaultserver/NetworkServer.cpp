@@ -202,8 +202,8 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 				{
 					NetworkID id;
 					unsigned char moving, movingxy, weapon;
-					bool alerted, sneaking;
-					PacketFactory::Access<pTypes::ID_UPDATE_STATE>(packet, id, moving, movingxy, weapon, alerted, sneaking);
+					bool alerted, sneaking, firing;
+					PacketFactory::Access<pTypes::ID_UPDATE_STATE>(packet, id, moving, movingxy, weapon, alerted, sneaking, firing);
 					FactoryObject reference = GameFactory::GetObject(id);
 					response = Server::GetActorState(data->guid, reference, moving, movingxy, weapon, alerted, sneaking);
 					break;

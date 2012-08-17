@@ -237,7 +237,7 @@ class Game
 		/**
 		 * \brief Network function to handle Actor state
 		 */
-		static void net_SetActorState(const FactoryObject& reference, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking);
+		static void net_SetActorState(const FactoryObject& reference, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking, bool firing);
 		/**
 		 * \brief Network function to handle Actor death
 		 */
@@ -245,7 +245,7 @@ class Game
 		/**
 		 * \brief Network function to handle Actor fire weapon
 		 */
-		static void net_FireWeapon(const FactoryObject& reference, unsigned int weapon, double attacks);
+		static void net_FireWeapon(const FactoryObject& reference, unsigned int weapon, double rate);
 		/**
 		 * \brief Network function to handle UI message
 		 */

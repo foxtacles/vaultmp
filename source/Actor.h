@@ -189,9 +189,9 @@ class Actor : public Container
 		 */
 		bool IsActorPunching() const;
 		/**
-		 * \brief Returns true if the Actor is punching (heavy)
+		 * \brief Returns true if the Actor is punching (power)
 		 */
-		bool IsActorHeavyPunching() const;
+		bool IsActorPowerPunching() const;
 		/**
 		 * \brief Returns true if the Actor is attacking
 		 */

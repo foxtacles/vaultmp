@@ -232,13 +232,13 @@ bool Actor::IsActorPunching() const
 {
 	unsigned char anim = this->GetActorWeaponAnimation();
 #ifdef VAULTSERVER
-	return (this->IsActorHeavyPunching() || (anim >= AnimGroup_AttackLeft && anim <= AnimGroup_AttackSpin2ISDown && !this->GetEquippedWeapon()));
+	return (this->IsActorPowerPunching() || (anim >= AnimGroup_AttackLeft && anim <= AnimGroup_AttackSpin2ISDown && !this->GetEquippedWeapon()));
 #else
-	return (this->IsActorHeavyPunching() || (anim >= AnimGroup_AttackLeft && anim <= AnimGroup_AttackSpin2ISDown));
+	return (this->IsActorPowerPunching() || (anim >= AnimGroup_AttackLeft && anim <= AnimGroup_AttackSpin2ISDown));
 #endif
 }
 
-bool Actor::IsActorHeavyPunching() const
+bool Actor::IsActorPowerPunching() const
 {
 	unsigned char anim = this->GetActorWeaponAnimation();
 	return (anim >= AnimGroup_AttackPower && anim <= AnimGroup_AttackRightPower);

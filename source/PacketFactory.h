@@ -1189,18 +1189,18 @@ class pActorState : public pObjectDefault
 		friend class PacketFactory;
 
 	private:
-		pActorState(NetworkID id, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking) : pObjectDefault(pTypes::ID_UPDATE_STATE, id)
+		pActorState(NetworkID id, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking, bool firing) : pObjectDefault(pTypes::ID_UPDATE_STATE, id)
 		{
-			construct(moving, movingxy, weapon, alerted, sneaking);
+			construct(moving, movingxy, weapon, alerted, sneaking, firing);
 		}
 		pActorState(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
 		{
 
 		}
 
-		void access(NetworkID& id, unsigned char& moving, unsigned char& movingxy, unsigned char& weapon, bool& alerted, bool& sneaking) const
+		void access(NetworkID& id, unsigned char& moving, unsigned char& movingxy, unsigned char& weapon, bool& alerted, bool& sneaking, bool& firing) const
 		{
-			deconstruct(id, moving, movingxy, weapon, alerted, sneaking);
+			deconstruct(id, moving, movingxy, weapon, alerted, sneaking, firing);
 		}
 };
 

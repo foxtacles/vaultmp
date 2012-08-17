@@ -267,18 +267,21 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, const FactoryObject& refe
 
 	if (result)
 	{
+		bool punching = _weapon && actor->IsActorPunching();
+		bool power_punching = _weapon && actor->IsActorPowerPunching();
+
 		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_STATE>(actor->GetNetworkID(), moving, movingxy, weapon, alerted, sneaking),
+			PacketFactory::Create<pTypes::ID_UPDATE_STATE>(actor->GetNetworkID(), moving, movingxy, weapon, alerted, sneaking, !punching && !power_punching),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
 		if (_weapon)
 		{
-			if (actor->IsActorHeavyPunching())
+			if (power_punching)
 			{
-				// heavy punch
+				// power punch
 				// OnActorPunch
 			}
-			else if (actor->IsActorPunching())
+			else if (punching)
 			{
 				// Normal punch
 				// OnActorPunch
@@ -289,7 +292,7 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, const FactoryObject& refe
 				const Weapon& weapon = Weapon::Lookup(baseID);
 
 				response.emplace_back(Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_UPDATE_FIREWEAPON>(actor->GetNetworkID(), baseID, weapon.GetAttacksSec()),
+					PacketFactory::Create<pTypes::ID_UPDATE_FIREWEAPON>(actor->GetNetworkID(), baseID, weapon.IsAutomatic() ? weapon.GetFireRate() : 0.00),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
 				// OnActorFireWeapon

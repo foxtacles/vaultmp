@@ -7,8 +7,10 @@ Record::Record(const string& table, sqlite3_stmt* stmt)
 	if (sqlite3_column_count(stmt) != 4)
 		throw VaultException("Malformed input database (records): %s", table.c_str());
 
-	unsigned char dlc = static_cast<unsigned char>(sqlite3_column_int(stmt, 3));
+	unsigned int dlc = static_cast<unsigned int>(sqlite3_column_int(stmt, 3));
 	// if DLC enabled
+
+	dlc <<= 24;
 
 	baseID = static_cast<unsigned int>(sqlite3_column_int(stmt, 0));
 	name = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
@@ -18,7 +20,7 @@ Record::Record(const string& table, sqlite3_stmt* stmt)
 	if (baseID & 0xFF000000)
 	{
 		baseID &= 0x00FFFFFF;
-		baseID |= (static_cast<unsigned int>(dlc) << 24);
+		baseID |= dlc;
 	}
 	else
 		data.erase(baseID);

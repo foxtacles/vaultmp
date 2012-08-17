@@ -1234,7 +1234,7 @@ void Game::net_SetActorValue(const FactoryObject& reference, bool base, unsigned
 		SetActorValue(reference, base, index, result->Lock());
 }
 
-void Game::net_SetActorState(const FactoryObject& reference, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking)
+void Game::net_SetActorState(const FactoryObject& reference, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking, bool firing)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -1273,7 +1273,7 @@ void Game::net_SetActorState(const FactoryObject& reference, unsigned char movin
 	result = actor->SetActorWeaponAnimation(weapon);
 
 	if (result && enabled && actor->GetActorAlerted() && weapon != AnimGroup_Idle && weapon != AnimGroup_Equip && weapon != AnimGroup_Unequip && weapon != AnimGroup_Holster &&
-		(weapon != AnimGroup_Aim || prev_weapon == AnimGroup_AimIS))
+		!firing && (weapon != AnimGroup_Aim || prev_weapon == AnimGroup_AimIS))
 	{
 		if (weapon == AnimGroup_Aim && prev_weapon == AnimGroup_AimIS)
 		{
@@ -1327,7 +1327,7 @@ void Game::net_SetActorDead(FactoryObject& reference, bool dead, unsigned short 
 	}
 }
 
-void Game::net_FireWeapon(const FactoryObject& reference, unsigned int weapon, double attacks)
+void Game::net_FireWeapon(const FactoryObject& reference, unsigned int weapon, double rate)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -1337,27 +1337,32 @@ void Game::net_FireWeapon(const FactoryObject& reference, unsigned int weapon, d
 	FireWeapon(reference, weapon);
 	NetworkID id = actor->GetNetworkID();
 
-	AsyncDispatch([=]
+	if (rate)
 	{
-		try
+		// automatic weapons
+
+		AsyncDispatch([=]
 		{
-			FactoryObject reference;
-			Actor* actor;
-
-			// attacks: per second
-			auto us = chrono::microseconds(static_cast<unsigned long long>(1000000 / attacks));
-
-			this_thread::sleep_for(us);
-
-			while ((actor = vaultcast<Actor>(reference = GameFactory::GetObject(id))) && actor->IsActorFiring() && actor->IsEquipped(weapon))
+			try
 			{
-				FireWeapon(reference, weapon);
-				GameFactory::LeaveReference(reference);
+				FactoryObject reference;
+				Actor* actor;
+
+				// rate: per second
+				auto us = chrono::microseconds(static_cast<unsigned long long>(1000000 / rate));
+
 				this_thread::sleep_for(us);
+
+				while ((actor = vaultcast<Actor>(reference = GameFactory::GetObject(id))) && actor->IsActorFiring() && actor->IsEquipped(weapon))
+				{
+					FireWeapon(reference, weapon);
+					GameFactory::LeaveReference(reference);
+					this_thread::sleep_for(us);
+				}
 			}
-		}
-		catch (...) {}
-	});
+			catch (...) {}
+		});
+	}
 }
 
 void Game::net_UIMessage(const string& message)
@@ -1649,7 +1654,7 @@ void Game::GetActorState(const FactoryObject& reference, unsigned char moving, u
 
 	if (result)
 		Network::Queue(NetworkResponse{Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_STATE>(actor->GetNetworkID(), moving, movingxy, weapon, actor->GetActorAlerted(), sneaking),
+			PacketFactory::Create<pTypes::ID_UPDATE_STATE>(actor->GetNetworkID(), moving, movingxy, weapon, actor->GetActorAlerted(), sneaking, false),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 		});
 }

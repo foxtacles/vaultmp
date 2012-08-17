@@ -281,10 +281,10 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				{
 					NetworkID id;
 					unsigned char moving, movingxy, weapon;
-					bool alerted, sneaking;
-					PacketFactory::Access<pTypes::ID_UPDATE_STATE>(packet, id, moving, movingxy, weapon, alerted, sneaking);
+					bool alerted, sneaking, firing;
+					PacketFactory::Access<pTypes::ID_UPDATE_STATE>(packet, id, moving, movingxy, weapon, alerted, sneaking, firing);
 					FactoryObject reference = GameFactory::GetObject(id);
-					Game::net_SetActorState(reference, moving, movingxy, weapon, alerted, sneaking);
+					Game::net_SetActorState(reference, moving, movingxy, weapon, alerted, sneaking, firing);
 					break;
 				}
 
@@ -304,10 +304,10 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				{
 					NetworkID id;
 					unsigned int weapon;
-					double attacks;
-					PacketFactory::Access<pTypes::ID_UPDATE_FIREWEAPON>(packet, id, weapon, attacks);
+					double rate;
+					PacketFactory::Access<pTypes::ID_UPDATE_FIREWEAPON>(packet, id, weapon, rate);
 					FactoryObject reference = GameFactory::GetObject(id);
-					Game::net_FireWeapon(reference, weapon, attacks);
+					Game::net_FireWeapon(reference, weapon, rate);
 					break;
 				}
 
