@@ -4,6 +4,8 @@
 unsigned char Game::game = 0x00;
 RakNetGUID Game::server;
 
+Game::CellData Game::cellData;
+
 #ifdef VAULTMP_DEBUG
 Debug* Game::debug;
 #endif
@@ -58,6 +60,13 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				case Fallout3::Func_Load:
 				case FalloutNV::Func_Load:
 					shared = Lockable::Poll(key);
+					break;
+
+				case Func_IsLimbGone:
+				case Fallout3::Func_GetFirstRef:
+				case FalloutNV::Func_GetFirstRef:
+				case Fallout3::Func_GetNextRef:
+				case FalloutNV::Func_GetNextRef:
 					break;
 
 				default:
@@ -209,13 +218,22 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 			}
 
+			case Fallout3::Func_GetFirstRef:
+			case FalloutNV::Func_GetFirstRef:
+			case Fallout3::Func_GetNextRef:
+			case FalloutNV::Func_GetNextRef:
+			{
+				GetNextRef(key, getFrom<double, unsigned int>(result));
+				break;
+			}
+
 			case Func_UIMessage:
 				break;
 
 			case Fallout3::Func_GetParentCell:
 			case FalloutNV::Func_GetParentCell:
 			{
-				vector<FactoryObject> objects = GameFactory::GetMultiple(vector<unsigned int> {getFrom<double, unsigned int>(info.at(1)), PLAYER_REFERENCE});
+				vector<FactoryObject> objects = GameFactory::GetMultiple(vector<unsigned int>{getFrom<double, unsigned int>(info.at(1)), PLAYER_REFERENCE});
 				GetParentCell(objects[0], objects[1], getFrom<double, unsigned int>(result));
 				break;
 			}
@@ -285,6 +303,8 @@ NetworkResponse Game::Authenticate(string password)
 
 void Game::Startup()
 {
+	cellData.clear();
+
 	FactoryObject reference = GameFactory::GetObject(PLAYER_REFERENCE);
 	Player* self = vaultcast<Player>(reference);
 
@@ -295,8 +315,8 @@ void Game::Startup()
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("GetControl", ParamContainer{RawParameter(API::RetrieveAllControls())});
-	Interface::ExecuteCommand("DisableControl", ParamContainer{RawParameter(vector<unsigned char>{
+	Interface::ExecuteCommand("GetControl", {RawParameter(API::RetrieveAllControls())});
+	Interface::ExecuteCommand("DisableControl", {RawParameter(vector<unsigned char>{
 		ControlCodes::ControlCode_Quickload,
 		ControlCodes::ControlCode_Quicksave,
 		ControlCodes::ControlCode_VATS,
@@ -306,14 +326,14 @@ void Game::Startup()
 
 	Interface::StartSetup();
 
-	Interface::SetupCommand("GetPos", ParamContainer{self_ref, Object::Param_Axis()});
-	Interface::SetupCommand("GetPos", ParamContainer{Player::CreateFunctor(FLAG_ENABLED | FLAG_NOTSELF | FLAG_ALIVE), Object::Param_Axis()}, 30);
-	Interface::SetupCommand("GetAngle", ParamContainer{self_ref, RawParameter(vector<string> {API::RetrieveAxis_Reverse(Axis_X), API::RetrieveAxis_Reverse(Axis_Z)})});
-	Interface::SetupCommand("GetActorState", ParamContainer{self_ref, Player::CreateFunctor(FLAG_MOVCONTROLS, id)});
-	Interface::SetupCommand("GetParentCell", ParamContainer{Player::CreateFunctor(FLAG_ALIVE)}, 30);
-	Interface::SetupCommand("ScanContainer", ParamContainer{self_ref}, 50);
-	Interface::SetupCommand("GetDead", ParamContainer{Player::CreateFunctor(FLAG_ENABLED | FLAG_ALIVE)}, 30);
-	Interface::SetupCommand("GetActorValue", ParamContainer{self_ref, RawParameter(vector<string>{
+	Interface::SetupCommand("GetPos", {self_ref, Object::Param_Axis()});
+	Interface::SetupCommand("GetPos", {Player::CreateFunctor(FLAG_ENABLED | FLAG_NOTSELF | FLAG_ALIVE), Object::Param_Axis()}, 30);
+	Interface::SetupCommand("GetAngle", {self_ref, RawParameter(vector<string> {API::RetrieveAxis_Reverse(Axis_X), API::RetrieveAxis_Reverse(Axis_Z)})});
+	Interface::SetupCommand("GetActorState", {self_ref, Player::CreateFunctor(FLAG_MOVCONTROLS, id)});
+	Interface::SetupCommand("GetParentCell", {Player::CreateFunctor(FLAG_ALIVE)}, 30);
+	Interface::SetupCommand("ScanContainer", {self_ref}, 50);
+	Interface::SetupCommand("GetDead", {Player::CreateFunctor(FLAG_ENABLED | FLAG_ALIVE)}, 30);
+	Interface::SetupCommand("GetActorValue", {self_ref, RawParameter(vector<string>{
 		API::RetrieveValue_Reverse(ActorVal_Health),
 		API::RetrieveValue_Reverse(ActorVal_Head),
 		API::RetrieveValue_Reverse(ActorVal_Torso),
@@ -323,8 +343,8 @@ void Game::Startup()
 		API::RetrieveValue_Reverse(ActorVal_RightLeg)})}, 30);
 
 	// we could exclude health values here
-	Interface::SetupCommand("GetActorValue", ParamContainer{self_ref, Actor::Param_ActorValues()}, 100);
-	Interface::SetupCommand("GetBaseActorValue", ParamContainer{self_ref, Actor::Param_ActorValues()}, 200);
+	Interface::SetupCommand("GetActorValue", {self_ref, Actor::Param_ActorValues()}, 100);
+	Interface::SetupCommand("GetBaseActorValue", {self_ref, Actor::Param_ActorValues()}, 200);
 
 	Interface::EndSetup();
 }
@@ -372,7 +392,7 @@ void Game::LoadGame(string savegame)
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("Load", ParamContainer{RawParameter(savegame)}, key);
+	Interface::ExecuteCommand("Load", {RawParameter(savegame)}, key);
 
 	Interface::EndDynamic();
 
@@ -402,7 +422,7 @@ void Game::CenterOnCell(string cell)
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("CenterOnCell", ParamContainer{RawParameter(cell)}, key);
+	Interface::ExecuteCommand("CenterOnCell", {RawParameter(cell)}, key);
 
 	Interface::EndDynamic();
 
@@ -425,7 +445,7 @@ void Game::CenterOnExterior(signed int x, signed int y)
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("CenterOnExterior", ParamContainer{RawParameter(x), RawParameter(y)}, key);
+	Interface::ExecuteCommand("CenterOnExterior", {RawParameter(x), RawParameter(y)}, key);
 
 	Interface::EndDynamic();
 
@@ -448,7 +468,7 @@ void Game::CenterOnWorld(unsigned int baseID, signed int x, signed int y)
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("CenterOnWorld", ParamContainer{RawParameter(baseID), RawParameter(x), RawParameter(y)}, key);
+	Interface::ExecuteCommand("CenterOnWorld", {RawParameter(baseID), RawParameter(x), RawParameter(y)}, key);
 
 	Interface::EndDynamic();
 
@@ -518,7 +538,7 @@ void Game::UIMessage(const string& message)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("UIMessage", ParamContainer{RawParameter(message)});
+	Interface::ExecuteCommand("UIMessage", {RawParameter(message)});
 
 	Interface::EndDynamic();
 }
@@ -527,7 +547,7 @@ void Game::ChatMessage(const string& message)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("ChatMessage", ParamContainer{RawParameter(message)});
+	Interface::ExecuteCommand("ChatMessage", {RawParameter(message)});
 
 	Interface::EndDynamic();
 }
@@ -661,7 +681,7 @@ void Game::RemoveObject(const FactoryObject& reference)
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("MarkForDelete", ParamContainer{object->GetReferenceParam()});
+	Interface::ExecuteCommand("MarkForDelete", {object->GetReferenceParam()});
 
 	Interface::EndDynamic();
 }
@@ -680,7 +700,7 @@ void Game::PlaceAtMe(unsigned int refID, unsigned int baseID, unsigned int count
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("PlaceAtMe", ParamContainer{RawParameter(refID), RawParameter(baseID), RawParameter(count)}, key);
+	Interface::ExecuteCommand("PlaceAtMe", {RawParameter(refID), RawParameter(baseID), RawParameter(count)}, key);
 
 	Interface::EndDynamic();
 }
@@ -692,9 +712,9 @@ void Game::ToggleEnabled(const FactoryObject& reference)
 	Interface::StartDynamic();
 
 	if (object->GetEnabled())
-		Interface::ExecuteCommand("Enable", ParamContainer{object->GetReferenceParam(), RawParameter(true)});
+		Interface::ExecuteCommand("Enable", {object->GetReferenceParam(), RawParameter(true)});
 	else
-		Interface::ExecuteCommand("Disable", ParamContainer{object->GetReferenceParam(), RawParameter(false)});
+		Interface::ExecuteCommand("Disable", {object->GetReferenceParam(), RawParameter(false)});
 
 	Interface::EndDynamic();
 }
@@ -712,7 +732,7 @@ void Game::SetName(const FactoryObject& reference)
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("SetName", ParamContainer{object->GetReferenceParam(), RawParameter(name)});
+	Interface::ExecuteCommand("SetName", {object->GetReferenceParam(), RawParameter(name)});
 
 	Interface::EndDynamic();
 }
@@ -728,7 +748,7 @@ void Game::SetRestrained(const FactoryObject& reference, bool restrained)
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("SetRestrained", ParamContainer{actor->GetReferenceParam(), RawParameter(restrained)});
+	Interface::ExecuteCommand("SetRestrained", {actor->GetReferenceParam(), RawParameter(restrained)});
 
 	Interface::EndDynamic();
 }
@@ -746,15 +766,15 @@ void Game::SetPos(const FactoryObject& reference)
 
 	key = object->SetGamePos(Axis_X, object->GetNetworkPos(Axis_X));
 
-	Interface::ExecuteCommand("SetPos", ParamContainer{object->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_X)), RawParameter(object->GetNetworkPos(Axis_X))}, key ? key->Lock() : 0);
+	Interface::ExecuteCommand("SetPos", {object->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_X)), RawParameter(object->GetNetworkPos(Axis_X))}, key ? key->Lock() : 0);
 
 	key = object->SetGamePos(Axis_Y, object->GetNetworkPos(Axis_Y));
 
-	Interface::ExecuteCommand("SetPos", ParamContainer{object->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_Y)), RawParameter(object->GetNetworkPos(Axis_Y))}, key ? key->Lock() : 0);
+	Interface::ExecuteCommand("SetPos", {object->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_Y)), RawParameter(object->GetNetworkPos(Axis_Y))}, key ? key->Lock() : 0);
 
 	key = object->SetGamePos(Axis_Z, object->GetNetworkPos(Axis_Z));
 
-	Interface::ExecuteCommand("SetPos", ParamContainer{object->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_Z)), RawParameter(object->GetNetworkPos(Axis_Z))}, key ? key->Lock() : 0);
+	Interface::ExecuteCommand("SetPos", {object->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_Z)), RawParameter(object->GetNetworkPos(Axis_Z))}, key ? key->Lock() : 0);
 
 	Interface::EndDynamic();
 }
@@ -765,7 +785,7 @@ void Game::SetAngle(const FactoryObject& reference)
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("SetAngle", ParamContainer{object->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_X)), RawParameter(object->GetAngle(Axis_X))});
+	Interface::ExecuteCommand("SetAngle", {object->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_X)), RawParameter(object->GetAngle(Axis_X))});
 
 	double value = object->GetAngle(Axis_Z);
 	Actor* actor = vaultcast<Actor>(reference);
@@ -779,7 +799,7 @@ void Game::SetAngle(const FactoryObject& reference)
 			AdjustZAngle(value, 45.0);
 	}
 
-	Interface::ExecuteCommand("SetAngle", ParamContainer{object->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_Z)), RawParameter(value)});
+	Interface::ExecuteCommand("SetAngle", {object->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_Z)), RawParameter(value)});
 
 	Interface::EndDynamic();
 }
@@ -815,9 +835,9 @@ void Game::SetActorValue(const FactoryObject& reference, bool base, unsigned cha
 	Interface::StartDynamic();
 
 	if (base)
-		Interface::ExecuteCommand("SetActorValue", ParamContainer{actor->GetReferenceParam(), RawParameter(API::RetrieveValue_Reverse(index)), RawParameter(actor->GetActorBaseValue(index))}, key);
+		Interface::ExecuteCommand("SetActorValue", {actor->GetReferenceParam(), RawParameter(API::RetrieveValue_Reverse(index)), RawParameter(actor->GetActorBaseValue(index))}, key);
 	else
-		Interface::ExecuteCommand("ForceActorValue", ParamContainer{actor->GetReferenceParam(), RawParameter(API::RetrieveValue_Reverse(index)), RawParameter(actor->GetActorValue(index))}, key);
+		Interface::ExecuteCommand("ForceActorValue", {actor->GetReferenceParam(), RawParameter(API::RetrieveValue_Reverse(index)), RawParameter(actor->GetActorValue(index))}, key);
 
 	Interface::EndDynamic();
 }
@@ -844,7 +864,7 @@ function<void()> Game::SetActorSneaking(const FactoryObject& reference, unsigned
 
 			Interface::StartDynamic();
 
-			Interface::ExecuteCommand("SetForceSneak", ParamContainer{actor->GetReferenceParam(), RawParameter(actor->GetActorSneaking())}, key);
+			Interface::ExecuteCommand("SetForceSneak", {actor->GetReferenceParam(), RawParameter(actor->GetActorSneaking())}, key);
 
 			Interface::EndDynamic();
 
@@ -884,7 +904,7 @@ function<void()> Game::SetActorAlerted(const FactoryObject& reference, unsigned 
 
 			Interface::StartDynamic();
 
-			Interface::ExecuteCommand("SetAlert", ParamContainer{actor->GetReferenceParam(), RawParameter(actor->GetActorAlerted())}, key);
+			Interface::ExecuteCommand("SetAlert", {actor->GetReferenceParam(), RawParameter(actor->GetActorAlerted())}, key);
 
 			Interface::EndDynamic();
 
@@ -909,7 +929,7 @@ void Game::SetActorAnimation(const FactoryObject& reference, unsigned char anim,
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("PlayGroup", ParamContainer{actor->GetReferenceParam(), RawParameter(API::RetrieveAnim_Reverse(anim)), RawParameter(true)}, key);
+	Interface::ExecuteCommand("PlayGroup", {actor->GetReferenceParam(), RawParameter(API::RetrieveAnim_Reverse(anim)), RawParameter(true)}, key);
 
 	Interface::EndDynamic();
 }
@@ -948,10 +968,10 @@ void Game::KillActor(const FactoryObject& reference, unsigned short limbs, signe
 	{
 		for (unsigned int i = 1; i <= limbs; i <<= 1)
 			if (limbs & i)
-				Interface::ExecuteCommand("Kill", ParamContainer{actor->GetReferenceParam(), actor->GetReferenceParam(), RawParameter(static_cast<unsigned int>(i / 2)), RawParameter(cause)}, ((i << 1) > limbs) ? key : 0x00);
+				Interface::ExecuteCommand("Kill", {actor->GetReferenceParam(), actor->GetReferenceParam(), RawParameter(static_cast<unsigned int>(i / 2)), RawParameter(cause)}, ((i << 1) > limbs) ? key : 0x00);
 	}
 	else
-		Interface::ExecuteCommand("Kill", ParamContainer{actor->GetReferenceParam(), actor->GetReferenceParam(), RawParameter(Limb_None), RawParameter(cause)}, key);
+		Interface::ExecuteCommand("Kill", {actor->GetReferenceParam(), actor->GetReferenceParam(), RawParameter(Limb_None), RawParameter(cause)}, key);
 
 	Interface::EndDynamic();
 }
@@ -965,7 +985,7 @@ void Game::FireWeapon(const FactoryObject& reference, unsigned int weapon, unsig
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("FireWeapon", ParamContainer{actor->GetReferenceParam(), RawParameter(weapon)}, key);
+	Interface::ExecuteCommand("FireWeapon", {actor->GetReferenceParam(), RawParameter(weapon)}, key);
 
 	Interface::EndDynamic();
 }
@@ -989,7 +1009,7 @@ void Game::AddItem(const FactoryObject& reference, unsigned int baseID, unsigned
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("AddItemHealthPercent", ParamContainer{container->GetReferenceParam(), RawParameter(baseID), RawParameter(count), RawParameter(condition / 100), RawParameter(silent)}, key);
+	Interface::ExecuteCommand("AddItemHealthPercent", {container->GetReferenceParam(), RawParameter(baseID), RawParameter(count), RawParameter(condition / 100), RawParameter(silent)}, key);
 
 	Interface::EndDynamic();
 }
@@ -1013,7 +1033,7 @@ void Game::RemoveItem(const FactoryObject& reference, unsigned int baseID, unsig
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("RemoveItem", ParamContainer{container->GetReferenceParam(), RawParameter(baseID), RawParameter(count), RawParameter(silent)}, key);
+	Interface::ExecuteCommand("RemoveItem", {container->GetReferenceParam(), RawParameter(baseID), RawParameter(count), RawParameter(silent)}, key);
 
 	Interface::EndDynamic();
 }
@@ -1027,7 +1047,7 @@ void Game::RemoveAllItems(const FactoryObject& reference, unsigned int key)
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("RemoveAllItems", ParamContainer{container->GetReferenceParam()}, key);
+	Interface::ExecuteCommand("RemoveAllItems", {container->GetReferenceParam()}, key);
 
 	Interface::EndDynamic();
 }
@@ -1044,7 +1064,7 @@ void Game::RemoveAllItemsEx(FactoryObject& reference)
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("RemoveAllItemsEx", ParamContainer{container->GetReferenceParam()}, key);
+	Interface::ExecuteCommand("RemoveAllItemsEx", {container->GetReferenceParam()}, key);
 
 	Interface::EndDynamic();
 
@@ -1082,7 +1102,7 @@ void Game::EquipItem(const FactoryObject& reference, unsigned int baseID, bool s
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("EquipItem", ParamContainer{actor->GetReferenceParam(), RawParameter(baseID), RawParameter(stick), RawParameter(silent)}, key);
+	Interface::ExecuteCommand("EquipItem", {actor->GetReferenceParam(), RawParameter(baseID), RawParameter(stick), RawParameter(silent)}, key);
 
 	Interface::EndDynamic();
 }
@@ -1106,9 +1126,37 @@ void Game::UnequipItem(const FactoryObject& reference, unsigned int baseID, bool
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("UnequipItem", ParamContainer{actor->GetReferenceParam(), RawParameter(baseID), RawParameter(stick), RawParameter(silent)}, key);
+	Interface::ExecuteCommand("UnequipItem", {actor->GetReferenceParam(), RawParameter(baseID), RawParameter(stick), RawParameter(silent)}, key);
 
 	Interface::EndDynamic();
+}
+
+Game::CellDiff Game::ScanCell(unsigned int type, unsigned int depth, bool taken)
+{
+	shared_ptr<Shared<CellDiff>> store = make_shared<Shared<CellDiff>>();
+	unsigned int key = Lockable::Share(store);
+
+	Interface::StartDynamic();
+
+	if (type != UINT_MAX)
+		Interface::ExecuteCommand("GetFirstRef", {RawParameter(type), RawParameter(depth), RawParameter(taken)}, key);
+	else
+		Interface::ExecuteCommand("GetFirstRef", {}, key);
+
+	Interface::EndDynamic();
+
+	CellDiff diff;
+
+	try
+	{
+		diff = store.get()->get_future(chrono::seconds(5));
+	}
+	catch (exception& e)
+	{
+		throw VaultException("Scan of player cell with type %d failed (%s)", type, e.what());
+	}
+
+	return diff;
 }
 
 void Game::net_SetPos(const FactoryObject& reference, double X, double Y, double Z)
@@ -1349,7 +1397,7 @@ void Game::net_FireWeapon(const FactoryObject& reference, unsigned int weapon, d
 				Actor* actor;
 
 				// rate: per second
-				auto us = chrono::microseconds(static_cast<unsigned long long>(1000000 / rate));
+				auto us = chrono::microseconds(static_cast<unsigned long long>(1000000ull / rate));
 
 				this_thread::sleep_for(us);
 
@@ -1459,10 +1507,28 @@ void Game::GetParentCell(const FactoryObject& reference, const FactoryObject& pl
 	}
 
 	if (result && object == self)
+	{
 		Network::Queue(NetworkResponse{Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_CELL>(object->GetNetworkID(), cell),
 			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, server)
 		});
+
+/*
+		AsyncDispatch([=]
+		{
+			debug->PrintFormat("new cell %08X", true, cell);
+
+			this_thread::sleep_for(chrono::seconds(3));
+
+			CellDiff diff = ScanCell(FormType_Inventory);
+
+			for (auto r : diff.first)
+				debug->PrintFormat("1 %08X", true, r);
+			for (auto r : diff.second)
+				debug->PrintFormat("2 %08X", true, r);
+		});
+*/
+	}
 }
 
 void Game::GetDead(const FactoryObject& reference, const FactoryObject& player, bool dead)
@@ -1516,7 +1582,7 @@ void Game::GetDead(const FactoryObject& reference, const FactoryObject& player, 
 
 						Interface::StartDynamic();
 
-						Interface::ExecuteCommand("IsLimbGone", ParamContainer{RawParameter(refID), RawParameter(vector<unsigned char>{
+						Interface::ExecuteCommand("IsLimbGone", {RawParameter(refID), RawParameter(vector<unsigned char>{
 							Limb_Torso,
 							Limb_Head1,
 							Limb_Head2,
@@ -1551,7 +1617,7 @@ void Game::GetDead(const FactoryObject& reference, const FactoryObject& player, 
 
 						Interface::StartDynamic();
 
-						Interface::ExecuteCommand("GetCauseofDeath", ParamContainer{RawParameter(refID)}, key);
+						Interface::ExecuteCommand("GetCauseofDeath", {RawParameter(refID)}, key);
 
 						Interface::EndDynamic();
 
@@ -1758,6 +1824,57 @@ void Game::GetRemoveAllItemsEx(const FactoryObject& reference, vector<unsigned c
 
 	for (unsigned int i = 0; i < count; ++i)
 		RemoveItem(reference, items[i].baseID, items[i].count, true);
+}
+
+void Game::GetNextRef(unsigned int key, unsigned int refID)
+{
+	static bool first = true;
+	static unsigned int cell;
+	static set<unsigned int> data;
+
+	if (first)
+	{
+		FactoryObject reference = GameFactory::GetObject(PLAYER_REFERENCE);
+		cell = vaultcast<Player>(reference)->GetGameCell();
+		first = false;
+	}
+
+	if (refID)
+	{
+		data.insert(refID);
+
+		Interface::StartDynamic();
+
+		Interface::ExecuteCommand("GetNextRef", {}, key);
+
+		Interface::EndDynamic();
+	}
+	else
+	{
+		shared_ptr<Lockable> shared = Lockable::Poll(key).lock();
+		Lockable* locked = shared.get();
+
+		if (locked == nullptr)
+			throw VaultException("Storage has expired");
+
+		Shared<CellDiff>* store = dynamic_cast<Shared<CellDiff>*>(locked);
+
+		if (store == nullptr)
+			throw VaultException("Storage is corrupted");
+
+		CellDiff diff;
+
+		set_difference(data.begin(), data.end(), cellData[cell].begin(), cellData[cell].end(), inserter(diff.first, diff.first.begin()));
+		set_difference(cellData[cell].begin(), cellData[cell].end(), data.begin(), data.end(), inserter(diff.second, diff.second.begin()));
+
+		cellData[cell].swap(data);
+		data.clear();
+
+		store->set(diff);
+		store->set_promise();
+
+		first = true;
+	}
 }
 
 void Game::GetMessage(string message)

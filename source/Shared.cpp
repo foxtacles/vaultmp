@@ -43,3 +43,4 @@ template class Shared<unsigned int>;
 template class Shared<unsigned short>;
 template class Shared<signed char>;
 template class Shared<bool>;
+template class Shared<pair<set<unsigned int>, set<unsigned int>>>;

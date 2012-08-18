@@ -586,7 +586,7 @@ void API::SetDebugHandler(Debug* debug)
 
 vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result, unsigned short opcode)
 {
-	if (*cmd == 0x00 || *def == 0x00 || opcode == 0x00)
+	if (!cmd || *cmd == 0x00 || opcode == 0x00)
 		throw VaultException("Invalid call to API::ParseCommand, one or more arguments are NULL (%s, %s, %04X)", cmd, def, opcode);
 
 	vector<double> result_data;

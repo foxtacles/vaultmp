@@ -35,3 +35,4 @@ template class Value<bool>;
 template class Value<double>;
 template class Value<string>;
 template class Value<Container*>;
+template class Value<pair<set<unsigned int>, set<unsigned int>>>;

@@ -392,7 +392,6 @@ GameDiff Container::ApplyDiff(ContainerDiff& diff)
 				_diff->count += iNew->GetItemCount(); // always 1
 				_diff->equipped = 0;
 			}
-
 			else
 			{
 				_diff->count += iNew->GetItemCount();
@@ -404,7 +403,6 @@ GameDiff Container::ApplyDiff(ContainerDiff& diff)
 					_diff->equipped = 1;
 			}
 		}
-
 		else
 		{
 			Diff _result;

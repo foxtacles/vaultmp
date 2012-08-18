@@ -36,6 +36,10 @@ class Game
 		static void AdjustZAngle(double& Z, double diff);
 
 		typedef pair<future<void>, chrono::milliseconds> AsyncPack;
+		typedef pair<set<unsigned int>, set<unsigned int>> CellDiff;
+		typedef unordered_map<unsigned int, set<unsigned int>> CellData;
+
+		static CellData cellData;
 
 	public:
 		/**
@@ -209,6 +213,10 @@ class Game
 		 */
 		static void UnequipItem(const FactoryObject& reference, const FactoryObject& item, unsigned int key = 0);
 		static void UnequipItem(const FactoryObject& reference, unsigned int baseID, bool silent = false, bool stick = false, unsigned int key = 0);
+		/**
+		 * \brief Scans a cell for forms and returns the delta to previous scan
+		 */
+		static CellDiff ScanCell(unsigned int type = UINT_MAX, unsigned int depth = 0, bool taken = false);
 
 		/**
 		 * Network functions
@@ -299,6 +307,10 @@ class Game
 		 * \brief Handles RemoveAllItemsEx command result
 		 */
 		static void GetRemoveAllItemsEx(const FactoryObject& reference, vector<unsigned char>& data);
+		/**
+		 * \brief Handles GetFirstRef / GetNextRef command result
+		 */
+		static void GetNextRef(unsigned int key, unsigned int refID);
 		/**
 		 * \brief Handles GUI message
 		 */

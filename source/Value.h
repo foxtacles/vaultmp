@@ -8,6 +8,8 @@
 #include "Debug.h"
 #endif
 
+#include <set>
+
 using namespace std;
 
 class Container;

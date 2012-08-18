@@ -7,6 +7,8 @@
 #include <chrono>
 #include <future>
 
+#include <set>
+
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"
 #endif

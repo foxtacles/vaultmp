@@ -354,6 +354,13 @@ namespace Values
 		ControlCode_Grab                = 27,
 	};
 
+	enum FormTypes
+	{
+		// reference walking
+		FormType_Actor					= 200,
+		FormType_Inventory				= 201,
+	};
+
 	/**
 	 * \brief Data specific to Fallout 3
 	 */

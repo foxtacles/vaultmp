@@ -14,10 +14,10 @@ Exterior::Exterior(const string& table, sqlite3_stmt* stmt)
 	dlc <<= 24;
 
 	baseID = static_cast<unsigned int>(sqlite3_column_int(stmt, 0));
-	world = static_cast<unsigned int>(sqlite3_column_int(stmt, 4));
 	name = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
 	x = sqlite3_column_int(stmt, 2);
 	y = sqlite3_column_int(stmt, 3);
+	world = static_cast<unsigned int>(sqlite3_column_int(stmt, 4));
 
 	if (world & 0xFF000000)
 	{
