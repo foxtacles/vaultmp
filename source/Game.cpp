@@ -4,7 +4,7 @@
 unsigned char Game::game = 0x00;
 RakNetGUID Game::server;
 
-Game::CellData Game::cellData;
+Game::CellRefs Game::cellRefs;
 
 #ifdef VAULTMP_DEBUG
 Debug* Game::debug;
@@ -220,12 +220,13 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 
 			case Fallout3::Func_GetFirstRef:
 			case FalloutNV::Func_GetFirstRef:
+				GetNextRef(key, getFrom<double, unsigned int>(result), getFrom<double, unsigned int>(info.at(1)));
+				break;
+
 			case Fallout3::Func_GetNextRef:
 			case FalloutNV::Func_GetNextRef:
-			{
 				GetNextRef(key, getFrom<double, unsigned int>(result));
 				break;
-			}
 
 			case Func_UIMessage:
 				break;
@@ -303,7 +304,7 @@ NetworkResponse Game::Authenticate(string password)
 
 void Game::Startup()
 {
-	cellData.clear();
+	cellRefs.clear();
 
 	FactoryObject reference = GameFactory::GetObject(PLAYER_REFERENCE);
 	Player* self = vaultcast<Player>(reference);
@@ -1131,17 +1132,14 @@ void Game::UnequipItem(const FactoryObject& reference, unsigned int baseID, bool
 	Interface::EndDynamic();
 }
 
-Game::CellDiff Game::ScanCell(unsigned int type, unsigned int depth, bool taken)
+Game::CellDiff Game::ScanCell(unsigned int type)
 {
 	shared_ptr<Shared<CellDiff>> store = make_shared<Shared<CellDiff>>();
 	unsigned int key = Lockable::Share(store);
 
 	Interface::StartDynamic();
 
-	if (type != UINT_MAX)
-		Interface::ExecuteCommand("GetFirstRef", {RawParameter(type), RawParameter(depth), RawParameter(taken)}, key);
-	else
-		Interface::ExecuteCommand("GetFirstRef", {}, key);
+	Interface::ExecuteCommand("GetFirstRef", {RawParameter(type)}, key);
 
 	Interface::EndDynamic();
 
@@ -1518,7 +1516,7 @@ void Game::GetParentCell(const FactoryObject& reference, const FactoryObject& pl
 		{
 			debug->PrintFormat("new cell %08X", true, cell);
 
-			this_thread::sleep_for(chrono::seconds(3));
+			this_thread::sleep_for(chrono::seconds(1));
 
 			CellDiff diff = ScanCell(FormType_Inventory);
 
@@ -1791,7 +1789,23 @@ void Game::ScanContainer(const FactoryObject& reference, vector<unsigned char>& 
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 			});
 
-			container->ApplyDiff(diff);
+			GameDiff _diff = container->ApplyDiff(diff);
+
+/*
+			_diff.remove_if([](const pair<unsigned int, Diff>& diff) { return !diff.second.count; });
+
+			if (!_diff.empty())
+			{
+				// removed, added items...
+
+				AsyncDispatch([=]
+				{
+					CellDiff diff = ScanCell(FormType_Inventory);
+
+					// if in set, has been dropped
+				});
+			}
+*/
 		}
 
 		GameFactory::DestroyInstance(_temp);
@@ -1826,16 +1840,18 @@ void Game::GetRemoveAllItemsEx(const FactoryObject& reference, vector<unsigned c
 		RemoveItem(reference, items[i].baseID, items[i].count, true);
 }
 
-void Game::GetNextRef(unsigned int key, unsigned int refID)
+void Game::GetNextRef(unsigned int key, unsigned int refID, unsigned int type)
 {
 	static bool first = true;
 	static unsigned int cell;
+	static unsigned int _type;
 	static set<unsigned int> data;
 
 	if (first)
 	{
 		FactoryObject reference = GameFactory::GetObject(PLAYER_REFERENCE);
 		cell = vaultcast<Player>(reference)->GetGameCell();
+		_type = type;
 		first = false;
 	}
 
@@ -1863,11 +1879,12 @@ void Game::GetNextRef(unsigned int key, unsigned int refID)
 			throw VaultException("Storage is corrupted");
 
 		CellDiff diff;
+		auto& refs = cellRefs[cell][_type];
 
-		set_difference(data.begin(), data.end(), cellData[cell].begin(), cellData[cell].end(), inserter(diff.first, diff.first.begin()));
-		set_difference(cellData[cell].begin(), cellData[cell].end(), data.begin(), data.end(), inserter(diff.second, diff.second.begin()));
+		set_difference(data.begin(), data.end(), refs.begin(), refs.end(), inserter(diff.first, diff.first.begin()));
+		set_difference(refs.begin(), refs.end(), data.begin(), data.end(), inserter(diff.second, diff.second.begin()));
 
-		cellData[cell].swap(data);
+		refs.swap(data);
 		data.clear();
 
 		store->set(diff);

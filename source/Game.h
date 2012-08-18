@@ -37,9 +37,9 @@ class Game
 
 		typedef pair<future<void>, chrono::milliseconds> AsyncPack;
 		typedef pair<set<unsigned int>, set<unsigned int>> CellDiff;
-		typedef unordered_map<unsigned int, set<unsigned int>> CellData;
+		typedef unordered_map<unsigned int, unordered_map<unsigned int, set<unsigned int>>> CellRefs;
 
-		static CellData cellData;
+		static CellRefs cellRefs;
 
 	public:
 		/**
@@ -216,7 +216,7 @@ class Game
 		/**
 		 * \brief Scans a cell for forms and returns the delta to previous scan
 		 */
-		static CellDiff ScanCell(unsigned int type = UINT_MAX, unsigned int depth = 0, bool taken = false);
+		static CellDiff ScanCell(unsigned int type);
 
 		/**
 		 * Network functions
@@ -310,7 +310,7 @@ class Game
 		/**
 		 * \brief Handles GetFirstRef / GetNextRef command result
 		 */
-		static void GetNextRef(unsigned int key, unsigned int refID);
+		static void GetNextRef(unsigned int key, unsigned int refID, unsigned int type = UINT_MAX);
 		/**
 		 * \brief Handles GUI message
 		 */
