@@ -4,6 +4,7 @@ CriticalSection GameFactory::cs;
 ReferenceList GameFactory::instances;
 ReferenceCount GameFactory::typecount;
 unsigned char GameFactory::game = 0x00;
+bool GameFactory::changed = false;
 
 #ifdef VAULTMP_DEBUG
 Debug* GameFactory::debug;
@@ -456,6 +457,7 @@ NetworkID GameFactory::CreateKnownInstance(unsigned char type, const pDefault* p
 	}
 
 	NetworkID id = reference->GetNetworkID();
+	reference->SetChanged(changed);
 
 	cs.StartSession();
 
@@ -546,4 +548,9 @@ NetworkID GameFactory::DestroyInstance(FactoryObject& reference)
 	reference.type = 0x00;
 
 	return id;
+}
+
+void GameFactory::SetChangeFlag(bool changed)
+{
+	GameFactory::changed = changed;
 }

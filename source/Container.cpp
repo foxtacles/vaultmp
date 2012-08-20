@@ -80,7 +80,7 @@ bool Container::Diff_sort(const pair<unsigned int, Diff>& diff, const pair<unsig
 	return true;
 }
 
-StripCopy Container::Strip() const
+Container::StripCopy Container::Strip() const
 {
 	StripCopy result;
 	result.first = this->Copy();

@@ -8,6 +8,7 @@ Reference::Reference(unsigned int refID, unsigned int baseID)
 {
 	this->refID.set(refID);
 	this->baseID.set(baseID);
+	this->changed.set(false);
 	this->SetNetworkIDManager(Network::Manager());
 #ifdef VAULTMP_DEBUG
 	//static_cast<CriticalSection*>(this)->SetDebugHandler(debug);
@@ -51,6 +52,8 @@ Lockable* Reference::SetObjectValue(Value<T>& dest, T value)
 	if (!dest.set(value))
 		return nullptr;
 
+	changed.set(true);
+
 #ifdef VAULTMP_DEBUG
 
 #endif
@@ -66,6 +69,8 @@ Lockable* Reference::SetObjectValue(Value<double>& dest, double value)
 
 	if (!dest.set(value))
 		return nullptr;
+
+	changed.set(true);
 
 #ifdef VAULTMP_DEBUG
 
@@ -89,6 +94,11 @@ Lockable* Reference::SetBase(unsigned int baseID)
 	return SetObjectValue(this->baseID, baseID);
 }
 
+Lockable* Reference::SetChanged(bool changed)
+{
+	return this->changed.set(changed) ? &this->changed : nullptr;
+}
+
 unsigned int Reference::GetReference() const
 {
 	return refID.get();
@@ -97,6 +107,11 @@ unsigned int Reference::GetReference() const
 unsigned int Reference::GetBase() const
 {
 	return baseID.get();
+}
+
+bool Reference::GetChanged() const
+{
+	return changed.get();
 }
 
 bool Reference::IsPersistent() const

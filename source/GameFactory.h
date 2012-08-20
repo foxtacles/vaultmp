@@ -72,6 +72,7 @@ class GameFactory
 		static ReferenceList instances;
 		static ReferenceCount typecount;
 		static unsigned char game;
+		static bool changed;
 
 #ifdef VAULTSERVER
 		static Database<Record> dbRecords;
@@ -182,6 +183,11 @@ class GameFactory
 		 * You must make sure the lock count of the given Reference equals to one
 		 */
 		static NetworkID DestroyInstance(FactoryObject& reference);
+
+		/**
+		 * \brief Used to set the changed flag for the next network reference going to be created
+		 */
+		static void SetChangeFlag(bool changed);
 };
 
 /**

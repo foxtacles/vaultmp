@@ -744,18 +744,18 @@ class pObjectNew : public pObjectNewDefault
 		friend class PacketFactory;
 
 	private:
-		pObjectNew(NetworkID id, unsigned int refID, unsigned int baseID, const string& name, double X, double Y, double Z, double aX, double aY, double aZ, unsigned int cell, bool enabled) : pObjectNewDefault(pTypes::ID_OBJECT_NEW, id, refID, baseID)
+		pObjectNew(NetworkID id, unsigned int refID, unsigned int baseID, bool changed, const string& name, double X, double Y, double Z, double aX, double aY, double aZ, unsigned int cell, bool enabled) : pObjectNewDefault(pTypes::ID_OBJECT_NEW, id, refID, baseID)
 		{
-			construct(name, X, Y, Z, aX, aY, aZ, cell, enabled);
+			construct(changed, name, X, Y, Z, aX, aY, aZ, cell, enabled);
 		}
 		pObjectNew(const unsigned char* stream, unsigned int len) : pObjectNewDefault(stream, len)
 		{
 
 		}
 
-		void access(NetworkID& id, unsigned int& refID, unsigned int& baseID, string& name, double& X, double& Y, double& Z, double& aX, double& aY, double& aZ, unsigned int& cell, bool& enabled) const
+		void access(NetworkID& id, unsigned int& refID, unsigned int& baseID, bool& changed, string& name, double& X, double& Y, double& Z, double& aX, double& aY, double& aZ, unsigned int& cell, bool& enabled) const
 		{
-			deconstruct(id, refID, baseID, name, X, Y, Z, aX, aY, aZ, cell, enabled);
+			deconstruct(id, refID, baseID, changed, name, X, Y, Z, aX, aY, aZ, cell, enabled);
 		}
 };
 
@@ -1111,18 +1111,18 @@ class pContainerUpdate : public pObjectDefault
 		friend class PacketFactory;
 
 	private:
-		pContainerUpdate(NetworkID id, const pair<list<NetworkID>, vector<pPacket>>& diff) : pObjectDefault(pTypes::ID_UPDATE_CONTAINER, id)
+		pContainerUpdate(NetworkID id, const pair<list<NetworkID>, vector<pPacket>>& ndiff, const pair<list<NetworkID>, vector<pPacket>>& gdiff) : pObjectDefault(pTypes::ID_UPDATE_CONTAINER, id)
 		{
-			construct(diff);
+			construct(ndiff, gdiff);
 		}
 		pContainerUpdate(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
 		{
 
 		}
 
-		void access(NetworkID& id, pair<list<NetworkID>, vector<pPacket>>& diff) const
+		void access(NetworkID& id, pair<list<NetworkID>, vector<pPacket>>& ndiff, pair<list<NetworkID>, vector<pPacket>>& gdiff) const
 		{
-			deconstruct(id, diff);
+			deconstruct(id, ndiff, gdiff);
 		}
 };
 

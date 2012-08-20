@@ -552,6 +552,9 @@ void API::Initialize(unsigned char game)
 	DefineFunction("GetControl", "x", Fallout3::Func_GetControl, FALLOUT3);
 	DefineFunction("EnableControl", "x", Fallout3::Func_EnableControl, FALLOUT3);
 	DefineFunction("DisableControl", "x", Fallout3::Func_DisableControl, FALLOUT3);
+	DefineFunction("GetRefCount", "r", Fallout3::Func_GetRefCount, FALLOUT3);
+	DefineFunction("SetRefCount", "ri", Fallout3::Func_SetRefCount, FALLOUT3);
+	DefineFunction("GetBaseObject", "r", Fallout3::Func_GetBaseObject, FALLOUT3);
 
 	DefineFunction("Load", "$s", FalloutNV::Func_Load, NEWVEGAS);
 	DefineFunction("CenterOnWorld", "$wii", FalloutNV::Func_CenterOnWorld, NEWVEGAS);
@@ -562,6 +565,9 @@ void API::Initialize(unsigned char game)
 	DefineFunction("GetControl", "x", FalloutNV::Func_GetControl, NEWVEGAS);
 	DefineFunction("EnableControl", "x", FalloutNV::Func_EnableControl, NEWVEGAS);
 	DefineFunction("DisableControl", "x", FalloutNV::Func_DisableControl, NEWVEGAS);
+	DefineFunction("GetRefCount", "r", FalloutNV::Func_GetRefCount, NEWVEGAS);
+	DefineFunction("SetRefCount", "ri", FalloutNV::Func_SetRefCount, NEWVEGAS);
+	DefineFunction("GetBaseObject", "r", FalloutNV::Func_GetBaseObject, NEWVEGAS);
 }
 
 void API::Terminate()

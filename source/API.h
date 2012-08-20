@@ -384,6 +384,9 @@ namespace Values
 			Func_GetControl                 = 0x144E,
 			Func_EnableControl				= 0x145E,
 			Func_DisableControl				= 0x145D,
+			Func_GetRefCount				= 0x14C3,
+			Func_SetRefCount				= 0x14C4,
+			Func_GetBaseObject				= 0x1416,
 		};
 
 		/**
@@ -445,6 +448,9 @@ namespace Values
 			Func_GetControl                 = 0x145D,
 			Func_EnableControl				= 0x1463,
 			Func_DisableControl				= 0x1462,
+			Func_GetRefCount				= 0x1476,
+			Func_SetRefCount				= 0x1477,
+			Func_GetBaseObject				= 0x1403,
 		};
 
 		/**

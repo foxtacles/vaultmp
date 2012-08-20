@@ -27,7 +27,6 @@ struct Diff
 typedef pair<list<NetworkID>, list<NetworkID>> ContainerDiff;
 typedef pair<list<NetworkID>, vector<pPacket>> ContainerDiffNet;
 typedef list<pair<unsigned int, Diff>> GameDiff;
-typedef pair<NetworkID, unordered_map<NetworkID, list<NetworkID>>> StripCopy;
 
 #include "vaultmp.h"
 #include "Data.h"
@@ -47,6 +46,7 @@ class Container : public Object
 		friend class Item;
 
 	private:
+		typedef pair<NetworkID, unordered_map<NetworkID, list<NetworkID>>> StripCopy;
 
 #ifdef VAULTMP_DEBUG
 		static Debug* debug;

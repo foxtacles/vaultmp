@@ -258,10 +258,10 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				case pTypes::ID_UPDATE_CONTAINER:
 				{
 					NetworkID id;
-					pair<list<NetworkID>, vector<pPacket>> diff;
-					PacketFactory::Access<pTypes::ID_UPDATE_CONTAINER>(packet, id, diff);
+					pair<list<NetworkID>, vector<pPacket>> ndiff, gdiff;
+					PacketFactory::Access<pTypes::ID_UPDATE_CONTAINER>(packet, id, ndiff, gdiff);
 					FactoryObject reference = GameFactory::GetObject(id);
-					Game::net_ContainerUpdate(reference, diff);
+					Game::net_ContainerUpdate(reference, ndiff);
 					break;
 				}
 

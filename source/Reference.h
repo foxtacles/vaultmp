@@ -34,6 +34,7 @@ class Reference : private CriticalSection, public NetworkIDObject
 
 		Value<unsigned int> refID;
 		Value<unsigned int> baseID;
+		Value<bool> changed;
 
 		Reference(const Reference&) = delete;
 		Reference& operator=(const Reference&) = delete;
@@ -42,7 +43,7 @@ class Reference : private CriticalSection, public NetworkIDObject
 		//static unsigned int ResolveIndex(unsigned int baseID);
 
 		template <typename T>
-		static Lockable* SetObjectValue(Value<T>& dest, T value);
+		Lockable* SetObjectValue(Value<T>& dest, T value);
 
 		Reference(unsigned int refID, unsigned int baseID);
 		virtual ~Reference();
@@ -62,6 +63,10 @@ class Reference : private CriticalSection, public NetworkIDObject
 		 */
 		unsigned int GetBase() const;
 		/**
+		 * \brief Retrieves the Reference's changed state
+		 */
+		bool GetChanged() const;
+		/**
 		 * \brief Determines if the reference ID is persistent
 		 */
 		bool IsPersistent() const;
@@ -78,6 +83,10 @@ class Reference : private CriticalSection, public NetworkIDObject
 #else
 		Lockable* SetBase(unsigned int baseID);
 #endif
+		/**
+		 * \brief Sets the Reference's changed state
+		 */
+		Lockable* SetChanged(bool changed);
 
 		/**
 		 * \brief Returns a constant Parameter used to pass the reference ID of this Reference to the Interface

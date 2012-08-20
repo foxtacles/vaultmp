@@ -55,6 +55,10 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				case Func_CenterOnExterior:
 				case Func_PlaceAtMe:
 				case Func_GetCauseofDeath:
+				case Fallout3::Func_GetRefCount:
+				case FalloutNV::Func_GetRefCount:
+				case Fallout3::Func_GetBaseObject:
+				case FalloutNV::Func_GetBaseObject:
 				case Fallout3::Func_CenterOnWorld:
 				case FalloutNV::Func_CenterOnWorld:
 				case Fallout3::Func_Load:
@@ -217,6 +221,20 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				delete data;
 				break;
 			}
+
+			case Fallout3::Func_GetBaseObject:
+			case FalloutNV::Func_GetBaseObject:
+				FutureSet<unsigned int>(shared, getFrom<double, unsigned int>(result));
+				break;
+
+			case Fallout3::Func_GetRefCount:
+			case FalloutNV::Func_GetRefCount:
+				FutureSet<unsigned int>(shared, result);
+				break;
+
+			case Fallout3::Func_SetRefCount:
+			case FalloutNV::Func_SetRefCount:
+				break;
 
 			case Fallout3::Func_GetFirstRef:
 			case FalloutNV::Func_GetFirstRef:
@@ -388,7 +406,7 @@ void Game::LoadGame(string savegame)
 		last_savegame = savegame;
 	}
 
-	shared_ptr<Shared<bool>> store = make_shared<Shared<bool>>();
+	auto store = make_shared<Shared<bool>>();
 	unsigned int key = Lockable::Share(store);
 
 	Interface::StartDynamic();
@@ -418,7 +436,7 @@ void Game::CenterOnCell(string cell)
 	else
 		last_cell = cell;
 
-	shared_ptr<Shared<bool>> store = make_shared<Shared<bool>>();
+	auto store = make_shared<Shared<bool>>();
 	unsigned int key = Lockable::Share(store);
 
 	Interface::StartDynamic();
@@ -441,7 +459,7 @@ void Game::CenterOnCell(string cell)
 
 void Game::CenterOnExterior(signed int x, signed int y)
 {
-	shared_ptr<Shared<bool>> store = make_shared<Shared<bool>>();
+	auto store = make_shared<Shared<bool>>();
 	unsigned int key = Lockable::Share(store);
 
 	Interface::StartDynamic();
@@ -464,7 +482,7 @@ void Game::CenterOnExterior(signed int x, signed int y)
 
 void Game::CenterOnWorld(unsigned int baseID, signed int x, signed int y)
 {
-	shared_ptr<Shared<bool>> store = make_shared<Shared<bool>>();
+	auto store = make_shared<Shared<bool>>();
 	unsigned int key = Lockable::Share(store);
 
 	Interface::StartDynamic();
@@ -559,7 +577,7 @@ void Game::NewObject(FactoryObject& reference)
 
 	if (!object->GetReference())
 	{
-		shared_ptr<Shared<unsigned int>> store = make_shared<Shared<unsigned int>>();
+		auto store = make_shared<Shared<unsigned int>>();
 		unsigned int key = Lockable::Share(store);
 
 		PlaceAtMe(PLAYER_REFERENCE, object->GetBase(), 1, key);
@@ -583,13 +601,11 @@ void Game::NewObject(FactoryObject& reference)
 
 		object->SetReference(refID);
 	}
-	else
-	{
-		// existing objects
-	}
+	//else if (!(not in player cell) || !object->GetChanged())
+		//return;
 
 	SetName(reference);
-	//SetPos(reference);
+	//SetPos(reference); moveto if in player cell
 	SetAngle(reference);
 
 	// maybe more
@@ -724,6 +740,31 @@ void Game::Delete(FactoryObject& reference)
 {
 	RemoveObject(reference);
 	GameFactory::DestroyInstance(reference);
+}
+
+unsigned int Game::GetBase(unsigned int refID)
+{
+	auto store = make_shared<Shared<unsigned int>>();
+	unsigned int key = Lockable::Share(store);
+
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("GetBaseObject", {RawParameter(refID)}, key);
+
+	Interface::EndDynamic();
+
+	unsigned int baseID;
+
+	try
+	{
+		baseID = store.get()->get_future(chrono::seconds(5));
+	}
+	catch (exception& e)
+	{
+		throw VaultException("Obtaining of baseID of refID %08X (%s)", refID, e.what());
+	}
+
+	return baseID;
 }
 
 void Game::SetName(const FactoryObject& reference)
@@ -1060,7 +1101,7 @@ void Game::RemoveAllItemsEx(FactoryObject& reference)
 	if (!container)
 		throw VaultException("Object with reference %08X is not a Container", reference->GetReference());
 
-	shared_ptr<Shared<bool>> store = make_shared<Shared<bool>>();
+	auto store = make_shared<Shared<bool>>();
 	unsigned int key = Lockable::Share(store);
 
 	Interface::StartDynamic();
@@ -1134,7 +1175,7 @@ void Game::UnequipItem(const FactoryObject& reference, unsigned int baseID, bool
 
 Game::CellDiff Game::ScanCell(unsigned int type)
 {
-	shared_ptr<Shared<CellDiff>> store = make_shared<Shared<CellDiff>>();
+	auto store = make_shared<Shared<CellDiff>>();
 	unsigned int key = Lockable::Share(store);
 
 	Interface::StartDynamic();
@@ -1575,7 +1616,7 @@ void Game::GetDead(const FactoryObject& reference, const FactoryObject& player, 
 					signed char cause;
 
 					{
-						shared_ptr<Shared<unsigned short>> store = make_shared<Shared<unsigned short>>();
+						auto store = make_shared<Shared<unsigned short>>();
 						key = Lockable::Share(store);
 
 						Interface::StartDynamic();
@@ -1610,7 +1651,7 @@ void Game::GetDead(const FactoryObject& reference, const FactoryObject& player, 
 					}
 
 					{
-						shared_ptr<Shared<signed char>> store = make_shared<Shared<signed char>>();
+						auto store = make_shared<Shared<signed char>>();
 						key = Lockable::Share(store);
 
 						Interface::StartDynamic();
@@ -1784,28 +1825,103 @@ void Game::ScanContainer(const FactoryObject& reference, vector<unsigned char>& 
 
 		if (!diff.first.empty() || !diff.second.empty())
 		{
-			Network::Queue(NetworkResponse{Network::CreateResponse(
-				PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(container->GetNetworkID(), Container::ToNetDiff(diff)),
-				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
-			});
+			ContainerDiffNet ndiff = Container::ToNetDiff(diff);
+			GameDiff gdiff = container->ApplyDiff(diff);
 
-			GameDiff _diff = container->ApplyDiff(diff);
+			gdiff.remove_if([](const pair<unsigned int, Diff>& diff) { return !diff.second.count; });
 
-/*
-			_diff.remove_if([](const pair<unsigned int, Diff>& diff) { return !diff.second.count; });
-
-			if (!_diff.empty())
+			if (!gdiff.empty())
 			{
-				// removed, added items...
+				// lambda can't capture by move :(
 
-				AsyncDispatch([=]
+				auto _ndiff = make_shared<ContainerDiffNet>(move(ndiff));
+
+				AsyncDispatch([=]() mutable
 				{
-					CellDiff diff = ScanCell(FormType_Inventory);
+					ContainerDiffNet ndiff;
+					CellDiff cdiff = ScanCell(FormType_Inventory);
+					map<unsigned int, pair<GameDiff::iterator, list<pair<unsigned int, unsigned int>>>> found;
 
-					// if in set, has been dropped
+					for (unsigned int refID : cdiff.first)
+					{
+						unsigned int baseID = Game::GetBase(refID);
+
+						auto it = find_if(gdiff.begin(), gdiff.end(), [=](const pair<unsigned int, Diff>& diff) { return diff.first == baseID; });
+
+						if (it != gdiff.end())
+						{
+							if (it->second.count < 0)
+							{
+								unsigned int count = Game::GetRefCount(refID);
+
+								// emplace_back
+								if (static_cast<signed int>(count) + it->second.count <= 0)
+								{
+									auto& data = found[baseID];
+									data.first = it;
+									data.second.emplace_back(refID, count);
+								}
+								#ifdef VAULTMP_DEBUG
+								else
+									debug->PrintFormat("Item match (drop): could not match %08X (baseID: %08X), count %d", true, refID, baseID, count);
+								#endif
+							}
+						}
+						#ifdef VAULTMP_DEBUG
+						else
+							debug->PrintFormat("Item match (drop): could not match %08X (baseID: %08X) at all", true, refID, baseID);
+						#endif
+					}
+
+					if (!found.empty())
+					{
+						for (auto& _found : found)
+						{
+							auto& data = _found.second.second;
+							data.sort();
+
+							unsigned int count = _found.second.first->second.count;
+							map<unsigned int, vector<pair<unsigned int, unsigned int>>> result;
+
+							do
+							{
+								unsigned int num = 0;
+								signed int i = count;
+
+								for (const auto& ref : data)
+								{
+									i -= ref.second;
+									++num;
+
+									if (i < 0)
+										num = 0;
+
+									if (i <= 0)
+										break;
+								}
+
+								// emplace
+								if (!i)
+								{
+									auto it = data.begin();
+									advance(it, num);
+									result.insert(make_pair(num, vector<pair<unsigned int, unsigned int>>(data.begin(), it)));
+								}
+							} while (next_permutation(data.begin(), data.end()));
+						}
+					}
+
+					Network::Queue(NetworkResponse{Network::CreateResponse(
+						PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(container->GetNetworkID(), *_ndiff, ndiff),
+						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+					});
 				});
 			}
-*/
+			else
+				Network::Queue(NetworkResponse{Network::CreateResponse(
+					PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(container->GetNetworkID(), ndiff, ContainerDiffNet()),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+				});
 		}
 
 		GameFactory::DestroyInstance(_temp);
@@ -1838,6 +1954,31 @@ void Game::GetRemoveAllItemsEx(const FactoryObject& reference, vector<unsigned c
 
 	for (unsigned int i = 0; i < count; ++i)
 		RemoveItem(reference, items[i].baseID, items[i].count, true);
+}
+
+unsigned int Game::GetRefCount(unsigned int refID)
+{
+	auto store = make_shared<Shared<unsigned int>>();
+	unsigned int key = Lockable::Share(store);
+
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("GetRefCount", {RawParameter(refID)}, key);
+
+	Interface::EndDynamic();
+
+	unsigned int count;
+
+	try
+	{
+		count = store.get()->get_future(chrono::seconds(5));
+	}
+	catch (exception& e)
+	{
+		throw VaultException("Obtaining of reference count of refID %08X (%s)", refID, e.what());
+	}
+
+	return count;
 }
 
 void Game::GetNextRef(unsigned int key, unsigned int refID, unsigned int type)

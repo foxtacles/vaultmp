@@ -134,6 +134,10 @@ class Game
 		 */
 		static void Delete(FactoryObject& reference);
 		/**
+		 * \brief Returns the baseID of an Object
+		 */
+		static unsigned int GetBase(unsigned int refID);
+		/**
 		 * \brief Sets the name of an Object
 		 */
 		static void SetName(const FactoryObject& reference);
@@ -204,6 +208,10 @@ class Game
 		 */
 		static void RemoveAllItemsEx(FactoryObject& reference);
 		/**
+		 * \brief Returns the reference count of an Item
+		 */
+		static unsigned int GetRefCount(unsigned int refID);
+		/**
 		 * \brief Makes an Actor equip an Item
 		 */
 		static void EquipItem(const FactoryObject& reference, const FactoryObject& item, unsigned int key = 0);
@@ -264,7 +272,7 @@ class Game
 		static void net_ChatMessage(const string& message);
 
 		/**
-		 * Interface functions
+		 * Interface result functions
 		 */
 
 		/**

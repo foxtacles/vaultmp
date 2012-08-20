@@ -29,12 +29,15 @@ Object::Object(const pDefault* packet) : Reference(0x00000000, 0x00000000)
 
 	NetworkID id;
 	unsigned int refID, baseID;
+	bool changed;
 	string name;
 	double X, Y, Z, aX, aY, aZ;
 	unsigned int cell;
 	bool enabled;
 
-	PacketFactory::Access<pTypes::ID_OBJECT_NEW>(packet, id, refID, baseID, name, X, Y, Z, aX, aY, aZ, cell, enabled);
+	PacketFactory::Access<pTypes::ID_OBJECT_NEW>(packet, id, refID, baseID, changed, name, X, Y, Z, aX, aY, aZ, cell, enabled);
+
+	GameFactory::SetChangeFlag(changed);
 
 	this->SetNetworkID(id);
 	this->SetReference(refID);
@@ -199,7 +202,7 @@ bool Object::HasValidCoordinates() const
 
 pPacket Object::toPacket() const
 {
-	pPacket packet = PacketFactory::Create<pTypes::ID_OBJECT_NEW>(const_cast<Object*>(this)->GetNetworkID(), this->GetReference(), this->GetBase(),
+	pPacket packet = PacketFactory::Create<pTypes::ID_OBJECT_NEW>(const_cast<Object*>(this)->GetNetworkID(), this->GetReference(), this->GetBase(), this->GetChanged(),
 		this->GetName(), this->GetNetworkPos(Values::Axis_X), this->GetNetworkPos(Values::Axis_Y), this->GetNetworkPos(Values::Axis_Z),
 		this->GetAngle(Values::Axis_X), this->GetAngle(Values::Axis_Y), this->GetAngle(Values::Axis_Z), this->GetNetworkCell(), this->GetEnabled());
 
