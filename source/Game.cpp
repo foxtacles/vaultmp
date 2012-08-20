@@ -1839,201 +1839,205 @@ void Game::ScanContainer(const FactoryObject& reference, vector<unsigned char>& 
 
 				AsyncDispatch([_ndiff, gdiff, id]() mutable
 				{
-					ContainerDiffNet ndiff;
-					CellDiff cdiff = ScanCell(FormType_Inventory);
-					map<unsigned int, pair<GameDiff::iterator, list<pair<unsigned int, unsigned int>>>> found;
-
-					auto best_match = [](decltype(found)::value_type& found)
+					try
 					{
-						auto& data = found.second.second;
-						data.sort();
+						ContainerDiffNet ndiff;
+						CellDiff cdiff = ScanCell(FormType_Inventory);
+						map<unsigned int, pair<GameDiff::iterator, list<pair<unsigned int, unsigned int>>>> found;
 
-						unsigned int count = abs(found.second.first->second.count);
-						pair<unsigned int, vector<pair<unsigned int, unsigned int>>> result;
-						result.first = UINT_MAX;
-
-						do
+						const auto best_match = [](decltype(found)::value_type& found)
 						{
-							unsigned int num = 0;
-							signed int i = count;
+							auto& data = found.second.second;
+							data.sort();
 
-							for (const auto& ref : data)
+							unsigned int count = abs(found.second.first->second.count);
+							pair<unsigned int, vector<pair<unsigned int, unsigned int>>> result;
+							result.first = UINT_MAX;
+
+							do
 							{
-								i -= ref.second;
-								++num;
+								unsigned int num = 0;
+								signed int i = count;
 
-								if (i < 0)
-									num = 0;
-
-								if (i <= 0)
-									break;
-							}
-
-							if (!i && result.first > num)
-							{
-								auto it = data.begin(); advance(it, num);
-								result.second.assign(data.begin(), it);
-							}
-						} while (next_permutation(data.begin(), data.end()));
-
-						return result;
-					};
-
-					for (unsigned int refID : cdiff.first)
-					{
-						unsigned int baseID = Game::GetBase(refID);
-
-						auto it = find_if(gdiff.begin(), gdiff.end(), [=](const pair<unsigned int, Diff>& diff) { return diff.first == baseID; });
-
-						if (it != gdiff.end())
-						{
-							if (it->second.count < 0)
-							{
-								unsigned int count = Game::GetRefCount(refID);
-
-								if (static_cast<signed int>(count) + it->second.count <= 0)
+								for (const auto& ref : data)
 								{
-									auto& data = found[baseID];
-									data.first = it;
-									data.second.emplace_back(refID, count);
+									i -= ref.second;
+									++num;
+
+									if (i < 0)
+										num = 0;
+
+									if (i <= 0)
+										break;
 								}
-#ifdef VAULTMP_DEBUG
-								else if (debug)
-									debug->PrintFormat("Item match (drop): could not match %08X (baseID: %08X), count %d", true, refID, baseID, count);
-#endif
-							}
-						}
-#ifdef VAULTMP_DEBUG
-						else if (debug)
-							debug->PrintFormat("Item match (drop): could not match %08X (baseID: %08X) at all", true, refID, baseID);
-#endif
-					}
 
-					if (!found.empty())
-					{
-						for (auto& _found : found)
-						{
-							auto result = best_match(_found);
-
-#ifdef VAULTMP_DEBUG
-							if (debug)
-							{
-								unsigned int count = abs(_found.second.first->second.count);
-
-								if (!result.second.empty())
-									debug->PrintFormat("Player dropped %08X (count %d, stacks %d)", true, _found.first, count, result.second.size());
-								else
-									debug->PrintFormat("Could not find a matching set for item drop %08X (count %d)", true, _found.first, count);
-							}
-#endif
-
-							for (const auto& _result : result.second)
-							{
-								NetworkID id = GameFactory::CreateInstance(ID_ITEM, _result.first, _found.first);
-								FactoryObject reference = GameFactory::GetObject(id);
-
-								Item* item = vaultcast<Item>(reference);
-
-								item->SetItemCount(_result.second);
-								item->SetItemCondition(_found.second.first->second.condition);
-
-								ndiff.second.emplace_back(item->toPacket());
-							}
-
-							gdiff.erase(_found.second.first);
-						}
-					}
-
-					found.clear();
-
-					for (unsigned int refID : cdiff.second)
-					{
-						FactoryObject reference;
-
-						try
-						{
-							reference = GameFactory::GetObject(refID);
-						}
-						catch (...)
-						{
-#ifdef VAULTMP_DEBUG
-							if (debug)
-								debug->PrintFormat("Item match (pickup): could not find %08X", true, refID);
-#endif
-							continue;
-						}
-
-						Item* item = vaultcast<Item>(reference);
-
-						unsigned int baseID = item->GetBase();
-
-						auto it = find_if(gdiff.begin(), gdiff.end(), [=](const pair<unsigned int, Diff>& diff) { return diff.first == baseID; });
-
-						if (it != gdiff.end())
-						{
-							if (it->second.count > 0)
-							{
-								unsigned int count = item->GetItemCount();
-
-								if (it->second.count - static_cast<signed int>(count) >= 0)
+								if (!i && result.first > num)
 								{
-									auto& data = found[baseID];
-									data.first = it;
-									data.second.emplace_back(refID, count);
+									auto it = data.begin(); advance(it, num);
+									result.second.assign(data.begin(), it);
 								}
-#ifdef VAULTMP_DEBUG
-								else if (debug)
-									debug->PrintFormat("Item match (pickup): could not match %08X (baseID: %08X), count %d", true, refID, baseID, count);
-#endif
-							}
-						}
-#ifdef VAULTMP_DEBUG
-						else if (debug)
-							debug->PrintFormat("Item match (pickup): could not match %08X (baseID: %08X) at all", true, refID, baseID);
-#endif
-					}
+							} while (next_permutation(data.begin(), data.end()));
 
-					if (!found.empty())
-					{
-						for (auto& _found : found)
+							return result;
+						};
+
+						for (unsigned int refID : cdiff.first)
 						{
-							auto result = best_match(_found);
+							unsigned int baseID = Game::GetBase(refID);
 
+							auto it = find_if(gdiff.begin(), gdiff.end(), [=](const pair<unsigned int, Diff>& diff) { return diff.first == baseID; });
+
+							if (it != gdiff.end())
+							{
+								if (it->second.count < 0)
+								{
+									unsigned int count = Game::GetRefCount(refID);
+
+									if (static_cast<signed int>(count) + it->second.count <= 0)
+									{
+										auto& data = found[baseID];
+										data.first = it;
+										data.second.emplace_back(refID, count);
+									}
 #ifdef VAULTMP_DEBUG
-							if (debug)
-							{
-								unsigned int count = abs(_found.second.first->second.count);
-
-								if (!result.second.empty())
-									debug->PrintFormat("Player picked up %08X (count %d, stacks %d)", true, _found.first, count, result.second.size());
-								else
-									debug->PrintFormat("Could not find a matching set for item pickup %08X (count %d)", true, _found.first, count);
-							}
+									else if (debug)
+										debug->PrintFormat("Item match (drop): could not match %08X (baseID: %08X), count %d", true, refID, baseID, count);
 #endif
-
-							for (const auto& _result : result.second)
-							{
-								NetworkID id = GameFactory::LookupNetworkID(_result.first);
-								ndiff.first.emplace_back(id);
-								GameFactory::DestroyInstance(id);
+								}
 							}
-
-							gdiff.erase(_found.second.first);
+#ifdef VAULTMP_DEBUG
+							else if (debug)
+								debug->PrintFormat("Item match (drop): could not match %08X (baseID: %08X) at all", true, refID, baseID);
+#endif
 						}
-					}
+
+						if (!found.empty())
+						{
+							for (auto& _found : found)
+							{
+								auto result = best_match(_found);
 
 #ifdef VAULTMP_DEBUG
-					if (debug)
-					{
-						for (const auto& _gdiff : gdiff)
-							debug->PrintFormat("Could not match drop / pickup %08X (count %d)", true, _gdiff.first, _gdiff.second.count);
-					}
+								if (debug)
+								{
+									unsigned int count = abs(_found.second.first->second.count);
+
+									if (!result.second.empty())
+										debug->PrintFormat("Player dropped %08X (count %d, stacks %d)", true, _found.first, count, result.second.size());
+									else
+										debug->PrintFormat("Could not find a matching set for item drop %08X (count %d)", true, _found.first, count);
+								}
 #endif
 
-					Network::Queue(NetworkResponse{Network::CreateResponse(
-						PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, *_ndiff, ndiff),
-						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
-					});
+								for (const auto& _result : result.second)
+								{
+									NetworkID id = GameFactory::CreateInstance(ID_ITEM, _result.first, _found.first);
+									FactoryObject reference = GameFactory::GetObject(id);
+
+									Item* item = vaultcast<Item>(reference);
+
+									item->SetItemCount(_result.second);
+									item->SetItemCondition(_found.second.first->second.condition);
+
+									ndiff.second.emplace_back(item->toPacket());
+								}
+
+								gdiff.erase(_found.second.first);
+							}
+						}
+
+						found.clear();
+
+						for (unsigned int refID : cdiff.second)
+						{
+							FactoryObject reference;
+
+							try
+							{
+								reference = GameFactory::GetObject(refID);
+							}
+							catch (...)
+							{
+#ifdef VAULTMP_DEBUG
+								if (debug)
+									debug->PrintFormat("Item match (pickup): could not find %08X", true, refID);
+#endif
+								continue;
+							}
+
+							Item* item = vaultcast<Item>(reference);
+
+							unsigned int baseID = item->GetBase();
+
+							auto it = find_if(gdiff.begin(), gdiff.end(), [=](const pair<unsigned int, Diff>& diff) { return diff.first == baseID; });
+
+							if (it != gdiff.end())
+							{
+								if (it->second.count > 0)
+								{
+									unsigned int count = item->GetItemCount();
+
+									if (it->second.count - static_cast<signed int>(count) >= 0)
+									{
+										auto& data = found[baseID];
+										data.first = it;
+										data.second.emplace_back(refID, count);
+									}
+#ifdef VAULTMP_DEBUG
+									else if (debug)
+										debug->PrintFormat("Item match (pickup): could not match %08X (baseID: %08X), count %d", true, refID, baseID, count);
+#endif
+								}
+							}
+#ifdef VAULTMP_DEBUG
+							else if (debug)
+								debug->PrintFormat("Item match (pickup): could not match %08X (baseID: %08X) at all", true, refID, baseID);
+#endif
+						}
+
+						if (!found.empty())
+						{
+							for (auto& _found : found)
+							{
+								auto result = best_match(_found);
+
+#ifdef VAULTMP_DEBUG
+								if (debug)
+								{
+									unsigned int count = abs(_found.second.first->second.count);
+
+									if (!result.second.empty())
+										debug->PrintFormat("Player picked up %08X (count %d, stacks %d)", true, _found.first, count, result.second.size());
+									else
+										debug->PrintFormat("Could not find a matching set for item pickup %08X (count %d)", true, _found.first, count);
+								}
+#endif
+
+								for (const auto& _result : result.second)
+								{
+									NetworkID id = GameFactory::LookupNetworkID(_result.first);
+									ndiff.first.emplace_back(id);
+									GameFactory::DestroyInstance(id);
+								}
+
+								gdiff.erase(_found.second.first);
+							}
+						}
+
+#ifdef VAULTMP_DEBUG
+						if (debug)
+						{
+							for (const auto& _gdiff : gdiff)
+								debug->PrintFormat("Could not match drop / pickup %08X (count %d)", true, _gdiff.first, _gdiff.second.count);
+						}
+#endif
+
+						Network::Queue(NetworkResponse{Network::CreateResponse(
+							PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, *_ndiff, ndiff),
+							HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+						});
+					}
+					catch (...) {}
 				});
 			}
 			else

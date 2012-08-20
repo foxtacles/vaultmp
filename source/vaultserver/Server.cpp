@@ -207,6 +207,32 @@ NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, const FactoryObject&
 	ContainerDiff diff = Container::ToContainerDiff(ndiff);
 	GameDiff _gdiff = container->ApplyDiff(diff);
 
+	for (const auto& packet : gdiff.second)
+	{
+		NetworkID id = GameFactory::CreateKnownInstance(ID_ITEM, packet.get());
+		FactoryObject _reference = GameFactory::GetObject(id);
+
+		Item* item = vaultcast<Item>(_reference);
+
+		unsigned int baseID = item->GetBase();
+		_gdiff.remove_if([=](const pair<unsigned int, Diff>& diff) { return diff.first == baseID; });
+
+		// OnActorDropItem
+	}
+
+	for (const auto& id : gdiff.first)
+	{
+		FactoryObject _reference = GameFactory::GetObject(id);
+		Item* item = vaultcast<Item>(_reference);
+
+		unsigned int baseID = item->GetBase();
+		_gdiff.remove_if([=](const pair<unsigned int, Diff>& diff) { return diff.first == baseID; });
+
+		// OnActorPickupItem
+
+		GameFactory::DestroyInstance(_reference);
+	}
+
 	for (const auto& _diff : _gdiff)
 	{
 		if (_diff.second.equipped)
