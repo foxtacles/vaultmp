@@ -84,6 +84,8 @@ forward OnActorSneak(ID, Bool:sneaking);
 forward OnActorDeath(ID, Limb:limbs, Death:cause);
 forward OnActorEquipItem(ID, base, Float:value);
 forward OnActorUnequipItem(ID, base, Float:value);
+forward OnActorDropItem(ID, base, count, Float:value);
+forward OnActorPickupItem(ID, base, count, Float:value);
 forward OnPlayerDisconnect(ID, reason);
 forward OnPlayerRequestGame(ID);
 forward OnPlayerChat(ID, message{});

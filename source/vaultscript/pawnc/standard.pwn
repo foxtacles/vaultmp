@@ -102,3 +102,13 @@ public OnActorUnequipItem(ID, base, Float: value)
 {
 
 }
+
+public OnActorDropItem(ID, base, count, Float: value)
+{
+
+}
+
+public OnActorPickupItem(ID, base, count, Float: value)
+{
+
+}

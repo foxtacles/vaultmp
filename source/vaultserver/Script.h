@@ -62,6 +62,8 @@ class Script
 		void (*fOnActorDeath)(NetworkID, unsigned short, signed char);
 		void (*fOnActorEquipItem)(NetworkID, unsigned int, double);
 		void (*fOnActorUnequipItem)(NetworkID, unsigned int, double);
+		void (*fOnActorDropItem)(NetworkID, unsigned int, unsigned int, double);
+		void (*fOnActorPickupItem)(NetworkID, unsigned int, unsigned int, double);
 		void (*fOnPlayerDisconnect)(NetworkID, pTypes);
 		unsigned int (*fOnPlayerRequestGame)(NetworkID);
 		bool (*fOnPlayerChat)(NetworkID, char*);
@@ -95,6 +97,8 @@ class Script
 		static void OnActorDeath(const FactoryObject& reference, unsigned short limbs, signed char cause);
 		static void OnActorEquipItem(const FactoryObject& reference, unsigned int baseID, double condition);
 		static void OnActorUnequipItem(const FactoryObject& reference, unsigned int baseID, double condition);
+		static void OnActorDropItem(const FactoryObject& reference, unsigned int baseID, unsigned int count, double condition);
+		static void OnActorPickupItem(const FactoryObject& reference, unsigned int baseID, unsigned int count, double condition);
 		static void OnPlayerDisconnect(const FactoryObject& reference, pTypes reason);
 		static unsigned int OnPlayerRequestGame(const FactoryObject& reference);
 		static bool OnPlayerChat(const FactoryObject& reference, string& message);

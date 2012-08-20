@@ -50,6 +50,8 @@ Script::Script(char* path)
 			GetScript("OnActorDeath", fOnActorDeath);
 			GetScript("OnActorEquipItem", fOnActorEquipItem);
 			GetScript("OnActorUnequipItem", fOnActorUnequipItem);
+			GetScript("OnActorDropItem", fOnActorDropItem);
+			GetScript("OnActorPickupItem", fOnActorPickupItem);
 			GetScript("OnPlayerDisconnect", fOnPlayerDisconnect);
 			GetScript("OnPlayerRequestGame", fOnPlayerRequestGame);
 			GetScript("OnPlayerChat", fOnPlayerChat);
@@ -562,6 +564,38 @@ void Script::OnActorUnequipItem(const FactoryObject& reference, unsigned int bas
 		}
 		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnActorUnequipItem"))
 			PAWN::Call((AMX*)script->handle, "OnActorUnequipItem", "fil", 0, condition, baseID, id);
+	}
+}
+
+void Script::OnActorDropItem(const FactoryObject& reference, unsigned int baseID, unsigned int count, double condition)
+{
+	NetworkID id = reference->GetNetworkID();
+
+	for (Script* script : scripts)
+	{
+		if (script->cpp_script)
+		{
+			if (script->fOnActorDropItem)
+				script->fOnActorDropItem(id, baseID, count, condition);
+		}
+		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnActorDropItem"))
+			PAWN::Call((AMX*)script->handle, "OnActorDropItem", "fiil", 0, condition, count, baseID, id);
+	}
+}
+
+void Script::OnActorPickupItem(const FactoryObject& reference, unsigned int baseID, unsigned int count, double condition)
+{
+	NetworkID id = reference->GetNetworkID();
+
+	for (Script* script : scripts)
+	{
+		if (script->cpp_script)
+		{
+			if (script->fOnActorPickupItem)
+				script->fOnActorPickupItem(id, baseID, count, condition);
+		}
+		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnActorPickupItem"))
+			PAWN::Call((AMX*)script->handle, "OnActorPickupItem", "fiil", 0, condition, count, baseID, id);
 	}
 }
 

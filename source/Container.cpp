@@ -362,6 +362,7 @@ GameDiff Container::ApplyDiff(ContainerDiff& diff)
 
 		_diff->count -= iDelete->GetItemCount();
 		_diff->equipped -= iDelete->GetItemEquipped();
+		_diff->condition = iDelete->GetItemCondition();
 		_diff->silent = iDelete->GetItemSilent();
 		_diff->stick = iDelete->GetItemStick();
 

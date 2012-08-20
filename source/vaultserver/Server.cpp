@@ -217,7 +217,7 @@ NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, const FactoryObject&
 		unsigned int baseID = item->GetBase();
 		_gdiff.remove_if([=](const pair<unsigned int, Diff>& diff) { return diff.first == baseID; });
 
-		// OnActorDropItem
+		Script::OnActorDropItem(reference, baseID, item->GetItemCount(), item->GetItemCondition());
 	}
 
 	for (const auto& id : gdiff.first)
@@ -228,9 +228,12 @@ NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, const FactoryObject&
 		unsigned int baseID = item->GetBase();
 		_gdiff.remove_if([=](const pair<unsigned int, Diff>& diff) { return diff.first == baseID; });
 
-		// OnActorPickupItem
+		unsigned int count = item->GetItemCount();
+		double condition = item->GetItemCondition();
 
 		GameFactory::DestroyInstance(_reference);
+
+		Script::OnActorPickupItem(reference, baseID, count, condition);
 	}
 
 	for (const auto& _diff : _gdiff)

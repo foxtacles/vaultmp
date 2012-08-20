@@ -113,3 +113,12 @@ Void VAULTSCRIPT OnActorUnequipItem(ID actor, Base base, Value value) noexcept
 
 }
 
+Void VAULTSCRIPT OnActorDropItem(ID actor, Base base, UCount count, Value value) noexcept
+{
+	std::printf("%s dropped %d of %s with condition %f\n", GetName(actor).c_str(), count, BaseToString(base).c_str(), value);
+}
+
+Void VAULTSCRIPT OnActorPickupItem(ID actor, Base base, UCount count, Value value) noexcept
+{
+	std::printf("%s picked up %d of %s with condition %f\n", GetName(actor).c_str(), count, BaseToString(base).c_str(), value);
+}
