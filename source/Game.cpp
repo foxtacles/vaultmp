@@ -1854,23 +1854,22 @@ void Game::ScanContainer(const FactoryObject& reference, vector<unsigned char>& 
 							{
 								unsigned int count = Game::GetRefCount(refID);
 
-								// emplace_back
 								if (static_cast<signed int>(count) + it->second.count <= 0)
 								{
 									auto& data = found[baseID];
 									data.first = it;
 									data.second.emplace_back(refID, count);
 								}
-								#ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
 								else
 									debug->PrintFormat("Item match (drop): could not match %08X (baseID: %08X), count %d", true, refID, baseID, count);
-								#endif
+#endif
 							}
 						}
-						#ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
 						else
 							debug->PrintFormat("Item match (drop): could not match %08X (baseID: %08X) at all", true, refID, baseID);
-						#endif
+#endif
 					}
 
 					if (!found.empty())
@@ -1880,8 +1879,9 @@ void Game::ScanContainer(const FactoryObject& reference, vector<unsigned char>& 
 							auto& data = _found.second.second;
 							data.sort();
 
-							unsigned int count = _found.second.first->second.count;
-							map<unsigned int, vector<pair<unsigned int, unsigned int>>> result;
+							unsigned int count = abs(_found.second.first->second.count);
+							pair<unsigned int, vector<pair<unsigned int, unsigned int>>> result;
+							result.first = UINT_MAX;
 
 							do
 							{
@@ -1900,14 +1900,21 @@ void Game::ScanContainer(const FactoryObject& reference, vector<unsigned char>& 
 										break;
 								}
 
-								// emplace
-								if (!i)
+								if (!i && result.first > num)
 								{
-									auto it = data.begin();
-									advance(it, num);
-									result.insert(make_pair(num, vector<pair<unsigned int, unsigned int>>(data.begin(), it)));
+									auto it = data.begin(); advance(it, num);
+									result.second.assign(data.begin(), it);
 								}
 							} while (next_permutation(data.begin(), data.end()));
+
+							gdiff.erase(_found.second.first);
+
+#ifdef VAULTMP_DEBUG
+							if (!result.second.empty())
+								debug->PrintFormat("Player dropped %08X (count %d, stacks %d)", true, _found.first, count, result.second.size());
+							else
+								debug->PrintFormat("Could not find a matching set for item drop %08X (count %d)", true, _found.first, count);
+#endif
 						}
 					}
 

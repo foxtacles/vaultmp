@@ -192,7 +192,7 @@ NetworkResponse Server::GetCell(RakNetGUID guid, const FactoryObject& reference,
 	return response;
 }
 
-NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, const FactoryObject& reference, const pair<list<NetworkID>, vector<pPacket>>& _diff)
+NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, const FactoryObject& reference, const pair<list<NetworkID>, vector<pPacket>>& ndiff, const pair<list<NetworkID>, vector<pPacket>>& gdiff)
 {
 	Container* container = vaultcast<Container>(reference);
 
@@ -200,14 +200,14 @@ NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, const FactoryObject&
 		throw VaultException("Object with reference %08X is not a Container", reference->GetReference());
 
 	SingleResponse response[] = {Network::CreateResponse(
-		PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(container->GetNetworkID(), _diff),
+		PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(container->GetNetworkID(), ndiff, gdiff),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid))
 	};
 
-	ContainerDiff diff = Container::ToContainerDiff(_diff);
-	GameDiff gamediff = container->ApplyDiff(diff);
+	ContainerDiff diff = Container::ToContainerDiff(ndiff);
+	GameDiff _gdiff = container->ApplyDiff(diff);
 
-	for (const auto& _diff : gamediff)
+	for (const auto& _diff : _gdiff)
 	{
 		if (_diff.second.equipped)
 		{

@@ -60,7 +60,7 @@ class Server
 		/**
 		 * \brief Handles container update network packet
 		 */
-		static NetworkResponse GetContainerUpdate(RakNetGUID guid, const FactoryObject& reference, const pair<list<NetworkID>, vector<pPacket>>& _diff);
+		static NetworkResponse GetContainerUpdate(RakNetGUID guid, const FactoryObject& reference, const pair<list<NetworkID>, vector<pPacket>>& ndiff, const pair<list<NetworkID>, vector<pPacket>>& gdiff);
 		/**
 		 * \brief Handles actor value network packet
 		 */

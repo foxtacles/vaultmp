@@ -179,10 +179,10 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 				case pTypes::ID_UPDATE_CONTAINER:
 				{
 					NetworkID id;
-					pair<list<NetworkID>, vector<pPacket>> diff;
-					PacketFactory::Access<pTypes::ID_UPDATE_CONTAINER>(packet, id, diff);
+					pair<list<NetworkID>, vector<pPacket>> ndiff, gdiff;
+					PacketFactory::Access<pTypes::ID_UPDATE_CONTAINER>(packet, id, ndiff, gdiff);
 					FactoryObject reference = GameFactory::GetObject(id);
-					response = Server::GetContainerUpdate(data->guid, reference, diff);
+					response = Server::GetContainerUpdate(data->guid, reference, ndiff, gdiff);
 					break;
 				}
 

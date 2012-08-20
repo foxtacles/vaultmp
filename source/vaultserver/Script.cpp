@@ -1509,7 +1509,7 @@ bool Script::AddItem(NetworkID id, unsigned int baseID, unsigned int count, doub
 				ContainerDiff diff = container->AddItem(baseID, count, condition, silent);
 
 				Network::Queue(NetworkResponse{Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff)),
+					PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff), ContainerDiffNet()),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 				});
 
@@ -1542,7 +1542,7 @@ unsigned int Script::RemoveItem(NetworkID id, unsigned int baseID, unsigned int 
 				if (!diff.first.empty() || !diff.second.empty())
 				{
 					Network::Queue(NetworkResponse{Network::CreateResponse(
-						PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff)),
+						PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff), ContainerDiffNet()),
 						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 					});
 
@@ -1572,7 +1572,7 @@ void Script::RemoveAllItems(NetworkID id)
 			if (!diff.first.empty() || !diff.second.empty())
 			{
 				Network::Queue(NetworkResponse{Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff)),
+					PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff), ContainerDiffNet()),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 				});
 
@@ -1643,7 +1643,7 @@ bool Script::EquipItem(NetworkID id, unsigned int baseID, bool silent, bool stic
 		if (!diff.first.empty() || !diff.second.empty())
 		{
 			Network::Queue(NetworkResponse{Network::CreateResponse(
-				PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff)),
+				PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff), ContainerDiffNet()),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 			});
 
@@ -1678,7 +1678,7 @@ bool Script::UnequipItem(NetworkID id, unsigned int baseID, bool silent, bool st
 		if (!diff.first.empty() || !diff.second.empty())
 		{
 			Network::Queue(NetworkResponse{Network::CreateResponse(
-				PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff)),
+				PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff), ContainerDiffNet()),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 			});
 
