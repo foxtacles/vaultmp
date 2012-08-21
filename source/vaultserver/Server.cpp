@@ -301,9 +301,10 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, const FactoryObject& refe
 	{
 		bool punching = _weapon && actor->IsActorPunching();
 		bool power_punching = _weapon && actor->IsActorPowerPunching();
+		bool firing = _weapon && actor->IsActorFiring();
 
 		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_STATE>(actor->GetNetworkID(), moving, movingxy, weapon, alerted, sneaking, !punching && !power_punching),
+			PacketFactory::Create<pTypes::ID_UPDATE_STATE>(actor->GetNetworkID(), moving, movingxy, weapon, alerted, sneaking, !punching && !power_punching && firing),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
 		if (_weapon)
@@ -318,7 +319,7 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, const FactoryObject& refe
 				// Normal punch
 				// OnActorPunch
 			}
-			else if (actor->IsActorFiring())
+			else if (firing)
 			{
 				unsigned int baseID = actor->GetEquippedWeapon();
 				const Weapon& weapon = Weapon::Lookup(baseID);

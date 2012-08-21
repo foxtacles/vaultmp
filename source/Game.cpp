@@ -53,7 +53,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				case Func_RemoveAllItemsEx:
 				case Func_CenterOnCell:
 				case Func_CenterOnExterior:
-				case Func_PlaceAtMe:
+				case Func_PlaceAtMeHealthPercent:
 				case Func_GetCauseofDeath:
 				case Fallout3::Func_GetRefCount:
 				case FalloutNV::Func_GetRefCount:
@@ -82,7 +82,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 
 		switch (opcode)
 		{
-			case Func_PlaceAtMe:
+			case Func_PlaceAtMeHealthPercent:
 				FutureSet<unsigned int>(shared, getFrom<double, unsigned int>(result));
 				break;
 
@@ -299,7 +299,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 
 		switch (opcode)
 		{
-			case Func_PlaceAtMe:
+			case Func_PlaceAtMeHealthPercent:
 				PlaceAtMe(getFrom<double, unsigned int>(info.at(1)), getFrom<double, unsigned int>(info.at(2)), getFrom<double, unsigned int>(info.at(3)), key);
 				break;
 
@@ -581,7 +581,10 @@ void Game::NewObject(FactoryObject& reference)
 		auto store = make_shared<Shared<unsigned int>>();
 		unsigned int key = Lockable::Share(store);
 
-		PlaceAtMe(PLAYER_REFERENCE, object->GetBase(), 1, key);
+		Item* item = vaultcast<Item>(reference);
+		double condition = item ? (item->GetItemCondition() / 100.0) : 1.00;
+
+		PlaceAtMe(PLAYER_REFERENCE, object->GetBase(), condition, 1, key);
 
 		NetworkID id = object->GetNetworkID();
 
@@ -642,7 +645,6 @@ void Game::NewItem(FactoryObject& reference)
 
 	NewObject(reference);
 	SetRefCount(reference);
-	// set condition
 
 	// TODO critical section
 	cellRefs[item->GetNetworkCell()][FormType_Inventory].insert(item->GetReference());
@@ -721,21 +723,21 @@ void Game::RemoveObject(const FactoryObject& reference)
 	cellRefs[object->GetNetworkCell()][FormType_Inventory].erase(object->GetReference());
 }
 
-void Game::PlaceAtMe(const FactoryObject& reference, unsigned int baseID, unsigned int count, unsigned int key)
+void Game::PlaceAtMe(const FactoryObject& reference, unsigned int baseID, double condition, unsigned int count, unsigned int key)
 {
 	Container* container = vaultcast<Container>(reference);
 
 	if (!container)
 		throw VaultException("Object with reference %08X is not a Container", reference->GetReference());
 
-	PlaceAtMe(container->GetReference(), baseID, count, key);
+	PlaceAtMe(container->GetReference(), baseID, condition, count, key);
 }
 
-void Game::PlaceAtMe(unsigned int refID, unsigned int baseID, unsigned int count, unsigned int key)
+void Game::PlaceAtMe(unsigned int refID, unsigned int baseID, double condition, unsigned int count, unsigned int key)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("PlaceAtMe", {RawParameter(refID), RawParameter(baseID), RawParameter(count)}, key);
+	Interface::ExecuteCommand("PlaceAtMeHealthPercent", {RawParameter(refID), RawParameter(baseID), RawParameter(condition), RawParameter(count)}, key);
 
 	Interface::EndDynamic();
 }
@@ -1436,7 +1438,7 @@ void Game::net_SetActorState(const FactoryObject& reference, unsigned char movin
 	result = actor->SetActorWeaponAnimation(weapon);
 
 	if (result && enabled && actor->GetActorAlerted() && weapon != AnimGroup_Idle && weapon != AnimGroup_Equip && weapon != AnimGroup_Unequip && weapon != AnimGroup_Holster &&
-		!firing && (weapon != AnimGroup_Aim || prev_weapon == AnimGroup_AimIS))
+		 (weapon != AnimGroup_Aim || prev_weapon == AnimGroup_AimIS))
 	{
 		if (weapon == AnimGroup_Aim && prev_weapon == AnimGroup_AimIS)
 		{
@@ -1996,7 +1998,7 @@ void Game::ScanContainer(const FactoryObject& reference, vector<unsigned char>& 
 								FactoryObject reference = GameFactory::GetObject(id);
 								Container* container = vaultcast<Container>(reference);
 
-								static const double spawn_offset = 80.0;
+								static const double spawn_offset = 100.0;
 
 								auto offset = container->GetOffset(spawn_offset);
 

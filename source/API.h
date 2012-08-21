@@ -218,6 +218,7 @@ namespace Values
 		Func_GetDead                    = 0x102E,
 		Func_MoveTo                     = 0x109E,
 		Func_PlaceAtMe                  = 0x1025,
+		Func_PlaceAtMeHealthPercent		= 0x11BD,
 		Func_SetRestrained              = 0x10F3,
 		Func_PlayGroup                  = 0x1013,
 		Func_SetAlert                   = 0x105A,

@@ -123,8 +123,8 @@ class Game
 		/**
 		 * \brief Places an Object in-game
 		 */
-		static void PlaceAtMe(const FactoryObject& reference, unsigned int baseID, unsigned int count, unsigned int key = 0);
-		static void PlaceAtMe(unsigned int refID, unsigned int baseID, unsigned int count, unsigned int key = 0);
+		static void PlaceAtMe(const FactoryObject& reference, unsigned int baseID, double condition = 1.00, unsigned int count = 1, unsigned int key = 0);
+		static void PlaceAtMe(unsigned int refID, unsigned int baseID, double condition = 1.00, unsigned int count = 1, unsigned int key = 0);
 		/**
 		 * \brief Enables / Disables an Object
 		 */

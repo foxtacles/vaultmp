@@ -514,7 +514,8 @@ void API::Initialize(unsigned char game)
 	DefineFunction("ForceActorValue", "rvi", Func_ForceActorValue, ALL_GAMES);
 	DefineFunction("GetDead", "r", Func_GetDead, ALL_GAMES);
 	DefineFunction("MoveTo", "roDDD", Func_MoveTo, ALL_GAMES);
-	DefineFunction("PlaceAtMe", "rbiII", Func_PlaceAtMe, ALL_GAMES);
+	DefineFunction("PlaceAtMe", "rbIII", Func_PlaceAtMe, ALL_GAMES);
+	DefineFunction("PlaceAtMeHealthPercent", "rbdIII", Func_PlaceAtMeHealthPercent, ALL_GAMES);
 	DefineFunction("SetRestrained", "ri", Func_SetRestrained, ALL_GAMES);
 	DefineFunction("PlayGroup", "rgi", Func_PlayGroup, ALL_GAMES);
 	DefineFunction("SetAlert", "ri", Func_SetAlert, ALL_GAMES);

@@ -285,10 +285,8 @@ void Interface::CommandThreadReceive(bool steam)
 		}
 
 #ifdef VAULTMP_DEBUG
-
 		if (debug)
 			debug->Print("Receive thread is going to terminate (ERROR)", true);
-
 #endif
 	}
 
