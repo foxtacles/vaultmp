@@ -1995,9 +1995,15 @@ void Game::ScanContainer(const FactoryObject& reference, vector<unsigned char>& 
 							{
 								FactoryObject reference = GameFactory::GetObject(id);
 								Container* container = vaultcast<Container>(reference);
-								X = container->GetGamePos(Axis_X);
-								Y = container->GetGamePos(Axis_Y);
+
+								static const double spawn_offset = 80.0;
+
+								auto offset = container->GetOffset(spawn_offset);
+
+								X = offset.first;
+								Y = offset.second;
 								Z = container->GetGamePos(Axis_Z) + 70.0;
+
 								cell = container->GetGameCell();
 							}
 

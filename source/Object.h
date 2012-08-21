@@ -10,6 +10,7 @@
 #include "Reference.h"
 #include "Value.h"
 #include "PacketFactory.h"
+#include "VaultVector.h"
 
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"
@@ -139,6 +140,11 @@ class Object : public Reference
 		Lockable* SetNetworkCell(unsigned int cell);
 
 		/**
+		 * \brief Returns a vector representation of the game coordinates
+		 */
+		VaultVector vvec() const;
+
+		/**
 		 * \brief Returns true if the Object is in a given range
 		 */
 		bool IsNearPoint(double X, double Y, double Z, double R) const;
@@ -146,6 +152,10 @@ class Object : public Reference
 		 * \brief Returns true if the Object's coordinate sepcified by axis (axis value hex code) is in a given range
 		 */
 		bool IsCoordinateInRange(unsigned char axis, double value, double R) const;
+		/**
+		 * \brief Returns distant coordinates of the object using the Z-angle
+		 */
+		pair<double, double> GetOffset(double N) const;
 		/**
 		 * \brief Returns true if the Object's network coordinates are valid
 		 */

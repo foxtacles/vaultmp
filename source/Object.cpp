@@ -181,14 +181,24 @@ Lockable* Object::SetNetworkCell(unsigned int cell)
 	return SetObjectValue(this->cell_Network, cell);
 }
 
+VaultVector Object::vvec() const
+{
+	return VaultVector(GetGamePos(Axis_X), GetGamePos(Axis_Y), GetGamePos(Axis_Z));
+}
+
 bool Object::IsNearPoint(double X, double Y, double Z, double R) const
 {
-	return (sqrt((abs(GetGamePos(Axis_X) - X) * abs(GetGamePos(Axis_X) - X)) + (abs(GetGamePos(Axis_Y) - Y) * abs(GetGamePos(Axis_Y) - Y)) + (abs(GetGamePos(Axis_Z) - Z) * abs(GetGamePos(Axis_Z) - Z))) <= R);
+	return this->vvec().IsNearPoint(VaultVector(X, Y, Z), R);
 }
 
 bool Object::IsCoordinateInRange(unsigned char axis, double pos, double R) const
 {
 	return (GetGamePos(axis) > (pos - R) && GetGamePos(axis) < (pos + R));
+}
+
+pair<double, double> Object::GetOffset(double N) const
+{
+	return this->vvec().GetOffset(GetAngle(Axis_Z), N);
 }
 
 bool Object::HasValidCoordinates() const
