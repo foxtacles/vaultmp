@@ -208,7 +208,7 @@ void Bethesda::Initialize()
 			CloseHandle(pi.hThread);
 			CloseHandle(pi.hProcess);
 
-			this_thread::sleep_for(chrono::seconds(5));
+			this_thread::sleep_for(chrono::seconds(6));
 
 			initialized = true;
 		}

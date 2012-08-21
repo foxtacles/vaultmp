@@ -623,6 +623,11 @@ void Game::NewItem(FactoryObject& reference)
 	NewObject(reference);
 	SetRefCount(reference);
 	// set condition
+
+	// TODO critical section
+	cellRefs[item->GetNetworkCell()][FormType_Inventory].insert(item->GetReference());
+
+	//SetPos(reference); // test only, item slips through ground, consider MoveTo
 }
 
 void Game::NewContainer(FactoryObject& reference)
@@ -708,6 +713,9 @@ void Game::RemoveObject(const FactoryObject& reference)
 	Interface::ExecuteCommand("MarkForDelete", {object->GetReferenceParam()});
 
 	Interface::EndDynamic();
+
+	// TODO critical section
+	cellRefs[object->GetNetworkCell()][FormType_Inventory].erase(object->GetReference());
 }
 
 void Game::PlaceAtMe(const FactoryObject& reference, unsigned int baseID, unsigned int count, unsigned int key)
@@ -778,6 +786,9 @@ void Game::SetName(const FactoryObject& reference)
 {
 	Object* object = vaultcast<Object>(reference);
 	string name = object->GetName();
+
+	if (name.empty())
+		return;
 
 	Interface::StartDynamic();
 
@@ -1973,6 +1984,18 @@ void Game::ScanContainer(const FactoryObject& reference, vector<unsigned char>& 
 
 						if (!found.empty())
 						{
+							double X, Y, Z;
+							unsigned int cell;
+
+							{
+								FactoryObject reference = GameFactory::GetObject(id);
+								Container* container = vaultcast<Container>(reference);
+								X = container->GetGamePos(Axis_X);
+								Y = container->GetGamePos(Axis_Y);
+								Z = container->GetGamePos(Axis_Z) + 70.0;
+								cell = container->GetGameCell();
+							}
+
 							for (auto& _found : found)
 							{
 								auto result = best_match(_found);
@@ -1995,6 +2018,15 @@ void Game::ScanContainer(const FactoryObject& reference, vector<unsigned char>& 
 									FactoryObject reference = GameFactory::GetObject(id);
 
 									Item* item = vaultcast<Item>(reference);
+
+									item->SetGamePos(Axis_X, X);
+									item->SetGamePos(Axis_Y, Y);
+									item->SetGamePos(Axis_Z, Z);
+									item->SetNetworkPos(Axis_X, X);
+									item->SetNetworkPos(Axis_Y, Y);
+									item->SetNetworkPos(Axis_Z, Z);
+									item->SetNetworkCell(cell);
+									item->SetGameCell(cell);
 
 									item->SetItemCount(_result.second);
 									item->SetItemCondition(_found.second.first->second.condition);
