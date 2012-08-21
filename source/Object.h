@@ -112,7 +112,7 @@ class Object : public Reference
 		/**
 		 * \brief Sets the Object's name
 		 */
-		Lockable* SetName(string name);
+		Lockable* SetName(const string& name);
 		/**
 		 * \brief Sets the Object's game coordiante on the specified axis (axis value hex code)
 		 */

@@ -132,9 +132,11 @@ Container::StripCopy Container::Strip() const
 void Container::AddItem(NetworkID id)
 {
 	FactoryObject reference = GameFactory::GetObject(id);
+	Item* item;
 
-	if (vaultcast<Item>(reference))
+	if ((item = vaultcast<Item>(reference)))
 	{
+		item->SetItemContainer(this->GetNetworkID());
 		container.emplace_back(id);
 		container.sort(Item_sort);
 	}
@@ -163,6 +165,8 @@ void Container::RemoveItem(NetworkID id)
 	if (it == container.end())
 		throw VaultException("Unknown Item with NetworkID %llu in Container with reference %08X", id, this->GetReference());
 
+	FactoryObject reference = GameFactory::GetObject(*it);
+	vaultcast<Item>(reference)->SetItemContainer(0);
 	container.erase(it);
 }
 

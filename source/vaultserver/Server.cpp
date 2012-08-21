@@ -71,9 +71,10 @@ NetworkResponse Server::LoadGame(RakNetGUID guid)
 	for (it = references.begin(); it != references.end(); GameFactory::LeaveReference(*it), ++it)
 	{
 		Object* object = vaultcast<Object>(*it);
+		Item* item;
 
-		if (vaultcast<Item>(*it))
-			continue; // FIXME, this is to not send items in a container
+		if ((item = vaultcast<Item>(*it)) && item->GetItemContainer())
+			continue;
 
 		response.emplace_back(Network::CreateResponse(
 			object->toPacket(),
@@ -213,6 +214,8 @@ NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, const FactoryObject&
 		FactoryObject _reference = GameFactory::GetObject(id);
 
 		Item* item = vaultcast<Item>(_reference);
+
+		item->SetReference(0x00000000);
 
 		unsigned int baseID = item->GetBase();
 		_gdiff.remove_if([=](const pair<unsigned int, Diff>& diff) { return diff.first == baseID; });

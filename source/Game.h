@@ -208,6 +208,10 @@ class Game
 		 */
 		static void RemoveAllItemsEx(FactoryObject& reference);
 		/**
+		 * \brief Sets the reference count of an Item
+		 */
+		static void SetRefCount(const FactoryObject& reference, unsigned int key = 0);
+		/**
 		 * \brief Returns the reference count of an Item
 		 */
 		static unsigned int GetRefCount(unsigned int refID);
@@ -245,7 +249,7 @@ class Game
 		/**
 		 * \brief Network function to handle Container update
 		 */
-		static void net_ContainerUpdate(FactoryObject& reference, const pair<list<NetworkID>, vector<pPacket>>& _diff);
+		static void net_ContainerUpdate(FactoryObject& reference, const pair<list<NetworkID>, vector<pPacket>>& ndiff, const pair<list<NetworkID>, vector<pPacket>>& gdiff);
 		/**
 		 * \brief Network function to handle Actor value
 		 */

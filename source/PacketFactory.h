@@ -790,18 +790,18 @@ class pItemNew : public pObjectNewDefault
 		friend class PacketFactory;
 
 	private:
-		pItemNew(const pPacket& _pObjectNew, unsigned int count, double condition, bool equipped, bool silent, bool stick) : pObjectNewDefault(pTypes::ID_ITEM_NEW)
+		pItemNew(const pPacket& _pObjectNew, NetworkID id, unsigned int count, double condition, bool equipped, bool silent, bool stick) : pObjectNewDefault(pTypes::ID_ITEM_NEW)
 		{
-			construct(_pObjectNew, count, condition, equipped, silent, stick);
+			construct(_pObjectNew, id, count, condition, equipped, silent, stick);
 		}
 		pItemNew(const unsigned char* stream, unsigned int len) : pObjectNewDefault(stream, len)
 		{
 
 		}
 
-		void access(unsigned int& count, double& condition, bool& equipped, bool& silent, bool& stick) const
+		void access(NetworkID& id, unsigned int& count, double& condition, bool& equipped, bool& silent, bool& stick) const
 		{
-			deconstruct(count, condition, equipped, silent, stick);
+			deconstruct(id, count, condition, equipped, silent, stick);
 		}
 };
 

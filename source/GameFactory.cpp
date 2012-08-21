@@ -360,6 +360,10 @@ NetworkID GameFactory::CreateInstance(unsigned char type, unsigned int refID, un
 
 	NetworkID id = reference->GetNetworkID();
 
+#ifdef VAULTSERVER
+	reference->SetBase(reference->GetBase());
+#endif
+
 	cs.StartSession();
 
 	++typecount[type];
@@ -410,6 +414,10 @@ void GameFactory::CreateKnownInstance(unsigned char type, NetworkID id, unsigned
 
 	reference->SetNetworkID(id);
 
+#ifdef VAULTSERVER
+	reference->SetBase(reference->GetBase());
+#endif
+
 	cs.StartSession();
 
 	++typecount[type];
@@ -457,6 +465,11 @@ NetworkID GameFactory::CreateKnownInstance(unsigned char type, const pDefault* p
 	}
 
 	NetworkID id = reference->GetNetworkID();
+
+#ifdef VAULTSERVER
+	reference->SetBase(reference->GetBase());
+#endif
+
 	reference->SetChanged(changed);
 
 	cs.StartSession();

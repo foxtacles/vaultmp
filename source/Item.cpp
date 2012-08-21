@@ -25,12 +25,14 @@ Item::Item(const pDefault* packet) : Object(PacketFactory::Pop<pPacket>(packet))
 {
 	initialize();
 
+	NetworkID id;
 	unsigned int count;
 	double condition;
 	bool equipped, silent, stick;
 
-	PacketFactory::Access<pTypes::ID_ITEM_NEW>(packet, count, condition, equipped, silent, stick);
+	PacketFactory::Access<pTypes::ID_ITEM_NEW>(packet, id, count, condition, equipped, silent, stick);
 
+	this->SetItemContainer(id);
 	this->SetItemCount(count);
 	this->SetItemCondition(condition);
 	this->SetItemEquipped(equipped);
@@ -53,6 +55,11 @@ void Item::initialize()
 	if (this->GetName().empty())
 		this->SetName(record.GetDescription());
 #endif
+}
+
+NetworkID Item::GetItemContainer() const
+{
+	return this->item_Container.get();
 }
 
 unsigned int Item::GetItemCount() const
@@ -78,6 +85,11 @@ bool Item::GetItemSilent() const
 bool Item::GetItemStick() const
 {
 	return this->flag_Stick.get();
+}
+
+Lockable* Item::SetItemContainer(NetworkID id)
+{
+	return SetObjectValue(this->item_Container, id);
 }
 
 Lockable* Item::SetItemCount(unsigned int count)
@@ -110,6 +122,7 @@ NetworkID Item::Copy() const
 	FactoryObject reference = GameFactory::GetObject(GameFactory::CreateInstance(ID_ITEM, 0x00000000, this->GetBase()));
 	Item* item = vaultcast<Item>(reference);
 
+	item->SetItemContainer(this->GetItemContainer());
 	item->SetItemCount(this->GetItemCount());
 	item->SetItemCondition(this->GetItemCondition());
 	item->SetItemEquipped(this->GetItemEquipped());
@@ -134,7 +147,7 @@ Lockable* Item::SetBase(unsigned int baseID)
 pPacket Item::toPacket() const
 {
 	pPacket pObjectNew = Object::toPacket();
-	pPacket packet = PacketFactory::Create<pTypes::ID_ITEM_NEW>(pObjectNew, this->GetItemCount(), this->GetItemCondition(), this->GetItemEquipped(), this->GetItemSilent(), this->GetItemStick());
+	pPacket packet = PacketFactory::Create<pTypes::ID_ITEM_NEW>(pObjectNew, this->GetItemContainer(), this->GetItemCount(), this->GetItemCondition(), this->GetItemEquipped(), this->GetItemSilent(), this->GetItemStick());
 
 	return packet;
 }

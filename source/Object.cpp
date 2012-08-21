@@ -131,7 +131,7 @@ unsigned int Object::GetNetworkCell() const
 	return cell_Network.get();
 }
 
-Lockable* Object::SetName(string name)
+Lockable* Object::SetName(const string& name)
 {
 	return SetObjectValue(this->object_Name, name);
 }

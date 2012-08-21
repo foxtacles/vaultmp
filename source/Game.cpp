@@ -524,8 +524,9 @@ void Game::LoadEnvironment()
 					NewObject(reference);
 					break;
 
-				case ID_ITEM: // don't create items of containers
-					//NewItem(reference);
+				case ID_ITEM:
+					if (!vaultcast<Item>(reference)->GetItemContainer())
+						NewItem(reference);
 					break;
 
 				case ID_CONTAINER:
@@ -613,8 +614,14 @@ void Game::NewObject(FactoryObject& reference)
 
 void Game::NewItem(FactoryObject& reference)
 {
-	NewObject(reference);
+	Item* item = vaultcast<Item>(reference);
+	NetworkID id = item->GetItemContainer();
 
+	if (id)
+		throw VaultException("Cannot create item %llu which is bound to a Container (%llu)", item->GetNetworkID(), id);
+
+	NewObject(reference);
+	SetRefCount(reference);
 	// set condition
 }
 
@@ -1125,6 +1132,45 @@ void Game::RemoveAllItemsEx(FactoryObject& reference)
 	reference = GameFactory::GetObject(id);
 }
 
+void Game::SetRefCount(const FactoryObject& reference, unsigned int key)
+{
+	Item* item = vaultcast<Item>(reference);
+
+	if (!item)
+		throw VaultException("Object with reference %08X is not an Item", reference->GetReference());
+
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("SetRefCount", {item->GetReferenceParam(), RawParameter(item->GetItemCount())}, key);
+
+	Interface::EndDynamic();
+}
+
+unsigned int Game::GetRefCount(unsigned int refID)
+{
+	auto store = make_shared<Shared<unsigned int>>();
+	unsigned int key = Lockable::Share(store);
+
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("GetRefCount", {RawParameter(refID)}, key);
+
+	Interface::EndDynamic();
+
+	unsigned int count;
+
+	try
+	{
+		count = store.get()->get_future(chrono::seconds(5));
+	}
+	catch (exception& e)
+	{
+		throw VaultException("Obtaining of reference count of refID %08X (%s)", refID, e.what());
+	}
+
+	return count;
+}
+
 void Game::EquipItem(const FactoryObject& reference, const FactoryObject& item, unsigned int key)
 {
 	Item* _item = vaultcast<Item>(item);
@@ -1259,7 +1305,7 @@ void Game::net_SetCell(const FactoryObject& reference, const FactoryObject& play
 	}
 }
 
-void Game::net_ContainerUpdate(FactoryObject& reference, const pair<list<NetworkID>, vector<pPacket>>& _diff)
+void Game::net_ContainerUpdate(FactoryObject& reference, const pair<list<NetworkID>, vector<pPacket>>& ndiff, const pair<list<NetworkID>, vector<pPacket>>& gdiff)
 {
 	Container* container = vaultcast<Container>(reference);
 
@@ -1270,7 +1316,7 @@ void Game::net_ContainerUpdate(FactoryObject& reference, const pair<list<Network
 
 	// cleaner solution here
 
-	ContainerDiff diff = Container::ToContainerDiff(_diff);
+	ContainerDiff diff = Container::ToContainerDiff(ndiff);
 	NetworkID id = container->GetNetworkID();
 	GameFactory::LeaveReference(reference);
 
@@ -1280,9 +1326,9 @@ void Game::net_ContainerUpdate(FactoryObject& reference, const pair<list<Network
 
 	unsigned int key = result->Lock();
 
-	GameDiff gamediff = container->ApplyDiff(diff);
+	GameDiff _gdiff = container->ApplyDiff(diff);
 
-	for (const auto& diff : gamediff)
+	for (const auto& diff : _gdiff)
 	{
 		if (diff.second.equipped)
 		{
@@ -1301,6 +1347,20 @@ void Game::net_ContainerUpdate(FactoryObject& reference, const pair<list<Network
 	}
 
 	result->Unlock(key);
+
+	for (const auto& id : gdiff.first)
+	{
+		FactoryObject reference = GameFactory::GetObject(id);
+		Delete(reference);
+	}
+
+	for (const auto& packet : gdiff.second)
+	{
+		NetworkID id = GameFactory::CreateKnownInstance(ID_ITEM, packet.get());
+		FactoryObject reference = GameFactory::GetObject(id);
+		vaultcast<Item>(reference)->SetReference(0x00000000);
+		NewItem(reference);
+	}
 }
 
 void Game::net_SetActorValue(const FactoryObject& reference, bool base, unsigned char index, double value)
@@ -2077,31 +2137,6 @@ void Game::GetRemoveAllItemsEx(const FactoryObject& reference, vector<unsigned c
 
 	for (unsigned int i = 0; i < count; ++i)
 		RemoveItem(reference, items[i].baseID, items[i].count, true);
-}
-
-unsigned int Game::GetRefCount(unsigned int refID)
-{
-	auto store = make_shared<Shared<unsigned int>>();
-	unsigned int key = Lockable::Share(store);
-
-	Interface::StartDynamic();
-
-	Interface::ExecuteCommand("GetRefCount", {RawParameter(refID)}, key);
-
-	Interface::EndDynamic();
-
-	unsigned int count;
-
-	try
-	{
-		count = store.get()->get_future(chrono::seconds(5));
-	}
-	catch (exception& e)
-	{
-		throw VaultException("Obtaining of reference count of refID %08X (%s)", refID, e.what());
-	}
-
-	return count;
 }
 
 void Game::GetNextRef(unsigned int key, unsigned int refID, unsigned int type)

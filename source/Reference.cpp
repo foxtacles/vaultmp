@@ -44,7 +44,7 @@ unsigned int Reference::ResolveIndex(unsigned int baseID)
 */
 
 template <typename T>
-Lockable* Reference::SetObjectValue(Value<T>& dest, T value)
+Lockable* Reference::SetObjectValue(Value<T>& dest, const T& value)
 {
 	if (dest.get() == value)
 		return nullptr;
@@ -62,7 +62,7 @@ Lockable* Reference::SetObjectValue(Value<T>& dest, T value)
 }
 
 template <>
-Lockable* Reference::SetObjectValue(Value<double>& dest, double value)
+Lockable* Reference::SetObjectValue(Value<double>& dest, const double& value)
 {
 	if (Utils::DoubleCompare(dest.get(), value, 0.0001))
 		return nullptr;
@@ -79,10 +79,11 @@ Lockable* Reference::SetObjectValue(Value<double>& dest, double value)
 	return &dest;
 }
 
-template Lockable* Reference::SetObjectValue(Value<unsigned int>& dest, unsigned int value);
-template Lockable* Reference::SetObjectValue(Value<unsigned char>& dest, unsigned char value);
-template Lockable* Reference::SetObjectValue(Value<bool>& dest, bool value);
-template Lockable* Reference::SetObjectValue(Value<string>& dest, string value);
+template Lockable* Reference::SetObjectValue(Value<unsigned int>& dest, const unsigned int& value);
+template Lockable* Reference::SetObjectValue(Value<unsigned char>& dest, const unsigned char& value);
+template Lockable* Reference::SetObjectValue(Value<bool>& dest, const bool& value);
+template Lockable* Reference::SetObjectValue(Value<string>& dest, const string& value);
+template Lockable* Reference::SetObjectValue(Value<NetworkID>& dest, const NetworkID& id);
 
 Lockable* Reference::SetReference(unsigned int refID)
 {

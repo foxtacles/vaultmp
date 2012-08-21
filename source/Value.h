@@ -35,7 +35,7 @@ class Value : public Lockable
 
 	public:
 		Value() : value(T()) {};
-		Value(T t) : value(t) {};
+		Value(const T& t) : value(t) {};
 		Value(Value&&) = default;
 		Value& operator=(Value&&) = default;
 		virtual ~Value() {}
@@ -43,7 +43,7 @@ class Value : public Lockable
 		/**
 		 * \brief Sets the value
 		 */
-		bool set(T value);
+		bool set(const T& value);
 		/**
 		 * \brief Gets the value
 		 */

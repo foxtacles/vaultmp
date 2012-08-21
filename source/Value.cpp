@@ -17,7 +17,7 @@ void Value<T>::SetDebugHandler(Debug* debug)
 #endif
 
 template <typename T>
-bool Value<T>::set(T value)
+bool Value<T>::set(const T& value)
 {
 	if (this->IsLocked())
 		return false;
@@ -28,6 +28,7 @@ bool Value<T>::set(T value)
 }
 
 template class Value<unsigned int>;
+template class Value<unsigned long long>;
 template class Value<unsigned char>;
 template class Value<unsigned short>;
 template class Value<signed char>;
