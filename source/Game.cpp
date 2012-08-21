@@ -584,6 +584,7 @@ void Game::NewObject(FactoryObject& reference)
 		PlaceAtMe(PLAYER_REFERENCE, object->GetBase(), 1, key);
 
 		NetworkID id = object->GetNetworkID();
+
 		GameFactory::LeaveReference(reference);
 
 		unsigned int refID;
@@ -605,9 +606,28 @@ void Game::NewObject(FactoryObject& reference)
 	//else if (!(not in player cell) || !object->GetChanged())
 		//return;
 
+	unsigned int refID = object->GetReference();
+
 	SetName(reference);
-	//SetPos(reference); moveto if in player cell
 	SetAngle(reference);
+
+	// experimental
+	AsyncDispatch([=]
+	{
+		try
+		{
+			this_thread::sleep_for(chrono::seconds(1));
+
+			auto objects = GameFactory::GetMultiple(vector<unsigned int>{refID, PLAYER_REFERENCE});
+
+			Object* object = vaultcast<Object>(objects[0]);
+			Player* player = vaultcast<Player>(objects[1]);
+
+			if (player->GetGameCell() == object->GetNetworkCell())
+				MoveTo(objects[0], objects[1], true);
+		}
+		catch (...) {}
+	});
 
 	// maybe more
 }
@@ -626,8 +646,6 @@ void Game::NewItem(FactoryObject& reference)
 
 	// TODO critical section
 	cellRefs[item->GetNetworkCell()][FormType_Inventory].insert(item->GetReference());
-
-	//SetPos(reference); // test only, item slips through ground, consider MoveTo
 }
 
 void Game::NewContainer(FactoryObject& reference)
@@ -684,21 +702,6 @@ void Game::NewPlayer(FactoryObject& reference)
 	NewActor(reference);
 
 	// ...
-
-/*
-thread t(AsyncTasks<AsyncPack>,
-	AsyncPack(async(launch::deferred, [](unsigned int r)
-	{
-		try
-		{
-	ParamContainer param_MoveTo{RawParameter(r),RawParameter(PLAYER_REFERENCE) };
-
-	Interface::ExecuteCommand("MoveTo", move(param_MoveTo));
-		}
-		catch (...) {}
-	}, reference->GetReference()), chrono::milliseconds(1000)));
-	t.detach();
-	*/
 }
 
 void Game::RemoveObject(const FactoryObject& reference)
@@ -1358,6 +1361,8 @@ void Game::net_ContainerUpdate(FactoryObject& reference, const pair<list<Network
 	}
 
 	result->Unlock(key);
+
+	GameFactory::LeaveReference(reference);
 
 	for (const auto& id : gdiff.first)
 	{
