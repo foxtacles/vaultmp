@@ -1438,7 +1438,7 @@ void Game::net_SetActorState(const FactoryObject& reference, unsigned char movin
 	result = actor->SetActorWeaponAnimation(weapon);
 
 	if (result && enabled && actor->GetActorAlerted() && weapon != AnimGroup_Idle && weapon != AnimGroup_Equip && weapon != AnimGroup_Unequip && weapon != AnimGroup_Holster &&
-		 (weapon != AnimGroup_Aim || prev_weapon == AnimGroup_AimIS))
+		!firing && (weapon != AnimGroup_Aim || prev_weapon == AnimGroup_AimIS))
 	{
 		if (weapon == AnimGroup_Aim && prev_weapon == AnimGroup_AimIS)
 		{
@@ -2000,6 +2000,7 @@ void Game::ScanContainer(const FactoryObject& reference, vector<unsigned char>& 
 
 								static const double spawn_offset = 100.0;
 
+								// maybe better synchronically obtain XYZ for correctness
 								auto offset = container->GetOffset(spawn_offset);
 
 								X = offset.first;
