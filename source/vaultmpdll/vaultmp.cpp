@@ -241,7 +241,6 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 						unsigned char type = 0x01; // that equals to a Z-angle correction of -45²
 						memcpy((void*)((unsigned) result + 5), &type, 1);
 					}
-
 					else if (((GetAsyncKeyState(MapVirtualKey(forward, 1)) & 0x8000) && (GetAsyncKeyState(MapVirtualKey(right, 1)) & 0x8000))
 							 || ((GetAsyncKeyState(MapVirtualKey(backward, 1)) & 0x8000) && (GetAsyncKeyState(MapVirtualKey(left, 1)) & 0x8000)))
 					{
@@ -249,6 +248,10 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 						memcpy((void*)((unsigned) result + 5), &type, 1);
 					}
 				}
+
+				unsigned char chat_keys = (GetAsyncKeyState(0x54) & 0x8000) ? 0x01 : 0x00; // T
+				chat_keys |= ((GetAsyncKeyState(VK_ESCAPE) & 0x8000) || (GetAsyncKeyState(VK_RETURN) & 0x8000)) ? 0x02 : 0x00;
+				memcpy((void*)((unsigned) result + 7), &chat_keys, 1);
 			}
 
 			break;
@@ -633,7 +636,7 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 				bool delegate_flag = (bool) *content;
 				content += 1;
 
-				for (unsigned int i = 0; i < 8; ++i)
+				for (unsigned int i = 0; i < 8 && !DLLerror; ++i)
 				{
 					unsigned char size = *content;
 
@@ -647,7 +650,6 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 
 						args.push_back((void*) arg);
 					}
-
 					else
 						DLLerror = true;
 				}

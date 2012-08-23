@@ -53,7 +53,7 @@ struct API::op_Arg1
 	char* type4;
 	unsigned int unk7;
 	unsigned int unk8;
-	double more[2];
+	double more[6];
 
 	op_Arg1()
 	{
@@ -538,6 +538,8 @@ void API::Initialize(unsigned char game)
 	DefineFunction("FireWeapon", "rb", Func_FireWeapon, FALLOUT_GAMES);
 	DefineFunction("GetCauseofDeath", "r", Func_GetCauseofDeath, FALLOUT_GAMES);
 	DefineFunction("IsLimbGone", "ri", Func_IsLimbGone, FALLOUT_GAMES);
+	DefineFunction("EnablePlayerControls", "IIIIIII", Func_EnablePlayerControls, FALLOUT_GAMES);
+	DefineFunction("DisablePlayerControls", "$IIIIIII", Func_DisablePlayerControls, FALLOUT_GAMES); // $ required, else access violation...
 	DefineFunction("ScanContainer", "r", Func_ScanContainer, FALLOUT_GAMES);
 	DefineFunction("UIMessage", "s", Func_UIMessage, FALLOUT_GAMES);
 	DefineFunction("CenterOnCell", "$s", Func_CenterOnCell, FALLOUT_GAMES);

@@ -23,6 +23,7 @@ public OnClientAuthenticate(const name {}, const pwd {})
 
 public OnPlayerDisconnect(ID, reason)
 {
+
 }
 
 public OnPlayerRequestGame(ID)

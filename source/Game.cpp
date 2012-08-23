@@ -122,6 +122,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			{
 				reference = GameFactory::GetObject(getFrom<double, unsigned int>(info.at(1)));
 				GetActorState(reference,
+									*reinterpret_cast<unsigned char*>(((unsigned) &result) + 7),
 									*reinterpret_cast<unsigned char*>(((unsigned) &result) + 4),
 									*reinterpret_cast<unsigned char*>(((unsigned) &result) + 5),
 									*reinterpret_cast<unsigned char*>(((unsigned) &result) + 6),
@@ -187,6 +188,12 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 
 			case Func_FireWeapon:
+				break;
+
+			case Func_EnablePlayerControls:
+				break;
+
+			case Func_DisablePlayerControls:
 				break;
 
 			case Func_Chat:
@@ -1260,6 +1267,24 @@ Game::CellDiff Game::ScanCell(unsigned int type)
 	return diff;
 }
 
+void Game::EnablePlayerControls(bool movement, bool pipboy, bool fighting, bool pov, bool looking, bool rollover, bool sneaking)
+{
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("EnablePlayerControls", {RawParameter(movement), RawParameter(pipboy), RawParameter(fighting), RawParameter(pov), RawParameter(looking), RawParameter(rollover), RawParameter(sneaking)});
+
+	Interface::EndDynamic();
+}
+
+void Game::DisablePlayerControls(bool movement, bool pipboy, bool fighting, bool pov, bool looking, bool rollover, bool sneaking)
+{
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("DisablePlayerControls", {RawParameter(movement), RawParameter(pipboy), RawParameter(fighting), RawParameter(pov), RawParameter(looking), RawParameter(rollover), RawParameter(sneaking)});
+
+	Interface::EndDynamic();
+}
+
 void Game::net_SetPos(const FactoryObject& reference, double X, double Y, double Z)
 {
 	Object* object = vaultcast<Object>(reference);
@@ -1808,12 +1833,25 @@ void Game::GetActorValue(const FactoryObject& reference, bool base, unsigned cha
 		});
 }
 
-void Game::GetActorState(const FactoryObject& reference, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool sneaking)
+void Game::GetActorState(const FactoryObject& reference, unsigned char chat_keys, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool sneaking)
 {
 	Actor* actor  = vaultcast<Actor>(reference);
 
 	if (!actor)
 		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
+
+	static bool chat_state = false;
+
+	if (chat_keys == 0x01 && !chat_state)
+	{
+		DisablePlayerControls(true, true, true, false);
+		chat_state = true;
+	}
+	else if (chat_keys == 0x02 && chat_state)
+	{
+		EnablePlayerControls();
+		chat_state = false;
+	}
 
 	bool result;
 

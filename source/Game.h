@@ -229,6 +229,14 @@ class Game
 		 * \brief Scans a cell for forms and returns the delta to previous scan
 		 */
 		static CellDiff ScanCell(unsigned int type);
+		/**
+		 * \brief Enable player controls
+		 */
+		static void EnablePlayerControls(bool movement = true, bool pipboy = true, bool fighting = true, bool pov = true, bool looking = true, bool rollover = true, bool sneaking = true);
+		/**
+		 * \brief Disable player controls
+		 */
+		static void DisablePlayerControls(bool movement = true, bool pipboy = true, bool fighting = true, bool pov = true, bool looking = false, bool rollover = false, bool sneaking = false);
 
 		/**
 		 * Network functions
@@ -306,7 +314,7 @@ class Game
 		/**
 		 * \brief Handles GetActorState command result
 		 */
-		static void GetActorState(const FactoryObject& reference, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool sneaking);
+		static void GetActorState(const FactoryObject& reference, unsigned char chat_keys, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool sneaking);
 		/**
 		 * \brief Handles GetControl command result
 		 */

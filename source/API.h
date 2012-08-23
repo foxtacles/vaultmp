@@ -239,6 +239,8 @@ namespace Values
 		Func_FireWeapon					= 0x11E2,
 		Func_GetCauseofDeath			= 0x118D,
 		Func_IsLimbGone					= 0x118E,
+		Func_EnablePlayerControls		= 0x1060,
+		Func_DisablePlayerControls		= 0x1061,
 
 		Func_GetActorState              = 0x0001 | VAULTFUNCTION,
 		Func_Chat						= 0x0002 | VAULTFUNCTION,
