@@ -523,7 +523,8 @@ void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
 			delegated.push_back(callAddr);
 			delegate = true;
 
-			while (delegate) Sleep(10);
+			while (delegate)
+				Sleep(2);
 		}
 
 		else

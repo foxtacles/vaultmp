@@ -535,7 +535,7 @@ void API::Initialize(unsigned char game)
 	DefineFunction("IsMoving", "r", Func_IsMoving, FALLOUT_GAMES);
 	DefineFunction("MarkForDelete", "r", Func_MarkForDelete, FALLOUT_GAMES);
 	DefineFunction("IsAnimPlaying", "rG", Func_IsAnimPlaying, FALLOUT_GAMES);
-	DefineFunction("FireWeapon", "rb", Func_FireWeapon, FALLOUT_GAMES);
+	DefineFunction("FireWeapon", "r$b", Func_FireWeapon, FALLOUT_GAMES);
 	DefineFunction("GetCauseofDeath", "r", Func_GetCauseofDeath, FALLOUT_GAMES);
 	DefineFunction("IsLimbGone", "ri", Func_IsLimbGone, FALLOUT_GAMES);
 	DefineFunction("EnablePlayerControls", "IIIIIII", Func_EnablePlayerControls, FALLOUT_GAMES);
