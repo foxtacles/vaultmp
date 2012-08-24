@@ -2,6 +2,7 @@
 #include "Record.h"
 #include "Exterior.h"
 #include "Weapon.h"
+#include "Race.h"
 
 #ifdef VAULTMP_DEBUG
 template <typename T>
@@ -125,7 +126,7 @@ unsigned int Database<T>::initialize(const string& file, const vector<string>& t
 
 #ifdef VAULTMP_DEBUG
 	if (debug)
-		debug->PrintFormat("Successfully read %d records from %s", true, data.size(), _file);
+		debug->PrintFormat("Successfully read %d records (%s) from %s", true, data.size(), typeid(T).name(), _file);
 #endif
 
 	return data.size();
@@ -140,3 +141,4 @@ Database<T>::~Database()
 template class Database<Record>;
 template class Database<Exterior>;
 template class Database<Weapon>;
+template class Database<Race>;

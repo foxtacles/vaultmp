@@ -17,12 +17,12 @@ function import($file,$dlc)
 if ($id == 0)
 continue;
 		$name=trim($name);
-                $prep = $db->prepare("insert into exteriors (baseID,name,x,y,wrld,dlc) values (?, ?, ?, ?, ?, ?)");
+                $prep = $db->prepare("insert into exteriors (baseID,x,y,wrld,dlc) values (?, ?, ?, ?, ?)");
                 if ($prep === FALSE) {
 			echo "Fail: " . $id;
 			continue;
 		}
-		$r = $prep->execute(array($id, $name, $x, $y, $wrld, $dlc));
+		$r = $prep->execute(array($id, $x, $y, $wrld, $dlc));
 if (!$r) {
 $arr = $prep->errorInfo();
 echo $arr[2];
@@ -34,7 +34,7 @@ echo $arr[2];
 function createTable($tb)
 {
 	global $db;
-	$db->exec("CREATE TABLE $tb (baseID integer,name varchar(128),x integer,y integer,wrld integer,dlc integer)");
+	$db->exec("CREATE TABLE $tb (baseID integer,x integer,y integer,wrld integer,dlc integer)");
 }
 
 $db = new PDO('sqlite:newvegas.sqlite');

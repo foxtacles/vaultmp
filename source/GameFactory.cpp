@@ -14,6 +14,7 @@ Debug* GameFactory::debug;
 Database<Record> GameFactory::dbRecords;
 Database<Exterior> GameFactory::dbExteriors;
 Database<Weapon> GameFactory::dbWeapons;
+Database<Race> GameFactory::dbRaces;
 #endif
 
 void GameFactory::Initialize(unsigned char game)
@@ -27,12 +28,14 @@ void GameFactory::Initialize(unsigned char game)
 			dbRecords.initialize(DB_FALLOUT3, {"NPC_", "CREA", "ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "ENCH", "KEYM", "MISC", "NOTE", "WEAP", "CELL"});
 			dbExteriors.initialize(DB_FALLOUT3, {"exteriors"});
 			dbWeapons.initialize(DB_FALLOUT3, {"weapons"});
+			dbRaces.initialize(DB_FALLOUT3, {"races"});
 			break;
 
 		case NEWVEGAS:
 			dbRecords.initialize(DB_NEWVEGAS, {"NPC_", "CREA", "ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "CCRD", "CDCK", "CHIP", "CMNY", "ENCH", "IMOD", "KEYM", "MISC", "NOTE", "RCPE", "WEAP", "CELL"});
 			dbExteriors.initialize(DB_NEWVEGAS, {"exteriors"});
 			dbWeapons.initialize(DB_NEWVEGAS, {"weapons"});
+			dbRaces.initialize(DB_NEWVEGAS, {"races"});
 			break;
 
 		default:

@@ -24,6 +24,7 @@
 #include "vaultserver/Record.h"
 #include "vaultserver/Exterior.h"
 #include "vaultserver/Weapon.h"
+#include "vaultserver/Race.h"
 #endif
 
 #ifdef VAULTMP_DEBUG
@@ -78,6 +79,7 @@ class GameFactory
 		static Database<Record> dbRecords;
 		static Database<Exterior> dbExteriors;
 		static Database<Weapon> dbWeapons;
+		static Database<Race> dbRaces;
 #endif
 
 		static unsigned char GetType(Reference* reference) noexcept;

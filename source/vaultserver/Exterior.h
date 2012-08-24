@@ -31,7 +31,6 @@ class Exterior
 		unsigned int world;
 		signed int x;
 		signed int y;
-		string name;
 
 		Exterior(const Exterior&) = delete;
 		Exterior& operator=(const Exterior& p) = delete;
@@ -44,7 +43,6 @@ class Exterior
 		unsigned int GetWorld() const;
 		signed int GetX() const;
 		signed int GetY() const;
-		const string& GetName() const;
 
 		Exterior(const string& table, sqlite3_stmt* stmt);
 		// must never be called. only defined because vector requires it
