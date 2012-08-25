@@ -170,8 +170,8 @@ void BethesdaDelegator()
 {
 	if (delegate)
 	{
-		CallCommand Call = (CallCommand) delegated.at(8);
-		Call(delegated.at(0), delegated.at(1), delegated.at(2), delegated.at(3), delegated.at(4), delegated.at(5), delegated.at(6), delegated.at(7));
+		CallCommand Call = (CallCommand) delegated[8];
+		Call(delegated[0], delegated[1], delegated[2], delegated[3], delegated[4], delegated[5], delegated[6], delegated[7]);
 		delegate = false;
 	}
 }
@@ -425,20 +425,20 @@ void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
 	if (args.size() != 8)
 		return;
 
-	unsigned int reference = *((unsigned int*) args.at(2));
+	unsigned int reference = *((unsigned int*) args[2]);
 	unsigned short opcode;
 	void* _args;
 
-	if (*((unsigned int*) args.at(1)) == 0x0001001C)
+	if (*((unsigned int*) args[1]) == 0x0001001C)
 	{
-		opcode = *((unsigned short*)(((unsigned) args.at(1)) + 4));
-		_args = (void*)(((unsigned) args.at(1)) + 4 + 2 + 2 + 2);            // skip 0001001C, opcode, unk2, numargs
+		opcode = *((unsigned short*)(((unsigned) args[1]) + 4));
+		_args = (void*)(((unsigned) args[1]) + 4 + 2 + 2 + 2);            // skip 0001001C, opcode, unk2, numargs
 	}
 
 	else
 	{
-		opcode = *((unsigned short*) args.at(1));
-		_args = (void*)(((unsigned) args.at(1)) + 2 + 2 + 2);            // skip opcode, unk2, numargs
+		opcode = *((unsigned short*) args[1]);
+		_args = (void*)(((unsigned) args[1]) + 2 + 2 + 2);            // skip opcode, unk2, numargs
 	}
 
 	if (opcode == 0x00)
@@ -452,7 +452,7 @@ void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
 			return;
 	}
 
-	void* arg4 = args.at(4);
+	void* arg4 = args[4];
 	unsigned int base = (unsigned) arg4;
 
 	unsigned int** param1 = (unsigned int**)(base + 0x44);
@@ -494,7 +494,7 @@ void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
 	bool bigresult = false;
 
 	if ((opcode & VAULTFUNCTION) == VAULTFUNCTION)
-		bigresult = vaultfunction((void*) reference, args.at(6), _args, opcode);
+		bigresult = vaultfunction((void*) reference, args[6], _args, opcode);
 
 	else
 	{
@@ -512,14 +512,14 @@ void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
 		{
 			delegated.clear();
 			delegated.reserve(9);
-			delegated.push_back(args.at(0));
-			delegated.push_back(args.at(1));
+			delegated.push_back(args[0]);
+			delegated.push_back(args[1]);
 			delegated.push_back((void*) reference);
-			delegated.push_back((void*) *((unsigned int*) args.at(3)));
-			delegated.push_back(args.at(4));
+			delegated.push_back((void*) *((unsigned int*) args[3]));
+			delegated.push_back(args[4]);
 			delegated.push_back((void*) &arg4);
-			delegated.push_back(args.at(6));
-			delegated.push_back(args.at(7));
+			delegated.push_back(args[6]);
+			delegated.push_back(args[7]);
 			delegated.push_back(callAddr);
 			delegate = true;
 
@@ -530,7 +530,7 @@ void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
 		else
 		{
 			CallCommand Call = (CallCommand) callAddr;
-			Call(args.at(0), args.at(1), (void*) reference, (void*) * ((unsigned int*) args.at(3)), args.at(4), (void*) &arg4, args.at(6), args.at(7));
+			Call(args[0], args[1], (void*) reference, (void*) * ((unsigned int*) args[3]), args[4], (void*) &arg4, args[6], args[7]);
 		}
 	}
 
@@ -542,13 +542,13 @@ void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
 	if (!bigresult)
 	{
 		result[0] = PIPE_OP_RETURN;
-		memcpy(result + 5, args.at(6), sizeof(double));
+		memcpy(result + 5, args[6], sizeof(double));
 	}
 
 	else
 	{
 		result[0] = PIPE_OP_RETURN_BIG;
-		void* data = args.at(6);
+		void* data = args[6];
 		unsigned int size = *((unsigned int*) data);
 		unsigned char* _data = (unsigned char*) * ((unsigned int*)(((unsigned) data) + 4));
 
@@ -718,6 +718,21 @@ void PatchGame(HINSTANCE& silverlock)
 
 	if (silverlock == NULL)
 		DLLerror = true;
+	else
+	{
+		// FOSE authors thought it was a smart move to prevent disabling ESC and console key
+		if (game == FALLOUT3)
+		{
+			unsigned int codebase = (DWORD) silverlock + 0x1000;
+			unsigned char NOP[] = {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
+
+			// patch inlined ShouldIgnoreKey
+			SafeWriteBuf(codebase + 0x14222, NOP, sizeof(NOP));
+			SafeWriteBuf(codebase + 0x14260, NOP, sizeof(NOP));
+		}
+
+		// NVSE: "whatever, mods can be malicious in easier ways"
+	}
 
 	switch (game)
 	{
