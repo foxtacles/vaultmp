@@ -8,6 +8,95 @@ unsigned int Player::default_respawn = DEFAULT_PLAYER_RESPAWN;
 unsigned int Player::default_cell;
 #endif
 
+const map<unsigned char, pair<double, double>> Player::f3_default_values = {
+	{ActorVal_Energy, {50.0, 50.0}},
+	{ActorVal_Responsibility, {50.0, 50.0}},
+	{ActorVal_Strength, {5.0, 5.0}},
+	{ActorVal_Perception, {5.0, 5.0}},
+	{ActorVal_Endurance, {5.0, 5.0}},
+	{ActorVal_Charisma, {5.0, 5.0}},
+	{ActorVal_Intelligence, {5.0, 5.0}},
+	{ActorVal_Agility, {5.0, 5.0}},
+	{ActorVal_Luck, {5.0, 5.0}},
+	{ActorVal_ActionPoints, {75.0, 75.0}},
+	{ActorVal_CarryWeight, {200.0, 200.0}},
+	{ActorVal_CritChance, {5.0, 5.0}},
+	{ActorVal_Health, {200.0, 200.0}},
+	{ActorVal_MeleeDamage, {2.0, 2.0}},
+	{ActorVal_PoisonResistance, {20.0, 20.0}},
+	{ActorVal_RadResistance, {8.0, 8.0}},
+	{ActorVal_SpeedMultiplier, {100.0, 100.0}},
+	{ActorVal_Fatigue, {200.0, 200.0}},
+	{ActorVal_Head, {100.0, 100.0}},
+	{ActorVal_Torso, {100.0, 100.0}},
+	{ActorVal_LeftArm, {100.0, 100.0}},
+	{ActorVal_RightArm, {100.0, 100.0}},
+	{ActorVal_LeftLeg, {100.0, 100.0}},
+	{ActorVal_RightLeg, {100.0, 100.0}},
+	{ActorVal_Brain, {100.0, 100.0}},
+	{ActorVal_Barter, {15.0, 15.0}},
+	{ActorVal_BigGuns, {15.0, 15.0}},
+	{ActorVal_EnergyWeapons, {15.0, 15.0}},
+	{ActorVal_Explosives, {15.0, 15.0}},
+	{ActorVal_Lockpick, {15.0, 15.0}},
+	{ActorVal_Medicine, {15.0, 15.0}},
+	{ActorVal_MeleeWeapons, {15.0, 15.0}},
+	{ActorVal_Repair, {15.0, 15.0}},
+	{ActorVal_Science, {15.0, 15.0}},
+	{ActorVal_SmallGuns, {15.0, 15.0}},
+	{ActorVal_Sneak, {15.0, 15.0}},
+	{ActorVal_Speech, {15.0, 15.0}},
+	{ActorVal_Unarmed, {15.0, 15.0}},
+	{ActorVal_UnarmedDamage, {1.0, 1.25}},
+};
+
+const map<unsigned char, pair<double, double>> Player::fnv_default_values = {
+	{ActorVal_Energy, {50.0, 50.0}},
+	{ActorVal_Responsibility, {50.0, 50.0}},
+	{ActorVal_Strength, {5.0, 5.0}},
+	{ActorVal_Perception, {5.0, 5.0}},
+	{ActorVal_Endurance, {5.0, 5.0}},
+	{ActorVal_Charisma, {5.0, 5.0}},
+	{ActorVal_Intelligence, {5.0, 5.0}},
+	{ActorVal_Agility, {5.0, 5.0}},
+	{ActorVal_Luck, {5.0, 5.0}},
+	{ActorVal_ActionPoints, {80.0, 80.0}},
+	{ActorVal_CarryWeight, {200.0, 200.0}},
+	{ActorVal_CritChance, {5.0, 5.0}},
+	{ActorVal_Health, {200.0, 200.0}},
+	{ActorVal_MeleeDamage, {2.0, 2.0}},
+	{ActorVal_PoisonResistance, {20.0, 20.0}},
+	{ActorVal_RadResistance, {8.0, 8.0}},
+	{ActorVal_SpeedMultiplier, {100.0, 100.0}},
+	{ActorVal_Fatigue, {390.0, 390.0}},
+	{ActorVal_Head, {100.0, 100.0}},
+	{ActorVal_Torso, {100.0, 100.0}},
+	{ActorVal_LeftArm, {100.0, 100.0}},
+	{ActorVal_RightArm, {100.0, 100.0}},
+	{ActorVal_LeftLeg, {100.0, 100.0}},
+	{ActorVal_RightLeg, {100.0, 100.0}},
+	{ActorVal_Brain, {100.0, 100.0}},
+	{ActorVal_Barter, {15.0, 15.0}},
+	{ActorVal_BigGuns, {14.0, 14.0}},
+	{ActorVal_EnergyWeapons, {15.0, 15.0}},
+	{ActorVal_Explosives, {15.0, 15.0}},
+	{ActorVal_Lockpick, {15.0, 15.0}},
+	{ActorVal_Medicine, {15.0, 15.0}},
+	{ActorVal_MeleeWeapons, {15.0, 15.0}},
+	{ActorVal_Repair, {15.0, 15.0}},
+	{ActorVal_Science, {15.0, 15.0}},
+	{ActorVal_SmallGuns, {15.0, 15.0}},
+	{ActorVal_Sneak, {15.0, 15.0}},
+	{ActorVal_Speech, {15.0, 15.0}},
+	{ActorVal_Unarmed, {15.0, 15.0}},
+	{ActorVal_UnarmedDamage, {1.0, 1.25}},
+};
+
+const map<unsigned int, tuple<unsigned int, double, bool, bool, bool>> Player::default_items = {
+	{0x00015038, tuple<unsigned int, double, bool, bool, bool>{1, 100.0, true, true, true}}, // Pip-Boy 3000
+	{0x00025B83, tuple<unsigned int, double, bool, bool, bool>{1, 100.0, true, true, true}}, // Pip-Boy Gloves
+};
+
 #ifdef VAULTMP_DEBUG
 Debug* Player::debug;
 #endif
@@ -15,6 +104,27 @@ Debug* Player::debug;
 Player::Player(unsigned int refID, unsigned int baseID) : Actor(refID, baseID)
 {
 	initialize();
+
+	const auto& values = (API::GetGameCode() == FALLOUT3) ? f3_default_values : fnv_default_values;
+
+	for (const auto& value : values)
+	{
+		this->SetActorBaseValue(value.first, value.second.first);
+		this->SetActorValue(value.first, value.second.second);
+	}
+
+	for (const auto& item : default_items)
+	{
+		NetworkID id = GameFactory::CreateInstance(ID_ITEM, item.first);
+		FactoryObject reference = GameFactory::GetObject(id);
+		Item* _item = vaultcast<Item>(reference);
+		_item->SetItemCount(get<0>(item.second));
+		_item->SetItemCondition(get<1>(item.second));
+		_item->SetItemEquipped(get<2>(item.second));
+		_item->SetItemSilent(get<3>(item.second));
+		_item->SetItemStick(get<4>(item.second));
+		this->AddItem(id);
+	}
 }
 
 Player::Player(const pDefault* packet) : Actor(PacketFactory::Pop<pPacket>(packet))

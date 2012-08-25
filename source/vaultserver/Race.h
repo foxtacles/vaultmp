@@ -31,7 +31,6 @@ class Race
 
 	public:
 		static const Race& Lookup(unsigned int baseID);
-		static const Race& Lookup(unsigned int world, double X, double Y);
 
 		unsigned int GetBase() const;
 		bool GetChild() const;

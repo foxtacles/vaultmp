@@ -54,7 +54,7 @@ Exterior::~Exterior()
 
 const Exterior& Exterior::Lookup(unsigned int baseID)
 {
-	unordered_map<unsigned int, const Exterior*>::iterator it = cells.find(baseID);
+	auto it = cells.find(baseID);
 
 	if (it != cells.end())
 		return *it->second;
@@ -67,7 +67,7 @@ const Exterior& Exterior::Lookup(unsigned int world, double X, double Y)
 	signed int x = floor(X / size);
 	signed int y = floor(Y / size);
 
-	vector<const Exterior*>::iterator it = find_if(worlds[world].begin(), worlds[world].end(), [=](const Exterior* cell) { return cell->x == x && cell->y == y; });
+	auto it = find_if(worlds[world].begin(), worlds[world].end(), [=](const Exterior* cell) { return cell->x == x && cell->y == y; });
 
 	if (it != worlds[world].end())
 		return **it;

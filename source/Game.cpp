@@ -518,45 +518,36 @@ void Game::LoadEnvironment()
 	{
 		FactoryObject reference = GameFactory::GetObject(id);
 
-		if (reference->GetReference() != PLAYER_REFERENCE)
+		if (!reference->IsPersistent())
+			reference->SetReference(0x00000000);
+
+		unsigned char type = reference.GetType();
+
+		switch (type)
 		{
-			if (!reference->IsPersistent())
-				reference->SetReference(0x00000000);
+			case ID_OBJECT:
+				NewObject(reference);
+				break;
 
-			unsigned char type = reference.GetType();
+			case ID_ITEM:
+				if (!vaultcast<Item>(reference)->GetItemContainer())
+					NewItem(reference);
+				break;
 
-			switch (type)
-			{
-				case ID_OBJECT:
-					NewObject(reference);
-					break;
+			case ID_CONTAINER:
+				NewContainer(reference);
+				break;
 
-				case ID_ITEM:
-					if (!vaultcast<Item>(reference)->GetItemContainer())
-						NewItem(reference);
-					break;
+			case ID_ACTOR:
+				NewActor(reference);
+				break;
 
-				case ID_CONTAINER:
-					NewContainer(reference);
-					break;
+			case ID_PLAYER:
+				NewPlayer(reference);
+				break;
 
-				case ID_ACTOR:
-					NewActor(reference);
-					break;
-
-				case ID_PLAYER:
-					NewPlayer(reference);
-					break;
-
-				default:
-					throw VaultException("Can't create object of unknown type %02X", type);
-			}
-		}
-		else
-		{
-			// this needs to be promoted to a true NewPlayer call as soon as we have default player initialization
-			SetName(reference);
-			RemoveAllItemsEx(reference);
+			default:
+				throw VaultException("Can't create object of unknown type %02X", type);
 		}
 	}
 }
@@ -622,22 +613,25 @@ void Game::NewObject(FactoryObject& reference)
 	SetAngle(reference);
 
 	// experimental
-	AsyncDispatch([=]
+	if (refID != PLAYER_REFERENCE)
 	{
-		try
+		AsyncDispatch([=]
 		{
-			this_thread::sleep_for(chrono::seconds(1));
+			try
+			{
+				this_thread::sleep_for(chrono::seconds(1));
 
-			auto objects = GameFactory::GetMultiple(vector<unsigned int>{refID, PLAYER_REFERENCE});
+				auto objects = GameFactory::GetMultiple(vector<unsigned int>{refID, PLAYER_REFERENCE});
 
-			Object* object = vaultcast<Object>(objects[0]);
-			Player* player = vaultcast<Player>(objects[1]);
+				Object* object = vaultcast<Object>(objects[0]);
+				Player* player = vaultcast<Player>(objects[1]);
 
-			if (player->GetGameCell() == object->GetNetworkCell())
-				MoveTo(objects[0], objects[1], true);
-		}
-		catch (...) {}
-	});
+				if (player->GetGameCell() == object->GetNetworkCell())
+					MoveTo(objects[0], objects[1], true);
+			}
+			catch (...) {}
+		});
+	}
 
 	// maybe more
 }
@@ -681,8 +675,6 @@ void Game::NewActor(FactoryObject& reference)
 {
 	NewContainer(reference);
 
-	SetRestrained(reference, true);
-
 	vector<unsigned char> values = API::RetrieveAllValues();
 
 	for (unsigned char value : values)
@@ -693,17 +685,22 @@ void Game::NewActor(FactoryObject& reference)
 
 	Actor* actor = vaultcast<Actor>(reference);
 
-	if (actor->GetActorAlerted())
-		SetActorAlerted(reference)();
+	if (actor->GetReference() != PLAYER_REFERENCE)
+	{
+		SetRestrained(reference, true);
 
-	if (actor->GetActorSneaking())
-		SetActorSneaking(reference)();
+		if (actor->GetActorAlerted())
+			SetActorAlerted(reference)();
 
-	if (actor->GetActorMovingAnimation() != AnimGroup_Idle)
-		SetActorMovingAnimation(reference);
+		if (actor->GetActorSneaking())
+			SetActorSneaking(reference)();
 
-	if (actor->GetActorWeaponAnimation() != AnimGroup_Idle)
-		SetActorWeaponAnimation(reference);
+		if (actor->GetActorMovingAnimation() != AnimGroup_Idle)
+			SetActorMovingAnimation(reference);
+
+		if (actor->GetActorWeaponAnimation() != AnimGroup_Idle)
+			SetActorWeaponAnimation(reference);
+	}
 }
 
 void Game::NewPlayer(FactoryObject& reference)

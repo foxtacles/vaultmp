@@ -43,6 +43,10 @@ class Player : public Actor
 		Value<unsigned int> player_Cell;
 #endif
 
+		static const map<unsigned char, pair<double, double>> f3_default_values;
+		static const map<unsigned char, pair<double, double>> fnv_default_values;
+		static const map<unsigned int, tuple<unsigned int, double, bool, bool, bool>> default_items;
+
 		unordered_map<unsigned char, pair<Value<unsigned char>, Value<bool>>> player_Controls;
 
 		void initialize();

@@ -408,6 +408,8 @@
 		<Unit filename="PAWN.h" />
 		<Unit filename="Public.cpp" />
 		<Unit filename="Public.h" />
+		<Unit filename="Race.cpp" />
+		<Unit filename="Race.h" />
 		<Unit filename="Record.cpp" />
 		<Unit filename="Record.h" />
 		<Unit filename="Script.cpp" />

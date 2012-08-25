@@ -45,6 +45,16 @@ Race::~Race()
 	races.erase(baseID);
 }
 
+const Race& Race::Lookup(unsigned int baseID)
+{
+	auto it = races.find(baseID);
+
+	if (it != races.end())
+		return *it->second;
+
+	throw VaultException("No race with baseID %08X found", baseID);
+}
+
 unsigned int Race::GetBase() const
 {
 	return baseID;

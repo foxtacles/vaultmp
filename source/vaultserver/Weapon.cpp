@@ -43,7 +43,7 @@ Weapon::~Weapon()
 
 const Weapon& Weapon::Lookup(unsigned int baseID)
 {
-	unordered_map<unsigned int, const Weapon*>::iterator it = weapons.find(baseID);
+	auto it = weapons.find(baseID);
 
 	if (it != weapons.end())
 		return *it->second;
