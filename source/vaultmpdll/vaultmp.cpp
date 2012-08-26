@@ -36,6 +36,8 @@ static QueueUIMessage_FalloutNV QueueMessage_FalloutNV;
 
 static void PatchGame(HINSTANCE& silverlock);
 static void BethesdaDelegator();
+static void ToggleRespawn();
+static void RespawnDetour();
 static vector<void*> delegated;
 
 typedef void (__stdcall * _GetSystemTimeAsFileTime)(LPFILETIME * fileTime);
@@ -45,6 +47,7 @@ static HINSTANCE silverlock = NULL;
 static HINSTANCE vaultgui = NULL;
 
 static bool delegate = false;
+static bool respawn = true;
 static bool DLLerror = false;
 static unsigned char game = 0x00;
 
@@ -55,6 +58,9 @@ static const unsigned FalloutNVpatch_delegatorCall_src = 0x0086E64A;
 static const unsigned FalloutNVpatch_delegatorCall_dest = (unsigned)& BethesdaDelegator;
 static const unsigned FalloutNVpatch_noRespawn_NOP = 0x00851304; // 2x NOP
 static const unsigned FalloutNVpatch_noRespawn_jmp = 0x0093FF83;
+static const unsigned FalloutNVpatch_noRespawn_call_src = 0x0093FF85;
+static const unsigned FalloutNVpatch_noRespawn_call_dest = 0x007D0A70;
+static const unsigned FalloutNVpatch_noRespawn_call_detour = (unsigned)& RespawnDetour;
 
 static const unsigned Fallout3patch_PlayGroup = 0x0045F704;
 static const unsigned Fallout3patch_delegator_src = 0x006EEC86;
@@ -64,6 +70,7 @@ static const unsigned Fallout3patch_delegatorCall_dest = (unsigned)& BethesdaDel
 static const unsigned Fallout3patch_noRespawn_NOP = 0x006D5965; // 2x NOP
 static const unsigned Fallout3patch_noRespawn_jmp_src = 0x0078B230;
 static const unsigned Fallout3patch_noRespawn_jmp_dest = 0x0078B2B9;
+static const unsigned Fallout3patch_noRespawn_jmp_detour = (unsigned)& RespawnDetour;
 
 static const unsigned FalloutNVpatch_disableNAM = 0x01018814;
 static const unsigned FalloutNVpatch_pluginsVMP = 0x0108282D;
@@ -174,6 +181,14 @@ void BethesdaDelegator()
 		Call(delegated[0], delegated[1], delegated[2], delegated[3], delegated[4], delegated[5], delegated[6], delegated[7]);
 		delegate = false;
 	}
+}
+
+void RespawnDetour()
+{
+	ToggleRespawn();
+
+	if (game == NEWVEGAS)
+		reinterpret_cast<void(*)()>(FalloutNVpatch_noRespawn_call_dest)();
 }
 
 bool vaultfunction(void* reference, void* result, void* args, unsigned short opcode)
@@ -414,6 +429,15 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 			break;
 		}
 
+		case 0x0006 | VAULTFUNCTION: // ForceRespawn - returns to the main screen
+		{
+			ToggleRespawn();
+
+			while (respawn)
+				Sleep(1);
+			break;
+		}
+
 		default:
 			break;
 	}
@@ -525,7 +549,7 @@ void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
 			delegate = true;
 
 			while (delegate)
-				Sleep(2);
+				Sleep(1);
 		}
 
 		else
@@ -695,6 +719,51 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 	return ((DWORD) 0);
 }
 
+void ToggleRespawn()
+{
+	if (respawn)
+	{
+		respawn = false;
+
+		switch (game)
+		{
+			case FALLOUT3:
+				SafeWrite8(Fallout3patch_noRespawn_NOP, 0x90);  // NOP
+				SafeWrite8(Fallout3patch_noRespawn_NOP + 1, 0x90);  // NOP
+				WriteRelJump(Fallout3patch_noRespawn_jmp_src, Fallout3patch_noRespawn_jmp_dest);
+				break;
+			case NEWVEGAS:
+				SafeWrite8(FalloutNVpatch_noRespawn_NOP, 0x90);  // NOP
+				SafeWrite8(FalloutNVpatch_noRespawn_NOP + 1, 0x90);  // NOP
+				SafeWrite8(FalloutNVpatch_noRespawn_jmp, 0xEB);   // JMP SHORT
+				SafeWrite8(FalloutNVpatch_noRespawn_jmp + 1, 0x05);   // JMP SHORT
+				WriteRelCall(FalloutNVpatch_noRespawn_call_src, FalloutNVpatch_noRespawn_call_dest);
+				break;
+		}
+	}
+	else
+	{
+		respawn = true;
+
+		switch (game)
+		{
+			case FALLOUT3:
+				SafeWrite8(Fallout3patch_noRespawn_NOP, 0x75);  // JNZ
+				SafeWrite8(Fallout3patch_noRespawn_NOP + 1, 0x03);
+				SafeWrite8(Fallout3patch_noRespawn_jmp_src + 5, 0x90);  // NOP (original JNZ instruction is 6 bytes, our CALL/JMP only 5. fix required for call return)
+				WriteRelCall(Fallout3patch_noRespawn_jmp_src, Fallout3patch_noRespawn_jmp_detour);
+				break;
+			case NEWVEGAS:
+				SafeWrite8(FalloutNVpatch_noRespawn_NOP, 0x75);  // JNZ
+				SafeWrite8(FalloutNVpatch_noRespawn_NOP + 1, 0x04);
+				SafeWrite8(FalloutNVpatch_noRespawn_jmp, 0x90);   // NOP
+				SafeWrite8(FalloutNVpatch_noRespawn_jmp + 1, 0x90);   // NOP
+				WriteRelCall(FalloutNVpatch_noRespawn_call_src, FalloutNVpatch_noRespawn_call_detour);
+				break;
+		}
+	}
+}
+
 void PatchGame(HINSTANCE& silverlock)
 {
 	TCHAR curdir[MAX_PATH+1];
@@ -746,12 +815,9 @@ void PatchGame(HINSTANCE& silverlock)
 			SafeWrite8(Fallout3patch_delegator_dest, 0x51);   // PUSH ECX
 			SafeWrite8(Fallout3patch_delegatorCall_src + 5, 0x59);   // POP ECX
 			SafeWrite8(Fallout3patch_PlayGroup, 0xEB);   // JMP SHORT
-			SafeWrite8(Fallout3patch_noRespawn_NOP, 0x90);  // NOP
-			SafeWrite8(Fallout3patch_noRespawn_NOP + 1, 0x90);  // NOP
 
 			WriteRelCall(Fallout3patch_delegatorCall_src, Fallout3patch_delegatorCall_dest);
 			WriteRelCall(Fallout3patch_delegator_src, Fallout3patch_delegator_dest);
-			WriteRelJump(Fallout3patch_noRespawn_jmp_src, Fallout3patch_noRespawn_jmp_dest);
 
 			SafeWrite32(Fallout3patch_pluginsVMP, *(DWORD*)".vmp"); // redirect Plugins.txt
 
@@ -767,9 +833,6 @@ void PatchGame(HINSTANCE& silverlock)
 			SafeWrite8(FalloutNVpatch_delegator_dest, 0x51);   // PUSH ECX
 			SafeWrite8(FalloutNVpatch_delegatorCall_src + 5, 0x59);   // POP ECX
 			SafeWrite8(FalloutNVpatch_PlayGroup, 0xEB);   // JMP SHORT
-			SafeWrite8(FalloutNVpatch_noRespawn_NOP, 0x90);  // NOP
-			SafeWrite8(FalloutNVpatch_noRespawn_NOP + 1, 0x90);  // NOP
-			SafeWrite8(FalloutNVpatch_noRespawn_jmp, 0xEB);   // JMP SHORT
 
 			WriteRelCall(FalloutNVpatch_delegatorCall_src, FalloutNVpatch_delegatorCall_dest);
 			WriteRelCall(FalloutNVpatch_delegator_src, FalloutNVpatch_delegator_dest);
@@ -780,6 +843,8 @@ void PatchGame(HINSTANCE& silverlock)
 			break;
 		}
 	}
+
+	ToggleRespawn();
 }
 
 void Initialize()

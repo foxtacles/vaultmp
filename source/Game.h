@@ -242,6 +242,11 @@ class Game
 		 * \brief Disable player controls
 		 */
 		static void DisablePlayerControls(bool movement = true, bool pipboy = true, bool fighting = true, bool pov = true, bool looking = false, bool rollover = false, bool sneaking = false);
+		/**
+		 * \brief Forces the respawn ('back to menu') for the player
+		 */
+		static void ForceRespawn();
+
 
 		/**
 		 * Network functions

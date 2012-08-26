@@ -248,6 +248,7 @@ namespace Values
 		Func_ScanContainer              = 0x0003 | VAULTFUNCTION,
 		Func_UIMessage                  = 0x0004 | VAULTFUNCTION,
 		Func_RemoveAllItemsEx			= 0x0005 | VAULTFUNCTION,
+		Func_ForceRespawn				= 0x0006 | VAULTFUNCTION,
 	};
 
 	enum ActorVals

@@ -51,6 +51,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 		{
 			switch (opcode)
 			{
+				case Func_ForceRespawn:
 				case Func_RemoveAllItemsEx:
 				case Func_CenterOnCell:
 				case Func_CenterOnExterior:
@@ -293,6 +294,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 
 			case Func_CenterOnCell:
 			case Func_CenterOnExterior:
+			case Func_ForceRespawn:
 			case Fallout3::Func_CenterOnWorld:
 			case FalloutNV::Func_CenterOnWorld:
 			case Fallout3::Func_Load:
@@ -565,7 +567,12 @@ void Game::LoadEnvironment()
 		FactoryObject reference = GameFactory::GetObject(id);
 
 		if (!reference->IsPersistent())
-			reference->SetReference(0x00000000);
+		{
+			// TODO critical section
+			Object* object = vaultcast<Object>(reference);
+			cellRefs[object->GetNetworkCell()][FormType_Inventory].erase(object->GetReference());
+			object->SetReference(0x00000000);
+		}
 
 		unsigned char type = reference.GetType();
 
@@ -1328,6 +1335,27 @@ void Game::DisablePlayerControls(bool movement, bool pipboy, bool fighting, bool
 	Interface::EndDynamic();
 }
 
+void Game::ForceRespawn()
+{
+	auto store = make_shared<Shared<bool>>();
+	unsigned int key = Lockable::Share(store);
+
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("ForceRespawn", {}, key);
+
+	Interface::EndDynamic();
+
+	try
+	{
+		store.get()->get_future(chrono::seconds(5));
+	}
+	catch (exception& e)
+	{
+		throw VaultException("Respawning failed (%s)", e.what());
+	}
+}
+
 void Game::net_SetPos(const FactoryObject& reference, double X, double Y, double Z)
 {
 	Object* object = vaultcast<Object>(reference);
@@ -1549,9 +1577,13 @@ void Game::net_SetActorDead(FactoryObject& reference, bool dead, unsigned short 
 		{
 			NetworkID id = actor->GetNetworkID();
 			GameFactory::LeaveReference(reference);
-			// enable death to menu code...
-			Game::spawnFunc();
-			Game::LoadEnvironment();
+
+			ForceRespawn();
+
+			this_thread::sleep_for(chrono::seconds(1));
+
+			spawnFunc();
+			LoadEnvironment();
 
 			Network::Queue(NetworkResponse{Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_UPDATE_DEAD>(id, false, 0, 0),
