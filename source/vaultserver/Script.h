@@ -64,7 +64,7 @@ class Script
 		void (*fOnActorUnequipItem)(NetworkID, unsigned int, double);
 		void (*fOnActorDropItem)(NetworkID, unsigned int, unsigned int, double);
 		void (*fOnActorPickupItem)(NetworkID, unsigned int, unsigned int, double);
-		void (*fOnPlayerDisconnect)(NetworkID, pTypes);
+		void (*fOnPlayerDisconnect)(NetworkID, Reason);
 		unsigned int (*fOnPlayerRequestGame)(NetworkID);
 		bool (*fOnPlayerChat)(NetworkID, char*);
 		bool (*fOnClientAuthenticate)(string, string);
@@ -99,7 +99,7 @@ class Script
 		static void OnActorUnequipItem(const FactoryObject& reference, unsigned int baseID, double condition);
 		static void OnActorDropItem(const FactoryObject& reference, unsigned int baseID, unsigned int count, double condition);
 		static void OnActorPickupItem(const FactoryObject& reference, unsigned int baseID, unsigned int count, double condition);
-		static void OnPlayerDisconnect(const FactoryObject& reference, pTypes reason);
+		static void OnPlayerDisconnect(const FactoryObject& reference, Reason reason);
 		static unsigned int OnPlayerRequestGame(const FactoryObject& reference);
 		static bool OnPlayerChat(const FactoryObject& reference, string& message);
 		static bool OnClientAuthenticate(string name, string pwd);

@@ -250,7 +250,8 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 				}
 
 				unsigned char chat_keys = (GetAsyncKeyState(0x54) & 0x8000) ? 0x01 : 0x00; // T
-				chat_keys |= ((GetAsyncKeyState(VK_ESCAPE) & 0x8000) || (GetAsyncKeyState(VK_RETURN) & 0x8000)) ? 0x02 : 0x00;
+				chat_keys |= (GetAsyncKeyState(VK_ESCAPE) & 0x8000) ? 0x02 : 0x00;
+				chat_keys |= (GetAsyncKeyState(VK_RETURN) & 0x8000) ? 0x04 : 0x00;
 				memcpy((void*)((unsigned) result + 7), &chat_keys, 1);
 			}
 

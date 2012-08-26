@@ -47,11 +47,15 @@ enum class pTypes : unsigned char
 	ID_UPDATE_CONTROL,
 	ID_UPDATE_INTERIOR,
 	ID_UPDATE_EXTERIOR,
+};
 
-	ID_REASON_KICK,
+enum class Reason : unsigned char
+{
+	ID_REASON_KICK = 0,
 	ID_REASON_BAN,
 	ID_REASON_ERROR,
 	ID_REASON_DENIED,
+	ID_REASON_QUIT,
 	ID_REASON_NONE,
 };
 
@@ -627,7 +631,7 @@ class pGameEnd : public pDefault
 		friend class PacketFactory;
 
 	private:
-		pGameEnd(pTypes reason) : pDefault(pTypes::ID_GAME_END)
+		pGameEnd(Reason reason) : pDefault(pTypes::ID_GAME_END)
 		{
 			construct(reason);
 		}
@@ -636,7 +640,7 @@ class pGameEnd : public pDefault
 
 		}
 
-		void access(pTypes& reason) const
+		void access(Reason& reason) const
 		{
 			deconstruct(reason);
 		}

@@ -24,7 +24,7 @@ NetworkResponse NetworkClient::ProcessEvent(unsigned char id)
 		case ID_EVENT_CLIENT_ERROR:
 		case ID_EVENT_INTERFACE_LOST:
 			return NetworkResponse{Network::CreateResponse(
-				PacketFactory::Create<pTypes::ID_GAME_END>(pTypes::ID_REASON_ERROR),
+				PacketFactory::Create<pTypes::ID_GAME_END>(Interface::HasShutdown() ? Reason::ID_REASON_QUIT : Reason::ID_REASON_ERROR),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Game::server)
 			};
 
@@ -135,24 +135,24 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
 				case pTypes::ID_GAME_END:
 				{
-					pTypes reason;
+					Reason reason;
 					PacketFactory::Access<pTypes::ID_GAME_END>(packet, reason);
 
 					switch (reason)
 					{
-						case pTypes::ID_REASON_KICK:
+						case Reason::ID_REASON_KICK:
 							throw VaultException("You have been kicked from the server");
 
-						case pTypes::ID_REASON_BAN:
+						case Reason::ID_REASON_BAN:
 							throw VaultException("You have been banned from the server");
 
-						case pTypes::ID_REASON_ERROR:
+						case Reason::ID_REASON_ERROR:
 							throw VaultException("The server encountered an internal error");
 
-						case pTypes::ID_REASON_DENIED:
+						case Reason::ID_REASON_DENIED:
 							throw VaultException("Your authentication has been denied");
 
-						case pTypes::ID_REASON_NONE:
+						case Reason::ID_REASON_NONE:
 							break;
 					}
 

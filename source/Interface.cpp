@@ -5,6 +5,7 @@ PipeServer* Interface::pipeClient;
 Interface::ResultHandler Interface::resultHandler;
 atomic<bool> Interface::endThread;
 atomic<bool> Interface::wakeup;
+atomic<bool> Interface::shutdown;
 bool Interface::initialized;
 Interface::PriorityMap Interface::priorityMap;
 Interface::StaticCommandList Interface::static_cmdlist;
@@ -25,6 +26,7 @@ bool Interface::Initialize(ResultHandler resultHandler, bool steam)
 	{
 		endThread = false;
 		wakeup = false;
+		shutdown = false;
 
 		Interface::resultHandler = resultHandler;
 
@@ -91,9 +93,20 @@ void Interface::SetDebugHandler(Debug* debug)
 }
 #endif
 
+void Interface::SignalEnd()
+{
+	endThread = true;
+	shutdown = true;
+}
+
 bool Interface::IsAvailable()
 {
 	return (wakeup && !endThread && hCommandThreadReceive.joinable() && hCommandThreadSend.joinable());
+}
+
+bool Interface::HasShutdown()
+{
+	return shutdown;
 }
 
 void Interface::StartSetup()
@@ -248,7 +261,12 @@ void Interface::CommandThreadReceive(bool steam)
 					vector<CommandResult> result = API::Translate(buffer);
 
 					for (CommandResult& _result : result)
+					{
 						resultHandler(get<0>(_result), get<1>(_result), get<2>(_result), get<3>(_result));
+
+						if (endThread)
+							break;
+					}
 				}
 				else if (code == PIPE_SYS_WAKEUP)
 				{

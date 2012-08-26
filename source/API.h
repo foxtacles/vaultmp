@@ -358,6 +358,12 @@ namespace Values
 		ControlCode_Grab                = 27,
 	};
 
+	enum ScanCodes
+	{
+		ScanCode_Escape					= 1,
+		// ...
+	};
+
 	enum FormTypes
 	{
 		// reference walking
@@ -386,8 +392,10 @@ namespace Values
 			Func_GetFirstRef                = 0x14AF,
 			Func_GetNextRef                 = 0x14B0,
 			Func_GetControl                 = 0x144E,
-			Func_EnableControl				= 0x145E,
 			Func_DisableControl				= 0x145D,
+			Func_EnableControl				= 0x145E,
+			Func_DisableKey					= 0x143E,
+			Func_EnableKey					= 0x143F,
 			Func_GetRefCount				= 0x14C3,
 			Func_SetRefCount				= 0x14C4,
 			Func_GetBaseObject				= 0x1416,
@@ -450,8 +458,10 @@ namespace Values
 			Func_GetFirstRef                = 0x1471,
 			Func_GetNextRef                 = 0x1472,
 			Func_GetControl                 = 0x145D,
-			Func_EnableControl				= 0x1463,
 			Func_DisableControl				= 0x1462,
+			Func_EnableControl				= 0x1463,
+			Func_DisableKey					= 0x1457,
+			Func_EnableKey					= 0x1458,
 			Func_GetRefCount				= 0x1476,
 			Func_SetRefCount				= 0x1477,
 			Func_GetBaseObject				= 0x1403,

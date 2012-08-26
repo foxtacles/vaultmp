@@ -75,6 +75,16 @@ class Interface : public API
 					return convert;
 				}
 
+				static vector<string> make(const vector<unsigned int>& str)
+				{
+					vector<string> convert;
+
+					for (unsigned int param : str)
+						convert.emplace_back(Utils::toString(param));
+
+					return convert;
+				}
+
 				static vector<string> make(signed int str)
 				{
 					return vector<string>{Utils::toString(str)};
@@ -99,6 +109,7 @@ class Interface : public API
 				RawParameter(string str) : data({str}) {}
 				RawParameter(const vector<string>& str) : data(str) {}
 				RawParameter(const vector<unsigned char>& str) : data(make(str)) {}
+				RawParameter(const vector<unsigned int>& str) : data(make(str)) {}
 				RawParameter(signed int str) : data(make(str)) {}
 				RawParameter(unsigned int str) : data(make(str)) {}
 				RawParameter(double str) : data(make(str)) {}
@@ -178,6 +189,7 @@ class Interface : public API
 
 		static atomic<bool> endThread;
 		static atomic<bool> wakeup;
+		static atomic<bool> shutdown;
 		static bool initialized;
 		static thread hCommandThreadReceive;
 		static thread hCommandThreadSend;
@@ -214,9 +226,17 @@ class Interface : public API
 		 */
 		static void Terminate();
 		/**
+		 * \brief Signals the interface to shutdown
+		 */
+		static void SignalEnd();
+		/**
 		 * \brief Checks if the Interface is up and running
 		 */
 		static bool IsAvailable();
+		/**
+		 * \brief Returns true if the interface has been shutdown properly
+		 */
+		static bool HasShutdown();
 
 		/**
 		 * \brief Starts a setup Interface session

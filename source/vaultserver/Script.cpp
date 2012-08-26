@@ -599,7 +599,7 @@ void Script::OnActorPickupItem(const FactoryObject& reference, unsigned int base
 	}
 }
 
-void Script::OnPlayerDisconnect(const FactoryObject& reference, pTypes reason)
+void Script::OnPlayerDisconnect(const FactoryObject& reference, Reason reason)
 {
 	NetworkID id = reference->GetNetworkID();
 

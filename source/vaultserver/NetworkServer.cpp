@@ -21,7 +21,7 @@ NetworkResponse NetworkServer::ProcessEvent(unsigned char id)
 	{
 		case ID_EVENT_SERVER_ERROR:
 			return NetworkResponse{Network::CreateResponse(
-				PacketFactory::Create<pTypes::ID_GAME_END>(pTypes::ID_REASON_ERROR),
+				PacketFactory::Create<pTypes::ID_GAME_END>(Reason::ID_REASON_ERROR),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 			};
 
@@ -72,7 +72,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					break;
 			}
 
-			response = Server::Disconnect(data->guid, pTypes::ID_REASON_ERROR);
+			response = Server::Disconnect(data->guid, data->data[0] == ID_DISCONNECTION_NOTIFICATION ? Reason::ID_REASON_NONE : Reason::ID_REASON_ERROR);
 			break;
 		}
 
@@ -132,7 +132,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 
 				case pTypes::ID_GAME_END:
 				{
-					pTypes reason;
+					Reason reason;
 					PacketFactory::Access<pTypes::ID_GAME_END>(packet, reason);
 					response = Server::Disconnect(data->guid, reason);
 					break;

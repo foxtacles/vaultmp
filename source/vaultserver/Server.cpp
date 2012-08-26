@@ -37,7 +37,7 @@ NetworkResponse Server::Authenticate(RakNetGUID guid, string name, string pwd)
 	else
 	{
 		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_GAME_END>(pTypes::ID_REASON_DENIED),
+			PacketFactory::Create<pTypes::ID_GAME_END>(Reason::ID_REASON_DENIED),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 
@@ -114,7 +114,7 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 	return NetworkResponse(make_move_iterator(begin(response)), make_move_iterator(end(response)));
 }
 
-NetworkResponse Server::Disconnect(RakNetGUID guid, pTypes reason)
+NetworkResponse Server::Disconnect(RakNetGUID guid, Reason reason)
 {
 	NetworkResponse response;
 	Client* client = Client::GetClientFromGUID(guid);

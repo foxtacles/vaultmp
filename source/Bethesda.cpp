@@ -335,6 +335,9 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
 					Network::Dispatch(peer, NetworkClient::ProcessEvent(ID_EVENT_INTERFACE_LOST));
 					peer->CloseConnection(server, true, CHANNEL_SYSTEM, HIGH_PRIORITY);
 					query = false;
+
+					if (!Interface::HasShutdown())
+						throw VaultException("Interface lost, game closed unexpectedly");
 				}
 
 				this_thread::sleep_for(chrono::milliseconds(1));

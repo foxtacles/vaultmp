@@ -554,8 +554,10 @@ void API::Initialize(unsigned char game)
 	DefineFunction("GetFirstRef", "III", Fallout3::Func_GetFirstRef, FALLOUT3);
 	DefineFunction("GetNextRef", "", Fallout3::Func_GetNextRef, FALLOUT3);
 	DefineFunction("GetControl", "x", Fallout3::Func_GetControl, FALLOUT3);
-	DefineFunction("EnableControl", "x", Fallout3::Func_EnableControl, FALLOUT3);
 	DefineFunction("DisableControl", "x", Fallout3::Func_DisableControl, FALLOUT3);
+	DefineFunction("EnableControl", "x", Fallout3::Func_EnableControl, FALLOUT3);
+	DefineFunction("DisableKey", "i", Fallout3::Func_DisableKey, FALLOUT3);
+	DefineFunction("EnableKey", "i", Fallout3::Func_EnableKey, FALLOUT3);
 	DefineFunction("GetRefCount", "r", Fallout3::Func_GetRefCount, FALLOUT3);
 	DefineFunction("SetRefCount", "ri", Fallout3::Func_SetRefCount, FALLOUT3);
 	DefineFunction("GetBaseObject", "r", Fallout3::Func_GetBaseObject, FALLOUT3);
@@ -567,8 +569,10 @@ void API::Initialize(unsigned char game)
 	DefineFunction("GetFirstRef", "III", FalloutNV::Func_GetFirstRef, NEWVEGAS);
 	DefineFunction("GetNextRef", "", FalloutNV::Func_GetNextRef, NEWVEGAS);
 	DefineFunction("GetControl", "x", FalloutNV::Func_GetControl, NEWVEGAS);
-	DefineFunction("EnableControl", "x", FalloutNV::Func_EnableControl, NEWVEGAS);
 	DefineFunction("DisableControl", "x", FalloutNV::Func_DisableControl, NEWVEGAS);
+	DefineFunction("EnableControl", "x", FalloutNV::Func_EnableControl, NEWVEGAS);
+	DefineFunction("DisableKey", "i", FalloutNV::Func_DisableKey, NEWVEGAS);
+	DefineFunction("EnableKey", "i", FalloutNV::Func_EnableKey, NEWVEGAS);
 	DefineFunction("GetRefCount", "r", FalloutNV::Func_GetRefCount, NEWVEGAS);
 	DefineFunction("SetRefCount", "ri", FalloutNV::Func_SetRefCount, NEWVEGAS);
 	DefineFunction("GetBaseObject", "r", FalloutNV::Func_GetBaseObject, NEWVEGAS);

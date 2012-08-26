@@ -282,6 +282,14 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				GetControl(self, getFrom<double, int>(info.at(1)), result);
 				break;
 
+			case Fallout3::Func_DisableKey:
+			case FalloutNV::Func_DisableKey:
+				break;
+
+			case Fallout3::Func_EnableKey:
+			case FalloutNV::Func_EnableKey:
+				break;
+
 			case Func_CenterOnCell:
 			case Func_CenterOnExterior:
 			case Fallout3::Func_CenterOnWorld:
@@ -351,10 +359,12 @@ void Game::Startup()
 
 	Interface::ExecuteCommand("GetControl", {RawParameter(API::RetrieveAllControls())});
 	Interface::ExecuteCommand("DisableControl", {RawParameter(vector<unsigned char>{
-		ControlCodes::ControlCode_Quickload,
-		ControlCodes::ControlCode_Quicksave,
-		ControlCodes::ControlCode_VATS,
-		ControlCodes::ControlCode_Rest})});
+		ControlCode_Quickload,
+		ControlCode_Quicksave,
+		ControlCode_VATS,
+		ControlCode_Rest})});
+	Interface::ExecuteCommand("DisableKey", {RawParameter(vector<unsigned int>{
+		ScanCode_Escape})});
 
 	Interface::EndDynamic();
 
@@ -1855,16 +1865,25 @@ void Game::GetActorState(const FactoryObject& reference, unsigned char chat_keys
 		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
 	static bool chat_state = false;
+	static bool quit_state = true;
 
-	if (chat_keys == 0x01 && !chat_state)
+	if (!chat_keys && !chat_state)
+		quit_state = true;
+	else if (chat_keys == 0x01 && !chat_state)
 	{
 		DisablePlayerControls(true, true, true, false);
 		chat_state = true;
+		quit_state = false;
 	}
-	else if (chat_keys == 0x02 && chat_state)
+	else if ((chat_keys & (0x02 | 0x04)) && chat_state)
 	{
 		EnablePlayerControls();
 		chat_state = false;
+	}
+	else if (chat_keys == 0x02 && quit_state)
+	{
+		Interface::SignalEnd();
+		return;
 	}
 
 	bool result;

@@ -43,7 +43,7 @@ class Server
 		/**
 		 * \brief Disconnects a client
 		 */
-		static NetworkResponse Disconnect(RakNetGUID guid, pTypes reason);
+		static NetworkResponse Disconnect(RakNetGUID guid, Reason reason);
 
 		/**
 		 * \brief Handles GetPos network packet
