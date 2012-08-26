@@ -196,6 +196,9 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func_DisablePlayerControls:
 				break;
 
+			case Func_SetINISetting:
+				break;
+
 			case Func_Chat:
 			{
 				if (!result)
@@ -338,6 +341,11 @@ void Game::Startup()
 	NetworkID id = self->GetNetworkID();
 
 	GameFactory::LeaveReference(reference);
+
+	SetINISetting("bSaveOnInteriorExteriorSwitch:GamePlay", "0");
+	SetINISetting("bSaveOnTravel:GamePlay", "0");
+	SetINISetting("bSaveOnWait:GamePlay", "0");
+	SetINISetting("bSaveOnRest:GamePlay", "0");
 
 	Interface::StartDynamic();
 
@@ -508,6 +516,15 @@ void Game::CenterOnWorld(unsigned int baseID, signed int x, signed int y)
 	}
 
 	// ready state
+}
+
+void Game::SetINISetting(const string& key, const string& value)
+{
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("SetINISetting", {RawParameter(key), RawParameter(value)});
+
+	Interface::EndDynamic();
 }
 
 void Game::LoadEnvironment()

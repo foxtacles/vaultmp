@@ -94,7 +94,7 @@ struct API::op_Arg3
 
 struct API::op_Arg4
 {
-	unsigned int unk1; // always 0x00
+	unsigned int unk1; // always 0x00?
 
 	op_Arg4()
 	{
@@ -541,10 +541,11 @@ void API::Initialize(unsigned char game)
 	DefineFunction("EnablePlayerControls", "IIIIIII", Func_EnablePlayerControls, FALLOUT_GAMES);
 	DefineFunction("DisablePlayerControls", "$IIIIIII", Func_DisablePlayerControls, FALLOUT_GAMES); // $ required, else access violation...
 	DefineFunction("ScanContainer", "r", Func_ScanContainer, FALLOUT_GAMES);
+	DefineFunction("RemoveAllItemsEx", "r", Func_RemoveAllItemsEx, FALLOUT_GAMES);
 	DefineFunction("UIMessage", "s", Func_UIMessage, FALLOUT_GAMES);
 	DefineFunction("CenterOnCell", "$s", Func_CenterOnCell, FALLOUT_GAMES);
 	DefineFunction("CenterOnExterior", "$ii", Func_CenterOnExterior, FALLOUT_GAMES);
-	DefineFunction("RemoveAllItemsEx", "r", Func_RemoveAllItemsEx, FALLOUT_GAMES);
+	DefineFunction("SetINISetting", "$ss", Func_SetINISetting, FALLOUT_GAMES);
 
 	DefineFunction("Load", "$s", Fallout3::Func_Load, FALLOUT3);
 	DefineFunction("CenterOnWorld", "$wii", Fallout3::Func_CenterOnWorld, FALLOUT3);

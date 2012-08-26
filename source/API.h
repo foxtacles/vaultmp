@@ -206,6 +206,7 @@ namespace Values
 	{
 		Func_CenterOnCell				= 0x0123,
 		Func_CenterOnExterior			= 0x0127,
+		Func_SetINISetting				= 0x0125,
 
 		Func_GetPos                     = 0x1006,
 		Func_SetPos                     = 0x1007,

@@ -85,6 +85,10 @@ class Game
 		 */
 		static void CenterOnWorld(unsigned int baseID, signed int x, signed int y);
 		/**
+		 * \brief Sets a INI setting
+		 */
+		static void SetINISetting(const string& key, const string& value);
+		/**
 		 * \brief Loads the environment after savegame load
 		 */
 		static void LoadEnvironment();
