@@ -374,11 +374,11 @@ void Game::Startup()
 	Interface::SetupCommand("GetPos", {self_ref, Object::Param_Axis()});
 	Interface::SetupCommand("GetPos", {Player::CreateFunctor(FLAG_ENABLED | FLAG_NOTSELF | FLAG_ALIVE), Object::Param_Axis()}, 30);
 	Interface::SetupCommand("GetAngle", {self_ref, RawParameter(vector<string> {API::RetrieveAxis_Reverse(Axis_X), API::RetrieveAxis_Reverse(Axis_Z)})});
-	Interface::SetupCommand("GetActorState", {self_ref, Player::CreateFunctor(FLAG_MOVCONTROLS, id)});
+	Interface::SetupCommand("GetActorState", {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), Player::CreateFunctor(FLAG_MOVCONTROLS, id)});
 	Interface::SetupCommand("GetParentCell", {Player::CreateFunctor(FLAG_ALIVE)}, 30);
-	Interface::SetupCommand("ScanContainer", {self_ref}, 50);
+	Interface::SetupCommand("ScanContainer", {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED)}, 50);
 	Interface::SetupCommand("GetDead", {Player::CreateFunctor(FLAG_ENABLED | FLAG_ALIVE)}, 30);
-	Interface::SetupCommand("GetActorValue", {self_ref, RawParameter(vector<string>{
+	Interface::SetupCommand("GetActorValue", {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), RawParameter(vector<string>{
 		API::RetrieveValue_Reverse(ActorVal_Health),
 		API::RetrieveValue_Reverse(ActorVal_Head),
 		API::RetrieveValue_Reverse(ActorVal_Torso),
@@ -388,8 +388,8 @@ void Game::Startup()
 		API::RetrieveValue_Reverse(ActorVal_RightLeg)})}, 30);
 
 	// we could exclude health values here
-	Interface::SetupCommand("GetActorValue", {self_ref, Actor::Param_ActorValues()}, 100);
-	Interface::SetupCommand("GetBaseActorValue", {self_ref, Actor::Param_ActorValues()}, 200);
+	Interface::SetupCommand("GetActorValue", {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), Actor::Param_ActorValues()}, 100);
+	Interface::SetupCommand("GetBaseActorValue", {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), Actor::Param_ActorValues()}, 200);
 
 	Interface::EndSetup();
 }
@@ -1576,14 +1576,19 @@ void Game::net_SetActorDead(FactoryObject& reference, bool dead, unsigned short 
 		else
 		{
 			NetworkID id = actor->GetNetworkID();
+			actor->SetEnabled(false);
 			GameFactory::LeaveReference(reference);
 
-			ForceRespawn();
+			Game::ForceRespawn();
 
 			this_thread::sleep_for(chrono::seconds(1));
 
-			spawnFunc();
-			LoadEnvironment();
+			Game::spawnFunc();
+			Game::LoadEnvironment();
+
+			reference = GameFactory::GetObject(id);
+			vaultcast<Actor>(reference)->SetEnabled(true);
+			GameFactory::LeaveReference(reference);
 
 			Network::Queue(NetworkResponse{Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_UPDATE_DEAD>(id, false, 0, 0),

@@ -263,6 +263,9 @@ bool ObjectFunctor::filter(FactoryObject& reference)
 	if (flags & FLAG_NOTSELF && object->GetReference() == PLAYER_REFERENCE)
 		return true;
 
+	if (flags & FLAG_SELF && object->GetReference() != PLAYER_REFERENCE)
+		return true;
+
 	if (flags & FLAG_ENABLED && !object->GetEnabled())
 		return true;
 
