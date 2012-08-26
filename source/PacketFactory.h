@@ -1349,18 +1349,18 @@ class pPlayerInterior : public pObjectDefault
 		friend class PacketFactory;
 
 	private:
-		pPlayerInterior(NetworkID id, const string& cell) : pObjectDefault(pTypes::ID_UPDATE_INTERIOR, id)
+		pPlayerInterior(NetworkID id, const string& cell, bool spawn) : pObjectDefault(pTypes::ID_UPDATE_INTERIOR, id)
 		{
-			construct(cell);
+			construct(cell, spawn);
 		}
 		pPlayerInterior(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
 		{
 
 		}
 
-		void access(NetworkID& id, string& cell) const
+		void access(NetworkID& id, string& cell, bool& spawn) const
 		{
-			deconstruct(id, cell);
+			deconstruct(id, cell, spawn);
 		}
 };
 
@@ -1388,18 +1388,18 @@ class pPlayerExterior : public pObjectDefault
 		friend class PacketFactory;
 
 	private:
-		pPlayerExterior(NetworkID id, unsigned int baseID, signed int x, signed int y) : pObjectDefault(pTypes::ID_UPDATE_EXTERIOR, id)
+		pPlayerExterior(NetworkID id, unsigned int baseID, signed int x, signed int y, bool spawn) : pObjectDefault(pTypes::ID_UPDATE_EXTERIOR, id)
 		{
-			construct(baseID, x, y);
+			construct(baseID, x, y, spawn);
 		}
 		pPlayerExterior(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
 		{
 
 		}
 
-		void access(NetworkID& id, unsigned int& baseID, signed int& x, signed int& y) const
+		void access(NetworkID& id, unsigned int& baseID, signed int& x, signed int& y, bool& spawn) const
 		{
-			deconstruct(id, baseID, x, y);
+			deconstruct(id, baseID, x, y, spawn);
 		}
 };
 

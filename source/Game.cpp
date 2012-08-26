@@ -5,6 +5,7 @@ unsigned char Game::game = 0x00;
 RakNetGUID Game::server;
 
 Game::CellRefs Game::cellRefs;
+function<void()> Game::spawnFunc;
 
 #ifdef VAULTMP_DEBUG
 Debug* Game::debug;
@@ -340,8 +341,6 @@ NetworkResponse Game::Authenticate(string password)
 
 void Game::Startup()
 {
-	cellRefs.clear();
-
 	FactoryObject reference = GameFactory::GetObject(PLAYER_REFERENCE);
 	Player* self = vaultcast<Player>(reference);
 
@@ -452,14 +451,16 @@ void Game::LoadGame(string savegame)
 	// ready state
 }
 
-void Game::CenterOnCell(string cell)
+void Game::CenterOnCell(const string& cell, bool spawn)
 {
-	static string last_cell;
+	if (spawn)
+	{
+		bool first = !spawnFunc.operator bool();
+		spawnFunc = bind(CenterOnCell, cell, false);
 
-	if (cell.empty())
-		cell = last_cell;
-	else
-		last_cell = cell;
+		if (!first)
+			return;
+	}
 
 	auto store = make_shared<Shared<bool>>();
 	unsigned int key = Lockable::Share(store);
@@ -482,8 +483,17 @@ void Game::CenterOnCell(string cell)
 	// ready state
 }
 
-void Game::CenterOnExterior(signed int x, signed int y)
+void Game::CenterOnExterior(signed int x, signed int y, bool spawn)
 {
+	if (spawn)
+	{
+		bool first = !spawnFunc.operator bool();
+		spawnFunc = bind(CenterOnExterior, x, y, false);
+
+		if (!first)
+			return;
+	}
+
 	auto store = make_shared<Shared<bool>>();
 	unsigned int key = Lockable::Share(store);
 
@@ -505,8 +515,17 @@ void Game::CenterOnExterior(signed int x, signed int y)
 	// ready state
 }
 
-void Game::CenterOnWorld(unsigned int baseID, signed int x, signed int y)
+void Game::CenterOnWorld(unsigned int baseID, signed int x, signed int y, bool spawn)
 {
+	if (spawn)
+	{
+		bool first = !spawnFunc.operator bool();
+		spawnFunc = bind(CenterOnWorld, baseID, x, y, false);
+
+		if (!first)
+			return;
+	}
+
 	auto store = make_shared<Shared<bool>>();
 	unsigned int key = Lockable::Share(store);
 
@@ -1530,7 +1549,8 @@ void Game::net_SetActorDead(FactoryObject& reference, bool dead, unsigned short 
 		{
 			NetworkID id = actor->GetNetworkID();
 			GameFactory::LeaveReference(reference);
-			//Game::LoadGame();
+			// enable death to menu code...
+			Game::spawnFunc();
 			Game::LoadEnvironment();
 
 			Network::Queue(NetworkResponse{Network::CreateResponse(

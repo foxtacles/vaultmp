@@ -120,6 +120,10 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 #endif
 
 					Bethesda::Initialize();
+
+					Game::cellRefs.clear();
+					Game::spawnFunc = function<void()>();
+
 					Game::LoadEnvironment();
 
 					response = NetworkClient::ProcessEvent(ID_EVENT_GAME_STARTED);
@@ -315,8 +319,9 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				{
 					NetworkID id;
 					string cell;
-					PacketFactory::Access<pTypes::ID_UPDATE_INTERIOR>(packet, id, cell);
-					Game::CenterOnCell(cell);
+					bool spawn;
+					PacketFactory::Access<pTypes::ID_UPDATE_INTERIOR>(packet, id, cell, spawn);
+					Game::CenterOnCell(cell, spawn);
 					break;
 				}
 
@@ -325,8 +330,9 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					NetworkID id;
 					unsigned int baseID;
 					signed int x, y;
-					PacketFactory::Access<pTypes::ID_UPDATE_EXTERIOR>(packet, id, baseID, x, y);
-					Game::CenterOnWorld(baseID, x, y);
+					bool spawn;
+					PacketFactory::Access<pTypes::ID_UPDATE_EXTERIOR>(packet, id, baseID, x, y, spawn);
+					Game::CenterOnWorld(baseID, x, y, spawn);
 					break;
 				}
 

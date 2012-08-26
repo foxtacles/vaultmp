@@ -40,6 +40,7 @@ class Game
 		typedef unordered_map<unsigned int, unordered_map<unsigned int, set<unsigned int>>> CellRefs;
 
 		static CellRefs cellRefs;
+		static function<void()> spawnFunc;
 
 	public:
 		/**
@@ -75,15 +76,15 @@ class Game
 		/**
 		 * \brief Loads an interior cell
 		 */
-		static void CenterOnCell(string cell = string());
+		static void CenterOnCell(const string& cell, bool spawn = false);
 		/**
 		 * \brief Loads a exterior cell
 		 */
-		static void CenterOnExterior(signed int x, signed int y);
+		static void CenterOnExterior(signed int x, signed int y, bool spawn = false);
 		/**
 		 * \brief Loads a worldspace and exterior cell
 		 */
-		static void CenterOnWorld(unsigned int baseID, signed int x, signed int y);
+		static void CenterOnWorld(unsigned int baseID, signed int x, signed int y, bool spawn = false);
 		/**
 		 * \brief Sets a INI setting
 		 */

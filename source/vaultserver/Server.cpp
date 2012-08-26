@@ -53,7 +53,7 @@ NetworkResponse Server::LoadGame(RakNetGUID guid)
 		const Exterior& cell = Exterior::Lookup(Player::GetSpawnCell());
 
 		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(0, cell.GetWorld(), cell.GetX(), cell.GetY()),
+			PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(0, cell.GetWorld(), cell.GetX(), cell.GetY(), true),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 	catch (...)
@@ -61,7 +61,7 @@ NetworkResponse Server::LoadGame(RakNetGUID guid)
 		const Record& record = Record::Lookup(Player::GetSpawnCell(), "CELL");
 
 		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(0, record.GetName()),
+			PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(0, record.GetName(), true),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 

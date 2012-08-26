@@ -379,31 +379,10 @@ unsigned long long Script::Timer_Respawn(NetworkID id)
 	Player* player = vaultcast<Player>(reference);
 	RakNetGUID guid = Client::GetClientFromPlayer(id)->GetGUID();
 
-	NetworkResponse response{Network::CreateResponse(
+	Network::Queue(NetworkResponse{Network::CreateResponse(
 		PacketFactory::Create<pTypes::ID_UPDATE_DEAD>(id, false, 0, 0),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid)
-	};
-
-	unsigned int _cell = player->GetSpawnCell();
-
-	try
-	{
-		const Exterior& cell = Exterior::Lookup(_cell);
-
-		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, cell.GetWorld(), cell.GetX(), cell.GetY()),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
-	}
-	catch (...)
-	{
-		const Record& record = Record::Lookup(_cell, "CELL");
-
-		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(id, record.GetName()),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
-	}
-
-	Network::Queue(move(response));
+	});
 
 	KillTimer();
 
@@ -1393,7 +1372,7 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 				if (player)
 				{
 					response.emplace_back(Network::CreateResponse(
-						PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, new_cell->GetWorld(), new_cell->GetX(), new_cell->GetY()),
+						PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, new_cell->GetWorld(), new_cell->GetX(), new_cell->GetY(), false),
 						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
 					);
 				}
@@ -1488,14 +1467,14 @@ bool Script::SetCell(NetworkID id, unsigned int cell, double X, double Y, double
 			if (new_interior)
 			{
 				response.emplace_back(Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(id, new_interior->GetName()),
+					PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(id, new_interior->GetName(), false),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
 				);
 			}
 			else
 			{
 				response.emplace_back(Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, new_exterior->GetWorld(), new_exterior->GetX(), new_exterior->GetY()),
+					PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, new_exterior->GetWorld(), new_exterior->GetX(), new_exterior->GetY(), false),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
 				);
 			}
@@ -1794,5 +1773,31 @@ void Script::SetPlayerSpawnCell(NetworkID id, unsigned int cell)
 	Player* player = vaultcast<Player>(reference);
 
 	if (player && Record::IsValidCell(cell))
-		player->SetPlayerSpawnCell(cell);
+	{
+		if (player->SetPlayerSpawnCell(cell))
+		{
+			NetworkResponse response;
+			NetworkID id = player->GetNetworkID();
+			RakNetGUID guid = Client::GetClientFromPlayer(id)->GetGUID();
+
+			try
+			{
+				const Exterior& _cell = Exterior::Lookup(cell);
+
+				response.emplace_back(Network::CreateResponse(
+					PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, _cell.GetWorld(), _cell.GetX(), _cell.GetY(), true),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+			}
+			catch (...)
+			{
+				const Record& record = Record::Lookup(cell, "CELL");
+
+				response.emplace_back(Network::CreateResponse(
+					PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(id, record.GetName(), true),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+			}
+
+			Network::Queue(move(response));
+		}
+	}
 }
