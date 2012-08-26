@@ -73,7 +73,7 @@ Void VAULTSCRIPT OnCellChange(ID object, Cell cell) noexcept
 
 }
 
-Void VAULTSCRIPT OnContainerItemChange(ID container, Base base, Count count, Value value) noexcept
+Void VAULTSCRIPT OnContainerItemChange(ID container, Base item, Count count, Value value) noexcept
 {
 
 }
@@ -103,22 +103,32 @@ Void VAULTSCRIPT OnActorDeath(ID actor, Limb limbs, Death cause) noexcept
 
 }
 
-Void VAULTSCRIPT OnActorEquipItem(ID actor, Base base, Value value) noexcept
+Void VAULTSCRIPT OnActorEquipItem(ID actor, Base item, Value value) noexcept
 {
 
 }
 
-Void VAULTSCRIPT OnActorUnequipItem(ID actor, Base base, Value value) noexcept
+Void VAULTSCRIPT OnActorUnequipItem(ID actor, Base item, Value value) noexcept
 {
 
 }
 
-Void VAULTSCRIPT OnActorDropItem(ID actor, Base base, UCount count, Value value) noexcept
+Void VAULTSCRIPT OnActorDropItem(ID actor, Base item, UCount count, Value value) noexcept
 {
 
 }
 
-Void VAULTSCRIPT OnActorPickupItem(ID actor, Base base, UCount count, Value value) noexcept
+Void VAULTSCRIPT OnActorPickupItem(ID actor, Base item, UCount count, Value value) noexcept
+{
+
+}
+
+Void VAULTSCRIPT OnActorPunch(ID actor, State power) noexcept
+{
+
+}
+
+Void VAULTSCRIPT OnActorFireWeapon(ID actor, Base weapon) noexcept
 {
 
 }

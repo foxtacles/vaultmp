@@ -64,6 +64,8 @@ class Script
 		void (*fOnActorUnequipItem)(NetworkID, unsigned int, double);
 		void (*fOnActorDropItem)(NetworkID, unsigned int, unsigned int, double);
 		void (*fOnActorPickupItem)(NetworkID, unsigned int, unsigned int, double);
+		void (*fOnActorPunch)(NetworkID, bool);
+		void (*fOnActorFireWeapon)(NetworkID, unsigned int);
 		void (*fOnPlayerDisconnect)(NetworkID, Reason);
 		unsigned int (*fOnPlayerRequestGame)(NetworkID);
 		bool (*fOnPlayerChat)(NetworkID, char*);
@@ -99,6 +101,8 @@ class Script
 		static void OnActorUnequipItem(const FactoryObject& reference, unsigned int baseID, double condition);
 		static void OnActorDropItem(const FactoryObject& reference, unsigned int baseID, unsigned int count, double condition);
 		static void OnActorPickupItem(const FactoryObject& reference, unsigned int baseID, unsigned int count, double condition);
+		static void OnActorPunch(const FactoryObject& reference, bool power);
+		static void OnActorFireWeapon(const FactoryObject& reference, unsigned int weapon);
 		static void OnPlayerDisconnect(const FactoryObject& reference, Reason reason);
 		static unsigned int OnPlayerRequestGame(const FactoryObject& reference);
 		static bool OnPlayerChat(const FactoryObject& reference, string& message);
@@ -139,6 +143,7 @@ class Script
 		static double GetActorValue(NetworkID id, unsigned char index);
 		static double GetActorBaseValue(NetworkID id, unsigned char index);
 		static unsigned char GetActorMovingAnimation(NetworkID id);
+		static unsigned char GetActorWeaponAnimation(NetworkID id);
 		static bool GetActorAlerted(NetworkID id);
 		static bool GetActorSneaking(NetworkID id);
 		static bool GetActorDead(NetworkID id);

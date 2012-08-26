@@ -310,15 +310,9 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, const FactoryObject& refe
 		if (_weapon)
 		{
 			if (power_punching)
-			{
-				// power punch
-				// OnActorPunch
-			}
+				Script::OnActorPunch(reference, true);
 			else if (punching)
-			{
-				// Normal punch
-				// OnActorPunch
-			}
+				Script::OnActorPunch(reference, false);
 			else if (firing)
 			{
 				unsigned int baseID = actor->GetEquippedWeapon();
@@ -328,7 +322,7 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, const FactoryObject& refe
 					PacketFactory::Create<pTypes::ID_UPDATE_FIREWEAPON>(actor->GetNetworkID(), baseID, weapon.IsAutomatic() ? weapon.GetFireRate() : 0.00),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
-				// OnActorFireWeapon
+				Script::OnActorFireWeapon(reference, baseID);
 			}
 		}
 

@@ -64,7 +64,7 @@ public OnCellChange(ID, cell)
 
 }
 
-public OnContainerItemChange(ID, base, count, Float: value)
+public OnContainerItemChange(ID, item, count, Float: value)
 {
 
 }
@@ -94,22 +94,32 @@ public OnActorDeath(ID, Limb: limbs, Death: cause)
 
 }
 
-public OnActorEquipItem(ID, base, Float: value)
+public OnActorEquipItem(ID, item, Float: value)
 {
 
 }
 
-public OnActorUnequipItem(ID, base, Float: value)
+public OnActorUnequipItem(ID, item, Float: value)
 {
 
 }
 
-public OnActorDropItem(ID, base, count, Float: value)
+public OnActorDropItem(ID, item, count, Float: value)
 {
 
 }
 
-public OnActorPickupItem(ID, base, count, Float: value)
+public OnActorPickupItem(ID, item, count, Float: value)
+{
+
+}
+
+public OnActorPunch(ID, Bool:power)
+{
+
+}
+
+public OnActorFireWeapon(ID, weapon)
 {
 
 }

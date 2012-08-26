@@ -52,6 +52,8 @@ Script::Script(char* path)
 			GetScript("OnActorUnequipItem", fOnActorUnequipItem);
 			GetScript("OnActorDropItem", fOnActorDropItem);
 			GetScript("OnActorPickupItem", fOnActorPickupItem);
+			GetScript("OnActorPunch", fOnActorPunch);
+			GetScript("OnActorFireWeapon", fOnActorFireWeapon);
 			GetScript("OnPlayerDisconnect", fOnPlayerDisconnect);
 			GetScript("OnPlayerRequestGame", fOnPlayerRequestGame);
 			GetScript("OnPlayerChat", fOnPlayerChat);
@@ -109,6 +111,7 @@ Script::Script(char* path)
 			SetScript(string(vpf + "GetActorValue").c_str(), &Script::GetActorValue);
 			SetScript(string(vpf + "GetActorBaseValue").c_str(), &Script::GetActorBaseValue);
 			SetScript(string(vpf + "GetActorMovingAnimation").c_str(), &Script::GetActorMovingAnimation);
+			SetScript(string(vpf + "GetActorWeaponAnimation").c_str(), &Script::GetActorWeaponAnimation);
 			SetScript(string(vpf + "GetActorAlerted").c_str(), &Script::GetActorAlerted);
 			SetScript(string(vpf + "GetActorSneaking").c_str(), &Script::GetActorSneaking);
 			SetScript(string(vpf + "GetActorDead").c_str(), &Script::GetActorDead);
@@ -575,6 +578,38 @@ void Script::OnActorPickupItem(const FactoryObject& reference, unsigned int base
 		}
 		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnActorPickupItem"))
 			PAWN::Call((AMX*)script->handle, "OnActorPickupItem", "fiil", 0, condition, count, baseID, id);
+	}
+}
+
+void Script::OnActorPunch(const FactoryObject& reference, bool power)
+{
+	NetworkID id = reference->GetNetworkID();
+
+	for (Script* script : scripts)
+	{
+		if (script->cpp_script)
+		{
+			if (script->fOnActorPunch)
+				script->fOnActorPunch(id, power);
+		}
+		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnActorPunch"))
+			PAWN::Call((AMX*)script->handle, "OnActorPunch", "il", 0, power, id);
+	}
+}
+
+void Script::OnActorFireWeapon(const FactoryObject& reference, unsigned int weapon)
+{
+	NetworkID id = reference->GetNetworkID();
+
+	for (Script* script : scripts)
+	{
+		if (script->cpp_script)
+		{
+			if (script->fOnActorFireWeapon)
+				script->fOnActorFireWeapon(id, weapon);
+		}
+		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnActorFireWeapon"))
+			PAWN::Call((AMX*)script->handle, "OnActorFireWeapon", "il", 0, weapon, id);
 	}
 }
 
@@ -1176,6 +1211,28 @@ unsigned char Script::GetActorMovingAnimation(NetworkID id)
 
 	if (actor)
 		index = actor->GetActorMovingAnimation();
+
+	return index;
+}
+
+unsigned char Script::GetActorWeaponAnimation(NetworkID id)
+{
+	unsigned char index = 0x00;
+	FactoryObject reference;
+
+	try
+	{
+		reference = GameFactory::GetObject(id);
+	}
+	catch (...)
+	{
+		return index;
+	}
+
+	Actor* actor = vaultcast<Actor>(reference);
+
+	if (actor)
+		index = actor->GetActorWeaponAnimation();
 
 	return index;
 }

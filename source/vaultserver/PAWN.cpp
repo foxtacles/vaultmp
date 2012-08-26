@@ -71,6 +71,7 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"GetActorValue", PAWN::vaultmp_GetActorValue},
 	{"GetActorBaseValue", PAWN::vaultmp_GetActorBaseValue},
 	{"GetActorMovingAnimation", PAWN::vaultmp_GetActorMovingAnimation},
+	{"GetActorWeaponAnimation", PAWN::vaultmp_GetActorWeaponAnimation},
 	{"GetActorAlerted", PAWN::vaultmp_GetActorAlerted},
 	{"GetActorSneaking", PAWN::vaultmp_GetActorSneaking},
 	{"GetActorDead", PAWN::vaultmp_GetActorDead},
@@ -639,6 +640,11 @@ cell PAWN::vaultmp_GetActorBaseValue(AMX* amx, const cell* params)
 cell PAWN::vaultmp_GetActorMovingAnimation(AMX* amx, const cell* params)
 {
 	return Script::GetActorMovingAnimation(params[1]);
+}
+
+cell PAWN::vaultmp_GetActorWeaponAnimation(AMX* amx, const cell* params)
+{
+	return Script::GetActorWeaponAnimation(params[1]);
 }
 
 cell PAWN::vaultmp_GetActorAlerted(AMX* amx, const cell* params)
