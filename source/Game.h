@@ -167,6 +167,14 @@ class Game
 		 */
 		static void SetActorValue(const FactoryObject& reference, bool base, unsigned char index, unsigned int key = 0);
 		/**
+		 * \brief Damages an actor value of an Actor
+		 */
+		static void DamageActorValue(const FactoryObject& reference, unsigned char index, double value, unsigned int key = 0);
+		/**
+		 * \brief Restores an actor value of an Actor
+		 */
+		static void RestoreActorValue(const FactoryObject& reference, unsigned char index, double value, unsigned int key = 0);
+		/**
 		 * \brief Sets the sneaking state of an Actor
 		 */
 		static function<void()> SetActorSneaking(const FactoryObject& reference, unsigned int key = 0);

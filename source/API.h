@@ -242,6 +242,8 @@ namespace Values
 		Func_IsLimbGone					= 0x118E,
 		Func_EnablePlayerControls		= 0x1060,
 		Func_DisablePlayerControls		= 0x1061,
+		Func_DamageActorValue			= 0x1181,
+		Func_RestoreActorValue			= 0x1182,
 
 		Func_GetActorState              = 0x0001 | VAULTFUNCTION,
 		Func_Chat						= 0x0002 | VAULTFUNCTION,

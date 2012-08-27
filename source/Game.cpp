@@ -112,6 +112,12 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func_ForceActorValue:
 				break;
 
+			case Func_DamageActorValue:
+				break;
+
+			case Func_RestoreActorValue:
+				break;
+
 			case Func_GetBaseActorValue:
 				reference = GameFactory::GetObject(getFrom<double, unsigned int>(info.at(1)));
 				GetActorValue(reference, true, getFrom<double, unsigned char>(info.at(2)), result);
@@ -386,7 +392,8 @@ void Game::Startup()
 		API::RetrieveValue_Reverse(ActorVal_LeftArm),
 		API::RetrieveValue_Reverse(ActorVal_RightArm),
 		API::RetrieveValue_Reverse(ActorVal_LeftLeg),
-		API::RetrieveValue_Reverse(ActorVal_RightLeg)});
+		API::RetrieveValue_Reverse(ActorVal_RightLeg),
+		API::RetrieveValue_Reverse(ActorVal_Brain)});
 
 	Interface::SetupCommand("GetActorValue", {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), health}, 30);
 	Interface::SetupCommand("GetActorValue", {Player::CreateFunctor(FLAG_NOTSELF | FLAG_SELFALERT | FLAG_ENABLED | FLAG_ALIVE), health}, 30);
@@ -968,6 +975,34 @@ void Game::SetActorValue(const FactoryObject& reference, bool base, unsigned cha
 	Interface::EndDynamic();
 }
 
+void Game::DamageActorValue(const FactoryObject& reference, unsigned char index, double value, unsigned int key)
+{
+	Actor* actor = vaultcast<Actor>(reference);
+
+	if (!actor)
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
+
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("DamageActorValue", {actor->GetReferenceParam(), RawParameter(API::RetrieveValue_Reverse(index)), RawParameter(value)}, key);
+
+	Interface::EndDynamic();
+}
+
+void Game::RestoreActorValue(const FactoryObject& reference, unsigned char index, double value, unsigned int key)
+{
+	Actor* actor = vaultcast<Actor>(reference);
+
+	if (!actor)
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
+
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("RestoreActorValue", {actor->GetReferenceParam(), RawParameter(API::RetrieveValue_Reverse(index)), RawParameter(value)}, key);
+
+	Interface::EndDynamic();
+}
+
 function<void()> Game::SetActorSneaking(const FactoryObject& reference, unsigned int key)
 {
 	Actor* actor = vaultcast<Actor>(reference);
@@ -1369,7 +1404,7 @@ void Game::net_SetPos(const FactoryObject& reference, double X, double Y, double
 	{
 		Actor* actor = vaultcast<Actor>(reference);   // maybe we should consider items, too (they have physics)
 
-		if (actor == nullptr || (!actor->IsNearPoint(object->GetNetworkPos(Axis_X), object->GetNetworkPos(Axis_Y), object->GetNetworkPos(Axis_Z), 200.0) && actor->GetActorMovingAnimation() == AnimGroup_Idle) || actor->IsActorJumping())
+		if (actor == nullptr || (!actor->IsNearPoint(object->GetNetworkPos(Axis_X), object->GetNetworkPos(Axis_Y), object->GetNetworkPos(Axis_Z), 50.0)) || actor->IsActorJumping())
 			SetPos(reference);
 	}
 }
@@ -1490,13 +1525,27 @@ void Game::net_SetActorValue(const FactoryObject& reference, bool base, unsigned
 
 	Lockable* result;
 
+	double prev_value = actor->GetActorValue(index);
+
 	if (base)
 		result = actor->SetActorBaseValue(index, value);
 	else
 		result = actor->SetActorValue(index, value);
 
 	if (result)
-		SetActorValue(reference, base, index, result->Lock());
+	{
+		if (!base && (index == ActorVal_Health || (index >= ActorVal_Head && index <= ActorVal_Brain)))
+		{
+			double diff = value - prev_value;
+
+			if (diff < 0.00)
+				DamageActorValue(reference, index, diff, result->Lock());
+			else if (diff > 0.00)
+				RestoreActorValue(reference, index, diff, result->Lock());
+		}
+		else
+			SetActorValue(reference, base, index, result->Lock());
+	}
 }
 
 void Game::net_SetActorState(const FactoryObject& reference, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking, bool firing)

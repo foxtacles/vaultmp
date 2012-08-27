@@ -540,6 +540,8 @@ void API::Initialize(unsigned char game)
 	DefineFunction("IsLimbGone", "ri", Func_IsLimbGone, FALLOUT_GAMES);
 	DefineFunction("EnablePlayerControls", "IIIIIII", Func_EnablePlayerControls, FALLOUT_GAMES);
 	DefineFunction("DisablePlayerControls", "$IIIIIII", Func_DisablePlayerControls, FALLOUT_GAMES); // $ required, else access violation...
+	DefineFunction("DamageActorValue", "rvd", Func_DamageActorValue, FALLOUT_GAMES);
+	DefineFunction("RestoreActorValue", "rvd", Func_RestoreActorValue, FALLOUT_GAMES);
 	DefineFunction("ScanContainer", "r", Func_ScanContainer, FALLOUT_GAMES);
 	DefineFunction("RemoveAllItemsEx", "r", Func_RemoveAllItemsEx, FALLOUT_GAMES);
 	DefineFunction("ForceRespawn", "", Func_ForceRespawn, FALLOUT_GAMES);
