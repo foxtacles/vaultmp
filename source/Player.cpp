@@ -295,7 +295,7 @@ vector<string> PlayerFunctor::operator()()
 		vector<FactoryObject> references = GameFactory::GetObjectTypes(ID_PLAYER);
 		unsigned int refID;
 
-		for (it = references.begin(); it != references.end(); GameFactory::LeaveReference(*it), ++it)
+		for (it = references.begin(); it != references.end(); ++it) // GameFactory::LeaveReference(*it), not possible due to FLAG_SELFALERT
 			if ((refID = (*it)->GetReference()) && !filter(*it))
 				result.emplace_back(Utils::toString(refID));
 	}
@@ -311,6 +311,16 @@ bool PlayerFunctor::filter(FactoryObject& reference)
 		return true;
 
 	Player* player = vaultcast<Player>(reference);
+	unsigned int flags = this->flags();
+
+	if (flags & FLAG_SELFALERT)
+	{
+		FactoryObject _self = GameFactory::GetObject(PLAYER_REFERENCE);
+		Player* self = vaultcast<Player>(_self);
+
+		if (!self->GetActorAlerted())
+			return true;
+	}
 
 	return false;
 }

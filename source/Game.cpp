@@ -378,14 +378,18 @@ void Game::Startup()
 	Interface::SetupCommand("GetParentCell", {Player::CreateFunctor(FLAG_ALIVE)}, 30);
 	Interface::SetupCommand("ScanContainer", {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED)}, 50);
 	Interface::SetupCommand("GetDead", {Player::CreateFunctor(FLAG_ENABLED | FLAG_ALIVE)}, 30);
-	Interface::SetupCommand("GetActorValue", {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), RawParameter(vector<string>{
+
+	RawParameter health = RawParameter(vector<string>{
 		API::RetrieveValue_Reverse(ActorVal_Health),
 		API::RetrieveValue_Reverse(ActorVal_Head),
 		API::RetrieveValue_Reverse(ActorVal_Torso),
 		API::RetrieveValue_Reverse(ActorVal_LeftArm),
 		API::RetrieveValue_Reverse(ActorVal_RightArm),
 		API::RetrieveValue_Reverse(ActorVal_LeftLeg),
-		API::RetrieveValue_Reverse(ActorVal_RightLeg)})}, 30);
+		API::RetrieveValue_Reverse(ActorVal_RightLeg)});
+
+	Interface::SetupCommand("GetActorValue", {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), health}, 30);
+	Interface::SetupCommand("GetActorValue", {Player::CreateFunctor(FLAG_NOTSELF | FLAG_SELFALERT | FLAG_ENABLED | FLAG_ALIVE), health}, 30);
 
 	// we could exclude health values here
 	Interface::SetupCommand("GetActorValue", {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), Actor::Param_ActorValues()}, 100);

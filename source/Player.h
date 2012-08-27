@@ -14,7 +14,7 @@
 #include "Debug.h"
 #endif
 
-const unsigned int FLAG_MOVCONTROLS      = FLAG_NOTALERTED << 1;
+const unsigned int FLAG_MOVCONTROLS      = FLAG_NOTALERT << 1;
 
 using namespace std;
 

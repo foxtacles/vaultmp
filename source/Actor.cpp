@@ -327,11 +327,13 @@ bool ActorFunctor::filter(FactoryObject& reference)
 	else if (flags & FLAG_DEAD && !actor->GetActorDead())
 		return true;
 
-	if (flags & FLAG_ISALERTED && !actor->GetActorAlerted())
+	if (flags & FLAG_ISALERT && !actor->GetActorAlerted())
 		return true;
 
-	else if (flags & FLAG_NOTALERTED && actor->GetActorAlerted())
+	else if (flags & FLAG_NOTALERT && actor->GetActorAlerted())
 		return true;
+
+	// FLAG_SELFALERT
 
 	return false;
 }

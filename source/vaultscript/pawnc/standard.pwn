@@ -16,7 +16,7 @@ main()
 	}
 }
 
-public OnClientAuthenticate(const name {}, const pwd {})
+public OnClientAuthenticate(const name{}, const pwd{})
 {
 	return true;
 }
