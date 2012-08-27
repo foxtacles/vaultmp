@@ -227,7 +227,7 @@ unsigned int Utils::updateCRC32(unsigned char ch, unsigned int crc)
 	return UPDC32(ch, crc);
 }
 
-bool Utils::crc32file(char* name, unsigned int* crc)
+bool Utils::crc32file(const char* name, unsigned int* crc)
 {
 	FILE* fin;
 	unsigned int oldcrc32;

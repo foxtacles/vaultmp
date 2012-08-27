@@ -98,8 +98,9 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 
 	unsigned int result = Script::OnPlayerRequestGame(_player);
 
+	// TODO hardcoded hack to not get DLC bases. no proper mod handling yet
 	if (!result)
-		throw VaultException("Script did not provide an actor base for a player");
+		result = Record::GetRecordNotIn(Player::GetBaseIDs(), [](const Record& data) { return !data.GetType().compare("NPC_") && !(data.GetBase() & 0xFF000000); }).GetBase();
 
 	player->SetReference(0x00000000);
 	player->SetBase(result);

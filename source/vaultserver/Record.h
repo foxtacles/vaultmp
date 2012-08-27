@@ -34,7 +34,7 @@ class Record
 		static const Record& Lookup(unsigned int baseID);
 		static const Record& Lookup(unsigned int baseID, const string& type);
 		static const Record& Lookup(unsigned int baseID, const vector<string>& type);
-		static const Record& GetRecordNotIn(const unordered_set<unsigned int>& _set);
+		static const Record& GetRecordNotIn(const unordered_set<unsigned int>& _set, const function<bool(const Record&)>& pred);
 
 		static bool IsValidCell(unsigned int baseID);
 

@@ -36,23 +36,7 @@ Void VAULTSCRIPT OnPlayerDisconnect(ID player, Reason reason) noexcept
 
 Base VAULTSCRIPT OnPlayerRequestGame(ID player) noexcept
 {
-	Base base = static_cast<Base>(0);
-
-	switch (GetGameCode())
-	{
-		case Index::FALLOUT3:
-			base = static_cast<Base>(0x00030D82); // Carter
-			break;
-
-		case Index::NEWVEGAS:
-			base = static_cast<Base>(0x0010C0BE); // Jessup
-			break;
-
-		default:
-			break;
-	}
-
-	return base;
+	return static_cast<Base>(0x00000000);
 }
 
 State VAULTSCRIPT OnPlayerChat(ID player, RawString message) noexcept

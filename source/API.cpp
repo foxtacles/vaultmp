@@ -606,6 +606,8 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 	if (!cmd || !def || !result || !*cmd || !opcode)
 		throw VaultException("Invalid call to API::ParseCommand, one or more arguments are NULL (%s, %s, %04X)", cmd, def, opcode);
 
+	debug->PrintFormat("%s", true, cmd);
+
 	vector<double> result_data;
 	string _cmd(cmd);
 

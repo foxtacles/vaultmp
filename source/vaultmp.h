@@ -18,6 +18,8 @@ static const unsigned int NVSE_VER0212                 =   0x0006B1BB;
 
 static const unsigned int VAULTMP_DLL                  =   0x000317A6;
 static const unsigned int XLIVE_PATCH                  =   0x0000D57E;
+static const unsigned int VAULTMP_F3                   =   0x5BAE6A24;
+static const unsigned int VAULTMP_FNV                  =   0xBBE5028A;
 
 static const unsigned char FALLOUT3             =   0x01;
 static const unsigned char NEWVEGAS             =   FALLOUT3 << 1;

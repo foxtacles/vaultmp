@@ -4,6 +4,8 @@
 using namespace std;
 
 #ifdef VAULTSERVER
+unordered_set<unsigned int> Player::baseIDs;
+
 unsigned int Player::default_respawn = DEFAULT_PLAYER_RESPAWN;
 unsigned int Player::default_cell;
 #endif
@@ -145,10 +147,12 @@ Player::Player(const pDefault* packet) : Actor(PacketFactory::Pop<pPacket>(packe
 Player::~Player()
 {
 #ifdef VAULTMP_DEBUG
-
 	if (debug)
 		debug->PrintFormat("Player object destroyed (ref: %08X)", true, GetReference());
+#endif
 
+#ifdef VAULTSERVER
+	baseIDs.erase(this->GetBase());
 #endif
 }
 
@@ -160,6 +164,8 @@ void Player::initialize()
 		player_Controls.insert(make_pair(_data, make_pair(Value<unsigned char>(), Value<bool>(true))));
 
 #ifdef VAULTSERVER
+	baseIDs.insert(this->GetBase());
+
 	player_Respawn.set(default_respawn);
 	player_Cell.set(default_cell);
 #endif
@@ -194,6 +200,11 @@ void Player::SetRespawn(unsigned int respawn)
 void Player::SetSpawnCell(unsigned int cell)
 {
 	default_cell = cell;
+}
+
+const unordered_set<unsigned int>& Player::GetBaseIDs()
+{
+	return baseIDs;
 }
 #endif
 
@@ -243,6 +254,22 @@ Lockable* Player::SetPlayerRespawn(unsigned int respawn)
 Lockable* Player::SetPlayerSpawnCell(unsigned int cell)
 {
 	return SetObjectValue(this->player_Cell, cell);
+}
+#endif
+
+#ifdef VAULTSERVER
+Lockable* Player::SetBase(unsigned int baseID)
+{
+	unsigned int prev_baseID = this->GetBase();
+	auto ret = Actor::SetBase(baseID);
+
+	if (ret)
+	{
+		baseIDs.erase(prev_baseID);
+		baseIDs.insert(baseID);
+	}
+
+	return ret;
 }
 #endif
 

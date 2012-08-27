@@ -277,25 +277,36 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 
 						if (checksum_real == XLIVE_PATCH)
 						{
-							games |= FALLOUT3;
-						}
+							filecheck = fopen("Data/vaultmpF3.esp", "rb");
 
+							if (filecheck != nullptr)
+							{
+								fclose(filecheck);
+								unsigned int crc;
+								Utils::crc32file("Data/vaultmpF3.esp", &crc);
+
+								if (crc == VAULTMP_F3)
+								{
+									games |= FALLOUT3;
+								}
+								else
+									return MessageBox(nullptr, "vaultmpF3.esp is outdated or has been modified!", "Error", MB_OK | MB_ICONERROR);
+							}
+							else
+								return MessageBox(nullptr, "vaultmpF3.esp is missing!", "Error", MB_OK | MB_ICONERROR);
+						}
 						else
 							return MessageBox(nullptr, "xlive.dll is unpatched!", "Error", MB_OK | MB_ICONERROR);
 					}
-
 					else
 						return MessageBox(nullptr, "xlive.dll is missing!", "Error", MB_OK | MB_ICONERROR);
 				}
-
 				else
 					return MessageBox(nullptr, "Your FOSE version is probably outdated!\nhttp://fose.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
 			}
-
 			else
 				return MessageBox(nullptr, "Could not find FOSE!\nhttp://fose.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
 		}
-
 		else
 			return MessageBox(nullptr, "Your version of Fallout 3 is not supported!", "Error", MB_OK | MB_ICONERROR);
 	}
@@ -320,17 +331,30 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 
 				if (checksum_real == NVSE_VER0212)
 				{
-					games |= NEWVEGAS;
-				}
+					filecheck = fopen("Data/vaultmpFNV.esp", "rb");
 
+					if (filecheck != nullptr)
+					{
+						fclose(filecheck);
+						unsigned int crc;
+						Utils::crc32file("Data/vaultmpFNV.esp", &crc);
+
+						if (crc == VAULTMP_FNV)
+						{
+							games |= NEWVEGAS;
+						}
+						else
+							return MessageBox(nullptr, "vaultmpFNV.esp is outdated or has been modified!", "Error", MB_OK | MB_ICONERROR);
+					}
+					else
+						return MessageBox(nullptr, "vaultmpFNV.esp is missing!", "Error", MB_OK | MB_ICONERROR);
+				}
 				else
 					return MessageBox(nullptr, "Your NVSE version is probably outdated!\nhttp://nvse.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
 			}
-
 			else
 				return MessageBox(nullptr, "Could not find NVSE!\nhttp://nvse.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
 		}
-
 		else
 			return MessageBox(nullptr, "Your version of Fallout: New Vegas is not supported!", "Error", MB_OK | MB_ICONERROR);
 	}

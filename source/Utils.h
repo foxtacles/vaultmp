@@ -34,7 +34,7 @@ class Utils
 		static const char* FileOnly(const char* path);
 		static unsigned int FileLength(const char* file);
 		static unsigned int crc32buf(char* buf, size_t len);
-		static bool crc32file(char* name, unsigned int* crc);
+		static bool crc32file(const char* name, unsigned int* crc);
 
 #ifdef __WIN32__
 		static BOOL GenerateChecksum(const string& szFilename,

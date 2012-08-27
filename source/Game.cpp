@@ -493,6 +493,8 @@ void Game::CenterOnCell(const string& cell, bool spawn)
 		throw VaultException("Loading of cell %s failed (%s)", cell.c_str(), e.what());
 	}
 
+	this_thread::sleep_for(chrono::milliseconds(500));
+
 	// ready state
 }
 
@@ -525,6 +527,8 @@ void Game::CenterOnExterior(signed int x, signed int y, bool spawn)
 		throw VaultException("Loading of cell (%d,%d) failed (%s)", x, y, e.what());
 	}
 
+	this_thread::sleep_for(chrono::milliseconds(500));
+
 	// ready state
 }
 
@@ -556,6 +560,9 @@ void Game::CenterOnWorld(unsigned int baseID, signed int x, signed int y, bool s
 	{
 		throw VaultException("Loading of world (%08X,%d,%d) failed (%s)", baseID, x, y, e.what());
 	}
+
+	// weirdness: if no sleep, some commands fail (RemoveItem). if sleep to long, random access violation in Fallout!
+	this_thread::sleep_for(chrono::milliseconds(500));
 
 	// ready state
 }
@@ -683,15 +690,27 @@ void Game::NewObject(FactoryObject& reference)
 		{
 			try
 			{
-				this_thread::sleep_for(chrono::seconds(1));
+				this_thread::sleep_for(chrono::milliseconds(500));
 
 				auto objects = GameFactory::GetMultiple(vector<unsigned int>{refID, PLAYER_REFERENCE});
 
 				Object* object = vaultcast<Object>(objects[0]);
 				Player* player = vaultcast<Player>(objects[1]);
 
-				if (player->GetGameCell() == object->GetNetworkCell())
+				unsigned int cell = player->GetGameCell();
+
+				if (object->GetNetworkCell() == cell)
+				{
 					MoveTo(objects[0], objects[1], true);
+					object->SetEnabled(true);
+				}
+				else
+				{
+					object->SetEnabled(false);
+					ToggleEnabled(objects[0]);
+				}
+
+				object->SetGameCell(cell);
 			}
 			catch (...) {}
 		});
@@ -1789,6 +1808,33 @@ void Game::GetParentCell(const FactoryObject& reference, const FactoryObject& pl
 			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, server)
 		});
 
+		// TODO CS
+
+		for (unsigned int refID : cellRefs[cell][FormType_Inventory])
+		{
+			FactoryObject _item;
+
+			try
+			{
+				_item = GameFactory::GetObject(refID);
+			}
+			catch (...)
+			{
+				// we don't have information about static refs yet. remove
+				continue;
+			}
+
+			Item* item = vaultcast<Item>(_item);
+
+			if (!item->GetEnabled() && item->GetNetworkCell() == cell)
+			{
+				item->SetEnabled(true);
+				ToggleEnabled(_item);
+
+				if (item->SetGameCell(cell))
+					MoveTo(_item, player, true);
+			}
+		}
 /*
 		AsyncDispatch([=]
 		{

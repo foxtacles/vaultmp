@@ -101,15 +101,15 @@ void Bethesda::Initialize()
 	{
 		case FALLOUT3:
 		{
-			char esm[] = "Fallout3.esm\n";
-			fwrite(esm, sizeof(char), strlen(esm), plugins);
+			char esm[] = "Fallout3.esm\nvaultmpF3.esp\n";
+			fwrite(esm, sizeof(char), sizeof(esm), plugins);
 			break;
 		}
 
 		case NEWVEGAS:
 		{
-			char esm[] = "FalloutNV.esm\n";
-			fwrite(esm, sizeof(char), strlen(esm), plugins);
+			char esm[] = "FalloutNV.esm\nvaultmpFNV.esp\n";
+			fwrite(esm, sizeof(char), sizeof(esm), plugins);
 			break;
 		}
 	}

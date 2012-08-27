@@ -36,6 +36,8 @@ class Player : public Actor
 #endif
 
 #ifdef VAULTSERVER
+		static unordered_set<unsigned int> baseIDs;
+
 		static unsigned int default_respawn;
 		static unsigned int default_cell;
 
@@ -80,6 +82,11 @@ class Player : public Actor
 		 * \brief Sets the default spawn cell
 		 */
 		static void SetSpawnCell(unsigned int cell);
+
+		/**
+		 * \brief Returns the set of all used base IDs by players
+		 */
+		static const unordered_set<unsigned int>& GetBaseIDs();
 #endif
 
 		/**
@@ -130,6 +137,13 @@ class Player : public Actor
 		 * \brief Sets the spawn cell
 		 */
 		Lockable* SetPlayerSpawnCell(unsigned int cell);
+#endif
+
+#ifdef VAULTSERVER
+		/**
+		 * \brief Sets the Player's base ID
+		 */
+		virtual Lockable* SetBase(unsigned int baseID);
 #endif
 
 		/**
