@@ -8,6 +8,7 @@ typedef HINSTANCE(__stdcall* fLoadLibrary)(char*);
 unsigned char Bethesda::game = 0x00;
 bool Bethesda::initialized = false;
 string Bethesda::password = "";
+unsigned int Bethesda::inittime = 6000;
 bool Bethesda::multiinst = false;
 bool Bethesda::steam = false;
 DWORD Bethesda::process = 0;
@@ -209,7 +210,7 @@ void Bethesda::Initialize()
 			CloseHandle(pi.hProcess);
 
 			// proper game ready signal here
-			this_thread::sleep_for(chrono::seconds(6));
+			this_thread::sleep_for(chrono::milliseconds(inittime));
 
 			initialized = true;
 		}
@@ -249,11 +250,12 @@ void Bethesda::Terminate(RakPeerInterface* peer)
 	}
 }
 
-void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, string name, string pwd, unsigned char game, bool multiinst, bool steam)
+void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, string name, string pwd, unsigned char game, bool multiinst, bool steam, unsigned int inittime)
 {
 	Bethesda::game = game;
 	Bethesda::password = pwd;
 	Bethesda::multiinst = multiinst;
+	Bethesda::inittime = inittime;
 	Bethesda::steam = steam;
 	Bethesda::modfiles.clear();
 	ZeroMemory(module, sizeof(module));

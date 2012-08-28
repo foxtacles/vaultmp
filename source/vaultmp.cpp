@@ -88,6 +88,7 @@ SystemAddress* selectedServer = nullptr;
 dictionary* config = nullptr;
 const char* player_name;
 const char* server_name;
+unsigned int inittime;
 bool multiinst;
 bool steam;
 unsigned char games;
@@ -386,6 +387,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 	config = iniparser_load("vaultmp.ini");
 	player_name = iniparser_getstring(config, "general:name", "");
 	server_name = iniparser_getstring(config, "general:master", "");
+	inittime = iniparser_getint(config, "general:inittime", 6000);
 	multiinst = (bool) iniparser_getboolean(config, "general:multiinst", 0);
 	const char* servers = iniparser_getstring(config,  "general:servers", "");
 
@@ -751,7 +753,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 							try
 							{
-								Bethesda::InitializeVaultMP(peer, addr, string(name), string(pwd), game, multiinst, game == NEWVEGAS ? steam : false);
+								Bethesda::InitializeVaultMP(peer, addr, name, pwd, game, multiinst, game == NEWVEGAS ? steam : false, inittime);
 							}
 
 							catch (std::exception& e)
