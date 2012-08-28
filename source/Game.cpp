@@ -493,8 +493,6 @@ void Game::CenterOnCell(const string& cell, bool spawn)
 		throw VaultException("Loading of cell %s failed (%s)", cell.c_str(), e.what());
 	}
 
-	this_thread::sleep_for(chrono::milliseconds(400));
-
 	// ready state
 }
 
@@ -527,8 +525,6 @@ void Game::CenterOnExterior(signed int x, signed int y, bool spawn)
 		throw VaultException("Loading of cell (%d,%d) failed (%s)", x, y, e.what());
 	}
 
-	this_thread::sleep_for(chrono::milliseconds(400));
-
 	// ready state
 }
 
@@ -560,9 +556,6 @@ void Game::CenterOnWorld(unsigned int baseID, signed int x, signed int y, bool s
 	{
 		throw VaultException("Loading of world (%08X,%d,%d) failed (%s)", baseID, x, y, e.what());
 	}
-
-	// weirdness: if no sleep, some commands fail (RemoveItem). if sleep too long, random access violation in Fallout!
-	this_thread::sleep_for(chrono::milliseconds(400));
 
 	// ready state
 }

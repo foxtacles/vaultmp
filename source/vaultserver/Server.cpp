@@ -98,9 +98,9 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 
 	unsigned int result = Script::OnPlayerRequestGame(_player);
 
-	// TODO hardcoded hack to not get DLC bases. no proper mod handling yet
+	// TODO hardcoded and very ugly hack to not get DLC bases, unwanted NPCs, etc. no proper mod handling yet, not enough info about NPCs yet
 	if (!result)
-		result = Record::GetRecordNotIn(Player::GetBaseIDs(), [](const Record& data) { return !data.GetType().compare("NPC_") && !(data.GetBase() & 0xFF000000); }).GetBase();
+		result = Record::GetRecordNotIn(Player::GetBaseIDs(), [](const Record& data) { return !data.GetType().compare("NPC_") && !(data.GetBase() & 0xFF000000) && data.GetName().find("Test") != string::npos && data.GetName().find("Child") == string::npos; }).GetBase();
 
 	player->SetReference(0x00000000);
 	player->SetBase(result);
