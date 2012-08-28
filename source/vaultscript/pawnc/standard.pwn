@@ -28,18 +28,7 @@ public OnPlayerDisconnect(ID, reason)
 
 public OnPlayerRequestGame(ID)
 {
-	new base = 0x00000000;
-
-	switch (GetGameCode())
-	{
-		case FALLOUT3:
-			base = 0x00030D82; // Carter
-
-		case NEWVEGAS:
-			base = 0x0010C0BE; // Jessup
-	}
-
-	return base;
+	return 0x00000000;
 }
 
 public OnPlayerChat(ID, message{})
