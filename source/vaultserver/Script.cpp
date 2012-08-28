@@ -382,6 +382,24 @@ unsigned long long Script::Timer_Respawn(NetworkID id)
 	Player* player = vaultcast<Player>(reference);
 	RakNetGUID guid = Client::GetClientFromPlayer(id)->GetGUID();
 
+	RemoveAllItems(id);
+
+	for (const auto& item : Player::default_items)
+	{
+		AddItem(id, item.first, get<0>(item.second), get<1>(item.second), get<3>(item.second));
+
+		if (get<2>(item.second))
+			EquipItem(id, item.first, get<3>(item.second), get<4>(item.second));
+	}
+
+	const auto& values = (API::GetGameCode() == FALLOUT3) ? Player::f3_default_values : Player::fnv_default_values;
+
+	for (const auto& value : values)
+	{
+		SetActorBaseValue(id, value.first, value.second.first);
+		SetActorValue(id, value.first, value.second.second);
+	}
+
 	Network::Queue(NetworkResponse{Network::CreateResponse(
 		PacketFactory::Create<pTypes::ID_UPDATE_DEAD>(id, false, 0, 0),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid)
