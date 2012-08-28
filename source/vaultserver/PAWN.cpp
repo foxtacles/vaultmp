@@ -62,6 +62,7 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"GetAngle", PAWN::vaultmp_GetAngle},
 	{"GetCell", PAWN::vaultmp_GetCell},
 	{"IsNearPoint", PAWN::vaultmp_IsNearPoint},
+	{"GetItemContainer", PAWN::vaultmp_GetItemContainer},
 	{"GetItemCount", PAWN::vaultmp_GetItemCount},
 	{"GetItemCondition", PAWN::vaultmp_GetItemCondition},
 	{"GetItemEquipped", PAWN::vaultmp_GetItemEquipped},
@@ -592,6 +593,11 @@ cell PAWN::vaultmp_GetCell(AMX* amx, const cell* params)
 cell PAWN::vaultmp_IsNearPoint(AMX* amx, const cell* params)
 {
 	return Script::IsNearPoint(params[1], amx_ctof(params[2]), amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
+}
+
+cell PAWN::vaultmp_GetItemContainer(AMX* amx, const cell* params)
+{
+	return Script::GetItemContainer(params[1]);
 }
 
 cell PAWN::vaultmp_GetItemCount(AMX* amx, const cell* params)

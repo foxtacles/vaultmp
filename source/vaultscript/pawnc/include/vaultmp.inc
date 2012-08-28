@@ -138,6 +138,7 @@ native GetPos(ID, &Float:X, &Float:Y, &Float:Z);
 native GetAngle(ID, &Float:X, &Float:Y, &Float:Z);
 native GetCell(ID);
 native Bool:IsNearPoint(ID, Float:X, Float:Y, Float:Z, Float:R);
+native GetItemContainer(ID);
 native GetItemCount(ID);
 native Float:GetItemCondition(ID);
 native Bool:GetItemEquipped(ID);

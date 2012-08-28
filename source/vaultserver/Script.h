@@ -134,6 +134,7 @@ class Script
 		static void GetAngle(NetworkID id, double* X, double* Y, double* Z);
 		static unsigned int GetCell(NetworkID id);
 		static bool IsNearPoint(NetworkID id, double X, double Y, double Z, double R);
+		static NetworkID GetItemContainer(NetworkID id);
 		static unsigned int GetItemCount(NetworkID id);
 		static double GetItemCondition(NetworkID id);
 		static bool GetItemEquipped(NetworkID id);
