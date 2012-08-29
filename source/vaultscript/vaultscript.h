@@ -157,11 +157,17 @@ namespace vaultmp {
 	enum Timer : uint64_t;
 	enum Result : uint64_t;
 
-	struct _hash_ID { inline size_t operator() (const ID& id) const { return std::hash<uint64_t>()(static_cast<uint64_t>(id)); }};
+	struct _hash_Base { inline size_t operator() (const Base& base) const { return std::hash<std::underlying_type<Base>::type>()(static_cast<std::underlying_type<Base>::type>(base)); }};
+	struct _hash_ID { inline size_t operator() (const ID& id) const { return std::hash<std::underlying_type<ID>::type>()(static_cast<std::underlying_type<ID>::type>(id)); }};
 
 	typedef std::string String;
+	typedef std::vector<Base> BaseVector;
 	typedef std::vector<ID> IDVector;
+	typedef std::unordered_set<ID, _hash_Base> BaseSet;
 	typedef std::unordered_set<ID, _hash_ID> IDSet;
+
+	template <typename V>
+	using BaseHash = std::unordered_map<Base, V, _hash_Base>;
 
 	template <typename V>
 	using IDHash = std::unordered_map<ID, V, _hash_ID>;
