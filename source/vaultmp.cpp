@@ -1060,7 +1060,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 					{
 						EnableWindow(wndsync, 0);
 
-						int result = MessageBox(nullptr, "This function downloads files (savegames, mods etc.) from the server. vaultmp has no control of which files get downloaded; this is up to the server configuration. Files will be placed in the \"Saves\" or \"Data\" folder of the appropiate game. Do NOT continue if you do not trust the server!", "Attention", MB_OKCANCEL | MB_ICONWARNING | MB_TOPMOST | MB_TASKMODAL);
+						int result = MessageBox(nullptr, "This function downloads files (mods) from the server. vaultmp has no control of which files get downloaded; this is up to the server configuration. Files will be placed in the \"Data\" folder of the corresponding game. Do NOT continue if you do not trust the server!", "Attention", MB_OKCANCEL | MB_ICONWARNING | MB_TOPMOST | MB_TASKMODAL);
 
 						if (result == IDCANCEL)
 						{

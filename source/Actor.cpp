@@ -222,7 +222,8 @@ bool Actor::IsActorFiring() const
 {
 	unsigned char anim = this->GetActorWeaponAnimation();
 #ifdef VAULTSERVER
-	return (anim >= AnimGroup_AttackLeft && anim <= AnimGroup_AttackSpin2ISDown && this->GetEquippedWeapon());
+	unsigned int weapon = this->GetEquippedWeapon();
+	return (anim >= AnimGroup_AttackLeft && anim <= AnimGroup_AttackSpin2ISDown && weapon && Weapon::Lookup(weapon).GetAmmo()); // || is throwable weapon
 #else
 	return (anim >= AnimGroup_AttackLeft && anim <= AnimGroup_AttackSpin2ISDown);
 #endif
