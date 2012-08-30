@@ -44,10 +44,8 @@ CriticalSection* CriticalSection::StartSession()
 	if (success && !finalize)
 	{
 #ifdef VAULTMP_DEBUG
-
 		if (debug)
 			debug->PrintFormat("CriticalSection object %08X (%s) locked by thread %s", true, this, typeid(*this).name(), thread_id().c_str());
-
 #endif
 		return this;
 	}
@@ -61,7 +59,6 @@ CriticalSection* CriticalSection::StartSession()
 	else
 #ifdef VAULTMP_DEBUG
 		throw VaultException("Thread %s could not enter CriticalSection object %08X, timeout of %dms reached (%s)", thread_id().c_str(), this, CS_TIMEOUT, typeid(*this).name());
-
 #else
 		throw VaultException("Could not enter CriticalSection object %08X, timeout of %dms reached (%s)", this, CS_TIMEOUT, typeid(*this).name());
 #endif

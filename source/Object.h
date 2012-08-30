@@ -63,9 +63,10 @@ class Object : public Reference
 		Object(unsigned int refID, unsigned int baseID);
 		Object(const pDefault* packet);
 		Object(pPacket&& packet);
-		virtual ~Object();
 
 	public:
+		virtual ~Object();
+
 #ifdef VAULTMP_DEBUG
 		static void SetDebugHandler(Debug* debug);
 #endif

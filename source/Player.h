@@ -55,9 +55,10 @@ class Player : public Actor
 	protected:
 		Player(unsigned int refID, unsigned int baseID);
 		Player(const pDefault* packet);
-		virtual ~Player();
 
 	public:
+		virtual ~Player();
+
 		static const map<unsigned char, pair<double, double>> f3_default_values;
 		static const map<unsigned char, pair<double, double>> fnv_default_values;
 		static const map<unsigned int, tuple<unsigned int, double, bool, bool, bool>> default_items;

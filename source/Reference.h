@@ -46,9 +46,9 @@ class Reference : private CriticalSection, public NetworkIDObject
 		Lockable* SetObjectValue(Value<T>& dest, const T& value);
 
 		Reference(unsigned int refID, unsigned int baseID);
-		virtual ~Reference();
 
 	public:
+		virtual ~Reference();
 
 #ifdef VAULTMP_DEBUG
 		static void SetDebugHandler(Debug* debug);

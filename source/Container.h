@@ -69,9 +69,10 @@ class Container : public Object
 		Container(unsigned int refID, unsigned int baseID);
 		Container(const pDefault* packet);
 		Container(pPacket&& packet);
-		virtual ~Container();
 
 	public:
+		virtual ~Container();
+
 #ifdef VAULTMP_DEBUG
 		static void SetDebugHandler(Debug* debug);
 #endif

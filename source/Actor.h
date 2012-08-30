@@ -69,9 +69,9 @@ class Actor : public Container
 		Actor(unsigned int refID, unsigned int baseID);
 		Actor(const pDefault* packet);
 		Actor(pPacket&& packet);
-		virtual ~Actor();
 
 	public:
+		virtual ~Actor();
 
 		/**
 		 * \brief Retrieves a reference to a constant Parameter containing every available actor value string representation

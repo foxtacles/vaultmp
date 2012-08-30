@@ -46,9 +46,10 @@ class Item : public Object
 	protected:
 		Item(unsigned int refID, unsigned int baseID);
 		Item(const pDefault* packet);
-		virtual ~Item();
 
 	public:
+		virtual ~Item();
+
 #ifdef VAULTMP_DEBUG
 		static void SetDebugHandler(Debug* debug);
 #endif

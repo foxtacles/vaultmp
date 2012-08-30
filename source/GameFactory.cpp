@@ -68,7 +68,11 @@ vector<FactoryObject> GameFactory::GetObjectTypes(unsigned char type) noexcept
 
 	for (it = copy.begin(); it != copy.end(); ++it)
 		if (it->second & type)
-			result.emplace_back(FactoryObject(it->first, it->second));
+			try
+			{
+				result.emplace_back(FactoryObject(it->first.get(), it->second));
+			}
+			catch (...) { continue; }
 
 	return result;
 }
@@ -108,7 +112,7 @@ FactoryObject GameFactory::GetObject(NetworkID id)
 	cs.StartSession();
 
 	Reference* reference = Network::Manager()->GET_OBJECT_FROM_ID<Reference*>(id);
-	unsigned char type = instances.find(reference)->second;
+	unsigned char type = GetShared(reference)->second;
 
 	cs.EndSession();
 
@@ -131,7 +135,7 @@ FactoryObject GameFactory::GetObject(unsigned int refID)
 
 	if (it != instances.end())
 	{
-		reference = it->first;
+		reference = it->first.get();
 		type = it->second;
 	}
 	else
@@ -151,7 +155,7 @@ FactoryObject GameFactory::GetObject(unsigned int refID)
 vector<FactoryObject> GameFactory::GetMultiple(const vector<NetworkID>& objects)
 {
 	vector<FactoryObject> result(objects.size());
-	multimap<pair<Reference*, unsigned char>, unsigned int> sort;
+	multimap<ReferenceList::value_type, unsigned int> sort;
 
 	cs.StartSession();
 
@@ -166,7 +170,8 @@ vector<FactoryObject> GameFactory::GetMultiple(const vector<NetworkID>& objects)
 			if (!reference)
 				throw VaultException("Unknown object with NetworkID %llu", id);
 
-			sort.insert(make_pair(*instances.find(reference), i));
+			// emplace
+			sort.insert(make_pair(*GetShared(reference), i));
 
 			++i;
 		}
@@ -180,7 +185,7 @@ vector<FactoryObject> GameFactory::GetMultiple(const vector<NetworkID>& objects)
 	cs.EndSession();
 
 	for (const auto& reference : sort)
-		result[reference.second] = FactoryObject(reference.first.first, reference.first.second);
+		result[reference.second] = FactoryObject(reference.first.first.get(), reference.first.second);
 
 	return result;
 }
@@ -188,7 +193,7 @@ vector<FactoryObject> GameFactory::GetMultiple(const vector<NetworkID>& objects)
 vector<FactoryObject> GameFactory::GetMultiple(const vector<unsigned int>& objects)
 {
 	vector<FactoryObject> result(objects.size());
-	multimap<pair<Reference*, unsigned char>, unsigned int> sort;
+	multimap<ReferenceList::value_type, unsigned int> sort;
 
 	cs.StartSession();
 
@@ -197,13 +202,14 @@ vector<FactoryObject> GameFactory::GetMultiple(const vector<unsigned int>& objec
 		ReferenceList::iterator it;
 		unsigned int i = 0;
 
-		for (const auto& id : objects)
+		for (const auto& refID : objects)
 		{
-			for (it = instances.begin(); it != instances.end() && it->first->GetReference() != id; ++it);
+			for (it = instances.begin(); it != instances.end() && it->first->GetReference() != refID; ++it);
 
 			if (it == instances.end())
-				throw VaultException("Unknown object with reference %08X", id);
+				throw VaultException("Unknown object with reference %08X", refID);
 
+			// emplace
 			sort.insert(make_pair(*it, i));
 
 			++i;
@@ -218,7 +224,7 @@ vector<FactoryObject> GameFactory::GetMultiple(const vector<unsigned int>& objec
 	cs.EndSession();
 
 	for (const auto& reference : sort)
-		result[reference.second] = FactoryObject(reference.first.first, reference.first.second);
+		result[reference.second] = FactoryObject(reference.first.first.get(), reference.first.second);
 
 	return result;
 }
@@ -288,7 +294,7 @@ unsigned char GameFactory::GetType(Reference* reference) noexcept
 	cs.StartSession();
 
 	unsigned char type;
-	it = instances.find(reference);
+	it = GetShared(reference);
 	type = (it != instances.end() ? it->second : 0x00);
 
 	cs.EndSession();
@@ -330,31 +336,32 @@ unsigned char GameFactory::GetType(unsigned int refID) noexcept
 
 NetworkID GameFactory::CreateInstance(unsigned char type, unsigned int refID, unsigned int baseID)
 {
-	Reference* reference;
+	shared_ptr<Reference> reference;
 
+	// can't use make_shared because of access control
 	switch (type)
 	{
 		case ID_REFERENCE:
 			throw VaultException("It is not possible to have a pure Reference instance");
 
 		case ID_OBJECT:
-			reference = new Object(refID, baseID);
+			reference = shared_ptr<Object>(new Object(refID, baseID));
 			break;
 
 		case ID_ITEM:
-			reference = new Item(refID, baseID);
+			reference = shared_ptr<Item>(new Item(refID, baseID));
 			break;
 
 		case ID_CONTAINER:
-			reference = new Container(refID, baseID);
+			reference = shared_ptr<Container>(new Container(refID, baseID));
 			break;
 
 		case ID_ACTOR:
-			reference = new Actor(refID, baseID);
+			reference = shared_ptr<Actor>(new Actor(refID, baseID));
 			break;
 
 		case ID_PLAYER:
-			reference = new Player(refID, baseID);
+			reference = shared_ptr<Player>(new Player(refID, baseID));
 			break;
 
 		default:
@@ -370,6 +377,7 @@ NetworkID GameFactory::CreateInstance(unsigned char type, unsigned int refID, un
 	cs.StartSession();
 
 	++typecount[type];
+	// emplace
 	instances.insert(make_pair(reference, type));
 
 	cs.EndSession();
@@ -384,31 +392,32 @@ NetworkID GameFactory::CreateInstance(unsigned char type, unsigned int baseID)
 
 void GameFactory::CreateKnownInstance(unsigned char type, NetworkID id, unsigned int refID, unsigned int baseID)
 {
-	Reference* reference;
+	shared_ptr<Reference> reference;
 
+	// can't use make_shared because of access control
 	switch (type)
 	{
 		case ID_REFERENCE:
 			throw VaultException("It is not possible to have a pure Reference instance");
 
 		case ID_OBJECT:
-			reference = new Object(refID, baseID);
+			reference = shared_ptr<Object>(new Object(refID, baseID));
 			break;
 
 		case ID_ITEM:
-			reference = new Item(refID, baseID);
+			reference = shared_ptr<Item>(new Item(refID, baseID));
 			break;
 
 		case ID_CONTAINER:
-			reference = new Container(refID, baseID);
+			reference = shared_ptr<Container>(new Container(refID, baseID));
 			break;
 
 		case ID_ACTOR:
-			reference = new Actor(refID, baseID);
+			reference = shared_ptr<Actor>(new Actor(refID, baseID));
 			break;
 
 		case ID_PLAYER:
-			reference = new Player(refID, baseID);
+			reference = shared_ptr<Player>(new Player(refID, baseID));
 			break;
 
 		default:
@@ -424,6 +433,7 @@ void GameFactory::CreateKnownInstance(unsigned char type, NetworkID id, unsigned
 	cs.StartSession();
 
 	++typecount[type];
+	// emplace
 	instances.insert(make_pair(reference, type));
 
 	cs.EndSession();
@@ -436,31 +446,32 @@ void GameFactory::CreateKnownInstance(unsigned char type, NetworkID id, unsigned
 
 NetworkID GameFactory::CreateKnownInstance(unsigned char type, const pDefault* packet)
 {
-	Reference* reference;
+	shared_ptr<Reference> reference;
 
+	// can't use make_shared because of access control
 	switch (type)
 	{
 		case ID_REFERENCE:
 			throw VaultException("It is not possible to have a pure Reference instance");
 
 		case ID_OBJECT:
-			reference = new Object(packet);
+			reference = shared_ptr<Object>(new Object(packet));
 			break;
 
 		case ID_ITEM:
-			reference = new Item(packet);
+			reference = shared_ptr<Item>(new Item(packet));
 			break;
 
 		case ID_CONTAINER:
-			reference = new Container(packet);
+			reference = shared_ptr<Container>(new Container(packet));
 			break;
 
 		case ID_ACTOR:
-			reference = new Actor(packet);
+			reference = shared_ptr<Actor>(new Actor(packet));
 			break;
 
 		case ID_PLAYER:
-			reference = new Player(packet);
+			reference = shared_ptr<Player>(new Player(packet));
 			break;
 
 		default:
@@ -478,6 +489,7 @@ NetworkID GameFactory::CreateKnownInstance(unsigned char type, const pDefault* p
 	cs.StartSession();
 
 	++typecount[type];
+	// emplace
 	instances.insert(make_pair(reference, type));
 
 	cs.EndSession();
@@ -492,22 +504,16 @@ void GameFactory::DestroyAllInstances()
 	for (const auto& instance : instances)
 	{
 		if (instance.second & ALL_CONTAINERS)
-			reinterpret_cast<Container*>(instance.first)->container.clear();
+			reinterpret_cast<Container*>(instance.first.get())->container.clear();
 
 #ifdef VAULTMP_DEBUG
-
 		if (debug)
-			debug->PrintFormat("Reference %08X with base %08X and NetworkID %llu (type: %s) to be destructed (%08X)", true, instance.first->GetReference(), instance.first->GetBase(), instance.first->GetNetworkID(), typeid(*(instance.first)).name(), instance.first);
-
+			debug->PrintFormat("Reference %08X with base %08X and NetworkID %llu (type: %s) to be destructed (%08X)", true, instance.first->GetReference(), instance.first->GetBase(), instance.first->GetNetworkID(), typeid(*(instance.first)).name(), instance.first.get());
 #endif
 
 		Reference* reference = reinterpret_cast<Reference*>(instance.first->StartSession());
 
-		if (reference)
-		{
-			reference->Finalize();
-			delete reference; // this throws
-		}
+		reference->Finalize();
 	}
 
 	instances.clear();
@@ -540,26 +546,23 @@ NetworkID GameFactory::DestroyInstance(FactoryObject& reference)
 	NetworkID id = _reference->GetNetworkID();
 
 #ifdef VAULTMP_DEBUG
-
 	if (debug)
 		debug->PrintFormat("Reference %08X with base %08X and NetworkID %llu (type: %s) to be destructed", true, _reference->GetReference(), _reference->GetBase(), _reference->GetNetworkID(), typeid(*_reference).name());
-
 #endif
 
 	cs.StartSession();
 
-	ReferenceList::iterator it = instances.find(_reference);
+	ReferenceList::iterator it = GetShared(_reference);
 
 	if (it != instances.end())
 	{
 		--typecount[it->second];
+		_reference->Finalize();
 		instances.erase(it);
 	}
 
 	cs.EndSession();
 
-	_reference->Finalize();
-	delete _reference; // this throws
 	reference.reference = nullptr;
 	reference.type = 0x00;
 

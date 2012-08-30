@@ -49,7 +49,7 @@ const unsigned char ALL_OBJECTS         = (ID_OBJECT | ID_ITEM | ID_CONTAINER | 
 const unsigned char ALL_CONTAINERS      = (ID_CONTAINER | ID_ACTOR | ID_PLAYER);
 const unsigned char ALL_ACTORS          = (ID_ACTOR | ID_PLAYER);
 
-typedef map<Reference*, unsigned char> ReferenceList;
+typedef map<shared_ptr<Reference>, unsigned char> ReferenceList;
 typedef unordered_map<unsigned char, unsigned int> ReferenceCount;
 
 using namespace std;
@@ -82,6 +82,7 @@ class GameFactory
 		static Database<Race> dbRaces;
 #endif
 
+		static inline ReferenceList::iterator GetShared(Reference* reference) { return find_if(instances.begin(), instances.end(), [=](const ReferenceList::value_type& _reference) { return _reference.first.get() == reference; }); }
 		static unsigned char GetType(Reference* reference) noexcept;
 
 	public:
