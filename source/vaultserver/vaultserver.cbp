@@ -120,7 +120,6 @@
 		<Unit filename="..\Object.h" />
 		<Unit filename="..\PacketFactory.cpp" />
 		<Unit filename="..\PacketFactory.h" />
-		<Unit filename="..\PacketTypes.h" />
 		<Unit filename="..\Player.cpp" />
 		<Unit filename="..\Player.h" />
 		<Unit filename="..\RakNet\AutopatcherPatchContext.h" />

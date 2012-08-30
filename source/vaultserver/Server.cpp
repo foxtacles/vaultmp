@@ -16,7 +16,7 @@ void Server::SetDebugHandler(Debug* debug)
 }
 #endif
 
-NetworkResponse Server::Authenticate(RakNetGUID guid, string name, string pwd)
+NetworkResponse Server::Authenticate(RakNetGUID guid, const string& name, const string& pwd)
 {
 	NetworkResponse response;
 	bool result = Script::OnClientAuthenticate(name, pwd);

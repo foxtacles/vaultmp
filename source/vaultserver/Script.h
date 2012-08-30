@@ -106,7 +106,7 @@ class Script
 		static void OnPlayerDisconnect(const FactoryObject& reference, Reason reason);
 		static unsigned int OnPlayerRequestGame(const FactoryObject& reference);
 		static bool OnPlayerChat(const FactoryObject& reference, string& message);
-		static bool OnClientAuthenticate(string name, string pwd);
+		static bool OnClientAuthenticate(const string& name, const string& pwd);
 
 		static const char* ValueToString(unsigned char index);
 		static const char* AxisToString(unsigned char index);

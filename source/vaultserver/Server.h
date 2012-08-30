@@ -31,7 +31,7 @@ class Server
 		/**
 		 * \brief Authenticates a client
 		 */
-		static NetworkResponse Authenticate(RakNetGUID guid, string name, string pwd);
+		static NetworkResponse Authenticate(RakNetGUID guid, const string& name, const string& pwd);
 		/**
 		 * \brief Sends the game world data
 		 */

@@ -692,7 +692,7 @@ bool Script::OnPlayerChat(const FactoryObject& reference, string& message)
 	return result;
 }
 
-bool Script::OnClientAuthenticate(string name, string pwd)
+bool Script::OnClientAuthenticate(const string& name, const string& pwd)
 {
 	bool result = true;
 
