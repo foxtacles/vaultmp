@@ -5,9 +5,9 @@
 #define THREAD_PRIORITY_NORMAL 1000
 #endif
 
-#define DEDICATED_VERSION "0.1a snapshot \"Gary 2\""
-#define MASTER_VERSION "0.1a snapshot \"Gary 2\""
-#define CLIENT_VERSION "0.1a snapshot \"Gary 2\""
+#define DEDICATED_VERSION "0.1a snapshot \"Gary 2.1\""
+#define MASTER_VERSION "0.1a snapshot \"Gary 2.1\""
+#define CLIENT_VERSION "0.1a snapshot \"Gary 2.1\""
 
 static const unsigned int FALLOUT3_EN_VER17            =   0x00E59528;
 //static const unsigned int FALLOUT3_EN_VER17_STEAM      =
