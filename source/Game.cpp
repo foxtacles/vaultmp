@@ -466,9 +466,11 @@ void Game::LoadGame(string savegame)
 
 void Game::CenterOnCell(const string& cell, bool spawn)
 {
+	bool first = false;
+
 	if (spawn)
 	{
-		bool first = !spawnFunc.operator bool();
+		first = !spawnFunc.operator bool();
 		spawnFunc = bind(CenterOnCell, cell, false);
 
 		if (!first)
@@ -493,14 +495,19 @@ void Game::CenterOnCell(const string& cell, bool spawn)
 		throw VaultException("Loading of cell %s failed (%s)", cell.c_str(), e.what());
 	}
 
+	if (first)
+		Game::LoadEnvironment();
+
 	// ready state
 }
 
 void Game::CenterOnExterior(signed int x, signed int y, bool spawn)
 {
+	bool first = false;
+
 	if (spawn)
 	{
-		bool first = !spawnFunc.operator bool();
+		first = !spawnFunc.operator bool();
 		spawnFunc = bind(CenterOnExterior, x, y, false);
 
 		if (!first)
@@ -525,14 +532,19 @@ void Game::CenterOnExterior(signed int x, signed int y, bool spawn)
 		throw VaultException("Loading of cell (%d,%d) failed (%s)", x, y, e.what());
 	}
 
+	if (first)
+		Game::LoadEnvironment();
+
 	// ready state
 }
 
 void Game::CenterOnWorld(unsigned int baseID, signed int x, signed int y, bool spawn)
 {
+	bool first = false;
+
 	if (spawn)
 	{
-		bool first = !spawnFunc.operator bool();
+		first = !spawnFunc.operator bool();
 		spawnFunc = bind(CenterOnWorld, baseID, x, y, false);
 
 		if (!first)
@@ -556,6 +568,9 @@ void Game::CenterOnWorld(unsigned int baseID, signed int x, signed int y, bool s
 	{
 		throw VaultException("Loading of world (%08X,%d,%d) failed (%s)", baseID, x, y, e.what());
 	}
+
+	if (first)
+		Game::LoadEnvironment();
 
 	// ready state
 }

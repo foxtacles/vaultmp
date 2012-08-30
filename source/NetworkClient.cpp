@@ -124,8 +124,6 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					Game::cellRefs.clear();
 					Game::spawnFunc = function<void()>();
 
-					Game::LoadEnvironment();
-
 					response = NetworkClient::ProcessEvent(ID_EVENT_GAME_STARTED);
 					break;
 				}
