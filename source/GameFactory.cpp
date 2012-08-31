@@ -554,12 +554,9 @@ NetworkID GameFactory::DestroyInstance(FactoryObject& reference)
 
 	ReferenceList::iterator it = GetShared(_reference);
 
-	if (it != instances.end())
-	{
-		--typecount[it->second];
-		_reference->Finalize();
-		instances.erase(it);
-	}
+	--typecount[it->second];
+	_reference->Finalize();
+	instances.erase(it);
 
 	cs.EndSession();
 

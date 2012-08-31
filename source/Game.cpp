@@ -1890,7 +1890,7 @@ void Game::GetDead(const FactoryObject& reference, const FactoryObject& player, 
 		{
 			NetworkID id = actor->GetNetworkID();
 
-			AsyncDispatch([=]
+			AsyncDispatch([id]
 			{
 				try
 				{

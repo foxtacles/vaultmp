@@ -178,12 +178,12 @@ void Interface::EndDynamic()
 
 void Interface::SetupCommand(string name, ParamContainer&& param, unsigned int priority)
 {
-	priorityMap.insert(make_pair(priority, natives.insert(make_pair(name, move(param)))));
+	priorityMap.insert(make_pair(priority, natives.emplace(name, move(param))));
 }
 
 void Interface::ExecuteCommand(string name, ParamContainer&& param, unsigned int key)
 {
-	dynamic_cmdlist.emplace_back(natives.insert(make_pair(name, move(param))), key);
+	dynamic_cmdlist.emplace_back(natives.emplace(make_pair(name, move(param))), key);
 }
 
 vector<string> Interface::Evaluate(Native::iterator _it)
@@ -208,7 +208,7 @@ vector<string> Interface::Evaluate(Native::iterator _it)
 		if (params.empty())
 			return result;
 
-		mult.insert(mult.begin(), rsize);
+		mult.emplace(mult.begin(), rsize);
 		rsize *= params.size();
 	}
 

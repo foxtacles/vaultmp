@@ -117,15 +117,13 @@ unsigned int Lockable::Lock()
 	}
 
 	locks.insert(next_key);
-	keymap.insert(pair<unsigned int, Lockable*>(next_key, this));
+	keymap.emplace(next_key, this);
 
 	cs.EndSession();
 
 #ifdef VAULTMP_DEBUG
-
 	if (debug)
 		debug->PrintFormat("%08X (%s) has been locked with key %08X", true, this, typeid(*this).name(), next_key);
-
 #endif
 
 	return next_key;
@@ -145,20 +143,16 @@ Lockable* Lockable::Unlock(unsigned int key)
 		cs.EndSession();
 
 #ifdef VAULTMP_DEBUG
-
 		if (debug)
 			debug->PrintFormat("%08X (%s) has been unlocked with key %08X", true, this, typeid(*this).name(), key);
-
 #endif
 
 		return this;
 	}
 
 #ifdef VAULTMP_DEBUG
-
 	if (debug)
 		debug->PrintFormat("%08X is still locked (key used: %08X)", true, this, key);
-
 #endif
 
 	return nullptr;
@@ -180,16 +174,14 @@ unsigned int Lockable::Share(const shared_ptr<Lockable>& share)
 		throw;
 	}
 
-	sharemap.insert(pair<unsigned int, weak_ptr<Lockable>>(next_key, weak_ptr<Lockable>(share)));
-	keymap.insert(pair<unsigned int, Lockable*>(next_key, share.get()));
+	sharemap.emplace(next_key, weak_ptr<Lockable>(share));
+	keymap.emplace(next_key, share.get());
 
 	cs.EndSession();
 
 #ifdef VAULTMP_DEBUG
-
 	if (debug)
 		debug->PrintFormat("%08X (%s) has been shared with key %08X", true, share.get(), typeid(*(share.get())).name(), next_key);
-
 #endif
 
 	return next_key;
