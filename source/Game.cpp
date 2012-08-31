@@ -2030,6 +2030,7 @@ void Game::GetActorState(const FactoryObject& reference, unsigned char chat_keys
 
 	static bool chat_state = false;
 	static bool quit_state = true;
+	static pair<unsigned char, unsigned char> buf_weapon{AnimGroup_Idle, AnimGroup_Idle};
 
 	if (!chat_keys && !chat_state)
 		quit_state = true;
@@ -2060,7 +2061,11 @@ void Game::GetActorState(const FactoryObject& reference, unsigned char chat_keys
 
 	result = (static_cast<bool>(actor->SetActorMovingAnimation(moving)) | static_cast<bool>(actor->SetActorMovingXY(movingxy)) | static_cast<bool>(actor->SetActorSneaking(sneaking)));
 
-	if (static_cast<bool>(actor->SetActorWeaponAnimation(weapon)))
+	// workaround for occurences of wrong animation (case: 2HA weapons in AimIS mode, spuriously falls back to Aim for a frame)
+	buf_weapon.first = buf_weapon.second;
+	buf_weapon.second = weapon;
+
+	if (buf_weapon.first == buf_weapon.second && static_cast<bool>(actor->SetActorWeaponAnimation(weapon)))
 	{
 		result = true;
 
@@ -2072,7 +2077,7 @@ void Game::GetActorState(const FactoryObject& reference, unsigned char chat_keys
 
 	if (result)
 		Network::Queue(NetworkResponse{Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_STATE>(actor->GetNetworkID(), moving, movingxy, weapon, actor->GetActorAlerted(), sneaking, false),
+			PacketFactory::Create<pTypes::ID_UPDATE_STATE>(actor->GetNetworkID(), moving, movingxy, actor->GetActorWeaponAnimation(), actor->GetActorAlerted(), sneaking, false),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 		});
 }
