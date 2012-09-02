@@ -38,8 +38,10 @@ static void PatchGame(HINSTANCE& silverlock);
 static void BethesdaDelegator();
 static void ToggleRespawn();
 static void RespawnDetour();
-static void AnimDetour();
-static void PlayIdleDetour();
+static void AnimDetour_F3();
+static void PlayIdleDetour_F3();
+static void AnimDetour_FNV();
+static void PlayIdleDetour_FNV();
 static vector<void*> delegated;
 
 typedef void (__stdcall * _GetSystemTimeAsFileTime)(LPFILETIME * fileTime);
@@ -64,6 +66,11 @@ static const unsigned FalloutNVpatch_noRespawn_jmp = 0x0093FF83;
 static const unsigned FalloutNVpatch_noRespawn_call_src = 0x0093FF85;
 static const unsigned FalloutNVpatch_noRespawn_call_dest = 0x007D0A70;
 static const unsigned FalloutNVpatch_noRespawn_call_detour = (unsigned)& RespawnDetour;
+static const unsigned FalloutNVpatch_playIdle_call_src = 0x008D96BA;
+static const unsigned FalloutNVpatch_playIdle_call_dest = (unsigned)& AnimDetour_FNV;
+static const unsigned FalloutNVpatch_playIdle_fix_src = 0x005CB4F1;
+static const unsigned FalloutNVpatch_playIdle_fix_dest = (unsigned)& PlayIdleDetour_FNV;
+static unsigned FalloutNVpatch_playIdle_fix_ret = 0x005CB4F6;
 
 static const unsigned Fallout3patch_PlayGroup = 0x0045F704;
 static const unsigned Fallout3patch_delegator_src = 0x006EEC86;
@@ -75,9 +82,9 @@ static const unsigned Fallout3patch_noRespawn_jmp_src = 0x0078B230;
 static const unsigned Fallout3patch_noRespawn_jmp_dest = 0x0078B2B9;
 static const unsigned Fallout3patch_noRespawn_jmp_detour = (unsigned)& RespawnDetour;
 static const unsigned Fallout3patch_playIdle_call_src = 0x0073BB20;
-static const unsigned Fallout3patch_playIdle_call_dest = (unsigned)& AnimDetour;
+static const unsigned Fallout3patch_playIdle_call_dest = (unsigned)& AnimDetour_F3;
 static const unsigned Fallout3patch_playIdle_fix_src = 0x00534D8D;
-static const unsigned Fallout3patch_playIdle_fix_dest = (unsigned)& PlayIdleDetour;
+static const unsigned Fallout3patch_playIdle_fix_dest = (unsigned)& PlayIdleDetour_F3;
 
 static const unsigned FalloutNVpatch_disableNAM = 0x01018814;
 static const unsigned FalloutNVpatch_pluginsVMP = 0x0108282D;
@@ -198,7 +205,7 @@ void RespawnDetour()
 		reinterpret_cast<void(*)()>(FalloutNVpatch_noRespawn_call_dest)();
 }
 
-void AnimDetour()
+void AnimDetour_F3()
 {
 	asm volatile(
 		"PUSH EAX\n"
@@ -212,7 +219,7 @@ void AnimDetour()
 	);
 }
 
-void PlayIdleDetour()
+void PlayIdleDetour_F3()
 {
 	asm volatile(
 		"MOV %0,0x80\n"
@@ -220,6 +227,43 @@ void PlayIdleDetour()
 		"CALL EAX\n"
 		: "=m"(anim)
 		:
+		:
+	);
+}
+
+void AnimDetour_FNV()
+{
+	asm volatile(
+		"PUSH ECX\n"
+		"MOV ECX,%1\n"
+		"TEST ECX,ECX\n"
+		"JE _store\n"
+		"CMP ECX,0x100\n"
+		"JE _first\n"
+		"MOV %0,0\n"
+		"JMP _store\n"
+
+		"_first:\n"
+		"SHR ECX,1\n"
+		"MOV %0,ECX\n"
+
+		"_store:\n"
+		"MOV [EAX+0x424],ECX\n"
+		"POP ECX\n"
+		: "=m"(anim)
+		: "m"(anim)
+		:
+	);
+}
+
+void PlayIdleDetour_FNV()
+{
+	asm volatile(
+		"MOV %0,0x100\n"
+		"PUSH 0x80\n"
+		"JMP %1\n"
+		: "=m"(anim)
+		: "m"(FalloutNVpatch_playIdle_fix_ret)
 		:
 	);
 }
@@ -870,8 +914,13 @@ void PatchGame(HINSTANCE& silverlock)
 			SafeWrite8(FalloutNVpatch_delegatorCall_src + 5, 0x59);   // POP ECX
 			SafeWrite8(FalloutNVpatch_PlayGroup, 0xEB);   // JMP SHORT
 
+			unsigned char NOP[] = {0x90, 0x90, 0x90, 0x90, 0x90};
+			SafeWriteBuf(FalloutNVpatch_playIdle_call_src + 5, NOP, sizeof(NOP)); // 5x NOP
+
 			WriteRelCall(FalloutNVpatch_delegatorCall_src, FalloutNVpatch_delegatorCall_dest);
 			WriteRelCall(FalloutNVpatch_delegator_src, FalloutNVpatch_delegator_dest);
+			WriteRelCall(FalloutNVpatch_playIdle_call_src, FalloutNVpatch_playIdle_call_dest);
+			WriteRelJump(FalloutNVpatch_playIdle_fix_src, FalloutNVpatch_playIdle_fix_dest);
 
 			SafeWrite32(FalloutNVpatch_disableNAM, *(DWORD*)".|||"); // disable .NAM files
 			SafeWrite32(FalloutNVpatch_pluginsVMP, *(DWORD*)".vmp"); // redirect Plugins.txt
