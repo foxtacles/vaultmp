@@ -38,6 +38,8 @@ static void PatchGame(HINSTANCE& silverlock);
 static void BethesdaDelegator();
 static void ToggleRespawn();
 static void RespawnDetour();
+static void AnimDetour();
+static void PlayIdleDetour();
 static vector<void*> delegated;
 
 typedef void (__stdcall * _GetSystemTimeAsFileTime)(LPFILETIME * fileTime);
@@ -49,6 +51,7 @@ static HINSTANCE vaultgui = NULL;
 static bool delegate = false;
 static bool respawn = true;
 static bool DLLerror = false;
+static unsigned int anim = 0x00;
 static unsigned char game = 0x00;
 
 static const unsigned FalloutNVpatch_PlayGroup = 0x00494D5C;
@@ -71,6 +74,10 @@ static const unsigned Fallout3patch_noRespawn_NOP = 0x006D5965; // 2x NOP
 static const unsigned Fallout3patch_noRespawn_jmp_src = 0x0078B230;
 static const unsigned Fallout3patch_noRespawn_jmp_dest = 0x0078B2B9;
 static const unsigned Fallout3patch_noRespawn_jmp_detour = (unsigned)& RespawnDetour;
+static const unsigned Fallout3patch_playIdle_call_src = 0x0073BB20;
+static const unsigned Fallout3patch_playIdle_call_dest = (unsigned)& AnimDetour;
+static const unsigned Fallout3patch_playIdle_fix_src = 0x00534D8D;
+static const unsigned Fallout3patch_playIdle_fix_dest = (unsigned)& PlayIdleDetour;
 
 static const unsigned FalloutNVpatch_disableNAM = 0x01018814;
 static const unsigned FalloutNVpatch_pluginsVMP = 0x0108282D;
@@ -189,6 +196,32 @@ void RespawnDetour()
 
 	if (game == NEWVEGAS)
 		reinterpret_cast<void(*)()>(FalloutNVpatch_noRespawn_call_dest)();
+}
+
+void AnimDetour()
+{
+	asm volatile(
+		"PUSH EAX\n"
+		"MOV EAX,%1\n"
+		"MOV %0,0\n"
+		"MOV [ECX+0x414],EAX\n"
+		"POP EAX\n"
+		: "=m"(anim)
+		: "m"(anim)
+		:
+	);
+}
+
+void PlayIdleDetour()
+{
+	asm volatile(
+		"MOV %0,0x80\n"
+		"PUSH 0x80\n"
+		"CALL EAX\n"
+		: "=m"(anim)
+		:
+		:
+	);
 }
 
 bool vaultfunction(void* reference, void* result, void* args, unsigned short opcode)
@@ -815,9 +848,12 @@ void PatchGame(HINSTANCE& silverlock)
 			SafeWrite8(Fallout3patch_delegator_dest, 0x51);   // PUSH ECX
 			SafeWrite8(Fallout3patch_delegatorCall_src + 5, 0x59);   // POP ECX
 			SafeWrite8(Fallout3patch_PlayGroup, 0xEB);   // JMP SHORT
+			SafeWrite16(Fallout3patch_playIdle_fix_src + 5, 0x9090); // NOP NOP
 
 			WriteRelCall(Fallout3patch_delegatorCall_src, Fallout3patch_delegatorCall_dest);
 			WriteRelCall(Fallout3patch_delegator_src, Fallout3patch_delegator_dest);
+			WriteRelCall(Fallout3patch_playIdle_fix_src, Fallout3patch_playIdle_fix_dest);
+			WriteRelJump(Fallout3patch_playIdle_call_src, Fallout3patch_playIdle_call_dest);
 
 			SafeWrite32(Fallout3patch_pluginsVMP, *(DWORD*)".vmp"); // redirect Plugins.txt
 

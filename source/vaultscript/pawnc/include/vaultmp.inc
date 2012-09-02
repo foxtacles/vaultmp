@@ -98,7 +98,7 @@ forward OnClientAuthenticate(const name{}, const pwd{});
 native timestamp();
 native CreateTimer(const func{}, interval);
 native CreateTimerEx(const func{}, interval, const def{}, {Fixed,Float,_}:...);
-native KillTimer(timer);
+native KillTimer(timer = 0);
 native MakePublic(const func{}, const name{}, const def{});
 native CallPublic(const name{}, {Fixed,Float,_}:...);
 

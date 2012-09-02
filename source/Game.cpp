@@ -454,7 +454,7 @@ void Game::LoadGame(string savegame)
 
 	try
 	{
-		store.get()->get_future(chrono::seconds(60));
+		store->get_future(chrono::seconds(60));
 	}
 	catch (exception& e)
 	{
@@ -488,7 +488,7 @@ void Game::CenterOnCell(const string& cell, bool spawn)
 
 	try
 	{
-		store.get()->get_future(chrono::seconds(60));
+		store->get_future(chrono::seconds(60));
 	}
 	catch (exception& e)
 	{
@@ -525,7 +525,7 @@ void Game::CenterOnExterior(signed int x, signed int y, bool spawn)
 
 	try
 	{
-		store.get()->get_future(chrono::seconds(60));
+		store->get_future(chrono::seconds(60));
 	}
 	catch (exception& e)
 	{
@@ -562,7 +562,7 @@ void Game::CenterOnWorld(unsigned int baseID, signed int x, signed int y, bool s
 
 	try
 	{
-		store.get()->get_future(chrono::seconds(60));
+		store->get_future(chrono::seconds(60));
 	}
 	catch (exception& e)
 	{
@@ -671,7 +671,7 @@ void Game::NewObject(FactoryObject& reference)
 
 		try
 		{
-			refID = store.get()->get_future(chrono::seconds(15));
+			refID = store->get_future(chrono::seconds(15));
 		}
 		catch (exception& e)
 		{
@@ -872,7 +872,7 @@ unsigned int Game::GetBase(unsigned int refID)
 
 	try
 	{
-		baseID = store.get()->get_future(chrono::seconds(5));
+		baseID = store->get_future(chrono::seconds(5));
 	}
 	catch (exception& e)
 	{
@@ -1261,7 +1261,7 @@ void Game::RemoveAllItemsEx(FactoryObject& reference)
 
 	try
 	{
-		store.get()->get_future(chrono::seconds(5));
+		store->get_future(chrono::seconds(5));
 	}
 	catch (exception& e)
 	{
@@ -1300,7 +1300,7 @@ unsigned int Game::GetRefCount(unsigned int refID)
 
 	try
 	{
-		count = store.get()->get_future(chrono::seconds(5));
+		count = store->get_future(chrono::seconds(5));
 	}
 	catch (exception& e)
 	{
@@ -1373,7 +1373,7 @@ Game::CellDiff Game::ScanCell(unsigned int type)
 
 	try
 	{
-		diff = store.get()->get_future(chrono::seconds(5));
+		diff = store->get_future(chrono::seconds(5));
 	}
 	catch (exception& e)
 	{
@@ -1414,7 +1414,7 @@ void Game::ForceRespawn()
 
 	try
 	{
-		store.get()->get_future(chrono::seconds(5));
+		store->get_future(chrono::seconds(5));
 	}
 	catch (exception& e)
 	{
@@ -1933,7 +1933,7 @@ void Game::GetDead(const FactoryObject& reference, const FactoryObject& player, 
 
 						try
 						{
-							limbs = store.get()->get_future(chrono::seconds(5));
+							limbs = store->get_future(chrono::seconds(5));
 						}
 						catch (exception& e)
 						{
@@ -1953,7 +1953,7 @@ void Game::GetDead(const FactoryObject& reference, const FactoryObject& player, 
 
 						try
 						{
-							cause = store.get()->get_future(chrono::seconds(5));
+							cause = store->get_future(chrono::seconds(5));
 						}
 						catch (exception& e)
 						{
