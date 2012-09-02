@@ -141,6 +141,9 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func_PlayGroup:
 				break;
 
+			case Func_PlayIdle:
+				break;
+
 			case Func_GetDead:
 			{
 				vector<FactoryObject> objects = GameFactory::GetMultiple(vector<unsigned int>{getFrom<double, unsigned int>(info.at(1)), PLAYER_REFERENCE});
@@ -1140,6 +1143,20 @@ void Game::SetActorWeaponAnimation(const FactoryObject& reference, unsigned int 
 		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
 	SetActorAnimation(reference, actor->GetActorWeaponAnimation(), key);
+}
+
+void Game::SetActorIdleAnimation(const FactoryObject& reference, const string& anim, unsigned int key)
+{
+	Actor* actor = vaultcast<Actor>(reference);
+
+	if (!actor)
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
+
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("PlayIdle", {actor->GetReferenceParam(), RawParameter(anim)}, key);
+
+	Interface::EndDynamic();
 }
 
 void Game::KillActor(const FactoryObject& reference, unsigned short limbs, signed char cause, unsigned int key)

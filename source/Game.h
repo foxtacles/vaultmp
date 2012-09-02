@@ -195,6 +195,10 @@ class Game
 		 */
 		static void SetActorWeaponAnimation(const FactoryObject& reference, unsigned int key = 0);
 		/**
+		 * \brief Sets the idle animation of an Actor
+		 */
+		static void SetActorIdleAnimation(const FactoryObject& reference, const string& anim, unsigned int key = 0);
+		/**
 		 * \brief Kills an Actor
 		 */
 		static void KillActor(const FactoryObject& reference, unsigned short limbs, signed char cause, unsigned int key = 0);

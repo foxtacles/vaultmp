@@ -244,6 +244,7 @@ namespace Values
 		Func_DisablePlayerControls		= 0x1061,
 		Func_DamageActorValue			= 0x1181,
 		Func_RestoreActorValue			= 0x1182,
+		Func_PlayIdle					= 0x1190,
 
 		Func_GetActorState              = 0x0001 | VAULTFUNCTION,
 		Func_Chat						= 0x0002 | VAULTFUNCTION,
