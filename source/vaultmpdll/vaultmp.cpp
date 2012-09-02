@@ -54,6 +54,7 @@ static bool delegate = false;
 static bool respawn = true;
 static bool DLLerror = false;
 static unsigned int anim = 0x00;
+static unsigned int* _anim = NULL;
 static unsigned char game = 0x00;
 
 static const unsigned FalloutNVpatch_PlayGroup = 0x00494D5C;
@@ -209,12 +210,21 @@ void AnimDetour_F3()
 {
 	asm volatile(
 		"PUSH EAX\n"
+		"LEA EAX,[ECX+0x414]\n"
+		"CMP EAX,%2\n"
+		"JNE _nopatch\n"
 		"MOV EAX,%1\n"
 		"MOV %0,0\n"
+		"JMP _patch\n"
+
+		"_nopatch:\n"
+		"XOR EAX,EAX\n"
+
+		"_patch:\n"
 		"MOV [ECX+0x414],EAX\n"
 		"POP EAX\n"
 		: "=m"(anim)
-		: "m"(anim)
+		: "m"(anim), "m"(_anim)
 		:
 	);
 }
@@ -222,10 +232,16 @@ void AnimDetour_F3()
 void PlayIdleDetour_F3()
 {
 	asm volatile(
+		"CMP DWORD PTR [EBP+0xC],0x14\n"
+		"JNE _push1\n"
 		"MOV %0,0x80\n"
+		"MOV %1,ECX\n"
+		"ADD %1,0x414\n"
+
+		"_push1:\n"
 		"PUSH 0x80\n"
 		"CALL EAX\n"
-		: "=m"(anim)
+		: "=m"(anim), "=m"(_anim)
 		:
 		:
 	);
@@ -235,6 +251,10 @@ void AnimDetour_FNV()
 {
 	asm volatile(
 		"PUSH ECX\n"
+		"LEA ECX,[EAX+0x424]\n"
+		"CMP ECX,%2\n"
+		"JNE _nopatch2\n"
+
 		"MOV ECX,%1\n"
 		"TEST ECX,ECX\n"
 		"JE _store\n"
@@ -246,12 +266,16 @@ void AnimDetour_FNV()
 		"_first:\n"
 		"SHR ECX,1\n"
 		"MOV %0,ECX\n"
+		"JMP _store\n"
+
+		"_nopatch2:\n"
+		"XOR ECX,ECX\n"
 
 		"_store:\n"
 		"MOV [EAX+0x424],ECX\n"
 		"POP ECX\n"
 		: "=m"(anim)
-		: "m"(anim)
+		: "m"(anim), "m"(_anim)
 		:
 	);
 }
@@ -259,10 +283,17 @@ void AnimDetour_FNV()
 void PlayIdleDetour_FNV()
 {
 	asm volatile(
+		"CMP DWORD PTR [ECX+0xC],0x14\n"
+		"JNE _push2\n"
 		"MOV %0,0x100\n"
+		"MOV ECX,[EBP-0x220]\n"
+		"MOV %1,ECX\n"
+		"ADD %1,0x424\n"
+
+		"_push2:\n"
 		"PUSH 0x80\n"
-		"JMP %1\n"
-		: "=m"(anim)
+		"JMP %2\n"
+		: "=m"(anim), "=m"(_anim)
 		: "m"(FalloutNVpatch_playIdle_fix_ret)
 		:
 	);
