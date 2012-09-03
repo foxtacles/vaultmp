@@ -42,6 +42,7 @@ static void AnimDetour_F3();
 static void PlayIdleDetour_F3();
 static void AnimDetour_FNV();
 static void PlayIdleDetour_FNV();
+static void AVFix_FNV();
 static vector<void*> delegated;
 
 typedef void (__stdcall * _GetSystemTimeAsFileTime)(LPFILETIME * fileTime);
@@ -57,6 +58,8 @@ static unsigned int anim = 0x00;
 static unsigned int* _anim = NULL;
 static unsigned char game = 0x00;
 
+static const unsigned FalloutNVpatch_disableNAM = 0x01018814;
+static const unsigned FalloutNVpatch_pluginsVMP = 0x0108282D;
 static const unsigned FalloutNVpatch_PlayGroup = 0x00494D5C;
 static const unsigned FalloutNVpatch_delegator_src = 0x0086B3E3;
 static const unsigned FalloutNVpatch_delegator_dest = 0x0086E649;
@@ -72,7 +75,13 @@ static const unsigned FalloutNVpatch_playIdle_call_dest = (unsigned)& AnimDetour
 static const unsigned FalloutNVpatch_playIdle_fix_src = 0x005CB4F1;
 static const unsigned FalloutNVpatch_playIdle_fix_dest = (unsigned)& PlayIdleDetour_FNV;
 static unsigned FalloutNVpatch_playIdle_fix_ret = 0x005CB4F6;
+static unsigned FalloutNVpatch_AVFix_src = 0x004AEC57;
+static unsigned FalloutNVpatch_AVFix_dest = (unsigned)& AVFix_FNV;
+static unsigned FalloutNVpatch_AVFix_ret = 0x004AEC5C;
+static unsigned FalloutNVpatch_AVFix_call = 0x0084E3A0;
+static unsigned FalloutNVpatch_AVFix_term = 0x004AEDCB;
 
+static const unsigned Fallout3patch_pluginsVMP = 0x00E10FF1;
 static const unsigned Fallout3patch_PlayGroup = 0x0045F704;
 static const unsigned Fallout3patch_delegator_src = 0x006EEC86;
 static const unsigned Fallout3patch_delegator_dest = 0x006EDBD9;
@@ -86,11 +95,6 @@ static const unsigned Fallout3patch_playIdle_call_src = 0x0073BB20;
 static const unsigned Fallout3patch_playIdle_call_dest = (unsigned)& AnimDetour_F3;
 static const unsigned Fallout3patch_playIdle_fix_src = 0x00534D8D;
 static const unsigned Fallout3patch_playIdle_fix_dest = (unsigned)& PlayIdleDetour_F3;
-
-static const unsigned FalloutNVpatch_disableNAM = 0x01018814;
-static const unsigned FalloutNVpatch_pluginsVMP = 0x0108282D;
-
-static const unsigned Fallout3patch_pluginsVMP = 0x00E10FF1;
 
 // Those snippets / functions are from FOSE / NVSE, thanks
 
@@ -295,6 +299,22 @@ void PlayIdleDetour_FNV()
 		"JMP %2\n"
 		: "=m"(anim), "=m"(_anim)
 		: "m"(FalloutNVpatch_playIdle_fix_ret)
+		:
+	);
+}
+
+void AVFix_FNV()
+{
+	asm volatile(
+		"TEST ECX,ECX\n"
+		"JNE _doit\n"
+		"JMP %2\n"
+
+		"_doit:\n"
+		"CALL %0\n"
+		"JMP %1\n"
+		:
+		: "m"(FalloutNVpatch_AVFix_call), "m"(FalloutNVpatch_AVFix_ret), "m"(FalloutNVpatch_AVFix_term)
 		:
 	);
 }
@@ -959,6 +979,7 @@ void PatchGame(HINSTANCE& silverlock)
 			WriteRelCall(FalloutNVpatch_delegator_src, FalloutNVpatch_delegator_dest);
 			WriteRelCall(FalloutNVpatch_playIdle_call_src, FalloutNVpatch_playIdle_call_dest);
 			WriteRelJump(FalloutNVpatch_playIdle_fix_src, FalloutNVpatch_playIdle_fix_dest);
+			WriteRelJump(FalloutNVpatch_AVFix_src, FalloutNVpatch_AVFix_dest);
 
 			SafeWrite32(FalloutNVpatch_disableNAM, *(DWORD*)".|||"); // disable .NAM files
 			SafeWrite32(FalloutNVpatch_pluginsVMP, *(DWORD*)".vmp"); // redirect Plugins.txt
