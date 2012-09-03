@@ -201,11 +201,12 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 				case pTypes::ID_UPDATE_STATE:
 				{
 					NetworkID id;
+					unsigned int idle;
 					unsigned char moving, movingxy, weapon;
 					bool alerted, sneaking, firing;
-					PacketFactory::Access<pTypes::ID_UPDATE_STATE>(packet, id, moving, movingxy, weapon, alerted, sneaking, firing);
+					PacketFactory::Access<pTypes::ID_UPDATE_STATE>(packet, id, idle, moving, movingxy, weapon, alerted, sneaking, firing);
 					FactoryObject reference = GameFactory::GetObject(id);
-					response = Server::GetActorState(data->guid, reference, moving, movingxy, weapon, alerted, sneaking);
+					response = Server::GetActorState(data->guid, reference, idle, moving, movingxy, weapon, alerted, sneaking);
 					break;
 				}
 

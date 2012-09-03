@@ -287,7 +287,11 @@ class Game
 		/**
 		 * \brief Network function to handle Actor state
 		 */
-		static void net_SetActorState(const FactoryObject& reference, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking, bool firing);
+		static void net_SetActorState(const FactoryObject& reference, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking, bool firing);
+		/**
+		 * \brief Network function to handle Actor idle animation
+		 */
+		static void net_SetActorIdle(const FactoryObject& reference, unsigned int idle, const string& name);
 		/**
 		 * \brief Network function to handle Actor death
 		 */

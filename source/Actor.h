@@ -53,6 +53,7 @@ class Actor : public Container
 
 		unordered_map<unsigned char, Value<double>> actor_Values;
 		unordered_map<unsigned char, Value<double>> actor_BaseValues;
+		Value<unsigned int> anim_Idle;
 		Value<unsigned char> anim_Moving;
 		Value<unsigned char> state_MovingXY;
 		Value<unsigned char> anim_Weapon;
@@ -101,6 +102,10 @@ class Actor : public Container
 		 */
 		double GetActorBaseValue(unsigned char index) const;
 		/**
+		 * \brief Retrieves the Actor's idle animation
+		 */
+		unsigned int GetActorIdleAnimation() const;
+		/**
 		 * \brief Retrieves the Actor's moving animation
 		 */
 		unsigned char GetActorMovingAnimation() const;
@@ -137,6 +142,10 @@ class Actor : public Container
 		 * \brief Sets the Actor's base actor value specified by index (actor value hex code)
 		 */
 		Lockable* SetActorBaseValue(unsigned char index, double value);
+		/**
+		 * \brief Sets the Actor's idle animation
+		 */
+		Lockable* SetActorIdleAnimation(unsigned int idle);
 		/**
 		 * \brief Sets the Actor's moving animation
 		 */

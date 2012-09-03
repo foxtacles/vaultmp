@@ -1592,7 +1592,7 @@ void Game::net_SetActorValue(const FactoryObject& reference, bool base, unsigned
 	}
 }
 
-void Game::net_SetActorState(const FactoryObject& reference, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking, bool firing)
+void Game::net_SetActorState(const FactoryObject& reference, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking, bool firing)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -1647,6 +1647,21 @@ void Game::net_SetActorState(const FactoryObject& reference, unsigned char movin
 			SetActorAnimation(reference, AnimGroup_AimISUp);
 		}
 	}
+}
+
+void Game::net_SetActorIdle(const FactoryObject& reference, unsigned int idle, const string& name)
+{
+	Actor* actor = vaultcast<Actor>(reference);
+
+	if (!actor)
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
+
+	Lockable* result;
+
+	result = actor->SetActorIdleAnimation(idle);
+
+	if (result && idle)
+		SetActorIdleAnimation(reference, name, result->Lock());
 }
 
 void Game::net_SetActorDead(FactoryObject& reference, bool dead, unsigned short limbs, signed char cause)
@@ -2079,7 +2094,7 @@ void Game::GetActorState(const FactoryObject& reference, unsigned int idle, unsi
 	if (weapon == 0xFF)
 		weapon = AnimGroup_Idle;
 
-	result = (static_cast<bool>(actor->SetActorMovingAnimation(moving)) | static_cast<bool>(actor->SetActorMovingXY(movingxy)) | static_cast<bool>(actor->SetActorSneaking(sneaking)));
+	result = (static_cast<bool>(actor->SetActorIdleAnimation(idle)) | static_cast<bool>(actor->SetActorMovingAnimation(moving)) | static_cast<bool>(actor->SetActorMovingXY(movingxy)) | static_cast<bool>(actor->SetActorSneaking(sneaking)));
 
 	// workaround for occurences of wrong animation (case: 2HA weapons in AimIS mode, spuriously falls back to Aim for a frame)
 	buf_weapon.first = buf_weapon.second;
@@ -2097,7 +2112,7 @@ void Game::GetActorState(const FactoryObject& reference, unsigned int idle, unsi
 
 	if (result)
 		Network::Queue(NetworkResponse{Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_STATE>(actor->GetNetworkID(), moving, movingxy, actor->GetActorWeaponAnimation(), actor->GetActorAlerted(), sneaking, false),
+			PacketFactory::Create<pTypes::ID_UPDATE_STATE>(actor->GetNetworkID(), idle, moving, movingxy, actor->GetActorWeaponAnimation(), actor->GetActorAlerted(), sneaking, false),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 		});
 }

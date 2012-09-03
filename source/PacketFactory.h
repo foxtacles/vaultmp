@@ -44,6 +44,7 @@ enum class pTypes : unsigned char
 	ID_UPDATE_STATE,
 	ID_UPDATE_DEAD,
 	ID_UPDATE_FIREWEAPON,
+	ID_UPDATE_IDLE,
 	ID_UPDATE_CONTROL,
 	ID_UPDATE_INTERIOR,
 	ID_UPDATE_EXTERIOR,
@@ -877,18 +878,18 @@ class pActorNew : public pObjectNewDefault
 		friend class PacketFactory;
 
 	private:
-		pActorNew(const pPacket& _pContainerNew, const map<unsigned char, double>& values, const map<unsigned char, double>& baseValues, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking, bool dead) : pObjectNewDefault(pTypes::ID_ACTOR_NEW)
+		pActorNew(const pPacket& _pContainerNew, const map<unsigned char, double>& values, const map<unsigned char, double>& baseValues, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking, bool dead) : pObjectNewDefault(pTypes::ID_ACTOR_NEW)
 		{
-			construct(_pContainerNew, values, baseValues, moving, movingxy, weapon, alerted, sneaking, dead);
+			construct(_pContainerNew, values, baseValues, idle, moving, movingxy, weapon, alerted, sneaking, dead);
 		}
 		pActorNew(const unsigned char* stream, unsigned int len) : pObjectNewDefault(stream, len)
 		{
 
 		}
 
-		void access(map<unsigned char, double>& values, map<unsigned char, double>& baseValues, unsigned char& moving, unsigned char& movingxy, unsigned char& weapon, bool& alerted, bool& sneaking, bool& dead) const
+		void access(map<unsigned char, double>& values, map<unsigned char, double>& baseValues, unsigned int& idle, unsigned char& moving, unsigned char& movingxy, unsigned char& weapon, bool& alerted, bool& sneaking, bool& dead) const
 		{
-			deconstruct(values, baseValues, moving, movingxy, weapon, alerted, sneaking, dead);
+			deconstruct(values, baseValues, idle, moving, movingxy, weapon, alerted, sneaking, dead);
 		}
 };
 
@@ -1193,18 +1194,18 @@ class pActorState : public pObjectDefault
 		friend class PacketFactory;
 
 	private:
-		pActorState(NetworkID id, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking, bool firing) : pObjectDefault(pTypes::ID_UPDATE_STATE, id)
+		pActorState(NetworkID id, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking, bool firing) : pObjectDefault(pTypes::ID_UPDATE_STATE, id)
 		{
-			construct(moving, movingxy, weapon, alerted, sneaking, firing);
+			construct(idle, moving, movingxy, weapon, alerted, sneaking, firing);
 		}
 		pActorState(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
 		{
 
 		}
 
-		void access(NetworkID& id, unsigned char& moving, unsigned char& movingxy, unsigned char& weapon, bool& alerted, bool& sneaking, bool& firing) const
+		void access(NetworkID& id, unsigned int& idle, unsigned char& moving, unsigned char& movingxy, unsigned char& weapon, bool& alerted, bool& sneaking, bool& firing) const
 		{
-			deconstruct(id, moving, movingxy, weapon, alerted, sneaking, firing);
+			deconstruct(id, idle, moving, movingxy, weapon, alerted, sneaking, firing);
 		}
 };
 
@@ -1302,6 +1303,45 @@ template<typename... Args>
 struct PacketFactory::_Access<pTypes::ID_UPDATE_FIREWEAPON, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
 		packet_cast<pActorFireweapon>(packet)->access(forward<Args&>(args)...);
+	}
+};
+
+class pActorIdle : public pObjectDefault
+{
+		friend class PacketFactory;
+
+	private:
+		pActorIdle(NetworkID id, unsigned int idle, const string& name) : pObjectDefault(pTypes::ID_UPDATE_IDLE, id)
+		{
+			construct(idle, name);
+		}
+		pActorIdle(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		{
+
+		}
+
+		void access(NetworkID& id, unsigned int& idle, string& name) const
+		{
+			deconstruct(id, idle, name);
+		}
+};
+
+template<typename... Args>
+struct PacketFactory::_Create<pTypes::ID_UPDATE_IDLE, Args...> {
+	inline static pPacket Create(Args&&... args) {
+		return pPacket(new pActorIdle(forward<Args>(args)...));
+	}
+};
+
+template<>
+inline const pActorIdle* PacketFactory::packet_cast(const pDefault* packet) {
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_IDLE ? reinterpret_cast<const pActorIdle*>(packet) : nullptr;
+}
+
+template<typename... Args>
+struct PacketFactory::_Access<pTypes::ID_UPDATE_IDLE, Args...> {
+	inline static void Access(const pDefault* packet, Args&... args) {
+		packet_cast<pActorIdle>(packet)->access(forward<Args&>(args)...);
 	}
 };
 

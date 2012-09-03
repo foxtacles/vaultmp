@@ -20,10 +20,11 @@ Actor::Actor(const pDefault* packet) : Container(PacketFactory::Pop<pPacket>(pac
 
 	map<unsigned char, double> values, baseValues;
 	map<unsigned char, double>::iterator it, it2;
+	unsigned int idle;
 	unsigned char moving, movingxy, weapon;
 	bool alerted, sneaking, dead;
 
-	PacketFactory::Access<pTypes::ID_ACTOR_NEW>(packet, values, baseValues, moving, movingxy, weapon, alerted, sneaking, dead);
+	PacketFactory::Access<pTypes::ID_ACTOR_NEW>(packet, values, baseValues, idle, moving, movingxy, weapon, alerted, sneaking, dead);
 
 	for (it = values.begin(), it2 = baseValues.begin(); it != values.end() && it2 != baseValues.end(); ++it, ++it2)
 	{
@@ -31,6 +32,7 @@ Actor::Actor(const pDefault* packet) : Container(PacketFactory::Pop<pPacket>(pac
 		this->SetActorBaseValue(it2->first, it2->second);
 	}
 
+	this->SetActorIdleAnimation(idle);
 	this->SetActorMovingAnimation(moving);
 	this->SetActorMovingXY(movingxy);
 	this->SetActorWeaponAnimation(weapon);
@@ -113,6 +115,11 @@ double Actor::GetActorBaseValue(unsigned char index) const
 	return actor_BaseValues.at(index).get();
 }
 
+unsigned int Actor::GetActorIdleAnimation() const
+{
+	return anim_Idle.get();
+}
+
 unsigned char Actor::GetActorMovingAnimation() const
 {
 	return anim_Moving.get();
@@ -151,6 +158,11 @@ Lockable* Actor::SetActorValue(unsigned char index, double value)
 Lockable* Actor::SetActorBaseValue(unsigned char index, double value)
 {
 	return SetObjectValue(this->actor_BaseValues.at(index), value);
+}
+
+Lockable* Actor::SetActorIdleAnimation(unsigned int idle)
+{
+	return SetObjectValue(this->anim_Idle, idle);
 }
 
 Lockable* Actor::SetActorMovingAnimation(unsigned char index)
@@ -282,7 +294,7 @@ pPacket Actor::toPacket() const
 	}
 
 	pPacket pContainerNew = Container::toPacket();
-	pPacket packet = PacketFactory::Create<pTypes::ID_ACTOR_NEW>(pContainerNew, values, baseValues, this->GetActorMovingAnimation(), this->GetActorMovingXY(), this->GetActorWeaponAnimation(), this->GetActorAlerted(), this->GetActorSneaking(), this->GetActorDead());
+	pPacket packet = PacketFactory::Create<pTypes::ID_ACTOR_NEW>(pContainerNew, values, baseValues, this->GetActorIdleAnimation(), this->GetActorMovingAnimation(), this->GetActorMovingXY(), this->GetActorWeaponAnimation(), this->GetActorAlerted(), this->GetActorSneaking(), this->GetActorDead());
 
 	return packet;
 }

@@ -90,6 +90,10 @@ pPacket PacketFactory::Init(const unsigned char* stream, unsigned int len)
 			packet = new pActorFireweapon(stream, len);
 			break;
 
+		case pTypes::ID_UPDATE_IDLE:
+			packet = new pActorIdle(stream, len);
+			break;
+
 		case pTypes::ID_UPDATE_CONTROL:
 			packet = new pPlayerControl(stream, len);
 			break;

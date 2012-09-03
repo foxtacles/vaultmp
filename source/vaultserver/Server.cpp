@@ -283,7 +283,7 @@ NetworkResponse Server::GetActorValue(RakNetGUID guid, const FactoryObject& refe
 	return response;
 }
 
-NetworkResponse Server::GetActorState(RakNetGUID guid, const FactoryObject& reference, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking)
+NetworkResponse Server::GetActorState(RakNetGUID guid, const FactoryObject& reference, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -291,12 +291,13 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, const FactoryObject& refe
 		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
 	NetworkResponse response;
-	bool result, _alerted, _sneaking, _weapon;
+	bool result, _alerted, _sneaking, _weapon, _idle;
 
 	_alerted = static_cast<bool>(actor->SetActorAlerted(alerted));
 	_sneaking = static_cast<bool>(actor->SetActorSneaking(sneaking));
 	_weapon = static_cast<bool>(actor->SetActorWeaponAnimation(weapon));
-	result = (static_cast<bool>(actor->SetActorMovingAnimation(moving)) | static_cast<bool>(actor->SetActorMovingXY(movingxy)) | _weapon | _alerted | _sneaking);
+	_idle = static_cast<bool>(actor->SetActorIdleAnimation(idle));
+	result = (static_cast<bool>(actor->SetActorMovingAnimation(moving)) | static_cast<bool>(actor->SetActorMovingXY(movingxy)) | _idle | _weapon | _alerted | _sneaking);
 
 	if (result)
 	{
@@ -305,7 +306,7 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, const FactoryObject& refe
 		bool firing = _weapon && actor->IsActorFiring();
 
 		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_STATE>(actor->GetNetworkID(), moving, movingxy, weapon, alerted, sneaking, !punching && !power_punching && firing),
+			PacketFactory::Create<pTypes::ID_UPDATE_STATE>(actor->GetNetworkID(), idle, moving, movingxy, weapon, alerted, sneaking, !punching && !power_punching && firing),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
 		if (_weapon)
@@ -332,6 +333,18 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, const FactoryObject& refe
 
 		if (_sneaking)
 			Script::OnActorSneak(reference, sneaking);
+
+		if (_idle)
+		{
+			const Record* record = nullptr;
+
+			if (idle)
+				record = &Record::Lookup(idle, "IDLE");
+
+			response.emplace_back(Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_IDLE>(actor->GetNetworkID(), idle, record ? record->GetName() : ""),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
+		}
 	}
 
 	return response;

@@ -282,11 +282,23 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				case pTypes::ID_UPDATE_STATE:
 				{
 					NetworkID id;
+					unsigned int idle;
 					unsigned char moving, movingxy, weapon;
 					bool alerted, sneaking, firing;
-					PacketFactory::Access<pTypes::ID_UPDATE_STATE>(packet, id, moving, movingxy, weapon, alerted, sneaking, firing);
+					PacketFactory::Access<pTypes::ID_UPDATE_STATE>(packet, id, idle, moving, movingxy, weapon, alerted, sneaking, firing);
 					FactoryObject reference = GameFactory::GetObject(id);
-					Game::net_SetActorState(reference, moving, movingxy, weapon, alerted, sneaking, firing);
+					Game::net_SetActorState(reference, idle, moving, movingxy, weapon, alerted, sneaking, firing);
+					break;
+				}
+
+				case pTypes::ID_UPDATE_IDLE:
+				{
+					NetworkID id;
+					unsigned int idle;
+					string name;
+					PacketFactory::Access<pTypes::ID_UPDATE_IDLE>(packet, id, idle, name);
+					FactoryObject reference = GameFactory::GetObject(id);
+					Game::net_SetActorIdle(reference, idle, name);
 					break;
 				}
 

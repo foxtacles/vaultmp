@@ -25,14 +25,14 @@ void GameFactory::Initialize(unsigned char game)
 	switch (game)
 	{
 		case FALLOUT3:
-			dbRecords.initialize(DB_FALLOUT3, {"NPC_", "CREA", "ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "ENCH", "KEYM", "MISC", "NOTE", "WEAP", "CELL"});
+			dbRecords.initialize(DB_FALLOUT3, {"NPC_", "CREA", "ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "ENCH", "KEYM", "MISC", "NOTE", "WEAP", "CELL", "IDLE"});
 			dbExteriors.initialize(DB_FALLOUT3, {"exteriors"});
 			dbWeapons.initialize(DB_FALLOUT3, {"weapons"});
 			dbRaces.initialize(DB_FALLOUT3, {"races"});
 			break;
 
 		case NEWVEGAS:
-			dbRecords.initialize(DB_NEWVEGAS, {"NPC_", "CREA", "ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "CCRD", "CDCK", "CHIP", "CMNY", "ENCH", "IMOD", "KEYM", "MISC", "NOTE", "RCPE", "WEAP", "CELL"});
+			dbRecords.initialize(DB_NEWVEGAS, {"NPC_", "CREA", "ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "CCRD", "CDCK", "CHIP", "CMNY", "ENCH", "IMOD", "KEYM", "MISC", "NOTE", "RCPE", "WEAP", "CELL", "IDLE"});
 			dbExteriors.initialize(DB_NEWVEGAS, {"exteriors"});
 			dbWeapons.initialize(DB_NEWVEGAS, {"weapons"});
 			dbRaces.initialize(DB_NEWVEGAS, {"races"});
