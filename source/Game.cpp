@@ -1171,9 +1171,11 @@ void Game::KillActor(const FactoryObject& reference, unsigned short limbs, signe
 	// maybe add valid killer later
 	if (limbs)
 	{
-		for (unsigned int i = 1; i <= limbs; i <<= 1)
+		unsigned int j = 0;
+
+		for (unsigned int i = 1; i <= limbs; i <<= 1, ++j)
 			if (limbs & i)
-				Interface::ExecuteCommand("Kill", {actor->GetReferenceParam(), actor->GetReferenceParam(), RawParameter(static_cast<unsigned int>(i / 2)), RawParameter(cause)}, ((i << 1) > limbs) ? key : 0x00);
+				Interface::ExecuteCommand("Kill", {actor->GetReferenceParam(), actor->GetReferenceParam(), RawParameter(j), RawParameter(cause)}, ((i << 1) > limbs) ? key : 0x00);
 	}
 	else
 		Interface::ExecuteCommand("Kill", {actor->GetReferenceParam(), actor->GetReferenceParam(), RawParameter(Limb_None), RawParameter(cause)}, key);
