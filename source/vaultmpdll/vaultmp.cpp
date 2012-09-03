@@ -321,10 +321,11 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 			if (data != NULL)
 			{
 				unsigned char sneaking, moving, weapon;
+				unsigned int idle = 0x00000000;
+				unsigned char* anim = data;
 
-				// idle: 0x50
-				moving = *(data + 0x4E);
-				weapon = *(data + 0x54);
+				moving = *(anim + 0x4E);
+				weapon = *(anim + 0x54);
 
 				asm(
 					"MOV ECX,%1\n"
@@ -337,14 +338,17 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 
 				sneaking = (game & FALLOUT3 ? ((bool)((unsigned) data & 0x00000400)) : ((unsigned) data & 0x00000001));
 
-				//sneaking = *( data + 0x4D ) == 0x10 ? 0x01 : 0x00;
+				unsigned int data = *(unsigned int*) (anim + (game & FALLOUT3 ? 0x118 : 0x124));
 
-				memcpy(result, &sneaking, 1);
-				memcpy((void*)((unsigned) result + 4), &moving, 1);
-				memcpy((void*)((unsigned) result + 6), &weapon, 1);
+				if (data)
+				{
+					data = *(unsigned int*)(data + 0x2C);
+					idle = *(unsigned int*)(data + 0x0C);
+				}
 
 				// This detection is unreliable; i.e. what when the player holds Forward/Backward/Left/Right all together for some reason?
 				unsigned char* _args = (unsigned char*) args;
+				unsigned char flags = 0x00;
 
 				if (*_args == 0x6E)   // Forward, Backward, Left, Right unsigned char scan codes stored in Integer, optional
 				{
@@ -361,21 +365,24 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 					if (((GetAsyncKeyState(MapVirtualKey(forward, 1)) & 0x8000) && (GetAsyncKeyState(MapVirtualKey(left, 1)) & 0x8000))
 							|| ((GetAsyncKeyState(MapVirtualKey(backward, 1)) & 0x8000) && (GetAsyncKeyState(MapVirtualKey(right, 1)) & 0x8000)))
 					{
-						unsigned char type = 0x01; // that equals to a Z-angle correction of -45²
-						memcpy((void*)((unsigned) result + 5), &type, 1);
+						flags |= 0x01; // that equals to a Z-angle correction of -45²
 					}
 					else if (((GetAsyncKeyState(MapVirtualKey(forward, 1)) & 0x8000) && (GetAsyncKeyState(MapVirtualKey(right, 1)) & 0x8000))
 							 || ((GetAsyncKeyState(MapVirtualKey(backward, 1)) & 0x8000) && (GetAsyncKeyState(MapVirtualKey(left, 1)) & 0x8000)))
 					{
-						unsigned char type = 0x02; // that equals to a Z-angle correction of 45²
-						memcpy((void*)((unsigned) result + 5), &type, 1);
+						flags |= 0x02; // that equals to a Z-angle correction of 45²
 					}
 				}
 
-				unsigned char chat_keys = (GetAsyncKeyState(0x54) & 0x8000) ? 0x01 : 0x00; // T
-				chat_keys |= (GetAsyncKeyState(VK_ESCAPE) & 0x8000) ? 0x02 : 0x00;
-				chat_keys |= (GetAsyncKeyState(VK_RETURN) & 0x8000) ? 0x04 : 0x00;
-				memcpy((void*)((unsigned) result + 7), &chat_keys, 1);
+				flags |= (GetAsyncKeyState(0x54) & 0x8000) ? 0x04 : 0x00; // T
+				flags |= (GetAsyncKeyState(VK_ESCAPE) & 0x8000) ? 0x08 : 0x00;
+				flags |= (GetAsyncKeyState(VK_RETURN) & 0x8000) ? 0x10 : 0x00;
+
+				memcpy(result, &idle, 4);
+				memcpy((void*)((unsigned) result + 4), &moving, 1);
+				memcpy((void*)((unsigned) result + 5), &flags, 1);
+				memcpy((void*)((unsigned) result + 6), &weapon, 1);
+				memcpy((void*)((unsigned) result + 7), &sneaking, 1);
 			}
 
 			break;

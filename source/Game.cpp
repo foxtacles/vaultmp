@@ -130,11 +130,11 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			{
 				reference = GameFactory::GetObject(getFrom<double, unsigned int>(info.at(1)));
 				GetActorState(reference,
-									*reinterpret_cast<unsigned char*>(((unsigned) &result) + 7),
+									*reinterpret_cast<unsigned int*>(&result),
 									*reinterpret_cast<unsigned char*>(((unsigned) &result) + 4),
-									*reinterpret_cast<unsigned char*>(((unsigned) &result) + 5),
 									*reinterpret_cast<unsigned char*>(((unsigned) &result) + 6),
-									*reinterpret_cast<unsigned char*>(&result));
+									*reinterpret_cast<unsigned char*>(((unsigned) &result) + 5),
+									*reinterpret_cast<unsigned char*>(((unsigned) &result) + 7));
 				break;
 			}
 
@@ -2038,7 +2038,7 @@ void Game::GetActorValue(const FactoryObject& reference, bool base, unsigned cha
 		});
 }
 
-void Game::GetActorState(const FactoryObject& reference, unsigned char chat_keys, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool sneaking)
+void Game::GetActorState(const FactoryObject& reference, unsigned int idle, unsigned char moving, unsigned char weapon, unsigned char flags, bool sneaking)
 {
 	Actor* actor  = vaultcast<Actor>(reference);
 
@@ -2048,6 +2048,9 @@ void Game::GetActorState(const FactoryObject& reference, unsigned char chat_keys
 	static bool chat_state = false;
 	static bool quit_state = true;
 	static pair<unsigned char, unsigned char> buf_weapon{AnimGroup_Idle, AnimGroup_Idle};
+
+	unsigned char chat_keys = flags >> 2;
+	unsigned char movingxy = flags & 0x03;
 
 	if (!chat_keys && !chat_state)
 		quit_state = true;
