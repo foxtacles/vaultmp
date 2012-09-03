@@ -143,6 +143,7 @@ class Script
 		static unsigned int GetContainerItemCount(NetworkID id, unsigned int baseID);
 		static double GetActorValue(NetworkID id, unsigned char index);
 		static double GetActorBaseValue(NetworkID id, unsigned char index);
+		static unsigned int GetActorIdleAnimation(NetworkID id);
 		static unsigned char GetActorMovingAnimation(NetworkID id);
 		static unsigned char GetActorWeaponAnimation(NetworkID id);
 		static bool GetActorAlerted(NetworkID id);
@@ -161,6 +162,7 @@ class Script
 		static void SetActorBaseValue(NetworkID id, unsigned char index, double value);
 		static bool EquipItem(NetworkID id, unsigned int baseID, bool silent, bool stick);
 		static bool UnequipItem(NetworkID id, unsigned int baseID, bool silent, bool stick);
+		static bool PlayIdle(NetworkID id, unsigned int idle);
 		static void KillActor(NetworkID id, unsigned short limbs, signed char cause);
 		static void SetPlayerRespawn(NetworkID id, unsigned int respawn);
 		static void SetPlayerSpawnCell(NetworkID id, unsigned int cell);

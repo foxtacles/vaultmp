@@ -71,6 +71,7 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"GetContainerItemCount", PAWN::vaultmp_GetContainerItemCount},
 	{"GetActorValue", PAWN::vaultmp_GetActorValue},
 	{"GetActorBaseValue", PAWN::vaultmp_GetActorBaseValue},
+	{"GetActorIdleAnimation", PAWN::vaultmp_GetActorIdleAnimation},
 	{"GetActorMovingAnimation", PAWN::vaultmp_GetActorMovingAnimation},
 	{"GetActorWeaponAnimation", PAWN::vaultmp_GetActorWeaponAnimation},
 	{"GetActorAlerted", PAWN::vaultmp_GetActorAlerted},
@@ -89,6 +90,7 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"SetActorBaseValue", PAWN::vaultmp_SetActorBaseValue},
 	{"EquipItem", PAWN::vaultmp_EquipItem},
 	{"UnequipItem", PAWN::vaultmp_UnequipItem},
+	{"PlayIdle", PAWN::vaultmp_PlayIdle},
 	{"KillActor", PAWN::vaultmp_KillActor},
 	{"SetPlayerRespawn", PAWN::vaultmp_SetPlayerRespawn},
 	{"SetPlayerSpawnCell", PAWN::vaultmp_SetPlayerSpawnCell},
@@ -643,6 +645,11 @@ cell PAWN::vaultmp_GetActorBaseValue(AMX* amx, const cell* params)
 	return amx_ftoc(value);
 }
 
+cell PAWN::vaultmp_GetActorIdleAnimation(AMX* amx, const cell* params)
+{
+	return Script::GetActorIdleAnimation(params[1]);
+}
+
 cell PAWN::vaultmp_GetActorMovingAnimation(AMX* amx, const cell* params)
 {
 	return Script::GetActorMovingAnimation(params[1]);
@@ -729,6 +736,11 @@ cell PAWN::vaultmp_EquipItem(AMX* amx, const cell* params)
 cell PAWN::vaultmp_UnequipItem(AMX* amx, const cell* params)
 {
 	return Script::UnequipItem(params[1], params[2], params[3], params[4]);
+}
+
+cell PAWN::vaultmp_PlayIdle(AMX* amx, const cell* params)
+{
+	return Script::PlayIdle(params[1], params[2]);
 }
 
 cell PAWN::vaultmp_KillActor(AMX* amx, const cell* params)

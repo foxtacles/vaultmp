@@ -111,6 +111,7 @@ Script::Script(char* path)
 			SetScript(string(vpf + "GetContainerItemCount").c_str(), &Script::GetContainerItemCount);
 			SetScript(string(vpf + "GetActorValue").c_str(), &Script::GetActorValue);
 			SetScript(string(vpf + "GetActorBaseValue").c_str(), &Script::GetActorBaseValue);
+			SetScript(string(vpf + "GetActorIdleAnimation").c_str(), &Script::GetActorIdleAnimation);
 			SetScript(string(vpf + "GetActorMovingAnimation").c_str(), &Script::GetActorMovingAnimation);
 			SetScript(string(vpf + "GetActorWeaponAnimation").c_str(), &Script::GetActorWeaponAnimation);
 			SetScript(string(vpf + "GetActorAlerted").c_str(), &Script::GetActorAlerted);
@@ -129,6 +130,7 @@ Script::Script(char* path)
 			SetScript(string(vpf + "SetActorBaseValue").c_str(), &Script::SetActorBaseValue);
 			SetScript(string(vpf + "EquipItem").c_str(), &Script::EquipItem);
 			SetScript(string(vpf + "UnequipItem").c_str(), &Script::UnequipItem);
+			SetScript(string(vpf + "PlayIdle").c_str(), &Script::PlayIdle);
 			SetScript(string(vpf + "KillActor").c_str(), &Script::KillActor);
 			SetScript(string(vpf + "SetPlayerRespawn").c_str(), &Script::SetPlayerRespawn);
 			SetScript(string(vpf + "SetPlayerSpawnCell").c_str(), &Script::SetPlayerSpawnCell);
@@ -1234,6 +1236,28 @@ double Script::GetActorBaseValue(NetworkID id, unsigned char index)
 	return value;
 }
 
+unsigned int Script::GetActorIdleAnimation(NetworkID id)
+{
+	unsigned int idle = 0x00000000;
+	FactoryObject reference;
+
+	try
+	{
+		reference = GameFactory::GetObject(id);
+	}
+	catch (...)
+	{
+		return idle;
+	}
+
+	Actor* actor = vaultcast<Actor>(reference);
+
+	if (actor)
+		idle = actor->GetActorIdleAnimation();
+
+	return idle;
+}
+
 unsigned char Script::GetActorMovingAnimation(NetworkID id)
 {
 	unsigned char index = 0x00;
@@ -1794,6 +1818,48 @@ bool Script::UnequipItem(NetworkID id, unsigned int baseID, bool silent, bool st
 			});
 
 			actor->ApplyDiff(diff);
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool Script::PlayIdle(NetworkID id, unsigned int idle)
+{
+	FactoryObject reference;
+
+	try
+	{
+		reference = GameFactory::GetObject(id);
+	}
+	catch (...)
+	{
+		return false;
+	}
+
+	Actor* actor = vaultcast<Actor>(reference);
+
+	if (actor)
+	{
+		const Record* record = nullptr;
+
+		try
+		{
+			record = &Record::Lookup(idle, "IDLE");
+		}
+		catch (...)
+		{
+			return false;
+		}
+
+		if (actor->SetActorIdleAnimation(idle))
+		{
+			Network::Queue(NetworkResponse{Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_IDLE>(actor->GetNetworkID(), idle, record->GetName()),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+			});
 
 			return true;
 		}

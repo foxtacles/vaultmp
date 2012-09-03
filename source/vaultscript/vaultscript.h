@@ -260,6 +260,7 @@ _CPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetContainerItemCount))(VAULTSPACE ID, VAULTSPACE Base) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Value (*VAULTAPI(GetActorValue))(VAULTSPACE ID, VAULTSPACE Index) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Value (*VAULTAPI(GetActorBaseValue))(VAULTSPACE ID, VAULTSPACE Index) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Base (*VAULTAPI(GetActorIdleAnimation))(VAULTSPACE ID) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Index (*VAULTAPI(GetActorMovingAnimation))(VAULTSPACE ID) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Index (*VAULTAPI(GetActorWeaponAnimation))(VAULTSPACE ID) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetActorAlerted))(VAULTSPACE ID) _CPP(noexcept);
@@ -278,6 +279,7 @@ _CPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetActorBaseValue))(VAULTSPACE ID, VAULTSPACE Index, VAULTSPACE Value) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(EquipItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE State, VAULTSPACE State) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(UnequipItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE State, VAULTSPACE State) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(PlayIdle))(VAULTSPACE ID, VAULTSPACE Base) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(KillActor))(VAULTSPACE ID, VAULTSPACE Limb, VAULTSPACE Death) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetPlayerRespawn))(VAULTSPACE ID, VAULTSPACE Interval) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetPlayerSpawnCell))(VAULTSPACE ID, VAULTSPACE Cell) _CPP(noexcept);
@@ -397,9 +399,10 @@ namespace vaultmp
 	VAULTFUNCTION State GetItemEquipped(ID id) noexcept { return VAULTAPI(GetItemEquipped)(id); }
 	VAULTFUNCTION State GetItemSilent(ID id) noexcept { return VAULTAPI(GetItemSilent)(id); }
 	VAULTFUNCTION State GetItemStick(ID id) noexcept { return VAULTAPI(GetItemStick)(id); }
-	VAULTFUNCTION UCount GetContainerItemCount(ID id, Base base = static_cast<Base>(0)) noexcept { return VAULTAPI(GetContainerItemCount)(id, base); }
+	VAULTFUNCTION UCount GetContainerItemCount(ID id, Base item = static_cast<Base>(0)) noexcept { return VAULTAPI(GetContainerItemCount)(id, item); }
 	VAULTFUNCTION Value GetActorValue(ID id, Index index) noexcept { return VAULTAPI(GetActorValue)(id, index); }
 	VAULTFUNCTION Value GetActorBaseValue(ID id, Index index) noexcept { return VAULTAPI(GetActorBaseValue)(id, index); }
+	VAULTFUNCTION Base GetActorIdleAnimation(ID id) noexcept { return VAULTAPI(GetActorIdleAnimation)(id); }
 	VAULTFUNCTION Index GetActorMovingAnimation(ID id) noexcept { return VAULTAPI(GetActorMovingAnimation)(id); }
 	VAULTFUNCTION Index GetActorWeaponAnimation(ID id) noexcept { return VAULTAPI(GetActorWeaponAnimation)(id); }
 	VAULTFUNCTION State GetActorAlerted(ID id) noexcept { return VAULTAPI(GetActorAlerted)(id); }
@@ -411,13 +414,14 @@ namespace vaultmp
 
 	VAULTFUNCTION State SetPos(ID id, Value X, Value Y, Value Z) noexcept { return VAULTAPI(SetPos)(id, X, Y, Z); }
 	VAULTFUNCTION State SetCell(ID id, Cell cell, Value X = 0.00, Value Y = 0.00, Value Z = 0.00) noexcept { return VAULTAPI(SetCell)(id, cell, X, Y, Z); }
-	VAULTFUNCTION State AddItem(ID id, Base base, UCount count = 1, Value condition = 100.0, State silent = True) noexcept { return VAULTAPI(AddItem)(id, base, count, condition, silent); }
-	VAULTFUNCTION UCount RemoveItem(ID id, Base base, UCount count = 1, State silent = True) noexcept { return VAULTAPI(RemoveItem)(id, base, count, silent); }
+	VAULTFUNCTION State AddItem(ID id, Base item, UCount count = 1, Value condition = 100.0, State silent = True) noexcept { return VAULTAPI(AddItem)(id, item, count, condition, silent); }
+	VAULTFUNCTION UCount RemoveItem(ID id, Base item, UCount count = 1, State silent = True) noexcept { return VAULTAPI(RemoveItem)(id, item, count, silent); }
 	VAULTFUNCTION Void RemoveAllItems(ID id) noexcept { return VAULTAPI(RemoveAllItems)(id); }
 	VAULTFUNCTION Void SetActorValue(ID id, Index index, Value value) noexcept { return VAULTAPI(SetActorValue)(id, index, value); }
 	VAULTFUNCTION Void SetActorBaseValue(ID id, Index index, Value value) noexcept { return VAULTAPI(SetActorBaseValue)(id, index, value); }
-	VAULTFUNCTION State EquipItem(ID id, Base base, State silent = True, State stick = True) noexcept { return VAULTAPI(EquipItem)(id, base, silent, stick); }
-	VAULTFUNCTION State UnequipItem(ID id, Base base, State silent = True, State stick = True) noexcept { return VAULTAPI(UnequipItem)(id, base, silent, stick); }
+	VAULTFUNCTION State EquipItem(ID id, Base item, State silent = True, State stick = True) noexcept { return VAULTAPI(EquipItem)(id, item, silent, stick); }
+	VAULTFUNCTION State UnequipItem(ID id, Base item, State silent = True, State stick = True) noexcept { return VAULTAPI(UnequipItem)(id, item, silent, stick); }
+	VAULTFUNCTION State PlayIdle(ID id, Base idle) noexcept { return VAULTAPI(PlayIdle)(id, idle); }
 	VAULTFUNCTION Void KillActor(ID id, Limb limbs = Limb::None, Death cause = Death::None) noexcept { return VAULTAPI(KillActor)(id, limbs, cause); }
 	VAULTFUNCTION Void SetPlayerRespawn(ID id, Interval interval) noexcept { return VAULTAPI(SetPlayerRespawn)(id, interval); }
 	VAULTFUNCTION Void SetPlayerSpawnCell(ID id, Cell cell) noexcept { return VAULTAPI(SetPlayerSpawnCell)(id, cell); }
@@ -496,10 +500,10 @@ namespace vaultmp
 			Container(ID id) noexcept : Object(vaultmp::IsContainer(id) ? id : static_cast<ID>(0), Type::ID_CONTAINER) {}
 			virtual ~Container() noexcept {}
 
-			UCount GetContainerItemCount(Base base = static_cast<Base>(0)) const noexcept { return vaultmp::GetContainerItemCount(id, base); }
+			UCount GetContainerItemCount(Base item = static_cast<Base>(0)) const noexcept { return vaultmp::GetContainerItemCount(id, item); }
 
-			State AddItem(Base base, UCount count = 1, Value condition = 100.0, State silent = True) noexcept { return vaultmp::AddItem(id, base, count, condition, silent); }
-			UCount RemoveItem(Base base, UCount count = 1, State silent = True) noexcept { return vaultmp::RemoveItem(id, base, count, silent); }
+			State AddItem(Base item, UCount count = 1, Value condition = 100.0, State silent = True) noexcept { return vaultmp::AddItem(id, item, count, condition, silent); }
+			UCount RemoveItem(Base item, UCount count = 1, State silent = True) noexcept { return vaultmp::RemoveItem(id, item, count, silent); }
 			Void RemoveAllItems() noexcept { return vaultmp::RemoveAllItems(id); }
 
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_CONTAINER); }
@@ -516,6 +520,7 @@ namespace vaultmp
 
 			Value GetActorValue(Index index) const noexcept { return vaultmp::GetActorValue(id, index); }
 			Value GetActorBaseValue(Index index) const noexcept { return vaultmp::GetActorBaseValue(id, index); }
+			Base GetActorIdleAnimation() const noexcept { return vaultmp::GetActorIdleAnimation(id); }
 			Index GetActorMovingAnimation() const noexcept { return vaultmp::GetActorMovingAnimation(id); }
 			Index GetActorWeaponAnimation() const noexcept { return vaultmp::GetActorWeaponAnimation(id); }
 			State GetActorAlerted() const noexcept { return vaultmp::GetActorAlerted(id); }
@@ -525,8 +530,9 @@ namespace vaultmp
 
 			Void SetActorValue(Index index, Value value) noexcept { return vaultmp::SetActorValue(id, index, value); }
 			Void SetActorBaseValue(Index index, Value value) noexcept { return vaultmp::SetActorBaseValue(id, index, value); }
-			State EquipItem(Base base, State silent = True, State stick = True) noexcept { return vaultmp::EquipItem(id, base, silent, stick); }
-			State UnequipItem(Base base, State silent = True, State stick = True) noexcept { return vaultmp::UnequipItem(id, base, silent, stick); }
+			State EquipItem(Base item, State silent = True, State stick = True) noexcept { return vaultmp::EquipItem(id, item, silent, stick); }
+			State UnequipItem(Base item, State silent = True, State stick = True) noexcept { return vaultmp::UnequipItem(id, item, silent, stick); }
+			State PlayIdle(Base idle) noexcept { return vaultmp::PlayIdle(id, idle); }
 			Void KillActor(Limb limbs = Limb::None, Death cause = Death::None) noexcept { return vaultmp::KillActor(id, limbs, cause); }
 
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_ACTOR); }
