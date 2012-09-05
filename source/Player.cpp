@@ -95,8 +95,8 @@ const map<unsigned char, pair<double, double>> Player::fnv_default_values = {
 };
 
 const map<unsigned int, tuple<unsigned int, double, bool, bool, bool>> Player::default_items = {
-	{0x00015038, tuple<unsigned int, double, bool, bool, bool>{1, 100.0, true, true, true}}, // Pip-Boy 3000
-	{0x00025B83, tuple<unsigned int, double, bool, bool, bool>{1, 100.0, true, true, true}}, // Pip-Boy Gloves
+	{PIPBOY_3000, tuple<unsigned int, double, bool, bool, bool>{1, 100.0, true, true, true}}, // Pip-Boy 3000
+	{PIPBOY_GLOVES, tuple<unsigned int, double, bool, bool, bool>{1, 100.0, true, true, true}}, // Pip-Boy Gloves
 };
 
 #ifdef VAULTMP_DEBUG

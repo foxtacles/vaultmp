@@ -82,8 +82,7 @@ class GameFactory
 		static Database<Race> dbRaces;
 #endif
 
-		static inline ReferenceList::iterator GetShared(Reference* reference) { return find_if(instances.begin(), instances.end(), [=](const ReferenceList::value_type& _reference) { return _reference.first.get() == reference; }); }
-		static unsigned char GetType(Reference* reference) noexcept;
+		static inline ReferenceList::iterator GetShared(const Reference* reference) { return find_if(instances.begin(), instances.end(), [=](const ReferenceList::value_type& _reference) { return _reference.first.get() == reference; }); }
 
 	public:
 
@@ -131,6 +130,10 @@ class GameFactory
 		 * \brief Returns the type of the given NetworkID
 		 */
 		static unsigned char GetType(NetworkID id) noexcept;
+		/**
+		 * \brief Returns the type of the given reference
+		 */
+		static unsigned char GetType(const Reference* reference) noexcept;
 		/**
 		 * \brief Returns the type of the given reference ID
 		 */

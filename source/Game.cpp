@@ -1214,6 +1214,14 @@ void Game::AddItem(const FactoryObject& reference, unsigned int baseID, unsigned
 	if (!container)
 		throw VaultException("Object with reference %08X is not a Container", reference->GetReference());
 
+	if ((baseID == PIPBOY_3000 || baseID == PIPBOY_GLOVES) && container->GetReference() == PLAYER_REFERENCE)
+	{
+		if (key)
+			Lockable::Retrieve(key);
+
+		return;
+	}
+
 	Interface::StartDynamic();
 
 	Interface::ExecuteCommand("AddItemHealthPercent", {container->GetReferenceParam(), RawParameter(baseID), RawParameter(count), RawParameter(condition / 100), RawParameter(silent)}, key);
@@ -1237,6 +1245,14 @@ void Game::RemoveItem(const FactoryObject& reference, unsigned int baseID, unsig
 
 	if (!container)
 		throw VaultException("Object with reference %08X is not a Container", reference->GetReference());
+
+	if ((baseID == PIPBOY_3000 || baseID == PIPBOY_GLOVES) && container->GetReference() == PLAYER_REFERENCE)
+	{
+		if (key)
+			Lockable::Retrieve(key);
+
+		return;
+	}
 
 	Interface::StartDynamic();
 
@@ -1346,6 +1362,14 @@ void Game::EquipItem(const FactoryObject& reference, unsigned int baseID, bool s
 	if (!actor)
 		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
+	if ((baseID == PIPBOY_3000 || baseID == PIPBOY_GLOVES) && actor->GetReference() == PLAYER_REFERENCE)
+	{
+		if (key)
+			Lockable::Retrieve(key);
+
+		return;
+	}
+
 	Interface::StartDynamic();
 
 	Interface::ExecuteCommand("EquipItem", {actor->GetReferenceParam(), RawParameter(baseID), RawParameter(stick), RawParameter(silent)}, key);
@@ -1369,6 +1393,14 @@ void Game::UnequipItem(const FactoryObject& reference, unsigned int baseID, bool
 
 	if (!actor)
 		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
+
+	if ((baseID == PIPBOY_3000 || baseID == PIPBOY_GLOVES) && actor->GetReference() == PLAYER_REFERENCE)
+	{
+		if (key)
+			Lockable::Retrieve(key);
+
+		return;
+	}
 
 	Interface::StartDynamic();
 

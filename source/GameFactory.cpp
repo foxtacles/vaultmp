@@ -287,7 +287,7 @@ void GameFactory::LeaveReference(FactoryObject& reference)
 	reference.type = 0x00;
 }
 
-unsigned char GameFactory::GetType(Reference* reference) noexcept
+unsigned char GameFactory::GetType(const Reference* reference) noexcept
 {
 	ReferenceList::iterator it;
 

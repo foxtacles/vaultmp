@@ -146,13 +146,17 @@ void Container::AddItem(NetworkID id)
 
 ContainerDiff Container::AddItem(unsigned int baseID, unsigned int count, double condition, bool silent) const
 {
+	ContainerDiff diff;
+
+	if ((baseID == PIPBOY_3000 || baseID == PIPBOY_GLOVES) && GameFactory::GetType(this) == ID_PLAYER)
+		return diff;
+
 	FactoryObject _item = GameFactory::GetObject(GameFactory::CreateInstance(ID_ITEM, baseID));
 	Item* item = vaultcast<Item>(_item);
 	item->SetItemCount(count);
 	item->SetItemCondition(condition);
 	item->SetItemSilent(silent);
 
-	ContainerDiff diff;
 	diff.second.emplace_back(item->GetNetworkID());
 
 	return diff;
@@ -174,6 +178,9 @@ ContainerDiff Container::RemoveItem(unsigned int baseID, unsigned int count, boo
 {
 	ContainerDiff diff;
 	list<NetworkID>::const_iterator it;
+
+	if ((baseID == PIPBOY_3000 || baseID == PIPBOY_GLOVES) && GameFactory::GetType(this) == ID_PLAYER)
+		return diff;
 
 	for (it = container.begin(); it != container.end() && count; ++it)
 	{
@@ -206,12 +213,24 @@ ContainerDiff Container::RemoveAllItems() const
 {
 	ContainerDiff diff;
 	diff.first = this->container;
+
+	if (GameFactory::GetType(this) == ID_PLAYER)
+		remove_if(diff.first.begin(), diff.first.end(), [](const NetworkID& id)
+		{
+			FactoryObject reference = GameFactory::GetObject(id);
+			unsigned int baseID = vaultcast<Item>(reference)->GetBase();
+			return (baseID == PIPBOY_3000 || baseID == PIPBOY_GLOVES);
+		});
+
 	return diff;
 }
 
 ContainerDiff Container::EquipItem(unsigned int baseID, bool silent, bool stick) const
 {
 	ContainerDiff diff;
+
+	if ((baseID == PIPBOY_3000 || baseID == PIPBOY_GLOVES) && GameFactory::GetType(this) == ID_PLAYER)
+		return diff;
 
 	if (!IsEquipped(baseID))
 	{
@@ -242,6 +261,10 @@ ContainerDiff Container::EquipItem(unsigned int baseID, bool silent, bool stick)
 ContainerDiff Container::UnequipItem(unsigned int baseID, bool silent, bool stick) const
 {
 	ContainerDiff diff;
+
+	if ((baseID == PIPBOY_3000 || baseID == PIPBOY_GLOVES) && GameFactory::GetType(this) == ID_PLAYER)
+		return diff;
+
 	NetworkID id = IsEquipped(baseID);
 
 	if (id)

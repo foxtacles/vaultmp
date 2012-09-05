@@ -444,6 +444,8 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 				{
 					unsigned int item;
 
+					// dynamic allocation here
+
 					asm(
 						"MOV ECX,%2\n"
 						"PUSH 0\n"
@@ -486,6 +488,8 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 
 							double condition;
 
+							// there's also a way to get the absolute health value
+
 							if (type == 0x18 || type == 0x28)
 							{
 								asm(
@@ -501,9 +505,7 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 
 							container.insert(container.end(), (unsigned char*) &condition, ((unsigned char*) &condition) + 8);
 
-							// Kind of cleanup here? not sure what this is
-
-							/*if (game & FALLOUT3)
+							if (game & FALLOUT3)
 							{
 							    asm (
 							        "MOV ECX,%0\n"
@@ -513,6 +515,8 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 							        : "m"(item), "r"(ITEM_UNK1_FALLOUT3)
 							        : "ecx"
 							    );
+
+								// the following is probably a free function
 
 							    asm (
 							        "MOV ECX,%0\n"
@@ -532,9 +536,8 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 							        : "m"(item), "r"(ITEM_UNK1_NEWVEGAS)
 							        : "ecx"
 							    );
-							}*/
+							}
 						}
-
 						else
 							return true;
 					}
@@ -594,7 +597,6 @@ void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
 		opcode = *((unsigned short*)(((unsigned) args[1]) + 4));
 		_args = (void*)(((unsigned) args[1]) + 4 + 2 + 2 + 2);            // skip 0001001C, opcode, unk2, numargs
 	}
-
 	else
 	{
 		opcode = *((unsigned short*) args[1]);
@@ -655,7 +657,6 @@ void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
 
 	if ((opcode & VAULTFUNCTION) == VAULTFUNCTION)
 		bigresult = vaultfunction((void*) reference, args[6], _args, opcode);
-
 	else
 	{
 		unsigned int function = FuncLookup((unsigned int) opcode);
@@ -686,7 +687,6 @@ void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
 			while (delegate)
 				Sleep(1);
 		}
-
 		else
 		{
 			CallCommand Call = (CallCommand) callAddr;
@@ -704,7 +704,6 @@ void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
 		result[0] = PIPE_OP_RETURN;
 		memcpy(result + 5, args[6], sizeof(double));
 	}
-
 	else
 	{
 		result[0] = PIPE_OP_RETURN_BIG;

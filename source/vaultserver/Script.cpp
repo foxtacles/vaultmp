@@ -378,7 +378,7 @@ unsigned long long Script::Timer_Respawn(NetworkID id)
 	}
 	catch (...)
 	{
-		KillTimer();    // Player has already left the server
+		KillTimer(); // Player has already left the server
 		return 0;
 	}
 
