@@ -79,8 +79,7 @@ Void VAULTSCRIPT OnActorAlert(ID actor, State alerted) noexcept
 
 Void VAULTSCRIPT OnActorSneak(ID actor, State sneaking) noexcept
 {
-	AddItem(actor, static_cast<Base>(0x8f216));
-EquipItem(actor, static_cast<Base>(0x8f216));
+
 }
 
 Void VAULTSCRIPT OnActorDeath(ID actor, Limb limbs, Death cause) noexcept

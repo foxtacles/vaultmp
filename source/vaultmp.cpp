@@ -370,7 +370,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 		fclose(filecheck);
 		Utils::GenerateChecksum("vaultmp.dll", checksum, checksum_real);
 
-		if (false && checksum_real != VAULTMP_DLL)
+		if (checksum_real != VAULTMP_DLL)
 		    return MessageBox(NULL, "vaultmp.dll is not up to date!", "Error", MB_OK | MB_ICONERROR);
 	}
 	else
@@ -386,7 +386,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 	config = iniparser_load("vaultmp.ini");
 	player_name = iniparser_getstring(config, "general:name", "");
 	server_name = iniparser_getstring(config, "general:master", "");
-	inittime = iniparser_getint(config, "general:inittime", 6000);
+	inittime = iniparser_getint(config, "general:inittime", 9000);
 	multiinst = (bool) iniparser_getboolean(config, "general:multiinst", 0);
 	const char* servers = iniparser_getstring(config,  "general:servers", "");
 

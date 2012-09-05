@@ -42,6 +42,7 @@ static void AnimDetour_F3();
 static void PlayIdleDetour_F3();
 static void AnimDetour_FNV();
 static void PlayIdleDetour_FNV();
+static void AVFix_F3();
 static void AVFix_FNV();
 static vector<void*> delegated;
 
@@ -95,6 +96,10 @@ static const unsigned Fallout3patch_playIdle_call_src = 0x0073BB20;
 static const unsigned Fallout3patch_playIdle_call_dest = (unsigned)& AnimDetour_F3;
 static const unsigned Fallout3patch_playIdle_fix_src = 0x00534D8D;
 static const unsigned Fallout3patch_playIdle_fix_dest = (unsigned)& PlayIdleDetour_F3;
+static unsigned Fallout3patch_AVFix_src = 0x00473D35;
+static unsigned Fallout3patch_AVFix_dest = (unsigned)& AVFix_F3;
+static unsigned Fallout3patch_AVFix_ret = 0x00473D3B;
+static unsigned Fallout3patch_AVFix_term = 0x00473E85;
 
 // Those snippets / functions are from FOSE / NVSE, thanks
 
@@ -303,14 +308,31 @@ void PlayIdleDetour_FNV()
 	);
 }
 
-void AVFix_FNV()
+void AVFix_F3()
 {
 	asm volatile(
 		"TEST ECX,ECX\n"
 		"JNE _doit\n"
-		"JMP %2\n"
+		"JMP %1\n"
 
 		"_doit:\n"
+		"MOV EDX,[ECX]\n"
+		"MOV [ESP+0x34],EAX\n"
+		"JMP %0\n"
+		:
+		:  "m"(Fallout3patch_AVFix_ret), "m"(Fallout3patch_AVFix_term)
+		:
+	);
+}
+
+void AVFix_FNV()
+{
+	asm volatile(
+		"TEST ECX,ECX\n"
+		"JNE _doit2\n"
+		"JMP %2\n"
+
+		"_doit2:\n"
 		"CALL %0\n"
 		"JMP %1\n"
 		:
@@ -955,6 +977,7 @@ void PatchGame(HINSTANCE& silverlock)
 			WriteRelCall(Fallout3patch_delegator_src, Fallout3patch_delegator_dest);
 			WriteRelCall(Fallout3patch_playIdle_fix_src, Fallout3patch_playIdle_fix_dest);
 			WriteRelJump(Fallout3patch_playIdle_call_src, Fallout3patch_playIdle_call_dest);
+			WriteRelJump(Fallout3patch_AVFix_src, Fallout3patch_AVFix_dest);
 
 			SafeWrite32(Fallout3patch_pluginsVMP, *(DWORD*)".vmp"); // redirect Plugins.txt
 
