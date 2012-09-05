@@ -7,6 +7,10 @@ bool logging=false;
 #define DB(a) 	/*{if(logging){std::ofstream d;d.open("C:\\Users\\PC\\Desktop\\debug.txt",std::ios::app);  d<<a<<" Address: "<<_ReturnAddress()<<std::endl;d.flush();d.close();}}*/
 #define DBB(a) 	/*std::ofstream d;d.open("C:\\Users\\PC\\Desktop\\debug.txt",std::ios::app);  d<<a<<" Address: "<<_ReturnAddress()<<std::endl;d.flush();d.close();*/
 
+//#define DB(a)  if(debugFrame==1){char tmp[100]="";sprintf(tmp,"C:\\Users\\PC\\Desktop\\frame_debug\\frame%d",debugCount);std::ofstream d;d.open(tmp,std::ios::app|std::ios::out);chatbox.AddLine(tmp);  d<<a<<" Address: "<<_ReturnAddress()<<std::endl;d.flush();d.close();}
+
+//#define DB3(a)  if(debugFrame==1){char tmp[100]="";sprintf(tmp,"C:\\Users\\PC\\Desktop\\frame_debug\\frame%d",debugCount);std::ofstream d;d.open(tmp,std::ios::app|std::ios::out);chatbox.AddLine(tmp);  d<<a<<" Address: "<<_ReturnAddress()<<std::endl;d.flush();d.close();}
+
 myIDirect3DDevice9::myIDirect3DDevice9(IDirect3DDevice9* pOriginal)
 {
     m_pIDirect3DDevice9 = pOriginal; // store the pointer to original object
@@ -19,12 +23,13 @@ myIDirect3DDevice9::myIDirect3DDevice9(IDirect3DDevice9* pOriginal)
    font=CreateFont(100,0,0,0,FW_NORMAL,false,false,false,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,DEFAULT_PITCH|FF_DONTCARE, "Arial");
 
    SelectObject(hdc, font);
-   
-
-
-   //D3DXCreateSphere(this->m_pIDirect3DDevice9, 100, 20, 20, &mesh, NULL);
 
    chatbox.Init(m_pIDirect3DDevice9,18);
+
+
+   minVertices=0;
+   maxVertices=0;
+   grabMatrix=0;
 }
 
 myIDirect3DDevice9::~myIDirect3DDevice9(void)
@@ -56,21 +61,9 @@ ULONG myIDirect3DDevice9::AddRef(void)
 ULONG myIDirect3DDevice9::Release(void)
 {
 	DB("myIDirect3DDevice9::Release");
-	// ATTENTION: This is a booby-trap ! Watch out !
-	// If we create our own sprites, surfaces, etc. (thus increasing the ref counter
-	// by external action), we need to delete that objects before calling the original
-	// Release function	
-	
-	// global var
 	extern myIDirect3DDevice9* gl_pmyIDirect3DDevice9;
 
-    // release/delete own objects
-    // .....
-	
-	// Calling original function now
 	ULONG count = m_pIDirect3DDevice9->Release();
-		
-    // now, the Original Object has deleted itself, so do we here
 	
 	if(count==0)
 	{
@@ -162,12 +155,37 @@ HRESULT myIDirect3DDevice9::Reset(D3DPRESENT_PARAMETERS* pPresentationParameters
 HRESULT myIDirect3DDevice9::Present(CONST RECT* pSourceRect,CONST RECT* pDestRect,HWND hDestWindowOverride,CONST RGNDATA* pDirtyRegion)
 { DB("myIDirect3DDevice9::Present");
     
+	if(GetAsyncKeyState('K')!=0)
+		chatbox.AddLine("PRESENT");
+
 	chatbox.Show(true);
 	chatbox.Lock();
 	chatbox.Draw(m_pIDirect3DDevice9);
 	chatbox.Unlock();
-    
-    // call original routine
+
+	{
+		char buf[100]="";
+		D3DXVECTOR2 screenPos;
+		float distance;
+
+		RECT font_rect;
+		bool vis;
+
+		for(int i=0;i<GameData::playersScreenName.size();i++)
+		{
+			vis=GetScreenPosition(screenPos,distance,D3DXVECTOR3(*GameData::playersScreenName[i].posX,*GameData::playersScreenName[i].posY,*GameData::playersScreenName[i].posZ));
+
+			if(vis)
+			{
+				SetRect(&font_rect,screenPos.x,screenPos.y,200,32);
+				sprintf(buf,GameData::playersScreenName[i].name.c_str(),screenPos.x,screenPos.y);
+				chatbox.g_font->DrawTextA(NULL,buf,-1,&font_rect,DT_LEFT|DT_NOCLIP,0xFFFFFFFF);
+			}
+		}
+
+		
+	}
+
 	HRESULT hres = m_pIDirect3DDevice9->Present( pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion);
 
 	logging=false;
@@ -292,43 +310,45 @@ HRESULT myIDirect3DDevice9::GetDepthStencilSurface(IDirect3DSurface9** ppZStenci
 
 HRESULT myIDirect3DDevice9::BeginScene(void)
 { DB("myIDirect3DDevice9::BeginScene");
+	
     return(m_pIDirect3DDevice9->BeginScene());
 }
 
 HRESULT myIDirect3DDevice9::EndScene(void)
 {
-	
-
-	
-
 	DB("myIDirect3DDevice9::EndScene");
+
     return(m_pIDirect3DDevice9->EndScene());
 }
 
 HRESULT myIDirect3DDevice9::Clear(DWORD Count,CONST D3DRECT* pRects,DWORD Flags,D3DCOLOR Color,float Z,DWORD Stencil)
 { 
-
+	if(Flags==7)
+		grabMatrix=1;
 	DB("myIDirect3DDevice9::Clear");
     return(m_pIDirect3DDevice9->Clear(Count,pRects,Flags,Color,Z,Stencil));
 }
 
 HRESULT myIDirect3DDevice9::SetTransform(D3DTRANSFORMSTATETYPE State,CONST D3DMATRIX* pMatrix)
 { 
-	DB("myIDirect3DDevice9::SetTransform");
-	/*if(State==D3DTS_VIEW)
+	if(State==D3DTS_PROJECTION)
 	{
-		DBB("myIDirect3DDevice9::SetTransform");
-
-		if(GetAsyncKeyState('P'))
+		if(grabMatrix==1)
 		{
-			
-			D3DXMatrixLookAtLH((D3DXMATRIX*)pMatrix,
-                     &D3DXVECTOR3(200,200,200),
-                     &D3DXVECTOR3(0,0,0),
-                     &D3DXVECTOR3(0.0f, 1.0f, 0.0f));
+			GameData::lastProjection=(*pMatrix);
+			grabMatrix=0;
+		}
+	}
+	if(State==D3DTS_VIEW)
+	{
+		if(grabMatrix==1)
+		{
+			GameData::lastView=(*pMatrix);
 		}
 		
-	}*/
+	}
+
+	DB("myIDirect3DDevice9::SetTransform");
     return(m_pIDirect3DDevice9->SetTransform(State,pMatrix));
 }
 
@@ -519,7 +539,8 @@ HRESULT myIDirect3DDevice9::DrawPrimitive(D3DPRIMITIVETYPE PrimitiveType,UINT St
 }
 
 HRESULT myIDirect3DDevice9::DrawIndexedPrimitive(D3DPRIMITIVETYPE PrimitiveType,INT BaseVertexIndex,UINT MinVertexIndex,UINT NumVertices,UINT startIndex,UINT primCount)
-{ DB("myIDirect3DDevice9::DrawIndexedPrimitive");
+{ 
+	DB("myIDirect3DDevice9::DrawIndexedPrimitive ("<<NumVertices<<" NumVertices)");
     return(m_pIDirect3DDevice9->DrawIndexedPrimitive(PrimitiveType,BaseVertexIndex,MinVertexIndex,NumVertices,startIndex,primCount));
 }
 

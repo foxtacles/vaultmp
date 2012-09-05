@@ -3,6 +3,8 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 
+#include "GameData.h"
+
 #include "GUI.h"
 
 class myIDirect3DDevice9 : public IDirect3DDevice9
@@ -139,8 +141,14 @@ private:
 
 	HDC hdc;
 	HFONT font;
+	
 
     
 	// This is our test function
+	public:
 
+		int minVertices;
+		int maxVertices;
+
+		int grabMatrix;
 };

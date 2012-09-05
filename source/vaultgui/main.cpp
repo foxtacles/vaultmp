@@ -8,7 +8,6 @@
 #include "Hook.h"
 #include "HookedFunctions.h"
 
-
 myIDirect3DDevice9* gl_pmyIDirect3DDevice9;
 myIDirect3D9*       gl_pmyIDirect3D9;
 HINSTANCE           gl_hOriginalDll;
