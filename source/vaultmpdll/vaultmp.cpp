@@ -75,6 +75,10 @@ static const unsigned FalloutNVpatch_playIdle_call_src = 0x008D96BA;
 static const unsigned FalloutNVpatch_playIdle_call_dest = (unsigned)& AnimDetour_FNV;
 static const unsigned FalloutNVpatch_playIdle_fix_src = 0x005CB4F1;
 static const unsigned FalloutNVpatch_playIdle_fix_dest = (unsigned)& PlayIdleDetour_FNV;
+static const unsigned FalloutNVpatch_matchRace_NOP1 = 0x005DA85D;
+static const unsigned FalloutNVpatch_matchRace_NOP2 = 0x005DA8A8;
+static const unsigned FalloutNVpatch_matchRace_patch = 0x005DA8C4;
+static const unsigned FalloutNVpatch_matchRace_param = 0x0118D5C8;
 static unsigned FalloutNVpatch_playIdle_fix_ret = 0x005CB4F6;
 static unsigned FalloutNVpatch_AVFix_src = 0x004AEC57;
 static unsigned FalloutNVpatch_AVFix_dest = (unsigned)& AVFix_FNV;
@@ -96,6 +100,10 @@ static const unsigned Fallout3patch_playIdle_call_src = 0x0073BB20;
 static const unsigned Fallout3patch_playIdle_call_dest = (unsigned)& AnimDetour_F3;
 static const unsigned Fallout3patch_playIdle_fix_src = 0x00534D8D;
 static const unsigned Fallout3patch_playIdle_fix_dest = (unsigned)& PlayIdleDetour_F3;
+static const unsigned Fallout3patch_matchRace_NOP1 = 0x0052F4DD;
+static const unsigned Fallout3patch_matchRace_NOP2 = 0x0052F50F;
+static const unsigned Fallout3patch_matchRace_patch = 0x0052F513;
+static const unsigned Fallout3patch_matchRace_param = 0x00F51ADC;
 static unsigned Fallout3patch_AVFix_src = 0x00473D35;
 static unsigned Fallout3patch_AVFix_dest = (unsigned)& AVFix_F3;
 static unsigned Fallout3patch_AVFix_ret = 0x00473D3B;
@@ -598,45 +606,6 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 			break;
 		}
 
-		case 0x0007 | VAULTFUNCTION: // SetRace - sets the race
-		{
-			ZeroMemory(result, sizeof(double));
-
-			unsigned char* _reference = (unsigned char*) reference;
-
-			if (!_reference)
-				return false;
-
-			if (*(unsigned char*) args != 0x6E)
-				return false;
-
-			unsigned int race = FormLookup(*(unsigned int*)((unsigned char*) args + 1));
-
-			if (!race)
-				return false;
-
-			unsigned int target_form = *(unsigned int*)(_reference + 0x1C);
-			unsigned int old_race = *(unsigned int*) ((unsigned char*) target_form + 0x110);
-
-			if (race == old_race)
-				return false;
-
-			asm(
-				"PUSH 0\n"
-				"PUSH %0\n"
-				"MOV ECX,%1\n"
-				"CALL %2\n"
-				"MOV ECX,%3\n"
-				"CALL %4\n"
-				:
-				: "r"(race), "r"(target_form), "r"(SETRACE_A_FALLOUT3), "m"(reference), "r"(SETRACE_B_FALLOUT3)
-				: "ecx"
-			);
-
-			*(double*) result = 1;
-			break;
-		}
-
 		default:
 			break;
 	}
@@ -1012,6 +981,13 @@ void PatchGame(HINSTANCE& silverlock)
 			SafeWrite8(Fallout3patch_PlayGroup, 0xEB);   // JMP SHORT
 			SafeWrite16(Fallout3patch_playIdle_fix_src + 5, 0x9090); // NOP NOP
 
+			unsigned char NOP[] = {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
+			SafeWriteBuf(Fallout3patch_matchRace_NOP1, NOP, sizeof(NOP));
+			SafeWriteBuf(Fallout3patch_matchRace_NOP2, NOP, 3);
+			SafeWrite8(Fallout3patch_matchRace_patch + 1, 0xF1);
+			SafeWriteBuf(Fallout3patch_matchRace_patch + 2, NOP, 4);
+			SafeWrite8(Fallout3patch_matchRace_param, 0x0F);
+
 			WriteRelCall(Fallout3patch_delegatorCall_src, Fallout3patch_delegatorCall_dest);
 			WriteRelCall(Fallout3patch_delegator_src, Fallout3patch_delegator_dest);
 			WriteRelCall(Fallout3patch_playIdle_fix_src, Fallout3patch_playIdle_fix_dest);
@@ -1033,8 +1009,15 @@ void PatchGame(HINSTANCE& silverlock)
 			SafeWrite8(FalloutNVpatch_delegatorCall_src + 5, 0x59);   // POP ECX
 			SafeWrite8(FalloutNVpatch_PlayGroup, 0xEB);   // JMP SHORT
 
-			unsigned char NOP[] = {0x90, 0x90, 0x90, 0x90, 0x90};
-			SafeWriteBuf(FalloutNVpatch_playIdle_call_src + 5, NOP, sizeof(NOP)); // 5x NOP
+			unsigned char NOP[] = {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
+			SafeWriteBuf(FalloutNVpatch_playIdle_call_src + 5, NOP, 5); // 5x NOP
+
+			SafeWriteBuf(FalloutNVpatch_matchRace_NOP1, NOP, sizeof(NOP));
+			SafeWriteBuf(FalloutNVpatch_matchRace_NOP2, NOP, 11);
+			SafeWrite8(FalloutNVpatch_matchRace_patch + 1, 0x45);
+			SafeWrite8(FalloutNVpatch_matchRace_patch + 2, 0xFC);
+			SafeWriteBuf(FalloutNVpatch_matchRace_patch + 3, NOP, 11);
+			SafeWrite8(FalloutNVpatch_matchRace_param, 0x0F);
 
 			WriteRelCall(FalloutNVpatch_delegatorCall_src, FalloutNVpatch_delegatorCall_dest);
 			WriteRelCall(FalloutNVpatch_delegator_src, FalloutNVpatch_delegator_dest);

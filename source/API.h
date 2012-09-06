@@ -245,6 +245,7 @@ namespace Values
 		Func_DamageActorValue			= 0x1181,
 		Func_RestoreActorValue			= 0x1182,
 		Func_PlayIdle					= 0x1190,
+		Func_MatchRace					= 0x11E5,
 
 		Func_GetActorState              = 0x0001 | VAULTFUNCTION,
 		Func_Chat						= 0x0002 | VAULTFUNCTION,
@@ -252,7 +253,6 @@ namespace Values
 		Func_UIMessage                  = 0x0004 | VAULTFUNCTION,
 		Func_RemoveAllItemsEx			= 0x0005 | VAULTFUNCTION,
 		Func_ForceRespawn				= 0x0006 | VAULTFUNCTION,
-		Func_SetRace					= 0x0007 | VAULTFUNCTION,
 	};
 
 	enum ActorVals

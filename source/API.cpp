@@ -543,10 +543,10 @@ void API::Initialize(unsigned char game)
 	DefineFunction("DamageActorValue", "rvd", Func_DamageActorValue, FALLOUT_GAMES);
 	DefineFunction("RestoreActorValue", "rvd", Func_RestoreActorValue, FALLOUT_GAMES);
 	DefineFunction("PlayIdle", "rs", Func_PlayIdle, FALLOUT_GAMES);
+	DefineFunction("MatchRace", "r$y", Func_MatchRace, FALLOUT_GAMES); // has been patched to take Race
 	DefineFunction("ScanContainer", "r", Func_ScanContainer, FALLOUT_GAMES);
 	DefineFunction("RemoveAllItemsEx", "r", Func_RemoveAllItemsEx, FALLOUT_GAMES);
 	DefineFunction("ForceRespawn", "", Func_ForceRespawn, FALLOUT_GAMES);
-	DefineFunction("SetRace", "ri", Func_SetRace, FALLOUT_GAMES);
 	DefineFunction("UIMessage", "s", Func_UIMessage, FALLOUT_GAMES);
 	DefineFunction("CenterOnCell", "$s", Func_CenterOnCell, FALLOUT_GAMES);
 	DefineFunction("CenterOnExterior", "$ii", Func_CenterOnExterior, FALLOUT_GAMES);
@@ -714,6 +714,10 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 				typecode = 0x0000000A;
 				break;
 
+			case 'y': // Race
+				typecode = 0x0000000F;
+				break;
+
 			case 'b': // Object ID
 				typecode = 0x00000015;
 				break;
@@ -764,6 +768,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 			c (Container, 2 byte, 0x72, stream) - 0x0000001A
 			w (World space, 2 byte, 0x72, stream) - 0x0000001B
 			q (Actor, 2 byte, 0x72, stream) - 0x00000006
+			y (Race, 2 byte, 0x72, stream) - 0x0000000F
 			s (String, 2 byte, length, followed by chars) - 0x00000000
 			x (Control code, 4 byte, 0x6E) - 0x00000001
 			r (Reference)
@@ -805,6 +810,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 			case 'q': // Actor
 			case 'c': // Container
 			case 'w': // World space
+			case 'y': // Race
 			{
 				if (refparam != 0x00)   // We don't support more than one refparam yet
 					throw VaultException("API::ParseCommand does only support one reference argument up until now");

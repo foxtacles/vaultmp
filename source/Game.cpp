@@ -224,7 +224,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func_MarkForDelete:
 				break;
 
-			case Func_SetRace:
+			case Func_MatchRace:
 				break;
 
 			case Func_ScanContainer:
@@ -1171,7 +1171,7 @@ void Game::SetActorRace(const FactoryObject& reference, unsigned int race, unsig
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("SetRace", {actor->GetReferenceParam(), RawParameter(race)}, key);
+	Interface::ExecuteCommand("MatchRace", {actor->GetReferenceParam(), RawParameter(race)}, key);
 
 	Interface::EndDynamic();
 }
@@ -2577,4 +2577,6 @@ void Game::GetMessage(string message)
 		PacketFactory::Create<pTypes::ID_GAME_CHAT>(message),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 	});
+
+	SetActorRace(GameFactory::GetObject(PLAYER_REFERENCE), 0x4bf72);
 }
