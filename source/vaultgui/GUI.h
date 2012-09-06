@@ -8,10 +8,12 @@ using namespace std;
 
 class GUI
 {
+public:
+	ID3DXFont* g_font;
 private:
 	GUIText* lines[50];
 	string writingText;
-	ID3DXFont* g_font;
+	
 	LPD3DXSPRITE sprite;
 	LPDIRECT3DTEXTURE9 gTexture;
 	bool visible;

@@ -141,6 +141,13 @@ HRESULT __stdcall myIDirect3D9::CreateDevice(UINT Adapter,D3DDEVTYPE DeviceType,
 	// store our pointer (the fake one) for returning it to the calling progam
 	*ppReturnedDeviceInterface = gl_pmyIDirect3DDevice9;
 
+
+	RECT rect;
+
+	GetWindowRect(hFocusWindow, &rect);
+	GameData::windowHeight=rect.bottom-rect.top;
+	GameData::windowWidth=rect.right-rect.left;
+
 	SendToLog("Hooked IDirect3D9 CreateDevice return");
 
 	return(hres); 

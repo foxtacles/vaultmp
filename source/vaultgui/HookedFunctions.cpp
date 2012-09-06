@@ -72,6 +72,8 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 {
 	static string chatbox_text="";
 	static bool chatting=false;
+	static int maxV=0;
+	static char buff[100];
 
 	SendToLog("CustomWindowProcedure called");
 
@@ -120,11 +122,6 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 					{
 						chatting=false;
 						gl_pmyIDirect3DDevice9->chatbox.Lock();
-						/*if(chatbox_text=="crash")
-						{
-							char* a=0;
-							(*a)=1;
-						}*/
 						gl_pmyIDirect3DDevice9->chatbox.AddToQueue(chatbox_text);
 						//gl_pmyIDirect3DDevice9->chatbox.AddLine(chatbox_text);
 						gl_pmyIDirect3DDevice9->chatbox.Unlock();
@@ -157,13 +154,23 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 
 			switch((char)wparam)
 			{
-				case VK_PRIOR:
-					gl_pmyIDirect3DDevice9->chatbox.ScrollUp();
+				/*case VK_PRIOR:
+					//gl_pmyIDirect3DDevice9->chatbox.ScrollUp();
+					maxV+=20;
+					gl_pmyIDirect3DDevice9->minVertices=maxV-20;
+					gl_pmyIDirect3DDevice9->maxVertices=maxV;
+					sprintf(buff,"Vertices from %d to %d disabled",maxV-20,maxV);
+					gl_pmyIDirect3DDevice9->chatbox.AddLine(buff);
 					break;
 
 				case VK_NEXT:
-					gl_pmyIDirect3DDevice9->chatbox.ScrollDown();
-					break;
+					//gl_pmyIDirect3DDevice9->chatbox.ScrollDown();
+					maxV-=20;
+					gl_pmyIDirect3DDevice9->minVertices=maxV-20;
+					gl_pmyIDirect3DDevice9->maxVertices=maxV;
+					sprintf(buff,"Vertices from %d to %d disabled",maxV-20,maxV);
+					gl_pmyIDirect3DDevice9->chatbox.AddLine(buff);
+					break;*/
 				case VK_ADD:
 					gl_pmyIDirect3DDevice9->chatbox.SetSize(gl_pmyIDirect3DDevice9->chatbox.GetSize()+0.1);
 					break;
