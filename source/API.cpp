@@ -546,6 +546,7 @@ void API::Initialize(unsigned char game)
 	DefineFunction("ScanContainer", "r", Func_ScanContainer, FALLOUT_GAMES);
 	DefineFunction("RemoveAllItemsEx", "r", Func_RemoveAllItemsEx, FALLOUT_GAMES);
 	DefineFunction("ForceRespawn", "", Func_ForceRespawn, FALLOUT_GAMES);
+	DefineFunction("SetRace", "ri", Func_SetRace, FALLOUT_GAMES);
 	DefineFunction("UIMessage", "s", Func_UIMessage, FALLOUT_GAMES);
 	DefineFunction("CenterOnCell", "$s", Func_CenterOnCell, FALLOUT_GAMES);
 	DefineFunction("CenterOnExterior", "$ii", Func_CenterOnExterior, FALLOUT_GAMES);

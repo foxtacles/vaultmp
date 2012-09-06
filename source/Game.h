@@ -199,6 +199,10 @@ class Game
 		 */
 		static void SetActorIdleAnimation(const FactoryObject& reference, const string& anim, unsigned int key = 0);
 		/**
+		 * \brief Sets the race of an Actor
+		 */
+		static void SetActorRace(const FactoryObject& reference, unsigned int race, unsigned int key = 0);
+		/**
 		 * \brief Kills an Actor
 		 */
 		static void KillActor(const FactoryObject& reference, unsigned short limbs, signed char cause, unsigned int key = 0);

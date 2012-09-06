@@ -224,6 +224,9 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func_MarkForDelete:
 				break;
 
+			case Func_SetRace:
+				break;
+
 			case Func_ScanContainer:
 			{
 				reference = GameFactory::GetObject(getFrom<double, unsigned int>(info.at(1)));
@@ -1155,6 +1158,20 @@ void Game::SetActorIdleAnimation(const FactoryObject& reference, const string& a
 	Interface::StartDynamic();
 
 	Interface::ExecuteCommand("PlayIdle", {actor->GetReferenceParam(), RawParameter(anim)}, key);
+
+	Interface::EndDynamic();
+}
+
+void Game::SetActorRace(const FactoryObject& reference, unsigned int race, unsigned int key)
+{
+	Actor* actor = vaultcast<Actor>(reference);
+
+	if (!actor)
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
+
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("SetRace", {actor->GetReferenceParam(), RawParameter(race)}, key);
 
 	Interface::EndDynamic();
 }

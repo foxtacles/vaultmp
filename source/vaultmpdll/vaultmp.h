@@ -13,6 +13,8 @@ static const unsigned int ITEM_COUNT_FALLOUT3         = 0x004E85E0;
 static const unsigned int ITEM_GET_FALLOUT3           = 0x004E8570;
 static const unsigned int ITEM_ISEQUIPPED_FALLOUT3    = 0x0047D260;
 static const unsigned int ITEM_CONDITION_FALLOUT3     = 0x0047CF30;
+static const unsigned int SETRACE_A_FALLOUT3		  = 0x005556C0;
+static const unsigned int SETRACE_B_FALLOUT3		  = 0x00729880; // maybe some kind of render/update function
 // unk
 static const unsigned int ITEM_UNK1_FALLOUT3          = 0x0047FD30;
 static const unsigned int ITEM_UNK2_FALLOUT3          = 0x0086BA60;

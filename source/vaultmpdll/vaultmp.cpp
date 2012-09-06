@@ -598,6 +598,45 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 			break;
 		}
 
+		case 0x0007 | VAULTFUNCTION: // SetRace - sets the race
+		{
+			ZeroMemory(result, sizeof(double));
+
+			unsigned char* _reference = (unsigned char*) reference;
+
+			if (!_reference)
+				return false;
+
+			if (*(unsigned char*) args != 0x6E)
+				return false;
+
+			unsigned int race = FormLookup(*(unsigned int*)((unsigned char*) args + 1));
+
+			if (!race)
+				return false;
+
+			unsigned int target_form = *(unsigned int*)(_reference + 0x1C);
+			unsigned int old_race = *(unsigned int*) ((unsigned char*) target_form + 0x110);
+
+			if (race == old_race)
+				return false;
+
+			asm(
+				"PUSH 0\n"
+				"PUSH %0\n"
+				"MOV ECX,%1\n"
+				"CALL %2\n"
+				"MOV ECX,%3\n"
+				"CALL %4\n"
+				:
+				: "r"(race), "r"(target_form), "r"(SETRACE_A_FALLOUT3), "m"(reference), "r"(SETRACE_B_FALLOUT3)
+				: "ecx"
+			);
+
+			*(double*) result = 1;
+			break;
+		}
+
 		default:
 			break;
 	}
