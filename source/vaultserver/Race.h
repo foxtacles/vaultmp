@@ -33,7 +33,7 @@ class Race
 		static const Race& Lookup(unsigned int baseID);
 
 		unsigned int GetBase() const;
-		bool GetChild() const;
+		bool IsChild() const;
 		unsigned int GetYounger() const;
 		unsigned int GetOlder() const;
 

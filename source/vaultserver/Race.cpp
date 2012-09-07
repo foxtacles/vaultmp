@@ -60,7 +60,7 @@ unsigned int Race::GetBase() const
 	return baseID;
 }
 
-bool Race::GetChild() const
+bool Race::IsChild() const
 {
 	return child;
 }

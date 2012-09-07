@@ -15,6 +15,7 @@ Database<Record> GameFactory::dbRecords;
 Database<Exterior> GameFactory::dbExteriors;
 Database<Weapon> GameFactory::dbWeapons;
 Database<Race> GameFactory::dbRaces;
+Database<NPC> GameFactory::dbNpcs;
 #endif
 
 void GameFactory::Initialize(unsigned char game)
@@ -29,6 +30,7 @@ void GameFactory::Initialize(unsigned char game)
 			dbExteriors.initialize(DB_FALLOUT3, {"exteriors"});
 			dbWeapons.initialize(DB_FALLOUT3, {"weapons"});
 			dbRaces.initialize(DB_FALLOUT3, {"races"});
+			dbNpcs.initialize(DB_FALLOUT3, {"npcs"});
 			break;
 
 		case NEWVEGAS:
@@ -36,6 +38,7 @@ void GameFactory::Initialize(unsigned char game)
 			dbExteriors.initialize(DB_NEWVEGAS, {"exteriors"});
 			dbWeapons.initialize(DB_NEWVEGAS, {"weapons"});
 			dbRaces.initialize(DB_NEWVEGAS, {"races"});
+			dbNpcs.initialize(DB_NEWVEGAS, {"npcs"});
 			break;
 
 		default:

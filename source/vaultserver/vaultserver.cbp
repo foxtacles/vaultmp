@@ -401,6 +401,8 @@
 		<Unit filename="Dedicated.h" />
 		<Unit filename="Exterior.cpp" />
 		<Unit filename="Exterior.h" />
+		<Unit filename="NPC.cpp" />
+		<Unit filename="NPC.h" />
 		<Unit filename="NetworkServer.cpp" />
 		<Unit filename="NetworkServer.h" />
 		<Unit filename="PAWN.cpp" />

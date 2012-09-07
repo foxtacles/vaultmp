@@ -282,6 +282,11 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
 	Player::SetDebugHandler(debug);
 	Game::SetDebugHandler(debug);
 	GameFactory::SetDebugHandler(debug);
+	Shared<unsigned int>::SetDebugHandler(debug);
+	Shared<unsigned short>::SetDebugHandler(debug);
+	Shared<signed char>::SetDebugHandler(debug);
+	Shared<bool>::SetDebugHandler(debug);
+	Shared<pair<set<unsigned int>, set<unsigned int>>>::SetDebugHandler(debug);
 	//Network::SetDebugHandler(debug);
 #endif
 

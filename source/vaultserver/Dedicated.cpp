@@ -274,6 +274,7 @@ void Dedicated::DedicatedThread()
 	Database<Exterior>::SetDebugHandler(debug);
 	Database<Weapon>::SetDebugHandler(debug);
 	Database<Race>::SetDebugHandler(debug);
+	Database<NPC>::SetDebugHandler(debug);
 	VaultException::SetDebugHandler(debug);
 	NetworkServer::SetDebugHandler(debug);
 	Lockable::SetDebugHandler(debug);

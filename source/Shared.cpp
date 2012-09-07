@@ -22,6 +22,11 @@ bool Shared<T>::set_promise()
 	try
 	{
 		this->async.set_value(this->get());
+
+#ifdef VAULTMP_DEBUG
+		if (debug)
+			debug->PrintFormat("Satisfied promise (%08X -> %08X)", true, this, &this->async);
+#endif
 	}
 	catch (exception& e)
 	{
