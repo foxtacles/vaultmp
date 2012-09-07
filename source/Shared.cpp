@@ -19,7 +19,14 @@ void Shared<T>::SetDebugHandler(Debug* debug)
 template <typename T>
 bool Shared<T>::set_promise()
 {
-	this->async.set_value(this->get());
+	try
+	{
+		this->async.set_value(this->get());
+	}
+	catch (exception& e)
+	{
+		throw VaultException("Failed setting promise (%08X -> %08X: %s)", this, &this->async, e.what());
+	}
 
 	return true;
 }
