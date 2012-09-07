@@ -80,6 +80,10 @@ unsigned int Database<T>::initialize(const string& file, const vector<string>& t
 
 	data.reserve(count);
 
+	double end = 0.0;
+	double delta = 100.0 / count;
+	printf("Reading database %s (%s, ...)\n", file.c_str(), tables.front().c_str());
+
 	for (const string& table : tables)
 	{
 		query = "SELECT * FROM " + table;
@@ -100,6 +104,11 @@ unsigned int Database<T>::initialize(const string& file, const vector<string>& t
 
 		do
 		{
+			if (static_cast<unsigned int>(end + delta) > static_cast<unsigned int>(end))
+				Utils::progress_func(100.0, end);
+
+			end += delta;
+
 			if (ret != SQLITE_ROW)
 			{
 				sqlite3_finalize(stmt);

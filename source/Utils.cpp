@@ -12,6 +12,31 @@ void Utils::timestamp()
 	printf(t);
 }
 
+// http://stackoverflow.com/questions/1637587/c-libcurl-console-progress-bar
+int Utils::progress_func(double TotalToDownload, double NowDownloaded)
+{
+    // how wide you want the progress meter to be
+    int totaldotz=40;
+    double fractiondownloaded = NowDownloaded / TotalToDownload;
+    // part of the progressmeter that's already "full"
+    int dotz = round(fractiondownloaded * totaldotz);
+
+    // create the "meter"
+    int ii=0;
+    printf("%3.0f%% [",fractiondownloaded*100);
+    // part  that's full already
+    for ( ; ii < dotz;ii++) {
+        printf("=");
+    }
+    // remaining part (spaces)
+    for ( ; ii < totaldotz;ii++) {
+        printf(" ");
+    }
+    // and back to line begin - do not forget the fflush to avoid output buffering problems!
+    printf("]\r");
+    fflush(stdout);
+}
+
 bool Utils::DoubleCompare(double a, double b, double epsilon)
 {
 	return fabs(a - b) < epsilon;

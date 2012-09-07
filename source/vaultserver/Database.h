@@ -15,6 +15,7 @@
 #include "vaultmp.h"
 #include "vaultserver.h"
 #include "Debug.h"
+#include "Utils.h"
 #include "VaultException.h"
 
 #include "sqlite/sqlite3.h"

@@ -24,6 +24,7 @@ class Utils
 
 	public:
 		static void timestamp();
+		static int progress_func(double TotalToDownload, double NowDownloaded);
 		static bool DoubleCompare(double a, double b, double epsilon);
 		static string toString(signed int value);
 		static string toString(unsigned int value);
