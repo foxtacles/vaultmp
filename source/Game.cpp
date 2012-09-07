@@ -2577,6 +2577,4 @@ void Game::GetMessage(string message)
 		PacketFactory::Create<pTypes::ID_GAME_CHAT>(message),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 	});
-
-	SetActorRace(GameFactory::GetObject(PLAYER_REFERENCE), 0x4bf72);
 }
