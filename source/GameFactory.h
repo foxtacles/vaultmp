@@ -26,6 +26,7 @@
 #include "vaultserver/Weapon.h"
 #include "vaultserver/Race.h"
 #include "vaultserver/NPC.h"
+#include "vaultserver/BaseContainer.h"
 #endif
 
 #ifdef VAULTMP_DEBUG
@@ -82,6 +83,7 @@ class GameFactory
 		static Database<Weapon> dbWeapons;
 		static Database<Race> dbRaces;
 		static Database<NPC> dbNpcs;
+		static Database<BaseContainer> dbContainers;
 #endif
 
 		static inline ReferenceList::iterator GetShared(const Reference* reference) { return find_if(instances.begin(), instances.end(), [=](const ReferenceList::value_type& _reference) { return _reference.first.get() == reference; }); }

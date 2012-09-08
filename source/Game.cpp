@@ -784,7 +784,7 @@ void Game::NewActor(FactoryObject& reference)
 	}
 
 	SetActorRace(reference);
-	// SetActorFemale
+	SetActorFemale(reference);
 
 	Actor* actor = vaultcast<Actor>(reference);
 
