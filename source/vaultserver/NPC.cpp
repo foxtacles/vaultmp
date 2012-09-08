@@ -58,7 +58,7 @@ const NPC& NPC::Lookup(unsigned int baseID)
 
 const NPC& NPC::GetNPCNotIn(const unordered_set<unsigned int>& _set, const function<bool(const NPC&)>& pred)
 {
-	unordered_map<unsigned int, const NPC*>::iterator it = find_if(npcs.begin(), npcs.end(), [&](const pair<const unsigned int, const NPC*>& npcs) { return !_set.count(npcs.first) && pred(*npcs.second); });
+	auto it = find_if(npcs.begin(), npcs.end(), [&](const pair<const unsigned int, const NPC*>& npcs) { return !_set.count(npcs.first) && pred(*npcs.second); });
 
 	if (it != npcs.end())
 		return *it->second;
@@ -89,4 +89,11 @@ unsigned int NPC::GetRace() const
 unsigned int NPC::GetDeathItem() const
 {
 	return deathitem;
+}
+
+const vector<const BaseContainer*>& NPC::GetBaseContainer() const
+{
+	// traverse base templates of NPC
+
+	return BaseContainer::Lookup(baseID);
 }

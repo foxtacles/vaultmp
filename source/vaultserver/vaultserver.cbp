@@ -393,6 +393,8 @@
 			<Option target="DebugUnix" />
 		</Unit>
 		<Unit filename="..\vaultmp.h" />
+		<Unit filename="BaseContainer.cpp" />
+		<Unit filename="BaseContainer.h" />
 		<Unit filename="Client.cpp" />
 		<Unit filename="Client.h" />
 		<Unit filename="Database.cpp" />

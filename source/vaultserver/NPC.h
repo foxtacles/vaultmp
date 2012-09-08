@@ -7,6 +7,7 @@
 #include "vaultserver.h"
 #include "Database.h"
 #include "Record.h"
+#include "BaseContainer.h"
 
 #include "sqlite/sqlite3.h"
 
@@ -39,6 +40,7 @@ class NPC
 		bool IsFemale() const;
 		unsigned int GetRace() const;
 		unsigned int GetDeathItem() const;
+		const vector<const BaseContainer*>& GetBaseContainer() const;
 
 		NPC(const string& table, sqlite3_stmt* stmt);
 		// must never be called. only defined because vector requires it

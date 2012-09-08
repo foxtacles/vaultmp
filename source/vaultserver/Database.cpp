@@ -4,6 +4,7 @@
 #include "Weapon.h"
 #include "Race.h"
 #include "NPC.h"
+#include "BaseContainer.h"
 
 #ifdef VAULTMP_DEBUG
 template <typename T>
@@ -153,3 +154,4 @@ template class Database<Exterior>;
 template class Database<Weapon>;
 template class Database<Race>;
 template class Database<NPC>;
+template class Database<BaseContainer>;

@@ -70,7 +70,7 @@ const Record& Record::Lookup(unsigned int baseID, const vector<string>& types)
 
 const Record& Record::GetRecordNotIn(const unordered_set<unsigned int>& _set, const function<bool(const Record&)>& pred)
 {
-	unordered_map<unsigned int, const Record*>::iterator it = find_if(data.begin(), data.end(), [&](const pair<const unsigned int, const Record*>& data) { return !_set.count(data.first) && pred(*data.second); });
+	auto it = find_if(data.begin(), data.end(), [&](const pair<const unsigned int, const Record*>& data) { return !_set.count(data.first) && pred(*data.second); });
 
 	if (it != data.end())
 		return *it->second;
