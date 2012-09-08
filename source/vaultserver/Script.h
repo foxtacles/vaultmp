@@ -149,6 +149,8 @@ class Script
 		static bool GetActorAlerted(NetworkID id);
 		static bool GetActorSneaking(NetworkID id);
 		static bool GetActorDead(NetworkID id);
+		static unsigned int GetActorBaseRace(NetworkID id);
+		static bool GetActorBaseSex(NetworkID id);
 		static bool IsActorJumping(NetworkID id);
 		static unsigned int GetPlayerRespawn(NetworkID id);
 		static unsigned int GetPlayerSpawnCell(NetworkID id);
@@ -164,6 +166,9 @@ class Script
 		static bool UnequipItem(NetworkID id, unsigned int baseID, bool silent, bool stick);
 		static bool PlayIdle(NetworkID id, unsigned int idle);
 		static void KillActor(NetworkID id, unsigned short limbs, signed char cause);
+		static bool SetActorBaseRace(NetworkID id, unsigned int race);
+		static bool AgeActorBaseRace(NetworkID id, signed int age);
+		static bool SetActorBaseSex(NetworkID id, bool female);
 		static void SetPlayerRespawn(NetworkID id, unsigned int respawn);
 		static void SetPlayerSpawnCell(NetworkID id, unsigned int cell);
 

@@ -112,13 +112,18 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 	player->SetBase(result);
 
 	unsigned int race = npc.GetRace();
+	unsigned int old_race = player->GetActorRace();
 
 	if (player->SetActorRace(race))
 	{
+		// no SetActorBaseRace called
+
 		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_RACE>(id, race),
+			PacketFactory::Create<pTypes::ID_UPDATE_RACE>(id, race, Race::Lookup(old_race).GetAgeDifference(race)),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
+
+	// SetActorAge <- delta age from race of selected base to current race
 
 	bool female = npc.IsFemale();
 

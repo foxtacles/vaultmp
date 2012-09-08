@@ -36,6 +36,9 @@ class Race
 		bool IsChild() const;
 		unsigned int GetYounger() const;
 		unsigned int GetOlder() const;
+		unsigned int GetAge() const;
+		unsigned int GetMaxAge() const;
+		signed int GetAgeDifference(unsigned int race) const;
 
 		Race(const string& table, sqlite3_stmt* stmt);
 		// must never be called. only defined because vector requires it

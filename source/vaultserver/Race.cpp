@@ -74,3 +74,43 @@ unsigned int Race::GetOlder() const
 {
 	return older;
 }
+
+unsigned int Race::GetAge() const
+{
+	unsigned int age = 0;
+	const Race* race = this;
+
+	while (race->younger)
+	{
+		++age;
+		race = &Lookup(race->younger);
+	}
+
+	return age;
+}
+
+unsigned int Race::GetMaxAge() const
+{
+	unsigned int age = GetAge();
+	const Race* race = this;
+
+	while (race->older)
+	{
+		++age;
+		race = &Lookup(race->older);
+	}
+
+	return age;
+}
+
+signed int Race::GetAgeDifference(unsigned int race) const
+{
+	const Race& other_race = Lookup(race);
+
+	unsigned int age = GetAge();
+
+	if (age > other_race.GetMaxAge())
+		return 0;
+
+	return other_race.GetAge() - age;
+}

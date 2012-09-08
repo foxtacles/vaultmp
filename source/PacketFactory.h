@@ -1235,18 +1235,18 @@ class pActorRace : public pObjectDefault
 		friend class PacketFactory;
 
 	private:
-		pActorRace(NetworkID id, unsigned int race) : pObjectDefault(pTypes::ID_UPDATE_RACE, id)
+		pActorRace(NetworkID id, unsigned int race, signed int age) : pObjectDefault(pTypes::ID_UPDATE_RACE, id)
 		{
-			construct(race);
+			construct(race, age);
 		}
 		pActorRace(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
 		{
 
 		}
 
-		void access(NetworkID& id, unsigned int& race) const
+		void access(NetworkID& id, unsigned int& race, signed int& age) const
 		{
-			deconstruct(id, race);
+			deconstruct(id, race, age);
 		}
 };
 

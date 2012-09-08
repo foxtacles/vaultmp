@@ -224,6 +224,9 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func_MarkForDelete:
 				break;
 
+			case Func_AgeRace:
+				break;
+
 			case Func_MatchRace:
 				break;
 
@@ -325,7 +328,6 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				throw VaultException("Unhandled function %04hX", opcode);
 		}
 	}
-
 	else
 	{
 #ifdef VAULTMP_DEBUG
@@ -783,7 +785,7 @@ void Game::NewActor(FactoryObject& reference)
 		SetActorValue(reference, false, value);
 	}
 
-	SetActorRace(reference);
+	SetActorRace(reference, 0); // FIXME - AgeRace is a delta, do only once per base (redo on respawn). sucks a bit
 	SetActorFemale(reference);
 
 	Actor* actor = vaultcast<Actor>(reference);
@@ -1168,7 +1170,7 @@ void Game::SetActorIdleAnimation(const FactoryObject& reference, const string& a
 	Interface::EndDynamic();
 }
 
-void Game::SetActorRace(const FactoryObject& reference, unsigned int key)
+void Game::SetActorRace(const FactoryObject& reference, signed int age, unsigned int key)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -1177,7 +1179,10 @@ void Game::SetActorRace(const FactoryObject& reference, unsigned int key)
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("MatchRace", {actor->GetReferenceParam(), RawParameter(actor->GetActorRace())}, key);
+	Interface::ExecuteCommand("MatchRace", {actor->GetReferenceParam(), RawParameter(actor->GetActorRace())}, age ? 0 : key);
+
+	if (age)
+		Interface::ExecuteCommand("AgeRace", {actor->GetReferenceParam(), RawParameter(age)}, key);
 
 	Interface::EndDynamic();
 }
@@ -1720,7 +1725,7 @@ void Game::net_SetActorState(const FactoryObject& reference, unsigned int idle, 
 	}
 }
 
-void Game::net_SetActorRace(const FactoryObject& reference, unsigned int race)
+void Game::net_SetActorRace(const FactoryObject& reference, unsigned int race, signed int age)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -1732,7 +1737,7 @@ void Game::net_SetActorRace(const FactoryObject& reference, unsigned int race)
 	result = actor->SetActorRace(race);
 
 	if (result)
-		SetActorRace(reference, result->Lock());
+		SetActorRace(reference, age, result->Lock());
 }
 
 void Game::net_SetActorFemale(const FactoryObject& reference, bool female)

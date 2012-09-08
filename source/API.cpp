@@ -543,6 +543,7 @@ void API::Initialize(unsigned char game)
 	DefineFunction("DamageActorValue", "rvd", Func_DamageActorValue, FALLOUT_GAMES);
 	DefineFunction("RestoreActorValue", "rvd", Func_RestoreActorValue, FALLOUT_GAMES);
 	DefineFunction("PlayIdle", "rs", Func_PlayIdle, FALLOUT_GAMES);
+	DefineFunction("AgeRace", "r$i", Func_AgeRace, FALLOUT_GAMES);
 	DefineFunction("MatchRace", "r$y", Func_MatchRace, FALLOUT_GAMES); // has been patched to take Race
 	DefineFunction("SexChange", "r$I", Func_SexChange, FALLOUT_GAMES);
 	DefineFunction("ScanContainer", "r", Func_ScanContainer, FALLOUT_GAMES);

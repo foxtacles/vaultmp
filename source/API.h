@@ -245,6 +245,7 @@ namespace Values
 		Func_DamageActorValue			= 0x1181,
 		Func_RestoreActorValue			= 0x1182,
 		Func_PlayIdle					= 0x1190,
+		Func_AgeRace					= 0x11E4,
 		Func_MatchRace					= 0x11E5,
 		Func_SexChange					= 0x11E7,
 
