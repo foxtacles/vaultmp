@@ -544,6 +544,7 @@ void API::Initialize(unsigned char game)
 	DefineFunction("RestoreActorValue", "rvd", Func_RestoreActorValue, FALLOUT_GAMES);
 	DefineFunction("PlayIdle", "rs", Func_PlayIdle, FALLOUT_GAMES);
 	DefineFunction("MatchRace", "r$y", Func_MatchRace, FALLOUT_GAMES); // has been patched to take Race
+	DefineFunction("SexChange", "r$I", Func_SexChange, FALLOUT_GAMES);
 	DefineFunction("ScanContainer", "r", Func_ScanContainer, FALLOUT_GAMES);
 	DefineFunction("RemoveAllItemsEx", "r", Func_RemoveAllItemsEx, FALLOUT_GAMES);
 	DefineFunction("ForceRespawn", "", Func_ForceRespawn, FALLOUT_GAMES);

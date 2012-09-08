@@ -13,7 +13,7 @@
 using namespace std;
 
 /**
- * \brief Represents a race
+ * \brief Represents a NPC
  */
 
 class NPC

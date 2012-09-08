@@ -42,6 +42,8 @@ enum class pTypes : unsigned char
 	ID_UPDATE_CONTAINER,
 	ID_UPDATE_VALUE,
 	ID_UPDATE_STATE,
+	ID_UPDATE_RACE,
+	ID_UPDATE_SEX,
 	ID_UPDATE_DEAD,
 	ID_UPDATE_FIREWEAPON,
 	ID_UPDATE_IDLE,
@@ -878,18 +880,18 @@ class pActorNew : public pObjectNewDefault
 		friend class PacketFactory;
 
 	private:
-		pActorNew(const pPacket& _pContainerNew, const map<unsigned char, double>& values, const map<unsigned char, double>& baseValues, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking, bool dead) : pObjectNewDefault(pTypes::ID_ACTOR_NEW)
+		pActorNew(const pPacket& _pContainerNew, const map<unsigned char, double>& values, const map<unsigned char, double>& baseValues, unsigned int race, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool female, bool alerted, bool sneaking, bool dead) : pObjectNewDefault(pTypes::ID_ACTOR_NEW)
 		{
-			construct(_pContainerNew, values, baseValues, idle, moving, movingxy, weapon, alerted, sneaking, dead);
+			construct(_pContainerNew, values, baseValues, race, idle, moving, movingxy, weapon, female, alerted, sneaking, dead);
 		}
 		pActorNew(const unsigned char* stream, unsigned int len) : pObjectNewDefault(stream, len)
 		{
 
 		}
 
-		void access(map<unsigned char, double>& values, map<unsigned char, double>& baseValues, unsigned int& idle, unsigned char& moving, unsigned char& movingxy, unsigned char& weapon, bool& alerted, bool& sneaking, bool& dead) const
+		void access(map<unsigned char, double>& values, map<unsigned char, double>& baseValues, unsigned int& race, unsigned int& idle, unsigned char& moving, unsigned char& movingxy, unsigned char& weapon, bool& female, bool& alerted, bool& sneaking, bool& dead) const
 		{
-			deconstruct(values, baseValues, idle, moving, movingxy, weapon, alerted, sneaking, dead);
+			deconstruct(values, baseValues, race, idle, moving, movingxy, weapon, female, alerted, sneaking, dead);
 		}
 };
 
@@ -1225,6 +1227,84 @@ template<typename... Args>
 struct PacketFactory::_Access<pTypes::ID_UPDATE_STATE, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
 		packet_cast<pActorState>(packet)->access(forward<Args&>(args)...);
+	}
+};
+
+class pActorRace : public pObjectDefault
+{
+		friend class PacketFactory;
+
+	private:
+		pActorRace(NetworkID id, unsigned int race) : pObjectDefault(pTypes::ID_UPDATE_RACE, id)
+		{
+			construct(race);
+		}
+		pActorRace(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		{
+
+		}
+
+		void access(NetworkID& id, unsigned int& race) const
+		{
+			deconstruct(id, race);
+		}
+};
+
+template<typename... Args>
+struct PacketFactory::_Create<pTypes::ID_UPDATE_RACE, Args...> {
+	inline static pPacket Create(Args&&... args) {
+		return pPacket(new pActorRace(forward<Args>(args)...));
+	}
+};
+
+template<>
+inline const pActorRace* PacketFactory::packet_cast(const pDefault* packet) {
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_RACE ? reinterpret_cast<const pActorRace*>(packet) : nullptr;
+}
+
+template<typename... Args>
+struct PacketFactory::_Access<pTypes::ID_UPDATE_RACE, Args...> {
+	inline static void Access(const pDefault* packet, Args&... args) {
+		packet_cast<pActorRace>(packet)->access(forward<Args&>(args)...);
+	}
+};
+
+class pActorSex : public pObjectDefault
+{
+		friend class PacketFactory;
+
+	private:
+		pActorSex(NetworkID id, bool female) : pObjectDefault(pTypes::ID_UPDATE_SEX, id)
+		{
+			construct(female);
+		}
+		pActorSex(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		{
+
+		}
+
+		void access(NetworkID& id, bool& female) const
+		{
+			deconstruct(id, female);
+		}
+};
+
+template<typename... Args>
+struct PacketFactory::_Create<pTypes::ID_UPDATE_SEX, Args...> {
+	inline static pPacket Create(Args&&... args) {
+		return pPacket(new pActorSex(forward<Args>(args)...));
+	}
+};
+
+template<>
+inline const pActorSex* PacketFactory::packet_cast(const pDefault* packet) {
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_SEX ? reinterpret_cast<const pActorSex*>(packet) : nullptr;
+}
+
+template<typename... Args>
+struct PacketFactory::_Access<pTypes::ID_UPDATE_SEX, Args...> {
+	inline static void Access(const pDefault* packet, Args&... args) {
+		packet_cast<pActorSex>(packet)->access(forward<Args&>(args)...);
 	}
 };
 

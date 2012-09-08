@@ -127,6 +127,9 @@ Player::Player(unsigned int refID, unsigned int baseID) : Actor(refID, baseID)
 		_item->SetItemStick(get<4>(item.second));
 		this->AddItem(id);
 	}
+
+	this->SetActorRace(RACE_CAUCASIAN);
+	this->SetActorFemale(false);
 }
 
 Player::Player(const pDefault* packet) : Actor(PacketFactory::Pop<pPacket>(packet))

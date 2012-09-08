@@ -227,6 +227,9 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func_MatchRace:
 				break;
 
+			case Func_SexChange:
+				break;
+
 			case Func_ScanContainer:
 			{
 				reference = GameFactory::GetObject(getFrom<double, unsigned int>(info.at(1)));
@@ -780,6 +783,9 @@ void Game::NewActor(FactoryObject& reference)
 		SetActorValue(reference, false, value);
 	}
 
+	SetActorRace(reference);
+	// SetActorFemale
+
 	Actor* actor = vaultcast<Actor>(reference);
 
 	if (actor->GetReference() != PLAYER_REFERENCE)
@@ -1162,7 +1168,7 @@ void Game::SetActorIdleAnimation(const FactoryObject& reference, const string& a
 	Interface::EndDynamic();
 }
 
-void Game::SetActorRace(const FactoryObject& reference, unsigned int race, unsigned int key)
+void Game::SetActorRace(const FactoryObject& reference, unsigned int key)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -1171,7 +1177,21 @@ void Game::SetActorRace(const FactoryObject& reference, unsigned int race, unsig
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("MatchRace", {actor->GetReferenceParam(), RawParameter(race)}, key);
+	Interface::ExecuteCommand("MatchRace", {actor->GetReferenceParam(), RawParameter(actor->GetActorRace())}, key);
+
+	Interface::EndDynamic();
+}
+
+void Game::SetActorFemale(const FactoryObject& reference, unsigned int key)
+{
+	Actor* actor = vaultcast<Actor>(reference);
+
+	if (!actor)
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
+
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("SexChange", {actor->GetReferenceParam(), RawParameter(actor->GetActorFemale())}, key);
 
 	Interface::EndDynamic();
 }
@@ -1700,7 +1720,7 @@ void Game::net_SetActorState(const FactoryObject& reference, unsigned int idle, 
 	}
 }
 
-void Game::net_SetActorIdle(const FactoryObject& reference, unsigned int idle, const string& name)
+void Game::net_SetActorRace(const FactoryObject& reference, unsigned int race)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -1709,10 +1729,25 @@ void Game::net_SetActorIdle(const FactoryObject& reference, unsigned int idle, c
 
 	Lockable* result;
 
-	result = actor->SetActorIdleAnimation(idle);
+	result = actor->SetActorRace(race);
 
-	if (result && idle)
-		SetActorIdleAnimation(reference, name, result->Lock());
+	if (result)
+		SetActorRace(reference, result->Lock());
+}
+
+void Game::net_SetActorFemale(const FactoryObject& reference, bool female)
+{
+	Actor* actor = vaultcast<Actor>(reference);
+
+	if (!actor)
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
+
+	Lockable* result;
+
+	result = actor->SetActorFemale(female);
+
+	if (result)
+		SetActorFemale(reference, result->Lock());
 }
 
 void Game::net_SetActorDead(FactoryObject& reference, bool dead, unsigned short limbs, signed char cause)
@@ -1797,6 +1832,21 @@ void Game::net_FireWeapon(const FactoryObject& reference, unsigned int weapon, d
 			catch (...) {}
 		});
 	}
+}
+
+void Game::net_SetActorIdle(const FactoryObject& reference, unsigned int idle, const string& name)
+{
+	Actor* actor = vaultcast<Actor>(reference);
+
+	if (!actor)
+		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
+
+	Lockable* result;
+
+	result = actor->SetActorIdleAnimation(idle);
+
+	if (result && idle)
+		SetActorIdleAnimation(reference, name, result->Lock());
 }
 
 void Game::net_UIMessage(const string& message)

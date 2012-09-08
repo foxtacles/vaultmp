@@ -53,10 +53,12 @@ class Actor : public Container
 
 		unordered_map<unsigned char, Value<double>> actor_Values;
 		unordered_map<unsigned char, Value<double>> actor_BaseValues;
+		Value<unsigned int> actor_Race;
 		Value<unsigned int> anim_Idle;
 		Value<unsigned char> anim_Moving;
 		Value<unsigned char> state_MovingXY;
 		Value<unsigned char> anim_Weapon;
+		Value<bool> state_Female;
 		Value<bool> state_Alerted;
 		Value<bool> state_Sneaking;
 		Value<bool> state_Dead;
@@ -102,6 +104,10 @@ class Actor : public Container
 		 */
 		double GetActorBaseValue(unsigned char index) const;
 		/**
+		 * \brief Retrieves the Actor's race
+		 */
+		unsigned int GetActorRace() const;
+		/**
 		 * \brief Retrieves the Actor's idle animation
 		 */
 		unsigned int GetActorIdleAnimation() const;
@@ -121,6 +127,10 @@ class Actor : public Container
 		 * \brief Retrieves the Actor's weapon animation
 		 */
 		unsigned char GetActorWeaponAnimation() const;
+		/**
+		 * \brief Retrieves the Actor's sex
+		 */
+		bool GetActorFemale() const;
 		/**
 		 * \brief Retrieves the Actor's alerted state
 		 */
@@ -143,6 +153,10 @@ class Actor : public Container
 		 */
 		Lockable* SetActorBaseValue(unsigned char index, double value);
 		/**
+		 * \brief Sets the Actor's race
+		 */
+		Lockable* SetActorRace(unsigned int race);
+		/**
 		 * \brief Sets the Actor's idle animation
 		 */
 		Lockable* SetActorIdleAnimation(unsigned int idle);
@@ -162,6 +176,10 @@ class Actor : public Container
 		 * \brief Sets the Actor's weapon animation
 		 */
 		Lockable* SetActorWeaponAnimation(unsigned char index);
+		/**
+		 * \brief Sets the Actor's sex
+		 */
+		Lockable* SetActorFemale(bool state);
 		/**
 		 * \brief Sets the Actor's alerted state
 		 */

@@ -12,7 +12,7 @@ void Shared<T>::SetDebugHandler(Debug* debug)
 	Shared::debug = debug;
 
 	if (debug)
-		debug->Print("Attached debug handler to Shared class", true);
+		debug->PrintFormat("Attached debug handler to Shared<%s> class", true, typeid(T).name());
 }
 #endif
 

@@ -12,7 +12,7 @@ void Value<T>::SetDebugHandler(Debug* debug)
 	Value::debug = debug;
 
 	if (debug)
-		debug->Print("Attached debug handler to Value class", true);
+		debug->PrintFormat("Attached debug handler to Value<%s> class", true, typeid(T).name());
 }
 #endif
 

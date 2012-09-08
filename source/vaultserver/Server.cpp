@@ -90,6 +90,7 @@ NetworkResponse Server::LoadGame(RakNetGUID guid)
 
 NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 {
+	NetworkResponse response;
 	FactoryObject _player = GameFactory::GetObject(id);
 	Player* player = vaultcast<Player>(_player);
 
@@ -105,17 +106,36 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 			return (!(data.GetBase() & 0xFF000000) && !data.IsEssential() && !Race::Lookup(data.GetRace()).IsChild());
 		}).GetBase();
 
+	const NPC& npc = NPC::Lookup(result);
+
 	player->SetReference(0x00000000);
 	player->SetBase(result);
 
-	SingleResponse response[] = {Network::CreateResponse(
+	unsigned int race = npc.GetRace();
+
+	if (player->SetActorRace(race))
+	{
+		response.emplace_back(Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_RACE>(id, race),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+	}
+
+	bool female = npc.IsFemale();
+
+	if (player->SetActorFemale(female))
+	{
+		response.emplace_back(Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_SEX>(id, female),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+	}
+
+	response.emplace_back(Network::CreateResponse(
 		player->toPacket(),
-		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(client))
-	};
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(client)));
 
 	Script::OnSpawn(_player);
 
-	return NetworkResponse(make_move_iterator(begin(response)), make_move_iterator(end(response)));
+	return response;
 }
 
 NetworkResponse Server::Disconnect(RakNetGUID guid, Reason reason)

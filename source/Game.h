@@ -201,7 +201,11 @@ class Game
 		/**
 		 * \brief Sets the race of an Actor
 		 */
-		static void SetActorRace(const FactoryObject& reference, unsigned int race, unsigned int key = 0);
+		static void SetActorRace(const FactoryObject& reference, unsigned int key = 0);
+		/**
+		 * \brief Sets the sex of an Actor
+		 */
+		static void SetActorFemale(const FactoryObject& reference, unsigned int key = 0);
 		/**
 		 * \brief Kills an Actor
 		 */
@@ -293,9 +297,13 @@ class Game
 		 */
 		static void net_SetActorState(const FactoryObject& reference, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking, bool firing);
 		/**
-		 * \brief Network function to handle Actor idle animation
+		 * \brief Network function to handle Actor race
 		 */
-		static void net_SetActorIdle(const FactoryObject& reference, unsigned int idle, const string& name);
+		static void net_SetActorRace(const FactoryObject& reference, unsigned int race);
+		/**
+		 * \brief Network function to handle Actor sex
+		 */
+		static void net_SetActorFemale(const FactoryObject& reference, bool female);
 		/**
 		 * \brief Network function to handle Actor death
 		 */
@@ -304,6 +312,10 @@ class Game
 		 * \brief Network function to handle Actor fire weapon
 		 */
 		static void net_FireWeapon(const FactoryObject& reference, unsigned int weapon, double rate);
+		/**
+		 * \brief Network function to handle Actor idle animation
+		 */
+		static void net_SetActorIdle(const FactoryObject& reference, unsigned int idle, const string& name);
 		/**
 		 * \brief Network function to handle UI message
 		 */

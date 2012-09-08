@@ -82,6 +82,14 @@ pPacket PacketFactory::Init(const unsigned char* stream, unsigned int len)
 			packet = new pActorState(stream, len);
 			break;
 
+		case pTypes::ID_UPDATE_RACE:
+			packet = new pActorRace(stream, len);
+			break;
+
+		case pTypes::ID_UPDATE_SEX:
+			packet = new pActorSex(stream, len);
+			break;
+
 		case pTypes::ID_UPDATE_DEAD:
 			packet = new pActorDead(stream, len);
 			break;

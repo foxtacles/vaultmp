@@ -291,14 +291,23 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
-				case pTypes::ID_UPDATE_IDLE:
+				case pTypes::ID_UPDATE_RACE:
 				{
 					NetworkID id;
-					unsigned int idle;
-					string name;
-					PacketFactory::Access<pTypes::ID_UPDATE_IDLE>(packet, id, idle, name);
+					unsigned int race;
+					PacketFactory::Access<pTypes::ID_UPDATE_RACE>(packet, id, race);
 					FactoryObject reference = GameFactory::GetObject(id);
-					Game::net_SetActorIdle(reference, idle, name);
+					Game::net_SetActorRace(reference, race);
+					break;
+				}
+
+				case pTypes::ID_UPDATE_SEX:
+				{
+					NetworkID id;
+					bool female;
+					PacketFactory::Access<pTypes::ID_UPDATE_SEX>(packet, id, female);
+					FactoryObject reference = GameFactory::GetObject(id);
+					Game::net_SetActorFemale(reference, female);
 					break;
 				}
 
@@ -322,6 +331,17 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					PacketFactory::Access<pTypes::ID_UPDATE_FIREWEAPON>(packet, id, weapon, rate);
 					FactoryObject reference = GameFactory::GetObject(id);
 					Game::net_FireWeapon(reference, weapon, rate);
+					break;
+				}
+
+				case pTypes::ID_UPDATE_IDLE:
+				{
+					NetworkID id;
+					unsigned int idle;
+					string name;
+					PacketFactory::Access<pTypes::ID_UPDATE_IDLE>(packet, id, idle, name);
+					FactoryObject reference = GameFactory::GetObject(id);
+					Game::net_SetActorIdle(reference, idle, name);
 					break;
 				}
 

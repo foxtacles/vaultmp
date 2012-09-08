@@ -20,11 +20,11 @@ Actor::Actor(const pDefault* packet) : Container(PacketFactory::Pop<pPacket>(pac
 
 	map<unsigned char, double> values, baseValues;
 	map<unsigned char, double>::iterator it, it2;
-	unsigned int idle;
+	unsigned int race, idle;
 	unsigned char moving, movingxy, weapon;
-	bool alerted, sneaking, dead;
+	bool female, alerted, sneaking, dead;
 
-	PacketFactory::Access<pTypes::ID_ACTOR_NEW>(packet, values, baseValues, idle, moving, movingxy, weapon, alerted, sneaking, dead);
+	PacketFactory::Access<pTypes::ID_ACTOR_NEW>(packet, values, baseValues, race, idle, moving, movingxy, weapon, female, alerted, sneaking, dead);
 
 	for (it = values.begin(), it2 = baseValues.begin(); it != values.end() && it2 != baseValues.end(); ++it, ++it2)
 	{
@@ -32,10 +32,12 @@ Actor::Actor(const pDefault* packet) : Container(PacketFactory::Pop<pPacket>(pac
 		this->SetActorBaseValue(it2->first, it2->second);
 	}
 
+	this->SetActorRace(race);
 	this->SetActorIdleAnimation(idle);
 	this->SetActorMovingAnimation(moving);
 	this->SetActorMovingXY(movingxy);
 	this->SetActorWeaponAnimation(weapon);
+	this->SetActorFemale(female);
 	this->SetActorAlerted(alerted);
 	this->SetActorSneaking(sneaking);
 	this->SetActorDead(dead);
@@ -115,6 +117,11 @@ double Actor::GetActorBaseValue(unsigned char index) const
 	return actor_BaseValues.at(index).get();
 }
 
+unsigned int Actor::GetActorRace() const
+{
+	return actor_Race.get();
+}
+
 unsigned int Actor::GetActorIdleAnimation() const
 {
 	return anim_Idle.get();
@@ -133,6 +140,11 @@ unsigned char Actor::GetActorMovingXY() const
 unsigned char Actor::GetActorWeaponAnimation() const
 {
 	return anim_Weapon.get();
+}
+
+bool Actor::GetActorFemale() const
+{
+	return state_Female.get();
 }
 
 bool Actor::GetActorAlerted() const
@@ -158,6 +170,11 @@ Lockable* Actor::SetActorValue(unsigned char index, double value)
 Lockable* Actor::SetActorBaseValue(unsigned char index, double value)
 {
 	return SetObjectValue(this->actor_BaseValues.at(index), value);
+}
+
+Lockable* Actor::SetActorRace(unsigned int race)
+{
+	return SetObjectValue(this->actor_Race, race);
 }
 
 Lockable* Actor::SetActorIdleAnimation(unsigned int idle)
@@ -188,6 +205,11 @@ Lockable* Actor::SetActorWeaponAnimation(unsigned char index)
 		throw VaultException("Value %02X not defined in database", index);
 
 	return SetObjectValue(this->anim_Weapon, index);
+}
+
+Lockable* Actor::SetActorFemale(bool state)
+{
+	return SetObjectValue(this->state_Female, state);
 }
 
 Lockable* Actor::SetActorAlerted(bool state)
@@ -294,7 +316,7 @@ pPacket Actor::toPacket() const
 	}
 
 	pPacket pContainerNew = Container::toPacket();
-	pPacket packet = PacketFactory::Create<pTypes::ID_ACTOR_NEW>(pContainerNew, values, baseValues, this->GetActorIdleAnimation(), this->GetActorMovingAnimation(), this->GetActorMovingXY(), this->GetActorWeaponAnimation(), this->GetActorAlerted(), this->GetActorSneaking(), this->GetActorDead());
+	pPacket packet = PacketFactory::Create<pTypes::ID_ACTOR_NEW>(pContainerNew, values, baseValues, this->GetActorRace(), this->GetActorIdleAnimation(), this->GetActorMovingAnimation(), this->GetActorMovingXY(), this->GetActorWeaponAnimation(), this->GetActorFemale(), this->GetActorAlerted(), this->GetActorSneaking(), this->GetActorDead());
 
 	return packet;
 }
