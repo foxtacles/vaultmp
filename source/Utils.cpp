@@ -102,9 +102,9 @@ const char* Utils::FileOnly(const char* path)
 	const char* tmp = path;
 	const char* end = path;
 
-	for (tmp; (tmp = strpbrk(tmp, "\\/")) != nullptr; end = tmp++);
+	for (tmp; (tmp = strpbrk(tmp, "\\/")) != nullptr; end = ++tmp);
 
-	return ++end;
+	return end;
 }
 
 unsigned int Utils::FileLength(const char* file)
