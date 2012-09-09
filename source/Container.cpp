@@ -215,7 +215,7 @@ ContainerDiff Container::RemoveAllItems() const
 	diff.first = this->container;
 
 	if (GameFactory::GetType(this) == ID_PLAYER)
-		remove_if(diff.first.begin(), diff.first.end(), [](const NetworkID& id)
+		diff.first.remove_if([](const NetworkID& id)
 		{
 			FactoryObject reference = GameFactory::GetObject(id);
 			unsigned int baseID = vaultcast<Item>(reference)->GetBase();
@@ -503,7 +503,7 @@ NetworkID Container::Copy() const
 	{
 		FactoryObject _reference = GameFactory::GetObject(id);
 		Item* item = vaultcast<Item>(_reference);
-		container->container.emplace_back(item->Copy());
+		container->AddItem(item->Copy());
 	}
 
 	return container->GetNetworkID();
