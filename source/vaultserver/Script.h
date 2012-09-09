@@ -69,7 +69,7 @@ class Script
 		void (*fOnPlayerDisconnect)(NetworkID, Reason);
 		unsigned int (*fOnPlayerRequestGame)(NetworkID);
 		bool (*fOnPlayerChat)(NetworkID, char*);
-		bool (*fOnClientAuthenticate)(string, string);
+		bool (*fOnClientAuthenticate)(const char*, const char*);
 
 		Script(const Script&) = delete;
 		Script& operator=(const Script&) = delete;
