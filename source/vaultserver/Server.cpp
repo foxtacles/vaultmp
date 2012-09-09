@@ -116,7 +116,7 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 
 	if (player->SetActorRace(race))
 	{
-		// no SetActorBaseRace called
+		// no SetActorBaseRace called or race is RACE_CAUCASIAN
 
 		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_RACE>(id, race, Race::Lookup(old_race).GetAgeDifference(race)),

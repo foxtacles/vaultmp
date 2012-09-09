@@ -24,7 +24,6 @@ using namespace std;
 template <typename T>
 class Shared : public Value<T>
 {
-
 	private:
 		promise<T> async;
 

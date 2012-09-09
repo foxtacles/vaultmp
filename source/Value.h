@@ -23,7 +23,6 @@ class Container;
 template <typename T>
 class Value : public Lockable
 {
-
 	private:
 		T value;
 

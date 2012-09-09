@@ -1808,34 +1808,39 @@ void Game::net_FireWeapon(const FactoryObject& reference, unsigned int weapon, d
 	if (!actor)
 		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
-	FireWeapon(reference, weapon);
-	NetworkID id = actor->GetNetworkID();
+	bool enabled = actor->GetEnabled();
 
-	if (rate)
+	if (enabled)
 	{
-		// automatic weapons
+		FireWeapon(reference, weapon);
+		NetworkID id = actor->GetNetworkID();
 
-		AsyncDispatch([=]
+		if (rate)
 		{
-			try
+			// automatic weapons
+
+			AsyncDispatch([=]
 			{
-				FactoryObject reference;
-				Actor* actor;
-
-				// rate: per second
-				auto us = chrono::microseconds(static_cast<unsigned long long>(1000000ull / rate));
-
-				this_thread::sleep_for(us);
-
-				while ((actor = vaultcast<Actor>(reference = GameFactory::GetObject(id))) && actor->IsActorFiring() && actor->IsEquipped(weapon))
+				try
 				{
-					FireWeapon(reference, weapon);
-					GameFactory::LeaveReference(reference);
+					FactoryObject reference;
+					Actor* actor;
+
+					// rate: per second
+					auto us = chrono::microseconds(static_cast<unsigned long long>(1000000ull / rate));
+
 					this_thread::sleep_for(us);
+
+					while ((actor = vaultcast<Actor>(reference = GameFactory::GetObject(id))) && actor->IsActorFiring() && actor->IsEquipped(weapon))
+					{
+						FireWeapon(reference, weapon);
+						GameFactory::LeaveReference(reference);
+						this_thread::sleep_for(us);
+					}
 				}
-			}
-			catch (...) {}
-		});
+				catch (...) {}
+			});
+		}
 	}
 }
 
@@ -1847,10 +1852,11 @@ void Game::net_SetActorIdle(const FactoryObject& reference, unsigned int idle, c
 		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
 	Lockable* result;
+	bool enabled = actor->GetEnabled();
 
 	result = actor->SetActorIdleAnimation(idle);
 
-	if (result && idle)
+	if (result && enabled && idle)
 		SetActorIdleAnimation(reference, name, result->Lock());
 }
 
