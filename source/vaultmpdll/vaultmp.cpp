@@ -832,13 +832,9 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 
 					if (size)
 					{
-						unsigned char* arg = new unsigned char[size];
 						++content;
-
-						memcpy(arg, content, size);
+						args.push_back((void*) content);
 						content += size;
-
-						args.push_back((void*) arg);
 					}
 					else
 						DLLerror = true;
@@ -846,12 +842,6 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 
 				if (!DLLerror)
 					ExecuteCommand(args, r, delegate_flag);
-
-				for (unsigned int i = 0; i < args.size(); ++i)
-				{
-					unsigned char* arg = (unsigned char*) args[i];
-					delete[] arg;
-				}
 
 				break;
 			}

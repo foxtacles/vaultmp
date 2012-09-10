@@ -2002,7 +2002,7 @@ void Game::GetParentCell(const FactoryObject& reference, const FactoryObject& pl
 
 			Item* item = vaultcast<Item>(_item);
 
-			if (!item->GetEnabled() && item->GetNetworkCell() == cell)
+			if (item->GetNetworkCell() == cell && !item->GetEnabled())
 			{
 				item->SetEnabled(true);
 				ToggleEnabled(_item);
