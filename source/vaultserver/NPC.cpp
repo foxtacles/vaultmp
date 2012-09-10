@@ -1,8 +1,9 @@
 #include "NPC.h"
+#include "Race.h"
 
 unordered_map<unsigned int, const NPC*> NPC::npcs;
 
-NPC::NPC(const string& table, sqlite3_stmt* stmt)
+NPC::NPC(const string& table, sqlite3_stmt* stmt) : new_race(0x00000000)
 {
 	if (sqlite3_column_count(stmt) != 6)
 		throw VaultException("Malformed input database (NPCs): %s", table.c_str());
@@ -83,6 +84,11 @@ bool NPC::IsFemale() const
 
 unsigned int NPC::GetRace() const
 {
+	return (new_race ? new_race : race);
+}
+
+unsigned int NPC::GetOriginalRace() const
+{
 	return race;
 }
 
@@ -96,4 +102,10 @@ const vector<const BaseContainer*>& NPC::GetBaseContainer() const
 	// traverse base templates of NPC
 
 	return BaseContainer::Lookup(baseID);
+}
+
+void NPC::SetRace(unsigned int race) const
+{
+	Race::Lookup(race);
+	this->new_race = race;
 }

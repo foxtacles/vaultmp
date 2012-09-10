@@ -28,6 +28,8 @@ class NPC
 		unsigned int race;
 		unsigned int deathitem;
 
+		mutable unsigned int new_race;
+
 		NPC(const NPC&) = delete;
 		NPC& operator=(const NPC& p) = delete;
 
@@ -39,8 +41,11 @@ class NPC
 		bool IsEssential() const;
 		bool IsFemale() const;
 		unsigned int GetRace() const;
+		unsigned int GetOriginalRace() const;
 		unsigned int GetDeathItem() const;
 		const vector<const BaseContainer*>& GetBaseContainer() const;
+
+		void SetRace(unsigned int race) const;
 
 		NPC(const string& table, sqlite3_stmt* stmt);
 		// must never be called. only defined because vector requires it

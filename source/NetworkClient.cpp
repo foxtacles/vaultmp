@@ -295,10 +295,10 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				{
 					NetworkID id;
 					unsigned int race;
-					signed int age;
-					PacketFactory::Access<pTypes::ID_UPDATE_RACE>(packet, id, race, age);
+					signed int age, delta_age;
+					PacketFactory::Access<pTypes::ID_UPDATE_RACE>(packet, id, race, age, delta_age);
 					FactoryObject reference = GameFactory::GetObject(id);
-					Game::net_SetActorRace(reference, race, age);
+					Game::net_SetActorRace(reference, race, age, delta_age);
 					break;
 				}
 

@@ -78,8 +78,8 @@ Lockable* Reference::SetObjectValue(Value<double>& dest, const double& value)
 
 	return &dest;
 }
-
 template Lockable* Reference::SetObjectValue(Value<unsigned int>& dest, const unsigned int& value);
+template Lockable* Reference::SetObjectValue(Value<signed int>& dest, const signed int& value);
 template Lockable* Reference::SetObjectValue(Value<unsigned char>& dest, const unsigned char& value);
 template Lockable* Reference::SetObjectValue(Value<bool>& dest, const bool& value);
 template Lockable* Reference::SetObjectValue(Value<string>& dest, const string& value);

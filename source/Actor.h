@@ -54,6 +54,7 @@ class Actor : public Container
 		unordered_map<unsigned char, Value<double>> actor_Values;
 		unordered_map<unsigned char, Value<double>> actor_BaseValues;
 		Value<unsigned int> actor_Race;
+		Value<signed int> actor_Age;
 		Value<unsigned int> anim_Idle;
 		Value<unsigned char> anim_Moving;
 		Value<unsigned char> state_MovingXY;
@@ -108,6 +109,10 @@ class Actor : public Container
 		 */
 		unsigned int GetActorRace() const;
 		/**
+		 * \brief Retrieves the Actor's relative age
+		 */
+		signed int GetActorAge() const;
+		/**
 		 * \brief Retrieves the Actor's idle animation
 		 */
 		unsigned int GetActorIdleAnimation() const;
@@ -156,6 +161,10 @@ class Actor : public Container
 		 * \brief Sets the Actor's race
 		 */
 		Lockable* SetActorRace(unsigned int race);
+		/**
+		 * \brief Sets the Actor's relative age
+		 */
+		Lockable* SetActorAge(signed int age);
 		/**
 		 * \brief Sets the Actor's idle animation
 		 */

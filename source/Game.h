@@ -201,7 +201,7 @@ class Game
 		/**
 		 * \brief Sets the race of an Actor
 		 */
-		static void SetActorRace(const FactoryObject& reference, signed int age, unsigned int key = 0);
+		static void SetActorRace(const FactoryObject& reference, signed int delta_age, unsigned int key = 0);
 		/**
 		 * \brief Sets the sex of an Actor
 		 */
@@ -299,7 +299,7 @@ class Game
 		/**
 		 * \brief Network function to handle Actor race
 		 */
-		static void net_SetActorRace(const FactoryObject& reference, unsigned int race, signed int age);
+		static void net_SetActorRace(const FactoryObject& reference, unsigned int race, signed int age, signed int delta_age);
 		/**
 		 * \brief Network function to handle Actor sex
 		 */

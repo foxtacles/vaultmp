@@ -28,6 +28,7 @@ bool Value<T>::set(const T& value)
 }
 
 template class Value<unsigned int>;
+template class Value<signed int>;
 template class Value<unsigned long long>;
 template class Value<unsigned char>;
 template class Value<unsigned short>;

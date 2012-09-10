@@ -785,10 +785,10 @@ void Game::NewActor(FactoryObject& reference)
 		SetActorValue(reference, false, value);
 	}
 
-	SetActorRace(reference, 0); // FIXME - AgeRace is a delta, do only once per base (redo on respawn). sucks a bit
-	SetActorFemale(reference);
-
 	Actor* actor = vaultcast<Actor>(reference);
+
+	SetActorRace(reference, actor->GetActorAge()); // FIXME - AgeRace is a delta, do only once per base (redo on respawn). sucks a bit
+	SetActorFemale(reference);
 
 	if (actor->GetReference() != PLAYER_REFERENCE)
 	{
@@ -1170,7 +1170,7 @@ void Game::SetActorIdleAnimation(const FactoryObject& reference, const string& a
 	Interface::EndDynamic();
 }
 
-void Game::SetActorRace(const FactoryObject& reference, signed int age, unsigned int key)
+void Game::SetActorRace(const FactoryObject& reference, signed int delta_age, unsigned int key)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -1179,10 +1179,10 @@ void Game::SetActorRace(const FactoryObject& reference, signed int age, unsigned
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("MatchRace", {actor->GetReferenceParam(), RawParameter(actor->GetActorRace())}, age ? 0 : key);
+	Interface::ExecuteCommand("MatchRace", {actor->GetReferenceParam(), RawParameter(actor->GetActorRace())}, delta_age ? 0 : key);
 
-	if (age)
-		Interface::ExecuteCommand("AgeRace", {actor->GetReferenceParam(), RawParameter(age)}, key);
+	if (delta_age)
+		Interface::ExecuteCommand("AgeRace", {actor->GetReferenceParam(), RawParameter(delta_age)}, key);
 
 	Interface::EndDynamic();
 }
@@ -1725,7 +1725,7 @@ void Game::net_SetActorState(const FactoryObject& reference, unsigned int idle, 
 	}
 }
 
-void Game::net_SetActorRace(const FactoryObject& reference, unsigned int race, signed int age)
+void Game::net_SetActorRace(const FactoryObject& reference, unsigned int race, signed int age, signed int delta_age)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -1737,7 +1737,10 @@ void Game::net_SetActorRace(const FactoryObject& reference, unsigned int race, s
 	result = actor->SetActorRace(race);
 
 	if (result)
-		SetActorRace(reference, age, result->Lock());
+	{
+		actor->SetActorAge(age); // delta from original race to new race
+		SetActorRace(reference, delta_age, result->Lock()); // using delta from current race to new race
+	}
 }
 
 void Game::net_SetActorFemale(const FactoryObject& reference, bool female)

@@ -116,14 +116,15 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 
 	if (player->SetActorRace(race))
 	{
-		// no SetActorBaseRace called or race is RACE_CAUCASIAN
+		signed int age = Race::Lookup(old_race).GetAgeDifference(race);
 
 		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_RACE>(id, race, Race::Lookup(old_race).GetAgeDifference(race)),
+			PacketFactory::Create<pTypes::ID_UPDATE_RACE>(id, race, age, age),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 
-	// SetActorAge <- delta age from race of selected base to current race
+	signed int age = Race::Lookup(npc.GetOriginalRace()).GetAgeDifference(race);
+	player->SetActorAge(age);
 
 	bool female = npc.IsFemale();
 

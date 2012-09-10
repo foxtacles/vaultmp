@@ -880,18 +880,18 @@ class pActorNew : public pObjectNewDefault
 		friend class PacketFactory;
 
 	private:
-		pActorNew(const pPacket& _pContainerNew, const map<unsigned char, double>& values, const map<unsigned char, double>& baseValues, unsigned int race, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool female, bool alerted, bool sneaking, bool dead) : pObjectNewDefault(pTypes::ID_ACTOR_NEW)
+		pActorNew(const pPacket& _pContainerNew, const map<unsigned char, double>& values, const map<unsigned char, double>& baseValues, unsigned int race, signed int age, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool female, bool alerted, bool sneaking, bool dead) : pObjectNewDefault(pTypes::ID_ACTOR_NEW)
 		{
-			construct(_pContainerNew, values, baseValues, race, idle, moving, movingxy, weapon, female, alerted, sneaking, dead);
+			construct(_pContainerNew, values, baseValues, race, age, idle, moving, movingxy, weapon, female, alerted, sneaking, dead);
 		}
 		pActorNew(const unsigned char* stream, unsigned int len) : pObjectNewDefault(stream, len)
 		{
 
 		}
 
-		void access(map<unsigned char, double>& values, map<unsigned char, double>& baseValues, unsigned int& race, unsigned int& idle, unsigned char& moving, unsigned char& movingxy, unsigned char& weapon, bool& female, bool& alerted, bool& sneaking, bool& dead) const
+		void access(map<unsigned char, double>& values, map<unsigned char, double>& baseValues, unsigned int& race, signed int& age, unsigned int& idle, unsigned char& moving, unsigned char& movingxy, unsigned char& weapon, bool& female, bool& alerted, bool& sneaking, bool& dead) const
 		{
-			deconstruct(values, baseValues, race, idle, moving, movingxy, weapon, female, alerted, sneaking, dead);
+			deconstruct(values, baseValues, race, age, idle, moving, movingxy, weapon, female, alerted, sneaking, dead);
 		}
 };
 
@@ -1235,18 +1235,18 @@ class pActorRace : public pObjectDefault
 		friend class PacketFactory;
 
 	private:
-		pActorRace(NetworkID id, unsigned int race, signed int age) : pObjectDefault(pTypes::ID_UPDATE_RACE, id)
+		pActorRace(NetworkID id, unsigned int race, signed int age, signed int delta_age) : pObjectDefault(pTypes::ID_UPDATE_RACE, id)
 		{
-			construct(race, age);
+			construct(race, age, delta_age);
 		}
 		pActorRace(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
 		{
 
 		}
 
-		void access(NetworkID& id, unsigned int& race, signed int& age) const
+		void access(NetworkID& id, unsigned int& race, signed int age, signed int& delta_age) const
 		{
-			deconstruct(id, race, age);
+			deconstruct(id, race, age, delta_age);
 		}
 };
 
