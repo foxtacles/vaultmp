@@ -30,7 +30,7 @@ class Value : public Lockable
 		static Debug* debug;
 #endif
 
-		Value& operator=(const Value&);
+		Value& operator=(const Value&) = delete;
 
 	public:
 		Value() : value(T()) {};
@@ -44,10 +44,17 @@ class Value : public Lockable
 		 */
 		bool set(const T& value);
 		/**
-		 * \brief Gets the value
+		 * \brief Gets the value (a copy)
 		 */
-		T get() const { return value; };
-
+		T get() const { return value; }
+		/**
+		 * \brief Returns a reference to the value
+		 */
+		T& operator*() { return value; }
+		/**
+		 * \brief Returns a pointer to the value
+		 */
+		T* operator->() { return &value; }
 
 #ifdef VAULTMP_DEBUG
 		static void SetDebugHandler(Debug* debug);

@@ -6,6 +6,7 @@
 #include "Player.h"
 #include "Network.h"
 #include "Shared.h"
+#include "Guarded.h"
 #include "VaultException.h"
 
 #include <future>
@@ -38,8 +39,10 @@ class Game
 		typedef pair<future<void>, chrono::milliseconds> AsyncPack;
 		typedef pair<set<unsigned int>, set<unsigned int>> CellDiff;
 		typedef unordered_map<unsigned int, unordered_map<unsigned int, set<unsigned int>>> CellRefs;
+		typedef unordered_map<unsigned int, unsigned int> BaseRaces;
 
-		static CellRefs cellRefs;
+		static Guarded<CellRefs> cellRefs;
+		static BaseRaces baseRaces;
 		static function<void()> spawnFunc;
 
 	public:

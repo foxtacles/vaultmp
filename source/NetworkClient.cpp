@@ -121,7 +121,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
 					Bethesda::Initialize();
 
-					Game::cellRefs.clear();
+					Game::cellRefs->clear();
+					Game::baseRaces.clear();
 					Game::spawnFunc = function<void()>();
 
 					response = NetworkClient::ProcessEvent(ID_EVENT_GAME_STARTED);

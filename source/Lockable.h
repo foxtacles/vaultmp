@@ -26,7 +26,6 @@ using namespace std;
 
 class Lockable
 {
-
 	private:
 		static unsigned int key;
 		static unordered_map<unsigned int, Lockable*> keymap;
@@ -41,17 +40,15 @@ class Lockable
 		static Debug* debug;
 #endif
 
-		Lockable& operator=(const Lockable&);
+		Lockable& operator=(const Lockable&) = delete;
 
 	protected:
-
 		Lockable() = default;
 		Lockable(Lockable &&) = default;
 		Lockable& operator=(Lockable &&) = default;
 		virtual ~Lockable() {};
 
 	public:
-
 		/**
 		 * \brief Resets the class to its initial state and releases all locks
 		 */

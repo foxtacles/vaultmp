@@ -4,7 +4,8 @@
 unsigned char Game::game = 0x00;
 RakNetGUID Game::server;
 
-Game::CellRefs Game::cellRefs;
+Guarded<Game::CellRefs> Game::cellRefs;
+Game::BaseRaces Game::baseRaces;
 function<void()> Game::spawnFunc;
 
 #ifdef VAULTMP_DEBUG
@@ -605,9 +606,12 @@ void Game::LoadEnvironment()
 
 		if (!reference->IsPersistent())
 		{
-			// TODO critical section
 			Object* object = vaultcast<Object>(reference);
-			cellRefs[object->GetNetworkCell()][FormType_Inventory].erase(object->GetReference());
+
+			cellRefs.StartSession();
+			(*cellRefs)[object->GetNetworkCell()][FormType_Inventory].erase(object->GetReference());
+			cellRefs.EndSession();
+
 			object->SetReference(0x00000000);
 		}
 
@@ -749,8 +753,9 @@ void Game::NewItem(FactoryObject& reference)
 	NewObject(reference);
 	SetRefCount(reference);
 
-	// TODO critical section
-	cellRefs[item->GetNetworkCell()][FormType_Inventory].insert(item->GetReference());
+	cellRefs.StartSession();
+	(*cellRefs)[item->GetNetworkCell()][FormType_Inventory].insert(item->GetReference());
+	cellRefs.EndSession();
 }
 
 void Game::NewContainer(FactoryObject& reference)
@@ -828,8 +833,9 @@ void Game::RemoveObject(const FactoryObject& reference)
 
 	Interface::EndDynamic();
 
-	// TODO critical section
-	cellRefs[object->GetNetworkCell()][FormType_Inventory].erase(object->GetReference());
+	cellRefs.StartSession();
+	(*cellRefs)[object->GetNetworkCell()][FormType_Inventory].erase(object->GetReference());
+	cellRefs.EndSession();
 }
 
 void Game::PlaceAtMe(const FactoryObject& reference, unsigned int baseID, double condition, unsigned int count, unsigned int key)
@@ -1176,6 +1182,19 @@ void Game::SetActorRace(const FactoryObject& reference, signed int delta_age, un
 
 	if (!actor)
 		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
+
+	unsigned int baseID = actor->GetBase();
+	unsigned int race = actor->GetActorRace();
+
+	// set only once per base
+	if (baseRaces[baseID] == race)
+	{
+		if (key)
+			Lockable::Retrieve(key);
+		return;
+	}
+
+	baseRaces[baseID] = race;
 
 	Interface::StartDynamic();
 
@@ -1789,6 +1808,8 @@ void Game::net_SetActorDead(FactoryObject& reference, bool dead, unsigned short 
 
 			this_thread::sleep_for(chrono::seconds(1));
 
+			// remove all base effects so they get re-applied in LoadEnvironment
+			Game::baseRaces.clear();
 			Game::spawnFunc();
 			Game::LoadEnvironment();
 
@@ -1963,15 +1984,15 @@ void Game::GetParentCell(const FactoryObject& reference, const FactoryObject& pl
 			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, server)
 		});
 
-		// TODO CS
+		cellRefs.StartSession();
 
-		for (unsigned int refID : cellRefs[cell][FormType_Inventory])
+		for (unsigned int refID : (*cellRefs)[cell][FormType_Inventory])
 		{
 			FactoryObject _item;
 
 			try
 			{
-				_item = GameFactory::GetObject(refID);
+				_item = GameFactory::GetObject(refID); // probably potential deadlock. maybe copy set out
 			}
 			catch (...)
 			{
@@ -1990,6 +2011,8 @@ void Game::GetParentCell(const FactoryObject& reference, const FactoryObject& pl
 					MoveTo(_item, player, true);
 			}
 		}
+
+		cellRefs.EndSession();
 /*
 		AsyncDispatch([=]
 		{
@@ -2141,7 +2164,7 @@ void Game::IsLimbGone(unsigned int key, unsigned char limb, bool gone)
 	if (store == nullptr)
 		throw VaultException("Storage is corrupted");
 
-	store->set(store->get() | (static_cast<unsigned short>(gone) << limb));
+	(**store) |= (static_cast<unsigned short>(gone) << limb);
 
 	if (last_limb)
 		store->set_promise();
@@ -2614,12 +2637,18 @@ void Game::GetNextRef(unsigned int key, unsigned int refID, unsigned int type)
 			throw VaultException("Storage is corrupted");
 
 		CellDiff diff;
-		auto& refs = cellRefs[cell][_type];
+
+		cellRefs.StartSession();
+
+		auto& refs = (*cellRefs)[cell][_type];
 
 		set_difference(data.begin(), data.end(), refs.begin(), refs.end(), inserter(diff.first, diff.first.begin()));
 		set_difference(refs.begin(), refs.end(), data.begin(), data.end(), inserter(diff.second, diff.second.begin()));
 
 		refs.swap(data);
+
+		cellRefs.EndSession();
+
 		data.clear();
 
 		store->set(diff);
