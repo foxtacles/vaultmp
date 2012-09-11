@@ -93,6 +93,10 @@ class Game
 		 */
 		static void SetINISetting(const string& key, const string& value);
 		/**
+		 * \brief Sets a global value
+		 */
+		static void SetGlobalValue(unsigned int global, signed int value);
+		/**
 		 * \brief Loads the environment after savegame load
 		 */
 		static void LoadEnvironment();
@@ -327,6 +331,10 @@ class Game
 		 * \brief Network function to handle chat message
 		 */
 		static void net_ChatMessage(const string& message);
+		/**
+		 * \brief Network function to handle global value
+		 */
+		static void net_SetGlobalValue(unsigned int global, signed int value);
 
 		/**
 		 * Interface result functions

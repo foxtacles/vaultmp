@@ -222,6 +222,9 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 			}
 
+			case Func_SetGlobalValue:
+				break;
+
 			case Func_MarkForDelete:
 				break;
 
@@ -373,6 +376,7 @@ void Game::Startup()
 	SetINISetting("bSaveOnTravel:GamePlay", "0");
 	SetINISetting("bSaveOnWait:GamePlay", "0");
 	SetINISetting("bSaveOnRest:GamePlay", "0");
+	SetGlobalValue(Global_TimeScale, 0);
 
 	Interface::StartDynamic();
 
@@ -592,6 +596,15 @@ void Game::SetINISetting(const string& key, const string& value)
 	Interface::StartDynamic();
 
 	Interface::ExecuteCommand("SetINISetting", {RawParameter(key), RawParameter(value)});
+
+	Interface::EndDynamic();
+}
+
+void Game::SetGlobalValue(unsigned int global, signed int value)
+{
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("SetGlobalValue", {RawParameter(global), RawParameter(value)});
 
 	Interface::EndDynamic();
 }
@@ -1892,6 +1905,11 @@ void Game::net_UIMessage(const string& message)
 void Game::net_ChatMessage(const string& message)
 {
 	ChatMessage(message);
+}
+
+void Game::net_SetGlobalValue(unsigned int global, signed int value)
+{
+	SetGlobalValue(global, value);
 }
 
 void Game::GetPos(const FactoryObject& reference, unsigned char axis, double value)

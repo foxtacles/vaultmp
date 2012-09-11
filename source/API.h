@@ -255,6 +255,7 @@ namespace Values
 		Func_UIMessage                  = 0x0004 | VAULTFUNCTION,
 		Func_RemoveAllItemsEx			= 0x0005 | VAULTFUNCTION,
 		Func_ForceRespawn				= 0x0006 | VAULTFUNCTION,
+		Func_SetGlobalValue				= 0x0007 | VAULTFUNCTION,
 	};
 
 	enum ActorVals
@@ -376,6 +377,16 @@ namespace Values
 		// reference walking
 		FormType_Actor					= 200,
 		FormType_Inventory				= 201,
+	};
+
+	enum GlobalValues
+	{
+		Global_GameYear					= 0x35,
+		Global_GameMonth				= 0x36,
+		Global_GameDay					= 0x37,
+		Global_GameHour					= 0x38,
+
+		Global_TimeScale				= 0x3A,
 	};
 
 	/**

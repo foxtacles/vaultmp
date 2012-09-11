@@ -139,6 +139,10 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 		player->toPacket(),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(client)));
 
+		response.emplace_back(Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameHour, 22),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+
 	Script::OnSpawn(_player);
 
 	return response;

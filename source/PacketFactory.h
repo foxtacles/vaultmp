@@ -28,6 +28,7 @@ enum class pTypes : unsigned char
 	ID_GAME_END,
 	ID_GAME_MESSAGE,
 	ID_GAME_CHAT,
+	ID_GAME_GLOBAL,
 
 	ID_OBJECT_NEW,
 	ID_ITEM_NEW,
@@ -743,6 +744,45 @@ template<typename... Args>
 struct PacketFactory::_Access<pTypes::ID_GAME_CHAT, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
 		packet_cast<pGameChat>(packet)->access(forward<Args&>(args)...);
+	}
+};
+
+class pGameGlobal : public pDefault
+{
+		friend class PacketFactory;
+
+	private:
+		pGameGlobal(unsigned int global, signed int value) : pDefault(pTypes::ID_GAME_GLOBAL)
+		{
+			construct(global, value);
+		}
+		pGameGlobal(const unsigned char* stream, unsigned int len) : pDefault(stream, len)
+		{
+
+		}
+
+		void access(unsigned int& global, signed int& value) const
+		{
+			deconstruct(global, value);
+		}
+};
+
+template<typename... Args>
+struct PacketFactory::_Create<pTypes::ID_GAME_GLOBAL, Args...> {
+	inline static pPacket Create(Args&&... args) {
+		return pPacket(new pGameGlobal(forward<Args>(args)...));
+	}
+};
+
+template<>
+inline const pGameGlobal* PacketFactory::packet_cast(const pDefault* packet) {
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_GLOBAL ? reinterpret_cast<const pGameGlobal*>(packet) : nullptr;
+}
+
+template<typename... Args>
+struct PacketFactory::_Access<pTypes::ID_GAME_GLOBAL, Args...> {
+	inline static void Access(const pDefault* packet, Args&... args) {
+		packet_cast<pGameGlobal>(packet)->access(forward<Args&>(args)...);
 	}
 };
 

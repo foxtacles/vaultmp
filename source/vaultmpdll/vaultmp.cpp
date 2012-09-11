@@ -606,6 +606,18 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 			break;
 		}
 
+		case 0x0007 | VAULTFUNCTION: // SetGlobalValue - sets a global value
+		{
+			if (!reference)
+				return false;
+
+			unsigned char* global_value = (unsigned char*) reference + 0x24;;
+			unsigned char* _args = (unsigned char*) args;
+
+			if (*_args == 0x6E) // just using int (stored as 4-byte float) so far
+				*(float*) global_value = (float) *(signed int*) (_args + 1);
+		}
+
 		default:
 			break;
 	}

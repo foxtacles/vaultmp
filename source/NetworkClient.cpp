@@ -178,6 +178,15 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
+				case pTypes::ID_GAME_GLOBAL:
+				{
+					unsigned int global;
+					signed int value;
+					PacketFactory::Access<pTypes::ID_GAME_GLOBAL>(packet, global, value);
+					Game::net_SetGlobalValue(global, value);
+					break;
+				}
+
 				case pTypes::ID_OBJECT_NEW:
 				{
 					NetworkID id = GameFactory::CreateKnownInstance(ID_OBJECT, packet);
