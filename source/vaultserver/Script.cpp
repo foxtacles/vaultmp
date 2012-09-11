@@ -456,20 +456,14 @@ unsigned long long Script::Timer_GameTime()
 	TM _tm_new;
 	gmtime64_r(&t, &_tm_new);
 
-	if (_tm.tm_hour != _tm_new.tm_hour)
+	if (_tm.tm_year != _tm_new.tm_year)
 	{
 		Network::Queue(NetworkResponse{Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameHour, _tm_new.tm_hour),
+			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameYear, _tm_new.tm_year),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		});
-	}
 
-	if (_tm.tm_mday != _tm_new.tm_mday)
-	{
-		Network::Queue(NetworkResponse{Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameDay, _tm_new.tm_mday),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-		});
+		Script::OnGameYearChange(_tm_new.tm_year + 1900);
 	}
 
 	if (_tm.tm_mon != _tm_new.tm_mon)
@@ -478,14 +472,28 @@ unsigned long long Script::Timer_GameTime()
 			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameMonth, _tm_new.tm_mon),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		});
+
+		Script::OnGameMonthChange(_tm_new.tm_mon);
 	}
 
-	if (_tm.tm_year != _tm_new.tm_year)
+	if (_tm.tm_mday != _tm_new.tm_mday)
 	{
 		Network::Queue(NetworkResponse{Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameYear, _tm_new.tm_year),
+			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameDay, _tm_new.tm_mday),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		});
+
+		Script::OnGameDayChange(_tm_new.tm_mday);
+	}
+
+	if (_tm.tm_hour != _tm_new.tm_hour)
+	{
+		Network::Queue(NetworkResponse{Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameHour, _tm_new.tm_hour),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+		});
+
+		Script::OnGameHourChange(_tm_new.tm_hour);
 	}
 
 	return 1;
