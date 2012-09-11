@@ -231,6 +231,11 @@ _CPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(ChatMessage))(VAULTSPACE ID, VAULTSPACE cRawString) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetRespawn))(VAULTSPACE Interval) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetSpawnCell))(VAULTSPACE Cell) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetGameYear))(VAULTSPACE UCount) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetGameMonth))(VAULTSPACE UCount) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetGameDay))(VAULTSPACE UCount) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetGameHour))(VAULTSPACE UCount) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetTimeScale))(VAULTSPACE Value) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsValid))(VAULTSPACE ID) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsObject))(VAULTSPACE ID) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsItem))(VAULTSPACE ID) _CPP(noexcept);
@@ -243,6 +248,11 @@ _CPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetConnection))(VAULTSPACE ID) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetCount))(VAULTSPACE Type) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetList))(VAULTSPACE Type, VAULTSPACE RawArray(VAULTSPACE ID)*) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetGameYear))() _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetGameMonth))() _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetGameDay))() _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetGameHour))() _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Value (*VAULTAPI(GetTimeScale))() _CPP(noexcept);
 
 	VAULTSCRIPT VAULTSPACE Ref (*VAULTAPI(GetReference))(VAULTSPACE ID) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Base (*VAULTAPI(GetBase))(VAULTSPACE ID) _CPP(noexcept);
@@ -266,6 +276,8 @@ _CPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetActorAlerted))(VAULTSPACE ID) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetActorSneaking))(VAULTSPACE ID) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetActorDead))(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Base (*VAULTAPI(GetActorBaseRace))(VAULTSPACE ID) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetActorBaseSex))(VAULTSPACE ID) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsActorJumping))(VAULTSPACE ID) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Interval (*VAULTAPI(GetPlayerRespawn))(VAULTSPACE ID) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Cell (*VAULTAPI(GetPlayerSpawnCell))(VAULTSPACE ID) _CPP(noexcept);
@@ -281,6 +293,9 @@ _CPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(UnequipItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE State, VAULTSPACE State) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(PlayIdle))(VAULTSPACE ID, VAULTSPACE Base) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(KillActor))(VAULTSPACE ID, VAULTSPACE Limb, VAULTSPACE Death) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetActorBaseRace))(VAULTSPACE ID, VAULTSPACE Base) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(AgeActorBaseRace))(VAULTSPACE ID, VAULTSPACE Count) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetActorBaseSex))(VAULTSPACE ID, VAULTSPACE State) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetPlayerRespawn))(VAULTSPACE ID, VAULTSPACE Interval) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetPlayerSpawnCell))(VAULTSPACE ID, VAULTSPACE Cell) _CPP(noexcept);
 _CPP(})
@@ -368,6 +383,11 @@ namespace vaultmp
 	VAULTFUNCTION State ChatMessage(String message) noexcept { return VAULTAPI(ChatMessage)(static_cast<ID>(0), message.c_str()); }
 	VAULTFUNCTION Void SetRespawn(Interval interval) noexcept { return VAULTAPI(SetRespawn)(interval); }
 	VAULTFUNCTION Void SetSpawnCell(Cell cell) noexcept { return VAULTAPI(SetSpawnCell)(cell); }
+	VAULTFUNCTION Void SetGameYear(UCount year) noexcept { return VAULTAPI(SetGameYear)(year); }
+	VAULTFUNCTION Void SetGameMonth(UCount month) noexcept { return VAULTAPI(SetGameMonth)(month); }
+	VAULTFUNCTION Void SetGameDay(UCount day) noexcept { return VAULTAPI(SetGameDay)(day); }
+	VAULTFUNCTION Void SetGameHour(UCount hour) noexcept { return VAULTAPI(SetGameHour)(hour); }
+	VAULTFUNCTION Void SetTimeScale(Value scale) noexcept { return VAULTAPI(SetTimeScale)(scale); }
 	VAULTFUNCTION State IsValid(ID id) noexcept { return VAULTAPI(IsValid)(id); }
 	VAULTFUNCTION State IsObject(ID id) noexcept { return VAULTAPI(IsObject)(id); }
 	VAULTFUNCTION State IsItem(ID id) noexcept { return VAULTAPI(IsItem)(id); }
@@ -385,6 +405,11 @@ namespace vaultmp
 		UCount size = VAULTAPI(GetList)(type, &data);
 		return IDVector(data, data + size);
 	}
+	VAULTFUNCTION UCount GetGameYear() noexcept { return VAULTAPI(GetGameYear)(); }
+	VAULTFUNCTION UCount GetGameMonth() noexcept { return VAULTAPI(GetGameMonth)(); }
+	VAULTFUNCTION UCount GetGameDay() noexcept { return VAULTAPI(GetGameDay)(); }
+	VAULTFUNCTION UCount GetGameHour() noexcept { return VAULTAPI(GetGameHour)(); }
+	VAULTFUNCTION Value GetTimeScale() noexcept { return VAULTAPI(GetTimeScale)(); }
 
 	VAULTFUNCTION Ref GetReference(ID id) noexcept { return VAULTAPI(GetReference)(id); }
 	VAULTFUNCTION Base GetBase(ID id) noexcept { return VAULTAPI(GetBase)(id); }
@@ -408,6 +433,8 @@ namespace vaultmp
 	VAULTFUNCTION State GetActorAlerted(ID id) noexcept { return VAULTAPI(GetActorAlerted)(id); }
 	VAULTFUNCTION State GetActorSneaking(ID id) noexcept { return VAULTAPI(GetActorSneaking)(id); }
 	VAULTFUNCTION State GetActorDead(ID id) noexcept { return VAULTAPI(GetActorDead)(id); }
+	VAULTFUNCTION Base GetActorBaseRace(ID id) noexcept { return VAULTAPI(GetActorBaseRace)(id); }
+	VAULTFUNCTION State GetActorBaseSex(ID id) noexcept { return VAULTAPI(GetActorBaseSex)(id); }
 	VAULTFUNCTION State IsActorJumping(ID id) noexcept { return VAULTAPI(IsActorJumping)(id); }
 	VAULTFUNCTION Interval GetPlayerRespawn(ID id) noexcept { return VAULTAPI(GetPlayerRespawn)(id); }
 	VAULTFUNCTION Cell GetPlayerSpawnCell(ID id) noexcept { return VAULTAPI(GetPlayerSpawnCell)(id); }
@@ -423,6 +450,9 @@ namespace vaultmp
 	VAULTFUNCTION State UnequipItem(ID id, Base item, State silent = True, State stick = True) noexcept { return VAULTAPI(UnequipItem)(id, item, silent, stick); }
 	VAULTFUNCTION State PlayIdle(ID id, Base idle) noexcept { return VAULTAPI(PlayIdle)(id, idle); }
 	VAULTFUNCTION Void KillActor(ID id, Limb limbs = Limb::None, Death cause = Death::None) noexcept { return VAULTAPI(KillActor)(id, limbs, cause); }
+	VAULTFUNCTION State SetActorBaseRace(ID id, Base race) noexcept { return VAULTAPI(SetActorBaseRace)(id, race); }
+	VAULTFUNCTION State AgeActorBaseRace(ID id, Count age) noexcept { return VAULTAPI(AgeActorBaseRace)(id, age); }
+	VAULTFUNCTION State SetActorBaseSex(ID id, State female) noexcept { return VAULTAPI(SetActorBaseSex)(id, female); }
 	VAULTFUNCTION Void SetPlayerRespawn(ID id, Interval interval) noexcept { return VAULTAPI(SetPlayerRespawn)(id, interval); }
 	VAULTFUNCTION Void SetPlayerSpawnCell(ID id, Cell cell) noexcept { return VAULTAPI(SetPlayerSpawnCell)(id, cell); }
 
@@ -526,6 +556,8 @@ namespace vaultmp
 			State GetActorAlerted() const noexcept { return vaultmp::GetActorAlerted(id); }
 			State GetActorSneaking() const noexcept { return vaultmp::GetActorSneaking(id); }
 			State GetActorDead() const noexcept { return vaultmp::GetActorDead(id); }
+			Base GetActorBaseRace() const noexcept { return vaultmp::GetActorBaseRace(id); }
+			State GetActorBaseSex() const noexcept { return vaultmp::GetActorBaseSex(id); }
 			State IsActorJumping() const noexcept { return vaultmp::IsActorJumping(id); }
 
 			Void SetActorValue(Index index, Value value) noexcept { return vaultmp::SetActorValue(id, index, value); }
@@ -534,6 +566,9 @@ namespace vaultmp
 			State UnequipItem(Base item, State silent = True, State stick = True) noexcept { return vaultmp::UnequipItem(id, item, silent, stick); }
 			State PlayIdle(Base idle) noexcept { return vaultmp::PlayIdle(id, idle); }
 			Void KillActor(Limb limbs = Limb::None, Death cause = Death::None) noexcept { return vaultmp::KillActor(id, limbs, cause); }
+			State SetActorBaseRace(Base race) const noexcept { return vaultmp::SetActorBaseRace(id, race); }
+			State AgeActorBaseRace(Count age) const noexcept { return vaultmp::AgeActorBaseRace(id, age); }
+			State SetActorBaseSex(State female) const noexcept { return vaultmp::SetActorBaseSex(id, female); }
 
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_ACTOR); }
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_ACTOR); }

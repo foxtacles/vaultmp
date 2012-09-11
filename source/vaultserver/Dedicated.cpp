@@ -69,20 +69,20 @@ void Dedicated::Announce(bool announce)
 			query.Write((bool) true);
 
 			RakString name(self->GetServerName().c_str());
-			RakString map(self->GetServerMap().c_str());
+			RakString _map(self->GetServerMap().c_str());
 			int players = self->GetServerPlayers().first;
 			int playersMax = self->GetServerPlayers().second;
 			unsigned char game = self->GetGame();
-			std::map<string, string> rules = self->GetServerRules();
+			map<string, string> rules = self->GetServerRules();
 
 			query.Write(name);
-			query.Write(map);
+			query.Write(_map);
 			query.Write(players);
 			query.Write(playersMax);
 			query.Write(game);
 			query.Write(rules.size());
 
-			for (std::map<string, string>::const_iterator i = rules.begin(); i != rules.end(); ++i)
+			for (map<string, string>::const_iterator i = rules.begin(); i != rules.end(); ++i)
 			{
 				RakString key(i->first.c_str());
 				RakString value(i->second.c_str());
@@ -126,20 +126,20 @@ void Dedicated::Query(Packet* packet)
 		query.Write(addr);
 
 		RakString name(self->GetServerName().c_str());
-		RakString map(self->GetServerMap().c_str());
+		RakString _map(self->GetServerMap().c_str());
 		int players = self->GetServerPlayers().first;
 		int playersMax = self->GetServerPlayers().second;
 		unsigned char game = self->GetGame();
-		std::map<string, string> rules = self->GetServerRules();
+		map<string, string> rules = self->GetServerRules();
 
 		query.Write(name);
-		query.Write(map);
+		query.Write(_map);
 		query.Write(players);
 		query.Write(playersMax);
 		query.Write(game);
 		query.Write((int) rules.size());
 
-		for (std::map<string, string>::const_iterator i = rules.begin(); i != rules.end(); ++i)
+		for (map<string, string>::const_iterator i = rules.begin(); i != rules.end(); ++i)
 		{
 			RakString key(i->first.c_str());
 			RakString value(i->second.c_str());
@@ -262,7 +262,7 @@ void Dedicated::DedicatedThread()
 	}
 
 #ifdef VAULTMP_DEBUG
-	Debug* debug = new Debug((char*) "vaultserver");
+	Debug* debug = new Debug("vaultserver");
 	Dedicated::debug = debug;
 	debug->PrintFormat("Vault-Tec Multiplayer Mod dedicated server debug log (%s)", false, DEDICATED_VERSION);
 	debug->PrintFormat("Local host: %s (game: %s)", false, peer->GetMyBoundAddress().ToString(), self->GetGame() == FALLOUT3 ? (char*) "Fallout 3" : (char*) "Fallout New Vegas");
@@ -296,9 +296,6 @@ void Dedicated::DedicatedThread()
 		Client::SetMaximumClients(connections);
 		Network::Flush();
 
-		if (!Record::IsValidCell(cell))
-			throw VaultException("%08X is not a valid cell", cell);
-
 		Player::SetSpawnCell(cell);
 
 		static_assert(sizeof(chrono::system_clock::rep) == sizeof(Time64_T), "Underlying representation of chrono::system_clock should be 64bit integral");
@@ -306,6 +303,11 @@ void Dedicated::DedicatedThread()
 		Script::gameTime.first = chrono::system_clock::now();
 		Script::gameTime.second = 1.0;
 		Script::CreateTimer(&Script::Timer_GameTime, 1000);
+
+		Utils::timestamp();
+		printf("Dedicated server initialized, running scripts now\n");
+
+		Script::Run();
 
 		while (thread)
 		{
@@ -315,7 +317,6 @@ void Dedicated::DedicatedThread()
 			{
 				if (packet->data[0] == ID_MASTER_UPDATE)
 					Query(packet);
-
 				else
 				{
 					try
@@ -335,7 +336,6 @@ void Dedicated::DedicatedThread()
 						for (RakNetGUID& guid : closures)
 							peer->CloseConnection(guid, true, CHANNEL_SYSTEM, HIGH_PRIORITY);
 					}
-
 					catch (...)
 					{
 						peer->DeallocatePacket(packet);
@@ -356,15 +356,14 @@ void Dedicated::DedicatedThread()
 			}
 		}
 	}
-	catch (std::exception& e)
+	catch (exception& e)
 	{
 		try
 		{
 			VaultException& vaulterror = dynamic_cast<VaultException&>(e);
 			vaulterror.Console();
 		}
-
-		catch (std::bad_cast& no_vaulterror)
+		catch (bad_cast& no_vaulterror)
 		{
 			VaultException vaulterror(e.what());
 			vaulterror.Console();

@@ -1,6 +1,6 @@
 #include "Debug.h"
 
-Debug::Debug(char* module)
+Debug::Debug(const char* module)
 {
 	char buf[32];
 	GetTimeFormat(buf, sizeof(buf), true);

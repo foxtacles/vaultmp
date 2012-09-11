@@ -40,9 +40,11 @@ class Game
 		typedef pair<set<unsigned int>, set<unsigned int>> CellDiff;
 		typedef unordered_map<unsigned int, unordered_map<unsigned int, set<unsigned int>>> CellRefs;
 		typedef unordered_map<unsigned int, unsigned int> BaseRaces;
+		typedef unordered_map<unsigned int, signed int> Globals;
 
 		static Guarded<CellRefs> cellRefs;
 		static BaseRaces baseRaces;
+		static Globals globals;
 		static function<void()> spawnFunc;
 
 	public:

@@ -1284,7 +1284,7 @@ class pActorRace : public pObjectDefault
 
 		}
 
-		void access(NetworkID& id, unsigned int& race, signed int age, signed int& delta_age) const
+		void access(NetworkID& id, unsigned int& race, signed int& age, signed int& delta_age) const
 		{
 			deconstruct(id, race, age, delta_age);
 		}

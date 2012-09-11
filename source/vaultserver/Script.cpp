@@ -83,6 +83,11 @@ Script::Script(char* path)
 			SetScript(string(vpf + "ChatMessage").c_str(), &Script::ChatMessage);
 			SetScript(string(vpf + "SetRespawn").c_str(), &Script::SetRespawn);
 			SetScript(string(vpf + "SetSpawnCell").c_str(), &Script::SetSpawnCell);
+			SetScript(string(vpf + "SetGameYear").c_str(), &Script::SetGameYear);
+			SetScript(string(vpf + "SetGameMonth").c_str(), &Script::SetGameMonth);
+			SetScript(string(vpf + "SetGameDay").c_str(), &Script::SetGameDay);
+			SetScript(string(vpf + "SetGameHour").c_str(), &Script::SetGameHour);
+			SetScript(string(vpf + "SetTimeScale").c_str(), &Script::SetTimeScale);
 			SetScript(string(vpf + "IsValid").c_str(), &Script::IsValid);
 			SetScript(string(vpf + "IsObject").c_str(), &Script::IsObject);
 			SetScript(string(vpf + "IsItem").c_str(), &Script::IsItem);
@@ -95,6 +100,11 @@ Script::Script(char* path)
 			SetScript(string(vpf + "GetConnection").c_str(), &Script::GetConnection);
 			SetScript(string(vpf + "GetCount").c_str(), &GameFactory::GetObjectCount);
 			SetScript(string(vpf + "GetList").c_str(), &Script::GetList);
+			SetScript(string(vpf + "GetGameYear").c_str(), &Script::GetGameYear);
+			SetScript(string(vpf + "GetGameMonth").c_str(), &Script::GetGameMonth);
+			SetScript(string(vpf + "GetGameDay").c_str(), &Script::GetGameDay);
+			SetScript(string(vpf + "GetGameHour").c_str(), &Script::GetGameHour);
+			SetScript(string(vpf + "GetTimeScale").c_str(), &Script::GetTimeScale);
 
 			SetScript(string(vpf + "GetReference").c_str(), &Script::GetReference);
 			SetScript(string(vpf + "GetBase").c_str(), &Script::GetBase);
@@ -118,6 +128,8 @@ Script::Script(char* path)
 			SetScript(string(vpf + "GetActorAlerted").c_str(), &Script::GetActorAlerted);
 			SetScript(string(vpf + "GetActorSneaking").c_str(), &Script::GetActorSneaking);
 			SetScript(string(vpf + "GetActorDead").c_str(), &Script::GetActorDead);
+			SetScript(string(vpf + "GetActorBaseRace").c_str(), &Script::GetActorBaseRace);
+			SetScript(string(vpf + "GetActorBaseSex").c_str(), &Script::GetActorBaseSex);
 			SetScript(string(vpf + "IsActorJumping").c_str(), &Script::IsActorJumping);
 			SetScript(string(vpf + "GetPlayerRespawn").c_str(), &Script::GetPlayerRespawn);
 			SetScript(string(vpf + "GetPlayerSpawnCell").c_str(), &Script::GetPlayerSpawnCell);
@@ -133,10 +145,11 @@ Script::Script(char* path)
 			SetScript(string(vpf + "UnequipItem").c_str(), &Script::UnequipItem);
 			SetScript(string(vpf + "PlayIdle").c_str(), &Script::PlayIdle);
 			SetScript(string(vpf + "KillActor").c_str(), &Script::KillActor);
+			SetScript(string(vpf + "SetActorBaseRace").c_str(), &Script::SetActorBaseRace);
+			SetScript(string(vpf + "AgeActorBaseRace").c_str(), &Script::AgeActorBaseRace);
+			SetScript(string(vpf + "SetActorBaseSex").c_str(), &Script::SetActorBaseSex);
 			SetScript(string(vpf + "SetPlayerRespawn").c_str(), &Script::SetPlayerRespawn);
 			SetScript(string(vpf + "SetPlayerSpawnCell").c_str(), &Script::SetPlayerSpawnCell);
-
-			fexec();
 		}
 		catch (...)
 		{
@@ -175,11 +188,6 @@ Script::Script(char* path)
 			PAWN::TimeInit(vaultscript);
 
 			err = PAWN::RegisterVaultmpFunctions(vaultscript);
-
-			if (err != AMX_ERR_NONE)
-				throw VaultException("PAWN script %s error (%d): \"%s\"", path, err, aux_StrError(err));
-
-			err = PAWN::Exec(vaultscript, &ret, AMX_EXEC_MAIN);
 
 			if (err != AMX_ERR_NONE)
 				throw VaultException("PAWN script %s error (%d): \"%s\"", path, err, aux_StrError(err));
@@ -236,6 +244,23 @@ void Script::LoadScripts(char* scripts, char* base)
 	{
 		UnloadScripts();
 		throw;
+	}
+}
+
+void Script::Run()
+{
+	for (Script* script : scripts)
+	{
+		if (script->cpp_script)
+			script->fexec();
+		else
+		{
+			cell ret;
+			int err = PAWN::Exec(reinterpret_cast<AMX*>(script->handle), &ret, AMX_EXEC_MAIN);
+
+			if (err != AMX_ERR_NONE)
+				throw VaultException("PAWN script error (%d): \"%s\"", err, aux_StrError(err));
+		}
 	}
 }
 
@@ -860,8 +885,121 @@ void Script::SetRespawn(unsigned int respawn)
 
 void Script::SetSpawnCell(unsigned int cell)
 {
-	if (Record::IsValidCell(cell))
+	try
+	{
 		Player::SetSpawnCell(cell);
+	}
+	catch (...) {}
+}
+
+void Script::SetGameYear(unsigned int year)
+{
+	Time64_T t = chrono::duration_cast<chrono::seconds>(gameTime.first.time_since_epoch()).count();
+
+	TM _tm;
+	gmtime64_r(&t, &_tm);
+
+	if (_tm.tm_year != year)
+	{
+		_tm.tm_year = year - 1900;
+		t = mktime64(&_tm);
+
+		if (t != -1)
+		{
+			gameTime.first = chrono::time_point<chrono::system_clock>(chrono::seconds(t));
+
+			Network::Queue(NetworkResponse{Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameYear, year),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+			});
+		}
+	}
+}
+
+void Script::SetGameMonth(unsigned int month)
+{
+	if (month > 11)
+		return;
+
+	Time64_T t = chrono::duration_cast<chrono::seconds>(gameTime.first.time_since_epoch()).count();
+
+	TM _tm;
+	gmtime64_r(&t, &_tm);
+
+	if (_tm.tm_mon != month)
+	{
+		_tm.tm_mon = month;
+		t = mktime64(&_tm);
+
+		if (t != -1)
+		{
+			gameTime.first = chrono::time_point<chrono::system_clock>(chrono::seconds(t));
+
+			Network::Queue(NetworkResponse{Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameMonth, month),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+			});
+		}
+	}
+}
+
+void Script::SetGameDay(unsigned int day)
+{
+	if (!day || day > 31)
+		return;
+
+	Time64_T t = chrono::duration_cast<chrono::seconds>(gameTime.first.time_since_epoch()).count();
+
+	TM _tm;
+	gmtime64_r(&t, &_tm);
+
+	if (_tm.tm_mday != day)
+	{
+		_tm.tm_mday = day;
+		t = mktime64(&_tm);
+
+		if (t != -1)
+		{
+			gameTime.first = chrono::time_point<chrono::system_clock>(chrono::seconds(t));
+
+			Network::Queue(NetworkResponse{Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameDay, day),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+			});
+		}
+	}
+}
+
+void Script::SetGameHour(unsigned int hour)
+{
+	if (hour > 23)
+		return;
+
+	Time64_T t = chrono::duration_cast<chrono::seconds>(gameTime.first.time_since_epoch()).count();
+
+	TM _tm;
+	gmtime64_r(&t, &_tm);
+
+	if (_tm.tm_hour != hour)
+	{
+		_tm.tm_hour = hour;
+		t = mktime64(&_tm);
+
+		if (t != -1)
+		{
+			gameTime.first = chrono::time_point<chrono::system_clock>(chrono::seconds(t));
+
+			Network::Queue(NetworkResponse{Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameHour, hour),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+			});
+		}
+	}
+}
+
+void Script::SetTimeScale(double scale)
+{
+	gameTime.second = scale;
 }
 
 bool Script::IsValid(NetworkID id)
@@ -937,7 +1075,7 @@ unsigned int Script::GetList(unsigned char type, NetworkID** data)
 unsigned int Script::GetGameYear()
 {
 	Time64_T t = chrono::duration_cast<chrono::seconds>(gameTime.first.time_since_epoch()).count();
-	return gmtime64(&t)->tm_year;
+	return gmtime64(&t)->tm_year + 1900;
 }
 
 unsigned int Script::GetGameMonth()
@@ -956,6 +1094,11 @@ unsigned int Script::GetGameHour()
 {
 	Time64_T t = chrono::duration_cast<chrono::seconds>(gameTime.first.time_since_epoch()).count();
 	return gmtime64(&t)->tm_hour;
+}
+
+double Script::GetTimeScale()
+{
+	return gameTime.second;
 }
 
 unsigned int Script::GetReference(NetworkID id)
@@ -1441,6 +1584,50 @@ bool Script::GetActorDead(NetworkID id)
 	return state;
 }
 
+unsigned int Script::GetActorBaseRace(NetworkID id)
+{
+	unsigned int race = 0;
+	FactoryObject reference;
+
+	try
+	{
+		reference = GameFactory::GetObject(id);
+	}
+	catch (...)
+	{
+		return race;
+	}
+
+	Actor* actor = vaultcast<Actor>(reference);
+
+	if (actor)
+		race = actor->GetActorRace();
+
+	return race;
+}
+
+bool Script::GetActorBaseSex(NetworkID id)
+{
+	bool female = false;
+	FactoryObject reference;
+
+	try
+	{
+		reference = GameFactory::GetObject(id);
+	}
+	catch (...)
+	{
+		return female;
+	}
+
+	Actor* actor = vaultcast<Actor>(reference);
+
+	if (actor)
+		female = actor->GetActorFemale();
+
+	return female;
+}
+
 bool Script::IsActorJumping(NetworkID id)
 {
 	bool state = false;
@@ -1814,16 +2001,29 @@ void Script::SetActorBaseValue(NetworkID id, unsigned char index, double value)
 {
 	try
 	{
-		FactoryObject reference = GameFactory::GetObject(id);
-		Actor* actor = vaultcast<Actor>(reference);
+		vector<FactoryObject> reference = GameFactory::GetObjectTypes(ALL_ACTORS);
+		auto it = find_if(reference.begin(), reference.end(), [&](const FactoryObject& reference) { return vaultcast<Actor>(reference)->GetNetworkID() == id; });
 
-		if (actor)
+		if (it == reference.end())
+			return;
+
+		unsigned int baseID = vaultcast<Actor>(*it)->GetBase();
+
+		if (baseID == PLAYER_BASE)
+			return;
+
+		for (const FactoryObject& _reference : reference)
 		{
-			if (actor->SetActorBaseValue(index, value))
-				Network::Queue(NetworkResponse{Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_UPDATE_VALUE>(actor->GetNetworkID(), true, index, value),
-					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-				});
+			Actor* actor = vaultcast<Actor>(_reference);
+
+			if (actor->GetBase() == baseID)
+			{
+				if (actor->SetActorBaseValue(index, value))
+					Network::Queue(NetworkResponse{Network::CreateResponse(
+						PacketFactory::Create<pTypes::ID_UPDATE_VALUE>(actor->GetNetworkID(), true, index, value),
+						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+					});
+			}
 		}
 	}
 	catch (...) {}
@@ -1975,6 +2175,163 @@ void Script::KillActor(NetworkID id, unsigned short limbs, signed char cause)
 	}
 }
 
+bool Script::SetActorBaseRace(NetworkID id, unsigned int race)
+{
+	vector<FactoryObject> reference = GameFactory::GetObjectTypes(ALL_ACTORS);
+	auto it = find_if(reference.begin(), reference.end(), [&](const FactoryObject& reference) { return vaultcast<Actor>(reference)->GetNetworkID() == id; });
+
+	if (it == reference.end())
+		return false;
+
+	unsigned int baseID = vaultcast<Actor>(*it)->GetBase();
+
+	if (baseID == PLAYER_BASE)
+		return false;
+
+	try
+	{
+		const Race& _race = Race::Lookup(race);
+		const NPC& npc = NPC::Lookup(baseID);
+		unsigned int old_race = npc.GetRace();
+
+		if (old_race != race)
+		{
+			npc.SetRace(race);
+			signed int delta_age = Race::Lookup(old_race).GetAgeDifference(race);
+			signed int new_age = Race::Lookup(npc.GetOriginalRace()).GetAgeDifference(race);
+
+			for (const FactoryObject& _reference : reference)
+			{
+				Actor* actor = vaultcast<Actor>(_reference);
+
+				if (actor->GetBase() == baseID)
+				{
+					actor->SetActorRace(race);
+					actor->SetActorAge(new_age);
+
+					if (vaultcast<Player>(_reference))
+						Network::Queue(NetworkResponse{Network::CreateResponse(
+							PacketFactory::Create<pTypes::ID_UPDATE_RACE>(actor->GetNetworkID(), race, Race::Lookup(RACE_CAUCASIAN).GetAgeDifference(race), delta_age),
+							HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+						});
+					else
+						Network::Queue(NetworkResponse{Network::CreateResponse(
+							PacketFactory::Create<pTypes::ID_UPDATE_RACE>(actor->GetNetworkID(), race, new_age, delta_age),
+							HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+						});
+				}
+			}
+		}
+
+		return true;
+	}
+	catch (...) {}
+
+	return false;
+}
+
+bool Script::AgeActorBaseRace(NetworkID id, signed int age)
+{
+	FactoryObject reference;
+
+	try
+	{
+		reference = GameFactory::GetObject(id);
+	}
+	catch (...)
+	{
+		return false;
+	}
+
+	Actor* actor = vaultcast<Actor>(reference);
+
+	if (actor)
+	{
+		const Race* race = &Race::Lookup(actor->GetActorRace());
+		unsigned int new_race;
+
+		if (age < 0)
+		{
+			age = abs(age);
+
+			for (unsigned int i = 0; i < age; ++i)
+			{
+				new_race = race->GetYounger();
+
+				if (!new_race)
+					return false;
+
+				race = &Race::Lookup(new_race);
+			}
+		}
+		else if (age > 0)
+		{
+			for (unsigned int i = 0; i < age; ++i)
+			{
+				new_race = race->GetOlder();
+
+				if (!new_race)
+					return false;
+
+				race = &Race::Lookup(new_race);
+			}
+		}
+		else
+			return true;
+
+		GameFactory::LeaveReference(reference);
+
+		return SetActorBaseRace(id, new_race);
+	}
+
+	return false;
+}
+
+bool Script::SetActorBaseSex(NetworkID id, bool female)
+{
+	vector<FactoryObject> reference = GameFactory::GetObjectTypes(ALL_ACTORS);
+	auto it = find_if(reference.begin(), reference.end(), [&](const FactoryObject& reference) { return vaultcast<Actor>(reference)->GetNetworkID() == id; });
+
+	if (it == reference.end())
+		return false;
+
+	unsigned int baseID = vaultcast<Actor>(*it)->GetBase();
+
+	if (baseID == PLAYER_BASE)
+		return false;
+
+	try
+	{
+		const NPC& npc = NPC::Lookup(baseID);
+		bool old_female = npc.IsFemale();
+
+		if (old_female != female)
+		{
+			npc.SetFemale(female);
+
+			for (const FactoryObject& _reference : reference)
+			{
+				Actor* actor = vaultcast<Actor>(_reference);
+
+				if (actor->GetBase() == baseID)
+				{
+					actor->SetActorFemale(female);
+
+					Network::Queue(NetworkResponse{Network::CreateResponse(
+						PacketFactory::Create<pTypes::ID_UPDATE_SEX>(actor->GetNetworkID(), female),
+						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+					});
+				}
+			}
+		}
+
+		return true;
+	}
+	catch (...) {}
+
+	return false;
+}
+
 void Script::SetPlayerRespawn(NetworkID id, unsigned int respawn)
 {
 	FactoryObject reference;
@@ -2009,32 +2366,36 @@ void Script::SetPlayerSpawnCell(NetworkID id, unsigned int cell)
 
 	Player* player = vaultcast<Player>(reference);
 
-	if (player && Record::IsValidCell(cell))
+	if (player)
 	{
-		if (player->SetPlayerSpawnCell(cell))
+		try
 		{
-			NetworkResponse response;
-			NetworkID id = player->GetNetworkID();
-			RakNetGUID guid = Client::GetClientFromPlayer(id)->GetGUID();
-
-			try
+			if (player->SetPlayerSpawnCell(cell))
 			{
-				const Exterior& _cell = Exterior::Lookup(cell);
+				NetworkResponse response;
+				NetworkID id = player->GetNetworkID();
+				RakNetGUID guid = Client::GetClientFromPlayer(id)->GetGUID();
 
-				response.emplace_back(Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, _cell.GetWorld(), _cell.GetX(), _cell.GetY(), true),
-					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+				try
+				{
+					const Exterior& _cell = Exterior::Lookup(cell);
+
+					response.emplace_back(Network::CreateResponse(
+						PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, _cell.GetWorld(), _cell.GetX(), _cell.GetY(), true),
+						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+				}
+				catch (...)
+				{
+					const Record& record = Record::Lookup(cell, "CELL");
+
+					response.emplace_back(Network::CreateResponse(
+						PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(id, record.GetName(), true),
+						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+				}
+
+				Network::Queue(move(response));
 			}
-			catch (...)
-			{
-				const Record& record = Record::Lookup(cell, "CELL");
-
-				response.emplace_back(Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(id, record.GetName(), true),
-					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
-			}
-
-			Network::Queue(move(response));
 		}
+		catch (...) {}
 	}
 }

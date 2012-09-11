@@ -79,6 +79,7 @@ class Script
 		static pair<chrono::system_clock::time_point, double> gameTime;
 
 		static void LoadScripts(char* scripts, char* base);
+		static void Run();
 		static void UnloadScripts();
 
 		static NetworkID CreateTimer(ScriptFunc timer, unsigned int interval);
@@ -121,6 +122,11 @@ class Script
 		static bool ChatMessage(NetworkID id, const char* message);
 		static void SetRespawn(unsigned int respawn);
 		static void SetSpawnCell(unsigned int cell);
+		static void SetGameYear(unsigned int year);
+		static void SetGameMonth(unsigned int month);
+		static void SetGameDay(unsigned int day);
+		static void SetGameHour(unsigned int hour);
+		static void SetTimeScale(double scale);
 		static bool IsValid(NetworkID id);
 		static bool IsObject(NetworkID id);
 		static bool IsItem(NetworkID id);
@@ -134,6 +140,7 @@ class Script
 		static unsigned int GetGameMonth();
 		static unsigned int GetGameDay();
 		static unsigned int GetGameHour();
+		static double GetTimeScale();
 
 		static unsigned int GetReference(NetworkID id);
 		static unsigned int GetBase(NetworkID id);

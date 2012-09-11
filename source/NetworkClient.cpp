@@ -123,6 +123,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
 					Game::cellRefs->clear();
 					Game::baseRaces.clear();
+					Game::globals.clear();
 					Game::spawnFunc = function<void()>();
 
 					response = NetworkClient::ProcessEvent(ID_EVENT_GAME_STARTED);

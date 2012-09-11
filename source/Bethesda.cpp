@@ -263,7 +263,7 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
 	initialized = false;
 
 #ifdef VAULTMP_DEBUG
-	debug = new Debug((char*) "vaultmp");
+	debug = new Debug("vaultmp");
 	debug->PrintFormat("Vault-Tec Multiplayer Mod client debug log (%s)", false, CLIENT_VERSION);
 	debug->PrintFormat("Connecting to server: %s (name: %s, password: %s, game: %s)", false, server.ToString(), name.c_str(), pwd.c_str(), game == FALLOUT3 ? (char*) "Fallout 3" : (char*) "Fallout New Vegas");
 	debug->Print("Visit www.vaultmp.com for help and upload this log if you experience problems with the mod.", false);

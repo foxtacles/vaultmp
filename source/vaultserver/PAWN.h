@@ -28,7 +28,7 @@ class PAWN
 
 		PAWN();
 
-		static AMX_NATIVE_INFO vaultmp_functions[71];
+		static AMX_NATIVE_INFO vaultmp_functions[86];
 
 		static cell vaultmp_timestamp(AMX* amx, const cell* params);
 		static cell vaultmp_CreateTimer(AMX* amx, const cell* params);
@@ -53,6 +53,11 @@ class PAWN
 		static cell vaultmp_ChatMessage(AMX* amx, const cell* params);
 		static cell vaultmp_SetRespawn(AMX* amx, const cell* params);
 		static cell vaultmp_SetSpawnCell(AMX* amx, const cell* params);
+		static cell vaultmp_SetGameYear(AMX* amx, const cell* params);
+		static cell vaultmp_SetGameMonth(AMX* amx, const cell* params);
+		static cell vaultmp_SetGameDay(AMX* amx, const cell* params);
+		static cell vaultmp_SetGameHour(AMX* amx, const cell* params);
+		static cell vaultmp_SetTimeScale(AMX* amx, const cell* params);
 		static cell vaultmp_IsValid(AMX* amx, const cell* params);
 		static cell vaultmp_IsObject(AMX* amx, const cell* params);
 		static cell vaultmp_IsItem(AMX* amx, const cell* params);
@@ -65,6 +70,11 @@ class PAWN
 		static cell vaultmp_GetConnection(AMX* amx, const cell* params);
 		static cell vaultmp_GetCount(AMX* amx, const cell* params);
 		static cell vaultmp_GetList(AMX* amx, const cell* params);
+		static cell vaultmp_GetGameYear(AMX* amx, const cell* params);
+		static cell vaultmp_GetGameMonth(AMX* amx, const cell* params);
+		static cell vaultmp_GetGameDay(AMX* amx, const cell* params);
+		static cell vaultmp_GetGameHour(AMX* amx, const cell* params);
+		static cell vaultmp_GetTimeScale(AMX* amx, const cell* params);
 
 		static cell vaultmp_GetReference(AMX* amx, const cell* params);
 		static cell vaultmp_GetBase(AMX* amx, const cell* params);
@@ -88,6 +98,8 @@ class PAWN
 		static cell vaultmp_GetActorAlerted(AMX* amx, const cell* params);
 		static cell vaultmp_GetActorSneaking(AMX* amx, const cell* params);
 		static cell vaultmp_GetActorDead(AMX* amx, const cell* params);
+		static cell vaultmp_GetActorBaseRace(AMX* amx, const cell* params);
+		static cell vaultmp_GetActorBaseSex(AMX* amx, const cell* params);
 		static cell vaultmp_IsActorJumping(AMX* amx, const cell* params);
 		static cell vaultmp_GetPlayerRespawn(AMX* amx, const cell* params);
 		static cell vaultmp_GetPlayerSpawnCell(AMX* amx, const cell* params);
@@ -103,6 +115,9 @@ class PAWN
 		static cell vaultmp_UnequipItem(AMX* amx, const cell* params);
 		static cell vaultmp_PlayIdle(AMX* amx, const cell* params);
 		static cell vaultmp_KillActor(AMX* amx, const cell* params);
+		static cell vaultmp_SetActorBaseRace(AMX* amx, const cell* params);
+		static cell vaultmp_AgeActorBaseRace(AMX* amx, const cell* params);
+		static cell vaultmp_SetActorBaseSex(AMX* amx, const cell* params);
 		static cell vaultmp_SetPlayerRespawn(AMX* amx, const cell* params);
 		static cell vaultmp_SetPlayerSpawnCell(AMX* amx, const cell* params);
 

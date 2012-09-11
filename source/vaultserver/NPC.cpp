@@ -3,7 +3,7 @@
 
 unordered_map<unsigned int, const NPC*> NPC::npcs;
 
-NPC::NPC(const string& table, sqlite3_stmt* stmt) : new_race(0x00000000)
+NPC::NPC(const string& table, sqlite3_stmt* stmt) : new_female(-1), new_race(0x00000000)
 {
 	if (sqlite3_column_count(stmt) != 6)
 		throw VaultException("Malformed input database (NPCs): %s", table.c_str());
@@ -79,6 +79,11 @@ bool NPC::IsEssential() const
 
 bool NPC::IsFemale() const
 {
+	return ((new_female != -1) ? new_female : female);
+}
+
+bool NPC::IsOriginalFemale() const
+{
 	return female;
 }
 
@@ -108,4 +113,9 @@ void NPC::SetRace(unsigned int race) const
 {
 	Race::Lookup(race);
 	this->new_race = race;
+}
+
+void NPC::SetFemale(bool female) const
+{
+	this->new_female = female;
 }

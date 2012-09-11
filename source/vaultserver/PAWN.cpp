@@ -42,6 +42,11 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"ChatMessage", PAWN::vaultmp_ChatMessage},
 	{"SetRespawn", PAWN::vaultmp_SetRespawn},
 	{"SetSpawnCell", PAWN::vaultmp_SetSpawnCell},
+	{"SetGameYear", PAWN::vaultmp_SetGameYear},
+	{"SetGameMonth", PAWN::vaultmp_SetGameMonth},
+	{"SetGameDay", PAWN::vaultmp_SetGameDay},
+	{"SetGameHour", PAWN::vaultmp_SetGameHour},
+	{"SetTimeScale", PAWN::vaultmp_SetTimeScale},
 	{"IsValid", PAWN::vaultmp_IsValid},
 	{"IsObject", PAWN::vaultmp_IsObject},
 	{"IsItem", PAWN::vaultmp_IsItem},
@@ -54,6 +59,11 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"GetConnection", PAWN::vaultmp_GetConnection},
 	{"GetCount", PAWN::vaultmp_GetCount},
 	{"GetList", PAWN::vaultmp_GetList},
+	{"GetGameYear", PAWN::vaultmp_GetGameYear},
+	{"GetGameMonth", PAWN::vaultmp_GetGameMonth},
+	{"GetGameDay", PAWN::vaultmp_GetGameDay},
+	{"GetGameHour", PAWN::vaultmp_GetGameHour},
+	{"GetTimeScale", PAWN::vaultmp_GetTimeScale},
 
 	{"GetReference", PAWN::vaultmp_GetReference},
 	{"GetBase", PAWN::vaultmp_GetBase},
@@ -77,6 +87,8 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"GetActorAlerted", PAWN::vaultmp_GetActorAlerted},
 	{"GetActorSneaking", PAWN::vaultmp_GetActorSneaking},
 	{"GetActorDead", PAWN::vaultmp_GetActorDead},
+	{"GetActorBaseRace", PAWN::vaultmp_GetActorBaseRace},
+	{"GetActorBaseSex", PAWN::vaultmp_GetActorBaseSex},
 	{"IsActorJumping", PAWN::vaultmp_IsActorJumping},
 	{"GetPlayerRespawn", PAWN::vaultmp_GetPlayerRespawn},
 	{"GetPlayerSpawnCell", PAWN::vaultmp_GetPlayerSpawnCell},
@@ -92,6 +104,9 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"UnequipItem", PAWN::vaultmp_UnequipItem},
 	{"PlayIdle", PAWN::vaultmp_PlayIdle},
 	{"KillActor", PAWN::vaultmp_KillActor},
+	{"SetActorBaseRace", PAWN::vaultmp_SetActorBaseRace},
+	{"AgeActorBaseRace", PAWN::vaultmp_AgeActorBaseRace},
+	{"SetActorBaseSex", PAWN::vaultmp_SetActorBaseSex},
 	{"SetPlayerRespawn", PAWN::vaultmp_SetPlayerRespawn},
 	{"SetPlayerSpawnCell", PAWN::vaultmp_SetPlayerSpawnCell},
 
@@ -456,6 +471,36 @@ cell PAWN::vaultmp_SetSpawnCell(AMX* amx, const cell* params)
 	return 1;
 }
 
+cell PAWN::vaultmp_SetGameYear(AMX* amx, const cell* params)
+{
+	Script::SetGameYear(params[1]);
+	return 1;
+}
+
+cell PAWN::vaultmp_SetGameMonth(AMX* amx, const cell* params)
+{
+	Script::SetGameMonth(params[1]);
+	return 1;
+}
+
+cell PAWN::vaultmp_SetGameDay(AMX* amx, const cell* params)
+{
+	Script::SetGameDay(params[1]);
+	return 1;
+}
+
+cell PAWN::vaultmp_SetGameHour(AMX* amx, const cell* params)
+{
+	Script::SetGameHour(params[1]);
+	return 1;
+}
+
+cell PAWN::vaultmp_SetTimeScale(AMX* amx, const cell* params)
+{
+	Script::SetTimeScale(amx_ctof(params[1]));
+	return 1;
+}
+
 cell PAWN::vaultmp_IsValid(AMX* amx, const cell* params)
 {
 	return Script::IsValid(params[1]);
@@ -524,6 +569,32 @@ cell PAWN::vaultmp_GetList(AMX* amx, const cell* params)
 	}
 
 	return reference.size();
+}
+
+cell PAWN::vaultmp_GetGameYear(AMX* amx, const cell* params)
+{
+	return Script::GetGameYear();
+}
+
+cell PAWN::vaultmp_GetGameMonth(AMX* amx, const cell* params)
+{
+	return Script::GetGameMonth();
+}
+
+cell PAWN::vaultmp_GetGameDay(AMX* amx, const cell* params)
+{
+	return Script::GetGameDay();
+}
+
+cell PAWN::vaultmp_GetGameHour(AMX* amx, const cell* params)
+{
+	return Script::GetGameHour();
+}
+
+cell PAWN::vaultmp_GetTimeScale(AMX* amx, const cell* params)
+{
+	double value = Script::GetTimeScale();
+	return amx_ftoc(value);
 }
 
 cell PAWN::vaultmp_GetReference(AMX* amx, const cell* params)
@@ -675,6 +746,16 @@ cell PAWN::vaultmp_GetActorDead(AMX* amx, const cell* params)
 	return Script::GetActorDead(params[1]);
 }
 
+cell PAWN::vaultmp_GetActorBaseRace(AMX* amx, const cell* params)
+{
+	return Script::GetActorBaseRace(params[1]);
+}
+
+cell PAWN::vaultmp_GetActorBaseSex(AMX* amx, const cell* params)
+{
+	return Script::GetActorBaseSex(params[1]);
+}
+
 cell PAWN::vaultmp_IsActorJumping(AMX* amx, const cell* params)
 {
 	return Script::IsActorJumping(params[1]);
@@ -747,6 +828,21 @@ cell PAWN::vaultmp_KillActor(AMX* amx, const cell* params)
 {
 	Script::KillActor(params[1], params[2], params[3]);
 	return 1;
+}
+
+cell PAWN::vaultmp_SetActorBaseRace(AMX* amx, const cell* params)
+{
+	return Script::SetActorBaseRace(params[1], params[2]);
+}
+
+cell PAWN::vaultmp_AgeActorBaseRace(AMX* amx, const cell* params)
+{
+	return Script::AgeActorBaseRace(params[1], params[2]);
+}
+
+cell PAWN::vaultmp_SetActorBaseSex(AMX* amx, const cell* params)
+{
+	return Script::SetActorBaseSex(params[1], params[2]);
 }
 
 cell PAWN::vaultmp_SetPlayerRespawn(AMX* amx, const cell* params)

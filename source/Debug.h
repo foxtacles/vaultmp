@@ -28,7 +28,7 @@ class Debug : private CriticalSection
 		Debug& operator=(const Debug&);
 
 	public:
-		Debug(char* module);
+		Debug(const char* module);
 		~Debug();
 
 		void Print(const char* text, bool timestamp);

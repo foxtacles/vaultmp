@@ -6,6 +6,8 @@ RakNetGUID Game::server;
 
 Guarded<Game::CellRefs> Game::cellRefs;
 Game::BaseRaces Game::baseRaces;
+Game::Globals Game::globals;
+
 function<void()> Game::spawnFunc;
 
 #ifdef VAULTMP_DEBUG
@@ -612,6 +614,9 @@ void Game::SetGlobalValue(unsigned int global, signed int value)
 void Game::LoadEnvironment()
 {
 	vector<NetworkID> reference = GameFactory::GetIDObjectTypes(ALL_OBJECTS);
+
+	for (const auto& global : globals)
+		SetGlobalValue(global.first, global.second);
 
 	for (NetworkID& id : reference)
 	{
@@ -1910,6 +1915,9 @@ void Game::net_ChatMessage(const string& message)
 
 void Game::net_SetGlobalValue(unsigned int global, signed int value)
 {
+	globals.erase(global);
+	globals.emplace(global, value);
+
 	SetGlobalValue(global, value);
 }
 
