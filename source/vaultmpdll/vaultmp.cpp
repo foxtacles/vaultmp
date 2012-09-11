@@ -611,7 +611,7 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 			if (!reference)
 				return false;
 
-			unsigned char* global_value = (unsigned char*) reference + 0x24;;
+			unsigned char* global_value = (unsigned char*) reference + 0x24;
 			unsigned char* _args = (unsigned char*) args;
 
 			if (*_args == 0x6E) // just using int (stored as 4-byte float) so far

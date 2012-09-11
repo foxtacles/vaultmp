@@ -1,6 +1,7 @@
 #include "Script.h"
 
 vector<Script*> Script::scripts;
+pair<chrono::system_clock::time_point, double> Script::gameTime;
 
 Script::Script(char* path)
 {
@@ -409,6 +410,51 @@ unsigned long long Script::Timer_Respawn(NetworkID id)
 	});
 
 	KillTimer();
+
+	return 1;
+}
+
+unsigned long long Script::Timer_GameTime()
+{
+	time_t t = chrono::system_clock::to_time_t(gameTime.first);
+	tm _tm = *gmtime(&t);
+
+	gameTime.first += chrono::milliseconds(static_cast<unsigned long long>(1000ull * gameTime.second));
+
+	t = chrono::system_clock::to_time_t(gameTime.first);
+	tm _tm_new = *gmtime(&t);
+
+	if (_tm.tm_hour != _tm_new.tm_hour)
+	{
+		Network::Queue(NetworkResponse{Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameHour, _tm_new.tm_hour),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+		});
+	}
+
+	if (_tm.tm_mday != _tm_new.tm_mday)
+	{
+		Network::Queue(NetworkResponse{Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameDay, _tm_new.tm_mday),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+		});
+	}
+
+	if (_tm.tm_mon != _tm_new.tm_mon)
+	{
+		Network::Queue(NetworkResponse{Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameMonth, _tm_new.tm_mon),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+		});
+	}
+
+	if (_tm.tm_year != _tm_new.tm_year)
+	{
+		Network::Queue(NetworkResponse{Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameYear, _tm_new.tm_year),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+		});
+	}
 
 	return 1;
 }
@@ -883,6 +929,34 @@ unsigned int Script::GetList(unsigned char type, NetworkID** data)
 	_data = GameFactory::GetIDObjectTypes(type);
 	*data = &_data[0];
 	return _data.size();
+}
+
+unsigned int Script::GetGameYear()
+{
+	time_t t = chrono::system_clock::to_time_t(gameTime.first);
+	tm _tm = *gmtime(&t);
+	return _tm.tm_year;
+}
+
+unsigned int Script::GetGameMonth()
+{
+	time_t t = chrono::system_clock::to_time_t(gameTime.first);
+	tm _tm = *gmtime(&t);
+	return _tm.tm_mon;
+}
+
+unsigned int Script::GetGameDay()
+{
+	time_t t = chrono::system_clock::to_time_t(gameTime.first);
+	tm _tm = *gmtime(&t);
+	return _tm.tm_mday;
+}
+
+unsigned int Script::GetGameHour()
+{
+	time_t t = chrono::system_clock::to_time_t(gameTime.first);
+	tm _tm = *gmtime(&t);
+	return _tm.tm_hour;
 }
 
 unsigned int Script::GetReference(NetworkID id)

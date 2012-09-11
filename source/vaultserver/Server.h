@@ -19,15 +19,13 @@ class Server
 		friend class Dedicated;
 
 	private:
-
-		Server();
+		Server() = delete;
 
 #ifdef VAULTMP_DEBUG
 		static Debug* debug;
 #endif
 
 	public:
-
 		/**
 		 * \brief Authenticates a client
 		 */

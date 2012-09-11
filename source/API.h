@@ -440,6 +440,7 @@ namespace Values
 			AnimGroup_JumpLandRight         = 0xB6,
 
 			AnimGroup_BlockIdle				= 0x8B,
+			AnimGroup_BlockHit				= 0x8C,
 
 			AnimGroup_ReloadA				= 0x8E,
 			AnimGroup_ReloadB				= 0x8F,
@@ -506,6 +507,7 @@ namespace Values
 			AnimGroup_JumpLandRight         = 0xF4,
 
 			AnimGroup_BlockIdle				= 0xAA,
+			AnimGroup_BlockHit				= 0xAB,
 
 			AnimGroup_ReloadWStart			= 0xAD,
 			AnimGroup_ReloadXStart			= 0xAE,

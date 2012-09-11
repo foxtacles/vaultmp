@@ -287,19 +287,23 @@ void Dedicated::DedicatedThread()
 	GameFactory::SetDebugHandler(debug);
 #endif
 
-	Packet* packet;
-
-	GameFactory::Initialize(self->GetGame());
-	API::Initialize(self->GetGame());
-	Client::SetMaximumClients(connections);
-	Network::Flush();
-
 	try
 	{
+		Packet* packet;
+
+		GameFactory::Initialize(self->GetGame());
+		API::Initialize(self->GetGame());
+		Client::SetMaximumClients(connections);
+		Network::Flush();
+
 		if (!Record::IsValidCell(cell))
 			throw VaultException("%08X is not a valid cell", cell);
 
 		Player::SetSpawnCell(cell);
+		Script::gameTime.first = chrono::system_clock::now();
+		Script::gameTime.second = 1.0;
+
+		Script::CreateTimer(&Script::Timer_GameTime, 1000);
 
 		while (thread)
 		{

@@ -82,6 +82,22 @@ NetworkResponse Server::LoadGame(RakNetGUID guid)
 	}
 
 	response.emplace_back(Network::CreateResponse(
+		PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameYear, Script::GetGameYear()),
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+
+	response.emplace_back(Network::CreateResponse(
+		PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameMonth, Script::GetGameMonth()),
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+
+	response.emplace_back(Network::CreateResponse(
+		PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameDay, Script::GetGameDay()),
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+
+	response.emplace_back(Network::CreateResponse(
+		PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameHour, Script::GetGameHour()),
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+
+	response.emplace_back(Network::CreateResponse(
 		PacketFactory::Create<pTypes::ID_GAME_LOAD>(),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 
@@ -138,10 +154,6 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 	response.emplace_back(Network::CreateResponse(
 		player->toPacket(),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(client)));
-
-		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameHour, 22),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 
 	Script::OnSpawn(_player);
 

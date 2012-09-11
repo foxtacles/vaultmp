@@ -1738,8 +1738,9 @@ void Game::net_SetActorState(const FactoryObject& reference, unsigned int idle, 
 	unsigned char prev_weapon = actor->GetActorWeaponAnimation();
 	result = actor->SetActorWeaponAnimation(weapon);
 
-	if (result && enabled && actor->GetActorAlerted() && weapon != AnimGroup_Idle && weapon != AnimGroup_Equip && weapon != AnimGroup_Unequip && weapon != AnimGroup_Holster &&
-		!firing && (weapon != AnimGroup_Aim || prev_weapon == AnimGroup_AimIS))
+	if (result && enabled && !firing && actor->GetActorAlerted() && weapon != AnimGroup_Idle && weapon != AnimGroup_Equip && weapon != AnimGroup_Unequip && weapon != AnimGroup_Holster &&
+		//(game == FALLOUT3 ? (weapon == Fallout3::AnimGroup_BlockHit) : (weapon == FalloutNV::AnimGroup_BlockHit)) &&
+		(weapon != AnimGroup_Aim || prev_weapon == AnimGroup_AimIS))
 	{
 		if (weapon == AnimGroup_Aim && prev_weapon == AnimGroup_AimIS)
 		{

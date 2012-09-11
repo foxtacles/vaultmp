@@ -43,12 +43,12 @@ class Script
 		Script(char* path);
 		~Script();
 
+		void* handle;
+		bool cpp_script;
+
 		static vector<Script*> scripts;
 
 		static void GetArguments(vector<boost::any>& params, va_list args, string def);
-
-		void* handle;
-		bool cpp_script;
 
 		const char* vaultprefix;
 		void (*fexec)();
@@ -75,6 +75,8 @@ class Script
 		Script& operator=(const Script&) = delete;
 
 	public:
+		static pair<chrono::system_clock::time_point, double> gameTime;
+
 		static void LoadScripts(char* scripts, char* base);
 		static void UnloadScripts();
 
@@ -89,6 +91,7 @@ class Script
 		static unsigned long long CallPublicPAWN(const char* name, const vector<boost::any>& args);
 
 		static unsigned long long Timer_Respawn(NetworkID id);
+		static unsigned long long Timer_GameTime();
 
 		static void OnSpawn(const FactoryObject& reference);
 		static void OnCellChange(const FactoryObject& reference, unsigned int cell);
@@ -126,6 +129,10 @@ class Script
 		static bool IsInterior(unsigned int cell);
 		static unsigned int GetConnection(NetworkID id);
 		static unsigned int GetList(unsigned char type, NetworkID** data);
+		static unsigned int GetGameYear();
+		static unsigned int GetGameMonth();
+		static unsigned int GetGameDay();
+		static unsigned int GetGameHour();
 
 		static unsigned int GetReference(NetworkID id);
 		static unsigned int GetBase(NetworkID id);

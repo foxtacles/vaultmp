@@ -351,6 +351,7 @@ void API::Initialize(unsigned char game)
 	DefineAnimString("JumpLandLeft", Fallout3::AnimGroup_JumpLandLeft, FALLOUT3);
 	DefineAnimString("JumpLandRight", Fallout3::AnimGroup_JumpLandRight, FALLOUT3);
 	DefineAnimString("BlockIdle", Fallout3::AnimGroup_BlockIdle, FALLOUT3);
+	DefineAnimString("BlockHit", Fallout3::AnimGroup_BlockHit, FALLOUT3);
 	DefineAnimString("ReloadA", Fallout3::AnimGroup_ReloadA, FALLOUT3);
 	DefineAnimString("ReloadB", Fallout3::AnimGroup_ReloadB, FALLOUT3);
 	DefineAnimString("ReloadC", Fallout3::AnimGroup_ReloadC, FALLOUT3);
@@ -375,6 +376,7 @@ void API::Initialize(unsigned char game)
 	DefineAnimString("JumpLandLeft", FalloutNV::AnimGroup_JumpLandLeft, NEWVEGAS);
 	DefineAnimString("JumpLandRight", FalloutNV::AnimGroup_JumpLandRight, NEWVEGAS);
 	DefineAnimString("BlockIdle", FalloutNV::AnimGroup_BlockIdle, NEWVEGAS);
+	DefineAnimString("BlockHit", FalloutNV::AnimGroup_BlockHit, NEWVEGAS);
 	DefineAnimString("ReloadWStart", FalloutNV::AnimGroup_ReloadWStart, NEWVEGAS);
 	DefineAnimString("ReloadXStart", FalloutNV::AnimGroup_ReloadXStart, NEWVEGAS);
 	DefineAnimString("ReloadYStart", FalloutNV::AnimGroup_ReloadYStart, NEWVEGAS);
