@@ -439,6 +439,12 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="sqlite\sqlite3.h" />
+		<Unit filename="time\time64.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="time\time64.h" />
+		<Unit filename="time\time64_config.h" />
+		<Unit filename="time\time64_limits.h" />
 		<Unit filename="vaultserver.cpp" />
 		<Unit filename="vaultserver.h" />
 		<Extensions>

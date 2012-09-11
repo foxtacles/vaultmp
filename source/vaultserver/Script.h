@@ -15,6 +15,7 @@
 #include "Public.h"
 #include "PAWN.h"
 #include "Dedicated.h"
+#include "time/time64.h"
 #include "../API.h"
 #include "../Utils.h"
 #include "../vaultmp.h"

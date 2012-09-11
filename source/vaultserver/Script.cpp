@@ -416,13 +416,16 @@ unsigned long long Script::Timer_Respawn(NetworkID id)
 
 unsigned long long Script::Timer_GameTime()
 {
-	time_t t = chrono::system_clock::to_time_t(gameTime.first);
-	tm _tm = *gmtime(&t);
+	Time64_T t = chrono::duration_cast<chrono::seconds>(gameTime.first.time_since_epoch()).count();
+
+	TM _tm;
+	gmtime64_r(&t, &_tm);
 
 	gameTime.first += chrono::milliseconds(static_cast<unsigned long long>(1000ull * gameTime.second));
 
-	t = chrono::system_clock::to_time_t(gameTime.first);
-	tm _tm_new = *gmtime(&t);
+	t = chrono::duration_cast<chrono::seconds>(gameTime.first.time_since_epoch()).count();
+	TM _tm_new;
+	gmtime64_r(&t, &_tm_new);
 
 	if (_tm.tm_hour != _tm_new.tm_hour)
 	{
@@ -933,30 +936,26 @@ unsigned int Script::GetList(unsigned char type, NetworkID** data)
 
 unsigned int Script::GetGameYear()
 {
-	time_t t = chrono::system_clock::to_time_t(gameTime.first);
-	tm _tm = *gmtime(&t);
-	return _tm.tm_year;
+	Time64_T t = chrono::duration_cast<chrono::seconds>(gameTime.first.time_since_epoch()).count();
+	return gmtime64(&t)->tm_year;
 }
 
 unsigned int Script::GetGameMonth()
 {
-	time_t t = chrono::system_clock::to_time_t(gameTime.first);
-	tm _tm = *gmtime(&t);
-	return _tm.tm_mon;
+	Time64_T t = chrono::duration_cast<chrono::seconds>(gameTime.first.time_since_epoch()).count();
+	return gmtime64(&t)->tm_mon;
 }
 
 unsigned int Script::GetGameDay()
 {
-	time_t t = chrono::system_clock::to_time_t(gameTime.first);
-	tm _tm = *gmtime(&t);
-	return _tm.tm_mday;
+	Time64_T t = chrono::duration_cast<chrono::seconds>(gameTime.first.time_since_epoch()).count();
+	return gmtime64(&t)->tm_mday;
 }
 
 unsigned int Script::GetGameHour()
 {
-	time_t t = chrono::system_clock::to_time_t(gameTime.first);
-	tm _tm = *gmtime(&t);
-	return _tm.tm_hour;
+	Time64_T t = chrono::duration_cast<chrono::seconds>(gameTime.first.time_since_epoch()).count();
+	return gmtime64(&t)->tm_hour;
 }
 
 unsigned int Script::GetReference(NetworkID id)

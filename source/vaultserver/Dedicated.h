@@ -31,6 +31,7 @@
 #include "NetworkServer.h"
 #include "Script.h"
 #include "Timer.h"
+#include "time/time64.h"
 #include "vaultserver.h"
 
 #define RAKNET_STANDARD_PORT            1770

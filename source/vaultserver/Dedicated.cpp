@@ -300,9 +300,11 @@ void Dedicated::DedicatedThread()
 			throw VaultException("%08X is not a valid cell", cell);
 
 		Player::SetSpawnCell(cell);
+
+		static_assert(sizeof(chrono::system_clock::rep) == sizeof(Time64_T), "Underlying representation of chrono::system_clock should be 64bit integral");
+
 		Script::gameTime.first = chrono::system_clock::now();
 		Script::gameTime.second = 1.0;
-
 		Script::CreateTimer(&Script::Timer_GameTime, 1000);
 
 		while (thread)
