@@ -1,3 +1,6 @@
 [submodule "source/iniparser"]
 	path = source/iniparser
 	url = git://github.com/Recycler1993/iniparser.git
+[submodule "source/vaultserver/time"]
+	path = source/vaultserver/time
+	url = https://github.com/Recycler1993/y2038.git
