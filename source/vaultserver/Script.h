@@ -71,6 +71,10 @@ class Script
 		unsigned int (*fOnPlayerRequestGame)(NetworkID);
 		bool (*fOnPlayerChat)(NetworkID, char*);
 		bool (*fOnClientAuthenticate)(const char*, const char*);
+		void (*fOnGameYearChange)(unsigned int);
+		void (*fOnGameMonthChange)(unsigned int);
+		void (*fOnGameDayChange)(unsigned int);
+		void (*fOnGameHourChange)(unsigned int);
 
 		Script(const Script&) = delete;
 		Script& operator=(const Script&) = delete;
@@ -112,6 +116,10 @@ class Script
 		static unsigned int OnPlayerRequestGame(const FactoryObject& reference);
 		static bool OnPlayerChat(const FactoryObject& reference, string& message);
 		static bool OnClientAuthenticate(const string& name, const string& pwd);
+		static void OnGameYearChange(unsigned int year);
+		static void OnGameMonthChange(unsigned int month);
+		static void OnGameDayChange(unsigned int day);
+		static void OnGameHourChange(unsigned int hour);
 
 		static const char* ValueToString(unsigned char index);
 		static const char* AxisToString(unsigned char index);

@@ -16,6 +16,26 @@ main()
 	}
 }
 
+public OnGameYearChange(year)
+{
+
+}
+
+public OnGameMonthChange(month)
+{
+
+}
+
+public OnGameDayChange(day)
+{
+
+}
+
+public OnGameHourChange(hour)
+{
+
+}
+
 public OnClientAuthenticate(const name{}, const pwd{})
 {
 	return true;

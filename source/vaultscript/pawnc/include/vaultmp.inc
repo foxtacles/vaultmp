@@ -92,6 +92,10 @@ forward OnPlayerDisconnect(ID, reason);
 forward OnPlayerRequestGame(ID);
 forward OnPlayerChat(ID, message{});
 forward OnClientAuthenticate(const name{}, const pwd{});
+forward OnGameYearChange(year);
+forward OnGameMonthChange(month);
+forward OnGameDayChange(day);
+forward OnGameHourChange(hour);
 
 // Functions
 

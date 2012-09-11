@@ -24,6 +24,26 @@ Void VAULTSCRIPT exec() noexcept
 	}
 }
 
+Void VAULTSCRIPT OnGameYearChange(UCount year) noexcept
+{
+
+}
+
+Void VAULTSCRIPT OnGameMonthChange(UCount month) noexcept
+{
+
+}
+
+Void VAULTSCRIPT OnGameDayChange(UCount day) noexcept
+{
+
+}
+
+Void VAULTSCRIPT OnGameHourChange(UCount hour) noexcept
+{
+
+}
+
 State VAULTSCRIPT OnClientAuthenticate(cRawString name, cRawString pwd) noexcept
 {
 	return True;

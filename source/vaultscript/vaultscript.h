@@ -207,6 +207,10 @@ _CPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE Base OnPlayerRequestGame(VAULTSPACE ID) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State OnPlayerChat(VAULTSPACE ID, VAULTSPACE RawString) _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State OnClientAuthenticate(VAULTSPACE cRawString, VAULTSPACE cRawString) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void OnGameYearChange(VAULTSPACE UCount) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void OnGameMonthChange(VAULTSPACE UCount) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void OnGameDayChange(VAULTSPACE UCount) _CPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void OnGameHourChange(VAULTSPACE UCount) _CPP(noexcept);
 
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(timestamp))() _CPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Timer (*VAULTAPI(CreateTimer))(VAULTSPACE RawFunction(), VAULTSPACE Interval) _CPP(noexcept);

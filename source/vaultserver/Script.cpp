@@ -59,6 +59,10 @@ Script::Script(char* path)
 			GetScript("OnPlayerRequestGame", fOnPlayerRequestGame);
 			GetScript("OnPlayerChat", fOnPlayerChat);
 			GetScript("OnClientAuthenticate", fOnClientAuthenticate);
+			GetScript("OnGameYearChange", fOnGameYearChange);
+			GetScript("OnGameMonthChange", fOnGameMonthChange);
+			GetScript("OnGameDayChange", fOnGameDayChange);
+			GetScript("OnGameHourChange", fOnGameHourChange);
 
 			SetScript(string(vpf + "timestamp").c_str(), &Utils::timestamp);
 			SetScript(string(vpf + "CreateTimer").c_str(), &Script::CreateTimer);
@@ -784,6 +788,62 @@ bool Script::OnClientAuthenticate(const string& name, const string& pwd)
 	}
 
 	return result;
+}
+
+void Script::OnGameYearChange(unsigned int year)
+{
+	for (Script* script : scripts)
+	{
+		if (script->cpp_script)
+		{
+			if (script->fOnGameYearChange)
+				script->fOnGameYearChange(year);
+		}
+		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnGameYearChange"))
+			PAWN::Call((AMX*)script->handle, "OnGameYearChange", "i", 0, year);
+	}
+}
+
+void Script::OnGameMonthChange(unsigned int month)
+{
+	for (Script* script : scripts)
+	{
+		if (script->cpp_script)
+		{
+			if (script->fOnGameMonthChange)
+				script->fOnGameMonthChange(month);
+		}
+		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnGameMonthChange"))
+			PAWN::Call((AMX*)script->handle, "OnGameMonthChange", "i", 0, month);
+	}
+}
+
+void Script::OnGameDayChange(unsigned int day)
+{
+	for (Script* script : scripts)
+	{
+		if (script->cpp_script)
+		{
+			if (script->fOnGameDayChange)
+				script->fOnGameDayChange(day);
+		}
+		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnGameDayChange"))
+			PAWN::Call((AMX*)script->handle, "OnGameDayChange", "i", 0, day);
+	}
+}
+
+void Script::OnGameHourChange(unsigned int hour)
+{
+	for (Script* script : scripts)
+	{
+		if (script->cpp_script)
+		{
+			if (script->fOnGameHourChange)
+				script->fOnGameHourChange(hour);
+		}
+		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnGameHourChange"))
+			PAWN::Call((AMX*)script->handle, "OnGameHourChange", "i", 0, hour);
+	}
 }
 
 const char* Script::ValueToString(unsigned char index)
@@ -1773,9 +1833,6 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 		state = true;
 	}
 
-	if (_new_cell)
-		Script::OnCellChange(reference, _new_cell);
-
 	return state;
 }
 
@@ -1883,9 +1940,6 @@ bool Script::SetCell(NetworkID id, unsigned int cell, double X, double Y, double
 
 	if (state)
 		Network::Queue(move(response));
-
-	if (cell)
-		Script::OnCellChange(reference, cell);
 
 	return state;
 }
@@ -2164,8 +2218,6 @@ void Script::KillActor(NetworkID id, unsigned short limbs, signed char cause)
 				PacketFactory::Create<pTypes::ID_UPDATE_DEAD>(actor->GetNetworkID(), true, limbs, cause),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 			});
-
-			Script::OnActorDeath(reference, limbs, cause);
 
 			Player* player = vaultcast<Player>(reference);
 
