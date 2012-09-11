@@ -28,7 +28,7 @@ class PAWN
 
 		PAWN();
 
-		static AMX_NATIVE_INFO vaultmp_functions[86];
+		static AMX_NATIVE_INFO vaultmp_functions[88];
 
 		static cell vaultmp_timestamp(AMX* amx, const cell* params);
 		static cell vaultmp_CreateTimer(AMX* amx, const cell* params);
@@ -53,6 +53,7 @@ class PAWN
 		static cell vaultmp_ChatMessage(AMX* amx, const cell* params);
 		static cell vaultmp_SetRespawn(AMX* amx, const cell* params);
 		static cell vaultmp_SetSpawnCell(AMX* amx, const cell* params);
+		static cell vaultmp_SetGameTime(AMX* amx, const cell* params);
 		static cell vaultmp_SetGameYear(AMX* amx, const cell* params);
 		static cell vaultmp_SetGameMonth(AMX* amx, const cell* params);
 		static cell vaultmp_SetGameDay(AMX* amx, const cell* params);
@@ -70,6 +71,7 @@ class PAWN
 		static cell vaultmp_GetConnection(AMX* amx, const cell* params);
 		static cell vaultmp_GetCount(AMX* amx, const cell* params);
 		static cell vaultmp_GetList(AMX* amx, const cell* params);
+		static cell vaultmp_GetGameTime(AMX* amx, const cell* params);
 		static cell vaultmp_GetGameYear(AMX* amx, const cell* params);
 		static cell vaultmp_GetGameMonth(AMX* amx, const cell* params);
 		static cell vaultmp_GetGameDay(AMX* amx, const cell* params);

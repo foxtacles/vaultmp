@@ -87,6 +87,7 @@ Script::Script(char* path)
 			SetScript(string(vpf + "ChatMessage").c_str(), &Script::ChatMessage);
 			SetScript(string(vpf + "SetRespawn").c_str(), &Script::SetRespawn);
 			SetScript(string(vpf + "SetSpawnCell").c_str(), &Script::SetSpawnCell);
+			SetScript(string(vpf + "SetGameTime").c_str(), &Script::SetGameTime);
 			SetScript(string(vpf + "SetGameYear").c_str(), &Script::SetGameYear);
 			SetScript(string(vpf + "SetGameMonth").c_str(), &Script::SetGameMonth);
 			SetScript(string(vpf + "SetGameDay").c_str(), &Script::SetGameDay);
@@ -104,6 +105,7 @@ Script::Script(char* path)
 			SetScript(string(vpf + "GetConnection").c_str(), &Script::GetConnection);
 			SetScript(string(vpf + "GetCount").c_str(), &GameFactory::GetObjectCount);
 			SetScript(string(vpf + "GetList").c_str(), &Script::GetList);
+			SetScript(string(vpf + "GetGameTime").c_str(), &Script::GetGameTime);
 			SetScript(string(vpf + "GetGameYear").c_str(), &Script::GetGameYear);
 			SetScript(string(vpf + "GetGameMonth").c_str(), &Script::GetGameMonth);
 			SetScript(string(vpf + "GetGameDay").c_str(), &Script::GetGameDay);
@@ -960,6 +962,56 @@ void Script::SetSpawnCell(unsigned int cell)
 	catch (...) {}
 }
 
+void Script::SetGameTime(signed long long time)
+{
+	Time64_T t_new = time;
+
+	TM _tm_new;
+	auto success = gmtime64_r(&t_new, &_tm_new);
+
+	if (!success)
+		return;
+
+	Time64_T t = chrono::duration_cast<chrono::seconds>(gameTime.first.time_since_epoch()).count();
+
+	TM _tm;
+	gmtime64_r(&t, &_tm);
+
+	if (_tm.tm_year != _tm_new.tm_year)
+	{
+		Network::Queue(NetworkResponse{Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameYear, _tm_new.tm_year),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+		});
+	}
+
+	if (_tm.tm_mon != _tm_new.tm_mon)
+	{
+		Network::Queue(NetworkResponse{Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameMonth, _tm_new.tm_mon),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+		});
+	}
+
+	if (_tm.tm_mday != _tm_new.tm_mday)
+	{
+		Network::Queue(NetworkResponse{Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameDay, _tm_new.tm_mday),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+		});
+	}
+
+	if (_tm.tm_hour != _tm_new.tm_hour)
+	{
+		Network::Queue(NetworkResponse{Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameHour, _tm_new.tm_hour),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+		});
+	}
+
+	gameTime.first = chrono::time_point<chrono::system_clock>(chrono::seconds(t_new));
+}
+
 void Script::SetGameYear(unsigned int year)
 {
 	Time64_T t = chrono::duration_cast<chrono::seconds>(gameTime.first.time_since_epoch()).count();
@@ -1138,6 +1190,12 @@ unsigned int Script::GetList(unsigned char type, NetworkID** data)
 	_data = GameFactory::GetIDObjectTypes(type);
 	*data = &_data[0];
 	return _data.size();
+}
+
+signed long long Script::GetGameTime()
+{
+	Time64_T t = chrono::duration_cast<chrono::seconds>(gameTime.first.time_since_epoch()).count();
+	return t;
 }
 
 unsigned int Script::GetGameYear()

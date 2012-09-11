@@ -130,6 +130,7 @@ class Script
 		static bool ChatMessage(NetworkID id, const char* message);
 		static void SetRespawn(unsigned int respawn);
 		static void SetSpawnCell(unsigned int cell);
+		static void SetGameTime(signed long long time);
 		static void SetGameYear(unsigned int year);
 		static void SetGameMonth(unsigned int month);
 		static void SetGameDay(unsigned int day);
@@ -144,6 +145,7 @@ class Script
 		static bool IsInterior(unsigned int cell);
 		static unsigned int GetConnection(NetworkID id);
 		static unsigned int GetList(unsigned char type, NetworkID** data);
+		static signed long long GetGameTime();
 		static unsigned int GetGameYear();
 		static unsigned int GetGameMonth();
 		static unsigned int GetGameDay();

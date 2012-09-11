@@ -42,6 +42,7 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"ChatMessage", PAWN::vaultmp_ChatMessage},
 	{"SetRespawn", PAWN::vaultmp_SetRespawn},
 	{"SetSpawnCell", PAWN::vaultmp_SetSpawnCell},
+	{"SetGameTime", PAWN::vaultmp_SetGameTime},
 	{"SetGameYear", PAWN::vaultmp_SetGameYear},
 	{"SetGameMonth", PAWN::vaultmp_SetGameMonth},
 	{"SetGameDay", PAWN::vaultmp_SetGameDay},
@@ -59,6 +60,7 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"GetConnection", PAWN::vaultmp_GetConnection},
 	{"GetCount", PAWN::vaultmp_GetCount},
 	{"GetList", PAWN::vaultmp_GetList},
+	{"GetGameTime", PAWN::vaultmp_GetGameTime},
 	{"GetGameYear", PAWN::vaultmp_GetGameYear},
 	{"GetGameMonth", PAWN::vaultmp_GetGameMonth},
 	{"GetGameDay", PAWN::vaultmp_GetGameDay},
@@ -471,6 +473,12 @@ cell PAWN::vaultmp_SetSpawnCell(AMX* amx, const cell* params)
 	return 1;
 }
 
+cell PAWN::vaultmp_SetGameTime(AMX* amx, const cell* params)
+{
+	Script::SetGameTime(params[1]);
+	return 1;
+}
+
 cell PAWN::vaultmp_SetGameYear(AMX* amx, const cell* params)
 {
 	Script::SetGameYear(params[1]);
@@ -569,6 +577,11 @@ cell PAWN::vaultmp_GetList(AMX* amx, const cell* params)
 	}
 
 	return reference.size();
+}
+
+cell PAWN::vaultmp_GetGameTime(AMX* amx, const cell* params)
+{
+	return Script::GetGameTime();
 }
 
 cell PAWN::vaultmp_GetGameYear(AMX* amx, const cell* params)
