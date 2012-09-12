@@ -29,6 +29,7 @@ enum class pTypes : unsigned char
 	ID_GAME_MESSAGE,
 	ID_GAME_CHAT,
 	ID_GAME_GLOBAL,
+	ID_GAME_WEATHER,
 
 	ID_OBJECT_NEW,
 	ID_ITEM_NEW,
@@ -783,6 +784,45 @@ template<typename... Args>
 struct PacketFactory::_Access<pTypes::ID_GAME_GLOBAL, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
 		packet_cast<pGameGlobal>(packet)->access(forward<Args&>(args)...);
+	}
+};
+
+class pGameWeather : public pDefault
+{
+		friend class PacketFactory;
+
+	private:
+		pGameWeather(unsigned int weather) : pDefault(pTypes::ID_GAME_WEATHER)
+		{
+			construct(weather);
+		}
+		pGameWeather(const unsigned char* stream, unsigned int len) : pDefault(stream, len)
+		{
+
+		}
+
+		void access(unsigned int& weather) const
+		{
+			deconstruct(weather);
+		}
+};
+
+template<typename... Args>
+struct PacketFactory::_Create<pTypes::ID_GAME_WEATHER, Args...> {
+	inline static pPacket Create(Args&&... args) {
+		return pPacket(new pGameWeather(forward<Args>(args)...));
+	}
+};
+
+template<>
+inline const pGameWeather* PacketFactory::packet_cast(const pDefault* packet) {
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_WEATHER ? reinterpret_cast<const pGameWeather*>(packet) : nullptr;
+}
+
+template<typename... Args>
+struct PacketFactory::_Access<pTypes::ID_GAME_WEATHER, Args...> {
+	inline static void Access(const pDefault* packet, Args&... args) {
+		packet_cast<pGameWeather>(packet)->access(forward<Args&>(args)...);
 	}
 };
 

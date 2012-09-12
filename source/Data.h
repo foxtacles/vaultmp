@@ -20,6 +20,7 @@ static const unsigned int PLAYER_BASE       = 0x00000007;
 static const unsigned int PIPBOY_3000		= 0x00015038;
 static const unsigned int PIPBOY_GLOVES		= 0x00025B83;
 static const unsigned int RACE_CAUCASIAN	= 0x00000019;
+static const unsigned int DEFAULT_WEATHER	= 0x0000015E;
 
 using namespace std;
 using namespace RakNet;

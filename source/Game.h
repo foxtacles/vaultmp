@@ -41,10 +41,12 @@ class Game
 		typedef unordered_map<unsigned int, unordered_map<unsigned int, set<unsigned int>>> CellRefs;
 		typedef unordered_map<unsigned int, unsigned int> BaseRaces;
 		typedef unordered_map<unsigned int, signed int> Globals;
+		typedef unsigned int Weather;
 
 		static Guarded<CellRefs> cellRefs;
 		static BaseRaces baseRaces;
 		static Globals globals;
+		static Weather weather;
 		static function<void()> spawnFunc;
 
 	public:
@@ -341,6 +343,10 @@ class Game
 		 * \brief Network function to handle global value
 		 */
 		static void net_SetGlobalValue(unsigned int global, signed int value);
+		/**
+		 * \brief Network function to handle weather update
+		 */
+		static void net_SetWeather(unsigned int weather);
 
 		/**
 		 * Interface result functions

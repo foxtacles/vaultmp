@@ -60,7 +60,7 @@ namespace vaultmp {
 		MAX_PLAYER_NAME     =	16,
 		MAX_PASSWORD_SIZE   =	16,
 		MAX_MESSAGE_LENGTH  =	64,
-		MAXVAULTCHAT_LENGTH		=	128,
+		MAX_CHAT_LENGTH		=	128,
 	};
 
 	enum VAULTCPP(class) Type VAULTCPP(: uint8_t)
@@ -237,6 +237,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(ChatMessage))(VAULTSPACE ID, VAULTSPACE cRawString) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetRespawn))(VAULTSPACE Interval) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetSpawnCell))(VAULTSPACE Cell) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetGameWeather))(VAULTSPACE Base) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetGameTime))(VAULTSPACE Time) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetGameYear))(VAULTSPACE UCount) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetGameMonth))(VAULTSPACE UCount) VAULTCPP(noexcept);
@@ -255,6 +256,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetConnection))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetCount))(VAULTSPACE Type) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetList))(VAULTSPACE Type, VAULTSPACE RawArray(VAULTSPACE ID)*) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Base (*VAULTAPI(GetGameWeather))() VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Time (*VAULTAPI(GetGameTime))() VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetGameYear))() VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetGameMonth))() VAULTCPP(noexcept);
@@ -391,6 +393,7 @@ namespace vaultmp
 	VAULTFUNCTION State ChatMessage(String message) noexcept { return VAULTAPI(ChatMessage)(static_cast<ID>(0), message.c_str()); }
 	VAULTFUNCTION Void SetRespawn(Interval interval) noexcept { return VAULTAPI(SetRespawn)(interval); }
 	VAULTFUNCTION Void SetSpawnCell(Cell cell) noexcept { return VAULTAPI(SetSpawnCell)(cell); }
+	VAULTFUNCTION Void SetGameWeather(Base weather) noexcept { return VAULTAPI(SetGameWeather)(weather); }
 	VAULTFUNCTION Void SetGameTime(Time time) noexcept { return VAULTAPI(SetGameTime)(time); }
 	VAULTFUNCTION Void SetGameYear(UCount year) noexcept { return VAULTAPI(SetGameYear)(year); }
 	VAULTFUNCTION Void SetGameMonth(UCount month) noexcept { return VAULTAPI(SetGameMonth)(month); }
@@ -414,6 +417,7 @@ namespace vaultmp
 		UCount size = VAULTAPI(GetList)(type, &data);
 		return IDVector(data, data + size);
 	}
+	VAULTFUNCTION Base GetGameWeather() noexcept { return VAULTAPI(GetGameWeather)(); }
 	VAULTFUNCTION Time GetGameTime() noexcept { return VAULTAPI(GetGameTime)(); }
 	VAULTFUNCTION UCount GetGameYear() noexcept { return VAULTAPI(GetGameYear)(); }
 	VAULTFUNCTION UCount GetGameMonth() noexcept { return VAULTAPI(GetGameMonth)(); }

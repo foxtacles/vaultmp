@@ -2,6 +2,7 @@
 
 vector<Script*> Script::scripts;
 pair<chrono::system_clock::time_point, double> Script::gameTime;
+unsigned int Script::gameWeather;
 
 Script::Script(char* path)
 {
@@ -87,6 +88,7 @@ Script::Script(char* path)
 			SetScript(string(vpf + "ChatMessage").c_str(), &Script::ChatMessage);
 			SetScript(string(vpf + "SetRespawn").c_str(), &Script::SetRespawn);
 			SetScript(string(vpf + "SetSpawnCell").c_str(), &Script::SetSpawnCell);
+			SetScript(string(vpf + "SetGameWeather").c_str(), &Script::SetGameWeather);
 			SetScript(string(vpf + "SetGameTime").c_str(), &Script::SetGameTime);
 			SetScript(string(vpf + "SetGameYear").c_str(), &Script::SetGameYear);
 			SetScript(string(vpf + "SetGameMonth").c_str(), &Script::SetGameMonth);
@@ -105,6 +107,7 @@ Script::Script(char* path)
 			SetScript(string(vpf + "GetConnection").c_str(), &Script::GetConnection);
 			SetScript(string(vpf + "GetCount").c_str(), &GameFactory::GetObjectCount);
 			SetScript(string(vpf + "GetList").c_str(), &Script::GetList);
+			SetScript(string(vpf + "GetGameWeather").c_str(), &Script::GetGameWeather);
 			SetScript(string(vpf + "GetGameTime").c_str(), &Script::GetGameTime);
 			SetScript(string(vpf + "GetGameYear").c_str(), &Script::GetGameYear);
 			SetScript(string(vpf + "GetGameMonth").c_str(), &Script::GetGameMonth);
@@ -962,6 +965,19 @@ void Script::SetSpawnCell(unsigned int cell)
 	catch (...) {}
 }
 
+void Script::SetGameWeather(unsigned int weather)
+{
+	if (Record::IsValidWeather(weather))
+	{
+		Script::gameWeather = weather;
+
+		Network::Queue(NetworkResponse{Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_GAME_WEATHER>(weather),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+		});
+	}
+}
+
 void Script::SetGameTime(signed long long time)
 {
 	Time64_T t_new = time;
@@ -1190,6 +1206,11 @@ unsigned int Script::GetList(unsigned char type, NetworkID** data)
 	_data = GameFactory::GetIDObjectTypes(type);
 	*data = &_data[0];
 	return _data.size();
+}
+
+unsigned int Script::GetGameWeather()
+{
+	return Script::gameWeather;
 }
 
 signed long long Script::GetGameTime()

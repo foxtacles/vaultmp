@@ -124,6 +124,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					Game::cellRefs->clear();
 					Game::baseRaces.clear();
 					Game::globals.clear();
+					Game::weather = 0x00000000;
+
 					Game::spawnFunc = function<void()>();
 
 					response = NetworkClient::ProcessEvent(ID_EVENT_GAME_STARTED);
@@ -185,6 +187,14 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					signed int value;
 					PacketFactory::Access<pTypes::ID_GAME_GLOBAL>(packet, global, value);
 					Game::net_SetGlobalValue(global, value);
+					break;
+				}
+
+				case pTypes::ID_GAME_WEATHER:
+				{
+					unsigned int weather;
+					PacketFactory::Access<pTypes::ID_GAME_WEATHER>(packet, weather);
+					Game::net_SetWeather(weather);
 					break;
 				}
 

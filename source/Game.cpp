@@ -7,6 +7,7 @@ RakNetGUID Game::server;
 Guarded<Game::CellRefs> Game::cellRefs;
 Game::BaseRaces Game::baseRaces;
 Game::Globals Game::globals;
+Game::Weather Game::weather;
 
 function<void()> Game::spawnFunc;
 
@@ -620,6 +621,9 @@ void Game::LoadEnvironment()
 
 	for (const auto& global : globals)
 		SetGlobalValue(global.first, global.second);
+
+	if (Game::weather)
+		SetWeather(Game::weather);
 
 	for (NetworkID& id : reference)
 	{
@@ -1931,6 +1935,13 @@ void Game::net_SetGlobalValue(unsigned int global, signed int value)
 	globals.emplace(global, value);
 
 	SetGlobalValue(global, value);
+}
+
+void Game::net_SetWeather(unsigned int weather)
+{
+	Game::weather = weather;
+
+	SetWeather(weather);
 }
 
 void Game::GetPos(const FactoryObject& reference, unsigned char axis, double value)

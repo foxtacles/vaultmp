@@ -81,6 +81,7 @@ class Script
 
 	public:
 		static pair<chrono::system_clock::time_point, double> gameTime;
+		static unsigned int gameWeather;
 
 		static void LoadScripts(char* scripts, char* base);
 		static void Run();
@@ -130,6 +131,7 @@ class Script
 		static bool ChatMessage(NetworkID id, const char* message);
 		static void SetRespawn(unsigned int respawn);
 		static void SetSpawnCell(unsigned int cell);
+		static void SetGameWeather(unsigned int weather);
 		static void SetGameTime(signed long long time);
 		static void SetGameYear(unsigned int year);
 		static void SetGameMonth(unsigned int month);
@@ -145,6 +147,7 @@ class Script
 		static bool IsInterior(unsigned int cell);
 		static unsigned int GetConnection(NetworkID id);
 		static unsigned int GetList(unsigned char type, NetworkID** data);
+		static unsigned int GetGameWeather();
 		static signed long long GetGameTime();
 		static unsigned int GetGameYear();
 		static unsigned int GetGameMonth();

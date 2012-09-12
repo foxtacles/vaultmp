@@ -92,6 +92,20 @@ bool Record::IsValidCell(unsigned int baseID)
 	return true;
 }
 
+bool Record::IsValidWeather(unsigned int baseID)
+{
+	try
+	{
+		const Record& record = Record::Lookup(baseID, "WTHR");
+	}
+	catch (...)
+	{
+		return false;
+	}
+
+	return true;
+}
+
 unsigned int Record::GetBase() const
 {
 	return baseID;

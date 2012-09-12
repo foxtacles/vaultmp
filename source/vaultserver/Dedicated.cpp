@@ -304,6 +304,8 @@ void Dedicated::DedicatedThread()
 		Script::gameTime.second = 1.0;
 		Script::CreateTimer(&Script::Timer_GameTime, 1000);
 
+		Script::gameWeather = DEFAULT_WEATHER;
+
 		Utils::timestamp();
 		printf("Dedicated server initialized, running scripts now\n");
 

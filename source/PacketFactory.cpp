@@ -38,6 +38,10 @@ pPacket PacketFactory::Init(const unsigned char* stream, unsigned int len)
 			packet = new pGameGlobal(stream, len);
 			break;
 
+		case pTypes::ID_GAME_WEATHER:
+			packet = new pGameWeather(stream, len);
+			break;
+
 		case pTypes::ID_OBJECT_NEW:
 			packet = new pObjectNew(stream, len);
 			break;

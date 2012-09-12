@@ -37,6 +37,7 @@ class Record
 		static const Record& GetRecordNotIn(const unordered_set<unsigned int>& _set, const function<bool(const Record&)>& pred);
 
 		static bool IsValidCell(unsigned int baseID);
+		static bool IsValidWeather(unsigned int baseID);
 
 		unsigned int GetBase() const;
 		const string& GetName() const;
