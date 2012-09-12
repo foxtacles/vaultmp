@@ -5,9 +5,9 @@
 #define THREAD_PRIORITY_NORMAL 1000
 #endif
 
-#define DEDICATED_VERSION "0.1a snapshot \"Gary 2.3\""
-#define MASTER_VERSION "0.1a snapshot \"Gary 2.3\""
-#define CLIENT_VERSION "0.1a snapshot \"Gary 2.3\""
+#define DEDICATED_VERSION "0.1a snapshot \"Gary 2.4\""
+#define MASTER_VERSION "0.1a snapshot \"Gary 2.4\""
+#define CLIENT_VERSION "0.1a snapshot \"Gary 2.4\""
 
 static const unsigned int FALLOUT3_EN_VER17            =   0x00E59528;
 //static const unsigned int FALLOUT3_EN_VER17_STEAM      =
@@ -16,7 +16,7 @@ static const unsigned int NEWVEGAS_EN_VER14_STEAM      =   0x00FCB4FE;
 static const unsigned int FOSE_VER0122                 =   0x0004E1B5;
 static const unsigned int NVSE_VER0212                 =   0x0006B1BB;
 
-static const unsigned int VAULTMP_DLL                  =   0x0002E15A;
+static const unsigned int VAULTMP_DLL                  =   0x0002E482;
 static const unsigned int XLIVE_PATCH                  =   0x0000D57E;
 static const unsigned int VAULTMP_F3                   =   0x51209E82;
 static const unsigned int VAULTMP_FNV                  =   0xF8819410;
