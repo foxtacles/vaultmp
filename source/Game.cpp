@@ -356,7 +356,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 	}
 }
 
-NetworkResponse Game::Authenticate(string password)
+NetworkResponse Game::Authenticate(const string& password)
 {
 	FactoryObject reference = GameFactory::GetObject(PLAYER_REFERENCE);
 	Player* self = vaultcast<Player>(reference);

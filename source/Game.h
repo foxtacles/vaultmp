@@ -55,7 +55,7 @@ class Game
 		/**
 		 * \brief Builds an authenticate packet for the server
 		 */
-		static NetworkResponse Authenticate(string password);
+		static NetworkResponse Authenticate(const string& password);
 		/**
 		 * \brief Starts the game command schedule
 		 */

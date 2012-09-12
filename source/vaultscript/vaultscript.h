@@ -13,8 +13,8 @@
 	#include <unordered_map>
 	#include <cstdint>
 	#define VAULTFUNCTION inline static
-	#define VAULTAPI(name) _##name
-	#define VAULTAPI_PREFIX '_'
+	#define VAULTAPI(name) c##name
+	#define VAULTAPI_PREFIX 'c'
 	#define VAULTSPACE vaultmp::
 	#define _CPP(expr) expr
 	#define _C(expr)
