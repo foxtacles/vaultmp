@@ -68,12 +68,12 @@ namespace vaultmp {
 		ID_REFERENCE        =	0x01,
 		ID_OBJECT           =	ID_REFERENCE << 1,
 		ID_ITEM             =	ID_OBJECT << 1,
-		IDVAULTCONTAINER        =	ID_ITEM << 1,
-		ID_ACTOR            =	IDVAULTCONTAINER << 1,
+		ID_CONTAINER        =	ID_ITEM << 1,
+		ID_ACTOR            =	ID_CONTAINER << 1,
 		ID_PLAYER           =	ID_ACTOR << 1,
 
-		ALL_OBJECTS         =	(ID_OBJECT | ID_ITEM | IDVAULTCONTAINER | ID_ACTOR | ID_PLAYER),
-		ALLVAULTCONTAINERS      =	(IDVAULTCONTAINER | ID_ACTOR | ID_PLAYER),
+		ALL_OBJECTS         =	(ID_OBJECT | ID_ITEM | ID_CONTAINER | ID_ACTOR | ID_PLAYER),
+		ALL_CONTAINERS      =	(ID_CONTAINER | ID_ACTOR | ID_PLAYER),
 		ALL_ACTORS          =	(ID_ACTOR | ID_PLAYER),
 	};
 
@@ -537,7 +537,7 @@ namespace vaultmp
 			Container(ID id, Type type) noexcept : Object(id, type) {}
 
 		public:
-			Container(ID id) noexcept : Object(vaultmp::IsContainer(id) ? id : static_cast<ID>(0), Type::IDVAULTCONTAINER) {}
+			Container(ID id) noexcept : Object(vaultmp::IsContainer(id) ? id : static_cast<ID>(0), Type::ID_CONTAINER) {}
 			virtual ~Container() noexcept {}
 
 			UCount GetContainerItemCount(Base item = static_cast<Base>(0)) const noexcept { return vaultmp::GetContainerItemCount(id, item); }
@@ -546,8 +546,8 @@ namespace vaultmp
 			UCount RemoveItem(Base item, UCount count = 1, State silent = True) noexcept { return vaultmp::RemoveItem(id, item, count, silent); }
 			Void RemoveAllItems() noexcept { return vaultmp::RemoveAllItems(id); }
 
-			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::IDVAULTCONTAINER); }
-			static IDVector GetList() noexcept { return vaultmp::GetList(Type::IDVAULTCONTAINER); }
+			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_CONTAINER); }
+			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_CONTAINER); }
 	};
 
 	class Actor : public Container {
