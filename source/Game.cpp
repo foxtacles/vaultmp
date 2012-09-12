@@ -239,6 +239,9 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func_SexChange:
 				break;
 
+			case Func_ForceWeather:
+				break;
+
 			case Func_ScanContainer:
 			{
 				reference = GameFactory::GetObject(getFrom<double, unsigned int>(info.at(1)));
@@ -1527,6 +1530,15 @@ void Game::DisablePlayerControls(bool movement, bool pipboy, bool fighting, bool
 	Interface::StartDynamic();
 
 	Interface::ExecuteCommand("DisablePlayerControls", {RawParameter(movement), RawParameter(pipboy), RawParameter(fighting), RawParameter(pov), RawParameter(looking), RawParameter(rollover), RawParameter(sneaking)});
+
+	Interface::EndDynamic();
+}
+
+void Game::SetWeather(unsigned int weather)
+{
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("ForceWeather", {RawParameter(weather), RawParameter(1)});
 
 	Interface::EndDynamic();
 }

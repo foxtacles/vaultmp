@@ -272,6 +272,10 @@ class Game
 		 */
 		static void DisablePlayerControls(bool movement = true, bool pipboy = true, bool fighting = true, bool pov = true, bool looking = false, bool rollover = false, bool sneaking = false);
 		/**
+		 * \brief Sets the weather
+		 */
+		static void SetWeather(unsigned int weather);
+		/**
 		 * \brief Forces the respawn ('back to menu') for the player
 		 */
 		static void ForceRespawn();

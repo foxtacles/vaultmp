@@ -248,6 +248,7 @@ namespace Values
 		Func_AgeRace					= 0x11E4,
 		Func_MatchRace					= 0x11E5,
 		Func_SexChange					= 0x11E7,
+		Func_ForceWeather				= 0x112D,
 
 		Func_GetActorState              = 0x0001 | VAULTFUNCTION,
 		Func_Chat						= 0x0002 | VAULTFUNCTION,

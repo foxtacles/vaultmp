@@ -548,6 +548,7 @@ void API::Initialize(unsigned char game)
 	DefineFunction("AgeRace", "r$i", Func_AgeRace, FALLOUT_GAMES);
 	DefineFunction("MatchRace", "r$y", Func_MatchRace, FALLOUT_GAMES); // has been patched to take Race
 	DefineFunction("SexChange", "r$I", Func_SexChange, FALLOUT_GAMES);
+	DefineFunction("ForceWeather", "nI", Func_ForceWeather, FALLOUT_GAMES);
 	DefineFunction("ScanContainer", "r", Func_ScanContainer, FALLOUT_GAMES);
 	DefineFunction("RemoveAllItemsEx", "r", Func_RemoveAllItemsEx, FALLOUT_GAMES);
 	DefineFunction("ForceRespawn", "", Func_ForceRespawn, FALLOUT_GAMES);
@@ -735,6 +736,10 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 				typecode = 0x0000001B;
 				break;
 
+			case 'n': // Weather
+				typecode = 0x00000021;
+				break;
+
 			case 'k': // Object ID base item
 				typecode = 0x00000032;
 				break;
@@ -774,6 +779,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 			w (World space, 2 byte, 0x72, stream) - 0x0000001B
 			q (Actor, 2 byte, 0x72, stream) - 0x00000006
 			y (Race, 2 byte, 0x72, stream) - 0x0000000F
+			n (Weather, 2 byte, 0x72, stream) - 0x00000021
 			s (String, 2 byte, length, followed by chars) - 0x00000000
 			x (Control code, 4 byte, 0x6E) - 0x00000001
 			r (Reference)
@@ -816,6 +822,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 			case 'c': // Container
 			case 'w': // World space
 			case 'y': // Race
+			case 'n': // Weather
 			{
 				if (refparam != 0x00)   // We don't support more than one refparam yet
 					throw VaultException("API::ParseCommand does only support one reference argument up until now");
