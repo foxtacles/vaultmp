@@ -967,6 +967,9 @@ void Script::SetSpawnCell(unsigned int cell)
 
 void Script::SetGameWeather(unsigned int weather)
 {
+	if (Script::gameWeather == weather)
+		return;
+
 	if (Record::IsValidWeather(weather))
 	{
 		Script::gameWeather = weather;

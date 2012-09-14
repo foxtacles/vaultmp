@@ -2378,7 +2378,7 @@ void Game::ScanContainer(const FactoryObject& reference, vector<unsigned char>& 
 				auto _ndiff = make_shared<ContainerDiffNet>(move(ndiff));
 				NetworkID id = container->GetNetworkID();
 
-				AsyncDispatch([_ndiff, gdiff, id]() mutable
+				AsyncDispatch([_ndiff, gdiff, key, result, id]() mutable
 				{
 					try
 					{
@@ -2607,7 +2607,11 @@ void Game::ScanContainer(const FactoryObject& reference, vector<unsigned char>& 
 						});
 					}
 					catch (...) {}
+
+					result->Unlock(key);
 				});
+
+				key = 0x00000000;
 			}
 			else
 				Network::Queue(NetworkResponse{Network::CreateResponse(
@@ -2618,7 +2622,8 @@ void Game::ScanContainer(const FactoryObject& reference, vector<unsigned char>& 
 
 		GameFactory::DestroyInstance(_temp);
 
-		result->Unlock(key);
+		if (key)
+			result->Unlock(key);
 	}
 }
 
