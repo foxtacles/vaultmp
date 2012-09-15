@@ -66,7 +66,7 @@ class Game
 		 * \brief Future set
 		 */
 		template <typename T>
-		static void FutureSet(const weak_ptr<Lockable>& data, T t);
+		static void FutureSet(const weak_ptr<Lockable>& data, T&& t);
 		/**
 		 * \brief Async task execution
 		 */
@@ -266,6 +266,10 @@ class Game
 		 */
 		static CellDiff ScanCell(unsigned int type);
 		/**
+		 * \brief Scans an inventory and returns the difference
+		 */
+		static pair<ContainerDiffNet, GameDiff> ScanContainer(FactoryObject& reference);
+		/**
 		 * \brief Enable player controls
 		 */
 		static void EnablePlayerControls(bool movement = true, bool pipboy = true, bool fighting = true, bool pov = true, bool looking = true, bool rollover = true, bool sneaking = true);
@@ -388,6 +392,10 @@ class Game
 		 * \brief Handles ScanContainer command result
 		 */
 		static void ScanContainer(const FactoryObject& reference, vector<unsigned char>& data);
+		/**
+		 * \brief Handles ScanContainer (synchronized) command result
+		 */
+		static pair<ContainerDiffNet, GameDiff> GetScanContainer(const FactoryObject& reference, vector<unsigned char>& data);
 		/**
 		 * \brief Handles RemoveAllItemsEx command result
 		 */

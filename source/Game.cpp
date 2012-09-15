@@ -57,6 +57,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			{
 				case Func_ForceRespawn:
 				case Func_RemoveAllItemsEx:
+				case Func_ScanContainer:
 				case Func_CenterOnCell:
 				case Func_CenterOnExterior:
 				case Func_PlaceAtMeHealthPercent:
@@ -89,7 +90,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 		switch (opcode)
 		{
 			case Func_PlaceAtMeHealthPercent:
-				FutureSet<unsigned int>(shared, getFrom<double, unsigned int>(result));
+				FutureSet(shared, getFrom<double, unsigned int>(result));
 				break;
 
 			case Func_GetPos:
@@ -160,7 +161,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 
 			case Func_GetCauseofDeath:
-				FutureSet<signed char>(shared, result);
+				FutureSet(shared, static_cast<signed char>(result));
 				break;
 
 			case Func_Kill:
@@ -247,7 +248,12 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			{
 				reference = GameFactory::GetObject(getFrom<double, unsigned int>(info.at(1)));
 				vector<unsigned char>* data = getFrom<double, vector<unsigned char>*>(result);
-				ScanContainer(reference, *data);
+
+				if (key)
+					FutureSet(shared, GetScanContainer(reference, *data));
+				else
+					ScanContainer(reference, *data);
+
 				delete data;
 				break;
 			}
@@ -257,19 +263,19 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				reference = GameFactory::GetObject(getFrom<double, unsigned int>(info.at(1)));
 				vector<unsigned char>* data = getFrom<double, vector<unsigned char>*>(result);
 				GetRemoveAllItemsEx(reference, *data);
-				FutureSet<bool>(shared, true);
+				FutureSet(shared, true);
 				delete data;
 				break;
 			}
 
 			case Fallout3::Func_GetBaseObject:
 			case FalloutNV::Func_GetBaseObject:
-				FutureSet<unsigned int>(shared, getFrom<double, unsigned int>(result));
+				FutureSet(shared, getFrom<double, unsigned int>(result));
 				break;
 
 			case Fallout3::Func_GetRefCount:
 			case FalloutNV::Func_GetRefCount:
-				FutureSet<unsigned int>(shared, result);
+				FutureSet(shared, static_cast<unsigned int>(result));
 				break;
 
 			case Fallout3::Func_SetRefCount:
@@ -327,7 +333,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case FalloutNV::Func_CenterOnWorld:
 			case Fallout3::Func_Load:
 			case FalloutNV::Func_Load:
-				FutureSet<bool>(shared, true);
+				FutureSet(shared, true);
 				break;
 
 			case Fallout3::Func_SetName:
@@ -428,7 +434,7 @@ void Game::Startup()
 }
 
 template <typename T>
-void Game::FutureSet(const weak_ptr<Lockable>& data, T t)
+void Game::FutureSet(const weak_ptr<Lockable>& data, T&& t)
 {
 	shared_ptr<Lockable> shared = data.lock();
 	Lockable* locked = shared.get();
@@ -441,11 +447,9 @@ void Game::FutureSet(const weak_ptr<Lockable>& data, T t)
 	if (store == nullptr)
 		throw VaultException("Storage is corrupted");
 
-	store->set(t);
+	(**store) = move(t);
 	store->set_promise();
 }
-template void Game::FutureSet(const weak_ptr<Lockable>& data, unsigned int t);
-template void Game::FutureSet(const weak_ptr<Lockable>& data, bool t);
 
 void Game::AsyncDispatch(function<void()>&& func)
 {
@@ -786,7 +790,6 @@ void Game::NewItem(FactoryObject& reference)
 void Game::NewContainer(FactoryObject& reference)
 {
 	NewObject(reference);
-	RemoveAllItemsEx(reference);
 
 	Container* container = vaultcast<Container>(reference);
 	vector<FactoryObject> items = GameFactory::GetMultiple(vector<NetworkID>(container->GetItemList().begin(), container->GetItemList().end()));
@@ -1388,8 +1391,6 @@ void Game::RemoveAllItemsEx(FactoryObject& reference)
 	{
 		throw VaultException("Obtaining of all items of %llu for RemoveAllItemsEx failed (%s)", id, e.what());
 	}
-
-	reference = GameFactory::GetObject(id);
 }
 
 void Game::SetRefCount(const FactoryObject& reference, unsigned int key)
@@ -1515,6 +1516,39 @@ Game::CellDiff Game::ScanCell(unsigned int type)
 	catch (exception& e)
 	{
 		throw VaultException("Scan of player cell with type %d failed (%s)", type, e.what());
+	}
+
+	return diff;
+}
+
+pair<ContainerDiffNet, GameDiff> Game::ScanContainer(FactoryObject& reference)
+{
+	Container* container = vaultcast<Container>(reference);
+
+	if (!container)
+		throw VaultException("Object with reference %08X is not a Container", reference->GetReference());
+
+	auto store = make_shared<Shared<pair<ContainerDiffNet, GameDiff>>>();
+	unsigned int key = Lockable::Share(store);
+
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("ScanContainer", {container->GetReferenceParam()}, key);
+
+	Interface::EndDynamic();
+
+	NetworkID id = container->GetNetworkID();
+	GameFactory::LeaveReference(reference);
+
+	pair<ContainerDiffNet, GameDiff> diff;
+
+	try
+	{
+		diff = store->get_future(chrono::seconds(5));
+	}
+	catch (exception& e)
+	{
+		throw VaultException("Scan of container inventory %llu failed (%s)", id, e.what());
 	}
 
 	return diff;
@@ -2336,38 +2370,12 @@ void Game::ScanContainer(const FactoryObject& reference, vector<unsigned char>& 
 	{
 		unsigned int key = result->Lock();
 
-#pragma pack(push, 1)
-		struct ItemInfo
+		auto _result = GetScanContainer(reference, data);
+
+		if (!_result.first.first.empty() || !_result.first.second.empty())
 		{
-			unsigned int baseID;
-			unsigned int count;
-			unsigned int equipped;
-			double condition;
-		};
-#pragma pack(pop)
-
-		ItemInfo* items = reinterpret_cast<ItemInfo*>(&data[0]);
-		unsigned int count = data.size() / sizeof(ItemInfo);
-
-		FactoryObject _temp = GameFactory::GetObject(GameFactory::CreateInstance(ID_CONTAINER, 0x00000000));
-		Container* temp = vaultcast<Container>(_temp);
-
-		for (unsigned int i = 0; i < count; ++i)
-		{
-			FactoryObject _item = GameFactory::GetObject(GameFactory::CreateInstance(ID_ITEM, items[i].baseID));
-			Item* item = vaultcast<Item>(_item);
-			item->SetItemCount(items[i].count);
-			item->SetItemEquipped(static_cast<bool>(items[i].equipped));
-			item->SetItemCondition(items[i].condition);
-			temp->AddItem(item->GetNetworkID());
-		}
-
-		ContainerDiff diff = container->Compare(temp->GetNetworkID());
-
-		if (!diff.first.empty() || !diff.second.empty())
-		{
-			ContainerDiffNet ndiff = Container::ToNetDiff(diff);
-			GameDiff gdiff = container->ApplyDiff(diff);
+			auto& ndiff = _result.first;
+			auto& gdiff = _result.second;
 
 			gdiff.remove_if([](const pair<unsigned int, Diff>& diff) { return !diff.second.count; });
 
@@ -2382,224 +2390,265 @@ void Game::ScanContainer(const FactoryObject& reference, vector<unsigned char>& 
 				{
 					try
 					{
+						{
+							vector<NetworkID> reference = GameFactory::GetIDObjectTypes(ALL_CONTAINERS);
+							unsigned int cell = vaultcast<Container>(GameFactory::GetObject(id))->GetGameCell();
+
+							for (const NetworkID& _id : reference)
+							{
+								if (_id == id)
+									continue;
+
+								FactoryObject _reference = GameFactory::GetObject(_id);
+								Container* container = vaultcast<Container>(_reference);
+
+								if (container->GetGameCell() != cell)
+									continue;
+
+								auto result = Game::ScanContainer(_reference);
+
+								if (!result.first.first.empty() || !result.first.second.empty())
+								{
+									Network::Queue(NetworkResponse{Network::CreateResponse(
+										PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(_id, result.first, ContainerDiffNet()),
+										HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+									});
+
+									for (const auto& _diff : result.second)
+										for (auto& diff : gdiff)
+											if (_diff.first == diff.first && _diff.second.count)
+												if ((_diff.second.count > 0 && diff.second.count < 0 && (_diff.second.count + diff.second.count) >= 0) ||
+													(_diff.second.count < 0 && diff.second.count > 0 && (_diff.second.count + diff.second.count) <= 0))
+													diff.second.count += _diff.second.count;
+								}
+							}
+
+							gdiff.remove_if([](const pair<unsigned int, Diff>& diff) { return !diff.second.count; });
+						}
+
 						ContainerDiffNet ndiff;
-						CellDiff cdiff = ScanCell(FormType_Inventory);
-						map<unsigned int, pair<GameDiff::iterator, list<pair<unsigned int, unsigned int>>>> found;
 
-						const auto best_match = [](decltype(found)::value_type& found)
+						if (!gdiff.empty())
 						{
-							auto& data = found.second.second;
-							data.sort();
+							CellDiff cdiff = ScanCell(FormType_Inventory);
+							map<unsigned int, pair<GameDiff::iterator, list<pair<unsigned int, unsigned int>>>> found;
 
-							unsigned int count = abs(found.second.first->second.count);
-							pair<unsigned int, vector<pair<unsigned int, unsigned int>>> result;
-							result.first = UINT_MAX;
-
-							do
+							const auto best_match = [](decltype(found)::value_type& found)
 							{
-								unsigned int num = 0;
-								signed int i = count;
+								auto& data = found.second.second;
+								data.sort();
 
-								for (const auto& ref : data)
+								unsigned int count = abs(found.second.first->second.count);
+								pair<unsigned int, vector<pair<unsigned int, unsigned int>>> result;
+								result.first = UINT_MAX;
+
+								do
 								{
-									i -= ref.second;
-									++num;
+									unsigned int num = 0;
+									signed int i = count;
 
-									if (i < 0)
-										num = 0;
-
-									if (i <= 0)
-										break;
-								}
-
-								if (!i && result.first > num)
-								{
-									auto it = data.begin(); advance(it, num);
-									result.second.assign(data.begin(), it);
-								}
-							} while (next_permutation(data.begin(), data.end()));
-
-							return result;
-						};
-
-						for (unsigned int refID : cdiff.first)
-						{
-							unsigned int baseID = Game::GetBase(refID);
-
-							auto it = find_if(gdiff.begin(), gdiff.end(), [=](const pair<unsigned int, Diff>& diff) { return diff.first == baseID; });
-
-							if (it != gdiff.end())
-							{
-								if (it->second.count < 0)
-								{
-									unsigned int count = Game::GetRefCount(refID);
-
-									if (static_cast<signed int>(count) + it->second.count <= 0)
+									for (const auto& ref : data)
 									{
-										auto& data = found[baseID];
-										data.first = it;
-										data.second.emplace_back(refID, count);
+										i -= ref.second;
+										++num;
+
+										if (i < 0)
+											num = 0;
+
+										if (i <= 0)
+											break;
 									}
-#ifdef VAULTMP_DEBUG
-									else if (debug)
-										debug->PrintFormat("Item match (drop): could not match %08X (baseID: %08X), count %d", true, refID, baseID, count);
-#endif
-								}
-							}
-#ifdef VAULTMP_DEBUG
-							else if (debug)
-								debug->PrintFormat("Item match (drop): could not match %08X (baseID: %08X) at all", true, refID, baseID);
-#endif
-						}
 
-						if (!found.empty())
-						{
-							double X, Y, Z;
-							unsigned int cell;
+									if (!i && result.first > num)
+									{
+										auto it = data.begin(); advance(it, num);
+										result.second.assign(data.begin(), it);
+										result.first = num;
+									}
+								} while (next_permutation(data.begin(), data.end()));
 
+								return result;
+							};
+
+							for (unsigned int refID : cdiff.first)
 							{
-								FactoryObject reference = GameFactory::GetObject(id);
-								Container* container = vaultcast<Container>(reference);
+								unsigned int baseID = Game::GetBase(refID);
 
-								static const double spawn_offset = 100.0;
+								auto it = find_if(gdiff.begin(), gdiff.end(), [=](const pair<unsigned int, Diff>& diff) { return diff.first == baseID; });
 
-								// maybe better synchronically obtain XYZ for correctness
-								auto offset = container->GetOffset(spawn_offset);
+								if (it != gdiff.end())
+								{
+									if (it->second.count < 0)
+									{
+										unsigned int count = Game::GetRefCount(refID);
 
-								X = offset.first;
-								Y = offset.second;
-								Z = container->GetGamePos(Axis_Z) + 70.0;
-
-								cell = container->GetGameCell();
+										if (static_cast<signed int>(count) + it->second.count <= 0)
+										{
+											auto& data = found[baseID];
+											data.first = it;
+											data.second.emplace_back(refID, count);
+										}
+	#ifdef VAULTMP_DEBUG
+										else if (debug)
+											debug->PrintFormat("Item match (drop): could not match %08X (baseID: %08X), count %d", true, refID, baseID, count);
+	#endif
+									}
+								}
+	#ifdef VAULTMP_DEBUG
+								else if (debug)
+									debug->PrintFormat("Item match (drop): could not match %08X (baseID: %08X) at all", true, refID, baseID);
+	#endif
 							}
 
-							for (auto& _found : found)
+							if (!found.empty())
 							{
-								auto result = best_match(_found);
+								double X, Y, Z;
+								unsigned int cell;
 
-#ifdef VAULTMP_DEBUG
-								if (debug)
 								{
-									unsigned int count = abs(_found.second.first->second.count);
-
-									if (!result.second.empty())
-										debug->PrintFormat("Player dropped %08X (count %d, stacks %d)", true, _found.first, count, result.second.size());
-									else
-										debug->PrintFormat("Could not find a matching set for item drop %08X (count %d)", true, _found.first, count);
-								}
-#endif
-
-								for (const auto& _result : result.second)
-								{
-									NetworkID id = GameFactory::CreateInstance(ID_ITEM, _result.first, _found.first);
 									FactoryObject reference = GameFactory::GetObject(id);
+									Container* container = vaultcast<Container>(reference);
 
-									Item* item = vaultcast<Item>(reference);
+									static const double spawn_offset = 100.0;
 
-									item->SetGamePos(Axis_X, X);
-									item->SetGamePos(Axis_Y, Y);
-									item->SetGamePos(Axis_Z, Z);
-									item->SetNetworkPos(Axis_X, X);
-									item->SetNetworkPos(Axis_Y, Y);
-									item->SetNetworkPos(Axis_Z, Z);
-									item->SetNetworkCell(cell);
-									item->SetGameCell(cell);
+									// maybe better synchronically obtain XYZ for correctness
+									auto offset = container->GetOffset(spawn_offset);
 
-									item->SetItemCount(_result.second);
-									item->SetItemCondition(_found.second.first->second.condition);
+									X = offset.first;
+									Y = offset.second;
+									Z = container->GetGamePos(Axis_Z) + 70.0;
 
-									ndiff.second.emplace_back(item->toPacket());
+									cell = container->GetGameCell();
 								}
 
-								gdiff.erase(_found.second.first);
-							}
-						}
-
-						found.clear();
-
-						for (unsigned int refID : cdiff.second)
-						{
-							FactoryObject reference;
-
-							try
-							{
-								reference = GameFactory::GetObject(refID);
-							}
-							catch (...)
-							{
-#ifdef VAULTMP_DEBUG
-								if (debug)
-									debug->PrintFormat("Item match (pickup): could not find %08X", true, refID);
-#endif
-								continue;
-							}
-
-							Item* item = vaultcast<Item>(reference);
-
-							unsigned int baseID = item->GetBase();
-
-							auto it = find_if(gdiff.begin(), gdiff.end(), [=](const pair<unsigned int, Diff>& diff) { return diff.first == baseID; });
-
-							if (it != gdiff.end())
-							{
-								if (it->second.count > 0)
+								for (auto& _found : found)
 								{
-									unsigned int count = item->GetItemCount();
+									auto result = best_match(_found);
 
-									if (it->second.count - static_cast<signed int>(count) >= 0)
+	#ifdef VAULTMP_DEBUG
+									if (debug)
 									{
-										auto& data = found[baseID];
-										data.first = it;
-										data.second.emplace_back(refID, count);
+										unsigned int count = abs(_found.second.first->second.count);
+
+										if (!result.second.empty())
+											debug->PrintFormat("Player dropped %08X (count %d, stacks %d)", true, _found.first, count, result.second.size());
+										else
+											debug->PrintFormat("Could not find a matching set for item drop %08X (count %d)", true, _found.first, count);
 									}
-#ifdef VAULTMP_DEBUG
-									else if (debug)
-										debug->PrintFormat("Item match (pickup): could not match %08X (baseID: %08X), count %d", true, refID, baseID, count);
-#endif
+	#endif
+
+									for (const auto& _result : result.second)
+									{
+										NetworkID id = GameFactory::CreateInstance(ID_ITEM, _result.first, _found.first);
+										FactoryObject reference = GameFactory::GetObject(id);
+
+										Item* item = vaultcast<Item>(reference);
+
+										item->SetGamePos(Axis_X, X);
+										item->SetGamePos(Axis_Y, Y);
+										item->SetGamePos(Axis_Z, Z);
+										item->SetNetworkPos(Axis_X, X);
+										item->SetNetworkPos(Axis_Y, Y);
+										item->SetNetworkPos(Axis_Z, Z);
+										item->SetNetworkCell(cell);
+										item->SetGameCell(cell);
+
+										item->SetItemCount(_result.second);
+										item->SetItemCondition(_found.second.first->second.condition);
+
+										ndiff.second.emplace_back(item->toPacket());
+									}
+
+									gdiff.erase(_found.second.first);
 								}
 							}
-#ifdef VAULTMP_DEBUG
-							else if (debug)
-								debug->PrintFormat("Item match (pickup): could not match %08X (baseID: %08X) at all", true, refID, baseID);
-#endif
-						}
 
-						if (!found.empty())
-						{
-							for (auto& _found : found)
+							found.clear();
+
+							for (unsigned int refID : cdiff.second)
 							{
-								auto result = best_match(_found);
+								FactoryObject reference;
 
-#ifdef VAULTMP_DEBUG
-								if (debug)
+								try
 								{
-									unsigned int count = abs(_found.second.first->second.count);
-
-									if (!result.second.empty())
-										debug->PrintFormat("Player picked up %08X (count %d, stacks %d)", true, _found.first, count, result.second.size());
-									else
-										debug->PrintFormat("Could not find a matching set for item pickup %08X (count %d)", true, _found.first, count);
+									reference = GameFactory::GetObject(refID);
 								}
-#endif
-
-								for (const auto& _result : result.second)
+								catch (...)
 								{
-									NetworkID id = GameFactory::LookupNetworkID(_result.first);
-									ndiff.first.emplace_back(id);
-									GameFactory::DestroyInstance(id);
+	#ifdef VAULTMP_DEBUG
+									if (debug)
+										debug->PrintFormat("Item match (pickup): could not find %08X", true, refID);
+	#endif
+									continue;
 								}
 
-								gdiff.erase(_found.second.first);
+								Item* item = vaultcast<Item>(reference);
+
+								unsigned int baseID = item->GetBase();
+
+								auto it = find_if(gdiff.begin(), gdiff.end(), [=](const pair<unsigned int, Diff>& diff) { return diff.first == baseID; });
+
+								if (it != gdiff.end())
+								{
+									if (it->second.count > 0)
+									{
+										unsigned int count = item->GetItemCount();
+
+										if (it->second.count - static_cast<signed int>(count) >= 0)
+										{
+											auto& data = found[baseID];
+											data.first = it;
+											data.second.emplace_back(refID, count);
+										}
+	#ifdef VAULTMP_DEBUG
+										else if (debug)
+											debug->PrintFormat("Item match (pickup): could not match %08X (baseID: %08X), count %d", true, refID, baseID, count);
+	#endif
+									}
+								}
+	#ifdef VAULTMP_DEBUG
+								else if (debug)
+									debug->PrintFormat("Item match (pickup): could not match %08X (baseID: %08X) at all", true, refID, baseID);
+	#endif
 							}
-						}
 
-#ifdef VAULTMP_DEBUG
-						if (debug)
-						{
-							for (const auto& _gdiff : gdiff)
-								debug->PrintFormat("Could not match drop / pickup %08X (count %d)", true, _gdiff.first, _gdiff.second.count);
+							if (!found.empty())
+							{
+								for (auto& _found : found)
+								{
+									auto result = best_match(_found);
+
+	#ifdef VAULTMP_DEBUG
+									if (debug)
+									{
+										unsigned int count = abs(_found.second.first->second.count);
+
+										if (!result.second.empty())
+											debug->PrintFormat("Player picked up %08X (count %d, stacks %d)", true, _found.first, count, result.second.size());
+										else
+											debug->PrintFormat("Could not find a matching set for item pickup %08X (count %d)", true, _found.first, count);
+									}
+	#endif
+
+									for (const auto& _result : result.second)
+									{
+										NetworkID id = GameFactory::LookupNetworkID(_result.first);
+										ndiff.first.emplace_back(id);
+										GameFactory::DestroyInstance(id);
+									}
+
+									gdiff.erase(_found.second.first);
+								}
+							}
+
+	#ifdef VAULTMP_DEBUG
+							if (debug)
+							{
+								for (const auto& _gdiff : gdiff)
+									debug->PrintFormat("Could not match drop / pickup %08X (count %d)", true, _gdiff.first, _gdiff.second.count);
+							}
+	#endif
 						}
-#endif
 
 						Network::Queue(NetworkResponse{Network::CreateResponse(
 							PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, *_ndiff, ndiff),
@@ -2620,11 +2669,57 @@ void Game::ScanContainer(const FactoryObject& reference, vector<unsigned char>& 
 				});
 		}
 
-		GameFactory::DestroyInstance(_temp);
-
 		if (key)
 			result->Unlock(key);
 	}
+}
+
+pair<ContainerDiffNet, GameDiff> Game::GetScanContainer(const FactoryObject& reference, vector<unsigned char>& data)
+{
+	Container* container = vaultcast<Container>(reference);
+
+	if (!container)
+		throw VaultException("Object with reference %08X is not a Container", reference->GetReference());
+
+	pair<ContainerDiffNet, GameDiff> result;
+
+#pragma pack(push, 1)
+	struct ItemInfo
+	{
+		unsigned int baseID;
+		unsigned int count;
+		unsigned int equipped;
+		double condition;
+	};
+#pragma pack(pop)
+
+	ItemInfo* items = reinterpret_cast<ItemInfo*>(&data[0]);
+	unsigned int count = data.size() / sizeof(ItemInfo);
+
+	FactoryObject _temp = GameFactory::GetObject(GameFactory::CreateInstance(ID_CONTAINER, 0x00000000));
+	Container* temp = vaultcast<Container>(_temp);
+
+	for (unsigned int i = 0; i < count; ++i)
+	{
+		FactoryObject _item = GameFactory::GetObject(GameFactory::CreateInstance(ID_ITEM, items[i].baseID));
+		Item* item = vaultcast<Item>(_item);
+		item->SetItemCount(items[i].count);
+		item->SetItemEquipped(static_cast<bool>(items[i].equipped));
+		item->SetItemCondition(items[i].condition);
+		temp->AddItem(item->GetNetworkID());
+	}
+
+	ContainerDiff diff = container->Compare(temp->GetNetworkID());
+
+	if (!diff.first.empty() || !diff.second.empty())
+	{
+		result.first = Container::ToNetDiff(diff);
+		result.second = container->ApplyDiff(diff);
+	}
+
+	GameFactory::DestroyInstance(_temp);
+
+	return result;
 }
 
 void Game::GetRemoveAllItemsEx(const FactoryObject& reference, vector<unsigned char>& data)
