@@ -32,7 +32,7 @@ void GameFactory::Initialize(unsigned char game)
 			dbWeapons.initialize(DB_FALLOUT3, {"weapons"});
 			dbRaces.initialize(DB_FALLOUT3, {"races"});
 			dbNpcs.initialize(DB_FALLOUT3, {"npcs"});
-			dbContainers.initialize(DB_FALLOUT3, {"containers"});
+			dbContainers.initialize(DB_FALLOUT3, {"npcitems", "contitems"});
 			break;
 
 		case NEWVEGAS:
@@ -41,7 +41,7 @@ void GameFactory::Initialize(unsigned char game)
 			dbWeapons.initialize(DB_NEWVEGAS, {"weapons"});
 			dbRaces.initialize(DB_NEWVEGAS, {"races"});
 			dbNpcs.initialize(DB_NEWVEGAS, {"npcs"});
-			dbContainers.initialize(DB_NEWVEGAS, {"containers"});
+			dbContainers.initialize(DB_NEWVEGAS, {"npcitems", "contitems"});
 			break;
 
 		default:
