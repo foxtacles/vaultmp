@@ -20,6 +20,20 @@ using namespace std;
 class NPC
 {
 	private:
+		enum TplFlags : unsigned short
+		{
+			Traits    = 0x0001,
+			Stats     = 0x0002,
+			Factions  = 0x0004,
+			Effects   = 0x0008,
+			AIData    = 0x0010,
+			AIPack    = 0x0020,
+			Model     = 0x0040,
+			Base      = 0x0080,
+			Inventory = 0x0100,
+			Script    = 0x0200,
+		};
+
 		static unordered_map<unsigned int, const NPC*> npcs;
 
 		unsigned int baseID;

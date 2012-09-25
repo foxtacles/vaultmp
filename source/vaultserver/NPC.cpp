@@ -82,26 +82,71 @@ unsigned int NPC::GetBase() const
 
 bool NPC::IsEssential() const
 {
+	if (template_ && (flags & TplFlags::Base))
+	{
+		try
+		{
+			return Lookup(template_).IsEssential();
+		}
+		catch (...) {}
+	}
+
 	return essential;
 }
 
 bool NPC::IsFemale() const
 {
+	if (template_ && (flags & TplFlags::Traits))
+	{
+		try
+		{
+			return Lookup(template_).IsFemale();
+		}
+		catch (...) {}
+	}
+
 	return ((new_female != -1) ? new_female : female);
 }
 
 bool NPC::IsOriginalFemale() const
 {
+	if (template_ && (flags & TplFlags::Traits))
+	{
+		try
+		{
+			return Lookup(template_).IsOriginalFemale();
+		}
+		catch (...) {}
+	}
+
 	return female;
 }
 
 unsigned int NPC::GetRace() const
 {
+	if (template_ && (flags & TplFlags::Traits))
+	{
+		try
+		{
+			return Lookup(template_).GetRace();
+		}
+		catch (...) {}
+	}
+
 	return (new_race ? new_race : race);
 }
 
 unsigned int NPC::GetOriginalRace() const
 {
+	if (template_ && (flags & TplFlags::Traits))
+	{
+		try
+		{
+			return Lookup(template_).GetOriginalRace();
+		}
+		catch (...) {}
+	}
+
 	return race;
 }
 
@@ -117,23 +162,57 @@ unsigned short NPC::GetFlags() const
 
 unsigned int NPC::GetDeathItem() const
 {
+	if (template_ && (flags & TplFlags::Traits))
+	{
+		try
+		{
+			return Lookup(template_).GetDeathItem();
+		}
+		catch (...) {}
+	}
+
 	return deathitem;
 }
 
 const vector<const BaseContainer*>& NPC::GetBaseContainer() const
 {
-	// traverse base templates of NPC
+	if (template_ && (flags & TplFlags::Inventory))
+	{
+		try
+		{
+			return Lookup(template_).GetBaseContainer();
+		}
+		catch (...) {}
+	}
 
 	return BaseContainer::Lookup(baseID);
 }
 
 void NPC::SetRace(unsigned int race) const
 {
+	if (template_ && (flags & TplFlags::Traits))
+	{
+		try
+		{
+			return Lookup(template_).SetRace(race);
+		}
+		catch (...) {}
+	}
+
 	Race::Lookup(race);
 	this->new_race = race;
 }
 
 void NPC::SetFemale(bool female) const
 {
+	if (template_ && (flags & TplFlags::Traits))
+	{
+		try
+		{
+			return Lookup(template_).SetFemale(female);
+		}
+		catch (...) {}
+	}
+
 	this->new_female = female;
 }

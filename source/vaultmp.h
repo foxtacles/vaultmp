@@ -18,7 +18,7 @@ static const unsigned int NVSE_VER0212                 =   0x0006B1BB;
 
 static const unsigned int VAULTMP_DLL                  =   0x0002E482;
 static const unsigned int XLIVE_PATCH                  =   0x0000D57E;
-static const unsigned int VAULTMP_F3                   =   0x51209E82;
+static const unsigned int VAULTMP_F3                   =   0x2B3944CB;
 static const unsigned int VAULTMP_FNV                  =   0xF8819410;
 
 static const unsigned char FALLOUT3             =   0x01;

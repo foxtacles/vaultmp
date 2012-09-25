@@ -155,6 +155,23 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 
+	const vector<const BaseContainer*>& container = npc.GetBaseContainer();
+
+	for (const auto* item : container)
+	{
+		// TODO see above
+		if (item->GetItem() & 0xFF000000)
+			continue;
+
+		ContainerDiff diff = player->AddItem(item->GetItem(), item->GetCount(), item->GetCondition(), true);
+
+		response.emplace_back(Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff), ContainerDiffNet()),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+
+		player->ApplyDiff(diff);
+	}
+
 	response.emplace_back(Network::CreateResponse(
 		player->toPacket(),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(client)));
