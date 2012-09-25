@@ -1,0 +1,29 @@
+The following license (MIT License) applies to all files in this repository, except for
+  [1] source/ufmod.obj
+  [2] source/ufmod.h
+  [3] source/the_wasteland.xm
+  [4] source/stack_trace
+  [5] source/RakNet
+  [6] source/iniparser
+  [7] source/vaultserver/amx
+  [8] source/vaultserver/time
+  [9] source/vaultserver/sqlite
+
+which fall under different licenses:
+  [1], [2] unknown license, open-source / freely available
+  [3] unknown license, freely available
+  [4] Boost Software License, Version 1.0
+  [5] RakNet Indy License, Version 1.03 (granted to Christan Semmler, csemmler.goe@googlemail.com)
+  [6], [8] MIT License
+  [7] Apache License, Version 2.0
+  [9] Public domain
+
+Copyright (c) 2010-2012 Christian Semmler
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
