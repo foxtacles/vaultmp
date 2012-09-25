@@ -26,6 +26,8 @@ class NPC
 		bool essential;
 		bool female;
 		unsigned int race;
+		unsigned int template_;
+		unsigned short flags;
 		unsigned int deathitem;
 
 		mutable signed int new_female;
@@ -44,6 +46,8 @@ class NPC
 		bool IsOriginalFemale() const;
 		unsigned int GetRace() const;
 		unsigned int GetOriginalRace() const;
+		unsigned int GetTemplate() const;
+		unsigned short GetFlags() const;
 		unsigned int GetDeathItem() const;
 		const vector<const BaseContainer*>& GetBaseContainer() const;
 

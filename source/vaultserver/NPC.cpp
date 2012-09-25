@@ -5,10 +5,10 @@ unordered_map<unsigned int, const NPC*> NPC::npcs;
 
 NPC::NPC(const string& table, sqlite3_stmt* stmt) : new_female(-1), new_race(0x00000000)
 {
-	if (sqlite3_column_count(stmt) != 6)
+	if (sqlite3_column_count(stmt) != 8)
 		throw VaultException("Malformed input database (NPCs): %s", table.c_str());
 
-	unsigned int dlc = static_cast<unsigned int>(sqlite3_column_int(stmt, 5));
+	unsigned int dlc = static_cast<unsigned int>(sqlite3_column_int(stmt, 7));
 	// if DLC enabled
 
 	dlc <<= 24;
@@ -17,12 +17,20 @@ NPC::NPC(const string& table, sqlite3_stmt* stmt) : new_female(-1), new_race(0x0
 	essential = static_cast<bool>(sqlite3_column_int(stmt, 1));
 	female = static_cast<bool>(sqlite3_column_int(stmt, 2));
 	race = static_cast<unsigned int>(sqlite3_column_int(stmt, 3));
-	deathitem = static_cast<unsigned int>(sqlite3_column_int(stmt, 4));
+	template_ = static_cast<unsigned int>(sqlite3_column_int(stmt, 4));
+	flags = static_cast<unsigned short>(sqlite3_column_int(stmt, 5));
+	deathitem = static_cast<unsigned int>(sqlite3_column_int(stmt, 6));
 
 	if (race & 0xFF000000)
 	{
 		race &= 0x00FFFFFF;
 		race |= dlc;
+	}
+
+	if (template_ & 0xFF000000)
+	{
+		template_ &= 0x00FFFFFF;
+		template_ |= dlc;
 	}
 
 	if (deathitem & 0xFF000000)
@@ -95,6 +103,16 @@ unsigned int NPC::GetRace() const
 unsigned int NPC::GetOriginalRace() const
 {
 	return race;
+}
+
+unsigned int NPC::GetTemplate() const
+{
+	return template_;
+}
+
+unsigned short NPC::GetFlags() const
+{
+	return flags;
 }
 
 unsigned int NPC::GetDeathItem() const
