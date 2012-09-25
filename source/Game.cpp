@@ -1820,15 +1820,9 @@ void Game::net_SetActorRace(const FactoryObject& reference, unsigned int race, s
 	if (!actor)
 		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
-	Lockable* result;
-
-	result = actor->SetActorRace(race);
-
-	if (result)
-	{
-		actor->SetActorAge(age); // delta from original race to new race
-		SetActorRace(reference, delta_age, result->Lock()); // using delta from current race to new race
-	}
+	actor->SetActorRace(race);
+	actor->SetActorAge(age); // delta from original race to new race
+	SetActorRace(reference, delta_age); // using delta from current race to new race
 }
 
 void Game::net_SetActorFemale(const FactoryObject& reference, bool female)
@@ -1838,12 +1832,8 @@ void Game::net_SetActorFemale(const FactoryObject& reference, bool female)
 	if (!actor)
 		throw VaultException("Object with reference %08X is not an Actor", reference->GetReference());
 
-	Lockable* result;
-
-	result = actor->SetActorFemale(female);
-
-	if (result)
-		SetActorFemale(reference, result->Lock());
+	actor->SetActorFemale(female);
+	SetActorFemale(reference);
 }
 
 void Game::net_SetActorDead(FactoryObject& reference, bool dead, unsigned short limbs, signed char cause)
