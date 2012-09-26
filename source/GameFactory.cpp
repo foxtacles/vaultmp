@@ -115,10 +115,15 @@ unsigned int GameFactory::GetObjectCount(unsigned char type) noexcept
 
 FactoryObject GameFactory::GetObject(NetworkID id)
 {
+	Reference* reference;
+	unsigned char type;
+
 	cs.StartSession();
 
-	Reference* reference = Network::Manager()->GET_OBJECT_FROM_ID<Reference*>(id);
-	unsigned char type = GetShared(reference)->second;
+	reference = Network::Manager()->GET_OBJECT_FROM_ID<Reference*>(id);
+
+	if (reference)
+		type = GetShared(reference)->second;
 
 	cs.EndSession();
 
@@ -130,14 +135,13 @@ FactoryObject GameFactory::GetObject(NetworkID id)
 
 FactoryObject GameFactory::GetObject(unsigned int refID)
 {
+	Reference* reference;
+	unsigned char type;
 	ReferenceList::iterator it;
 
 	cs.StartSession();
 
 	for (it = instances.begin(); it != instances.end() && it->first->GetReference() != refID; ++it);
-
-	Reference* reference;
-	unsigned char type;
 
 	if (it != instances.end())
 	{
@@ -145,10 +149,7 @@ FactoryObject GameFactory::GetObject(unsigned int refID)
 		type = it->second;
 	}
 	else
-	{
 		reference = nullptr;
-		type = 0x00;
-	}
 
 	cs.EndSession();
 
@@ -238,45 +239,37 @@ vector<FactoryObject> GameFactory::GetMultiple(const vector<unsigned int>& objec
 NetworkID GameFactory::LookupNetworkID(unsigned int refID)
 {
 	NetworkID id;
+	ReferenceList::iterator it;
 
 	cs.StartSession();
 
-	try
-	{
-		ReferenceList::iterator it;
-
-		for (it = instances.begin(); it != instances.end() && it->first->GetReference() != refID; ++it);
-		id = (it != instances.end() ? it->first->GetNetworkID() : throw VaultException("Unknown object with reference %08X", refID));
-	}
-	catch (...)
-	{
-		cs.EndSession();
-		throw;
-	}
+	for (it = instances.begin(); it != instances.end() && it->first->GetReference() != refID; ++it);
+	id = (it != instances.end() ? it->first->GetNetworkID() : 0);
 
 	cs.EndSession();
+
+	if (!id)
+		throw VaultException("Unknown object with reference %08X", refID);
 
 	return id;
 }
 
 unsigned int GameFactory::LookupRefID(NetworkID id)
 {
+	Reference* reference;
 	unsigned int refID;
 
 	cs.StartSession();
 
-	try
-	{
-		Reference* reference = Network::Manager()->GET_OBJECT_FROM_ID<Reference*>(id);
-		refID = (reference != nullptr ? reference->GetReference() : throw VaultException("Unknown object with NetworkID %llu", id));
-	}
-	catch (...)
-	{
-		cs.EndSession();
-		throw;
-	}
+	reference = Network::Manager()->GET_OBJECT_FROM_ID<Reference*>(id);
+
+	if (reference)
+		refID = reference->GetReference();
 
 	cs.EndSession();
+
+	if (!reference)
+		throw VaultException("Unknown object with NetworkID %llu", id);
 
 	return refID;
 }
