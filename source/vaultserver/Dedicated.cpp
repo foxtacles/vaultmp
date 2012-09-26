@@ -397,7 +397,7 @@ std::thread Dedicated::InitializeServer(unsigned int port, unsigned int connecti
 	Dedicated::query = query;
 	Dedicated::fileserve = fileserve;
 	Dedicated::fileslots = fileslots;
-	Dedicated::self->SetServerPlayers(pair<int, int>(0, Dedicated::connections));
+	Dedicated::self->SetServerPlayers(make_pair(0u, Dedicated::connections));
 
 	hDedicatedThread = std::thread(DedicatedThread);
 

@@ -198,7 +198,7 @@ NetworkResponse Server::Disconnect(RakNetGUID guid, Reason reason)
 			PacketFactory::Create<pTypes::ID_OBJECT_REMOVE>(id),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr)));
 
-		Dedicated::self->SetServerPlayers(pair<int, int>(Client::GetClientCount(), Dedicated::connections));
+		Dedicated::self->SetServerPlayers(make_pair(Client::GetClientCount(), Dedicated::connections));
 	}
 
 	return response;

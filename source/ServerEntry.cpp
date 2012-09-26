@@ -2,48 +2,39 @@
 
 using namespace std;
 
-ServerEntry::ServerEntry(unsigned char game)
+ServerEntry::ServerEntry(unsigned char game) : name("Vault-Tec Multiplayer Mod server"), map("default"), ping(USHRT_MAX)
 {
-	this->game = game;
-	this->name = "Vault-Tec Multiplayer Mod server";
-	this->map = "default";
-	this->players = pair<int, int>(0, 0);
-	this->ping = USHRT_MAX;
-	this->SetServerRule("game", game == FALLOUT3 ? "Fallout 3" : game == NEWVEGAS ? "Fallout NV" : "undefined");
-}
-
-ServerEntry::ServerEntry(string name, string map, pair<int, int> players, int ping, unsigned char game)
-{
-	this->game = game;
-	SetServerName(name);
-	SetServerMap(map);
-	SetServerPlayers(players);
-	SetServerPing(ping);
 	SetGame(game);
 }
 
-void ServerEntry::SetServerName(string name)
+ServerEntry::ServerEntry(const string& name, const string& map, const pair<unsigned int, unsigned int>& players, unsigned int ping, unsigned char game) : name(name), map(map), players(players), ping(ping)
+{
+	SetGame(game);
+}
+
+void ServerEntry::SetServerName(const string& name)
 {
 	this->name = name;
 }
 
-void ServerEntry::SetServerMap(string map)
+void ServerEntry::SetServerMap(const string& map)
 {
 	this->map = map;
 }
 
-void ServerEntry::SetServerRule(string rule, string value)
+void ServerEntry::SetServerRule(const string& rule, const string& value)
 {
 	this->rules.erase(rule);
-	this->rules.insert(pair<string, string>(rule, value));
+	// emplace
+	this->rules.insert(make_pair(rule, value));
 }
 
-void ServerEntry::SetServerPlayers(pair<int, int> players)
+void ServerEntry::SetServerPlayers(const pair<unsigned int, unsigned int>& players)
 {
 	this->players = players;
 }
 
-void ServerEntry::SetServerPing(int ping)
+void ServerEntry::SetServerPing(unsigned int ping)
 {
 	this->ping = ping;
 }
@@ -54,27 +45,27 @@ void ServerEntry::SetGame(unsigned char game)
 	this->SetServerRule("game", game == FALLOUT3 ? "Fallout 3" : game == NEWVEGAS ? "Fallout NV" : "undefined");
 }
 
-string ServerEntry::GetServerName()
+const string& ServerEntry::GetServerName()
 {
 	return name;
 }
 
-string ServerEntry::GetServerMap()
+const string& ServerEntry::GetServerMap()
 {
 	return map;
 }
 
-map<string, string> ServerEntry::GetServerRules()
+const map<string, string>& ServerEntry::GetServerRules()
 {
 	return rules;
 }
 
-pair<int, int> ServerEntry::GetServerPlayers()
+const pair<unsigned int, unsigned int>& ServerEntry::GetServerPlayers()
 {
 	return players;
 }
 
-int ServerEntry::GetServerPing()
+unsigned int ServerEntry::GetServerPing()
 {
 	return ping;
 }

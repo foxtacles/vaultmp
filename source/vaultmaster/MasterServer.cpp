@@ -70,8 +70,8 @@ void MasterServer::MasterThread()
 						ServerEntry entry = i->second;
 						RakString name(entry.GetServerName().c_str());
 						RakString map(entry.GetServerMap().c_str());
-						int players = entry.GetServerPlayers().first;
-						int playersMax = entry.GetServerPlayers().second;
+						unsigned int players = entry.GetServerPlayers().first;
+						unsigned int playersMax = entry.GetServerPlayers().second;
 						unsigned char game = entry.GetGame();
 						std::map<string, string> rules = entry.GetServerRules();
 
@@ -120,8 +120,8 @@ void MasterServer::MasterThread()
 						ServerEntry entry = i->second;
 						RakString name(entry.GetServerName().c_str());
 						RakString map(entry.GetServerMap().c_str());
-						int players = entry.GetServerPlayers().first;
-						int playersMax = entry.GetServerPlayers().second;
+						unsigned int players = entry.GetServerPlayers().first;
+						unsigned int playersMax = entry.GetServerPlayers().second;
 						unsigned char game = entry.GetGame();
 						std::map<string, string> rules = entry.GetServerRules();
 
@@ -162,7 +162,7 @@ void MasterServer::MasterThread()
 					if (announce)
 					{
 						RakString name, map;
-						int players, playersMax, rsize;
+						unsigned int players, playersMax, rsize;
 						unsigned char game;
 
 						query.Read(name);
@@ -177,7 +177,7 @@ void MasterServer::MasterThread()
 						if (i == serverList.end())
 						{
 							std::pair<std::map<SystemAddress, ServerEntry>::iterator, bool> k;
-							k = serverList.insert(pair<SystemAddress, ServerEntry>(packet->systemAddress, ServerEntry(name.C_String(), map.C_String(), pair<int, int>(players, playersMax), 999, game)));
+							k = serverList.insert(make_pair(packet->systemAddress, ServerEntry(name.C_String(), map.C_String(), make_pair(players, playersMax), 999, game)));
 							entry = &(k.first)->second;
 						}
 
@@ -186,10 +186,10 @@ void MasterServer::MasterThread()
 							entry = &i->second;
 							entry->SetServerName(name.C_String());
 							entry->SetServerMap(map.C_String());
-							entry->SetServerPlayers(pair<int, int>(players, playersMax));
+							entry->SetServerPlayers(make_pair(players, playersMax));
 						}
 
-						for (int j = 0; j < rsize; j++)
+						for (unsigned int j = 0; j < rsize; j++)
 						{
 							RakString key, value;
 							query.Read(key);

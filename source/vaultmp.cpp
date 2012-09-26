@@ -408,7 +408,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 
 		addr.SetBinaryAddress(token);
 
-		ServerEntry entry(addr.ToString(true), "", pair<int, int>(0, 0), USHRT_MAX, 0);
+		ServerEntry entry(addr.ToString(true), "", make_pair(0u, 0u), USHRT_MAX, 0);
 
 		serverList.insert(pair<SystemAddress, ServerEntry>(addr, entry));
 
@@ -869,7 +869,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 											{
 												SystemAddress addr;
 												RakString name, map;
-												int players, playersMax, rsize;
+												unsigned int players, playersMax, rsize;
 												unsigned char game;
 												std::map<string, string> rules;
 
@@ -881,7 +881,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 												query.Read(game);
 												query.Read(rsize);
 
-												ServerEntry entry(name.C_String(), map.C_String(), pair<int, int>(players, playersMax), USHRT_MAX, game);
+												ServerEntry entry(name.C_String(), map.C_String(), make_pair(players, playersMax), USHRT_MAX, game);
 
 												for (int j = 0; j < rsize; j++)
 												{
@@ -934,7 +934,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 											if (query.GetNumberOfUnreadBits() > 0)
 											{
 												RakString name, map;
-												int players, playersMax, rsize;
+												unsigned int players, playersMax, rsize;
 												unsigned char game;
 
 												query.Read(name);
@@ -951,18 +951,18 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 													entry = &i->second;
 													entry->SetServerName(name.C_String());
 													entry->SetServerMap(map.C_String());
-													entry->SetServerPlayers(pair<int, int>(players, playersMax));
+													entry->SetServerPlayers(make_pair(players, playersMax));
 													entry->SetGame(game);
 												}
 
 												else
 												{
 													std::pair<std::map<SystemAddress, ServerEntry>::iterator, bool> k;
-													k = serverList.insert(pair<SystemAddress, ServerEntry>(addr, ServerEntry(name.C_String(), map.C_String(), pair<int, int>(players, playersMax), USHRT_MAX, game)));
+													k = serverList.insert(make_pair(addr, ServerEntry(name.C_String(), map.C_String(), make_pair(players, playersMax), USHRT_MAX, game)));
 													entry = &(k.first)->second;
 												}
 
-												for (int j = 0; j < rsize; j++)
+												for (unsigned int j = 0; j < rsize; j++)
 												{
 													RakString key, value;
 													query.Read(key);
