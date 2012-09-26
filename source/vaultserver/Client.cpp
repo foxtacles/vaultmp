@@ -8,7 +8,8 @@ stack<unsigned int> Client::clientID;
 
 Client::Client(RakNetGUID guid, NetworkID player)
 {
-	clients.insert(pair<RakNetGUID, Client*>(guid, this));
+	// emplace
+	clients.insert(make_pair(guid, this));
 	this->guid = guid;
 	this->player = player;
 	this->ID = clientID.top();
@@ -27,7 +28,7 @@ void Client::SetMaximumClients(unsigned int clients)
 		clientID.push(i);
 }
 
-int Client::GetClientCount()
+unsigned int Client::GetClientCount()
 {
 	return clients.size();
 }

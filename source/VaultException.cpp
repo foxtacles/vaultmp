@@ -4,10 +4,8 @@
 Debug* VaultException::debug;
 #endif
 
-VaultException::VaultException(string error)
+VaultException::VaultException(const string& error) : error(error)
 {
-	this->error = error;
-
 #ifdef VAULTMP_DEBUG
 	if (debug)
 	{

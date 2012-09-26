@@ -41,7 +41,7 @@ class Client
 		/**
 		 * \brief Returns the amount of connected clients
 		 */
-		static int GetClientCount();
+		static unsigned int GetClientCount();
 		/**
 		 * \brief Given the RakNetGUID, returns the Client
 		 */

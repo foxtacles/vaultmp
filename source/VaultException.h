@@ -38,7 +38,7 @@ class VaultException : public exception
 		VaultException& operator=(const VaultException&) = delete;
 
 	public:
-		VaultException(string error);
+		VaultException(const string& error);
 		VaultException(const char* format, ...);
 		virtual ~VaultException() throw() {}
 
