@@ -1,6 +1,8 @@
 #ifndef DEDICATED_H
 #define DEDICATED_H
 
+#include "../vaultmp.h"
+
 #ifdef __WIN32__
 #include <winsock2.h>
 #include <io.h>
@@ -9,9 +11,16 @@
 #include <chrono>
 #include <cstdio>
 
-#include "../RakNet.h"
+#include "../RakNet/RakPeerInterface.h"
+#include "../RakNet/MessageIdentifiers.h"
+#include "../RakNet/IncrementalReadInterface.h"
+#include "../RakNet/FileListTransfer.h"
+#include "../RakNet/PacketizedTCP.h"
+#include "../RakNet/BitStream.h"
+#include "../RakNet/RakString.h"
+#include "../RakNet/RakSleep.h"
+#include "../RakNet/GetTime.h"
 
-#include "../vaultmp.h"
 #include "../ServerEntry.h"
 #include "../Actor.h"
 #include "../Player.h"

@@ -2,15 +2,20 @@
 #include <winsock2.h>
 #endif
 
+#include "../vaultmp.h"
+
 #include <cstdio>
 #include <ctime>
 #include <map>
 #include <thread>
 #include <chrono>
 
-#include "../RakNet.h"
+#include "../RakNet/RakPeerInterface.h"
+#include "../RakNet/MessageIdentifiers.h"
+#include "../RakNet/BitStream.h"
+#include "../RakNet/RakString.h"
+#include "../RakNet/RakSleep.h"
 
-#include "../vaultmp.h"
 #include "../ServerEntry.h"
 #include "../Data.h"
 #include "../Utils.h"

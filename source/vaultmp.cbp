@@ -15,6 +15,8 @@
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-Wredundant-decls" />
+					<Add option="-Wunreachable-code" />
 					<Add option="-gstabs" />
 					<Add option="-DVAULTMP_DEBUG" />
 				</Compiler>
@@ -31,6 +33,8 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add option="-Wredundant-decls" />
+					<Add option="-Wunreachable-code" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -38,12 +42,7 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-pedantic-errors" />
-			<Add option="-pedantic" />
-			<Add option="-Wfatal-errors" />
-			<Add option="-Wextra" />
-			<Add option="-Wall" />
-			<Add option="-Werror -std=gnu++0x" />
+			<Add option="-std=gnu++0x" />
 			<Add directory="." />
 			<Add directory="stack_trace\include" />
 		</Compiler>
@@ -93,7 +92,6 @@
 		<Unit filename="Pipe.h" />
 		<Unit filename="Player.cpp" />
 		<Unit filename="Player.h" />
-		<Unit filename="RakNet.h" />
 		<Unit filename="RakNet\AutopatcherPatchContext.h" />
 		<Unit filename="RakNet\AutopatcherRepositoryInterface.h" />
 		<Unit filename="RakNet\BitStream.cpp" />

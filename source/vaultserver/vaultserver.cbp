@@ -15,6 +15,8 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-Wredundant-decls" />
+					<Add option="-Wunreachable-code" />
 					<Add option="-gstabs" />
 					<Add option="-DVAULTMP_DEBUG" />
 				</Compiler>
@@ -36,6 +38,8 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add option="-Wredundant-decls" />
+					<Add option="-Wunreachable-code" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -88,7 +92,7 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-Werror -std=gnu++0x" />
+			<Add option="-std=gnu++0x" />
 			<Add option="-DVAULTSERVER" />
 			<Add directory=".." />
 			<Add directory="..\stack_trace\include" />

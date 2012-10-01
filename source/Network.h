@@ -1,7 +1,9 @@
 #ifndef NETWORK_H
 #define NETWORK_H
 
-#include "RakNet.h"
+#include "RakNet/RakPeerInterface.h"
+#include "RakNet/MessageIdentifiers.h"
+#include "RakNet/NetworkIDManager.h"
 
 #include "vaultmp.h"
 #include "VaultException.h"

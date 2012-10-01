@@ -1,3 +1,5 @@
+#include "vaultmp.h"
+
 #include <winsock2.h>
 #include <cstdio>
 #include <shlwapi.h>
@@ -8,9 +10,11 @@
 #include <thread>
 #include <chrono>
 
-#include "RakNet.h"
+#include "RakNet/RakPeerInterface.h"
+#include "RakNet/MessageIdentifiers.h"
+#include "RakNet/BitStream.h"
+#include "RakNet/RakSleep.h"
 
-#include "vaultmp.h"
 #include "Data.h"
 #include "Player.h"
 #include "Container.h"

@@ -14,34 +14,47 @@ Pipe::~Pipe()
 	CloseHandle(this->pipe);
 }
 
-void Pipe::SetPipeAttributes(const string& name, unsigned int size)
+void Pipe::SetPipeAttributes(string name, unsigned int size)
 {
 	this->name = "\\\\.\\pipe\\" + name;
 	this->size = size;
 }
 
-unsigned int Pipe::Send(const unsigned char* stream)
+unsigned int Pipe::Send(unsigned char* stream)
 {
 	DWORD dwActuallyWritten;
 
-	vector<unsigned char> buffer(this->size);
-	memcpy(&buffer[0], stream, this->size);
+	unsigned char buffer[this->size];
+	ZeroMemory(buffer, sizeof(buffer));
 
-	if (!WriteFile(this->pipe, &buffer[0], this->size, &dwActuallyWritten, nullptr))
+	memcpy(buffer, stream, sizeof(buffer));
+
+	if (!WriteFile(this->pipe, &buffer, this->size, &dwActuallyWritten, nullptr))
 		return 0;
+
 	else
 		return dwActuallyWritten;
 }
 
+unsigned int Pipe::Send(string stream)
+{
+	char c_stream[this->size];
+	ZeroMemory(c_stream, sizeof(c_stream));
+	strncpy(c_stream, stream.c_str(), sizeof(c_stream) - 1);
+	return Send(c_stream);
+}
+
 void Pipe::Receive(unsigned char* stream)
 {
-	DWORD dwActuallyRead;
-	vector<unsigned char> buffer(this->size);
+	unsigned char buffer[this->size];
+	ZeroMemory(buffer, sizeof(buffer));
 
-	if (!ReadFile(this->pipe, &buffer[0], this->size, &dwActuallyRead, nullptr))
+	DWORD dwActuallyRead;
+
+	if (!ReadFile(this->pipe, &buffer, this->size, &dwActuallyRead, nullptr))
 		return;
 
-	memcpy(stream, &buffer[0], this->size);
+	memcpy(stream, buffer, sizeof(buffer));
 }
 
 bool PipeServer::CreateServer()

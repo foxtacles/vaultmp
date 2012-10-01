@@ -57,6 +57,7 @@ NetworkResponse NetworkClient::ProcessEvent(unsigned char id)
 NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 {
 	NetworkResponse response;
+	pDefault* packet;
 
 	switch (data->data[0])
 	{
@@ -157,7 +158,6 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 						case Reason::ID_REASON_DENIED:
 							throw VaultException("Your authentication has been denied");
 
-						case Reason::ID_REASON_QUIT:
 						case Reason::ID_REASON_NONE:
 							break;
 					}

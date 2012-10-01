@@ -609,19 +609,18 @@ void API::SetDebugHandler(Debug* debug)
 }
 #endif
 
-vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* result, unsigned short opcode)
+vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result, unsigned short opcode)
 {
-	if (!cmd_ || !def || !result || !*cmd_ || !opcode)
-		throw VaultException("Invalid call to API::ParseCommand, one or more arguments are NULL (%s, %s, %04X)", cmd_, def, opcode);
+	if (!cmd || !def || !result || !*cmd || !opcode)
+		throw VaultException("Invalid call to API::ParseCommand, one or more arguments are NULL (%s, %s, %04X)", cmd, def, opcode);
 
-	string _cmd(cmd_);
-	vector<char> cmd_buf(cmd_, cmd_ + _cmd.length() + 1);
 	vector<double> result_data;
-
-	char* cmd = &cmd_buf[0];
+	string _cmd(cmd);
 
 	char* arg1_pos = reinterpret_cast<char*>(&result->arg1.unk1);
+	char* arg1_end = reinterpret_cast<char*>(&result->arg1) + result->size_arg1;
 	char* arg2_pos = reinterpret_cast<char*>(&result->arg2.param1);
+	char* arg2_end = reinterpret_cast<char*>(&result->arg2) + result->size_arg2;
 	unsigned short* _opcode = &result->arg2.opcode;
 	unsigned short* _numargs = &result->arg2.numargs;
 
@@ -896,6 +895,12 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 			default:
 				throw VaultException("API::ParseCommand could not recognize argument identifier %02X", (unsigned int) tolower(type));
 		}
+
+		if (reinterpret_cast<unsigned int>(arg1_end) - reinterpret_cast<unsigned int>(arg1_pos) < 0)
+			throw VaultException("API::ParseCommand argument #1 size overrun while processing %s", _cmd.c_str());
+
+		if (reinterpret_cast<unsigned int>(arg2_end) - reinterpret_cast<unsigned int>(arg2_pos) < 0)
+			throw VaultException("API::ParseCommand argument #2 size overrun while processing %s", _cmd.c_str());
 
 		++numargs;
 	}
@@ -1180,9 +1185,13 @@ CommandParsed API::Translate(const vector<string>& cmd, unsigned int key)
 			continue;
 		}
 
+		char content[command.length() + 1];
+		ZeroMemory(content, sizeof(content));
+		strcpy(content, command.c_str());
+
 		op_default result;
 
-		vector<double> parsed = ParseCommand(command.c_str(), func.first.c_str(), &result, func.second);
+		vector<double> parsed = ParseCommand(content, func.first.c_str(), &result, func.second);
 		unsigned char* data = BuildCommandStream(move(parsed), key, reinterpret_cast<unsigned char*>(&result), sizeof(op_default));
 		stream.emplace_back(data);
 	}

@@ -346,7 +346,7 @@ bool PlayerFunctor::filter(FactoryObject& reference)
 	if (ActorFunctor::filter(reference))
 		return true;
 
-	//Player* player = vaultcast<Player>(reference);
+	Player* player = vaultcast<Player>(reference);
 	unsigned int flags = this->flags();
 
 	if (flags & FLAG_SELFALERT)

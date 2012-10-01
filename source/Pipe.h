@@ -1,14 +1,14 @@
 #include <winsock2.h>
 #include <string>
-#include <vector>
 
 using namespace std;
 
 class Pipe
 {
+
 	private:
-		Pipe(const Pipe&) = delete;
-		Pipe& operator=(const Pipe&) = delete;
+		Pipe(const Pipe&);
+		Pipe& operator=(const Pipe&);
 
 	protected:
 		Pipe();
@@ -19,21 +19,30 @@ class Pipe
 		HANDLE pipe;
 
 	public:
-		void SetPipeAttributes(const string& name, unsigned int size);
-		unsigned int Send(const unsigned char* stream);
+		void SetPipeAttributes(string name, unsigned int size);
+		unsigned int Send(unsigned char* stream);
+		unsigned int Send(string stream);
 		void Receive(unsigned char* stream);
 		virtual bool ConnectToServer() = 0;
+
 };
 
 class PipeServer : public Pipe
 {
+
+	private:
+		PipeServer& operator=(const PipeServer&);
+
 	public:
 		bool CreateServer();
 		bool ConnectToServer();
+
 };
 
 class PipeClient : public Pipe
 {
+
 	public:
 		bool ConnectToServer();
+
 };
