@@ -88,6 +88,11 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-pedantic-errors" />
+			<Add option="-pedantic" />
+			<Add option="-Wfatal-errors" />
+			<Add option="-Wextra" />
+			<Add option="-Wall" />
 			<Add option="-Werror -std=gnu++0x" />
 			<Add option="-DVAULTSERVER" />
 			<Add directory=".." />

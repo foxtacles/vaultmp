@@ -585,7 +585,7 @@ list<NetworkID> Container::GetItemTypes(const string& type) const
 
 		try
 		{
-			const Record& record = Record::Lookup(item->GetBase(), type);
+			Record::Lookup(item->GetBase(), type);
 			result.emplace_back(id);
 		}
 		catch (...) {}
