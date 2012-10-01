@@ -7,10 +7,7 @@
 #include <vector>
 #include <map>
 
-#include "RakNet/RakPeerInterface.h"
-#include "RakNet/RakString.h"
-#include "RakNet/MessageIdentifiers.h"
-
+#include "RakNet.h"
 #include "Utils.h"
 #include "VaultException.h"
 #include "VaultFunctor.h"

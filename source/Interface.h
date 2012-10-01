@@ -155,7 +155,7 @@ class Interface : public API
 			private:
 				unique_ptr<const _Parameter, void(*)(const _Parameter*)> param;
 
-				static void no_delete(const _Parameter* param) {}
+				static void no_delete(const _Parameter*) {}
 				static void def_delete(const _Parameter* param) { delete param; }
 
 			public:

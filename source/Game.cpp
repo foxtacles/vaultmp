@@ -48,7 +48,6 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 		//debug->PrintFormat("Executing command %04hX on reference %08X, key %08X", true, opcode, info.size() > 1 ? getFrom<double, unsigned int>(info.at(1)) : 0, key);
 #endif
 
-		Lockable* data;
 		weak_ptr<Lockable> shared;
 
 		if (key)
@@ -81,7 +80,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 					break;
 
 				default:
-					data = Lockable::Retrieve(key);
+					Lockable::Retrieve(key);
 			}
 		}
 
@@ -1755,7 +1754,7 @@ void Game::net_SetActorValue(const FactoryObject& reference, bool base, unsigned
 	}
 }
 
-void Game::net_SetActorState(const FactoryObject& reference, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking, bool firing)
+void Game::net_SetActorState(const FactoryObject& reference, unsigned int, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking, bool firing)
 {
 	Actor* actor = vaultcast<Actor>(reference);
 
@@ -2718,8 +2717,6 @@ void Game::GetRemoveAllItemsEx(const FactoryObject& reference, vector<unsigned c
 
 	if (!container)
 		throw VaultException("Object with reference %08X is not a Container", reference->GetReference());
-
-	Lockable* result;
 
 #pragma pack(push, 1)
 	struct ItemInfo

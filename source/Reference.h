@@ -1,13 +1,14 @@
 #ifndef REFERENCE_H
 #define REFERENCE_H
 
+#include "RakNet.h"
+
 #include "Data.h"
 #include "Utils.h"
 #include "Value.h"
 #include "Network.h"
 #include "CriticalSection.h"
 #include "VaultFunctor.h"
-#include "RakNet/NetworkIDObject.h"
 #include "Interface.h"
 #include "PacketFactory.h"
 
