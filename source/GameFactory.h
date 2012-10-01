@@ -6,6 +6,8 @@
 #include <list>
 #include <typeinfo>
 
+#include "RakNet.h"
+
 #ifndef TYPECLASS
 #include "Object.h"
 #include "Item.h"

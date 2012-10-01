@@ -16,16 +16,6 @@
 #include "iniparser/src/dictionary.h"
 #include "iniparser/src/iniparser.h"
 
-#include "RakNet/RakPeerInterface.h"
-#include "RakNet/PacketizedTCP.h"
-#include "RakNet/MessageIdentifiers.h"
-#include "RakNet/FileListTransfer.h"
-#include "RakNet/FileListTransferCBInterface.h"
-#include "RakNet/BitStream.h"
-#include "RakNet/RakString.h"
-#include "RakNet/RakSleep.h"
-#include "RakNet/GetTime.h"
-
 #define MSG_MINTRAYICON         (WM_USER + 1)
 
 #define WND_CLASS_NAME          "vaultmp"

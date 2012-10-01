@@ -4,6 +4,8 @@
 #include <map>
 #include <string>
 
+#include "../RakNet.h"
+
 #include "boost/any.hpp"
 
 #include "ScriptFunction.h"
@@ -12,8 +14,6 @@
 #include "../vaultmp.h"
 #include "../Debug.h"
 #include "../Network.h"
-#include "../RakNet/gettimeofday.h"
-#include "../RakNet/NetworkIDObject.h"
 
 using namespace std;
 using namespace RakNet;
