@@ -8,8 +8,6 @@
 
 #include <utility>
 
-using namespace std;
-
 /**
  * \brief The vector class of vaultmp
  */
@@ -28,9 +26,9 @@ class VaultVector
 			return (sqrt((abs(X - vvec.X) * abs(X - vvec.X)) + (abs(Y - vvec.Y) * abs(Y - vvec.Y)) + (abs(Z - vvec.Z) * abs(Z - vvec.Z))) <= R);
 		}
 
-		pair<double, double> GetOffset(double aZ, double N) const
+		std::pair<double, double> GetOffset(double aZ, double N) const
 		{
-			return make_pair(X + (N * sin((aZ / 360.0) * 2 * M_PI)), Y + (N * cos((aZ / 360.0) * 2 * M_PI)));
+			return std::make_pair(X + (N * sin((aZ / 360.0) * 2 * M_PI)), Y + (N * cos((aZ / 360.0) * 2 * M_PI)));
 		}
 };
 

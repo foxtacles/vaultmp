@@ -32,32 +32,32 @@ class Game
 #endif
 
 		static unsigned char game;
-		static RakNetGUID server;
+		static RakNet::RakNetGUID server;
 
 		static void AdjustZAngle(double& Z, double diff);
 
-		typedef pair<future<void>, chrono::milliseconds> AsyncPack;
-		typedef pair<set<unsigned int>, set<unsigned int>> CellDiff;
-		typedef unordered_map<unsigned int, unordered_map<unsigned int, set<unsigned int>>> CellRefs;
-		typedef unordered_map<unsigned int, unsigned int> BaseRaces;
-		typedef unordered_map<unsigned int, signed int> Globals;
+		typedef std::pair<std::future<void>, std::chrono::milliseconds> AsyncPack;
+		typedef std::pair<std::set<unsigned int>, std::set<unsigned int>> CellDiff;
+		typedef std::unordered_map<unsigned int, std::unordered_map<unsigned int, std::set<unsigned int>>> CellRefs;
+		typedef std::unordered_map<unsigned int, unsigned int> BaseRaces;
+		typedef std::unordered_map<unsigned int, signed int> Globals;
 		typedef unsigned int Weather;
 
 		static Guarded<CellRefs> cellRefs;
 		static BaseRaces baseRaces;
 		static Globals globals;
 		static Weather weather;
-		static function<void()> spawnFunc;
+		static std::function<void()> spawnFunc;
 
 	public:
 		/**
 		 * \brief Handles translated command results from the game
 		 */
-		static void CommandHandler(unsigned int key, const vector<double>& info, double result, bool error);
+		static void CommandHandler(unsigned int key, const std::vector<double>& info, double result, bool error);
 		/**
 		 * \brief Builds an authenticate packet for the server
 		 */
-		static NetworkResponse Authenticate(const string& password);
+		static NetworkResponse Authenticate(const std::string& password);
 		/**
 		 * \brief Starts the game command schedule
 		 */
@@ -66,11 +66,11 @@ class Game
 		 * \brief Future set
 		 */
 		template <typename T>
-		static void FutureSet(const weak_ptr<Lockable>& data, T&& t);
+		static void FutureSet(const std::weak_ptr<Lockable>& data, T&& t);
 		/**
 		 * \brief Async task execution
 		 */
-		static void AsyncDispatch(function<void()>&& func);
+		static void AsyncDispatch(std::function<void()>&& func);
 
 		/**
 		 * Game functions
@@ -79,11 +79,11 @@ class Game
 		/**
 		 * \brief Loads a savegame
 		 */
-		static void LoadGame(string savegame = string());
+		static void LoadGame(std::string savegame = std::string());
 		/**
 		 * \brief Loads an interior cell
 		 */
-		static void CenterOnCell(const string& cell, bool spawn = false);
+		static void CenterOnCell(const std::string& cell, bool spawn = false);
 		/**
 		 * \brief Loads a exterior cell
 		 */
@@ -95,7 +95,7 @@ class Game
 		/**
 		 * \brief Sets a INI setting
 		 */
-		static void SetINISetting(const string& key, const string& value);
+		static void SetINISetting(const std::string& key, const std::string& value);
 		/**
 		 * \brief Sets a global value
 		 */
@@ -107,11 +107,11 @@ class Game
 		/**
 		 * \brief Display a Fallout UI message
 		 */
-		static void UIMessage(const string& message);
+		static void UIMessage(const std::string& message);
 		/**
 		 * \brief Display a GUI chat message
 		 */
-		static void ChatMessage(const string& message);
+		static void ChatMessage(const std::string& message);
 		/**
 		 * \brief Creates a new Object
 		 */
@@ -188,11 +188,11 @@ class Game
 		/**
 		 * \brief Sets the sneaking state of an Actor
 		 */
-		static function<void()> SetActorSneaking(const FactoryObject& reference, unsigned int key = 0);
+		static std::function<void()> SetActorSneaking(const FactoryObject& reference, unsigned int key = 0);
 		/**
 		 * \brief Sets the alerted state of an Actor
 		 */
-		static function<void()> SetActorAlerted(const FactoryObject& reference, unsigned int key = 0);
+		static std::function<void()> SetActorAlerted(const FactoryObject& reference, unsigned int key = 0);
 		/**
 		 * \brief Plays an animation on an Actor
 		 */
@@ -208,7 +208,7 @@ class Game
 		/**
 		 * \brief Sets the idle animation of an Actor
 		 */
-		static void SetActorIdleAnimation(const FactoryObject& reference, const string& anim, unsigned int key = 0);
+		static void SetActorIdleAnimation(const FactoryObject& reference, const std::string& anim, unsigned int key = 0);
 		/**
 		 * \brief Sets the race of an Actor
 		 */
@@ -268,7 +268,7 @@ class Game
 		/**
 		 * \brief Scans an inventory and returns the difference
 		 */
-		static pair<ContainerDiffNet, GameDiff> ScanContainer(FactoryObject& reference);
+		static std::pair<ContainerDiffNet, GameDiff> ScanContainer(FactoryObject& reference);
 		/**
 		 * \brief Enable player controls
 		 */
@@ -306,7 +306,7 @@ class Game
 		/**
 		 * \brief Network function to handle Container update
 		 */
-		static void net_ContainerUpdate(FactoryObject& reference, const pair<list<NetworkID>, vector<pPacket>>& ndiff, const pair<list<NetworkID>, vector<pPacket>>& gdiff);
+		static void net_ContainerUpdate(FactoryObject& reference, const ContainerDiffNet& ndiff, const ContainerDiffNet& gdiff);
 		/**
 		 * \brief Network function to handle Actor value
 		 */
@@ -334,15 +334,15 @@ class Game
 		/**
 		 * \brief Network function to handle Actor idle animation
 		 */
-		static void net_SetActorIdle(const FactoryObject& reference, unsigned int idle, const string& name);
+		static void net_SetActorIdle(const FactoryObject& reference, unsigned int idle, const std::string& name);
 		/**
 		 * \brief Network function to handle UI message
 		 */
-		static void net_UIMessage(const string& message);
+		static void net_UIMessage(const std::string& message);
 		/**
 		 * \brief Network function to handle chat message
 		 */
-		static void net_ChatMessage(const string& message);
+		static void net_ChatMessage(const std::string& message);
 		/**
 		 * \brief Network function to handle global value
 		 */
@@ -391,15 +391,15 @@ class Game
 		/**
 		 * \brief Handles ScanContainer command result
 		 */
-		static void ScanContainer(const FactoryObject& reference, vector<unsigned char>& data);
+		static void ScanContainer(const FactoryObject& reference, std::vector<unsigned char>& data);
 		/**
 		 * \brief Handles ScanContainer (synchronized) command result
 		 */
-		static pair<ContainerDiffNet, GameDiff> GetScanContainer(const FactoryObject& reference, vector<unsigned char>& data);
+		static std::pair<ContainerDiffNet, GameDiff> GetScanContainer(const FactoryObject& reference, std::vector<unsigned char>& data);
 		/**
 		 * \brief Handles RemoveAllItemsEx command result
 		 */
-		static void GetRemoveAllItemsEx(const FactoryObject& reference, vector<unsigned char>& data);
+		static void GetRemoveAllItemsEx(const FactoryObject& reference, std::vector<unsigned char>& data);
 		/**
 		 * \brief Handles GetFirstRef / GetNextRef command result
 		 */
@@ -407,7 +407,7 @@ class Game
 		/**
 		 * \brief Handles GUI message
 		 */
-		static void GetMessage(string message);
+		static void GetMessage(std::string message);
 
 #ifdef VAULTMP_DEBUG
 		static void SetDebugHandler(Debug* debug);

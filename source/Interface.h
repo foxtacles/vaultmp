@@ -23,17 +23,15 @@
 #include "Data.h"
 
 #ifndef VAULTSERVER
-#include "Pipe.h"
+	#include "Pipe.h"
 #else
-class PipeServer;
-class PipeClient;
+	class PipeServer;
+	class PipeClient;
 #endif
 
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"
 #endif
-
-using namespace std;
 
 /**
  * \brief Provides facilities to execute engine commands, connects with the game process and is responsible for sending / retrieving game data
@@ -44,30 +42,30 @@ using namespace std;
 class Interface : public API
 {
 	private:
-		class _Parameter {
+		class Parameter_ {
 
 			protected:
-				_Parameter() = default;
-				_Parameter(const _Parameter&) = default;
-				_Parameter(_Parameter&&) = default;
-				_Parameter& operator= (_Parameter&&) = default;
+				Parameter_() = default;
+				Parameter_(const Parameter_&) = default;
+				Parameter_(Parameter_&&) = default;
+				Parameter_& operator= (Parameter_&&) = default;
 
 			public:
-				virtual ~_Parameter() {}
+				virtual ~Parameter_() {}
 
-				virtual const vector<string>& get() const = 0;
+				virtual const std::vector<std::string>& get() const = 0;
 				virtual void reset() const = 0;
 		};
 
 	public:
-		class RawParameter : public _Parameter {
+		class RawParameter : public Parameter_ {
 
 			private:
-				vector<string> data;
+				std::vector<std::string> data;
 
-				static vector<string> make(const vector<unsigned char>& str)
+				static std::vector<std::string> make(const std::vector<unsigned char>& str)
 				{
-					vector<string> convert;
+					std::vector<std::string> convert;
 
 					for (unsigned char param : str)
 						convert.emplace_back(Utils::toString(param));
@@ -75,9 +73,9 @@ class Interface : public API
 					return convert;
 				}
 
-				static vector<string> make(const vector<unsigned int>& str)
+				static std::vector<std::string> make(const std::vector<unsigned int>& str)
 				{
-					vector<string> convert;
+					std::vector<std::string> convert;
 
 					for (unsigned int param : str)
 						convert.emplace_back(Utils::toString(param));
@@ -85,31 +83,31 @@ class Interface : public API
 					return convert;
 				}
 
-				static vector<string> make(signed int str)
+				static std::vector<std::string> make(signed int str)
 				{
-					return vector<string>{Utils::toString(str)};
+					return std::vector<std::string>{Utils::toString(str)};
 				}
 
-				static vector<string> make(unsigned int str)
+				static std::vector<std::string> make(unsigned int str)
 				{
-					return vector<string>{Utils::toString(str)};
+					return std::vector<std::string>{Utils::toString(str)};
 				}
 
-				static vector<string> make(double str)
+				static std::vector<std::string> make(double str)
 				{
-					return vector<string>{Utils::toString(str)};
+					return std::vector<std::string>{Utils::toString(str)};
 				}
 
-				static vector<string> make(bool str)
+				static std::vector<std::string> make(bool str)
 				{
-					return vector<string>{str ? "1" : "0"};
+					return std::vector<std::string>{str ? "1" : "0"};
 				}
 
 			public:
-				RawParameter(string str) : data({str}) {}
-				RawParameter(const vector<string>& str) : data(str) {}
-				RawParameter(const vector<unsigned char>& str) : data(make(str)) {}
-				RawParameter(const vector<unsigned int>& str) : data(make(str)) {}
+				RawParameter(const std::string& str) : data({str}) {}
+				RawParameter(const std::vector<std::string>& str) : data(str) {}
+				RawParameter(const std::vector<unsigned char>& str) : data(make(str)) {}
+				RawParameter(const std::vector<unsigned int>& str) : data(make(str)) {}
 				RawParameter(signed int str) : data(make(str)) {}
 				RawParameter(unsigned int str) : data(make(str)) {}
 				RawParameter(double str) : data(make(str)) {}
@@ -119,24 +117,24 @@ class Interface : public API
 				RawParameter& operator= (RawParameter&&) = default;
 				virtual ~RawParameter() {}
 
-				virtual const vector<string>& get() const { return data; }
+				virtual const std::vector<std::string>& get() const { return data; }
 				virtual void reset() const {}
 		};
 
-		class FuncParameter : public _Parameter {
+		class FuncParameter : public Parameter_ {
 
 			private:
-				unique_ptr<VaultFunctor> func;
-				mutable vector<string> data;
+				std::unique_ptr<VaultFunctor> func;
+				mutable std::vector<std::string> data;
 				mutable bool initialized;
 
 			public:
-				FuncParameter(unique_ptr<VaultFunctor>&& func) : func(move(func)), initialized(false) {}
+				FuncParameter(std::unique_ptr<VaultFunctor>&& func) : func(move(func)), initialized(false) {}
 				FuncParameter(FuncParameter&&) = default;
 				FuncParameter& operator= (FuncParameter&&) = default;
 				virtual ~FuncParameter() {}
 
-				virtual const vector<string>& get() const
+				virtual const std::vector<std::string>& get() const
 				{
 					if (!initialized)
 					{
@@ -153,15 +151,15 @@ class Interface : public API
 		class Parameter {
 
 			private:
-				unique_ptr<const _Parameter, void(*)(const _Parameter*)> param;
+				std::unique_ptr<const Parameter_, void(*)(const Parameter_*)> param;
 
-				static void no_delete(const _Parameter*) {}
-				static void def_delete(const _Parameter* param) { delete param; }
+				static void no_delete(const Parameter_*) {}
+				static void def_delete(const Parameter_* param) { delete param; }
 
 			public:
 				Parameter(RawParameter& param) : param(new RawParameter(param), def_delete) {}
-				Parameter(RawParameter&& param) : param(new RawParameter(move(param)), def_delete) {}
-				Parameter(FuncParameter&& param) : param(new FuncParameter(move(param)), def_delete) {}
+				Parameter(RawParameter&& param) : param(new RawParameter(std::move(param)), def_delete) {}
+				Parameter(FuncParameter&& param) : param(new FuncParameter(std::move(param)), def_delete) {}
 				Parameter(const RawParameter& param) : param(&param, no_delete) {}
 				Parameter(const FuncParameter& param) : param(&param, no_delete) {}
 
@@ -170,29 +168,29 @@ class Interface : public API
 
 				// hack: initializer lists reference static memory... this ctor enables moving the unique_ptr
 				// NOT A COPY CTOR
-				Parameter(const Parameter& param) : Parameter(move(const_cast<Parameter&>(param))) {}
+				Parameter(const Parameter& param) : Parameter(std::move(const_cast<Parameter&>(param))) {}
 
 				~Parameter() = default;
 
-				const vector<string>& get() const { return param->get(); }
+				const std::vector<std::string>& get() const { return param->get(); }
 				void reset() { param->reset(); }
 		};
 
-		typedef vector<Parameter> ParamContainer;
-		typedef void (*ResultHandler)(unsigned int, const vector<double>&, double, bool);
+		typedef std::vector<Parameter> ParamContainer;
+		typedef void (*ResultHandler)(unsigned int, const std::vector<double>&, double, bool);
 
 	private:
-		typedef unordered_multimap<string, ParamContainer> Native;
-		typedef multimap<unsigned int, Native::iterator> PriorityMap;
-		typedef vector<vector<Native::iterator>> StaticCommandList;
-		typedef deque<pair<Native::iterator, unsigned int>> DynamicCommandList;
+		typedef std::unordered_multimap<std::string, ParamContainer> Native;
+		typedef std::multimap<unsigned int, Native::iterator> PriorityMap;
+		typedef std::vector<std::vector<Native::iterator>> StaticCommandList;
+		typedef std::deque<std::pair<Native::iterator, unsigned int>> DynamicCommandList;
 
-		static atomic<bool> endThread;
-		static atomic<bool> wakeup;
-		static atomic<bool> shutdown;
+		static std::atomic<bool> endThread;
+		static std::atomic<bool> wakeup;
+		static std::atomic<bool> shutdown;
 		static bool initialized;
-		static thread hCommandThreadReceive;
-		static thread hCommandThreadSend;
+		static std::thread hCommandThreadReceive;
+		static std::thread hCommandThreadSend;
 		static PriorityMap priorityMap;
 		static StaticCommandList static_cmdlist;
 		static DynamicCommandList dynamic_cmdlist;
@@ -203,7 +201,7 @@ class Interface : public API
 		static CriticalSection dynamic_cs;
 		static Native natives;
 
-		static vector<string> Evaluate(Native::iterator _it);
+		static std::vector<std::string> Evaluate(Native::iterator _it);
 
 		static void CommandThreadReceive(bool steam);
 		static void CommandThreadSend();
@@ -271,14 +269,14 @@ class Interface : public API
 		 * param is a ParamContainer which is a STL list of Parameter's
 		 * priority (optional) - the lower this variable, the higher is the priority
 		 */
-		static void SetupCommand(string name, ParamContainer&& param, unsigned int priority = 1);
+		static void SetupCommand(const std::string& name, ParamContainer&& param, unsigned int priority = 1);
 		/**
 		 * \brief Executes a command once
 		 *
 		 * name refers to an existing command
 		 * key (optional) - a key (usually from the Lockable class) which is to later identify this command
 		 */
-		static void ExecuteCommand(string name, ParamContainer&&, unsigned int key = 0);
+		static void ExecuteCommand(const std::string& name, ParamContainer&&, unsigned int key = 0);
 
 #ifdef VAULTMP_DEBUG
 		static void SetDebugHandler(Debug* debug);

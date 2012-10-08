@@ -1,6 +1,10 @@
 #include "Game.h"
 #include "PacketFactory.h"
 
+using namespace std;
+using namespace RakNet;
+using namespace Values;
+
 unsigned char Game::game = 0x00;
 RakNetGUID Game::server;
 
@@ -14,8 +18,6 @@ function<void()> Game::spawnFunc;
 #ifdef VAULTMP_DEBUG
 Debug* Game::debug;
 #endif
-
-using namespace Values;
 
 #ifdef VAULTMP_DEBUG
 void Game::SetDebugHandler(Debug* debug)
@@ -33,7 +35,6 @@ void Game::AdjustZAngle(double& Z, double diff)
 
 	if (Z > 360.0)
 		Z -= 360.0;
-
 	else if (Z < 0.00)
 		Z += 360.0;
 }

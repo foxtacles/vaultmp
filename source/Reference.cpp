@@ -1,5 +1,8 @@
 #include "Reference.h"
 
+using namespace std;
+using namespace RakNet;
+
 #ifdef VAULTMP_DEBUG
 Debug* Reference::debug;
 #endif

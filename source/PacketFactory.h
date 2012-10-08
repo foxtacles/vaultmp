@@ -65,7 +65,7 @@ enum class Reason : unsigned char
 };
 
 class pDefault;
-typedef unique_ptr<pDefault> pPacket;
+typedef std::unique_ptr<pDefault> pPacket;
 
 class PacketFactory
 {
@@ -84,10 +84,10 @@ class PacketFactory
 
 	public:
 		template<pTypes type, typename... Args>
-		inline static pPacket Create(Args&&... args) { return Create_<type, Args...>::Create(forward<Args>(args)...); };
+		inline static pPacket Create(Args&&... args) { return Create_<type, Args...>::Create(std::forward<Args>(args)...); }
 
 		template<pTypes type, typename... Args>
-		inline static void Access(const pDefault* packet, Args&... args) { Access_<type, Args...>::Access(packet, forward<Args&>(args)...); };
+		inline static void Access(const pDefault* packet, Args&... args) { Access_<type, Args...>::Access(packet, std::forward<Args&>(args)...); }
 
 		template<typename T>
 		inline static T Pop(const pDefault* packet);
@@ -110,16 +110,16 @@ class pDefault
 		struct tuple_count {};
 
 		template<typename... T, size_t N>
-		void unpack_tuple(const tuple<T...>&, tuple_count<N>);
+		void unpack_tuple(const std::tuple<T...>&, tuple_count<N>);
 		template<typename... T>
-		void unpack_tuple(const tuple<T...>&, tuple_count<0>);
+		void unpack_tuple(const std::tuple<T...>&, tuple_count<0>);
 
 		template<typename... T, size_t N>
-		void pack_tuple(tuple<T...>&, tuple_count<N>) const;
+		void pack_tuple(std::tuple<T...>&, tuple_count<N>) const;
 		template<typename... T>
-		void pack_tuple(tuple<T...>&, tuple_count<0>) const;
+		void pack_tuple(std::tuple<T...>&, tuple_count<0>) const;
 
-		vector<unsigned char> data;
+		std::vector<unsigned char> data;
 		mutable unsigned int location;
 
 	protected:
@@ -143,22 +143,22 @@ class pDefault
 		void construct(const pPacket&, const Args&...);
 
 		template<typename... Args>
-		void construct(const string&, const Args&...);
+		void construct(const std::string&, const Args&...);
 
 		template<typename T, typename... Args>
-		void construct(const vector<T>&, const Args&...);
+		void construct(const std::vector<T>&, const Args&...);
 
 		template<typename T, typename... Args>
-		void construct(const list<T>&, const Args&...);
+		void construct(const std::list<T>&, const Args&...);
 
 		template<typename K, typename V, typename... Args>
-		void construct(const map<K, V>&, const Args&...);
+		void construct(const std::map<K, V>&, const Args&...);
 
 		template<typename T1, typename T2, typename... Args>
-		void construct(const pair<T1, T2>&, const Args&...);
+		void construct(const std::pair<T1, T2>&, const Args&...);
 
 		template<typename... T, typename... Args>
-		void construct(const tuple<T...>&, const Args&...);
+		void construct(const std::tuple<T...>&, const Args&...);
 
 		template<typename T, typename... Args>
 		void deconstruct(T&, Args&...) const;
@@ -167,22 +167,22 @@ class pDefault
 		void deconstruct() const {}
 
 		template<typename... Args>
-		void deconstruct(string&, Args&...) const;
+		void deconstruct(std::string&, Args&...) const;
 
 		template<typename T, typename... Args>
-		void deconstruct(vector<T>&, Args&...) const;
+		void deconstruct(std::vector<T>&, Args&...) const;
 
 		template<typename T, typename... Args>
-		void deconstruct(list<T>&, Args&...) const;
+		void deconstruct(std::list<T>&, Args&...) const;
 
 		template<typename K, typename V, typename... Args>
-		void deconstruct(map<K, V>&, Args&...) const;
+		void deconstruct(std::map<K, V>&, Args&...) const;
 
 		template<typename T1, typename T2, typename... Args>
-		void deconstruct(pair<T1, T2>&, Args&...) const;
+		void deconstruct(std::pair<T1, T2>&, Args&...) const;
 
 		template<typename... T, typename... Args>
-		void deconstruct(tuple<T...>&, Args&...) const;
+		void deconstruct(std::tuple<T...>&, Args&...) const;
 
 	public:
 		virtual ~pDefault() = default;
@@ -202,7 +202,7 @@ template<typename T, typename... Args>
 void pDefault::construct(const T& arg, const Args&... args)
 {
 	// is_trivially_copyable not implemented in GCC as of now
-	static_assert(is_trivial<T>::value, "Type cannot be trivially copied");
+	static_assert(std::is_trivial<T>::value, "Type cannot be trivially copied");
 
 	data.insert(data.end(), reinterpret_cast<const unsigned char*>(&arg), reinterpret_cast<const unsigned char*>(&arg) + sizeof(T));
 
@@ -222,7 +222,7 @@ void pDefault::construct(const pPacket& arg, const Args&... args)
 }
 
 template<typename... Args>
-void pDefault::construct(const string& arg, const Args&...args)
+void pDefault::construct(const std::string& arg, const Args&...args)
 {
 	unsigned int length = arg.length();
 	const unsigned char* str = reinterpret_cast<const unsigned char*>(arg.c_str());
@@ -233,7 +233,7 @@ void pDefault::construct(const string& arg, const Args&...args)
 }
 
 template<typename T, typename... Args>
-void pDefault::construct(const vector<T>& arg, const Args&...args)
+void pDefault::construct(const std::vector<T>& arg, const Args&...args)
 {
 	construct(arg.size());
 
@@ -244,7 +244,7 @@ void pDefault::construct(const vector<T>& arg, const Args&...args)
 }
 
 template<typename T, typename... Args>
-void pDefault::construct(const list<T>& arg, const Args&...args)
+void pDefault::construct(const std::list<T>& arg, const Args&...args)
 {
 	construct(arg.size());
 
@@ -255,7 +255,7 @@ void pDefault::construct(const list<T>& arg, const Args&...args)
 }
 
 template<typename K, typename V, typename... Args>
-void pDefault::construct(const map<K, V>& arg, const Args&...args)
+void pDefault::construct(const std::map<K, V>& arg, const Args&...args)
 {
 	construct(arg.size());
 
@@ -266,7 +266,7 @@ void pDefault::construct(const map<K, V>& arg, const Args&...args)
 }
 
 template<typename T1, typename T2, typename... Args>
-void pDefault::construct(const pair<T1, T2>& arg, const Args&...args)
+void pDefault::construct(const std::pair<T1, T2>& arg, const Args&...args)
 {
 	construct(arg.first);
 	construct(arg.second);
@@ -274,21 +274,21 @@ void pDefault::construct(const pair<T1, T2>& arg, const Args&...args)
 }
 
 template<typename... T, typename... Args>
-void pDefault::construct(const tuple<T...>& arg, const Args&...args)
+void pDefault::construct(const std::tuple<T...>& arg, const Args&...args)
 {
 	unpack_tuple(arg, tuple_count<sizeof...(T) - 1>());
 	construct(args...);
 }
 
 template<typename... T, size_t N>
-void pDefault::unpack_tuple(const tuple<T...>& arg, tuple_count<N>)
+void pDefault::unpack_tuple(const std::tuple<T...>& arg, tuple_count<N>)
 {
 	construct(std::get<N>(arg));
 	unpack_tuple(arg, tuple_count<N - 1>());
 }
 
 template<typename... T>
-void pDefault::unpack_tuple(const tuple<T...>& arg, tuple_count<0>)
+void pDefault::unpack_tuple(const std::tuple<T...>& arg, tuple_count<0>)
 {
 	construct(std::get<0>(arg));
 }
@@ -304,7 +304,7 @@ template<typename T>
 T pDefault::deconstruct_single() const
 {
 	// is_trivially_copyable not implemented in GCC as of now
-	static_assert(is_trivial<T>::value, "Type cannot be trivially copied");
+	static_assert(std::is_trivial<T>::value, "Type cannot be trivially copied");
 
 	if (location + sizeof(T) > this->length())
 		throw VaultException("Reading past the end of packet");
@@ -330,7 +330,7 @@ inline pPacket pDefault::deconstruct_single() const
 }
 
 template<typename... Args>
-void pDefault::deconstruct(string& arg, Args&... args) const
+void pDefault::deconstruct(std::string& arg, Args&... args) const
 {
 	unsigned int length = strlen(reinterpret_cast<const char*>(&data[location]));
 
@@ -345,7 +345,7 @@ void pDefault::deconstruct(string& arg, Args&... args) const
 }
 
 template<typename T, typename... Args>
-void pDefault::deconstruct(vector<T>& arg, Args&... args) const
+void pDefault::deconstruct(std::vector<T>& arg, Args&... args) const
 {
 	unsigned int size = deconstruct_single<unsigned int>();
 
@@ -363,7 +363,7 @@ void pDefault::deconstruct(vector<T>& arg, Args&... args) const
 }
 
 template<typename T, typename... Args>
-void pDefault::deconstruct(list<T>& arg, Args&... args) const
+void pDefault::deconstruct(std::list<T>& arg, Args&... args) const
 {
 	unsigned int size = deconstruct_single<unsigned int>();
 
@@ -373,14 +373,14 @@ void pDefault::deconstruct(list<T>& arg, Args&... args) const
 	{
 		T data;
 		deconstruct(data);
-		arg.emplace_back(move(data));
+		arg.emplace_back(std::move(data));
 	}
 
 	deconstruct(args...);
 }
 
 template<typename K, typename V, typename... Args>
-void pDefault::deconstruct(map<K, V>& arg, Args&... args) const
+void pDefault::deconstruct(std::map<K, V>& arg, Args&... args) const
 {
 	unsigned int size = deconstruct_single<unsigned int>();
 
@@ -388,7 +388,7 @@ void pDefault::deconstruct(map<K, V>& arg, Args&... args) const
 
 	for (unsigned int i = 0; i < size; ++i)
 	{
-		pair<K, V> data;
+		std::pair<K, V> data;
 		deconstruct(data);
 		// arg.emplace_hint(arg.end(), move(data));
 		arg.insert(move(data));
@@ -398,7 +398,7 @@ void pDefault::deconstruct(map<K, V>& arg, Args&... args) const
 }
 
 template<typename T1, typename T2, typename... Args>
-void pDefault::deconstruct(pair<T1, T2>& arg, Args&... args) const
+void pDefault::deconstruct(std::pair<T1, T2>& arg, Args&... args) const
 {
 	deconstruct(arg.first);
 	deconstruct(arg.second);
@@ -406,21 +406,21 @@ void pDefault::deconstruct(pair<T1, T2>& arg, Args&... args) const
 }
 
 template<typename... T, typename... Args>
-void pDefault::deconstruct(tuple<T...>& arg, Args&... args) const
+void pDefault::deconstruct(std::tuple<T...>& arg, Args&... args) const
 {
 	pack_tuple(arg, tuple_count<sizeof...(T) - 1>());
 	deconstruct(args...);
 }
 
 template<typename... T, size_t N>
-void pDefault::pack_tuple(tuple<T...>& arg, tuple_count<N>) const
+void pDefault::pack_tuple(std::tuple<T...>& arg, tuple_count<N>) const
 {
 	deconstruct(std::get<N>(arg));
 	pack_tuple(arg, tuple_count<N - 1>());
 }
 
 template<typename... T>
-void pDefault::pack_tuple(tuple<T...>& arg, tuple_count<0>) const
+void pDefault::pack_tuple(std::tuple<T...>& arg, tuple_count<0>) const
 {
 	deconstruct(std::get<0>(arg));
 }
@@ -440,7 +440,7 @@ class pObjectDefault : public pDefault
 
 		}
 
-		pObjectDefault(pTypes type, NetworkID id) : pDefault(type)
+		pObjectDefault(pTypes type, RakNet::NetworkID id) : pDefault(type)
 		{
 			construct(id);
 		}
@@ -461,7 +461,7 @@ class pObjectNewDefault : public pObjectDefault
 
 		}
 
-		pObjectNewDefault(pTypes type, NetworkID id, unsigned int refID, unsigned int baseID) : pObjectDefault(type, id)
+		pObjectNewDefault(pTypes type, RakNet::NetworkID id, unsigned int refID, unsigned int baseID) : pObjectDefault(type, id)
 		{
 			construct(refID, baseID);
 		}
@@ -477,7 +477,7 @@ class pGameAuth : public pDefault
 		friend class PacketFactory;
 
 	private:
-		pGameAuth(const string& name, const string& pwd) : pDefault(pTypes::ID_GAME_AUTH)
+		pGameAuth(const std::string& name, const std::string& pwd) : pDefault(pTypes::ID_GAME_AUTH)
 		{
 			construct(name, pwd);
 		}
@@ -486,7 +486,7 @@ class pGameAuth : public pDefault
 
 		}
 
-		void access(string& name, string& pwd) const
+		void access(std::string& name, std::string& pwd) const
 		{
 			deconstruct(name, pwd);
 		}
@@ -495,7 +495,7 @@ class pGameAuth : public pDefault
 template<typename... Args>
 struct PacketFactory::Create_<pTypes::ID_GAME_AUTH, Args...> {
 	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pGameAuth(forward<Args>(args)...));
+		return pPacket(new pGameAuth(std::forward<Args>(args)...));
 	}
 };
 
@@ -507,7 +507,7 @@ inline const pGameAuth* PacketFactory::packet_cast(const pDefault* packet) {
 template<typename... Args>
 struct PacketFactory::Access_<pTypes::ID_GAME_AUTH, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pGameAuth>(packet)->access(forward<Args&>(args)...);
+		packet_cast<pGameAuth>(packet)->access(std::forward<Args&>(args)...);
 	}
 };
 
@@ -555,7 +555,7 @@ class pGameMod : public pDefault
 		friend class PacketFactory;
 
 	private:
-		pGameMod(const string& modfile, unsigned int crc) : pDefault(pTypes::ID_GAME_MOD)
+		pGameMod(const std::string& modfile, unsigned int crc) : pDefault(pTypes::ID_GAME_MOD)
 		{
 			construct(modfile, crc);
 		}
@@ -564,7 +564,7 @@ class pGameMod : public pDefault
 
 		}
 
-		void access(string& modfile, unsigned int& crc) const
+		void access(std::string& modfile, unsigned int& crc) const
 		{
 			deconstruct(modfile, crc);
 		}
@@ -573,7 +573,7 @@ class pGameMod : public pDefault
 template<typename... Args>
 struct PacketFactory::Create_<pTypes::ID_GAME_MOD, Args...> {
 	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pGameMod(forward<Args>(args)...));
+		return pPacket(new pGameMod(std::forward<Args>(args)...));
 	}
 };
 
@@ -585,7 +585,7 @@ inline const pGameMod* PacketFactory::packet_cast(const pDefault* packet) {
 template<typename... Args>
 struct PacketFactory::Access_<pTypes::ID_GAME_MOD, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pGameMod>(packet)->access(forward<Args&>(args)...);
+		packet_cast<pGameMod>(packet)->access(std::forward<Args&>(args)...);
 	}
 };
 
@@ -651,7 +651,7 @@ class pGameEnd : public pDefault
 template<typename... Args>
 struct PacketFactory::Create_<pTypes::ID_GAME_END, Args...> {
 	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pGameEnd(forward<Args>(args)...));
+		return pPacket(new pGameEnd(std::forward<Args>(args)...));
 	}
 };
 
@@ -663,7 +663,7 @@ inline const pGameEnd* PacketFactory::packet_cast(const pDefault* packet) {
 template<typename... Args>
 struct PacketFactory::Access_<pTypes::ID_GAME_END, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pGameEnd>(packet)->access(forward<Args&>(args)...);
+		packet_cast<pGameEnd>(packet)->access(std::forward<Args&>(args)...);
 	}
 };
 
@@ -672,7 +672,7 @@ class pGameMessage : public pDefault
 		friend class PacketFactory;
 
 	private:
-		pGameMessage(const string& message) : pDefault(pTypes::ID_GAME_MESSAGE)
+		pGameMessage(const std::string& message) : pDefault(pTypes::ID_GAME_MESSAGE)
 		{
 			construct(message);
 		}
@@ -681,7 +681,7 @@ class pGameMessage : public pDefault
 
 		}
 
-		void access(string& message) const
+		void access(std::string& message) const
 		{
 			deconstruct(message);
 		}
@@ -690,7 +690,7 @@ class pGameMessage : public pDefault
 template<typename... Args>
 struct PacketFactory::Create_<pTypes::ID_GAME_MESSAGE, Args...> {
 	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pGameMessage(forward<Args>(args)...));
+		return pPacket(new pGameMessage(std::forward<Args>(args)...));
 	}
 };
 
@@ -702,7 +702,7 @@ inline const pGameMessage* PacketFactory::packet_cast(const pDefault* packet) {
 template<typename... Args>
 struct PacketFactory::Access_<pTypes::ID_GAME_MESSAGE, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pGameMessage>(packet)->access(forward<Args&>(args)...);
+		packet_cast<pGameMessage>(packet)->access(std::forward<Args&>(args)...);
 	}
 };
 
@@ -711,7 +711,7 @@ class pGameChat : public pDefault
 		friend class PacketFactory;
 
 	private:
-		pGameChat(const string& message) : pDefault(pTypes::ID_GAME_CHAT)
+		pGameChat(const std::string& message) : pDefault(pTypes::ID_GAME_CHAT)
 		{
 			construct(message);
 		}
@@ -720,7 +720,7 @@ class pGameChat : public pDefault
 
 		}
 
-		void access(string& message) const
+		void access(std::string& message) const
 		{
 			deconstruct(message);
 		}
@@ -729,7 +729,7 @@ class pGameChat : public pDefault
 template<typename... Args>
 struct PacketFactory::Create_<pTypes::ID_GAME_CHAT, Args...> {
 	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pGameChat(forward<Args>(args)...));
+		return pPacket(new pGameChat(std::forward<Args>(args)...));
 	}
 };
 
@@ -741,7 +741,7 @@ inline const pGameChat* PacketFactory::packet_cast(const pDefault* packet) {
 template<typename... Args>
 struct PacketFactory::Access_<pTypes::ID_GAME_CHAT, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pGameChat>(packet)->access(forward<Args&>(args)...);
+		packet_cast<pGameChat>(packet)->access(std::forward<Args&>(args)...);
 	}
 };
 
@@ -768,7 +768,7 @@ class pGameGlobal : public pDefault
 template<typename... Args>
 struct PacketFactory::Create_<pTypes::ID_GAME_GLOBAL, Args...> {
 	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pGameGlobal(forward<Args>(args)...));
+		return pPacket(new pGameGlobal(std::forward<Args>(args)...));
 	}
 };
 
@@ -780,7 +780,7 @@ inline const pGameGlobal* PacketFactory::packet_cast(const pDefault* packet) {
 template<typename... Args>
 struct PacketFactory::Access_<pTypes::ID_GAME_GLOBAL, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pGameGlobal>(packet)->access(forward<Args&>(args)...);
+		packet_cast<pGameGlobal>(packet)->access(std::forward<Args&>(args)...);
 	}
 };
 
@@ -807,7 +807,7 @@ class pGameWeather : public pDefault
 template<typename... Args>
 struct PacketFactory::Create_<pTypes::ID_GAME_WEATHER, Args...> {
 	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pGameWeather(forward<Args>(args)...));
+		return pPacket(new pGameWeather(std::forward<Args>(args)...));
 	}
 };
 
@@ -819,7 +819,7 @@ inline const pGameWeather* PacketFactory::packet_cast(const pDefault* packet) {
 template<typename... Args>
 struct PacketFactory::Access_<pTypes::ID_GAME_WEATHER, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pGameWeather>(packet)->access(forward<Args&>(args)...);
+		packet_cast<pGameWeather>(packet)->access(std::forward<Args&>(args)...);
 	}
 };
 
@@ -828,7 +828,7 @@ class pObjectNew : public pObjectNewDefault
 		friend class PacketFactory;
 
 	private:
-		pObjectNew(NetworkID id, unsigned int refID, unsigned int baseID, bool changed, const string& name, double X, double Y, double Z, double aX, double aY, double aZ, unsigned int cell, bool enabled) : pObjectNewDefault(pTypes::ID_OBJECT_NEW, id, refID, baseID)
+		pObjectNew(RakNet::NetworkID id, unsigned int refID, unsigned int baseID, bool changed, const std::string& name, double X, double Y, double Z, double aX, double aY, double aZ, unsigned int cell, bool enabled) : pObjectNewDefault(pTypes::ID_OBJECT_NEW, id, refID, baseID)
 		{
 			construct(changed, name, X, Y, Z, aX, aY, aZ, cell, enabled);
 		}
@@ -837,7 +837,7 @@ class pObjectNew : public pObjectNewDefault
 
 		}
 
-		void access(NetworkID& id, unsigned int& refID, unsigned int& baseID, bool& changed, string& name, double& X, double& Y, double& Z, double& aX, double& aY, double& aZ, unsigned int& cell, bool& enabled) const
+		void access(RakNet::NetworkID& id, unsigned int& refID, unsigned int& baseID, bool& changed, std::string& name, double& X, double& Y, double& Z, double& aX, double& aY, double& aZ, unsigned int& cell, bool& enabled) const
 		{
 			deconstruct(id, refID, baseID, changed, name, X, Y, Z, aX, aY, aZ, cell, enabled);
 		}
@@ -846,7 +846,7 @@ class pObjectNew : public pObjectNewDefault
 template<typename... Args>
 struct PacketFactory::Create_<pTypes::ID_OBJECT_NEW, Args...> {
 	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pObjectNew(forward<Args>(args)...));
+		return pPacket(new pObjectNew(std::forward<Args>(args)...));
 	}
 };
 
@@ -865,7 +865,7 @@ inline const pObjectNew* PacketFactory::packet_cast(const pDefault* packet) {
 template<typename... Args>
 struct PacketFactory::Access_<pTypes::ID_OBJECT_NEW, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pObjectNew>(packet)->access(forward<Args&>(args)...);
+		packet_cast<pObjectNew>(packet)->access(std::forward<Args&>(args)...);
 	}
 };
 
@@ -874,7 +874,7 @@ class pItemNew : public pObjectNewDefault
 		friend class PacketFactory;
 
 	private:
-		pItemNew(const pPacket& _pObjectNew, NetworkID id, unsigned int count, double condition, bool equipped, bool silent, bool stick) : pObjectNewDefault(pTypes::ID_ITEM_NEW)
+		pItemNew(const pPacket& _pObjectNew, RakNet::NetworkID id, unsigned int count, double condition, bool equipped, bool silent, bool stick) : pObjectNewDefault(pTypes::ID_ITEM_NEW)
 		{
 			construct(_pObjectNew, id, count, condition, equipped, silent, stick);
 		}
@@ -883,7 +883,7 @@ class pItemNew : public pObjectNewDefault
 
 		}
 
-		void access(NetworkID& id, unsigned int& count, double& condition, bool& equipped, bool& silent, bool& stick) const
+		void access(RakNet::NetworkID& id, unsigned int& count, double& condition, bool& equipped, bool& silent, bool& stick) const
 		{
 			deconstruct(id, count, condition, equipped, silent, stick);
 		}
@@ -892,7 +892,7 @@ class pItemNew : public pObjectNewDefault
 template<typename... Args>
 struct PacketFactory::Create_<pTypes::ID_ITEM_NEW, Args...> {
 	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pItemNew(forward<Args>(args)...));
+		return pPacket(new pItemNew(std::forward<Args>(args)...));
 	}
 };
 
@@ -904,7 +904,7 @@ inline const pItemNew* PacketFactory::packet_cast(const pDefault* packet) {
 template<typename... Args>
 struct PacketFactory::Access_<pTypes::ID_ITEM_NEW, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pItemNew>(packet)->access(forward<Args&>(args)...);
+		packet_cast<pItemNew>(packet)->access(std::forward<Args&>(args)...);
 	}
 };
 
@@ -913,7 +913,7 @@ class pContainerNew : public pObjectNewDefault
 		friend class PacketFactory;
 
 	private:
-		pContainerNew(const pPacket& _pObjectNew, const vector<pPacket>& _pItemNew) : pObjectNewDefault(pTypes::ID_CONTAINER_NEW)
+		pContainerNew(const pPacket& _pObjectNew, const std::vector<pPacket>& _pItemNew) : pObjectNewDefault(pTypes::ID_CONTAINER_NEW)
 		{
 			construct(_pObjectNew, _pItemNew);
 		}
@@ -922,7 +922,7 @@ class pContainerNew : public pObjectNewDefault
 
 		}
 
-		void access(vector<pPacket>& _pItemNew) const
+		void access(std::vector<pPacket>& _pItemNew) const
 		{
 			deconstruct(_pItemNew);
 		}
@@ -931,7 +931,7 @@ class pContainerNew : public pObjectNewDefault
 template<typename... Args>
 struct PacketFactory::Create_<pTypes::ID_CONTAINER_NEW, Args...> {
 	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pContainerNew(forward<Args>(args)...));
+		return pPacket(new pContainerNew(std::forward<Args>(args)...));
 	}
 };
 
@@ -948,7 +948,7 @@ inline const pContainerNew* PacketFactory::packet_cast(const pDefault* packet) {
 template<typename... Args>
 struct PacketFactory::Access_<pTypes::ID_CONTAINER_NEW, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pContainerNew>(packet)->access(forward<Args&>(args)...);
+		packet_cast<pContainerNew>(packet)->access(std::forward<Args&>(args)...);
 	}
 };
 
@@ -957,7 +957,7 @@ class pActorNew : public pObjectNewDefault
 		friend class PacketFactory;
 
 	private:
-		pActorNew(const pPacket& _pContainerNew, const map<unsigned char, double>& values, const map<unsigned char, double>& baseValues, unsigned int race, signed int age, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool female, bool alerted, bool sneaking, bool dead) : pObjectNewDefault(pTypes::ID_ACTOR_NEW)
+		pActorNew(const pPacket& _pContainerNew, const std::map<unsigned char, double>& values, const std::map<unsigned char, double>& baseValues, unsigned int race, signed int age, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool female, bool alerted, bool sneaking, bool dead) : pObjectNewDefault(pTypes::ID_ACTOR_NEW)
 		{
 			construct(_pContainerNew, values, baseValues, race, age, idle, moving, movingxy, weapon, female, alerted, sneaking, dead);
 		}
@@ -966,7 +966,7 @@ class pActorNew : public pObjectNewDefault
 
 		}
 
-		void access(map<unsigned char, double>& values, map<unsigned char, double>& baseValues, unsigned int& race, signed int& age, unsigned int& idle, unsigned char& moving, unsigned char& movingxy, unsigned char& weapon, bool& female, bool& alerted, bool& sneaking, bool& dead) const
+		void access(std::map<unsigned char, double>& values, std::map<unsigned char, double>& baseValues, unsigned int& race, signed int& age, unsigned int& idle, unsigned char& moving, unsigned char& movingxy, unsigned char& weapon, bool& female, bool& alerted, bool& sneaking, bool& dead) const
 		{
 			deconstruct(values, baseValues, race, age, idle, moving, movingxy, weapon, female, alerted, sneaking, dead);
 		}
@@ -975,7 +975,7 @@ class pActorNew : public pObjectNewDefault
 template<typename... Args>
 struct PacketFactory::Create_<pTypes::ID_ACTOR_NEW, Args...> {
 	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pActorNew(forward<Args>(args)...));
+		return pPacket(new pActorNew(std::forward<Args>(args)...));
 	}
 };
 
@@ -991,7 +991,7 @@ inline const pActorNew* PacketFactory::packet_cast(const pDefault* packet) {
 template<typename... Args>
 struct PacketFactory::Access_<pTypes::ID_ACTOR_NEW, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pActorNew>(packet)->access(forward<Args&>(args)...);
+		packet_cast<pActorNew>(packet)->access(std::forward<Args&>(args)...);
 	}
 };
 
@@ -1000,7 +1000,7 @@ class pPlayerNew : public pObjectNewDefault
 		friend class PacketFactory;
 
 	private:
-		pPlayerNew(const pPacket& _pActorNew, const map<unsigned char, pair<unsigned char, bool>>& controls) : pObjectNewDefault(pTypes::ID_PLAYER_NEW)
+		pPlayerNew(const pPacket& _pActorNew, const std::map<unsigned char, std::pair<unsigned char, bool>>& controls) : pObjectNewDefault(pTypes::ID_PLAYER_NEW)
 		{
 			construct(_pActorNew, controls);
 		}
@@ -1009,7 +1009,7 @@ class pPlayerNew : public pObjectNewDefault
 
 		}
 
-		void access(map<unsigned char, pair<unsigned char, bool>>& controls) const
+		void access(std::map<unsigned char, std::pair<unsigned char, bool>>& controls) const
 		{
 			deconstruct(controls);
 		}
@@ -1018,7 +1018,7 @@ class pPlayerNew : public pObjectNewDefault
 template<typename... Args>
 struct PacketFactory::Create_<pTypes::ID_PLAYER_NEW, Args...> {
 	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pPlayerNew(forward<Args>(args)...));
+		return pPacket(new pPlayerNew(std::forward<Args>(args)...));
 	}
 };
 
@@ -1030,7 +1030,7 @@ inline const pPlayerNew* PacketFactory::packet_cast(const pDefault* packet) {
 template<typename... Args>
 struct PacketFactory::Access_<pTypes::ID_PLAYER_NEW, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pPlayerNew>(packet)->access(forward<Args&>(args)...);
+		packet_cast<pPlayerNew>(packet)->access(std::forward<Args&>(args)...);
 	}
 };
 
@@ -1039,7 +1039,7 @@ class pObjectRemove : public pObjectDefault
 		friend class PacketFactory;
 
 	private:
-		pObjectRemove(NetworkID id) : pObjectDefault(pTypes::ID_OBJECT_REMOVE, id)
+		pObjectRemove(RakNet::NetworkID id) : pObjectDefault(pTypes::ID_OBJECT_REMOVE, id)
 		{
 
 		}
@@ -1048,7 +1048,7 @@ class pObjectRemove : public pObjectDefault
 
 		}
 
-		void access(NetworkID& id) const
+		void access(RakNet::NetworkID& id) const
 		{
 			deconstruct(id);
 		}
@@ -1057,7 +1057,7 @@ class pObjectRemove : public pObjectDefault
 template<typename... Args>
 struct PacketFactory::Create_<pTypes::ID_OBJECT_REMOVE, Args...> {
 	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pObjectRemove(forward<Args>(args)...));
+		return pPacket(new pObjectRemove(std::forward<Args>(args)...));
 	}
 };
 
@@ -1069,7 +1069,7 @@ inline const pObjectRemove* PacketFactory::packet_cast(const pDefault* packet) {
 template<typename... Args>
 struct PacketFactory::Access_<pTypes::ID_OBJECT_REMOVE, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pObjectRemove>(packet)->access(forward<Args&>(args)...);
+		packet_cast<pObjectRemove>(packet)->access(std::forward<Args&>(args)...);
 	}
 };
 
@@ -1078,7 +1078,7 @@ class pObjectPos : public pObjectDefault
 		friend class PacketFactory;
 
 	private:
-		pObjectPos(NetworkID id, double X, double Y, double Z) : pObjectDefault(pTypes::ID_UPDATE_POS, id)
+		pObjectPos(RakNet::NetworkID id, double X, double Y, double Z) : pObjectDefault(pTypes::ID_UPDATE_POS, id)
 		{
 			construct(X, Y, Z);
 		}
@@ -1087,7 +1087,7 @@ class pObjectPos : public pObjectDefault
 
 		}
 
-		void access(NetworkID& id, double& X, double& Y, double& Z) const
+		void access(RakNet::NetworkID& id, double& X, double& Y, double& Z) const
 		{
 			deconstruct(id, X, Y, Z);
 		}
@@ -1096,7 +1096,7 @@ class pObjectPos : public pObjectDefault
 template<typename... Args>
 struct PacketFactory::Create_<pTypes::ID_UPDATE_POS, Args...> {
 	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pObjectPos(forward<Args>(args)...));
+		return pPacket(new pObjectPos(std::forward<Args>(args)...));
 	}
 };
 
@@ -1108,7 +1108,7 @@ inline const pObjectPos* PacketFactory::packet_cast(const pDefault* packet) {
 template<typename... Args>
 struct PacketFactory::Access_<pTypes::ID_UPDATE_POS, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pObjectPos>(packet)->access(forward<Args&>(args)...);
+		packet_cast<pObjectPos>(packet)->access(std::forward<Args&>(args)...);
 	}
 };
 
@@ -1117,7 +1117,7 @@ class pObjectAngle : public pObjectDefault
 		friend class PacketFactory;
 
 	private:
-		pObjectAngle(NetworkID id, unsigned char axis, double value) : pObjectDefault(pTypes::ID_UPDATE_ANGLE, id)
+		pObjectAngle(RakNet::NetworkID id, unsigned char axis, double value) : pObjectDefault(pTypes::ID_UPDATE_ANGLE, id)
 		{
 			construct(axis, value);
 		}
@@ -1126,7 +1126,7 @@ class pObjectAngle : public pObjectDefault
 
 		}
 
-		void access(NetworkID& id, unsigned char& axis, double& value) const
+		void access(RakNet::NetworkID& id, unsigned char& axis, double& value) const
 		{
 			deconstruct(id, axis, value);
 		}
@@ -1135,7 +1135,7 @@ class pObjectAngle : public pObjectDefault
 template<typename... Args>
 struct PacketFactory::Create_<pTypes::ID_UPDATE_ANGLE, Args...> {
 	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pObjectAngle(forward<Args>(args)...));
+		return pPacket(new pObjectAngle(std::forward<Args>(args)...));
 	}
 };
 
@@ -1147,7 +1147,7 @@ inline const pObjectAngle* PacketFactory::packet_cast(const pDefault* packet) {
 template<typename... Args>
 struct PacketFactory::Access_<pTypes::ID_UPDATE_ANGLE, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pObjectAngle>(packet)->access(forward<Args&>(args)...);
+		packet_cast<pObjectAngle>(packet)->access(std::forward<Args&>(args)...);
 	}
 };
 
@@ -1156,7 +1156,7 @@ class pObjectCell : public pObjectDefault
 		friend class PacketFactory;
 
 	private:
-		pObjectCell(NetworkID id, unsigned int cell) : pObjectDefault(pTypes::ID_UPDATE_CELL, id)
+		pObjectCell(RakNet::NetworkID id, unsigned int cell) : pObjectDefault(pTypes::ID_UPDATE_CELL, id)
 		{
 			construct(cell);
 		}
@@ -1165,7 +1165,7 @@ class pObjectCell : public pObjectDefault
 
 		}
 
-		void access(NetworkID& id, unsigned int& cell) const
+		void access(RakNet::NetworkID& id, unsigned int& cell) const
 		{
 			deconstruct(id, cell);
 		}
@@ -1174,7 +1174,7 @@ class pObjectCell : public pObjectDefault
 template<typename... Args>
 struct PacketFactory::Create_<pTypes::ID_UPDATE_CELL, Args...> {
 	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pObjectCell(forward<Args>(args)...));
+		return pPacket(new pObjectCell(std::forward<Args>(args)...));
 	}
 };
 
@@ -1186,7 +1186,7 @@ inline const pObjectCell* PacketFactory::packet_cast(const pDefault* packet) {
 template<typename... Args>
 struct PacketFactory::Access_<pTypes::ID_UPDATE_CELL, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pObjectCell>(packet)->access(forward<Args&>(args)...);
+		packet_cast<pObjectCell>(packet)->access(std::forward<Args&>(args)...);
 	}
 };
 
@@ -1195,7 +1195,7 @@ class pContainerUpdate : public pObjectDefault
 		friend class PacketFactory;
 
 	private:
-		pContainerUpdate(NetworkID id, const pair<list<NetworkID>, vector<pPacket>>& ndiff, const pair<list<NetworkID>, vector<pPacket>>& gdiff) : pObjectDefault(pTypes::ID_UPDATE_CONTAINER, id)
+		pContainerUpdate(RakNet::NetworkID id, const std::pair<std::list<RakNet::NetworkID>, std::vector<pPacket>>& ndiff, const std::pair<std::list<RakNet::NetworkID>, std::vector<pPacket>>& gdiff) : pObjectDefault(pTypes::ID_UPDATE_CONTAINER, id)
 		{
 			construct(ndiff, gdiff);
 		}
@@ -1204,7 +1204,7 @@ class pContainerUpdate : public pObjectDefault
 
 		}
 
-		void access(NetworkID& id, pair<list<NetworkID>, vector<pPacket>>& ndiff, pair<list<NetworkID>, vector<pPacket>>& gdiff) const
+		void access(RakNet::NetworkID& id, std::pair<std::list<RakNet::NetworkID>, std::vector<pPacket>>& ndiff, std::pair<std::list<RakNet::NetworkID>, std::vector<pPacket>>& gdiff) const
 		{
 			deconstruct(id, ndiff, gdiff);
 		}
@@ -1213,7 +1213,7 @@ class pContainerUpdate : public pObjectDefault
 template<typename... Args>
 struct PacketFactory::Create_<pTypes::ID_UPDATE_CONTAINER, Args...> {
 	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pContainerUpdate(forward<Args>(args)...));
+		return pPacket(new pContainerUpdate(std::forward<Args>(args)...));
 	}
 };
 
@@ -1225,7 +1225,7 @@ inline const pContainerUpdate* PacketFactory::packet_cast(const pDefault* packet
 template<typename... Args>
 struct PacketFactory::Access_<pTypes::ID_UPDATE_CONTAINER, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pContainerUpdate>(packet)->access(forward<Args&>(args)...);
+		packet_cast<pContainerUpdate>(packet)->access(std::forward<Args&>(args)...);
 	}
 };
 
@@ -1234,7 +1234,7 @@ class pActorValue : public pObjectDefault
 		friend class PacketFactory;
 
 	private:
-		pActorValue(NetworkID id, bool base, unsigned char index, double value) : pObjectDefault(pTypes::ID_UPDATE_VALUE, id)
+		pActorValue(RakNet::NetworkID id, bool base, unsigned char index, double value) : pObjectDefault(pTypes::ID_UPDATE_VALUE, id)
 		{
 			construct(base, index, value);
 		}
@@ -1243,7 +1243,7 @@ class pActorValue : public pObjectDefault
 
 		}
 
-		void access(NetworkID& id, bool& base, unsigned char& index, double& value) const
+		void access(RakNet::NetworkID& id, bool& base, unsigned char& index, double& value) const
 		{
 			deconstruct(id, base, index, value);
 		}
@@ -1252,7 +1252,7 @@ class pActorValue : public pObjectDefault
 template<typename... Args>
 struct PacketFactory::Create_<pTypes::ID_UPDATE_VALUE, Args...> {
 	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pActorValue(forward<Args>(args)...));
+		return pPacket(new pActorValue(std::forward<Args>(args)...));
 	}
 };
 
@@ -1264,7 +1264,7 @@ inline const pActorValue* PacketFactory::packet_cast(const pDefault* packet) {
 template<typename... Args>
 struct PacketFactory::Access_<pTypes::ID_UPDATE_VALUE, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pActorValue>(packet)->access(forward<Args&>(args)...);
+		packet_cast<pActorValue>(packet)->access(std::forward<Args&>(args)...);
 	}
 };
 
@@ -1273,7 +1273,7 @@ class pActorState : public pObjectDefault
 		friend class PacketFactory;
 
 	private:
-		pActorState(NetworkID id, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking, bool firing) : pObjectDefault(pTypes::ID_UPDATE_STATE, id)
+		pActorState(RakNet::NetworkID id, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking, bool firing) : pObjectDefault(pTypes::ID_UPDATE_STATE, id)
 		{
 			construct(idle, moving, movingxy, weapon, alerted, sneaking, firing);
 		}
@@ -1282,7 +1282,7 @@ class pActorState : public pObjectDefault
 
 		}
 
-		void access(NetworkID& id, unsigned int& idle, unsigned char& moving, unsigned char& movingxy, unsigned char& weapon, bool& alerted, bool& sneaking, bool& firing) const
+		void access(RakNet::NetworkID& id, unsigned int& idle, unsigned char& moving, unsigned char& movingxy, unsigned char& weapon, bool& alerted, bool& sneaking, bool& firing) const
 		{
 			deconstruct(id, idle, moving, movingxy, weapon, alerted, sneaking, firing);
 		}
@@ -1291,7 +1291,7 @@ class pActorState : public pObjectDefault
 template<typename... Args>
 struct PacketFactory::Create_<pTypes::ID_UPDATE_STATE, Args...> {
 	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pActorState(forward<Args>(args)...));
+		return pPacket(new pActorState(std::forward<Args>(args)...));
 	}
 };
 
@@ -1303,7 +1303,7 @@ inline const pActorState* PacketFactory::packet_cast(const pDefault* packet) {
 template<typename... Args>
 struct PacketFactory::Access_<pTypes::ID_UPDATE_STATE, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pActorState>(packet)->access(forward<Args&>(args)...);
+		packet_cast<pActorState>(packet)->access(std::forward<Args&>(args)...);
 	}
 };
 
@@ -1312,7 +1312,7 @@ class pActorRace : public pObjectDefault
 		friend class PacketFactory;
 
 	private:
-		pActorRace(NetworkID id, unsigned int race, signed int age, signed int delta_age) : pObjectDefault(pTypes::ID_UPDATE_RACE, id)
+		pActorRace(RakNet::NetworkID id, unsigned int race, signed int age, signed int delta_age) : pObjectDefault(pTypes::ID_UPDATE_RACE, id)
 		{
 			construct(race, age, delta_age);
 		}
@@ -1321,7 +1321,7 @@ class pActorRace : public pObjectDefault
 
 		}
 
-		void access(NetworkID& id, unsigned int& race, signed int& age, signed int& delta_age) const
+		void access(RakNet::NetworkID& id, unsigned int& race, signed int& age, signed int& delta_age) const
 		{
 			deconstruct(id, race, age, delta_age);
 		}
@@ -1330,7 +1330,7 @@ class pActorRace : public pObjectDefault
 template<typename... Args>
 struct PacketFactory::Create_<pTypes::ID_UPDATE_RACE, Args...> {
 	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pActorRace(forward<Args>(args)...));
+		return pPacket(new pActorRace(std::forward<Args>(args)...));
 	}
 };
 
@@ -1342,7 +1342,7 @@ inline const pActorRace* PacketFactory::packet_cast(const pDefault* packet) {
 template<typename... Args>
 struct PacketFactory::Access_<pTypes::ID_UPDATE_RACE, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pActorRace>(packet)->access(forward<Args&>(args)...);
+		packet_cast<pActorRace>(packet)->access(std::forward<Args&>(args)...);
 	}
 };
 
@@ -1351,7 +1351,7 @@ class pActorSex : public pObjectDefault
 		friend class PacketFactory;
 
 	private:
-		pActorSex(NetworkID id, bool female) : pObjectDefault(pTypes::ID_UPDATE_SEX, id)
+		pActorSex(RakNet::NetworkID id, bool female) : pObjectDefault(pTypes::ID_UPDATE_SEX, id)
 		{
 			construct(female);
 		}
@@ -1360,7 +1360,7 @@ class pActorSex : public pObjectDefault
 
 		}
 
-		void access(NetworkID& id, bool& female) const
+		void access(RakNet::NetworkID& id, bool& female) const
 		{
 			deconstruct(id, female);
 		}
@@ -1369,7 +1369,7 @@ class pActorSex : public pObjectDefault
 template<typename... Args>
 struct PacketFactory::Create_<pTypes::ID_UPDATE_SEX, Args...> {
 	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pActorSex(forward<Args>(args)...));
+		return pPacket(new pActorSex(std::forward<Args>(args)...));
 	}
 };
 
@@ -1381,7 +1381,7 @@ inline const pActorSex* PacketFactory::packet_cast(const pDefault* packet) {
 template<typename... Args>
 struct PacketFactory::Access_<pTypes::ID_UPDATE_SEX, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pActorSex>(packet)->access(forward<Args&>(args)...);
+		packet_cast<pActorSex>(packet)->access(std::forward<Args&>(args)...);
 	}
 };
 
@@ -1390,7 +1390,7 @@ class pActorDead : public pObjectDefault
 		friend class PacketFactory;
 
 	private:
-		pActorDead(NetworkID id, bool dead, unsigned short limbs, signed char cause) : pObjectDefault(pTypes::ID_UPDATE_DEAD, id)
+		pActorDead(RakNet::NetworkID id, bool dead, unsigned short limbs, signed char cause) : pObjectDefault(pTypes::ID_UPDATE_DEAD, id)
 		{
 			construct(dead, limbs, cause);
 		}
@@ -1399,7 +1399,7 @@ class pActorDead : public pObjectDefault
 
 		}
 
-		void access(NetworkID& id, bool& dead, unsigned short& limbs, signed char& cause) const
+		void access(RakNet::NetworkID& id, bool& dead, unsigned short& limbs, signed char& cause) const
 		{
 			deconstruct(id, dead, limbs, cause);
 		}
@@ -1408,7 +1408,7 @@ class pActorDead : public pObjectDefault
 template<typename... Args>
 struct PacketFactory::Create_<pTypes::ID_UPDATE_DEAD, Args...> {
 	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pActorDead(forward<Args>(args)...));
+		return pPacket(new pActorDead(std::forward<Args>(args)...));
 	}
 };
 
@@ -1420,7 +1420,7 @@ inline const pActorDead* PacketFactory::packet_cast(const pDefault* packet) {
 template<typename... Args>
 struct PacketFactory::Access_<pTypes::ID_UPDATE_DEAD, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pActorDead>(packet)->access(forward<Args&>(args)...);
+		packet_cast<pActorDead>(packet)->access(std::forward<Args&>(args)...);
 	}
 };
 
@@ -1429,7 +1429,7 @@ class pActorFireweapon : public pObjectDefault
 		friend class PacketFactory;
 
 	private:
-		pActorFireweapon(NetworkID id, unsigned int weapon, double attacks) : pObjectDefault(pTypes::ID_UPDATE_FIREWEAPON, id)
+		pActorFireweapon(RakNet::NetworkID id, unsigned int weapon, double attacks) : pObjectDefault(pTypes::ID_UPDATE_FIREWEAPON, id)
 		{
 			construct(weapon, attacks);
 		}
@@ -1438,7 +1438,7 @@ class pActorFireweapon : public pObjectDefault
 
 		}
 
-		void access(NetworkID& id, unsigned int& weapon, double& attacks) const
+		void access(RakNet::NetworkID& id, unsigned int& weapon, double& attacks) const
 		{
 			deconstruct(id, weapon, attacks);
 		}
@@ -1447,7 +1447,7 @@ class pActorFireweapon : public pObjectDefault
 template<typename... Args>
 struct PacketFactory::Create_<pTypes::ID_UPDATE_FIREWEAPON, Args...> {
 	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pActorFireweapon(forward<Args>(args)...));
+		return pPacket(new pActorFireweapon(std::forward<Args>(args)...));
 	}
 };
 
@@ -1459,7 +1459,7 @@ inline const pActorFireweapon* PacketFactory::packet_cast(const pDefault* packet
 template<typename... Args>
 struct PacketFactory::Access_<pTypes::ID_UPDATE_FIREWEAPON, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pActorFireweapon>(packet)->access(forward<Args&>(args)...);
+		packet_cast<pActorFireweapon>(packet)->access(std::forward<Args&>(args)...);
 	}
 };
 
@@ -1468,7 +1468,7 @@ class pActorIdle : public pObjectDefault
 		friend class PacketFactory;
 
 	private:
-		pActorIdle(NetworkID id, unsigned int idle, const string& name) : pObjectDefault(pTypes::ID_UPDATE_IDLE, id)
+		pActorIdle(RakNet::NetworkID id, unsigned int idle, const std::string& name) : pObjectDefault(pTypes::ID_UPDATE_IDLE, id)
 		{
 			construct(idle, name);
 		}
@@ -1477,7 +1477,7 @@ class pActorIdle : public pObjectDefault
 
 		}
 
-		void access(NetworkID& id, unsigned int& idle, string& name) const
+		void access(RakNet::NetworkID& id, unsigned int& idle, std::string& name) const
 		{
 			deconstruct(id, idle, name);
 		}
@@ -1486,7 +1486,7 @@ class pActorIdle : public pObjectDefault
 template<typename... Args>
 struct PacketFactory::Create_<pTypes::ID_UPDATE_IDLE, Args...> {
 	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pActorIdle(forward<Args>(args)...));
+		return pPacket(new pActorIdle(std::forward<Args>(args)...));
 	}
 };
 
@@ -1498,7 +1498,7 @@ inline const pActorIdle* PacketFactory::packet_cast(const pDefault* packet) {
 template<typename... Args>
 struct PacketFactory::Access_<pTypes::ID_UPDATE_IDLE, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pActorIdle>(packet)->access(forward<Args&>(args)...);
+		packet_cast<pActorIdle>(packet)->access(std::forward<Args&>(args)...);
 	}
 };
 
@@ -1507,7 +1507,7 @@ class pPlayerControl : public pObjectDefault
 		friend class PacketFactory;
 
 	private:
-		pPlayerControl(NetworkID id, unsigned char control, unsigned char key) : pObjectDefault(pTypes::ID_UPDATE_CONTROL, id)
+		pPlayerControl(RakNet::NetworkID id, unsigned char control, unsigned char key) : pObjectDefault(pTypes::ID_UPDATE_CONTROL, id)
 		{
 			construct(control, key);
 		}
@@ -1516,7 +1516,7 @@ class pPlayerControl : public pObjectDefault
 
 		}
 
-		void access(NetworkID& id, unsigned char& control, unsigned char& key) const
+		void access(RakNet::NetworkID& id, unsigned char& control, unsigned char& key) const
 		{
 			deconstruct(id, control, key);
 		}
@@ -1525,7 +1525,7 @@ class pPlayerControl : public pObjectDefault
 template<typename... Args>
 struct PacketFactory::Create_<pTypes::ID_UPDATE_CONTROL, Args...> {
 	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pPlayerControl(forward<Args>(args)...));
+		return pPacket(new pPlayerControl(std::forward<Args>(args)...));
 	}
 };
 
@@ -1537,7 +1537,7 @@ inline const pPlayerControl* PacketFactory::packet_cast(const pDefault* packet) 
 template<typename... Args>
 struct PacketFactory::Access_<pTypes::ID_UPDATE_CONTROL, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pPlayerControl>(packet)->access(forward<Args&>(args)...);
+		packet_cast<pPlayerControl>(packet)->access(std::forward<Args&>(args)...);
 	}
 };
 
@@ -1546,7 +1546,7 @@ class pPlayerInterior : public pObjectDefault
 		friend class PacketFactory;
 
 	private:
-		pPlayerInterior(NetworkID id, const string& cell, bool spawn) : pObjectDefault(pTypes::ID_UPDATE_INTERIOR, id)
+		pPlayerInterior(RakNet::NetworkID id, const std::string& cell, bool spawn) : pObjectDefault(pTypes::ID_UPDATE_INTERIOR, id)
 		{
 			construct(cell, spawn);
 		}
@@ -1555,7 +1555,7 @@ class pPlayerInterior : public pObjectDefault
 
 		}
 
-		void access(NetworkID& id, string& cell, bool& spawn) const
+		void access(RakNet::NetworkID& id, std::string& cell, bool& spawn) const
 		{
 			deconstruct(id, cell, spawn);
 		}
@@ -1564,7 +1564,7 @@ class pPlayerInterior : public pObjectDefault
 template<typename... Args>
 struct PacketFactory::Create_<pTypes::ID_UPDATE_INTERIOR, Args...> {
 	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pPlayerInterior(forward<Args>(args)...));
+		return pPacket(new pPlayerInterior(std::forward<Args>(args)...));
 	}
 };
 
@@ -1576,7 +1576,7 @@ inline const pPlayerInterior* PacketFactory::packet_cast(const pDefault* packet)
 template<typename... Args>
 struct PacketFactory::Access_<pTypes::ID_UPDATE_INTERIOR, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pPlayerInterior>(packet)->access(forward<Args&>(args)...);
+		packet_cast<pPlayerInterior>(packet)->access(std::forward<Args&>(args)...);
 	}
 };
 
@@ -1585,7 +1585,7 @@ class pPlayerExterior : public pObjectDefault
 		friend class PacketFactory;
 
 	private:
-		pPlayerExterior(NetworkID id, unsigned int baseID, signed int x, signed int y, bool spawn) : pObjectDefault(pTypes::ID_UPDATE_EXTERIOR, id)
+		pPlayerExterior(RakNet::NetworkID id, unsigned int baseID, signed int x, signed int y, bool spawn) : pObjectDefault(pTypes::ID_UPDATE_EXTERIOR, id)
 		{
 			construct(baseID, x, y, spawn);
 		}
@@ -1594,7 +1594,7 @@ class pPlayerExterior : public pObjectDefault
 
 		}
 
-		void access(NetworkID& id, unsigned int& baseID, signed int& x, signed int& y, bool& spawn) const
+		void access(RakNet::NetworkID& id, unsigned int& baseID, signed int& x, signed int& y, bool& spawn) const
 		{
 			deconstruct(id, baseID, x, y, spawn);
 		}
@@ -1603,7 +1603,7 @@ class pPlayerExterior : public pObjectDefault
 template<typename... Args>
 struct PacketFactory::Create_<pTypes::ID_UPDATE_EXTERIOR, Args...> {
 	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pPlayerExterior(forward<Args>(args)...));
+		return pPacket(new pPlayerExterior(std::forward<Args>(args)...));
 	}
 };
 
@@ -1615,7 +1615,7 @@ inline const pPlayerExterior* PacketFactory::packet_cast(const pDefault* packet)
 template<typename... Args>
 struct PacketFactory::Access_<pTypes::ID_UPDATE_EXTERIOR, Args...> {
 	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pPlayerExterior>(packet)->access(forward<Args&>(args)...);
+		packet_cast<pPlayerExterior>(packet)->access(std::forward<Args&>(args)...);
 	}
 };
 

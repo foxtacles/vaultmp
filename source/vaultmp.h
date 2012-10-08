@@ -1,6 +1,9 @@
 #ifndef VAULTMP_H
 #define VAULTMP_H
 
+// FIXME
+#pragma GCC diagnostic ignored "-Wstrict-aliasing"
+
 #ifndef THREAD_PRIORITY_NORMAL
 #define THREAD_PRIORITY_NORMAL 1000
 #endif

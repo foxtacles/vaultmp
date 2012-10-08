@@ -2,6 +2,10 @@
 #include "Container.h"
 #include "PacketFactory.h"
 
+using namespace std;
+using namespace RakNet;
+using namespace Values;
+
 RawParameter Object::param_Axis = RawParameter(vector<string>());
 
 #ifdef VAULTMP_DEBUG

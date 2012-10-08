@@ -8,8 +8,6 @@
 #include "Debug.h"
 #endif
 
-using namespace std;
-
 /**
  * \brief A container class which simply stores a variable of type T
  *

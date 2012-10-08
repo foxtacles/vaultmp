@@ -16,8 +16,6 @@
 #include "Debug.h"
 #endif
 
-using namespace std;
-
 /**
  * \brief An extension class which provides a basic lock / unlock mechanism
  *
@@ -28,13 +26,13 @@ class Lockable
 {
 	private:
 		static unsigned int key;
-		static unordered_map<unsigned int, Lockable*> keymap;
-		static unordered_map<unsigned int, weak_ptr<Lockable>> sharemap;
+		static std::unordered_map<unsigned int, Lockable*> keymap;
+		static std::unordered_map<unsigned int, std::weak_ptr<Lockable>> sharemap;
 		static CriticalSection cs;
 
 		static unsigned int NextKey();
 
-		unordered_set<unsigned int> locks;
+		std::unordered_set<unsigned int> locks;
 
 #ifdef VAULTMP_DEBUG
 		static Debug* debug;
@@ -64,7 +62,7 @@ class Lockable
 		 *
 		 * Returns a weak_ptr to the object if successful.
 		 */
-		static weak_ptr<Lockable> Poll(unsigned int key, bool remove = true);
+		static std::weak_ptr<Lockable> Poll(unsigned int key, bool remove = true);
 
 		/**
 		 * \brief Locks this object
@@ -83,7 +81,7 @@ class Lockable
 		 *
 		 * Returns a key on success.
 		 */
-		static unsigned int Share(const shared_ptr<Lockable>& share);
+		static unsigned int Share(const std::shared_ptr<Lockable>& share);
 		/**
 		 * \brief Checks if this object is locked
 		 *

@@ -932,28 +932,28 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 	return result_data;
 }
 
-void API::DefineFunction(string name, string def, unsigned short opcode, unsigned char games)
+void API::DefineFunction(const string& name, const string& def, unsigned short opcode, unsigned char games)
 {
 	if (games & game)
-		functions.insert(pair<string, pair<string, unsigned short> >(name, pair<string, unsigned short>(def, opcode)));
+		functions.emplace(name, pair<string, unsigned short>(def, opcode));
 }
 
-void API::DefineValueString(string name, unsigned char value, unsigned char games)
+void API::DefineValueString(const string& name, unsigned char value, unsigned char games)
 {
 	if (games & game)
-		values.insert(pair<string, unsigned char>(name, value));
+		values.emplace(name, value);
 }
 
-void API::DefineAxisString(string name, unsigned char axis, unsigned char games)
+void API::DefineAxisString(const string& name, unsigned char axis, unsigned char games)
 {
 	if (games & game)
-		API::axis.insert(pair<string, unsigned char>(name, axis));
+		API::axis.emplace(name, axis);
 }
 
-void API::DefineAnimString(string name, unsigned char anim, unsigned char games)
+void API::DefineAnimString(const string& name, unsigned char anim, unsigned char games)
 {
 	if (games & game)
-		anims.insert(pair<string, unsigned char>(name, anim));
+		anims.emplace(name, anim);
 }
 
 void API::DefineControl(unsigned char control, unsigned char games)
@@ -1113,20 +1113,19 @@ vector<string> API::RetrieveAllAnims_Reverse()
 	return result;
 }
 
-pair<string, unsigned short> API::RetrieveFunction(string name)
+pair<string, unsigned short> API::RetrieveFunction(const string& name)
 {
-	FunctionMap::iterator it;
-	it = functions.find(name);
+	auto it = functions.find(name);
 
 	if (it != functions.end())
 		return it->second;
 
-	pair<string, unsigned short> empty = pair<string, unsigned short>("", 0x00);
+	auto empty = pair<string, unsigned short>("", 0x00);
 
 	return empty;
 }
 
-bool API::AnnounceFunction(string name)
+bool API::AnnounceFunction(const string& name)
 {
 	pair<string, unsigned short> func = RetrieveFunction(name);
 
@@ -1134,10 +1133,8 @@ bool API::AnnounceFunction(string name)
 		return true;
 
 #ifdef VAULTMP_DEBUG
-
 	if (debug)
 		debug->PrintFormat("API function %s not found or not supported by the game", true, name.c_str());
-
 #endif
 
 	return false;

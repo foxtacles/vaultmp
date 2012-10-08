@@ -1,6 +1,8 @@
 #include "Actor.h"
 #include "PacketFactory.h"
 
+using namespace std;
+using namespace RakNet;
 using namespace Values;
 
 RawParameter Actor::param_ActorValues = RawParameter(vector<string>());

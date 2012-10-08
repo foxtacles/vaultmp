@@ -1,5 +1,7 @@
 #include "VaultException.h"
 
+using namespace std;
+
 #ifdef VAULTMP_DEBUG
 Debug* VaultException::debug;
 #endif

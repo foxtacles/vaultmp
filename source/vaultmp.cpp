@@ -378,11 +378,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 	server_name = iniparser_getstring(config, "general:master", "");
 	inittime = iniparser_getint(config, "general:inittime", 9000);
 	multiinst = (bool) iniparser_getboolean(config, "general:multiinst", 0);
+
+/*
 	const char* servers = iniparser_getstring(config,  "general:servers", "");
 
 	char* token;
-	char buf[strlen(servers) + 1];
-	strcpy(buf, servers);
+	char* buf = servers;
 	token = strtok(buf, ",");
 
 	while (token != nullptr)
@@ -404,6 +405,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 
 		token = strtok(nullptr, ",");
 	}
+*/
 
 	hFont = CreateFont(-11, 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Verdana");
 	wndmain = CreateMainWindow();
@@ -588,17 +590,17 @@ void CleanUp()
 	CloseHandle(global_mutex);
 }
 
-int Create2ColItem(HWND hwndList, char* text1, char* text2)
+int Create2ColItem(HWND hwndList, const char* text1, const char* text2)
 {
 	LVITEM lvi;
 	ZeroMemory(&lvi, sizeof(lvi));
 	int ret;
 	lvi.mask = LVIF_TEXT;
-	lvi.pszText = text1;
+	lvi.pszText = const_cast<char*>(text1);
 	ret = ListView_InsertItem(hwndList, &lvi);
 
 	if (ret >= 0)
-		ListView_SetItemText(hwndList, ret, 1, text2);
+		ListView_SetItemText(hwndList, ret, 1, const_cast<char*>(text2));
 
 	return ret;
 }
@@ -873,7 +875,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 												ServerEntry entry(name.C_String(), map.C_String(), make_pair(players, playersMax), USHRT_MAX, game);
 
-												for (int j = 0; j < rsize; j++)
+												for (unsigned int j = 0; j < rsize; j++)
 												{
 													RakString key, value;
 													query.Read(key);
@@ -1136,20 +1138,13 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 						if (i != serverList.end())
 						{
 							ServerEntry* entry = &i->second;
-							std::map<string, string> rules = entry->GetServerRules();
+							const map<string, string>& rules = entry->GetServerRules();
 
-							for (map<string, string>::iterator k = rules.begin(); k != rules.end(); ++k)
+							for (const auto& k : rules)
 							{
-								string key = k->first;
-								string value = k->second;
-
-								char c_key[key.length()];
-								char c_value[value.length()];
-
-								strcpy(c_key, key.c_str());
-								strcpy(c_value, value.c_str());
-
-								Create2ColItem(wndlistview2, c_key, c_value);
+								const string& key = k.first;
+								const string& value = k.second;
+								Create2ColItem(wndlistview2, key.c_str(), value.c_str());
 							}
 						}
 					}

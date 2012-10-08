@@ -1,5 +1,8 @@
 #include "GameFactory.h"
 
+using namespace std;
+using namespace RakNet;
+
 CriticalSection GameFactory::cs;
 ReferenceList GameFactory::instances;
 ReferenceCount GameFactory::typecount;

@@ -36,7 +36,7 @@ class NetworkClient : public Network
 		 *
 		 * Returns a NetworkResponse to send to the server
 		 */
-		static NetworkResponse ProcessPacket(Packet* data);
+		static NetworkResponse ProcessPacket(RakNet::Packet* data);
 
 };
 

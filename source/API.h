@@ -4,6 +4,7 @@
 #ifdef __WIN32__
 #include <winsock2.h>
 #endif
+
 #include <ctime>
 #include <climits>
 #include <string>
@@ -22,14 +23,12 @@
 #include "Debug.h"
 #endif
 
-using namespace std;
-
-typedef vector<unique_ptr<unsigned char[]>> CommandParsed;
-typedef tuple<unsigned int, vector<double>, double, bool> CommandResult;
-typedef deque<tuple<unsigned int, vector<double>, unsigned int>> CommandQueue;
-typedef unordered_map<string, pair<string, unsigned short>> FunctionMap;
-typedef unordered_map<string, unsigned char> ValueMap;
-typedef set<unsigned char> ValueList;
+typedef std::vector<std::unique_ptr<unsigned char[]>> CommandParsed;
+typedef std::tuple<unsigned int, std::vector<double>, double, bool> CommandResult;
+typedef std::deque<std::tuple<unsigned int, std::vector<double>, unsigned int>> CommandQueue;
+typedef std::unordered_map<std::string, std::pair<std::string, unsigned short>> FunctionMap;
+typedef std::unordered_map<std::string, unsigned char> ValueMap;
+typedef std::set<unsigned char> ValueList;
 
 /*
  * \brief This namespace contains key data of the game
@@ -571,16 +570,16 @@ class API
 		static CommandQueue queue;
 		static unsigned char game;
 
-		static void DefineFunction(string name, string def, unsigned short opcode, unsigned char games);
-		static void DefineValueString(string name, unsigned char value, unsigned char games);
-		static void DefineAxisString(string name, unsigned char axis, unsigned char games);
-		static void DefineAnimString(string name, unsigned char anim, unsigned char games);
+		static void DefineFunction(const std::string& name, const std::string& def, unsigned short opcode, unsigned char games);
+		static void DefineValueString(const std::string& name, unsigned char value, unsigned char games);
+		static void DefineAxisString(const std::string& name, unsigned char axis, unsigned char games);
+		static void DefineAnimString(const std::string& name, unsigned char anim, unsigned char games);
 		static void DefineControl(unsigned char control, unsigned char games);
 
-		static pair<string, unsigned short> RetrieveFunction(string name);
-		static unsigned char* BuildCommandStream(vector<double>&& info, unsigned int key, unsigned char* command, unsigned int size);
+		static std::pair<std::string, unsigned short> RetrieveFunction(const std::string& name);
+		static unsigned char* BuildCommandStream(std::vector<double>&& info, unsigned int key, unsigned char* command, unsigned int size);
 
-		static vector<double> ParseCommand(const char* cmd_, const char* def, op_default* result, unsigned short opcode);
+		static std::vector<double> ParseCommand(const char* cmd_, const char* def, op_default* result, unsigned short opcode);
 
 #ifdef VAULTMP_DEBUG
 		static Debug* debug;
@@ -591,8 +590,7 @@ class API
 		/**
 		 * \brief Checks whether a certain function is available in the current API environment
 		 */
-
-		static bool AnnounceFunction(string name);
+		static bool AnnounceFunction(const std::string& name);
 
 		/**
 		 * \brief Translates commands to a stream of bytes
@@ -601,8 +599,7 @@ class API
 		 * Also takes an optional unsigned key (usually comes from the Lockable extension class) which will automatically associated with each parsed command.
 		 * Returns a STL vector containing the parsed commands (allocated on the heap; you are required to free them when you don't need them anymore).
 		 */
-
-		static CommandParsed Translate(const vector<string>& cmd, unsigned int key = 0);
+		static CommandParsed Translate(const std::vector<std::string>& cmd, unsigned int key = 0);
 
 		/**
 		 * \brief Translates a result from vaultmp DLL
@@ -614,8 +611,7 @@ class API
 		 * unsigned int is the key provided to the corresponding Translate call.
 		 * vector<double> is the argument list of the executed command; the first element is always the opcode of the function
 		 */
-
-		static vector<CommandResult> Translate(unsigned char* stream);
+		static std::vector<CommandResult> Translate(unsigned char* stream);
 
 		API() = delete;
 
@@ -629,13 +625,11 @@ class API
 		/**
 		 * \brief Initializes the API for the given game code. Must be called before the API can be used
 		 */
-
 		static void Initialize(unsigned char game);
 
 		/**
 		 * \brief Must be called when you are finished with the current API environment.
 		 */
-
 		static void Terminate();
 
 
@@ -658,43 +652,43 @@ class API
 		/**
 		 * \brief Given the hex code of an actor value, returns the string representation. An empty string indicates an error
 		 */
-		static string RetrieveValue_Reverse(unsigned char value);
+		static std::string RetrieveValue_Reverse(unsigned char value);
 		/**
 		 * \brief Given the hex code of an axis value, returns the string representation. An empty string indicates an error
 		 */
-		static string RetrieveAxis_Reverse(unsigned char axis);
+		static std::string RetrieveAxis_Reverse(unsigned char axis);
 		/**
 		 * \brief Given the hex code of an animation value, returns the string representation. An empty string indicates an error
 		 */
-		static string RetrieveAnim_Reverse(unsigned char anim);
+		static std::string RetrieveAnim_Reverse(unsigned char anim);
 		/**
 		 * \brief Returns a STL vector containing every available actor value hex code
 		 */
-		static vector<unsigned char> RetrieveAllValues();
+		static std::vector<unsigned char> RetrieveAllValues();
 		/**
 		 * \brief Returns a STL vector containing every available axis value hex code
 		 */
-		static vector<unsigned char> RetrieveAllAxis();
+		static std::vector<unsigned char> RetrieveAllAxis();
 		/**
 		 * \brief Returns a STL vector containing every available animation value hex code
 		 */
-		static vector<unsigned char> RetrieveAllAnims();
+		static std::vector<unsigned char> RetrieveAllAnims();
 		/**
 		 * \brief Returns a STL vector containing every available control code
 		 */
-		static vector<unsigned char> RetrieveAllControls();
+		static std::vector<unsigned char> RetrieveAllControls();
 		/**
 		 * \brief Returns a STL vector containing every available actor value string representation
 		 */
-		static vector<string> RetrieveAllValues_Reverse();
+		static std::vector<std::string> RetrieveAllValues_Reverse();
 		/**
 		 * \brief Returns a STL vector containing every available axis value string representation
 		 */
-		static vector<string> RetrieveAllAxis_Reverse();
+		static std::vector<std::string> RetrieveAllAxis_Reverse();
 		/**
 		 * \brief Returns a STL vector containing every available animation value string representation
 		 */
-		static vector<string> RetrieveAllAnims_Reverse();
+		static std::vector<std::string> RetrieveAllAnims_Reverse();
 
 
 		/**

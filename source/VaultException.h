@@ -17,18 +17,16 @@
 #include <ostream>
 #endif
 
-using namespace std;
-
 /**
  * \brief The exception class of vaultmp
  *
  * Stores an exception message and is able to print it to either a MessageBox or to the console
  */
 
-class VaultException : public exception
+class VaultException : public std::exception
 {
 	private:
-		string error;
+		std::string error;
 
 #ifdef VAULTMP_DEBUG
 		static Debug* debug;
@@ -38,7 +36,7 @@ class VaultException : public exception
 		VaultException& operator=(const VaultException&) = delete;
 
 	public:
-		VaultException(const string& error);
+		VaultException(const std::string& error);
 		VaultException(const char* format, ...);
 		virtual ~VaultException() throw() {}
 

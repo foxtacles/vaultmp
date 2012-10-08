@@ -17,8 +17,6 @@
 #include "Debug.h"
 #endif
 
-using namespace std;
-
 class Container;
 
 class Item : public Object
@@ -31,7 +29,7 @@ class Item : public Object
 		static Debug* debug;
 #endif
 
-		Value<NetworkID> item_Container;
+		Value<RakNet::NetworkID> item_Container;
 		Value<unsigned int> item_Count;
 		Value<double> item_Condition;
 		Value<bool> state_Equipped;
@@ -40,8 +38,8 @@ class Item : public Object
 
 		void initialize();
 
-		Item(const Item&);
-		Item& operator=(const Item&);
+		Item(const Item&) = delete;
+		Item& operator=(const Item&) = delete;
 
 	protected:
 		Item(unsigned int refID, unsigned int baseID);
@@ -54,21 +52,21 @@ class Item : public Object
 		static void SetDebugHandler(Debug* debug);
 #endif
 
-		NetworkID GetItemContainer() const;
+		RakNet::NetworkID GetItemContainer() const;
 		unsigned int GetItemCount() const;
 		double GetItemCondition() const;
 		bool GetItemEquipped() const;
 		bool GetItemSilent() const;
 		bool GetItemStick() const;
 
-		Lockable* SetItemContainer(NetworkID id);
+		Lockable* SetItemContainer(RakNet::NetworkID id);
 		Lockable* SetItemCount(unsigned int count);
 		Lockable* SetItemCondition(double condition);
 		Lockable* SetItemEquipped(bool state);
 		Lockable* SetItemSilent(bool silent);
 		Lockable* SetItemStick(bool stick);
 
-		NetworkID Copy() const;
+		RakNet::NetworkID Copy() const;
 
 #ifdef VAULTSERVER
 		/**

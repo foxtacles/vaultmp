@@ -250,7 +250,7 @@ void Bethesda::Terminate(RakPeerInterface* peer)
 	}
 }
 
-void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, string name, string pwd, unsigned char game, bool multiinst, bool steam, unsigned int inittime)
+void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, const string& name, const string& pwd, unsigned char game, bool multiinst, bool steam, unsigned int inittime)
 {
 	Bethesda::game = game;
 	Bethesda::password = pwd;

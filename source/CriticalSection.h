@@ -17,12 +17,10 @@
 
 class Debug;
 
-using namespace std;
-
 class CriticalSection
 {
 	private:
-		recursive_timed_mutex cs;
+		std::recursive_timed_mutex cs;
 
 #ifdef VAULTMP_DEBUG
 		Debug* debug;
@@ -30,8 +28,8 @@ class CriticalSection
 
 		bool finalize;
 
-		CriticalSection(const CriticalSection&);
-		CriticalSection& operator=(const CriticalSection&);
+		CriticalSection(const CriticalSection&) = delete;
+		CriticalSection& operator=(const CriticalSection&) = delete;
 
 	public:
 #ifdef VAULTMP_DEBUG
@@ -46,8 +44,8 @@ class CriticalSection
 		void Finalize();
 
 #ifdef VAULTMP_DEBUG
-		static string thread_id(thread&);
-		static string thread_id();
+		static std::string thread_id(std::thread&);
+		static std::string thread_id();
 		void PrintStatus();
 		void SetDebugHandler(Debug* debug);
 #endif

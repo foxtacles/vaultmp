@@ -12,9 +12,6 @@
 #include "Interface.h"
 #include "PacketFactory.h"
 
-using namespace std;
-using namespace RakNet;
-
 /**
  * \brief The base class for all in-game types
  *
@@ -23,7 +20,7 @@ using namespace RakNet;
 
 class FactoryObject;
 
-class Reference : private CriticalSection, public NetworkIDObject
+class Reference : private CriticalSection, public RakNet::NetworkIDObject
 {
 		friend class GameFactory;
 		friend class FactoryObject;
@@ -114,16 +111,16 @@ class ReferenceFunctor : public VaultFunctor
 {
 	private:
 		unsigned int _flags;
-		NetworkID id;
+		RakNet::NetworkID id;
 
 	protected:
-		ReferenceFunctor(unsigned int flags, NetworkID id) : VaultFunctor(), _flags(flags), id(id) {}
+		ReferenceFunctor(unsigned int flags, RakNet::NetworkID id) : VaultFunctor(), _flags(flags), id(id) {}
 		virtual ~ReferenceFunctor() {}
 
 		virtual bool filter(FactoryObject& reference) = 0;
 
 		unsigned int flags() { return _flags; }
-		NetworkID get() { return id; }
+		RakNet::NetworkID get() { return id; }
 };
 
 #endif

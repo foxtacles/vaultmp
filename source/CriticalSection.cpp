@@ -1,6 +1,8 @@
 #include "CriticalSection.h"
 #include "VaultException.h"
 
+using namespace std;
+
 #ifdef VAULTMP_DEBUG
 string CriticalSection::thread_id(thread& t)
 {

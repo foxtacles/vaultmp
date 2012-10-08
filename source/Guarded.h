@@ -8,8 +8,6 @@
 #include "Debug.h"
 #endif
 
-using namespace std;
-
 /**
  * \brief A class for guarding a Value with a CriticalSection
  *

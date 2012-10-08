@@ -24,9 +24,9 @@ struct Diff
 	}
 };
 
-typedef pair<list<NetworkID>, list<NetworkID>> ContainerDiff;
-typedef pair<list<NetworkID>, vector<pPacket>> ContainerDiffNet;
-typedef list<pair<unsigned int, Diff>> GameDiff;
+typedef std::pair<std::list<RakNet::NetworkID>, std::list<RakNet::NetworkID>> ContainerDiff;
+typedef std::pair<std::list<RakNet::NetworkID>, std::vector<pPacket>> ContainerDiffNet;
+typedef std::list<std::pair<unsigned int, Diff>> GameDiff;
 
 #include "vaultmp.h"
 #include "Data.h"
@@ -38,32 +38,30 @@ typedef list<pair<unsigned int, Diff>> GameDiff;
 #include "Debug.h"
 #endif
 
-using namespace std;
-
 class Container : public Object
 {
 		friend class GameFactory;
 		friend class Item;
 
 	private:
-		typedef pair<NetworkID, unordered_map<NetworkID, list<NetworkID>>> StripCopy;
+		typedef std::pair<RakNet::NetworkID, std::unordered_map<RakNet::NetworkID, std::list<RakNet::NetworkID>>> StripCopy;
 
 #ifdef VAULTMP_DEBUG
 		static Debug* debug;
 #endif
 
-		static bool Item_sort(NetworkID id, NetworkID id2);
-		static bool Diff_sort(const pair<unsigned int, Diff>& diff, const pair<unsigned int, Diff>& diff2);
+		static bool Item_sort(RakNet::NetworkID id, RakNet::NetworkID id2);
+		static bool Diff_sort(const std::pair<unsigned int, Diff>& diff, const std::pair<unsigned int, Diff>& diff2);
 
-		list<NetworkID> container;
+		std::list<RakNet::NetworkID> container;
 		Value<bool> flag_Lock;
 
 		StripCopy Strip() const;
 
 		void initialize();
 
-		Container(const Container&);
-		Container& operator=(const Container&);
+		Container(const Container&) = delete;
+		Container& operator=(const Container&) = delete;
 
 	protected:
 		Container(unsigned int refID, unsigned int baseID);
@@ -77,16 +75,16 @@ class Container : public Object
 		static void SetDebugHandler(Debug* debug);
 #endif
 
-		void AddItem(NetworkID id);
+		void AddItem(RakNet::NetworkID id);
 		ContainerDiff AddItem(unsigned int baseID, unsigned int count, double condition, bool silent) const;
-		void RemoveItem(NetworkID id);
+		void RemoveItem(RakNet::NetworkID id);
 		ContainerDiff RemoveItem(unsigned int baseID, unsigned int count, bool silent) const;
 		ContainerDiff RemoveAllItems() const;
 		ContainerDiff EquipItem(unsigned int baseID, bool silent, bool stick) const;
 		ContainerDiff UnequipItem(unsigned int baseID, bool silent, bool stick) const;
 
-		ContainerDiff Compare(NetworkID id) const;
-		NetworkID IsEquipped(unsigned int baseID) const;
+		ContainerDiff Compare(RakNet::NetworkID id) const;
+		RakNet::NetworkID IsEquipped(unsigned int baseID) const;
 		GameDiff ApplyDiff(ContainerDiff& diff);
 
 		static ContainerDiff ToContainerDiff(const ContainerDiffNet& diff);
@@ -97,14 +95,14 @@ class Container : public Object
 		bool IsEmpty() const;
 		void PrintContainer() const;
 		unsigned int GetItemCount(unsigned int baseID) const;
-		const list<NetworkID>& GetItemList() const;
+		const std::list<RakNet::NetworkID>& GetItemList() const;
 
 #ifdef VAULTSERVER
-		list<NetworkID> GetItemTypes(const string& type) const;
+		std::list<RakNet::NetworkID> GetItemTypes(const string& type) const;
 #endif
 
 		void FlushContainer();
-		NetworkID Copy() const;
+		RakNet::NetworkID Copy() const;
 
 		/**
 		 * \brief For network transfer

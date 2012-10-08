@@ -32,8 +32,6 @@ const unsigned int FLAG_SELFALERT       = FLAG_DEAD << 1;
 const unsigned int FLAG_ISALERT         = FLAG_SELFALERT << 1;
 const unsigned int FLAG_NOTALERT        = FLAG_ISALERT << 1;
 
-using namespace std;
-
 /**
  * \brief Derives from Container class and represents an actor in-game
  *
@@ -51,8 +49,8 @@ class Actor : public Container
 		static Debug* debug;
 #endif
 
-		unordered_map<unsigned char, Value<double>> actor_Values;
-		unordered_map<unsigned char, Value<double>> actor_BaseValues;
+		std::unordered_map<unsigned char, Value<double>> actor_Values;
+		std::unordered_map<unsigned char, Value<double>> actor_BaseValues;
 		Value<unsigned int> actor_Race;
 		Value<signed int> actor_Age;
 		Value<unsigned int> anim_Idle;
@@ -66,8 +64,8 @@ class Actor : public Container
 
 		void initialize();
 
-		Actor(const Actor&);
-		Actor& operator=(const Actor&);
+		Actor(const Actor&) = delete;
+		Actor& operator=(const Actor&) = delete;
 
 	protected:
 		Actor(unsigned int refID, unsigned int baseID);
@@ -90,7 +88,7 @@ class Actor : public Container
 		 * Used to pass Actor references matching the provided flags to the Interface
 		 * Can also be used to pass data of a given Actor to the Interface
 		 */
-		static FuncParameter CreateFunctor(unsigned int flags, NetworkID id = 0);
+		static FuncParameter CreateFunctor(unsigned int flags, RakNet::NetworkID id = 0);
 
 #ifdef VAULTMP_DEBUG
 		static void SetDebugHandler(Debug* debug);
@@ -250,10 +248,10 @@ class Actor : public Container
 class ActorFunctor : public ObjectFunctor
 {
 	public:
-		ActorFunctor(unsigned int flags, NetworkID id) : ObjectFunctor(flags, id) {}
+		ActorFunctor(unsigned int flags, RakNet::NetworkID id) : ObjectFunctor(flags, id) {}
 		virtual ~ActorFunctor() {}
 
-		virtual vector<string> operator()();
+		virtual std::vector<std::string> operator()();
 		virtual bool filter(FactoryObject& reference);
 };
 

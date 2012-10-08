@@ -5,6 +5,7 @@
 		<Option title="vaultmp" />
 		<Option platforms="Windows;" />
 		<Option makefile="makefile" />
+		<Option makefile_is_custom="1" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>

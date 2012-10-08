@@ -1,11 +1,8 @@
+#pragma GCC diagnostic push
+
 #pragma GCC diagnostic ignored "-pedantic"
-#pragma GCC diagnostic push
-
 #pragma GCC diagnostic ignored "-Wall"
-#pragma GCC diagnostic push
-
-#pragma GCC diagnostic ignored "-Werror"
-#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-variable"
 
 #include "RakNet/RakPeerInterface.h"
 #include "RakNet/PacketizedTCP.h"
@@ -21,6 +18,3 @@
 #include "RakNet/NetworkIDManager.h"
 
 #pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
-#pragma GCC diagnostic pop
-

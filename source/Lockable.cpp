@@ -1,5 +1,7 @@
 #include "Lockable.h"
 
+using namespace std;
+
 unsigned int Lockable::key = 0x01;
 unordered_map<unsigned int, Lockable*> Lockable::keymap;
 unordered_map<unsigned int, weak_ptr<Lockable>> Lockable::sharemap;

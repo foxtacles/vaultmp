@@ -2,6 +2,8 @@
 #include "PacketFactory.h"
 
 using namespace std;
+using namespace RakNet;
+using namespace Values;
 
 #ifdef VAULTSERVER
 unordered_set<unsigned int> Player::baseIDs;

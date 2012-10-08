@@ -4,6 +4,7 @@
 #ifdef __WIN32__
 #include <winsock2.h>
 #endif
+
 #include <ctime>
 #include <cstdio>
 #include <cstdarg>
@@ -14,18 +15,16 @@
 #include "vaultmp.h"
 #include "CriticalSection.h"
 
-using namespace std;
-
 class Debug : private CriticalSection
 {
 	private:
-		string logfile;
+		std::string logfile;
 		FILE* vaultmplog;
 
 		static void GetTimeFormat(char* buf, unsigned int size, bool file);
 
-		Debug(const Debug&);
-		Debug& operator=(const Debug&);
+		Debug(const Debug&) = delete;
+		Debug& operator=(const Debug&) = delete;
 
 	public:
 		Debug(const char* module);

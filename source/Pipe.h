@@ -2,8 +2,6 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
 class Pipe
 {
 	private:
@@ -14,12 +12,12 @@ class Pipe
 		Pipe();
 		virtual ~Pipe();
 
-		string name;
+		std::string name;
 		unsigned int size;
 		HANDLE pipe;
 
 	public:
-		void SetPipeAttributes(const string& name, unsigned int size);
+		void SetPipeAttributes(const std::string& name, unsigned int size);
 		unsigned int Send(const unsigned char* stream);
 		void Receive(unsigned char* stream);
 		virtual bool ConnectToServer() = 0;

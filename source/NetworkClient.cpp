@@ -3,6 +3,9 @@
 #include "Game.h"
 #include "PacketFactory.h"
 
+using namespace std;
+using namespace RakNet;
+
 #ifdef VAULTMP_DEBUG
 Debug* NetworkClient::debug;
 #endif

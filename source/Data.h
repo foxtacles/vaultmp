@@ -19,9 +19,6 @@ static const unsigned int PIPBOY_GLOVES		= 0x00025B83;
 static const unsigned int RACE_CAUCASIAN	= 0x00000019;
 static const unsigned int DEFAULT_WEATHER	= 0x0000015E;
 
-using namespace std;
-using namespace RakNet;
-
 template <typename R, typename T>
 inline static R storeIn(T t)
 {

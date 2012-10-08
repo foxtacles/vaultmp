@@ -53,10 +53,8 @@ const unsigned char ALL_OBJECTS         = (ID_OBJECT | ID_ITEM | ID_CONTAINER | 
 const unsigned char ALL_CONTAINERS      = (ID_CONTAINER | ID_ACTOR | ID_PLAYER);
 const unsigned char ALL_ACTORS          = (ID_ACTOR | ID_PLAYER);
 
-typedef map<shared_ptr<Reference>, unsigned char> ReferenceList;
-typedef unordered_map<unsigned char, unsigned int> ReferenceCount;
-
-using namespace std;
+typedef std::map<std::shared_ptr<Reference>, unsigned char> ReferenceList;
+typedef std::unordered_map<unsigned char, unsigned int> ReferenceCount;
 
 class FactoryObject;
 
@@ -103,7 +101,7 @@ class GameFactory
 		 *
 		 * The Reference is identified by a NetworkID
 		 */
-		static FactoryObject GetObject(NetworkID id);
+		static FactoryObject GetObject(RakNet::NetworkID id);
 		/**
 		 * \brief Obtains a lock on a Reference
 		 *
@@ -116,26 +114,26 @@ class GameFactory
 		 * The References are identified by a STL vector of reference IDs. You must use this function if you want to obtain multiple locks.
 		 * Returns a STL vector which contains the locked References in the same ordering as the input vector.
 		 */
-		static vector<FactoryObject> GetMultiple(const vector<unsigned int>& objects);
+		static std::vector<FactoryObject> GetMultiple(const std::vector<unsigned int>& objects);
 		/**
 		 * \brief Obtains a lock on multiple References
 		 *
 		 * The References are identified by a STL vector of NetworkID. You must use this function if you want to obtain multiple locks.
 		 * Returns a STL vector which contains the locked References in the same ordering as the input vector.
 		 */
-		static vector<FactoryObject> GetMultiple(const vector<NetworkID>& objects);
+		static std::vector<FactoryObject> GetMultiple(const std::vector<RakNet::NetworkID>& objects);
 		/**
 		 * \brief Lookup a NetworkID
 		 */
-		static NetworkID LookupNetworkID(unsigned int refID);
+		static RakNet::NetworkID LookupNetworkID(unsigned int refID);
 		/**
 		 * \brief Lookup a reference ID
 		 */
-		static unsigned int LookupRefID(NetworkID id);
+		static unsigned int LookupRefID(RakNet::NetworkID id);
 		/**
 		 * \brief Returns the type of the given NetworkID
 		 */
-		static unsigned char GetType(NetworkID id) noexcept;
+		static unsigned char GetType(RakNet::NetworkID id) noexcept;
 		/**
 		 * \brief Returns the type of the given reference
 		 */
@@ -147,11 +145,11 @@ class GameFactory
 		/**
 		 * \brief Obtains a lock on all References of a given type
 		 */
-		static vector<FactoryObject> GetObjectTypes(unsigned char type) noexcept;
+		static std::vector<FactoryObject> GetObjectTypes(unsigned char type) noexcept;
 		/**
 		 * \brief Returns the NetworkID's of all References of a given type
 		 */
-		static vector<NetworkID> GetIDObjectTypes(unsigned char type) noexcept;
+		static std::vector<RakNet::NetworkID> GetIDObjectTypes(unsigned char type) noexcept;
 		/**
 		 * \brief Counts the amount of References of a given type
 		 */
@@ -163,23 +161,23 @@ class GameFactory
 		/**
 		 * \brief Creates a new instance of a given type
 		 */
-		static NetworkID CreateInstance(unsigned char type, unsigned int refID, unsigned int baseID);
+		static RakNet::NetworkID CreateInstance(unsigned char type, unsigned int refID, unsigned int baseID);
 		/**
 		 * \brief Creates a new instance of a given type
 		 */
-		static NetworkID CreateInstance(unsigned char type, unsigned int baseID);
+		static RakNet::NetworkID CreateInstance(unsigned char type, unsigned int baseID);
 		/**
 		 * \brief Creates a known instance of a given type
 		 */
-		static void CreateKnownInstance(unsigned char type, NetworkID id, unsigned int refID, unsigned int baseID);
+		static void CreateKnownInstance(unsigned char type, RakNet::NetworkID id, unsigned int refID, unsigned int baseID);
 		/**
 		 * \brief Creates a known instance of a given type
 		 */
-		static void CreateKnownInstance(unsigned char type, NetworkID id, unsigned int baseID);
+		static void CreateKnownInstance(unsigned char type, RakNet::NetworkID id, unsigned int baseID);
 		/**
 		 * \brief Creates a known instance from a network packet
 		 */
-		static NetworkID CreateKnownInstance(unsigned char type, const pDefault* packet);
+		static RakNet::NetworkID CreateKnownInstance(unsigned char type, const pDefault* packet);
 
 		/**
 		 * \brief Destroys all instances and cleans up type classes
@@ -188,13 +186,13 @@ class GameFactory
 		/**
 		 * \brief Destroys an instance
 		 */
-		static bool DestroyInstance(NetworkID id);
+		static bool DestroyInstance(RakNet::NetworkID id);
 		/**
 		 * \brief Destroys an instance which has previously been locked
 		 *
 		 * You must make sure the lock count of the given Reference equals to one
 		 */
-		static NetworkID DestroyInstance(FactoryObject& reference);
+		static RakNet::NetworkID DestroyInstance(FactoryObject& reference);
 
 		/**
 		 * \brief Used to set the changed flag for the next network reference going to be created

@@ -1,5 +1,7 @@
 #include "Interface.h"
 
+using namespace std;
+
 PipeClient* Interface::pipeServer;
 PipeServer* Interface::pipeClient;
 Interface::ResultHandler Interface::resultHandler;
@@ -176,12 +178,12 @@ void Interface::EndDynamic()
 	dynamic_cs.EndSession();
 }
 
-void Interface::SetupCommand(string name, ParamContainer&& param, unsigned int priority)
+void Interface::SetupCommand(const string& name, ParamContainer&& param, unsigned int priority)
 {
 	priorityMap.insert(make_pair(priority, natives.emplace(name, move(param))));
 }
 
-void Interface::ExecuteCommand(string name, ParamContainer&& param, unsigned int key)
+void Interface::ExecuteCommand(const string& name, ParamContainer&& param, unsigned int key)
 {
 	dynamic_cmdlist.emplace_back(natives.emplace(make_pair(name, move(param))), key);
 }

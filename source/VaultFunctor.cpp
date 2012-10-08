@@ -1,5 +1,7 @@
 #include "VaultFunctor.h"
 
+using namespace std;
+
 VaultFunctor::~VaultFunctor()
 {
 	delete this->next;
