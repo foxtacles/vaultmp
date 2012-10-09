@@ -29,7 +29,7 @@
 ;   License for the specific language governing permissions and limitations
 ;   under the License.
 ;
-;   Version: $Id: amxexec_arm7.s 4240 2010-04-06 15:55:46Z thiadmer $
+;   Version: $Id: amxexec_arm7.s 4641 2012-01-16 08:15:57Z thiadmer $
 
 
     AREA    amxexec_data, DATA, READONLY
@@ -861,6 +861,7 @@ movs4loop
     ldrge r12, [r0], #4
     strge r12, [r1], #4
     bgt movs4loop
+    addlt r11, r11, #4          ; undo subtraction of 4-byte word, if not zero
 movs1loop
     subs r11, r11, #1
     ldrgeb r12, [r0], #1

@@ -1,6 +1,6 @@
 /*  Core module for the Pawn AMX
  *
- *  Copyright (c) ITB CompuPhase, 1997-2011
+ *  Copyright (c) ITB CompuPhase, 1997-2012
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not
  *  use this file except in compliance with the License. You may obtain a copy
@@ -14,7 +14,7 @@
  *  License for the specific language governing permissions and limitations
  *  under the License.
  *
- *  Version: $Id: amxcore.c 4523 2011-06-21 15:03:47Z thiadmer $
+ *  Version: $Id: amxcore.c 4708 2012-05-18 12:52:49Z thiadmer $
  */
 #if defined _UNICODE || defined __UNICODE__ || defined UNICODE
 # if !defined UNICODE   /* for Windows */

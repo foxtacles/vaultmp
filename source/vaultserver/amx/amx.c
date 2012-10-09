@@ -1,6 +1,6 @@
 /*  Pawn Abstract Machine (for the Pawn language)
  *
- *  Copyright (c) ITB CompuPhase, 1997-2011
+ *  Copyright (c) ITB CompuPhase, 1997-2012
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not
  *  use this file except in compliance with the License. You may obtain a copy
@@ -14,12 +14,8 @@
  *  License for the specific language governing permissions and limitations
  *  under the License.
  *
- *  Version: $Id: amx.c 4535 2011-07-07 09:15:22Z thiadmer $
+ *  Version: $Id: amx.c 4708 2012-05-18 12:52:49Z thiadmer $
  */
-
-//#define AMX_ASM // fast! I can't get this to work with 64bit cell size :(
-#define NDEBUG // no debug
-#define AMX_ANSIONLY // no unicode
 
 #define WIN32_LEAN_AND_MEAN
 #if defined _UNICODE || defined __UNICODE__ || defined UNICODE

@@ -12,7 +12,7 @@
  *  "conditional allocation".
  *
  *
- *  Copyright (c) ITB CompuPhase, 2007-2011
+ *  Copyright (c) ITB CompuPhase, 2007-2012
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not
  *  use this file except in compliance with the License. You may obtain a copy
@@ -26,7 +26,7 @@
  *  License for the specific language governing permissions and limitations
  *  under the License.
  *
- *  Version: $Id: amxpool.c 4523 2011-06-21 15:03:47Z thiadmer $
+ *  Version: $Id: amxpool.c 4731 2012-06-21 11:11:18Z thiadmer $
  */
 #include <assert.h>
 #include "amx.h"

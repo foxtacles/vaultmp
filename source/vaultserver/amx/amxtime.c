@@ -22,8 +22,6 @@
 #if defined __WIN32__ || defined _WIN32 || defined _Windows
   #include <windows.h>
   #include <mmsystem.h>
-#else
-  #include <sys/time.h>
 #endif
 
 #define CELLMIN   (-1 << (8*sizeof(cell) - 1))
