@@ -24,6 +24,7 @@
 #define FLOATPOINT // floating point for console
 #define AMXCONSOLE_NOIDLE // no idle state
 #define AMXTIME_NOIDLE // no idle state
+#define AMX_ANSIONLY
 
 #include <stdlib.h>   /* for size_t */
 #include <limits.h>

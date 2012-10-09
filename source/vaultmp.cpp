@@ -795,7 +795,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 						if (strcmp(maddr, "") == 0)
 						{
 							SetDlgItemText(hwnd, IDC_EDIT3, (char*) RAKNET_MASTER_ADDRESS);
-							master.SetBinaryAddress((char*) RAKNET_MASTER_ADDRESS);
+							master.SetBinaryAddress(RAKNET_MASTER_ADDRESS);
 							master.SetPort(RAKNET_MASTER_PORT);
 						}
 

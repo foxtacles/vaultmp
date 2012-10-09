@@ -17,8 +17,8 @@ Debug::~Debug()
 {
 	if (this->vaultmplog != nullptr)
 	{
-		this->Print((char*) "-----------------------------------------------------------------------------------------------------", false);
-		this->Print((char*) "END OF LOG", false);
+		this->Print("-----------------------------------------------------------------------------------------------------", false);
+		this->Print("END OF LOG", false);
 
 		fclose(vaultmplog);
 	}
