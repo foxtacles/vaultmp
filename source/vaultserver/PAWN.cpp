@@ -1,21 +1,17 @@
 #include "PAWN.h"
-
-/* AMX extension modules */
-#define FLOATPOINT // floating point for console
-#define AMXCONSOLE_NOIDLE // no idle state
-#define AMXTIME_NOIDLE // no idle state
-#define NDEBUG // no debug
-#include "amx/amxcore.c"
-#undef __T
-#include "amx/amxfile.c"
-#undef __T
-#include "amx/amxcons.c"
-#undef __T
-#include "amx/amxstring.c"
-#include "amx/amxtime.c"
-#include "amx/float.c"
-
 #include "Script.h"
+
+using namespace std;
+using namespace RakNet;
+
+extern "C" {
+	int AMXAPI amx_CoreInit(AMX* amx);
+	int AMXAPI amx_ConsoleInit(AMX* amx);
+	int AMXAPI amx_FloatInit(AMX* amx);
+	int AMXAPI amx_TimeInit(AMX* amx);
+	int AMXAPI amx_StringInit(AMX* amx);
+	int AMXAPI amx_FileInit(AMX* amx);
+}
 
 AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 {
@@ -135,11 +131,13 @@ cell PAWN::vaultmp_CreateTimer(AMX* amx, const cell* params)
 
 	source = amx_Address(amx, params[1]);
 	amx_StrLen(source, &len);
-	char name[len + 1];
 
-	amx_GetString(name, source, 0, UNLIMITED);
+	vector<char> name;
+	name.reserve(len + 1);
 
-	return Script::CreateTimerPAWN(name, amx, params[2]);
+	amx_GetString(&name[0], source, 0, UNLIMITED);
+
+	return Script::CreateTimerPAWN(&name[0], amx, params[2]);
 }
 
 cell PAWN::vaultmp_CreateTimerEx(AMX* amx, const cell* params)
@@ -149,15 +147,19 @@ cell PAWN::vaultmp_CreateTimerEx(AMX* amx, const cell* params)
 
 	source = amx_Address(amx, params[1]);
 	amx_StrLen(source, &len);
-	char name[len + 1];
 
-	amx_GetString(name, source, 0, UNLIMITED);
+	vector<char> name;
+	name.reserve(len + 1);
+
+	amx_GetString(&name[0], source, 0, UNLIMITED);
 
 	source = amx_Address(amx, params[3]);
 	amx_StrLen(source, &len);
-	char def[len + 1];
 
-	amx_GetString(def, source, 0, UNLIMITED);
+	vector<char> def;
+	def.reserve(len + 1);
+
+	amx_GetString(&def[0], source, 0, UNLIMITED);
 
 	vector<boost::any> args;
 	unsigned int count = (params[0] / sizeof(cell)) - 3;
@@ -192,9 +194,10 @@ cell PAWN::vaultmp_CreateTimerEx(AMX* amx, const cell* params)
 			case 's':
 			{
 				amx_StrLen(data, &len);
-				char str[len + 1];
-				amx_GetString(str, data, 0, UNLIMITED);
-				args.emplace_back(string(str));
+				vector<char> str;
+				str.reserve(len + 1);
+				amx_GetString(&str[0], data, 0, UNLIMITED);
+				args.emplace_back(string(&str[0]));
 				break;
 			}
 
@@ -203,7 +206,7 @@ cell PAWN::vaultmp_CreateTimerEx(AMX* amx, const cell* params)
 		}
 	}
 
-	return Script::CreateTimerPAWNEx(name, amx, params[2], def, args);
+	return Script::CreateTimerPAWNEx(&name[0], amx, params[2], &def[0], args);
 }
 
 cell PAWN::vaultmp_KillTimer(AMX* amx, const cell* params)
@@ -219,23 +222,26 @@ cell PAWN::vaultmp_MakePublic(AMX* amx, const cell* params)
 
 	source = amx_Address(amx, params[1]);
 	amx_StrLen(source, &len);
-	char real[len + 1];
+	vector<char> real;
+	real.reserve(len + 1);
 
-	amx_GetString(real, source, 0, UNLIMITED);
+	amx_GetString(&real[0], source, 0, UNLIMITED);
 
 	source = amx_Address(amx, params[2]);
 	amx_StrLen(source, &len);
-	char name[len + 1];
+	vector<char> name;
+	name.reserve(len + 1);
 
-	amx_GetString(name, source, 0, UNLIMITED);
+	amx_GetString(&name[0], source, 0, UNLIMITED);
 
 	source = amx_Address(amx, params[3]);
 	amx_StrLen(source, &len);
-	char def[len + 1];
+	vector<char> def;
+	def.reserve(len + 1);
 
-	amx_GetString(def, source, 0, UNLIMITED);
+	amx_GetString(&def[0], source, 0, UNLIMITED);
 
-	Script::MakePublicPAWN(real, amx, name, def);
+	Script::MakePublicPAWN(&real[0], amx, &name[0], &def[0]);
 
 	return 1;
 }
@@ -247,11 +253,12 @@ cell PAWN::vaultmp_CallPublic(AMX* amx, const cell* params)
 
 	source = amx_Address(amx, params[1]);
 	amx_StrLen(source, &len);
-	char name[len + 1];
+	vector<char> name;
+	name.reserve(len + 1);
 
-	amx_GetString(name, source, 0, UNLIMITED);
+	amx_GetString(&name[0], source, 0, UNLIMITED);
 
-	string def = Public::GetDefinition(string(name));
+	string def = Public::GetDefinition(&name[0]);
 
 	vector<boost::any> args;
 	unsigned int count = (params[0] / sizeof(cell)) - 1;
@@ -292,9 +299,10 @@ cell PAWN::vaultmp_CallPublic(AMX* amx, const cell* params)
 			case 's':
 			{
 				amx_StrLen(data, &len);
-				char str[len + 1];
-				amx_GetString(str, data, 0, UNLIMITED);
-				args.emplace_back(string(str));
+				vector<char> str;
+				str.reserve(len + 1);
+				amx_GetString(&str[0], data, 0, UNLIMITED);
+				args.emplace_back(string(&str[0]));
 				break;
 			}
 
@@ -303,7 +311,7 @@ cell PAWN::vaultmp_CallPublic(AMX* amx, const cell* params)
 		}
 	}
 
-	return Script::CallPublicPAWN(name, args);
+	return Script::CallPublicPAWN(&name[0], args);
 }
 
 cell PAWN::vaultmp_SetServerName(AMX* amx, const cell* params)
@@ -313,11 +321,12 @@ cell PAWN::vaultmp_SetServerName(AMX* amx, const cell* params)
 
 	source = amx_Address(amx, params[1]);
 	amx_StrLen(source, &len);
-	char name[len + 1];
+	vector<char> name;
+	name.reserve(len + 1);
 
-	amx_GetString(name, source, 0, UNLIMITED);
+	amx_GetString(&name[0], source, 0, UNLIMITED);
 
-	Dedicated::SetServerName(name);
+	Dedicated::SetServerName(&name[0]);
 
 	return 1;
 }
@@ -329,11 +338,12 @@ cell PAWN::vaultmp_SetServerMap(AMX* amx, const cell* params)
 
 	source = amx_Address(amx, params[1]);
 	amx_StrLen(source, &len);
-	char map[len + 1];
+	vector<char> map;
+	map.reserve(len + 1);
 
-	amx_GetString(map, source, 0, UNLIMITED);
+	amx_GetString(&map[0], source, 0, UNLIMITED);
 
-	Dedicated::SetServerMap(map);
+	Dedicated::SetServerMap(&map[0]);
 
 	return 1;
 }
@@ -349,13 +359,15 @@ cell PAWN::vaultmp_SetServerRule(AMX* amx, const cell* params)
 	amx_StrLen(source, &len);
 	amx_StrLen(source2, &len2);
 
-	char rule[len + 1];
-	char value[len2 + 1];
+	vector<char> rule;
+	rule.reserve(len + 1);
+	vector<char> value;
+	value.reserve(len2 + 1);
 
-	amx_GetString(rule, source, 0, UNLIMITED);
-	amx_GetString(value, source2, 0, UNLIMITED);
+	amx_GetString(&rule[0], source, 0, UNLIMITED);
+	amx_GetString(&value[0], source2, 0, UNLIMITED);
 
-	Dedicated::SetServerRule(rule, value);
+	Dedicated::SetServerRule(&rule[0], &value[0]);
 
 	return 1;
 }
@@ -442,11 +454,12 @@ cell PAWN::vaultmp_UIMessage(AMX* amx, const cell* params)
 
 	source = amx_Address(amx, params[2]);
 	amx_StrLen(source, &len);
-	char message[len + 1];
+	vector<char> message;
+	message.reserve(len + 1);
 
-	amx_GetString(message, source, 0, UNLIMITED);
+	amx_GetString(&message[0], source, 0, UNLIMITED);
 
-	return Script::UIMessage(params[1], message);
+	return Script::UIMessage(params[1], &message[0]);
 }
 
 cell PAWN::vaultmp_ChatMessage(AMX* amx, const cell* params)
@@ -456,11 +469,12 @@ cell PAWN::vaultmp_ChatMessage(AMX* amx, const cell* params)
 
 	source = amx_Address(amx, params[2]);
 	amx_StrLen(source, &len);
-	char message[len + 1];
+	vector<char> message;
+	message.reserve(len + 1);
 
-	amx_GetString(message, source, 0, UNLIMITED);
+	amx_GetString(&message[0], source, 0, UNLIMITED);
 
-	return Script::ChatMessage(params[1], message);
+	return Script::ChatMessage(params[1], &message[0]);
 }
 
 cell PAWN::vaultmp_SetRespawn(AMX* amx, const cell* params)
@@ -845,33 +859,33 @@ cell PAWN::vaultmp_UnequipItem(AMX* amx, const cell* params)
 	return Script::UnequipItem(params[1], params[2], params[3], params[4]);
 }
 
-cell PAWN::vaultmp_PlayIdle(AMX* amx, const cell* params)
+cell PAWN::vaultmp_PlayIdle(AMX*, const cell* params)
 {
 	return Script::PlayIdle(params[1], params[2]);
 }
 
-cell PAWN::vaultmp_KillActor(AMX* amx, const cell* params)
+cell PAWN::vaultmp_KillActor(AMX*, const cell* params)
 {
 	Script::KillActor(params[1], params[2], params[3]);
 	return 1;
 }
 
-cell PAWN::vaultmp_SetActorBaseRace(AMX* amx, const cell* params)
+cell PAWN::vaultmp_SetActorBaseRace(AMX*, const cell* params)
 {
 	return Script::SetActorBaseRace(params[1], params[2]);
 }
 
-cell PAWN::vaultmp_AgeActorBaseRace(AMX* amx, const cell* params)
+cell PAWN::vaultmp_AgeActorBaseRace(AMX*, const cell* params)
 {
 	return Script::AgeActorBaseRace(params[1], params[2]);
 }
 
-cell PAWN::vaultmp_SetActorBaseSex(AMX* amx, const cell* params)
+cell PAWN::vaultmp_SetActorBaseSex(AMX*, const cell* params)
 {
 	return Script::SetActorBaseSex(params[1], params[2]);
 }
 
-cell PAWN::vaultmp_SetPlayerRespawn(AMX* amx, const cell* params)
+cell PAWN::vaultmp_SetPlayerRespawn(AMX*, const cell* params)
 {
 	Script::SetPlayerRespawn(params[1], params[2]);
 	return 1;

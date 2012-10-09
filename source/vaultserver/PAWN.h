@@ -132,7 +132,7 @@ class PAWN
 		static int FreeProgram(AMX* amx);
 		static bool IsCallbackPresent(AMX* amx, const char* name);
 		static cell Call(AMX* amx, const char* name, const char* argl, int buf, ...);
-		static cell Call(AMX* amx, const char* name, const char* argl, const vector<boost::any>& args);
+		static cell Call(AMX* amx, const char* name, const char* argl, const std::vector<boost::any>& args);
 
 		static int CoreInit(AMX* amx);
 		static int ConsoleInit(AMX* amx);

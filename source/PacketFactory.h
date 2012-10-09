@@ -74,12 +74,12 @@ class PacketFactory
 
 		template<pTypes type, typename... Args>
 		struct Create_ {
-			static pPacket Create(Args...);
+			static pPacket Create(Args&&...);
 		};
 
 		template<pTypes type, typename... Args>
 		struct Access_ {
-			static void Access(const pDefault* packet, Args...);
+			static void Access(const pDefault* packet, Args&...);
 		};
 
 	public:
@@ -501,7 +501,7 @@ struct PacketFactory::Create_<pTypes::ID_GAME_AUTH, Args...> {
 
 template<>
 inline const pGameAuth* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_AUTH ? reinterpret_cast<const pGameAuth*>(packet) : nullptr;
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_AUTH ? static_cast<const pGameAuth*>(packet) : nullptr;
 }
 
 template<typename... Args>
@@ -540,7 +540,7 @@ struct PacketFactory::Create_<pTypes::ID_GAME_LOAD> {
 
 template<>
 inline const pGameLoad* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_LOAD ? reinterpret_cast<const pGameLoad*>(packet) : nullptr;
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_LOAD ? static_cast<const pGameLoad*>(packet) : nullptr;
 }
 
 template<>
@@ -579,7 +579,7 @@ struct PacketFactory::Create_<pTypes::ID_GAME_MOD, Args...> {
 
 template<>
 inline const pGameMod* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_MOD ? reinterpret_cast<const pGameMod*>(packet) : nullptr;
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_MOD ? static_cast<const pGameMod*>(packet) : nullptr;
 }
 
 template<typename... Args>
@@ -618,7 +618,7 @@ struct PacketFactory::Create_<pTypes::ID_GAME_START> {
 
 template<>
 inline const pGameStart* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_START ? reinterpret_cast<const pGameStart*>(packet) : nullptr;
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_START ? static_cast<const pGameStart*>(packet) : nullptr;
 }
 
 template<>
@@ -657,7 +657,7 @@ struct PacketFactory::Create_<pTypes::ID_GAME_END, Args...> {
 
 template<>
 inline const pGameEnd* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_END ? reinterpret_cast<const pGameEnd*>(packet) : nullptr;
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_END ? static_cast<const pGameEnd*>(packet) : nullptr;
 }
 
 template<typename... Args>
@@ -696,7 +696,7 @@ struct PacketFactory::Create_<pTypes::ID_GAME_MESSAGE, Args...> {
 
 template<>
 inline const pGameMessage* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_MESSAGE ? reinterpret_cast<const pGameMessage*>(packet) : nullptr;
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_MESSAGE ? static_cast<const pGameMessage*>(packet) : nullptr;
 }
 
 template<typename... Args>
@@ -735,7 +735,7 @@ struct PacketFactory::Create_<pTypes::ID_GAME_CHAT, Args...> {
 
 template<>
 inline const pGameChat* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_CHAT ? reinterpret_cast<const pGameChat*>(packet) : nullptr;
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_CHAT ? static_cast<const pGameChat*>(packet) : nullptr;
 }
 
 template<typename... Args>
@@ -774,7 +774,7 @@ struct PacketFactory::Create_<pTypes::ID_GAME_GLOBAL, Args...> {
 
 template<>
 inline const pGameGlobal* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_GLOBAL ? reinterpret_cast<const pGameGlobal*>(packet) : nullptr;
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_GLOBAL ? static_cast<const pGameGlobal*>(packet) : nullptr;
 }
 
 template<typename... Args>
@@ -813,7 +813,7 @@ struct PacketFactory::Create_<pTypes::ID_GAME_WEATHER, Args...> {
 
 template<>
 inline const pGameWeather* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_WEATHER ? reinterpret_cast<const pGameWeather*>(packet) : nullptr;
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_WEATHER ? static_cast<const pGameWeather*>(packet) : nullptr;
 }
 
 template<typename... Args>
@@ -859,7 +859,7 @@ inline const pObjectNew* PacketFactory::packet_cast(const pDefault* packet) {
 		type == pTypes::ID_CONTAINER_NEW ||
 		type == pTypes::ID_ACTOR_NEW ||
 		type == pTypes::ID_PLAYER_NEW
-	) ? reinterpret_cast<const pObjectNew*>(packet) : nullptr;
+	) ? static_cast<const pObjectNew*>(packet) : nullptr;
 }
 
 template<typename... Args>
@@ -898,7 +898,7 @@ struct PacketFactory::Create_<pTypes::ID_ITEM_NEW, Args...> {
 
 template<>
 inline const pItemNew* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_ITEM_NEW ? reinterpret_cast<const pItemNew*>(packet) : nullptr;
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_ITEM_NEW ? static_cast<const pItemNew*>(packet) : nullptr;
 }
 
 template<typename... Args>
@@ -942,7 +942,7 @@ inline const pContainerNew* PacketFactory::packet_cast(const pDefault* packet) {
 		type == pTypes::ID_CONTAINER_NEW ||
 		type == pTypes::ID_ACTOR_NEW ||
 		type == pTypes::ID_PLAYER_NEW
-	) ? reinterpret_cast<const pContainerNew*>(packet) : nullptr;
+	) ? static_cast<const pContainerNew*>(packet) : nullptr;
 }
 
 template<typename... Args>
@@ -985,7 +985,7 @@ inline const pActorNew* PacketFactory::packet_cast(const pDefault* packet) {
 	return (
 		type == pTypes::ID_ACTOR_NEW ||
 		type == pTypes::ID_PLAYER_NEW
-	) ? reinterpret_cast<const pActorNew*>(packet) : nullptr;
+	) ? static_cast<const pActorNew*>(packet) : nullptr;
 }
 
 template<typename... Args>
@@ -1024,7 +1024,7 @@ struct PacketFactory::Create_<pTypes::ID_PLAYER_NEW, Args...> {
 
 template<>
 inline const pPlayerNew* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_PLAYER_NEW ? reinterpret_cast<const pPlayerNew*>(packet) : nullptr;
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_PLAYER_NEW ? static_cast<const pPlayerNew*>(packet) : nullptr;
 }
 
 template<typename... Args>
@@ -1063,7 +1063,7 @@ struct PacketFactory::Create_<pTypes::ID_OBJECT_REMOVE, Args...> {
 
 template<>
 inline const pObjectRemove* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_OBJECT_REMOVE ? reinterpret_cast<const pObjectRemove*>(packet) : nullptr;
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_OBJECT_REMOVE ? static_cast<const pObjectRemove*>(packet) : nullptr;
 }
 
 template<typename... Args>
@@ -1102,7 +1102,7 @@ struct PacketFactory::Create_<pTypes::ID_UPDATE_POS, Args...> {
 
 template<>
 inline const pObjectPos* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_POS ? reinterpret_cast<const pObjectPos*>(packet) : nullptr;
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_POS ? static_cast<const pObjectPos*>(packet) : nullptr;
 }
 
 template<typename... Args>
@@ -1141,7 +1141,7 @@ struct PacketFactory::Create_<pTypes::ID_UPDATE_ANGLE, Args...> {
 
 template<>
 inline const pObjectAngle* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_ANGLE ? reinterpret_cast<const pObjectAngle*>(packet) : nullptr;
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_ANGLE ? static_cast<const pObjectAngle*>(packet) : nullptr;
 }
 
 template<typename... Args>
@@ -1180,7 +1180,7 @@ struct PacketFactory::Create_<pTypes::ID_UPDATE_CELL, Args...> {
 
 template<>
 inline const pObjectCell* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_CELL ? reinterpret_cast<const pObjectCell*>(packet) : nullptr;
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_CELL ? static_cast<const pObjectCell*>(packet) : nullptr;
 }
 
 template<typename... Args>
@@ -1219,7 +1219,7 @@ struct PacketFactory::Create_<pTypes::ID_UPDATE_CONTAINER, Args...> {
 
 template<>
 inline const pContainerUpdate* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_CONTAINER ? reinterpret_cast<const pContainerUpdate*>(packet) : nullptr;
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_CONTAINER ? static_cast<const pContainerUpdate*>(packet) : nullptr;
 }
 
 template<typename... Args>
@@ -1258,7 +1258,7 @@ struct PacketFactory::Create_<pTypes::ID_UPDATE_VALUE, Args...> {
 
 template<>
 inline const pActorValue* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_VALUE ? reinterpret_cast<const pActorValue*>(packet) : nullptr;
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_VALUE ? static_cast<const pActorValue*>(packet) : nullptr;
 }
 
 template<typename... Args>
@@ -1297,7 +1297,7 @@ struct PacketFactory::Create_<pTypes::ID_UPDATE_STATE, Args...> {
 
 template<>
 inline const pActorState* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_STATE ? reinterpret_cast<const pActorState*>(packet) : nullptr;
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_STATE ? static_cast<const pActorState*>(packet) : nullptr;
 }
 
 template<typename... Args>
@@ -1336,7 +1336,7 @@ struct PacketFactory::Create_<pTypes::ID_UPDATE_RACE, Args...> {
 
 template<>
 inline const pActorRace* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_RACE ? reinterpret_cast<const pActorRace*>(packet) : nullptr;
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_RACE ? static_cast<const pActorRace*>(packet) : nullptr;
 }
 
 template<typename... Args>
@@ -1375,7 +1375,7 @@ struct PacketFactory::Create_<pTypes::ID_UPDATE_SEX, Args...> {
 
 template<>
 inline const pActorSex* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_SEX ? reinterpret_cast<const pActorSex*>(packet) : nullptr;
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_SEX ? static_cast<const pActorSex*>(packet) : nullptr;
 }
 
 template<typename... Args>
@@ -1414,7 +1414,7 @@ struct PacketFactory::Create_<pTypes::ID_UPDATE_DEAD, Args...> {
 
 template<>
 inline const pActorDead* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_DEAD ? reinterpret_cast<const pActorDead*>(packet) : nullptr;
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_DEAD ? static_cast<const pActorDead*>(packet) : nullptr;
 }
 
 template<typename... Args>
@@ -1453,7 +1453,7 @@ struct PacketFactory::Create_<pTypes::ID_UPDATE_FIREWEAPON, Args...> {
 
 template<>
 inline const pActorFireweapon* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_FIREWEAPON ? reinterpret_cast<const pActorFireweapon*>(packet) : nullptr;
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_FIREWEAPON ? static_cast<const pActorFireweapon*>(packet) : nullptr;
 }
 
 template<typename... Args>
@@ -1492,7 +1492,7 @@ struct PacketFactory::Create_<pTypes::ID_UPDATE_IDLE, Args...> {
 
 template<>
 inline const pActorIdle* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_IDLE ? reinterpret_cast<const pActorIdle*>(packet) : nullptr;
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_IDLE ? static_cast<const pActorIdle*>(packet) : nullptr;
 }
 
 template<typename... Args>
@@ -1531,7 +1531,7 @@ struct PacketFactory::Create_<pTypes::ID_UPDATE_CONTROL, Args...> {
 
 template<>
 inline const pPlayerControl* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_CONTROL ? reinterpret_cast<const pPlayerControl*>(packet) : nullptr;
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_CONTROL ? static_cast<const pPlayerControl*>(packet) : nullptr;
 }
 
 template<typename... Args>
@@ -1570,7 +1570,7 @@ struct PacketFactory::Create_<pTypes::ID_UPDATE_INTERIOR, Args...> {
 
 template<>
 inline const pPlayerInterior* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_INTERIOR ? reinterpret_cast<const pPlayerInterior*>(packet) : nullptr;
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_INTERIOR ? static_cast<const pPlayerInterior*>(packet) : nullptr;
 }
 
 template<typename... Args>
@@ -1609,7 +1609,7 @@ struct PacketFactory::Create_<pTypes::ID_UPDATE_EXTERIOR, Args...> {
 
 template<>
 inline const pPlayerExterior* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_EXTERIOR ? reinterpret_cast<const pPlayerExterior*>(packet) : nullptr;
+	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_EXTERIOR ? static_cast<const pPlayerExterior*>(packet) : nullptr;
 }
 
 template<typename... Args>

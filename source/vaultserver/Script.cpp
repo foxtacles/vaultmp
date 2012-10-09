@@ -1,5 +1,9 @@
 #include "Script.h"
 
+using namespace std;
+using namespace RakNet;
+using namespace Values;
+
 vector<Script*> Script::scripts;
 pair<chrono::system_clock::time_point, double> Script::gameTime;
 unsigned int Script::gameWeather;
@@ -180,8 +184,6 @@ Script::Script(char* path)
 
 			this->handle = reinterpret_cast<void*>(vaultscript);
 			this->cpp_script = false;
-
-			cell ret = 0;
 			int err = 0;
 
 			err = PAWN::LoadProgram(vaultscript, path, nullptr);
@@ -230,7 +232,11 @@ Script::~Script()
 	}
 }
 
+#ifdef __WIN32__
+void Script::LoadScripts(char* scripts, char*)
+#else
 void Script::LoadScripts(char* scripts, char* base)
+#endif
 {
 	char* token = strtok(scripts, ",");
 
@@ -283,7 +289,7 @@ void Script::UnloadScripts()
 	scripts.clear();
 }
 
-void Script::GetArguments(vector<boost::any>& params, va_list args, string def)
+void Script::GetArguments(vector<boost::any>& params, va_list args, const string& def)
 {
 	params.reserve(def.length());
 
@@ -1175,14 +1181,14 @@ bool Script::IsInterior(unsigned int cell)
 {
 	try
 	{
-		const Exterior& _cell = Exterior::Lookup(cell);
+		Exterior::Lookup(cell);
 		return false;
 	}
 	catch (...)
 	{
 		try
 		{
-			const Record& record = Record::Lookup(cell, "CELL");
+			Record::Lookup(cell, "CELL");
 			return true;
 		}
 		catch (...)
@@ -2332,7 +2338,7 @@ bool Script::SetActorBaseRace(NetworkID id, unsigned int race)
 
 	try
 	{
-		const Race& _race = Race::Lookup(race);
+		Race::Lookup(race);
 		const NPC& npc = NPC::Lookup(baseID);
 		unsigned int old_race = npc.GetRace();
 
@@ -2394,9 +2400,9 @@ bool Script::AgeActorBaseRace(NetworkID id, signed int age)
 
 		if (age < 0)
 		{
-			age = abs(age);
+			unsigned int _age = abs(age);
 
-			for (unsigned int i = 0; i < age; ++i)
+			for (unsigned int i = 0; i < _age; ++i)
 			{
 				new_race = race->GetYounger();
 
@@ -2408,7 +2414,7 @@ bool Script::AgeActorBaseRace(NetworkID id, signed int age)
 		}
 		else if (age > 0)
 		{
-			for (unsigned int i = 0; i < age; ++i)
+			for (signed int i = 0; i < age; ++i)
 			{
 				new_race = race->GetOlder();
 

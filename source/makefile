@@ -7,7 +7,7 @@ LD = mingw32-g++.exe
 WINDRES = windres.exe
 
 INC =  -I. -Istack_trace\\include
-CFLAGS =  -pedantic-errors -pedantic -Wfatal-errors -Wextra -Wall -Werror -std=gnu++0x
+CFLAGS =  -pedantic-errors -pedantic -Wfatal-errors -Wextra -Wall -std=gnu++0x
 CLFAGSEXT =
 RESINC =
 LIBDIR =

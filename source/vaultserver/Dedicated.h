@@ -30,10 +30,7 @@
 #define RAKNET_MASTER_RATE              2000
 #define RAKNET_MASTER_STANDARD_PORT     1660
 
-using namespace RakNet;
-using namespace std;
-
-typedef vector<pair<string, unsigned int>> ModList;
+typedef std::vector<std::pair<std::string, unsigned int>> ModList;
 
 /**
  * \brief The main class of the dedicated server
@@ -46,8 +43,8 @@ class Dedicated
 		friend class FileProgress;
 
 	private:
-		static RakPeerInterface* peer;
-		static SocketDescriptor* sockdescr;
+		static RakNet::RakPeerInterface* peer;
+		static RakNet::SocketDescriptor* sockdescr;
 
 		static unsigned int port;
 		static unsigned int fileslots;
@@ -57,9 +54,9 @@ class Dedicated
 		static bool fileserve;
 
 		static void Announce(bool announce);
-		static void Query(Packet* packet);
-		static TimeMS announcetime;
-		static SystemAddress master;
+		static void Query(RakNet::Packet* packet);
+		static RakNet::TimeMS announcetime;
+		static RakNet::SystemAddress master;
 		static ServerEntry* self;
 		static unsigned int cell;
 		static ModList modfiles;

@@ -29,56 +29,56 @@ class Server
 		/**
 		 * \brief Authenticates a client
 		 */
-		static NetworkResponse Authenticate(RakNetGUID guid, const string& name, const string& pwd);
+		static NetworkResponse Authenticate(RakNet::RakNetGUID guid, const std::string& name, const std::string& pwd);
 		/**
 		 * \brief Sends the game world data
 		 */
-		static NetworkResponse LoadGame(RakNetGUID guid);
+		static NetworkResponse LoadGame(RakNet::RakNetGUID guid);
 		/**
 		 * \brief Creates a new Player
 		 */
-		static NetworkResponse NewPlayer(RakNetGUID guid, NetworkID id);
+		static NetworkResponse NewPlayer(RakNet::RakNetGUID guid, RakNet::NetworkID id);
 		/**
 		 * \brief Disconnects a client
 		 */
-		static NetworkResponse Disconnect(RakNetGUID guid, Reason reason);
+		static NetworkResponse Disconnect(RakNet::RakNetGUID guid, Reason reason);
 
 		/**
 		 * \brief Handles GetPos network packet
 		 */
-		static NetworkResponse GetPos(RakNetGUID guid, const FactoryObject& reference, double X, double Y, double Z);
+		static NetworkResponse GetPos(RakNet::RakNetGUID guid, const FactoryObject& reference, double X, double Y, double Z);
 		/**
 		 * \brief Handles GetAngle network packet
 		 */
-		static NetworkResponse GetAngle(RakNetGUID guid, const FactoryObject& reference, unsigned char axis, double value);
+		static NetworkResponse GetAngle(RakNet::RakNetGUID guid, const FactoryObject& reference, unsigned char axis, double value);
 		/**
 		 * \brief Handles cell network packet
 		 */
-		static NetworkResponse GetCell(RakNetGUID guid, const FactoryObject& reference, unsigned int cell);
+		static NetworkResponse GetCell(RakNet::RakNetGUID guid, const FactoryObject& reference, unsigned int cell);
 		/**
 		 * \brief Handles container update network packet
 		 */
-		static NetworkResponse GetContainerUpdate(RakNetGUID guid, const FactoryObject& reference, const pair<list<NetworkID>, vector<pPacket>>& ndiff, const pair<list<NetworkID>, vector<pPacket>>& gdiff);
+		static NetworkResponse GetContainerUpdate(RakNet::RakNetGUID guid, const FactoryObject& reference, const ContainerDiffNet& ndiff, const ContainerDiffNet& gdiff);
 		/**
 		 * \brief Handles actor value network packet
 		 */
-		static NetworkResponse GetActorValue(RakNetGUID guid, const FactoryObject& reference, bool base, unsigned char index, double value);
+		static NetworkResponse GetActorValue(RakNet::RakNetGUID guid, const FactoryObject& reference, bool base, unsigned char index, double value);
 		/**
 		 * \brief Handles actor state network packet
 		 */
-		static NetworkResponse GetActorState(RakNetGUID guid, const FactoryObject& reference, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking);
+		static NetworkResponse GetActorState(RakNet::RakNetGUID guid, const FactoryObject& reference, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking);
 		/**
 		 * \brief Handles actor dead network packet
 		 */
-		static NetworkResponse GetActorDead(RakNetGUID guid, const FactoryObject& reference, bool dead, unsigned short limbs, signed char cause);
+		static NetworkResponse GetActorDead(RakNet::RakNetGUID guid, const FactoryObject& reference, bool dead, unsigned short limbs, signed char cause);
 		/**
 		 * \brief Handles player control network packet
 		 */
-		static NetworkResponse GetPlayerControl(RakNetGUID guid, const FactoryObject& reference, unsigned char control, unsigned char key);
+		static NetworkResponse GetPlayerControl(RakNet::RakNetGUID guid, const FactoryObject& reference, unsigned char control, unsigned char key);
 		/**
 		 * \brief Handles player chat message network packet
 		 */
-		static NetworkResponse ChatMessage(RakNetGUID guid, string message);
+		static NetworkResponse ChatMessage(RakNet::RakNetGUID guid, std::string message);
 
 #ifdef VAULTMP_DEBUG
 		static void SetDebugHandler(Debug* debug);

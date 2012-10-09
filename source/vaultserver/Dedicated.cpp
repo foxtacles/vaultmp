@@ -1,7 +1,7 @@
 #include "Dedicated.h"
 
-using namespace RakNet;
 using namespace std;
+using namespace RakNet;
 
 RakPeerInterface* Dedicated::peer;
 SocketDescriptor* Dedicated::sockdescr;
@@ -163,7 +163,7 @@ void Dedicated::Query(Packet* packet)
 
 class FileProgress : public FileListProgress
 {
-		virtual void OnFilePush(const char* fileName, unsigned int fileLengthBytes, unsigned int offset, unsigned int bytesBeingSent, bool done, SystemAddress targetSystem)
+		virtual void OnFilePush(const char* fileName, unsigned int, unsigned int, unsigned int bytesBeingSent, bool, SystemAddress targetSystem)
 		{
 			Utils::timestamp();
 			printf("Sending %s (%d bytes) to %s\n", fileName, bytesBeingSent, targetSystem.ToString(false));
@@ -211,7 +211,7 @@ void Dedicated::FileThread()
 	unsigned int len;
 	unsigned int i = 1;
 
-	for (it = modfiles.begin(), i; it != modfiles.end(); ++it, i++)
+	for (it = modfiles.begin(); it != modfiles.end(); ++it, i++)
 	{
 		snprintf(file, sizeof(file), "%s/%s/%s", dir, MODFILES_PATH, it->first.c_str());
 		len = Utils::FileLength(file);
@@ -245,11 +245,10 @@ void Dedicated::DedicatedThread()
 
 	if (announce)
 	{
-		char buf[strlen(announce) + 1];
-		strcpy(buf, announce);
+		vector<char> buf(announce, announce + strlen(announce) + 1);
 		peer->Startup(connections + 1, sockdescr, 1, THREAD_PRIORITY_NORMAL);
 		peer->SetMaximumIncomingConnections(connections);
-		master.SetBinaryAddress(strtok(buf, ":"));
+		master.SetBinaryAddress(strtok(&buf[0], ":"));
 		char* cport = strtok(nullptr, ":");
 		master.SetPort(cport != nullptr ? atoi(cport) : RAKNET_MASTER_STANDARD_PORT);
 		peer->Connect(master.ToString(false), master.GetPort(), MASTER_VERSION, sizeof(MASTER_VERSION), 0, 0, 3, 500, 0);

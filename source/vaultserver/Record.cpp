@@ -1,5 +1,7 @@
 #include "Record.h"
 
+using namespace std;
+
 unordered_map<unsigned int, const Record*> Record::data;
 
 Record::Record(const string& table, sqlite3_stmt* stmt)
@@ -26,11 +28,6 @@ Record::Record(const string& table, sqlite3_stmt* stmt)
 		data.erase(baseID);
 
 	data.insert(make_pair(baseID, this));
-}
-
-Record::~Record()
-{
-	data.erase(baseID);
 }
 
 const Record& Record::Lookup(unsigned int baseID)
@@ -82,7 +79,7 @@ bool Record::IsValidCell(unsigned int baseID)
 {
 	try
 	{
-		const Record& record = Record::Lookup(baseID, "CELL");
+		Record::Lookup(baseID, "CELL");
 	}
 	catch (...)
 	{
@@ -96,7 +93,7 @@ bool Record::IsValidWeather(unsigned int baseID)
 {
 	try
 	{
-		const Record& record = Record::Lookup(baseID, "WTHR");
+		Record::Lookup(baseID, "WTHR");
 	}
 	catch (...)
 	{

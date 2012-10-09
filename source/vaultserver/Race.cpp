@@ -1,5 +1,7 @@
 #include "Race.h"
 
+using namespace std;
+
 unordered_map<unsigned int, const Race*> Race::races;
 
 Race::Race(const string& table, sqlite3_stmt* stmt)
@@ -38,11 +40,6 @@ Race::Race(const string& table, sqlite3_stmt* stmt)
 		races.erase(baseID);
 
 	races.emplace(baseID, this);
-}
-
-Race::~Race()
-{
-	races.erase(baseID);
 }
 
 const Race& Race::Lookup(unsigned int baseID)

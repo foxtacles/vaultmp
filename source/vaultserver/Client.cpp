@@ -1,18 +1,15 @@
 #include "Client.h"
 
-using namespace RakNet;
 using namespace std;
+using namespace RakNet;
 
 map<RakNetGUID, Client*> Client::clients;
 stack<unsigned int> Client::clientID;
 
-Client::Client(RakNetGUID guid, NetworkID player)
+Client::Client(RakNetGUID guid, NetworkID player) : guid(guid), ID(clientID.top()), player(player)
 {
 	// emplace
 	clients.insert(make_pair(guid, this));
-	this->guid = guid;
-	this->player = player;
-	this->ID = clientID.top();
 	clientID.pop();
 }
 

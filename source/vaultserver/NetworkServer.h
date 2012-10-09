@@ -13,8 +13,7 @@ class NetworkServer : public Network
 		friend class Dedicated;
 
 	private:
-
-		NetworkServer();
+		NetworkServer() = delete;
 
 #ifdef VAULTMP_DEBUG
 		static Debug* debug;
@@ -37,7 +36,7 @@ class NetworkServer : public Network
 		 *
 		 * Returns a NetworkResponse to send to the client(s)
 		 */
-		static NetworkResponse ProcessPacket(Packet* data);
+		static NetworkResponse ProcessPacket(RakNet::Packet* data);
 
 };
 

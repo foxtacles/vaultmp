@@ -4,7 +4,8 @@
 	<Project>
 		<Option title="vaultserver" />
 		<Option platforms="Windows;Unix;" />
-		<Option makefile="makefile" />
+		<Option makefile="makefile.windows" />
+		<Option makefile_is_custom="1" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>

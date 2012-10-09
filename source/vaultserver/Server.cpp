@@ -4,6 +4,8 @@
 Debug* Server::debug = nullptr;
 #endif
 
+using namespace std;
+using namespace RakNet;
 using namespace Values;
 
 #ifdef VAULTMP_DEBUG
@@ -450,7 +452,7 @@ NetworkResponse Server::GetActorDead(RakNetGUID guid, const FactoryObject& refer
 	return response;
 }
 
-NetworkResponse Server::GetPlayerControl(RakNetGUID guid, const FactoryObject& reference, unsigned char control, unsigned char key)
+NetworkResponse Server::GetPlayerControl(RakNetGUID, const FactoryObject& reference, unsigned char control, unsigned char key)
 {
 	Player* player = vaultcast<Player>(reference);
 

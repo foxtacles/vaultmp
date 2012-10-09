@@ -9,6 +9,7 @@
 #include "RakNet/MessageIdentifiers.h"
 #include "RakNet/FileListTransfer.h"
 #include "RakNet/FileListTransferCBInterface.h"
+#include "RakNet/IncrementalReadInterface.h"
 #include "RakNet/BitStream.h"
 #include "RakNet/RakString.h"
 #include "RakNet/RakSleep.h"

@@ -1,6 +1,8 @@
 #include "NPC.h"
 #include "Race.h"
 
+using namespace std;
+
 unordered_map<unsigned int, const NPC*> NPC::npcs;
 
 NPC::NPC(const string& table, sqlite3_stmt* stmt) : new_female(-1), new_race(0x00000000)
@@ -48,11 +50,6 @@ NPC::NPC(const string& table, sqlite3_stmt* stmt) : new_female(-1), new_race(0x0
 		npcs.erase(baseID);
 
 	npcs.emplace(baseID, this);
-}
-
-NPC::~NPC()
-{
-	npcs.erase(baseID);
 }
 
 const NPC& NPC::Lookup(unsigned int baseID)

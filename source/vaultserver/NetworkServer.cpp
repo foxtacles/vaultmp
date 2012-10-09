@@ -1,6 +1,9 @@
 #include "NetworkServer.h"
 #include "Dedicated.h"
 
+using namespace std;
+using namespace RakNet;
+
 #ifdef VAULTMP_DEBUG
 Debug* NetworkServer::debug = nullptr;
 #endif
@@ -33,7 +36,6 @@ NetworkResponse NetworkServer::ProcessEvent(unsigned char id)
 NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 {
 	NetworkResponse response;
-	pDefault* packet;
 
 	switch (data->data[0])
 	{

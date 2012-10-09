@@ -35,7 +35,7 @@ Network::SingleResponse Network::CreateResponse(pPacket&& packet, PacketPriority
 
 void Network::Dispatch(RakPeerInterface* peer, NetworkResponse&& response)
 {
-	for (SingleResponse& s : response)
+	for (SingleResponse& s : move(response))
 	{
 #ifdef VAULTMP_DEBUG
 		if (debug)

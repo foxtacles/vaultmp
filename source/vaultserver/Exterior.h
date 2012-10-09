@@ -13,8 +13,6 @@
 
 #include "sqlite/sqlite3.h"
 
-using namespace std;
-
 /**
  * \brief Represents a game exterior cell
  */
@@ -24,8 +22,8 @@ class Exterior
 	private:
 		static constexpr double size = 4096.0;
 
-		static unordered_map<unsigned int, const Exterior*> cells;
-		static unordered_map<unsigned int, vector<const Exterior*>> worlds;
+		static std::unordered_map<unsigned int, const Exterior*> cells;
+		static std::unordered_map<unsigned int, std::vector<const Exterior*>> worlds;
 
 		unsigned int baseID;
 		unsigned int world;
@@ -44,11 +42,11 @@ class Exterior
 		signed int GetX() const;
 		signed int GetY() const;
 
-		Exterior(const string& table, sqlite3_stmt* stmt);
+		Exterior(const std::string& table, sqlite3_stmt* stmt);
+		~Exterior() = default;
 		// must never be called. only defined because vector requires it
-		Exterior(Exterior&&) { terminate(); }
+		Exterior(Exterior&&) { std::terminate(); }
 		Exterior& operator=(Exterior&&) = delete;
-		~Exterior();
 };
 
 #endif

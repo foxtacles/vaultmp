@@ -447,13 +447,13 @@ void Game::FutureSet(const weak_ptr<Lockable>& data, T&& t)
 	if (store == nullptr)
 		throw VaultException("Storage is corrupted");
 
-	(**store) = move(t);
+	(**store) = forward<T>(t);
 	store->set_promise();
 }
 
 void Game::AsyncDispatch(function<void()>&& func)
 {
-	thread t(func);
+	thread t(move(func));
 	t.detach();
 }
 

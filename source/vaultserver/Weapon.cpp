@@ -1,5 +1,7 @@
 #include "Weapon.h"
 
+using namespace std;
+
 unordered_map<unsigned int, const Weapon*> Weapon::weapons;
 
 Weapon::Weapon(const string& table, sqlite3_stmt* stmt)
@@ -34,11 +36,6 @@ Weapon::Weapon(const string& table, sqlite3_stmt* stmt)
 		weapons.erase(baseID);
 
 	weapons.emplace(baseID, this);
-}
-
-Weapon::~Weapon()
-{
-	weapons.erase(baseID);
 }
 
 const Weapon& Weapon::Lookup(unsigned int baseID)

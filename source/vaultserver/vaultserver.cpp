@@ -11,6 +11,9 @@
 #include "../iniparser/src/dictionary.h"
 #include "../iniparser/src/iniparser.h"
 
+using namespace std;
+using namespace RakNet;
+
 void InputThread()
 {
 	char input[256];
@@ -133,9 +136,8 @@ int main(int argc, char* argv[])
 	try
 	{
 		putenv(PWNFILES_PATH);
-		char _scripts[strlen(scripts) + 1];
-		snprintf(_scripts, sizeof(_scripts), "%s", scripts);
-		Script::LoadScripts(_scripts, base);
+		vector<char> _scripts(scripts, scripts + strlen(scripts) + 1);
+		Script::LoadScripts(&_scripts[0], base);
 	}
 	catch (std::exception& e)
 	{
@@ -156,9 +158,8 @@ int main(int argc, char* argv[])
 	{
 		Dedicated::SetSpawnCell(cell);
 
-		char buf[strlen(mods) + 1];
-		strcpy(buf, mods);
-		char* token = strtok(buf, ",");
+		vector<char> buf(mods, mods + strlen(mods) + 1);
+		char* token = strtok(&buf[0], ",");
 		ModList modfiles;
 		char file[MAX_PATH];
 		unsigned int crc;

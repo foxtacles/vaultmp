@@ -1,5 +1,7 @@
 #include "BaseContainer.h"
 
+using namespace std;
+
 unordered_map<unsigned int, vector<const BaseContainer*>> BaseContainer::baseContainers;
 
 BaseContainer::BaseContainer(const string& table, sqlite3_stmt* stmt)
@@ -40,14 +42,6 @@ BaseContainer::BaseContainer(const string& table, sqlite3_stmt* stmt)
 		baseContainers[baseID].erase(remove_if(baseContainers[baseID].begin(), baseContainers[baseID].end(), [=](const BaseContainer* container) { return container->GetItem() == item; }), baseContainers[baseID].end());
 
 	baseContainers[baseID].emplace_back(this);
-}
-
-BaseContainer::~BaseContainer()
-{
-	auto it = find(baseContainers[baseID].begin(), baseContainers[baseID].end(), this);
-
-	if (it != baseContainers[baseID].end())
-		baseContainers[baseID].erase(it);
 }
 
 const vector<const BaseContainer*>& BaseContainer::Lookup(unsigned int baseID)

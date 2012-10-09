@@ -31,7 +31,7 @@ class Shared : public Value<T>
 
 	public:
 		Shared() : Value<T>() {};
-		Shared(T t) : Value<T>(t) {};
+		Shared(const T& t) : Value<T>(t) {};
 		Shared(Shared&&) = default;
 		Shared& operator=(Shared&&) = default;
 		virtual ~Shared() {}

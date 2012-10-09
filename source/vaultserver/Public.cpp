@@ -1,15 +1,17 @@
 #include "Public.h"
 
-map<string, Public*> Public::publics;
+using namespace std;
 
-Public::Public(ScriptFunc _public, string name, string def) : ScriptFunction(_public, def)
+unordered_map<string, Public*> Public::publics;
+
+Public::Public(ScriptFunc _public, const string& name, const string& def) : ScriptFunction(_public, def)
 {
-	publics.insert(pair<string, Public*>(name, this));
+	publics.emplace(name, this);
 }
 
-Public::Public(ScriptFuncPAWN _public, AMX* amx, string name, string def) : ScriptFunction(_public, amx, def)
+Public::Public(ScriptFuncPAWN _public, AMX* amx, const string& name, const string& def) : ScriptFunction(_public, amx, def)
 {
-	publics.insert(pair<string, Public*>(name, this));
+	publics.emplace(name, this);
 }
 
 Public::~Public()
@@ -17,10 +19,9 @@ Public::~Public()
 
 }
 
-unsigned long long Public::Call(string name, const vector<boost::any>& args)
+unsigned long long Public::Call(const string& name, const vector<boost::any>& args)
 {
-	map<string, Public*>::iterator it;
-	it = publics.find(name);
+	auto it = publics.find(name);
 
 	if (it == publics.end())
 		throw VaultException("Public with name %s does not exist", name.c_str());
@@ -28,10 +29,9 @@ unsigned long long Public::Call(string name, const vector<boost::any>& args)
 	return it->second->ScriptFunction::Call(args);
 }
 
-string Public::GetDefinition(string name)
+string Public::GetDefinition(const string& name)
 {
-	map<string, Public*>::iterator it;
-	it = publics.find(name);
+	auto it = publics.find(name);
 
 	if (it == publics.end())
 		throw VaultException("Public with name %s does not exist", name.c_str());
@@ -41,9 +41,7 @@ string Public::GetDefinition(string name)
 
 void Public::DeleteAll()
 {
-	map<string, Public*>::iterator it;
-
-	for (it = publics.begin(); it != publics.end(); publics.erase(it++))
+	for (auto it = publics.begin(); it != publics.end(); publics.erase(it++))
 	{
 		Public* _public = it->second;
 		delete _public;

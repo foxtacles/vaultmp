@@ -10,8 +10,6 @@
 
 #include "sqlite/sqlite3.h"
 
-using namespace std;
-
 /**
  * \brief Represents a base container
  */
@@ -19,7 +17,7 @@ using namespace std;
 class BaseContainer
 {
 	private:
-		static unordered_map<unsigned int, vector<const BaseContainer*>> baseContainers;
+		static std::unordered_map<unsigned int, std::vector<const BaseContainer*>> baseContainers;
 
 		unsigned int baseID;
 		unsigned int item;
@@ -30,18 +28,18 @@ class BaseContainer
 		BaseContainer& operator=(const BaseContainer& p) = delete;
 
 	public:
-		static const vector<const BaseContainer*>& Lookup(unsigned int baseID);
+		static const std::vector<const BaseContainer*>& Lookup(unsigned int baseID);
 
 		unsigned int GetBase() const;
 		unsigned int GetItem() const;
 		unsigned int GetCount() const;
 		double GetCondition() const;
 
-		BaseContainer(const string& table, sqlite3_stmt* stmt);
+		BaseContainer(const std::string& table, sqlite3_stmt* stmt);
+		~BaseContainer() = default;
 		// must never be called. only defined because vector requires it
-		BaseContainer(BaseContainer&&) { terminate(); }
+		BaseContainer(BaseContainer&&) { std::terminate(); }
 		BaseContainer& operator=(BaseContainer&&) = delete;
-		~BaseContainer();
 };
 
 #endif

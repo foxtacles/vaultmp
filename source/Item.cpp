@@ -2,6 +2,7 @@
 #include "Container.h"
 #include "PacketFactory.h"
 
+using namespace std;
 using namespace RakNet;
 
 #ifdef VAULTMP_DEBUG

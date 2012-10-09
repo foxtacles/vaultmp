@@ -240,7 +240,7 @@ static int getkeystring(INI_FILETYPE *fp, const TCHAR *Section, const TCHAR *Key
     *--ep = '\0';
     isstring = QUOTE_DEQUOTE; /* this is a string, so remove escaped characters */
   } /* if */
-  save_strncpy(Buffer, sp, BufferSize, (quote_option) isstring);
+  save_strncpy(Buffer, sp, BufferSize, (enum quote_option) isstring);
   return 1;
 }
 

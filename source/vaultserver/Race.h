@@ -10,8 +10,6 @@
 
 #include "sqlite/sqlite3.h"
 
-using namespace std;
-
 /**
  * \brief Represents a race
  */
@@ -19,7 +17,7 @@ using namespace std;
 class Race
 {
 	private:
-		static unordered_map<unsigned int, const Race*> races;
+		static std::unordered_map<unsigned int, const Race*> races;
 
 		unsigned int baseID;
 		bool child;
@@ -40,11 +38,11 @@ class Race
 		unsigned int GetMaxAge() const;
 		signed int GetAgeDifference(unsigned int race) const;
 
-		Race(const string& table, sqlite3_stmt* stmt);
+		Race(const std::string& table, sqlite3_stmt* stmt);
+		~Race() = default;
 		// must never be called. only defined because vector requires it
-		Race(Race&&) { terminate(); }
+		Race(Race&&) { std::terminate(); }
 		Race& operator=(Race&&) = delete;
-		~Race();
 };
 
 #endif

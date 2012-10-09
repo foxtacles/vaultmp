@@ -98,7 +98,7 @@ class Container : public Object
 		const std::list<RakNet::NetworkID>& GetItemList() const;
 
 #ifdef VAULTSERVER
-		std::list<RakNet::NetworkID> GetItemTypes(const string& type) const;
+		std::list<RakNet::NetworkID> GetItemTypes(const std::string& type) const;
 #endif
 
 		void FlushContainer();

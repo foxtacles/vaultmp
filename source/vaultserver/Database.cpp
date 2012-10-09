@@ -6,6 +6,8 @@
 #include "NPC.h"
 #include "BaseContainer.h"
 
+using namespace std;
+
 #ifdef VAULTMP_DEBUG
 template <typename T>
 Debug* Database<T>::debug = nullptr;
@@ -21,12 +23,6 @@ void Database<T>::SetDebugHandler(Debug* debug)
 		debug->PrintFormat("Attached debug handler to Database<%s> class", true, typeid(T).name());
 }
 #endif
-
-template <typename T>
-Database<T>::Database()
-{
-
-}
 
 template <typename T>
 unsigned int Database<T>::initialize(const string& file, const vector<string>& tables)
@@ -141,12 +137,6 @@ unsigned int Database<T>::initialize(const string& file, const vector<string>& t
 #endif
 
 	return data.size();
-}
-
-template <typename T>
-Database<T>::~Database()
-{
-
 }
 
 template class Database<Record>;

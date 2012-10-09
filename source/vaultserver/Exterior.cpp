@@ -1,5 +1,7 @@
 #include "Exterior.h"
 
+using namespace std;
+
 unordered_map<unsigned int, const Exterior*> Exterior::cells;
 unordered_map<unsigned int, vector<const Exterior*>> Exterior::worlds;
 
@@ -40,16 +42,6 @@ Exterior::Exterior(const string& table, sqlite3_stmt* stmt)
 
 	//All exteriors are also CELLs
 	//const Record& record = Record::Lookup(baseID, "CELL");
-}
-
-Exterior::~Exterior()
-{
-	cells.erase(baseID);
-
-	auto it = find(worlds[world].begin(), worlds[world].end(), this);
-
-	if (it != worlds[world].end())
-		worlds[world].erase(it);
 }
 
 const Exterior& Exterior::Lookup(unsigned int baseID)

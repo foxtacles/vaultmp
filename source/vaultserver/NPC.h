@@ -11,8 +11,6 @@
 
 #include "sqlite/sqlite3.h"
 
-using namespace std;
-
 /**
  * \brief Represents a NPC
  */
@@ -34,7 +32,7 @@ class NPC
 			Script    = 0x0200,
 		};
 
-		static unordered_map<unsigned int, const NPC*> npcs;
+		static std::unordered_map<unsigned int, const NPC*> npcs;
 
 		unsigned int baseID;
 		bool essential;
@@ -52,7 +50,7 @@ class NPC
 
 	public:
 		static const NPC& Lookup(unsigned int baseID);
-		static const NPC& GetNPCNotIn(const unordered_set<unsigned int>& _set, const function<bool(const NPC&)>& pred);
+		static const NPC& GetNPCNotIn(const std::unordered_set<unsigned int>& _set, const std::function<bool(const NPC&)>& pred);
 
 		unsigned int GetBase() const;
 		bool IsEssential() const;
@@ -63,16 +61,16 @@ class NPC
 		unsigned int GetTemplate() const;
 		unsigned short GetFlags() const;
 		unsigned int GetDeathItem() const;
-		const vector<const BaseContainer*>& GetBaseContainer() const;
+		const std::vector<const BaseContainer*>& GetBaseContainer() const;
 
 		void SetRace(unsigned int race) const;
 		void SetFemale(bool female) const;
 
-		NPC(const string& table, sqlite3_stmt* stmt);
+		NPC(const std::string& table, sqlite3_stmt* stmt);
+		~NPC() = default;
 		// must never be called. only defined because vector requires it
-		NPC(NPC&&) { terminate(); }
+		NPC(NPC&&) { std::terminate(); }
 		NPC& operator=(NPC&&) = delete;
-		~NPC();
 };
 
 #endif
