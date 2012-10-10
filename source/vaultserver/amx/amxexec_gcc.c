@@ -182,7 +182,7 @@ static const void * const amx_opcodelist[] = {
    * structure has the flags set to all ones (see amx_exec_list() above)
    */
   if (amx->flags==~0) {
-    assert(sizeof(cell)==sizeof(void *));
+    assert(sizeof(cell)>=sizeof(void *));
     assert(data==NULL);
     assert(retval!=NULL);
     *retval=(cell)amx_opcodelist;

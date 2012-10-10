@@ -25,6 +25,7 @@
 #define AMXCONSOLE_NOIDLE // no idle state
 #define AMXTIME_NOIDLE // no idle state
 #define AMX_ANSIONLY
+#define AMX_ALTCORE
 
 #include <stdlib.h>   /* for size_t */
 #include <limits.h>
