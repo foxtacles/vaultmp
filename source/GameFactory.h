@@ -68,7 +68,7 @@ class GameFactory
 		GameFactory() = delete;
 
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
+		static DebugInput<GameFactory> debug;
 #endif
 
 		static CriticalSection cs;
@@ -89,12 +89,7 @@ class GameFactory
 		static inline ReferenceList::iterator GetShared(const Reference* reference) { return find_if(instances.begin(), instances.end(), [=](const ReferenceList::value_type& _reference) { return _reference.first.get() == reference; }); }
 
 	public:
-
 		static void Initialize(unsigned char game);
-
-#ifdef VAULTMP_DEBUG
-		static void SetDebugHandler(Debug* debug);
-#endif
 
 		/**
 		 * \brief Obtains a lock on a Reference

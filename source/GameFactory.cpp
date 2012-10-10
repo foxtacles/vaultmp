@@ -10,7 +10,7 @@ unsigned char GameFactory::game = 0x00;
 bool GameFactory::changed = false;
 
 #ifdef VAULTMP_DEBUG
-Debug* GameFactory::debug;
+DebugInput<GameFactory> GameFactory::debug;
 #endif
 
 #ifdef VAULTSERVER
@@ -52,16 +52,6 @@ void GameFactory::Initialize(unsigned char game)
 	}
 #endif
 }
-
-#ifdef VAULTMP_DEBUG
-void GameFactory::SetDebugHandler(Debug* debug)
-{
-	GameFactory::debug = debug;
-
-	if (debug)
-		debug->Print("Attached debug handler to GameFactory class", true);
-}
-#endif
 
 vector<FactoryObject> GameFactory::GetObjectTypes(unsigned char type) noexcept
 {
@@ -509,8 +499,7 @@ void GameFactory::DestroyAllInstances()
 			reinterpret_cast<Container*>(instance.first.get())->container.clear();
 
 #ifdef VAULTMP_DEBUG
-		if (debug)
-			debug->PrintFormat("Reference %08X with base %08X and NetworkID %llu (type: %s) to be destructed (%08X)", true, instance.first->GetReference(), instance.first->GetBase(), instance.first->GetNetworkID(), typeid(*(instance.first)).name(), instance.first.get());
+		debug.print("Reference ", hex, instance.first->GetReference(), " with base ", instance.first->GetBase(), " and NetworkID ", dec, instance.first->GetNetworkID(), " (type: ", typeid(*(instance.first)).name(), ") to be destructed (", instance.first.get(), ")");
 #endif
 
 		Reference* reference = reinterpret_cast<Reference*>(instance.first->StartSession());
@@ -548,8 +537,7 @@ NetworkID GameFactory::DestroyInstance(FactoryObject& reference)
 	NetworkID id = _reference->GetNetworkID();
 
 #ifdef VAULTMP_DEBUG
-	if (debug)
-		debug->PrintFormat("Reference %08X with base %08X and NetworkID %llu (type: %s) to be destructed", true, _reference->GetReference(), _reference->GetBase(), _reference->GetNetworkID(), typeid(*_reference).name());
+	debug.print("Reference ", hex, _reference->GetReference(), " with base ",  _reference->GetBase(), " and NetworkID ", dec, _reference->GetNetworkID(), " (type: ", typeid(*_reference).name(), ") to be destructed");
 #endif
 
 	cs.StartSession();

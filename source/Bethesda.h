@@ -61,17 +61,16 @@ class Bethesda
 		 * \brief Lookup the ID of a given process name
 		 */
 		static DWORD lookupProgramID(const char process[]);
+
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
+		static DebugInput<Bethesda> debug;
 #endif
 
 		Bethesda() = delete;
 
 	public:
-
 		/**
 		 * \brief Initializes Vault-Tec Multiplayer Mod
 		 */
 		static void InitializeVaultMP(RakNet::RakPeerInterface* peer, RakNet::SystemAddress server, const std::string& name, const std::string& pwd, unsigned char game, bool multiinst, bool steam, unsigned int inittime);
-
 };

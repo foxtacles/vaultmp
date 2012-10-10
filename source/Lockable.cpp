@@ -8,17 +8,7 @@ unordered_map<unsigned int, weak_ptr<Lockable>> Lockable::sharemap;
 CriticalSection Lockable::cs;
 
 #ifdef VAULTMP_DEBUG
-Debug* Lockable::debug;
-#endif
-
-#ifdef VAULTMP_DEBUG
-void Lockable::SetDebugHandler(Debug* debug)
-{
-	Lockable::debug = debug;
-
-	if (debug)
-		debug->Print("Attached debug handler to Lockable class", true);
-}
+DebugInput<Lockable> Lockable::debug;
 #endif
 
 unsigned int Lockable::NextKey()
@@ -124,8 +114,7 @@ unsigned int Lockable::Lock()
 	cs.EndSession();
 
 #ifdef VAULTMP_DEBUG
-	if (debug)
-		debug->PrintFormat("%08X (%s) has been locked with key %08X", true, this, typeid(*this).name(), next_key);
+	debug.print(hex, this, " (", typeid(*this).name(), ") has been locked with key ", next_key);
 #endif
 
 	return next_key;
@@ -145,16 +134,14 @@ Lockable* Lockable::Unlock(unsigned int key)
 		cs.EndSession();
 
 #ifdef VAULTMP_DEBUG
-		if (debug)
-			debug->PrintFormat("%08X (%s) has been unlocked with key %08X", true, this, typeid(*this).name(), key);
+		debug.print(hex, this, " (", typeid(*this).name(), ") has been unlocked with key ", key);
 #endif
 
 		return this;
 	}
 
 #ifdef VAULTMP_DEBUG
-	if (debug)
-		debug->PrintFormat("%08X is still locked (key used: %08X)", true, this, key);
+	debug.print(hex, this, " is still locked (key used: ", key, ")");
 #endif
 
 	return nullptr;
@@ -182,8 +169,7 @@ unsigned int Lockable::Share(const shared_ptr<Lockable>& share)
 	cs.EndSession();
 
 #ifdef VAULTMP_DEBUG
-	if (debug)
-		debug->PrintFormat("%08X (%s) has been shared with key %08X", true, share.get(), typeid(*(share.get())).name(), next_key);
+	debug.print(hex, share.get(), " (", typeid(*(share.get())).name(), ") has been shared with key ", next_key);
 #endif
 
 	return next_key;

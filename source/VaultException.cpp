@@ -3,17 +3,14 @@
 using namespace std;
 
 #ifdef VAULTMP_DEBUG
-Debug* VaultException::debug;
+DebugInput<VaultException> VaultException::debug;
 #endif
 
 VaultException::VaultException(const string& error) : error(error)
 {
 #ifdef VAULTMP_DEBUG
-	if (debug)
-	{
-		debug->Print(error.c_str(), true);
-		stacktrace();
-	}
+	debug.print(error.c_str());
+	stacktrace();
 #endif
 }
 
@@ -30,43 +27,21 @@ VaultException::VaultException(const char* format, ...)
 	this->error = string(text);
 
 #ifdef VAULTMP_DEBUG
-	if (debug)
-	{
-		debug->Print(text, true);
-		stacktrace();
-	}
+	debug.print(error.c_str());
+	stacktrace();
 #endif
 }
 
 #ifdef VAULTMP_DEBUG
-void VaultException::SetDebugHandler(Debug* debug)
-{
-	VaultException::debug = debug;
-
-	if (debug)
-		debug->Print("Attached debug handler to VaultException class", true);
-}
-
 void VaultException::stacktrace()
 {
-	if (debug)
-	{
-		dbg::stack st;
-		ostringstream stream;
+	dbg::stack st;
+	ostringstream stream;
 
-		for (const auto& frame : st)
-			stream << frame << "\n";
+	for (const auto& frame : st)
+		stream << frame << "\n";
 
-		debug->Print(stream.str().c_str(), false);
-	}
-}
-
-void VaultException::FinalizeDebug()
-{
-	if (debug)
-		delete debug;
-
-	debug = nullptr;
+	debug.print(stream.str().c_str());
 }
 #endif
 

@@ -5,17 +5,7 @@ using namespace std;
 using namespace RakNet;
 
 #ifdef VAULTMP_DEBUG
-Debug* Container::debug;
-#endif
-
-#ifdef VAULTMP_DEBUG
-void Container::SetDebugHandler(Debug* debug)
-{
-	Container::debug = debug;
-
-	if (debug)
-		debug->Print("Attached debug handler to Container class", true);
-}
+DebugInput<Container> Container::debug;
 #endif
 
 Container::Container(unsigned int refID, unsigned int baseID) : Object(refID, baseID)
@@ -541,25 +531,6 @@ unsigned int Container::GetItemCount(unsigned int baseID) const
 	return count;
 }
 
-void Container::PrintContainer() const
-{
-#ifdef VAULTMP_DEBUG
-
-	if (debug)
-	{
-		debug->PrintFormat("Content of container %08X (%s):", true, this->GetBase(), this->GetName().c_str());
-
-		for (const NetworkID& id : container)
-		{
-			FactoryObject _reference = GameFactory::GetObject(id);
-			Item* item = vaultcast<Item>(_reference);
-			debug->PrintFormat("%d of %s (%08X), condition %f, equipped state %d", true, item->GetItemCount(), item->GetName().c_str(), item->GetBase(), (float) item->GetItemCondition(), (int) item->GetItemEquipped());
-		}
-	}
-
-#endif
-}
-
 void Container::FlushContainer()
 {
 	for (NetworkID& id : container)
@@ -595,6 +566,21 @@ list<NetworkID> Container::GetItemTypes(const string& type) const
 	}
 
 	return result;
+}
+#endif
+
+
+#ifdef VAULTMP_DEBUG
+void Container::PrintContainer() const
+{
+	debug.print("Content of container ", hex, this->GetBase(), " (", this->GetName().c_str(), ")");
+
+	for (const NetworkID& id : container)
+	{
+		FactoryObject _reference = GameFactory::GetObject(id);
+		Item* item = vaultcast<Item>(_reference);
+		debug.print(dec, item->GetItemCount(), " of ", item->GetName().c_str(), " (", hex, item->GetBase(), "), condition ", item->GetItemCondition(), ", equipped state ", item->GetItemEquipped());
+	}
 }
 #endif
 

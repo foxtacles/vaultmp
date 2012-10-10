@@ -6,17 +6,7 @@ using namespace std;
 using namespace RakNet;
 
 #ifdef VAULTMP_DEBUG
-Debug* Item::debug;
-#endif
-
-#ifdef VAULTMP_DEBUG
-void Item::SetDebugHandler(Debug* debug)
-{
-	Item::debug = debug;
-
-	if (debug)
-		debug->Print("Attached debug handler to Item class", true);
-}
+DebugInput<Item> Item::debug;
 #endif
 
 Item::Item(unsigned int refID, unsigned int baseID) : Object(refID, baseID)

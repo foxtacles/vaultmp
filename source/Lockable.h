@@ -35,7 +35,7 @@ class Lockable
 		std::unordered_set<unsigned int> locks;
 
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
+		static DebugInput<Lockable> debug;
 #endif
 
 		Lockable& operator=(const Lockable&) = delete;
@@ -88,11 +88,6 @@ class Lockable
 		 * Usually used by classes which derive from Lockable to protect their members
 		 */
 		bool IsLocked() const;
-
-#ifdef VAULTMP_DEBUG
-		static void SetDebugHandler(Debug* debug);
-#endif
-
 };
 
 #endif

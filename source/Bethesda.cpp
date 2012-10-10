@@ -16,7 +16,7 @@ ModList Bethesda::modfiles;
 char Bethesda::module[32];
 
 #ifdef VAULTMP_DEBUG
-Debug* Bethesda::debug;
+DebugInput<Bethesda> Bethesda::debug;
 #endif
 
 DWORD Bethesda::lookupProgramID(const char process[])
@@ -224,8 +224,7 @@ void Bethesda::Initialize()
 void Bethesda::Terminate(RakPeerInterface* peer)
 {
 #ifdef VAULTMP_DEBUG
-	if (debug)
-		debug->Print("Terminate called...", true);
+	debug.print("Terminate called...");
 #endif
 
 	this_thread::sleep_for(chrono::milliseconds(200));
@@ -263,31 +262,11 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, c
 	initialized = false;
 
 #ifdef VAULTMP_DEBUG
-	debug = new Debug("vaultmp");
-	debug->PrintFormat("Vault-Tec Multiplayer Mod client debug log (%s)", false, CLIENT_VERSION);
-	debug->PrintFormat("Connecting to server: %s (name: %s, password: %s, game: %s)", false, server.ToString(), name.c_str(), pwd.c_str(), game == FALLOUT3 ? "Fallout 3" : "Fallout New Vegas");
-	debug->Print("Visit www.vaultmp.com for help and upload this log if you experience problems with the mod.", false);
-	debug->Print("-----------------------------------------------------------------------------------------------------", false);
-	//debug->PrintSystem();
-	API::SetDebugHandler(debug);
-	VaultException::SetDebugHandler(debug);
-	NetworkClient::SetDebugHandler(debug);
-	Interface::SetDebugHandler(debug);
-	Lockable::SetDebugHandler(debug);
-	Reference::SetDebugHandler(debug);
-	Object::SetDebugHandler(debug);
-	Item::SetDebugHandler(debug);
-	Container::SetDebugHandler(debug);
-	Actor::SetDebugHandler(debug);
-	Player::SetDebugHandler(debug);
-	Game::SetDebugHandler(debug);
-	GameFactory::SetDebugHandler(debug);
-	Shared<unsigned int>::SetDebugHandler(debug);
-	Shared<unsigned short>::SetDebugHandler(debug);
-	Shared<signed char>::SetDebugHandler(debug);
-	Shared<bool>::SetDebugHandler(debug);
-	Shared<pair<set<unsigned int>, set<unsigned int>>>::SetDebugHandler(debug);
-	//Network::SetDebugHandler(debug);
+	Debug::SetDebugHandler("vaultmp");
+	debug.note("Vault-Tec Multiplayer Mod client debug log (", CLIENT_VERSION, ")");
+	debug.note("Connecting to server: ", server.ToString(), " (name: ", name.c_str(), ", password: ", pwd.c_str(), ", game: ", game == FALLOUT3 ? "Fallout 3" : "Fallout New Vegas");
+	debug.note("Visit www.vaultmp.com for help and upload this log if you experience problems with the mod.");
+	debug.note("-----------------------------------------------------------------------------------------------------");
 #endif
 
 	GameFactory::Initialize(game);
@@ -358,7 +337,7 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, c
 		Bethesda::Terminate(peer);
 
 #ifdef VAULTMP_DEBUG
-		debug->Print("Network thread is going to terminate (ERROR)", true);
+		debug.print("Network thread is going to terminate (ERROR)");
 #endif
 		throw;
 	}
@@ -366,6 +345,6 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, c
 	Bethesda::Terminate(peer);
 
 #ifdef VAULTMP_DEBUG
-	debug->Print("Network thread is going to terminate (no error occured)", true);
+	debug.print("Network thread is going to terminate (no error occured)");
 #endif
 }

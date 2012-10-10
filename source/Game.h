@@ -28,7 +28,7 @@ class Game
 		Game() = delete;
 
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
+		static DebugInput<Game> debug;
 #endif
 
 		static unsigned char game;
@@ -408,10 +408,6 @@ class Game
 		 * \brief Handles GUI message
 		 */
 		static void GetMessage(std::string message);
-
-#ifdef VAULTMP_DEBUG
-		static void SetDebugHandler(Debug* debug);
-#endif
 };
 
 #endif

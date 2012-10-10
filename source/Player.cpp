@@ -102,7 +102,7 @@ const map<unsigned int, tuple<unsigned int, double, bool, bool, bool>> Player::d
 };
 
 #ifdef VAULTMP_DEBUG
-Debug* Player::debug;
+DebugInput<Player> Player::debug;
 #endif
 
 Player::Player(unsigned int refID, unsigned int baseID) : Actor(refID, baseID)
@@ -152,8 +152,7 @@ Player::Player(const pDefault* packet) : Actor(PacketFactory::Pop<pPacket>(packe
 Player::~Player()
 {
 #ifdef VAULTMP_DEBUG
-	if (debug)
-		debug->PrintFormat("Player object destroyed (ref: %08X)", true, GetReference());
+	debug.print("Player object destroyed (ref: ", hex, this->GetReference(), ")");
 #endif
 
 #ifdef VAULTSERVER
@@ -175,16 +174,6 @@ void Player::initialize()
 	player_Cell.set(default_cell);
 #endif
 }
-
-#ifdef VAULTMP_DEBUG
-void Player::SetDebugHandler(Debug* debug)
-{
-	Player::debug = debug;
-
-	if (debug)
-		debug->Print("Attached debug handler to Player class", true);
-}
-#endif
 
 #ifdef VAULTSERVER
 unsigned int Player::GetRespawn()

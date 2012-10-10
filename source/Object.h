@@ -37,7 +37,7 @@ class Object : public Reference
 		static RawParameter param_Axis;
 
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
+		static DebugInput<Object> debug;
 #endif
 
 		Value<std::string> object_Name;
@@ -64,16 +64,11 @@ class Object : public Reference
 	public:
 		virtual ~Object();
 
-#ifdef VAULTMP_DEBUG
-		static void SetDebugHandler(Debug* debug);
-#endif
-
 		/**
 		 * \brief Retrieves a reference to a constant Parameter containing every available axis value string representation
 		 *
 		 * Used to pass axis values to the Interface
 		 */
-
 		static const RawParameter& Param_Axis();
 
 		/**

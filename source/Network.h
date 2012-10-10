@@ -55,7 +55,7 @@ class Network
 		Network() = delete;
 
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
+		static DebugInput<Network> debug;
 #endif
 
 		typedef std::deque<NetworkResponse> NetworkQueue;
@@ -66,7 +66,6 @@ class Network
 		static bool dequeue;
 
 	public:
-
 		/**
 		 * \brief Creates a SingleResponse given multiple network targets
 		 *
@@ -117,10 +116,6 @@ class Network
 		 * \brief Flushes the queue
 		 */
 		static void Flush();
-
-#ifdef VAULTMP_DEBUG
-		static void SetDebugHandler(Debug* debug);
-#endif
 };
 
 using NetworkResponse = Network::NetworkResponse;

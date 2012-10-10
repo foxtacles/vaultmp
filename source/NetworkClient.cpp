@@ -7,17 +7,7 @@ using namespace std;
 using namespace RakNet;
 
 #ifdef VAULTMP_DEBUG
-Debug* NetworkClient::debug;
-#endif
-
-#ifdef VAULTMP_DEBUG
-void NetworkClient::SetDebugHandler(Debug* debug)
-{
-	NetworkClient::debug = debug;
-
-	if (debug)
-		debug->Print("Attached debug handler to NetworkClient class", true);
-}
+DebugInput<NetworkClient> NetworkClient::debug;
 #endif
 
 NetworkResponse NetworkClient::ProcessEvent(unsigned char id)
@@ -66,7 +56,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 		case ID_CONNECTION_REQUEST_ACCEPTED:
 		{
 #ifdef VAULTMP_DEBUG
-			debug->PrintFormat("Connection request accepted (%s)", true, data->systemAddress.ToString());
+			debug.print("Connection request accepted (", data->systemAddress.ToString(), ")");
 #endif
 			response = Game::Authenticate(Bethesda::password);
 			break;
@@ -75,7 +65,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 		case ID_DISCONNECTION_NOTIFICATION:
 		{
 #ifdef VAULTMP_DEBUG
-			debug->PrintFormat("Connection closed (%s)", true, data->systemAddress.ToString());
+			debug.print("Connection closed (", data->systemAddress.ToString(), ")");
 #endif
 			break;
 		}
@@ -117,8 +107,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				case pTypes::ID_GAME_START:
 				{
 #ifdef VAULTMP_DEBUG
-					debug->PrintFormat("We were successfully authenticated (%s)", true, data->systemAddress.ToString());
-					debug->Print("Initiating vaultmp game thread...", true);
+					debug.print("We were successfully authenticated (", data->systemAddress.ToString(), ")");
+					debug.print("Initiating vaultmp game thread...");
 #endif
 
 					Bethesda::Initialize();

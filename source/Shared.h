@@ -24,7 +24,7 @@ class Shared : public Value<T>
 		std::promise<T> async;
 
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
+		static DebugInput<Shared<T>> debug;
 #endif
 
 		Shared& operator=(const Shared&) = delete;
@@ -45,10 +45,9 @@ class Shared : public Value<T>
 			{
 				this->async.set_value(std::move(**this));
 
-		#ifdef VAULTMP_DEBUG
-				if (debug)
-					debug->PrintFormat("Satisfied promise (%08X -> %08X)", true, this, &this->async);
-		#endif
+#ifdef VAULTMP_DEBUG
+				debug.print("Satisfied promise (", std::hex, this, " -> ", &this->async, ")");
+#endif
 			}
 			catch (std::exception& e)
 			{
@@ -73,21 +72,11 @@ class Shared : public Value<T>
 
 			return value;
 		}
-
-#ifdef VAULTMP_DEBUG
-		static void SetDebugHandler(Debug* debug)
-		{
-			Shared<T>::debug = debug;
-
-			if (debug)
-				debug->PrintFormat("Attached debug handler to Shared<%s> class", true, typeid(T).name());
-		}
-#endif
 };
 
 #ifdef VAULTMP_DEBUG
 template <typename T>
-Debug* Shared<T>::debug;
+DebugInput<Shared<T>> Shared<T>::debug;
 #endif
 
 #endif

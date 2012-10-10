@@ -26,7 +26,7 @@ class Item : public Object
 
 	private:
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
+		static DebugInput<Item> debug;
 #endif
 
 		Value<RakNet::NetworkID> item_Container;
@@ -47,10 +47,6 @@ class Item : public Object
 
 	public:
 		virtual ~Item();
-
-#ifdef VAULTMP_DEBUG
-		static void SetDebugHandler(Debug* debug);
-#endif
 
 		RakNet::NetworkID GetItemContainer() const;
 		unsigned int GetItemCount() const;

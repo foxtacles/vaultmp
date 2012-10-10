@@ -8,7 +8,7 @@ using namespace Values;
 RawParameter Actor::param_ActorValues = RawParameter(vector<string>());
 
 #ifdef VAULTMP_DEBUG
-Debug* Actor::debug;
+DebugInput<Actor> Actor::debug;
 #endif
 
 Actor::Actor(unsigned int refID, unsigned int baseID) : Container(refID, baseID)
@@ -81,22 +81,9 @@ void Actor::initialize()
 #endif
 
 #ifdef VAULTMP_DEBUG
-
-	if (debug)
-		debug->PrintFormat("New actor object created (ref: %08X)", true, this->GetReference());
-
+	debug.print("New actor object created (ref: ", hex, this->GetReference(), ")");
 #endif
 }
-
-#ifdef VAULTMP_DEBUG
-void Actor::SetDebugHandler(Debug* debug)
-{
-	Actor::debug = debug;
-
-	if (debug)
-		debug->Print("Attached debug handler to Actor class", true);
-}
-#endif
 
 const RawParameter& Actor::Param_ActorValues()
 {

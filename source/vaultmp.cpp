@@ -746,7 +746,6 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							{
 								Bethesda::InitializeVaultMP(peer, addr, name, pwd, game, multiinst, game == NEWVEGAS ? steam : false, inittime);
 							}
-
 							catch (std::exception& e)
 							{
 								try
@@ -754,7 +753,6 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 									VaultException& vaulterror = dynamic_cast<VaultException&>(e);
 									vaulterror.Message();
 								}
-
 								catch (std::bad_cast& no_vaulterror)
 								{
 									VaultException vaulterror(e.what());
@@ -763,7 +761,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							}
 
 #ifdef VAULTMP_DEBUG
-							VaultException::FinalizeDebug();
+							Debug::SetDebugHandler(nullptr);
 #endif
 
 							Maximize(hwnd);

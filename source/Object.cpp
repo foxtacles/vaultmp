@@ -9,17 +9,7 @@ using namespace Values;
 RawParameter Object::param_Axis = RawParameter(vector<string>());
 
 #ifdef VAULTMP_DEBUG
-Debug* Object::debug;
-#endif
-
-#ifdef VAULTMP_DEBUG
-void Object::SetDebugHandler(Debug* debug)
-{
-	Object::debug = debug;
-
-	if (debug)
-		debug->Print("Attached debug handler to Object class", true);
-}
+DebugInput<Object> Object::debug;
 #endif
 
 Object::Object(unsigned int refID, unsigned int baseID) : Reference(refID, baseID)

@@ -46,7 +46,7 @@ class Actor : public Container
 		static RawParameter param_ActorValues;
 
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
+		static DebugInput<Actor> debug;
 #endif
 
 		std::unordered_map<unsigned char, Value<double>> actor_Values;
@@ -89,10 +89,6 @@ class Actor : public Container
 		 * Can also be used to pass data of a given Actor to the Interface
 		 */
 		static FuncParameter CreateFunctor(unsigned int flags, RakNet::NetworkID id = 0);
-
-#ifdef VAULTMP_DEBUG
-		static void SetDebugHandler(Debug* debug);
-#endif
 
 		/**
 		 * \brief Retrieves the Actor's actor value specified by index (actor value hex code)

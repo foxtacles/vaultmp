@@ -10,17 +10,7 @@ CriticalSection Network::cs;
 bool Network::dequeue = true;
 
 #ifdef VAULTMP_DEBUG
-Debug* Network::debug;
-#endif
-
-#ifdef VAULTMP_DEBUG
-void Network::SetDebugHandler(Debug* debug)
-{
-	Network::debug = debug;
-
-	if (debug)
-		debug->Print("Attached debug handler to Network class", true);
-}
+DebugInput<Network> Network::debug;
 #endif
 
 Network::SingleResponse Network::CreateResponse(pPacket&& packet, PacketPriority priority, PacketReliability reliability, unsigned char channel, const vector<RakNetGUID>& targets)
@@ -38,8 +28,7 @@ void Network::Dispatch(RakPeerInterface* peer, NetworkResponse&& response)
 	for (SingleResponse& s : move(response))
 	{
 #ifdef VAULTMP_DEBUG
-		if (debug)
-			debug->PrintFormat("Sending packet of type %s, length %d, type %d", true, typeid(*s.packet).name(), s.packet->length(), *s.packet->get());
+		debug.print("Sending packet of type ", typeid(*s.packet).name(), ", length ", dec, s.packet->length(), ", type ", static_cast<unsigned int>(*s.packet->get()));
 #endif
 
 		for (RakNetGUID& guid : s.targets)
@@ -59,8 +48,7 @@ bool Network::Dispatch(RakPeerInterface* peer)
 	for (const SingleResponse& s : response)
 	{
 #ifdef VAULTMP_DEBUG
-		if (debug)
-			debug->PrintFormat("Sending packet of type %s, length %d, type %d", true, typeid(*s.packet).name(), s.packet->length(), *s.packet->get());
+		debug.print("Sending packet of type ", typeid(*s.packet).name(), ", length ", dec, s.packet->length(), ", type ", static_cast<unsigned int>(*s.packet->get()));
 #endif
 
 		for (const RakNetGUID& guid : s.targets)

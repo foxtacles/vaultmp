@@ -15,17 +15,10 @@
 
 #define CS_TIMEOUT     5000
 
-class Debug;
-
 class CriticalSection
 {
 	private:
 		std::recursive_timed_mutex cs;
-
-#ifdef VAULTMP_DEBUG
-		Debug* debug;
-#endif
-
 		bool finalize;
 
 		CriticalSection(const CriticalSection&) = delete;
@@ -33,7 +26,7 @@ class CriticalSection
 
 	public:
 #ifdef VAULTMP_DEBUG
-		CriticalSection() : debug(nullptr), finalize(false) {}
+		CriticalSection() : finalize(false) {}
 #else
 		CriticalSection() : finalize(false) {}
 #endif
@@ -46,8 +39,6 @@ class CriticalSection
 #ifdef VAULTMP_DEBUG
 		static std::string thread_id(std::thread&);
 		static std::string thread_id();
-		void PrintStatus();
-		void SetDebugHandler(Debug* debug);
 #endif
 
 };

@@ -550,8 +550,11 @@ namespace Values
 
 class API
 {
-
 	private:
+#ifdef VAULTMP_DEBUG
+		static DebugInput<API> debug;
+#endif
+
 		struct op_Arg1;
 		struct op_Arg2;
 		struct op_Arg3;
@@ -581,12 +584,7 @@ class API
 
 		static std::vector<double> ParseCommand(const char* cmd_, const char* def, op_default* result, unsigned short opcode);
 
-#ifdef VAULTMP_DEBUG
-		static Debug* debug;
-#endif
-
 	protected:
-
 		/**
 		 * \brief Checks whether a certain function is available in the current API environment
 		 */
@@ -617,10 +615,6 @@ class API
 
 	public:
 		static const unsigned char FalloutSavegame[];
-
-#ifdef VAULTMP_DEBUG
-		static void SetDebugHandler(Debug* debug);
-#endif
 
 		/**
 		 * \brief Initializes the API for the given game code. Must be called before the API can be used

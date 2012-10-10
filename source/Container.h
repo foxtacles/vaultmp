@@ -47,7 +47,7 @@ class Container : public Object
 		typedef std::pair<RakNet::NetworkID, std::unordered_map<RakNet::NetworkID, std::list<RakNet::NetworkID>>> StripCopy;
 
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
+		static DebugInput<Container> debug;
 #endif
 
 		static bool Item_sort(RakNet::NetworkID id, RakNet::NetworkID id2);
@@ -71,10 +71,6 @@ class Container : public Object
 	public:
 		virtual ~Container();
 
-#ifdef VAULTMP_DEBUG
-		static void SetDebugHandler(Debug* debug);
-#endif
-
 		void AddItem(RakNet::NetworkID id);
 		ContainerDiff AddItem(unsigned int baseID, unsigned int count, double condition, bool silent) const;
 		void RemoveItem(RakNet::NetworkID id);
@@ -93,7 +89,6 @@ class Container : public Object
 
 		Lockable* getLock();
 		bool IsEmpty() const;
-		void PrintContainer() const;
 		unsigned int GetItemCount(unsigned int baseID) const;
 		const std::list<RakNet::NetworkID>& GetItemList() const;
 
@@ -103,6 +98,10 @@ class Container : public Object
 
 		void FlushContainer();
 		RakNet::NetworkID Copy() const;
+
+#ifdef VAULTMP_DEBUG
+		void PrintContainer() const;
+#endif
 
 		/**
 		 * \brief For network transfer

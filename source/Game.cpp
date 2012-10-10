@@ -16,17 +16,7 @@ Game::Weather Game::weather;
 function<void()> Game::spawnFunc;
 
 #ifdef VAULTMP_DEBUG
-Debug* Game::debug;
-#endif
-
-#ifdef VAULTMP_DEBUG
-void Game::SetDebugHandler(Debug* debug)
-{
-	Game::debug = debug;
-
-	if (debug)
-		debug->Print("Attached debug handler to Game class", true);
-}
+DebugInput<Game> Game::debug;
 #endif
 
 void Game::AdjustZAngle(double& Z, double diff)
@@ -347,8 +337,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 	else
 	{
 #ifdef VAULTMP_DEBUG
-		if (debug)
-			debug->PrintFormat("Command %04hX failed", true, opcode);
+		debug.print("Command ", hex, opcode, " failed");
 #endif
 
 		switch (opcode)
@@ -2478,16 +2467,16 @@ void Game::ScanContainer(const FactoryObject& reference, vector<unsigned char>& 
 											data.first = it;
 											data.second.emplace_back(refID, count);
 										}
-	#ifdef VAULTMP_DEBUG
-										else if (debug)
-											debug->PrintFormat("Item match (drop): could not match %08X (baseID: %08X), count %d", true, refID, baseID, count);
-	#endif
+#ifdef VAULTMP_DEBUG
+										else
+											debug.print("Item match (drop): could not match ", hex, refID, " (baseID: ", baseID, "), count ", dec, count);
+#endif
 									}
 								}
-	#ifdef VAULTMP_DEBUG
-								else if (debug)
-									debug->PrintFormat("Item match (drop): could not match %08X (baseID: %08X) at all", true, refID, baseID);
-	#endif
+#ifdef VAULTMP_DEBUG
+								else
+									debug.print("Item match (drop): could not match ", hex, refID, " (baseID: ", baseID, ") at all");
+#endif
 							}
 
 							if (!found.empty())
@@ -2515,17 +2504,14 @@ void Game::ScanContainer(const FactoryObject& reference, vector<unsigned char>& 
 								{
 									auto result = best_match(_found);
 
-	#ifdef VAULTMP_DEBUG
-									if (debug)
-									{
-										unsigned int count = abs(_found.second.first->second.count);
+#ifdef VAULTMP_DEBUG
+									unsigned int count = abs(_found.second.first->second.count);
 
-										if (!result.second.empty())
-											debug->PrintFormat("Player dropped %08X (count %d, stacks %d)", true, _found.first, count, result.second.size());
-										else
-											debug->PrintFormat("Could not find a matching set for item drop %08X (count %d)", true, _found.first, count);
-									}
-	#endif
+									if (!result.second.empty())
+										debug.print("Player dropped ", hex, _found.first, " (count ", dec, count, ", stacks ", result.second.size(), ")");
+									else
+										debug.print("Could not find a matching set for item drop ", hex, _found.first, " (count ", dec, ")");
+#endif
 
 									for (const auto& _result : result.second)
 									{
@@ -2565,10 +2551,9 @@ void Game::ScanContainer(const FactoryObject& reference, vector<unsigned char>& 
 								}
 								catch (...)
 								{
-	#ifdef VAULTMP_DEBUG
-									if (debug)
-										debug->PrintFormat("Item match (pickup): could not find %08X", true, refID);
-	#endif
+#ifdef VAULTMP_DEBUG
+									debug.print("Item match (pickup): could not find ", hex, refID);
+#endif
 									continue;
 								}
 
@@ -2590,16 +2575,16 @@ void Game::ScanContainer(const FactoryObject& reference, vector<unsigned char>& 
 											data.first = it;
 											data.second.emplace_back(refID, count);
 										}
-	#ifdef VAULTMP_DEBUG
-										else if (debug)
-											debug->PrintFormat("Item match (pickup): could not match %08X (baseID: %08X), count %d", true, refID, baseID, count);
-	#endif
+#ifdef VAULTMP_DEBUG
+										else
+											debug.print("Item match (pickup): could not match ", hex, refID, " (baseID: ", baseID, "), count ", dec, count);
+#endif
 									}
 								}
-	#ifdef VAULTMP_DEBUG
-								else if (debug)
-									debug->PrintFormat("Item match (pickup): could not match %08X (baseID: %08X) at all", true, refID, baseID);
-	#endif
+#ifdef VAULTMP_DEBUG
+								else
+									debug.print("Item match (pickup): could not match ", hex, refID, " (baseID: ", baseID, ") at all");
+#endif
 							}
 
 							if (!found.empty())
@@ -2608,17 +2593,14 @@ void Game::ScanContainer(const FactoryObject& reference, vector<unsigned char>& 
 								{
 									auto result = best_match(_found);
 
-	#ifdef VAULTMP_DEBUG
-									if (debug)
-									{
-										unsigned int count = abs(_found.second.first->second.count);
+#ifdef VAULTMP_DEBUG
+									unsigned int count = abs(_found.second.first->second.count);
 
-										if (!result.second.empty())
-											debug->PrintFormat("Player picked up %08X (count %d, stacks %d)", true, _found.first, count, result.second.size());
-										else
-											debug->PrintFormat("Could not find a matching set for item pickup %08X (count %d)", true, _found.first, count);
-									}
-	#endif
+									if (!result.second.empty())
+										debug.print("Player picked up ", hex, _found.first, " (count ", dec, count, ", stacks ", result.second.size(), ")");
+									else
+										debug.print("Could not find a matching set for item pickup ", hex, _found.first, " (count ", dec, count, ")");
+#endif
 
 									for (const auto& _result : result.second)
 									{
@@ -2631,13 +2613,10 @@ void Game::ScanContainer(const FactoryObject& reference, vector<unsigned char>& 
 								}
 							}
 
-	#ifdef VAULTMP_DEBUG
-							if (debug)
-							{
-								for (const auto& _gdiff : gdiff)
-									debug->PrintFormat("Could not match drop / pickup %08X (count %d)", true, _gdiff.first, _gdiff.second.count);
-							}
-	#endif
+#ifdef VAULTMP_DEBUG
+							for (const auto& _gdiff : gdiff)
+								debug.print("Could not match drop / pickup ", hex, _gdiff.first, " (count ", dec, _gdiff.second.count, ")");
+#endif
 						}
 
 						Network::Queue(NetworkResponse{Network::CreateResponse(

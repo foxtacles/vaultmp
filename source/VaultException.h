@@ -29,7 +29,7 @@ class VaultException : public std::exception
 		std::string error;
 
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
+		static DebugInput<VaultException> debug;
 		static void stacktrace();
 #endif
 
@@ -50,12 +50,6 @@ class VaultException : public std::exception
 		void Console();
 
 		virtual const char* what() const throw();
-
-#ifdef VAULTMP_DEBUG
-		static void SetDebugHandler(Debug* debug);
-		static void FinalizeDebug();
-#endif
-
 };
 
 #endif

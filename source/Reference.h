@@ -27,7 +27,7 @@ class Reference : private CriticalSection, public RakNet::NetworkIDObject
 
 	private:
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
+		static DebugInput<Reference> debug;
 #endif
 
 		Value<unsigned int> refID;
@@ -47,10 +47,6 @@ class Reference : private CriticalSection, public RakNet::NetworkIDObject
 
 	public:
 		virtual ~Reference();
-
-#ifdef VAULTMP_DEBUG
-		static void SetDebugHandler(Debug* debug);
-#endif
 
 		/**
 		 * \brief Retrieves the Reference's reference ID

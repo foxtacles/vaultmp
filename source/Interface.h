@@ -207,7 +207,7 @@ class Interface : public API
 		static void CommandThreadSend();
 
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
+		static DebugInput<Interface> debug;
 #endif
 
 		Interface() = delete;
@@ -277,10 +277,6 @@ class Interface : public API
 		 * key (optional) - a key (usually from the Lockable class) which is to later identify this command
 		 */
 		static void ExecuteCommand(const std::string& name, ParamContainer&&, unsigned int key = 0);
-
-#ifdef VAULTMP_DEBUG
-		static void SetDebugHandler(Debug* debug);
-#endif
 };
 
 using RawParameter = Interface::RawParameter;

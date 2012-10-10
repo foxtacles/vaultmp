@@ -34,7 +34,7 @@ const unsigned char API::FalloutSavegame[] =
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x7C};
 
 #ifdef VAULTMP_DEBUG
-Debug* API::debug;
+DebugInput<API> API::debug;
 #endif
 
 #pragma pack(push, 1)
@@ -599,16 +599,6 @@ void API::Terminate()
 	queue.clear();
 }
 
-#ifdef VAULTMP_DEBUG
-void API::SetDebugHandler(Debug* debug)
-{
-	API::debug = debug;
-
-	if (debug)
-		debug->Print("Attached debug handler to API class", true);
-}
-#endif
-
 vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* result, unsigned short opcode)
 {
 	if (!cmd_ || !def || !result || !*cmd_ || !opcode)
@@ -1133,8 +1123,7 @@ bool API::AnnounceFunction(const string& name)
 		return true;
 
 #ifdef VAULTMP_DEBUG
-	if (debug)
-		debug->PrintFormat("API function %s not found or not supported by the game", true, name.c_str());
+	debug.print("API function ", name.c_str(), " not found or not supported by the game");
 #endif
 
 	return false;
@@ -1169,10 +1158,7 @@ CommandParsed API::Translate(const vector<string>& cmd, unsigned int key)
 		if (!func.second)
 		{
 #ifdef VAULTMP_DEBUG
-
-			if (debug)
-				debug->PrintFormat("API was not able to find function for %s", true, command.c_str());
-
+			debug.print("API was not able to find function for ", command.c_str());
 #endif
 			continue;
 		}
@@ -1202,12 +1188,9 @@ vector<CommandResult> API::Translate(unsigned char* stream)
 		{
 			auto& element = queue.back();
 
-	#ifdef VAULTMP_DEBUG
-
-			if (debug)
-				debug->PrintFormat("API did not retrieve the result of command with identifier %08X (opcode %04hX)", true, get<0>(element), getFrom<double, unsigned short>(get<1>(element).at(0)));
-
-	#endif
+#ifdef VAULTMP_DEBUG
+			debug.print("API did not retrieve the result of command with identifier ", hex, get<0>(element), " (opcode ", getFrom<double, unsigned short>(get<1>(element).at(0)), ")");
+#endif
 
 			result.emplace_back();
 
@@ -1224,10 +1207,7 @@ vector<CommandResult> API::Translate(unsigned char* stream)
 		if (queue.empty())
 		{
 	#ifdef VAULTMP_DEBUG
-
-			if (debug)
-				debug->PrintFormat("API could not find a stored command with identifier %08X (queue is empty)", true, r);
-
+			debug.print("API could not find a stored command with identifier ", hex, r, " (queue is empty)");
 	#endif
 			return result;
 		}

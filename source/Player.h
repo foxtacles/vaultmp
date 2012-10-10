@@ -30,7 +30,7 @@ class Player : public Actor
 	private:
 
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
+		static DebugInput<Player> debug;
 #endif
 
 #ifdef VAULTSERVER
@@ -94,10 +94,6 @@ class Player : public Actor
 		 * Can also be used to pass data of a given Player to the Interface
 		 */
 		static FuncParameter CreateFunctor(unsigned int flags, RakNet::NetworkID id = 0);
-
-#ifdef VAULTMP_DEBUG
-		static void SetDebugHandler(Debug* debug);
-#endif
 
 		/**
 		 * \brief Retrieves the key associated to the Player's control
