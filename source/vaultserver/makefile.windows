@@ -8,7 +8,7 @@ WINDRES = windres.exe
 
 INC =  -I.. -I..\\stack_trace\\include
 CFLAGS =  -pedantic-errors -pedantic -Wfatal-errors -Wextra -Wall -std=gnu++0x -DVAULTSERVER
-CLFAGSEXT =
+CFLAGSEXT = -std=gnu++0x
 RESINC =
 LIBDIR =
 LIB =
@@ -16,7 +16,7 @@ LDFLAGS = -lws2_32 -lwinmm -lm -limagehlp -static
 
 INC_DEBUG =  $(INC)
 CFLAGS_DEBUG =  $(CFLAGS) -gstabs -DVAULTMP_DEBUG
-CLFAGSEXT_DEBUG =  $(CFLAGSEXT) -gstabs
+CFLAGSEXT_DEBUG =  $(CFLAGSEXT)
 RESINC_DEBUG =  $(RESINC)
 RCFLAGS_DEBUG =  $(RCFLAGS)
 LIBDIR_DEBUG =  $(LIBDIR)
@@ -28,7 +28,7 @@ OUT_DEBUG = vaultserverd.exe
 
 INC_RELEASE =  $(INC)
 CFLAGS_RELEASE =  $(CFLAGS) -O2 -DNDEBUG
-CLFAGSEXT_RELEASE =  $(CFLAGSEXT) -O2 -DNDEBUG
+CFLAGSEXT_RELEASE =  $(CFLAGSEXT) -O2 -DNDEBUG
 RESINC_RELEASE =  $(RESINC)
 RCFLAGS_RELEASE =  $(RCFLAGS)
 LIBDIR_RELEASE =  $(LIBDIR)
