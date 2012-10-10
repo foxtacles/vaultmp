@@ -21,6 +21,11 @@
 #define AMX_H_INCLUDED
 
 #define PAWN_CELL_SIZE 64 // 64 bit cell size
+
+#ifndef __WIN32__
+#define HAVE_I64
+#endif
+
 #define FLOATPOINT // floating point for console
 #define AMXCONSOLE_NOIDLE // no idle state
 #define AMXTIME_NOIDLE // no idle state

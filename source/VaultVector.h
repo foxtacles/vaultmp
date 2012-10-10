@@ -23,7 +23,7 @@ class VaultVector
 
 		bool IsNearPoint(const VaultVector& vvec, double R) const
 		{
-			return (sqrt((abs(X - vvec.X) * abs(X - vvec.X)) + (abs(Y - vvec.Y) * abs(Y - vvec.Y)) + (abs(Z - vvec.Z) * abs(Z - vvec.Z))) <= R);
+			return (sqrt((std::abs(X - vvec.X) * std::abs(X - vvec.X)) + (std::abs(Y - vvec.Y) * std::abs(Y - vvec.Y)) + (std::abs(Z - vvec.Z) * std::abs(Z - vvec.Z))) <= R);
 		}
 
 		std::pair<double, double> GetOffset(double aZ, double N) const

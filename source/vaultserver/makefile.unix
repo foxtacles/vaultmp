@@ -8,15 +8,15 @@ WINDRES = windres
 
 INC =  -I.. -Iamx/linux
 CFLAGS =  -pedantic-errors -pedantic -Wfatal-errors -Wextra -Wall -std=gnu++0x -m32 -DVAULTSERVER
-CLFAGSEXT =
+CFLAGSEXT =  -std=gnu++0x -m32
 RESINC =
 LIBDIR =
 LIB =
 LDFLAGS = -m32 -ldl -lncurses -lpthread
 
 INC_DEBUG =  $(INC) -I../stack_trace/include
-CFLAGS_DEBUG =  $(CFLAGS)  -gstabs -DVAULTMP_DEBUG
-CLFAGSEXT_DEBUG =  $(CFLAGSEXT) -gstabs
+CFLAGS_DEBUG =  $(CFLAGS) -gstabs -rdynamic -DVAULTMP_DEBUG
+CFLAGSEXT_DEBUG =  $(CFLAGSEXT) -rdynamic
 RESINC_DEBUG =  $(RESINC)
 RCFLAGS_DEBUG =  $(RCFLAGS)
 LIBDIR_DEBUG =  $(LIBDIR)
@@ -28,7 +28,7 @@ OUT_DEBUG = vaultserverd
 
 INC_RELEASE =  $(INC)
 CFLAGS_RELEASE =  $(CFLAGS) -O2 -DNEDBUG
-CLFAGSEXT_RELEASE =  $(CFLAGSEXT) -O2 -DNDEBUG
+CFLAGSEXT_RELEASE =  $(CFLAGSEXT) -O2 -DNDEBUG
 RESINC_RELEASE =  $(RESINC)
 RCFLAGS_RELEASE =  $(RCFLAGS)
 LIBDIR_RELEASE =  $(LIBDIR)
@@ -223,7 +223,7 @@ $(OBJDIR_DEBUG)/amx/amxtime.o: amx/amxtime.c
 	$(CC) $(CFLAGSEXT_DEBUG) $(INC_DEBUG) -c amx/amxtime.c -o $(OBJDIR_DEBUG)/amx/amxtime.o
 
 $(OBJDIR_DEBUG)/amx/float.o: amx/float.c
-	$(CC) $(CFLAGSEXT_DEBUG) $(INC_DEBUG) -c amx/float.c -o $(OBJDIR_DEBUG)/amx/amxfloat.o
+	$(CC) $(CFLAGSEXT_DEBUG) $(INC_DEBUG) -c amx/float.c -o $(OBJDIR_DEBUG)/amx/float.o
 
 $(OBJDIR_DEBUG)/amx/amxaux.o: amx/amxaux.c
 	$(CC) $(CFLAGSEXT_DEBUG) $(INC_DEBUG) -c amx/amxaux.c -o $(OBJDIR_DEBUG)/amx/amxaux.o
@@ -679,7 +679,7 @@ $(OBJDIR_RELEASE)/amx/amxtime.o: amx/amxtime.c
 	$(CC) $(CFLAGSEXT_RELEASE) $(INC_RELEASE) -c amx/amxtime.c -o $(OBJDIR_RELEASE)/amx/amxtime.o
 
 $(OBJDIR_RELEASE)/amx/float.o: amx/float.c
-	$(CC) $(CFLAGSEXT_RELEASE) $(INC_RELEASE) -c amx/float.c -o $(OBJDIR_RELEASE)/amx/amxfloat.o
+	$(CC) $(CFLAGSEXT_RELEASE) $(INC_RELEASE) -c amx/float.c -o $(OBJDIR_RELEASE)/amx/float.o
 
 $(OBJDIR_RELEASE)/amx/amxaux.o: amx/amxaux.c
 	$(CC) $(CFLAGSEXT_RELEASE) $(INC_RELEASE) -c amx/amxaux.c -o $(OBJDIR_RELEASE)/amx/amxaux.o

@@ -87,7 +87,7 @@
   #define _tfopen       fopen
   #define _tfputs       fputs
   #define _tgetenv      getenv
-  #define _tmkdir       _mkdir
+  #define _tmkdir       mkdir
   #define _tremove      remove
   #define _trename      rename
   #define _trmdir       _rmdir
@@ -795,6 +795,7 @@ static int matchfiles(const TCHAR *path,int skip,TCHAR *out,int outlen)
       FindClose(hfind);
     } /* if */
   #else
+    #define _T __T
     /* copy directory part only (zero-terminate) */
     if (basename==path) {
       strcpy(dirname,".");
