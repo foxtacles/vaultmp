@@ -22,7 +22,7 @@ class Server
 		Server() = delete;
 
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
+		static DebugInput<Server> debug;
 #endif
 
 	public:
@@ -79,10 +79,6 @@ class Server
 		 * \brief Handles player chat message network packet
 		 */
 		static NetworkResponse ChatMessage(RakNet::RakNetGUID guid, std::string message);
-
-#ifdef VAULTMP_DEBUG
-		static void SetDebugHandler(Debug* debug);
-#endif
 };
 
 #endif

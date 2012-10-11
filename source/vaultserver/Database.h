@@ -31,7 +31,7 @@ class Database
 
 	private:
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
+		static DebugInput<Database<T>> debug;
 #endif
 
 		std::vector<T> data;
@@ -40,12 +40,6 @@ class Database
 		~Database() = default;
 
 		unsigned int initialize(const std::string& file, const std::vector<std::string>& tables);
-
-	public:
-#ifdef VAULTMP_DEBUG
-		static void SetDebugHandler(Debug* debug);
-#endif
-
 };
 
 #endif

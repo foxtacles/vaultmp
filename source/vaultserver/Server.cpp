@@ -1,22 +1,12 @@
 #include "Server.h"
 
 #ifdef VAULTMP_DEBUG
-Debug* Server::debug = nullptr;
+DebugInput<Server> Server::debug;
 #endif
 
 using namespace std;
 using namespace RakNet;
 using namespace Values;
-
-#ifdef VAULTMP_DEBUG
-void Server::SetDebugHandler(Debug* debug)
-{
-	Server::debug = debug;
-
-	if (debug)
-		debug->Print("Attached debug handler to Server class", true);
-}
-#endif
 
 NetworkResponse Server::Authenticate(RakNetGUID guid, const string& name, const string& pwd)
 {

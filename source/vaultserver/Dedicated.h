@@ -67,11 +67,10 @@ class Dedicated
 		static bool thread;
 
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
+		static DebugInput<Dedicated> debug;
 #endif
 
 	public:
-
 		/**
 		 * \brief Initializes the dedicated server
 		 *

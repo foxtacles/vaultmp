@@ -5,17 +5,7 @@ using namespace std;
 using namespace RakNet;
 
 #ifdef VAULTMP_DEBUG
-Debug* NetworkServer::debug = nullptr;
-#endif
-
-#ifdef VAULTMP_DEBUG
-void NetworkServer::SetDebugHandler(Debug* debug)
-{
-	NetworkServer::debug = debug;
-
-	if (debug)
-		debug->Print("Attached debug handler to Network class", true);
-}
+DebugInput<NetworkServer> NetworkServer::debug;
 #endif
 
 NetworkResponse NetworkServer::ProcessEvent(unsigned char id)
@@ -44,7 +34,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 			Utils::timestamp();
 			printf("Connected to MasterServer (%s)\n", data->systemAddress.ToString());
 #ifdef VAULTMP_DEBUG
-			debug->PrintFormat("Connected to MasterServer (%s)", true, data->systemAddress.ToString());
+			debug.print("Connected to MasterServer (", data->systemAddress.ToString(), ")");
 #endif
 
 			Dedicated::master = data->systemAddress;
@@ -62,14 +52,14 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 				case ID_DISCONNECTION_NOTIFICATION:
 					printf("Client disconnected (%s)\n", data->systemAddress.ToString());
 #ifdef VAULTMP_DEBUG
-					debug->PrintFormat("Client disconnected (%s)", true, data->systemAddress.ToString());
+					debug.print("Client disconnected (", data->systemAddress.ToString(), ")");
 #endif
 					break;
 
 				case ID_CONNECTION_LOST:
 					printf("Lost connection (%s)\n", data->systemAddress.ToString());
 #ifdef VAULTMP_DEBUG
-					debug->PrintFormat("Lost connection (%s)", true, data->systemAddress.ToString());
+					debug.print("Lost connection (", data->systemAddress.ToString(), ")");
 #endif
 					break;
 			}
@@ -83,7 +73,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 			Utils::timestamp();
 			printf("New incoming connection from %s\n", data->systemAddress.ToString());
 #ifdef VAULTMP_DEBUG
-			debug->PrintFormat("New incoming connection from %s", true, data->systemAddress.ToString());
+			debug.print("New incoming connection from ", data->systemAddress.ToString());
 #endif
 			break;
 		}
@@ -93,7 +83,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 			Utils::timestamp();
 			printf("MasterServer version mismatch (%s)\n", data->systemAddress.ToString());
 #ifdef VAULTMP_DEBUG
-			debug->PrintFormat("MasterServer version mismatch (%s)", true, data->systemAddress.ToString());
+			debug.print("MasterServer version mismatch (", data->systemAddress.ToString(), ")");
 #endif
 			break;
 		}

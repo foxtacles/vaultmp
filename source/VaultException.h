@@ -10,9 +10,9 @@
 #include <typeinfo>
 
 #include "vaultmp.h"
-#include "Debug.h"
 
 #ifdef VAULTMP_DEBUG
+#include "Debug.h"
 #include "dbg/stack.hpp"
 #include <ostream>
 #endif

@@ -16,8 +16,9 @@ TimeMS Dedicated::announcetime;
 ServerEntry* Dedicated::self = nullptr;
 unsigned int Dedicated::cell;
 ModList Dedicated::modfiles;
+
 #ifdef VAULTMP_DEBUG
-Debug* Dedicated::debug;
+DebugInput<Dedicated> Dedicated::debug;
 #endif
 
 bool Dedicated::thread;
@@ -167,27 +168,18 @@ class FileProgress : public FileListProgress
 		{
 			Utils::timestamp();
 			printf("Sending %s (%d bytes) to %s\n", fileName, bytesBeingSent, targetSystem.ToString(false));
-#ifdef VAULTMP_DEBUG
-			Dedicated::debug->PrintFormat("Sending %s (%d bytes) to %s", true, fileName, bytesBeingSent, targetSystem.ToString(false));
-#endif
 		}
 
 		virtual void OnFilePushesComplete(SystemAddress systemAddress)
 		{
 			Utils::timestamp();
 			printf("Transfer complete (%s)\n", systemAddress.ToString(false));
-#ifdef VAULTMP_DEBUG
-			Dedicated::debug->PrintFormat("Transfer complete (%s)", true, systemAddress.ToString(false));
-#endif
 		}
 
 		virtual void OnSendAborted(SystemAddress systemAddress)
 		{
 			Utils::timestamp();
 			printf("Transfer aborted (%s)\n", systemAddress.ToString(false));
-#ifdef VAULTMP_DEBUG
-			Dedicated::debug->PrintFormat("Transfer aborted (%s)", true, systemAddress.ToString(false));
-#endif
 		}
 
 } fileProgress;
@@ -261,29 +253,11 @@ void Dedicated::DedicatedThread()
 	}
 
 #ifdef VAULTMP_DEBUG
-	Debug* debug = new Debug("vaultserver");
-	Dedicated::debug = debug;
-	debug->PrintFormat("Vault-Tec Multiplayer Mod dedicated server debug log (%s)", false, DEDICATED_VERSION);
-	debug->PrintFormat("Local host: %s (game: %s)", false, peer->GetMyBoundAddress().ToString(), self->GetGame() == FALLOUT3 ? "Fallout 3" : "Fallout New Vegas");
-	debug->Print("Visit www.vaultmp.com for help and upload this log if you experience problems with the mod.", false);
-	debug->Print("-----------------------------------------------------------------------------------------------------", false);
-	//debug->PrintSystem();
-	API::SetDebugHandler(debug);
-	Database<Record>::SetDebugHandler(debug);
-	Database<Exterior>::SetDebugHandler(debug);
-	Database<Weapon>::SetDebugHandler(debug);
-	Database<Race>::SetDebugHandler(debug);
-	Database<NPC>::SetDebugHandler(debug);
-	Database<BaseContainer>::SetDebugHandler(debug);
-	VaultException::SetDebugHandler(debug);
-	NetworkServer::SetDebugHandler(debug);
-	Lockable::SetDebugHandler(debug);
-	Object::SetDebugHandler(debug);
-	Item::SetDebugHandler(debug);
-	Container::SetDebugHandler(debug);
-	Actor::SetDebugHandler(debug);
-	Player::SetDebugHandler(debug);
-	GameFactory::SetDebugHandler(debug);
+	Debug::SetDebugHandler("vaultserver");
+	debug.note("Vault-Tec Multiplayer Mod dedicated server debug log (", DEDICATED_VERSION, ")");
+	debug.note("Local host: ", peer->GetMyBoundAddress().ToString(), " (", self->GetGame() == FALLOUT3 ? "Fallout 3" : "Fallout New Vegas", ")");
+	debug.note("Visit www.vaultmp.com for help and upload this log if you experience problems with the mod.");
+	debug.note("-----------------------------------------------------------------------------------------------------");
 #endif
 
 	try
@@ -380,8 +354,8 @@ void Dedicated::DedicatedThread()
 	API::Terminate();
 
 #ifdef VAULTMP_DEBUG
-	debug->Print("Network thread is going to terminate", true);
-	VaultException::FinalizeDebug();
+	debug.print("Network thread is going to terminate");
+	Debug::SetDebugHandler(nullptr);
 #endif
 }
 
