@@ -193,7 +193,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				case pTypes::ID_OBJECT_NEW:
 				{
 					NetworkID id = GameFactory::CreateKnownInstance(ID_OBJECT, packet);
-					FactoryObject<Object> reference = GameFactory::GetObject<Object>(id);
+					FactoryObject<Object> reference = GameFactory::GetObject(id);
 					Game::NewObject(reference);
 					break;
 				}
@@ -234,7 +234,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				{
 					NetworkID id;
 					PacketFactory::Access<pTypes::ID_OBJECT_REMOVE>(packet, id);
-					FactoryObject<Object> reference = GameFactory::GetObject<Object>(id);
+					FactoryObject<Object> reference = GameFactory::GetObject(id);
 					Game::Delete(reference);
 					break;
 				}
@@ -244,7 +244,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					NetworkID id;
 					double X, Y, Z;
 					PacketFactory::Access<pTypes::ID_UPDATE_POS>(packet, id, X, Y, Z);
-					FactoryObject<Object> reference = GameFactory::GetObject<Object>(id);
+					FactoryObject<Object> reference = GameFactory::GetObject(id);
 					Game::net_SetPos(reference, X, Y, Z);
 					break;
 				}
@@ -255,7 +255,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					unsigned char axis;
 					double value;
 					PacketFactory::Access<pTypes::ID_UPDATE_ANGLE>(packet, id, axis, value);
-					FactoryObject<Object> reference = GameFactory::GetObject<Object>(id);
+					FactoryObject<Object> reference = GameFactory::GetObject(id);
 					Game::net_SetAngle(reference, axis, value);
 					break;
 				}

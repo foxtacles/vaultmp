@@ -220,7 +220,7 @@ vector<string> ObjectFunctor::operator()()
 
 	if (id)
 	{
-		FactoryObject<Object> object = GameFactory::GetObject<Object>(id);
+		FactoryObject<Object> object = GameFactory::GetObject(id);
 
 		if (object)
 		{

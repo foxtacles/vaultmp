@@ -211,7 +211,7 @@ class FactoryObject<Reference>
 {
 		friend class GameFactory;
 
-		template <typename T, typename U>
+		template<typename T, typename U>
 		friend FactoryObject<T> vaultcast(const FactoryObject<U>& object, bool = true) noexcept;
 
 	private:
@@ -225,14 +225,12 @@ class FactoryObject<Reference>
 				throw VaultException("Unknown object %08X", reference);
 		}
 
-		template<typename T>
-		FactoryObject(const FactoryObject<T>& p) : reference(p.reference), type(p.type)
+		FactoryObject(const FactoryObject& p) : reference(p.reference), type(p.type)
 		{
 			if (reference)
 				reference->StartSession();
 		}
-		template<typename T>
-		FactoryObject& operator=(const FactoryObject<T>& p)
+		FactoryObject& operator=(const FactoryObject& p)
 		{
 			if (this != &p)
 			{
@@ -248,8 +246,6 @@ class FactoryObject<Reference>
 
 			return *this;
 		}
-		FactoryObject(const FactoryObject& p) : FactoryObject<Reference>(p) {}
-		FactoryObject& operator=(const FactoryObject& p) { return FactoryObject<Reference>::operator=(p); }
 
 		FactoryObject(FactoryObject&& p) : reference(p.reference), type(p.type)
 		{
@@ -296,7 +292,7 @@ template<> class FactoryObject<Object> : public FactoryObject<Reference>
 {
 		friend class GameFactory;
 
-		template <typename T, typename U>
+		template<typename T, typename U>
 		friend FactoryObject<T> vaultcast(const FactoryObject<U>& object, bool = true) noexcept;
 
 	protected:
@@ -320,13 +316,13 @@ template<> class FactoryObject<Item> : public FactoryObject<Object>
 {
 		friend class GameFactory;
 
-		template <typename T, typename U>
+		template<typename T, typename U>
 		friend FactoryObject<T> vaultcast(const FactoryObject<U>& object, bool = true) noexcept;
 
 	protected:
 		FactoryObject(Reference* reference, unsigned char type) : FactoryObject<Object>(reference, type)
 		{
-			if (validate<Item>())
+			if (!validate<Item>())
 				throw VaultException("Object %08X is not an Item", reference);
 		}
 		template<typename T> FactoryObject(const FactoryObject<T>& p) : FactoryObject<Object>(p) {}
@@ -348,13 +344,13 @@ template<> class FactoryObject<Container> : public FactoryObject<Object>
 {
 		friend class GameFactory;
 
-		template <typename T, typename U>
+		template<typename T, typename U>
 		friend FactoryObject<T> vaultcast(const FactoryObject<U>& object, bool = true) noexcept;
 
 	protected:
 		FactoryObject(Reference* reference, unsigned char type) : FactoryObject<Object>(reference, type)
 		{
-			if (validate<Container>())
+			if (!validate<Container>())
 				throw VaultException("Object %08X is not a Container", reference);
 		}
 		template<typename T> FactoryObject(const FactoryObject<T>& p) : FactoryObject<Object>(p) {}
@@ -376,13 +372,13 @@ template<> class FactoryObject<Actor> : public FactoryObject<Container>
 {
 		friend class GameFactory;
 
-		template <typename T, typename U>
+		template<typename T, typename U>
 		friend FactoryObject<T> vaultcast(const FactoryObject<U>& object, bool = true) noexcept;
 
 	protected:
 		FactoryObject(Reference* reference, unsigned char type) : FactoryObject<Container>(reference, type)
 		{
-			if (validate<Actor>())
+			if (!validate<Actor>())
 				throw VaultException("Object %08X is not an Actor", reference);
 		}
 		template<typename T> FactoryObject(const FactoryObject<T>& p) : FactoryObject<Container>(p) {}
@@ -404,13 +400,13 @@ template<> class FactoryObject<Player> : public FactoryObject<Actor>
 {
 		friend class GameFactory;
 
-		template <typename T, typename U>
+		template<typename T, typename U>
 		friend FactoryObject<T> vaultcast(const FactoryObject<U>& object, bool = true) noexcept;
 
 	protected:
 		FactoryObject(Reference* reference, unsigned char type) : FactoryObject<Actor>(reference, type)
 		{
-			if (validate<Player>())
+			if (!validate<Player>())
 				throw VaultException("Object %08X is not a Player", reference);
 		}
 		template<typename T> FactoryObject(const FactoryObject<T>& p) : FactoryObject<Actor>(p) {}

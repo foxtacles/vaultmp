@@ -616,17 +616,17 @@ void Game::SetGlobalValue(unsigned int global, signed int value)
 
 void Game::LoadEnvironment()
 {
-	vector<NetworkID> reference = GameFactory::GetIDObjectTypes(ALL_OBJECTS);
-
 	for (const auto& global : globals)
 		SetGlobalValue(global.first, global.second);
 
 	if (Game::weather)
 		SetWeather(Game::weather);
 
+	vector<NetworkID> reference = GameFactory::GetIDObjectTypes(ALL_OBJECTS);
+
 	for (NetworkID& id : reference)
 	{
-		auto reference = GameFactory::GetObject<Object>(id);
+		auto reference = GameFactory::GetObject(id);
 
 		if (!reference->IsPersistent())
 		{

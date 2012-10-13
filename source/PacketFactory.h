@@ -64,6 +64,9 @@ enum class Reason : unsigned char
 	ID_REASON_NONE,
 };
 
+template<pTypes>
+struct pTypesMap;
+
 class pDefault;
 typedef std::unique_ptr<pDefault> pPacket;
 
@@ -74,26 +77,35 @@ class PacketFactory
 
 		template<pTypes type, typename... Args>
 		struct Create_ {
-			static pPacket Create(Args&&...);
+			inline static pPacket Create(Args&&... args) {
+				return pPacket(new typename pTypesMap<type>::type(std::forward<Args>(args)...));
+			}
+		};
+
+		template<pTypes type>
+		struct Cast_ {
+			inline static const typename pTypesMap<type>::type* Cast(const pDefault* packet);
 		};
 
 		template<pTypes type, typename... Args>
 		struct Access_ {
-			static void Access(const pDefault* packet, Args&...);
+			inline static void Access(const pDefault* packet, Args&... args) {
+				Cast<type>(packet)->access(std::forward<Args&>(args)...);
+			}
 		};
 
 	public:
 		template<pTypes type, typename... Args>
 		inline static pPacket Create(Args&&... args) { return Create_<type, Args...>::Create(std::forward<Args>(args)...); }
 
+		template<pTypes type>
+		inline static const typename pTypesMap<type>::type* Cast(const pDefault* packet) { return Cast_<type>::Cast(packet); }
+
 		template<pTypes type, typename... Args>
 		inline static void Access(const pDefault* packet, Args&... args) { Access_<type, Args...>::Access(packet, std::forward<Args&>(args)...); }
 
 		template<typename T>
 		inline static T Pop(const pDefault* packet);
-
-		template<typename T>
-		inline static const T* packet_cast(const pDefault* packet);
 
 		static pPacket Init(const unsigned char* stream, unsigned int len);
 };
@@ -197,6 +209,11 @@ class pDefault
 			return data.size();
 		}
 };
+
+template<pTypes type>
+inline const typename pTypesMap<type>::type* PacketFactory::Cast_<type>::Cast(const pDefault* packet) {
+	return static_cast<pTypes>(packet->get()[0]) == type ? static_cast<const typename pTypesMap<type>::type*>(packet) : nullptr;
+}
 
 template<typename T, typename... Args>
 void pDefault::construct(const T& arg, const Args&... args)
@@ -491,25 +508,7 @@ class pGameAuth : public pDefault
 			deconstruct(name, pwd);
 		}
 };
-
-template<typename... Args>
-struct PacketFactory::Create_<pTypes::ID_GAME_AUTH, Args...> {
-	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pGameAuth(std::forward<Args>(args)...));
-	}
-};
-
-template<>
-inline const pGameAuth* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_AUTH ? static_cast<const pGameAuth*>(packet) : nullptr;
-}
-
-template<typename... Args>
-struct PacketFactory::Access_<pTypes::ID_GAME_AUTH, Args...> {
-	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pGameAuth>(packet)->access(std::forward<Args&>(args)...);
-	}
-};
+template<> struct pTypesMap<pTypes::ID_GAME_AUTH> { typedef pGameAuth type; };
 
 class pGameLoad : public pDefault
 {
@@ -530,25 +529,7 @@ class pGameLoad : public pDefault
 
 		}
 };
-
-template<>
-struct PacketFactory::Create_<pTypes::ID_GAME_LOAD> {
-	inline static pPacket Create() {
-		return pPacket(new pGameLoad());
-	}
-};
-
-template<>
-inline const pGameLoad* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_LOAD ? static_cast<const pGameLoad*>(packet) : nullptr;
-}
-
-template<>
-struct PacketFactory::Access_<pTypes::ID_GAME_LOAD> {
-	inline static void Access(const pDefault* packet) {
-		packet_cast<pGameLoad>(packet)->access();
-	}
-};
+template<> struct pTypesMap<pTypes::ID_GAME_LOAD> { typedef pGameLoad type; };
 
 class pGameMod : public pDefault
 {
@@ -569,25 +550,7 @@ class pGameMod : public pDefault
 			deconstruct(modfile, crc);
 		}
 };
-
-template<typename... Args>
-struct PacketFactory::Create_<pTypes::ID_GAME_MOD, Args...> {
-	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pGameMod(std::forward<Args>(args)...));
-	}
-};
-
-template<>
-inline const pGameMod* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_MOD ? static_cast<const pGameMod*>(packet) : nullptr;
-}
-
-template<typename... Args>
-struct PacketFactory::Access_<pTypes::ID_GAME_MOD, Args...> {
-	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pGameMod>(packet)->access(std::forward<Args&>(args)...);
-	}
-};
+template<> struct pTypesMap<pTypes::ID_GAME_MOD> { typedef pGameMod type; };
 
 class pGameStart : public pDefault
 {
@@ -608,25 +571,7 @@ class pGameStart : public pDefault
 
 		}
 };
-
-template<>
-struct PacketFactory::Create_<pTypes::ID_GAME_START> {
-	inline static pPacket Create() {
-		return pPacket(new pGameStart());
-	}
-};
-
-template<>
-inline const pGameStart* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_START ? static_cast<const pGameStart*>(packet) : nullptr;
-}
-
-template<>
-struct PacketFactory::Access_<pTypes::ID_GAME_START> {
-	inline static void Access(const pDefault* packet) {
-		packet_cast<pGameStart>(packet)->access();
-	}
-};
+template<> struct pTypesMap<pTypes::ID_GAME_START> { typedef pGameStart type; };
 
 class pGameEnd : public pDefault
 {
@@ -647,25 +592,7 @@ class pGameEnd : public pDefault
 			deconstruct(reason);
 		}
 };
-
-template<typename... Args>
-struct PacketFactory::Create_<pTypes::ID_GAME_END, Args...> {
-	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pGameEnd(std::forward<Args>(args)...));
-	}
-};
-
-template<>
-inline const pGameEnd* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_END ? static_cast<const pGameEnd*>(packet) : nullptr;
-}
-
-template<typename... Args>
-struct PacketFactory::Access_<pTypes::ID_GAME_END, Args...> {
-	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pGameEnd>(packet)->access(std::forward<Args&>(args)...);
-	}
-};
+template<> struct pTypesMap<pTypes::ID_GAME_END> { typedef pGameEnd type; };
 
 class pGameMessage : public pDefault
 {
@@ -686,25 +613,7 @@ class pGameMessage : public pDefault
 			deconstruct(message);
 		}
 };
-
-template<typename... Args>
-struct PacketFactory::Create_<pTypes::ID_GAME_MESSAGE, Args...> {
-	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pGameMessage(std::forward<Args>(args)...));
-	}
-};
-
-template<>
-inline const pGameMessage* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_MESSAGE ? static_cast<const pGameMessage*>(packet) : nullptr;
-}
-
-template<typename... Args>
-struct PacketFactory::Access_<pTypes::ID_GAME_MESSAGE, Args...> {
-	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pGameMessage>(packet)->access(std::forward<Args&>(args)...);
-	}
-};
+template<> struct pTypesMap<pTypes::ID_GAME_MESSAGE> { typedef pGameMessage type; };
 
 class pGameChat : public pDefault
 {
@@ -725,25 +634,7 @@ class pGameChat : public pDefault
 			deconstruct(message);
 		}
 };
-
-template<typename... Args>
-struct PacketFactory::Create_<pTypes::ID_GAME_CHAT, Args...> {
-	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pGameChat(std::forward<Args>(args)...));
-	}
-};
-
-template<>
-inline const pGameChat* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_CHAT ? static_cast<const pGameChat*>(packet) : nullptr;
-}
-
-template<typename... Args>
-struct PacketFactory::Access_<pTypes::ID_GAME_CHAT, Args...> {
-	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pGameChat>(packet)->access(std::forward<Args&>(args)...);
-	}
-};
+template<> struct pTypesMap<pTypes::ID_GAME_CHAT> { typedef pGameChat type; };
 
 class pGameGlobal : public pDefault
 {
@@ -764,25 +655,7 @@ class pGameGlobal : public pDefault
 			deconstruct(global, value);
 		}
 };
-
-template<typename... Args>
-struct PacketFactory::Create_<pTypes::ID_GAME_GLOBAL, Args...> {
-	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pGameGlobal(std::forward<Args>(args)...));
-	}
-};
-
-template<>
-inline const pGameGlobal* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_GLOBAL ? static_cast<const pGameGlobal*>(packet) : nullptr;
-}
-
-template<typename... Args>
-struct PacketFactory::Access_<pTypes::ID_GAME_GLOBAL, Args...> {
-	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pGameGlobal>(packet)->access(std::forward<Args&>(args)...);
-	}
-};
+template<> struct pTypesMap<pTypes::ID_GAME_GLOBAL> { typedef pGameGlobal type; };
 
 class pGameWeather : public pDefault
 {
@@ -803,25 +676,7 @@ class pGameWeather : public pDefault
 			deconstruct(weather);
 		}
 };
-
-template<typename... Args>
-struct PacketFactory::Create_<pTypes::ID_GAME_WEATHER, Args...> {
-	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pGameWeather(std::forward<Args>(args)...));
-	}
-};
-
-template<>
-inline const pGameWeather* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_GAME_WEATHER ? static_cast<const pGameWeather*>(packet) : nullptr;
-}
-
-template<typename... Args>
-struct PacketFactory::Access_<pTypes::ID_GAME_WEATHER, Args...> {
-	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pGameWeather>(packet)->access(std::forward<Args&>(args)...);
-	}
-};
+template<> struct pTypesMap<pTypes::ID_GAME_WEATHER> { typedef pGameWeather type; };
 
 class pObjectNew : public pObjectNewDefault
 {
@@ -842,16 +697,10 @@ class pObjectNew : public pObjectNewDefault
 			deconstruct(id, refID, baseID, changed, name, X, Y, Z, aX, aY, aZ, cell, enabled);
 		}
 };
-
-template<typename... Args>
-struct PacketFactory::Create_<pTypes::ID_OBJECT_NEW, Args...> {
-	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pObjectNew(std::forward<Args>(args)...));
-	}
-};
+template<> struct pTypesMap<pTypes::ID_OBJECT_NEW> { typedef pObjectNew type; };
 
 template<>
-inline const pObjectNew* PacketFactory::packet_cast(const pDefault* packet) {
+inline const typename pTypesMap<pTypes::ID_OBJECT_NEW>::type* PacketFactory::Cast_<pTypes::ID_OBJECT_NEW>::Cast(const pDefault* packet) {
 	pTypes type = static_cast<pTypes>(packet->get()[0]);
 	return (
 		type == pTypes::ID_OBJECT_NEW ||
@@ -859,15 +708,8 @@ inline const pObjectNew* PacketFactory::packet_cast(const pDefault* packet) {
 		type == pTypes::ID_CONTAINER_NEW ||
 		type == pTypes::ID_ACTOR_NEW ||
 		type == pTypes::ID_PLAYER_NEW
-	) ? static_cast<const pObjectNew*>(packet) : nullptr;
+	) ? static_cast<const typename pTypesMap<pTypes::ID_OBJECT_NEW>::type*>(packet) : nullptr;
 }
-
-template<typename... Args>
-struct PacketFactory::Access_<pTypes::ID_OBJECT_NEW, Args...> {
-	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pObjectNew>(packet)->access(std::forward<Args&>(args)...);
-	}
-};
 
 class pItemNew : public pObjectNewDefault
 {
@@ -888,25 +730,7 @@ class pItemNew : public pObjectNewDefault
 			deconstruct(id, count, condition, equipped, silent, stick);
 		}
 };
-
-template<typename... Args>
-struct PacketFactory::Create_<pTypes::ID_ITEM_NEW, Args...> {
-	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pItemNew(std::forward<Args>(args)...));
-	}
-};
-
-template<>
-inline const pItemNew* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_ITEM_NEW ? static_cast<const pItemNew*>(packet) : nullptr;
-}
-
-template<typename... Args>
-struct PacketFactory::Access_<pTypes::ID_ITEM_NEW, Args...> {
-	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pItemNew>(packet)->access(std::forward<Args&>(args)...);
-	}
-};
+template<> struct pTypesMap<pTypes::ID_ITEM_NEW> { typedef pItemNew type; };
 
 class pContainerNew : public pObjectNewDefault
 {
@@ -927,30 +751,17 @@ class pContainerNew : public pObjectNewDefault
 			deconstruct(_pItemNew);
 		}
 };
-
-template<typename... Args>
-struct PacketFactory::Create_<pTypes::ID_CONTAINER_NEW, Args...> {
-	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pContainerNew(std::forward<Args>(args)...));
-	}
-};
+template<> struct pTypesMap<pTypes::ID_CONTAINER_NEW> { typedef pContainerNew type; };
 
 template<>
-inline const pContainerNew* PacketFactory::packet_cast(const pDefault* packet) {
+inline const typename pTypesMap<pTypes::ID_CONTAINER_NEW>::type* PacketFactory::Cast_<pTypes::ID_CONTAINER_NEW>::Cast(const pDefault* packet) {
 	pTypes type = static_cast<pTypes>(packet->get()[0]);
 	return (
 		type == pTypes::ID_CONTAINER_NEW ||
 		type == pTypes::ID_ACTOR_NEW ||
 		type == pTypes::ID_PLAYER_NEW
-	) ? static_cast<const pContainerNew*>(packet) : nullptr;
+	) ? static_cast<const typename pTypesMap<pTypes::ID_CONTAINER_NEW>::type*>(packet) : nullptr;
 }
-
-template<typename... Args>
-struct PacketFactory::Access_<pTypes::ID_CONTAINER_NEW, Args...> {
-	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pContainerNew>(packet)->access(std::forward<Args&>(args)...);
-	}
-};
 
 class pActorNew : public pObjectNewDefault
 {
@@ -971,29 +782,16 @@ class pActorNew : public pObjectNewDefault
 			deconstruct(values, baseValues, race, age, idle, moving, movingxy, weapon, female, alerted, sneaking, dead);
 		}
 };
-
-template<typename... Args>
-struct PacketFactory::Create_<pTypes::ID_ACTOR_NEW, Args...> {
-	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pActorNew(std::forward<Args>(args)...));
-	}
-};
+template<> struct pTypesMap<pTypes::ID_ACTOR_NEW> { typedef pActorNew type; };
 
 template<>
-inline const pActorNew* PacketFactory::packet_cast(const pDefault* packet) {
+inline const typename pTypesMap<pTypes::ID_ACTOR_NEW>::type* PacketFactory::Cast_<pTypes::ID_ACTOR_NEW>::Cast(const pDefault* packet) {
 	pTypes type = static_cast<pTypes>(packet->get()[0]);
 	return (
 		type == pTypes::ID_ACTOR_NEW ||
 		type == pTypes::ID_PLAYER_NEW
-	) ? static_cast<const pActorNew*>(packet) : nullptr;
+	) ? static_cast<const typename pTypesMap<pTypes::ID_ACTOR_NEW>::type*>(packet) : nullptr;
 }
-
-template<typename... Args>
-struct PacketFactory::Access_<pTypes::ID_ACTOR_NEW, Args...> {
-	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pActorNew>(packet)->access(std::forward<Args&>(args)...);
-	}
-};
 
 class pPlayerNew : public pObjectNewDefault
 {
@@ -1014,25 +812,7 @@ class pPlayerNew : public pObjectNewDefault
 			deconstruct(controls);
 		}
 };
-
-template<typename... Args>
-struct PacketFactory::Create_<pTypes::ID_PLAYER_NEW, Args...> {
-	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pPlayerNew(std::forward<Args>(args)...));
-	}
-};
-
-template<>
-inline const pPlayerNew* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_PLAYER_NEW ? static_cast<const pPlayerNew*>(packet) : nullptr;
-}
-
-template<typename... Args>
-struct PacketFactory::Access_<pTypes::ID_PLAYER_NEW, Args...> {
-	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pPlayerNew>(packet)->access(std::forward<Args&>(args)...);
-	}
-};
+template<> struct pTypesMap<pTypes::ID_PLAYER_NEW> { typedef pPlayerNew type; };
 
 class pObjectRemove : public pObjectDefault
 {
@@ -1053,25 +833,7 @@ class pObjectRemove : public pObjectDefault
 			deconstruct(id);
 		}
 };
-
-template<typename... Args>
-struct PacketFactory::Create_<pTypes::ID_OBJECT_REMOVE, Args...> {
-	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pObjectRemove(std::forward<Args>(args)...));
-	}
-};
-
-template<>
-inline const pObjectRemove* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_OBJECT_REMOVE ? static_cast<const pObjectRemove*>(packet) : nullptr;
-}
-
-template<typename... Args>
-struct PacketFactory::Access_<pTypes::ID_OBJECT_REMOVE, Args...> {
-	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pObjectRemove>(packet)->access(std::forward<Args&>(args)...);
-	}
-};
+template<> struct pTypesMap<pTypes::ID_OBJECT_REMOVE> { typedef pObjectRemove type; };
 
 class pObjectPos : public pObjectDefault
 {
@@ -1092,25 +854,7 @@ class pObjectPos : public pObjectDefault
 			deconstruct(id, X, Y, Z);
 		}
 };
-
-template<typename... Args>
-struct PacketFactory::Create_<pTypes::ID_UPDATE_POS, Args...> {
-	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pObjectPos(std::forward<Args>(args)...));
-	}
-};
-
-template<>
-inline const pObjectPos* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_POS ? static_cast<const pObjectPos*>(packet) : nullptr;
-}
-
-template<typename... Args>
-struct PacketFactory::Access_<pTypes::ID_UPDATE_POS, Args...> {
-	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pObjectPos>(packet)->access(std::forward<Args&>(args)...);
-	}
-};
+template<> struct pTypesMap<pTypes::ID_UPDATE_POS> { typedef pObjectPos type; };
 
 class pObjectAngle : public pObjectDefault
 {
@@ -1131,25 +875,7 @@ class pObjectAngle : public pObjectDefault
 			deconstruct(id, axis, value);
 		}
 };
-
-template<typename... Args>
-struct PacketFactory::Create_<pTypes::ID_UPDATE_ANGLE, Args...> {
-	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pObjectAngle(std::forward<Args>(args)...));
-	}
-};
-
-template<>
-inline const pObjectAngle* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_ANGLE ? static_cast<const pObjectAngle*>(packet) : nullptr;
-}
-
-template<typename... Args>
-struct PacketFactory::Access_<pTypes::ID_UPDATE_ANGLE, Args...> {
-	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pObjectAngle>(packet)->access(std::forward<Args&>(args)...);
-	}
-};
+template<> struct pTypesMap<pTypes::ID_UPDATE_ANGLE> { typedef pObjectAngle type; };
 
 class pObjectCell : public pObjectDefault
 {
@@ -1170,25 +896,7 @@ class pObjectCell : public pObjectDefault
 			deconstruct(id, cell);
 		}
 };
-
-template<typename... Args>
-struct PacketFactory::Create_<pTypes::ID_UPDATE_CELL, Args...> {
-	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pObjectCell(std::forward<Args>(args)...));
-	}
-};
-
-template<>
-inline const pObjectCell* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_CELL ? static_cast<const pObjectCell*>(packet) : nullptr;
-}
-
-template<typename... Args>
-struct PacketFactory::Access_<pTypes::ID_UPDATE_CELL, Args...> {
-	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pObjectCell>(packet)->access(std::forward<Args&>(args)...);
-	}
-};
+template<> struct pTypesMap<pTypes::ID_UPDATE_CELL> { typedef pObjectCell type; };
 
 class pContainerUpdate : public pObjectDefault
 {
@@ -1209,25 +917,7 @@ class pContainerUpdate : public pObjectDefault
 			deconstruct(id, ndiff, gdiff);
 		}
 };
-
-template<typename... Args>
-struct PacketFactory::Create_<pTypes::ID_UPDATE_CONTAINER, Args...> {
-	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pContainerUpdate(std::forward<Args>(args)...));
-	}
-};
-
-template<>
-inline const pContainerUpdate* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_CONTAINER ? static_cast<const pContainerUpdate*>(packet) : nullptr;
-}
-
-template<typename... Args>
-struct PacketFactory::Access_<pTypes::ID_UPDATE_CONTAINER, Args...> {
-	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pContainerUpdate>(packet)->access(std::forward<Args&>(args)...);
-	}
-};
+template<> struct pTypesMap<pTypes::ID_UPDATE_CONTAINER> { typedef pContainerUpdate type; };
 
 class pActorValue : public pObjectDefault
 {
@@ -1248,25 +938,7 @@ class pActorValue : public pObjectDefault
 			deconstruct(id, base, index, value);
 		}
 };
-
-template<typename... Args>
-struct PacketFactory::Create_<pTypes::ID_UPDATE_VALUE, Args...> {
-	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pActorValue(std::forward<Args>(args)...));
-	}
-};
-
-template<>
-inline const pActorValue* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_VALUE ? static_cast<const pActorValue*>(packet) : nullptr;
-}
-
-template<typename... Args>
-struct PacketFactory::Access_<pTypes::ID_UPDATE_VALUE, Args...> {
-	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pActorValue>(packet)->access(std::forward<Args&>(args)...);
-	}
-};
+template<> struct pTypesMap<pTypes::ID_UPDATE_VALUE> { typedef pActorValue type; };
 
 class pActorState : public pObjectDefault
 {
@@ -1287,25 +959,7 @@ class pActorState : public pObjectDefault
 			deconstruct(id, idle, moving, movingxy, weapon, alerted, sneaking, firing);
 		}
 };
-
-template<typename... Args>
-struct PacketFactory::Create_<pTypes::ID_UPDATE_STATE, Args...> {
-	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pActorState(std::forward<Args>(args)...));
-	}
-};
-
-template<>
-inline const pActorState* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_STATE ? static_cast<const pActorState*>(packet) : nullptr;
-}
-
-template<typename... Args>
-struct PacketFactory::Access_<pTypes::ID_UPDATE_STATE, Args...> {
-	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pActorState>(packet)->access(std::forward<Args&>(args)...);
-	}
-};
+template<> struct pTypesMap<pTypes::ID_UPDATE_STATE> { typedef pActorState type; };
 
 class pActorRace : public pObjectDefault
 {
@@ -1326,25 +980,7 @@ class pActorRace : public pObjectDefault
 			deconstruct(id, race, age, delta_age);
 		}
 };
-
-template<typename... Args>
-struct PacketFactory::Create_<pTypes::ID_UPDATE_RACE, Args...> {
-	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pActorRace(std::forward<Args>(args)...));
-	}
-};
-
-template<>
-inline const pActorRace* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_RACE ? static_cast<const pActorRace*>(packet) : nullptr;
-}
-
-template<typename... Args>
-struct PacketFactory::Access_<pTypes::ID_UPDATE_RACE, Args...> {
-	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pActorRace>(packet)->access(std::forward<Args&>(args)...);
-	}
-};
+template<> struct pTypesMap<pTypes::ID_UPDATE_RACE> { typedef pActorRace type; };
 
 class pActorSex : public pObjectDefault
 {
@@ -1365,25 +1001,7 @@ class pActorSex : public pObjectDefault
 			deconstruct(id, female);
 		}
 };
-
-template<typename... Args>
-struct PacketFactory::Create_<pTypes::ID_UPDATE_SEX, Args...> {
-	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pActorSex(std::forward<Args>(args)...));
-	}
-};
-
-template<>
-inline const pActorSex* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_SEX ? static_cast<const pActorSex*>(packet) : nullptr;
-}
-
-template<typename... Args>
-struct PacketFactory::Access_<pTypes::ID_UPDATE_SEX, Args...> {
-	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pActorSex>(packet)->access(std::forward<Args&>(args)...);
-	}
-};
+template<> struct pTypesMap<pTypes::ID_UPDATE_SEX> { typedef pActorSex type; };
 
 class pActorDead : public pObjectDefault
 {
@@ -1404,25 +1022,7 @@ class pActorDead : public pObjectDefault
 			deconstruct(id, dead, limbs, cause);
 		}
 };
-
-template<typename... Args>
-struct PacketFactory::Create_<pTypes::ID_UPDATE_DEAD, Args...> {
-	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pActorDead(std::forward<Args>(args)...));
-	}
-};
-
-template<>
-inline const pActorDead* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_DEAD ? static_cast<const pActorDead*>(packet) : nullptr;
-}
-
-template<typename... Args>
-struct PacketFactory::Access_<pTypes::ID_UPDATE_DEAD, Args...> {
-	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pActorDead>(packet)->access(std::forward<Args&>(args)...);
-	}
-};
+template<> struct pTypesMap<pTypes::ID_UPDATE_DEAD> { typedef pActorDead type; };
 
 class pActorFireweapon : public pObjectDefault
 {
@@ -1443,25 +1043,7 @@ class pActorFireweapon : public pObjectDefault
 			deconstruct(id, weapon, attacks);
 		}
 };
-
-template<typename... Args>
-struct PacketFactory::Create_<pTypes::ID_UPDATE_FIREWEAPON, Args...> {
-	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pActorFireweapon(std::forward<Args>(args)...));
-	}
-};
-
-template<>
-inline const pActorFireweapon* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_FIREWEAPON ? static_cast<const pActorFireweapon*>(packet) : nullptr;
-}
-
-template<typename... Args>
-struct PacketFactory::Access_<pTypes::ID_UPDATE_FIREWEAPON, Args...> {
-	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pActorFireweapon>(packet)->access(std::forward<Args&>(args)...);
-	}
-};
+template<> struct pTypesMap<pTypes::ID_UPDATE_FIREWEAPON> { typedef pActorFireweapon type; };
 
 class pActorIdle : public pObjectDefault
 {
@@ -1482,25 +1064,7 @@ class pActorIdle : public pObjectDefault
 			deconstruct(id, idle, name);
 		}
 };
-
-template<typename... Args>
-struct PacketFactory::Create_<pTypes::ID_UPDATE_IDLE, Args...> {
-	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pActorIdle(std::forward<Args>(args)...));
-	}
-};
-
-template<>
-inline const pActorIdle* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_IDLE ? static_cast<const pActorIdle*>(packet) : nullptr;
-}
-
-template<typename... Args>
-struct PacketFactory::Access_<pTypes::ID_UPDATE_IDLE, Args...> {
-	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pActorIdle>(packet)->access(std::forward<Args&>(args)...);
-	}
-};
+template<> struct pTypesMap<pTypes::ID_UPDATE_IDLE> { typedef pActorIdle type; };
 
 class pPlayerControl : public pObjectDefault
 {
@@ -1521,25 +1085,7 @@ class pPlayerControl : public pObjectDefault
 			deconstruct(id, control, key);
 		}
 };
-
-template<typename... Args>
-struct PacketFactory::Create_<pTypes::ID_UPDATE_CONTROL, Args...> {
-	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pPlayerControl(std::forward<Args>(args)...));
-	}
-};
-
-template<>
-inline const pPlayerControl* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_CONTROL ? static_cast<const pPlayerControl*>(packet) : nullptr;
-}
-
-template<typename... Args>
-struct PacketFactory::Access_<pTypes::ID_UPDATE_CONTROL, Args...> {
-	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pPlayerControl>(packet)->access(std::forward<Args&>(args)...);
-	}
-};
+template<> struct pTypesMap<pTypes::ID_UPDATE_CONTROL> { typedef pPlayerControl type; };
 
 class pPlayerInterior : public pObjectDefault
 {
@@ -1560,25 +1106,7 @@ class pPlayerInterior : public pObjectDefault
 			deconstruct(id, cell, spawn);
 		}
 };
-
-template<typename... Args>
-struct PacketFactory::Create_<pTypes::ID_UPDATE_INTERIOR, Args...> {
-	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pPlayerInterior(std::forward<Args>(args)...));
-	}
-};
-
-template<>
-inline const pPlayerInterior* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_INTERIOR ? static_cast<const pPlayerInterior*>(packet) : nullptr;
-}
-
-template<typename... Args>
-struct PacketFactory::Access_<pTypes::ID_UPDATE_INTERIOR, Args...> {
-	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pPlayerInterior>(packet)->access(std::forward<Args&>(args)...);
-	}
-};
+template<> struct pTypesMap<pTypes::ID_UPDATE_INTERIOR> { typedef pPlayerInterior type; };
 
 class pPlayerExterior : public pObjectDefault
 {
@@ -1599,24 +1127,6 @@ class pPlayerExterior : public pObjectDefault
 			deconstruct(id, baseID, x, y, spawn);
 		}
 };
-
-template<typename... Args>
-struct PacketFactory::Create_<pTypes::ID_UPDATE_EXTERIOR, Args...> {
-	inline static pPacket Create(Args&&... args) {
-		return pPacket(new pPlayerExterior(std::forward<Args>(args)...));
-	}
-};
-
-template<>
-inline const pPlayerExterior* PacketFactory::packet_cast(const pDefault* packet) {
-	return static_cast<pTypes>(packet->get()[0]) == pTypes::ID_UPDATE_EXTERIOR ? static_cast<const pPlayerExterior*>(packet) : nullptr;
-}
-
-template<typename... Args>
-struct PacketFactory::Access_<pTypes::ID_UPDATE_EXTERIOR, Args...> {
-	inline static void Access(const pDefault* packet, Args&... args) {
-		packet_cast<pPlayerExterior>(packet)->access(std::forward<Args&>(args)...);
-	}
-};
+template<> struct pTypesMap<pTypes::ID_UPDATE_EXTERIOR> { typedef pPlayerExterior type; };
 
 #endif

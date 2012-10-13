@@ -617,7 +617,7 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 
 	char* tokenizer = nullptr;
 	unsigned int reference = 0x00;
-	result_data.emplace_back(storeIn<double, unsigned short>(opcode));
+	result_data.emplace_back(storeIn<double>(opcode));
 
 	// Skip the function name
 	tokenizer = strtok(cmd, " ");
@@ -635,7 +635,7 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 			throw VaultException("API::ParseCommand reference base operand is NULL (%s, %s, %04X)", _cmd.c_str(), def, opcode);
 
 		result->arg3.reference = reference;
-		result_data.emplace_back(storeIn<double, unsigned int>(reference));
+		result_data.emplace_back(storeIn<double>(reference));
 		++def;
 	}
 	else
@@ -790,7 +790,7 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 
 				*reinterpret_cast<unsigned char*>(arg2_pos) = 0x6E;
 				*reinterpret_cast<unsigned int*>(arg2_pos + sizeof(unsigned char)) = integer;
-				result_data.emplace_back(storeIn<double, unsigned int>(integer));
+				result_data.emplace_back(storeIn<double>(integer));
 				arg2_pos += sizeof(unsigned char) + sizeof(unsigned int);
 				break;
 			}
@@ -825,7 +825,7 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 
 				*reinterpret_cast<unsigned char*>(arg2_pos) = 0x72;
 				*reinterpret_cast<unsigned short*>(arg2_pos + sizeof(unsigned char)) = (!reference || refparam == reference) ? 0x0001 : 0x0002;
-				result_data.emplace_back(storeIn<double, unsigned int>(refparam));
+				result_data.emplace_back(storeIn<double>(refparam));
 				arg2_pos += sizeof(unsigned char) + sizeof(unsigned short);
 				break;
 			}
@@ -838,7 +838,7 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 					throw VaultException("API::ParseCommand could not find an Actor Value identifier for input %s", tokenizer);
 
 				*reinterpret_cast<unsigned short*>(arg2_pos) = (unsigned short) value;
-				result_data.emplace_back(storeIn<double, unsigned short>(value));
+				result_data.emplace_back(storeIn<double>(value));
 				arg2_pos += sizeof(unsigned short);
 				break;
 			}
@@ -851,7 +851,7 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 					throw VaultException("API::ParseCommand could not find an Axis identifier for input %s", tokenizer);
 
 				*reinterpret_cast<unsigned char*>(arg2_pos) = axis;
-				result_data.emplace_back(storeIn<double, unsigned char>(axis));
+				result_data.emplace_back(storeIn<double>(axis));
 				arg2_pos += sizeof(unsigned char);
 				break;
 			}
@@ -864,7 +864,7 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 					throw VaultException("API::ParseCommand could not find an Animation identifier for input %s", tokenizer);
 
 				*reinterpret_cast<unsigned short*>(arg2_pos) = (unsigned short) anim;
-				result_data.emplace_back(storeIn<double, unsigned short>(anim));
+				result_data.emplace_back(storeIn<double>(anim));
 				arg2_pos += sizeof(unsigned short);
 				break;
 			}
