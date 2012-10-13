@@ -168,7 +168,7 @@ class ObjectFunctor : public ReferenceFunctor
 		virtual ~ObjectFunctor() {}
 
 		virtual std::vector<std::string> operator()();
-		virtual bool filter(FactoryObject& reference);
+		virtual bool filter(FactoryObject<Reference>& reference);
 };
 
 #endif

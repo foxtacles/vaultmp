@@ -120,13 +120,12 @@ Player::Player(unsigned int refID, unsigned int baseID) : Actor(refID, baseID)
 	for (const auto& item : default_items)
 	{
 		NetworkID id = GameFactory::CreateInstance(ID_ITEM, item.first);
-		FactoryObject reference = GameFactory::GetObject(id);
-		Item* _item = vaultcast<Item>(reference);
-		_item->SetItemCount(get<0>(item.second));
-		_item->SetItemCondition(get<1>(item.second));
-		_item->SetItemEquipped(get<2>(item.second));
-		_item->SetItemSilent(get<3>(item.second));
-		_item->SetItemStick(get<4>(item.second));
+		FactoryObject<Item> reference = GameFactory::GetObject<Item>(id);
+		reference->SetItemCount(get<0>(item.second));
+		reference->SetItemCondition(get<1>(item.second));
+		reference->SetItemEquipped(get<2>(item.second));
+		reference->SetItemSilent(get<3>(item.second));
+		reference->SetItemStick(get<4>(item.second));
 		this->AddItem(id);
 	}
 
@@ -294,8 +293,7 @@ vector<string> PlayerFunctor::operator()()
 
 	if (id)
 	{
-		FactoryObject reference = GameFactory::GetObject(id);
-		Player* player = vaultcast<Player>(reference);
+		FactoryObject<Player> player = GameFactory::GetObject<Player>(id);
 
 		if (player)
 		{
@@ -318,8 +316,8 @@ vector<string> PlayerFunctor::operator()()
 	}
 	else
 	{
-		vector<FactoryObject>::iterator it;
-		vector<FactoryObject> references = GameFactory::GetObjectTypes(ID_PLAYER);
+		vector<FactoryObject<Player>>::iterator it;
+		vector<FactoryObject<Player>> references = GameFactory::GetObjectTypes<Player>(ID_PLAYER);
 		unsigned int refID;
 
 		for (it = references.begin(); it != references.end(); ++it) // GameFactory::LeaveReference(*it), not possible due to FLAG_SELFALERT
@@ -332,7 +330,7 @@ vector<string> PlayerFunctor::operator()()
 	return result;
 }
 
-bool PlayerFunctor::filter(FactoryObject& reference)
+bool PlayerFunctor::filter(FactoryObject<Reference>& reference)
 {
 	if (ActorFunctor::filter(reference))
 		return true;
@@ -342,10 +340,7 @@ bool PlayerFunctor::filter(FactoryObject& reference)
 
 	if (flags & FLAG_SELFALERT)
 	{
-		FactoryObject _self = GameFactory::GetObject(PLAYER_REFERENCE);
-		Player* self = vaultcast<Player>(_self);
-
-		if (!self->GetActorAlerted())
+		if (!GameFactory::GetObject<Player>(PLAYER_REFERENCE)->GetActorAlerted())
 			return true;
 	}
 

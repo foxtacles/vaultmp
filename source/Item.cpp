@@ -112,8 +112,7 @@ Lockable* Item::SetItemStick(bool stick)
 
 NetworkID Item::Copy() const
 {
-	FactoryObject reference = GameFactory::GetObject(GameFactory::CreateInstance(ID_ITEM, 0x00000000, this->GetBase()));
-	Item* item = vaultcast<Item>(reference);
+	FactoryObject<Item> item = GameFactory::GetObject<Item>(GameFactory::CreateInstance(ID_ITEM, 0x00000000, this->GetBase()));
 
 	item->SetItemContainer(this->GetItemContainer());
 	item->SetItemCount(this->GetItemCount());

@@ -335,8 +335,8 @@ vector<string> ActorFunctor::operator()()
 	}
 	else
 	{
-		vector<FactoryObject>::iterator it;
-		vector<FactoryObject> references = GameFactory::GetObjectTypes(ID_ACTOR);
+		vector<FactoryObject<Actor>>::iterator it;
+		vector<FactoryObject<Actor>> references = GameFactory::GetObjectTypes<Actor>(ID_ACTOR);
 		unsigned int refID;
 
 		for (it = references.begin(); it != references.end(); GameFactory::LeaveReference(*it), ++it)
@@ -349,12 +349,12 @@ vector<string> ActorFunctor::operator()()
 	return result;
 }
 
-bool ActorFunctor::filter(FactoryObject& reference)
+bool ActorFunctor::filter(FactoryObject<Reference>& reference)
 {
 	if (ObjectFunctor::filter(reference))
 		return true;
 
-	Actor* actor = vaultcast<Actor>(reference);
+	FactoryObject<Actor> actor = vaultcast<Actor>(reference);
 	unsigned int flags = this->flags();
 
 	if (flags & FLAG_ALIVE && actor->GetActorDead())

@@ -153,7 +153,7 @@ class PlayerFunctor : public ActorFunctor
 		virtual ~PlayerFunctor() {}
 
 		virtual std::vector<std::string> operator()();
-		virtual bool filter(FactoryObject& reference);
+		virtual bool filter(FactoryObject<Reference>& reference);
 };
 
 #endif

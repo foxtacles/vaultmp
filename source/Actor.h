@@ -248,7 +248,7 @@ class ActorFunctor : public ObjectFunctor
 		virtual ~ActorFunctor() {}
 
 		virtual std::vector<std::string> operator()();
-		virtual bool filter(FactoryObject& reference);
+		virtual bool filter(FactoryObject<Reference>& reference);
 };
 
 #endif

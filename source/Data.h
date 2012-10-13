@@ -20,17 +20,17 @@ static const unsigned int RACE_CAUCASIAN	= 0x00000019;
 static const unsigned int DEFAULT_WEATHER	= 0x0000015E;
 
 template <typename R, typename T>
-inline static R storeIn(T t)
+inline static R storeIn(const T& t)
 {
 	R r;
 	*reinterpret_cast<T*>(&r) = t;
 	return r;
 }
 
-template <typename R, typename T>
-inline static T getFrom(R r)
+template <typename T, typename R>
+inline static T getFrom(const R& r)
 {
-	return *reinterpret_cast<T*>(&r);
+	return *reinterpret_cast<const T*>(&r);
 }
 
 enum

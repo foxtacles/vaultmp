@@ -1189,7 +1189,7 @@ vector<CommandResult> API::Translate(unsigned char* stream)
 			auto& element = queue.back();
 
 #ifdef VAULTMP_DEBUG
-			debug.print("API did not retrieve the result of command with identifier ", hex, get<0>(element), " (opcode ", getFrom<double, unsigned short>(get<1>(element).at(0)), ")");
+			debug.print("API did not retrieve the result of command with identifier ", hex, get<0>(element), " (opcode ", getFrom<unsigned short>(get<1>(element).at(0)), ")");
 #endif
 
 			result.emplace_back();
@@ -1236,7 +1236,7 @@ vector<CommandResult> API::Translate(unsigned char* stream)
 		unsigned int length = *reinterpret_cast<unsigned int*>(data);
 		data += sizeof(unsigned int);
 		vector<unsigned char>* big = new vector<unsigned char>(data, data + length);
-		get<2>(_result) = storeIn<double, vector<unsigned char>*>(big);
+		get<2>(_result) = storeIn<double>(big);
 	}
 	else
 		get<2>(_result) = *reinterpret_cast<double*>(data);

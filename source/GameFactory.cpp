@@ -53,9 +53,10 @@ void GameFactory::Initialize(unsigned char game)
 #endif
 }
 
-vector<FactoryObject> GameFactory::GetObjectTypes(unsigned char type) noexcept
+template<typename T>
+vector<FactoryObject<T>> GameFactory::GetObjectTypes(unsigned char type) noexcept
 {
-	vector<FactoryObject> result;
+	vector<FactoryObject<T>> result;
 	ReferenceList::iterator it;
 
 	cs.StartSession();
@@ -69,12 +70,17 @@ vector<FactoryObject> GameFactory::GetObjectTypes(unsigned char type) noexcept
 		if (it->second & type)
 			try
 			{
-				result.emplace_back(FactoryObject(it->first.get(), it->second));
+				result.emplace_back(FactoryObject<T>(it->first.get(), it->second));
 			}
 			catch (...) { continue; }
 
 	return result;
 }
+template vector<FactoryObject<Object>> GameFactory::GetObjectTypes(unsigned char type) noexcept;
+template vector<FactoryObject<Item>> GameFactory::GetObjectTypes(unsigned char type) noexcept;
+template vector<FactoryObject<Container>> GameFactory::GetObjectTypes(unsigned char type) noexcept;
+template vector<FactoryObject<Actor>> GameFactory::GetObjectTypes(unsigned char type) noexcept;
+template vector<FactoryObject<Player>> GameFactory::GetObjectTypes(unsigned char type) noexcept;
 
 vector<NetworkID> GameFactory::GetIDObjectTypes(unsigned char type) noexcept
 {
@@ -106,7 +112,8 @@ unsigned int GameFactory::GetObjectCount(unsigned char type) noexcept
 	return count;
 }
 
-FactoryObject GameFactory::GetObject(NetworkID id)
+template<typename T>
+FactoryObject<T> GameFactory::GetObject(NetworkID id)
 {
 	Reference* reference;
 	unsigned char type;
@@ -123,10 +130,16 @@ FactoryObject GameFactory::GetObject(NetworkID id)
 	if (!reference)
 		throw VaultException("Unknown object with NetworkID %llu", id);
 
-	return FactoryObject(reference, type);
+	return FactoryObject<T>(reference, type);
 }
+template FactoryObject<Object> GameFactory::GetObject(NetworkID id);
+template FactoryObject<Item> GameFactory::GetObject(NetworkID id);
+template FactoryObject<Container> GameFactory::GetObject(NetworkID id);
+template FactoryObject<Actor> GameFactory::GetObject(NetworkID id);
+template FactoryObject<Player> GameFactory::GetObject(NetworkID id);
 
-FactoryObject GameFactory::GetObject(unsigned int refID)
+template<typename T>
+FactoryObject<T> GameFactory::GetObject(unsigned int refID)
 {
 	Reference* reference;
 	unsigned char type;
@@ -149,12 +162,18 @@ FactoryObject GameFactory::GetObject(unsigned int refID)
 	if (!reference)
 		throw VaultException("Unknown object with reference %08X", refID);
 
-	return FactoryObject(reference, type);
+	return FactoryObject<T>(reference, type);
 }
+template FactoryObject<Object> GameFactory::GetObject(unsigned int refID);
+template FactoryObject<Item> GameFactory::GetObject(unsigned int refID);
+template FactoryObject<Container> GameFactory::GetObject(unsigned int refID);
+template FactoryObject<Actor> GameFactory::GetObject(unsigned int refID);
+template FactoryObject<Player> GameFactory::GetObject(unsigned int refID);
 
-vector<FactoryObject> GameFactory::GetMultiple(const vector<NetworkID>& objects)
+template<typename T>
+vector<FactoryObject<T>> GameFactory::GetMultiple(const vector<NetworkID>& objects)
 {
-	vector<FactoryObject> result(objects.size());
+	vector<FactoryObject<T>> result(objects.size());
 	multimap<ReferenceList::value_type, unsigned int> sort;
 
 	cs.StartSession();
@@ -185,14 +204,20 @@ vector<FactoryObject> GameFactory::GetMultiple(const vector<NetworkID>& objects)
 	cs.EndSession();
 
 	for (const auto& reference : sort)
-		result[reference.second] = FactoryObject(reference.first.first.get(), reference.first.second);
+		result[reference.second] = FactoryObject<T>(reference.first.first.get(), reference.first.second);
 
 	return result;
 }
+template vector<FactoryObject<Object>> GameFactory::GetMultiple(const vector<NetworkID>& objects);
+template vector<FactoryObject<Item>> GameFactory::GetMultiple(const vector<NetworkID>& objects);
+template vector<FactoryObject<Container>> GameFactory::GetMultiple(const vector<NetworkID>& objects);
+template vector<FactoryObject<Actor>> GameFactory::GetMultiple(const vector<NetworkID>& objects);
+template vector<FactoryObject<Player>> GameFactory::GetMultiple(const vector<NetworkID>& objects);
 
-vector<FactoryObject> GameFactory::GetMultiple(const vector<unsigned int>& objects)
+template<typename T>
+vector<FactoryObject<T>> GameFactory::GetMultiple(const vector<unsigned int>& objects)
 {
-	vector<FactoryObject> result(objects.size());
+	vector<FactoryObject<T>> result(objects.size());
 	multimap<ReferenceList::value_type, unsigned int> sort;
 
 	cs.StartSession();
@@ -224,10 +249,15 @@ vector<FactoryObject> GameFactory::GetMultiple(const vector<unsigned int>& objec
 	cs.EndSession();
 
 	for (const auto& reference : sort)
-		result[reference.second] = FactoryObject(reference.first.first.get(), reference.first.second);
+		result[reference.second] = FactoryObject<T>(reference.first.first.get(), reference.first.second);
 
 	return result;
 }
+template vector<FactoryObject<Object>> GameFactory::GetMultiple(const vector<unsigned int>& objects);
+template vector<FactoryObject<Item>> GameFactory::GetMultiple(const vector<unsigned int>& objects);
+template vector<FactoryObject<Container>> GameFactory::GetMultiple(const vector<unsigned int>& objects);
+template vector<FactoryObject<Actor>> GameFactory::GetMultiple(const vector<unsigned int>& objects);
+template vector<FactoryObject<Player>> GameFactory::GetMultiple(const vector<unsigned int>& objects);
 
 NetworkID GameFactory::LookupNetworkID(unsigned int refID)
 {
@@ -267,7 +297,7 @@ unsigned int GameFactory::LookupRefID(NetworkID id)
 	return refID;
 }
 
-void GameFactory::LeaveReference(FactoryObject& reference)
+void GameFactory::LeaveReference(FactoryObject<Object>& reference)
 {
 	Reference* _reference = reference.reference;
 
@@ -522,12 +552,12 @@ void GameFactory::DestroyAllInstances()
 
 bool GameFactory::DestroyInstance(NetworkID id)
 {
-	FactoryObject reference = GetObject(id);
+	FactoryObject<Object> reference = GetObject(id);
 	DestroyInstance(reference);
 	return true;
 }
 
-NetworkID GameFactory::DestroyInstance(FactoryObject& reference)
+NetworkID GameFactory::DestroyInstance(FactoryObject<Object>& reference)
 {
 	Reference* _reference = reference.reference;
 

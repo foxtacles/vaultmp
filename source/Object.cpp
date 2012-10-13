@@ -220,8 +220,7 @@ vector<string> ObjectFunctor::operator()()
 
 	if (id)
 	{
-		FactoryObject reference = GameFactory::GetObject(id);
-		Reference* object = vaultcast<Object>(reference);
+		FactoryObject<Object> object = GameFactory::GetObject<Object>(id);
 
 		if (object)
 		{
@@ -235,8 +234,8 @@ vector<string> ObjectFunctor::operator()()
 	}
 	else
 	{
-		vector<FactoryObject>::iterator it;
-		vector<FactoryObject> references = GameFactory::GetObjectTypes(ID_OBJECT);
+		vector<FactoryObject<Object>>::iterator it;
+		vector<FactoryObject<Object>> references = GameFactory::GetObjectTypes<Object>(ID_OBJECT);
 		unsigned int refID;
 
 		for (it = references.begin(); it != references.end(); GameFactory::LeaveReference(*it), ++it)
@@ -249,9 +248,9 @@ vector<string> ObjectFunctor::operator()()
 	return result;
 }
 
-bool ObjectFunctor::filter(FactoryObject& reference)
+bool ObjectFunctor::filter(FactoryObject<Reference>& reference)
 {
-	Object* object = vaultcast<Object>(reference);
+	FactoryObject<Object> object = vaultcast<Object>(reference);
 	unsigned int flags = this->flags();
 
 	if (flags & FLAG_NOTSELF && object->GetReference() == PLAYER_REFERENCE)
