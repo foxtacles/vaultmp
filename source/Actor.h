@@ -1,9 +1,6 @@
 #ifndef ACTOR_H
 #define ACTOR_H
 
-#define TYPECLASS
-#include "GameFactory.h"
-
 #include <string>
 #include <list>
 #include <cmath>

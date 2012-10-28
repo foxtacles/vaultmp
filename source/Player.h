@@ -1,9 +1,6 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#define TYPECLASS
-#include "GameFactory.h"
-
 #include <string>
 #include <map>
 #include <vector>

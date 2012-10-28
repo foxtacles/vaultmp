@@ -1,15 +1,11 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-#define TYPECLASS
-#include "GameFactory.h"
-
 #include "vaultmp.h"
 #include "Data.h"
 #include "API.h"
 #include "Reference.h"
 #include "Value.h"
-#include "PacketFactory.h"
 #include "VaultVector.h"
 
 #ifdef VAULTMP_DEBUG

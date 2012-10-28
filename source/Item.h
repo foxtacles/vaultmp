@@ -1,9 +1,6 @@
 #ifndef ITEM_H
 #define ITEM_H
 
-#define TYPECLASS
-#include "GameFactory.h"
-
 #include "vaultmp.h"
 #include "Data.h"
 #include "Value.h"

@@ -8,17 +8,12 @@
 
 #include "RakNet.h"
 
-#ifndef TYPECLASS
+#include "Reference.h"
 #include "Object.h"
 #include "Item.h"
 #include "Container.h"
 #include "Actor.h"
 #include "Player.h"
-#else
-#undef TYPECLASS
-#endif
-
-#include "Reference.h"
 
 #ifdef VAULTSERVER
 #include "vaultserver/vaultserver.h"
@@ -34,13 +29,6 @@
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"
 #endif
-
-class Reference;
-class Object;
-class Item;
-class Container;
-class Actor;
-class Player;
 
 const unsigned char ID_REFERENCE        = 0x01;
 const unsigned char ID_OBJECT           = ID_REFERENCE << 1;
@@ -308,7 +296,7 @@ template<> class FactoryObject<Object> : public FactoryObject<Reference>
 		FactoryObject& operator=(FactoryObject&&) = default;
 		~FactoryObject() = default;
 
-		Object* operator->() const { return reinterpret_cast<Object*>(FactoryObject<Reference>::operator->()); }
+		Object* operator->() const { return static_cast<Object*>(FactoryObject<Reference>::operator->()); }
 };
 
 template<> inline bool FactoryObject<Reference>::validate<Item>(unsigned char type) const { return type ? (type & ID_ITEM) : (this->type & ID_ITEM); }
@@ -336,7 +324,7 @@ template<> class FactoryObject<Item> : public FactoryObject<Object>
 		FactoryObject& operator=(FactoryObject&&) = default;
 		~FactoryObject() = default;
 
-		Item* operator->() const { return reinterpret_cast<Item*>(FactoryObject<Reference>::operator->()); }
+		Item* operator->() const { return static_cast<Item*>(FactoryObject<Reference>::operator->()); }
 };
 
 template<> inline bool FactoryObject<Reference>::validate<Container>(unsigned char type) const { return type ? (type & ALL_CONTAINERS) : (this->type & ALL_CONTAINERS); }
@@ -364,7 +352,7 @@ template<> class FactoryObject<Container> : public FactoryObject<Object>
 		FactoryObject& operator=(FactoryObject&&) = default;
 		~FactoryObject() = default;
 
-		Container* operator->() const { return reinterpret_cast<Container*>(FactoryObject<Reference>::operator->()); }
+		Container* operator->() const { return static_cast<Container*>(FactoryObject<Reference>::operator->()); }
 };
 
 template<> inline bool FactoryObject<Reference>::validate<Actor>(unsigned char type) const { return type ? (type & ALL_ACTORS) : (this->type & ALL_ACTORS); }
@@ -392,7 +380,7 @@ template<> class FactoryObject<Actor> : public FactoryObject<Container>
 		FactoryObject& operator=(FactoryObject&&) = default;
 		~FactoryObject() = default;
 
-		Actor* operator->() const { return reinterpret_cast<Actor*>(FactoryObject<Reference>::operator->()); }
+		Actor* operator->() const { return static_cast<Actor*>(FactoryObject<Reference>::operator->()); }
 };
 
 template<> inline bool FactoryObject<Reference>::validate<Player>(unsigned char type) const { return type ? (type & ID_PLAYER) : (this->type & ID_PLAYER); }
@@ -420,7 +408,7 @@ template<> class FactoryObject<Player> : public FactoryObject<Actor>
 		FactoryObject& operator=(FactoryObject&&) = default;
 		~FactoryObject() = default;
 
-		Player* operator->() const { return reinterpret_cast<Player*>(FactoryObject<Reference>::operator->()); }
+		Player* operator->() const { return static_cast<Player*>(FactoryObject<Reference>::operator->()); }
 };
 
 /**
@@ -429,9 +417,20 @@ template<> class FactoryObject<Player> : public FactoryObject<Actor>
 template<typename T, typename U>
 inline FactoryObject<T> vaultcast(const FactoryObject<U>& object, bool safe = true) noexcept
 {
-	if (safe || object.template validate<T>())
-		return FactoryObject<T>(object);
-	else
-		return FactoryObject<T>();
+	bool valid = object.template validate<T>();
+
+	if (!valid)
+	{
+		if (safe)
+#ifdef VAULTMP_DEBUG
+			throw VaultException("Object %08X (%s) cannot be casted to %s", object.reference, typeid(U).name(), typeid(T).name());
+#else
+			throw VaultException("Object vaultcast failed (%08X)", object.reference);
+#endif
+		else
+			return FactoryObject<T>();
+	}
+
+	return FactoryObject<T>(object);
 }
 #endif

@@ -1,5 +1,6 @@
 #include "Actor.h"
 #include "PacketFactory.h"
+#include "GameFactory.h"
 
 using namespace std;
 using namespace RakNet;
@@ -293,8 +294,7 @@ unsigned int Actor::GetEquippedWeapon() const
 	// this won't reliably work if the actor has equipped more than one weapon
 	for (NetworkID& weapon : weapons)
 	{
-		FactoryObject _reference = GameFactory::GetObject(weapon);
-		Item* item = vaultcast<Item>(_reference);
+		FactoryObject<Item> item = GameFactory::GetObject<Item>(weapon);
 
 		if (item->GetItemEquipped())
 			return item->GetBase();

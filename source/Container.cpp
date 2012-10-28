@@ -1,5 +1,6 @@
 #include "Container.h"
 #include "PacketFactory.h"
+#include "GameFactory.h"
 
 using namespace std;
 using namespace RakNet;
@@ -510,8 +511,7 @@ list<NetworkID> Container::GetItemTypes(const string& type) const
 
 	for (const NetworkID& id : container)
 	{
-		FactoryObject _reference = GameFactory::GetObject(id);
-		Item* item = vaultcast<Item>(_reference);
+		FactoryObject<Item> item = GameFactory::GetObject<Item>(id);
 
 		try
 		{

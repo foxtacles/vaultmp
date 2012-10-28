@@ -1,14 +1,20 @@
 #ifndef CONTAINER_H
 #define CONTAINER_H
 
-#define TYPECLASS
-#include "GameFactory.h"
-
 #include <map>
 #include <list>
 #include <vector>
 #include <algorithm>
 #include <cstdlib>
+
+#include "vaultmp.h"
+#include "Data.h"
+#include "Object.h"
+#include "PacketFactory.h"
+
+#ifdef VAULTMP_DEBUG
+#include "Debug.h"
+#endif
 
 struct Diff
 {
@@ -28,15 +34,7 @@ typedef std::pair<std::list<RakNet::NetworkID>, std::list<RakNet::NetworkID>> Co
 typedef std::pair<std::list<RakNet::NetworkID>, std::vector<pPacket>> ContainerDiffNet;
 typedef std::list<std::pair<unsigned int, Diff>> GameDiff;
 
-#include "vaultmp.h"
-#include "Data.h"
-#include "Item.h"
-#include "Object.h"
-#include "PacketFactory.h"
-
-#ifdef VAULTMP_DEBUG
-#include "Debug.h"
-#endif
+class Item;
 
 class Container : public Object
 {
