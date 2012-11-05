@@ -216,7 +216,7 @@ void GUI::Draw(IDirect3DDevice9* d)
 		SetRect(&font_rect,15+(15*sizeMult),15+(18*sizeMult)+(((9-i)*20)*sizeMult),200,32);
 		g_font->DrawText(NULL,t.c_str(),-1,&font_rect,DT_LEFT|DT_NOCLIP,0xFF000000);*/
 		if(t)
-			t->Draw(15+(15*sizeMult),15+(18*sizeMult)+(((9-i)*20)*sizeMult));
+			t->Draw(15+(15*sizeMult),15+(18*sizeMult)+(((9-i)*20)*sizeMult),sizeMult);
 	}
 
 	string t=writingText;

@@ -149,7 +149,7 @@ GUIText::~GUIText()
 
 }
 
-void GUIText::Draw( int xOff , int yOff )
+void GUIText::Draw( int xOff , int yOff , float mul )
 {
 	char tmp[512];
 	for(int i=0;i<textChunks.size();i++)
@@ -158,7 +158,7 @@ void GUIText::Draw( int xOff , int yOff )
 		strncpy(tmp,str+textChunks[i].start,textChunks[i].end-textChunks[i].start);
 		DEBUG(xOff+textChunks[i].offsetX)
 		RECT font_rect;
-		SetRect(&font_rect,xOff+textChunks[i].offsetX,yOff+textChunks[i].offsetY,200,32);
+		SetRect(&font_rect,xOff+(textChunks[i].offsetX*mul),yOff+(textChunks[i].offsetY*mul),200,32);
 		font->DrawTextA(NULL,tmp,-1,&font_rect,DT_LEFT|DT_NOCLIP,textChunks[i].color);
 	}
 }

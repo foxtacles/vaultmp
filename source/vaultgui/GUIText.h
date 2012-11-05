@@ -26,5 +26,5 @@ class GUIText
 public:
 	GUIText(char*,ID3DXFont*);
 	~GUIText();
-	void Draw( int xOff , int yOff );
+	void Draw( int xOff , int yOff , float mul );
 };
