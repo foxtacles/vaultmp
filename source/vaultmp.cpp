@@ -869,9 +869,10 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 											{
 												SystemAddress addr;
 												RakString name, map;
-												unsigned int players, playersMax, rsize;
+												unsigned int players, playersMax, rsize, msize;
 												unsigned char game;
 												std::map<string, string> rules;
+												std::vector<string> modfiles;
 
 												query.Read(addr);
 												query.Read(name);
@@ -890,6 +891,17 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 													query.Read(value);
 													entry.SetServerRule(key.C_String(), value.C_String());
 												}
+
+												query.Read(msize);
+
+												for(int j = 0; j < msize; j++)
+												{
+												    RakString mod_name;
+												    query.Read(mod_name);
+												    entry.SetModFiles(mod_name.C_String());
+												}
+
+
 
 												SystemAddress self = peer->GetExternalID(packet->systemAddress);
 
@@ -1145,7 +1157,20 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 						if (i != serverList.end())
 						{
-							ServerEntry* entry = &i->second;
+
+						    ServerEntry* entry = &i->second;
+						    std::vector<string> modfiles = entry->GetServerModFiles();
+
+							for(unsigned p = 0; p < modfiles.size(); ++p)
+							{
+							    RakString _mod_name(modfiles.at(p).c_str());
+							    char mod_number[8],mod_name[strlen(_mod_name.C_String())];
+							    snprintf(mod_number,8,"Mod %d",p);
+							    strcpy(mod_name, _mod_name.C_String());
+							    Create2ColItem(wndlistview2, mod_number, mod_name);
+							}
+
+
 							std::map<string, string> rules = entry->GetServerRules();
 
 							for (map<string, string>::iterator k = rules.begin(); k != rules.end(); ++k)
@@ -1161,6 +1186,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 								Create2ColItem(wndlistview2, c_key, c_value);
 							}
+
 						}
 					}
 

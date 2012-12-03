@@ -220,6 +220,8 @@ void MasterServer::MasterThread()
 
 						query.Read(mfsize);
 
+						entry->ClearModFiles();
+
                         for (unsigned int j = 0; j < mfsize; j++)
                         {
                             RakString mod_name;

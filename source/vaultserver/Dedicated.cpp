@@ -90,13 +90,12 @@ void Dedicated::Announce(bool announce)
 				query.Write(value);
 			}
 
-			query.Write(modfiles.size()); //Writes size of modfile data
+			query.Write((int) modfiles.size()); //Writes size of modfile data
 
 			for(vector<pair<string, unsigned int>>::const_iterator j = modfiles.begin(); j != modfiles.end(); j++)
 			{
 			    RakString name(j->first.c_str());
 			    query.Write(name);
-			    //query.Write(j->second); //CRC removed
 			}
 		}
 
@@ -155,6 +154,14 @@ void Dedicated::Query(Packet* packet)
 			query.Write(key);
 			query.Write(value);
 		}
+
+		query.Write((int) modfiles.size());
+
+		for(unsigned k = 0; k < modfiles.size(); ++k)
+        {
+            RakString mod_name(modfiles.at(k).first.c_str());
+            query.Write(mod_name);
+        }
 
 		peer->Send(&query, LOW_PRIORITY, RELIABLE_ORDERED, CHANNEL_SYSTEM, packet->systemAddress, false, 0);
 

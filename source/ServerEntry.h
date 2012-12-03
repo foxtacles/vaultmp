@@ -39,6 +39,7 @@ class ServerEntry
 		unsigned int GetServerPing();
 		unsigned char GetGame();
 		const std::vector<string> GetServerModFiles();
+		void ClearModFiles();
 
 		ServerEntry(unsigned char game);
 		ServerEntry(const string& name, const string& map, const pair<unsigned int, unsigned int>& players, unsigned int ping, unsigned char game);

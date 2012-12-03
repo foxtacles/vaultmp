@@ -84,3 +84,8 @@ const std::vector<string> ServerEntry::GetServerModFiles()
 {
     return modfiles;
 }
+
+void ServerEntry::ClearModFiles()
+{
+    modfiles.clear();
+}
