@@ -45,6 +45,11 @@ void ServerEntry::SetGame(unsigned char game)
 	this->SetServerRule("game", game == FALLOUT3 ? "Fallout 3" : game == NEWVEGAS ? "Fallout NV" : "undefined");
 }
 
+void ServerEntry::SetModFiles(const string& name)
+{
+    this->modfiles.push_back(name);
+}
+
 const string& ServerEntry::GetServerName()
 {
 	return name;
@@ -73,4 +78,9 @@ unsigned int ServerEntry::GetServerPing()
 unsigned char ServerEntry::GetGame()
 {
 	return game;
+}
+
+const std::vector<string> ServerEntry::GetServerModFiles()
+{
+    return modfiles;
 }

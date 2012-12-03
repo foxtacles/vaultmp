@@ -89,6 +89,15 @@ void Dedicated::Announce(bool announce)
 				query.Write(key);
 				query.Write(value);
 			}
+
+			query.Write(modfiles.size()); //Writes size of modfile data
+
+			for(vector<pair<string, unsigned int>>::const_iterator j = modfiles.begin(); j != modfiles.end(); j++)
+			{
+			    RakString name(j->first.c_str());
+			    query.Write(name);
+			    //query.Write(j->second); //CRC removed
+			}
 		}
 
 		else

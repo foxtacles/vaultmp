@@ -74,6 +74,7 @@ void MasterServer::MasterThread()
 						unsigned int playersMax = entry.GetServerPlayers().second;
 						unsigned char game = entry.GetGame();
 						std::map<string, string> rules = entry.GetServerRules();
+						std::vector<string> modfiles = entry.GetServerModFiles();
 
 						query.Write(addr);
 						query.Write(name);
@@ -90,6 +91,15 @@ void MasterServer::MasterThread()
 							query.Write(key);
 							query.Write(value);
 						}
+
+						query.Write((int) modfiles.size());
+
+						for(unsigned k = 0; k < modfiles.size(); ++k)
+						{
+						    RakString mod_name(modfiles.at(k).c_str());
+						    query.Write(mod_name);
+						}
+
 					}
 
 					peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, packet->systemAddress, false, 0);
@@ -124,6 +134,7 @@ void MasterServer::MasterThread()
 						unsigned int playersMax = entry.GetServerPlayers().second;
 						unsigned char game = entry.GetGame();
 						std::map<string, string> rules = entry.GetServerRules();
+						std::vector<string> modfiles = entry.GetServerModFiles();
 
 						query.Write(name);
 						query.Write(map);
@@ -139,6 +150,16 @@ void MasterServer::MasterThread()
 							query.Write(key);
 							query.Write(value);
 						}
+
+						query.Write((int) modfiles.size());
+
+						for(unsigned k = 0; k < modfiles.size(); ++k)
+						{
+						    RakString mod_name(modfiles.at(k).c_str());
+						    query.Write(mod_name);
+						}
+
+
 					}
 
 					peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, packet->systemAddress, false, 0);
@@ -162,7 +183,7 @@ void MasterServer::MasterThread()
 					if (announce)
 					{
 						RakString name, map;
-						unsigned int players, playersMax, rsize;
+						unsigned int players, playersMax, rsize, mfsize;
 						unsigned char game;
 
 						query.Read(name);
@@ -196,6 +217,17 @@ void MasterServer::MasterThread()
 							query.Read(value);
 							entry->SetServerRule(key.C_String(), value.C_String());
 						}
+
+						query.Read(mfsize);
+
+                        for (unsigned int j = 0; j < mfsize; j++)
+                        {
+                            RakString mod_name;
+                            query.Read(mod_name);
+                            entry->SetModFiles(mod_name.C_String());
+                        }
+
+
 					}
 
 					else if (i != serverList.end())
