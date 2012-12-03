@@ -1165,7 +1165,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							{
 							    RakString _mod_name(modfiles.at(p).c_str());
 							    char mod_number[8],mod_name[strlen(_mod_name.C_String())];
-							    snprintf(mod_number,8,"Mod %d",p);
+							    snprintf(mod_number,8,"Mod %d",p+1);
 							    strcpy(mod_name, _mod_name.C_String());
 							    Create2ColItem(wndlistview2, mod_number, mod_name);
 							}
