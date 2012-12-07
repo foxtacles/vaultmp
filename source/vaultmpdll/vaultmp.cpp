@@ -61,17 +61,11 @@ static unsigned char game = 0x00;
 
 
 //Game ready hook address
-static const unsigned FalloutNVPatch_gamereadyhook = 0x72432d;
+static const unsigned FalloutNVPatch_gamereadyhook = 0x403e05;
 //IsGameReady variable
 static const unsigned FalloutNVPatch_gamereadyvariable = 0x401015;
-                                                     //mov dword [401015],0                    push 724332         push 6815c0         retn
-static unsigned char FalloutNVPatch_gamereadyfunc[] = "\xc7\x05\x15\x10\x40\x00\x00\x00\x00\x00\x68\x32\x43\x72\x00\x68\xc0\x15\x68\x00\xc3";
-/*The patch above means (21 bytes total)
-mov dword [00401015],0 -> Set the IsGameReady to 0, meaning the game IS ready to load the MP mod (default value is xCC (int 3)
-push 724332    -> The return address
-push 6815c0    -> Use push as JMP to avoid relative jumps
-retn           -> Jumps to the last address pushed, the other pushed address will be the return location of the old function
-*/
+
+
 
 static const unsigned FalloutNVpatch_disableNAM = 0x01018814;
 static const unsigned FalloutNVpatch_pluginsVMP = 0x0108282D;
@@ -345,6 +339,19 @@ void AVFix_F3()
 		:  "m"(Fallout3patch_AVFix_ret), "m"(Fallout3patch_AVFix_term)
 		:
 	);
+}
+
+void __declspec(naked) GameReady_NV()
+{
+    asm volatile(
+        "mov [ebp-8],ecx\n"
+        "cmp ecx,0x0101c524\n"
+        "jne _notready\n"
+        "mov dword ptr [0x401015],0\n"
+        "_notready:\n"
+        "push 0x403e11\n"
+        "ret\n"
+    );
 }
 
 void AVFix_FNV()
@@ -1045,12 +1052,13 @@ void PatchGame(HINSTANCE& silverlock)
 			SafeWrite32(FalloutNVpatch_pluginsVMP, *(DWORD*)".vmp"); // redirect Plugins.txt
 
             //Allocates hook function, write jmp to hook function , write hooking function and makes variable writeable
+
             unsigned int oldProtect;
             VirtualProtect((void*) FalloutNVPatch_gamereadyvariable, 4, PAGE_EXECUTE_READWRITE, (DWORD*) &oldProtect);
 
-            char* buffer = (char*)malloc(21);
-            SafeWriteBuf((unsigned)buffer, FalloutNVPatch_gamereadyfunc, 21);
-            WriteRelJump(FalloutNVPatch_gamereadyhook, (unsigned)buffer);
+            char* buffer = (char*)malloc(23);
+            //SafeWriteBuf((unsigned)buffer, FalloutNVPatch_gamereadyfunc, 23);
+            WriteRelJump(FalloutNVPatch_gamereadyhook, (unsigned)&GameReady_NV);
 
 			break;
 		}
