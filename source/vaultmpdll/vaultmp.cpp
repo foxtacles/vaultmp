@@ -62,10 +62,7 @@ static unsigned char game = 0x00;
 
 //Game ready hook address
 static const unsigned FalloutNVPatch_gamereadyhook = 0x403e05;
-//IsGameReady variable
 static const unsigned FalloutNVPatch_gamereadyvariable = 0x401015;
-
-
 
 static const unsigned FalloutNVpatch_disableNAM = 0x01018814;
 static const unsigned FalloutNVpatch_pluginsVMP = 0x0108282D;
@@ -341,11 +338,11 @@ void AVFix_F3()
 	);
 }
 
-void __declspec(naked) GameReady_NV()
+void GameReady_NV()
 {
     asm volatile(
         "mov [ebp-8],ecx\n"
-        "cmp ecx,0x0101c524\n"
+        "cmp ecx,0x0105bd68\n" //0101c524
         "jne _notready\n"
         "mov dword ptr [0x401015],0\n"
         "_notready:\n"
@@ -1051,13 +1048,8 @@ void PatchGame(HINSTANCE& silverlock)
 			SafeWrite32(FalloutNVpatch_disableNAM, *(DWORD*)".|||"); // disable .NAM files
 			SafeWrite32(FalloutNVpatch_pluginsVMP, *(DWORD*)".vmp"); // redirect Plugins.txt
 
-            //Allocates hook function, write jmp to hook function , write hooking function and makes variable writeable
-
             unsigned int oldProtect;
             VirtualProtect((void*) FalloutNVPatch_gamereadyvariable, 4, PAGE_EXECUTE_READWRITE, (DWORD*) &oldProtect);
-
-            char* buffer = (char*)malloc(23);
-            //SafeWriteBuf((unsigned)buffer, FalloutNVPatch_gamereadyfunc, 23);
             WriteRelJump(FalloutNVPatch_gamereadyhook, (unsigned)&GameReady_NV);
 
 			break;
