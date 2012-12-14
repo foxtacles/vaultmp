@@ -51,6 +51,24 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReser
 				SendToLog("RegisterClass hook failed");
 			}
 
+			if(SUCCEEDED(PatchIat(GetModuleHandle(NULL),"kernel32.dll","CreateFileA",(PVOID)CreateFile_Hook,(PVOID *)&CreateFile_Original)))
+			{
+				SendToLog("CreateFile hook injected");
+			}
+			else
+			{
+				SendToLog("CreateFile hook failed");
+			}
+			
+			if(SUCCEEDED(PatchIat(GetModuleHandle(NULL),"kernel32.dll","ReadFile",(PVOID)ReadFile_Hook,(PVOID *)&ReadFile_Original)))
+			{
+				SendToLog("ReadFile hook injected");
+			}
+			else
+			{
+				SendToLog("ReadFile hook failed");
+			}
+
 	    case DLL_PROCESS_DETACH: ExitInstance(); break;
         
         case DLL_THREAD_ATTACH:  break;

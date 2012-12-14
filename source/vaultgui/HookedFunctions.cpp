@@ -4,6 +4,10 @@ IDirect3D9* (WINAPI *Direct3DCreate9_Original)(UINT SDKVersion);
 FARPROC (WINAPI *GetProcAddress_Original)(HMODULE hModule,LPCSTR lpProcName);
 ATOM (WINAPI *RegisterClass_Original)(const WNDCLASS *lpWndClass);
 LRESULT (CALLBACK *WindowProcedure_Original)(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
+HANDLE (WINAPI *CreateFile_Original)(LPCTSTR lpFileName,DWORD dwDesiredAccess,DWORD dwShareMode,LPSECURITY_ATTRIBUTES lpSecurityAttributes,DWORD dwCreationDisposition,DWORD dwFlagsAndAttributes,HANDLE hTemplateFile);
+
+BOOL (WINAPI *ReadFile_Original)(HANDLE hFile,LPVOID lpBuffer,DWORD nNumberOfBytesToRead,LPDWORD lpNumberOfBytesRead,LPOVERLAPPED lpOverlapped);
+HFILE (WINAPI *OpenFile_Original)(LPCSTR lpFileName,LPOFSTRUCT lpReOpenBuff,UINT uStyle);
 
 extern myIDirect3DDevice9* gl_pmyIDirect3DDevice9;
 
@@ -183,4 +187,24 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 
 	}
 	return WindowProcedure_Original(hwnd,message,wparam,lparam);
+}
+
+BOOL WINAPI ReadFile_Hook(HANDLE hFile,LPVOID lpBuffer,DWORD nNumberOfBytesToRead,LPDWORD lpNumberOfBytesRead,LPOVERLAPPED lpOverlapped)
+{
+	char tmp[100];
+	sprintf(tmp,"Readfile (%d bytes)",lpNumberOfBytesRead);
+	//SendToLog(tmp);
+	return ReadFile_Original(hFile,lpBuffer,nNumberOfBytesToRead,lpNumberOfBytesRead,lpOverlapped);
+}
+
+HFILE WINAPI OpenFile_Hook(LPCSTR lpFileName,LPOFSTRUCT lpReOpenBuff,UINT uStyle)
+{
+	//SendToLog((char*)(string("Openfile:")+lpFileName).c_str());
+	return OpenFile_Original(lpFileName,lpReOpenBuff,uStyle);
+}
+
+HANDLE WINAPI CreateFile_Hook(LPCTSTR lpFileName,DWORD dwDesiredAccess,DWORD dwShareMode,LPSECURITY_ATTRIBUTES lpSecurityAttributes,DWORD dwCreationDisposition,DWORD dwFlagsAndAttributes,HANDLE hTemplateFile)
+{
+	//SendToLog((char*)(string("CreateFile:")+lpFileName).c_str());
+	return CreateFile_Original(lpFileName,dwDesiredAccess,dwShareMode,lpSecurityAttributes,dwCreationDisposition,dwFlagsAndAttributes,hTemplateFile);
 }
