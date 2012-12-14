@@ -7,7 +7,7 @@ unsigned int Script::gameWeather;
 Script::Script(char* path)
 {
 	FILE* file = fopen(path, "rb");
-
+    //printf("Loading script %s",path);
 	if (file == nullptr)
 		throw VaultException("Script not found: %s", path);
 

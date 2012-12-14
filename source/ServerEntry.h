@@ -4,6 +4,7 @@
 #include <climits>
 #include <string>
 #include <map>
+#include <vector>
 
 #include "vaultmp.h"
 
@@ -18,6 +19,7 @@ class ServerEntry
 		pair<unsigned int, unsigned int> players;
 		unsigned int ping;
 		unsigned char game;
+		std::vector<string> modfiles;
 
 		ServerEntry& operator=(const ServerEntry&) = delete;
 
@@ -28,6 +30,7 @@ class ServerEntry
 		void SetServerPlayers(const pair<unsigned int, unsigned int>& players);
 		void SetServerPing(unsigned int ping);
 		void SetGame(unsigned char game);
+		void SetModFiles(const string& name);
 
 		const string& GetServerName();
 		const string& GetServerMap();
@@ -35,6 +38,8 @@ class ServerEntry
 		const pair<unsigned int, unsigned int>& GetServerPlayers();
 		unsigned int GetServerPing();
 		unsigned char GetGame();
+		const std::vector<string> GetServerModFiles();
+		void ClearModFiles();
 
 		ServerEntry(unsigned char game);
 		ServerEntry(const string& name, const string& map, const pair<unsigned int, unsigned int>& players, unsigned int ping, unsigned char game);
