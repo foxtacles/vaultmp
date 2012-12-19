@@ -6,32 +6,32 @@ AR = ar.exe
 LD = g++.exe
 WINDRES = windres.exe
 
-INC =  -I.. -I..\\stack_trace\\include
-CFLAGS =  -pedantic-errors -pedantic -Wfatal-errors -Wextra -Wall -std=gnu++0x -DVAULTSERVER
-CFLAGSEXT = -std=gnu++0x
+INC = -I..
+CFLAGS = -pedantic-errors -pedantic -Wfatal-errors -Wextra -Wall -std=gnu++0x -m32 -DVAULTSERVER
+CFLAGSEXT = -std=gnu++0x -m32
 RESINC =
 LIBDIR =
 LIB =
-LDFLAGS = -lws2_32 -lwinmm -lm -limagehlp -static
+LDFLAGS = -m32 -lws2_32 -lwinmm -lm -limagehlp -static
 
-INC_DEBUG =  $(INC)
-CFLAGS_DEBUG =  $(CFLAGS) -gstabs -DVAULTMP_DEBUG
-CFLAGSEXT_DEBUG =  $(CFLAGSEXT)
-RESINC_DEBUG =  $(RESINC)
-RCFLAGS_DEBUG =  $(RCFLAGS)
-LIBDIR_DEBUG =  $(LIBDIR)
+INC_DEBUG = $(INC) -I..\\stack_trace\\include
+CFLAGS_DEBUG = $(CFLAGS) -gstabs -DVAULTMP_DEBUG
+CFLAGSEXT_DEBUG = $(CFLAGSEXT)
+RESINC_DEBUG = $(RESINC)
+RCFLAGS_DEBUG = $(RCFLAGS)
+LIBDIR_DEBUG = $(LIBDIR)
 LIB_DEBUG = $(LIB)
-LDFLAGS_DEBUG =  -lbfd -liberty $(LDFLAGS)
+LDFLAGS_DEBUG = -lbfd -liberty $(LDFLAGS)
 OBJDIR_DEBUG = .objs\\Debug
 DEP_DEBUG =
 OUT_DEBUG = vaultserverd.exe
 
-INC_RELEASE =  $(INC)
-CFLAGS_RELEASE =  $(CFLAGS) -O2 -DNDEBUG
-CFLAGSEXT_RELEASE =  $(CFLAGSEXT) -O2 -DNDEBUG
-RESINC_RELEASE =  $(RESINC)
-RCFLAGS_RELEASE =  $(RCFLAGS)
-LIBDIR_RELEASE =  $(LIBDIR)
+INC_RELEASE = $(INC)
+CFLAGS_RELEASE = $(CFLAGS) -O2 -DNDEBUG
+CFLAGSEXT_RELEASE = $(CFLAGSEXT) -O2 -DNDEBUG
+RESINC_RELEASE = $(RESINC)
+RCFLAGS_RELEASE = $(RCFLAGS)
+LIBDIR_RELEASE = $(LIBDIR)
 LIB_RELEASE = $(LIB)
 LDFLAGS_RELEASE = -s $(LDFLAGS)
 OBJDIR_RELEASE = .objs\\Release

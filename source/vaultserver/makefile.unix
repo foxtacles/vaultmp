@@ -6,34 +6,34 @@ AR = ar
 LD = g++
 WINDRES = windres
 
-INC =  -I.. -Iamx/linux
-CFLAGS =  -pedantic-errors -pedantic -Wfatal-errors -Wextra -Wall -std=gnu++0x -m32 -DVAULTSERVER
-CFLAGSEXT =  -std=gnu++0x -m32
+INC = -I.. -Iamx/linux
+CFLAGS = -pedantic-errors -pedantic -Wfatal-errors -Wextra -Wall -std=gnu++0x -m32 -DVAULTSERVER
+CFLAGSEXT = -std=gnu++0x -m32
 RESINC =
 LIBDIR =
 LIB =
 LDFLAGS = -m32 -ldl -lncurses -lpthread
 
-INC_DEBUG =  $(INC) -I../stack_trace/include
-CFLAGS_DEBUG =  $(CFLAGS) -gstabs -rdynamic -DVAULTMP_DEBUG
-CFLAGSEXT_DEBUG =  $(CFLAGSEXT) -rdynamic
-RESINC_DEBUG =  $(RESINC)
-RCFLAGS_DEBUG =  $(RCFLAGS)
-LIBDIR_DEBUG =  $(LIBDIR)
+INC_DEBUG = $(INC) -I../stack_trace/include
+CFLAGS_DEBUG = $(CFLAGS) -gstabs -rdynamic -DVAULTMP_DEBUG
+CFLAGSEXT_DEBUG = $(CFLAGSEXT) -rdynamic
+RESINC_DEBUG = $(RESINC)
+RCFLAGS_DEBUG = $(RCFLAGS)
+LIBDIR_DEBUG = $(LIBDIR)
 LIB_DEBUG = $(LIB)
-LDFLAGS_DEBUG =  $(LDFLAGS)
+LDFLAGS_DEBUG = $(LDFLAGS)
 OBJDIR_DEBUG = .objs/Debug
 DEP_DEBUG =
 OUT_DEBUG = vaultserverd
 
-INC_RELEASE =  $(INC)
-CFLAGS_RELEASE =  $(CFLAGS) -O2 -DNEDBUG
-CFLAGSEXT_RELEASE =  $(CFLAGSEXT) -O2 -DNDEBUG
-RESINC_RELEASE =  $(RESINC)
-RCFLAGS_RELEASE =  $(RCFLAGS)
-LIBDIR_RELEASE =  $(LIBDIR)
+INC_RELEASE = $(INC)
+CFLAGS_RELEASE = $(CFLAGS) -O2 -DNDEBUG
+CFLAGSEXT_RELEASE = $(CFLAGSEXT) -O2 -DNDEBUG
+RESINC_RELEASE = $(RESINC)
+RCFLAGS_RELEASE = $(RCFLAGS)
+LIBDIR_RELEASE = $(LIBDIR)
 LIB_RELEASE = $(LIB)
-LDFLAGS_RELEASE =  $(LDFLAGS) -s
+LDFLAGS_RELEASE = -s $(LDFLAGS)
 OBJDIR_RELEASE = .objs/Release
 DEP_RELEASE =
 OUT_RELEASE = vaultserver

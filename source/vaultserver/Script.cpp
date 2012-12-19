@@ -411,11 +411,9 @@ unsigned long long Script::CallPublicPAWN(const char* name, const vector<boost::
 
 unsigned long long Script::Timer_Respawn(NetworkID id)
 {
-	FactoryObject reference;
-
 	try
 	{
-		reference = GameFactory::GetObject(id);
+		GameFactory::GetObject<Player>(id);
 	}
 	catch (...)
 	{
@@ -423,7 +421,6 @@ unsigned long long Script::Timer_Respawn(NetworkID id)
 		return 0;
 	}
 
-	Player* player = vaultcast<Player>(reference);
 	RakNetGUID guid = Client::GetClientFromPlayer(id)->GetGUID();
 
 	RemoveAllItems(id);
@@ -510,7 +507,7 @@ unsigned long long Script::Timer_GameTime()
 	return 1;
 }
 
-void Script::OnSpawn(const FactoryObject& reference)
+void Script::OnSpawn(const FactoryObject<Object>& reference)
 {
 	NetworkID id = reference->GetNetworkID();
 
@@ -526,7 +523,7 @@ void Script::OnSpawn(const FactoryObject& reference)
 	}
 }
 
-void Script::OnCellChange(const FactoryObject& reference, unsigned int cell)
+void Script::OnCellChange(const FactoryObject<Object>& reference, unsigned int cell)
 {
 	NetworkID id = reference->GetNetworkID();
 
@@ -542,7 +539,7 @@ void Script::OnCellChange(const FactoryObject& reference, unsigned int cell)
 	}
 }
 
-void Script::OnContainerItemChange(const FactoryObject& reference, unsigned int baseID, signed int count, double condition)
+void Script::OnContainerItemChange(const FactoryObject<Container>& reference, unsigned int baseID, signed int count, double condition)
 {
 	NetworkID id = reference->GetNetworkID();
 
@@ -558,7 +555,7 @@ void Script::OnContainerItemChange(const FactoryObject& reference, unsigned int 
 	}
 }
 
-void Script::OnActorValueChange(const FactoryObject& reference, unsigned char index, bool base, double value)
+void Script::OnActorValueChange(const FactoryObject<Actor>& reference, unsigned char index, bool base, double value)
 {
 	NetworkID id = reference->GetNetworkID();
 
@@ -587,7 +584,7 @@ void Script::OnActorValueChange(const FactoryObject& reference, unsigned char in
 	}
 }
 
-void Script::OnActorAlert(const FactoryObject& reference, bool alerted)
+void Script::OnActorAlert(const FactoryObject<Actor>& reference, bool alerted)
 {
 	NetworkID id = reference->GetNetworkID();
 
@@ -603,7 +600,7 @@ void Script::OnActorAlert(const FactoryObject& reference, bool alerted)
 	}
 }
 
-void Script::OnActorSneak(const FactoryObject& reference, bool sneaking)
+void Script::OnActorSneak(const FactoryObject<Actor>& reference, bool sneaking)
 {
 	NetworkID id = reference->GetNetworkID();
 
@@ -619,7 +616,7 @@ void Script::OnActorSneak(const FactoryObject& reference, bool sneaking)
 	}
 }
 
-void Script::OnActorDeath(const FactoryObject& reference, unsigned short limbs, signed char cause)
+void Script::OnActorDeath(const FactoryObject<Actor>& reference, unsigned short limbs, signed char cause)
 {
 	NetworkID id = reference->GetNetworkID();
 
@@ -635,7 +632,7 @@ void Script::OnActorDeath(const FactoryObject& reference, unsigned short limbs, 
 	}
 }
 
-void Script::OnActorEquipItem(const FactoryObject& reference, unsigned int baseID, double condition)
+void Script::OnActorEquipItem(const FactoryObject<Actor>& reference, unsigned int baseID, double condition)
 {
 	NetworkID id = reference->GetNetworkID();
 
@@ -651,7 +648,7 @@ void Script::OnActorEquipItem(const FactoryObject& reference, unsigned int baseI
 	}
 }
 
-void Script::OnActorUnequipItem(const FactoryObject& reference, unsigned int baseID, double condition)
+void Script::OnActorUnequipItem(const FactoryObject<Actor>& reference, unsigned int baseID, double condition)
 {
 	NetworkID id = reference->GetNetworkID();
 
@@ -667,7 +664,7 @@ void Script::OnActorUnequipItem(const FactoryObject& reference, unsigned int bas
 	}
 }
 
-void Script::OnActorDropItem(const FactoryObject& reference, unsigned int baseID, unsigned int count, double condition)
+void Script::OnActorDropItem(const FactoryObject<Actor>& reference, unsigned int baseID, unsigned int count, double condition)
 {
 	NetworkID id = reference->GetNetworkID();
 
@@ -683,7 +680,7 @@ void Script::OnActorDropItem(const FactoryObject& reference, unsigned int baseID
 	}
 }
 
-void Script::OnActorPickupItem(const FactoryObject& reference, unsigned int baseID, unsigned int count, double condition)
+void Script::OnActorPickupItem(const FactoryObject<Actor>& reference, unsigned int baseID, unsigned int count, double condition)
 {
 	NetworkID id = reference->GetNetworkID();
 
@@ -699,7 +696,7 @@ void Script::OnActorPickupItem(const FactoryObject& reference, unsigned int base
 	}
 }
 
-void Script::OnActorPunch(const FactoryObject& reference, bool power)
+void Script::OnActorPunch(const FactoryObject<Actor>& reference, bool power)
 {
 	NetworkID id = reference->GetNetworkID();
 
@@ -715,7 +712,7 @@ void Script::OnActorPunch(const FactoryObject& reference, bool power)
 	}
 }
 
-void Script::OnActorFireWeapon(const FactoryObject& reference, unsigned int weapon)
+void Script::OnActorFireWeapon(const FactoryObject<Actor>& reference, unsigned int weapon)
 {
 	NetworkID id = reference->GetNetworkID();
 
@@ -731,7 +728,7 @@ void Script::OnActorFireWeapon(const FactoryObject& reference, unsigned int weap
 	}
 }
 
-void Script::OnPlayerDisconnect(const FactoryObject& reference, Reason reason)
+void Script::OnPlayerDisconnect(const FactoryObject<Player>& reference, Reason reason)
 {
 	NetworkID id = reference->GetNetworkID();
 
@@ -747,7 +744,7 @@ void Script::OnPlayerDisconnect(const FactoryObject& reference, Reason reason)
 	}
 }
 
-unsigned int Script::OnPlayerRequestGame(const FactoryObject& reference)
+unsigned int Script::OnPlayerRequestGame(const FactoryObject<Player>& reference)
 {
 	NetworkID id = reference->GetNetworkID();
 	unsigned int result = 0;
@@ -766,7 +763,7 @@ unsigned int Script::OnPlayerRequestGame(const FactoryObject& reference)
 	return result;
 }
 
-bool Script::OnPlayerChat(const FactoryObject& reference, string& message)
+bool Script::OnPlayerChat(const FactoryObject<Player>& reference, string& message)
 {
 	NetworkID id = reference->GetNetworkID();
 	bool result = true;
@@ -1259,68 +1256,38 @@ double Script::GetTimeScale()
 
 unsigned int Script::GetReference(NetworkID id)
 {
-	unsigned int value = 0;
-	FactoryObject reference;
-
 	try
 	{
-		reference = GameFactory::GetObject(id);
+		return GameFactory::GetObject(id)->GetReference();
 	}
-	catch (...)
-	{
-		return value;
-	}
+	catch (...) {}
 
-	Object* object = vaultcast<Object>(reference);
-
-	if (object)
-		value = object->GetReference();
-
-	return value;
+	return 0;
 }
 
 unsigned int Script::GetBase(NetworkID id)
 {
-	unsigned int value = 0;
-	FactoryObject reference;
-
 	try
 	{
-		reference = GameFactory::GetObject(id);
+		return GameFactory::GetObject(id)->GetBase();
 	}
-	catch (...)
-	{
-		return value;
-	}
+	catch (...) {}
 
-	Object* object = vaultcast<Object>(reference);
-
-	if (object)
-		value = object->GetBase();
-
-	return value;
+	return 0;
 }
 
 const char* Script::GetName(NetworkID id)
 {
 	static string name;
-	FactoryObject reference;
 
 	try
 	{
-		reference = GameFactory::GetObject(id);
+		name.assign(GameFactory::GetObject(id)->GetName());
+		return name.c_str();
 	}
-	catch (...)
-	{
-		return "";
-	}
+	catch (...) {}
 
-	Object* object = vaultcast<Object>(reference);
-
-	if (object)
-		name.assign(object->GetName());
-
-	return name.c_str();
+	return "";
 }
 
 void Script::GetPos(NetworkID id, double* X, double* Y, double* Z)
@@ -1329,25 +1296,14 @@ void Script::GetPos(NetworkID id, double* X, double* Y, double* Z)
 	*Y = 0.00;
 	*Z = 0.00;
 
-	FactoryObject reference;
-
 	try
 	{
-		reference = GameFactory::GetObject(id);
-	}
-	catch (...)
-	{
-		return;
-	}
-
-	Object* object = vaultcast<Object>(reference);
-
-	if (object)
-	{
+		auto object = GameFactory::GetObject(id);
 		*X = object->GetNetworkPos(Axis_X);
 		*Y = object->GetNetworkPos(Axis_Y);
 		*Z = object->GetNetworkPos(Axis_Z);
 	}
+	catch (...) {}
 }
 
 void Script::GetAngle(NetworkID id, double* X, double* Y, double* Z)
@@ -1356,256 +1312,135 @@ void Script::GetAngle(NetworkID id, double* X, double* Y, double* Z)
 	*Y = 0.00;
 	*Z = 0.00;
 
-	FactoryObject reference;
-
 	try
 	{
-		reference = GameFactory::GetObject(id);
-	}
-	catch (...)
-	{
-		return;
-	}
-
-	Object* object = vaultcast<Object>(reference);
-
-	if (object)
-	{
+		auto object = GameFactory::GetObject(id);
 		*X = object->GetAngle(Axis_X);
 		*Y = object->GetAngle(Axis_Y);
 		*Z = object->GetAngle(Axis_Z);
 	}
+	catch (...) {}
 }
 
 unsigned int Script::GetCell(NetworkID id)
 {
-	unsigned int value = 0;
-	FactoryObject reference;
-
 	try
 	{
-		reference = GameFactory::GetObject(id);
+		return GameFactory::GetObject(id)->GetNetworkCell();
 	}
-	catch (...)
-	{
-		return value;
-	}
+	catch (...) {}
 
-	Object* object = vaultcast<Object>(reference);
-
-	if (object)
-		value = object->GetNetworkCell();
-
-	return value;
+	return 0;
 }
 
 bool Script::IsNearPoint(NetworkID id, double X, double Y, double Z, double R)
 {
-	FactoryObject reference;
-
 	try
 	{
-		reference = GameFactory::GetObject(id);
+		return GameFactory::GetObject(id)->IsNearPoint(X, Y, Z, R);
 	}
-	catch (...)
-	{
-		return false;
-	}
-
-	Object* object = vaultcast<Object>(reference);
-
-	if (object)
-		return object->IsNearPoint(X, Y, Z, R);
+	catch (...) {}
 
 	return false;
 }
 
 NetworkID Script::GetItemContainer(NetworkID id)
 {
-	NetworkID container = 0;
-	FactoryObject reference;
-
 	try
 	{
-		reference = GameFactory::GetObject(id);
+		return GameFactory::GetObject<Item>(id)->GetItemContainer();
 	}
-	catch (...)
-	{
-		return container;
-	}
+	catch (...) {}
 
-	Item* item = vaultcast<Item>(reference);
-
-	if (item)
-		container = item->GetItemContainer();
-
-	return container;
+	return 0;
 }
 
 unsigned int Script::GetItemCount(NetworkID id)
 {
-	unsigned int value = 0;
-	FactoryObject reference;
-
 	try
 	{
-		reference = GameFactory::GetObject(id);
+		return GameFactory::GetObject<Item>(id)->GetItemCount();
 	}
-	catch (...)
-	{
-		return value;
-	}
+	catch (...) {}
 
-	Item* item = vaultcast<Item>(reference);
-
-	if (item)
-		value = item->GetItemCount();
-
-	return value;
+	return 0;
 }
 
 double Script::GetItemCondition(NetworkID id)
 {
-	double value = 0.00;
-	FactoryObject reference;
-
 	try
 	{
-		reference = GameFactory::GetObject(id);
+		return GameFactory::GetObject<Item>(id)->GetItemCondition();
 	}
-	catch (...)
-	{
-		return value;
-	}
+	catch (...) {}
 
-	Item* item = vaultcast<Item>(reference);
-
-	if (item)
-		value = item->GetItemCondition();
-
-	return value;
+	return 0.00;
 }
 
 bool Script::GetItemEquipped(NetworkID id)
 {
-	bool value = false;
-	FactoryObject reference;
-
 	try
 	{
-		reference = GameFactory::GetObject(id);
+		return GameFactory::GetObject<Item>(id)->GetItemEquipped();
 	}
-	catch (...)
-	{
-		return value;
-	}
+	catch (...) {}
 
-	Item* item = vaultcast<Item>(reference);
-
-	if (item)
-		value = item->GetItemEquipped();
-
-	return value;
+	return false;
 }
 
 bool Script::GetItemSilent(NetworkID id)
 {
-	bool value = false;
-	FactoryObject reference;
-
 	try
 	{
-		reference = GameFactory::GetObject(id);
+		return GameFactory::GetObject<Item>(id)->GetItemSilent();
 	}
-	catch (...)
-	{
-		return value;
-	}
+	catch (...) {}
 
-	Item* item = vaultcast<Item>(reference);
-
-	if (item)
-		value = item->GetItemSilent();
-
-	return value;
+	return false;
 }
 
 bool Script::GetItemStick(NetworkID id)
 {
-	bool value = false;
-	FactoryObject reference;
-
 	try
 	{
-		reference = GameFactory::GetObject(id);
+		return GameFactory::GetObject<Item>(id)->GetItemStick();
 	}
-	catch (...)
-	{
-		return value;
-	}
+	catch (...) {}
 
-	Item* item = vaultcast<Item>(reference);
-
-	if (item)
-		value = item->GetItemStick();
-
-	return value;
+	return false;
 }
 
 unsigned int Script::GetContainerItemCount(NetworkID id, unsigned int baseID)
 {
-	unsigned int value = 0;
-	FactoryObject reference;
-
 	try
 	{
-		reference = GameFactory::GetObject(id);
+		return GameFactory::GetObject<Container>(id)->GetItemCount();
 	}
-	catch (...)
-	{
-		return value;
-	}
+	catch (...) {}
 
-	Container* container = vaultcast<Container>(reference);
-
-	if (container)
-		value = container->GetItemCount(baseID);
-
-	return value;
+	return 0;
 }
 
 double Script::GetActorValue(NetworkID id, unsigned char index)
 {
-	double value = 0.00;
-
 	try
 	{
-		FactoryObject reference = GameFactory::GetObject(id);
-		Actor* actor = vaultcast<Actor>(reference);
-
-		if (actor)
-			value = actor->GetActorValue(index);
+		return GameFactory::GetObject<Actor>(id)->GetActorValue(index);
 	}
 	catch (...) {}
 
-	return value;
+	return 0.00;
 }
 
 double Script::GetActorBaseValue(NetworkID id, unsigned char index)
 {
-	double value = 0.00;
-
 	try
 	{
-		FactoryObject reference = GameFactory::GetObject(id);
-		Actor* actor = vaultcast<Actor>(reference);
-
-		if (actor)
-			value = actor->GetActorBaseValue(index);
+		return GameFactory::GetObject<Actor>(id)->GetActorBaseValue(index);;
 	}
 	catch (...) {}
 
-	return value;
+	return 0.00;
 }
 
 unsigned int Script::GetActorIdleAnimation(NetworkID id)

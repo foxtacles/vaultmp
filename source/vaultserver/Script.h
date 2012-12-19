@@ -16,7 +16,9 @@
 #include "PAWN.h"
 #include "Dedicated.h"
 #include "time/time64.h"
+#include "Record.h"
 #include "../API.h"
+#include "../GameFactory.h"
 #include "../Utils.h"
 #include "../vaultmp.h"
 #include "../VaultException.h"
@@ -97,22 +99,22 @@ class Script
 		static unsigned long long Timer_Respawn(RakNet::NetworkID id);
 		static unsigned long long Timer_GameTime();
 
-		static void OnSpawn(const FactoryObject& reference);
-		static void OnCellChange(const FactoryObject& reference, unsigned int cell);
-		static void OnContainerItemChange(const FactoryObject& reference, unsigned int baseID, signed int count, double condition);
-		static void OnActorValueChange(const FactoryObject& reference, unsigned char index, bool base, double value);
-		static void OnActorAlert(const FactoryObject& reference, bool alerted);
-		static void OnActorSneak(const FactoryObject& reference, bool sneaking);
-		static void OnActorDeath(const FactoryObject& reference, unsigned short limbs, signed char cause);
-		static void OnActorEquipItem(const FactoryObject& reference, unsigned int baseID, double condition);
-		static void OnActorUnequipItem(const FactoryObject& reference, unsigned int baseID, double condition);
-		static void OnActorDropItem(const FactoryObject& reference, unsigned int baseID, unsigned int count, double condition);
-		static void OnActorPickupItem(const FactoryObject& reference, unsigned int baseID, unsigned int count, double condition);
-		static void OnActorPunch(const FactoryObject& reference, bool power);
-		static void OnActorFireWeapon(const FactoryObject& reference, unsigned int weapon);
-		static void OnPlayerDisconnect(const FactoryObject& reference, Reason reason);
-		static unsigned int OnPlayerRequestGame(const FactoryObject& reference);
-		static bool OnPlayerChat(const FactoryObject& reference, std::string& message);
+		static void OnSpawn(const FactoryObject<Object>& reference);
+		static void OnCellChange(const FactoryObject<Object>& reference, unsigned int cell);
+		static void OnContainerItemChange(const FactoryObject<Container>& reference, unsigned int baseID, signed int count, double condition);
+		static void OnActorValueChange(const FactoryObject<Actor>& reference, unsigned char index, bool base, double value);
+		static void OnActorAlert(const FactoryObject<Actor>& reference, bool alerted);
+		static void OnActorSneak(const FactoryObject<Actor>& reference, bool sneaking);
+		static void OnActorDeath(const FactoryObject<Actor>& reference, unsigned short limbs, signed char cause);
+		static void OnActorEquipItem(const FactoryObject<Actor>& reference, unsigned int baseID, double condition);
+		static void OnActorUnequipItem(const FactoryObject<Actor>& reference, unsigned int baseID, double condition);
+		static void OnActorDropItem(const FactoryObject<Actor>& reference, unsigned int baseID, unsigned int count, double condition);
+		static void OnActorPickupItem(const FactoryObject<Actor>& reference, unsigned int baseID, unsigned int count, double condition);
+		static void OnActorPunch(const FactoryObject<Actor>& reference, bool power);
+		static void OnActorFireWeapon(const FactoryObject<Actor>& reference, unsigned int weapon);
+		static void OnPlayerDisconnect(const FactoryObject<Player>& reference, Reason reason);
+		static unsigned int OnPlayerRequestGame(const FactoryObject<Player>& reference);
+		static bool OnPlayerChat(const FactoryObject<Player>& reference, std::string& message);
 		static bool OnClientAuthenticate(const std::string& name, const std::string& pwd);
 		static void OnGameYearChange(unsigned int year);
 		static void OnGameMonthChange(unsigned int month);

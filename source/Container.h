@@ -87,7 +87,7 @@ class Container : public Object
 
 		Lockable* getLock();
 		bool IsEmpty() const;
-		unsigned int GetItemCount(unsigned int baseID) const;
+		unsigned int GetItemCount(unsigned int baseID = 0) const;
 		const std::list<RakNet::NetworkID>& GetItemList() const;
 
 #ifdef VAULTSERVER
