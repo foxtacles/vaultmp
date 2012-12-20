@@ -142,7 +142,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					NetworkID id;
 					double X, Y, Z;
 					PacketFactory::Access<pTypes::ID_UPDATE_POS>(packet, id, X, Y, Z);
-					FactoryObject reference = GameFactory::GetObject(id);
+					FactoryObject<Object> reference = GameFactory::GetObject(id);
 					response = Server::GetPos(data->guid, reference, X, Y, Z);
 					break;
 				}
@@ -153,7 +153,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					unsigned char axis;
 					double value;
 					PacketFactory::Access<pTypes::ID_UPDATE_ANGLE>(packet, id, axis, value);
-					FactoryObject reference = GameFactory::GetObject(id);
+					FactoryObject<Object> reference = GameFactory::GetObject(id);
 					response = Server::GetAngle(data->guid, reference, axis, value);
 					break;
 				}
@@ -163,7 +163,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					NetworkID id;
 					unsigned int cell;
 					PacketFactory::Access<pTypes::ID_UPDATE_CELL>(packet, id, cell);
-					FactoryObject reference = GameFactory::GetObject(id);
+					FactoryObject<Object> reference = GameFactory::GetObject(id);
 					response = Server::GetCell(data->guid, reference, cell);
 					break;
 				}
@@ -173,7 +173,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					NetworkID id;
 					pair<list<NetworkID>, vector<pPacket>> ndiff, gdiff;
 					PacketFactory::Access<pTypes::ID_UPDATE_CONTAINER>(packet, id, ndiff, gdiff);
-					FactoryObject reference = GameFactory::GetObject(id);
+					FactoryObject<Container> reference = GameFactory::GetObject<Container>(id);
 					response = Server::GetContainerUpdate(data->guid, reference, ndiff, gdiff);
 					break;
 				}
@@ -185,7 +185,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					unsigned char index;
 					double value;
 					PacketFactory::Access<pTypes::ID_UPDATE_VALUE>(packet, id, base, index, value);
-					FactoryObject reference = GameFactory::GetObject(id);
+					FactoryObject<Actor> reference = GameFactory::GetObject<Actor>(id);
 					response = Server::GetActorValue(data->guid, reference, base, index, value);
 					break;
 				}
@@ -197,7 +197,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					unsigned char moving, movingxy, weapon;
 					bool alerted, sneaking, firing;
 					PacketFactory::Access<pTypes::ID_UPDATE_STATE>(packet, id, idle, moving, movingxy, weapon, alerted, sneaking, firing);
-					FactoryObject reference = GameFactory::GetObject(id);
+					FactoryObject<Actor> reference = GameFactory::GetObject<Actor>(id);
 					response = Server::GetActorState(data->guid, reference, idle, moving, movingxy, weapon, alerted, sneaking);
 					break;
 				}
@@ -209,7 +209,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					unsigned short limbs;
 					signed char cause;
 					PacketFactory::Access<pTypes::ID_UPDATE_DEAD>(packet, id, dead, limbs, cause);
-					FactoryObject reference = GameFactory::GetObject(id);
+					FactoryObject<Actor> reference = GameFactory::GetObject<Actor>(id);
 					response = Server::GetActorDead(data->guid, reference, dead, limbs, cause);
 					break;
 				}
@@ -219,7 +219,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					NetworkID id;
 					unsigned char control, key;
 					PacketFactory::Access<pTypes::ID_UPDATE_CONTROL>(packet, id, control, key);
-					FactoryObject reference = GameFactory::GetObject(id);
+					FactoryObject<Player> reference = GameFactory::GetObject<Player>(id);
 					response = Server::GetPlayerControl(data->guid, reference, control, key);
 					break;
 				}
