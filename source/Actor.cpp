@@ -294,7 +294,7 @@ unsigned int Actor::GetEquippedWeapon() const
 	// this won't reliably work if the actor has equipped more than one weapon
 	for (NetworkID& weapon : weapons)
 	{
-		FactoryObject<Item> item = GameFactory::GetObject<Item>(weapon);
+		FactoryObject<Item> item = GameFactory::GetObject<Item>(weapon).get();
 
 		if (item->GetItemEquipped())
 			return item->GetBase();
@@ -354,7 +354,7 @@ bool ActorFunctor::filter(FactoryObject<Reference>& reference)
 	if (ObjectFunctor::filter(reference))
 		return true;
 
-	FactoryObject<Actor> actor = vaultcast<Actor>(reference);
+	FactoryObject<Actor> actor = vaultcast<Actor>(reference).get();
 	unsigned int flags = this->flags();
 
 	if (flags & FLAG_ALIVE && actor->GetActorDead())

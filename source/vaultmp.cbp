@@ -70,6 +70,8 @@
 		<Unit filename="Data.h" />
 		<Unit filename="Debug.cpp" />
 		<Unit filename="Debug.h" />
+		<Unit filename="Expected.cpp" />
+		<Unit filename="Expected.h" />
 		<Unit filename="Game.cpp" />
 		<Unit filename="Game.h" />
 		<Unit filename="GameFactory.cpp" />

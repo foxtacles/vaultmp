@@ -220,7 +220,7 @@ vector<string> ObjectFunctor::operator()()
 
 	if (id)
 	{
-		FactoryObject<Object> object = GameFactory::GetObject(id);
+		auto object = GameFactory::GetObject(id);
 
 		if (object)
 		{
@@ -250,7 +250,7 @@ vector<string> ObjectFunctor::operator()()
 
 bool ObjectFunctor::filter(FactoryObject<Reference>& reference)
 {
-	FactoryObject<Object> object = vaultcast<Object>(reference);
+	FactoryObject<Object> object = vaultcast<Object>(reference).get();
 	unsigned int flags = this->flags();
 
 	if (flags & FLAG_NOTSELF && object->GetReference() == PLAYER_REFERENCE)

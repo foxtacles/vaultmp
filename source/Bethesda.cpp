@@ -273,7 +273,7 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, c
 	API::Initialize(game);
 
 	NetworkID id = GameFactory::CreateInstance(ID_PLAYER, PLAYER_REFERENCE, PLAYER_BASE);
-	FactoryObject<Player> reference = GameFactory::GetObject<Player>(id);
+	FactoryObject<Player> reference = GameFactory::GetObject<Player>(id).get();
 	reference->SetEnabled(true);
 	reference->SetName(name);
 	GameFactory::LeaveReference(reference);

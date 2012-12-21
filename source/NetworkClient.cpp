@@ -33,7 +33,7 @@ NetworkResponse NetworkClient::ProcessEvent(unsigned char id)
 		{
 			Network::ToggleDequeue(true);
 
-			FactoryObject<Player> reference = GameFactory::GetObject<Player>(PLAYER_REFERENCE);
+			FactoryObject<Player> reference = GameFactory::GetObject<Player>(PLAYER_REFERENCE).get();
 
 			return NetworkResponse{Network::CreateResponse(
 				reference->toPacket(),
@@ -193,40 +193,40 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				case pTypes::ID_OBJECT_NEW:
 				{
 					NetworkID id = GameFactory::CreateKnownInstance(ID_OBJECT, packet);
-					FactoryObject<Object> reference = GameFactory::GetObject(id);
-					Game::NewObject(reference);
+					auto reference = GameFactory::GetObject(id);
+					Game::NewObject(reference.get());
 					break;
 				}
 
 				case pTypes::ID_ITEM_NEW:
 				{
 					NetworkID id = GameFactory::CreateKnownInstance(ID_ITEM, packet);
-					FactoryObject<Item> reference = GameFactory::GetObject<Item>(id);
-					Game::NewItem(reference);
+					auto reference = GameFactory::GetObject<Item>(id);
+					Game::NewItem(reference.get());
 					break;
 				}
 
 				case pTypes::ID_CONTAINER_NEW:
 				{
 					NetworkID id = GameFactory::CreateKnownInstance(ID_CONTAINER, packet);
-					FactoryObject<Container> reference = GameFactory::GetObject<Container>(id);
-					Game::NewContainer(reference);
+					auto reference = GameFactory::GetObject<Container>(id);
+					Game::NewContainer(reference.get());
 					break;
 				}
 
 				case pTypes::ID_ACTOR_NEW:
 				{
 					NetworkID id = GameFactory::CreateKnownInstance(ID_ACTOR, packet);
-					FactoryObject<Actor> reference = GameFactory::GetObject<Actor>(id);
-					Game::NewActor(reference);
+					auto reference = GameFactory::GetObject<Actor>(id);
+					Game::NewActor(reference.get());
 					break;
 				}
 
 				case pTypes::ID_PLAYER_NEW:
 				{
 					NetworkID id = GameFactory::CreateKnownInstance(ID_PLAYER, packet);
-					FactoryObject<Player> reference = GameFactory::GetObject<Player>(id);
-					Game::NewPlayer(reference);
+					auto reference = GameFactory::GetObject<Player>(id);
+					Game::NewPlayer(reference.get());
 					break;
 				}
 
@@ -234,8 +234,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				{
 					NetworkID id;
 					PacketFactory::Access<pTypes::ID_OBJECT_REMOVE>(packet, id);
-					FactoryObject<Object> reference = GameFactory::GetObject(id);
-					Game::Delete(reference);
+					auto reference = GameFactory::GetObject(id);
+					Game::Delete(reference.get());
 					break;
 				}
 
@@ -244,8 +244,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					NetworkID id;
 					double X, Y, Z;
 					PacketFactory::Access<pTypes::ID_UPDATE_POS>(packet, id, X, Y, Z);
-					FactoryObject<Object> reference = GameFactory::GetObject(id);
-					Game::net_SetPos(reference, X, Y, Z);
+					auto reference = GameFactory::GetObject(id);
+					Game::net_SetPos(reference.get(), X, Y, Z);
 					break;
 				}
 
@@ -255,8 +255,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					unsigned char axis;
 					double value;
 					PacketFactory::Access<pTypes::ID_UPDATE_ANGLE>(packet, id, axis, value);
-					FactoryObject<Object> reference = GameFactory::GetObject(id);
-					Game::net_SetAngle(reference, axis, value);
+					auto reference = GameFactory::GetObject(id);
+					Game::net_SetAngle(reference.get(), axis, value);
 					break;
 				}
 
@@ -265,8 +265,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					NetworkID id;
 					unsigned int cell;
 					PacketFactory::Access<pTypes::ID_UPDATE_CELL>(packet, id, cell);
-					vector<FactoryObject<Object>> reference = GameFactory::GetMultiple<Object>(vector<unsigned int>{GameFactory::LookupRefID(id), PLAYER_REFERENCE});
-					Game::net_SetCell(reference[0], vaultcast<Player>(reference[1]), cell);
+					auto reference = GameFactory::GetMultiple<Object>(vector<unsigned int>{GameFactory::LookupRefID(id), PLAYER_REFERENCE});
+					Game::net_SetCell(reference[0].get(), vaultcast<Player>(reference[1]).get(), cell);
 					break;
 				}
 
@@ -275,8 +275,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					NetworkID id;
 					pair<list<NetworkID>, vector<pPacket>> ndiff, gdiff;
 					PacketFactory::Access<pTypes::ID_UPDATE_CONTAINER>(packet, id, ndiff, gdiff);
-					FactoryObject<Container> reference = GameFactory::GetObject<Container>(id);
-					Game::net_ContainerUpdate(reference, ndiff, gdiff);
+					auto reference = GameFactory::GetObject<Container>(id);
+					Game::net_ContainerUpdate(reference.get(), ndiff, gdiff);
 					break;
 				}
 
@@ -287,8 +287,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					unsigned char index;
 					double value;
 					PacketFactory::Access<pTypes::ID_UPDATE_VALUE>(packet, id, base, index, value);
-					FactoryObject<Actor> reference = GameFactory::GetObject<Actor>(id);
-					Game::net_SetActorValue(reference, base, index, value);
+					auto reference = GameFactory::GetObject<Actor>(id);
+					Game::net_SetActorValue(reference.get(), base, index, value);
 					break;
 				}
 
@@ -299,8 +299,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					unsigned char moving, movingxy, weapon;
 					bool alerted, sneaking, firing;
 					PacketFactory::Access<pTypes::ID_UPDATE_STATE>(packet, id, idle, moving, movingxy, weapon, alerted, sneaking, firing);
-					FactoryObject<Actor> reference = GameFactory::GetObject<Actor>(id);
-					Game::net_SetActorState(reference, idle, moving, movingxy, weapon, alerted, sneaking, firing);
+					auto reference = GameFactory::GetObject<Actor>(id);
+					Game::net_SetActorState(reference.get(), idle, moving, movingxy, weapon, alerted, sneaking, firing);
 					break;
 				}
 
@@ -310,8 +310,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					unsigned int race;
 					signed int age, delta_age;
 					PacketFactory::Access<pTypes::ID_UPDATE_RACE>(packet, id, race, age, delta_age);
-					FactoryObject<Actor> reference = GameFactory::GetObject<Actor>(id);
-					Game::net_SetActorRace(reference, race, age, delta_age);
+					auto reference = GameFactory::GetObject<Actor>(id);
+					Game::net_SetActorRace(reference.get(), race, age, delta_age);
 					break;
 				}
 
@@ -320,8 +320,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					NetworkID id;
 					bool female;
 					PacketFactory::Access<pTypes::ID_UPDATE_SEX>(packet, id, female);
-					FactoryObject<Actor> reference = GameFactory::GetObject<Actor>(id);
-					Game::net_SetActorFemale(reference, female);
+					auto reference = GameFactory::GetObject<Actor>(id);
+					Game::net_SetActorFemale(reference.get(), female);
 					break;
 				}
 
@@ -332,8 +332,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					unsigned short limbs;
 					signed char cause;
 					PacketFactory::Access<pTypes::ID_UPDATE_DEAD>(packet, id, dead, limbs, cause);
-					FactoryObject<Actor> reference = GameFactory::GetObject<Actor>(id);
-					Game::net_SetActorDead(reference, dead, limbs, cause);
+					auto reference = GameFactory::GetObject<Actor>(id);
+					Game::net_SetActorDead(reference.get(), dead, limbs, cause);
 					break;
 				}
 
@@ -343,8 +343,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					unsigned int weapon;
 					double rate;
 					PacketFactory::Access<pTypes::ID_UPDATE_FIREWEAPON>(packet, id, weapon, rate);
-					FactoryObject<Actor> reference = GameFactory::GetObject<Actor>(id);
-					Game::net_FireWeapon(reference, weapon, rate);
+					auto reference = GameFactory::GetObject<Actor>(id);
+					Game::net_FireWeapon(reference.get(), weapon, rate);
 					break;
 				}
 
@@ -354,8 +354,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					unsigned int idle;
 					string name;
 					PacketFactory::Access<pTypes::ID_UPDATE_IDLE>(packet, id, idle, name);
-					FactoryObject<Actor> reference = GameFactory::GetObject<Actor>(id);
-					Game::net_SetActorIdle(reference, idle, name);
+					auto reference = GameFactory::GetObject<Actor>(id);
+					Game::net_SetActorIdle(reference.get(), idle, name);
 					break;
 				}
 

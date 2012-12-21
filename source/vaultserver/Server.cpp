@@ -62,9 +62,9 @@ NetworkResponse Server::LoadGame(RakNetGUID guid)
 
 	for (it = references.begin(); it != references.end(); GameFactory::LeaveReference(*it), ++it)
 	{
-		FactoryObject<Item> item;
+		auto item = vaultcast<Item>(*it);
 
-		if ((item = vaultcast<Item>(*it, false)) && item->GetItemContainer())
+		if (item && item->GetItemContainer())
 			continue;
 
 		response.emplace_back(Network::CreateResponse(
@@ -102,7 +102,7 @@ NetworkResponse Server::LoadGame(RakNetGUID guid)
 NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 {
 	NetworkResponse response;
-	FactoryObject<Player> player = GameFactory::GetObject<Player>(id);
+	auto player = GameFactory::GetObject<Player>(id).get();
 
 	Client* client = new Client(guid, player->GetNetworkID());
 	Dedicated::self->SetServerPlayers(make_pair(Client::GetClientCount(), Dedicated::connections));
@@ -178,11 +178,11 @@ NetworkResponse Server::Disconnect(RakNetGUID guid, Reason reason)
 
 	if (client != nullptr)
 	{
-		FactoryObject<Player> player = GameFactory::GetObject<Player>(client->GetPlayer());
-		Script::OnPlayerDisconnect(player, reason);
+		auto player = GameFactory::GetObject<Player>(client->GetPlayer());
+		Script::OnPlayerDisconnect(player.get(), reason);
 		delete client;
 
-		NetworkID id = GameFactory::DestroyInstance(player);
+		NetworkID id = GameFactory::DestroyInstance(player.get());
 
 		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_OBJECT_REMOVE>(id),
@@ -260,19 +260,19 @@ NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, const FactoryObject<
 	for (const auto& packet : gdiff.second)
 	{
 		NetworkID id = GameFactory::CreateKnownInstance(ID_ITEM, packet.get());
-		FactoryObject<Item> item = GameFactory::GetObject<Item>(id);
+		FactoryObject<Item> item = GameFactory::GetObject<Item>(id).get();
 
 		item->SetReference(0x00000000);
 
 		unsigned int baseID = item->GetBase();
 		_gdiff.remove_if([=](const pair<unsigned int, Diff>& diff) { return diff.first == baseID; });
 
-		Script::OnActorDropItem(vaultcast<Actor>(reference), baseID, item->GetItemCount(), item->GetItemCondition());
+		Script::OnActorDropItem(vaultcast<Actor>(reference).get(), baseID, item->GetItemCount(), item->GetItemCondition());
 	}
 
 	for (const auto& id : gdiff.first)
 	{
-		FactoryObject<Item> item = GameFactory::GetObject<Item>(id);
+		FactoryObject<Item> item = GameFactory::GetObject<Item>(id).get();
 
 		unsigned int baseID = item->GetBase();
 		_gdiff.remove_if([=](const pair<unsigned int, Diff>& diff) { return diff.first == baseID; });
@@ -282,7 +282,7 @@ NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, const FactoryObject<
 
 		GameFactory::DestroyInstance(item);
 
-		Script::OnActorPickupItem(vaultcast<Actor>(reference), baseID, count, condition);
+		Script::OnActorPickupItem(vaultcast<Actor>(reference).get(), baseID, count, condition);
 	}
 
 	for (const auto& _diff : _gdiff)
@@ -290,9 +290,9 @@ NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, const FactoryObject<
 		if (_diff.second.equipped)
 		{
 			if (_diff.second.equipped > 0)
-				Script::OnActorEquipItem(vaultcast<Actor>(reference), _diff.first, _diff.second.condition);
+				Script::OnActorEquipItem(vaultcast<Actor>(reference).get(), _diff.first, _diff.second.condition);
 			else if (_diff.second.equipped < 0)
-				Script::OnActorUnequipItem(vaultcast<Actor>(reference), _diff.first, _diff.second.condition);
+				Script::OnActorUnequipItem(vaultcast<Actor>(reference).get(), _diff.first, _diff.second.condition);
 		}
 		else
 			Script::OnContainerItemChange(reference, _diff.first, _diff.second.count, _diff.second.condition);
@@ -402,7 +402,7 @@ NetworkResponse Server::GetActorDead(RakNetGUID guid, const FactoryObject<Actor>
 		{
 			Script::OnActorDeath(reference, limbs, cause);
 
-			FactoryObject<Player> player = vaultcast<Player>(reference, false);
+			auto player = vaultcast<Player>(reference);
 
 			if (player)
 				Script::CreateTimerEx(reinterpret_cast<ScriptFunc>(&Script::Timer_Respawn), player->GetPlayerRespawn(), "l", player->GetNetworkID());
@@ -433,11 +433,11 @@ NetworkResponse Server::ChatMessage(RakNetGUID guid, string message)
 {
 	Client* client = Client::GetClientFromGUID(guid);
 
-	FactoryObject<Player> reference = GameFactory::GetObject<Player>(client->GetPlayer());
+	auto reference = GameFactory::GetObject<Player>(client->GetPlayer());
 
 	NetworkResponse response;
 
-	bool result = Script::OnPlayerChat(reference, message);
+	bool result = Script::OnPlayerChat(reference.get(), message);
 
 	if (result && !message.empty())
 	{

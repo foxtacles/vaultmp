@@ -121,7 +121,7 @@ Player::Player(unsigned int refID, unsigned int baseID) : Actor(refID, baseID)
 	for (const auto& item : default_items)
 	{
 		NetworkID id = GameFactory::CreateInstance(ID_ITEM, item.first);
-		FactoryObject<Item> reference = GameFactory::GetObject<Item>(id);
+		FactoryObject<Item> reference = GameFactory::GetObject<Item>(id).get();
 		reference->SetItemCount(get<0>(item.second));
 		reference->SetItemCondition(get<1>(item.second));
 		reference->SetItemEquipped(get<2>(item.second));
@@ -294,7 +294,7 @@ vector<string> PlayerFunctor::operator()()
 
 	if (id)
 	{
-		FactoryObject<Player> player = GameFactory::GetObject<Player>(id);
+		auto player = GameFactory::GetObject<Player>(id);
 
 		if (player)
 		{

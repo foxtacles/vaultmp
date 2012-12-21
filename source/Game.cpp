@@ -85,7 +85,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func_GetPos:
 			{
 				auto reference = GameFactory::GetObject(getFrom<unsigned int>(info.at(1)));
-				GetPos(reference, getFrom<unsigned char>(info.at(2)), result);
+				GetPos(reference.get(), getFrom<unsigned char>(info.at(2)), result);
 				break;
 			}
 
@@ -95,7 +95,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func_GetAngle:
 			{
 				auto reference = GameFactory::GetObject(getFrom<unsigned int>(info.at(1)));
-				GetAngle(reference, getFrom<unsigned char>(info.at(2)), result);
+				GetAngle(reference.get(), getFrom<unsigned char>(info.at(2)), result);
 				break;
 			}
 
@@ -105,7 +105,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func_GetActorValue:
 			{
 				auto reference = GameFactory::GetObject<Actor>(getFrom<unsigned int>(info.at(1)));
-				Game::GetActorValue(reference, false, getFrom<unsigned char>(info.at(2)), result);
+				Game::GetActorValue(reference.get(), false, getFrom<unsigned char>(info.at(2)), result);
 				break;
 			}
 
@@ -121,7 +121,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func_GetBaseActorValue:
 			{
 				auto reference = GameFactory::GetObject<Actor>(getFrom<unsigned int>(info.at(1)));
-				GetActorValue(reference, true, getFrom<unsigned char>(info.at(2)), result);
+				GetActorValue(reference.get(), true, getFrom<unsigned char>(info.at(2)), result);
 				break;
 			}
 
@@ -131,7 +131,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func_GetActorState:
 			{
 				auto reference = GameFactory::GetObject<Actor>(getFrom<unsigned int>(info.at(1)));
-				GetActorState(reference,
+				GetActorState(reference.get(),
 									*reinterpret_cast<unsigned int*>(&result),
 									*reinterpret_cast<unsigned char*>(((unsigned) &result) + 4),
 									*reinterpret_cast<unsigned char*>(((unsigned) &result) + 6),
@@ -149,7 +149,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func_GetDead:
 			{
 				auto objects = GameFactory::GetMultiple<Actor>(vector<unsigned int>{getFrom<unsigned int>(info.at(1)), PLAYER_REFERENCE});
-				GetDead(objects[0], vaultcast<Player>(objects[1]), result);
+				GetDead(objects[0].get(), vaultcast<Player>(objects[1]).get(), result);
 				break;
 			}
 
@@ -247,9 +247,9 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				vector<unsigned char>* data = getFrom<vector<unsigned char>*>(result);
 
 				if (key)
-					FutureSet(shared, GetScanContainer(reference, *data));
+					FutureSet(shared, GetScanContainer(reference.get(), *data));
 				else
-					ScanContainer(reference, *data);
+					ScanContainer(reference.get(), *data);
 
 				delete data;
 				break;
@@ -259,7 +259,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			{
 				auto reference = GameFactory::GetObject<Container>(getFrom<unsigned int>(info.at(1)));
 				vector<unsigned char>* data = getFrom<vector<unsigned char>*>(result);
-				GetRemoveAllItemsEx(reference, *data);
+				GetRemoveAllItemsEx(reference.get(), *data);
 				FutureSet(shared, true);
 				delete data;
 				break;
@@ -296,7 +296,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case FalloutNV::Func_GetParentCell:
 			{
 				auto objects = GameFactory::GetMultiple<Actor>(vector<unsigned int>{getFrom<unsigned int>(info.at(1)), PLAYER_REFERENCE});
-				GetParentCell(objects[0], vaultcast<Player>(objects[1]), getFrom<unsigned int>(result));
+				GetParentCell(objects[0].get(), vaultcast<Player>(objects[1]).get(), getFrom<unsigned int>(result));
 				break;
 			}
 
@@ -313,7 +313,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Fallout3::Func_GetControl:
 			{
 				auto self = GameFactory::GetObject<Player>(PLAYER_REFERENCE);
-				GetControl(self, getFrom<int>(info.at(1)), result);
+				GetControl(self.get(), getFrom<int>(info.at(1)), result);
 				break;
 			}
 
@@ -374,11 +374,12 @@ NetworkResponse Game::Authenticate(const string& password)
 void Game::Startup()
 {
 	auto reference = GameFactory::GetObject<Player>(PLAYER_REFERENCE);
+	auto& player = reference.get();
 
-	RawParameter self_ref = reference->GetReferenceParam();
-	NetworkID id = reference->GetNetworkID();
+	RawParameter self_ref = player->GetReferenceParam();
+	NetworkID id = player->GetNetworkID();
 
-	GameFactory::LeaveReference(reference);
+	GameFactory::LeaveReference(player);
 
 	SetINISetting("bSaveOnInteriorExteriorSwitch:GamePlay", "0");
 	SetINISetting("bSaveOnTravel:GamePlay", "0");
@@ -627,7 +628,8 @@ void Game::LoadEnvironment()
 
 	for (NetworkID& id : reference)
 	{
-		auto reference = GameFactory::GetObject(id);
+		auto _reference = GameFactory::GetObject(id);
+		auto& reference = _reference.get();
 
 		if (!reference->IsPersistent())
 		{
@@ -648,7 +650,9 @@ void Game::LoadEnvironment()
 
 			case ID_ITEM:
 			{
-				auto item = vaultcast<Item>(reference);
+				auto item = GameFactory::GetObject<Item>(id).get();
+				GameFactory::LeaveReference(reference);
+
 				if (!item->GetItemContainer())
 					NewItem(item);
 				break;
@@ -656,21 +660,24 @@ void Game::LoadEnvironment()
 
 			case ID_CONTAINER:
 			{
-				auto container = vaultcast<Container>(reference);
+				auto container = GameFactory::GetObject<Container>(id).get();
+				GameFactory::LeaveReference(reference);
 				NewContainer(container);
 				break;
 			}
 
 			case ID_ACTOR:
 			{
-				auto actor = vaultcast<Actor>(reference);
+				auto actor = GameFactory::GetObject<Actor>(id).get();
+				GameFactory::LeaveReference(reference);
 				NewActor(actor);
 				break;
 			}
 
 			case ID_PLAYER:
 			{
-				auto player = vaultcast<Player>(reference);
+				auto player = GameFactory::GetObject<Player>(id).get();
+				GameFactory::LeaveReference(reference);
 				NewPlayer(player);
 				break;
 			}
@@ -706,7 +713,7 @@ void Game::NewObject(FactoryObject<Object>& reference)
 		auto store = make_shared<Shared<unsigned int>>();
 		unsigned int key = Lockable::Share(store);
 
-		auto item = vaultcast<Item>(reference, false);
+		auto item = vaultcast<Item>(reference);
 		double condition = item ? (item->GetItemCondition() / 100.0) : 1.00;
 
 		unsigned int baseID = reference->GetBase();
@@ -727,7 +734,7 @@ void Game::NewObject(FactoryObject<Object>& reference)
 			throw VaultException("Object creation with baseID %08X and NetworkID %llu failed (%s)", baseID, id, e.what());
 		}
 
-		reference = GameFactory::GetObject(id);
+		reference = GameFactory::GetObject(id).get();
 		reference->SetReference(refID);
 	}
 	//else if (!(not in player cell) || !reference->GetChanged())
@@ -749,8 +756,8 @@ void Game::NewObject(FactoryObject<Object>& reference)
 
 				auto objects = GameFactory::GetMultiple(vector<unsigned int>{refID, PLAYER_REFERENCE});
 
-				const auto& object = objects[0];
-				const auto& player = objects[1];
+				auto& object = objects[0].get();
+				auto& player = objects[1].get();
 
 				unsigned int cell = player->GetGameCell();
 
@@ -792,15 +799,15 @@ void Game::NewItem(FactoryObject<Item>& reference)
 void Game::NewContainer(FactoryObject<Container>& reference)
 {
 	NewObject(reference);
-	vector<FactoryObject<Item>> items = GameFactory::GetMultiple<Item>(vector<NetworkID>(reference->GetItemList().begin(), reference->GetItemList().end()));
+	auto items = GameFactory::GetMultiple<Item>(vector<NetworkID>(reference->GetItemList().begin(), reference->GetItemList().end()));
 
-	for (const auto& _item : items)
+	for (auto& _item : items)
 	{
-		AddItem(reference, _item);
+		AddItem(reference, _item.get());
 		//debug->PrintFormat("ID: %llu, %s, %08X, %d, %d, %d, %d", true, item->GetNetworkID(), item->GetName().c_str(), item->GetBase(), (int)item->GetItemEquipped(), (int)item->GetItemSilent(), (int)item->GetItemStick(), item->GetItemCount());
 
 		if (_item->GetItemEquipped())
-			EquipItem(vaultcast<Actor>(reference), _item);
+			EquipItem(vaultcast<Actor>(reference).get(), _item.get());
 	}
 }
 
@@ -973,7 +980,7 @@ void Game::SetAngle(const FactoryObject<Object>& reference)
 	Interface::ExecuteCommand("SetAngle", {reference->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_X)), RawParameter(reference->GetAngle(Axis_X))});
 
 	double value = reference->GetAngle(Axis_Z);
-	FactoryObject<Actor> actor = vaultcast<Actor>(reference, false);
+	auto actor = vaultcast<Actor>(reference);
 
 	if (actor)
 	{
@@ -1044,11 +1051,11 @@ function<void()> Game::SetActorSneaking(const FactoryObject<Actor>& reference, u
 	{
 		try
 		{
-			SetRestrained(GameFactory::GetObject<Actor>(id), false);
+			SetRestrained(GameFactory::GetObject<Actor>(id).get(), false);
 
 			this_thread::sleep_for(chrono::milliseconds(20));
 
-			FactoryObject<Actor> reference = GameFactory::GetObject<Actor>(id);
+			auto reference = GameFactory::GetObject<Actor>(id);
 
 			Interface::StartDynamic();
 
@@ -1056,11 +1063,11 @@ function<void()> Game::SetActorSneaking(const FactoryObject<Actor>& reference, u
 
 			Interface::EndDynamic();
 
-			GameFactory::LeaveReference(reference);
+			GameFactory::LeaveReference(reference.get());
 
 			this_thread::sleep_for(chrono::milliseconds(100));
 
-			SetRestrained(GameFactory::GetObject<Actor>(id), true);
+			SetRestrained(GameFactory::GetObject<Actor>(id).get(), true);
 		}
 		catch (...) {}
 	};
@@ -1078,11 +1085,11 @@ function<void()> Game::SetActorAlerted(const FactoryObject<Actor>& reference, un
 	{
 		try
 		{
-			SetRestrained(GameFactory::GetObject<Actor>(id), false);
+			SetRestrained(GameFactory::GetObject<Actor>(id).get(), false);
 
 			this_thread::sleep_for(chrono::milliseconds(20));
 
-			FactoryObject<Actor> reference = GameFactory::GetObject<Actor>(id);
+			auto reference = GameFactory::GetObject<Actor>(id);
 
 			Interface::StartDynamic();
 
@@ -1090,11 +1097,11 @@ function<void()> Game::SetActorAlerted(const FactoryObject<Actor>& reference, un
 
 			Interface::EndDynamic();
 
-			GameFactory::LeaveReference(reference);
+			GameFactory::LeaveReference(reference.get());
 
 			this_thread::sleep_for(chrono::milliseconds(100));
 
-			SetRestrained(GameFactory::GetObject<Actor>(id), true);
+			SetRestrained(GameFactory::GetObject<Actor>(id).get(), true);
 		}
 		catch (...) {}
 	};
@@ -1450,9 +1457,9 @@ void Game::net_SetPos(const FactoryObject<Object>& reference, double X, double Y
 
 	if (result && reference->GetEnabled())
 	{
-		FactoryObject<Actor> actor = vaultcast<Actor>(reference, false); // maybe we should consider items, too (they have physics)
+		auto actor = vaultcast<Actor>(reference); // maybe we should consider items, too (they have physics)
 
-		if (!actor || (!actor->IsNearPoint(reference->GetNetworkPos(Axis_X), reference->GetNetworkPos(Axis_Y), reference->GetNetworkPos(Axis_Z), 50.0)) || actor->IsActorJumping())
+		if (!actor || (!reference->IsNearPoint(reference->GetNetworkPos(Axis_X), reference->GetNetworkPos(Axis_Y), reference->GetNetworkPos(Axis_Z), 50.0)) || actor->IsActorJumping())
 			SetPos(reference);
 	}
 }
@@ -1467,12 +1474,12 @@ void Game::net_SetAngle(const FactoryObject<Object>& reference, unsigned char ax
 
 		if (axis == Axis_X)
 		{
-			FactoryObject<Actor> actor = vaultcast<Actor>(reference, false);
+			auto actor = vaultcast<Actor>(reference);
 
 			if (actor && actor->GetActorWeaponAnimation() == AnimGroup_AimIS)
 			{
-				SetActorAnimation(actor, AnimGroup_AimISDown);
-				SetActorAnimation(actor, AnimGroup_AimISUp);
+				SetActorAnimation(actor.get(), AnimGroup_AimISDown);
+				SetActorAnimation(actor.get(), AnimGroup_AimISUp);
 			}
 		}
 	}
@@ -1509,7 +1516,7 @@ void Game::net_ContainerUpdate(FactoryObject<Container>& reference, const Contai
 
 	while (!(result = reference->getLock()));
 
-	reference = GameFactory::GetObject<Container>(id);
+	reference = GameFactory::GetObject<Container>(id).get();
 
 	unsigned int key = result->Lock();
 
@@ -1520,9 +1527,9 @@ void Game::net_ContainerUpdate(FactoryObject<Container>& reference, const Contai
 		if (diff.second.equipped)
 		{
 			if (diff.second.equipped > 0)
-				EquipItem(vaultcast<Actor>(reference), diff.first, diff.second.silent, diff.second.stick, result->Lock());
+				EquipItem(vaultcast<Actor>(reference).get(), diff.first, diff.second.silent, diff.second.stick, result->Lock());
 			else if (diff.second.equipped < 0)
-				UnequipItem(vaultcast<Actor>(reference), diff.first, diff.second.silent, diff.second.stick, result->Lock());
+				UnequipItem(vaultcast<Actor>(reference).get(), diff.first, diff.second.silent, diff.second.stick, result->Lock());
 		}
 		else if (diff.second.count > 0)
 			AddItem(reference, diff.first, diff.second.count, diff.second.condition, diff.second.silent, result->Lock());
@@ -1539,16 +1546,16 @@ void Game::net_ContainerUpdate(FactoryObject<Container>& reference, const Contai
 
 	for (const auto& id : gdiff.first)
 	{
-		FactoryObject<Item> reference = GameFactory::GetObject<Item>(id);
-		Delete(reference);
+		auto reference = GameFactory::GetObject<Item>(id);
+		Delete(reference.get());
 	}
 
 	for (const auto& packet : gdiff.second)
 	{
 		NetworkID id = GameFactory::CreateKnownInstance(ID_ITEM, packet.get());
-		FactoryObject<Item> reference = GameFactory::GetObject<Item>(id);
+		auto reference = GameFactory::GetObject<Item>(id);
 		reference->SetReference(0x00000000);
-		NewItem(reference);
+		NewItem(reference.get());
 	}
 }
 
@@ -1676,7 +1683,7 @@ void Game::net_SetActorDead(FactoryObject<Actor>& reference, bool dead, unsigned
 			Game::spawnFunc();
 			Game::LoadEnvironment();
 
-			reference = GameFactory::GetObject<Actor>(id);
+			reference = GameFactory::GetObject<Actor>(id).get();
 			reference->SetEnabled(true);
 			GameFactory::LeaveReference(reference);
 
@@ -1712,7 +1719,7 @@ void Game::net_FireWeapon(const FactoryObject<Actor>& reference, unsigned int we
 
 					this_thread::sleep_for(us);
 
-					while ((reference = GameFactory::GetObject<Actor>(id)) && reference->IsActorFiring() && reference->IsEquipped(weapon))
+					while ((reference = GameFactory::GetObject<Actor>(id).get()) && reference->IsActorFiring() && reference->IsEquipped(weapon))
 					{
 						FireWeapon(reference, weapon);
 						GameFactory::LeaveReference(reference);
@@ -1847,17 +1854,12 @@ void Game::GetParentCell(const FactoryObject<Object>& reference, const FactoryOb
 
 		for (unsigned int refID : (*cellRefs)[cell][FormType_Inventory])
 		{
-			FactoryObject<Item> item;
+			auto reference = GameFactory::GetObject<Item>(refID); // probably potential deadlock. maybe copy set out
 
-			try
-			{
-				item = GameFactory::GetObject<Item>(refID); // probably potential deadlock. maybe copy set out
-			}
-			catch (...)
-			{
-				// we don't have information about static refs yet. remove
-				continue;
-			}
+			if (!reference)
+				continue; // we don't have information about static refs yet. remove
+
+			auto& item = reference.get();
 
 			if (item->GetNetworkCell() == cell && !item->GetEnabled())
 			{
@@ -2131,7 +2133,7 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 								if (_id == id)
 									continue;
 
-								FactoryObject<Container> container = GameFactory::GetObject<Container>(_id);
+								FactoryObject<Container> container = GameFactory::GetObject<Container>(_id).get();
 
 								if (container->GetGameCell() != cell)
 									continue;
@@ -2237,7 +2239,7 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 								unsigned int cell;
 
 								{
-									FactoryObject<Container> reference = GameFactory::GetObject<Container>(id);
+									FactoryObject<Container> reference = GameFactory::GetObject<Container>(id).get();
 
 									static const double spawn_offset = 100.0;
 
@@ -2267,7 +2269,7 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 									for (const auto& _result : result.second)
 									{
 										NetworkID id = GameFactory::CreateInstance(ID_ITEM, _result.first, _found.first);
-										FactoryObject<Item> reference = GameFactory::GetObject<Item>(id);
+										FactoryObject<Item> reference = GameFactory::GetObject<Item>(id).get();
 
 										reference->SetGamePos(Axis_X, X);
 										reference->SetGamePos(Axis_Y, Y);
@@ -2292,13 +2294,9 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 
 							for (unsigned int refID : cdiff.second)
 							{
-								FactoryObject<Item> reference;
+								auto _reference = GameFactory::GetObject<Item>(refID);
 
-								try
-								{
-									reference = GameFactory::GetObject<Item>(refID);
-								}
-								catch (...)
+								if (!_reference)
 								{
 #ifdef VAULTMP_DEBUG
 									debug.print("Item match (pickup): could not find ", hex, refID);
@@ -2306,6 +2304,7 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 									continue;
 								}
 
+								auto& reference = _reference.get();
 
 								unsigned int baseID = reference->GetBase();
 
@@ -2408,11 +2407,11 @@ pair<ContainerDiffNet, GameDiff> Game::GetScanContainer(const FactoryObject<Cont
 	const ItemInfo* items = reinterpret_cast<const ItemInfo*>(&data[0]);
 	unsigned int count = data.size() / sizeof(ItemInfo);
 
-	FactoryObject<Container> temp = GameFactory::GetObject<Container>(GameFactory::CreateInstance(ID_CONTAINER, 0x00000000));
+	FactoryObject<Container> temp = GameFactory::GetObject<Container>(GameFactory::CreateInstance(ID_CONTAINER, 0x00000000)).get();
 
 	for (unsigned int i = 0; i < count; ++i)
 	{
-		FactoryObject<Item> item = GameFactory::GetObject<Item>(GameFactory::CreateInstance(ID_ITEM, items[i].baseID));
+		FactoryObject<Item> item = GameFactory::GetObject<Item>(GameFactory::CreateInstance(ID_ITEM, items[i].baseID)).get();
 		item->SetItemCount(items[i].count);
 		item->SetItemEquipped(static_cast<bool>(items[i].equipped));
 		item->SetItemCondition(items[i].condition);
@@ -2460,7 +2459,7 @@ void Game::GetNextRef(unsigned int key, unsigned int refID, unsigned int type)
 
 	if (first)
 	{
-		FactoryObject<Player> reference = GameFactory::GetObject<Player>(PLAYER_REFERENCE);
+		FactoryObject<Player> reference = GameFactory::GetObject<Player>(PLAYER_REFERENCE).get();
 		cell = reference->GetGameCell();
 		_type = type;
 		first = false;

@@ -26,6 +26,8 @@
 #include "vaultserver/BaseContainer.h"
 #endif
 
+#include "Expected.h"
+
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"
 #endif
@@ -85,14 +87,14 @@ class GameFactory
 		 * The Reference is identified by a NetworkID
 		 */
 		template<typename T = Object>
-		static FactoryObject<T> GetObject(RakNet::NetworkID id);
+		static Expected<FactoryObject<T>> GetObject(RakNet::NetworkID id);
 		/**
 		 * \brief Obtains a lock on a Reference
 		 *
 		 * The Reference is identified by a reference ID
 		 */
 		template<typename T = Object>
-		static FactoryObject<T> GetObject(unsigned int refID);
+		static Expected<FactoryObject<T>> GetObject(unsigned int refID);
 		/**
 		 * \brief Obtains a lock on multiple References
 		 *
@@ -100,7 +102,7 @@ class GameFactory
 		 * Returns a STL vector which contains the locked References in the same ordering as the input vector.
 		 */
 		template<typename T = Object>
-		static std::vector<FactoryObject<T>> GetMultiple(const std::vector<unsigned int>& objects);
+		static std::vector<Expected<FactoryObject<T>>> GetMultiple(const std::vector<unsigned int>& objects);
 		/**
 		 * \brief Obtains a lock on multiple References
 		 *
@@ -108,7 +110,7 @@ class GameFactory
 		 * Returns a STL vector which contains the locked References in the same ordering as the input vector.
 		 */
 		template<typename T = Object>
-		static std::vector<FactoryObject<T>> GetMultiple(const std::vector<RakNet::NetworkID>& objects);
+		static std::vector<Expected<FactoryObject<T>>> GetMultiple(const std::vector<RakNet::NetworkID>& objects);
 		/**
 		 * \brief Lookup a NetworkID
 		 */
@@ -145,7 +147,8 @@ class GameFactory
 		/**
 		 * \brief Invalidates a Reference held by a FactoryObject
 		 */
-		static void LeaveReference(FactoryObject<Object>& reference);
+		template<typename T>
+		static void LeaveReference(FactoryObject<T>& reference);
 		/**
 		 * \brief Creates a new instance of a given type
 		 */
@@ -180,7 +183,8 @@ class GameFactory
 		 *
 		 * You must make sure the lock count of the given Reference equals to one
 		 */
-		static RakNet::NetworkID DestroyInstance(FactoryObject<Object>& reference);
+		template<typename T>
+		static RakNet::NetworkID DestroyInstance(FactoryObject<T>& reference);
 
 		/**
 		 * \brief Used to set the changed flag for the next network reference going to be created
@@ -200,18 +204,14 @@ class FactoryObject<Reference>
 		friend class GameFactory;
 
 		template<typename T, typename U>
-		friend FactoryObject<T> vaultcast(const FactoryObject<U>& object, bool = true) noexcept;
+		friend Expected<FactoryObject<T>> vaultcast(const FactoryObject<U>& object) noexcept;
 
 	private:
 		Reference* reference;
 		unsigned char type;
 
 	protected:
-		FactoryObject(Reference* reference, unsigned char type) : reference(reference), type(type)
-		{
-			if (!(reference = reinterpret_cast<Reference*>(reference->StartSession())))
-				throw VaultException("Unknown object %08X", reference);
-		}
+		FactoryObject(Reference* reference, unsigned char type) : reference(reinterpret_cast<Reference*>(reference->StartSession())), type(type) {}
 
 		FactoryObject(const FactoryObject& p) : reference(p.reference), type(p.type)
 		{
@@ -266,6 +266,7 @@ class FactoryObject<Reference>
 
 	public:
 		unsigned char GetType() const { return type; }
+		Reference& operator*() const { return *reference; }
 		Reference* operator->() const { return reference; }
 		explicit operator bool() const { return reference; }
 		bool operator==(const FactoryObject& p) const { return reference && reference == p.reference; }
@@ -281,7 +282,7 @@ template<> class FactoryObject<Object> : public FactoryObject<Reference>
 		friend class GameFactory;
 
 		template<typename T, typename U>
-		friend FactoryObject<T> vaultcast(const FactoryObject<U>& object, bool = true) noexcept;
+		friend Expected<FactoryObject<T>> vaultcast(const FactoryObject<U>& object) noexcept;
 
 	protected:
 		FactoryObject(Reference* reference, unsigned char type) : FactoryObject<Reference>(reference, type) {}
@@ -305,13 +306,13 @@ template<> class FactoryObject<Item> : public FactoryObject<Object>
 		friend class GameFactory;
 
 		template<typename T, typename U>
-		friend FactoryObject<T> vaultcast(const FactoryObject<U>& object, bool = true) noexcept;
+		friend Expected<FactoryObject<T>> vaultcast(const FactoryObject<U>& object) noexcept;
 
 	protected:
 		FactoryObject(Reference* reference, unsigned char type) : FactoryObject<Object>(reference, type)
 		{
 			if (!validate<Item>())
-				throw VaultException("Object %08X is not an Item", reference);
+				reference = nullptr;
 		}
 		template<typename T> FactoryObject(const FactoryObject<T>& p) : FactoryObject<Object>(p) {}
 		template<typename T> FactoryObject& operator=(const FactoryObject<T>& p) { return FactoryObject<Object>::operator=(p); }
@@ -333,13 +334,13 @@ template<> class FactoryObject<Container> : public FactoryObject<Object>
 		friend class GameFactory;
 
 		template<typename T, typename U>
-		friend FactoryObject<T> vaultcast(const FactoryObject<U>& object, bool = true) noexcept;
+		friend Expected<FactoryObject<T>> vaultcast(const FactoryObject<U>& object) noexcept;
 
 	protected:
 		FactoryObject(Reference* reference, unsigned char type) : FactoryObject<Object>(reference, type)
 		{
 			if (!validate<Container>())
-				throw VaultException("Object %08X is not a Container", reference);
+				reference = nullptr;
 		}
 		template<typename T> FactoryObject(const FactoryObject<T>& p) : FactoryObject<Object>(p) {}
 		template<typename T> FactoryObject& operator=(const FactoryObject<T>& p) { return FactoryObject<Object>::operator=(p); }
@@ -361,13 +362,13 @@ template<> class FactoryObject<Actor> : public FactoryObject<Container>
 		friend class GameFactory;
 
 		template<typename T, typename U>
-		friend FactoryObject<T> vaultcast(const FactoryObject<U>& object, bool = true) noexcept;
+		friend Expected<FactoryObject<T>> vaultcast(const FactoryObject<U>& object) noexcept;
 
 	protected:
 		FactoryObject(Reference* reference, unsigned char type) : FactoryObject<Container>(reference, type)
 		{
 			if (!validate<Actor>())
-				throw VaultException("Object %08X is not an Actor", reference);
+				reference = nullptr;
 		}
 		template<typename T> FactoryObject(const FactoryObject<T>& p) : FactoryObject<Container>(p) {}
 		template<typename T> FactoryObject& operator=(const FactoryObject<T>& p) { return FactoryObject<Container>::operator=(p); }
@@ -389,13 +390,13 @@ template<> class FactoryObject<Player> : public FactoryObject<Actor>
 		friend class GameFactory;
 
 		template<typename T, typename U>
-		friend FactoryObject<T> vaultcast(const FactoryObject<U>& object, bool = true) noexcept;
+		friend Expected<FactoryObject<T>> vaultcast(const FactoryObject<U>& object) noexcept;
 
 	protected:
 		FactoryObject(Reference* reference, unsigned char type) : FactoryObject<Actor>(reference, type)
 		{
 			if (!validate<Player>())
-				throw VaultException("Object %08X is not a Player", reference);
+				reference = nullptr;
 		}
 		template<typename T> FactoryObject(const FactoryObject<T>& p) : FactoryObject<Actor>(p) {}
 		template<typename T> FactoryObject& operator=(const FactoryObject<T>& p) { return FactoryObject<Actor>::operator=(p); }
@@ -415,22 +416,15 @@ template<> class FactoryObject<Player> : public FactoryObject<Actor>
   * \brief Tries to cast the instance pointer of a FactoryObject
   */
 template<typename T, typename U>
-inline FactoryObject<T> vaultcast(const FactoryObject<U>& object, bool safe = true) noexcept
+inline Expected<FactoryObject<T>> vaultcast(const FactoryObject<U>& object) noexcept
 {
-	bool valid = object.template validate<T>();
+	auto result = FactoryObject<T>(object);
 
-	if (!valid)
-	{
-		if (safe)
-#ifdef VAULTMP_DEBUG
-			throw VaultException("Object %08X (%s) cannot be casted to %s", object.reference, typeid(U).name(), typeid(T).name());
-#else
-			throw VaultException("Object vaultcast failed (%08X)", object.reference);
-#endif
-		else
-			return FactoryObject<T>();
-	}
+	if (result)
+		return result;
 
-	return FactoryObject<T>(object);
+	return VaultException("vaultcast failed");
 }
+template<typename T, typename U>
+inline Expected<FactoryObject<T>> vaultcast(const Expected<FactoryObject<U>>& object) noexcept { return vaultcast<T>(const_cast<Expected<FactoryObject<U>>&>(object).get()); }
 #endif
