@@ -88,10 +88,31 @@ class Expected
 				std::rethrow_exception(exception);
 		}
 
-		//operator T() const { return const_cast<Expected*>(this)->get(); }
+		template<typename U>
+		struct result_star_operator
+		{
+			template<typename Q> static decltype(Q().operator*()) test(decltype(&Q::operator*));
+			template<typename> static void test(...);
+			typedef decltype(test<U>(0)) type;
+		};
+
+		template<typename U>
+		struct result_pointer_operator
+		{
+			template<typename Q> static decltype(Q().operator->()) test(decltype(&Q::operator->));
+			template<typename> static void test(...);
+			typedef decltype(test<U>(0)) type;
+		};
+
 		explicit operator bool() const { return valid && const_cast<Expected*>(this)->get(); }
-		decltype(value.operator*()) operator*() const { return const_cast<Expected*>(this)->get().operator*(); }
-		decltype(value.operator->()) operator->() const { return const_cast<Expected*>(this)->get().operator->(); }
+
+		template<typename U> typename std::enable_if<std::is_class<U>::value, typename result_star_operator<U>::type>::type star_operator(U& u) { return u.operator*(); }
+		template<typename U> typename std::enable_if<!std::is_class<U>::value, U&>::type star_operator(U& u) { return u; }
+		auto operator*() -> decltype(this->star_operator<T>(value)) { return star_operator<T>(get()); }
+
+		template<typename U> typename std::enable_if<std::is_class<U>::value, typename result_pointer_operator<U>::type>::type pointer_operator(U& u) { return u.operator->(); }
+		template<typename U> typename std::enable_if<!std::is_class<U>::value && std::is_pointer<U>::value, U>::type pointer_operator(U& u) { return u; }
+		auto operator->() -> decltype(this->pointer_operator<T>(value)) { return pointer_operator<T>(get()); }
 };
 
 #endif

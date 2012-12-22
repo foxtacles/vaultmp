@@ -8,6 +8,7 @@
 #include "vaultmp.h"
 #include "vaultserver.h"
 #include "Database.h"
+#include "Expected.h"
 
 #include "sqlite/sqlite3.h"
 
@@ -29,10 +30,10 @@ class Record
 		Record& operator=(const Record& p) = delete;
 
 	public:
-		static const Record& Lookup(unsigned int baseID);
-		static const Record& Lookup(unsigned int baseID, const std::string& type);
-		static const Record& Lookup(unsigned int baseID, const std::vector<std::string>& type);
-		static const Record& GetRecordNotIn(const std::unordered_set<unsigned int>& _set, const std::function<bool(const Record&)>& pred);
+		static Expected<const Record*> Lookup(unsigned int baseID);
+		static Expected<const Record*> Lookup(unsigned int baseID, const std::string& type);
+		static Expected<const Record*> Lookup(unsigned int baseID, const std::vector<std::string>& type);
+		static Expected<const Record*> GetRecordNotIn(const std::unordered_set<unsigned int>& _set, const std::function<bool(const Record&)>& pred);
 
 		static bool IsValidCell(unsigned int baseID);
 		static bool IsValidWeather(unsigned int baseID);

@@ -7,6 +7,7 @@
 #include "vaultserver.h"
 #include "Database.h"
 #include "Record.h"
+#include "Expected.h"
 
 #include "sqlite/sqlite3.h"
 
@@ -28,7 +29,7 @@ class Race
 		Race& operator=(const Race& p) = delete;
 
 	public:
-		static const Race& Lookup(unsigned int baseID);
+		static Expected<const Race*> Lookup(unsigned int baseID);
 
 		unsigned int GetBase() const;
 		bool IsChild() const;

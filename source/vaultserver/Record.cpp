@@ -30,27 +30,27 @@ Record::Record(const string& table, sqlite3_stmt* stmt)
 	data.insert(make_pair(baseID, this));
 }
 
-const Record& Record::Lookup(unsigned int baseID)
+Expected<const Record*> Record::Lookup(unsigned int baseID)
 {
 	auto it = data.find(baseID);
 
 	if (it != data.end())
-		return *it->second;
+		return it->second;
 
-	throw VaultException("No record with baseID %08X found", baseID);
+	return VaultException("No record with baseID %08X found", baseID);
 }
 
-const Record& Record::Lookup(unsigned int baseID, const string& type)
+Expected<const Record*> Record::Lookup(unsigned int baseID, const string& type)
 {
 	auto it = data.find(baseID);
 
 	if (it != data.end() && !it->second->GetType().compare(type))
-		return *it->second;
+		return it->second;
 
-	throw VaultException("No record with baseID %08X and type %s found", baseID, type.c_str());
+	return VaultException("No record with baseID %08X and type %s found", baseID, type.c_str());
 }
 
-const Record& Record::Lookup(unsigned int baseID, const vector<string>& types)
+Expected<const Record*> Record::Lookup(unsigned int baseID, const vector<string>& types)
 {
 	auto it = data.find(baseID);
 
@@ -59,48 +59,30 @@ const Record& Record::Lookup(unsigned int baseID, const vector<string>& types)
 		const string& type = it->second->GetType();
 
 		if (find(types.begin(), types.end(), type) != types.end())
-			return *it->second;
+			return it->second;
 	}
 
-	throw VaultException("No record with baseID %08X found", baseID);
+	return VaultException("No record with baseID %08X found", baseID);
 }
 
-const Record& Record::GetRecordNotIn(const unordered_set<unsigned int>& _set, const function<bool(const Record&)>& pred)
+Expected<const Record*> Record::GetRecordNotIn(const unordered_set<unsigned int>& _set, const function<bool(const Record&)>& pred)
 {
 	auto it = find_if(data.begin(), data.end(), [&](const pair<const unsigned int, const Record*>& data) { return !_set.count(data.first) && pred(*data.second); });
 
 	if (it != data.end())
-		return *it->second;
+		return it->second;
 
-	throw VaultException("No record found which is not in the given set");
+	return VaultException("No record found which is not in the given set");
 }
 
 bool Record::IsValidCell(unsigned int baseID)
 {
-	try
-	{
-		Record::Lookup(baseID, "CELL");
-	}
-	catch (...)
-	{
-		return false;
-	}
-
-	return true;
+	return Record::Lookup(baseID, "CELL").operator bool();
 }
 
 bool Record::IsValidWeather(unsigned int baseID)
 {
-	try
-	{
-		Record::Lookup(baseID, "WTHR");
-	}
-	catch (...)
-	{
-		return false;
-	}
-
-	return true;
+	return Record::Lookup(baseID, "WTHR").operator bool();
 }
 
 unsigned int Record::GetBase() const

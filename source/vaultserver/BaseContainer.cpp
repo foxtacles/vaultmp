@@ -30,7 +30,7 @@ BaseContainer::BaseContainer(const string& table, sqlite3_stmt* stmt)
 
 	// leveld items not implemented yet
 	// STAT, MSTT: some "Test" containers contain illegal stuff
-	if (!Record::Lookup(item).GetType().compare("LVLI") || !Record::Lookup(item).GetType().compare("STAT") || !Record::Lookup(item).GetType().compare("MSTT"))
+	if (!Record::Lookup(item)->GetType().compare("LVLI") || !Record::Lookup(item)->GetType().compare("STAT") || !Record::Lookup(item)->GetType().compare("MSTT"))
 		return;
 
 	if (baseID & 0xFF000000)

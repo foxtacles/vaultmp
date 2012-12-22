@@ -8,6 +8,7 @@
 #include "Database.h"
 #include "Record.h"
 #include "BaseContainer.h"
+#include "Expected.h"
 
 #include "sqlite/sqlite3.h"
 
@@ -49,8 +50,8 @@ class NPC
 		NPC& operator=(const NPC& p) = delete;
 
 	public:
-		static const NPC& Lookup(unsigned int baseID);
-		static const NPC& GetNPCNotIn(const std::unordered_set<unsigned int>& _set, const std::function<bool(const NPC&)>& pred);
+		static Expected<const NPC*> Lookup(unsigned int baseID);
+		static Expected<const NPC*> GetNPCNotIn(const std::unordered_set<unsigned int>& _set, const std::function<bool(const NPC&)>& pred);
 
 		unsigned int GetBase() const;
 		bool IsEssential() const;

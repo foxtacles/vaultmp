@@ -10,6 +10,7 @@
 #include "vaultserver.h"
 #include "Database.h"
 #include "Record.h"
+#include "Expected.h"
 
 #include "sqlite/sqlite3.h"
 
@@ -34,8 +35,8 @@ class Exterior
 		Exterior& operator=(const Exterior& p) = delete;
 
 	public:
-		static const Exterior& Lookup(unsigned int baseID);
-		static const Exterior& Lookup(unsigned int world, double X, double Y);
+		static Expected<const Exterior*> Lookup(unsigned int baseID);
+		static Expected<const Exterior*> Lookup(unsigned int world, double X, double Y);
 
 		unsigned int GetBase() const;
 		unsigned int GetWorld() const;

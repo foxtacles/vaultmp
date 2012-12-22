@@ -47,8 +47,8 @@ void Container::initialize()
 bool Container::Item_sort(NetworkID id, NetworkID id2)
 {
 	auto items = GameFactory::GetMultiple<Item>(vector<NetworkID>{id, id2});
-	const auto& item = items[0];
-	const auto& item2 = items[1];
+	auto& item = items[0];
+	auto& item2 = items[1];
 
 	if (item->GetBase() > item2->GetBase())
 		return false;
@@ -512,12 +512,8 @@ list<NetworkID> Container::GetItemTypes(const string& type) const
 	{
 		FactoryObject<Item> item = GameFactory::GetObject<Item>(id).get();
 
-		try
-		{
-			Record::Lookup(item->GetBase(), type);
+		if (Record::Lookup(item->GetBase(), type))
 			result.emplace_back(id);
-		}
-		catch (...) {}
 	}
 
 	return result;

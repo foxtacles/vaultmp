@@ -6,6 +6,7 @@
 #include "vaultmp.h"
 #include "vaultserver.h"
 #include "Database.h"
+#include "Expected.h"
 
 #include "sqlite/sqlite3.h"
 
@@ -29,7 +30,7 @@ class Weapon
 		Weapon& operator=(const Weapon& p) = delete;
 
 	public:
-		static const Weapon& Lookup(unsigned int baseID);
+		static Expected<const Weapon*> Lookup(unsigned int baseID);
 
 		unsigned int GetBase() const;
 		double GetDamage() const;

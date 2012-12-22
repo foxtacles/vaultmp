@@ -40,22 +40,16 @@ NetworkResponse Server::LoadGame(RakNetGUID guid)
 {
 	NetworkResponse response;
 
-	try
-	{
-		const Exterior& cell = Exterior::Lookup(Player::GetSpawnCell());
+	auto cell = Exterior::Lookup(Player::GetSpawnCell());
 
+	if (cell)
 		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(0, cell.GetWorld(), cell.GetX(), cell.GetY(), true),
+			PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(0, cell->GetWorld(), cell->GetX(), cell->GetY(), true),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
-	}
-	catch (...)
-	{
-		const Record& record = Record::Lookup(Player::GetSpawnCell(), "CELL");
-
+	else
 		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(0, record.GetName(), true),
+			PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(0, Record::Lookup(Player::GetSpawnCell(), "CELL")->GetName(), true),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
-	}
 
 	vector<FactoryObject<Object>> references = GameFactory::GetObjectTypes<Object>(ALL_OBJECTS);
 	vector<FactoryObject<Object>>::iterator it;
@@ -113,30 +107,30 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 	if (!result)
 		result = NPC::GetNPCNotIn(Player::GetBaseIDs(), [](const NPC& data)
 		{
-			return (!(data.GetBase() & 0xFF000000) && !data.IsEssential() && !Race::Lookup(data.GetRace()).IsChild());
-		}).GetBase();
+			return (!(data.GetBase() & 0xFF000000) && !data.IsEssential() && !Race::Lookup(data.GetRace())->IsChild());
+		})->GetBase();
 
-	const NPC& npc = NPC::Lookup(result);
+	const NPC* npc = *NPC::Lookup(result);
 
 	player->SetReference(0x00000000);
 	player->SetBase(result);
 
-	unsigned int race = npc.GetRace();
+	unsigned int race = npc->GetRace();
 	unsigned int old_race = player->GetActorRace();
 
 	if (player->SetActorRace(race))
 	{
-		signed int age = Race::Lookup(old_race).GetAgeDifference(race);
+		signed int age = Race::Lookup(old_race)->GetAgeDifference(race);
 
 		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_RACE>(id, race, age, age),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 
-	signed int age = Race::Lookup(npc.GetOriginalRace()).GetAgeDifference(race);
+	signed int age = Race::Lookup(npc->GetOriginalRace())->GetAgeDifference(race);
 	player->SetActorAge(age);
 
-	bool female = npc.IsFemale();
+	bool female = npc->IsFemale();
 
 	if (player->SetActorFemale(female))
 	{
@@ -145,7 +139,7 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 
-	const vector<const BaseContainer*>& container = npc.GetBaseContainer();
+	const vector<const BaseContainer*>& container = npc->GetBaseContainer();
 
 	for (const auto* item : container)
 	{
@@ -353,10 +347,10 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, const FactoryObject<Actor
 			else if (firing)
 			{
 				unsigned int baseID = reference->GetEquippedWeapon();
-				const Weapon& weapon = Weapon::Lookup(baseID);
+				const Weapon* weapon = *Weapon::Lookup(baseID);
 
 				response.emplace_back(Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_UPDATE_FIREWEAPON>(reference->GetNetworkID(), baseID, weapon.IsAutomatic() ? weapon.GetFireRate() : 0.00),
+					PacketFactory::Create<pTypes::ID_UPDATE_FIREWEAPON>(reference->GetNetworkID(), baseID, weapon->IsAutomatic() ? weapon->GetFireRate() : 0.00),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
 				Script::OnActorFireWeapon(reference, baseID);
@@ -374,7 +368,7 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, const FactoryObject<Actor
 			const Record* record = nullptr;
 
 			if (idle)
-				record = &Record::Lookup(idle, "IDLE");
+				record = *Record::Lookup(idle, "IDLE");
 
 			response.emplace_back(Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_UPDATE_IDLE>(reference->GetNetworkID(), idle, record ? record->GetName() : ""),

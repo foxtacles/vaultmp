@@ -884,12 +884,10 @@ const char* Script::BaseToString(unsigned int baseID)
 	static string base;
 	base.clear();
 
-	try
-	{
-		const Record& record = Record::Lookup(baseID);
-		base.assign(record.GetName());
-	}
-	catch (...) {}
+	auto record = Record::Lookup(baseID);
+
+	if (record)
+		base.assign(record->GetName());
 
 	return base.c_str();
 }
@@ -1162,23 +1160,7 @@ bool Script::IsPlayer(NetworkID id)
 
 bool Script::IsInterior(unsigned int cell)
 {
-	try
-	{
-		Exterior::Lookup(cell);
-		return false;
-	}
-	catch (...)
-	{
-		try
-		{
-			Record::Lookup(cell, "CELL");
-			return true;
-		}
-		catch (...)
-		{
-			return false;
-		}
-	}
+	return !Exterior::Lookup(cell) && Record::Lookup(cell, "CELL");
 }
 
 unsigned int Script::GetConnection(NetworkID id)
@@ -1540,20 +1522,17 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 	unsigned int cell = object->GetNetworkCell();
 	const Exterior* new_cell = nullptr;
 
-	try
-	{
-		unsigned int world = Exterior::Lookup(cell).GetWorld();
+	auto exterior = Exterior::Lookup(cell);
 
-		try
-		{
-			new_cell = &Exterior::Lookup(world, X, Y);
-		}
-		catch (...)
-		{
+	if (exterior)
+	{
+		exterior = Exterior::Lookup(exterior->GetWorld(), X, Y);
+
+		if (!exterior)
 			return state;
-		}
-	}
-	catch (...) {} // interior, can't check pos (yet? which are the bounds of interiors?)
+
+		new_cell = *exterior;
+	} // interior, can't check pos (yet? which are the bounds of interiors?)
 
 	NetworkResponse response;
 	unsigned int _new_cell = 0x00000000;
@@ -1619,38 +1598,26 @@ bool Script::SetCell(NetworkID id, unsigned int cell, double X, double Y, double
 	const Record* new_interior = nullptr;
 	const Exterior* new_exterior = nullptr;
 
-	try
-	{
-		if (update_pos)
-		{
-			unsigned int world = Exterior::Lookup(cell).GetWorld();
+	auto exterior = Exterior::Lookup(cell);
 
-			try
-			{
-				new_exterior = &Exterior::Lookup(world, X, Y);
-
-				if (new_exterior->GetBase() != cell)
-					return state;
-			}
-			catch (...)
-			{
-				return state;
-			}
-		}
-		else
-			new_exterior = &Exterior::Lookup(cell);
-	}
-	catch (...)
+	if (!exterior)
 	{
-		try
-		{
-			new_interior = &Record::Lookup(cell, "CELL");
-		}
-		catch (...)
-		{
+		auto interior = Record::Lookup(cell, "CELL");
+
+		if (!interior)
 			return state;
-		}
+
+		new_interior = *interior;
 	}
+	else if (update_pos)
+	{
+		exterior = Exterior::Lookup(exterior->GetWorld(), X, Y);
+
+		if (!exterior || (new_exterior = *exterior)->GetBase() != cell)
+			return state;
+	}
+	else
+		new_exterior = *exterior;
 
 	NetworkResponse response;
 
@@ -1892,14 +1859,12 @@ bool Script::PlayIdle(NetworkID id, unsigned int idle)
 
 	const Record* record = nullptr;
 
-	try
-	{
-		record = &Record::Lookup(idle, "IDLE");
-	}
-	catch (...)
-	{
+	auto _record = Record::Lookup(idle, "IDLE");
+
+	if (!_record)
 		return false;
-	}
+
+	record = *_record;
 
 	if (actor->SetActorIdleAnimation(idle))
 	{
@@ -1950,44 +1915,40 @@ bool Script::SetActorBaseRace(NetworkID id, unsigned int race)
 	if (baseID == PLAYER_BASE)
 		return false;
 
-	try
+	if (!Race::Lookup(race))
+		return false;
+
+	const NPC* npc = *NPC::Lookup(baseID);
+	unsigned int old_race = npc->GetRace();
+
+	if (old_race != race)
 	{
-		Race::Lookup(race);
-		const NPC& npc = NPC::Lookup(baseID);
-		unsigned int old_race = npc.GetRace();
+		npc->SetRace(race);
+		signed int delta_age = Race::Lookup(old_race)->GetAgeDifference(race);
+		signed int new_age = Race::Lookup(npc->GetOriginalRace())->GetAgeDifference(race);
 
-		if (old_race != race)
+		for (const auto& actor : reference)
 		{
-			npc.SetRace(race);
-			signed int delta_age = Race::Lookup(old_race).GetAgeDifference(race);
-			signed int new_age = Race::Lookup(npc.GetOriginalRace()).GetAgeDifference(race);
-
-			for (const auto& actor : reference)
+			if (actor->GetBase() == baseID)
 			{
-				if (actor->GetBase() == baseID)
-				{
-					actor->SetActorRace(race);
-					actor->SetActorAge(new_age);
+				actor->SetActorRace(race);
+				actor->SetActorAge(new_age);
 
-					if (vaultcast<Player>(actor))
-						Network::Queue(NetworkResponse{Network::CreateResponse(
-							PacketFactory::Create<pTypes::ID_UPDATE_RACE>(actor->GetNetworkID(), race, Race::Lookup(RACE_CAUCASIAN).GetAgeDifference(race), delta_age),
-							HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-						});
-					else
-						Network::Queue(NetworkResponse{Network::CreateResponse(
-							PacketFactory::Create<pTypes::ID_UPDATE_RACE>(actor->GetNetworkID(), race, new_age, delta_age),
-							HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-						});
-				}
+				if (vaultcast<Player>(actor))
+					Network::Queue(NetworkResponse{Network::CreateResponse(
+						PacketFactory::Create<pTypes::ID_UPDATE_RACE>(actor->GetNetworkID(), race, Race::Lookup(RACE_CAUCASIAN)->GetAgeDifference(race), delta_age),
+						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+					});
+				else
+					Network::Queue(NetworkResponse{Network::CreateResponse(
+						PacketFactory::Create<pTypes::ID_UPDATE_RACE>(actor->GetNetworkID(), race, new_age, delta_age),
+						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+					});
 			}
 		}
-
-		return true;
 	}
-	catch (...) {}
 
-	return false;
+	return true;
 }
 
 bool Script::AgeActorBaseRace(NetworkID id, signed int age)
@@ -1999,7 +1960,7 @@ bool Script::AgeActorBaseRace(NetworkID id, signed int age)
 
 	auto& actor = reference.get();
 
-	const Race* race = &Race::Lookup(actor->GetActorRace());
+	const Race* race = *Race::Lookup(actor->GetActorRace());
 	unsigned int new_race;
 
 	if (age < 0)
@@ -2013,7 +1974,7 @@ bool Script::AgeActorBaseRace(NetworkID id, signed int age)
 			if (!new_race)
 				return false;
 
-			race = &Race::Lookup(new_race);
+			race = *Race::Lookup(new_race);
 		}
 	}
 	else if (age > 0)
@@ -2025,7 +1986,7 @@ bool Script::AgeActorBaseRace(NetworkID id, signed int age)
 			if (!new_race)
 				return false;
 
-			race = &Race::Lookup(new_race);
+			race = *Race::Lookup(new_race);
 		}
 	}
 	else
@@ -2049,34 +2010,28 @@ bool Script::SetActorBaseSex(NetworkID id, bool female)
 	if (baseID == PLAYER_BASE)
 		return false;
 
-	try
+	const NPC* npc = *NPC::Lookup(baseID);
+	bool old_female = npc->IsFemale();
+
+	if (old_female != female)
 	{
-		const NPC& npc = NPC::Lookup(baseID);
-		bool old_female = npc.IsFemale();
+		npc->SetFemale(female);
 
-		if (old_female != female)
+		for (const auto& actor : reference)
 		{
-			npc.SetFemale(female);
-
-			for (const auto& actor : reference)
+			if (actor->GetBase() == baseID)
 			{
-				if (actor->GetBase() == baseID)
-				{
-					actor->SetActorFemale(female);
+				actor->SetActorFemale(female);
 
-					Network::Queue(NetworkResponse{Network::CreateResponse(
-						PacketFactory::Create<pTypes::ID_UPDATE_SEX>(actor->GetNetworkID(), female),
-						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-					});
-				}
+				Network::Queue(NetworkResponse{Network::CreateResponse(
+					PacketFactory::Create<pTypes::ID_UPDATE_SEX>(actor->GetNetworkID(), female),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+				});
 			}
 		}
-
-		return true;
 	}
-	catch (...) {}
 
-	return false;
+	return true;
 }
 
 void Script::SetPlayerRespawn(NetworkID id, unsigned int respawn)
@@ -2096,33 +2051,30 @@ void Script::SetPlayerSpawnCell(NetworkID id, unsigned int cell)
 
 	auto& player = reference.get();
 
-	try
+	if (player->SetPlayerSpawnCell(cell))
 	{
-		if (player->SetPlayerSpawnCell(cell))
+		NetworkResponse response;
+		NetworkID id = player->GetNetworkID();
+		RakNetGUID guid = Client::GetClientFromPlayer(id)->GetGUID();
+
+		auto _cell = Exterior::Lookup(cell);
+
+		if (!_cell)
 		{
-			NetworkResponse response;
-			NetworkID id = player->GetNetworkID();
-			RakNetGUID guid = Client::GetClientFromPlayer(id)->GetGUID();
+			auto record = Record::Lookup(cell, "CELL");
 
-			try
-			{
-				const Exterior& _cell = Exterior::Lookup(cell);
+			if (!record)
+				return;
 
-				response.emplace_back(Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, _cell.GetWorld(), _cell.GetX(), _cell.GetY(), true),
-					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
-			}
-			catch (...)
-			{
-				const Record& record = Record::Lookup(cell, "CELL");
-
-				response.emplace_back(Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(id, record.GetName(), true),
-					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
-			}
-
-			Network::Queue(move(response));
+			response.emplace_back(Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(id, record->GetName(), true),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 		}
+		else
+			response.emplace_back(Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, _cell->GetWorld(), _cell->GetX(), _cell->GetY(), true),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+
+		Network::Queue(move(response));
 	}
-	catch (...) {}
 }

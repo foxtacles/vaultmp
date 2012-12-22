@@ -44,17 +44,17 @@ Exterior::Exterior(const string& table, sqlite3_stmt* stmt)
 	//const Record& record = Record::Lookup(baseID, "CELL");
 }
 
-const Exterior& Exterior::Lookup(unsigned int baseID)
+Expected<const Exterior*> Exterior::Lookup(unsigned int baseID)
 {
 	auto it = cells.find(baseID);
 
 	if (it != cells.end())
-		return *it->second;
+		return it->second;
 
-	throw VaultException("No cell with baseID %08X found", baseID);
+	return VaultException("No cell with baseID %08X found", baseID);
 }
 
-const Exterior& Exterior::Lookup(unsigned int world, double X, double Y)
+Expected<const Exterior*> Exterior::Lookup(unsigned int world, double X, double Y)
 {
 	signed int x = floor(X / size);
 	signed int y = floor(Y / size);
@@ -62,9 +62,9 @@ const Exterior& Exterior::Lookup(unsigned int world, double X, double Y)
 	auto it = find_if(worlds[world].begin(), worlds[world].end(), [=](const Exterior* cell) { return cell->x == x && cell->y == y; });
 
 	if (it != worlds[world].end())
-		return **it;
+		return *it;
 
-	throw VaultException("No cell with coordinates (%f, %f) in world %08X found", static_cast<float>(X), static_cast<float>(Y), world);
+	return VaultException("No cell with coordinates (%f, %f) in world %08X found", static_cast<float>(X), static_cast<float>(Y), world);
 }
 
 unsigned int Exterior::GetBase() const
