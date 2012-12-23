@@ -6,6 +6,8 @@
 #endif
 
 #include <cstdio>
+#include <cstring>
+#include <cstdarg>
 #include <string>
 #include <typeinfo>
 
