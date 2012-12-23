@@ -12,7 +12,8 @@ template <typename T>
 class Expected
 {
 	private:
-		union {
+		union
+		{
 			T value;
 			std::exception_ptr exception;
 		};
@@ -65,9 +66,13 @@ class Expected
 				}
 				else
 				{
+					using std::exception_ptr;
+
 					auto t = std::move(expected.exception);
+					expected.exception.~exception_ptr();
 					new(&expected.value) T(std::move(value));
-					new(&exception) std::exception_ptr(t);
+					value.~T();
+					new(&exception) exception_ptr(std::move(t));
 					std::swap(valid, expected.valid);
 				}
 			}
