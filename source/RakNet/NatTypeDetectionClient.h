@@ -34,7 +34,7 @@ struct Packet;
 	/// \sa NatPunchthroughClient
 	/// \sa NatTypeDetectionServer
 	/// \ingroup NAT_TYPE_DETECTION_GROUP
-	class RAK_DLL_EXPORT NatTypeDetectionClient : public PluginInterface2
+	class RAK_DLL_EXPORT NatTypeDetectionClient : public PluginInterface2, public RNS2EventHandler
 	{
 	public:
 
@@ -61,9 +61,15 @@ struct Packet;
 
 		virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 
+		virtual void OnRNS2Recv(RNS2RecvStruct *recvStruct);
+		virtual void DeallocRNS2RecvStruct(RNS2RecvStruct *s, const char *file, unsigned int line);
+		virtual RNS2RecvStruct *AllocRNS2RecvStruct(const char *file, unsigned int line);
 	protected:
-		SOCKET c2;
-		unsigned short c2Port;
+		DataStructures::Queue<RNS2RecvStruct*> bufferedPackets;
+		SimpleMutex bufferedPacketsMutex;
+		
+		RakNetSocket2* c2;
+		//unsigned short c2Port;
 		void Shutdown(void);
 		void OnCompletion(NATTypeDetectionResult result);
 		bool IsInProgress(void) const;

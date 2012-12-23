@@ -74,9 +74,9 @@ public:
 	void DeallocWideChar(WCHAR * w);
 #endif
 	
-	///String class find replacement
-	///Searches the string for the content specified in stringToFind and returns the position of the first occurrence in the string.
-	///Search only includes characters on or after position pos, ignoring any possible occurrences in previous locations.
+	/// String class find replacement
+	/// Searches the string for the content specified in stringToFind and returns the position of the first occurrence in the string.
+	/// Search only includes characters on or after position pos, ignoring any possible occurrences in previous locations.
 	/// \param[in] stringToFind The string to find inside of this object's string
 	/// \param[in] pos The position in the string to start the search
 	/// \return Returns the position of the first occurrence in the string.
@@ -121,6 +121,7 @@ public:
 
 	/// Returns the length of the string
 	size_t GetLength(void) const;
+	size_t GetLengthUTF8(void) const;
 
 	/// Replace character(s) in starting at index, for count, with c
 	void Replace(unsigned index, unsigned count, unsigned char c);
@@ -132,7 +133,8 @@ public:
 	void SetChar( unsigned index, RakNet::RakString s );
 
 	/// Make sure string is no longer than \a length
-	void Truncate(unsigned length);
+	void Truncate(unsigned int length);
+	void TruncateUTF8(unsigned int length);
 
 	// Gets the substring starting at index for count characters
 	RakString SubStr(unsigned int index, unsigned int count) const;
@@ -144,6 +146,9 @@ public:
 	void TerminateAtFirstCharacter(char c);
 	/// Set the last instance of c with a NULL terminator
 	void TerminateAtLastCharacter(char c);
+
+	/// Returns how many occurances there are of \a c in the string
+	int GetCharacterCount(char c);
 	
 	/// Remove all instances of c
 	void RemoveCharacter(char c);
@@ -152,15 +157,24 @@ public:
 	/// Equivalent to assignment operator
 	static RakNet::RakString NonVariadic(const char *str);
 
-	/// Has the string into an unsigned int
+	/// Hash the string into an unsigned int
 	static unsigned long ToInteger(const char *str);
 	static unsigned long ToInteger(const RakString &rs);
+
+	/// \brief Read an integer out of a substring
+	/// \param[in] str The string
+	/// \param[in] pos The position on str where the integer starts
+	/// \param[in] n How many chars to copy
+	static int ReadIntFromSubstring(const char *str, size_t pos, size_t n);
 
 	// Like strncat, but for a fixed length
 	void AppendBytes(const char *bytes, unsigned int count);
 
 	/// Compare strings (case sensitive)
 	int StrCmp(const RakString &rhs) const;
+
+	/// Compare strings (case sensitive), up to num characters
+	int StrNCmp(const RakString &rhs, size_t num) const;
 
 	/// Compare strings (not case sensitive)
 	int StrICmp(const RakString &rhs) const;
@@ -194,6 +208,24 @@ public:
 
 	/// Scan for quote, double quote, and backslash and prepend with backslash
 	RakNet::RakString& SQLEscape(void);
+
+	/// Format as a POST command that can be sent to a webserver
+	/// \param[in] uri For example, masterserver2.raknet.com/testServer
+	/// \param[in] contentType For example, text/plain; charset=UTF-8
+	/// \param[in] body Body of the post
+	/// \return Formatted string
+	static RakNet::RakString FormatForPOST(RakString uri, RakString contentType, RakString body, RakString extraHeaders=RakString());
+	static RakNet::RakString FormatForPUT(RakString uri, RakString contentType, RakString body, RakString extraHeaders=RakString());
+
+	/// Format as a GET command that can be sent to a webserver
+	/// \param[in] uri For example, masterserver2.raknet.com/testServer?__gameId=comprehensivePCGame
+	/// \return Formatted string
+	static RakNet::RakString FormatForGET(RakString uri, RakString extraHeaders=RakString());
+
+	/// Format as a DELETE command that can be sent to a webserver
+	/// \param[in] uri For example, masterserver2.raknet.com/testServer?__gameId=comprehensivePCGame&__rowId=1
+	/// \return Formatted string
+	static RakNet::RakString FormatForDELETE(RakString uri, RakString extraHeaders=RakString());
 
 	/// Fix to be a file path, ending with /
 	RakNet::RakString& MakeFilePath(void);
@@ -286,6 +318,7 @@ public:
 	static void UnlockMutex(void);
 
 protected:
+	static RakNet::RakString FormatForPUTOrPost(const char* type, RakString uri, RakString contentType, RakString body, RakString extraHeaders);
 	void Allocate(size_t len);
 	void Assign(const char *str);
 	void Assign(const char *str, va_list ap);

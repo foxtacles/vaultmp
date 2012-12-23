@@ -22,7 +22,7 @@ SendToThread::SendToThreadBlock* SendToWorkerThread(SendToThread::SendToThreadBl
 	*returnOutput=false;
 //	RakNet::TimeUS *mostRecentTime=(RakNet::TimeUS *)input->data;
 //	*mostRecentTime=RakNet::GetTimeUS();
-	SocketLayer::SendTo(input->s, input->data, input->dataWriteOffset, input->systemAddress, input->remotePortRakNetWasStartedOn_PS3, input->extraSocketOptions, _FILE_AND_LINE_);
+	SocketLayer::SendTo(input->s, input->data, input->dataWriteOffset, input->systemAddress, _FILE_AND_LINE_);
 	SendToThread::objectQueue.Push(input);
 	return 0;
 }

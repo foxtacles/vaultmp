@@ -23,6 +23,7 @@
 // #define _RAKNET_SUPPORT_Router2 0
 // #define _RAKNET_SUPPORT_RPC4Plugin 0
 // #define _RAKNET_SUPPORT_TeamBalancer 0
+// #define _RAKNET_SUPPORT_TeamManager 0
 // #define _RAKNET_SUPPORT_UDPProxyClient 0
 // #define _RAKNET_SUPPORT_UDPProxyCoordinator 0
 // #define _RAKNET_SUPPORT_UDPProxyServer 0
@@ -34,6 +35,7 @@
 // #define _RAKNET_SUPPORT_RakNetCommandParser 0
 // #define _RAKNET_SUPPORT_EmailSender 0
 // #define _RAKNET_SUPPORT_HTTPConnection 0
+// #define _RAKNET_SUPPORT_HTTPConnection2 0
 // #define _RAKNET_SUPPORT_PacketizedTCP 0
 // #define _RAKNET_SUPPORT_TwoWayAuthentication 0
 
@@ -89,6 +91,9 @@
 #ifndef _RAKNET_SUPPORT_TeamBalancer
 #define _RAKNET_SUPPORT_TeamBalancer 1
 #endif
+#ifndef _RAKNET_SUPPORT_TeamManager
+#define _RAKNET_SUPPORT_TeamManager 1
+#endif
 #ifndef _RAKNET_SUPPORT_UDPProxyClient
 #define _RAKNET_SUPPORT_UDPProxyClient 1
 #endif
@@ -122,6 +127,9 @@
 #ifndef _RAKNET_SUPPORT_HTTPConnection
 #define _RAKNET_SUPPORT_HTTPConnection 1
 #endif
+#ifndef _RAKNET_SUPPORT_HTTPConnection2
+#define _RAKNET_SUPPORT_HTTPConnection2 1
+#endif
 #ifndef _RAKNET_SUPPORT_PacketizedTCP
 #define _RAKNET_SUPPORT_PacketizedTCP 1
 #endif
@@ -146,27 +154,33 @@
 #ifndef _RAKNET_SUPPORT_UDPForwarder
 #define _RAKNET_SUPPORT_UDPForwarder 1
 #endif
+#ifndef _RAKNET_SUPPORT_StatisticsHistory
+#define _RAKNET_SUPPORT_StatisticsHistory 1
+#endif
+#ifndef _RAKNET_SUPPORT_LibVoice
+#define _RAKNET_SUPPORT_LibVoice 0
+#endif
+#ifndef _RAKNET_SUPPORT_RelayPlugin
+#define _RAKNET_SUPPORT_RelayPlugin 1
+#endif
 
 // Take care of dependencies
-
+#if _RAKNET_SUPPORT_DirectoryDeltaTransfer==1
 #undef _RAKNET_SUPPORT_FileListTransfer
 #define _RAKNET_SUPPORT_FileListTransfer 1
-
-
+#endif
+#if _RAKNET_SUPPORT_FullyConnectedMesh2==1
 #undef _RAKNET_SUPPORT_ConnectionGraph2
 #define _RAKNET_SUPPORT_ConnectionGraph2 1
-
-
+#endif
+#if _RAKNET_SUPPORT_TelnetTransport==1
 #undef _RAKNET_SUPPORT_PacketizedTCP
 #define _RAKNET_SUPPORT_PacketizedTCP 1
-
-
+#endif
+#if _RAKNET_SUPPORT_PacketizedTCP==1 || _RAKNET_SUPPORT_EmailSender==1 || _RAKNET_SUPPORT_HTTPConnection==1
 #undef _RAKNET_SUPPORT_TCPInterface
 #define _RAKNET_SUPPORT_TCPInterface 1
-
-
-
-
+#endif
 
 
 

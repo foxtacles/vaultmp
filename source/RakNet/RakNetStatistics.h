@@ -29,7 +29,7 @@ enum RNSPerSecondMetrics
 	/// How many user message bytes were resent. A message is resent if it is marked as reliable, and either the message didn't arrive or the message ack didn't arrive.
 	USER_MESSAGE_BYTES_RESENT,
 
-	/// How many user message bytes were received, and processed successfully.
+	/// How many user message bytes were received, and returned to the user successfully.
 	USER_MESSAGE_BYTES_RECEIVED_PROCESSED,
 
 	/// How many user message bytes were received, but ignored due to data format errors. This will usually be 0.

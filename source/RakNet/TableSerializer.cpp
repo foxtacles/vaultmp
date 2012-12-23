@@ -177,7 +177,7 @@ void TableSerializer::SerializeCell(RakNet::BitStream *out, DataStructures::Tabl
 }
 bool TableSerializer::DeserializeCell(RakNet::BitStream *in, DataStructures::Table::Cell *cell, DataStructures::Table::ColumnType columnType)
 {
-	bool isEmpty;
+	bool isEmpty=false;
 	double value;
 	void *ptr;
 	char tempString[65535];

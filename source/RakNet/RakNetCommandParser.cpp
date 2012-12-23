@@ -20,7 +20,7 @@ STATIC_FACTORY_DEFINITIONS(RakNetCommandParser,RakNetCommandParser);
 
 RakNetCommandParser::RakNetCommandParser()
 {
-	RegisterCommand(4, "Startup","( unsigned short maxConnections, unsigned short localPort, const char *forceHostAddress );");
+	RegisterCommand(4, "Startup","( unsigned int maxConnections, unsigned short localPort, const char *forceHostAddress );");
 	RegisterCommand(0,"InitializeSecurity","();");
 	RegisterCommand(0,"DisableSecurity","( void );");
 	RegisterCommand(1,"AddToSecurityExceptionList","( const char *ip );");
@@ -35,7 +35,7 @@ RakNetCommandParser::RakNetCommandParser()
 	RegisterCommand(3,"CloseConnection","( const SystemAddress target, bool sendDisconnectionNotification, unsigned char orderingChannel=0 );");
 	RegisterCommand(2,"IsConnected","( );");
 	RegisterCommand(1,"GetIndexFromSystemAddress","( const SystemAddress systemAddress );");
-	RegisterCommand(1,"GetSystemAddressFromIndex","( int index );");
+	RegisterCommand(1,"GetSystemAddressFromIndex","( unsigned int index );");
 	RegisterCommand(2,"AddToBanList","( const char *IP, RakNet::TimeMS milliseconds=0 );");
 	RegisterCommand(1,"RemoveFromBanList","( const char *IP );");
 	RegisterCommand(0,"ClearBanList","( void );");
@@ -110,7 +110,7 @@ bool RakNetCommandParser::OnCommand(const char *command, unsigned numParameters,
 	}
 	else if (strcmp(command, "GetMaximumIncomingConnections")==0)
 	{
-		ReturnResult(peer->GetMaximumIncomingConnections(), command, transport, systemAddress);
+		ReturnResult((int) peer->GetMaximumIncomingConnections(), command, transport, systemAddress);
 	}
 	else if (strcmp(command, "Connect")==0)
 	{

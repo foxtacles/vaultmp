@@ -96,7 +96,7 @@ public:
 	/// \param[in] bytesBeingSent How many bytes we are sending this push
 	/// \param[in] done If this file is now done with this push
 	/// \param[in] targetSystem Who we are sending to
-	virtual void OnFilePush(const char *fileName, unsigned int fileLengthBytes, unsigned int offset, unsigned int bytesBeingSent, bool done, SystemAddress targetSystem)
+	virtual void OnFilePush(const char *fileName, unsigned int fileLengthBytes, unsigned int offset, unsigned int bytesBeingSent, bool done, SystemAddress targetSystem, unsigned short setId)
 	{
 		(void) fileName;
 		(void) fileLengthBytes;
@@ -104,12 +104,14 @@ public:
 		(void) bytesBeingSent;
 		(void) done;
 		(void) targetSystem;
+        (void) setId;
 	}
 
 	/// \brief This function is called when all files have been read and are being transferred to a remote system
-	virtual void OnFilePushesComplete( SystemAddress systemAddress )
+	virtual void OnFilePushesComplete( SystemAddress systemAddress, unsigned short setId )
 	{
 		(void) systemAddress;
+        (void) setId;
 	}
 
 	/// \brief This function is called when a send to a system was aborted (probably due to disconnection)
@@ -136,7 +138,7 @@ public:
 	virtual void OnDirectory(FileList *fileList, char *dir, unsigned int directoriesRemaining);
 
 	/// \brief This function is called when all files have been transferred to a particular remote system
-	virtual void OnFilePushesComplete( SystemAddress systemAddress );
+    virtual void OnFilePushesComplete( SystemAddress systemAddress, unsigned short setID );
 
 	/// \brief This function is called when a send to a system was aborted (probably due to disconnection)
 	virtual void OnSendAborted( SystemAddress systemAddress );

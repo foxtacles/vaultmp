@@ -74,7 +74,7 @@ void Dedicated::Announce(bool announce)
 			unsigned int players = self->GetServerPlayers().first;
 			unsigned int playersMax = self->GetServerPlayers().second;
 			unsigned char game = self->GetGame();
-			map<string, string> rules = self->GetServerRules();
+			const map<string, string>& rules = self->GetServerRules();
 
 			query.Write(name);
 			query.Write(_map);
@@ -121,13 +121,13 @@ void Dedicated::Query(Packet* packet)
 {
 	if (Dedicated::query)
 	{
-		BitStream query(packet->data, packet->length, false);
-		query.IgnoreBytes(sizeof(MessageID));
+		BitStream queryy(packet->data, packet->length, false);
+		queryy.IgnoreBytes(sizeof(MessageID));
 
 		SystemAddress addr;
-		query.Read(addr);
+		queryy.Read(addr);
 
-		query = BitStream();
+		BitStream query;
 
 		query.Write((MessageID) ID_MASTER_UPDATE);
 		query.Write(addr);
@@ -137,7 +137,7 @@ void Dedicated::Query(Packet* packet)
 		unsigned int players = self->GetServerPlayers().first;
 		unsigned int playersMax = self->GetServerPlayers().second;
 		unsigned char game = self->GetGame();
-		map<string, string> rules = self->GetServerRules();
+		const map<string, string>& rules = self->GetServerRules();
 
 		query.Write(name);
 		query.Write(_map);

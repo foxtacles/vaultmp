@@ -26,12 +26,10 @@
 #define _RAKNET_SUPPORT_ConsoleServer 0
 #define _RAKNET_SUPPORT_RakNetTransport 0
 #define _RAKNET_SUPPORT_TelnetTransport 0
-#define _RAKNET_SUPPORT_TCPInterface 0
 #define _RAKNET_SUPPORT_LogCommandParser 0
 #define _RAKNET_SUPPORT_RakNetCommandParser 0
 #define _RAKNET_SUPPORT_EmailSender 0
 #define _RAKNET_SUPPORT_HTTPConnection 0
-#define _RAKNET_SUPPORT_PacketizedTCP 0
 #define _RAKNET_SUPPORT_TwoWayAuthentication 0
 
 #endif

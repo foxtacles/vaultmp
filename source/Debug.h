@@ -70,14 +70,16 @@ struct DebugInput
 		template <typename... Args>
 		const DebugInput& note(Args&&... args) const
 		{
-			Debug::debug->Note(std::forward<Args>(args)...);
+			if (Debug::debug)
+				Debug::debug->Note(std::forward<Args>(args)...);
 			return *this;
 		}
 
 		template <typename... Args>
 		const DebugInput& print(Args&&... args) const
 		{
-			Debug::debug->Print(std::forward<Args>(args)...);
+			if (Debug::debug)
+				Debug::debug->Print(std::forward<Args>(args)...);
 			return *this;
 		}
 };

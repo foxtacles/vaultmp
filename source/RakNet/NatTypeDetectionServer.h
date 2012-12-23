@@ -45,7 +45,7 @@ struct Packet;
 /// \sa NatPunchthroughServer
 /// \sa NatTypeDetectionClient
 /// \ingroup NAT_TYPE_DETECTION_GROUP
-class RAK_DLL_EXPORT NatTypeDetectionServer : public PluginInterface2
+class RAK_DLL_EXPORT NatTypeDetectionServer : public PluginInterface2, public RNS2EventHandler
 {
 public:
 
@@ -65,7 +65,11 @@ public:
 	void Startup(
 		const char *nonRakNetIP2,
 		const char *nonRakNetIP3,
-		const char *nonRakNetIP4);
+		const char *nonRakNetIP4
+#ifdef __native_client__
+		,_PP_Instance_ chromeInstance
+#endif
+		);
 
 	// Releases the sockets created in Startup();
 	void Shutdown(void);
@@ -101,15 +105,21 @@ public:
 		RakNetGUID guid;
 	};
 
+	virtual void OnRNS2Recv(RNS2RecvStruct *recvStruct);
+	virtual void DeallocRNS2RecvStruct(RNS2RecvStruct *s, const char *file, unsigned int line);
+	virtual RNS2RecvStruct *AllocRNS2RecvStruct(const char *file, unsigned int line);
 protected:
+	DataStructures::Queue<RNS2RecvStruct*> bufferedPackets;
+	SimpleMutex bufferedPacketsMutex;
+
 	void OnDetectionRequest(Packet *packet);
 	DataStructures::List<NATDetectionAttempt> natDetectionAttempts;
 	unsigned int GetDetectionAttemptIndex(const SystemAddress &sa);
 	unsigned int GetDetectionAttemptIndex(RakNetGUID guid);
 
 	// s1p1 is rakpeer itself
-	SOCKET s1p2,s2p3,s3p4,s4p5;
-	unsigned short s1p2Port, s2p3Port, s3p4Port, s4p5Port;
+	RakNetSocket2 *s1p2,*s2p3,*s3p4,*s4p5;
+	//unsigned short s1p2Port, s2p3Port, s3p4Port, s4p5Port;
 	char s3p4Address[64];
 };
 }

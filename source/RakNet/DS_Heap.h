@@ -82,6 +82,9 @@ namespace DataStructures
 			{
 				for (parentIndex = Parent(currentIndex); parentIndex < currentIndex; parentIndex++)
 				{
+#ifdef _MSC_VER
+#pragma warning(disable:4127)   // conditional expression is constant
+#endif
 					if (isMaxHeap)
 					{
 						// Every child is less than its parent

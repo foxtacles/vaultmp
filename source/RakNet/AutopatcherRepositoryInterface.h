@@ -29,32 +29,29 @@ public:
 	/// \param[in] An input date, in whatever format your repository uses
 	/// \param[out] currentDate The current server date, in whatever format your repository uses
 	/// \return True on success, false on failure.
-	virtual bool GetChangelistSinceDate(const char *applicationName, FileList *addedFiles, FileList *deletedFiles, double sinceDate)=0;
+	virtual bool GetChangelistSinceDate(const char *applicationName, FileList *addedOrModifiedFilesWithHashData, FileList *deletedFiles, double sinceDate)=0;
 
 	/// Get patches (or files) for every file in input, assuming that input has a hash for each of those files.
 	/// \param[in] applicationName A null terminated string identifying the application
 	/// \param[in] input A list of files with SHA1_LENGTH byte hashes to get from the database.
 	/// \param[out] patchList You should return list of files with either the filedata or the patch.  This is a subset of \a input.  The context data for each file will be either PC_WRITE_FILE (to just write the file) or PC_HASH_WITH_PATCH (to patch).  If PC_HASH_WITH_PATCH, then the file contains a SHA1_LENGTH byte patch followed by the hash.  The datalength is patchlength + SHA1_LENGTH
 	/// \param[out] currentDate The current server date, in whatever format your repository uses
-	/// \return True on success, false on failure.
-	virtual bool GetPatches(const char *applicationName, FileList *input, FileList *patchList)=0;
+	/// \return 1 on success, 0 on database failure, -1 on tried to download original unmodified file
+	virtual int GetPatches(const char *applicationName, FileList *input, bool allowDownloadOfOriginalUnmodifiedFiles, FileList *patchList)=0;
 
 	/// For the most recent update, return files that were patched, added, or deleted. For files that were patched, return both the patch in \a patchedFiles and the current version in \a updatedFiles
-	/// The cache will be used if the client last patched between \a priorRowPatchTime and \a mostRecentRowPatchTime
-	/// No files changed will be returned to the client if the client last patched after mostRecentRowPatchTime
 	/// \param[in,out] applicationName Name of the application to get patches for. If empty, uses the most recently updated application, and the string will be updated to reflect this name.
-	/// \param[out] patchedFiles Given the most recent update, if a file was patched, add it to this list. The context data for each file will be PC_HASH_WITH_PATCH. The first 4 bytes of data should be a hash of the file being patched. The second 4 bytes should be the hash of the file after the patch. The remaining bytes should be the patch itself.
-	/// \param[out] updatedFiles The current value of the file. List should have the same length and order as \a patchedFiles
-	/// \param[out] updatedFileHashes The hash of the current value of the file. List should have the same length and order as \a patchedFiles
-	/// \param[out] deletedFiles Files that were deleted in the last patch.
-	/// \param[out] priorRowPatchTime  When the patch before the most recent patch took place. 0 means never.
-	/// \param[out] mostRecentRowPatchTime When the most recent patch took place. 0 means never. 
+	/// \param[out] patchedFiles A list of patched files with op PC_HASH_2_WITH_PATCH. It has 2 hashes, the priorHash and the currentHash. The currentHash is checked on the client after patching for patch success. The priorHash is checked in AutopatcherServer::OnGetPatch() to see if the client is able to hash with the version they currently have
+	/// \param[out] patchedFiles A list of new files. It contains the actual data in addition to the filename
+	/// \param[out] addedOrModifiedFileHashes A list of file hashes that were either modified or new. This is returned to the client when replying to ID_AUTOPATCHER_CREATION_LIST, which tells the client what files have changed on the server since a certain date
+	/// \param[out] deletedFiles A list of the current versions of filenames that were deleted in the most recent patch
+	/// \param[out] whenPatched time in seconds since epoch when patched. Use time() function to get this in C
 	/// \return true on success, false on failure
 	virtual bool GetMostRecentChangelistWithPatches(
 		RakNet::RakString &applicationName,
 		FileList *patchedFiles,
 		FileList *updatedFiles,
-		FileList *updatedFileHashes,
+		FileList *addedOrModifiedFileHashes,
 		FileList *deletedFiles,
 		double *priorRowPatchTime,
 		double *mostRecentRowPatchTime)=0;

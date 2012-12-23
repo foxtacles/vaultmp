@@ -1,6 +1,6 @@
 
 
-#if   defined(_WIN32) 
+#if   defined(_WIN32)
 #include <conio.h> /* getche() */
 
 #else

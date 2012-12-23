@@ -39,6 +39,7 @@ DEP_RELEASE =
 OUT_RELEASE = vaultserver
 
 OBJ_DEBUG = \
+$(OBJDIR_DEBUG)/RakNet/RakNetSocket2.o \
 $(OBJDIR_DEBUG)/RakNet/LinuxStrings.o \
 $(OBJDIR_DEBUG)/RakNet/_FindFirst.o \
 $(OBJDIR_DEBUG)/RakNet/Rand.o \
@@ -128,6 +129,7 @@ $(OBJDIR_DEBUG)/PacketFactory.o \
 $(OBJDIR_DEBUG)/Expected.o
 
 OBJ_RELEASE = \
+$(OBJDIR_RELEASE)/RakNet/RakNetSocket2.o \
 $(OBJDIR_RELEASE)/RakNet/LinuxStrings.o \
 $(OBJDIR_RELEASE)/RakNet/_FindFirst.o \
 $(OBJDIR_RELEASE)/RakNet/Rand.o \
@@ -234,6 +236,9 @@ debug: before_debug out_debug after_debug
 
 out_debug: $(OBJ_DEBUG) $(DEP_DEBUG)
 	$(LD) $(LDFLAGS_DEBUG) $(LIBDIR_DEBUG) $(OBJ_DEBUG) $(LIB_DEBUG) -o $(OUT_DEBUG)
+
+$(OBJDIR_DEBUG)/RakNet/RakNetSocket2.o: ../RakNet/RakNetSocket2.cpp
+	$(CXX) $(CFLAGSEXT_DEBUG) $(INC_DEBUG) -c ../RakNet/RakNetSocket2.cpp -o $(OBJDIR_DEBUG)/RakNet/RakNetSocket2.o
 
 $(OBJDIR_DEBUG)/RakNet/LinuxStrings.o: ../RakNet/LinuxStrings.cpp
 	$(CXX) $(CFLAGSEXT_DEBUG) $(INC_DEBUG) -c ../RakNet/LinuxStrings.cpp -o $(OBJDIR_DEBUG)/RakNet/LinuxStrings.o
@@ -522,6 +527,9 @@ release: before_release out_release after_release
 
 out_release: $(OBJ_RELEASE) $(DEP_RELEASE)
 	$(LD) $(LDFLAGS_RELEASE) $(LIBDIR_RELEASE) $(OBJ_RELEASE) $(LIB_RELEASE) -o $(OUT_RELEASE)
+
+$(OBJDIR_RELEASE)/RakNet/RakNetSocket2.o: ../RakNet/RakNetSocket2.cpp
+	$(CXX) $(CFLAGSEXT_RELEASE) $(INC_RELEASE) -c ../RakNet/RakNetSocket2.cpp -o $(OBJDIR_RELEASE)/RakNet/RakNetSocket2.o
 
 $(OBJDIR_RELEASE)/RakNet/LinuxStrings.o: ../RakNet/LinuxStrings.cpp
 	$(CXX) $(CFLAGSEXT_RELEASE) $(INC_RELEASE) -c ../RakNet/LinuxStrings.cpp -o $(OBJDIR_RELEASE)/RakNet/LinuxStrings.o

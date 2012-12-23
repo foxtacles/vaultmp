@@ -18,6 +18,7 @@
 # define CAT_NEUTER_EXPORT
 #endif
 
+// Include DependentExtensions in your path to include this
 #include "cat/AllTunnel.hpp"
 
 #endif // LIBCAT_SECURITY

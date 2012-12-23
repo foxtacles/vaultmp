@@ -269,7 +269,7 @@ void MessageFilter::OnInvalidMessage(FilterSet *filterSet, AddressOrGUID systemA
 			rakPeerInterface->CloseConnection(systemAddress, true, 0);
 #if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
 		else
-			packetizedTCP->CloseConnection(systemAddress.systemAddress);
+			tcpInterface->CloseConnection(systemAddress.systemAddress);
 #endif
 	}
 }
@@ -303,7 +303,7 @@ void MessageFilter::Update(void)
 					rakPeerInterface->CloseConnection(keyList[index], true, 0);
 #if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
 				else
-					packetizedTCP->CloseConnection(keyList[index].systemAddress);
+					tcpInterface->CloseConnection(keyList[index].systemAddress);
 #endif
 
 				systemList.Remove(keyList[index], _FILE_AND_LINE_);

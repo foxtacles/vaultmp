@@ -41,6 +41,7 @@ protected:
 
 
 
+
 #else
 	SimpleMutex isSignaledMutex;
 	bool isSignaled;

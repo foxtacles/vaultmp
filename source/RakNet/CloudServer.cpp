@@ -336,7 +336,7 @@ void CloudServer::OnPostRequest(Packet *packet)
 		if (cloudData->serverSystemAddress.GetPort()==0)
 		{
 			// Fix localhost port
-			cloudData->serverSystemAddress.SetPort(rakPeerInterface->GetSocket(UNASSIGNED_SYSTEM_ADDRESS)->boundAddress.GetPort());
+			cloudData->serverSystemAddress.SetPort(rakPeerInterface->GetSocket(UNASSIGNED_SYSTEM_ADDRESS)->GetBoundAddress().GetPort());
 		}
 		cloudData->clientSystemAddress=packet->systemAddress;
 		cloudData->serverGUID=rakPeerInterface->GetMyGUID();
@@ -361,7 +361,7 @@ void CloudServer::OnPostRequest(Packet *packet)
 			if (cloudData->serverSystemAddress.GetPort()==0)
 			{
 				// Fix localhost port
-				cloudData->serverSystemAddress.SetPort(rakPeerInterface->GetSocket(UNASSIGNED_SYSTEM_ADDRESS)->boundAddress.GetPort());
+				cloudData->serverSystemAddress.SetPort(rakPeerInterface->GetSocket(UNASSIGNED_SYSTEM_ADDRESS)->GetBoundAddress().GetPort());
 			}
 
 			cloudData->clientSystemAddress=packet->systemAddress;
@@ -451,7 +451,7 @@ void CloudServer::OnReleaseRequest(Packet *packet)
 
 	for (unsigned int filterIndex=0; filterIndex < queryFilters.Size(); filterIndex++)
 	{
-		if (queryFilters[filterIndex]->OnReleaseRequest(packet->guid, packet->systemAddress, cloudKeys))
+		if (queryFilters[filterIndex]->OnReleaseRequest(packet->guid, packet->systemAddress, cloudKeys)==false)
 			return;
 	}
 
@@ -1480,7 +1480,7 @@ void CloudServer::OnServerDataChanged( Packet *packet )
 		return;
 
 	// Find everyone that cares about this change and relay
-	bool wasUpdated;
+	bool wasUpdated=false;
 	bsIn.Read(wasUpdated);
 	CloudQueryRow row;
 	row.Serialize(false, &bsIn, this);

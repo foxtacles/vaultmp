@@ -1,6 +1,10 @@
 #include "NatTypeDetectionCommon.h"
+
+#if _RAKNET_SUPPORT_NatTypeDetectionServer==1 || _RAKNET_SUPPORT_NatTypeDetectionClient==1
+
 #include "SocketLayer.h"
 #include "SocketIncludes.h"
+#include "SocketDefines.h"
 
 using namespace RakNet;
 
@@ -11,14 +15,14 @@ bool RakNet::CanConnect(NATTypeDetectionResult type1, NATTypeDetectionResult typ
 	bool connectionGraph[NAT_TYPE_COUNT][NAT_TYPE_COUNT] =
 	{
 		// None,	Full Cone,	Address Restricted,		Port Restricted,	Symmetric,	Unknown,	InProgress,	Supports_UPNP
-		{true, 		true, 		true, 					true, 				true,		false,		false,		false},		// None
-		{true, 		true, 		true, 					true, 				true,		false,		false,		false},		// Full Cone
-		{true, 		true, 		true, 					true, 				true,		false,		false,		false},		// Address restricted
-		{true, 		true, 		true, 					true, 				false,		false,		false,		false},		// Port restricted
-		{true, 		true, 		true, 					false, 				false,		false,		false,		false},		// Symmetric
+		{true, 		true, 		true, 					true, 				true,		false,		false,		true},		// None
+		{true, 		true, 		true, 					true, 				true,		false,		false,		true},		// Full Cone
+		{true, 		true, 		true, 					true, 				true,		false,		false,		true},		// Address restricted
+		{true, 		true, 		true, 					true, 				false,		false,		false,		true},		// Port restricted
+		{true, 		true, 		true, 					false, 				false,		false,		false,		true},		// Symmetric
 		{false,		false,		false,					false,				false,		false,		false,		false},		// Unknown
 		{false,		false,		false,					false,				false,		false,		false,		false},		// InProgress
-		{false,		false,		false,					false,				false,		false,		false,		false}		// Supports_UPNP
+		{true,		true,		true,					true,				true,		false,		false,		true}		// Supports_UPNP
 	};
 
 	return connectionGraph[(int) type1][(int) type2];
@@ -80,36 +84,115 @@ const char *RakNet::NATTypeDetectionResultToStringFriendly(NATTypeDetectionResul
 }
 
 
-SOCKET RakNet::CreateNonblockingBoundSocket(const char *bindAddr )
+RakNetSocket2* RakNet::CreateNonblockingBoundSocket(const char *bindAddr
+#ifdef __native_client__
+											,_PP_Instance_ chromeInstance
+#endif
+											, RNS2EventHandler *eventHandler
+	)
 {
-	SOCKET s = SocketLayer::CreateBoundSocket( 0, false, bindAddr, true, 0, AF_INET );
+	RakNetSocket2 *r2 = RakNetSocket2Allocator::AllocRNS2();
+#if defined(__native_client__)
+	NativeClientBindParameters ncbp;
+	RNS2_NativeClient * nativeClientSocket = (RNS2_NativeClient*) r2;
+	ncbp.eventHandler=eventHandler;
+	ncbp.forceHostAddress=(char*) bindAddr;
+	ncbp.is_ipv6=false;
+	ncbp.nativeClientInstance=chromeInstance;
+	ncbp.port=0;
+	nativeClientSocket->Bind(&ncbp, _FILE_AND_LINE_);
+#elif defined(WINDOWS_STORE_RT)
+	RakAssert("TODO" && 0);
+#else
+	if (r2->IsBerkleySocket())
+	{
+		RNS2_BerkleyBindParameters bbp;
+		bbp.port=0;
+		bbp.hostAddress=(char*)bindAddr;
+		bbp.addressFamily=AF_INET;
+		bbp.type=SOCK_DGRAM;
+		bbp.protocol=0;
+		bbp.nonBlockingSocket=true;
+		bbp.setBroadcast=true;
+		bbp.doNotFragment=false;
+		bbp.pollingThreadPriority=0;
+		bbp.eventHandler=eventHandler;
+		bbp.remotePortRakNetWasStartedOn_PS3_PSP2=0;
+		RNS2BindResult br = ((RNS2_Berkley*) r2)->Bind(&bbp, _FILE_AND_LINE_);
+
+		if (br==BR_FAILED_TO_BIND_SOCKET)
+		{
+			RakNetSocket2Allocator::DeallocRNS2(r2);
+			return 0;
+		}
+		else if (br==BR_FAILED_SEND_TEST)
+		{
+			RakNetSocket2Allocator::DeallocRNS2(r2);
+			return 0;
+		}
+		else
+		{
+			RakAssert(br==BR_SUCCESS);
+		}
+
+		((RNS2_Berkley*) r2)->CreateRecvPollingThread(0);
+	}
+	else
+	{
+		RakAssert("TODO" && 0);
+	}
+#endif
+
+	return r2;
+
+	/*
+	#ifdef __native_client__
+	RakNetSocket2 *s = SocketLayer::CreateBoundSocket( 0, 0, false, bindAddr, true, 0, AF_INET, chromeInstance );
+	#else
+	RakNetSocket2 *s = SocketLayer::CreateBoundSocket( 0, 0, false, bindAddr, true, 0, AF_INET, 0 );
+	#endif
+
 	#ifdef _WIN32
 		unsigned long nonblocking = 1;
-		ioctlsocket( s, FIONBIO, &nonblocking );
-
-
-
+		s->IOCTLSocket( FIONBIO, &nonblocking );
+	#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(SN_TARGET_PSP2)
+		int sock_opt=1;
+		s->SetSockOpt(SOL_SOCKET, SO_NBIO, ( char * ) & sock_opt, sizeof ( sock_opt ) );
+	#elif defined(__native_client__)
+		// Nop
 	#else
-		fcntl( s, F_SETFL, O_NONBLOCK );
+		s->Fcntl( F_SETFL, O_NONBLOCK );
 	#endif
 	return s;
+	*/
 }
 
-int RakNet::NatTypeRecvFrom(char *data, SOCKET socket, SystemAddress &sender)
+/*
+int RakNet::NatTypeRecvFrom(char *data, RakNetSocket2* socket, SystemAddress &sender, RNS2EventHandler *eventHandler)
 {
-	sockaddr_in sa;
-	socklen_t len2;
-	const int flag=0;
-	len2 = sizeof( sa );
-	sa.sin_family = AF_INET;
-	sa.sin_port=0;
-	int len = recvfrom( socket, data, MAXIMUM_MTU_SIZE, flag, ( sockaddr* ) & sa, ( socklen_t* ) & len2 );
-	if (len>0)
+#if defined(__native_client__)
+	RakAssert("TODO" && 0);
+#elif defined(WINDOWS_STORE_RT)
+	RakAssert("TODO" && 0);
+#else
+	if (socket->IsBerkleySocket())
 	{
-		sender.address.addr4.sin_family=AF_INET;
-		sender.address.addr4.sin_addr.s_addr = sa.sin_addr.s_addr;
-		//sender.SetPort( ntohs( sa.sin_port ) );
-		sender.SetPort( ntohs( sa.sin_port ) );
+		RNS2RecvStruct *recvFromStruct;
+		recvFromStruct=AllocRNS2RecvStruct(_FILE_AND_LINE_);
+		if (recvFromStruct != NULL)
+		{
+			recvFromStruct->socket=this;
+			socket->RecvFromBlocking(recvFromStruct);
+		}
+		if (recvFromStruct->bytesRead>0)
+		{
+			sender = recvFromStruct->systemAddress;
+		}
+		return recvFromStruct->bytesRead;
 	}
-	return len;
+	return 0;
+#endif
 }
+*/
+
+#endif // #if _RAKNET_SUPPORT_NatTypeDetectionServer==1 || _RAKNET_SUPPORT_NatTypeDetectionClient==1

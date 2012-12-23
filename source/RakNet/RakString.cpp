@@ -7,6 +7,7 @@
 #include "LinuxStrings.h"
 #include "StringCompressor.h"
 #include "SimpleMutex.h"
+#include <stdlib.h>
 
 using namespace RakNet;
 
@@ -142,6 +143,7 @@ void RakString::Realloc(SharedString *sharedString, size_t bytes)
 {
 	if (bytes<=sharedString->bytesUsed)
 		return;
+
 	RakAssert(bytes>0);
 	size_t oldBytes = sharedString->bytesUsed;
 	size_t newBytes;
@@ -373,6 +375,39 @@ size_t RakString::GetLength(void) const
 {
 	return strlen(sharedString->c_str);
 }
+// http://porg.es/blog/counting-characters-in-utf-8-strings-is-faster
+int porges_strlen2(char *s)
+{
+	int i = 0;
+	int iBefore = 0;
+	int count = 0;
+
+	while (s[i] > 0)
+ascii:  i++;
+
+	count += i-iBefore;
+	while (s[i])
+	{
+		if (s[i] > 0)
+		{
+			iBefore = i;
+			goto ascii;
+		}
+		else
+			switch (0xF0 & s[i])
+		{
+			case 0xE0: i += 3; break;
+			case 0xF0: i += 4; break;
+			default:   i += 2; break;
+		}
+		++count;
+	}
+	return count;
+}
+size_t RakString::GetLengthUTF8(void) const
+{
+	return porges_strlen2(sharedString->c_str);
+}
 void RakString::Replace(unsigned index, unsigned count, unsigned char c)
 {
 	RakAssert(index+count < GetLength());
@@ -500,13 +535,44 @@ size_t RakString::Find(const char *stringToFind,size_t pos)
 	return (size_t) -1;
 }
 
-void RakString::Truncate(unsigned length)
+void RakString::TruncateUTF8(unsigned int length)
+{
+	int i = 0;
+	unsigned int count = 0;
+
+	while (sharedString->c_str[i]!=0)
+	{
+		if (count==length)
+		{
+			sharedString->c_str[i]=0;
+			return;
+		}
+		else if (sharedString->c_str[i]>0)
+		{
+			i++;
+		}
+		else
+		{
+			switch (0xF0 & sharedString->c_str[i])
+			{
+			case 0xE0: i += 3; break;
+			case 0xF0: i += 4; break;
+			default:   i += 2; break;
+			}
+		}
+
+		count++;
+	}
+}
+
+void RakString::Truncate(unsigned int length)
 {
 	if (length < GetLength())
 	{
 		SetChar(length, 0);
 	}
 }
+
 RakString RakString::SubStr(unsigned int index, unsigned int count) const
 {
 	size_t length = GetLength();
@@ -562,6 +628,19 @@ void RakString::TerminateAtFirstCharacter(char c)
 		}
 	}
 }
+int RakString::GetCharacterCount(char c)
+{
+	int count=0;
+	unsigned int i, len=(unsigned int) GetLength();
+	for (i=0; i < len; i++)
+	{
+		if (sharedString->c_str[i]==c)
+		{
+			++count;
+		}
+	}
+	return count;
+}
 void RakString::RemoveCharacter(char c)
 {
 	if (c==0)
@@ -579,11 +658,15 @@ void RakString::RemoveCharacter(char c)
 }
 int RakString::StrCmp(const RakString &rhs) const
 {
-	return strcmp(sharedString->c_str, rhs);
+	return strcmp(sharedString->c_str, rhs.C_String());
+}
+int RakString::StrNCmp(const RakString &rhs, size_t num) const
+{
+	return strncmp(sharedString->c_str, rhs.C_String(), num);
 }
 int RakString::StrICmp(const RakString &rhs) const
 {
-	return _stricmp(sharedString->c_str, rhs);
+	return _stricmp(sharedString->c_str, rhs.C_String());
 }
 void RakString::Printf(void)
 {
@@ -860,6 +943,129 @@ RakNet::RakString& RakString::SQLEscape(void)
 	}
 	return *this;
 }
+RakNet::RakString RakString::FormatForPUTOrPost(const char* type, RakString uri, RakString contentType, RakString body, RakString extraHeaders)
+{
+	RakString out;
+	RakString host;
+	RakString remotePath;
+	RakNet::RakString header;
+
+	uri.SplitURI(header, host, remotePath);
+	if (host.IsEmpty() || remotePath.IsEmpty())
+		return out;
+
+	if (extraHeaders.IsEmpty()==false)
+	{
+		out.Set("%s %s HTTP/1.1\r\n"
+			"%s\r\n"
+			"Host: %s\r\n"
+			"Content-Type: %s\r\n"
+			"Content-Length: %u\r\n"
+			"\r\n"
+			"%s",
+			type,
+			remotePath.C_String(),
+			extraHeaders.C_String(),
+			host.C_String(),
+			contentType.C_String(),
+			body.GetLength(),
+			body.C_String());
+	}
+	else
+	{
+		out.Set("%s %s HTTP/1.1\r\n"
+			"Host: %s\r\n"
+			"Content-Type: %s\r\n"
+			"Content-Length: %u\r\n"
+			"\r\n"
+			"%s",
+			type,
+			remotePath.C_String(),
+			host.C_String(),
+			contentType.C_String(),
+			body.GetLength(),
+			body.C_String());
+	}
+
+	return out;
+}
+RakString RakString::FormatForPOST(RakString uri, RakString contentType, RakString body, RakString extraHeaders)
+{
+	return FormatForPUTOrPost("POST", uri, contentType, body, extraHeaders);
+}
+RakString RakString::FormatForPUT(RakString uri, RakString contentType, RakString body, RakString extraHeaders)
+{
+	return FormatForPUTOrPost("PUT", uri, contentType, body, extraHeaders);
+}
+RakString RakString::FormatForGET(RakString uri, RakString extraHeaders)
+{
+	RakString out;
+	RakString host;
+	RakString remotePath;
+	RakNet::RakString header;
+
+	uri.SplitURI(header, host, remotePath);
+	if (host.IsEmpty() || remotePath.IsEmpty())
+		return out;
+
+	if (extraHeaders.IsEmpty()==false)
+	{
+		out.Set("GET %s HTTP/1.1\r\n"
+			"%s\r\n"
+			"Host: %s\r\n"
+			"\r\n",
+			remotePath.C_String(),
+			extraHeaders.C_String(),
+			host.C_String());
+	}
+	else
+	{
+		out.Set("GET %s HTTP/1.1\r\n"
+			"Host: %s\r\n"
+			"\r\n",
+			remotePath.C_String(),
+			host.C_String());
+
+	}
+
+
+	return out;
+}
+RakString RakString::FormatForDELETE(RakString uri, RakString extraHeaders)
+{
+	RakString out;
+	RakString host;
+	RakString remotePath;
+	RakNet::RakString header;
+
+	uri.SplitURI(header, host, remotePath);
+	if (host.IsEmpty() || remotePath.IsEmpty())
+		return out;
+
+	if (extraHeaders.IsEmpty()==false)
+	{
+		out.Set("DELETE %s HTTP/1.1\r\n"
+			"%s\r\n"
+			"Content-Length: 0\r\n"
+			"Host: %s\r\n"
+			"Connection: close\r\n"
+			"\r\n",
+			remotePath.C_String(),
+			host.C_String());
+	}
+	else
+	{
+		out.Set("DELETE %s HTTP/1.1\r\n"
+			"Content-Length: 0\r\n"
+			"Host: %s\r\n"
+			"Connection: close\r\n"
+			"\r\n",
+			remotePath.C_String(),
+			host.C_String());
+	}
+
+	return out;
+}
 RakNet::RakString& RakString::MakeFilePath(void)
 {
 	if (IsEmpty())
@@ -1065,6 +1271,12 @@ void RakString::Assign(const char *str)
 }
 void RakString::Assign(const char *str, va_list ap)
 {
+	if (str==0 || str[0]==0)
+	{
+		sharedString=&emptyString;
+		return;
+	}
+
 	char stackBuff[512];
 	if (_vsnprintf(stackBuff, 512, str, ap)!=-1
 #ifndef _WIN32
@@ -1152,16 +1364,36 @@ unsigned long RakString::ToInteger(const RakString &rs)
 {
 	return RakString::ToInteger(rs.C_String());
 }
+int RakString::ReadIntFromSubstring(const char *str, size_t pos, size_t n)
+{
+	char tmp[32];
+	if (n >= 32)
+		return 0;
+	for (size_t i=0; i < n; i++)
+		tmp[i]=str[i+pos];
+	return atoi(tmp);
+}
 void RakString::AppendBytes(const char *bytes, unsigned int count)
 {
-	Clone();
-	Realloc(sharedString, count);
-	unsigned int length=(unsigned int) GetLength();
-	memcpy(sharedString->c_str+length, bytes, count);
-	sharedString->c_str[length+count]=0;
+	if (IsEmpty())
+	{
+		Allocate(count);
+		memcpy(sharedString->c_str, bytes, count);
+	}
+	else
+	{
+		Clone();
+		Realloc(sharedString, count);
+		unsigned int length=(unsigned int) GetLength();
+		memcpy(sharedString->c_str+length, bytes, count);
+		sharedString->c_str[length+count]=0;
+	}
+
+	
 }
 void RakString::Clone(void)
 {
+	RakAssert(sharedString!=&emptyString);
 	if (sharedString==&emptyString)
 	{
 		return;

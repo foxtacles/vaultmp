@@ -80,11 +80,11 @@ namespace RakNet
 	};
 
 	/// \brief Callback interface to receive the results of operations
-	class RAK_DLL_EXPORT RackspaceEventCallback
+	class RAK_DLL_EXPORT Rackspace2EventCallback
 	{
 	public:
-		RackspaceEventCallback() {}
-		virtual ~RackspaceEventCallback() {}
+		Rackspace2EventCallback() {}
+		virtual ~Rackspace2EventCallback() {}
 		virtual void OnAuthenticationResult(RackspaceEventType eventType, const char *htmlAdditionalInfo)=0;
 		virtual void OnListServersResult(RackspaceEventType eventType, const char *htmlAdditionalInfo)=0;
 		virtual void OnListServersWithDetailsResult(RackspaceEventType eventType, const char *htmlAdditionalInfo)=0;
@@ -116,7 +116,7 @@ namespace RakNet
 	};
 
 	/// \brief Callback interface to receive the results of operations, with a default result
-	class RAK_DLL_EXPORT RackspaceEventCallback_Default : public RackspaceEventCallback
+	class RAK_DLL_EXPORT RackspaceEventCallback_Default : public Rackspace2EventCallback
 	{
 	public:
 		virtual void ExecuteDefault(const char *callbackName, RackspaceEventType eventType, const char *htmlAdditionalInfo) {(void) callbackName; (void) eventType; (void) htmlAdditionalInfo;}
@@ -187,7 +187,7 @@ namespace RakNet
 		/// \details Create a server with a given image (harddrive contents) and flavor (hardware configuration)
 		/// Get the available images with ListImages()
 		/// Get the available flavors with ListFlavors()
-		/// It is possible to configure the server in more detail. See the XML schema at http://docs.rackspacecloud.com/servers/api/v1.0\
+		/// It is possible to configure the server in more detail. See the XML schema at http://docs.rackspacecloud.com/servers/api/v1.0
 		/// You can execute such a custom command by calling AddOperation() manually. See the implementation of CreateServer for how to do so.
 		/// The server takes a while to build. Call GetServerDetails() to get the current build status. Server id to pass to GetServerDetails() is returned in the field <server ... id="1234">
 		/// \sa http://docs.rackspacecloud.com/servers/api/v1.0/cs-devguide-20110112.pdf
@@ -332,10 +332,10 @@ namespace RakNet
 
 		/// \brief Adds a callback to the list of callbacks to be called when any of the above functions finish executing
 		/// The callbacks are called in the order they are added
-		void AddEventCallback(RackspaceEventCallback *callback);
+		void AddEventCallback(Rackspace2EventCallback *callback);
 		/// \brief Removes a callback from the list of callbacks to be called when any of the above functions finish executing
 		/// The callbacks are called in the order they are added
-		void RemoveEventCallback(RackspaceEventCallback *callback);
+		void RemoveEventCallback(Rackspace2EventCallback *callback);
 		/// \brief Removes all callbacks
 		void ClearEventCallbacks(void);
 
@@ -353,7 +353,7 @@ namespace RakNet
 		void AddOperation(RackspaceOperationType type, RakNet::RakString httpCommand, RakNet::RakString operation, RakNet::RakString xml);
 	protected:
 
-		DataStructures::List<RackspaceEventCallback*> eventCallbacks;
+		DataStructures::List<Rackspace2EventCallback*> eventCallbacks;
 
 		struct RackspaceOperation
 		{

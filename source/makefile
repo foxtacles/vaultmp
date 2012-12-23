@@ -39,6 +39,7 @@ DEP_RELEASE =
 OUT_RELEASE = vaultmp.exe
 
 OBJ_DEBUG = \
+$(OBJDIR_DEBUG)\\RakNet\\RakNetSocket2.o \
 $(OBJDIR_DEBUG)\\RakNet\\Rand.o \
 $(OBJDIR_DEBUG)\\RakNet\\RakThread.o \
 $(OBJDIR_DEBUG)\\RakNet\\RakString.o \
@@ -106,6 +107,7 @@ $(OBJDIR_DEBUG)\\Debug.o \
 $(OBJDIR_DEBUG)\\Expected.o
 
 OBJ_RELEASE = \
+$(OBJDIR_RELEASE)\\RakNet\\RakNetSocket2.o \
 $(OBJDIR_RELEASE)\\RakNet\\Rand.o \
 $(OBJDIR_RELEASE)\\RakNet\\RakThread.o \
 $(OBJDIR_RELEASE)\\RakNet\\RakString.o \
@@ -186,6 +188,9 @@ debug: before_debug out_debug after_debug
 
 out_debug: $(OBJ_DEBUG) $(DEP_DEBUG)
 	$(LD) $(LIBDIR_DEBUG) $(OBJ_DEBUG) $(LIB_DEBUG) -o $(OUT_DEBUG) $(LDFLAGS_DEBUG)
+
+$(OBJDIR_DEBUG)\\RakNet\\RakNetSocket2.o: RakNet\\RakNetSocket2.cpp
+	$(CXX) $(CFLAGSEXT_DEBUG) $(INC_DEBUG) -c RakNet\\RakNetSocket2.cpp -o $(OBJDIR_DEBUG)\\RakNet\\RakNetSocket2.o
 
 $(OBJDIR_DEBUG)\\RakNet\\Rand.o: RakNet\\Rand.cpp
 	$(CXX) $(CFLAGSEXT_DEBUG) $(INC_DEBUG) -c RakNet\\Rand.cpp -o $(OBJDIR_DEBUG)\\RakNet\\Rand.o
@@ -398,6 +403,9 @@ release: before_release out_release after_release
 
 out_release: $(OBJ_RELEASE) $(DEP_RELEASE)
 	$(LD) $(LIBDIR_RELEASE) $(OBJ_RELEASE) $(LIB_RELEASE) -o $(OUT_RELEASE) $(LDFLAGS_RELEASE)
+
+$(OBJDIR_RELEASE)\\RakNet\\RakNetSocket2.o: RakNet\\RakNetSocket2.cpp
+	$(CXX) $(CFLAGSEXT_RELEASE) $(INC_RELEASE) -c RakNet\\RakNetSocket2.cpp -o $(OBJDIR_RELEASE)\\RakNet\\RakNetSocket2.o
 
 $(OBJDIR_RELEASE)\\RakNet\\Rand.o: RakNet\\Rand.cpp
 	$(CXX) $(CFLAGSEXT_RELEASE) $(INC_RELEASE) -c RakNet\\Rand.cpp -o $(OBJDIR_RELEASE)\\RakNet\\Rand.o

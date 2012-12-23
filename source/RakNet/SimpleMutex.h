@@ -50,6 +50,7 @@ public:
 
 
 
+
 private:
 	void Init(void);
 #ifdef _WIN32

@@ -208,10 +208,13 @@ void Table::Cell::SetByType(double numericValue, char *charValue, void *ptr, Col
 Table::ColumnType Table::Cell::EstimateColumnType(void) const
 {
 	if (c)
+	{
 		if (i!=0.0f)
 			return BINARY;
 		else
 			return STRING;
+	}
+
 	if (ptr)
 		return POINTER;
 	return NUMERIC;

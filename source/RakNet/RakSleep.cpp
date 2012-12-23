@@ -15,6 +15,12 @@
 
 #include "RakSleep.h"
 
+
+#if defined(WINDOWS_PHONE_8)
+#include "../DependentExtensions/WinPhone8/ThreadEmulation.h"
+using namespace ThreadEmulation;
+#endif
+
 void RakSleep(unsigned int ms)
 {
 #ifdef _WIN32

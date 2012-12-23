@@ -120,7 +120,6 @@ struct RAK_DLL_EXPORT CloudQueryResult
 	/// resultKeyIndices would be 0, 3, 3, 8
 	DataStructures::List<uint32_t> resultKeyIndices;
 
-
 	/// Whatever was passed to CloudClient::Get() as CloudQuery::subscribeToResults
 	bool subscribeToResults;
 

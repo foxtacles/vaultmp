@@ -200,7 +200,7 @@ void CloudClient::OnSubscriptionNotification(Packet *packet, CloudClientCallback
 	if (_allocator==0)
 		_allocator=allocator;
 
-	bool wasUpdated;
+	bool wasUpdated=false;
 	CloudQueryRow row;
 
 	RakNet::BitStream bsIn(packet->data, packet->length, false);
@@ -221,7 +221,7 @@ void CloudClient::OnSubscriptionNotification(bool *wasUpdated, CloudQueryRow *ro
 
 	RakNet::BitStream bsIn(packet->data, packet->length, false);
 	bsIn.IgnoreBytes(sizeof(MessageID));
-	bool b;
+	bool b=false;
 	bsIn.Read(b);
 	*wasUpdated=b;
 	row->Serialize(false,&bsIn,_allocator);
@@ -234,6 +234,10 @@ void CloudClient::DeallocateWithDefaultAllocator(CloudQueryResult *cloudQueryRes
 		allocator->DeallocateRowData(cloudQueryResult->rowsReturned[i]->data);
 		allocator->DeallocateCloudQueryRow(cloudQueryResult->rowsReturned[i]);
 	}
+
+	cloudQueryResult->rowsReturned.Clear(false, _FILE_AND_LINE_);
+	cloudQueryResult->resultKeyIndices.Clear(false, _FILE_AND_LINE_);
+	cloudQueryResult->cloudQuery.keys.Clear(false, _FILE_AND_LINE_);
 }
 void CloudClient::DeallocateWithDefaultAllocator(CloudQueryRow *row)
 {

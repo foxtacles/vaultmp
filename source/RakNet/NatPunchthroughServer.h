@@ -125,14 +125,10 @@ public:
 	static int NatPunchthroughUserComp( const RakNetGUID &key, User * const &data );
 protected:
 	void OnNATPunchthroughRequest(Packet *packet);
-	void OnNATGroupPunchthroughRequest(Packet *packet);
-	void OnNATConfirmConnectionToServer(Packet *packet);
-	void OnNATGroupPunchthroughReply(Packet *packet);
 	DataStructures::OrderedList<RakNetGUID, User*, NatPunchthroughServer::NatPunchthroughUserComp> users;
 
 	void OnGetMostRecentPort(Packet *packet);
 	void OnClientReady(Packet *packet);
-	void OnFailureNotification(Packet *packet);
 
 	void SendTimestamps(void);
 	void StartPendingPunchthrough(void);

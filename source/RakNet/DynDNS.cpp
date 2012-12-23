@@ -5,6 +5,7 @@
 #include "SocketLayer.h"
 #include "DynDNS.h"
 #include "GetTime.h"
+#include "Base64Encoder.h"
 
 using namespace RakNet;
 
@@ -30,7 +31,7 @@ DynDnsResult resultTable[13] =
 	{"Invalid hostname format", "notfqdn", RC_NOT_FQDN},
 	{"Serious error", "numhost", RC_NUM_HOST},
 	{"This host exists, but does not belong to you", "!yours", RC_NOT_YOURS},
-	{"911", "911", RC_911},
+	{"911", "911", RC_911}
 };
 DynDNS::DynDNS()
 {
@@ -52,7 +53,7 @@ void DynDNS::Stop(void)
 
 
 // newIPAddress is optional - if left out, DynDNS will use whatever it receives
-void DynDNS::UpdateHostIP(const char *dnsHost, const char *newIPAddress, const char *usernameAndPassword )
+void DynDNS::UpdateHostIPAsynch(const char *dnsHost, const char *newIPAddress, const char *usernameAndPassword )
 {
 	myIPStr[0]=0;
 
@@ -82,7 +83,7 @@ void DynDNS::UpdateHostIP(const char *dnsHost, const char *newIPAddress, const c
 	getString+="Host: members.dyndns.org\n";
 	getString+="Authorization: Basic ";
 	char outputData[512];
-	TCPInterface::Base64Encoding(usernameAndPassword, (int) strlen(usernameAndPassword), outputData);
+	Base64Encoding(usernameAndPassword, (int) strlen(usernameAndPassword), outputData);
 	getString+=outputData;
 	getString+="User-Agent: Jenkins Software LLC - PC - 1.0\n\n";
 }
@@ -139,7 +140,7 @@ void DynDNS::Update(void)
 			if (result!=0)
 			{
 				result+=strlen("Connection: close");
-				while (*result && (*result=='\r') || (*result=='\n') || (*result==' ') )
+				while (*result && ((*result=='\r') || (*result=='\n') || (*result==' ')) )
 					result++;
 				for (i=0; i < 13; i++)
 				{

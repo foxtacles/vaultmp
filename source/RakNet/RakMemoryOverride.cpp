@@ -277,18 +277,18 @@ void FreeRakNetFixedHeap(void) {}
 #endif
 
 #if _USE_RAK_MEMORY_OVERRIDE==1
-
+	#if defined(RMO_MALLOC_UNDEF)
 	#pragma pop_macro("malloc")
 	#undef RMO_MALLOC_UNDEF
+	#endif
 
-
-
+	#if defined(RMO_REALLOC_UNDEF)
 	#pragma pop_macro("realloc")
 	#undef RMO_REALLOC_UNDEF
+	#endif
 
-
-
+	#if defined(RMO_FREE_UNDEF)
 	#pragma pop_macro("free")
 	#undef RMO_FREE_UNDEF
-
+	#endif
 #endif

@@ -24,7 +24,7 @@ enum OutOfBandIdentifiers
 	ID_ROUTER_2_MINI_PUNCH_REPLY_BOUNCE,
 	ID_XBOX_360_VOICE,
 	ID_XBOX_360_GET_NETWORK_ROOM,
-	ID_XBOX_360_RETURN_NETWORK_ROOM,
+	ID_XBOX_360_RETURN_NETWORK_ROOM
 };
 
 /// You should not edit the file MessageIdentifiers.h as it is a part of RakNet static library
@@ -173,10 +173,6 @@ enum DefaultMessageIDTypes
 	ID_REPLICA_MANAGER_DOWNLOAD_STARTED,
  	/// ReplicaManager plugin - Finished downloading all serialized objects
 	ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE,
-	/// Serialize construction for an object that already exists on the remote system
-	ID_REPLICA_MANAGER_3_SERIALIZE_CONSTRUCTION_EXISTING,
-	ID_REPLICA_MANAGER_3_LOCAL_CONSTRUCTION_REJECTED,
-	ID_REPLICA_MANAGER_3_LOCAL_CONSTRUCTION_ACCEPTED,
 
 	/// RakVoice plugin - Open a communication channel
 	ID_RAKVOICE_OPEN_CHANNEL_REQUEST,
@@ -199,6 +195,8 @@ enum DefaultMessageIDTypes
 	ID_AUTOPATCHER_PATCH_LIST,
 	/// Autopatcher plugin - Returned to the user: An error from the database repository for the autopatcher.
 	ID_AUTOPATCHER_REPOSITORY_FATAL_ERROR,
+	/// Autopatcher plugin - Returned to the user: The server does not allow downloading unmodified game files.
+	ID_AUTOPATCHER_CANNOT_DOWNLOAD_ORIGINAL_UNMODIFIED_FILES,
 	/// Autopatcher plugin - Finished getting all files from the autopatcher
 	ID_AUTOPATCHER_FINISHED_INTERNAL,
 	ID_AUTOPATCHER_FINISHED,
@@ -208,9 +206,9 @@ enum DefaultMessageIDTypes
 	/// NATPunchthrough plugin: internal
 	ID_NAT_PUNCHTHROUGH_REQUEST,
 	/// NATPunchthrough plugin: internal
-	ID_NAT_GROUP_PUNCHTHROUGH_REQUEST,
+	//ID_NAT_GROUP_PUNCHTHROUGH_REQUEST,
 	/// NATPunchthrough plugin: internal
-	ID_NAT_GROUP_PUNCHTHROUGH_REPLY,
+	//ID_NAT_GROUP_PUNCHTHROUGH_REPLY,
 	/// NATPunchthrough plugin: internal
 	ID_NAT_CONNECT_AT_TIME,
 	/// NATPunchthrough plugin: internal
@@ -218,9 +216,7 @@ enum DefaultMessageIDTypes
 	/// NATPunchthrough plugin: internal
 	ID_NAT_CLIENT_READY,
 	/// NATPunchthrough plugin: internal
-	ID_NAT_CONFIRM_CONNECTION_TO_SERVER,
-	/// NATPunchthrough plugin: internal
-	ID_NAT_GROUP_PUNCHTHROUGH_FAILURE_NOTIFICATION,
+	//ID_NAT_GROUP_PUNCHTHROUGH_FAILURE_NOTIFICATION,
 
 	/// NATPunchthrough plugin: Destination system is not connected to the server. Bytes starting at offset 1 contains the
 	///  RakNetGUID destination field of NatPunchthroughClient::OpenNAT().
@@ -241,15 +237,6 @@ enum DefaultMessageIDTypes
 	/// NATPunchthrough plugin: Punchthrough succeeded. See packet::systemAddress and packet::guid. Byte 1 contains 1 if you are the sender,
 	///  0 if not. You can now use RakPeer::Connect() or other calls to communicate with this system.
 	ID_NAT_PUNCHTHROUGH_SUCCEEDED,
-	/// NATPunchthrough plugin: OpenNATGroup failed.
-	/// packet::guid contains the destination field of NatPunchthroughClient::OpenNAT()
-	/// Data format starts at byte 1: (unsigned short) passedSystemsCount, List<SystemAddress> passedSystems, (unsigned short) failedSystemsCount, List<RakNetGuid> failedSystems
-	ID_NAT_GROUP_PUNCH_FAILED,
-	/// NATPunchthrough plugin: OpenNATGroup succeeded.
-	/// packet::guid contains the destination field of NatPunchthroughClient::OpenNATGroup()
-	/// You can now use RakPeer::Connect() or other calls to communicate with these systems
-	/// Data format starts at byte 1: (unsigned short) passedSystemsCount, List<SystemAddress> passedSystems
-	ID_NAT_GROUP_PUNCH_SUCCEEDED,
 
 	/// ReadyEvent plugin - Set the ready state for a particular system
 	/// First 4 bytes after the message contains the id
@@ -267,7 +254,7 @@ enum DefaultMessageIDTypes
 	/// Lobby packets. Second byte indicates type.
 	ID_LOBBY_GENERAL,
 
-	// RPC3, RPC4Plugin error
+	// RPC3, RPC4 error
 	ID_RPC_REMOTE_ERROR,
 	/// Plugin based replacement for RPC system
 	ID_RPC_PLUGIN,
@@ -287,6 +274,8 @@ enum DefaultMessageIDTypes
 	ID_LOBBY2_SERVER_ERROR,
 
 	/// Informs user of a new host GUID. Packet::Guid contains this new host RakNetGuid. The old host can be read out using BitStream->Read(RakNetGuid) starting on byte 1
+	/// This is not returned until connected to a remote system
+	/// If the oldHost is UNASSIGNED_RAKNET_GUID, then this is the first time the host has been determined
 	ID_FCM2_NEW_HOST,
 	/// \internal For FullyConnectedMesh2 plugin
 	ID_FCM2_REQUEST_FCMGUID,
@@ -296,6 +285,36 @@ enum DefaultMessageIDTypes
 	ID_FCM2_INFORM_FCMGUID,
 	/// \internal For FullyConnectedMesh2 plugin
 	ID_FCM2_UPDATE_MIN_TOTAL_CONNECTION_COUNT,
+	/// A remote system (not necessarily the host) called FullyConnectedMesh2::StartVerifiedJoin() with our system as the client
+	/// Use FullyConnectedMesh2::GetVerifiedJoinRequiredProcessingList() to read systems
+	/// For each system, attempt NatPunchthroughClient::OpenNAT() and/or RakPeerInterface::Connect()
+	/// When this has been done for all systems, the remote system will automatically be informed of the results
+	/// \note Only the designated client gets this message
+	/// \note You won't get this message if you are already connected to all target systems
+	/// \note If you fail to connect to a system, this does not automatically mean you will get ID_FCM2_VERIFIED_JOIN_FAILED as that system may have been shutting down from the host too
+	/// \sa FullyConnectedMesh2::StartVerifiedJoin()
+	ID_FCM2_VERIFIED_JOIN_START,
+	/// \internal The client has completed processing for all systems designated in ID_FCM2_VERIFIED_JOIN_START
+	ID_FCM2_VERIFIED_JOIN_CAPABLE,
+	/// Client failed to connect to a required systems notified via FullyConnectedMesh2::StartVerifiedJoin()
+	/// RakPeerInterface::CloseConnection() was automatically called for all systems connected due to ID_FCM2_VERIFIED_JOIN_START 
+	/// Programmer should inform the player via the UI that they cannot join this session, and to choose a different session
+	/// \note Server normally sends us this message, however if connection to the server was lost, message will be returned locally
+	/// \note Only the designated client gets this message
+	ID_FCM2_VERIFIED_JOIN_FAILED,
+	/// The system that called StartVerifiedJoin() got ID_FCM2_VERIFIED_JOIN_CAPABLE from the client and then called RespondOnVerifiedJoinCapable() with true
+	/// AddParticipant() has automatically been called for this system
+	/// Use GetVerifiedJoinAcceptedAdditionalData() to read any additional data passed to RespondOnVerifiedJoinCapable()
+	/// \note All systems in the mesh get this message
+	/// \sa RespondOnVerifiedJoinCapable()
+	ID_FCM2_VERIFIED_JOIN_ACCEPTED,
+	/// The system that called StartVerifiedJoin() got ID_FCM2_VERIFIED_JOIN_CAPABLE from the client and then called RespondOnVerifiedJoinCapable() with false
+	/// CloseConnection() has been automatically called for each system connected to since ID_FCM2_VERIFIED_JOIN_START.
+	/// The connection is NOT automatically closed to the original host that sent StartVerifiedJoin()
+	/// Use GetVerifiedJoinRejectedAdditionalData() to read any additional data passed to RespondOnVerifiedJoinCapable()
+	/// \note Only the designated client gets this message
+	/// \sa RespondOnVerifiedJoinCapable()
+	ID_FCM2_VERIFIED_JOIN_REJECTED,
 
 	/// UDP proxy messages. Second byte indicates type.
 	ID_UDP_PROXY_GENERAL,
@@ -338,12 +357,15 @@ enum DefaultMessageIDTypes
 	/// \internal Used by the team balancer plugin
 	ID_TEAM_BALANCER_INTERNAL,
 	/// Cannot switch to the desired team because it is full. However, if someone on that team leaves, you will
-	///  get ID_TEAM_BALANCER_SET_TEAM later. Byte 1 contains the team you requested to join.
-	ID_TEAM_BALANCER_REQUESTED_TEAM_CHANGE_PENDING,
+	///  get ID_TEAM_BALANCER_TEAM_ASSIGNED later.
+	/// For TeamBalancer: Byte 1 contains the team you requested to join. Following bytes contain NetworkID of which member
+	ID_TEAM_BALANCER_REQUESTED_TEAM_FULL,
 	/// Cannot switch to the desired team because all teams are locked. However, if someone on that team leaves,
-	///  you will get ID_TEAM_BALANCER_SET_TEAM later. Byte 1 contains the team you requested to join.
-	ID_TEAM_BALANCER_TEAMS_LOCKED,
-	/// Team balancer plugin informing you of your team. Byte 1 contains the team you requested to join.
+	///  you will get ID_TEAM_BALANCER_SET_TEAM later.
+	/// For TeamBalancer: Byte 1 contains the team you requested to join.
+	ID_TEAM_BALANCER_REQUESTED_TEAM_LOCKED,
+	ID_TEAM_BALANCER_TEAM_REQUESTED_CANCELLED,
+	/// Team balancer plugin informing you of your team. Byte 1 contains the team you requested to join. Following bytes contain NetworkID of which member.
 	ID_TEAM_BALANCER_TEAM_ASSIGNED,
 
 	/// Gamebryo Lightspeed integration
@@ -380,6 +402,12 @@ enum DefaultMessageIDTypes
 	ID_CLOUD_SERVER_TO_SERVER_COMMAND,
 	ID_CLOUD_SUBSCRIPTION_NOTIFICATION,
 
+	// LibVoice
+	ID_LIB_VOICE,
+
+	ID_RELAY_PLUGIN_TO_RELAY,
+	ID_RELAY_PLUGIN_FROM_RELAY,
+
 	// So I can add more without changing user enumerations
 	ID_RESERVED_1,
 	ID_RESERVED_2,
@@ -392,7 +420,7 @@ enum DefaultMessageIDTypes
 	ID_RESERVED_9,
 
 	// For the user to use.  Start your first enumeration at this value.
-	ID_USER_PACKET_ENUM,
+	ID_USER_PACKET_ENUM
 	//-------------------------------------------------------------------------------------------------------------
  
 };

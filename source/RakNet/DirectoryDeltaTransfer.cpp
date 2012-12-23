@@ -27,7 +27,7 @@ public:
 
 	DDTCallback() {}
 	virtual ~DDTCallback() {}
-
+	
 	virtual bool OnFile(OnFileStruct *onFileStruct)
 	{
 		char fullPathToDir[1024];
@@ -126,17 +126,13 @@ void DirectoryDeltaTransfer::AddUploadsFromSubdirectory(const char *subdir)
 {
 	availableUploads->AddFilesFromDirectory(applicationDirectory, subdir, true, false, true, FileListNodeContext(0,0));
 }
-unsigned short DirectoryDeltaTransfer::DownloadFromSubdirectory(const char *subdir, const char *outputSubdir, bool prependAppDirToOutputSubdir, SystemAddress host, FileListTransferCBInterface *onFileCallback, PacketPriority _priority, char _orderingChannel, FileListProgress *cb)
+unsigned short DirectoryDeltaTransfer::DownloadFromSubdirectory(FileList &localFiles, const char *subdir, const char *outputSubdir, bool prependAppDirToOutputSubdir, SystemAddress host, FileListTransferCBInterface *onFileCallback, PacketPriority _priority, char _orderingChannel, FileListProgress *cb)
 {
 	RakAssert(host!=UNASSIGNED_SYSTEM_ADDRESS);
 
 	DDTCallback *transferCallback;
-	FileList localFiles;
 
 	localFiles.AddCallback(cb);
-
-	// Get a hash of all the files that we already have (if any)
-	localFiles.AddFilesFromDirectory(prependAppDirToOutputSubdir ? applicationDirectory : 0, outputSubdir, true, false, true, FileListNodeContext(0,0));
 
 	// Prepare the callback data
 	transferCallback = RakNet::OP_NEW<DDTCallback>( _FILE_AND_LINE_ );
@@ -167,10 +163,21 @@ unsigned short DirectoryDeltaTransfer::DownloadFromSubdirectory(const char *subd
 	outBitstream.Write(setId);
 	StringCompressor::Instance()->EncodeString(subdir, 256, &outBitstream);
 	StringCompressor::Instance()->EncodeString(outputSubdir, 256, &outBitstream);
-    localFiles.Serialize(&outBitstream);
+	localFiles.Serialize(&outBitstream);
 	SendUnified(&outBitstream, _priority, RELIABLE_ORDERED, _orderingChannel, host, false);
 
 	return setId;
+}
+unsigned short DirectoryDeltaTransfer::DownloadFromSubdirectory(const char *subdir, const char *outputSubdir, bool prependAppDirToOutputSubdir, SystemAddress host, FileListTransferCBInterface *onFileCallback, PacketPriority _priority, char _orderingChannel, FileListProgress *cb)
+{
+	FileList localFiles;
+	// Get a hash of all the files that we already have (if any)
+	localFiles.AddFilesFromDirectory(prependAppDirToOutputSubdir ? applicationDirectory : 0, outputSubdir, true, false, true, FileListNodeContext(0,0));
+	return DownloadFromSubdirectory(localFiles, subdir, outputSubdir, prependAppDirToOutputSubdir, host, onFileCallback, _priority, _orderingChannel, cb);
+}
+void DirectoryDeltaTransfer::GenerateHashes(FileList &localFiles, const char *outputSubdir, bool prependAppDirToOutputSubdir)
+{
+	localFiles.AddFilesFromDirectory(prependAppDirToOutputSubdir ? applicationDirectory : 0, outputSubdir, true, false, true, FileListNodeContext(0,0));
 }
 void DirectoryDeltaTransfer::ClearUploads(void)
 {

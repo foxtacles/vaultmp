@@ -18,6 +18,6 @@ typedef uint32_t TimeMS;
 typedef uint64_t TimeUS;
 #endif
 
-}; // namespace RakNet
+} // namespace RakNet
 
 #endif

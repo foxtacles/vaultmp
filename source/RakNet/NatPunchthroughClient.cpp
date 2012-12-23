@@ -47,40 +47,27 @@ bool NatPunchthroughClient::OpenNAT(RakNetGUID destination, const SystemAddress 
 	SendPunchthrough(destination, facilitator);
 	return true;
 }
-bool NatPunchthroughClient::OpenNATGroup(RakNetGUID destination, const SystemAddress &facilitator)
+/*
+bool NatPunchthroughClient::OpenNATGroup(DataStructures::List<RakNetGUID> destinationSystems, const SystemAddress &facilitator)
 {
 	ConnectionState cs = rakPeerInterface->GetConnectionState(facilitator);
 	if (cs!=IS_CONNECTED)
 		return false;
 
-	// Make sure this request doesn't already exist, if so return false
-	unsigned int i;
-	for (i=0; i < groupPunchRequests.Size(); i++)
+	unsigned long i;
+	for (i=0; i < destinationSystems.Size(); i++)
 	{
-		if (groupPunchRequests[i]->destination==destination && groupPunchRequests[i]->facilitator==facilitator)
-			return false;
-	}
-
-	RakNet::BitStream outgoingBs;
-	outgoingBs.Write((MessageID)ID_NAT_GROUP_PUNCHTHROUGH_REQUEST);
-	outgoingBs.Write(destination);
-	rakPeerInterface->Send(&outgoingBs,HIGH_PRIORITY,RELIABLE_ORDERED,0,facilitator,false);
-
-	if (natPunchthroughDebugInterface)
-	{
-		char guidString[128];
-		destination.ToString(guidString);
-		natPunchthroughDebugInterface->OnClientMessage(RakNet::RakString("Starting ID_NAT_GROUP_PUNCHTHROUGH_REQUEST to guid %s.", guidString));
+		SendPunchthrough(destinationSystems[i], facilitator);
 	}
 
 	GroupPunchRequest *gpr = RakNet::OP_NEW<GroupPunchRequest>(_FILE_AND_LINE_);
 	gpr->facilitator=facilitator;
-	gpr->destination=destination;
-	gpr->confirmingDestinationConnected=false;
+	gpr->pendingList=destinationSystems;
 	groupPunchRequests.Push(gpr, _FILE_AND_LINE_);
 
 	return true;
 }
+*/
 void NatPunchthroughClient::SetDebugInterface(NatPunchthroughDebugInterface *i)
 {
 	natPunchthroughDebugInterface=i;
@@ -243,7 +230,7 @@ void NatPunchthroughClient::Update(void)
 		{
 			// Failed. Tell the user
 			OnPunchthroughFailure();
-			UpdateGroupPunchOnNatResult(sp.facilitator, sp.targetGuid, sp.targetAddress, 1);
+		//	UpdateGroupPunchOnNatResult(sp.facilitator, sp.targetGuid, sp.targetAddress, 1);
 		}
 
 		if (sp.testMode==SendPing::PUNCHING_FIXED_PORT)
@@ -273,6 +260,7 @@ void NatPunchthroughClient::Update(void)
 		}
 	}
 
+	/*
 	// Remove elapsed groupRequestsInProgress
 	unsigned int i;
 	i=0;
@@ -283,6 +271,7 @@ void NatPunchthroughClient::Update(void)
 		else
 			i++;
 	}
+	*/
 }
 void NatPunchthroughClient::PushFailure(void)
 {
@@ -382,26 +371,6 @@ PluginReceiveResult NatPunchthroughClient::OnReceive(Packet *packet)
 {
 	switch (packet->data[0])
 	{
-	case ID_NAT_CONFIRM_CONNECTION_TO_SERVER:
-		{
-			OnConfirmConnectionToServer(packet);
-			return RR_STOP_PROCESSING_AND_DEALLOCATE;
-		}
-	case ID_NAT_GROUP_PUNCHTHROUGH_REQUEST:
-		{
-			OnNatGroupPunchthroughRequest(packet);
-			return RR_STOP_PROCESSING_AND_DEALLOCATE;
-		}
-	case ID_NAT_GROUP_PUNCHTHROUGH_FAILURE_NOTIFICATION:
-		{
-			OnFailureNotification(packet);
-			return RR_STOP_PROCESSING_AND_DEALLOCATE;
-		}
-	case ID_NAT_GROUP_PUNCHTHROUGH_REPLY:
-		{
-			OnNatGroupPunchthroughReply(packet);
-			return RR_STOP_PROCESSING_AND_DEALLOCATE;
-		}
 	case ID_NAT_GET_MOST_RECENT_PORT:
 		{
 			OnGetMostRecentPort(packet);
@@ -458,7 +427,7 @@ PluginReceiveResult NatPunchthroughClient::OnReceive(Packet *packet)
 				// Tell the user about the success
 				sp.targetAddress=packet->systemAddress;
 				PushSuccess();
-				UpdateGroupPunchOnNatResult(sp.facilitator, sp.targetGuid, sp.targetAddress, 1);
+				//UpdateGroupPunchOnNatResult(sp.facilitator, sp.targetGuid, sp.targetAddress, 1);
 				OnReadyForNextPunchthrough();
 				bool removedFromFailureQueue=RemoveFromFailureQueue();
 
@@ -482,7 +451,8 @@ PluginReceiveResult NatPunchthroughClient::OnReceive(Packet *packet)
 			incomingBs.IgnoreBytes(sizeof(MessageID));
 			RakNetGUID targetGuid;
 			incomingBs.Read(targetGuid);
-			UpdateGroupPunchOnNatResult(packet->systemAddress, targetGuid, UNASSIGNED_SYSTEM_ADDRESS, 2);
+			// Don't update group, just use later message
+			// UpdateGroupPunchOnNatResult(packet->systemAddress, targetGuid, UNASSIGNED_SYSTEM_ADDRESS, 2);
 			if (natPunchthroughDebugInterface)
 			{
 				char guidString[128];
@@ -510,7 +480,7 @@ PluginReceiveResult NatPunchthroughClient::OnReceive(Packet *packet)
 
 			RakNetGUID targetGuid;
 			incomingBs.Read(targetGuid);
-			UpdateGroupPunchOnNatResult(packet->systemAddress, targetGuid, UNASSIGNED_SYSTEM_ADDRESS, 2);
+			//UpdateGroupPunchOnNatResult(packet->systemAddress, targetGuid, UNASSIGNED_SYSTEM_ADDRESS, 2);
 
 			if (packet->data[0]==ID_NAT_CONNECTION_TO_TARGET_LOST ||
 				packet->data[0]==ID_NAT_TARGET_UNRESPONSIVE)
@@ -706,6 +676,7 @@ void NatPunchthroughClient::OnNewConnection(const SystemAddress &systemAddress, 
 	if (ourExternalId!=UNASSIGNED_SYSTEM_ADDRESS)
 		mostRecentNewExternalPort=ourExternalId.GetPort();
 
+	/*
 	unsigned int i;
 	i=0;
 	while (i < groupRequestsInProgress.Size())
@@ -719,6 +690,7 @@ void NatPunchthroughClient::OnNewConnection(const SystemAddress &systemAddress, 
 			i++;
 		}
 	}
+	*/
 }
 
 void NatPunchthroughClient::OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason )
@@ -745,6 +717,7 @@ void NatPunchthroughClient::OnClosedConnection(const SystemAddress &systemAddres
 		}
 	}
 
+	/*
 	unsigned int i;
 	i=0;
 	while (i < groupPunchRequests.Size())
@@ -759,73 +732,14 @@ void NatPunchthroughClient::OnClosedConnection(const SystemAddress &systemAddres
 			i++;
 		}
 	}
+	*/
 
-}
-void NatPunchthroughClient::OnConfirmConnectionToServer(Packet *packet)
-{
-	RakNet::BitStream incomingBs(packet->data,packet->length,false);
-	incomingBs.IgnoreBytes(sizeof(MessageID));
-	RakNetGUID recipientGuid;
-	incomingBs.Read(recipientGuid);
-	bool wasConnected;
-	incomingBs.Read(wasConnected);
-
-	unsigned int i;
-	i=0;
-	while (i < groupPunchRequests.Size())
-	{
-		GroupPunchRequest *gpr = groupPunchRequests[i];
-		if (gpr->facilitator==packet->systemAddress && gpr->confirmingDestinationConnected==true && gpr->destination==recipientGuid)
-		{
-			if (wasConnected)
-			{
-				// Return success to user
-				PushGroupSuccess(gpr);
-			}
-			else
-			{
-				// Return failure to user
-				PushGroupFailure(gpr);
-			}
-
-			if (natPunchthroughDebugInterface)
-			{
-				char guidString[128];
-				recipientGuid.ToString(guidString);
-				natPunchthroughDebugInterface->OnClientMessage(RakNet::RakString("Completed group punch to guid %s. Success=%i", guidString, wasConnected));
-			}
-
-			RakNet::OP_DELETE(gpr,_FILE_AND_LINE_);
-			groupPunchRequests.RemoveAtIndexFast(i);
-		}
-		else
-		{
-			i++;
-		}
-	}
-}
-void NatPunchthroughClient::GetGuidsForGroupPunchthroughRequest(RakNetGUID excludeThisGuid, DataStructures::List<RakNetGUID> &guids)
-{
-	DataStructures::List<SystemAddress> addresses;
-	rakPeerInterface->GetSystemList(addresses, guids);
-	if (excludeThisGuid!=UNASSIGNED_RAKNET_GUID)
-	{
-		unsigned int i;
-		for (i=0; i < guids.Size(); i++)
-		{
-			if (guids[i]==excludeThisGuid)
-			{
-				guids.RemoveAtIndexFast(i);
-				return;
-			}
-		}
-	}
 }
 void NatPunchthroughClient::GetUPNPPortMappings(char *externalPort, char *internalPort, const SystemAddress &natPunchthroughServerAddress)
 {
-	DataStructures::List<RakNet::RakNetSmartPtr<RakNet::RakNetSocket> > sockets;
+	DataStructures::List< RakNet::RakNetSocket2* > sockets;
 	rakPeerInterface->GetSockets(sockets);
-	Itoa(sockets[0]->boundAddress.GetPort(),internalPort,10);
+	Itoa(sockets[0]->GetBoundAddress().GetPort(),internalPort,10);
 	if (mostRecentNewExternalPort==0)
 		mostRecentNewExternalPort=rakPeerInterface->GetExternalID(natPunchthroughServerAddress).GetPort();
 	Itoa(mostRecentNewExternalPort,externalPort,10);
@@ -837,6 +751,7 @@ void NatPunchthroughClient::OnFailureNotification(Packet *packet)
 	RakNetGUID senderGuid;
 	incomingBs.Read(senderGuid);
 
+	/*
 	unsigned int i;
 	i=0;
 	while (i < groupRequestsInProgress.Size())
@@ -851,95 +766,7 @@ void NatPunchthroughClient::OnFailureNotification(Packet *packet)
 			i++;
 		}
 	}
-}
-void NatPunchthroughClient::OnNatGroupPunchthroughRequest(Packet *packet)
-{
-	RakNet::BitStream incomingBs(packet->data,packet->length,false);
-	incomingBs.IgnoreBytes(sizeof(MessageID));
-	RakNetGUID senderGuid;
-	incomingBs.Read(senderGuid);
-	
-	// Return all connected systems, and all group requests in progress
-	DataStructures::List<RakNetGUID> guids;
-	GetGuidsForGroupPunchthroughRequest(packet->guid, guids);
-	unsigned int i;
-	for (i=0; i < groupRequestsInProgress.Size(); i++)
-	{
-		guids.Push(groupRequestsInProgress[i].guid, _FILE_AND_LINE_);
-	}
-
-	RakNet::BitStream outgoingBs;
-	outgoingBs.Write((MessageID)ID_NAT_GROUP_PUNCHTHROUGH_REPLY);
-	outgoingBs.Write(senderGuid);
-	unsigned short count = (unsigned short) guids.Size();
-	count++; // include myself
-	outgoingBs.Write(count);
-	outgoingBs.Write(rakPeerInterface->GetMyGUID());
-	for (i=0; i < guids.Size(); i++)
-		outgoingBs.Write(guids[i]);
-	rakPeerInterface->Send(&outgoingBs,HIGH_PRIORITY,RELIABLE_ORDERED,0,packet->systemAddress,false);
-
-	if (natPunchthroughDebugInterface)
-	{
-		char guidString[128];
-		senderGuid.ToString(guidString);
-		natPunchthroughDebugInterface->OnClientMessage(RakNet::RakString("Processing ID_NAT_GROUP_PUNCHTHROUGH_REQUEST from guid %s. Returning %i systems.", guidString, count));
-	}
-
-	// Add requester with a timeout
-	for (i=0; i < groupRequestsInProgress.Size(); i++)
-	{
-		if (groupRequestsInProgress[i].guid==senderGuid)
-		{
-			groupRequestsInProgress[i].time=RakNet::GetTime()+30000;
-			return;
-		}
-	}
-	TimeAndGuid tag;
-	tag.guid=senderGuid;
-	tag.time=RakNet::GetTime()+30000;
-	groupRequestsInProgress.Push(tag, _FILE_AND_LINE_);
-}
-void NatPunchthroughClient::OnNatGroupPunchthroughReply(Packet *packet)
-{
-	RakNet::BitStream incomingBs(packet->data,packet->length,false);
-	incomingBs.IgnoreBytes(sizeof(MessageID));
-	unsigned short count;
-	incomingBs.Read(count);
-	if (count==0)
-		return;
-
-	DataStructures::List<RakNetGUID> guids;
-	for (unsigned short k=0; k < count; k++)
-	{
-		RakNetGUID g;
-		incomingBs.Read(g);
-		guids.Push(g,_FILE_AND_LINE_);
-	}
-
-	unsigned int i;
-	for (i=0; i < groupPunchRequests.Size(); i++)
-	{
-		if (groupPunchRequests[i]->destination==guids[0] && groupPunchRequests[i]->facilitator==packet->systemAddress)
-		{
-			if (natPunchthroughDebugInterface)
-			{
-				char guidString[128];
-				guids[0].ToString(guidString);
-				natPunchthroughDebugInterface->OnClientMessage(RakNet::RakString("Got ID_NAT_GROUP_PUNCHTHROUGH_REPLY from guid %s. Punching %i systems.", guidString, count));
-			}
-
-			groupPunchRequests[i]->processingList=guids;
-
-			// Punch each in the processing list
-			for (unsigned short k=0; k < count; k++)
-			{
-				OpenNAT(guids[k], packet->systemAddress);
-			}
-
-			break;	
-		}
-	}
+	*/
 }
 void NatPunchthroughClient::OnGetMostRecentPort(Packet *packet)
 {
@@ -1003,6 +830,7 @@ void NatPunchthroughClient::Clear(void)
 	OnReadyForNextPunchthrough();
 
 	failedAttemptList.Clear(false, _FILE_AND_LINE_);
+	/*
 	groupRequestsInProgress.Clear(false, _FILE_AND_LINE_);
 	unsigned int i;
 	for (i=0; i < groupPunchRequests.Size(); i++)
@@ -1010,6 +838,7 @@ void NatPunchthroughClient::Clear(void)
 		RakNet::OP_DELETE(groupPunchRequests[i],_FILE_AND_LINE_);
 	}
 	groupPunchRequests.Clear(true, _FILE_AND_LINE_);
+	*/
 }
 PunchthroughConfiguration* NatPunchthroughClient::GetPunchthroughConfiguration(void)
 {
@@ -1041,35 +870,6 @@ void NatPunchthroughClient::PushSuccess(void)
 	p->wasGeneratedLocally=true;
 	rakPeerInterface->PushBackPacket(p, true);
 }
-void NatPunchthroughClient::PushGroupSuccess(GroupPunchRequest *gpr)
-{
-	Packet *p = AllocatePacketUnified(sizeof(MessageID)+sizeof(unsigned short) + SystemAddress::size()*gpr->successList.Size());
-	p->guid=gpr->destination;
-	p->wasGeneratedLocally=true;
-	RakNet::BitStream bs(p->data, p->length, false);
-	bs.SetWriteOffset(0);
-	bs.Write((MessageID)ID_NAT_GROUP_PUNCH_SUCCEEDED);
-	bs.WriteCasted<unsigned short>(gpr->successList.Size());
-	for (unsigned int i=0; i < gpr->successList.Size(); i++)
-		bs.Write(gpr->successList[i]);
-	rakPeerInterface->PushBackPacket(p, true);
-}
-void NatPunchthroughClient::PushGroupFailure(GroupPunchRequest *gpr)
-{
-	Packet *p = AllocatePacketUnified(sizeof(MessageID)+sizeof(unsigned short)*2 + RakNetGUID::size()*gpr->failureList.Size() + SystemAddress::size()*gpr->successList.Size());
-	p->guid=gpr->destination;
-	p->wasGeneratedLocally=true;
-	RakNet::BitStream bs(p->data, p->length, false);
-	bs.SetWriteOffset(0);
-	bs.Write((MessageID)ID_NAT_GROUP_PUNCH_FAILED);
-	bs.WriteCasted<unsigned short>(gpr->successList.Size());
-	for (unsigned int i=0; i < gpr->successList.Size(); i++)
-		bs.Write(gpr->successList[i]);
-	bs.WriteCasted<unsigned short>(gpr->failureList.Size());
-	for (unsigned int i=0; i < gpr->failureList.Size(); i++)
-		bs.Write(gpr->failureList[i]);
-	rakPeerInterface->PushBackPacket(p, true);
-}
 bool NatPunchthroughClient::RemoveFromFailureQueue(void)
 {
 	unsigned int i;
@@ -1098,86 +898,87 @@ void NatPunchthroughClient::IncrementExternalAttemptCount(RakNet::Time time, Rak
 		sp.nextActionTime=time+pc.TIME_BETWEEN_PUNCH_ATTEMPTS_EXTERNAL-delta;
 	}
 }
+/*
 // 0=failed, 1=success, 2=ignore
 void NatPunchthroughClient::UpdateGroupPunchOnNatResult(SystemAddress facilitator, RakNetGUID targetSystem, SystemAddress targetSystemAddress, int result)
 {
-	unsigned int i,j;
+	GroupPunchRequest *gpr;
+	unsigned long i,j,k;
 	i=0;
 	while (i < groupPunchRequests.Size())
 	{
-		GroupPunchRequest *gpr = groupPunchRequests[i];
-		if (gpr->facilitator==facilitator && gpr->processingList.Size()>0)
+		gpr = groupPunchRequests[i];
+		if (gpr->facilitator==facilitator)
 		{
 			j=0;
-			while (j < gpr->processingList.Size())
+			while (j < gpr->pendingList.Size())
 			{
-				if (gpr->processingList[j]==targetSystem)
+				if (gpr->pendingList[j]==targetSystem)
 				{
-					gpr->processingList.RemoveAtIndexFast(j);
 					if (result==0)
 					{
-						if (gpr->failureList.Size()==0)
-						{
-							// Send message to destination system that the group punch has failed, so remove from the groupRequestsInProgress list right away rather than wait
-							RakNet::BitStream outgoingBs;
-							outgoingBs.Write((MessageID)ID_NAT_GROUP_PUNCHTHROUGH_FAILURE_NOTIFICATION);
-							outgoingBs.Write(gpr->destination);
-							rakPeerInterface->Send(&outgoingBs,HIGH_PRIORITY,RELIABLE_ORDERED,0,facilitator,false);
-						}
-
-						gpr->failureList.Push(targetSystem, _FILE_AND_LINE_);
-
+						gpr->failedList.Push(targetSystem, _FILE_AND_LINE_);
 					}
 					else if (result==1)
 					{
-						gpr->successList.Push(targetSystemAddress, _FILE_AND_LINE_);
+						gpr->passedListGuid.Push(targetSystem, _FILE_AND_LINE_);
+						gpr->passedListAddress.Push(targetSystemAddress, _FILE_AND_LINE_);
 					}
-					// else ignore
-				}
-				else
-				{
-					j++;
-				}
-			}
-
-			if (gpr->processingList.Size()==0)
-			{
-				if (gpr->failureList.Size()>0)
-				{
-					if (natPunchthroughDebugInterface)
+					else
 					{
-						char guidString[128];
-						gpr->destination.ToString(guidString);
-						natPunchthroughDebugInterface->OnClientMessage(RakNet::RakString("Failed group punch to guid %s. %i systems failed.", guidString, gpr->failureList.Size()));
+						gpr->ignoredList.Push(targetSystem, _FILE_AND_LINE_);
 					}
-
-					// Push failure to user
-					PushGroupFailure(gpr);
-
-					// Done processing, failed, tell result to user
-					RakNet::OP_DELETE(gpr,_FILE_AND_LINE_);
-					groupPunchRequests.RemoveAtIndexFast(i);
+					gpr->pendingList.RemoveAtIndex(j);
 				}
 				else
-				{
-					// Tenative success, confirm destination is still connected
-					RakNet::BitStream outgoingBs;
-					outgoingBs.Write((MessageID)ID_NAT_CONFIRM_CONNECTION_TO_SERVER);
-					outgoingBs.Write(gpr->destination);
-					gpr->confirmingDestinationConnected=true;
-					rakPeerInterface->Send(&outgoingBs,HIGH_PRIORITY,RELIABLE_ORDERED,0,facilitator,false);
-
-					i++;
-				}
+					j++;
+			}
+		}
+		if (gpr->pendingList.Size()==0)
+		{
+			RakNet::BitStream output;
+			if (gpr->failedList.Size()==0)
+			{
+				output.Write(ID_NAT_GROUP_PUNCH_SUCCEEDED);
 			}
 			else
 			{
-				// Still working
-				i++;
+				output.Write(ID_NAT_GROUP_PUNCH_FAILED);
 			}
+
+			output.WriteCasted<unsigned char>(gpr->passedListGuid.Size());
+			for (k=0; k < gpr->passedListGuid.Size(); k++)
+			{
+				output.Write(gpr->passedListGuid[k]);
+				output.Write(gpr->passedListAddress[k]);
+			}
+			output.WriteCasted<unsigned char>(gpr->ignoredList.Size());
+			for (k=0; k < gpr->ignoredList.Size(); k++)
+			{
+				output.Write(gpr->ignoredList[k]);
+			}
+			output.WriteCasted<unsigned char>(gpr->failedList.Size());
+			for (k=0; k < gpr->failedList.Size(); k++)
+			{
+				output.Write(gpr->failedList[k]);
+			}			
+
+			Packet *p = AllocatePacketUnified(output.GetNumberOfBytesUsed());
+			p->systemAddress=gpr->facilitator;
+			p->systemAddress.systemIndex=(SystemIndex)-1;
+			p->guid=rakPeerInterface->GetGuidFromSystemAddress(gpr->facilitator);
+			p->wasGeneratedLocally=true;
+			memcpy(p->data, output.GetData(), output.GetNumberOfBytesUsed());
+			rakPeerInterface->PushBackPacket(p, true);
+
+			groupPunchRequests.RemoveAtIndex(i);
+			RakNet::OP_DELETE(gpr, _FILE_AND_LINE_);
 		}
+		else
+			i++;
 	}
 }
+*/
 
 #endif // _RAKNET_SUPPORT_*
 

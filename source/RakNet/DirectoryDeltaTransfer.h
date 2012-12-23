@@ -92,6 +92,7 @@ public:
 	/// AddUploadsFromSubdirectory("Levels/Level1/"); would allow you to download using DownloadFromSubdirectory("Levels/Level1/Textures/"...
 	/// but it would NOT allow you to download from DownloadFromSubdirectory("Levels/"... or DownloadFromSubdirectory("Levels/Level2/"...
 	/// \pre You must call SetFileListTransferPlugin with a valid FileListTransfer plugin
+	/// \note Blocking. Will block while hashes of the local files are generated
 	/// \param[in] subdir A directory passed to AddUploadsFromSubdirectory on the remote system.  The passed dir can be more specific than the remote dir.
 	/// \param[in] outputSubdir The directory to write the output to.  Usually this will match \a subdir but it can be different if you want.
 	/// \param[in] prependAppDirToOutputSubdir True to prepend outputSubdir with pathToApplication when determining the final output path.  Usually you want this to be true.
@@ -102,6 +103,32 @@ public:
 	/// \param[in] cb Callback to get progress updates. Pass 0 to not use.
 	/// \return A set ID, identifying this download set.  Returns 65535 on host unreachable.
 	unsigned short DownloadFromSubdirectory(const char *subdir, const char *outputSubdir, bool prependAppDirToOutputSubdir, SystemAddress host, FileListTransferCBInterface *onFileCallback, PacketPriority _priority, char _orderingChannel, FileListProgress *cb);
+
+	/// \brief Downloads files from the matching parameter \a subdir in AddUploadsFromSubdirectory.
+	/// \details \a subdir must contain all starting characters in \a subdir in AddUploadsFromSubdirectory
+	/// Therefore,
+	/// AddUploadsFromSubdirectory("Levels/Level1/"); would allow you to download using DownloadFromSubdirectory("Levels/Level1/Textures/"...
+	/// but it would NOT allow you to download from DownloadFromSubdirectory("Levels/"... or DownloadFromSubdirectory("Levels/Level2/"...
+	/// \pre You must call SetFileListTransferPlugin with a valid FileListTransfer plugin
+	/// \note Nonblocking, but requires call to GenerateHashes()
+	/// \param[in] localFiles Hashes of local files already on the harddrive. Populate with GenerateHashes(), which you may wish to call from a thread
+	/// \param[in] subdir A directory passed to AddUploadsFromSubdirectory on the remote system.  The passed dir can be more specific than the remote dir.
+	/// \param[in] outputSubdir The directory to write the output to.  Usually this will match \a subdir but it can be different if you want.
+	/// \param[in] prependAppDirToOutputSubdir True to prepend outputSubdir with pathToApplication when determining the final output path.  Usually you want this to be true.
+	/// \param[in] host The address of the remote system to send the message to.
+	/// \param[in] onFileCallback Callback to call per-file (optional).  When fileIndex+1==setCount in the callback then the download is done
+	/// \param[in] _priority See RakPeerInterface::Send()
+	/// \param[in] _orderingChannel See RakPeerInterface::Send()
+	/// \param[in] cb Callback to get progress updates. Pass 0 to not use.
+	/// \return A set ID, identifying this download set.  Returns 65535 on host unreachable.
+	unsigned short DownloadFromSubdirectory(FileList &localFiles, const char *subdir, const char *outputSubdir, bool prependAppDirToOutputSubdir, SystemAddress host, FileListTransferCBInterface *onFileCallback, PacketPriority _priority, char _orderingChannel, FileListProgress *cb);
+
+	/// Hash files already on the harddrive, in preparation for a call to DownloadFromSubdirectory(). Passed to second version of DownloadFromSubdirectory()
+	/// This is slow, and it is exposed so you can call it from a thread before calling DownloadFromSubdirectory()
+	/// \param[out] localFiles List of hashed files populated from \a outputSubdir and \a prependAppDirToOutputSubdir
+	/// \param[in] outputSubdir The directory to write the output to.  Usually this will match \a subdir but it can be different if you want.
+	/// \param[in] prependAppDirToOutputSubdir True to prepend outputSubdir with pathToApplication when determining the final output path.  Usually you want this to be true.
+	void GenerateHashes(FileList &localFiles, const char *outputSubdir, bool prependAppDirToOutputSubdir);
 
 	/// \brief Clear all allowed uploads previously set with AddUploadsFromSubdirectory
 	void ClearUploads(void);

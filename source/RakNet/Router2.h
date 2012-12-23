@@ -137,7 +137,7 @@ public:
 		RakNet::TimeMS timeout;
 		RakNet::TimeMS nextAction;
 		unsigned short forwardingPort;
-		SOCKET forwardingSocket;
+		__UDPSOCKET__ forwardingSocket;
 	};
 
 	struct ForwardedConnection
@@ -181,7 +181,7 @@ protected:
 	void SendFailureOnCannotForward(RakNetGUID sourceGuid, RakNetGUID endpointGuid);
 	void SendForwardingSuccess(MessageID messageId, RakNetGUID sourceGuid, RakNetGUID endpointGuid, unsigned short sourceToDstPort);
 	void SendOOBFromRakNetPort(OutOfBandIdentifiers oob, BitStream *extraData, SystemAddress sa);
-	void SendOOBFromSpecifiedSocket(OutOfBandIdentifiers oob, SystemAddress sa, SOCKET socket);
+	void SendOOBFromSpecifiedSocket(OutOfBandIdentifiers oob, SystemAddress sa, __UDPSOCKET__ socket);
 	void SendOOBMessages(MiniPunchRequest *mpr);
 
 	Router2DebugInterface *debugInterface;

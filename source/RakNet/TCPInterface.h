@@ -22,6 +22,8 @@
 #include "SocketIncludes.h"
 #include "DS_ByteQueue.h"
 #include "DS_ThreadsafeAllocatingQueue.h"
+#include "LocklessTypes.h"
+#include "PluginInterface2.h"
 
 #if OPEN_SSL_CLIENT_SUPPORT==1
 #include <openssl/crypto.h>
@@ -47,6 +49,7 @@ public:
 	TCPInterface();
 	virtual ~TCPInterface();
 
+	// TODO - add socketdescriptor
 	/// Starts the TCP server on the indicated port
 	/// \param[in] port Which port to listen on.
 	/// \param[in] maxIncomingConnections Max incoming connections we will accept
@@ -70,19 +73,20 @@ public:
 #endif
 
 	/// Sends a byte stream
-	void Send( const char *data, unsigned int length, const SystemAddress &systemAddress, bool broadcast );
+	virtual void Send( const char *data, unsigned int length, const SystemAddress &systemAddress, bool broadcast );
 
 	// Sends a concatenated list of byte streams
-	bool SendList( const char **data, const unsigned int  *lengths, const int numParameters, const SystemAddress &systemAddress, bool broadcast );
+	virtual bool SendList( const char **data, const unsigned int  *lengths, const int numParameters, const SystemAddress &systemAddress, bool broadcast );
 
 	// Get how many bytes are waiting to be sent. If too many, you may want to skip sending
 	unsigned int GetOutgoingDataBufferSize(SystemAddress systemAddress) const;
 
 	/// Returns if Receive() will return data
-	bool ReceiveHasPackets( void );
+	/// Do not use on PacketizedTCP
+	virtual bool ReceiveHasPackets( void );
 
 	/// Returns data received
-	Packet* Receive( void );
+	virtual Packet* Receive( void );
 
 	/// Disconnects a player/address
 	void CloseConnection( SystemAddress systemAddress );
@@ -118,18 +122,26 @@ public:
 	// Push a packet back to the queue
 	virtual void PushBackPacket( Packet *packet, bool pushAtHead );
 
-	static const char *Base64Map(void) {return "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";}
-
-	/// \brief Returns how many bytes were written.
-	static int Base64Encoding(const char *inputData, int dataLength, char *outputData);
-
 	/// Returns if Start() was called successfully
 	bool WasStarted(void) const;
 
+	void AttachPlugin( PluginInterface2 *plugin );
+	void DetachPlugin( PluginInterface2 *plugin );
 protected:
 
-	bool isStarted, threadRunning;
-	SOCKET listenSocket;
+	Packet* ReceiveInt( void );
+
+#if defined(WINDOWS_STORE_RT)
+	bool CreateListenSocket_WinStore8(unsigned short port, unsigned short maxIncomingConnections, unsigned short socketFamily);
+#else
+	bool CreateListenSocket(unsigned short port, unsigned short maxIncomingConnections, unsigned short socketFamily);
+#endif
+
+	// Plugins
+	DataStructures::List<PluginInterface2*> messageHandlerList;
+
+	RakNet::LocklessUint32_t isStarted, threadRunning;
+	__TCPSOCKET__ listenSocket;
 
 	DataStructures::Queue<Packet*> headPush, tailPush;
 	RemoteClient* remoteClients;
@@ -163,7 +175,7 @@ protected:
 
 	int threadPriority;
 
-	DataStructures::List<SOCKET> blockingSocketList;
+	DataStructures::List<__TCPSOCKET__> blockingSocketList;
 	SimpleMutex blockingSocketListMutex;
 
 
@@ -175,7 +187,7 @@ protected:
 
 //	void DeleteRemoteClient(RemoteClient *remoteClient, fd_set *exceptionFD);
 //	void InsertRemoteClient(RemoteClient* remoteClient);
-	SOCKET SocketConnect(const char* host, unsigned short remotePort, unsigned short socketFamily);
+	__TCPSOCKET__ SocketConnect(const char* host, unsigned short remotePort, unsigned short socketFamily);
 
 	struct ThisPtrPlusSysAddr
 	{
@@ -202,9 +214,11 @@ struct RemoteClient
 		ssl=0;
 #endif
 		isActive=false;
-		socket=INVALID_SOCKET;
+#if !defined(WINDOWS_STORE_RT)
+		socket=0;
+#endif
 	}
-	SOCKET socket;
+	__TCPSOCKET__ socket;
 	SystemAddress systemAddress;
 	DataStructures::ByteQueue outgoingData;
 	bool isActive;

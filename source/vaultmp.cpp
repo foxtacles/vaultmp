@@ -4,6 +4,7 @@
 #include <shlwapi.h>
 #include <shlobj.h>
 #include <commctrl.h>
+#include <dbghelp.h>
 #include <map>
 #include <chrono>
 #include <thread>
@@ -168,7 +169,8 @@ class FileServer : public FileListTransferCBInterface
 					PathRemoveFileSpec(file);
 
 					strcat(file, "\\Data\\");
-					strcat(file, Utils::FileOnly(onFileStruct->fileName));
+					strcat(file, onFileStruct->fileName);
+					MakeSureDirectoryPathExists(file);
 					break;
 				}
 
@@ -862,8 +864,6 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 												RakString name, map;
 												unsigned int players, playersMax, rsize, msize;
 												unsigned char game;
-												std::map<string, string> rules;
-												std::vector<string> modfiles;
 
 												query.Read(addr);
 												query.Read(name);
@@ -982,7 +982,6 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 												peer->Ping(addr.ToString(false), addr.GetPort(), false);
 											}
-
 											else if (i != serverList.end())
 												serverList.erase(i);
 
@@ -1020,7 +1019,6 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 												peer->Connect(selectedServer->ToString(false), selectedServer->GetPort(), DEDICATED_VERSION, sizeof(DEDICATED_VERSION), 0, 0, 3, 500, 0);
 												lock = true;
 											}
-
 											else
 											{
 												if (update)

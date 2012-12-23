@@ -13,11 +13,11 @@
 
 using namespace RakNet;
 
-int RakNet::ReadyEvent::RemoteSystemCompBySystemAddress( const SystemAddress &key, const RemoteSystem &data )
+int RakNet::ReadyEvent::RemoteSystemCompByGuid( const RakNetGUID &key, const RemoteSystem &data )
 {
-	if (key < data.systemAddress)
+	if (key < data.rakNetGuid)
 		return -1;
-	else if (key==data.systemAddress)
+	else if (key==data.rakNetGuid)
 		return 0;
 	else
 		return 1;
@@ -61,7 +61,7 @@ bool ReadyEvent::SetEvent(int eventId, bool isReady)
 	}
 	return true;
 }
-bool ReadyEvent::ForceCompletion(int eventId)
+void ReadyEvent::ForceCompletion(int eventId)
 {
 	bool objectExists;
 	unsigned eventIndex = readyEventNodeList.GetIndexFromKey(eventId, &objectExists);
@@ -75,8 +75,6 @@ bool ReadyEvent::ForceCompletion(int eventId)
 	ReadyEventNode *ren = readyEventNodeList[eventIndex];
 	ren->eventStatus=ID_READY_EVENT_FORCE_ALL_SET;
 	UpdateReadyStatus(eventIndex);
-
-	return true;
 }
 bool ReadyEvent::DeleteEvent(int eventId)
 {
@@ -148,7 +146,7 @@ int ReadyEvent::GetEventAtIndex(unsigned index) const
 	return readyEventNodeList[index]->eventId;
 }
 
-bool ReadyEvent::AddToWaitList(int eventId, SystemAddress address)
+bool ReadyEvent::AddToWaitList(int eventId, RakNetGUID guid)
 {
 	bool eventExists;
 	unsigned eventIndex = readyEventNodeList.GetIndexFromKey(eventId, &eventExists);
@@ -161,33 +159,33 @@ bool ReadyEvent::AddToWaitList(int eventId, SystemAddress address)
 
 	unsigned i;
 	unsigned numAdded=0;
-	if (address==UNASSIGNED_SYSTEM_ADDRESS)
+	if (guid==UNASSIGNED_RAKNET_GUID)
 	{
 		for (i=0; i < rakPeerInterface->GetMaximumNumberOfPeers(); i++)
 		{
-			SystemAddress internalAddress = rakPeerInterface->GetSystemAddressFromIndex(i);
-			if (internalAddress!=UNASSIGNED_SYSTEM_ADDRESS)
+			RakNetGUID firstGuid = rakPeerInterface->GetGUIDFromIndex(i);
+			if (firstGuid!=UNASSIGNED_RAKNET_GUID)
 			{
-				numAdded+=AddToWaitListInternal(eventIndex, internalAddress);
+				numAdded+=AddToWaitListInternal(eventIndex, firstGuid);
 			}
 		}
 	}
 	else
 	{
-		numAdded=AddToWaitListInternal(eventIndex, address);
+		numAdded=AddToWaitListInternal(eventIndex, guid);
 	}
 
 	if (numAdded>0)
 		UpdateReadyStatus(eventIndex);
 	return numAdded>0;
 }
-bool ReadyEvent::RemoveFromWaitList(int eventId, SystemAddress address)
+bool ReadyEvent::RemoveFromWaitList(int eventId, RakNetGUID guid)
 {
 	bool eventExists;
 	unsigned eventIndex = readyEventNodeList.GetIndexFromKey(eventId, &eventExists);
 	if (eventExists)
 	{
-		if (address==UNASSIGNED_SYSTEM_ADDRESS)
+		if (guid==UNASSIGNED_RAKNET_GUID)
 		{
 			// Remove all waiters
 			readyEventNodeList[eventIndex]->systemList.Clear(false, _FILE_AND_LINE_);
@@ -196,7 +194,7 @@ bool ReadyEvent::RemoveFromWaitList(int eventId, SystemAddress address)
 		else
 		{
 			bool systemExists;
-			unsigned systemIndex = readyEventNodeList[eventIndex]->systemList.GetIndexFromKey(address, &systemExists);
+			unsigned systemIndex = readyEventNodeList[eventIndex]->systemList.GetIndexFromKey(guid, &systemExists);
 			if (systemExists)
 			{
 				bool isCompleted = IsEventCompletedByIndex(eventIndex);
@@ -214,13 +212,13 @@ bool ReadyEvent::RemoveFromWaitList(int eventId, SystemAddress address)
 
 	return false;
 }
-bool ReadyEvent::IsInWaitList(int eventId, SystemAddress address)
+bool ReadyEvent::IsInWaitList(int eventId, RakNetGUID guid)
 {
 	bool objectExists;
 	unsigned readyIndex = readyEventNodeList.GetIndexFromKey(eventId, &objectExists);
 	if (objectExists)
 	{
-		return readyEventNodeList[readyIndex]->systemList.HasData(address);
+		return readyEventNodeList[readyIndex]->systemList.HasData(guid);
 	}
 	return false;
 }
@@ -236,24 +234,24 @@ unsigned ReadyEvent::GetRemoteWaitListSize(int eventId) const
 	return 0;
 }
 
-SystemAddress ReadyEvent::GetFromWaitListAtIndex(int eventId, unsigned index) const
+RakNetGUID ReadyEvent::GetFromWaitListAtIndex(int eventId, unsigned index) const
 {
 	bool objectExists;
 	unsigned readyIndex = readyEventNodeList.GetIndexFromKey(eventId, &objectExists);
 	if (objectExists)
 	{
-		return readyEventNodeList[readyIndex]->systemList[index].systemAddress;
+		return readyEventNodeList[readyIndex]->systemList[index].rakNetGuid;
 	}
-	return UNASSIGNED_SYSTEM_ADDRESS;
+	return UNASSIGNED_RAKNET_GUID;
 }
-ReadyEventSystemStatus ReadyEvent::GetReadyStatus(int eventId, SystemAddress address)
+ReadyEventSystemStatus ReadyEvent::GetReadyStatus(int eventId, RakNetGUID guid)
 {
 	bool objectExists;
 	unsigned readyIndex = readyEventNodeList.GetIndexFromKey(eventId, &objectExists);
 	if (objectExists)
 	{
 		ReadyEventNode *ren = readyEventNodeList[readyIndex];
-		unsigned systemIndex = ren->systemList.GetIndexFromKey(address, &objectExists);
+		unsigned systemIndex = ren->systemList.GetIndexFromKey(guid, &objectExists);
 		if (objectExists==false)
 			return RES_NOT_WAITING;		
 		if (ren->systemList[systemIndex].lastReceivedStatus==ID_READY_EVENT_SET)
@@ -296,20 +294,20 @@ PluginReceiveResult ReadyEvent::OnReceive(Packet *packet)
 
 	return RR_CONTINUE_PROCESSING;
 }
-bool ReadyEvent::AddToWaitListInternal(unsigned eventIndex, SystemAddress address)
+bool ReadyEvent::AddToWaitListInternal(unsigned eventIndex, RakNetGUID guid)
 {
 	ReadyEventNode *ren = readyEventNodeList[eventIndex];
 	bool objectExists;
-	unsigned systemIndex = ren->systemList.GetIndexFromKey(address, &objectExists);
+	unsigned systemIndex = ren->systemList.GetIndexFromKey(guid, &objectExists);
 	if (objectExists==false)
 	{
 		RemoteSystem rs;
 		rs.lastReceivedStatus=ID_READY_EVENT_UNSET;
 		rs.lastSentStatus=ID_READY_EVENT_UNSET;
-		rs.systemAddress=address;
+		rs.rakNetGuid=guid;
 		ren->systemList.InsertAtIndex(rs,systemIndex, _FILE_AND_LINE_);
 
-		SendReadyStateQuery(ren->eventId, address);
+		SendReadyStateQuery(ren->eventId, guid);
 		return true;
 	}
 	return false;
@@ -344,7 +342,7 @@ void ReadyEvent::OnReadyEventPacketUpdate(Packet *packet)
 	{
 		ReadyEventNode *ren = readyEventNodeList[readyIndex];
 		bool systemExists;
-		unsigned systemIndex = ren->systemList.GetIndexFromKey(packet->systemAddress, &systemExists);
+		unsigned systemIndex = ren->systemList.GetIndexFromKey(packet->guid, &systemExists);
 		if (systemExists)
 		{
 			// Just return if no change
@@ -372,7 +370,7 @@ void ReadyEvent::OnReadyEventQuery(Packet *packet)
 	unsigned readyIndex = readyEventNodeList.GetIndexFromKey(eventId, &objectExists);
 	if (objectExists)
 	{
-		unsigned systemIndex = readyEventNodeList[readyIndex]->systemList.GetIndexFromKey(packet->systemAddress,&objectExists);
+		unsigned systemIndex = readyEventNodeList[readyIndex]->systemList.GetIndexFromKey(packet->guid,&objectExists);
 		// Force the non-default send, because our initial send may have arrived at a system that didn't yet create the ready event
 		if (objectExists)
 			SendReadyUpdate(readyIndex, systemIndex, true);
@@ -384,7 +382,7 @@ void ReadyEvent::OnClosedConnection(const SystemAddress &systemAddress, RakNetGU
 	(void) rakNetGUID;
 	(void) lostConnectionReason;
 
-	RemoveFromAllLists(systemAddress);
+	RemoveFromAllLists(rakNetGUID);
 }
 void ReadyEvent::OnRakPeerShutdown(void)
 {
@@ -395,11 +393,11 @@ bool ReadyEvent::SetEventByIndex(int eventIndex, bool isReady)
 {
 	ReadyEventNode *ren = readyEventNodeList[eventIndex];
 	if ((ren->eventStatus==ID_READY_EVENT_ALL_SET || ren->eventStatus==ID_READY_EVENT_SET) && isReady==true)
-		return true; // Success - no change
+		return false; // Success - no change
 	if (ren->eventStatus==ID_READY_EVENT_UNSET && isReady==false)
-		return true; // Success - no change
+		return false; // Success - no change
 	if (ren->eventStatus==ID_READY_EVENT_FORCE_ALL_SET)
-		return true; // Can't change
+		return false; // Can't change
 
 	if (isReady)
 		ren->eventStatus=ID_READY_EVENT_SET;
@@ -502,7 +500,7 @@ void ReadyEvent::SendReadyUpdate(unsigned eventIndex, unsigned systemIndex, bool
 	{
 		bs.Write(ren->eventStatus);
 		bs.Write(ren->eventId);
-		SendUnified(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, channel, ren->systemList[systemIndex].systemAddress, false);
+		SendUnified(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, channel, ren->systemList[systemIndex].rakNetGuid, false);
 
 		ren->systemList[systemIndex].lastSentStatus=ren->eventStatus;
 	}
@@ -517,14 +515,14 @@ void ReadyEvent::BroadcastReadyUpdate(unsigned eventIndex, bool forceIfNotDefaul
 		SendReadyUpdate(eventIndex, systemIndex, forceIfNotDefault);
 	}
 }
-void ReadyEvent::SendReadyStateQuery(unsigned eventId, SystemAddress address)
+void ReadyEvent::SendReadyStateQuery(unsigned eventId, RakNetGUID guid)
 {
 	RakNet::BitStream bs;
 	bs.Write((MessageID)ID_READY_EVENT_QUERY);
 	bs.Write(eventId);
-	SendUnified(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, channel, address, false);
+	SendUnified(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, channel, guid, false);
 }
-void ReadyEvent::RemoveFromAllLists(SystemAddress address)
+void ReadyEvent::RemoveFromAllLists(RakNetGUID guid)
 {
 	unsigned eventIndex;
 	for (eventIndex=0; eventIndex < readyEventNodeList.Size(); eventIndex++)
@@ -533,7 +531,7 @@ void ReadyEvent::RemoveFromAllLists(SystemAddress address)
 		bool systemExists;
 		unsigned systemIndex;
 		
-		systemIndex = readyEventNodeList[eventIndex]->systemList.GetIndexFromKey(address, &systemExists);
+		systemIndex = readyEventNodeList[eventIndex]->systemList.GetIndexFromKey(guid, &systemExists);
 		if (systemExists)
 			readyEventNodeList[eventIndex]->systemList.RemoveAtIndex(systemIndex);
 	

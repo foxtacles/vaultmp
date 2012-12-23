@@ -40,6 +40,7 @@ struct SystemAddress;
 /// This class will handle connecting and reconnecting as necessary.
 ///
 /// Note that only one Post() can be handled at a time. 
+/// \deprecated, use HTTPConnection2
 class RAK_DLL_EXPORT HTTPConnection
 {
 public:

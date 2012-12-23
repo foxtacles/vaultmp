@@ -101,6 +101,7 @@ void VariadicSQLParser::ExtractArguments( va_list argptr, const DataStructures::
 				if (RakNet::BitStream::IsNetworkOrder()==false) RakNet::BitStream::ReverseBytesInPlace((unsigned char*) paramData[i], paramLength[i]);
 			}
 			break;
+			/*
 		case 'f':
 			{
 				// On MSVC at least, this only works with double as the 2nd param
@@ -112,6 +113,9 @@ void VariadicSQLParser::ExtractArguments( va_list argptr, const DataStructures::
 				if (RakNet::BitStream::IsNetworkOrder()==false) RakNet::BitStream::ReverseBytesInPlace((unsigned char*) paramData[i], paramLength[i]);
 			}
 			break;
+			*/
+		// On MSVC at least, this only works with double as the 2nd param
+		case 'f':
 		case 'g':
 			{
 				double val = va_arg( argptr, double );

@@ -35,7 +35,7 @@ public:
 		/// \brief The data pointed to by the file
 		char *fileData;
 
-		/// \brief The actual length of this file.
+		/// \brief The amount of data to be downloaded for this file
 		BitSize_t byteLengthOfThisFile;
 
 		/// \brief How many bytes of this file has been downloaded

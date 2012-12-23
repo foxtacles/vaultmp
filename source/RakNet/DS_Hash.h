@@ -24,7 +24,7 @@ namespace DataStructures
 		unsigned int primaryIndex;
 		unsigned int secondaryIndex;
 		bool IsInvalid(void) const {return primaryIndex==(unsigned int) -1;}
-		void SetInvalid(void) {primaryIndex=(unsigned int) -1;}
+		void SetInvalid(void) {primaryIndex=(unsigned int) -1; secondaryIndex=(unsigned int) -1;}
 	};
 
 	/// \brief Using a string as a identifier for a node, store an allocated pointer to that node
@@ -101,6 +101,9 @@ namespace DataStructures
 	template <class key_type, class data_type, unsigned int HASH_SIZE, unsigned long (*hashFunction)(const key_type &) >
 	data_type* Hash<key_type, data_type, HASH_SIZE, hashFunction>::Peek(key_type key )
 	{
+		if (nodeList==0)
+			return 0;
+
 		unsigned long hashIndex = (*hashFunction)(key) % HASH_SIZE;
 		Node *node = nodeList[hashIndex];
 		while (node!=0)
@@ -115,6 +118,9 @@ namespace DataStructures
 	template <class key_type, class data_type, unsigned int HASH_SIZE, unsigned long (*hashFunction)(const key_type &) >
 	bool Hash<key_type, data_type, HASH_SIZE, hashFunction>::Pop(data_type& out, key_type key, const char *file, unsigned int line )
 	{
+		if (nodeList==0)
+			return false;
+
 		unsigned long hashIndex = (*hashFunction)(key) % HASH_SIZE;
 		Node *node = nodeList[hashIndex];
 		if (node==0)

@@ -155,11 +155,11 @@ namespace RakNet
 		/// \param[in] minimum Minimum value of \a value
 		/// \param[in] maximum Maximum value of \a value
 		/// \param[in] allowOutsideRange If true, all sends will take an extra bit, however value can deviate from outside \a minimum and \a maximum. If false, will assert if the value deviates
-		template <class templateType, class rangeType>
-		bool SerializeBitsFromIntegerRange( bool writeToBitstream, templateType &value, const rangeType minimum, const rangeType maximum, bool allowOutsideRange=false );
+		template <class templateType>
+		bool SerializeBitsFromIntegerRange( bool writeToBitstream, templateType &value, const templateType minimum, const templateType maximum, bool allowOutsideRange=false );
 		/// \param[in] requiredBits Primarily for internal use, called from above function() after calculating number of bits needed to represent maximum-minimum
-		template <class templateType, class rangeType>
-		bool SerializeBitsFromIntegerRange( bool writeToBitstream, templateType &value, const rangeType minimum, const rangeType maximum, const int requiredBits, bool allowOutsideRange=false );
+		template <class templateType>
+		bool SerializeBitsFromIntegerRange( bool writeToBitstream, templateType &value, const templateType minimum, const templateType maximum, const int requiredBits, bool allowOutsideRange=false );
 
 		/// \brief Bidirectional serialize/deserialize a normalized 3D vector, using (at most) 4 bytes + 3 bits instead of 12-24 bytes.  
 		/// \details Will further compress y or z axis aligned vectors.
@@ -346,11 +346,11 @@ namespace RakNet
 		/// \param[in] minimum Minimum value of \a value
 		/// \param[in] maximum Maximum value of \a value
 		/// \param[in] allowOutsideRange If true, all sends will take an extra bit, however value can deviate from outside \a minimum and \a maximum. If false, will assert if the value deviates. This should match the corresponding value passed to Read().
-		template <class templateType, class rangeType>
-		void WriteBitsFromIntegerRange( const templateType value, const rangeType minimum, const rangeType maximum, bool allowOutsideRange=false );
+		template <class templateType>
+		void WriteBitsFromIntegerRange( const templateType value, const templateType minimum, const templateType maximum, bool allowOutsideRange=false );
 		/// \param[in] requiredBits Primarily for internal use, called from above function() after calculating number of bits needed to represent maximum-minimum
-		template <class templateType, class rangeType>
-		void WriteBitsFromIntegerRange( const templateType value, const rangeType minimum, const rangeType maximum, const int requiredBits, bool allowOutsideRange=false );
+		template <class templateType>
+		void WriteBitsFromIntegerRange( const templateType value, const templateType minimum, const templateType maximum, const int requiredBits, bool allowOutsideRange=false );
 
 		/// \brief Write a normalized 3D vector, using (at most) 4 bytes + 3 bits instead of 12-24 bytes.  
 		/// \details Will further compress y or z axis aligned vectors.
@@ -414,11 +414,11 @@ namespace RakNet
 		/// \param[in] minimum Minimum value of \a value
 		/// \param[in] maximum Maximum value of \a value
 		/// \param[in] allowOutsideRange If true, all sends will take an extra bit, however value can deviate from outside \a minimum and \a maximum. If false, will assert if the value deviates. This should match the corresponding value passed to Write().
-		template <class templateType, class rangeType>
-		bool ReadBitsFromIntegerRange( templateType &value, const rangeType minimum, const rangeType maximum, bool allowOutsideRange=false );
+		template <class templateType>
+		bool ReadBitsFromIntegerRange( templateType &value, const templateType minimum, const templateType maximum, bool allowOutsideRange=false );
 		/// \param[in] requiredBits Primarily for internal use, called from above function() after calculating number of bits needed to represent maximum-minimum
-		template <class templateType, class rangeType>
-		bool ReadBitsFromIntegerRange( templateType &value, const rangeType minimum, const rangeType maximum, const int requiredBits, bool allowOutsideRange=false );
+		template <class templateType>
+		bool ReadBitsFromIntegerRange( templateType &value, const templateType minimum, const templateType maximum, const int requiredBits, bool allowOutsideRange=false );
 
 		/// \brief Read a normalized 3D vector, using (at most) 4 bytes + 3 bits instead of 12-24 bytes.  
 		/// \details Will further compress y or z axis aligned vectors.
@@ -997,14 +997,14 @@ namespace RakNet
 			return true;
 		}
 
-		template <class templateType, class rangeType>
-		bool BitStream::SerializeBitsFromIntegerRange( bool writeToBitstream, templateType &value, const rangeType minimum, const rangeType maximum, bool allowOutsideRange )
+		template <class templateType>
+		bool BitStream::SerializeBitsFromIntegerRange( bool writeToBitstream, templateType &value, const templateType minimum, const templateType maximum, bool allowOutsideRange )
 		{
-			static int requiredBits=BYTES_TO_BITS(sizeof(templateType))-NumberOfLeadingZeroes(templateType(maximum-minimum));
+			int requiredBits=BYTES_TO_BITS(sizeof(templateType))-NumberOfLeadingZeroes(templateType(maximum-minimum));
 			return SerializeBitsFromIntegerRange(writeToBitstream,value,minimum,maximum,requiredBits,allowOutsideRange);
 		}
-		template <class templateType, class rangeType>
-		bool BitStream::SerializeBitsFromIntegerRange( bool writeToBitstream, templateType &value, const rangeType minimum, const rangeType maximum, const int requiredBits, bool allowOutsideRange )
+		template <class templateType>
+		bool BitStream::SerializeBitsFromIntegerRange( bool writeToBitstream, templateType &value, const templateType minimum, const templateType maximum, const int requiredBits, bool allowOutsideRange )
 		{
 			if (writeToBitstream) WriteBitsFromIntegerRange(value,minimum,maximum,requiredBits,allowOutsideRange);
 			else return ReadBitsFromIntegerRange(value,minimum,maximum,requiredBits,allowOutsideRange);
@@ -1735,14 +1735,14 @@ namespace RakNet
 		Write(val);
 	}
 
-	template <class templateType, class rangeType>
-	void BitStream::WriteBitsFromIntegerRange( const templateType value, const rangeType minimum,const rangeType maximum, bool allowOutsideRange )
+	template <class templateType>
+	void BitStream::WriteBitsFromIntegerRange( const templateType value, const templateType minimum,const templateType maximum, bool allowOutsideRange )
 	{
-		static int requiredBits=BYTES_TO_BITS(sizeof(templateType))-NumberOfLeadingZeroes(templateType(maximum-minimum));
+		int requiredBits=BYTES_TO_BITS(sizeof(templateType))-NumberOfLeadingZeroes(templateType(maximum-minimum));
 		WriteBitsFromIntegerRange(value,minimum,maximum,requiredBits,allowOutsideRange);
 	}
-	template <class templateType, class rangeType>
-	void BitStream::WriteBitsFromIntegerRange( const templateType value, const rangeType minimum,const rangeType maximum, const int requiredBits, bool allowOutsideRange )
+	template <class templateType>
+	void BitStream::WriteBitsFromIntegerRange( const templateType value, const templateType minimum,const templateType maximum, const int requiredBits, bool allowOutsideRange )
 	{
 		RakAssert(maximum>=minimum);
 		RakAssert(allowOutsideRange==true || (value>=minimum && value<=maximum));
@@ -1857,14 +1857,14 @@ namespace RakNet
 		return success;
 	}
 
-	template <class templateType, class rangeType>
-	bool BitStream::ReadBitsFromIntegerRange( templateType &value, const rangeType minimum, const rangeType maximum, bool allowOutsideRange )
+	template <class templateType>
+	bool BitStream::ReadBitsFromIntegerRange( templateType &value, const templateType minimum, const templateType maximum, bool allowOutsideRange )
 	{
-		static int requiredBits=BYTES_TO_BITS(sizeof(templateType))-NumberOfLeadingZeroes(templateType(maximum-minimum));
+		int requiredBits=BYTES_TO_BITS(sizeof(templateType))-NumberOfLeadingZeroes(templateType(maximum-minimum));
 		return ReadBitsFromIntegerRange(value,minimum,maximum,requiredBits,allowOutsideRange);
 	}
-	template <class templateType, class rangeType>
-	bool BitStream::ReadBitsFromIntegerRange( templateType &value, const rangeType minimum, const rangeType maximum, const int requiredBits, bool allowOutsideRange )
+	template <class templateType>
+	bool BitStream::ReadBitsFromIntegerRange( templateType &value, const templateType minimum, const templateType maximum, const int requiredBits, bool allowOutsideRange )
 	{
 		RakAssert(maximum>=minimum);
 		if (allowOutsideRange)
@@ -1918,7 +1918,7 @@ namespace RakNet
 			//	x=((float)sx / 32767.5f - 1.0f) * magnitude;
 			//	y=((float)sy / 32767.5f - 1.0f) * magnitude;
 			//	z=((float)sz / 32767.5f - 1.0f) * magnitude;
-			float cx,cy,cz;
+			float cx=0.0f,cy=0.0f,cz=0.0f;
 			ReadCompressed(cx);
 			ReadCompressed(cy);
 			if (!ReadCompressed(cz))
@@ -1942,7 +1942,7 @@ namespace RakNet
 	template <class templateType> // templateType for this function must be a float or double
 		bool BitStream::ReadNormQuat( templateType &w, templateType &x, templateType &y, templateType &z)
 	{
-		bool cwNeg, cxNeg, cyNeg, czNeg;
+		bool cwNeg=false, cxNeg=false, cyNeg=false, czNeg=false;
 		unsigned short cx,cy,cz;
 		Read(cwNeg);
 		Read(cxNeg);
@@ -2017,6 +2017,8 @@ namespace RakNet
 	BitStream& operator>>(BitStream& in, templateType& c)
 	{
 		bool success = in.Read(c);
+		(void)success;
+
 		RakAssert(success);
 		return in;
 	}

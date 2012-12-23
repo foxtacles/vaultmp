@@ -22,26 +22,12 @@ PacketizedTCP::~PacketizedTCP()
 	ClearAllConnections();
 }
 
-bool PacketizedTCP::Start(unsigned short port, unsigned short maxIncomingConnections, int threadPriority, unsigned short socketFamily)
-{
-	bool success = TCPInterface::Start(port, maxIncomingConnections,0,threadPriority, socketFamily);
-	if (success)
-	{
-		unsigned int i;
-		for (i=0; i < messageHandlerList.Size(); i++)
-			messageHandlerList[i]->OnRakPeerStartup();
-	}
-	return success;
-}
-
 void PacketizedTCP::Stop(void)
 {
 	unsigned int i;
-	for (i=0; i < messageHandlerList.Size(); i++)
-		messageHandlerList[i]->OnRakPeerShutdown();
+	TCPInterface::Stop();
 	for (i=0; i < waitingPackets.Size(); i++)
 		DeallocatePacket(waitingPackets[i]);
-	TCPInterface::Stop();
 	ClearAllConnections();
 }
 
@@ -64,9 +50,9 @@ void PacketizedTCP::Send( const char *data, unsigned length, const SystemAddress
 	lengthsArray[1]=length;
 	TCPInterface::SendList(dataArray,lengthsArray,2,systemAddress,broadcast);
 }
-bool PacketizedTCP::SendList( const char **data, const int *lengths, const int numParameters, const SystemAddress &systemAddress, bool broadcast )
+bool PacketizedTCP::SendList( const char **data, const unsigned int *lengths, const int numParameters, const SystemAddress &systemAddress, bool broadcast )
 {
-	if (isStarted==false)
+	if (isStarted.GetValue()==0)
 		return false;
 	if (data==0)
 		return false;
@@ -110,25 +96,12 @@ void PacketizedTCP::PushNotificationsToQueues(void)
 	{
 		_newIncomingConnections.Push(sa, _FILE_AND_LINE_ );
 		AddToConnectionList(sa);
-		unsigned int i;
-		for (i=0; i < messageHandlerList.Size(); i++)
-			messageHandlerList[i]->OnNewConnection(sa, UNASSIGNED_RAKNET_GUID, true);
 	}
 
 	sa = TCPInterface::HasFailedConnectionAttempt();
 	if (sa!=UNASSIGNED_SYSTEM_ADDRESS)
 	{
 		_failedConnectionAttempts.Push(sa, _FILE_AND_LINE_ );
-		unsigned int i;
-		for (i=0; i < messageHandlerList.Size(); i++)
-		{
-			Packet p;
-			p.systemAddress=sa;
-			p.data=0;
-			p.length=0;
-			p.bitSize=0;
-			messageHandlerList[i]->OnFailedConnectionAttempt(&p, FCAR_CONNECTION_ATTEMPT_FAILED);
-		}
 	}
 
 	sa = TCPInterface::HasLostConnection();
@@ -136,9 +109,6 @@ void PacketizedTCP::PushNotificationsToQueues(void)
 	{
 		_lostConnections.Push(sa, _FILE_AND_LINE_ );
 		RemoveFromConnectionList(sa);
-		unsigned int i;
-		for (i=0; i < messageHandlerList.Size(); i++)
-			messageHandlerList[i]->OnClosedConnection(sa, UNASSIGNED_RAKNET_GUID, LCR_DISCONNECTION_NOTIFICATION);
 	}
 
 	sa = TCPInterface::HasCompletedConnectionAttempt();
@@ -146,9 +116,6 @@ void PacketizedTCP::PushNotificationsToQueues(void)
 	{
 		_completedConnectionAttempts.Push(sa, _FILE_AND_LINE_ );
 		AddToConnectionList(sa);
-		unsigned int i;
-		for (i=0; i < messageHandlerList.Size(); i++)
-			messageHandlerList[i]->OnNewConnection(sa, UNASSIGNED_RAKNET_GUID, true);
 	}
 }
 Packet* PacketizedTCP::Receive( void )
@@ -164,7 +131,7 @@ Packet* PacketizedTCP::Receive( void )
 		return outgoingPacket;
 
 	Packet *incomingPacket;
-	incomingPacket = TCPInterface::Receive();
+	incomingPacket = TCPInterface::ReceiveInt();
 	unsigned int index;
 
 	while (incomingPacket)
@@ -176,7 +143,7 @@ Packet* PacketizedTCP::Receive( void )
 		if ((unsigned int)index==(unsigned int)-1)
 		{
 			DeallocatePacket(incomingPacket);
-			incomingPacket = TCPInterface::Receive();
+			incomingPacket = TCPInterface::ReceiveInt();
 			continue;
 		}
 
@@ -279,7 +246,7 @@ Packet* PacketizedTCP::Receive( void )
 		else
 			waitingPackets.Push(incomingPacket, _FILE_AND_LINE_ );
 
-		incomingPacket = TCPInterface::Receive();
+		incomingPacket = TCPInterface::ReceiveInt();
 	}
 
 	return ReturnOutgoingPacket();
@@ -311,38 +278,9 @@ Packet *PacketizedTCP::ReturnOutgoingPacket(void)
 
 	return outgoingPacket;
 }
-
-void PacketizedTCP::AttachPlugin( PluginInterface2 *plugin )
-{
-	if (messageHandlerList.GetIndexOf(plugin)==MAX_UNSIGNED_LONG)
-	{
-		messageHandlerList.Insert(plugin, _FILE_AND_LINE_);
-		plugin->SetPacketizedTCP(this);
-		plugin->OnAttach();
-	}
-}
-void PacketizedTCP::DetachPlugin( PluginInterface2 *plugin )
-{
-	if (plugin==0)
-		return;
-
-	unsigned int index;
-	index = messageHandlerList.GetIndexOf(plugin);
-	if (index!=MAX_UNSIGNED_LONG)
-	{
-		messageHandlerList[index]->OnDetach();
-		// Unordered list so delete from end for speed
-		messageHandlerList[index]=messageHandlerList[messageHandlerList.Size()-1];
-		messageHandlerList.RemoveFromEnd();
-		plugin->SetPacketizedTCP(0);
-	}
-}
 void PacketizedTCP::CloseConnection( SystemAddress systemAddress )
 {
 	RemoveFromConnectionList(systemAddress);
-	unsigned int i;
-	for (i=0; i < messageHandlerList.Size(); i++)
-		messageHandlerList[i]->OnClosedConnection(systemAddress, UNASSIGNED_RAKNET_GUID, LCR_CLOSED_BY_USER);
 	TCPInterface::CloseConnection(systemAddress);
 }
 void PacketizedTCP::RemoveFromConnectionList(const SystemAddress &sa)

@@ -10,7 +10,7 @@
 #include <io.h>
 
 
-#elif !defined ( __APPLE__ ) && !defined ( __APPLE_CC__ ) && !defined ( __PPC__ ) && !defined ( __FreeBSD__ )
+#elif !defined ( __APPLE__ ) && !defined ( __APPLE_CC__ ) && !defined ( __PPC__ ) && !defined ( __FreeBSD__ ) && !defined ( __S3E__ )
 #include <sys/io.h>
 #endif
 
@@ -45,9 +45,9 @@ using namespace RakNet;
 
 
 #else
-#if !defined ( __FreeBSD__ )
-#include <alloca.h>
-#endif
+	#if !defined ( __FreeBSD__ )
+	#include <alloca.h>
+	#endif
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -80,8 +80,10 @@ void FLP_Printf::OnAddFilesFromDirectoryStarted(FileList *fileList, char *dir) {
 void FLP_Printf::OnDirectory(FileList *fileList, char *dir, unsigned int directoriesRemaining) {
 	(void) fileList;
 	RAKNET_DEBUG_PRINTF("Adding %s. %i remaining.\n", dir, directoriesRemaining);}	
-void FLP_Printf::OnFilePushesComplete( SystemAddress systemAddress )
+void FLP_Printf::OnFilePushesComplete( SystemAddress systemAddress, unsigned short setID )
 {
+	(void) setID;
+
 	char str[32];
 	systemAddress.ToString(true, (char*) str);
 	RAKNET_DEBUG_PRINTF("File pushes complete to %s\n", str);	
@@ -124,7 +126,7 @@ void FileList::AddFile(const char *filepath, const char *filename, FileListNodeC
 	}
 
 
-
+#if USE_ALLOCA==1
 	bool usedAlloca=false;
 	if (length < MAX_ALLOCA_STACK_ALLOCATION)
 	{
@@ -132,7 +134,7 @@ void FileList::AddFile(const char *filepath, const char *filename, FileListNodeC
 		usedAlloca=true;
 	}
 	else
-
+#endif
 	{
 		data = (char*) rakMalloc_Ex( length, _FILE_AND_LINE_ );
 	}
@@ -141,9 +143,9 @@ void FileList::AddFile(const char *filepath, const char *filename, FileListNodeC
 	AddFile(filename, filepath, data, length, length, context);
 	fclose(fp);
 
-
+#if USE_ALLOCA==1
 	if (usedAlloca==false)
-
+#endif
 		rakFree_Ex(data, _FILE_AND_LINE_ );
 
 }
@@ -377,7 +379,7 @@ void FileList::Serialize(RakNet::BitStream *outBitStream)
 		outBitStream->WriteCompressed(fileList[i].context.fileId);
 		StringCompressor::Instance()->EncodeString(fileList[i].filename.C_String(), MAX_FILENAME_LENGTH, outBitStream);
 
-		bool writeFileData = fileList[i].dataLengthBytes>0==true;
+		bool writeFileData = (fileList[i].dataLengthBytes>0)==true;
 		outBitStream->Write(writeFileData);
 		if (writeFileData)
 		{
@@ -701,7 +703,7 @@ void FileList::WriteDataToDisk(const char *applicationDirectory)
 }
 
 #ifdef _MSC_VER
-#pragma warning( disable : 4966 ) // unlink declared deprecated by Microsoft in order to make it harder to be cross platform.  I don't agree it's deprecated.
+#pragma warning( disable : 4996 ) // unlink declared deprecated by Microsoft in order to make it harder to be cross platform.  I don't agree it's deprecated.
 #endif
 void FileList::DeleteFiles(const char *applicationDirectory)
 {
@@ -729,11 +731,13 @@ void FileList::DeleteFiles(const char *applicationDirectory)
 		strcpy(fullPath, applicationDirectory);
 		FixEndingSlash(fullPath);
 		strcat(fullPath, fileList[i].filename.C_String());
-
-#ifdef _MSC_VER
-#pragma warning( disable : 4966 ) // unlink declared deprecated by Microsoft in order to make it harder to be cross platform.  I don't agree it's deprecated.
-#endif
+	
+		// Do not rename to _unlink as linux uses unlink
+#if defined(WINDOWS_PHONE_8) || defined(WINDOWS_STORE_RT)
+		int result = _unlink(fullPath);
+#else
         int result = unlink(fullPath);
+#endif
 		if (result!=0)
 		{
 			RAKNET_DEBUG_PRINTF("FileList::DeleteFiles: unlink (%s) failed.\n", fullPath);

@@ -8,8 +8,7 @@ using namespace RakNet;
 
 // From http://www.joelonsoftware.com/articles/Unicode.html
 // Only code points 128 and above are stored using 2, 3, in fact, up to 6 bytes.
-//#define MAX_BYTES_PER_UNICODE_CHAR 6
-#define MAX_BYTES_PER_UNICODE_CHAR 2
+#define MAX_BYTES_PER_UNICODE_CHAR sizeof(wchar_t)
 
 RakWString::RakWString()
 {
@@ -253,7 +252,7 @@ int RakWString::StrCmp(const RakWString &right) const
 int RakWString::StrICmp(const RakWString &right) const
 {
 #ifdef _WIN32
-	return wcsicmp(C_String(), right.C_String());
+	return _wcsicmp(C_String(), right.C_String());
 #else
 	// Not supported
 	return wcscmp(C_String(), right.C_String());
@@ -275,30 +274,65 @@ void RakWString::FPrintf(FILE *fp)
 }
 void RakWString::Serialize(BitStream *bs) const
 {
-	bs->WriteCasted<unsigned short>(c_strCharLength);
-	bs->WriteAlignedBytes((const unsigned char*) c_str,(const unsigned int) (c_strCharLength+1)*MAX_BYTES_PER_UNICODE_CHAR);
+	Serialize(c_str, bs);
 }
 void RakWString::Serialize(const wchar_t * const str, BitStream *bs)
 {
- 	size_t length = wcslen(str);
- 	bs->WriteCasted<unsigned short>(length);
- 	bs->WriteAlignedBytes((const unsigned char*) str,(const unsigned int) length*MAX_BYTES_PER_UNICODE_CHAR);
+#if 0
+	char *multiByteBuffer;
+	size_t allocated = wcslen(str)*MAX_BYTES_PER_UNICODE_CHAR;
+	multiByteBuffer = (char*) rakMalloc_Ex(allocated, _FILE_AND_LINE_);
+	size_t used = wcstombs(multiByteBuffer, str, allocated);
+	bs->WriteCasted<unsigned short>(used);
+	bs->WriteAlignedBytes((const unsigned char*) multiByteBuffer,(const unsigned int) used);
+	rakFree_Ex(multiByteBuffer, _FILE_AND_LINE_);
+#else
+	size_t mbByteLength = wcslen(str);
+	bs->WriteCasted<unsigned short>(mbByteLength);
+	for (unsigned int i=0; i < mbByteLength; i++)
+	{
+		uint16_t t;
+		t = (uint16_t) str[i];
+		// Force endian swapping, and write to 16 bits
+		bs->Write(t);
+	}
+#endif
 }
 bool RakWString::Deserialize(BitStream *bs)
 {
 	Clear();
-	size_t length;
-	bs->ReadCasted<unsigned short>(length);
-	if (length>0)
+
+	size_t mbByteLength;
+	bs->ReadCasted<unsigned short>(mbByteLength);
+	if (mbByteLength>0)
 	{
-		c_str = (wchar_t *) rakMalloc_Ex( (length + 1) * MAX_BYTES_PER_UNICODE_CHAR, _FILE_AND_LINE_);
-		if (!c_str)
+#if 0
+		char *multiByteBuffer;
+		multiByteBuffer = (char*) rakMalloc_Ex(mbByteLength+1, _FILE_AND_LINE_);
+		bool result = bs->ReadAlignedBytes((unsigned char*) multiByteBuffer,(const unsigned int) mbByteLength);
+		if (result==false)
 		{
-			notifyOutOfMemory(_FILE_AND_LINE_);
+			rakFree_Ex(multiByteBuffer, _FILE_AND_LINE_);
 			return false;
 		}
-		c_strCharLength = (size_t) length;
-		return bs->ReadAlignedBytes((unsigned char*) c_str,(const unsigned int) (c_strCharLength+1)*MAX_BYTES_PER_UNICODE_CHAR);
+		multiByteBuffer[mbByteLength]=0;
+		c_str = (wchar_t *) rakMalloc_Ex( (mbByteLength + 1) * MAX_BYTES_PER_UNICODE_CHAR, _FILE_AND_LINE_);
+		c_strCharLength = mbstowcs(c_str, multiByteBuffer, mbByteLength);
+		rakFree_Ex(multiByteBuffer, _FILE_AND_LINE_);
+		c_str[c_strCharLength]=0;
+#else
+		c_str = (wchar_t*) rakMalloc_Ex(mbByteLength+1, _FILE_AND_LINE_);
+		c_strCharLength = mbByteLength;
+		for (unsigned int i=0; i < mbByteLength; i++)
+		{
+			uint16_t t;
+			// Force endian swapping, and read 16 bits
+			bs->Read(t);
+			c_str[i]=t;
+		}
+		c_str[mbByteLength]=0;
+#endif
+		return true;
 	}
 	else
 	{
@@ -307,11 +341,34 @@ bool RakWString::Deserialize(BitStream *bs)
 }
 bool RakWString::Deserialize(wchar_t *str, BitStream *bs)
 {
-	size_t length;
-	bs->ReadCasted<unsigned short>(length);
-	if (length>0)
+	size_t mbByteLength;
+	bs->ReadCasted<unsigned short>(mbByteLength);
+	if (mbByteLength>0)
 	{
-		return bs->ReadAlignedBytes((unsigned char*) str,(const unsigned int) (length+1)*MAX_BYTES_PER_UNICODE_CHAR);
+#if 0
+		char *multiByteBuffer;
+		multiByteBuffer = (char*) rakMalloc_Ex(mbByteLength+1, _FILE_AND_LINE_);
+		bool result = bs->ReadAlignedBytes((unsigned char*) multiByteBuffer,(const unsigned int) mbByteLength);
+		if (result==false)
+		{
+			rakFree_Ex(multiByteBuffer, _FILE_AND_LINE_);
+			return false;
+		}
+		multiByteBuffer[mbByteLength]=0;
+		size_t c_strCharLength = mbstowcs(str, multiByteBuffer, mbByteLength);
+		rakFree_Ex(multiByteBuffer, _FILE_AND_LINE_);
+		str[c_strCharLength]=0;
+#else
+		for (unsigned int i=0; i < mbByteLength; i++)
+		{
+			uint16_t t;
+			// Force endian swapping, and read 16 bits
+			bs->Read(t);
+			str[i]=t;
+		}
+		str[mbByteLength]=0;
+#endif
+		return true;
 	}
 	else
 	{

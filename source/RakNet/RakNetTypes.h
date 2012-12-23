@@ -13,9 +13,9 @@
 #include "NativeTypes.h"
 #include "RakNetTime.h"
 #include "Export.h"
-#include "SocketIncludes.h"
 #include "WindowsIncludes.h"
 #include "XBox360Includes.h"
+#include "SocketIncludes.h"
 
 
 
@@ -39,7 +39,7 @@ enum StartupResult
 	SOCKET_FAILED_TEST_SEND,
 	PORT_CANNOT_BE_ZERO,
 	FAILED_TO_CREATE_NETWORK_THREAD,
-	STARTUP_OTHER_FAILURE,
+	STARTUP_OTHER_FAILURE
 };
 
 
@@ -56,8 +56,6 @@ enum ConnectionAttemptResult
 /// Returned from RakPeerInterface::GetConnectionState()
 enum ConnectionState
 {
-	/// Not applicable, because the passed address is the loopback address
-	IS_LOOPBACK,
 	/// Connect() was called, but the process hasn't started yet
 	IS_PENDING,
 	/// Processing the connection attempt
@@ -71,7 +69,7 @@ enum ConnectionState
 	/// No longer connected
 	IS_DISCONNECTED,
 	/// Was never connected, or else was disconnected long enough ago that the entry has been discarded
-	IS_NOT_CONNECTED,
+	IS_NOT_CONNECTED
 };
 
 /// Given a number of bits, return how many bytes are needed to represent that.
@@ -147,7 +145,7 @@ struct RAK_DLL_EXPORT SocketDescriptor
 	char hostAddress[32];
 
 	/// IP version: For IPV4, use AF_INET (default). For IPV6, use AF_INET6. To autoselect, use AF_UNSPEC.
-	/// IPV6 is the newer internet protocol. Instead of addresses such as 94.198.81.195, you may have an address such as fe80::7c:31f7:fec4:27de%14.
+	/// IPV6 is the newer internet protocol. Instead of addresses such as natpunch.jenkinssoftware.com, you may have an address such as fe80::7c:31f7:fec4:27de%14.
 	/// Encoding takes 16 bytes instead of 4, so IPV6 is less efficient for bandwidth.
 	/// On the positive side, NAT Punchthrough is not needed and should not be used with IPV6 because there are enough addresses that routers do not need to create address mappings.
 	/// RakPeer::Startup() will fail if this IP version is not supported.
@@ -163,6 +161,12 @@ struct RAK_DLL_EXPORT SocketDescriptor
 
 
 	unsigned short remotePortRakNetWasStartedOn_PS3_PSP2;
+
+	// Required for Google chrome
+	_PP_Instance_ chromeInstance;
+
+	// Set to true to use a blocking socket (default, do not change unless you have a reason to)
+	bool blockingSocket;
 
 	/// XBOX only: set IPPROTO_VDP if you want to use VDP. If enabled, this socket does not support broadcast to 255.255.255.255
 	unsigned int extraSocketOptions;
@@ -181,12 +185,12 @@ struct RAK_DLL_EXPORT SystemAddress
 	SystemAddress();
 	SystemAddress(const char *str);
 	SystemAddress(const char *str, unsigned short port);
-#if   defined(GFWL)
-	/// On the XBOX, never transmit SystemAddress. Instead, transmit XSESSION_INFO and use SetFromXSessionInfo() to get the address of a remote console
-	explicit SystemAddress(XSESSION_INFO *addr, unsigned short _port);
-	void SetFromXSessionInfo(XSESSION_INFO *addr, unsigned short _port);
-	void SetFromXNADDRAndXNKID(XNADDR *xnaddr, XNKID *xnkid, unsigned short _port);
-#endif
+
+
+
+
+
+
 
 	/// SystemAddress, with RAKNET_SUPPORT_IPV6 defined, holds both an sockaddr_in6 and a sockaddr_in
 	union// In6OrIn4
@@ -221,6 +225,9 @@ struct RAK_DLL_EXPORT SystemAddress
 	/// Call SetToLoopback() with a specific IP version
 	/// \param[in] ipVersion Either 4 for IPV4 or 6 for IPV6
 	void SetToLoopback(unsigned char ipVersion);
+
+	/// \return If was set to 127.0.0.1 or ::1
+	bool IsLoopback(void) const;
 
 	// Return the systemAddress as a string in the format <IP>|<Port>
 	// Returns a static string
@@ -265,7 +272,7 @@ struct RAK_DLL_EXPORT SystemAddress
 	void SetPortNetworkOrder(unsigned short s);
 
 	/// Old version, for crap platforms that don't support newer socket functions
-	void SetBinaryAddress(const char *str, char portDelineator=':');
+	bool SetBinaryAddress(const char *str, char portDelineator=':');
 	/// Old version, for crap platforms that don't support newer socket functions
 	void ToString_Old(bool writePort, char *dest, char portDelineator=':') const;
 
@@ -401,10 +408,6 @@ typedef uint64_t NetworkID;
 /// This represents a user message from another system.
 struct Packet
 {
-	// This is now in the systemAddress struct and is used for lookups automatically
-	/// Server only - this is the index into the player array that this systemAddress maps to
-//	SystemIndex systemIndex;
-
 	/// The system that send this packet.
 	SystemAddress systemAddress;
 

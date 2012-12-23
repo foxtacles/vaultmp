@@ -17,13 +17,13 @@ Rackspace::~Rackspace()
 
 }
 
-void Rackspace::AddEventCallback(RackspaceEventCallback *callback)
+void Rackspace::AddEventCallback(Rackspace2EventCallback *callback)
 {
 	unsigned int idx = eventCallbacks.GetIndexOf(callback);
 	if (idx == (unsigned int)-1)
 		eventCallbacks.Push(callback,_FILE_AND_LINE_);
 }
-void Rackspace::RemoveEventCallback(RackspaceEventCallback *callback)
+void Rackspace::RemoveEventCallback(Rackspace2EventCallback *callback)
 {
 	unsigned int idx = eventCallbacks.GetIndexOf(callback);
 	if (idx != (unsigned int)-1)
@@ -598,6 +598,12 @@ void Rackspace::ReadLine(const char *data, const char *stringStart, RakNet::RakS
 	char *result, *resultEnd;
 
 	result=strstr((char*) data, stringStart);
+	if (result==0)
+	{
+		RakAssert(0);
+		return;
+	}
+
 	result+=strlen(stringStart);
 	if (result==0)
 	{

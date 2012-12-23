@@ -54,11 +54,11 @@ else use congestion avoidance
 /// Set to 4 if you are using the iPod Touch TG. See http://www.jenkinssoftware.com/forum/index.php?topic=2717.0
 #define CC_TIME_TYPE_BYTES 8
 
-
+#if CC_TIME_TYPE_BYTES==8
 typedef RakNet::TimeUS CCTimeType;
-
-
-
+#else
+typedef RakNet::TimeMS CCTimeType;
+#endif
 
 typedef RakNet::uint24_t DatagramSequenceNumberType;
 typedef double BytesPerMicrosecond;
@@ -112,7 +112,7 @@ class CCRakNetSlidingWindow
 
 	/// Call when you get a NAK, with the sequence number of the lost message
 	/// Affects the congestion control
-	void OnResend(CCTimeType curTime);
+	void OnResend(CCTimeType curTime, RakNet::TimeUS nextActionTime);
 	void OnNAK(CCTimeType curTime, DatagramSequenceNumberType nakSequenceNumber);
 
 	/// Call this when an ACK arrives.
@@ -142,7 +142,7 @@ class CCRakNetSlidingWindow
 	/// If we have been continuously sending for the last RTO, and no ACK or NAK at all, SND*=2;
 	/// This is per message, which is different from UDT, but RakNet supports packetloss with continuing data where UDT is only RELIABLE_ORDERED
 	/// Minimum value is 100 milliseconds
-	CCTimeType GetRTOForRetransmission(void) const;
+	CCTimeType GetRTOForRetransmission(unsigned char timesSent) const;
 
 	/// Set the maximum amount of data that can be sent in one datagram
 	/// Default to MAXIMUM_MTU_SIZE-UDP_HEADER_SIZE
@@ -172,15 +172,11 @@ class CCRakNetSlidingWindow
 	static bool LessThan(DatagramSequenceNumberType a, DatagramSequenceNumberType b);
 //	void SetTimeBetweenSendsLimit(unsigned int bitsPerSecond);
 	uint64_t GetBytesPerSecondLimitByCongestionControl(void) const;
-
-	void OnExternalPing(double pingMS);
-
+	  
 	protected:
 
 	// Maximum amount of bytes that the user can send, e.g. the size of one full datagram
 	uint32_t MAXIMUM_MTU_INCLUDING_UDP_HEADER;
-
-	double RTT;
 
 	double cwnd; // max bytes on wire
 	double ssThresh; // Threshhold between slow start and congestion avoidance
@@ -202,6 +198,9 @@ class CCRakNetSlidingWindow
 	bool _isContinuousSend;
 
 	bool IsInSlowStart(void) const;
+
+	double lastRtt, estimatedRTT, deviationRtt;
+
 };
 
 }

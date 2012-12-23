@@ -18,11 +18,12 @@
 #define __UDP_PROXY_COORDINATOR_H
 
 #include "Export.h"
-#include "DS_Multilist.h"
 #include "RakNetTypes.h"
 #include "PluginInterface2.h"
 #include "RakString.h"
 #include "BitStream.h"
+#include "DS_Queue.h"
+#include "DS_OrderedList.h"
 
 namespace RakNet
 {
@@ -53,7 +54,9 @@ namespace RakNet
 		struct SenderAndTargetAddress
 		{
 			SystemAddress senderClientAddress;
+			RakNetGUID senderClientGuid;
 			SystemAddress targetClientAddress;
+			RakNetGUID targetClientGuid;
 		};
 
 		struct ServerWithPing
@@ -69,32 +72,37 @@ namespace RakNet
 			SenderAndTargetAddress sata;
 			SystemAddress requestingAddress; // Which system originally sent the network message to start forwarding
 			SystemAddress currentlyAttemptedServerAddress;
-			DataStructures::Multilist<ML_QUEUE, SystemAddress> remainingServersToTry;
+			DataStructures::Queue<SystemAddress> remainingServersToTry;
 			RakNet::BitStream serverSelectionBitstream;
 
-			DataStructures::Multilist<ML_STACK, ServerWithPing, unsigned short> sourceServerPings, targetServerPings;
+			DataStructures::List<ServerWithPing> sourceServerPings, targetServerPings;
 			RakNet::TimeMS timeRequestedPings;
 			// Order based on sourceServerPings and targetServerPings
 			void OrderRemainingServersToTry(void);
 		
 		};
-
 	protected:
+
+		static int ServerWithPingComp( const unsigned short &key, const UDPProxyCoordinator::ServerWithPing &data );
+		static int ForwardingRequestComp( const SenderAndTargetAddress &key, ForwardingRequest* const &data);
+
 		void OnForwardingRequestFromClientToCoordinator(Packet *packet);
 		void OnLoginRequestFromServerToCoordinator(Packet *packet);
 		void OnForwardingReplyFromServerToCoordinator(Packet *packet);
 		void OnPingServersReplyFromClientToCoordinator(Packet *packet);
 		void TryNextServer(SenderAndTargetAddress sata, ForwardingRequest *fw);
-		void SendAllBusy(SystemAddress senderClientAddress, SystemAddress targetClientAddress, SystemAddress requestingAddress);
+		void SendAllBusy(SystemAddress senderClientAddress, SystemAddress targetClientAddress, RakNetGUID targetClientGuid, SystemAddress requestingAddress);
 		void Clear(void);
 
 		void SendForwardingRequest(SystemAddress sourceAddress, SystemAddress targetAddress, SystemAddress serverAddress, RakNet::TimeMS timeoutOnNoDataMS);
 
 		// Logged in servers
-		DataStructures::Multilist<ML_UNORDERED_LIST, SystemAddress> serverList;
+		//DataStructures::Multilist<ML_UNORDERED_LIST, SystemAddress> serverList;
+		DataStructures::List<SystemAddress> serverList;
 
 		// Forwarding requests in progress
-		DataStructures::Multilist<ML_ORDERED_LIST, ForwardingRequest*, SenderAndTargetAddress> forwardingRequestList;
+		//DataStructures::Multilist<ML_ORDERED_LIST, ForwardingRequest*, SenderAndTargetAddress> forwardingRequestList;
+		DataStructures::OrderedList<SenderAndTargetAddress, ForwardingRequest*, ForwardingRequestComp> forwardingRequestList;
 
 		RakNet::RakString remoteLoginPassword;
 

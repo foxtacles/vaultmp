@@ -1,5 +1,5 @@
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_EmailSender==1 && _RAKNET_SUPPORT_TCPInterface==1
+#if _RAKNET_SUPPORT_EmailSender==1 && _RAKNET_SUPPORT_TCPInterface==1 && _RAKNET_SUPPORT_FileOperations==1
 
 // Useful sites
 // http://www.faqs.org\rfcs\rfc2821.html
@@ -11,6 +11,7 @@
 #include "Rand.h"
 #include "FileList.h"
 #include "BitStream.h"
+#include "Base64Encoder.h"
 #include <stdio.h>
 
 
@@ -99,7 +100,7 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
 		bs.Write(password,(const unsigned int)strlen(password));
 		bs.Write(&zero,1);
 		//bs.Write("not.my.real.password",(const unsigned int)strlen("not.my.real.password"));
-		TCPInterface::Base64Encoding((const char*)bs.GetData(), bs.GetNumberOfBytesUsed(), outputData);
+		Base64Encoding((const char*)bs.GetData(), bs.GetNumberOfBytesUsed(), outputData);
 		sprintf(query, "AUTH PLAIN %s", outputData);
 		tcpInterface.Send(query, (unsigned int)strlen(query), emailServer,false);
 		response=GetResponse(&tcpInterface, emailServer, doPrintf);
@@ -158,7 +159,7 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
 		rakNetRandom.SeedMT((unsigned int) RakNet::GetTimeMS());
 		// Random multipart message boundary
 		for (i=0; i < boundarySize; i++)
-			boundary[i]=TCPInterface::Base64Map()[rakNetRandom.RandomMT()%64];
+			boundary[i]=Base64Map()[rakNetRandom.RandomMT()%64];
 		boundary[boundarySize]=0;
 	}
 
@@ -267,7 +268,7 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
 
 			newBody = (char*) rakMalloc_Ex( (size_t) (attachedFiles->fileList[i].dataLengthBytes*3)/2, _FILE_AND_LINE_ );
 
-			outputOffset=TCPInterface::Base64Encoding(attachedFiles->fileList[i].data, (int) attachedFiles->fileList[i].dataLengthBytes, newBody);
+			outputOffset=Base64Encoding(attachedFiles->fileList[i].data, (int) attachedFiles->fileList[i].dataLengthBytes, newBody);
 
 			// Send the base64 mapped file.
 			tcpInterface.Send(newBody, outputOffset, emailServer,false);

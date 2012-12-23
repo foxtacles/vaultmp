@@ -8,7 +8,7 @@
 
 using namespace RakNet;
 
-STATIC_FACTORY_DEFINITIONS(ConnectionGraph2,ConnectionGraph2);
+STATIC_FACTORY_DEFINITIONS(ConnectionGraph2,ConnectionGraph2)
 
 int RakNet::ConnectionGraph2::RemoteSystemComp( const RakNetGUID &key, RemoteSystem * const &data )
 {
@@ -264,9 +264,9 @@ PluginReceiveResult ConnectionGraph2::OnReceive(Packet *packet)
 			SystemAddressAndGuid saag;
 			bs.Read(saag.systemAddress);
 			bs.Read(saag.guid);
-			idx = remoteSystems[idx]->remoteConnections.GetIndexFromKey(saag, &objectExists);
+			unsigned long idx2 = remoteSystems[idx]->remoteConnections.GetIndexFromKey(saag, &objectExists);
 			if (objectExists)
-				remoteSystems[idx]->remoteConnections.RemoveAtIndex(idx);
+				remoteSystems[idx]->remoteConnections.RemoveAtIndex(idx2);
 		}
 	}
 	else if (packet->data[0]==ID_REMOTE_NEW_INCOMING_CONNECTION)

@@ -9,13 +9,13 @@
 #include "NativeFeatureIncludes.h"
 #if _RAKNET_SUPPORT_DynDNS==1 && _RAKNET_SUPPORT_TCPInterface==1
 
-class TCPInterface;
-
 #ifndef __DYN_DNS_H
 #define __DYN_DNS_H
 
 namespace RakNet
 {
+
+class TCPInterface;
 
 enum DynDnsResultCode
 {
@@ -45,7 +45,7 @@ enum DynDnsResultCode
 	RC_NOT_FQDN, // ???
 	RC_NUM_HOST, // ???
 	RC_911, // ???
-	RC_DYNDNS_TIMEOUT, // DynDNS did not respond
+	RC_DYNDNS_TIMEOUT // DynDNS did not respond
 };
 
 // Can only process one at a time with the current implementation
@@ -57,7 +57,7 @@ public:
 
 	// Pass 0 for newIPAddress to autodetect whatever you are uploading from
 	// usernameAndPassword should be in the format username:password
-	void UpdateHostIP(const char *dnsHost, const char *newIPAddress, const char *usernameAndPassword );
+	void UpdateHostIPAsynch(const char *dnsHost, const char *newIPAddress, const char *usernameAndPassword );
 	void Update(void);
 
 	// Output
@@ -78,7 +78,7 @@ protected:
 		CP_WAITING_FOR_CHECKIP_RESPONSE,
 		CP_CONNECTING_TO_DYNDNS,
 		CP_WAITING_FOR_DYNDNS_RESPONSE,
-		CP_IDLE,
+		CP_IDLE
 	};
 
 	TCPInterface *tcp;

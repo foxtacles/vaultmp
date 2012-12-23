@@ -14,7 +14,7 @@ uint32_t LocklessUint32_t::Increment(void)
 {
 #ifdef _WIN32
 	return (uint32_t) InterlockedIncrement(&value);
-#elif defined(ANDROID)
+#elif defined(ANDROID) || defined(__S3E__) || defined(__APPLE__)
 	uint32_t v;
 	mutex.Lock();
 	++value;
@@ -29,7 +29,7 @@ uint32_t LocklessUint32_t::Decrement(void)
 {
 #ifdef _WIN32
 	return (uint32_t) InterlockedDecrement(&value);
-#elif defined(ANDROID)
+#elif defined(ANDROID) || defined(__S3E__) || defined(__APPLE__)
 	uint32_t v;
 	mutex.Lock();
 	--value;

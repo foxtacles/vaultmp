@@ -1,8 +1,15 @@
 #ifndef __RAK_ITOA_H
 #define __RAK_ITOA_H
 
-#include "Export.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-RAK_DLL_EXPORT char* Itoa( int value, char* result, int base );
+char* Itoa( int value, char* result, int base );
+
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif

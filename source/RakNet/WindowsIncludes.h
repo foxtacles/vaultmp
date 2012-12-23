@@ -1,4 +1,7 @@
-#if defined(X360__) 
+
+#if   defined (WINDOWS_STORE_RT)
+#include <windows.h>
+#include <winsock.h>
 #elif defined (_WIN32)
 #include <WinSock2.h>
 #include <windows.h>

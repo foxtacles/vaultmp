@@ -73,8 +73,8 @@ void MasterServer::MasterThread()
 						unsigned int players = entry.GetServerPlayers().first;
 						unsigned int playersMax = entry.GetServerPlayers().second;
 						unsigned char game = entry.GetGame();
-						std::map<string, string> rules = entry.GetServerRules();
-						std::vector<string> modfiles = entry.GetServerModFiles();
+						const std::map<string, string>& rules = entry.GetServerRules();
+						const std::vector<string>& modfiles = entry.GetServerModFiles();
 
 						query.Write(addr);
 						query.Write(name);
@@ -110,13 +110,13 @@ void MasterServer::MasterThread()
 
 				case ID_MASTER_UPDATE:
 				{
-					BitStream query(packet->data, packet->length, false);
-					query.IgnoreBytes(sizeof(MessageID));
+					BitStream queryy(packet->data, packet->length, false);
+					queryy.IgnoreBytes(sizeof(MessageID));
 
 					SystemAddress addr;
-					query.Read(addr);
+					queryy.Read(addr);
 
-					query = BitStream();
+					BitStream query;
 
 					map<SystemAddress, ServerEntry>::iterator i;
 					i = serverList.find(addr);
@@ -132,8 +132,8 @@ void MasterServer::MasterThread()
 						unsigned int players = entry.GetServerPlayers().first;
 						unsigned int playersMax = entry.GetServerPlayers().second;
 						unsigned char game = entry.GetGame();
-						std::map<string, string> rules = entry.GetServerRules();
-						std::vector<string> modfiles = entry.GetServerModFiles();
+						const std::map<string, string>& rules = entry.GetServerRules();
+						const std::vector<string>& modfiles = entry.GetServerModFiles();
 
 						query.Write(name);
 						query.Write(map);
