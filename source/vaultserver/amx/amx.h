@@ -1,6 +1,6 @@
 /*  Pawn Abstract Machine (for the Pawn language)
  *
- *  Copyright (c) ITB CompuPhase, 1997-2011
+ *  Copyright (c) ITB CompuPhase, 1997-2012
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not
  *  use this file except in compliance with the License. You may obtain a copy
@@ -14,16 +14,23 @@
  *  License for the specific language governing permissions and limitations
  *  under the License.
  *
- *  Version: $Id: amx.h 4535 2011-07-07 09:15:22Z thiadmer $
+ *  Version: $Id: amx.h 4731 2012-06-21 11:11:18Z thiadmer $
  */
 
 #ifndef AMX_H_INCLUDED
 #define AMX_H_INCLUDED
 
 #define PAWN_CELL_SIZE 64 // 64 bit cell size
+
 #ifndef __WIN32__
 #define HAVE_I64
 #endif
+
+#define FLOATPOINT // floating point for console
+#define AMXCONSOLE_NOIDLE // no idle state
+#define AMXTIME_NOIDLE // no idle state
+#define AMX_ANSIONLY
+#define AMX_ALTCORE
 
 #include <stdlib.h>   /* for size_t */
 #include <limits.h>
@@ -104,9 +111,6 @@
   #endif
 #endif
 
-#if !defined arraysize
-  #define arraysize(array)  (sizeof(array) / sizeof((array)[0]))
-#endif
 #if !defined assert_static
   /* see "Compile-Time Assertions" by Greg Miller,
    * (with modifications to port it to C)
@@ -420,7 +424,7 @@ enum {
   #define amx_Address(amx,addr) \
                         (cell*)(((int32_t)((amx)->data ? (amx)->data : (amx)->code) & ~CELLMASK) | ((int32_t)(addr) & CELLMASK))
 #else
-  #define amx_Address(amx,addr) (cell*)(addr)
+  #define amx_Address(amx,addr) ((void)(amx),(cell*)(addr))
 #endif
 
 #if defined __STDC_VERSION__ && __STDC_VERSION__ >= 199901L
@@ -447,12 +451,12 @@ enum {
       else (result) = NULL;                                                 \
     } while (0)
   #define amx_StrParam(amx,param,result) \
-    amx_StrParam_Type(amx,param,result,char*)
+    amx_StrParam_Type(amx,param,result,void*)
 #endif
 
 uint16_t * AMXAPI amx_Align16(uint16_t *v);
 uint32_t * AMXAPI amx_Align32(uint32_t *v);
-#if defined _I64_MAX || defined HAVE_I64
+#if defined _I64_MAX || defined INT64_MAX || defined HAVE_I64
   uint64_t * AMXAPI amx_Align64(uint64_t *v);
 #endif
 int AMXAPI amx_Allot(AMX *amx, int cells, cell **address);
@@ -501,7 +505,7 @@ int AMXAPI amx_UTF8Put(char *string, char **endptr, int maxchars, cell value);
   #define amx_AlignCell(v) amx_Align16(v)
 #elif PAWN_CELL_SIZE==32
   #define amx_AlignCell(v) amx_Align32(v)
-#elif PAWN_CELL_SIZE==64 && (defined _I64_MAX || defined HAVE_I64)
+#elif PAWN_CELL_SIZE==64 && (defined _I64_MAX || defined INT64_MAX || defined HAVE_I64)
   #define amx_AlignCell(v) amx_Align64(v)
 #else
   #error Unsupported cell size

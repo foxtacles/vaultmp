@@ -34,7 +34,7 @@ const unsigned char API::FalloutSavegame[] =
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x7C};
 
 #ifdef VAULTMP_DEBUG
-Debug* API::debug;
+DebugInput<API> API::debug;
 #endif
 
 #pragma pack(push, 1)
@@ -599,34 +599,25 @@ void API::Terminate()
 	queue.clear();
 }
 
-#ifdef VAULTMP_DEBUG
-void API::SetDebugHandler(Debug* debug)
+vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* result, unsigned short opcode)
 {
-	API::debug = debug;
+	if (!cmd_ || !def || !result || !*cmd_ || !opcode)
+		throw VaultException("Invalid call to API::ParseCommand, one or more arguments are NULL (%s, %s, %04X)", cmd_, def, opcode);
 
-	if (debug)
-		debug->Print("Attached debug handler to API class", true);
-}
-#endif
-
-vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result, unsigned short opcode)
-{
-	if (!cmd || !def || !result || !*cmd || !opcode)
-		throw VaultException("Invalid call to API::ParseCommand, one or more arguments are NULL (%s, %s, %04X)", cmd, def, opcode);
-
+	string _cmd(cmd_);
+	vector<char> cmd_buf(cmd_, cmd_ + _cmd.length() + 1);
 	vector<double> result_data;
-	string _cmd(cmd);
+
+	char* cmd = &cmd_buf[0];
 
 	char* arg1_pos = reinterpret_cast<char*>(&result->arg1.unk1);
-	char* arg1_end = reinterpret_cast<char*>(&result->arg1) + result->size_arg1;
 	char* arg2_pos = reinterpret_cast<char*>(&result->arg2.param1);
-	char* arg2_end = reinterpret_cast<char*>(&result->arg2) + result->size_arg2;
 	unsigned short* _opcode = &result->arg2.opcode;
 	unsigned short* _numargs = &result->arg2.numargs;
 
 	char* tokenizer = nullptr;
 	unsigned int reference = 0x00;
-	result_data.emplace_back(storeIn<double, unsigned short>(opcode));
+	result_data.emplace_back(storeIn<double>(opcode));
 
 	// Skip the function name
 	tokenizer = strtok(cmd, " ");
@@ -644,7 +635,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 			throw VaultException("API::ParseCommand reference base operand is NULL (%s, %s, %04X)", _cmd.c_str(), def, opcode);
 
 		result->arg3.reference = reference;
-		result_data.emplace_back(storeIn<double, unsigned int>(reference));
+		result_data.emplace_back(storeIn<double>(reference));
 		++def;
 	}
 	else
@@ -799,7 +790,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 
 				*reinterpret_cast<unsigned char*>(arg2_pos) = 0x6E;
 				*reinterpret_cast<unsigned int*>(arg2_pos + sizeof(unsigned char)) = integer;
-				result_data.emplace_back(storeIn<double, unsigned int>(integer));
+				result_data.emplace_back(storeIn<double>(integer));
 				arg2_pos += sizeof(unsigned char) + sizeof(unsigned int);
 				break;
 			}
@@ -834,7 +825,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 
 				*reinterpret_cast<unsigned char*>(arg2_pos) = 0x72;
 				*reinterpret_cast<unsigned short*>(arg2_pos + sizeof(unsigned char)) = (!reference || refparam == reference) ? 0x0001 : 0x0002;
-				result_data.emplace_back(storeIn<double, unsigned int>(refparam));
+				result_data.emplace_back(storeIn<double>(refparam));
 				arg2_pos += sizeof(unsigned char) + sizeof(unsigned short);
 				break;
 			}
@@ -847,7 +838,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 					throw VaultException("API::ParseCommand could not find an Actor Value identifier for input %s", tokenizer);
 
 				*reinterpret_cast<unsigned short*>(arg2_pos) = (unsigned short) value;
-				result_data.emplace_back(storeIn<double, unsigned short>(value));
+				result_data.emplace_back(storeIn<double>(value));
 				arg2_pos += sizeof(unsigned short);
 				break;
 			}
@@ -860,7 +851,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 					throw VaultException("API::ParseCommand could not find an Axis identifier for input %s", tokenizer);
 
 				*reinterpret_cast<unsigned char*>(arg2_pos) = axis;
-				result_data.emplace_back(storeIn<double, unsigned char>(axis));
+				result_data.emplace_back(storeIn<double>(axis));
 				arg2_pos += sizeof(unsigned char);
 				break;
 			}
@@ -873,7 +864,7 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 					throw VaultException("API::ParseCommand could not find an Animation identifier for input %s", tokenizer);
 
 				*reinterpret_cast<unsigned short*>(arg2_pos) = (unsigned short) anim;
-				result_data.emplace_back(storeIn<double, unsigned short>(anim));
+				result_data.emplace_back(storeIn<double>(anim));
 				arg2_pos += sizeof(unsigned short);
 				break;
 			}
@@ -895,12 +886,6 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 			default:
 				throw VaultException("API::ParseCommand could not recognize argument identifier %02X", (unsigned int) tolower(type));
 		}
-
-		if (reinterpret_cast<unsigned int>(arg1_end) - reinterpret_cast<unsigned int>(arg1_pos) < 0)
-			throw VaultException("API::ParseCommand argument #1 size overrun while processing %s", _cmd.c_str());
-
-		if (reinterpret_cast<unsigned int>(arg2_end) - reinterpret_cast<unsigned int>(arg2_pos) < 0)
-			throw VaultException("API::ParseCommand argument #2 size overrun while processing %s", _cmd.c_str());
 
 		++numargs;
 	}
@@ -937,28 +922,28 @@ vector<double> API::ParseCommand(char* cmd, const char* def, op_default* result,
 	return result_data;
 }
 
-void API::DefineFunction(string name, string def, unsigned short opcode, unsigned char games)
+void API::DefineFunction(const string& name, const string& def, unsigned short opcode, unsigned char games)
 {
 	if (games & game)
-		functions.insert(pair<string, pair<string, unsigned short> >(name, pair<string, unsigned short>(def, opcode)));
+		functions.emplace(name, pair<string, unsigned short>(def, opcode));
 }
 
-void API::DefineValueString(string name, unsigned char value, unsigned char games)
+void API::DefineValueString(const string& name, unsigned char value, unsigned char games)
 {
 	if (games & game)
-		values.insert(pair<string, unsigned char>(name, value));
+		values.emplace(name, value);
 }
 
-void API::DefineAxisString(string name, unsigned char axis, unsigned char games)
+void API::DefineAxisString(const string& name, unsigned char axis, unsigned char games)
 {
 	if (games & game)
-		API::axis.insert(pair<string, unsigned char>(name, axis));
+		API::axis.emplace(name, axis);
 }
 
-void API::DefineAnimString(string name, unsigned char anim, unsigned char games)
+void API::DefineAnimString(const string& name, unsigned char anim, unsigned char games)
 {
 	if (games & game)
-		anims.insert(pair<string, unsigned char>(name, anim));
+		anims.emplace(name, anim);
 }
 
 void API::DefineControl(unsigned char control, unsigned char games)
@@ -1118,20 +1103,19 @@ vector<string> API::RetrieveAllAnims_Reverse()
 	return result;
 }
 
-pair<string, unsigned short> API::RetrieveFunction(string name)
+pair<string, unsigned short> API::RetrieveFunction(const string& name)
 {
-	FunctionMap::iterator it;
-	it = functions.find(name);
+	auto it = functions.find(name);
 
 	if (it != functions.end())
 		return it->second;
 
-	pair<string, unsigned short> empty = pair<string, unsigned short>("", 0x00);
+	auto empty = pair<string, unsigned short>("", 0x00);
 
 	return empty;
 }
 
-bool API::AnnounceFunction(string name)
+bool API::AnnounceFunction(const string& name)
 {
 	pair<string, unsigned short> func = RetrieveFunction(name);
 
@@ -1139,10 +1123,7 @@ bool API::AnnounceFunction(string name)
 		return true;
 
 #ifdef VAULTMP_DEBUG
-
-	if (debug)
-		debug->PrintFormat("API function %s not found or not supported by the game", true, name.c_str());
-
+	debug.print("API function ", name.c_str(), " not found or not supported by the game");
 #endif
 
 	return false;
@@ -1177,21 +1158,14 @@ CommandParsed API::Translate(const vector<string>& cmd, unsigned int key)
 		if (!func.second)
 		{
 #ifdef VAULTMP_DEBUG
-
-			if (debug)
-				debug->PrintFormat("API was not able to find function for %s", true, command.c_str());
-
+			debug.print("API was not able to find function for ", command.c_str());
 #endif
 			continue;
 		}
 
-		char content[command.length() + 1];
-		ZeroMemory(content, sizeof(content));
-		strcpy(content, command.c_str());
-
 		op_default result;
 
-		vector<double> parsed = ParseCommand(content, func.first.c_str(), &result, func.second);
+		vector<double> parsed = ParseCommand(command.c_str(), func.first.c_str(), &result, func.second);
 		unsigned char* data = BuildCommandStream(move(parsed), key, reinterpret_cast<unsigned char*>(&result), sizeof(op_default));
 		stream.emplace_back(data);
 	}
@@ -1214,12 +1188,9 @@ vector<CommandResult> API::Translate(unsigned char* stream)
 		{
 			auto& element = queue.back();
 
-	#ifdef VAULTMP_DEBUG
-
-			if (debug)
-				debug->PrintFormat("API did not retrieve the result of command with identifier %08X (opcode %04hX)", true, get<0>(element), getFrom<double, unsigned short>(get<1>(element).at(0)));
-
-	#endif
+#ifdef VAULTMP_DEBUG
+			debug.print("API did not retrieve the result of command with identifier ", hex, get<0>(element), " (opcode ", getFrom<unsigned short>(get<1>(element).at(0)), ")");
+#endif
 
 			result.emplace_back();
 
@@ -1236,10 +1207,7 @@ vector<CommandResult> API::Translate(unsigned char* stream)
 		if (queue.empty())
 		{
 	#ifdef VAULTMP_DEBUG
-
-			if (debug)
-				debug->PrintFormat("API could not find a stored command with identifier %08X (queue is empty)", true, r);
-
+			debug.print("API could not find a stored command with identifier ", hex, r, " (queue is empty)");
 	#endif
 			return result;
 		}
@@ -1268,7 +1236,7 @@ vector<CommandResult> API::Translate(unsigned char* stream)
 		unsigned int length = *reinterpret_cast<unsigned int*>(data);
 		data += sizeof(unsigned int);
 		vector<unsigned char>* big = new vector<unsigned char>(data, data + length);
-		get<2>(_result) = storeIn<double, vector<unsigned char>*>(big);
+		get<2>(_result) = storeIn<double>(big);
 	}
 	else
 		get<2>(_result) = *reinterpret_cast<double*>(data);

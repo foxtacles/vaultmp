@@ -6,12 +6,9 @@
 #include <stack>
 #include <vector>
 
-#include "../RakNet/RakPeerInterface.h"
+#include "../RakNet.h"
 
 class Player;
-
-using namespace RakNet;
-using namespace std;
 
 /**
  * \brief The Client class contains information about a connected client
@@ -20,18 +17,18 @@ using namespace std;
 class Client
 {
 	private:
-		static map<RakNetGUID, Client*> clients;
-		static stack<unsigned int> clientID;
+		static std::map<RakNet::RakNetGUID, Client*> clients;
+		static std::stack<unsigned int> clientID;
 
-		RakNetGUID guid;
+		RakNet::RakNetGUID guid;
 		unsigned int ID;
-		NetworkID player;
+		RakNet::NetworkID player;
 
-		Client(const Client&);
-		Client& operator=(const Client&);
+		Client(const Client&) = delete;
+		Client& operator=(const Client&) = delete;
 
 	public:
-		Client(RakNetGUID guid, NetworkID player);
+		Client(RakNet::RakNetGUID guid, RakNet::NetworkID player);
 		~Client();
 
 		/**
@@ -45,7 +42,7 @@ class Client
 		/**
 		 * \brief Given the RakNetGUID, returns the Client
 		 */
-		static Client* GetClientFromGUID(RakNetGUID guid);
+		static Client* GetClientFromGUID(RakNet::RakNetGUID guid);
 		/**
 		 * \brief Given the ID, returns the Client
 		 */
@@ -53,24 +50,24 @@ class Client
 		/**
 		 * \brief Given the NetworkID, returns the Client
 		 */
-		static Client* GetClientFromPlayer(NetworkID id);
+		static Client* GetClientFromPlayer(RakNet::NetworkID id);
 		/**
 		 * \brief Returns a STL vector containing every RakNetGUID
 		 *
 		 * except (optional, Client*) - excludes a RakNetGUID from the result
 		 */
-		static vector<RakNetGUID> GetNetworkList(Client* except = nullptr);
+		static std::vector<RakNet::RakNetGUID> GetNetworkList(Client* except = nullptr);
 		/**
 		 * \brief Returns a STL vector containing every RakNetGUID
 		 *
 		 * except (optional, RakNetGUID) - excludes a RakNetGUID from the result
 		 */
-		static vector<RakNetGUID> GetNetworkList(RakNetGUID except = UNASSIGNED_RAKNET_GUID);
+		static std::vector<RakNet::RakNetGUID> GetNetworkList(RakNet::RakNetGUID except = RakNet::UNASSIGNED_RAKNET_GUID);
 
 		/**
 		 * \brief Returns the RakNetGUID
 		 */
-		RakNetGUID GetGUID();
+		RakNet::RakNetGUID GetGUID();
 		/**
 		 * \brief Returns the ID
 		 */
@@ -78,7 +75,7 @@ class Client
 		/**
 		 * \brief Returns the NetworkID of the coressponding Player instance
 		 */
-		NetworkID GetPlayer();
+		RakNet::NetworkID GetPlayer();
 
 };
 

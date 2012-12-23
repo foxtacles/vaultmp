@@ -14,7 +14,7 @@
  *  License for the specific language governing permissions and limitations
  *  under the License.
  *
- *  Version: $Id: amxfile.c 4548 2011-08-01 09:35:40Z thiadmer $
+ *  Version: $Id: amxfile.c 4611 2011-12-05 17:46:53Z thiadmer $
  */
 #if defined _UNICODE || defined __UNICODE__ || defined UNICODE
 # if !defined UNICODE   /* for Windows */
@@ -87,7 +87,7 @@
   #define _tfopen       fopen
   #define _tfputs       fputs
   #define _tgetenv      getenv
-  #define _tmkdir       _mkdir
+  #define _tmkdir       mkdir
   #define _tremove      remove
   #define _trename      rename
   #define _trmdir       _rmdir
@@ -96,6 +96,9 @@
 #endif
 #if !(defined __WIN32__ || defined _WIN32 || defined WIN32)
   #define _stat(n,b)  stat(n,b)
+#endif
+#if !defined S_ISDIR
+  #define S_ISDIR(mode) (((mode) & _S_IFDIR) != 0)
 #endif
 
 #include "minIni.c"
@@ -451,20 +454,21 @@ static cell AMX_NATIVE_CALL n_fopen(AMX *amx, const cell *params)
   TCHAR *name,fullname[_MAX_PATH];
   FILE *f = NULL;
 
+  (void)amx;
   altattrib=NULL;
   switch (params[2] & 0x7fff) {
   case io_read:
-    attrib=__T((char*)"rb");
+    attrib=__T("rb");
     break;
   case io_write:
-    attrib=__T((char*)"wb");
+    attrib=__T("wb");
     break;
   case io_readwrite:
-    attrib=__T((char*)"r+b");
-    altattrib=__T((char*)"w+b");
+    attrib=__T("r+b");
+    altattrib=__T("w+b");
     break;
   case io_append:
-    attrib=__T((char*)"ab");
+    attrib=__T("ab");
     break;
   default:
     return 0;
@@ -686,7 +690,7 @@ static cell AMX_NATIVE_CALL n_fremove(AMX *amx, const cell *params)
 #else
     struct stat stbuf;
 #endif
-    _tstat(fullname,  &stbuf);
+    _tstat(fullname, &stbuf);
     if (S_ISDIR(stbuf.st_mode))
       r=_trmdir(fullname);
     else
@@ -791,7 +795,7 @@ static int matchfiles(const TCHAR *path,int skip,TCHAR *out,int outlen)
       FindClose(hfind);
     } /* if */
   #else
-  #define _T __T
+    #define _T __T
     /* copy directory part only (zero-terminate) */
     if (basename==path) {
       strcpy(dirname,".");
@@ -911,12 +915,10 @@ static cell AMX_NATIVE_CALL n_fcreatedir(AMX *amx, const cell *params)
   (void)amx;
   amx_StrParam(amx,params[1],name);
   if (name!=NULL && completename(fullname,name,sizearray(fullname))!=NULL) {
-    #undef _tmkdir
-    #define _tmkdir mkdir
     #if defined __WIN32__ || defined __DOS__
       r=_tmkdir(fullname);
     #else
-      r=mkdir(fullname,0755);
+      r=_tmkdir(fullname,0755);
     #endif
   } /* if */
   return r==0;
@@ -1150,7 +1152,7 @@ static cell AMX_NATIVE_CALL n_deletecfg(AMX *amx, const cell *params)
 #if defined __cplusplus
   extern "C"
 #endif
-const AMX_NATIVE_INFO file_Natives[] = {
+AMX_NATIVE_INFO file_Natives[] = {
   { "fopen",        n_fopen },
   { "fclose",       n_fclose },
   { "fwrite",       n_fwrite },

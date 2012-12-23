@@ -1,11 +1,13 @@
 #include "ScriptFunction.h"
 
-ScriptFunction::ScriptFunction(ScriptFunc fCpp, string def) : fCpp(fCpp), def(def), pawn(false)
+using namespace std;
+
+ScriptFunction::ScriptFunction(ScriptFunc fCpp, const string& def) : fCpp(fCpp), def(def), pawn(false)
 {
 
 }
 
-ScriptFunction::ScriptFunction(ScriptFuncPAWN fPawn, AMX* amx, string def) : fPawn(fPawn), amx(amx), def(def), pawn(true)
+ScriptFunction::ScriptFunction(ScriptFuncPAWN fPawn, AMX* amx, const string& def) : fPawn(fPawn), amx(amx), def(def), pawn(true)
 {
 
 }

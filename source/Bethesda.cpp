@@ -16,7 +16,7 @@ ModList Bethesda::modfiles;
 char Bethesda::module[32];
 
 #ifdef VAULTMP_DEBUG
-Debug* Bethesda::debug;
+DebugInput<Bethesda> Bethesda::debug;
 #endif
 
 DWORD Bethesda::lookupProgramID(const char process[])
@@ -197,7 +197,6 @@ void Bethesda::Initialize()
 				if (!Interface::IsAvailable())
 					throw VaultException("Failed connecting to vaultmp interface");
 			}
-
 			catch (...)
 			{
 				CloseHandle(pi.hThread);
@@ -207,12 +206,15 @@ void Bethesda::Initialize()
 
 			ResumeThread(pi.hThread);
 
-			unsigned int IsGameReady = 0xCC;
-			while(IsGameReady!=0)
+/*
+			unsigned int IsGameReady = 1;
+
+			while (IsGameReady)
 			{
-			    ReadProcessMemory(pi.hProcess, (LPCVOID)0x401015, &IsGameReady, 4, 0);
-			    this_thread::sleep_for(chrono::milliseconds(500));
+				ReadProcessMemory(pi.hProcess, (LPCVOID)0x401015, &IsGameReady, sizeof(IsGameReady), nullptr);
+				this_thread::sleep_for(chrono::milliseconds(500));
 			}
+*/
 
 			CloseHandle(pi.hThread);
 			CloseHandle(pi.hProcess);
@@ -229,8 +231,7 @@ void Bethesda::Initialize()
 void Bethesda::Terminate(RakPeerInterface* peer)
 {
 #ifdef VAULTMP_DEBUG
-	if (debug)
-		debug->Print("Terminate called...", true);
+	debug.print("Terminate called...");
 #endif
 
 	this_thread::sleep_for(chrono::milliseconds(200));
@@ -255,7 +256,7 @@ void Bethesda::Terminate(RakPeerInterface* peer)
 	}
 }
 
-void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, string name, string pwd, unsigned char game, bool multiinst, bool steam, unsigned int inittime)
+void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, const string& name, const string& pwd, unsigned char game, bool multiinst, bool steam, unsigned int inittime)
 {
 	Bethesda::game = game;
 	Bethesda::password = pwd;
@@ -268,41 +269,20 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
 	initialized = false;
 
 #ifdef VAULTMP_DEBUG
-	debug = new Debug("vaultmp");
-	debug->PrintFormat("Vault-Tec Multiplayer Mod client debug log (%s)", false, CLIENT_VERSION);
-	debug->PrintFormat("Connecting to server: %s (name: %s, password: %s, game: %s)", false, server.ToString(), name.c_str(), pwd.c_str(), game == FALLOUT3 ? (char*) "Fallout 3" : (char*) "Fallout New Vegas");
-	debug->Print("Visit www.vaultmp.com for help and upload this log if you experience problems with the mod.", false);
-	debug->Print("-----------------------------------------------------------------------------------------------------", false);
-	//debug->PrintSystem();
-	API::SetDebugHandler(debug);
-	VaultException::SetDebugHandler(debug);
-	NetworkClient::SetDebugHandler(debug);
-	Interface::SetDebugHandler(debug);
-	Lockable::SetDebugHandler(debug);
-	Reference::SetDebugHandler(debug);
-	Object::SetDebugHandler(debug);
-	Item::SetDebugHandler(debug);
-	Container::SetDebugHandler(debug);
-	Actor::SetDebugHandler(debug);
-	Player::SetDebugHandler(debug);
-	Game::SetDebugHandler(debug);
-	GameFactory::SetDebugHandler(debug);
-	Shared<unsigned int>::SetDebugHandler(debug);
-	Shared<unsigned short>::SetDebugHandler(debug);
-	Shared<signed char>::SetDebugHandler(debug);
-	Shared<bool>::SetDebugHandler(debug);
-	Shared<pair<set<unsigned int>, set<unsigned int>>>::SetDebugHandler(debug);
-	//Network::SetDebugHandler(debug);
+	Debug::SetDebugHandler("vaultmp");
+	debug.note("Vault-Tec Multiplayer Mod client debug log (", CLIENT_VERSION, ")");
+	debug.note("Connecting to server: ", server.ToString(), " (name: ", name.c_str(), ", password: ", pwd.c_str(), ", game: ", game == FALLOUT3 ? "Fallout 3" : "Fallout New Vegas");
+	debug.note("Visit www.vaultmp.com for help and upload this log if you experience problems with the mod.");
+	debug.note("-----------------------------------------------------------------------------------------------------");
 #endif
 
 	GameFactory::Initialize(game);
 	API::Initialize(game);
 
 	NetworkID id = GameFactory::CreateInstance(ID_PLAYER, PLAYER_REFERENCE, PLAYER_BASE);
-	FactoryObject reference = GameFactory::GetObject(id);
-	Player* self = vaultcast<Player>(reference);
-	self->SetEnabled(true);
-	self->SetName(name);
+	FactoryObject<Player> reference = GameFactory::GetObject<Player>(id).get();
+	reference->SetEnabled(true);
+	reference->SetName(name);
 	GameFactory::LeaveReference(reference);
 
 	Network::Flush();
@@ -363,7 +343,7 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
 		Bethesda::Terminate(peer);
 
 #ifdef VAULTMP_DEBUG
-		debug->Print("Network thread is going to terminate (ERROR)", true);
+		debug.print("Network thread is going to terminate (ERROR)");
 #endif
 		throw;
 	}
@@ -371,6 +351,6 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, s
 	Bethesda::Terminate(peer);
 
 #ifdef VAULTMP_DEBUG
-	debug->Print("Network thread is going to terminate (no error occured)", true);
+	debug.print("Network thread is going to terminate (no error occured)");
 #endif
 }

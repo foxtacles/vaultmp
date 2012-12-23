@@ -1,8 +1,10 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-#include <map>
+#include <unordered_map>
 #include <string>
+
+#include "../RakNet.h"
 
 #include "boost/any.hpp"
 
@@ -12,34 +14,28 @@
 #include "../vaultmp.h"
 #include "../Debug.h"
 #include "../Network.h"
-#include "../RakNet/gettimeofday.h"
-#include "../RakNet/NetworkIDObject.h"
-
-using namespace std;
-using namespace RakNet;
 
 /**
  * \brief Create timers to be used in scripts
  */
 
-class Timer : public ScriptFunction, public NetworkIDObject
+class Timer : public ScriptFunction, public RakNet::NetworkIDObject
 {
 	private:
 		~Timer();
 
 		unsigned int ms;
 		unsigned int interval;
-		vector<boost::any> args;
+		std::vector<boost::any> args;
 		bool markdelete;
 
-		static map<NetworkID, Timer*> timers;
-		static NetworkID last_timer;
+		static std::unordered_map<RakNet::NetworkID, Timer*> timers;
+		static RakNet::NetworkID last_timer;
 		static unsigned int msecs();
 
 	public:
-
-		Timer(ScriptFunc timer, string def, vector<boost::any> args, unsigned int interval);
-		Timer(ScriptFuncPAWN timer, AMX* amx, string def, vector<boost::any> args, unsigned int interval);
+		Timer(ScriptFunc timer, const std::string& def, std::vector<boost::any> args, unsigned int interval);
+		Timer(ScriptFuncPAWN timer, AMX* amx, const std::string& def, std::vector<boost::any> args, unsigned int interval);
 
 		/**
 		 * \brief Called from the dedicated server main thread
@@ -50,11 +46,11 @@ class Timer : public ScriptFunction, public NetworkIDObject
 		/**
 		 * \brief Returns the NetworkID of the latest timer
 		 */
-		static NetworkID LastTimer();
+		static RakNet::NetworkID LastTimer();
 		/**
 		 * \brief Terminates a timer
 		 */
-		static void Terminate(NetworkID id);
+		static void Terminate(RakNet::NetworkID id);
 		/**
 		 * \brief Terminates all timers
 		 */

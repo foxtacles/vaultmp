@@ -4,12 +4,6 @@
 #include "vaultmp.h"
 #include "Value.h"
 
-#ifdef VAULTMP_DEBUG
-#include "Debug.h"
-#endif
-
-using namespace std;
-
 /**
  * \brief A class for guarding a Value with a CriticalSection
  *
@@ -19,15 +13,6 @@ using namespace std;
 template <typename T>
 class Guarded : public Value<T>, public CriticalSection
 {
-	private:
-#ifdef VAULTMP_DEBUG
-		static Debug* debug;
-#endif
-
-	public:
-#ifdef VAULTMP_DEBUG
-		static void SetDebugHandler(Debug* debug);
-#endif
 
 };
 

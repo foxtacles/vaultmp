@@ -1,8 +1,6 @@
 #ifndef DEDICATED_H
 #define DEDICATED_H
 
-#include "../vaultmp.h"
-
 #ifdef __WIN32__
 #include <winsock2.h>
 #include <io.h>
@@ -11,16 +9,9 @@
 #include <chrono>
 #include <cstdio>
 
-#include "../RakNet/RakPeerInterface.h"
-#include "../RakNet/MessageIdentifiers.h"
-#include "../RakNet/IncrementalReadInterface.h"
-#include "../RakNet/FileListTransfer.h"
-#include "../RakNet/PacketizedTCP.h"
-#include "../RakNet/BitStream.h"
-#include "../RakNet/RakString.h"
-#include "../RakNet/RakSleep.h"
-#include "../RakNet/GetTime.h"
+#include "../RakNet.h"
 
+#include "../vaultmp.h"
 #include "../ServerEntry.h"
 #include "../Actor.h"
 #include "../Player.h"
@@ -39,10 +30,7 @@
 #define RAKNET_MASTER_RATE              2000
 #define RAKNET_MASTER_STANDARD_PORT     1660
 
-using namespace RakNet;
-using namespace std;
-
-typedef vector<pair<string, unsigned int>> ModList;
+typedef std::vector<std::pair<std::string, unsigned int>> ModList;
 
 /**
  * \brief The main class of the dedicated server
@@ -55,8 +43,8 @@ class Dedicated
 		friend class FileProgress;
 
 	private:
-		static RakPeerInterface* peer;
-		static SocketDescriptor* sockdescr;
+		static RakNet::RakPeerInterface* peer;
+		static RakNet::SocketDescriptor* sockdescr;
 
 		static unsigned int port;
 		static unsigned int fileslots;
@@ -66,9 +54,9 @@ class Dedicated
 		static bool fileserve;
 
 		static void Announce(bool announce);
-		static void Query(Packet* packet);
-		static TimeMS announcetime;
-		static SystemAddress master;
+		static void Query(RakNet::Packet* packet);
+		static RakNet::TimeMS announcetime;
+		static RakNet::SystemAddress master;
 		static ServerEntry* self;
 		static unsigned int cell;
 		static ModList modfiles;
@@ -79,11 +67,10 @@ class Dedicated
 		static bool thread;
 
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
+		static DebugInput<Dedicated> debug;
 #endif
 
 	public:
-
 		/**
 		 * \brief Initializes the dedicated server
 		 *

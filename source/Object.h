@@ -1,15 +1,11 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-#define TYPECLASS
-#include "GameFactory.h"
-
 #include "vaultmp.h"
 #include "Data.h"
 #include "API.h"
 #include "Reference.h"
 #include "Value.h"
-#include "PacketFactory.h"
 #include "VaultVector.h"
 
 #ifdef VAULTMP_DEBUG
@@ -22,9 +18,6 @@ const unsigned int FLAG_NOTSELF         = FLAG_DISABLED << 1;
 const unsigned int FLAG_SELF            = FLAG_NOTSELF << 1;
 const unsigned int FLAG_REFERENCE		= FLAG_SELF << 1;
 const unsigned int FLAG_BASE			= FLAG_REFERENCE << 1;
-
-using namespace Values;
-using namespace std;
 
 /**
  * \brief Derives from Reference class and represents an object in-game
@@ -40,13 +33,13 @@ class Object : public Reference
 		static RawParameter param_Axis;
 
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
+		static DebugInput<Object> debug;
 #endif
 
-		Value<string> object_Name;
-		unordered_map<unsigned char, Value<double>> object_Game_Pos;
-		unordered_map<unsigned char, Value<double>> object_Network_Pos;
-		unordered_map<unsigned char, Value<double>> object_Angle;
+		Value<std::string> object_Name;
+		std::unordered_map<unsigned char, Value<double>> object_Game_Pos;
+		std::unordered_map<unsigned char, Value<double>> object_Network_Pos;
+		std::unordered_map<unsigned char, Value<double>> object_Angle;
 		Value<unsigned int> cell_Game;
 		Value<unsigned int> cell_Network;
 		Value<bool> state_Enabled;
@@ -67,22 +60,17 @@ class Object : public Reference
 	public:
 		virtual ~Object();
 
-#ifdef VAULTMP_DEBUG
-		static void SetDebugHandler(Debug* debug);
-#endif
-
 		/**
 		 * \brief Retrieves a reference to a constant Parameter containing every available axis value string representation
 		 *
 		 * Used to pass axis values to the Interface
 		 */
-
 		static const RawParameter& Param_Axis();
 
 		/**
 		 * \brief Retrieves the Object's name
 		 */
-		string GetName() const;
+		std::string GetName() const;
 		/**
 		 * \brief Retrieves the Object's game coordinate on the specified axis (axis value hex code)
 		 */
@@ -115,7 +103,7 @@ class Object : public Reference
 		/**
 		 * \brief Sets the Object's name
 		 */
-		Lockable* SetName(const string& name);
+		Lockable* SetName(const std::string& name);
 		/**
 		 * \brief Sets the Object's game coordiante on the specified axis (axis value hex code)
 		 */
@@ -157,7 +145,7 @@ class Object : public Reference
 		/**
 		 * \brief Returns distant coordinates of the object using the Z-angle
 		 */
-		pair<double, double> GetOffset(double N) const;
+		std::pair<double, double> GetOffset(double N) const;
 		/**
 		 * \brief Returns true if the Object's network coordinates are valid
 		 */
@@ -172,11 +160,11 @@ class Object : public Reference
 class ObjectFunctor : public ReferenceFunctor
 {
 	public:
-		ObjectFunctor(unsigned int flags, NetworkID id) : ReferenceFunctor(flags, id) {}
+		ObjectFunctor(unsigned int flags, RakNet::NetworkID id) : ReferenceFunctor(flags, id) {}
 		virtual ~ObjectFunctor() {}
 
-		virtual vector<string> operator()();
-		virtual bool filter(FactoryObject& reference);
+		virtual std::vector<std::string> operator()();
+		virtual bool filter(FactoryObject<Reference>& reference);
 };
 
 #endif

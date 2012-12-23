@@ -7,10 +7,8 @@
 
 #include "PAWN.h"
 
-using namespace std;
-
 typedef unsigned long long(*ScriptFunc)();
-typedef string ScriptFuncPAWN;
+typedef std::string ScriptFuncPAWN;
 
 class ScriptFunction
 {
@@ -20,13 +18,13 @@ class ScriptFunction
 		AMX* amx;
 
 	protected:
-		string def;
+		std::string def;
 		bool pawn;
 
-		ScriptFunction(ScriptFunc fCpp, string def);
-		ScriptFunction(ScriptFuncPAWN fPawn, AMX* amx, string def);
+		ScriptFunction(ScriptFunc fCpp, const std::string& def);
+		ScriptFunction(ScriptFuncPAWN fPawn, AMX* amx, const std::string& def);
 
-		unsigned long long Call(const vector<boost::any>& args);
+		unsigned long long Call(const std::vector<boost::any>& args);
 
 };
 

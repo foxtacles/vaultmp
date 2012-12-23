@@ -354,8 +354,7 @@ namespace vaultmp
 	VAULTFUNCTION Timer CreateTimer(Function<> function, Interval interval) noexcept { return VAULTAPI(CreateTimer)(function, interval); }
 
 	template<typename... Types>
-	VAULTFUNCTION Timer CreateTimerEx(Function<Types...> function, Interval interval, Types... values) noexcept
-	{
+	VAULTFUNCTION Timer CreateTimerEx(Function<Types...> function, Interval interval, Types... values) noexcept {
 		cRawString types = TypeString<Types...>::value;
 		return VAULTAPI(CreateTimerEx)(reinterpret_cast<Function<>>(function), interval, types, values...);
 	}
@@ -363,21 +362,37 @@ namespace vaultmp
 	VAULTFUNCTION Void KillTimer(Timer timer = static_cast<Timer>(0)) noexcept { return VAULTAPI(KillTimer)(timer); }
 
 	template<typename... Types>
-	VAULTFUNCTION Void MakePublic(Function<Types...> function, String name) noexcept
-	{
+	VAULTFUNCTION Void MakePublic(Function<Types...> function, const String& name) noexcept {
 		cRawString types = TypeString<Types...>::value;
 		return VAULTAPI(MakePublic)(reinterpret_cast<Function<>>(function), name.c_str(), types);
 	}
 
 	template<typename... Types>
-	VAULTFUNCTION Result CallPublic(String name, Types... values) noexcept
-	{
+	VAULTFUNCTION Void MakePublic(Function<Types...> function, cRawString name) noexcept {
+		cRawString types = TypeString<Types...>::value;
+		return VAULTAPI(MakePublic)(reinterpret_cast<Function<>>(function), name, types);
+	}
+
+	template<typename... Types>
+	VAULTFUNCTION Result CallPublic(const String& name, Types... values) noexcept {
+		TypeString<Types...>::value;
 		return VAULTAPI(CallPublic)(name.c_str(), values...);
 	}
 
-	VAULTFUNCTION Void SetServerName(String name) noexcept { return VAULTAPI(SetServerName)(name.c_str()); }
-	VAULTFUNCTION Void SetServerMap(String map) noexcept { return VAULTAPI(SetServerMap)(map.c_str()); }
-	VAULTFUNCTION Void SetServerRule(String key, String value) noexcept { return VAULTAPI(SetServerRule)(key.c_str(), value.c_str()); }
+	template<typename... Types>
+	VAULTFUNCTION Result CallPublic(cRawString name, Types... values) noexcept {
+		TypeString<Types...>::value;
+		return VAULTAPI(CallPublic)(name, values...);
+	}
+
+	VAULTFUNCTION Void SetServerName(const String& name) noexcept { return VAULTAPI(SetServerName)(name.c_str()); }
+	VAULTFUNCTION Void SetServerName(cRawString name) noexcept { return VAULTAPI(SetServerName)(name); }
+	VAULTFUNCTION Void SetServerMap(const String& map) noexcept { return VAULTAPI(SetServerMap)(map.c_str()); }
+	VAULTFUNCTION Void SetServerMap(cRawString map) noexcept { return VAULTAPI(SetServerMap)(map); }
+	VAULTFUNCTION Void SetServerRule(const String& key, const String& value) noexcept { return VAULTAPI(SetServerRule)(key.c_str(), value.c_str()); }
+	VAULTFUNCTION Void SetServerRule(const String& key, cRawString value) noexcept { return VAULTAPI(SetServerRule)(key.c_str(), value); }
+	VAULTFUNCTION Void SetServerRule(cRawString key, const String& value) noexcept { return VAULTAPI(SetServerRule)(key, value.c_str()); }
+	VAULTFUNCTION Void SetServerRule(cRawString key, cRawString value) noexcept { return VAULTAPI(SetServerRule)(key, value); }
 	VAULTFUNCTION Index GetGameCode() noexcept { return VAULTAPI(GetGameCode)(); }
 	VAULTFUNCTION UCount GetMaximumPlayers() noexcept { return VAULTAPI(GetMaximumPlayers)(); }
 	VAULTFUNCTION UCount GetCurrentPlayers() noexcept { return VAULTAPI(GetCurrentPlayers)(); }
@@ -387,10 +402,14 @@ namespace vaultmp
 	VAULTFUNCTION String AnimToString(Index index) noexcept { return String(VAULTAPI(AnimToString)(index)); }
 	VAULTFUNCTION String BaseToString(Base base) noexcept { return String(VAULTAPI(BaseToString)(base)); }
 
-	VAULTFUNCTION State UIMessage(ID id, String message) noexcept { return VAULTAPI(UIMessage)(id, message.c_str()); }
-	VAULTFUNCTION State UIMessage(String message) noexcept { return VAULTAPI(UIMessage)(static_cast<ID>(0), message.c_str()); }
-	VAULTFUNCTION State ChatMessage(ID id, String message) noexcept { return VAULTAPI(ChatMessage)(id, message.c_str()); }
-	VAULTFUNCTION State ChatMessage(String message) noexcept { return VAULTAPI(ChatMessage)(static_cast<ID>(0), message.c_str()); }
+	VAULTFUNCTION State UIMessage(ID id, const String& message) noexcept { return VAULTAPI(UIMessage)(id, message.c_str()); }
+	VAULTFUNCTION State UIMessage(ID id, cRawString message) noexcept { return VAULTAPI(UIMessage)(id, message); }
+	VAULTFUNCTION State UIMessage(const String& message) noexcept { return VAULTAPI(UIMessage)(static_cast<ID>(0), message.c_str()); }
+	VAULTFUNCTION State UIMessage(cRawString message) noexcept { return VAULTAPI(UIMessage)(static_cast<ID>(0), message); }
+	VAULTFUNCTION State ChatMessage(ID id, const String& message) noexcept { return VAULTAPI(ChatMessage)(id, message.c_str()); }
+	VAULTFUNCTION State ChatMessage(ID id, cRawString message) noexcept { return VAULTAPI(ChatMessage)(id, message); }
+	VAULTFUNCTION State ChatMessage(const String& message) noexcept { return VAULTAPI(ChatMessage)(static_cast<ID>(0), message.c_str()); }
+	VAULTFUNCTION State ChatMessage(cRawString message) noexcept { return VAULTAPI(ChatMessage)(static_cast<ID>(0), message); }
 	VAULTFUNCTION Void SetRespawn(Interval interval) noexcept { return VAULTAPI(SetRespawn)(interval); }
 	VAULTFUNCTION Void SetSpawnCell(Cell cell) noexcept { return VAULTAPI(SetSpawnCell)(cell); }
 	VAULTFUNCTION Void SetGameWeather(Base weather) noexcept { return VAULTAPI(SetGameWeather)(weather); }
@@ -598,10 +617,16 @@ namespace vaultmp
 
 			Void SetPlayerRespawn(Interval interval) noexcept { return vaultmp::SetPlayerRespawn(id, interval); }
 			Void SetPlayerSpawnCell(Cell cell) noexcept { return vaultmp::SetPlayerSpawnCell(id, cell); }
-			State UIMessage(String message) noexcept { return vaultmp::UIMessage(id, message); }
-			State ChatMessage(String message) noexcept { return vaultmp::ChatMessage(id, message); }
+			State UIMessage(const String& message) noexcept { return vaultmp::UIMessage(id, message); }
+			State ChatMessage(const String& message) noexcept { return vaultmp::ChatMessage(id, message); }
 
 			Player& operator<<(const String& message) noexcept
+			{
+				ChatMessage(message);
+				return *this;
+			}
+
+			Player& operator<<(cRawString message) noexcept
 			{
 				ChatMessage(message);
 				return *this;
@@ -614,6 +639,12 @@ namespace vaultmp
 	class GlobalChat {
 		public:
 			GlobalChat& operator<<(const String& message) noexcept
+			{
+				ChatMessage(message);
+				return *this;
+			}
+
+			GlobalChat& operator<<(cRawString message) noexcept
 			{
 				ChatMessage(message);
 				return *this;

@@ -16,7 +16,9 @@
 #include "PAWN.h"
 #include "Dedicated.h"
 #include "time/time64.h"
+#include "Record.h"
 #include "../API.h"
+#include "../GameFactory.h"
 #include "../Utils.h"
 #include "../vaultmp.h"
 #include "../VaultException.h"
@@ -28,9 +30,6 @@
 #define GetScript(a,b) (b = (decltype(b)) dlsym(this->handle,a))
 #define SetScript(a,b) *((decltype(b)*)(dlsym(this->handle,a)?dlsym(this->handle,a):throw VaultException("Script function pointer not found: %s", a)))=b;
 #endif
-
-using namespace std;
-using namespace Values;
 
 /**
  * \brief Maintains communication with a script
@@ -47,29 +46,29 @@ class Script
 		void* handle;
 		bool cpp_script;
 
-		static vector<Script*> scripts;
+		static std::vector<Script*> scripts;
 
-		static void GetArguments(vector<boost::any>& params, va_list args, string def);
+		static void GetArguments(std::vector<boost::any>& params, va_list args, const std::string& def);
 
 		const char* vaultprefix;
 		void (*fexec)();
-		void (*fOnSpawn)(NetworkID);
-		void (*fOnCellChange)(NetworkID, unsigned int);
-		void (*fOnContainerItemChange)(NetworkID, unsigned int, signed int, double);
-		void (*fOnActorValueChange)(NetworkID, unsigned char, double);
-		void (*fOnActorBaseValueChange)(NetworkID, unsigned char, double);
-		void (*fOnActorAlert)(NetworkID, bool);
-		void (*fOnActorSneak)(NetworkID, bool);
-		void (*fOnActorDeath)(NetworkID, unsigned short, signed char);
-		void (*fOnActorEquipItem)(NetworkID, unsigned int, double);
-		void (*fOnActorUnequipItem)(NetworkID, unsigned int, double);
-		void (*fOnActorDropItem)(NetworkID, unsigned int, unsigned int, double);
-		void (*fOnActorPickupItem)(NetworkID, unsigned int, unsigned int, double);
-		void (*fOnActorPunch)(NetworkID, bool);
-		void (*fOnActorFireWeapon)(NetworkID, unsigned int);
-		void (*fOnPlayerDisconnect)(NetworkID, Reason);
-		unsigned int (*fOnPlayerRequestGame)(NetworkID);
-		bool (*fOnPlayerChat)(NetworkID, char*);
+		void (*fOnSpawn)(RakNet::NetworkID);
+		void (*fOnCellChange)(RakNet::NetworkID, unsigned int);
+		void (*fOnContainerItemChange)(RakNet::NetworkID, unsigned int, signed int, double);
+		void (*fOnActorValueChange)(RakNet::NetworkID, unsigned char, double);
+		void (*fOnActorBaseValueChange)(RakNet::NetworkID, unsigned char, double);
+		void (*fOnActorAlert)(RakNet::NetworkID, bool);
+		void (*fOnActorSneak)(RakNet::NetworkID, bool);
+		void (*fOnActorDeath)(RakNet::NetworkID, unsigned short, signed char);
+		void (*fOnActorEquipItem)(RakNet::NetworkID, unsigned int, double);
+		void (*fOnActorUnequipItem)(RakNet::NetworkID, unsigned int, double);
+		void (*fOnActorDropItem)(RakNet::NetworkID, unsigned int, unsigned int, double);
+		void (*fOnActorPickupItem)(RakNet::NetworkID, unsigned int, unsigned int, double);
+		void (*fOnActorPunch)(RakNet::NetworkID, bool);
+		void (*fOnActorFireWeapon)(RakNet::NetworkID, unsigned int);
+		void (*fOnPlayerDisconnect)(RakNet::NetworkID, Reason);
+		unsigned int (*fOnPlayerRequestGame)(RakNet::NetworkID);
+		bool (*fOnPlayerChat)(RakNet::NetworkID, char*);
 		bool (*fOnClientAuthenticate)(const char*, const char*);
 		void (*fOnGameYearChange)(unsigned int);
 		void (*fOnGameMonthChange)(unsigned int);
@@ -80,43 +79,43 @@ class Script
 		Script& operator=(const Script&) = delete;
 
 	public:
-		static pair<chrono::system_clock::time_point, double> gameTime;
+		static std::pair<std::chrono::system_clock::time_point, double> gameTime;
 		static unsigned int gameWeather;
 
 		static void LoadScripts(char* scripts, char* base);
 		static void Run();
 		static void UnloadScripts();
 
-		static NetworkID CreateTimer(ScriptFunc timer, unsigned int interval);
-		static NetworkID CreateTimerEx(ScriptFunc timer, unsigned int interval, const char* def, ...);
-		static NetworkID CreateTimerPAWN(ScriptFuncPAWN timer, AMX* amx, unsigned int interval);
-		static NetworkID CreateTimerPAWNEx(ScriptFuncPAWN timer, AMX* amx, unsigned int interval, const char* def, const vector<boost::any>& args);
-		static void KillTimer(NetworkID id = 0);
+		static RakNet::NetworkID CreateTimer(ScriptFunc timer, unsigned int interval);
+		static RakNet::NetworkID CreateTimerEx(ScriptFunc timer, unsigned int interval, const char* def, ...);
+		static RakNet::NetworkID CreateTimerPAWN(ScriptFuncPAWN timer, AMX* amx, unsigned int interval);
+		static RakNet::NetworkID CreateTimerPAWNEx(ScriptFuncPAWN timer, AMX* amx, unsigned int interval, const char* def, const std::vector<boost::any>& args);
+		static void KillTimer(RakNet::NetworkID id = 0);
 		static void MakePublic(ScriptFunc _public, const char* name, const char* def);
 		static void MakePublicPAWN(ScriptFuncPAWN _public, AMX* amx, const char* name, const char* def);
 		static unsigned long long CallPublic(const char* name, ...);
-		static unsigned long long CallPublicPAWN(const char* name, const vector<boost::any>& args);
+		static unsigned long long CallPublicPAWN(const char* name, const std::vector<boost::any>& args);
 
-		static unsigned long long Timer_Respawn(NetworkID id);
+		static unsigned long long Timer_Respawn(RakNet::NetworkID id);
 		static unsigned long long Timer_GameTime();
 
-		static void OnSpawn(const FactoryObject& reference);
-		static void OnCellChange(const FactoryObject& reference, unsigned int cell);
-		static void OnContainerItemChange(const FactoryObject& reference, unsigned int baseID, signed int count, double condition);
-		static void OnActorValueChange(const FactoryObject& reference, unsigned char index, bool base, double value);
-		static void OnActorAlert(const FactoryObject& reference, bool alerted);
-		static void OnActorSneak(const FactoryObject& reference, bool sneaking);
-		static void OnActorDeath(const FactoryObject& reference, unsigned short limbs, signed char cause);
-		static void OnActorEquipItem(const FactoryObject& reference, unsigned int baseID, double condition);
-		static void OnActorUnequipItem(const FactoryObject& reference, unsigned int baseID, double condition);
-		static void OnActorDropItem(const FactoryObject& reference, unsigned int baseID, unsigned int count, double condition);
-		static void OnActorPickupItem(const FactoryObject& reference, unsigned int baseID, unsigned int count, double condition);
-		static void OnActorPunch(const FactoryObject& reference, bool power);
-		static void OnActorFireWeapon(const FactoryObject& reference, unsigned int weapon);
-		static void OnPlayerDisconnect(const FactoryObject& reference, Reason reason);
-		static unsigned int OnPlayerRequestGame(const FactoryObject& reference);
-		static bool OnPlayerChat(const FactoryObject& reference, string& message);
-		static bool OnClientAuthenticate(const string& name, const string& pwd);
+		static void OnSpawn(const FactoryObject<Object>& reference);
+		static void OnCellChange(const FactoryObject<Object>& reference, unsigned int cell);
+		static void OnContainerItemChange(const FactoryObject<Container>& reference, unsigned int baseID, signed int count, double condition);
+		static void OnActorValueChange(const FactoryObject<Actor>& reference, unsigned char index, bool base, double value);
+		static void OnActorAlert(const FactoryObject<Actor>& reference, bool alerted);
+		static void OnActorSneak(const FactoryObject<Actor>& reference, bool sneaking);
+		static void OnActorDeath(const FactoryObject<Actor>& reference, unsigned short limbs, signed char cause);
+		static void OnActorEquipItem(const FactoryObject<Actor>& reference, unsigned int baseID, double condition);
+		static void OnActorUnequipItem(const FactoryObject<Actor>& reference, unsigned int baseID, double condition);
+		static void OnActorDropItem(const FactoryObject<Actor>& reference, unsigned int baseID, unsigned int count, double condition);
+		static void OnActorPickupItem(const FactoryObject<Actor>& reference, unsigned int baseID, unsigned int count, double condition);
+		static void OnActorPunch(const FactoryObject<Actor>& reference, bool power);
+		static void OnActorFireWeapon(const FactoryObject<Actor>& reference, unsigned int weapon);
+		static void OnPlayerDisconnect(const FactoryObject<Player>& reference, Reason reason);
+		static unsigned int OnPlayerRequestGame(const FactoryObject<Player>& reference);
+		static bool OnPlayerChat(const FactoryObject<Player>& reference, std::string& message);
+		static bool OnClientAuthenticate(const std::string& name, const std::string& pwd);
 		static void OnGameYearChange(unsigned int year);
 		static void OnGameMonthChange(unsigned int month);
 		static void OnGameDayChange(unsigned int day);
@@ -127,8 +126,8 @@ class Script
 		static const char* AnimToString(unsigned char index);
 		static const char* BaseToString(unsigned int baseID);
 
-		static bool UIMessage(NetworkID id, const char* message);
-		static bool ChatMessage(NetworkID id, const char* message);
+		static bool UIMessage(RakNet::NetworkID id, const char* message);
+		static bool ChatMessage(RakNet::NetworkID id, const char* message);
 		static void SetRespawn(unsigned int respawn);
 		static void SetSpawnCell(unsigned int cell);
 		static void SetGameWeather(unsigned int weather);
@@ -138,15 +137,15 @@ class Script
 		static void SetGameDay(unsigned int day);
 		static void SetGameHour(unsigned int hour);
 		static void SetTimeScale(double scale);
-		static bool IsValid(NetworkID id);
-		static bool IsObject(NetworkID id);
-		static bool IsItem(NetworkID id);
-		static bool IsContainer(NetworkID id);
-		static bool IsActor(NetworkID id);
-		static bool IsPlayer(NetworkID id);
+		static bool IsValid(RakNet::NetworkID id);
+		static bool IsObject(RakNet::NetworkID id);
+		static bool IsItem(RakNet::NetworkID id);
+		static bool IsContainer(RakNet::NetworkID id);
+		static bool IsActor(RakNet::NetworkID id);
+		static bool IsPlayer(RakNet::NetworkID id);
 		static bool IsInterior(unsigned int cell);
-		static unsigned int GetConnection(NetworkID id);
-		static unsigned int GetList(unsigned char type, NetworkID** data);
+		static unsigned int GetConnection(RakNet::NetworkID id);
+		static unsigned int GetList(unsigned char type, RakNet::NetworkID** data);
 		static unsigned int GetGameWeather();
 		static signed long long GetGameTime();
 		static unsigned int GetGameYear();
@@ -155,50 +154,50 @@ class Script
 		static unsigned int GetGameHour();
 		static double GetTimeScale();
 
-		static unsigned int GetReference(NetworkID id);
-		static unsigned int GetBase(NetworkID id);
-		static const char* GetName(NetworkID id);
-		static void GetPos(NetworkID id, double* X, double* Y, double* Z);
-		static void GetAngle(NetworkID id, double* X, double* Y, double* Z);
-		static unsigned int GetCell(NetworkID id);
-		static bool IsNearPoint(NetworkID id, double X, double Y, double Z, double R);
-		static NetworkID GetItemContainer(NetworkID id);
-		static unsigned int GetItemCount(NetworkID id);
-		static double GetItemCondition(NetworkID id);
-		static bool GetItemEquipped(NetworkID id);
-		static bool GetItemSilent(NetworkID id);
-		static bool GetItemStick(NetworkID id);
-		static unsigned int GetContainerItemCount(NetworkID id, unsigned int baseID);
-		static double GetActorValue(NetworkID id, unsigned char index);
-		static double GetActorBaseValue(NetworkID id, unsigned char index);
-		static unsigned int GetActorIdleAnimation(NetworkID id);
-		static unsigned char GetActorMovingAnimation(NetworkID id);
-		static unsigned char GetActorWeaponAnimation(NetworkID id);
-		static bool GetActorAlerted(NetworkID id);
-		static bool GetActorSneaking(NetworkID id);
-		static bool GetActorDead(NetworkID id);
-		static unsigned int GetActorBaseRace(NetworkID id);
-		static bool GetActorBaseSex(NetworkID id);
-		static bool IsActorJumping(NetworkID id);
-		static unsigned int GetPlayerRespawn(NetworkID id);
-		static unsigned int GetPlayerSpawnCell(NetworkID id);
+		static unsigned int GetReference(RakNet::NetworkID id);
+		static unsigned int GetBase(RakNet::NetworkID id);
+		static const char* GetName(RakNet::NetworkID id);
+		static void GetPos(RakNet::NetworkID id, double* X, double* Y, double* Z);
+		static void GetAngle(RakNet::NetworkID id, double* X, double* Y, double* Z);
+		static unsigned int GetCell(RakNet::NetworkID id);
+		static bool IsNearPoint(RakNet::NetworkID id, double X, double Y, double Z, double R);
+		static RakNet::NetworkID GetItemContainer(RakNet::NetworkID id);
+		static unsigned int GetItemCount(RakNet::NetworkID id);
+		static double GetItemCondition(RakNet::NetworkID id);
+		static bool GetItemEquipped(RakNet::NetworkID id);
+		static bool GetItemSilent(RakNet::NetworkID id);
+		static bool GetItemStick(RakNet::NetworkID id);
+		static unsigned int GetContainerItemCount(RakNet::NetworkID id, unsigned int baseID);
+		static double GetActorValue(RakNet::NetworkID id, unsigned char index);
+		static double GetActorBaseValue(RakNet::NetworkID id, unsigned char index);
+		static unsigned int GetActorIdleAnimation(RakNet::NetworkID id);
+		static unsigned char GetActorMovingAnimation(RakNet::NetworkID id);
+		static unsigned char GetActorWeaponAnimation(RakNet::NetworkID id);
+		static bool GetActorAlerted(RakNet::NetworkID id);
+		static bool GetActorSneaking(RakNet::NetworkID id);
+		static bool GetActorDead(RakNet::NetworkID id);
+		static unsigned int GetActorBaseRace(RakNet::NetworkID id);
+		static bool GetActorBaseSex(RakNet::NetworkID id);
+		static bool IsActorJumping(RakNet::NetworkID id);
+		static unsigned int GetPlayerRespawn(RakNet::NetworkID id);
+		static unsigned int GetPlayerSpawnCell(RakNet::NetworkID id);
 
-		static bool SetPos(NetworkID id, double X, double Y, double Z);
-		static bool SetCell(NetworkID id, unsigned int cell, double X, double Y, double Z);
-		static bool AddItem(NetworkID id, unsigned int baseID, unsigned int count, double condition, bool silent);
-		static unsigned int RemoveItem(NetworkID id, unsigned int baseID, unsigned int count, bool silent);
-		static void RemoveAllItems(NetworkID id);
-		static void SetActorValue(NetworkID id, unsigned char index, double value);
-		static void SetActorBaseValue(NetworkID id, unsigned char index, double value);
-		static bool EquipItem(NetworkID id, unsigned int baseID, bool silent, bool stick);
-		static bool UnequipItem(NetworkID id, unsigned int baseID, bool silent, bool stick);
-		static bool PlayIdle(NetworkID id, unsigned int idle);
-		static void KillActor(NetworkID id, unsigned short limbs, signed char cause);
-		static bool SetActorBaseRace(NetworkID id, unsigned int race);
-		static bool AgeActorBaseRace(NetworkID id, signed int age);
-		static bool SetActorBaseSex(NetworkID id, bool female);
-		static void SetPlayerRespawn(NetworkID id, unsigned int respawn);
-		static void SetPlayerSpawnCell(NetworkID id, unsigned int cell);
+		static bool SetPos(RakNet::NetworkID id, double X, double Y, double Z);
+		static bool SetCell(RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z);
+		static bool AddItem(RakNet::NetworkID id, unsigned int baseID, unsigned int count, double condition, bool silent);
+		static unsigned int RemoveItem(RakNet::NetworkID id, unsigned int baseID, unsigned int count, bool silent);
+		static void RemoveAllItems(RakNet::NetworkID id);
+		static void SetActorValue(RakNet::NetworkID id, unsigned char index, double value);
+		static void SetActorBaseValue(RakNet::NetworkID id, unsigned char index, double value);
+		static bool EquipItem(RakNet::NetworkID id, unsigned int baseID, bool silent, bool stick);
+		static bool UnequipItem(RakNet::NetworkID id, unsigned int baseID, bool silent, bool stick);
+		static bool PlayIdle(RakNet::NetworkID id, unsigned int idle);
+		static void KillActor(RakNet::NetworkID id, unsigned short limbs, signed char cause);
+		static bool SetActorBaseRace(RakNet::NetworkID id, unsigned int race);
+		static bool AgeActorBaseRace(RakNet::NetworkID id, signed int age);
+		static bool SetActorBaseSex(RakNet::NetworkID id, bool female);
+		static void SetPlayerRespawn(RakNet::NetworkID id, unsigned int respawn);
+		static void SetPlayerSpawnCell(RakNet::NetworkID id, unsigned int cell);
 
 };
 

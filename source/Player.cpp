@@ -1,7 +1,10 @@
 #include "Player.h"
 #include "PacketFactory.h"
+#include "GameFactory.h"
 
 using namespace std;
+using namespace RakNet;
+using namespace Values;
 
 #ifdef VAULTSERVER
 unordered_set<unsigned int> Player::baseIDs;
@@ -100,7 +103,7 @@ const map<unsigned int, tuple<unsigned int, double, bool, bool, bool>> Player::d
 };
 
 #ifdef VAULTMP_DEBUG
-Debug* Player::debug;
+DebugInput<Player> Player::debug;
 #endif
 
 Player::Player(unsigned int refID, unsigned int baseID) : Actor(refID, baseID)
@@ -118,13 +121,12 @@ Player::Player(unsigned int refID, unsigned int baseID) : Actor(refID, baseID)
 	for (const auto& item : default_items)
 	{
 		NetworkID id = GameFactory::CreateInstance(ID_ITEM, item.first);
-		FactoryObject reference = GameFactory::GetObject(id);
-		Item* _item = vaultcast<Item>(reference);
-		_item->SetItemCount(get<0>(item.second));
-		_item->SetItemCondition(get<1>(item.second));
-		_item->SetItemEquipped(get<2>(item.second));
-		_item->SetItemSilent(get<3>(item.second));
-		_item->SetItemStick(get<4>(item.second));
+		FactoryObject<Item> reference = GameFactory::GetObject<Item>(id).get();
+		reference->SetItemCount(get<0>(item.second));
+		reference->SetItemCondition(get<1>(item.second));
+		reference->SetItemEquipped(get<2>(item.second));
+		reference->SetItemSilent(get<3>(item.second));
+		reference->SetItemStick(get<4>(item.second));
 		this->AddItem(id);
 	}
 
@@ -150,8 +152,7 @@ Player::Player(const pDefault* packet) : Actor(PacketFactory::Pop<pPacket>(packe
 Player::~Player()
 {
 #ifdef VAULTMP_DEBUG
-	if (debug)
-		debug->PrintFormat("Player object destroyed (ref: %08X)", true, GetReference());
+	debug.print("Player object destroyed (ref: ", hex, this->GetReference(), ")");
 #endif
 
 #ifdef VAULTSERVER
@@ -173,16 +174,6 @@ void Player::initialize()
 	player_Cell.set(default_cell);
 #endif
 }
-
-#ifdef VAULTMP_DEBUG
-void Player::SetDebugHandler(Debug* debug)
-{
-	Player::debug = debug;
-
-	if (debug)
-		debug->Print("Attached debug handler to Player class", true);
-}
-#endif
 
 #ifdef VAULTSERVER
 unsigned int Player::GetRespawn()
@@ -303,8 +294,7 @@ vector<string> PlayerFunctor::operator()()
 
 	if (id)
 	{
-		FactoryObject reference = GameFactory::GetObject(id);
-		Player* player = vaultcast<Player>(reference);
+		auto player = GameFactory::GetObject<Player>(id);
 
 		if (player)
 		{
@@ -327,8 +317,8 @@ vector<string> PlayerFunctor::operator()()
 	}
 	else
 	{
-		vector<FactoryObject>::iterator it;
-		vector<FactoryObject> references = GameFactory::GetObjectTypes(ID_PLAYER);
+		vector<FactoryObject<Player>>::iterator it;
+		vector<FactoryObject<Player>> references = GameFactory::GetObjectTypes<Player>(ID_PLAYER);
 		unsigned int refID;
 
 		for (it = references.begin(); it != references.end(); ++it) // GameFactory::LeaveReference(*it), not possible due to FLAG_SELFALERT
@@ -341,20 +331,17 @@ vector<string> PlayerFunctor::operator()()
 	return result;
 }
 
-bool PlayerFunctor::filter(FactoryObject& reference)
+bool PlayerFunctor::filter(FactoryObject<Reference>& reference)
 {
 	if (ActorFunctor::filter(reference))
 		return true;
 
-	Player* player = vaultcast<Player>(reference);
+	//Player* player = vaultcast<Player>(reference);
 	unsigned int flags = this->flags();
 
 	if (flags & FLAG_SELFALERT)
 	{
-		FactoryObject _self = GameFactory::GetObject(PLAYER_REFERENCE);
-		Player* self = vaultcast<Player>(_self);
-
-		if (!self->GetActorAlerted())
+		if (!GameFactory::GetObject<Player>(PLAYER_REFERENCE)->GetActorAlerted())
 			return true;
 	}
 

@@ -6,8 +6,6 @@
 #include <algorithm>
 #include "vaultmp.h"
 
-using namespace std;
-
 /**
  * \brief The functor class of vaultmp
  *
@@ -20,7 +18,7 @@ class VaultFunctor
 		VaultFunctor* next;
 
 	protected:
-		void _next(vector<string>& result);
+		void _next(std::vector<std::string>& result);
 
 	public:
 		VaultFunctor() : next(nullptr) {}
@@ -36,7 +34,7 @@ class VaultFunctor
 		/**
 		 * \brief The functor call
 		 */
-		virtual vector<string> operator()() = 0;
+		virtual std::vector<std::string> operator()() = 0;
 
 };
 

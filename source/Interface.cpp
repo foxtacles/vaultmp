@@ -1,5 +1,7 @@
 #include "Interface.h"
 
+using namespace std;
+
 PipeClient* Interface::pipeServer;
 PipeServer* Interface::pipeClient;
 Interface::ResultHandler Interface::resultHandler;
@@ -17,7 +19,7 @@ CriticalSection Interface::static_cs;
 CriticalSection Interface::dynamic_cs;
 
 #ifdef VAULTMP_DEBUG
-Debug* Interface::debug;
+DebugInput<Interface> Interface::debug;
 #endif
 
 bool Interface::Initialize(ResultHandler resultHandler, bool steam)
@@ -47,10 +49,7 @@ bool Interface::Initialize(ResultHandler resultHandler, bool steam)
 		initialized = true;
 
 #ifdef VAULTMP_DEBUG
-		//static_cs.SetDebugHandler(debug);
-		//dynamic_cs.SetDebugHandler(debug);
-		if (debug)
-			debug->PrintFormat("Threads %s %s %p %p", true, CriticalSection::thread_id(hCommandThreadReceive).c_str(), CriticalSection::thread_id(hCommandThreadSend).c_str(), &static_cs, &dynamic_cs);
+		debug.print("Threads ", CriticalSection::thread_id(hCommandThreadReceive).c_str(), " ", CriticalSection::thread_id(hCommandThreadSend).c_str(), " ", hex, &static_cs, " ", &dynamic_cs);
 #endif
 
 		return true;
@@ -82,16 +81,6 @@ void Interface::Terminate()
 		initialized = false;
 	}
 }
-
-#ifdef VAULTMP_DEBUG
-void Interface::SetDebugHandler(Debug* debug)
-{
-	Interface::debug = debug;
-
-	if (debug)
-		debug->Print("Attached debug handler to Interface class", true);
-}
-#endif
 
 void Interface::SignalEnd()
 {
@@ -176,12 +165,12 @@ void Interface::EndDynamic()
 	dynamic_cs.EndSession();
 }
 
-void Interface::SetupCommand(string name, ParamContainer&& param, unsigned int priority)
+void Interface::SetupCommand(const string& name, ParamContainer&& param, unsigned int priority)
 {
 	priorityMap.insert(make_pair(priority, natives.emplace(name, move(param))));
 }
 
-void Interface::ExecuteCommand(string name, ParamContainer&& param, unsigned int key)
+void Interface::ExecuteCommand(const string& name, ParamContainer&& param, unsigned int key)
 {
 	dynamic_cmdlist.emplace_back(natives.emplace(make_pair(name, move(param))), key);
 }
@@ -273,8 +262,7 @@ void Interface::CommandThreadReceive(bool steam)
 					wakeup = true;
 
 #ifdef VAULTMP_DEBUG
-					if (debug)
-						debug->Print("vaultmp process waked up (game patched)", true);
+					debug.print("vaultmp process waked up (game patched)");
 #endif
 				}
 				else if (code == PIPE_ERROR_CLOSE)
@@ -303,8 +291,7 @@ void Interface::CommandThreadReceive(bool steam)
 		}
 
 #ifdef VAULTMP_DEBUG
-		if (debug)
-			debug->Print("Receive thread is going to terminate (ERROR)", true);
+		debug.print("Receive thread is going to terminate (ERROR)");
 #endif
 	}
 
@@ -387,10 +374,7 @@ void Interface::CommandThreadSend()
 		}
 
 #ifdef VAULTMP_DEBUG
-
-		if (debug)
-			debug->Print("Send thread is going to terminate (ERROR)", true);
-
+		debug.print("Send thread is going to terminate (ERROR)");
 #endif
 	}
 

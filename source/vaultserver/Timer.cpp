@@ -1,18 +1,21 @@
 #include "Timer.h"
 
-map<NetworkID, Timer*> Timer::timers;
+using namespace std;
+using namespace RakNet;
+
+unordered_map<NetworkID, Timer*> Timer::timers;
 NetworkID Timer::last_timer = 0;
 
-Timer::Timer(ScriptFunc timer, string def, vector<boost::any> args, unsigned int interval) : markdelete(false), ms(msecs()), interval(interval), args(args), ScriptFunction(timer, def)
+Timer::Timer(ScriptFunc timer, const string& def, vector<boost::any> args, unsigned int interval) : ScriptFunction(timer, def), ms(msecs()), interval(interval), args(args), markdelete(false)
 {
 	this->SetNetworkIDManager(Network::Manager());
-	timers.insert(pair<NetworkID, Timer*>(this->GetNetworkID(), this));
+	timers.emplace(this->GetNetworkID(), this);
 }
 
-Timer::Timer(ScriptFuncPAWN timer, AMX* amx, string def, vector<boost::any> args, unsigned int interval) : markdelete(false), ms(msecs()), interval(interval), args(args), ScriptFunction(timer, amx, def)
+Timer::Timer(ScriptFuncPAWN timer, AMX* amx, const string& def, vector<boost::any> args, unsigned int interval) : ScriptFunction(timer, amx, def), ms(msecs()), interval(interval), args(args), markdelete(false)
 {
 	this->SetNetworkIDManager(Network::Manager());
-	timers.insert(pair<NetworkID, Timer*>(this->GetNetworkID(), this));
+	timers.emplace(this->GetNetworkID(), this);
 }
 
 Timer::~Timer()
@@ -29,9 +32,7 @@ unsigned int Timer::msecs()
 
 void Timer::GlobalTick()
 {
-	map<NetworkID, Timer*>::iterator it;
-
-	for (it = timers.begin(); it != timers.end();)
+	for (auto it = timers.begin(); it != timers.end();)
 	{
 		Timer* timer = it->second;
 
@@ -68,9 +69,7 @@ void Timer::Terminate(NetworkID id)
 
 void Timer::TerminateAll()
 {
-	map<NetworkID, Timer*>::iterator it;
-
-	for (it = timers.begin(); it != timers.end(); timers.erase(it++))
+	for (auto it = timers.begin(); it != timers.end(); timers.erase(it++))
 	{
 		Timer* timer = it->second;
 		delete timer;

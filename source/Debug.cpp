@@ -1,27 +1,33 @@
 #include "Debug.h"
 
+using namespace std;
+
+unique_ptr<Debug> Debug::debug;
+
 Debug::Debug(const char* module)
 {
 	char buf[32];
 	GetTimeFormat(buf, sizeof(buf), true);
 
-	this->logfile = module;
-	this->logfile += "_";
-	this->logfile += buf;
-	this->logfile += ".log";
+	string logfile(module);
+	logfile += "_" + string(buf) + ".log";
 
-	this->vaultmplog = fopen(logfile.c_str(), "w");
+	this->vaultmplog.open(logfile.c_str(), fstream::out | fstream::trunc);
 }
 
 Debug::~Debug()
 {
-	if (this->vaultmplog != nullptr)
-	{
-		this->Print((char*) "-----------------------------------------------------------------------------------------------------", false);
-		this->Print((char*) "END OF LOG", false);
+	this->Note("-----------------------------------------------------------------------------------------------------");
+	this->Note("END OF LOG");
+	this->vaultmplog.close();
+}
 
-		fclose(vaultmplog);
-	}
+void Debug::SetDebugHandler(const char* module)
+{
+	if (module)
+		Debug::debug.reset(new Debug(module));
+	else
+		Debug::debug.reset();
 }
 
 void Debug::GetTimeFormat(char* buf, unsigned int size, bool file)
@@ -35,65 +41,4 @@ void Debug::GetTimeFormat(char* buf, unsigned int size, bool file)
 
 	if (size > strlen(timeformat))
 		strcpy(buf, timeformat);
-}
-
-void Debug::Print(const char* text, bool timestamp)
-{
-	StartSession();
-
-	if (vaultmplog == nullptr)
-		return;
-
-	if (timestamp)
-	{
-		char buf[32];
-		GetTimeFormat(buf, sizeof(buf), false);
-		fprintf(this->vaultmplog, "[%s] ", buf);
-	}
-
-	/*
-	char* lpMsgBuf;
-
-	if( FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, GetLastError(), MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ), ( LPTSTR ) &lpMsgBuf, 0, NULL ) )
-	{
-		fprintf( this->vaultmplog, "[error: %s(0x%x)] ", lpMsgBuf, GetLastError() );
-	}
-	*/
-
-	fwrite(text, sizeof(char), strlen(text), this->vaultmplog);
-	fputc((int) '\n', this->vaultmplog);
-
-	EndSession();
-}
-
-void Debug::PrintFormat(const char* format, bool timestamp, ...)
-{
-	char text[256];
-	ZeroMemory(text, sizeof(text));
-
-	va_list args;
-	va_start(args, timestamp);
-	vsnprintf(text, sizeof(text), format, args);
-	va_end(args);
-
-	Print(text, timestamp);
-}
-
-void Debug::PrintSystem()
-{
-	StartSession();
-
-	FILE* systeminfo = popen("systeminfo", "r");
-
-	if (systeminfo == nullptr)
-		return;
-
-	char buf[2048];
-
-	while (fgets(buf, sizeof(buf), systeminfo) != nullptr)
-		fwrite(buf, sizeof(char), strlen(buf), this->vaultmplog);
-
-	pclose(systeminfo);
-
-	EndSession();
 }

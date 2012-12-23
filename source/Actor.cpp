@@ -1,12 +1,15 @@
 #include "Actor.h"
 #include "PacketFactory.h"
+#include "GameFactory.h"
 
+using namespace std;
+using namespace RakNet;
 using namespace Values;
 
 RawParameter Actor::param_ActorValues = RawParameter(vector<string>());
 
 #ifdef VAULTMP_DEBUG
-Debug* Actor::debug;
+DebugInput<Actor> Actor::debug;
 #endif
 
 Actor::Actor(unsigned int refID, unsigned int baseID) : Container(refID, baseID)
@@ -71,30 +74,17 @@ void Actor::initialize()
 
 	if (baseID != PLAYER_BASE)
 	{
-		const Record& record = Record::Lookup(baseID, vector<string>{"NPC_", "CREA"});
+		const Record* record = *Record::Lookup(baseID, vector<string>{"NPC_", "CREA"});
 
 		if (this->GetName().empty())
-			this->SetName(record.GetDescription());
+			this->SetName(record->GetDescription());
 	}
 #endif
 
 #ifdef VAULTMP_DEBUG
-
-	if (debug)
-		debug->PrintFormat("New actor object created (ref: %08X)", true, this->GetReference());
-
+	debug.print("New actor object created (ref: ", hex, this->GetReference(), ")");
 #endif
 }
-
-#ifdef VAULTMP_DEBUG
-void Actor::SetDebugHandler(Debug* debug)
-{
-	Actor::debug = debug;
-
-	if (debug)
-		debug->Print("Attached debug handler to Actor class", true);
-}
-#endif
 
 const RawParameter& Actor::Param_ActorValues()
 {
@@ -242,10 +232,10 @@ Lockable* Actor::SetActorDead(bool state)
 #ifdef VAULTSERVER
 Lockable* Actor::SetBase(unsigned int baseID)
 {
-	const Record& record = Record::Lookup(baseID, vector<string>{"NPC_", "CREA"});
+	const Record* record = *Record::Lookup(baseID, vector<string>{"NPC_", "CREA"});
 
 	if (this->GetName().empty())
-		this->SetName(record.GetDescription());
+		this->SetName(record->GetDescription());
 
 	return Reference::SetBase(baseID);
 }
@@ -269,7 +259,7 @@ bool Actor::IsActorFiring() const
 	unsigned char anim = this->GetActorWeaponAnimation();
 #ifdef VAULTSERVER
 	unsigned int weapon = this->GetEquippedWeapon();
-	return (anim >= AnimGroup_AttackLeft && anim <= AnimGroup_AttackSpin2ISDown && weapon && Weapon::Lookup(weapon).GetAmmo()); // || is throwable weapon
+	return (anim >= AnimGroup_AttackLeft && anim <= AnimGroup_AttackSpin2ISDown && weapon && Weapon::Lookup(weapon)->GetAmmo()); // || is throwable weapon
 #else
 	return (anim >= AnimGroup_AttackLeft && anim <= AnimGroup_AttackSpin2ISDown);
 #endif
@@ -304,8 +294,7 @@ unsigned int Actor::GetEquippedWeapon() const
 	// this won't reliably work if the actor has equipped more than one weapon
 	for (NetworkID& weapon : weapons)
 	{
-		FactoryObject _reference = GameFactory::GetObject(weapon);
-		Item* item = vaultcast<Item>(_reference);
+		FactoryObject<Item> item = GameFactory::GetObject<Item>(weapon).get();
 
 		if (item->GetItemEquipped())
 			return item->GetBase();
@@ -346,8 +335,8 @@ vector<string> ActorFunctor::operator()()
 	}
 	else
 	{
-		vector<FactoryObject>::iterator it;
-		vector<FactoryObject> references = GameFactory::GetObjectTypes(ID_ACTOR);
+		vector<FactoryObject<Actor>>::iterator it;
+		vector<FactoryObject<Actor>> references = GameFactory::GetObjectTypes<Actor>(ID_ACTOR);
 		unsigned int refID;
 
 		for (it = references.begin(); it != references.end(); GameFactory::LeaveReference(*it), ++it)
@@ -360,12 +349,12 @@ vector<string> ActorFunctor::operator()()
 	return result;
 }
 
-bool ActorFunctor::filter(FactoryObject& reference)
+bool ActorFunctor::filter(FactoryObject<Reference>& reference)
 {
 	if (ObjectFunctor::filter(reference))
 		return true;
 
-	Actor* actor = vaultcast<Actor>(reference);
+	FactoryObject<Actor> actor = vaultcast<Actor>(reference).get();
 	unsigned int flags = this->flags();
 
 	if (flags & FLAG_ALIVE && actor->GetActorDead())

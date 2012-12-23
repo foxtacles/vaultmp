@@ -7,10 +7,7 @@
 #include <vector>
 #include <map>
 
-#include "RakNet/RakPeerInterface.h"
-#include "RakNet/RakString.h"
-#include "RakNet/MessageIdentifiers.h"
-
+#include "RakNet.h"
 #include "Utils.h"
 #include "VaultException.h"
 #include "VaultFunctor.h"
@@ -22,21 +19,18 @@ static const unsigned int PIPBOY_GLOVES		= 0x00025B83;
 static const unsigned int RACE_CAUCASIAN	= 0x00000019;
 static const unsigned int DEFAULT_WEATHER	= 0x0000015E;
 
-using namespace std;
-using namespace RakNet;
-
 template <typename R, typename T>
-inline static R storeIn(T t)
+inline static R storeIn(const T& t)
 {
 	R r;
 	*reinterpret_cast<T*>(&r) = t;
 	return r;
 }
 
-template <typename R, typename T>
-inline static T getFrom(R r)
+template <typename T, typename R>
+inline static T getFrom(const R& r)
 {
-	return *reinterpret_cast<T*>(&r);
+	return *reinterpret_cast<const T*>(&r);
 }
 
 enum

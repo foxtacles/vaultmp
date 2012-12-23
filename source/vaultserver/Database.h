@@ -2,11 +2,11 @@
 #define DATABASE_H
 
 #ifdef __WIN32__
-#include <winsock2.h>
-#include <io.h>
+	#include <winsock2.h>
+	#include <io.h>
 #else
-#include <climits>
-#include <unistd.h>
+	#include <climits>
+	#include <unistd.h>
 #endif
 
 #include <list>
@@ -20,8 +20,6 @@
 
 #include "sqlite/sqlite3.h"
 
-using namespace std;
-
 /**
  * \brief Used to access vaultmp SQLite3 databases
  */
@@ -33,21 +31,15 @@ class Database
 
 	private:
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
+		static DebugInput<Database<T>> debug;
 #endif
 
-		vector<T> data;
+		std::vector<T> data;
 
-		Database();
-		~Database();
+		Database() = default;
+		~Database() = default;
 
-		unsigned int initialize(const string& file, const vector<string>& tables);
-
-	public:
-#ifdef VAULTMP_DEBUG
-		static void SetDebugHandler(Debug* debug);
-#endif
-
+		unsigned int initialize(const std::string& file, const std::vector<std::string>& tables);
 };
 
 #endif

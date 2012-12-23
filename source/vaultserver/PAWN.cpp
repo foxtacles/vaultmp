@@ -1,21 +1,17 @@
 #include "PAWN.h"
-
-/* AMX extension modules */
-#define FLOATPOINT // floating point for console
-#define AMXCONSOLE_NOIDLE // no idle state
-#define AMXTIME_NOIDLE // no idle state
-#define NDEBUG // no debug
-#include "amx/amxcore.c"
-#undef __T
-#include "amx/amxfile.c"
-#undef __T
-#include "amx/amxcons.c"
-#undef __T
-#include "amx/amxstring.c"
-#include "amx/amxtime.c"
-#include "amx/float.c"
-
 #include "Script.h"
+
+using namespace std;
+using namespace RakNet;
+
+extern "C" {
+	int AMXAPI amx_CoreInit(AMX* amx);
+	int AMXAPI amx_ConsoleInit(AMX* amx);
+	int AMXAPI amx_FloatInit(AMX* amx);
+	int AMXAPI amx_TimeInit(AMX* amx);
+	int AMXAPI amx_StringInit(AMX* amx);
+	int AMXAPI amx_FileInit(AMX* amx);
+}
 
 AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 {
@@ -122,7 +118,7 @@ int PAWN::RegisterVaultmpFunctions(AMX* amx)
 	return PAWN::Register(amx, PAWN::vaultmp_functions, -1);
 }
 
-cell PAWN::vaultmp_timestamp(AMX* amx, const cell* params)
+cell PAWN::vaultmp_timestamp(AMX*, const cell*)
 {
 	Utils::timestamp();
 	return 1;
@@ -135,11 +131,13 @@ cell PAWN::vaultmp_CreateTimer(AMX* amx, const cell* params)
 
 	source = amx_Address(amx, params[1]);
 	amx_StrLen(source, &len);
-	char name[len + 1];
 
-	amx_GetString(name, source, 0, UNLIMITED);
+	vector<char> name;
+	name.reserve(len + 1);
 
-	return Script::CreateTimerPAWN(name, amx, params[2]);
+	amx_GetString(&name[0], source, 0, UNLIMITED);
+
+	return Script::CreateTimerPAWN(&name[0], amx, params[2]);
 }
 
 cell PAWN::vaultmp_CreateTimerEx(AMX* amx, const cell* params)
@@ -149,15 +147,19 @@ cell PAWN::vaultmp_CreateTimerEx(AMX* amx, const cell* params)
 
 	source = amx_Address(amx, params[1]);
 	amx_StrLen(source, &len);
-	char name[len + 1];
 
-	amx_GetString(name, source, 0, UNLIMITED);
+	vector<char> name;
+	name.reserve(len + 1);
+
+	amx_GetString(&name[0], source, 0, UNLIMITED);
 
 	source = amx_Address(amx, params[3]);
 	amx_StrLen(source, &len);
-	char def[len + 1];
 
-	amx_GetString(def, source, 0, UNLIMITED);
+	vector<char> def;
+	def.reserve(len + 1);
+
+	amx_GetString(&def[0], source, 0, UNLIMITED);
 
 	vector<boost::any> args;
 	unsigned int count = (params[0] / sizeof(cell)) - 3;
@@ -165,7 +167,7 @@ cell PAWN::vaultmp_CreateTimerEx(AMX* amx, const cell* params)
 	if (count != len)
 		throw VaultException("Script call: Number of arguments does not match definition");
 
-	for (int i = 0; i < count; ++i)
+	for (unsigned int i = 0; i < count; ++i)
 	{
 		cell* data = amx_Address(amx, params[i + 4]);
 
@@ -192,9 +194,10 @@ cell PAWN::vaultmp_CreateTimerEx(AMX* amx, const cell* params)
 			case 's':
 			{
 				amx_StrLen(data, &len);
-				char str[len + 1];
-				amx_GetString(str, data, 0, UNLIMITED);
-				args.emplace_back(string(str));
+				vector<char> str;
+				str.reserve(len + 1);
+				amx_GetString(&str[0], data, 0, UNLIMITED);
+				args.emplace_back(string(&str[0]));
 				break;
 			}
 
@@ -203,10 +206,10 @@ cell PAWN::vaultmp_CreateTimerEx(AMX* amx, const cell* params)
 		}
 	}
 
-	return Script::CreateTimerPAWNEx(name, amx, params[2], def, args);
+	return Script::CreateTimerPAWNEx(&name[0], amx, params[2], &def[0], args);
 }
 
-cell PAWN::vaultmp_KillTimer(AMX* amx, const cell* params)
+cell PAWN::vaultmp_KillTimer(AMX*, const cell* params)
 {
 	Script::KillTimer(params[1]);
 	return 1;
@@ -219,23 +222,26 @@ cell PAWN::vaultmp_MakePublic(AMX* amx, const cell* params)
 
 	source = amx_Address(amx, params[1]);
 	amx_StrLen(source, &len);
-	char real[len + 1];
+	vector<char> real;
+	real.reserve(len + 1);
 
-	amx_GetString(real, source, 0, UNLIMITED);
+	amx_GetString(&real[0], source, 0, UNLIMITED);
 
 	source = amx_Address(amx, params[2]);
 	amx_StrLen(source, &len);
-	char name[len + 1];
+	vector<char> name;
+	name.reserve(len + 1);
 
-	amx_GetString(name, source, 0, UNLIMITED);
+	amx_GetString(&name[0], source, 0, UNLIMITED);
 
 	source = amx_Address(amx, params[3]);
 	amx_StrLen(source, &len);
-	char def[len + 1];
+	vector<char> def;
+	def.reserve(len + 1);
 
-	amx_GetString(def, source, 0, UNLIMITED);
+	amx_GetString(&def[0], source, 0, UNLIMITED);
 
-	Script::MakePublicPAWN(real, amx, name, def);
+	Script::MakePublicPAWN(&real[0], amx, &name[0], &def[0]);
 
 	return 1;
 }
@@ -247,11 +253,12 @@ cell PAWN::vaultmp_CallPublic(AMX* amx, const cell* params)
 
 	source = amx_Address(amx, params[1]);
 	amx_StrLen(source, &len);
-	char name[len + 1];
+	vector<char> name;
+	name.reserve(len + 1);
 
-	amx_GetString(name, source, 0, UNLIMITED);
+	amx_GetString(&name[0], source, 0, UNLIMITED);
 
-	string def = Public::GetDefinition(string(name));
+	string def = Public::GetDefinition(&name[0]);
 
 	vector<boost::any> args;
 	unsigned int count = (params[0] / sizeof(cell)) - 1;
@@ -259,7 +266,7 @@ cell PAWN::vaultmp_CallPublic(AMX* amx, const cell* params)
 	if (count != def.length())
 		throw VaultException("Script call: Number of arguments does not match definition");
 
-	for (int i = 0; i < count; ++i)
+	for (unsigned int i = 0; i < count; ++i)
 	{
 		cell* data = amx_Address(amx, params[i + 2]);
 
@@ -292,9 +299,10 @@ cell PAWN::vaultmp_CallPublic(AMX* amx, const cell* params)
 			case 's':
 			{
 				amx_StrLen(data, &len);
-				char str[len + 1];
-				amx_GetString(str, data, 0, UNLIMITED);
-				args.emplace_back(string(str));
+				vector<char> str;
+				str.reserve(len + 1);
+				amx_GetString(&str[0], data, 0, UNLIMITED);
+				args.emplace_back(string(&str[0]));
 				break;
 			}
 
@@ -303,7 +311,7 @@ cell PAWN::vaultmp_CallPublic(AMX* amx, const cell* params)
 		}
 	}
 
-	return Script::CallPublicPAWN(name, args);
+	return Script::CallPublicPAWN(&name[0], args);
 }
 
 cell PAWN::vaultmp_SetServerName(AMX* amx, const cell* params)
@@ -313,11 +321,12 @@ cell PAWN::vaultmp_SetServerName(AMX* amx, const cell* params)
 
 	source = amx_Address(amx, params[1]);
 	amx_StrLen(source, &len);
-	char name[len + 1];
+	vector<char> name;
+	name.reserve(len + 1);
 
-	amx_GetString(name, source, 0, UNLIMITED);
+	amx_GetString(&name[0], source, 0, UNLIMITED);
 
-	Dedicated::SetServerName(name);
+	Dedicated::SetServerName(&name[0]);
 
 	return 1;
 }
@@ -329,11 +338,12 @@ cell PAWN::vaultmp_SetServerMap(AMX* amx, const cell* params)
 
 	source = amx_Address(amx, params[1]);
 	amx_StrLen(source, &len);
-	char map[len + 1];
+	vector<char> map;
+	map.reserve(len + 1);
 
-	amx_GetString(map, source, 0, UNLIMITED);
+	amx_GetString(&map[0], source, 0, UNLIMITED);
 
-	Dedicated::SetServerMap(map);
+	Dedicated::SetServerMap(&map[0]);
 
 	return 1;
 }
@@ -349,28 +359,30 @@ cell PAWN::vaultmp_SetServerRule(AMX* amx, const cell* params)
 	amx_StrLen(source, &len);
 	amx_StrLen(source2, &len2);
 
-	char rule[len + 1];
-	char value[len2 + 1];
+	vector<char> rule;
+	rule.reserve(len + 1);
+	vector<char> value;
+	value.reserve(len2 + 1);
 
-	amx_GetString(rule, source, 0, UNLIMITED);
-	amx_GetString(value, source2, 0, UNLIMITED);
+	amx_GetString(&rule[0], source, 0, UNLIMITED);
+	amx_GetString(&value[0], source2, 0, UNLIMITED);
 
-	Dedicated::SetServerRule(rule, value);
+	Dedicated::SetServerRule(&rule[0], &value[0]);
 
 	return 1;
 }
 
-cell PAWN::vaultmp_GetGameCode(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetGameCode(AMX*, const cell*)
 {
 	return Dedicated::GetGameCode();
 }
 
-cell PAWN::vaultmp_GetMaximumPlayers(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetMaximumPlayers(AMX*, const cell*)
 {
 	return Dedicated::GetMaximumPlayers();
 }
 
-cell PAWN::vaultmp_GetCurrentPlayers(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetCurrentPlayers(AMX*, const cell*)
 {
 	return Dedicated::GetCurrentPlayers();
 }
@@ -442,11 +454,12 @@ cell PAWN::vaultmp_UIMessage(AMX* amx, const cell* params)
 
 	source = amx_Address(amx, params[2]);
 	amx_StrLen(source, &len);
-	char message[len + 1];
+	vector<char> message;
+	message.reserve(len + 1);
 
-	amx_GetString(message, source, 0, UNLIMITED);
+	amx_GetString(&message[0], source, 0, UNLIMITED);
 
-	return Script::UIMessage(params[1], message);
+	return Script::UIMessage(params[1], &message[0]);
 }
 
 cell PAWN::vaultmp_ChatMessage(AMX* amx, const cell* params)
@@ -456,118 +469,119 @@ cell PAWN::vaultmp_ChatMessage(AMX* amx, const cell* params)
 
 	source = amx_Address(amx, params[2]);
 	amx_StrLen(source, &len);
-	char message[len + 1];
+	vector<char> message;
+	message.reserve(len + 1);
 
-	amx_GetString(message, source, 0, UNLIMITED);
+	amx_GetString(&message[0], source, 0, UNLIMITED);
 
-	return Script::ChatMessage(params[1], message);
+	return Script::ChatMessage(params[1], &message[0]);
 }
 
-cell PAWN::vaultmp_SetRespawn(AMX* amx, const cell* params)
+cell PAWN::vaultmp_SetRespawn(AMX*, const cell* params)
 {
 	Script::SetRespawn(params[1]);
 	return 1;
 }
 
-cell PAWN::vaultmp_SetSpawnCell(AMX* amx, const cell* params)
+cell PAWN::vaultmp_SetSpawnCell(AMX*, const cell* params)
 {
 	Script::SetSpawnCell(params[1]);
 	return 1;
 }
 
-cell PAWN::vaultmp_SetGameWeather(AMX* amx, const cell* params)
+cell PAWN::vaultmp_SetGameWeather(AMX*, const cell* params)
 {
 	Script::SetGameWeather(params[1]);
 	return 1;
 }
 
-cell PAWN::vaultmp_SetGameTime(AMX* amx, const cell* params)
+cell PAWN::vaultmp_SetGameTime(AMX*, const cell* params)
 {
 	Script::SetGameTime(params[1]);
 	return 1;
 }
 
-cell PAWN::vaultmp_SetGameYear(AMX* amx, const cell* params)
+cell PAWN::vaultmp_SetGameYear(AMX*, const cell* params)
 {
 	Script::SetGameYear(params[1]);
 	return 1;
 }
 
-cell PAWN::vaultmp_SetGameMonth(AMX* amx, const cell* params)
+cell PAWN::vaultmp_SetGameMonth(AMX*, const cell* params)
 {
 	Script::SetGameMonth(params[1]);
 	return 1;
 }
 
-cell PAWN::vaultmp_SetGameDay(AMX* amx, const cell* params)
+cell PAWN::vaultmp_SetGameDay(AMX*, const cell* params)
 {
 	Script::SetGameDay(params[1]);
 	return 1;
 }
 
-cell PAWN::vaultmp_SetGameHour(AMX* amx, const cell* params)
+cell PAWN::vaultmp_SetGameHour(AMX*, const cell* params)
 {
 	Script::SetGameHour(params[1]);
 	return 1;
 }
 
-cell PAWN::vaultmp_SetTimeScale(AMX* amx, const cell* params)
+cell PAWN::vaultmp_SetTimeScale(AMX*, const cell* params)
 {
 	Script::SetTimeScale(amx_ctof(params[1]));
 	return 1;
 }
 
-cell PAWN::vaultmp_IsValid(AMX* amx, const cell* params)
+cell PAWN::vaultmp_IsValid(AMX*, const cell* params)
 {
 	return Script::IsValid(params[1]);
 }
 
-cell PAWN::vaultmp_IsObject(AMX* amx, const cell* params)
+cell PAWN::vaultmp_IsObject(AMX*, const cell* params)
 {
 	return Script::IsObject(params[1]);
 }
 
-cell PAWN::vaultmp_IsItem(AMX* amx, const cell* params)
+cell PAWN::vaultmp_IsItem(AMX*, const cell* params)
 {
 	return Script::IsItem(params[1]);
 }
 
-cell PAWN::vaultmp_IsContainer(AMX* amx, const cell* params)
+cell PAWN::vaultmp_IsContainer(AMX*, const cell* params)
 {
 	return Script::IsContainer(params[1]);
 }
 
-cell PAWN::vaultmp_IsActor(AMX* amx, const cell* params)
+cell PAWN::vaultmp_IsActor(AMX*, const cell* params)
 {
 	return Script::IsActor(params[1]);
 }
 
-cell PAWN::vaultmp_IsPlayer(AMX* amx, const cell* params)
+cell PAWN::vaultmp_IsPlayer(AMX*, const cell* params)
 {
 	return Script::IsPlayer(params[1]);
 }
 
-cell PAWN::vaultmp_IsCell(AMX* amx, const cell* params)
+cell PAWN::vaultmp_IsCell(AMX*, const cell* params)
 {
 	return Record::IsValidCell(params[1]);
 }
 
-cell PAWN::vaultmp_IsInterior(AMX* amx, const cell* params)
+cell PAWN::vaultmp_IsInterior(AMX*, const cell* params)
 {
 	return Script::IsInterior(params[1]);
 }
 
-cell PAWN::vaultmp_GetType(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetType(AMX*, const cell* params)
 {
 	return GameFactory::GetType(static_cast<NetworkID>(params[1]));
 }
 
-cell PAWN::vaultmp_GetConnection(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetConnection(AMX*, const cell* params)
 {
 	return Script::GetConnection(params[1]);
 }
 
-cell PAWN::vaultmp_GetCount(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetCount(AMX*, const cell* params)
 {
 	return GameFactory::GetObjectCount(params[1]);
 }
@@ -587,48 +601,48 @@ cell PAWN::vaultmp_GetList(AMX* amx, const cell* params)
 	return reference.size();
 }
 
-cell PAWN::vaultmp_GetGameWeather(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetGameWeather(AMX*, const cell*)
 {
 	return Script::GetGameWeather();
 }
 
-cell PAWN::vaultmp_GetGameTime(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetGameTime(AMX*, const cell*)
 {
 	return Script::GetGameTime();
 }
 
-cell PAWN::vaultmp_GetGameYear(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetGameYear(AMX*, const cell*)
 {
 	return Script::GetGameYear();
 }
 
-cell PAWN::vaultmp_GetGameMonth(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetGameMonth(AMX*, const cell*)
 {
 	return Script::GetGameMonth();
 }
 
-cell PAWN::vaultmp_GetGameDay(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetGameDay(AMX*, const cell*)
 {
 	return Script::GetGameDay();
 }
 
-cell PAWN::vaultmp_GetGameHour(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetGameHour(AMX*, const cell*)
 {
 	return Script::GetGameHour();
 }
 
-cell PAWN::vaultmp_GetTimeScale(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetTimeScale(AMX*, const cell*)
 {
 	double value = Script::GetTimeScale();
 	return amx_ftoc(value);
 }
 
-cell PAWN::vaultmp_GetReference(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetReference(AMX*, const cell* params)
 {
 	return Script::GetReference(params[1]);
 }
 
-cell PAWN::vaultmp_GetBase(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetBase(AMX*, const cell* params)
 {
 	return Script::GetBase(params[1]);
 }
@@ -684,200 +698,200 @@ cell PAWN::vaultmp_GetAngle(AMX* amx, const cell* params)
 	return 1;
 }
 
-cell PAWN::vaultmp_GetCell(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetCell(AMX*, const cell* params)
 {
 	return Script::GetCell(params[1]);
 }
 
-cell PAWN::vaultmp_IsNearPoint(AMX* amx, const cell* params)
+cell PAWN::vaultmp_IsNearPoint(AMX*, const cell* params)
 {
 	return Script::IsNearPoint(params[1], amx_ctof(params[2]), amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
 }
 
-cell PAWN::vaultmp_GetItemContainer(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetItemContainer(AMX*, const cell* params)
 {
 	return Script::GetItemContainer(params[1]);
 }
 
-cell PAWN::vaultmp_GetItemCount(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetItemCount(AMX*, const cell* params)
 {
 	return Script::GetItemCount(params[1]);
 }
 
-cell PAWN::vaultmp_GetItemCondition(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetItemCondition(AMX*, const cell* params)
 {
 	double value = Script::GetItemCondition(params[1]);
 	return amx_ftoc(value);
 }
 
-cell PAWN::vaultmp_GetItemEquipped(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetItemEquipped(AMX*, const cell* params)
 {
 	return Script::GetItemEquipped(params[1]);
 }
 
-cell PAWN::vaultmp_GetItemSilent(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetItemSilent(AMX*, const cell* params)
 {
 	return Script::GetItemSilent(params[1]);
 }
 
-cell PAWN::vaultmp_GetItemStick(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetItemStick(AMX*, const cell* params)
 {
 	return Script::GetItemStick(params[1]);
 }
 
-cell PAWN::vaultmp_GetContainerItemCount(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetContainerItemCount(AMX*, const cell* params)
 {
 	return Script::GetContainerItemCount(params[1], params[2]);
 }
 
-cell PAWN::vaultmp_GetActorValue(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetActorValue(AMX*, const cell* params)
 {
 	double value = Script::GetActorValue(params[1], params[2]);
 	return amx_ftoc(value);
 }
 
-cell PAWN::vaultmp_GetActorBaseValue(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetActorBaseValue(AMX*, const cell* params)
 {
 	double value = Script::GetActorBaseValue(params[1], params[2]);
 	return amx_ftoc(value);
 }
 
-cell PAWN::vaultmp_GetActorIdleAnimation(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetActorIdleAnimation(AMX*, const cell* params)
 {
 	return Script::GetActorIdleAnimation(params[1]);
 }
 
-cell PAWN::vaultmp_GetActorMovingAnimation(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetActorMovingAnimation(AMX*, const cell* params)
 {
 	return Script::GetActorMovingAnimation(params[1]);
 }
 
-cell PAWN::vaultmp_GetActorWeaponAnimation(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetActorWeaponAnimation(AMX*, const cell* params)
 {
 	return Script::GetActorWeaponAnimation(params[1]);
 }
 
-cell PAWN::vaultmp_GetActorAlerted(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetActorAlerted(AMX*, const cell* params)
 {
 	return Script::GetActorAlerted(params[1]);
 }
 
-cell PAWN::vaultmp_GetActorSneaking(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetActorSneaking(AMX*, const cell* params)
 {
 	return Script::GetActorSneaking(params[1]);
 }
 
-cell PAWN::vaultmp_GetActorDead(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetActorDead(AMX*, const cell* params)
 {
 	return Script::GetActorDead(params[1]);
 }
 
-cell PAWN::vaultmp_GetActorBaseRace(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetActorBaseRace(AMX*, const cell* params)
 {
 	return Script::GetActorBaseRace(params[1]);
 }
 
-cell PAWN::vaultmp_GetActorBaseSex(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetActorBaseSex(AMX*, const cell* params)
 {
 	return Script::GetActorBaseSex(params[1]);
 }
 
-cell PAWN::vaultmp_IsActorJumping(AMX* amx, const cell* params)
+cell PAWN::vaultmp_IsActorJumping(AMX*, const cell* params)
 {
 	return Script::IsActorJumping(params[1]);
 }
 
-cell PAWN::vaultmp_GetPlayerRespawn(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetPlayerRespawn(AMX*, const cell* params)
 {
 	return Script::GetPlayerRespawn(params[1]);
 }
 
-cell PAWN::vaultmp_GetPlayerSpawnCell(AMX* amx, const cell* params)
+cell PAWN::vaultmp_GetPlayerSpawnCell(AMX*, const cell* params)
 {
 	return Script::GetPlayerSpawnCell(params[1]);
 }
 
-cell PAWN::vaultmp_SetPos(AMX* amx, const cell* params)
+cell PAWN::vaultmp_SetPos(AMX*, const cell* params)
 {
 	return Script::SetPos(params[1], amx_ctof(params[2]), amx_ctof(params[3]), amx_ctof(params[4]));
 }
 
-cell PAWN::vaultmp_SetCell(AMX* amx, const cell* params)
+cell PAWN::vaultmp_SetCell(AMX*, const cell* params)
 {
 	return Script::SetCell(params[1], params[2], amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
 }
 
-cell PAWN::vaultmp_AddItem(AMX* amx, const cell* params)
+cell PAWN::vaultmp_AddItem(AMX*, const cell* params)
 {
 	return Script::AddItem(params[1], params[2], params[3], amx_ctof(params[4]), params[5]);
 }
 
-cell PAWN::vaultmp_RemoveItem(AMX* amx, const cell* params)
+cell PAWN::vaultmp_RemoveItem(AMX*, const cell* params)
 {
 	return Script::RemoveItem(params[1], params[2], params[3], params[4]);
 }
 
-cell PAWN::vaultmp_RemoveAllItems(AMX* amx, const cell* params)
+cell PAWN::vaultmp_RemoveAllItems(AMX*, const cell* params)
 {
 	Script::RemoveAllItems(params[1]);
 	return 1;
 }
 
-cell PAWN::vaultmp_SetActorValue(AMX* amx, const cell* params)
+cell PAWN::vaultmp_SetActorValue(AMX*, const cell* params)
 {
 	Script::SetActorValue(params[1], params[2], amx_ctof(params[3]));
 	return 1;
 }
 
-cell PAWN::vaultmp_SetActorBaseValue(AMX* amx, const cell* params)
+cell PAWN::vaultmp_SetActorBaseValue(AMX*, const cell* params)
 {
 	Script::SetActorBaseValue(params[1], params[2], amx_ctof(params[3]));
 	return 1;
 }
 
-cell PAWN::vaultmp_EquipItem(AMX* amx, const cell* params)
+cell PAWN::vaultmp_EquipItem(AMX*, const cell* params)
 {
 	return Script::EquipItem(params[1], params[2], params[3], params[4]);
 }
 
-cell PAWN::vaultmp_UnequipItem(AMX* amx, const cell* params)
+cell PAWN::vaultmp_UnequipItem(AMX*, const cell* params)
 {
 	return Script::UnequipItem(params[1], params[2], params[3], params[4]);
 }
 
-cell PAWN::vaultmp_PlayIdle(AMX* amx, const cell* params)
+cell PAWN::vaultmp_PlayIdle(AMX*, const cell* params)
 {
 	return Script::PlayIdle(params[1], params[2]);
 }
 
-cell PAWN::vaultmp_KillActor(AMX* amx, const cell* params)
+cell PAWN::vaultmp_KillActor(AMX*, const cell* params)
 {
 	Script::KillActor(params[1], params[2], params[3]);
 	return 1;
 }
 
-cell PAWN::vaultmp_SetActorBaseRace(AMX* amx, const cell* params)
+cell PAWN::vaultmp_SetActorBaseRace(AMX*, const cell* params)
 {
 	return Script::SetActorBaseRace(params[1], params[2]);
 }
 
-cell PAWN::vaultmp_AgeActorBaseRace(AMX* amx, const cell* params)
+cell PAWN::vaultmp_AgeActorBaseRace(AMX*, const cell* params)
 {
 	return Script::AgeActorBaseRace(params[1], params[2]);
 }
 
-cell PAWN::vaultmp_SetActorBaseSex(AMX* amx, const cell* params)
+cell PAWN::vaultmp_SetActorBaseSex(AMX*, const cell* params)
 {
 	return Script::SetActorBaseSex(params[1], params[2]);
 }
 
-cell PAWN::vaultmp_SetPlayerRespawn(AMX* amx, const cell* params)
+cell PAWN::vaultmp_SetPlayerRespawn(AMX*, const cell* params)
 {
 	Script::SetPlayerRespawn(params[1], params[2]);
 	return 1;
 }
 
-cell PAWN::vaultmp_SetPlayerSpawnCell(AMX* amx, const cell* params)
+cell PAWN::vaultmp_SetPlayerSpawnCell(AMX*, const cell* params)
 {
 	Script::SetPlayerSpawnCell(params[1], params[2]);
 	return 1;
@@ -928,7 +942,9 @@ cell PAWN::Call(AMX* amx, const char* name, const char* argl, int buf, ...)
 		if (err != AMX_ERR_NONE)
 			throw VaultException("PAWN runtime error (%d): \"%s\"", err, aux_StrError(err));
 
-		for (int i = 0; i < strlen(argl); i++)
+		unsigned int len = strlen(argl);
+
+		for (unsigned int i = 0; i < len; i++)
 		{
 			switch (argl[i])
 			{

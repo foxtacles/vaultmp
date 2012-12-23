@@ -12,19 +12,13 @@ class NetworkClient : public Network
 		friend class Game;
 
 	private:
-
-		NetworkClient();
+		NetworkClient() = delete;
 
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
+		static DebugInput<NetworkClient> debug;
 #endif
 
 	public:
-
-#ifdef VAULTMP_DEBUG
-		static void SetDebugHandler(Debug* debug);
-#endif
-
 		/**
 		 * \brief Processes an event of a given type
 		 *
@@ -36,7 +30,7 @@ class NetworkClient : public Network
 		 *
 		 * Returns a NetworkResponse to send to the server
 		 */
-		static NetworkResponse ProcessPacket(Packet* data);
+		static NetworkResponse ProcessPacket(RakNet::Packet* data);
 
 };
 

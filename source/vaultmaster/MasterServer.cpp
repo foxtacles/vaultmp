@@ -82,24 +82,23 @@ void MasterServer::MasterThread()
 						query.Write(players);
 						query.Write(playersMax);
 						query.Write(game);
-						query.Write((int) rules.size());
+						query.Write(rules.size());
 
-						for (std::map<string, string>::iterator k = rules.begin(); k != rules.end(); ++k)
+						for (const auto& k : rules)
 						{
-							RakString key(k->first.c_str());
-							RakString value(k->second.c_str());
+							RakString key(k.first.c_str());
+							RakString value(k.second.c_str());
 							query.Write(key);
 							query.Write(value);
 						}
 
-						query.Write((int) modfiles.size());
+						query.Write(modfiles.size());
 
-						for(unsigned k = 0; k < modfiles.size(); ++k)
+						for (const auto& k : modfiles)
 						{
-						    RakString mod_name(modfiles.at(k).c_str());
+						    RakString mod_name(k.c_str());
 						    query.Write(mod_name);
 						}
-
 					}
 
 					peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, packet->systemAddress, false, 0);
@@ -141,25 +140,23 @@ void MasterServer::MasterThread()
 						query.Write(players);
 						query.Write(playersMax);
 						query.Write(game);
-						query.Write((int) rules.size());
+						query.Write(rules.size());
 
-						for (std::map<string, string>::iterator k = rules.begin(); k != rules.end(); ++k)
+						for (const auto& k : rules)
 						{
-							RakString key(k->first.c_str());
-							RakString value(k->second.c_str());
+							RakString key(k.first.c_str());
+							RakString value(k.second.c_str());
 							query.Write(key);
 							query.Write(value);
 						}
 
-						query.Write((int) modfiles.size());
+						query.Write(modfiles.size());
 
-						for(unsigned k = 0; k < modfiles.size(); ++k)
+						for (const auto& k : modfiles)
 						{
-						    RakString mod_name(modfiles.at(k).c_str());
+						    RakString mod_name(k.c_str());
 						    query.Write(mod_name);
 						}
-
-
 					}
 
 					peer->Send(&query, HIGH_PRIORITY, RELIABLE, 0, packet->systemAddress, false, 0);
@@ -183,7 +180,7 @@ void MasterServer::MasterThread()
 					if (announce)
 					{
 						RakString name, map;
-						unsigned int players, playersMax, rsize, mfsize;
+						unsigned int players, playersMax, rsize, msize;
 						unsigned char game;
 
 						query.Read(name);
@@ -201,7 +198,6 @@ void MasterServer::MasterThread()
 							k = serverList.insert(make_pair(packet->systemAddress, ServerEntry(name.C_String(), map.C_String(), make_pair(players, playersMax), 999, game)));
 							entry = &(k.first)->second;
 						}
-
 						else
 						{
 							entry = &i->second;
@@ -218,20 +214,16 @@ void MasterServer::MasterThread()
 							entry->SetServerRule(key.C_String(), value.C_String());
 						}
 
-						query.Read(mfsize);
-
 						entry->ClearModFiles();
+						query.Read(msize);
 
-                        for (unsigned int j = 0; j < mfsize; j++)
+                        for (unsigned int j = 0; j < msize; j++)
                         {
                             RakString mod_name;
                             query.Read(mod_name);
                             entry->SetModFiles(mod_name.C_String());
                         }
-
-
 					}
-
 					else if (i != serverList.end())
 						serverList.erase(i);
 

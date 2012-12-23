@@ -852,6 +852,7 @@ amx_exec_run:
     ldrge r12, [r0], #4
     strge r12, [r1], #4
     bgt .movs4loop
+    addlt r11, r11, #4          @ undo subtraction of 4-byte word, if not zero
 .movs1loop:
     subs r11, r11, #1
     ldrbge r12, [r0], #1

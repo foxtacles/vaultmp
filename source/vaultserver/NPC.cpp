@@ -1,6 +1,8 @@
 #include "NPC.h"
 #include "Race.h"
 
+using namespace std;
+
 unordered_map<unsigned int, const NPC*> NPC::npcs;
 
 NPC::NPC(const string& table, sqlite3_stmt* stmt) : new_female(-1), new_race(0x00000000)
@@ -50,29 +52,24 @@ NPC::NPC(const string& table, sqlite3_stmt* stmt) : new_female(-1), new_race(0x0
 	npcs.emplace(baseID, this);
 }
 
-NPC::~NPC()
-{
-	npcs.erase(baseID);
-}
-
-const NPC& NPC::Lookup(unsigned int baseID)
+Expected<const NPC*> NPC::Lookup(unsigned int baseID)
 {
 	auto it = npcs.find(baseID);
 
 	if (it != npcs.end())
-		return *it->second;
+		return it->second;
 
-	throw VaultException("No NPC with baseID %08X found", baseID);
+	return VaultException("No NPC with baseID %08X found", baseID);
 }
 
-const NPC& NPC::GetNPCNotIn(const unordered_set<unsigned int>& _set, const function<bool(const NPC&)>& pred)
+Expected<const NPC*> NPC::GetNPCNotIn(const unordered_set<unsigned int>& _set, const function<bool(const NPC&)>& pred)
 {
 	auto it = find_if(npcs.begin(), npcs.end(), [&](const pair<const unsigned int, const NPC*>& npcs) { return !_set.count(npcs.first) && pred(*npcs.second); });
 
 	if (it != npcs.end())
-		return *it->second;
+		return it->second;
 
-	throw VaultException("No NPC found which is not in the given set");
+	return VaultException("No NPC found which is not in the given set");
 }
 
 unsigned int NPC::GetBase() const
@@ -84,11 +81,10 @@ bool NPC::IsEssential() const
 {
 	if (template_ && (flags & TplFlags::Base))
 	{
-		try
-		{
-			return Lookup(template_).IsEssential();
-		}
-		catch (...) {}
+		auto npc = Lookup(template_);
+
+		if (npc)
+			return npc->IsEssential();
 	}
 
 	return essential;
@@ -98,11 +94,10 @@ bool NPC::IsFemale() const
 {
 	if (template_ && (flags & TplFlags::Traits))
 	{
-		try
-		{
-			return Lookup(template_).IsFemale();
-		}
-		catch (...) {}
+		auto npc = Lookup(template_);
+
+		if (npc)
+			return npc->IsFemale();
 	}
 
 	return ((new_female != -1) ? new_female : female);
@@ -112,11 +107,10 @@ bool NPC::IsOriginalFemale() const
 {
 	if (template_ && (flags & TplFlags::Traits))
 	{
-		try
-		{
-			return Lookup(template_).IsOriginalFemale();
-		}
-		catch (...) {}
+		auto npc = Lookup(template_);
+
+		if (npc)
+			return npc->IsOriginalFemale();
 	}
 
 	return female;
@@ -126,11 +120,10 @@ unsigned int NPC::GetRace() const
 {
 	if (template_ && (flags & TplFlags::Traits))
 	{
-		try
-		{
-			return Lookup(template_).GetRace();
-		}
-		catch (...) {}
+		auto npc = Lookup(template_);
+
+		if (npc)
+			return npc->GetRace();
 	}
 
 	return (new_race ? new_race : race);
@@ -140,11 +133,10 @@ unsigned int NPC::GetOriginalRace() const
 {
 	if (template_ && (flags & TplFlags::Traits))
 	{
-		try
-		{
-			return Lookup(template_).GetOriginalRace();
-		}
-		catch (...) {}
+		auto npc = Lookup(template_);
+
+		if (npc)
+			return npc->GetOriginalRace();
 	}
 
 	return race;
@@ -164,11 +156,10 @@ unsigned int NPC::GetDeathItem() const
 {
 	if (template_ && (flags & TplFlags::Traits))
 	{
-		try
-		{
-			return Lookup(template_).GetDeathItem();
-		}
-		catch (...) {}
+		auto npc = Lookup(template_);
+
+		if (npc)
+			return npc->GetDeathItem();
 	}
 
 	return deathitem;
@@ -178,11 +169,10 @@ const vector<const BaseContainer*>& NPC::GetBaseContainer() const
 {
 	if (template_ && (flags & TplFlags::Inventory))
 	{
-		try
-		{
-			return Lookup(template_).GetBaseContainer();
-		}
-		catch (...) {}
+		auto npc = Lookup(template_);
+
+		if (npc)
+			return npc->GetBaseContainer();
 	}
 
 	return BaseContainer::Lookup(baseID);
@@ -192,26 +182,24 @@ void NPC::SetRace(unsigned int race) const
 {
 	if (template_ && (flags & TplFlags::Traits))
 	{
-		try
-		{
-			return Lookup(template_).SetRace(race);
-		}
-		catch (...) {}
+		auto npc = Lookup(template_);
+
+		if (npc)
+			return npc->SetRace(race);
 	}
 
-	Race::Lookup(race);
-	this->new_race = race;
+	if (Race::Lookup(race))
+		this->new_race = race;
 }
 
 void NPC::SetFemale(bool female) const
 {
 	if (template_ && (flags & TplFlags::Traits))
 	{
-		try
-		{
-			return Lookup(template_).SetFemale(female);
-		}
-		catch (...) {}
+		auto npc = Lookup(template_);
+
+		if (npc)
+			return npc->SetFemale(female);
 	}
 
 	this->new_female = female;

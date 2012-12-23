@@ -16,7 +16,7 @@
  *  License for the specific language governing permissions and limitations
  *  under the License.
  *
- *  Version: $Id: amxdgram.c 4541 2011-07-21 12:15:13Z thiadmer $
+ *  Version: $Id: amxdgram.c 4611 2011-12-05 17:46:53Z thiadmer $
  */
 #include <assert.h>
 #include <ctype.h>
@@ -134,7 +134,7 @@ static int udp_Receive(char *message,size_t maxmsg,char *source)
   size=recvfrom(sLocal, message, maxmsg - 1, 0, (struct sockaddr *)&sSource, &slen);
   if (size==-1)
     return -1;
-  assert(size < maxmsg);
+  assert((size_t)size < maxmsg);
   message[size] = '\0';
   if (source!=NULL)
     sprintf(source, "%s:%d", inet_ntoa(sSource.sin_addr), ntohs(sSource.sin_port));

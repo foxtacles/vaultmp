@@ -80,7 +80,7 @@ unsigned char ServerEntry::GetGame()
 	return game;
 }
 
-const std::vector<string> ServerEntry::GetServerModFiles()
+const std::vector<string>& ServerEntry::GetServerModFiles()
 {
     return modfiles;
 }

@@ -1,5 +1,7 @@
 #include "Utils.h"
 
+using namespace std;
+
 void Utils::timestamp()
 {
 	time_t ltime;
@@ -35,6 +37,7 @@ int Utils::progress_func(double TotalToDownload, double NowDownloaded)
     // and back to line begin - do not forget the fflush to avoid output buffering problems!
     printf("]\r");
     fflush(stdout);
+    return 1;
 }
 
 bool Utils::DoubleCompare(double a, double b, double epsilon)
@@ -102,7 +105,7 @@ const char* Utils::FileOnly(const char* path)
 	const char* tmp = path;
 	const char* end = path;
 
-	for (tmp; (tmp = strpbrk(tmp, "\\/")) != nullptr; end = ++tmp);
+	for (; (tmp = strpbrk(tmp, "\\/")) != nullptr; end = ++tmp);
 
 	return end;
 }
@@ -133,7 +136,6 @@ BOOL Utils::GenerateChecksum(const string& szFilename,
 	HANDLE hFile = INVALID_HANDLE_VALUE;
 	HANDLE hFileMapping = nullptr;
 	PVOID pBaseAddress = nullptr;
-	DWORD dwFileLength = 0;
 	DWORD dwHeaderSum; // Checksum as stated by Header
 	DWORD dwCheckSum; // Calculated Checksum
 
@@ -166,7 +168,7 @@ BOOL Utils::GenerateChecksum(const string& szFilename,
 
 	/////////////////////////////////////////////////////////////
 	DWORD dwSize = 0;
-	LARGE_INTEGER liSize = { 0, 0 };
+	LARGE_INTEGER liSize = { { 0, 0 } };
 
 	if (TRUE == GetFileSizeEx(hFile, &liSize))
 	{

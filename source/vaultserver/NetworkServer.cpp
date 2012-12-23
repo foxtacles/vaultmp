@@ -1,18 +1,11 @@
 #include "NetworkServer.h"
 #include "Dedicated.h"
 
-#ifdef VAULTMP_DEBUG
-Debug* NetworkServer::debug = nullptr;
-#endif
+using namespace std;
+using namespace RakNet;
 
 #ifdef VAULTMP_DEBUG
-void NetworkServer::SetDebugHandler(Debug* debug)
-{
-	NetworkServer::debug = debug;
-
-	if (debug)
-		debug->Print("Attached debug handler to Network class", true);
-}
+DebugInput<NetworkServer> NetworkServer::debug;
 #endif
 
 NetworkResponse NetworkServer::ProcessEvent(unsigned char id)
@@ -33,7 +26,6 @@ NetworkResponse NetworkServer::ProcessEvent(unsigned char id)
 NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 {
 	NetworkResponse response;
-	pDefault* packet;
 
 	switch (data->data[0])
 	{
@@ -42,7 +34,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 			Utils::timestamp();
 			printf("Connected to MasterServer (%s)\n", data->systemAddress.ToString());
 #ifdef VAULTMP_DEBUG
-			debug->PrintFormat("Connected to MasterServer (%s)", true, data->systemAddress.ToString());
+			debug.print("Connected to MasterServer (", data->systemAddress.ToString(), ")");
 #endif
 
 			Dedicated::master = data->systemAddress;
@@ -60,14 +52,14 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 				case ID_DISCONNECTION_NOTIFICATION:
 					printf("Client disconnected (%s)\n", data->systemAddress.ToString());
 #ifdef VAULTMP_DEBUG
-					debug->PrintFormat("Client disconnected (%s)", true, data->systemAddress.ToString());
+					debug.print("Client disconnected (", data->systemAddress.ToString(), ")");
 #endif
 					break;
 
 				case ID_CONNECTION_LOST:
 					printf("Lost connection (%s)\n", data->systemAddress.ToString());
 #ifdef VAULTMP_DEBUG
-					debug->PrintFormat("Lost connection (%s)", true, data->systemAddress.ToString());
+					debug.print("Lost connection (", data->systemAddress.ToString(), ")");
 #endif
 					break;
 			}
@@ -81,7 +73,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 			Utils::timestamp();
 			printf("New incoming connection from %s\n", data->systemAddress.ToString());
 #ifdef VAULTMP_DEBUG
-			debug->PrintFormat("New incoming connection from %s", true, data->systemAddress.ToString());
+			debug.print("New incoming connection from ", data->systemAddress.ToString());
 #endif
 			break;
 		}
@@ -91,7 +83,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 			Utils::timestamp();
 			printf("MasterServer version mismatch (%s)\n", data->systemAddress.ToString());
 #ifdef VAULTMP_DEBUG
-			debug->PrintFormat("MasterServer version mismatch (%s)", true, data->systemAddress.ToString());
+			debug.print("MasterServer version mismatch (", data->systemAddress.ToString(), ")");
 #endif
 			break;
 		}
@@ -150,8 +142,8 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					NetworkID id;
 					double X, Y, Z;
 					PacketFactory::Access<pTypes::ID_UPDATE_POS>(packet, id, X, Y, Z);
-					FactoryObject reference = GameFactory::GetObject(id);
-					response = Server::GetPos(data->guid, reference, X, Y, Z);
+					auto reference = GameFactory::GetObject(id);
+					response = Server::GetPos(data->guid, reference.get(), X, Y, Z);
 					break;
 				}
 
@@ -161,8 +153,8 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					unsigned char axis;
 					double value;
 					PacketFactory::Access<pTypes::ID_UPDATE_ANGLE>(packet, id, axis, value);
-					FactoryObject reference = GameFactory::GetObject(id);
-					response = Server::GetAngle(data->guid, reference, axis, value);
+					auto reference = GameFactory::GetObject(id);
+					response = Server::GetAngle(data->guid, reference.get(), axis, value);
 					break;
 				}
 
@@ -171,8 +163,8 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					NetworkID id;
 					unsigned int cell;
 					PacketFactory::Access<pTypes::ID_UPDATE_CELL>(packet, id, cell);
-					FactoryObject reference = GameFactory::GetObject(id);
-					response = Server::GetCell(data->guid, reference, cell);
+					auto reference = GameFactory::GetObject(id);
+					response = Server::GetCell(data->guid, reference.get(), cell);
 					break;
 				}
 
@@ -181,8 +173,8 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					NetworkID id;
 					pair<list<NetworkID>, vector<pPacket>> ndiff, gdiff;
 					PacketFactory::Access<pTypes::ID_UPDATE_CONTAINER>(packet, id, ndiff, gdiff);
-					FactoryObject reference = GameFactory::GetObject(id);
-					response = Server::GetContainerUpdate(data->guid, reference, ndiff, gdiff);
+					auto reference = GameFactory::GetObject<Container>(id);
+					response = Server::GetContainerUpdate(data->guid, reference.get(), ndiff, gdiff);
 					break;
 				}
 
@@ -193,8 +185,8 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					unsigned char index;
 					double value;
 					PacketFactory::Access<pTypes::ID_UPDATE_VALUE>(packet, id, base, index, value);
-					FactoryObject reference = GameFactory::GetObject(id);
-					response = Server::GetActorValue(data->guid, reference, base, index, value);
+					auto reference = GameFactory::GetObject<Actor>(id);
+					response = Server::GetActorValue(data->guid, reference.get(), base, index, value);
 					break;
 				}
 
@@ -205,8 +197,8 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					unsigned char moving, movingxy, weapon;
 					bool alerted, sneaking, firing;
 					PacketFactory::Access<pTypes::ID_UPDATE_STATE>(packet, id, idle, moving, movingxy, weapon, alerted, sneaking, firing);
-					FactoryObject reference = GameFactory::GetObject(id);
-					response = Server::GetActorState(data->guid, reference, idle, moving, movingxy, weapon, alerted, sneaking);
+					auto reference = GameFactory::GetObject<Actor>(id);
+					response = Server::GetActorState(data->guid, reference.get(), idle, moving, movingxy, weapon, alerted, sneaking);
 					break;
 				}
 
@@ -217,8 +209,8 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					unsigned short limbs;
 					signed char cause;
 					PacketFactory::Access<pTypes::ID_UPDATE_DEAD>(packet, id, dead, limbs, cause);
-					FactoryObject reference = GameFactory::GetObject(id);
-					response = Server::GetActorDead(data->guid, reference, dead, limbs, cause);
+					auto reference = GameFactory::GetObject<Actor>(id);
+					response = Server::GetActorDead(data->guid, reference.get(), dead, limbs, cause);
 					break;
 				}
 
@@ -227,8 +219,8 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					NetworkID id;
 					unsigned char control, key;
 					PacketFactory::Access<pTypes::ID_UPDATE_CONTROL>(packet, id, control, key);
-					FactoryObject reference = GameFactory::GetObject(id);
-					response = Server::GetPlayerControl(data->guid, reference, control, key);
+					auto reference = GameFactory::GetObject<Player>(id);
+					response = Server::GetPlayerControl(data->guid, reference.get(), control, key);
 					break;
 				}
 

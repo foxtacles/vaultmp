@@ -65,7 +65,7 @@ int  ini_getkey(const TCHAR *Section, int idx, TCHAR *Buffer, int BufferSize, co
       { return ini_getl(Section.c_str(), Key.c_str(), DefValue, iniFilename.c_str()); }
 
     long geti(const std::string& Section, const std::string& Key, int DefValue=0) const
-      { (int) this->getl(Section, Key, DefValue); }
+      { return reinterpret_cast<int>( this->getl(Section, Key, DefValue) ); }
 
     std::string gets(const std::string& Section, const std::string& Key, const std::string& DefValue="") const
       {
@@ -79,6 +79,12 @@ int  ini_getkey(const TCHAR *Section, int idx, TCHAR *Buffer, int BufferSize, co
 
     bool put(const std::string& Section, const std::string& Key, const std::string& Value) const
       { return ini_puts(Section.c_str(), Key.c_str(), Value.c_str(), iniFilename.c_str()); }
+
+    int getsection(int idx, TCHAR *Buffer, int BufferSize) const
+      { return return ini_getsection(idx, Buffer, BufferSize, iniFilename.c_str()); }
+
+    int getkey(const std::string& Section, int idx, TCHAR *Buffer, int BufferSize) const
+      { return return ini_getsection(Section.c_str(), idx, Buffer, BufferSize, iniFilename.c_str()); }
 
   private:
     std::string iniFilename;

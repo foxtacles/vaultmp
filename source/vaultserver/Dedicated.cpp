@@ -1,7 +1,7 @@
 #include "Dedicated.h"
 
-using namespace RakNet;
 using namespace std;
+using namespace RakNet;
 
 RakPeerInterface* Dedicated::peer;
 SocketDescriptor* Dedicated::sockdescr;
@@ -16,8 +16,9 @@ TimeMS Dedicated::announcetime;
 ServerEntry* Dedicated::self = nullptr;
 unsigned int Dedicated::cell;
 ModList Dedicated::modfiles;
+
 #ifdef VAULTMP_DEBUG
-Debug* Dedicated::debug;
+DebugInput<Dedicated> Dedicated::debug;
 #endif
 
 bool Dedicated::thread;
@@ -66,12 +67,12 @@ void Dedicated::Announce(bool announce)
 		if (announce)
 		{
 			query.Write((MessageID) ID_MASTER_ANNOUNCE);
-			query.Write((bool) true);
+			query.Write(true);
 
 			RakString name(self->GetServerName().c_str());
 			RakString _map(self->GetServerMap().c_str());
-			int players = self->GetServerPlayers().first;
-			int playersMax = self->GetServerPlayers().second;
+			unsigned int players = self->GetServerPlayers().first;
+			unsigned int playersMax = self->GetServerPlayers().second;
 			unsigned char game = self->GetGame();
 			map<string, string> rules = self->GetServerRules();
 
@@ -82,32 +83,30 @@ void Dedicated::Announce(bool announce)
 			query.Write(game);
 			query.Write(rules.size());
 
-			for (map<string, string>::const_iterator i = rules.begin(); i != rules.end(); ++i)
+			for (const auto& i : rules)
 			{
-				RakString key(i->first.c_str());
-				RakString value(i->second.c_str());
+				RakString key(i.first.c_str());
+				RakString value(i.second.c_str());
 				query.Write(key);
 				query.Write(value);
 			}
 
-			query.Write((int) modfiles.size()); //Writes size of modfile data
+			query.Write(modfiles.size());
 
-			for(vector<pair<string, unsigned int>>::const_iterator j = modfiles.begin(); j != modfiles.end(); j++)
+			for (const auto& j : modfiles)
 			{
-			    RakString name(j->first.c_str());
+			    RakString name(j.first.c_str());
 			    query.Write(name);
 			}
 		}
-
 		else
 		{
 			query.Write((MessageID) ID_MASTER_ANNOUNCE);
-			query.Write((bool) false);
+			query.Write(false);
 		}
 
 		peer->Send(&query, HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_SYSTEM, master, false, 0);
 	}
-
 	else
 	{
 		Utils::timestamp();
@@ -135,8 +134,8 @@ void Dedicated::Query(Packet* packet)
 
 		RakString name(self->GetServerName().c_str());
 		RakString _map(self->GetServerMap().c_str());
-		int players = self->GetServerPlayers().first;
-		int playersMax = self->GetServerPlayers().second;
+		unsigned int players = self->GetServerPlayers().first;
+		unsigned int playersMax = self->GetServerPlayers().second;
 		unsigned char game = self->GetGame();
 		map<string, string> rules = self->GetServerRules();
 
@@ -145,21 +144,21 @@ void Dedicated::Query(Packet* packet)
 		query.Write(players);
 		query.Write(playersMax);
 		query.Write(game);
-		query.Write((int) rules.size());
+		query.Write(rules.size());
 
-		for (map<string, string>::const_iterator i = rules.begin(); i != rules.end(); ++i)
+		for (const auto& i : rules)
 		{
-			RakString key(i->first.c_str());
-			RakString value(i->second.c_str());
+			RakString key(i.first.c_str());
+			RakString value(i.second.c_str());
 			query.Write(key);
 			query.Write(value);
 		}
 
-		query.Write((int) modfiles.size());
+		query.Write(modfiles.size());
 
-		for(unsigned k = 0; k < modfiles.size(); ++k)
+		for (const auto& k : modfiles)
         {
-            RakString mod_name(modfiles.at(k).first.c_str());
+            RakString mod_name(k.first.c_str());
             query.Write(mod_name);
         }
 
@@ -168,7 +167,6 @@ void Dedicated::Query(Packet* packet)
 		Utils::timestamp();
 		printf("Query processed (%s)\n", packet->systemAddress.ToString());
 	}
-
 	else
 	{
 		Utils::timestamp();
@@ -179,31 +177,22 @@ void Dedicated::Query(Packet* packet)
 
 class FileProgress : public FileListProgress
 {
-		virtual void OnFilePush(const char* fileName, unsigned int fileLengthBytes, unsigned int offset, unsigned int bytesBeingSent, bool done, SystemAddress targetSystem)
+		virtual void OnFilePush(const char* fileName, unsigned int, unsigned int, unsigned int bytesBeingSent, bool, SystemAddress targetSystem)
 		{
 			Utils::timestamp();
 			printf("Sending %s (%d bytes) to %s\n", fileName, bytesBeingSent, targetSystem.ToString(false));
-#ifdef VAULTMP_DEBUG
-			Dedicated::debug->PrintFormat("Sending %s (%d bytes) to %s", true, fileName, bytesBeingSent, targetSystem.ToString(false));
-#endif
 		}
 
 		virtual void OnFilePushesComplete(SystemAddress systemAddress)
 		{
 			Utils::timestamp();
 			printf("Transfer complete (%s)\n", systemAddress.ToString(false));
-#ifdef VAULTMP_DEBUG
-			Dedicated::debug->PrintFormat("Transfer complete (%s)", true, systemAddress.ToString(false));
-#endif
 		}
 
 		virtual void OnSendAborted(SystemAddress systemAddress)
 		{
 			Utils::timestamp();
 			printf("Transfer aborted (%s)\n", systemAddress.ToString(false));
-#ifdef VAULTMP_DEBUG
-			Dedicated::debug->PrintFormat("Transfer aborted (%s)", true, systemAddress.ToString(false));
-#endif
 		}
 
 } fileProgress;
@@ -227,7 +216,7 @@ void Dedicated::FileThread()
 	unsigned int len;
 	unsigned int i = 1;
 
-	for (it = modfiles.begin(), i; it != modfiles.end(); ++it, i++)
+	for (it = modfiles.begin(); it != modfiles.end(); ++it, i++)
 	{
 		snprintf(file, sizeof(file), "%s/%s/%s", dir, MODFILES_PATH, it->first.c_str());
 		len = Utils::FileLength(file);
@@ -261,11 +250,10 @@ void Dedicated::DedicatedThread()
 
 	if (announce)
 	{
-		char buf[strlen(announce) + 1];
-		strcpy(buf, announce);
+		vector<char> buf(announce, announce + strlen(announce) + 1);
 		peer->Startup(connections + 1, sockdescr, 1, THREAD_PRIORITY_NORMAL);
 		peer->SetMaximumIncomingConnections(connections);
-		master.SetBinaryAddress(strtok(buf, ":"));
+		master.SetBinaryAddress(strtok(&buf[0], ":"));
 		char* cport = strtok(nullptr, ":");
 		master.SetPort(cport != nullptr ? atoi(cport) : RAKNET_MASTER_STANDARD_PORT);
 		peer->Connect(master.ToString(false), master.GetPort(), MASTER_VERSION, sizeof(MASTER_VERSION), 0, 0, 3, 500, 0);
@@ -278,29 +266,11 @@ void Dedicated::DedicatedThread()
 	}
 
 #ifdef VAULTMP_DEBUG
-	Debug* debug = new Debug("vaultserver");
-	Dedicated::debug = debug;
-	debug->PrintFormat("Vault-Tec Multiplayer Mod dedicated server debug log (%s)", false, DEDICATED_VERSION);
-	debug->PrintFormat("Local host: %s (game: %s)", false, peer->GetMyBoundAddress().ToString(), self->GetGame() == FALLOUT3 ? (char*) "Fallout 3" : (char*) "Fallout New Vegas");
-	debug->Print("Visit www.vaultmp.com for help and upload this log if you experience problems with the mod.", false);
-	debug->Print("-----------------------------------------------------------------------------------------------------", false);
-	//debug->PrintSystem();
-	API::SetDebugHandler(debug);
-	Database<Record>::SetDebugHandler(debug);
-	Database<Exterior>::SetDebugHandler(debug);
-	Database<Weapon>::SetDebugHandler(debug);
-	Database<Race>::SetDebugHandler(debug);
-	Database<NPC>::SetDebugHandler(debug);
-	Database<BaseContainer>::SetDebugHandler(debug);
-	VaultException::SetDebugHandler(debug);
-	NetworkServer::SetDebugHandler(debug);
-	Lockable::SetDebugHandler(debug);
-	Object::SetDebugHandler(debug);
-	Item::SetDebugHandler(debug);
-	Container::SetDebugHandler(debug);
-	Actor::SetDebugHandler(debug);
-	Player::SetDebugHandler(debug);
-	GameFactory::SetDebugHandler(debug);
+	Debug::SetDebugHandler("vaultserver");
+	debug.note("Vault-Tec Multiplayer Mod dedicated server debug log (", DEDICATED_VERSION, ")");
+	debug.note("Local host: ", peer->GetMyBoundAddress().ToString(), " (", self->GetGame() == FALLOUT3 ? "Fallout 3" : "Fallout New Vegas", ")");
+	debug.note("Visit www.vaultmp.com for help and upload this log if you experience problems with the mod.");
+	debug.note("-----------------------------------------------------------------------------------------------------");
 #endif
 
 	try
@@ -397,8 +367,8 @@ void Dedicated::DedicatedThread()
 	API::Terminate();
 
 #ifdef VAULTMP_DEBUG
-	debug->Print("Network thread is going to terminate", true);
-	VaultException::FinalizeDebug();
+	debug.print("Network thread is going to terminate");
+	Debug::SetDebugHandler(nullptr);
 #endif
 }
 

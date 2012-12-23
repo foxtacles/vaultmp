@@ -1,6 +1,9 @@
 #ifndef VAULTMP_H
 #define VAULTMP_H
 
+// FIXME
+#pragma GCC diagnostic ignored "-Wstrict-aliasing"
+
 #ifndef THREAD_PRIORITY_NORMAL
 #define THREAD_PRIORITY_NORMAL 1000
 #endif
@@ -49,7 +52,9 @@ static const unsigned char RAKNET_FILE_RDY      =   0x01;
 static const unsigned char FILE_MODFILE         =   0x02;
 
 #ifndef __WIN32__
-#define stricmp strcasecmp
+#ifndef stricmp
+  #define stricmp strcasecmp
+#endif
 #define ZeroMemory(a, b) memset(a, 0, b)
 #endif
 

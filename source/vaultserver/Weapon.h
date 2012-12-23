@@ -6,10 +6,9 @@
 #include "vaultmp.h"
 #include "vaultserver.h"
 #include "Database.h"
+#include "Expected.h"
 
 #include "sqlite/sqlite3.h"
-
-using namespace std;
 
 /**
  * \brief Represents a game weapon
@@ -18,7 +17,7 @@ using namespace std;
 class Weapon
 {
 	private:
-		static unordered_map<unsigned int, const Weapon*> weapons;
+		static std::unordered_map<unsigned int, const Weapon*> weapons;
 
 		unsigned int baseID;
 		double damage;
@@ -31,7 +30,7 @@ class Weapon
 		Weapon& operator=(const Weapon& p) = delete;
 
 	public:
-		static const Weapon& Lookup(unsigned int baseID);
+		static Expected<const Weapon*> Lookup(unsigned int baseID);
 
 		unsigned int GetBase() const;
 		double GetDamage() const;
@@ -40,11 +39,11 @@ class Weapon
 		bool IsAutomatic() const;
 		unsigned int GetAmmo() const;
 
-		Weapon(const string& table, sqlite3_stmt* stmt);
+		Weapon(const std::string& table, sqlite3_stmt* stmt);
+		~Weapon() = default;
 		// must never be called. only defined because vector requires it
-		Weapon(Weapon&&) { terminate(); }
+		Weapon(Weapon&&) { std::terminate(); }
 		Weapon& operator=(Weapon&&) = delete;
-		~Weapon();
 };
 
 #endif

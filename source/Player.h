@@ -1,9 +1,6 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#define TYPECLASS
-#include "GameFactory.h"
-
 #include <string>
 #include <map>
 #include <vector>
@@ -15,8 +12,6 @@
 #endif
 
 const unsigned int FLAG_MOVCONTROLS      = FLAG_NOTALERT << 1;
-
-using namespace std;
 
 /**
  * \brief Derives from Actor class and represents a player in-game
@@ -32,11 +27,11 @@ class Player : public Actor
 	private:
 
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
+		static DebugInput<Player> debug;
 #endif
 
 #ifdef VAULTSERVER
-		static unordered_set<unsigned int> baseIDs;
+		static std::unordered_set<unsigned int> baseIDs;
 
 		static unsigned int default_respawn;
 		static unsigned int default_cell;
@@ -45,12 +40,12 @@ class Player : public Actor
 		Value<unsigned int> player_Cell;
 #endif
 
-		unordered_map<unsigned char, pair<Value<unsigned char>, Value<bool>>> player_Controls;
+		std::unordered_map<unsigned char, std::pair<Value<unsigned char>, Value<bool>>> player_Controls;
 
 		void initialize();
 
-		Player(const Player&);
-		Player& operator=(const Player&);
+		Player(const Player&) = delete;
+		Player& operator=(const Player&) = delete;
 
 	protected:
 		Player(unsigned int refID, unsigned int baseID);
@@ -59,9 +54,9 @@ class Player : public Actor
 	public:
 		virtual ~Player();
 
-		static const map<unsigned char, pair<double, double>> f3_default_values;
-		static const map<unsigned char, pair<double, double>> fnv_default_values;
-		static const map<unsigned int, tuple<unsigned int, double, bool, bool, bool>> default_items;
+		static const std::map<unsigned char, std::pair<double, double>> f3_default_values;
+		static const std::map<unsigned char, std::pair<double, double>> fnv_default_values;
+		static const std::map<unsigned int, std::tuple<unsigned int, double, bool, bool, bool>> default_items;
 
 #ifdef VAULTSERVER
 		static const unsigned int DEFAULT_PLAYER_RESPAWN = 8000;
@@ -86,7 +81,7 @@ class Player : public Actor
 		/**
 		 * \brief Returns the set of all used base IDs by players
 		 */
-		static const unordered_set<unsigned int>& GetBaseIDs();
+		static const std::unordered_set<unsigned int>& GetBaseIDs();
 #endif
 
 		/**
@@ -95,11 +90,7 @@ class Player : public Actor
 		 * Used to pass Player references matching the provided flags to the Interface
 		 * Can also be used to pass data of a given Player to the Interface
 		 */
-		static FuncParameter CreateFunctor(unsigned int flags, NetworkID id = 0);
-
-#ifdef VAULTMP_DEBUG
-		static void SetDebugHandler(Debug* debug);
-#endif
+		static FuncParameter CreateFunctor(unsigned int flags, RakNet::NetworkID id = 0);
 
 		/**
 		 * \brief Retrieves the key associated to the Player's control
@@ -155,11 +146,11 @@ class Player : public Actor
 class PlayerFunctor : public ActorFunctor
 {
 	public:
-		PlayerFunctor(unsigned int flags, NetworkID id) : ActorFunctor(flags, id) {}
+		PlayerFunctor(unsigned int flags, RakNet::NetworkID id) : ActorFunctor(flags, id) {}
 		virtual ~PlayerFunctor() {}
 
-		virtual vector<string> operator()();
-		virtual bool filter(FactoryObject& reference);
+		virtual std::vector<std::string> operator()();
+		virtual bool filter(FactoryObject<Reference>& reference);
 };
 
 #endif

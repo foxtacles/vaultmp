@@ -1,5 +1,7 @@
 #include "Race.h"
 
+using namespace std;
+
 unordered_map<unsigned int, const Race*> Race::races;
 
 Race::Race(const string& table, sqlite3_stmt* stmt)
@@ -40,19 +42,14 @@ Race::Race(const string& table, sqlite3_stmt* stmt)
 	races.emplace(baseID, this);
 }
 
-Race::~Race()
-{
-	races.erase(baseID);
-}
-
-const Race& Race::Lookup(unsigned int baseID)
+Expected<const Race*> Race::Lookup(unsigned int baseID)
 {
 	auto it = races.find(baseID);
 
 	if (it != races.end())
-		return *it->second;
+		return it->second;
 
-	throw VaultException("No race with baseID %08X found", baseID);
+	return VaultException("No race with baseID %08X found", baseID);
 }
 
 unsigned int Race::GetBase() const
@@ -83,7 +80,7 @@ unsigned int Race::GetAge() const
 	while (race->younger)
 	{
 		++age;
-		race = &Lookup(race->younger);
+		race = *Lookup(race->younger);
 	}
 
 	return age;
@@ -97,7 +94,7 @@ unsigned int Race::GetMaxAge() const
 	while (race->older)
 	{
 		++age;
-		race = &Lookup(race->older);
+		race = *Lookup(race->older);
 	}
 
 	return age;
@@ -105,12 +102,12 @@ unsigned int Race::GetMaxAge() const
 
 signed int Race::GetAgeDifference(unsigned int race) const
 {
-	const Race& other_race = Lookup(race);
+	const Race* other_race = *Lookup(race);
 
 	unsigned int age = GetAge();
 
-	if (age > other_race.GetMaxAge())
+	if (age > other_race->GetMaxAge())
 		return 0;
 
-	return other_race.GetAge() - age;
+	return other_race->GetAge() - age;
 }

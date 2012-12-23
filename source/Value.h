@@ -8,8 +8,6 @@
 #include "Debug.h"
 #endif
 
-using namespace std;
-
 /**
  * \brief A container class which simply stores a variable of type T
  *
@@ -23,7 +21,7 @@ class Value : public Lockable
 		T value;
 
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
+		static DebugInput<Value<T>> debug;
 #endif
 
 		Value& operator=(const Value&) = delete;
@@ -59,21 +57,11 @@ class Value : public Lockable
 		 * \brief Returns a pointer to the value
 		 */
 		T* operator->() { return &value; }
-
-#ifdef VAULTMP_DEBUG
-		static void SetDebugHandler(Debug* debug)
-		{
-			Value::debug = debug;
-
-			if (debug)
-				debug->PrintFormat("Attached debug handler to Value<%s> class", true, typeid(T).name());
-		}
-#endif
 };
 
 #ifdef VAULTMP_DEBUG
 template <typename T>
-Debug* Value<T>::debug;
+DebugInput<Value<T>> Value<T>::debug;
 #endif
 
 #endif

@@ -6,27 +6,12 @@
 #include "NPC.h"
 #include "BaseContainer.h"
 
-#ifdef VAULTMP_DEBUG
-template <typename T>
-Debug* Database<T>::debug = nullptr;
-#endif
+using namespace std;
 
 #ifdef VAULTMP_DEBUG
 template <typename T>
-void Database<T>::SetDebugHandler(Debug* debug)
-{
-	Database::debug = debug;
-
-	if (debug)
-		debug->PrintFormat("Attached debug handler to Database<%s> class", true, typeid(T).name());
-}
+DebugInput<Database<T>> Database<T>::debug;
 #endif
-
-template <typename T>
-Database<T>::Database()
-{
-
-}
 
 template <typename T>
 unsigned int Database<T>::initialize(const string& file, const vector<string>& tables)
@@ -136,17 +121,10 @@ unsigned int Database<T>::initialize(const string& file, const vector<string>& t
 	sqlite3_close(db);
 
 #ifdef VAULTMP_DEBUG
-	if (debug)
-		debug->PrintFormat("Successfully read %d records (%s) from %s", true, data.size(), typeid(T).name(), _file);
+	debug.print("Successfully read ", dec, data.size(), " records (", typeid(T).name(), ") from ", _file);
 #endif
 
 	return data.size();
-}
-
-template <typename T>
-Database<T>::~Database()
-{
-
 }
 
 template class Database<Record>;

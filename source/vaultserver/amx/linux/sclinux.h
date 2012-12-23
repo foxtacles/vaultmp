@@ -18,7 +18,9 @@
   #include "getch.h"
 #endif
 
-//#define	stricmp(a,b)    strcasecmp(a,b)
+#ifndef stricmp
+#define	stricmp(a,b)    strcasecmp(a,b)
+#endif
 #define	strnicmp(a,b,c) strncasecmp(a,b,c)
 
 /*

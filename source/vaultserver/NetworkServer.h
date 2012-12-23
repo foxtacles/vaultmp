@@ -13,19 +13,13 @@ class NetworkServer : public Network
 		friend class Dedicated;
 
 	private:
-
-		NetworkServer();
+		NetworkServer() = delete;
 
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
+		static DebugInput<NetworkServer> debug;
 #endif
 
 	public:
-
-#ifdef VAULTMP_DEBUG
-		static void SetDebugHandler(Debug* debug);
-#endif
-
 		/**
 		 * \brief Processes an event of a given type
 		 *
@@ -37,7 +31,7 @@ class NetworkServer : public Network
 		 *
 		 * Returns a NetworkResponse to send to the client(s)
 		 */
-		static NetworkResponse ProcessPacket(Packet* data);
+		static NetworkResponse ProcessPacket(RakNet::Packet* data);
 
 };
 

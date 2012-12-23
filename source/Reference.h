@@ -1,18 +1,16 @@
 #ifndef REFERENCE_H
 #define REFERENCE_H
 
+#include "RakNet.h"
+
 #include "Data.h"
 #include "Utils.h"
 #include "Value.h"
 #include "Network.h"
 #include "CriticalSection.h"
 #include "VaultFunctor.h"
-#include "RakNet/NetworkIDObject.h"
 #include "Interface.h"
 #include "PacketFactory.h"
-
-using namespace std;
-using namespace RakNet;
 
 /**
  * \brief The base class for all in-game types
@@ -20,16 +18,19 @@ using namespace RakNet;
  * Data specific to References are a reference ID, a base ID and a NetworkID
  */
 
+template<typename T>
 class FactoryObject;
 
-class Reference : private CriticalSection, public NetworkIDObject
+class Reference : private CriticalSection, public RakNet::NetworkIDObject
 {
 		friend class GameFactory;
+
+		template<typename T>
 		friend class FactoryObject;
 
 	private:
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
+		static DebugInput<Reference> debug;
 #endif
 
 		Value<unsigned int> refID;
@@ -49,10 +50,6 @@ class Reference : private CriticalSection, public NetworkIDObject
 
 	public:
 		virtual ~Reference();
-
-#ifdef VAULTMP_DEBUG
-		static void SetDebugHandler(Debug* debug);
-#endif
 
 		/**
 		 * \brief Retrieves the Reference's reference ID
@@ -113,16 +110,16 @@ class ReferenceFunctor : public VaultFunctor
 {
 	private:
 		unsigned int _flags;
-		NetworkID id;
+		RakNet::NetworkID id;
 
 	protected:
-		ReferenceFunctor(unsigned int flags, NetworkID id) : VaultFunctor(), _flags(flags), id(id) {}
+		ReferenceFunctor(unsigned int flags, RakNet::NetworkID id) : VaultFunctor(), _flags(flags), id(id) {}
 		virtual ~ReferenceFunctor() {}
 
-		virtual bool filter(FactoryObject& reference) = 0;
+		virtual bool filter(FactoryObject<Reference>& reference) = 0;
 
 		unsigned int flags() { return _flags; }
-		NetworkID get() { return id; }
+		RakNet::NetworkID get() { return id; }
 };
 
 #endif

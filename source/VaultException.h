@@ -10,14 +10,12 @@
 #include <typeinfo>
 
 #include "vaultmp.h"
-#include "Debug.h"
 
 #ifdef VAULTMP_DEBUG
+#include "Debug.h"
 #include "dbg/stack.hpp"
 #include <ostream>
 #endif
-
-using namespace std;
 
 /**
  * \brief The exception class of vaultmp
@@ -25,20 +23,20 @@ using namespace std;
  * Stores an exception message and is able to print it to either a MessageBox or to the console
  */
 
-class VaultException : public exception
+class VaultException : public std::exception
 {
 	private:
-		string error;
+		std::string error;
 
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
+		static DebugInput<VaultException> debug;
 		static void stacktrace();
 #endif
 
 		VaultException& operator=(const VaultException&) = delete;
 
 	public:
-		VaultException(const string& error);
+		VaultException(const std::string& error);
 		VaultException(const char* format, ...);
 		virtual ~VaultException() throw() {}
 
@@ -52,12 +50,6 @@ class VaultException : public exception
 		void Console();
 
 		virtual const char* what() const throw();
-
-#ifdef VAULTMP_DEBUG
-		static void SetDebugHandler(Debug* debug);
-		static void FinalizeDebug();
-#endif
-
 };
 
 #endif

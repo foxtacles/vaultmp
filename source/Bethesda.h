@@ -1,5 +1,3 @@
-#include "vaultmp.h"
-
 #include <winsock2.h>
 #include <cstdio>
 #include <shlwapi.h>
@@ -10,11 +8,9 @@
 #include <thread>
 #include <chrono>
 
-#include "RakNet/RakPeerInterface.h"
-#include "RakNet/MessageIdentifiers.h"
-#include "RakNet/BitStream.h"
-#include "RakNet/RakSleep.h"
+#include "RakNet.h"
 
+#include "vaultmp.h"
 #include "Data.h"
 #include "Player.h"
 #include "Container.h"
@@ -29,10 +25,7 @@
 #include "Debug.h"
 #endif
 
-using namespace RakNet;
-using namespace std;
-
-typedef vector<pair<string, unsigned int>> ModList;
+typedef std::vector<std::pair<std::string, unsigned int>> ModList;
 
 /**
  * \brief Starting point to run a vaultmp game
@@ -45,7 +38,7 @@ class Bethesda
 
 	private:
 		static unsigned char game;
-		static string password;
+		static std::string password;
 		static unsigned int inittime;
 		static bool multiinst;
 		static bool steam;
@@ -62,22 +55,22 @@ class Bethesda
 		/**
 		 * \brief Ends this session, cleanup
 		 */
-		static void Terminate(RakPeerInterface* peer);
+		static void Terminate(RakNet::RakPeerInterface* peer);
 
 		/**
 		 * \brief Lookup the ID of a given process name
 		 */
 		static DWORD lookupProgramID(const char process[]);
+
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
+		static DebugInput<Bethesda> debug;
 #endif
 
 		Bethesda() = delete;
-	public:
 
+	public:
 		/**
 		 * \brief Initializes Vault-Tec Multiplayer Mod
 		 */
-		static void InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, string name, string pwd, unsigned char game, bool multiinst, bool steam, unsigned int inittime);
-
+		static void InitializeVaultMP(RakNet::RakPeerInterface* peer, RakNet::SystemAddress server, const std::string& name, const std::string& pwd, unsigned char game, bool multiinst, bool steam, unsigned int inittime);
 };

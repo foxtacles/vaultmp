@@ -1,19 +1,12 @@
 #include "Item.h"
-#include "Container.h"
 #include "PacketFactory.h"
+#include "GameFactory.h"
+
+using namespace std;
+using namespace RakNet;
 
 #ifdef VAULTMP_DEBUG
-Debug* Item::debug;
-#endif
-
-#ifdef VAULTMP_DEBUG
-void Item::SetDebugHandler(Debug* debug)
-{
-	Item::debug = debug;
-
-	if (debug)
-		debug->Print("Attached debug handler to Item class", true);
-}
+DebugInput<Item> Item::debug;
 #endif
 
 Item::Item(unsigned int refID, unsigned int baseID) : Object(refID, baseID)
@@ -50,10 +43,10 @@ void Item::initialize()
 #ifdef VAULTSERVER
 	unsigned int baseID = this->GetBase();
 
-	const Record& record = Record::Lookup(baseID, vector<string>{"ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "CCRD", "CDCK", "CHIP", "CMNY", "ENCH", "IMOD", "KEYM", "MISC", "NOTE", "RCPE", "WEAP", "LIGH"});
+	const Record* record = *Record::Lookup(baseID, vector<string>{"ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "CCRD", "CDCK", "CHIP", "CMNY", "ENCH", "IMOD", "KEYM", "MISC", "NOTE", "RCPE", "WEAP", "LIGH"});
 
 	if (this->GetName().empty())
-		this->SetName(record.GetDescription());
+		this->SetName(record->GetDescription());
 #endif
 }
 
@@ -119,8 +112,7 @@ Lockable* Item::SetItemStick(bool stick)
 
 NetworkID Item::Copy() const
 {
-	FactoryObject reference = GameFactory::GetObject(GameFactory::CreateInstance(ID_ITEM, 0x00000000, this->GetBase()));
-	Item* item = vaultcast<Item>(reference);
+	FactoryObject<Item> item = GameFactory::GetObject<Item>(GameFactory::CreateInstance(ID_ITEM, 0x00000000, this->GetBase())).get();
 
 	item->SetItemContainer(this->GetItemContainer());
 	item->SetItemCount(this->GetItemCount());
@@ -135,10 +127,10 @@ NetworkID Item::Copy() const
 #ifdef VAULTSERVER
 Lockable* Item::SetBase(unsigned int baseID)
 {
-	const Record& record = Record::Lookup(baseID, vector<string>{"ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "CCRD", "CDCK", "CHIP", "CMNY", "ENCH", "IMOD", "KEYM", "MISC", "NOTE", "RCPE", "WEAP", "LIGH"});
+	const Record* record = *Record::Lookup(baseID, vector<string>{"ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "CCRD", "CDCK", "CHIP", "CMNY", "ENCH", "IMOD", "KEYM", "MISC", "NOTE", "RCPE", "WEAP", "LIGH"});
 
 	if (this->GetName().empty())
-		this->SetName(record.GetDescription());
+		this->SetName(record->GetDescription());
 
 	return Reference::SetBase(baseID);
 }

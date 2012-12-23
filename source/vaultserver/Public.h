@@ -1,7 +1,7 @@
 #ifndef PUBLIC_H
 #define PUBLIC_H
 
-#include <map>
+#include <unordered_map>
 #include <string>
 
 #include "boost/any.hpp"
@@ -13,9 +13,6 @@
 #include "../Debug.h"
 #include "../Network.h"
 
-using namespace std;
-using namespace RakNet;
-
 /**
  * \brief Create publics to use across all scripts
  */
@@ -25,21 +22,20 @@ class Public : public ScriptFunction
 	private:
 		~Public();
 
-		static map<string, Public*> publics;
+		static std::unordered_map<std::string, Public*> publics;
 
 	public:
-
-		Public(ScriptFunc _public, string name, string def);
-		Public(ScriptFuncPAWN _public, AMX* amx, string name, string def);
+		Public(ScriptFunc _public, const std::string& name, const std::string& def);
+		Public(ScriptFuncPAWN _public, AMX* amx, const std::string& name, const std::string& def);
 
 		/**
 		 * \brief Calls a public
 		 */
-		static unsigned long long Call(string name, const vector<boost::any>& args);
+		static unsigned long long Call(const std::string& name, const std::vector<boost::any>& args);
 		/**
 		 * \brief Retrieves the definition of a public
 		 */
-		static string GetDefinition(string name);
+		static std::string GetDefinition(const std::string& name);
 		/**
 		 * \brief Deletes all publics
 		 */

@@ -1,9 +1,7 @@
 #ifndef NETWORK_H
 #define NETWORK_H
 
-#include "RakNet/RakPeerInterface.h"
-#include "RakNet/MessageIdentifiers.h"
-#include "RakNet/NetworkIDManager.h"
+#include "RakNet.h"
 
 #include "vaultmp.h"
 #include "VaultException.h"
@@ -14,8 +12,6 @@
 #include <tuple>
 #include <deque>
 
-using namespace RakNet;
-
 /**
  * \brief The Network class provides basic facilities to create, send and queue packets
  *
@@ -24,7 +20,7 @@ using namespace RakNet;
 
 class Network
 {
-	typedef tuple<PacketPriority, PacketReliability, unsigned char> PacketDescriptor;
+	typedef std::tuple<PacketPriority, PacketReliability, unsigned char> PacketDescriptor;
 
 	public:
 		class SingleResponse {
@@ -34,10 +30,10 @@ class Network
 			private:
 				pPacket packet;
 				PacketDescriptor descriptor;
-				vector<RakNetGUID> targets;
+				std::vector<RakNet::RakNetGUID> targets;
 
-				SingleResponse(pPacket&& packet, PacketDescriptor descriptor, const vector<RakNetGUID>& targets) : packet(move(packet)), descriptor(descriptor), targets(targets) {}
-				SingleResponse(pPacket&& packet, PacketDescriptor descriptor, RakNetGUID target) : packet(move(packet)), descriptor(descriptor), targets(vector<RakNetGUID>{target}) {}
+				SingleResponse(pPacket&& packet, PacketDescriptor descriptor, const std::vector<RakNet::RakNetGUID>& targets) : packet(std::move(packet)), descriptor(descriptor), targets(targets) {}
+				SingleResponse(pPacket&& packet, PacketDescriptor descriptor, RakNet::RakNetGUID target) : packet(std::move(packet)), descriptor(descriptor), targets(std::vector<RakNet::RakNetGUID>{target}) {}
 
 			public:
 				~SingleResponse() = default;
@@ -47,30 +43,29 @@ class Network
 
 				// hack: initializer lists reference static memory... this ctor enables moving the packet
 				// NOT A COPY CTOR
-				SingleResponse(const SingleResponse& response) : SingleResponse(move(const_cast<SingleResponse&>(response))) {}
+				SingleResponse(const SingleResponse& response) : SingleResponse(std::move(const_cast<SingleResponse&>(response))) {}
 
-				const vector<RakNetGUID>& get_targets() const { return targets; }
+				const std::vector<RakNet::RakNetGUID>& get_targets() const { return targets; }
 				const pDefault* get_packet() const { return packet.get(); }
 		};
 
-		typedef vector<SingleResponse> NetworkResponse;
+		typedef std::vector<SingleResponse> NetworkResponse;
 
 	private:
 		Network() = delete;
 
 #ifdef VAULTMP_DEBUG
-		static Debug* debug;
+		static DebugInput<Network> debug;
 #endif
 
-		typedef deque<NetworkResponse> NetworkQueue;
+		typedef std::deque<NetworkResponse> NetworkQueue;
 
-		static NetworkIDManager manager;
+		static RakNet::NetworkIDManager manager;
 		static NetworkQueue queue;
 		static CriticalSection cs;
 		static bool dequeue;
 
 	public:
-
 		/**
 		 * \brief Creates a SingleResponse given multiple network targets
 		 *
@@ -80,7 +75,7 @@ class Network
 		 * channel sepcifies the RakNet channel to send this packet on
 		 * targets is a STL vector containing RakNetGUID's
 		 */
-		static SingleResponse CreateResponse(pPacket&& packet, PacketPriority priority, PacketReliability reliability, unsigned char channel, const vector<RakNetGUID>& targets);
+		static SingleResponse CreateResponse(pPacket&& packet, PacketPriority priority, PacketReliability reliability, unsigned char channel, const std::vector<RakNet::RakNetGUID>& targets);
 		/**
 		 * \brief Creates a SingleResponse given a single network target
 		 *
@@ -90,25 +85,25 @@ class Network
 		 * channel sepcifies the RakNet channel to send this packet on
 		 * target is a RakNetGUID
 		 */
-		static SingleResponse CreateResponse(pPacket&& packet, PacketPriority priority, PacketReliability reliability, unsigned char channel, RakNetGUID target);
+		static SingleResponse CreateResponse(pPacket&& packet, PacketPriority priority, PacketReliability reliability, unsigned char channel, RakNet::RakNetGUID target);
 		/**
 		 * \brief Sends a NetworkResponse over RakPeerInterface peer
 		 *
 		 * This function effectively deallocates the packets inside the NetworkResponse
 		 */
-		static void Dispatch(RakPeerInterface* peer, NetworkResponse&& response);
+		static void Dispatch(RakNet::RakPeerInterface* peer, NetworkResponse&& response);
 		/**
 		 * \brief Sends the next NetworkResponse in the queue over RakPeerInterface peer
 		 *
 		 * This function effectively deallocates the packet
 		 */
-		static bool Dispatch(RakPeerInterface* peer);
+		static bool Dispatch(RakNet::RakPeerInterface* peer);
 		/**
 		 * \brief Returns a pointer to the static NetworkIDManager
 		 *
 		 * Although not a const pointer, you must not delete the object
 		 */
-		static NetworkIDManager* Manager() { return &manager; }
+		static RakNet::NetworkIDManager* Manager() { return &manager; }
 		/**
 		 * \brief Queues a NetworkResponse
 		 */
@@ -121,10 +116,6 @@ class Network
 		 * \brief Flushes the queue
 		 */
 		static void Flush();
-
-#ifdef VAULTMP_DEBUG
-		static void SetDebugHandler(Debug* debug);
-#endif
 };
 
 using NetworkResponse = Network::NetworkResponse;
