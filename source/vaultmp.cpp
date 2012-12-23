@@ -1146,6 +1146,9 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 						selectedServer = (SystemAddress*) item.lParam;
 
+						if (!selectedServer)
+							break;
+
 						SendMessage(wndlistview2, LVM_DELETEALLITEMS, 0, 0);
 
 						map<SystemAddress, ServerEntry>::iterator i;
