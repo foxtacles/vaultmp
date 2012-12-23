@@ -219,6 +219,9 @@ void Bethesda::Initialize()
 			CloseHandle(pi.hThread);
 			CloseHandle(pi.hProcess);
 
+			// proper game ready signal here
+			this_thread::sleep_for(chrono::milliseconds(inittime));
+
 			initialized = true;
 		}
 		else

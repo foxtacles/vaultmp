@@ -1512,9 +1512,10 @@ void Game::net_ContainerUpdate(FactoryObject<Container>& reference, const Contai
 
 	ContainerDiff diff = Container::ToContainerDiff(ndiff);
 	NetworkID id = reference->GetNetworkID();
+	auto container = reference.operator ->();
 	GameFactory::LeaveReference(reference);
 
-	while (!(result = reference->getLock()));
+	while (!(result = container->getLock()));
 
 	reference = GameFactory::GetObject<Container>(id).get();
 

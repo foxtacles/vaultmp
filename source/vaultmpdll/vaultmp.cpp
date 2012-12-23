@@ -59,11 +59,11 @@ static unsigned int anim = 0x00;
 static unsigned int* _anim = NULL;
 static unsigned char game = 0x00;
 
-/*
+
 //Game ready hook address
 static const unsigned FalloutNVPatch_gamereadyhook = 0x403e05;
 static const unsigned FalloutNVPatch_gamereadyvariable = 0x401015;
-*/
+
 
 static const unsigned FalloutNVpatch_disableNAM = 0x01018814;
 static const unsigned FalloutNVpatch_pluginsVMP = 0x0108282D;
