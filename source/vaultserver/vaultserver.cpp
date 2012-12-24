@@ -43,12 +43,11 @@ void InputThread()
 
 				if (client)
 				{
-					try
-					{
-						unsigned int id = client->GetID();
-						printf("client ID: %d, player name: %s\n", id, vaultcast<Player>(GameFactory::GetObject(client->GetPlayer()))->GetName().c_str());
-					}
-					catch (...) {}
+					unsigned int id = client->GetID();
+					auto player = GameFactory::GetObject<Player>(client->GetPlayer());
+
+					if (player)
+						printf("client ID: %d, player name: %s\n", id, player->GetName().c_str());
 				}
 			}
 		}

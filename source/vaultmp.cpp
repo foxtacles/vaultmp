@@ -168,8 +168,11 @@ class FileServer : public FileListTransferCBInterface
 					GetModuleFileName(GetModuleHandle(nullptr), (LPTSTR) file, MAX_PATH);
 					PathRemoveFileSpec(file);
 
+					string _file(onFileStruct->fileName);
+					_file = Utils::str_replace(_file, "/", "\\");
+
 					strcat(file, "\\Data\\");
-					strcat(file, onFileStruct->fileName);
+					strcat(file, _file.c_str());
 					MakeSureDirectoryPathExists(file);
 					break;
 				}
