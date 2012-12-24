@@ -151,6 +151,8 @@ namespace vaultmp {
 		False   =   false
 	};
 
+	State operator!(State state) { return state ? False : True; }
+
 	enum Ref : uint32_t;
 	enum Base : uint32_t;
 	enum Cell : uint32_t;
