@@ -134,6 +134,12 @@ class Interface : public API
 				FuncParameter& operator= (FuncParameter&&) = default;
 				virtual ~FuncParameter() {}
 
+				const FuncParameter& connect(FuncParameter&& param) const
+				{
+					func.get()->connect(param.func.release());
+					return *this;
+				}
+
 				virtual const std::vector<std::string>& get() const
 				{
 					if (!initialized)

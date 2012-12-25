@@ -420,7 +420,7 @@ inline Expected<FactoryObject<T>> vaultcast(const FactoryObject<U>& object) noex
 {
 	auto result = FactoryObject<T>(object);
 
-	if (result)
+	if (result.template validate<T>())
 		return result;
 
 	return VaultException("vaultcast failed");

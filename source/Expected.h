@@ -109,7 +109,7 @@ class Expected
 			typedef decltype(test<U>(0)) type;
 		};
 
-		explicit operator bool() const { return valid && const_cast<Expected*>(this)->get(); }
+		explicit operator bool() const { return valid && value; }
 
 		template<typename U> typename std::enable_if<std::is_class<U>::value, typename result_star_operator<U>::type>::type star_operator(U& u) { return u.operator*(); }
 		template<typename U> typename std::enable_if<!std::is_class<U>::value, U&>::type star_operator(U& u) { return u; }

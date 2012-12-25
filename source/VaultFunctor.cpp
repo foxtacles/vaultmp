@@ -1,4 +1,5 @@
 #include "VaultFunctor.h"
+#include <winsock2.h>
 
 using namespace std;
 
@@ -23,5 +24,5 @@ VaultFunctor* VaultFunctor::connect(VaultFunctor* next)
 	if (!this->next)
 		return (this->next = next);
 	else
-		return nullptr;
+		return this->next->connect(next);
 }
