@@ -748,7 +748,7 @@ void Game::NewObject(FactoryObject<Object>& reference)
 	// experimental
 	if (refID != PLAYER_REFERENCE)
 	{
-		AsyncDispatch([=]
+		AsyncDispatch([refID]
 		{
 			try
 			{
@@ -761,18 +761,18 @@ void Game::NewObject(FactoryObject<Object>& reference)
 
 				unsigned int cell = player->GetGameCell();
 
-				if (reference->GetNetworkCell() == cell)
+				if (object->GetNetworkCell() == cell)
 				{
 					MoveTo(object, player, true);
-					reference->SetEnabled(true);
+					object->SetEnabled(true);
 				}
 				else
 				{
-					reference->SetEnabled(false);
+					object->SetEnabled(false);
 					ToggleEnabled(object);
 				}
 
-				reference->SetGameCell(cell);
+				object->SetGameCell(cell);
 			}
 			catch (...) {}
 		});
