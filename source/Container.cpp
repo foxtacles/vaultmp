@@ -41,7 +41,17 @@ Container::~Container()
 
 void Container::initialize()
 {
+#ifdef VAULTSERVER
+	unsigned int baseID = this->GetBase();
 
+	if (baseID != PLAYER_BASE)
+	{
+		const Record* record = *Record::Lookup(baseID, vector<string>{"CONT", "NPC_", "CREA"});
+
+		if (this->GetName().empty())
+			this->SetName(record->GetDescription());
+	}
+#endif
 }
 
 bool Container::Item_sort(NetworkID id, NetworkID id2)
@@ -518,8 +528,17 @@ list<NetworkID> Container::GetItemTypes(const string& type) const
 
 	return result;
 }
-#endif
 
+Lockable* Container::SetBase(unsigned int baseID)
+{
+	const Record* record = *Record::Lookup(baseID, vector<string>{"CONT", "NPC_", "CREA"});
+
+	if (this->GetName().empty())
+		this->SetName(record->GetDescription());
+
+	return Reference::SetBase(baseID);
+}
+#endif
 
 #ifdef VAULTMP_DEBUG
 void Container::PrintContainer() const

@@ -1153,6 +1153,9 @@ void Game::SetActorRace(const FactoryObject<Actor>& reference, signed int delta_
 	unsigned int baseID = reference->GetBase();
 	unsigned int race = reference->GetActorRace();
 
+	if (race == UINT_MAX)
+		return;
+
 	// set only once per base
 	if (baseRaces[baseID] == race)
 	{
@@ -1175,6 +1178,9 @@ void Game::SetActorRace(const FactoryObject<Actor>& reference, signed int delta_
 
 void Game::SetActorFemale(const FactoryObject<Actor>& reference, unsigned int key)
 {
+	if (reference->GetActorRace() == UINT_MAX)
+		return;
+
 	Interface::StartDynamic();
 
 	Interface::ExecuteCommand("SexChange", {reference->GetReferenceParam(), RawParameter(reference->GetActorFemale())}, key);

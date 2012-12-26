@@ -93,11 +93,15 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"GetPlayerRespawn", PAWN::vaultmp_GetPlayerRespawn},
 	{"GetPlayerSpawnCell", PAWN::vaultmp_GetPlayerSpawnCell},
 
+	{"DestroyObject", PAWN::vaultmp_DestroyObject},
 	{"SetPos", PAWN::vaultmp_SetPos},
 	{"SetCell", PAWN::vaultmp_SetCell},
+	{"CreateItem", PAWN::vaultmp_CreateItem},
+	{"CreateContainer", PAWN::vaultmp_CreateContainer},
 	{"AddItem", PAWN::vaultmp_AddItem},
 	{"RemoveItem", PAWN::vaultmp_RemoveItem},
 	{"RemoveAllItems", PAWN::vaultmp_RemoveAllItems},
+	{"CreateActor", PAWN::vaultmp_CreateActor},
 	{"SetActorValue", PAWN::vaultmp_SetActorValue},
 	{"SetActorBaseValue", PAWN::vaultmp_SetActorBaseValue},
 	{"EquipItem", PAWN::vaultmp_EquipItem},
@@ -811,6 +815,11 @@ cell PAWN::vaultmp_GetPlayerSpawnCell(AMX*, const cell* params)
 	return Script::GetPlayerSpawnCell(params[1]);
 }
 
+cell PAWN::vaultmp_DestroyObject(AMX*, const cell* params)
+{
+	return Script::DestroyObject(params[1]);
+}
+
 cell PAWN::vaultmp_SetPos(AMX*, const cell* params)
 {
 	return Script::SetPos(params[1], amx_ctof(params[2]), amx_ctof(params[3]), amx_ctof(params[4]));
@@ -819,6 +828,16 @@ cell PAWN::vaultmp_SetPos(AMX*, const cell* params)
 cell PAWN::vaultmp_SetCell(AMX*, const cell* params)
 {
 	return Script::SetCell(params[1], params[2], amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
+}
+
+cell PAWN::vaultmp_CreateItem(AMX*, const cell* params)
+{
+	return Script::CreateItem(params[1], params[2], params[3], amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6]));
+}
+
+cell PAWN::vaultmp_CreateContainer(AMX*, const cell* params)
+{
+	return Script::CreateContainer(params[1], params[2], params[3], amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6]));
 }
 
 cell PAWN::vaultmp_AddItem(AMX*, const cell* params)
@@ -835,6 +854,11 @@ cell PAWN::vaultmp_RemoveAllItems(AMX*, const cell* params)
 {
 	Script::RemoveAllItems(params[1]);
 	return 1;
+}
+
+cell PAWN::vaultmp_CreateActor(AMX*, const cell* params)
+{
+	return Script::CreateActor(params[1], params[2], params[3], amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6]));
 }
 
 cell PAWN::vaultmp_SetActorValue(AMX*, const cell* params)

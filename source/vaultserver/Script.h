@@ -90,6 +90,11 @@ class Script
 		static RakNet::NetworkID CreateTimerEx(ScriptFunc timer, unsigned int interval, const char* def, ...);
 		static RakNet::NetworkID CreateTimerPAWN(ScriptFuncPAWN timer, AMX* amx, unsigned int interval);
 		static RakNet::NetworkID CreateTimerPAWNEx(ScriptFuncPAWN timer, AMX* amx, unsigned int interval, const char* def, const std::vector<boost::any>& args);
+		static bool SetCell_intern(RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z, bool nosend);
+		static void SetupObject(FactoryObject<Object>& object, FactoryObject<Object>& reference, unsigned int cell, double X, double Y, double Z);
+		static void SetupItem(FactoryObject<Item>& item, FactoryObject<Object>& reference, unsigned int cell, double X, double Y, double Z);
+		static void SetupContainer(FactoryObject<Container>& container, FactoryObject<Object>& reference, unsigned int cell, double X, double Y, double Z);
+		static void SetupActor(FactoryObject<Actor>& actor, FactoryObject<Object>& reference, unsigned int cell, double X, double Y, double Z);
 		static void KillTimer(RakNet::NetworkID id = 0);
 		static void MakePublic(ScriptFunc _public, const char* name, const char* def);
 		static void MakePublicPAWN(ScriptFuncPAWN _public, AMX* amx, const char* name, const char* def);
@@ -182,11 +187,15 @@ class Script
 		static unsigned int GetPlayerRespawn(RakNet::NetworkID id);
 		static unsigned int GetPlayerSpawnCell(RakNet::NetworkID id);
 
+		static bool DestroyObject(RakNet::NetworkID id);
 		static bool SetPos(RakNet::NetworkID id, double X, double Y, double Z);
 		static bool SetCell(RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z);
+		static RakNet::NetworkID CreateItem(unsigned int baseID, RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z);
+		static RakNet::NetworkID CreateContainer(unsigned int baseID, RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z);
 		static bool AddItem(RakNet::NetworkID id, unsigned int baseID, unsigned int count, double condition, bool silent);
 		static unsigned int RemoveItem(RakNet::NetworkID id, unsigned int baseID, unsigned int count, bool silent);
 		static void RemoveAllItems(RakNet::NetworkID id);
+		static RakNet::NetworkID CreateActor(unsigned int baseID, RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z);
 		static void SetActorValue(RakNet::NetworkID id, unsigned char index, double value);
 		static void SetActorBaseValue(RakNet::NetworkID id, unsigned char index, double value);
 		static bool EquipItem(RakNet::NetworkID id, unsigned int baseID, bool silent, bool stick);

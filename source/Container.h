@@ -92,6 +92,11 @@ class Container : public Object
 
 #ifdef VAULTSERVER
 		std::list<RakNet::NetworkID> GetItemTypes(const std::string& type) const;
+
+		/**
+		 * \brief Sets the Container's base ID
+		 */
+		virtual Lockable* SetBase(unsigned int baseID);
 #endif
 
 		void FlushContainer();

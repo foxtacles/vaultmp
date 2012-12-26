@@ -294,11 +294,15 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE Interval (*VAULTAPI(GetPlayerRespawn))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Cell (*VAULTAPI(GetPlayerSpawnCell))(VAULTSPACE ID) VAULTCPP(noexcept);
 
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(DestroyObject))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetPos))(VAULTSPACE ID, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetCell))(VAULTSPACE ID, VAULTSPACE Cell, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateItem))(VAULTSPACE Base, VAULTSPACE ID, VAULTSPACE Cell, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateContainer))(VAULTSPACE Base, VAULTSPACE ID, VAULTSPACE Cell, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(AddItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE UCount, VAULTSPACE Value, VAULTSPACE State) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(RemoveItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE UCount, VAULTSPACE State) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(RemoveAllItems))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateActor))(VAULTSPACE Base, VAULTSPACE ID, VAULTSPACE Cell, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetActorValue))(VAULTSPACE ID, VAULTSPACE Index, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetActorBaseValue))(VAULTSPACE ID, VAULTSPACE Index, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(EquipItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE State, VAULTSPACE State) VAULTCPP(noexcept);
@@ -474,11 +478,18 @@ namespace vaultmp
 	VAULTFUNCTION Interval GetPlayerRespawn(ID id) noexcept { return VAULTAPI(GetPlayerRespawn)(id); }
 	VAULTFUNCTION Cell GetPlayerSpawnCell(ID id) noexcept { return VAULTAPI(GetPlayerSpawnCell)(id); }
 
+	VAULTFUNCTION State DestroyObject(ID id) noexcept { return VAULTAPI(DestroyObject)(id); }
 	VAULTFUNCTION State SetPos(ID id, Value X, Value Y, Value Z) noexcept { return VAULTAPI(SetPos)(id, X, Y, Z); }
 	VAULTFUNCTION State SetCell(ID id, Cell cell, Value X = 0.00, Value Y = 0.00, Value Z = 0.00) noexcept { return VAULTAPI(SetCell)(id, cell, X, Y, Z); }
+	VAULTFUNCTION ID CreateItem(Base item, ID id) noexcept { return VAULTAPI(CreateItem)(item, id, static_cast<Cell>(0), 0.00, 0.00, 0.00); }
+	VAULTFUNCTION ID CreateItem(Base item, Cell cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateItem)(item, static_cast<ID>(0), cell, X, Y, Z); }
+	VAULTFUNCTION ID CreateContainer(Base container, ID id) noexcept { return VAULTAPI(CreateContainer)(container, id, static_cast<Cell>(0), 0.00, 0.00, 0.00); }
+	VAULTFUNCTION ID CreateContainer(Base container, Cell cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateContainer)(container, static_cast<ID>(0), cell, X, Y, Z); }
 	VAULTFUNCTION State AddItem(ID id, Base item, UCount count = 1, Value condition = 100.0, State silent = True) noexcept { return VAULTAPI(AddItem)(id, item, count, condition, silent); }
 	VAULTFUNCTION UCount RemoveItem(ID id, Base item, UCount count = 1, State silent = True) noexcept { return VAULTAPI(RemoveItem)(id, item, count, silent); }
 	VAULTFUNCTION Void RemoveAllItems(ID id) noexcept { return VAULTAPI(RemoveAllItems)(id); }
+	VAULTFUNCTION ID CreateActor(Base actor, ID id) noexcept { return VAULTAPI(CreateActor)(actor, id, static_cast<Cell>(0), 0.00, 0.00, 0.00); }
+	VAULTFUNCTION ID CreateActor(Base actor, Cell cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateActor)(actor, static_cast<ID>(0), cell, X, Y, Z); }
 	VAULTFUNCTION Void SetActorValue(ID id, Index index, Value value) noexcept { return VAULTAPI(SetActorValue)(id, index, value); }
 	VAULTFUNCTION Void SetActorBaseValue(ID id, Index index, Value value) noexcept { return VAULTAPI(SetActorBaseValue)(id, index, value); }
 	VAULTFUNCTION State EquipItem(ID id, Base item, State silent = True, State stick = True) noexcept { return VAULTAPI(EquipItem)(id, item, silent, stick); }
@@ -553,6 +564,8 @@ namespace vaultmp
 			State GetItemStick() const noexcept { return vaultmp::GetItemStick(id); }
 			State GetItemSilent() const noexcept { return vaultmp::GetItemSilent(id); }
 
+			static ID Create(Base item, ID id) { return vaultmp::CreateItem(item, id); }
+			static ID Create(Base item, Cell cell, Value X, Value Y, Value Z) { return vaultmp::CreateItem(item, cell, X, Y, Z); }
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_ITEM); }
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_ITEM); }
 	};
@@ -571,6 +584,8 @@ namespace vaultmp
 			UCount RemoveItem(Base item, UCount count = 1, State silent = True) noexcept { return vaultmp::RemoveItem(id, item, count, silent); }
 			Void RemoveAllItems() noexcept { return vaultmp::RemoveAllItems(id); }
 
+			static ID Create(Base item, ID id) { return vaultmp::CreateContainer(item, id); }
+			static ID Create(Base item, Cell cell, Value X, Value Y, Value Z) { return vaultmp::CreateContainer(item, cell, X, Y, Z); }
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_CONTAINER); }
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_CONTAINER); }
 	};
@@ -605,6 +620,8 @@ namespace vaultmp
 			State AgeActorBaseRace(Count age) const noexcept { return vaultmp::AgeActorBaseRace(id, age); }
 			State SetActorBaseSex(State female) const noexcept { return vaultmp::SetActorBaseSex(id, female); }
 
+			static ID Create(Base item, ID id) { return vaultmp::CreateActor(item, id); }
+			static ID Create(Base item, Cell cell, Value X, Value Y, Value Z) { return vaultmp::CreateActor(item, cell, X, Y, Z); }
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_ACTOR); }
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_ACTOR); }
 	};

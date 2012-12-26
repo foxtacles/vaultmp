@@ -11,7 +11,7 @@ unsigned int Script::gameWeather;
 Script::Script(char* path)
 {
 	FILE* file = fopen(path, "rb");
-    //printf("Loading script %s",path);
+
 	if (file == nullptr)
 		throw VaultException("Script not found: %s", path);
 
@@ -147,11 +147,15 @@ Script::Script(char* path)
 			SetScript(string(vpf + "GetPlayerRespawn").c_str(), &Script::GetPlayerRespawn);
 			SetScript(string(vpf + "GetPlayerSpawnCell").c_str(), &Script::GetPlayerSpawnCell);
 
+			SetScript(string(vpf + "DestroyObject").c_str(), &Script::DestroyObject);
 			SetScript(string(vpf + "SetPos").c_str(), &Script::SetPos);
 			SetScript(string(vpf + "SetCell").c_str(), &Script::SetCell);
+			SetScript(string(vpf + "CreateItem").c_str(), &Script::CreateItem);
+			SetScript(string(vpf + "CreateContainer").c_str(), &Script::CreateContainer);
 			SetScript(string(vpf + "AddItem").c_str(), &Script::AddItem);
 			SetScript(string(vpf + "RemoveItem").c_str(), &Script::RemoveItem);
 			SetScript(string(vpf + "RemoveAllItems").c_str(), &Script::RemoveAllItems);
+			SetScript(string(vpf + "CreateActor").c_str(), &Script::CreateActor);
 			SetScript(string(vpf + "SetActorValue").c_str(), &Script::SetActorValue);
 			SetScript(string(vpf + "SetActorBaseValue").c_str(), &Script::SetActorBaseValue);
 			SetScript(string(vpf + "EquipItem").c_str(), &Script::EquipItem);
@@ -371,6 +375,156 @@ NetworkID Script::CreateTimerPAWNEx(ScriptFuncPAWN timer, AMX* amx, unsigned int
 {
 	Timer* t = new Timer(timer, amx, string(def), args, interval);
 	return t->GetNetworkID();
+}
+
+bool Script::SetCell_intern(NetworkID id, unsigned int cell, double X, double Y, double Z, bool nosend)
+{
+	bool state = false;
+
+	auto reference = GameFactory::GetObject(id);
+
+	if (!reference)
+		return state;
+
+	auto& object = reference.get();
+
+	bool update_pos = X != 0.00 && Y != 0.00 && Z != 0.00;
+	const Record* new_interior = nullptr;
+	const Exterior* new_exterior = nullptr;
+
+	auto exterior = Exterior::Lookup(cell);
+
+	if (!exterior)
+	{
+		auto interior = Record::Lookup(cell, "CELL");
+
+		if (!interior)
+			return state;
+
+		new_interior = *interior;
+	}
+	else if (update_pos)
+	{
+		exterior = Exterior::Lookup(exterior->GetWorld(), X, Y);
+
+		if (!exterior || (new_exterior = *exterior)->GetBase() != cell)
+			return state;
+	}
+	else
+		new_exterior = *exterior;
+
+	NetworkResponse response;
+
+	auto player = vaultcast<Player>(object);
+
+	if (object->SetNetworkCell(cell))
+	{
+		object->SetGameCell(cell);
+
+		if (!nosend)
+		{
+			response.emplace_back(Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, cell),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+			);
+
+			if (player)
+			{
+				if (new_interior)
+					response.emplace_back(Network::CreateResponse(
+						PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(id, new_interior->GetName(), false),
+						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
+					);
+				else
+					response.emplace_back(Network::CreateResponse(
+						PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, new_exterior->GetWorld(), new_exterior->GetX(), new_exterior->GetY(), false),
+						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
+					);
+			}
+		}
+
+		state = true;
+	}
+	else
+		cell = 0x00000000;
+
+	if (update_pos && (static_cast<bool>(object->SetNetworkPos(Axis_X, X)) | static_cast<bool>(object->SetNetworkPos(Axis_Y, Y)) | static_cast<bool>(object->SetNetworkPos(Axis_Z, Z))))
+	{
+		object->SetGamePos(Axis_X, X);
+		object->SetGamePos(Axis_Y, Y);
+		object->SetGamePos(Axis_Z, Z);
+
+		if (!nosend)
+			response.emplace_back(Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_POS>(id, X, Y, Z),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+			);
+
+		state = true;
+	}
+
+	if (state && !nosend)
+		Network::Queue(move(response));
+
+	return state;
+}
+
+void Script::SetupObject(FactoryObject<Object>& object, FactoryObject<Object>& reference, unsigned int cell, double X, double Y, double Z)
+{
+	if (reference)
+	{
+		object->SetNetworkCell(reference->GetNetworkCell());
+		object->SetNetworkPos(Axis_X, reference->GetNetworkPos(Axis_X));
+		object->SetNetworkPos(Axis_Y, reference->GetNetworkPos(Axis_Y));
+		object->SetNetworkPos(Axis_Z, reference->GetNetworkPos(Axis_Z));
+	}
+	else
+		SetCell_intern(object->GetNetworkID(), cell, X, Y, Z, true);
+}
+
+void Script::SetupItem(FactoryObject<Item>& item, FactoryObject<Object>& reference, unsigned int cell, double X, double Y, double Z)
+{
+	SetupObject(item, reference, cell, X, Y, Z);
+
+	item->SetItemCount(1);
+	item->SetItemCondition(100.0);
+}
+
+void Script::SetupContainer(FactoryObject<Container>& container, FactoryObject<Object>& reference, unsigned int cell, double X, double Y, double Z)
+{
+	SetupObject(container, reference, cell, X, Y, Z);
+
+	const vector<const BaseContainer*>& items = BaseContainer::Lookup(container->GetBase());
+
+	for (const auto* item : items)
+	{
+		if (item->GetItem() & 0xFF000000)
+			continue;
+
+		ContainerDiff diff = container->AddItem(item->GetItem(), item->GetCount(), item->GetCondition(), true);
+		container->ApplyDiff(diff);
+	}
+}
+
+void Script::SetupActor(FactoryObject<Actor>& actor, FactoryObject<Object>& reference, unsigned int cell, double X, double Y, double Z)
+{
+	SetupContainer(actor, reference, cell, X, Y, Z);
+
+	unsigned int baseID = actor->GetBase();
+
+	if (!Record::Lookup(baseID, "CREA"))
+	{
+		const NPC* npc = *NPC::Lookup(baseID);
+		unsigned int race = npc->GetRace();
+		signed int age = Race::Lookup(npc->GetOriginalRace())->GetAgeDifference(race);
+		bool female = npc->IsFemale();
+
+		actor->SetActorRace(race);
+		actor->SetActorAge(age);
+		actor->SetActorFemale(female);
+	}
+	else
+		actor->SetActorRace(UINT_MAX);
 }
 
 void Script::KillTimer(NetworkID id)
@@ -1508,6 +1662,27 @@ unsigned int Script::GetPlayerSpawnCell(NetworkID id)
 	return 0x00000000;
 }
 
+bool Script::DestroyObject(NetworkID id)
+{
+	bool state = false;
+
+	auto reference = GameFactory::GetObject(id);
+
+	if (!reference || vaultcast<Player>(reference))
+		return state;
+
+	auto& object = reference.get();
+
+	Network::Queue(NetworkResponse{Network::CreateResponse(
+		PacketFactory::Create<pTypes::ID_OBJECT_REMOVE>(id),
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+	});
+
+	GameFactory::DestroyInstance(object);
+
+	return state;
+}
+
 bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 {
 	bool state = false;
@@ -1537,7 +1712,7 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 	NetworkResponse response;
 	unsigned int _new_cell = 0x00000000;
 
-	if (object->SetNetworkPos(Axis_X, X) || object->SetNetworkPos(Axis_Y, Y) || object->SetNetworkPos(Axis_Z, Z))
+	if (static_cast<bool>(object->SetNetworkPos(Axis_X, X)) | static_cast<bool>(object->SetNetworkPos(Axis_Y, Y)) | static_cast<bool>(object->SetNetworkPos(Axis_Z, Z)))
 	{
 		object->SetGamePos(Axis_X, X);
 		object->SetGamePos(Axis_Y, Y);
@@ -1559,12 +1734,10 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 				);
 
 				if (player)
-				{
 					response.emplace_back(Network::CreateResponse(
 						PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, new_cell->GetWorld(), new_cell->GetX(), new_cell->GetY(), false),
 						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
 					);
-				}
 			}
 			else
 				_new_cell = 0x00000000;
@@ -1585,94 +1758,71 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 
 bool Script::SetCell(NetworkID id, unsigned int cell, double X, double Y, double Z)
 {
-	bool state = false;
+	return SetCell_intern(id, cell, X, Y, Z, false);
+}
 
-	auto reference = GameFactory::GetObject(id);
+NetworkID Script::CreateItem(unsigned int baseID, NetworkID id, unsigned int cell, double X, double Y, double Z)
+{
+	NetworkID result = 0;
+	FactoryObject<Object> object;
+	FactoryObject<Item> item;
 
-	if (!reference)
-		return state;
+	if (id && !GameFactory::GetType(id))
+		return result;
 
-	auto& object = reference.get();
-
-	bool update_pos = X != 0.00 && Y != 0.00 && Z != 0.00;
-	const Record* new_interior = nullptr;
-	const Exterior* new_exterior = nullptr;
-
-	auto exterior = Exterior::Lookup(cell);
-
-	if (!exterior)
+	try
 	{
-		auto interior = Record::Lookup(cell, "CELL");
+		auto reference = GameFactory::GetMultiple<Object>(vector<NetworkID>{id, GameFactory::CreateInstance(ID_ITEM, baseID)});
 
-		if (!interior)
-			return state;
+		if (id)
+			object = reference[0].get();
 
-		new_interior = *interior;
+		item = vaultcast<Item>(reference[1]).get();
 	}
-	else if (update_pos)
+	catch (...) { return result; }
+
+	result = item->GetNetworkID();
+
+	SetupItem(item, object, cell, X, Y, Z);
+
+	Network::Queue(NetworkResponse{Network::CreateResponse(
+		item->toPacket(),
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+	});
+
+	return result;
+}
+
+NetworkID Script::CreateContainer(unsigned int baseID, NetworkID id, unsigned int cell, double X, double Y, double Z)
+{
+	NetworkID result = 0;
+	FactoryObject<Object> object;
+	FactoryObject<Container> container;
+
+	if (id && !GameFactory::GetType(id))
+		return result;
+
+	try
 	{
-		exterior = Exterior::Lookup(exterior->GetWorld(), X, Y);
+		auto reference = GameFactory::GetMultiple<Object>(vector<NetworkID>{id, GameFactory::CreateInstance(ID_CONTAINER, baseID)});
 
-		if (!exterior || (new_exterior = *exterior)->GetBase() != cell)
-			return state;
+		if (id)
+			object = reference[0].get();
+
+		container = vaultcast<Container>(reference[1]).get();
 	}
-	else
-		new_exterior = *exterior;
+	catch (...) { return result; }
 
-	NetworkResponse response;
+	result = container->GetNetworkID();
 
-	auto player = vaultcast<Player>(object);
+	SetupContainer(container, object, cell, X, Y, Z);
 
-	if (object->SetNetworkCell(cell))
-	{
-		object->SetGameCell(cell);
+	Network::Queue(NetworkResponse{Network::CreateResponse(
+		container->toPacket(),
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+	});
 
-		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, cell),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-		);
-
-		if (player)
-		{
-			if (new_interior)
-			{
-				response.emplace_back(Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(id, new_interior->GetName(), false),
-					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
-				);
-			}
-			else
-			{
-				response.emplace_back(Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, new_exterior->GetWorld(), new_exterior->GetX(), new_exterior->GetY(), false),
-					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
-				);
-			}
-		}
-
-		state = true;
-	}
-	else
-		cell = 0x00000000;
-
-	if (update_pos && (object->SetNetworkPos(Axis_X, X) || object->SetNetworkPos(Axis_Y, Y) || object->SetNetworkPos(Axis_Z, Z)))
-	{
-		object->SetGamePos(Axis_X, X);
-		object->SetGamePos(Axis_Y, Y);
-		object->SetGamePos(Axis_Z, Z);
-
-		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_POS>(id, X, Y, Z),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-		);
-
-		state = true;
-	}
-
-	if (state)
-		Network::Queue(move(response));
-
-	return state;
+	return result;
 }
 
 bool Script::AddItem(NetworkID id, unsigned int baseID, unsigned int count, double condition, bool silent)
@@ -1752,6 +1902,38 @@ void Script::RemoveAllItems(NetworkID id)
 
 		container->ApplyDiff(diff);
 	}
+}
+
+NetworkID Script::CreateActor(unsigned int baseID, NetworkID id, unsigned int cell, double X, double Y, double Z)
+{
+	NetworkID result = 0;
+	FactoryObject<Object> object;
+	FactoryObject<Actor> actor;
+
+	if (id && !GameFactory::GetType(id))
+		return result;
+
+	try
+	{
+		auto reference = GameFactory::GetMultiple<Object>(vector<NetworkID>{id, GameFactory::CreateInstance(ID_ACTOR, baseID)});
+
+		if (id)
+			object = reference[0].get();
+
+		actor = vaultcast<Actor>(reference[1]).get();
+	}
+	catch (...) { return result; }
+
+	result = actor->GetNetworkID();
+
+	SetupActor(actor, object, cell, X, Y, Z);
+
+	Network::Queue(NetworkResponse{Network::CreateResponse(
+		actor->toPacket(),
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+	});
+
+	return result;
 }
 
 void Script::SetActorValue(NetworkID id, unsigned char index, double value)
@@ -1912,6 +2094,9 @@ bool Script::SetActorBaseRace(NetworkID id, unsigned int race)
 
 	unsigned int baseID = (*it)->GetBase();
 
+	if (Record::Lookup(baseID, "CREA"))
+		return false;
+
 	if (baseID == PLAYER_BASE)
 		return false;
 
@@ -1960,6 +2145,9 @@ bool Script::AgeActorBaseRace(NetworkID id, signed int age)
 
 	auto& actor = reference.get();
 
+	if (Record::Lookup(actor->GetBase(), "CREA"))
+		return false;
+
 	const Race* race = *Race::Lookup(actor->GetActorRace());
 	unsigned int new_race;
 
@@ -2006,6 +2194,9 @@ bool Script::SetActorBaseSex(NetworkID id, bool female)
 		return false;
 
 	unsigned int baseID = (*it)->GetBase();
+
+	if (Record::Lookup(baseID, "CREA"))
+		return false;
 
 	if (baseID == PLAYER_BASE)
 		return false;
