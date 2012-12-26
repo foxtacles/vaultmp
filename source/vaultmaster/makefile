@@ -11,7 +11,7 @@ CFLAGS =  -std=gnu++0x
 RESINC = 
 LIBDIR = 
 LIB = 
-LDFLAGS = -lpthread
+LDFLAGS = 
 
 INC_UNIX =  $(INC)
 CFLAGS_UNIX =  $(CFLAGS) -O2 -Wredundant-decls -Wunreachable-code
@@ -24,7 +24,7 @@ OBJDIR_UNIX = obj
 DEP_UNIX = 
 OUT_UNIX = vaultmaster
 
-OBJ_UNIX = $(OBJDIR_UNIX)/../RakNet/RakPeer.o $(OBJDIR_UNIX)/../RakNet/RakSleep.o $(OBJDIR_UNIX)/../RakNet/RakString.o $(OBJDIR_UNIX)/../RakNet/RakThread.o $(OBJDIR_UNIX)/../RakNet/RakWString.o $(OBJDIR_UNIX)/../RakNet/Rand.o $(OBJDIR_UNIX)/../RakNet/ReadyEvent.o $(OBJDIR_UNIX)/../RakNet/ReliabilityLayer.o $(OBJDIR_UNIX)/../RakNet/ReplicaManager3.o $(OBJDIR_UNIX)/../RakNet/Router2.o $(OBJDIR_UNIX)/../RakNet/SHA1.o $(OBJDIR_UNIX)/../RakNet/SecureHandshake.o $(OBJDIR_UNIX)/../RakNet/SendToThread.o $(OBJDIR_UNIX)/../RakNet/SignaledEvent.o $(OBJDIR_UNIX)/../RakNet/PacketOutputWindowLogger.o $(OBJDIR_UNIX)/../RakNet/PacketizedTCP.o $(OBJDIR_UNIX)/../RakNet/PluginInterface2.o $(OBJDIR_UNIX)/../RakNet/RPC4Plugin.o $(OBJDIR_UNIX)/../RakNet/Rackspace.o $(OBJDIR_UNIX)/../RakNet/RakMemoryOverride.o $(OBJDIR_UNIX)/../RakNet/RakNetCommandParser.o $(OBJDIR_UNIX)/../RakNet/RakNetSocket.o $(OBJDIR_UNIX)/../RakNet/RakNetStatistics.o $(OBJDIR_UNIX)/../RakNet/RakNetTransport2.o $(OBJDIR_UNIX)/../RakNet/RakNetTypes.o $(OBJDIR_UNIX)/../RakNet/UDPProxyCoordinator.o $(OBJDIR_UNIX)/../RakNet/UDPProxyServer.o $(OBJDIR_UNIX)/../RakNet/VariableDeltaSerializer.o $(OBJDIR_UNIX)/../RakNet/VariableListDeltaTracker.o $(OBJDIR_UNIX)/../RakNet/VariadicSQLParser.o $(OBJDIR_UNIX)/../RakNet/WSAStartupSingleton.o $(OBJDIR_UNIX)/../RakNet/_FindFirst.o $(OBJDIR_UNIX)/../RakNet/gettimeofday.o $(OBJDIR_UNIX)/../RakNet/rdlmalloc.o $(OBJDIR_UNIX)/../ServerEntry.o $(OBJDIR_UNIX)/../Utils.o $(OBJDIR_UNIX)/MasterServer.o $(OBJDIR_UNIX)/vaultmaster.o $(OBJDIR_UNIX)/../RakNet/SimpleMutex.o $(OBJDIR_UNIX)/../RakNet/SocketLayer.o $(OBJDIR_UNIX)/../RakNet/StringCompressor.o $(OBJDIR_UNIX)/../RakNet/StringTable.o $(OBJDIR_UNIX)/../RakNet/SuperFastHash.o $(OBJDIR_UNIX)/../RakNet/TCPInterface.o $(OBJDIR_UNIX)/../RakNet/TableSerializer.o $(OBJDIR_UNIX)/../RakNet/TeamBalancer.o $(OBJDIR_UNIX)/../RakNet/TelnetTransport.o $(OBJDIR_UNIX)/../RakNet/ThreadsafePacketLogger.o $(OBJDIR_UNIX)/../RakNet/TwoWayAuthentication.o $(OBJDIR_UNIX)/../RakNet/UDPForwarder.o $(OBJDIR_UNIX)/../RakNet/UDPProxyClient.o $(OBJDIR_UNIX)/../RakNet/DS_HuffmanEncodingTree.o $(OBJDIR_UNIX)/../RakNet/DS_Table.o $(OBJDIR_UNIX)/../RakNet/DataCompressor.o $(OBJDIR_UNIX)/../RakNet/DirectoryDeltaTransfer.o $(OBJDIR_UNIX)/../RakNet/DynDNS.o $(OBJDIR_UNIX)/../RakNet/EmailSender.o $(OBJDIR_UNIX)/../RakNet/EncodeClassName.o $(OBJDIR_UNIX)/../RakNet/EpochTimeToString.o $(OBJDIR_UNIX)/../RakNet/BitStream.o $(OBJDIR_UNIX)/../RakNet/CCRakNetSlidingWindow.o $(OBJDIR_UNIX)/../RakNet/CCRakNetUDT.o $(OBJDIR_UNIX)/../RakNet/CheckSum.o $(OBJDIR_UNIX)/../RakNet/CloudClient.o $(OBJDIR_UNIX)/../RakNet/CloudCommon.o $(OBJDIR_UNIX)/../RakNet/CloudServer.o $(OBJDIR_UNIX)/../RakNet/CommandParserInterface.o $(OBJDIR_UNIX)/../RakNet/ConnectionGraph2.o $(OBJDIR_UNIX)/../RakNet/ConsoleServer.o $(OBJDIR_UNIX)/../RakNet/DS_BytePool.o $(OBJDIR_UNIX)/../RakNet/DS_ByteQueue.o $(OBJDIR_UNIX)/../RakNet/LogCommandParser.o $(OBJDIR_UNIX)/../RakNet/MessageFilter.o $(OBJDIR_UNIX)/../RakNet/NatPunchthroughClient.o $(OBJDIR_UNIX)/../RakNet/NatPunchthroughServer.o $(OBJDIR_UNIX)/../RakNet/NatTypeDetectionClient.o $(OBJDIR_UNIX)/../RakNet/NatTypeDetectionCommon.o $(OBJDIR_UNIX)/../RakNet/NatTypeDetectionServer.o $(OBJDIR_UNIX)/../RakNet/NetworkIDManager.o $(OBJDIR_UNIX)/../RakNet/NetworkIDObject.o $(OBJDIR_UNIX)/../RakNet/PacketConsoleLogger.o $(OBJDIR_UNIX)/../RakNet/PacketFileLogger.o $(OBJDIR_UNIX)/../RakNet/PacketLogger.o $(OBJDIR_UNIX)/../RakNet/FileList.o $(OBJDIR_UNIX)/../RakNet/FileListTransfer.o $(OBJDIR_UNIX)/../RakNet/FileOperations.o $(OBJDIR_UNIX)/../RakNet/FormatString.o $(OBJDIR_UNIX)/../RakNet/FullyConnectedMesh2.o $(OBJDIR_UNIX)/../RakNet/GetTime.o $(OBJDIR_UNIX)/../RakNet/Getche.o $(OBJDIR_UNIX)/../RakNet/Gets.o $(OBJDIR_UNIX)/../RakNet/GridSectorizer.o $(OBJDIR_UNIX)/../RakNet/HTTPConnection.o $(OBJDIR_UNIX)/../RakNet/IncrementalReadInterface.o $(OBJDIR_UNIX)/../RakNet/Itoa.o $(OBJDIR_UNIX)/../RakNet/LinuxStrings.o $(OBJDIR_UNIX)/../RakNet/LocklessTypes.o
+OBJ_UNIX = $(OBJDIR_UNIX)/../RakNet/RakPeer.o $(OBJDIR_UNIX)/../RakNet/RakSleep.o $(OBJDIR_UNIX)/../RakNet/RakString.o $(OBJDIR_UNIX)/../RakNet/RakThread.o $(OBJDIR_UNIX)/../RakNet/RakWString.o $(OBJDIR_UNIX)/../RakNet/Rand.o $(OBJDIR_UNIX)/../RakNet/ReadyEvent.o $(OBJDIR_UNIX)/../RakNet/ReliabilityLayer.o $(OBJDIR_UNIX)/../RakNet/ReplicaManager3.o $(OBJDIR_UNIX)/../RakNet/Router2.o $(OBJDIR_UNIX)/../RakNet/SHA1.o $(OBJDIR_UNIX)/../RakNet/SecureHandshake.o $(OBJDIR_UNIX)/../RakNet/SendToThread.o $(OBJDIR_UNIX)/../RakNet/PacketOutputWindowLogger.o $(OBJDIR_UNIX)/../RakNet/PacketizedTCP.o $(OBJDIR_UNIX)/../RakNet/PluginInterface2.o $(OBJDIR_UNIX)/../RakNet/RPC4Plugin.o $(OBJDIR_UNIX)/../RakNet/Rackspace.o $(OBJDIR_UNIX)/../RakNet/RakMemoryOverride.o $(OBJDIR_UNIX)/../RakNet/RakNetCommandParser.o $(OBJDIR_UNIX)/../RakNet/RakNetSocket.o $(OBJDIR_UNIX)/../RakNet/RakNetSocket2.o $(OBJDIR_UNIX)/../RakNet/RakNetStatistics.o $(OBJDIR_UNIX)/../RakNet/RakNetTransport2.o $(OBJDIR_UNIX)/../RakNet/RakNetTypes.o $(OBJDIR_UNIX)/../RakNet/UDPProxyCoordinator.o $(OBJDIR_UNIX)/../RakNet/UDPProxyServer.o $(OBJDIR_UNIX)/../RakNet/VariableDeltaSerializer.o $(OBJDIR_UNIX)/../RakNet/VariableListDeltaTracker.o $(OBJDIR_UNIX)/../RakNet/VariadicSQLParser.o $(OBJDIR_UNIX)/../RakNet/WSAStartupSingleton.o $(OBJDIR_UNIX)/../RakNet/_FindFirst.o $(OBJDIR_UNIX)/../RakNet/gettimeofday.o $(OBJDIR_UNIX)/../RakNet/rdlmalloc.o $(OBJDIR_UNIX)/../ServerEntry.o $(OBJDIR_UNIX)/../Utils.o $(OBJDIR_UNIX)/MasterServer.o $(OBJDIR_UNIX)/vaultmaster.o $(OBJDIR_UNIX)/../RakNet/SignaledEvent.o $(OBJDIR_UNIX)/../RakNet/SimpleMutex.o $(OBJDIR_UNIX)/../RakNet/SocketLayer.o $(OBJDIR_UNIX)/../RakNet/StringCompressor.o $(OBJDIR_UNIX)/../RakNet/StringTable.o $(OBJDIR_UNIX)/../RakNet/SuperFastHash.o $(OBJDIR_UNIX)/../RakNet/TCPInterface.o $(OBJDIR_UNIX)/../RakNet/TableSerializer.o $(OBJDIR_UNIX)/../RakNet/TeamBalancer.o $(OBJDIR_UNIX)/../RakNet/TelnetTransport.o $(OBJDIR_UNIX)/../RakNet/ThreadsafePacketLogger.o $(OBJDIR_UNIX)/../RakNet/TwoWayAuthentication.o $(OBJDIR_UNIX)/../RakNet/UDPForwarder.o $(OBJDIR_UNIX)/../RakNet/UDPProxyClient.o $(OBJDIR_UNIX)/../RakNet/DS_HuffmanEncodingTree.o $(OBJDIR_UNIX)/../RakNet/DS_Table.o $(OBJDIR_UNIX)/../RakNet/DataCompressor.o $(OBJDIR_UNIX)/../RakNet/DirectoryDeltaTransfer.o $(OBJDIR_UNIX)/../RakNet/DynDNS.o $(OBJDIR_UNIX)/../RakNet/EmailSender.o $(OBJDIR_UNIX)/../RakNet/EncodeClassName.o $(OBJDIR_UNIX)/../RakNet/EpochTimeToString.o $(OBJDIR_UNIX)/../RakNet/Base64Encoder.o $(OBJDIR_UNIX)/../RakNet/BitStream.o $(OBJDIR_UNIX)/../RakNet/CCRakNetSlidingWindow.o $(OBJDIR_UNIX)/../RakNet/CCRakNetUDT.o $(OBJDIR_UNIX)/../RakNet/CheckSum.o $(OBJDIR_UNIX)/../RakNet/CloudClient.o $(OBJDIR_UNIX)/../RakNet/CloudCommon.o $(OBJDIR_UNIX)/../RakNet/CloudServer.o $(OBJDIR_UNIX)/../RakNet/CommandParserInterface.o $(OBJDIR_UNIX)/../RakNet/ConnectionGraph2.o $(OBJDIR_UNIX)/../RakNet/ConsoleServer.o $(OBJDIR_UNIX)/../RakNet/DS_BytePool.o $(OBJDIR_UNIX)/../RakNet/DS_ByteQueue.o $(OBJDIR_UNIX)/../RakNet/LocklessTypes.o $(OBJDIR_UNIX)/../RakNet/LogCommandParser.o $(OBJDIR_UNIX)/../RakNet/MessageFilter.o $(OBJDIR_UNIX)/../RakNet/NatPunchthroughClient.o $(OBJDIR_UNIX)/../RakNet/NatPunchthroughServer.o $(OBJDIR_UNIX)/../RakNet/NatTypeDetectionClient.o $(OBJDIR_UNIX)/../RakNet/NatTypeDetectionCommon.o $(OBJDIR_UNIX)/../RakNet/NatTypeDetectionServer.o $(OBJDIR_UNIX)/../RakNet/NetworkIDManager.o $(OBJDIR_UNIX)/../RakNet/NetworkIDObject.o $(OBJDIR_UNIX)/../RakNet/PacketConsoleLogger.o $(OBJDIR_UNIX)/../RakNet/PacketFileLogger.o $(OBJDIR_UNIX)/../RakNet/PacketLogger.o $(OBJDIR_UNIX)/../RakNet/FileList.o $(OBJDIR_UNIX)/../RakNet/FileListTransfer.o $(OBJDIR_UNIX)/../RakNet/FileOperations.o $(OBJDIR_UNIX)/../RakNet/FormatString.o $(OBJDIR_UNIX)/../RakNet/FullyConnectedMesh2.o $(OBJDIR_UNIX)/../RakNet/GetTime.o $(OBJDIR_UNIX)/../RakNet/Getche.o $(OBJDIR_UNIX)/../RakNet/Gets.o $(OBJDIR_UNIX)/../RakNet/GridSectorizer.o $(OBJDIR_UNIX)/../RakNet/HTTPConnection.o $(OBJDIR_UNIX)/../RakNet/IncrementalReadInterface.o $(OBJDIR_UNIX)/../RakNet/Itoa.o $(OBJDIR_UNIX)/../RakNet/LinuxStrings.o
 
 all: unix
 
@@ -81,9 +81,6 @@ $(OBJDIR_UNIX)/../RakNet/SecureHandshake.o: ../RakNet/SecureHandshake.cpp
 $(OBJDIR_UNIX)/../RakNet/SendToThread.o: ../RakNet/SendToThread.cpp
 	$(CXX) $(CFLAGS_UNIX) $(INC_UNIX) -c ../RakNet/SendToThread.cpp -o $(OBJDIR_UNIX)/../RakNet/SendToThread.o
 
-$(OBJDIR_UNIX)/../RakNet/SignaledEvent.o: ../RakNet/SignaledEvent.cpp
-	$(CXX) $(CFLAGS_UNIX) $(INC_UNIX) -c ../RakNet/SignaledEvent.cpp -o $(OBJDIR_UNIX)/../RakNet/SignaledEvent.o
-
 $(OBJDIR_UNIX)/../RakNet/PacketOutputWindowLogger.o: ../RakNet/PacketOutputWindowLogger.cpp
 	$(CXX) $(CFLAGS_UNIX) $(INC_UNIX) -c ../RakNet/PacketOutputWindowLogger.cpp -o $(OBJDIR_UNIX)/../RakNet/PacketOutputWindowLogger.o
 
@@ -107,6 +104,9 @@ $(OBJDIR_UNIX)/../RakNet/RakNetCommandParser.o: ../RakNet/RakNetCommandParser.cp
 
 $(OBJDIR_UNIX)/../RakNet/RakNetSocket.o: ../RakNet/RakNetSocket.cpp
 	$(CXX) $(CFLAGS_UNIX) $(INC_UNIX) -c ../RakNet/RakNetSocket.cpp -o $(OBJDIR_UNIX)/../RakNet/RakNetSocket.o
+
+$(OBJDIR_UNIX)/../RakNet/RakNetSocket2.o: ../RakNet/RakNetSocket2.cpp
+	$(CXX) $(CFLAGS_UNIX) $(INC_UNIX) -c ../RakNet/RakNetSocket2.cpp -o $(OBJDIR_UNIX)/../RakNet/RakNetSocket2.o
 
 $(OBJDIR_UNIX)/../RakNet/RakNetStatistics.o: ../RakNet/RakNetStatistics.cpp
 	$(CXX) $(CFLAGS_UNIX) $(INC_UNIX) -c ../RakNet/RakNetStatistics.cpp -o $(OBJDIR_UNIX)/../RakNet/RakNetStatistics.o
@@ -155,6 +155,9 @@ $(OBJDIR_UNIX)/MasterServer.o: MasterServer.cpp
 
 $(OBJDIR_UNIX)/vaultmaster.o: vaultmaster.cpp
 	$(CXX) $(CFLAGS_UNIX) $(INC_UNIX) -c vaultmaster.cpp -o $(OBJDIR_UNIX)/vaultmaster.o
+
+$(OBJDIR_UNIX)/../RakNet/SignaledEvent.o: ../RakNet/SignaledEvent.cpp
+	$(CXX) $(CFLAGS_UNIX) $(INC_UNIX) -c ../RakNet/SignaledEvent.cpp -o $(OBJDIR_UNIX)/../RakNet/SignaledEvent.o
 
 $(OBJDIR_UNIX)/../RakNet/SimpleMutex.o: ../RakNet/SimpleMutex.cpp
 	$(CXX) $(CFLAGS_UNIX) $(INC_UNIX) -c ../RakNet/SimpleMutex.cpp -o $(OBJDIR_UNIX)/../RakNet/SimpleMutex.o
@@ -219,6 +222,9 @@ $(OBJDIR_UNIX)/../RakNet/EncodeClassName.o: ../RakNet/EncodeClassName.cpp
 $(OBJDIR_UNIX)/../RakNet/EpochTimeToString.o: ../RakNet/EpochTimeToString.cpp
 	$(CXX) $(CFLAGS_UNIX) $(INC_UNIX) -c ../RakNet/EpochTimeToString.cpp -o $(OBJDIR_UNIX)/../RakNet/EpochTimeToString.o
 
+$(OBJDIR_UNIX)/../RakNet/Base64Encoder.o: ../RakNet/Base64Encoder.cpp
+	$(CXX) $(CFLAGS_UNIX) $(INC_UNIX) -c ../RakNet/Base64Encoder.cpp -o $(OBJDIR_UNIX)/../RakNet/Base64Encoder.o
+
 $(OBJDIR_UNIX)/../RakNet/BitStream.o: ../RakNet/BitStream.cpp
 	$(CXX) $(CFLAGS_UNIX) $(INC_UNIX) -c ../RakNet/BitStream.cpp -o $(OBJDIR_UNIX)/../RakNet/BitStream.o
 
@@ -254,6 +260,9 @@ $(OBJDIR_UNIX)/../RakNet/DS_BytePool.o: ../RakNet/DS_BytePool.cpp
 
 $(OBJDIR_UNIX)/../RakNet/DS_ByteQueue.o: ../RakNet/DS_ByteQueue.cpp
 	$(CXX) $(CFLAGS_UNIX) $(INC_UNIX) -c ../RakNet/DS_ByteQueue.cpp -o $(OBJDIR_UNIX)/../RakNet/DS_ByteQueue.o
+
+$(OBJDIR_UNIX)/../RakNet/LocklessTypes.o: ../RakNet/LocklessTypes.cpp
+	$(CXX) $(CFLAGS_UNIX) $(INC_UNIX) -c ../RakNet/LocklessTypes.cpp -o $(OBJDIR_UNIX)/../RakNet/LocklessTypes.o
 
 $(OBJDIR_UNIX)/../RakNet/LogCommandParser.o: ../RakNet/LogCommandParser.cpp
 	$(CXX) $(CFLAGS_UNIX) $(INC_UNIX) -c ../RakNet/LogCommandParser.cpp -o $(OBJDIR_UNIX)/../RakNet/LogCommandParser.o
@@ -329,9 +338,6 @@ $(OBJDIR_UNIX)/../RakNet/Itoa.o: ../RakNet/Itoa.cpp
 
 $(OBJDIR_UNIX)/../RakNet/LinuxStrings.o: ../RakNet/LinuxStrings.cpp
 	$(CXX) $(CFLAGS_UNIX) $(INC_UNIX) -c ../RakNet/LinuxStrings.cpp -o $(OBJDIR_UNIX)/../RakNet/LinuxStrings.o
-
-$(OBJDIR_UNIX)/../RakNet/LocklessTypes.o: ../RakNet/LocklessTypes.cpp
-	$(CXX) $(CFLAGS_UNIX) $(INC_UNIX) -c ../RakNet/LocklessTypes.cpp -o $(OBJDIR_UNIX)/../RakNet/LocklessTypes.o
 
 clean_unix: 
 	rm -f $(OBJ_UNIX) $(OUT_UNIX)
