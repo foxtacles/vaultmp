@@ -33,6 +33,9 @@ namespace
 #if defined(__GNUC__)
     std::string demangle(const char *name)
     {
+        if (!name)
+            return "";
+
         int status = 0;
         char *d = 0;
         std::string ret = name;
