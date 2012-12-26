@@ -1,5 +1,4 @@
 #include "VaultFunctor.h"
-#include <winsock2.h>
 
 using namespace std;
 
