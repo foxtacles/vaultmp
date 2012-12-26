@@ -385,11 +385,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 	inittime = iniparser_getint(config, "general:inittime", 9000);
 	multiinst = (bool) iniparser_getboolean(config, "general:multiinst", 0);
 
-/*
-	const char* servers = iniparser_getstring(config,  "general:servers", "");
+	const char* _servers = iniparser_getstring(config,  "general:servers", "");
+	vector<char> servers(_servers, _servers + strlen(_servers) + 1);
 
 	char* token;
-	char* buf = servers;
+	char* buf = &servers[0];
 	token = strtok(buf, ",");
 
 	while (token != nullptr)
@@ -411,7 +411,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 
 		token = strtok(nullptr, ",");
 	}
-*/
 
 	hFont = CreateFont(-11, 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Verdana");
 	wndmain = CreateMainWindow();
@@ -512,16 +511,16 @@ void CreateWindowContent(HWND parent)
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 	wndchiptune = wnd;
 
-	wnd = CreateWindowEx(0x00000000, "Button", "Join Server", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 555, 239, 100, 25, parent, (HMENU) IDC_BUTTON0, instance, nullptr);
+	wnd = CreateWindowEx(0x00000000, "Button", "Join server", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 555, 239, 100, 25, parent, (HMENU) IDC_BUTTON0, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
-	wnd = CreateWindowEx(0x00000000, "Button", "Update Server", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 660, 239, 100, 25, parent, (HMENU) IDC_BUTTON1, instance, nullptr);
+	wnd = CreateWindowEx(0x00000000, "Button", "Update server", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 660, 239, 100, 25, parent, (HMENU) IDC_BUTTON1, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
-	wnd = CreateWindowEx(0x00000000, "Button", "Master Query", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 555, 272, 100, 25, parent, (HMENU) IDC_BUTTON2, instance, nullptr);
+	wnd = CreateWindowEx(0x00000000, "Button", "Get servers", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 555, 272, 100, 25, parent, (HMENU) IDC_BUTTON2, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
-	wnd = CreateWindowEx(0x00000000, "Button", "Synchronize", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 660, 272, 100, 25, parent, (HMENU) IDC_BUTTON3, instance, nullptr);
+	wnd = CreateWindowEx(0x00000000, "Button", "Get mods", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 660, 272, 100, 25, parent, (HMENU) IDC_BUTTON3, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 	wndsync = wnd;
 

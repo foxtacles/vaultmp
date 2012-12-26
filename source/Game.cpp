@@ -1165,7 +1165,7 @@ void Game::SetActorRace(const FactoryObject<Actor>& reference, signed int delta_
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("MatchRace", {reference->GetReferenceParam(), RawParameter(reference->GetActorRace())}, delta_age ? 0 : key);
+	Interface::ExecuteCommand("MatchRace", {reference->GetReferenceParam(), RawParameter(race)}, delta_age ? 0 : key);
 
 	if (delta_age)
 		Interface::ExecuteCommand("AgeRace", {reference->GetReferenceParam(), RawParameter(delta_age)}, key);
@@ -2479,7 +2479,7 @@ void Game::GetNextRef(unsigned int key, unsigned int refID, unsigned int type)
 	static unsigned int _type;
 	static set<unsigned int> data;
 
-	static std::unordered_map<unsigned int, unsigned int> typemap {
+	static unordered_map<unsigned int, unsigned int> typemap {
 		{FormType_Inventory, ID_ITEM},
 		{FormType_Actor, ID_ACTOR},
 	};
