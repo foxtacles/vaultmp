@@ -7,11 +7,11 @@ LD = g++
 WINDRES = windres
 
 INC =  -I..
-CFLAGS =  -std=gnu++0x
+CFLAGS =  -m32 -std=gnu++0x
 RESINC = 
 LIBDIR = 
 LIB = 
-LDFLAGS = -lpthread
+LDFLAGS = -m32 -lpthread
 
 INC_UNIX =  $(INC)
 CFLAGS_UNIX =  $(CFLAGS) -O2 -Wredundant-decls -Wunreachable-code
