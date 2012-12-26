@@ -364,10 +364,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 	{
 		fclose(filecheck);
 		Utils::GenerateChecksum("vaultmp.dll", checksum, checksum_real);
-/*
+
 		if (checksum_real != VAULTMP_DLL)
 		    return MessageBox(NULL, "vaultmp.dll is not up to date!", "Error", MB_OK | MB_ICONERROR);
-*/
 	}
 	else
 		return MessageBox(nullptr, "Could not find vaultmp.dll!", "Error", MB_OK | MB_ICONERROR);
