@@ -2242,30 +2242,24 @@ void Script::SetPlayerSpawnCell(NetworkID id, unsigned int cell)
 
 	auto& player = reference.get();
 
-	if (player->SetPlayerSpawnCell(cell))
+	auto _cell = Exterior::Lookup(cell);
+
+	if (!_cell)
 	{
-		NetworkResponse response;
-		NetworkID id = player->GetNetworkID();
-		RakNetGUID guid = Client::GetClientFromPlayer(id)->GetGUID();
+		auto record = Record::Lookup(cell, "CELL");
 
-		auto _cell = Exterior::Lookup(cell);
+		if (!record)
+			return;
 
-		if (!_cell)
-		{
-			auto record = Record::Lookup(cell, "CELL");
-
-			if (!record)
-				return;
-
-			response.emplace_back(Network::CreateResponse(
-				PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(id, record->GetName(), true),
-				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
-		}
-		else
-			response.emplace_back(Network::CreateResponse(
-				PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, _cell->GetWorld(), _cell->GetX(), _cell->GetY(), true),
-				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
-
-		Network::Queue(move(response));
+		if (player->SetPlayerSpawnCell(cell))
+			Network::Queue(NetworkResponse{Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(player->GetNetworkID(), record->GetName(), true),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
+			});
 	}
+	else if (player->SetPlayerSpawnCell(cell))
+		Network::Queue(NetworkResponse{Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(player->GetNetworkID(), _cell->GetWorld(), _cell->GetX(), _cell->GetY(), true),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
+		});
 }
