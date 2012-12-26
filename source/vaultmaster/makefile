@@ -11,7 +11,7 @@ CFLAGS =  -std=gnu++0x
 RESINC = 
 LIBDIR = 
 LIB = 
-LDFLAGS = 
+LDFLAGS = -lpthread
 
 INC_UNIX =  $(INC)
 CFLAGS_UNIX =  $(CFLAGS) -O2 -Wredundant-decls -Wunreachable-code

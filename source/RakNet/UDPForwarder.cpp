@@ -16,6 +16,10 @@
 using namespace RakNet;
 static const unsigned short DEFAULT_MAX_FORWARD_ENTRIES=64;
 
+#ifndef INVALID_SOCKET
+#define INVALID_SOCKET (~0)
+#endif
+
 namespace RakNet
 {
 	RAK_THREAD_DECLARATION(UpdateUDPForwarderGlobal);
