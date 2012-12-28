@@ -353,7 +353,17 @@ GameDiff Container::ApplyDiff(ContainerDiff& diff)
 
 	for (NetworkID& id : diff.first)
 	{
-		FactoryObject<Item> iDelete = GameFactory::GetObject<Item>(id).get();
+		auto _iDelete = GameFactory::GetObject<Item>(id);
+
+		if (!_iDelete)
+		{
+#ifdef VAULTMP_DEBUG
+			debug.print("WARNING (ApplyDiff): item ", dec, id, " not found. Has it already been deleted? ", GameFactory::IsDeleted(id) ? "YES" : "NO", ", in the container? ", find(container.begin(), container.end(), id) != container.end() ? "YES" : "NO");
+#endif
+			continue;
+		}
+
+		auto& iDelete = _iDelete.get();
 		Diff* _diff = nullptr;
 		_diff = &assoc_delete.emplace(iDelete->GetBase(), Diff()).first->second;
 

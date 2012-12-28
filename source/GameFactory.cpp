@@ -6,6 +6,7 @@ using namespace RakNet;
 CriticalSection GameFactory::cs;
 ReferenceList GameFactory::instances;
 ReferenceCount GameFactory::typecount;
+ReferenceDeleted GameFactory::delrefs;
 unsigned char GameFactory::game = 0x00;
 bool GameFactory::changed = false;
 
@@ -282,6 +283,19 @@ unsigned int GameFactory::LookupRefID(NetworkID id)
 	return refID;
 }
 
+bool GameFactory::IsDeleted(NetworkID id)
+{
+	bool result;
+
+	cs.StartSession();
+
+	result = delrefs.find(id) != delrefs.end();
+
+	cs.EndSession();
+
+	return result;
+}
+
 template<typename T>
 void GameFactory::LeaveReference(FactoryObject<T>& reference)
 {
@@ -530,6 +544,7 @@ void GameFactory::DestroyAllInstances()
 
 	instances.clear();
 	typecount.clear();
+	delrefs.clear();
 
 	cs.EndSession();
 
@@ -568,6 +583,7 @@ NetworkID GameFactory::DestroyInstance(FactoryObject<T>& reference)
 	--typecount[it->second];
 	_reference->Finalize();
 	instances.erase(it);
+	delrefs.emplace(id);
 
 	cs.EndSession();
 

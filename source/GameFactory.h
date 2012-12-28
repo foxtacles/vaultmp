@@ -45,6 +45,7 @@ const unsigned char ALL_ACTORS          = (ID_ACTOR | ID_PLAYER);
 
 typedef std::map<std::shared_ptr<Reference>, unsigned char> ReferenceList;
 typedef std::unordered_map<unsigned char, unsigned int> ReferenceCount;
+typedef std::unordered_set<RakNet::NetworkID> ReferenceDeleted;
 
 template<typename T>
 class FactoryObject;
@@ -64,6 +65,7 @@ class GameFactory
 		static CriticalSection cs;
 		static ReferenceList instances;
 		static ReferenceCount typecount;
+		static ReferenceDeleted delrefs;
 		static unsigned char game;
 		static bool changed;
 
@@ -119,6 +121,10 @@ class GameFactory
 		 * \brief Lookup a reference ID
 		 */
 		static unsigned int LookupRefID(RakNet::NetworkID id);
+		/**
+		 * \brief Checks if an ID has been deleted
+		 */
+		static bool IsDeleted(RakNet::NetworkID id);
 		/**
 		 * \brief Returns the type of the given NetworkID
 		 */
