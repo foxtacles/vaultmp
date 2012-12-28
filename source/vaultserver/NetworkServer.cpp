@@ -91,6 +91,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 		case ID_CONNECTED_PING:
 		case ID_UNCONNECTED_PING:
 		case ID_CONNECTION_ATTEMPT_FAILED:
+		case ID_ALREADY_CONNECTED:
 			break;
 
 		default:

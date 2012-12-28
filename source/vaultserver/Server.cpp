@@ -266,9 +266,9 @@ NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, const FactoryObject<
 
 	for (const auto& id : gdiff.first)
 	{
-		auto item = GameFactory::GetObject<Item>(id);
+		auto _item = GameFactory::GetObject<Item>(id);
 
-		if (!item)
+		if (!_item)
 		{
 #ifdef VAULTMP_DEBUG
 			debug.print("WARNING (GetContainerUpdate): item ", dec, id, " not found. Has it already been deleted? ", GameFactory::IsDeleted(id) ? "YES" : "NO");

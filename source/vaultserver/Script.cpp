@@ -1855,26 +1855,30 @@ NetworkID Script::CreateContainer(unsigned int baseID, NetworkID id, unsigned in
 
 bool Script::AddItem(NetworkID id, unsigned int baseID, unsigned int count, double condition, bool silent)
 {
-	if (count)
+	try
 	{
-		auto reference = GameFactory::GetObject<Container>(id);
+		if (count)
+		{
+			auto reference = GameFactory::GetObject<Container>(id);
 
-		if (!reference)
-			return false;
+			if (!reference)
+				return false;
 
-		auto& container = reference.get();
+			auto& container = reference.get();
 
-		ContainerDiff diff = container->AddItem(baseID, count, condition, silent);
+			ContainerDiff diff = container->AddItem(baseID, count, condition, silent);
 
-		Network::Queue(NetworkResponse{Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff), ContainerDiffNet()),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-		});
+			Network::Queue(NetworkResponse{Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff), ContainerDiffNet()),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+			});
 
-		container->ApplyDiff(diff);
+			container->ApplyDiff(diff);
 
-		return true;
+			return true;
+		}
 	}
+	catch (...) {}
 
 	return false;
 }
