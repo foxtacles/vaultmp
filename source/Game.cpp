@@ -1572,6 +1572,15 @@ void Game::net_ContainerUpdate(FactoryObject<Container>& reference, const Contai
 	for (const auto& id : gdiff.first)
 	{
 		auto reference = GameFactory::GetObject<Item>(id);
+
+		if (!reference)
+		{
+#ifdef VAULTMP_DEBUG
+			debug.print("WARNING (net_ContainerUpdate): item ", dec, id, " not found. Has it already been deleted? ", GameFactory::IsDeleted(id) ? "YES" : "NO");
+#endif
+			continue;
+		}
+
 		Delete(reference.get());
 	}
 

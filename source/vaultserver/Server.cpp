@@ -266,7 +266,17 @@ NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, const FactoryObject<
 
 	for (const auto& id : gdiff.first)
 	{
-		FactoryObject<Item> item = GameFactory::GetObject<Item>(id).get();
+		auto item = GameFactory::GetObject<Item>(id);
+
+		if (!item)
+		{
+#ifdef VAULTMP_DEBUG
+			debug.print("WARNING (GetContainerUpdate): item ", dec, id, " not found. Has it already been deleted? ", GameFactory::IsDeleted(id) ? "YES" : "NO");
+#endif
+			continue;
+		}
+
+		auto& item = _item.get();
 
 		unsigned int baseID = item->GetBase();
 		_gdiff.remove_if([=](const pair<unsigned int, Diff>& diff) { return diff.first == baseID; });
