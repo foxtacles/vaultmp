@@ -182,10 +182,10 @@ ContainerDiff Container::RemoveItem(unsigned int baseID, unsigned int count, boo
 
 			if (item->GetItemCount() > count)
 			{
-				FactoryObject<Item> item = GameFactory::GetObject<Item>(item->Copy()).get();
-				item->SetItemCount(item->GetItemCount() - count);
-				item->SetItemSilent(silent);
-				diff.second.emplace_back(item->GetNetworkID());
+				FactoryObject<Item> copy = GameFactory::GetObject<Item>(item->Copy()).get();
+				copy->SetItemCount(item->GetItemCount() - count);
+				copy->SetItemSilent(silent);
+				diff.second.emplace_back(copy->GetNetworkID());
 				return diff;
 			}
 
@@ -229,11 +229,11 @@ ContainerDiff Container::EquipItem(unsigned int baseID, bool silent, bool stick)
 			{
 				diff.first.emplace_back(id);
 
-				FactoryObject<Item> item = GameFactory::GetObject<Item>(item->Copy()).get();
-				item->SetItemEquipped(true);
-				item->SetItemSilent(silent);
-				item->SetItemStick(stick);
-				diff.second.emplace_back(item->GetNetworkID());
+				FactoryObject<Item> copy = GameFactory::GetObject<Item>(item->Copy()).get();
+				copy->SetItemEquipped(true);
+				copy->SetItemSilent(silent);
+				copy->SetItemStick(stick);
+				diff.second.emplace_back(copy->GetNetworkID());
 
 				return diff;
 			}
