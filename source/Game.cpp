@@ -105,7 +105,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func_GetActorValue:
 			{
 				auto reference = GameFactory::GetObject<Actor>(getFrom<unsigned int>(info.at(1)));
-				Game::GetActorValue(reference.get(), false, getFrom<unsigned char>(info.at(2)), result);
+				GetActorValue(reference.get(), false, getFrom<unsigned char>(info.at(2)), result);
 				break;
 			}
 
