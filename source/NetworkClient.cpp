@@ -270,6 +270,16 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
+				case pTypes::ID_UPDATE_COUNT:
+				{
+					NetworkID id;
+					unsigned int count;
+					PacketFactory::Access<pTypes::ID_UPDATE_COUNT>(packet, id, count);
+					auto reference = GameFactory::GetObject<Item>(id);
+					Game::net_SetItemCount(reference.get(), count);
+					break;
+				}
+
 				case pTypes::ID_UPDATE_CONTAINER:
 				{
 					NetworkID id;

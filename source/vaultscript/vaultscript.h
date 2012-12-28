@@ -300,6 +300,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetPos))(VAULTSPACE ID, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetCell))(VAULTSPACE ID, VAULTSPACE Cell, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateItem))(VAULTSPACE Base, VAULTSPACE ID, VAULTSPACE Cell, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetItemCount))(VAULTSPACE ID, VAULTSPACE UCount) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateContainer))(VAULTSPACE Base, VAULTSPACE ID, VAULTSPACE Cell, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(AddItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE UCount, VAULTSPACE Value, VAULTSPACE State) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(RemoveItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE UCount, VAULTSPACE State) VAULTCPP(noexcept);
@@ -485,6 +486,7 @@ namespace vaultmp
 	VAULTFUNCTION State SetCell(ID id, Cell cell, Value X = 0.00, Value Y = 0.00, Value Z = 0.00) noexcept { return VAULTAPI(SetCell)(id, cell, X, Y, Z); }
 	VAULTFUNCTION ID CreateItem(Base item, ID id) noexcept { return VAULTAPI(CreateItem)(item, id, static_cast<Cell>(0), 0.00, 0.00, 0.00); }
 	VAULTFUNCTION ID CreateItem(Base item, Cell cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateItem)(item, static_cast<ID>(0), cell, X, Y, Z); }
+	VAULTFUNCTION State SetItemCount(ID id, UCount count) noexcept { return VAULTAPI(SetItemCount)(id, count); }
 	VAULTFUNCTION ID CreateContainer(Base container, ID id) noexcept { return VAULTAPI(CreateContainer)(container, id, static_cast<Cell>(0), 0.00, 0.00, 0.00); }
 	VAULTFUNCTION ID CreateContainer(Base container, Cell cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateContainer)(container, static_cast<ID>(0), cell, X, Y, Z); }
 	VAULTFUNCTION State AddItem(ID id, Base item, UCount count = 1, Value condition = 100.0, State silent = True) noexcept { return VAULTAPI(AddItem)(id, item, count, condition, silent); }
@@ -565,6 +567,8 @@ namespace vaultmp
 			State GetItemEquipped() const noexcept { return vaultmp::GetItemEquipped(id); }
 			State GetItemStick() const noexcept { return vaultmp::GetItemStick(id); }
 			State GetItemSilent() const noexcept { return vaultmp::GetItemSilent(id); }
+
+			State SetItemCount(UCount count) const noexcept { return vaultmp::SetItemCount(id, count); }
 
 			static ID Create(Base item, ID id) { return vaultmp::CreateItem(item, id); }
 			static ID Create(Base item, Cell cell, Value X, Value Y, Value Z) { return vaultmp::CreateItem(item, cell, X, Y, Z); }

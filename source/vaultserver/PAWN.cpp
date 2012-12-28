@@ -97,6 +97,7 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"SetPos", PAWN::vaultmp_SetPos},
 	{"SetCell", PAWN::vaultmp_SetCell},
 	{"CreateItem", PAWN::vaultmp_CreateItem},
+	{"SetItemCount", PAWN::vaultmp_SetItemCount},
 	{"CreateContainer", PAWN::vaultmp_CreateContainer},
 	{"AddItem", PAWN::vaultmp_AddItem},
 	{"RemoveItem", PAWN::vaultmp_RemoveItem},
@@ -833,6 +834,11 @@ cell PAWN::vaultmp_SetCell(AMX*, const cell* params)
 cell PAWN::vaultmp_CreateItem(AMX*, const cell* params)
 {
 	return Script::CreateItem(params[1], params[2], params[3], amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6]));
+}
+
+cell PAWN::vaultmp_SetItemCount(AMX*, const cell* params)
+{
+	return Script::SetItemCount(params[1], params[2]);
 }
 
 cell PAWN::vaultmp_CreateContainer(AMX*, const cell* params)

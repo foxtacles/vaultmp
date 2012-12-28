@@ -1528,6 +1528,15 @@ void Game::net_SetCell(const FactoryObject<Object>& reference, const FactoryObje
 	}
 }
 
+void Game::net_SetItemCount(const FactoryObject<Item>& reference, unsigned int count)
+{
+	if (reference->GetItemContainer())
+		return;
+
+	if (reference->SetItemCount(count))
+		SetRefCount(reference);
+}
+
 void Game::net_ContainerUpdate(FactoryObject<Container>& reference, const ContainerDiffNet& ndiff, const ContainerDiffNet& gdiff)
 {
 	Lockable* result;

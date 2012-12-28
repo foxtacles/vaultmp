@@ -152,6 +152,7 @@ Script::Script(char* path)
 			SetScript(string(vpf + "SetPos").c_str(), &Script::SetPos);
 			SetScript(string(vpf + "SetCell").c_str(), &Script::SetCell);
 			SetScript(string(vpf + "CreateItem").c_str(), &Script::CreateItem);
+			SetScript(string(vpf + "SetItemCount").c_str(), &Script::SetItemCount);
 			SetScript(string(vpf + "CreateContainer").c_str(), &Script::CreateContainer);
 			SetScript(string(vpf + "AddItem").c_str(), &Script::AddItem);
 			SetScript(string(vpf + "RemoveItem").c_str(), &Script::RemoveItem);
@@ -1819,6 +1820,31 @@ NetworkID Script::CreateItem(unsigned int baseID, NetworkID id, unsigned int cel
 	});
 
 	return result;
+}
+
+bool Script::SetItemCount(NetworkID id, unsigned int count)
+{
+	if (!count)
+		return false;
+
+	auto reference = GameFactory::GetObject<Item>(id);
+
+	if (!reference)
+		return false;
+
+	auto& item = reference.get();
+
+	if (!item->GetItemContainer() && item->SetItemCount(count))
+	{
+		Network::Queue(NetworkResponse{Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_COUNT>(item->GetNetworkID(), count),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+		});
+
+		return true;
+	}
+
+	return false;
 }
 
 NetworkID Script::CreateContainer(unsigned int baseID, NetworkID id, unsigned int cell, double X, double Y, double Z)

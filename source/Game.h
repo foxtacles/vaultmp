@@ -304,6 +304,10 @@ class Game
 		 */
 		static void net_SetCell(const FactoryObject<Object>& reference, const FactoryObject<Player>& player, unsigned int cell);
 		/**
+		 * \brief Network function to handle Item count
+		 */
+		static void net_SetItemCount(const FactoryObject<Item>& reference, unsigned int count);
+		/**
 		 * \brief Network function to handle Container update
 		 */
 		static void net_ContainerUpdate(FactoryObject<Container>& reference, const ContainerDiffNet& ndiff, const ContainerDiffNet& gdiff);
