@@ -96,6 +96,8 @@ forward OnGameYearChange(year);
 forward OnGameMonthChange(month);
 forward OnGameDayChange(day);
 forward OnGameHourChange(hour);
+forward OnServerInit();
+forward OnServerExit();
 
 // Functions
 

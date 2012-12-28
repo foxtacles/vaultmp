@@ -23,19 +23,18 @@ Script::Script(char* path)
 	if (strstr(path, ".so"))
 #endif
 	{
-		void* handle = nullptr;
+		lib_t handle;
 #ifdef __WIN32__
 		handle = LoadLibrary(path);
 #else
 		handle = dlopen(path, RTLD_LAZY);
 #endif
 
-		if (handle == nullptr)
+		if (!handle)
 			throw VaultException("Was not able to load C++ script: %s", path);
-
 		try
 		{
-			this->handle = handle;
+			this->lib = handle;
 			this->cpp_script = true;
 
 			GetScript("exec", fexec);
@@ -68,6 +67,8 @@ Script::Script(char* path)
 			GetScript("OnGameMonthChange", fOnGameMonthChange);
 			GetScript("OnGameDayChange", fOnGameDayChange);
 			GetScript("OnGameHourChange", fOnGameHourChange);
+			GetScript("OnServerInit", fOnServerInit);
+			GetScript("OnServerExit", fOnServerExit);
 
 			SetScript(string(vpf + "timestamp").c_str(), &Utils::timestamp);
 			SetScript(string(vpf + "CreateTimer").c_str(), &Script::CreateTimer);
@@ -171,7 +172,7 @@ Script::Script(char* path)
 		catch (...)
 		{
 #ifdef __WIN32__
-			FreeLibrary((HINSTANCE) handle);
+			FreeLibrary(handle);
 #else
 			dlclose(handle);
 #endif
@@ -186,7 +187,7 @@ Script::Script(char* path)
 		{
 			vaultscript = new AMX();
 
-			this->handle = reinterpret_cast<void*>(vaultscript);
+			this->amx = vaultscript;
 			this->cpp_script = false;
 			int err = 0;
 
@@ -223,16 +224,15 @@ Script::~Script()
 	if (this->cpp_script)
 	{
 #ifdef __WIN32__
-		FreeLibrary((HINSTANCE) this->handle);
+		FreeLibrary(this->lib);
 #else
-		dlclose(this->handle);
+		dlclose(this->lib);
 #endif
 	}
 	else
 	{
-		AMX* vaultscript = reinterpret_cast<AMX*>(this->handle);
-		PAWN::FreeProgram(vaultscript);
-		delete vaultscript;
+		PAWN::FreeProgram(this->amx);
+		delete this->amx;
 	}
 }
 
@@ -275,7 +275,7 @@ void Script::Run()
 		else
 		{
 			cell ret;
-			int err = PAWN::Exec(reinterpret_cast<AMX*>(script->handle), &ret, AMX_EXEC_MAIN);
+			int err = PAWN::Exec(script->amx, &ret, AMX_EXEC_MAIN);
 
 			if (err != AMX_ERR_NONE)
 				throw VaultException("PAWN script error (%d): \"%s\"", err, aux_StrError(err));
@@ -668,8 +668,8 @@ void Script::OnSpawn(const FactoryObject<Object>& reference)
 			if (script->fOnSpawn)
 				script->fOnSpawn(id);
 		}
-		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnSpawn"))
-			PAWN::Call((AMX*)script->handle, "OnSpawn", "l", 0, id);
+		else if (PAWN::IsCallbackPresent(script->amx, "OnSpawn"))
+			PAWN::Call(script->amx, "OnSpawn", "l", 0, id);
 	}
 }
 
@@ -684,8 +684,8 @@ void Script::OnCellChange(const FactoryObject<Object>& reference, unsigned int c
 			if (script->fOnCellChange)
 				script->fOnCellChange(id, cell);
 		}
-		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnCellChange"))
-			PAWN::Call((AMX*)script->handle, "OnCellChange", "il", 0, cell, id);
+		else if (PAWN::IsCallbackPresent(script->amx, "OnCellChange"))
+			PAWN::Call(script->amx, "OnCellChange", "il", 0, cell, id);
 	}
 }
 
@@ -700,8 +700,8 @@ void Script::OnContainerItemChange(const FactoryObject<Container>& reference, un
 			if (script->fOnContainerItemChange)
 				script->fOnContainerItemChange(id, baseID, count, condition);
 		}
-		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnContainerItemChange"))
-			PAWN::Call((AMX*)script->handle, "OnContainerItemChange", "fiil", 0, condition, count, baseID, id);
+		else if (PAWN::IsCallbackPresent(script->amx, "OnContainerItemChange"))
+			PAWN::Call(script->amx, "OnContainerItemChange", "fiil", 0, condition, count, baseID, id);
 	}
 }
 
@@ -725,11 +725,11 @@ void Script::OnActorValueChange(const FactoryObject<Actor>& reference, unsigned 
 		{
 			if (base)
 			{
-				if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnActorBaseValueChange"))
-					PAWN::Call((AMX*)script->handle, "OnActorBaseValueChange", "fil", 0, value, (unsigned int) index, id);
+				if (PAWN::IsCallbackPresent(script->amx, "OnActorBaseValueChange"))
+					PAWN::Call(script->amx, "OnActorBaseValueChange", "fil", 0, value, (unsigned int) index, id);
 			}
-			else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnActorValueChange"))
-				PAWN::Call((AMX*)script->handle, "OnActorValueChange", "fil", 0, value, (unsigned int) index, id);
+			else if (PAWN::IsCallbackPresent(script->amx, "OnActorValueChange"))
+				PAWN::Call(script->amx, "OnActorValueChange", "fil", 0, value, (unsigned int) index, id);
 		}
 	}
 }
@@ -745,8 +745,8 @@ void Script::OnActorAlert(const FactoryObject<Actor>& reference, bool alerted)
 			if (script->fOnActorAlert)
 				script->fOnActorAlert(id, alerted);
 		}
-		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnActorAlert"))
-			PAWN::Call((AMX*)script->handle, "OnActorAlert", "il", 0, (unsigned int) alerted, id);
+		else if (PAWN::IsCallbackPresent(script->amx, "OnActorAlert"))
+			PAWN::Call(script->amx, "OnActorAlert", "il", 0, (unsigned int) alerted, id);
 	}
 }
 
@@ -761,8 +761,8 @@ void Script::OnActorSneak(const FactoryObject<Actor>& reference, bool sneaking)
 			if (script->fOnActorSneak)
 				script->fOnActorSneak(id, sneaking);
 		}
-		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnActorSneak"))
-			PAWN::Call((AMX*)script->handle, "OnActorSneak", "il", 0, (unsigned int) sneaking, id);
+		else if (PAWN::IsCallbackPresent(script->amx, "OnActorSneak"))
+			PAWN::Call(script->amx, "OnActorSneak", "il", 0, (unsigned int) sneaking, id);
 	}
 }
 
@@ -777,8 +777,8 @@ void Script::OnActorDeath(const FactoryObject<Actor>& reference, unsigned short 
 			if (script->fOnActorDeath)
 				script->fOnActorDeath(id, limbs, cause);
 		}
-		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnActorDeath"))
-			PAWN::Call((AMX*)script->handle, "OnActorDeath", "iil", 0, cause, limbs, id);
+		else if (PAWN::IsCallbackPresent(script->amx, "OnActorDeath"))
+			PAWN::Call(script->amx, "OnActorDeath", "iil", 0, cause, limbs, id);
 	}
 }
 
@@ -793,8 +793,8 @@ void Script::OnActorEquipItem(const FactoryObject<Actor>& reference, unsigned in
 			if (script->fOnActorEquipItem)
 				script->fOnActorEquipItem(id, baseID, condition);
 		}
-		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnActorEquipItem"))
-			PAWN::Call((AMX*)script->handle, "OnActorEquipItem", "fil", 0, condition, baseID, id);
+		else if (PAWN::IsCallbackPresent(script->amx, "OnActorEquipItem"))
+			PAWN::Call(script->amx, "OnActorEquipItem", "fil", 0, condition, baseID, id);
 	}
 }
 
@@ -809,8 +809,8 @@ void Script::OnActorUnequipItem(const FactoryObject<Actor>& reference, unsigned 
 			if (script->fOnActorUnequipItem)
 				script->fOnActorUnequipItem(id, baseID, condition);
 		}
-		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnActorUnequipItem"))
-			PAWN::Call((AMX*)script->handle, "OnActorUnequipItem", "fil", 0, condition, baseID, id);
+		else if (PAWN::IsCallbackPresent(script->amx, "OnActorUnequipItem"))
+			PAWN::Call(script->amx, "OnActorUnequipItem", "fil", 0, condition, baseID, id);
 	}
 }
 
@@ -825,8 +825,8 @@ void Script::OnActorDropItem(const FactoryObject<Actor>& reference, unsigned int
 			if (script->fOnActorDropItem)
 				script->fOnActorDropItem(id, baseID, count, condition);
 		}
-		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnActorDropItem"))
-			PAWN::Call((AMX*)script->handle, "OnActorDropItem", "fiil", 0, condition, count, baseID, id);
+		else if (PAWN::IsCallbackPresent(script->amx, "OnActorDropItem"))
+			PAWN::Call(script->amx, "OnActorDropItem", "fiil", 0, condition, count, baseID, id);
 	}
 }
 
@@ -841,8 +841,8 @@ void Script::OnActorPickupItem(const FactoryObject<Actor>& reference, unsigned i
 			if (script->fOnActorPickupItem)
 				script->fOnActorPickupItem(id, baseID, count, condition);
 		}
-		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnActorPickupItem"))
-			PAWN::Call((AMX*)script->handle, "OnActorPickupItem", "fiil", 0, condition, count, baseID, id);
+		else if (PAWN::IsCallbackPresent(script->amx, "OnActorPickupItem"))
+			PAWN::Call(script->amx, "OnActorPickupItem", "fiil", 0, condition, count, baseID, id);
 	}
 }
 
@@ -857,8 +857,8 @@ void Script::OnActorPunch(const FactoryObject<Actor>& reference, bool power)
 			if (script->fOnActorPunch)
 				script->fOnActorPunch(id, power);
 		}
-		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnActorPunch"))
-			PAWN::Call((AMX*)script->handle, "OnActorPunch", "il", 0, power, id);
+		else if (PAWN::IsCallbackPresent(script->amx, "OnActorPunch"))
+			PAWN::Call(script->amx, "OnActorPunch", "il", 0, power, id);
 	}
 }
 
@@ -873,8 +873,8 @@ void Script::OnActorFireWeapon(const FactoryObject<Actor>& reference, unsigned i
 			if (script->fOnActorFireWeapon)
 				script->fOnActorFireWeapon(id, weapon);
 		}
-		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnActorFireWeapon"))
-			PAWN::Call((AMX*)script->handle, "OnActorFireWeapon", "il", 0, weapon, id);
+		else if (PAWN::IsCallbackPresent(script->amx, "OnActorFireWeapon"))
+			PAWN::Call(script->amx, "OnActorFireWeapon", "il", 0, weapon, id);
 	}
 }
 
@@ -889,8 +889,8 @@ void Script::OnPlayerDisconnect(const FactoryObject<Player>& reference, Reason r
 			if (script->fOnPlayerDisconnect)
 				script->fOnPlayerDisconnect(id, reason);
 		}
-		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnPlayerDisconnect"))
-			PAWN::Call((AMX*)script->handle, "OnPlayerDisconnect", "il", 0, (unsigned int) reason, id);
+		else if (PAWN::IsCallbackPresent(script->amx, "OnPlayerDisconnect"))
+			PAWN::Call(script->amx, "OnPlayerDisconnect", "il", 0, (unsigned int) reason, id);
 	}
 }
 
@@ -906,8 +906,8 @@ unsigned int Script::OnPlayerRequestGame(const FactoryObject<Player>& reference)
 			if (script->fOnPlayerRequestGame)
 				result = script->fOnPlayerRequestGame(id);
 		}
-		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnPlayerRequestGame"))
-			result = (unsigned int) PAWN::Call((AMX*)script->handle, "OnPlayerRequestGame", "l", 0, id);
+		else if (PAWN::IsCallbackPresent(script->amx, "OnPlayerRequestGame"))
+			result = (unsigned int) PAWN::Call(script->amx, "OnPlayerRequestGame", "l", 0, id);
 	}
 
 	return result;
@@ -929,8 +929,8 @@ bool Script::OnPlayerChat(const FactoryObject<Player>& reference, string& messag
 			if (script->fOnPlayerChat)
 				result = script->fOnPlayerChat(id, _message);
 		}
-		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnPlayerChat"))
-			result = static_cast<bool>(PAWN::Call((AMX*)script->handle, "OnPlayerChat", "sl", 1, _message, id));
+		else if (PAWN::IsCallbackPresent(script->amx, "OnPlayerChat"))
+			result = static_cast<bool>(PAWN::Call(script->amx, "OnPlayerChat", "sl", 1, _message, id));
 	}
 
 	message.assign(_message);
@@ -949,8 +949,8 @@ bool Script::OnClientAuthenticate(const string& name, const string& pwd)
 			if (script->fOnClientAuthenticate)
 				result = script->fOnClientAuthenticate(name.c_str(), pwd.c_str());
 		}
-		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnClientAuthenticate"))
-			result = static_cast<bool>(PAWN::Call((AMX*)script->handle, "OnClientAuthenticate", "ss", 0, pwd.c_str(), name.c_str()));
+		else if (PAWN::IsCallbackPresent(script->amx, "OnClientAuthenticate"))
+			result = static_cast<bool>(PAWN::Call(script->amx, "OnClientAuthenticate", "ss", 0, pwd.c_str(), name.c_str()));
 	}
 
 	return result;
@@ -965,8 +965,8 @@ void Script::OnGameYearChange(unsigned int year)
 			if (script->fOnGameYearChange)
 				script->fOnGameYearChange(year);
 		}
-		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnGameYearChange"))
-			PAWN::Call((AMX*)script->handle, "OnGameYearChange", "i", 0, year);
+		else if (PAWN::IsCallbackPresent(script->amx, "OnGameYearChange"))
+			PAWN::Call(script->amx, "OnGameYearChange", "i", 0, year);
 	}
 }
 
@@ -979,8 +979,8 @@ void Script::OnGameMonthChange(unsigned int month)
 			if (script->fOnGameMonthChange)
 				script->fOnGameMonthChange(month);
 		}
-		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnGameMonthChange"))
-			PAWN::Call((AMX*)script->handle, "OnGameMonthChange", "i", 0, month);
+		else if (PAWN::IsCallbackPresent(script->amx, "OnGameMonthChange"))
+			PAWN::Call(script->amx, "OnGameMonthChange", "i", 0, month);
 	}
 }
 
@@ -993,8 +993,8 @@ void Script::OnGameDayChange(unsigned int day)
 			if (script->fOnGameDayChange)
 				script->fOnGameDayChange(day);
 		}
-		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnGameDayChange"))
-			PAWN::Call((AMX*)script->handle, "OnGameDayChange", "i", 0, day);
+		else if (PAWN::IsCallbackPresent(script->amx, "OnGameDayChange"))
+			PAWN::Call(script->amx, "OnGameDayChange", "i", 0, day);
 	}
 }
 
@@ -1007,8 +1007,36 @@ void Script::OnGameHourChange(unsigned int hour)
 			if (script->fOnGameHourChange)
 				script->fOnGameHourChange(hour);
 		}
-		else if (PAWN::IsCallbackPresent((AMX*)script->handle, "OnGameHourChange"))
-			PAWN::Call((AMX*)script->handle, "OnGameHourChange", "i", 0, hour);
+		else if (PAWN::IsCallbackPresent(script->amx, "OnGameHourChange"))
+			PAWN::Call(script->amx, "OnGameHourChange", "i", 0, hour);
+	}
+}
+
+void Script::OnServerInit()
+{
+	for (Script* script : scripts)
+	{
+		if (script->cpp_script)
+		{
+			if (script->fOnServerInit)
+				script->fOnServerInit();
+		}
+		else if (PAWN::IsCallbackPresent(script->amx, "OnServerInit"))
+			PAWN::Call(script->amx, "OnServerInit", "", 0);
+	}
+}
+
+void Script::OnServerExit()
+{
+	for (Script* script : scripts)
+	{
+		if (script->cpp_script)
+		{
+			if (script->fOnServerExit)
+				script->fOnServerExit();
+		}
+		else if (PAWN::IsCallbackPresent(script->amx, "OnServerExit"))
+			PAWN::Call(script->amx, "OnServerExit", "", 0);
 	}
 }
 

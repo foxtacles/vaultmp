@@ -16,6 +16,16 @@ main()
 	}
 }
 
+public OnServerInit()
+{
+
+}
+
+public OnServerExit()
+{
+
+}
+
 public OnGameYearChange(year)
 {
 

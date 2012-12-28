@@ -24,6 +24,16 @@ Void VAULTSCRIPT exec() noexcept
 	}
 }
 
+Void VAULTSCRIPT OnServerInit() noexcept
+{
+
+}
+
+Void VAULTSCRIPT OnServerExit() noexcept
+{
+
+}
+
 Void VAULTSCRIPT OnGameYearChange(UCount year) noexcept
 {
 

@@ -296,53 +296,64 @@ void Dedicated::DedicatedThread()
 		printf("Dedicated server initialized, running scripts now\n");
 
 		Script::Run();
+		Script::OnServerInit();
 
-		while (thread)
+		try
 		{
-			while (Network::Dispatch(peer));
-
-			for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
+			while (thread)
 			{
-				if (packet->data[0] == ID_MASTER_UPDATE)
-					Query(packet);
-				else
+				while (Network::Dispatch(peer));
+
+				for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
 				{
-					try
+					if (packet->data[0] == ID_MASTER_UPDATE)
+						Query(packet);
+					else
 					{
-						NetworkResponse response = NetworkServer::ProcessPacket(packet);
+						try
+						{
+							NetworkResponse response = NetworkServer::ProcessPacket(packet);
 
-						vector<RakNetGUID> closures;
+							vector<RakNetGUID> closures;
 
-						for (const SingleResponse& _response : response)
-							if (static_cast<pTypes>(*_response.get_packet()->get()) == pTypes::ID_GAME_END)
-								closures.insert(closures.end(), _response.get_targets().begin(), _response.get_targets().end());
+							for (const SingleResponse& _response : response)
+								if (static_cast<pTypes>(*_response.get_packet()->get()) == pTypes::ID_GAME_END)
+									closures.insert(closures.end(), _response.get_targets().begin(), _response.get_targets().end());
 
-						Network::Dispatch(peer, move(response));
+							Network::Dispatch(peer, move(response));
 
-						while (Network::Dispatch(peer));
+							while (Network::Dispatch(peer));
 
-						for (RakNetGUID& guid : closures)
-							peer->CloseConnection(guid, true, CHANNEL_SYSTEM, HIGH_PRIORITY);
-					}
-					catch (...)
-					{
-						peer->DeallocatePacket(packet);
-						Network::Dispatch(peer, NetworkServer::ProcessEvent(ID_EVENT_SERVER_ERROR));
-						throw;
+							for (RakNetGUID& guid : closures)
+								peer->CloseConnection(guid, true, CHANNEL_SYSTEM, HIGH_PRIORITY);
+						}
+						catch (...)
+						{
+							peer->DeallocatePacket(packet);
+							Network::Dispatch(peer, NetworkServer::ProcessEvent(ID_EVENT_SERVER_ERROR));
+							throw;
+						}
 					}
 				}
-			}
 
-			Timer::GlobalTick();
+				Timer::GlobalTick();
 
-			this_thread::sleep_for(chrono::milliseconds(1));
+				this_thread::sleep_for(chrono::milliseconds(1));
 
-			if (announce)
-			{
-				if ((GetTimeMS() - announcetime) > RAKNET_MASTER_RATE)
-					Announce(true);
+				if (announce)
+				{
+					if ((GetTimeMS() - announcetime) > RAKNET_MASTER_RATE)
+						Announce(true);
+				}
 			}
 		}
+		catch (...)
+		{
+			Script::OnServerExit();
+			throw;
+		}
+
+		Script::OnServerExit();
 	}
 	catch (exception& e)
 	{
@@ -357,6 +368,8 @@ void Dedicated::DedicatedThread()
 			vaulterror.Console();
 		}
 	}
+
+	Script::UnloadScripts();
 
 	thread = false;
 

@@ -24,11 +24,11 @@
 #include "../VaultException.h"
 
 #ifdef __WIN32__
-#define GetScript(a,b) (b = (decltype(b)) GetProcAddress((HINSTANCE)this->handle,a))
-#define SetScript(a,b) *((decltype(b)*)(GetProcAddress((HINSTANCE)this->handle,a)?GetProcAddress((HINSTANCE)this->handle,a):throw VaultException("Script variable not found: %s", a)))=b;
+#define GetScript(a,b) (b = (decltype(b)) GetProcAddress((HINSTANCE)this->lib,a))
+#define SetScript(a,b) *((decltype(b)*)(GetProcAddress((HINSTANCE)this->lib,a)?GetProcAddress((HINSTANCE)this->lib,a):throw VaultException("Script variable not found: %s", a)))=b;
 #else
-#define GetScript(a,b) (b = (decltype(b)) dlsym(this->handle,a))
-#define SetScript(a,b) *((decltype(b)*)(dlsym(this->handle,a)?dlsym(this->handle,a):throw VaultException("Script function pointer not found: %s", a)))=b;
+#define GetScript(a,b) (b = (decltype(b)) dlsym(this->lib,a))
+#define SetScript(a,b) *((decltype(b)*)(dlsym(this->lib,a)?dlsym(this->lib,a):throw VaultException("Script function pointer not found: %s", a)))=b;
 #endif
 
 /**
@@ -43,7 +43,18 @@ class Script
 		Script(char* path);
 		~Script();
 
-		void* handle;
+#ifdef __WIN32__
+		typedef HMODULE lib_t;
+#else
+		typedef void* lib_t;
+#endif
+
+		union
+		{
+			lib_t lib;
+			AMX* amx;
+		};
+
 		bool cpp_script;
 
 		static std::vector<Script*> scripts;
@@ -74,6 +85,8 @@ class Script
 		void (*fOnGameMonthChange)(unsigned int);
 		void (*fOnGameDayChange)(unsigned int);
 		void (*fOnGameHourChange)(unsigned int);
+		void (*fOnServerInit)();
+		void (*fOnServerExit)();
 
 		Script(const Script&) = delete;
 		Script& operator=(const Script&) = delete;
@@ -125,6 +138,8 @@ class Script
 		static void OnGameMonthChange(unsigned int month);
 		static void OnGameDayChange(unsigned int day);
 		static void OnGameHourChange(unsigned int hour);
+		static void OnServerInit();
+		static void OnServerExit();
 
 		static const char* ValueToString(unsigned char index);
 		static const char* AxisToString(unsigned char index);

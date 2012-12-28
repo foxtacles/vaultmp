@@ -199,7 +199,6 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	Script::UnloadScripts();
 	iniparser_freedict(config);
 
 #ifdef __WIN32__
