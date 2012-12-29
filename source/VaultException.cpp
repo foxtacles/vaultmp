@@ -10,7 +10,12 @@ VaultException::VaultException(const string& error) : error(error)
 {
 #ifdef VAULTMP_DEBUG
 	debug.print(error.c_str());
-	stacktrace();
+
+	try
+	{
+		stacktrace();
+	}
+	catch (...) {}
 #endif
 }
 
