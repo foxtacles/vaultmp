@@ -572,6 +572,7 @@ void API::Initialize(unsigned char game)
 	DefineFunction("GetRefCount", "r", Fallout3::Func_GetRefCount, FALLOUT3);
 	DefineFunction("SetRefCount", "ri", Fallout3::Func_SetRefCount, FALLOUT3);
 	DefineFunction("GetBaseObject", "r", Fallout3::Func_GetBaseObject, FALLOUT3);
+	DefineFunction("SetCurrentHealth", "rd", Fallout3::Func_SetCurrentHealth, FALLOUT3);
 
 	DefineFunction("Load", "$s", FalloutNV::Func_Load, NEWVEGAS);
 	DefineFunction("CenterOnWorld", "$wii", FalloutNV::Func_CenterOnWorld, NEWVEGAS);
@@ -587,6 +588,7 @@ void API::Initialize(unsigned char game)
 	DefineFunction("GetRefCount", "r", FalloutNV::Func_GetRefCount, NEWVEGAS);
 	DefineFunction("SetRefCount", "ri", FalloutNV::Func_SetRefCount, NEWVEGAS);
 	DefineFunction("GetBaseObject", "r", FalloutNV::Func_GetBaseObject, NEWVEGAS);
+	DefineFunction("SetCurrentHealth", "rd", FalloutNV::Func_SetCurrentHealth, NEWVEGAS);
 }
 
 void API::Terminate()

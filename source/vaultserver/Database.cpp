@@ -5,6 +5,7 @@
 #include "Race.h"
 #include "NPC.h"
 #include "BaseContainer.h"
+#include "Item.h"
 
 using namespace std;
 
@@ -127,9 +128,10 @@ unsigned int Database<T>::initialize(const string& file, const vector<string>& t
 	return data.size();
 }
 
-template class Database<Record>;
-template class Database<Exterior>;
-template class Database<Weapon>;
-template class Database<Race>;
-template class Database<NPC>;
-template class Database<BaseContainer>;
+template class Database<DB::Record>;
+template class Database<DB::Exterior>;
+template class Database<DB::Weapon>;
+template class Database<DB::Race>;
+template class Database<DB::NPC>;
+template class Database<DB::BaseContainer>;
+template class Database<DB::Item>;

@@ -417,6 +417,7 @@ namespace Values
 			Func_GetRefCount				= 0x14C3,
 			Func_SetRefCount				= 0x14C4,
 			Func_GetBaseObject				= 0x1416,
+			Func_SetCurrentHealth			= 0x14BF,
 		};
 
 		/**
@@ -484,6 +485,7 @@ namespace Values
 			Func_GetRefCount				= 0x1476,
 			Func_SetRefCount				= 0x1477,
 			Func_GetBaseObject				= 0x1403,
+			Func_SetCurrentHealth			= 0x1452,
 		};
 
 		/**

@@ -1,6 +1,7 @@
 #include "Weapon.h"
 
 using namespace std;
+using namespace DB;
 
 unordered_map<unsigned int, const Weapon*> Weapon::weapons;
 

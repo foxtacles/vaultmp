@@ -46,7 +46,7 @@ void Container::initialize()
 
 	if (baseID != PLAYER_BASE)
 	{
-		const Record* record = *Record::Lookup(baseID, vector<string>{"CONT", "NPC_", "CREA"});
+		const DB::Record* record = *DB::Record::Lookup(baseID, vector<string>{"CONT", "NPC_", "CREA"});
 
 		if (this->GetName().empty())
 			this->SetName(record->GetDescription());
@@ -532,7 +532,7 @@ list<NetworkID> Container::GetItemTypes(const string& type) const
 	{
 		FactoryObject<Item> item = GameFactory::GetObject<Item>(id).get();
 
-		if (Record::Lookup(item->GetBase(), type))
+		if (DB::Record::Lookup(item->GetBase(), type))
 			result.emplace_back(id);
 	}
 
@@ -541,7 +541,7 @@ list<NetworkID> Container::GetItemTypes(const string& type) const
 
 Lockable* Container::SetBase(unsigned int baseID)
 {
-	const Record* record = *Record::Lookup(baseID, vector<string>{"CONT", "NPC_", "CREA"});
+	const DB::Record* record = *DB::Record::Lookup(baseID, vector<string>{"CONT", "NPC_", "CREA"});
 
 	if (this->GetName().empty())
 		this->SetName(record->GetDescription());

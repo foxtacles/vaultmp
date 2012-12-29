@@ -106,7 +106,7 @@ Script::Script(char* path)
 			SetScript(string(vpf + "IsContainer").c_str(), &Script::IsContainer);
 			SetScript(string(vpf + "IsActor").c_str(), &Script::IsActor);
 			SetScript(string(vpf + "IsPlayer").c_str(), &Script::IsPlayer);
-			SetScript(string(vpf + "IsCell").c_str(), &Record::IsValidCell);
+			SetScript(string(vpf + "IsCell").c_str(), &DB::Record::IsValidCell);
 			SetScript(string(vpf + "IsInterior").c_str(), &Script::IsInterior);
 			SetScript(string(vpf + "GetType").c_str(), (unsigned char(*)(NetworkID)) &GameFactory::GetType);
 			SetScript(string(vpf + "GetConnection").c_str(), &Script::GetConnection);
@@ -153,6 +153,7 @@ Script::Script(char* path)
 			SetScript(string(vpf + "SetCell").c_str(), &Script::SetCell);
 			SetScript(string(vpf + "CreateItem").c_str(), &Script::CreateItem);
 			SetScript(string(vpf + "SetItemCount").c_str(), &Script::SetItemCount);
+			SetScript(string(vpf + "SetItemCondition").c_str(), &Script::SetItemCondition);
 			SetScript(string(vpf + "CreateContainer").c_str(), &Script::CreateContainer);
 			SetScript(string(vpf + "AddItem").c_str(), &Script::AddItem);
 			SetScript(string(vpf + "RemoveItem").c_str(), &Script::RemoveItem);
@@ -390,14 +391,14 @@ bool Script::SetCell_intern(NetworkID id, unsigned int cell, double X, double Y,
 	auto& object = reference.get();
 
 	bool update_pos = X != 0.00 && Y != 0.00 && Z != 0.00;
-	const Record* new_interior = nullptr;
-	const Exterior* new_exterior = nullptr;
+	const DB::Record* new_interior = nullptr;
+	const DB::Exterior* new_exterior = nullptr;
 
-	auto exterior = Exterior::Lookup(cell);
+	auto exterior = DB::Exterior::Lookup(cell);
 
 	if (!exterior)
 	{
-		auto interior = Record::Lookup(cell, "CELL");
+		auto interior = DB::Record::Lookup(cell, "CELL");
 
 		if (!interior)
 			return state;
@@ -406,7 +407,7 @@ bool Script::SetCell_intern(NetworkID id, unsigned int cell, double X, double Y,
 	}
 	else if (update_pos)
 	{
-		exterior = Exterior::Lookup(exterior->GetWorld(), X, Y);
+		exterior = DB::Exterior::Lookup(exterior->GetWorld(), X, Y);
 
 		if (!exterior || (new_exterior = *exterior)->GetBase() != cell)
 			return state;
@@ -495,7 +496,7 @@ void Script::SetupContainer(FactoryObject<Container>& container, FactoryObject<O
 {
 	SetupObject(container, reference, cell, X, Y, Z);
 
-	const vector<const BaseContainer*>& items = BaseContainer::Lookup(container->GetBase());
+	const vector<const DB::BaseContainer*>& items = DB::BaseContainer::Lookup(container->GetBase());
 
 	for (const auto* item : items)
 	{
@@ -513,11 +514,11 @@ void Script::SetupActor(FactoryObject<Actor>& actor, FactoryObject<Object>& refe
 
 	unsigned int baseID = actor->GetBase();
 
-	if (!Record::Lookup(baseID, "CREA"))
+	if (!DB::Record::Lookup(baseID, "CREA"))
 	{
-		const NPC* npc = *NPC::Lookup(baseID);
+		const DB::NPC* npc = *DB::NPC::Lookup(baseID);
 		unsigned int race = npc->GetRace();
-		signed int age = Race::Lookup(npc->GetOriginalRace())->GetAgeDifference(race);
+		signed int age = DB::Race::Lookup(npc->GetOriginalRace())->GetAgeDifference(race);
 		bool female = npc->IsFemale();
 
 		actor->SetActorRace(race);
@@ -1067,7 +1068,7 @@ const char* Script::BaseToString(unsigned int baseID)
 	static string base;
 	base.clear();
 
-	auto record = Record::Lookup(baseID);
+	auto record = DB::Record::Lookup(baseID);
 
 	if (record)
 		base.assign(record->GetName());
@@ -1140,7 +1141,7 @@ void Script::SetGameWeather(unsigned int weather)
 	if (Script::gameWeather == weather)
 		return;
 
-	if (Record::IsValidWeather(weather))
+	if (DB::Record::IsValidWeather(weather))
 	{
 		Script::gameWeather = weather;
 
@@ -1343,7 +1344,7 @@ bool Script::IsPlayer(NetworkID id)
 
 bool Script::IsInterior(unsigned int cell)
 {
-	return !Exterior::Lookup(cell) && Record::Lookup(cell, "CELL");
+	return !DB::Exterior::Lookup(cell) && DB::Record::Lookup(cell, "CELL");
 }
 
 unsigned int Script::GetConnection(NetworkID id)
@@ -1724,13 +1725,13 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 	auto& object = reference.get();
 
 	unsigned int cell = object->GetNetworkCell();
-	const Exterior* new_cell = nullptr;
+	const DB::Exterior* new_cell = nullptr;
 
-	auto exterior = Exterior::Lookup(cell);
+	auto exterior = DB::Exterior::Lookup(cell);
 
 	if (exterior)
 	{
-		exterior = Exterior::Lookup(exterior->GetWorld(), X, Y);
+		exterior = DB::Exterior::Lookup(exterior->GetWorld(), X, Y);
 
 		if (!exterior)
 			return state;
@@ -1838,6 +1839,36 @@ bool Script::SetItemCount(NetworkID id, unsigned int count)
 	{
 		Network::Queue(NetworkResponse{Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_COUNT>(item->GetNetworkID(), count),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+		});
+
+		return true;
+	}
+
+	return false;
+}
+
+bool Script::SetItemCondition(NetworkID id, double condition)
+{
+	if (condition < 0.00 || condition > 100.0)
+		return false;
+
+	auto reference = GameFactory::GetObject<Item>(id);
+
+	if (!reference)
+		return false;
+
+	auto& item = reference.get();
+
+	auto _item = DB::Item::Lookup(item->GetBase());
+
+	if (!_item)
+		return false;
+
+	if (!item->GetItemContainer() && item->SetItemCondition(condition))
+	{
+		Network::Queue(NetworkResponse{Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_CONDITION>(item->GetNetworkID(), condition, static_cast<unsigned int>(_item->GetHealth() * (condition / 100.0))),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		});
 
@@ -2097,9 +2128,9 @@ bool Script::PlayIdle(NetworkID id, unsigned int idle)
 
 	auto& actor = reference.get();
 
-	const Record* record = nullptr;
+	const DB::Record* record = nullptr;
 
-	auto _record = Record::Lookup(idle, "IDLE");
+	auto _record = DB::Record::Lookup(idle, "IDLE");
 
 	if (!_record)
 		return false;
@@ -2152,23 +2183,23 @@ bool Script::SetActorBaseRace(NetworkID id, unsigned int race)
 
 	unsigned int baseID = (*it)->GetBase();
 
-	if (Record::Lookup(baseID, "CREA"))
+	if (DB::Record::Lookup(baseID, "CREA"))
 		return false;
 
 	if (baseID == PLAYER_BASE)
 		return false;
 
-	if (!Race::Lookup(race))
+	if (!DB::Race::Lookup(race))
 		return false;
 
-	const NPC* npc = *NPC::Lookup(baseID);
+	const DB::NPC* npc = *DB::NPC::Lookup(baseID);
 	unsigned int old_race = npc->GetRace();
 
 	if (old_race != race)
 	{
 		npc->SetRace(race);
-		signed int delta_age = Race::Lookup(old_race)->GetAgeDifference(race);
-		signed int new_age = Race::Lookup(npc->GetOriginalRace())->GetAgeDifference(race);
+		signed int delta_age = DB::Race::Lookup(old_race)->GetAgeDifference(race);
+		signed int new_age = DB::Race::Lookup(npc->GetOriginalRace())->GetAgeDifference(race);
 
 		for (const auto& actor : reference)
 		{
@@ -2179,7 +2210,7 @@ bool Script::SetActorBaseRace(NetworkID id, unsigned int race)
 
 				if (vaultcast<Player>(actor))
 					Network::Queue(NetworkResponse{Network::CreateResponse(
-						PacketFactory::Create<pTypes::ID_UPDATE_RACE>(actor->GetNetworkID(), race, Race::Lookup(RACE_CAUCASIAN)->GetAgeDifference(race), delta_age),
+						PacketFactory::Create<pTypes::ID_UPDATE_RACE>(actor->GetNetworkID(), race, DB::Race::Lookup(RACE_CAUCASIAN)->GetAgeDifference(race), delta_age),
 						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 					});
 				else
@@ -2203,10 +2234,10 @@ bool Script::AgeActorBaseRace(NetworkID id, signed int age)
 
 	auto& actor = reference.get();
 
-	if (Record::Lookup(actor->GetBase(), "CREA"))
+	if (DB::Record::Lookup(actor->GetBase(), "CREA"))
 		return false;
 
-	const Race* race = *Race::Lookup(actor->GetActorRace());
+	const DB::Race* race = *DB::Race::Lookup(actor->GetActorRace());
 	unsigned int new_race;
 
 	if (age < 0)
@@ -2220,7 +2251,7 @@ bool Script::AgeActorBaseRace(NetworkID id, signed int age)
 			if (!new_race)
 				return false;
 
-			race = *Race::Lookup(new_race);
+			race = *DB::Race::Lookup(new_race);
 		}
 	}
 	else if (age > 0)
@@ -2232,7 +2263,7 @@ bool Script::AgeActorBaseRace(NetworkID id, signed int age)
 			if (!new_race)
 				return false;
 
-			race = *Race::Lookup(new_race);
+			race = *DB::Race::Lookup(new_race);
 		}
 	}
 	else
@@ -2253,13 +2284,13 @@ bool Script::SetActorBaseSex(NetworkID id, bool female)
 
 	unsigned int baseID = (*it)->GetBase();
 
-	if (Record::Lookup(baseID, "CREA"))
+	if (DB::Record::Lookup(baseID, "CREA"))
 		return false;
 
 	if (baseID == PLAYER_BASE)
 		return false;
 
-	const NPC* npc = *NPC::Lookup(baseID);
+	const DB::NPC* npc = *DB::NPC::Lookup(baseID);
 	bool old_female = npc->IsFemale();
 
 	if (old_female != female)
@@ -2300,11 +2331,11 @@ void Script::SetPlayerSpawnCell(NetworkID id, unsigned int cell)
 
 	auto& player = reference.get();
 
-	auto _cell = Exterior::Lookup(cell);
+	auto _cell = DB::Exterior::Lookup(cell);
 
 	if (!_cell)
 	{
-		auto record = Record::Lookup(cell, "CELL");
+		auto record = DB::Record::Lookup(cell, "CELL");
 
 		if (!record)
 			return;

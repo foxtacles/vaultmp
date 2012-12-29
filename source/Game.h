@@ -248,6 +248,10 @@ class Game
 		 */
 		static void SetRefCount(const FactoryObject<Item>& reference, unsigned int key = 0);
 		/**
+		 * \brief Sets the current health of an Item
+		 */
+		static void SetCurrentHealth(const FactoryObject<Item>& reference, unsigned int health, unsigned int key = 0);
+		/**
 		 * \brief Returns the reference count of an Item
 		 */
 		static unsigned int GetRefCount(unsigned int refID);
@@ -307,6 +311,10 @@ class Game
 		 * \brief Network function to handle Item count
 		 */
 		static void net_SetItemCount(const FactoryObject<Item>& reference, unsigned int count);
+		/**
+		 * \brief Network function to handle Item condition
+		 */
+		static void net_SetItemCondition(const FactoryObject<Item>& reference, double condition, unsigned int health);
 		/**
 		 * \brief Network function to handle Container update
 		 */

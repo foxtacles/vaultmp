@@ -98,6 +98,7 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"SetCell", PAWN::vaultmp_SetCell},
 	{"CreateItem", PAWN::vaultmp_CreateItem},
 	{"SetItemCount", PAWN::vaultmp_SetItemCount},
+	{"SetItemCondition", PAWN::vaultmp_SetItemCondition},
 	{"CreateContainer", PAWN::vaultmp_CreateContainer},
 	{"AddItem", PAWN::vaultmp_AddItem},
 	{"RemoveItem", PAWN::vaultmp_RemoveItem},
@@ -568,7 +569,7 @@ cell PAWN::vaultmp_IsPlayer(AMX*, const cell* params)
 
 cell PAWN::vaultmp_IsCell(AMX*, const cell* params)
 {
-	return Record::IsValidCell(params[1]);
+	return DB::Record::IsValidCell(params[1]);
 }
 
 cell PAWN::vaultmp_IsInterior(AMX*, const cell* params)
@@ -839,6 +840,11 @@ cell PAWN::vaultmp_CreateItem(AMX*, const cell* params)
 cell PAWN::vaultmp_SetItemCount(AMX*, const cell* params)
 {
 	return Script::SetItemCount(params[1], params[2]);
+}
+
+cell PAWN::vaultmp_SetItemCondition(AMX*, const cell* params)
+{
+	return Script::SetItemCondition(params[1], amx_ctof(params[2]));
 }
 
 cell PAWN::vaultmp_CreateContainer(AMX*, const cell* params)

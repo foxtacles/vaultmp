@@ -90,25 +90,26 @@ $(OBJDIR_DEBUG)/amx/amxtime.o \
 $(OBJDIR_DEBUG)/amx/float.o \
 $(OBJDIR_DEBUG)/amx/amxaux.o \
 $(OBJDIR_DEBUG)/amx/amx.o \
-$(OBJDIR_DEBUG)/Script.o \
-$(OBJDIR_DEBUG)/Record.o \
-$(OBJDIR_DEBUG)/Race.o \
-$(OBJDIR_DEBUG)/Public.o \
-$(OBJDIR_DEBUG)/PAWN.o \
-$(OBJDIR_DEBUG)/NetworkServer.o \
-$(OBJDIR_DEBUG)/NPC.o \
-$(OBJDIR_DEBUG)/Exterior.o \
-$(OBJDIR_DEBUG)/Dedicated.o \
-$(OBJDIR_DEBUG)/Database.o \
-$(OBJDIR_DEBUG)/vaultserver.o \
-$(OBJDIR_DEBUG)/Weapon.o \
-$(OBJDIR_DEBUG)/Timer.o \
-$(OBJDIR_DEBUG)/Server.o \
-$(OBJDIR_DEBUG)/ScriptFunction.o \
+$(OBJDIR_DEBUG)/vaultserver/Script.o \
+$(OBJDIR_DEBUG)/vaultserver/Record.o \
+$(OBJDIR_DEBUG)/vaultserver/Race.o \
+$(OBJDIR_DEBUG)/vaultserver/Public.o \
+$(OBJDIR_DEBUG)/vaultserver/PAWN.o \
+$(OBJDIR_DEBUG)/vaultserver/NetworkServer.o \
+$(OBJDIR_DEBUG)/vaultserver/NPC.o \
+$(OBJDIR_DEBUG)/vaultserver/Exterior.o \
+$(OBJDIR_DEBUG)/vaultserver/Dedicated.o \
+$(OBJDIR_DEBUG)/vaultserver/Database.o \
+$(OBJDIR_DEBUG)/vaultserver/vaultserver.o \
+$(OBJDIR_DEBUG)/vaultserver/Weapon.o \
+$(OBJDIR_DEBUG)/vaultserver/Timer.o \
+$(OBJDIR_DEBUG)/vaultserver/Server.o \
+$(OBJDIR_DEBUG)/vaultserver/ScriptFunction.o \
+$(OBJDIR_DEBUG)/vaultserver/Client.o \
+$(OBJDIR_DEBUG)/vaultserver/BaseContainer.o \
+$(OBJDIR_DEBUG)/vaultserver/Item.o \
 $(OBJDIR_DEBUG)/ServerEntry.o \
 $(OBJDIR_DEBUG)/Reference.o \
-$(OBJDIR_DEBUG)/Client.o \
-$(OBJDIR_DEBUG)/BaseContainer.o \
 $(OBJDIR_DEBUG)/VaultVector.o \
 $(OBJDIR_DEBUG)/VaultFunctor.o \
 $(OBJDIR_DEBUG)/VaultException.o \
@@ -119,14 +120,14 @@ $(OBJDIR_DEBUG)/Network.o  \
 $(OBJDIR_DEBUG)/Lockable.o \
 $(OBJDIR_DEBUG)/Item.o \
 $(OBJDIR_DEBUG)/GameFactory.o \
-$(OBJDIR_DEBUG)/Debug.o \
 $(OBJDIR_DEBUG)/CriticalSection.o \
 $(OBJDIR_DEBUG)/Container.o \
 $(OBJDIR_DEBUG)/Actor.o \
 $(OBJDIR_DEBUG)/API.o \
 $(OBJDIR_DEBUG)/Player.o \
 $(OBJDIR_DEBUG)/PacketFactory.o \
-$(OBJDIR_DEBUG)/Expected.o
+$(OBJDIR_DEBUG)/Expected.o \
+$(OBJDIR_DEBUG)/Debug.o \
 
 OBJ_RELEASE = \
 $(OBJDIR_RELEASE)/RakNet/RakNetSocket2.o \
@@ -179,25 +180,26 @@ $(OBJDIR_RELEASE)/amx/amxtime.o \
 $(OBJDIR_RELEASE)/amx/float.o \
 $(OBJDIR_RELEASE)/amx/amxaux.o \
 $(OBJDIR_RELEASE)/amx/amx.o \
-$(OBJDIR_RELEASE)/Script.o \
-$(OBJDIR_RELEASE)/Record.o \
-$(OBJDIR_RELEASE)/Race.o \
-$(OBJDIR_RELEASE)/Public.o \
-$(OBJDIR_RELEASE)/PAWN.o \
-$(OBJDIR_RELEASE)/NetworkServer.o \
-$(OBJDIR_RELEASE)/NPC.o \
-$(OBJDIR_RELEASE)/Exterior.o \
-$(OBJDIR_RELEASE)/Dedicated.o \
-$(OBJDIR_RELEASE)/Database.o \
-$(OBJDIR_RELEASE)/vaultserver.o \
-$(OBJDIR_RELEASE)/Weapon.o \
-$(OBJDIR_RELEASE)/Timer.o \
-$(OBJDIR_RELEASE)/Server.o \
-$(OBJDIR_RELEASE)/ScriptFunction.o \
+$(OBJDIR_RELEASE)/vaultserver/Script.o \
+$(OBJDIR_RELEASE)/vaultserver/Record.o \
+$(OBJDIR_RELEASE)/vaultserver/Race.o \
+$(OBJDIR_RELEASE)/vaultserver/Public.o \
+$(OBJDIR_RELEASE)/vaultserver/PAWN.o \
+$(OBJDIR_RELEASE)/vaultserver/NetworkServer.o \
+$(OBJDIR_RELEASE)/vaultserver/NPC.o \
+$(OBJDIR_RELEASE)/vaultserver/Exterior.o \
+$(OBJDIR_RELEASE)/vaultserver/Dedicated.o \
+$(OBJDIR_RELEASE)/vaultserver/Database.o \
+$(OBJDIR_RELEASE)/vaultserver/vaultserver.o \
+$(OBJDIR_RELEASE)/vaultserver/Weapon.o \
+$(OBJDIR_RELEASE)/vaultserver/Timer.o \
+$(OBJDIR_RELEASE)/vaultserver/Server.o \
+$(OBJDIR_RELEASE)/vaultserver/ScriptFunction.o \
+$(OBJDIR_RELEASE)/vaultserver/Client.o \
+$(OBJDIR_RELEASE)/vaultserver/BaseContainer.o \
+$(OBJDIR_RELEASE)/vaultserver/Item.o \
 $(OBJDIR_RELEASE)/ServerEntry.o \
 $(OBJDIR_RELEASE)/Reference.o \
-$(OBJDIR_RELEASE)/Client.o \
-$(OBJDIR_RELEASE)/BaseContainer.o \
 $(OBJDIR_RELEASE)/VaultVector.o \
 $(OBJDIR_RELEASE)/VaultFunctor.o \
 $(OBJDIR_RELEASE)/VaultException.o \
@@ -221,12 +223,12 @@ all: debug release
 clean: clean_debug clean_release
 
 before_debug:
-	test -d $(OBJDIR_DEBUG)/RakNet || mkdir -p $(OBJDIR_DEBUG)/RakNet
 	test -d $(OBJDIR_DEBUG) || mkdir -p $(OBJDIR_DEBUG)
+	test -d $(OBJDIR_DEBUG)/vaultserver || mkdir -p $(OBJDIR_DEBUG)/vaultserver
+	test -d $(OBJDIR_DEBUG)/RakNet || mkdir -p $(OBJDIR_DEBUG)/RakNet
 	test -d $(OBJDIR_DEBUG)/time || mkdir -p $(OBJDIR_DEBUG)/time
 	test -d $(OBJDIR_DEBUG)/sqlite || mkdir -p $(OBJDIR_DEBUG)/sqlite
 	test -d $(OBJDIR_DEBUG)/amx || mkdir -p $(OBJDIR_DEBUG)/amx
-	test -d $(OBJDIR_DEBUG) || mkdir -p $(OBJDIR_DEBUG)
 	test -d $(OBJDIR_DEBUG)/stack_trace/src || mkdir -p $(OBJDIR_DEBUG)/stack_trace/src
 	test -d $(OBJDIR_DEBUG)/iniparser/src || mkdir -p $(OBJDIR_DEBUG)/iniparser/src
 
@@ -390,62 +392,65 @@ $(OBJDIR_DEBUG)/iniparser/src/iniparser.o: ../iniparser/src/iniparser.c
 $(OBJDIR_DEBUG)/iniparser/src/dictionary.o: ../iniparser/src/dictionary.c
 	$(CC) $(CFLAGSEXT_DEBUG) $(INC_DEBUG) -c ../iniparser/src/dictionary.c -o $(OBJDIR_DEBUG)/iniparser/src/dictionary.o
 
-$(OBJDIR_DEBUG)/Script.o: Script.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Script.cpp -o $(OBJDIR_DEBUG)/Script.o
+$(OBJDIR_DEBUG)/vaultserver/Script.o: Script.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Script.cpp -o $(OBJDIR_DEBUG)/vaultserver/Script.o
 
-$(OBJDIR_DEBUG)/Record.o: Record.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Record.cpp -o $(OBJDIR_DEBUG)/Record.o
+$(OBJDIR_DEBUG)/vaultserver/Record.o: Record.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Record.cpp -o $(OBJDIR_DEBUG)/vaultserver/Record.o
 
-$(OBJDIR_DEBUG)/Race.o: Race.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Race.cpp -o $(OBJDIR_DEBUG)/Race.o
+$(OBJDIR_DEBUG)/vaultserver/Race.o: Race.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Race.cpp -o $(OBJDIR_DEBUG)/vaultserver/Race.o
 
-$(OBJDIR_DEBUG)/Public.o: Public.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Public.cpp -o $(OBJDIR_DEBUG)/Public.o
+$(OBJDIR_DEBUG)/vaultserver/Public.o: Public.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Public.cpp -o $(OBJDIR_DEBUG)/vaultserver/Public.o
 
-$(OBJDIR_DEBUG)/PAWN.o: PAWN.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c PAWN.cpp -o $(OBJDIR_DEBUG)/PAWN.o
+$(OBJDIR_DEBUG)/vaultserver/PAWN.o: PAWN.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c PAWN.cpp -o $(OBJDIR_DEBUG)/vaultserver/PAWN.o
 
-$(OBJDIR_DEBUG)/NetworkServer.o: NetworkServer.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c NetworkServer.cpp -o $(OBJDIR_DEBUG)/NetworkServer.o
+$(OBJDIR_DEBUG)/vaultserver/NetworkServer.o: NetworkServer.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c NetworkServer.cpp -o $(OBJDIR_DEBUG)/vaultserver/NetworkServer.o
 
-$(OBJDIR_DEBUG)/NPC.o: NPC.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c NPC.cpp -o $(OBJDIR_DEBUG)/NPC.o
+$(OBJDIR_DEBUG)/vaultserver/NPC.o: NPC.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c NPC.cpp -o $(OBJDIR_DEBUG)/vaultserver/NPC.o
 
-$(OBJDIR_DEBUG)/Exterior.o: Exterior.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Exterior.cpp -o $(OBJDIR_DEBUG)/Exterior.o
+$(OBJDIR_DEBUG)/vaultserver/Exterior.o: Exterior.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Exterior.cpp -o $(OBJDIR_DEBUG)/vaultserver/Exterior.o
 
-$(OBJDIR_DEBUG)/Dedicated.o: Dedicated.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Dedicated.cpp -o $(OBJDIR_DEBUG)/Dedicated.o
+$(OBJDIR_DEBUG)/vaultserver/Dedicated.o: Dedicated.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Dedicated.cpp -o $(OBJDIR_DEBUG)/vaultserver/Dedicated.o
 
-$(OBJDIR_DEBUG)/Database.o: Database.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Database.cpp -o $(OBJDIR_DEBUG)/Database.o
+$(OBJDIR_DEBUG)/vaultserver/Database.o: Database.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Database.cpp -o $(OBJDIR_DEBUG)/vaultserver/Database.o
 
-$(OBJDIR_DEBUG)/vaultserver.o: vaultserver.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c vaultserver.cpp -o $(OBJDIR_DEBUG)/vaultserver.o
+$(OBJDIR_DEBUG)/vaultserver/vaultserver.o: vaultserver.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c vaultserver.cpp -o $(OBJDIR_DEBUG)/vaultserver/vaultserver.o
 
-$(OBJDIR_DEBUG)/Weapon.o: Weapon.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Weapon.cpp -o $(OBJDIR_DEBUG)/Weapon.o
+$(OBJDIR_DEBUG)/vaultserver/Weapon.o: Weapon.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Weapon.cpp -o $(OBJDIR_DEBUG)/vaultserver/Weapon.o
 
-$(OBJDIR_DEBUG)/Timer.o: Timer.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Timer.cpp -o $(OBJDIR_DEBUG)/Timer.o
+$(OBJDIR_DEBUG)/vaultserver/Timer.o: Timer.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Timer.cpp -o $(OBJDIR_DEBUG)/vaultserver/Timer.o
 
-$(OBJDIR_DEBUG)/Server.o: Server.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Server.cpp -o $(OBJDIR_DEBUG)/Server.o
+$(OBJDIR_DEBUG)/vaultserver/Server.o: Server.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Server.cpp -o $(OBJDIR_DEBUG)/vaultserver/Server.o
 
-$(OBJDIR_DEBUG)/ScriptFunction.o: ScriptFunction.cpp
-	$(CXX) $(CFLAGS_DEBUG) -masm=intel $(INC_DEBUG) -c ScriptFunction.cpp -o $(OBJDIR_DEBUG)/ScriptFunction.o
+$(OBJDIR_DEBUG)/vaultserver/ScriptFunction.o: ScriptFunction.cpp
+	$(CXX) $(CFLAGS_DEBUG) -masm=intel $(INC_DEBUG) -c ScriptFunction.cpp -o $(OBJDIR_DEBUG)/vaultserver/ScriptFunction.o
+
+$(OBJDIR_DEBUG)/vaultserver/Client.o: Client.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Client.cpp -o $(OBJDIR_DEBUG)/vaultserver/Client.o
+
+$(OBJDIR_DEBUG)/vaultserver/BaseContainer.o: BaseContainer.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c BaseContainer.cpp -o $(OBJDIR_DEBUG)/vaultserver/BaseContainer.o
+
+$(OBJDIR_DEBUG)/vaultserver/Item.o: Item.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Item.cpp -o $(OBJDIR_DEBUG)/vaultserver/Item.o
 
 $(OBJDIR_DEBUG)/ServerEntry.o: ../ServerEntry.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../ServerEntry.cpp -o $(OBJDIR_DEBUG)/ServerEntry.o
 
 $(OBJDIR_DEBUG)/Reference.o: ../Reference.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../Reference.cpp -o $(OBJDIR_DEBUG)/Reference.o
-
-$(OBJDIR_DEBUG)/Client.o: Client.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Client.cpp -o $(OBJDIR_DEBUG)/Client.o
-
-$(OBJDIR_DEBUG)/BaseContainer.o: BaseContainer.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c BaseContainer.cpp -o $(OBJDIR_DEBUG)/BaseContainer.o
 
 $(OBJDIR_DEBUG)/VaultVector.o: ../VaultVector.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../VaultVector.cpp -o $(OBJDIR_DEBUG)/VaultVector.o
@@ -503,22 +508,15 @@ $(OBJDIR_DEBUG)/Expected.o: ../Expected.cpp
 
 clean_debug:
 	rm -f $(OBJ_DEBUG) $(OUT_DEBUG)
-	rm -rf $(OBJDIR_DEBUG)/RakNet
 	rm -rf $(OBJDIR_DEBUG)
-	rm -rf $(OBJDIR_DEBUG)/time
-	rm -rf $(OBJDIR_DEBUG)/sqlite
-	rm -rf $(OBJDIR_DEBUG)/amx
-	rm -rf $(OBJDIR_DEBUG)
-	rm -rf $(OBJDIR_DEBUG)/stack_trace/src
-	rm -rf $(OBJDIR_DEBUG)/iniparser/src
 
 before_release:
-	test -d $(OBJDIR_RELEASE)/RakNet || mkdir -p $(OBJDIR_RELEASE)/RakNet
 	test -d $(OBJDIR_RELEASE) || mkdir -p $(OBJDIR_RELEASE)
+	test -d $(OBJDIR_RELEASE)/vaultserver || mkdir -p $(OBJDIR_RELEASE)/vaultserver
+	test -d $(OBJDIR_RELEASE)/RakNet || mkdir -p $(OBJDIR_RELEASE)/RakNet
 	test -d $(OBJDIR_RELEASE)/time || mkdir -p $(OBJDIR_RELEASE)/time
 	test -d $(OBJDIR_RELEASE)/sqlite || mkdir -p $(OBJDIR_RELEASE)/sqlite
 	test -d $(OBJDIR_RELEASE)/amx || mkdir -p $(OBJDIR_RELEASE)/amx
-	test -d $(OBJDIR_RELEASE) || mkdir -p $(OBJDIR_RELEASE)
 	test -d $(OBJDIR_RELEASE)/iniparser/src || mkdir -p $(OBJDIR_RELEASE)/iniparser/src
 
 after_release:
@@ -681,62 +679,65 @@ $(OBJDIR_RELEASE)/iniparser/src/iniparser.o: ../iniparser/src/iniparser.c
 $(OBJDIR_RELEASE)/iniparser/src/dictionary.o: ../iniparser/src/dictionary.c
 	$(CC) $(CFLAGSEXT_RELEASE) $(INC_RELEASE) -c ../iniparser/src/dictionary.c -o $(OBJDIR_RELEASE)/iniparser/src/dictionary.o
 
-$(OBJDIR_RELEASE)/Script.o: Script.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Script.cpp -o $(OBJDIR_RELEASE)/Script.o
+$(OBJDIR_RELEASE)/vaultserver/Script.o: Script.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Script.cpp -o $(OBJDIR_RELEASE)/vaultserver/Script.o
 
-$(OBJDIR_RELEASE)/Record.o: Record.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Record.cpp -o $(OBJDIR_RELEASE)/Record.o
+$(OBJDIR_RELEASE)/vaultserver/Record.o: Record.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Record.cpp -o $(OBJDIR_RELEASE)/vaultserver/Record.o
 
-$(OBJDIR_RELEASE)/Race.o: Race.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Race.cpp -o $(OBJDIR_RELEASE)/Race.o
+$(OBJDIR_RELEASE)/vaultserver/Race.o: Race.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Race.cpp -o $(OBJDIR_RELEASE)/vaultserver/Race.o
 
-$(OBJDIR_RELEASE)/Public.o: Public.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Public.cpp -o $(OBJDIR_RELEASE)/Public.o
+$(OBJDIR_RELEASE)/vaultserver/Public.o: Public.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Public.cpp -o $(OBJDIR_RELEASE)/vaultserver/Public.o
 
-$(OBJDIR_RELEASE)/PAWN.o: PAWN.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c PAWN.cpp -o $(OBJDIR_RELEASE)/PAWN.o
+$(OBJDIR_RELEASE)/vaultserver/PAWN.o: PAWN.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c PAWN.cpp -o $(OBJDIR_RELEASE)/vaultserver/PAWN.o
 
-$(OBJDIR_RELEASE)/NetworkServer.o: NetworkServer.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c NetworkServer.cpp -o $(OBJDIR_RELEASE)/NetworkServer.o
+$(OBJDIR_RELEASE)/vaultserver/NetworkServer.o: NetworkServer.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c NetworkServer.cpp -o $(OBJDIR_RELEASE)/vaultserver/NetworkServer.o
 
-$(OBJDIR_RELEASE)/NPC.o: NPC.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c NPC.cpp -o $(OBJDIR_RELEASE)/NPC.o
+$(OBJDIR_RELEASE)/vaultserver/NPC.o: NPC.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c NPC.cpp -o $(OBJDIR_RELEASE)/vaultserver/NPC.o
 
-$(OBJDIR_RELEASE)/Exterior.o: Exterior.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Exterior.cpp -o $(OBJDIR_RELEASE)/Exterior.o
+$(OBJDIR_RELEASE)/vaultserver/Exterior.o: Exterior.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Exterior.cpp -o $(OBJDIR_RELEASE)/vaultserver/Exterior.o
 
-$(OBJDIR_RELEASE)/Dedicated.o: Dedicated.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Dedicated.cpp -o $(OBJDIR_RELEASE)/Dedicated.o
+$(OBJDIR_RELEASE)/vaultserver/Dedicated.o: Dedicated.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Dedicated.cpp -o $(OBJDIR_RELEASE)/vaultserver/Dedicated.o
 
-$(OBJDIR_RELEASE)/Database.o: Database.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Database.cpp -o $(OBJDIR_RELEASE)/Database.o
+$(OBJDIR_RELEASE)/vaultserver/Database.o: Database.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Database.cpp -o $(OBJDIR_RELEASE)/vaultserver/Database.o
 
-$(OBJDIR_RELEASE)/vaultserver.o: vaultserver.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c vaultserver.cpp -o $(OBJDIR_RELEASE)/vaultserver.o
+$(OBJDIR_RELEASE)/vaultserver/vaultserver.o: vaultserver.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c vaultserver.cpp -o $(OBJDIR_RELEASE)/vaultserver/vaultserver.o
 
-$(OBJDIR_RELEASE)/Weapon.o: Weapon.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Weapon.cpp -o $(OBJDIR_RELEASE)/Weapon.o
+$(OBJDIR_RELEASE)/vaultserver/Weapon.o: Weapon.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Weapon.cpp -o $(OBJDIR_RELEASE)/vaultserver/Weapon.o
 
-$(OBJDIR_RELEASE)/Timer.o: Timer.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Timer.cpp -o $(OBJDIR_RELEASE)/Timer.o
+$(OBJDIR_RELEASE)/vaultserver/Timer.o: Timer.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Timer.cpp -o $(OBJDIR_RELEASE)/vaultserver/Timer.o
 
-$(OBJDIR_RELEASE)/Server.o: Server.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Server.cpp -o $(OBJDIR_RELEASE)/Server.o
+$(OBJDIR_RELEASE)/vaultserver/Server.o: Server.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Server.cpp -o $(OBJDIR_RELEASE)/vaultserver/Server.o
 
-$(OBJDIR_RELEASE)/ScriptFunction.o: ScriptFunction.cpp
-	$(CXX) $(CFLAGS_RELEASE) -masm=intel $(INC_RELEASE) -c ScriptFunction.cpp -o $(OBJDIR_RELEASE)/ScriptFunction.o
+$(OBJDIR_RELEASE)/vaultserver/ScriptFunction.o: ScriptFunction.cpp
+	$(CXX) $(CFLAGS_RELEASE) -masm=intel $(INC_RELEASE) -c ScriptFunction.cpp -o $(OBJDIR_RELEASE)/vaultserver/ScriptFunction.o
+
+$(OBJDIR_RELEASE)/vaultserver/Client.o: Client.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Client.cpp -o $(OBJDIR_RELEASE)/vaultserver/Client.o
+
+$(OBJDIR_RELEASE)/vaultserver/BaseContainer.o: BaseContainer.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c BaseContainer.cpp -o $(OBJDIR_RELEASE)/vaultserver/BaseContainer.o
+
+$(OBJDIR_RELEASE)/vaultserver/Item.o: Item.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Item.cpp -o $(OBJDIR_RELEASE)/vaultserver/Item.o
 
 $(OBJDIR_RELEASE)/ServerEntry.o: ../ServerEntry.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../ServerEntry.cpp -o $(OBJDIR_RELEASE)/ServerEntry.o
 
 $(OBJDIR_RELEASE)/Reference.o: ../Reference.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../Reference.cpp -o $(OBJDIR_RELEASE)/Reference.o
-
-$(OBJDIR_RELEASE)/Client.o: Client.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Client.cpp -o $(OBJDIR_RELEASE)/Client.o
-
-$(OBJDIR_RELEASE)/BaseContainer.o: BaseContainer.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c BaseContainer.cpp -o $(OBJDIR_RELEASE)/BaseContainer.o
 
 $(OBJDIR_RELEASE)/VaultVector.o: ../VaultVector.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../VaultVector.cpp -o $(OBJDIR_RELEASE)/VaultVector.o
@@ -791,13 +792,7 @@ $(OBJDIR_RELEASE)/Expected.o: ../Expected.cpp
 
 clean_release:
 	rm -f $(OBJ_RELEASE) $(OUT_RELEASE)
-	rm -rf $(OBJDIR_RELEASE)/RakNet
 	rm -rf $(OBJDIR_RELEASE)
-	rm -rf $(OBJDIR_RELEASE)/time
-	rm -rf $(OBJDIR_RELEASE)/sqlite
-	rm -rf $(OBJDIR_RELEASE)/amx
-	rm -rf $(OBJDIR_RELEASE)
-	rm -rf $(OBJDIR_RELEASE)/iniparser/src
 
 .PHONY: before_debug after_debug clean_debug before_release after_release clean_release
 

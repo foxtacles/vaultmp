@@ -40,7 +40,7 @@ NetworkResponse Server::LoadGame(RakNetGUID guid)
 {
 	NetworkResponse response;
 
-	auto cell = Exterior::Lookup(Player::GetSpawnCell());
+	auto cell = DB::Exterior::Lookup(Player::GetSpawnCell());
 
 	if (cell)
 		response.emplace_back(Network::CreateResponse(
@@ -48,7 +48,7 @@ NetworkResponse Server::LoadGame(RakNetGUID guid)
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	else
 		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(0, Record::Lookup(Player::GetSpawnCell(), "CELL")->GetName(), true),
+			PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(0, DB::Record::Lookup(Player::GetSpawnCell(), "CELL")->GetName(), true),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 
 	vector<FactoryObject<Object>> references = GameFactory::GetObjectTypes<Object>(ALL_OBJECTS);
@@ -105,17 +105,17 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 
 	// TODO hardcoded hack to not get DLC bases, no proper mod handling yet
 	if (!result)
-		result = NPC::GetNPCNotIn(Player::GetBaseIDs(), [](const NPC& data)
+		result = DB::NPC::GetNPCNotIn(Player::GetBaseIDs(), [](const DB::NPC& data)
 		{
-			return (!(data.GetBase() & 0xFF000000) && !data.IsEssential() && !Race::Lookup(data.GetRace())->IsChild());
+			return (!(data.GetBase() & 0xFF000000) && !data.IsEssential() && !DB::Race::Lookup(data.GetRace())->IsChild());
 		})->GetBase();
 
-	const NPC* npc = *NPC::Lookup(result);
+	const DB::NPC* npc = *DB::NPC::Lookup(result);
 
 	player->SetReference(0x00000000);
 	player->SetBase(result);
 
-	const vector<const BaseContainer*>& container = npc->GetBaseContainer();
+	const vector<const DB::BaseContainer*>& container = npc->GetBaseContainer();
 
 	for (const auto* item : container)
 	{
@@ -137,14 +137,14 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 
 	if (player->SetActorRace(race))
 	{
-		signed int age = Race::Lookup(old_race)->GetAgeDifference(race);
+		signed int age = DB::Race::Lookup(old_race)->GetAgeDifference(race);
 
 		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_RACE>(id, race, age, age),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 
-	signed int age = Race::Lookup(npc->GetOriginalRace())->GetAgeDifference(race);
+	signed int age = DB::Race::Lookup(npc->GetOriginalRace())->GetAgeDifference(race);
 	player->SetActorAge(age);
 
 	bool female = npc->IsFemale();
@@ -357,7 +357,7 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, const FactoryObject<Actor
 			else if (firing)
 			{
 				unsigned int baseID = reference->GetEquippedWeapon();
-				const Weapon* weapon = *Weapon::Lookup(baseID);
+				const DB::Weapon* weapon = *DB::Weapon::Lookup(baseID);
 
 				response.emplace_back(Network::CreateResponse(
 					PacketFactory::Create<pTypes::ID_UPDATE_FIREWEAPON>(reference->GetNetworkID(), baseID, weapon->IsAutomatic() ? weapon->GetFireRate() : 0.00),
@@ -375,10 +375,10 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, const FactoryObject<Actor
 
 		if (_idle)
 		{
-			const Record* record = nullptr;
+			const DB::Record* record = nullptr;
 
 			if (idle)
-				record = *Record::Lookup(idle, "IDLE");
+				record = *DB::Record::Lookup(idle, "IDLE");
 
 			response.emplace_back(Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_UPDATE_IDLE>(reference->GetNetworkID(), idle, record ? record->GetName() : ""),

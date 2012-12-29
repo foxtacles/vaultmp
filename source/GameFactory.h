@@ -24,6 +24,7 @@
 #include "vaultserver/Race.h"
 #include "vaultserver/NPC.h"
 #include "vaultserver/BaseContainer.h"
+#include "vaultserver/Item.h"
 #endif
 
 #include "Expected.h"
@@ -70,12 +71,13 @@ class GameFactory
 		static bool changed;
 
 #ifdef VAULTSERVER
-		static Database<Record> dbRecords;
-		static Database<Exterior> dbExteriors;
-		static Database<Weapon> dbWeapons;
-		static Database<Race> dbRaces;
-		static Database<NPC> dbNpcs;
-		static Database<BaseContainer> dbContainers;
+		static Database<DB::Record> dbRecords;
+		static Database<DB::Exterior> dbExteriors;
+		static Database<DB::Weapon> dbWeapons;
+		static Database<DB::Race> dbRaces;
+		static Database<DB::NPC> dbNpcs;
+		static Database<DB::BaseContainer> dbContainers;
+		static Database<DB::Item> dbItems;
 #endif
 
 		static inline ReferenceList::iterator GetShared(const Reference* reference) { return find_if(instances.begin(), instances.end(), [=](const ReferenceList::value_type& _reference) { return _reference.first.get() == reference; }); }

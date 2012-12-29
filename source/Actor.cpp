@@ -74,7 +74,7 @@ void Actor::initialize()
 
 	if (baseID != PLAYER_BASE)
 	{
-		const Record* record = *Record::Lookup(baseID, vector<string>{"NPC_", "CREA"});
+		const DB::Record* record = *DB::Record::Lookup(baseID, vector<string>{"NPC_", "CREA"});
 
 		if (this->GetName().empty())
 			this->SetName(record->GetDescription());
@@ -232,7 +232,7 @@ Lockable* Actor::SetActorDead(bool state)
 #ifdef VAULTSERVER
 Lockable* Actor::SetBase(unsigned int baseID)
 {
-	const Record* record = *Record::Lookup(baseID, vector<string>{"NPC_", "CREA"});
+	const DB::Record* record = *DB::Record::Lookup(baseID, vector<string>{"NPC_", "CREA"});
 
 	if (this->GetName().empty())
 		this->SetName(record->GetDescription());
@@ -259,7 +259,7 @@ bool Actor::IsActorFiring() const
 	unsigned char anim = this->GetActorWeaponAnimation();
 #ifdef VAULTSERVER
 	unsigned int weapon = this->GetEquippedWeapon();
-	return (anim >= AnimGroup_AttackLeft && anim <= AnimGroup_AttackSpin2ISDown && weapon && Weapon::Lookup(weapon)->GetAmmo()); // || is throwable weapon
+	return (anim >= AnimGroup_AttackLeft && anim <= AnimGroup_AttackSpin2ISDown && weapon && DB::Weapon::Lookup(weapon)->GetAmmo()); // || is throwable weapon
 #else
 	return (anim >= AnimGroup_AttackLeft && anim <= AnimGroup_AttackSpin2ISDown);
 #endif

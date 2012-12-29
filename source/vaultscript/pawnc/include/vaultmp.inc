@@ -184,6 +184,7 @@ native Bool:SetPos(ID, Float:X, Float:Y, Float:Z);
 native Bool:SetCell(ID, cell, Float:X = 0.00, Float:Y = 0.00, Float:Z = 0.00);
 native CreateItem(item, ID, cell = 0, Float:X = 0.00, Float:Y = 0.00, Float:Z = 0.00);
 native Bool:SetItemCount(ID, count);
+native Bool:SetItemCondition(ID, Float:condition);
 native CreateContainer(container, ID, cell = 0, Float:X = 0.00, Float:Y = 0.00, Float:Z = 0.00);
 native Bool:AddItem(ID, item, count = 1, Float:value = 100.0, Bool:silent = Bool:true);
 native RemoveItem(ID, item, count = 1, Bool:silent = Bool:true);

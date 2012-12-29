@@ -280,6 +280,17 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
+				case pTypes::ID_UPDATE_CONDITION:
+				{
+					NetworkID id;
+					double condition;
+					unsigned int health;
+					PacketFactory::Access<pTypes::ID_UPDATE_CONDITION>(packet, id, condition, health);
+					auto reference = GameFactory::GetObject<Item>(id);
+					Game::net_SetItemCondition(reference.get(), condition, health);
+					break;
+				}
+
 				case pTypes::ID_UPDATE_CONTAINER:
 				{
 					NetworkID id;

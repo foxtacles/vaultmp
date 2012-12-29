@@ -177,8 +177,8 @@ all: debug release
 clean: clean_debug clean_release
 
 before_debug:
-	cmd /c if not exist $(OBJDIR_DEBUG)\\RakNet md $(OBJDIR_DEBUG)\\RakNet
 	cmd /c if not exist $(OBJDIR_DEBUG) md $(OBJDIR_DEBUG)
+	cmd /c if not exist $(OBJDIR_DEBUG)\\RakNet md $(OBJDIR_DEBUG)\\RakNet
 	cmd /c if not exist $(OBJDIR_DEBUG)\\stack_trace\\src md $(OBJDIR_DEBUG)\\stack_trace\\src
 	cmd /c if not exist $(OBJDIR_DEBUG)\\iniparser\\src md $(OBJDIR_DEBUG)\\iniparser\\src
 
@@ -387,14 +387,11 @@ $(OBJDIR_DEBUG)\\Expected.o: Expected.cpp
 
 clean_debug:
 	cmd /c del /f $(OBJ_DEBUG) $(OUT_DEBUG)
-	cmd /c rd $(OBJDIR_DEBUG)\\RakNet
 	cmd /c rd $(OBJDIR_DEBUG)
-	cmd /c rd $(OBJDIR_DEBUG)\\stack_trace\\src
-	cmd /c rd $(OBJDIR_DEBUG)\\iniparser\\src
 
 before_release:
-	cmd /c if not exist $(OBJDIR_RELEASE)\\RakNet md $(OBJDIR_RELEASE)\\RakNet
 	cmd /c if not exist $(OBJDIR_RELEASE) md $(OBJDIR_RELEASE)
+	cmd /c if not exist $(OBJDIR_RELEASE)\\RakNet md $(OBJDIR_RELEASE)\\RakNet
 	cmd /c if not exist $(OBJDIR_RELEASE)\\iniparser\\src md $(OBJDIR_RELEASE)\\iniparser\\src
 
 after_release:
@@ -596,9 +593,7 @@ $(OBJDIR_RELEASE)\\Expected.o: Expected.cpp
 
 clean_release:
 	cmd /c del /f $(OBJ_RELEASE) $(OUT_RELEASE)
-	cmd /c rd $(OBJDIR_RELEASE)\\RakNet
 	cmd /c rd $(OBJDIR_RELEASE)
-	cmd /c rd $(OBJDIR_RELEASE)\\iniparser\\src
 
 .PHONY: before_debug after_debug clean_debug before_release after_release clean_release
 

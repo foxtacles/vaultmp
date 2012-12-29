@@ -1,6 +1,7 @@
 #include "BaseContainer.h"
 
 using namespace std;
+using namespace DB;
 
 unordered_map<unsigned int, vector<const BaseContainer*>> BaseContainer::baseContainers;
 

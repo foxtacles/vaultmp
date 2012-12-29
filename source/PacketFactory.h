@@ -42,6 +42,7 @@ enum class pTypes : unsigned char
 	ID_UPDATE_ANGLE,
 	ID_UPDATE_CELL,
 	ID_UPDATE_COUNT,
+	ID_UPDATE_CONDITION,
 	ID_UPDATE_CONTAINER,
 	ID_UPDATE_VALUE,
 	ID_UPDATE_STATE,
@@ -919,6 +920,27 @@ class pItemCount : public pObjectDefault
 		}
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_COUNT> { typedef pItemCount type; };
+
+class pItemCondition : public pObjectDefault
+{
+		friend class PacketFactory;
+
+	private:
+		pItemCondition(RakNet::NetworkID id, double condition, unsigned int health) : pObjectDefault(pTypes::ID_UPDATE_CONDITION, id)
+		{
+			construct(condition, health);
+		}
+		pItemCondition(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		{
+
+		}
+
+		void access(RakNet::NetworkID& id, double& condition, unsigned int& health) const
+		{
+			deconstruct(id, condition, health);
+		}
+};
+template<> struct pTypesMap<pTypes::ID_UPDATE_CONDITION> { typedef pItemCondition type; };
 
 class pContainerUpdate : public pObjectDefault
 {

@@ -43,7 +43,7 @@ void Item::initialize()
 #ifdef VAULTSERVER
 	unsigned int baseID = this->GetBase();
 
-	const Record* record = *Record::Lookup(baseID, vector<string>{"ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "CCRD", "CDCK", "CHIP", "CMNY", "ENCH", "IMOD", "KEYM", "MISC", "NOTE", "RCPE", "WEAP", "LIGH"});
+	const DB::Record* record = *DB::Record::Lookup(baseID, vector<string>{"ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "CCRD", "CDCK", "CHIP", "CMNY", "ENCH", "IMOD", "KEYM", "MISC", "NOTE", "RCPE", "WEAP", "LIGH"});
 
 	if (this->GetName().empty())
 		this->SetName(record->GetDescription());
@@ -92,6 +92,9 @@ Lockable* Item::SetItemCount(unsigned int count)
 
 Lockable* Item::SetItemCondition(double condition)
 {
+	if (condition < 0.00 || condition > 100.0)
+		return nullptr;
+
 	return SetObjectValue(this->item_Condition, condition);
 }
 
@@ -127,7 +130,7 @@ NetworkID Item::Copy() const
 #ifdef VAULTSERVER
 Lockable* Item::SetBase(unsigned int baseID)
 {
-	const Record* record = *Record::Lookup(baseID, vector<string>{"ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "CCRD", "CDCK", "CHIP", "CMNY", "ENCH", "IMOD", "KEYM", "MISC", "NOTE", "RCPE", "WEAP", "LIGH"});
+	const DB::Record* record = *DB::Record::Lookup(baseID, vector<string>{"ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "CCRD", "CDCK", "CHIP", "CMNY", "ENCH", "IMOD", "KEYM", "MISC", "NOTE", "RCPE", "WEAP", "LIGH"});
 
 	if (this->GetName().empty())
 		this->SetName(record->GetDescription());

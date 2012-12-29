@@ -207,6 +207,7 @@ class Script
 		static bool SetCell(RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z);
 		static RakNet::NetworkID CreateItem(unsigned int baseID, RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z);
 		static bool SetItemCount(RakNet::NetworkID id, unsigned int count);
+		static bool SetItemCondition(RakNet::NetworkID id, double condition);
 		static RakNet::NetworkID CreateContainer(unsigned int baseID, RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z);
 		static bool AddItem(RakNet::NetworkID id, unsigned int baseID, unsigned int count, double condition, bool silent);
 		static unsigned int RemoveItem(RakNet::NetworkID id, unsigned int baseID, unsigned int count, bool silent);

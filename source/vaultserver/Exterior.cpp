@@ -1,6 +1,7 @@
 #include "Exterior.h"
 
 using namespace std;
+using namespace DB;
 
 unordered_map<unsigned int, const Exterior*> Exterior::cells;
 unordered_map<unsigned int, vector<const Exterior*>> Exterior::worlds;

@@ -1,6 +1,7 @@
 #include "Record.h"
 
 using namespace std;
+using namespace DB;
 
 unordered_map<unsigned int, const Record*> Record::data;
 

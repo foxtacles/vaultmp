@@ -82,6 +82,10 @@ pPacket PacketFactory::Init(const unsigned char* stream, unsigned int len)
 			packet = new pItemCount(stream, len);
 			break;
 
+		case pTypes::ID_UPDATE_CONDITION:
+			packet = new pItemCondition(stream, len);
+			break;
+
 		case pTypes::ID_UPDATE_CONTAINER:
 			packet = new pContainerUpdate(stream, len);
 			break;

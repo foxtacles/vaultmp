@@ -15,12 +15,13 @@ DebugInput<GameFactory> GameFactory::debug;
 #endif
 
 #ifdef VAULTSERVER
-Database<Record> GameFactory::dbRecords;
-Database<Exterior> GameFactory::dbExteriors;
-Database<Weapon> GameFactory::dbWeapons;
-Database<Race> GameFactory::dbRaces;
-Database<NPC> GameFactory::dbNpcs;
-Database<BaseContainer> GameFactory::dbContainers;
+Database<DB::Record> GameFactory::dbRecords;
+Database<DB::Exterior> GameFactory::dbExteriors;
+Database<DB::Weapon> GameFactory::dbWeapons;
+Database<DB::Race> GameFactory::dbRaces;
+Database<DB::NPC> GameFactory::dbNpcs;
+Database<DB::BaseContainer> GameFactory::dbContainers;
+Database<DB::Item> GameFactory::dbItems;
 #endif
 
 void GameFactory::Initialize(unsigned char game)
@@ -37,6 +38,7 @@ void GameFactory::Initialize(unsigned char game)
 			dbRaces.initialize(DB_FALLOUT3, {"races"});
 			dbNpcs.initialize(DB_FALLOUT3, {"npcs"});
 			dbContainers.initialize(DB_FALLOUT3, {"npcitems", "contitems"});
+			dbItems.initialize(DB_FALLOUT3, {"items"});
 			break;
 
 		case NEWVEGAS:
@@ -46,6 +48,7 @@ void GameFactory::Initialize(unsigned char game)
 			dbRaces.initialize(DB_NEWVEGAS, {"races"});
 			dbNpcs.initialize(DB_NEWVEGAS, {"npcs"});
 			dbContainers.initialize(DB_NEWVEGAS, {"npcitems", "contitems"});
+			dbItems.initialize(DB_NEWVEGAS, {"items"});
 			break;
 
 		default:

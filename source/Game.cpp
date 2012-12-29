@@ -279,6 +279,10 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case FalloutNV::Func_SetRefCount:
 				break;
 
+			case Fallout3::Func_SetCurrentHealth:
+			case FalloutNV::Func_SetCurrentHealth:
+				break;
+
 			case Fallout3::Func_GetFirstRef:
 			case FalloutNV::Func_GetFirstRef:
 				GetNextRef(key, getFrom<unsigned int>(result), getFrom<unsigned int>(info.at(1)));
@@ -1301,6 +1305,15 @@ void Game::SetRefCount(const FactoryObject<Item>& reference, unsigned int key)
 	Interface::EndDynamic();
 }
 
+void Game::SetCurrentHealth(const FactoryObject<Item>& reference, unsigned int health, unsigned int key)
+{
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("SetCurrentHealth", {reference->GetReferenceParam(), RawParameter(health)}, key);
+
+	Interface::EndDynamic();
+}
+
 unsigned int Game::GetRefCount(unsigned int refID)
 {
 	auto store = make_shared<Shared<unsigned int>>();
@@ -1535,6 +1548,15 @@ void Game::net_SetItemCount(const FactoryObject<Item>& reference, unsigned int c
 
 	if (reference->SetItemCount(count))
 		SetRefCount(reference);
+}
+
+void Game::net_SetItemCondition(const FactoryObject<Item>& reference, double condition, unsigned int health)
+{
+	if (reference->GetItemContainer())
+		return;
+
+	if (reference->SetItemCondition(condition))
+		SetCurrentHealth(reference, health);
 }
 
 void Game::net_ContainerUpdate(FactoryObject<Container>& reference, const ContainerDiffNet& ndiff, const ContainerDiffNet& gdiff)

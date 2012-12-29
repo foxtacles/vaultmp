@@ -1,5 +1,5 @@
-#ifndef CELL_H
-#define CELL_H
+#ifndef EXTERIORDB_H
+#define EXTERIORDB_H
 
 #include <algorithm>
 #include <vector>
@@ -18,36 +18,39 @@
  * \brief Represents a game exterior cell
  */
 
-class Exterior
+namespace DB
 {
-	private:
-		static constexpr double size = 4096.0;
+	class Exterior
+	{
+		private:
+			static constexpr double size = 4096.0;
 
-		static std::unordered_map<unsigned int, const Exterior*> cells;
-		static std::unordered_map<unsigned int, std::vector<const Exterior*>> worlds;
+			static std::unordered_map<unsigned int, const Exterior*> cells;
+			static std::unordered_map<unsigned int, std::vector<const Exterior*>> worlds;
 
-		unsigned int baseID;
-		unsigned int world;
-		signed int x;
-		signed int y;
+			unsigned int baseID;
+			unsigned int world;
+			signed int x;
+			signed int y;
 
-		Exterior(const Exterior&) = delete;
-		Exterior& operator=(const Exterior& p) = delete;
+			Exterior(const Exterior&) = delete;
+			Exterior& operator=(const Exterior& p) = delete;
 
-	public:
-		static Expected<const Exterior*> Lookup(unsigned int baseID);
-		static Expected<const Exterior*> Lookup(unsigned int world, double X, double Y);
+		public:
+			static Expected<const Exterior*> Lookup(unsigned int baseID);
+			static Expected<const Exterior*> Lookup(unsigned int world, double X, double Y);
 
-		unsigned int GetBase() const;
-		unsigned int GetWorld() const;
-		signed int GetX() const;
-		signed int GetY() const;
+			unsigned int GetBase() const;
+			unsigned int GetWorld() const;
+			signed int GetX() const;
+			signed int GetY() const;
 
-		Exterior(const std::string& table, sqlite3_stmt* stmt);
-		~Exterior() = default;
-		// must never be called. only defined because vector requires it
-		Exterior(Exterior&&) { std::terminate(); }
-		Exterior& operator=(Exterior&&) = delete;
-};
+			Exterior(const std::string& table, sqlite3_stmt* stmt);
+			~Exterior() = default;
+			// must never be called. only defined because vector requires it
+			Exterior(Exterior&&) { std::terminate(); }
+			Exterior& operator=(Exterior&&) = delete;
+	};
+}
 
 #endif

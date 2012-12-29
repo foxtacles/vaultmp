@@ -2,6 +2,7 @@
 #include "Race.h"
 
 using namespace std;
+using namespace DB;
 
 unordered_map<unsigned int, const NPC*> NPC::npcs;
 
