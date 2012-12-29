@@ -28,7 +28,12 @@ VaultException::VaultException(const char* format, ...)
 
 #ifdef VAULTMP_DEBUG
 	debug.print(error.c_str());
-	stacktrace();
+
+	try
+	{
+		stacktrace();
+	}
+	catch (...) {}
 #endif
 }
 
