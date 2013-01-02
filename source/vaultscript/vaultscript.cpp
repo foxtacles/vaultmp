@@ -1,3 +1,6 @@
+//#define GAME_FALLOUT3
+//#define GAME_NEWVEGAS
+
 #include "vaultscript.h"
 #include <cstdio>
 
@@ -64,14 +67,14 @@ Void VAULTSCRIPT OnPlayerDisconnect(ID player, Reason reason) noexcept
 
 }
 
-Base VAULTSCRIPT OnPlayerRequestGame(ID player) noexcept
+VAULTNPC VAULTSCRIPT OnPlayerRequestGame(ID player) noexcept
 {
-	return static_cast<Base>(0x00000000);
+	return static_cast<VAULTNPC>(0x00000000);
 }
 
 State VAULTSCRIPT OnPlayerChat(ID player, RawString message) noexcept
 {
-
+	return True;
 }
 
 Void VAULTSCRIPT OnSpawn(ID object) noexcept
@@ -82,7 +85,7 @@ Void VAULTSCRIPT OnSpawn(ID object) noexcept
 		player.UIMessage("Hello, " + player.GetName() + "!");
 }
 
-Void VAULTSCRIPT OnCellChange(ID object, Cell cell) noexcept
+Void VAULTSCRIPT OnCellChange(ID object, VAULTCELL cell) noexcept
 {
 
 }
@@ -142,7 +145,7 @@ Void VAULTSCRIPT OnActorPunch(ID actor, State power) noexcept
 
 }
 
-Void VAULTSCRIPT OnActorFireWeapon(ID actor, Base weapon) noexcept
+Void VAULTSCRIPT OnActorFireWeapon(ID actor, VAULTWEAPON weapon) noexcept
 {
 
 }

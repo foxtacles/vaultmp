@@ -18,6 +18,14 @@
 	#define VAULTSPACE vaultmp::
 	#define VAULTCPP(expr) expr
 	#define VAULTC(expr)
+	#if defined(GAME_NEWVEGAS)
+		#define VAULTGAME FNV::
+	#elif defined(GAME_FALLOUT3)
+		#define VAULTGAME F3::
+	#else
+		#define VAULTGAME
+		#define VAULTWEAKTYPING
+	#endif
 #else
 	#include <stdint.h>
 	#define VAULTAPI(name) name
@@ -25,6 +33,8 @@
 	#define VAULTSPACE
 	#define VAULTCPP(expr)
 	#define VAULTC(expr) expr
+	#define VAULTGAME
+	#define VAULTWEAKTYPING
 #endif
 
 #ifndef __WIN32__
@@ -52,77 +62,77 @@ namespace vaultmp {
 
 	enum VAULTCPP(class) Index VAULTCPP(: uint8_t)
 	{
-		FALLOUT3            =	0x01,
-		NEWVEGAS            =	FALLOUT3 << 1,
-		FALLOUT_GAMES       =	FALLOUT3 | NEWVEGAS,
-		ALL_GAMES           =	FALLOUT_GAMES,
+		FALLOUT3 = 0x01,
+		NEWVEGAS = FALLOUT3 << 1,
+		FALLOUT_GAMES =	FALLOUT3 | NEWVEGAS,
+		ALL_GAMES =	FALLOUT_GAMES,
 
-		MAX_PLAYER_NAME     =	16,
-		MAX_PASSWORD_SIZE   =	16,
-		MAX_MESSAGE_LENGTH  =	64,
-		MAX_CHAT_LENGTH		=	128,
+		MAX_PLAYER_NAME = 16,
+		MAX_PASSWORD_SIZE = 16,
+		MAX_MESSAGE_LENGTH = 64,
+		MAX_CHAT_LENGTH	= 128,
 	};
 
 	enum VAULTCPP(class) Type VAULTCPP(: uint8_t)
 	{
-		ID_REFERENCE        =	0x01,
-		ID_OBJECT           =	ID_REFERENCE << 1,
-		ID_ITEM             =	ID_OBJECT << 1,
-		ID_CONTAINER        =	ID_ITEM << 1,
-		ID_ACTOR            =	ID_CONTAINER << 1,
-		ID_PLAYER           =	ID_ACTOR << 1,
+		ID_REFERENCE = 0x01,
+		ID_OBJECT = ID_REFERENCE << 1,
+		ID_ITEM = ID_OBJECT << 1,
+		ID_CONTAINER = ID_ITEM << 1,
+		ID_ACTOR = ID_CONTAINER << 1,
+		ID_PLAYER = ID_ACTOR << 1,
 
-		ALL_OBJECTS         =	(ID_OBJECT | ID_ITEM | ID_CONTAINER | ID_ACTOR | ID_PLAYER),
-		ALL_CONTAINERS      =	(ID_CONTAINER | ID_ACTOR | ID_PLAYER),
-		ALL_ACTORS          =	(ID_ACTOR | ID_PLAYER),
+		ALL_OBJECTS = (ID_OBJECT | ID_ITEM | ID_CONTAINER | ID_ACTOR | ID_PLAYER),
+		ALL_CONTAINERS = (ID_CONTAINER | ID_ACTOR | ID_PLAYER),
+		ALL_ACTORS = (ID_ACTOR | ID_PLAYER),
 	};
 
 	enum VAULTCPP(class) Limb VAULTCPP(: uint16_t)
 	{
-		VAULTCPP(None)VAULTC(None_) =	0x0000,
-		Torso				=	0x0001,
-		Head1				=	Torso << 1,
-		Head2				=	Head1 << 1,
-		LeftArm1			=	Head2 << 1,
-		LeftArm2			=	LeftArm1 << 1,
-		RightArm1			=	LeftArm2 << 1,
-		RightArm2			=	RightArm1 << 1,
-		LeftLeg1			=  	RightArm2 << 1,
-		LeftLeg2			=	LeftLeg1 << 1,
-		LeftLeg3			=	LeftLeg2 << 1,
-		RightLeg1			=	LeftLeg3 << 1,
-		RightLeg2			=	RightLeg1 << 1,
-		RightLeg3			=	RightLeg2 << 1,
-		Brain				=	RightLeg3 << 1,
-		Weapon				=	Brain << 1,
+		VAULTCPP(None)VAULTC(None_) = 0x0000,
+		Torso = 0x0001,
+		Head1 = Torso << 1,
+		Head2 = Head1 << 1,
+		LeftArm1 = Head2 << 1,
+		LeftArm2 = LeftArm1 << 1,
+		RightArm1 = LeftArm2 << 1,
+		RightArm2 = RightArm1 << 1,
+		LeftLeg1 = RightArm2 << 1,
+		LeftLeg2 = LeftLeg1 << 1,
+		LeftLeg3 = LeftLeg2 << 1,
+		RightLeg1 = LeftLeg3 << 1,
+		RightLeg2 = RightLeg1 << 1,
+		RightLeg3 = RightLeg2 << 1,
+		Brain = RightLeg3 << 1,
+		Weapon = Brain << 1,
 
-		TORSO				=	(Torso),
-		HEAD				=	(Head1 | Head2),
-		LEFT_ARM			=	(LeftArm1 | LeftArm2),
-		RIGHT_ARM			=	(RightArm1 | RightArm2),
-		LEFT_LEG			=	(LeftLeg1 | LeftLeg2 | LeftLeg3),
-		RIGHT_LEG			=	(RightLeg1 | RightLeg2 | RightLeg3),
-		BRAIN				=	(Brain),
-		WEAPON				=	(Weapon),
+		TORSO = (Torso),
+		HEAD = (Head1 | Head2),
+		LEFT_ARM = (LeftArm1 | LeftArm2),
+		RIGHT_ARM = (RightArm1 | RightArm2),
+		LEFT_LEG = (LeftLeg1 | LeftLeg2 | LeftLeg3),
+		RIGHT_LEG = (RightLeg1 | RightLeg2 | RightLeg3),
+		BRAIN = (Brain),
+		WEAPON = (Weapon),
 
-		ALL_LIMBS			=	(TORSO | HEAD | LEFT_ARM | RIGHT_ARM | LEFT_LEG | RIGHT_LEG | BRAIN | WEAPON),
+		ALL_LIMBS = (TORSO | HEAD | LEFT_ARM | RIGHT_ARM | LEFT_LEG | RIGHT_LEG | BRAIN | WEAPON),
 	};
 
 	enum VAULTCPP(class) Death VAULTCPP(: int8_t)
 	{
-		None				=	-1,
-		Explosion			=	0,
-		Gun					=	2,
-		BluntWeapon			=	3,
-		HandToHand			=	4,
-		ObjectImpact		=	5,
-		Poison				=	6,
-		Radiation			=	7,
+		None = -1,
+		Explosion = 0,
+		Gun = 2,
+		BluntWeapon	= 3,
+		HandToHand = 4,
+		ObjectImpact = 5,
+		Poison = 6,
+		Radiation = 7,
 	};
 
-	enum Interval VAULTCPP(: uint32_t)
+	enum VAULTCPP(class) Interval VAULTCPP(: uint32_t)
 	{
-		DEFAULT_PLAYER_RESPAWN  =	8000,
+		DEFAULT_PLAYER_RESPAWN = 8000,
 	};
 #ifndef __cplusplus
 	typedef int8_t Death;
@@ -133,29 +143,27 @@ namespace vaultmp {
 	typedef uint16_t Limb;
 	typedef uint32_t Ref;
 	typedef uint32_t Base;
-	typedef uint32_t Cell;
 	typedef uint32_t Interval;
 	typedef uint64_t ID;
 	typedef uint64_t Timer;
 	typedef uint64_t Result;
 	typedef int64_t Time;
 
-	#define RawFunction(types)  Result (__cdecl*)(types)
-	#define RawArray(type)		type*
+	#define RawFunction(types) Result (__cdecl*)(types)
+	#define RawArray(type) type*
 #else
 	enum Reason : uint8_t;
 
 	enum State : bool
 	{
-		True    =   true,
-		False   =   false
+		True = true,
+		False = false
 	};
 
 	State operator!(State state) { return state ? False : True; }
 
 	enum Ref : uint32_t;
 	enum Base : uint32_t;
-	enum Cell : uint32_t;
 	enum ID : uint64_t;
 	enum Timer : uint64_t;
 	enum Result : uint64_t;
@@ -185,8 +193,11 @@ namespace vaultmp {
 	using Function = Result (__cdecl*)(Types...) noexcept;
 
 	#define RawFunction(types) 	Function<types>
-}
 #endif
+
+#include "records.h"
+
+VAULTCPP(})
 
 VAULTCPP(extern "C" {)
 	VAULTVAR VAULTSPACE RawChar vaultprefix = VAULTAPI_PREFIX;
@@ -194,7 +205,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE Void exec() VAULTCPP(noexcept);
 
 	VAULTSCRIPT VAULTSPACE Void OnSpawn(VAULTSPACE ID) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE Void OnCellChange(VAULTSPACE ID, VAULTSPACE Cell) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void OnCellChange(VAULTSPACE ID, VAULTSPACE VAULTCELL) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void OnContainerItemChange(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE Count, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void OnActorValueChange(VAULTSPACE ID, VAULTSPACE Index, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void OnActorBaseValueChange(VAULTSPACE ID, VAULTSPACE Index, VAULTSPACE Value) VAULTCPP(noexcept);
@@ -206,9 +217,9 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE Void OnActorDropItem(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE UCount, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void OnActorPickupItem(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE UCount, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void OnActorPunch(VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE Void OnActorFireWeapon(VAULTSPACE ID, VAULTSPACE Base) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void OnActorFireWeapon(VAULTSPACE ID, VAULTSPACE VAULTWEAPON) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void OnPlayerDisconnect(VAULTSPACE ID, VAULTSPACE Reason) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE Base OnPlayerRequestGame(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE VAULTNPC OnPlayerRequestGame(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State OnPlayerChat(VAULTSPACE ID, VAULTSPACE RawString) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State OnClientAuthenticate(VAULTSPACE cRawString, VAULTSPACE cRawString) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void OnGameYearChange(VAULTSPACE UCount) VAULTCPP(noexcept);
@@ -240,8 +251,8 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(UIMessage))(VAULTSPACE ID, VAULTSPACE cRawString) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(ChatMessage))(VAULTSPACE ID, VAULTSPACE cRawString) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetRespawn))(VAULTSPACE Interval) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetSpawnCell))(VAULTSPACE Cell) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetGameWeather))(VAULTSPACE Base) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetSpawnCell))(VAULTSPACE VAULTCELL) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetGameWeather))(VAULTSPACE VAULTWEATHER) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetGameTime))(VAULTSPACE Time) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetGameYear))(VAULTSPACE UCount) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetGameMonth))(VAULTSPACE UCount) VAULTCPP(noexcept);
@@ -254,13 +265,13 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsContainer))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsActor))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsPlayer))(VAULTSPACE ID) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsCell))(VAULTSPACE Cell) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsInterior))(VAULTSPACE Cell) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsCell))(VAULTSPACE VAULTCELL) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsInterior))(VAULTSPACE VAULTCELL) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Type (*VAULTAPI(GetType))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetConnection))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetCount))(VAULTSPACE Type) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetList))(VAULTSPACE Type, VAULTSPACE RawArray(VAULTSPACE ID)*) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE Base (*VAULTAPI(GetGameWeather))() VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE VAULTWEATHER (*VAULTAPI(GetGameWeather))() VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Time (*VAULTAPI(GetGameTime))() VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetGameYear))() VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetGameMonth))() VAULTCPP(noexcept);
@@ -273,7 +284,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE cRawString (*VAULTAPI(GetName))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(GetPos))(VAULTSPACE ID, VAULTSPACE Value*, VAULTSPACE Value*, VAULTSPACE Value*) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(GetAngle))(VAULTSPACE ID, VAULTSPACE Value*, VAULTSPACE Value*, VAULTSPACE Value*) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE Cell (*VAULTAPI(GetCell))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE VAULTCELL (*VAULTAPI(GetCell))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsNearPoint))(VAULTSPACE ID, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(GetItemContainer))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetItemCount))(VAULTSPACE ID) VAULTCPP(noexcept);
@@ -284,40 +295,40 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetContainerItemCount))(VAULTSPACE ID, VAULTSPACE Base) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Value (*VAULTAPI(GetActorValue))(VAULTSPACE ID, VAULTSPACE Index) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Value (*VAULTAPI(GetActorBaseValue))(VAULTSPACE ID, VAULTSPACE Index) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE Base (*VAULTAPI(GetActorIdleAnimation))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE VAULTIDLE (*VAULTAPI(GetActorIdleAnimation))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Index (*VAULTAPI(GetActorMovingAnimation))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Index (*VAULTAPI(GetActorWeaponAnimation))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetActorAlerted))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetActorSneaking))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetActorDead))(VAULTSPACE ID) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE Base (*VAULTAPI(GetActorBaseRace))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE VAULTRACE (*VAULTAPI(GetActorBaseRace))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetActorBaseSex))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsActorJumping))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Interval (*VAULTAPI(GetPlayerRespawn))(VAULTSPACE ID) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE Cell (*VAULTAPI(GetPlayerSpawnCell))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE VAULTCELL (*VAULTAPI(GetPlayerSpawnCell))(VAULTSPACE ID) VAULTCPP(noexcept);
 
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(DestroyObject))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetPos))(VAULTSPACE ID, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetCell))(VAULTSPACE ID, VAULTSPACE Cell, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateItem))(VAULTSPACE Base, VAULTSPACE ID, VAULTSPACE Cell, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetCell))(VAULTSPACE ID, VAULTSPACE VAULTCELL, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateItem))(VAULTSPACE Base, VAULTSPACE ID, VAULTSPACE VAULTCELL, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetItemCount))(VAULTSPACE ID, VAULTSPACE UCount) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetItemCondition))(VAULTSPACE ID, VAULTSPACE Value) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateContainer))(VAULTSPACE Base, VAULTSPACE ID, VAULTSPACE Cell, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateContainer))(VAULTSPACE VAULTCONTAINER, VAULTSPACE ID, VAULTSPACE VAULTCELL, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(AddItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE UCount, VAULTSPACE Value, VAULTSPACE State) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(RemoveItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE UCount, VAULTSPACE State) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(RemoveAllItems))(VAULTSPACE ID) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateActor))(VAULTSPACE Base, VAULTSPACE ID, VAULTSPACE Cell, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateActor))(VAULTSPACE Base, VAULTSPACE ID, VAULTSPACE VAULTCELL, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetActorValue))(VAULTSPACE ID, VAULTSPACE Index, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetActorBaseValue))(VAULTSPACE ID, VAULTSPACE Index, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(EquipItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE State, VAULTSPACE State) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(UnequipItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE State, VAULTSPACE State) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(PlayIdle))(VAULTSPACE ID, VAULTSPACE Base) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(PlayIdle))(VAULTSPACE ID, VAULTSPACE VAULTIDLE) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(KillActor))(VAULTSPACE ID, VAULTSPACE Limb, VAULTSPACE Death) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetActorBaseRace))(VAULTSPACE ID, VAULTSPACE Base) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetActorBaseRace))(VAULTSPACE ID, VAULTSPACE VAULTRACE) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(AgeActorBaseRace))(VAULTSPACE ID, VAULTSPACE Count) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetActorBaseSex))(VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetPlayerRespawn))(VAULTSPACE ID, VAULTSPACE Interval) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetPlayerSpawnCell))(VAULTSPACE ID, VAULTSPACE Cell) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetPlayerSpawnCell))(VAULTSPACE ID, VAULTSPACE VAULTCELL) VAULTCPP(noexcept);
 VAULTCPP(})
 
 #ifdef __cplusplus
@@ -421,8 +432,8 @@ namespace vaultmp
 	VAULTFUNCTION State ChatMessage(const String& message) noexcept { return VAULTAPI(ChatMessage)(static_cast<ID>(0), message.c_str()); }
 	VAULTFUNCTION State ChatMessage(cRawString message) noexcept { return VAULTAPI(ChatMessage)(static_cast<ID>(0), message); }
 	VAULTFUNCTION Void SetRespawn(Interval interval) noexcept { return VAULTAPI(SetRespawn)(interval); }
-	VAULTFUNCTION Void SetSpawnCell(Cell cell) noexcept { return VAULTAPI(SetSpawnCell)(cell); }
-	VAULTFUNCTION Void SetGameWeather(Base weather) noexcept { return VAULTAPI(SetGameWeather)(weather); }
+	VAULTFUNCTION Void SetSpawnCell(VAULTCELL cell) noexcept { return VAULTAPI(SetSpawnCell)(cell); }
+	VAULTFUNCTION Void SetGameWeather(VAULTWEATHER weather) noexcept { return VAULTAPI(SetGameWeather)(weather); }
 	VAULTFUNCTION Void SetGameTime(Time time) noexcept { return VAULTAPI(SetGameTime)(time); }
 	VAULTFUNCTION Void SetGameYear(UCount year) noexcept { return VAULTAPI(SetGameYear)(year); }
 	VAULTFUNCTION Void SetGameMonth(UCount month) noexcept { return VAULTAPI(SetGameMonth)(month); }
@@ -435,8 +446,8 @@ namespace vaultmp
 	VAULTFUNCTION State IsContainer(ID id) noexcept { return VAULTAPI(IsContainer)(id); }
 	VAULTFUNCTION State IsActor(ID id) noexcept { return VAULTAPI(IsActor)(id); }
 	VAULTFUNCTION State IsPlayer(ID id) noexcept { return VAULTAPI(IsPlayer)(id); }
-	VAULTFUNCTION State IsCell(Cell cell) noexcept { return VAULTAPI(IsCell)(cell); }
-	VAULTFUNCTION State IsInterior(Cell cell) noexcept { return VAULTAPI(IsInterior)(cell); }
+	VAULTFUNCTION State IsCell(VAULTCELL cell) noexcept { return VAULTAPI(IsCell)(cell); }
+	VAULTFUNCTION State IsInterior(VAULTCELL cell) noexcept { return VAULTAPI(IsInterior)(cell); }
 	VAULTFUNCTION Type GetType(ID id) noexcept { return VAULTAPI(GetType)(id); }
 	VAULTFUNCTION UCount GetConnection(ID id) noexcept { return VAULTAPI(GetConnection)(id); }
 	VAULTFUNCTION UCount GetCount(Type type) noexcept { return VAULTAPI(GetCount)(type); }
@@ -446,7 +457,7 @@ namespace vaultmp
 		UCount size = VAULTAPI(GetList)(type, &data);
 		return IDVector(data, data + size);
 	}
-	VAULTFUNCTION Base GetGameWeather() noexcept { return VAULTAPI(GetGameWeather)(); }
+	VAULTFUNCTION VAULTWEATHER GetGameWeather() noexcept { return VAULTAPI(GetGameWeather)(); }
 	VAULTFUNCTION Time GetGameTime() noexcept { return VAULTAPI(GetGameTime)(); }
 	VAULTFUNCTION UCount GetGameYear() noexcept { return VAULTAPI(GetGameYear)(); }
 	VAULTFUNCTION UCount GetGameMonth() noexcept { return VAULTAPI(GetGameMonth)(); }
@@ -459,7 +470,7 @@ namespace vaultmp
 	VAULTFUNCTION String GetName(ID id) noexcept { return String(VAULTAPI(GetName)(id)); }
 	VAULTFUNCTION Void GetPos(ID id, Value& X, Value& Y, Value& Z) noexcept { return VAULTAPI(GetPos)(id, &X, &Y, &Z); }
 	VAULTFUNCTION Void GetAngle(ID id, Value& X, Value& Y, Value& Z) noexcept { return VAULTAPI(GetAngle)(id, &X, &Y, &Z); }
-	VAULTFUNCTION Cell GetCell(ID id) noexcept { return VAULTAPI(GetCell)(id); }
+	VAULTFUNCTION VAULTCELL GetCell(ID id) noexcept { return VAULTAPI(GetCell)(id); }
 	VAULTFUNCTION State IsNearPoint(ID id, Value X, Value Y, Value Z, Value R) noexcept { return VAULTAPI(IsNearPoint)(id, X, Y, Z, R); }
 	VAULTFUNCTION ID GetItemContainer(ID id) noexcept { return VAULTAPI(GetItemContainer)(id); }
 	VAULTFUNCTION UCount GetItemCount(ID id) noexcept { return VAULTAPI(GetItemCount)(id); }
@@ -470,43 +481,43 @@ namespace vaultmp
 	VAULTFUNCTION UCount GetContainerItemCount(ID id, Base item = static_cast<Base>(0)) noexcept { return VAULTAPI(GetContainerItemCount)(id, item); }
 	VAULTFUNCTION Value GetActorValue(ID id, Index index) noexcept { return VAULTAPI(GetActorValue)(id, index); }
 	VAULTFUNCTION Value GetActorBaseValue(ID id, Index index) noexcept { return VAULTAPI(GetActorBaseValue)(id, index); }
-	VAULTFUNCTION Base GetActorIdleAnimation(ID id) noexcept { return VAULTAPI(GetActorIdleAnimation)(id); }
+	VAULTFUNCTION VAULTIDLE GetActorIdleAnimation(ID id) noexcept { return VAULTAPI(GetActorIdleAnimation)(id); }
 	VAULTFUNCTION Index GetActorMovingAnimation(ID id) noexcept { return VAULTAPI(GetActorMovingAnimation)(id); }
 	VAULTFUNCTION Index GetActorWeaponAnimation(ID id) noexcept { return VAULTAPI(GetActorWeaponAnimation)(id); }
 	VAULTFUNCTION State GetActorAlerted(ID id) noexcept { return VAULTAPI(GetActorAlerted)(id); }
 	VAULTFUNCTION State GetActorSneaking(ID id) noexcept { return VAULTAPI(GetActorSneaking)(id); }
 	VAULTFUNCTION State GetActorDead(ID id) noexcept { return VAULTAPI(GetActorDead)(id); }
-	VAULTFUNCTION Base GetActorBaseRace(ID id) noexcept { return VAULTAPI(GetActorBaseRace)(id); }
+	VAULTFUNCTION VAULTRACE GetActorBaseRace(ID id) noexcept { return VAULTAPI(GetActorBaseRace)(id); }
 	VAULTFUNCTION State GetActorBaseSex(ID id) noexcept { return VAULTAPI(GetActorBaseSex)(id); }
 	VAULTFUNCTION State IsActorJumping(ID id) noexcept { return VAULTAPI(IsActorJumping)(id); }
 	VAULTFUNCTION Interval GetPlayerRespawn(ID id) noexcept { return VAULTAPI(GetPlayerRespawn)(id); }
-	VAULTFUNCTION Cell GetPlayerSpawnCell(ID id) noexcept { return VAULTAPI(GetPlayerSpawnCell)(id); }
+	VAULTFUNCTION VAULTCELL GetPlayerSpawnCell(ID id) noexcept { return VAULTAPI(GetPlayerSpawnCell)(id); }
 
 	VAULTFUNCTION State DestroyObject(ID id) noexcept { return VAULTAPI(DestroyObject)(id); }
 	VAULTFUNCTION State SetPos(ID id, Value X, Value Y, Value Z) noexcept { return VAULTAPI(SetPos)(id, X, Y, Z); }
-	VAULTFUNCTION State SetCell(ID id, Cell cell, Value X = 0.00, Value Y = 0.00, Value Z = 0.00) noexcept { return VAULTAPI(SetCell)(id, cell, X, Y, Z); }
-	VAULTFUNCTION ID CreateItem(Base item, ID id) noexcept { return VAULTAPI(CreateItem)(item, id, static_cast<Cell>(0), 0.00, 0.00, 0.00); }
-	VAULTFUNCTION ID CreateItem(Base item, Cell cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateItem)(item, static_cast<ID>(0), cell, X, Y, Z); }
+	VAULTFUNCTION State SetCell(ID id, VAULTCELL cell, Value X = 0.00, Value Y = 0.00, Value Z = 0.00) noexcept { return VAULTAPI(SetCell)(id, cell, X, Y, Z); }
+	VAULTFUNCTION ID CreateItem(Base item, ID id) noexcept { return VAULTAPI(CreateItem)(item, id, static_cast<VAULTCELL>(0), 0.00, 0.00, 0.00); }
+	VAULTFUNCTION ID CreateItem(Base item, VAULTCELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateItem)(item, static_cast<ID>(0), cell, X, Y, Z); }
 	VAULTFUNCTION State SetItemCount(ID id, UCount count) noexcept { return VAULTAPI(SetItemCount)(id, count); }
 	VAULTFUNCTION State SetItemCondition(ID id, Value condition) noexcept { return VAULTAPI(SetItemCondition)(id, condition); }
-	VAULTFUNCTION ID CreateContainer(Base container, ID id) noexcept { return VAULTAPI(CreateContainer)(container, id, static_cast<Cell>(0), 0.00, 0.00, 0.00); }
-	VAULTFUNCTION ID CreateContainer(Base container, Cell cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateContainer)(container, static_cast<ID>(0), cell, X, Y, Z); }
+	VAULTFUNCTION ID CreateContainer(VAULTCONTAINER container, ID id) noexcept { return VAULTAPI(CreateContainer)(container, id, static_cast<VAULTCELL>(0), 0.00, 0.00, 0.00); }
+	VAULTFUNCTION ID CreateContainer(VAULTCONTAINER container, VAULTCELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateContainer)(container, static_cast<ID>(0), cell, X, Y, Z); }
 	VAULTFUNCTION State AddItem(ID id, Base item, UCount count = 1, Value condition = 100.0, State silent = True) noexcept { return VAULTAPI(AddItem)(id, item, count, condition, silent); }
 	VAULTFUNCTION UCount RemoveItem(ID id, Base item, UCount count = 1, State silent = True) noexcept { return VAULTAPI(RemoveItem)(id, item, count, silent); }
 	VAULTFUNCTION Void RemoveAllItems(ID id) noexcept { return VAULTAPI(RemoveAllItems)(id); }
-	VAULTFUNCTION ID CreateActor(Base actor, ID id) noexcept { return VAULTAPI(CreateActor)(actor, id, static_cast<Cell>(0), 0.00, 0.00, 0.00); }
-	VAULTFUNCTION ID CreateActor(Base actor, Cell cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateActor)(actor, static_cast<ID>(0), cell, X, Y, Z); }
+	VAULTFUNCTION ID CreateActor(Base actor, ID id) noexcept { return VAULTAPI(CreateActor)(actor, id, static_cast<VAULTCELL>(0), 0.00, 0.00, 0.00); }
+	VAULTFUNCTION ID CreateActor(Base actor, VAULTCELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateActor)(actor, static_cast<ID>(0), cell, X, Y, Z); }
 	VAULTFUNCTION Void SetActorValue(ID id, Index index, Value value) noexcept { return VAULTAPI(SetActorValue)(id, index, value); }
 	VAULTFUNCTION Void SetActorBaseValue(ID id, Index index, Value value) noexcept { return VAULTAPI(SetActorBaseValue)(id, index, value); }
 	VAULTFUNCTION State EquipItem(ID id, Base item, State silent = True, State stick = True) noexcept { return VAULTAPI(EquipItem)(id, item, silent, stick); }
 	VAULTFUNCTION State UnequipItem(ID id, Base item, State silent = True, State stick = True) noexcept { return VAULTAPI(UnequipItem)(id, item, silent, stick); }
-	VAULTFUNCTION State PlayIdle(ID id, Base idle) noexcept { return VAULTAPI(PlayIdle)(id, idle); }
+	VAULTFUNCTION State PlayIdle(ID id, VAULTIDLE idle) noexcept { return VAULTAPI(PlayIdle)(id, idle); }
 	VAULTFUNCTION Void KillActor(ID id, Limb limbs = Limb::None, Death cause = Death::None) noexcept { return VAULTAPI(KillActor)(id, limbs, cause); }
-	VAULTFUNCTION State SetActorBaseRace(ID id, Base race) noexcept { return VAULTAPI(SetActorBaseRace)(id, race); }
+	VAULTFUNCTION State SetActorBaseRace(ID id, VAULTRACE race) noexcept { return VAULTAPI(SetActorBaseRace)(id, race); }
 	VAULTFUNCTION State AgeActorBaseRace(ID id, Count age) noexcept { return VAULTAPI(AgeActorBaseRace)(id, age); }
 	VAULTFUNCTION State SetActorBaseSex(ID id, State female) noexcept { return VAULTAPI(SetActorBaseSex)(id, female); }
 	VAULTFUNCTION Void SetPlayerRespawn(ID id, Interval interval) noexcept { return VAULTAPI(SetPlayerRespawn)(id, interval); }
-	VAULTFUNCTION Void SetPlayerSpawnCell(ID id, Cell cell) noexcept { return VAULTAPI(SetPlayerSpawnCell)(id, cell); }
+	VAULTFUNCTION Void SetPlayerSpawnCell(ID id, VAULTCELL cell) noexcept { return VAULTAPI(SetPlayerSpawnCell)(id, cell); }
 
 	class Reference {
 		protected:
@@ -545,11 +556,11 @@ namespace vaultmp
 			String GetName() const noexcept { return vaultmp::GetName(id); }
 			Void GetPos(Value& X, Value& Y, Value& Z) const noexcept { return vaultmp::GetPos(id, X, Y, Z); }
 			Void GetAngle(Value& X, Value& Y, Value& Z) const noexcept { return vaultmp::GetAngle(id, X, Y, Z); }
-			Cell GetCell() const noexcept { return vaultmp::GetCell(id); }
+			VAULTCELL GetCell() const noexcept { return vaultmp::GetCell(id); }
 			State IsNearPoint(Value& X, Value& Y, Value& Z, Value& R) const noexcept { return vaultmp::IsNearPoint(id, X, Y, Z, R); }
 
 			State SetPos(Value X, Value Y, Value Z) const noexcept { return vaultmp::SetPos(id, X, Y, Z); }
-			State SetCell(Cell cell, Value X = 0.00, Value Y = 0.00, Value Z = 0.00) const noexcept { return vaultmp::SetCell(id, cell, X, Y, Z); }
+			State SetCell(VAULTCELL cell, Value X = 0.00, Value Y = 0.00, Value Z = 0.00) const noexcept { return vaultmp::SetCell(id, cell, X, Y, Z); }
 
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_OBJECT); }
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_OBJECT); }
@@ -574,7 +585,7 @@ namespace vaultmp
 			State SetItemCondition(Value condition) const noexcept { return vaultmp::SetItemCondition(id, condition); }
 
 			static ID Create(Base item, ID id) { return vaultmp::CreateItem(item, id); }
-			static ID Create(Base item, Cell cell, Value X, Value Y, Value Z) { return vaultmp::CreateItem(item, cell, X, Y, Z); }
+			static ID Create(Base item, VAULTCELL cell, Value X, Value Y, Value Z) { return vaultmp::CreateItem(item, cell, X, Y, Z); }
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_ITEM); }
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_ITEM); }
 	};
@@ -593,8 +604,8 @@ namespace vaultmp
 			UCount RemoveItem(Base item, UCount count = 1, State silent = True) noexcept { return vaultmp::RemoveItem(id, item, count, silent); }
 			Void RemoveAllItems() noexcept { return vaultmp::RemoveAllItems(id); }
 
-			static ID Create(Base item, ID id) { return vaultmp::CreateContainer(item, id); }
-			static ID Create(Base item, Cell cell, Value X, Value Y, Value Z) { return vaultmp::CreateContainer(item, cell, X, Y, Z); }
+			static ID Create(VAULTCONTAINER container, ID id) { return vaultmp::CreateContainer(container, id); }
+			static ID Create(VAULTCONTAINER container, VAULTCELL cell, Value X, Value Y, Value Z) { return vaultmp::CreateContainer(container, cell, X, Y, Z); }
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_CONTAINER); }
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_CONTAINER); }
 	};
@@ -609,13 +620,13 @@ namespace vaultmp
 
 			Value GetActorValue(Index index) const noexcept { return vaultmp::GetActorValue(id, index); }
 			Value GetActorBaseValue(Index index) const noexcept { return vaultmp::GetActorBaseValue(id, index); }
-			Base GetActorIdleAnimation() const noexcept { return vaultmp::GetActorIdleAnimation(id); }
+			VAULTIDLE GetActorIdleAnimation() const noexcept { return vaultmp::GetActorIdleAnimation(id); }
 			Index GetActorMovingAnimation() const noexcept { return vaultmp::GetActorMovingAnimation(id); }
 			Index GetActorWeaponAnimation() const noexcept { return vaultmp::GetActorWeaponAnimation(id); }
 			State GetActorAlerted() const noexcept { return vaultmp::GetActorAlerted(id); }
 			State GetActorSneaking() const noexcept { return vaultmp::GetActorSneaking(id); }
 			State GetActorDead() const noexcept { return vaultmp::GetActorDead(id); }
-			Base GetActorBaseRace() const noexcept { return vaultmp::GetActorBaseRace(id); }
+			VAULTRACE GetActorBaseRace() const noexcept { return vaultmp::GetActorBaseRace(id); }
 			State GetActorBaseSex() const noexcept { return vaultmp::GetActorBaseSex(id); }
 			State IsActorJumping() const noexcept { return vaultmp::IsActorJumping(id); }
 
@@ -623,14 +634,14 @@ namespace vaultmp
 			Void SetActorBaseValue(Index index, Value value) noexcept { return vaultmp::SetActorBaseValue(id, index, value); }
 			State EquipItem(Base item, State silent = True, State stick = True) noexcept { return vaultmp::EquipItem(id, item, silent, stick); }
 			State UnequipItem(Base item, State silent = True, State stick = True) noexcept { return vaultmp::UnequipItem(id, item, silent, stick); }
-			State PlayIdle(Base idle) noexcept { return vaultmp::PlayIdle(id, idle); }
+			State PlayIdle(VAULTIDLE idle) noexcept { return vaultmp::PlayIdle(id, idle); }
 			Void KillActor(Limb limbs = Limb::None, Death cause = Death::None) noexcept { return vaultmp::KillActor(id, limbs, cause); }
-			State SetActorBaseRace(Base race) const noexcept { return vaultmp::SetActorBaseRace(id, race); }
+			State SetActorBaseRace(VAULTRACE race) const noexcept { return vaultmp::SetActorBaseRace(id, race); }
 			State AgeActorBaseRace(Count age) const noexcept { return vaultmp::AgeActorBaseRace(id, age); }
 			State SetActorBaseSex(State female) const noexcept { return vaultmp::SetActorBaseSex(id, female); }
 
-			static ID Create(Base item, ID id) { return vaultmp::CreateActor(item, id); }
-			static ID Create(Base item, Cell cell, Value X, Value Y, Value Z) { return vaultmp::CreateActor(item, cell, X, Y, Z); }
+			static ID Create(Base actor, ID id) { return vaultmp::CreateActor(actor, id); }
+			static ID Create(Base actor, VAULTCELL cell, Value X, Value Y, Value Z) { return vaultmp::CreateActor(actor, cell, X, Y, Z); }
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_ACTOR); }
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_ACTOR); }
 	};
@@ -641,10 +652,10 @@ namespace vaultmp
 			virtual ~Player() noexcept {}
 
 			Interval GetPlayerRespawn() const noexcept { return vaultmp::GetPlayerRespawn(id); }
-			Cell GetPlayerSpawnCell() const noexcept { return vaultmp::GetPlayerSpawnCell(id); }
+			VAULTCELL GetPlayerSpawnCell() const noexcept { return vaultmp::GetPlayerSpawnCell(id); }
 
 			Void SetPlayerRespawn(Interval interval) noexcept { return vaultmp::SetPlayerRespawn(id, interval); }
-			Void SetPlayerSpawnCell(Cell cell) noexcept { return vaultmp::SetPlayerSpawnCell(id, cell); }
+			Void SetPlayerSpawnCell(VAULTCELL cell) noexcept { return vaultmp::SetPlayerSpawnCell(id, cell); }
 			State UIMessage(const String& message) noexcept { return vaultmp::UIMessage(id, message); }
 			State ChatMessage(const String& message) noexcept { return vaultmp::ChatMessage(id, message); }
 
