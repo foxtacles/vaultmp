@@ -95,6 +95,7 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 
 	{"DestroyObject", PAWN::vaultmp_DestroyObject},
 	{"SetPos", PAWN::vaultmp_SetPos},
+	{"SetAngle", PAWN::vaultmp_SetAngle},
 	{"SetCell", PAWN::vaultmp_SetCell},
 	{"CreateItem", PAWN::vaultmp_CreateItem},
 	{"SetItemCount", PAWN::vaultmp_SetItemCount},
@@ -825,6 +826,11 @@ cell PAWN::vaultmp_DestroyObject(AMX*, const cell* params)
 cell PAWN::vaultmp_SetPos(AMX*, const cell* params)
 {
 	return Script::SetPos(params[1], amx_ctof(params[2]), amx_ctof(params[3]), amx_ctof(params[4]));
+}
+
+cell PAWN::vaultmp_SetAngle(AMX*, const cell* params)
+{
+	return Script::SetAngle(params[1], amx_ctof(params[2]), amx_ctof(params[3]), amx_ctof(params[4]));
 }
 
 cell PAWN::vaultmp_SetCell(AMX*, const cell* params)

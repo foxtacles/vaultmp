@@ -181,6 +181,7 @@ native GetPlayerSpawnCell(ID);
 
 native Bool:DestroyObject(ID);
 native Bool:SetPos(ID, Float:X, Float:Y, Float:Z);
+native Bool:SetAngle(ID, Float:X, Float:Y, Float:Z);
 native Bool:SetCell(ID, cell, Float:X = 0.00, Float:Y = 0.00, Float:Z = 0.00);
 native CreateItem(item, ID, cell = 0, Float:X = 0.00, Float:Y = 0.00, Float:Z = 0.00);
 native Bool:SetItemCount(ID, count);

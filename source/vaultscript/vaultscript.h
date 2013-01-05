@@ -65,7 +65,7 @@ namespace vaultmp {
 		FALLOUT3 = 0x01,
 		NEWVEGAS = FALLOUT3 << 1,
 		FALLOUT_GAMES =	FALLOUT3 | NEWVEGAS,
-		ALL_GAMES =	FALLOUT_GAMES,
+		ALL_GAMES = FALLOUT_GAMES,
 
 		MAX_PLAYER_NAME = 16,
 		MAX_PASSWORD_SIZE = 16,
@@ -309,6 +309,7 @@ VAULTCPP(extern "C" {)
 
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(DestroyObject))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetPos))(VAULTSPACE ID, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetAngle))(VAULTSPACE ID, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetCell))(VAULTSPACE ID, VAULTSPACE VAULTCELL, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateItem))(VAULTSPACE Base, VAULTSPACE ID, VAULTSPACE VAULTCELL, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetItemCount))(VAULTSPACE ID, VAULTSPACE UCount) VAULTCPP(noexcept);
@@ -495,6 +496,7 @@ namespace vaultmp
 
 	VAULTFUNCTION State DestroyObject(ID id) noexcept { return VAULTAPI(DestroyObject)(id); }
 	VAULTFUNCTION State SetPos(ID id, Value X, Value Y, Value Z) noexcept { return VAULTAPI(SetPos)(id, X, Y, Z); }
+	VAULTFUNCTION State SetAngle(ID id, Value X, Value Y, Value Z) noexcept { return VAULTAPI(SetAngle)(id, X, Y, Z); }
 	VAULTFUNCTION State SetCell(ID id, VAULTCELL cell, Value X = 0.00, Value Y = 0.00, Value Z = 0.00) noexcept { return VAULTAPI(SetCell)(id, cell, X, Y, Z); }
 	VAULTFUNCTION ID CreateItem(Base item, ID id) noexcept { return VAULTAPI(CreateItem)(item, id, static_cast<VAULTCELL>(0), 0.00, 0.00, 0.00); }
 	VAULTFUNCTION ID CreateItem(Base item, VAULTCELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateItem)(item, static_cast<ID>(0), cell, X, Y, Z); }
@@ -557,9 +559,10 @@ namespace vaultmp
 			Void GetPos(Value& X, Value& Y, Value& Z) const noexcept { return vaultmp::GetPos(id, X, Y, Z); }
 			Void GetAngle(Value& X, Value& Y, Value& Z) const noexcept { return vaultmp::GetAngle(id, X, Y, Z); }
 			VAULTCELL GetCell() const noexcept { return vaultmp::GetCell(id); }
-			State IsNearPoint(Value& X, Value& Y, Value& Z, Value& R) const noexcept { return vaultmp::IsNearPoint(id, X, Y, Z, R); }
+			State IsNearPoint(Value X, Value Y, Value Z, Value R) const noexcept { return vaultmp::IsNearPoint(id, X, Y, Z, R); }
 
 			State SetPos(Value X, Value Y, Value Z) const noexcept { return vaultmp::SetPos(id, X, Y, Z); }
+			State SetAngle(Value X, Value Y, Value Z) const noexcept { return vaultmp::SetAngle(id, X, Y, Z); }
 			State SetCell(VAULTCELL cell, Value X = 0.00, Value Y = 0.00, Value Z = 0.00) const noexcept { return vaultmp::SetCell(id, cell, X, Y, Z); }
 
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_OBJECT); }

@@ -204,6 +204,7 @@ class Script
 
 		static bool DestroyObject(RakNet::NetworkID id);
 		static bool SetPos(RakNet::NetworkID id, double X, double Y, double Z);
+		static bool SetAngle(RakNet::NetworkID id, double X, double Y, double Z);
 		static bool SetCell(RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z);
 		static RakNet::NetworkID CreateItem(unsigned int baseID, RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z);
 		static bool SetItemCount(RakNet::NetworkID id, unsigned int count);

@@ -150,6 +150,7 @@ Script::Script(char* path)
 
 			SetScript(string(vpf + "DestroyObject").c_str(), &Script::DestroyObject);
 			SetScript(string(vpf + "SetPos").c_str(), &Script::SetPos);
+			SetScript(string(vpf + "SetAngle").c_str(), &Script::SetAngle);
 			SetScript(string(vpf + "SetCell").c_str(), &Script::SetCell);
 			SetScript(string(vpf + "CreateItem").c_str(), &Script::CreateItem);
 			SetScript(string(vpf + "SetItemCount").c_str(), &Script::SetItemCount);
@@ -1566,8 +1567,12 @@ double Script::GetActorValue(NetworkID id, unsigned char index)
 {
 	auto actor = GameFactory::GetObject<Actor>(id);
 
-	if (actor)
-		return actor->GetActorValue(index);
+	try
+	{
+		if (actor)
+			return actor->GetActorValue(index);
+	}
+	catch (...) {}
 
 	return 0.00;
 }
@@ -1576,8 +1581,12 @@ double Script::GetActorBaseValue(NetworkID id, unsigned char index)
 {
 	auto actor = GameFactory::GetObject<Actor>(id);
 
-	if (actor)
-		return actor->GetActorBaseValue(index);
+	try
+	{
+		if (actor)
+			return actor->GetActorBaseValue(index);
+	}
+	catch (...) {}
 
 	return 0.00;
 }
@@ -1779,6 +1788,50 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 		);
 
 		Network::Queue(move(response));
+
+		state = true;
+	}
+
+	return state;
+}
+
+bool Script::SetAngle(NetworkID id, double X, double Y, double Z)
+{
+	bool state = false;
+
+	auto reference = GameFactory::GetObject(id);
+
+	if (!reference)
+		return state;
+
+	auto& object = reference.get();
+
+	if (object->SetAngle(Axis_X, X))
+	{
+		Network::Queue(NetworkResponse{Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_ANGLE>(id, Axis_X, X),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+		});
+
+		state = true;
+	}
+
+	if (object->SetAngle(Axis_Y, Y))
+	{
+		Network::Queue(NetworkResponse{Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_ANGLE>(id, Axis_Y, Y),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+		});
+
+		state = true;
+	}
+
+	if (object->SetAngle(Axis_Z, Z))
+	{
+		Network::Queue(NetworkResponse{Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_ANGLE>(id, Axis_Z, Z),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+		});
 
 		state = true;
 	}
@@ -2034,11 +2087,15 @@ void Script::SetActorValue(NetworkID id, unsigned char index, double value)
 
 	auto& actor = reference.get();
 
-	if (actor->SetActorValue(index, value))
-		Network::Queue(NetworkResponse{Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_VALUE>(actor->GetNetworkID(), false, index, value),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-		});
+	try
+	{
+		if (actor->SetActorValue(index, value))
+			Network::Queue(NetworkResponse{Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_VALUE>(actor->GetNetworkID(), false, index, value),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+			});
+	}
+	catch (...) {}
 }
 
 void Script::SetActorBaseValue(NetworkID id, unsigned char index, double value)
@@ -2058,11 +2115,15 @@ void Script::SetActorBaseValue(NetworkID id, unsigned char index, double value)
 	{
 		if (actor->GetBase() == baseID)
 		{
-			if (actor->SetActorBaseValue(index, value))
-				Network::Queue(NetworkResponse{Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_UPDATE_VALUE>(actor->GetNetworkID(), true, index, value),
-					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-				});
+			try
+			{
+				if (actor->SetActorBaseValue(index, value))
+					Network::Queue(NetworkResponse{Network::CreateResponse(
+						PacketFactory::Create<pTypes::ID_UPDATE_VALUE>(actor->GetNetworkID(), true, index, value),
+						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+					});
+			}
+			catch (...) {}
 		}
 	}
 }
