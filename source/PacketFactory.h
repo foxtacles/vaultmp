@@ -8,6 +8,10 @@
 #include "VaultException.h"
 #include "Data.h"
 
+#ifdef VAULTMP_DEBUG
+#include "Debug.h"
+#endif
+
 enum
 {
 	ID_EVENT_INTERFACE_LOST,
@@ -75,6 +79,10 @@ typedef std::unique_ptr<pDefault> pPacket;
 class PacketFactory
 {
 	private:
+#ifdef VAULTMP_DEBUG
+		static DebugInput<PacketFactory> debug;
+#endif
+
 		PacketFactory() = delete;
 
 		template<pTypes type, typename... Args>

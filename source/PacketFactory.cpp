@@ -1,5 +1,9 @@
 #include "PacketFactory.h"
 
+#ifdef VAULTMP_DEBUG
+DebugInput<PacketFactory> PacketFactory::debug;
+#endif
+
 pPacket PacketFactory::Init(const unsigned char* stream, unsigned int len)
 {
 	pDefault* packet;
@@ -133,6 +137,10 @@ pPacket PacketFactory::Init(const unsigned char* stream, unsigned int len)
 		default:
 			throw VaultException("Unhandled packet type %d", stream[0]);
 	}
+
+#ifdef VAULTMP_DEBUG
+	debug.print("Constructing packet of type ", typeid(packet).name(), ", length ", dec, packet->length(), ", type ", static_cast<unsigned int>(packet->get()));
+#endif
 
 	return pPacket(packet);
 }
