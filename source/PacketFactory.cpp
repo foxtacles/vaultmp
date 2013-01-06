@@ -4,6 +4,8 @@
 DebugInput<PacketFactory> PacketFactory::debug;
 #endif
 
+using namespace std;
+
 pPacket PacketFactory::Init(const unsigned char* stream, unsigned int len)
 {
 	pDefault* packet;
@@ -139,7 +141,7 @@ pPacket PacketFactory::Init(const unsigned char* stream, unsigned int len)
 	}
 
 #ifdef VAULTMP_DEBUG
-	debug.print("Constructing packet of type ", typeid(packet).name(), ", length ", dec, packet->length(), ", type ", static_cast<unsigned int>(packet->get()));
+	debug.print("Constructing packet of type ", typeid(packet).name(), ", length ", dec, packet->length(), ", type ", static_cast<unsigned int>(*packet->get()));
 #endif
 
 	return pPacket(packet);
