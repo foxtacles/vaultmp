@@ -23,7 +23,7 @@ void InputThread()
 	{
 		fgets(input, sizeof(input), stdin);
 
-		if (strlen(input) > 0 && input[strlen(input) - 1] == '\n')
+		if (*input && input[strlen(input) - 1] == '\n')
 			input[strlen(input) - 1] = '\0';
 
 		char* tok = strtok(input, " ");

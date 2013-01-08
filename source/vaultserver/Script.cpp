@@ -165,6 +165,11 @@ Script::Script(char* path)
 			SetScript(string(vpf + "EquipItem").c_str(), &Script::EquipItem);
 			SetScript(string(vpf + "UnequipItem").c_str(), &Script::UnequipItem);
 			SetScript(string(vpf + "PlayIdle").c_str(), &Script::PlayIdle);
+			SetScript(string(vpf + "SetActorMovingAnimation").c_str(), &Script::SetActorMovingAnimation);
+			SetScript(string(vpf + "SetActorWeaponAnimation").c_str(), &Script::SetActorWeaponAnimation);
+			SetScript(string(vpf + "SetActorAlerted").c_str(), &Script::SetActorAlerted);
+			SetScript(string(vpf + "SetActorSneaking").c_str(), &Script::SetActorSneaking);
+			SetScript(string(vpf + "FireWeapon").c_str(), &Script::FireWeapon);
 			SetScript(string(vpf + "KillActor").c_str(), &Script::KillActor);
 			SetScript(string(vpf + "SetActorBaseRace").c_str(), &Script::SetActorBaseRace);
 			SetScript(string(vpf + "AgeActorBaseRace").c_str(), &Script::AgeActorBaseRace);
@@ -2173,6 +2178,131 @@ bool Script::UnequipItem(NetworkID id, unsigned int baseID, bool silent, bool st
 		});
 
 		actor->ApplyDiff(diff);
+
+		return true;
+	}
+
+	return false;
+}
+
+bool Script::SetActorMovingAnimation(NetworkID id, unsigned char anim)
+{
+	auto reference = GameFactory::GetObject<Actor>(id);
+
+	if (!reference || vaultcast<Player>(reference))
+		return false;
+
+	auto& actor = reference.get();
+
+	try
+	{
+		if (actor->SetActorMovingAnimation(anim))
+		{
+			Network::Queue(NetworkResponse{Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_STATE>(actor->GetNetworkID(), actor->GetActorIdleAnimation(), anim, actor->GetActorMovingXY(), actor->GetActorWeaponAnimation(), actor->GetActorAlerted(), actor->GetActorSneaking(), false),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+			});
+
+			return true;
+		}
+	}
+	catch (...) {}
+
+	return false;
+}
+
+bool Script::SetActorWeaponAnimation(NetworkID id, unsigned char anim)
+{
+	auto reference = GameFactory::GetObject<Actor>(id);
+
+	if (!reference || vaultcast<Player>(reference))
+		return false;
+
+	auto& actor = reference.get();
+
+	try
+	{
+		if (actor->SetActorWeaponAnimation(anim))
+		{
+			bool punching = actor->IsActorPunching();
+			bool power_punching = actor->IsActorPowerPunching();
+			bool firing = actor->IsActorFiring();
+
+			Network::Queue(NetworkResponse{Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_STATE>(actor->GetNetworkID(), actor->GetActorIdleAnimation(), actor->GetActorMovingAnimation(), actor->GetActorMovingXY(), anim, actor->GetActorAlerted(), actor->GetActorSneaking(), !punching && !power_punching && firing),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+			});
+
+			return true;
+		}
+	}
+	catch (...) {}
+
+	return false;
+}
+
+bool Script::SetActorAlerted(NetworkID id, bool alerted)
+{
+	auto reference = GameFactory::GetObject<Actor>(id);
+
+	if (!reference || vaultcast<Player>(reference))
+		return false;
+
+	auto& actor = reference.get();
+
+	if (actor->SetActorAlerted(alerted))
+	{
+		Network::Queue(NetworkResponse{Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_STATE>(actor->GetNetworkID(), actor->GetActorIdleAnimation(), actor->GetActorMovingAnimation(), actor->GetActorMovingXY(), actor->GetActorWeaponAnimation(), alerted, actor->GetActorSneaking(), false),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+		});
+
+		return true;
+	}
+
+	return false;
+}
+
+bool Script::SetActorSneaking(NetworkID id, bool sneaking)
+{
+	auto reference = GameFactory::GetObject<Actor>(id);
+
+	if (!reference || vaultcast<Player>(reference))
+		return false;
+
+	auto& actor = reference.get();
+
+	if (actor->SetActorSneaking(sneaking))
+	{
+		Network::Queue(NetworkResponse{Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_STATE>(actor->GetNetworkID(), actor->GetActorIdleAnimation(), actor->GetActorMovingAnimation(), actor->GetActorMovingXY(), actor->GetActorWeaponAnimation(), actor->GetActorAlerted(), sneaking, false),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+		});
+
+		return true;
+	}
+
+	return false;
+}
+
+bool Script::FireWeapon(NetworkID id)
+{
+	auto reference = GameFactory::GetObject<Actor>(id);
+
+	if (!reference)
+		return false;
+
+	auto& actor = reference.get();
+
+	unsigned int baseID = actor->GetEquippedWeapon();
+	auto weapon = DB::Weapon::Lookup(baseID);
+
+	if (weapon)
+	{
+		Network::Queue(NetworkResponse{Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_FIREWEAPON>(actor->GetNetworkID(), baseID, weapon->IsAutomatic() ? weapon->GetFireRate() : 0.00),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+		});
 
 		return true;
 	}

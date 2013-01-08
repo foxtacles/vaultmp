@@ -219,6 +219,11 @@ class Script
 		static bool EquipItem(RakNet::NetworkID id, unsigned int baseID, bool silent, bool stick);
 		static bool UnequipItem(RakNet::NetworkID id, unsigned int baseID, bool silent, bool stick);
 		static bool PlayIdle(RakNet::NetworkID id, unsigned int idle);
+		static bool SetActorMovingAnimation(RakNet::NetworkID id, unsigned char anim);
+		static bool SetActorWeaponAnimation(RakNet::NetworkID id, unsigned char anim);
+		static bool SetActorAlerted(RakNet::NetworkID id, bool alerted);
+		static bool SetActorSneaking(RakNet::NetworkID id, bool sneaking);
+		static bool FireWeapon(RakNet::NetworkID id);
 		static void KillActor(RakNet::NetworkID id, unsigned short limbs, signed char cause);
 		static bool SetActorBaseRace(RakNet::NetworkID id, unsigned int race);
 		static bool AgeActorBaseRace(RakNet::NetworkID id, signed int age);

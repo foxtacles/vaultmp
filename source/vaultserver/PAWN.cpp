@@ -110,6 +110,11 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"EquipItem", PAWN::vaultmp_EquipItem},
 	{"UnequipItem", PAWN::vaultmp_UnequipItem},
 	{"PlayIdle", PAWN::vaultmp_PlayIdle},
+	{"SetActorMovingAnimation", PAWN::vaultmp_SetActorMovingAnimation},
+	{"SetActorWeaponAnimation", PAWN::vaultmp_SetActorWeaponAnimation},
+	{"SetActorAlerted", PAWN::vaultmp_SetActorAlerted},
+	{"SetActorSneaking", PAWN::vaultmp_SetActorSneaking},
+	{"FireWeapon", PAWN::vaultmp_FireWeapon},
 	{"KillActor", PAWN::vaultmp_KillActor},
 	{"SetActorBaseRace", PAWN::vaultmp_SetActorBaseRace},
 	{"AgeActorBaseRace", PAWN::vaultmp_AgeActorBaseRace},
@@ -904,6 +909,31 @@ cell PAWN::vaultmp_UnequipItem(AMX*, const cell* params)
 cell PAWN::vaultmp_PlayIdle(AMX*, const cell* params)
 {
 	return Script::PlayIdle(params[1], params[2]);
+}
+
+cell PAWN::vaultmp_SetActorMovingAnimation(AMX*, const cell* params)
+{
+	return Script::SetActorMovingAnimation(params[1], params[2]);
+}
+
+cell PAWN::vaultmp_SetActorWeaponAnimation(AMX*, const cell* params)
+{
+	return Script::SetActorWeaponAnimation(params[1], params[2]);
+}
+
+cell PAWN::vaultmp_SetActorAlerted(AMX*, const cell* params)
+{
+	return Script::SetActorAlerted(params[1], params[2]);
+}
+
+cell PAWN::vaultmp_SetActorSneaking(AMX*, const cell* params)
+{
+	return Script::SetActorSneaking(params[1], params[2]);
+}
+
+cell PAWN::vaultmp_FireWeapon(AMX*, const cell* params)
+{
+	return Script::FireWeapon(params[1]);
 }
 
 cell PAWN::vaultmp_KillActor(AMX*, const cell* params)

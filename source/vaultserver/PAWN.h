@@ -28,7 +28,7 @@ class PAWN
 
 		PAWN();
 
-		static AMX_NATIVE_INFO vaultmp_functions[97];
+		static AMX_NATIVE_INFO vaultmp_functions[102];
 
 		static cell vaultmp_timestamp(AMX* amx, const cell* params);
 		static cell vaultmp_CreateTimer(AMX* amx, const cell* params);
@@ -125,6 +125,11 @@ class PAWN
 		static cell vaultmp_EquipItem(AMX* amx, const cell* params);
 		static cell vaultmp_UnequipItem(AMX* amx, const cell* params);
 		static cell vaultmp_PlayIdle(AMX* amx, const cell* params);
+		static cell vaultmp_SetActorMovingAnimation(AMX* amx, const cell* params);
+		static cell vaultmp_SetActorWeaponAnimation(AMX* amx, const cell* params);
+		static cell vaultmp_SetActorAlerted(AMX* amx, const cell* params);
+		static cell vaultmp_SetActorSneaking(AMX* amx, const cell* params);
+		static cell vaultmp_FireWeapon(AMX* amx, const cell* params);
 		static cell vaultmp_KillActor(AMX* amx, const cell* params);
 		static cell vaultmp_SetActorBaseRace(AMX* amx, const cell* params);
 		static cell vaultmp_AgeActorBaseRace(AMX* amx, const cell* params);
