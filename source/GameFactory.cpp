@@ -5,6 +5,7 @@ using namespace RakNet;
 
 CriticalSection GameFactory::cs;
 ReferenceList GameFactory::instances;
+ReferenceIndex GameFactory::index;
 ReferenceCount GameFactory::typecount;
 ReferenceDeleted GameFactory::delrefs;
 unsigned char GameFactory::game = 0x00;
@@ -120,15 +121,18 @@ unsigned int GameFactory::GetObjectCount(unsigned char type) noexcept
 template<typename T>
 Expected<FactoryObject<T>> GameFactory::GetObject(NetworkID id)
 {
-	Reference* reference;
+	Reference* reference = nullptr;
 	unsigned char type;
 
 	cs.StartSession();
 
-	reference = Network::Manager()->GET_OBJECT_FROM_ID<Reference*>(id);
+	auto it = GetShared(id);
 
-	if (reference)
-		type = GetShared(reference)->second;
+	if (it != instances.end())
+	{
+		reference = it->first.get();
+		type = it->second;
+	}
 
 	cs.EndSession();
 
@@ -187,13 +191,13 @@ vector<Expected<FactoryObject<T>>> GameFactory::GetMultiple(const vector<Network
 
 	for (const auto& id : objects)
 	{
-		Reference* reference = Network::Manager()->GET_OBJECT_FROM_ID<Reference*>(id);
+		auto it = GetShared(id);
 
-		if (!reference)
+		if (it == instances.end())
 			result[i] = VaultException("Unknown object with NetworkID %llu", id);
 		else
 			// emplace
-			sort.insert(make_pair(*GetShared(reference), i));
+			sort.insert(make_pair(*it, i));
 
 		++i;
 	}
@@ -273,10 +277,11 @@ unsigned int GameFactory::LookupRefID(NetworkID id)
 
 	cs.StartSession();
 
-	reference = Network::Manager()->GET_OBJECT_FROM_ID<Reference*>(id);
+	auto it = GetShared(id);
+	reference = it != instances.end() ? it->first.get() : nullptr;
 
 	if (reference)
-		refID = reference->GetReference();
+		refID = it->first->GetReference();
 
 	cs.EndSession();
 
@@ -319,25 +324,16 @@ template void GameFactory::LeaveReference(FactoryObject<Player>& reference);
 
 unsigned char GameFactory::GetType(const Reference* reference) noexcept
 {
-	ReferenceList::iterator it;
-
-	cs.StartSession();
-
-	unsigned char type;
-	it = GetShared(reference);
-	type = (it != instances.end() ? it->second : 0x00);
-
-	cs.EndSession();
-
-	return type;
+	return GetType(const_cast<Reference*>(reference)->GetNetworkID());
 }
 
 unsigned char GameFactory::GetType(NetworkID id) noexcept
 {
 	cs.StartSession();
 
-	Reference* reference = Network::Manager()->GET_OBJECT_FROM_ID<Reference*>(id);
-	unsigned char type = GetType(reference);
+	unsigned char type;
+	auto it = GetShared(id);
+	type = (it != instances.end() ? it->second : 0x00);
 
 	cs.EndSession();
 
@@ -408,7 +404,7 @@ NetworkID GameFactory::CreateInstance(unsigned char type, unsigned int refID, un
 
 	++typecount[type];
 	// emplace
-	instances.insert(make_pair(reference, type));
+	index[id] = instances.insert(make_pair(reference, type)).first;
 
 	cs.EndSession();
 
@@ -464,7 +460,7 @@ void GameFactory::CreateKnownInstance(unsigned char type, NetworkID id, unsigned
 
 	++typecount[type];
 	// emplace
-	instances.insert(make_pair(reference, type));
+	index[id] = instances.insert(make_pair(reference, type)).first;
 
 	cs.EndSession();
 }
@@ -520,7 +516,7 @@ NetworkID GameFactory::CreateKnownInstance(unsigned char type, const pDefault* p
 
 	++typecount[type];
 	// emplace
-	instances.insert(make_pair(reference, type));
+	index[id] = instances.insert(make_pair(reference, type)).first;
 
 	cs.EndSession();
 
@@ -546,6 +542,7 @@ void GameFactory::DestroyAllInstances()
 	}
 
 	instances.clear();
+	index.clear();
 	typecount.clear();
 	delrefs.clear();
 
@@ -581,11 +578,12 @@ NetworkID GameFactory::DestroyInstance(FactoryObject<T>& reference)
 
 	cs.StartSession();
 
-	ReferenceList::iterator it = GetShared(_reference);
+	ReferenceList::iterator it = GetShared(id);
 
 	--typecount[it->second];
 	_reference->Finalize();
 	instances.erase(it);
+	index.erase(id);
 	delrefs.emplace(id);
 
 	cs.EndSession();

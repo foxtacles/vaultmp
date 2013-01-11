@@ -45,6 +45,7 @@ const unsigned char ALL_CONTAINERS      = (ID_CONTAINER | ID_ACTOR | ID_PLAYER);
 const unsigned char ALL_ACTORS          = (ID_ACTOR | ID_PLAYER);
 
 typedef std::map<std::shared_ptr<Reference>, unsigned char> ReferenceList;
+typedef std::unordered_map<RakNet::NetworkID, ReferenceList::iterator> ReferenceIndex;
 typedef std::unordered_map<unsigned char, unsigned int> ReferenceCount;
 typedef std::unordered_set<RakNet::NetworkID> ReferenceDeleted;
 
@@ -65,6 +66,7 @@ class GameFactory
 
 		static CriticalSection cs;
 		static ReferenceList instances;
+		static ReferenceIndex index;
 		static ReferenceCount typecount;
 		static ReferenceDeleted delrefs;
 		static unsigned char game;
@@ -80,7 +82,7 @@ class GameFactory
 		static Database<DB::Item> dbItems;
 #endif
 
-		static inline ReferenceList::iterator GetShared(const Reference* reference) { return find_if(instances.begin(), instances.end(), [=](const ReferenceList::value_type& _reference) { return _reference.first.get() == reference; }); }
+		static inline ReferenceList::iterator GetShared(const RakNet::NetworkID& id) { return index.count(id) ? index[id] : instances.end(); }
 
 	public:
 		static void Initialize(unsigned char game);
