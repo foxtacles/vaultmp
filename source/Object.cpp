@@ -28,8 +28,9 @@ Object::Object(const pDefault* packet) : Reference(0x00000000, 0x00000000)
 	double X, Y, Z, aX, aY, aZ;
 	unsigned int cell;
 	bool enabled;
+	unsigned int lock;
 
-	PacketFactory::Access<pTypes::ID_OBJECT_NEW>(packet, id, refID, baseID, changed, name, X, Y, Z, aX, aY, aZ, cell, enabled);
+	PacketFactory::Access<pTypes::ID_OBJECT_NEW>(packet, id, refID, baseID, changed, name, X, Y, Z, aX, aY, aZ, cell, enabled, lock);
 
 	GameFactory::SetChangeFlag(changed);
 
@@ -45,6 +46,7 @@ Object::Object(const pDefault* packet) : Reference(0x00000000, 0x00000000)
 	this->SetAngle(Axis_Z, aZ);
 	this->SetNetworkCell(cell);
 	this->SetEnabled(enabled);
+	this->SetLockLevel(lock);
 }
 
 Object::Object(pPacket&& packet) : Object(packet.get())
@@ -68,6 +70,8 @@ void Object::initialize()
 		object_Network_Pos.insert(make_pair(_data, Value<double>()));
 		object_Angle.insert(make_pair(_data, Value<double>()));
 	}
+
+	this->SetLockLevel(UINT_MAX);
 }
 
 inline
@@ -110,11 +114,6 @@ double Object::GetAngle(unsigned char axis) const
 	return object_Angle.at(axis).get();
 }
 
-bool Object::GetEnabled() const
-{
-	return state_Enabled.get();
-}
-
 unsigned int Object::GetGameCell() const
 {
 	return cell_Game.get();
@@ -123,6 +122,16 @@ unsigned int Object::GetGameCell() const
 unsigned int Object::GetNetworkCell() const
 {
 	return cell_Network.get();
+}
+
+bool Object::GetEnabled() const
+{
+	return state_Enabled.get();
+}
+
+unsigned int Object::GetLockLevel() const
+{
+	return state_Lock.get();
 }
 
 Lockable* Object::SetName(const string& name)
@@ -154,11 +163,6 @@ Lockable* Object::SetAngle(unsigned char axis, double angle)
 	return SetObjectValue(this->object_Angle.at(axis), angle);
 }
 
-Lockable* Object::SetEnabled(bool state)
-{
-	return SetObjectValue(this->state_Enabled, state);
-}
-
 Lockable* Object::SetGameCell(unsigned int cell)
 {
 	if (!cell)
@@ -173,6 +177,16 @@ Lockable* Object::SetNetworkCell(unsigned int cell)
 		return nullptr;
 
 	return SetObjectValue(this->cell_Network, cell);
+}
+
+Lockable* Object::SetEnabled(bool state)
+{
+	return SetObjectValue(this->state_Enabled, state);
+}
+
+Lockable* Object::SetLockLevel(unsigned int lock)
+{
+	return SetObjectValue(this->state_Lock, lock);
 }
 
 VaultVector Object::vvec() const
@@ -208,7 +222,7 @@ pPacket Object::toPacket() const
 {
 	pPacket packet = PacketFactory::Create<pTypes::ID_OBJECT_NEW>(const_cast<Object*>(this)->GetNetworkID(), this->GetReference(), this->GetBase(), this->GetChanged(),
 		this->GetName(), this->GetNetworkPos(Values::Axis_X), this->GetNetworkPos(Values::Axis_Y), this->GetNetworkPos(Values::Axis_Z),
-		this->GetAngle(Values::Axis_X), this->GetAngle(Values::Axis_Y), this->GetAngle(Values::Axis_Z), this->GetNetworkCell(), this->GetEnabled());
+		this->GetAngle(Values::Axis_X), this->GetAngle(Values::Axis_Y), this->GetAngle(Values::Axis_Z), this->GetNetworkCell(), this->GetEnabled(), this->GetLockLevel());
 
 	return packet;
 }

@@ -174,6 +174,10 @@ class Game
 		 */
 		static void MoveTo(const FactoryObject<Object>& reference, const FactoryObject<Object>& object, bool cell = false, unsigned int key = 0);
 		/**
+		 * \brief Sets the lock level of an Object
+		 */
+		static void SetLock(const FactoryObject<Object>& reference, unsigned int key = 0);
+		/**
 		 * \brief Sets an actor value of an Actor
 		 */
 		static void SetActorValue(const FactoryObject<Actor>& reference, bool base, unsigned char index, unsigned int key = 0);

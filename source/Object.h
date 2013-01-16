@@ -43,6 +43,7 @@ class Object : public Reference
 		Value<unsigned int> cell_Game;
 		Value<unsigned int> cell_Network;
 		Value<bool> state_Enabled;
+		Value<unsigned int> state_Lock;
 
 		static bool IsValidCoordinate(double C);
 		static bool IsValidAngle(unsigned char axis, double A);
@@ -84,10 +85,6 @@ class Object : public Reference
 		 */
 		double GetAngle(unsigned char axis) const;
 		/**
-		 * \brief Retrieves the Object's enabled state
-		 */
-		bool GetEnabled() const;
-		/**
 		 * \brief Retrieves the Object's game cell
 		 *
 		 * This is the actual cell the object has in the game
@@ -99,6 +96,14 @@ class Object : public Reference
 		 * This is the "real" cell which the object should be in
 		 */
 		unsigned int GetNetworkCell() const;
+		/**
+		 * \brief Retrieves the Object's enabled state
+		 */
+		bool GetEnabled() const;
+		/**
+		 * \brief Retrieves the Object's lock level (UINT_MAX = not locked)
+		 */
+		unsigned int GetLockLevel() const;
 
 		/**
 		 * \brief Sets the Object's name
@@ -117,10 +122,6 @@ class Object : public Reference
 		 */
 		Lockable* SetAngle(unsigned char axis, double angle);
 		/**
-		 * \brief Sets the Object's enabled state
-		 */
-		Lockable* SetEnabled(bool state);
-		/**
 		 * \brief Sets the Object's game cell
 		 */
 		Lockable* SetGameCell(unsigned int cell);
@@ -128,6 +129,14 @@ class Object : public Reference
 		 * \brief Sets the Object's network cell
 		 */
 		Lockable* SetNetworkCell(unsigned int cell);
+		/**
+		 * \brief Sets the Object's enabled state
+		 */
+		Lockable* SetEnabled(bool state);
+		/**
+		 * \brief Sets the Object's lock level
+		 */
+		Lockable* SetLockLevel(unsigned int lock);
 
 		/**
 		 * \brief Returns a vector representation of the game coordinates

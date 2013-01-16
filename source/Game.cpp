@@ -212,6 +212,12 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func_SetINISetting:
 				break;
 
+			case Func_Lock:
+				break;
+
+			case Func_Unlock:
+				break;
+
 			case Func_Chat:
 			{
 				if (!result)
@@ -1024,6 +1030,20 @@ void Game::MoveTo(const FactoryObject<Object>& reference, const FactoryObject<Ob
 	}
 
 	Interface::ExecuteCommand("MoveTo", move(param_MoveTo), key);
+
+	Interface::EndDynamic();
+}
+
+void Game::SetLock(const FactoryObject<Object>& reference, unsigned int key)
+{
+	Interface::StartDynamic();
+
+	unsigned int lock = reference->GetLockLevel();
+
+	if (lock != UINT_MAX)
+		Interface::ExecuteCommand("Lock", {reference->GetReferenceParam(), RawParameter(lock)}, key);
+	else
+		Interface::ExecuteCommand("Unlock", {reference->GetReferenceParam()}, key);
 
 	Interface::EndDynamic();
 }

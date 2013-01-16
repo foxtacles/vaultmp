@@ -85,6 +85,7 @@ static const unsigned FalloutNVpatch_matchRace_NOP1 = 0x005DA85D;
 static const unsigned FalloutNVpatch_matchRace_NOP2 = 0x005DA8A8;
 static const unsigned FalloutNVpatch_matchRace_patch = 0x005DA8C4;
 static const unsigned FalloutNVpatch_matchRace_param = 0x0118D5C8;
+static const unsigned FalloutNVpatch_Lock = 0x005CC08B;
 static unsigned FalloutNVpatch_playIdle_fix_ret = 0x005CB4F6;
 static unsigned FalloutNVpatch_AVFix_src = 0x004AEC57;
 static unsigned FalloutNVpatch_AVFix_dest = (unsigned)& AVFix_FNV;
@@ -110,6 +111,7 @@ static const unsigned Fallout3patch_matchRace_NOP1 = 0x0052F4DD;
 static const unsigned Fallout3patch_matchRace_NOP2 = 0x0052F50F;
 static const unsigned Fallout3patch_matchRace_patch = 0x0052F513;
 static const unsigned Fallout3patch_matchRace_param = 0x00F51ADC;
+static const unsigned Fallout3patch_Lock = 0x00527F33;
 static unsigned Fallout3patch_AVFix_src = 0x00473D35;
 static unsigned Fallout3patch_AVFix_dest = (unsigned)& AVFix_F3;
 static unsigned Fallout3patch_AVFix_ret = 0x00473D3B;
@@ -1001,6 +1003,7 @@ void PatchGame(HINSTANCE& silverlock)
 			SafeWrite8(Fallout3patch_delegatorCall_src + 5, 0x59);   // POP ECX
 			SafeWrite8(Fallout3patch_PlayGroup, 0xEB);   // JMP SHORT
 			SafeWrite16(Fallout3patch_playIdle_fix_src + 5, 0x9090); // NOP NOP
+			SafeWrite16(Fallout3patch_Lock, 0x9090); // NOP NOP
 
 			unsigned char NOP[] = {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
 			SafeWriteBuf(Fallout3patch_matchRace_NOP1, NOP, sizeof(NOP));
@@ -1032,6 +1035,7 @@ void PatchGame(HINSTANCE& silverlock)
 
 			unsigned char NOP[] = {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
 			SafeWriteBuf(FalloutNVpatch_playIdle_call_src + 5, NOP, 5); // 5x NOP
+			SafeWrite16(FalloutNVpatch_Lock, 0x9090); // NOP NOP
 
 			SafeWriteBuf(FalloutNVpatch_matchRace_NOP1, NOP, sizeof(NOP));
 			SafeWriteBuf(FalloutNVpatch_matchRace_NOP2, NOP, 11);
