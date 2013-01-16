@@ -270,6 +270,16 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
+				case pTypes::ID_UPDATE_LOCK:
+				{
+					NetworkID id;
+					unsigned int lock;
+					PacketFactory::Access<pTypes::ID_UPDATE_LOCK>(packet, id, lock);
+					auto reference = GameFactory::GetObject(id);
+					Game::net_SetLock(reference.get(), lock);
+					break;
+				}
+
 				case pTypes::ID_UPDATE_COUNT:
 				{
 					NetworkID id;

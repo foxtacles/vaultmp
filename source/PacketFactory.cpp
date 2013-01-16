@@ -84,6 +84,10 @@ pPacket PacketFactory::Init(const unsigned char* stream, unsigned int len)
 			packet = new pObjectCell(stream, len);
 			break;
 
+		case pTypes::ID_UPDATE_LOCK:
+			packet = new pObjectLock(stream, len);
+			break;
+
 		case pTypes::ID_UPDATE_COUNT:
 			packet = new pItemCount(stream, len);
 			break;

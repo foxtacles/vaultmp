@@ -312,6 +312,10 @@ class Game
 		 */
 		static void net_SetCell(const FactoryObject<Object>& reference, const FactoryObject<Player>& player, unsigned int cell);
 		/**
+		 * \brief Network function to handle Object lock level
+		 */
+		static void net_SetLock(const FactoryObject<Object>& reference, unsigned int lock);
+		/**
 		 * \brief Network function to handle Item count
 		 */
 		static void net_SetItemCount(const FactoryObject<Item>& reference, unsigned int count);

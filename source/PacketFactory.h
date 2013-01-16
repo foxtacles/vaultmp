@@ -45,6 +45,7 @@ enum class pTypes : unsigned char
 	ID_UPDATE_POS,
 	ID_UPDATE_ANGLE,
 	ID_UPDATE_CELL,
+	ID_UPDATE_LOCK,
 	ID_UPDATE_COUNT,
 	ID_UPDATE_CONDITION,
 	ID_UPDATE_CONTAINER,
@@ -907,6 +908,27 @@ class pObjectCell : public pObjectDefault
 		}
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_CELL> { typedef pObjectCell type; };
+
+class pObjectLock : public pObjectDefault
+{
+		friend class PacketFactory;
+
+	private:
+		pObjectLock(RakNet::NetworkID id, unsigned int lock) : pObjectDefault(pTypes::ID_UPDATE_LOCK, id)
+		{
+			construct(lock);
+		}
+		pObjectLock(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		{
+
+		}
+
+		void access(RakNet::NetworkID& id, unsigned int& lock) const
+		{
+			deconstruct(id, lock);
+		}
+};
+template<> struct pTypesMap<pTypes::ID_UPDATE_LOCK> { typedef pObjectLock type; };
 
 class pItemCount : public pObjectDefault
 {

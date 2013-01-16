@@ -761,6 +761,9 @@ void Game::NewObject(FactoryObject<Object>& reference)
 	SetName(reference);
 	SetAngle(reference);
 
+	if (reference->GetLockLevel() != UINT_MAX)
+		SetLock(reference);
+
 	// experimental
 	if (refID != PLAYER_REFERENCE)
 	{
@@ -1559,6 +1562,12 @@ void Game::net_SetCell(const FactoryObject<Object>& reference, const FactoryObje
 		(*cellRefs)[cell][reference.GetType()].insert(reference->GetReference());
 		cellRefs.EndSession();
 	}
+}
+
+void Game::net_SetLock(const FactoryObject<Object>& reference, unsigned int lock)
+{
+	if (reference->SetLockLevel(lock))
+		SetLock(reference);
 }
 
 void Game::net_SetItemCount(const FactoryObject<Item>& reference, unsigned int count)
