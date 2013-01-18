@@ -13,6 +13,7 @@ Guarded<Game::CellRefs> Game::cellRefs;
 Game::BaseRaces Game::baseRaces;
 Game::Globals Game::globals;
 Game::Weather Game::weather;
+unsigned int Game::playerBase;
 
 function<void()> Game::spawnFunc;
 
@@ -216,6 +217,9 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 
 			case Func_Unlock:
+				break;
+
+			case Func_SetOwnership:
 				break;
 
 			case Func_Chat:
@@ -764,6 +768,9 @@ void Game::NewObject(FactoryObject<Object>& reference)
 	if (reference->GetLockLevel() != UINT_MAX)
 		SetLock(reference);
 
+	if (reference->GetOwner())
+		SetOwner(reference);
+
 	// experimental
 	if (refID != PLAYER_REFERENCE)
 	{
@@ -1047,6 +1054,20 @@ void Game::SetLock(const FactoryObject<Object>& reference, unsigned int key)
 		Interface::ExecuteCommand("Lock", {reference->GetReferenceParam(), RawParameter(lock)}, key);
 	else
 		Interface::ExecuteCommand("Unlock", {reference->GetReferenceParam()}, key);
+
+	Interface::EndDynamic();
+}
+
+void Game::SetOwner(const FactoryObject<Object>& reference, unsigned int key)
+{
+	Interface::StartDynamic();
+
+	unsigned int owner = reference->GetOwner();
+
+	if (owner == playerBase)
+		owner = PLAYER_BASE;
+
+	Interface::ExecuteCommand("SetOwnership", {reference->GetReferenceParam(), RawParameter(owner)}, key);
 
 	Interface::EndDynamic();
 }
@@ -1570,6 +1591,12 @@ void Game::net_SetLock(const FactoryObject<Object>& reference, unsigned int lock
 		SetLock(reference);
 }
 
+void Game::net_SetOwner(const FactoryObject<Object>& reference, unsigned int owner)
+{
+	if (reference->SetOwner(owner))
+		SetOwner(reference);
+}
+
 void Game::net_SetItemCount(const FactoryObject<Item>& reference, unsigned int count)
 {
 	if (reference->GetItemContainer())
@@ -1860,6 +1887,11 @@ void Game::net_SetWeather(unsigned int weather)
 	Game::weather = weather;
 
 	SetWeather(weather);
+}
+
+void Game::net_SetBase(unsigned int base)
+{
+	Game::playerBase = base;
 }
 
 void Game::GetPos(const FactoryObject<Object>& reference, unsigned char axis, double value)

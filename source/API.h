@@ -243,6 +243,7 @@ namespace Values
 		Func_ForceWeather				= 0x112D,
 		Func_Lock						= 0x1072,
 		Func_Unlock						= 0x1073,
+		Func_SetOwnership				= 0x1117,
 
 		Func_GetActorState              = 0x0001 | VAULTFUNCTION,
 		Func_Chat						= 0x0002 | VAULTFUNCTION,
@@ -550,6 +551,7 @@ class API
 	public:
 		typedef std::tuple<unsigned int, std::vector<double>, double, bool> CommandResult;
 		typedef std::vector<std::unique_ptr<unsigned char[]>> CommandParsed;
+
 	private:
 		typedef std::deque<std::tuple<unsigned int, std::vector<double>, unsigned int>> CommandQueue;
 		typedef std::unordered_map<std::string, std::pair<std::string, unsigned short>> FunctionMap;

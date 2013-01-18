@@ -72,6 +72,7 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"GetAngle", PAWN::vaultmp_GetAngle},
 	{"GetCell", PAWN::vaultmp_GetCell},
 	{"GetLock", PAWN::vaultmp_GetLock},
+	{"GetOwner", PAWN::vaultmp_GetOwner},
 	{"IsNearPoint", PAWN::vaultmp_IsNearPoint},
 	{"GetItemContainer", PAWN::vaultmp_GetItemContainer},
 	{"GetItemCount", PAWN::vaultmp_GetItemCount},
@@ -99,6 +100,7 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"SetAngle", PAWN::vaultmp_SetAngle},
 	{"SetCell", PAWN::vaultmp_SetCell},
 	{"SetLock", PAWN::vaultmp_SetLock},
+	{"SetOwner", PAWN::vaultmp_SetOwner},
 	{"CreateItem", PAWN::vaultmp_CreateItem},
 	{"SetItemCount", PAWN::vaultmp_SetItemCount},
 	{"SetItemCondition", PAWN::vaultmp_SetItemCondition},
@@ -722,6 +724,11 @@ cell PAWN::vaultmp_GetLock(AMX*, const cell* params)
 	return Script::GetLock(params[1]);
 }
 
+cell PAWN::vaultmp_GetOwner(AMX*, const cell* params)
+{
+	return Script::GetOwner(params[1]);
+}
+
 cell PAWN::vaultmp_IsNearPoint(AMX*, const cell* params)
 {
 	return Script::IsNearPoint(params[1], amx_ctof(params[2]), amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
@@ -853,6 +860,11 @@ cell PAWN::vaultmp_SetCell(AMX*, const cell* params)
 cell PAWN::vaultmp_SetLock(AMX*, const cell* params)
 {
 	return Script::SetLock(params[1], params[2]);
+}
+
+cell PAWN::vaultmp_SetOwner(AMX*, const cell* params)
+{
+	return Script::SetOwner(params[1], params[2]);
 }
 
 cell PAWN::vaultmp_CreateItem(AMX*, const cell* params)

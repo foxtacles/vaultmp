@@ -110,6 +110,10 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 			return (!(data.GetBase() & 0xFF000000) && !data.IsEssential() && !DB::Race::Lookup(data.GetRace())->IsChild());
 		})->GetBase();
 
+	response.emplace_back(Network::CreateResponse(
+		PacketFactory::Create<pTypes::ID_GAME_BASE>(result),
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+
 	const DB::NPC* npc = *DB::NPC::Lookup(result);
 
 	player->SetReference(0x00000000);

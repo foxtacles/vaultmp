@@ -47,6 +47,7 @@ class Game
 		static BaseRaces baseRaces;
 		static Globals globals;
 		static Weather weather;
+		static unsigned int playerBase;
 		static std::function<void()> spawnFunc;
 
 	public:
@@ -177,6 +178,10 @@ class Game
 		 * \brief Sets the lock level of an Object
 		 */
 		static void SetLock(const FactoryObject<Object>& reference, unsigned int key = 0);
+		/**
+		 * \brief Sets the owner of an Object
+		 */
+		static void SetOwner(const FactoryObject<Object>& reference, unsigned int key = 0);
 		/**
 		 * \brief Sets an actor value of an Actor
 		 */
@@ -316,6 +321,10 @@ class Game
 		 */
 		static void net_SetLock(const FactoryObject<Object>& reference, unsigned int lock);
 		/**
+		 * \brief Network function to handle Object owner
+		 */
+		static void net_SetOwner(const FactoryObject<Object>& reference, unsigned int owner);
+		/**
 		 * \brief Network function to handle Item count
 		 */
 		static void net_SetItemCount(const FactoryObject<Item>& reference, unsigned int count);
@@ -371,6 +380,10 @@ class Game
 		 * \brief Network function to handle weather update
 		 */
 		static void net_SetWeather(unsigned int weather);
+		/**
+		 * \brief Network function to handle player base
+		 */
+		static void net_SetBase(unsigned int base);
 
 		/**
 		 * Interface result functions

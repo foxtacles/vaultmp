@@ -534,6 +534,7 @@ void API::Initialize(unsigned char game)
 	DefineFunction("UIMessage", "s", Func_UIMessage, FALLOUT_GAMES);
 	DefineFunction("Lock", "rII", Func_Lock, FALLOUT_GAMES);
 	DefineFunction("Unlock", "r", Func_Unlock, FALLOUT_GAMES);
+	DefineFunction("SetOwnership", "rF", Func_SetOwnership, FALLOUT_GAMES);
 	DefineFunction("CenterOnCell", "$s", Func_CenterOnCell, FALLOUT_GAMES);
 	DefineFunction("CenterOnExterior", "$ii", Func_CenterOnExterior, FALLOUT_GAMES);
 	DefineFunction("SetINISetting", "$ss", Func_SetINISetting, FALLOUT_GAMES);
@@ -713,6 +714,10 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 				typecode = 0x00000021;
 				break;
 
+			case 'f': // Owner
+				typecode = 0x00000023;
+				break;
+
 			case 'k': // Object ID base item
 				typecode = 0x00000032;
 				break;
@@ -755,6 +760,7 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 			n (Weather, 2 byte, 0x72, stream) - 0x00000021
 			s (String, 2 byte, length, followed by chars) - 0x00000000
 			x (Control code, 4 byte, 0x6E) - 0x00000001
+			f (Owner, 2 byte, 0x72, stream) - 0x00000023
 			r (Reference)
 
 			upper case means optional
@@ -796,6 +802,7 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 			case 'w': // World space
 			case 'y': // Race
 			case 'n': // Weather
+			case 'f': // Owner
 			{
 				if (refparam != 0x00)   // We don't support more than one refparam yet
 					throw VaultException("API::ParseCommand does only support one reference argument up until now");

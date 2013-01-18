@@ -48,6 +48,10 @@ pPacket PacketFactory::Init(const unsigned char* stream, unsigned int len)
 			packet = new pGameWeather(stream, len);
 			break;
 
+		case pTypes::ID_GAME_BASE:
+			packet = new pGameBase(stream, len);
+			break;
+
 		case pTypes::ID_OBJECT_NEW:
 			packet = new pObjectNew(stream, len);
 			break;
@@ -86,6 +90,10 @@ pPacket PacketFactory::Init(const unsigned char* stream, unsigned int len)
 
 		case pTypes::ID_UPDATE_LOCK:
 			packet = new pObjectLock(stream, len);
+			break;
+
+		case pTypes::ID_UPDATE_OWNER:
+			packet = new pObjectOwner(stream, len);
 			break;
 
 		case pTypes::ID_UPDATE_COUNT:

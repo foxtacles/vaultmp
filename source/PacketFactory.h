@@ -34,6 +34,7 @@ enum class pTypes : unsigned char
 	ID_GAME_CHAT,
 	ID_GAME_GLOBAL,
 	ID_GAME_WEATHER,
+	ID_GAME_BASE,
 
 	ID_OBJECT_NEW,
 	ID_ITEM_NEW,
@@ -46,6 +47,7 @@ enum class pTypes : unsigned char
 	ID_UPDATE_ANGLE,
 	ID_UPDATE_CELL,
 	ID_UPDATE_LOCK,
+	ID_UPDATE_OWNER,
 	ID_UPDATE_COUNT,
 	ID_UPDATE_CONDITION,
 	ID_UPDATE_CONTAINER,
@@ -689,23 +691,44 @@ class pGameWeather : public pDefault
 };
 template<> struct pTypesMap<pTypes::ID_GAME_WEATHER> { typedef pGameWeather type; };
 
+class pGameBase : public pDefault
+{
+		friend class PacketFactory;
+
+	private:
+		pGameBase(unsigned int base) : pDefault(pTypes::ID_GAME_BASE)
+		{
+			construct(base);
+		}
+		pGameBase(const unsigned char* stream, unsigned int len) : pDefault(stream, len)
+		{
+
+		}
+
+		void access(unsigned int& base) const
+		{
+			deconstruct(base);
+		}
+};
+template<> struct pTypesMap<pTypes::ID_GAME_BASE> { typedef pGameBase type; };
+
 class pObjectNew : public pObjectNewDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pObjectNew(RakNet::NetworkID id, unsigned int refID, unsigned int baseID, bool changed, const std::string& name, double X, double Y, double Z, double aX, double aY, double aZ, unsigned int cell, bool enabled, unsigned int lock) : pObjectNewDefault(pTypes::ID_OBJECT_NEW, id, refID, baseID)
+		pObjectNew(RakNet::NetworkID id, unsigned int refID, unsigned int baseID, bool changed, const std::string& name, double X, double Y, double Z, double aX, double aY, double aZ, unsigned int cell, bool enabled, unsigned int lock, unsigned int owner) : pObjectNewDefault(pTypes::ID_OBJECT_NEW, id, refID, baseID)
 		{
-			construct(changed, name, X, Y, Z, aX, aY, aZ, cell, enabled, lock);
+			construct(changed, name, X, Y, Z, aX, aY, aZ, cell, enabled, lock, owner);
 		}
 		pObjectNew(const unsigned char* stream, unsigned int len) : pObjectNewDefault(stream, len)
 		{
 
 		}
 
-		void access(RakNet::NetworkID& id, unsigned int& refID, unsigned int& baseID, bool& changed, std::string& name, double& X, double& Y, double& Z, double& aX, double& aY, double& aZ, unsigned int& cell, bool& enabled, unsigned int& lock) const
+		void access(RakNet::NetworkID& id, unsigned int& refID, unsigned int& baseID, bool& changed, std::string& name, double& X, double& Y, double& Z, double& aX, double& aY, double& aZ, unsigned int& cell, bool& enabled, unsigned int& lock, unsigned int& owner) const
 		{
-			deconstruct(id, refID, baseID, changed, name, X, Y, Z, aX, aY, aZ, cell, enabled, lock);
+			deconstruct(id, refID, baseID, changed, name, X, Y, Z, aX, aY, aZ, cell, enabled, lock, owner);
 		}
 };
 template<> struct pTypesMap<pTypes::ID_OBJECT_NEW> { typedef pObjectNew type; };
@@ -929,6 +952,27 @@ class pObjectLock : public pObjectDefault
 		}
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_LOCK> { typedef pObjectLock type; };
+
+class pObjectOwner : public pObjectDefault
+{
+		friend class PacketFactory;
+
+	private:
+		pObjectOwner(RakNet::NetworkID id, unsigned int owner) : pObjectDefault(pTypes::ID_UPDATE_OWNER, id)
+		{
+			construct(owner);
+		}
+		pObjectOwner(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		{
+
+		}
+
+		void access(RakNet::NetworkID& id, unsigned int& owner) const
+		{
+			deconstruct(id, owner);
+		}
+};
+template<> struct pTypesMap<pTypes::ID_UPDATE_OWNER> { typedef pObjectOwner type; };
 
 class pItemCount : public pObjectDefault
 {

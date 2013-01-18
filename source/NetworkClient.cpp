@@ -190,6 +190,14 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
+				case pTypes::ID_GAME_BASE:
+				{
+					unsigned int base;
+					PacketFactory::Access<pTypes::ID_GAME_BASE>(packet, base);
+					Game::net_SetBase(base);
+					break;
+				}
+
 				case pTypes::ID_OBJECT_NEW:
 				{
 					NetworkID id = GameFactory::CreateKnownInstance(ID_OBJECT, packet);
@@ -277,6 +285,16 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					PacketFactory::Access<pTypes::ID_UPDATE_LOCK>(packet, id, lock);
 					auto reference = GameFactory::GetObject(id);
 					Game::net_SetLock(reference.get(), lock);
+					break;
+				}
+
+				case pTypes::ID_UPDATE_OWNER:
+				{
+					NetworkID id;
+					unsigned int owner;
+					PacketFactory::Access<pTypes::ID_UPDATE_OWNER>(packet, id, owner);
+					auto reference = GameFactory::GetObject(id);
+					Game::net_SetOwner(reference.get(), owner);
 					break;
 				}
 

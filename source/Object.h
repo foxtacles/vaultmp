@@ -44,6 +44,7 @@ class Object : public Reference
 		Value<unsigned int> cell_Network;
 		Value<bool> state_Enabled;
 		Value<unsigned int> state_Lock;
+		Value<unsigned int> state_Owner;
 
 		static bool IsValidCoordinate(double C);
 		static bool IsValidAngle(unsigned char axis, double A);
@@ -104,6 +105,10 @@ class Object : public Reference
 		 * \brief Retrieves the Object's lock level (UINT_MAX = not locked)
 		 */
 		unsigned int GetLockLevel() const;
+		/**
+		 * \brief Retrieves the Object's owner
+		 */
+		unsigned int GetOwner() const;
 
 		/**
 		 * \brief Sets the Object's name
@@ -137,6 +142,10 @@ class Object : public Reference
 		 * \brief Sets the Object's lock level
 		 */
 		Lockable* SetLockLevel(unsigned int lock);
+		/**
+		 * \brief Sets the Object's owner
+		 */
+		Lockable* SetOwner(unsigned int owner);
 
 		/**
 		 * \brief Returns a vector representation of the game coordinates

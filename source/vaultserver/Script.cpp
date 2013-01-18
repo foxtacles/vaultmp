@@ -127,6 +127,7 @@ Script::Script(char* path)
 			SetScript(string(vpf + "GetAngle").c_str(), &Script::GetAngle);
 			SetScript(string(vpf + "GetCell").c_str(), &Script::GetCell);
 			SetScript(string(vpf + "GetLock").c_str(), &Script::GetLock);
+			SetScript(string(vpf + "GetOwner").c_str(), &Script::GetOwner);
 			SetScript(string(vpf + "IsNearPoint").c_str(), &Script::IsNearPoint);
 			SetScript(string(vpf + "GetItemContainer").c_str(), &Script::GetItemContainer);
 			SetScript(string(vpf + "GetItemCount").c_str(), &Script::GetItemCount);
@@ -154,6 +155,7 @@ Script::Script(char* path)
 			SetScript(string(vpf + "SetAngle").c_str(), &Script::SetAngle);
 			SetScript(string(vpf + "SetCell").c_str(), &Script::SetCell);
 			SetScript(string(vpf + "SetLock").c_str(), &Script::SetLock);
+			SetScript(string(vpf + "SetOwner").c_str(), &Script::SetOwner);
 			SetScript(string(vpf + "CreateItem").c_str(), &Script::CreateItem);
 			SetScript(string(vpf + "SetItemCount").c_str(), &Script::SetItemCount);
 			SetScript(string(vpf + "SetItemCondition").c_str(), &Script::SetItemCondition);
@@ -1500,6 +1502,16 @@ unsigned int Script::GetLock(NetworkID id)
 	return 0;
 }
 
+unsigned int Script::GetOwner(NetworkID id)
+{
+	auto object = GameFactory::GetObject(id);
+
+	if (object)
+		return object->GetOwner();
+
+	return 0;
+}
+
 bool Script::IsNearPoint(NetworkID id, double X, double Y, double Z, double R)
 {
 	auto object = GameFactory::GetObject(id);
@@ -1876,6 +1888,31 @@ bool Script::SetLock(NetworkID id, unsigned int lock)
 	{
 		Network::Queue(NetworkResponse{Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_LOCK>(id, lock),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+		});
+
+		state = true;
+	}
+
+	return state;
+}
+
+bool Script::SetOwner(NetworkID id, unsigned int owner)
+{
+	bool state = false;
+
+	auto reference = GameFactory::GetObject(id);
+
+	if (!reference || owner == PLAYER_BASE)
+		return state;
+
+	auto& object = reference.get();
+	auto npc = DB::NPC::Lookup(owner);
+
+	if (npc && object->SetOwner(owner))
+	{
+		Network::Queue(NetworkResponse{Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_OWNER>(id, owner),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		});
 
