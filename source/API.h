@@ -23,13 +23,6 @@
 #include "Debug.h"
 #endif
 
-typedef std::vector<std::unique_ptr<unsigned char[]>> CommandParsed;
-typedef std::tuple<unsigned int, std::vector<double>, double, bool> CommandResult;
-typedef std::deque<std::tuple<unsigned int, std::vector<double>, unsigned int>> CommandQueue;
-typedef std::unordered_map<std::string, std::pair<std::string, unsigned short>> FunctionMap;
-typedef std::unordered_map<std::string, unsigned char> ValueMap;
-typedef std::set<unsigned char> ValueList;
-
 /*
  * \brief This namespace contains key data of the game
  */
@@ -554,7 +547,15 @@ namespace Values
 
 class API
 {
+	public:
+		typedef std::tuple<unsigned int, std::vector<double>, double, bool> CommandResult;
+		typedef std::vector<std::unique_ptr<unsigned char[]>> CommandParsed;
 	private:
+		typedef std::deque<std::tuple<unsigned int, std::vector<double>, unsigned int>> CommandQueue;
+		typedef std::unordered_map<std::string, std::pair<std::string, unsigned short>> FunctionMap;
+		typedef std::unordered_map<std::string, unsigned char> ValueMap;
+		typedef std::set<unsigned char> ValueList;
+
 #ifdef VAULTMP_DEBUG
 		static DebugInput<API> debug;
 #endif

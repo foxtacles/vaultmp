@@ -4,10 +4,10 @@ using namespace std;
 using namespace RakNet;
 
 CriticalSection GameFactory::cs;
-ReferenceList GameFactory::instances;
-ReferenceIndex GameFactory::index;
-ReferenceCount GameFactory::typecount;
-ReferenceDeleted GameFactory::delrefs;
+GameFactory::ReferenceList GameFactory::instances;
+GameFactory::ReferenceIndex GameFactory::index;
+GameFactory::ReferenceCount GameFactory::typecount;
+GameFactory::ReferenceDeleted GameFactory::delrefs;
 unsigned char GameFactory::game = 0x00;
 bool GameFactory::changed = false;
 
@@ -77,7 +77,7 @@ vector<FactoryObject<T>> GameFactory::GetObjectTypes(unsigned char type) noexcep
 			auto object = FactoryObject<T>(reference.first.get(), reference.second);
 
 			if (object)
-				result.emplace_back(std::move(object));
+				result.emplace_back(move(object));
 		}
 
 	return result;

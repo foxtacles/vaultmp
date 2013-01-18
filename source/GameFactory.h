@@ -44,11 +44,6 @@ const unsigned char ALL_OBJECTS         = (ID_OBJECT | ID_ITEM | ID_CONTAINER | 
 const unsigned char ALL_CONTAINERS      = (ID_CONTAINER | ID_ACTOR | ID_PLAYER);
 const unsigned char ALL_ACTORS          = (ID_ACTOR | ID_PLAYER);
 
-typedef std::map<std::shared_ptr<Reference>, unsigned char> ReferenceList;
-typedef std::unordered_map<RakNet::NetworkID, ReferenceList::iterator> ReferenceIndex;
-typedef std::unordered_map<unsigned char, unsigned int> ReferenceCount;
-typedef std::unordered_set<RakNet::NetworkID> ReferenceDeleted;
-
 template<typename T>
 class FactoryObject;
 
@@ -58,6 +53,11 @@ class FactoryObject;
 class GameFactory
 {
 	private:
+		typedef std::map<std::shared_ptr<Reference>, unsigned char> ReferenceList;
+		typedef std::unordered_map<RakNet::NetworkID, ReferenceList::iterator> ReferenceIndex;
+		typedef std::unordered_map<unsigned char, unsigned int> ReferenceCount;
+		typedef std::unordered_set<RakNet::NetworkID> ReferenceDeleted;
+
 		GameFactory() = delete;
 
 #ifdef VAULTMP_DEBUG

@@ -25,8 +25,6 @@
 #include "Debug.h"
 #endif
 
-typedef std::vector<std::pair<std::string, unsigned int>> ModList;
-
 /**
  * \brief Starting point to run a vaultmp game
  */
@@ -37,6 +35,9 @@ class Bethesda
 		friend class Game;
 
 	private:
+		typedef HINSTANCE(__stdcall* fLoadLibrary)(char*);
+		typedef std::vector<std::pair<std::string, unsigned int>> ModList;
+
 		static unsigned char game;
 		static std::string password;
 		static unsigned int inittime;

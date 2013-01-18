@@ -23,11 +23,11 @@
 #include "Debug.h"
 #endif
 
-const unsigned int FLAG_ALIVE           = FLAG_BASE << 1;
-const unsigned int FLAG_DEAD            = FLAG_ALIVE << 1;
-const unsigned int FLAG_SELFALERT       = FLAG_DEAD << 1;
-const unsigned int FLAG_ISALERT         = FLAG_SELFALERT << 1;
-const unsigned int FLAG_NOTALERT        = FLAG_ISALERT << 1;
+const unsigned int FLAG_ALIVE = FLAG_BASE << 1;
+const unsigned int FLAG_DEAD = FLAG_ALIVE << 1;
+const unsigned int FLAG_SELFALERT = FLAG_DEAD << 1;
+const unsigned int FLAG_ISALERT = FLAG_SELFALERT << 1;
+const unsigned int FLAG_NOTALERT = FLAG_ISALERT << 1;
 
 /**
  * \brief Derives from Container class and represents an actor in-game

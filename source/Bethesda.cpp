@@ -3,8 +3,6 @@
 using namespace std;
 using namespace RakNet;
 
-typedef HINSTANCE(__stdcall* fLoadLibrary)(char*);
-
 unsigned char Bethesda::game = 0x00;
 bool Bethesda::initialized = false;
 string Bethesda::password = "";
@@ -12,7 +10,7 @@ unsigned int Bethesda::inittime = 6000;
 bool Bethesda::multiinst = false;
 bool Bethesda::steam = false;
 DWORD Bethesda::process = 0;
-ModList Bethesda::modfiles;
+Bethesda::ModList Bethesda::modfiles;
 char Bethesda::module[32];
 
 #ifdef VAULTMP_DEBUG

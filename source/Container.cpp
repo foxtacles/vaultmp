@@ -134,7 +134,7 @@ void Container::AddItem(NetworkID id)
 	container.sort(Item_sort);
 }
 
-ContainerDiff Container::AddItem(unsigned int baseID, unsigned int count, double condition, bool silent) const
+Container::ContainerDiff Container::AddItem(unsigned int baseID, unsigned int count, double condition, bool silent) const
 {
 	ContainerDiff diff;
 
@@ -163,7 +163,7 @@ void Container::RemoveItem(NetworkID id)
 	container.erase(it);
 }
 
-ContainerDiff Container::RemoveItem(unsigned int baseID, unsigned int count, bool silent) const
+Container::ContainerDiff Container::RemoveItem(unsigned int baseID, unsigned int count, bool silent) const
 {
 	ContainerDiff diff;
 	list<NetworkID>::const_iterator it;
@@ -196,7 +196,7 @@ ContainerDiff Container::RemoveItem(unsigned int baseID, unsigned int count, boo
 	return diff;
 }
 
-ContainerDiff Container::RemoveAllItems() const
+Container::ContainerDiff Container::RemoveAllItems() const
 {
 	ContainerDiff diff;
 	diff.first = this->container;
@@ -212,7 +212,7 @@ ContainerDiff Container::RemoveAllItems() const
 	return diff;
 }
 
-ContainerDiff Container::EquipItem(unsigned int baseID, bool silent, bool stick) const
+Container::ContainerDiff Container::EquipItem(unsigned int baseID, bool silent, bool stick) const
 {
 	ContainerDiff diff;
 
@@ -243,7 +243,7 @@ ContainerDiff Container::EquipItem(unsigned int baseID, bool silent, bool stick)
 	return diff;
 }
 
-ContainerDiff Container::UnequipItem(unsigned int baseID, bool silent, bool stick) const
+Container::ContainerDiff Container::UnequipItem(unsigned int baseID, bool silent, bool stick) const
 {
 	ContainerDiff diff;
 
@@ -267,7 +267,7 @@ ContainerDiff Container::UnequipItem(unsigned int baseID, bool silent, bool stic
 	return diff;
 }
 
-ContainerDiff Container::Compare(NetworkID id) const
+Container::ContainerDiff Container::Compare(NetworkID id) const
 {
 	FactoryObject<Container> container = GameFactory::GetObject<Container>(id).get();
 	ContainerDiff diff;
@@ -346,7 +346,7 @@ NetworkID Container::IsEquipped(unsigned int baseID) const
 	return 0;
 }
 
-GameDiff Container::ApplyDiff(ContainerDiff& diff)
+Container::GameDiff Container::ApplyDiff(ContainerDiff& diff)
 {
 	GameDiff result;
 	unordered_map<unsigned int, Diff> assoc_delete;
@@ -437,7 +437,7 @@ GameDiff Container::ApplyDiff(ContainerDiff& diff)
 	return result;
 }
 
-ContainerDiff Container::ToContainerDiff(const ContainerDiffNet& diff)
+Container::ContainerDiff Container::ToContainerDiff(const NetDiff& diff)
 {
 	ContainerDiff _diff(make_pair(diff.first, list<NetworkID>()));
 
@@ -447,9 +447,9 @@ ContainerDiff Container::ToContainerDiff(const ContainerDiffNet& diff)
 	return _diff;
 }
 
-ContainerDiffNet Container::ToNetDiff(const ContainerDiff& diff)
+Container::NetDiff Container::ToNetDiff(const ContainerDiff& diff)
 {
-	ContainerDiffNet _diff(make_pair(diff.first, vector<pPacket>()));
+	NetDiff _diff(make_pair(diff.first, vector<pPacket>()));
 
 	for (const auto& id : diff.second)
 	{
@@ -460,7 +460,7 @@ ContainerDiffNet Container::ToNetDiff(const ContainerDiff& diff)
 	return _diff;
 }
 
-void FreeDiff(ContainerDiff& diff)
+void Container::FreeDiff(ContainerDiff& diff)
 {
 	for (NetworkID& id : diff.second)
 		GameFactory::DestroyInstance(id);

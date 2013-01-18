@@ -16,30 +16,28 @@
 #include "Debug.h"
 #endif
 
-struct Diff
-{
-	signed int count;
-	double condition;
-	signed int equipped;
-	bool silent;
-	bool stick;
-
-	Diff() : count(0), condition(0.00), equipped(0), silent(false), stick(false)
-	{
-
-	}
-};
-
-typedef std::pair<std::list<RakNet::NetworkID>, std::list<RakNet::NetworkID>> ContainerDiff;
-typedef std::pair<std::list<RakNet::NetworkID>, std::vector<pPacket>> ContainerDiffNet;
-typedef std::list<std::pair<unsigned int, Diff>> GameDiff;
-
 class Item;
 
 class Container : public Object
 {
 		friend class GameFactory;
 		friend class Item;
+
+	public:
+		struct Diff
+		{
+			signed int count;
+			double condition;
+			signed int equipped;
+			bool silent;
+			bool stick;
+
+			Diff() : count(0), condition(0.00), equipped(0), silent(false), stick(false) {}
+		};
+
+		typedef std::pair<std::list<RakNet::NetworkID>, std::list<RakNet::NetworkID>> ContainerDiff;
+		typedef std::pair<std::list<RakNet::NetworkID>, std::vector<pPacket>> NetDiff;
+		typedef std::list<std::pair<unsigned int, Diff>> GameDiff;
 
 	private:
 		typedef std::pair<RakNet::NetworkID, std::unordered_map<RakNet::NetworkID, std::list<RakNet::NetworkID>>> StripCopy;
@@ -81,8 +79,8 @@ class Container : public Object
 		RakNet::NetworkID IsEquipped(unsigned int baseID) const;
 		GameDiff ApplyDiff(ContainerDiff& diff);
 
-		static ContainerDiff ToContainerDiff(const ContainerDiffNet& diff);
-		static ContainerDiffNet ToNetDiff(const ContainerDiff& diff);
+		static ContainerDiff ToContainerDiff(const NetDiff& diff);
+		static NetDiff ToNetDiff(const ContainerDiff& diff);
 		static void FreeDiff(ContainerDiff& diff);
 
 		Lockable* getLock();

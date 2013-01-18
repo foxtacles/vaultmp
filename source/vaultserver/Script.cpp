@@ -511,7 +511,7 @@ void Script::SetupContainer(FactoryObject<Container>& container, FactoryObject<O
 		if (item->GetItem() & 0xFF000000)
 			continue;
 
-		ContainerDiff diff = container->AddItem(item->GetItem(), item->GetCount(), item->GetCondition(), true);
+		auto diff = container->AddItem(item->GetItem(), item->GetCount(), item->GetCondition(), true);
 		container->ApplyDiff(diff);
 	}
 }
@@ -2017,10 +2017,10 @@ bool Script::AddItem(NetworkID id, unsigned int baseID, unsigned int count, doub
 
 			auto& container = reference.get();
 
-			ContainerDiff diff = container->AddItem(baseID, count, condition, silent);
+			auto diff = container->AddItem(baseID, count, condition, silent);
 
 			Network::Queue(NetworkResponse{Network::CreateResponse(
-				PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff), ContainerDiffNet()),
+				PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff), Container::NetDiff()),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 			});
 
@@ -2047,16 +2047,16 @@ unsigned int Script::RemoveItem(NetworkID id, unsigned int baseID, unsigned int 
 
 		auto& container = reference.get();
 
-		ContainerDiff diff = container->RemoveItem(baseID, count, silent);
+		auto diff = container->RemoveItem(baseID, count, silent);
 
 		if (!diff.first.empty() || !diff.second.empty())
 		{
 			Network::Queue(NetworkResponse{Network::CreateResponse(
-				PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff), ContainerDiffNet()),
+				PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff), Container::NetDiff()),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 			});
 
-			GameDiff gamediff = container->ApplyDiff(diff);
+			auto gamediff = container->ApplyDiff(diff);
 
 			removed = abs(gamediff.front().second.count);
 		}
@@ -2074,12 +2074,12 @@ void Script::RemoveAllItems(NetworkID id)
 
 	auto& container = reference.get();
 
-	ContainerDiff diff = container->RemoveAllItems();
+	auto diff = container->RemoveAllItems();
 
 	if (!diff.first.empty() || !diff.second.empty())
 	{
 		Network::Queue(NetworkResponse{Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff), ContainerDiffNet()),
+			PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff), Container::NetDiff()),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		});
 
@@ -2178,12 +2178,12 @@ bool Script::EquipItem(NetworkID id, unsigned int baseID, bool silent, bool stic
 
 	auto& actor = reference.get();
 
-	ContainerDiff diff = actor->EquipItem(baseID, silent, stick);
+	auto diff = actor->EquipItem(baseID, silent, stick);
 
 	if (!diff.first.empty() || !diff.second.empty())
 	{
 		Network::Queue(NetworkResponse{Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff), ContainerDiffNet()),
+			PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff), Container::NetDiff()),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		});
 
@@ -2204,12 +2204,12 @@ bool Script::UnequipItem(NetworkID id, unsigned int baseID, bool silent, bool st
 
 	auto& actor = reference.get();
 
-	ContainerDiff diff = actor->UnequipItem(baseID, silent, stick);
+	auto diff = actor->UnequipItem(baseID, silent, stick);
 
 	if (!diff.first.empty() || !diff.second.empty())
 	{
 		Network::Queue(NetworkResponse{Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff), ContainerDiffNet()),
+			PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff), Container::NetDiff()),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		});
 

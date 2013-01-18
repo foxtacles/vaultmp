@@ -12,12 +12,12 @@
 #include "Debug.h"
 #endif
 
-const unsigned int FLAG_ENABLED         = 0x00000001;
-const unsigned int FLAG_DISABLED        = FLAG_ENABLED << 1;
-const unsigned int FLAG_NOTSELF         = FLAG_DISABLED << 1;
-const unsigned int FLAG_SELF            = FLAG_NOTSELF << 1;
-const unsigned int FLAG_REFERENCE		= FLAG_SELF << 1;
-const unsigned int FLAG_BASE			= FLAG_REFERENCE << 1;
+const unsigned int FLAG_ENABLED = 0x00000001;
+const unsigned int FLAG_DISABLED = FLAG_ENABLED << 1;
+const unsigned int FLAG_NOTSELF = FLAG_DISABLED << 1;
+const unsigned int FLAG_SELF = FLAG_NOTSELF << 1;
+const unsigned int FLAG_REFERENCE = FLAG_SELF << 1;
+const unsigned int FLAG_BASE = FLAG_REFERENCE << 1;
 
 /**
  * \brief Derives from Reference class and represents an object in-game

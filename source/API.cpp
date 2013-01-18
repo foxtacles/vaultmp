@@ -3,12 +3,12 @@
 using namespace std;
 using namespace Values;
 
-FunctionMap API::functions;
-ValueMap API::values;
-ValueMap API::axis;
-ValueMap API::anims;
-ValueList API::controls;
-CommandQueue API::queue;
+API::FunctionMap API::functions;
+API::ValueMap API::values;
+API::ValueMap API::axis;
+API::ValueMap API::anims;
+API::ValueList API::controls;
+API::CommandQueue API::queue;
 unsigned char API::game = 0x00;
 
 #ifdef VAULTMP_DEBUG
@@ -1129,7 +1129,7 @@ unsigned char* API::BuildCommandStream(vector<double>&& info, unsigned int key, 
 	return data;
 }
 
-CommandParsed API::Translate(const vector<string>& cmd, unsigned int key)
+API::CommandParsed API::Translate(const vector<string>& cmd, unsigned int key)
 {
 	CommandParsed stream;
 
@@ -1155,7 +1155,7 @@ CommandParsed API::Translate(const vector<string>& cmd, unsigned int key)
 	return stream;
 }
 
-vector<CommandResult> API::Translate(unsigned char* stream)
+vector<API::CommandResult> API::Translate(unsigned char* stream)
 {
 	if (stream[0] != PIPE_OP_RETURN && stream[0] != PIPE_OP_RETURN_BIG && stream[0] != PIPE_OP_RETURN_RAW)
 		throw VaultException("API could not recognize stream identifier %02X", stream[0]);

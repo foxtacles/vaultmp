@@ -123,10 +123,10 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 		if (item->GetItem() & 0xFF000000)
 			continue;
 
-		ContainerDiff diff = player->AddItem(item->GetItem(), item->GetCount(), item->GetCondition(), true);
+		auto diff = player->AddItem(item->GetItem(), item->GetCount(), item->GetCondition(), true);
 
 		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff), ContainerDiffNet()),
+			PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff), Container::NetDiff()),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 
 		player->ApplyDiff(diff);
@@ -241,15 +241,15 @@ NetworkResponse Server::GetCell(RakNetGUID guid, const FactoryObject<Object>& re
 	return response;
 }
 
-NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, const FactoryObject<Container>& reference, const ContainerDiffNet& ndiff, const ContainerDiffNet& gdiff)
+NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, const FactoryObject<Container>& reference, const Container::NetDiff& ndiff, const Container::NetDiff& gdiff)
 {
 	SingleResponse response[] = {Network::CreateResponse(
 		PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(reference->GetNetworkID(), ndiff, gdiff),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid))
 	};
 
-	ContainerDiff diff = Container::ToContainerDiff(ndiff);
-	GameDiff _gdiff = reference->ApplyDiff(diff);
+	auto diff = Container::ToContainerDiff(ndiff);
+	auto _gdiff = reference->ApplyDiff(diff);
 
 	for (const auto& packet : gdiff.second)
 	{
@@ -259,7 +259,7 @@ NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, const FactoryObject<
 		item->SetReference(0x00000000);
 
 		unsigned int baseID = item->GetBase();
-		_gdiff.remove_if([=](const pair<unsigned int, Diff>& diff) { return diff.first == baseID; });
+		_gdiff.remove_if([=](const pair<unsigned int, Container::Diff>& diff) { return diff.first == baseID; });
 
 		Script::OnActorDropItem(vaultcast<Actor>(reference).get(), baseID, item->GetItemCount(), item->GetItemCondition());
 	}
@@ -279,7 +279,7 @@ NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, const FactoryObject<
 		auto& item = _item.get();
 
 		unsigned int baseID = item->GetBase();
-		_gdiff.remove_if([=](const pair<unsigned int, Diff>& diff) { return diff.first == baseID; });
+		_gdiff.remove_if([=](const pair<unsigned int, Container::Diff>& diff) { return diff.first == baseID; });
 
 		unsigned int count = item->GetItemCount();
 		double condition = item->GetItemCondition();

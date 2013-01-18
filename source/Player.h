@@ -11,7 +11,7 @@
 #include "Debug.h"
 #endif
 
-const unsigned int FLAG_MOVCONTROLS      = FLAG_NOTALERT << 1;
+const unsigned int FLAG_MOVCONTROLS = FLAG_NOTALERT << 1;
 
 /**
  * \brief Derives from Actor class and represents a player in-game

@@ -276,7 +276,7 @@ class Game
 		/**
 		 * \brief Scans an inventory and returns the difference
 		 */
-		static std::pair<ContainerDiffNet, GameDiff> ScanContainer(FactoryObject<Container>& reference);
+		static std::pair<Container::NetDiff, Container::GameDiff> ScanContainer(FactoryObject<Container>& reference);
 		/**
 		 * \brief Enable player controls
 		 */
@@ -326,7 +326,7 @@ class Game
 		/**
 		 * \brief Network function to handle Container update
 		 */
-		static void net_ContainerUpdate(FactoryObject<Container>& reference, const ContainerDiffNet& ndiff, const ContainerDiffNet& gdiff);
+		static void net_ContainerUpdate(FactoryObject<Container>& reference, const Container::NetDiff& ndiff, const Container::NetDiff& gdiff);
 		/**
 		 * \brief Network function to handle Actor value
 		 */
@@ -415,7 +415,7 @@ class Game
 		/**
 		 * \brief Handles ScanContainer (synchronized) command result
 		 */
-		static std::pair<ContainerDiffNet, GameDiff> GetScanContainer(const FactoryObject<Container>& reference, const std::vector<unsigned char>& data);
+		static std::pair<Container::NetDiff, Container::GameDiff> GetScanContainer(const FactoryObject<Container>& reference, const std::vector<unsigned char>& data);
 		/**
 		 * \brief Handles RemoveAllItemsEx command result
 		 */

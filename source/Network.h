@@ -20,7 +20,8 @@
 
 class Network
 {
-	typedef std::tuple<PacketPriority, PacketReliability, unsigned char> PacketDescriptor;
+	private:
+		typedef std::tuple<PacketPriority, PacketReliability, unsigned char> PacketDescriptor;
 
 	public:
 		class SingleResponse {

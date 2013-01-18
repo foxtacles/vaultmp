@@ -1429,9 +1429,9 @@ Game::CellDiff Game::ScanCell(unsigned int type)
 	return diff;
 }
 
-pair<ContainerDiffNet, GameDiff> Game::ScanContainer(FactoryObject<Container>& reference)
+pair<Container::NetDiff, Container::GameDiff> Game::ScanContainer(FactoryObject<Container>& reference)
 {
-	auto store = make_shared<Shared<pair<ContainerDiffNet, GameDiff>>>();
+	auto store = make_shared<Shared<pair<Container::NetDiff, Container::GameDiff>>>();
 	unsigned int key = Lockable::Share(store);
 
 	Interface::StartDynamic();
@@ -1443,7 +1443,7 @@ pair<ContainerDiffNet, GameDiff> Game::ScanContainer(FactoryObject<Container>& r
 	NetworkID id = reference->GetNetworkID();
 	GameFactory::LeaveReference(reference);
 
-	pair<ContainerDiffNet, GameDiff> diff;
+	pair<Container::NetDiff, Container::GameDiff> diff;
 
 	try
 	{
@@ -1588,13 +1588,13 @@ void Game::net_SetItemCondition(const FactoryObject<Item>& reference, double con
 		SetCurrentHealth(reference, health);
 }
 
-void Game::net_ContainerUpdate(FactoryObject<Container>& reference, const ContainerDiffNet& ndiff, const ContainerDiffNet& gdiff)
+void Game::net_ContainerUpdate(FactoryObject<Container>& reference, const Container::NetDiff& ndiff, const Container::NetDiff& gdiff)
 {
 	Lockable* result;
 
 	// cleaner solution here
 
-	ContainerDiff diff = Container::ToContainerDiff(ndiff);
+	Container::ContainerDiff diff = Container::ToContainerDiff(ndiff);
 	NetworkID id = reference->GetNetworkID();
 	auto container = reference.operator ->();
 	GameFactory::LeaveReference(reference);
@@ -1605,7 +1605,7 @@ void Game::net_ContainerUpdate(FactoryObject<Container>& reference, const Contai
 
 	unsigned int key = result->Lock();
 
-	GameDiff _gdiff = reference->ApplyDiff(diff);
+	Container::GameDiff _gdiff = reference->ApplyDiff(diff);
 
 	for (const auto& diff : _gdiff)
 	{
@@ -2209,13 +2209,13 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 			auto& ndiff = _result.first;
 			auto& gdiff = _result.second;
 
-			gdiff.remove_if([](const pair<unsigned int, Diff>& diff) { return !diff.second.count; });
+			gdiff.remove_if([](const pair<unsigned int, Container::Diff>& diff) { return !diff.second.count; });
 
 			if (!gdiff.empty())
 			{
 				// lambda can't capture by move :(
 
-				auto _ndiff = make_shared<ContainerDiffNet>(move(ndiff));
+				auto _ndiff = make_shared<Container::NetDiff>(move(ndiff));
 				NetworkID id = reference->GetNetworkID();
 
 				AsyncDispatch([_ndiff, gdiff, key, result, id]() mutable
@@ -2241,7 +2241,7 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 								if (!result.first.first.empty() || !result.first.second.empty())
 								{
 									Network::Queue(NetworkResponse{Network::CreateResponse(
-										PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(_id, result.first, ContainerDiffNet()),
+										PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(_id, result.first, Container::NetDiff()),
 										HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 									});
 
@@ -2254,15 +2254,15 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 								}
 							}
 
-							gdiff.remove_if([](const pair<unsigned int, Diff>& diff) { return !diff.second.count; });
+							gdiff.remove_if([](const pair<unsigned int, Container::Diff>& diff) { return !diff.second.count; });
 						}
 
-						ContainerDiffNet ndiff;
+						Container::NetDiff ndiff;
 
 						if (!gdiff.empty())
 						{
 							CellDiff cdiff = ScanCell(FormType_Inventory);
-							map<unsigned int, pair<GameDiff::iterator, list<pair<unsigned int, unsigned int>>>> found;
+							map<unsigned int, pair<Container::GameDiff::iterator, list<pair<unsigned int, unsigned int>>>> found;
 
 							const auto best_match = [](decltype(found)::value_type& found)
 							{
@@ -2305,7 +2305,7 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 							{
 								unsigned int baseID = Game::GetBase(refID);
 
-								auto it = find_if(gdiff.begin(), gdiff.end(), [=](const pair<unsigned int, Diff>& diff) { return diff.first == baseID; });
+								auto it = find_if(gdiff.begin(), gdiff.end(), [=](const pair<unsigned int, Container::Diff>& diff) { return diff.first == baseID; });
 
 								if (it != gdiff.end())
 								{
@@ -2406,7 +2406,7 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 
 								unsigned int baseID = reference->GetBase();
 
-								auto it = find_if(gdiff.begin(), gdiff.end(), [=](const pair<unsigned int, Diff>& diff) { return diff.first == baseID; });
+								auto it = find_if(gdiff.begin(), gdiff.end(), [=](const pair<unsigned int, Container::Diff>& diff) { return diff.first == baseID; });
 
 								if (it != gdiff.end())
 								{
@@ -2478,7 +2478,7 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 			}
 			else
 				Network::Queue(NetworkResponse{Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(reference->GetNetworkID(), ndiff, ContainerDiffNet()),
+					PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(reference->GetNetworkID(), ndiff, Container::NetDiff()),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 				});
 		}
@@ -2488,9 +2488,9 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 	}
 }
 
-pair<ContainerDiffNet, GameDiff> Game::GetScanContainer(const FactoryObject<Container>& reference, const vector<unsigned char>& data)
+pair<Container::NetDiff, Container::GameDiff> Game::GetScanContainer(const FactoryObject<Container>& reference, const vector<unsigned char>& data)
 {
-	pair<ContainerDiffNet, GameDiff> result;
+	pair<Container::NetDiff, Container::GameDiff> result;
 
 #pragma pack(push, 1)
 	struct ItemInfo
@@ -2516,7 +2516,7 @@ pair<ContainerDiffNet, GameDiff> Game::GetScanContainer(const FactoryObject<Cont
 		temp->AddItem(item->GetNetworkID());
 	}
 
-	ContainerDiff diff = reference->Compare(temp->GetNetworkID());
+	auto diff = reference->Compare(temp->GetNetworkID());
 
 	if (!diff.first.empty() || !diff.second.empty())
 	{

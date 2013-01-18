@@ -58,7 +58,7 @@ class Server
 		/**
 		 * \brief Handles container update network packet
 		 */
-		static NetworkResponse GetContainerUpdate(RakNet::RakNetGUID guid, const FactoryObject<Container>& reference, const ContainerDiffNet& ndiff, const ContainerDiffNet& gdiff);
+		static NetworkResponse GetContainerUpdate(RakNet::RakNetGUID guid, const FactoryObject<Container>& reference, const Container::NetDiff& ndiff, const Container::NetDiff& gdiff);
 		/**
 		 * \brief Handles actor value network packet
 		 */
