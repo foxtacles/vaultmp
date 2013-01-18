@@ -123,7 +123,7 @@ namespace vaultmp {
 		None = -1,
 		Explosion = 0,
 		Gun = 2,
-		BluntWeapon	= 3,
+		BluntWeapon = 3,
 		HandToHand = 4,
 		ObjectImpact = 5,
 		Poison = 6,
