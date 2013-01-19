@@ -28,7 +28,7 @@ class PAWN
 
 		PAWN();
 
-		static AMX_NATIVE_INFO vaultmp_functions[106];
+		static AMX_NATIVE_INFO vaultmp_functions[107];
 
 		static cell vaultmp_timestamp(AMX* amx, const cell* params);
 		static cell vaultmp_CreateTimer(AMX* amx, const cell* params);
@@ -96,6 +96,7 @@ class PAWN
 		static cell vaultmp_GetItemSilent(AMX* amx, const cell* params);
 		static cell vaultmp_GetItemStick(AMX* amx, const cell* params);
 		static cell vaultmp_GetContainerItemCount(AMX* amx, const cell* params);
+		static cell vaultmp_GetContainerItemList(AMX* amx, const cell* params);
 		static cell vaultmp_GetActorValue(AMX* amx, const cell* params);
 		static cell vaultmp_GetActorBaseValue(AMX* amx, const cell* params);
 		static cell vaultmp_GetActorIdleAnimation(AMX* amx, const cell* params);

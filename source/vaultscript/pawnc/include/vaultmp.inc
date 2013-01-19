@@ -177,6 +177,7 @@ native Bool:GetItemEquipped(ID);
 native Bool:GetItemSilent(ID);
 native Bool:GetItemStick(ID);
 native GetContainerItemCount(ID, item = 0);
+native GetContainerItemList(ID, id[]);
 native Float:GetActorValue(ID, index);
 native Float:GetActorBaseValue(ID, index);
 native GetActorIdleAnimation(ID);

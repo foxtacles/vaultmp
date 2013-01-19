@@ -190,6 +190,7 @@ class Script
 		static bool GetItemSilent(RakNet::NetworkID id);
 		static bool GetItemStick(RakNet::NetworkID id);
 		static unsigned int GetContainerItemCount(RakNet::NetworkID id, unsigned int baseID);
+		static unsigned int GetContainerItemList(RakNet::NetworkID id, RakNet::NetworkID** data);
 		static double GetActorValue(RakNet::NetworkID id, unsigned char index);
 		static double GetActorBaseValue(RakNet::NetworkID id, unsigned char index);
 		static unsigned int GetActorIdleAnimation(RakNet::NetworkID id);

@@ -136,6 +136,7 @@ Script::Script(char* path)
 			SetScript(string(vpf + "GetItemSilent").c_str(), &Script::GetItemSilent);
 			SetScript(string(vpf + "GetItemStick").c_str(), &Script::GetItemStick);
 			SetScript(string(vpf + "GetContainerItemCount").c_str(), &Script::GetContainerItemCount);
+			SetScript(string(vpf + "GetContainerItemList").c_str(), &Script::GetContainerItemList);
 			SetScript(string(vpf + "GetActorValue").c_str(), &Script::GetActorValue);
 			SetScript(string(vpf + "GetActorBaseValue").c_str(), &Script::GetActorBaseValue);
 			SetScript(string(vpf + "GetActorIdleAnimation").c_str(), &Script::GetActorIdleAnimation);
@@ -1588,6 +1589,27 @@ unsigned int Script::GetContainerItemCount(NetworkID id, unsigned int baseID)
 
 	if (container)
 		return container->GetItemCount(baseID);
+
+	return 0;
+}
+
+unsigned int Script::GetContainerItemList(NetworkID id, NetworkID** data)
+{
+	static vector<NetworkID> _data;
+	*data = nullptr;
+
+	auto container = GameFactory::GetObject<Container>(id);
+
+	if (container)
+	{
+		_data.assign(container->GetItemList().begin(), container->GetItemList().end());
+		unsigned int size = _data.size();
+
+		if (size)
+			*data = &_data[0];
+
+		return size;
+	}
 
 	return 0;
 }

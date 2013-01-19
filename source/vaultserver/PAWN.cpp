@@ -81,6 +81,7 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"GetItemSilent", PAWN::vaultmp_GetItemSilent},
 	{"GetItemStick", PAWN::vaultmp_GetItemStick},
 	{"GetContainerItemCount", PAWN::vaultmp_GetContainerItemCount},
+	{"GetContainerItemList", PAWN::vaultmp_GetContainerItemList},
 	{"GetActorValue", PAWN::vaultmp_GetActorValue},
 	{"GetActorBaseValue", PAWN::vaultmp_GetActorBaseValue},
 	{"GetActorIdleAnimation", PAWN::vaultmp_GetActorIdleAnimation},
@@ -604,17 +605,14 @@ cell PAWN::vaultmp_GetCount(AMX*, const cell* params)
 
 cell PAWN::vaultmp_GetList(AMX* amx, const cell* params)
 {
-	vector<NetworkID> reference = GameFactory::GetIDObjectTypes(params[1]);
+	NetworkID* data;
 	cell* dest = amx_Address(amx, params[2]);
-	unsigned int i = 0;
+	unsigned int size = Script::GetList(params[1], &data);
 
-	for (const NetworkID& id : reference)
-	{
-		dest[i] = id;
-		++i;
-	}
+	for (unsigned int i = 0; i < size; ++i)
+		dest[i] = data[i];
 
-	return reference.size();
+	return size;
 }
 
 cell PAWN::vaultmp_GetGameWeather(AMX*, const cell*)
@@ -768,6 +766,18 @@ cell PAWN::vaultmp_GetItemStick(AMX*, const cell* params)
 cell PAWN::vaultmp_GetContainerItemCount(AMX*, const cell* params)
 {
 	return Script::GetContainerItemCount(params[1], params[2]);
+}
+
+cell PAWN::vaultmp_GetContainerItemList(AMX* amx, const cell* params)
+{
+	NetworkID* data;
+	cell* dest = amx_Address(amx, params[2]);
+	unsigned int size = Script::GetContainerItemList(params[1], &data);
+
+	for (unsigned int i = 0; i < size; ++i)
+		dest[i] = data[i];
+
+	return size;
 }
 
 cell PAWN::vaultmp_GetActorValue(AMX*, const cell* params)
