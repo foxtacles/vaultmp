@@ -27,7 +27,7 @@ namespace DB
 			double condition;
 
 			BaseContainer(const BaseContainer&) = delete;
-			BaseContainer& operator=(const BaseContainer& p) = delete;
+			BaseContainer& operator=(const BaseContainer&) = delete;
 
 		public:
 			static const std::vector<const BaseContainer*>& Lookup(unsigned int baseID);

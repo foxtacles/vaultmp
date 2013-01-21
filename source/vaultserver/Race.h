@@ -28,7 +28,7 @@ namespace DB
 			unsigned int older;
 
 			Race(const Race&) = delete;
-			Race& operator=(const Race& p) = delete;
+			Race& operator=(const Race&) = delete;
 
 		public:
 			static Expected<const Race*> Lookup(unsigned int baseID);

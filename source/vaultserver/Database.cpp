@@ -1,5 +1,6 @@
 #include "Database.h"
 #include "Record.h"
+#include "Reference.h"
 #include "Exterior.h"
 #include "Weapon.h"
 #include "Race.h"
@@ -129,6 +130,7 @@ unsigned int Database<T>::initialize(const string& file, const vector<string>& t
 }
 
 template class Database<DB::Record>;
+template class Database<DB::Reference>;
 template class Database<DB::Exterior>;
 template class Database<DB::Weapon>;
 template class Database<DB::Race>;

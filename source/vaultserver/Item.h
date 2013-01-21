@@ -28,7 +28,7 @@ namespace DB
 			unsigned int slot;
 
 			Item(const Item&) = delete;
-			Item& operator=(const Item& p) = delete;
+			Item& operator=(const Item&) = delete;
 
 		public:
 			static Expected<const Item*> Lookup(unsigned int baseID);

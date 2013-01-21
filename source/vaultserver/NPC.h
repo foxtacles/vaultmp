@@ -49,7 +49,7 @@ namespace DB
 			mutable unsigned int new_race;
 
 			NPC(const NPC&) = delete;
-			NPC& operator=(const NPC& p) = delete;
+			NPC& operator=(const NPC&) = delete;
 
 		public:
 			static Expected<const NPC*> Lookup(unsigned int baseID);

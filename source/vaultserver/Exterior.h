@@ -34,7 +34,7 @@ namespace DB
 			signed int y;
 
 			Exterior(const Exterior&) = delete;
-			Exterior& operator=(const Exterior& p) = delete;
+			Exterior& operator=(const Exterior&) = delete;
 
 		public:
 			static Expected<const Exterior*> Lookup(unsigned int baseID);

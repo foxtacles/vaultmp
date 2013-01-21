@@ -29,7 +29,7 @@ namespace DB
 			unsigned int ammo;
 
 			Weapon(const Weapon&) = delete;
-			Weapon& operator=(const Weapon& p) = delete;
+			Weapon& operator=(const Weapon&) = delete;
 
 		public:
 			static Expected<const Weapon*> Lookup(unsigned int baseID);

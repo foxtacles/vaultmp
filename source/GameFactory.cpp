@@ -17,6 +17,7 @@ DebugInput<GameFactory> GameFactory::debug;
 
 #ifdef VAULTSERVER
 Database<DB::Record> GameFactory::dbRecords;
+Database<DB::Reference> GameFactory::dbReferences;
 Database<DB::Exterior> GameFactory::dbExteriors;
 Database<DB::Weapon> GameFactory::dbWeapons;
 Database<DB::Race> GameFactory::dbRaces;
@@ -34,6 +35,7 @@ void GameFactory::Initialize(unsigned char game)
 	{
 		case FALLOUT3:
 			dbRecords.initialize(DB_FALLOUT3, {"CONT", "NPC_", "CREA", "LVLI", "ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "ENCH", "KEYM", "MISC", "NOTE", "WEAP", "CELL", "IDLE", "WTHR", "STAT", "MSTT", "RACE", "LIGH"});
+			dbReferences.initialize(DB_FALLOUT3, {"refs_CONT"});
 			dbExteriors.initialize(DB_FALLOUT3, {"exteriors"});
 			dbWeapons.initialize(DB_FALLOUT3, {"weapons"});
 			dbRaces.initialize(DB_FALLOUT3, {"races"});
@@ -44,6 +46,7 @@ void GameFactory::Initialize(unsigned char game)
 
 		case NEWVEGAS:
 			dbRecords.initialize(DB_NEWVEGAS, {"CONT", "NPC_", "CREA", "LVLI", "ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "CCRD", "CDCK", "CHIP", "CMNY", "ENCH", "IMOD", "KEYM", "MISC", "NOTE", "RCPE", "WEAP", "CELL", "IDLE", "WTHR", "STAT", "MSTT", "RACE", "LIGH"});
+			dbReferences.initialize(DB_NEWVEGAS, {"refs_CONT"});
 			dbExteriors.initialize(DB_NEWVEGAS, {"exteriors"});
 			dbWeapons.initialize(DB_NEWVEGAS, {"weapons"});
 			dbRaces.initialize(DB_NEWVEGAS, {"races"});

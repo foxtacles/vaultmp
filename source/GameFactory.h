@@ -19,6 +19,7 @@
 #include "vaultserver/vaultserver.h"
 #include "vaultserver/Database.h"
 #include "vaultserver/Record.h"
+#include "vaultserver/Reference.h"
 #include "vaultserver/Exterior.h"
 #include "vaultserver/Weapon.h"
 #include "vaultserver/Race.h"
@@ -74,6 +75,7 @@ class GameFactory
 
 #ifdef VAULTSERVER
 		static Database<DB::Record> dbRecords;
+		static Database<DB::Reference> dbReferences;
 		static Database<DB::Exterior> dbExteriors;
 		static Database<DB::Weapon> dbWeapons;
 		static Database<DB::Race> dbRaces;

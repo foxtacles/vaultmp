@@ -29,7 +29,7 @@ namespace DB
 			std::string type;
 
 			Record(const Record&) = delete;
-			Record& operator=(const Record& p) = delete;
+			Record& operator=(const Record&) = delete;
 
 		public:
 			static Expected<const Record*> Lookup(unsigned int baseID);
