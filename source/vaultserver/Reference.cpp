@@ -28,7 +28,9 @@ Reference::Reference(const string& table, sqlite3_stmt* stmt)
 	lock = static_cast<unsigned int>(sqlite3_column_int(stmt, 13));
 
 	if (lock == UINT_MAX)
-		lock = 255;
+		lock = 255; // requires key
+	else if (lock == UINT_MAX - 1)
+		lock = UINT_MAX; // unlocked
 
 	key = static_cast<unsigned int>(sqlite3_column_int(stmt, 14));
 	link = static_cast<unsigned int>(sqlite3_column_int(stmt, 15));

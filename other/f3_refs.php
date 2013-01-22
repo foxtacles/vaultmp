@@ -21,6 +21,9 @@ function import($file,$dlc)
 		$link=hexdec($link);
 		createTable($tb);
 
+if (!$ref)
+	continue;
+
                 $prep = $db->prepare("insert into $tb (editor,refID,baseID,count,health,cell,x,y,z,ax,ay,az,flags,lock,key,link,dlc) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                 if ($prep === FALSE) {
 			echo "Fail: " . $db->errorInfo()[2];
