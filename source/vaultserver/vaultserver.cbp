@@ -421,6 +421,8 @@
 		<Unit filename="Race.h" />
 		<Unit filename="Record.cpp" />
 		<Unit filename="Record.h" />
+		<Unit filename="Reference.cpp" />
+		<Unit filename="Reference.h" />
 		<Unit filename="Script.cpp" />
 		<Unit filename="Script.h" />
 		<Unit filename="ScriptFunction.cpp">

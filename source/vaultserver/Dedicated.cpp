@@ -2,6 +2,7 @@
 
 using namespace std;
 using namespace RakNet;
+using namespace Values;
 
 RakPeerInterface* Dedicated::peer;
 SocketDescriptor* Dedicated::sockdescr;
@@ -291,6 +292,33 @@ void Dedicated::DedicatedThread()
 		Script::CreateTimer(&Script::Timer_GameTime, 1000);
 
 		Script::gameWeather = DEFAULT_WEATHER;
+
+		auto containers = DB::Reference::Lookup("CONT");
+
+		for (const auto* reference : containers)
+		{
+			// FIXME dlc support
+			if (reference->GetReference() & 0xFF000000)
+				continue;
+
+			auto container = GameFactory::GetObject<Container>(GameFactory::CreateInstance(ID_CONTAINER, reference->GetReference(), reference->GetBase())).get();
+			const auto& pos = reference->GetPos();
+			const auto& angle = reference->GetAngle();
+			auto cell = reference->GetCell();
+			auto lock = reference->GetLock();
+			container->SetNetworkPos(Axis_X, get<0>(pos));
+			container->SetNetworkPos(Axis_Y, get<1>(pos));
+			container->SetNetworkPos(Axis_Z, get<2>(pos));
+			container->SetGamePos(Axis_X, get<0>(pos));
+			container->SetGamePos(Axis_Y, get<1>(pos));
+			container->SetGamePos(Axis_Z, get<2>(pos));
+			container->SetAngle(Axis_X, get<0>(angle));
+			container->SetAngle(Axis_Y, get<1>(angle));
+			container->SetAngle(Axis_Z, get<2>(angle));
+			container->SetNetworkCell(cell);
+			container->SetGameCell(cell);
+			container->SetLockLevel(lock);
+		}
 
 		Utils::timestamp();
 		printf("Dedicated server initialized, running scripts now\n");

@@ -78,6 +78,17 @@ Expected<const Reference*> Reference::Lookup(unsigned int refID)
 	return VaultException("No weapon with refID %08X found", refID);
 }
 
+vector<const Reference*> Reference::Lookup(const std::string& type)
+{
+	vector<const Reference*> data;
+
+	for (const auto& ref : refs)
+		if (!ref.second->GetType().compare(type))
+			data.emplace_back(ref.second);
+
+	return data;
+}
+
 const string& Reference::GetType() const
 {
 	return type;

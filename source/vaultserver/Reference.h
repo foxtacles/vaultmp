@@ -2,6 +2,7 @@
 #define REFERENCEDB_H
 
 #include <unordered_map>
+#include <vector>
 #include <tuple>
 
 #include "vaultmp.h"
@@ -41,6 +42,7 @@ namespace DB
 
 		public:
 			static Expected<const Reference*> Lookup(unsigned int refID);
+			static std::vector<const Reference*> Lookup(const std::string& type);
 
 			const std::string& GetType() const;
 			const std::string& GetEditor() const;

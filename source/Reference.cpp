@@ -108,5 +108,5 @@ bool Reference::GetChanged() const
 bool Reference::IsPersistent() const
 {
 	unsigned int refID = GetReference();
-	return !(refID & 0xFF000000) && refID;
+	return ((refID & 0xFF000000) != 0xFF000000) && refID;
 }

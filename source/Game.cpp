@@ -763,8 +763,11 @@ void Game::NewObject(FactoryObject<Object>& reference)
 
 	unsigned int refID = reference->GetReference();
 
-	SetName(reference);
-	SetAngle(reference);
+	if (!reference->IsPersistent())
+	{
+		SetName(reference);
+		SetAngle(reference);
+	}
 
 	if (reference->GetLockLevel() != UINT_MAX)
 		SetLock(reference);
@@ -775,34 +778,37 @@ void Game::NewObject(FactoryObject<Object>& reference)
 	// experimental
 	if (refID != PLAYER_REFERENCE)
 	{
-		AsyncDispatch([refID]
+		if (!reference->IsPersistent())
 		{
-			try
+			AsyncDispatch([refID]
 			{
-				this_thread::sleep_for(chrono::milliseconds(500));
-
-				auto objects = GameFactory::GetMultiple(vector<unsigned int>{refID, PLAYER_REFERENCE});
-
-				auto& object = objects[0].get();
-				auto& player = objects[1].get();
-
-				unsigned int cell = player->GetGameCell();
-
-				if (object->GetNetworkCell() == cell)
+				try
 				{
-					MoveTo(object, player, true);
-					object->SetEnabled(true);
-				}
-				else
-				{
-					object->SetEnabled(false);
-					ToggleEnabled(object);
-				}
+					this_thread::sleep_for(chrono::milliseconds(500));
 
-				object->SetGameCell(cell);
-			}
-			catch (...) {}
-		});
+					auto objects = GameFactory::GetMultiple(vector<unsigned int>{refID, PLAYER_REFERENCE});
+
+					auto& object = objects[0].get();
+					auto& player = objects[1].get();
+
+					unsigned int cell = player->GetGameCell();
+
+					if (object->GetNetworkCell() == cell)
+					{
+						MoveTo(object, player, true);
+						object->SetEnabled(true);
+					}
+					else
+					{
+						object->SetEnabled(false);
+						ToggleEnabled(object);
+					}
+
+					object->SetGameCell(cell);
+				}
+				catch (...) {}
+			});
+		}
 
 		cellRefs.StartSession();
 		(*cellRefs)[reference->GetNetworkCell()][reference.GetType()].insert(refID);
