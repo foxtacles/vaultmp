@@ -354,7 +354,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 
 			default:
-				throw VaultException("Unhandled function %04hX", opcode);
+				throw VaultException("Unhandled function %04hX", opcode).stacktrace();
 		}
 	}
 	else
@@ -458,12 +458,12 @@ void Game::FutureSet(const weak_ptr<Lockable>& data, T&& t)
 	Lockable* locked = shared.get();
 
 	if (locked == nullptr)
-		throw VaultException("Storage has expired");
+		throw VaultException("Storage has expired").stacktrace();
 
 	Shared<T>* store = dynamic_cast<Shared<T>*>(locked);
 
 	if (store == nullptr)
-		throw VaultException("Storage is corrupted");
+		throw VaultException("Storage is corrupted").stacktrace();
 
 	(**store) = forward<T>(t);
 	store->set_promise();
@@ -502,7 +502,7 @@ void Game::LoadGame(string savegame)
 	}
 	catch (exception& e)
 	{
-		throw VaultException("Loading of savegame %s failed (%s)", savegame.c_str(), e.what());
+		throw VaultException("Loading of savegame %s failed (%s)", savegame.c_str(), e.what()).stacktrace();
 	}
 
 	// ready state
@@ -536,7 +536,7 @@ void Game::CenterOnCell(const string& cell, bool spawn)
 	}
 	catch (exception& e)
 	{
-		throw VaultException("Loading of cell %s failed (%s)", cell.c_str(), e.what());
+		throw VaultException("Loading of cell %s failed (%s)", cell.c_str(), e.what()).stacktrace();
 	}
 
 	if (first)
@@ -573,7 +573,7 @@ void Game::CenterOnExterior(signed int x, signed int y, bool spawn)
 	}
 	catch (exception& e)
 	{
-		throw VaultException("Loading of cell (%d,%d) failed (%s)", x, y, e.what());
+		throw VaultException("Loading of cell (%d,%d) failed (%s)", x, y, e.what()).stacktrace();
 	}
 
 	if (first)
@@ -610,7 +610,7 @@ void Game::CenterOnWorld(unsigned int baseID, signed int x, signed int y, bool s
 	}
 	catch (exception& e)
 	{
-		throw VaultException("Loading of world (%08X,%d,%d) failed (%s)", baseID, x, y, e.what());
+		throw VaultException("Loading of world (%08X,%d,%d) failed (%s)", baseID, x, y, e.what()).stacktrace();
 	}
 
 	if (first)
@@ -704,7 +704,7 @@ void Game::LoadEnvironment()
 			}
 
 			default:
-				throw VaultException("Can't create object of unknown type %02X", type);
+				throw VaultException("Can't create object of unknown type %02X", type).stacktrace();
 		}
 	}
 }
@@ -752,7 +752,7 @@ void Game::NewObject(FactoryObject<Object>& reference)
 		}
 		catch (exception& e)
 		{
-			throw VaultException("Object creation with baseID %08X and NetworkID %llu failed (%s)", baseID, id, e.what());
+			throw VaultException("Object creation with baseID %08X and NetworkID %llu failed (%s)", baseID, id, e.what()).stacktrace();
 		}
 
 		reference = GameFactory::GetObject(id).get();
@@ -823,7 +823,7 @@ void Game::NewItem(FactoryObject<Item>& reference)
 	NetworkID id = reference->GetItemContainer();
 
 	if (id)
-		throw VaultException("Cannot create item %llu which is bound to a Container (%llu)", reference->GetNetworkID(), id);
+		throw VaultException("Cannot create item %llu which is bound to a Container (%llu)", reference->GetNetworkID(), id).stacktrace();
 
 	NewObject(reference);
 	SetRefCount(reference);
@@ -956,7 +956,7 @@ unsigned int Game::GetBase(unsigned int refID)
 	}
 	catch (exception& e)
 	{
-		throw VaultException("Obtaining of baseID of refID %08X (%s)", refID, e.what());
+		throw VaultException("Obtaining of baseID of refID %08X (%s)", refID, e.what()).stacktrace();
 	}
 
 	return baseID;
@@ -1343,7 +1343,7 @@ void Game::RemoveAllItemsEx(FactoryObject<Container>& reference)
 	}
 	catch (exception& e)
 	{
-		throw VaultException("Obtaining of all items of %llu for RemoveAllItemsEx failed (%s)", id, e.what());
+		throw VaultException("Obtaining of all items of %llu for RemoveAllItemsEx failed (%s)", id, e.what()).stacktrace();
 	}
 }
 
@@ -1384,7 +1384,7 @@ unsigned int Game::GetRefCount(unsigned int refID)
 	}
 	catch (exception& e)
 	{
-		throw VaultException("Obtaining of reference count of refID %08X (%s)", refID, e.what());
+		throw VaultException("Obtaining of reference count of refID %08X (%s)", refID, e.what()).stacktrace();
 	}
 
 	return count;
@@ -1451,7 +1451,7 @@ Game::CellDiff Game::ScanCell(unsigned int type)
 	}
 	catch (exception& e)
 	{
-		throw VaultException("Scan of player cell with type %d failed (%s)", type, e.what());
+		throw VaultException("Scan of player cell with type %d failed (%s)", type, e.what()).stacktrace();
 	}
 
 	return diff;
@@ -1479,7 +1479,7 @@ pair<Container::NetDiff, Container::GameDiff> Game::ScanContainer(FactoryObject<
 	}
 	catch (exception& e)
 	{
-		throw VaultException("Scan of container inventory %llu failed (%s)", id, e.what());
+		throw VaultException("Scan of container inventory %llu failed (%s)", id, e.what()).stacktrace();
 	}
 
 	return diff;
@@ -1529,7 +1529,7 @@ void Game::ForceRespawn()
 	}
 	catch (exception& e)
 	{
-		throw VaultException("Respawning failed (%s)", e.what());
+		throw VaultException("Respawning failed (%s)", e.what()).stacktrace();
 	}
 }
 
@@ -2084,7 +2084,7 @@ void Game::GetDead(const FactoryObject<Actor>& reference, const FactoryObject<Pl
 						}
 						catch (exception& e)
 						{
-							throw VaultException("Obtaining of limb data of %08X failed (%s)", refID, e.what());
+							throw VaultException("Obtaining of limb data of %08X failed (%s)", refID, e.what()).stacktrace();
 						}
 					}
 
@@ -2104,7 +2104,7 @@ void Game::GetDead(const FactoryObject<Actor>& reference, const FactoryObject<Pl
 						}
 						catch (exception& e)
 						{
-							throw VaultException("Obtaining of cause of death of %08X failed (%s)", refID, e.what());
+							throw VaultException("Obtaining of cause of death of %08X failed (%s)", refID, e.what()).stacktrace();
 						}
 					}
 
@@ -2134,12 +2134,12 @@ void Game::IsLimbGone(unsigned int key, unsigned char limb, bool gone)
 	Lockable* locked = shared.get();
 
 	if (locked == nullptr)
-		throw VaultException("Storage has expired");
+		throw VaultException("Storage has expired").stacktrace();
 
 	Shared<unsigned short>* store = dynamic_cast<Shared<unsigned short>*>(locked);
 
 	if (store == nullptr)
-		throw VaultException("Storage is corrupted");
+		throw VaultException("Storage is corrupted").stacktrace();
 
 	(**store) |= (static_cast<unsigned short>(gone) << limb);
 
@@ -2623,12 +2623,12 @@ void Game::GetNextRef(unsigned int key, unsigned int refID, unsigned int type)
 		Lockable* locked = shared.get();
 
 		if (locked == nullptr)
-			throw VaultException("Storage has expired");
+			throw VaultException("Storage has expired").stacktrace();
 
 		Shared<CellDiff>* store = dynamic_cast<Shared<CellDiff>*>(locked);
 
 		if (store == nullptr)
-			throw VaultException("Storage is corrupted");
+			throw VaultException("Storage is corrupted").stacktrace();
 
 		CellDiff diff;
 

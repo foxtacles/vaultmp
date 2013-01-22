@@ -585,7 +585,7 @@ void API::Terminate()
 vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* result, unsigned short opcode)
 {
 	if (!cmd_ || !def || !result || !*cmd_ || !opcode)
-		throw VaultException("Invalid call to API::ParseCommand, one or more arguments are NULL (%s, %s, %04X)", cmd_, def, opcode);
+		throw VaultException("Invalid call to API::ParseCommand, one or more arguments are NULL (%s, %s, %04X)", cmd_, def, opcode).stacktrace();
 
 	string _cmd(cmd_);
 	vector<char> cmd_buf(cmd_, cmd_ + _cmd.length() + 1);
@@ -610,12 +610,12 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 		tokenizer = strtok(nullptr, " ");
 
 		if (tokenizer == nullptr)
-			throw VaultException("API::ParseCommand expected a reference base operand, which could not be found");
+			throw VaultException("API::ParseCommand expected a reference base operand, which could not be found").stacktrace();
 
 		reference = strtoul(tokenizer, nullptr, 0);
 
 		if (reference == 0x00)
-			throw VaultException("API::ParseCommand reference base operand is NULL (%s, %s, %04X)", _cmd.c_str(), def, opcode);
+			throw VaultException("API::ParseCommand reference base operand is NULL (%s, %s, %04X)", _cmd.c_str(), def, opcode).stacktrace();
 
 		result->arg3.reference = reference;
 		result_data.emplace_back(storeIn<double>(reference));
@@ -723,7 +723,7 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 				break;
 
 			default:
-				throw VaultException("API::ParseCommand could not recognize argument identifier %02X", (unsigned int) tolower(type));
+				throw VaultException("API::ParseCommand could not recognize argument identifier %02X", static_cast<unsigned int>(tolower(type))).stacktrace();
 		}
 
 		*reinterpret_cast<unsigned int*>(arg1_pos) = typecode;
@@ -740,7 +740,7 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 			if (isupper(type))
 				continue;
 			else
-				throw VaultException("API::ParseCommand failed parsing command %s (end of input reached, not all required arguments could be found)", _cmd.c_str());
+				throw VaultException("API::ParseCommand failed parsing command %s (end of input reached, not all required arguments could be found)", _cmd.c_str()).stacktrace();
 		}
 
 		/* Types:
@@ -774,7 +774,7 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 				unsigned int integer = strtoul(tokenizer, nullptr, 0);
 
 				if (tolower(type) == 'x' && !IsControl((unsigned char) integer))
-					throw VaultException("API::ParseCommand could not find a control code for input %s", tokenizer);
+					throw VaultException("API::ParseCommand could not find a control code for input %s", tokenizer).stacktrace();
 
 				*reinterpret_cast<unsigned char*>(arg2_pos) = 0x6E;
 				*reinterpret_cast<unsigned int*>(arg2_pos + sizeof(unsigned char)) = integer;
@@ -805,12 +805,12 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 			case 'f': // Owner
 			{
 				if (refparam != 0x00)   // We don't support more than one refparam yet
-					throw VaultException("API::ParseCommand does only support one reference argument up until now");
+					throw VaultException("API::ParseCommand does only support one reference argument up until now").stacktrace();
 
 				refparam = strtoul(tokenizer, nullptr, 0);
 
 				if (!refparam)
-					throw VaultException("API::ParseCommand reference argument is NULL");
+					throw VaultException("API::ParseCommand reference argument is NULL").stacktrace();
 
 				*reinterpret_cast<unsigned char*>(arg2_pos) = 0x72;
 				*reinterpret_cast<unsigned short*>(arg2_pos + sizeof(unsigned char)) = (!reference || refparam == reference) ? 0x0001 : 0x0002;
@@ -824,7 +824,7 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 				unsigned char value = RetrieveValue(tokenizer);
 
 				if (value == 0xFF)
-					throw VaultException("API::ParseCommand could not find an Actor Value identifier for input %s", tokenizer);
+					throw VaultException("API::ParseCommand could not find an Actor Value identifier for input %s", tokenizer).stacktrace();
 
 				*reinterpret_cast<unsigned short*>(arg2_pos) = (unsigned short) value;
 				result_data.emplace_back(storeIn<double>(value));
@@ -837,7 +837,7 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 				unsigned char axis = RetrieveAxis(tokenizer);
 
 				if (axis == 0xFF)
-					throw VaultException("API::ParseCommand could not find an Axis identifier for input %s", tokenizer);
+					throw VaultException("API::ParseCommand could not find an Axis identifier for input %s", tokenizer).stacktrace();
 
 				*reinterpret_cast<unsigned char*>(arg2_pos) = axis;
 				result_data.emplace_back(storeIn<double>(axis));
@@ -850,7 +850,7 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 				unsigned char anim = RetrieveAnim(tokenizer);
 
 				if (anim == 0xFF)
-					throw VaultException("API::ParseCommand could not find an Animation identifier for input %s", tokenizer);
+					throw VaultException("API::ParseCommand could not find an Animation identifier for input %s", tokenizer).stacktrace();
 
 				*reinterpret_cast<unsigned short*>(arg2_pos) = (unsigned short) anim;
 				result_data.emplace_back(storeIn<double>(anim));
@@ -873,7 +873,7 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 			}
 
 			default:
-				throw VaultException("API::ParseCommand could not recognize argument identifier %02X", (unsigned int) tolower(type));
+				throw VaultException("API::ParseCommand could not recognize argument identifier %02X", static_cast<unsigned int>(tolower(type))).stacktrace();
 		}
 
 		++numargs;
@@ -1121,7 +1121,7 @@ bool API::AnnounceFunction(const string& name)
 unsigned char* API::BuildCommandStream(vector<double>&& info, unsigned int key, unsigned char* command, unsigned int size)
 {
 	if (size + 5 > PIPE_LENGTH)
-		throw VaultException("Error in API class; command size (%d bytes) exceeds the pipe length of %d bytes", size + 5, PIPE_LENGTH);
+		throw VaultException("Error in API class; command size (%d bytes) exceeds the pipe length of %d bytes", size + 5, PIPE_LENGTH).stacktrace();
 
 	unsigned char* data = new unsigned char[PIPE_LENGTH];
 	ZeroMemory(data, sizeof(data));
@@ -1165,7 +1165,7 @@ API::CommandParsed API::Translate(const vector<string>& cmd, unsigned int key)
 vector<API::CommandResult> API::Translate(unsigned char* stream)
 {
 	if (stream[0] != PIPE_OP_RETURN && stream[0] != PIPE_OP_RETURN_BIG && stream[0] != PIPE_OP_RETURN_RAW)
-		throw VaultException("API could not recognize stream identifier %02X", stream[0]);
+		throw VaultException("API could not recognize stream identifier %02X", stream[0]).stacktrace();
 
 	vector<CommandResult> result;
 

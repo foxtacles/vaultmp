@@ -34,7 +34,7 @@ unsigned int Database<T>::initialize(const string& file, const vector<string>& t
 	if (sqlite3_open_v2(_file, &db, SQLITE_OPEN_READONLY, nullptr) != SQLITE_OK)
 	{
 		sqlite3_close(db);
-		throw VaultException("Could not open SQLite3 database: %s", sqlite3_errmsg(db));
+		throw VaultException("Could not open SQLite3 database: %s", sqlite3_errmsg(db)).stacktrace();
 	}
 
 	sqlite3_stmt* stmt;
@@ -46,7 +46,7 @@ unsigned int Database<T>::initialize(const string& file, const vector<string>& t
 	if (sqlite3_prepare_v2(db, query.c_str(), query.length() + 1, &stmt, nullptr) != SQLITE_OK)
 	{
 		sqlite3_close(db);
-		throw VaultException("Could not prepare query: %s", sqlite3_errmsg(db));
+		throw VaultException("Could not prepare query: %s", sqlite3_errmsg(db)).stacktrace();
 	}
 
 	int ret = sqlite3_step(stmt);
@@ -55,7 +55,7 @@ unsigned int Database<T>::initialize(const string& file, const vector<string>& t
 	{
 		sqlite3_finalize(stmt);
 		sqlite3_close(db);
-		throw VaultException("Could not determine count of tables: %s", query.c_str());
+		throw VaultException("Could not determine count of tables: %s", query.c_str()).stacktrace();
 	}
 
 	unsigned int count = sqlite3_column_int(stmt, 0);
@@ -80,7 +80,7 @@ unsigned int Database<T>::initialize(const string& file, const vector<string>& t
 		if (sqlite3_prepare_v2(db, query.c_str(), query.length() + 1, &stmt, nullptr) != SQLITE_OK)
 		{
 			sqlite3_close(db);
-			throw VaultException("Could not prepare query: %s", sqlite3_errmsg(db));
+			throw VaultException("Could not prepare query: %s", sqlite3_errmsg(db)).stacktrace();
 		}
 
 		int ret = sqlite3_step(stmt);
@@ -102,7 +102,7 @@ unsigned int Database<T>::initialize(const string& file, const vector<string>& t
 			{
 				sqlite3_finalize(stmt);
 				sqlite3_close(db);
-				throw VaultException("Failed processing query: %s", sqlite3_errmsg(db));
+				throw VaultException("Failed processing query: %s", sqlite3_errmsg(db)).stacktrace();
 			}
 
 			try

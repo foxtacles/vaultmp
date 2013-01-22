@@ -13,7 +13,7 @@ Script::Script(char* path)
 	FILE* file = fopen(path, "rb");
 
 	if (file == nullptr)
-		throw VaultException("Script not found: %s", path);
+		throw VaultException("Script not found: %s", path).stacktrace();
 
 	fclose(file);
 
@@ -31,7 +31,7 @@ Script::Script(char* path)
 #endif
 
 		if (!handle)
-			throw VaultException("Was not able to load C++ script: %s", path);
+			throw VaultException("Was not able to load C++ script: %s", path).stacktrace();
 		try
 		{
 			this->lib = handle;
@@ -40,7 +40,7 @@ Script::Script(char* path)
 			GetScript("exec", fexec);
 
 			if (!fexec)
-				throw VaultException("Could not find exec() callback in: %s", path);
+				throw VaultException("Could not find exec() callback in: %s", path).stacktrace();
 
 			GetScript("vaultprefix", vaultprefix);
 			string vpf(vaultprefix);
@@ -207,7 +207,7 @@ Script::Script(char* path)
 			err = PAWN::LoadProgram(vaultscript, path, nullptr);
 
 			if (err != AMX_ERR_NONE)
-				throw VaultException("PAWN script %s error (%d): \"%s\"", path, err, aux_StrError(err));
+				throw VaultException("PAWN script %s error (%d): \"%s\"", path, err, aux_StrError(err)).stacktrace();
 
 			PAWN::CoreInit(vaultscript);
 			PAWN::ConsoleInit(vaultscript);
@@ -219,7 +219,7 @@ Script::Script(char* path)
 			err = PAWN::RegisterVaultmpFunctions(vaultscript);
 
 			if (err != AMX_ERR_NONE)
-				throw VaultException("PAWN script %s error (%d): \"%s\"", path, err, aux_StrError(err));
+				throw VaultException("PAWN script %s error (%d): \"%s\"", path, err, aux_StrError(err)).stacktrace();
 		}
 		catch (...)
 		{
@@ -229,7 +229,7 @@ Script::Script(char* path)
 		}
 	}
 	else
-		throw VaultException("Script type not recognized: %s", path);
+		throw VaultException("Script type not recognized: %s", path).stacktrace();
 }
 
 Script::~Script()
@@ -291,7 +291,7 @@ void Script::Run()
 			int err = PAWN::Exec(script->amx, &ret, AMX_EXEC_MAIN);
 
 			if (err != AMX_ERR_NONE)
-				throw VaultException("PAWN script error (%d): \"%s\"", err, aux_StrError(err));
+				throw VaultException("PAWN script error (%d): \"%s\"", err, aux_StrError(err)).stacktrace();
 		}
 	}
 }
@@ -347,7 +347,7 @@ void Script::GetArguments(vector<boost::any>& params, va_list args, const string
 				}
 
 				default:
-					throw VaultException("C++ call: Unknown argument identifier %02X", c);
+					throw VaultException("C++ call: Unknown argument identifier %02X", c).stacktrace();
 			}
 		}
 	}

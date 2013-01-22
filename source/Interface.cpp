@@ -268,10 +268,10 @@ void Interface::CommandThreadReceive(bool steam)
 				else if (code == PIPE_ERROR_CLOSE)
 				{
 					if (!endThread)
-						throw VaultException("Error in vaultmp.dll");
+						throw VaultException("Error in vaultmp.dll").stacktrace();
 				}
 				else if (code)
-					throw VaultException("Unknown pipe code identifier %02X", code);
+					throw VaultException("Unknown pipe code identifier %02X", code).stacktrace();
 				else
 					endThread = true;
 			}

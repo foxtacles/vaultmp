@@ -17,7 +17,7 @@ unsigned long long ScriptFunction::Call(const vector<boost::any>& args)
 	unsigned long long result = 0x0000000000000000;
 
 	if (def.length() != args.size())
-		throw VaultException("Script call: Number of arguments does not match definition");
+		throw VaultException("Script call: Number of arguments does not match definition").stacktrace();
 
 	if (pawn)
 		result = PAWN::Call(amx, fPawn.c_str(), def.c_str(), args);
@@ -71,7 +71,7 @@ unsigned long long ScriptFunction::Call(const vector<boost::any>& args)
 				}
 
 				default:
-					throw VaultException("C++ call: Unknown argument identifier %02X XX", *it);
+					throw VaultException("C++ call: Unknown argument identifier %02X XX", *it).stacktrace();
 			}
 		}
 

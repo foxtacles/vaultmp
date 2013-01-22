@@ -8,7 +8,7 @@ unordered_map<unsigned int, const Reference*> Reference::refs;
 Reference::Reference(const string& table, sqlite3_stmt* stmt)
 {
 	if (sqlite3_column_count(stmt) != 17)
-		throw VaultException("Malformed input database (references): %s", table.c_str());
+		throw VaultException("Malformed input database (references): %s", table.c_str()).stacktrace();
 
 	unsigned int dlc = static_cast<unsigned int>(sqlite3_column_int(stmt, 16));
 	// if DLC enabled

@@ -51,7 +51,7 @@ class Shared : public Value<T>
 			}
 			catch (std::exception& e)
 			{
-				throw VaultException("Failed setting promise (%08X -> %08X: %s)", this, &this->async, e.what());
+				throw VaultException("Failed setting promise (%08X -> %08X: %s)", this, &this->async, e.what()).stacktrace();
 			}
 
 			return true;
@@ -65,7 +65,7 @@ class Shared : public Value<T>
 
 			if (timeout > std::chrono::milliseconds(0))
 				if (f.wait_for(timeout) == std::future_status::timeout)
-					throw VaultException("Timeout of %d reached for future value retrieval", timeout.count());
+					throw VaultException("Timeout of %d reached for future value retrieval", timeout.count()).stacktrace();
 
 			T value = f.get();
 			this->async = std::promise<T>();

@@ -182,7 +182,7 @@ cell PAWN::vaultmp_CreateTimerEx(AMX* amx, const cell* params)
 	unsigned int count = (params[0] / sizeof(cell)) - 3;
 
 	if (count != len)
-		throw VaultException("Script call: Number of arguments does not match definition");
+		throw VaultException("Script call: Number of arguments does not match definition").stacktrace();
 
 	for (unsigned int i = 0; i < count; ++i)
 	{
@@ -219,7 +219,7 @@ cell PAWN::vaultmp_CreateTimerEx(AMX* amx, const cell* params)
 			}
 
 			default:
-				throw VaultException("PAWN call: Unknown argument identifier %02X", def[i]);
+				throw VaultException("PAWN call: Unknown argument identifier %02X", def[i]).stacktrace();
 		}
 	}
 
@@ -281,7 +281,7 @@ cell PAWN::vaultmp_CallPublic(AMX* amx, const cell* params)
 	unsigned int count = (params[0] / sizeof(cell)) - 1;
 
 	if (count != def.length())
-		throw VaultException("Script call: Number of arguments does not match definition");
+		throw VaultException("Script call: Number of arguments does not match definition").stacktrace();
 
 	for (unsigned int i = 0; i < count; ++i)
 	{
@@ -324,7 +324,7 @@ cell PAWN::vaultmp_CallPublic(AMX* amx, const cell* params)
 			}
 
 			default:
-				throw VaultException("PAWN call: Unknown argument identifier %02X", def[i]);
+				throw VaultException("PAWN call: Unknown argument identifier %02X", def[i]).stacktrace();
 		}
 	}
 
@@ -1046,7 +1046,7 @@ cell PAWN::Call(AMX* amx, const char* name, const char* argl, int buf, ...)
 		err = amx_FindPublic(amx, name, &idx);
 
 		if (err != AMX_ERR_NONE)
-			throw VaultException("PAWN runtime error (%d): \"%s\"", err, aux_StrError(err));
+			throw VaultException("PAWN runtime error (%d): \"%s\"", err, aux_StrError(err)).stacktrace();
 
 		unsigned int len = strlen(argl);
 
@@ -1092,14 +1092,14 @@ cell PAWN::Call(AMX* amx, const char* name, const char* argl, int buf, ...)
 				}
 
 				default:
-					throw VaultException("PAWN call: Unknown argument identifier %02X", argl[i]);
+					throw VaultException("PAWN call: Unknown argument identifier %02X", argl[i]).stacktrace();
 			}
 		}
 
 		err = amx_Exec(amx, &ret, idx);
 
 		if (err != AMX_ERR_NONE)
-			throw VaultException("PAWN runtime error (%d): \"%s\"", err, aux_StrError(err));
+			throw VaultException("PAWN runtime error (%d): \"%s\"", err, aux_StrError(err)).stacktrace();
 
 		if (buf != 0)
 		{
@@ -1146,7 +1146,7 @@ cell PAWN::Call(AMX* amx, const char* name, const char* argl, const vector<boost
 		err = amx_FindPublic(amx, name, &idx);
 
 		if (err != AMX_ERR_NONE)
-			throw VaultException("PAWN runtime error (%d): \"%s\"", err, aux_StrError(err));
+			throw VaultException("PAWN runtime error (%d): \"%s\"", err, aux_StrError(err)).stacktrace();
 
 		for (int i = strlen(argl) - 1; i >= 0; i--)
 		{
@@ -1194,14 +1194,14 @@ cell PAWN::Call(AMX* amx, const char* name, const char* argl, const vector<boost
 				}
 
 				default:
-					throw VaultException("PAWN call: Unknown argument identifier %02X", argl[i]);
+					throw VaultException("PAWN call: Unknown argument identifier %02X", argl[i]).stacktrace();
 			}
 		}
 
 		err = amx_Exec(amx, &ret, idx);
 
 		if (err != AMX_ERR_NONE)
-			throw VaultException("PAWN runtime error (%d): \"%s\"", err, aux_StrError(err));
+			throw VaultException("PAWN runtime error (%d): \"%s\"", err, aux_StrError(err)).stacktrace();
 
 		if (str)
 			amx_Release(amx, str);

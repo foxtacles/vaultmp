@@ -8,7 +8,7 @@ unordered_map<unsigned int, vector<const BaseContainer*>> BaseContainer::baseCon
 BaseContainer::BaseContainer(const string& table, sqlite3_stmt* stmt)
 {
 	if (sqlite3_column_count(stmt) != 5)
-		throw VaultException("Malformed input database (base containers): %s", table.c_str());
+		throw VaultException("Malformed input database (base containers): %s", table.c_str()).stacktrace();
 
 	unsigned int dlc = static_cast<unsigned int>(sqlite3_column_int(stmt, 4));
 	// if DLC enabled

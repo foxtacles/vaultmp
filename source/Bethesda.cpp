@@ -54,7 +54,7 @@ void Bethesda::Initialize()
 			break;
 
 		default:
-			throw VaultException("Bad game ID %08X", Bethesda::game);
+			throw VaultException("Bad game ID %08X", Bethesda::game).stacktrace();
 	}
 
 	TCHAR curdir[MAX_PATH+1];
@@ -73,10 +73,10 @@ void Bethesda::Initialize()
 		strcat(modfile, it->first.c_str());
 
 		if (!Utils::crc32file(modfile, &crc))
-			throw VaultException("Could not find modification file:\n\n%s\n\nAsk the server owner to send you the file or try to Synchronize with the server", modfile);
+			throw VaultException("Could not find modification file:\n\n%s\n\nAsk the server owner to send you the file or try to Synchronize with the server", modfile).stacktrace();
 
 		if (crc != it->second)
-			throw VaultException("Modfile differs from the server version:\n\n%s\n\nAsk the server owner to send you the file or try to Synchronize with the server", modfile);
+			throw VaultException("Modfile differs from the server version:\n\n%s\n\nAsk the server owner to send you the file or try to Synchronize with the server", modfile).stacktrace();
 	}
 
 	TCHAR pluginsdir[MAX_PATH+1];
@@ -156,7 +156,7 @@ void Bethesda::Initialize()
 				VirtualFreeEx(pi.hProcess, remote, size, MEM_RELEASE);
 				CloseHandle(pi.hThread);
 				CloseHandle(pi.hProcess);
-				throw VaultException("Couldn't allocate memory in remote process");
+				throw VaultException("Couldn't allocate memory in remote process").stacktrace();
 			}
 
 			if (WriteProcessMemory(pi.hProcess, remote, curdir, size, nullptr) == false)
@@ -164,7 +164,7 @@ void Bethesda::Initialize()
 				VirtualFreeEx(pi.hProcess, remote, size, MEM_RELEASE);
 				CloseHandle(pi.hThread);
 				CloseHandle(pi.hProcess);
-				throw VaultException("Couldn't write memory in remote process");
+				throw VaultException("Couldn't write memory in remote process").stacktrace();
 			}
 
 			if ((hRemoteThread = CreateRemoteThread(pi.hProcess, nullptr, 0, (LPTHREAD_START_ROUTINE) pLoadLibrary, remote, 0, 0)) == nullptr)
@@ -172,13 +172,13 @@ void Bethesda::Initialize()
 				VirtualFreeEx(pi.hProcess, remote, size, MEM_RELEASE);
 				CloseHandle(pi.hThread);
 				CloseHandle(pi.hProcess);
-				throw VaultException("Couldn't create remote thread");
+				throw VaultException("Couldn't create remote thread").stacktrace();
 			}
 
 			if (WaitForSingleObject(hRemoteThread, 5000) != WAIT_OBJECT_0)
 			{
 				VirtualFreeEx(pi.hProcess, remote, size, MEM_RELEASE);
-				throw VaultException("Remote thread timed out");
+				throw VaultException("Remote thread timed out").stacktrace();
 			}
 
 			VirtualFreeEx(pi.hProcess, remote, size, MEM_RELEASE);
@@ -193,7 +193,7 @@ void Bethesda::Initialize()
 					this_thread::sleep_for(chrono::milliseconds(100));
 
 				if (!Interface::IsAvailable())
-					throw VaultException("Failed connecting to vaultmp interface");
+					throw VaultException("Failed connecting to vaultmp interface").stacktrace();
 			}
 			catch (...)
 			{
@@ -223,10 +223,10 @@ void Bethesda::Initialize()
 			initialized = true;
 		}
 		else
-			throw VaultException("Failed creating the game process");
+			throw VaultException("Failed creating the game process").stacktrace();
 	}
 	else
-		throw VaultException("Either Fallout 3 or Fallout: New Vegas is already runnning");
+		throw VaultException("Either Fallout 3 or Fallout: New Vegas is already runnning").stacktrace();
 }
 
 void Bethesda::Terminate(RakPeerInterface* peer)
@@ -321,7 +321,7 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, c
 				}
 
 				if (!query)
-					throw VaultException("Server closed connection");
+					throw VaultException("Server closed connection").stacktrace();
 
 				if (initialized && !Interface::IsAvailable())
 				{
@@ -330,14 +330,14 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, c
 					query = false;
 
 					if (!Interface::HasShutdown())
-						throw VaultException("Interface lost, game closed unexpectedly");
+						throw VaultException("Interface lost, game closed unexpectedly").stacktrace();
 				}
 
 				this_thread::sleep_for(chrono::milliseconds(1));
 			}
 		}
 		else
-			throw VaultException("Could not establish connection to server");
+			throw VaultException("Could not establish connection to server").stacktrace();
 	}
 	catch (...)
 	{

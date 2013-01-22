@@ -90,7 +90,17 @@ class Expected
 			if (valid)
 				return value;
 			else
-				std::rethrow_exception(exception);
+			{
+				try
+				{
+					std::rethrow_exception(exception);
+				}
+				catch (VaultException& exception)
+				{
+					exception.stacktrace();
+					throw;
+				}
+			}
 		}
 
 		template<typename U>

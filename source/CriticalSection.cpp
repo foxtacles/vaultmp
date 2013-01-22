@@ -47,7 +47,7 @@ CriticalSection* CriticalSection::StartSession()
 		return nullptr;
 	}
 	else
-		throw VaultException("Could not enter CriticalSection object %08X, timeout of %dms reached (%s)", this, CS_TIMEOUT, typeid(*this).name());
+		throw VaultException("Could not enter CriticalSection object %08X, timeout of %dms reached (%s)", this, CS_TIMEOUT, typeid(*this).name()).stacktrace();
 }
 
 void CriticalSection::EndSession()

@@ -8,7 +8,7 @@ unordered_map<unsigned int, const Weapon*> Weapon::weapons;
 Weapon::Weapon(const string& table, sqlite3_stmt* stmt)
 {
 	if (sqlite3_column_count(stmt) != 7)
-		throw VaultException("Malformed input database (weapons): %s", table.c_str());
+		throw VaultException("Malformed input database (weapons): %s", table.c_str()).stacktrace();
 
 	unsigned int dlc = static_cast<unsigned int>(sqlite3_column_int(stmt, 6));
 	// if DLC enabled

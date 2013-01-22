@@ -24,7 +24,7 @@ unsigned long long Public::Call(const string& name, const vector<boost::any>& ar
 	auto it = publics.find(name);
 
 	if (it == publics.end())
-		throw VaultException("Public with name %s does not exist", name.c_str());
+		throw VaultException("Public with name %s does not exist", name.c_str()).stacktrace();
 
 	return it->second->ScriptFunction::Call(args);
 }
@@ -34,7 +34,7 @@ string Public::GetDefinition(const string& name)
 	auto it = publics.find(name);
 
 	if (it == publics.end())
-		throw VaultException("Public with name %s does not exist", name.c_str());
+		throw VaultException("Public with name %s does not exist", name.c_str()).stacktrace();
 
 	return it->second->def;
 }

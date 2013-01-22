@@ -194,7 +194,7 @@ void Player::SetRespawn(unsigned int respawn)
 void Player::SetSpawnCell(unsigned int cell)
 {
 	if (!DB::Record::IsValidCell(cell))
-		throw VaultException("%08X is not a valid cell", cell);
+		throw VaultException("%08X is not a valid cell", cell).stacktrace();
 
 	default_cell = cell;
 }
@@ -251,7 +251,7 @@ Lockable* Player::SetPlayerRespawn(unsigned int respawn)
 Lockable* Player::SetPlayerSpawnCell(unsigned int cell)
 {
 	if (!DB::Record::IsValidCell(cell))
-		throw VaultException("%08X is not a valid cell", cell);
+		throw VaultException("%08X is not a valid cell", cell).stacktrace();
 
 	return SetObjectValue(this->player_Cell, cell);
 }

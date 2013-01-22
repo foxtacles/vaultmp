@@ -9,7 +9,7 @@ unordered_map<unsigned int, const NPC*> NPC::npcs;
 NPC::NPC(const string& table, sqlite3_stmt* stmt) : new_female(-1), new_race(0x00000000)
 {
 	if (sqlite3_column_count(stmt) != 8)
-		throw VaultException("Malformed input database (NPCs): %s", table.c_str());
+		throw VaultException("Malformed input database (NPCs): %s", table.c_str()).stacktrace();
 
 	unsigned int dlc = static_cast<unsigned int>(sqlite3_column_int(stmt, 7));
 	// if DLC enabled

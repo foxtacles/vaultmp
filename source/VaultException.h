@@ -32,7 +32,7 @@ class VaultException : public std::exception
 
 #ifdef VAULTMP_DEBUG
 		static DebugInput<VaultException> debug;
-		static void stacktrace();
+		static void stacktrace_();
 #endif
 
 		VaultException& operator=(const VaultException&) = delete;
@@ -50,6 +50,10 @@ class VaultException : public std::exception
 		 * \brief Prints the exception message to the console
 		 */
 		void Console();
+		/**
+		 * \brief Prints a stacktrace
+		 */
+		VaultException& stacktrace();
 
 		virtual const char* what() const throw();
 };

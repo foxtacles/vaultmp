@@ -42,7 +42,7 @@ NetworkResponse NetworkClient::ProcessEvent(unsigned char id)
 		}
 
 		default:
-			throw VaultException("Unhandled event type %d", id);
+			throw VaultException("Unhandled event type %d", id).stacktrace();
 	}
 }
 
@@ -70,19 +70,19 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 		}
 
 		case ID_INVALID_PASSWORD:
-			throw VaultException("Dedicated server version mismatch.\nPlease download the most recent binaries from www.vaultmp.com");
+			throw VaultException("Dedicated server version mismatch.\nPlease download the most recent binaries from www.vaultmp.com").stacktrace();
 
 		case ID_NO_FREE_INCOMING_CONNECTIONS:
-			throw VaultException("The server is full");
+			throw VaultException("The server is full").stacktrace();
 
 		case ID_CONNECTION_ATTEMPT_FAILED:
-			throw VaultException("Failed to connect to the server");
+			throw VaultException("Failed to connect to the server").stacktrace();
 
 		case ID_CONNECTION_BANNED:
-			throw VaultException("You are banned from the server");
+			throw VaultException("You are banned from the server").stacktrace();
 
 		case ID_CONNECTION_LOST:
-			throw VaultException("Lost connection to the server");
+			throw VaultException("Lost connection to the server").stacktrace();
 
 		case ID_UNCONNECTED_PONG:
 			break;
@@ -138,16 +138,16 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					switch (reason)
 					{
 						case Reason::ID_REASON_KICK:
-							throw VaultException("You have been kicked from the server");
+							throw VaultException("You have been kicked from the server").stacktrace();
 
 						case Reason::ID_REASON_BAN:
-							throw VaultException("You have been banned from the server");
+							throw VaultException("You have been banned from the server").stacktrace();
 
 						case Reason::ID_REASON_ERROR:
-							throw VaultException("The server encountered an internal error");
+							throw VaultException("The server encountered an internal error").stacktrace();
 
 						case Reason::ID_REASON_DENIED:
-							throw VaultException("Your authentication has been denied");
+							throw VaultException("Your authentication has been denied").stacktrace();
 
 						case Reason::ID_REASON_QUIT:
 						case Reason::ID_REASON_NONE:
@@ -430,7 +430,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				}
 
 				default:
-					throw VaultException("Unhandled packet type %d", data->data[0]);
+					throw VaultException("Unhandled packet type %d", data->data[0]).stacktrace();
 			}
 		}
 	}

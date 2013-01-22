@@ -189,7 +189,7 @@ Lockable* Actor::SetActorMovingAnimation(unsigned char index)
 	string anim = API::RetrieveAnim_Reverse(index);
 
 	if (anim.empty())
-		throw VaultException("Value %02X not defined in database", index);
+		throw VaultException("Value %02X not defined in database", index).stacktrace();
 
 	return SetObjectValue(this->anim_Moving, index);
 }
@@ -204,7 +204,7 @@ Lockable* Actor::SetActorWeaponAnimation(unsigned char index)
 	string anim = API::RetrieveAnim_Reverse(index);
 
 	if (anim.empty())
-		throw VaultException("Value %02X not defined in database", index);
+		throw VaultException("Value %02X not defined in database", index).stacktrace();
 
 	return SetObjectValue(this->anim_Weapon, index);
 }

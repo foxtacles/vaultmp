@@ -168,7 +168,7 @@ int main(int argc, char* argv[])
 			snprintf(file, sizeof(file), "%s/%s/%s", base, MODFILES_PATH, token);
 
 			if (!Utils::crc32file(file, &crc))
-				throw VaultException("Could not find modfile %s in folder %s", token, MODFILES_PATH);
+				throw VaultException("Could not find modfile %s in folder %s", token, MODFILES_PATH).stacktrace();
 
 			modfiles.emplace_back(token, crc);
 

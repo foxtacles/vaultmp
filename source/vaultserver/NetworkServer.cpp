@@ -19,7 +19,7 @@ NetworkResponse NetworkServer::ProcessEvent(unsigned char id)
 			};
 
 		default:
-			throw VaultException("Unhandled event type %d", id);
+			throw VaultException("Unhandled event type %d", id).stacktrace();
 	}
 }
 
@@ -226,7 +226,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 				}
 
 				default:
-					throw VaultException("Unhandled packet type %d", data->data[0]);
+					throw VaultException("Unhandled packet type %d", data->data[0]).stacktrace();
 			}
 		}
 	}

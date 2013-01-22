@@ -25,10 +25,10 @@
 
 #ifdef __WIN32__
 #define GetScript(a,b) (b = (decltype(b)) GetProcAddress(this->lib,a))
-#define SetScript(a,b) *((decltype(b)*)(GetProcAddress(this->lib,a)?GetProcAddress(this->lib,a):throw VaultException("Script variable not found: %s", a)))=b;
+#define SetScript(a,b) *((decltype(b)*)(GetProcAddress(this->lib,a)?GetProcAddress(this->lib,a):throw VaultException("Script variable not found: %s", a).stacktrace()))=b;
 #else
 #define GetScript(a,b) (b = (decltype(b)) dlsym(this->lib,a))
-#define SetScript(a,b) *((decltype(b)*)(dlsym(this->lib,a)?dlsym(this->lib,a):throw VaultException("Script function pointer not found: %s", a)))=b;
+#define SetScript(a,b) *((decltype(b)*)(dlsym(this->lib,a)?dlsym(this->lib,a):throw VaultException("Script function pointer not found: %s", a).stacktrace()))=b;
 #endif
 
 /**

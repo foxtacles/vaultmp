@@ -337,7 +337,7 @@ T pDefault::deconstruct_single() const
 	static_assert(std::is_trivial<T>::value, "Type cannot be trivially copied");
 
 	if (location + sizeof(T) > this->length())
-		throw VaultException("Reading past the end of packet");
+		throw VaultException("Reading past the end of packet").stacktrace();
 
 	location += sizeof(T);
 
@@ -365,7 +365,7 @@ void pDefault::deconstruct(std::string& arg, Args&... args) const
 	unsigned int length = strlen(reinterpret_cast<const char*>(&data[location]));
 
 	if (location + length + 1 > this->length())
-		throw VaultException("Reading past the end of packet");
+		throw VaultException("Reading past the end of packet").stacktrace();
 
 	arg.assign(reinterpret_cast<const char*>(&data[location]), length);
 

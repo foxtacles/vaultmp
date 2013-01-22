@@ -8,7 +8,7 @@ unordered_map<unsigned int, const Item*> Item::items;
 Item::Item(const string& table, sqlite3_stmt* stmt)
 {
 	if (sqlite3_column_count(stmt) != 6)
-		throw VaultException("Malformed input database (items): %s", table.c_str());
+		throw VaultException("Malformed input database (items): %s", table.c_str()).stacktrace();
 
 	unsigned int dlc = static_cast<unsigned int>(sqlite3_column_int(stmt, 5));
 	// if DLC enabled

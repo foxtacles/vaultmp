@@ -10,12 +10,6 @@ VaultException::VaultException(const string& error) : error(error)
 {
 #ifdef VAULTMP_DEBUG
 	debug.print(error.c_str());
-
-	try
-	{
-		stacktrace();
-	}
-	catch (...) {}
 #endif
 }
 
@@ -33,17 +27,11 @@ VaultException::VaultException(const char* format, ...)
 
 #ifdef VAULTMP_DEBUG
 	debug.print(error.c_str());
-
-	try
-	{
-		stacktrace();
-	}
-	catch (...) {}
 #endif
 }
 
 #ifdef VAULTMP_DEBUG
-void VaultException::stacktrace()
+void VaultException::stacktrace_()
 {
 	dbg::stack st;
 	ostringstream stream;
@@ -65,6 +53,18 @@ void VaultException::Message()
 void VaultException::Console()
 {
 	printf("%s\n", error.c_str());
+}
+
+VaultException& VaultException::stacktrace()
+{
+#ifdef VAULTMP_DEBUG
+	try
+	{
+		stacktrace_();
+	}
+	catch (...) {}
+#endif
+	return *this;
 }
 
 const char* VaultException::what() const throw()

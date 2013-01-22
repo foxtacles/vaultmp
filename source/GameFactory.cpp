@@ -56,7 +56,7 @@ void GameFactory::Initialize(unsigned char game)
 			break;
 
 		default:
-			throw VaultException("Bad game ID %08X", game);
+			throw VaultException("Bad game ID %08X", game).stacktrace();
 	}
 #endif
 }
@@ -268,7 +268,7 @@ NetworkID GameFactory::LookupNetworkID(unsigned int refID)
 	cs.EndSession();
 
 	if (!id)
-		throw VaultException("Unknown object with reference %08X", refID);
+		throw VaultException("Unknown object with reference %08X", refID).stacktrace();
 
 	return id;
 }
@@ -313,7 +313,7 @@ void GameFactory::LeaveReference(FactoryObject<T>& reference)
 	Reference* _reference = reference.reference;
 
 	if (!_reference)
-		throw VaultException("GameFactory::LeaveReference Reference is NULL");
+		throw VaultException("GameFactory::LeaveReference Reference is NULL").stacktrace();
 
 	_reference->EndSession();
 	reference.reference = nullptr;
@@ -371,7 +371,7 @@ NetworkID GameFactory::CreateInstance(unsigned char type, unsigned int refID, un
 	switch (type)
 	{
 		case ID_REFERENCE:
-			throw VaultException("It is not possible to have a pure Reference instance");
+			throw VaultException("It is not possible to have a pure Reference instance").stacktrace();
 
 		case ID_OBJECT:
 			reference = shared_ptr<Object>(new Object(refID, baseID));
@@ -394,7 +394,7 @@ NetworkID GameFactory::CreateInstance(unsigned char type, unsigned int refID, un
 			break;
 
 		default:
-			throw VaultException("Unknown type identifier %X", type);
+			throw VaultException("Unknown type identifier %X", type).stacktrace();
 	}
 
 	NetworkID id = reference->GetNetworkID();
@@ -427,7 +427,7 @@ void GameFactory::CreateKnownInstance(unsigned char type, NetworkID id, unsigned
 	switch (type)
 	{
 		case ID_REFERENCE:
-			throw VaultException("It is not possible to have a pure Reference instance");
+			throw VaultException("It is not possible to have a pure Reference instance").stacktrace();
 
 		case ID_OBJECT:
 			reference = shared_ptr<Object>(new Object(refID, baseID));
@@ -450,7 +450,7 @@ void GameFactory::CreateKnownInstance(unsigned char type, NetworkID id, unsigned
 			break;
 
 		default:
-			throw VaultException("Unknown type identifier %X", type);
+			throw VaultException("Unknown type identifier %X", type).stacktrace();
 	}
 
 	reference->SetNetworkID(id);
@@ -481,7 +481,7 @@ NetworkID GameFactory::CreateKnownInstance(unsigned char type, const pDefault* p
 	switch (type)
 	{
 		case ID_REFERENCE:
-			throw VaultException("It is not possible to have a pure Reference instance");
+			throw VaultException("It is not possible to have a pure Reference instance").stacktrace();
 
 		case ID_OBJECT:
 			reference = shared_ptr<Object>(new Object(packet));
@@ -504,7 +504,7 @@ NetworkID GameFactory::CreateKnownInstance(unsigned char type, const pDefault* p
 			break;
 
 		default:
-			throw VaultException("Unknown type identifier %X", type);
+			throw VaultException("Unknown type identifier %X", type).stacktrace();
 	}
 
 	NetworkID id = reference->GetNetworkID();
@@ -571,7 +571,7 @@ NetworkID GameFactory::DestroyInstance(FactoryObject<T>& reference)
 	Reference* _reference = reference.reference;
 
 	if (!_reference)
-		throw VaultException("GameFactory::DestroyInstance Reference is NULL");
+		throw VaultException("GameFactory::DestroyInstance Reference is NULL").stacktrace();
 
 	NetworkID id = _reference->GetNetworkID();
 

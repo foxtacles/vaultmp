@@ -24,7 +24,7 @@ unsigned int Lockable::NextKey()
 			++temp_key;
 
 		if (temp_key == key)
-			throw VaultException("Lockable class ran out of keys");
+			throw VaultException("Lockable class ran out of keys").stacktrace();
 	}
 
 	next_key = temp_key;
@@ -52,7 +52,7 @@ Lockable* Lockable::Retrieve(unsigned int key)
 	catch (...)
 	{
 		cs.EndSession();
-		throw VaultException("Key %08X did not unlock anything", key);
+		throw VaultException("Key %08X did not unlock anything", key).stacktrace();
 	}
 
 	cs.EndSession();
@@ -79,7 +79,7 @@ weak_ptr<Lockable> Lockable::Poll(unsigned int key, bool remove)
 	catch (...)
 	{
 		cs.EndSession();
-		throw VaultException("Key %08X did not share anything", key);
+		throw VaultException("Key %08X did not share anything", key).stacktrace();
 	}
 
 	cs.EndSession();

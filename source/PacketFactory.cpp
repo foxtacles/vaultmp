@@ -149,7 +149,7 @@ pPacket PacketFactory::Init(const unsigned char* stream, unsigned int len)
 			break;
 
 		default:
-			throw VaultException("Unhandled packet type %d", stream[0]);
+			throw VaultException("Unhandled packet type %d", stream[0]).stacktrace();
 	}
 
 #ifdef VAULTMP_DEBUG
