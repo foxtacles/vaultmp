@@ -325,7 +325,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					pair<list<NetworkID>, vector<pPacket>> ndiff, gdiff;
 					PacketFactory::Access<pTypes::ID_UPDATE_CONTAINER>(packet, id, ndiff, gdiff);
 					auto reference = GameFactory::GetObject<Container>(id);
-					Game::net_ContainerUpdate(reference.get(), ndiff, gdiff);
+					Game::net_UpdateContainer(reference.get(), ndiff, gdiff);
 					break;
 				}
 

@@ -310,8 +310,8 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Fallout3::Func_GetParentCell:
 			case FalloutNV::Func_GetParentCell:
 			{
-				auto objects = GameFactory::GetMultiple<Actor>(vector<unsigned int>{getFrom<unsigned int>(info.at(1)), PLAYER_REFERENCE});
-				GetParentCell(objects[0].get(), vaultcast<Player>(objects[1]).get(), getFrom<unsigned int>(result));
+				auto player = GameFactory::GetObject<Player>(getFrom<unsigned int>(info.at(1)));
+				GetParentCell(player.get(), getFrom<unsigned int>(result));
 				break;
 			}
 
@@ -422,7 +422,7 @@ void Game::Startup()
 	//Interface::SetupCommand("GetPos", {Actor::CreateFunctor(FLAG_ENABLED | FLAG_ALIVE), Object::Param_Axis()}, 30);
 	Interface::SetupCommand("GetAngle", {self_ref, RawParameter(vector<string> {API::RetrieveAxis_Reverse(Axis_X), API::RetrieveAxis_Reverse(Axis_Z)})});
 	Interface::SetupCommand("GetActorState", {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), Player::CreateFunctor(FLAG_MOVCONTROLS, id)});
-	Interface::SetupCommand("GetParentCell", {Player::CreateFunctor(FLAG_ALIVE)}, 30);
+	Interface::SetupCommand("GetParentCell", {self_ref}, 30);
 	Interface::SetupCommand("ScanContainer", {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED)}, 50);
 
 	auto func = Player::CreateFunctor(FLAG_ENABLED | FLAG_ALIVE);
@@ -792,12 +792,10 @@ void Game::NewObject(FactoryObject<Object>& reference)
 					auto& object = objects[0].get();
 					auto& player = objects[1].get();
 
-					unsigned int cell = player->GetGameCell();
-
-					if (object->GetNetworkCell() == cell)
+					if (IsInContext(object->GetNetworkCell()))
 					{
-						MoveTo(object, player, true);
 						object->SetEnabled(true);
+						MoveTo(object, player, true);
 					}
 					else
 					{
@@ -805,7 +803,7 @@ void Game::NewObject(FactoryObject<Object>& reference)
 						ToggleEnabled(object);
 					}
 
-					object->SetGameCell(cell);
+					object->SetGameCell(player->GetGameCell());
 				}
 				catch (...) {}
 			});
@@ -1539,6 +1537,17 @@ void Game::ForceRespawn()
 	}
 }
 
+bool Game::IsInContext(unsigned int cell)
+{
+	bool result;
+
+	cellContext.StartSession();
+	result = find((*cellContext).begin(), (*cellContext).end(), cell) != (*cellContext).end();
+	cellContext.EndSession();
+
+	return result;
+}
+
 void Game::net_SetPos(const FactoryObject<Object>& reference, double X, double Y, double Z)
 {
 	bool result = (static_cast<bool>(reference->SetNetworkPos(Axis_X, X)) | static_cast<bool>(reference->SetNetworkPos(Axis_Y, Y)) | static_cast<bool>(reference->SetNetworkPos(Axis_Z, Z)));
@@ -1580,22 +1589,25 @@ void Game::net_SetCell(const FactoryObject<Object>& reference, const FactoryObje
 
 	if (reference != player)
 	{
-		if (reference->GetNetworkCell() != player->GetGameCell())
+		if (IsInContext(cell))
+		{
+			if (reference->SetEnabled(true))
+				ToggleEnabled(reference);
+
+			if (reference->SetGameCell(cell))
+				MoveTo(reference, player, true);
+		}
+		else
 		{
 			if (reference->SetEnabled(false))
 				ToggleEnabled(reference);
 		}
-		else
-		{
-			if (reference->SetEnabled(true))
-				ToggleEnabled(reference);
-		}
-
-		cellRefs.StartSession();
-		(*cellRefs)[old_cell][reference.GetType()].erase(reference->GetReference());
-		(*cellRefs)[cell][reference.GetType()].insert(reference->GetReference());
-		cellRefs.EndSession();
 	}
+
+	cellRefs.StartSession();
+	(*cellRefs)[old_cell][reference.GetType()].erase(reference->GetReference());
+	(*cellRefs)[cell][reference.GetType()].insert(reference->GetReference());
+	cellRefs.EndSession();
 }
 
 void Game::net_SetLock(const FactoryObject<Object>& reference, unsigned int lock)
@@ -1628,7 +1640,7 @@ void Game::net_SetItemCondition(const FactoryObject<Item>& reference, double con
 		SetCurrentHealth(reference, health);
 }
 
-void Game::net_ContainerUpdate(FactoryObject<Container>& reference, const Container::NetDiff& ndiff, const Container::NetDiff& gdiff)
+void Game::net_UpdateContainer(FactoryObject<Container>& reference, const Container::NetDiff& ndiff, const Container::NetDiff& gdiff)
 {
 	Lockable* result;
 
@@ -1887,11 +1899,58 @@ void Game::net_UpdateExterior(unsigned int baseID, signed int x, signed int y, b
 	CenterOnWorld(baseID, x, y, spawn);
 }
 
-void Game::net_UpdateContext(const Player::CellContext& context)
+void Game::net_UpdateContext(Player::CellContext& context)
 {
+	cellRefs.StartSession();
 	cellContext.StartSession();
+
+	sort(context.begin(), context.end());
+	pair<vector<unsigned int>, vector<unsigned int>> diff;
+
+	set_difference(context.begin(), context.end(), (*cellContext).begin(), (*cellContext).end(), inserter(diff.first, diff.first.begin()));
+	set_difference((*cellContext).begin(), (*cellContext).end(), context.begin(), context.end(), inserter(diff.second, diff.second.begin()));
+
+	for (const auto& cell : diff.second)
+		if (cell)
+			for (const auto& refs : (*cellRefs)[cell])
+				for (unsigned int refID : refs.second)
+					if (refID != PLAYER_REFERENCE)
+					{
+						auto reference = GameFactory::GetObject<Object>(refID);
+
+						if (!reference)
+							continue; // we don't have information about static refs yet. remove
+
+						auto& object = reference.get();
+
+						if (object->SetEnabled(false))
+							ToggleEnabled(object);
+					}
+
+	for (const auto& cell : diff.first)
+		if (cell)
+			for (const auto& refs : (*cellRefs)[cell])
+				for (unsigned int refID : refs.second)
+					if (refID != PLAYER_REFERENCE)
+					{
+						auto reference = GameFactory::GetMultiple<Object>(vector<unsigned int>{refID, PLAYER_REFERENCE});
+
+						if (!reference[0])
+							continue; // we don't have information about static refs yet. remove
+
+						auto& object = reference[0].get();
+
+						if (object->SetEnabled(true))
+							ToggleEnabled(object);
+
+						if (object->SetGameCell(cell))
+							MoveTo(object, reference[1].get(), true);
+					}
+
 	*cellContext = context;
+
 	cellContext.EndSession();
+	cellRefs.EndSession();
 }
 
 void Game::net_UIMessage(const string& message)
@@ -1965,77 +2024,15 @@ void Game::GetAngle(const FactoryObject<Object>& reference, unsigned char axis, 
 		});
 }
 
-void Game::GetParentCell(const FactoryObject<Object>& reference, const FactoryObject<Player>& player, unsigned int cell)
+void Game::GetParentCell(const FactoryObject<Player>& player, unsigned int cell)
 {
-	// this obsolete soon
-	if (reference != player)
-	{
-		if (player->GetGameCell() && player->GetGameCell() == reference->GetNetworkCell() && reference->GetGameCell() != reference->GetNetworkCell())
-		{
-			if (reference->SetEnabled(true))
-				ToggleEnabled(reference);
+	bool result = static_cast<bool>(player->SetGameCell(cell));
 
-			Lockable* result = reference->SetGameCell(player->GetGameCell());
-
-			if (result)
-				MoveTo(reference, player, true, result->Lock());
-
-			SetAngle(reference);
-		}
-	}
-
-	bool result = static_cast<bool>(reference->SetGameCell(cell));
-
-	// this obsolete soon
-	if (reference != player)
-	{
-		if (player->GetGameCell() && reference->GetNetworkCell() != player->GetGameCell())
-		{
-			if (reference->SetEnabled(false))
-				ToggleEnabled(reference);
-		}
-		else
-		{
-			if (reference->SetEnabled(true))
-				ToggleEnabled(reference);
-		}
-	}
-
-	if (result && reference == player)
-	{
+	if (result)
 		Network::Queue(NetworkResponse{Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_CELL>(reference->GetNetworkID(), cell),
+			PacketFactory::Create<pTypes::ID_UPDATE_CELL>(player->GetNetworkID(), cell),
 			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, server)
 		});
-
-		cellRefs.StartSession();
-
-		for (const auto& refs : (*cellRefs)[cell])
-			if (refs.first != ID_PLAYER) // fix this
-				for (unsigned int refID : refs.second)
-				{
-					auto reference = GameFactory::GetObject<Object>(refID); // probably potential deadlock. maybe copy set out
-
-					if (!reference || reference.operator->() == player.operator->())
-						continue; // we don't have information about static refs yet. remove
-
-					auto& object = reference.get();
-
-					if (object->GetNetworkCell() == cell)
-					{
-						if (!object->GetEnabled())
-						{
-							object->SetEnabled(true);
-							ToggleEnabled(object);
-						}
-
-						if (object->SetGameCell(cell))
-							MoveTo(object, player, true);
-					}
-				}
-
-		cellRefs.EndSession();
-	}
 }
 
 void Game::GetDead(const FactoryObject<Actor>& reference, const FactoryObject<Player>&, bool dead)

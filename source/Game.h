@@ -299,7 +299,10 @@ class Game
 		 * \brief Forces the respawn ('back to menu') for the player
 		 */
 		static void ForceRespawn();
-
+		/**
+		 * \brief Tests whether a cell is in the range of the player
+		 */
+		static bool IsInContext(unsigned int cell);
 
 		/**
 		 * Network functions
@@ -336,7 +339,7 @@ class Game
 		/**
 		 * \brief Network function to handle Container update
 		 */
-		static void net_ContainerUpdate(FactoryObject<Container>& reference, const Container::NetDiff& ndiff, const Container::NetDiff& gdiff);
+		static void net_UpdateContainer(FactoryObject<Container>& reference, const Container::NetDiff& ndiff, const Container::NetDiff& gdiff);
 		/**
 		 * \brief Network function to handle Actor value
 		 */
@@ -374,9 +377,9 @@ class Game
 		 */
 		static void net_UpdateExterior(unsigned int baseID, signed int x, signed int y, bool spawn);
 		/**
-		 * \brief Network function to handle exterior update
+		 * \brief Network function to handle cell context update
 		 */
-		static void net_UpdateContext(const Player::CellContext& context);
+		static void net_UpdateContext(Player::CellContext& context);
 		/**
 		 * \brief Network function to handle UI message
 		 */
@@ -413,7 +416,7 @@ class Game
 		/**
 		 * \brief Handles GetParentCell command result
 		 */
-		static void GetParentCell(const FactoryObject<Object>& reference, const FactoryObject<Player>& player, unsigned int cell);
+		static void GetParentCell(const FactoryObject<Player>& player, unsigned int cell);
 		/**
 		 * \brief Handles GetDead command result
 		 */
