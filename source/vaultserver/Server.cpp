@@ -241,7 +241,14 @@ NetworkResponse Server::GetCell(RakNetGUID guid, const FactoryObject<Object>& re
 
 		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_CELL>(reference->GetNetworkID(), cell),
-			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, Client::GetNetworkList(guid)));
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
+
+		auto player = vaultcast<Player>(reference);
+
+		if (player)
+			response.emplace_back(Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(reference->GetNetworkID(), player->GetPlayerCellContext()),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 
 		Script::OnCellChange(reference, cell);
 	}

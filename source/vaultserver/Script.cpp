@@ -453,6 +453,11 @@ bool Script::SetCell_intern(NetworkID id, unsigned int cell, double X, double Y,
 						PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, new_exterior->GetWorld(), new_exterior->GetX(), new_exterior->GetY(), false),
 						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
 					);
+
+				response.emplace_back(Network::CreateResponse(
+					PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(reference->GetNetworkID(), player->GetPlayerCellContext()),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
+				);
 			}
 		}
 
@@ -1821,11 +1826,20 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 				);
 
-				if (vaultcast<Player>(object))
+				auto player = vaultcast<Player>(object);
+
+				if (player)
+				{
 					response.emplace_back(Network::CreateResponse(
 						PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, new_cell->GetWorld(), new_cell->GetX(), new_cell->GetY(), false),
 						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
 					);
+
+					response.emplace_back(Network::CreateResponse(
+						PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(reference->GetNetworkID(), player->GetPlayerCellContext()),
+						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
+					);
+				}
 			}
 			else
 				_new_cell = 0x00000000;

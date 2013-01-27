@@ -148,6 +148,10 @@ pPacket PacketFactory::Init(const unsigned char* stream, unsigned int len)
 			packet = new pPlayerExterior(stream, len);
 			break;
 
+		case pTypes::ID_UPDATE_CONTEXT:
+			packet = new pPlayerContext(stream, len);
+			break;
+
 		default:
 			throw VaultException("Unhandled packet type %d", stream[0]).stacktrace();
 	}

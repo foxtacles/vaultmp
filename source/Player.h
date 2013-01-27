@@ -26,7 +26,7 @@ class Player : public Actor
 		friend class PlayerFunctor;
 
 	public:
-		typedef std::array<unsigned int, 6> CellContext;
+		typedef std::array<unsigned int, 9> CellContext;
 
 	private:
 #ifdef VAULTMP_DEBUG

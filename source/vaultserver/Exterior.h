@@ -23,8 +23,6 @@ namespace DB
 	class Exterior
 	{
 		private:
-			static constexpr double size = 4096.0;
-
 			static std::unordered_map<unsigned int, const Exterior*> cells;
 			static std::unordered_map<unsigned int, std::vector<const Exterior*>> worlds;
 
@@ -37,6 +35,8 @@ namespace DB
 			Exterior& operator=(const Exterior&) = delete;
 
 		public:
+			static constexpr double size = 4096.0;
+
 			static Expected<const Exterior*> Lookup(unsigned int baseID);
 			static Expected<const Exterior*> Lookup(unsigned int world, double X, double Y);
 

@@ -61,6 +61,7 @@ enum class pTypes : unsigned char
 	ID_UPDATE_CONTROL,
 	ID_UPDATE_INTERIOR,
 	ID_UPDATE_EXTERIOR,
+	ID_UPDATE_CONTEXT
 };
 
 enum class Reason : unsigned char
@@ -138,11 +139,19 @@ class pDefault
 		void unpack_tuple(const std::tuple<T...>&, tuple_count<N>);
 		template<typename... T>
 		void unpack_tuple(const std::tuple<T...>&, tuple_count<0>);
+		template<typename T, size_t N, size_t I>
+		void unpack_array(const std::array<T, N>&, tuple_count<I>);
+		template<typename T, size_t N>
+		void unpack_array(const std::array<T, N>&, tuple_count<0>);
 
 		template<typename... T, size_t N>
 		void pack_tuple(std::tuple<T...>&, tuple_count<N>) const;
 		template<typename... T>
 		void pack_tuple(std::tuple<T...>&, tuple_count<0>) const;
+		template<typename T, size_t N, size_t I>
+		void pack_array(std::array<T, N>&, tuple_count<I>) const;
+		template<typename T, size_t N>
+		void pack_array(std::array<T, N>&, tuple_count<0>) const;
 
 		std::vector<unsigned char> data;
 		mutable unsigned int location;
@@ -185,6 +194,9 @@ class pDefault
 		template<typename... T, typename... Args>
 		void construct(const std::tuple<T...>&, const Args&...);
 
+		template<typename T, size_t N, typename... Args>
+		void construct(const std::array<T, N>&, const Args&...);
+
 		template<typename T, typename... Args>
 		void deconstruct(T&, Args&...) const;
 		template<typename T>
@@ -208,6 +220,9 @@ class pDefault
 
 		template<typename... T, typename... Args>
 		void deconstruct(std::tuple<T...>&, Args&...) const;
+
+		template<typename T, size_t N, typename... Args>
+		void deconstruct(std::array<T, N>&, Args&...) const;
 
 	public:
 		virtual ~pDefault() = default;
@@ -310,6 +325,13 @@ void pDefault::construct(const std::tuple<T...>& arg, const Args&...args)
 	construct(args...);
 }
 
+template<typename T, size_t N, typename... Args>
+void pDefault::construct(const std::array<T, N>& arg, const Args&...args)
+{
+	unpack_array(arg, tuple_count<N - 1>());
+	construct(args...);
+}
+
 template<typename... T, size_t N>
 void pDefault::unpack_tuple(const std::tuple<T...>& arg, tuple_count<N>)
 {
@@ -321,6 +343,19 @@ template<typename... T>
 void pDefault::unpack_tuple(const std::tuple<T...>& arg, tuple_count<0>)
 {
 	construct(std::get<0>(arg));
+}
+
+template<typename T, size_t N, size_t I>
+void pDefault::unpack_array(const std::array<T, N>& arg, tuple_count<I>)
+{
+	construct(arg[I]);
+	unpack_array(arg, tuple_count<I - 1>());
+}
+
+template<typename T, size_t N>
+void pDefault::unpack_array(const std::array<T, N>& arg, tuple_count<0>)
+{
+	construct(arg[0]);
 }
 
 template<typename T, typename... Args>
@@ -442,6 +477,13 @@ void pDefault::deconstruct(std::tuple<T...>& arg, Args&... args) const
 	deconstruct(args...);
 }
 
+template<typename T, size_t N, typename... Args>
+void pDefault::deconstruct(std::array<T, N>& arg, Args&... args) const
+{
+	pack_array(arg, tuple_count<N - 1>());
+	deconstruct(args...);
+}
+
 template<typename... T, size_t N>
 void pDefault::pack_tuple(std::tuple<T...>& arg, tuple_count<N>) const
 {
@@ -453,6 +495,19 @@ template<typename... T>
 void pDefault::pack_tuple(std::tuple<T...>& arg, tuple_count<0>) const
 {
 	deconstruct(std::get<0>(arg));
+}
+
+template<typename T, size_t N, size_t I>
+void pDefault::pack_array(std::array<T, N>& arg, tuple_count<I>) const
+{
+	deconstruct(arg[I]);
+	pack_array(arg, tuple_count<I - 1>());
+}
+
+template<typename T, size_t N>
+void pDefault::pack_array(std::array<T, N>& arg, tuple_count<0>) const
+{
+	deconstruct(arg[0]);
 }
 
 template<typename T>
@@ -1246,5 +1301,26 @@ class pPlayerExterior : public pObjectDefault
 		}
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_EXTERIOR> { typedef pPlayerExterior type; };
+
+class pPlayerContext : public pObjectDefault
+{
+		friend class PacketFactory;
+
+	private:
+		pPlayerContext(RakNet::NetworkID id, const std::array<unsigned int, 9>& context) : pObjectDefault(pTypes::ID_UPDATE_CONTEXT, id)
+		{
+			construct(context);
+		}
+		pPlayerContext(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		{
+
+		}
+
+		void access(RakNet::NetworkID& id, std::array<unsigned int, 9>& context) const
+		{
+			deconstruct(id, context);
+		}
+};
+template<> struct pTypesMap<pTypes::ID_UPDATE_CONTEXT> { typedef pPlayerContext type; };
 
 #endif
