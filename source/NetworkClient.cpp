@@ -414,7 +414,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					string cell;
 					bool spawn;
 					PacketFactory::Access<pTypes::ID_UPDATE_INTERIOR>(packet, id, cell, spawn);
-					Game::CenterOnCell(cell, spawn);
+					Game::net_UpdateInterior(cell, spawn);
 					break;
 				}
 
@@ -425,7 +425,16 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					signed int x, y;
 					bool spawn;
 					PacketFactory::Access<pTypes::ID_UPDATE_EXTERIOR>(packet, id, baseID, x, y, spawn);
-					Game::CenterOnWorld(baseID, x, y, spawn);
+					Game::net_UpdateExterior(baseID, x, y, spawn);
+					break;
+				}
+
+				case pTypes::ID_UPDATE_CONTEXT:
+				{
+					NetworkID id;
+					Player::CellContext context;
+					PacketFactory::Access<pTypes::ID_UPDATE_CONTEXT>(packet, id, context);
+					Game::net_UpdateContext(context);
 					break;
 				}
 

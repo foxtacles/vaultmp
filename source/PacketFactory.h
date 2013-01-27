@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <type_traits>
+#include <array>
 
 #include "vaultmp.h"
 #include "VaultException.h"

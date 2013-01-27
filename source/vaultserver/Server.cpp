@@ -110,10 +110,6 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 			return (!(data.GetBase() & 0xFF000000) && !data.IsEssential() && !DB::Race::Lookup(data.GetRace())->IsChild());
 		})->GetBase();
 
-	response.emplace_back(Network::CreateResponse(
-		PacketFactory::Create<pTypes::ID_GAME_BASE>(result),
-		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
-
 	const DB::NPC* npc = *DB::NPC::Lookup(result);
 
 	player->SetReference(0x00000000);
@@ -123,7 +119,15 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 	player->SetNetworkCell(cell);
 	player->SetGameCell(cell);
 
-	const vector<const DB::BaseContainer*>& container = npc->GetBaseContainer();
+	response.emplace_back(Network::CreateResponse(
+		PacketFactory::Create<pTypes::ID_GAME_BASE>(result),
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+
+	response.emplace_back(Network::CreateResponse(
+		PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(id, player->GetPlayerCellContext()),
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+
+	const auto& container = npc->GetBaseContainer();
 
 	for (const auto* item : container)
 	{

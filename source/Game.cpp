@@ -10,6 +10,7 @@ unsigned char Game::game = 0x00;
 RakNetGUID Game::server;
 
 Guarded<Game::CellRefs> Game::cellRefs;
+Guarded<Player::CellContext> Game::cellContext;
 Game::BaseRaces Game::baseRaces;
 Game::Globals Game::globals;
 Game::Weather Game::weather;
@@ -1874,6 +1875,23 @@ void Game::net_SetActorIdle(const FactoryObject<Actor>& reference, unsigned int 
 
 	if (result && enabled && idle)
 		SetActorIdleAnimation(reference, name, result->Lock());
+}
+
+void Game::net_UpdateInterior(const std::string& cell, bool spawn)
+{
+	CenterOnCell(cell, spawn);
+}
+
+void Game::net_UpdateExterior(unsigned int baseID, signed int x, signed int y, bool spawn)
+{
+	CenterOnWorld(baseID, x, y, spawn);
+}
+
+void Game::net_UpdateContext(const Player::CellContext& context)
+{
+	cellContext.StartSession();
+	*cellContext = context;
+	cellContext.EndSession();
 }
 
 void Game::net_UIMessage(const string& message)

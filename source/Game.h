@@ -44,6 +44,7 @@ class Game
 		typedef unsigned int Weather;
 
 		static Guarded<CellRefs> cellRefs;
+		static Guarded<Player::CellContext> cellContext;
 		static BaseRaces baseRaces;
 		static Globals globals;
 		static Weather weather;
@@ -364,6 +365,18 @@ class Game
 		 * \brief Network function to handle Actor idle animation
 		 */
 		static void net_SetActorIdle(const FactoryObject<Actor>& reference, unsigned int idle, const std::string& name);
+		/**
+		 * \brief Network function to handle interior update
+		 */
+		static void net_UpdateInterior(const std::string& cell, bool spawn);
+		/**
+		 * \brief Network function to handle exterior update
+		 */
+		static void net_UpdateExterior(unsigned int baseID, signed int x, signed int y, bool spawn);
+		/**
+		 * \brief Network function to handle exterior update
+		 */
+		static void net_UpdateContext(const Player::CellContext& context);
 		/**
 		 * \brief Network function to handle UI message
 		 */
