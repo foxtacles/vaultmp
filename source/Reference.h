@@ -1,6 +1,8 @@
 #ifndef REFERENCE_H
 #define REFERENCE_H
 
+#include <array>
+
 #include "RakNet.h"
 
 #include "Data.h"

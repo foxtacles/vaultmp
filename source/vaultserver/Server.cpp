@@ -119,6 +119,10 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 	player->SetReference(0x00000000);
 	player->SetBase(result);
 
+	auto cell = Player::GetSpawnCell();
+	player->SetNetworkCell(cell);
+	player->SetGameCell(cell);
+
 	const vector<const DB::BaseContainer*>& container = npc->GetBaseContainer();
 
 	for (const auto* item : container)

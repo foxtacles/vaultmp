@@ -1808,8 +1808,6 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 		object->SetGamePos(Axis_Y, Y);
 		object->SetGamePos(Axis_Z, Z);
 
-		auto player = vaultcast<Player>(object);
-
 		if (new_cell)
 		{
 			_new_cell = new_cell->GetBase();
@@ -1823,7 +1821,7 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 				);
 
-				if (player)
+				if (vaultcast<Player>(object))
 					response.emplace_back(Network::CreateResponse(
 						PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, new_cell->GetWorld(), new_cell->GetX(), new_cell->GetY(), false),
 						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())

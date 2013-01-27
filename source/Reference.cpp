@@ -68,12 +68,13 @@ Lockable* Reference::SetObjectValue(Value<double>& dest, const double& value)
 
 	return &dest;
 }
-template Lockable* Reference::SetObjectValue(Value<unsigned int>& dest, const unsigned int& value);
-template Lockable* Reference::SetObjectValue(Value<signed int>& dest, const signed int& value);
-template Lockable* Reference::SetObjectValue(Value<unsigned char>& dest, const unsigned char& value);
-template Lockable* Reference::SetObjectValue(Value<bool>& dest, const bool& value);
-template Lockable* Reference::SetObjectValue(Value<string>& dest, const string& value);
-template Lockable* Reference::SetObjectValue(Value<NetworkID>& dest, const NetworkID& id);
+template Lockable* Reference::SetObjectValue(Value<unsigned int>&, const unsigned int&);
+template Lockable* Reference::SetObjectValue(Value<signed int>&, const signed int&);
+template Lockable* Reference::SetObjectValue(Value<unsigned char>&, const unsigned char&);
+template Lockable* Reference::SetObjectValue(Value<bool>&, const bool&);
+template Lockable* Reference::SetObjectValue(Value<string>&, const string&);
+template Lockable* Reference::SetObjectValue(Value<NetworkID>&, const NetworkID&);
+template Lockable* Reference::SetObjectValue(Value<array<unsigned int, 6>>&, const array<unsigned int, 6>&);
 
 Lockable* Reference::SetReference(unsigned int refID)
 {

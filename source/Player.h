@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <array>
 
 #include "Actor.h"
 
@@ -24,8 +25,10 @@ class Player : public Actor
 		friend class GameFactory;
 		friend class PlayerFunctor;
 
-	private:
+	public:
+		typedef std::array<unsigned int, 6> CellContext;
 
+	private:
 #ifdef VAULTMP_DEBUG
 		static DebugInput<Player> debug;
 #endif
@@ -38,6 +41,8 @@ class Player : public Actor
 
 		Value<unsigned int> player_Respawn;
 		Value<unsigned int> player_Cell;
+
+		Value<CellContext> player_CellContext;
 #endif
 
 		std::unordered_map<unsigned char, std::pair<Value<unsigned char>, Value<bool>>> player_Controls;
@@ -109,10 +114,14 @@ class Player : public Actor
 		 * \brief Returns the Player's spawn cell
 		 */
 		unsigned int GetPlayerSpawnCell() const;
+		/**
+		 * \brief Returns the Player's cell context
+		 */
+		const CellContext& GetPlayerCellContext() const;
 #endif
 
 		/**
-		 * \brief Associates a key to the Player's control code
+		 * \brief Associates a key with the Player's control code
 		 */
 		Lockable* SetPlayerControl(unsigned char control, unsigned char key);
 		/**
@@ -128,6 +137,10 @@ class Player : public Actor
 		 * \brief Sets the spawn cell
 		 */
 		Lockable* SetPlayerSpawnCell(unsigned int cell);
+		/**
+		 * \brief Sets the network cell / network cell context
+		 */
+		virtual Lockable* SetNetworkCell(unsigned int cell);
 #endif
 
 #ifdef VAULTSERVER

@@ -133,7 +133,11 @@ class Object : public Reference
 		/**
 		 * \brief Sets the Object's network cell
 		 */
+#ifdef VAULTSERVER
+		virtual Lockable* SetNetworkCell(unsigned int cell);
+#else
 		Lockable* SetNetworkCell(unsigned int cell);
+#endif
 		/**
 		 * \brief Sets the Object's enabled state
 		 */

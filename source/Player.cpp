@@ -230,6 +230,11 @@ unsigned int Player::GetPlayerSpawnCell() const
 {
 	return player_Cell.get();
 }
+
+const Player::CellContext& Player::GetPlayerCellContext() const
+{
+	return *player_CellContext;
+}
 #endif
 
 Lockable* Player::SetPlayerControl(unsigned char control, unsigned char key)
@@ -254,6 +259,18 @@ Lockable* Player::SetPlayerSpawnCell(unsigned int cell)
 		throw VaultException("%08X is not a valid cell", cell).stacktrace();
 
 	return SetObjectValue(this->player_Cell, cell);
+}
+
+Lockable* Player::SetNetworkCell(unsigned int cell)
+{
+	Lockable* ret = Object::SetNetworkCell(cell);
+
+	if (ret)
+	{
+
+	}
+
+	return ret;
 }
 #endif
 

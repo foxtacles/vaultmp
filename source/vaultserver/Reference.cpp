@@ -15,6 +15,8 @@ Reference::Reference(const string& table, sqlite3_stmt* stmt)
 
 	dlc <<= 24;
 
+	constexpr double degrees = 180.0 / M_PI;
+
 	type = Utils::str_replace(table, "refs_", "");
 	editor = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
 	refID = static_cast<unsigned int>(sqlite3_column_int(stmt, 1));
@@ -23,7 +25,7 @@ Reference::Reference(const string& table, sqlite3_stmt* stmt)
 	health = sqlite3_column_double(stmt, 4);
 	cell = static_cast<unsigned int>(sqlite3_column_int(stmt, 5));
 	pos = make_tuple(sqlite3_column_double(stmt, 6), sqlite3_column_double(stmt, 7), sqlite3_column_double(stmt, 8));
-	angle = make_tuple(sqlite3_column_double(stmt, 9), sqlite3_column_double(stmt, 10), sqlite3_column_double(stmt, 11));
+	angle = make_tuple(sqlite3_column_double(stmt, 9) * degrees, sqlite3_column_double(stmt, 10) * degrees, sqlite3_column_double(stmt, 11) * degrees);
 	flags = static_cast<unsigned int>(sqlite3_column_int(stmt, 12));
 	lock = static_cast<unsigned int>(sqlite3_column_int(stmt, 13));
 

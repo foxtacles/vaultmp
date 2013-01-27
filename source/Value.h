@@ -54,6 +54,10 @@ class Value : public Lockable
 		 */
 		T& operator*() { return value; }
 		/**
+		 * \brief Returns a reference to the value (const)
+		 */
+		const T& operator*() const { return value; }
+		/**
 		 * \brief Returns a pointer to the value
 		 */
 		T* operator->() { return &value; }

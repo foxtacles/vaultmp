@@ -809,6 +809,11 @@ void Game::NewObject(FactoryObject<Object>& reference)
 				catch (...) {}
 			});
 		}
+		else
+		{
+			reference->SetEnabled(true);
+			reference->SetGameCell(reference->GetNetworkCell());
+		}
 
 		cellRefs.StartSession();
 		(*cellRefs)[reference->GetNetworkCell()][reference.GetType()].insert(refID);
@@ -1998,10 +2003,13 @@ void Game::GetParentCell(const FactoryObject<Object>& reference, const FactoryOb
 
 					auto& object = reference.get();
 
-					if (object->GetNetworkCell() == cell && !object->GetEnabled())
+					if (object->GetNetworkCell() == cell)
 					{
-						object->SetEnabled(true);
-						ToggleEnabled(object);
+						if (!object->GetEnabled())
+						{
+							object->SetEnabled(true);
+							ToggleEnabled(object);
+						}
 
 						if (object->SetGameCell(cell))
 							MoveTo(object, player, true);
@@ -2009,21 +2017,6 @@ void Game::GetParentCell(const FactoryObject<Object>& reference, const FactoryOb
 				}
 
 		cellRefs.EndSession();
-/*
-		AsyncDispatch([=]
-		{
-			debug->PrintFormat("new cell %08X", true, cell);
-
-			this_thread::sleep_for(chrono::seconds(1));
-
-			CellDiff diff = ScanCell(FormType_Inventory);
-
-			for (auto r : diff.first)
-				debug->PrintFormat("1 %08X", true, r);
-			for (auto r : diff.second)
-				debug->PrintFormat("2 %08X", true, r);
-		});
-*/
 	}
 }
 
