@@ -1057,30 +1057,60 @@ void Game::MoveTo(const FactoryObject<Object>& reference, const FactoryObject<Ob
 
 void Game::SetLock(const FactoryObject<Object>& reference, unsigned int key)
 {
-	Interface::StartDynamic();
-
 	unsigned int lock = reference->GetLockLevel();
 
-	if (lock != UINT_MAX)
-		Interface::ExecuteCommand("Lock", {reference->GetReferenceParam(), RawParameter(lock)}, key);
-	else
-		Interface::ExecuteCommand("Unlock", {reference->GetReferenceParam()}, key);
+	auto* object = reference.operator->();
 
-	Interface::EndDynamic();
+	auto func = [object, lock](unsigned int key)
+	{
+		Interface::StartDynamic();
+
+		if (lock != UINT_MAX)
+			Interface::ExecuteCommand("Lock", {object->GetReferenceParam(), RawParameter(lock)}, key);
+		else
+			Interface::ExecuteCommand("Unlock", {object->GetReferenceParam()}, key);
+
+		Interface::EndDynamic();
+	};
+
+	if (!IsInContext(reference->GetGameCell()))
+	{
+		if (key)
+			Lockable::Retrieve(key);
+		function<void()> task = bind(func, 0x00000000);
+		reference->Enqueue(task);
+	}
+	else
+		func(key);
 }
 
 void Game::SetOwner(const FactoryObject<Object>& reference, unsigned int key)
 {
-	Interface::StartDynamic();
-
 	unsigned int owner = reference->GetOwner();
 
 	if (owner == playerBase)
 		owner = PLAYER_BASE;
 
-	Interface::ExecuteCommand("SetOwnership", {reference->GetReferenceParam(), RawParameter(owner)}, key);
+	auto* object = reference.operator->();
 
-	Interface::EndDynamic();
+	auto func = [object, owner](unsigned int key)
+	{
+		Interface::StartDynamic();
+
+		Interface::ExecuteCommand("SetOwnership", {object->GetReferenceParam(), RawParameter(owner)}, key);
+
+		Interface::EndDynamic();
+	};
+
+	if (!IsInContext(reference->GetGameCell()))
+	{
+		if (key)
+			Lockable::Retrieve(key);
+		function<void()> task = bind(func, 0x00000000);
+		reference->Enqueue(task);
+	}
+	else
+		func(key);
 }
 
 void Game::SetActorValue(const FactoryObject<Actor>& reference, bool base, unsigned char index, unsigned int key)
@@ -1326,11 +1356,26 @@ void Game::RemoveItem(const FactoryObject<Container>& reference, unsigned int ba
 		return;
 	}
 
-	Interface::StartDynamic();
+	auto* container = reference.operator->();
 
-	Interface::ExecuteCommand("RemoveItem", {reference->GetReferenceParam(), RawParameter(baseID), RawParameter(count), RawParameter(silent)}, key);
+	auto func = [container, baseID, count, silent](unsigned int key)
+	{
+		Interface::StartDynamic();
 
-	Interface::EndDynamic();
+		Interface::ExecuteCommand("RemoveItem", {container->GetReferenceParam(), RawParameter(baseID), RawParameter(count), RawParameter(silent)}, key);
+
+		Interface::EndDynamic();
+	};
+
+	if (!IsInContext(reference->GetGameCell()))
+	{
+		if (key)
+			Lockable::Retrieve(key);
+		function<void()> task = bind(func, 0x00000000);
+		reference->Enqueue(task);
+	}
+	else
+		func(key);
 }
 
 void Game::RemoveAllItems(const FactoryObject<Container>& reference, unsigned int key)
