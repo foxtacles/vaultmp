@@ -1938,7 +1938,7 @@ void Game::net_UpdateContext(Player::CellContext& context)
 
 						auto& object = reference.get();
 
-						if (object->SetEnabled(false))
+						if (!object->IsPersistent() && object->SetEnabled(false))
 							ToggleEnabled(object);
 					}
 
