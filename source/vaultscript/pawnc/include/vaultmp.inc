@@ -161,6 +161,7 @@ native GetGameDay();
 native GetGameHour();
 native Float:GetTimeScale();
 
+native GetID(ref);
 native GetReference(ID);
 native GetBase(ID);
 native GetName(ID, name{});

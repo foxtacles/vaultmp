@@ -28,7 +28,7 @@ class PAWN
 
 		PAWN();
 
-		static AMX_NATIVE_INFO vaultmp_functions[107];
+		static AMX_NATIVE_INFO vaultmp_functions[108];
 
 		static cell vaultmp_timestamp(AMX* amx, const cell* params);
 		static cell vaultmp_CreateTimer(AMX* amx, const cell* params);
@@ -80,6 +80,7 @@ class PAWN
 		static cell vaultmp_GetGameHour(AMX* amx, const cell* params);
 		static cell vaultmp_GetTimeScale(AMX* amx, const cell* params);
 
+		static cell vaultmp_GetID(AMX* amx, const cell* params);
 		static cell vaultmp_GetReference(AMX* amx, const cell* params);
 		static cell vaultmp_GetBase(AMX* amx, const cell* params);
 		static cell vaultmp_GetName(AMX* amx, const cell* params);

@@ -293,43 +293,48 @@ void Dedicated::DedicatedThread()
 
 		Script::gameWeather = DEFAULT_WEATHER;
 
-		auto containers = DB::Reference::Lookup("CONT");
+		auto object_init = [](FactoryObject<Object>& object, const DB::Reference* reference)
+		{
+			const auto& pos = reference->GetPos();
+			const auto& angle = reference->GetAngle();
+			auto cell = reference->GetCell();
+			auto lock = reference->GetLock();
+			object->SetNetworkPos(Axis_X, get<0>(pos));
+			object->SetNetworkPos(Axis_Y, get<1>(pos));
+			object->SetNetworkPos(Axis_Z, get<2>(pos));
+			object->SetGamePos(Axis_X, get<0>(pos));
+			object->SetGamePos(Axis_Y, get<1>(pos));
+			object->SetGamePos(Axis_Z, get<2>(pos));
+			object->SetAngle(Axis_X, get<0>(angle));
+			object->SetAngle(Axis_Y, get<1>(angle));
+			object->SetAngle(Axis_Z, get<2>(angle));
+			object->SetNetworkCell(cell);
+			object->SetGameCell(cell);
+			object->SetLockLevel(lock);
+		};
 
-		for (const auto* reference : containers)
+		auto objects = DB::Reference::Lookup("CONT");
+
+		for (const auto* reference : objects)
 		{
 			// FIXME dlc support
 			if (reference->GetReference() & 0xFF000000)
 				continue;
 
 			auto container = GameFactory::GetObject<Container>(GameFactory::CreateInstance(ID_CONTAINER, reference->GetReference(), reference->GetBase())).get();
-			const auto& pos = reference->GetPos();
-			const auto& angle = reference->GetAngle();
-			auto cell = reference->GetCell();
-			auto lock = reference->GetLock();
-			container->SetNetworkPos(Axis_X, get<0>(pos));
-			container->SetNetworkPos(Axis_Y, get<1>(pos));
-			container->SetNetworkPos(Axis_Z, get<2>(pos));
-			container->SetGamePos(Axis_X, get<0>(pos));
-			container->SetGamePos(Axis_Y, get<1>(pos));
-			container->SetGamePos(Axis_Z, get<2>(pos));
-			container->SetAngle(Axis_X, get<0>(angle));
-			container->SetAngle(Axis_Y, get<1>(angle));
-			container->SetAngle(Axis_Z, get<2>(angle));
-			container->SetNetworkCell(cell);
-			container->SetGameCell(cell);
-			container->SetLockLevel(lock);
-/*
-			const auto& items = DB::BaseContainer::Lookup(container->GetBase());
+			object_init(container, reference);
+		}
 
-			for (const auto* item : items)
-			{
-				if (item->GetItem() & 0xFF000000)
-					continue;
+		objects = DB::Reference::Lookup("DOOR");
 
-				auto diff = container->AddItem(item->GetItem(), item->GetCount(), item->GetCondition(), true);
-				container->ApplyDiff(diff);
-			}
-*/
+		for (const auto* reference : objects)
+		{
+			// FIXME dlc support
+			if (reference->GetReference() & 0xFF000000)
+				continue;
+
+			auto door = GameFactory::GetObject(GameFactory::CreateInstance(ID_OBJECT, reference->GetReference(), reference->GetBase())).get();
+			object_init(door, reference);
 		}
 
 		Utils::timestamp();

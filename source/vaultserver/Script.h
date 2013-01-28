@@ -174,6 +174,7 @@ class Script
 		static unsigned int GetGameHour();
 		static double GetTimeScale();
 
+		static RakNet::NetworkID GetID(unsigned int refID);
 		static unsigned int GetReference(RakNet::NetworkID id);
 		static unsigned int GetBase(RakNet::NetworkID id);
 		static const char* GetName(RakNet::NetworkID id);
@@ -235,7 +236,6 @@ class Script
 		static bool SetActorBaseSex(RakNet::NetworkID id, bool female);
 		static void SetPlayerRespawn(RakNet::NetworkID id, unsigned int respawn);
 		static void SetPlayerSpawnCell(RakNet::NetworkID id, unsigned int cell);
-
 };
 
 #endif

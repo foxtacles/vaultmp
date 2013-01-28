@@ -65,6 +65,7 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"GetGameHour", PAWN::vaultmp_GetGameHour},
 	{"GetTimeScale", PAWN::vaultmp_GetTimeScale},
 
+	{"GetID", PAWN::vaultmp_GetID},
 	{"GetReference", PAWN::vaultmp_GetReference},
 	{"GetBase", PAWN::vaultmp_GetBase},
 	{"GetName", PAWN::vaultmp_GetName},
@@ -649,6 +650,11 @@ cell PAWN::vaultmp_GetTimeScale(AMX*, const cell*)
 {
 	double value = Script::GetTimeScale();
 	return amx_ftoc(value);
+}
+
+cell PAWN::vaultmp_GetID(AMX*, const cell* params)
+{
+	return Script::GetID(params[1]);
 }
 
 cell PAWN::vaultmp_GetReference(AMX*, const cell* params)

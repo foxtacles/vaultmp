@@ -120,6 +120,7 @@ Script::Script(char* path)
 			SetScript(string(vpf + "GetGameHour").c_str(), &Script::GetGameHour);
 			SetScript(string(vpf + "GetTimeScale").c_str(), &Script::GetTimeScale);
 
+			SetScript(string(vpf + "GetID").c_str(), &Script::GetID);
 			SetScript(string(vpf + "GetReference").c_str(), &Script::GetReference);
 			SetScript(string(vpf + "GetBase").c_str(), &Script::GetBase);
 			SetScript(string(vpf + "GetName").c_str(), &Script::GetName);
@@ -1420,6 +1421,16 @@ unsigned int Script::GetGameHour()
 double Script::GetTimeScale()
 {
 	return gameTime.second;
+}
+
+NetworkID Script::GetID(unsigned int refID)
+{
+	auto object = GameFactory::GetObject(refID);
+
+	if (object)
+		return object->GetNetworkID();
+
+	return 0;
 }
 
 unsigned int Script::GetReference(NetworkID id)
