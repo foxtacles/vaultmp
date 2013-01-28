@@ -318,6 +318,18 @@ void Dedicated::DedicatedThread()
 			container->SetNetworkCell(cell);
 			container->SetGameCell(cell);
 			container->SetLockLevel(lock);
+/*
+			const auto& items = DB::BaseContainer::Lookup(container->GetBase());
+
+			for (const auto* item : items)
+			{
+				if (item->GetItem() & 0xFF000000)
+					continue;
+
+				auto diff = container->AddItem(item->GetItem(), item->GetCount(), item->GetCondition(), true);
+				container->ApplyDiff(diff);
+			}
+*/
 		}
 
 		Utils::timestamp();

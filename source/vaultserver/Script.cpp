@@ -512,7 +512,7 @@ void Script::SetupContainer(FactoryObject<Container>& container, FactoryObject<O
 {
 	SetupObject(container, reference, cell, X, Y, Z);
 
-	const vector<const DB::BaseContainer*>& items = DB::BaseContainer::Lookup(container->GetBase());
+	const auto& items = DB::BaseContainer::Lookup(container->GetBase());
 
 	for (const auto* item : items)
 	{

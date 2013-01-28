@@ -361,7 +361,12 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 	else
 	{
 #ifdef VAULTMP_DEBUG
-		debug.print("Command ", hex, opcode, " failed");
+		debug.note("Command ", hex, opcode, " failed (");
+
+		for (const auto& value : info)
+			debug.note(*reinterpret_cast<const unsigned long long*>(&value), ", ");
+
+		debug.print(")");
 #endif
 
 		switch (opcode)
@@ -769,6 +774,11 @@ void Game::NewObject(FactoryObject<Object>& reference)
 		SetName(reference);
 		SetAngle(reference);
 	}
+	else
+	{
+		reference->SetEnabled(true);
+		reference->SetGameCell(reference->GetNetworkCell());
+	}
 
 	if (reference->GetLockLevel() != UINT_MAX)
 		SetLock(reference);
@@ -804,14 +814,10 @@ void Game::NewObject(FactoryObject<Object>& reference)
 					}
 
 					object->SetGameCell(player->GetGameCell());
+					object->Work();
 				}
 				catch (...) {}
 			});
-		}
-		else
-		{
-			reference->SetEnabled(true);
-			reference->SetGameCell(reference->GetNetworkCell());
 		}
 
 		cellRefs.StartSession();
@@ -1599,6 +1605,9 @@ void Game::ForceRespawn()
 
 bool Game::IsInContext(unsigned int cell)
 {
+	if (!cell)
+		return false;
+
 	bool result;
 
 	cellContext.StartSession();
