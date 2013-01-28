@@ -308,6 +308,21 @@ void Dedicated::DedicatedThread()
 			object->SetAngle(Axis_X, get<0>(angle));
 			object->SetAngle(Axis_Y, get<1>(angle));
 			object->SetAngle(Axis_Z, get<2>(angle));
+
+			auto exterior = DB::Exterior::Lookup(cell);
+
+			if (exterior)
+			{
+				auto match_exterior = DB::Exterior::Lookup(exterior->GetWorld(), get<0>(pos), get<1>(pos));
+
+#ifdef VAULTMP_DEBUG
+				if (exterior->GetBase() != match_exterior->GetBase())
+					debug.print("Error matching position with cell: ", hex, object->GetReference(), " relocating from ", dec, exterior->GetX(), ",", exterior->GetY(), " to ",  match_exterior->GetX(), ",", match_exterior->GetY());
+#endif
+
+				cell = match_exterior->GetBase();
+			}
+
 			object->SetNetworkCell(cell);
 			object->SetGameCell(cell);
 			object->SetLockLevel(lock);
