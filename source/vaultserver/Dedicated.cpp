@@ -402,7 +402,7 @@ void Dedicated::DedicatedThread()
 			VaultException& vaulterror = dynamic_cast<VaultException&>(e);
 			vaulterror.Console();
 		}
-		catch (bad_cast& no_vaulterror)
+		catch (bad_cast&)
 		{
 			VaultException vaulterror(e.what());
 			vaulterror.Console();

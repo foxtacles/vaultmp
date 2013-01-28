@@ -7,6 +7,7 @@
 #include <chrono>
 #include <thread>
 #include <typeinfo>
+#include <atomic>
 
 #ifdef VAULTMP_DEBUG
 // only in debug, streams blow the executable size
@@ -19,17 +20,13 @@ class CriticalSection
 {
 	private:
 		std::recursive_timed_mutex cs;
-		bool finalize;
+		std::atomic<bool> finalize;
 
 		CriticalSection(const CriticalSection&) = delete;
 		CriticalSection& operator=(const CriticalSection&) = delete;
 
 	public:
-#ifdef VAULTMP_DEBUG
 		CriticalSection() : finalize(false) {}
-#else
-		CriticalSection() : finalize(false) {}
-#endif
 		virtual ~CriticalSection() {}
 
 		CriticalSection* StartSession();

@@ -750,14 +750,14 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							{
 								Bethesda::InitializeVaultMP(peer, addr, name, pwd, game, multiinst, game == NEWVEGAS ? steam : false, inittime);
 							}
-							catch (std::exception& e)
+							catch (exception& e)
 							{
 								try
 								{
 									VaultException& vaulterror = dynamic_cast<VaultException&>(e);
 									vaulterror.Message();
 								}
-								catch (std::bad_cast& no_vaulterror)
+								catch (bad_cast&)
 								{
 									VaultException vaulterror(e.what());
 									vaulterror.Message();
@@ -788,7 +788,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 					if (peer->NumberOfConnections() == 0)
 					{
-						if (!update) serverList.clear();
+						if (!update)
+							serverList.clear();
 
 						SystemAddress master;
 						char maddr[32];
@@ -800,7 +801,6 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							master.SetBinaryAddress(RAKNET_MASTER_ADDRESS);
 							master.SetPort(RAKNET_MASTER_PORT);
 						}
-
 						else
 						{
 							master.SetBinaryAddress(strtok(maddr, ":"));
@@ -839,7 +839,6 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 												query.Write(addr);
 											}
-
 											else
 												query.Write((MessageID) ID_MASTER_QUERY);
 
