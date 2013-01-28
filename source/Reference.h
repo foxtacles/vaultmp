@@ -2,6 +2,7 @@
 #define REFERENCE_H
 
 #include <array>
+#include <queue>
 
 #include "RakNet.h"
 
@@ -38,6 +39,10 @@ class Reference : private CriticalSection, public RakNet::NetworkIDObject
 		Value<unsigned int> refID;
 		Value<unsigned int> baseID;
 		Value<bool> changed;
+
+#ifndef VAULTSERVER
+		std::queue<std::function<void()>> tasks;
+#endif
 
 		Reference(const Reference&) = delete;
 		Reference& operator=(const Reference&) = delete;
@@ -101,6 +106,17 @@ class Reference : private CriticalSection, public RakNet::NetworkIDObject
 		{
 			return RawParameter(baseID.get());
 		};
+
+#ifndef VAULTSERVER
+		/**
+		 * \brief Enqueues a task
+		 */
+		void Enqueue(const std::function<void()>& task);
+		/**
+		 * \brief Executes all tasks
+		 */
+		void Work();
+#endif
 
 		/**
 		 * \brief For network transfer

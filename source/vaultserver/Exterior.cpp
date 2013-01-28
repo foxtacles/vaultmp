@@ -87,3 +87,22 @@ signed int Exterior::GetY() const
 {
 	return y;
 }
+
+array<unsigned int, 9> Exterior::GetAdjacents() const
+{
+	double X = GetX() * size;
+	double Y = GetY() * size;
+
+	Expected<const Exterior*> next_exterior;
+
+	return
+		{{GetBase(),
+		(next_exterior = DB::Exterior::Lookup(world, X, Y + size)) ? next_exterior->GetBase() : 0u,
+		(next_exterior = DB::Exterior::Lookup(world, X + size, Y + size)) ? next_exterior->GetBase() : 0u,
+		(next_exterior = DB::Exterior::Lookup(world, X + size, Y)) ? next_exterior->GetBase() : 0u,
+		(next_exterior = DB::Exterior::Lookup(world, X + size, Y - size)) ? next_exterior->GetBase() : 0u,
+		(next_exterior = DB::Exterior::Lookup(world, X, Y - size)) ? next_exterior->GetBase() : 0u,
+		(next_exterior = DB::Exterior::Lookup(world, X - size, Y - size)) ? next_exterior->GetBase() : 0u,
+		(next_exterior = DB::Exterior::Lookup(world, X - size, Y)) ? next_exterior->GetBase() : 0u,
+		(next_exterior = DB::Exterior::Lookup(world, X - size, Y + size)) ? next_exterior->GetBase() : 0u}};
+}

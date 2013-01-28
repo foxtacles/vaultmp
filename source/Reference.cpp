@@ -111,3 +111,19 @@ bool Reference::IsPersistent() const
 	unsigned int refID = GetReference();
 	return ((refID & 0xFF000000) != 0xFF000000) && refID;
 }
+
+#ifndef VAULTSERVER
+void Reference::Enqueue(const function<void()>& task)
+{
+	tasks.push(task);
+}
+
+void Reference::Work()
+{
+	while (!tasks.empty())
+	{
+		tasks.front()();
+		tasks.pop();
+	}
+}
+#endif

@@ -43,13 +43,25 @@ NetworkResponse Server::LoadGame(RakNetGUID guid)
 	auto cell = DB::Exterior::Lookup(Player::GetSpawnCell());
 
 	if (cell)
+	{
 		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(0, cell->GetWorld(), cell->GetX(), cell->GetY(), true),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+
+		response.emplace_back(Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(0, cell->GetAdjacents()),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+	}
 	else
+	{
 		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(0, DB::Record::Lookup(Player::GetSpawnCell(), "CELL")->GetName(), true),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+
+		response.emplace_back(Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(0, array<unsigned int, 9>{{Player::GetSpawnCell(), 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u}}),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+	}
 
 	vector<FactoryObject<Object>> references = GameFactory::GetObjectTypes<Object>(ALL_OBJECTS);
 	vector<FactoryObject<Object>>::iterator it;
@@ -121,10 +133,6 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 
 	response.emplace_back(Network::CreateResponse(
 		PacketFactory::Create<pTypes::ID_GAME_BASE>(result),
-		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
-
-	response.emplace_back(Network::CreateResponse(
-		PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(id, player->GetPlayerCellContext()),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 
 	const auto& container = npc->GetBaseContainer();

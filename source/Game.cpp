@@ -422,7 +422,7 @@ void Game::Startup()
 	//Interface::SetupCommand("GetPos", {Actor::CreateFunctor(FLAG_ENABLED | FLAG_ALIVE), Object::Param_Axis()}, 30);
 	Interface::SetupCommand("GetAngle", {self_ref, RawParameter(vector<string> {API::RetrieveAxis_Reverse(Axis_X), API::RetrieveAxis_Reverse(Axis_Z)})});
 	Interface::SetupCommand("GetActorState", {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), Player::CreateFunctor(FLAG_MOVCONTROLS, id)});
-	Interface::SetupCommand("GetParentCell", {self_ref}, 30);
+	Interface::SetupCommand("GetParentCell", {Player::CreateFunctor(FLAG_SELF | FLAG_ALIVE)}, 30);
 	Interface::SetupCommand("ScanContainer", {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED)}, 50);
 
 	auto func = Player::CreateFunctor(FLAG_ENABLED | FLAG_ALIVE);
@@ -1290,11 +1290,26 @@ void Game::AddItem(const FactoryObject<Container>& reference, unsigned int baseI
 		return;
 	}
 
-	Interface::StartDynamic();
+	auto* container = reference.operator->();
 
-	Interface::ExecuteCommand("AddItemHealthPercent", {reference->GetReferenceParam(), RawParameter(baseID), RawParameter(count), RawParameter(condition / 100), RawParameter(silent)}, key);
+	auto func = [container, baseID, count, condition, silent](unsigned int key)
+	{
+		Interface::StartDynamic();
 
-	Interface::EndDynamic();
+		Interface::ExecuteCommand("AddItemHealthPercent", {container->GetReferenceParam(), RawParameter(baseID), RawParameter(count), RawParameter(condition / 100), RawParameter(silent)}, key);
+
+		Interface::EndDynamic();
+	};
+
+	if (!IsInContext(reference->GetGameCell()))
+	{
+		if (key)
+			Lockable::Retrieve(key);
+		function<void()> task = bind(func, 0x00000000);
+		reference->Enqueue(task);
+	}
+	else
+		func(key);
 }
 
 void Game::RemoveItem(const FactoryObject<Container>& reference, const FactoryObject<Item>& item, unsigned int key)
@@ -1916,7 +1931,7 @@ void Game::net_UpdateContext(Player::CellContext& context)
 				for (unsigned int refID : refs.second)
 					if (refID != PLAYER_REFERENCE)
 					{
-						auto reference = GameFactory::GetObject<Object>(refID);
+						auto reference = GameFactory::GetObject(refID);
 
 						if (!reference)
 							continue; // we don't have information about static refs yet. remove
@@ -1933,7 +1948,7 @@ void Game::net_UpdateContext(Player::CellContext& context)
 				for (unsigned int refID : refs.second)
 					if (refID != PLAYER_REFERENCE)
 					{
-						auto reference = GameFactory::GetMultiple<Object>(vector<unsigned int>{refID, PLAYER_REFERENCE});
+						auto reference = GameFactory::GetMultiple(vector<unsigned int>{refID, PLAYER_REFERENCE});
 
 						if (!reference[0])
 							continue; // we don't have information about static refs yet. remove
@@ -1945,6 +1960,8 @@ void Game::net_UpdateContext(Player::CellContext& context)
 
 						if (object->SetGameCell(cell))
 							MoveTo(object, reference[1].get(), true);
+
+						object->Work();
 					}
 
 	*cellContext = context;

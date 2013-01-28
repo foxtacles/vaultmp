@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <vector>
+#include <array>
 #include <unordered_map>
 #include <cmath>
 
@@ -44,6 +45,7 @@ namespace DB
 			unsigned int GetWorld() const;
 			signed int GetX() const;
 			signed int GetY() const;
+			std::array<unsigned int, 9> GetAdjacents() const;
 
 			Exterior(const std::string& table, sqlite3_stmt* stmt);
 			~Exterior() = default;

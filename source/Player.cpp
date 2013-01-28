@@ -270,24 +270,7 @@ Lockable* Player::SetNetworkCell(unsigned int cell)
 		auto new_exterior = DB::Exterior::Lookup(cell);
 
 		if (new_exterior)
-		{
-			unsigned int world = new_exterior->GetWorld();
-			double X = new_exterior->GetX();
-			double Y = new_exterior->GetY();
-
-			constexpr double size = DB::Exterior::size;
-
-			Expected<const DB::Exterior*> next_exterior;
-			*player_CellContext = {{cell,
-				(next_exterior = DB::Exterior::Lookup(world, X, Y + size)) ? next_exterior->GetBase() : 0u,
-				(next_exterior = DB::Exterior::Lookup(world, X + size, Y + size)) ? next_exterior->GetBase() : 0u,
-				(next_exterior = DB::Exterior::Lookup(world, X + size, Y)) ? next_exterior->GetBase() : 0u,
-				(next_exterior = DB::Exterior::Lookup(world, X + size, Y - size)) ? next_exterior->GetBase() : 0u,
-				(next_exterior = DB::Exterior::Lookup(world, X, Y - size)) ? next_exterior->GetBase() : 0u,
-				(next_exterior = DB::Exterior::Lookup(world, X - size, Y - size)) ? next_exterior->GetBase() : 0u,
-				(next_exterior = DB::Exterior::Lookup(world, X - size, Y)) ? next_exterior->GetBase() : 0u,
-				(next_exterior = DB::Exterior::Lookup(world, X - size, Y + size)) ? next_exterior->GetBase() : 0u}};
-		}
+			*player_CellContext = new_exterior->GetAdjacents();
 		else
 			*player_CellContext = {{cell, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u}};
 	}
