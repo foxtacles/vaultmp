@@ -23,7 +23,7 @@
 #include "Debug.h"
 #endif
 
-const unsigned int FLAG_ALIVE = FLAG_BASE << 1;
+const unsigned int FLAG_ALIVE = FLAG_LOCKED << 1;
 const unsigned int FLAG_DEAD = FLAG_ALIVE << 1;
 const unsigned int FLAG_SELFALERT = FLAG_DEAD << 1;
 const unsigned int FLAG_ISALERT = FLAG_SELFALERT << 1;
@@ -78,7 +78,7 @@ class Actor : public Container
 		 * Used to pass actor values to the Interface
 		 */
 		static const RawParameter& Param_ActorValues();
-
+#ifndef VAULTSERVER
 		/**
 		 * \brief Creates a Parameter containing a VaultFunctor initialized with the given flags
 		 *
@@ -86,7 +86,7 @@ class Actor : public Container
 		 * Can also be used to pass data of a given Actor to the Interface
 		 */
 		static FuncParameter CreateFunctor(unsigned int flags, RakNet::NetworkID id = 0);
-
+#endif
 		/**
 		 * \brief Retrieves the Actor's actor value specified by index (actor value hex code)
 		 */
@@ -238,14 +238,16 @@ class Actor : public Container
 		virtual pPacket toPacket() const;
 };
 
-class ActorFunctor : public ObjectFunctor
+#ifndef VAULTSERVER
+class ActorFunctor : public ContainerFunctor
 {
 	public:
-		ActorFunctor(unsigned int flags, RakNet::NetworkID id) : ObjectFunctor(flags, id) {}
+		ActorFunctor(unsigned int flags, RakNet::NetworkID id) : ContainerFunctor(flags, id) {}
 		virtual ~ActorFunctor() {}
 
 		virtual std::vector<std::string> operator()();
 		virtual bool filter(FactoryObject<Reference>& reference);
 };
+#endif
 
 #endif

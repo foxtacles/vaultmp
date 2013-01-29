@@ -535,6 +535,7 @@ void API::Initialize(unsigned char game)
 	DefineFunction("Lock", "rII", Func_Lock, FALLOUT_GAMES);
 	DefineFunction("Unlock", "r", Func_Unlock, FALLOUT_GAMES);
 	DefineFunction("SetOwnership", "rF", Func_SetOwnership, FALLOUT_GAMES);
+	DefineFunction("GetLocked", "r", Func_GetLocked, FALLOUT_GAMES);
 	DefineFunction("CenterOnCell", "$s", Func_CenterOnCell, FALLOUT_GAMES);
 	DefineFunction("CenterOnExterior", "$ii", Func_CenterOnExterior, FALLOUT_GAMES);
 	DefineFunction("SetINISetting", "$ss", Func_SetINISetting, FALLOUT_GAMES);

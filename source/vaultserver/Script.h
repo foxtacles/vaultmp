@@ -206,6 +206,7 @@ class Script
 		static unsigned int GetPlayerRespawn(RakNet::NetworkID id);
 		static unsigned int GetPlayerSpawnCell(RakNet::NetworkID id);
 
+		static RakNet::NetworkID CreateObject(unsigned int baseID, RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z);
 		static bool DestroyObject(RakNet::NetworkID id);
 		static bool SetPos(RakNet::NetworkID id, double X, double Y, double Z);
 		static bool SetAngle(RakNet::NetworkID id, double X, double Y, double Z);

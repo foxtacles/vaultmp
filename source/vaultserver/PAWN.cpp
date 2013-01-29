@@ -97,6 +97,7 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"GetPlayerRespawn", PAWN::vaultmp_GetPlayerRespawn},
 	{"GetPlayerSpawnCell", PAWN::vaultmp_GetPlayerSpawnCell},
 
+	{"CreateObject", PAWN::vaultmp_CreateObject},
 	{"DestroyObject", PAWN::vaultmp_DestroyObject},
 	{"SetPos", PAWN::vaultmp_SetPos},
 	{"SetAngle", PAWN::vaultmp_SetAngle},
@@ -851,6 +852,11 @@ cell PAWN::vaultmp_GetPlayerRespawn(AMX*, const cell* params)
 cell PAWN::vaultmp_GetPlayerSpawnCell(AMX*, const cell* params)
 {
 	return Script::GetPlayerSpawnCell(params[1]);
+}
+
+cell PAWN::vaultmp_CreateObject(AMX*, const cell* params)
+{
+	return Script::CreateObject(params[1], params[2], params[3], amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6]));
 }
 
 cell PAWN::vaultmp_DestroyObject(AMX*, const cell* params)

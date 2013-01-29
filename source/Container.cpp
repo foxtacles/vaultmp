@@ -2,6 +2,10 @@
 #include "PacketFactory.h"
 #include "GameFactory.h"
 
+#ifndef VAULTSERVER
+	#include "Game.h"
+#endif
+
 using namespace std;
 using namespace RakNet;
 
@@ -126,6 +130,13 @@ Container::StripCopy Container::Strip() const
 
 	return result;
 }
+
+#ifndef VAULTSERVER
+FuncParameter Container::CreateFunctor(unsigned int flags, NetworkID id)
+{
+	return FuncParameter(unique_ptr<VaultFunctor>(new ContainerFunctor(flags, id)));
+}
+#endif
 
 void Container::AddItem(NetworkID id)
 {
@@ -579,3 +590,39 @@ pPacket Container::toPacket() const
 
 	return packet;
 }
+
+#ifndef VAULTSERVER
+vector<string> ContainerFunctor::operator()()
+{
+	vector<string> result;
+
+	NetworkID id = get();
+
+	if (id)
+	{
+
+	}
+	else
+	{
+		auto references = Game::GetContext(ID_CONTAINER);
+		Expected<FactoryObject<Container>> container;
+
+		for (unsigned int refID : references)
+			if ((container = GameFactory::GetObject<Container>(refID)))
+				if (!filter(container.get()))
+					result.emplace_back(Utils::toString(refID));
+	}
+
+	_next(result);
+
+	return result;
+}
+
+bool ContainerFunctor::filter(FactoryObject<Reference>& reference)
+{
+	if (ObjectFunctor::filter(reference))
+		return true;
+
+	return false;
+}
+#endif

@@ -88,7 +88,7 @@ class Player : public Actor
 		 */
 		static const std::unordered_set<unsigned int>& GetBaseIDs();
 #endif
-
+#ifndef VAULTSERVER
 		/**
 		 * \brief Creates a Parameter containing a VaultFunctor initialized with the given flags
 		 *
@@ -96,7 +96,7 @@ class Player : public Actor
 		 * Can also be used to pass data of a given Player to the Interface
 		 */
 		static FuncParameter CreateFunctor(unsigned int flags, RakNet::NetworkID id = 0);
-
+#endif
 		/**
 		 * \brief Retrieves the key associated to the Player's control
 		 */
@@ -156,6 +156,7 @@ class Player : public Actor
 		virtual pPacket toPacket() const;
 };
 
+#ifndef VAULTSERVER
 class PlayerFunctor : public ActorFunctor
 {
 	public:
@@ -165,5 +166,6 @@ class PlayerFunctor : public ActorFunctor
 		virtual std::vector<std::string> operator()();
 		virtual bool filter(FactoryObject<Reference>& reference);
 };
+#endif
 
 #endif

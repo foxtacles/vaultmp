@@ -323,6 +323,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE Interval (*VAULTAPI(GetPlayerRespawn))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE VAULTCELL (*VAULTAPI(GetPlayerSpawnCell))(VAULTSPACE ID) VAULTCPP(noexcept);
 
+	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateObject))(VAULTSPACE Base, VAULTSPACE ID, VAULTSPACE VAULTCELL, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(DestroyObject))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetPos))(VAULTSPACE ID, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetAngle))(VAULTSPACE ID, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
@@ -526,6 +527,8 @@ namespace vaultmp
 	VAULTFUNCTION Interval GetPlayerRespawn(ID id) noexcept { return VAULTAPI(GetPlayerRespawn)(id); }
 	VAULTFUNCTION VAULTCELL GetPlayerSpawnCell(ID id) noexcept { return VAULTAPI(GetPlayerSpawnCell)(id); }
 
+	VAULTFUNCTION ID CreateObject(Base object, ID id) noexcept { return VAULTAPI(CreateObject)(object, id, static_cast<VAULTCELL>(0), 0.00, 0.00, 0.00); }
+	VAULTFUNCTION ID CreateObject(Base object, VAULTCELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateObject)(object, static_cast<ID>(0), cell, X, Y, Z); }
 	VAULTFUNCTION State DestroyObject(ID id) noexcept { return VAULTAPI(DestroyObject)(id); }
 	VAULTFUNCTION State SetPos(ID id, Value X, Value Y, Value Z) noexcept { return VAULTAPI(SetPos)(id, X, Y, Z); }
 	VAULTFUNCTION State SetAngle(ID id, Value X, Value Y, Value Z) noexcept { return VAULTAPI(SetAngle)(id, X, Y, Z); }
@@ -609,6 +612,8 @@ namespace vaultmp
 			State SetLock(Lock lock) const noexcept { return vaultmp::SetLock(id, lock); }
 			State SetOwner(VAULTNPC owner) const noexcept { return vaultmp::SetOwner(id, owner); }
 
+			static ID Create(Base object, ID id) { return vaultmp::CreateObject(object, id); }
+			static ID Create(Base object, VAULTCELL cell, Value X, Value Y, Value Z) { return vaultmp::CreateObject(object, cell, X, Y, Z); }
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_OBJECT); }
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_OBJECT); }
 	};

@@ -66,7 +66,15 @@ class Container : public Object
 
 	public:
 		virtual ~Container();
-
+#ifndef VAULTSERVER
+		/**
+		 * \brief Creates a Parameter containing a VaultFunctor initialized with the given flags
+		 *
+		 * Used to pass Container references matching the provided flags to the Interface
+		 * Can also be used to pass data of a given Container to the Interface
+		 */
+		static FuncParameter CreateFunctor(unsigned int flags, RakNet::NetworkID id = 0);
+#endif
 		void AddItem(RakNet::NetworkID id);
 		ContainerDiff AddItem(unsigned int baseID, unsigned int count, double condition, bool silent) const;
 		void RemoveItem(RakNet::NetworkID id);
@@ -109,5 +117,17 @@ class Container : public Object
 		 */
 		virtual pPacket toPacket() const;
 };
+
+#ifndef VAULTSERVER
+class ContainerFunctor : public ObjectFunctor
+{
+	public:
+		ContainerFunctor(unsigned int flags, RakNet::NetworkID id) : ObjectFunctor(flags, id) {}
+		virtual ~ContainerFunctor() {}
+
+		virtual std::vector<std::string> operator()();
+		virtual bool filter(FactoryObject<Reference>& reference);
+};
+#endif
 
 #endif

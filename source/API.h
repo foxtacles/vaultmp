@@ -244,6 +244,7 @@ namespace Values
 		Func_Lock						= 0x1072,
 		Func_Unlock						= 0x1073,
 		Func_SetOwnership				= 0x1117,
+		Func_GetLocked					= 0x1005,
 
 		Func_GetActorState              = 0x0001 | VAULTFUNCTION,
 		Func_Chat						= 0x0002 | VAULTFUNCTION,

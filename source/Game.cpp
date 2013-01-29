@@ -223,6 +223,13 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func_SetOwnership:
 				break;
 
+			case Func_GetLocked:
+			{
+				auto reference = GameFactory::GetObject<Container>(getFrom<unsigned int>(info.at(1)));
+				GetLocked(reference.get(), result);
+				break;
+			}
+
 			case Func_Chat:
 			{
 				if (!result)
@@ -453,6 +460,10 @@ void Game::Startup()
 	// we could exclude health values here
 	Interface::SetupCommand("GetActorValue", {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), Actor::Param_ActorValues()}, 100);
 	Interface::SetupCommand("GetBaseActorValue", {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), Actor::Param_ActorValues()}, 200);
+
+	func = Container::CreateFunctor(FLAG_ENABLED | FLAG_LOCKED);
+	func.connect(Object::CreateFunctor(FLAG_ENABLED | FLAG_LOCKED));
+	Interface::SetupCommand("GetLocked", {move(func)}, 200);
 
 	Interface::EndSetup();
 }
@@ -1701,8 +1712,10 @@ void Game::net_SetCell(const FactoryObject<Object>& reference, const FactoryObje
 
 void Game::net_SetLock(const FactoryObject<Object>& reference, unsigned int lock)
 {
-	if (reference->SetLockLevel(lock))
-		SetLock(reference);
+	Lockable* result;
+
+	if ((result = reference->SetLockLevel(lock)))
+		SetLock(reference, result->Lock());
 }
 
 void Game::net_SetOwner(const FactoryObject<Object>& reference, unsigned int owner)
@@ -2333,17 +2346,6 @@ void Game::GetActorState(const FactoryObject<Actor>& reference, unsigned int idl
 		});
 }
 
-void Game::GetControl(const FactoryObject<Player>& reference, unsigned char control, unsigned char key)
-{
-	bool result = static_cast<bool>(reference->SetPlayerControl(control, key));
-
-	if (result)
-		Network::Queue(NetworkResponse{Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_CONTROL>(reference->GetNetworkID(), control, key),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
-		});
-}
-
 void Game::ScanContainer(const FactoryObject<Container>& reference, const vector<unsigned char>& data)
 {
 	Lockable* result;
@@ -2696,6 +2698,40 @@ void Game::GetRemoveAllItemsEx(const FactoryObject<Container>& reference, const 
 
 	for (unsigned int i = 0; i < count; ++i)
 		RemoveItem(reference, items[i].baseID, items[i].count, true);
+}
+
+void Game::GetLocked(const FactoryObject<Container>& reference, unsigned int lock)
+{
+	switch (lock)
+	{
+		case 0:
+			if (reference->SetLockLevel(UINT_MAX))
+				Network::Queue(NetworkResponse{Network::CreateResponse(
+					PacketFactory::Create<pTypes::ID_UPDATE_LOCK>(reference->GetNetworkID(), UINT_MAX),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+				});
+			break;
+		case 1:
+			break;
+		case 2:
+			if (reference->SetLockLevel(UINT_MAX - 1))
+				Network::Queue(NetworkResponse{Network::CreateResponse(
+					PacketFactory::Create<pTypes::ID_UPDATE_LOCK>(reference->GetNetworkID(), UINT_MAX - 1),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+				});
+			break;
+	}
+}
+
+void Game::GetControl(const FactoryObject<Player>& reference, unsigned char control, unsigned char key)
+{
+	bool result = static_cast<bool>(reference->SetPlayerControl(control, key));
+
+	if (result)
+		Network::Queue(NetworkResponse{Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_CONTROL>(reference->GetNetworkID(), control, key),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+		});
 }
 
 void Game::GetNextRef(unsigned int key, unsigned int refID, unsigned int type)

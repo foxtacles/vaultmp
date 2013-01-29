@@ -56,6 +56,10 @@ class Server
 		 */
 		static NetworkResponse GetCell(RakNet::RakNetGUID guid, const FactoryObject<Object>& reference, unsigned int cell);
 		/**
+		 * \brief Handles lock update packet
+		 */
+		static NetworkResponse GetLock(RakNet::RakNetGUID guid, const FactoryObject<Object>& reference, unsigned int lock);
+		/**
 		 * \brief Handles container update network packet
 		 */
 		static NetworkResponse GetContainerUpdate(RakNet::RakNetGUID guid, const FactoryObject<Container>& reference, const Container::NetDiff& ndiff, const Container::NetDiff& gdiff);

@@ -1,7 +1,10 @@
 #include "Player.h"
 #include "PacketFactory.h"
 #include "GameFactory.h"
-#include "Game.h"
+
+#ifndef VAULTSERVER
+	#include "Game.h"
+#endif
 
 using namespace std;
 using namespace RakNet;
@@ -206,10 +209,12 @@ const unordered_set<unsigned int>& Player::GetBaseIDs()
 }
 #endif
 
+#ifndef VAULTSERVER
 FuncParameter Player::CreateFunctor(unsigned int flags, NetworkID id)
 {
 	return FuncParameter(unique_ptr<VaultFunctor>(new PlayerFunctor(flags, id)));
 }
+#endif
 
 unsigned char Player::GetPlayerControl(unsigned char control) const
 {
@@ -310,6 +315,7 @@ pPacket Player::toPacket() const
 	return packet;
 }
 
+#ifndef VAULTSERVER
 vector<string> PlayerFunctor::operator()()
 {
 	vector<string> result;
@@ -370,3 +376,4 @@ bool PlayerFunctor::filter(FactoryObject<Reference>& reference)
 
 	return false;
 }
+#endif

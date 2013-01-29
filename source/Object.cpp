@@ -1,7 +1,10 @@
 #include "Object.h"
 #include "PacketFactory.h"
 #include "GameFactory.h"
-#include "Game.h"
+
+#ifndef VAULTSERVER
+	#include "Game.h"
+#endif
 
 using namespace std;
 using namespace RakNet;
@@ -96,6 +99,13 @@ const RawParameter& Object::Param_Axis()
 
 	return param_Axis;
 }
+
+#ifndef VAULTSERVER
+FuncParameter Object::CreateFunctor(unsigned int flags, NetworkID id)
+{
+	return FuncParameter(unique_ptr<VaultFunctor>(new ObjectFunctor(flags, id)));
+}
+#endif
 
 string Object::GetName() const
 {
@@ -240,6 +250,7 @@ pPacket Object::toPacket() const
 	return packet;
 }
 
+#ifndef VAULTSERVER
 vector<string> ObjectFunctor::operator()()
 {
 	vector<string> result;
@@ -292,5 +303,14 @@ bool ObjectFunctor::filter(FactoryObject<Reference>& reference)
 	else if (flags & FLAG_DISABLED && object->GetEnabled())
 		return true;
 
+	if (flags & FLAG_LOCKED)
+	{
+		unsigned int lock = object->GetLockLevel();
+
+		if (lock == UINT_MAX || lock == UINT_MAX - 1 || lock == 255 || lock == 5)
+			return true;
+	}
+
 	return false;
 }
+#endif

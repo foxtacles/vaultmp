@@ -1,7 +1,10 @@
 #include "Actor.h"
 #include "PacketFactory.h"
 #include "GameFactory.h"
-#include "Game.h"
+
+#ifndef VAULTSERVER
+	#include "Game.h"
+#endif
 
 using namespace std;
 using namespace RakNet;
@@ -95,10 +98,12 @@ const RawParameter& Actor::Param_ActorValues()
 	return param_ActorValues;
 }
 
+#ifndef VAULTSERVER
 FuncParameter Actor::CreateFunctor(unsigned int flags, NetworkID id)
 {
 	return FuncParameter(unique_ptr<VaultFunctor>(new ActorFunctor(flags, id)));
 }
+#endif
 
 double Actor::GetActorValue(unsigned char index) const
 {
@@ -323,6 +328,7 @@ pPacket Actor::toPacket() const
 	return packet;
 }
 
+#ifndef VAULTSERVER
 vector<string> ActorFunctor::operator()()
 {
 	vector<string> result;
@@ -352,7 +358,7 @@ vector<string> ActorFunctor::operator()()
 
 bool ActorFunctor::filter(FactoryObject<Reference>& reference)
 {
-	if (ObjectFunctor::filter(reference))
+	if (ContainerFunctor::filter(reference))
 		return true;
 
 	FactoryObject<Actor> actor = vaultcast<Actor>(reference).get();
@@ -374,3 +380,4 @@ bool ActorFunctor::filter(FactoryObject<Reference>& reference)
 
 	return false;
 }
+#endif

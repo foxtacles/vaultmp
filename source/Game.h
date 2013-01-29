@@ -438,10 +438,6 @@ class Game
 		 */
 		static void GetActorState(const FactoryObject<Actor>& reference, unsigned int idle, unsigned char moving, unsigned char weapon, unsigned char flags, bool sneaking);
 		/**
-		 * \brief Handles GetControl command result
-		 */
-		static void GetControl(const FactoryObject<Player>& reference, unsigned char control, unsigned char key);
-		/**
 		 * \brief Handles ScanContainer command result
 		 */
 		static void ScanContainer(const FactoryObject<Container>& reference, const std::vector<unsigned char>& data);
@@ -453,6 +449,14 @@ class Game
 		 * \brief Handles RemoveAllItemsEx command result
 		 */
 		static void GetRemoveAllItemsEx(const FactoryObject<Container>& reference, const std::vector<unsigned char>& data);
+		/**
+		 * \brief Handles GetLocked command result
+		 */
+		static void GetLocked(const FactoryObject<Container>& reference, unsigned int lock);
+		/**
+		 * \brief Handles GetControl command result
+		 */
+		static void GetControl(const FactoryObject<Player>& reference, unsigned char control, unsigned char key);
 		/**
 		 * \brief Handles GetFirstRef / GetNextRef command result
 		 */

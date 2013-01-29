@@ -268,6 +268,28 @@ NetworkResponse Server::GetCell(RakNetGUID guid, const FactoryObject<Object>& re
 	return response;
 }
 
+NetworkResponse Server::GetLock(RakNetGUID guid, const FactoryObject<Object>& reference, unsigned int lock)
+{
+	NetworkResponse response;
+	bool result = static_cast<bool>(reference->SetLockLevel(lock));
+
+	if (result)
+	{
+		if (lock == UINT_MAX)
+			printf("%s unlocked %s\n", GameFactory::GetObject<Player>(Client::GetClientFromGUID(guid)->GetPlayer())->GetName().c_str(), reference->GetName().c_str());
+		else if (lock == UINT_MAX - 1)
+			printf("%s failed at unlocking/hacking %s\n", GameFactory::GetObject<Player>(Client::GetClientFromGUID(guid)->GetPlayer())->GetName().c_str(), reference->GetName().c_str());
+
+		response.emplace_back(Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_LOCK>(reference->GetNetworkID(), lock),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
+
+		// Script call
+	}
+
+	return response;
+}
+
 NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, const FactoryObject<Container>& reference, const Container::NetDiff& ndiff, const Container::NetDiff& gdiff)
 {
 	SingleResponse response[] = {Network::CreateResponse(

@@ -28,7 +28,7 @@ class PAWN
 
 		PAWN();
 
-		static AMX_NATIVE_INFO vaultmp_functions[108];
+		static AMX_NATIVE_INFO vaultmp_functions[109];
 
 		static cell vaultmp_timestamp(AMX* amx, const cell* params);
 		static cell vaultmp_CreateTimer(AMX* amx, const cell* params);
@@ -112,6 +112,7 @@ class PAWN
 		static cell vaultmp_GetPlayerRespawn(AMX* amx, const cell* params);
 		static cell vaultmp_GetPlayerSpawnCell(AMX* amx, const cell* params);
 
+		static cell vaultmp_CreateObject(AMX* amx, const cell* params);
 		static cell vaultmp_DestroyObject(AMX* amx, const cell* params);
 		static cell vaultmp_SetPos(AMX* amx, const cell* params);
 		static cell vaultmp_SetAngle(AMX* amx, const cell* params);

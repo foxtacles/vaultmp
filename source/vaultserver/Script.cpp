@@ -152,6 +152,7 @@ Script::Script(char* path)
 			SetScript(string(vpf + "GetPlayerRespawn").c_str(), &Script::GetPlayerRespawn);
 			SetScript(string(vpf + "GetPlayerSpawnCell").c_str(), &Script::GetPlayerSpawnCell);
 
+			SetScript(string(vpf + "CreateObject").c_str(), &Script::CreateObject);
 			SetScript(string(vpf + "DestroyObject").c_str(), &Script::DestroyObject);
 			SetScript(string(vpf + "SetPos").c_str(), &Script::SetPos);
 			SetScript(string(vpf + "SetAngle").c_str(), &Script::SetAngle);
@@ -1768,6 +1769,38 @@ unsigned int Script::GetPlayerSpawnCell(NetworkID id)
 	return 0x00000000;
 }
 
+NetworkID Script::CreateObject(unsigned int baseID, NetworkID id, unsigned int cell, double X, double Y, double Z)
+{
+	NetworkID result = 0;
+	FactoryObject<Object> object;
+	FactoryObject<Object> _object;
+
+	if (id && !GameFactory::GetType(id))
+		return result;
+
+	try
+	{
+		auto reference = GameFactory::GetMultiple<Object>(vector<NetworkID>{id, GameFactory::CreateInstance(ID_OBJECT, baseID)});
+
+		if (id)
+			object = reference[0].get();
+
+		_object = vaultcast<Object>(reference[1]).get();
+	}
+	catch (...) { return result; }
+
+	result = _object->GetNetworkID();
+
+	SetupObject(_object, object, cell, X, Y, Z);
+
+	Network::Queue(NetworkResponse{Network::CreateResponse(
+		_object->toPacket(),
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+	});
+
+	return result;
+}
+
 bool Script::DestroyObject(NetworkID id)
 {
 	bool state = false;
@@ -1928,6 +1961,15 @@ bool Script::SetLock(NetworkID id, unsigned int lock)
 		return state;
 
 	auto& object = reference.get();
+
+	if (lock != UINT_MAX)
+	{
+		lock = ceil(static_cast<double>(lock) / 25.0) * 25;
+
+		// if terminal, map to different values
+		if (lock > 100)
+			lock = 255;
+	}
 
 	if (object->SetLockLevel(lock))
 	{

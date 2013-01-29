@@ -193,6 +193,7 @@ native Bool:IsActorJumping(ID);
 native GetPlayerRespawn(ID);
 native GetPlayerSpawnCell(ID);
 
+native CreateObject(object, ID, cell = 0, Float:X = 0.00, Float:Y = 0.00, Float:Z = 0.00);
 native Bool:DestroyObject(ID);
 native Bool:SetPos(ID, Float:X, Float:Y, Float:Z);
 native Bool:SetAngle(ID, Float:X, Float:Y, Float:Z);

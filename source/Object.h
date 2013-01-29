@@ -18,6 +18,7 @@ const unsigned int FLAG_NOTSELF = FLAG_DISABLED << 1;
 const unsigned int FLAG_SELF = FLAG_NOTSELF << 1;
 const unsigned int FLAG_REFERENCE = FLAG_SELF << 1;
 const unsigned int FLAG_BASE = FLAG_REFERENCE << 1;
+const unsigned int FLAG_LOCKED = FLAG_BASE << 1;
 
 /**
  * \brief Derives from Reference class and represents an object in-game
@@ -68,7 +69,15 @@ class Object : public Reference
 		 * Used to pass axis values to the Interface
 		 */
 		static const RawParameter& Param_Axis();
-
+#ifndef VAULTSERVER
+		/**
+		 * \brief Creates a Parameter containing a VaultFunctor initialized with the given flags
+		 *
+		 * Used to pass Object references matching the provided flags to the Interface
+		 * Can also be used to pass data of a given Object to the Interface
+		 */
+		static FuncParameter CreateFunctor(unsigned int flags, RakNet::NetworkID id = 0);
+#endif
 		/**
 		 * \brief Retrieves the Object's name
 		 */
@@ -179,6 +188,7 @@ class Object : public Reference
 		virtual pPacket toPacket() const;
 };
 
+#ifndef VAULTSERVER
 class ObjectFunctor : public ReferenceFunctor
 {
 	public:
@@ -188,5 +198,6 @@ class ObjectFunctor : public ReferenceFunctor
 		virtual std::vector<std::string> operator()();
 		virtual bool filter(FactoryObject<Reference>& reference);
 };
+#endif
 
 #endif
