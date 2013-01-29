@@ -1,6 +1,7 @@
 #include "Actor.h"
 #include "PacketFactory.h"
 #include "GameFactory.h"
+#include "Game.h"
 
 using namespace std;
 using namespace RakNet;
@@ -335,13 +336,13 @@ vector<string> ActorFunctor::operator()()
 	}
 	else
 	{
-		vector<FactoryObject<Actor>>::iterator it;
-		vector<FactoryObject<Actor>> references = GameFactory::GetObjectTypes<Actor>(ID_ACTOR);
-		unsigned int refID;
+		auto references = Game::GetContext(ID_ACTOR);
+		Expected<FactoryObject<Actor>> actor;
 
-		for (it = references.begin(); it != references.end(); GameFactory::LeaveReference(*it), ++it)
-			if ((refID = (*it)->GetReference()) && !filter(*it))
-				result.emplace_back(Utils::toString(refID));
+		for (unsigned int refID : references)
+			if ((actor = GameFactory::GetObject<Actor>(refID)))
+				if (!filter(actor.get()))
+					result.emplace_back(Utils::toString(refID));
 	}
 
 	_next(result);

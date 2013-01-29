@@ -38,7 +38,7 @@ class Game
 
 		typedef std::pair<std::future<void>, std::chrono::milliseconds> AsyncPack;
 		typedef std::pair<std::set<unsigned int>, std::set<unsigned int>> CellDiff;
-		typedef std::unordered_map<unsigned int, std::unordered_map<unsigned int, std::set<unsigned int>>> CellRefs;
+		typedef std::unordered_map<unsigned int, std::unordered_map<unsigned char, std::set<unsigned int>>> CellRefs;
 		typedef std::unordered_map<unsigned int, unsigned int> BaseRaces;
 		typedef std::unordered_map<unsigned int, signed int> Globals;
 		typedef unsigned int Weather;
@@ -303,6 +303,10 @@ class Game
 		 * \brief Tests whether a cell is in the range of the player
 		 */
 		static bool IsInContext(unsigned int cell);
+		/**
+		 * \brief Retrieves reference IDs of context objects
+		 */
+		static std::vector<unsigned int> GetContext(unsigned char type);
 
 		/**
 		 * Network functions

@@ -658,13 +658,14 @@ void Game::LoadEnvironment()
 		auto _reference = GameFactory::GetObject(id);
 		auto& reference = _reference.get();
 
-		if (!reference->IsPersistent())
+		if (!reference->IsPersistent() || reference->GetReference() == PLAYER_REFERENCE)
 		{
 			cellRefs.StartSession();
 			(*cellRefs)[reference->GetNetworkCell()][reference.GetType()].erase(reference->GetReference());
 			cellRefs.EndSession();
 
-			reference->SetReference(0x00000000);
+			if (reference->GetReference() != PLAYER_REFERENCE)
+				reference->SetReference(0x00000000);
 		}
 
 		unsigned char type = reference.GetType();
@@ -819,11 +820,11 @@ void Game::NewObject(FactoryObject<Object>& reference)
 				catch (...) {}
 			});
 		}
-
-		cellRefs.StartSession();
-		(*cellRefs)[reference->GetNetworkCell()][reference.GetType()].insert(refID);
-		cellRefs.EndSession();
 	}
+
+	cellRefs.StartSession();
+	(*cellRefs)[reference->GetNetworkCell()][reference.GetType()].insert(refID);
+	cellRefs.EndSession();
 
 	// maybe more
 }
@@ -1617,6 +1618,25 @@ bool Game::IsInContext(unsigned int cell)
 	return result;
 }
 
+vector<unsigned int> Game::GetContext(unsigned char type)
+{
+	vector<unsigned int> result;
+
+	cellRefs.StartSession();
+	cellContext.StartSession();
+
+	for (unsigned int cell : *cellContext)
+		if (cell)
+			for (const auto& refs : (*cellRefs)[cell])
+				if (refs.first & type)
+					result.insert(result.end(), refs.second.begin(), refs.second.end());
+
+	cellContext.EndSession();
+	cellRefs.EndSession();
+
+	return result;
+}
+
 void Game::net_SetPos(const FactoryObject<Object>& reference, double X, double Y, double Z)
 {
 	bool result = (static_cast<bool>(reference->SetNetworkPos(Axis_X, X)) | static_cast<bool>(reference->SetNetworkPos(Axis_Y, Y)) | static_cast<bool>(reference->SetNetworkPos(Axis_Z, Z)));
@@ -1972,6 +1992,18 @@ void Game::net_UpdateContext(Player::CellContext& context)
 {
 	cellRefs.StartSession();
 	cellContext.StartSession();
+
+	auto player = GameFactory::GetObject<Player>(PLAYER_REFERENCE).get();
+
+	unsigned int old_cell = player->GetNetworkCell();
+
+	(*cellRefs)[old_cell][ID_PLAYER].erase(PLAYER_REFERENCE);
+	(*cellRefs)[context[0]][ID_PLAYER].insert(PLAYER_REFERENCE);
+
+	player->SetNetworkCell(context[0]);
+	player->SetGameCell(context[0]);
+
+	GameFactory::LeaveReference(player);
 
 	sort(context.begin(), context.end());
 	pair<vector<unsigned int>, vector<unsigned int>> diff;
