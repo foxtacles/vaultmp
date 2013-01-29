@@ -65,6 +65,7 @@ class Script
 		void (*fexec)();
 		void (*fOnSpawn)(RakNet::NetworkID);
 		void (*fOnCellChange)(RakNet::NetworkID, unsigned int);
+		void (*fOnLockChange)(RakNet::NetworkID, RakNet::NetworkID, unsigned int);
 		void (*fOnContainerItemChange)(RakNet::NetworkID, unsigned int, signed int, double);
 		void (*fOnActorValueChange)(RakNet::NetworkID, unsigned char, double);
 		void (*fOnActorBaseValueChange)(RakNet::NetworkID, unsigned char, double);
@@ -119,6 +120,7 @@ class Script
 
 		static void OnSpawn(const FactoryObject<Object>& reference);
 		static void OnCellChange(const FactoryObject<Object>& reference, unsigned int cell);
+		static void OnLockChange(const FactoryObject<Object>& reference, const FactoryObject<Player>& player, unsigned int lock);
 		static void OnContainerItemChange(const FactoryObject<Container>& reference, unsigned int baseID, signed int count, double condition);
 		static void OnActorValueChange(const FactoryObject<Actor>& reference, unsigned char index, bool base, double value);
 		static void OnActorAlert(const FactoryObject<Actor>& reference, bool alerted);

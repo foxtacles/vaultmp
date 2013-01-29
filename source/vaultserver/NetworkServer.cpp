@@ -174,8 +174,8 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					NetworkID id;
 					unsigned int lock;
 					PacketFactory::Access<pTypes::ID_UPDATE_LOCK>(packet, id, lock);
-					auto reference = GameFactory::GetObject(id);
-					response = Server::GetLock(data->guid, reference.get(), lock);
+					auto reference = GameFactory::GetMultiple(vector<NetworkID>{id, Client::GetClientFromGUID(data->guid)->GetPlayer()});
+					response = Server::GetLock(data->guid, reference[0].get(), vaultcast<Player>(reference[1]).get(), lock);
 					break;
 				}
 

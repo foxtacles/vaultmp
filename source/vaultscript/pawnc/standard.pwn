@@ -83,6 +83,11 @@ public OnCellChange(ID, cell)
 
 }
 
+public OnLockChange(ID, player, Lock:lock)
+{
+
+}
+
 public OnContainerItemChange(ID, item, count, Float: value)
 {
 

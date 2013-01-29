@@ -58,7 +58,7 @@ class Server
 		/**
 		 * \brief Handles lock update packet
 		 */
-		static NetworkResponse GetLock(RakNet::RakNetGUID guid, const FactoryObject<Object>& reference, unsigned int lock);
+		static NetworkResponse GetLock(RakNet::RakNetGUID guid, const FactoryObject<Object>& reference, const FactoryObject<Player>& player, unsigned int lock);
 		/**
 		 * \brief Handles container update network packet
 		 */

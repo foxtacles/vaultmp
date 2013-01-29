@@ -90,6 +90,11 @@ Void VAULTSCRIPT OnCellChange(ID object, VAULTCELL cell) noexcept
 
 }
 
+Void VAULTSCRIPT OnLockChange(ID object, ID player, Lock lock) noexcept
+{
+
+}
+
 Void VAULTSCRIPT OnContainerItemChange(ID container, Base item, Count count, Value value) noexcept
 {
 

@@ -46,6 +46,7 @@ Script::Script(char* path)
 			string vpf(vaultprefix);
 
 			GetScript("OnSpawn", fOnSpawn);
+			GetScript("OnLockChange", fOnLockChange);
 			GetScript("OnCellChange", fOnCellChange);
 			GetScript("OnContainerItemChange", fOnContainerItemChange);
 			GetScript("OnActorValueChange", fOnActorValueChange);
@@ -706,6 +707,24 @@ void Script::OnCellChange(const FactoryObject<Object>& reference, unsigned int c
 		}
 		else if (PAWN::IsCallbackPresent(script->amx, "OnCellChange"))
 			PAWN::Call(script->amx, "OnCellChange", "il", 0, cell, id);
+	}
+}
+
+void Script::OnLockChange(const FactoryObject<Object>& reference, const FactoryObject<Player>& player, unsigned int lock)
+{
+	NetworkID id = reference->GetNetworkID();
+
+	// if terminal, map to different values
+
+	for (Script* script : scripts)
+	{
+		if (script->cpp_script)
+		{
+			if (script->fOnLockChange)
+				script->fOnLockChange(id, player->GetNetworkID(), lock);
+		}
+		else if (PAWN::IsCallbackPresent(script->amx, "OnLockChange"))
+			PAWN::Call(script->amx, "OnLockChange", "il", 0, lock, player->GetNetworkID(), id);
 	}
 }
 

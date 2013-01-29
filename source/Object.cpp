@@ -3,7 +3,7 @@
 #include "GameFactory.h"
 
 #ifndef VAULTSERVER
-	#include "Game.h"
+#include "Game.h"
 #endif
 
 using namespace std;

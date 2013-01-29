@@ -74,6 +74,7 @@ const Death: {
 
 const Lock: {
 	Unlocked = ~0,
+	Broken = (~0) - 1,
 	VeryEasy = 0,
 	Easy = 25,
 	Average = 50,
@@ -86,6 +87,7 @@ const Lock: {
 
 forward OnSpawn(ID);
 forward OnCellChange(ID, cell);
+forward OnLockChange(ID, player, Lock:lock);
 forward OnContainerItemChange(ID, item, count, Float:value);
 forward OnActorValueChange(ID, index, Float:value);
 forward OnActorBaseValueChange(ID, index, Float:value);
