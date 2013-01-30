@@ -724,7 +724,7 @@ void Script::OnLockChange(const FactoryObject<Object>& reference, const FactoryO
 				script->fOnLockChange(id, player->GetNetworkID(), lock);
 		}
 		else if (PAWN::IsCallbackPresent(script->amx, "OnLockChange"))
-			PAWN::Call(script->amx, "OnLockChange", "il", 0, lock, player->GetNetworkID(), id);
+			PAWN::Call(script->amx, "OnLockChange", "ill", 0, lock, player->GetNetworkID(), id);
 	}
 }
 
