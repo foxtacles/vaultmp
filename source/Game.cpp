@@ -1077,6 +1077,9 @@ void Game::SetLock(const FactoryObject<Object>& reference, unsigned int key)
 {
 	unsigned int lock = reference->GetLockLevel();
 
+	if (lock == UINT_MAX - 1) // workaround: can't set lock to broken, so set it to impossible
+		lock = 255;
+
 	auto* object = reference.operator->();
 
 	auto func = [object, lock](unsigned int key)
@@ -1956,21 +1959,22 @@ void Game::net_FireWeapon(const FactoryObject<Actor>& reference, unsigned int we
 		{
 			// automatic weapons
 
-			AsyncDispatch([=]
+			AsyncDispatch([id, weapon, rate]
 			{
 				try
 				{
-					FactoryObject<Actor> reference;
+					Expected<FactoryObject<Actor>> reference;
 
 					// rate: per second
 					auto us = chrono::microseconds(static_cast<unsigned long long>(1000000ull / rate));
 
 					this_thread::sleep_for(us);
 
-					while ((reference = GameFactory::GetObject<Actor>(id).get()) && reference->IsActorFiring() && reference->IsEquipped(weapon))
+					while ((reference = GameFactory::GetObject<Actor>(id)) && reference->IsActorFiring() && reference->IsEquipped(weapon))
 					{
-						FireWeapon(reference, weapon);
-						GameFactory::LeaveReference(reference);
+						auto& _reference = reference.get();
+						FireWeapon(_reference, weapon);
+						GameFactory::LeaveReference(_reference);
 						this_thread::sleep_for(us);
 					}
 				}

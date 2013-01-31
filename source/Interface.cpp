@@ -177,7 +177,7 @@ void Interface::ExecuteCommand(const string& name, ParamContainer&& param, unsig
 
 vector<string> Interface::Evaluate(Native::iterator _it)
 {
-	string name = _it->first;
+	const string& name = _it->first;
 	ParamContainer& param = _it->second;
 
 	unsigned int i = 0;
@@ -211,7 +211,7 @@ vector<string> Interface::Evaluate(Native::iterator _it)
 			cmd += " " + Utils::str_replace(param[j].get()[idx], " ", "|");
 		}
 
-		result.emplace_back(cmd);
+		result.emplace_back(move(cmd));
 	}
 
 	return result;
@@ -284,7 +284,7 @@ void Interface::CommandThreadReceive(bool steam)
 			VaultException& vaulterror = dynamic_cast<VaultException&>(e);
 			vaulterror.Message();
 		}
-		catch (bad_cast& no_vaulterror)
+		catch (bad_cast&)
 		{
 			VaultException vaulterror(e.what());
 			vaulterror.Message();
@@ -367,7 +367,7 @@ void Interface::CommandThreadSend()
 			VaultException& vaulterror = dynamic_cast<VaultException&>(e);
 			vaulterror.Message();
 		}
-		catch (bad_cast& no_vaulterror)
+		catch (bad_cast&)
 		{
 			VaultException vaulterror(e.what());
 			vaulterror.Message();
