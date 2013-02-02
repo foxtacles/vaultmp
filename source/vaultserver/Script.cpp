@@ -714,7 +714,8 @@ void Script::OnLockChange(const FactoryObject<Object>& reference, const FactoryO
 {
 	NetworkID id = reference->GetNetworkID();
 
-	// if terminal, map to different values
+	if (lock < 5 && DB::Terminal::Lookup(reference->GetBase()))
+		lock *= 25;
 
 	for (Script* script : scripts)
 	{
@@ -1985,9 +1986,16 @@ bool Script::SetLock(NetworkID id, unsigned int lock)
 	{
 		lock = ceil(static_cast<double>(lock) / 25.0) * 25;
 
-		// if terminal, map to different values
 		if (lock > 100)
 			lock = 255;
+
+		if (DB::Terminal::Lookup(object->GetBase()))
+		{
+			if (lock == 255)
+				lock = 5;
+			else
+				lock /= 25;
+		}
 	}
 
 	if (object->SetLockLevel(lock))

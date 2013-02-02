@@ -352,6 +352,19 @@ void Dedicated::DedicatedThread()
 			object_init(door, reference);
 		}
 
+		objects = DB::Reference::Lookup("TERM");
+
+		for (const auto* reference : objects)
+		{
+			// FIXME dlc support
+			if (reference->GetReference() & 0xFF000000)
+				continue;
+
+			auto terminal = GameFactory::GetObject(GameFactory::CreateInstance(ID_OBJECT, reference->GetReference(), reference->GetBase())).get();
+			object_init(terminal, reference);
+			terminal->SetLockLevel(DB::Terminal::Lookup(reference->GetBase())->GetLock());
+		}
+
 		Utils::timestamp();
 		printf("Dedicated server initialized, running scripts now\n");
 

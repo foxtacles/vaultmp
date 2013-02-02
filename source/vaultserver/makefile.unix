@@ -109,6 +109,7 @@ $(OBJDIR_DEBUG)/vaultserver/Client.o \
 $(OBJDIR_DEBUG)/vaultserver/BaseContainer.o \
 $(OBJDIR_DEBUG)/vaultserver/Item.o \
 $(OBJDIR_DEBUG)/vaultserver/Reference.o \
+$(OBJDIR_DEBUG)/vaultserver/Terminal.o \
 $(OBJDIR_DEBUG)/ServerEntry.o \
 $(OBJDIR_DEBUG)/Reference.o \
 $(OBJDIR_DEBUG)/VaultVector.o \
@@ -200,6 +201,7 @@ $(OBJDIR_RELEASE)/vaultserver/Client.o \
 $(OBJDIR_RELEASE)/vaultserver/BaseContainer.o \
 $(OBJDIR_RELEASE)/vaultserver/Item.o \
 $(OBJDIR_RELEASE)/vaultserver/Reference.o \
+$(OBJDIR_RELEASE)/vaultserver/Terminal.o \
 $(OBJDIR_RELEASE)/ServerEntry.o \
 $(OBJDIR_RELEASE)/Reference.o \
 $(OBJDIR_RELEASE)/VaultVector.o \
@@ -450,6 +452,9 @@ $(OBJDIR_DEBUG)/vaultserver/Item.o: Item.cpp
 
 $(OBJDIR_DEBUG)/vaultserver/Reference.o: Reference.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Reference.cpp -o $(OBJDIR_DEBUG)/vaultserver/Reference.o
+
+$(OBJDIR_DEBUG)/vaultserver/Terminal.o: Terminal.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Terminal.cpp -o $(OBJDIR_DEBUG)/vaultserver/Terminal.o
 
 $(OBJDIR_DEBUG)/ServerEntry.o: ../ServerEntry.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../ServerEntry.cpp -o $(OBJDIR_DEBUG)/ServerEntry.o
@@ -740,6 +745,9 @@ $(OBJDIR_RELEASE)/vaultserver/Item.o: Item.cpp
 
 $(OBJDIR_RELEASE)/vaultserver/Reference.o: Reference.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Reference.cpp -o $(OBJDIR_RELEASE)/vaultserver/Reference.o
+
+$(OBJDIR_RELEASE)/vaultserver/Terminal.o: Terminal.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Terminal.cpp -o $(OBJDIR_RELEASE)/vaultserver/Terminal.o
 
 $(OBJDIR_RELEASE)/ServerEntry.o: ../ServerEntry.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../ServerEntry.cpp -o $(OBJDIR_RELEASE)/ServerEntry.o

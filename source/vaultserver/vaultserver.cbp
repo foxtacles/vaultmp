@@ -431,6 +431,8 @@
 		<Unit filename="ScriptFunction.h" />
 		<Unit filename="Server.cpp" />
 		<Unit filename="Server.h" />
+		<Unit filename="Terminal.cpp" />
+		<Unit filename="Terminal.h" />
 		<Unit filename="Timer.cpp" />
 		<Unit filename="Timer.h" />
 		<Unit filename="Weapon.cpp" />
