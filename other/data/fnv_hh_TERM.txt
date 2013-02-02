@@ -1,0 +1,9 @@
+NVDLC02ZionStoreTerminal|0x100f863|0|0x0
+NVDLC02NarrowsSurvivalistTerminal|0x100f39d|-2|0x0
+NVDLC02ZionSCaveWLogTerminal01|0x100d4c1|-2|0x0
+NVDLC02ZionSCaveNLogTerminal01|0x100d4c0|-2|0x0
+NVDLC02ZionSCaveSLogTerminal01|0x100d326|-2|0x0
+NVDLC02ZionSCaveSElectricDoorTerminal02|0x100d298|-2|0x0
+NVDLC02ZionSCaveSElectricDoorTerminal|0x100d28d|2|0x0
+NVDLC02EVSurvivalistTerminal|0x100b7a3|-2|0x0
+NVDLC02RangerTerminal|0x1009e68|-2|0x0
