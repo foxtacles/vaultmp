@@ -792,7 +792,7 @@ void Game::NewObject(FactoryObject<Object>& reference)
 		reference->SetGameCell(reference->GetNetworkCell());
 	}
 
-	if (reference->GetLockLevel() != UINT_MAX)
+	//if (reference->GetLockLevel() != UINT_MAX)
 		SetLock(reference);
 
 	if (reference->GetOwner())
