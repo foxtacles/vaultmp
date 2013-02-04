@@ -253,11 +253,11 @@ bool Actor::IsActorJumping() const
 	unsigned char game = API::GetGameCode();
 
 	return ((game & FALLOUT3 && ((anim >= Fallout3::AnimGroup_JumpStart && anim <= Fallout3::AnimGroup_JumpLand)
-								|| (anim >= Fallout3::AnimGroup_JumpLoopForward && anim <= Fallout3::AnimGroup_JumpLoopRight)
-								|| (anim >= Fallout3::AnimGroup_JumpLandForward && anim <= Fallout3::AnimGroup_JumpLandRight)))
-			|| (game & NEWVEGAS && ((anim >= FalloutNV::AnimGroup_JumpStart && anim <= FalloutNV::AnimGroup_JumpLand)
-								   || (anim >= FalloutNV::AnimGroup_JumpLoopForward && anim <= FalloutNV::AnimGroup_JumpLoopRight)
-								   || (anim >= FalloutNV::AnimGroup_JumpLandForward && anim <= FalloutNV::AnimGroup_JumpLandRight))));
+		|| (anim >= Fallout3::AnimGroup_JumpLoopForward && anim <= Fallout3::AnimGroup_JumpLoopRight)
+		|| (anim >= Fallout3::AnimGroup_JumpLandForward && anim <= Fallout3::AnimGroup_JumpLandRight)))
+		|| (game & NEWVEGAS && ((anim >= FalloutNV::AnimGroup_JumpStart && anim <= FalloutNV::AnimGroup_JumpLand)
+		|| (anim >= FalloutNV::AnimGroup_JumpLoopForward && anim <= FalloutNV::AnimGroup_JumpLoopRight)
+		|| (anim >= FalloutNV::AnimGroup_JumpLandForward && anim <= FalloutNV::AnimGroup_JumpLandRight))));
 }
 
 bool Actor::IsActorFiring() const
@@ -295,12 +295,12 @@ bool Actor::IsActorAttacking() const
 #ifdef VAULTSERVER
 unsigned int Actor::GetEquippedWeapon() const
 {
-	list<NetworkID> weapons = this->GetItemTypes("WEAP");
+	auto weapons = this->GetItemTypes("WEAP");
 
 	// this won't reliably work if the actor has equipped more than one weapon
-	for (NetworkID& weapon : weapons)
+	for (const auto& weapon : weapons)
 	{
-		FactoryObject<Item> item = GameFactory::GetObject<Item>(weapon).get();
+		auto item = GameFactory::GetObject<Item>(weapon);
 
 		if (item->GetItemEquipped())
 			return item->GetBase();
