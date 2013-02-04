@@ -796,6 +796,17 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 		DLLerror = true;
 	else
 	{
+		LoadLibrary("CEGUIBase.dll");
+		LoadLibrary("CEGUIDevILImageCodec.dll");
+		LoadLibrary("CEGUIDirect3D9Renderer.dll");
+		LoadLibrary("CEGUIExpatParser.dll");
+		LoadLibrary("CEGUIFalagardWRBase.dll");
+		LoadLibrary("CEGUIFreeImageImageCodec.dll");
+		LoadLibrary("CEGUIOpenGLRenderer.dll");
+		LoadLibrary("CEGUISILLYImageCodec.dll");
+		LoadLibrary("CEGUISTBImageCodec.dll");
+		LoadLibrary("CEGUITGAImageCodec.dll");
+
 		AddToChat = reinterpret_cast<Chatbox_AddToChat>(GetProcAddress(vaultgui, "Chatbox_AddToChat"));
 		GetQueue = reinterpret_cast<Chatbox_GetQueue>(GetProcAddress(vaultgui, "Chatbox_GetQueue"));
 
@@ -833,10 +844,10 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 	else
 		PatchGame(silverlock);
 
+	SetCurrentDirectory("..");
+
 	buffer[0] = PIPE_SYS_WAKEUP;
 	pipeClient.Send(buffer);
-
-	SetCurrentDirectory("..");
 
 	Sleep(3000);
 
@@ -888,7 +899,7 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 				break;
 			}
 		}
-/*
+
 		string chat(GetQueue());
 
 		if (!chat.empty())
@@ -899,7 +910,7 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 			memcpy(buffer + 9, chat.c_str(), chat.length());
 
 			pipeClient.Send(buffer);
-		}*/
+		}
 	}
 
 	buffer[0] = PIPE_ERROR_CLOSE;

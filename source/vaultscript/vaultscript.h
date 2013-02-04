@@ -210,6 +210,14 @@ namespace vaultmp {
 
 #include "records.h"
 
+#ifdef __cplusplus
+	#if defined(GAME_NEWVEGAS)
+		using namespace FNV;
+	#elif defined(GAME_FALLOUT3)
+		using namespace F3;
+	#endif
+#endif
+
 VAULTCPP(})
 
 VAULTCPP(extern "C" {)
