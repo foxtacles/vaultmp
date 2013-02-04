@@ -836,6 +836,8 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 	buffer[0] = PIPE_SYS_WAKEUP;
 	pipeClient.Send(buffer);
 
+	SetCurrentDirectory("..");
+
 	Sleep(3000);
 
 	while (!DLLerror)
@@ -886,7 +888,7 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 				break;
 			}
 		}
-
+/*
 		string chat(GetQueue());
 
 		if (!chat.empty())
@@ -897,7 +899,7 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 			memcpy(buffer + 9, chat.c_str(), chat.length());
 
 			pipeClient.Send(buffer);
-		}
+		}*/
 	}
 
 	buffer[0] = PIPE_ERROR_CLOSE;

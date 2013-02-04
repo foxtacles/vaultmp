@@ -63,7 +63,7 @@ void Bethesda::Initialize()
 	GetModuleFileName(GetModuleHandle(nullptr), (LPTSTR) curdir, MAX_PATH);
 	PathRemoveFileSpec(curdir);
 
-	strcat(curdir, "\\Data\\");
+	strcat(curdir, "\\..\\Data\\");
 
 	for (ModList::iterator it = modfiles.begin(); it != modfiles.end(); ++it)
 	{
@@ -130,7 +130,9 @@ void Bethesda::Initialize()
 		ZeroMemory(&pi, sizeof(pi));
 		si.cb = sizeof(si);
 
-		if (CreateProcess(module, nullptr, nullptr, nullptr, FALSE, CREATE_SUSPENDED, nullptr, nullptr, &si, &pi))
+		string _module = string("..\\") + module;
+
+		if (CreateProcess(_module.c_str(), nullptr, nullptr, nullptr, FALSE, CREATE_SUSPENDED, nullptr, nullptr, &si, &pi))
 		{
 			HANDLE hRemoteThread;
 			HINSTANCE hDll;
@@ -187,7 +189,7 @@ void Bethesda::Initialize()
 			{
 				Interface::Initialize(&Game::CommandHandler, Bethesda::steam);
 
-				chrono::steady_clock::time_point till = chrono::steady_clock::now() + chrono::milliseconds(5000);
+				chrono::steady_clock::time_point till = chrono::steady_clock::now() + chrono::milliseconds(15000);
 
 				while (chrono::steady_clock::now() < till && !Interface::IsAvailable())
 					this_thread::sleep_for(chrono::milliseconds(100));

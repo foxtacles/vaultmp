@@ -246,40 +246,40 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 	FILE* filecheck = nullptr;
 	DWORD checksum, checksum_real;
 
-	filecheck = fopen("Fallout3.exe", "rb");
+	filecheck = fopen("../Fallout3.exe", "rb");
 
 	if (filecheck != nullptr)
 	{
 		fclose(filecheck);
-		Utils::GenerateChecksum("Fallout3.exe", checksum, checksum_real);
+		Utils::GenerateChecksum("../Fallout3.exe", checksum, checksum_real);
 
 		if (checksum == FALLOUT3_EN_VER17 /*|| checksum == FALLOUT3_EN_VER17_STEAM*/)
 		{
-			filecheck = fopen("fose_1_7.dll", "rb");
+			filecheck = fopen("../fose_1_7.dll", "rb");
 
 			if (filecheck != nullptr)
 			{
 				fclose(filecheck);
-				Utils::GenerateChecksum("fose_1_7.dll", checksum, checksum_real);
+				Utils::GenerateChecksum("../fose_1_7.dll", checksum, checksum_real);
 
 				if (checksum_real == FOSE_VER0122)
 				{
-					filecheck = fopen("xlive.dll", "rb");
+					filecheck = fopen("../xlive.dll", "rb");
 
 					if (filecheck != nullptr)
 					{
 						fclose(filecheck);
-						Utils::GenerateChecksum("xlive.dll", checksum, checksum_real);
+						Utils::GenerateChecksum("../xlive.dll", checksum, checksum_real);
 
 						if (checksum_real == XLIVE_PATCH)
 						{
-							filecheck = fopen("Data/vaultmpF3.esp", "rb");
+							filecheck = fopen("../Data/vaultmpF3.esp", "rb");
 
 							if (filecheck != nullptr)
 							{
 								fclose(filecheck);
 								unsigned int crc;
-								Utils::crc32file("Data/vaultmpF3.esp", &crc);
+								Utils::crc32file("../Data/vaultmpF3.esp", &crc);
 
 								if (crc == VAULTMP_F3)
 								{
@@ -307,33 +307,33 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 			return MessageBox(nullptr, "Your version of Fallout 3 is not supported!", "Error", MB_OK | MB_ICONERROR);
 	}
 
-	filecheck = fopen("FalloutNV.exe", "rb");
+	filecheck = fopen("../FalloutNV.exe", "rb");
 
 	if (filecheck != nullptr)
 	{
 		fclose(filecheck);
-		Utils::GenerateChecksum("FalloutNV.exe", checksum, checksum_real);
+		Utils::GenerateChecksum("../FalloutNV.exe", checksum, checksum_real);
 
 		if (checksum == NEWVEGAS_EN_VER14_STEAM)
 		{
 			steam = (checksum_real == NEWVEGAS_EN_VER14_STEAM);
 
-			filecheck = fopen("nvse_1_4.dll", "rb");
+			filecheck = fopen("../nvse_1_4.dll", "rb");
 
 			if (filecheck != nullptr)
 			{
 				fclose(filecheck);
-				Utils::GenerateChecksum("nvse_1_4.dll", checksum, checksum_real);
+				Utils::GenerateChecksum("../nvse_1_4.dll", checksum, checksum_real);
 
 				if (checksum_real == NVSE_VER0212)
 				{
-					filecheck = fopen("Data/vaultmpFNV.esp", "rb");
+					filecheck = fopen("../Data/vaultmpFNV.esp", "rb");
 
 					if (filecheck != nullptr)
 					{
 						fclose(filecheck);
 						unsigned int crc;
-						Utils::crc32file("Data/vaultmpFNV.esp", &crc);
+						Utils::crc32file("../Data/vaultmpFNV.esp", &crc);
 
 						if (crc == VAULTMP_FNV)
 						{
@@ -365,7 +365,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 		fclose(filecheck);
 		Utils::GenerateChecksum("vaultmp.dll", checksum, checksum_real);
 
-		if (checksum_real != VAULTMP_DLL)
+		if (false && checksum_real != VAULTMP_DLL)
 		    return MessageBox(NULL, "vaultmp.dll is not up to date!", "Error", MB_OK | MB_ICONERROR);
 	}
 	else
