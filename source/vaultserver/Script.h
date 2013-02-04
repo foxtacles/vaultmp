@@ -179,12 +179,12 @@ class Script
 		static RakNet::NetworkID GetID(unsigned int refID);
 		static unsigned int GetReference(RakNet::NetworkID id);
 		static unsigned int GetBase(RakNet::NetworkID id);
-		static const char* GetName(RakNet::NetworkID id);
 		static void GetPos(RakNet::NetworkID id, double* X, double* Y, double* Z);
 		static void GetAngle(RakNet::NetworkID id, double* X, double* Y, double* Z);
 		static unsigned int GetCell(RakNet::NetworkID id);
 		static unsigned int GetLock(RakNet::NetworkID id);
 		static unsigned int GetOwner(RakNet::NetworkID id);
+		static const char* GetBaseName(RakNet::NetworkID id);
 		static bool IsNearPoint(RakNet::NetworkID id, double X, double Y, double Z, double R);
 		static RakNet::NetworkID GetItemContainer(RakNet::NetworkID id);
 		static unsigned int GetItemCount(RakNet::NetworkID id);
@@ -215,6 +215,7 @@ class Script
 		static bool SetCell(RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z);
 		static bool SetLock(RakNet::NetworkID id, unsigned int lock);
 		static bool SetOwner(RakNet::NetworkID id, unsigned int owner);
+		static bool SetBaseName(RakNet::NetworkID id, const char* name);
 		static RakNet::NetworkID CreateItem(unsigned int baseID, RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z);
 		static bool SetItemCount(RakNet::NetworkID id, unsigned int count);
 		static bool SetItemCondition(RakNet::NetworkID id, double condition);

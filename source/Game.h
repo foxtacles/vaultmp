@@ -313,6 +313,10 @@ class Game
 		 */
 
 		/**
+		 * \brief Network function to handle Object name
+		 */
+		static void net_SetName(const FactoryObject<Object>& reference, const std::string& name);
+		/**
 		 * \brief Network function to handle Object position
 		 */
 		static void net_SetPos(const FactoryObject<Object>& reference, double X, double Y, double Z);

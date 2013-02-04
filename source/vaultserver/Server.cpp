@@ -122,7 +122,7 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 			return (!(data.GetBase() & 0xFF000000) && !data.IsEssential() && !DB::Race::Lookup(data.GetRace())->IsChild());
 		})->GetBase();
 
-	const DB::NPC* npc = *DB::NPC::Lookup(result);
+	const auto* npc = *DB::NPC::Lookup(result);
 
 	player->SetReference(0x00000000);
 	player->SetBase(result);
@@ -179,6 +179,8 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 	response.emplace_back(Network::CreateResponse(
 		player->toPacket(),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(client)));
+
+	Script::SetBaseName(id, player->GetName().c_str());
 
 	Script::OnSpawn(player);
 

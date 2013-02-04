@@ -28,7 +28,7 @@ class PAWN
 
 		PAWN();
 
-		static AMX_NATIVE_INFO vaultmp_functions[109];
+		static AMX_NATIVE_INFO vaultmp_functions[110];
 
 		static cell vaultmp_timestamp(AMX* amx, const cell* params);
 		static cell vaultmp_CreateTimer(AMX* amx, const cell* params);
@@ -83,12 +83,12 @@ class PAWN
 		static cell vaultmp_GetID(AMX* amx, const cell* params);
 		static cell vaultmp_GetReference(AMX* amx, const cell* params);
 		static cell vaultmp_GetBase(AMX* amx, const cell* params);
-		static cell vaultmp_GetName(AMX* amx, const cell* params);
 		static cell vaultmp_GetPos(AMX* amx, const cell* params);
 		static cell vaultmp_GetAngle(AMX* amx, const cell* params);
 		static cell vaultmp_GetCell(AMX* amx, const cell* params);
 		static cell vaultmp_GetLock(AMX* amx, const cell* params);
 		static cell vaultmp_GetOwner(AMX* amx, const cell* params);
+		static cell vaultmp_GetBaseName(AMX* amx, const cell* params);
 		static cell vaultmp_IsNearPoint(AMX* amx, const cell* params);
 		static cell vaultmp_GetItemContainer(AMX* amx, const cell* params);
 		static cell vaultmp_GetItemCount(AMX* amx, const cell* params);
@@ -119,6 +119,7 @@ class PAWN
 		static cell vaultmp_SetCell(AMX* amx, const cell* params);
 		static cell vaultmp_SetLock(AMX* amx, const cell* params);
 		static cell vaultmp_SetOwner(AMX* amx, const cell* params);
+		static cell vaultmp_SetBaseName(AMX* amx, const cell* params);
 		static cell vaultmp_CreateItem(AMX* amx, const cell* params);
 		static cell vaultmp_SetItemCount(AMX* amx, const cell* params);
 		static cell vaultmp_SetItemCondition(AMX* amx, const cell* params);

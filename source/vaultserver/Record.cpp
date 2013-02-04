@@ -105,3 +105,8 @@ const string& Record::GetType() const
 {
 	return type;
 }
+
+void Record::SetDescription(const string& description) const
+{
+	this->description = description;
+}

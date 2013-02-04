@@ -76,6 +76,10 @@ pPacket PacketFactory::Init(const unsigned char* stream, unsigned int len)
 			packet = new pObjectRemove(stream, len);
 			break;
 
+		case pTypes::ID_UPDATE_NAME:
+			packet = new pObjectName(stream, len);
+			break;
+
 		case pTypes::ID_UPDATE_POS:
 			packet = new pObjectPos(stream, len);
 			break;

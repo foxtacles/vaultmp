@@ -296,12 +296,12 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(GetID))(VAULTSPACE Ref) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Ref (*VAULTAPI(GetReference))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Base (*VAULTAPI(GetBase))(VAULTSPACE ID) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE cRawString (*VAULTAPI(GetName))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(GetPos))(VAULTSPACE ID, VAULTSPACE Value*, VAULTSPACE Value*, VAULTSPACE Value*) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(GetAngle))(VAULTSPACE ID, VAULTSPACE Value*, VAULTSPACE Value*, VAULTSPACE Value*) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE VAULTCELL (*VAULTAPI(GetCell))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Lock (*VAULTAPI(GetLock))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE VAULTNPC (*VAULTAPI(GetOwner))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE cRawString (*VAULTAPI(GetBaseName))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsNearPoint))(VAULTSPACE ID, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(GetItemContainer))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetItemCount))(VAULTSPACE ID) VAULTCPP(noexcept);
@@ -332,6 +332,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetCell))(VAULTSPACE ID, VAULTSPACE VAULTCELL, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetLock))(VAULTSPACE ID, VAULTSPACE Lock) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetOwner))(VAULTSPACE ID, VAULTSPACE VAULTNPC) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetBaseName))(VAULTSPACE ID, VAULTSPACE cRawString) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateItem))(VAULTSPACE Base, VAULTSPACE ID, VAULTSPACE VAULTCELL, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetItemCount))(VAULTSPACE ID, VAULTSPACE UCount) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetItemCondition))(VAULTSPACE ID, VAULTSPACE Value) VAULTCPP(noexcept);
@@ -495,12 +496,12 @@ namespace vaultmp
 	VAULTFUNCTION ID GetID(Ref ref) noexcept { return VAULTAPI(GetID)(ref); }
 	VAULTFUNCTION Ref GetReference(ID id) noexcept { return VAULTAPI(GetReference)(id); }
 	VAULTFUNCTION Base GetBase(ID id) noexcept { return VAULTAPI(GetBase)(id); }
-	VAULTFUNCTION String GetName(ID id) noexcept { return String(VAULTAPI(GetName)(id)); }
 	VAULTFUNCTION Void GetPos(ID id, Value& X, Value& Y, Value& Z) noexcept { return VAULTAPI(GetPos)(id, &X, &Y, &Z); }
 	VAULTFUNCTION Void GetAngle(ID id, Value& X, Value& Y, Value& Z) noexcept { return VAULTAPI(GetAngle)(id, &X, &Y, &Z); }
 	VAULTFUNCTION VAULTCELL GetCell(ID id) noexcept { return VAULTAPI(GetCell)(id); }
 	VAULTFUNCTION Lock GetLock(ID id) noexcept { return VAULTAPI(GetLock)(id); }
 	VAULTFUNCTION VAULTNPC GetOwner(ID id) noexcept { return VAULTAPI(GetOwner)(id); }
+	VAULTFUNCTION String GetBaseName(ID id) noexcept { return String(VAULTAPI(GetBaseName)(id)); }
 	VAULTFUNCTION State IsNearPoint(ID id, Value X, Value Y, Value Z, Value R) noexcept { return VAULTAPI(IsNearPoint)(id, X, Y, Z, R); }
 	VAULTFUNCTION ID GetItemContainer(ID id) noexcept { return VAULTAPI(GetItemContainer)(id); }
 	VAULTFUNCTION UCount GetItemCount(ID id) noexcept { return VAULTAPI(GetItemCount)(id); }
@@ -537,6 +538,8 @@ namespace vaultmp
 	VAULTFUNCTION State SetCell(ID id, VAULTCELL cell, Value X = 0.00, Value Y = 0.00, Value Z = 0.00) noexcept { return VAULTAPI(SetCell)(id, cell, X, Y, Z); }
 	VAULTFUNCTION State SetLock(ID id, Lock lock) noexcept { return VAULTAPI(SetLock)(id, lock); }
 	VAULTFUNCTION State SetOwner(ID id, VAULTNPC owner) noexcept { return VAULTAPI(SetOwner)(id, owner); }
+	VAULTFUNCTION State SetBaseName(ID id, const String& name) noexcept { return VAULTAPI(SetBaseName)(id, name.c_str()); }
+	VAULTFUNCTION State SetBaseName(ID id, cRawString name) noexcept { return VAULTAPI(SetBaseName)(id, name); }
 	VAULTFUNCTION ID CreateItem(Base item, ID id) noexcept { return VAULTAPI(CreateItem)(item, id, static_cast<VAULTCELL>(0), 0.00, 0.00, 0.00); }
 	VAULTFUNCTION ID CreateItem(Base item, VAULTCELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateItem)(item, static_cast<ID>(0), cell, X, Y, Z); }
 	VAULTFUNCTION State SetItemCount(ID id, UCount count) noexcept { return VAULTAPI(SetItemCount)(id, count); }
@@ -599,12 +602,12 @@ namespace vaultmp
 			Object(ID id) noexcept : Reference(vaultmp::IsObject(id) ? id : static_cast<ID>(0), Type::ID_OBJECT) {}
 			virtual ~Object() noexcept {}
 
-			String GetName() const noexcept { return vaultmp::GetName(id); }
 			Void GetPos(Value& X, Value& Y, Value& Z) const noexcept { return vaultmp::GetPos(id, X, Y, Z); }
 			Void GetAngle(Value& X, Value& Y, Value& Z) const noexcept { return vaultmp::GetAngle(id, X, Y, Z); }
 			VAULTCELL GetCell() const noexcept { return vaultmp::GetCell(id); }
 			Lock GetLock() const noexcept { return vaultmp::GetLock(id); }
 			VAULTNPC GetOwner() const noexcept { return vaultmp::GetOwner(id); }
+			String GetBaseName() const noexcept { return vaultmp::GetBaseName(id); }
 			State IsNearPoint(Value X, Value Y, Value Z, Value R) const noexcept { return vaultmp::IsNearPoint(id, X, Y, Z, R); }
 
 			State DestroyObject() noexcept { State state = vaultmp::DestroyObject(id); id = static_cast<ID>(0); return state; }
@@ -613,6 +616,8 @@ namespace vaultmp
 			State SetCell(VAULTCELL cell, Value X = 0.00, Value Y = 0.00, Value Z = 0.00) const noexcept { return vaultmp::SetCell(id, cell, X, Y, Z); }
 			State SetLock(Lock lock) const noexcept { return vaultmp::SetLock(id, lock); }
 			State SetOwner(VAULTNPC owner) const noexcept { return vaultmp::SetOwner(id, owner); }
+			State SetBaseName(const String& name) const noexcept { return vaultmp::SetBaseName(id, name); }
+			State SetBaseName(cRawString name) const noexcept { return vaultmp::SetBaseName(id, name); }
 
 			static ID Create(Base object, ID id) { return vaultmp::CreateObject(object, id); }
 			static ID Create(Base object, VAULTCELL cell, Value X, Value Y, Value Z) { return vaultmp::CreateObject(object, cell, X, Y, Z); }

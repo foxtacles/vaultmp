@@ -25,7 +25,7 @@ namespace DB
 
 			unsigned int baseID;
 			std::string name;
-			std::string description;
+			mutable std::string description;
 			std::string type;
 
 			Record(const Record&) = delete;
@@ -44,6 +44,8 @@ namespace DB
 			const std::string& GetName() const;
 			const std::string& GetDescription() const;
 			const std::string& GetType() const;
+
+			void SetDescription(const std::string& description) const;
 
 			Record(const std::string& table, sqlite3_stmt* stmt);
 			~Record() = default;

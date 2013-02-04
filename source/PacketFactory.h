@@ -44,6 +44,7 @@ enum class pTypes : unsigned char
 	ID_PLAYER_NEW,
 	ID_OBJECT_REMOVE,
 
+	ID_UPDATE_NAME,
 	ID_UPDATE_POS,
 	ID_UPDATE_ANGLE,
 	ID_UPDATE_CELL,
@@ -924,6 +925,27 @@ class pObjectRemove : public pObjectDefault
 		}
 };
 template<> struct pTypesMap<pTypes::ID_OBJECT_REMOVE> { typedef pObjectRemove type; };
+
+class pObjectName : public pObjectDefault
+{
+		friend class PacketFactory;
+
+	private:
+		pObjectName(RakNet::NetworkID id, const std::string& name) : pObjectDefault(pTypes::ID_UPDATE_NAME, id)
+		{
+			construct(name);
+		}
+		pObjectName(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		{
+
+		}
+
+		void access(RakNet::NetworkID& id, std::string& name) const
+		{
+			deconstruct(id, name);
+		}
+};
+template<> struct pTypesMap<pTypes::ID_UPDATE_NAME> { typedef pObjectName type; };
 
 class pObjectPos : public pObjectDefault
 {

@@ -986,7 +986,7 @@ unsigned int Game::GetBase(unsigned int refID)
 
 void Game::SetName(const FactoryObject<Object>& reference)
 {
-	string name = reference->GetName();
+	const string& name = reference->GetName();
 
 	if (name.empty())
 		return;
@@ -1651,6 +1651,14 @@ vector<unsigned int> Game::GetContext(unsigned char type)
 	return result;
 }
 
+void Game::net_SetName(const FactoryObject<Object>& reference, const string& name)
+{
+	bool result = static_cast<bool>(reference->SetName(name));
+
+	if (result)
+		SetName(reference);
+}
+
 void Game::net_SetPos(const FactoryObject<Object>& reference, double X, double Y, double Z)
 {
 	bool result = (static_cast<bool>(reference->SetNetworkPos(Axis_X, X)) | static_cast<bool>(reference->SetNetworkPos(Axis_Y, Y)) | static_cast<bool>(reference->SetNetworkPos(Axis_Z, Z)));
@@ -1995,7 +2003,7 @@ void Game::net_SetActorIdle(const FactoryObject<Actor>& reference, unsigned int 
 		SetActorIdleAnimation(reference, name, result->Lock());
 }
 
-void Game::net_UpdateInterior(const std::string& cell, bool spawn)
+void Game::net_UpdateInterior(const string& cell, bool spawn)
 {
 	CenterOnCell(cell, spawn);
 }

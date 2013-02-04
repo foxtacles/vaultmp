@@ -82,7 +82,7 @@ Void VAULTSCRIPT OnSpawn(ID object) noexcept
 	Player player(object);
 
 	if (player)
-		player.UIMessage("Hello, " + player.GetName() + "!");
+		player.UIMessage("Hello, " + player.GetBaseName() + "!");
 }
 
 Void VAULTSCRIPT OnCellChange(ID object, VAULTCELL cell) noexcept

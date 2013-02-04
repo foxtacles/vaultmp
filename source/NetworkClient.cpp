@@ -247,6 +247,16 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
+				case pTypes::ID_UPDATE_NAME:
+				{
+					NetworkID id;
+					string name;
+					PacketFactory::Access<pTypes::ID_UPDATE_NAME>(packet, id, name);
+					auto reference = GameFactory::GetObject(id);
+					Game::net_SetName(reference.get(), move(name));
+					break;
+				}
+
 				case pTypes::ID_UPDATE_POS:
 				{
 					NetworkID id;

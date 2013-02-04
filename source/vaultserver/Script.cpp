@@ -124,12 +124,12 @@ Script::Script(char* path)
 			SetScript(string(vpf + "GetID").c_str(), &Script::GetID);
 			SetScript(string(vpf + "GetReference").c_str(), &Script::GetReference);
 			SetScript(string(vpf + "GetBase").c_str(), &Script::GetBase);
-			SetScript(string(vpf + "GetName").c_str(), &Script::GetName);
 			SetScript(string(vpf + "GetPos").c_str(), &Script::GetPos);
 			SetScript(string(vpf + "GetAngle").c_str(), &Script::GetAngle);
 			SetScript(string(vpf + "GetCell").c_str(), &Script::GetCell);
 			SetScript(string(vpf + "GetLock").c_str(), &Script::GetLock);
 			SetScript(string(vpf + "GetOwner").c_str(), &Script::GetOwner);
+			SetScript(string(vpf + "GetBaseName").c_str(), &Script::GetBaseName);
 			SetScript(string(vpf + "IsNearPoint").c_str(), &Script::IsNearPoint);
 			SetScript(string(vpf + "GetItemContainer").c_str(), &Script::GetItemContainer);
 			SetScript(string(vpf + "GetItemCount").c_str(), &Script::GetItemCount);
@@ -160,6 +160,7 @@ Script::Script(char* path)
 			SetScript(string(vpf + "SetCell").c_str(), &Script::SetCell);
 			SetScript(string(vpf + "SetLock").c_str(), &Script::SetLock);
 			SetScript(string(vpf + "SetOwner").c_str(), &Script::SetOwner);
+			SetScript(string(vpf + "SetBaseName").c_str(), &Script::SetBaseName);
 			SetScript(string(vpf + "CreateItem").c_str(), &Script::CreateItem);
 			SetScript(string(vpf + "SetItemCount").c_str(), &Script::SetItemCount);
 			SetScript(string(vpf + "SetItemCondition").c_str(), &Script::SetItemCondition);
@@ -1474,20 +1475,6 @@ unsigned int Script::GetBase(NetworkID id)
 	return 0;
 }
 
-const char* Script::GetName(NetworkID id)
-{
-	static string name;
-	auto object = GameFactory::GetObject(id);
-
-	if (object)
-	{
-		name.assign(object->GetName());
-		return name.c_str();
-	}
-
-	return "";
-}
-
 void Script::GetPos(NetworkID id, double* X, double* Y, double* Z)
 {
 	*X = 0.00;
@@ -1548,6 +1535,20 @@ unsigned int Script::GetOwner(NetworkID id)
 		return object->GetOwner();
 
 	return 0;
+}
+
+const char* Script::GetBaseName(NetworkID id)
+{
+	static string name;
+	auto object = GameFactory::GetObject(id);
+
+	if (object)
+	{
+		name.assign(object->GetName());
+		return name.c_str();
+	}
+
+	return "";
 }
 
 bool Script::IsNearPoint(NetworkID id, double X, double Y, double Z, double R)
@@ -2034,6 +2035,49 @@ bool Script::SetOwner(NetworkID id, unsigned int owner)
 	}
 
 	return state;
+}
+
+bool Script::SetBaseName(NetworkID id, const char* name)
+{
+	if (!name)
+		return false;
+
+	string _name(name);
+
+	if (_name.length() > MAX_PLAYER_NAME)
+		return false;
+
+	vector<FactoryObject<Object>> reference = GameFactory::GetObjectTypes<Object>(ALL_OBJECTS);
+	auto it = find_if(reference.begin(), reference.end(), [&](const FactoryObject<Object>& object) { return object->GetNetworkID() == id; });
+
+	if (it == reference.end())
+		return false;
+
+	unsigned int baseID = (*it)->GetBase();
+
+	if (baseID == PLAYER_BASE)
+		return false;
+
+	DB::Record::Lookup(baseID)->SetDescription(_name);
+
+	for (const auto& object : reference)
+	{
+		auto item = vaultcast<Item>(object);
+
+		if (item && item->GetItemContainer())
+			continue;
+
+		if (object->GetBase() == baseID)
+		{
+			if (object->SetName(_name))
+				Network::Queue(NetworkResponse{Network::CreateResponse(
+					PacketFactory::Create<pTypes::ID_UPDATE_NAME>(object->GetNetworkID(), _name),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+				});
+		}
+	}
+
+	return true;
 }
 
 NetworkID Script::CreateItem(unsigned int baseID, NetworkID id, unsigned int cell, double X, double Y, double Z)

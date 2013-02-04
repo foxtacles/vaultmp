@@ -71,7 +71,7 @@ public OnSpawn(ID)
 	if (IsPlayer(ID))
 	{
 		new message {MAX_MESSAGE_LENGTH};
-		GetName(ID, message);
+		GetBaseName(ID, message);
 
 		strformat(message, sizeof(message), true, "Hello, %s!", message);
 		UIMessage(ID, message);
