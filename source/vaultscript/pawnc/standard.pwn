@@ -88,52 +88,52 @@ public OnLockChange(ID, player, Lock:lock)
 
 }
 
-public OnContainerItemChange(ID, item, count, Float: value)
+public OnContainerItemChange(ID, item, count, Float:value)
 {
 
 }
 
-public OnActorValueChange(ID, index, Float: value)
+public OnActorValueChange(ID, index, Float:value)
 {
 
 }
 
-public OnActorBaseValueChange(ID, index, Float: value)
+public OnActorBaseValueChange(ID, index, Float:value)
 {
 
 }
 
-public OnActorAlert(ID, Bool: alerted)
+public OnActorAlert(ID, Bool:alerted)
 {
 
 }
 
-public OnActorSneak(ID, Bool: sneaking)
+public OnActorSneak(ID, Bool:sneaking)
 {
 
 }
 
-public OnActorDeath(ID, Limb: limbs, Death: cause)
+public OnActorDeath(ID, killer, Limb:limbs, Death:cause)
 {
 
 }
 
-public OnActorEquipItem(ID, item, Float: value)
+public OnActorEquipItem(ID, item, Float:value)
 {
 
 }
 
-public OnActorUnequipItem(ID, item, Float: value)
+public OnActorUnequipItem(ID, item, Float:value)
 {
 
 }
 
-public OnActorDropItem(ID, item, count, Float: value)
+public OnActorDropItem(ID, item, count, Float:value)
 {
 
 }
 
-public OnActorPickupItem(ID, item, count, Float: value)
+public OnActorPickupItem(ID, item, count, Float:value)
 {
 
 }

@@ -220,8 +220,8 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					unsigned short limbs;
 					signed char cause;
 					PacketFactory::Access<pTypes::ID_UPDATE_DEAD>(packet, id, dead, limbs, cause);
-					auto reference = GameFactory::GetObject<Actor>(id);
-					response = Server::GetActorDead(data->guid, reference.get(), dead, limbs, cause);
+					auto reference = GameFactory::GetMultiple<Actor>(vector<NetworkID>{id, Client::GetClientFromGUID(data->guid)->GetPlayer()});
+					response = Server::GetActorDead(data->guid, reference[0].get(), vaultcast<Player>(reference[1]).get(), dead, limbs, cause);
 					break;
 				}
 

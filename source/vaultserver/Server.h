@@ -74,7 +74,7 @@ class Server
 		/**
 		 * \brief Handles actor dead network packet
 		 */
-		static NetworkResponse GetActorDead(RakNet::RakNetGUID guid, const FactoryObject<Actor>& reference, bool dead, unsigned short limbs, signed char cause);
+		static NetworkResponse GetActorDead(RakNet::RakNetGUID guid, const FactoryObject<Actor>& reference, const FactoryObject<Player>& killer, bool dead, unsigned short limbs, signed char cause);
 		/**
 		 * \brief Handles player control network packet
 		 */

@@ -435,7 +435,7 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, const FactoryObject<Actor
 	return response;
 }
 
-NetworkResponse Server::GetActorDead(RakNetGUID guid, const FactoryObject<Actor>& reference, bool dead, unsigned short limbs, signed char cause)
+NetworkResponse Server::GetActorDead(RakNetGUID guid, const FactoryObject<Actor>& reference, const FactoryObject<Player>& killer, bool dead, unsigned short limbs, signed char cause)
 {
 	NetworkResponse response;
 	bool result;
@@ -450,7 +450,7 @@ NetworkResponse Server::GetActorDead(RakNetGUID guid, const FactoryObject<Actor>
 
 		if (dead)
 		{
-			Script::OnActorDeath(reference, limbs, cause);
+			Script::OnActorDeath(reference, killer, limbs, cause);
 
 			auto player = vaultcast<Player>(reference);
 

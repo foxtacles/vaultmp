@@ -807,7 +807,7 @@ void Script::OnActorSneak(const FactoryObject<Actor>& reference, bool sneaking)
 	}
 }
 
-void Script::OnActorDeath(const FactoryObject<Actor>& reference, unsigned short limbs, signed char cause)
+void Script::OnActorDeath(const FactoryObject<Actor>& reference, const FactoryObject<Player>& killer, unsigned short limbs, signed char cause)
 {
 	NetworkID id = reference->GetNetworkID();
 
@@ -816,10 +816,10 @@ void Script::OnActorDeath(const FactoryObject<Actor>& reference, unsigned short 
 		if (script->cpp_script)
 		{
 			if (script->fOnActorDeath)
-				script->fOnActorDeath(id, limbs, cause);
+				script->fOnActorDeath(id, killer->GetNetworkID(), limbs, cause);
 		}
 		else if (PAWN::IsCallbackPresent(script->amx, "OnActorDeath"))
-			PAWN::Call(script->amx, "OnActorDeath", "iil", 0, cause, limbs, id);
+			PAWN::Call(script->amx, "OnActorDeath", "iill", 0, cause, limbs, killer->GetNetworkID(), id);
 	}
 }
 
@@ -1134,8 +1134,6 @@ bool Script::UIMessage(NetworkID id, const char* message, unsigned char emoticon
 		PacketFactory::Create<pTypes::ID_GAME_MESSAGE>(_message, emoticon),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, id ? vector<RakNetGUID>{Client::GetClientFromPlayer(id)->GetGUID()} : Client::GetNetworkList(nullptr))
 	});
-
-	printf("werz %d\n", emoticon);
 
 	return true;
 }

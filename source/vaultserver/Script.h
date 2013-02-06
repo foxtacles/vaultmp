@@ -71,7 +71,7 @@ class Script
 		void (*fOnActorBaseValueChange)(RakNet::NetworkID, unsigned char, double);
 		void (*fOnActorAlert)(RakNet::NetworkID, bool);
 		void (*fOnActorSneak)(RakNet::NetworkID, bool);
-		void (*fOnActorDeath)(RakNet::NetworkID, unsigned short, signed char);
+		void (*fOnActorDeath)(RakNet::NetworkID, RakNet::NetworkID, unsigned short, signed char);
 		void (*fOnActorEquipItem)(RakNet::NetworkID, unsigned int, double);
 		void (*fOnActorUnequipItem)(RakNet::NetworkID, unsigned int, double);
 		void (*fOnActorDropItem)(RakNet::NetworkID, unsigned int, unsigned int, double);
@@ -125,7 +125,7 @@ class Script
 		static void OnActorValueChange(const FactoryObject<Actor>& reference, unsigned char index, bool base, double value);
 		static void OnActorAlert(const FactoryObject<Actor>& reference, bool alerted);
 		static void OnActorSneak(const FactoryObject<Actor>& reference, bool sneaking);
-		static void OnActorDeath(const FactoryObject<Actor>& reference, unsigned short limbs, signed char cause);
+		static void OnActorDeath(const FactoryObject<Actor>& reference, const FactoryObject<Player>& killer, unsigned short limbs, signed char cause);
 		static void OnActorEquipItem(const FactoryObject<Actor>& reference, unsigned int baseID, double condition);
 		static void OnActorUnequipItem(const FactoryObject<Actor>& reference, unsigned int baseID, double condition);
 		static void OnActorDropItem(const FactoryObject<Actor>& reference, unsigned int baseID, unsigned int count, double condition);

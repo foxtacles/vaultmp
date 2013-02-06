@@ -100,7 +100,7 @@ forward OnActorValueChange(ID, index, Float:value);
 forward OnActorBaseValueChange(ID, index, Float:value);
 forward OnActorAlert(ID, Bool:alerted);
 forward OnActorSneak(ID, Bool:sneaking);
-forward OnActorDeath(ID, Limb:limbs, Death:cause);
+forward OnActorDeath(ID, killer, Limb:limbs, Death:cause);
 forward OnActorEquipItem(ID, item, Float:value);
 forward OnActorUnequipItem(ID, item, Float:value);
 forward OnActorDropItem(ID, item, count, Float:value);
