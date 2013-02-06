@@ -610,10 +610,12 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 			ZeroMemory(result, sizeof(double));
 			const char* data = ((char*) args) + 2; // skip length
 
+			unsigned int emoticon = *(unsigned int*)(data + strlen(data) + 2);
+
 			if (game & FALLOUT3)
-				QueueMessage_Fallout3(data, 0, NULL, NULL, 2.0); // add more later
+				QueueMessage_Fallout3(data, emoticon, NULL, NULL, 2.0); // add more later
 			else
-				QueueMessage_FalloutNV(data, 0, NULL, NULL, 2.0, 0); // add more later
+				QueueMessage_FalloutNV(data, emoticon, NULL, NULL, 2.0, 0); // add more later
 
 			break;
 		}

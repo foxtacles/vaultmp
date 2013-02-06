@@ -171,7 +171,7 @@ class FileServer : public FileListTransferCBInterface
 					string _file(onFileStruct->fileName);
 					_file = Utils::str_replace(_file, "/", "\\");
 
-					strcat(file, "\\Data\\");
+					strcat(file, "\\..\\Data\\");
 					strcat(file, _file.c_str());
 					MakeSureDirectoryPathExists(file);
 					break;

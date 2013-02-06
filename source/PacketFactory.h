@@ -669,18 +669,18 @@ class pGameMessage : public pDefault
 		friend class PacketFactory;
 
 	private:
-		pGameMessage(const std::string& message) : pDefault(pTypes::ID_GAME_MESSAGE)
+		pGameMessage(const std::string& message, unsigned char emoticon) : pDefault(pTypes::ID_GAME_MESSAGE)
 		{
-			construct(message);
+			construct(message, emoticon);
 		}
 		pGameMessage(const unsigned char* stream, unsigned int len) : pDefault(stream, len)
 		{
 
 		}
 
-		void access(std::string& message) const
+		void access(std::string& message, unsigned char& emoticon) const
 		{
-			deconstruct(message);
+			deconstruct(message, emoticon);
 		}
 };
 template<> struct pTypesMap<pTypes::ID_GAME_MESSAGE> { typedef pGameMessage type; };

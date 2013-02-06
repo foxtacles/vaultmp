@@ -1115,7 +1115,7 @@ const char* Script::BaseToString(unsigned int baseID)
 	return base.c_str();
 }
 
-bool Script::UIMessage(NetworkID id, const char* message)
+bool Script::UIMessage(NetworkID id, const char* message, unsigned char emoticon)
 {
 	string _message(message);
 
@@ -1131,9 +1131,11 @@ bool Script::UIMessage(NetworkID id, const char* message)
 	}
 
 	Network::Queue(NetworkResponse{Network::CreateResponse(
-		PacketFactory::Create<pTypes::ID_GAME_MESSAGE>(_message),
+		PacketFactory::Create<pTypes::ID_GAME_MESSAGE>(_message, emoticon),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, id ? vector<RakNetGUID>{Client::GetClientFromPlayer(id)->GetGUID()} : Client::GetNetworkList(nullptr))
 	});
+
+	printf("werz %d\n", emoticon);
 
 	return true;
 }

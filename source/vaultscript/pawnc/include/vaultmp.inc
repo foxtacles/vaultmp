@@ -83,6 +83,13 @@ const Lock: {
 	Impossible = 255,
 }
 
+const Emoticon: {
+	Happy = 0,
+	Sad = 1,
+	Neutral = 2,
+	Pain = 3,
+}
+
 // Callbacks
 
 forward OnSpawn(ID);
@@ -132,7 +139,7 @@ native AxisToString(index, value{});
 native AnimToString(index, value{});
 native BaseToString(base, value{});
 
-native Bool:UIMessage(ID, const message{});
+native Bool:UIMessage(ID, const message{}, Emoticon:emoticon = Emoticon:Happy);
 native Bool:ChatMessage(ID, const message{});
 native SetRespawn(interval);
 native SetSpawnCell(cell);

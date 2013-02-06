@@ -479,7 +479,7 @@ cell PAWN::vaultmp_UIMessage(AMX* amx, const cell* params)
 
 	amx_GetString(&message[0], source, 0, UNLIMITED);
 
-	return Script::UIMessage(params[1], &message[0]);
+	return Script::UIMessage(params[1], &message[0], params[3]);
 }
 
 cell PAWN::vaultmp_ChatMessage(AMX* amx, const cell* params)

@@ -148,7 +148,7 @@ class Script
 		static const char* AnimToString(unsigned char index);
 		static const char* BaseToString(unsigned int baseID);
 
-		static bool UIMessage(RakNet::NetworkID id, const char* message);
+		static bool UIMessage(RakNet::NetworkID id, const char* message, unsigned char emoticon);
 		static bool ChatMessage(RakNet::NetworkID id, const char* message);
 		static void SetRespawn(unsigned int respawn);
 		static void SetSpawnCell(unsigned int cell);

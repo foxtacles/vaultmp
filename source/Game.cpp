@@ -727,11 +727,11 @@ void Game::LoadEnvironment()
 	}
 }
 
-void Game::UIMessage(const string& message)
+void Game::UIMessage(const string& message, unsigned char emoticon)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("UIMessage", {RawParameter(message)});
+	Interface::ExecuteCommand("UIMessage", {RawParameter(message), RawParameter(emoticon)});
 
 	Interface::EndDynamic();
 }
@@ -2081,9 +2081,9 @@ void Game::net_UpdateContext(Player::CellContext& context)
 	cellRefs.EndSession();
 }
 
-void Game::net_UIMessage(const string& message)
+void Game::net_UIMessage(const string& message, unsigned char emoticon)
 {
-	UIMessage(message);
+	UIMessage(message, emoticon);
 }
 
 void Game::net_ChatMessage(const string& message)

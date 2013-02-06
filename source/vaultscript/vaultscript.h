@@ -142,6 +142,14 @@ namespace vaultmp {
 		Impossible = 255,
 	};
 
+	enum VAULTCPP(class) Emoticon VAULTCPP(: uint8_t)
+	{
+		Happy = 0,
+		Sad = 1,
+		Neutral = 2,
+		Pain = 3,
+	};
+
 	enum VAULTCPP(class) Interval VAULTCPP(: uint32_t)
 	{
 		DEFAULT_PLAYER_RESPAWN = 8000,
@@ -152,6 +160,7 @@ namespace vaultmp {
 	typedef uint8_t Index;
 	typedef uint8_t Type;
 	typedef uint8_t State;
+	typedef uint8_t Emoticon;
 	typedef uint16_t Limb;
 	typedef uint32_t Ref;
 	typedef uint32_t Base;
@@ -270,7 +279,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE cRawString (*VAULTAPI(AnimToString))(VAULTSPACE Index) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE cRawString (*VAULTAPI(BaseToString))(VAULTSPACE Base) VAULTCPP(noexcept);
 
-	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(UIMessage))(VAULTSPACE ID, VAULTSPACE cRawString) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(UIMessage))(VAULTSPACE ID, VAULTSPACE cRawString, VAULTSPACE Emoticon) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(ChatMessage))(VAULTSPACE ID, VAULTSPACE cRawString) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetRespawn))(VAULTSPACE Interval) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetSpawnCell))(VAULTSPACE VAULTCELL) VAULTCPP(noexcept);
@@ -459,10 +468,10 @@ namespace vaultmp
 	VAULTFUNCTION String AnimToString(Index index) noexcept { return String(VAULTAPI(AnimToString)(index)); }
 	VAULTFUNCTION String BaseToString(Base base) noexcept { return String(VAULTAPI(BaseToString)(base)); }
 
-	VAULTFUNCTION State UIMessage(ID id, const String& message) noexcept { return VAULTAPI(UIMessage)(id, message.c_str()); }
-	VAULTFUNCTION State UIMessage(ID id, cRawString message) noexcept { return VAULTAPI(UIMessage)(id, message); }
-	VAULTFUNCTION State UIMessage(const String& message) noexcept { return VAULTAPI(UIMessage)(static_cast<ID>(0), message.c_str()); }
-	VAULTFUNCTION State UIMessage(cRawString message) noexcept { return VAULTAPI(UIMessage)(static_cast<ID>(0), message); }
+	VAULTFUNCTION State UIMessage(ID id, const String& message, Emoticon emoticon = Emoticon::Happy) noexcept { return VAULTAPI(UIMessage)(id, message.c_str(), emoticon); }
+	VAULTFUNCTION State UIMessage(ID id, cRawString message, Emoticon emoticon = Emoticon::Happy) noexcept { return VAULTAPI(UIMessage)(id, message, emoticon); }
+	VAULTFUNCTION State UIMessage(const String& message, Emoticon emoticon = Emoticon::Happy) noexcept { return VAULTAPI(UIMessage)(static_cast<ID>(0), message.c_str(), emoticon); }
+	VAULTFUNCTION State UIMessage(cRawString message, Emoticon emoticon = Emoticon::Happy) noexcept { return VAULTAPI(UIMessage)(static_cast<ID>(0), message, emoticon); }
 	VAULTFUNCTION State ChatMessage(ID id, const String& message) noexcept { return VAULTAPI(ChatMessage)(id, message.c_str()); }
 	VAULTFUNCTION State ChatMessage(ID id, cRawString message) noexcept { return VAULTAPI(ChatMessage)(id, message); }
 	VAULTFUNCTION State ChatMessage(const String& message) noexcept { return VAULTAPI(ChatMessage)(static_cast<ID>(0), message.c_str()); }
@@ -729,8 +738,10 @@ namespace vaultmp
 
 			Void SetPlayerRespawn(Interval interval) noexcept { return vaultmp::SetPlayerRespawn(id, interval); }
 			Void SetPlayerSpawnCell(VAULTCELL cell) noexcept { return vaultmp::SetPlayerSpawnCell(id, cell); }
-			State UIMessage(const String& message) noexcept { return vaultmp::UIMessage(id, message); }
+			State UIMessage(const String& message, Emoticon emoticon = Emoticon::Happy) noexcept { return vaultmp::UIMessage(id, message, emoticon); }
+			State UIMessage(cRawString message, Emoticon emoticon = Emoticon::Happy) noexcept { return vaultmp::UIMessage(id, message, emoticon); }
 			State ChatMessage(const String& message) noexcept { return vaultmp::ChatMessage(id, message); }
+			State ChatMessage(cRawString message) noexcept { return vaultmp::ChatMessage(id, message); }
 
 			Player& operator<<(const String& message) noexcept
 			{

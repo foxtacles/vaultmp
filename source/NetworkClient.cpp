@@ -160,8 +160,9 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				case pTypes::ID_GAME_MESSAGE:
 				{
 					string message;
-					PacketFactory::Access<pTypes::ID_GAME_MESSAGE>(packet, message);
-					Game::net_UIMessage(move(message));
+					unsigned char emoticon;
+					PacketFactory::Access<pTypes::ID_GAME_MESSAGE>(packet, message, emoticon);
+					Game::net_UIMessage(move(message), emoticon);
 					break;
 				}
 

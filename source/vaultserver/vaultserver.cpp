@@ -65,7 +65,7 @@ void InputThread()
 					char* msg = _id + strlen(_id) + 1;
 
 					if (*msg)
-						Script::UIMessage(client->GetPlayer(), msg);
+						Script::UIMessage(client->GetPlayer(), msg, 0);
 				}
 			}
 		}

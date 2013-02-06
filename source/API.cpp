@@ -531,7 +531,7 @@ void API::Initialize(unsigned char game)
 	DefineFunction("RemoveAllItemsEx", "r", Func_RemoveAllItemsEx, FALLOUT_GAMES);
 	DefineFunction("ForceRespawn", "", Func_ForceRespawn, FALLOUT_GAMES);
 	DefineFunction("SetGlobalValue", "ri", Func_SetGlobalValue, FALLOUT_GAMES);
-	DefineFunction("UIMessage", "s", Func_UIMessage, FALLOUT_GAMES);
+	DefineFunction("UIMessage", "si", Func_UIMessage, FALLOUT_GAMES);
 	DefineFunction("Lock", "rII", Func_Lock, FALLOUT_GAMES);
 	DefineFunction("Unlock", "r", Func_Unlock, FALLOUT_GAMES);
 	DefineFunction("SetOwnership", "rF", Func_SetOwnership, FALLOUT_GAMES);
@@ -866,10 +866,10 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 				unsigned short length = (unsigned short) str.length();
 
 				*reinterpret_cast<unsigned short*>(arg2_pos) = length;
-				memcpy(arg2_pos + sizeof(unsigned short), str.c_str(), length +  sizeof(unsigned char));
+				memcpy(arg2_pos + sizeof(unsigned short), str.c_str(), length + sizeof(unsigned char));
 				result_data.emplace_back(0); // Don't pass on string for now
 				arg2_pos += sizeof(unsigned short);
-				arg2_pos += length;
+				arg2_pos += length + sizeof(unsigned char);
 				break;
 			}
 

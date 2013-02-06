@@ -109,7 +109,7 @@ class Game
 		/**
 		 * \brief Display a Fallout UI message
 		 */
-		static void UIMessage(const std::string& message);
+		static void UIMessage(const std::string& message, unsigned char emoticon);
 		/**
 		 * \brief Display a GUI chat message
 		 */
@@ -391,7 +391,7 @@ class Game
 		/**
 		 * \brief Network function to handle UI message
 		 */
-		static void net_UIMessage(const std::string& message);
+		static void net_UIMessage(const std::string& message, unsigned char emoticon);
 		/**
 		 * \brief Network function to handle chat message
 		 */
