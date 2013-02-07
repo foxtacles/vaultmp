@@ -23,14 +23,6 @@
 #include "../vaultmp.h"
 #include "../VaultException.h"
 
-#ifdef __WIN32__
-#define GetScript(a,b) (b = (decltype(b)) GetProcAddress(this->lib,a))
-#define SetScript(a,b) *((decltype(b)*)(GetProcAddress(this->lib,a)?GetProcAddress(this->lib,a):throw VaultException("Script variable not found: %s", a).stacktrace()))=b;
-#else
-#define GetScript(a,b) (b = (decltype(b)) dlsym(this->lib,a))
-#define SetScript(a,b) *((decltype(b)*)(dlsym(this->lib,a)?dlsym(this->lib,a):throw VaultException("Script function pointer not found: %s", a).stacktrace()))=b;
-#endif
-
 /**
  * \brief Maintains communication with a script
  *
@@ -89,10 +81,24 @@ class Script
 		void (*fOnServerInit)();
 		void (*fOnServerExit)();
 
+		class FunctionPointer
+		{
+			template<typename T, typename... Types>
+			using FunctionPointer_ = T(*)(Types...);
+
+			public:
+				FunctionPointer_<void> func;
+
+				template<typename T, typename... Args>
+				constexpr FunctionPointer(FunctionPointer_<T, Args...> func) : func(reinterpret_cast<FunctionPointer_<void>>(func)) {}
+		};
+
 		Script(const Script&) = delete;
 		Script& operator=(const Script&) = delete;
 
 	public:
+		static const std::map<const char*, FunctionPointer> functions;
+
 		static std::pair<std::chrono::system_clock::time_point, double> gameTime;
 		static unsigned int gameWeather;
 

@@ -5,6 +5,124 @@ using namespace RakNet;
 using namespace Values;
 
 vector<Script*> Script::scripts;
+
+const map<const char*, Script::FunctionPointer> Script::functions {
+	{"timestamp", Utils::timestamp},
+	{"CreateTimer", Script::CreateTimer},
+	{"CreateTimerEx", reinterpret_cast<void(*)()>(Script::CreateTimerEx)},
+	{"KillTimer", Script::KillTimer},
+	{"MakePublic", Script::MakePublic},
+	{"CallPublic", reinterpret_cast<void(*)()>(Script::CallPublic)},
+
+	{"SetServerName", Dedicated::SetServerName},
+	{"SetServerMap", Dedicated::SetServerMap},
+	{"SetServerRule", Dedicated::SetServerRule},
+	{"GetGameCode", Dedicated::GetGameCode},
+	{"GetMaximumPlayers", Dedicated::GetMaximumPlayers},
+	{"GetCurrentPlayers", Dedicated::GetCurrentPlayers},
+
+	{"ValueToString", Script::ValueToString},
+	{"AxisToString", Script::AxisToString},
+	{"AnimToString", Script::AnimToString},
+	{"BaseToString", Script::BaseToString},
+
+	{"UIMessage", Script::UIMessage},
+	{"ChatMessage", Script::ChatMessage},
+	{"SetRespawn", Script::SetRespawn},
+	{"SetSpawnCell", Script::SetSpawnCell},
+	{"SetGameWeather", Script::SetGameWeather},
+	{"SetGameTime", Script::SetGameTime},
+	{"SetGameYear", Script::SetGameYear},
+	{"SetGameMonth", Script::SetGameMonth},
+	{"SetGameDay", Script::SetGameDay},
+	{"SetGameHour", Script::SetGameHour},
+	{"SetTimeScale", Script::SetTimeScale},
+	{"IsValid", Script::IsValid},
+	{"IsObject", Script::IsObject},
+	{"IsItem", Script::IsItem},
+	{"IsContainer", Script::IsContainer},
+	{"IsActor", Script::IsActor},
+	{"IsPlayer", Script::IsPlayer},
+	{"IsCell", DB::Record::IsValidCell},
+	{"IsInterior", Script::IsInterior},
+	{"GetType", (unsigned char(*)(NetworkID)) GameFactory::GetType},
+	{"GetConnection", Script::GetConnection},
+	{"GetCount", GameFactory::GetObjectCount},
+	{"GetList", Script::GetList},
+	{"GetGameWeather", Script::GetGameWeather},
+	{"GetGameTime", Script::GetGameTime},
+	{"GetGameYear", Script::GetGameYear},
+	{"GetGameMonth", Script::GetGameMonth},
+	{"GetGameDay", Script::GetGameDay},
+	{"GetGameHour", Script::GetGameHour},
+	{"GetTimeScale", Script::GetTimeScale},
+
+	{"GetID", Script::GetID},
+	{"GetReference", Script::GetReference},
+	{"GetBase", Script::GetBase},
+	{"GetPos", Script::GetPos},
+	{"GetAngle", Script::GetAngle},
+	{"GetCell", Script::GetCell},
+	{"GetLock", Script::GetLock},
+	{"GetOwner", Script::GetOwner},
+	{"GetBaseName", Script::GetBaseName},
+	{"IsNearPoint", Script::IsNearPoint},
+	{"GetItemContainer", Script::GetItemContainer},
+	{"GetItemCount", Script::GetItemCount},
+	{"GetItemCondition", Script::GetItemCondition},
+	{"GetItemEquipped", Script::GetItemEquipped},
+	{"GetItemSilent", Script::GetItemSilent},
+	{"GetItemStick", Script::GetItemStick},
+	{"GetContainerItemCount", Script::GetContainerItemCount},
+	{"GetContainerItemList", Script::GetContainerItemList},
+	{"GetActorValue", Script::GetActorValue},
+	{"GetActorBaseValue", Script::GetActorBaseValue},
+	{"GetActorIdleAnimation", Script::GetActorIdleAnimation},
+	{"GetActorMovingAnimation", Script::GetActorMovingAnimation},
+	{"GetActorWeaponAnimation", Script::GetActorWeaponAnimation},
+	{"GetActorAlerted", Script::GetActorAlerted},
+	{"GetActorSneaking", Script::GetActorSneaking},
+	{"GetActorDead", Script::GetActorDead},
+	{"GetActorBaseRace", Script::GetActorBaseRace},
+	{"GetActorBaseSex", Script::GetActorBaseSex},
+	{"IsActorJumping", Script::IsActorJumping},
+	{"GetPlayerRespawn", Script::GetPlayerRespawn},
+	{"GetPlayerSpawnCell", Script::GetPlayerSpawnCell},
+
+	{"CreateObject", Script::CreateObject},
+	{"DestroyObject", Script::DestroyObject},
+	{"SetPos", Script::SetPos},
+	{"SetAngle", Script::SetAngle},
+	{"SetCell", Script::SetCell},
+	{"SetLock", Script::SetLock},
+	{"SetOwner", Script::SetOwner},
+	{"SetBaseName", Script::SetBaseName},
+	{"CreateItem", Script::CreateItem},
+	{"SetItemCount", Script::SetItemCount},
+	{"SetItemCondition", Script::SetItemCondition},
+	{"CreateContainer", Script::CreateContainer},
+	{"AddItem", Script::AddItem},
+	{"RemoveItem", Script::RemoveItem},
+	{"RemoveAllItems", Script::RemoveAllItems},
+	{"CreateActor", Script::CreateActor},
+	{"SetActorValue", Script::SetActorValue},
+	{"SetActorBaseValue", Script::SetActorBaseValue},
+	{"EquipItem", Script::EquipItem},
+	{"UnequipItem", Script::UnequipItem},
+	{"PlayIdle", Script::PlayIdle},
+	{"SetActorMovingAnimation", Script::SetActorMovingAnimation},
+	{"SetActorWeaponAnimation", Script::SetActorWeaponAnimation},
+	{"SetActorAlerted", Script::SetActorAlerted},
+	{"SetActorSneaking", Script::SetActorSneaking},
+	{"FireWeapon", Script::FireWeapon},
+	{"KillActor", Script::KillActor},
+	{"SetActorBaseRace", Script::SetActorBaseRace},
+	{"AgeActorBaseRace", Script::AgeActorBaseRace},
+	{"SetActorBaseSex", Script::SetActorBaseSex},
+	{"SetPlayerRespawn", Script::SetPlayerRespawn},
+	{"SetPlayerSpawnCell", Script::SetPlayerSpawnCell},
+};
+
 pair<chrono::system_clock::time_point, double> Script::gameTime;
 unsigned int Script::gameWeather;
 
@@ -36,6 +154,12 @@ Script::Script(char* path)
 		{
 			this->lib = handle;
 			this->cpp_script = true;
+
+#ifdef __WIN32__
+	#define GetScript(a,b) (b = (decltype(b)) GetProcAddress(this->lib,a))
+#else
+	#define GetScript(a,b) (b = (decltype(b)) dlsym(this->lib,a))
+#endif
 
 			GetScript("exec", fexec);
 
@@ -71,120 +195,21 @@ Script::Script(char* path)
 			GetScript("OnServerInit", fOnServerInit);
 			GetScript("OnServerExit", fOnServerExit);
 
-			SetScript(string(vpf + "timestamp").c_str(), &Utils::timestamp);
-			SetScript(string(vpf + "CreateTimer").c_str(), &Script::CreateTimer);
-			SetScript(string(vpf + "CreateTimerEx").c_str(), &Script::CreateTimerEx);
-			SetScript(string(vpf + "KillTimer").c_str(), &Script::KillTimer);
-			SetScript(string(vpf + "MakePublic").c_str(), &Script::MakePublic);
-			SetScript(string(vpf + "CallPublic").c_str(), &Script::CallPublic);
+			auto SetScript = [this](const char* name, FunctionPointer func)
+			{
+#ifdef __WIN32__
+				auto addr = GetProcAddress(this->lib, name);
+#else
+				auto addr = dlsym(this->lib, name);
+#endif
+				if (addr)
+					*reinterpret_cast<decltype(func)*>(addr) = func;
+				else
+					printf("Script function pointer not found: %s\n", name);
+			};
 
-			SetScript(string(vpf + "SetServerName").c_str(), &Dedicated::SetServerName);
-			SetScript(string(vpf + "SetServerMap").c_str(), &Dedicated::SetServerMap);
-			SetScript(string(vpf + "SetServerRule").c_str(), &Dedicated::SetServerRule);
-			SetScript(string(vpf + "GetGameCode").c_str(), &Dedicated::GetGameCode);
-			SetScript(string(vpf + "GetMaximumPlayers").c_str(), &Dedicated::GetMaximumPlayers);
-			SetScript(string(vpf + "GetCurrentPlayers").c_str(), &Dedicated::GetCurrentPlayers);
-
-			SetScript(string(vpf + "ValueToString").c_str(), &Script::ValueToString);
-			SetScript(string(vpf + "AxisToString").c_str(), &Script::AxisToString);
-			SetScript(string(vpf + "AnimToString").c_str(), &Script::AnimToString);
-			SetScript(string(vpf + "BaseToString").c_str(), &Script::BaseToString);
-
-			SetScript(string(vpf + "UIMessage").c_str(), &Script::UIMessage);
-			SetScript(string(vpf + "ChatMessage").c_str(), &Script::ChatMessage);
-			SetScript(string(vpf + "SetRespawn").c_str(), &Script::SetRespawn);
-			SetScript(string(vpf + "SetSpawnCell").c_str(), &Script::SetSpawnCell);
-			SetScript(string(vpf + "SetGameWeather").c_str(), &Script::SetGameWeather);
-			SetScript(string(vpf + "SetGameTime").c_str(), &Script::SetGameTime);
-			SetScript(string(vpf + "SetGameYear").c_str(), &Script::SetGameYear);
-			SetScript(string(vpf + "SetGameMonth").c_str(), &Script::SetGameMonth);
-			SetScript(string(vpf + "SetGameDay").c_str(), &Script::SetGameDay);
-			SetScript(string(vpf + "SetGameHour").c_str(), &Script::SetGameHour);
-			SetScript(string(vpf + "SetTimeScale").c_str(), &Script::SetTimeScale);
-			SetScript(string(vpf + "IsValid").c_str(), &Script::IsValid);
-			SetScript(string(vpf + "IsObject").c_str(), &Script::IsObject);
-			SetScript(string(vpf + "IsItem").c_str(), &Script::IsItem);
-			SetScript(string(vpf + "IsContainer").c_str(), &Script::IsContainer);
-			SetScript(string(vpf + "IsActor").c_str(), &Script::IsActor);
-			SetScript(string(vpf + "IsPlayer").c_str(), &Script::IsPlayer);
-			SetScript(string(vpf + "IsCell").c_str(), &DB::Record::IsValidCell);
-			SetScript(string(vpf + "IsInterior").c_str(), &Script::IsInterior);
-			SetScript(string(vpf + "GetType").c_str(), (unsigned char(*)(NetworkID)) &GameFactory::GetType);
-			SetScript(string(vpf + "GetConnection").c_str(), &Script::GetConnection);
-			SetScript(string(vpf + "GetCount").c_str(), &GameFactory::GetObjectCount);
-			SetScript(string(vpf + "GetList").c_str(), &Script::GetList);
-			SetScript(string(vpf + "GetGameWeather").c_str(), &Script::GetGameWeather);
-			SetScript(string(vpf + "GetGameTime").c_str(), &Script::GetGameTime);
-			SetScript(string(vpf + "GetGameYear").c_str(), &Script::GetGameYear);
-			SetScript(string(vpf + "GetGameMonth").c_str(), &Script::GetGameMonth);
-			SetScript(string(vpf + "GetGameDay").c_str(), &Script::GetGameDay);
-			SetScript(string(vpf + "GetGameHour").c_str(), &Script::GetGameHour);
-			SetScript(string(vpf + "GetTimeScale").c_str(), &Script::GetTimeScale);
-
-			SetScript(string(vpf + "GetID").c_str(), &Script::GetID);
-			SetScript(string(vpf + "GetReference").c_str(), &Script::GetReference);
-			SetScript(string(vpf + "GetBase").c_str(), &Script::GetBase);
-			SetScript(string(vpf + "GetPos").c_str(), &Script::GetPos);
-			SetScript(string(vpf + "GetAngle").c_str(), &Script::GetAngle);
-			SetScript(string(vpf + "GetCell").c_str(), &Script::GetCell);
-			SetScript(string(vpf + "GetLock").c_str(), &Script::GetLock);
-			SetScript(string(vpf + "GetOwner").c_str(), &Script::GetOwner);
-			SetScript(string(vpf + "GetBaseName").c_str(), &Script::GetBaseName);
-			SetScript(string(vpf + "IsNearPoint").c_str(), &Script::IsNearPoint);
-			SetScript(string(vpf + "GetItemContainer").c_str(), &Script::GetItemContainer);
-			SetScript(string(vpf + "GetItemCount").c_str(), &Script::GetItemCount);
-			SetScript(string(vpf + "GetItemCondition").c_str(), &Script::GetItemCondition);
-			SetScript(string(vpf + "GetItemEquipped").c_str(), &Script::GetItemEquipped);
-			SetScript(string(vpf + "GetItemSilent").c_str(), &Script::GetItemSilent);
-			SetScript(string(vpf + "GetItemStick").c_str(), &Script::GetItemStick);
-			SetScript(string(vpf + "GetContainerItemCount").c_str(), &Script::GetContainerItemCount);
-			SetScript(string(vpf + "GetContainerItemList").c_str(), &Script::GetContainerItemList);
-			SetScript(string(vpf + "GetActorValue").c_str(), &Script::GetActorValue);
-			SetScript(string(vpf + "GetActorBaseValue").c_str(), &Script::GetActorBaseValue);
-			SetScript(string(vpf + "GetActorIdleAnimation").c_str(), &Script::GetActorIdleAnimation);
-			SetScript(string(vpf + "GetActorMovingAnimation").c_str(), &Script::GetActorMovingAnimation);
-			SetScript(string(vpf + "GetActorWeaponAnimation").c_str(), &Script::GetActorWeaponAnimation);
-			SetScript(string(vpf + "GetActorAlerted").c_str(), &Script::GetActorAlerted);
-			SetScript(string(vpf + "GetActorSneaking").c_str(), &Script::GetActorSneaking);
-			SetScript(string(vpf + "GetActorDead").c_str(), &Script::GetActorDead);
-			SetScript(string(vpf + "GetActorBaseRace").c_str(), &Script::GetActorBaseRace);
-			SetScript(string(vpf + "GetActorBaseSex").c_str(), &Script::GetActorBaseSex);
-			SetScript(string(vpf + "IsActorJumping").c_str(), &Script::IsActorJumping);
-			SetScript(string(vpf + "GetPlayerRespawn").c_str(), &Script::GetPlayerRespawn);
-			SetScript(string(vpf + "GetPlayerSpawnCell").c_str(), &Script::GetPlayerSpawnCell);
-
-			SetScript(string(vpf + "CreateObject").c_str(), &Script::CreateObject);
-			SetScript(string(vpf + "DestroyObject").c_str(), &Script::DestroyObject);
-			SetScript(string(vpf + "SetPos").c_str(), &Script::SetPos);
-			SetScript(string(vpf + "SetAngle").c_str(), &Script::SetAngle);
-			SetScript(string(vpf + "SetCell").c_str(), &Script::SetCell);
-			SetScript(string(vpf + "SetLock").c_str(), &Script::SetLock);
-			SetScript(string(vpf + "SetOwner").c_str(), &Script::SetOwner);
-			SetScript(string(vpf + "SetBaseName").c_str(), &Script::SetBaseName);
-			SetScript(string(vpf + "CreateItem").c_str(), &Script::CreateItem);
-			SetScript(string(vpf + "SetItemCount").c_str(), &Script::SetItemCount);
-			SetScript(string(vpf + "SetItemCondition").c_str(), &Script::SetItemCondition);
-			SetScript(string(vpf + "CreateContainer").c_str(), &Script::CreateContainer);
-			SetScript(string(vpf + "AddItem").c_str(), &Script::AddItem);
-			SetScript(string(vpf + "RemoveItem").c_str(), &Script::RemoveItem);
-			SetScript(string(vpf + "RemoveAllItems").c_str(), &Script::RemoveAllItems);
-			SetScript(string(vpf + "CreateActor").c_str(), &Script::CreateActor);
-			SetScript(string(vpf + "SetActorValue").c_str(), &Script::SetActorValue);
-			SetScript(string(vpf + "SetActorBaseValue").c_str(), &Script::SetActorBaseValue);
-			SetScript(string(vpf + "EquipItem").c_str(), &Script::EquipItem);
-			SetScript(string(vpf + "UnequipItem").c_str(), &Script::UnequipItem);
-			SetScript(string(vpf + "PlayIdle").c_str(), &Script::PlayIdle);
-			SetScript(string(vpf + "SetActorMovingAnimation").c_str(), &Script::SetActorMovingAnimation);
-			SetScript(string(vpf + "SetActorWeaponAnimation").c_str(), &Script::SetActorWeaponAnimation);
-			SetScript(string(vpf + "SetActorAlerted").c_str(), &Script::SetActorAlerted);
-			SetScript(string(vpf + "SetActorSneaking").c_str(), &Script::SetActorSneaking);
-			SetScript(string(vpf + "FireWeapon").c_str(), &Script::FireWeapon);
-			SetScript(string(vpf + "KillActor").c_str(), &Script::KillActor);
-			SetScript(string(vpf + "SetActorBaseRace").c_str(), &Script::SetActorBaseRace);
-			SetScript(string(vpf + "AgeActorBaseRace").c_str(), &Script::AgeActorBaseRace);
-			SetScript(string(vpf + "SetActorBaseSex").c_str(), &Script::SetActorBaseSex);
-			SetScript(string(vpf + "SetPlayerRespawn").c_str(), &Script::SetPlayerRespawn);
-			SetScript(string(vpf + "SetPlayerSpawnCell").c_str(), &Script::SetPlayerSpawnCell);
+			for (const auto& function : functions)
+				SetScript(string(vpf + function.first).c_str(), function.second.func);
 		}
 		catch (...)
 		{
