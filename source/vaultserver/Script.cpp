@@ -87,7 +87,7 @@ Script::Script(char* path)
 				auto addr = dlsym(this->lib, name);
 #endif
 				if (addr)
-					*reinterpret_cast<decltype(func.func)*>(addr) = func.func;
+					*reinterpret_cast<decltype(func.addr)*>(addr) = func.addr;
 				else
 					printf("Script function pointer not found: %s\n", name);
 			};

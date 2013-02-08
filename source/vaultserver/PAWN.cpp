@@ -5,12 +5,64 @@ using namespace std;
 using namespace RakNet;
 
 extern "C" {
-	int AMXAPI amx_CoreInit(AMX* amx);
-	int AMXAPI amx_ConsoleInit(AMX* amx);
-	int AMXAPI amx_FloatInit(AMX* amx);
-	int AMXAPI amx_TimeInit(AMX* amx);
-	int AMXAPI amx_StringInit(AMX* amx);
-	int AMXAPI amx_FileInit(AMX* amx);
+	int AMXAPI amx_CoreInit(AMX*);
+	int AMXAPI amx_ConsoleInit(AMX*);
+	int AMXAPI amx_FloatInit(AMX*);
+	int AMXAPI amx_TimeInit(AMX*);
+	int AMXAPI amx_StringInit(AMX*);
+	int AMXAPI amx_FileInit(AMX*);
+}
+
+template<typename R>
+using FunctionPointerEllipsis = R(*)(...);
+
+template<typename R, unsigned int I, unsigned int F>
+struct PAWN_extract_ {
+	inline static R PAWN_extract(const cell*&& params) {
+		return static_cast<R>(forward<const cell*>(params)[I]);
+	}
+};
+
+template<unsigned int I, unsigned int F>
+struct PAWN_extract_<double, I, F> {
+	inline static double PAWN_extract(const cell*&& params) {
+		return amx_ctof(forward<const cell*>(params)[I]);
+	}
+};
+
+template<unsigned int I, unsigned int F>
+struct PAWN_dispatch_ {
+	template<typename R, typename... Args>
+	inline static R PAWN_dispatch(const cell*&& params, Args&&... args) {
+		constexpr ScriptFunctionData const& F_ = Script::functions[F];
+		return PAWN_dispatch_<I - 1, F>::template PAWN_dispatch<R>(forward<const cell*>(params), PAWN_extract_<typename CharType<F_.func.types[I - 1]>::type, I, F>::PAWN_extract(forward<const cell*>(params)), forward<Args>(args)...);
+	}
+};
+
+template<unsigned int F>
+struct PAWN_dispatch_<0, F> {
+	template<typename R, typename... Args>
+	inline static R PAWN_dispatch(const cell*&&, Args&&... args) {
+		constexpr ScriptFunctionData const& F_ = Script::functions[F];
+		return reinterpret_cast<FunctionPointerEllipsis<R>>(F_.func.addr)(forward<Args>(args)...);
+	}
+};
+
+template<unsigned int I>
+static typename enable_if<Script::functions[I].func.ret == 'v', cell>::type PAWN_wrapper(AMX*, const cell* params) {
+	PAWN_dispatch_<Script::functions[I].func.numargs, I>::template PAWN_dispatch<void>(forward<const cell*>(params));
+	return 1;
+}
+
+template<unsigned int I>
+static typename enable_if<Script::functions[I].func.ret == 'f', cell>::type PAWN_wrapper(AMX*, const cell* params) {
+	double value = PAWN_dispatch_<Script::functions[I].func.numargs, I>::template PAWN_dispatch<double>(forward<const cell*>(params));
+	return amx_ftoc(value);
+}
+
+template<unsigned int I>
+static typename enable_if<Script::functions[I].func.ret != 'v' && Script::functions[I].func.ret != 'f', cell>::type PAWN_wrapper(AMX*, const cell* params) {
+	return PAWN_dispatch_<Script::functions[I].func.numargs, I>::template PAWN_dispatch<typename CharType<Script::functions[I].func.ret>::type>(forward<const cell*>(params));
 }
 
 AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
@@ -25,7 +77,7 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"SetServerName", PAWN::vaultmp_SetServerName},
 	{"SetServerMap", PAWN::vaultmp_SetServerMap},
 	{"SetServerRule", PAWN::vaultmp_SetServerRule},
-	{"GetGameCode", PAWN::vaultmp_GetGameCode},
+	{"GetGameCode", PAWN_wrapper<9>},
 	{"GetMaximumPlayers", PAWN::vaultmp_GetMaximumPlayers},
 	{"GetCurrentPlayers", PAWN::vaultmp_GetCurrentPlayers},
 
@@ -117,7 +169,7 @@ AMX_NATIVE_INFO PAWN::vaultmp_functions[] =
 	{"SetActorBaseValue", PAWN::vaultmp_SetActorBaseValue},
 	{"EquipItem", PAWN::vaultmp_EquipItem},
 	{"UnequipItem", PAWN::vaultmp_UnequipItem},
-	{"PlayIdle", PAWN::vaultmp_PlayIdle},
+	{"PlayIdle", PAWN_wrapper<97>},
 	{"SetActorMovingAnimation", PAWN::vaultmp_SetActorMovingAnimation},
 	{"SetActorWeaponAnimation", PAWN::vaultmp_SetActorWeaponAnimation},
 	{"SetActorAlerted", PAWN::vaultmp_SetActorAlerted},

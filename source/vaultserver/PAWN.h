@@ -25,8 +25,7 @@
 class PAWN
 {
 	private:
-
-		PAWN();
+		PAWN() = delete;
 
 		static AMX_NATIVE_INFO vaultmp_functions[110];
 
@@ -162,7 +161,6 @@ class PAWN
 		static int FileInit(AMX* amx);
 
 		static int RegisterVaultmpFunctions(AMX* amx);
-
 };
 
 #endif

@@ -29,47 +29,32 @@
  * A script can be either a C++ or PAWN script
  */
 
-template<typename T>
-struct sizeof_void { enum { value = sizeof(T) }; };
+template<typename T> struct sizeof_void { enum { value = sizeof(T) }; };
+template<> struct sizeof_void<void> { enum { value = 0 }; };
 
-template<>
-struct sizeof_void<void> { enum { value = 0 }; };
+template<typename T, size_t t> struct TypeChar { static_assert(!t, "Unsupported type in variadic type list"); };
+template<typename T> struct TypeChar<T*, sizeof(void*)> { enum { value = 'p' }; };
+template<typename T> struct TypeChar<T, sizeof(uint8_t)> { enum { value = 'i' }; };
+template<typename T> struct TypeChar<T, sizeof(uint16_t)> { enum { value = 'i' }; };
+template<typename T> struct TypeChar<T, sizeof(uint32_t)> { enum { value = 'i' }; };
+template<typename T> struct TypeChar<T, sizeof(uint64_t)> { enum { value = 'l' }; };
+template<> struct TypeChar<double, sizeof(double)> { enum { value = 'f' }; };
+template<> struct TypeChar<const char*, sizeof(const char*)> { enum { value = 's' }; };
+template<> struct TypeChar<void, sizeof_void<void>::value> { enum { value = 'v' }; };
 
-template<typename T, size_t t>
-struct TypeChar { static_assert(!t, "Unsupported type in variadic type list"); };
-
-template<typename T>
-struct TypeChar<T*, sizeof(void*)> { enum { value = 'p' }; };
-
-template<typename T>
-struct TypeChar<T, sizeof(uint8_t)> { enum { value = 'i' }; };
-
-template<typename T>
-struct TypeChar<T, sizeof(uint16_t)> { enum { value = 'i' }; };
-
-template<typename T>
-struct TypeChar<T, sizeof(uint32_t)> { enum { value = 'i' }; };
-
-template<typename T>
-struct TypeChar<T, sizeof(uint64_t)> { enum { value = 'l' }; };
-
-template<>
-struct TypeChar<double, sizeof(double)> { enum { value = 'f' }; };
-
-template<>
-struct TypeChar<const char*, sizeof(const char*)> { enum { value = 's' }; };
-
-template<>
-struct TypeChar<void, sizeof_void<void>::value> { enum { value = 'v' }; };
+template<const char t> struct CharType { static_assert(!t, "Unsupported type in variadic type list"); };
+template<> struct CharType<'p'> { typedef void* type; };
+template<> struct CharType<'i'> { typedef unsigned int type; };
+template<> struct CharType<'l'> { typedef unsigned long long type; };
+template<> struct CharType<'f'> { typedef double type; };
+template<> struct CharType<'s'> { typedef const char* type; };
+template<> struct CharType<'v'> { typedef void type; };
 
 template<typename... Types>
 struct TypeString {
-	static const char value[sizeof...(Types) + 1];
-};
-
-template<typename... Types>
-const char TypeString<Types...>::value[sizeof...(Types) + 1] = {
-	TypeChar<typeof(Types), sizeof(Types)>::value...
+	static constexpr char value[sizeof...(Types) + 1] = {
+		TypeChar<typeof(Types), sizeof(Types)>::value...
+	};
 };
 
 class ScriptFunctionPointer
@@ -78,12 +63,13 @@ class ScriptFunctionPointer
 	using ScriptFunctionPointer_ = R(*)(Types...);
 
 	public:
-		ScriptFunctionPointer_<void> func;
+		ScriptFunctionPointer_<void> addr;
 		const char* types;
 		const char ret;
+		const unsigned int numargs;
 
 		template<typename R, typename... Types>
-		constexpr ScriptFunctionPointer(ScriptFunctionPointer_<R, Types...> func) : func(reinterpret_cast<ScriptFunctionPointer_<void>>(func)), types(TypeString<Types...>::value), ret(TypeChar<R, sizeof_void<R>::value>::value) {}
+		constexpr ScriptFunctionPointer(ScriptFunctionPointer_<R, Types...> addr) : addr(reinterpret_cast<ScriptFunctionPointer_<void>>(addr)), types(TypeString<Types...>::value), ret(TypeChar<R, sizeof_void<R>::value>::value), numargs(sizeof(TypeString<Types...>::value) - 1) {}
 };
 
 struct ScriptFunctionData

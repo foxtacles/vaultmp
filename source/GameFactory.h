@@ -86,7 +86,7 @@ class GameFactory
 		static Database<DB::Terminal> dbTerminals;
 #endif
 
-		static inline ReferenceList::iterator GetShared(const RakNet::NetworkID& id) { return index.count(id) ? index[id] : instances.end(); }
+		inline static ReferenceList::iterator GetShared(const RakNet::NetworkID& id) { return index.count(id) ? index[id] : instances.end(); }
 
 	public:
 		static void Initialize(unsigned char game);
