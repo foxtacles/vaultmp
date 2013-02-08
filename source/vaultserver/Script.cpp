@@ -5,126 +5,10 @@ using namespace RakNet;
 using namespace Values;
 
 vector<Script*> Script::scripts;
-
-const map<const char*, Script::FunctionPointer> Script::functions {
-	{"timestamp", Utils::timestamp},
-	{"CreateTimer", Script::CreateTimer},
-	{"CreateTimerEx", reinterpret_cast<void(*)()>(Script::CreateTimerEx)},
-	{"KillTimer", Script::KillTimer},
-	{"MakePublic", Script::MakePublic},
-	{"CallPublic", reinterpret_cast<void(*)()>(Script::CallPublic)},
-
-	{"SetServerName", Dedicated::SetServerName},
-	{"SetServerMap", Dedicated::SetServerMap},
-	{"SetServerRule", Dedicated::SetServerRule},
-	{"GetGameCode", Dedicated::GetGameCode},
-	{"GetMaximumPlayers", Dedicated::GetMaximumPlayers},
-	{"GetCurrentPlayers", Dedicated::GetCurrentPlayers},
-
-	{"ValueToString", Script::ValueToString},
-	{"AxisToString", Script::AxisToString},
-	{"AnimToString", Script::AnimToString},
-	{"BaseToString", Script::BaseToString},
-
-	{"UIMessage", Script::UIMessage},
-	{"ChatMessage", Script::ChatMessage},
-	{"SetRespawn", Script::SetRespawn},
-	{"SetSpawnCell", Script::SetSpawnCell},
-	{"SetGameWeather", Script::SetGameWeather},
-	{"SetGameTime", Script::SetGameTime},
-	{"SetGameYear", Script::SetGameYear},
-	{"SetGameMonth", Script::SetGameMonth},
-	{"SetGameDay", Script::SetGameDay},
-	{"SetGameHour", Script::SetGameHour},
-	{"SetTimeScale", Script::SetTimeScale},
-	{"IsValid", Script::IsValid},
-	{"IsObject", Script::IsObject},
-	{"IsItem", Script::IsItem},
-	{"IsContainer", Script::IsContainer},
-	{"IsActor", Script::IsActor},
-	{"IsPlayer", Script::IsPlayer},
-	{"IsCell", DB::Record::IsValidCell},
-	{"IsInterior", Script::IsInterior},
-	{"GetType", (unsigned char(*)(NetworkID)) GameFactory::GetType},
-	{"GetConnection", Script::GetConnection},
-	{"GetCount", GameFactory::GetObjectCount},
-	{"GetList", Script::GetList},
-	{"GetGameWeather", Script::GetGameWeather},
-	{"GetGameTime", Script::GetGameTime},
-	{"GetGameYear", Script::GetGameYear},
-	{"GetGameMonth", Script::GetGameMonth},
-	{"GetGameDay", Script::GetGameDay},
-	{"GetGameHour", Script::GetGameHour},
-	{"GetTimeScale", Script::GetTimeScale},
-
-	{"GetID", Script::GetID},
-	{"GetReference", Script::GetReference},
-	{"GetBase", Script::GetBase},
-	{"GetPos", Script::GetPos},
-	{"GetAngle", Script::GetAngle},
-	{"GetCell", Script::GetCell},
-	{"GetLock", Script::GetLock},
-	{"GetOwner", Script::GetOwner},
-	{"GetBaseName", Script::GetBaseName},
-	{"IsNearPoint", Script::IsNearPoint},
-	{"GetItemContainer", Script::GetItemContainer},
-	{"GetItemCount", Script::GetItemCount},
-	{"GetItemCondition", Script::GetItemCondition},
-	{"GetItemEquipped", Script::GetItemEquipped},
-	{"GetItemSilent", Script::GetItemSilent},
-	{"GetItemStick", Script::GetItemStick},
-	{"GetContainerItemCount", Script::GetContainerItemCount},
-	{"GetContainerItemList", Script::GetContainerItemList},
-	{"GetActorValue", Script::GetActorValue},
-	{"GetActorBaseValue", Script::GetActorBaseValue},
-	{"GetActorIdleAnimation", Script::GetActorIdleAnimation},
-	{"GetActorMovingAnimation", Script::GetActorMovingAnimation},
-	{"GetActorWeaponAnimation", Script::GetActorWeaponAnimation},
-	{"GetActorAlerted", Script::GetActorAlerted},
-	{"GetActorSneaking", Script::GetActorSneaking},
-	{"GetActorDead", Script::GetActorDead},
-	{"GetActorBaseRace", Script::GetActorBaseRace},
-	{"GetActorBaseSex", Script::GetActorBaseSex},
-	{"IsActorJumping", Script::IsActorJumping},
-	{"GetPlayerRespawn", Script::GetPlayerRespawn},
-	{"GetPlayerSpawnCell", Script::GetPlayerSpawnCell},
-
-	{"CreateObject", Script::CreateObject},
-	{"DestroyObject", Script::DestroyObject},
-	{"SetPos", Script::SetPos},
-	{"SetAngle", Script::SetAngle},
-	{"SetCell", Script::SetCell},
-	{"SetLock", Script::SetLock},
-	{"SetOwner", Script::SetOwner},
-	{"SetBaseName", Script::SetBaseName},
-	{"CreateItem", Script::CreateItem},
-	{"SetItemCount", Script::SetItemCount},
-	{"SetItemCondition", Script::SetItemCondition},
-	{"CreateContainer", Script::CreateContainer},
-	{"AddItem", Script::AddItem},
-	{"RemoveItem", Script::RemoveItem},
-	{"RemoveAllItems", Script::RemoveAllItems},
-	{"CreateActor", Script::CreateActor},
-	{"SetActorValue", Script::SetActorValue},
-	{"SetActorBaseValue", Script::SetActorBaseValue},
-	{"EquipItem", Script::EquipItem},
-	{"UnequipItem", Script::UnequipItem},
-	{"PlayIdle", Script::PlayIdle},
-	{"SetActorMovingAnimation", Script::SetActorMovingAnimation},
-	{"SetActorWeaponAnimation", Script::SetActorWeaponAnimation},
-	{"SetActorAlerted", Script::SetActorAlerted},
-	{"SetActorSneaking", Script::SetActorSneaking},
-	{"FireWeapon", Script::FireWeapon},
-	{"KillActor", Script::KillActor},
-	{"SetActorBaseRace", Script::SetActorBaseRace},
-	{"AgeActorBaseRace", Script::AgeActorBaseRace},
-	{"SetActorBaseSex", Script::SetActorBaseSex},
-	{"SetPlayerRespawn", Script::SetPlayerRespawn},
-	{"SetPlayerSpawnCell", Script::SetPlayerSpawnCell},
-};
-
 pair<chrono::system_clock::time_point, double> Script::gameTime;
 unsigned int Script::gameWeather;
+
+constexpr ScriptFunctionData Script::functions[];
 
 Script::Script(char* path)
 {
@@ -195,7 +79,7 @@ Script::Script(char* path)
 			GetScript("OnServerInit", fOnServerInit);
 			GetScript("OnServerExit", fOnServerExit);
 
-			auto SetScript = [this](const char* name, FunctionPointer func)
+			auto SetScript = [this](const char* name, ScriptFunctionPointer func)
 			{
 #ifdef __WIN32__
 				auto addr = GetProcAddress(this->lib, name);
@@ -209,7 +93,7 @@ Script::Script(char* path)
 			};
 
 			for (const auto& function : functions)
-				SetScript(string(vpf + function.first).c_str(), function.second.func);
+				SetScript(string(vpf + function.name).c_str(), function.func);
 		}
 		catch (...)
 		{

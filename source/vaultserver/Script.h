@@ -29,6 +29,26 @@
  * A script can be either a C++ or PAWN script
  */
 
+class ScriptFunctionPointer
+{
+	template<typename T, typename... Types>
+	using ScriptFunctionPointer_ = T(*)(Types...);
+
+	public:
+		ScriptFunctionPointer_<void> func;
+
+		template<typename T, typename... Args>
+		constexpr ScriptFunctionPointer(ScriptFunctionPointer_<T, Args...> func) : func(reinterpret_cast<ScriptFunctionPointer_<void>>(func)) {}
+};
+
+struct ScriptFunctionData
+{
+	const char* name;
+	ScriptFunctionPointer func;
+
+	constexpr ScriptFunctionData(const char* name, ScriptFunctionPointer func) : name(name), func(func) {}
+};
+
 class Script
 {
 	private:
@@ -81,24 +101,10 @@ class Script
 		void (*fOnServerInit)();
 		void (*fOnServerExit)();
 
-		class FunctionPointer
-		{
-			template<typename T, typename... Types>
-			using FunctionPointer_ = T(*)(Types...);
-
-			public:
-				FunctionPointer_<void> func;
-
-				template<typename T, typename... Args>
-				constexpr FunctionPointer(FunctionPointer_<T, Args...> func) : func(reinterpret_cast<FunctionPointer_<void>>(func)) {}
-		};
-
 		Script(const Script&) = delete;
 		Script& operator=(const Script&) = delete;
 
 	public:
-		static const std::map<const char*, FunctionPointer> functions;
-
 		static std::pair<std::chrono::system_clock::time_point, double> gameTime;
 		static unsigned int gameWeather;
 
@@ -246,6 +252,123 @@ class Script
 		static bool SetActorBaseSex(RakNet::NetworkID id, bool female);
 		static void SetPlayerRespawn(RakNet::NetworkID id, unsigned int respawn);
 		static void SetPlayerSpawnCell(RakNet::NetworkID id, unsigned int cell);
+
+		static constexpr ScriptFunctionData functions[] {
+			{"timestamp", Utils::timestamp},
+			{"CreateTimer", Script::CreateTimer},
+			{"CreateTimerEx", reinterpret_cast<void(*)()>(Script::CreateTimerEx)},
+			{"KillTimer", Script::KillTimer},
+			{"MakePublic", Script::MakePublic},
+			{"CallPublic", reinterpret_cast<void(*)()>(Script::CallPublic)},
+
+			{"SetServerName", Dedicated::SetServerName},
+			{"SetServerMap", Dedicated::SetServerMap},
+			{"SetServerRule", Dedicated::SetServerRule},
+			{"GetGameCode", Dedicated::GetGameCode},
+			{"GetMaximumPlayers", Dedicated::GetMaximumPlayers},
+			{"GetCurrentPlayers", Dedicated::GetCurrentPlayers},
+
+			{"ValueToString", Script::ValueToString},
+			{"AxisToString", Script::AxisToString},
+			{"AnimToString", Script::AnimToString},
+			{"BaseToString", Script::BaseToString},
+
+			{"UIMessage", Script::UIMessage},
+			{"ChatMessage", Script::ChatMessage},
+			{"SetRespawn", Script::SetRespawn},
+			{"SetSpawnCell", Script::SetSpawnCell},
+			{"SetGameWeather", Script::SetGameWeather},
+			{"SetGameTime", Script::SetGameTime},
+			{"SetGameYear", Script::SetGameYear},
+			{"SetGameMonth", Script::SetGameMonth},
+			{"SetGameDay", Script::SetGameDay},
+			{"SetGameHour", Script::SetGameHour},
+			{"SetTimeScale", Script::SetTimeScale},
+			{"IsValid", Script::IsValid},
+			{"IsObject", Script::IsObject},
+			{"IsItem", Script::IsItem},
+			{"IsContainer", Script::IsContainer},
+			{"IsActor", Script::IsActor},
+			{"IsPlayer", Script::IsPlayer},
+			{"IsCell", DB::Record::IsValidCell},
+			{"IsInterior", Script::IsInterior},
+			{"GetType", (unsigned char(*)(RakNet::NetworkID)) GameFactory::GetType},
+			{"GetConnection", Script::GetConnection},
+			{"GetCount", GameFactory::GetObjectCount},
+			{"GetList", Script::GetList},
+			{"GetGameWeather", Script::GetGameWeather},
+			{"GetGameTime", Script::GetGameTime},
+			{"GetGameYear", Script::GetGameYear},
+			{"GetGameMonth", Script::GetGameMonth},
+			{"GetGameDay", Script::GetGameDay},
+			{"GetGameHour", Script::GetGameHour},
+			{"GetTimeScale", Script::GetTimeScale},
+
+			{"GetID", Script::GetID},
+			{"GetReference", Script::GetReference},
+			{"GetBase", Script::GetBase},
+			{"GetPos", Script::GetPos},
+			{"GetAngle", Script::GetAngle},
+			{"GetCell", Script::GetCell},
+			{"GetLock", Script::GetLock},
+			{"GetOwner", Script::GetOwner},
+			{"GetBaseName", Script::GetBaseName},
+			{"IsNearPoint", Script::IsNearPoint},
+			{"GetItemContainer", Script::GetItemContainer},
+			{"GetItemCount", Script::GetItemCount},
+			{"GetItemCondition", Script::GetItemCondition},
+			{"GetItemEquipped", Script::GetItemEquipped},
+			{"GetItemSilent", Script::GetItemSilent},
+			{"GetItemStick", Script::GetItemStick},
+			{"GetContainerItemCount", Script::GetContainerItemCount},
+			{"GetContainerItemList", Script::GetContainerItemList},
+			{"GetActorValue", Script::GetActorValue},
+			{"GetActorBaseValue", Script::GetActorBaseValue},
+			{"GetActorIdleAnimation", Script::GetActorIdleAnimation},
+			{"GetActorMovingAnimation", Script::GetActorMovingAnimation},
+			{"GetActorWeaponAnimation", Script::GetActorWeaponAnimation},
+			{"GetActorAlerted", Script::GetActorAlerted},
+			{"GetActorSneaking", Script::GetActorSneaking},
+			{"GetActorDead", Script::GetActorDead},
+			{"GetActorBaseRace", Script::GetActorBaseRace},
+			{"GetActorBaseSex", Script::GetActorBaseSex},
+			{"IsActorJumping", Script::IsActorJumping},
+			{"GetPlayerRespawn", Script::GetPlayerRespawn},
+			{"GetPlayerSpawnCell", Script::GetPlayerSpawnCell},
+
+			{"CreateObject", Script::CreateObject},
+			{"DestroyObject", Script::DestroyObject},
+			{"SetPos", Script::SetPos},
+			{"SetAngle", Script::SetAngle},
+			{"SetCell", Script::SetCell},
+			{"SetLock", Script::SetLock},
+			{"SetOwner", Script::SetOwner},
+			{"SetBaseName", Script::SetBaseName},
+			{"CreateItem", Script::CreateItem},
+			{"SetItemCount", Script::SetItemCount},
+			{"SetItemCondition", Script::SetItemCondition},
+			{"CreateContainer", Script::CreateContainer},
+			{"AddItem", Script::AddItem},
+			{"RemoveItem", Script::RemoveItem},
+			{"RemoveAllItems", Script::RemoveAllItems},
+			{"CreateActor", Script::CreateActor},
+			{"SetActorValue", Script::SetActorValue},
+			{"SetActorBaseValue", Script::SetActorBaseValue},
+			{"EquipItem", Script::EquipItem},
+			{"UnequipItem", Script::UnequipItem},
+			{"PlayIdle", Script::PlayIdle},
+			{"SetActorMovingAnimation", Script::SetActorMovingAnimation},
+			{"SetActorWeaponAnimation", Script::SetActorWeaponAnimation},
+			{"SetActorAlerted", Script::SetActorAlerted},
+			{"SetActorSneaking", Script::SetActorSneaking},
+			{"FireWeapon", Script::FireWeapon},
+			{"KillActor", Script::KillActor},
+			{"SetActorBaseRace", Script::SetActorBaseRace},
+			{"AgeActorBaseRace", Script::AgeActorBaseRace},
+			{"SetActorBaseSex", Script::SetActorBaseSex},
+			{"SetPlayerRespawn", Script::SetPlayerRespawn},
+			{"SetPlayerSpawnCell", Script::SetPlayerSpawnCell},
+		};
 };
 
 #endif
