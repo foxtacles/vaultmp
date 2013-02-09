@@ -379,41 +379,21 @@ VAULTCPP(})
 #ifdef __cplusplus
 namespace vaultmp
 {
-	template<typename T, size_t t>
-	struct TypeChar { static_assert(!t, "Unsupported type in variadic type list"); };
-
-	template<typename T>
-	struct TypeChar<T*, sizeof(void*)> { enum { value = 'p' }; };
-
-	template<typename T>
-	struct TypeChar<T, sizeof(uint8_t)> { enum { value = 'i' }; };
-
-	template<typename T>
-	struct TypeChar<T, sizeof(uint16_t)> { enum { value = 'i' }; };
-
-	template<typename T>
-	struct TypeChar<T, sizeof(uint32_t)> { enum { value = 'i' }; };
-
-	template<typename T>
-	struct TypeChar<T, sizeof(uint64_t)> { enum { value = 'l' }; };
-
-	template<>
-	struct TypeChar<Value, sizeof(Value)> { enum { value = 'f' }; };
-
-	template<>
-	struct TypeChar<cRawString, sizeof(cRawString)> { enum { value = 's' }; };
-
-	template<>
-	struct TypeChar<RawString, sizeof(RawString)> { enum { value = 's' }; };
+	template<typename T, size_t t> struct TypeChar { static_assert(!t, "Unsupported type in variadic type list"); };
+	template<typename T> struct TypeChar<T*, sizeof(void*)> { enum { value = 'p' }; };
+	template<typename T> struct TypeChar<T, sizeof(uint8_t)> { enum { value = 'i' }; };
+	template<typename T> struct TypeChar<T, sizeof(uint16_t)> { enum { value = 'i' }; };
+	template<typename T> struct TypeChar<T, sizeof(uint32_t)> { enum { value = 'i' }; };
+	template<typename T> struct TypeChar<T, sizeof(uint64_t)> { enum { value = 'l' }; };
+	template<> struct TypeChar<Value, sizeof(Value)> { enum { value = 'f' }; };
+	template<> struct TypeChar<cRawString, sizeof(cRawString)> { enum { value = 's' }; };
+	template<> struct TypeChar<RawString, sizeof(RawString)> { enum { value = 's' }; };
 
 	template<typename... Types>
 	struct TypeString {
-		static cRawChar value[sizeof...(Types) + 1];
-	};
-
-	template<typename... Types>
-	cRawChar TypeString<Types...>::value[sizeof...(Types) + 1] = {
-		TypeChar<typeof(Types), sizeof(Types)>::value...
+		static constexpr RawChar value[sizeof...(Types) + 1] = {
+			TypeChar<typeof(Types), sizeof(Types)>::value...
+		};
 	};
 
 	VAULTFUNCTION Void timestamp() noexcept { return VAULTAPI(timestamp)(); }
