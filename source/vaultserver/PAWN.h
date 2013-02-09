@@ -33,8 +33,6 @@ class PAWN
 		static cell CreateTimerEx(AMX* amx, const cell* params);
 		static cell MakePublic(AMX* amx, const cell* params);
 		static cell CallPublic(AMX* amx, const cell* params);
-		static cell GetList(AMX* amx, const cell* params);
-		static cell GetContainerItemList(AMX* amx, const cell* params);
 
 	public:
 		static int LoadProgram(AMX* amx, char* filename, void* memblock);

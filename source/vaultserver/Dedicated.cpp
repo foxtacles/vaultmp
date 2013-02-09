@@ -1,4 +1,7 @@
 #include "Dedicated.h"
+#include "GameFactory.h"
+#include "Script.h"
+#include "Timer.h"
 
 using namespace std;
 using namespace RakNet;

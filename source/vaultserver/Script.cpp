@@ -1,4 +1,5 @@
 #include "Script.h"
+#include "Timer.h"
 
 using namespace std;
 using namespace RakNet;
@@ -8,6 +9,8 @@ vector<Script*> Script::scripts;
 pair<chrono::system_clock::time_point, double> Script::gameTime;
 unsigned int Script::gameWeather;
 
+template<typename... Types>
+constexpr char TypeString<Types...>::value[];
 constexpr ScriptFunctionData Script::functions[];
 
 Script::Script(char* path)

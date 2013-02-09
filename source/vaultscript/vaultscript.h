@@ -396,6 +396,9 @@ namespace vaultmp
 		};
 	};
 
+	template<typename... Types>
+	constexpr char TypeString<Types...>::value[];
+
 	VAULTFUNCTION Void timestamp() noexcept { return VAULTAPI(timestamp)(); }
 	VAULTFUNCTION Timer CreateTimer(Function<> function, Interval interval) noexcept { return VAULTAPI(CreateTimer)(function, interval); }
 

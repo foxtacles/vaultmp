@@ -21,8 +21,6 @@
 #include "../API.h"
 #include "Client.h"
 #include "NetworkServer.h"
-#include "Script.h"
-#include "Timer.h"
 #include "time/time64.h"
 #include "vaultserver.h"
 

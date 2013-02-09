@@ -1,5 +1,6 @@
 #include "NetworkServer.h"
 #include "Dedicated.h"
+#include "GameFactory.h"
 
 using namespace std;
 using namespace RakNet;
