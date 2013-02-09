@@ -6,6 +6,7 @@ using namespace RakNet;
 using namespace Values;
 
 vector<Script*> Script::scripts;
+
 pair<chrono::system_clock::time_point, double> Script::gameTime;
 unsigned int Script::gameWeather;
 
@@ -53,6 +54,7 @@ Script::Script(char* path)
 			if (!fexec)
 				throw VaultException("Could not find exec() callback in: %s", path).stacktrace();
 
+			const char* vaultprefix;
 			GetScript("vaultprefix", vaultprefix);
 			string vpf(vaultprefix);
 

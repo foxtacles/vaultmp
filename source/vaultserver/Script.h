@@ -108,7 +108,6 @@ class Script
 
 		static void GetArguments(std::vector<boost::any>& params, va_list args, const std::string& def);
 
-		const char* vaultprefix;
 		void (*fexec)();
 		void (*fOnSpawn)(RakNet::NetworkID);
 		void (*fOnCellChange)(RakNet::NetworkID, unsigned int);
