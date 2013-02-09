@@ -15,6 +15,7 @@ extern "C" {
 
 static vector<const char*> strings;
 static vector<pair<cell*, double>> floats;
+static pair<cell*, NetworkID*> data = {nullptr, nullptr};
 
 void free_strings() {
 	for (const auto* value : strings)
@@ -30,9 +31,31 @@ void free_floats() {
 	floats.clear();
 }
 
+void free_data(unsigned int size) {
+	if (data.first && data.second)
+		for (unsigned int i = 0; i < size; ++i)
+			data.first[i] = data.second[i];
+
+	data.first = nullptr;
+	data.second = nullptr;
+}
+
 void after_call() {
 	free_strings();
 	free_floats();
+}
+
+template<typename R>
+void after_call(const R&) {
+	free_strings();
+	free_floats();
+}
+
+template<>
+void after_call(const unsigned int& result) {
+	free_strings();
+	free_floats();
+	free_data(result);
 }
 
 template<typename R>
@@ -72,12 +95,18 @@ struct PAWN_extract_<const char*, I, F> {
 template<unsigned int I, unsigned int F>
 struct PAWN_extract_<double*, I, F> {
 	inline static double* PAWN_extract(AMX*&& amx, const cell*&& params) {
-		cell* dest;
-
-		dest = amx_Address(amx, params[I]);
-		floats.emplace_back(dest, 0.00);
-
+		floats.emplace_back(amx_Address(amx, params[I]), 0.00);
 		return &floats.back().second;
+	}
+};
+
+template<unsigned int I, unsigned int F>
+struct PAWN_extract_<NetworkID**, I, F> {
+	inline static NetworkID** PAWN_extract(AMX*&& amx, const cell*&& params) {
+		constexpr ScriptFunctionData const& F_ = Script::functions[F];
+		static_assert(F_.func.numargs == I, "NetworkID** must be the last parameter");
+		data.first = amx_Address(amx, params[I]);
+		return &data.second;
 	}
 };
 
@@ -131,7 +160,7 @@ static typename enable_if<Script::functions[I].func.ret == 's', cell>::type wrap
 template<unsigned int I>
 static typename enable_if<Script::functions[I].func.ret != 'v' && Script::functions[I].func.ret != 'f' && Script::functions[I].func.ret != 's', cell>::type wrapper(AMX* amx, const cell* params) {
 	auto result = PAWN_dispatch_<Script::functions[I].func.numargs, I>::template PAWN_dispatch<typename CharType<Script::functions[I].func.ret>::type>(forward<AMX*>(amx), forward<const cell*>(params));
-	after_call();
+	after_call(result);
 	return result;
 }
 
@@ -178,7 +207,7 @@ AMX_NATIVE_INFO PAWN::functions[] =
 	{"GetType", wrapper<35>},
 	{"GetConnection", wrapper<36>},
 	{"GetCount", wrapper<37>},
-	{"GetList", PAWN::GetList},
+	{"GetList", wrapper<38>},
 	{"GetGameWeather", wrapper<39>},
 	{"GetGameTime", wrapper<40>},
 	{"GetGameYear", wrapper<41>},
@@ -204,7 +233,7 @@ AMX_NATIVE_INFO PAWN::functions[] =
 	{"GetItemSilent", wrapper<60>},
 	{"GetItemStick", wrapper<61>},
 	{"GetContainerItemCount", wrapper<62>},
-	{"GetContainerItemList", PAWN::GetContainerItemList},
+	{"GetContainerItemList", wrapper<63>},
 	{"GetActorValue", wrapper<64>},
 	{"GetActorBaseValue", wrapper<65>},
 	{"GetActorIdleAnimation", wrapper<66>},
@@ -442,30 +471,6 @@ cell PAWN::CallPublic(AMX* amx, const cell* params)
 	}
 
 	return Script::CallPublicPAWN(&name[0], args);
-}
-
-cell PAWN::GetList(AMX* amx, const cell* params)
-{
-	NetworkID* data;
-	cell* dest = amx_Address(amx, params[2]);
-	unsigned int size = Script::GetList(params[1], &data);
-
-	for (unsigned int i = 0; i < size; ++i)
-		dest[i] = data[i];
-
-	return size;
-}
-
-cell PAWN::GetContainerItemList(AMX* amx, const cell* params)
-{
-	NetworkID* data;
-	cell* dest = amx_Address(amx, params[2]);
-	unsigned int size = Script::GetContainerItemList(params[1], &data);
-
-	for (unsigned int i = 0; i < size; ++i)
-		dest[i] = data[i];
-
-	return size;
 }
 
 int PAWN::LoadProgram(AMX* amx, char* filename, void* memblock)
