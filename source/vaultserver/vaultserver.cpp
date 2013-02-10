@@ -7,9 +7,9 @@
 #include "vaultserver.h"
 #include "Dedicated.h"
 #include "Script.h"
-#include "../Utils.h"
-#include "../iniparser/src/dictionary.h"
-#include "../iniparser/src/iniparser.h"
+#include "Utils.h"
+#include "iniparser/src/dictionary.h"
+#include "iniparser/src/iniparser.h"
 
 using namespace std;
 using namespace RakNet;

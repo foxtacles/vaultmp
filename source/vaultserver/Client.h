@@ -6,7 +6,7 @@
 #include <stack>
 #include <vector>
 
-#include "../RakNet.h"
+#include "RakNet.h"
 
 class Player;
 

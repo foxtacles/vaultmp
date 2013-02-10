@@ -17,11 +17,11 @@
 #include "Dedicated.h"
 #include "time/time64.h"
 #include "Record.h"
-#include "../API.h"
-#include "../GameFactory.h"
-#include "../Utils.h"
-#include "../vaultmp.h"
-#include "../VaultException.h"
+#include "API.h"
+#include "GameFactory.h"
+#include "Utils.h"
+#include "vaultmp.h"
+#include "VaultException.h"
 
 /**
  * \brief Maintains communication with a script

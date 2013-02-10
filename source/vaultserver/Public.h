@@ -9,9 +9,9 @@
 #include "ScriptFunction.h"
 #include "Script.h"
 #include "PAWN.h"
-#include "../vaultmp.h"
-#include "../Debug.h"
-#include "../Network.h"
+#include "vaultmp.h"
+#include "Debug.h"
+#include "Network.h"
 
 /**
  * \brief Create publics to use across all scripts

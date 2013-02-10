@@ -3,9 +3,9 @@
 
 #include "Dedicated.h"
 #include "Client.h"
-#include "../Player.h"
-#include "../Network.h"
-#include "../VaultException.h"
+#include "Player.h"
+#include "Network.h"
+#include "VaultException.h"
 
 /**
  * \brief Server game code, communicating with loaded scripts

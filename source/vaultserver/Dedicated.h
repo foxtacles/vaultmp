@@ -9,16 +9,16 @@
 #include <chrono>
 #include <cstdio>
 
-#include "../RakNet.h"
+#include "RakNet.h"
 
-#include "../vaultmp.h"
-#include "../ServerEntry.h"
-#include "../Actor.h"
-#include "../Player.h"
-#include "../Data.h"
-#include "../Utils.h"
-#include "../VaultException.h"
-#include "../API.h"
+#include "vaultmp.h"
+#include "ServerEntry.h"
+#include "Actor.h"
+#include "Player.h"
+#include "Data.h"
+#include "Utils.h"
+#include "VaultException.h"
+#include "API.h"
 #include "Client.h"
 #include "NetworkServer.h"
 #include "time/time64.h"

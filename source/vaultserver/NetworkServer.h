@@ -1,7 +1,7 @@
 #ifndef NETWORKSERVER_H
 #define NETWORKSERVER_H
 
-#include "../Network.h"
+#include "Network.h"
 #include "Server.h"
 
 /**

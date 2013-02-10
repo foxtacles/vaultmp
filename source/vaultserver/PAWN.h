@@ -14,9 +14,9 @@
 
 #include "boost/any.hpp"
 
-#include "../Utils.h"
-#include "../VaultException.h"
-#include "../vaultmp.h"
+#include "Utils.h"
+#include "VaultException.h"
+#include "vaultmp.h"
 
 /**
  * \brief Contains the PAWN scripting function wrappers
