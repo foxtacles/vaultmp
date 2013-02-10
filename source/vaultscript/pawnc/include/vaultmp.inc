@@ -104,7 +104,7 @@ forward OnActorDeath(ID, killer, Limb:limbs, Death:cause);
 forward OnActorEquipItem(ID, item, Float:value);
 forward OnActorUnequipItem(ID, item, Float:value);
 forward OnActorDropItem(ID, item, count, Float:value);
-forward OnActorPickupItem(ID, item, count, Float:value);
+forward OnActorPickupItem(ID, item, count, Float:value, owner);
 forward OnActorPunch(ID, Bool:power);
 forward OnActorFireWeapon(ID, weapon);
 forward OnPlayerDisconnect(ID, reason);

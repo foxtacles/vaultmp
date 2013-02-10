@@ -763,7 +763,7 @@ void Script::OnActorDropItem(const FactoryObject<Actor>& reference, unsigned int
 	}
 }
 
-void Script::OnActorPickupItem(const FactoryObject<Actor>& reference, unsigned int baseID, unsigned int count, double condition)
+void Script::OnActorPickupItem(const FactoryObject<Actor>& reference, unsigned int baseID, unsigned int count, double condition, unsigned int owner)
 {
 	NetworkID id = reference->GetNetworkID();
 
@@ -772,10 +772,10 @@ void Script::OnActorPickupItem(const FactoryObject<Actor>& reference, unsigned i
 		if (script->cpp_script)
 		{
 			if (script->fOnActorPickupItem)
-				script->fOnActorPickupItem(id, baseID, count, condition);
+				script->fOnActorPickupItem(id, baseID, count, condition, owner);
 		}
 		else if (PAWN::IsCallbackPresent(script->amx, "OnActorPickupItem"))
-			PAWN::Call(script->amx, "OnActorPickupItem", "fiil", 0, condition, count, baseID, id);
+			PAWN::Call(script->amx, "OnActorPickupItem", "ifiil", 0, owner, condition, count, baseID, id);
 	}
 }
 

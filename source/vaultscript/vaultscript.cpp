@@ -140,7 +140,7 @@ Void VAULTSCRIPT OnActorDropItem(ID actor, Base item, UCount count, Value value)
 
 }
 
-Void VAULTSCRIPT OnActorPickupItem(ID actor, Base item, UCount count, Value value) noexcept
+Void VAULTSCRIPT OnActorPickupItem(ID actor, Base item, UCount count, Value value, VAULTNPC owner) noexcept
 {
 
 }

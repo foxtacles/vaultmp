@@ -330,10 +330,11 @@ NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, const FactoryObject<
 
 		unsigned int count = item->GetItemCount();
 		double condition = item->GetItemCondition();
+		unsigned int owner = item->GetOwner();
 
 		GameFactory::DestroyInstance(item);
 
-		Script::OnActorPickupItem(vaultcast<Actor>(reference).get(), baseID, count, condition);
+		Script::OnActorPickupItem(vaultcast<Actor>(reference).get(), baseID, count, condition, owner);
 	}
 
 	for (const auto& _diff : _gdiff)

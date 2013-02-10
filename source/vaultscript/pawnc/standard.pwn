@@ -133,7 +133,7 @@ public OnActorDropItem(ID, item, count, Float:value)
 
 }
 
-public OnActorPickupItem(ID, item, count, Float:value)
+public OnActorPickupItem(ID, item, count, Float:value, owner)
 {
 
 }
