@@ -283,11 +283,6 @@ AMX_NATIVE_INFO PAWN::functions[] {
 	{0, 0}
 };
 
-int PAWN::RegisterVaultmpFunctions(AMX* amx)
-{
-	return PAWN::Register(amx, PAWN::functions, -1);
-}
-
 cell PAWN::CreateTimer(AMX* amx, const cell* params)
 {
 	int len;
@@ -477,9 +472,15 @@ int PAWN::LoadProgram(AMX* amx, char* filename, void* memblock)
 	return aux_LoadProgram(amx, filename, memblock);
 }
 
-int PAWN::Register(AMX* amx, const AMX_NATIVE_INFO* list, int number)
+int PAWN::Init(AMX* amx)
 {
-	return amx_Register(amx, list, number);
+	amx_CoreInit(amx);
+	amx_ConsoleInit(amx);
+	amx_FloatInit(amx);
+	amx_TimeInit(amx);
+	amx_StringInit(amx);
+	amx_FileInit(amx);
+	return amx_Register(amx, PAWN::functions, -1);
 }
 
 int PAWN::Exec(AMX* amx, cell* retval, int index)
@@ -683,34 +684,4 @@ cell PAWN::Call(AMX* amx, const char* name, const char* argl, const vector<boost
 	}
 
 	return ret;
-}
-
-int PAWN::CoreInit(AMX* amx)
-{
-	return amx_CoreInit(amx);
-}
-
-int PAWN::ConsoleInit(AMX* amx)
-{
-	return amx_ConsoleInit(amx);
-}
-
-int PAWN::FloatInit(AMX* amx)
-{
-	return amx_FloatInit(amx);
-}
-
-int PAWN::TimeInit(AMX* amx)
-{
-	return amx_TimeInit(amx);
-}
-
-int PAWN::StringInit(AMX* amx)
-{
-	return amx_StringInit(amx);
-}
-
-int PAWN::FileInit(AMX* amx)
-{
-	return amx_FileInit(amx);
 }

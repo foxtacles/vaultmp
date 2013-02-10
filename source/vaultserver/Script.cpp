@@ -127,14 +127,7 @@ Script::Script(char* path)
 			if (err != AMX_ERR_NONE)
 				throw VaultException("PAWN script %s error (%d): \"%s\"", path, err, aux_StrError(err)).stacktrace();
 
-			PAWN::CoreInit(vaultscript);
-			PAWN::ConsoleInit(vaultscript);
-			PAWN::FloatInit(vaultscript);
-			PAWN::StringInit(vaultscript);
-			PAWN::FileInit(vaultscript);
-			PAWN::TimeInit(vaultscript);
-
-			err = PAWN::RegisterVaultmpFunctions(vaultscript);
+			err = PAWN::Init(vaultscript);
 
 			if (err != AMX_ERR_NONE)
 				throw VaultException("PAWN script %s error (%d): \"%s\"", path, err, aux_StrError(err)).stacktrace();
