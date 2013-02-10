@@ -96,7 +96,7 @@ NetworkResponse Server::LoadGame(RakNetGUID guid)
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 
 	response.emplace_back(Network::CreateResponse(
-		PacketFactory::Create<pTypes::ID_GAME_WEATHER>(Script::gameWeather),
+		PacketFactory::Create<pTypes::ID_GAME_WEATHER>(Script::GetGameWeather()),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 
 	response.emplace_back(Network::CreateResponse(

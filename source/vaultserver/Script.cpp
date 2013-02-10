@@ -112,7 +112,7 @@ Script::Script(char* path)
 	}
 	else if (strstr(path, ".amx"))
 	{
-		AMX* vaultscript;
+		AMX* vaultscript = nullptr;
 
 		try
 		{
@@ -187,6 +187,88 @@ void Script::LoadScripts(char* scripts, char* base)
 	{
 		UnloadScripts();
 		throw;
+	}
+}
+
+void Script::Initialize()
+{
+	static_assert(sizeof(chrono::system_clock::rep) == sizeof(Time64_T), "Underlying representation of chrono::system_clock should be 64bit integral");
+
+	gameTime.first = chrono::system_clock::now();
+	gameTime.second = 1.0;
+	CreateTimer(&Timer_GameTime, 1000);
+
+	gameWeather = DEFAULT_WEATHER;
+
+	auto object_init = [](FactoryObject<Object>& object, const DB::Reference* reference)
+	{
+		const auto& pos = reference->GetPos();
+		const auto& angle = reference->GetAngle();
+		auto cell = reference->GetCell();
+		auto lock = reference->GetLock();
+		object->SetNetworkPos(Axis_X, get<0>(pos));
+		object->SetNetworkPos(Axis_Y, get<1>(pos));
+		object->SetNetworkPos(Axis_Z, get<2>(pos));
+		object->SetGamePos(Axis_X, get<0>(pos));
+		object->SetGamePos(Axis_Y, get<1>(pos));
+		object->SetGamePos(Axis_Z, get<2>(pos));
+		object->SetAngle(Axis_X, get<0>(angle));
+		object->SetAngle(Axis_Y, get<1>(angle));
+		object->SetAngle(Axis_Z, get<2>(angle));
+
+		auto exterior = DB::Exterior::Lookup(cell);
+
+		if (exterior)
+		{
+			auto match_exterior = DB::Exterior::Lookup(exterior->GetWorld(), get<0>(pos), get<1>(pos));
+
+#ifdef VAULTMP_DEBUG
+			if (exterior->GetBase() != match_exterior->GetBase())
+				debug.print("Error matching position with cell: ", hex, object->GetReference(), " relocating from ", dec, exterior->GetX(), ",", exterior->GetY(), " to ",  match_exterior->GetX(), ",", match_exterior->GetY());
+#endif
+			cell = match_exterior->GetBase();
+		}
+
+		object->SetNetworkCell(cell);
+		object->SetGameCell(cell);
+		object->SetLockLevel(lock);
+	};
+
+	auto objects = DB::Reference::Lookup("CONT");
+
+	for (const auto* reference : objects)
+	{
+		// FIXME dlc support
+		if (reference->GetReference() & 0xFF000000)
+			continue;
+
+		auto container = GameFactory::GetObject<Container>(GameFactory::CreateInstance(ID_CONTAINER, reference->GetReference(), reference->GetBase())).get();
+		object_init(container, reference);
+	}
+
+	objects = DB::Reference::Lookup("DOOR");
+
+	for (const auto* reference : objects)
+	{
+		// FIXME dlc support
+		if (reference->GetReference() & 0xFF000000)
+			continue;
+
+		auto door = GameFactory::GetObject(GameFactory::CreateInstance(ID_OBJECT, reference->GetReference(), reference->GetBase())).get();
+		object_init(door, reference);
+	}
+
+	objects = DB::Reference::Lookup("TERM");
+
+	for (const auto* reference : objects)
+	{
+		// FIXME dlc support
+		if (reference->GetReference() & 0xFF000000)
+			continue;
+
+		auto terminal = GameFactory::GetObject(GameFactory::CreateInstance(ID_OBJECT, reference->GetReference(), reference->GetBase())).get();
+		object_init(terminal, reference);
+		terminal->SetLockLevel(DB::Terminal::Lookup(reference->GetBase())->GetLock());
 	}
 }
 

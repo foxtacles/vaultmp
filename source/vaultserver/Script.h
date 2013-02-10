@@ -135,14 +135,15 @@ class Script
 		void (*fOnServerInit)();
 		void (*fOnServerExit)();
 
+		static std::pair<std::chrono::system_clock::time_point, double> gameTime;
+		static unsigned int gameWeather;
+
 		Script(const Script&) = delete;
 		Script& operator=(const Script&) = delete;
 
 	public:
-		static std::pair<std::chrono::system_clock::time_point, double> gameTime;
-		static unsigned int gameWeather;
-
 		static void LoadScripts(char* scripts, char* base);
+		static void Initialize();
 		static void Run();
 		static void UnloadScripts();
 
