@@ -150,7 +150,6 @@ class Script
 		static RakNet::NetworkID CreateTimerEx(ScriptFunc timer, unsigned int interval, const char* def, ...);
 		static RakNet::NetworkID CreateTimerPAWN(ScriptFuncPAWN timer, AMX* amx, unsigned int interval);
 		static RakNet::NetworkID CreateTimerPAWNEx(ScriptFuncPAWN timer, AMX* amx, unsigned int interval, const char* def, const std::vector<boost::any>& args);
-		static bool SetCell_intern(RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z, bool nosend);
 		static void SetupObject(FactoryObject<Object>& object, FactoryObject<Object>& reference, unsigned int cell, double X, double Y, double Z);
 		static void SetupItem(FactoryObject<Item>& item, FactoryObject<Object>& reference, unsigned int cell, double X, double Y, double Z);
 		static void SetupContainer(FactoryObject<Container>& container, FactoryObject<Object>& reference, unsigned int cell, double X, double Y, double Z);
@@ -259,6 +258,7 @@ class Script
 		static bool SetPos(RakNet::NetworkID id, double X, double Y, double Z);
 		static bool SetAngle(RakNet::NetworkID id, double X, double Y, double Z);
 		static bool SetCell(RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z);
+		static bool SetCell_(RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z, bool nosend);
 		static bool SetLock(RakNet::NetworkID id, unsigned int lock);
 		static bool SetOwner(RakNet::NetworkID id, unsigned int owner);
 		static bool SetBaseName(RakNet::NetworkID id, const char* name);
