@@ -752,6 +752,8 @@ void Game::ChatMessage(const string& message)
 
 void Game::NewObject(FactoryObject<Object>& reference)
 {
+	reference->Release();
+
 	if (!reference->GetReference())
 	{
 		auto store = make_shared<Shared<unsigned int>>();

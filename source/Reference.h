@@ -116,6 +116,10 @@ class Reference : private CriticalSection, public RakNet::NetworkIDObject
 		 * \brief Executes all tasks
 		 */
 		void Work();
+		/**
+		 * \brief Releases all tasks
+		 */
+		void Release();
 #endif
 
 		/**

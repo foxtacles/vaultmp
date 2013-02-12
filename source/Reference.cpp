@@ -126,4 +126,10 @@ void Reference::Work()
 		tasks.pop();
 	}
 }
+
+void Reference::Release()
+{
+	while (!tasks.empty())
+		tasks.pop();
+}
 #endif
