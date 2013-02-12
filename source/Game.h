@@ -73,6 +73,10 @@ class Game
 		 * \brief Async task execution
 		 */
 		static void AsyncDispatch(std::function<void()>&& func);
+		/**
+		 * \brief Job task execution
+		 */
+		static void JobDispatch(std::chrono::milliseconds&& time, std::function<void()>&& func);
 
 		/**
 		 * Game functions

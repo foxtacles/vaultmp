@@ -207,6 +207,7 @@ class Interface : public API
 		static bool initialized;
 		static std::thread hCommandThreadReceive;
 		static std::thread hCommandThreadSend;
+		static std::thread hCommandThreadJob;
 		static PriorityMap priorityMap;
 		static StaticCommandList static_cmdlist;
 		static DynamicCommandList dynamic_cmdlist;
@@ -223,6 +224,7 @@ class Interface : public API
 
 		static void CommandThreadReceive(bool steam);
 		static void CommandThreadSend();
+		static void CommandThreadJob();
 
 #ifdef VAULTMP_DEBUG
 		static DebugInput<Interface> debug;
@@ -295,6 +297,10 @@ class Interface : public API
 		 * key (optional) - a key (usually from the Lockable class) which is to later identify this command
 		 */
 		static void ExecuteCommand(const std::string& name, ParamContainer&&, unsigned int key = 0);
+		/**
+		 * \brief Pushes a job
+		 */
+		static void PushJob(std::chrono::steady_clock::time_point&& T, std::function<void()>&& F);
 };
 
 using RawParameter = Interface::RawParameter;

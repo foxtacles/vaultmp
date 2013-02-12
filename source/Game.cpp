@@ -492,6 +492,11 @@ void Game::AsyncDispatch(function<void()>&& func)
 	t.detach();
 }
 
+void Game::JobDispatch(chrono::milliseconds&& time, function<void()>&& func)
+{
+	Interface::PushJob(chrono::steady_clock::now() + move(time), move(func));
+}
+
 void Game::LoadGame(string savegame)
 {
 	static string last_savegame;
@@ -803,12 +808,10 @@ void Game::NewObject(FactoryObject<Object>& reference)
 	{
 		if (!reference->IsPersistent())
 		{
-			AsyncDispatch([refID]
+			JobDispatch(chrono::milliseconds(500), [refID]
 			{
 				try
 				{
-					this_thread::sleep_for(chrono::milliseconds(500));
-
 					auto objects = GameFactory::GetMultiple(vector<unsigned int>{refID, PLAYER_REFERENCE});
 
 					auto& object = objects[0].get();

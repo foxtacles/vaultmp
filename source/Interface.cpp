@@ -16,6 +16,7 @@ Interface::JobList Interface::job_cmdlist;
 Interface::Native Interface::natives;
 thread Interface::hCommandThreadReceive;
 thread Interface::hCommandThreadSend;
+thread Interface::hCommandThreadJob;
 CriticalSection Interface::static_cs;
 CriticalSection Interface::dynamic_cs;
 CriticalSection Interface::job_cs;
@@ -39,8 +40,9 @@ bool Interface::Initialize(ResultHandler resultHandler, bool steam)
 
 		hCommandThreadReceive = thread(CommandThreadReceive, steam);
 		hCommandThreadSend = thread(CommandThreadSend);
+		hCommandThreadJob = thread(CommandThreadJob);
 
-		if (!hCommandThreadReceive.joinable() || !hCommandThreadSend.joinable())
+		if (!hCommandThreadReceive.joinable() || !hCommandThreadSend.joinable() || !hCommandThreadJob.joinable())
 		{
 			delete pipeServer;
 			delete pipeClient;
@@ -72,6 +74,9 @@ void Interface::Terminate()
 		if (hCommandThreadSend.joinable())
 			hCommandThreadSend.join();
 
+		if (hCommandThreadJob.joinable())
+			hCommandThreadJob.join();
+
 		static_cmdlist.clear();
 		dynamic_cmdlist.clear();
 
@@ -96,7 +101,7 @@ void Interface::SignalEnd()
 
 bool Interface::IsAvailable()
 {
-	return (wakeup && !endThread && hCommandThreadReceive.joinable() && hCommandThreadSend.joinable());
+	return (wakeup && !endThread && hCommandThreadReceive.joinable() && hCommandThreadSend.joinable() && hCommandThreadJob.joinable());
 }
 
 bool Interface::HasShutdown()
@@ -179,6 +184,13 @@ void Interface::SetupCommand(const string& name, ParamContainer&& param, unsigne
 void Interface::ExecuteCommand(const string& name, ParamContainer&& param, unsigned int key)
 {
 	dynamic_cmdlist.emplace_back(natives.emplace(make_pair(name, move(param))), key);
+}
+
+void Interface::PushJob(chrono::steady_clock::time_point&& T, function<void()>&& F)
+{
+	job_cs.StartSession();
+	job_cmdlist.emplace(move(T), move(F));
+	job_cs.EndSession();
 }
 
 vector<string> Interface::Evaluate(Native::iterator _it)
@@ -389,6 +401,56 @@ void Interface::CommandThreadSend()
 		unsigned char buffer[PIPE_LENGTH];
 		buffer[0] = PIPE_ERROR_CLOSE;
 		pipeServer->Send(buffer);
+	}
+
+	endThread = true;
+}
+
+void Interface::CommandThreadJob()
+{
+	try
+	{
+		while (!endThread)
+		{
+			function<void()> F;
+
+			job_cs.StartSession();
+
+			if (!job_cmdlist.empty())
+			{
+				const Job& job = job_cmdlist.top();
+
+				if (job.T <= chrono::steady_clock::now())
+				{
+					F = job.F;
+					job_cmdlist.pop();
+				}
+			}
+
+			job_cs.EndSession();
+
+			if (F)
+				F();
+
+			this_thread::sleep_for(chrono::milliseconds(1));
+		}
+	}
+	catch (exception& e)
+	{
+		try
+		{
+			VaultException& vaulterror = dynamic_cast<VaultException&>(e);
+			vaulterror.Message();
+		}
+		catch (bad_cast&)
+		{
+			VaultException vaulterror(e.what());
+			vaulterror.Message();
+		}
+
+#ifdef VAULTMP_DEBUG
+		debug.print("Job thread is going to terminate (ERROR)");
+#endif
 	}
 
 	endThread = true;
