@@ -12,11 +12,13 @@ bool Interface::initialized;
 Interface::PriorityMap Interface::priorityMap;
 Interface::StaticCommandList Interface::static_cmdlist;
 Interface::DynamicCommandList Interface::dynamic_cmdlist;
+Interface::JobList Interface::job_cmdlist;
 Interface::Native Interface::natives;
 thread Interface::hCommandThreadReceive;
 thread Interface::hCommandThreadSend;
 CriticalSection Interface::static_cs;
 CriticalSection Interface::dynamic_cs;
+CriticalSection Interface::job_cs;
 
 #ifdef VAULTMP_DEBUG
 DebugInput<Interface> Interface::debug;
@@ -72,6 +74,10 @@ void Interface::Terminate()
 
 		static_cmdlist.clear();
 		dynamic_cmdlist.clear();
+
+		while (!job_cmdlist.empty())
+			job_cmdlist.pop();
+
 		priorityMap.clear();
 		natives.clear();
 

@@ -17,6 +17,7 @@
 #include <chrono>
 #include <numeric>
 #include <algorithm>
+#include <queue>
 
 #include "API.h"
 #include "CriticalSection.h"
@@ -182,6 +183,14 @@ class Interface : public API
 				void reset() { param->reset(); }
 		};
 
+		struct Job {
+			std::chrono::steady_clock::time_point T;
+			std::function<void()> F;
+
+			Job(std::chrono::steady_clock::time_point&& T, std::function<void()>&& F) : T(move(T)), F(move(F)) {}
+			bool operator<(const Job& job) const { return T < job.T; }
+		};
+
 		typedef std::vector<Parameter> ParamContainer;
 		typedef void (*ResultHandler)(unsigned int, const std::vector<double>&, double, bool);
 
@@ -190,6 +199,7 @@ class Interface : public API
 		typedef std::multimap<unsigned int, Native::iterator> PriorityMap;
 		typedef std::vector<std::vector<Native::iterator>> StaticCommandList;
 		typedef std::deque<std::pair<Native::iterator, unsigned int>> DynamicCommandList;
+		typedef std::priority_queue<Job> JobList;
 
 		static std::atomic<bool> endThread;
 		static std::atomic<bool> wakeup;
@@ -200,11 +210,13 @@ class Interface : public API
 		static PriorityMap priorityMap;
 		static StaticCommandList static_cmdlist;
 		static DynamicCommandList dynamic_cmdlist;
+		static JobList job_cmdlist;
 		static PipeClient* pipeServer;
 		static PipeServer* pipeClient;
 		static ResultHandler resultHandler;
 		static CriticalSection static_cs;
 		static CriticalSection dynamic_cs;
+		static CriticalSection job_cs;
 		static Native natives;
 
 		static std::vector<std::string> Evaluate(Native::iterator _it);
