@@ -3,3 +3,8 @@ Release
 vaultgui
 
 *.sdf
+/taskManager.cpp
+/taskManager.h
+/tasks.cpp
+/tasks.h
+/waypoints.h

@@ -135,14 +135,17 @@ public:
     HRESULT __stdcall CreateQuery(D3DQUERYTYPE Type,IDirect3DQuery9** ppQuery);
     // END: The original DX9 function definitions
 
-	GUI chatbox;
 private:
     IDirect3DDevice9 *m_pIDirect3DDevice9;
 
 	HDC hdc;
 	HFONT font;
-	
 
+	IDirect3DStateBlock9* pStateBlockBackup[2];
+	
+#ifdef USE_CEGUI
+	CEGUI::Direct3D9Renderer* GUI;
+#endif
     
 	// This is our test function
 	public:
@@ -151,4 +154,8 @@ private:
 		int maxVertices;
 
 		int grabMatrix;
+		ID3DXFont* g_font;
+#ifdef USE_CEGUI
+		CEGUI::FrameWindow* wnd;
+#endif
 };

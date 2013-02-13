@@ -8,4 +8,5 @@ namespace GameData
 	int windowWidth=0;
 
 	vector <PlayerScreenName> playersScreenName;
+
 }

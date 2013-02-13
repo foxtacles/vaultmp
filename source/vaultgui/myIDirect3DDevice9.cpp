@@ -2,6 +2,11 @@
 #include <fstream>
 #include <intrin.h>
 
+#include "utils.h"
+
+#include "HookedFunctions.h"
+#include "TextureHooking.h"
+
 bool logging=false;
 
 #define DB(a) 	/*{if(logging){std::ofstream d;d.open("C:\\Users\\PC\\Desktop\\debug.txt",std::ios::app);  d<<a<<" Address: "<<_ReturnAddress()<<std::endl;d.flush();d.close();}}*/
@@ -11,11 +16,29 @@ bool logging=false;
 
 //#define DB3(a)  if(debugFrame==1){char tmp[100]="";sprintf(tmp,"C:\\Users\\PC\\Desktop\\frame_debug\\frame%d",debugCount);std::ofstream d;d.open(tmp,std::ios::app|std::ios::out);chatbox.AddLine(tmp);  d<<a<<" Address: "<<_ReturnAddress()<<std::endl;d.flush();d.close();}
 
+
+
 myIDirect3DDevice9::myIDirect3DDevice9(IDirect3DDevice9* pOriginal)
 {
+
+	/*Test Data for names above characters*/
+	/*for(int i=0;i<5;i++)
+	{
+		strcpy(playersData[i].name,"TEST");
+		playersData[i].player=false;
+		playersData[i].pos[0]=100;
+		playersData[i].pos[1]=100;
+		playersData[i].pos[2]=100;
+	}
+	playersData[0].player=true;
+	playersData[0].pos[0]=0;
+	playersData[0].pos[1]=0;
+	playersData[0].pos[2]=0;*/
+
     m_pIDirect3DDevice9 = pOriginal; // store the pointer to original object
 
 	extern myIDirect3DDevice9* gl_pmyIDirect3DDevice9;
+
 	gl_pmyIDirect3DDevice9=this;
 
 	hdc=CreateCompatibleDC(NULL);
@@ -24,16 +47,85 @@ myIDirect3DDevice9::myIDirect3DDevice9(IDirect3DDevice9* pOriginal)
 
    SelectObject(hdc, font);
 
-   chatbox.Init(m_pIDirect3DDevice9,18);
+   D3DXCreateFont(m_pIDirect3DDevice9,12,0,700,1,false,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,ANTIALIASED_QUALITY,DEFAULT_PITCH|FF_DONTCARE,"arial",&g_font);
 
+   #ifdef USE_CEGUI
+
+   SendToLog("CEGUI BootStrap");
+
+   try
+   {
+		GUI=&CEGUI::Direct3D9Renderer::bootstrapSystem(pOriginal);
+
+		CEGUI::DefaultResourceProvider* rp = static_cast<CEGUI::DefaultResourceProvider*>(CEGUI::System::getSingleton().getResourceProvider());
+		rp->setResourceGroupDirectory("schemes", "vaultmp/datafiles/schemes/");
+		rp->setResourceGroupDirectory("imagesets", "vaultmp/datafiles/imagesets/");
+		rp->setResourceGroupDirectory("fonts", "vaultmp/datafiles/fonts/");
+		rp->setResourceGroupDirectory("layouts", "vaultmp/datafiles/layouts/");
+		rp->setResourceGroupDirectory("looknfeels", "vaultmp/datafiles/looknfeel/");
+		rp->setResourceGroupDirectory("lua_scripts", "vaultmp/datafiles/lua_scripts/");
+
+		CEGUI::Imageset::setDefaultResourceGroup("imagesets");
+		CEGUI::Font::setDefaultResourceGroup("fonts");
+		CEGUI::Scheme::setDefaultResourceGroup("schemes");
+		CEGUI::WidgetLookManager::setDefaultResourceGroup("looknfeels");
+		CEGUI::WindowManager::setDefaultResourceGroup("layouts");
+		CEGUI::ScriptModule::setDefaultResourceGroup("lua_scripts");
+		CEGUI::AnimationManager::setDefaultResourceGroup("animations");
+
+		using namespace CEGUI;
+		SchemeManager::getSingleton().create("TaharezLook.scheme");
+		CEGUI::System::getSingleton().setDefaultMouseCursor("TaharezLook", "MouseArrow");
+		WindowManager& winMgr = WindowManager::getSingleton();
+		DefaultWindow* root = (DefaultWindow*)winMgr.createWindow("DefaultWindow", "Root");
+		CEGUI::System::getSingleton().setGUISheet(root);
+		wnd = (FrameWindow*)winMgr.createWindow("TaharezLook/FrameWindow", "Main Window");
+		root->addChildWindow(wnd);
+		wnd->setPosition(UVector2(cegui_reldim(0.01f), cegui_reldim( 0.01f)));
+		wnd->setSize(UVector2(cegui_reldim(0.35f), cegui_reldim( 0.30f)));
+		wnd->setMaxSize(UVector2(cegui_reldim(1.0f), cegui_reldim( 1.0f)));
+		wnd->setMinSize(UVector2(cegui_reldim(0.1f), cegui_reldim( 0.1f)));
+		wnd->setText("Chat Box");
+		wnd->setAlpha(0.9);
+		
+		CEGUI::Editbox* editb=(CEGUI::Editbox*)winMgr.createWindow("TaharezLook/Editbox", "Edit Box");
+		wnd->addChildWindow(editb);
+		editb->setText("");
+		editb->setSize(UVector2(cegui_reldim(1.0f), cegui_reldim( 0.15f)));
+		editb->setPosition(UVector2(cegui_reldim(0.0f), cegui_reldim( 0.85f)));
+		
+
+		CEGUI::Listbox* listb=(CEGUI::Listbox*)winMgr.createWindow("TaharezLook/Listbox", "List Box");
+		wnd->addChildWindow(listb);
+		listb->setText("");
+		listb->setSize(UVector2(cegui_reldim(1.0f), cegui_reldim( 0.85f)));
+		listb->setPosition(UVector2(cegui_reldim(0.0f), cegui_reldim( 0.0f)));
+
+		CEGUI::MouseCursor::getSingleton().hide();
+   }
+   catch(CEGUI::Exception e)
+   {
+	   MessageBoxA(0,e.getMessage().c_str(),"",0);
+	   exit(0);
+   }
+
+	#endif
 
    minVertices=0;
    maxVertices=0;
    grabMatrix=0;
+
+   m_pIDirect3DDevice9->CreateStateBlock(D3DSBT_ALL, &pStateBlockBackup[0]);
+   m_pIDirect3DDevice9->CreateStateBlock(D3DSBT_ALL, &pStateBlockBackup[1]);
+   pStateBlockBackup[0]->Capture();
+
+   //memset(&gData,0,sizeof(gData));
 }
 
 myIDirect3DDevice9::~myIDirect3DDevice9(void)
 {
+	pStateBlockBackup[0]->Release();
+	pStateBlockBackup[1]->Release();
 }
 
 HRESULT myIDirect3DDevice9::QueryInterface (REFIID riid, void** ppvObj)
@@ -68,7 +160,6 @@ ULONG myIDirect3DDevice9::Release(void)
 	if(count==0)
 	{
 		gl_pmyIDirect3DDevice9 = NULL;
-		chatbox.Release();
 		delete(this);
 	}
 
@@ -125,7 +216,13 @@ void    myIDirect3DDevice9::SetCursorPosition(int X,int Y,DWORD Flags)
 }
 
 BOOL    myIDirect3DDevice9::ShowCursor(BOOL bShow)
-{ DB("myIDirect3DDevice9::ShowCursor");
+{ 
+	DB("myIDirect3DDevice9::ShowCursor");
+	/*if(bShow)
+		Reversing_AddDebug("myIDirect3DDevice9::ShowCursor(true)");
+	else
+		Reversing_AddDebug("myIDirect3DDevice9::ShowCursor(false)");*/
+
     return(m_pIDirect3DDevice9->ShowCursor(bShow));
 }
 
@@ -148,20 +245,79 @@ HRESULT myIDirect3DDevice9::Reset(D3DPRESENT_PARAMETERS* pPresentationParameters
 { DB("myIDirect3DDevice9::Reset");
 	
     HRESULT t=(m_pIDirect3DDevice9->Reset(pPresentationParameters));
-	chatbox.OnReset();
+	CEGUI::System::getSingleton().invalidateAllCachedRendering();
 	return t;
 }
 
 HRESULT myIDirect3DDevice9::Present(CONST RECT* pSourceRect,CONST RECT* pDestRect,HWND hDestWindowOverride,CONST RGNDATA* pDirtyRegion)
 { DB("myIDirect3DDevice9::Present");
     
-	if(GetAsyncKeyState('K')!=0)
-		chatbox.AddLine("PRESENT");
+#ifdef USE_CEGUI
+	if(gData.gameReady)
+	{
+		pStateBlockBackup[1]->Capture();
+		pStateBlockBackup[0]->Apply();
 
-	chatbox.Show(true);
-	chatbox.Lock();
-	chatbox.Draw(m_pIDirect3DDevice9);
-	chatbox.Unlock();
+		if(gData.chatting)
+		{
+			((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"))->setAlpha(0.9);
+			
+		}
+		else
+		{
+			if(GetTickCount()-gData.lastChatTextTick<2000)
+			{
+				((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"))->setAlpha(1);
+			}
+			else
+			if(GetTickCount()-gData.lastChatTextTick>=2000&&GetTickCount()-gData.lastChatTextTick<5000)
+			{
+				float rat=0.6/3000;
+				float var=GetTickCount()-gData.lastChatTextTick;
+				((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"))->setAlpha(1-((var-2000)*rat));
+			}
+
+			/*if(GetTickCount()-gData.lastChatTextTick<2000)
+			{
+				((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"))->setAlpha(0.85);
+			}
+			else if(GetTickCount()-gData.lastChatTextTick<3000)
+			{
+				((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"))->setAlpha(0.8);
+			}
+			else if(GetTickCount()-gData.lastChatTextTick<3500)
+			{
+				((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"))->setAlpha(0.75);
+			}
+			else if(GetTickCount()-gData.lastChatTextTick<4000)
+			{
+				((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"))->setAlpha(0.7);
+			}
+			else if(GetTickCount()-gData.lastChatTextTick<4500)
+			{
+				((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"))->setAlpha(0.65);
+			}
+			else  if(GetTickCount()-gData.lastChatTextTick<5000)
+			{
+				((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"))->setAlpha(0.60);
+			}
+			else  if(GetTickCount()-gData.lastChatTextTick<5500)
+			{
+				((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"))->setAlpha(0.55);
+			}
+			else  if(GetTickCount()-gData.lastChatTextTick<6000)
+			{
+				((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"))->setAlpha(0.50);
+			}*/
+			else 
+				((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"))->setAlpha(0.40);
+		}
+
+		CEGUI::System::getSingleton().renderGUI();
+		pStateBlockBackup[1]->Apply();
+		
+	}
+#endif
 
 	{
 		char buf[100]="";
@@ -171,7 +327,41 @@ HRESULT myIDirect3DDevice9::Present(CONST RECT* pSourceRect,CONST RECT* pDestRec
 		RECT font_rect;
 		bool vis;
 
-		for(int i=0;i<GameData::playersScreenName.size();i++)
+		if(playersData)
+		{
+			float x=0;
+			float y=0;
+			float z=0;
+			bool go=false;
+			for(unsigned int i=0;i<5;i++)
+			{
+				if(playersData[i].player)
+				{
+					x=playersData[i].pos[0];
+					x=playersData[i].pos[1];
+					x=playersData[i].pos[2];
+					go=true;
+					break;
+				}
+			}
+
+			if(go)
+			{
+				for(unsigned int i=0;i<5;i++)
+				{
+					vis=GetScreenPosition(screenPos,distance,D3DXVECTOR3(playersData[i].pos[0]-x,playersData[i].pos[1]-y,playersData[i].pos[2]-z));
+					if(vis)
+					{
+						SetRect(&font_rect,screenPos.x,screenPos.y,200,32);
+						sprintf(buf,playersData[i].name,screenPos.x,screenPos.y);
+						g_font->DrawTextA(NULL,buf,-1,&font_rect,DT_LEFT|DT_NOCLIP,0xFFFFFFFF);
+						//exit(0);
+					}
+				}
+			}
+		}
+
+		/*for(unsigned int i=0;i<GameData::playersScreenName.size();i++)
 		{
 			vis=GetScreenPosition(screenPos,distance,D3DXVECTOR3(*GameData::playersScreenName[i].posX,*GameData::playersScreenName[i].posY,*GameData::playersScreenName[i].posZ));
 
@@ -179,11 +369,30 @@ HRESULT myIDirect3DDevice9::Present(CONST RECT* pSourceRect,CONST RECT* pDestRec
 			{
 				SetRect(&font_rect,screenPos.x,screenPos.y,200,32);
 				sprintf(buf,GameData::playersScreenName[i].name.c_str(),screenPos.x,screenPos.y);
-				chatbox.g_font->DrawTextA(NULL,buf,-1,&font_rect,DT_LEFT|DT_NOCLIP,0xFFFFFFFF);
+				g_font->DrawTextA(NULL,buf,-1,&font_rect,DT_LEFT|DT_NOCLIP,0xFFFFFFFF);
 			}
+		}*/
+
+
+		/*SetRect(&font_rect,20,400,800,32);
+		sprintf(buf,"Player pointer: 0x%x",playerPointer);
+		g_font->DrawTextA(NULL,buf,-1,&font_rect,DT_LEFT|DT_NOCLIP,0xFFFFFFFF);
+
+		if(playerPointer)
+		{
+			SetRect(&font_rect,20,415,800,32);
+			sprintf(buf,"Player angle: %.4f %.4f %.4f",*(float*)(playerPointer+0x24),*(float*)(playerPointer+0x28),*(float*)(playerPointer+0x2C));
+			g_font->DrawTextA(NULL,buf,-1,&font_rect,DT_LEFT|DT_NOCLIP,0xFFFFFFFF);
+
+			SetRect(&font_rect,20,430,800,32);
+			sprintf(buf,"Player position: %.4f %.4f %.4f",*(float*)(playerPointer+0x30),*(float*)(playerPointer+0x34),*(float*)(playerPointer+0x38));
+			g_font->DrawTextA(NULL,buf,-1,&font_rect,DT_LEFT|DT_NOCLIP,0xFFFFFFFF);
 		}
 
-		
+		SetRect(&font_rect,20,445,800,32);
+		sprintf(buf,"%d task in queue",TaskManager::taskQueue.size());
+		g_font->DrawTextA(NULL,buf,-1,&font_rect,DT_LEFT|DT_NOCLIP,0xFFFFFFFF);*/
+
 	}
 
 	HRESULT hres = m_pIDirect3DDevice9->Present( pSourceRect, pDestRect, hDestWindowOverride, pDirtyRegion);
@@ -220,6 +429,18 @@ void    myIDirect3DDevice9::GetGammaRamp(UINT iSwapChain,D3DGAMMARAMP* pRamp)
 
 HRESULT myIDirect3DDevice9::CreateTexture(UINT Width,UINT Height,UINT Levels,DWORD Usage,D3DFORMAT Format,D3DPOOL Pool,IDirect3DTexture9** ppTexture,HANDLE* pSharedHandle)
 { DB("myIDirect3DDevice9::CreateTexture");
+	char tmp[512];
+	if(lastTextureLoaded)
+	{
+		sprintf(tmp,"myIDirect3DDevice9::CreateTexture %s",lastTextureLoaded);
+		SendToLog(tmp);
+		lastTextureLoaded=0;
+	}
+
+	
+
+	
+
     return(m_pIDirect3DDevice9->CreateTexture(Width,Height,Levels,Usage,Format,Pool,ppTexture,pSharedHandle));
 }
 
@@ -280,6 +501,7 @@ HRESULT myIDirect3DDevice9::StretchRect(IDirect3DSurface9* pSourceSurface,CONST 
 
 HRESULT myIDirect3DDevice9::ColorFill(IDirect3DSurface9* pSurface,CONST RECT* pRect,D3DCOLOR color)
 { DB("myIDirect3DDevice9::ColorFill");
+	/*Reversing_AddDebug("myIDirect3DDevice9::ColorFill("+string(""+color)+")");*/
     return(m_pIDirect3DDevice9->ColorFill(pSurface,pRect,color));
 }
 
@@ -326,6 +548,8 @@ HRESULT myIDirect3DDevice9::Clear(DWORD Count,CONST D3DRECT* pRects,DWORD Flags,
 	if(Flags==7)
 		grabMatrix=1;
 	DB("myIDirect3DDevice9::Clear");
+	/*Reversing_AddDebug(string("myIDirect3DDevice9::Clear(")+string(""+Count)+","+string(""+Flags)+","+string(""+Color)+")");*/
+	//TODO: Da finire
     return(m_pIDirect3DDevice9->Clear(Count,pRects,Flags,Color,Z,Stencil));
 }
 
@@ -455,6 +679,7 @@ HRESULT myIDirect3DDevice9::GetTexture(DWORD Stage,IDirect3DBaseTexture9** ppTex
 
 HRESULT myIDirect3DDevice9::SetTexture(DWORD Stage,IDirect3DBaseTexture9* pTexture)
 { DB("myIDirect3DDevice9::SetTexture");
+	
     return(m_pIDirect3DDevice9->SetTexture(Stage,pTexture));
 }
 

@@ -26,6 +26,9 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReser
 {
 	switch (ul_reason_for_call) {
 		case DLL_PROCESS_ATTACH: {
+
+			gl_pmyIDirect3DDevice9=0;
+
 			DisableThreadLibraryCalls(hModule);
 			InitializeCriticalSection(&cs_GetQueue);
 
@@ -33,6 +36,20 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReser
 			SendToLog("DLL Loaded");
 
 			InitInstance(hModule);
+
+			/*TODO: Remove after testing*/
+			gData.gameReady=true;
+			/**/
+
+			if(SUCCEEDED(PatchIat(GetModuleHandle(NULL),"kernel32.dll","LoadLibraryA",(PVOID)LoadLibrary_Hooked,(PVOID *)&LoadLibrary_Original)))
+			{
+				SendToLog("LoadLibrary hook injected");
+			}
+			else
+			{
+				SendToLog("LoadLibrary hook failed");
+			}
+
 			if(SUCCEEDED(PatchIat(GetModuleHandle(NULL),"kernel32.dll","GetProcAddress",(PVOID)GetProcAddress_Hooked,(PVOID *)&GetProcAddress_Original)))
 			{
 				SendToLog("GetPRocAddress hook injected");
@@ -40,6 +57,15 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReser
 			else
 			{
 				SendToLog("GetPRocAddress hook failed");
+			}
+
+			if(SUCCEEDED(PatchIat(GetModuleHandle(NULL),"DINPUT8.DLL","DirectInput8Create",(PVOID)DirectInput8Create_Hooked,(PVOID *)&DirectInput8Create_Original)))
+			{
+				SendToLog("DirectInput8Create hook injected");
+			}
+			else
+			{
+				SendToLog("DirectInput8Create hook failed");
 			}
 
 			if(SUCCEEDED(PatchIat(GetModuleHandle(NULL),"user32.dll","RegisterClassA",(PVOID)RegisterClass_Hooked,(PVOID *)&RegisterClass_Original)))
@@ -68,6 +94,30 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReser
 			{
 				SendToLog("ReadFile hook failed");
 			}
+			
+			if(SUCCEEDED(PatchIat(GetModuleHandle(NULL),"d3dx9_38.dll","D3DXCreateTextureFromFileInMemory",(PVOID)D3DXCreateTextureFromFileInMemory_Hook,(PVOID *)&D3DXCreateTextureFromFileInMemory_Original)))
+			{
+				SendToLog("D3DXCreateTextureFromFileInMemory hook injected");
+			}
+			else
+			{
+				SendToLog("D3DXCreateTextureFromFileInMemory hook failed");
+			}
+			//F3
+			if(*((unsigned char*)0x87BCA9)==0xE8)
+			{
+				loadTextureJmp=0x089E810;
+				HookCall((BYTE*)0x87BCA9,(BYTE*)loadTextureHook,5);
+				SendToLog("Texture Loading Hooked in Fallout 3");
+			}
+			//FNV
+			if(*((unsigned char*)0xE68BA9)==0xE8)
+			{
+				loadTextureJmp=0xAA1070;
+				HookCall((BYTE*)0xE68BA9,(BYTE*)loadTextureHook,5);
+				SendToLog("Texture Loading Hooked in Fallout NV");
+			}
+			//HookCall((BYTE*)0x871E28,(BYTE*)playerPointerHook,6);
 
 	    case DLL_PROCESS_DETACH: ExitInstance(); break;
         
