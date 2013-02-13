@@ -14,9 +14,10 @@ Guarded<Player::CellContext> Game::cellContext;
 Game::BaseRaces Game::baseRaces;
 Game::Globals Game::globals;
 Game::Weather Game::weather;
-unsigned int Game::playerBase;
-
-function<void()> Game::spawnFunc;
+Game::PlayerBase Game::playerBase;
+Game::SpawnFunc Game::spawnFunc;
+Game::StartupQueue Game::startupQueue;
+bool Game::startup;
 
 #ifdef VAULTMP_DEBUG
 DebugInput<Game> Game::debug;
@@ -466,6 +467,14 @@ void Game::Startup()
 	Interface::SetupCommand("GetLocked", {move(func)}, 200);
 
 	Interface::EndSetup();
+
+	startup = true;
+
+	while (!startupQueue.empty())
+	{
+		startupQueue.front()();
+		startupQueue.pop_front();
+	}
 }
 
 template <typename T>
@@ -494,7 +503,13 @@ void Game::AsyncDispatch(function<void()>&& func)
 
 void Game::JobDispatch(chrono::milliseconds&& time, function<void()>&& func)
 {
-	Interface::PushJob(chrono::steady_clock::now() + move(time), move(func));
+	// no move supported
+	auto func_ = [time, func]() mutable { Interface::PushJob(chrono::steady_clock::now() + time, move(func)); };
+
+	if (!startup)
+		startupQueue.emplace_back(func_);
+	else
+		func_();
 }
 
 void Game::LoadGame(string savegame)
