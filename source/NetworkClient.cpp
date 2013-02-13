@@ -116,8 +116,10 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					Game::baseRaces.clear();
 					Game::globals.clear();
 					Game::weather = 0x00000000;
-
-					Game::spawnFunc = function<void()>();
+					Game::playerBase = 0x00000000;
+					Game::spawnFunc = Game::SpawnFunc();
+					Game::startupQueue.clear();
+					Game::startup = false;
 
 					response = NetworkClient::ProcessEvent(ID_EVENT_GAME_STARTED);
 					break;

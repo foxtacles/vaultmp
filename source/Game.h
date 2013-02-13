@@ -42,14 +42,19 @@ class Game
 		typedef std::unordered_map<unsigned int, unsigned int> BaseRaces;
 		typedef std::unordered_map<unsigned int, signed int> Globals;
 		typedef unsigned int Weather;
+		typedef unsigned int PlayerBase;
+		typedef std::function<void()> SpawnFunc;
+		typedef std::deque<std::function<void()>> StartupQueue;
 
 		static Guarded<CellRefs> cellRefs;
 		static Guarded<Player::CellContext> cellContext;
 		static BaseRaces baseRaces;
 		static Globals globals;
 		static Weather weather;
-		static unsigned int playerBase;
-		static std::function<void()> spawnFunc;
+		static PlayerBase playerBase;
+		static SpawnFunc spawnFunc;
+		static StartupQueue startupQueue;
+		static bool startup;
 
 	public:
 		/**
