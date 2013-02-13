@@ -33,7 +33,7 @@ void ParseChatText(string& p)
 	myReplace(p,"$white","[colour='FFFFFFFF']");
  	myReplace(p,"$silver","[colour='FFc0c0c0']");
  	myReplace(p,"$gray","[colour='FF808080']");
- 	myReplace(p,"$black","[colour='FFFFFFFF']");
+ 	myReplace(p,"$black","[colour='FF000000']");
  	myReplace(p,"$red","[colour='FFFF0000']");
  	myReplace(p,"$maroon","[colour='FF800000']");
  	myReplace(p,"$yellow","[colour='FFFFFF00']");

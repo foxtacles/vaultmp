@@ -1,2 +1,11 @@
 bin
 docs
+/source/vaultgui/CEGUI/lib
+/source/vaultgui/CEGUI/cegui/CEGUI.spec.in
+/source/vaultgui/CEGUI/cegui/CEGUI-NULL.pc.in
+/source/vaultgui/CEGUI/cegui/CEGUI-OGRE.pc.in
+/source/vaultgui/CEGUI/cegui/CEGUI-OPENGL.pc.in
+/source/vaultgui/CEGUI/cegui/Makefile.am
+/source/vaultgui/CEGUI/cegui/Makefile.in
+/source/vaultgui/CEGUI/cegui/src
+/source/vaultgui/CEGUI/cegui/CEGUI.pc.in
