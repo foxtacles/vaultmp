@@ -1741,7 +1741,7 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 
 	auto reference = GameFactory::GetObject(id);
 
-	if (!reference)
+	if (!reference || reference->IsPersistent())
 		return state;
 
 	auto& object = reference.get();
@@ -1870,7 +1870,7 @@ bool Script::SetCell_(NetworkID id, unsigned int cell, double X, double Y, doubl
 
 	auto reference = GameFactory::GetObject(id);
 
-	if (!reference)
+	if (!reference || reference->IsPersistent())
 		return state;
 
 	auto& object = reference.get();
