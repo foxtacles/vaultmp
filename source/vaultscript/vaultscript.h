@@ -180,7 +180,7 @@ namespace vaultmp {
 		RightLeg2 = RightLeg1 << 1,
 		RightLeg3 = RightLeg2 << 1,
 		VAULTCPP(Brain)VAULTC(Brain_) = RightLeg3 << 1,
-		Weapon = Brain << 1,
+		Weapon = VAULTCPP(Brain)VAULTC(Brain_) << 1,
 
 		TORSO = (VAULTCPP(Torso)VAULTC(Torso_)),
 		HEAD = (Head1 | Head2),
