@@ -93,12 +93,12 @@ public OnContainerItemChange(ID, item, count, Float:value)
 
 }
 
-public OnActorValueChange(ID, index, Float:value)
+public OnActorValueChange(ID, ActorValue:index, Float:value)
 {
 
 }
 
-public OnActorBaseValueChange(ID, index, Float:value)
+public OnActorBaseValueChange(ID, ActorValue:index, Float:value)
 {
 
 }

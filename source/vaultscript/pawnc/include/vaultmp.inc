@@ -31,31 +31,106 @@ const Type: {
 	ALL_ACTORS = (ID_ACTOR | ID_PLAYER),
 }
 
+const ActorValue: {
+	Aggression = 0x00,
+	Confidence = 0x01,
+	Energy = 0x02,
+	Responsibility = 0x03,
+	Mood = 0x04,
+	Strength = 0x05,
+	Perception = 0x06,
+	Endurance = 0x07,
+	Charisma = 0x08,
+	Intelligence = 0x09,
+	Agility = 0x0A,
+	Luck = 0x0B,
+	ActionPoints = 0x0C,
+	CarryWeight = 0x0D,
+	CritChance = 0x0E,
+	HealRate = 0x0F,
+	Health = 0x10,
+	MeleeDamage = 0x11,
+	DamageResistance = 0x12,
+	PoisonResistance = 0x13,
+	RadResistance = 0x14,
+	SpeedMultiplier = 0x15,
+	Fatigue = 0x16,
+	Karma = 0x17,
+	XP = 0x18,
+	Head = 0x19,
+	Torso = 0x1A,
+	LeftArm = 0x1B,
+	RightArm = 0x1C,
+	LeftLeg = 0x1D,
+	RightLeg = 0x1E,
+	Brain = 0x1F,
+	Barter = 0x20,
+	BigGuns = 0x21,
+	EnergyWeapons = 0x22,
+	Explosives = 0x23,
+	Lockpick = 0x24,
+	Medicine = 0x25,
+	MeleeWeapons = 0x26,
+	Repair = 0x27,
+	Science = 0x28,
+	SmallGuns = 0x29,
+	Sneak = 0x2A,
+	Speech = 0x2B,
+	Throwing = 0x2C,
+	Unarmed = 0x2D,
+	InventoryWeight = 0x2E,
+	Paralysis = 0x2F,
+	Invisibility = 0x30,
+	Chameleon = 0x31,
+	NightEye = 0x32,
+	DetectLifeRange = 0x33,
+	FireResistance = 0x34,
+	WaterBreathing = 0x35,
+	RadLevel = 0x36,
+	BloodyMess = 0x37,
+	UnarmedDamage = 0x38,
+	Assistance = 0x39,
+
+	EnergyResistance = 0x3C,
+	EMPResistance = 0x3D,
+	Var1Medical = 0x3E,
+	Variable02 = 0x3F,
+	Variable03 = 0x40,
+	Variable04 = 0x41,
+	Variable05 = 0x42,
+	Variable06 = 0x43,
+	Variable07 = 0x44,
+	Variable08 = 0x45,
+	Variable09 = 0x46,
+	Variable10 = 0x47,
+	IgnoreCrippledLimbs = 0x48,
+};
+
 const Limb: {
 	None_ =	0x0000,
-	Torso =	0x0001,
-	Head1 =	Torso << Torso,
-	Head2 =	Head1 << Torso,
-	LeftArm1 = Head2 << Torso,
-	LeftArm2 = LeftArm1 << Torso,
-	RightArm1 = LeftArm2 << Torso,
-	RightArm2 = RightArm1 << Torso,
-	LeftLeg1 =  RightArm2 << Torso,
-	LeftLeg2 = LeftLeg1 << Torso,
-	LeftLeg3 = LeftLeg2 << Torso,
-	RightLeg1 = LeftLeg3 << Torso,
-	RightLeg2 = RightLeg1 << Torso,
-	RightLeg3 = RightLeg2 << Torso,
-	Brain = RightLeg3 << Torso,
-	Weapon = Brain << Torso,
+	Torso_ = 0x0001,
+	Head1 =	Torso_ << Torso_,
+	Head2 =	Head1 << Torso_,
+	LeftArm1 = Head2 << Torso_,
+	LeftArm2 = LeftArm1 << Torso_,
+	RightArm1 = LeftArm2 << Torso_,
+	RightArm2 = RightArm1 << Torso_,
+	LeftLeg1 =  RightArm2 << Torso_,
+	LeftLeg2 = LeftLeg1 << Torso_,
+	LeftLeg3 = LeftLeg2 << Torso_,
+	RightLeg1 = LeftLeg3 << Torso_,
+	RightLeg2 = RightLeg1 << Torso_,
+	RightLeg3 = RightLeg2 << Torso_,
+	Brain_ = RightLeg3 << Torso_,
+	Weapon = Brain_ << Torso_,
 
-	TORSO =	(Torso),
+	TORSO =	(Torso_),
 	HEAD =	(Head1 | Head2),
 	LEFT_ARM = (LeftArm1 | LeftArm2),
 	RIGHT_ARM = (RightArm1 | RightArm2),
 	LEFT_LEG = (LeftLeg1 | LeftLeg2 | LeftLeg3),
 	RIGHT_LEG = (RightLeg1 | RightLeg2 | RightLeg3),
-	BRAIN = (Brain),
+	BRAIN = (Brain_),
 	WEAPON = (Weapon),
 
 	ALL_LIMBS = (TORSO | HEAD | LEFT_ARM | RIGHT_ARM | LEFT_LEG | RIGHT_LEG | BRAIN | WEAPON),
@@ -96,8 +171,8 @@ forward OnSpawn(ID);
 forward OnCellChange(ID, cell);
 forward OnLockChange(ID, player, Lock:lock);
 forward OnContainerItemChange(ID, item, count, Float:value);
-forward OnActorValueChange(ID, index, Float:value);
-forward OnActorBaseValueChange(ID, index, Float:value);
+forward OnActorValueChange(ID, ActorValue:index, Float:value);
+forward OnActorBaseValueChange(ID, ActorValue:index, Float:value);
 forward OnActorAlert(ID, Bool:alerted);
 forward OnActorSneak(ID, Bool:sneaking);
 forward OnActorDeath(ID, killer, Limb:limbs, Death:cause);
@@ -188,8 +263,8 @@ native Bool:GetItemSilent(ID);
 native Bool:GetItemStick(ID);
 native GetContainerItemCount(ID, item = 0);
 native GetContainerItemList(ID, id[]);
-native Float:GetActorValue(ID, index);
-native Float:GetActorBaseValue(ID, index);
+native Float:GetActorValue(ID, ActorValue:index);
+native Float:GetActorBaseValue(ID, ActorValue:index);
 native GetActorIdleAnimation(ID);
 native GetActorMovingAnimation(ID);
 native GetActorWeaponAnimation(ID);
@@ -218,8 +293,8 @@ native Bool:AddItem(ID, item, count = 1, Float:value = 100.0, Bool:silent = Bool
 native RemoveItem(ID, item, count = 1, Bool:silent = Bool:true);
 native RemoveAllItems(ID);
 native CreateActor(actor, ID, cell = 0, Float:X = 0.00, Float:Y = 0.00, Float:Z = 0.00);
-native SetActorValue(ID, index, Float:value);
-native SetActorBaseValue(ID, index, Float:value);
+native SetActorValue(ID, ActorValue:index, Float:value);
+native SetActorBaseValue(ID, ActorValue:index, Float:value);
 native Bool:EquipItem(ID, item, Bool:silent = Bool:true, Bool:stick = Bool:true);
 native Bool:UnequipItem(ID, item, Bool:silent = Bool:true, Bool:stick = Bool:true);
 native Bool:PlayIdle(ID, idle);

@@ -100,12 +100,12 @@ Void VAULTSCRIPT OnContainerItemChange(ID container, Base item, Count count, Val
 
 }
 
-Void VAULTSCRIPT OnActorValueChange(ID actor, Index index, Value value) noexcept
+Void VAULTSCRIPT OnActorValueChange(ID actor, ActorValue index, Value value) noexcept
 {
 
 }
 
-Void VAULTSCRIPT OnActorBaseValueChange(ID actor, Index index, Value value) noexcept
+Void VAULTSCRIPT OnActorBaseValueChange(ID actor, ActorValue index, Value value) noexcept
 {
 
 }
