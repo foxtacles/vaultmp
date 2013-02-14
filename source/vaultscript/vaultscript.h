@@ -12,6 +12,7 @@
 	#include <unordered_set>
 	#include <unordered_map>
 	#include <cstdint>
+	#include <climits>
 	#define VAULTFUNCTION inline static
 	#define VAULTAPI(name) c##name
 	#define VAULTAPI_PREFIX 'c'
@@ -28,6 +29,7 @@
 	#endif
 #else
 	#include <stdint.h>
+	#include <limits.h>
 	#define VAULTAPI(name) name
 	#define VAULTAPI_PREFIX '\0'
 	#define VAULTSPACE
@@ -180,7 +182,7 @@ namespace vaultmp {
 		RightLeg2 = RightLeg1 << 1,
 		RightLeg3 = RightLeg2 << 1,
 		VAULTCPP(Brain)VAULTC(Brain_) = RightLeg3 << 1,
-		Weapon = Brain << 1,
+		Weapon = VAULTCPP(Brain)VAULTC(Brain_) << 1,
 
 		TORSO = (VAULTCPP(Torso)VAULTC(Torso_)),
 		HEAD = (Head1 | Head2),
