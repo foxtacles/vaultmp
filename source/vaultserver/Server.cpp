@@ -136,6 +136,10 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 		PacketFactory::Create<pTypes::ID_GAME_BASE>(result),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 
+	response.emplace_back(Network::CreateResponse(
+		PacketFactory::Create<pTypes::ID_UPDATE_CONSOLE>(0, player->GetPlayerConsoleEnabled()),
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+
 	const auto& container = npc->GetBaseContainer();
 
 	for (const auto* item : container)

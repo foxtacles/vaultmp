@@ -451,6 +451,15 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
+				case pTypes::ID_UPDATE_CONSOLE:
+				{
+					NetworkID id;
+					bool enabled;
+					PacketFactory::Access<pTypes::ID_UPDATE_CONSOLE>(packet, id, enabled);
+					Game::net_UpdateConsole(enabled);
+					break;
+				}
+
 				default:
 					throw VaultException("Unhandled packet type %d", data->data[0]).stacktrace();
 			}

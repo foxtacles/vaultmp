@@ -63,7 +63,8 @@ enum class pTypes : unsigned char
 	ID_UPDATE_CONTROL,
 	ID_UPDATE_INTERIOR,
 	ID_UPDATE_EXTERIOR,
-	ID_UPDATE_CONTEXT
+	ID_UPDATE_CONTEXT,
+	ID_UPDATE_CONSOLE,
 };
 
 enum class Reason : unsigned char
@@ -1345,5 +1346,26 @@ class pPlayerContext : public pObjectDefault
 		}
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_CONTEXT> { typedef pPlayerContext type; };
+
+class pPlayerConsole : public pObjectDefault
+{
+		friend class PacketFactory;
+
+	private:
+		pPlayerConsole(RakNet::NetworkID id, bool enabled) : pObjectDefault(pTypes::ID_UPDATE_CONSOLE, id)
+		{
+			construct(enabled);
+		}
+		pPlayerConsole(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		{
+
+		}
+
+		void access(RakNet::NetworkID& id, bool& enabled) const
+		{
+			deconstruct(id, enabled);
+		}
+};
+template<> struct pTypesMap<pTypes::ID_UPDATE_CONSOLE> { typedef pPlayerConsole type; };
 
 #endif

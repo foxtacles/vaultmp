@@ -74,7 +74,7 @@ template Lockable* Reference::SetObjectValue(Value<unsigned char>&, const unsign
 template Lockable* Reference::SetObjectValue(Value<bool>&, const bool&);
 template Lockable* Reference::SetObjectValue(Value<string>&, const string&);
 template Lockable* Reference::SetObjectValue(Value<NetworkID>&, const NetworkID&);
-template Lockable* Reference::SetObjectValue(Value<array<unsigned int, 6>>&, const array<unsigned int, 6>&);
+template Lockable* Reference::SetObjectValue(Value<array<unsigned int, 9>>&, const array<unsigned int, 9>&);
 
 Lockable* Reference::SetReference(unsigned int refID)
 {

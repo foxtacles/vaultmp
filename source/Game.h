@@ -398,6 +398,10 @@ class Game
 		 */
 		static void net_UpdateContext(Player::CellContext& context);
 		/**
+		 * \brief Network function to handle console update
+		 */
+		static void net_UpdateConsole(bool enabled);
+		/**
 		 * \brief Network function to handle UI message
 		 */
 		static void net_UIMessage(const std::string& message, unsigned char emoticon);

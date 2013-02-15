@@ -424,7 +424,8 @@ void Game::Startup()
 		ControlCode_VATS,
 		ControlCode_Rest})});
 	Interface::ExecuteCommand("DisableKey", {RawParameter(vector<unsigned int>{
-		ScanCode_Escape})});
+		ScanCode_Escape,
+		ScanCode_Console})});
 
 	Interface::EndDynamic();
 
@@ -2099,6 +2100,18 @@ void Game::net_UpdateContext(Player::CellContext& context)
 
 	cellContext.EndSession();
 	cellRefs.EndSession();
+}
+
+void Game::net_UpdateConsole(bool enabled)
+{
+	Interface::StartDynamic();
+
+	if (enabled)
+		Interface::ExecuteCommand("EnableKey", {RawParameter(ScanCode_Console)});
+	else
+		Interface::ExecuteCommand("DisableKey", {RawParameter(ScanCode_Console)});
+
+	Interface::EndDynamic();
 }
 
 void Game::net_UIMessage(const string& message, unsigned char emoticon)

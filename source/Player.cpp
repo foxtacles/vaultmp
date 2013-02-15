@@ -15,6 +15,7 @@ unordered_set<unsigned int> Player::baseIDs;
 
 unsigned int Player::default_respawn = DEFAULT_PLAYER_RESPAWN;
 unsigned int Player::default_cell;
+bool Player::default_console = true;
 #endif
 
 const map<unsigned char, pair<double, double>> Player::f3_default_values = {
@@ -176,6 +177,7 @@ void Player::initialize()
 
 	player_Respawn.set(default_respawn);
 	player_Cell.set(default_cell);
+	state_Console.set(default_console);
 #endif
 }
 
@@ -190,6 +192,11 @@ unsigned int Player::GetSpawnCell()
 	return default_cell;
 }
 
+bool Player::GetConsoleEnabled()
+{
+	return default_console;
+}
+
 void Player::SetRespawn(unsigned int respawn)
 {
 	default_respawn = respawn;
@@ -201,6 +208,11 @@ void Player::SetSpawnCell(unsigned int cell)
 		throw VaultException("%08X is not a valid cell", cell).stacktrace();
 
 	default_cell = cell;
+}
+
+void Player::SetConsoleEnabled(bool enabled)
+{
+	default_console = enabled;
 }
 
 const unordered_set<unsigned int>& Player::GetBaseIDs()
@@ -240,6 +252,11 @@ unsigned int Player::GetPlayerSpawnCell() const
 const Player::CellContext& Player::GetPlayerCellContext() const
 {
 	return *player_CellContext;
+}
+
+bool Player::GetPlayerConsoleEnabled() const
+{
+	return state_Console.get();
 }
 #endif
 
@@ -282,6 +299,11 @@ Lockable* Player::SetNetworkCell(unsigned int cell)
 	}
 
 	return ret;
+}
+
+Lockable* Player::SetPlayerConsoleEnabled(bool enabled)
+{
+	return SetObjectValue(this->state_Console, enabled);
 }
 #endif
 

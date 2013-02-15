@@ -223,8 +223,10 @@ void Script::Initialize()
 			auto match_exterior = DB::Exterior::Lookup(exterior->GetWorld(), get<0>(pos), get<1>(pos));
 
 #ifdef VAULTMP_DEBUG
+/*
 			if (exterior->GetBase() != match_exterior->GetBase())
 				debug.print("Error matching position with cell: ", hex, object->GetReference(), " relocating from ", dec, exterior->GetX(), ",", exterior->GetY(), " to ",  match_exterior->GetX(), ",", match_exterior->GetY());
+*/
 #endif
 			cell = match_exterior->GetBase();
 		}
@@ -1067,6 +1069,11 @@ void Script::SetSpawnCell(unsigned int cell)
 	catch (...) {}
 }
 
+void Script::SetConsoleEnabled(bool enabled)
+{
+	Player::SetConsoleEnabled(enabled);
+}
+
 void Script::SetGameWeather(unsigned int weather)
 {
 	if (Script::gameWeather == weather)
@@ -1680,6 +1687,16 @@ unsigned int Script::GetPlayerSpawnCell(NetworkID id)
 		return player->GetPlayerSpawnCell();
 
 	return 0x00000000;
+}
+
+bool Script::GetPlayerConsoleEnabled(NetworkID id)
+{
+	auto player = GameFactory::GetObject<Player>(id);
+
+	if (player)
+		return player->GetPlayerConsoleEnabled();
+
+	return false;
 }
 
 NetworkID Script::CreateObject(unsigned int baseID, NetworkID id, unsigned int cell, double X, double Y, double Z)
@@ -2760,6 +2777,22 @@ void Script::SetPlayerSpawnCell(NetworkID id, unsigned int cell)
 	else if (player->SetPlayerSpawnCell(cell))
 		Network::Queue(NetworkResponse{Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(player->GetNetworkID(), _cell->GetWorld(), _cell->GetX(), _cell->GetY(), true),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
+		});
+}
+
+void Script::SetPlayerConsoleEnabled(NetworkID id, bool enabled)
+{
+	auto reference = GameFactory::GetObject<Player>(id);
+
+	if (!reference)
+		return;
+
+	auto& player = reference.get();
+
+	if (player->SetPlayerConsoleEnabled(enabled))
+		Network::Queue(NetworkResponse{Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_CONSOLE>(player->GetNetworkID(), enabled),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
 		});
 }

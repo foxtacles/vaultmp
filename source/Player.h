@@ -38,11 +38,12 @@ class Player : public Actor
 
 		static unsigned int default_respawn;
 		static unsigned int default_cell;
+		static bool default_console;
 
 		Value<unsigned int> player_Respawn;
 		Value<unsigned int> player_Cell;
-
 		Value<CellContext> player_CellContext;
+		Value<bool> state_Console;
 #endif
 
 		std::unordered_map<unsigned char, std::pair<Value<unsigned char>, Value<bool>>> player_Controls;
@@ -75,6 +76,10 @@ class Player : public Actor
 		 */
 		static unsigned int GetSpawnCell();
 		/**
+		 * \brief Gets the default console state
+		 */
+		static bool GetConsoleEnabled();
+		/**
 		 * \brief Sets the default respawn time
 		 */
 		static void SetRespawn(unsigned int respawn);
@@ -82,6 +87,10 @@ class Player : public Actor
 		 * \brief Sets the default spawn cell
 		 */
 		static void SetSpawnCell(unsigned int cell);
+		/**
+		 * \brief Sets the default console state
+		 */
+		static void SetConsoleEnabled(bool enabled);
 
 		/**
 		 * \brief Returns the set of all used base IDs by players
@@ -118,6 +127,10 @@ class Player : public Actor
 		 * \brief Returns the Player's cell context
 		 */
 		const CellContext& GetPlayerCellContext() const;
+		/**
+		 * \brief Returns the Player's console state
+		 */
+		bool GetPlayerConsoleEnabled() const;
 #endif
 
 		/**
@@ -141,6 +154,10 @@ class Player : public Actor
 		 * \brief Sets the network cell / network cell context
 		 */
 		virtual Lockable* SetNetworkCell(unsigned int cell);
+		/**
+		 * \brief Sets the console state
+		 */
+		Lockable* SetPlayerConsoleEnabled(bool enabled);
 #endif
 
 #ifdef VAULTSERVER

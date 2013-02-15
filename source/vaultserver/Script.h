@@ -198,6 +198,7 @@ class Script
 		static bool ChatMessage(RakNet::NetworkID id, const char* message);
 		static void SetRespawn(unsigned int respawn);
 		static void SetSpawnCell(unsigned int cell);
+		static void SetConsoleEnabled(bool enabled);
 		static void SetGameWeather(unsigned int weather);
 		static void SetGameTime(signed long long time);
 		static void SetGameYear(unsigned int year);
@@ -253,6 +254,7 @@ class Script
 		static bool IsActorJumping(RakNet::NetworkID id);
 		static unsigned int GetPlayerRespawn(RakNet::NetworkID id);
 		static unsigned int GetPlayerSpawnCell(RakNet::NetworkID id);
+		static bool GetPlayerConsoleEnabled(RakNet::NetworkID id);
 
 		static RakNet::NetworkID CreateObject(unsigned int baseID, RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z);
 		static bool DestroyObject(RakNet::NetworkID id);
@@ -287,6 +289,7 @@ class Script
 		static bool SetActorBaseSex(RakNet::NetworkID id, bool female);
 		static void SetPlayerRespawn(RakNet::NetworkID id, unsigned int respawn);
 		static void SetPlayerSpawnCell(RakNet::NetworkID id, unsigned int cell);
+		static void SetPlayerConsoleEnabled(RakNet::NetworkID id, bool enabled);
 
 		static constexpr ScriptFunctionData functions[] {
 			{"timestamp", Utils::timestamp},
@@ -312,6 +315,7 @@ class Script
 			{"ChatMessage", Script::ChatMessage},
 			{"SetRespawn", Script::SetRespawn},
 			{"SetSpawnCell", Script::SetSpawnCell},
+			{"SetConsoleEnabled", Script::SetConsoleEnabled},
 			{"SetGameWeather", Script::SetGameWeather},
 			{"SetGameTime", Script::SetGameTime},
 			{"SetGameYear", Script::SetGameYear},
@@ -370,6 +374,7 @@ class Script
 			{"IsActorJumping", Script::IsActorJumping},
 			{"GetPlayerRespawn", Script::GetPlayerRespawn},
 			{"GetPlayerSpawnCell", Script::GetPlayerSpawnCell},
+			{"GetPlayerConsoleEnabled", Script::GetPlayerConsoleEnabled},
 
 			{"CreateObject", Script::CreateObject},
 			{"DestroyObject", Script::DestroyObject},
@@ -403,6 +408,7 @@ class Script
 			{"SetActorBaseSex", Script::SetActorBaseSex},
 			{"SetPlayerRespawn", Script::SetPlayerRespawn},
 			{"SetPlayerSpawnCell", Script::SetPlayerSpawnCell},
+			{"SetPlayerConsoleEnabled", Script::SetPlayerConsoleEnabled},
 		};
 };
 

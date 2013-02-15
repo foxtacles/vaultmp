@@ -366,7 +366,7 @@ namespace Values
 	enum ScanCodes
 	{
 		ScanCode_Escape					= 1,
-		// ...
+		ScanCode_Console				= 41,
 	};
 
 	enum FormTypes
