@@ -109,6 +109,7 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReser
 				loadTextureJmp=0x089E810;
 				HookCall((BYTE*)0x87BCA9,(BYTE*)loadTextureHook,5);
 				SendToLog("Texture Loading Hooked in Fallout 3");
+				gData.textureHookingDone=true;
 			}
 			//FNV
 			if(*((unsigned char*)0xE68BA9)==0xE8)
@@ -116,6 +117,7 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReser
 				loadTextureJmp=0xAA1070;
 				HookCall((BYTE*)0xE68BA9,(BYTE*)loadTextureHook,5);
 				SendToLog("Texture Loading Hooked in Fallout NV");
+				gData.textureHookingDone=true;
 			}
 			//HookCall((BYTE*)0x871E28,(BYTE*)playerPointerHook,6);
 

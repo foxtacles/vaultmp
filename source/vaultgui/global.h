@@ -15,6 +15,7 @@ struct globalData
 	bool disableKeyboardInput;
 	bool disableMouseInput;
 	bool gameReady;
+	bool textureHookingDone;
 
 	int lastChatTextTick;
 };
