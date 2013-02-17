@@ -1018,9 +1018,7 @@ bool Script::UIMessage(NetworkID id, const char* message, unsigned char emoticon
 
 	if (id)
 	{
-		auto reference = GameFactory::GetObject(id);
-
-		if (!reference || !vaultcast<Player>(reference))
+		if (!GameFactory::GetObject<Player>(id))
 			return false;
 	}
 
@@ -1041,9 +1039,7 @@ bool Script::ChatMessage(NetworkID id, const char* message)
 
 	if (id)
 	{
-		auto reference = GameFactory::GetObject(id);
-
-		if (!reference || !vaultcast<Player>(reference))
+		if (!GameFactory::GetObject<Player>(id))
 			return false;
 	}
 
