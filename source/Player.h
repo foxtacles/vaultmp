@@ -70,7 +70,7 @@ class Player : public Actor
 		/**
 		 * \brief Gets the default respawn time
 		 */
-		static unsigned int GetRespawn();
+		static unsigned int GetRespawnTime();
 		/**
 		 * \brief Gets the default spawn cell
 		 */
@@ -82,7 +82,7 @@ class Player : public Actor
 		/**
 		 * \brief Sets the default respawn time
 		 */
-		static void SetRespawn(unsigned int respawn);
+		static void SetRespawnTime(unsigned int respawn);
 		/**
 		 * \brief Sets the default spawn cell
 		 */
@@ -118,7 +118,7 @@ class Player : public Actor
 		/**
 		 * \brief Returns the Player's respawn time
 		 */
-		unsigned int GetPlayerRespawn() const;
+		unsigned int GetPlayerRespawnTime() const;
 		/**
 		 * \brief Returns the Player's spawn cell
 		 */
@@ -145,7 +145,7 @@ class Player : public Actor
 		/**
 		 * \brief Sets the respawn time
 		 */
-		Lockable* SetPlayerRespawn(unsigned int respawn);
+		Lockable* SetPlayerRespawnTime(unsigned int respawn);
 		/**
 		 * \brief Sets the spawn cell
 		 */

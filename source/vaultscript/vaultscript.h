@@ -360,7 +360,7 @@ VAULTCPP(extern "C" {)
 
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(UIMessage))(VAULTSPACE ID, VAULTSPACE cRawString, VAULTSPACE Emoticon) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(ChatMessage))(VAULTSPACE ID, VAULTSPACE cRawString) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetRespawn))(VAULTSPACE Interval) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetRespawnTime))(VAULTSPACE Interval) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetSpawnCell))(VAULTSPACE VAULTCELL) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetConsoleEnabled))(VAULTSPACE State) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetGameWeather))(VAULTSPACE VAULTWEATHER) VAULTCPP(noexcept);
@@ -382,6 +382,9 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetConnection))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetCount))(VAULTSPACE Type) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetList))(VAULTSPACE Type, VAULTSPACE RawArray(VAULTSPACE ID)*) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Interval (*VAULTAPI(GetRespawnTime))() VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE VAULTCELL (*VAULTAPI(GetSpawnCell))() VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetConsoleEnabled))() VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE VAULTWEATHER (*VAULTAPI(GetGameWeather))() VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Time (*VAULTAPI(GetGameTime))() VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetGameYear))() VAULTCPP(noexcept);
@@ -419,7 +422,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE VAULTRACE (*VAULTAPI(GetActorBaseRace))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetActorBaseSex))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsActorJumping))(VAULTSPACE ID) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE Interval (*VAULTAPI(GetPlayerRespawn))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Interval (*VAULTAPI(GetPlayerRespawnTime))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE VAULTCELL (*VAULTAPI(GetPlayerSpawnCell))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetPlayerConsoleEnabled))(VAULTSPACE ID) VAULTCPP(noexcept);
 
@@ -453,7 +456,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetActorBaseRace))(VAULTSPACE ID, VAULTSPACE VAULTRACE) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(AgeActorBaseRace))(VAULTSPACE ID, VAULTSPACE Count) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetActorBaseSex))(VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetPlayerRespawn))(VAULTSPACE ID, VAULTSPACE Interval) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetPlayerRespawnTime))(VAULTSPACE ID, VAULTSPACE Interval) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetPlayerSpawnCell))(VAULTSPACE ID, VAULTSPACE VAULTCELL) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetPlayerConsoleEnabled))(VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
 VAULTCPP(})
@@ -541,7 +544,7 @@ namespace vaultmp
 	VAULTFUNCTION State ChatMessage(ID id, cRawString message) noexcept { return VAULTAPI(ChatMessage)(id, message); }
 	VAULTFUNCTION State ChatMessage(const String& message) noexcept { return VAULTAPI(ChatMessage)(static_cast<ID>(0), message.c_str()); }
 	VAULTFUNCTION State ChatMessage(cRawString message) noexcept { return VAULTAPI(ChatMessage)(static_cast<ID>(0), message); }
-	VAULTFUNCTION Void SetRespawn(Interval interval) noexcept { return VAULTAPI(SetRespawn)(interval); }
+	VAULTFUNCTION Void SetRespawnTime(Interval interval) noexcept { return VAULTAPI(SetRespawnTime)(interval); }
 	VAULTFUNCTION Void SetSpawnCell(VAULTCELL cell) noexcept { return VAULTAPI(SetSpawnCell)(cell); }
 	VAULTFUNCTION Void SetConsoleEnabled(State enabled) noexcept { return VAULTAPI(SetConsoleEnabled)(enabled); }
 	VAULTFUNCTION Void SetGameWeather(VAULTWEATHER weather) noexcept { return VAULTAPI(SetGameWeather)(weather); }
@@ -568,6 +571,9 @@ namespace vaultmp
 		UCount size = VAULTAPI(GetList)(type, &data);
 		return IDVector(data, data + size);
 	}
+	VAULTFUNCTION Interval GetRespawnTime() noexcept { return VAULTAPI(GetRespawnTime)(); }
+	VAULTFUNCTION VAULTCELL GetSpawnCell() noexcept { return VAULTAPI(GetSpawnCell)(); }
+	VAULTFUNCTION State GetConsoleEnabled() noexcept { return VAULTAPI(GetConsoleEnabled)(); }
 	VAULTFUNCTION VAULTWEATHER GetGameWeather() noexcept { return VAULTAPI(GetGameWeather)(); }
 	VAULTFUNCTION Time GetGameTime() noexcept { return VAULTAPI(GetGameTime)(); }
 	VAULTFUNCTION UCount GetGameYear() noexcept { return VAULTAPI(GetGameYear)(); }
@@ -610,7 +616,7 @@ namespace vaultmp
 	VAULTFUNCTION VAULTRACE GetActorBaseRace(ID id) noexcept { return VAULTAPI(GetActorBaseRace)(id); }
 	VAULTFUNCTION State GetActorBaseSex(ID id) noexcept { return VAULTAPI(GetActorBaseSex)(id); }
 	VAULTFUNCTION State IsActorJumping(ID id) noexcept { return VAULTAPI(IsActorJumping)(id); }
-	VAULTFUNCTION Interval GetPlayerRespawn(ID id) noexcept { return VAULTAPI(GetPlayerRespawn)(id); }
+	VAULTFUNCTION Interval GetPlayerRespawnTime(ID id) noexcept { return VAULTAPI(GetPlayerRespawnTime)(id); }
 	VAULTFUNCTION VAULTCELL GetPlayerSpawnCell(ID id) noexcept { return VAULTAPI(GetPlayerSpawnCell)(id); }
 	VAULTFUNCTION State GetPlayerConsoleEnabled(ID id) noexcept { return VAULTAPI(GetPlayerConsoleEnabled)(id); }
 
@@ -649,7 +655,7 @@ namespace vaultmp
 	VAULTFUNCTION State SetActorBaseRace(ID id, VAULTRACE race) noexcept { return VAULTAPI(SetActorBaseRace)(id, race); }
 	VAULTFUNCTION State AgeActorBaseRace(ID id, Count age) noexcept { return VAULTAPI(AgeActorBaseRace)(id, age); }
 	VAULTFUNCTION State SetActorBaseSex(ID id, State female) noexcept { return VAULTAPI(SetActorBaseSex)(id, female); }
-	VAULTFUNCTION Void SetPlayerRespawn(ID id, Interval interval) noexcept { return VAULTAPI(SetPlayerRespawn)(id, interval); }
+	VAULTFUNCTION Void SetPlayerRespawnTime(ID id, Interval interval) noexcept { return VAULTAPI(SetPlayerRespawnTime)(id, interval); }
 	VAULTFUNCTION Void SetPlayerSpawnCell(ID id, VAULTCELL cell) noexcept { return VAULTAPI(SetPlayerSpawnCell)(id, cell); }
 	VAULTFUNCTION Void SetPlayerConsoleEnabled(ID id, State enabled) noexcept { return VAULTAPI(SetPlayerConsoleEnabled)(id, enabled); }
 
@@ -801,11 +807,11 @@ namespace vaultmp
 			Player(ID id) noexcept : Actor(vaultmp::IsPlayer(id) ? id : static_cast<ID>(0), Type::ID_PLAYER) {}
 			virtual ~Player() noexcept {}
 
-			Interval GetPlayerRespawn() const noexcept { return vaultmp::GetPlayerRespawn(id); }
+			Interval GetPlayerRespawnTime() const noexcept { return vaultmp::GetPlayerRespawnTime(id); }
 			VAULTCELL GetPlayerSpawnCell() const noexcept { return vaultmp::GetPlayerSpawnCell(id); }
 			State GetPlayerConsoleEnabled() const noexcept { return vaultmp::GetPlayerConsoleEnabled(id); }
 
-			Void SetPlayerRespawn(Interval interval) noexcept { return vaultmp::SetPlayerRespawn(id, interval); }
+			Void SetPlayerRespawnTime(Interval interval) noexcept { return vaultmp::SetPlayerRespawnTime(id, interval); }
 			Void SetPlayerSpawnCell(VAULTCELL cell) noexcept { return vaultmp::SetPlayerSpawnCell(id, cell); }
 			Void SetPlayerConsoleEnabled(State enabled) noexcept { return vaultmp::SetPlayerConsoleEnabled(id, enabled); }
 			State UIMessage(const String& message, Emoticon emoticon = Emoticon::Happy) noexcept { return vaultmp::UIMessage(id, message, emoticon); }

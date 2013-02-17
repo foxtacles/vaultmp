@@ -196,9 +196,7 @@ class Script
 
 		static bool UIMessage(RakNet::NetworkID id, const char* message, unsigned char emoticon);
 		static bool ChatMessage(RakNet::NetworkID id, const char* message);
-		static void SetRespawn(unsigned int respawn);
 		static void SetSpawnCell(unsigned int cell);
-		static void SetConsoleEnabled(bool enabled);
 		static void SetGameWeather(unsigned int weather);
 		static void SetGameTime(signed long long time);
 		static void SetGameYear(unsigned int year);
@@ -252,7 +250,7 @@ class Script
 		static unsigned int GetActorBaseRace(RakNet::NetworkID id);
 		static bool GetActorBaseSex(RakNet::NetworkID id);
 		static bool IsActorJumping(RakNet::NetworkID id);
-		static unsigned int GetPlayerRespawn(RakNet::NetworkID id);
+		static unsigned int GetPlayerRespawnTime(RakNet::NetworkID id);
 		static unsigned int GetPlayerSpawnCell(RakNet::NetworkID id);
 		static bool GetPlayerConsoleEnabled(RakNet::NetworkID id);
 
@@ -287,7 +285,7 @@ class Script
 		static bool SetActorBaseRace(RakNet::NetworkID id, unsigned int race);
 		static bool AgeActorBaseRace(RakNet::NetworkID id, signed int age);
 		static bool SetActorBaseSex(RakNet::NetworkID id, bool female);
-		static void SetPlayerRespawn(RakNet::NetworkID id, unsigned int respawn);
+		static void SetPlayerRespawnTime(RakNet::NetworkID id, unsigned int respawn);
 		static void SetPlayerSpawnCell(RakNet::NetworkID id, unsigned int cell);
 		static void SetPlayerConsoleEnabled(RakNet::NetworkID id, bool enabled);
 
@@ -313,9 +311,9 @@ class Script
 
 			{"UIMessage", Script::UIMessage},
 			{"ChatMessage", Script::ChatMessage},
-			{"SetRespawn", Script::SetRespawn},
+			{"SetRespawnTime", Player::SetRespawnTime},
 			{"SetSpawnCell", Script::SetSpawnCell},
-			{"SetConsoleEnabled", Script::SetConsoleEnabled},
+			{"SetConsoleEnabled", Player::SetConsoleEnabled},
 			{"SetGameWeather", Script::SetGameWeather},
 			{"SetGameTime", Script::SetGameTime},
 			{"SetGameYear", Script::SetGameYear},
@@ -335,6 +333,9 @@ class Script
 			{"GetConnection", Script::GetConnection},
 			{"GetCount", GameFactory::GetObjectCount},
 			{"GetList", Script::GetList},
+			{"GetRespawnTime", Player::GetRespawnTime},
+			{"GetSpawnCell", Player::GetSpawnCell},
+			{"GetConsoleEnabled", Player::GetConsoleEnabled},
 			{"GetGameWeather", Script::GetGameWeather},
 			{"GetGameTime", Script::GetGameTime},
 			{"GetGameYear", Script::GetGameYear},
@@ -372,7 +373,7 @@ class Script
 			{"GetActorBaseRace", Script::GetActorBaseRace},
 			{"GetActorBaseSex", Script::GetActorBaseSex},
 			{"IsActorJumping", Script::IsActorJumping},
-			{"GetPlayerRespawn", Script::GetPlayerRespawn},
+			{"GetPlayerRespawnTime", Script::GetPlayerRespawnTime},
 			{"GetPlayerSpawnCell", Script::GetPlayerSpawnCell},
 			{"GetPlayerConsoleEnabled", Script::GetPlayerConsoleEnabled},
 
@@ -406,7 +407,7 @@ class Script
 			{"SetActorBaseRace", Script::SetActorBaseRace},
 			{"AgeActorBaseRace", Script::AgeActorBaseRace},
 			{"SetActorBaseSex", Script::SetActorBaseSex},
-			{"SetPlayerRespawn", Script::SetPlayerRespawn},
+			{"SetPlayerRespawnTime", Script::SetPlayerRespawnTime},
 			{"SetPlayerSpawnCell", Script::SetPlayerSpawnCell},
 			{"SetPlayerConsoleEnabled", Script::SetPlayerConsoleEnabled},
 		};

@@ -27,7 +27,7 @@ class PAWN
 	private:
 		PAWN() = delete;
 
-		static AMX_NATIVE_INFO functions[113];
+		static AMX_NATIVE_INFO functions[116];
 
 		static cell CreateTimer(AMX* amx, const cell* params);
 		static cell CreateTimerEx(AMX* amx, const cell* params);

@@ -182,7 +182,7 @@ void Player::initialize()
 }
 
 #ifdef VAULTSERVER
-unsigned int Player::GetRespawn()
+unsigned int Player::GetRespawnTime()
 {
 	return default_respawn;
 }
@@ -197,7 +197,7 @@ bool Player::GetConsoleEnabled()
 	return default_console;
 }
 
-void Player::SetRespawn(unsigned int respawn)
+void Player::SetRespawnTime(unsigned int respawn)
 {
 	default_respawn = respawn;
 }
@@ -239,7 +239,7 @@ bool Player::GetPlayerControlEnabled(unsigned char control) const
 }
 
 #ifdef VAULTSERVER
-unsigned int Player::GetPlayerRespawn() const
+unsigned int Player::GetPlayerRespawnTime() const
 {
 	return player_Respawn.get();
 }
@@ -271,7 +271,7 @@ Lockable* Player::SetPlayerControlEnabled(unsigned char control, bool state)
 }
 
 #ifdef VAULTSERVER
-Lockable* Player::SetPlayerRespawn(unsigned int respawn)
+Lockable* Player::SetPlayerRespawnTime(unsigned int respawn)
 {
 	return SetObjectValue(this->player_Respawn, respawn);
 }

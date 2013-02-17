@@ -461,7 +461,7 @@ NetworkResponse Server::GetActorDead(RakNetGUID guid, const FactoryObject<Actor>
 			auto player = vaultcast<Player>(reference);
 
 			if (player)
-				Script::CreateTimerEx(reinterpret_cast<ScriptFunc>(&Script::Timer_Respawn), player->GetPlayerRespawn(), "l", player->GetNetworkID());
+				Script::CreateTimerEx(reinterpret_cast<ScriptFunc>(&Script::Timer_Respawn), player->GetPlayerRespawnTime(), "l", player->GetNetworkID());
 		}
 		else
 			Script::OnSpawn(reference);

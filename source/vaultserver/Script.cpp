@@ -1055,11 +1055,6 @@ bool Script::ChatMessage(NetworkID id, const char* message)
 	return true;
 }
 
-void Script::SetRespawn(unsigned int respawn)
-{
-	Player::SetRespawn(respawn);
-}
-
 void Script::SetSpawnCell(unsigned int cell)
 {
 	try
@@ -1067,11 +1062,6 @@ void Script::SetSpawnCell(unsigned int cell)
 		Player::SetSpawnCell(cell);
 	}
 	catch (...) {}
-}
-
-void Script::SetConsoleEnabled(bool enabled)
-{
-	Player::SetConsoleEnabled(enabled);
 }
 
 void Script::SetGameWeather(unsigned int weather)
@@ -1669,12 +1659,12 @@ bool Script::IsActorJumping(NetworkID id)
 	return false;
 }
 
-unsigned int Script::GetPlayerRespawn(NetworkID id)
+unsigned int Script::GetPlayerRespawnTime(NetworkID id)
 {
 	auto player = GameFactory::GetObject<Player>(id);
 
 	if (player)
-		return player->GetPlayerRespawn();
+		return player->GetPlayerRespawnTime();
 
 	return 0;
 }
@@ -2597,7 +2587,7 @@ void Script::KillActor(NetworkID id, unsigned short limbs, signed char cause)
 		auto player = vaultcast<Player>(actor);
 
 		if (player)
-			Script::CreateTimerEx(reinterpret_cast<ScriptFunc>(&Script::Timer_Respawn), player->GetPlayerRespawn(), "l", player->GetNetworkID());
+			Script::CreateTimerEx(reinterpret_cast<ScriptFunc>(&Script::Timer_Respawn), player->GetPlayerRespawnTime(), "l", player->GetNetworkID());
 	}
 }
 
@@ -2742,12 +2732,12 @@ bool Script::SetActorBaseSex(NetworkID id, bool female)
 	return true;
 }
 
-void Script::SetPlayerRespawn(NetworkID id, unsigned int respawn)
+void Script::SetPlayerRespawnTime(NetworkID id, unsigned int respawn)
 {
 	auto reference = GameFactory::GetObject<Player>(id);
 
 	if (reference)
-		reference->SetPlayerRespawn(respawn);
+		reference->SetPlayerRespawnTime(respawn);
 }
 
 void Script::SetPlayerSpawnCell(NetworkID id, unsigned int cell)
