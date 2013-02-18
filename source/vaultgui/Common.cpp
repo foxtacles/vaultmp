@@ -181,7 +181,7 @@ void SimulateKeyDown(LPVOID ths, DWORD size, LPVOID data)
 		if(!gData.lockChatbox)
 		{
 			char* d=(char*)data;
-			if (d[DIK_NUMPAD9] & 0x80 && d[DIK_LSHIFT] & 0x80)
+			/*if (d[DIK_NUMPAD9] & 0x80 && d[DIK_LSHIFT] & 0x80)
 			{
 				CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"));
 				w->setPosition(CEGUI::UVector2(cegui_reldim(1.0f-0.35f-0.01f), cegui_reldim( 0.01f)));
@@ -227,7 +227,7 @@ void SimulateKeyDown(LPVOID ths, DWORD size, LPVOID data)
 			{
 				CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"));
 				w->setPosition(CEGUI::UVector2(cegui_reldim(0.01f), cegui_reldim( 1.0f-0.30f-0.01f)));
-			}
+			}*/
 		}
 	}
 
