@@ -373,8 +373,14 @@ vector<string> PlayerFunctor::operator()()
 
 		for (unsigned int refID : references)
 			if ((player = GameFactory::GetObject<Player>(refID)))
-				if (!filter(player.get()))
+			{
+				auto& player_ = player.get();
+
+				if (!filter(player_))
 					result.emplace_back(Utils::toString(refID));
+
+				GameFactory::LeaveReference(player_);
+			}
 	}
 
 	_next(result);

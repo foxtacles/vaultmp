@@ -2042,8 +2042,6 @@ void Game::net_UpdateContext(Player::CellContext& context)
 	player->SetNetworkCell(context[0]);
 	player->SetGameCell(context[0]);
 
-	GameFactory::LeaveReference(player);
-
 	cellRefs.StartSession();
 	cellContext.StartSession();
 
@@ -2069,6 +2067,8 @@ void Game::net_UpdateContext(Player::CellContext& context)
 
 	cellContext.EndSession();
 	cellRefs.EndSession();
+
+	GameFactory::LeaveReference(player);
 
 	for (const auto& cell : diff.second)
 		if (cell)

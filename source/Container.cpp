@@ -609,8 +609,14 @@ vector<string> ContainerFunctor::operator()()
 
 		for (unsigned int refID : references)
 			if ((container = GameFactory::GetObject<Container>(refID)))
-				if (!filter(container.get()))
+			{
+				auto& container_ = container.get();
+
+				if (!filter(container_))
 					result.emplace_back(Utils::toString(refID));
+
+				GameFactory::LeaveReference(container_);
+			}
 	}
 
 	_next(result);
