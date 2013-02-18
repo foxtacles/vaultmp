@@ -16,6 +16,8 @@ struct globalData
 	bool disableMouseInput;
 	bool gameReady;
 	bool textureHookingDone;
+	bool hideChatbox;
+	bool lockChatbox;
 
 	int lastChatTextTick;
 };
