@@ -2036,20 +2036,19 @@ void Game::net_UpdateExterior(unsigned int baseID, signed int x, signed int y, b
 
 void Game::net_UpdateContext(Player::CellContext& context)
 {
-	cellRefs.StartSession();
-	cellContext.StartSession();
-
 	auto player = GameFactory::GetObject<Player>(PLAYER_REFERENCE).get();
-
 	unsigned int old_cell = player->GetNetworkCell();
-
-	(*cellRefs)[old_cell][ID_PLAYER].erase(PLAYER_REFERENCE);
-	(*cellRefs)[context[0]][ID_PLAYER].insert(PLAYER_REFERENCE);
 
 	player->SetNetworkCell(context[0]);
 	player->SetGameCell(context[0]);
 
 	GameFactory::LeaveReference(player);
+
+	cellRefs.StartSession();
+	cellContext.StartSession();
+
+	(*cellRefs)[old_cell][ID_PLAYER].erase(PLAYER_REFERENCE);
+	(*cellRefs)[context[0]][ID_PLAYER].insert(PLAYER_REFERENCE);
 
 	sort(context.begin(), context.end());
 	pair<vector<unsigned int>, vector<unsigned int>> diff;
@@ -2057,9 +2056,15 @@ void Game::net_UpdateContext(Player::CellContext& context)
 	set_difference(context.begin(), context.end(), (*cellContext).begin(), (*cellContext).end(), inserter(diff.first, diff.first.begin()));
 	set_difference((*cellContext).begin(), (*cellContext).end(), context.begin(), context.end(), inserter(diff.second, diff.second.begin()));
 
+	*cellContext = context;
+	CellRefs copy = *cellRefs;
+
+	cellContext.EndSession();
+	cellRefs.EndSession();
+
 	for (const auto& cell : diff.second)
 		if (cell)
-			for (const auto& refs : (*cellRefs)[cell])
+			for (const auto& refs : copy[cell])
 				for (unsigned int refID : refs.second)
 					if (refID != PLAYER_REFERENCE)
 					{
@@ -2076,7 +2081,7 @@ void Game::net_UpdateContext(Player::CellContext& context)
 
 	for (const auto& cell : diff.first)
 		if (cell)
-			for (const auto& refs : (*cellRefs)[cell])
+			for (const auto& refs : copy[cell])
 				for (unsigned int refID : refs.second)
 					if (refID != PLAYER_REFERENCE)
 					{
@@ -2095,11 +2100,6 @@ void Game::net_UpdateContext(Player::CellContext& context)
 
 						object->Work();
 					}
-
-	*cellContext = context;
-
-	cellContext.EndSession();
-	cellRefs.EndSession();
 }
 
 void Game::net_UpdateConsole(bool enabled)
