@@ -2057,7 +2057,15 @@ void Game::net_UpdateContext(Player::CellContext& context)
 	set_difference((*cellContext).begin(), (*cellContext).end(), context.begin(), context.end(), inserter(diff.second, diff.second.begin()));
 
 	*cellContext = context;
-	CellRefs copy = *cellRefs;
+	CellRefs copy;
+
+	for (const auto& cell : diff.second)
+		if (cell)
+			copy[cell] = (*cellRefs)[cell];
+
+	for (const auto& cell : diff.first)
+		if (cell)
+			copy[cell] = (*cellRefs)[cell];
 
 	cellContext.EndSession();
 	cellRefs.EndSession();
