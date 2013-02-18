@@ -255,12 +255,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 
 		if (checksum == FALLOUT3_EN_VER17 /*|| checksum == FALLOUT3_EN_VER17_STEAM*/)
 		{
-			filecheck = fopen("../fose_1_7.dll", "rb");
+			filecheck = fopen("fose_1_7_vmp.dll", "rb");
 
 			if (filecheck != nullptr)
 			{
 				fclose(filecheck);
-				Utils::GenerateChecksum("../fose_1_7.dll", checksum, checksum_real);
+				Utils::GenerateChecksum("fose_1_7_vmp.dll", checksum, checksum_real);
 
 				if (checksum_real == FOSE_VER0122)
 				{
@@ -318,12 +318,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 		{
 			steam = (checksum_real == NEWVEGAS_EN_VER14_STEAM);
 
-			filecheck = fopen("../nvse_1_4.dll", "rb");
+			filecheck = fopen("nvse_1_4_vmp.dll", "rb");
 
 			if (filecheck != nullptr)
 			{
 				fclose(filecheck);
-				Utils::GenerateChecksum("../nvse_1_4.dll", checksum, checksum_real);
+				Utils::GenerateChecksum("nvse_1_4_vmp.dll", checksum, checksum_real);
 
 				if (checksum_real == NVSE_VER0212)
 				{

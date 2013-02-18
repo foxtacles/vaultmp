@@ -979,13 +979,13 @@ void PatchGame(HINSTANCE& silverlock)
 	if (strstr(curdir, "Fallout3.exe"))
 	{
 		game = FALLOUT3;
-		silverlock = LoadLibrary("fose_1_7.dll");
+		silverlock = LoadLibrary("fose_1_7_vmp.dll");
 	}
 
 	else if (strstr(curdir, "FalloutNV.exe"))
 	{
 		game = NEWVEGAS;
-		silverlock = LoadLibrary("nvse_1_4.dll");
+		silverlock = LoadLibrary("nvse_1_4_vmp.dll");
 	}
 
 	if (silverlock == NULL)
