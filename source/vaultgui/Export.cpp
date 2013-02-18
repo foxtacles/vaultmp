@@ -79,4 +79,26 @@ extern "C"
 	{
 		playersData=(remotePlayers*)p;
 	}
+
+	__declspec(dllexport) void HideChatbox(bool hide)
+	{
+		gData.hideChatbox=hide;
+	}
+
+	__declspec(dllexport) void LockChatbox(bool lock)
+	{
+		gData.lockChatbox=lock;
+	}
+
+	__declspec(dllexport) void SetChatboxPos(float x,float y)
+	{
+		CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"));
+		w->setPosition(CEGUI::UVector2(cegui_reldim(x), cegui_reldim(y)));
+	}
+
+	__declspec(dllexport) void SetChatboxSize(float x,float y)
+	{
+		CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"));
+		w->setSize(CEGUI::UVector2(cegui_reldim(x), cegui_reldim(y)));
+	}
 }

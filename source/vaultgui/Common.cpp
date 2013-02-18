@@ -178,53 +178,56 @@ void SimulateKeyDown(LPVOID ths, DWORD size, LPVOID data)
 		/*wnd->setPosition(UVector2(cegui_reldim(0.01f), cegui_reldim( 0.01f)));
 		wnd->setSize(UVector2(cegui_reldim(0.35f), cegui_reldim( 0.30f)));*/
 
-		char* d=(char*)data;
-		if (d[DIK_NUMPAD9] & 0x80 && d[DIK_LSHIFT] & 0x80)
+		if(!gData.lockChatbox)
 		{
-			CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"));
-			w->setPosition(CEGUI::UVector2(cegui_reldim(1.0f-0.35f-0.01f), cegui_reldim( 0.01f)));
-		}
-		if (d[DIK_NUMPAD8] & 0x80 && d[DIK_LSHIFT] & 0x80)
-		{
-			CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"));
-			w->setPosition(CEGUI::UVector2(cegui_reldim((1.0f-0.35f)/2-0.01f), cegui_reldim( 0.01f)));
-		}
-		if (d[DIK_NUMPAD7] & 0x80 && d[DIK_LSHIFT] & 0x80)
-		{
-			CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"));
-			w->setPosition(CEGUI::UVector2(cegui_reldim(0.01f), cegui_reldim( 0.01f)));
-		}
+			char* d=(char*)data;
+			if (d[DIK_NUMPAD9] & 0x80 && d[DIK_LSHIFT] & 0x80)
+			{
+				CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"));
+				w->setPosition(CEGUI::UVector2(cegui_reldim(1.0f-0.35f-0.01f), cegui_reldim( 0.01f)));
+			}
+			if (d[DIK_NUMPAD8] & 0x80 && d[DIK_LSHIFT] & 0x80)
+			{
+				CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"));
+				w->setPosition(CEGUI::UVector2(cegui_reldim((1.0f-0.35f)/2-0.01f), cegui_reldim( 0.01f)));
+			}
+			if (d[DIK_NUMPAD7] & 0x80 && d[DIK_LSHIFT] & 0x80)
+			{
+				CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"));
+				w->setPosition(CEGUI::UVector2(cegui_reldim(0.01f), cegui_reldim( 0.01f)));
+			}
 
-		if (d[DIK_NUMPAD6] & 0x80 && d[DIK_LSHIFT] & 0x80)
-		{
-			CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"));
-			w->setPosition(CEGUI::UVector2(cegui_reldim(1.0f-0.35f-0.01f), cegui_reldim( (1.0f-0.30f)/2-0.01f)));
-		}
-		if (d[DIK_NUMPAD5] & 0x80 && d[DIK_LSHIFT] & 0x80)
-		{
-			CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"));
-			w->setPosition(CEGUI::UVector2(cegui_reldim((1.0f-0.35f)/2-0.01f), cegui_reldim( (1.0f-0.30f)/2-0.01f)));
-		}
-		if (d[DIK_NUMPAD4] & 0x80 && d[DIK_LSHIFT] & 0x80)
-		{
-			CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"));
-			w->setPosition(CEGUI::UVector2(cegui_reldim(0.01f), cegui_reldim( (1.0f-0.30f)/2-0.01f)));
-		}
+			if (d[DIK_NUMPAD6] & 0x80 && d[DIK_LSHIFT] & 0x80)
+			{
+				CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"));
+				w->setPosition(CEGUI::UVector2(cegui_reldim(1.0f-0.35f-0.01f), cegui_reldim( (1.0f-0.30f)/2-0.01f)));
+			}
+			if (d[DIK_NUMPAD5] & 0x80 && d[DIK_LSHIFT] & 0x80)
+			{
+				CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"));
+				w->setPosition(CEGUI::UVector2(cegui_reldim((1.0f-0.35f)/2-0.01f), cegui_reldim( (1.0f-0.30f)/2-0.01f)));
+			}
+			if (d[DIK_NUMPAD4] & 0x80 && d[DIK_LSHIFT] & 0x80)
+			{
+				CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"));
+				w->setPosition(CEGUI::UVector2(cegui_reldim(0.01f), cegui_reldim( (1.0f-0.30f)/2-0.01f)));
+			}
 
-		if (d[DIK_NUMPAD3] & 0x80 && d[DIK_LSHIFT] & 0x80)
-		{
-			CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"));
-			w->setPosition(CEGUI::UVector2(cegui_reldim(1.0f-0.35f-0.01f), cegui_reldim( 1.0f-0.30f-0.01f)));
-		}
-		if (d[DIK_NUMPAD2] & 0x80 && d[DIK_LSHIFT] & 0x80)
-		{
-			CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"));
-			w->setPosition(CEGUI::UVector2(cegui_reldim((1.0f-0.35f)/2-0.01f), cegui_reldim( 1.0f-0.30f-0.01f)));
-		}
-		if (d[DIK_NUMPAD1] & 0x80 && d[DIK_LSHIFT] & 0x80)
-		{
-			CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"));
-			w->setPosition(CEGUI::UVector2(cegui_reldim(0.01f), cegui_reldim( 1.0f-0.30f-0.01f)));
+			if (d[DIK_NUMPAD3] & 0x80 && d[DIK_LSHIFT] & 0x80)
+			{
+				CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"));
+				w->setPosition(CEGUI::UVector2(cegui_reldim(1.0f-0.35f-0.01f), cegui_reldim( 1.0f-0.30f-0.01f)));
+			}
+			if (d[DIK_NUMPAD2] & 0x80 && d[DIK_LSHIFT] & 0x80)
+			{
+				CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"));
+				w->setPosition(CEGUI::UVector2(cegui_reldim((1.0f-0.35f)/2-0.01f), cegui_reldim( 1.0f-0.30f-0.01f)));
+			}
+			if (d[DIK_NUMPAD1] & 0x80 && d[DIK_LSHIFT] & 0x80)
+			{
+				CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"));
+				w->setPosition(CEGUI::UVector2(cegui_reldim(0.01f), cegui_reldim( 1.0f-0.30f-0.01f)));
+			}
 		}
 	}
 

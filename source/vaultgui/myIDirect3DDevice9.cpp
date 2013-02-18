@@ -253,7 +253,7 @@ HRESULT myIDirect3DDevice9::Present(CONST RECT* pSourceRect,CONST RECT* pDestRec
 { DB("myIDirect3DDevice9::Present");
     
 #ifdef USE_CEGUI
-	if(gData.gameReady)
+	if(gData.gameReady&&!gData.hideChatbox)
 	{
 		pStateBlockBackup[1]->Capture();
 		pStateBlockBackup[0]->Apply();
