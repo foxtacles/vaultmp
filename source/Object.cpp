@@ -277,8 +277,14 @@ vector<string> ObjectFunctor::operator()()
 
 		for (unsigned int refID : references)
 			if ((object = GameFactory::GetObject(refID)))
-				if (!filter(object.get()))
+			{
+				auto& object_ = object.get();
+
+				if (!filter(object_))
 					result.emplace_back(Utils::toString(refID));
+
+				GameFactory::LeaveReference(object_);
+			}
 	}
 
 	_next(result);
