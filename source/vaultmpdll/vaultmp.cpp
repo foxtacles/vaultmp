@@ -23,6 +23,10 @@ typedef unsigned int (*LookupForm)(unsigned int);
 typedef unsigned int (*LookupFunc)(unsigned int);
 typedef void (*Chatbox_AddToChat)(const char*);
 typedef const char* (*Chatbox_GetQueue)();
+typedef void (*Chatbox_HideChatbox)(bool);
+typedef void (*Chatbox_LockChatbox)(bool);
+typedef void (*Chatbox_SetChatboxPos)(float, float);
+typedef void (*Chatbox_SetChatboxSize)(float, float);
 
 static HANDLE hProc;
 static PipeServer pipeServer;
@@ -31,6 +35,10 @@ static LookupForm FormLookup;
 static LookupFunc FuncLookup;
 static Chatbox_AddToChat AddToChat;
 static Chatbox_GetQueue GetQueue;
+static Chatbox_HideChatbox HideChatbox;
+static Chatbox_LockChatbox LockChatbox;
+static Chatbox_SetChatboxPos SetChatboxPos;
+static Chatbox_SetChatboxSize SetChatboxSize;
 static QueueUIMessage_Fallout3 QueueMessage_Fallout3;;
 static QueueUIMessage_FalloutNV QueueMessage_FalloutNV;
 
@@ -639,6 +647,26 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 
 			if (*_args == 0x6E) // just using int (stored as 4-byte float) so far
 				*(float*) global_value = (float) *(signed int*) (_args + 1);
+
+			break;
+		}
+
+		case 0x0008 | VAULTFUNCTION: // ChatUpdate - change chatbox state
+		{
+			unsigned char* _args = (unsigned char*) args;
+
+			bool enabled = (bool) *(unsigned int*)(_args + 1);
+			bool locked = (bool) *(unsigned int*)(_args + 6);
+			float pos_X = *(double*)(_args + 11);
+			float pos_Y = *(double*)(_args + 20);
+			float size_X = *(double*)(_args + 29);
+			float size_Y = *(double*)(_args + 38);
+
+			HideChatbox(!enabled);
+			LockChatbox(locked);
+			SetChatboxPos(pos_X, pos_Y);
+			SetChatboxSize(size_X, size_Y);
+			break;
 		}
 
 		default:
@@ -811,8 +839,12 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 
 		AddToChat = reinterpret_cast<Chatbox_AddToChat>(GetProcAddress(vaultgui, "Chatbox_AddToChat"));
 		GetQueue = reinterpret_cast<Chatbox_GetQueue>(GetProcAddress(vaultgui, "Chatbox_GetQueue"));
+		HideChatbox = reinterpret_cast<Chatbox_HideChatbox>(GetProcAddress(vaultgui, "HideChatbox"));
+		LockChatbox = reinterpret_cast<Chatbox_LockChatbox>(GetProcAddress(vaultgui, "LockChatbox"));
+		SetChatboxPos = reinterpret_cast<Chatbox_SetChatboxPos>(GetProcAddress(vaultgui, "SetChatboxPos"));
+		SetChatboxSize = reinterpret_cast<Chatbox_SetChatboxSize>(GetProcAddress(vaultgui, "SetChatboxSize"));
 
-		if (!AddToChat || !GetQueue)
+		if (!AddToChat || !GetQueue || !HideChatbox || !LockChatbox || !SetChatboxPos || !SetChatboxSize)
 			DLLerror = true;
 	}
 

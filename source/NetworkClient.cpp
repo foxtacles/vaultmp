@@ -460,6 +460,16 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
+				case pTypes::ID_UPDATE_CHAT:
+				{
+					NetworkID id;
+					bool enabled, locked;
+					pair<double, double> pos, size;
+					PacketFactory::Access<pTypes::ID_UPDATE_CHAT>(packet, id, enabled, locked, pos, size);
+					Game::net_UpdateChat(enabled, locked, pos, size);
+					break;
+				}
+
 				default:
 					throw VaultException("Unhandled packet type %d", data->data[0]).stacktrace();
 			}

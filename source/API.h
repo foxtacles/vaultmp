@@ -253,6 +253,7 @@ namespace Values
 		Func_RemoveAllItemsEx			= 0x0005 | VAULTFUNCTION,
 		Func_ForceRespawn				= 0x0006 | VAULTFUNCTION,
 		Func_SetGlobalValue				= 0x0007 | VAULTFUNCTION,
+		Func_Chatbox					= 0x0008 | VAULTFUNCTION,
 	};
 
 	enum ActorVals

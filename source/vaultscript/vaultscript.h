@@ -363,6 +363,10 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetRespawnTime))(VAULTSPACE Interval) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetSpawnCell))(VAULTSPACE VAULTCELL) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetConsoleEnabled))(VAULTSPACE State) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetChatboxEnabled))(VAULTSPACE State) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetChatboxLocked))(VAULTSPACE State) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetChatboxPos))(VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetChatboxSize))(VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetGameWeather))(VAULTSPACE VAULTWEATHER) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetGameTime))(VAULTSPACE Time) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetGameYear))(VAULTSPACE UCount) VAULTCPP(noexcept);
@@ -385,6 +389,10 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE Interval (*VAULTAPI(GetRespawnTime))() VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE VAULTCELL (*VAULTAPI(GetSpawnCell))() VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetConsoleEnabled))() VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetChatboxEnabled))() VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetChatboxLocked))() VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(GetChatboxPos))(VAULTSPACE Value*, VAULTSPACE Value*) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(GetChatboxSize))(VAULTSPACE Value*, VAULTSPACE Value*) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE VAULTWEATHER (*VAULTAPI(GetGameWeather))() VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Time (*VAULTAPI(GetGameTime))() VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetGameYear))() VAULTCPP(noexcept);
@@ -425,6 +433,10 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE Interval (*VAULTAPI(GetPlayerRespawnTime))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE VAULTCELL (*VAULTAPI(GetPlayerSpawnCell))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetPlayerConsoleEnabled))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetPlayerChatboxEnabled))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetPlayerChatboxLocked))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(GetPlayerChatboxPos))(VAULTSPACE ID, VAULTSPACE Value*, VAULTSPACE Value*) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(GetPlayerChatboxSize))(VAULTSPACE ID, VAULTSPACE Value*, VAULTSPACE Value*) VAULTCPP(noexcept);
 
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateObject))(VAULTSPACE Base, VAULTSPACE ID, VAULTSPACE VAULTCELL, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(DestroyObject))(VAULTSPACE ID) VAULTCPP(noexcept);
@@ -459,6 +471,10 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetPlayerRespawnTime))(VAULTSPACE ID, VAULTSPACE Interval) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetPlayerSpawnCell))(VAULTSPACE ID, VAULTSPACE VAULTCELL) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetPlayerConsoleEnabled))(VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetPlayerChatboxEnabled))(VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetPlayerChatboxLocked))(VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetPlayerChatboxPos))(VAULTSPACE ID, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetPlayerChatboxSize))(VAULTSPACE ID, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 VAULTCPP(})
 
 #ifdef __cplusplus
@@ -547,6 +563,10 @@ namespace vaultmp
 	VAULTFUNCTION Void SetRespawnTime(Interval interval) noexcept { return VAULTAPI(SetRespawnTime)(interval); }
 	VAULTFUNCTION Void SetSpawnCell(VAULTCELL cell) noexcept { return VAULTAPI(SetSpawnCell)(cell); }
 	VAULTFUNCTION Void SetConsoleEnabled(State enabled) noexcept { return VAULTAPI(SetConsoleEnabled)(enabled); }
+	VAULTFUNCTION Void SetChatboxEnabled(State enabled) noexcept { return VAULTAPI(SetChatboxEnabled)(enabled); }
+	VAULTFUNCTION Void SetChatboxLocked(State locked) noexcept { return VAULTAPI(SetChatboxLocked)(locked); }
+	VAULTFUNCTION Void SetChatboxPos(Value X, Value Y) noexcept { return VAULTAPI(SetChatboxPos)(X, Y); }
+	VAULTFUNCTION Void SetChatboxSize(Value X, Value Y) noexcept { return VAULTAPI(SetChatboxSize)(X, Y); }
 	VAULTFUNCTION Void SetGameWeather(VAULTWEATHER weather) noexcept { return VAULTAPI(SetGameWeather)(weather); }
 	VAULTFUNCTION Void SetGameTime(Time time) noexcept { return VAULTAPI(SetGameTime)(time); }
 	VAULTFUNCTION Void SetGameYear(UCount year) noexcept { return VAULTAPI(SetGameYear)(year); }
@@ -574,6 +594,10 @@ namespace vaultmp
 	VAULTFUNCTION Interval GetRespawnTime() noexcept { return VAULTAPI(GetRespawnTime)(); }
 	VAULTFUNCTION VAULTCELL GetSpawnCell() noexcept { return VAULTAPI(GetSpawnCell)(); }
 	VAULTFUNCTION State GetConsoleEnabled() noexcept { return VAULTAPI(GetConsoleEnabled)(); }
+	VAULTFUNCTION State GetChatboxEnabled() noexcept { return VAULTAPI(GetChatboxEnabled)(); }
+	VAULTFUNCTION State GetChatboxLocked() noexcept { return VAULTAPI(GetChatboxLocked)(); }
+	VAULTFUNCTION Void GetChatboxPos(Value& X, Value& Y) noexcept { return VAULTAPI(GetChatboxPos)(&X, &Y); }
+	VAULTFUNCTION Void GetChatboxSize(Value& X, Value& Y) noexcept { return VAULTAPI(GetChatboxSize)(&X, &Y); }
 	VAULTFUNCTION VAULTWEATHER GetGameWeather() noexcept { return VAULTAPI(GetGameWeather)(); }
 	VAULTFUNCTION Time GetGameTime() noexcept { return VAULTAPI(GetGameTime)(); }
 	VAULTFUNCTION UCount GetGameYear() noexcept { return VAULTAPI(GetGameYear)(); }
@@ -619,6 +643,10 @@ namespace vaultmp
 	VAULTFUNCTION Interval GetPlayerRespawnTime(ID id) noexcept { return VAULTAPI(GetPlayerRespawnTime)(id); }
 	VAULTFUNCTION VAULTCELL GetPlayerSpawnCell(ID id) noexcept { return VAULTAPI(GetPlayerSpawnCell)(id); }
 	VAULTFUNCTION State GetPlayerConsoleEnabled(ID id) noexcept { return VAULTAPI(GetPlayerConsoleEnabled)(id); }
+	VAULTFUNCTION State GetPlayerChatboxEnabled(ID id) noexcept { return VAULTAPI(GetPlayerChatboxEnabled)(id); }
+	VAULTFUNCTION State GetPlayerChatboxLocked(ID id) noexcept { return VAULTAPI(GetPlayerChatboxLocked)(id); }
+	VAULTFUNCTION Void GetPlayerChatboxPos(ID id, Value& X, Value& Y) noexcept { return VAULTAPI(GetPlayerChatboxPos)(id, &X, &Y); }
+	VAULTFUNCTION Void GetPlayerChatboxSize(ID id, Value& X, Value& Y) noexcept { return VAULTAPI(GetPlayerChatboxSize)(id, &X, &Y); }
 
 	VAULTFUNCTION ID CreateObject(Base object, ID id) noexcept { return VAULTAPI(CreateObject)(object, id, static_cast<VAULTCELL>(0), 0.00, 0.00, 0.00); }
 	VAULTFUNCTION ID CreateObject(Base object, VAULTCELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateObject)(object, static_cast<ID>(0), cell, X, Y, Z); }
@@ -658,6 +686,10 @@ namespace vaultmp
 	VAULTFUNCTION Void SetPlayerRespawnTime(ID id, Interval interval) noexcept { return VAULTAPI(SetPlayerRespawnTime)(id, interval); }
 	VAULTFUNCTION Void SetPlayerSpawnCell(ID id, VAULTCELL cell) noexcept { return VAULTAPI(SetPlayerSpawnCell)(id, cell); }
 	VAULTFUNCTION Void SetPlayerConsoleEnabled(ID id, State enabled) noexcept { return VAULTAPI(SetPlayerConsoleEnabled)(id, enabled); }
+	VAULTFUNCTION Void SetPlayerChatboxEnabled(ID id, State enabled) noexcept { return VAULTAPI(SetPlayerChatboxEnabled)(id, enabled); }
+	VAULTFUNCTION Void SetPlayerChatboxLocked(ID id, State locked) noexcept { return VAULTAPI(SetPlayerChatboxLocked)(id, locked); }
+	VAULTFUNCTION Void SetPlayerChatboxPos(ID id, Value X, Value Y) noexcept { return VAULTAPI(SetPlayerChatboxPos)(id, X, Y); }
+	VAULTFUNCTION Void SetPlayerChatboxSize(ID id, Value X, Value Y) noexcept { return VAULTAPI(SetPlayerChatboxSize)(id, X, Y); }
 
 	class Reference {
 		protected:
@@ -810,10 +842,18 @@ namespace vaultmp
 			Interval GetPlayerRespawnTime() const noexcept { return vaultmp::GetPlayerRespawnTime(id); }
 			VAULTCELL GetPlayerSpawnCell() const noexcept { return vaultmp::GetPlayerSpawnCell(id); }
 			State GetPlayerConsoleEnabled() const noexcept { return vaultmp::GetPlayerConsoleEnabled(id); }
+			State GetPlayerChatboxEnabled() const noexcept { return vaultmp::GetPlayerChatboxEnabled(id); }
+			State GetPlayerChatboxLocked() const noexcept { return vaultmp::GetPlayerChatboxLocked(id); }
+			Void GetPlayerChatboxPos(Value& X, Value& Y) const noexcept { return vaultmp::GetPlayerChatboxPos(id, X, Y); }
+			Void GetPlayerChatboxSize(Value& X, Value& Y) const noexcept { return vaultmp::GetPlayerChatboxSize(id, X, Y); }
 
 			Void SetPlayerRespawnTime(Interval interval) noexcept { return vaultmp::SetPlayerRespawnTime(id, interval); }
 			Void SetPlayerSpawnCell(VAULTCELL cell) noexcept { return vaultmp::SetPlayerSpawnCell(id, cell); }
 			Void SetPlayerConsoleEnabled(State enabled) noexcept { return vaultmp::SetPlayerConsoleEnabled(id, enabled); }
+			Void SetPlayerChatboxEnabled(State enabled) noexcept { return vaultmp::SetPlayerChatboxEnabled(id, enabled); }
+			Void SetPlayerChatboxLocked(State locked) noexcept { return vaultmp::SetPlayerChatboxLocked(id, locked); }
+			Void SetPlayerChatboxPos(Value X, Value Y) noexcept { return vaultmp::SetPlayerChatboxPos(id, X, Y); }
+			Void SetPlayerChatboxSize(Value X, Value Y) noexcept { return vaultmp::SetPlayerChatboxSize(id, X, Y); }
 			State UIMessage(const String& message, Emoticon emoticon = Emoticon::Happy) noexcept { return vaultmp::UIMessage(id, message, emoticon); }
 			State UIMessage(cRawString message, Emoticon emoticon = Emoticon::Happy) noexcept { return vaultmp::UIMessage(id, message, emoticon); }
 			State ChatMessage(const String& message) noexcept { return vaultmp::ChatMessage(id, message); }

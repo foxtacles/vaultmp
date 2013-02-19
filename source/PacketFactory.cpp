@@ -160,6 +160,10 @@ pPacket PacketFactory::Init(const unsigned char* stream, unsigned int len)
 			packet = new pPlayerConsole(stream, len);
 			break;
 
+		case pTypes::ID_UPDATE_CHAT:
+			packet = new pPlayerChat(stream, len);
+			break;
+
 		default:
 			throw VaultException("Unhandled packet type %d", stream[0]).stacktrace();
 	}

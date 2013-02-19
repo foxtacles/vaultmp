@@ -402,6 +402,10 @@ class Game
 		 */
 		static void net_UpdateConsole(bool enabled);
 		/**
+		 * \brief Network function to handle chatbox update
+		 */
+		static void net_UpdateChat(bool enabled, bool locked, const std::pair<double, double>& pos, const std::pair<double, double>& size);
+		/**
 		 * \brief Network function to handle UI message
 		 */
 		static void net_UIMessage(const std::string& message, unsigned char emoticon);

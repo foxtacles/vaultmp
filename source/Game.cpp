@@ -242,6 +242,9 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 			}
 
+			case Func_Chatbox:
+				break;
+
 			case Func_SetGlobalValue:
 				break;
 
@@ -2118,6 +2121,15 @@ void Game::net_UpdateConsole(bool enabled)
 		Interface::ExecuteCommand("EnableKey", {RawParameter(ScanCode_Console)});
 	else
 		Interface::ExecuteCommand("DisableKey", {RawParameter(ScanCode_Console)});
+
+	Interface::EndDynamic();
+}
+
+void Game::net_UpdateChat(bool enabled, bool locked, const std::pair<double, double>& pos, const std::pair<double, double>& size)
+{
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("ChatUpdate", {RawParameter(enabled), RawParameter(locked), RawParameter(pos.first), RawParameter(pos.second), RawParameter(size.first), RawParameter(size.second)});
 
 	Interface::EndDynamic();
 }

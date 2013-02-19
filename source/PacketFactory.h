@@ -65,6 +65,7 @@ enum class pTypes : unsigned char
 	ID_UPDATE_EXTERIOR,
 	ID_UPDATE_CONTEXT,
 	ID_UPDATE_CONSOLE,
+	ID_UPDATE_CHAT,
 };
 
 enum class Reason : unsigned char
@@ -1367,5 +1368,26 @@ class pPlayerConsole : public pObjectDefault
 		}
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_CONSOLE> { typedef pPlayerConsole type; };
+
+class pPlayerChat : public pObjectDefault
+{
+		friend class PacketFactory;
+
+	private:
+		pPlayerChat(RakNet::NetworkID id, bool enabled, bool locked, const std::pair<double, double> pos, const std::pair<double, double> size) : pObjectDefault(pTypes::ID_UPDATE_CHAT, id)
+		{
+			construct(enabled, locked, pos, size);
+		}
+		pPlayerChat(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		{
+
+		}
+
+		void access(RakNet::NetworkID& id, bool& enabled, bool& locked, std::pair<double, double>& pos, std::pair<double, double>& size) const
+		{
+			deconstruct(id, enabled, locked, pos, size);
+		}
+};
+template<> struct pTypesMap<pTypes::ID_UPDATE_CHAT> { typedef pPlayerChat type; };
 
 #endif

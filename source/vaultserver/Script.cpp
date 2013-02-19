@@ -1290,6 +1290,20 @@ unsigned int Script::GetList(unsigned char type, NetworkID** data)
 	return _data.size();
 }
 
+void Script::GetChatboxPos(double* X, double* Y)
+{
+	auto pos = Player::GetChatboxPos();
+	*X = pos.first;
+	*Y = pos.second;
+}
+
+void Script::GetChatboxSize(double* X, double* Y)
+{
+	auto size = Player::GetChatboxSize();
+	*X = size.first;
+	*Y = size.second;
+}
+
 unsigned int Script::GetGameWeather()
 {
 	return Script::gameWeather;
@@ -1683,6 +1697,50 @@ bool Script::GetPlayerConsoleEnabled(NetworkID id)
 		return player->GetPlayerConsoleEnabled();
 
 	return false;
+}
+
+bool Script::GetPlayerChatboxEnabled(NetworkID id)
+{
+	auto player = GameFactory::GetObject<Player>(id);
+
+	if (player)
+		return player->GetPlayerChatboxEnabled();
+
+	return false;
+}
+
+bool Script::GetPlayerChatboxLocked(NetworkID id)
+{
+	auto player = GameFactory::GetObject<Player>(id);
+
+	if (player)
+		return player->GetPlayerChatboxLocked();
+
+	return false;
+}
+
+void Script::GetPlayerChatboxPos(NetworkID id, double* X, double* Y)
+{
+	auto player = GameFactory::GetObject<Player>(id);
+
+	if (player)
+	{
+		auto pos = player->GetPlayerChatboxPos();
+		*X = pos.first;
+		*Y = pos.second;
+	}
+}
+
+void Script::GetPlayerChatboxSize(NetworkID id, double* X, double* Y)
+{
+	auto player = GameFactory::GetObject<Player>(id);
+
+	if (player)
+	{
+		auto size = player->GetPlayerChatboxSize();
+		*X = size.first;
+		*Y = size.second;
+	}
 }
 
 NetworkID Script::CreateObject(unsigned int baseID, NetworkID id, unsigned int cell, double X, double Y, double Z)
@@ -2779,6 +2837,70 @@ void Script::SetPlayerConsoleEnabled(NetworkID id, bool enabled)
 	if (player->SetPlayerConsoleEnabled(enabled))
 		Network::Queue(NetworkResponse{Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_CONSOLE>(player->GetNetworkID(), enabled),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
+		});
+}
+
+void Script::SetPlayerChatboxEnabled(NetworkID id, bool enabled)
+{
+	auto reference = GameFactory::GetObject<Player>(id);
+
+	if (!reference)
+		return;
+
+	auto& player = reference.get();
+
+	if (player->SetPlayerChatboxEnabled(enabled))
+		Network::Queue(NetworkResponse{Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_CHAT>(player->GetNetworkID(), player->GetPlayerChatboxEnabled(), player->GetPlayerChatboxLocked(), player->GetPlayerChatboxPos(), player->GetPlayerChatboxSize()),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
+		});
+}
+
+void Script::SetPlayerChatboxLocked(NetworkID id, bool locked)
+{
+	auto reference = GameFactory::GetObject<Player>(id);
+
+	if (!reference)
+		return;
+
+	auto& player = reference.get();
+
+	if (player->SetPlayerChatboxLocked(locked))
+		Network::Queue(NetworkResponse{Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_CHAT>(player->GetNetworkID(), player->GetPlayerChatboxEnabled(), player->GetPlayerChatboxLocked(), player->GetPlayerChatboxPos(), player->GetPlayerChatboxSize()),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
+		});
+}
+
+void Script::SetPlayerChatboxPos(NetworkID id, double X, double Y)
+{
+	auto reference = GameFactory::GetObject<Player>(id);
+
+	if (!reference)
+		return;
+
+	auto& player = reference.get();
+
+	if (player->SetPlayerChatboxPos(X, Y))
+		Network::Queue(NetworkResponse{Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_CHAT>(player->GetNetworkID(), player->GetPlayerChatboxEnabled(), player->GetPlayerChatboxLocked(), player->GetPlayerChatboxPos(), player->GetPlayerChatboxSize()),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
+		});
+}
+
+void Script::SetPlayerChatboxSize(NetworkID id, double X, double Y)
+{
+	auto reference = GameFactory::GetObject<Player>(id);
+
+	if (!reference)
+		return;
+
+	auto& player = reference.get();
+
+	if (player->SetPlayerChatboxSize(X, Y))
+		Network::Queue(NetworkResponse{Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_CHAT>(player->GetNetworkID(), player->GetPlayerChatboxEnabled(), player->GetPlayerChatboxLocked(), player->GetPlayerChatboxPos(), player->GetPlayerChatboxSize()),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
 		});
 }
