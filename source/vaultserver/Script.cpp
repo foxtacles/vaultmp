@@ -2039,6 +2039,9 @@ bool Script::SetLock(NetworkID id, unsigned int lock)
 
 	auto& object = reference.get();
 
+	if (object->GetLockLevel() == UINT_MAX - 1)
+		return state;
+
 	if (lock != UINT_MAX)
 	{
 		lock = ceil(static_cast<double>(lock) / 25.0) * 25;
