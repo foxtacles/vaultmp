@@ -482,9 +482,9 @@ namespace vaultmp
 {
 	template<typename T, size_t t> struct TypeChar { static_assert(!t, "Unsupported type in variadic type list"); };
 	template<typename T> struct TypeChar<T*, sizeof(void*)> { enum { value = 'p' }; };
-	template<typename T> struct TypeChar<T, sizeof(uint8_t)> { enum { value = 'i' }; };
-	template<typename T> struct TypeChar<T, sizeof(uint16_t)> { enum { value = 'i' }; };
-	template<typename T> struct TypeChar<T, sizeof(uint32_t)> { enum { value = 'i' }; };
+	template<typename T> struct TypeChar<T, sizeof(uint8_t)> { enum { value = std::is_signed<T>::value ? 'q' : 'i' }; };
+	template<typename T> struct TypeChar<T, sizeof(uint16_t)> { enum { value = std::is_signed<T>::value ? 'q' : 'i' }; };
+	template<typename T> struct TypeChar<T, sizeof(uint32_t)> { enum { value = std::is_signed<T>::value ? 'q' : 'i' }; };
 	template<typename T> struct TypeChar<T, sizeof(uint64_t)> { enum { value = 'l' }; };
 	template<> struct TypeChar<Value, sizeof(Value)> { enum { value = 'f' }; };
 	template<> struct TypeChar<cRawString, sizeof(cRawString)> { enum { value = 's' }; };

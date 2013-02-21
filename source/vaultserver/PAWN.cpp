@@ -360,6 +360,12 @@ cell PAWN::CreateTimerEx(AMX* amx, const cell* params)
 				break;
 			}
 
+			case 'q':
+			{
+				args.emplace_back((signed int) *data);
+				break;
+			}
+
 			case 'l':
 			{
 				args.emplace_back((unsigned long long) *data);
@@ -450,6 +456,12 @@ cell PAWN::CallPublic(AMX* amx, const cell* params)
 			case 'i':
 			{
 				args.emplace_back((unsigned int) *data);
+				break;
+			}
+
+			case 'q':
+			{
+				args.emplace_back((signed int) *data);
 				break;
 			}
 
@@ -551,6 +563,13 @@ cell PAWN::Call(AMX* amx, const char* name, const char* argl, int buf, ...)
 					break;
 				}
 
+				case 'q':
+				{
+					cell value = (cell) va_arg(args, signed int);
+					amx_Push(amx, value);
+					break;
+				}
+
 				case 'l':
 				{
 					cell value = (cell) va_arg(args, unsigned long long);
@@ -645,6 +664,13 @@ cell PAWN::Call(AMX* amx, const char* name, const char* argl, const vector<boost
 				case 'i':
 				{
 					cell value = (cell) boost::any_cast<unsigned int>(args.at(i));
+					amx_Push(amx, value);
+					break;
+				}
+
+				case 'q':
+				{
+					cell value = (cell) boost::any_cast<signed int>(args.at(i));
 					amx_Push(amx, value);
 					break;
 				}

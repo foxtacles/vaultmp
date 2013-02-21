@@ -317,6 +317,12 @@ void Script::GetArguments(vector<boost::any>& params, va_list args, const string
 					break;
 				}
 
+				case 'q':
+				{
+					params.emplace_back(va_arg(args, signed int));
+					break;
+				}
+
 				case 'l':
 				{
 					params.emplace_back(va_arg(args, unsigned long long));
@@ -636,7 +642,7 @@ void Script::OnContainerItemChange(const FactoryObject<Container>& reference, un
 				script->fOnContainerItemChange(id, baseID, count, condition);
 		}
 		else if (PAWN::IsCallbackPresent(script->amx, "OnContainerItemChange"))
-			PAWN::Call(script->amx, "OnContainerItemChange", "fiil", 0, condition, count, baseID, id);
+			PAWN::Call(script->amx, "OnContainerItemChange", "fqil", 0, condition, count, baseID, id);
 	}
 }
 
@@ -713,7 +719,7 @@ void Script::OnActorDeath(const FactoryObject<Actor>& reference, const FactoryOb
 				script->fOnActorDeath(id, killer->GetNetworkID(), limbs, cause);
 		}
 		else if (PAWN::IsCallbackPresent(script->amx, "OnActorDeath"))
-			PAWN::Call(script->amx, "OnActorDeath", "iill", 0, cause, limbs, killer->GetNetworkID(), id);
+			PAWN::Call(script->amx, "OnActorDeath", "qill", 0, cause, limbs, killer->GetNetworkID(), id);
 	}
 }
 
