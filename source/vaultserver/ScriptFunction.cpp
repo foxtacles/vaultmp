@@ -40,6 +40,13 @@ unsigned long long ScriptFunction::Call(const vector<boost::any>& args)
 					break;
 				}
 
+				case 'q':
+				{
+					unsigned int value = boost::any_cast<signed int>(*it2);
+					data.push_back(value);
+					break;
+				}
+
 				case 'l':
 				{
 					unsigned long long value = boost::any_cast<unsigned long long>(*it2);

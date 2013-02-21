@@ -148,8 +148,8 @@ const Death: {
 }
 
 const Lock: {
-	Unlocked = ~0,
-	Broken = (~0) - 1,
+	Unlocked = 0xFFFFFFFF,
+	Broken = 0xFFFFFFFE,
 	VeryEasy = 0,
 	Easy = 25,
 	Average = 50,
