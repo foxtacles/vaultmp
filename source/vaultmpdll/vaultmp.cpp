@@ -124,6 +124,8 @@ static unsigned Fallout3patch_AVFix_src = 0x00473D35;
 static unsigned Fallout3patch_AVFix_dest = (unsigned)& AVFix_F3;
 static unsigned Fallout3patch_AVFix_ret = 0x00473D3B;
 static unsigned Fallout3patch_AVFix_term = 0x00473E85;
+static unsigned Fallout3patch_FireFix_jmp = 0x0079236C;
+static unsigned Fallout3patch_FireFix_patch = 0x007923C5;
 
 // Those snippets / functions are from FOSE / NVSE, thanks
 
@@ -1058,6 +1060,11 @@ void PatchGame(HINSTANCE& silverlock)
 			SafeWrite8(Fallout3patch_matchRace_patch + 1, 0xF1);
 			SafeWriteBuf(Fallout3patch_matchRace_patch + 2, NOP, 4);
 			SafeWrite8(Fallout3patch_matchRace_param, 0x0F);
+
+			unsigned char jmp[] = {0xEB, 0x57, 0x90};
+			unsigned char patch[] = {0x85, 0xED, 0x74, 0xE8, 0x8B, 0x55, 0x00, 0xEB, 0xA1};
+			SafeWriteBuf(Fallout3patch_FireFix_jmp, jmp, sizeof(jmp));
+			SafeWriteBuf(Fallout3patch_FireFix_patch, patch, sizeof(patch));
 
 			WriteRelCall(Fallout3patch_delegatorCall_src, Fallout3patch_delegatorCall_dest);
 			WriteRelCall(Fallout3patch_delegator_src, Fallout3patch_delegator_dest);

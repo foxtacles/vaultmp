@@ -19,7 +19,7 @@ static const unsigned int NEWVEGAS_EN_VER14_STEAM      =   0x00FCB4FE;
 static const unsigned int FOSE_VER0122                 =   0x0004E1B5;
 static const unsigned int NVSE_VER0212                 =   0x0006B1BB;
 
-static const unsigned int VAULTMP_DLL                  =   0x00034891;
+static const unsigned int VAULTMP_DLL                  =   0x0002E45A;
 static const unsigned int XLIVE_PATCH                  =   0x0000D57E;
 static const unsigned int VAULTMP_F3                   =   0x2B3944CB;
 static const unsigned int VAULTMP_FNV                  =   0xF8819410;
