@@ -14,8 +14,11 @@
 using namespace std;
 using namespace RakNet;
 
+bool cmd_exit = false;
+
 void InputThread()
 {
+	cmd_exit = false;
 	char input[256];
 	string cmd;
 
@@ -69,9 +72,8 @@ void InputThread()
 				}
 			}
 		}
-
 	}
-	while (strcmp(cmd.c_str(), "exit") != 0);
+	while (!(cmd_exit = !strcmp(cmd.c_str(), "exit")));
 
 	Dedicated::TerminateThread();
 }
@@ -105,6 +107,7 @@ int main(int argc, char* argv[])
 	const char* scripts;
 	const char* mods;
 	unsigned int cell;
+	bool keep;
 
 	dictionary* config = iniparser_load(argc > 1 ? argv[1] : "vaultserver.ini");
 
@@ -124,80 +127,85 @@ int main(int argc, char* argv[])
 	cell = iniparser_getint(config, "general:spawn", game == FALLOUT3 ? 0x000010C1 : 0x000DAEBB); // Vault101Exterior and Goodsprings
 	scripts = iniparser_getstring(config, "scripts:scripts", "");
 	mods = iniparser_getstring(config, "mods:mods", "");
+	keep = static_cast<bool>(iniparser_getboolean(config, "general:keepalive", 0));
 
-	ServerEntry self(game);
-	self.SetServerRule("version", DEDICATED_VERSION);
-	Dedicated::SetServerEntry(&self);
+	thread hInputThread = thread(InputThread);
 
-	char base[MAX_PATH];
-	_getcwd(base, sizeof(base));
-
-	try
+	do
 	{
-		putenv(PWNFILES_PATH);
-		vector<char> _scripts(scripts, scripts + strlen(scripts) + 1);
-		Script::LoadScripts(&_scripts[0], base);
-	}
-	catch (std::exception& e)
-	{
+		ServerEntry self(game);
+		self.SetServerRule("version", DEDICATED_VERSION);
+		Dedicated::SetServerEntry(&self);
+
+		char base[MAX_PATH];
+		_getcwd(base, sizeof(base));
+
 		try
 		{
-			VaultException& vaulterror = dynamic_cast<VaultException&>(e);
-			vaulterror.Console();
+			putenv(PWNFILES_PATH);
+			vector<char> _scripts(scripts, scripts + strlen(scripts) + 1);
+			Script::LoadScripts(&_scripts[0], base);
 		}
-
-		catch (std::bad_cast& no_vaulterror)
+		catch (exception& e)
 		{
-			VaultException vaulterror(e.what());
-			vaulterror.Console();
-		}
-	}
-
-	try
-	{
-		Dedicated::SetSpawnCell(cell);
-
-		vector<char> buf(mods, mods + strlen(mods) + 1);
-		char* token = strtok(&buf[0], ",");
-		ModList modfiles;
-		char file[MAX_PATH];
-		unsigned int crc;
-
-		while (token != nullptr)
-		{
-			snprintf(file, sizeof(file), "%s/%s/%s", base, MODFILES_PATH, token);
-
-			if (!Utils::crc32file(file, &crc))
-				throw VaultException("Could not find modfile %s in folder %s", token, MODFILES_PATH).stacktrace();
-
-			modfiles.emplace_back(token, crc);
-
-			token = strtok(nullptr, ",");
+			try
+			{
+				VaultException& vaulterror = dynamic_cast<VaultException&>(e);
+				vaulterror.Console();
+			}
+			catch (bad_cast& no_vaulterror)
+			{
+				VaultException vaulterror(e.what());
+				vaulterror.Console();
+			}
 		}
 
-		Dedicated::SetModfiles(modfiles);
-
-		thread hDedicatedThread = Dedicated::InitializeServer(port, players, announce, query, files, fileslots);
-		thread hInputThread = thread(InputThread);
-
-		hDedicatedThread.join();
-
-		if (hInputThread.joinable())
-			hInputThread.join();
-	}
-	catch (std::exception& e)
-	{
 		try
 		{
-			VaultException& vaulterror = dynamic_cast<VaultException&>(e);
-			vaulterror.Console();
+			Dedicated::SetSpawnCell(cell);
+
+			vector<char> buf(mods, mods + strlen(mods) + 1);
+			char* token = strtok(&buf[0], ",");
+			ModList modfiles;
+			char file[MAX_PATH];
+			unsigned int crc;
+
+			while (token != nullptr)
+			{
+				snprintf(file, sizeof(file), "%s/%s/%s", base, MODFILES_PATH, token);
+
+				if (!Utils::crc32file(file, &crc))
+					throw VaultException("Could not find modfile %s in folder %s", token, MODFILES_PATH).stacktrace();
+
+				modfiles.emplace_back(token, crc);
+
+				token = strtok(nullptr, ",");
+			}
+
+			Dedicated::SetModfiles(modfiles);
+
+			thread hDedicatedThread = Dedicated::InitializeServer(port, players, announce, query, files, fileslots);
+			hDedicatedThread.join();
 		}
-		catch (std::bad_cast& no_vaulterror)
+		catch (exception& e)
 		{
-			VaultException vaulterror(e.what());
-			vaulterror.Console();
+			try
+			{
+				VaultException& vaulterror = dynamic_cast<VaultException&>(e);
+				vaulterror.Console();
+			}
+			catch (bad_cast& no_vaulterror)
+			{
+				VaultException vaulterror(e.what());
+				vaulterror.Console();
+			}
+
+			keep = false;
 		}
-	}
+	} while (keep && !cmd_exit);
+
+	if (hInputThread.joinable())
+		hInputThread.join();
 
 	iniparser_freedict(config);
 
