@@ -71,7 +71,12 @@ struct DebugInput
 		const DebugInput& note(Args&&... args) const
 		{
 			if (Debug::debug)
+			{
+				Debug::debug->StartSession();
 				Debug::debug->Note(std::forward<Args>(args)...);
+				Debug::debug->EndSession();
+			}
+
 			return *this;
 		}
 
@@ -79,7 +84,12 @@ struct DebugInput
 		const DebugInput& print(Args&&... args) const
 		{
 			if (Debug::debug)
+			{
+				Debug::debug->StartSession();
 				Debug::debug->Print(std::forward<Args>(args)...);
+				Debug::debug->EndSession();
+			}
+
 			return *this;
 		}
 };
