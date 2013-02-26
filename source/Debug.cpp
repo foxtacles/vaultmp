@@ -36,9 +36,5 @@ void Debug::GetTimeFormat(char* buf, unsigned int size, bool file)
 	ltime = time(nullptr);
 
 	tm* local = localtime(&ltime);
-	char timeformat[32];
-	snprintf(timeformat, sizeof(timeformat), "%d%c%02d%c%02d%c%02d%c%02d%c%02d", local->tm_year + 1900, '-', local->tm_mon + 1, '-', local->tm_mday, file ? '_' : ' ', local->tm_hour, file ? '-' : ':', local->tm_min, file ? '-' : ':', local->tm_sec);
-
-	if (size > strlen(timeformat))
-		strcpy(buf, timeformat);
+	snprintf(buf, size, "%d%c%02d%c%02d%c%02d%c%02d%c%02d", local->tm_year + 1900, '-', local->tm_mon + 1, '-', local->tm_mday, file ? '_' : ' ', local->tm_hour, file ? '-' : ':', local->tm_min, file ? '-' : ':', local->tm_sec);
 }
