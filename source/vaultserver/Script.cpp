@@ -1015,6 +1015,19 @@ const char* Script::BaseToString(unsigned int baseID)
 	return base.c_str();
 }
 
+bool Script::Kick(NetworkID id)
+{
+	if (!GameFactory::GetObject<Player>(id))
+		return false;
+
+	Network::Queue(NetworkResponse{Network::CreateResponse(
+		PacketFactory::Create<pTypes::ID_GAME_END>(Reason::ID_REASON_KICK),
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
+	});
+
+	return true;
+}
+
 bool Script::UIMessage(NetworkID id, const char* message, unsigned char emoticon)
 {
 	string _message(message);

@@ -358,6 +358,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE cRawString (*VAULTAPI(AnimToString))(VAULTSPACE Index) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE cRawString (*VAULTAPI(BaseToString))(VAULTSPACE Base) VAULTCPP(noexcept);
 
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(Kick))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(UIMessage))(VAULTSPACE ID, VAULTSPACE cRawString, VAULTSPACE Emoticon) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(ChatMessage))(VAULTSPACE ID, VAULTSPACE cRawString) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetRespawnTime))(VAULTSPACE Interval) VAULTCPP(noexcept);
@@ -552,6 +553,7 @@ namespace vaultmp
 	VAULTFUNCTION String AnimToString(Index index) noexcept { return String(VAULTAPI(AnimToString)(index)); }
 	VAULTFUNCTION String BaseToString(Base base) noexcept { return String(VAULTAPI(BaseToString)(base)); }
 
+	VAULTFUNCTION State Kick(ID id) noexcept { return VAULTAPI(Kick)(id); }
 	VAULTFUNCTION State UIMessage(ID id, const String& message, Emoticon emoticon = Emoticon::Happy) noexcept { return VAULTAPI(UIMessage)(id, message.c_str(), emoticon); }
 	VAULTFUNCTION State UIMessage(ID id, cRawString message, Emoticon emoticon = Emoticon::Happy) noexcept { return VAULTAPI(UIMessage)(id, message, emoticon); }
 	VAULTFUNCTION State UIMessage(const String& message, Emoticon emoticon = Emoticon::Happy) noexcept { return VAULTAPI(UIMessage)(static_cast<ID>(0), message.c_str(), emoticon); }
@@ -854,6 +856,7 @@ namespace vaultmp
 			Void SetPlayerChatboxLocked(State locked) noexcept { return vaultmp::SetPlayerChatboxLocked(id, locked); }
 			Void SetPlayerChatboxPos(Value X, Value Y) noexcept { return vaultmp::SetPlayerChatboxPos(id, X, Y); }
 			Void SetPlayerChatboxSize(Value X, Value Y) noexcept { return vaultmp::SetPlayerChatboxSize(id, X, Y); }
+			State Kick() noexcept { return vaultmp::Kick(id); }
 			State UIMessage(const String& message, Emoticon emoticon = Emoticon::Happy) noexcept { return vaultmp::UIMessage(id, message, emoticon); }
 			State UIMessage(cRawString message, Emoticon emoticon = Emoticon::Happy) noexcept { return vaultmp::UIMessage(id, message, emoticon); }
 			State ChatMessage(const String& message) noexcept { return vaultmp::ChatMessage(id, message); }

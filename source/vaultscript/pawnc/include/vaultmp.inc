@@ -214,6 +214,7 @@ native AxisToString(index, value{});
 native AnimToString(index, value{});
 native BaseToString(base, value{});
 
+native Bool:Kick(ID);
 native Bool:UIMessage(ID, const message{}, Emoticon:emoticon = Emoticon:Happy);
 native Bool:ChatMessage(ID, const message{});
 native SetRespawnTime(interval);

@@ -194,6 +194,7 @@ class Script
 		static const char* AnimToString(unsigned char index);
 		static const char* BaseToString(unsigned int baseID);
 
+		static bool Kick(RakNet::NetworkID id);
 		static bool UIMessage(RakNet::NetworkID id, const char* message, unsigned char emoticon);
 		static bool ChatMessage(RakNet::NetworkID id, const char* message);
 		static void SetSpawnCell(unsigned int cell);
@@ -319,6 +320,7 @@ class Script
 			{"AnimToString", Script::AnimToString},
 			{"BaseToString", Script::BaseToString},
 
+			{"Kick", Script::Kick},
 			{"UIMessage", Script::UIMessage},
 			{"ChatMessage", Script::ChatMessage},
 			{"SetRespawnTime", Player::SetRespawnTime},
