@@ -27,8 +27,9 @@ void InputThread()
 	{
 		fgets(input, sizeof(input), stdin);
 
-		if (*input && input[strlen(input) - 1] == '\n')
-			input[strlen(input) - 1] = '\0';
+		unsigned int len;
+		if (*input && input[(len = strlen(input)) - 1] == '\n')
+			input[len - 1] = '\0';
 
 		char* tok = strtok(input, " ");
 
@@ -57,7 +58,7 @@ void InputThread()
 		}
 		else if (!strcmp(cmd.c_str(), "uimsg"))
 		{
-			char* _id = strtok(nullptr, " ");
+			const char* _id = strtok(nullptr, " ");
 
 			if (_id)
 			{
@@ -66,7 +67,7 @@ void InputThread()
 
 				if (client)
 				{
-					char* msg = _id + strlen(_id) + 1;
+					const char* msg = _id + strlen(_id) + 1;
 
 					if (*msg)
 						Script::UIMessage(client->GetPlayer(), msg, 0);
@@ -146,9 +147,9 @@ int main(int, char* argv[])
 	fileslots = iniparser_getint_ex("general:fileslots", 8);
 	announce = iniparser_getstring_ex("general:master", "vaultmp.com");
 	cell = iniparser_getint_ex("general:spawn", game == FALLOUT3 ? 0x000010C1 : 0x000DAEBB); // Vault101Exterior and Goodsprings
+	keep = iniparser_getboolean_ex("general:keepalive", false);
 	scripts = iniparser_getstring_ex("scripts:scripts", "");
 	mods = iniparser_getstring_ex("mods:mods", "");
-	keep = iniparser_getboolean_ex("general:keepalive", false);
 
 	thread hInputThread = thread(InputThread);
 
