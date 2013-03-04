@@ -8,8 +8,8 @@ using namespace RakNet;
 using namespace Values;
 
 RakPeerInterface* Dedicated::peer;
-SocketDescriptor* Dedicated::sockdescr;
 unsigned int Dedicated::port;
+const char* Dedicated::host;
 unsigned int Dedicated::fileslots;
 unsigned int Dedicated::connections;
 const char* Dedicated::announce;
@@ -248,14 +248,14 @@ void Dedicated::FileThread()
 
 void Dedicated::DedicatedThread()
 {
-	sockdescr = new SocketDescriptor(port, 0);
+	auto sockdescr = SocketDescriptor(port, host);
 	peer = RakPeerInterface::GetInstance();
 	peer->SetIncomingPassword(DEDICATED_VERSION, sizeof(DEDICATED_VERSION));
 
 	if (announce)
 	{
 		vector<char> buf(announce, announce + strlen(announce) + 1);
-		peer->Startup(connections + 1, sockdescr, 1, THREAD_PRIORITY_NORMAL);
+		peer->Startup(connections + 1, &sockdescr, 1, THREAD_PRIORITY_NORMAL);
 		peer->SetMaximumIncomingConnections(connections);
 		master.SetBinaryAddress(strtok(&buf[0], ":"));
 		char* cport = strtok(nullptr, ":");
@@ -265,7 +265,7 @@ void Dedicated::DedicatedThread()
 	}
 	else
 	{
-		peer->Startup(connections, sockdescr, 1, THREAD_PRIORITY_NORMAL);
+		peer->Startup(connections, &sockdescr, 1, THREAD_PRIORITY_NORMAL);
 		peer->SetMaximumIncomingConnections(connections);
 	}
 
@@ -383,14 +383,15 @@ void Dedicated::DedicatedThread()
 #endif
 }
 
-std::thread Dedicated::InitializeServer(unsigned int port, unsigned int connections, const char* announce, bool query, bool fileserve, unsigned int fileslots)
+std::thread Dedicated::InitializeServer(unsigned int port, const char* host, unsigned int connections, const char* announce, bool query, bool fileserve, unsigned int fileslots)
 {
 	std::thread hDedicatedThread;
 
 	thread = true;
 	Dedicated::port = port ? port : RAKNET_STANDARD_PORT;
+	Dedicated::host = host;
 	Dedicated::connections = connections ? connections : RAKNET_STANDARD_CONNECTIONS;
-	Dedicated::announce = strlen(announce) ? announce : nullptr;
+	Dedicated::announce = (announce && *announce) ? announce : nullptr;
 	Dedicated::query = query;
 	Dedicated::fileserve = fileserve;
 	Dedicated::fileslots = fileslots;

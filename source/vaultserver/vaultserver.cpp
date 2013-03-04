@@ -114,6 +114,7 @@ int main(int, char* argv[])
 
 	unsigned char game;
 	unsigned int port;
+	const char* host;
 	unsigned int players;
 	unsigned int fileslots;
 	bool query;
@@ -138,6 +139,7 @@ int main(int, char* argv[])
 		game = FALLOUT3;
 
 	port = iniparser_getint_ex("general:port", RAKNET_STANDARD_PORT);
+	host = iniparser_getstring_ex("general:host", nullptr);
 	players = iniparser_getint_ex("general:players", RAKNET_STANDARD_CONNECTIONS);
 	query = iniparser_getboolean_ex("general:query", true);
 	files = iniparser_getboolean_ex("general:fileserve", false);
@@ -203,7 +205,7 @@ int main(int, char* argv[])
 
 			Dedicated::SetModfiles(modfiles);
 
-			thread hDedicatedThread = Dedicated::InitializeServer(port, players, announce, query, files, fileslots);
+			thread hDedicatedThread = Dedicated::InitializeServer(port, host, players, announce, query, files, fileslots);
 			hDedicatedThread.join();
 		}
 		catch (exception& e)

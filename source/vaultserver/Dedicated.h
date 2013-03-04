@@ -43,9 +43,9 @@ class Dedicated
 
 	private:
 		static RakNet::RakPeerInterface* peer;
-		static RakNet::SocketDescriptor* sockdescr;
 
 		static unsigned int port;
+		static const char* host;
 		static unsigned int fileslots;
 		static unsigned int connections;
 		static const char* announce;
@@ -75,12 +75,13 @@ class Dedicated
 		 *
 		 * port - the port to run the server on
 		 * connections - the maximum amount of player connections
+		 * host - the IP address to listen on
 		 * announce - whether the server should announce himself to a MasterServer, can be nullptr
 		 * query - enable / disable direct query
 		 * fileserver - enable / disable file downloading from this server
 		 * fileslots - the maximum amount of file downloading connections
 		 */
-		static std::thread InitializeServer(unsigned int port, unsigned int connections, const char* announce, bool query, bool fileserve, unsigned int fileslots);
+		static std::thread InitializeServer(unsigned int port, const char* host, unsigned int connections, const char* announce, bool query, bool fileserve, unsigned int fileslots);
 		/**
 		 * \brief Sets the ServerEntry of the dedicated server
 		 *
