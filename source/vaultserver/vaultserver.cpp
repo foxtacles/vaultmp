@@ -3,6 +3,7 @@
 #endif
 #include <cstdio>
 #include <thread>
+#include <unordered_map>
 
 #include "vaultserver.h"
 #include "Dedicated.h"
@@ -78,7 +79,7 @@ void InputThread()
 	Dedicated::TerminateThread();
 }
 
-int main(int argc, char* argv[])
+int main(int, char* argv[])
 {
 #ifdef VAULTMP_DEBUG
 #ifdef __WIN32__
@@ -97,6 +98,20 @@ int main(int argc, char* argv[])
 	printf("Vault-Tec dedicated server %s (Unix)\n----------------------------------------------------------\n", DEDICATED_VERSION);
 #endif
 
+	unordered_map<string, const char*> args;
+	unsigned int arg_ = 1;
+
+	while (argv[arg_])
+	{
+		if (*argv[arg_] == '-' && *(argv[arg_] + 1) && argv[arg_ + 1])
+		{
+			args.emplace(argv[arg_] + 1, argv[arg_ + 1]);
+			++arg_;
+		}
+
+		++arg_;
+	}
+
 	unsigned char game;
 	unsigned int port;
 	unsigned int players;
@@ -109,25 +124,29 @@ int main(int argc, char* argv[])
 	unsigned int cell;
 	bool keep;
 
-	dictionary* config = iniparser_load(argc > 1 ? argv[1] : "vaultserver.ini");
+	dictionary* config = iniparser_load(args.count("ini") ? args["ini"] : "vaultserver.ini");
 
-	const char* game_str = iniparser_getstring(config, "general:game", "fallout3");
+	auto iniparser_getstring_ex = [&args, config](const char* param, const char* alt) -> const char* { return args.count(param) ? args[param] : iniparser_getstring(config, param, alt); };
+	auto iniparser_getint_ex = [&args, config](const char* param, int alt) -> int { return args.count(param) ? strtol(args[param], nullptr, 0) : iniparser_getint(config, param, alt); };
+	auto iniparser_getboolean_ex = [&args, config](const char* param, bool alt) -> bool { return args.count(param) ? strtol(args[param], nullptr, 0) : iniparser_getboolean(config, param, alt); };
+
+	const char* game_str = iniparser_getstring_ex("general:game", "fallout3");
 
 	if (stricmp(game_str, "newvegas") == 0)
 		game = NEWVEGAS;
 	else
 		game = FALLOUT3;
 
-	port = iniparser_getint(config, "general:port", RAKNET_STANDARD_PORT);
-	players = iniparser_getint(config, "general:players", RAKNET_STANDARD_CONNECTIONS);
-	query = static_cast<bool>(iniparser_getboolean(config, "general:query", 1));
-	files = static_cast<bool>(iniparser_getboolean(config, "general:fileserve", 0));
-	fileslots = iniparser_getint(config, "general:fileslots", 8);
-	announce = iniparser_getstring(config, "general:master", "vaultmp.com");
-	cell = iniparser_getint(config, "general:spawn", game == FALLOUT3 ? 0x000010C1 : 0x000DAEBB); // Vault101Exterior and Goodsprings
-	scripts = iniparser_getstring(config, "scripts:scripts", "");
-	mods = iniparser_getstring(config, "mods:mods", "");
-	keep = static_cast<bool>(iniparser_getboolean(config, "general:keepalive", 0));
+	port = iniparser_getint_ex("general:port", RAKNET_STANDARD_PORT);
+	players = iniparser_getint_ex("general:players", RAKNET_STANDARD_CONNECTIONS);
+	query = iniparser_getboolean_ex("general:query", true);
+	files = iniparser_getboolean_ex("general:fileserve", false);
+	fileslots = iniparser_getint_ex("general:fileslots", 8);
+	announce = iniparser_getstring_ex("general:master", "vaultmp.com");
+	cell = iniparser_getint_ex("general:spawn", game == FALLOUT3 ? 0x000010C1 : 0x000DAEBB); // Vault101Exterior and Goodsprings
+	scripts = iniparser_getstring_ex("scripts:scripts", "");
+	mods = iniparser_getstring_ex("mods:mods", "");
+	keep = iniparser_getboolean_ex("general:keepalive", false);
 
 	thread hInputThread = thread(InputThread);
 
