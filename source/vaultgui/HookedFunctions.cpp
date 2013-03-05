@@ -52,6 +52,8 @@ LONG myFunc(LPEXCEPTION_POINTERS p)
 	SendToLog("EXCEPTION!");
 	SendToLog(ExceptionToString(p->ExceptionRecord));
 
+	Debug::InspectCrash(p);
+
 	STARTUPINFO info={sizeof(info)};
 	PROCESS_INFORMATION processInfo;
 	if (CreateProcess("SendFalloutLog.exe", "", NULL, NULL, TRUE, 0, NULL, NULL, &info, &processInfo))

@@ -9,6 +9,8 @@
 
 #include "ChatUtils.h"
 
+#include "debug.h"
+
 extern myIDirect3DDevice9* gl_pmyIDirect3DDevice9;
 
 CRITICAL_SECTION cs_GetQueue;
@@ -18,6 +20,7 @@ extern "C"
 {
 	__declspec(dllexport) void Chatbox_AddToChat(char* c)
 	{
+		Debug::FunctionCall("Chatbox_AddToChat");
 		string inp=c;
 		ParseChatText(inp);
 		CEGUI::FormattedListboxTextItem* itm=new CEGUI::FormattedListboxTextItem(inp.c_str(),CEGUI::HTF_WORDWRAP_LEFT_ALIGNED);
@@ -30,10 +33,12 @@ extern "C"
 		listb->ensureItemIsVisible(itm);
 
 		gData.lastChatTextTick=GetTickCount();
+		Debug::FunctionReturn("Chatbox_AddToChat");
 	}
 
 	__declspec(dllexport) char* Chatbox_GetQueue()
 	{
+		Debug::FunctionCall("Chatbox_GetQueue");
 		static char buffer[300]={0};
 		string tmp="";
 
@@ -50,17 +55,21 @@ extern "C"
 
 		LeaveCriticalSection(&cs_GetQueue);
 
+		Debug::FunctionReturn("Chatbox_GetQueue");
+
 		return buffer;
 	}
 
 	__declspec(dllexport) void Chatbox_AddPlayerName(string name,int* x,int* y,int* z)
 	{
+		Debug::FunctionCall("Chatbox_AddPlayerName");
 		PlayerScreenName tmp;
 		tmp.name=name;
 		tmp.posX=x;
 		tmp.posY=y;
 		tmp.posZ=z;
 		GameData::playersScreenName.push_back(tmp);
+		Debug::FunctionReturn("Chatbox_AddPlayerName");
 	}
 
 	__declspec(dllexport) void Chatbox_DeletePlayerName(string name)
@@ -77,7 +86,9 @@ extern "C"
 
 	__declspec(dllexport) void SetPlayersDataPointer(void* p)
 	{
+		Debug::FunctionCall("SetPlayersDataPointer");
 		playersData=(remotePlayers*)p;
+		Debug::FunctionReturn("SetPlayersDataPointer");
 	}
 
 	__declspec(dllexport) void HideChatbox(bool hide)

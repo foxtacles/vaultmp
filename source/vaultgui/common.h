@@ -29,6 +29,8 @@ struct PlayerScreenName
 #include "global.h"
 #include "taskManager.h"
 
+#include "debug.h"
+
 #ifdef USE_CEGUI
 
 	#include "CEGUI\cegui\include\CEGUI.h"

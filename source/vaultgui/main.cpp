@@ -33,7 +33,9 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReser
 			InitializeCriticalSection(&cs_GetQueue);
 
 			ResetLog();
-			SendToLog("DLL Loaded");
+			char tmp[200];
+			sprintf(tmp,"DLL Loaded (0x%x)",(int)hModule);
+			SendToLog(tmp);
 
 			InitInstance(hModule);
 
