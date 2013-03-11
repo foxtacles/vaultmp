@@ -516,6 +516,19 @@ void Game::JobDispatch(chrono::milliseconds&& time, function<void()>&& func)
 		func_();
 }
 
+void Game::DelayOrExecute(const FactoryObject<Object>& reference, function<void(unsigned int)>&& func, unsigned int key)
+{
+	if (!IsInContext(reference->GetGameCell()))
+	{
+		if (key)
+			Lockable::Retrieve(key);
+		function<void()> task = bind(func, 0x00000000);
+		reference->Enqueue(task);
+	}
+	else
+		func(key);
+}
+
 void Game::LoadGame(string savegame)
 {
 	static string last_savegame;
@@ -1118,15 +1131,7 @@ void Game::SetLock(const FactoryObject<Object>& reference, unsigned int key)
 		Interface::EndDynamic();
 	};
 
-	if (!IsInContext(reference->GetGameCell()))
-	{
-		if (key)
-			Lockable::Retrieve(key);
-		function<void()> task = bind(func, 0x00000000);
-		reference->Enqueue(task);
-	}
-	else
-		func(key);
+	DelayOrExecute(reference, func, key);
 }
 
 void Game::SetOwner(const FactoryObject<Object>& reference, unsigned int key)
@@ -1147,15 +1152,7 @@ void Game::SetOwner(const FactoryObject<Object>& reference, unsigned int key)
 		Interface::EndDynamic();
 	};
 
-	if (!IsInContext(reference->GetGameCell()))
-	{
-		if (key)
-			Lockable::Retrieve(key);
-		function<void()> task = bind(func, 0x00000000);
-		reference->Enqueue(task);
-	}
-	else
-		func(key);
+	DelayOrExecute(reference, func, key);
 }
 
 void Game::SetActorValue(const FactoryObject<Actor>& reference, bool base, unsigned char index, unsigned int key)
@@ -1376,15 +1373,7 @@ void Game::AddItem(const FactoryObject<Container>& reference, unsigned int baseI
 		Interface::EndDynamic();
 	};
 
-	if (!IsInContext(reference->GetGameCell()))
-	{
-		if (key)
-			Lockable::Retrieve(key);
-		function<void()> task = bind(func, 0x00000000);
-		reference->Enqueue(task);
-	}
-	else
-		func(key);
+	DelayOrExecute(reference, func, key);
 }
 
 void Game::RemoveItem(const FactoryObject<Container>& reference, const FactoryObject<Item>& item, unsigned int key)
@@ -1412,15 +1401,7 @@ void Game::RemoveItem(const FactoryObject<Container>& reference, unsigned int ba
 		Interface::EndDynamic();
 	};
 
-	if (!IsInContext(reference->GetGameCell()))
-	{
-		if (key)
-			Lockable::Retrieve(key);
-		function<void()> task = bind(func, 0x00000000);
-		reference->Enqueue(task);
-	}
-	else
-		func(key);
+	DelayOrExecute(reference, func, key);
 }
 
 void Game::RemoveAllItems(const FactoryObject<Container>& reference, unsigned int key)

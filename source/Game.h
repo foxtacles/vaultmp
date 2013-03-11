@@ -82,6 +82,10 @@ class Game
 		 * \brief Job task execution
 		 */
 		static void JobDispatch(std::chrono::milliseconds&& time, std::function<void()>&& func);
+		/**
+		 * \brief Delay or execute
+		 */
+		static void DelayOrExecute(const FactoryObject<Object>& reference, std::function<void(unsigned int)>&& func, unsigned int key = 0x00000000);
 
 		/**
 		 * Game functions

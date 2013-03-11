@@ -591,6 +591,7 @@ void CleanUp()
 	peer->Shutdown(300);
 	RakPeerInterface::DestroyInstance(peer);
 	iniparser_freedict(config);
+	delete sockdescr;
 	CloseHandle(global_mutex);
 }
 
