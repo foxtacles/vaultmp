@@ -121,6 +121,8 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					Game::startupQueue.clear();
 					Game::startup = false;
 
+					Game::DisablePlayerControls(true, true, true, false, true);
+
 					response = NetworkClient::ProcessEvent(ID_EVENT_GAME_STARTED);
 					break;
 				}

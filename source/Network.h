@@ -101,8 +101,6 @@ class Network
 		static bool Dispatch(RakNet::RakPeerInterface* peer);
 		/**
 		 * \brief Returns a pointer to the static NetworkIDManager
-		 *
-		 * Although not a const pointer, you must not delete the object
 		 */
 		static RakNet::NetworkIDManager* Manager() { return &manager; }
 		/**

@@ -430,6 +430,8 @@ void Game::Startup()
 		ScanCode_Escape,
 		ScanCode_Console})});
 
+	EnablePlayerControls();
+
 	Interface::EndDynamic();
 
 	Interface::StartSetup();
