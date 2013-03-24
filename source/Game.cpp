@@ -56,22 +56,16 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				case Func_CenterOnExterior:
 				case Func_PlaceAtMeHealthPercent:
 				case Func_GetCauseofDeath:
-				case Fallout3::Func_GetRefCount:
-				case FalloutNV::Func_GetRefCount:
-				case Fallout3::Func_GetBaseObject:
-				case FalloutNV::Func_GetBaseObject:
-				case Fallout3::Func_CenterOnWorld:
-				case FalloutNV::Func_CenterOnWorld:
-				case Fallout3::Func_Load:
-				case FalloutNV::Func_Load:
+				case Func_GetRefCount:
+				case Func_GetBaseObject:
+				case Func_CenterOnWorld:
+				case Func_Load:
 					shared = Lockable::Poll(key);
 					break;
 
 				case Func_IsLimbGone:
-				case Fallout3::Func_GetFirstRef:
-				case FalloutNV::Func_GetFirstRef:
-				case Fallout3::Func_GetNextRef:
-				case FalloutNV::Func_GetNextRef:
+				case Func_GetFirstRef:
+				case Func_GetNextRef:
 					break;
 
 				default:
@@ -287,82 +281,66 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 			}
 
-			case Fallout3::Func_GetBaseObject:
-			case FalloutNV::Func_GetBaseObject:
+			case Func_GetBaseObject:
 				FutureSet(shared, getFrom<unsigned int>(result));
 				break;
 
-			case Fallout3::Func_GetRefCount:
-			case FalloutNV::Func_GetRefCount:
+			case Func_GetRefCount:
 				FutureSet(shared, static_cast<unsigned int>(result));
 				break;
 
-			case Fallout3::Func_SetRefCount:
-			case FalloutNV::Func_SetRefCount:
+			case Func_SetRefCount:
 				break;
 
-			case Fallout3::Func_SetCurrentHealth:
-			case FalloutNV::Func_SetCurrentHealth:
+			case Func_SetCurrentHealth:
 				break;
 
-			case Fallout3::Func_GetFirstRef:
-			case FalloutNV::Func_GetFirstRef:
+			case Func_GetFirstRef:
 				GetNextRef(key, getFrom<unsigned int>(result), getFrom<unsigned int>(info.at(1)));
 				break;
 
-			case Fallout3::Func_GetNextRef:
-			case FalloutNV::Func_GetNextRef:
+			case Func_GetNextRef:
 				GetNextRef(key, getFrom<unsigned int>(result));
 				break;
 
 			case Func_UIMessage:
 				break;
 
-			case Fallout3::Func_GetParentCell:
-			case FalloutNV::Func_GetParentCell:
+			case Func_GetParentCell:
 			{
 				auto player = GameFactory::GetObject<Player>(getFrom<unsigned int>(info.at(1)));
 				GetParentCell(player.get(), getFrom<unsigned int>(result));
 				break;
 			}
 
-			case Fallout3::Func_EnableControl:
-			case FalloutNV::Func_EnableControl:
+			case Func_EnableControl:
 				break;
 
-			case FalloutNV::Func_DisableControl:
+			case Func_DisableControl:
 				break;
 
-			case FalloutNV::Func_GetControl:
-				if (game == FALLOUT3) // Fallout3::Func_DisableControl
-					break;
-			case Fallout3::Func_GetControl:
+			case Func_GetControl:
 			{
 				auto self = GameFactory::GetObject<Player>(PLAYER_REFERENCE);
 				GetControl(self.get(), getFrom<int>(info.at(1)), result);
 				break;
 			}
 
-			case Fallout3::Func_DisableKey:
-			case FalloutNV::Func_DisableKey:
+			case Func_DisableKey:
 				break;
 
-			case Fallout3::Func_EnableKey:
-			case FalloutNV::Func_EnableKey:
+			case Func_EnableKey:
 				break;
 
 			case Func_CenterOnCell:
 			case Func_CenterOnExterior:
 			case Func_ForceRespawn:
-			case Fallout3::Func_CenterOnWorld:
-			case FalloutNV::Func_CenterOnWorld:
-			case Fallout3::Func_Load:
-			case FalloutNV::Func_Load:
+			case Func_CenterOnWorld:
+			case Func_Load:
 				FutureSet(shared, true);
 				break;
 
-			case Fallout3::Func_SetName:
-			case FalloutNV::Func_SetName:
+			case Func_SetName:
 				break;
 
 			default:
@@ -1886,7 +1864,7 @@ void Game::net_SetActorState(const FactoryObject<Actor>& reference, unsigned int
 	result = reference->SetActorWeaponAnimation(weapon);
 
 	if (result && enabled && !firing && reference->GetActorAlerted() && weapon != AnimGroup_Idle && weapon != AnimGroup_Equip && weapon != AnimGroup_Unequip && weapon != AnimGroup_Holster &&
-		//(game == FALLOUT3 ? (weapon == Fallout3::AnimGroup_BlockHit) : (weapon == FalloutNV::AnimGroup_BlockHit)) &&
+		//(game == FALLOUT3 ? (weapon == AnimGroup_BlockHit) : (weapon == FalloutNV::AnimGroup_BlockHit)) &&
 		(weapon != AnimGroup_Aim || prev_weapon == AnimGroup_AimIS))
 	{
 		if (weapon == AnimGroup_Aim && prev_weapon == AnimGroup_AimIS)

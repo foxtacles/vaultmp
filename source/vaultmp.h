@@ -13,21 +13,10 @@
 #define CLIENT_VERSION "0.1a snapshot \"Gary 2.7\""
 
 static const unsigned int FALLOUT3_EN_VER17            =   0x00E59528;
-//static const unsigned int FALLOUT3_EN_VER17_STEAM      =
-static const unsigned int NEWVEGAS_EN_VER14_STEAM      =   0x00FCB4FE;
-
 static const unsigned int FOSE_VER0122                 =   0x0004E1B5;
-static const unsigned int NVSE_VER0212                 =   0x0006B1BB;
-
-static const unsigned int VAULTMP_DLL                  =   0x0002E45A;
-static const unsigned int XLIVE_PATCH                  =   0x0000D57E;
+static const unsigned int VAULTMP_DLL                  =   0x00039699;
 static const unsigned int VAULTMP_F3                   =   0x2B3944CB;
-static const unsigned int VAULTMP_FNV                  =   0xF8819410;
-
-static const unsigned char FALLOUT3             =   0x01;
-static const unsigned char NEWVEGAS             =   FALLOUT3 << 1;
-static const unsigned char FALLOUT_GAMES        =   FALLOUT3 | NEWVEGAS;
-static const unsigned char ALL_GAMES            =   FALLOUT_GAMES;
+static const unsigned int XLIVE_PATCH                  =   0x0000D57E;
 
 static const unsigned int MAX_PLAYER_NAME       =   16;
 static const unsigned int MAX_PASSWORD_SIZE     =   16;

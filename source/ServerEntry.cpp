@@ -2,16 +2,6 @@
 
 using namespace std;
 
-ServerEntry::ServerEntry(unsigned char game) : name("Vault-Tec Multiplayer Mod server"), map("default"), ping(USHRT_MAX)
-{
-	SetGame(game);
-}
-
-ServerEntry::ServerEntry(const string& name, const string& map, const pair<unsigned int, unsigned int>& players, unsigned int ping, unsigned char game) : name(name), map(map), players(players), ping(ping)
-{
-	SetGame(game);
-}
-
 void ServerEntry::SetServerName(const string& name)
 {
 	this->name = name;
@@ -37,12 +27,6 @@ void ServerEntry::SetServerPlayers(const pair<unsigned int, unsigned int>& playe
 void ServerEntry::SetServerPing(unsigned int ping)
 {
 	this->ping = ping;
-}
-
-void ServerEntry::SetGame(unsigned char game)
-{
-	this->game = game;
-	this->SetServerRule("game", game == FALLOUT3 ? "Fallout 3" : game == NEWVEGAS ? "Fallout NV" : "undefined");
 }
 
 void ServerEntry::SetModFiles(const string& name)
@@ -73,11 +57,6 @@ const pair<unsigned int, unsigned int>& ServerEntry::GetServerPlayers()
 unsigned int ServerEntry::GetServerPing()
 {
 	return ping;
-}
-
-unsigned char ServerEntry::GetGame()
-{
-	return game;
 }
 
 const std::vector<string>& ServerEntry::GetServerModFiles()

@@ -8,7 +8,6 @@ GameFactory::ReferenceList GameFactory::instances;
 GameFactory::ReferenceIndex GameFactory::index;
 GameFactory::ReferenceCount GameFactory::typecount;
 GameFactory::ReferenceDeleted GameFactory::delrefs;
-unsigned char GameFactory::game = 0x00;
 bool GameFactory::changed = false;
 
 #ifdef VAULTMP_DEBUG
@@ -27,40 +26,18 @@ Database<DB::Item> GameFactory::dbItems;
 Database<DB::Terminal> GameFactory::dbTerminals;
 #endif
 
-void GameFactory::Initialize(unsigned char game)
+void GameFactory::Initialize()
 {
-	GameFactory::game = game;
-
 #ifdef VAULTSERVER
-	switch (game)
-	{
-		case FALLOUT3:
-			dbRecords.initialize(DB_FALLOUT3, {"CONT", "NPC_", "CREA", "LVLI", "ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "ENCH", "KEYM", "MISC", "NOTE", "WEAP", "CELL", "IDLE", "WTHR", "STAT", "MSTT", "RACE", "LIGH", "DOOR", "TERM"});
-			dbReferences.initialize(DB_FALLOUT3, {"refs_CONT", "refs_DOOR", "refs_TERM"});
-			dbExteriors.initialize(DB_FALLOUT3, {"exteriors"});
-			dbWeapons.initialize(DB_FALLOUT3, {"weapons"});
-			dbRaces.initialize(DB_FALLOUT3, {"races"});
-			dbNpcs.initialize(DB_FALLOUT3, {"npcs"});
-			dbContainers.initialize(DB_FALLOUT3, {"npcitems", "contitems"});
-			dbItems.initialize(DB_FALLOUT3, {"items"});
-			dbTerminals.initialize(DB_FALLOUT3, {"terminals"});
-			break;
-
-		case NEWVEGAS:
-			dbRecords.initialize(DB_NEWVEGAS, {"CONT", "NPC_", "CREA", "LVLI", "ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "CCRD", "CDCK", "CHIP", "CMNY", "ENCH", "IMOD", "KEYM", "MISC", "NOTE", "RCPE", "WEAP", "CELL", "IDLE", "WTHR", "STAT", "MSTT", "RACE", "LIGH", "DOOR", "TERM"});
-			dbReferences.initialize(DB_NEWVEGAS, {"refs_CONT", "refs_DOOR", "refs_TERM"});
-			dbExteriors.initialize(DB_NEWVEGAS, {"exteriors"});
-			dbWeapons.initialize(DB_NEWVEGAS, {"weapons"});
-			dbRaces.initialize(DB_NEWVEGAS, {"races"});
-			dbNpcs.initialize(DB_NEWVEGAS, {"npcs"});
-			dbContainers.initialize(DB_NEWVEGAS, {"npcitems", "contitems"});
-			dbItems.initialize(DB_NEWVEGAS, {"items"});
-			dbTerminals.initialize(DB_NEWVEGAS, {"terminals"});
-			break;
-
-		default:
-			throw VaultException("Bad game ID %08X", game).stacktrace();
-	}
+	dbRecords.initialize(DB_FALLOUT3, {"CONT", "NPC_", "CREA", "LVLI", "ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "ENCH", "KEYM", "MISC", "NOTE", "WEAP", "CELL", "IDLE", "WTHR", "STAT", "MSTT", "RACE", "LIGH", "DOOR", "TERM"});
+	dbReferences.initialize(DB_FALLOUT3, {"refs_CONT", "refs_DOOR", "refs_TERM"});
+	dbExteriors.initialize(DB_FALLOUT3, {"exteriors"});
+	dbWeapons.initialize(DB_FALLOUT3, {"weapons"});
+	dbRaces.initialize(DB_FALLOUT3, {"races"});
+	dbNpcs.initialize(DB_FALLOUT3, {"npcs"});
+	dbContainers.initialize(DB_FALLOUT3, {"npcitems", "contitems"});
+	dbItems.initialize(DB_FALLOUT3, {"items"});
+	dbTerminals.initialize(DB_FALLOUT3, {"terminals"});
 #endif
 }
 

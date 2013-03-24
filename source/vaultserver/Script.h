@@ -311,7 +311,6 @@ class Script
 			{"SetServerName", Dedicated::SetServerName},
 			{"SetServerMap", Dedicated::SetServerMap},
 			{"SetServerRule", Dedicated::SetServerRule},
-			{"GetGameCode", Dedicated::GetGameCode},
 			{"GetMaximumPlayers", Dedicated::GetMaximumPlayers},
 			{"GetCurrentPlayers", Dedicated::GetCurrentPlayers},
 

@@ -81,8 +81,6 @@ const char* player_name;
 const char* server_name;
 unsigned int inittime;
 bool multiinst;
-bool steam;
-unsigned char games;
 
 HWND CreateMainWindow();
 int RegisterClasses();
@@ -281,11 +279,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 								unsigned int crc;
 								Utils::crc32file("../Data/vaultmpF3.esp", &crc);
 
-								if (crc == VAULTMP_F3)
-								{
-									games |= FALLOUT3;
-								}
-								else
+								if (crc != VAULTMP_F3)
 									return MessageBox(nullptr, "vaultmpF3.esp is outdated or has been modified!", "Error", MB_OK | MB_ICONERROR);
 							}
 							else
@@ -306,57 +300,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 		else
 			return MessageBox(nullptr, "Your version of Fallout 3 is not supported!", "Error", MB_OK | MB_ICONERROR);
 	}
-
-	filecheck = fopen("../FalloutNV.exe", "rb");
-
-	if (filecheck != nullptr)
-	{
-		fclose(filecheck);
-		Utils::GenerateChecksum("../FalloutNV.exe", checksum, checksum_real);
-
-		if (checksum == NEWVEGAS_EN_VER14_STEAM)
-		{
-			steam = (checksum_real == NEWVEGAS_EN_VER14_STEAM);
-
-			filecheck = fopen("nvse_1_4_vmp.dll", "rb");
-
-			if (filecheck != nullptr)
-			{
-				fclose(filecheck);
-				Utils::GenerateChecksum("nvse_1_4_vmp.dll", checksum, checksum_real);
-
-				if (checksum_real == NVSE_VER0212)
-				{
-					filecheck = fopen("../Data/vaultmpFNV.esp", "rb");
-
-					if (filecheck != nullptr)
-					{
-						fclose(filecheck);
-						unsigned int crc;
-						Utils::crc32file("../Data/vaultmpFNV.esp", &crc);
-
-						if (crc == VAULTMP_FNV)
-						{
-							games |= NEWVEGAS;
-						}
-						else
-							return MessageBox(nullptr, "vaultmpFNV.esp is outdated or has been modified!", "Error", MB_OK | MB_ICONERROR);
-					}
-					else
-						return MessageBox(nullptr, "vaultmpFNV.esp is missing!", "Error", MB_OK | MB_ICONERROR);
-				}
-				else
-					return MessageBox(nullptr, "Your NVSE version is probably outdated!\nhttp://nvse.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
-			}
-			else
-				return MessageBox(nullptr, "Could not find NVSE!\nhttp://nvse.silverlock.org/", "Error", MB_OK | MB_ICONERROR);
-		}
-		else
-			return MessageBox(nullptr, "Your version of Fallout: New Vegas is not supported!", "Error", MB_OK | MB_ICONERROR);
-	}
-
-	if (!games)
-		return MessageBox(nullptr, "Could not find either Fallout 3 or Fallout: New Vegas!", "Error", MB_OK | MB_ICONERROR);
+	else
+		return MessageBox(nullptr, "Could not find Fallout 3!", "Error", MB_OK | MB_ICONERROR);
 
 	filecheck = fopen("vaultmp.dll", "rb");
 
@@ -404,7 +349,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 
 		addr.SetBinaryAddress(token);
 
-		ServerEntry entry(addr.ToString(true), "", make_pair(0u, 0u), USHRT_MAX, 0);
+		ServerEntry entry(addr.ToString(true), "", make_pair(0u, 0u), USHRT_MAX);
 
 		serverList.insert(pair<SystemAddress, ServerEntry>(addr, entry));
 
@@ -721,35 +666,11 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 								break;
 							}
 
-							map<SystemAddress, ServerEntry>::iterator i;
-							i = serverList.find(*selectedServer);
-
-							unsigned char game = (&i->second)->GetGame();
-
-							if ((games & game) != game || !game)
-							{
-								switch (game)
-								{
-									case FALLOUT3:
-										MessageBox(nullptr, "Could not find Fallout3.exe!", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
-										break;
-
-									case NEWVEGAS:
-										MessageBox(nullptr, "Could not find FalloutNV.exe!", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
-										break;
-
-									default:
-										break;
-								}
-
-								break;
-							}
-
 							MinimizeToTray(hwnd);
 
 							try
 							{
-								Bethesda::InitializeVaultMP(peer, addr, name, pwd, game, multiinst, game == NEWVEGAS ? steam : false, inittime);
+								Bethesda::InitializeVaultMP(peer, addr, name, pwd, multiinst, inittime);
 							}
 							catch (exception& e)
 							{
@@ -864,17 +785,15 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 												SystemAddress addr;
 												RakString name, map;
 												unsigned int players, playersMax, rsize, msize;
-												unsigned char game;
 
 												query.Read(addr);
 												query.Read(name);
 												query.Read(map);
 												query.Read(players);
 												query.Read(playersMax);
-												query.Read(game);
 												query.Read(rsize);
 
-												ServerEntry entry(name.C_String(), map.C_String(), make_pair(players, playersMax), USHRT_MAX, game);
+												ServerEntry entry(name.C_String(), map.C_String(), make_pair(players, playersMax), USHRT_MAX);
 
 												for (unsigned int j = 0; j < rsize; j++)
 												{
@@ -937,13 +856,11 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 											{
 												RakString name, map;
 												unsigned int players, playersMax, rsize, msize;
-												unsigned char game;
 
 												query.Read(name);
 												query.Read(map);
 												query.Read(players);
 												query.Read(playersMax);
-												query.Read(game);
 												query.Read(rsize);
 
 												ServerEntry* entry;
@@ -954,12 +871,11 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 													entry->SetServerName(name.C_String());
 													entry->SetServerMap(map.C_String());
 													entry->SetServerPlayers(make_pair(players, playersMax));
-													entry->SetGame(game);
 												}
 												else
 												{
 													std::pair<std::map<SystemAddress, ServerEntry>::iterator, bool> k;
-													k = serverList.insert(make_pair(addr, ServerEntry(name.C_String(), map.C_String(), make_pair(players, playersMax), USHRT_MAX, game)));
+													k = serverList.insert(make_pair(addr, ServerEntry(name.C_String(), map.C_String(), make_pair(players, playersMax), USHRT_MAX)));
 													entry = &(k.first)->second;
 												}
 
@@ -1038,9 +954,10 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 										}
 
 										case ID_INVALID_PASSWORD:
-											if (update) MessageBox(nullptr, "MasterServer version mismatch.\nPlease download the most recent binaries from www.vaultmp.com", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
-
-											else MessageBox(nullptr, "Dedicated server version mismatch.\nPlease download the most recent binaries from www.vaultmp.com", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
+											if (update)
+												MessageBox(nullptr, "MasterServer version mismatch.\nPlease download the most recent binaries from www.vaultmp.com", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
+											else
+												MessageBox(nullptr, "Dedicated server version mismatch.\nPlease download the most recent binaries from www.vaultmp.com", "Error", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_TASKMODAL);
 
 										case ID_DISCONNECTION_NOTIFICATION:
 										case ID_CONNECTION_BANNED:
@@ -1064,7 +981,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					/* RakNet File Transfer */
 
-					if (selectedServer != nullptr && serverList.find(*selectedServer)->second.GetGame())
+					if (selectedServer != nullptr)
 					{
 						EnableWindow(wndsync, 0);
 

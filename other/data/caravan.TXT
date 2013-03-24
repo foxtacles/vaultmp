@@ -1,7 +1,0 @@
-TXST|0x1735dd|1stPreordCaravanShotgunTexture|
-SCPT|0x172a25|VPreorderCaravanSCRIPT|
-ARMO|0x1735e0|PreordArmorLeather|Lightweight Leather Armor
-STAT|0x1735dc|1stPreordCaravanShotgun|
-WEAP|0x1735e3|WeapPreordCaravanShotgun|Sturdy Caravan Shotgun
-QUST|0x172a1e|VPreorderCaravan|
-MESG|0x174775|PreorderMessageInventoryCaravan|Caravan Pack

@@ -1,7 +1,0 @@
-TXST|0x1735df|1stPreordGrenadeRifleTexture|
-SCPT|0x172a24|VPreorderMercenarySCRIPT|
-ARMO|0x1735e1|PreordArmorMetal|Lightweight Metal Armor
-STAT|0x1735de|1stPreordGrenadeRifle|
-WEAP|0x1735e4|WeapPreordGrenadeRifle|Mercenary's Grenade Rifle
-QUST|0x172a1d|VPreorderMercenary|
-MESG|0x174776|PreorderMessageInventoryMercenary|Mercenary Pack

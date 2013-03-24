@@ -47,11 +47,6 @@ void Dedicated::SetServerRule(const char* rule, const char* value)
 	self->SetServerRule(rule, value);
 }
 
-unsigned char Dedicated::GetGameCode()
-{
-	return self->GetGame();
-}
-
 unsigned int Dedicated::GetCurrentPlayers()
 {
 	return self->GetServerPlayers().first;
@@ -77,14 +72,12 @@ void Dedicated::Announce(bool announce)
 			RakString _map(self->GetServerMap().c_str());
 			unsigned int players = self->GetServerPlayers().first;
 			unsigned int playersMax = self->GetServerPlayers().second;
-			unsigned char game = self->GetGame();
 			const map<string, string>& rules = self->GetServerRules();
 
 			query.Write(name);
 			query.Write(_map);
 			query.Write(players);
 			query.Write(playersMax);
-			query.Write(game);
 			query.Write(rules.size());
 
 			for (const auto& i : rules)
@@ -140,14 +133,12 @@ void Dedicated::Query(Packet* packet)
 		RakString _map(self->GetServerMap().c_str());
 		unsigned int players = self->GetServerPlayers().first;
 		unsigned int playersMax = self->GetServerPlayers().second;
-		unsigned char game = self->GetGame();
 		const map<string, string>& rules = self->GetServerRules();
 
 		query.Write(name);
 		query.Write(_map);
 		query.Write(players);
 		query.Write(playersMax);
-		query.Write(game);
 		query.Write(rules.size());
 
 		for (const auto& i : rules)
@@ -272,7 +263,7 @@ void Dedicated::DedicatedThread()
 #ifdef VAULTMP_DEBUG
 	Debug::SetDebugHandler("vaultserver");
 	debug.note("Vault-Tec Multiplayer Mod dedicated server debug log (", DEDICATED_VERSION, ")");
-	debug.note("Local host: ", peer->GetMyBoundAddress().ToString(), " (", self->GetGame() == FALLOUT3 ? "Fallout 3" : "Fallout New Vegas", ")");
+	debug.note("Local host: ", peer->GetMyBoundAddress().ToString());
 	debug.note("Visit www.vaultmp.com for help and upload this log if you experience problems with the mod.");
 	debug.note("-----------------------------------------------------------------------------------------------------");
 #endif
@@ -281,8 +272,8 @@ void Dedicated::DedicatedThread()
 	{
 		Packet* packet;
 
-		GameFactory::Initialize(self->GetGame());
-		API::Initialize(self->GetGame());
+		GameFactory::Initialize();
+		API::Initialize();
 		Client::SetMaximumClients(connections);
 		Network::Flush();
 

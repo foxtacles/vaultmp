@@ -19,14 +19,7 @@
 	#define VAULTSPACE vaultmp::
 	#define VAULTCPP(expr) expr
 	#define VAULTC(expr)
-	#if defined(GAME_NEWVEGAS)
-		#define VAULTGAME FNV::
-	#elif defined(GAME_FALLOUT3)
-		#define VAULTGAME F3::
-	#else
-		#define VAULTGAME
-		#define VAULTWEAKTYPING
-	#endif
+	#define VAULTGAME F3::
 #else
 	#include <stdint.h>
 	#include <limits.h>
@@ -299,11 +292,7 @@ namespace vaultmp {
 #include "records.h"
 
 #ifdef __cplusplus
-	#if defined(GAME_NEWVEGAS)
-		using namespace FNV;
-	#elif defined(GAME_FALLOUT3)
-		using namespace F3;
-	#endif
+	using namespace F3;
 #endif
 
 VAULTCPP(})
@@ -349,7 +338,6 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetServerName))(VAULTSPACE cRawString) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetServerMap))(VAULTSPACE cRawString) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetServerRule))(VAULTSPACE cRawString, VAULTSPACE cRawString) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE Index (*VAULTAPI(GetGameCode))() VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetMaximumPlayers))() VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetCurrentPlayers))() VAULTCPP(noexcept);
 
@@ -544,7 +532,6 @@ namespace vaultmp
 	VAULTFUNCTION Void SetServerRule(const String& key, cRawString value) noexcept { return VAULTAPI(SetServerRule)(key.c_str(), value); }
 	VAULTFUNCTION Void SetServerRule(cRawString key, const String& value) noexcept { return VAULTAPI(SetServerRule)(key, value.c_str()); }
 	VAULTFUNCTION Void SetServerRule(cRawString key, cRawString value) noexcept { return VAULTAPI(SetServerRule)(key, value); }
-	VAULTFUNCTION Index GetGameCode() noexcept { return VAULTAPI(GetGameCode)(); }
 	VAULTFUNCTION UCount GetMaximumPlayers() noexcept { return VAULTAPI(GetMaximumPlayers)(); }
 	VAULTFUNCTION UCount GetCurrentPlayers() noexcept { return VAULTAPI(GetCurrentPlayers)(); }
 

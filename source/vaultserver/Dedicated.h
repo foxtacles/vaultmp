@@ -118,10 +118,6 @@ class Dedicated
 		 */
 		static void SetSpawnCell(unsigned int cell);
 		/**
-		 * \brief Returns the game code of the dedicated server
-		 */
-		static unsigned char GetGameCode();
-		/**
 		 * \brief Returns the current number of player connections
 		 */
 		static unsigned int GetCurrentPlayers();

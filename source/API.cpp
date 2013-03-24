@@ -9,7 +9,6 @@ API::ValueMap API::axis;
 API::ValueMap API::anims;
 API::ValueList API::controls;
 API::CommandQueue API::queue;
-unsigned char API::game = 0x00;
 
 #ifdef VAULTMP_DEBUG
 DebugInput<API> API::debug;
@@ -114,7 +113,7 @@ struct API::op_Arg5
 
 	op_Arg5()
 	{
-		unk1 = (game & FALLOUT3) ? 0x00DD3D0C : 0x01037094;
+		unk1 = 0x00DD3D0C;
 		unk2 = 0x00000000;
 		unk3 = 0x0000400A;
 		unk4 = 0x00000000;
@@ -210,368 +209,310 @@ struct API::op_default
 
 #pragma pack(pop)
 
-void API::Initialize(unsigned char game)
+void API::Initialize()
 {
-	API::game = game;
 	srand(time(nullptr));
 
-	DefineAxisString("X", Axis_X, ALL_GAMES);
-	DefineAxisString("Y", Axis_Y, ALL_GAMES);
-	DefineAxisString("Z", Axis_Z, ALL_GAMES);
+	DefineAxisString("X", Axis_X);
+	DefineAxisString("Y", Axis_Y);
+	DefineAxisString("Z", Axis_Z);
 
-	DefineAnimString("Idle", AnimGroup_Idle, ALL_GAMES);
-	DefineAnimString("DynamicIdle", AnimGroup_DynamicIdle, ALL_GAMES);
-	DefineAnimString("SpecialIdle", AnimGroup_SpecialIdle, ALL_GAMES);
-	DefineAnimString("Forward", AnimGroup_Forward, ALL_GAMES);
-	DefineAnimString("Backward", AnimGroup_Backward, ALL_GAMES);
-	DefineAnimString("Left", AnimGroup_Left, ALL_GAMES);
-	DefineAnimString("Right", AnimGroup_Right, ALL_GAMES);
-	DefineAnimString("FastForward", AnimGroup_FastForward, ALL_GAMES);
-	DefineAnimString("FastBackward", AnimGroup_FastBackward, ALL_GAMES);
-	DefineAnimString("FastLeft", AnimGroup_FastLeft, ALL_GAMES);
-	DefineAnimString("FastRight", AnimGroup_FastRight, ALL_GAMES);
-	DefineAnimString("DodgeForward", AnimGroup_DodgeForward, ALL_GAMES);
-	DefineAnimString("DodgeBack", AnimGroup_DodgeBack, ALL_GAMES);
-	DefineAnimString("DodgeLeft", AnimGroup_DodgeLeft, ALL_GAMES);
-	DefineAnimString("DodgeRight", AnimGroup_DodgeRight, ALL_GAMES);
-	DefineAnimString("TurnLeft", AnimGroup_TurnLeft, ALL_GAMES);
-	DefineAnimString("TurnRight", AnimGroup_TurnRight, ALL_GAMES);
-	DefineAnimString("Aim", AnimGroup_Aim, ALL_GAMES);
-	DefineAnimString("AimUp", AnimGroup_AimUp, ALL_GAMES);
-	DefineAnimString("AimDown", AnimGroup_AimDown, ALL_GAMES);
-	DefineAnimString("AimIS", AnimGroup_AimIS, ALL_GAMES);
-	DefineAnimString("AimISUp", AnimGroup_AimISUp, ALL_GAMES);
-	DefineAnimString("AimISDown", AnimGroup_AimISDown, ALL_GAMES);
-	DefineAnimString("AttackLeft", AnimGroup_AttackLeft, ALL_GAMES);
-	DefineAnimString("AttackLeftUp", AnimGroup_AttackLeftUp, ALL_GAMES);
-	DefineAnimString("AttackLeftDown", AnimGroup_AttackLeftDown, ALL_GAMES);
-	DefineAnimString("AttackLeftIS", AnimGroup_AttackLeftIS, ALL_GAMES);
-	DefineAnimString("AttackLeftISUp", AnimGroup_AttackLeftISUp, ALL_GAMES);
-	DefineAnimString("AttackLeftISDown", AnimGroup_AttackLeftISDown, ALL_GAMES);
-	DefineAnimString("AttackRight", AnimGroup_AttackRight, ALL_GAMES);
-	DefineAnimString("AttackRightUp", AnimGroup_AttackRightUp, ALL_GAMES);
-	DefineAnimString("AttackRightDown", AnimGroup_AttackRightDown, ALL_GAMES);
-	DefineAnimString("AttackRightIS", AnimGroup_AttackRightIS, ALL_GAMES);
-	DefineAnimString("AttackRightISUp", AnimGroup_AttackRightISUp, ALL_GAMES);
-	DefineAnimString("AttackRightISDown", AnimGroup_AttackRightISDown, ALL_GAMES);
-	DefineAnimString("Attack3", AnimGroup_Attack3, ALL_GAMES);
-	DefineAnimString("Attack3Up", AnimGroup_Attack3Up, ALL_GAMES);
-	DefineAnimString("Attack3Down", AnimGroup_Attack3Down, ALL_GAMES);
-	DefineAnimString("Attack3IS", AnimGroup_Attack3IS, ALL_GAMES);
-	DefineAnimString("Attack3ISUp", AnimGroup_Attack3ISUp, ALL_GAMES);
-	DefineAnimString("Attack3ISDown", AnimGroup_Attack3ISDown, ALL_GAMES);
-	DefineAnimString("Attack4", AnimGroup_Attack4, ALL_GAMES);
-	DefineAnimString("Attack4Up", AnimGroup_Attack4Up, ALL_GAMES);
-	DefineAnimString("Attack4Down", AnimGroup_Attack4Down, ALL_GAMES);
-	DefineAnimString("Attack4IS", AnimGroup_Attack4IS, ALL_GAMES);
-	DefineAnimString("Attack4ISUp", AnimGroup_Attack4ISUp, ALL_GAMES);
-	DefineAnimString("Attack4ISDown", AnimGroup_Attack4ISDown, ALL_GAMES);
-	DefineAnimString("Attack5", AnimGroup_Attack5, ALL_GAMES);
-	DefineAnimString("Attack5Up", AnimGroup_Attack5Up, ALL_GAMES);
-	DefineAnimString("Attack5Down", AnimGroup_Attack5Down, ALL_GAMES);
-	DefineAnimString("Attack5IS", AnimGroup_Attack5IS, ALL_GAMES);
-	DefineAnimString("Attack5ISUp", AnimGroup_Attack5ISUp, ALL_GAMES);
-	DefineAnimString("Attack5ISDown", AnimGroup_Attack5ISDown, ALL_GAMES);
-	DefineAnimString("Attack6", AnimGroup_Attack6, ALL_GAMES);
-	DefineAnimString("Attack6Up", AnimGroup_Attack6Up, ALL_GAMES);
-	DefineAnimString("Attack6Down", AnimGroup_Attack6Down, ALL_GAMES);
-	DefineAnimString("Attack6IS", AnimGroup_Attack6IS, ALL_GAMES);
-	DefineAnimString("Attack6ISUp", AnimGroup_Attack6ISUp, ALL_GAMES);
-	DefineAnimString("Attack6ISDown", AnimGroup_Attack6ISDown, ALL_GAMES);
-	DefineAnimString("Attack7", AnimGroup_Attack7, ALL_GAMES);
-	DefineAnimString("Attack7Up", AnimGroup_Attack7Up, ALL_GAMES);
-	DefineAnimString("Attack7Down", AnimGroup_Attack7Down, ALL_GAMES);
-	DefineAnimString("Attack7IS", AnimGroup_Attack7IS, ALL_GAMES);
-	DefineAnimString("Attack7ISUp", AnimGroup_Attack7ISUp, ALL_GAMES);
-	DefineAnimString("Attack7ISDown", AnimGroup_Attack7ISDown, ALL_GAMES);
-	DefineAnimString("Attack8", AnimGroup_Attack8, ALL_GAMES);
-	DefineAnimString("Attack8Up", AnimGroup_Attack8Up, ALL_GAMES);
-	DefineAnimString("Attack8Down", AnimGroup_Attack8Down, ALL_GAMES);
-	DefineAnimString("Attack8IS", AnimGroup_Attack8IS, ALL_GAMES);
-	DefineAnimString("Attack8ISUp", AnimGroup_Attack8ISUp, ALL_GAMES);
-	DefineAnimString("Attack8ISDown", AnimGroup_Attack8ISDown, ALL_GAMES);
-	DefineAnimString("AttackLoop", AnimGroup_AttackLoop, ALL_GAMES);
-	DefineAnimString("AttackLoopUp", AnimGroup_AttackLoopUp, ALL_GAMES);
-	DefineAnimString("AttackLoopDown", AnimGroup_AttackLoopDown, ALL_GAMES);
-	DefineAnimString("AttackLoopIS", AnimGroup_AttackLoopIS, ALL_GAMES);
-	DefineAnimString("AttackLoopISUp", AnimGroup_AttackLoopISUp, ALL_GAMES);
-	DefineAnimString("AttackLoopISDown", AnimGroup_AttackLoopISDown, ALL_GAMES);
-	DefineAnimString("AttackSpin", AnimGroup_AttackSpin, ALL_GAMES);
-	DefineAnimString("AttackSpinUp", AnimGroup_AttackSpinUp, ALL_GAMES);
-	DefineAnimString("AttackSpinDown", AnimGroup_AttackSpinDown, ALL_GAMES);
-	DefineAnimString("AttackSpinIS", AnimGroup_AttackSpinIS, ALL_GAMES);
-	DefineAnimString("AttackSpinISUp", AnimGroup_AttackSpinISUp, ALL_GAMES);
-	DefineAnimString("AttackSpinISDown", AnimGroup_AttackSpinISDown, ALL_GAMES);
-	DefineAnimString("AttackSpin2", AnimGroup_AttackSpin2, ALL_GAMES);
-	DefineAnimString("AttackSpin2Up", AnimGroup_AttackSpin2Up, ALL_GAMES);
-	DefineAnimString("AttackSpin2Down", AnimGroup_AttackSpin2Down, ALL_GAMES);
-	DefineAnimString("AttackSpin2IS", AnimGroup_AttackSpin2IS, ALL_GAMES);
-	DefineAnimString("AttackSpin2ISUp", AnimGroup_AttackSpin2ISUp, ALL_GAMES);
-	DefineAnimString("AttackSpin2ISDown", AnimGroup_AttackSpin2ISDown, ALL_GAMES);
-	DefineAnimString("AttackPower", AnimGroup_AttackPower, ALL_GAMES);
-	DefineAnimString("AttackForwardPower", AnimGroup_AttackForwardPower, ALL_GAMES);
-	DefineAnimString("AttackBackPower", AnimGroup_AttackBackPower, ALL_GAMES);
-	DefineAnimString("AttackLeftPower", AnimGroup_AttackLeftPower, ALL_GAMES);
-	DefineAnimString("AttackRightPower", AnimGroup_AttackRightPower, ALL_GAMES);
-	DefineAnimString("Holster", AnimGroup_Holster, ALL_GAMES);
-	DefineAnimString("Equip", AnimGroup_Equip, ALL_GAMES);
-	DefineAnimString("Unequip", AnimGroup_Unequip, ALL_GAMES);
+	DefineAnimString("Idle", AnimGroup_Idle);
+	DefineAnimString("DynamicIdle", AnimGroup_DynamicIdle);
+	DefineAnimString("SpecialIdle", AnimGroup_SpecialIdle);
+	DefineAnimString("Forward", AnimGroup_Forward);
+	DefineAnimString("Backward", AnimGroup_Backward);
+	DefineAnimString("Left", AnimGroup_Left);
+	DefineAnimString("Right", AnimGroup_Right);
+	DefineAnimString("FastForward", AnimGroup_FastForward);
+	DefineAnimString("FastBackward", AnimGroup_FastBackward);
+	DefineAnimString("FastLeft", AnimGroup_FastLeft);
+	DefineAnimString("FastRight", AnimGroup_FastRight);
+	DefineAnimString("DodgeForward", AnimGroup_DodgeForward);
+	DefineAnimString("DodgeBack", AnimGroup_DodgeBack);
+	DefineAnimString("DodgeLeft", AnimGroup_DodgeLeft);
+	DefineAnimString("DodgeRight", AnimGroup_DodgeRight);
+	DefineAnimString("TurnLeft", AnimGroup_TurnLeft);
+	DefineAnimString("TurnRight", AnimGroup_TurnRight);
+	DefineAnimString("Aim", AnimGroup_Aim);
+	DefineAnimString("AimUp", AnimGroup_AimUp);
+	DefineAnimString("AimDown", AnimGroup_AimDown);
+	DefineAnimString("AimIS", AnimGroup_AimIS);
+	DefineAnimString("AimISUp", AnimGroup_AimISUp);
+	DefineAnimString("AimISDown", AnimGroup_AimISDown);
+	DefineAnimString("AttackLeft", AnimGroup_AttackLeft);
+	DefineAnimString("AttackLeftUp", AnimGroup_AttackLeftUp);
+	DefineAnimString("AttackLeftDown", AnimGroup_AttackLeftDown);
+	DefineAnimString("AttackLeftIS", AnimGroup_AttackLeftIS);
+	DefineAnimString("AttackLeftISUp", AnimGroup_AttackLeftISUp);
+	DefineAnimString("AttackLeftISDown", AnimGroup_AttackLeftISDown);
+	DefineAnimString("AttackRight", AnimGroup_AttackRight);
+	DefineAnimString("AttackRightUp", AnimGroup_AttackRightUp);
+	DefineAnimString("AttackRightDown", AnimGroup_AttackRightDown);
+	DefineAnimString("AttackRightIS", AnimGroup_AttackRightIS);
+	DefineAnimString("AttackRightISUp", AnimGroup_AttackRightISUp);
+	DefineAnimString("AttackRightISDown", AnimGroup_AttackRightISDown);
+	DefineAnimString("Attack3", AnimGroup_Attack3);
+	DefineAnimString("Attack3Up", AnimGroup_Attack3Up);
+	DefineAnimString("Attack3Down", AnimGroup_Attack3Down);
+	DefineAnimString("Attack3IS", AnimGroup_Attack3IS);
+	DefineAnimString("Attack3ISUp", AnimGroup_Attack3ISUp);
+	DefineAnimString("Attack3ISDown", AnimGroup_Attack3ISDown);
+	DefineAnimString("Attack4", AnimGroup_Attack4);
+	DefineAnimString("Attack4Up", AnimGroup_Attack4Up);
+	DefineAnimString("Attack4Down", AnimGroup_Attack4Down);
+	DefineAnimString("Attack4IS", AnimGroup_Attack4IS);
+	DefineAnimString("Attack4ISUp", AnimGroup_Attack4ISUp);
+	DefineAnimString("Attack4ISDown", AnimGroup_Attack4ISDown);
+	DefineAnimString("Attack5", AnimGroup_Attack5);
+	DefineAnimString("Attack5Up", AnimGroup_Attack5Up);
+	DefineAnimString("Attack5Down", AnimGroup_Attack5Down);
+	DefineAnimString("Attack5IS", AnimGroup_Attack5IS);
+	DefineAnimString("Attack5ISUp", AnimGroup_Attack5ISUp);
+	DefineAnimString("Attack5ISDown", AnimGroup_Attack5ISDown);
+	DefineAnimString("Attack6", AnimGroup_Attack6);
+	DefineAnimString("Attack6Up", AnimGroup_Attack6Up);
+	DefineAnimString("Attack6Down", AnimGroup_Attack6Down);
+	DefineAnimString("Attack6IS", AnimGroup_Attack6IS);
+	DefineAnimString("Attack6ISUp", AnimGroup_Attack6ISUp);
+	DefineAnimString("Attack6ISDown", AnimGroup_Attack6ISDown);
+	DefineAnimString("Attack7", AnimGroup_Attack7);
+	DefineAnimString("Attack7Up", AnimGroup_Attack7Up);
+	DefineAnimString("Attack7Down", AnimGroup_Attack7Down);
+	DefineAnimString("Attack7IS", AnimGroup_Attack7IS);
+	DefineAnimString("Attack7ISUp", AnimGroup_Attack7ISUp);
+	DefineAnimString("Attack7ISDown", AnimGroup_Attack7ISDown);
+	DefineAnimString("Attack8", AnimGroup_Attack8);
+	DefineAnimString("Attack8Up", AnimGroup_Attack8Up);
+	DefineAnimString("Attack8Down", AnimGroup_Attack8Down);
+	DefineAnimString("Attack8IS", AnimGroup_Attack8IS);
+	DefineAnimString("Attack8ISUp", AnimGroup_Attack8ISUp);
+	DefineAnimString("Attack8ISDown", AnimGroup_Attack8ISDown);
+	DefineAnimString("AttackLoop", AnimGroup_AttackLoop);
+	DefineAnimString("AttackLoopUp", AnimGroup_AttackLoopUp);
+	DefineAnimString("AttackLoopDown", AnimGroup_AttackLoopDown);
+	DefineAnimString("AttackLoopIS", AnimGroup_AttackLoopIS);
+	DefineAnimString("AttackLoopISUp", AnimGroup_AttackLoopISUp);
+	DefineAnimString("AttackLoopISDown", AnimGroup_AttackLoopISDown);
+	DefineAnimString("AttackSpin", AnimGroup_AttackSpin);
+	DefineAnimString("AttackSpinUp", AnimGroup_AttackSpinUp);
+	DefineAnimString("AttackSpinDown", AnimGroup_AttackSpinDown);
+	DefineAnimString("AttackSpinIS", AnimGroup_AttackSpinIS);
+	DefineAnimString("AttackSpinISUp", AnimGroup_AttackSpinISUp);
+	DefineAnimString("AttackSpinISDown", AnimGroup_AttackSpinISDown);
+	DefineAnimString("AttackSpin2", AnimGroup_AttackSpin2);
+	DefineAnimString("AttackSpin2Up", AnimGroup_AttackSpin2Up);
+	DefineAnimString("AttackSpin2Down", AnimGroup_AttackSpin2Down);
+	DefineAnimString("AttackSpin2IS", AnimGroup_AttackSpin2IS);
+	DefineAnimString("AttackSpin2ISUp", AnimGroup_AttackSpin2ISUp);
+	DefineAnimString("AttackSpin2ISDown", AnimGroup_AttackSpin2ISDown);
+	DefineAnimString("AttackPower", AnimGroup_AttackPower);
+	DefineAnimString("AttackForwardPower", AnimGroup_AttackForwardPower);
+	DefineAnimString("AttackBackPower", AnimGroup_AttackBackPower);
+	DefineAnimString("AttackLeftPower", AnimGroup_AttackLeftPower);
+	DefineAnimString("AttackRightPower", AnimGroup_AttackRightPower);
+	DefineAnimString("Holster", AnimGroup_Holster);
+	DefineAnimString("Equip", AnimGroup_Equip);
+	DefineAnimString("Unequip", AnimGroup_Unequip);
 
-	DefineAnimString("JumpStart", Fallout3::AnimGroup_JumpStart, FALLOUT3);
-	DefineAnimString("JumpLoop", Fallout3::AnimGroup_JumpLoop, FALLOUT3);
-	DefineAnimString("JumpLand", Fallout3::AnimGroup_JumpLand, FALLOUT3);
-	DefineAnimString("JumpLoopForward", Fallout3::AnimGroup_JumpLoopForward, FALLOUT3);
-	DefineAnimString("JumpLoopBackward", Fallout3::AnimGroup_JumpLoopBackward, FALLOUT3);
-	DefineAnimString("JumpLoopLeft", Fallout3::AnimGroup_JumpLoopLeft, FALLOUT3);
-	DefineAnimString("JumpLoopRight", Fallout3::AnimGroup_JumpLoopRight, FALLOUT3);
-	DefineAnimString("JumpLandForward", Fallout3::AnimGroup_JumpLandForward, FALLOUT3);
-	DefineAnimString("JumpLandBackward", Fallout3::AnimGroup_JumpLandBackward, FALLOUT3);
-	DefineAnimString("JumpLandLeft", Fallout3::AnimGroup_JumpLandLeft, FALLOUT3);
-	DefineAnimString("JumpLandRight", Fallout3::AnimGroup_JumpLandRight, FALLOUT3);
-	DefineAnimString("BlockIdle", Fallout3::AnimGroup_BlockIdle, FALLOUT3);
-	DefineAnimString("BlockHit", Fallout3::AnimGroup_BlockHit, FALLOUT3);
-	DefineAnimString("ReloadA", Fallout3::AnimGroup_ReloadA, FALLOUT3);
-	DefineAnimString("ReloadB", Fallout3::AnimGroup_ReloadB, FALLOUT3);
-	DefineAnimString("ReloadC", Fallout3::AnimGroup_ReloadC, FALLOUT3);
-	DefineAnimString("ReloadD", Fallout3::AnimGroup_ReloadD, FALLOUT3);
-	DefineAnimString("ReloadE", Fallout3::AnimGroup_ReloadE, FALLOUT3);
-	DefineAnimString("ReloadF", Fallout3::AnimGroup_ReloadF, FALLOUT3);
-	DefineAnimString("ReloadG", Fallout3::AnimGroup_ReloadG, FALLOUT3);
-	DefineAnimString("ReloadH", Fallout3::AnimGroup_ReloadH, FALLOUT3);
-	DefineAnimString("ReloadI", Fallout3::AnimGroup_ReloadI, FALLOUT3);
-	DefineAnimString("ReloadJ", Fallout3::AnimGroup_ReloadJ, FALLOUT3);
-	DefineAnimString("ReloadK", Fallout3::AnimGroup_ReloadK, FALLOUT3);
+	DefineAnimString("JumpStart", AnimGroup_JumpStart);
+	DefineAnimString("JumpLoop", AnimGroup_JumpLoop);
+	DefineAnimString("JumpLand", AnimGroup_JumpLand);
+	DefineAnimString("JumpLoopForward", AnimGroup_JumpLoopForward);
+	DefineAnimString("JumpLoopBackward", AnimGroup_JumpLoopBackward);
+	DefineAnimString("JumpLoopLeft", AnimGroup_JumpLoopLeft);
+	DefineAnimString("JumpLoopRight", AnimGroup_JumpLoopRight);
+	DefineAnimString("JumpLandForward", AnimGroup_JumpLandForward);
+	DefineAnimString("JumpLandBackward", AnimGroup_JumpLandBackward);
+	DefineAnimString("JumpLandLeft", AnimGroup_JumpLandLeft);
+	DefineAnimString("JumpLandRight", AnimGroup_JumpLandRight);
+	DefineAnimString("BlockIdle", AnimGroup_BlockIdle);
+	DefineAnimString("BlockHit", AnimGroup_BlockHit);
+	DefineAnimString("ReloadA", AnimGroup_ReloadA);
+	DefineAnimString("ReloadB", AnimGroup_ReloadB);
+	DefineAnimString("ReloadC", AnimGroup_ReloadC);
+	DefineAnimString("ReloadD", AnimGroup_ReloadD);
+	DefineAnimString("ReloadE", AnimGroup_ReloadE);
+	DefineAnimString("ReloadF", AnimGroup_ReloadF);
+	DefineAnimString("ReloadG", AnimGroup_ReloadG);
+	DefineAnimString("ReloadH", AnimGroup_ReloadH);
+	DefineAnimString("ReloadI", AnimGroup_ReloadI);
+	DefineAnimString("ReloadJ", AnimGroup_ReloadJ);
+	DefineAnimString("ReloadK", AnimGroup_ReloadK);
 
-	DefineAnimString("JumpStart", FalloutNV::AnimGroup_JumpStart, NEWVEGAS);
-	DefineAnimString("JumpLoop", FalloutNV::AnimGroup_JumpLoop, NEWVEGAS);
-	DefineAnimString("JumpLand", FalloutNV::AnimGroup_JumpLand, NEWVEGAS);
-	DefineAnimString("JumpLoopForward", FalloutNV::AnimGroup_JumpLoopForward, NEWVEGAS);
-	DefineAnimString("JumpLoopBackward", FalloutNV::AnimGroup_JumpLoopBackward, NEWVEGAS);
-	DefineAnimString("JumpLoopLeft", FalloutNV::AnimGroup_JumpLoopLeft, NEWVEGAS);
-	DefineAnimString("JumpLoopRight", FalloutNV::AnimGroup_JumpLoopRight, NEWVEGAS);
-	DefineAnimString("JumpLandForward", FalloutNV::AnimGroup_JumpLandForward, NEWVEGAS);
-	DefineAnimString("JumpLandBackward", FalloutNV::AnimGroup_JumpLandBackward, NEWVEGAS);
-	DefineAnimString("JumpLandLeft", FalloutNV::AnimGroup_JumpLandLeft, NEWVEGAS);
-	DefineAnimString("JumpLandRight", FalloutNV::AnimGroup_JumpLandRight, NEWVEGAS);
-	DefineAnimString("BlockIdle", FalloutNV::AnimGroup_BlockIdle, NEWVEGAS);
-	DefineAnimString("BlockHit", FalloutNV::AnimGroup_BlockHit, NEWVEGAS);
-	DefineAnimString("ReloadWStart", FalloutNV::AnimGroup_ReloadWStart, NEWVEGAS);
-	DefineAnimString("ReloadXStart", FalloutNV::AnimGroup_ReloadXStart, NEWVEGAS);
-	DefineAnimString("ReloadYStart", FalloutNV::AnimGroup_ReloadYStart, NEWVEGAS);
-	DefineAnimString("ReloadZStart", FalloutNV::AnimGroup_ReloadZStart, NEWVEGAS);
-	DefineAnimString("ReloadA", FalloutNV::AnimGroup_ReloadA, NEWVEGAS);
-	DefineAnimString("ReloadB", FalloutNV::AnimGroup_ReloadB, NEWVEGAS);
-	DefineAnimString("ReloadC", FalloutNV::AnimGroup_ReloadC, NEWVEGAS);
-	DefineAnimString("ReloadD", FalloutNV::AnimGroup_ReloadD, NEWVEGAS);
-	DefineAnimString("ReloadE", FalloutNV::AnimGroup_ReloadE, NEWVEGAS);
-	DefineAnimString("ReloadF", FalloutNV::AnimGroup_ReloadF, NEWVEGAS);
-	DefineAnimString("ReloadG", FalloutNV::AnimGroup_ReloadG, NEWVEGAS);
-	DefineAnimString("ReloadH", FalloutNV::AnimGroup_ReloadH, NEWVEGAS);
-	DefineAnimString("ReloadI", FalloutNV::AnimGroup_ReloadI, NEWVEGAS);
-	DefineAnimString("ReloadJ", FalloutNV::AnimGroup_ReloadJ, NEWVEGAS);
-	DefineAnimString("ReloadK", FalloutNV::AnimGroup_ReloadK, NEWVEGAS);
-	DefineAnimString("ReloadL", FalloutNV::AnimGroup_ReloadL, NEWVEGAS);
-	DefineAnimString("ReloadM", FalloutNV::AnimGroup_ReloadM, NEWVEGAS);
-	DefineAnimString("ReloadN", FalloutNV::AnimGroup_ReloadN, NEWVEGAS);
-	DefineAnimString("ReloadO", FalloutNV::AnimGroup_ReloadO, NEWVEGAS);
-	DefineAnimString("ReloadP", FalloutNV::AnimGroup_ReloadP, NEWVEGAS);
-	DefineAnimString("ReloadQ", FalloutNV::AnimGroup_ReloadQ, NEWVEGAS);
-	DefineAnimString("ReloadR", FalloutNV::AnimGroup_ReloadR, NEWVEGAS);
-	DefineAnimString("ReloadS", FalloutNV::AnimGroup_ReloadS, NEWVEGAS);
-	DefineAnimString("ReloadW", FalloutNV::AnimGroup_ReloadW, NEWVEGAS);
-	DefineAnimString("ReloadX", FalloutNV::AnimGroup_ReloadX, NEWVEGAS);
-	DefineAnimString("ReloadY", FalloutNV::AnimGroup_ReloadY, NEWVEGAS);
-	DefineAnimString("ReloadZ", FalloutNV::AnimGroup_ReloadZ, NEWVEGAS);
+	DefineValueString("Aggression", ActorVal_Aggression);
+	DefineValueString("Confidence", ActorVal_Confidence);
+	DefineValueString("Energy", ActorVal_Energy);
+	DefineValueString("Responsibility", ActorVal_Responsibility);
+	DefineValueString("Mood", ActorVal_Mood);
+	DefineValueString("Strength", ActorVal_Strength);
+	DefineValueString("Perception", ActorVal_Perception);
+	DefineValueString("Endurance", ActorVal_Endurance);
+	DefineValueString("Charisma", ActorVal_Charisma);
+	DefineValueString("Intelligence", ActorVal_Intelligence);
+	DefineValueString("Agility", ActorVal_Agility);
+	DefineValueString("Luck", ActorVal_Luck);
+	DefineValueString("ActionPoints", ActorVal_ActionPoints);
+	DefineValueString("CarryWeight", ActorVal_CarryWeight);
+	DefineValueString("CritChance", ActorVal_CritChance);
+	DefineValueString("HealRate", ActorVal_HealRate);
+	DefineValueString("Health", ActorVal_Health);
+	DefineValueString("MeleeDamage", ActorVal_MeleeDamage);
+	DefineValueString("DamageResist", ActorVal_DamageResistance);
+	DefineValueString("PoisonResist", ActorVal_PoisonResistance);
+	DefineValueString("RadResist", ActorVal_RadResistance);
+	DefineValueString("SpeedMult", ActorVal_SpeedMultiplier);
+	DefineValueString("Fatigue", ActorVal_Fatigue);
+	DefineValueString("Karma", ActorVal_Karma);
+	DefineValueString("XP", ActorVal_XP);
+	DefineValueString("PerceptionCondition", ActorVal_Head);
+	DefineValueString("EnduranceCondition", ActorVal_Torso);
+	DefineValueString("LeftAttackCondition", ActorVal_LeftArm);
+	DefineValueString("RightAttackCondition", ActorVal_RightArm);
+	DefineValueString("LeftMobilityCondition", ActorVal_LeftLeg);
+	DefineValueString("RightMobilityCondition", ActorVal_RightLeg);
+	DefineValueString("BrainCondition", ActorVal_Brain);
+	DefineValueString("Barter", ActorVal_Barter);
+	DefineValueString("BigGuns", ActorVal_BigGuns);
+	DefineValueString("EnergyWeapons", ActorVal_EnergyWeapons);
+	DefineValueString("Explosives", ActorVal_Explosives);
+	DefineValueString("Lockpick", ActorVal_Lockpick);
+	DefineValueString("Medicine", ActorVal_Medicine);
+	DefineValueString("MeleeWeapons", ActorVal_MeleeWeapons);
+	DefineValueString("Repair", ActorVal_Repair);
+	DefineValueString("Science", ActorVal_Science);
+	DefineValueString("SmallGuns", ActorVal_SmallGuns);
+	DefineValueString("Sneak", ActorVal_Sneak);
+	DefineValueString("Speech", ActorVal_Speech);
+	//DefineValueString("Throwing", ActorVal_Throwing);
+	DefineValueString("Unarmed", ActorVal_Unarmed);
+	DefineValueString("InventoryWeight", ActorVal_InventoryWeight);
+	DefineValueString("Paralysis", ActorVal_Paralysis);
+	DefineValueString("Invisibility", ActorVal_Invisibility);
+	DefineValueString("Chameleon", ActorVal_Chameleon);
+	DefineValueString("NightEye", ActorVal_NightEye);
+	DefineValueString("DetectLifeRange", ActorVal_DetectLifeRange);
+	DefineValueString("FireResist", ActorVal_FireResistance);
+	DefineValueString("WaterBreathing", ActorVal_WaterBreathing);
+	DefineValueString("RadiationRads", ActorVal_RadLevel);
+	DefineValueString("BloodyMess", ActorVal_BloodyMess);
+	DefineValueString("UnarmedDamage", ActorVal_UnarmedDamage);
+	DefineValueString("Assistance", ActorVal_Assistance);
+	DefineValueString("EnergyResist", ActorVal_EnergyResistance);
+	DefineValueString("EMPResist", ActorVal_EMPResistance);
+	DefineValueString("Variable01", ActorVal_Var1Medical);
+	DefineValueString("Variable02", ActorVal_Variable02);
+	DefineValueString("Variable03", ActorVal_Variable03);
+	DefineValueString("Variable04", ActorVal_Variable04);
+	DefineValueString("Variable05", ActorVal_Variable05);
+	DefineValueString("Variable06", ActorVal_Variable06);
+	DefineValueString("Variable07", ActorVal_Variable07);
+	DefineValueString("Variable08", ActorVal_Variable08);
+	DefineValueString("Variable09", ActorVal_Variable09);
+	DefineValueString("Variable10", ActorVal_Variable10);
+	DefineValueString("IgnoreCrippledLimbs", ActorVal_IgnoreCrippledLimbs);
 
-	DefineValueString("Aggression", ActorVal_Aggression, FALLOUT_GAMES);
-	DefineValueString("Confidence", ActorVal_Confidence, FALLOUT_GAMES);
-	DefineValueString("Energy", ActorVal_Energy, FALLOUT_GAMES);
-	DefineValueString("Responsibility", ActorVal_Responsibility, FALLOUT_GAMES);
-	DefineValueString("Mood", ActorVal_Mood, FALLOUT_GAMES);
-	DefineValueString("Strength", ActorVal_Strength, FALLOUT_GAMES);
-	DefineValueString("Perception", ActorVal_Perception, FALLOUT_GAMES);
-	DefineValueString("Endurance", ActorVal_Endurance, FALLOUT_GAMES);
-	DefineValueString("Charisma", ActorVal_Charisma, FALLOUT_GAMES);
-	DefineValueString("Intelligence", ActorVal_Intelligence, FALLOUT_GAMES);
-	DefineValueString("Agility", ActorVal_Agility, FALLOUT_GAMES);
-	DefineValueString("Luck", ActorVal_Luck, FALLOUT_GAMES);
-	DefineValueString("ActionPoints", ActorVal_ActionPoints, FALLOUT_GAMES);
-	DefineValueString("CarryWeight", ActorVal_CarryWeight, FALLOUT_GAMES);
-	DefineValueString("CritChance", ActorVal_CritChance, FALLOUT_GAMES);
-	DefineValueString("HealRate", ActorVal_HealRate, FALLOUT_GAMES);
-	DefineValueString("Health", ActorVal_Health, FALLOUT_GAMES);
-	DefineValueString("MeleeDamage", ActorVal_MeleeDamage, FALLOUT_GAMES);
-	DefineValueString("DamageResist", ActorVal_DamageResistance, FALLOUT_GAMES);
-	DefineValueString("PoisonResist", ActorVal_PoisonResistance, FALLOUT_GAMES);
-	DefineValueString("RadResist", ActorVal_RadResistance, FALLOUT_GAMES);
-	DefineValueString("SpeedMult", ActorVal_SpeedMultiplier, FALLOUT_GAMES);
-	DefineValueString("Fatigue", ActorVal_Fatigue, FALLOUT_GAMES);
-	DefineValueString("Karma", ActorVal_Karma, FALLOUT_GAMES);
-	DefineValueString("XP", ActorVal_XP, FALLOUT_GAMES);
-	DefineValueString("PerceptionCondition", ActorVal_Head, FALLOUT_GAMES);
-	DefineValueString("EnduranceCondition", ActorVal_Torso, FALLOUT_GAMES);
-	DefineValueString("LeftAttackCondition", ActorVal_LeftArm, FALLOUT_GAMES);
-	DefineValueString("RightAttackCondition", ActorVal_RightArm, FALLOUT_GAMES);
-	DefineValueString("LeftMobilityCondition", ActorVal_LeftLeg, FALLOUT_GAMES);
-	DefineValueString("RightMobilityCondition", ActorVal_RightLeg, FALLOUT_GAMES);
-	DefineValueString("BrainCondition", ActorVal_Brain, FALLOUT_GAMES);
-	DefineValueString("Barter", ActorVal_Barter, FALLOUT_GAMES);
-	DefineValueString("BigGuns", ActorVal_BigGuns, FALLOUT_GAMES);
-	DefineValueString("EnergyWeapons", ActorVal_EnergyWeapons, FALLOUT_GAMES);
-	DefineValueString("Explosives", ActorVal_Explosives, FALLOUT_GAMES);
-	DefineValueString("Lockpick", ActorVal_Lockpick, FALLOUT_GAMES);
-	DefineValueString("Medicine", ActorVal_Medicine, FALLOUT_GAMES);
-	DefineValueString("MeleeWeapons", ActorVal_MeleeWeapons, FALLOUT_GAMES);
-	DefineValueString("Repair", ActorVal_Repair, FALLOUT_GAMES);
-	DefineValueString("Science", ActorVal_Science, FALLOUT_GAMES);
-	DefineValueString("SmallGuns", ActorVal_SmallGuns, FALLOUT_GAMES);
-	DefineValueString("Sneak", ActorVal_Sneak, FALLOUT_GAMES);
-	DefineValueString("Speech", ActorVal_Speech, FALLOUT_GAMES);
-	//DefineValueString("Throwing", ActorVal_Throwing, FALLOUT_GAMES);
-	DefineValueString("Unarmed", ActorVal_Unarmed, FALLOUT_GAMES);
-	DefineValueString("InventoryWeight", ActorVal_InventoryWeight, FALLOUT_GAMES);
-	DefineValueString("Paralysis", ActorVal_Paralysis, FALLOUT_GAMES);
-	DefineValueString("Invisibility", ActorVal_Invisibility, FALLOUT_GAMES);
-	DefineValueString("Chameleon", ActorVal_Chameleon, FALLOUT_GAMES);
-	DefineValueString("NightEye", ActorVal_NightEye, FALLOUT_GAMES);
-	DefineValueString("DetectLifeRange", ActorVal_DetectLifeRange, FALLOUT_GAMES);
-	DefineValueString("FireResist", ActorVal_FireResistance, FALLOUT_GAMES);
-	DefineValueString("WaterBreathing", ActorVal_WaterBreathing, FALLOUT_GAMES);
-	DefineValueString("RadiationRads", ActorVal_RadLevel, FALLOUT_GAMES);
-	DefineValueString("BloodyMess", ActorVal_BloodyMess, FALLOUT_GAMES);
-	DefineValueString("UnarmedDamage", ActorVal_UnarmedDamage, FALLOUT_GAMES);
-	DefineValueString("Assistance", ActorVal_Assistance, FALLOUT_GAMES);
-	DefineValueString("EnergyResist", ActorVal_EnergyResistance, FALLOUT_GAMES);
-	DefineValueString("EMPResist", ActorVal_EMPResistance, FALLOUT_GAMES);
-	DefineValueString("Variable01", ActorVal_Var1Medical, FALLOUT_GAMES);
-	DefineValueString("Variable02", ActorVal_Variable02, FALLOUT_GAMES);
-	DefineValueString("Variable03", ActorVal_Variable03, FALLOUT_GAMES);
-	DefineValueString("Variable04", ActorVal_Variable04, FALLOUT_GAMES);
-	DefineValueString("Variable05", ActorVal_Variable05, FALLOUT_GAMES);
-	DefineValueString("Variable06", ActorVal_Variable06, FALLOUT_GAMES);
-	DefineValueString("Variable07", ActorVal_Variable07, FALLOUT_GAMES);
-	DefineValueString("Variable08", ActorVal_Variable08, FALLOUT_GAMES);
-	DefineValueString("Variable09", ActorVal_Variable09, FALLOUT_GAMES);
-	DefineValueString("Variable10", ActorVal_Variable10, FALLOUT_GAMES);
-	DefineValueString("IgnoreCrippledLimbs", ActorVal_IgnoreCrippledLimbs, FALLOUT_GAMES);
+	DefineControl(ControlCode_Forward);
+	DefineControl(ControlCode_Backward);
+	DefineControl(ControlCode_Left);
+	DefineControl(ControlCode_Right);
+	DefineControl(ControlCode_Attack);
+	DefineControl(ControlCode_Activate);
+	DefineControl(ControlCode_Block);
+	DefineControl(ControlCode_ReadyItem);
+	DefineControl(ControlCode_Crouch);
+	DefineControl(ControlCode_Run);
+	DefineControl(ControlCode_AlwaysRun);
+	DefineControl(ControlCode_AutoMove);
+	DefineControl(ControlCode_Jump);
+	DefineControl(ControlCode_TogglePOV);
+	DefineControl(ControlCode_MenuMode);
+	DefineControl(ControlCode_Rest);
+	DefineControl(ControlCode_VATS);
+	DefineControl(ControlCode_Hotkey1);
+	DefineControl(ControlCode_Hotkey2);
+	DefineControl(ControlCode_Hotkey3);
+	DefineControl(ControlCode_Hotkey4);
+	DefineControl(ControlCode_Hotkey5);
+	DefineControl(ControlCode_Hotkey6);
+	DefineControl(ControlCode_Hotkey7);
+	DefineControl(ControlCode_Hotkey8);
+	DefineControl(ControlCode_Quicksave);
+	DefineControl(ControlCode_Quickload);
+	DefineControl(ControlCode_Grab);
 
-	DefineControl(ControlCode_Forward, FALLOUT_GAMES);
-	DefineControl(ControlCode_Backward, FALLOUT_GAMES);
-	DefineControl(ControlCode_Left, FALLOUT_GAMES);
-	DefineControl(ControlCode_Right, FALLOUT_GAMES);
-	DefineControl(ControlCode_Attack, FALLOUT_GAMES);
-	DefineControl(ControlCode_Activate, FALLOUT_GAMES);
-	DefineControl(ControlCode_Block, FALLOUT_GAMES);
-	DefineControl(ControlCode_ReadyItem, FALLOUT_GAMES);
-	DefineControl(ControlCode_Crouch, FALLOUT_GAMES);
-	DefineControl(ControlCode_Run, FALLOUT_GAMES);
-	DefineControl(ControlCode_AlwaysRun, FALLOUT_GAMES);
-	DefineControl(ControlCode_AutoMove, FALLOUT_GAMES);
-	DefineControl(ControlCode_Jump, FALLOUT_GAMES);
-	DefineControl(ControlCode_TogglePOV, FALLOUT_GAMES);
-	DefineControl(ControlCode_MenuMode, FALLOUT_GAMES);
-	DefineControl(ControlCode_Rest, FALLOUT_GAMES);
-	DefineControl(ControlCode_VATS, FALLOUT_GAMES);
-	DefineControl(ControlCode_Hotkey1, FALLOUT_GAMES);
-	DefineControl(ControlCode_Hotkey2, FALLOUT_GAMES);
-	DefineControl(ControlCode_Hotkey3, FALLOUT_GAMES);
-	DefineControl(ControlCode_Hotkey4, FALLOUT_GAMES);
-	DefineControl(ControlCode_Hotkey5, FALLOUT_GAMES);
-	DefineControl(ControlCode_Hotkey6, FALLOUT_GAMES);
-	DefineControl(ControlCode_Hotkey7, FALLOUT_GAMES);
-	DefineControl(ControlCode_Hotkey8, FALLOUT_GAMES);
-	DefineControl(ControlCode_Quicksave, FALLOUT_GAMES);
-	DefineControl(ControlCode_Quickload, FALLOUT_GAMES);
-	DefineControl(ControlCode_Grab, FALLOUT_GAMES);
+	DefineFunction("GetPos", "ra", Func_GetPos);
+	DefineFunction("SetPos", "rad", Func_SetPos);
+	DefineFunction("GetAngle", "ra", Func_GetAngle);
+	DefineFunction("SetAngle", "rad", Func_SetAngle);
+	DefineFunction("GetBaseActorValue", "rv", Func_GetBaseActorValue);
+	DefineFunction("SetActorValue", "rvi", Func_SetActorValue);
+	DefineFunction("GetActorValue", "rv", Func_GetActorValue);
+	DefineFunction("ForceActorValue", "rvi", Func_ForceActorValue);
+	DefineFunction("GetDead", "r", Func_GetDead);
+	DefineFunction("MoveTo", "roDDD", Func_MoveTo);
+	DefineFunction("PlaceAtMe", "rbIII", Func_PlaceAtMe);
+	DefineFunction("PlaceAtMeHealthPercent", "rbdIII", Func_PlaceAtMeHealthPercent);
+	DefineFunction("SetRestrained", "ri", Func_SetRestrained);
+	DefineFunction("PlayGroup", "rgi", Func_PlayGroup);
+	DefineFunction("SetAlert", "ri", Func_SetAlert);
+	DefineFunction("RemoveAllItems", "rCI", Func_RemoveAllItems);
+	DefineFunction("GetCombatTarget", "r", Func_GetCombatTarget);
+	DefineFunction("SetForceSneak", "ri", Func_SetForceSneak);
+	DefineFunction("GetActorState", "rI", Func_GetActorState);
+	DefineFunction("ChatMessage", "s", Func_Chat);
+	DefineFunction("ChatUpdate", "iidddd", Func_Chatbox);
+	DefineFunction("Enable", "rI", Func_Enable);
+	DefineFunction("Disable", "rI", Func_Disable);
+	DefineFunction("EquipItem", "rjII", Func_EquipItem);
+	DefineFunction("UnequipItem", "rjII", Func_UnequipItem);
+	DefineFunction("AddItem", "rkiI", Func_AddItem);
+	DefineFunction("AddItemHealthPercent", "rjidI", Func_AddItemHealthPercent);
+	DefineFunction("RemoveItem", "rkiI", Func_RemoveItem);
+	DefineFunction("Kill", "rQII", Func_Kill);
+	DefineFunction("IsMoving", "r", Func_IsMoving);
+	DefineFunction("MarkForDelete", "r", Func_MarkForDelete);
+	DefineFunction("IsAnimPlaying", "rG", Func_IsAnimPlaying);
+	DefineFunction("FireWeapon", "r$b", Func_FireWeapon);
+	DefineFunction("GetCauseofDeath", "r", Func_GetCauseofDeath);
+	DefineFunction("IsLimbGone", "ri", Func_IsLimbGone);
+	DefineFunction("EnablePlayerControls", "IIIIIII", Func_EnablePlayerControls);
+	DefineFunction("DisablePlayerControls", "$IIIIIII", Func_DisablePlayerControls); // $ required, else access violation...
+	DefineFunction("DamageActorValue", "rvd", Func_DamageActorValue);
+	DefineFunction("RestoreActorValue", "rvd", Func_RestoreActorValue);
+	DefineFunction("PlayIdle", "rs", Func_PlayIdle);
+	DefineFunction("AgeRace", "r$i", Func_AgeRace);
+	DefineFunction("MatchRace", "r$y", Func_MatchRace); // has been patched to take Race
+	DefineFunction("SexChange", "r$I", Func_SexChange);
+	DefineFunction("ForceWeather", "nI", Func_ForceWeather);
+	DefineFunction("ScanContainer", "r", Func_ScanContainer);
+	DefineFunction("RemoveAllItemsEx", "r", Func_RemoveAllItemsEx);
+	DefineFunction("ForceRespawn", "", Func_ForceRespawn);
+	DefineFunction("SetGlobalValue", "ri", Func_SetGlobalValue);
+	DefineFunction("UIMessage", "si", Func_UIMessage);
+	DefineFunction("Lock", "rII", Func_Lock);
+	DefineFunction("Unlock", "r", Func_Unlock);
+	DefineFunction("SetOwnership", "rF", Func_SetOwnership);
+	DefineFunction("GetLocked", "r", Func_GetLocked);
+	DefineFunction("CenterOnCell", "$s", Func_CenterOnCell);
+	DefineFunction("CenterOnExterior", "$ii", Func_CenterOnExterior);
+	DefineFunction("SetINISetting", "$ss", Func_SetINISetting);
 
-	DefineFunction("GetPos", "ra", Func_GetPos, ALL_GAMES);
-	DefineFunction("SetPos", "rad", Func_SetPos, ALL_GAMES);
-	DefineFunction("GetAngle", "ra", Func_GetAngle, ALL_GAMES);
-	DefineFunction("SetAngle", "rad", Func_SetAngle, ALL_GAMES);
-	DefineFunction("GetBaseActorValue", "rv", Func_GetBaseActorValue, ALL_GAMES);
-	DefineFunction("SetActorValue", "rvi", Func_SetActorValue, ALL_GAMES);
-	DefineFunction("GetActorValue", "rv", Func_GetActorValue, ALL_GAMES);
-	DefineFunction("ForceActorValue", "rvi", Func_ForceActorValue, ALL_GAMES);
-	DefineFunction("GetDead", "r", Func_GetDead, ALL_GAMES);
-	DefineFunction("MoveTo", "roDDD", Func_MoveTo, ALL_GAMES);
-	DefineFunction("PlaceAtMe", "rbIII", Func_PlaceAtMe, ALL_GAMES);
-	DefineFunction("PlaceAtMeHealthPercent", "rbdIII", Func_PlaceAtMeHealthPercent, ALL_GAMES);
-	DefineFunction("SetRestrained", "ri", Func_SetRestrained, ALL_GAMES);
-	DefineFunction("PlayGroup", "rgi", Func_PlayGroup, ALL_GAMES);
-	DefineFunction("SetAlert", "ri", Func_SetAlert, ALL_GAMES);
-	DefineFunction("RemoveAllItems", "rCI", Func_RemoveAllItems, ALL_GAMES);
-	DefineFunction("GetCombatTarget", "r", Func_GetCombatTarget, ALL_GAMES);
-	DefineFunction("SetForceSneak", "ri", Func_SetForceSneak, ALL_GAMES);
-	DefineFunction("GetActorState", "rI", Func_GetActorState, ALL_GAMES);
-	DefineFunction("ChatMessage", "s", Func_Chat, ALL_GAMES);
-	DefineFunction("ChatUpdate", "iidddd", Func_Chatbox, ALL_GAMES);
-	DefineFunction("Enable", "rI", Func_Enable, FALLOUT_GAMES);
-	DefineFunction("Disable", "rI", Func_Disable, FALLOUT_GAMES);
-	DefineFunction("EquipItem", "rjII", Func_EquipItem, FALLOUT_GAMES);
-	DefineFunction("UnequipItem", "rjII", Func_UnequipItem, FALLOUT_GAMES);
-	DefineFunction("AddItem", "rkiI", Func_AddItem, FALLOUT_GAMES);
-	DefineFunction("AddItemHealthPercent", "rjidI", Func_AddItemHealthPercent, FALLOUT_GAMES);
-	DefineFunction("RemoveItem", "rkiI", Func_RemoveItem, FALLOUT_GAMES);
-	DefineFunction("Kill", "rQII", Func_Kill, FALLOUT_GAMES);
-	DefineFunction("IsMoving", "r", Func_IsMoving, FALLOUT_GAMES);
-	DefineFunction("MarkForDelete", "r", Func_MarkForDelete, FALLOUT_GAMES);
-	DefineFunction("IsAnimPlaying", "rG", Func_IsAnimPlaying, FALLOUT_GAMES);
-	DefineFunction("FireWeapon", "r$b", Func_FireWeapon, FALLOUT_GAMES);
-	DefineFunction("GetCauseofDeath", "r", Func_GetCauseofDeath, FALLOUT_GAMES);
-	DefineFunction("IsLimbGone", "ri", Func_IsLimbGone, FALLOUT_GAMES);
-	DefineFunction("EnablePlayerControls", "IIIIIII", Func_EnablePlayerControls, FALLOUT_GAMES);
-	DefineFunction("DisablePlayerControls", "$IIIIIII", Func_DisablePlayerControls, FALLOUT_GAMES); // $ required, else access violation...
-	DefineFunction("DamageActorValue", "rvd", Func_DamageActorValue, FALLOUT_GAMES);
-	DefineFunction("RestoreActorValue", "rvd", Func_RestoreActorValue, FALLOUT_GAMES);
-	DefineFunction("PlayIdle", "rs", Func_PlayIdle, FALLOUT_GAMES);
-	DefineFunction("AgeRace", "r$i", Func_AgeRace, FALLOUT_GAMES);
-	DefineFunction("MatchRace", "r$y", Func_MatchRace, FALLOUT_GAMES); // has been patched to take Race
-	DefineFunction("SexChange", "r$I", Func_SexChange, FALLOUT_GAMES);
-	DefineFunction("ForceWeather", "nI", Func_ForceWeather, FALLOUT_GAMES);
-	DefineFunction("ScanContainer", "r", Func_ScanContainer, FALLOUT_GAMES);
-	DefineFunction("RemoveAllItemsEx", "r", Func_RemoveAllItemsEx, FALLOUT_GAMES);
-	DefineFunction("ForceRespawn", "", Func_ForceRespawn, FALLOUT_GAMES);
-	DefineFunction("SetGlobalValue", "ri", Func_SetGlobalValue, FALLOUT_GAMES);
-	DefineFunction("UIMessage", "si", Func_UIMessage, FALLOUT_GAMES);
-	DefineFunction("Lock", "rII", Func_Lock, FALLOUT_GAMES);
-	DefineFunction("Unlock", "r", Func_Unlock, FALLOUT_GAMES);
-	DefineFunction("SetOwnership", "rF", Func_SetOwnership, FALLOUT_GAMES);
-	DefineFunction("GetLocked", "r", Func_GetLocked, FALLOUT_GAMES);
-	DefineFunction("CenterOnCell", "$s", Func_CenterOnCell, FALLOUT_GAMES);
-	DefineFunction("CenterOnExterior", "$ii", Func_CenterOnExterior, FALLOUT_GAMES);
-	DefineFunction("SetINISetting", "$ss", Func_SetINISetting, FALLOUT_GAMES);
-
-	DefineFunction("Load", "$s", Fallout3::Func_Load, FALLOUT3);
-	DefineFunction("CenterOnWorld", "$wii", Fallout3::Func_CenterOnWorld, FALLOUT3);
-	DefineFunction("SetName", "rsB", Fallout3::Func_SetName, FALLOUT3);
-	DefineFunction("GetParentCell", "r", Fallout3::Func_GetParentCell, FALLOUT3);
-	DefineFunction("GetFirstRef", "III", Fallout3::Func_GetFirstRef, FALLOUT3);
-	DefineFunction("GetNextRef", "", Fallout3::Func_GetNextRef, FALLOUT3);
-	DefineFunction("GetControl", "x", Fallout3::Func_GetControl, FALLOUT3);
-	DefineFunction("DisableControl", "x", Fallout3::Func_DisableControl, FALLOUT3);
-	DefineFunction("EnableControl", "x", Fallout3::Func_EnableControl, FALLOUT3);
-	DefineFunction("DisableKey", "i", Fallout3::Func_DisableKey, FALLOUT3);
-	DefineFunction("EnableKey", "i", Fallout3::Func_EnableKey, FALLOUT3);
-	DefineFunction("GetRefCount", "r", Fallout3::Func_GetRefCount, FALLOUT3);
-	DefineFunction("SetRefCount", "ri", Fallout3::Func_SetRefCount, FALLOUT3);
-	DefineFunction("GetBaseObject", "r", Fallout3::Func_GetBaseObject, FALLOUT3);
-	DefineFunction("SetCurrentHealth", "rd", Fallout3::Func_SetCurrentHealth, FALLOUT3);
-
-	DefineFunction("Load", "$s", FalloutNV::Func_Load, NEWVEGAS);
-	DefineFunction("CenterOnWorld", "$wii", FalloutNV::Func_CenterOnWorld, NEWVEGAS);
-	DefineFunction("SetName", "rsB", FalloutNV::Func_SetName, NEWVEGAS);
-	DefineFunction("GetParentCell", "r", FalloutNV::Func_GetParentCell, NEWVEGAS);
-	DefineFunction("GetFirstRef", "III", FalloutNV::Func_GetFirstRef, NEWVEGAS);
-	DefineFunction("GetNextRef", "", FalloutNV::Func_GetNextRef, NEWVEGAS);
-	DefineFunction("GetControl", "x", FalloutNV::Func_GetControl, NEWVEGAS);
-	DefineFunction("DisableControl", "x", FalloutNV::Func_DisableControl, NEWVEGAS);
-	DefineFunction("EnableControl", "x", FalloutNV::Func_EnableControl, NEWVEGAS);
-	DefineFunction("DisableKey", "i", FalloutNV::Func_DisableKey, NEWVEGAS);
-	DefineFunction("EnableKey", "i", FalloutNV::Func_EnableKey, NEWVEGAS);
-	DefineFunction("GetRefCount", "r", FalloutNV::Func_GetRefCount, NEWVEGAS);
-	DefineFunction("SetRefCount", "ri", FalloutNV::Func_SetRefCount, NEWVEGAS);
-	DefineFunction("GetBaseObject", "r", FalloutNV::Func_GetBaseObject, NEWVEGAS);
-	DefineFunction("SetCurrentHealth", "rd", FalloutNV::Func_SetCurrentHealth, NEWVEGAS);
+	DefineFunction("Load", "$s", Func_Load);
+	DefineFunction("CenterOnWorld", "$wii", Func_CenterOnWorld);
+	DefineFunction("SetName", "rsB", Func_SetName);
+	DefineFunction("GetParentCell", "r", Func_GetParentCell);
+	DefineFunction("GetFirstRef", "III", Func_GetFirstRef);
+	DefineFunction("GetNextRef", "", Func_GetNextRef);
+	DefineFunction("GetControl", "x", Func_GetControl);
+	DefineFunction("DisableControl", "x", Func_DisableControl);
+	DefineFunction("EnableControl", "x", Func_EnableControl);
+	DefineFunction("DisableKey", "i", Func_DisableKey);
+	DefineFunction("EnableKey", "i", Func_EnableKey);
+	DefineFunction("GetRefCount", "r", Func_GetRefCount);
+	DefineFunction("SetRefCount", "ri", Func_SetRefCount);
+	DefineFunction("GetBaseObject", "r", Func_GetBaseObject);
+	DefineFunction("SetCurrentHealth", "rd", Func_SetCurrentHealth);
 }
 
 void API::Terminate()
@@ -913,37 +854,32 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 	return result_data;
 }
 
-void API::DefineFunction(const string& name, const string& def, unsigned short opcode, unsigned char games)
+void API::DefineFunction(const string& name, const string& def, unsigned short opcode)
 {
-	if (games & game)
-		functions.emplace(name, pair<string, unsigned short>(def, opcode));
+	functions.emplace(name, pair<string, unsigned short>(def, opcode));
 }
 
-void API::DefineValueString(const string& name, unsigned char value, unsigned char games)
+void API::DefineValueString(const string& name, unsigned char value)
 {
-	if (games & game)
-		values.emplace(name, value);
+	values.emplace(name, value);
 }
 
-void API::DefineAxisString(const string& name, unsigned char axis, unsigned char games)
+void API::DefineAxisString(const string& name, unsigned char axis)
 {
-	if (games & game)
-		API::axis.emplace(name, axis);
+	API::axis.emplace(name, axis);
 }
 
-void API::DefineAnimString(const string& name, unsigned char anim, unsigned char games)
+void API::DefineAnimString(const string& name, unsigned char anim)
 {
-	if (games & game)
-		anims.emplace(name, anim);
+	anims.emplace(name, anim);
 }
 
-void API::DefineControl(unsigned char control, unsigned char games)
+void API::DefineControl(unsigned char control)
 {
-	if (games & game)
-		controls.insert(control);
+	controls.insert(control);
 }
 
-unsigned char API::RetrieveValue(char* value)
+unsigned char API::RetrieveValue(const char* value)
 {
 	ValueMap::iterator it;
 	it = values.find(string(value));
@@ -954,7 +890,7 @@ unsigned char API::RetrieveValue(char* value)
 	return 0xFF;
 }
 
-unsigned char API::RetrieveAxis(char* axis)
+unsigned char API::RetrieveAxis(const char* axis)
 {
 	ValueMap::iterator it;
 	it = API::axis.find(string(axis));
@@ -965,7 +901,7 @@ unsigned char API::RetrieveAxis(char* axis)
 	return 0xFF;
 }
 
-unsigned char API::RetrieveAnim(char* anim)
+unsigned char API::RetrieveAnim(const char* anim)
 {
 	ValueMap::iterator it;
 	it = anims.find(string(anim));
@@ -1238,9 +1174,4 @@ vector<API::CommandResult> API::Translate(unsigned char* stream)
 		queue.pop_back();
 
 	return result;
-}
-
-unsigned char API::GetGameCode()
-{
-	return game;
 }

@@ -17,8 +17,7 @@ enum eEmotion
 };
 
 typedef void (*CallCommand)(void*, void*, void*, void*, void*, void*, void*, void*);
-typedef bool (*QueueUIMessage_Fallout3)(const char* msg, unsigned int emotion, const char* ddsPath, const char* soundName, float msgTime);
-typedef bool (*QueueUIMessage_FalloutNV)(const char* msg, unsigned int emotion, const char* ddsPath, const char* soundName, float msgTime, char unk);
+typedef bool (*QueueUIMessage)(const char* msg, unsigned int emotion, const char* ddsPath, const char* soundName, float msgTime);
 typedef unsigned int (*LookupForm)(unsigned int);
 typedef unsigned int (*LookupFunc)(unsigned int);
 typedef void (*Chatbox_AddToChat)(const char*);
@@ -39,24 +38,17 @@ static Chatbox_HideChatbox HideChatbox;
 static Chatbox_LockChatbox LockChatbox;
 static Chatbox_SetChatboxPos SetChatboxPos;
 static Chatbox_SetChatboxSize SetChatboxSize;
-static QueueUIMessage_Fallout3 QueueMessage_Fallout3;;
-static QueueUIMessage_FalloutNV QueueMessage_FalloutNV;
+static QueueUIMessage QueueMessage;
 
 static void PatchGame(HINSTANCE& silverlock);
 static void BethesdaDelegator();
 static void ToggleRespawn();
 static void RespawnDetour();
-static void AnimDetour_F3();
-static void PlayIdleDetour_F3();
-static void AnimDetour_FNV();
-static void PlayIdleDetour_FNV();
-static void AVFix_F3();
-static void AVFix_FNV();
+static void AnimDetour();
+static void PlayIdleDetour();
+static void AVFix();
 static vector<void*> delegated;
 
-typedef void (__stdcall * _GetSystemTimeAsFileTime)(LPFILETIME * fileTime);
-static _GetSystemTimeAsFileTime GetSystemTimeAsFileTime_Original = NULL;
-static _GetSystemTimeAsFileTime * _GetSystemTimeAsFileTime_IAT = NULL;
 static HINSTANCE silverlock = NULL;
 static HINSTANCE vaultgui = NULL;
 
@@ -65,67 +57,32 @@ static bool respawn = true;
 static bool DLLerror = false;
 static unsigned int anim = 0x00;
 static unsigned int* _anim = NULL;
-static unsigned char game = 0x00;
 
-
-//Game ready hook address
-static const unsigned FalloutNVPatch_gamereadyhook = 0x403e05;
-static const unsigned FalloutNVPatch_gamereadyvariable = 0x401015;
-
-
-static const unsigned FalloutNVpatch_disableNAM = 0x01018814;
-static const unsigned FalloutNVpatch_pluginsVMP = 0x0108282D;
-static const unsigned FalloutNVpatch_PlayGroup = 0x00494D5C;
-static const unsigned FalloutNVpatch_delegator_src = 0x0086B3E3;
-static const unsigned FalloutNVpatch_delegator_dest = 0x0086E649;
-static const unsigned FalloutNVpatch_delegatorCall_src = 0x0086E64A;
-static const unsigned FalloutNVpatch_delegatorCall_dest = (unsigned)& BethesdaDelegator;
-static const unsigned FalloutNVpatch_noRespawn_NOP = 0x00851304; // 2x NOP
-static const unsigned FalloutNVpatch_noRespawn_jmp = 0x0093FF83;
-static const unsigned FalloutNVpatch_noRespawn_call_src = 0x0093FF85;
-static const unsigned FalloutNVpatch_noRespawn_call_dest = 0x007D0A70;
-static const unsigned FalloutNVpatch_noRespawn_call_detour = (unsigned)& RespawnDetour;
-static const unsigned FalloutNVpatch_playIdle_call_src = 0x008D96BA;
-static const unsigned FalloutNVpatch_playIdle_call_dest = (unsigned)& AnimDetour_FNV;
-static const unsigned FalloutNVpatch_playIdle_fix_src = 0x005CB4F1;
-static const unsigned FalloutNVpatch_playIdle_fix_dest = (unsigned)& PlayIdleDetour_FNV;
-static const unsigned FalloutNVpatch_matchRace_NOP1 = 0x005DA85D;
-static const unsigned FalloutNVpatch_matchRace_NOP2 = 0x005DA8A8;
-static const unsigned FalloutNVpatch_matchRace_patch = 0x005DA8C4;
-static const unsigned FalloutNVpatch_matchRace_param = 0x0118D5C8;
-static const unsigned FalloutNVpatch_Lock = 0x005CC08B;
-static unsigned FalloutNVpatch_playIdle_fix_ret = 0x005CB4F6;
-static unsigned FalloutNVpatch_AVFix_src = 0x004AEC57;
-static unsigned FalloutNVpatch_AVFix_dest = (unsigned)& AVFix_FNV;
-static unsigned FalloutNVpatch_AVFix_ret = 0x004AEC5C;
-static unsigned FalloutNVpatch_AVFix_call = 0x0084E3A0;
-static unsigned FalloutNVpatch_AVFix_term = 0x004AEDCB;
-
-static const unsigned Fallout3patch_pluginsVMP = 0x00E10FF1;
-static const unsigned Fallout3patch_PlayGroup = 0x0045F704;
-static const unsigned Fallout3patch_delegator_src = 0x006EEC86;
-static const unsigned Fallout3patch_delegator_dest = 0x006EDBD9;
-static const unsigned Fallout3patch_delegatorCall_src = 0x006EDBDA;
-static const unsigned Fallout3patch_delegatorCall_dest = (unsigned)& BethesdaDelegator;
-static const unsigned Fallout3patch_noRespawn_NOP = 0x006D5965; // 2x NOP
-static const unsigned Fallout3patch_noRespawn_jmp_src = 0x0078B230;
-static const unsigned Fallout3patch_noRespawn_jmp_dest = 0x0078B2B9;
-static const unsigned Fallout3patch_noRespawn_jmp_detour = (unsigned)& RespawnDetour;
-static const unsigned Fallout3patch_playIdle_call_src = 0x0073BB20;
-static const unsigned Fallout3patch_playIdle_call_dest = (unsigned)& AnimDetour_F3;
-static const unsigned Fallout3patch_playIdle_fix_src = 0x00534D8D;
-static const unsigned Fallout3patch_playIdle_fix_dest = (unsigned)& PlayIdleDetour_F3;
-static const unsigned Fallout3patch_matchRace_NOP1 = 0x0052F4DD;
-static const unsigned Fallout3patch_matchRace_NOP2 = 0x0052F50F;
-static const unsigned Fallout3patch_matchRace_patch = 0x0052F513;
-static const unsigned Fallout3patch_matchRace_param = 0x00F51ADC;
-static const unsigned Fallout3patch_Lock = 0x00527F33;
-static unsigned Fallout3patch_AVFix_src = 0x00473D35;
-static unsigned Fallout3patch_AVFix_dest = (unsigned)& AVFix_F3;
-static unsigned Fallout3patch_AVFix_ret = 0x00473D3B;
-static unsigned Fallout3patch_AVFix_term = 0x00473E85;
-static unsigned Fallout3patch_FireFix_jmp = 0x0079236C;
-static unsigned Fallout3patch_FireFix_patch = 0x007923C5;
+static const unsigned pluginsVMP = 0x00E10FF1;
+static const unsigned PlayGroup = 0x0045F704;
+static const unsigned delegator_src = 0x006EEC86;
+static const unsigned delegator_dest = 0x006EDBD9;
+static const unsigned delegatorCall_src = 0x006EDBDA;
+static const unsigned delegatorCall_dest = (unsigned)& BethesdaDelegator;
+static const unsigned noRespawn_NOP = 0x006D5965; // 2x NOP
+static const unsigned noRespawn_jmp_src = 0x0078B230;
+static const unsigned noRespawn_jmp_dest = 0x0078B2B9;
+static const unsigned noRespawn_jmp_detour = (unsigned)& RespawnDetour;
+static const unsigned playIdle_call_src = 0x0073BB20;
+static const unsigned playIdle_call_dest = (unsigned)& AnimDetour;
+static const unsigned playIdle_fix_src = 0x00534D8D;
+static const unsigned playIdle_fix_dest = (unsigned)& PlayIdleDetour;
+static const unsigned matchRace_NOP1 = 0x0052F4DD;
+static const unsigned matchRace_NOP2 = 0x0052F50F;
+static const unsigned matchRace_patch = 0x0052F513;
+static const unsigned matchRace_param = 0x00F51ADC;
+static const unsigned Lock = 0x00527F33;
+static unsigned AVFix_src = 0x00473D35;
+static unsigned AVFix_dest = (unsigned)& AVFix;
+static unsigned AVFix_ret = 0x00473D3B;
+static unsigned AVFix_term = 0x00473E85;
+static unsigned FireFix_jmp = 0x0079236C;
+static unsigned FireFix_patch = 0x007923C5;
 
 // Those snippets / functions are from FOSE / NVSE, thanks
 
@@ -177,52 +134,6 @@ void WriteRelCall(unsigned int jumpSrc, unsigned int jumpTgt)
 	SafeWrite32(jumpSrc + 1, jumpTgt - jumpSrc - 1 - 4);
 }
 
-void * GetIATAddr(unsigned char * base, const char * searchDllName, const char * searchImportName)
-{
-	IMAGE_DOS_HEADER		* dosHeader = (IMAGE_DOS_HEADER *)base;
-	IMAGE_NT_HEADERS		* ntHeader = (IMAGE_NT_HEADERS *)(base + dosHeader->e_lfanew);
-	IMAGE_IMPORT_DESCRIPTOR	* importTable =
-		(IMAGE_IMPORT_DESCRIPTOR *)(base + ntHeader->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress);
-
-	for(; importTable->Characteristics; ++importTable)
-	{
-		const char	* dllName = (const char *)(base + importTable->Name);
-
-		if(!_stricmp(dllName, searchDllName))
-		{
-			// found the dll
-
-			IMAGE_THUNK_DATA	* thunkData = (IMAGE_THUNK_DATA *)(base + importTable->OriginalFirstThunk);
-			unsigned int				* iat = (unsigned int *)(base + importTable->FirstThunk);
-
-			for(; thunkData->u1.Ordinal; ++thunkData, ++iat)
-			{
-				if(!IMAGE_SNAP_BY_ORDINAL(thunkData->u1.Ordinal))
-				{
-					IMAGE_IMPORT_BY_NAME	* importInfo = (IMAGE_IMPORT_BY_NAME *)(base + thunkData->u1.AddressOfData);
-
-					if(!_stricmp((char *)importInfo->Name, searchImportName))
-					{
-						// found the import
-						return iat;
-					}
-				}
-			}
-
-			return NULL;
-		}
-	}
-
-	return NULL;
-}
-
-void __stdcall GetSystemTimeAsFileTime_Hook(LPFILETIME * fileTime)
-{
-	PatchGame(silverlock);
-
-	GetSystemTimeAsFileTime_Original(fileTime);
-}
-
 void BethesdaDelegator()
 {
 	if (delegate)
@@ -236,12 +147,9 @@ void BethesdaDelegator()
 void RespawnDetour()
 {
 	ToggleRespawn();
-
-	if (game == NEWVEGAS)
-		reinterpret_cast<void(*)()>(FalloutNVpatch_noRespawn_call_dest)();
 }
 
-void AnimDetour_F3()
+void AnimDetour()
 {
 	asm volatile(
 		"PUSH EAX\n"
@@ -264,7 +172,7 @@ void AnimDetour_F3()
 	);
 }
 
-void PlayIdleDetour_F3()
+void PlayIdleDetour()
 {
 	asm volatile(
 		"CMP DWORD PTR [EBP+0xC],0x14\n"
@@ -282,59 +190,7 @@ void PlayIdleDetour_F3()
 	);
 }
 
-void AnimDetour_FNV()
-{
-	asm volatile(
-		"PUSH ECX\n"
-		"LEA ECX,[EAX+0x424]\n"
-		"CMP ECX,%2\n"
-		"JNE _nopatch2\n"
-
-		"MOV ECX,%1\n"
-		"TEST ECX,ECX\n"
-		"JE _store\n"
-		"CMP ECX,0x100\n"
-		"JE _first\n"
-		"MOV %0,0\n"
-		"JMP _store\n"
-
-		"_first:\n"
-		"SHR ECX,1\n"
-		"MOV %0,ECX\n"
-		"JMP _store\n"
-
-		"_nopatch2:\n"
-		"XOR ECX,ECX\n"
-
-		"_store:\n"
-		"MOV [EAX+0x424],ECX\n"
-		"POP ECX\n"
-		: "=m"(anim)
-		: "m"(anim), "m"(_anim)
-		:
-	);
-}
-
-void PlayIdleDetour_FNV()
-{
-	asm volatile(
-		"CMP DWORD PTR [ECX+0xC],0x14\n"
-		"JNE _push2\n"
-		"MOV %0,0x100\n"
-		"MOV ECX,[EBP-0x220]\n"
-		"MOV %1,ECX\n"
-		"ADD %1,0x424\n"
-
-		"_push2:\n"
-		"PUSH 0x80\n"
-		"JMP %2\n"
-		: "=m"(anim), "=m"(_anim)
-		: "m"(FalloutNVpatch_playIdle_fix_ret)
-		:
-	);
-}
-
-void AVFix_F3()
+void AVFix()
 {
 	asm volatile(
 		"TEST ECX,ECX\n"
@@ -346,36 +202,7 @@ void AVFix_F3()
 		"MOV [ESP+0x34],EAX\n"
 		"JMP %0\n"
 		:
-		:  "m"(Fallout3patch_AVFix_ret), "m"(Fallout3patch_AVFix_term)
-		:
-	);
-}
-
-void GameReady_NV()
-{
-    asm volatile(
-        "mov [ebp-8],ecx\n"
-        "cmp ecx,0x0105bd68\n" //0101c524
-        "jne _notready\n"
-        "mov dword ptr [0x401015],0\n"
-        "_notready:\n"
-        "push 0x403e11\n"
-        "ret\n"
-    );
-}
-
-void AVFix_FNV()
-{
-	asm volatile(
-		"TEST ECX,ECX\n"
-		"JNE _doit2\n"
-		"JMP %2\n"
-
-		"_doit2:\n"
-		"CALL %0\n"
-		"JMP %1\n"
-		:
-		: "m"(FalloutNVpatch_AVFix_call), "m"(FalloutNVpatch_AVFix_ret), "m"(FalloutNVpatch_AVFix_term)
+		:  "m"(AVFix_ret), "m"(AVFix_term)
 		:
 	);
 }
@@ -413,13 +240,13 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 					"CALL %2\n"
 					"MOV %0,EAX\n"
 					: "=m"(data)
-					: "m"(reference), "r"((game & FALLOUT3) ? SNEAKING_STATE_FALLOUT3 : SNEAKING_STATE_NEWVEGAS)
+					: "m"(reference), "r"(SNEAKING_STATE)
 					: "eax", "ecx", "edx"
 				);
 
-				sneaking = (game & FALLOUT3 ? ((bool)((unsigned) data & 0x00000400)) : ((unsigned) data & 0x00000001));
+				sneaking = (bool)((unsigned) data & 0x00000400);
 
-				unsigned int data = *(unsigned int*) (anim + (game & FALLOUT3 ? 0x118 : 0x124));
+				unsigned int data = *(unsigned int*) (anim + 0x118);
 
 				if (data)
 				{
@@ -491,7 +318,7 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 				"CALL %2\n"
 				"MOV %0,EAX\n"
 				: "=m"(count)
-				: "m"(reference), "r"((game & FALLOUT3) ? ITEM_COUNT_FALLOUT3 : ITEM_COUNT_NEWVEGAS)
+				: "m"(reference), "r"(ITEM_COUNT)
 				: "eax", "ecx"
 			);
 
@@ -514,7 +341,7 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 						"CALL %3\n"
 						"MOV %0,EAX\n"
 						: "=m"(item)
-						: "r"(i), "m"(reference), "r"((game & FALLOUT3) ? ITEM_GET_FALLOUT3 : ITEM_GET_NEWVEGAS)
+						: "r"(i), "m"(reference), "r"(ITEM_GET)
 						: "eax", "ecx"
 					);
 
@@ -539,7 +366,7 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 								"CALL %2\n"
 								"MOV %0,EAX\n"
 								: "=m"(equipped)
-								: "m"(item), "r"((game & FALLOUT3) ? ITEM_ISEQUIPPED_FALLOUT3 : ITEM_ISEQUIPPED_NEWVEGAS)
+								: "m"(item), "r"(ITEM_ISEQUIPPED)
 								: "eax", "ecx"
 							);
 
@@ -559,45 +386,31 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 									"CALL %2\n"
 									"FSTP QWORD PTR %0\n"
 									: "=m"(condition)
-									: "m"(item), "r"((game & FALLOUT3) ? ITEM_CONDITION_FALLOUT3 : ITEM_CONDITION_NEWVEGAS)
+									: "m"(item), "r"(ITEM_CONDITION)
 									: "ecx"
 								);
 							}
 
 							container.insert(container.end(), (unsigned char*) &condition, ((unsigned char*) &condition) + 8);
 
-							if (game & FALLOUT3)
-							{
-							    asm (
-							        "MOV ECX,%0\n"
-							        "CALL %1\n"
-							        "PUSH %0\n"
-							        :
-							        : "m"(item), "r"(ITEM_UNK1_FALLOUT3)
-							        : "ecx"
-							    );
+							asm (
+								"MOV ECX,%0\n"
+								"CALL %1\n"
+								"PUSH %0\n"
+								:
+								: "m"(item), "r"(ITEM_UNK1)
+								: "ecx"
+							);
 
-								// the following is probably a free function
+							// the following is probably a free function
 
-							    asm (
-							        "MOV ECX,%0\n"
-							        "CALL %1\n"
-							        :
-							        : "r"(ITEM_UNK3_FALLOUT3), "r"(ITEM_UNK2_FALLOUT3)
-							        : "ecx"
-							    );
-							}
-							else
-							{
-							    asm (
-							        "MOV ECX,%0\n"
-							        "PUSH 1\n"
-							        "CALL %1\n"
-							        :
-							        : "m"(item), "r"(ITEM_UNK1_NEWVEGAS)
-							        : "ecx"
-							    );
-							}
+							asm (
+								"MOV ECX,%0\n"
+								"CALL %1\n"
+								:
+								: "r"(ITEM_UNK3), "r"(ITEM_UNK2)
+								: "ecx"
+							);
 						}
 						else
 							return true;
@@ -622,10 +435,7 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 
 			unsigned int emoticon = *(unsigned int*)(data + strlen(data) + 2);
 
-			if (game & FALLOUT3)
-				QueueMessage_Fallout3(data, emoticon, NULL, NULL, 2.0); // add more later
-			else
-				QueueMessage_FalloutNV(data, emoticon, NULL, NULL, 2.0, 0); // add more later
+			QueueMessage(data, emoticon, NULL, NULL, 2.0); // add more later
 
 			break;
 		}
@@ -690,12 +500,12 @@ void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
 	if (*((unsigned int*) args[1]) == 0x0001001C)
 	{
 		opcode = *((unsigned short*)(((unsigned) args[1]) + 4));
-		_args = (void*)(((unsigned) args[1]) + 4 + 2 + 2 + 2);            // skip 0001001C, opcode, unk2, numargs
+		_args = (void*)(((unsigned) args[1]) + 4 + 2 + 2 + 2); // skip 0001001C, opcode, unk2, numargs
 	}
 	else
 	{
 		opcode = *((unsigned short*) args[1]);
-		_args = (void*)(((unsigned) args[1]) + 2 + 2 + 2);            // skip opcode, unk2, numargs
+		_args = (void*)(((unsigned) args[1]) + 2 + 2 + 2); // skip opcode, unk2, numargs
 	}
 
 	if (opcode == 0x00)
@@ -859,26 +669,8 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 	pipeServer.ConnectToServer();
 
 	unsigned char buffer[PIPE_LENGTH];
-	pipeClient.Receive(buffer);
 
-	// The special Steam hook by NVSE
-	if (buffer[0])
-	{
-		unsigned int oldProtect;
-		_GetSystemTimeAsFileTime_IAT = (_GetSystemTimeAsFileTime *)GetIATAddr((unsigned char *)GetModuleHandle(NULL), "kernel32.dll", "GetSystemTimeAsFileTime");
-		if(_GetSystemTimeAsFileTime_IAT)
-		{
-			VirtualProtect((void *)_GetSystemTimeAsFileTime_IAT, 4, PAGE_EXECUTE_READWRITE, (DWORD*) &oldProtect);
-			GetSystemTimeAsFileTime_Original = *_GetSystemTimeAsFileTime_IAT;
-			*_GetSystemTimeAsFileTime_IAT = GetSystemTimeAsFileTime_Hook;
-			unsigned int junk;
-			VirtualProtect((void *)_GetSystemTimeAsFileTime_IAT, 4, oldProtect, (DWORD*) &junk);
-		}
-		else
-			DLLerror = true;
-	}
-	else
-		PatchGame(silverlock);
+	PatchGame(silverlock);
 
 	SetCurrentDirectory("..");
 
@@ -961,159 +753,65 @@ void ToggleRespawn()
 	{
 		respawn = false;
 
-		switch (game)
-		{
-			case FALLOUT3:
-				SafeWrite8(Fallout3patch_noRespawn_NOP, 0x90);  // NOP
-				SafeWrite8(Fallout3patch_noRespawn_NOP + 1, 0x90);  // NOP
-				WriteRelJump(Fallout3patch_noRespawn_jmp_src, Fallout3patch_noRespawn_jmp_dest);
-				break;
-			case NEWVEGAS:
-				SafeWrite8(FalloutNVpatch_noRespawn_NOP, 0x90);  // NOP
-				SafeWrite8(FalloutNVpatch_noRespawn_NOP + 1, 0x90);  // NOP
-				SafeWrite8(FalloutNVpatch_noRespawn_jmp, 0xEB);   // JMP SHORT
-				SafeWrite8(FalloutNVpatch_noRespawn_jmp + 1, 0x05);   // JMP SHORT
-				WriteRelCall(FalloutNVpatch_noRespawn_call_src, FalloutNVpatch_noRespawn_call_dest);
-				break;
-		}
+		SafeWrite8(noRespawn_NOP, 0x90);  // NOP
+		SafeWrite8(noRespawn_NOP + 1, 0x90);  // NOP
+		WriteRelJump(noRespawn_jmp_src, noRespawn_jmp_dest);
 	}
 	else
 	{
-		respawn = true;
-
-		switch (game)
-		{
-			case FALLOUT3:
-				SafeWrite8(Fallout3patch_noRespawn_NOP, 0x75);  // JNZ
-				SafeWrite8(Fallout3patch_noRespawn_NOP + 1, 0x03);
-				SafeWrite8(Fallout3patch_noRespawn_jmp_src + 5, 0x90);  // NOP (original JNZ instruction is 6 bytes, our CALL/JMP only 5. fix required for call return)
-				WriteRelCall(Fallout3patch_noRespawn_jmp_src, Fallout3patch_noRespawn_jmp_detour);
-				break;
-			case NEWVEGAS:
-				SafeWrite8(FalloutNVpatch_noRespawn_NOP, 0x75);  // JNZ
-				SafeWrite8(FalloutNVpatch_noRespawn_NOP + 1, 0x04);
-				SafeWrite8(FalloutNVpatch_noRespawn_jmp, 0x90);   // NOP
-				SafeWrite8(FalloutNVpatch_noRespawn_jmp + 1, 0x90);   // NOP
-				WriteRelCall(FalloutNVpatch_noRespawn_call_src, FalloutNVpatch_noRespawn_call_detour);
-				break;
-		}
+		SafeWrite8(noRespawn_NOP, 0x75);  // JNZ
+		SafeWrite8(noRespawn_NOP + 1, 0x03);
+		SafeWrite8(noRespawn_jmp_src + 5, 0x90);  // NOP (original JNZ instruction is 6 bytes, our CALL/JMP only 5. fix required for call return)
+		WriteRelCall(noRespawn_jmp_src, noRespawn_jmp_detour);
 	}
 }
 
 void PatchGame(HINSTANCE& silverlock)
 {
-	TCHAR curdir[MAX_PATH+1];
-	ZeroMemory(curdir, sizeof(curdir));
-	GetModuleFileName(NULL, (LPTSTR) curdir, MAX_PATH);
-
-	/* Loading FOSE / NVSE */
-
-	silverlock = NULL;
-
-	if (strstr(curdir, "Fallout3.exe"))
-	{
-		game = FALLOUT3;
-		silverlock = LoadLibrary("fose_1_7_vmp.dll");
-	}
-
-	else if (strstr(curdir, "FalloutNV.exe"))
-	{
-		game = NEWVEGAS;
-		silverlock = LoadLibrary("nvse_1_4_vmp.dll");
-	}
+	// Loading FOSE
+	silverlock = LoadLibrary("fose_1_7_vmp.dll");
 
 	if (silverlock == NULL)
 		DLLerror = true;
 	else
 	{
 		// FOSE authors thought it was a smart move to prevent disabling ESC and console key
-		if (game == FALLOUT3)
-		{
-			unsigned int codebase = (DWORD) silverlock + 0x1000;
-			unsigned char NOP[] = {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
+		unsigned int codebase = (DWORD) silverlock + 0x1000;
+		unsigned char NOP[] = {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
 
-			// patch inlined ShouldIgnoreKey
-			SafeWriteBuf(codebase + 0x14222, NOP, sizeof(NOP));
-			SafeWriteBuf(codebase + 0x14260, NOP, sizeof(NOP));
-		}
-
-		// NVSE: "whatever, mods can be malicious in easier ways"
+		SafeWriteBuf(codebase + 0x14222, NOP, sizeof(NOP));
+		SafeWriteBuf(codebase + 0x14260, NOP, sizeof(NOP));
 	}
 
-	switch (game)
-	{
-		case FALLOUT3:
-		{
-			FormLookup = (LookupForm) LOOKUP_FORM_FALLOUT3;
-			FuncLookup = (LookupFunc) LOOKUP_FUNC_FALLOUT3;
-			QueueMessage_Fallout3 = (QueueUIMessage_Fallout3) QUEUE_UI_MESSAGE_FALLOUT3;
+	FormLookup = (LookupForm) LOOKUP_FORM;
+	FuncLookup = (LookupFunc) LOOKUP_FUNC;
+	QueueMessage = (QueueUIMessage) QUEUE_UI_MESSAGE;
 
-			SafeWrite8(Fallout3patch_delegator_dest, 0x51);   // PUSH ECX
-			SafeWrite8(Fallout3patch_delegatorCall_src + 5, 0x59);   // POP ECX
-			SafeWrite8(Fallout3patch_PlayGroup, 0xEB);   // JMP SHORT
-			SafeWrite16(Fallout3patch_playIdle_fix_src + 5, 0x9090); // NOP NOP
-			SafeWrite16(Fallout3patch_Lock, 0x9090); // NOP NOP
+	SafeWrite8(delegator_dest, 0x51);   // PUSH ECX
+	SafeWrite8(delegatorCall_src + 5, 0x59);   // POP ECX
+	SafeWrite8(PlayGroup, 0xEB);   // JMP SHORT
+	SafeWrite16(playIdle_fix_src + 5, 0x9090); // NOP NOP
+	SafeWrite16(Lock, 0x9090); // NOP NOP
 
-			unsigned char NOP[] = {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
-			SafeWriteBuf(Fallout3patch_matchRace_NOP1, NOP, sizeof(NOP));
-			SafeWriteBuf(Fallout3patch_matchRace_NOP2, NOP, 3);
-			SafeWrite8(Fallout3patch_matchRace_patch + 1, 0xF1);
-			SafeWriteBuf(Fallout3patch_matchRace_patch + 2, NOP, 4);
-			SafeWrite8(Fallout3patch_matchRace_param, 0x0F);
+	unsigned char NOP[] = {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
+	SafeWriteBuf(matchRace_NOP1, NOP, sizeof(NOP));
+	SafeWriteBuf(matchRace_NOP2, NOP, 3);
+	SafeWrite8(matchRace_patch + 1, 0xF1);
+	SafeWriteBuf(matchRace_patch + 2, NOP, 4);
+	SafeWrite8(matchRace_param, 0x0F);
 
-			unsigned char jmp[] = {0xEB, 0x57, 0x90};
-			unsigned char patch[] = {0x85, 0xED, 0x74, 0xE8, 0x8B, 0x55, 0x00, 0xEB, 0xA1};
-			SafeWriteBuf(Fallout3patch_FireFix_jmp, jmp, sizeof(jmp));
-			SafeWriteBuf(Fallout3patch_FireFix_patch, patch, sizeof(patch));
+	unsigned char jmp[] = {0xEB, 0x57, 0x90};
+	unsigned char patch[] = {0x85, 0xED, 0x74, 0xE8, 0x8B, 0x55, 0x00, 0xEB, 0xA1};
+	SafeWriteBuf(FireFix_jmp, jmp, sizeof(jmp));
+	SafeWriteBuf(FireFix_patch, patch, sizeof(patch));
 
-			WriteRelCall(Fallout3patch_delegatorCall_src, Fallout3patch_delegatorCall_dest);
-			WriteRelCall(Fallout3patch_delegator_src, Fallout3patch_delegator_dest);
-			WriteRelCall(Fallout3patch_playIdle_fix_src, Fallout3patch_playIdle_fix_dest);
-			WriteRelJump(Fallout3patch_playIdle_call_src, Fallout3patch_playIdle_call_dest);
-			WriteRelJump(Fallout3patch_AVFix_src, Fallout3patch_AVFix_dest);
+	WriteRelCall(delegatorCall_src, delegatorCall_dest);
+	WriteRelCall(delegator_src, delegator_dest);
+	WriteRelCall(playIdle_fix_src, playIdle_fix_dest);
+	WriteRelJump(playIdle_call_src, playIdle_call_dest);
+	WriteRelJump(AVFix_src, AVFix_dest);
 
-			SafeWrite32(Fallout3patch_pluginsVMP, *(DWORD*)".vmp"); // redirect Plugins.txt
-
-			break;
-		}
-
-		case NEWVEGAS:
-		{
-			FormLookup = (LookupForm) LOOKUP_FORM_NEWVEGAS;
-			FuncLookup = (LookupFunc) LOOKUP_FUNC_NEWVEGAS;
-			QueueMessage_FalloutNV = (QueueUIMessage_FalloutNV) QUEUE_UI_MESSAGE_NEWVEGAS;
-
-			SafeWrite8(FalloutNVpatch_delegator_dest, 0x51);   // PUSH ECX
-			SafeWrite8(FalloutNVpatch_delegatorCall_src + 5, 0x59);   // POP ECX
-			SafeWrite8(FalloutNVpatch_PlayGroup, 0xEB);   // JMP SHORT
-
-			unsigned char NOP[] = {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
-			SafeWriteBuf(FalloutNVpatch_playIdle_call_src + 5, NOP, 5); // 5x NOP
-			SafeWrite16(FalloutNVpatch_Lock, 0x9090); // NOP NOP
-
-			SafeWriteBuf(FalloutNVpatch_matchRace_NOP1, NOP, sizeof(NOP));
-			SafeWriteBuf(FalloutNVpatch_matchRace_NOP2, NOP, 11);
-			SafeWrite8(FalloutNVpatch_matchRace_patch + 1, 0x45);
-			SafeWrite8(FalloutNVpatch_matchRace_patch + 2, 0xFC);
-			SafeWriteBuf(FalloutNVpatch_matchRace_patch + 3, NOP, 11);
-			SafeWrite8(FalloutNVpatch_matchRace_param, 0x0F);
-
-			WriteRelCall(FalloutNVpatch_delegatorCall_src, FalloutNVpatch_delegatorCall_dest);
-			WriteRelCall(FalloutNVpatch_delegator_src, FalloutNVpatch_delegator_dest);
-			WriteRelCall(FalloutNVpatch_playIdle_call_src, FalloutNVpatch_playIdle_call_dest);
-			WriteRelJump(FalloutNVpatch_playIdle_fix_src, FalloutNVpatch_playIdle_fix_dest);
-			WriteRelJump(FalloutNVpatch_AVFix_src, FalloutNVpatch_AVFix_dest);
-
-			SafeWrite32(FalloutNVpatch_disableNAM, *(DWORD*)".|||"); // disable .NAM files
-			SafeWrite32(FalloutNVpatch_pluginsVMP, *(DWORD*)".vmp"); // redirect Plugins.txt
-/*
-            unsigned int oldProtect;
-            VirtualProtect((void*) FalloutNVPatch_gamereadyvariable, 4, PAGE_EXECUTE_READWRITE, (DWORD*) &oldProtect);
-            WriteRelJump(FalloutNVPatch_gamereadyhook, (unsigned)&GameReady_NV);
-*/
-			break;
-		}
-	}
+	SafeWrite32(pluginsVMP, *(DWORD*)".vmp"); // redirect Plugins.txt
 
 	ToggleRespawn();
 }

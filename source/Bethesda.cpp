@@ -3,15 +3,12 @@
 using namespace std;
 using namespace RakNet;
 
-unsigned char Bethesda::game = 0x00;
 bool Bethesda::initialized = false;
 string Bethesda::password = "";
 unsigned int Bethesda::inittime = 6000;
 bool Bethesda::multiinst = false;
-bool Bethesda::steam = false;
 DWORD Bethesda::process = 0;
 Bethesda::ModList Bethesda::modfiles;
-char Bethesda::module[32];
 
 #ifdef VAULTMP_DEBUG
 DebugInput<Bethesda> Bethesda::debug;
@@ -42,21 +39,6 @@ DWORD Bethesda::lookupProgramID(const char process[])
 
 void Bethesda::Initialize()
 {
-	switch (Bethesda::game = game)
-	{
-		case FALLOUT3:
-			strcpy(module, "Fallout3.exe");
-			break;
-
-		case NEWVEGAS:
-			SetEnvironmentVariable("SteamAppID", "22380");
-			strcpy(module, "FalloutNV.exe");
-			break;
-
-		default:
-			throw VaultException("Bad game ID %08X", Bethesda::game).stacktrace();
-	}
-
 	TCHAR curdir[MAX_PATH+1];
 	unsigned int crc;
 	ZeroMemory(curdir, sizeof(curdir));
@@ -82,36 +64,12 @@ void Bethesda::Initialize()
 	TCHAR pluginsdir[MAX_PATH+1];
 	ZeroMemory(pluginsdir, sizeof(pluginsdir));
 	SHGetFolderPath(nullptr, CSIDL_LOCAL_APPDATA, nullptr, 0, pluginsdir);   // SHGFP_TYPE_CURRENT
-
-	switch (Bethesda::game)
-	{
-		case FALLOUT3:
-			strcat(pluginsdir, "\\Fallout3\\plugins.vmp");
-			break;
-
-		case NEWVEGAS:
-			strcat(pluginsdir, "\\FalloutNV\\plugins.vmp");
-			break;
-	}
+	strcat(pluginsdir, "\\Fallout3\\plugins.vmp");
 
 	FILE* plugins = fopen(pluginsdir, "w");
 
-	switch (Bethesda::game)
-	{
-		case FALLOUT3:
-		{
-			char esm[] = "Fallout3.esm\nvaultmpF3.esp\n";
-			fwrite(esm, sizeof(char), sizeof(esm) - 1, plugins);
-			break;
-		}
-
-		case NEWVEGAS:
-		{
-			char esm[] = "FalloutNV.esm\nvaultmpFNV.esp\n";
-			fwrite(esm, sizeof(char), sizeof(esm) - 1, plugins);
-			break;
-		}
-	}
+	char esm[] = "Fallout3.esm\nvaultmpF3.esp\n";
+	fwrite(esm, sizeof(char), sizeof(esm) - 1, plugins);
 
 	for (ModList::iterator it = modfiles.begin(); it != modfiles.end(); ++it)
 	{
@@ -121,7 +79,7 @@ void Bethesda::Initialize()
 
 	fclose(plugins);
 
-	if (Bethesda::multiinst || lookupProgramID(module) == 0)
+	if (Bethesda::multiinst || lookupProgramID("Fallout3.exe") == 0)
 	{
 		STARTUPINFO si;
 		PROCESS_INFORMATION pi;
@@ -130,7 +88,7 @@ void Bethesda::Initialize()
 		ZeroMemory(&pi, sizeof(pi));
 		si.cb = sizeof(si);
 
-		string _module = string("..\\") + module;
+		string _module = "..\\Fallout3.exe";
 
 		if (CreateProcess(_module.c_str(), nullptr, nullptr, nullptr, FALSE, CREATE_SUSPENDED, nullptr, nullptr, &si, &pi))
 		{
@@ -187,7 +145,7 @@ void Bethesda::Initialize()
 
 			try
 			{
-				Interface::Initialize(&Game::CommandHandler, Bethesda::steam);
+				Interface::Initialize(&Game::CommandHandler);
 
 				chrono::steady_clock::time_point till = chrono::steady_clock::now() + chrono::milliseconds(15000);
 
@@ -259,28 +217,24 @@ void Bethesda::Terminate(RakPeerInterface* peer)
 	}
 }
 
-void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, const string& name, const string& pwd, unsigned char game, bool multiinst, bool steam, unsigned int inittime)
+void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, const string& name, const string& pwd, bool multiinst, unsigned int inittime)
 {
-	Bethesda::game = game;
 	Bethesda::password = pwd;
 	Bethesda::multiinst = multiinst;
 	Bethesda::inittime = inittime;
-	Bethesda::steam = steam;
 	Bethesda::modfiles.clear();
-	ZeroMemory(module, sizeof(module));
-	Game::game = game;
 	initialized = false;
 
 #ifdef VAULTMP_DEBUG
 	Debug::SetDebugHandler("vaultmp");
 	debug.note("Vault-Tec Multiplayer Mod client debug log (", CLIENT_VERSION, ")");
-	debug.note("Connecting to server: ", server.ToString(), " (name: ", name.c_str(), ", password: ", pwd.c_str(), ", game: ", game == FALLOUT3 ? "Fallout 3" : "Fallout New Vegas");
+	debug.note("Connecting to server: ", server.ToString(), " (name: ", name.c_str(), ", password: ", pwd.c_str());
 	debug.note("Visit www.vaultmp.com for help and upload this log if you experience problems with the mod.");
 	debug.note("-----------------------------------------------------------------------------------------------------");
 #endif
 
-	GameFactory::Initialize(game);
-	API::Initialize(game);
+	GameFactory::Initialize();
+	API::Initialize();
 
 	NetworkID id = GameFactory::CreateInstance(ID_PLAYER, PLAYER_REFERENCE, PLAYER_BASE);
 	FactoryObject<Player> reference = GameFactory::GetObject<Player>(id).get();

@@ -72,7 +72,6 @@ void MasterServer::MasterThread()
 						RakString map(entry.GetServerMap().c_str());
 						unsigned int players = entry.GetServerPlayers().first;
 						unsigned int playersMax = entry.GetServerPlayers().second;
-						unsigned char game = entry.GetGame();
 						const std::map<string, string>& rules = entry.GetServerRules();
 						const std::vector<string>& modfiles = entry.GetServerModFiles();
 
@@ -81,7 +80,6 @@ void MasterServer::MasterThread()
 						query.Write(map);
 						query.Write(players);
 						query.Write(playersMax);
-						query.Write(game);
 						query.Write(rules.size());
 
 						for (const auto& k : rules)
@@ -131,7 +129,6 @@ void MasterServer::MasterThread()
 						RakString map(entry.GetServerMap().c_str());
 						unsigned int players = entry.GetServerPlayers().first;
 						unsigned int playersMax = entry.GetServerPlayers().second;
-						unsigned char game = entry.GetGame();
 						const std::map<string, string>& rules = entry.GetServerRules();
 						const std::vector<string>& modfiles = entry.GetServerModFiles();
 
@@ -139,7 +136,6 @@ void MasterServer::MasterThread()
 						query.Write(map);
 						query.Write(players);
 						query.Write(playersMax);
-						query.Write(game);
 						query.Write(rules.size());
 
 						for (const auto& k : rules)
@@ -181,13 +177,11 @@ void MasterServer::MasterThread()
 					{
 						RakString name, map;
 						unsigned int players, playersMax, rsize, msize;
-						unsigned char game;
 
 						query.Read(name);
 						query.Read(map);
 						query.Read(players);
 						query.Read(playersMax);
-						query.Read(game);
 						query.Read(rsize);
 
 						ServerEntry* entry;
@@ -195,7 +189,7 @@ void MasterServer::MasterThread()
 						if (i == serverList.end())
 						{
 							std::pair<std::map<SystemAddress, ServerEntry>::iterator, bool> k;
-							k = serverList.insert(make_pair(packet->systemAddress, ServerEntry(name.C_String(), map.C_String(), make_pair(players, playersMax), 999, game)));
+							k = serverList.insert(make_pair(packet->systemAddress, ServerEntry(name.C_String(), map.C_String(), make_pair(players, playersMax), 999)));
 							entry = &(k.first)->second;
 						}
 						else

@@ -505,7 +505,7 @@ unsigned long long Script::Timer_Respawn(NetworkID id)
 			EquipItem(id, item.first, get<3>(item.second), get<4>(item.second));
 	}
 
-	const auto& values = (API::GetGameCode() == FALLOUT3) ? Player::f3_default_values : Player::fnv_default_values;
+	const auto& values = Player::f3_default_values;
 
 	for (const auto& value : values)
 	{

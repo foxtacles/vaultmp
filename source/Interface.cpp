@@ -25,7 +25,7 @@ CriticalSection Interface::job_cs;
 DebugInput<Interface> Interface::debug;
 #endif
 
-bool Interface::Initialize(ResultHandler resultHandler, bool steam)
+bool Interface::Initialize(ResultHandler resultHandler)
 {
 	if (!initialized)
 	{
@@ -38,7 +38,7 @@ bool Interface::Initialize(ResultHandler resultHandler, bool steam)
 		pipeClient = new PipeServer();
 		pipeServer = new PipeClient();
 
-		hCommandThreadReceive = thread(CommandThreadReceive, steam);
+		hCommandThreadReceive = thread(CommandThreadReceive);
 		hCommandThreadSend = thread(CommandThreadSend);
 		hCommandThreadJob = thread(CommandThreadJob);
 
@@ -235,7 +235,7 @@ vector<string> Interface::Evaluate(Native::iterator _it)
 	return result;
 }
 
-void Interface::CommandThreadReceive(bool steam)
+void Interface::CommandThreadReceive()
 {
 	try
 	{
@@ -248,9 +248,6 @@ void Interface::CommandThreadReceive(bool steam)
 		while (!pipeServer->ConnectToServer() && !endThread);
 
 		unsigned char buffer[PIPE_LENGTH];
-
-		buffer[0] = steam;
-		pipeClient->Send(buffer);
 
 		if (!endThread)
 		{

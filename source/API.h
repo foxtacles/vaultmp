@@ -137,6 +137,35 @@ namespace Values
 		AnimGroup_AttackBackPower		= 0x5E,
 		AnimGroup_AttackLeftPower		= 0x5F,
 		AnimGroup_AttackRightPower		= 0x60,
+
+		AnimGroup_JumpStart             = 0xA8,
+		AnimGroup_JumpLoop              = 0xA9,
+		AnimGroup_JumpLand              = 0xAA,
+
+		AnimGroup_JumpLoopForward       = 0xAE,
+		AnimGroup_JumpLoopBackward      = 0xAF,
+		AnimGroup_JumpLoopLeft          = 0xB0,
+		AnimGroup_JumpLoopRight         = 0xB1,
+
+		AnimGroup_JumpLandForward       = 0xB3,
+		AnimGroup_JumpLandBackward      = 0xB4,
+		AnimGroup_JumpLandLeft          = 0xB5,
+		AnimGroup_JumpLandRight         = 0xB6,
+
+		AnimGroup_BlockIdle				= 0x8B,
+		AnimGroup_BlockHit				= 0x8C,
+
+		AnimGroup_ReloadA				= 0x8E,
+		AnimGroup_ReloadB				= 0x8F,
+		AnimGroup_ReloadC				= 0x90,
+		AnimGroup_ReloadD				= 0x91,
+		AnimGroup_ReloadE				= 0x92,
+		AnimGroup_ReloadF				= 0x93,
+		AnimGroup_ReloadG				= 0x94,
+		AnimGroup_ReloadH				= 0x95,
+		AnimGroup_ReloadI				= 0x96,
+		AnimGroup_ReloadJ				= 0x97,
+		AnimGroup_ReloadK				= 0x98,
 	};
 
 	/**
@@ -245,6 +274,23 @@ namespace Values
 		Func_Unlock						= 0x1073,
 		Func_SetOwnership				= 0x1117,
 		Func_GetLocked					= 0x1005,
+
+		Func_Load                       = 0x014F,
+		Func_CenterOnWorld				= 0x0143,
+
+		Func_SetName                    = 0x1485,
+		Func_GetParentCell              = 0x1495,
+		Func_GetFirstRef                = 0x14AF,
+		Func_GetNextRef                 = 0x14B0,
+		Func_GetControl                 = 0x144E,
+		Func_DisableControl				= 0x145D,
+		Func_EnableControl				= 0x145E,
+		Func_DisableKey					= 0x143E,
+		Func_EnableKey					= 0x143F,
+		Func_GetRefCount				= 0x14C3,
+		Func_SetRefCount				= 0x14C4,
+		Func_GetBaseObject				= 0x1416,
+		Func_SetCurrentHealth			= 0x14BF,
 
 		Func_GetActorState              = 0x0001 | VAULTFUNCTION,
 		Func_Chat						= 0x0002 | VAULTFUNCTION,
@@ -386,159 +432,6 @@ namespace Values
 
 		Global_TimeScale				= 0x3A,
 	};
-
-	/**
-	 * \brief Data specific to Fallout 3
-	 */
-
-	namespace Fallout3
-	{
-
-		/**
-		 * \brief Function opcodes used in Fallout 3
-		 */
-
-		enum Functions
-		{
-			Func_Load                       = 0x014F,
-			Func_CenterOnWorld				= 0x0143,
-
-			Func_SetName                    = 0x1485,
-			Func_GetParentCell              = 0x1495,
-			Func_GetFirstRef                = 0x14AF,
-			Func_GetNextRef                 = 0x14B0,
-			Func_GetControl                 = 0x144E,
-			Func_DisableControl				= 0x145D,
-			Func_EnableControl				= 0x145E,
-			Func_DisableKey					= 0x143E,
-			Func_EnableKey					= 0x143F,
-			Func_GetRefCount				= 0x14C3,
-			Func_SetRefCount				= 0x14C4,
-			Func_GetBaseObject				= 0x1416,
-			Func_SetCurrentHealth			= 0x14BF,
-		};
-
-		/**
-		 * \brief Animation values used in Fallout 3
-		 */
-
-		enum AnimationGroups
-		{
-			AnimGroup_JumpStart             = 0xA8,
-			AnimGroup_JumpLoop              = 0xA9,
-			AnimGroup_JumpLand              = 0xAA,
-
-			AnimGroup_JumpLoopForward       = 0xAE,
-			AnimGroup_JumpLoopBackward      = 0xAF,
-			AnimGroup_JumpLoopLeft          = 0xB0,
-			AnimGroup_JumpLoopRight         = 0xB1,
-
-			AnimGroup_JumpLandForward       = 0xB3,
-			AnimGroup_JumpLandBackward      = 0xB4,
-			AnimGroup_JumpLandLeft          = 0xB5,
-			AnimGroup_JumpLandRight         = 0xB6,
-
-			AnimGroup_BlockIdle				= 0x8B,
-			AnimGroup_BlockHit				= 0x8C,
-
-			AnimGroup_ReloadA				= 0x8E,
-			AnimGroup_ReloadB				= 0x8F,
-			AnimGroup_ReloadC				= 0x90,
-			AnimGroup_ReloadD				= 0x91,
-			AnimGroup_ReloadE				= 0x92,
-			AnimGroup_ReloadF				= 0x93,
-			AnimGroup_ReloadG				= 0x94,
-			AnimGroup_ReloadH				= 0x95,
-			AnimGroup_ReloadI				= 0x96,
-			AnimGroup_ReloadJ				= 0x97,
-			AnimGroup_ReloadK				= 0x98,
-		};
-	}
-
-	/**
-	 * \brief Data specific to New Vegas
-	 */
-
-	namespace FalloutNV
-	{
-
-		/**
-		 * \brief Function opcodes used in New Vegas
-		 */
-
-		enum Functions
-		{
-			Func_Load                       = 0x014E,
-			Func_CenterOnWorld				= 0x0142,
-
-			Func_SetName                    = 0x144C,
-			Func_GetParentCell              = 0x146D,
-			Func_GetFirstRef                = 0x1471,
-			Func_GetNextRef                 = 0x1472,
-			Func_GetControl                 = 0x145D,
-			Func_DisableControl				= 0x1462,
-			Func_EnableControl				= 0x1463,
-			Func_DisableKey					= 0x1457,
-			Func_EnableKey					= 0x1458,
-			Func_GetRefCount				= 0x1476,
-			Func_SetRefCount				= 0x1477,
-			Func_GetBaseObject				= 0x1403,
-			Func_SetCurrentHealth			= 0x1452,
-		};
-
-		/**
-		 * \brief Animation values used in New Vegas
-		 */
-
-		enum AnimationGroups
-		{
-			AnimGroup_JumpStart             = 0xE3,
-			AnimGroup_JumpLoop              = 0xE4,
-			AnimGroup_JumpLand              = 0xE5,
-
-			AnimGroup_JumpLoopForward       = 0xEC,
-			AnimGroup_JumpLoopBackward      = 0xED,
-			AnimGroup_JumpLoopLeft          = 0xEE,
-			AnimGroup_JumpLoopRight         = 0xEF,
-
-			AnimGroup_JumpLandForward       = 0xF1,
-			AnimGroup_JumpLandBackward      = 0xF2,
-			AnimGroup_JumpLandLeft          = 0xF3,
-			AnimGroup_JumpLandRight         = 0xF4,
-
-			AnimGroup_BlockIdle				= 0xAA,
-			AnimGroup_BlockHit				= 0xAB,
-
-			AnimGroup_ReloadWStart			= 0xAD,
-			AnimGroup_ReloadXStart			= 0xAE,
-			AnimGroup_ReloadYStart			= 0xAF,
-			AnimGroup_ReloadZStart			= 0xB0,
-
-			AnimGroup_ReloadA				= 0xB1,
-			AnimGroup_ReloadB				= 0xB2,
-			AnimGroup_ReloadC				= 0xB3,
-			AnimGroup_ReloadD				= 0xB4,
-			AnimGroup_ReloadE				= 0xB5,
-			AnimGroup_ReloadF				= 0xB6,
-			AnimGroup_ReloadG				= 0xB7,
-			AnimGroup_ReloadH				= 0xB8,
-			AnimGroup_ReloadI				= 0xB9,
-			AnimGroup_ReloadJ				= 0xBA,
-			AnimGroup_ReloadK				= 0xBB,
-			AnimGroup_ReloadL				= 0xBC,
-			AnimGroup_ReloadM				= 0xBD,
-			AnimGroup_ReloadN				= 0xBE,
-			AnimGroup_ReloadO				= 0xBF,
-			AnimGroup_ReloadP				= 0xC0,
-			AnimGroup_ReloadQ				= 0xC1,
-			AnimGroup_ReloadR				= 0xC2,
-			AnimGroup_ReloadS				= 0xC3,
-			AnimGroup_ReloadW				= 0xC4,
-			AnimGroup_ReloadX				= 0xC5,
-			AnimGroup_ReloadY				= 0xC6,
-			AnimGroup_ReloadZ				= 0xC7,
-		};
-	}
 }
 
 /**
@@ -580,13 +473,12 @@ class API
 		static ValueMap anims;
 		static ValueList controls;
 		static CommandQueue queue;
-		static unsigned char game;
 
-		static void DefineFunction(const std::string& name, const std::string& def, unsigned short opcode, unsigned char games);
-		static void DefineValueString(const std::string& name, unsigned char value, unsigned char games);
-		static void DefineAxisString(const std::string& name, unsigned char axis, unsigned char games);
-		static void DefineAnimString(const std::string& name, unsigned char anim, unsigned char games);
-		static void DefineControl(unsigned char control, unsigned char games);
+		static void DefineFunction(const std::string& name, const std::string& def, unsigned short opcode);
+		static void DefineValueString(const std::string& name, unsigned char value);
+		static void DefineAxisString(const std::string& name, unsigned char axis);
+		static void DefineAnimString(const std::string& name, unsigned char anim);
+		static void DefineControl(unsigned char control);
 
 		static std::pair<std::string, unsigned short> RetrieveFunction(const std::string& name);
 		static unsigned char* BuildCommandStream(std::vector<double>&& info, unsigned int key, unsigned char* command, unsigned int size);
@@ -624,9 +516,9 @@ class API
 
 	public:
 		/**
-		 * \brief Initializes the API for the given game code. Must be called before the API can be used
+		 * \brief Initializes the API. Must be called before the API can be used
 		 */
-		static void Initialize(unsigned char game);
+		static void Initialize();
 
 		/**
 		 * \brief Must be called when you are finished with the current API environment.
@@ -637,15 +529,15 @@ class API
 		/**
 		 * \brief Given the string representation of an actor value, returns the hex code. 0xFF indicates an error
 		 */
-		static unsigned char RetrieveValue(char* value);
+		static unsigned char RetrieveValue(const char* value);
 		/**
 		 * \brief Given the string representation of an axis value, returns the hex code. 0xFF indicates an error
 		 */
-		static unsigned char RetrieveAxis(char* axis);
+		static unsigned char RetrieveAxis(const char* axis);
 		/**
 		 * \brief Given the string representation of an animation value, returns the hex code. 0xFF indicates an error
 		 */
-		static unsigned char RetrieveAnim(char* anim);
+		static unsigned char RetrieveAnim(const char* anim);
 		/**
 		 * \brief Returns true if the given value is a valid control code
 		 */
@@ -690,13 +582,6 @@ class API
 		 * \brief Returns a STL vector containing every available animation value string representation
 		 */
 		static std::vector<std::string> RetrieveAllAnims_Reverse();
-
-
-		/**
-		 * \brief Returns the game code of the current API environment setup
-		 */
-		static unsigned char GetGameCode();
-
 };
 
 #endif

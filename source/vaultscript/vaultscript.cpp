@@ -1,6 +1,3 @@
-//#define GAME_FALLOUT3
-//#define GAME_NEWVEGAS
-
 #include "vaultscript.h"
 #include <cstdio>
 
@@ -11,20 +8,7 @@ Void VAULTSCRIPT exec() noexcept
 	std::printf("My first C++ vaultscript <3\n");
 	SetServerName("vaultmp 0.1a server");
 	SetServerRule("website", "vaultmp.com");
-
-	switch (GetGameCode())
-	{
-		case Index::FALLOUT3:
-			SetServerMap("the wasteland");
-			break;
-
-		case Index::NEWVEGAS:
-			SetServerMap("mojave desert");
-			break;
-
-		default:
-			break;
-	}
+	SetServerMap("the wasteland");
 }
 
 Void VAULTSCRIPT OnServerInit() noexcept

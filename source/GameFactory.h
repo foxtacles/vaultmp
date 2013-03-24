@@ -71,7 +71,6 @@ class GameFactory
 		static ReferenceIndex index;
 		static ReferenceCount typecount;
 		static ReferenceDeleted delrefs;
-		static unsigned char game;
 		static bool changed;
 
 #ifdef VAULTSERVER
@@ -89,7 +88,7 @@ class GameFactory
 		inline static ReferenceList::iterator GetShared(const RakNet::NetworkID& id) { return index.count(id) ? index[id] : instances.end(); }
 
 	public:
-		static void Initialize(unsigned char game);
+		static void Initialize();
 
 		/**
 		 * \brief Obtains a lock on a Reference

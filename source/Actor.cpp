@@ -250,14 +250,10 @@ Lockable* Actor::SetBase(unsigned int baseID)
 bool Actor::IsActorJumping() const
 {
 	unsigned char anim = this->GetActorMovingAnimation();
-	unsigned char game = API::GetGameCode();
 
-	return ((game & FALLOUT3 && ((anim >= Fallout3::AnimGroup_JumpStart && anim <= Fallout3::AnimGroup_JumpLand)
-		|| (anim >= Fallout3::AnimGroup_JumpLoopForward && anim <= Fallout3::AnimGroup_JumpLoopRight)
-		|| (anim >= Fallout3::AnimGroup_JumpLandForward && anim <= Fallout3::AnimGroup_JumpLandRight)))
-		|| (game & NEWVEGAS && ((anim >= FalloutNV::AnimGroup_JumpStart && anim <= FalloutNV::AnimGroup_JumpLand)
-		|| (anim >= FalloutNV::AnimGroup_JumpLoopForward && anim <= FalloutNV::AnimGroup_JumpLoopRight)
-		|| (anim >= FalloutNV::AnimGroup_JumpLandForward && anim <= FalloutNV::AnimGroup_JumpLandRight))));
+	return (anim >= AnimGroup_JumpStart && anim <= AnimGroup_JumpLand)
+		|| (anim >= AnimGroup_JumpLoopForward && anim <= AnimGroup_JumpLoopRight)
+		|| (anim >= AnimGroup_JumpLandForward && anim <= AnimGroup_JumpLandRight);
 }
 
 bool Actor::IsActorFiring() const

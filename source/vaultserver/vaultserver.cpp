@@ -113,7 +113,6 @@ int main(int, char* argv[])
 		++arg_;
 	}
 
-	unsigned char game;
 	unsigned int port;
 	const char* host;
 	unsigned int players;
@@ -132,13 +131,6 @@ int main(int, char* argv[])
 	auto iniparser_getint_ex = [&args, config](const char* param, int alt) -> int { return args.count(param) ? strtol(args[param], nullptr, 0) : iniparser_getint(config, param, alt); };
 	auto iniparser_getboolean_ex = [&args, config](const char* param, bool alt) -> bool { return args.count(param) ? strtol(args[param], nullptr, 0) : iniparser_getboolean(config, param, alt); };
 
-	const char* game_str = iniparser_getstring_ex("general:game", "fallout3");
-
-	if (stricmp(game_str, "newvegas") == 0)
-		game = NEWVEGAS;
-	else
-		game = FALLOUT3;
-
 	port = iniparser_getint_ex("general:port", RAKNET_STANDARD_PORT);
 	host = iniparser_getstring_ex("general:host", nullptr);
 	players = iniparser_getint_ex("general:players", RAKNET_STANDARD_CONNECTIONS);
@@ -146,7 +138,7 @@ int main(int, char* argv[])
 	files = iniparser_getboolean_ex("general:fileserve", false);
 	fileslots = iniparser_getint_ex("general:fileslots", 8);
 	announce = iniparser_getstring_ex("general:master", "vaultmp.com");
-	cell = iniparser_getint_ex("general:spawn", game == FALLOUT3 ? 0x000010C1 : 0x000DAEBB); // Vault101Exterior and Goodsprings
+	cell = iniparser_getint_ex("general:spawn", 0x000010C1); // Vault101Exterior
 	keep = iniparser_getboolean_ex("general:keepalive", false);
 	scripts = iniparser_getstring_ex("scripts:scripts", "");
 	mods = iniparser_getstring_ex("mods:mods", "");
@@ -155,7 +147,7 @@ int main(int, char* argv[])
 
 	do
 	{
-		ServerEntry self(game);
+		ServerEntry self;
 		self.SetServerRule("version", DEDICATED_VERSION);
 		Dedicated::SetServerEntry(&self);
 

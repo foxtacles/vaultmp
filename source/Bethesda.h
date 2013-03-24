@@ -38,14 +38,11 @@ class Bethesda
 		typedef HINSTANCE(__stdcall* fLoadLibrary)(char*);
 		typedef std::vector<std::pair<std::string, unsigned int>> ModList;
 
-		static unsigned char game;
 		static std::string password;
 		static unsigned int inittime;
 		static bool multiinst;
-		static bool steam;
 		static ModList modfiles;
 		static DWORD process;
-		static char module[32];
 		static bool initialized;
 
 		/**
@@ -73,5 +70,5 @@ class Bethesda
 		/**
 		 * \brief Initializes Vault-Tec Multiplayer Mod
 		 */
-		static void InitializeVaultMP(RakNet::RakPeerInterface* peer, RakNet::SystemAddress server, const std::string& name, const std::string& pwd, unsigned char game, bool multiinst, bool steam, unsigned int inittime);
+		static void InitializeVaultMP(RakNet::RakPeerInterface* peer, RakNet::SystemAddress server, const std::string& name, const std::string& pwd, bool multiinst, unsigned int inittime);
 };

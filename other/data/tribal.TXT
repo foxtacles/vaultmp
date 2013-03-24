@@ -1,5 +1,0 @@
-SCPT|0x172a26|VPreorderTribalSCRIPT|
-ARMO|0x1735e2|PreordArmorTribalRaiding|Tribal Raiding Armor
-WEAP|0x1735e5|WeapPreordMachete|Broad Machete
-QUST|0x172a1f|VPreorderTribal|
-MESG|0x1674d2|PreorderMessageInventoryTribal|Tribal Pack

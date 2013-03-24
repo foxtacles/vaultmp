@@ -222,7 +222,7 @@ class Interface : public API
 
 		static std::vector<std::string> Evaluate(Native::iterator _it);
 
-		static void CommandThreadReceive(bool steam);
+		static void CommandThreadReceive();
 		static void CommandThreadSend();
 		static void CommandThreadJob();
 
@@ -236,9 +236,9 @@ class Interface : public API
 		/**
 		 * \brief Initializes the Interface
 		 *
-		 * Takes a ResultHandler function pointer and the game code
+		 * Takes a ResultHandler function pointer
 		 */
-		static bool Initialize(ResultHandler, bool steam);
+		static bool Initialize(ResultHandler);
 		/**
 		 * \brief Terminates the Interface
 		 */
