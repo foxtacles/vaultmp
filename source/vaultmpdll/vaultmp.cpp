@@ -80,6 +80,7 @@ static const unsigned LockFix = 0x00527F33;
 static const unsigned aiFix1 = 0x0072051E;
 static const unsigned aiFix2 = 0x006FAEE8;
 static const unsigned aiFix3 = 0x006FAF19;
+static const unsigned aiFix4 = 0x0042FBDC;
 static unsigned AVFix_src = 0x00473D35;
 static unsigned AVFix_dest = (unsigned)& AVFix;
 static unsigned AVFix_ret = 0x00473D3B;
@@ -802,6 +803,8 @@ void PatchGame(HINSTANCE& silverlock)
 
 	unsigned char aiFix3_[] = {0x85, 0xFF, 0x74, 0xCC, 0xEB, 0xF6};
 	SafeWriteBuf(aiFix3, aiFix3_, sizeof(aiFix3_));
+
+	SafeWriteBuf(aiFix4, NOP, 11); // 11x NOP
 
 	SafeWriteBuf(matchRace_NOP1, NOP, sizeof(NOP));
 	SafeWriteBuf(matchRace_NOP2, NOP, 3);
