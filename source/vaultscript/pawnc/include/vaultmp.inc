@@ -7,11 +7,6 @@ const Interval: {
 }
 
 const Index: {
-	FALLOUT3 = 0x01,
-	NEWVEGAS = FALLOUT3 << FALLOUT3,
-	FALLOUT_GAMES = FALLOUT3 | NEWVEGAS,
-	ALL_GAMES = FALLOUT_GAMES,
-
 	MAX_PLAYER_NAME = 16,
 	MAX_PASSWORD_SIZE = 16,
 	MAX_MESSAGE_LENGTH = 64,
@@ -205,7 +200,6 @@ native CallPublic(const name{}, {Fixed,Float,_}:...);
 native SetServerName(const name{});
 native SetServerMap(const map{});
 native SetServerRule(const rule{}, const value{});
-native GetGameCode();
 native GetMaximumPlayers();
 native GetCurrentPlayers();
 

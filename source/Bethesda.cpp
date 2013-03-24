@@ -186,7 +186,7 @@ void Bethesda::Initialize()
 			throw VaultException("Failed creating the game process").stacktrace();
 	}
 	else
-		throw VaultException("Either Fallout 3 or Fallout: New Vegas is already runnning").stacktrace();
+		throw VaultException("Fallout 3 is already runnning").stacktrace();
 }
 
 void Bethesda::Terminate(RakPeerInterface* peer)

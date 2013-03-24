@@ -5,15 +5,7 @@ main()
 	printf("My first PAWN vaultscript <3\n");
 	SetServerName("vaultmp 0.1a server");
 	SetServerRule("website", "vaultmp.com");
-
-	switch (GetGameCode())
-	{
-		case FALLOUT3:
-			SetServerMap("the wasteland");
-
-		case NEWVEGAS:
-			SetServerMap("mojave desert");
-	}
+	SetServerMap("the wasteland");
 }
 
 public OnServerInit()
