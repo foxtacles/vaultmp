@@ -76,7 +76,10 @@ static const unsigned matchRace_NOP1 = 0x0052F4DD;
 static const unsigned matchRace_NOP2 = 0x0052F50F;
 static const unsigned matchRace_patch = 0x0052F513;
 static const unsigned matchRace_param = 0x00F51ADC;
-static const unsigned Lock = 0x00527F33;
+static const unsigned LockFix = 0x00527F33;
+static const unsigned aiFix1 = 0x0072051E;
+static const unsigned aiFix2 = 0x006FAEE8;
+static const unsigned aiFix3 = 0x006FAF19;
 static unsigned AVFix_src = 0x00473D35;
 static unsigned AVFix_dest = (unsigned)& AVFix;
 static unsigned AVFix_ret = 0x00473D3B;
@@ -783,6 +786,8 @@ void PatchGame(HINSTANCE& silverlock)
 		SafeWriteBuf(codebase + 0x14260, NOP, sizeof(NOP));
 	}
 
+	unsigned char NOP[] = {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
+
 	FormLookup = (LookupForm) LOOKUP_FORM;
 	FuncLookup = (LookupFunc) LOOKUP_FUNC;
 	QueueMessage = (QueueUIMessage) QUEUE_UI_MESSAGE;
@@ -791,9 +796,13 @@ void PatchGame(HINSTANCE& silverlock)
 	SafeWrite8(delegatorCall_src + 5, 0x59);   // POP ECX
 	SafeWrite8(PlayGroup, 0xEB);   // JMP SHORT
 	SafeWrite16(playIdle_fix_src + 5, 0x9090); // NOP NOP
-	SafeWrite16(Lock, 0x9090); // NOP NOP
+	SafeWrite16(LockFix, 0x9090); // NOP NOP
+	SafeWrite16(aiFix1, 0x9090); // NOP NOP
+	SafeWrite8(aiFix2, 0x30); // redirect local jump to below
 
-	unsigned char NOP[] = {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
+	unsigned char aiFix3_[] = {0x85, 0xFF, 0x74, 0xCC, 0xEB, 0xF6};
+	SafeWriteBuf(aiFix3, aiFix3_, sizeof(aiFix3_));
+
 	SafeWriteBuf(matchRace_NOP1, NOP, sizeof(NOP));
 	SafeWriteBuf(matchRace_NOP2, NOP, 3);
 	SafeWrite8(matchRace_patch + 1, 0xF1);
