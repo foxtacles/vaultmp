@@ -1,6 +1,6 @@
 # Vault-Tec Multiplayer Mod
 
-*Vault-Tec Multiplayer Mod* ("VaultMP") is a multiplayer mod for the PC versions of Bethesda's award-winning role-playing games [Fallout 3](http://en.wikipedia.org/wiki/Fallout_3 "Fallout 3"). It's currently in development, but is going to support the following:
+*Vault-Tec Multiplayer Mod* ("VaultMP") is a multiplayer mod for the PC version of Bethesda's award-winning role-playing games [Fallout 3](http://en.wikipedia.org/wiki/Fallout_3 "Fallout 3"). It's currently in development, but is going to support the following:
 
 * Dedicated server, MasterServer and client including a server browser
 * Syncing of movement, actions / animations and AI
