@@ -905,10 +905,10 @@ void Game::NewActor(FactoryObject<Actor>& reference)
 		if (!reference->GetActorDead())
 		{
 			if (reference->GetActorAlerted())
-				SetActorAlerted(reference)();
+				SetActorAlerted(reference);
 
 			if (reference->GetActorSneaking())
-				SetActorSneaking(reference)();
+				SetActorSneaking(reference);
 
 			if (reference->GetActorMovingAnimation() != AnimGroup_Idle)
 				SetActorMovingAnimation(reference);
@@ -1165,70 +1165,24 @@ void Game::RestoreActorValue(const FactoryObject<Actor>& reference, unsigned cha
 	Interface::EndDynamic();
 }
 
-function<void()> Game::SetActorSneaking(const FactoryObject<Actor>& reference, unsigned int key)
+void Game::SetActorSneaking(const FactoryObject<Actor>& reference, unsigned int key)
 {
-	NetworkID id = reference->GetNetworkID();
+	Interface::StartDynamic();
 
-	function<void()> sneaking = [=]
-	{
-		try
-		{
-			SetRestrained(GameFactory::GetObject<Actor>(id).get(), false);
+	Interface::ExecuteCommand("SetForceSneak", {reference->GetReferenceParam(), RawParameter(reference->GetActorSneaking())}, key);
 
-			this_thread::sleep_for(chrono::milliseconds(20));
-
-			auto reference = GameFactory::GetObject<Actor>(id);
-
-			Interface::StartDynamic();
-
-			Interface::ExecuteCommand("SetForceSneak", {reference->GetReferenceParam(), RawParameter(reference->GetActorSneaking())}, key);
-
-			Interface::EndDynamic();
-
-			GameFactory::LeaveReference(reference.get());
-
-			this_thread::sleep_for(chrono::milliseconds(100));
-
-			SetRestrained(GameFactory::GetObject<Actor>(id).get(), true);
-		}
-		catch (...) {}
-	};
-
-	return sneaking;
+	Interface::EndDynamic();
 }
 
-function<void()> Game::SetActorAlerted(const FactoryObject<Actor>& reference, unsigned int key)
+void Game::SetActorAlerted(const FactoryObject<Actor>& reference, unsigned int key)
 {
 	// really need to introduce restrained state in Actor class
 
-	NetworkID id = reference->GetNetworkID();
+	Interface::StartDynamic();
 
-	function<void()> alerted = [=]
-	{
-		try
-		{
-			SetRestrained(GameFactory::GetObject<Actor>(id).get(), false);
+	Interface::ExecuteCommand("SetAlert", {reference->GetReferenceParam(), RawParameter(reference->GetActorAlerted())}, key);
 
-			this_thread::sleep_for(chrono::milliseconds(20));
-
-			auto reference = GameFactory::GetObject<Actor>(id);
-
-			Interface::StartDynamic();
-
-			Interface::ExecuteCommand("SetAlert", {reference->GetReferenceParam(), RawParameter(reference->GetActorAlerted())}, key);
-
-			Interface::EndDynamic();
-
-			GameFactory::LeaveReference(reference.get());
-
-			this_thread::sleep_for(chrono::milliseconds(100));
-
-			SetRestrained(GameFactory::GetObject<Actor>(id).get(), true);
-		}
-		catch (...) {}
-	};
-
-	return alerted;
+	Interface::EndDynamic();
 }
 
 void Game::SetActorAnimation(const FactoryObject<Actor>& reference, unsigned char anim, unsigned int key)
@@ -1843,12 +1797,12 @@ void Game::net_SetActorState(const FactoryObject<Actor>& reference, unsigned int
 	result = reference->SetActorAlerted(alerted);
 
 	if (result && enabled)
-		AsyncDispatch(SetActorAlerted(reference, result->Lock()));
+		SetActorAlerted(reference, result->Lock());
 
 	result = reference->SetActorSneaking(sneaking);
 
 	if (result && enabled)
-		AsyncDispatch(SetActorSneaking(reference, result->Lock()));
+		SetActorSneaking(reference, result->Lock());
 
 	result = reference->SetActorMovingAnimation(moving);
 

@@ -211,11 +211,11 @@ class Game
 		/**
 		 * \brief Sets the sneaking state of an Actor
 		 */
-		static std::function<void()> SetActorSneaking(const FactoryObject<Actor>& reference, unsigned int key = 0);
+		static void SetActorSneaking(const FactoryObject<Actor>& reference, unsigned int key = 0);
 		/**
 		 * \brief Sets the alerted state of an Actor
 		 */
-		static std::function<void()> SetActorAlerted(const FactoryObject<Actor>& reference, unsigned int key = 0);
+		static void SetActorAlerted(const FactoryObject<Actor>& reference, unsigned int key = 0);
 		/**
 		 * \brief Plays an animation on an Actor
 		 */
