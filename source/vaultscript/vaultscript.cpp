@@ -51,9 +51,9 @@ Void VAULTSCRIPT OnPlayerDisconnect(ID player, Reason reason) noexcept
 
 }
 
-VAULTNPC VAULTSCRIPT OnPlayerRequestGame(ID player) noexcept
+NPC_ VAULTSCRIPT OnPlayerRequestGame(ID player) noexcept
 {
-	return static_cast<VAULTNPC>(0x00000000);
+	return static_cast<NPC_>(0x00000000);
 }
 
 State VAULTSCRIPT OnPlayerChat(ID player, RawString message) noexcept
@@ -69,7 +69,7 @@ Void VAULTSCRIPT OnSpawn(ID object) noexcept
 		player.UIMessage("Hello, " + player.GetBaseName() + "!");
 }
 
-Void VAULTSCRIPT OnCellChange(ID object, VAULTCELL cell) noexcept
+Void VAULTSCRIPT OnCellChange(ID object, CELL cell) noexcept
 {
 
 }
@@ -124,7 +124,7 @@ Void VAULTSCRIPT OnActorDropItem(ID actor, Base item, UCount count, Value value)
 
 }
 
-Void VAULTSCRIPT OnActorPickupItem(ID actor, Base item, UCount count, Value value, VAULTNPC owner) noexcept
+Void VAULTSCRIPT OnActorPickupItem(ID actor, Base item, UCount count, Value value, NPC_ owner) noexcept
 {
 
 }
@@ -134,7 +134,7 @@ Void VAULTSCRIPT OnActorPunch(ID actor, State power) noexcept
 
 }
 
-Void VAULTSCRIPT OnActorFireWeapon(ID actor, VAULTWEAPON weapon) noexcept
+Void VAULTSCRIPT OnActorFireWeapon(ID actor, WEAP weapon) noexcept
 {
 
 }
