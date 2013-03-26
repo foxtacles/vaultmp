@@ -474,17 +474,12 @@ class API
 		static ValueList controls;
 		static CommandQueue queue;
 
-		static std::pair<std::string, unsigned short> RetrieveFunction(const std::string& name);
+		static const std::pair<std::string, unsigned short>& RetrieveFunction(const std::string& name);
 		static unsigned char* BuildCommandStream(std::vector<double>&& info, unsigned int key, unsigned char* command, unsigned int size);
 
 		static std::vector<double> ParseCommand(const char* cmd_, const char* def, op_default* result, unsigned short opcode);
 
 	protected:
-		/**
-		 * \brief Checks whether a certain function is available in the current API environment
-		 */
-		static bool AnnounceFunction(const std::string& name);
-
 		/**
 		 * \brief Translates commands to a stream of bytes
 		 *

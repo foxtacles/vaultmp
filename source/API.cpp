@@ -856,179 +856,108 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 
 unsigned char API::RetrieveValue(const char* value)
 {
-	ValueMap::iterator it;
-	it = values.find(string(value));
-
-	if (it != values.end())
-		return it->second;
-
-	return 0xFF;
+	auto it = values.find(value);
+	return it != values.end() ? it->second : 0xFF;
 }
 
 unsigned char API::RetrieveAxis(const char* axis)
 {
-	ValueMap::iterator it;
-	it = API::axis.find(string(axis));
-
-	if (it != API::axis.end())
-		return it->second;
-
-	return 0xFF;
+	auto it = API::axis.find(axis);
+	return it != API::axis.end() ? it->second : 0xFF;
 }
 
 unsigned char API::RetrieveAnim(const char* anim)
 {
-	ValueMap::iterator it;
-	it = anims.find(string(anim));
-
-	if (it != anims.end())
-		return it->second;
-
-	return 0xFF;
+	auto it = anims.find(anim);
+	return it != anims.end() ? it->second : 0xFF;
 }
 
 bool API::IsControl(unsigned char control)
 {
-	return (controls.find(control) != controls.end() ? true : false);
+	return controls.find(control) != controls.end();
 }
 
 string API::RetrieveValue_Reverse(unsigned char value)
 {
-	ValueMap::iterator it;
-
-	for (it = values.begin(); it != values.end() && it->second != value; ++it);
-
-	if (it != values.end())
-		return it->first;
-
-	return string();
+	auto it = find_if(values.begin(), values.end(), [value](const ValueMap::value_type& data) { return data.second == value; });
+	return it != values.end() ? it->first : string();
 }
 
 string API::RetrieveAxis_Reverse(unsigned char axis)
 {
-	ValueMap::iterator it;
-
-	for (it = API::axis.begin(); it != API::axis.end() && it->second != axis; ++it);
-
-	if (it != API::axis.end())
-		return it->first;
-
-	return string();
+	auto it = find_if(API::axis.begin(), API::axis.end(), [axis](const ValueMap::value_type& data) { return data.second == axis; });
+	return it != API::axis.end() ? it->first : string();
 }
 
 string API::RetrieveAnim_Reverse(unsigned char anim)
 {
-	ValueMap::iterator it;
-
-	for (it = anims.begin(); it != anims.end() && it->second != anim; ++it);
-
-	if (it != anims.end())
-		return it->first;
-
-	return string();
+	auto it = find_if(anims.begin(), anims.end(), [anim](const ValueMap::value_type& data) { return data.second == anim; });
+	return it != anims.end() ? it->first : string();
 }
 
 vector<unsigned char> API::RetrieveAllValues()
 {
 	vector<unsigned char> result;
-	ValueMap::iterator it;
-
-	for (it = values.begin(); it != values.end(); ++it)
-		result.emplace_back(it->second);
-
+	result.reserve(values.size());
+	transform(values.begin(), values.end(), back_inserter(result), [](const ValueMap::value_type& data) { return data.second; });
 	return result;
 }
 
 vector<unsigned char> API::RetrieveAllAxis()
 {
 	vector<unsigned char> result;
-	ValueMap::iterator it;
-
-	for (it = axis.begin(); it != axis.end(); ++it)
-		result.emplace_back(it->second);
-
+	result.reserve(axis.size());
+	transform(axis.begin(), axis.end(), back_inserter(result), [](const ValueMap::value_type& data) { return data.second; });
 	return result;
 }
 
 vector<unsigned char> API::RetrieveAllAnims()
 {
 	vector<unsigned char> result;
-	ValueMap::iterator it;
-
-	for (it = anims.begin(); it != anims.end(); ++it)
-		result.emplace_back(it->second);
-
+	result.reserve(anims.size());
+	transform(anims.begin(), anims.end(), back_inserter(result), [](const ValueMap::value_type& data) { return data.second; });
 	return result;
 }
 
 vector<unsigned char> API::RetrieveAllControls()
 {
-	vector<unsigned char> result;
-	ValueList::iterator it;
-
-	for (it = controls.begin(); it != controls.end(); ++it)
-		result.emplace_back(*it);
-
-	return result;
+	return {controls.begin(), controls.end()};
 }
 
 vector<string> API::RetrieveAllValues_Reverse()
 {
 	vector<string> result;
-	ValueMap::iterator it;
-
-	for (it = values.begin(); it != values.end(); ++it)
-		result.emplace_back(it->first);
-
+	result.reserve(values.size());
+	transform(values.begin(), values.end(), back_inserter(result), [](const ValueMap::value_type& data) { return data.first; });
 	return result;
 }
 
 vector<string> API::RetrieveAllAxis_Reverse()
 {
 	vector<string> result;
-	ValueMap::iterator it;
-
-	for (it = axis.begin(); it != axis.end(); ++it)
-		result.emplace_back(it->first);
-
+	result.reserve(axis.size());
+	transform(axis.begin(), axis.end(), back_inserter(result), [](const ValueMap::value_type& data) { return data.first; });
 	return result;
 }
 
 vector<string> API::RetrieveAllAnims_Reverse()
 {
 	vector<string> result;
-	ValueMap::iterator it;
-
-	for (it = anims.begin(); it != anims.end(); ++it)
-		result.emplace_back(it->first);
-
+	result.reserve(anims.size());
+	transform(anims.begin(), anims.end(), back_inserter(result), [](const ValueMap::value_type& data) { return data.first; });
 	return result;
 }
 
-pair<string, unsigned short> API::RetrieveFunction(const string& name)
+const pair<string, unsigned short>& API::RetrieveFunction(const string& name)
 {
 	auto it = functions.find(name);
 
 	if (it != functions.end())
 		return it->second;
 
-	auto empty = pair<string, unsigned short>("", 0x00);
+	static auto empty = pair<string, unsigned short>();
 
 	return empty;
-}
-
-bool API::AnnounceFunction(const string& name)
-{
-	pair<string, unsigned short> func = RetrieveFunction(name);
-
-	if (!func.first.empty())
-		return true;
-
-#ifdef VAULTMP_DEBUG
-	debug.print("API function ", name.c_str(), " not found or not supported by the game");
-#endif
-
-	return false;
 }
 
 unsigned char* API::BuildCommandStream(vector<double>&& info, unsigned int key, unsigned char* command, unsigned int size)
@@ -1055,7 +984,7 @@ API::CommandParsed API::Translate(const vector<string>& cmd, unsigned int key)
 
 	for (const string& command : cmd)
 	{
-		pair<string, unsigned short> func = RetrieveFunction(command.substr(0, command.find_first_of(' ')));
+		const auto& func = RetrieveFunction(command.substr(0, command.find_first_of(' ')));
 
 		if (!func.second)
 		{
