@@ -3,12 +3,318 @@
 using namespace std;
 using namespace Values;
 
-API::FunctionMap API::functions;
-API::ValueMap API::values;
-API::ValueMap API::axis;
-API::ValueMap API::anims;
-API::ValueList API::controls;
 API::CommandQueue API::queue;
+
+API::ValueMap API::axis = {
+		{"X", Axis_X},
+		{"Y", Axis_Y},
+		{"Z", Axis_Z},
+	};
+
+API::ValueMap API::anims = {
+		{"Idle", AnimGroup_Idle},
+		{"DynamicIdle", AnimGroup_DynamicIdle},
+		{"SpecialIdle", AnimGroup_SpecialIdle},
+		{"Forward", AnimGroup_Forward},
+		{"Backward", AnimGroup_Backward},
+		{"Left", AnimGroup_Left},
+		{"Right", AnimGroup_Right},
+		{"FastForward", AnimGroup_FastForward},
+		{"FastBackward", AnimGroup_FastBackward},
+		{"FastLeft", AnimGroup_FastLeft},
+		{"FastRight", AnimGroup_FastRight},
+		{"DodgeForward", AnimGroup_DodgeForward},
+		{"DodgeBack", AnimGroup_DodgeBack},
+		{"DodgeLeft", AnimGroup_DodgeLeft},
+		{"DodgeRight", AnimGroup_DodgeRight},
+		{"TurnLeft", AnimGroup_TurnLeft},
+		{"TurnRight", AnimGroup_TurnRight},
+		{"Aim", AnimGroup_Aim},
+		{"AimUp", AnimGroup_AimUp},
+		{"AimDown", AnimGroup_AimDown},
+		{"AimIS", AnimGroup_AimIS},
+		{"AimISUp", AnimGroup_AimISUp},
+		{"AimISDown", AnimGroup_AimISDown},
+		{"AttackLeft", AnimGroup_AttackLeft},
+		{"AttackLeftUp", AnimGroup_AttackLeftUp},
+		{"AttackLeftDown", AnimGroup_AttackLeftDown},
+		{"AttackLeftIS", AnimGroup_AttackLeftIS},
+		{"AttackLeftISUp", AnimGroup_AttackLeftISUp},
+		{"AttackLeftISDown", AnimGroup_AttackLeftISDown},
+		{"AttackRight", AnimGroup_AttackRight},
+		{"AttackRightUp", AnimGroup_AttackRightUp},
+		{"AttackRightDown", AnimGroup_AttackRightDown},
+		{"AttackRightIS", AnimGroup_AttackRightIS},
+		{"AttackRightISUp", AnimGroup_AttackRightISUp},
+		{"AttackRightISDown", AnimGroup_AttackRightISDown},
+		{"Attack3", AnimGroup_Attack3},
+		{"Attack3Up", AnimGroup_Attack3Up},
+		{"Attack3Down", AnimGroup_Attack3Down},
+		{"Attack3IS", AnimGroup_Attack3IS},
+		{"Attack3ISUp", AnimGroup_Attack3ISUp},
+		{"Attack3ISDown", AnimGroup_Attack3ISDown},
+		{"Attack4", AnimGroup_Attack4},
+		{"Attack4Up", AnimGroup_Attack4Up},
+		{"Attack4Down", AnimGroup_Attack4Down},
+		{"Attack4IS", AnimGroup_Attack4IS},
+		{"Attack4ISUp", AnimGroup_Attack4ISUp},
+		{"Attack4ISDown", AnimGroup_Attack4ISDown},
+		{"Attack5", AnimGroup_Attack5},
+		{"Attack5Up", AnimGroup_Attack5Up},
+		{"Attack5Down", AnimGroup_Attack5Down},
+		{"Attack5IS", AnimGroup_Attack5IS},
+		{"Attack5ISUp", AnimGroup_Attack5ISUp},
+		{"Attack5ISDown", AnimGroup_Attack5ISDown},
+		{"Attack6", AnimGroup_Attack6},
+		{"Attack6Up", AnimGroup_Attack6Up},
+		{"Attack6Down", AnimGroup_Attack6Down},
+		{"Attack6IS", AnimGroup_Attack6IS},
+		{"Attack6ISUp", AnimGroup_Attack6ISUp},
+		{"Attack6ISDown", AnimGroup_Attack6ISDown},
+		{"Attack7", AnimGroup_Attack7},
+		{"Attack7Up", AnimGroup_Attack7Up},
+		{"Attack7Down", AnimGroup_Attack7Down},
+		{"Attack7IS", AnimGroup_Attack7IS},
+		{"Attack7ISUp", AnimGroup_Attack7ISUp},
+		{"Attack7ISDown", AnimGroup_Attack7ISDown},
+		{"Attack8", AnimGroup_Attack8},
+		{"Attack8Up", AnimGroup_Attack8Up},
+		{"Attack8Down", AnimGroup_Attack8Down},
+		{"Attack8IS", AnimGroup_Attack8IS},
+		{"Attack8ISUp", AnimGroup_Attack8ISUp},
+		{"Attack8ISDown", AnimGroup_Attack8ISDown},
+		{"AttackLoop", AnimGroup_AttackLoop},
+		{"AttackLoopUp", AnimGroup_AttackLoopUp},
+		{"AttackLoopDown", AnimGroup_AttackLoopDown},
+		{"AttackLoopIS", AnimGroup_AttackLoopIS},
+		{"AttackLoopISUp", AnimGroup_AttackLoopISUp},
+		{"AttackLoopISDown", AnimGroup_AttackLoopISDown},
+		{"AttackSpin", AnimGroup_AttackSpin},
+		{"AttackSpinUp", AnimGroup_AttackSpinUp},
+		{"AttackSpinDown", AnimGroup_AttackSpinDown},
+		{"AttackSpinIS", AnimGroup_AttackSpinIS},
+		{"AttackSpinISUp", AnimGroup_AttackSpinISUp},
+		{"AttackSpinISDown", AnimGroup_AttackSpinISDown},
+		{"AttackSpin2", AnimGroup_AttackSpin2},
+		{"AttackSpin2Up", AnimGroup_AttackSpin2Up},
+		{"AttackSpin2Down", AnimGroup_AttackSpin2Down},
+		{"AttackSpin2IS", AnimGroup_AttackSpin2IS},
+		{"AttackSpin2ISUp", AnimGroup_AttackSpin2ISUp},
+		{"AttackSpin2ISDown", AnimGroup_AttackSpin2ISDown},
+		{"AttackPower", AnimGroup_AttackPower},
+		{"AttackForwardPower", AnimGroup_AttackForwardPower},
+		{"AttackBackPower", AnimGroup_AttackBackPower},
+		{"AttackLeftPower", AnimGroup_AttackLeftPower},
+		{"AttackRightPower", AnimGroup_AttackRightPower},
+		{"Holster", AnimGroup_Holster},
+		{"Equip", AnimGroup_Equip},
+		{"Unequip", AnimGroup_Unequip},
+
+		{"JumpStart", AnimGroup_JumpStart},
+		{"JumpLoop", AnimGroup_JumpLoop},
+		{"JumpLand", AnimGroup_JumpLand},
+		{"JumpLoopForward", AnimGroup_JumpLoopForward},
+		{"JumpLoopBackward", AnimGroup_JumpLoopBackward},
+		{"JumpLoopLeft", AnimGroup_JumpLoopLeft},
+		{"JumpLoopRight", AnimGroup_JumpLoopRight},
+		{"JumpLandForward", AnimGroup_JumpLandForward},
+		{"JumpLandBackward", AnimGroup_JumpLandBackward},
+		{"JumpLandLeft", AnimGroup_JumpLandLeft},
+		{"JumpLandRight", AnimGroup_JumpLandRight},
+		{"BlockIdle", AnimGroup_BlockIdle},
+		{"BlockHit", AnimGroup_BlockHit},
+		{"ReloadA", AnimGroup_ReloadA},
+		{"ReloadB", AnimGroup_ReloadB},
+		{"ReloadC", AnimGroup_ReloadC},
+		{"ReloadD", AnimGroup_ReloadD},
+		{"ReloadE", AnimGroup_ReloadE},
+		{"ReloadF", AnimGroup_ReloadF},
+		{"ReloadG", AnimGroup_ReloadG},
+		{"ReloadH", AnimGroup_ReloadH},
+		{"ReloadI", AnimGroup_ReloadI},
+		{"ReloadJ", AnimGroup_ReloadJ},
+		{"ReloadK", AnimGroup_ReloadK},
+	};
+
+API::ValueMap API::values = {
+		{"Aggression", ActorVal_Aggression},
+		{"Confidence", ActorVal_Confidence},
+		{"Energy", ActorVal_Energy},
+		{"Responsibility", ActorVal_Responsibility},
+		{"Mood", ActorVal_Mood},
+		{"Strength", ActorVal_Strength},
+		{"Perception", ActorVal_Perception},
+		{"Endurance", ActorVal_Endurance},
+		{"Charisma", ActorVal_Charisma},
+		{"Intelligence", ActorVal_Intelligence},
+		{"Agility", ActorVal_Agility},
+		{"Luck", ActorVal_Luck},
+		{"ActionPoints", ActorVal_ActionPoints},
+		{"CarryWeight", ActorVal_CarryWeight},
+		{"CritChance", ActorVal_CritChance},
+		{"HealRate", ActorVal_HealRate},
+		{"Health", ActorVal_Health},
+		{"MeleeDamage", ActorVal_MeleeDamage},
+		{"DamageResist", ActorVal_DamageResistance},
+		{"PoisonResist", ActorVal_PoisonResistance},
+		{"RadResist", ActorVal_RadResistance},
+		{"SpeedMult", ActorVal_SpeedMultiplier},
+		{"Fatigue", ActorVal_Fatigue},
+		{"Karma", ActorVal_Karma},
+		{"XP", ActorVal_XP},
+		{"PerceptionCondition", ActorVal_Head},
+		{"EnduranceCondition", ActorVal_Torso},
+		{"LeftAttackCondition", ActorVal_LeftArm},
+		{"RightAttackCondition", ActorVal_RightArm},
+		{"LeftMobilityCondition", ActorVal_LeftLeg},
+		{"RightMobilityCondition", ActorVal_RightLeg},
+		{"BrainCondition", ActorVal_Brain},
+		{"Barter", ActorVal_Barter},
+		{"BigGuns", ActorVal_BigGuns},
+		{"EnergyWeapons", ActorVal_EnergyWeapons},
+		{"Explosives", ActorVal_Explosives},
+		{"Lockpick", ActorVal_Lockpick},
+		{"Medicine", ActorVal_Medicine},
+		{"MeleeWeapons", ActorVal_MeleeWeapons},
+		{"Repair", ActorVal_Repair},
+		{"Science", ActorVal_Science},
+		{"SmallGuns", ActorVal_SmallGuns},
+		{"Sneak", ActorVal_Sneak},
+		{"Speech", ActorVal_Speech},
+		//{"Throwing", ActorVal_Throwing},
+		{"Unarmed", ActorVal_Unarmed},
+		{"InventoryWeight", ActorVal_InventoryWeight},
+		{"Paralysis", ActorVal_Paralysis},
+		{"Invisibility", ActorVal_Invisibility},
+		{"Chameleon", ActorVal_Chameleon},
+		{"NightEye", ActorVal_NightEye},
+		{"DetectLifeRange", ActorVal_DetectLifeRange},
+		{"FireResist", ActorVal_FireResistance},
+		{"WaterBreathing", ActorVal_WaterBreathing},
+		{"RadiationRads", ActorVal_RadLevel},
+		{"BloodyMess", ActorVal_BloodyMess},
+		{"UnarmedDamage", ActorVal_UnarmedDamage},
+		{"Assistance", ActorVal_Assistance},
+		{"EnergyResist", ActorVal_EnergyResistance},
+		{"EMPResist", ActorVal_EMPResistance},
+		{"Variable01", ActorVal_Var1Medical},
+		{"Variable02", ActorVal_Variable02},
+		{"Variable03", ActorVal_Variable03},
+		{"Variable04", ActorVal_Variable04},
+		{"Variable05", ActorVal_Variable05},
+		{"Variable06", ActorVal_Variable06},
+		{"Variable07", ActorVal_Variable07},
+		{"Variable08", ActorVal_Variable08},
+		{"Variable09", ActorVal_Variable09},
+		{"Variable10", ActorVal_Variable10},
+		{"IgnoreCrippledLimbs", ActorVal_IgnoreCrippledLimbs},
+	};
+
+API::ValueList API::controls = {
+		ControlCode_Forward,
+		ControlCode_Backward,
+		ControlCode_Left,
+		ControlCode_Right,
+		ControlCode_Attack,
+		ControlCode_Activate,
+		ControlCode_Block,
+		ControlCode_ReadyItem,
+		ControlCode_Crouch,
+		ControlCode_Run,
+		ControlCode_AlwaysRun,
+		ControlCode_AutoMove,
+		ControlCode_Jump,
+		ControlCode_TogglePOV,
+		ControlCode_MenuMode,
+		ControlCode_Rest,
+		ControlCode_VATS,
+		ControlCode_Hotkey1,
+		ControlCode_Hotkey2,
+		ControlCode_Hotkey3,
+		ControlCode_Hotkey4,
+		ControlCode_Hotkey5,
+		ControlCode_Hotkey6,
+		ControlCode_Hotkey7,
+		ControlCode_Hotkey8,
+		ControlCode_Quicksave,
+		ControlCode_Quickload,
+		ControlCode_Grab,
+	};
+
+API::FunctionMap API::functions = {
+		{"GetPos", {"ra", Func_GetPos}},
+		{"SetPos", {"rad", Func_SetPos}},
+		{"GetAngle", {"ra", Func_GetAngle}},
+		{"SetAngle", {"rad", Func_SetAngle}},
+		{"GetBaseActorValue", {"rv", Func_GetBaseActorValue}},
+		{"SetActorValue", {"rvi", Func_SetActorValue}},
+		{"GetActorValue", {"rv", Func_GetActorValue}},
+		{"ForceActorValue", {"rvi", Func_ForceActorValue}},
+		{"GetDead", {"r", Func_GetDead}},
+		{"MoveTo", {"roDDD", Func_MoveTo}},
+		{"PlaceAtMe", {"rbIII", Func_PlaceAtMe}},
+		{"PlaceAtMeHealthPercent", {"rbdIII", Func_PlaceAtMeHealthPercent}},
+		{"SetRestrained", {"ri", Func_SetRestrained}},
+		{"PlayGroup", {"rgi", Func_PlayGroup}},
+		{"SetAlert", {"ri", Func_SetAlert}},
+		{"RemoveAllItems", {"rCI", Func_RemoveAllItems}},
+		{"GetCombatTarget", {"r", Func_GetCombatTarget}},
+		{"SetForceSneak", {"ri", Func_SetForceSneak}},
+		{"GetActorState", {"rI", Func_GetActorState}},
+		{"ChatMessage", {"s", Func_Chat}},
+		{"ChatUpdate", {"iidddd", Func_Chatbox}},
+		{"Enable", {"rI", Func_Enable}},
+		{"Disable", {"rI", Func_Disable}},
+		{"EquipItem", {"rjII", Func_EquipItem}},
+		{"UnequipItem", {"rjII", Func_UnequipItem}},
+		{"AddItem", {"rkiI", Func_AddItem}},
+		{"AddItemHealthPercent", {"rjidI", Func_AddItemHealthPercent}},
+		{"RemoveItem", {"rkiI", Func_RemoveItem}},
+		{"Kill", {"rQII", Func_Kill}},
+		{"IsMoving", {"r", Func_IsMoving}},
+		{"MarkForDelete", {"r", Func_MarkForDelete}},
+		{"IsAnimPlaying", {"rG", Func_IsAnimPlaying}},
+		{"FireWeapon", {"r$b", Func_FireWeapon}},
+		{"GetCauseofDeath", {"r", Func_GetCauseofDeath}},
+		{"IsLimbGone", {"ri", Func_IsLimbGone}},
+		{"EnablePlayerControls", {"IIIIIII", Func_EnablePlayerControls}},
+		{"DisablePlayerControls", {"$IIIIIII", Func_DisablePlayerControls}}, // $ required, else access violation...
+		{"DamageActorValue", {"rvd", Func_DamageActorValue}},
+		{"RestoreActorValue", {"rvd", Func_RestoreActorValue}},
+		{"PlayIdle", {"rs", Func_PlayIdle}},
+		{"AgeRace", {"r$i", Func_AgeRace}},
+		{"MatchRace", {"r$y", Func_MatchRace}}, // has been patched to take Race
+		{"SexChange", {"r$I", Func_SexChange}},
+		{"ForceWeather", {"nI", Func_ForceWeather}},
+		{"ScanContainer", {"r", Func_ScanContainer}},
+		{"RemoveAllItemsEx", {"r", Func_RemoveAllItemsEx}},
+		{"ForceRespawn", {"", Func_ForceRespawn}},
+		{"SetGlobalValue", {"ri", Func_SetGlobalValue}},
+		{"UIMessage", {"si", Func_UIMessage}},
+		{"Lock", {"rII", Func_Lock}},
+		{"Unlock", {"r", Func_Unlock}},
+		{"SetOwnership", {"rF", Func_SetOwnership}},
+		{"GetLocked", {"r", Func_GetLocked}},
+		{"CenterOnCell", {"$s", Func_CenterOnCell}},
+		{"CenterOnExterior", {"$ii", Func_CenterOnExterior}},
+		{"SetINISetting", {"$ss", Func_SetINISetting}},
+
+		{"Load", {"$s", Func_Load}},
+		{"CenterOnWorld", {"$wii", Func_CenterOnWorld}},
+		{"SetName", {"rsB", Func_SetName}},
+		{"GetParentCell", {"r", Func_GetParentCell}},
+		{"GetFirstRef", {"III", Func_GetFirstRef}},
+		{"GetNextRef", {"", Func_GetNextRef}},
+		{"GetControl", {"x", Func_GetControl}},
+		{"DisableControl", {"x", Func_DisableControl}},
+		{"EnableControl", {"x", Func_EnableControl}},
+		{"DisableKey", {"i", Func_DisableKey}},
+		{"EnableKey", {"i", Func_EnableKey}},
+		{"GetRefCount", {"r", Func_GetRefCount}},
+		{"SetRefCount", {"ri", Func_SetRefCount}},
+		{"GetBaseObject", {"r", Func_GetBaseObject}},
+		{"SetCurrentHealth", {"rd", Func_SetCurrentHealth}},
+	};
 
 #ifdef VAULTMP_DEBUG
 DebugInput<API> API::debug;
@@ -212,316 +518,10 @@ struct API::op_default
 void API::Initialize()
 {
 	srand(time(nullptr));
-
-	DefineAxisString("X", Axis_X);
-	DefineAxisString("Y", Axis_Y);
-	DefineAxisString("Z", Axis_Z);
-
-	DefineAnimString("Idle", AnimGroup_Idle);
-	DefineAnimString("DynamicIdle", AnimGroup_DynamicIdle);
-	DefineAnimString("SpecialIdle", AnimGroup_SpecialIdle);
-	DefineAnimString("Forward", AnimGroup_Forward);
-	DefineAnimString("Backward", AnimGroup_Backward);
-	DefineAnimString("Left", AnimGroup_Left);
-	DefineAnimString("Right", AnimGroup_Right);
-	DefineAnimString("FastForward", AnimGroup_FastForward);
-	DefineAnimString("FastBackward", AnimGroup_FastBackward);
-	DefineAnimString("FastLeft", AnimGroup_FastLeft);
-	DefineAnimString("FastRight", AnimGroup_FastRight);
-	DefineAnimString("DodgeForward", AnimGroup_DodgeForward);
-	DefineAnimString("DodgeBack", AnimGroup_DodgeBack);
-	DefineAnimString("DodgeLeft", AnimGroup_DodgeLeft);
-	DefineAnimString("DodgeRight", AnimGroup_DodgeRight);
-	DefineAnimString("TurnLeft", AnimGroup_TurnLeft);
-	DefineAnimString("TurnRight", AnimGroup_TurnRight);
-	DefineAnimString("Aim", AnimGroup_Aim);
-	DefineAnimString("AimUp", AnimGroup_AimUp);
-	DefineAnimString("AimDown", AnimGroup_AimDown);
-	DefineAnimString("AimIS", AnimGroup_AimIS);
-	DefineAnimString("AimISUp", AnimGroup_AimISUp);
-	DefineAnimString("AimISDown", AnimGroup_AimISDown);
-	DefineAnimString("AttackLeft", AnimGroup_AttackLeft);
-	DefineAnimString("AttackLeftUp", AnimGroup_AttackLeftUp);
-	DefineAnimString("AttackLeftDown", AnimGroup_AttackLeftDown);
-	DefineAnimString("AttackLeftIS", AnimGroup_AttackLeftIS);
-	DefineAnimString("AttackLeftISUp", AnimGroup_AttackLeftISUp);
-	DefineAnimString("AttackLeftISDown", AnimGroup_AttackLeftISDown);
-	DefineAnimString("AttackRight", AnimGroup_AttackRight);
-	DefineAnimString("AttackRightUp", AnimGroup_AttackRightUp);
-	DefineAnimString("AttackRightDown", AnimGroup_AttackRightDown);
-	DefineAnimString("AttackRightIS", AnimGroup_AttackRightIS);
-	DefineAnimString("AttackRightISUp", AnimGroup_AttackRightISUp);
-	DefineAnimString("AttackRightISDown", AnimGroup_AttackRightISDown);
-	DefineAnimString("Attack3", AnimGroup_Attack3);
-	DefineAnimString("Attack3Up", AnimGroup_Attack3Up);
-	DefineAnimString("Attack3Down", AnimGroup_Attack3Down);
-	DefineAnimString("Attack3IS", AnimGroup_Attack3IS);
-	DefineAnimString("Attack3ISUp", AnimGroup_Attack3ISUp);
-	DefineAnimString("Attack3ISDown", AnimGroup_Attack3ISDown);
-	DefineAnimString("Attack4", AnimGroup_Attack4);
-	DefineAnimString("Attack4Up", AnimGroup_Attack4Up);
-	DefineAnimString("Attack4Down", AnimGroup_Attack4Down);
-	DefineAnimString("Attack4IS", AnimGroup_Attack4IS);
-	DefineAnimString("Attack4ISUp", AnimGroup_Attack4ISUp);
-	DefineAnimString("Attack4ISDown", AnimGroup_Attack4ISDown);
-	DefineAnimString("Attack5", AnimGroup_Attack5);
-	DefineAnimString("Attack5Up", AnimGroup_Attack5Up);
-	DefineAnimString("Attack5Down", AnimGroup_Attack5Down);
-	DefineAnimString("Attack5IS", AnimGroup_Attack5IS);
-	DefineAnimString("Attack5ISUp", AnimGroup_Attack5ISUp);
-	DefineAnimString("Attack5ISDown", AnimGroup_Attack5ISDown);
-	DefineAnimString("Attack6", AnimGroup_Attack6);
-	DefineAnimString("Attack6Up", AnimGroup_Attack6Up);
-	DefineAnimString("Attack6Down", AnimGroup_Attack6Down);
-	DefineAnimString("Attack6IS", AnimGroup_Attack6IS);
-	DefineAnimString("Attack6ISUp", AnimGroup_Attack6ISUp);
-	DefineAnimString("Attack6ISDown", AnimGroup_Attack6ISDown);
-	DefineAnimString("Attack7", AnimGroup_Attack7);
-	DefineAnimString("Attack7Up", AnimGroup_Attack7Up);
-	DefineAnimString("Attack7Down", AnimGroup_Attack7Down);
-	DefineAnimString("Attack7IS", AnimGroup_Attack7IS);
-	DefineAnimString("Attack7ISUp", AnimGroup_Attack7ISUp);
-	DefineAnimString("Attack7ISDown", AnimGroup_Attack7ISDown);
-	DefineAnimString("Attack8", AnimGroup_Attack8);
-	DefineAnimString("Attack8Up", AnimGroup_Attack8Up);
-	DefineAnimString("Attack8Down", AnimGroup_Attack8Down);
-	DefineAnimString("Attack8IS", AnimGroup_Attack8IS);
-	DefineAnimString("Attack8ISUp", AnimGroup_Attack8ISUp);
-	DefineAnimString("Attack8ISDown", AnimGroup_Attack8ISDown);
-	DefineAnimString("AttackLoop", AnimGroup_AttackLoop);
-	DefineAnimString("AttackLoopUp", AnimGroup_AttackLoopUp);
-	DefineAnimString("AttackLoopDown", AnimGroup_AttackLoopDown);
-	DefineAnimString("AttackLoopIS", AnimGroup_AttackLoopIS);
-	DefineAnimString("AttackLoopISUp", AnimGroup_AttackLoopISUp);
-	DefineAnimString("AttackLoopISDown", AnimGroup_AttackLoopISDown);
-	DefineAnimString("AttackSpin", AnimGroup_AttackSpin);
-	DefineAnimString("AttackSpinUp", AnimGroup_AttackSpinUp);
-	DefineAnimString("AttackSpinDown", AnimGroup_AttackSpinDown);
-	DefineAnimString("AttackSpinIS", AnimGroup_AttackSpinIS);
-	DefineAnimString("AttackSpinISUp", AnimGroup_AttackSpinISUp);
-	DefineAnimString("AttackSpinISDown", AnimGroup_AttackSpinISDown);
-	DefineAnimString("AttackSpin2", AnimGroup_AttackSpin2);
-	DefineAnimString("AttackSpin2Up", AnimGroup_AttackSpin2Up);
-	DefineAnimString("AttackSpin2Down", AnimGroup_AttackSpin2Down);
-	DefineAnimString("AttackSpin2IS", AnimGroup_AttackSpin2IS);
-	DefineAnimString("AttackSpin2ISUp", AnimGroup_AttackSpin2ISUp);
-	DefineAnimString("AttackSpin2ISDown", AnimGroup_AttackSpin2ISDown);
-	DefineAnimString("AttackPower", AnimGroup_AttackPower);
-	DefineAnimString("AttackForwardPower", AnimGroup_AttackForwardPower);
-	DefineAnimString("AttackBackPower", AnimGroup_AttackBackPower);
-	DefineAnimString("AttackLeftPower", AnimGroup_AttackLeftPower);
-	DefineAnimString("AttackRightPower", AnimGroup_AttackRightPower);
-	DefineAnimString("Holster", AnimGroup_Holster);
-	DefineAnimString("Equip", AnimGroup_Equip);
-	DefineAnimString("Unequip", AnimGroup_Unequip);
-
-	DefineAnimString("JumpStart", AnimGroup_JumpStart);
-	DefineAnimString("JumpLoop", AnimGroup_JumpLoop);
-	DefineAnimString("JumpLand", AnimGroup_JumpLand);
-	DefineAnimString("JumpLoopForward", AnimGroup_JumpLoopForward);
-	DefineAnimString("JumpLoopBackward", AnimGroup_JumpLoopBackward);
-	DefineAnimString("JumpLoopLeft", AnimGroup_JumpLoopLeft);
-	DefineAnimString("JumpLoopRight", AnimGroup_JumpLoopRight);
-	DefineAnimString("JumpLandForward", AnimGroup_JumpLandForward);
-	DefineAnimString("JumpLandBackward", AnimGroup_JumpLandBackward);
-	DefineAnimString("JumpLandLeft", AnimGroup_JumpLandLeft);
-	DefineAnimString("JumpLandRight", AnimGroup_JumpLandRight);
-	DefineAnimString("BlockIdle", AnimGroup_BlockIdle);
-	DefineAnimString("BlockHit", AnimGroup_BlockHit);
-	DefineAnimString("ReloadA", AnimGroup_ReloadA);
-	DefineAnimString("ReloadB", AnimGroup_ReloadB);
-	DefineAnimString("ReloadC", AnimGroup_ReloadC);
-	DefineAnimString("ReloadD", AnimGroup_ReloadD);
-	DefineAnimString("ReloadE", AnimGroup_ReloadE);
-	DefineAnimString("ReloadF", AnimGroup_ReloadF);
-	DefineAnimString("ReloadG", AnimGroup_ReloadG);
-	DefineAnimString("ReloadH", AnimGroup_ReloadH);
-	DefineAnimString("ReloadI", AnimGroup_ReloadI);
-	DefineAnimString("ReloadJ", AnimGroup_ReloadJ);
-	DefineAnimString("ReloadK", AnimGroup_ReloadK);
-
-	DefineValueString("Aggression", ActorVal_Aggression);
-	DefineValueString("Confidence", ActorVal_Confidence);
-	DefineValueString("Energy", ActorVal_Energy);
-	DefineValueString("Responsibility", ActorVal_Responsibility);
-	DefineValueString("Mood", ActorVal_Mood);
-	DefineValueString("Strength", ActorVal_Strength);
-	DefineValueString("Perception", ActorVal_Perception);
-	DefineValueString("Endurance", ActorVal_Endurance);
-	DefineValueString("Charisma", ActorVal_Charisma);
-	DefineValueString("Intelligence", ActorVal_Intelligence);
-	DefineValueString("Agility", ActorVal_Agility);
-	DefineValueString("Luck", ActorVal_Luck);
-	DefineValueString("ActionPoints", ActorVal_ActionPoints);
-	DefineValueString("CarryWeight", ActorVal_CarryWeight);
-	DefineValueString("CritChance", ActorVal_CritChance);
-	DefineValueString("HealRate", ActorVal_HealRate);
-	DefineValueString("Health", ActorVal_Health);
-	DefineValueString("MeleeDamage", ActorVal_MeleeDamage);
-	DefineValueString("DamageResist", ActorVal_DamageResistance);
-	DefineValueString("PoisonResist", ActorVal_PoisonResistance);
-	DefineValueString("RadResist", ActorVal_RadResistance);
-	DefineValueString("SpeedMult", ActorVal_SpeedMultiplier);
-	DefineValueString("Fatigue", ActorVal_Fatigue);
-	DefineValueString("Karma", ActorVal_Karma);
-	DefineValueString("XP", ActorVal_XP);
-	DefineValueString("PerceptionCondition", ActorVal_Head);
-	DefineValueString("EnduranceCondition", ActorVal_Torso);
-	DefineValueString("LeftAttackCondition", ActorVal_LeftArm);
-	DefineValueString("RightAttackCondition", ActorVal_RightArm);
-	DefineValueString("LeftMobilityCondition", ActorVal_LeftLeg);
-	DefineValueString("RightMobilityCondition", ActorVal_RightLeg);
-	DefineValueString("BrainCondition", ActorVal_Brain);
-	DefineValueString("Barter", ActorVal_Barter);
-	DefineValueString("BigGuns", ActorVal_BigGuns);
-	DefineValueString("EnergyWeapons", ActorVal_EnergyWeapons);
-	DefineValueString("Explosives", ActorVal_Explosives);
-	DefineValueString("Lockpick", ActorVal_Lockpick);
-	DefineValueString("Medicine", ActorVal_Medicine);
-	DefineValueString("MeleeWeapons", ActorVal_MeleeWeapons);
-	DefineValueString("Repair", ActorVal_Repair);
-	DefineValueString("Science", ActorVal_Science);
-	DefineValueString("SmallGuns", ActorVal_SmallGuns);
-	DefineValueString("Sneak", ActorVal_Sneak);
-	DefineValueString("Speech", ActorVal_Speech);
-	//DefineValueString("Throwing", ActorVal_Throwing);
-	DefineValueString("Unarmed", ActorVal_Unarmed);
-	DefineValueString("InventoryWeight", ActorVal_InventoryWeight);
-	DefineValueString("Paralysis", ActorVal_Paralysis);
-	DefineValueString("Invisibility", ActorVal_Invisibility);
-	DefineValueString("Chameleon", ActorVal_Chameleon);
-	DefineValueString("NightEye", ActorVal_NightEye);
-	DefineValueString("DetectLifeRange", ActorVal_DetectLifeRange);
-	DefineValueString("FireResist", ActorVal_FireResistance);
-	DefineValueString("WaterBreathing", ActorVal_WaterBreathing);
-	DefineValueString("RadiationRads", ActorVal_RadLevel);
-	DefineValueString("BloodyMess", ActorVal_BloodyMess);
-	DefineValueString("UnarmedDamage", ActorVal_UnarmedDamage);
-	DefineValueString("Assistance", ActorVal_Assistance);
-	DefineValueString("EnergyResist", ActorVal_EnergyResistance);
-	DefineValueString("EMPResist", ActorVal_EMPResistance);
-	DefineValueString("Variable01", ActorVal_Var1Medical);
-	DefineValueString("Variable02", ActorVal_Variable02);
-	DefineValueString("Variable03", ActorVal_Variable03);
-	DefineValueString("Variable04", ActorVal_Variable04);
-	DefineValueString("Variable05", ActorVal_Variable05);
-	DefineValueString("Variable06", ActorVal_Variable06);
-	DefineValueString("Variable07", ActorVal_Variable07);
-	DefineValueString("Variable08", ActorVal_Variable08);
-	DefineValueString("Variable09", ActorVal_Variable09);
-	DefineValueString("Variable10", ActorVal_Variable10);
-	DefineValueString("IgnoreCrippledLimbs", ActorVal_IgnoreCrippledLimbs);
-
-	DefineControl(ControlCode_Forward);
-	DefineControl(ControlCode_Backward);
-	DefineControl(ControlCode_Left);
-	DefineControl(ControlCode_Right);
-	DefineControl(ControlCode_Attack);
-	DefineControl(ControlCode_Activate);
-	DefineControl(ControlCode_Block);
-	DefineControl(ControlCode_ReadyItem);
-	DefineControl(ControlCode_Crouch);
-	DefineControl(ControlCode_Run);
-	DefineControl(ControlCode_AlwaysRun);
-	DefineControl(ControlCode_AutoMove);
-	DefineControl(ControlCode_Jump);
-	DefineControl(ControlCode_TogglePOV);
-	DefineControl(ControlCode_MenuMode);
-	DefineControl(ControlCode_Rest);
-	DefineControl(ControlCode_VATS);
-	DefineControl(ControlCode_Hotkey1);
-	DefineControl(ControlCode_Hotkey2);
-	DefineControl(ControlCode_Hotkey3);
-	DefineControl(ControlCode_Hotkey4);
-	DefineControl(ControlCode_Hotkey5);
-	DefineControl(ControlCode_Hotkey6);
-	DefineControl(ControlCode_Hotkey7);
-	DefineControl(ControlCode_Hotkey8);
-	DefineControl(ControlCode_Quicksave);
-	DefineControl(ControlCode_Quickload);
-	DefineControl(ControlCode_Grab);
-
-	DefineFunction("GetPos", "ra", Func_GetPos);
-	DefineFunction("SetPos", "rad", Func_SetPos);
-	DefineFunction("GetAngle", "ra", Func_GetAngle);
-	DefineFunction("SetAngle", "rad", Func_SetAngle);
-	DefineFunction("GetBaseActorValue", "rv", Func_GetBaseActorValue);
-	DefineFunction("SetActorValue", "rvi", Func_SetActorValue);
-	DefineFunction("GetActorValue", "rv", Func_GetActorValue);
-	DefineFunction("ForceActorValue", "rvi", Func_ForceActorValue);
-	DefineFunction("GetDead", "r", Func_GetDead);
-	DefineFunction("MoveTo", "roDDD", Func_MoveTo);
-	DefineFunction("PlaceAtMe", "rbIII", Func_PlaceAtMe);
-	DefineFunction("PlaceAtMeHealthPercent", "rbdIII", Func_PlaceAtMeHealthPercent);
-	DefineFunction("SetRestrained", "ri", Func_SetRestrained);
-	DefineFunction("PlayGroup", "rgi", Func_PlayGroup);
-	DefineFunction("SetAlert", "ri", Func_SetAlert);
-	DefineFunction("RemoveAllItems", "rCI", Func_RemoveAllItems);
-	DefineFunction("GetCombatTarget", "r", Func_GetCombatTarget);
-	DefineFunction("SetForceSneak", "ri", Func_SetForceSneak);
-	DefineFunction("GetActorState", "rI", Func_GetActorState);
-	DefineFunction("ChatMessage", "s", Func_Chat);
-	DefineFunction("ChatUpdate", "iidddd", Func_Chatbox);
-	DefineFunction("Enable", "rI", Func_Enable);
-	DefineFunction("Disable", "rI", Func_Disable);
-	DefineFunction("EquipItem", "rjII", Func_EquipItem);
-	DefineFunction("UnequipItem", "rjII", Func_UnequipItem);
-	DefineFunction("AddItem", "rkiI", Func_AddItem);
-	DefineFunction("AddItemHealthPercent", "rjidI", Func_AddItemHealthPercent);
-	DefineFunction("RemoveItem", "rkiI", Func_RemoveItem);
-	DefineFunction("Kill", "rQII", Func_Kill);
-	DefineFunction("IsMoving", "r", Func_IsMoving);
-	DefineFunction("MarkForDelete", "r", Func_MarkForDelete);
-	DefineFunction("IsAnimPlaying", "rG", Func_IsAnimPlaying);
-	DefineFunction("FireWeapon", "r$b", Func_FireWeapon);
-	DefineFunction("GetCauseofDeath", "r", Func_GetCauseofDeath);
-	DefineFunction("IsLimbGone", "ri", Func_IsLimbGone);
-	DefineFunction("EnablePlayerControls", "IIIIIII", Func_EnablePlayerControls);
-	DefineFunction("DisablePlayerControls", "$IIIIIII", Func_DisablePlayerControls); // $ required, else access violation...
-	DefineFunction("DamageActorValue", "rvd", Func_DamageActorValue);
-	DefineFunction("RestoreActorValue", "rvd", Func_RestoreActorValue);
-	DefineFunction("PlayIdle", "rs", Func_PlayIdle);
-	DefineFunction("AgeRace", "r$i", Func_AgeRace);
-	DefineFunction("MatchRace", "r$y", Func_MatchRace); // has been patched to take Race
-	DefineFunction("SexChange", "r$I", Func_SexChange);
-	DefineFunction("ForceWeather", "nI", Func_ForceWeather);
-	DefineFunction("ScanContainer", "r", Func_ScanContainer);
-	DefineFunction("RemoveAllItemsEx", "r", Func_RemoveAllItemsEx);
-	DefineFunction("ForceRespawn", "", Func_ForceRespawn);
-	DefineFunction("SetGlobalValue", "ri", Func_SetGlobalValue);
-	DefineFunction("UIMessage", "si", Func_UIMessage);
-	DefineFunction("Lock", "rII", Func_Lock);
-	DefineFunction("Unlock", "r", Func_Unlock);
-	DefineFunction("SetOwnership", "rF", Func_SetOwnership);
-	DefineFunction("GetLocked", "r", Func_GetLocked);
-	DefineFunction("CenterOnCell", "$s", Func_CenterOnCell);
-	DefineFunction("CenterOnExterior", "$ii", Func_CenterOnExterior);
-	DefineFunction("SetINISetting", "$ss", Func_SetINISetting);
-
-	DefineFunction("Load", "$s", Func_Load);
-	DefineFunction("CenterOnWorld", "$wii", Func_CenterOnWorld);
-	DefineFunction("SetName", "rsB", Func_SetName);
-	DefineFunction("GetParentCell", "r", Func_GetParentCell);
-	DefineFunction("GetFirstRef", "III", Func_GetFirstRef);
-	DefineFunction("GetNextRef", "", Func_GetNextRef);
-	DefineFunction("GetControl", "x", Func_GetControl);
-	DefineFunction("DisableControl", "x", Func_DisableControl);
-	DefineFunction("EnableControl", "x", Func_EnableControl);
-	DefineFunction("DisableKey", "i", Func_DisableKey);
-	DefineFunction("EnableKey", "i", Func_EnableKey);
-	DefineFunction("GetRefCount", "r", Func_GetRefCount);
-	DefineFunction("SetRefCount", "ri", Func_SetRefCount);
-	DefineFunction("GetBaseObject", "r", Func_GetBaseObject);
-	DefineFunction("SetCurrentHealth", "rd", Func_SetCurrentHealth);
 }
 
 void API::Terminate()
 {
-	values.clear();
-	axis.clear();
-	anims.clear();
-	controls.clear();
-	functions.clear();
 	queue.clear();
 }
 
@@ -852,31 +852,6 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 	}
 
 	return result_data;
-}
-
-void API::DefineFunction(const string& name, const string& def, unsigned short opcode)
-{
-	functions.emplace(name, pair<string, unsigned short>(def, opcode));
-}
-
-void API::DefineValueString(const string& name, unsigned char value)
-{
-	values.emplace(name, value);
-}
-
-void API::DefineAxisString(const string& name, unsigned char axis)
-{
-	API::axis.emplace(name, axis);
-}
-
-void API::DefineAnimString(const string& name, unsigned char anim)
-{
-	anims.emplace(name, anim);
-}
-
-void API::DefineControl(unsigned char control)
-{
-	controls.insert(control);
 }
 
 unsigned char API::RetrieveValue(const char* value)

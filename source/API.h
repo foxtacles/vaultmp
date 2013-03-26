@@ -474,12 +474,6 @@ class API
 		static ValueList controls;
 		static CommandQueue queue;
 
-		static void DefineFunction(const std::string& name, const std::string& def, unsigned short opcode);
-		static void DefineValueString(const std::string& name, unsigned char value);
-		static void DefineAxisString(const std::string& name, unsigned char axis);
-		static void DefineAnimString(const std::string& name, unsigned char anim);
-		static void DefineControl(unsigned char control);
-
 		static std::pair<std::string, unsigned short> RetrieveFunction(const std::string& name);
 		static unsigned char* BuildCommandStream(std::vector<double>&& info, unsigned int key, unsigned char* command, unsigned int size);
 
