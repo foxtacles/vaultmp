@@ -685,8 +685,6 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 
 	while (!DLLerror)
 	{
-		ZeroMemory(buffer, sizeof(buffer));
-
 		pipeServer.Receive(buffer);
 		unsigned char code = buffer[0];
 		unsigned char* content = buffer + 1;

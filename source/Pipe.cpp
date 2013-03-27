@@ -24,10 +24,7 @@ unsigned int Pipe::Send(const unsigned char* stream)
 {
 	DWORD dwActuallyWritten;
 
-	vector<unsigned char> buffer(this->size);
-	memcpy(&buffer[0], stream, this->size);
-
-	if (!WriteFile(this->pipe, &buffer[0], this->size, &dwActuallyWritten, nullptr))
+	if (!WriteFile(this->pipe, stream, this->size, &dwActuallyWritten, nullptr))
 		return 0;
 	else
 		return dwActuallyWritten;
@@ -36,12 +33,9 @@ unsigned int Pipe::Send(const unsigned char* stream)
 void Pipe::Receive(unsigned char* stream)
 {
 	DWORD dwActuallyRead;
-	vector<unsigned char> buffer(this->size);
 
-	if (!ReadFile(this->pipe, &buffer[0], this->size, &dwActuallyRead, nullptr))
+	if (!ReadFile(this->pipe, stream, this->size, &dwActuallyRead, nullptr))
 		return;
-
-	memcpy(stream, &buffer[0], this->size);
 }
 
 bool PipeServer::CreateServer()

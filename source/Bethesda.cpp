@@ -164,16 +164,6 @@ void Bethesda::Initialize()
 
 			ResumeThread(pi.hThread);
 
-/*
-			unsigned int IsGameReady = 1;
-
-			while (IsGameReady)
-			{
-				ReadProcessMemory(pi.hProcess, (LPCVOID)0x401015, &IsGameReady, sizeof(IsGameReady), nullptr);
-				this_thread::sleep_for(chrono::milliseconds(500));
-			}
-*/
-
 			CloseHandle(pi.hThread);
 			CloseHandle(pi.hProcess);
 

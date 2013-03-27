@@ -966,7 +966,7 @@ unsigned char* API::BuildCommandStream(vector<double>&& info, unsigned int key, 
 		throw VaultException("Error in API class; command size (%d bytes) exceeds the pipe length of %d bytes", size + 5, PIPE_LENGTH).stacktrace();
 
 	unsigned char* data = new unsigned char[PIPE_LENGTH];
-	ZeroMemory(data, sizeof(data));
+	ZeroMemory(data, PIPE_LENGTH);
 	data[0] = PIPE_OP_COMMAND;
 
 	memcpy(data + 5, command, size);

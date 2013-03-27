@@ -255,8 +255,6 @@ void Interface::CommandThreadReceive()
 
 			while (!endThread)
 			{
-				ZeroMemory(buffer, sizeof(buffer));
-
 				pipeClient->Receive(buffer);
 				code = buffer[0];
 
