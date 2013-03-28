@@ -47,18 +47,18 @@ void Bethesda::Initialize()
 
 	strcat(curdir, "\\..\\Data\\");
 
-	for (ModList::iterator it = modfiles.begin(); it != modfiles.end(); ++it)
+	for (const auto& modfile : modfiles)
 	{
-		TCHAR modfile[MAX_PATH+1];
-		ZeroMemory(modfile, sizeof(modfile));
-		strcat(modfile, curdir);
-		strcat(modfile, it->first.c_str());
+		TCHAR modfile_[MAX_PATH+1];
+		ZeroMemory(modfile_, sizeof(modfile_));
+		strcat(modfile_, curdir);
+		strcat(modfile_, modfile.first.c_str());
 
-		if (!Utils::crc32file(modfile, &crc))
-			throw VaultException("Could not find modification file:\n\n%s\n\nAsk the server owner to send you the file or try to Synchronize with the server", modfile).stacktrace();
+		if (!Utils::crc32file(modfile_, &crc))
+			throw VaultException("Could not find modification file:\n\n%s\n\nAsk the server owner to send you the file or try to use \"Get mods\" on the server", modfile_).stacktrace();
 
-		if (crc != it->second)
-			throw VaultException("Modfile differs from the server version:\n\n%s\n\nAsk the server owner to send you the file or try to Synchronize with the server", modfile).stacktrace();
+		if (crc != modfile.second)
+			throw VaultException("Modfile differs from the server version:\n\n%s\n\nAsk the server owner to send you the file or try to use \"Get mods\" on the server", modfile_).stacktrace();
 	}
 
 	TCHAR pluginsdir[MAX_PATH+1];
@@ -71,15 +71,15 @@ void Bethesda::Initialize()
 	char esm[] = "Fallout3.esm\nvaultmpF3.esp\n";
 	fwrite(esm, sizeof(char), sizeof(esm) - 1, plugins);
 
-	for (ModList::iterator it = modfiles.begin(); it != modfiles.end(); ++it)
+	for (const auto& modfile : modfiles)
 	{
-		fwrite(it->first.c_str(), sizeof(char), it->first.length(), plugins);
+		fwrite(modfile.first.c_str(), sizeof(char), modfile.first.length(), plugins);
 		fwrite("\n", sizeof(char), 1, plugins);
 	}
 
 	fclose(plugins);
 
-	if (Bethesda::multiinst || lookupProgramID("Fallout3.exe") == 0)
+	if (Bethesda::multiinst || !lookupProgramID("Fallout3.exe"))
 	{
 		STARTUPINFO si;
 		PROCESS_INFORMATION pi;
