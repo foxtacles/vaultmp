@@ -602,6 +602,7 @@ namespace vaultmp
 
 	#define GetContainerItemCount_Template(type) \
 		VAULTFUNCTION UCount GetContainerItemCount(ID id, type item = static_cast<type>(0)) noexcept { return VAULTAPI(GetContainerItemCount)(id, static_cast<Base>(item)); }
+	GetContainerItemCount_Template(Base);
 	GetContainerItemCount_Template(ALCH);
 	GetContainerItemCount_Template(AMMO);
 	GetContainerItemCount_Template(ARMA);
@@ -652,6 +653,7 @@ namespace vaultmp
 	#define CreateItem_Template(type) \
 		VAULTFUNCTION ID CreateItem(type item, ID id) noexcept { return VAULTAPI(CreateItem)(static_cast<Base>(item), id, static_cast<CELL>(0), 0.00, 0.00, 0.00); } \
 		VAULTFUNCTION ID CreateItem(type item, CELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateItem)(static_cast<Base>(item), static_cast<ID>(0), cell, X, Y, Z); }
+	CreateItem_Template(Base);
 	CreateItem_Template(ALCH);
 	CreateItem_Template(AMMO);
 	CreateItem_Template(ARMA);
@@ -670,6 +672,7 @@ namespace vaultmp
 
 	#define AddItem_Template(type) \
 		VAULTFUNCTION State AddItem(ID id, type item, UCount count = 1, Value condition = 100.0, State silent = True) noexcept { return VAULTAPI(AddItem)(id, static_cast<Base>(item), count, condition, silent); }
+	AddItem_Template(Base);
 	AddItem_Template(ALCH);
 	AddItem_Template(AMMO);
 	AddItem_Template(ARMA);
@@ -683,6 +686,7 @@ namespace vaultmp
 
 	#define RemoveItem_Template(type) \
 		VAULTFUNCTION UCount RemoveItem(ID id, type item, UCount count = 1, State silent = True) noexcept { return VAULTAPI(RemoveItem)(id, static_cast<Base>(item), count, silent); }
+	RemoveItem_Template(Base);
 	RemoveItem_Template(ALCH);
 	RemoveItem_Template(AMMO);
 	RemoveItem_Template(ARMA);
@@ -699,6 +703,7 @@ namespace vaultmp
 	#define CreateActor_Template(type) \
 		VAULTFUNCTION ID CreateActor(type actor, ID id) noexcept { return VAULTAPI(CreateActor)(static_cast<Base>(actor), id, static_cast<CELL>(0), 0.00, 0.00, 0.00); } \
 		VAULTFUNCTION ID CreateActor(type actor, CELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateActor)(static_cast<Base>(actor), static_cast<ID>(0), cell, X, Y, Z); }
+	CreateActor_Template(Base);
 	CreateActor_Template(NPC_);
 	CreateActor_Template(CREA);
 	#undef CreateActor_Template
@@ -708,6 +713,7 @@ namespace vaultmp
 
 	#define EquipItem_Template(type) \
 		VAULTFUNCTION State EquipItem(ID id, type item, State silent = True, State stick = True) noexcept { return VAULTAPI(EquipItem)(id, static_cast<Base>(item), silent, stick); }
+	EquipItem_Template(Base);
 	EquipItem_Template(ARMA);
 	EquipItem_Template(ARMO);
 	EquipItem_Template(WEAP);
@@ -715,6 +721,7 @@ namespace vaultmp
 
 	#define UnequipItem_Template(type) \
 		VAULTFUNCTION State UnequipItem(ID id, type item, State silent = True, State stick = True) noexcept { return VAULTAPI(UnequipItem)(id, static_cast<Base>(item), silent, stick); }
+	UnequipItem_Template(Base);
 	UnequipItem_Template(ARMA);
 	UnequipItem_Template(ARMO);
 	UnequipItem_Template(WEAP);
@@ -816,6 +823,7 @@ namespace vaultmp
 			#define Create_Template(type) \
 				static ID Create(type item, ID id) { return vaultmp::CreateItem(item, id); } \
 				static ID Create(type item, CELL cell, Value X, Value Y, Value Z) { return vaultmp::CreateItem(item, cell, X, Y, Z); }
+			Create_Template(Base);
 			Create_Template(ALCH);
 			Create_Template(AMMO);
 			Create_Template(ARMA);
@@ -841,6 +849,7 @@ namespace vaultmp
 
 			#define GetContainerItemCount_Template(type) \
 				UCount GetContainerItemCount(type item = static_cast<type>(0)) const noexcept { return vaultmp::GetContainerItemCount(id, item); }
+			GetContainerItemCount_Template(Base);
 			GetContainerItemCount_Template(ALCH);
 			GetContainerItemCount_Template(AMMO);
 			GetContainerItemCount_Template(ARMA);
@@ -856,6 +865,7 @@ namespace vaultmp
 
 			#define AddItem_Template(type) \
 				State AddItem(type item, UCount count = 1, Value condition = 100.0, State silent = True) noexcept { return vaultmp::AddItem(id, item, count, condition, silent); }
+			AddItem_Template(Base);
 			AddItem_Template(ALCH);
 			AddItem_Template(AMMO);
 			AddItem_Template(ARMA);
@@ -869,6 +879,7 @@ namespace vaultmp
 
 			#define RemoveItem_Template(type) \
 				UCount RemoveItem(type item, UCount count = 1, State silent = True) noexcept { return vaultmp::RemoveItem(id, item, count, silent); }
+			RemoveItem_Template(Base);
 			RemoveItem_Template(ALCH);
 			RemoveItem_Template(AMMO);
 			RemoveItem_Template(ARMA);
@@ -913,6 +924,7 @@ namespace vaultmp
 
 			#define EquipItem_Template(type) \
 				State EquipItem(type item, State silent = True, State stick = True) noexcept { return vaultmp::EquipItem(id, item, silent, stick); }
+			EquipItem_Template(Base);
 			EquipItem_Template(ARMA);
 			EquipItem_Template(ARMO);
 			EquipItem_Template(WEAP);
@@ -920,6 +932,7 @@ namespace vaultmp
 
 			#define UnequipItem_Template(type) \
 				State UnequipItem(type item, State silent = True, State stick = True) noexcept { return vaultmp::UnequipItem(id, item, silent, stick); }
+			UnequipItem_Template(Base);
 			UnequipItem_Template(ARMA);
 			UnequipItem_Template(ARMO);
 			UnequipItem_Template(WEAP);
@@ -939,6 +952,7 @@ namespace vaultmp
 			#define Create_Template(type) \
 				static ID Create(type actor, ID id) { return vaultmp::CreateActor(actor, id); } \
 				static ID Create(type actor, CELL cell, Value X, Value Y, Value Z) { return vaultmp::CreateActor(actor, cell, X, Y, Z); }
+			Create_Template(Base);
 			Create_Template(NPC_);
 			Create_Template(CREA);
 			#undef Create_Template
