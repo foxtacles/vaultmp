@@ -7,15 +7,6 @@
 
 using namespace std;
 
-// FOSE
-enum eEmotion
-{
-	happy	= 0,
-	sad		= 1,
-	neutral = 2,
-	pain	= 3
-};
-
 typedef void (*CallCommand)(void*, void*, void*, void*, void*, void*, void*, void*);
 typedef bool (*QueueUIMessage)(const char* msg, unsigned int emotion, const char* ddsPath, const char* soundName, float msgTime);
 typedef unsigned int (*LookupForm)(unsigned int);
