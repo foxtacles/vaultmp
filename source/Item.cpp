@@ -130,7 +130,7 @@ NetworkID Item::Copy() const
 #ifdef VAULTSERVER
 Lockable* Item::SetBase(unsigned int baseID)
 {
-	const DB::Record* record = *DB::Record::Lookup(baseID, vector<string>{"ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "ENCH", "KEYM", "MISC", "NOTE", "WEAP", "LIGH""});
+	const DB::Record* record = *DB::Record::Lookup(baseID, vector<string>{"ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "ENCH", "KEYM", "MISC", "NOTE", "WEAP", "LIGH"});
 
 	if (this->GetName().empty())
 		this->SetName(record->GetDescription());
