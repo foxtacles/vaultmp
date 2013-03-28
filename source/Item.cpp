@@ -43,7 +43,7 @@ void Item::initialize()
 #ifdef VAULTSERVER
 	unsigned int baseID = this->GetBase();
 
-	const DB::Record* record = *DB::Record::Lookup(baseID, vector<string>{"ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "CCRD", "CDCK", "CHIP", "CMNY", "ENCH", "IMOD", "KEYM", "MISC", "NOTE", "RCPE", "WEAP", "LIGH"});
+	const DB::Record* record = *DB::Record::Lookup(baseID, vector<string>{"ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "ENCH", "KEYM", "MISC", "NOTE", "WEAP", "LIGH"});
 
 	if (this->GetName().empty())
 		this->SetName(record->GetDescription());
@@ -130,7 +130,7 @@ NetworkID Item::Copy() const
 #ifdef VAULTSERVER
 Lockable* Item::SetBase(unsigned int baseID)
 {
-	const DB::Record* record = *DB::Record::Lookup(baseID, vector<string>{"ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "CCRD", "CDCK", "CHIP", "CMNY", "ENCH", "IMOD", "KEYM", "MISC", "NOTE", "RCPE", "WEAP", "LIGH"});
+	const DB::Record* record = *DB::Record::Lookup(baseID, vector<string>{"ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "ENCH", "KEYM", "MISC", "NOTE", "WEAP", "LIGH""});
 
 	if (this->GetName().empty())
 		this->SetName(record->GetDescription());

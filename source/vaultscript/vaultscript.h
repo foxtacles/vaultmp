@@ -599,7 +599,20 @@ namespace vaultmp
 	VAULTFUNCTION State GetItemEquipped(ID id) noexcept { return VAULTAPI(GetItemEquipped)(id); }
 	VAULTFUNCTION State GetItemSilent(ID id) noexcept { return VAULTAPI(GetItemSilent)(id); }
 	VAULTFUNCTION State GetItemStick(ID id) noexcept { return VAULTAPI(GetItemStick)(id); }
-	VAULTFUNCTION UCount GetContainerItemCount(ID id, Base item = static_cast<Base>(0)) noexcept { return VAULTAPI(GetContainerItemCount)(id, item); }
+
+	#define GetContainerItemCount_Template(type) \
+		VAULTFUNCTION UCount GetContainerItemCount(ID id, type item = static_cast<type>(0)) noexcept { return VAULTAPI(GetContainerItemCount)(id, static_cast<Base>(item)); }
+	GetContainerItemCount_Template(ALCH);
+	GetContainerItemCount_Template(AMMO);
+	GetContainerItemCount_Template(ARMA);
+	GetContainerItemCount_Template(ARMO);
+	GetContainerItemCount_Template(ENCH);
+	GetContainerItemCount_Template(KEYM);
+	GetContainerItemCount_Template(MISC);
+	GetContainerItemCount_Template(NOTE);
+	GetContainerItemCount_Template(WEAP);
+	#undef GetContainerItemCount_Template
+
 	VAULTFUNCTION IDVector GetContainerItemList(ID id) noexcept
 	{
 		RawArray<ID> data;
@@ -635,21 +648,78 @@ namespace vaultmp
 	VAULTFUNCTION State SetOwner(ID id, NPC_ owner) noexcept { return VAULTAPI(SetOwner)(id, owner); }
 	VAULTFUNCTION State SetBaseName(ID id, const String& name) noexcept { return VAULTAPI(SetBaseName)(id, name.c_str()); }
 	VAULTFUNCTION State SetBaseName(ID id, cRawString name) noexcept { return VAULTAPI(SetBaseName)(id, name); }
-	VAULTFUNCTION ID CreateItem(Base item, ID id) noexcept { return VAULTAPI(CreateItem)(item, id, static_cast<CELL>(0), 0.00, 0.00, 0.00); }
-	VAULTFUNCTION ID CreateItem(Base item, CELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateItem)(item, static_cast<ID>(0), cell, X, Y, Z); }
+
+	#define CreateItem_Template(type) \
+		VAULTFUNCTION ID CreateItem(type item, ID id) noexcept { return VAULTAPI(CreateItem)(static_cast<Base>(item), id, static_cast<CELL>(0), 0.00, 0.00, 0.00); } \
+		VAULTFUNCTION ID CreateItem(type item, CELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateItem)(static_cast<Base>(item), static_cast<ID>(0), cell, X, Y, Z); }
+	CreateItem_Template(ALCH);
+	CreateItem_Template(AMMO);
+	CreateItem_Template(ARMA);
+	CreateItem_Template(ARMO);
+	CreateItem_Template(ENCH);
+	CreateItem_Template(KEYM);
+	CreateItem_Template(MISC);
+	CreateItem_Template(NOTE);
+	CreateItem_Template(WEAP);
+	#undef CreateItem_Template
+
 	VAULTFUNCTION State SetItemCount(ID id, UCount count) noexcept { return VAULTAPI(SetItemCount)(id, count); }
 	VAULTFUNCTION State SetItemCondition(ID id, Value condition) noexcept { return VAULTAPI(SetItemCondition)(id, condition); }
 	VAULTFUNCTION ID CreateContainer(CONT container, ID id) noexcept { return VAULTAPI(CreateContainer)(container, id, static_cast<CELL>(0), 0.00, 0.00, 0.00); }
 	VAULTFUNCTION ID CreateContainer(CONT container, CELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateContainer)(container, static_cast<ID>(0), cell, X, Y, Z); }
-	VAULTFUNCTION State AddItem(ID id, Base item, UCount count = 1, Value condition = 100.0, State silent = True) noexcept { return VAULTAPI(AddItem)(id, item, count, condition, silent); }
-	VAULTFUNCTION UCount RemoveItem(ID id, Base item, UCount count = 1, State silent = True) noexcept { return VAULTAPI(RemoveItem)(id, item, count, silent); }
+
+	#define AddItem_Template(type) \
+		VAULTFUNCTION State AddItem(ID id, type item, UCount count = 1, Value condition = 100.0, State silent = True) noexcept { return VAULTAPI(AddItem)(id, static_cast<Base>(item), count, condition, silent); }
+	AddItem_Template(ALCH);
+	AddItem_Template(AMMO);
+	AddItem_Template(ARMA);
+	AddItem_Template(ARMO);
+	AddItem_Template(ENCH);
+	AddItem_Template(KEYM);
+	AddItem_Template(MISC);
+	AddItem_Template(NOTE);
+	AddItem_Template(WEAP);
+	#undef AddItem_Template
+
+	#define RemoveItem_Template(type) \
+		VAULTFUNCTION UCount RemoveItem(ID id, type item, UCount count = 1, State silent = True) noexcept { return VAULTAPI(RemoveItem)(id, static_cast<Base>(item), count, silent); }
+	RemoveItem_Template(ALCH);
+	RemoveItem_Template(AMMO);
+	RemoveItem_Template(ARMA);
+	RemoveItem_Template(ARMO);
+	RemoveItem_Template(ENCH);
+	RemoveItem_Template(KEYM);
+	RemoveItem_Template(MISC);
+	RemoveItem_Template(NOTE);
+	RemoveItem_Template(WEAP);
+	#undef RemoveItem_Template
+
 	VAULTFUNCTION Void RemoveAllItems(ID id) noexcept { return VAULTAPI(RemoveAllItems)(id); }
-	VAULTFUNCTION ID CreateActor(Base actor, ID id) noexcept { return VAULTAPI(CreateActor)(actor, id, static_cast<CELL>(0), 0.00, 0.00, 0.00); }
-	VAULTFUNCTION ID CreateActor(Base actor, CELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateActor)(actor, static_cast<ID>(0), cell, X, Y, Z); }
+
+	#define CreateActor_Template(type) \
+		VAULTFUNCTION ID CreateActor(type actor, ID id) noexcept { return VAULTAPI(CreateActor)(static_cast<Base>(actor), id, static_cast<CELL>(0), 0.00, 0.00, 0.00); } \
+		VAULTFUNCTION ID CreateActor(type actor, CELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateActor)(static_cast<Base>(actor), static_cast<ID>(0), cell, X, Y, Z); }
+	CreateActor_Template(NPC_);
+	CreateActor_Template(CREA);
+	#undef CreateActor_Template
+
 	VAULTFUNCTION Void SetActorValue(ID id, ActorValue index, Value value) noexcept { return VAULTAPI(SetActorValue)(id, index, value); }
 	VAULTFUNCTION Void SetActorBaseValue(ID id, ActorValue index, Value value) noexcept { return VAULTAPI(SetActorBaseValue)(id, index, value); }
-	VAULTFUNCTION State EquipItem(ID id, Base item, State silent = True, State stick = True) noexcept { return VAULTAPI(EquipItem)(id, item, silent, stick); }
-	VAULTFUNCTION State UnequipItem(ID id, Base item, State silent = True, State stick = True) noexcept { return VAULTAPI(UnequipItem)(id, item, silent, stick); }
+
+	#define EquipItem_Template(type) \
+		VAULTFUNCTION State EquipItem(ID id, type item, State silent = True, State stick = True) noexcept { return VAULTAPI(EquipItem)(id, static_cast<Base>(item), silent, stick); }
+	EquipItem_Template(ARMA);
+	EquipItem_Template(ARMO);
+	EquipItem_Template(WEAP);
+	#undef EquipItem_Template
+
+	#define UnequipItem_Template(type) \
+		VAULTFUNCTION State UnequipItem(ID id, type item, State silent = True, State stick = True) noexcept { return VAULTAPI(UnequipItem)(id, static_cast<Base>(item), silent, stick); }
+	UnequipItem_Template(ARMA);
+	UnequipItem_Template(ARMO);
+	UnequipItem_Template(WEAP);
+	#undef UnequipItem_Template
+
 	VAULTFUNCTION State PlayIdle(ID id, IDLE idle) noexcept { return VAULTAPI(PlayIdle)(id, idle); }
 	VAULTFUNCTION State SetActorMovingAnimation(ID id, Index anim) noexcept { return VAULTAPI(SetActorMovingAnimation)(id, anim); }
 	VAULTFUNCTION State SetActorWeaponAnimation(ID id, Index anim) noexcept { return VAULTAPI(SetActorWeaponAnimation)(id, anim); }
@@ -743,8 +813,20 @@ namespace vaultmp
 			State SetItemCount(UCount count) const noexcept { return vaultmp::SetItemCount(id, count); }
 			State SetItemCondition(Value condition) const noexcept { return vaultmp::SetItemCondition(id, condition); }
 
-			static ID Create(Base item, ID id) { return vaultmp::CreateItem(item, id); }
-			static ID Create(Base item, CELL cell, Value X, Value Y, Value Z) { return vaultmp::CreateItem(item, cell, X, Y, Z); }
+			#define Create_Template(type) \
+				static ID Create(type item, ID id) { return vaultmp::CreateItem(item, id); } \
+				static ID Create(type item, CELL cell, Value X, Value Y, Value Z) { return vaultmp::CreateItem(item, cell, X, Y, Z); }
+			Create_Template(ALCH);
+			Create_Template(AMMO);
+			Create_Template(ARMA);
+			Create_Template(ARMO);
+			Create_Template(ENCH);
+			Create_Template(KEYM);
+			Create_Template(MISC);
+			Create_Template(NOTE);
+			Create_Template(WEAP);
+			#undef Create_Template
+
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_ITEM); }
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_ITEM); }
 	};
@@ -757,11 +839,47 @@ namespace vaultmp
 			Container(ID id) noexcept : Object(vaultmp::IsContainer(id) ? id : static_cast<ID>(0), Type::ID_CONTAINER) {}
 			virtual ~Container() noexcept {}
 
-			UCount GetContainerItemCount(Base item = static_cast<Base>(0)) const noexcept { return vaultmp::GetContainerItemCount(id, item); }
+			#define GetContainerItemCount_Template(type) \
+				UCount GetContainerItemCount(type item = static_cast<type>(0)) const noexcept { return vaultmp::GetContainerItemCount(id, item); }
+			GetContainerItemCount_Template(ALCH);
+			GetContainerItemCount_Template(AMMO);
+			GetContainerItemCount_Template(ARMA);
+			GetContainerItemCount_Template(ARMO);
+			GetContainerItemCount_Template(ENCH);
+			GetContainerItemCount_Template(KEYM);
+			GetContainerItemCount_Template(MISC);
+			GetContainerItemCount_Template(NOTE);
+			GetContainerItemCount_Template(WEAP);
+			#undef GetContainerItemCount_Template
+
 			IDVector GetContainerItemList() noexcept { return vaultmp::GetContainerItemList(id); }
 
-			State AddItem(Base item, UCount count = 1, Value condition = 100.0, State silent = True) noexcept { return vaultmp::AddItem(id, item, count, condition, silent); }
-			UCount RemoveItem(Base item, UCount count = 1, State silent = True) noexcept { return vaultmp::RemoveItem(id, item, count, silent); }
+			#define AddItem_Template(type) \
+				State AddItem(type item, UCount count = 1, Value condition = 100.0, State silent = True) noexcept { return vaultmp::AddItem(id, item, count, condition, silent); }
+			AddItem_Template(ALCH);
+			AddItem_Template(AMMO);
+			AddItem_Template(ARMA);
+			AddItem_Template(ARMO);
+			AddItem_Template(ENCH);
+			AddItem_Template(KEYM);
+			AddItem_Template(MISC);
+			AddItem_Template(NOTE);
+			AddItem_Template(WEAP);
+			#undef AddItem_Template
+
+			#define RemoveItem_Template(type) \
+				UCount RemoveItem(type item, UCount count = 1, State silent = True) noexcept { return vaultmp::RemoveItem(id, item, count, silent); }
+			RemoveItem_Template(ALCH);
+			RemoveItem_Template(AMMO);
+			RemoveItem_Template(ARMA);
+			RemoveItem_Template(ARMO);
+			RemoveItem_Template(ENCH);
+			RemoveItem_Template(KEYM);
+			RemoveItem_Template(MISC);
+			RemoveItem_Template(NOTE);
+			RemoveItem_Template(WEAP);
+			#undef RemoveItem_Template
+
 			Void RemoveAllItems() noexcept { return vaultmp::RemoveAllItems(id); }
 
 			static ID Create(CONT container, ID id) { return vaultmp::CreateContainer(container, id); }
@@ -792,8 +910,21 @@ namespace vaultmp
 
 			Void SetActorValue(ActorValue index, Value value) noexcept { return vaultmp::SetActorValue(id, index, value); }
 			Void SetActorBaseValue(ActorValue index, Value value) noexcept { return vaultmp::SetActorBaseValue(id, index, value); }
-			State EquipItem(Base item, State silent = True, State stick = True) noexcept { return vaultmp::EquipItem(id, item, silent, stick); }
-			State UnequipItem(Base item, State silent = True, State stick = True) noexcept { return vaultmp::UnequipItem(id, item, silent, stick); }
+
+			#define EquipItem_Template(type) \
+				State EquipItem(type item, State silent = True, State stick = True) noexcept { return vaultmp::EquipItem(id, item, silent, stick); }
+			EquipItem_Template(ARMA);
+			EquipItem_Template(ARMO);
+			EquipItem_Template(WEAP);
+			#undef EquipItem_Template
+
+			#define UnequipItem_Template(type) \
+				State UnequipItem(type item, State silent = True, State stick = True) noexcept { return vaultmp::UnequipItem(id, item, silent, stick); }
+			UnequipItem_Template(ARMA);
+			UnequipItem_Template(ARMO);
+			UnequipItem_Template(WEAP);
+			#undef UnequipItem_Template
+
 			State PlayIdle(IDLE idle) noexcept { return vaultmp::PlayIdle(id, idle); }
 			State SetActorMovingAnimation(Index anim) noexcept { return vaultmp::SetActorMovingAnimation(id, anim); }
 			State SetActorWeaponAnimation(Index anim) noexcept { return vaultmp::SetActorWeaponAnimation(id, anim); }
@@ -805,8 +936,13 @@ namespace vaultmp
 			State AgeActorBaseRace(Count age) const noexcept { return vaultmp::AgeActorBaseRace(id, age); }
 			State SetActorBaseSex(State female) const noexcept { return vaultmp::SetActorBaseSex(id, female); }
 
-			static ID Create(Base actor, ID id) { return vaultmp::CreateActor(actor, id); }
-			static ID Create(Base actor, CELL cell, Value X, Value Y, Value Z) { return vaultmp::CreateActor(actor, cell, X, Y, Z); }
+			#define Create_Template(type) \
+				static ID Create(type actor, ID id) { return vaultmp::CreateActor(actor, id); } \
+				static ID Create(type actor, CELL cell, Value X, Value Y, Value Z) { return vaultmp::CreateActor(actor, cell, X, Y, Z); }
+			Create_Template(NPC_);
+			Create_Template(CREA);
+			#undef Create_Template
+
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_ACTOR); }
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_ACTOR); }
 	};
