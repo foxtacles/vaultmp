@@ -18,8 +18,8 @@ class Pipe
 
 	public:
 		void SetPipeAttributes(const std::string& name, unsigned int size);
-		unsigned int Send(const unsigned char* stream);
-		void Receive(unsigned char* stream);
+		bool Send(const unsigned char* stream);
+		bool Receive(unsigned char* stream);
 		virtual bool ConnectToServer() = 0;
 };
 

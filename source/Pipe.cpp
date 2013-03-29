@@ -20,22 +20,18 @@ void Pipe::SetPipeAttributes(const string& name, unsigned int size)
 	this->size = size;
 }
 
-unsigned int Pipe::Send(const unsigned char* stream)
+bool Pipe::Send(const unsigned char* stream)
 {
 	DWORD dwActuallyWritten;
 
-	if (!WriteFile(this->pipe, stream, this->size, &dwActuallyWritten, nullptr))
-		return 0;
-	else
-		return dwActuallyWritten;
+	return WriteFile(this->pipe, stream, this->size, &dwActuallyWritten, nullptr) && dwActuallyWritten == this->size;
 }
 
-void Pipe::Receive(unsigned char* stream)
+bool Pipe::Receive(unsigned char* stream)
 {
 	DWORD dwActuallyRead;
 
-	if (!ReadFile(this->pipe, stream, this->size, &dwActuallyRead, nullptr))
-		return;
+	return ReadFile(this->pipe, stream, this->size, &dwActuallyRead, nullptr) && dwActuallyRead == this->size;
 }
 
 bool PipeServer::CreateServer()

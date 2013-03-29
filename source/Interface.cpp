@@ -251,12 +251,12 @@ void Interface::CommandThreadReceive()
 
 		if (!endThread)
 		{
-			unsigned char code;
-
 			while (!endThread)
 			{
-				pipeClient->Receive(buffer);
-				code = buffer[0];
+				if (!pipeClient->Receive(buffer))
+					continue;
+
+				unsigned char code = buffer[0];
 
 				if (code == PIPE_OP_RETURN || code == PIPE_OP_RETURN_BIG || code == PIPE_OP_RETURN_RAW)
 				{
@@ -337,7 +337,7 @@ void Interface::CommandThreadSend()
 							CommandParsed stream = API::Translate(cmd);
 
 							for (auto it = stream.begin(); it != stream.end() && !endThread; ++it)
-								pipeServer->Send(it->get());
+								while (!pipeServer->Send(it->get()) && !endThread);
 						}
 					}
 
@@ -359,7 +359,7 @@ void Interface::CommandThreadSend()
 						CommandParsed stream = API::Translate(cmd, dynamic.second);
 
 						for (auto it = stream.begin(); it != stream.end() && !endThread; ++it)
-							pipeServer->Send(it->get());
+							while (!pipeServer->Send(it->get()) && !endThread);
 					}
 
 					dynamic_cs.StartSession();

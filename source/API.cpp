@@ -1037,9 +1037,9 @@ vector<API::CommandResult> API::Translate(unsigned char* stream)
 
 		if (queue.empty())
 		{
-	#ifdef VAULTMP_DEBUG
+#ifdef VAULTMP_DEBUG
 			debug.print("API could not find a stored command with identifier ", hex, r, " (queue is empty)");
-	#endif
+#endif
 			return result;
 		}
 	}

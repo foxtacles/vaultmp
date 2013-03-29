@@ -315,7 +315,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 		MessageBox(NULL,asd,asd,MB_OK);
 */
 		if (checksum_real != VAULTMP_DLL)
-		    return MessageBox(NULL, "vaultmp.dll is not up to date!", "Error", MB_OK | MB_ICONERROR);
+			return MessageBox(NULL, "vaultmp.dll is not up to date!", "Error", MB_OK | MB_ICONERROR);
 	}
 	else
 		return MessageBox(nullptr, "Could not find vaultmp.dll!", "Error", MB_OK | MB_ICONERROR);
