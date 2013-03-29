@@ -72,8 +72,7 @@ static const unsigned aiFix1 = 0x0072051E;
 static const unsigned aiFix2 = 0x006FAEE8;
 static const unsigned aiFix3 = 0x006FAF19;
 static const unsigned aiFix4 = 0x0042FBDC;
-static const unsigned playGroup_fix1 = 0x0049DCF1;
-static const unsigned playGroup_fix2 = 0x0049DD6A;
+static const unsigned playGroup_fix = 0x0049DD6A;
 static const unsigned playGroup_fix_src = 0x0049DD8E;
 static const unsigned playGroup_fix_dest = 0x0049DCF1;
 static unsigned AVFix_src = 0x00473D35;
@@ -624,7 +623,7 @@ void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
 		delete[] _data;
 	}
 
-	while (!pipeClient.Send(result));
+	pipeClient.Send(result);
 }
 
 DWORD WINAPI vaultmp_pipe(LPVOID data)
@@ -675,7 +674,7 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 
 	buffer[0] = PIPE_SYS_WAKEUP;
 
-	while (!pipeClient.Send(buffer));
+	pipeClient.Send(buffer);
 
 	Sleep(3000);
 
@@ -737,7 +736,7 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 			*reinterpret_cast<unsigned int*>(buffer + 5) = chat.length();
 			memcpy(buffer + 9, chat.c_str(), chat.length());
 
-			while (!pipeClient.Send(buffer));
+			pipeClient.Send(buffer);
 		}
 	}
 
@@ -819,10 +818,10 @@ void PatchGame(HINSTANCE& silverlock)
 	WriteRelJump(playIdle_call_src, playIdle_call_dest);
 	WriteRelJump(AVFix_src, AVFix_dest);
 
-	unsigned char playGroup_fix[] = {0x85, 0xC9, 0x0F, 0x84, 0xFF, 0x00, 0x00, 0x00, 0x8B, 0x71, 0x0C, 0x85, 0xF6, 0xEB, 0x6A};
-	unsigned char playGroup_fix_2[] = {0xEB, 0x27};
-	SafeWriteBuf(playGroup_fix1, playGroup_fix, sizeof(playGroup_fix));
-	SafeWriteBuf(playGroup_fix2, playGroup_fix_2, sizeof(playGroup_fix_2));
+	unsigned char playGroup_fix_A[] = {0x85, 0xC9, 0x0F, 0x84, 0xFF, 0x00, 0x00, 0x00, 0x8B, 0x71, 0x0C, 0x85, 0xF6, 0xEB, 0x6A};
+	unsigned char playGroup_fix_B[] = {0xEB, 0x27};
+	SafeWriteBuf(playGroup_fix_dest, playGroup_fix_A, sizeof(playGroup_fix_A));
+	SafeWriteBuf(playGroup_fix, playGroup_fix_B, sizeof(playGroup_fix_B));
 	WriteRelJump(playGroup_fix_src, playGroup_fix_dest);
 
 	SafeWrite32(pluginsVMP, *(DWORD*)".vmp"); // redirect Plugins.txt
