@@ -45,7 +45,7 @@ IDirect3D9* WINAPI Direct3DCreate9_Hooked(UINT SDKVersion)
 	return gl_pmyIDirect3D9;
 }
 
-LONG myFunc(LPEXCEPTION_POINTERS p)
+LONG OnApplicationCrash(LPEXCEPTION_POINTERS p)
 {
 	//Exception handler
 	//char* exstr=ExceptionToString(p->ExceptionRecord);
@@ -83,7 +83,7 @@ FARPROC WINAPI GetProcAddress_Hooked(HMODULE hModule,LPCSTR lpProcName)
 		SendToLog((char*)out.c_str());
 
 		FARPROC tmp=GetProcAddress_Original(hModule,lpProcName);
-		SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)&myFunc);  
+		SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)&OnApplicationCrash);  
 		DBB("GetProcAddress_Hooked("<<lpProcName<<")");
 		if(strcmp(lpProcName,"Direct3DCreate9")==0)
 		{

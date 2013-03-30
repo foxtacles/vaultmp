@@ -9,7 +9,10 @@
 
 bool logging=false;
 
-#define DB(a) 	/*{if(logging){std::ofstream d;d.open("C:\\Users\\PC\\Desktop\\debug.txt",std::ios::app);  d<<a<<" Address: "<<_ReturnAddress()<<std::endl;d.flush();d.close();}}*/
+//#define DB(a) 	/*{if(logging){std::ofstream d;d.open("C:\\Users\\PC\\Desktop\\debug.txt",std::ios::app);  d<<a<<" Address: "<<_ReturnAddress()<<std::endl;d.flush();d.close();}}*/
+
+#define DB(a) 	{char tmp[100];sprintf(tmp,"%s 0x%x",a,_ReturnAddress());SendToLog(tmp);}
+
 #define DBB(a) 	/*std::ofstream d;d.open("C:\\Users\\PC\\Desktop\\debug.txt",std::ios::app);  d<<a<<" Address: "<<_ReturnAddress()<<std::endl;d.flush();d.close();*/
 
 //#define DB(a)  if(debugFrame==1){char tmp[100]="";sprintf(tmp,"C:\\Users\\PC\\Desktop\\frame_debug\\frame%d",debugCount);std::ofstream d;d.open(tmp,std::ios::app|std::ios::out);chatbox.AddLine(tmp);  d<<a<<" Address: "<<_ReturnAddress()<<std::endl;d.flush();d.close();}
@@ -638,7 +641,7 @@ HRESULT myIDirect3DDevice9::GetClipPlane(DWORD Index,float* pPlane)
 
 HRESULT myIDirect3DDevice9::SetRenderState(D3DRENDERSTATETYPE State,DWORD Value)
 { 
-	DB("myIDirect3DDevice9::SetRenderState("<<State<<","<<Value<<")");
+	DB("myIDirect3DDevice9::SetRenderState()");
     return(m_pIDirect3DDevice9->SetRenderState(State, Value));
 }
 
@@ -765,7 +768,7 @@ HRESULT myIDirect3DDevice9::DrawPrimitive(D3DPRIMITIVETYPE PrimitiveType,UINT St
 
 HRESULT myIDirect3DDevice9::DrawIndexedPrimitive(D3DPRIMITIVETYPE PrimitiveType,INT BaseVertexIndex,UINT MinVertexIndex,UINT NumVertices,UINT startIndex,UINT primCount)
 { 
-	DB("myIDirect3DDevice9::DrawIndexedPrimitive ("<<NumVertices<<" NumVertices)");
+	DB("myIDirect3DDevice9::DrawIndexedPrimitive ()");
     return(m_pIDirect3DDevice9->DrawIndexedPrimitive(PrimitiveType,BaseVertexIndex,MinVertexIndex,NumVertices,startIndex,primCount));
 }
 
