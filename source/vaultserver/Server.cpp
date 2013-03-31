@@ -330,10 +330,12 @@ NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, FactoryObject<Contai
 		item->SetReference(0x00000000);
 
 		unsigned int baseID = item->GetBase();
+		unsigned int count = item->GetItemCount();
+		double condition = eitem->GetItemCondition();
 		_gdiff.remove_if([baseID](const pair<unsigned int, Container::Diff>& diff) { return diff.first == baseID; });
 
 		GameFactory::LeaveReference(item);
-		Script::OnActorDropItem(reference_id, baseID, item->GetItemCount(), item->GetItemCondition());
+		Script::OnActorDropItem(reference_id, baseID, count, condition);
 	}
 
 	for (const auto& id : gdiff.first)
