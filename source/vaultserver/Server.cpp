@@ -311,15 +311,16 @@ NetworkResponse Server::GetLock(RakNetGUID guid, FactoryObject<Object>& referenc
 
 NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, FactoryObject<Container>& reference, const Container::NetDiff& ndiff, const Container::NetDiff& gdiff)
 {
+	NetworkID reference_id = reference->GetNetworkID();
+
 	SingleResponse response[] = {Network::CreateResponse(
-		PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(reference->GetNetworkID(), ndiff, gdiff),
+		PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(reference_id, ndiff, gdiff),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid))
 	};
 
 	auto diff = Container::ToContainerDiff(ndiff);
 	auto _gdiff = reference->ApplyDiff(diff);
 
-	NetworkID reference_id = reference->GetNetworkID();
 	GameFactory::LeaveReference(reference);
 
 	for (const auto& packet : gdiff.second)
@@ -331,7 +332,7 @@ NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, FactoryObject<Contai
 
 		unsigned int baseID = item->GetBase();
 		unsigned int count = item->GetItemCount();
-		double condition = eitem->GetItemCondition();
+		double condition = item->GetItemCondition();
 		_gdiff.remove_if([baseID](const pair<unsigned int, Container::Diff>& diff) { return diff.first == baseID; });
 
 		GameFactory::LeaveReference(item);
