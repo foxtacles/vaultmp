@@ -176,7 +176,9 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					unsigned int lock;
 					PacketFactory::Access<pTypes::ID_UPDATE_LOCK>(packet, id, lock);
 					auto reference = GameFactory::GetMultiple(vector<NetworkID>{id, Client::GetClientFromGUID(data->guid)->GetPlayer()});
-					response = Server::GetLock(data->guid, reference[0].get(), vaultcast<Player>(reference[1]).get(), lock);
+					auto player = vaultcast<Player>(reference[1]);
+					GameFactory::LeaveReference(reference[1].get());
+					response = Server::GetLock(data->guid, reference[0].get(), player.get(), lock);
 					break;
 				}
 
@@ -222,7 +224,9 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					signed char cause;
 					PacketFactory::Access<pTypes::ID_UPDATE_DEAD>(packet, id, dead, limbs, cause);
 					auto reference = GameFactory::GetMultiple<Actor>(vector<NetworkID>{id, Client::GetClientFromGUID(data->guid)->GetPlayer()});
-					response = Server::GetActorDead(data->guid, reference[0].get(), vaultcast<Player>(reference[1]).get(), dead, limbs, cause);
+					auto player = vaultcast<Player>(reference[1]);
+					GameFactory::LeaveReference(reference[1].get());
+					response = Server::GetActorDead(data->guid, reference[0].get(), player.get(), dead, limbs, cause);
 					break;
 				}
 
