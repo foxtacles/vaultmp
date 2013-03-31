@@ -266,7 +266,6 @@ NetworkResponse Server::GetCell(RakNetGUID guid, FactoryObject<Object>& referenc
 		NetworkID id = reference->GetNetworkID();
 		auto player = vaultcast<Player>(reference);
 		reference->SetGameCell(cell);
-		GameFactory::LeaveReference(reference);
 
 		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, cell),
@@ -281,6 +280,7 @@ NetworkResponse Server::GetCell(RakNetGUID guid, FactoryObject<Object>& referenc
 			GameFactory::LeaveReference(player.get());
 		}
 
+		GameFactory::LeaveReference(reference);
 		Script::OnCellChange(id, cell);
 	}
 
@@ -296,13 +296,13 @@ NetworkResponse Server::GetLock(RakNetGUID guid, FactoryObject<Object>& referenc
 	{
 		NetworkID id = reference->GetNetworkID();
 		NetworkID player_id = player->GetNetworkID();
-		GameFactory::LeaveReference(reference);
-		GameFactory::LeaveReference(player);
 
 		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_LOCK>(id, lock),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
+		GameFactory::LeaveReference(reference);
+		GameFactory::LeaveReference(player);
 		Script::OnLockChange(id, player_id, lock);
 	}
 
@@ -394,12 +394,12 @@ NetworkResponse Server::GetActorValue(RakNetGUID guid, FactoryObject<Actor>& ref
 	if (result)
 	{
 		NetworkID id = reference->GetNetworkID();
-		GameFactory::LeaveReference(reference);
 
 		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_VALUE>(id, base, index, value),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
+		GameFactory::LeaveReference(reference);
 		Script::OnActorValueChange(id, index, base, value);
 	}
 
@@ -429,34 +429,6 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, FactoryObject<Actor>& ref
 			PacketFactory::Create<pTypes::ID_UPDATE_STATE>(id, idle, moving, movingxy, weapon, alerted, sneaking, !punching && !power_punching && firing),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
-		unsigned int baseID = reference->GetEquippedWeapon();
-
-		GameFactory::LeaveReference(reference);
-
-		if (_weapon)
-		{
-			if (power_punching)
-				Script::OnActorPunch(id, true);
-			else if (punching)
-				Script::OnActorPunch(id, false);
-			else if (firing)
-			{
-				const DB::Weapon* weapon = *DB::Weapon::Lookup(baseID);
-
-				response.emplace_back(Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_UPDATE_FIREWEAPON>(id, baseID, weapon->IsAutomatic() ? weapon->GetFireRate() : 0.00),
-					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
-
-				Script::OnActorFireWeapon(id, baseID);
-			}
-		}
-
-		if (_alerted)
-			Script::OnActorAlert(id, alerted);
-
-		if (_sneaking)
-			Script::OnActorSneak(id, sneaking);
-
 		if (_idle)
 		{
 			const DB::Record* record = nullptr;
@@ -468,6 +440,42 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, FactoryObject<Actor>& ref
 				PacketFactory::Create<pTypes::ID_UPDATE_IDLE>(id, idle, record ? record->GetName() : ""),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 		}
+
+		if (_weapon)
+		{
+			if (power_punching)
+			{
+				GameFactory::LeaveReference(reference);
+				Script::OnActorPunch(id, true);
+			}
+			else if (punching)
+			{
+				GameFactory::LeaveReference(reference);
+				Script::OnActorPunch(id, false);
+			}
+			else if (firing)
+			{
+				unsigned int baseID = reference->GetEquippedWeapon();
+				const DB::Weapon* weapon = *DB::Weapon::Lookup(baseID);
+
+				response.emplace_back(Network::CreateResponse(
+					PacketFactory::Create<pTypes::ID_UPDATE_FIREWEAPON>(id, baseID, weapon->IsAutomatic() ? weapon->GetFireRate() : 0.00),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
+
+				GameFactory::LeaveReference(reference);
+				Script::OnActorFireWeapon(id, baseID);
+			}
+			else
+				GameFactory::LeaveReference(reference);
+		}
+		else
+			GameFactory::LeaveReference(reference);
+
+		if (_alerted)
+			Script::OnActorAlert(id, alerted);
+
+		if (_sneaking)
+			Script::OnActorSneak(id, sneaking);
 	}
 
 	return response;
@@ -484,12 +492,13 @@ NetworkResponse Server::GetActorDead(RakNetGUID guid, FactoryObject<Actor>& refe
 	{
 		NetworkID id = reference->GetNetworkID();
 		NetworkID killer_id = killer->GetNetworkID();
-		GameFactory::LeaveReference(reference);
-		GameFactory::LeaveReference(killer);
 
 		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_DEAD>(id, dead, limbs, cause),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
+
+		GameFactory::LeaveReference(reference);
+		GameFactory::LeaveReference(killer);
 
 		if (dead)
 		{
