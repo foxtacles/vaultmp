@@ -304,6 +304,7 @@ native CreateContainer(container, ID, cell = 0, Float:X = 0.00, Float:Y = 0.00, 
 native Bool:AddItem(ID, item, count = 1, Float:value = 100.0, Bool:silent = Bool:true);
 native RemoveItem(ID, item, count = 1, Bool:silent = Bool:true);
 native RemoveAllItems(ID);
+native AddItemList(ID, list);
 native CreateActor(actor, ID, cell = 0, Float:X = 0.00, Float:Y = 0.00, Float:Z = 0.00);
 native SetActorValue(ID, ActorValue:index, Float:value);
 native SetActorBaseValue(ID, ActorValue:index, Float:value);

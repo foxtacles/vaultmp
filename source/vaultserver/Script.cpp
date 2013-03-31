@@ -415,17 +415,6 @@ void Script::SetupItem(FactoryObject<Item>& item, FactoryObject<Object>& referen
 void Script::SetupContainer(FactoryObject<Container>& container, FactoryObject<Object>& reference, unsigned int cell, double X, double Y, double Z)
 {
 	SetupObject(container, reference, cell, X, Y, Z);
-
-	const auto& items = DB::BaseContainer::Lookup(container->GetBase());
-
-	for (const auto* item : items)
-	{
-		if (item->GetItem() & 0xFF000000)
-			continue;
-
-		auto diff = container->AddItem(item->GetItem(), item->GetCount(), item->GetCondition(), true);
-		container->ApplyDiff(diff);
-	}
 }
 
 void Script::SetupActor(FactoryObject<Actor>& actor, FactoryObject<Object>& reference, unsigned int cell, double X, double Y, double Z)
@@ -2296,7 +2285,7 @@ bool Script::AddItem(NetworkID id, unsigned int baseID, unsigned int count, doub
 			return true;
 		}
 	}
-	catch (...) {}
+	catch (...) {} // invalid item baseID
 
 	return false;
 }
@@ -2351,6 +2340,33 @@ void Script::RemoveAllItems(NetworkID id)
 		});
 
 		container->ApplyDiff(diff);
+	}
+}
+
+void Script::AddItemList(NetworkID id, NetworkID list)
+{
+	auto reference = GameFactory::GetObject<Container>(id);
+
+	if (!reference)
+		return;
+
+	auto& container = reference.get();
+
+	if (list)
+	{
+		// item list functionality
+	}
+	else
+	{
+		const auto& items = DB::BaseContainer::Lookup(container->GetBase());
+
+		for (const auto* item : items)
+		{
+			if (item->GetItem() & 0xFF000000)
+				continue;
+
+			AddItem(id, item->GetItem(), item->GetCount(), item->GetCondition(), true);
+		}
 	}
 }
 

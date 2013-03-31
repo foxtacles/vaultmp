@@ -476,7 +476,12 @@ void Game::FutureSet(const weak_ptr<Lockable>& data, T&& t)
 		throw VaultException("Storage is corrupted").stacktrace();
 
 	(**store) = forward<T>(t);
-	store->set_promise();
+
+	try
+	{
+		store->set_promise();
+	}
+	catch (...) {}  // for resolving a weird bug with promise already satisfied, investigate
 }
 
 void Game::AsyncDispatch(function<void()>&& func)
@@ -1503,7 +1508,8 @@ pair<Container::NetDiff, Container::GameDiff> Game::ScanContainer(FactoryObject<
 	}
 	catch (exception& e)
 	{
-		throw VaultException("Scan of container inventory %llu failed (%s)", id, e.what()).stacktrace();
+		// for resolving a weird bug with promise already satisfied, investigate
+		VaultException("Scan of container inventory %llu failed (%s)", id, e.what()).stacktrace();
 	}
 
 	return diff;
@@ -2350,7 +2356,7 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 				auto _ndiff = make_shared<Container::NetDiff>(move(ndiff));
 				NetworkID id = reference->GetNetworkID();
 
-				AsyncDispatch([_ndiff, gdiff, key, result, id]() mutable
+				JobDispatch(chrono::milliseconds(0), [_ndiff, gdiff, key, result, id]() mutable
 				{
 					try
 					{

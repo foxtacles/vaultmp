@@ -277,6 +277,7 @@ class Script
 		static bool AddItem(RakNet::NetworkID id, unsigned int baseID, unsigned int count, double condition, bool silent);
 		static unsigned int RemoveItem(RakNet::NetworkID id, unsigned int baseID, unsigned int count, bool silent);
 		static void RemoveAllItems(RakNet::NetworkID id);
+		static void AddItemList(RakNet::NetworkID id, RakNet::NetworkID list);
 		static RakNet::NetworkID CreateActor(unsigned int baseID, RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z);
 		static void SetActorValue(RakNet::NetworkID id, unsigned char index, double value);
 		static void SetActorBaseValue(RakNet::NetworkID id, unsigned char index, double value);
@@ -415,6 +416,7 @@ class Script
 			{"AddItem", Script::AddItem},
 			{"RemoveItem", Script::RemoveItem},
 			{"RemoveAllItems", Script::RemoveAllItems},
+			{"AddItemList", Script::AddItemList},
 			{"CreateActor", Script::CreateActor},
 			{"SetActorValue", Script::SetActorValue},
 			{"SetActorBaseValue", Script::SetActorBaseValue},
