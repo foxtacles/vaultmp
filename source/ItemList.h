@@ -51,12 +51,15 @@ class ItemList
 		RakNet::NetworkID source;
 		StripCopy Strip() const;
 
-	public:
-		ItemList(const ItemList&) = default;
-		ItemList& operator=(const ItemList&) = default;
+		ItemList(const ItemList&) = delete;
+		ItemList& operator=(const ItemList&) = delete;
 
+	public:
 		ItemList(RakNet::NetworkID source) : source(source) {}
 		~ItemList();
+
+		ItemList(ItemList&&) = default;
+		ItemList& operator=(ItemList&&) = default;
 
 		void AddItem(RakNet::NetworkID id);
 		ContainerDiff AddItem(unsigned int baseID, unsigned int count, double condition, bool silent) const;

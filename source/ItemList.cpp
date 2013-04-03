@@ -64,7 +64,7 @@ ItemList::StripCopy ItemList::Strip() const
 		if (opt->GetItemEquipped())
 			continue;
 
-		for (++(it3 = it2), ++(it4 = it); it3 != copy->IL.GetItemList().end() && it4 != this_container.end();)
+		for (++(it3 = it2), ++(it4 = it); it3 != copy->IL.container.end() && it4 != this_container.end();)
 		{
 			FactoryObject<Item> ins = GameFactory::GetObject<Item>(*it3).get();
 
@@ -93,7 +93,7 @@ ItemList::StripCopy ItemList::Strip() const
 
 void ItemList::AddItem(NetworkID id)
 {
-	GameFactory::GetObject<Item>(id).get()->SetItemContainer(source);
+	GameFactory::GetObject<Item>(id)->SetItemContainer(source);
 	container.emplace_back(id);
 	container.sort(Item_sort);
 }
