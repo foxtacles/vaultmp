@@ -94,7 +94,7 @@ Player::Player(unsigned int refID, unsigned int baseID) : Actor(refID, baseID)
 		reference->SetItemEquipped(get<2>(item.second));
 		reference->SetItemSilent(get<3>(item.second));
 		reference->SetItemStick(get<4>(item.second));
-		this->AddItem(id);
+		this->IL.AddItem(id);
 	}
 
 	this->SetActorRace(RACE_CAUCASIAN);

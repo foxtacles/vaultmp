@@ -92,6 +92,7 @@ $(OBJDIR_DEBUG)\\GameFactory.o \
 $(OBJDIR_DEBUG)\\Game.o \
 $(OBJDIR_DEBUG)\\CriticalSection.o \
 $(OBJDIR_DEBUG)\\Container.o \
+$(OBJDIR_DEBUG)\\ItemList.o \
 $(OBJDIR_DEBUG)\\Bethesda.o \
 $(OBJDIR_DEBUG)\\Actor.o \
 $(OBJDIR_DEBUG)\\API.o \
@@ -159,6 +160,7 @@ $(OBJDIR_RELEASE)\\GameFactory.o \
 $(OBJDIR_RELEASE)\\Game.o \
 $(OBJDIR_RELEASE)\\CriticalSection.o \
 $(OBJDIR_RELEASE)\\Container.o \
+$(OBJDIR_RELEASE)\\ItemList.o \
 $(OBJDIR_RELEASE)\\Bethesda.o \
 $(OBJDIR_RELEASE)\\Actor.o \
 $(OBJDIR_RELEASE)\\API.o \
@@ -343,6 +345,9 @@ $(OBJDIR_DEBUG)\\CriticalSection.o: CriticalSection.cpp
 
 $(OBJDIR_DEBUG)\\Container.o: Container.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Container.cpp -o $(OBJDIR_DEBUG)\\Container.o
+
+$(OBJDIR_DEBUG)\\ItemList.o: ItemList.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ItemList.cpp -o $(OBJDIR_DEBUG)\\ItemList.o
 
 $(OBJDIR_DEBUG)\\Bethesda.o: Bethesda.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Bethesda.cpp -o $(OBJDIR_DEBUG)\\Bethesda.o
@@ -552,6 +557,9 @@ $(OBJDIR_RELEASE)\\CriticalSection.o: CriticalSection.cpp
 
 $(OBJDIR_RELEASE)\\Container.o: Container.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Container.cpp -o $(OBJDIR_RELEASE)\\Container.o
+
+$(OBJDIR_RELEASE)\\ItemList.o: ItemList.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ItemList.cpp -o $(OBJDIR_RELEASE)\\ItemList.o
 
 $(OBJDIR_RELEASE)\\Bethesda.o: Bethesda.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Bethesda.cpp -o $(OBJDIR_RELEASE)\\Bethesda.o

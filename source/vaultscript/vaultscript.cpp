@@ -13,7 +13,10 @@ Void VAULTSCRIPT exec() noexcept
 
 Void VAULTSCRIPT OnServerInit() noexcept
 {
+	auto containers = Container::GetList();
 
+	for (const auto& container : containers)
+		AddItemList(container, static_cast<ID>(0));
 }
 
 Void VAULTSCRIPT OnServerExit() noexcept

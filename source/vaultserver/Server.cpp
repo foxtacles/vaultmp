@@ -145,23 +145,6 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 		PacketFactory::Create<pTypes::ID_UPDATE_CHAT>(0, player->GetPlayerChatboxEnabled(), player->GetPlayerChatboxLocked(), player->GetPlayerChatboxPos(), player->GetPlayerChatboxSize()),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 
-	const auto& container = npc->GetBaseContainer();
-
-	for (const auto* item : container)
-	{
-		// TODO see above
-		if (item->GetItem() & 0xFF000000)
-			continue;
-
-		auto diff = player->AddItem(item->GetItem(), item->GetCount(), item->GetCondition(), true);
-
-		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, Container::ToNetDiff(diff), Container::NetDiff()),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
-
-		player->ApplyDiff(diff);
-	}
-
 	unsigned int race = npc->GetRace();
 	unsigned int old_race = player->GetActorRace();
 
@@ -309,7 +292,7 @@ NetworkResponse Server::GetLock(RakNetGUID guid, FactoryObject<Object>& referenc
 	return response;
 }
 
-NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, FactoryObject<Container>& reference, const Container::NetDiff& ndiff, const Container::NetDiff& gdiff)
+NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, FactoryObject<Container>& reference, const ItemList::NetDiff& ndiff, const ItemList::NetDiff& gdiff)
 {
 	NetworkID reference_id = reference->GetNetworkID();
 
@@ -318,8 +301,8 @@ NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, FactoryObject<Contai
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid))
 	};
 
-	auto diff = Container::ToContainerDiff(ndiff);
-	auto _gdiff = reference->ApplyDiff(diff);
+	auto diff = ItemList::ToContainerDiff(ndiff);
+	auto _gdiff = reference->IL.ApplyDiff(diff);
 
 	GameFactory::LeaveReference(reference);
 
@@ -333,7 +316,7 @@ NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, FactoryObject<Contai
 		unsigned int baseID = item->GetBase();
 		unsigned int count = item->GetItemCount();
 		double condition = item->GetItemCondition();
-		_gdiff.remove_if([baseID](const pair<unsigned int, Container::Diff>& diff) { return diff.first == baseID; });
+		_gdiff.remove_if([baseID](const pair<unsigned int, ItemList::Diff>& diff) { return diff.first == baseID; });
 
 		GameFactory::LeaveReference(item);
 		Script::OnActorDropItem(reference_id, baseID, count, condition);
@@ -354,7 +337,7 @@ NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, FactoryObject<Contai
 		auto& item = _item.get();
 
 		unsigned int baseID = item->GetBase();
-		_gdiff.remove_if([baseID](const pair<unsigned int, Container::Diff>& diff) { return diff.first == baseID; });
+		_gdiff.remove_if([baseID](const pair<unsigned int, ItemList::Diff>& diff) { return diff.first == baseID; });
 
 		unsigned int count = item->GetItemCount();
 		double condition = item->GetItemCondition();

@@ -399,60 +399,6 @@ NetworkID GameFactory::CreateInstance(unsigned char type, unsigned int baseID)
 	return CreateInstance(type, 0x00, baseID);
 }
 
-void GameFactory::CreateKnownInstance(unsigned char type, NetworkID id, unsigned int refID, unsigned int baseID)
-{
-	shared_ptr<Reference> reference;
-
-	// can't use make_shared because of access control
-	switch (type)
-	{
-		case ID_REFERENCE:
-			throw VaultException("It is not possible to have a pure Reference instance").stacktrace();
-
-		case ID_OBJECT:
-			reference = shared_ptr<Object>(new Object(refID, baseID));
-			break;
-
-		case ID_ITEM:
-			reference = shared_ptr<Item>(new Item(refID, baseID));
-			break;
-
-		case ID_CONTAINER:
-			reference = shared_ptr<Container>(new Container(refID, baseID));
-			break;
-
-		case ID_ACTOR:
-			reference = shared_ptr<Actor>(new Actor(refID, baseID));
-			break;
-
-		case ID_PLAYER:
-			reference = shared_ptr<Player>(new Player(refID, baseID));
-			break;
-
-		default:
-			throw VaultException("Unknown type identifier %X", type).stacktrace();
-	}
-
-	reference->SetNetworkID(id);
-
-#ifdef VAULTSERVER
-	reference->SetBase(reference->GetBase());
-#endif
-
-	cs.StartSession();
-
-	++typecount[type];
-	// emplace
-	index[id] = instances.insert(make_pair(reference, type)).first;
-
-	cs.EndSession();
-}
-
-void GameFactory::CreateKnownInstance(unsigned char type, NetworkID id, unsigned int baseID)
-{
-	return CreateKnownInstance(type, id, 0x00, baseID);
-}
-
 NetworkID GameFactory::CreateKnownInstance(unsigned char type, const pDefault* packet)
 {
 	shared_ptr<Reference> reference;
@@ -513,7 +459,7 @@ void GameFactory::DestroyAllInstances()
 	for (const auto& instance : instances)
 	{
 		if (instance.second & ALL_CONTAINERS)
-			static_cast<Container*>(instance.first.get())->container.clear();
+			static_cast<Container*>(instance.first.get())->IL.container.clear();
 
 #ifdef VAULTMP_DEBUG
 		debug.print("Reference ", hex, instance.first->GetReference(), " with base ", instance.first->GetBase(), " and NetworkID ", dec, instance.first->GetNetworkID(), " (type: ", typeid(*(instance.first)).name(), ") to be destructed (", instance.first.get(), ")");

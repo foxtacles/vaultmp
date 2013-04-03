@@ -876,7 +876,7 @@ void Game::NewItem(FactoryObject<Item>& reference)
 void Game::NewContainer(FactoryObject<Container>& reference)
 {
 	NewObject(reference);
-	auto items = GameFactory::GetMultiple<Item>(vector<NetworkID>(reference->GetItemList().begin(), reference->GetItemList().end()));
+	auto items = GameFactory::GetMultiple<Item>(vector<NetworkID>(reference->IL.GetItemList().begin(), reference->IL.GetItemList().end()));
 
 	for (auto& _item : items)
 	{
@@ -1486,9 +1486,9 @@ Game::CellDiff Game::ScanCell(unsigned int type)
 	return diff;
 }
 
-pair<Container::NetDiff, Container::GameDiff> Game::ScanContainer(FactoryObject<Container>& reference)
+pair<ItemList::NetDiff, ItemList::GameDiff> Game::ScanContainer(FactoryObject<Container>& reference)
 {
-	auto store = make_shared<Shared<pair<Container::NetDiff, Container::GameDiff>>>();
+	auto store = make_shared<Shared<pair<ItemList::NetDiff, ItemList::GameDiff>>>();
 	unsigned int key = Lockable::Share(store);
 
 	Interface::StartDynamic();
@@ -1500,7 +1500,7 @@ pair<Container::NetDiff, Container::GameDiff> Game::ScanContainer(FactoryObject<
 	NetworkID id = reference->GetNetworkID();
 	GameFactory::LeaveReference(reference);
 
-	pair<Container::NetDiff, Container::GameDiff> diff;
+	pair<ItemList::NetDiff, ItemList::GameDiff> diff;
 
 	try
 	{
@@ -1698,13 +1698,13 @@ void Game::net_SetItemCondition(const FactoryObject<Item>& reference, double con
 		SetCurrentHealth(reference, health);
 }
 
-void Game::net_UpdateContainer(FactoryObject<Container>& reference, const Container::NetDiff& ndiff, const Container::NetDiff& gdiff)
+void Game::net_UpdateContainer(FactoryObject<Container>& reference, const ItemList::NetDiff& ndiff, const ItemList::NetDiff& gdiff)
 {
 	Lockable* result;
 
 	// cleaner solution here
 
-	Container::ContainerDiff diff = Container::ToContainerDiff(ndiff);
+	ItemList::ContainerDiff diff = ItemList::ToContainerDiff(ndiff);
 	NetworkID id = reference->GetNetworkID();
 	auto container = reference.operator ->();
 	GameFactory::LeaveReference(reference);
@@ -1715,7 +1715,7 @@ void Game::net_UpdateContainer(FactoryObject<Container>& reference, const Contai
 
 	unsigned int key = result->Lock();
 
-	Container::GameDiff _gdiff = reference->ApplyDiff(diff);
+	ItemList::GameDiff _gdiff = reference->IL.ApplyDiff(diff);
 
 	for (const auto& diff : _gdiff)
 	{
@@ -1923,7 +1923,7 @@ void Game::net_FireWeapon(const FactoryObject<Actor>& reference, unsigned int we
 
 					this_thread::sleep_for(us);
 
-					while ((reference = GameFactory::GetObject<Actor>(id)) && reference->IsActorFiring() && reference->IsEquipped(weapon))
+					while ((reference = GameFactory::GetObject<Actor>(id)) && reference->IsActorFiring() && reference->IL.IsEquipped(weapon))
 					{
 						auto& _reference = reference.get();
 						FireWeapon(_reference, weapon);
@@ -2347,13 +2347,13 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 			auto& ndiff = _result.first;
 			auto& gdiff = _result.second;
 
-			gdiff.remove_if([](const pair<unsigned int, Container::Diff>& diff) { return !diff.second.count; });
+			gdiff.remove_if([](const pair<unsigned int, ItemList::Diff>& diff) { return !diff.second.count; });
 
 			if (!gdiff.empty())
 			{
 				// lambda can't capture by move :(
 
-				auto _ndiff = make_shared<Container::NetDiff>(move(ndiff));
+				auto _ndiff = make_shared<ItemList::NetDiff>(move(ndiff));
 				NetworkID id = reference->GetNetworkID();
 
 				JobDispatch(chrono::milliseconds(0), [_ndiff, gdiff, key, result, id]() mutable
@@ -2379,7 +2379,7 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 								if (!result.first.first.empty() || !result.first.second.empty())
 								{
 									Network::Queue(NetworkResponse{Network::CreateResponse(
-										PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(_id, result.first, Container::NetDiff()),
+										PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(_id, result.first, ItemList::NetDiff()),
 										HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 									});
 
@@ -2392,15 +2392,15 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 								}
 							}
 
-							gdiff.remove_if([](const pair<unsigned int, Container::Diff>& diff) { return !diff.second.count; });
+							gdiff.remove_if([](const pair<unsigned int, ItemList::Diff>& diff) { return !diff.second.count; });
 						}
 
-						Container::NetDiff ndiff;
+						ItemList::NetDiff ndiff;
 
 						if (!gdiff.empty())
 						{
 							CellDiff cdiff = ScanCell(FormType_Inventory);
-							map<unsigned int, pair<Container::GameDiff::iterator, list<pair<unsigned int, unsigned int>>>> found;
+							map<unsigned int, pair<ItemList::GameDiff::iterator, list<pair<unsigned int, unsigned int>>>> found;
 
 							const auto best_match = [](decltype(found)::value_type& found)
 							{
@@ -2443,7 +2443,7 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 							{
 								unsigned int baseID = Game::GetBase(refID);
 
-								auto it = find_if(gdiff.begin(), gdiff.end(), [=](const pair<unsigned int, Container::Diff>& diff) { return diff.first == baseID; });
+								auto it = find_if(gdiff.begin(), gdiff.end(), [=](const pair<unsigned int, ItemList::Diff>& diff) { return diff.first == baseID; });
 
 								if (it != gdiff.end())
 								{
@@ -2544,7 +2544,7 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 
 								unsigned int baseID = reference->GetBase();
 
-								auto it = find_if(gdiff.begin(), gdiff.end(), [=](const pair<unsigned int, Container::Diff>& diff) { return diff.first == baseID; });
+								auto it = find_if(gdiff.begin(), gdiff.end(), [=](const pair<unsigned int, ItemList::Diff>& diff) { return diff.first == baseID; });
 
 								if (it != gdiff.end())
 								{
@@ -2616,7 +2616,7 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 			}
 			else
 				Network::Queue(NetworkResponse{Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(reference->GetNetworkID(), ndiff, Container::NetDiff()),
+					PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(reference->GetNetworkID(), ndiff, ItemList::NetDiff()),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 				});
 		}
@@ -2626,9 +2626,9 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 	}
 }
 
-pair<Container::NetDiff, Container::GameDiff> Game::GetScanContainer(const FactoryObject<Container>& reference, const vector<unsigned char>& data)
+pair<ItemList::NetDiff, ItemList::GameDiff> Game::GetScanContainer(const FactoryObject<Container>& reference, const vector<unsigned char>& data)
 {
-	pair<Container::NetDiff, Container::GameDiff> result;
+	pair<ItemList::NetDiff, ItemList::GameDiff> result;
 
 #pragma pack(push, 1)
 	struct ItemInfo
@@ -2651,15 +2651,15 @@ pair<Container::NetDiff, Container::GameDiff> Game::GetScanContainer(const Facto
 		item->SetItemCount(items[i].count);
 		item->SetItemEquipped(static_cast<bool>(items[i].equipped));
 		item->SetItemCondition(items[i].condition);
-		temp->AddItem(item->GetNetworkID());
+		temp->IL.AddItem(item->GetNetworkID());
 	}
 
-	auto diff = reference->Compare(temp->GetNetworkID());
+	auto diff = reference->IL.Compare(temp->GetNetworkID());
 
 	if (!diff.first.empty() || !diff.second.empty())
 	{
-		result.first = Container::ToNetDiff(diff);
-		result.second = reference->ApplyDiff(diff);
+		result.first = ItemList::ToNetDiff(diff);
+		result.second = reference->IL.ApplyDiff(diff);
 	}
 
 	GameFactory::DestroyInstance(temp);

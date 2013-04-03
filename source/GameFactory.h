@@ -171,14 +171,6 @@ class GameFactory
 		 */
 		static RakNet::NetworkID CreateInstance(unsigned char type, unsigned int baseID);
 		/**
-		 * \brief Creates a known instance of a given type
-		 */
-		static void CreateKnownInstance(unsigned char type, RakNet::NetworkID id, unsigned int refID, unsigned int baseID);
-		/**
-		 * \brief Creates a known instance of a given type
-		 */
-		static void CreateKnownInstance(unsigned char type, RakNet::NetworkID id, unsigned int baseID);
-		/**
 		 * \brief Creates a known instance from a network packet
 		 */
 		static RakNet::NetworkID CreateKnownInstance(unsigned char type, const pDefault* packet);

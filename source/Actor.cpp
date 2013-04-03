@@ -291,7 +291,7 @@ bool Actor::IsActorAttacking() const
 #ifdef VAULTSERVER
 unsigned int Actor::GetEquippedWeapon() const
 {
-	auto weapons = this->GetItemTypes("WEAP");
+	auto weapons = this->IL.GetItemTypes("WEAP");
 
 	// this won't reliably work if the actor has equipped more than one weapon
 	for (const auto& weapon : weapons)

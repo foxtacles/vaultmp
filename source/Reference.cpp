@@ -12,7 +12,7 @@ Reference::Reference(unsigned int refID, unsigned int baseID)
 	this->refID.set(refID);
 	this->baseID.set(baseID);
 	this->changed.set(false);
-	this->SetNetworkIDManager(Network::Manager());
+	this->SetNetworkIDManager(Network::Manager());;
 }
 
 Reference::~Reference()
