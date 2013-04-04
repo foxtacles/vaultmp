@@ -674,8 +674,64 @@ namespace vaultmp
 	VAULTFUNCTION State SetItemCondition(ID id, Value condition) noexcept { return VAULTAPI(SetItemCondition)(id, condition); }
 	VAULTFUNCTION ID CreateContainer(CONT container, ID id) noexcept { return VAULTAPI(CreateContainer)(container, id, static_cast<CELL>(0), 0.00, 0.00, 0.00); }
 	VAULTFUNCTION ID CreateContainer(CONT container, CELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateContainer)(container, static_cast<ID>(0), cell, X, Y, Z); }
+
+	struct CreateItemList_Initializer {
+		Base item;
+		UCount count;
+		Value condition;
+		State silent;
+		State equipped;
+		State stick;
+
+		#define CreateItemList_Initializer_ctor(type) \
+			CreateItemList_Initializer(type item, UCount count = 1, Value condition = 100.0, State silent = True, State equipped = False, State stick = True) : item(static_cast<Base>(item)), count(count), condition(condition), silent(silent), equipped(equipped), stick(stick) {}
+		CreateItemList_Initializer_ctor(Base);
+		CreateItemList_Initializer_ctor(ALCH);
+		CreateItemList_Initializer_ctor(AMMO);
+		CreateItemList_Initializer_ctor(ARMA);
+		CreateItemList_Initializer_ctor(ARMO);
+		CreateItemList_Initializer_ctor(ENCH);
+		CreateItemList_Initializer_ctor(KEYM);
+		CreateItemList_Initializer_ctor(MISC);
+		CreateItemList_Initializer_ctor(NOTE);
+		CreateItemList_Initializer_ctor(WEAP);
+		#undef CreateItemList_Initialzier_ctor
+	};
+
 	VAULTFUNCTION ID CreateItemList(ID source = static_cast<ID>(0)) noexcept { return VAULTAPI(CreateItemList)(source, static_cast<Base>(0)); }
 	VAULTFUNCTION ID CreateItemList(Base source) noexcept { return VAULTAPI(CreateItemList)(static_cast<ID>(0), source); }
+	VAULTFUNCTION ID CreateItemList(std::initializer_list<ID> source) noexcept
+	{
+		ID result = VAULTAPI(CreateItemList)(static_cast<ID>(0), static_cast<Base>(0));
+
+		for (const auto& id : source)
+			VAULTAPI(AddItemList)(result, id, static_cast<Base>(0));
+
+		return result;
+	}
+	VAULTFUNCTION ID CreateItemList(std::initializer_list<Base> source) noexcept
+	{
+		ID result = VAULTAPI(CreateItemList)(static_cast<ID>(0), static_cast<Base>(0));
+
+		for (const auto& base : source)
+			VAULTAPI(AddItemList)(result, static_cast<ID>(0), base);
+
+		return result;
+	}
+	VAULTFUNCTION ID CreateItemList(std::initializer_list<CreateItemList_Initializer> source) noexcept
+	{
+		ID result = VAULTAPI(CreateItemList)(static_cast<ID>(0), static_cast<Base>(0));
+
+		for (const auto& item : source)
+		{
+			VAULTAPI(AddItem)(result, item.item, item.count, item.condition, item.silent);
+
+			if (item.equipped)
+				VAULTAPI(EquipItem)(result, item.item, item.silent, item.stick);
+		}
+
+		return result;
+	}
 
 	#define AddItem_Template(type) \
 		VAULTFUNCTION State AddItem(ID id, type item, UCount count = 1, Value condition = 100.0, State silent = True) noexcept { return VAULTAPI(AddItem)(id, static_cast<Base>(item), count, condition, silent); }
@@ -997,6 +1053,9 @@ namespace vaultmp
 
 			static ID Create(ID source = static_cast<ID>(0)) { return vaultmp::CreateItemList(source); }
 			static ID Create(Base source) { return vaultmp::CreateItemList(source); }
+			static ID Create(std::initializer_list<ID> source) { return vaultmp::CreateItemList(source); }
+			static ID Create(std::initializer_list<Base> source) { return vaultmp::CreateItemList(source); }
+			static ID Create(std::initializer_list<CreateItemList_Initializer> source) { return vaultmp::CreateItemList(source); }
 	};
 
 	class Actor : public Container {
