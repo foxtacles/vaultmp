@@ -13,6 +13,20 @@ using namespace RakNet;
 DebugInput<ItemList> ItemList::debug;
 #endif
 
+ItemList::ItemList(NetworkID source) : source(source)
+{
+#ifdef VAULTSERVER
+	if (!source)
+	{
+		SetNetworkIDManager(Network::Manager());
+		this->source = GetNetworkID();
+	}
+#else
+	if (!source)
+		throw VaultException("Source NetworkID must not be null").stacktrace();
+#endif
+}
+
 ItemList::~ItemList()
 {
 	this->FlushContainer();
@@ -433,17 +447,15 @@ void ItemList::FreeDiff(ContainerDiff& diff)
 	diff.second.clear();
 }
 
-ItemList ItemList::Copy(NetworkID source) const
+void ItemList::Copy(ItemList& IL) const
 {
-	ItemList container(source);
+	IL.FlushContainer();
 
 	for (const NetworkID& id : this->container)
 	{
 		FactoryObject<Item> item = GameFactory::GetObject<Item>(id).get();
-		container.AddItem(item->Copy());
+		IL.AddItem(item->Copy());
 	}
-
-	return container;
 }
 
 bool ItemList::IsEmpty() const

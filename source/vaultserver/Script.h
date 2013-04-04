@@ -135,6 +135,7 @@ class Script
 		void (*fOnServerInit)();
 		void (*fOnServerExit)();
 
+		static std::unordered_map<RakNet::NetworkID, std::unique_ptr<ItemList>> scriptIL;
 		static std::pair<std::chrono::system_clock::time_point, double> gameTime;
 		static unsigned int gameWeather;
 
@@ -212,6 +213,7 @@ class Script
 		static bool IsActor(RakNet::NetworkID id);
 		static bool IsPlayer(RakNet::NetworkID id);
 		static bool IsInterior(unsigned int cell);
+		static bool IsItemList(RakNet::NetworkID id);
 		static unsigned int GetConnection(RakNet::NetworkID id);
 		static unsigned int GetList(unsigned char type, RakNet::NetworkID** data);
 		static void GetChatboxPos(double* X, double* Y);
@@ -274,10 +276,11 @@ class Script
 		static bool SetItemCount(RakNet::NetworkID id, unsigned int count);
 		static bool SetItemCondition(RakNet::NetworkID id, double condition);
 		static RakNet::NetworkID CreateContainer(unsigned int baseID, RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z);
+		static RakNet::NetworkID CreateItemList(RakNet::NetworkID source, unsigned int baseID);
 		static bool AddItem(RakNet::NetworkID id, unsigned int baseID, unsigned int count, double condition, bool silent);
+		static void AddItemList(RakNet::NetworkID id, RakNet::NetworkID source, unsigned int baseID);
 		static unsigned int RemoveItem(RakNet::NetworkID id, unsigned int baseID, unsigned int count, bool silent);
 		static void RemoveAllItems(RakNet::NetworkID id);
-		static void AddItemList(RakNet::NetworkID id, RakNet::NetworkID list);
 		static RakNet::NetworkID CreateActor(unsigned int baseID, RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z);
 		static void SetActorValue(RakNet::NetworkID id, unsigned char index, double value);
 		static void SetActorBaseValue(RakNet::NetworkID id, unsigned char index, double value);
@@ -345,6 +348,7 @@ class Script
 			{"IsPlayer", Script::IsPlayer},
 			{"IsCell", DB::Record::IsValidCell},
 			{"IsInterior", Script::IsInterior},
+			{"IsItemList", Script::IsItemList},
 			{"GetType", (unsigned char(*)(RakNet::NetworkID)) GameFactory::GetType},
 			{"GetConnection", Script::GetConnection},
 			{"GetCount", GameFactory::GetObjectCount},
@@ -413,6 +417,7 @@ class Script
 			{"SetItemCount", Script::SetItemCount},
 			{"SetItemCondition", Script::SetItemCondition},
 			{"CreateContainer", Script::CreateContainer},
+			{"CreateItemList", Script::CreateItemList},
 			{"AddItem", Script::AddItem},
 			{"RemoveItem", Script::RemoveItem},
 			{"RemoveAllItems", Script::RemoveAllItems},

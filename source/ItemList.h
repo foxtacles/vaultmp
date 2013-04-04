@@ -9,6 +9,7 @@
 #include "vaultmp.h"
 #include "RakNet.h"
 #include "PacketFactory.h"
+#include "Network.h"
 
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"
@@ -16,7 +17,11 @@
 
 class Item;
 
+#ifdef VAULTSERVER
+class ItemList : public RakNet::NetworkIDObject
+#else
 class ItemList
+#endif
 {
 		friend class GameFactory;
 
@@ -48,18 +53,16 @@ class ItemList
 		static bool Diff_sort(const std::pair<unsigned int, Diff>& diff, const std::pair<unsigned int, Diff>& diff2);
 
 		ItemListImpl container;
-		RakNet::NetworkID source;
 		StripCopy Strip() const;
 
 		ItemList(const ItemList&) = delete;
 		ItemList& operator=(const ItemList&) = delete;
 
 	public:
-		ItemList(RakNet::NetworkID source) : source(source) {}
-		~ItemList();
+		RakNet::NetworkID source;
 
-		ItemList(ItemList&&) = default;
-		ItemList& operator=(ItemList&&) = default;
+		ItemList(RakNet::NetworkID source);
+		~ItemList();
 
 		void AddItem(RakNet::NetworkID id);
 		ContainerDiff AddItem(unsigned int baseID, unsigned int count, double condition, bool silent) const;
@@ -86,7 +89,7 @@ class ItemList
 #endif
 
 		void FlushContainer();
-		ItemList Copy(RakNet::NetworkID source) const;
+		void Copy(ItemList& IL) const;
 };
 
 #endif

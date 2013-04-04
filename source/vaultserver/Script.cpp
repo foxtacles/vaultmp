@@ -7,6 +7,7 @@ using namespace Values;
 
 vector<Script*> Script::scripts;
 
+unordered_map<NetworkID, unique_ptr<ItemList>> Script::scriptIL;
 pair<chrono::system_clock::time_point, double> Script::gameTime;
 unsigned int Script::gameWeather;
 
@@ -299,6 +300,7 @@ void Script::UnloadScripts()
 	Timer::TerminateAll();
 	Public::DeleteAll();
 	scripts.clear();
+	scriptIL.clear();
 }
 
 void Script::GetArguments(vector<boost::any>& params, va_list args, const string& def)
@@ -1214,7 +1216,7 @@ void Script::SetTimeScale(double scale)
 
 bool Script::IsValid(NetworkID id)
 {
-	return GameFactory::GetType(id);
+	return GameFactory::GetType(id) || scriptIL.count(id);
 }
 
 bool Script::IsObject(NetworkID id)
@@ -1245,6 +1247,11 @@ bool Script::IsPlayer(NetworkID id)
 bool Script::IsInterior(unsigned int cell)
 {
 	return !DB::Exterior::Lookup(cell) && DB::Record::Lookup(cell, "CELL");
+}
+
+bool Script::IsItemList(NetworkID id)
+{
+	return scriptIL.count(id);
 }
 
 unsigned int Script::GetConnection(NetworkID id)
@@ -1500,8 +1507,11 @@ unsigned int Script::GetContainerItemCount(NetworkID id, unsigned int baseID)
 {
 	auto container = GameFactory::GetObject<Container>(id);
 
-	if (container)
-		return container->IL.GetItemCount(baseID);
+	if (container || scriptIL.count(id))
+	{
+		ItemList* IL = container ? &container->IL : scriptIL[id].get();
+		return IL->GetItemCount(baseID);
+	}
 
 	return 0;
 }
@@ -1513,9 +1523,10 @@ unsigned int Script::GetContainerItemList(NetworkID id, NetworkID** data)
 
 	auto container = GameFactory::GetObject<Container>(id);
 
-	if (container)
+	if (container || scriptIL.count(id))
 	{
-		_data.assign(container->IL.GetItemList().begin(), container->IL.GetItemList().end());
+		ItemList* IL = container ? &container->IL : scriptIL[id].get();
+		_data.assign(IL->GetItemList().begin(), IL->GetItemList().end());
 		unsigned int size = _data.size();
 
 		if (size)
@@ -1757,8 +1768,10 @@ bool Script::DestroyObject(NetworkID id)
 
 	auto reference = GameFactory::GetObject(id);
 
-	if (!reference || vaultcast<Player>(reference))
-		return state;
+	if (!reference)
+		return scriptIL.erase(id) != 0;
+	else if (vaultcast<Player>(reference))
+		return false;
 
 	auto& object = reference.get();
 
@@ -2228,6 +2241,19 @@ NetworkID Script::CreateContainer(unsigned int baseID, NetworkID id, unsigned in
 	return result;
 }
 
+NetworkID Script::CreateItemList(NetworkID source, unsigned int baseID)
+{
+	// make_unique
+	auto IL = unique_ptr<ItemList>(new ItemList(0));
+	NetworkID id = IL->GetNetworkID();
+	scriptIL.emplace(id, move(IL));
+
+	if (source || baseID)
+		AddItemList(id, source, baseID);
+
+	return id;
+}
+
 bool Script::AddItem(NetworkID id, unsigned int baseID, unsigned int count, double condition, bool silent)
 {
 	try
@@ -2236,19 +2262,19 @@ bool Script::AddItem(NetworkID id, unsigned int baseID, unsigned int count, doub
 		{
 			auto reference = GameFactory::GetObject<Container>(id);
 
-			if (!reference)
+			if (!reference && !scriptIL.count(id))
 				return false;
 
-			auto& container = reference.get();
+			ItemList* IL = reference ? &reference->IL : scriptIL[id].get();
+			auto diff = IL->AddItem(baseID, count, condition, silent);
 
-			auto diff = container->IL.AddItem(baseID, count, condition, silent);
+			if (reference)
+				Network::Queue(NetworkResponse{Network::CreateResponse(
+					PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, ItemList::ToNetDiff(diff), ItemList::NetDiff()),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+				});
 
-			Network::Queue(NetworkResponse{Network::CreateResponse(
-				PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, ItemList::ToNetDiff(diff), ItemList::NetDiff()),
-				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-			});
-
-			container->IL.ApplyDiff(diff);
+			IL->ApplyDiff(diff);
 
 			return true;
 		}
@@ -2256,6 +2282,48 @@ bool Script::AddItem(NetworkID id, unsigned int baseID, unsigned int count, doub
 	catch (...) {} // invalid item baseID
 
 	return false;
+}
+
+void Script::AddItemList(NetworkID id, NetworkID source, unsigned int baseID)
+{
+	auto reference = GameFactory::GetObject<Container>(id);
+
+	if (!reference && !scriptIL.count(id))
+		return;
+
+	if (source)
+	{
+		if (reference)
+			GameFactory::LeaveReference(reference.get());
+
+		reference = GameFactory::GetObject<Container>(source);
+
+		if (!reference && !scriptIL.count(source))
+			return;
+
+		ItemList* IL = reference ? &reference->IL : scriptIL[source].get();
+		auto items = GameFactory::GetMultiple<Item>(vector<NetworkID>{IL->GetItemList().begin(), IL->GetItemList().end()});
+
+		for (auto& item : items)
+		{
+			AddItem(id, item->GetBase(), item->GetItemCount(), item->GetItemCondition(), item->GetItemSilent());
+
+			if (item->GetItemEquipped())
+				EquipItem(id, item->GetBase(), item->GetItemSilent(), item->GetItemStick());
+		}
+	}
+	else if (reference || baseID)
+	{
+		const auto& items = DB::BaseContainer::Lookup(reference ? reference->GetBase() : baseID);
+
+		for (const auto* item : items)
+		{
+			if (item->GetItem() & 0xFF000000)
+				continue;
+
+			AddItem(id, item->GetItem(), item->GetCount(), item->GetCondition(), true);
+		}
+	}
 }
 
 unsigned int Script::RemoveItem(NetworkID id, unsigned int baseID, unsigned int count, bool silent)
@@ -2266,22 +2334,21 @@ unsigned int Script::RemoveItem(NetworkID id, unsigned int baseID, unsigned int 
 	{
 		auto reference = GameFactory::GetObject<Container>(id);
 
-		if (!reference)
+		if (!reference && !scriptIL.count(id))
 			return removed;
 
-		auto& container = reference.get();
-
-		auto diff = container->IL.RemoveItem(baseID, count, silent);
+		ItemList* IL = reference ? &reference->IL : scriptIL[id].get();
+		auto diff = IL->RemoveItem(baseID, count, silent);
 
 		if (!diff.first.empty() || !diff.second.empty())
 		{
-			Network::Queue(NetworkResponse{Network::CreateResponse(
-				PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, ItemList::ToNetDiff(diff), ItemList::NetDiff()),
-				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-			});
+			if (reference)
+				Network::Queue(NetworkResponse{Network::CreateResponse(
+					PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, ItemList::ToNetDiff(diff), ItemList::NetDiff()),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+				});
 
-			auto gamediff = container->IL.ApplyDiff(diff);
-
+			auto gamediff = IL->ApplyDiff(diff);
 			removed = abs(gamediff.front().second.count);
 		}
 	}
@@ -2293,48 +2360,21 @@ void Script::RemoveAllItems(NetworkID id)
 {
 	auto reference = GameFactory::GetObject<Container>(id);
 
-	if (!reference)
+	if (!reference && !scriptIL.count(id))
 		return;
 
-	auto& container = reference.get();
-
-	auto diff = container->IL.RemoveAllItems();
+	ItemList* IL = reference ? &reference->IL : scriptIL[id].get();
+	auto diff = IL->RemoveAllItems();
 
 	if (!diff.first.empty() || !diff.second.empty())
 	{
-		Network::Queue(NetworkResponse{Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, ItemList::ToNetDiff(diff), ItemList::NetDiff()),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-		});
+		if (reference)
+			Network::Queue(NetworkResponse{Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, ItemList::ToNetDiff(diff), ItemList::NetDiff()),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+			});
 
-		container->IL.ApplyDiff(diff);
-	}
-}
-
-void Script::AddItemList(NetworkID id, NetworkID list)
-{
-	auto reference = GameFactory::GetObject<Container>(id);
-
-	if (!reference)
-		return;
-
-	auto& container = reference.get();
-
-	if (list)
-	{
-		// item list functionality
-	}
-	else
-	{
-		const auto& items = DB::BaseContainer::Lookup(container->GetBase());
-
-		for (const auto* item : items)
-		{
-			if (item->GetItem() & 0xFF000000)
-				continue;
-
-			AddItem(id, item->GetItem(), item->GetCount(), item->GetCondition(), true);
-		}
+		IL->ApplyDiff(diff);
 	}
 }
 
@@ -2424,21 +2464,21 @@ bool Script::EquipItem(NetworkID id, unsigned int baseID, bool silent, bool stic
 {
 	auto reference = GameFactory::GetObject<Actor>(id);
 
-	if (!reference)
+	if (!reference && !scriptIL.count(id))
 		return false;
 
-	auto& actor = reference.get();
-
-	auto diff = actor->IL.EquipItem(baseID, silent, stick);
+	ItemList* IL = reference ? &reference->IL : scriptIL[id].get();
+	auto diff = IL->EquipItem(baseID, silent, stick);
 
 	if (!diff.first.empty() || !diff.second.empty())
 	{
-		Network::Queue(NetworkResponse{Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, ItemList::ToNetDiff(diff), ItemList::NetDiff()),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-		});
+		if (reference)
+			Network::Queue(NetworkResponse{Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, ItemList::ToNetDiff(diff), ItemList::NetDiff()),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+			});
 
-		actor->IL.ApplyDiff(diff);
+		IL->ApplyDiff(diff);
 
 		return true;
 	}
@@ -2450,21 +2490,21 @@ bool Script::UnequipItem(NetworkID id, unsigned int baseID, bool silent, bool st
 {
 	auto reference = GameFactory::GetObject<Actor>(id);
 
-	if (!reference)
+	if (!reference && !scriptIL.count(id))
 		return false;
 
-	auto& actor = reference.get();
-
-	auto diff = actor->IL.UnequipItem(baseID, silent, stick);
+	ItemList* IL = reference ? &reference->IL : scriptIL[id].get();
+	auto diff = IL->UnequipItem(baseID, silent, stick);
 
 	if (!diff.first.empty() || !diff.second.empty())
 	{
-		Network::Queue(NetworkResponse{Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, ItemList::ToNetDiff(diff), ItemList::NetDiff()),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-		});
+		if (reference)
+			Network::Queue(NetworkResponse{Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, ItemList::ToNetDiff(diff), ItemList::NetDiff()),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+			});
 
-		actor->IL.ApplyDiff(diff);
+		IL->ApplyDiff(diff);
 
 		return true;
 	}

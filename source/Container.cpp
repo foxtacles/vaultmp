@@ -69,7 +69,7 @@ NetworkID Container::Copy() const
 {
 	FactoryObject<Container> container = GameFactory::GetObject<Container>(GameFactory::CreateInstance(ID_CONTAINER, 0x00000000, this->GetBase())).get();
 	NetworkID id = container->GetNetworkID();
-	container->IL = IL.Copy(id);
+	IL.Copy(container->IL);
 	return id;
 }
 
