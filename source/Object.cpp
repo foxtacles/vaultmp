@@ -53,6 +53,14 @@ Object::Object(const pDefault* packet) : Reference(0x00000000, 0x00000000)
 	this->SetEnabled(enabled);
 	this->SetLockLevel(lock);
 	this->SetOwner(owner);
+
+	if (refID)
+	{
+		this->SetGamePos(Axis_X, X);
+		this->SetGamePos(Axis_Y, Y);
+		this->SetGamePos(Axis_Z, Z);
+		this->SetGameCell(cell);
+	}
 }
 
 Object::Object(pPacket&& packet) : Object(packet.get())

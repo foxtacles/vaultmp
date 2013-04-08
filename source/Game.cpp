@@ -2361,17 +2361,22 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 					try
 					{
 						{
-							vector<NetworkID> reference = GameFactory::GetIDObjectTypes(ALL_CONTAINERS);
-							unsigned int cell = vaultcast<Container>(GameFactory::GetObject(id))->GetGameCell();
+							// ALL_CONTAINERS: removed due to weird behaviour. fix
+							auto reference = GetContext(ID_CONTAINER);
+							auto player = GameFactory::GetObject<Player>(id).get();
 
-							for (const NetworkID& _id : reference)
+							double X = player->GetGamePos(Axis_X);
+							double Y = player->GetGamePos(Axis_Y);
+							double Z = player->GetGamePos(Axis_Z);
+
+							GameFactory::LeaveReference(player);
+
+							for (unsigned int ref : reference)
 							{
-								if (_id == id)
-									continue;
+								auto container = GameFactory::GetObject<Container>(ref).get();
+								NetworkID id_ = container->GetNetworkID();
 
-								FactoryObject<Container> container = GameFactory::GetObject<Container>(_id).get();
-
-								if (container->GetGameCell() != cell)
+								if (!container->IsNearPoint(X, Y, Z, 500.0))
 									continue;
 
 								auto result = Game::ScanContainer(container);
@@ -2379,7 +2384,7 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 								if (!result.first.first.empty() || !result.first.second.empty())
 								{
 									Network::Queue(NetworkResponse{Network::CreateResponse(
-										PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(_id, result.first, ItemList::NetDiff()),
+										PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id_, result.first, ItemList::NetDiff()),
 										HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 									});
 
