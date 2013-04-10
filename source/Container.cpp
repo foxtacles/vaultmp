@@ -40,7 +40,7 @@ Container::Container(pPacket&& packet) : Container(packet.get())
 
 Container::~Container()
 {
-	IL.FlushContainer();
+
 }
 
 void Container::initialize()
