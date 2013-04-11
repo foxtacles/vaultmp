@@ -14,4 +14,29 @@ The main goal is to enable players to roam the open world of the wasteland and e
 
 ![Application structure](http://www.brickster.net/files/vaultmp/structure.png "Application structure")
 
+# Compilation
 
+All sources (except source/vaultgui) can be compiled with >=GCC 4.7.1 (std::thread is required!). On Windows operating systems, you should use a MinGW setup. The following makefiles are available:
+
+* source/makefile (main application, Windows only)
+* source/vaultserver/makefile.windows (dedicated server, Windows)
+* source/vaultserver/makefile.unix (dedicated server, Linux)
+* source/vaultmaster/makefile (master server, Linux)
+* source/vaultscript/makefile (default C++ script, Linux)
+
+Code::Blocks project files are available for the parts for which there are no makefiles yet:
+
+* source/vaultmpdll/vaultmpDLL.cbp
+* source/vaultmaster/vaultmaster.cbp
+* source/vaultscript/vaultscript.cbp
+
+# Scripting
+
+An essential part of vaultmp is the server-side scripting interface component. Documentation and examples on how use it are available on vaultmp.com. See:
+
+* http://www.vaultmp.com/showwiki.php?title=Category:Scripting
+* http://www.vaultmp.com/showwiki.php?title=Category:VaultMP+interface
+
+# Help
+
+vaultmp is far from complete. Any help (mostly coding, documentation) is very appreciated.
