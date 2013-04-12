@@ -112,4 +112,55 @@ extern "C"
 		CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"));
 		w->setSize(CEGUI::UVector2(cegui_reldim(x), cegui_reldim(y)));
 	}
+
+
+
+
+	__declspec(dllexport) void GUI_CreateFrameWindow(char *name)
+	{
+		CEGUI::WindowManager& winMgr = CEGUI::WindowManager::getSingleton();
+		CEGUI::DefaultWindow* root = (CEGUI::DefaultWindow*)winMgr.createWindow("DefaultWindow", "Root");
+		CEGUI::FrameWindow * wnd = (CEGUI::FrameWindow*)winMgr.createWindow("TaharezLook/FrameWindow", name);
+		root->addChildWindow(wnd);
+	}
+
+	__declspec(dllexport) void GUI_SetFrameWindowPosition(char* name,float x,float y)
+	{
+		CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow(name));
+		w->setPosition(CEGUI::UVector2(cegui_reldim(x), cegui_reldim(y)));
+	}
+
+	__declspec(dllexport) void GUI_SetFrameWindowSize(char* name,float x,float y)
+	{
+		CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow(name));
+		w->setSize(CEGUI::UVector2(cegui_reldim(x), cegui_reldim(y)));
+	}
+
+	__declspec(dllexport) void GUI_AddStaticText(char* parent,char* name)
+	{
+		CEGUI::WindowManager& winMgr = CEGUI::WindowManager::getSingleton();
+
+		CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow(parent));
+		CEGUI::DefaultWindow* wnd=(CEGUI::DefaultWindow*)winMgr.createWindow("TaharezLook/StaticText", name);
+
+		w->addChildWindow(wnd);
+	}
+
+	__declspec(dllexport) void GUI_SetStaticTextPosition(char* name,float x,float y)
+	{
+		CEGUI::DefaultWindow *w = ((CEGUI::DefaultWindow*)CEGUI::WindowManager::getSingleton().getWindow(name));
+		w->setPosition(CEGUI::UVector2(cegui_reldim(x), cegui_reldim(y)));
+	}
+
+	__declspec(dllexport) void GUI_SetStaticTextSize(char* name,float x,float y)
+	{
+		CEGUI::DefaultWindow *w = ((CEGUI::DefaultWindow*)CEGUI::WindowManager::getSingleton().getWindow(name));
+		w->setSize(CEGUI::UVector2(cegui_reldim(x), cegui_reldim(y)));
+	}
+
+	__declspec(dllexport) void GUI_SetStaticTextText(char* name,char* txt)
+	{
+		CEGUI::DefaultWindow *w = ((CEGUI::DefaultWindow*)CEGUI::WindowManager::getSingleton().getWindow(name));
+		w->setText(txt);
+	}
 }
