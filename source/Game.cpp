@@ -12,6 +12,7 @@ RakNetGUID Game::server;
 Guarded<Game::CellRefs> Game::cellRefs;
 Guarded<Player::CellContext> Game::cellContext;
 Guarded<Game::UninitializedObjects> Game::uninitObj;
+Guarded<Game::DeletedObjects> Game::deletedObj;
 Game::BaseRaces Game::baseRaces;
 Game::Globals Game::globals;
 Game::Weather Game::weather;
@@ -698,6 +699,10 @@ void Game::LoadEnvironment()
 	uninitObj->clear();
 	uninitObj.EndSession();
 
+	deletedObj.StartSession();
+	deletedObj->clear();
+	deletedObj.EndSession();
+
 	for (NetworkID& id : reference)
 	{
 		auto _reference = GameFactory::GetObject(id);
@@ -1006,18 +1011,41 @@ void Game::NewPlayer_(FactoryObject<Player>& reference)
 
 void Game::RemoveObject(const FactoryObject<Object>& reference)
 {
-	if (reference->SetEnabled(false))
-		ToggleEnabled(reference);
+	if (!reference->GetReference())
+		return;
 
-	Interface::StartDynamic();
+	if (IsInContext(reference->GetGameCell()))
+	{
+		if (reference->SetEnabled(false))
+			ToggleEnabled(reference);
 
-	Interface::ExecuteCommand("MarkForDelete", {reference->GetReferenceParam()});
+		Interface::StartDynamic();
 
-	Interface::EndDynamic();
+		Interface::ExecuteCommand("MarkForDelete", {reference->GetReferenceParam()});
+
+		Interface::EndDynamic();
+	}
+	else
+	{
+		deletedObj.StartSession();
+		(*deletedObj)[reference->GetGameCell()].insert(reference->GetReference());
+		deletedObj.EndSession();
+	}
 
 	cellRefs.StartSession();
 	(*cellRefs)[reference->GetNetworkCell()][reference.GetType()].erase(reference->GetReference());
 	cellRefs.EndSession();
+}
+
+void Game::RemoveObject(unsigned int refID)
+{
+	ToggleEnabled(refID, false);
+
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("MarkForDelete", {RawParameter(refID)});
+
+	Interface::EndDynamic();
 }
 
 void Game::PlaceAtMe(const FactoryObject<Object>& reference, unsigned int baseID, double condition, unsigned int count, unsigned int key)
@@ -1036,12 +1064,17 @@ void Game::PlaceAtMe(unsigned int refID, unsigned int baseID, double condition, 
 
 void Game::ToggleEnabled(const FactoryObject<Object>& reference)
 {
+	ToggleEnabled(reference->GetReference(), reference->GetEnabled());
+}
+
+void Game::ToggleEnabled(unsigned int refID, bool enabled)
+{
 	Interface::StartDynamic();
 
-	if (reference->GetEnabled())
-		Interface::ExecuteCommand("Enable", {reference->GetReferenceParam(), RawParameter(true)});
+	if (enabled)
+		Interface::ExecuteCommand("Enable", {RawParameter(refID), RawParameter(true)});
 	else
-		Interface::ExecuteCommand("Disable", {reference->GetReferenceParam(), RawParameter(false)});
+		Interface::ExecuteCommand("Disable", {RawParameter(refID), RawParameter(false)});
 
 	Interface::EndDynamic();
 }
@@ -1725,16 +1758,41 @@ void Game::net_SetCell(FactoryObject<Object>& reference, FactoryObject<Player>& 
 		{
 			if (IsInContext(cell))
 			{
-				if (reference->SetEnabled(true))
-					ToggleEnabled(reference);
+				if (vaultcast<Actor>(reference) || IsInContext(old_cell))
+				{
+					if (reference->SetEnabled(true))
+						ToggleEnabled(reference);
 
-				if (reference->SetGameCell(cell))
-					MoveTo(reference, player, true);
+					if (reference->SetGameCell(cell))
+						MoveTo(reference, player, true);
+				}
+				else
+				{
+					RemoveObject(reference);
+					reference->SetReference(0x00000000);
+					reference->SetEnabled(false);
+
+					GameFactory::LeaveReference(player);
+					NewDispatch(reference);
+				}
 			}
 			else
 			{
-				if (reference->SetEnabled(false))
-					ToggleEnabled(reference);
+				if (vaultcast<Actor>(reference))
+				{
+					if (reference->SetEnabled(false))
+						ToggleEnabled(reference);
+				}
+				else
+				{
+					RemoveObject(reference);
+					reference->SetReference(0x00000000);
+					reference->SetEnabled(false);
+
+					uninitObj.StartSession();
+					(*uninitObj)[cell].emplace(reference->GetNetworkID());
+					uninitObj.EndSession();
+				}
 			}
 		}
 
@@ -1973,19 +2031,19 @@ void Game::net_SetActorDead(FactoryObject<Actor>& reference, bool dead, unsigned
 			reference->SetEnabled(false);
 			GameFactory::LeaveReference(reference);
 
-			ForceRespawn();
+			Game::ForceRespawn();
 
 			this_thread::sleep_for(chrono::seconds(1));
 
 			// remove all base effects so they get re-applied in LoadEnvironment
-			baseRaces.clear();
-			spawnFunc();
+			Game::baseRaces.clear();
+			Game::spawnFunc();
 /*
 			cellContext.StartSession();
 			(*cellContext) = {{0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u}};
 			cellContext.EndSession();
 */
-			LoadEnvironment();
+			Game::LoadEnvironment();
 
 			reference = GameFactory::GetObject<Actor>(id).get();
 			reference->SetEnabled(true);
@@ -2114,6 +2172,13 @@ void Game::net_UpdateContext(Player::CellContext& context)
 	for (const auto& cell : diff.first)
 		if (cell)
 		{
+			deletedObj.StartSession();
+			set<unsigned int> refIDs = move((*deletedObj)[cell]);
+			deletedObj.EndSession();
+
+			for (const auto& id : refIDs)
+				RemoveObject(id);
+
 			for (const auto& refs : copy[cell])
 				for (unsigned int refID : refs.second)
 					if (refID != PLAYER_REFERENCE)

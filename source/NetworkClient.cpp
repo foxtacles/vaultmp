@@ -114,6 +114,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
 					Game::cellRefs->clear();
 					Game::uninitObj->clear();
+					Game::deletedObj->clear();
 					Game::baseRaces.clear();
 					Game::globals.clear();
 					Game::weather = 0x00000000;

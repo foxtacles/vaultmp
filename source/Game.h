@@ -40,6 +40,7 @@ class Game
 		typedef std::pair<std::set<unsigned int>, std::set<unsigned int>> CellDiff;
 		typedef std::unordered_map<unsigned int, std::unordered_map<unsigned char, std::set<unsigned int>>> CellRefs;
 		typedef std::unordered_map<unsigned int, std::unordered_set<RakNet::NetworkID>> UninitializedObjects;
+		typedef std::unordered_map<unsigned int, std::set<unsigned int>> DeletedObjects;
 		typedef std::unordered_map<unsigned int, unsigned int> BaseRaces;
 		typedef std::unordered_map<unsigned int, signed int> Globals;
 		typedef unsigned int Weather;
@@ -50,6 +51,7 @@ class Game
 		static Guarded<CellRefs> cellRefs;
 		static Guarded<Player::CellContext> cellContext;
 		static Guarded<UninitializedObjects> uninitObj;
+		static Guarded<DeletedObjects> deletedObj;
 		static BaseRaces baseRaces;
 		static Globals globals;
 		static Weather weather;
@@ -118,7 +120,7 @@ class Game
 		 */
 		static void SetGlobalValue(unsigned int global, signed int value);
 		/**
-		 * \brief Loads the environment after savegame load
+		 * \brief Loads the environment after game boot
 		 */
 		static void LoadEnvironment();
 		static void NewDispatch(FactoryObject<Object>& reference);
@@ -159,6 +161,7 @@ class Game
 		 * \brief Removes an Object from the game
 		 */
 		static void RemoveObject(const FactoryObject<Object>& reference);
+		static void RemoveObject(unsigned int refID);
 		/**
 		 * \brief Places an Object in-game
 		 */
@@ -168,6 +171,7 @@ class Game
 		 * \brief Enables / Disables an Object
 		 */
 		static void ToggleEnabled(const FactoryObject<Object>& reference);
+		static void ToggleEnabled(unsigned int refID, bool enabled);
 		/**
 		 * \brief Deletes an Object
 		 */
