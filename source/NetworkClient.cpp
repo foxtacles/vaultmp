@@ -113,6 +113,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					Bethesda::Initialize();
 
 					Game::cellRefs->clear();
+					Game::uninitObj->clear();
 					Game::baseRaces.clear();
 					Game::globals.clear();
 					Game::weather = 0x00000000;

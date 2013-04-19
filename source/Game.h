@@ -39,6 +39,7 @@ class Game
 		typedef std::pair<std::future<void>, std::chrono::milliseconds> AsyncPack;
 		typedef std::pair<std::set<unsigned int>, std::set<unsigned int>> CellDiff;
 		typedef std::unordered_map<unsigned int, std::unordered_map<unsigned char, std::set<unsigned int>>> CellRefs;
+		typedef std::unordered_map<unsigned int, std::unordered_set<RakNet::NetworkID>> UninitializedObjects;
 		typedef std::unordered_map<unsigned int, unsigned int> BaseRaces;
 		typedef std::unordered_map<unsigned int, signed int> Globals;
 		typedef unsigned int Weather;
@@ -48,6 +49,7 @@ class Game
 
 		static Guarded<CellRefs> cellRefs;
 		static Guarded<Player::CellContext> cellContext;
+		static Guarded<UninitializedObjects> uninitObj;
 		static BaseRaces baseRaces;
 		static Globals globals;
 		static Weather weather;
@@ -119,6 +121,7 @@ class Game
 		 * \brief Loads the environment after savegame load
 		 */
 		static void LoadEnvironment();
+		static void NewDispatch(FactoryObject<Object>& reference);
 		/**
 		 * \brief Display a Fallout UI message
 		 */
@@ -131,22 +134,27 @@ class Game
 		 * \brief Creates a new Object
 		 */
 		static void NewObject(FactoryObject<Object>& reference);
+		static void NewObject_(FactoryObject<Object>& reference);
 		/**
 		 * \brief Creates a new Item
 		 */
 		static void NewItem(FactoryObject<Item>& reference);
+		static void NewItem_(FactoryObject<Item>& reference);
 		/**
 		 * \brief Creates a new Container
 		 */
 		static void NewContainer(FactoryObject<Container>& reference);
+		static void NewContainer_(FactoryObject<Container>& reference);
 		/**
 		 * \brief Creates a new Actor
 		 */
 		static void NewActor(FactoryObject<Actor>& reference);
+		static void NewActor_(FactoryObject<Actor>& reference);
 		/**
 		 * \brief Creates a new Player
 		 */
 		static void NewPlayer(FactoryObject<Player>& reference);
+		static void NewPlayer_(FactoryObject<Player>& reference);
 		/**
 		 * \brief Removes an Object from the game
 		 */
@@ -340,7 +348,7 @@ class Game
 		/**
 		 * \brief Network function to handle Object cell
 		 */
-		static void net_SetCell(const FactoryObject<Object>& reference, const FactoryObject<Player>& player, unsigned int cell);
+		static void net_SetCell(FactoryObject<Object>& reference, FactoryObject<Player>& player, unsigned int cell);
 		/**
 		 * \brief Network function to handle Object lock level
 		 */

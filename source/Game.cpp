@@ -11,6 +11,7 @@ RakNetGUID Game::server;
 
 Guarded<Game::CellRefs> Game::cellRefs;
 Guarded<Player::CellContext> Game::cellContext;
+Guarded<Game::UninitializedObjects> Game::uninitObj;
 Game::BaseRaces Game::baseRaces;
 Game::Globals Game::globals;
 Game::Weather Game::weather;
@@ -503,6 +504,13 @@ void Game::JobDispatch(chrono::milliseconds&& time, function<void()>&& func)
 
 void Game::DelayOrExecute(const FactoryObject<Object>& reference, function<void(unsigned int)>&& func, unsigned int key)
 {
+	if (!reference->GetReference())
+	{
+		if (key)
+			Lockable::Retrieve(key);
+		return;
+	}
+
 	if (!IsInContext(reference->GetGameCell()))
 	{
 		if (key)
@@ -686,6 +694,10 @@ void Game::LoadEnvironment()
 
 	vector<NetworkID> reference = GameFactory::GetIDObjectTypes(ALL_OBJECTS);
 
+	uninitObj.StartSession();
+	uninitObj->clear();
+	uninitObj.EndSession();
+
 	for (NetworkID& id : reference)
 	{
 		auto _reference = GameFactory::GetObject(id);
@@ -701,51 +713,57 @@ void Game::LoadEnvironment()
 				reference->SetReference(0x00000000);
 		}
 
-		unsigned char type = reference.GetType();
+		NewDispatch(reference);
+	}
+}
 
-		switch (type)
+void Game::NewDispatch(FactoryObject<Object>& reference)
+{
+	NetworkID id = reference->GetNetworkID();
+	unsigned char type = reference.GetType();
+
+	switch (type)
+	{
+		case ID_OBJECT:
+			NewObject(reference);
+			break;
+
+		case ID_ITEM:
 		{
-			case ID_OBJECT:
-				NewObject(reference);
-				break;
+			auto item = GameFactory::GetObject<Item>(id).get();
+			GameFactory::LeaveReference(reference);
 
-			case ID_ITEM:
-			{
-				auto item = GameFactory::GetObject<Item>(id).get();
-				GameFactory::LeaveReference(reference);
-
-				if (!item->GetItemContainer())
-					NewItem(item);
-				break;
-			}
-
-			case ID_CONTAINER:
-			{
-				auto container = GameFactory::GetObject<Container>(id).get();
-				GameFactory::LeaveReference(reference);
-				NewContainer(container);
-				break;
-			}
-
-			case ID_ACTOR:
-			{
-				auto actor = GameFactory::GetObject<Actor>(id).get();
-				GameFactory::LeaveReference(reference);
-				NewActor(actor);
-				break;
-			}
-
-			case ID_PLAYER:
-			{
-				auto player = GameFactory::GetObject<Player>(id).get();
-				GameFactory::LeaveReference(reference);
-				NewPlayer(player);
-				break;
-			}
-
-			default:
-				throw VaultException("Can't create object of unknown type %02X", type).stacktrace();
+			if (!item->GetItemContainer())
+				NewItem(item);
+			break;
 		}
+
+		case ID_CONTAINER:
+		{
+			auto container = GameFactory::GetObject<Container>(id).get();
+			GameFactory::LeaveReference(reference);
+			NewContainer(container);
+			break;
+		}
+
+		case ID_ACTOR:
+		{
+			auto actor = GameFactory::GetObject<Actor>(id).get();
+			GameFactory::LeaveReference(reference);
+			NewActor(actor);
+			break;
+		}
+
+		case ID_PLAYER:
+		{
+			auto player = GameFactory::GetObject<Player>(id).get();
+			GameFactory::LeaveReference(reference);
+			NewPlayer(player);
+			break;
+		}
+
+		default:
+			throw VaultException("Can't create object of unknown type %02X", type).stacktrace();
 	}
 }
 
@@ -768,6 +786,20 @@ void Game::ChatMessage(const string& message)
 }
 
 void Game::NewObject(FactoryObject<Object>& reference)
+{
+	if (IsInContext(reference->GetNetworkCell()))
+		NewObject_(reference);
+	else
+	{
+		reference->SetEnabled(false);
+
+		uninitObj.StartSession();
+		(*uninitObj)[reference->GetNetworkCell()].emplace(reference->GetReference());
+		uninitObj.EndSession();
+	}
+}
+
+void Game::NewObject_(FactoryObject<Object>& reference)
 {
 	reference->Release();
 
@@ -800,27 +832,19 @@ void Game::NewObject(FactoryObject<Object>& reference)
 		reference = GameFactory::GetObject(id).get();
 		reference->SetReference(refID);
 	}
-	//else if (!(not in player cell) || !reference->GetChanged())
-		//return;
 
-	unsigned int refID = reference->GetReference();
+	reference->SetEnabled(true);
 
-	if (!reference->IsPersistent())
-	{
-		SetName(reference);
-		SetAngle(reference);
-	}
-	else
-	{
-		reference->SetEnabled(true);
-		reference->SetGameCell(reference->GetNetworkCell());
-	}
+	SetName(reference);
+	SetAngle(reference);
 
 	//if (reference->GetLockLevel() != UINT_MAX)
 		SetLock(reference);
 
 	if (reference->GetOwner())
 		SetOwner(reference);
+
+	unsigned int refID = reference->GetReference();
 
 	// experimental
 	if (refID != PLAYER_REFERENCE)
@@ -836,16 +860,8 @@ void Game::NewObject(FactoryObject<Object>& reference)
 					auto& object = objects[0].get();
 					auto& player = objects[1].get();
 
-					if (IsInContext(object->GetNetworkCell()))
-					{
-						object->SetEnabled(true);
-						MoveTo(object, player, true);
-					}
-					else
-					{
-						object->SetEnabled(false);
-						ToggleEnabled(object);
-					}
+					object->SetEnabled(true);
+					MoveTo(object, player, true);
 
 					object->SetGameCell(player->GetGameCell());
 					object->Work();
@@ -864,18 +880,46 @@ void Game::NewObject(FactoryObject<Object>& reference)
 
 void Game::NewItem(FactoryObject<Item>& reference)
 {
+	if (IsInContext(reference->GetNetworkCell()))
+		NewItem_(reference);
+	else
+	{
+		reference->SetEnabled(false);
+
+		uninitObj.StartSession();
+		(*uninitObj)[reference->GetNetworkCell()].emplace(reference->GetReference());
+		uninitObj.EndSession();
+	}
+}
+
+void Game::NewItem_(FactoryObject<Item>& reference)
+{
 	NetworkID id = reference->GetItemContainer();
 
 	if (id)
 		throw VaultException("Cannot create item %llu which is bound to a Container (%llu)", reference->GetNetworkID(), id).stacktrace();
 
-	NewObject(reference);
+	NewObject_(reference);
 	SetRefCount(reference);
 }
 
 void Game::NewContainer(FactoryObject<Container>& reference)
 {
-	NewObject(reference);
+	if (IsInContext(reference->GetNetworkCell()))
+		NewContainer_(reference);
+	else
+	{
+		reference->SetEnabled(false);
+
+		uninitObj.StartSession();
+		(*uninitObj)[reference->GetNetworkCell()].emplace(reference->GetReference());
+		uninitObj.EndSession();
+	}
+}
+
+void Game::NewContainer_(FactoryObject<Container>& reference)
+{
+	NewObject_(reference);
 	auto items = GameFactory::GetMultiple<Item>(vector<NetworkID>(reference->IL.GetItemList().begin(), reference->IL.GetItemList().end()));
 
 	for (auto& _item : items)
@@ -890,7 +934,21 @@ void Game::NewContainer(FactoryObject<Container>& reference)
 
 void Game::NewActor(FactoryObject<Actor>& reference)
 {
-	NewContainer(reference);
+	if (IsInContext(reference->GetNetworkCell()))
+		NewActor_(reference);
+	else
+	{
+		reference->SetEnabled(false);
+
+		uninitObj.StartSession();
+		(*uninitObj)[reference->GetNetworkCell()].emplace(reference->GetReference());
+		uninitObj.EndSession();
+	}
+}
+
+void Game::NewActor_(FactoryObject<Actor>& reference)
+{
+	NewContainer_(reference);
 
 	vector<unsigned char> values = API::RetrieveAllValues();
 
@@ -928,7 +986,21 @@ void Game::NewActor(FactoryObject<Actor>& reference)
 
 void Game::NewPlayer(FactoryObject<Player>& reference)
 {
-	NewActor(reference);
+	if (IsInContext(reference->GetNetworkCell()))
+		NewPlayer_(reference);
+	else
+	{
+		reference->SetEnabled(false);
+
+		uninitObj.StartSession();
+		(*uninitObj)[reference->GetNetworkCell()].emplace(reference->GetReference());
+		uninitObj.EndSession();
+	}
+}
+
+void Game::NewPlayer_(FactoryObject<Player>& reference)
+{
+	NewActor_(reference);
 
 	// ...
 }
@@ -1571,7 +1643,7 @@ bool Game::IsInContext(unsigned int cell)
 	bool result;
 
 	cellContext.StartSession();
-	result = find((*cellContext).begin(), (*cellContext).end(), cell) != (*cellContext).end();
+	result = find(cellContext->begin(), cellContext->end(), cell) != cellContext->end();
 	cellContext.EndSession();
 
 	return result;
@@ -1638,32 +1710,51 @@ void Game::net_SetAngle(const FactoryObject<Object>& reference, unsigned char ax
 	}
 }
 
-void Game::net_SetCell(const FactoryObject<Object>& reference, const FactoryObject<Player>& player, unsigned int cell)
+void Game::net_SetCell(FactoryObject<Object>& reference, FactoryObject<Player>& player, unsigned int cell)
 {
 	unsigned int old_cell = reference->GetNetworkCell();
 	reference->SetNetworkCell(cell);
 
-	if (reference != player)
+	if (reference->GetReference())
 	{
-		if (IsInContext(cell))
+		if (reference != player)
 		{
-			if (reference->SetEnabled(true))
-				ToggleEnabled(reference);
+			if (IsInContext(cell))
+			{
+				if (reference->SetEnabled(true))
+					ToggleEnabled(reference);
 
-			if (reference->SetGameCell(cell))
-				MoveTo(reference, player, true);
+				if (reference->SetGameCell(cell))
+					MoveTo(reference, player, true);
+			}
+			else
+			{
+				if (reference->SetEnabled(false))
+					ToggleEnabled(reference);
+			}
 		}
-		else
+
+		cellRefs.StartSession();
+		(*cellRefs)[old_cell][reference.GetType()].erase(reference->GetReference());
+		(*cellRefs)[cell][reference.GetType()].insert(reference->GetReference());
+		cellRefs.EndSession();
+	}
+	else
+	{
+		bool context = IsInContext(cell);
+
+		uninitObj.StartSession();
+		(*uninitObj)[old_cell].erase(reference->GetNetworkID());
+		if (!context)
+			(*uninitObj)[cell].insert(reference->GetNetworkID());
+		uninitObj.EndSession();
+
+		if (context)
 		{
-			if (reference->SetEnabled(false))
-				ToggleEnabled(reference);
+			GameFactory::LeaveReference(player);
+			NewDispatch(reference);
 		}
 	}
-
-	cellRefs.StartSession();
-	(*cellRefs)[old_cell][reference.GetType()].erase(reference->GetReference());
-	(*cellRefs)[cell][reference.GetType()].insert(reference->GetReference());
-	cellRefs.EndSession();
 }
 
 void Game::net_SetLock(const FactoryObject<Object>& reference, unsigned int lock)
@@ -1862,7 +1953,7 @@ void Game::net_SetActorDead(FactoryObject<Actor>& reference, bool dead, unsigned
 
 	result = reference->SetActorDead(dead);
 
-	if (result)
+	if (result && reference->GetReference())
 	{
 		if (dead)
 			KillActor(reference, limbs, cause, result->Lock());
@@ -1883,9 +1974,9 @@ void Game::net_SetActorDead(FactoryObject<Actor>& reference, bool dead, unsigned
 			this_thread::sleep_for(chrono::seconds(1));
 
 			// remove all base effects so they get re-applied in LoadEnvironment
-			Game::baseRaces.clear();
-			Game::spawnFunc();
-			Game::LoadEnvironment();
+			baseRaces.clear();
+			spawnFunc();
+			LoadEnvironment();
 
 			reference = GameFactory::GetObject<Actor>(id).get();
 			reference->SetEnabled(true);
@@ -2013,6 +2104,7 @@ void Game::net_UpdateContext(Player::CellContext& context)
 
 	for (const auto& cell : diff.first)
 		if (cell)
+		{
 			for (const auto& refs : copy[cell])
 				for (unsigned int refID : refs.second)
 					if (refID != PLAYER_REFERENCE)
@@ -2032,6 +2124,17 @@ void Game::net_UpdateContext(Player::CellContext& context)
 
 						object->Work();
 					}
+
+			uninitObj.StartSession();
+			unordered_set<NetworkID> ids = move((*uninitObj)[cell]);
+			uninitObj.EndSession();
+
+			for (const auto& id : ids)
+			{
+				auto reference = GameFactory::GetObject(id);
+				NewDispatch(reference.get());
+			}
+		}
 }
 
 void Game::net_UpdateConsole(bool enabled)
