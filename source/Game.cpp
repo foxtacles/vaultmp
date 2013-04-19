@@ -2624,6 +2624,7 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 										NetworkID id = GameFactory::CreateInstance(ID_ITEM, _result.first, _found.first);
 										FactoryObject<Item> reference = GameFactory::GetObject<Item>(id).get();
 
+										reference->SetEnabled(true);
 										reference->SetGamePos(Axis_X, X);
 										reference->SetGamePos(Axis_Y, Y);
 										reference->SetGamePos(Axis_Z, Z);
