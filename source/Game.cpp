@@ -41,7 +41,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 	if (!error)
 	{
 #ifdef VAULTMP_DEBUG
-		//debug->PrintFormat("Executing command %04hX on reference %08X, key %08X", true, opcode, info.size() > 1 ? getFrom<unsigned int>(info.at(1)) : 0, key);
+		//debug.print("Executing command ", hex, opcode, " on reference ", info.size() > 1 ? getFrom<unsigned int>(info.at(1)) : 0);
 #endif
 
 		weak_ptr<Lockable> shared;
@@ -794,7 +794,7 @@ void Game::NewObject(FactoryObject<Object>& reference)
 		reference->SetEnabled(false);
 
 		uninitObj.StartSession();
-		(*uninitObj)[reference->GetNetworkCell()].emplace(reference->GetReference());
+		(*uninitObj)[reference->GetNetworkCell()].emplace(reference->GetNetworkID());
 		uninitObj.EndSession();
 	}
 }
@@ -860,7 +860,6 @@ void Game::NewObject_(FactoryObject<Object>& reference)
 					auto& object = objects[0].get();
 					auto& player = objects[1].get();
 
-					object->SetEnabled(true);
 					MoveTo(object, player, true);
 
 					object->SetGameCell(player->GetGameCell());
@@ -887,7 +886,7 @@ void Game::NewItem(FactoryObject<Item>& reference)
 		reference->SetEnabled(false);
 
 		uninitObj.StartSession();
-		(*uninitObj)[reference->GetNetworkCell()].emplace(reference->GetReference());
+		(*uninitObj)[reference->GetNetworkCell()].emplace(reference->GetNetworkID());
 		uninitObj.EndSession();
 	}
 }
@@ -912,7 +911,7 @@ void Game::NewContainer(FactoryObject<Container>& reference)
 		reference->SetEnabled(false);
 
 		uninitObj.StartSession();
-		(*uninitObj)[reference->GetNetworkCell()].emplace(reference->GetReference());
+		(*uninitObj)[reference->GetNetworkCell()].emplace(reference->GetNetworkID());
 		uninitObj.EndSession();
 	}
 }
@@ -941,7 +940,7 @@ void Game::NewActor(FactoryObject<Actor>& reference)
 		reference->SetEnabled(false);
 
 		uninitObj.StartSession();
-		(*uninitObj)[reference->GetNetworkCell()].emplace(reference->GetReference());
+		(*uninitObj)[reference->GetNetworkCell()].emplace(reference->GetNetworkID());
 		uninitObj.EndSession();
 	}
 }
@@ -986,14 +985,14 @@ void Game::NewActor_(FactoryObject<Actor>& reference)
 
 void Game::NewPlayer(FactoryObject<Player>& reference)
 {
-	if (IsInContext(reference->GetNetworkCell()))
+	if (IsInContext(reference->GetNetworkCell()) || reference->GetReference() == PLAYER_REFERENCE)
 		NewPlayer_(reference);
 	else
 	{
 		reference->SetEnabled(false);
 
 		uninitObj.StartSession();
-		(*uninitObj)[reference->GetNetworkCell()].emplace(reference->GetReference());
+		(*uninitObj)[reference->GetNetworkCell()].emplace(reference->GetNetworkID());
 		uninitObj.EndSession();
 	}
 }
@@ -1050,6 +1049,11 @@ void Game::ToggleEnabled(const FactoryObject<Object>& reference)
 void Game::Delete(FactoryObject<Object>& reference)
 {
 	RemoveObject(reference);
+
+	uninitObj.StartSession();
+	(*uninitObj)[reference->GetNetworkCell()].erase(reference->GetNetworkID());
+	uninitObj.EndSession();
+
 	GameFactory::DestroyInstance(reference);
 }
 
@@ -1976,6 +1980,11 @@ void Game::net_SetActorDead(FactoryObject<Actor>& reference, bool dead, unsigned
 			// remove all base effects so they get re-applied in LoadEnvironment
 			baseRaces.clear();
 			spawnFunc();
+
+			cellContext.StartSession();
+			(*cellContext) = {{0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u}};
+			cellContext.EndSession();
+
 			LoadEnvironment();
 
 			reference = GameFactory::GetObject<Actor>(id).get();

@@ -60,7 +60,7 @@ NetworkResponse Server::LoadGame(RakNetGUID guid)
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 
 		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(0, array<unsigned int, 9>{{Player::GetSpawnCell(), 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u}}),
+			PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(0, Player::CellContext{{Player::GetSpawnCell(), 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u}}),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 
