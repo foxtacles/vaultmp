@@ -1973,18 +1973,18 @@ void Game::net_SetActorDead(FactoryObject<Actor>& reference, bool dead, unsigned
 			reference->SetEnabled(false);
 			GameFactory::LeaveReference(reference);
 
-			Game::ForceRespawn();
+			ForceRespawn();
 
 			this_thread::sleep_for(chrono::seconds(1));
 
 			// remove all base effects so they get re-applied in LoadEnvironment
 			baseRaces.clear();
 			spawnFunc();
-
+/*
 			cellContext.StartSession();
 			(*cellContext) = {{0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u}};
 			cellContext.EndSession();
-
+*/
 			LoadEnvironment();
 
 			reference = GameFactory::GetObject<Actor>(id).get();

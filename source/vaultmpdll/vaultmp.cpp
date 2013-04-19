@@ -758,6 +758,8 @@ void ToggleRespawn()
 	}
 	else
 	{
+		respawn = true;
+
 		SafeWrite8(noRespawn_NOP, 0x75);  // JNZ
 		SafeWrite8(noRespawn_NOP + 1, 0x03);
 		SafeWrite8(noRespawn_jmp_src + 5, 0x90);  // NOP (original JNZ instruction is 6 bytes, our CALL/JMP only 5. fix required for call return)
