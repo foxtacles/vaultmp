@@ -16,7 +16,7 @@ NetworkResponse NetworkClient::ProcessEvent(unsigned char id)
 	{
 		case ID_EVENT_CLIENT_ERROR:
 		case ID_EVENT_INTERFACE_LOST:
-			return NetworkResponse{Network::CreateResponse(
+			return {Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_GAME_END>(Interface::HasShutdown() ? Reason::ID_REASON_QUIT : Reason::ID_REASON_ERROR),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Game::server)
 			};
@@ -24,7 +24,7 @@ NetworkResponse NetworkClient::ProcessEvent(unsigned char id)
 		case ID_EVENT_GAME_STARTED:
 			Network::ToggleDequeue(false);
 
-			return NetworkResponse{Network::CreateResponse(
+			return {Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_GAME_LOAD>(),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Game::server)
 			};
@@ -35,7 +35,7 @@ NetworkResponse NetworkClient::ProcessEvent(unsigned char id)
 
 			FactoryObject<Player> reference = GameFactory::GetObject<Player>(PLAYER_REFERENCE).get();
 
-			return NetworkResponse{Network::CreateResponse(
+			return {Network::CreateResponse(
 				reference->toPacket(),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Game::server)
 			};

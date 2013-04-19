@@ -375,7 +375,7 @@ NetworkResponse Game::Authenticate(const string& password)
 {
 	auto reference = GameFactory::GetObject<Player>(PLAYER_REFERENCE);
 
-	return NetworkResponse{Network::CreateResponse(
+	return {Network::CreateResponse(
 		PacketFactory::Create<pTypes::ID_GAME_AUTH>(reference->GetName(), password),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 	};
@@ -1991,7 +1991,7 @@ void Game::net_SetActorDead(FactoryObject<Actor>& reference, bool dead, unsigned
 			reference->SetEnabled(true);
 			GameFactory::LeaveReference(reference);
 
-			Network::Queue(NetworkResponse{Network::CreateResponse(
+			Network::Queue({Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_UPDATE_DEAD>(id, false, 0, 0),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 			});
@@ -2219,7 +2219,7 @@ void Game::GetPos(const FactoryObject<Object>& reference, unsigned char axis, do
 			reference->SetNetworkPos(Axis_Y, Y);
 			reference->SetNetworkPos(Axis_Z, Z);
 
-			Network::Queue(NetworkResponse{Network::CreateResponse(
+			Network::Queue({Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_UPDATE_POS>(reference->GetNetworkID(), X, Y, Z),
 				HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, server)
 			});
@@ -2232,7 +2232,7 @@ void Game::GetAngle(const FactoryObject<Object>& reference, unsigned char axis, 
 	bool result = static_cast<bool>(reference->SetAngle(axis, value));
 
 	if (result)
-		Network::Queue(NetworkResponse{Network::CreateResponse(
+		Network::Queue({Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_ANGLE>(reference->GetNetworkID(), axis, value),
 			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, server)
 		});
@@ -2243,7 +2243,7 @@ void Game::GetParentCell(const FactoryObject<Player>& player, unsigned int cell)
 	bool result = static_cast<bool>(player->SetGameCell(cell));
 
 	if (result)
-		Network::Queue(NetworkResponse{Network::CreateResponse(
+		Network::Queue({Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_CELL>(player->GetNetworkID(), cell),
 			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, server)
 		});
@@ -2330,7 +2330,7 @@ void Game::GetDead(const FactoryObject<Actor>& reference, const FactoryObject<Pl
 						}
 					}
 
-					Network::Queue(NetworkResponse{Network::CreateResponse(
+					Network::Queue({Network::CreateResponse(
 						PacketFactory::Create<pTypes::ID_UPDATE_DEAD>(id, true, limbs, cause),
 						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 					});
@@ -2340,7 +2340,7 @@ void Game::GetDead(const FactoryObject<Actor>& reference, const FactoryObject<Pl
 		}
 		else
 		{
-			Network::Queue(NetworkResponse{Network::CreateResponse(
+			Network::Queue({Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_UPDATE_DEAD>(reference->GetNetworkID(), false, 0, 0),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 			});
@@ -2379,7 +2379,7 @@ void Game::GetActorValue(const FactoryObject<Actor>& reference, bool base, unsig
 		result = static_cast<bool>(reference->SetActorValue(index, value));
 
 	if (result)
-		Network::Queue(NetworkResponse{Network::CreateResponse(
+		Network::Queue({Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_VALUE>(reference->GetNetworkID(), base, index, value),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 		});
@@ -2438,7 +2438,7 @@ void Game::GetActorState(const FactoryObject<Actor>& reference, unsigned int idl
 	}
 
 	if (result)
-		Network::Queue(NetworkResponse{Network::CreateResponse(
+		Network::Queue({Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_STATE>(reference->GetNetworkID(), idle, moving, movingxy, reference->GetActorWeaponAnimation(), reference->GetActorAlerted(), sneaking, false),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 		});
@@ -2495,7 +2495,7 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 
 								if (!result.first.first.empty() || !result.first.second.empty())
 								{
-									Network::Queue(NetworkResponse{Network::CreateResponse(
+									Network::Queue({Network::CreateResponse(
 										PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id_, result.first, ItemList::NetDiff()),
 										HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 									});
@@ -2719,7 +2719,7 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 #endif
 						}
 
-						Network::Queue(NetworkResponse{Network::CreateResponse(
+						Network::Queue({Network::CreateResponse(
 							PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, *_ndiff, ndiff),
 							HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 						});
@@ -2732,7 +2732,7 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 				key = 0x00000000;
 			}
 			else
-				Network::Queue(NetworkResponse{Network::CreateResponse(
+				Network::Queue({Network::CreateResponse(
 					PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(reference->GetNetworkID(), ndiff, ItemList::NetDiff()),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 				});
@@ -2809,7 +2809,7 @@ void Game::GetLocked(const FactoryObject<Container>& reference, unsigned int loc
 	{
 		case 0:
 			if (reference->SetLockLevel(UINT_MAX))
-				Network::Queue(NetworkResponse{Network::CreateResponse(
+				Network::Queue({Network::CreateResponse(
 					PacketFactory::Create<pTypes::ID_UPDATE_LOCK>(reference->GetNetworkID(), UINT_MAX),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 				});
@@ -2818,7 +2818,7 @@ void Game::GetLocked(const FactoryObject<Container>& reference, unsigned int loc
 			break;
 		case 2:
 			if (reference->SetLockLevel(UINT_MAX - 1))
-				Network::Queue(NetworkResponse{Network::CreateResponse(
+				Network::Queue({Network::CreateResponse(
 					PacketFactory::Create<pTypes::ID_UPDATE_LOCK>(reference->GetNetworkID(), UINT_MAX - 1),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 				});
@@ -2831,7 +2831,7 @@ void Game::GetControl(const FactoryObject<Player>& reference, unsigned char cont
 	bool result = static_cast<bool>(reference->SetPlayerControl(control, key));
 
 	if (result)
-		Network::Queue(NetworkResponse{Network::CreateResponse(
+		Network::Queue({Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_CONTROL>(reference->GetNetworkID(), control, key),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 		});
@@ -2910,7 +2910,7 @@ void Game::GetMessage(string message)
 	if (message.length() > MAX_CHAT_LENGTH)
 		message.resize(MAX_CHAT_LENGTH);
 
-	Network::Queue(NetworkResponse{Network::CreateResponse(
+	Network::Queue({Network::CreateResponse(
 		PacketFactory::Create<pTypes::ID_GAME_CHAT>(message),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 	});
