@@ -13,11 +13,13 @@ Guarded<Game::CellRefs> Game::cellRefs;
 Guarded<Player::CellContext> Game::cellContext;
 Guarded<Game::UninitializedObjects> Game::uninitObj;
 Guarded<Game::DeletedObjects> Game::deletedObj;
+Guarded<Game::DeletedObjects> Game::deletedStatic;
 Game::BaseRaces Game::baseRaces;
 Game::Globals Game::globals;
 Game::Weather Game::weather;
 Game::PlayerBase Game::playerBase;
 Game::SpawnFunc Game::spawnFunc;
+Player::CellContext Game::spawnContext;
 Game::StartupQueue Game::startupQueue;
 bool Game::startup;
 
@@ -700,7 +702,20 @@ void Game::LoadEnvironment()
 	uninitObj.EndSession();
 
 	deletedObj.StartSession();
-	deletedObj->clear();
+
+	deletedStatic.StartSession();
+	(*deletedObj) = (*deletedStatic);
+	deletedStatic.EndSession();
+
+	for (unsigned int cell : spawnContext)
+		if (cell)
+		{
+			for (unsigned int refID : (*deletedObj)[cell])
+				RemoveObject(refID);
+
+			(*deletedObj)[cell].clear();
+		}
+
 	deletedObj.EndSession();
 
 	for (NetworkID& id : reference)
@@ -716,6 +731,11 @@ void Game::LoadEnvironment()
 
 			if (reference->GetReference() != PLAYER_REFERENCE)
 				reference->SetReference(0x00000000);
+			else
+			{
+				reference->SetNetworkCell(spawnContext[0]);
+				reference->SetGameCell(spawnContext[0]);
+			}
 		}
 
 		NewDispatch(reference);
@@ -1028,7 +1048,7 @@ void Game::RemoveObject(const FactoryObject<Object>& reference)
 	else
 	{
 		deletedObj.StartSession();
-		(*deletedObj)[reference->GetGameCell()].insert(reference->GetReference());
+		(*deletedObj)[reference->GetGameCell()].emplace_back(reference->GetReference());
 		deletedObj.EndSession();
 	}
 
@@ -1086,6 +1106,13 @@ void Game::Delete(FactoryObject<Object>& reference)
 	uninitObj.StartSession();
 	(*uninitObj)[reference->GetNetworkCell()].erase(reference->GetNetworkID());
 	uninitObj.EndSession();
+
+	if (reference->IsPersistent())
+	{
+		deletedStatic.StartSession();
+		(*deletedStatic)[reference->GetNetworkCell()].emplace_back(reference->GetReference());
+		deletedStatic.EndSession();
+	}
 
 	GameFactory::DestroyInstance(reference);
 }
@@ -2051,11 +2078,11 @@ void Game::net_SetActorDead(FactoryObject<Actor>& reference, bool dead, unsigned
 			// remove all base effects so they get re-applied in LoadEnvironment
 			Game::baseRaces.clear();
 			Game::spawnFunc();
-/*
+
 			cellContext.StartSession();
-			(*cellContext) = {{0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u}};
+			(*cellContext) = spawnContext;
 			cellContext.EndSession();
-*/
+
 			Game::LoadEnvironment();
 
 			reference = GameFactory::GetObject<Actor>(id).get();
@@ -2129,8 +2156,11 @@ void Game::net_UpdateExterior(unsigned int baseID, signed int x, signed int y, b
 	CenterOnWorld(baseID, x, y, spawn);
 }
 
-void Game::net_UpdateContext(Player::CellContext& context)
+void Game::net_UpdateContext(Player::CellContext& context, bool spawn)
 {
+	if (spawn)
+		spawnContext = context;
+
 	auto player = GameFactory::GetObject<Player>(PLAYER_REFERENCE).get();
 	unsigned int old_cell = player->GetNetworkCell();
 
@@ -2186,7 +2216,7 @@ void Game::net_UpdateContext(Player::CellContext& context)
 		if (cell)
 		{
 			deletedObj.StartSession();
-			set<unsigned int> refIDs = move((*deletedObj)[cell]);
+			vector<unsigned int> refIDs = move((*deletedObj)[cell]);
 			deletedObj.EndSession();
 
 			for (const auto& id : refIDs)
@@ -2273,6 +2303,13 @@ void Game::net_SetWeather(unsigned int weather)
 void Game::net_SetBase(unsigned int base)
 {
 	Game::playerBase = base;
+}
+
+void Game::net_SetDeletedStatic(DeletedObjects&& deletedStatic)
+{
+	Game::deletedStatic.StartSession();
+	(*Game::deletedStatic) = move(deletedStatic);
+	Game::deletedStatic.EndSession();
 }
 
 void Game::GetPos(const FactoryObject<Object>& reference, unsigned char axis, double value)

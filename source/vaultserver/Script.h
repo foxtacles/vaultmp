@@ -136,6 +136,7 @@ class Script
 		void (*fOnServerExit)();
 
 		static std::unordered_map<RakNet::NetworkID, std::unique_ptr<ItemList>> scriptIL;
+		static std::unordered_map<unsigned int, std::vector<unsigned int>> deletedStatic;
 		static std::pair<std::chrono::system_clock::time_point, double> gameTime;
 		static unsigned int gameWeather;
 
@@ -161,6 +162,7 @@ class Script
 		static void MakePublicPAWN(ScriptFuncPAWN _public, AMX* amx, const char* name, const char* def);
 		static unsigned long long CallPublic(const char* name, ...);
 		static unsigned long long CallPublicPAWN(const char* name, const std::vector<boost::any>& args);
+		static const decltype(deletedStatic)& GetDeletedStatic() { return deletedStatic; }
 
 		static unsigned long long Timer_Respawn(RakNet::NetworkID id);
 		static unsigned long long Timer_GameTime();

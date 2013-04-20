@@ -4,6 +4,7 @@
 #include <memory>
 #include <type_traits>
 #include <array>
+#include <unordered_map>
 
 #include "vaultmp.h"
 #include "VaultException.h"
@@ -36,6 +37,7 @@ enum class pTypes : unsigned char
 	ID_GAME_GLOBAL,
 	ID_GAME_WEATHER,
 	ID_GAME_BASE,
+	ID_GAME_DELETED,
 
 	ID_OBJECT_NEW,
 	ID_ITEM_NEW,
@@ -192,6 +194,9 @@ class pDefault
 		template<typename K, typename V, typename... Args>
 		void construct(const std::map<K, V>&, const Args&...);
 
+		template<typename K, typename V, typename... Args>
+		void construct(const std::unordered_map<K, V>&, const Args&...);
+
 		template<typename T1, typename T2, typename... Args>
 		void construct(const std::pair<T1, T2>&, const Args&...);
 
@@ -218,6 +223,9 @@ class pDefault
 
 		template<typename K, typename V, typename... Args>
 		void deconstruct(std::map<K, V>&, Args&...) const;
+
+		template<typename K, typename V, typename... Args>
+		void deconstruct(std::unordered_map<K, V>&, Args&...) const;
 
 		template<typename T1, typename T2, typename... Args>
 		void deconstruct(std::pair<T1, T2>&, Args&...) const;
@@ -305,6 +313,17 @@ void pDefault::construct(const std::list<T>& arg, const Args&...args)
 
 template<typename K, typename V, typename... Args>
 void pDefault::construct(const std::map<K, V>& arg, const Args&...args)
+{
+	construct(arg.size());
+
+	for (const auto& element : arg)
+		construct(element);
+
+	construct(args...);
+}
+
+template<typename K, typename V, typename... Args>
+void pDefault::construct(const std::unordered_map<K, V>& arg, const Args&...args)
 {
 	construct(arg.size());
 
@@ -425,7 +444,7 @@ void pDefault::deconstruct(std::vector<T>& arg, Args&... args) const
 	{
 		T data;
 		deconstruct(data);
-		arg.emplace_back(move(data));
+		arg.emplace_back(std::move(data));
 	}
 
 	deconstruct(args...);
@@ -460,7 +479,24 @@ void pDefault::deconstruct(std::map<K, V>& arg, Args&... args) const
 		std::pair<K, V> data;
 		deconstruct(data);
 		// arg.emplace_hint(arg.end(), move(data));
-		arg.insert(move(data));
+		arg.insert(std::move(data));
+	}
+
+	deconstruct(args...);
+}
+
+template<typename K, typename V, typename... Args>
+void pDefault::deconstruct(std::unordered_map<K, V>& arg, Args&... args) const
+{
+	unsigned int size = deconstruct_single<unsigned int>();
+
+	arg.clear();
+
+	for (unsigned int i = 0; i < size; ++i)
+	{
+		std::pair<K, V> data;
+		deconstruct(data);
+		arg.emplace(std::move(data));
 	}
 
 	deconstruct(args...);
@@ -770,6 +806,27 @@ class pGameBase : public pDefault
 		}
 };
 template<> struct pTypesMap<pTypes::ID_GAME_BASE> { typedef pGameBase type; };
+
+class pGameDeleted : public pDefault
+{
+		friend class PacketFactory;
+
+	private:
+		pGameDeleted(const std::unordered_map<unsigned int, std::vector<unsigned int>>& deletedStatic) : pDefault(pTypes::ID_GAME_DELETED)
+		{
+			construct(deletedStatic);
+		}
+		pGameDeleted(const unsigned char* stream, unsigned int len) : pDefault(stream, len)
+		{
+
+		}
+
+		void access(std::unordered_map<unsigned int, std::vector<unsigned int>>& deletedStatic) const
+		{
+			deconstruct(deletedStatic);
+		}
+};
+template<> struct pTypesMap<pTypes::ID_GAME_DELETED> { typedef pGameDeleted type; };
 
 class pObjectNew : public pObjectNewDefault
 {
@@ -1332,18 +1389,18 @@ class pPlayerContext : public pObjectDefault
 		friend class PacketFactory;
 
 	private:
-		pPlayerContext(RakNet::NetworkID id, const std::array<unsigned int, 9>& context) : pObjectDefault(pTypes::ID_UPDATE_CONTEXT, id)
+		pPlayerContext(RakNet::NetworkID id, const std::array<unsigned int, 9>& context, bool spawn) : pObjectDefault(pTypes::ID_UPDATE_CONTEXT, id)
 		{
-			construct(context);
+			construct(context, spawn);
 		}
 		pPlayerContext(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
 		{
 
 		}
 
-		void access(RakNet::NetworkID& id, std::array<unsigned int, 9>& context) const
+		void access(RakNet::NetworkID& id, std::array<unsigned int, 9>& context, bool& spawn) const
 		{
-			deconstruct(id, context);
+			deconstruct(id, context, spawn);
 		}
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_CONTEXT> { typedef pPlayerContext type; };

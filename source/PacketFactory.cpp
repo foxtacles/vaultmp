@@ -52,6 +52,10 @@ pPacket PacketFactory::Init(const unsigned char* stream, unsigned int len)
 			packet = new pGameBase(stream, len);
 			break;
 
+		case pTypes::ID_GAME_DELETED:
+			packet = new pGameDeleted(stream, len);
+			break;
+
 		case pTypes::ID_OBJECT_NEW:
 			packet = new pObjectNew(stream, len);
 			break;

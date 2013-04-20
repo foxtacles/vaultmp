@@ -8,6 +8,7 @@ using namespace Values;
 vector<Script*> Script::scripts;
 
 unordered_map<NetworkID, unique_ptr<ItemList>> Script::scriptIL;
+std::unordered_map<unsigned int, std::vector<unsigned int>> Script::deletedStatic;
 pair<chrono::system_clock::time_point, double> Script::gameTime;
 unsigned int Script::gameWeather;
 
@@ -194,6 +195,8 @@ void Script::LoadScripts(char* scripts, char* base)
 void Script::Initialize()
 {
 	static_assert(sizeof(chrono::system_clock::rep) == sizeof(Time64_T), "Underlying representation of chrono::system_clock should be 64bit integral");
+
+	deletedStatic.clear();
 
 	gameTime.first = chrono::system_clock::now();
 	gameTime.second = 1.0;
@@ -1780,6 +1783,9 @@ bool Script::DestroyObject(NetworkID id)
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 	});
 
+	if (reference->IsPersistent())
+		deletedStatic[reference->GetNetworkCell()].emplace_back(reference->GetReference());
+
 	GameFactory::DestroyInstance(object);
 
 	return state;
@@ -1843,7 +1849,7 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 					);
 
 					response.emplace_back(Network::CreateResponse(
-						PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(reference->GetNetworkID(), player->GetPlayerCellContext()),
+						PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(reference->GetNetworkID(), player->GetPlayerCellContext(), false),
 						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
 					);
 				}
@@ -1979,7 +1985,7 @@ bool Script::SetCell_(NetworkID id, unsigned int cell, double X, double Y, doubl
 					);
 
 				response.emplace_back(Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(reference->GetNetworkID(), player->GetPlayerCellContext()),
+					PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(reference->GetNetworkID(), player->GetPlayerCellContext(), false),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
 				);
 			}
@@ -2861,12 +2867,20 @@ void Script::SetPlayerSpawnCell(NetworkID id, unsigned int cell)
 		if (player->SetPlayerSpawnCell(cell))
 			Network::Queue({Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(player->GetNetworkID(), record->GetName(), true),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID()),
+
+				Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(player->GetNetworkID(), Player::CellContext{{cell, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u}}, true),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
 			});
 	}
 	else if (player->SetPlayerSpawnCell(cell))
 		Network::Queue({Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(player->GetNetworkID(), _cell->GetWorld(), _cell->GetX(), _cell->GetY(), true),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID()),
+
+			Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(player->GetNetworkID(), _cell->GetAdjacents(), true),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
 		});
 }

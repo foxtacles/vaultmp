@@ -40,7 +40,7 @@ class Game
 		typedef std::pair<std::set<unsigned int>, std::set<unsigned int>> CellDiff;
 		typedef std::unordered_map<unsigned int, std::unordered_map<unsigned char, std::set<unsigned int>>> CellRefs;
 		typedef std::unordered_map<unsigned int, std::unordered_set<RakNet::NetworkID>> UninitializedObjects;
-		typedef std::unordered_map<unsigned int, std::set<unsigned int>> DeletedObjects;
+		typedef std::unordered_map<unsigned int, std::vector<unsigned int>> DeletedObjects;
 		typedef std::unordered_map<unsigned int, unsigned int> BaseRaces;
 		typedef std::unordered_map<unsigned int, signed int> Globals;
 		typedef unsigned int Weather;
@@ -52,11 +52,13 @@ class Game
 		static Guarded<Player::CellContext> cellContext;
 		static Guarded<UninitializedObjects> uninitObj;
 		static Guarded<DeletedObjects> deletedObj;
+		static Guarded<DeletedObjects> deletedStatic;
 		static BaseRaces baseRaces;
 		static Globals globals;
 		static Weather weather;
 		static PlayerBase playerBase;
 		static SpawnFunc spawnFunc;
+		static Player::CellContext spawnContext;
 		static StartupQueue startupQueue;
 		static bool startup;
 
@@ -412,7 +414,7 @@ class Game
 		/**
 		 * \brief Network function to handle cell context update
 		 */
-		static void net_UpdateContext(Player::CellContext& context);
+		static void net_UpdateContext(Player::CellContext& context, bool spawn);
 		/**
 		 * \brief Network function to handle console update
 		 */
@@ -441,6 +443,10 @@ class Game
 		 * \brief Network function to handle player base
 		 */
 		static void net_SetBase(unsigned int base);
+		/**
+		 * \brief Network function to handle deleted static references
+		 */
+		static void net_SetDeletedStatic(DeletedObjects&& deletedStatic);
 
 		/**
 		 * Interface result functions

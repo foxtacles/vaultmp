@@ -113,13 +113,16 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					Bethesda::Initialize();
 
 					Game::cellRefs->clear();
+					(*Game::cellContext) = {{0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u}};
 					Game::uninitObj->clear();
 					Game::deletedObj->clear();
+					Game::deletedStatic->clear();
 					Game::baseRaces.clear();
 					Game::globals.clear();
 					Game::weather = 0x00000000;
 					Game::playerBase = 0x00000000;
 					Game::spawnFunc = Game::SpawnFunc();
+					Game::spawnContext = {{0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u}};
 					Game::startupQueue.clear();
 					Game::startup = false;
 
@@ -202,6 +205,14 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					unsigned int base;
 					PacketFactory::Access<pTypes::ID_GAME_BASE>(packet, base);
 					Game::net_SetBase(base);
+					break;
+				}
+
+				case pTypes::ID_GAME_DELETED:
+				{
+					std::unordered_map<unsigned int, std::vector<unsigned int>> deletedStatic;
+					PacketFactory::Access<pTypes::ID_GAME_DELETED>(packet, deletedStatic);
+					Game::net_SetDeletedStatic(move(deletedStatic));
 					break;
 				}
 
@@ -452,8 +463,9 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				{
 					NetworkID id;
 					Player::CellContext context;
-					PacketFactory::Access<pTypes::ID_UPDATE_CONTEXT>(packet, id, context);
-					Game::net_UpdateContext(context);
+					bool spawn;
+					PacketFactory::Access<pTypes::ID_UPDATE_CONTEXT>(packet, id, context, spawn);
+					Game::net_UpdateContext(context, spawn);
 					break;
 				}
 

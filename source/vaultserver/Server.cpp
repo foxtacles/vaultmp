@@ -41,7 +41,12 @@ NetworkResponse Server::LoadGame(RakNetGUID guid)
 {
 	NetworkResponse response;
 
-	auto cell = DB::Exterior::Lookup(Player::GetSpawnCell());
+	response.emplace_back(Network::CreateResponse(
+		PacketFactory::Create<pTypes::ID_GAME_DELETED>(Script::GetDeletedStatic()),
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+
+	unsigned int cellID = Player::GetSpawnCell();
+	auto cell = DB::Exterior::Lookup(cellID);
 
 	if (cell)
 	{
@@ -50,17 +55,17 @@ NetworkResponse Server::LoadGame(RakNetGUID guid)
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 
 		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(0, cell->GetAdjacents()),
+			PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(0, cell->GetAdjacents(), true),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 	else
 	{
 		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(0, DB::Record::Lookup(Player::GetSpawnCell(), "CELL")->GetName(), true),
+			PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(0, DB::Record::Lookup(cellID, "CELL")->GetName(), true),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 
 		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(0, Player::CellContext{{Player::GetSpawnCell(), 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u}}),
+			PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(0, Player::CellContext{{cellID, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u}}, true),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 
@@ -257,7 +262,7 @@ NetworkResponse Server::GetCell(RakNetGUID guid, FactoryObject<Object>& referenc
 		if (player)
 		{
 			response.emplace_back(Network::CreateResponse(
-				PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(id, player->GetPlayerCellContext()),
+				PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(id, player->GetPlayerCellContext(), false),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 
 			GameFactory::LeaveReference(player.get());
