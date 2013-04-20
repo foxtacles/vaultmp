@@ -1760,6 +1760,11 @@ void Game::net_SetCell(FactoryObject<Object>& reference, FactoryObject<Player>& 
 			{
 				if (vaultcast<Actor>(reference) || IsInContext(old_cell))
 				{
+					cellRefs.StartSession();
+					(*cellRefs)[old_cell][reference.GetType()].erase(reference->GetReference());
+					(*cellRefs)[cell][reference.GetType()].insert(reference->GetReference());
+					cellRefs.EndSession();
+
 					if (reference->SetEnabled(true))
 						ToggleEnabled(reference);
 
@@ -1768,6 +1773,10 @@ void Game::net_SetCell(FactoryObject<Object>& reference, FactoryObject<Player>& 
 				}
 				else
 				{
+					cellRefs.StartSession();
+					(*cellRefs)[old_cell][reference.GetType()].erase(reference->GetReference());
+					cellRefs.EndSession();
+
 					RemoveObject(reference);
 					reference->SetReference(0x00000000);
 					reference->SetEnabled(false);
@@ -1780,26 +1789,30 @@ void Game::net_SetCell(FactoryObject<Object>& reference, FactoryObject<Player>& 
 			{
 				if (vaultcast<Actor>(reference))
 				{
+					cellRefs.StartSession();
+					(*cellRefs)[old_cell][reference.GetType()].erase(reference->GetReference());
+					(*cellRefs)[cell][reference.GetType()].insert(reference->GetReference());
+					cellRefs.EndSession();
+
 					if (reference->SetEnabled(false))
 						ToggleEnabled(reference);
 				}
 				else
 				{
-					RemoveObject(reference);
-					reference->SetReference(0x00000000);
-					reference->SetEnabled(false);
+					cellRefs.StartSession();
+					(*cellRefs)[old_cell][reference.GetType()].erase(reference->GetReference());
+					cellRefs.EndSession();
 
 					uninitObj.StartSession();
 					(*uninitObj)[cell].emplace(reference->GetNetworkID());
 					uninitObj.EndSession();
+
+					RemoveObject(reference);
+					reference->SetReference(0x00000000);
+					reference->SetEnabled(false);
 				}
 			}
 		}
-
-		cellRefs.StartSession();
-		(*cellRefs)[old_cell][reference.GetType()].erase(reference->GetReference());
-		(*cellRefs)[cell][reference.GetType()].insert(reference->GetReference());
-		cellRefs.EndSession();
 	}
 	else
 	{
