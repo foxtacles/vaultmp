@@ -438,14 +438,10 @@ void pDefault::deconstruct(std::vector<T>& arg, Args&... args) const
 	unsigned int size = deconstruct_single<unsigned int>();
 
 	arg.clear();
-	arg.reserve(size);
+	arg.resize(size);
 
-	for (unsigned int i = 0; i < size; ++i)
-	{
-		T data;
-		deconstruct(data);
-		arg.emplace_back(std::move(data));
-	}
+	for (auto& element : arg)
+		deconstruct(element);
 
 	deconstruct(args...);
 }
@@ -456,13 +452,10 @@ void pDefault::deconstruct(std::list<T>& arg, Args&... args) const
 	unsigned int size = deconstruct_single<unsigned int>();
 
 	arg.clear();
+	arg.resize(size);
 
-	for (unsigned int i = 0; i < size; ++i)
-	{
-		T data;
-		deconstruct(data);
-		arg.emplace_back(std::move(data));
-	}
+	for (auto& element : arg)
+		deconstruct(element);
 
 	deconstruct(args...);
 }

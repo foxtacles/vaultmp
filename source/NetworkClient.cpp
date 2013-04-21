@@ -113,7 +113,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					Bethesda::Initialize();
 
 					Game::cellRefs->clear();
-					(*Game::cellContext) = {{0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u}};
+					*Game::cellContext = {{0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u}};
 					Game::uninitObj->clear();
 					Game::deletedObj->clear();
 					Game::deletedStatic->clear();
