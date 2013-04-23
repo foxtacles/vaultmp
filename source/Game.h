@@ -31,7 +31,6 @@ class Game
 		static DebugInput<Game> debug;
 #endif
 
-		static unsigned char game;
 		static RakNet::RakNetGUID server;
 
 		static void AdjustZAngle(double& Z, double diff);

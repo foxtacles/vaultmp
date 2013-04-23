@@ -6,7 +6,6 @@ using namespace std;
 using namespace RakNet;
 using namespace Values;
 
-unsigned char Game::game = 0x00;
 RakNetGUID Game::server;
 
 Guarded<Game::CellRefs> Game::cellRefs;
