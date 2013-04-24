@@ -11,7 +11,7 @@ bool logging=false;
 
 //#define DB(a) 	/*{if(logging){std::ofstream d;d.open("C:\\Users\\PC\\Desktop\\debug.txt",std::ios::app);  d<<a<<" Address: "<<_ReturnAddress()<<std::endl;d.flush();d.close();}}*/
 
-#define DB(a) 	{char tmp[100];sprintf(tmp,"%s 0x%x",a,_ReturnAddress());SendToLog(tmp);}
+#define DB(a) 	{/*char tmp[100];sprintf(tmp,"%s 0x%x",a,_ReturnAddress());SendToLog(tmp);*/}
 
 #define DBB(a) 	/*std::ofstream d;d.open("C:\\Users\\PC\\Desktop\\debug.txt",std::ios::app);  d<<a<<" Address: "<<_ReturnAddress()<<std::endl;d.flush();d.close();*/
 
