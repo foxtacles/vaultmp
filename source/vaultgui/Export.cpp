@@ -119,7 +119,7 @@ extern "C"
 	__declspec(dllexport) void GUI_CreateFrameWindow(char *name)
 	{
 		CEGUI::WindowManager& winMgr = CEGUI::WindowManager::getSingleton();
-		CEGUI::DefaultWindow* root = (CEGUI::DefaultWindow*)winMgr.createWindow("DefaultWindow", "Root");
+		CEGUI::DefaultWindow* root = (CEGUI::DefaultWindow*)winMgr.getWindow("Root");
 		CEGUI::FrameWindow * wnd = (CEGUI::FrameWindow*)winMgr.createWindow("TaharezLook/FrameWindow", name);
 		root->addChildWindow(wnd);
 	}

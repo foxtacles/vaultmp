@@ -6,6 +6,8 @@
 
 #include "global.h"
 
+#include "Export.h"
+
 IDirect3D9* (WINAPI *Direct3DCreate9_Original)(UINT SDKVersion);
 HRESULT (WINAPI *DirectInput8Create_Original)(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID * ppvOut, LPUNKNOWN punkOuter);
 
@@ -220,6 +222,18 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 						CEGUI::MouseCursor::getSingleton().hide();
 						
 						chatQueue.push_back(chatbox_text);
+
+						/*if(chatbox_text=="test")
+						{
+							GUI_CreateFrameWindow("test1");
+							GUI_SetFrameWindowPosition("test1",0.7,0.1);
+							GUI_SetFrameWindowSize("test1",0.2,0.2);
+
+							GUI_AddStaticText("test1","test2");
+							GUI_SetStaticTextPosition("test2",0,0);
+							GUI_SetStaticTextSize("test2",1,1);
+							GUI_SetStaticTextText("test2","This is a TEST!");
+						}*/
 						
 						/*CEGUI::FormattedListboxTextItem* itm=new CEGUI::FormattedListboxTextItem(chatbox_text,CEGUI::HTF_WORDWRAP_LEFT_ALIGNED);
 						itm->setTextColours(0xFFFFFFFF);
