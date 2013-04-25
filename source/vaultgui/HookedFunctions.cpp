@@ -230,9 +230,9 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 							GUI_SetFrameWindowSize("test1",0.2,0.2);
 
 							GUI_AddStaticText("test1","test2");
-							GUI_SetStaticTextPosition("test2",0,0);
-							GUI_SetStaticTextSize("test2",1,1);
-							GUI_SetStaticTextText("test2","This is a TEST!");
+							GUI_SetPosition("test2",0,0);
+							GUI_SetSize("test2",1,1);
+							GUI_SetText("test2","This is a TEST!");
 						}*/
 						
 						/*CEGUI::FormattedListboxTextItem* itm=new CEGUI::FormattedListboxTextItem(chatbox_text,CEGUI::HTF_WORDWRAP_LEFT_ALIGNED);

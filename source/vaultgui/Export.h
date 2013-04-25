@@ -33,9 +33,11 @@ extern "C"
 
 	__declspec(dllexport) void GUI_AddStaticText(char* parent,char* name);
 
-	__declspec(dllexport) void GUI_SetStaticTextPosition(char* name,float x,float y);
+	__declspec(dllexport) void GUI_SetPosition(char* name,float x,float y);
 
-	__declspec(dllexport) void GUI_SetStaticTextSize(char* name,float x,float y);
+	__declspec(dllexport) void GUI_SetSize(char* name,float x,float y);
 
-	__declspec(dllexport) void GUI_SetStaticTextText(char* name,char* txt);
+	__declspec(dllexport) void GUI_SetText(char* name,char* txt);
+
+	__declspec(dllexport) void GUI_RemoveWindow(char* name);
 }
