@@ -78,7 +78,7 @@ unsigned long long ScriptFunction::Call(const vector<boost::any>& args)
 				}
 
 				default:
-					throw VaultException("C++ call: Unknown argument identifier %02X XX", *it).stacktrace();
+					throw VaultException("C++ call: Unknown argument identifier %02X", *it).stacktrace();
 			}
 		}
 
