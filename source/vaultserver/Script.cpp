@@ -5,12 +5,11 @@ using namespace std;
 using namespace RakNet;
 using namespace Values;
 
-vector<Script*> Script::scripts;
-
-unordered_map<NetworkID, unique_ptr<ItemList>> Script::scriptIL;
-std::unordered_map<unsigned int, std::vector<unsigned int>> Script::deletedStatic;
-pair<chrono::system_clock::time_point, double> Script::gameTime;
-unsigned int Script::gameWeather;
+Script::ScriptList Script::scripts;
+Script::ScriptItemLists Script::scriptIL;
+Script::DeletedObjects Script::deletedStatic;
+Script::GameTime Script::gameTime;
+Script::GameWeather Script::gameWeather;
 
 template<typename... Types>
 constexpr char TypeString<Types...>::value[];
