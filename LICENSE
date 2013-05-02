@@ -8,17 +8,27 @@ The following license (MIT License) applies to all files in this repository, exc
   [7] source/vaultserver/amx
   [8] source/vaultserver/time
   [9] source/vaultserver/sqlite
+  [10] source/vaultgui
+  [11] source/deps/exchndl.dll
+  [12] source/deps/fose_1_7_vmp.dll
+  [13] source/deps/xlive.dll
 
 which fall under different licenses:
-  [1], [2] unknown license, open-source / freely available
+  [1] unknown license, open-source / freely available
+  [2] unknown license, open-source / freely available
   [3] unknown license, freely available
   [4] Boost Software License, Version 1.0
   [5] RakNet Indy License, Version 1.03 (granted to Christan Semmler, csemmler.goe@googlemail.com)
-  [6], [8] MIT License
+  [6] MIT License
   [7] Apache License, Version 2.0
+  [8] MIT License
   [9] Public domain
+  [10] CEGUI (MIT License) and others
+  [11] GNU General Public License version 2
+  [12] unknown license / open-source
+  [13] unknown license / freely available
 
-Copyright (c) 2010-2012 Christian Semmler
+Copyright (c) 2010 - 2013 Christian Semmler
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
