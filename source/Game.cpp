@@ -2674,7 +2674,7 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 							{
 								unsigned int baseID = Game::GetBase(refID);
 
-								auto it = find_if(gdiff.begin(), gdiff.end(), [=](const pair<unsigned int, ItemList::Diff>& diff) { return diff.first == baseID; });
+								auto it = find_if(gdiff.begin(), gdiff.end(), [baseID](const pair<unsigned int, ItemList::Diff>& diff) { return diff.first == baseID; });
 
 								if (it != gdiff.end())
 								{
@@ -2776,7 +2776,7 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 
 								unsigned int baseID = reference->GetBase();
 
-								auto it = find_if(gdiff.begin(), gdiff.end(), [=](const pair<unsigned int, ItemList::Diff>& diff) { return diff.first == baseID; });
+								auto it = find_if(gdiff.begin(), gdiff.end(), [baseID](const pair<unsigned int, ItemList::Diff>& diff) { return diff.first == baseID; });
 
 								if (it != gdiff.end())
 								{

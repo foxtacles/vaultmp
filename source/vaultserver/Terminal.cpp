@@ -3,7 +3,7 @@
 using namespace std;
 using namespace DB;
 
-unordered_map<unsigned int, const Terminal*> Terminal::terminals;
+unordered_map<unsigned int, Terminal*> Terminal::terminals;
 
 Terminal::Terminal(const string& table, sqlite3_stmt* stmt)
 {
@@ -40,7 +40,7 @@ Terminal::Terminal(const string& table, sqlite3_stmt* stmt)
 	terminals.emplace(baseID, this);
 }
 
-Expected<const Terminal*> Terminal::Lookup(unsigned int baseID)
+Expected<Terminal*> Terminal::Lookup(unsigned int baseID)
 {
 	auto it = terminals.find(baseID);
 

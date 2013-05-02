@@ -19,7 +19,7 @@ namespace DB
 	class Weapon
 	{
 		private:
-			static std::unordered_map<unsigned int, const Weapon*> weapons;
+			static std::unordered_map<unsigned int, Weapon*> weapons;
 
 			unsigned int baseID;
 			double damage;
@@ -32,7 +32,7 @@ namespace DB
 			Weapon& operator=(const Weapon&) = delete;
 
 		public:
-			static Expected<const Weapon*> Lookup(unsigned int baseID);
+			static Expected<Weapon*> Lookup(unsigned int baseID);
 
 			unsigned int GetBase() const;
 			double GetDamage() const;

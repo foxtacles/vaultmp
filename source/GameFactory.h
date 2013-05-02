@@ -147,7 +147,7 @@ class GameFactory
 		/**
 		 * \brief Obtains a lock on all References of a given type
 		 */
-		template<typename T>
+		template<typename T = Object>
 		static std::vector<FactoryObject<T>> GetObjectTypes(unsigned char type) noexcept;
 		/**
 		 * \brief Returns the NetworkID's of all References of a given type

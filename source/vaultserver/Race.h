@@ -20,7 +20,7 @@ namespace DB
 	class Race
 	{
 		private:
-			static std::unordered_map<unsigned int, const Race*> races;
+			static std::unordered_map<unsigned int, Race*> races;
 
 			unsigned int baseID;
 			bool child;
@@ -31,7 +31,7 @@ namespace DB
 			Race& operator=(const Race&) = delete;
 
 		public:
-			static Expected<const Race*> Lookup(unsigned int baseID);
+			static Expected<Race*> Lookup(unsigned int baseID);
 
 			unsigned int GetBase() const;
 			bool IsChild() const;

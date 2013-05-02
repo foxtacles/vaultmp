@@ -35,7 +35,7 @@ namespace DB
 				Script    = 0x0200,
 			};
 
-			static std::unordered_map<unsigned int, const NPC*> npcs;
+			static std::unordered_map<unsigned int, NPC*> npcs;
 
 			unsigned int baseID;
 			bool essential;
@@ -45,15 +45,15 @@ namespace DB
 			unsigned short flags;
 			unsigned int deathitem;
 
-			mutable signed int new_female;
-			mutable unsigned int new_race;
+			signed int new_female;
+			unsigned int new_race;
 
 			NPC(const NPC&) = delete;
 			NPC& operator=(const NPC&) = delete;
 
 		public:
-			static Expected<const NPC*> Lookup(unsigned int baseID);
-			static Expected<const NPC*> GetNPCNotIn(const std::unordered_set<unsigned int>& _set, const std::function<bool(const NPC&)>& pred);
+			static Expected<NPC*> Lookup(unsigned int baseID);
+			static Expected<NPC*> GetNPCNotIn(const std::unordered_set<unsigned int>& _set, const std::function<bool(const NPC&)>& pred);
 
 			unsigned int GetBase() const;
 			bool IsEssential() const;
@@ -64,10 +64,10 @@ namespace DB
 			unsigned int GetTemplate() const;
 			unsigned short GetFlags() const;
 			unsigned int GetDeathItem() const;
-			const std::vector<const BaseContainer*>& GetBaseContainer() const;
+			const std::vector<BaseContainer*>& GetBaseContainer() const;
 
-			void SetRace(unsigned int race) const;
-			void SetFemale(bool female) const;
+			void SetRace(unsigned int race);
+			void SetFemale(bool female);
 
 			NPC(const std::string& table, sqlite3_stmt* stmt);
 			~NPC() = default;

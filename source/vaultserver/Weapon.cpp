@@ -3,7 +3,7 @@
 using namespace std;
 using namespace DB;
 
-unordered_map<unsigned int, const Weapon*> Weapon::weapons;
+unordered_map<unsigned int, Weapon*> Weapon::weapons;
 
 Weapon::Weapon(const string& table, sqlite3_stmt* stmt)
 {
@@ -39,7 +39,7 @@ Weapon::Weapon(const string& table, sqlite3_stmt* stmt)
 	weapons.emplace(baseID, this);
 }
 
-Expected<const Weapon*> Weapon::Lookup(unsigned int baseID)
+Expected<Weapon*> Weapon::Lookup(unsigned int baseID)
 {
 	auto it = weapons.find(baseID);
 

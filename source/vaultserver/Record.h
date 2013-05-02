@@ -21,21 +21,21 @@ namespace DB
 	class Record
 	{
 		private:
-			static std::unordered_map<unsigned int, const Record*> data;
+			static std::unordered_map<unsigned int, Record*> data;
 
 			unsigned int baseID;
 			std::string name;
-			mutable std::string description;
+			std::string description;
 			std::string type;
 
 			Record(const Record&) = delete;
 			Record& operator=(const Record&) = delete;
 
 		public:
-			static Expected<const Record*> Lookup(unsigned int baseID);
-			static Expected<const Record*> Lookup(unsigned int baseID, const std::string& type);
-			static Expected<const Record*> Lookup(unsigned int baseID, const std::vector<std::string>& type);
-			static Expected<const Record*> GetRecordNotIn(const std::unordered_set<unsigned int>& _set, const std::function<bool(const Record&)>& pred);
+			static Expected<Record*> Lookup(unsigned int baseID);
+			static Expected<Record*> Lookup(unsigned int baseID, const std::string& type);
+			static Expected<Record*> Lookup(unsigned int baseID, const std::vector<std::string>& type);
+			static Expected<Record*> GetRecordNotIn(const std::unordered_set<unsigned int>& _set, const std::function<bool(const Record&)>& pred);
 
 			static bool IsValidCell(unsigned int baseID);
 			static bool IsValidWeather(unsigned int baseID);
@@ -45,7 +45,7 @@ namespace DB
 			const std::string& GetDescription() const;
 			const std::string& GetType() const;
 
-			void SetDescription(const std::string& description) const;
+			void SetDescription(const std::string& description);
 
 			Record(const std::string& table, sqlite3_stmt* stmt);
 			~Record() = default;
