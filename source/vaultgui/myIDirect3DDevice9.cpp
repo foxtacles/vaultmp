@@ -24,6 +24,38 @@ bool logging=false;
 myIDirect3DDevice9::myIDirect3DDevice9(IDirect3DDevice9* pOriginal)
 {
 
+	/*playersData=new remotePlayers[5];
+	for(int i=0;i<5;i++)
+	{
+		playersData[i].health=1;
+		strcpy(playersData[i].name,"test");
+		playersData[i].player=false;
+		playersData[i].rot[0]=10;
+		playersData[i].rot[1]=10;
+		playersData[i].rot[2]=10;
+	}
+
+	playersData[0].player=true;
+	playersData[0].pos[0]=10;
+	playersData[0].pos[1]=10;
+	playersData[0].pos[2]=0;
+
+	playersData[1].pos[0]=10;
+	playersData[1].pos[1]=-10;
+	playersData[1].pos[2]=0;
+
+	playersData[2].pos[0]=-10;
+	playersData[2].pos[1]=-10;
+	playersData[2].pos[2]=0;
+
+	playersData[3].pos[0]=-10;
+	playersData[3].pos[1]=-10;
+	playersData[3].pos[2]=10;
+
+	playersData[4].pos[0]=10;
+	playersData[4].pos[1]=-10;
+	playersData[4].pos[2]=10;*/
+
 	/*Test Data for names above characters*/
 	/*for(int i=0;i<5;i++)
 	{
@@ -341,8 +373,8 @@ HRESULT myIDirect3DDevice9::Present(CONST RECT* pSourceRect,CONST RECT* pDestRec
 				if(playersData[i].player)
 				{
 					x=playersData[i].pos[0];
-					x=playersData[i].pos[1];
-					x=playersData[i].pos[2];
+					y=playersData[i].pos[1];
+					z=playersData[i].pos[2];
 					go=true;
 					break;
 				}
