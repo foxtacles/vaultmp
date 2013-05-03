@@ -347,12 +347,15 @@ HRESULT WINAPI D3DXCreateTextureFromFileInMemory_Hook(LPDIRECT3DDEVICE9 pDevice,
 	char *tmp2=(char*)pSrcData;
 	sprintf(tmp,"0x%x D3DXCreateTextureFromFileInMemory %s",_ReturnAddress(),lastTextureLoadedBackup);
 	SendToLog(tmp);
-
-	if(gData.textureHookingDone)
-		TextureHooking::hookTextureIfNecessary((char*)lastTextureLoadedBackup,(char**)&pSrcData,(int*)&SrcDataSize);
+	if(lastTextureLoadedBackup!=0)
+	{
+		if(gData.textureHookingDone)
+			TextureHooking::hookTextureIfNecessary((char*)lastTextureLoadedBackup,(char**)&pSrcData,(int*)&SrcDataSize);
+	}
 
 	HRESULT ret=D3DXCreateTextureFromFileInMemory_Original(pDevice,pSrcData,SrcDataSize,ppTexture);
-	TextureHooking::registerTexture((char*)lastTextureLoadedBackup,*ppTexture);
+	if(lastTextureLoadedBackup!=0)
+		TextureHooking::registerTexture((char*)lastTextureLoadedBackup,*ppTexture);
 	return ret;
 }
 
