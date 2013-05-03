@@ -5,12 +5,11 @@ using namespace std;
 using namespace RakNet;
 using namespace Values;
 
-vector<Script*> Script::scripts;
-
-unordered_map<NetworkID, unique_ptr<ItemList>> Script::scriptIL;
-std::unordered_map<unsigned int, std::vector<unsigned int>> Script::deletedStatic;
-pair<chrono::system_clock::time_point, double> Script::gameTime;
-unsigned int Script::gameWeather;
+Script::ScriptList Script::scripts;
+Script::ScriptItemLists Script::scriptIL;
+Script::DeletedObjects Script::deletedStatic;
+Script::GameTime Script::gameTime;
+Script::GameWeather Script::gameWeather;
 
 template<typename... Types>
 constexpr char TypeString<Types...>::value[];
@@ -2095,8 +2094,8 @@ bool Script::SetBaseName(NetworkID id, const char* name)
 	if (_name.length() > MAX_PLAYER_NAME)
 		return false;
 
-	vector<FactoryObject<Object>> reference = GameFactory::GetObjectTypes<Object>(ALL_OBJECTS);
-	auto it = find_if(reference.begin(), reference.end(), [&](const FactoryObject<Object>& object) { return object->GetNetworkID() == id; });
+	auto reference = GameFactory::GetObjectTypes(ALL_OBJECTS);
+	auto it = find_if(reference.begin(), reference.end(), [&id](const FactoryObject<Object>& object) { return object->GetNetworkID() == id; });
 
 	if (it == reference.end())
 		return false;
@@ -2438,8 +2437,8 @@ void Script::SetActorValue(NetworkID id, unsigned char index, double value)
 
 void Script::SetActorBaseValue(NetworkID id, unsigned char index, double value)
 {
-	vector<FactoryObject<Actor>> reference = GameFactory::GetObjectTypes<Actor>(ALL_ACTORS);
-	auto it = find_if(reference.begin(), reference.end(), [&](const FactoryObject<Actor>& actor) { return actor->GetNetworkID() == id; });
+	auto reference = GameFactory::GetObjectTypes<Actor>(ALL_ACTORS);
+	auto it = find_if(reference.begin(), reference.end(), [&id](const FactoryObject<Actor>& actor) { return actor->GetNetworkID() == id; });
 
 	if (it == reference.end())
 		return;
@@ -2699,8 +2698,8 @@ void Script::KillActor(NetworkID id, unsigned short limbs, signed char cause)
 
 bool Script::SetActorBaseRace(NetworkID id, unsigned int race)
 {
-	vector<FactoryObject<Actor>> reference = GameFactory::GetObjectTypes<Actor>(ALL_ACTORS);
-	auto it = find_if(reference.begin(), reference.end(), [&](const FactoryObject<Actor>& actor) { return actor->GetNetworkID() == id; });
+	auto reference = GameFactory::GetObjectTypes<Actor>(ALL_ACTORS);
+	auto it = find_if(reference.begin(), reference.end(), [&id](const FactoryObject<Actor>& actor) { return actor->GetNetworkID() == id; });
 
 	if (it == reference.end())
 		return false;
@@ -2716,7 +2715,7 @@ bool Script::SetActorBaseRace(NetworkID id, unsigned int race)
 	if (!DB::Race::Lookup(race))
 		return false;
 
-	const DB::NPC* npc = *DB::NPC::Lookup(baseID);
+	DB::NPC* npc = *DB::NPC::Lookup(baseID);
 	unsigned int old_race = npc->GetRace();
 
 	if (old_race != race)
@@ -2800,8 +2799,8 @@ bool Script::AgeActorBaseRace(NetworkID id, signed int age)
 
 bool Script::SetActorBaseSex(NetworkID id, bool female)
 {
-	vector<FactoryObject<Actor>> reference = GameFactory::GetObjectTypes<Actor>(ALL_ACTORS);
-	auto it = find_if(reference.begin(), reference.end(), [&](const FactoryObject<Actor>& actor) { return actor->GetNetworkID() == id; });
+	auto reference = GameFactory::GetObjectTypes<Actor>(ALL_ACTORS);
+	auto it = find_if(reference.begin(), reference.end(), [&id](const FactoryObject<Actor>& actor) { return actor->GetNetworkID() == id; });
 
 	if (it == reference.end())
 		return false;
@@ -2814,7 +2813,7 @@ bool Script::SetActorBaseSex(NetworkID id, bool female)
 	if (baseID == PLAYER_BASE)
 		return false;
 
-	const DB::NPC* npc = *DB::NPC::Lookup(baseID);
+	DB::NPC* npc = *DB::NPC::Lookup(baseID);
 	bool old_female = npc->IsFemale();
 
 	if (old_female != female)

@@ -19,7 +19,7 @@ namespace DB
 	class BaseContainer
 	{
 		private:
-			static std::unordered_map<unsigned int, std::vector<const BaseContainer*>> baseContainers;
+			static std::unordered_map<unsigned int, std::vector<BaseContainer*>> baseContainers;
 
 			unsigned int baseID;
 			unsigned int item;
@@ -30,7 +30,7 @@ namespace DB
 			BaseContainer& operator=(const BaseContainer&) = delete;
 
 		public:
-			static const std::vector<const BaseContainer*>& Lookup(unsigned int baseID);
+			static const std::vector<BaseContainer*>& Lookup(unsigned int baseID);
 
 			unsigned int GetBase() const;
 			unsigned int GetItem() const;

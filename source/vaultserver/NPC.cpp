@@ -4,7 +4,7 @@
 using namespace std;
 using namespace DB;
 
-unordered_map<unsigned int, const NPC*> NPC::npcs;
+unordered_map<unsigned int, NPC*> NPC::npcs;
 
 NPC::NPC(const string& table, sqlite3_stmt* stmt) : new_female(-1), new_race(0x00000000)
 {
@@ -53,7 +53,7 @@ NPC::NPC(const string& table, sqlite3_stmt* stmt) : new_female(-1), new_race(0x0
 	npcs.emplace(baseID, this);
 }
 
-Expected<const NPC*> NPC::Lookup(unsigned int baseID)
+Expected<NPC*> NPC::Lookup(unsigned int baseID)
 {
 	auto it = npcs.find(baseID);
 
@@ -63,9 +63,9 @@ Expected<const NPC*> NPC::Lookup(unsigned int baseID)
 	return VaultException("No NPC with baseID %08X found", baseID);
 }
 
-Expected<const NPC*> NPC::GetNPCNotIn(const unordered_set<unsigned int>& _set, const function<bool(const NPC&)>& pred)
+Expected<NPC*> NPC::GetNPCNotIn(const unordered_set<unsigned int>& _set, const function<bool(const NPC&)>& pred)
 {
-	auto it = find_if(npcs.begin(), npcs.end(), [&](const pair<const unsigned int, const NPC*>& npcs) { return !_set.count(npcs.first) && pred(*npcs.second); });
+	auto it = find_if(npcs.begin(), npcs.end(), [&_set, &pred](const pair<const unsigned int, const NPC*>& npcs) { return !_set.count(npcs.first) && pred(*npcs.second); });
 
 	if (it != npcs.end())
 		return it->second;
@@ -166,7 +166,7 @@ unsigned int NPC::GetDeathItem() const
 	return deathitem;
 }
 
-const vector<const BaseContainer*>& NPC::GetBaseContainer() const
+const vector<BaseContainer*>& NPC::GetBaseContainer() const
 {
 	if (template_ && (flags & TplFlags::Inventory))
 	{
@@ -179,7 +179,7 @@ const vector<const BaseContainer*>& NPC::GetBaseContainer() const
 	return BaseContainer::Lookup(baseID);
 }
 
-void NPC::SetRace(unsigned int race) const
+void NPC::SetRace(unsigned int race)
 {
 	if (template_ && (flags & TplFlags::Traits))
 	{
@@ -193,7 +193,7 @@ void NPC::SetRace(unsigned int race) const
 		this->new_race = race;
 }
 
-void NPC::SetFemale(bool female) const
+void NPC::SetFemale(bool female)
 {
 	if (template_ && (flags & TplFlags::Traits))
 	{

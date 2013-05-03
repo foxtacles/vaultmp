@@ -2,10 +2,6 @@
 
 // Constants
 
-const Interval: {
-	DEFAULT_PLAYER_RESPAWN = 8000,
-}
-
 const Index: {
 	MAX_PLAYER_NAME = 16,
 	MAX_PASSWORD_SIZE = 16,
@@ -158,6 +154,10 @@ const Emoticon: {
 	Sad = 1,
 	Neutral = 2,
 	Pain = 3,
+}
+
+const Interval: {
+	DEFAULT_PLAYER_RESPAWN = 8000,
 }
 
 // Callbacks

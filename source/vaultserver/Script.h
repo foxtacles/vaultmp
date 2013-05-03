@@ -104,8 +104,6 @@ class Script
 
 		bool cpp_script;
 
-		static std::vector<Script*> scripts;
-
 		static void GetArguments(std::vector<boost::any>& params, va_list args, const std::string& def);
 
 		void (*fexec)();
@@ -135,10 +133,17 @@ class Script
 		void (*fOnServerInit)();
 		void (*fOnServerExit)();
 
-		static std::unordered_map<RakNet::NetworkID, std::unique_ptr<ItemList>> scriptIL;
-		static std::unordered_map<unsigned int, std::vector<unsigned int>> deletedStatic;
-		static std::pair<std::chrono::system_clock::time_point, double> gameTime;
-		static unsigned int gameWeather;
+		typedef std::vector<Script*> ScriptList;
+		typedef std::unordered_map<RakNet::NetworkID, std::unique_ptr<ItemList>> ScriptItemLists;
+		typedef std::unordered_map<unsigned int, std::vector<unsigned int>> DeletedObjects;
+		typedef std::pair<std::chrono::system_clock::time_point, double> GameTime;
+		typedef unsigned int GameWeather;
+
+		static ScriptList scripts;
+		static ScriptItemLists scriptIL;
+		static DeletedObjects deletedStatic;
+		static GameTime gameTime;
+		static GameWeather gameWeather;
 
 		Script(const Script&) = delete;
 		Script& operator=(const Script&) = delete;
@@ -162,7 +167,7 @@ class Script
 		static void MakePublicPAWN(ScriptFuncPAWN _public, AMX* amx, const char* name, const char* def);
 		static unsigned long long CallPublic(const char* name, ...);
 		static unsigned long long CallPublicPAWN(const char* name, const std::vector<boost::any>& args);
-		static const decltype(deletedStatic)& GetDeletedStatic() { return deletedStatic; }
+		static const DeletedObjects& GetDeletedStatic() { return deletedStatic; }
 
 		static unsigned long long Timer_Respawn(RakNet::NetworkID id);
 		static unsigned long long Timer_GameTime();

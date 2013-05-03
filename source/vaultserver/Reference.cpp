@@ -3,7 +3,7 @@
 using namespace std;
 using namespace DB;
 
-unordered_map<unsigned int, const Reference*> Reference::refs;
+unordered_map<unsigned int, Reference*> Reference::refs;
 
 Reference::Reference(const string& table, sqlite3_stmt* stmt)
 {
@@ -72,7 +72,7 @@ Reference::Reference(const string& table, sqlite3_stmt* stmt)
 	refs.emplace(refID, this);
 }
 
-Expected<const Reference*> Reference::Lookup(unsigned int refID)
+Expected<Reference*> Reference::Lookup(unsigned int refID)
 {
 	auto it = refs.find(refID);
 
@@ -82,9 +82,9 @@ Expected<const Reference*> Reference::Lookup(unsigned int refID)
 	return VaultException("No weapon with refID %08X found", refID);
 }
 
-vector<const Reference*> Reference::Lookup(const std::string& type)
+vector<Reference*> Reference::Lookup(const std::string& type)
 {
-	vector<const Reference*> data;
+	vector<Reference*> data;
 
 	for (const auto& ref : refs)
 		if (!ref.second->GetType().compare(type))

@@ -19,7 +19,7 @@ namespace DB
 	class Item
 	{
 		private:
-			static std::unordered_map<unsigned int, const Item*> items;
+			static std::unordered_map<unsigned int, Item*> items;
 
 			unsigned int baseID;
 			unsigned int value;
@@ -31,7 +31,7 @@ namespace DB
 			Item& operator=(const Item&) = delete;
 
 		public:
-			static Expected<const Item*> Lookup(unsigned int baseID);
+			static Expected<Item*> Lookup(unsigned int baseID);
 
 			unsigned int GetBase() const;
 			unsigned int GetValue() const;

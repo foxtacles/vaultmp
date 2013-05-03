@@ -22,7 +22,7 @@ namespace DB
 	class Reference
 	{
 		private:
-			static std::unordered_map<unsigned int, const Reference*> refs;
+			static std::unordered_map<unsigned int, Reference*> refs;
 
 			std::string type;
 			std::string editor;
@@ -41,8 +41,8 @@ namespace DB
 			Reference& operator=(const Reference&) = delete;
 
 		public:
-			static Expected<const Reference*> Lookup(unsigned int refID);
-			static std::vector<const Reference*> Lookup(const std::string& type);
+			static Expected<Reference*> Lookup(unsigned int refID);
+			static std::vector<Reference*> Lookup(const std::string& type);
 
 			const std::string& GetType() const;
 			const std::string& GetEditor() const;

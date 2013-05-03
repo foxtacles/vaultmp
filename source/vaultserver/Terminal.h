@@ -20,7 +20,7 @@ namespace DB
 	class Terminal
 	{
 		private:
-			static std::unordered_map<unsigned int, const Terminal*> terminals;
+			static std::unordered_map<unsigned int, Terminal*> terminals;
 
 			unsigned int baseID;
 			unsigned int lock;
@@ -30,7 +30,7 @@ namespace DB
 			Terminal& operator=(const Terminal&) = delete;
 
 		public:
-			static Expected<const Terminal*> Lookup(unsigned int baseID);
+			static Expected<Terminal*> Lookup(unsigned int baseID);
 
 			unsigned int GetBase() const;
 			unsigned int GetLock() const;

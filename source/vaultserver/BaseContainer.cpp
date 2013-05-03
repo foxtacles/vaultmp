@@ -3,7 +3,7 @@
 using namespace std;
 using namespace DB;
 
-unordered_map<unsigned int, vector<const BaseContainer*>> BaseContainer::baseContainers;
+unordered_map<unsigned int, vector<BaseContainer*>> BaseContainer::baseContainers;
 
 BaseContainer::BaseContainer(const string& table, sqlite3_stmt* stmt)
 {
@@ -40,12 +40,12 @@ BaseContainer::BaseContainer(const string& table, sqlite3_stmt* stmt)
 		baseID |= dlc;
 	}
 	else
-		baseContainers[baseID].erase(remove_if(baseContainers[baseID].begin(), baseContainers[baseID].end(), [=](const BaseContainer* container) { return container->GetItem() == item; }), baseContainers[baseID].end());
+		baseContainers[baseID].erase(remove_if(baseContainers[baseID].begin(), baseContainers[baseID].end(), [this](const BaseContainer* container) { return container->GetItem() == item; }), baseContainers[baseID].end());
 
 	baseContainers[baseID].emplace_back(this);
 }
 
-const vector<const BaseContainer*>& BaseContainer::Lookup(unsigned int baseID)
+const vector<BaseContainer*>& BaseContainer::Lookup(unsigned int baseID)
 {
 	return baseContainers[baseID];
 }

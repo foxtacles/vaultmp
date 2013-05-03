@@ -3,8 +3,8 @@
 using namespace std;
 using namespace DB;
 
-unordered_map<unsigned int, const Exterior*> Exterior::cells;
-unordered_map<unsigned int, vector<const Exterior*>> Exterior::worlds;
+unordered_map<unsigned int, Exterior*> Exterior::cells;
+unordered_map<unsigned int, vector<Exterior*>> Exterior::worlds;
 
 Exterior::Exterior(const string& table, sqlite3_stmt* stmt)
 {
@@ -35,7 +35,7 @@ Exterior::Exterior(const string& table, sqlite3_stmt* stmt)
 	else
 	{
 		cells.erase(baseID);
-		worlds[world].erase(remove_if(worlds[world].begin(), worlds[world].end(), [=](const Exterior* cell) { return cell->GetBase() == baseID; }), worlds[world].end());
+		worlds[world].erase(remove_if(worlds[world].begin(), worlds[world].end(), [this](const Exterior* cell) { return cell->GetBase() == baseID; }), worlds[world].end());
 	}
 
 	cells.emplace(baseID, this);
@@ -45,7 +45,7 @@ Exterior::Exterior(const string& table, sqlite3_stmt* stmt)
 	//const Record& record = Record::Lookup(baseID, "CELL");
 }
 
-Expected<const Exterior*> Exterior::Lookup(unsigned int baseID)
+Expected<Exterior*> Exterior::Lookup(unsigned int baseID)
 {
 	auto it = cells.find(baseID);
 
@@ -55,17 +55,17 @@ Expected<const Exterior*> Exterior::Lookup(unsigned int baseID)
 	return VaultException("No cell with baseID %08X found", baseID);
 }
 
-Expected<const Exterior*> Exterior::Lookup(unsigned int world, double X, double Y)
+Expected<Exterior*> Exterior::Lookup(unsigned int world, double X, double Y)
 {
 	signed int x = floor(X / size);
 	signed int y = floor(Y / size);
 
-	auto it = find_if(worlds[world].begin(), worlds[world].end(), [=](const Exterior* cell) { return cell->x == x && cell->y == y; });
+	auto it = find_if(worlds[world].begin(), worlds[world].end(), [&x, &y](const Exterior* cell) { return cell->x == x && cell->y == y; });
 
 	if (it != worlds[world].end())
 		return *it;
 
-	return VaultException("No cell with coordinates (%f, %f) in world %08X found", static_cast<float>(X), static_cast<float>(Y), world);
+	return VaultException("No cell with coordinates (%f, %f) in world %08X found", X, Y, world);
 }
 
 unsigned int Exterior::GetBase() const
@@ -93,7 +93,7 @@ array<unsigned int, 9> Exterior::GetAdjacents() const
 	double X = GetX() * size;
 	double Y = GetY() * size;
 
-	Expected<const Exterior*> next_exterior;
+	Expected<Exterior*> next_exterior;
 
 	return
 		{{GetBase(),

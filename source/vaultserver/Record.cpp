@@ -3,7 +3,7 @@
 using namespace std;
 using namespace DB;
 
-unordered_map<unsigned int, const Record*> Record::data;
+unordered_map<unsigned int, Record*> Record::data;
 
 Record::Record(const string& table, sqlite3_stmt* stmt)
 {
@@ -28,10 +28,10 @@ Record::Record(const string& table, sqlite3_stmt* stmt)
 	else
 		data.erase(baseID);
 
-	data.insert(make_pair(baseID, this));
+	data.emplace(baseID, this);
 }
 
-Expected<const Record*> Record::Lookup(unsigned int baseID)
+Expected<Record*> Record::Lookup(unsigned int baseID)
 {
 	auto it = data.find(baseID);
 
@@ -41,7 +41,7 @@ Expected<const Record*> Record::Lookup(unsigned int baseID)
 	return VaultException("No record with baseID %08X found", baseID);
 }
 
-Expected<const Record*> Record::Lookup(unsigned int baseID, const string& type)
+Expected<Record*> Record::Lookup(unsigned int baseID, const string& type)
 {
 	auto it = data.find(baseID);
 
@@ -51,7 +51,7 @@ Expected<const Record*> Record::Lookup(unsigned int baseID, const string& type)
 	return VaultException("No record with baseID %08X and type %s found", baseID, type.c_str());
 }
 
-Expected<const Record*> Record::Lookup(unsigned int baseID, const vector<string>& types)
+Expected<Record*> Record::Lookup(unsigned int baseID, const vector<string>& types)
 {
 	auto it = data.find(baseID);
 
@@ -66,9 +66,9 @@ Expected<const Record*> Record::Lookup(unsigned int baseID, const vector<string>
 	return VaultException("No record with baseID %08X found", baseID);
 }
 
-Expected<const Record*> Record::GetRecordNotIn(const unordered_set<unsigned int>& _set, const function<bool(const Record&)>& pred)
+Expected<Record*> Record::GetRecordNotIn(const unordered_set<unsigned int>& _set, const function<bool(const Record&)>& pred)
 {
-	auto it = find_if(data.begin(), data.end(), [&](const pair<const unsigned int, const Record*>& data) { return !_set.count(data.first) && pred(*data.second); });
+	auto it = find_if(data.begin(), data.end(), [&_set, &pred](const pair<const unsigned int, const Record*>& data) { return !_set.count(data.first) && pred(*data.second); });
 
 	if (it != data.end())
 		return it->second;
@@ -106,7 +106,7 @@ const string& Record::GetType() const
 	return type;
 }
 
-void Record::SetDescription(const string& description) const
+void Record::SetDescription(const string& description)
 {
 	this->description = description;
 }
