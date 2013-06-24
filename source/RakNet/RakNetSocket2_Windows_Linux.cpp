@@ -1,5 +1,9 @@
 #include "EmptyHeader.h"
 
+#ifndef _WIN32
+#include <netdb.h>
+#endif
+
 #ifdef RAKNET_SOCKET_2_INLINE_FUNCTIONS
 
 #ifndef RAKNETSOCKET2_WINDOWS_LINUX_CPP

@@ -20,6 +20,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <netdb.h>
 #endif
 #include <string.h>
 #include "RakAssert.h"

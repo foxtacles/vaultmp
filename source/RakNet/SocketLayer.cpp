@@ -14,6 +14,10 @@
 #include "LinuxStrings.h"
 #include "SocketDefines.h"
 
+#ifndef _WIN32
+#include <netdb.h>
+#endif
+
 using namespace RakNet;
 
 /*
