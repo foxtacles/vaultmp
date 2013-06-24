@@ -158,6 +158,14 @@ void NatTypeDetectionClient::OnClosedConnection(const SystemAddress &systemAddre
 	if (IsInProgress() && systemAddress==serverAddress)
 		Shutdown();
 }
+void NatTypeDetectionClient::OnRakPeerShutdown(void)
+{
+	Shutdown();
+}
+void NatTypeDetectionClient::OnDetach(void)
+{
+	Shutdown();
+}
 void NatTypeDetectionClient::OnTestPortRestricted(Packet *packet)
 {
 	RakNet::BitStream bsIn(packet->data,packet->length,false);

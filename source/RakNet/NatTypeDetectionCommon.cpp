@@ -117,7 +117,7 @@ RakNetSocket2* RakNet::CreateNonblockingBoundSocket(const char *bindAddr
 		bbp.doNotFragment=false;
 		bbp.pollingThreadPriority=0;
 		bbp.eventHandler=eventHandler;
-		bbp.remotePortRakNetWasStartedOn_PS3_PSP2=0;
+		bbp.remotePortRakNetWasStartedOn_PS3_PS4_PSP2=0;
 		RNS2BindResult br = ((RNS2_Berkley*) r2)->Bind(&bbp, _FILE_AND_LINE_);
 
 		if (br==BR_FAILED_TO_BIND_SOCKET)
@@ -155,7 +155,7 @@ RakNetSocket2* RakNet::CreateNonblockingBoundSocket(const char *bindAddr
 	#ifdef _WIN32
 		unsigned long nonblocking = 1;
 		s->IOCTLSocket( FIONBIO, &nonblocking );
-	#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(SN_TARGET_PSP2)
+	#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(_PS4) || defined(SN_TARGET_PSP2)
 		int sock_opt=1;
 		s->SetSockOpt(SOL_SOCKET, SO_NBIO, ( char * ) & sock_opt, sizeof ( sock_opt ) );
 	#elif defined(__native_client__)

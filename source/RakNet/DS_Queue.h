@@ -43,7 +43,7 @@ namespace DataStructures
 		inline unsigned int AllocationSize( void ) const;
 		inline void Clear( const char *file, unsigned int line );
 		void Compress( const char *file, unsigned int line );
-		bool Find ( queue_type q );
+		bool Find ( const queue_type& q );
 		void ClearAndForceAllocation( int size, const char *file, unsigned int line ); // Force a memory allocation to a certain larger size
 
 	private:
@@ -236,7 +236,7 @@ namespace DataStructures
 
 			// Need to allocate more memory.
 			queue_type * new_array;
-			new_array = RakNet::OP_NEW_ARRAY<queue_type>(allocation_size * 2, file, line );
+			new_array = RakNet::OP_NEW_ARRAY<queue_type>((int)allocation_size * 2, file, line );
 #ifdef _DEBUG
 			RakAssert( new_array );
 #endif
@@ -359,7 +359,7 @@ namespace DataStructures
 	}
 
 	template <class queue_type>
-		bool Queue<queue_type>::Find ( queue_type q )
+		bool Queue<queue_type>::Find ( const queue_type &q )
 	{
 		if ( allocation_size == 0 )
 			return false;

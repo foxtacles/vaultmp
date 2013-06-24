@@ -8,6 +8,15 @@
 #include "DS_ThreadsafeAllocatingQueue.h"
 #include "Export.h"
 
+// For CFSocket
+// https://developer.apple.com/library/mac/#documentation/CoreFOundation/Reference/CFSocketRef/Reference/reference.html
+// Reason: http://sourceforge.net/p/open-dis/discussion/683284/thread/0929d6a0
+#if defined(__APPLE__)
+#import <CoreFoundation/CoreFoundation.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#endif
+
 // #define TEST_NATIVE_CLIENT_ON_WINDOWS
 
 #ifdef TEST_NATIVE_CLIENT_ON_WINDOWS
@@ -28,7 +37,7 @@ enum RNS2BindResult
 	BR_SUCCESS,
 	BR_REQUIRES_RAKNET_SUPPORT_IPV6_DEFINE,
 	BR_FAILED_TO_BIND_SOCKET,
-	BR_FAILED_SEND_TEST
+	BR_FAILED_SEND_TEST,
 };
 
 typedef int RNS2SendResult;
@@ -78,6 +87,8 @@ public:
 class RAK_DLL_EXPORT RNS2EventHandler
 {
 public:
+	RNS2EventHandler() {}
+	virtual ~RNS2EventHandler() {}
 
 	//		bufferedPackets.Push(recvFromStruct);
 	//		quitAndDataEvents.SetEvent();
@@ -104,9 +115,11 @@ public:
 	SystemAddress GetBoundAddress(void) const;
 	unsigned int GetUserConnectionSocketIndex(void) const;
 	void SetUserConnectionSocketIndex(unsigned int i);
+	RNS2EventHandler * GetEventHandler(void) const;
 
 	// ----------- STATICS ------------
 	static void GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] );
+	static void DomainNameToIP( const char *domainName, char ip[65] );
 
 protected:
 	RNS2EventHandler *eventHandler;
@@ -116,13 +129,50 @@ protected:
 };
 
 #if defined(WINDOWS_STORE_RT)
+
+ref class ListenerContext;
+
+// #include <collection.h>
+//#include <map>
+#include "DS_List.h"
 class RNS2_WindowsStore8 : public RakNetSocket2
 {
 public:
-	RNS2BindResult Bind( const char* localHostName, const char * localServiceName);
+	RNS2_WindowsStore8();
+	~RNS2_WindowsStore8();
+
+	virtual RNS2SendResult Send( RNS2_SendParameters *sendParameters, const char *file, unsigned int line );
+	RNS2BindResult Bind( Platform::String ^localServiceName );
 	// ----------- STATICS ------------
 	static void GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] );
 	static void DomainNameToIP( const char *domainName, char ip[65] );
+
+	static int WinRTInet_Addr(const char * cp);
+
+	static int WinRTSetSockOpt(Windows::Networking::Sockets::DatagramSocket ^s,
+	   int level,
+	   int optname,
+	   const char * optval,
+	   socklen_t optlen);
+   
+	static int WinRTIOCTLSocket(Windows::Networking::Sockets::DatagramSocket ^s,
+		long cmd,
+		unsigned long *argp);
+	
+	static int WinRTGetSockName(Windows::Networking::Sockets::DatagramSocket ^s,
+		struct sockaddr *name,
+		socklen_t* namelen);
+
+	static RNS2_WindowsStore8 *GetRNS2FromDatagramSocket(Windows::Networking::Sockets::DatagramSocket^ s);
+protected:
+	static DataStructures::List<RNS2_WindowsStore8*> rns2List;
+	static SimpleMutex rns2ListMutex;
+
+	Windows::Networking::Sockets::DatagramSocket^ listener;
+	// Platform::Collections::Map<Windows::Storage::Streams::IOutputStream> ^outputStreamMap;
+	// Platform::Collections::Map<String^, int>^ m;
+	//std::map<> m;
+    ListenerContext^ listenerContext;
 };
 #elif defined(__native_client__)
 struct NativeClientBindParameters
@@ -145,8 +195,11 @@ public:
 	virtual ~RNS2_NativeClient();
 	RNS2BindResult Bind( NativeClientBindParameters *bindParameters, const char *file, unsigned int line );
 	RNS2SendResult Send( RNS2_SendParameters *sendParameters, const char *file, unsigned int line );
-	static void GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] );
 	const NativeClientBindParameters *GetBindings(void) const;
+
+	// ----------- STATICS ------------
+	static bool IsPortInUse(unsigned short port, const char *hostAddress, unsigned short addressFamily, int type );
+	static void GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] );
 
 	// RNS2_NativeClient doesn't automatically call recvfrom in a thread - user must call Update() from the main thread
 	// This causes buffered sends to send, until send is asynch pending
@@ -202,7 +255,7 @@ struct RNS2_BerkleyBindParameters
 	int doNotFragment;
 	int pollingThreadPriority;
 	RNS2EventHandler *eventHandler;
-	unsigned short remotePortRakNetWasStartedOn_PS3_PSP2;
+	unsigned short remotePortRakNetWasStartedOn_PS3_PS4_PSP2;
 };
 
 // Every platform except Windows Store 8 can use the Berkley sockets interface
@@ -210,8 +263,9 @@ class IRNS2_Berkley : public RakNetSocket2
 {
 public:
 	// ----------- STATICS ------------
+	// For addressFamily, use AF_INET
+	// For type, use SOCK_DGRAM
 	static bool IsPortInUse(unsigned short port, const char *hostAddress, unsigned short addressFamily, int type );
-	static void DomainNameToIP( const char *domainName, char ip[65] );
 
 	// ----------- MEMBERS ------------
 	virtual RNS2BindResult Bind( RNS2_BerkleyBindParameters *bindParameters, const char *file, unsigned int line )=0;
@@ -255,8 +309,14 @@ protected:
 	volatile bool endThreads;
 	// Constructor not called!
 
+#if defined(__APPLE__)
+	// http://sourceforge.net/p/open-dis/discussion/683284/thread/0929d6a0
+	CFSocketRef             _cfSocket;
+#endif
+
 	static RAK_THREAD_DECLARATION(RecvFromLoop);
 };
+
 
 
 
@@ -280,7 +340,6 @@ protected:
 	static RNS2SendResult Send_Windows_Linux_360NoVDP( RNS2Socket rns2Socket, RNS2_SendParameters *sendParameters, const char *file, unsigned int line );
 };
 #endif
-
 
 
 

@@ -1,3 +1,5 @@
+#include "EmptyHeader.h"
+
 #ifdef RAKNET_SOCKET_2_INLINE_FUNCTIONS
 
 #ifndef RAKNETSOCKET2_NATIVE_CLIENT_CPP
@@ -131,7 +133,7 @@ void RNS2_NativeClient::onRecvFrom(void* pData, int32_t dataSize)
 
 	if(ok)
 	{
-		recvStruct->systemAddress.SetPort(pp::NetAddressPrivate::GetPort(addr));
+		recvStruct->systemAddress.SetPortHostOrder(pp::NetAddressPrivate::GetPort(addr));
 		socket2->binding.eventHandler->OnRNS2Recv(recvStruct);				
 	}
 

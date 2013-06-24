@@ -661,6 +661,7 @@ SHValueType StatisticsHistory::TimeAndValueQueue::Interpolate(StatisticsHistory:
 void StatisticsHistory::TimeAndValueQueue::Clear(void)
 {
 	recentSum = 0;
+	recentSumOfSquares = 0;
 	longTermSum = 0;
 	longTermCount = 0;
 	longTermLowest = SH_TYPE_MAX;

@@ -70,15 +70,19 @@ public:
 	static RakNetSocket* CreateBoundSocket_PSP2( unsigned short port, bool blockingSocket, const char *forceHostAddress, unsigned short socketFamily );
 	*/
 
+	/*
+#ifndef WINDOWS_STORE_RT
 	/// Returns if this specified port is in use, for UDP
 	/// \param[in] port the port number 
 	/// \return If this port is already in use
-	static bool IsPortInUse_Old(unsigned short port, const char *hostAddress);
-	static bool IsPortInUse(unsigned short port, const char *hostAddress, unsigned short socketFamily );
+	//static bool IsPortInUse_Old(unsigned short port, const char *hostAddress);
+	//static bool IsPortInUse(unsigned short port, const char *hostAddress, unsigned short socketFamily );
 	static bool IsSocketFamilySupported(const char *hostAddress, unsigned short socketFamily);
+#endif
+	*/
 
-	static const char* DomainNameToIP_Old( const char *domainName );
-	static const char* DomainNameToIP( const char *domainName );
+//	static const char* DomainNameToIP_Old( const char *domainName );
+//	static const char* DomainNameToIP( const char *domainName );
 	
 	/// Write \a data of length \a length to \a writeSocket
 	/// \param[in] writeSocket The socket to write to
@@ -128,7 +132,7 @@ public:
 	/// \return 0 on success, nonzero on failure.
 //	static int SendTo( UDPSOCKET s, const char *data, int length, const char ip[ 16 ], unsigned short port, unsigned short remotePortRakNetWasStartedOn_PS3, unsigned int extraSocketOptions, const char *file, const long line );
 
-	/// Call sendto (UDP obviously)
+	/// Call sendto' (UDP obviously)
 	/// It won't reach the recipient, except on a LAN
 	/// However, this is good for opening routers / firewalls
 	/// \param[in] s the socket

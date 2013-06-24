@@ -124,7 +124,7 @@ void DirectoryDeltaTransfer::SetUploadSendParameters(PacketPriority _priority, c
 }
 void DirectoryDeltaTransfer::AddUploadsFromSubdirectory(const char *subdir)
 {
-	availableUploads->AddFilesFromDirectory(applicationDirectory, subdir, true, false, true, FileListNodeContext(0,0));
+	availableUploads->AddFilesFromDirectory(applicationDirectory, subdir, true, false, true, FileListNodeContext(0,0,0,0));
 }
 unsigned short DirectoryDeltaTransfer::DownloadFromSubdirectory(FileList &localFiles, const char *subdir, const char *outputSubdir, bool prependAppDirToOutputSubdir, SystemAddress host, FileListTransferCBInterface *onFileCallback, PacketPriority _priority, char _orderingChannel, FileListProgress *cb)
 {
@@ -172,12 +172,12 @@ unsigned short DirectoryDeltaTransfer::DownloadFromSubdirectory(const char *subd
 {
 	FileList localFiles;
 	// Get a hash of all the files that we already have (if any)
-	localFiles.AddFilesFromDirectory(prependAppDirToOutputSubdir ? applicationDirectory : 0, outputSubdir, true, false, true, FileListNodeContext(0,0));
+	localFiles.AddFilesFromDirectory(prependAppDirToOutputSubdir ? applicationDirectory : 0, outputSubdir, true, false, true, FileListNodeContext(0,0,0,0));
 	return DownloadFromSubdirectory(localFiles, subdir, outputSubdir, prependAppDirToOutputSubdir, host, onFileCallback, _priority, _orderingChannel, cb);
 }
 void DirectoryDeltaTransfer::GenerateHashes(FileList &localFiles, const char *outputSubdir, bool prependAppDirToOutputSubdir)
 {
-	localFiles.AddFilesFromDirectory(prependAppDirToOutputSubdir ? applicationDirectory : 0, outputSubdir, true, false, true, FileListNodeContext(0,0));
+	localFiles.AddFilesFromDirectory(prependAppDirToOutputSubdir ? applicationDirectory : 0, outputSubdir, true, false, true, FileListNodeContext(0,0,0,0));
 }
 void DirectoryDeltaTransfer::ClearUploads(void)
 {

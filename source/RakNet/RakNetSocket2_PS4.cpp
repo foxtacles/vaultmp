@@ -2,24 +2,8 @@
 
 #ifdef RAKNET_SOCKET_2_INLINE_FUNCTIONS
 
-#ifndef RAKNETSOCKET2_360_720_CPP
-#define RAKNETSOCKET2_360_720_CPP
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#ifndef RAKNETSOCKET2_PS4_CPP
+#define RAKNETSOCKET2_PS4_CPP
 
 
 

@@ -13,6 +13,10 @@
 
 using namespace RakNet;
 
+#ifndef INVALID_SOCKET
+#define INVALID_SOCKET -1
+#endif
+
 /*
 Algorithm:
 
@@ -297,7 +301,7 @@ PluginReceiveResult Router2::OnReceive(Packet *packet)
 					sa=packet->systemAddress;
 					unsigned short port;
 					bs.Read(port);
-					sa.SetPort(port);
+					sa.SetPortHostOrder(port);
 					RakAssert(sa.GetPort()!=0);
 					SendOOBFromRakNetPort(ID_ROUTER_2_MINI_PUNCH_REPLY, &bsOut, sa);
 
@@ -912,16 +916,29 @@ void Router2::SendOOBFromSpecifiedSocket(OutOfBandIdentifiers oob, SystemAddress
 	bs.Write((unsigned char) oob);
 	// SocketLayer::SendTo_PC( socket, (const char*) bs.GetData(), bs.GetNumberOfBytesUsed(), sa, __FILE__, __LINE__  );
 
+
 	if (sa.address.addr4.sin_family==AF_INET)
 	{
 		sendto__( socket, (const char*) bs.GetData(), bs.GetNumberOfBytesUsed(), 0, ( const sockaddr* ) & sa.address.addr4, sizeof( sockaddr_in ) );
 	}
 	else
 	{
-#if RAKNET_SUPPORT_IPV6==1
+		#if RAKNET_SUPPORT_IPV6==1
 		sendto__( socket, (const char*) bs.GetData(), bs.GetNumberOfBytesUsed(), 0, ( const sockaddr* ) & sa.address.addr6, sizeof( sockaddr_in6 ) );
-#endif
+		#endif
 	}
+
+
+
+
+
+
+
+
+
+
+
+
 }
 void Router2::SendOOBMessages(Router2::MiniPunchRequest *mpr)
 {
@@ -1142,7 +1159,7 @@ void Router2::OnRerouted(Packet *packet)
 
 	// Return rerouted notice
 	SystemAddress intermediaryAddress=packet->systemAddress;
-	intermediaryAddress.SetPort(sourceToDestPort);
+	intermediaryAddress.SetPortHostOrder(sourceToDestPort);
 	rakPeerInterface->ChangeSystemAddress(endpointGuid, intermediaryAddress);
 
     unsigned int forwardingIndex;
@@ -1159,7 +1176,7 @@ void Router2::OnRerouted(Packet *packet)
 		forwardedConnectionListMutex.Unlock();
 
     	ref_fc.intermediaryAddress      = packet->systemAddress;
-		ref_fc.intermediaryAddress.SetPort(sourceToDestPort);
+		ref_fc.intermediaryAddress.SetPortHostOrder(sourceToDestPort);
 		ref_fc.intermediaryGuid         = packet->guid;
 
         rakPeerInterface->ChangeSystemAddress(endpointGuid, intermediaryAddress);
@@ -1176,7 +1193,7 @@ void Router2::OnRerouted(Packet *packet)
         ForwardedConnection fc;
         fc.endpointGuid=endpointGuid;
         fc.intermediaryAddress=packet->systemAddress;
-        fc.intermediaryAddress.SetPort(sourceToDestPort);
+        fc.intermediaryAddress.SetPortHostOrder(sourceToDestPort);
         fc.intermediaryGuid=packet->guid;
         fc.weInitiatedForwarding=false;
         // add to forwarding list. This is only here to avoid reporting direct connections in Router2::ReturnFailureOnCannotForward
@@ -1214,13 +1231,13 @@ bool Router2::OnForwardingSuccess(Packet *packet)
 	{
 		// Return rerouted notice
 		SystemAddress intermediaryAddress=packet->systemAddress;
-		intermediaryAddress.SetPort(sourceToDestPort);
+		intermediaryAddress.SetPortHostOrder(sourceToDestPort);
 		rakPeerInterface->ChangeSystemAddress(endpointGuid, intermediaryAddress);
 
         ////////////////////////////////////////////////////////////////////////////
         ForwardedConnection& ref_fc     = forwardedConnectionList[forwardingIndex];
     	ref_fc.intermediaryAddress      = packet->systemAddress;
-		ref_fc.intermediaryAddress.SetPort(sourceToDestPort);
+		ref_fc.intermediaryAddress.SetPortHostOrder(sourceToDestPort);
 		ref_fc.intermediaryGuid         = packet->guid;
         ////////////////////////////////////////////////////////////////////////////
 
@@ -1248,7 +1265,7 @@ bool Router2::OnForwardingSuccess(Packet *packet)
 		connectionRequestsMutex.Unlock();
 		fc.endpointGuid=endpointGuid;
 		fc.intermediaryAddress=packet->systemAddress;
-		fc.intermediaryAddress.SetPort(sourceToDestPort);
+		fc.intermediaryAddress.SetPortHostOrder(sourceToDestPort);
 		fc.intermediaryGuid=packet->guid;
 		fc.weInitiatedForwarding=true;
 

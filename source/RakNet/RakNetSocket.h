@@ -90,7 +90,7 @@ public:
 		int tolen) {return sendto__(s,buf,len,flags,to,tolen);}
 
 	#ifdef _WIN32
-	#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(SN_TARGET_PSP2)
+	#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(_PS4) || defined(SN_TARGET_PSP2)
 	#else
 	inline int Fcntl(int cmd, int arg) {return fcntl(s,cmd,arg);}
 	#endif
@@ -163,7 +163,7 @@ protected:
 	void* recvEvent;
 #endif
 
-	#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(SN_TARGET_PSP2)
+	#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(_PS4) || defined(SN_TARGET_PSP2)
 	/// PS3: Set for the PS3, when using signaling.
 	/// PS3: Connect with the port returned by signaling. Set this to whatever port RakNet was actually started on
 	/// PSP2: Set non-zero to use SCE_NET_SOCK_DGRAM_P2P. This should be done for ad-hoc or with 

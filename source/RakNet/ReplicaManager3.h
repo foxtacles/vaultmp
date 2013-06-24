@@ -99,7 +99,7 @@ public:
 	/// By default this is on, to make the system easier to learn and setup.<BR>
 	/// If you don't want all connections to take part in the game, or you want to delay when a connection downloads the game, set \a autoCreate to false.<BR>
 	/// If you want to delay deleting a connection that has dropped, set \a autoDestroy to false. If you do this, then you must call PopConnection() to remove that connection from being internally tracked. You'll also have to delete the connection instance on your own.<BR>
-	/// \param[in] autoCreate Automatically call ReplicaManager3::AllocConnection() for each new connection. Defaults to true.
+	/// \param[in] autoCreate Automatically call ReplicaManager3::AllocConnection() for each new connection. Defaults to true. Also see AutoCreateConnectionList()
 	/// \param[in] autoDestroy Automatically call ReplicaManager3::DeallocConnection() for each dropped connection. Defaults to true.
 	void SetAutoManageConnections(bool autoCreate, bool autoDestroy);
 
@@ -108,6 +108,15 @@ public:
 
 	/// \return What was passed to the autoDestroy parameter of SetAutoManageConnections()
 	bool GetAutoDestroyConnections(void) const;
+
+	/// \brief Call AllocConnection() and PushConnection() for each connection in \a participantList
+	/// \param[in] participantListIn The list of connections to allocate
+	/// \param[in] participantListOut The connections allocated, if any
+	/// \param[in] worldId Used for multiple worlds. World 0 is created automatically by default. See AddWorld()
+	void AutoCreateConnectionList(
+		DataStructures::List<RakNetGUID> &participantListIn,
+		DataStructures::List<Connection_RM3*> &participantListOut,
+		WorldId worldId=0);
 
 	/// \brief Track a new Connection_RM3 instance
 	/// \details If \a autoCreate is false for SetAutoManageConnections(), then you need this function to add new instances of Connection_RM3 yourself.<BR>
@@ -1073,7 +1082,7 @@ public:
 /// \brief Use Replica3 through composition instead of inheritance by containing an instance of this templated class
 /// Calls to parent class for all functions
 /// Parent class must still define and functions though!
-/// \pre Parent class must call SetParent() on this object
+/// \pre Parent class must call SetCompositeOwner() on this object
 template <class parent_type>
 class RAK_DLL_EXPORT Replica3Composite : public Replica3
 {
@@ -1083,10 +1092,10 @@ public:
     void SetCompositeOwner(parent_type *p) {r3CompositeOwner=p;}
     parent_type* GetCompositeOwner(void) const {return r3CompositeOwner;};
 	virtual void WriteAllocationID(RakNet::Connection_RM3 *destinationConnection, RakNet::BitStream *allocationIdBitstream) const {r3CompositeOwner->WriteAllocationID(destinationConnection, allocationIdBitstream);}
-	virtual RM3ConstructionState QueryConstruction(RakNet::Connection_RM3 *destinationConnection, ReplicaManager3 *replicaManager3) {return r3CompositeOwner->QueryConstruction(destinationConnection, replicaManager3);}
-	virtual RM3DestructionState QueryDestruction(RakNet::Connection_RM3 *destinationConnection, ReplicaManager3 *replicaManager3) {return r3CompositeOwner->QueryDestruction(destinationConnection, replicaManager3);}
+	virtual RakNet::RM3ConstructionState QueryConstruction(RakNet::Connection_RM3 *destinationConnection, RakNet::ReplicaManager3 *replicaManager3) {return r3CompositeOwner->QueryConstruction(destinationConnection, replicaManager3);}
+	virtual RakNet::RM3DestructionState QueryDestruction(RakNet::Connection_RM3 *destinationConnection, RakNet::ReplicaManager3 *replicaManager3) {return r3CompositeOwner->QueryDestruction(destinationConnection, replicaManager3);}
 	virtual bool QueryRemoteConstruction(RakNet::Connection_RM3 *sourceConnection) {return r3CompositeOwner->QueryRemoteConstruction(sourceConnection);}
-	virtual bool QueryRelayDestruction(Connection_RM3 *sourceConnection) const {return r3CompositeOwner->QueryRelayDestruction(sourceConnection);}
+	virtual bool QueryRelayDestruction(RakNet::Connection_RM3 *sourceConnection) const {return r3CompositeOwner->QueryRelayDestruction(sourceConnection);}
 	virtual void SerializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection) {r3CompositeOwner->SerializeConstruction(constructionBitstream, destinationConnection);}
 	virtual bool DeserializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection) {return r3CompositeOwner->DeserializeConstruction(constructionBitstream, sourceConnection);}
 	virtual void SerializeConstructionExisting(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection) {r3CompositeOwner->SerializeConstructionExisting(constructionBitstream, destinationConnection);}
@@ -1098,8 +1107,8 @@ public:
 	virtual void DeallocReplica(RakNet::Connection_RM3 *sourceConnection) {r3CompositeOwner->DeallocReplica(sourceConnection);}
 	virtual RakNet::RM3QuerySerializationResult QuerySerialization(RakNet::Connection_RM3 *destinationConnection) {return r3CompositeOwner->QuerySerialization(destinationConnection);}
 	virtual void OnUserReplicaPreSerializeTick(void) {r3CompositeOwner->OnUserReplicaPreSerializeTick();}
-	virtual RM3SerializationResult Serialize(RakNet::SerializeParameters *serializeParameters) {return r3CompositeOwner->Serialize(serializeParameters);}
-	virtual void OnSerializeTransmission(RakNet::BitStream *bitStream, RakNet::Connection_RM3 *destinationConnection, BitSize_t bitsPerChannel[RM3_NUM_OUTPUT_BITSTREAM_CHANNELS], RakNet::Time curTime) {r3CompositeOwner->OnSerializeTransmission(bitStream, destinationConnection, bitsPerChannel, curTime);}
+	virtual RakNet::RM3SerializationResult Serialize(RakNet::SerializeParameters *serializeParameters) {return r3CompositeOwner->Serialize(serializeParameters);}
+	virtual void OnSerializeTransmission(RakNet::BitStream *bitStream, RakNet::Connection_RM3 *destinationConnection, RakNet::BitSize_t bitsPerChannel[RakNet::RM3_NUM_OUTPUT_BITSTREAM_CHANNELS], RakNet::Time curTime) {r3CompositeOwner->OnSerializeTransmission(bitStream, destinationConnection, bitsPerChannel, curTime);}
 	virtual void Deserialize(RakNet::DeserializeParameters *deserializeParameters) {r3CompositeOwner->Deserialize(deserializeParameters);}
 	virtual void PostSerializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *destinationConnection) {r3CompositeOwner->PostSerializeConstruction(constructionBitstream, destinationConnection);}
 	virtual void PostDeserializeConstruction(RakNet::BitStream *constructionBitstream, RakNet::Connection_RM3 *sourceConnection) {r3CompositeOwner->PostDeserializeConstruction(constructionBitstream, sourceConnection);}

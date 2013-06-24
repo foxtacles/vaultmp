@@ -28,7 +28,7 @@
 #include "BitStream.h"
 #include "InternalPacket.h"
 #include "RakNetStatistics.h"
-#include "SHA1.h"
+#include "DR_SHA1.h"
 #include "DS_OrderedList.h"
 #include "DS_RangeList.h"
 #include "DS_BPlusTree.h"

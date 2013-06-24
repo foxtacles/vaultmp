@@ -890,7 +890,8 @@ void FileListTransfer::OnReferencePush(Packet *packet, bool isTheFullFile)
 			fps.partCount=currentNotificationIndex;
 			fps.partTotal=totalNotifications;
 
-			if (rakPeerInterface)
+// 2/19/2013 Why was this check here? It prevent smaller progress notifications
+//			if (rakPeerInterface)
 			{
 				// Thus chunk is incomplete
 				fps.iriDataChunk=0;

@@ -399,6 +399,11 @@ public:
 	/// \return Identifier of your system internally, which may not be how other systems see if you if you are behind a NAT or proxy.
 	SystemAddress GetInternalID( const SystemAddress systemAddress=UNASSIGNED_SYSTEM_ADDRESS, const int index=0 ) const;
 
+	/// \brief Sets your internal IP address, for platforms that do not support reading it, or to override a value
+	/// \param[in] systemAddress. The address to set. Use SystemAddress::FromString() if you want to use a dotted string
+	/// \param[in] index When you have multiple internal IDs, which index to set?
+	void SetInternalID(SystemAddress systemAddress, int index=0);
+
 	/// \brief Returns the unique address identifier that represents the target on the the network and is based on the target's external IP / port.
 	/// \param[in] target The SystemAddress of the remote system. Usually the same for all systems, unless you have two or more network cards.
 	SystemAddress GetExternalID( const SystemAddress target ) const;
@@ -546,7 +551,7 @@ public:
 
 	/// \brief Gets all sockets in use.
 	/// \note This sends a query to the thread and blocks on the return value for up to one second. In practice it should only take a millisecond or so.
-	/// \param[out] sockets List of RakNetSocket structures in use. Sockets will not be closed until \a sockets goes out of scope
+	/// \param[out] sockets List of RakNetSocket structures in use.
 	virtual void GetSockets( DataStructures::List<RakNetSocket2* > &sockets );
 	virtual void ReleaseSockets( DataStructures::List<RakNetSocket2* > &sockets );
 
@@ -557,6 +562,12 @@ public:
 	/// \param[in] _userUpdateThreadPtr C callback function
 	/// \param[in] _userUpdateThreadData Passed to C callback function
 	virtual void SetUserUpdateThread(void (*_userUpdateThreadPtr)(RakPeerInterface *, void *), void *_userUpdateThreadData);
+
+	/// Set a C callback to be called whenever a datagram arrives
+	/// Return true from the callback to have RakPeer handle the datagram. Return false and RakPeer will ignore the datagram.
+	/// This can be used to filter incoming datagrams by system, or to share a recvfrom socket with RakPeer
+	/// RNS2RecvStruct will only remain valid for the duration of the call
+	virtual void SetIncomingDatagramEventHandler( bool (*_incomingDatagramEventHandler)(RNS2RecvStruct *) );
 
 	// --------------------------------------------------------------------------------------------Network Simulator Functions--------------------------------------------------------------------------------------------
 	/// Adds simulated ping and packet loss to the outgoing data flow.
@@ -947,6 +958,8 @@ protected:
 	SystemAddress firstExternalID;
 	int splitMessageProgressInterval;
 	RakNet::TimeMS unreliableTimeout;
+
+	bool (*incomingDatagramEventHandler)(RNS2RecvStruct *);
 
 	// Systems in this list will not go through the secure connection process, even when secure connections are turned on. Wildcards are accepted.
 	DataStructures::List<RakNet::RakString> securityExceptionList;

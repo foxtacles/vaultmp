@@ -112,6 +112,27 @@ bool ReplicaManager3::GetAutoDestroyConnections(void) const
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+void ReplicaManager3::AutoCreateConnectionList(
+	DataStructures::List<RakNetGUID> &participantListIn,
+	DataStructures::List<Connection_RM3*> &participantListOut,
+	WorldId worldId)
+{
+	for (unsigned int index=0; index < participantListIn.Size(); index++)
+	{
+		if (GetConnectionByGUID(participantListIn[index], worldId)==false)
+		{
+			Connection_RM3 *connection = AllocConnection(rakPeerInterface->GetSystemAddressFromGuid(participantListIn[index]), participantListIn[index]);
+			if (connection)
+			{
+				PushConnection(connection);
+				participantListOut.Push(connection, _FILE_AND_LINE_);
+			}
+		}
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 bool ReplicaManager3::PushConnection(RakNet::Connection_RM3 *newConnection, WorldId worldId)
 {
 	if (newConnection==0)
@@ -270,9 +291,9 @@ unsigned int ReplicaManager3::ReferenceInternal(RakNet::Replica3 *replica3, Worl
 			replica3->creatingSystemGUID=rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
 		replica3->replicaManager=this;
 		world->userReplicaList.Push(replica3,_FILE_AND_LINE_);
-		index=world->userReplicaList.Size()-1;
+		return world->userReplicaList.Size()-1;
 	}
-	return index;
+	return -1;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -313,7 +334,7 @@ void ReplicaManager3::DereferenceList(DataStructures::List<Replica3*> &replicaLi
 
 void ReplicaManager3::GetReplicasCreatedByMe(DataStructures::List<Replica3*> &replicaListOut, WorldId worldId)
 {
-	RakNetGUID myGuid = rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
+	//RakNetGUID myGuid = rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
 	GetReplicasCreatedByGuid(rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS), replicaListOut, worldId);
 }
 

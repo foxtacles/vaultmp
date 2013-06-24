@@ -50,7 +50,7 @@ $(OBJDIR_DEBUG)/RakNet/RakPeer.o \
 $(OBJDIR_DEBUG)/RakNet/RakNetTypes.o \
 $(OBJDIR_DEBUG)/RakNet/SimpleMutex.o \
 $(OBJDIR_DEBUG)/RakNet/SignaledEvent.o \
-$(OBJDIR_DEBUG)/RakNet/SHA1.o \
+$(OBJDIR_DEBUG)/RakNet/DR_SHA1.o \
 $(OBJDIR_DEBUG)/RakNet/ReliabilityLayer.o \
 $(OBJDIR_DEBUG)/RakNet/PluginInterface2.o \
 $(OBJDIR_DEBUG)/RakNet/PacketizedTCP.o \
@@ -144,7 +144,7 @@ $(OBJDIR_RELEASE)/RakNet/RakPeer.o \
 $(OBJDIR_RELEASE)/RakNet/RakNetTypes.o \
 $(OBJDIR_RELEASE)/RakNet/SimpleMutex.o \
 $(OBJDIR_RELEASE)/RakNet/SignaledEvent.o \
-$(OBJDIR_RELEASE)/RakNet/SHA1.o \
+$(OBJDIR_RELEASE)/RakNet/DR_SHA1.o \
 $(OBJDIR_RELEASE)/RakNet/ReliabilityLayer.o \
 $(OBJDIR_RELEASE)/RakNet/PluginInterface2.o \
 $(OBJDIR_RELEASE)/RakNet/PacketizedTCP.o \
@@ -278,8 +278,8 @@ $(OBJDIR_DEBUG)/RakNet/SimpleMutex.o: ../RakNet/SimpleMutex.cpp
 $(OBJDIR_DEBUG)/RakNet/SignaledEvent.o: ../RakNet/SignaledEvent.cpp
 	$(CXX) $(CFLAGSEXT_DEBUG) $(INC_DEBUG) -c ../RakNet/SignaledEvent.cpp -o $(OBJDIR_DEBUG)/RakNet/SignaledEvent.o
 
-$(OBJDIR_DEBUG)/RakNet/SHA1.o: ../RakNet/SHA1.cpp
-	$(CXX) $(CFLAGSEXT_DEBUG) $(INC_DEBUG) -c ../RakNet/SHA1.cpp -o $(OBJDIR_DEBUG)/RakNet/SHA1.o
+$(OBJDIR_DEBUG)/RakNet/DR_SHA1.o: ../RakNet/DR_SHA1.cpp
+	$(CXX) $(CFLAGSEXT_DEBUG) $(INC_DEBUG) -c ../RakNet/DR_SHA1.cpp -o $(OBJDIR_DEBUG)/RakNet/DR_SHA1.o
 
 $(OBJDIR_DEBUG)/RakNet/ReliabilityLayer.o: ../RakNet/ReliabilityLayer.cpp
 	$(CXX) $(CFLAGSEXT_DEBUG) $(INC_DEBUG) -c ../RakNet/ReliabilityLayer.cpp -o $(OBJDIR_DEBUG)/RakNet/ReliabilityLayer.o
@@ -574,8 +574,8 @@ $(OBJDIR_RELEASE)/RakNet/SimpleMutex.o: ../RakNet/SimpleMutex.cpp
 $(OBJDIR_RELEASE)/RakNet/SignaledEvent.o: ../RakNet/SignaledEvent.cpp
 	$(CXX) $(CFLAGSEXT_RELEASE) $(INC_RELEASE) -c ../RakNet/SignaledEvent.cpp -o $(OBJDIR_RELEASE)/RakNet/SignaledEvent.o
 
-$(OBJDIR_RELEASE)/RakNet/SHA1.o: ../RakNet/SHA1.cpp
-	$(CXX) $(CFLAGSEXT_RELEASE) $(INC_RELEASE) -c ../RakNet/SHA1.cpp -o $(OBJDIR_RELEASE)/RakNet/SHA1.o
+$(OBJDIR_RELEASE)/RakNet/DR_SHA1.o: ../RakNet/DR_SHA1.cpp
+	$(CXX) $(CFLAGSEXT_RELEASE) $(INC_RELEASE) -c ../RakNet/DR_SHA1.cpp -o $(OBJDIR_RELEASE)/RakNet/DR_SHA1.o
 
 $(OBJDIR_RELEASE)/RakNet/ReliabilityLayer.o: ../RakNet/ReliabilityLayer.cpp
 	$(CXX) $(CFLAGSEXT_RELEASE) $(INC_RELEASE) -c ../RakNet/ReliabilityLayer.cpp -o $(OBJDIR_RELEASE)/RakNet/ReliabilityLayer.o

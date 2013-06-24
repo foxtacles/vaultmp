@@ -2725,7 +2725,7 @@ void TeamManager::OnLeaveTeam(Packet *packet, TM_World *world)
 		teamMember->RemoveFromSpecificTeamInternal(team);
 		if (teamMember->GetCurrentTeamCount()==0)
 		{
-			noTeamId=noTeamId;
+			teamMember->noTeamSubcategory=noTeamId;
 			teamMember->joinTeamType=JOIN_NO_TEAM;
 		}
 		PushTeamAssigned(teamMember);

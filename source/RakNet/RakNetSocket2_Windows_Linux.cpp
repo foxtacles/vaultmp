@@ -1,9 +1,11 @@
+#include "EmptyHeader.h"
+
 #ifdef RAKNET_SOCKET_2_INLINE_FUNCTIONS
 
 #ifndef RAKNETSOCKET2_WINDOWS_LINUX_CPP
 #define RAKNETSOCKET2_WINDOWS_LINUX_CPP
 
-#if (defined(_WIN32) || defined(__GNUC__)  || defined(__GCCXML__) || defined(__S3E__)) && !defined(__native_client__)
+#if !defined(WINDOWS_STORE_RT) && !defined(__native_client__)
 
 #if RAKNET_SUPPORT_IPV6==1
 
@@ -57,6 +59,7 @@ void GetMyIP_Windows_Linux_IPV4( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTER
 	int idx=0;
 	char ac[ 80 ];
 	int err = gethostname( ac, sizeof( ac ) );
+    (void) err;
 	RakAssert(err != -1);
 	
 	struct hostent *phe = gethostbyname( ac );

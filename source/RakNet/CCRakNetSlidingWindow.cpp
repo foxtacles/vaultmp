@@ -35,6 +35,7 @@ void CCRakNetSlidingWindow::Init(CCTimeType curTime, uint32_t maxDatagramPayload
 	(void) curTime;
 
 	lastRtt=estimatedRTT=deviationRtt=UNSET_TIME_US;
+	RakAssert(maxDatagramPayload <= MAXIMUM_MTU_SIZE);
 	MAXIMUM_MTU_INCLUDING_UDP_HEADER=maxDatagramPayload;
 	cwnd=maxDatagramPayload;
 	ssThresh=0.0;
@@ -304,6 +305,7 @@ CCTimeType CCRakNetSlidingWindow::GetRTOForRetransmission(unsigned char timesSen
 // ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetSlidingWindow::SetMTU(uint32_t bytes)
 {
+	RakAssert(bytes < MAXIMUM_MTU_SIZE);
 	MAXIMUM_MTU_INCLUDING_UDP_HEADER=bytes;
 }
 // ----------------------------------------------------------------------------------------------------------------------------

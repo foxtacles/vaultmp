@@ -248,7 +248,7 @@ void NatTypeDetectionServer::Update(void)
 				printf("Testing NAT_TYPE_NONE\n");
 				// S4P5 sends to C2. If arrived, no NAT. Done. (Else S4P5 potentially banned, do not use again).
 				saOut=natDetectionAttempts[i].systemAddress;
-				saOut.SetPort(natDetectionAttempts[i].c2Port);
+				saOut.SetPortHostOrder(natDetectionAttempts[i].c2Port);
 				// SocketLayer::SendTo_PC( s4p5, (const char*) &c, 1, saOut, __FILE__, __LINE__  );
 				bsp.data = (char*) &c;
 				bsp.length = 1;
@@ -263,7 +263,7 @@ void NatTypeDetectionServer::Update(void)
 				bs.Write((unsigned char) NAT_TYPE_FULL_CONE);
 				// S2P3 sends to C1 (Different address, different port, to previously used port on client). If received, Full-cone nat. Done.  (Else S2P3 potentially banned, do not use again).
 				saOut=natDetectionAttempts[i].systemAddress;
-				saOut.SetPort(natDetectionAttempts[i].systemAddress.GetPort());
+				saOut.SetPortHostOrder(natDetectionAttempts[i].systemAddress.GetPort());
 				// SocketLayer::SendTo_PC( s2p3, (const char*) bs.GetData(), bs.GetNumberOfBytesUsed(), saOut, __FILE__, __LINE__  );
 				bsp.data = (char*) bs.GetData();
 				bsp.length = bs.GetNumberOfBytesUsed();
@@ -278,7 +278,7 @@ void NatTypeDetectionServer::Update(void)
 				bs.Write((unsigned char) NAT_TYPE_ADDRESS_RESTRICTED);
 				// S1P2 sends to C1 (Same address, different port, to previously used port on client). If received, address-restricted cone nat. Done.
 				saOut=natDetectionAttempts[i].systemAddress;
-				saOut.SetPort(natDetectionAttempts[i].systemAddress.GetPort());
+				saOut.SetPortHostOrder(natDetectionAttempts[i].systemAddress.GetPort());
 				//SocketLayer::SendTo_PC( s1p2, (const char*) bs.GetData(), bs.GetNumberOfBytesUsed(), saOut, __FILE__, __LINE__  );
 				bsp.data = (char*) bs.GetData();
 				bsp.length = bs.GetNumberOfBytesUsed();

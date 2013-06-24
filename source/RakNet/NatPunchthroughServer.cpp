@@ -416,8 +416,8 @@ void NatPunchthroughServer::OnGetMostRecentPort(Packet *packet)
 				SystemAddress recipientSystemAddress = connectionAttempt->recipient->systemAddress;
 				SystemAddress recipientTargetAddress = recipientSystemAddress;
 				SystemAddress senderTargetAddress = senderSystemAddress;
-				recipientTargetAddress.SetPort(connectionAttempt->recipient->mostRecentPort);
-				senderTargetAddress.SetPort(connectionAttempt->sender->mostRecentPort);
+				recipientTargetAddress.SetPortHostOrder(connectionAttempt->recipient->mostRecentPort);
+				senderTargetAddress.SetPortHostOrder(connectionAttempt->sender->mostRecentPort);
 
 				// Pick a time far enough in the future that both systems will have gotten the message
 				int targetPing = rakPeerInterface->GetAveragePing(recipientTargetAddress);

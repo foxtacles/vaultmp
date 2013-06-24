@@ -100,7 +100,7 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
 		bs.Write(password,(const unsigned int)strlen(password));
 		bs.Write(&zero,1);
 		//bs.Write("not.my.real.password",(const unsigned int)strlen("not.my.real.password"));
-		Base64Encoding((const char*)bs.GetData(), bs.GetNumberOfBytesUsed(), outputData);
+		Base64Encoding((const unsigned char*)bs.GetData(), bs.GetNumberOfBytesUsed(), outputData);
 		sprintf(query, "AUTH PLAIN %s", outputData);
 		tcpInterface.Send(query, (unsigned int)strlen(query), emailServer,false);
 		response=GetResponse(&tcpInterface, emailServer, doPrintf);
@@ -268,7 +268,7 @@ const char *EmailSender::Send(const char *hostAddress, unsigned short hostPort, 
 
 			newBody = (char*) rakMalloc_Ex( (size_t) (attachedFiles->fileList[i].dataLengthBytes*3)/2, _FILE_AND_LINE_ );
 
-			outputOffset=Base64Encoding(attachedFiles->fileList[i].data, (int) attachedFiles->fileList[i].dataLengthBytes, newBody);
+			outputOffset=Base64Encoding((const unsigned char*) attachedFiles->fileList[i].data, (int) attachedFiles->fileList[i].dataLengthBytes, newBody);
 
 			// Send the base64 mapped file.
 			tcpInterface.Send(newBody, outputOffset, emailServer,false);

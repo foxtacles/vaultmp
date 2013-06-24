@@ -38,7 +38,7 @@ public:
 	void Clear(const char *file, unsigned int line);
 protected:
 
-	MemoryPool<structureType> memoryPool;
+	mutable MemoryPool<structureType> memoryPool;
 	RakNet::SimpleMutex memoryPoolMutex;
 	Queue<structureType*> queue;
 	RakNet::SimpleMutex queueMutex;

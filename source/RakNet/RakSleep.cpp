@@ -16,8 +16,8 @@
 #include "RakSleep.h"
 
 
-#if defined(WINDOWS_PHONE_8)
-#include "../DependentExtensions/WinPhone8/ThreadEmulation.h"
+#if defined(WINDOWS_PHONE_8) || defined(WINDOWS_STORE_RT)
+#include "ThreadEmulation.h"
 using namespace ThreadEmulation;
 #endif
 
@@ -28,6 +28,8 @@ void RakSleep(unsigned int ms)
 
 
 
+#elif defined(_PS4__)
+	_PS4_usleep((SceKernelUseconds) ms * 1000);
 
 
 #else

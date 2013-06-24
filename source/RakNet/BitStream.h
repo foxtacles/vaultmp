@@ -898,6 +898,13 @@ namespace RakNet
 			RakAssert(0);
 		}
 
+		BitStream& operator = ( const BitStream& invalid ) {
+			(void) invalid;
+			RakAssert(0);
+			static BitStream i;
+			return i;
+		}
+
 		/// \brief Assume the input source points to a native type, compress and write it.
 		void WriteCompressed( const unsigned char* inByteArray, const unsigned int size, const bool unsignedData );
 
@@ -1155,15 +1162,15 @@ namespace RakNet
 
 		if (IsBigEndian()==false)
 		{
-			data[( numberOfBitsUsed >> 3 ) + 0] = ((char *)&inTemplateVar.val)[0];
-			data[( numberOfBitsUsed >> 3 ) + 1] = ((char *)&inTemplateVar.val)[1];
-			data[( numberOfBitsUsed >> 3 ) + 2] = ((char *)&inTemplateVar.val)[2];
+			data[( numberOfBitsUsed >> 3 ) + 0] = ((unsigned char *)&inTemplateVar.val)[0];
+			data[( numberOfBitsUsed >> 3 ) + 1] = ((unsigned char *)&inTemplateVar.val)[1];
+			data[( numberOfBitsUsed >> 3 ) + 2] = ((unsigned char *)&inTemplateVar.val)[2];
 		}
 		else
 		{
-			data[( numberOfBitsUsed >> 3 ) + 0] = ((char *)&inTemplateVar.val)[3];
-			data[( numberOfBitsUsed >> 3 ) + 1] = ((char *)&inTemplateVar.val)[2];
-			data[( numberOfBitsUsed >> 3 ) + 2] = ((char *)&inTemplateVar.val)[1];
+			data[( numberOfBitsUsed >> 3 ) + 0] = ((unsigned char *)&inTemplateVar.val)[3];
+			data[( numberOfBitsUsed >> 3 ) + 1] = ((unsigned char *)&inTemplateVar.val)[2];
+			data[( numberOfBitsUsed >> 3 ) + 2] = ((unsigned char *)&inTemplateVar.val)[1];
 		}
 
 		numberOfBitsUsed+=3*8;
@@ -1515,18 +1522,18 @@ namespace RakNet
 
 		if (IsBigEndian()==false)
 		{
-			((char *)&outTemplateVar.val)[0]=data[ (readOffset >> 3) + 0];
-			((char *)&outTemplateVar.val)[1]=data[ (readOffset >> 3) + 1];
-			((char *)&outTemplateVar.val)[2]=data[ (readOffset >> 3) + 2];
-			((char *)&outTemplateVar.val)[3]=0;
+			((unsigned char *)&outTemplateVar.val)[0]=data[ (readOffset >> 3) + 0];
+			((unsigned char *)&outTemplateVar.val)[1]=data[ (readOffset >> 3) + 1];
+			((unsigned char *)&outTemplateVar.val)[2]=data[ (readOffset >> 3) + 2];
+			((unsigned char *)&outTemplateVar.val)[3]=0;
 		}
 		else
 		{
 
-			((char *)&outTemplateVar.val)[3]=data[ (readOffset >> 3) + 0];
-			((char *)&outTemplateVar.val)[2]=data[ (readOffset >> 3) + 1];
-			((char *)&outTemplateVar.val)[1]=data[ (readOffset >> 3) + 2];
-			((char *)&outTemplateVar.val)[0]=0;
+			((unsigned char *)&outTemplateVar.val)[3]=data[ (readOffset >> 3) + 0];
+			((unsigned char *)&outTemplateVar.val)[2]=data[ (readOffset >> 3) + 1];
+			((unsigned char *)&outTemplateVar.val)[1]=data[ (readOffset >> 3) + 2];
+			((unsigned char *)&outTemplateVar.val)[0]=0;
 		}
 
 		readOffset+=3*8;

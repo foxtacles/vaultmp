@@ -134,7 +134,7 @@ namespace DataStructures
 			if (res==0)
 			{
 				*objectExists=true;
-				return index;
+				return (unsigned)index;
 			}
 			else if (res<0)
 			{
@@ -150,7 +150,7 @@ namespace DataStructures
 			if (lowerBound>upperBound)
 			{
 				*objectExists=false;
-				return lowerBound; // No match
+				return (unsigned)lowerBound; // No match
 			}
 		}
 	}

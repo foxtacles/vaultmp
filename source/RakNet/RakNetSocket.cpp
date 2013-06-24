@@ -85,7 +85,7 @@ RakNetSocket* RakNetSocket::Create
 		sock = sceNetSocket( "RakNetSocket::Create", SCE_NET_AF_INET, SCE_NET_SOCK_DGRAM_P2P, 0 );
 	#elif defined(WINDOWS_STORE_RT)
 		sock = WinRTCreateDatagramSocket(af,type,protocol);
-	#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+	#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(_PS4)
 		sock = socket__( AF_INET, SOCK_DGRAM_P2P, 0 );
 	#else
 		sock = socket__(af, type, protocol);

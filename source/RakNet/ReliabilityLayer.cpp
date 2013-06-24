@@ -535,6 +535,10 @@ void ReliabilityLayer::FreeThreadSafeMemory( void )
 	{
 		InternalPacket *prev;
 		InternalPacket *iter = resendLinkedListHead;
+
+#ifdef _MSC_VER
+#pragma warning( disable : 4127 ) // warning C4127: conditional expression is constant
+#endif
 		while (1)
 		{
 			if (iter->data)
@@ -1701,7 +1705,7 @@ void ReliabilityLayer::Update( RakNetSocket2 *s, SystemAddress &systemAddress, i
 			bsp.data = (char*) dat->data;
 			bsp.length = dat->length;
 			bsp.systemAddress = systemAddress;
-			if (dat->s->Send(&bsp, _FILE_AND_LINE_) == 10040)
+			dat->s->Send(&bsp, _FILE_AND_LINE_);
 
 			RakNet::OP_DELETE(dat,__FILE__,__LINE__);
 		}
@@ -1739,6 +1743,10 @@ void ReliabilityLayer::Update( RakNetSocket2 *s, SystemAddress &systemAddress, i
 				// Cull out all unreliable messages that have exceeded the timeout
 				InternalPacket *cur = unreliableLinkedListHead;
 				InternalPacket *end = unreliableLinkedListHead->unreliablePrev;
+
+#ifdef _MSC_VER
+#pragma warning( disable : 4127 ) // warning C4127: conditional expression is constant
+#endif
 				while (1)
 				{
 					if (time > cur->creationTime+(CCTimeType)unreliableTimeout)

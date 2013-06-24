@@ -60,6 +60,8 @@ struct Packet;
 		virtual PluginReceiveResult OnReceive(Packet *packet);
 
 		virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
+		virtual void OnRakPeerShutdown(void);
+		virtual void OnDetach(void);
 
 		virtual void OnRNS2Recv(RNS2RecvStruct *recvStruct);
 		virtual void DeallocRNS2RecvStruct(RNS2RecvStruct *s, const char *file, unsigned int line);

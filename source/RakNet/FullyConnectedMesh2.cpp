@@ -310,7 +310,7 @@ void FullyConnectedMesh2::OnNewConnection(const SystemAddress &systemAddress, Ra
 	(void) rakNetGUID;
 	(void) systemAddress;
 
-	UpdateVerifiedJoinInProgressMember(systemAddress, rakNetGUID, JIPS_CONNECTED);
+	UpdateVerifiedJoinInProgressMember(rakNetGUID, rakNetGUID, JIPS_CONNECTED);
 
 	if (autoParticipateConnections)
 		AddParticipant(rakNetGUID);
@@ -319,7 +319,7 @@ void FullyConnectedMesh2::OnFailedConnectionAttempt(Packet *packet, PI2_FailedCo
 {
 	if (failedConnectionAttemptReason==FCAR_ALREADY_CONNECTED)
 	{
-		UpdateVerifiedJoinInProgressMember(packet->systemAddress, packet->guid, JIPS_CONNECTED);
+		UpdateVerifiedJoinInProgressMember(packet->guid, packet->guid, JIPS_CONNECTED);
 	}
 	else
 	{
@@ -721,7 +721,8 @@ void FullyConnectedMesh2::RespondOnVerifiedJoinCapable(Packet *packet, bool acce
 	{
 		// Tell client rejected, otherwise process the same as ID_FCM2_VERIFIED_JOIN_FAILED
 		bsOut.Write((MessageID)ID_FCM2_VERIFIED_JOIN_REJECTED);
-		bsOut.Write(additionalData);
+		if (additionalData)
+			bsOut.Write(additionalData);
 	}
 
 	SendUnified(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->guid, false);
@@ -1048,7 +1049,7 @@ void FullyConnectedMesh2::UpdateVerifiedJoinInProgressMember(const AddressOrGUID
 			if (vjip->members[j].guid==UNASSIGNED_RAKNET_GUID && guidToAssign!=UNASSIGNED_RAKNET_GUID)
 				vjip->members[j].guid = guidToAssign;
 
-			if (vjip->members[j].joinInProgressState!=newState)
+			if (vjip->members[j].joinInProgressState==JIPS_PROCESSING)
 			{
 				anythingChanged=true;
 				vjip->members[j].joinInProgressState=newState;

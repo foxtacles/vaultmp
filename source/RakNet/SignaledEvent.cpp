@@ -172,7 +172,8 @@ void SignaledEvent::WaitOnEvent(int timeoutMs)
 	isSignaledMutex.Unlock();
 
 	
-	struct timespec   ts;
+
+	//struct timespec   ts;
 
 	// Else wait for SetEvent to be called
 
@@ -189,12 +190,17 @@ void SignaledEvent::WaitOnEvent(int timeoutMs)
 
 
 
+
+
+
+		struct timespec   ts;
+
 		int rc;
 		struct timeval    tp;
 		rc =  gettimeofday(&tp, NULL);
 		ts.tv_sec  = tp.tv_sec;
 		ts.tv_nsec = tp.tv_usec * 1000;
-
+// #endif
 
 		while (timeoutMs > 30)
 		{
@@ -243,5 +249,6 @@ void SignaledEvent::WaitOnEvent(int timeoutMs)
 		isSignaledMutex.Lock();
 		isSignaled=false;
 		isSignaledMutex.Unlock();
+
 #endif
 }

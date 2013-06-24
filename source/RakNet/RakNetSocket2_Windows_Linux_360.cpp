@@ -1,9 +1,11 @@
+#include "EmptyHeader.h"
+
 #ifdef RAKNET_SOCKET_2_INLINE_FUNCTIONS
 
 #ifndef RAKNETSOCKET2_WINDOWS_LINUX_360_CPP
 #define RAKNETSOCKET2_WINDOWS_LINUX_360_CPP
 
-#if (defined(_WIN32) || defined(__GNUC__)  || defined(__GCCXML__) || defined(__S3E__) ) && !defined(__native_client__)
+#if (defined(_WIN32) || defined(__GNUC__)  || defined(__GCCXML__) || defined(__S3E__) ) && !defined(WINDOWS_STORE_RT) && !defined(__native_client__)
 
 RNS2SendResult RNS2_Windows_Linux_360::Send_Windows_Linux_360NoVDP( RNS2Socket rns2Socket, RNS2_SendParameters *sendParameters, const char *file, unsigned int line ) {
 

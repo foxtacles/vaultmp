@@ -156,9 +156,10 @@ void PrepareAddrInfoHints(addrinfo *hints)
 }
 #endif
 
+/*
 // Frogwares: Define this
 // #define DEBUG_SENDTO_SPIKES
-
+#if !defined(WINDOWS_STORE_RT)
 bool SocketLayer::IsPortInUse_Old(unsigned short port, const char *hostAddress)
 {
 #ifdef __native_client__
@@ -170,11 +171,11 @@ bool SocketLayer::IsPortInUse_Old(unsigned short port, const char *hostAddress)
 	// Listen on our designated Port#
 	listenerSocketAddress.sin_port = htons( port );
 
-
-
-
+#if defined(SN_TARGET_PSP2)
+	listenSocket = socket__( AF_INET, SCE_NET_SOCK_DGRAM_P2P, 0 );
+#else
 	listenSocket = socket__( AF_INET, SOCK_DGRAM, 0 );
-
+#endif
 
 #if !defined(WINDOWS_STORE_RT)
 	if ( listenSocket == 0 )
@@ -187,35 +188,37 @@ bool SocketLayer::IsPortInUse_Old(unsigned short port, const char *hostAddress)
 	
 	if ( hostAddress && hostAddress[0] )
 	{
-
-
-
+#if defined(SN_TARGET_PSP2)
+		inet_addr__( hostAddress, &listenerSocketAddress.sin_addr );
+#else
 		listenerSocketAddress.sin_addr.s_addr = inet_addr__( hostAddress );
-
+#endif
 	}
 	else
 		listenerSocketAddress.sin_addr.s_addr = INADDR_ANY;
 
-
-
-
-
-
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(_PS4)
+	// Binding specific addresses doesn't work with the PS3
+	// The functions return success but broadcast messages, possibly more, never arrive
+	listenerSocketAddress.sin_addr.s_addr = INADDR_ANY;
+#endif
 
 	int ret = bind__( listenSocket, ( struct sockaddr * ) & listenerSocketAddress, sizeof( listenerSocketAddress ) );
 	closesocket__(listenSocket);
 
-
-
-
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(_PS4)
+	return ret == SYS_NET_EADDRINUSE;
+#else
 	// 	#if defined(_DEBUG)
 	// 	if (ret == -1)
 	// 		perror("Failed to bind to address:");
 	// 	#endif
 	return ret <= -1;
-
+#endif
 #endif
 }
+*/
+/*
 bool SocketLayer::IsSocketFamilySupported(const char *hostAddress, unsigned short socketFamily)
 {
 	(void) hostAddress;
@@ -258,6 +261,8 @@ bool SocketLayer::IsSocketFamilySupported(const char *hostAddress, unsigned shor
 	return false;
 #endif
 }
+*/
+/*
 bool SocketLayer::IsPortInUse(unsigned short port, const char *hostAddress, unsigned short socketFamily)
 {
 #if RAKNET_SUPPORT_IPV6!=1
@@ -311,6 +316,9 @@ bool SocketLayer::IsPortInUse(unsigned short port, const char *hostAddress, unsi
 	return true;
 #endif // #if RAKNET_SUPPORT_IPV6!=1
 }
+
+#endif // #if defined(WINDOWS_STORE_RT)
+*/
 /*
 void SocketLayer::SetDoNotFragment( RakNetSocket* listenSocket, int opt )
 {
@@ -345,7 +353,7 @@ void SocketLayer::SetNonBlocking( RakNetSocket* listenSocket)
 #elif defined(_WIN32)
 	unsigned long nonBlocking = 1;
 	listenSocket->IOCTLSocket( FIONBIO, &nonBlocking );
-#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(SN_TARGET_PSP2)
+#elif defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(_PS4) || defined(SN_TARGET_PSP2)
 	int sock_opt=1;
 	listenSocket->SetSockOpt( SOL_SOCKET, SO_NBIO, ( char * ) & sock_opt, sizeof ( sock_opt ) );
 #else
@@ -434,7 +442,7 @@ RakNetSocket *SocketLayer::CreateBoundSocket_PS3Lobby( unsigned short port, bool
 	(void) forceHostAddress;
 	(void) socketFamily;
 
-#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(_PS4)
 	(void) blockingSocket;
 
 	int ret;
@@ -541,7 +549,7 @@ RakNetSocket *SocketLayer::CreateBoundSocket_PSP2( unsigned short port, bool blo
 		listenerSocketAddress.sin_addr.s_addr = INADDR_ANY;
 	}
 
-#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(SN_TARGET_PSP2)
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(_PS4) || defined(SN_TARGET_PSP2)
 	// Binding specific addresses doesn't work with the PS3
 	// The functions return success but broadcast messages, possibly more, never arrive
 	listenerSocketAddress.sin_addr.s_addr = INADDR_ANY;
@@ -680,7 +688,7 @@ void onRecvFrom(void* pData, int32_t dataSize)
 
 	if(ok)
 	{
-		sab->recvFromAddress.SetPort(pp::NetAddressPrivate::GetPort(addr));
+		sab->recvFromAddress.SetPortHostOrder(pp::NetAddressPrivate::GetPort(addr));
 
 		if(sab->peer)
 		{
@@ -862,7 +870,7 @@ RakNetSocket *SocketLayer::CreateBoundSocket_IPV4( RakPeer *peer, unsigned short
 		listenerSocketAddress.sin_addr.s_addr = INADDR_ANY;
 	}
 
-#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(SN_TARGET_PSP2)
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(_PS4) || defined(SN_TARGET_PSP2)
 	// Binding specific addresses doesn't work with the PS3
 	// The functions return success but broadcast messages, possibly more, never arrive
 	listenerSocketAddress.sin_addr.s_addr = INADDR_ANY;
@@ -874,7 +882,7 @@ RakNetSocket *SocketLayer::CreateBoundSocket_IPV4( RakPeer *peer, unsigned short
 
 	if ( ret <= -1 )
 	{
-#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(_PS4)
 		ret = sys_net_errno;
 		// See Error Codes for Socket Functions
 		// Error codes of socket functions obtained with sys_net_errno
@@ -935,12 +943,12 @@ RakNetSocket *SocketLayer::CreateBoundSocket_IPV4( RakPeer *peer, unsigned short
 		//Free the buffer.
 		LocalFree( messageBuffer );
 		#endif
-#elif (defined(__GNUC__) || defined(__GCCXML__) || defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)  ) && !defined(_WIN32)
+#elif (defined(__GNUC__) || defined(__GCCXML__) || defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(_PS4)  ) && !defined(_WIN32)
 		switch (ret)
 		{
 		case EBADF:
 			RAKNET_DEBUG_PRINTF("bind__(): sockfd is not a valid descriptor.\n"); break;
-#if !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3) && !defined(SN_TARGET_PSP2)
+#if !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3) && !defined(_PS4) && !defined(SN_TARGET_PSP2)
 		case ENOTSOCK:
 			RAKNET_DEBUG_PRINTF("bind__(): Argument is a descriptor for a file, not a socket.\n"); break;
 #endif
@@ -960,7 +968,7 @@ RakNetSocket *SocketLayer::CreateBoundSocket_IPV4( RakPeer *peer, unsigned short
 			RAKNET_DEBUG_PRINTF("bind__(): A component of the path prefix is not a directory.\n"); break;
 		case EACCES:
 			RAKNET_DEBUG_PRINTF("bind__(): Search permission is denied on a component of the path prefix.\n"); break;
-#if !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3) && !defined(SN_TARGET_PSP2)
+#if !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3) && !defined(_PS4) && !defined(SN_TARGET_PSP2)
 		case ELOOP:
 			RAKNET_DEBUG_PRINTF("bind__(): Too many symbolic links were encountered in resolving my_addr.\n"); break;
 #endif
@@ -1053,7 +1061,7 @@ RakNetSocket *SocketLayer::CreateBoundSocket_SupportIPV4And6( RakPeer *peer, uns
 	{
 	case EBADF:
 		RAKNET_DEBUG_PRINTF("bind__(): sockfd is not a valid descriptor.\n"); break;
-#if !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3) && !defined(SN_TARGET_PSP2)
+#if !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3) && !defined(_PS4) && !defined(SN_TARGET_PSP2)
 	case ENOTSOCK:
 		RAKNET_DEBUG_PRINTF("bind__(): Argument is a descriptor for a file, not a socket.\n"); break;
 #endif
@@ -1073,7 +1081,7 @@ RakNetSocket *SocketLayer::CreateBoundSocket_SupportIPV4And6( RakPeer *peer, uns
 		RAKNET_DEBUG_PRINTF("bind__(): A component of the path prefix is not a directory.\n"); break;
 	case EACCES:
 		RAKNET_DEBUG_PRINTF("bind__(): Search permission is denied on a component of the path prefix.\n"); break;
-#if !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3) && !defined(SN_TARGET_PSP2)
+#if !defined(_PS3) && !defined(__PS3__) && !defined(SN_TARGET_PS3) && !defined(_PS4) && !defined(SN_TARGET_PSP2)
 	case ELOOP:
 		RAKNET_DEBUG_PRINTF("bind__(): Too many symbolic links were encountered in resolving my_addr.\n"); break;
 #endif
@@ -1110,48 +1118,49 @@ RakNetSocket *SocketLayer::CreateBoundSocket( RakPeer *peer, unsigned short port
 #endif
 }
 */
+/*
 const char* SocketLayer::DomainNameToIP_Old( const char *domainName )
 {
 	static struct in_addr addr;
 	memset(&addr,0,sizeof(in_addr));
 
+#if defined(_XBOX) || defined(_XBOX_720_WITH_XBOX_LIVE) || defined(X360)
+	WSAEVENT hEvent = WSACreateEvent();
+	XNDNS* pDns = NULL;
 
+	HRESULT err = XNetDnsLookup( domainName, hEvent, &pDns );
+	WaitForSingleObject( hEvent, 1000 );
+	WSACloseEvent( hEvent );
 
+	if( pDns )
+	{
+		const unsigned int ADDR_BUFF_SIZE = 16;		//Enough room for "xxx.xxx.xxx.xxx\0"
+		static char addrBuff[ADDR_BUFF_SIZE] = {0};
 
+		if( pDns->iStatus == 0 )
+		{
+			memcpy( &addr, &pDns->aina[0].s_addr, sizeof( struct in_addr ) );
+			XNetInAddrToString(addr, addrBuff, ADDR_BUFF_SIZE);
+		}
+		else
+		{
+			//error "DNS lookup failed: %u", pDns->iStatus
+		}
+		XNetDnsRelease( pDns );
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#if   defined(WINDOWS_STORE_RT)
+		return addrBuff;
+	}
+	else
+	{
+		//error "DNS lookup failed: %u", err;
+	}
+#elif defined(WINDOWS_STORE_RT)
 	// Do I use http://msdn.microsoft.com/en-US/library/windows/apps/windows.networking.sockets.datagramsocketinformation for this?
 	// Perhaps DatagramSocket., followed by GetEndpointParisAsync
 	RakAssert("Not yet supported" && 0);
-
-
-
+#elif defined(SN_TARGET_PSP2)
+	inet_addr__(domainName, &addr);
+	return inet_ntoa( addr );
 #else
 	// Use inet_addr instead? What is the difference?
 	struct hostent * phe = gethostbyname( domainName );
@@ -1171,44 +1180,46 @@ const char* SocketLayer::DomainNameToIP_Old( const char *domainName )
 
 	return "";
 }
+*/
+/*
 const char* SocketLayer::DomainNameToIP( const char *domainName )
 {
 #if RAKNET_SUPPORT_IPV6!=1
 	return DomainNameToIP_Old(domainName);
 #else
 
+#if defined(_XBOX) || defined(_XBOX_720_WITH_XBOX_LIVE) || defined(X360)
+	struct in_addr addr;
+	WSAEVENT hEvent = WSACreateEvent();
+	XNDNS* pDns = NULL;
 
+	HRESULT err = XNetDnsLookup( domainName, hEvent, &pDns );
+	WaitForSingleObject( hEvent, 1000 );
+	WSACloseEvent( hEvent );
 
+	if( pDns )
+	{
+		const unsigned int ADDR_BUFF_SIZE = 16;		//Enough room for "xxx.xxx.xxx.xxx\0"
+		static char addrBuff[ADDR_BUFF_SIZE] = {0};
 
+		if( pDns->iStatus == 0 )
+		{
+			memcpy( &addr, &pDns->aina[0].s_addr, sizeof( struct in_addr ) );
+			XNetInAddrToString(addr, addrBuff, ADDR_BUFF_SIZE);
+		}
+		else
+		{
+			//error "DNS lookup failed: %u", pDns->iStatus
+		}
+		XNetDnsRelease( pDns );
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		return addrBuff;
+	}
+	else
+	{
+		//error "DNS lookup failed: %u", err;
+	}
+#else
 
 	struct addrinfo hints, *res, *p;
 	int status;
@@ -1247,12 +1258,13 @@ const char* SocketLayer::DomainNameToIP( const char *domainName )
 		return ipstr;
 //	}
 
-
+#endif
 
 	return "";
 
 #endif // #if RAKNET_SUPPORT_IPV6!=1
 }
+*/
 
 /*
 void SocketLayer::Write( RakNetSocket*writeSocket, const char* data, const int length )
@@ -1286,7 +1298,7 @@ void SocketLayer::RecvFromBlocking_IPV4( RakNetSocket *s, RakPeer *rakPeer, char
 	int dataOutSize;
 	const int flag=0;
 
-#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(_PS4)
 	sockaddr_in_p2p sap2p;
 	if (s->GetRemotePortRakNetWasStartedOn()!=0)
 	{
@@ -1332,7 +1344,7 @@ void SocketLayer::RecvFromBlocking_IPV4( RakNetSocket *s, RakPeer *rakPeer, char
 		return;
 	*timeRead=RakNet::GetTimeUS();
 
-#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(SN_TARGET_PSP2)
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(_PS4) || defined(SN_TARGET_PSP2)
 	if (s->GetRemotePortRakNetWasStartedOn()!=0)
 	{
 		systemAddressOut->SetPortNetworkOrder( sap2p.sin_port );
@@ -1359,7 +1371,7 @@ void SocketLayer::RecvFromBlockingIPV4And6( RakNetSocket *s, RakPeer *rakPeer, c
 	int dataOutSize;
 	const int flag=0;
 
-#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(SN_TARGET_PSP2)
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(_PS4) || defined(SN_TARGET_PSP2)
 	sockaddr_in_p2p sap2p;
 	if (remotePortRakNetWasStartedOn_PS3!=0)
 	{
@@ -1394,7 +1406,7 @@ void SocketLayer::RecvFromBlockingIPV4And6( RakNetSocket *s, RakPeer *rakPeer, c
 		return;
 	*timeRead=RakNet::GetTimeUS();
 
-#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(SN_TARGET_PSP2)
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(_PS4) || defined(SN_TARGET_PSP2)
 	if (remotePortRakNetWasStartedOn_PS3!=0)
 	{
 		systemAddressOut->port = ntohs( sap2p.sin_port );
@@ -1429,7 +1441,7 @@ void SocketLayer::RecvFromBlocking( RakNetSocket *s, RakPeer *rakPeer, char *dat
 		RecvFromBlocking_IPV4(s,rakPeer,dataOut,bytesReadOut,systemAddressOut,timeRead);
 	#else
 		RecvFromBlockingIPV4And6(s,rakPeer,dataOut,bytesReadOut,systemAddressOut,timeRead);
-	#endif // defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(SN_TARGET_PSP2)
+	#endif // defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(_PS4) || defined(SN_TARGET_PSP2)
 #endif
 
 }
@@ -1442,7 +1454,7 @@ int SocketLayer::SendTo_PS3Lobby( RakNetSocket *s, const char *data, int length,
 	(void) systemAddress;
 
 	int len=0;
-#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(_PS4)
 	sockaddr_in_p2p sa;
 	memset(&sa, 0, sizeof(sa));
 	// LAME!!!! You have to know the behind-nat port on the recipient! Just guessing it is the same as our own
@@ -1616,7 +1628,7 @@ int SocketLayer::SendTo( RakNetSocket *s, const char *data, int length, SystemAd
 
 	if (s->GetRemotePortRakNetWasStartedOn()!=0)
 	{
-	#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3)
+	#if defined(_PS3) || defined(__PS3__) || defined(SN_TARGET_PS3) || defined(_PS4)
 		len = SendTo_PS3Lobby(s,data,length,systemAddress);
 	#elif defined(SN_TARGET_PSP2)
 		len = SendTo_PSP2(s,data,length,systemAddress);
@@ -1992,6 +2004,8 @@ void GetMyIP_Win32( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
 
 void SocketLayer::GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
 {
+
+
 
 
 

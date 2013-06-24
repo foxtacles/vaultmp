@@ -39,6 +39,7 @@ enum StartupResult
 	SOCKET_FAILED_TEST_SEND,
 	PORT_CANNOT_BE_ZERO,
 	FAILED_TO_CREATE_NETWORK_THREAD,
+	COULD_NOT_GENERATE_GUID,
 	STARTUP_OTHER_FAILURE
 };
 
@@ -196,10 +197,10 @@ struct RAK_DLL_EXPORT SystemAddress
 	union// In6OrIn4
 	{
 #if RAKNET_SUPPORT_IPV6==1
-		struct sockaddr_in6 addr6;
+		sockaddr_in6 addr6;
 #endif
 
-		struct sockaddr_in addr4;
+		sockaddr_in addr4;
 	} address;
 
 	/// This is not used internally, but holds a copy of the port held in the address union, so for debugging it's easier to check what port is being held
@@ -266,7 +267,8 @@ struct RAK_DLL_EXPORT SystemAddress
 	unsigned short GetPortNetworkOrder(void) const;
 
 	/// Sets the port. The port value should be in host order (this is what you normally use)
-	void SetPort(unsigned short s);
+	/// Renamed from SetPort because of winspool.h http://edn.embarcadero.com/article/21494
+	void SetPortHostOrder(unsigned short s);
 
 	/// \internal Sets the port. The port value should already be in network order.
 	void SetPortNetworkOrder(unsigned short s);

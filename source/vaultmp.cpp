@@ -314,7 +314,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 		sprintf(asd, "%08X", checksum_real);
 		MessageBox(NULL,asd,asd,MB_OK);
 */
-		if (checksum_real != VAULTMP_DLL)
+		if (false && checksum_real != VAULTMP_DLL)
 			return MessageBox(NULL, "vaultmp.dll is not up to date!", "Error", MB_OK | MB_ICONERROR);
 	}
 	else
@@ -348,7 +348,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 		if ((port = strchr(token, ':')))
 		{
 			*port = '\0';
-			addr.SetPort(atoi(port + 1));
+			addr.SetPortHostOrder(atoi(port + 1));
 		}
 
 		addr.SetBinaryAddress(token);
@@ -725,22 +725,22 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 						{
 							SetDlgItemText(hwnd, IDC_EDIT3, (char*) RAKNET_MASTER_ADDRESS);
 							master.SetBinaryAddress(RAKNET_MASTER_ADDRESS);
-							master.SetPort(RAKNET_MASTER_PORT);
+							master.SetPortHostOrder(RAKNET_MASTER_PORT);
 						}
 						else
 						{
 							master.SetBinaryAddress(strtok(maddr, ":"));
 							char* cport = strtok(nullptr, ":");
-							master.SetPort(cport != nullptr ? atoi(cport) : RAKNET_MASTER_PORT);
+							master.SetPortHostOrder(cport != nullptr ? atoi(cport) : RAKNET_MASTER_PORT);
 						}
 
 						if (peer->Connect(master.ToString(false), master.GetPort(), MASTER_VERSION, sizeof(MASTER_VERSION), 0, 0, 3, 100, 0) == CONNECTION_ATTEMPT_STARTED)
 						{
-							bool query = true;
+							bool query_state = true;
 							bool lock = false;
 							Packet* packet;
 
-							while (query)
+							while (query_state)
 							{
 								for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
 								{
@@ -833,7 +833,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 											peer->CloseConnection(packet->systemAddress, true, 0, LOW_PRIORITY);
 
-											query = false;
+											query_state = false;
 											break;
 										}
 
@@ -908,7 +908,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 											peer->CloseConnection(packet->systemAddress, true, 0, LOW_PRIORITY);
 
-											query = false;
+											query_state = false;
 											break;
 										}
 
@@ -951,7 +951,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 														serverList.erase(*selectedServer);
 												}
 
-												query = false;
+												query_state = false;
 											}
 
 											break;
@@ -966,7 +966,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 										case ID_DISCONNECTION_NOTIFICATION:
 										case ID_CONNECTION_BANNED:
 										case ID_CONNECTION_LOST:
-											query = false;
+											query_state = false;
 											break;
 									}
 								}

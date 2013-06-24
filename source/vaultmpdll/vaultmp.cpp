@@ -7,6 +7,18 @@
 
 using namespace std;
 
+struct remotePlayers
+{
+    char name[64];
+    bool player;
+    double health;
+    double pos[3];
+    double rot[3];
+    long int pid;
+};
+
+static remotePlayers players[10];
+
 typedef void (*CallCommand)(void*, void*, void*, void*, void*, void*, void*, void*);
 typedef bool (*QueueUIMessage)(const char* msg, unsigned int emotion, const char* ddsPath, const char* soundName, float msgTime);
 typedef unsigned int (*LookupForm)(unsigned int);
@@ -17,6 +29,7 @@ typedef void (*Chatbox_HideChatbox)(bool);
 typedef void (*Chatbox_LockChatbox)(bool);
 typedef void (*Chatbox_SetChatboxPos)(float, float);
 typedef void (*Chatbox_SetChatboxSize)(float, float);
+typedef void (*Chatbox_SetPlayersDataPointer)(remotePlayers*);
 
 static HANDLE hProc;
 static PipeServer pipeServer;
@@ -29,6 +42,7 @@ static Chatbox_HideChatbox HideChatbox;
 static Chatbox_LockChatbox LockChatbox;
 static Chatbox_SetChatboxPos SetChatboxPos;
 static Chatbox_SetChatboxSize SetChatboxSize;
+static Chatbox_SetPlayersDataPointer SetPlayersDataPointer;
 static QueueUIMessage QueueMessage;
 
 static void PatchGame(HINSTANCE& silverlock);
@@ -653,9 +667,29 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 		LockChatbox = reinterpret_cast<Chatbox_LockChatbox>(GetProcAddress(vaultgui, "LockChatbox"));
 		SetChatboxPos = reinterpret_cast<Chatbox_SetChatboxPos>(GetProcAddress(vaultgui, "SetChatboxPos"));
 		SetChatboxSize = reinterpret_cast<Chatbox_SetChatboxSize>(GetProcAddress(vaultgui, "SetChatboxSize"));
+		SetPlayersDataPointer = reinterpret_cast<Chatbox_SetPlayersDataPointer>(GetProcAddress(vaultgui, "SetPlayersDataPointer"));
 
-		if (!AddToChat || !GetQueue || !HideChatbox || !LockChatbox || !SetChatboxPos || !SetChatboxSize)
+		if (!AddToChat || !GetQueue || !HideChatbox || !LockChatbox || !SetChatboxPos || !SetChatboxSize || !SetPlayersDataPointer)
 			DLLerror = true;
+
+players[0].health = 80.0;
+sprintf(players[0].name, "asdf");
+players[0].pos[0] = 995.0;
+players[0].pos[1] = 7157.0;
+players[0].pos[2] = 6802.0;
+players[0].pid = 1;
+players[0].player = true;
+
+
+players[1].health = 80.0;
+sprintf(players[1].name, "asdf123");
+players[1].pos[0] = 985.0;
+players[1].pos[1] = 7357.0;
+players[1].pos[2] = 6802.0;
+players[1].pid = 2;
+players[1].player = false;
+
+		SetPlayersDataPointer(players);
 	}
 
 	pipeClient.SetPipeAttributes("BethesdaClient", PIPE_LENGTH);

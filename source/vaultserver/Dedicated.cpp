@@ -215,7 +215,7 @@ void Dedicated::FileThread()
 	{
 		snprintf(file, sizeof(file), "%s/%s/%s", dir, MODFILES_PATH, it->first.c_str());
 		len = Utils::FileLength(file);
-		files.AddFile(it->first.c_str(), file, 0, len, len, FileListNodeContext(FILE_MODFILE, i), true);
+		files.AddFile(it->first.c_str(), file, 0, len, len, FileListNodeContext(FILE_MODFILE, i, 0, 0), true);
 	}
 
 	Packet* packet;
@@ -250,7 +250,7 @@ void Dedicated::DedicatedThread()
 		peer->SetMaximumIncomingConnections(connections);
 		master.SetBinaryAddress(strtok(&buf[0], ":"));
 		char* cport = strtok(nullptr, ":");
-		master.SetPort(cport != nullptr ? atoi(cport) : RAKNET_MASTER_STANDARD_PORT);
+		master.SetPortHostOrder(cport != nullptr ? atoi(cport) : RAKNET_MASTER_STANDARD_PORT);
 		peer->Connect(master.ToString(false), master.GetPort(), MASTER_VERSION, sizeof(MASTER_VERSION), 0, 0, 3, 500, 0);
 		announcetime = GetTimeMS();
 	}

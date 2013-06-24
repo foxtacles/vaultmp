@@ -73,6 +73,8 @@
 		<Unit filename="../RakNet/ConnectionGraph2.h" />
 		<Unit filename="../RakNet/ConsoleServer.cpp" />
 		<Unit filename="../RakNet/ConsoleServer.h" />
+		<Unit filename="../RakNet/DR_SHA1.cpp" />
+		<Unit filename="../RakNet/DR_SHA1.h" />
 		<Unit filename="../RakNet/DS_BPlusTree.h" />
 		<Unit filename="../RakNet/DS_BinarySearchTree.h" />
 		<Unit filename="../RakNet/DS_BytePool.cpp" />
@@ -232,8 +234,6 @@
 		<Unit filename="../RakNet/ReplicaManager3.h" />
 		<Unit filename="../RakNet/Router2.cpp" />
 		<Unit filename="../RakNet/Router2.h" />
-		<Unit filename="../RakNet/SHA1.cpp" />
-		<Unit filename="../RakNet/SHA1.h" />
 		<Unit filename="../RakNet/SecureHandshake.cpp" />
 		<Unit filename="../RakNet/SecureHandshake.h" />
 		<Unit filename="../RakNet/SendToThread.cpp" />
