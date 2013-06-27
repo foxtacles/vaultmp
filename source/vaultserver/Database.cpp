@@ -8,6 +8,7 @@
 #include "BaseContainer.h"
 #include "Item.h"
 #include "Terminal.h"
+#include "Interior.h"
 
 using namespace std;
 
@@ -139,3 +140,4 @@ template class Database<DB::NPC>;
 template class Database<DB::BaseContainer>;
 template class Database<DB::Item>;
 template class Database<DB::Terminal>;
+template class Database<DB::Interior>;

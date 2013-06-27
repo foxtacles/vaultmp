@@ -300,11 +300,12 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				{
 					NetworkID id;
 					unsigned int cell;
-					PacketFactory::Access<pTypes::ID_UPDATE_CELL>(packet, id, cell);
+					double X, Y, Z;
+					PacketFactory::Access<pTypes::ID_UPDATE_CELL>(packet, id, cell, X, Y, Z);
 					auto reference = GameFactory::GetMultiple(vector<NetworkID>{id, GameFactory::LookupNetworkID(PLAYER_REFERENCE)});
 					auto player = vaultcast<Player>(reference[1]);
 					GameFactory::LeaveReference(reference[1].get());
-					Game::net_SetCell(reference[0].get(), player.get(), cell);
+					Game::net_SetCell(reference[0].get(), player.get(), cell, X, Y, Z);
 					break;
 				}
 

@@ -353,7 +353,7 @@ class Game
 		/**
 		 * \brief Network function to handle Object cell
 		 */
-		static void net_SetCell(FactoryObject<Object>& reference, FactoryObject<Player>& player, unsigned int cell);
+		static void net_SetCell(FactoryObject<Object>& reference, FactoryObject<Player>& player, unsigned int cell, double X, double Y, double Z);
 		/**
 		 * \brief Network function to handle Object lock level
 		 */

@@ -39,6 +39,7 @@ namespace DB
 
 			static bool IsValidCell(unsigned int baseID);
 			static bool IsValidWeather(unsigned int baseID);
+			static bool IsValidCoordinate(unsigned int baseID, double X, double Y, double Z);
 
 			unsigned int GetBase() const;
 			const std::string& GetName() const;

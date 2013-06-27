@@ -39,7 +39,7 @@ DWORD Bethesda::lookupProgramID(const char process[])
 
 void Bethesda::Initialize()
 {
-	TCHAR curdir[MAX_PATH+1];
+	char curdir[MAX_PATH+1];
 	unsigned int crc;
 	ZeroMemory(curdir, sizeof(curdir));
 	GetModuleFileName(GetModuleHandle(nullptr), (LPTSTR) curdir, MAX_PATH);
@@ -49,7 +49,7 @@ void Bethesda::Initialize()
 
 	for (const auto& modfile : modfiles)
 	{
-		TCHAR modfile_[MAX_PATH+1];
+		char modfile_[MAX_PATH+1];
 		ZeroMemory(modfile_, sizeof(modfile_));
 		strcat(modfile_, curdir);
 		strcat(modfile_, modfile.first.c_str());
@@ -61,7 +61,7 @@ void Bethesda::Initialize()
 			throw VaultException("Modfile differs from the server version:\n\n%s\n\nAsk the server owner to send you the file or try to use \"Get mods\" on the server", modfile_).stacktrace();
 	}
 
-	TCHAR pluginsdir[MAX_PATH+1];
+	char pluginsdir[MAX_PATH+1];
 	ZeroMemory(pluginsdir, sizeof(pluginsdir));
 	SHGetFolderPath(nullptr, CSIDL_LOCAL_APPDATA, nullptr, 0, pluginsdir);   // SHGFP_TYPE_CURRENT
 	strcat(pluginsdir, "\\Fallout3\\plugins.vmp");

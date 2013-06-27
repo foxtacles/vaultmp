@@ -164,7 +164,8 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 				{
 					NetworkID id;
 					unsigned int cell;
-					PacketFactory::Access<pTypes::ID_UPDATE_CELL>(packet, id, cell);
+					double X, Y, Z;
+					PacketFactory::Access<pTypes::ID_UPDATE_CELL>(packet, id, cell, X, Y, Z);
 					auto reference = GameFactory::GetObject(id);
 					response = Server::GetCell(data->guid, reference.get(), cell);
 					break;

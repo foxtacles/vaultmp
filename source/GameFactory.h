@@ -27,6 +27,7 @@
 #include "vaultserver/BaseContainer.h"
 #include "vaultserver/Item.h"
 #include "vaultserver/Terminal.h"
+#include "vaultserver/Interior.h"
 #endif
 
 #include "Expected.h"
@@ -83,6 +84,7 @@ class GameFactory
 		static Database<DB::BaseContainer> dbContainers;
 		static Database<DB::Item> dbItems;
 		static Database<DB::Terminal> dbTerminals;
+		static Database<DB::Interior> dbInteriors;
 #endif
 
 		inline static ReferenceList::iterator GetShared(const RakNet::NetworkID& id) { return index.count(id) ? index[id] : instances.end(); }

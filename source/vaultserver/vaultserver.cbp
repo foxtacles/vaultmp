@@ -433,6 +433,8 @@
 		<Unit filename="Dedicated.h" />
 		<Unit filename="Exterior.cpp" />
 		<Unit filename="Exterior.h" />
+		<Unit filename="Interior.cpp" />
+		<Unit filename="Interior.h" />
 		<Unit filename="Item.cpp" />
 		<Unit filename="Item.h" />
 		<Unit filename="NPC.cpp" />

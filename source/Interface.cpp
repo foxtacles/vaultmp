@@ -337,7 +337,16 @@ void Interface::CommandThreadSend()
 							CommandParsed stream = API::Translate(cmd);
 
 							for (auto it = stream.begin(); it != stream.end() && !endThread; ++it)
-								while (!pipeServer->Send(it->get()) && !endThread);
+								while (!pipeServer->Send(it->get()) && !endThread)
+								{
+									DWORD error = GetLastError();
+
+									if (error == ERROR_BROKEN_PIPE || error == ERROR_NO_DATA)
+									{
+										endThread = true;
+										break;
+									}
+								}
 						}
 					}
 
@@ -359,7 +368,16 @@ void Interface::CommandThreadSend()
 						CommandParsed stream = API::Translate(cmd, dynamic.second);
 
 						for (auto it = stream.begin(); it != stream.end() && !endThread; ++it)
-							while (!pipeServer->Send(it->get()) && !endThread);
+							while (!pipeServer->Send(it->get()) && !endThread)
+							{
+								DWORD error = GetLastError();
+
+								if (error == ERROR_BROKEN_PIPE || error == ERROR_NO_DATA)
+								{
+									endThread = true;
+									break;
+								}
+							}
 					}
 
 					dynamic_cs.StartSession();

@@ -213,6 +213,10 @@ NetworkResponse Server::Disconnect(RakNetGUID guid, Reason reason)
 NetworkResponse Server::GetPos(RakNetGUID guid, FactoryObject<Object>& reference, double X, double Y, double Z)
 {
 	NetworkResponse response;
+
+	if (!DB::Record::IsValidCoordinate(reference->GetNetworkCell(), X, Y, Z))
+		return response;
+
 	bool result = (static_cast<bool>(reference->SetNetworkPos(Axis_X, X)) | static_cast<bool>(reference->SetNetworkPos(Axis_Y, Y)) | static_cast<bool>(reference->SetNetworkPos(Axis_Z, Z)));
 
 	if (result)
@@ -221,9 +225,34 @@ NetworkResponse Server::GetPos(RakNetGUID guid, FactoryObject<Object>& reference
 		reference->SetGamePos(Axis_Y, Y);
 		reference->SetGamePos(Axis_Z, Z);
 
-		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_POS>(reference->GetNetworkID(), X, Y, Z),
-			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, Client::GetNetworkList(guid)));
+		unsigned int cell = reference->GetNetworkCell();
+
+		if (reference->SetGameCell(cell))
+		{
+			NetworkID id = reference->GetNetworkID();
+			auto player = vaultcast<Player>(reference);
+			reference->SetGameCell(cell);
+
+			response.emplace_back(Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, cell, X, Y, Z),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
+
+			if (player)
+			{
+				response.emplace_back(Network::CreateResponse(
+					PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(id, player->GetPlayerCellContext(), false),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+
+				GameFactory::LeaveReference(player.get());
+			}
+
+			GameFactory::LeaveReference(reference);
+			Script::OnCellChange(id, cell);
+		}
+		else
+			response.emplace_back(Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_POS>(reference->GetNetworkID(), X, Y, Z),
+				HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 	}
 
 	return response;
@@ -247,7 +276,9 @@ NetworkResponse Server::GetAngle(RakNetGUID guid, FactoryObject<Object>& referen
 NetworkResponse Server::GetCell(RakNetGUID guid, FactoryObject<Object>& reference, unsigned int cell)
 {
 	NetworkResponse response;
-	bool result = static_cast<bool>(reference->SetNetworkCell(cell));
+
+	bool valid = DB::Record::IsValidCoordinate(cell, reference->GetNetworkPos(Axis_X), reference->GetNetworkPos(Axis_Y), reference->GetNetworkPos(Axis_Z));
+	bool result = static_cast<bool>(reference->SetNetworkCell(cell)) && valid;
 
 	if (result)
 	{
@@ -256,7 +287,7 @@ NetworkResponse Server::GetCell(RakNetGUID guid, FactoryObject<Object>& referenc
 		reference->SetGameCell(cell);
 
 		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, cell),
+			PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, cell, reference->GetNetworkPos(Axis_X), reference->GetNetworkPos(Axis_Y), reference->GetNetworkPos(Axis_Z)),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
 		if (player)

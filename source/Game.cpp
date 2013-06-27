@@ -1747,7 +1747,7 @@ void Game::net_SetPos(const FactoryObject<Object>& reference, double X, double Y
 	{
 		auto actor = vaultcast<Actor>(reference); // maybe we should consider items, too (they have physics)
 
-		if (!actor || (!reference->IsNearPoint(reference->GetNetworkPos(Axis_X), reference->GetNetworkPos(Axis_Y), reference->GetNetworkPos(Axis_Z), 50.0)) || actor->IsActorJumping())
+		if (!actor || (!reference->IsNearPoint(reference->GetNetworkPos(Axis_X), reference->GetNetworkPos(Axis_Y), reference->GetNetworkPos(Axis_Z), 50.0)) || actor->IsActorJumping() || actor->GetReference() == PLAYER_REFERENCE)
 			SetPos(reference);
 	}
 }
@@ -1773,10 +1773,15 @@ void Game::net_SetAngle(const FactoryObject<Object>& reference, unsigned char ax
 	}
 }
 
-void Game::net_SetCell(FactoryObject<Object>& reference, FactoryObject<Player>& player, unsigned int cell)
+void Game::net_SetCell(FactoryObject<Object>& reference, FactoryObject<Player>& player, unsigned int cell, double X, double Y, double Z)
 {
 	unsigned int old_cell = reference->GetNetworkCell();
 	reference->SetNetworkCell(cell);
+
+	bool result = false;
+
+	if (X || Y || Z)
+		result = (static_cast<bool>(reference->SetNetworkPos(Axis_X, X)) | static_cast<bool>(reference->SetNetworkPos(Axis_Y, Y)) | static_cast<bool>(reference->SetNetworkPos(Axis_Z, Z)));
 
 	if (reference->GetReference())
 	{
@@ -1839,6 +1844,8 @@ void Game::net_SetCell(FactoryObject<Object>& reference, FactoryObject<Player>& 
 				}
 			}
 		}
+		else if (result)
+			SetPos(player);
 	}
 	else
 	{
@@ -2358,7 +2365,7 @@ void Game::GetParentCell(const FactoryObject<Player>& player, unsigned int cell)
 
 	if (result)
 		Network::Queue({Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_CELL>(player->GetNetworkID(), cell),
+			PacketFactory::Create<pTypes::ID_UPDATE_CELL>(player->GetNetworkID(), cell, 0.0, 0.0, 0.0),
 			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, server)
 		});
 }

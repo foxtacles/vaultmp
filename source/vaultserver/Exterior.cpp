@@ -106,3 +106,12 @@ array<unsigned int, 9> Exterior::GetAdjacents() const
 		(next_exterior = DB::Exterior::Lookup(world, X - size, Y)) ? next_exterior->GetBase() : 0u,
 		(next_exterior = DB::Exterior::Lookup(world, X - size, Y + size)) ? next_exterior->GetBase() : 0u}};
 }
+
+bool Exterior::IsValidCoordinate(double X, double Y) const
+{
+	double x1 = x * size;
+	double y1 = y * size;
+	double x2 = (x + 1) * size;
+	double y2 = (y + 1) * size;
+	return ((X >= x1 && X < x2) && (Y >= y1 && Y < y2));
+}

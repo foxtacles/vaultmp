@@ -24,6 +24,7 @@ Database<DB::NPC> GameFactory::dbNpcs;
 Database<DB::BaseContainer> GameFactory::dbContainers;
 Database<DB::Item> GameFactory::dbItems;
 Database<DB::Terminal> GameFactory::dbTerminals;
+Database<DB::Interior> GameFactory::dbInteriors;
 #endif
 
 void GameFactory::Initialize()
@@ -38,6 +39,7 @@ void GameFactory::Initialize()
 	dbContainers.initialize(DB_FALLOUT3, {"npcitems", "contitems"});
 	dbItems.initialize(DB_FALLOUT3, {"items"});
 	dbTerminals.initialize(DB_FALLOUT3, {"terminals"});
+	dbInteriors.initialize(DB_FALLOUT3, {"interiors"});
 #endif
 }
 

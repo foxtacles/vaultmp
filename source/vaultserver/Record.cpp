@@ -1,4 +1,6 @@
 #include "Record.h"
+#include "Exterior.h"
+#include "Interior.h"
 
 using namespace std;
 using namespace DB;
@@ -84,6 +86,16 @@ bool Record::IsValidCell(unsigned int baseID)
 bool Record::IsValidWeather(unsigned int baseID)
 {
 	return Record::Lookup(baseID, "WTHR").operator bool();
+}
+
+bool Record::IsValidCoordinate(unsigned int baseID, double X, double Y, double Z)
+{
+	auto exterior = Exterior::Lookup(baseID);
+
+	if (exterior)
+		return exterior->IsValidCoordinate(X, Y);
+
+	return Interior::Lookup(baseID)->IsValidCoordinate(X, Y, Z);
 }
 
 unsigned int Record::GetBase() const

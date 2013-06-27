@@ -1248,7 +1248,7 @@ bool Script::IsPlayer(NetworkID id)
 
 bool Script::IsInterior(unsigned int cell)
 {
-	return !DB::Exterior::Lookup(cell) && DB::Record::Lookup(cell, "CELL");
+	return DB::Interior::Lookup(cell).operator bool();
 }
 
 bool Script::IsItemList(NetworkID id)
@@ -1814,7 +1814,12 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 			return state;
 
 		new_cell = *exterior;
-	} // interior, can't check pos (yet? which are the bounds of interiors?)
+	}
+	else
+	{
+		if (!DB::Interior::Lookup(cell)->IsValidCoordinate(X, Y, Z))
+			return state;
+	}
 
 	NetworkResponse response;
 	unsigned int _new_cell = 0x00000000;
@@ -1833,11 +1838,6 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 			{
 				object->SetGameCell(_new_cell);
 
-				response.emplace_back(Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, _new_cell),
-					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-				);
-
 				auto player = vaultcast<Player>(object);
 
 				if (player)
@@ -1852,15 +1852,20 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
 					);
 				}
+
+				response.emplace_back(Network::CreateResponse(
+					PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, _new_cell, X, Y, Z),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+				);
 			}
 			else
 				_new_cell = 0x00000000;
 		}
-
-		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_POS>(id, X, Y, Z),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-		);
+		else
+			response.emplace_back(Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_POS>(id, X, Y, Z),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+			);
 
 		Network::Queue(move(response));
 
@@ -1931,17 +1936,23 @@ bool Script::SetCell_(NetworkID id, unsigned int cell, double X, double Y, doubl
 	auto& object = reference.get();
 
 	bool update_pos = X != 0.00 && Y != 0.00 && Z != 0.00;
-	const DB::Record* new_interior = nullptr;
+	const DB::Interior* new_interior = nullptr;
 	const DB::Exterior* new_exterior = nullptr;
 
 	auto exterior = DB::Exterior::Lookup(cell);
 
 	if (!exterior)
 	{
-		auto interior = DB::Record::Lookup(cell, "CELL");
+		auto interior = DB::Interior::Lookup(cell);
 
 		if (!interior)
 			return state;
+
+		if (update_pos)
+		{
+			if (!interior->IsValidCoordinate(X, Y, Z))
+				return state;
+		}
 
 		new_interior = *interior;
 	}
@@ -1965,16 +1976,11 @@ bool Script::SetCell_(NetworkID id, unsigned int cell, double X, double Y, doubl
 
 		if (!nosend)
 		{
-			response.emplace_back(Network::CreateResponse(
-				PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, cell),
-				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-			);
-
 			if (player)
 			{
 				if (new_interior)
 					response.emplace_back(Network::CreateResponse(
-						PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(id, new_interior->GetName(), false),
+						PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(id, DB::Record::Lookup(cell, "CELL")->GetName(), false),
 						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
 					);
 				else
@@ -1988,6 +1994,23 @@ bool Script::SetCell_(NetworkID id, unsigned int cell, double X, double Y, doubl
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
 				);
 			}
+
+			if (update_pos && (static_cast<bool>(object->SetNetworkPos(Axis_X, X)) | static_cast<bool>(object->SetNetworkPos(Axis_Y, Y)) | static_cast<bool>(object->SetNetworkPos(Axis_Z, Z))))
+			{
+				object->SetGamePos(Axis_X, X);
+				object->SetGamePos(Axis_Y, Y);
+				object->SetGamePos(Axis_Z, Z);
+
+				response.emplace_back(Network::CreateResponse(
+					PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, cell, X, Y, Z),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+				);
+			}
+			else
+				response.emplace_back(Network::CreateResponse(
+					PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, cell, 0.0, 0.0, 0.0),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+				);
 		}
 
 		state = true;

@@ -156,7 +156,7 @@ class FileServer : public FileListTransferCBInterface
 
 			SetWindowText(wndmain, wndtitle);
 
-			TCHAR file[MAX_PATH];
+			char file[MAX_PATH+1];
 			ZeroMemory(file, sizeof(file));
 
 			switch (onFileStruct->context.op)
@@ -832,8 +832,6 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 											}
 
 											peer->CloseConnection(packet->systemAddress, true, 0, LOW_PRIORITY);
-
-											query_state = false;
 											break;
 										}
 
@@ -907,8 +905,6 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 												serverList.erase(i);
 
 											peer->CloseConnection(packet->systemAddress, true, 0, LOW_PRIORITY);
-
-											query_state = false;
 											break;
 										}
 

@@ -46,6 +46,7 @@ namespace DB
 			signed int GetX() const;
 			signed int GetY() const;
 			std::array<unsigned int, 9> GetAdjacents() const;
+			bool IsValidCoordinate(double X, double Y) const;
 
 			Exterior(const std::string& table, sqlite3_stmt* stmt);
 			~Exterior() = default;

@@ -1044,18 +1044,18 @@ class pObjectCell : public pObjectDefault
 		friend class PacketFactory;
 
 	private:
-		pObjectCell(RakNet::NetworkID id, unsigned int cell) : pObjectDefault(pTypes::ID_UPDATE_CELL, id)
+		pObjectCell(RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z) : pObjectDefault(pTypes::ID_UPDATE_CELL, id)
 		{
-			construct(cell);
+			construct(cell, X, Y, Z);
 		}
 		pObjectCell(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
 		{
 
 		}
 
-		void access(RakNet::NetworkID& id, unsigned int& cell) const
+		void access(RakNet::NetworkID& id, unsigned int& cell, double& X, double& Y, double& Z) const
 		{
-			deconstruct(id, cell);
+			deconstruct(id, cell, X, Y, Z);
 		}
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_CELL> { typedef pObjectCell type; };
