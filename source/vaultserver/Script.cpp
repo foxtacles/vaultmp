@@ -2050,19 +2050,19 @@ bool Script::SetLock(NetworkID id, unsigned int lock)
 
 	auto& object = reference.get();
 
-	if (object->GetLockLevel() == UINT_MAX - 1)
+	if (object->GetLockLevel() == Lock_Broken)
 		return state;
 
-	if (lock != UINT_MAX)
+	if (lock != Lock_Unlocked)
 	{
 		lock = ceil(static_cast<double>(lock) / 25.0) * 25;
 
-		if (lock > 100)
-			lock = 255;
+		if (lock > Lock_VeryHard)
+			lock = Lock_Impossible;
 
 		if (DB::Terminal::Lookup(object->GetBase()))
 		{
-			if (lock == 255)
+			if (lock == Lock_Impossible)
 				lock = 5;
 			else
 				lock /= 25;

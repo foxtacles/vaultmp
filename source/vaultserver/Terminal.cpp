@@ -1,7 +1,9 @@
 #include "Terminal.h"
+#include "API.h"
 
 using namespace std;
 using namespace DB;
+using namespace Values;
 
 unordered_map<unsigned int, Terminal*> Terminal::terminals;
 
@@ -19,7 +21,7 @@ Terminal::Terminal(const string& table, sqlite3_stmt* stmt)
 	lock = static_cast<unsigned int>(sqlite3_column_int(stmt, 1));
 
 	if (lock == UINT_MAX - 1)
-		lock = UINT_MAX;
+		lock = Lock_Unlocked;
 
 	note = static_cast<unsigned int>(sqlite3_column_int(stmt, 2));
 

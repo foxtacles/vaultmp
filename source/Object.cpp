@@ -85,7 +85,7 @@ void Object::initialize()
 		object_Angle.insert(make_pair(_data, Value<double>()));
 	}
 
-	this->SetLockLevel(UINT_MAX);
+	this->SetLockLevel(Lock_Unlocked);
 }
 
 inline

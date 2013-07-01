@@ -111,7 +111,7 @@ class Object : public Reference
 		 */
 		bool GetEnabled() const;
 		/**
-		 * \brief Retrieves the Object's lock level (UINT_MAX = not locked)
+		 * \brief Retrieves the Object's lock level
 		 */
 		unsigned int GetLockLevel() const;
 		/**

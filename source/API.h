@@ -431,6 +431,18 @@ namespace Values
 
 		Global_TimeScale = 0x3A,
 	};
+
+	enum Lock : uint32_t
+	{
+		Lock_Unlocked = UINT_MAX,
+		Lock_Broken = UINT_MAX - 1,
+		Lock_VeryEasy = 0,
+		Lock_Easy = 25,
+		Lock_Average = 50,
+		Lock_Hard = 75,
+		Lock_VeryHard = 100,
+		Lock_Impossible = 255,
+	};
 }
 
 /**

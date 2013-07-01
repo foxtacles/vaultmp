@@ -862,7 +862,7 @@ void Game::NewObject_(FactoryObject<Object>& reference)
 	SetName(reference);
 	SetAngle(reference);
 
-	//if (reference->GetLockLevel() != UINT_MAX)
+	//if (reference->GetLockLevel() != Lock_Unlocked)
 		SetLock(reference);
 
 	if (reference->GetOwner())
@@ -1234,7 +1234,7 @@ void Game::SetLock(const FactoryObject<Object>& reference, unsigned int key)
 {
 	unsigned int lock = reference->GetLockLevel();
 
-	if (lock == UINT_MAX - 1) // workaround: can't set lock to broken, so set it to impossible
+	if (lock == Lock_Broken) // workaround: can't set lock to broken, so set it to impossible
 		lock = 255;
 
 	auto* object = reference.operator->();
@@ -1243,7 +1243,7 @@ void Game::SetLock(const FactoryObject<Object>& reference, unsigned int key)
 	{
 		Interface::StartDynamic();
 
-		if (lock != UINT_MAX)
+		if (lock != Lock_Unlocked)
 			Interface::ExecuteCommand("Lock", {object->GetReferenceParam(), RawParameter(lock)}, key);
 		else
 			Interface::ExecuteCommand("Unlock", {object->GetReferenceParam()}, key);
@@ -2930,18 +2930,18 @@ void Game::GetLocked(const FactoryObject<Container>& reference, unsigned int loc
 	switch (lock)
 	{
 		case 0:
-			if (reference->SetLockLevel(UINT_MAX))
+			if (reference->SetLockLevel(Lock_Unlocked))
 				Network::Queue({Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_UPDATE_LOCK>(reference->GetNetworkID(), UINT_MAX),
+					PacketFactory::Create<pTypes::ID_UPDATE_LOCK>(reference->GetNetworkID(), Lock_Unlocked),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 				});
 			break;
 		case 1:
 			break;
 		case 2:
-			if (reference->SetLockLevel(UINT_MAX - 1))
+			if (reference->SetLockLevel(Lock_Broken))
 				Network::Queue({Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_UPDATE_LOCK>(reference->GetNetworkID(), UINT_MAX - 1),
+					PacketFactory::Create<pTypes::ID_UPDATE_LOCK>(reference->GetNetworkID(), Lock_Broken),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 				});
 			break;

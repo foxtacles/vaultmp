@@ -1,7 +1,9 @@
 #include "Reference.h"
+#include "API.h"
 
 using namespace std;
 using namespace DB;
+using namespace Values;
 
 unordered_map<unsigned int, Reference*> Reference::refs;
 
@@ -29,10 +31,10 @@ Reference::Reference(const string& table, sqlite3_stmt* stmt)
 	flags = static_cast<unsigned int>(sqlite3_column_int(stmt, 12));
 	lock = static_cast<unsigned int>(sqlite3_column_int(stmt, 13));
 
-	if (lock == UINT_MAX)
-		lock = 255; // requires key
-	else if (lock == UINT_MAX - 1)
-		lock = UINT_MAX; // unlocked
+	if (lock == UINT_MAX) // -1
+		lock = Lock_Impossible; // requires key
+	else if (lock == UINT_MAX - 1) // -2
+		lock = Lock_Unlocked; // unlocked
 
 	key = static_cast<unsigned int>(sqlite3_column_int(stmt, 14));
 	link = static_cast<unsigned int>(sqlite3_column_int(stmt, 15));
