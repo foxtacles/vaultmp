@@ -230,8 +230,8 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 							edb->setText("");
 
 
-							//chatQueue.push_back((char*)txt.c_str());
-							Chatbox_AddToChat((char*)txt.c_str());
+							chatQueue.push_back((char*)txt.c_str());
+							//Chatbox_AddToChat((char*)txt.c_str());
 
 						
 							/*CEGUI::FormattedListboxTextItem* itm=new CEGUI::FormattedListboxTextItem(chatbox_text,CEGUI::HTF_WORDWRAP_LEFT_ALIGNED);
