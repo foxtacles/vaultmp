@@ -11,9 +11,46 @@
 
 #include "debug.h"
 
+#include "Export.h"
+
 extern myIDirect3DDevice9* gl_pmyIDirect3DDevice9;
 
 CRITICAL_SECTION cs_GetQueue;
+
+void (*callbackPTR_OnClick)(char* name)=0;
+void (*callbackPTR_OnTextChange)(char* name,char* text)=0;
+
+bool GUI_MouseClickCallback(const CEGUI::EventArgs& e)
+{
+	//char buf[120];
+	const CEGUI::MouseEventArgs& we = static_cast<const CEGUI::MouseEventArgs&>(e);
+
+	//sprintf(buf,"CLICK ON %s",we.window->getName().c_str());
+
+	//Chatbox_AddToChat(buf);
+
+	if(callbackPTR_OnClick)
+	{
+		callbackPTR_OnClick((char*)we.window->getName().c_str());
+	}
+
+	return true;
+}
+
+bool GUI_TextChanged(const CEGUI::EventArgs& e)
+{
+	//char buf[120];
+	const CEGUI::WindowEventArgs& we = static_cast<const CEGUI::WindowEventArgs&>(e);
+	//sprintf(buf,"TEXT CHANGED ON %s",we.window->getName().c_str());
+	//Chatbox_AddToChat(buf);
+
+	if(callbackPTR_OnTextChange)
+	{
+		callbackPTR_OnTextChange((char*)we.window->getName().c_str(),(char*)we.window->getText().c_str());
+	}
+
+	return true;
+}
 
 
 extern "C"
@@ -144,6 +181,34 @@ extern "C"
 		CEGUI::DefaultWindow* wnd=(CEGUI::DefaultWindow*)winMgr.createWindow("TaharezLook/StaticText", name);
 
 		w->addChildWindow(wnd);
+
+		wnd->subscribeEvent(CEGUI::Window::EventMouseClick,GUI_MouseClickCallback);
+	}
+
+	__declspec(dllexport) void GUI_AddTextbox(char* parent,char* name)
+	{
+		CEGUI::WindowManager& winMgr = CEGUI::WindowManager::getSingleton();
+
+		CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow(parent));
+
+		CEGUI::Editbox* wnd=(CEGUI::Editbox*)winMgr.createWindow("TaharezLook/Editbox", name);
+
+		w->addChildWindow(wnd);
+
+		wnd->subscribeEvent(CEGUI::Editbox::EventTextChanged,GUI_TextChanged);
+	}
+
+	__declspec(dllexport) void GUI_AddButton(char* parent,char* name)
+	{
+		CEGUI::WindowManager& winMgr = CEGUI::WindowManager::getSingleton();
+
+		CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow(parent));
+
+		CEGUI::Editbox* wnd=(CEGUI::Editbox*)winMgr.createWindow("TaharezLook/Button",name);
+
+		w->addChildWindow(wnd);
+
+		wnd->subscribeEvent(CEGUI::PushButton::EventClicked,GUI_MouseClickCallback);
 	}
 
 	__declspec(dllexport) void GUI_SetPosition(char* name,float x,float y)
@@ -168,4 +233,19 @@ extern "C"
 	{
 		CEGUI::WindowManager::getSingleton().destroyWindow(name);
 	}
+
+	__declspec(dllexport) void GUI_SetClickCallback(void (*pt)(char* name))
+	{
+		callbackPTR_OnClick=pt;
+	}
+
+	__declspec(dllexport) void GUI_SetTextChangedCallback(void (*pt)(char* name,char* t))
+	{
+		callbackPTR_OnTextChange=pt;
+	}
+
+	/*__declspec(dllexport) void GUI_EnterChatMode()
+	{
+
+	}*/
 }

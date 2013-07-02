@@ -2,6 +2,9 @@
 
 using namespace std;
 
+bool GUI_MouseClickCallback(const CEGUI::EventArgs& e);
+bool GUI_TextChanged(const CEGUI::EventArgs& e);
+
 extern "C"
 {
 	__declspec(dllexport) void Chatbox_AddToChat(char* c);
@@ -32,6 +35,8 @@ extern "C"
 	__declspec(dllexport) void GUI_SetFrameWindowSize(char* name,float x,float y);
 
 	__declspec(dllexport) void GUI_AddStaticText(char* parent,char* name);
+	__declspec(dllexport) void GUI_AddTextbox(char* parent,char* name);
+	__declspec(dllexport) void GUI_AddButton(char* parent,char* name);
 
 	__declspec(dllexport) void GUI_SetPosition(char* name,float x,float y);
 
@@ -40,4 +45,7 @@ extern "C"
 	__declspec(dllexport) void GUI_SetText(char* name,char* txt);
 
 	__declspec(dllexport) void GUI_RemoveWindow(char* name);
+
+	__declspec(dllexport) void GUI_SetClickCallback(void (*pt)(char* name));
+	__declspec(dllexport) void GUI_SetTextChangedCallback(void (*pt)(char* name,char* t));
 }

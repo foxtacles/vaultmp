@@ -36,3 +36,5 @@ struct remotePlayers
 
 extern remotePlayers *playersData;
 extern deque<string> chatQueue;
+
+unsigned int createHash(const char * s,int length);

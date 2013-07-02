@@ -127,7 +127,7 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 
 				int xPos = GET_X_LPARAM(lparam); 
 				int yPos = GET_Y_LPARAM(lparam);
-				//CEGUI::System::getSingleton().injectMousePosition(xPos,yPos);
+				CEGUI::System::getSingleton().injectMousePosition(xPos,yPos);
 
 			}
 			gl_pmyIDirect3DDevice9->wnd->setText("Mouse move!");
@@ -177,8 +177,9 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 					{
 						chatbox_text.pop_back();
 						#ifdef USE_CEGUI
-						((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("Edit Box"))->setText(chatbox_text);
-						((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("Edit Box"))->setCaratIndex(chatbox_text.length());
+
+						/*((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("Edit Box"))->setText(chatbox_text);
+						((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("Edit Box"))->setCaratIndex(chatbox_text.length());*/
 #endif
 					}
                      
@@ -197,9 +198,10 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 					chatbox_text="";
 					chatting=false;
 					gData.chatting=false;
+					gData.disableMouseInput=false;
 					#ifdef USE_CEGUI
 					CEGUI::MouseCursor::getSingleton().hide();
-					((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("Edit Box"))->setText(chatbox_text);
+					//((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("Edit Box"))->setText(chatbox_text);
 #endif
 
 					gData.chatting=false;
@@ -218,42 +220,37 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
                     // Process a carriage return. 
 					if(chatting)
 					{
-#ifdef USE_CEGUI
-						CEGUI::MouseCursor::getSingleton().hide();
 						
-						chatQueue.push_back(chatbox_text);
-
-						/*if(chatbox_text=="test")
-						{
-							GUI_CreateFrameWindow("test1");
-							GUI_SetFrameWindowPosition("test1",0.7,0.1);
-							GUI_SetFrameWindowSize("test1",0.2,0.2);
-
-							GUI_AddStaticText("test1","test2");
-							GUI_SetPosition("test2",0,0);
-							GUI_SetSize("test2",1,1);
-							GUI_SetText("test2","This is a TEST!");
-						}*/
-						
-						/*CEGUI::FormattedListboxTextItem* itm=new CEGUI::FormattedListboxTextItem(chatbox_text,CEGUI::HTF_WORDWRAP_LEFT_ALIGNED);
-						itm->setTextColours(0xFFFFFFFF);
-						CEGUI::Listbox* listb=((CEGUI::Listbox*)CEGUI::WindowManager::getSingleton().getWindow("List Box"));
-						listb->addItem(itm);
-						while(listb->getItemCount() > D_MAX_CHAT_ENTRIES) {
-							listb->removeItem(listb->getListboxItemFromIndex(0));
-						}
-						listb->ensureItemIsVisible(itm);*/
-#endif
-						chatting=false;
-						chatbox_text="";
-
-						gData.chatting=false;
-						gData.lastChatTextTick=GetTickCount();
-
-#ifdef USE_CEGUI
-						((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("Edit Box"))->setText(chatbox_text);
 						CEGUI::Editbox* edb = ((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("Edit Box"));
-#endif
+
+						if(edb->hasInputFocus())
+						{
+
+							CEGUI::String txt=edb->getText();
+							edb->setText("");
+
+
+							//chatQueue.push_back((char*)txt.c_str());
+							Chatbox_AddToChat((char*)txt.c_str());
+
+						
+							/*CEGUI::FormattedListboxTextItem* itm=new CEGUI::FormattedListboxTextItem(chatbox_text,CEGUI::HTF_WORDWRAP_LEFT_ALIGNED);
+							itm->setTextColours(0xFFFFFFFF);
+							CEGUI::Listbox* listb=((CEGUI::Listbox*)CEGUI::WindowManager::getSingleton().getWindow("List Box"));
+							listb->addItem(itm);
+							while(listb->getItemCount() > D_MAX_CHAT_ENTRIES) {
+								listb->removeItem(listb->getListboxItemFromIndex(0));
+							}
+							listb->ensureItemIsVisible(itm);*/
+
+							chatting=false;
+							chatbox_text="";
+
+							gData.chatting=false;
+							gData.disableMouseInput=false;
+							CEGUI::MouseCursor::getSingleton().hide();
+							gData.lastChatTextTick=GetTickCount();
+						}
 					}
                      
                     break; 
@@ -262,13 +259,16 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 
 				if(chatting)
 				{
-					if(chatbox_text.length()<120)
+					/*if(chatbox_text.length()<120)
 					{
 						chatbox_text+=(char)wparam;
-						#ifdef USE_CEGUI
 						((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("Edit Box"))->setText(chatbox_text);
 						((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("Edit Box"))->setCaratIndex(chatbox_text.length());
-#endif
+					}*/
+					char t=(char)wparam;
+					if(t>=32)//if((t>='a'&&t<='z')||(t>='A'&&t<='Z'))
+					{
+						CEGUI::System::getSingleton().injectChar(t);
 					}
 				}
 
@@ -281,6 +281,10 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 				{
 					chatting=!chatting;
 					gData.chatting=true;
+					gData.disableMouseInput=true;
+					CEGUI::MouseCursor::getSingleton().show();
+					CEGUI::Editbox* edb = ((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("Edit Box"));
+					edb->activate();
 #ifdef USE_CEGUI
 					//CEGUI::MouseCursor::getSingleton().show();
 #endif
@@ -294,23 +298,6 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 
 			switch((char)wparam)
 			{
-				/*case VK_PRIOR:
-					//gl_pmyIDirect3DDevice9->chatbox.ScrollUp();
-					maxV+=20;
-					gl_pmyIDirect3DDevice9->minVertices=maxV-20;
-					gl_pmyIDirect3DDevice9->maxVertices=maxV;
-					sprintf(buff,"Vertices from %d to %d disabled",maxV-20,maxV);
-					gl_pmyIDirect3DDevice9->chatbox.AddLine(buff);
-					break;
-
-				case VK_NEXT:
-					//gl_pmyIDirect3DDevice9->chatbox.ScrollDown();
-					maxV-=20;
-					gl_pmyIDirect3DDevice9->minVertices=maxV-20;
-					gl_pmyIDirect3DDevice9->maxVertices=maxV;
-					sprintf(buff,"Vertices from %d to %d disabled",maxV-20,maxV);
-					gl_pmyIDirect3DDevice9->chatbox.AddLine(buff);
-					break;*/
 				case VK_ADD:
 					
 					break;
@@ -347,6 +334,7 @@ HRESULT WINAPI D3DXCreateTextureFromFileInMemory_Hook(LPDIRECT3DDEVICE9 pDevice,
 	char *tmp2=(char*)pSrcData;
 	sprintf(tmp,"0x%x D3DXCreateTextureFromFileInMemory %s",_ReturnAddress(),lastTextureLoadedBackup);
 	SendToLog(tmp);
+
 	if(lastTextureLoadedBackup!=0)
 	{
 		if(gData.textureHookingDone)
@@ -356,6 +344,13 @@ HRESULT WINAPI D3DXCreateTextureFromFileInMemory_Hook(LPDIRECT3DDEVICE9 pDevice,
 	HRESULT ret=D3DXCreateTextureFromFileInMemory_Original(pDevice,pSrcData,SrcDataSize,ppTexture);
 	if(lastTextureLoadedBackup!=0)
 		TextureHooking::registerTexture((char*)lastTextureLoadedBackup,*ppTexture);
+
+	
+	/*unsigned int textureHash=createHash((const char*)pSrcData,SrcDataSize);
+	sprintf(tmp,"textureDump/%u.png",textureHash);
+	D3DXSaveTextureToFile(tmp,D3DXIFF_PNG,(*ppTexture),NULL);*/
+
+
 	return ret;
 }
 

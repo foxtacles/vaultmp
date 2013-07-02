@@ -155,6 +155,8 @@ private:
 
 		int grabMatrix;
 		ID3DXFont* g_font;
+
+		int debug_TexturesCount;
 #ifdef USE_CEGUI
 		CEGUI::FrameWindow* wnd;
 #endif

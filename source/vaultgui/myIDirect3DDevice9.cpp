@@ -4,6 +4,8 @@
 
 #include "utils.h"
 
+#include "Export.h"
+
 #include "HookedFunctions.h"
 #include "TextureHooking.h"
 
@@ -12,6 +14,8 @@ bool logging=false;
 //#define DB(a) 	/*{if(logging){std::ofstream d;d.open("C:\\Users\\PC\\Desktop\\debug.txt",std::ios::app);  d<<a<<" Address: "<<_ReturnAddress()<<std::endl;d.flush();d.close();}}*/
 
 #define DB(a) 	{/*char tmp[100];sprintf(tmp,"%s 0x%x",a,_ReturnAddress());SendToLog(tmp);*/}
+
+#define DB2(a) 	{char tmp[100];sprintf(tmp,"%s 0x%x",a,_ReturnAddress());SendToLog(tmp);}
 
 #define DBB(a) 	/*std::ofstream d;d.open("C:\\Users\\PC\\Desktop\\debug.txt",std::ios::app);  d<<a<<" Address: "<<_ReturnAddress()<<std::endl;d.flush();d.close();*/
 
@@ -23,6 +27,25 @@ bool logging=false;
 
 myIDirect3DDevice9::myIDirect3DDevice9(IDirect3DDevice9* pOriginal)
 {
+	/*remotePlayers *players=new remotePlayers[5];
+	players[0].health = 80.0;
+	sprintf(players[0].name, "asdf");
+	players[0].pos[0] = 995.0;
+	players[0].pos[1] = 7157.0;
+	players[0].pos[2] = 6802.0;
+	players[0].pid = 1;
+	players[0].player = true;
+
+
+	players[1].health = 80.0;
+	sprintf(players[1].name, "asdf123");
+	players[1].pos[0] = 985.0;
+	players[1].pos[1] = 7357.0;
+	players[1].pos[2] = 6802.0;
+	players[1].pid = 2;
+	players[1].player = false;
+
+	playersData=players;*/
 
 	/*playersData=new remotePlayers[5];
 	for(int i=0;i<5;i++)
@@ -84,6 +107,8 @@ myIDirect3DDevice9::myIDirect3DDevice9(IDirect3DDevice9* pOriginal)
 
    D3DXCreateFont(m_pIDirect3DDevice9,12,0,700,1,false,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,ANTIALIASED_QUALITY,DEFAULT_PITCH|FF_DONTCARE,"arial",&g_font);
 
+
+
    #ifdef USE_CEGUI
 
    SendToLog("CEGUI BootStrap");
@@ -122,8 +147,10 @@ myIDirect3DDevice9::myIDirect3DDevice9(IDirect3DDevice9* pOriginal)
 		wnd->setMinSize(UVector2(cegui_reldim(0.1f), cegui_reldim( 0.1f)));
 		wnd->setText("Chat Box");
 		wnd->setAlpha(0.9);
+		//wnd->setDragMovingEnabled(false);
 		
 		CEGUI::Editbox* editb=(CEGUI::Editbox*)winMgr.createWindow("TaharezLook/Editbox", "Edit Box");
+		editb->setMaxTextLength(120);
 		wnd->addChildWindow(editb);
 		editb->setText("");
 		editb->setSize(UVector2(cegui_reldim(1.0f), cegui_reldim( 0.15f)));
@@ -135,6 +162,26 @@ myIDirect3DDevice9::myIDirect3DDevice9(IDirect3DDevice9* pOriginal)
 		listb->setText("");
 		listb->setSize(UVector2(cegui_reldim(1.0f), cegui_reldim( 0.85f)));
 		listb->setPosition(UVector2(cegui_reldim(0.0f), cegui_reldim( 0.0f)));
+
+		/*GUI_CreateFrameWindow("debugmain");
+		GUI_SetFrameWindowPosition("debugmain",0.75,0.05);
+		GUI_SetFrameWindowSize("debugmain",0.20,0.3);
+		GUI_AddStaticText("debugmain","debug");
+		GUI_SetText("debug","This is a static text");
+		GUI_SetPosition("debug",0,0);
+		GUI_SetSize("debug",1,0.4);
+
+		GUI_AddTextbox("debugmain","debug2");
+		GUI_SetText("debug2","This is a textbox");
+		GUI_SetPosition("debug2",0,0.4);
+		GUI_SetSize("debug2",1,0.3);
+
+		GUI_AddButton("debugmain","debug3");
+		GUI_SetText("debug3","This is a button");
+		GUI_SetPosition("debug3",0,0.7);
+		GUI_SetSize("debug3",1,0.3);*/
+
+		debug_TexturesCount=0;
 
 		CEGUI::MouseCursor::getSingleton().hide();
    }
@@ -349,7 +396,29 @@ HRESULT myIDirect3DDevice9::Present(CONST RECT* pSourceRect,CONST RECT* pDestRec
 		}
 
 		CEGUI::System::getSingleton().renderGUI();
+
+
+
+
+		
+		/*D3DXMATRIX world_matrix;
+		D3DXMatrixIdentity(&world_matrix);
+		D3DXMatrixTranslation(&world_matrix,20,20,10);
+		this->SetPixelShader(0);
+		this->SetVertexShader(0);
+		this->SetRenderState(D3DRS_LIGHTING,FALSE);
+		this->SetTransform(D3DTS_WORLD,&world_matrix);
+		mesh->DrawSubset(0);
+		*/
+
+
+
+
+
 		pStateBlockBackup[1]->Apply();
+
+		
+
 		
 	}
 #endif
@@ -463,7 +532,8 @@ void    myIDirect3DDevice9::GetGammaRamp(UINT iSwapChain,D3DGAMMARAMP* pRamp)
 }
 
 HRESULT myIDirect3DDevice9::CreateTexture(UINT Width,UINT Height,UINT Levels,DWORD Usage,D3DFORMAT Format,D3DPOOL Pool,IDirect3DTexture9** ppTexture,HANDLE* pSharedHandle)
-{ DB("myIDirect3DDevice9::CreateTexture");
+{
+	DB("myIDirect3DDevice9::CreateTexture");
 	char tmp[512];
 	if(lastTextureLoaded)
 	{
@@ -472,9 +542,9 @@ HRESULT myIDirect3DDevice9::CreateTexture(UINT Width,UINT Height,UINT Levels,DWO
 		lastTextureLoaded=0;
 	}
 
-	
-
-	
+	debug_TexturesCount++;
+	/*sprintf(tmp,"%d textures loaded",debug_TexturesCount);
+	GUI_SetText("debug",tmp);*/
 
     return(m_pIDirect3DDevice9->CreateTexture(Width,Height,Levels,Usage,Format,Pool,ppTexture,pSharedHandle));
 }
@@ -800,7 +870,14 @@ HRESULT myIDirect3DDevice9::DrawPrimitive(D3DPRIMITIVETYPE PrimitiveType,UINT St
 
 HRESULT myIDirect3DDevice9::DrawIndexedPrimitive(D3DPRIMITIVETYPE PrimitiveType,INT BaseVertexIndex,UINT MinVertexIndex,UINT NumVertices,UINT startIndex,UINT primCount)
 { 
-	DB("myIDirect3DDevice9::DrawIndexedPrimitive ()");
+	//DB2("myIDirect3DDevice9::DrawIndexedPrimitive () ");
+
+	/*if((unsigned int)_ReturnAddress()==0x879968)	//Disattiva la landscape
+		return 0;*/
+
+	/*if((unsigned int)_ReturnAddress()==0x879745&&GetAsyncKeyState('A'))	//Disattiva tutto il rendering
+		return 0;*/
+
     return(m_pIDirect3DDevice9->DrawIndexedPrimitive(PrimitiveType,BaseVertexIndex,MinVertexIndex,NumVertices,startIndex,primCount));
 }
 
