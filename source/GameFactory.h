@@ -288,10 +288,10 @@ class FactoryObject<Reference>
 	template<> class FactoryObject<derived> : public FactoryObject<base>                                                                                    \
 	{                                                                                                                                                       \
 		friend class GameFactory;                                                                                                                           \
-																																						    \
+                                                                                                                                                            \
 		template<typename T, typename U>                                                                                                                    \
 		friend Expected<FactoryObject<T>> vaultcast(const FactoryObject<U>& object) noexcept;                                                               \
-																																						    \
+                                                                                                                                                            \
 	protected:                                                                                                                                              \
 		FactoryObject(Reference* reference, unsigned char type) : FactoryObject<base>(reference, type)                                                      \
 		{                                                                                                                                                   \
@@ -300,7 +300,7 @@ class FactoryObject<Reference>
 		}                                                                                                                                                   \
 		template<typename T> FactoryObject(const FactoryObject<T>& p) : FactoryObject<base>(p) {}                                                           \
 		template<typename T> FactoryObject& operator=(const FactoryObject<T>& p) { return FactoryObject<base>::operator=(p); }                              \
-																																						    \
+                                                                                                                                                            \
 	public:                                                                                                                                                 \
 		FactoryObject() : FactoryObject<base>() {}                                                                                                          \
 		FactoryObject(const FactoryObject& p) : FactoryObject<base>(p) {}                                                                                   \
@@ -308,7 +308,7 @@ class FactoryObject<Reference>
 		FactoryObject(FactoryObject&& p) : FactoryObject<base>(std::move(p)) {}                                                                             \
 		FactoryObject& operator=(FactoryObject&&) = default;                                                                                                \
 		~FactoryObject() = default;                                                                                                                         \
-																																						    \
+                                                                                                                                                            \
 		derived* operator->() const { return static_cast<derived*>(FactoryObject<Reference>::operator->()); }                                               \
 };
 
