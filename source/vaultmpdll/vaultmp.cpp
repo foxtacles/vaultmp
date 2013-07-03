@@ -672,6 +672,7 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 		if (!AddToChat || !GetQueue || !HideChatbox || !LockChatbox || !SetChatboxPos || !SetChatboxSize || !SetPlayersDataPointer)
 			DLLerror = true;
 
+/*
 players[0].health = 80.0;
 sprintf(players[0].name, "asdf");
 players[0].pos[0] = 995.0;
@@ -690,6 +691,8 @@ players[1].pid = 2;
 players[1].player = false;
 
 		SetPlayersDataPointer(players);
+
+*/
 	}
 
 	pipeClient.SetPipeAttributes("BethesdaClient", PIPE_LENGTH);

@@ -283,141 +283,42 @@ class FactoryObject<Reference>
 		inline bool validate(unsigned char type = 0x00) const;
 };
 
-template<> inline bool FactoryObject<Reference>::validate<Object>(unsigned char) const { return true; }
-template<> class FactoryObject<Object> : public FactoryObject<Reference>
-{
-		friend class GameFactory;
-
-		template<typename T, typename U>
-		friend Expected<FactoryObject<T>> vaultcast(const FactoryObject<U>& object) noexcept;
-
-	protected:
-		FactoryObject(Reference* reference, unsigned char type) : FactoryObject<Reference>(reference, type) {}
-		template<typename T> FactoryObject(const FactoryObject<T>& p) : FactoryObject<Reference>(p) {}
-		template<typename T> FactoryObject& operator=(const FactoryObject<T>& p) { return FactoryObject<Reference>::operator=(p); }
-
-	public:
-		FactoryObject() : FactoryObject<Reference>() {}
-		FactoryObject(const FactoryObject& p) : FactoryObject<Reference>(p) {}
-		FactoryObject& operator=(const FactoryObject&) = default;
-		FactoryObject(FactoryObject&& p) : FactoryObject<Reference>(std::move(p)) {}
-		FactoryObject& operator=(FactoryObject&&) = default;
-		~FactoryObject() = default;
-
-		Object* operator->() const { return static_cast<Object*>(FactoryObject<Reference>::operator->()); }
+#define GF_TYPE_WRAPPER(derived, base, token)                                                                                                               \
+	template<> inline bool FactoryObject<Reference>::validate<derived>(unsigned char type) const { return type ? (type & token) : (this->type & token); }   \
+	template<> class FactoryObject<derived> : public FactoryObject<base>                                                                                    \
+	{                                                                                                                                                       \
+		friend class GameFactory;                                                                                                                           \
+																																						    \
+		template<typename T, typename U>                                                                                                                    \
+		friend Expected<FactoryObject<T>> vaultcast(const FactoryObject<U>& object) noexcept;                                                               \
+																																						    \
+	protected:                                                                                                                                              \
+		FactoryObject(Reference* reference, unsigned char type) : FactoryObject<base>(reference, type)                                                      \
+		{                                                                                                                                                   \
+			if (!validate<derived>())                                                                                                                       \
+				reference = nullptr;                                                                                                                        \
+		}                                                                                                                                                   \
+		template<typename T> FactoryObject(const FactoryObject<T>& p) : FactoryObject<base>(p) {}                                                           \
+		template<typename T> FactoryObject& operator=(const FactoryObject<T>& p) { return FactoryObject<base>::operator=(p); }                              \
+																																						    \
+	public:                                                                                                                                                 \
+		FactoryObject() : FactoryObject<base>() {}                                                                                                          \
+		FactoryObject(const FactoryObject& p) : FactoryObject<base>(p) {}                                                                                   \
+		FactoryObject& operator=(const FactoryObject&) = default;                                                                                           \
+		FactoryObject(FactoryObject&& p) : FactoryObject<base>(std::move(p)) {}                                                                             \
+		FactoryObject& operator=(FactoryObject&&) = default;                                                                                                \
+		~FactoryObject() = default;                                                                                                                         \
+																																						    \
+		derived* operator->() const { return static_cast<derived*>(FactoryObject<Reference>::operator->()); }                                               \
 };
 
-template<> inline bool FactoryObject<Reference>::validate<Item>(unsigned char type) const { return type ? (type & ID_ITEM) : (this->type & ID_ITEM); }
-template<> class FactoryObject<Item> : public FactoryObject<Object>
-{
-		friend class GameFactory;
+GF_TYPE_WRAPPER(Object, Reference, ALL_OBJECTS)
+GF_TYPE_WRAPPER(Item, Object, ID_ITEM)
+GF_TYPE_WRAPPER(Container, Object, ID_CONTAINER)
+GF_TYPE_WRAPPER(Actor, Container, ALL_ACTORS)
+GF_TYPE_WRAPPER(Player, Actor, ID_PLAYER)
 
-		template<typename T, typename U>
-		friend Expected<FactoryObject<T>> vaultcast(const FactoryObject<U>& object) noexcept;
-
-	protected:
-		FactoryObject(Reference* reference, unsigned char type) : FactoryObject<Object>(reference, type)
-		{
-			if (!validate<Item>())
-				reference = nullptr;
-		}
-		template<typename T> FactoryObject(const FactoryObject<T>& p) : FactoryObject<Object>(p) {}
-		template<typename T> FactoryObject& operator=(const FactoryObject<T>& p) { return FactoryObject<Object>::operator=(p); }
-
-	public:
-		FactoryObject() : FactoryObject<Object>() {}
-		FactoryObject(const FactoryObject& p) : FactoryObject<Object>(p) {}
-		FactoryObject& operator=(const FactoryObject&) = default;
-		FactoryObject(FactoryObject&& p) : FactoryObject<Object>(std::move(p)) {}
-		FactoryObject& operator=(FactoryObject&&) = default;
-		~FactoryObject() = default;
-
-		Item* operator->() const { return static_cast<Item*>(FactoryObject<Reference>::operator->()); }
-};
-
-template<> inline bool FactoryObject<Reference>::validate<Container>(unsigned char type) const { return type ? (type & ALL_CONTAINERS) : (this->type & ALL_CONTAINERS); }
-template<> class FactoryObject<Container> : public FactoryObject<Object>
-{
-		friend class GameFactory;
-
-		template<typename T, typename U>
-		friend Expected<FactoryObject<T>> vaultcast(const FactoryObject<U>& object) noexcept;
-
-	protected:
-		FactoryObject(Reference* reference, unsigned char type) : FactoryObject<Object>(reference, type)
-		{
-			if (!validate<Container>())
-				reference = nullptr;
-		}
-		template<typename T> FactoryObject(const FactoryObject<T>& p) : FactoryObject<Object>(p) {}
-		template<typename T> FactoryObject& operator=(const FactoryObject<T>& p) { return FactoryObject<Object>::operator=(p); }
-
-	public:
-		FactoryObject() : FactoryObject<Object>() {}
-		FactoryObject(const FactoryObject& p) : FactoryObject<Object>(p) {}
-		FactoryObject& operator=(const FactoryObject&) = default;
-		FactoryObject(FactoryObject&& p) : FactoryObject<Object>(std::move(p)) {}
-		FactoryObject& operator=(FactoryObject&&) = default;
-		~FactoryObject() = default;
-
-		Container* operator->() const { return static_cast<Container*>(FactoryObject<Reference>::operator->()); }
-};
-
-template<> inline bool FactoryObject<Reference>::validate<Actor>(unsigned char type) const { return type ? (type & ALL_ACTORS) : (this->type & ALL_ACTORS); }
-template<> class FactoryObject<Actor> : public FactoryObject<Container>
-{
-		friend class GameFactory;
-
-		template<typename T, typename U>
-		friend Expected<FactoryObject<T>> vaultcast(const FactoryObject<U>& object) noexcept;
-
-	protected:
-		FactoryObject(Reference* reference, unsigned char type) : FactoryObject<Container>(reference, type)
-		{
-			if (!validate<Actor>())
-				reference = nullptr;
-		}
-		template<typename T> FactoryObject(const FactoryObject<T>& p) : FactoryObject<Container>(p) {}
-		template<typename T> FactoryObject& operator=(const FactoryObject<T>& p) { return FactoryObject<Container>::operator=(p); }
-
-	public:
-		FactoryObject() : FactoryObject<Container>() {}
-		FactoryObject(const FactoryObject& p) : FactoryObject<Container>(p) {}
-		FactoryObject& operator=(const FactoryObject&) = default;
-		FactoryObject(FactoryObject&& p) : FactoryObject<Container>(std::move(p)) {}
-		FactoryObject& operator=(FactoryObject&&) = default;
-		~FactoryObject() = default;
-
-		Actor* operator->() const { return static_cast<Actor*>(FactoryObject<Reference>::operator->()); }
-};
-
-template<> inline bool FactoryObject<Reference>::validate<Player>(unsigned char type) const { return type ? (type & ID_PLAYER) : (this->type & ID_PLAYER); }
-template<> class FactoryObject<Player> : public FactoryObject<Actor>
-{
-		friend class GameFactory;
-
-		template<typename T, typename U>
-		friend Expected<FactoryObject<T>> vaultcast(const FactoryObject<U>& object) noexcept;
-
-	protected:
-		FactoryObject(Reference* reference, unsigned char type) : FactoryObject<Actor>(reference, type)
-		{
-			if (!validate<Player>())
-				reference = nullptr;
-		}
-		template<typename T> FactoryObject(const FactoryObject<T>& p) : FactoryObject<Actor>(p) {}
-		template<typename T> FactoryObject& operator=(const FactoryObject<T>& p) { return FactoryObject<Actor>::operator=(p); }
-
-	public:
-		FactoryObject() : FactoryObject<Actor>() {}
-		FactoryObject(const FactoryObject& p) : FactoryObject<Actor>(p) {}
-		FactoryObject& operator=(const FactoryObject&) = default;
-		FactoryObject(FactoryObject&& p) : FactoryObject<Actor>(std::move(p)) {}
-		FactoryObject& operator=(FactoryObject&&) = default;
-		~FactoryObject() = default;
-
-		Player* operator->() const { return static_cast<Player*>(FactoryObject<Reference>::operator->()); }
-};
+#undef GF_TYPE_WRAPPER
 
 /**
   * \brief Tries to cast the instance pointer of a FactoryObject

@@ -20,7 +20,7 @@ Terminal::Terminal(const string& table, sqlite3_stmt* stmt)
 	baseID = static_cast<unsigned int>(sqlite3_column_int(stmt, 0));
 	lock = static_cast<unsigned int>(sqlite3_column_int(stmt, 1));
 
-	if (lock == UINT_MAX - 1)
+	if (lock == UINT_MAX - 1) // -2
 		lock = Lock_Unlocked;
 
 	note = static_cast<unsigned int>(sqlite3_column_int(stmt, 2));
