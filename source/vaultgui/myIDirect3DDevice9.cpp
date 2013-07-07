@@ -163,6 +163,28 @@ myIDirect3DDevice9::myIDirect3DDevice9(IDirect3DDevice9* pOriginal)
 		listb->setSize(UVector2(cegui_reldim(1.0f), cegui_reldim( 0.85f)));
 		listb->setPosition(UVector2(cegui_reldim(0.0f), cegui_reldim( 0.0f)));
 
+		/*Close BTN*/
+		wnd = (FrameWindow*)winMgr.createWindow("DefaultWindow", "Close Button Window");
+		wnd->setWidth(UDim(0,16.0f));
+		wnd->setHeight(UDim(0,16.0f));
+		wnd->setPosition(UVector2(UDim(1.0f,-18.0f), UDim(0.0f,2.0f)));
+		root->addChildWindow(wnd);
+
+		CEGUI::ImagesetManager::getSingleton().createFromImageFile("quitBTN","close.png");
+		PushButton* closeBTN = (PushButton*)winMgr.createWindow("TaharezLook/Button", "closeBTN");
+		closeBTN->setWidth(UDim(0,16.0f));
+		closeBTN->setHeight(UDim(0,16.0f));
+		/*closeBTN->setXPosition(UDim(1.0f, -16.0f));
+		closeBTN->setYPosition(UDim(0.0f, 0.0f));*/
+		closeBTN->setPosition(UVector2(cegui_reldim(0.0f), cegui_reldim( 0.0f)));
+		closeBTN->setProperty( "NormalImage", "set:quitBTN image:full_image" );
+		closeBTN->setProperty( "HoverImage", "set:quitBTN image:full_image" );
+		closeBTN->setProperty( "PushedImage", "set:quitBTN image:full_image" );
+		closeBTN->subscribeEvent(CEGUI::PushButton::EventClicked,GUI_MouseClickCallback);
+		closeBTN->setAlpha(0);
+
+		wnd->addChildWindow(closeBTN);
+
 		/*GUI_CreateFrameWindow("debugmain");
 		GUI_SetFrameWindowPosition("debugmain",0.75,0.05);
 		GUI_SetFrameWindowSize("debugmain",0.20,0.3);

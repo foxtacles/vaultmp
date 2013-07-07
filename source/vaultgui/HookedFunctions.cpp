@@ -175,12 +175,19 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 				case 0x08: 
                     
                     // Process a backspace. 
-					if(chatting&&chatbox_text.length()>0)
+					/*if(chatting&&chatbox_text.length()>0)
 					{
 						chatbox_text.pop_back();
-					}
+					}*/
+					if(chatting)
+						CEGUI::System::getSingleton().injectKeyDown(CEGUI::Key::Backspace);
                      
                     break; 
+
+				case VK_DELETE: 
+					if(chatting)
+						CEGUI::System::getSingleton().injectKeyDown(CEGUI::Key::Delete);
+					break;
  
                 case 0x0A: 
                     
@@ -197,6 +204,7 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 					gData.chatting=false;
 					gData.disableMouseInput=false;
 					CEGUI::MouseCursor::getSingleton().hide();
+					((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("closeBTN"))->setAlpha(0);
 					if(GUI_OnMode)
 						GUI_OnMode(false);
 
@@ -233,7 +241,7 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 
 							chatting=false;
 							chatbox_text="";
-
+							((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("closeBTN"))->setAlpha(0);
 							gData.chatting=false;
 							gData.disableMouseInput=false;
 							CEGUI::MouseCursor::getSingleton().hide();
@@ -268,6 +276,9 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 					gData.disableMouseInput=true;
 					CEGUI::MouseCursor::getSingleton().show();
 					CEGUI::Editbox* edb = ((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("Edit Box"));
+
+					((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("closeBTN"))->setAlpha(1);
+
 					edb->activate();
 					if(GUI_OnMode)
 						GUI_OnMode(true);
@@ -286,6 +297,41 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 					break;
 				case VK_SUBTRACT:
 					
+					break;
+
+				case VK_DELETE:
+					if(chatting)
+						CEGUI::System::getSingleton().injectKeyDown(CEGUI::Key::Delete);
+					break;
+
+				case VK_LEFT:
+					if(chatting)
+						CEGUI::System::getSingleton().injectKeyDown(CEGUI::Key::ArrowLeft);
+					break;
+
+				case VK_RIGHT:
+					if(chatting)
+						CEGUI::System::getSingleton().injectKeyDown(CEGUI::Key::ArrowRight);
+					break;
+
+				case VK_DOWN:
+					if(chatting)
+						CEGUI::System::getSingleton().injectKeyDown(CEGUI::Key::ArrowDown);
+					break;
+
+				case VK_UP:
+					if(chatting)
+						CEGUI::System::getSingleton().injectKeyDown(CEGUI::Key::ArrowUp);
+					break;
+
+				case VK_TAB:
+					if(chatting)
+						CEGUI::System::getSingleton().injectKeyDown(CEGUI::Key::Tab);
+					break;
+
+				case VK_CAPITAL:
+					if(chatting)
+						CEGUI::System::getSingleton().injectKeyDown(CEGUI::Key::Capital);
 					break;
 			}
 

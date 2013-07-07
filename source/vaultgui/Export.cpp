@@ -22,12 +22,12 @@ void (*callbackPTR_OnTextChange)(char* name,char* text)=0;
 
 bool GUI_MouseClickCallback(const CEGUI::EventArgs& e)
 {
-	//char buf[120];
+	char buf[120];
 	const CEGUI::MouseEventArgs& we = static_cast<const CEGUI::MouseEventArgs&>(e);
 
-	//sprintf(buf,"CLICK ON %s",we.window->getName().c_str());
+	sprintf(buf,"CLICK ON %s",we.window->getName().c_str());
 
-	//Chatbox_AddToChat(buf);
+	Chatbox_AddToChat(buf);
 
 	if(callbackPTR_OnClick)
 	{
