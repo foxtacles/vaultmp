@@ -7,6 +7,7 @@
 */
 #include "Hook.h"
 #include "HookedFunctions.h"
+#include "import.h"
 
 myIDirect3DDevice9* gl_pmyIDirect3DDevice9;
 myIDirect3D9*       gl_pmyIDirect3D9;
@@ -122,6 +123,7 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReser
 				gData.textureHookingDone=true;
 			}
 			//HookCall((BYTE*)0x871E28,(BYTE*)playerPointerHook,6);
+			SetupImports();
 
 	    case DLL_PROCESS_DETACH: ExitInstance(); break;
         

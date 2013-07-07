@@ -8,6 +8,8 @@
 
 #include "Export.h"
 
+#include "import.h"
+
 IDirect3D9* (WINAPI *Direct3DCreate9_Original)(UINT SDKVersion);
 HRESULT (WINAPI *DirectInput8Create_Original)(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID * ppvOut, LPUNKNOWN punkOuter);
 
@@ -120,8 +122,8 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 
 	switch(message)
 	{	
-#ifdef USE_CEGUI
-		case WM_MOUSEMOVE:
+
+/*		case WM_MOUSEMOVE:
 			if(chatting)
 			{
 
@@ -132,16 +134,16 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 			}
 			gl_pmyIDirect3DDevice9->wnd->setText("Mouse move!");
 		break;
-#endif
+
 
 		case WM_LBUTTONDOWN:
 			if(chatting)
 			{
-#ifdef USE_CEGUI
+
 				int xPos = GET_X_LPARAM(lparam); 
 				int yPos = GET_Y_LPARAM(lparam);
 				CEGUI::System::getSingleton().injectMouseButtonDown(CEGUI::MouseButton::LeftButton);
-#endif
+
 			}
 		break;
 
@@ -165,7 +167,7 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 				CEGUI::System::getSingleton().injectMouseButtonDoubleClick(CEGUI::MouseButton::LeftButton);
 #endif
 			}
-		break;
+		break;*/
 
 		case WM_CHAR:
 			switch((char)wparam)
@@ -176,11 +178,6 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 					if(chatting&&chatbox_text.length()>0)
 					{
 						chatbox_text.pop_back();
-						#ifdef USE_CEGUI
-
-						/*((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("Edit Box"))->setText(chatbox_text);
-						((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("Edit Box"))->setCaratIndex(chatbox_text.length());*/
-#endif
 					}
                      
                     break; 
@@ -199,12 +196,10 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 					chatting=false;
 					gData.chatting=false;
 					gData.disableMouseInput=false;
-					#ifdef USE_CEGUI
 					CEGUI::MouseCursor::getSingleton().hide();
-					//((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("Edit Box"))->setText(chatbox_text);
-#endif
+					if(GUI_OnMode)
+						GUI_OnMode(false);
 
-					gData.chatting=false;
                     
                     break; 
  
@@ -229,19 +224,12 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 							CEGUI::String txt=edb->getText();
 							edb->setText("");
 
-
+							if(GUI_OnChat)
+								GUI_OnChat(txt.c_str());
+							else
 							chatQueue.push_back((char*)txt.c_str());
 							//Chatbox_AddToChat((char*)txt.c_str());
 
-						
-							/*CEGUI::FormattedListboxTextItem* itm=new CEGUI::FormattedListboxTextItem(chatbox_text,CEGUI::HTF_WORDWRAP_LEFT_ALIGNED);
-							itm->setTextColours(0xFFFFFFFF);
-							CEGUI::Listbox* listb=((CEGUI::Listbox*)CEGUI::WindowManager::getSingleton().getWindow("List Box"));
-							listb->addItem(itm);
-							while(listb->getItemCount() > D_MAX_CHAT_ENTRIES) {
-								listb->removeItem(listb->getListboxItemFromIndex(0));
-							}
-							listb->ensureItemIsVisible(itm);*/
 
 							chatting=false;
 							chatbox_text="";
@@ -250,6 +238,8 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 							gData.disableMouseInput=false;
 							CEGUI::MouseCursor::getSingleton().hide();
 							gData.lastChatTextTick=GetTickCount();
+							if(GUI_OnMode)
+								GUI_OnMode(false);
 						}
 					}
                      
@@ -259,14 +249,8 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 
 				if(chatting)
 				{
-					/*if(chatbox_text.length()<120)
-					{
-						chatbox_text+=(char)wparam;
-						((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("Edit Box"))->setText(chatbox_text);
-						((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("Edit Box"))->setCaratIndex(chatbox_text.length());
-					}*/
 					char t=(char)wparam;
-					if(t>=32)//if((t>='a'&&t<='z')||(t>='A'&&t<='Z'))
+					if(t>=32)
 					{
 						CEGUI::System::getSingleton().injectChar(t);
 					}
@@ -285,9 +269,8 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 					CEGUI::MouseCursor::getSingleton().show();
 					CEGUI::Editbox* edb = ((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("Edit Box"));
 					edb->activate();
-#ifdef USE_CEGUI
-					//CEGUI::MouseCursor::getSingleton().show();
-#endif
+					if(GUI_OnMode)
+						GUI_OnMode(true);
 				}
 				
 			}

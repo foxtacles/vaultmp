@@ -4,6 +4,8 @@
 
 #include "common.h"
 
+#include "DirectInputHook.h"
+
 /*
 Class: MyDirectDevice
 	This class implements the interface IDirectInputDevice8 and represents the core of the hooking procedure,

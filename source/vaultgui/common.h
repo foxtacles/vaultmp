@@ -48,6 +48,4 @@ void ResetLog();
 void SendToLog(char* str);
 char* ExceptionToString(PEXCEPTION_RECORD p);
 bool GetScreenPosition(D3DXVECTOR2& ScreenPosition, float& Distance, D3DXVECTOR3 PositionOffset);
-void RealityKeyDown(LPVOID ths, DWORD size, LPVOID data);
-void SimulateKeyDown(LPVOID ths, DWORD size, LPVOID data);
 void CreateDevice(LPVOID ths, BOOL isKeyboard);
