@@ -2,6 +2,8 @@
 #include <cstdio>
 #include <vector>
 #include <string>
+#include <mutex>
+#include <queue>
 
 #include "vaultmp.h"
 
@@ -30,6 +32,10 @@ typedef void (*Chatbox_LockChatbox)(bool);
 typedef void (*Chatbox_SetChatboxPos)(float, float);
 typedef void (*Chatbox_SetChatboxSize)(float, float);
 typedef void (*Chatbox_SetPlayersDataPointer)(remotePlayers*);
+
+mutex mGUI;
+queue<string> qGUI_OnChat;
+queue<bool> qGUI_OnMode;
 
 static HANDLE hProc;
 static PipeServer pipeServer;
@@ -294,9 +300,7 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 					}
 				}
 
-				flags |= (GetAsyncKeyState(0x54) & 0x8000) ? 0x04 : 0x00; // T
-				flags |= (GetAsyncKeyState(VK_ESCAPE) & 0x8000) ? 0x08 : 0x00;
-				flags |= (GetAsyncKeyState(VK_RETURN) & 0x8000) ? 0x10 : 0x00;
+				flags |= (GetAsyncKeyState(VK_ESCAPE) & 0x8000) ? 0x04 : 0x00;
 
 				memcpy(result, &idle, 4);
 				memcpy((void*)((unsigned) result + 4), &moving, 1);
@@ -475,7 +479,7 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 			break;
 		}
 
-		case 0x0008 | VAULTFUNCTION: // ChatUpdate - change chatbox state
+		case 0x0008 | VAULTFUNCTION: // GUIUpdate - change chatbox state
 		{
 			unsigned char* _args = (unsigned char*) args;
 
@@ -764,17 +768,37 @@ players[1].player = false;
 			}
 		}
 
-		string chat(GetQueue());
+		mGUI.lock();
 
-		if (!chat.empty())
+		while (!qGUI_OnChat.empty())
 		{
+			const string& chat = qGUI_OnChat.front();
+
 			buffer[0] = PIPE_OP_RETURN_RAW;
 			*reinterpret_cast<unsigned int*>(buffer + 1) = 0x0002 | VAULTFUNCTION;
 			*reinterpret_cast<unsigned int*>(buffer + 5) = chat.length();
 			memcpy(buffer + 9, chat.c_str(), chat.length());
 
 			pipeClient.Send(buffer);
+
+			qGUI_OnChat.pop();
 		}
+
+		while (!qGUI_OnMode.empty())
+		{
+			bool mode = qGUI_OnMode.front();
+
+			buffer[0] = PIPE_OP_RETURN_RAW;
+			*reinterpret_cast<unsigned int*>(buffer + 1) = 0x0009 | VAULTFUNCTION;
+			*reinterpret_cast<unsigned int*>(buffer + 5) = 1;
+			*reinterpret_cast<bool*>(buffer + 9) = mode;
+
+			pipeClient.Send(buffer);
+
+			qGUI_OnMode.pop();
+		}
+
+		mGUI.unlock();
 	}
 
 	buffer[0] = PIPE_ERROR_CLOSE;
@@ -866,6 +890,23 @@ void PatchGame(HINSTANCE& silverlock)
 	SafeWrite32(pluginsVMP, *(DWORD*)".vmp"); // redirect Plugins.txt
 
 	ToggleRespawn();
+}
+
+extern "C"
+{
+	void GUI_OnMode(bool enabled)
+	{
+		mGUI.lock();
+		qGUI_OnMode.push(enabled);
+		mGUI.unlock();
+	}
+
+	void GUI_OnChat(const char* message)
+	{
+		mGUI.lock();
+		qGUI_OnChat.push(message);
+		mGUI.unlock();
+	}
 }
 
 void Initialize()

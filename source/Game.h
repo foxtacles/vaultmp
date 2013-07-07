@@ -59,6 +59,7 @@ class Game
 		static SpawnFunc spawnFunc;
 		static Player::CellContext spawnContext;
 		static StartupQueue startupQueue;
+		static bool GUIMode;
 		static bool startup;
 
 	public:
@@ -507,6 +508,10 @@ class Game
 		 * \brief Handles GUI message
 		 */
 		static void GetMessage(std::string message);
+		/**
+		 * \brief Handles GUI mode
+		 */
+		static void GetMode(bool enabled);
 };
 
 #endif
