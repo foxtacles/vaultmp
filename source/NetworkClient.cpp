@@ -124,6 +124,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					Game::spawnFunc = Game::SpawnFunc();
 					Game::spawnContext = {{0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u}};
 					Game::startupQueue.clear();
+					Game::GUIMode = false;
 					Game::startup = false;
 
 					Game::DisablePlayerControls(true, true, true, false, true);

@@ -20,6 +20,7 @@ Game::PlayerBase Game::playerBase;
 Game::SpawnFunc Game::spawnFunc;
 Player::CellContext Game::spawnContext;
 Game::StartupQueue Game::startupQueue;
+bool Game::GUIMode;
 bool Game::startup;
 
 #ifdef VAULTMP_DEBUG
@@ -228,7 +229,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 			}
 
-			case Func_Chat:
+			case Func_GUIChat:
 			{
 				if (!result)
 					break;
@@ -239,7 +240,18 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 			}
 
-			case Func_Chatbox:
+			case Func_GUIMode:
+			{
+				if (!result)
+					break;
+
+				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
+				GetMode(data[0]);
+				delete &data;
+				break;
+			}
+
+			case Func_GUIChatbox:
 				break;
 
 			case Func_SetGlobalValue:
@@ -2276,7 +2288,7 @@ void Game::net_UpdateChat(bool enabled, bool locked, const std::pair<double, dou
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("ChatUpdate", {RawParameter(enabled), RawParameter(locked), RawParameter(pos.first), RawParameter(pos.second), RawParameter(size.first), RawParameter(size.second)});
+	Interface::ExecuteCommand("GUIUpdate", {RawParameter(enabled), RawParameter(locked), RawParameter(pos.first), RawParameter(pos.second), RawParameter(size.first), RawParameter(size.second)});
 
 	Interface::EndDynamic();
 }
@@ -2508,27 +2520,11 @@ void Game::GetActorValue(const FactoryObject<Actor>& reference, bool base, unsig
 
 void Game::GetActorState(const FactoryObject<Actor>& reference, unsigned int idle, unsigned char moving, unsigned char weapon, unsigned char flags, bool sneaking)
 {
-	static bool chat_state = false;
-	static bool quit_state = true;
 	static pair<unsigned char, unsigned char> buf_weapon{AnimGroup_Idle, AnimGroup_Idle};
 
-	unsigned char chat_keys = flags >> 2;
 	unsigned char movingxy = flags & 0x03;
 
-	if (!chat_keys && !chat_state)
-		quit_state = true;
-	else if (chat_keys == 0x01 && !chat_state)
-	{
-		DisablePlayerControls(true, true, true, false);
-		chat_state = true;
-		quit_state = false;
-	}
-	else if ((chat_keys & (0x02 | 0x04)) && chat_state)
-	{
-		EnablePlayerControls();
-		chat_state = false;
-	}
-	else if (chat_keys == 0x02 && quit_state)
+	if (flags & 0x04 && !GUIMode)
 	{
 		Interface::SignalEnd();
 		return;
@@ -3036,4 +3032,14 @@ void Game::GetMessage(string message)
 		PacketFactory::Create<pTypes::ID_GAME_CHAT>(message),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 	});
+}
+
+void Game::GetMode(bool enabled)
+{
+	GUIMode = enabled;
+
+	if (GUIMode)
+		DisablePlayerControls(true, true, true, false);
+	else
+		EnablePlayerControls();
 }
