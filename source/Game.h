@@ -512,6 +512,10 @@ class Game
 		 * \brief Handles GUI mode
 		 */
 		static void GetMode(bool enabled);
+		/**
+		 * \brief Handles GUI click
+		 */
+		static void GetClick(std::string name);
 };
 
 #endif

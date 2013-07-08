@@ -300,6 +300,7 @@ namespace Values
 		Func_SetGlobalValue = 0x0007 | VAULTFUNCTION,
 		Func_GUIChatbox = 0x0008 | VAULTFUNCTION,
 		Func_GUIMode = 0x0009 | VAULTFUNCTION,
+		Func_GUIClick = 0x0010 | VAULTFUNCTION,
 	};
 
 	enum ActorVals

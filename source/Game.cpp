@@ -251,6 +251,17 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 			}
 
+			case Func_GUIClick:
+			{
+				if (!result)
+					break;
+
+				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
+				GetClick(string(reinterpret_cast<char*>(&data[0]), data.size()));
+				delete &data;
+				break;
+			}
+
 			case Func_GUIChatbox:
 				break;
 
@@ -816,7 +827,7 @@ void Game::ChatMessage(const string& message)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("ChatMessage", {RawParameter(message)});
+	Interface::ExecuteCommand("GUIChat", {RawParameter(message)});
 
 	Interface::EndDynamic();
 }
@@ -2288,7 +2299,7 @@ void Game::net_UpdateChat(bool enabled, bool locked, const std::pair<double, dou
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("GUIUpdate", {RawParameter(enabled), RawParameter(locked), RawParameter(pos.first), RawParameter(pos.second), RawParameter(size.first), RawParameter(size.second)});
+	Interface::ExecuteCommand("GUIChatbox", {RawParameter(enabled), RawParameter(locked), RawParameter(pos.first), RawParameter(pos.second), RawParameter(size.first), RawParameter(size.second)});
 
 	Interface::EndDynamic();
 }
@@ -2523,13 +2534,6 @@ void Game::GetActorState(const FactoryObject<Actor>& reference, unsigned int idl
 	static pair<unsigned char, unsigned char> buf_weapon{AnimGroup_Idle, AnimGroup_Idle};
 
 	unsigned char movingxy = flags & 0x03;
-
-	if (flags & 0x04 && !GUIMode)
-	{
-		Interface::SignalEnd();
-		return;
-	}
-
 	bool result;
 
 	if (moving == 0xFF)
@@ -3042,4 +3046,12 @@ void Game::GetMode(bool enabled)
 		DisablePlayerControls(true, true, true, false);
 	else
 		EnablePlayerControls();
+}
+
+void Game::GetClick(string name)
+{
+	static const char* exit_button = "closeBTN";
+
+	if (!name.compare(exit_button))
+		Interface::SignalEnd();
 }

@@ -28,6 +28,7 @@ class PipeServer : public Pipe
 	public:
 		bool CreateServer();
 		bool ConnectToServer();
+		bool Disconnect();
 };
 
 class PipeClient : public Pipe

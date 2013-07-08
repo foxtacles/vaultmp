@@ -58,6 +58,11 @@ bool PipeServer::ConnectToServer()
 	return false;
 }
 
+bool PipeServer::Disconnect()
+{
+	return DisconnectNamedPipe(this->pipe);
+}
+
 bool PipeClient::ConnectToServer()
 {
 	if (this->name == "pipe")
