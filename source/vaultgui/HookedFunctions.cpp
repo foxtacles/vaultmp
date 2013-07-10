@@ -114,7 +114,7 @@ ATOM WINAPI RegisterClass_Hooked(
 LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	static string chatbox_text="";
-	static bool chatting=false;
+	/*static bool chatting=false;*/
 	static int maxV=0;
 	static char buff[100];
 
@@ -179,13 +179,13 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 					{
 						chatbox_text.pop_back();
 					}*/
-					if(chatting)
+					if(gData.chatting)
 						CEGUI::System::getSingleton().injectKeyDown(CEGUI::Key::Backspace);
                      
                     break; 
 
 				case VK_DELETE: 
-					if(chatting)
+					if(gData.chatting)
 						CEGUI::System::getSingleton().injectKeyDown(CEGUI::Key::Delete);
 					break;
  
@@ -200,7 +200,6 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
                     // Process an escape. 
 					
 					chatbox_text="";
-					chatting=false;
 					gData.chatting=false;
 					gData.disableMouseInput=false;
 					CEGUI::MouseCursor::getSingleton().hide();
@@ -221,7 +220,7 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
                 case 0x0D: 
                     
                     // Process a carriage return. 
-					if(chatting)
+					if(gData.chatting)
 					{
 						
 						CEGUI::Editbox* edb = ((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("Edit Box"));
@@ -239,7 +238,6 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 							//Chatbox_AddToChat((char*)txt.c_str());
 
 
-							chatting=false;
 							chatbox_text="";
 							((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("closeBTN"))->setAlpha(0);
 							gData.chatting=false;
@@ -255,7 +253,7 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 
 				default:
 
-				if(chatting)
+				if(gData.chatting)
 				{
 					char t=(char)wparam;
 					if(t>=32)
@@ -264,14 +262,14 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 					}
 				}
 
-				if(((char)wparam=='b'||(char)wparam=='B')&&!chatting)
+				if(((char)wparam=='b'||(char)wparam=='B')&&!gData.chatting)
 				{
 
 				}
 
-				if(((char)wparam=='t'||(char)wparam=='T')&&!chatting)
+				if(((char)wparam=='t'||(char)wparam=='T')&&!gData.chatting)
 				{
-					chatting=!chatting;
+					gData.chatting=!gData.chatting;
 					gData.chatting=true;
 					gData.disableMouseInput=true;
 					CEGUI::MouseCursor::getSingleton().show();
@@ -300,37 +298,37 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 					break;
 
 				case VK_DELETE:
-					if(chatting)
+					if(gData.chatting)
 						CEGUI::System::getSingleton().injectKeyDown(CEGUI::Key::Delete);
 					break;
 
 				case VK_LEFT:
-					if(chatting)
+					if(gData.chatting)
 						CEGUI::System::getSingleton().injectKeyDown(CEGUI::Key::ArrowLeft);
 					break;
 
 				case VK_RIGHT:
-					if(chatting)
+					if(gData.chatting)
 						CEGUI::System::getSingleton().injectKeyDown(CEGUI::Key::ArrowRight);
 					break;
 
 				case VK_DOWN:
-					if(chatting)
+					if(gData.chatting)
 						CEGUI::System::getSingleton().injectKeyDown(CEGUI::Key::ArrowDown);
 					break;
 
 				case VK_UP:
-					if(chatting)
+					if(gData.chatting)
 						CEGUI::System::getSingleton().injectKeyDown(CEGUI::Key::ArrowUp);
 					break;
 
 				case VK_TAB:
-					if(chatting)
+					if(gData.chatting)
 						CEGUI::System::getSingleton().injectKeyDown(CEGUI::Key::Tab);
 					break;
 
 				case VK_CAPITAL:
-					if(chatting)
+					if(gData.chatting)
 						CEGUI::System::getSingleton().injectKeyDown(CEGUI::Key::Capital);
 					break;
 			}
