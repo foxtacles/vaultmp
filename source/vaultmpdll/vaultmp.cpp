@@ -32,10 +32,12 @@ typedef void (*Chatbox_LockChatbox)(bool);
 typedef void (*Chatbox_SetChatboxPos)(float, float);
 typedef void (*Chatbox_SetChatboxSize)(float, float);
 typedef void (*Chatbox_SetPlayersDataPointer)(remotePlayers*);
+typedef void (*GUI_SetClickCallback)(void (*)(const char*));
 
 mutex mGUI;
 queue<string> qGUI_OnChat;
 queue<bool> qGUI_OnMode;
+queue<string> qGUI_OnClick;
 
 static HANDLE hProc;
 static PipeServer pipeServer;
@@ -49,6 +51,7 @@ static Chatbox_LockChatbox LockChatbox;
 static Chatbox_SetChatboxPos SetChatboxPos;
 static Chatbox_SetChatboxSize SetChatboxSize;
 static Chatbox_SetPlayersDataPointer SetPlayersDataPointer;
+static GUI_SetClickCallback SetClickCallback;
 static QueueUIMessage QueueMessage;
 
 static void PatchGame(HINSTANCE& silverlock);
@@ -300,8 +303,6 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 					}
 				}
 
-				flags |= (GetAsyncKeyState(VK_ESCAPE) & 0x8000) ? 0x04 : 0x00;
-
 				memcpy(result, &idle, 4);
 				memcpy((void*)((unsigned) result + 4), &moving, 1);
 				memcpy((void*)((unsigned) result + 5), &flags, 1);
@@ -479,7 +480,7 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 			break;
 		}
 
-		case 0x0008 | VAULTFUNCTION: // GUIUpdate - change chatbox state
+		case 0x0008 | VAULTFUNCTION: // GUIChatbox - change chatbox state
 		{
 			unsigned char* _args = (unsigned char*) args;
 
@@ -502,6 +503,13 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 	}
 
 	return false;
+}
+
+void GUI_OnClick(const char* name)
+{
+	mGUI.lock();
+	qGUI_OnClick.push(name);
+	mGUI.unlock();
 }
 
 void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
@@ -672,9 +680,12 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 		SetChatboxPos = reinterpret_cast<Chatbox_SetChatboxPos>(GetProcAddress(vaultgui, "SetChatboxPos"));
 		SetChatboxSize = reinterpret_cast<Chatbox_SetChatboxSize>(GetProcAddress(vaultgui, "SetChatboxSize"));
 		SetPlayersDataPointer = reinterpret_cast<Chatbox_SetPlayersDataPointer>(GetProcAddress(vaultgui, "SetPlayersDataPointer"));
+		SetClickCallback = reinterpret_cast<GUI_SetClickCallback>(GetProcAddress(vaultgui, "GUI_SetClickCallback"));
 
-		if (!AddToChat || !GetQueue || !HideChatbox || !LockChatbox || !SetChatboxPos || !SetChatboxSize || !SetPlayersDataPointer)
+		if (!AddToChat || !GetQueue || !HideChatbox || !LockChatbox || !SetChatboxPos || !SetChatboxSize || !SetPlayersDataPointer || !SetClickCallback)
 			DLLerror = true;
+
+		SetClickCallback(GUI_OnClick);
 
 /*
 players[0].health = 80.0;
@@ -796,6 +807,20 @@ players[1].player = false;
 			pipeClient.Send(buffer);
 
 			qGUI_OnMode.pop();
+		}
+
+		while (!qGUI_OnClick.empty())
+		{
+			const string& name = qGUI_OnClick.front();
+
+			buffer[0] = PIPE_OP_RETURN_RAW;
+			*reinterpret_cast<unsigned int*>(buffer + 1) = 0x0010 | VAULTFUNCTION;
+			*reinterpret_cast<unsigned int*>(buffer + 5) = name.length();
+			memcpy(buffer + 9, name.c_str(), name.length());
+
+			pipeClient.Send(buffer);
+
+			qGUI_OnClick.pop();
 		}
 
 		mGUI.unlock();

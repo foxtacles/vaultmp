@@ -95,6 +95,7 @@ void Interface::Terminate()
 
 void Interface::SignalEnd()
 {
+	pipeClient->Disconnect();
 	endThread = true;
 	shutdown = true;
 }
