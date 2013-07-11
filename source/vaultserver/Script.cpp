@@ -1267,7 +1267,7 @@ unsigned int Script::GetConnection(NetworkID id)
 	return value;
 }
 
-unsigned int Script::GetList(unsigned char type, NetworkID** data)
+unsigned int Script::GetList(unsigned int type, NetworkID** data)
 {
 	static vector<NetworkID> _data;
 	_data = GameFactory::GetIDObjectTypes(type);

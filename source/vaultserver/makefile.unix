@@ -131,7 +131,8 @@ $(OBJDIR_DEBUG)/API.o \
 $(OBJDIR_DEBUG)/Player.o \
 $(OBJDIR_DEBUG)/PacketFactory.o \
 $(OBJDIR_DEBUG)/Expected.o \
-$(OBJDIR_DEBUG)/Debug.o \
+$(OBJDIR_DEBUG)/Window.o \
+$(OBJDIR_DEBUG)/Debug.o
 
 OBJ_RELEASE = \
 $(OBJDIR_RELEASE)/RakNet/RakNetSocket2.o \
@@ -224,7 +225,8 @@ $(OBJDIR_RELEASE)/Actor.o \
 $(OBJDIR_RELEASE)/API.o \
 $(OBJDIR_RELEASE)/Player.o \
 $(OBJDIR_RELEASE)/PacketFactory.o \
-$(OBJDIR_RELEASE)/Expected.o
+$(OBJDIR_RELEASE)/Expected.o \
+$(OBJDIR_RELEASE)/Window.o \
 
 all: debug release
 
@@ -526,6 +528,9 @@ $(OBJDIR_DEBUG)/PacketFactory.o: ../PacketFactory.cpp
 $(OBJDIR_DEBUG)/Expected.o: ../Expected.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../Expected.cpp -o $(OBJDIR_DEBUG)/Expected.o
 
+$(OBJDIR_DEBUG)/Window.o: ../Window.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../Window.cpp -o $(OBJDIR_DEBUG)/Window.o
+
 clean_debug:
 	rm -f $(OBJ_DEBUG) $(OUT_DEBUG)
 	rm -rf $(OBJDIR_DEBUG)
@@ -821,6 +826,9 @@ $(OBJDIR_RELEASE)/PacketFactory.o: ../PacketFactory.cpp
 
 $(OBJDIR_RELEASE)/Expected.o: ../Expected.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../Expected.cpp -o $(OBJDIR_RELEASE)/Expected.o
+
+$(OBJDIR_RELEASE)/Window.o: ../Window.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../Window.cpp -o $(OBJDIR_RELEASE)/Window.o
 
 clean_release:
 	rm -f $(OBJ_RELEASE) $(OUT_RELEASE)

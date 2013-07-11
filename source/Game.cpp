@@ -767,7 +767,7 @@ void Game::LoadEnvironment()
 void Game::NewDispatch(FactoryObject<Object>& reference)
 {
 	NetworkID id = reference->GetNetworkID();
-	unsigned char type = reference.GetType();
+	unsigned int type = reference.GetType();
 
 	switch (type)
 	{
@@ -1735,7 +1735,7 @@ bool Game::IsInContext(unsigned int cell)
 	return result;
 }
 
-vector<unsigned int> Game::GetContext(unsigned char type)
+vector<unsigned int> Game::GetContext(unsigned int type)
 {
 	vector<unsigned int> result;
 

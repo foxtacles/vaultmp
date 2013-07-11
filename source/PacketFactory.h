@@ -46,6 +46,12 @@ enum class pTypes : unsigned char
 	ID_PLAYER_NEW,
 	ID_OBJECT_REMOVE,
 
+	ID_WINDOW_NEW,
+	ID_BUTTON_NEW,
+	ID_TEXT_NEW,
+	ID_EDIT_NEW,
+	ID_WINDOW_REMOVE,
+
 	ID_UPDATE_NAME,
 	ID_UPDATE_POS,
 	ID_UPDATE_ANGLE,
@@ -546,43 +552,43 @@ inline T PacketFactory::Pop(const pDefault* packet) {
 	return packet->deconstruct_single<T>();
 }
 
-class pObjectDefault : public pDefault
+class pReferenceDefault : public pDefault
 {
 		friend class PacketFactory;
 
 	protected:
-		pObjectDefault(pTypes type) : pDefault(type)
+		pReferenceDefault(pTypes type) : pDefault(type)
 		{
 
 		}
 
-		pObjectDefault(pTypes type, RakNet::NetworkID id) : pDefault(type)
+		pReferenceDefault(pTypes type, RakNet::NetworkID id) : pDefault(type)
 		{
 			construct(id);
 		}
 
-		pObjectDefault(const unsigned char* stream, unsigned int len) : pDefault(stream, len)
+		pReferenceDefault(const unsigned char* stream, unsigned int len) : pDefault(stream, len)
 		{
 
 		}
 };
 
-class pObjectNewDefault : public pObjectDefault
+class pReferenceNewDefault : public pReferenceDefault
 {
 		friend class PacketFactory;
 
 	protected:
-		pObjectNewDefault(pTypes type) : pObjectDefault(type)
+		pReferenceNewDefault(pTypes type) : pReferenceDefault(type)
 		{
 
 		}
 
-		pObjectNewDefault(pTypes type, RakNet::NetworkID id, unsigned int refID, unsigned int baseID) : pObjectDefault(type, id)
+		pReferenceNewDefault(pTypes type, RakNet::NetworkID id, unsigned int refID, unsigned int baseID) : pReferenceDefault(type, id)
 		{
 			construct(refID, baseID);
 		}
 
-		pObjectNewDefault(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		pReferenceNewDefault(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
@@ -819,16 +825,16 @@ class pGameDeleted : public pDefault
 };
 template<> struct pTypesMap<pTypes::ID_GAME_DELETED> { typedef pGameDeleted type; };
 
-class pObjectNew : public pObjectNewDefault
+class pObjectNew : public pReferenceNewDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pObjectNew(RakNet::NetworkID id, unsigned int refID, unsigned int baseID, bool changed, const std::string& name, double X, double Y, double Z, double aX, double aY, double aZ, unsigned int cell, bool enabled, unsigned int lock, unsigned int owner) : pObjectNewDefault(pTypes::ID_OBJECT_NEW, id, refID, baseID)
+		pObjectNew(RakNet::NetworkID id, unsigned int refID, unsigned int baseID, bool changed, const std::string& name, double X, double Y, double Z, double aX, double aY, double aZ, unsigned int cell, bool enabled, unsigned int lock, unsigned int owner) : pReferenceNewDefault(pTypes::ID_OBJECT_NEW, id, refID, baseID)
 		{
 			construct(changed, name, X, Y, Z, aX, aY, aZ, cell, enabled, lock, owner);
 		}
-		pObjectNew(const unsigned char* stream, unsigned int len) : pObjectNewDefault(stream, len)
+		pObjectNew(const unsigned char* stream, unsigned int len) : pReferenceNewDefault(stream, len)
 		{
 
 		}
@@ -852,16 +858,16 @@ inline const typename pTypesMap<pTypes::ID_OBJECT_NEW>::type* PacketFactory::Cas
 	) ? static_cast<const typename pTypesMap<pTypes::ID_OBJECT_NEW>::type*>(packet) : nullptr;
 }
 
-class pItemNew : public pObjectNewDefault
+class pItemNew : public pReferenceNewDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pItemNew(const pPacket& _pObjectNew, RakNet::NetworkID id, unsigned int count, double condition, bool equipped, bool silent, bool stick) : pObjectNewDefault(pTypes::ID_ITEM_NEW)
+		pItemNew(const pPacket& _pObjectNew, RakNet::NetworkID id, unsigned int count, double condition, bool equipped, bool silent, bool stick) : pReferenceNewDefault(pTypes::ID_ITEM_NEW)
 		{
 			construct(_pObjectNew, id, count, condition, equipped, silent, stick);
 		}
-		pItemNew(const unsigned char* stream, unsigned int len) : pObjectNewDefault(stream, len)
+		pItemNew(const unsigned char* stream, unsigned int len) : pReferenceNewDefault(stream, len)
 		{
 
 		}
@@ -873,16 +879,16 @@ class pItemNew : public pObjectNewDefault
 };
 template<> struct pTypesMap<pTypes::ID_ITEM_NEW> { typedef pItemNew type; };
 
-class pContainerNew : public pObjectNewDefault
+class pContainerNew : public pReferenceNewDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pContainerNew(const pPacket& _pObjectNew, const std::vector<pPacket>& _pItemNew) : pObjectNewDefault(pTypes::ID_CONTAINER_NEW)
+		pContainerNew(const pPacket& _pObjectNew, const std::vector<pPacket>& _pItemNew) : pReferenceNewDefault(pTypes::ID_CONTAINER_NEW)
 		{
 			construct(_pObjectNew, _pItemNew);
 		}
-		pContainerNew(const unsigned char* stream, unsigned int len) : pObjectNewDefault(stream, len)
+		pContainerNew(const unsigned char* stream, unsigned int len) : pReferenceNewDefault(stream, len)
 		{
 
 		}
@@ -904,16 +910,16 @@ inline const typename pTypesMap<pTypes::ID_CONTAINER_NEW>::type* PacketFactory::
 	) ? static_cast<const typename pTypesMap<pTypes::ID_CONTAINER_NEW>::type*>(packet) : nullptr;
 }
 
-class pActorNew : public pObjectNewDefault
+class pActorNew : public pReferenceNewDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pActorNew(const pPacket& _pContainerNew, const std::map<unsigned char, double>& values, const std::map<unsigned char, double>& baseValues, unsigned int race, signed int age, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool female, bool alerted, bool sneaking, bool dead) : pObjectNewDefault(pTypes::ID_ACTOR_NEW)
+		pActorNew(const pPacket& _pContainerNew, const std::map<unsigned char, double>& values, const std::map<unsigned char, double>& baseValues, unsigned int race, signed int age, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool female, bool alerted, bool sneaking, bool dead) : pReferenceNewDefault(pTypes::ID_ACTOR_NEW)
 		{
 			construct(_pContainerNew, values, baseValues, race, age, idle, moving, movingxy, weapon, female, alerted, sneaking, dead);
 		}
-		pActorNew(const unsigned char* stream, unsigned int len) : pObjectNewDefault(stream, len)
+		pActorNew(const unsigned char* stream, unsigned int len) : pReferenceNewDefault(stream, len)
 		{
 
 		}
@@ -934,16 +940,16 @@ inline const typename pTypesMap<pTypes::ID_ACTOR_NEW>::type* PacketFactory::Cast
 	) ? static_cast<const typename pTypesMap<pTypes::ID_ACTOR_NEW>::type*>(packet) : nullptr;
 }
 
-class pPlayerNew : public pObjectNewDefault
+class pPlayerNew : public pReferenceNewDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pPlayerNew(const pPacket& _pActorNew, const std::map<unsigned char, std::pair<unsigned char, bool>>& controls) : pObjectNewDefault(pTypes::ID_PLAYER_NEW)
+		pPlayerNew(const pPacket& _pActorNew, const std::map<unsigned char, std::pair<unsigned char, bool>>& controls) : pReferenceNewDefault(pTypes::ID_PLAYER_NEW)
 		{
 			construct(_pActorNew, controls);
 		}
-		pPlayerNew(const unsigned char* stream, unsigned int len) : pObjectNewDefault(stream, len)
+		pPlayerNew(const unsigned char* stream, unsigned int len) : pReferenceNewDefault(stream, len)
 		{
 
 		}
@@ -955,16 +961,16 @@ class pPlayerNew : public pObjectNewDefault
 };
 template<> struct pTypesMap<pTypes::ID_PLAYER_NEW> { typedef pPlayerNew type; };
 
-class pObjectRemove : public pObjectDefault
+class pObjectRemove : public pReferenceDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pObjectRemove(RakNet::NetworkID id) : pObjectDefault(pTypes::ID_OBJECT_REMOVE, id)
+		pObjectRemove(RakNet::NetworkID id) : pReferenceDefault(pTypes::ID_OBJECT_REMOVE, id)
 		{
 
 		}
-		pObjectRemove(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		pObjectRemove(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
@@ -976,16 +982,58 @@ class pObjectRemove : public pObjectDefault
 };
 template<> struct pTypesMap<pTypes::ID_OBJECT_REMOVE> { typedef pObjectRemove type; };
 
-class pObjectName : public pObjectDefault
+class pWindowNew : public pReferenceDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pObjectName(RakNet::NetworkID id, const std::string& name) : pObjectDefault(pTypes::ID_UPDATE_NAME, id)
+		pWindowNew(RakNet::NetworkID id, RakNet::NetworkID parent, const std::string& label, const std::pair<double, double>& pos, const std::pair<double, double>& size, bool locked) : pReferenceDefault(pTypes::ID_WINDOW_NEW, id)
+		{
+			construct(parent, label, pos, size, locked);
+		}
+		pWindowNew(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
+		{
+
+		}
+
+		void access(RakNet::NetworkID& id, RakNet::NetworkID& parent, std::string& label, std::pair<double, double>& pos, std::pair<double, double>& size, bool& locked) const
+		{
+			deconstruct(id, parent, label, pos, size, locked);
+		}
+};
+template<> struct pTypesMap<pTypes::ID_WINDOW_NEW> { typedef pWindowNew type; };
+
+class pWindowRemove : public pReferenceDefault
+{
+		friend class PacketFactory;
+
+	private:
+		pWindowRemove(RakNet::NetworkID id) : pReferenceDefault(pTypes::ID_WINDOW_REMOVE, id)
+		{
+
+		}
+		pWindowRemove(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
+		{
+
+		}
+
+		void access(RakNet::NetworkID& id) const
+		{
+			deconstruct(id);
+		}
+};
+template<> struct pTypesMap<pTypes::ID_WINDOW_REMOVE> { typedef pWindowRemove type; };
+
+class pObjectName : public pReferenceDefault
+{
+		friend class PacketFactory;
+
+	private:
+		pObjectName(RakNet::NetworkID id, const std::string& name) : pReferenceDefault(pTypes::ID_UPDATE_NAME, id)
 		{
 			construct(name);
 		}
-		pObjectName(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		pObjectName(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
@@ -997,16 +1045,16 @@ class pObjectName : public pObjectDefault
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_NAME> { typedef pObjectName type; };
 
-class pObjectPos : public pObjectDefault
+class pObjectPos : public pReferenceDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pObjectPos(RakNet::NetworkID id, double X, double Y, double Z) : pObjectDefault(pTypes::ID_UPDATE_POS, id)
+		pObjectPos(RakNet::NetworkID id, double X, double Y, double Z) : pReferenceDefault(pTypes::ID_UPDATE_POS, id)
 		{
 			construct(X, Y, Z);
 		}
-		pObjectPos(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		pObjectPos(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
@@ -1018,16 +1066,16 @@ class pObjectPos : public pObjectDefault
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_POS> { typedef pObjectPos type; };
 
-class pObjectAngle : public pObjectDefault
+class pObjectAngle : public pReferenceDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pObjectAngle(RakNet::NetworkID id, unsigned char axis, double value) : pObjectDefault(pTypes::ID_UPDATE_ANGLE, id)
+		pObjectAngle(RakNet::NetworkID id, unsigned char axis, double value) : pReferenceDefault(pTypes::ID_UPDATE_ANGLE, id)
 		{
 			construct(axis, value);
 		}
-		pObjectAngle(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		pObjectAngle(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
@@ -1039,16 +1087,16 @@ class pObjectAngle : public pObjectDefault
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_ANGLE> { typedef pObjectAngle type; };
 
-class pObjectCell : public pObjectDefault
+class pObjectCell : public pReferenceDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pObjectCell(RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z) : pObjectDefault(pTypes::ID_UPDATE_CELL, id)
+		pObjectCell(RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z) : pReferenceDefault(pTypes::ID_UPDATE_CELL, id)
 		{
 			construct(cell, X, Y, Z);
 		}
-		pObjectCell(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		pObjectCell(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
@@ -1060,16 +1108,16 @@ class pObjectCell : public pObjectDefault
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_CELL> { typedef pObjectCell type; };
 
-class pObjectLock : public pObjectDefault
+class pObjectLock : public pReferenceDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pObjectLock(RakNet::NetworkID id, unsigned int lock) : pObjectDefault(pTypes::ID_UPDATE_LOCK, id)
+		pObjectLock(RakNet::NetworkID id, unsigned int lock) : pReferenceDefault(pTypes::ID_UPDATE_LOCK, id)
 		{
 			construct(lock);
 		}
-		pObjectLock(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		pObjectLock(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
@@ -1081,16 +1129,16 @@ class pObjectLock : public pObjectDefault
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_LOCK> { typedef pObjectLock type; };
 
-class pObjectOwner : public pObjectDefault
+class pObjectOwner : public pReferenceDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pObjectOwner(RakNet::NetworkID id, unsigned int owner) : pObjectDefault(pTypes::ID_UPDATE_OWNER, id)
+		pObjectOwner(RakNet::NetworkID id, unsigned int owner) : pReferenceDefault(pTypes::ID_UPDATE_OWNER, id)
 		{
 			construct(owner);
 		}
-		pObjectOwner(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		pObjectOwner(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
@@ -1102,16 +1150,16 @@ class pObjectOwner : public pObjectDefault
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_OWNER> { typedef pObjectOwner type; };
 
-class pItemCount : public pObjectDefault
+class pItemCount : public pReferenceDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pItemCount(RakNet::NetworkID id, unsigned int count) : pObjectDefault(pTypes::ID_UPDATE_COUNT, id)
+		pItemCount(RakNet::NetworkID id, unsigned int count) : pReferenceDefault(pTypes::ID_UPDATE_COUNT, id)
 		{
 			construct(count);
 		}
-		pItemCount(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		pItemCount(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
@@ -1123,16 +1171,16 @@ class pItemCount : public pObjectDefault
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_COUNT> { typedef pItemCount type; };
 
-class pItemCondition : public pObjectDefault
+class pItemCondition : public pReferenceDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pItemCondition(RakNet::NetworkID id, double condition, unsigned int health) : pObjectDefault(pTypes::ID_UPDATE_CONDITION, id)
+		pItemCondition(RakNet::NetworkID id, double condition, unsigned int health) : pReferenceDefault(pTypes::ID_UPDATE_CONDITION, id)
 		{
 			construct(condition, health);
 		}
-		pItemCondition(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		pItemCondition(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
@@ -1144,16 +1192,16 @@ class pItemCondition : public pObjectDefault
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_CONDITION> { typedef pItemCondition type; };
 
-class pContainerUpdate : public pObjectDefault
+class pContainerUpdate : public pReferenceDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pContainerUpdate(RakNet::NetworkID id, const std::pair<std::list<RakNet::NetworkID>, std::vector<pPacket>>& ndiff, const std::pair<std::list<RakNet::NetworkID>, std::vector<pPacket>>& gdiff) : pObjectDefault(pTypes::ID_UPDATE_CONTAINER, id)
+		pContainerUpdate(RakNet::NetworkID id, const std::pair<std::list<RakNet::NetworkID>, std::vector<pPacket>>& ndiff, const std::pair<std::list<RakNet::NetworkID>, std::vector<pPacket>>& gdiff) : pReferenceDefault(pTypes::ID_UPDATE_CONTAINER, id)
 		{
 			construct(ndiff, gdiff);
 		}
-		pContainerUpdate(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		pContainerUpdate(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
@@ -1165,16 +1213,16 @@ class pContainerUpdate : public pObjectDefault
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_CONTAINER> { typedef pContainerUpdate type; };
 
-class pActorValue : public pObjectDefault
+class pActorValue : public pReferenceDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pActorValue(RakNet::NetworkID id, bool base, unsigned char index, double value) : pObjectDefault(pTypes::ID_UPDATE_VALUE, id)
+		pActorValue(RakNet::NetworkID id, bool base, unsigned char index, double value) : pReferenceDefault(pTypes::ID_UPDATE_VALUE, id)
 		{
 			construct(base, index, value);
 		}
-		pActorValue(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		pActorValue(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
@@ -1186,16 +1234,16 @@ class pActorValue : public pObjectDefault
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_VALUE> { typedef pActorValue type; };
 
-class pActorState : public pObjectDefault
+class pActorState : public pReferenceDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pActorState(RakNet::NetworkID id, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking, bool firing) : pObjectDefault(pTypes::ID_UPDATE_STATE, id)
+		pActorState(RakNet::NetworkID id, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking, bool firing) : pReferenceDefault(pTypes::ID_UPDATE_STATE, id)
 		{
 			construct(idle, moving, movingxy, weapon, alerted, sneaking, firing);
 		}
-		pActorState(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		pActorState(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
@@ -1207,16 +1255,16 @@ class pActorState : public pObjectDefault
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_STATE> { typedef pActorState type; };
 
-class pActorRace : public pObjectDefault
+class pActorRace : public pReferenceDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pActorRace(RakNet::NetworkID id, unsigned int race, signed int age, signed int delta_age) : pObjectDefault(pTypes::ID_UPDATE_RACE, id)
+		pActorRace(RakNet::NetworkID id, unsigned int race, signed int age, signed int delta_age) : pReferenceDefault(pTypes::ID_UPDATE_RACE, id)
 		{
 			construct(race, age, delta_age);
 		}
-		pActorRace(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		pActorRace(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
@@ -1228,16 +1276,16 @@ class pActorRace : public pObjectDefault
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_RACE> { typedef pActorRace type; };
 
-class pActorSex : public pObjectDefault
+class pActorSex : public pReferenceDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pActorSex(RakNet::NetworkID id, bool female) : pObjectDefault(pTypes::ID_UPDATE_SEX, id)
+		pActorSex(RakNet::NetworkID id, bool female) : pReferenceDefault(pTypes::ID_UPDATE_SEX, id)
 		{
 			construct(female);
 		}
-		pActorSex(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		pActorSex(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
@@ -1249,16 +1297,16 @@ class pActorSex : public pObjectDefault
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_SEX> { typedef pActorSex type; };
 
-class pActorDead : public pObjectDefault
+class pActorDead : public pReferenceDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pActorDead(RakNet::NetworkID id, bool dead, unsigned short limbs, signed char cause) : pObjectDefault(pTypes::ID_UPDATE_DEAD, id)
+		pActorDead(RakNet::NetworkID id, bool dead, unsigned short limbs, signed char cause) : pReferenceDefault(pTypes::ID_UPDATE_DEAD, id)
 		{
 			construct(dead, limbs, cause);
 		}
-		pActorDead(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		pActorDead(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
@@ -1270,16 +1318,16 @@ class pActorDead : public pObjectDefault
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_DEAD> { typedef pActorDead type; };
 
-class pActorFireweapon : public pObjectDefault
+class pActorFireweapon : public pReferenceDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pActorFireweapon(RakNet::NetworkID id, unsigned int weapon, double attacks) : pObjectDefault(pTypes::ID_UPDATE_FIREWEAPON, id)
+		pActorFireweapon(RakNet::NetworkID id, unsigned int weapon, double attacks) : pReferenceDefault(pTypes::ID_UPDATE_FIREWEAPON, id)
 		{
 			construct(weapon, attacks);
 		}
-		pActorFireweapon(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		pActorFireweapon(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
@@ -1291,16 +1339,16 @@ class pActorFireweapon : public pObjectDefault
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_FIREWEAPON> { typedef pActorFireweapon type; };
 
-class pActorIdle : public pObjectDefault
+class pActorIdle : public pReferenceDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pActorIdle(RakNet::NetworkID id, unsigned int idle, const std::string& name) : pObjectDefault(pTypes::ID_UPDATE_IDLE, id)
+		pActorIdle(RakNet::NetworkID id, unsigned int idle, const std::string& name) : pReferenceDefault(pTypes::ID_UPDATE_IDLE, id)
 		{
 			construct(idle, name);
 		}
-		pActorIdle(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		pActorIdle(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
@@ -1312,16 +1360,16 @@ class pActorIdle : public pObjectDefault
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_IDLE> { typedef pActorIdle type; };
 
-class pPlayerControl : public pObjectDefault
+class pPlayerControl : public pReferenceDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pPlayerControl(RakNet::NetworkID id, unsigned char control, unsigned char key) : pObjectDefault(pTypes::ID_UPDATE_CONTROL, id)
+		pPlayerControl(RakNet::NetworkID id, unsigned char control, unsigned char key) : pReferenceDefault(pTypes::ID_UPDATE_CONTROL, id)
 		{
 			construct(control, key);
 		}
-		pPlayerControl(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		pPlayerControl(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
@@ -1333,16 +1381,16 @@ class pPlayerControl : public pObjectDefault
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_CONTROL> { typedef pPlayerControl type; };
 
-class pPlayerInterior : public pObjectDefault
+class pPlayerInterior : public pReferenceDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pPlayerInterior(RakNet::NetworkID id, const std::string& cell, bool spawn) : pObjectDefault(pTypes::ID_UPDATE_INTERIOR, id)
+		pPlayerInterior(RakNet::NetworkID id, const std::string& cell, bool spawn) : pReferenceDefault(pTypes::ID_UPDATE_INTERIOR, id)
 		{
 			construct(cell, spawn);
 		}
-		pPlayerInterior(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		pPlayerInterior(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
@@ -1354,16 +1402,16 @@ class pPlayerInterior : public pObjectDefault
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_INTERIOR> { typedef pPlayerInterior type; };
 
-class pPlayerExterior : public pObjectDefault
+class pPlayerExterior : public pReferenceDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pPlayerExterior(RakNet::NetworkID id, unsigned int baseID, signed int x, signed int y, bool spawn) : pObjectDefault(pTypes::ID_UPDATE_EXTERIOR, id)
+		pPlayerExterior(RakNet::NetworkID id, unsigned int baseID, signed int x, signed int y, bool spawn) : pReferenceDefault(pTypes::ID_UPDATE_EXTERIOR, id)
 		{
 			construct(baseID, x, y, spawn);
 		}
-		pPlayerExterior(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		pPlayerExterior(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
@@ -1375,16 +1423,16 @@ class pPlayerExterior : public pObjectDefault
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_EXTERIOR> { typedef pPlayerExterior type; };
 
-class pPlayerContext : public pObjectDefault
+class pPlayerContext : public pReferenceDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pPlayerContext(RakNet::NetworkID id, const std::array<unsigned int, 9>& context, bool spawn) : pObjectDefault(pTypes::ID_UPDATE_CONTEXT, id)
+		pPlayerContext(RakNet::NetworkID id, const std::array<unsigned int, 9>& context, bool spawn) : pReferenceDefault(pTypes::ID_UPDATE_CONTEXT, id)
 		{
 			construct(context, spawn);
 		}
-		pPlayerContext(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		pPlayerContext(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
@@ -1396,16 +1444,16 @@ class pPlayerContext : public pObjectDefault
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_CONTEXT> { typedef pPlayerContext type; };
 
-class pPlayerConsole : public pObjectDefault
+class pPlayerConsole : public pReferenceDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pPlayerConsole(RakNet::NetworkID id, bool enabled) : pObjectDefault(pTypes::ID_UPDATE_CONSOLE, id)
+		pPlayerConsole(RakNet::NetworkID id, bool enabled) : pReferenceDefault(pTypes::ID_UPDATE_CONSOLE, id)
 		{
 			construct(enabled);
 		}
-		pPlayerConsole(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		pPlayerConsole(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
@@ -1417,16 +1465,16 @@ class pPlayerConsole : public pObjectDefault
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_CONSOLE> { typedef pPlayerConsole type; };
 
-class pPlayerChat : public pObjectDefault
+class pPlayerChat : public pReferenceDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pPlayerChat(RakNet::NetworkID id, bool enabled, bool locked, const std::pair<double, double> pos, const std::pair<double, double> size) : pObjectDefault(pTypes::ID_UPDATE_CHAT, id)
+		pPlayerChat(RakNet::NetworkID id, bool enabled, bool locked, const std::pair<double, double> pos, const std::pair<double, double> size) : pReferenceDefault(pTypes::ID_UPDATE_CHAT, id)
 		{
 			construct(enabled, locked, pos, size);
 		}
-		pPlayerChat(const unsigned char* stream, unsigned int len) : pObjectDefault(stream, len)
+		pPlayerChat(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}

@@ -60,7 +60,7 @@ namespace vaultmp {
 		MAX_CHAT_LENGTH	= 128,
 	};
 
-	enum VAULTCPP(class) Type VAULTCPP(: uint8_t)
+	enum VAULTCPP(class) Type VAULTCPP(: uint32_t)
 	{
 		ID_REFERENCE = 0x01,
 		ID_OBJECT = ID_REFERENCE << 1,

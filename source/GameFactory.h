@@ -14,6 +14,7 @@
 #include "Container.h"
 #include "Actor.h"
 #include "Player.h"
+#include "Window.h"
 
 #ifdef VAULTSERVER
 #include "vaultserver/vaultserver.h"
@@ -36,16 +37,21 @@
 #include "Debug.h"
 #endif
 
-const unsigned char ID_REFERENCE        = 0x01;
-const unsigned char ID_OBJECT           = ID_REFERENCE << 1;
-const unsigned char ID_ITEM             = ID_OBJECT << 1;
-const unsigned char ID_CONTAINER        = ID_ITEM << 1;
-const unsigned char ID_ACTOR            = ID_CONTAINER << 1;
-const unsigned char ID_PLAYER           = ID_ACTOR << 1;
+const unsigned int ID_REFERENCE        = 0x01;
+const unsigned int ID_OBJECT           = ID_REFERENCE << 1;
+const unsigned int ID_ITEM             = ID_OBJECT << 1;
+const unsigned int ID_CONTAINER        = ID_ITEM << 1;
+const unsigned int ID_ACTOR            = ID_CONTAINER << 1;
+const unsigned int ID_PLAYER           = ID_ACTOR << 1;
+const unsigned int ID_WINDOW           = ID_PLAYER << 1;
+const unsigned int ID_BUTTON           = ID_WINDOW << 1;
+const unsigned int ID_TEXT             = ID_BUTTON << 1;
+const unsigned int ID_EDIT             = ID_TEXT << 1;
 
-const unsigned char ALL_OBJECTS         = (ID_OBJECT | ID_ITEM | ID_CONTAINER | ID_ACTOR | ID_PLAYER);
-const unsigned char ALL_CONTAINERS      = (ID_CONTAINER | ID_ACTOR | ID_PLAYER);
-const unsigned char ALL_ACTORS          = (ID_ACTOR | ID_PLAYER);
+const unsigned int ALL_OBJECTS         = (ID_OBJECT | ID_ITEM | ID_CONTAINER | ID_ACTOR | ID_PLAYER);
+const unsigned int ALL_CONTAINERS      = (ID_CONTAINER | ID_ACTOR | ID_PLAYER);
+const unsigned int ALL_ACTORS          = (ID_ACTOR | ID_PLAYER);
+const unsigned int ALL_GUI             = (ID_WINDOW | ID_BUTTON | ID_TEXT | ID_EDIT);
 
 template<typename T>
 class FactoryObject;
@@ -56,9 +62,9 @@ class FactoryObject;
 class GameFactory
 {
 	private:
-		typedef std::map<std::shared_ptr<Reference>, unsigned char> ReferenceList;
+		typedef std::map<std::shared_ptr<Reference>, unsigned int> ReferenceList;
 		typedef std::unordered_map<RakNet::NetworkID, ReferenceList::iterator> ReferenceIndex;
-		typedef std::unordered_map<unsigned char, unsigned int> ReferenceCount;
+		typedef std::unordered_map<unsigned int, unsigned int> ReferenceCount;
 		typedef std::unordered_set<RakNet::NetworkID> ReferenceDeleted;
 
 		GameFactory() = delete;
@@ -137,28 +143,28 @@ class GameFactory
 		/**
 		 * \brief Returns the type of the given NetworkID
 		 */
-		static unsigned char GetType(RakNet::NetworkID id) noexcept;
+		static unsigned int GetType(RakNet::NetworkID id) noexcept;
 		/**
 		 * \brief Returns the type of the given reference
 		 */
-		static unsigned char GetType(const Reference* reference) noexcept;
+		static unsigned int GetType(const Reference* reference) noexcept;
 		/**
 		 * \brief Returns the type of the given reference ID
 		 */
-		static unsigned char GetType(unsigned int refID) noexcept;
+		static unsigned int GetType(unsigned int refID) noexcept;
 		/**
 		 * \brief Obtains a lock on all References of a given type
 		 */
 		template<typename T = Object>
-		static std::vector<FactoryObject<T>> GetObjectTypes(unsigned char type) noexcept;
+		static std::vector<FactoryObject<T>> GetObjectTypes(unsigned int type) noexcept;
 		/**
 		 * \brief Returns the NetworkID's of all References of a given type
 		 */
-		static std::vector<RakNet::NetworkID> GetIDObjectTypes(unsigned char type) noexcept;
+		static std::vector<RakNet::NetworkID> GetIDObjectTypes(unsigned int type) noexcept;
 		/**
 		 * \brief Counts the amount of References of a given type
 		 */
-		static unsigned int GetObjectCount(unsigned char type) noexcept;
+		static unsigned int GetObjectCount(unsigned int type) noexcept;
 		/**
 		 * \brief Invalidates a Reference held by a FactoryObject
 		 */
@@ -167,15 +173,15 @@ class GameFactory
 		/**
 		 * \brief Creates a new instance of a given type
 		 */
-		static RakNet::NetworkID CreateInstance(unsigned char type, unsigned int refID, unsigned int baseID);
+		static RakNet::NetworkID CreateInstance(unsigned int type, unsigned int refID, unsigned int baseID);
 		/**
 		 * \brief Creates a new instance of a given type
 		 */
-		static RakNet::NetworkID CreateInstance(unsigned char type, unsigned int baseID);
+		static RakNet::NetworkID CreateInstance(unsigned int type, unsigned int baseID);
 		/**
 		 * \brief Creates a known instance from a network packet
 		 */
-		static RakNet::NetworkID CreateKnownInstance(unsigned char type, const pDefault* packet);
+		static RakNet::NetworkID CreateKnownInstance(unsigned int type, const pDefault* packet);
 
 		/**
 		 * \brief Destroys all instances and cleans up type classes
@@ -215,10 +221,10 @@ class FactoryObject<Reference>
 
 	private:
 		Reference* reference;
-		unsigned char type;
+		unsigned int type;
 
 	protected:
-		FactoryObject(Reference* reference, unsigned char type) : reference(reinterpret_cast<Reference*>(reference->StartSession())), type(type) {}
+		FactoryObject(Reference* reference, unsigned int type) : reference(reinterpret_cast<Reference*>(reference->StartSession())), type(type) {}
 
 		FactoryObject(const FactoryObject& p) : reference(p.reference), type(p.type)
 		{
@@ -272,7 +278,7 @@ class FactoryObject<Reference>
 		}
 
 	public:
-		unsigned char GetType() const { return type; }
+		unsigned int GetType() const { return type; }
 		Reference& operator*() const { return *reference; }
 		Reference* operator->() const { return reference; }
 		explicit operator bool() const { return reference; }
@@ -280,11 +286,11 @@ class FactoryObject<Reference>
 		bool operator!=(const FactoryObject& p) const { return !operator==(p); }
 
 		template<typename T>
-		inline bool validate(unsigned char type = 0x00) const;
+		inline bool validate(unsigned int type = 0x00000000) const;
 };
 
 #define GF_TYPE_WRAPPER(derived, base, token)                                                                                                               \
-	template<> inline bool FactoryObject<Reference>::validate<derived>(unsigned char type) const { return type ? (type & token) : (this->type & token); }   \
+	template<> inline bool FactoryObject<Reference>::validate<derived>(unsigned int type) const { return type ? (type & token) : (this->type & token); }   \
 	template<> class FactoryObject<derived> : public FactoryObject<base>                                                                                    \
 	{                                                                                                                                                       \
 		friend class GameFactory;                                                                                                                           \
@@ -293,7 +299,7 @@ class FactoryObject<Reference>
 		friend Expected<FactoryObject<T>> vaultcast(const FactoryObject<U>& object) noexcept;                                                               \
                                                                                                                                                             \
 	protected:                                                                                                                                              \
-		FactoryObject(Reference* reference, unsigned char type) : FactoryObject<base>(reference, type)                                                      \
+		FactoryObject(Reference* reference, unsigned int type) : FactoryObject<base>(reference, type)                                                      \
 		{                                                                                                                                                   \
 			if (!validate<derived>())                                                                                                                       \
 				reference = nullptr;                                                                                                                        \
@@ -317,6 +323,7 @@ GF_TYPE_WRAPPER(Item, Object, ID_ITEM)
 GF_TYPE_WRAPPER(Container, Object, ID_CONTAINER)
 GF_TYPE_WRAPPER(Actor, Container, ALL_ACTORS)
 GF_TYPE_WRAPPER(Player, Actor, ID_PLAYER)
+GF_TYPE_WRAPPER(Window, Reference, ALL_GUI)
 
 #undef GF_TYPE_WRAPPER
 

@@ -80,6 +80,14 @@ pPacket PacketFactory::Init(const unsigned char* stream, unsigned int len)
 			packet = new pObjectRemove(stream, len);
 			break;
 
+		case pTypes::ID_WINDOW_NEW:
+			packet = new pWindowNew(stream, len);
+			break;
+
+		case pTypes::ID_WINDOW_REMOVE:
+			packet = new pWindowRemove(stream, len);
+			break;
+
 		case pTypes::ID_UPDATE_NAME:
 			packet = new pObjectName(stream, len);
 			break;

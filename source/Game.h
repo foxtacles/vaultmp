@@ -37,7 +37,7 @@ class Game
 
 		typedef std::pair<std::future<void>, std::chrono::milliseconds> AsyncPack;
 		typedef std::pair<std::set<unsigned int>, std::set<unsigned int>> CellDiff;
-		typedef std::unordered_map<unsigned int, std::unordered_map<unsigned char, std::set<unsigned int>>> CellRefs;
+		typedef std::unordered_map<unsigned int, std::unordered_map<unsigned int, std::set<unsigned int>>> CellRefs;
 		typedef std::unordered_map<unsigned int, std::unordered_set<RakNet::NetworkID>> UninitializedObjects;
 		typedef std::unordered_map<unsigned int, std::vector<unsigned int>> DeletedObjects;
 		typedef std::unordered_map<unsigned int, unsigned int> BaseRaces;
@@ -333,7 +333,7 @@ class Game
 		/**
 		 * \brief Retrieves reference IDs of context objects
 		 */
-		static std::vector<unsigned int> GetContext(unsigned char type);
+		static std::vector<unsigned int> GetContext(unsigned int type);
 
 		/**
 		 * Network functions

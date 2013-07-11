@@ -134,6 +134,8 @@
 		<Unit filename="../Data.h" />
 		<Unit filename="../Debug.cpp" />
 		<Unit filename="../Debug.h" />
+		<Unit filename="../Edit.cpp" />
+		<Unit filename="../Edit.h" />
 		<Unit filename="../Expected.cpp" />
 		<Unit filename="../Expected.h" />
 		<Unit filename="../GameFactory.cpp" />
@@ -396,6 +398,8 @@
 		<Unit filename="../Reference.h" />
 		<Unit filename="../ServerEntry.cpp" />
 		<Unit filename="../ServerEntry.h" />
+		<Unit filename="../Text.cpp" />
+		<Unit filename="../Text.h" />
 		<Unit filename="../Utils.cpp" />
 		<Unit filename="../Utils.h" />
 		<Unit filename="../Value.cpp" />
@@ -406,6 +410,8 @@
 		<Unit filename="../VaultFunctor.h" />
 		<Unit filename="../VaultVector.cpp" />
 		<Unit filename="../VaultVector.h" />
+		<Unit filename="../Window.cpp" />
+		<Unit filename="../Window.h" />
 		<Unit filename="../iniparser/src/dictionary.c">
 			<Option compilerVar="CC" />
 		</Unit>

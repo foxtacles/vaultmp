@@ -105,8 +105,9 @@ $(OBJDIR_DEBUG)\\Network.o \
 $(OBJDIR_DEBUG)\\Lockable.o \
 $(OBJDIR_DEBUG)\\Item.o \
 $(OBJDIR_DEBUG)\\Interface.o \
-$(OBJDIR_DEBUG)\\Debug.o \
-$(OBJDIR_DEBUG)\\Expected.o
+$(OBJDIR_DEBUG)\\Expected.o \
+$(OBJDIR_DEBUG)\\Window.o \
+$(OBJDIR_DEBUG)\\Debug.o
 
 OBJ_RELEASE = \
 $(OBJDIR_RELEASE)\\RakNet\\RakNetSocket2.o \
@@ -173,7 +174,8 @@ $(OBJDIR_RELEASE)\\Network.o \
 $(OBJDIR_RELEASE)\\Lockable.o \
 $(OBJDIR_RELEASE)\\Item.o \
 $(OBJDIR_RELEASE)\\Interface.o \
-$(OBJDIR_RELEASE)\\Expected.o
+$(OBJDIR_RELEASE)\\Expected.o \
+$(OBJDIR_RELEASE)\\Window.o
 
 all: debug release
 
@@ -391,6 +393,9 @@ $(OBJDIR_DEBUG)\\Debug.o: Debug.cpp
 $(OBJDIR_DEBUG)\\Expected.o: Expected.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Expected.cpp -o $(OBJDIR_DEBUG)\\Expected.o
 
+$(OBJDIR_DEBUG)\\Window.o: Window.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Window.cpp -o $(OBJDIR_DEBUG)\\Window.o
+
 clean_debug:
 	cmd /c del /f $(OBJ_DEBUG) $(OUT_DEBUG)
 	cmd /c rd $(OBJDIR_DEBUG)
@@ -599,6 +604,9 @@ $(OBJDIR_RELEASE)\\Interface.o: Interface.cpp
 
 $(OBJDIR_RELEASE)\\Expected.o: Expected.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Expected.cpp -o $(OBJDIR_RELEASE)\\Expected.o
+
+$(OBJDIR_RELEASE)\\Window.o: Window.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Window.cpp -o $(OBJDIR_RELEASE)\\Window.o
 
 clean_release:
 	cmd /c del /f $(OBJ_RELEASE) $(OUT_RELEASE)

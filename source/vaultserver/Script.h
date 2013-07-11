@@ -222,7 +222,7 @@ class Script
 		static bool IsInterior(unsigned int cell);
 		static bool IsItemList(RakNet::NetworkID id);
 		static unsigned int GetConnection(RakNet::NetworkID id);
-		static unsigned int GetList(unsigned char type, RakNet::NetworkID** data);
+		static unsigned int GetList(unsigned int type, RakNet::NetworkID** data);
 		static void GetChatboxPos(double* X, double* Y);
 		static void GetChatboxSize(double* X, double* Y);
 		static unsigned int GetGameWeather();
@@ -356,7 +356,7 @@ class Script
 			{"IsCell", DB::Record::IsValidCell},
 			{"IsInterior", Script::IsInterior},
 			{"IsItemList", Script::IsItemList},
-			{"GetType", (unsigned char(*)(RakNet::NetworkID)) GameFactory::GetType},
+			{"GetType", (unsigned int(*)(RakNet::NetworkID)) GameFactory::GetType},
 			{"GetConnection", Script::GetConnection},
 			{"GetCount", GameFactory::GetObjectCount},
 			{"GetList", Script::GetList},
