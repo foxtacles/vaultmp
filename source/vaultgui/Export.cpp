@@ -128,7 +128,7 @@ extern "C"
 		Debug::FunctionReturn("SetPlayersDataPointer");
 	}
 
-	__declspec(dllexport) void HideChatbox(bool hide)
+	/*__declspec(dllexport) void HideChatbox(bool hide)
 	{
 		gData.hideChatbox=hide;
 	}
@@ -148,7 +148,7 @@ extern "C"
 	{
 		CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"));
 		w->setSize(CEGUI::UVector2(cegui_reldim(x), cegui_reldim(y)));
-	}
+	}*/
 
 
 
@@ -242,6 +242,23 @@ extern "C"
 	__declspec(dllexport) void GUI_SetTextChangedCallback(void (*pt)(char* name,char* t))
 	{
 		callbackPTR_OnTextChange=pt;
+	}
+
+	__declspec(dllexport) void GUI_ForceGUI(bool inGui)
+	{
+		gData.chatting=inGui;
+	}
+
+	__declspec(dllexport) void GUI_SetVisible(char* name,bool visible)
+	{
+		CEGUI::DefaultWindow *w = ((CEGUI::DefaultWindow*)CEGUI::WindowManager::getSingleton().getWindow(name));
+		w->setVisible(visible);
+	}
+
+	__declspec(dllexport) void GUI_AllowDrag(char* name,bool allow)
+	{
+		CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow(name));
+		w->setDragMovingEnabled(allow);
 	}
 
 	/*__declspec(dllexport) void GUI_EnterChatMode()
