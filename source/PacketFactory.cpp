@@ -184,8 +184,12 @@ pPacket PacketFactory::Init(const unsigned char* stream, unsigned int len)
 			packet = new pPlayerConsole(stream, len);
 			break;
 
-		case pTypes::ID_UPDATE_CHAT:
-			packet = new pPlayerChat(stream, len);
+		case pTypes::ID_UPDATE_WINDOW:
+			packet = new pGuiWindow(stream, len);
+			break;
+
+		case pTypes::ID_UPDATE_TEXT:
+			packet = new pGuiText(stream, len);
 			break;
 
 		default:

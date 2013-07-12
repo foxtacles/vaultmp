@@ -262,9 +262,6 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 			}
 
-			case Func_GUIChatbox:
-				break;
-
 			case Func_SetGlobalValue:
 				break;
 
@@ -810,7 +807,7 @@ void Game::NewDispatch(FactoryObject<Object>& reference)
 		}
 
 		default:
-			throw VaultException("Can't create object of unknown type %02X", type).stacktrace();
+			throw VaultException("Can't create object of unknown type %08X", type).stacktrace();
 	}
 }
 
@@ -1090,6 +1087,88 @@ void Game::RemoveObject(unsigned int refID)
 	Interface::EndDynamic();
 }
 
+void Game::NewWindow(const FactoryObject<Window>& reference)
+{
+	Interface::StartDynamic();
+
+	if (reference->GetLabel().empty())
+	{
+		reference->SetLabel(Utils::toString(reference->GetNetworkID()));
+
+		Interface::ExecuteCommand("GUICreateWindow", {RawParameter(reference->GetLabel())});
+	}
+
+	GUIWindowUpdate(reference);
+
+	Interface::EndDynamic();
+}
+
+void Game::NewButton(const FactoryObject<Button>& reference)
+{
+	if (!reference->GetParentWindow())
+		throw VaultException("Window %llu requires a parent", reference->GetNetworkID());
+
+	Interface::StartDynamic();
+
+	if (reference->GetLabel().empty())
+	{
+		reference->SetLabel(Utils::toString(reference->GetNetworkID()));
+
+		Interface::ExecuteCommand("GUICreateButton", {RawParameter(Utils::toString(reference->GetParentWindow())), RawParameter(reference->GetLabel())});
+	}
+
+	GUIWindowUpdate(reference);
+
+	if (!reference->GetText().empty())
+		GUITextUpdate(reference);
+
+	Interface::EndDynamic();
+}
+
+void Game::NewText(const FactoryObject<Text>& reference)
+{
+	if (!reference->GetParentWindow())
+		throw VaultException("Window %llu requires a parent", reference->GetNetworkID());
+
+	Interface::StartDynamic();
+
+	if (reference->GetLabel().empty())
+	{
+		reference->SetLabel(Utils::toString(reference->GetNetworkID()));
+
+		Interface::ExecuteCommand("GUICreateText", {RawParameter(Utils::toString(reference->GetParentWindow())), RawParameter(reference->GetLabel())});
+	}
+
+	GUIWindowUpdate(reference);
+
+	if (!reference->GetText().empty())
+		GUITextUpdate(reference);
+
+	Interface::EndDynamic();
+}
+
+void Game::NewEdit(const FactoryObject<Edit>& reference)
+{
+	if (!reference->GetParentWindow())
+		throw VaultException("Window %llu requires a parent", reference->GetNetworkID());
+
+	Interface::StartDynamic();
+
+	if (reference->GetLabel().empty())
+	{
+		reference->SetLabel(Utils::toString(reference->GetNetworkID()));
+
+		Interface::ExecuteCommand("GUICreateEdit", {RawParameter(Utils::toString(reference->GetParentWindow())), RawParameter(reference->GetLabel())});
+	}
+
+	GUIWindowUpdate(reference);
+
+	if (!reference->GetText().empty())
+		GUITextUpdate(reference);
+
+	Interface::EndDynamic();
+}
+
 void Game::PlaceAtMe(const FactoryObject<Object>& reference, unsigned int baseID, double condition, unsigned int count, unsigned int key)
 {
 	PlaceAtMe(reference->GetReference(), baseID, condition, count, key);
@@ -1121,7 +1200,7 @@ void Game::ToggleEnabled(unsigned int refID, bool enabled)
 	Interface::EndDynamic();
 }
 
-void Game::Delete(FactoryObject<Object>& reference)
+void Game::DeleteObject(FactoryObject<Object>& reference)
 {
 	RemoveObject(reference);
 
@@ -1135,6 +1214,17 @@ void Game::Delete(FactoryObject<Object>& reference)
 		(*deletedStatic)[reference->GetNetworkCell()].emplace_back(reference->GetReference());
 		deletedStatic.EndSession();
 	}
+
+	GameFactory::DestroyInstance(reference);
+}
+
+void Game::DeleteWindow(FactoryObject<Window>& reference)
+{
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("GUIRemoveWindow", {RawParameter(reference->GetLabel())});
+
+	Interface::EndDynamic();
 
 	GameFactory::DestroyInstance(reference);
 }
@@ -1619,6 +1709,28 @@ void Game::UnequipItem(const FactoryObject<Actor>& reference, unsigned int baseI
 	Interface::EndDynamic();
 }
 
+void Game::GUIWindowUpdate(const FactoryObject<Window>& reference)
+{
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("GUIChange", {RawParameter(reference->GetLabel()), RawParameter(reference->GetVisible()), RawParameter(reference->GetLocked()), RawParameter(reference->GetPos().first), RawParameter(reference->GetPos().second), RawParameter(reference->GetSize().first), RawParameter(reference->GetSize().second)});
+
+	Interface::EndDynamic();
+}
+
+template<typename T>
+void Game::GUITextUpdate(const FactoryObject<T>& reference)
+{
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("GUIText", {RawParameter(reference->GetLabel()), RawParameter(reference->GetText())});
+
+	Interface::EndDynamic();
+}
+template void Game::GUITextUpdate(const FactoryObject<Button>& reference);
+template void Game::GUITextUpdate(const FactoryObject<Text>& reference);
+template void Game::GUITextUpdate(const FactoryObject<Edit>& reference);
+
 Game::CellDiff Game::ScanCell(unsigned int type)
 {
 	auto store = make_shared<Shared<CellDiff>>();
@@ -1973,7 +2085,7 @@ void Game::net_UpdateContainer(FactoryObject<Container>& reference, const ItemLi
 			continue;
 		}
 
-		Delete(reference.get());
+		DeleteObject(reference.get());
 	}
 
 	for (const auto& packet : gdiff.second)
@@ -2295,13 +2407,49 @@ void Game::net_UpdateConsole(bool enabled)
 	Interface::EndDynamic();
 }
 
-void Game::net_UpdateChat(bool enabled, bool locked, const std::pair<double, double>& pos, const std::pair<double, double>& size)
+void Game::net_UpdateGUIWindow(const FactoryObject<Window>& reference, bool visible, bool locked, const pair<double, double>& pos, const pair<double, double>& size)
 {
-	Interface::StartDynamic();
+	reference->SetVisible(visible);
+	reference->SetLocked(locked);
+	reference->SetPos(pos.first, pos.second);
+	reference->SetSize(size.first, size.second);
 
-	Interface::ExecuteCommand("GUIChatbox", {RawParameter(enabled), RawParameter(locked), RawParameter(pos.first), RawParameter(pos.second), RawParameter(size.first), RawParameter(size.second)});
+	GUIWindowUpdate(reference);
+}
 
-	Interface::EndDynamic();
+void Game::net_UpdateGUIText(const FactoryObject<Window>& reference, const string& text)
+{
+	unsigned int type = reference.GetType();
+
+	switch (type)
+	{
+		case ID_BUTTON:
+		{
+			auto _reference = vaultcast<Button>(reference);
+			_reference->SetText(text);
+			GUITextUpdate(_reference.get());
+			break;
+		}
+
+		case ID_TEXT:
+		{
+			auto _reference = vaultcast<Text>(reference);
+			_reference->SetText(text);
+			GUITextUpdate(_reference.get());
+			break;
+		}
+
+		case ID_EDIT:
+		{
+			auto _reference = vaultcast<Edit>(reference);
+			_reference->SetText(text);
+			GUITextUpdate(_reference.get());
+			break;
+		}
+
+		default:
+			throw VaultException("Incompatible type %08X in UpdateGUIText", type);
+	}
 }
 
 void Game::net_UIMessage(const string& message, unsigned char emoticon)

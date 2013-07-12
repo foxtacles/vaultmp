@@ -20,7 +20,7 @@ class Window : public Reference
 		RakNet::NetworkID parent;
 		std::string label;
 		std::pair<double, double> pos, size;
-		bool locked;
+		bool locked, visible;
 
 		void initialize();
 
@@ -40,12 +40,14 @@ class Window : public Reference
 		void SetPos(double x, double y) { pos.first = x; pos.second = y; }
 		void SetSize(double x, double y) { size.first = x; size.second = y; }
 		void SetLocked(bool locked) { this->locked = locked; }
+		void SetVisible(bool visible) { this->visible = visible; }
 
 		RakNet::NetworkID GetParentWindow() const { return parent; }
 		const std::string& GetLabel() const { return label; }
 		const std::pair<double, double>& GetPos() const { return pos; }
 		const std::pair<double, double>& GetSize() const { return size; }
 		bool GetLocked() const { return locked; }
+		bool GetVisible() const { return visible; }
 
 		/**
 		 * \brief For network transfer

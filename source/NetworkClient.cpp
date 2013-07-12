@@ -262,7 +262,48 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					NetworkID id;
 					PacketFactory::Access<pTypes::ID_OBJECT_REMOVE>(packet, id);
 					auto reference = GameFactory::GetObject(id);
-					Game::Delete(reference.get());
+					Game::DeleteObject(reference.get());
+					break;
+				}
+
+				case pTypes::ID_WINDOW_NEW:
+				{
+					NetworkID id = GameFactory::CreateKnownInstance(ID_WINDOW, packet);
+					auto reference = GameFactory::GetObject<Window>(id);
+					Game::NewWindow(reference.get());
+					break;
+				}
+
+				case pTypes::ID_BUTTON_NEW:
+				{
+					NetworkID id = GameFactory::CreateKnownInstance(ID_BUTTON, packet);
+					auto reference = GameFactory::GetObject<Button>(id);
+					Game::NewButton(reference.get());
+					break;
+				}
+
+				case pTypes::ID_TEXT_NEW:
+				{
+					NetworkID id = GameFactory::CreateKnownInstance(ID_TEXT, packet);
+					auto reference = GameFactory::GetObject<Text>(id);
+					Game::NewText(reference.get());
+					break;
+				}
+
+				case pTypes::ID_EDIT_NEW:
+				{
+					NetworkID id = GameFactory::CreateKnownInstance(ID_EDIT, packet);
+					auto reference = GameFactory::GetObject<Edit>(id);
+					Game::NewEdit(reference.get());
+					break;
+				}
+
+				case pTypes::ID_WINDOW_REMOVE:
+				{
+					NetworkID id;
+					PacketFactory::Access<pTypes::ID_WINDOW_REMOVE>(packet, id);
+					auto reference = GameFactory::GetObject<Window>(id);
+					Game::DeleteWindow(reference.get());
 					break;
 				}
 
@@ -480,13 +521,24 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
-				case pTypes::ID_UPDATE_CHAT:
+				case pTypes::ID_UPDATE_WINDOW:
 				{
 					NetworkID id;
-					bool enabled, locked;
+					bool visible, locked;
 					pair<double, double> pos, size;
-					PacketFactory::Access<pTypes::ID_UPDATE_CHAT>(packet, id, enabled, locked, pos, size);
-					Game::net_UpdateChat(enabled, locked, pos, size);
+					PacketFactory::Access<pTypes::ID_UPDATE_WINDOW>(packet, id, visible, locked, pos, size);
+					auto reference = GameFactory::GetObject<Window>(id);
+					Game::net_UpdateGUIWindow(reference.get(), visible, locked, pos, size);
+					break;
+				}
+
+				case pTypes::ID_UPDATE_TEXT:
+				{
+					NetworkID id;
+					string text;
+					PacketFactory::Access<pTypes::ID_UPDATE_TEXT>(packet, id, text);
+					auto reference = GameFactory::GetObject<Window>(id);
+					Game::net_UpdateGUIText(reference.get(), text);
 					break;
 				}
 

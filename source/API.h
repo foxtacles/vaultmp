@@ -292,15 +292,21 @@ namespace Values
 		Func_SetCurrentHealth = 0x14BF,
 
 		Func_GetActorState = 0x0001 | VAULTFUNCTION,
-		Func_GUIChat = 0x0002 | VAULTFUNCTION,
 		Func_ScanContainer = 0x0003 | VAULTFUNCTION,
 		Func_UIMessage = 0x0004 | VAULTFUNCTION,
 		Func_RemoveAllItemsEx = 0x0005 | VAULTFUNCTION,
 		Func_ForceRespawn = 0x0006 | VAULTFUNCTION,
 		Func_SetGlobalValue = 0x0007 | VAULTFUNCTION,
-		Func_GUIChatbox = 0x0008 | VAULTFUNCTION,
+		Func_GUIChat = 0x0008 | VAULTFUNCTION,
 		Func_GUIMode = 0x0009 | VAULTFUNCTION,
-		Func_GUIClick = 0x0010 | VAULTFUNCTION,
+		Func_GUICreateWindow = 0x0010 | VAULTFUNCTION,
+		Func_GUICreateButton = 0x0011 | VAULTFUNCTION,
+		Func_GUICreateText = 0x0012 | VAULTFUNCTION,
+		Func_GUICreateEdit = 0x0013 | VAULTFUNCTION,
+		Func_GUIRemoveWindow = 0x0014 | VAULTFUNCTION,
+		Func_GUIUpdate = 0x0015 | VAULTFUNCTION,
+		Func_GUIText = 0x0016 | VAULTFUNCTION,
+		Func_GUIClick = 0x0017 | VAULTFUNCTION,
 	};
 
 	enum ActorVals

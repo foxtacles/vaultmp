@@ -16,7 +16,7 @@ Window::Window(const pDefault* packet) : Reference(0x00000000, 0x00000000)
 
 	NetworkID id;
 
-	PacketFactory::Access<pTypes::ID_WINDOW_NEW>(packet, id, parent, label, pos, size, locked);
+	PacketFactory::Access<pTypes::ID_WINDOW_NEW>(packet, id, parent, label, pos, size, locked, visible);
 
 	this->SetNetworkID(id);
 }
@@ -35,11 +35,12 @@ void Window::initialize()
 {
 	parent = 0;
 	locked = false;
+	visible = true;
 }
 
 pPacket Window::toPacket() const
 {
-	pPacket packet = PacketFactory::Create<pTypes::ID_WINDOW_NEW>(const_cast<Window*>(this)->GetNetworkID(), parent, label, pos, size, locked);
+	pPacket packet = PacketFactory::Create<pTypes::ID_WINDOW_NEW>(const_cast<Window*>(this)->GetNetworkID(), parent, label, pos, size, locked, visible);
 
 	return packet;
 }

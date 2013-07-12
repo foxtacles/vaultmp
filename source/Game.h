@@ -8,6 +8,10 @@
 #include "Shared.h"
 #include "Guarded.h"
 #include "VaultException.h"
+#include "Window.h"
+#include "Button.h"
+#include "Text.h"
+#include "Edit.h"
 
 #include <future>
 #include <chrono>
@@ -165,6 +169,22 @@ class Game
 		static void RemoveObject(const FactoryObject<Object>& reference);
 		static void RemoveObject(unsigned int refID);
 		/**
+		 * \brief Creates a new Window
+		 */
+		static void NewWindow(const FactoryObject<Window>& reference);
+		/**
+		 * \brief Creates a new Button
+		 */
+		static void NewButton(const FactoryObject<Button>& reference);
+		/**
+		 * \brief Creates a new Text
+		 */
+		static void NewText(const FactoryObject<Text>& reference);
+		/**
+		 * \brief Creates a new Edit
+		 */
+		static void NewEdit(const FactoryObject<Edit>& reference);
+		/**
 		 * \brief Places an Object in-game
 		 */
 		static void PlaceAtMe(const FactoryObject<Object>& reference, unsigned int baseID, double condition = 1.00, unsigned int count = 1, unsigned int key = 0);
@@ -177,7 +197,11 @@ class Game
 		/**
 		 * \brief Deletes an Object
 		 */
-		static void Delete(FactoryObject<Object>& reference);
+		static void DeleteObject(FactoryObject<Object>& reference);
+		/**
+		 * \brief Deletes a Window
+		 */
+		static void DeleteWindow(FactoryObject<Window>& reference);
 		/**
 		 * \brief Returns the baseID of an Object
 		 */
@@ -303,6 +327,15 @@ class Game
 		static void UnequipItem(const FactoryObject<Actor>& reference, const FactoryObject<Item>& item, unsigned int key = 0);
 		static void UnequipItem(const FactoryObject<Actor>& reference, unsigned int baseID, bool silent = false, bool stick = false, unsigned int key = 0);
 		/**
+		 * \brief Updates the settings of a GUI window
+		 */
+		static void GUIWindowUpdate(const FactoryObject<Window>& reference);
+		/**
+		 * \brief Updates the text of various GUI window elements
+		 */
+		template<typename T>
+		static void GUITextUpdate(const FactoryObject<T>& reference);
+		/**
 		 * \brief Scans a cell for forms and returns the delta to previous scan
 		 */
 		static CellDiff ScanCell(unsigned int type);
@@ -420,9 +453,13 @@ class Game
 		 */
 		static void net_UpdateConsole(bool enabled);
 		/**
-		 * \brief Network function to handle chatbox update
+		 * \brief Network function to handle GUI window update
 		 */
-		static void net_UpdateChat(bool enabled, bool locked, const std::pair<double, double>& pos, const std::pair<double, double>& size);
+		static void net_UpdateGUIWindow(const FactoryObject<Window>& reference, bool visible, bool locked, const std::pair<double, double>& pos, const std::pair<double, double>& size);
+		/**
+		 * \brief Network function to handle GUI text update
+		 */
+		static void net_UpdateGUIText(const FactoryObject<Window>& reference, const std::string& text);
 		/**
 		 * \brief Network function to handle UI message
 		 */

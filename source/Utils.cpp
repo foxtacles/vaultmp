@@ -73,6 +73,13 @@ string Utils::toString(double value)
 	return string(str);
 }
 
+string Utils::toString(unsigned long long value)
+{
+	char str[32];
+	snprintf(str, sizeof(str), "%llu", value);
+	return string(str);
+}
+
 string Utils::str_replace(const string& source, const char* find, const char* replace)
 {
 	unsigned int find_len = strlen(find);

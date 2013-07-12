@@ -29,6 +29,7 @@ class Utils
 		static std::string toString(unsigned int value);
 		static std::string toString(unsigned char value);
 		static std::string toString(double value);
+		static std::string toString(unsigned long long value);
 		static std::string str_replace(const std::string& source, const char* find, const char* replace);
 		static std::string& RemoveExtension(std::string& file);
 		static const char* FileOnly(const char* path);

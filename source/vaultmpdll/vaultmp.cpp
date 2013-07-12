@@ -22,17 +22,6 @@ struct remotePlayers
 static remotePlayers players[10];
 
 typedef void (*CallCommand)(void*, void*, void*, void*, void*, void*, void*, void*);
-typedef bool (*QueueUIMessage)(const char* msg, unsigned int emotion, const char* ddsPath, const char* soundName, float msgTime);
-typedef unsigned int (*LookupForm)(unsigned int);
-typedef unsigned int (*LookupFunc)(unsigned int);
-typedef void (*Chatbox_AddToChat)(const char*);
-typedef const char* (*Chatbox_GetQueue)();
-typedef void (*Chatbox_HideChatbox)(bool);
-typedef void (*Chatbox_LockChatbox)(bool);
-typedef void (*Chatbox_SetChatboxPos)(float, float);
-typedef void (*Chatbox_SetChatboxSize)(float, float);
-typedef void (*Chatbox_SetPlayersDataPointer)(remotePlayers*);
-typedef void (*GUI_SetClickCallback)(void (*)(const char*));
 
 mutex mGUI;
 queue<string> qGUI_OnChat;
@@ -42,17 +31,23 @@ queue<string> qGUI_OnClick;
 static HANDLE hProc;
 static PipeServer pipeServer;
 static PipeClient pipeClient;
-static LookupForm FormLookup;
-static LookupFunc FuncLookup;
-static Chatbox_AddToChat AddToChat;
-static Chatbox_GetQueue GetQueue;
-static Chatbox_HideChatbox HideChatbox;
-static Chatbox_LockChatbox LockChatbox;
-static Chatbox_SetChatboxPos SetChatboxPos;
-static Chatbox_SetChatboxSize SetChatboxSize;
-static Chatbox_SetPlayersDataPointer SetPlayersDataPointer;
-static GUI_SetClickCallback SetClickCallback;
-static QueueUIMessage QueueMessage;
+static unsigned int (*FormLookup)(unsigned int);
+static unsigned int (*FuncLookup)(unsigned int);
+static void (*Chatbox_AddToChat)(const char*);
+static void (*GUI_CreateFrameWindow)(const char*);
+static void (*GUI_AddStaticText)(const char*, const char*);
+static void (*GUI_AddTextbox)(const char*, const char*);
+static void (*GUI_AddButton)(const char*, const char*);
+static void (*GUI_SetVisible)(const char*, bool);
+static void (*GUI_AllowDrag)(const char*, bool);
+static void (*GUI_SetPosition)(const char*, float, float);
+static void (*GUI_SetSize)(const char*, float, float);
+static void (*GUI_SetText)(const char*, const char*);
+static void (*GUI_RemoveWindow)(const char*);
+static void (*GUI_ForceGUI)(bool);
+static void (*GUI_SetClickCallback)(void (*)(const char*));
+static void (*SetPlayersDataPointer)(remotePlayers*);
+static bool (*QueueUIMessage)(const char* msg, unsigned int emotion, const char* ddsPath, const char* soundName, float msgTime);
 
 static void PatchGame(HINSTANCE& silverlock);
 static void BethesdaDelegator();
@@ -313,14 +308,6 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 			break;
 		}
 
-		case 0x0002 | VAULTFUNCTION: // Chat - Print chat message
-		{
-			ZeroMemory(result, sizeof(double));
-			const char* data = ((char*) args) + 2; // skip length
-			AddToChat(data);
-			break;
-		}
-
 		case 0x0003 | VAULTFUNCTION: // ScanContainer - Returns a containers content including baseID, amount, condition, equipped state
 		case 0x0005 | VAULTFUNCTION: // RemoveAllItemsEx - same functionality, client will use the information for RemoveItem
 		{
@@ -452,7 +439,7 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 
 			unsigned int emoticon = *(unsigned int*)(data + strlen(data) + 2);
 
-			QueueMessage(data, emoticon, NULL, NULL, 2.0); // add more later
+			QueueUIMessage(data, emoticon, NULL, NULL, 2.0); // add more later
 
 			break;
 		}
@@ -480,21 +467,89 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 			break;
 		}
 
-		case 0x0008 | VAULTFUNCTION: // GUIChatbox - change chatbox state
+		case 0x0008 | VAULTFUNCTION: // GUIChat - Print chat message
 		{
+			ZeroMemory(result, sizeof(double));
+			const char* data = ((char*) args) + 2; // skip length
+			Chatbox_AddToChat(data);
+			break;
+		}
+
+		case 0x0009 | VAULTFUNCTION: // GUIMode - Force in / out of GUI mode
+		{
+			ZeroMemory(result, sizeof(double));
 			unsigned char* _args = (unsigned char*) args;
 
-			bool enabled = (bool) *(unsigned int*)(_args + 1);
+			if (*_args == 0x6E)
+				GUI_ForceGUI(*(unsigned int*) (_args + 1));
+			break;
+		}
+
+		case 0x0010 | VAULTFUNCTION: // GUICreateWindow - Create new frame window
+		{
+			ZeroMemory(result, sizeof(double));
+			const char* data = ((char*) args) + 2; // skip length
+			GUI_CreateFrameWindow(data);
+			break;
+		}
+
+		case 0x0011 | VAULTFUNCTION: // GUICreateButton - Create new button
+		{
+			ZeroMemory(result, sizeof(double));
+			const char* data = ((char*) args) + 2; // skip length
+			GUI_AddButton(data, data + strlen(data) + 3);
+			break;
+		}
+
+		case 0x0012 | VAULTFUNCTION: // GUICreateText - Create new text
+		{
+			ZeroMemory(result, sizeof(double));
+			const char* data = ((char*) args) + 2; // skip length
+			GUI_AddStaticText(data, data + strlen(data) + 3);
+			break;
+		}
+
+		case 0x0013 | VAULTFUNCTION: // GUICreateEdit - Create new edit box
+		{
+			ZeroMemory(result, sizeof(double));
+			const char* data = ((char*) args) + 2; // skip length
+			GUI_AddTextbox(data, data + strlen(data) + 3);
+			break;
+		}
+
+		case 0x0014 | VAULTFUNCTION: // GUIRemoveWindow - Remove window
+		{
+			ZeroMemory(result, sizeof(double));
+			const char* data = ((char*) args) + 2; // skip length
+			GUI_RemoveWindow(data);
+			break;
+		}
+
+		case 0x0015 | VAULTFUNCTION: // GUIUpdate - Update window
+		{
+			ZeroMemory(result, sizeof(double));
+			const char* data = ((char*) args) + 2; // skip length
+			unsigned char* _args = (unsigned char*) (data + strlen(data) + 1);
+
+			bool visible = (bool) *(unsigned int*)(_args + 1);
 			bool locked = (bool) *(unsigned int*)(_args + 6);
 			float pos_X = *(double*)(_args + 11);
 			float pos_Y = *(double*)(_args + 20);
 			float size_X = *(double*)(_args + 29);
 			float size_Y = *(double*)(_args + 38);
 
-			HideChatbox(!enabled);
-			LockChatbox(locked);
-			SetChatboxPos(pos_X, pos_Y);
-			SetChatboxSize(size_X, size_Y);
+			GUI_SetVisible(data, visible);
+			GUI_AllowDrag(data, !locked);
+			GUI_SetPosition(data, pos_X, pos_Y);
+			GUI_SetSize(data, size_X, size_Y);
+			break;
+		}
+
+		case 0x0016 | VAULTFUNCTION: // GUIText - Update text
+		{
+			ZeroMemory(result, sizeof(double));
+			const char* data = ((char*) args) + 2; // skip length
+			GUI_SetText(data, data + strlen(data) + 3);
 			break;
 		}
 
@@ -673,19 +728,25 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 		LoadLibrary("CEGUISTBImageCodec.dll");
 		LoadLibrary("CEGUITGAImageCodec.dll");
 
-		AddToChat = reinterpret_cast<Chatbox_AddToChat>(GetProcAddress(vaultgui, "Chatbox_AddToChat"));
-		GetQueue = reinterpret_cast<Chatbox_GetQueue>(GetProcAddress(vaultgui, "Chatbox_GetQueue"));
-		HideChatbox = reinterpret_cast<Chatbox_HideChatbox>(GetProcAddress(vaultgui, "HideChatbox"));
-		LockChatbox = reinterpret_cast<Chatbox_LockChatbox>(GetProcAddress(vaultgui, "LockChatbox"));
-		SetChatboxPos = reinterpret_cast<Chatbox_SetChatboxPos>(GetProcAddress(vaultgui, "SetChatboxPos"));
-		SetChatboxSize = reinterpret_cast<Chatbox_SetChatboxSize>(GetProcAddress(vaultgui, "SetChatboxSize"));
-		SetPlayersDataPointer = reinterpret_cast<Chatbox_SetPlayersDataPointer>(GetProcAddress(vaultgui, "SetPlayersDataPointer"));
-		SetClickCallback = reinterpret_cast<GUI_SetClickCallback>(GetProcAddress(vaultgui, "GUI_SetClickCallback"));
+		Chatbox_AddToChat = reinterpret_cast<decltype(Chatbox_AddToChat)>(GetProcAddress(vaultgui, "Chatbox_AddToChat"));
+		GUI_CreateFrameWindow = reinterpret_cast<decltype(GUI_CreateFrameWindow)>(GetProcAddress(vaultgui, "GUI_CreateFrameWindow"));
+		GUI_AddStaticText = reinterpret_cast<decltype(GUI_AddStaticText)>(GetProcAddress(vaultgui, "GUI_AddStaticText"));
+		GUI_AddTextbox = reinterpret_cast<decltype(GUI_AddTextbox)>(GetProcAddress(vaultgui, "GUI_AddTextbox"));
+		GUI_AddButton = reinterpret_cast<decltype(GUI_AddButton)>(GetProcAddress(vaultgui, "GUI_AddButton"));
+		GUI_SetVisible = reinterpret_cast<decltype(GUI_SetVisible)>(GetProcAddress(vaultgui, "GUI_SetVisible"));
+		GUI_AllowDrag = reinterpret_cast<decltype(GUI_AllowDrag)>(GetProcAddress(vaultgui, "GUI_AllowDrag"));
+		GUI_SetPosition = reinterpret_cast<decltype(GUI_SetPosition)>(GetProcAddress(vaultgui, "GUI_SetPosition"));
+		GUI_SetSize = reinterpret_cast<decltype(GUI_SetSize)>(GetProcAddress(vaultgui, "GUI_SetSize"));
+		GUI_SetText = reinterpret_cast<decltype(GUI_SetText)>(GetProcAddress(vaultgui, "GUI_SetText"));
+		GUI_RemoveWindow = reinterpret_cast<decltype(GUI_RemoveWindow)>(GetProcAddress(vaultgui, "GUI_RemoveWindow"));
+		GUI_ForceGUI = reinterpret_cast<decltype(GUI_ForceGUI)>(GetProcAddress(vaultgui, "GUI_ForceGUI"));
+		GUI_SetClickCallback = reinterpret_cast<decltype(GUI_SetClickCallback)>(GetProcAddress(vaultgui, "GUI_SetClickCallback"));
+		SetPlayersDataPointer = reinterpret_cast<decltype(SetPlayersDataPointer)>(GetProcAddress(vaultgui, "SetPlayersDataPointer"));
 
-		if (!AddToChat || !GetQueue || !HideChatbox || !LockChatbox || !SetChatboxPos || !SetChatboxSize || !SetPlayersDataPointer || !SetClickCallback)
+		if (!Chatbox_AddToChat || !GUI_CreateFrameWindow || !GUI_AddStaticText || !GUI_AddTextbox || !GUI_AddButton || !GUI_SetVisible || !GUI_AllowDrag || !GUI_SetPosition || !GUI_SetSize || !GUI_SetText || !GUI_RemoveWindow || !GUI_ForceGUI || !GUI_SetClickCallback || !SetPlayersDataPointer)
 			DLLerror = true;
 
-		SetClickCallback(GUI_OnClick);
+		GUI_SetClickCallback(GUI_OnClick);
 
 /*
 players[0].health = 80.0;
@@ -786,7 +847,7 @@ players[1].player = false;
 			const string& chat = qGUI_OnChat.front();
 
 			buffer[0] = PIPE_OP_RETURN_RAW;
-			*reinterpret_cast<unsigned int*>(buffer + 1) = 0x0002 | VAULTFUNCTION;
+			*reinterpret_cast<unsigned int*>(buffer + 1) = 0x0008 | VAULTFUNCTION;
 			*reinterpret_cast<unsigned int*>(buffer + 5) = chat.length();
 			memcpy(buffer + 9, chat.c_str(), chat.length());
 
@@ -814,7 +875,7 @@ players[1].player = false;
 			const string& name = qGUI_OnClick.front();
 
 			buffer[0] = PIPE_OP_RETURN_RAW;
-			*reinterpret_cast<unsigned int*>(buffer + 1) = 0x0010 | VAULTFUNCTION;
+			*reinterpret_cast<unsigned int*>(buffer + 1) = 0x0017 | VAULTFUNCTION;
 			*reinterpret_cast<unsigned int*>(buffer + 5) = name.length();
 			memcpy(buffer + 9, name.c_str(), name.length());
 
@@ -872,9 +933,9 @@ void PatchGame(HINSTANCE& silverlock)
 
 	unsigned char NOP[] = {0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
 
-	FormLookup = (LookupForm) LOOKUP_FORM;
-	FuncLookup = (LookupFunc) LOOKUP_FUNC;
-	QueueMessage = (QueueUIMessage) QUEUE_UI_MESSAGE;
+	FormLookup = (decltype(FormLookup)) LOOKUP_FORM;
+	FuncLookup = (decltype(FuncLookup)) LOOKUP_FUNC;
+	QueueUIMessage = (decltype(QueueUIMessage)) QUEUE_UI_MESSAGE;
 
 	SafeWrite8(delegator_dest, 0x51);   // PUSH ECX
 	SafeWrite8(delegatorCall_src + 5, 0x59);   // POP ECX
