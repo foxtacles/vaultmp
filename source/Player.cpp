@@ -16,10 +16,6 @@ unordered_set<unsigned int> Player::baseIDs;
 unsigned int Player::default_respawn = DEFAULT_PLAYER_RESPAWN;
 unsigned int Player::default_cell;
 bool Player::default_console = true;
-bool Player::default_chatbox_enabled = true;
-bool Player::default_chatbox_locked = false;
-pair<double, double> Player::default_chatbox_pos{0.01, 0.01};
-pair<double, double> Player::default_chatbox_size{0.35, 0.3};
 #endif
 
 const map<unsigned char, pair<double, double>> Player::f3_default_values = {
@@ -140,10 +136,6 @@ void Player::initialize()
 	player_Respawn.set(default_respawn);
 	player_Cell.set(default_cell);
 	state_Console.set(default_console);
-	state_Chatbox_Enabled.set(default_chatbox_enabled);
-	state_Chatbox_Locked.set(default_chatbox_locked);
-	player_Chatbox_Pos.set(default_chatbox_pos);
-	player_Chatbox_Size.set(default_chatbox_size);
 #endif
 }
 
@@ -163,26 +155,6 @@ bool Player::GetConsoleEnabled()
 	return default_console;
 }
 
-bool Player::GetChatboxEnabled()
-{
-	return default_chatbox_enabled;
-}
-
-bool Player::GetChatboxLocked()
-{
-	return default_chatbox_locked;
-}
-
-pair<double, double> Player::GetChatboxPos()
-{
-	return default_chatbox_pos;
-}
-
-pair<double, double> Player::GetChatboxSize()
-{
-	return default_chatbox_size;
-}
-
 void Player::SetRespawnTime(unsigned int respawn)
 {
 	default_respawn = respawn;
@@ -199,34 +171,6 @@ void Player::SetSpawnCell(unsigned int cell)
 void Player::SetConsoleEnabled(bool enabled)
 {
 	default_console = enabled;
-}
-
-void Player::SetChatboxEnabled(bool enabled)
-{
-	default_chatbox_enabled = enabled;
-}
-
-void Player::SetChatboxLocked(bool locked)
-{
-	default_chatbox_locked = locked;
-}
-
-void Player::SetChatboxPos(double X, double Y)
-{
-	if (!(X >= 0.0 && X <= 1.0 && Y >= 0.0 && Y <= 1.0))
-		return;
-
-	default_chatbox_pos.first = X;
-	default_chatbox_pos.second = Y;
-}
-
-void Player::SetChatboxSize(double X, double Y)
-{
-	if (!(X >= 0.0 && X <= 1.0 && Y >= 0.0 && Y <= 1.0))
-		return;
-
-	default_chatbox_size.first = X;
-	default_chatbox_size.second = Y;
 }
 
 const unordered_set<unsigned int>& Player::GetBaseIDs()
@@ -271,26 +215,6 @@ const Player::CellContext& Player::GetPlayerCellContext() const
 bool Player::GetPlayerConsoleEnabled() const
 {
 	return state_Console.get();
-}
-
-bool Player::GetPlayerChatboxEnabled() const
-{
-	return state_Chatbox_Enabled.get();
-}
-
-bool Player::GetPlayerChatboxLocked() const
-{
-	return state_Chatbox_Locked.get();
-}
-
-pair<double, double> Player::GetPlayerChatboxPos() const
-{
-	return player_Chatbox_Pos.get();
-}
-
-pair<double, double> Player::GetPlayerChatboxSize() const
-{
-	return player_Chatbox_Size.get();
 }
 #endif
 
@@ -338,32 +262,6 @@ Lockable* Player::SetNetworkCell(unsigned int cell)
 Lockable* Player::SetPlayerConsoleEnabled(bool enabled)
 {
 	return SetObjectValue(this->state_Console, enabled);
-}
-
-Lockable* Player::SetPlayerChatboxEnabled(bool enabled)
-{
-	return SetObjectValue(this->state_Chatbox_Enabled, enabled);
-}
-
-Lockable* Player::SetPlayerChatboxLocked(bool locked)
-{
-	return SetObjectValue(this->state_Chatbox_Locked, locked);
-}
-
-Lockable* Player::SetPlayerChatboxPos(double X, double Y)
-{
-	if (!(X >= 0.0 && X <= 1.0 && Y >= 0.0 && Y <= 1.0))
-		return nullptr;
-
-	return SetObjectValue(this->player_Chatbox_Pos, {X, Y});
-}
-
-Lockable* Player::SetPlayerChatboxSize(double X, double Y)
-{
-	if (!(X >= 0.0 && X <= 1.0 && Y >= 0.0 && Y <= 1.0))
-		return nullptr;
-
-	return SetObjectValue(this->player_Chatbox_Size, {X, Y});
 }
 #endif
 

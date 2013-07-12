@@ -39,19 +39,11 @@ class Player : public Actor
 		static unsigned int default_respawn;
 		static unsigned int default_cell;
 		static bool default_console;
-		static bool default_chatbox_enabled;
-		static bool default_chatbox_locked;
-		static std::pair<double, double> default_chatbox_pos;
-		static std::pair<double, double> default_chatbox_size;
 
 		Value<unsigned int> player_Respawn;
 		Value<unsigned int> player_Cell;
 		Value<CellContext> player_CellContext;
 		Value<bool> state_Console;
-		Value<bool> state_Chatbox_Enabled;
-		Value<bool> state_Chatbox_Locked;
-		Value<std::pair<double, double>> player_Chatbox_Pos;
-		Value<std::pair<double, double>> player_Chatbox_Size;
 #endif
 
 		std::unordered_map<unsigned char, std::pair<Value<unsigned char>, Value<bool>>> player_Controls;
@@ -87,22 +79,6 @@ class Player : public Actor
 		 */
 		static bool GetConsoleEnabled();
 		/**
-		 * \brief Gets the default chatbox enabled state
-		 */
-		static bool GetChatboxEnabled();
-		/**
-		 * \brief Gets the default chatbox locked state
-		 */
-		static bool GetChatboxLocked();
-		/**
-		 * \brief Gets the default chatbox position
-		 */
-		static std::pair<double, double> GetChatboxPos();
-		/**
-		 * \brief Gets the default chatbox size
-		 */
-		static std::pair<double, double> GetChatboxSize();
-		/**
 		 * \brief Sets the default respawn time
 		 */
 		static void SetRespawnTime(unsigned int respawn);
@@ -114,22 +90,6 @@ class Player : public Actor
 		 * \brief Sets the default console state
 		 */
 		static void SetConsoleEnabled(bool enabled);
-		/**
-		 * \brief Sets the default chatbox enabled state
-		 */
-		static void SetChatboxEnabled(bool enabled);
-		/**
-		 * \brief Sets the default chatbox locked state
-		 */
-		static void SetChatboxLocked(bool locked);
-		/**
-		 * \brief Sets the default chatbox position
-		 */
-		static void SetChatboxPos(double X, double Y);
-		/**
-		 * \brief Sets the default chatbox size
-		 */
-		static void SetChatboxSize(double X, double Y);
 		/**
 		 * \brief Returns the set of all used base IDs by players
 		 */

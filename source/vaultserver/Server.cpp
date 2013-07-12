@@ -146,10 +146,6 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 		PacketFactory::Create<pTypes::ID_UPDATE_CONSOLE>(0, player->GetPlayerConsoleEnabled()),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 
-	response.emplace_back(Network::CreateResponse(
-		PacketFactory::Create<pTypes::ID_UPDATE_CHAT>(0, player->GetPlayerChatboxEnabled(), player->GetPlayerChatboxLocked(), player->GetPlayerChatboxPos(), player->GetPlayerChatboxSize()),
-		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
-
 	unsigned int race = npc->GetRace();
 	unsigned int old_race = player->GetActorRace();
 

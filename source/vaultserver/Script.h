@@ -223,8 +223,6 @@ class Script
 		static bool IsItemList(RakNet::NetworkID id);
 		static unsigned int GetConnection(RakNet::NetworkID id);
 		static unsigned int GetList(unsigned int type, RakNet::NetworkID** data);
-		static void GetChatboxPos(double* X, double* Y);
-		static void GetChatboxSize(double* X, double* Y);
 		static unsigned int GetGameWeather();
 		static signed long long GetGameTime();
 		static unsigned int GetGameYear();
@@ -265,10 +263,6 @@ class Script
 		static unsigned int GetPlayerRespawnTime(RakNet::NetworkID id);
 		static unsigned int GetPlayerSpawnCell(RakNet::NetworkID id);
 		static bool GetPlayerConsoleEnabled(RakNet::NetworkID id);
-		static bool GetPlayerChatboxEnabled(RakNet::NetworkID id);
-		static bool GetPlayerChatboxLocked(RakNet::NetworkID id);
-		static void GetPlayerChatboxPos(RakNet::NetworkID id, double* X, double* Y);
-		static void GetPlayerChatboxSize(RakNet::NetworkID id, double* X, double* Y);
 
 		static RakNet::NetworkID CreateObject(unsigned int baseID, RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z);
 		static bool DestroyObject(RakNet::NetworkID id);
@@ -306,10 +300,6 @@ class Script
 		static void SetPlayerRespawnTime(RakNet::NetworkID id, unsigned int respawn);
 		static void SetPlayerSpawnCell(RakNet::NetworkID id, unsigned int cell);
 		static void SetPlayerConsoleEnabled(RakNet::NetworkID id, bool enabled);
-		static void SetPlayerChatboxEnabled(RakNet::NetworkID id, bool enabled);
-		static void SetPlayerChatboxLocked(RakNet::NetworkID id, bool locked);
-		static void SetPlayerChatboxPos(RakNet::NetworkID id, double X, double Y);
-		static void SetPlayerChatboxSize(RakNet::NetworkID id, double X, double Y);
 
 		static constexpr ScriptFunctionData functions[] {
 			{"timestamp", Utils::timestamp},
@@ -336,10 +326,6 @@ class Script
 			{"SetRespawnTime", Player::SetRespawnTime},
 			{"SetSpawnCell", Script::SetSpawnCell},
 			{"SetConsoleEnabled", Player::SetConsoleEnabled},
-			{"SetChatboxEnabled", Player::SetChatboxEnabled},
-			{"SetChatboxLocked", Player::SetChatboxLocked},
-			{"SetChatboxPos", Player::SetChatboxPos},
-			{"SetChatboxSize", Player::SetChatboxSize},
 			{"SetGameWeather", Script::SetGameWeather},
 			{"SetGameTime", Script::SetGameTime},
 			{"SetGameYear", Script::SetGameYear},
@@ -363,10 +349,6 @@ class Script
 			{"GetRespawnTime", Player::GetRespawnTime},
 			{"GetSpawnCell", Player::GetSpawnCell},
 			{"GetConsoleEnabled", Player::GetConsoleEnabled},
-			{"GetChatboxEnabled", Player::GetChatboxEnabled},
-			{"GetChatboxLocked", Player::GetChatboxLocked},
-			{"GetChatboxPos", Script::GetChatboxPos},
-			{"GetChatboxSize", Script::GetChatboxSize},
 			{"GetGameWeather", Script::GetGameWeather},
 			{"GetGameTime", Script::GetGameTime},
 			{"GetGameYear", Script::GetGameYear},
@@ -407,10 +389,6 @@ class Script
 			{"GetPlayerRespawnTime", Script::GetPlayerRespawnTime},
 			{"GetPlayerSpawnCell", Script::GetPlayerSpawnCell},
 			{"GetPlayerConsoleEnabled", Script::GetPlayerConsoleEnabled},
-			{"GetPlayerChatboxEnabled", Script::GetPlayerChatboxEnabled},
-			{"GetPlayerChatboxLocked", Script::GetPlayerChatboxLocked},
-			{"GetPlayerChatboxPos", Script::GetPlayerChatboxPos},
-			{"GetPlayerChatboxSize", Script::GetPlayerChatboxSize},
 
 			{"CreateObject", Script::CreateObject},
 			{"DestroyObject", Script::DestroyObject},
@@ -447,10 +425,6 @@ class Script
 			{"SetPlayerRespawnTime", Script::SetPlayerRespawnTime},
 			{"SetPlayerSpawnCell", Script::SetPlayerSpawnCell},
 			{"SetPlayerConsoleEnabled", Script::SetPlayerConsoleEnabled},
-			{"SetPlayerChatboxEnabled", Script::SetPlayerChatboxEnabled},
-			{"SetPlayerChatboxLocked", Script::SetPlayerChatboxLocked},
-			{"SetPlayerChatboxPos", Script::SetPlayerChatboxPos},
-			{"SetPlayerChatboxSize", Script::SetPlayerChatboxSize},
 		};
 };
 

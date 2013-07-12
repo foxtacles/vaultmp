@@ -37,8 +37,8 @@ class Window : public Reference
 
 		void SetParentWindow(Window& parent) { this->parent = parent.GetNetworkID(); }
 		void SetLabel(const std::string& label) { this->label = label; }
-		void SetPos(double x, double y) { pos.first = x; pos.second = y; }
-		void SetSize(double x, double y) { size.first = x; size.second = y; }
+		bool SetPos(double x, double y);
+		bool SetSize(double x, double y);
 		void SetLocked(bool locked) { this->locked = locked; }
 		void SetVisible(bool visible) { this->visible = visible; }
 
