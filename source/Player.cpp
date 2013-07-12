@@ -216,6 +216,11 @@ bool Player::GetPlayerConsoleEnabled() const
 {
 	return state_Console.get();
 }
+
+const Player::AttachedWindows& Player::GetPlayerWindows() const
+{
+	return (*player_Windows);
+}
 #endif
 
 Lockable* Player::SetPlayerControl(unsigned char control, unsigned char key)
@@ -262,6 +267,22 @@ Lockable* Player::SetNetworkCell(unsigned int cell)
 Lockable* Player::SetPlayerConsoleEnabled(bool enabled)
 {
 	return SetObjectValue(this->state_Console, enabled);
+}
+
+Lockable* Player::AttachWindow(RakNet::NetworkID id)
+{
+	if ((*player_Windows).emplace(id).second)
+		return &player_Windows;
+
+	return nullptr;
+}
+
+Lockable* Player::DetachWindow(RakNet::NetworkID id)
+{
+	if ((*player_Windows).erase(id))
+		return &player_Windows;
+
+	return nullptr;
 }
 #endif
 

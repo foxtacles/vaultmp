@@ -5,6 +5,8 @@
 using namespace std;
 using namespace RakNet;
 
+Window::WindowChilds Window::childs;
+
 Window::Window() : Reference(0x00000000, 0x00000000)
 {
 	initialize();
@@ -19,6 +21,9 @@ Window::Window(const pDefault* packet) : Reference(0x00000000, 0x00000000)
 	PacketFactory::Access<pTypes::ID_WINDOW_NEW>(packet, id, parent, label, pos, size, locked, visible, text);
 
 	this->SetNetworkID(id);
+
+	if (parent)
+		childs[parent].emplace(id);
 }
 
 Window::Window(pPacket&& packet) : Window(packet.get())
@@ -28,7 +33,8 @@ Window::Window(pPacket&& packet) : Window(packet.get())
 
 Window::~Window()
 {
-
+	if (parent)
+		childs[parent].erase(this->GetNetworkID());
 }
 
 void Window::initialize()
@@ -36,6 +42,30 @@ void Window::initialize()
 	parent = 0;
 	locked = false;
 	visible = true;
+}
+
+void Window::CollectChilds(NetworkID root, vector<NetworkID>& dest)
+{
+	dest.emplace_back(root);
+
+	for (const auto& child : childs[root])
+		CollectChilds(child, dest);
+}
+
+void Window::SetParentWindow(Window* parent)
+{
+	NetworkID id = this->GetNetworkID();
+
+	if (this->parent)
+		childs[this->parent].erase(id);
+
+	if (parent)
+	{
+		this->parent = parent->GetNetworkID();
+		childs[this->parent].emplace(id);
+	}
+	else
+		this->parent = 0;
 }
 
 bool Window::SetPos(double X, double Y)

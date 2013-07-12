@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 #include <array>
+#include <unordered_set>
 
 #include "Actor.h"
 
@@ -27,6 +28,7 @@ class Player : public Actor
 
 	public:
 		typedef std::array<unsigned int, 9> CellContext;
+		typedef std::unordered_set<RakNet::NetworkID> AttachedWindows;
 
 	private:
 #ifdef VAULTMP_DEBUG
@@ -44,6 +46,7 @@ class Player : public Actor
 		Value<unsigned int> player_Cell;
 		Value<CellContext> player_CellContext;
 		Value<bool> state_Console;
+		Value<AttachedWindows> player_Windows;
 #endif
 
 		std::unordered_map<unsigned char, std::pair<Value<unsigned char>, Value<bool>>> player_Controls;
@@ -130,21 +133,9 @@ class Player : public Actor
 		 */
 		bool GetPlayerConsoleEnabled() const;
 		/**
-		 * \brief Returns the Player's chatbox enabled state
+		 * \brief Returns the Player's attached windows
 		 */
-		bool GetPlayerChatboxEnabled() const;
-		/**
-		 * \brief Returns the Player's chatbox lock state
-		 */
-		bool GetPlayerChatboxLocked() const;
-		/**
-		 * \brief Returns the Player's chatbox position
-		 */
-		std::pair<double, double> GetPlayerChatboxPos() const;
-		/**
-		 * \brief Returns the Player's chatbox size
-		 */
-		std::pair<double, double> GetPlayerChatboxSize() const;
+		const AttachedWindows& GetPlayerWindows() const;
 #endif
 
 		/**
@@ -173,21 +164,13 @@ class Player : public Actor
 		 */
 		Lockable* SetPlayerConsoleEnabled(bool enabled);
 		/**
-		 * \brief Sets the chatbox enabled state
+		 * \brief Attaches a window
 		 */
-		Lockable* SetPlayerChatboxEnabled(bool enabled);
+		Lockable* AttachWindow(RakNet::NetworkID id);
 		/**
-		 * \brief Sets the chatbox locked state
+		 * \brief Detaches a window
 		 */
-		Lockable* SetPlayerChatboxLocked(bool locked);
-		/**
-		 * \brief Sets the chatbox position
-		 */
-		Lockable* SetPlayerChatboxPos(double X, double Y);
-		/**
-		 * \brief Sets the chatbox size
-		 */
-		Lockable* SetPlayerChatboxSize(double X, double Y);
+		Lockable* DetachWindow(RakNet::NetworkID id);
 #endif
 
 #ifdef VAULTSERVER

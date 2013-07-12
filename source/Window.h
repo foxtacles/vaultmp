@@ -3,6 +3,9 @@
 
 #include <string>
 #include <utility>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
 
 #include "vaultmp.h"
 #include "RakNet.h"
@@ -17,6 +20,10 @@ class Window : public Reference
 		friend class GameFactory;
 
 	private:
+		typedef std::unordered_map<RakNet::NetworkID, std::unordered_set<RakNet::NetworkID>> WindowChilds;
+
+		static WindowChilds childs;
+
 		RakNet::NetworkID parent;
 		std::string label;
 		std::pair<double, double> pos, size;
@@ -36,7 +43,10 @@ class Window : public Reference
 	public:
 		virtual ~Window();
 
-		void SetParentWindow(Window& parent) { this->parent = parent.GetNetworkID(); }
+		static const WindowChilds& GetChilds() { return childs; }
+		static void CollectChilds(RakNet::NetworkID root, std::vector<RakNet::NetworkID>& dest);
+
+		void SetParentWindow(Window* parent);
 		void SetLabel(const std::string& label) { this->label = label; }
 		bool SetPos(double X, double Y);
 		bool SetSize(double X, double Y);

@@ -302,6 +302,7 @@ class Script
 		static void SetPlayerConsoleEnabled(RakNet::NetworkID id, bool enabled);
 
 		static RakNet::NetworkID GetParentWindow(RakNet::NetworkID id);
+		static RakNet::NetworkID GetWindowRoot(RakNet::NetworkID id);
 		static unsigned int GetWindowChildCount(RakNet::NetworkID id);
 		static unsigned int GetWindowChildList(RakNet::NetworkID id, RakNet::NetworkID** data);
 		static void GetWindowPos(RakNet::NetworkID id, double* X, double* Y);
@@ -310,17 +311,7 @@ class Script
 		static bool GetWindowLocked(RakNet::NetworkID id);
 		static const char* GetWindowText(RakNet::NetworkID id);
 
-		// Avoid MinGW CreateWindow macro
-
-		#ifdef  __WIN32__
-			#pragma push_macro("CreateWindow")
-			#undef CreateWindow
-		#endif
-		static RakNet::NetworkID CreateWindow(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text);
-		#ifdef  __WIN32__
-			#pragma pop_macro("CreateWindow")
-		#endif
-
+		static RakNet::NetworkID (CreateWindow)(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text);
 		static bool AddChildWindow(RakNet::NetworkID id, RakNet::NetworkID child);
 		static bool RemoveChildWindow(RakNet::NetworkID id, RakNet::NetworkID child);
 		static bool DestroyWindow(RakNet::NetworkID id);
@@ -457,6 +448,29 @@ class Script
 			{"SetPlayerRespawnTime", Script::SetPlayerRespawnTime},
 			{"SetPlayerSpawnCell", Script::SetPlayerSpawnCell},
 			{"SetPlayerConsoleEnabled", Script::SetPlayerConsoleEnabled},
+
+			{"GetParentWindow", Script::GetParentWindow},
+			{"GetWindowRoot", Script::GetWindowRoot},
+			{"GetWindowChildCount", Script::GetWindowChildCount},
+			{"GetWindowChildList", Script::GetWindowChildList},
+			{"GetWindowPos", Script::GetWindowPos},
+			{"GetWindowSize", Script::GetWindowSize},
+			{"GetWindowVisible", Script::GetWindowVisible},
+			{"GetWindowLocked", Script::GetWindowLocked},
+			{"GetWindowText", Script::GetWindowText},
+
+			{"CreateWindow", Script::CreateWindow},
+			{"AddChildWindow", Script::AddChildWindow},
+			{"RemoveChildWindow", Script::RemoveChildWindow},
+			{"DestroyWindow", Script::DestroyWindow},
+			{"SetWindowPos", Script::SetWindowPos},
+			{"SetWindowSize", Script::SetWindowSize},
+			{"SetWindowVisible", Script::SetWindowVisible},
+			{"SetWindowLocked", Script::SetWindowLocked},
+			{"SetWindowText", Script::SetWindowText},
+			{"CreateButton", Script::CreateButton},
+			{"CreateText", Script::CreateText},
+			{"CreateEdit", Script::CreateEdit},
 		};
 };
 

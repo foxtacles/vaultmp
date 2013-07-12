@@ -287,6 +287,27 @@ AMX_NATIVE_INFO PAWN::functions[] {
 	F_<115>::F,
 	F_<116>::F,
 	F_<117>::F,
+	F_<118>::F,
+	F_<119>::F,
+	F_<120>::F,
+	F_<121>::F,
+	F_<122>::F,
+	F_<123>::F,
+	F_<124>::F,
+	F_<125>::F,
+	F_<126>::F,
+	F_<127>::F,
+	F_<128>::F,
+	F_<129>::F,
+	F_<130>::F,
+	F_<131>::F,
+	F_<132>::F,
+	F_<133>::F,
+	F_<134>::F,
+	F_<135>::F,
+	F_<136>::F,
+	F_<137>::F,
+	F_<138>::F,
 
 	{0, 0}
 };
@@ -500,6 +521,9 @@ int PAWN::Init(AMX* amx)
 	amx_TimeInit(amx);
 	amx_StringInit(amx);
 	amx_FileInit(amx);
+
+	static_assert(sizeof(PAWN::functions) / sizeof(PAWN::functions[0]) - 1 == sizeof(Script::functions) / sizeof(Script::functions[0]), "Not all functions have been mapped to PAWN");
+
 	return amx_Register(amx, PAWN::functions, -1);
 }
 

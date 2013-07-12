@@ -319,6 +319,7 @@ class FactoryObject<Reference>
 		~FactoryObject() = default;                                                                                                                         \
                                                                                                                                                             \
 		derived* operator->() const { return static_cast<derived*>(FactoryObject<Reference>::operator->()); }                                               \
+		derived& operator*() const { return static_cast<derived&>(FactoryObject<Reference>::operator*()); }                                                 \
 };
 
 GF_TYPE_WRAPPER(Object, Reference, ALL_OBJECTS)
