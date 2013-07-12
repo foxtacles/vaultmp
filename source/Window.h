@@ -21,6 +21,7 @@ class Window : public Reference
 		std::string label;
 		std::pair<double, double> pos, size;
 		bool locked, visible;
+		std::string text;
 
 		void initialize();
 
@@ -37,10 +38,11 @@ class Window : public Reference
 
 		void SetParentWindow(Window& parent) { this->parent = parent.GetNetworkID(); }
 		void SetLabel(const std::string& label) { this->label = label; }
-		bool SetPos(double x, double y);
-		bool SetSize(double x, double y);
+		bool SetPos(double X, double Y);
+		bool SetSize(double X, double Y);
 		void SetLocked(bool locked) { this->locked = locked; }
 		void SetVisible(bool visible) { this->visible = visible; }
+		void SetText(const std::string& text) { this->text = text; }
 
 		RakNet::NetworkID GetParentWindow() const { return parent; }
 		const std::string& GetLabel() const { return label; }
@@ -48,6 +50,7 @@ class Window : public Reference
 		const std::pair<double, double>& GetSize() const { return size; }
 		bool GetLocked() const { return locked; }
 		bool GetVisible() const { return visible; }
+		const std::string& GetText() const { return text; }
 
 		/**
 		 * \brief For network transfer

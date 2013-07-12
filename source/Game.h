@@ -327,14 +327,25 @@ class Game
 		static void UnequipItem(const FactoryObject<Actor>& reference, const FactoryObject<Item>& item, unsigned int key = 0);
 		static void UnequipItem(const FactoryObject<Actor>& reference, unsigned int baseID, bool silent = false, bool stick = false, unsigned int key = 0);
 		/**
-		 * \brief Updates the settings of a GUI window
+		 * \brief Updates the settings of a GUI window (pos)
 		 */
-		static void GUIWindowUpdate(const FactoryObject<Window>& reference);
+		static void GUIWindowPos(const FactoryObject<Window>& reference);
 		/**
-		 * \brief Updates the text of various GUI window elements
+		 * \brief Updates the settings of a GUI window (size)
 		 */
-		template<typename T>
-		static void GUITextUpdate(const FactoryObject<T>& reference);
+		static void GUIWindowSize(const FactoryObject<Window>& reference);
+		/**
+		 * \brief Updates the settings of a GUI window (visible)
+		 */
+		static void GUIWindowVisible(const FactoryObject<Window>& reference);
+		/**
+		 * \brief Updates the settings of a GUI window (locked)
+		 */
+		static void GUIWindowLocked(const FactoryObject<Window>& reference);
+		/**
+		 * \brief Updates the settings of a GUI window (text)
+		 */
+		static void GUIWindowText(const FactoryObject<Window>& reference);
 		/**
 		 * \brief Scans a cell for forms and returns the delta to previous scan
 		 */
@@ -453,11 +464,23 @@ class Game
 		 */
 		static void net_UpdateConsole(bool enabled);
 		/**
-		 * \brief Network function to handle GUI window update
+		 * \brief Network function to handle GUI window pos
 		 */
-		static void net_UpdateGUIWindow(const FactoryObject<Window>& reference, bool visible, bool locked, const std::pair<double, double>& pos, const std::pair<double, double>& size);
+		static void net_UpdateGUIPos(const FactoryObject<Window>& reference, const std::pair<double, double>& pos);
 		/**
-		 * \brief Network function to handle GUI text update
+		 * \brief Network function to handle GUI window size
+		 */
+		static void net_UpdateGUISize(const FactoryObject<Window>& reference, const std::pair<double, double>& size);
+		/**
+		 * \brief Network function to handle GUI window visible
+		 */
+		static void net_UpdateGUIVisible(const FactoryObject<Window>& reference, bool visible);
+		/**
+		 * \brief Network function to handle GUI window locked
+		 */
+		static void net_UpdateGUILocked(const FactoryObject<Window>& reference, bool locked);
+		/**
+		 * \brief Network function to handle GUI window text
 		 */
 		static void net_UpdateGUIText(const FactoryObject<Window>& reference, const std::string& text);
 		/**

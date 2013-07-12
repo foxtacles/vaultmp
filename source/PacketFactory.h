@@ -73,8 +73,11 @@ enum class pTypes : unsigned char
 	ID_UPDATE_EXTERIOR,
 	ID_UPDATE_CONTEXT,
 	ID_UPDATE_CONSOLE,
-	ID_UPDATE_WINDOW,
-	ID_UPDATE_TEXT
+	ID_UPDATE_WPOS,
+	ID_UPDATE_WSIZE,
+	ID_UPDATE_WVISIBLE,
+	ID_UPDATE_WLOCKED,
+	ID_UPDATE_WTEXT
 };
 
 enum class Reason : unsigned char
@@ -988,18 +991,18 @@ class pWindowNew : public pReferenceDefault
 		friend class PacketFactory;
 
 	private:
-		pWindowNew(RakNet::NetworkID id, RakNet::NetworkID parent, const std::string& label, const std::pair<double, double>& pos, const std::pair<double, double>& size, bool locked, bool visible) : pReferenceDefault(pTypes::ID_WINDOW_NEW, id)
+		pWindowNew(RakNet::NetworkID id, RakNet::NetworkID parent, const std::string& label, const std::pair<double, double>& pos, const std::pair<double, double>& size, bool locked, bool visible, const std::string& text) : pReferenceDefault(pTypes::ID_WINDOW_NEW, id)
 		{
-			construct(parent, label, pos, size, locked, visible);
+			construct(parent, label, pos, size, locked, visible, text);
 		}
 		pWindowNew(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
 
-		void access(RakNet::NetworkID& id, RakNet::NetworkID& parent, std::string& label, std::pair<double, double>& pos, std::pair<double, double>& size, bool& locked, bool& visible) const
+		void access(RakNet::NetworkID& id, RakNet::NetworkID& parent, std::string& label, std::pair<double, double>& pos, std::pair<double, double>& size, bool& locked, bool& visible, std::string& text) const
 		{
-			deconstruct(id, parent, label, pos, size, locked, visible);
+			deconstruct(id, parent, label, pos, size, locked, visible, text);
 		}
 };
 template<> struct pTypesMap<pTypes::ID_WINDOW_NEW> { typedef pWindowNew type; };
@@ -1020,18 +1023,18 @@ class pButtonNew : public pReferenceDefault
 		friend class PacketFactory;
 
 	private:
-		pButtonNew(const pPacket& _pWindowNew, const std::string& text) : pReferenceDefault(pTypes::ID_BUTTON_NEW)
+		pButtonNew(const pPacket& _pWindowNew) : pReferenceDefault(pTypes::ID_BUTTON_NEW)
 		{
-			construct(_pWindowNew, text);
+			construct(_pWindowNew);
 		}
 		pButtonNew(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
 
-		void access(std::string& text) const
+		void access() const
 		{
-			deconstruct(text);
+			deconstruct();
 		}
 };
 template<> struct pTypesMap<pTypes::ID_BUTTON_NEW> { typedef pButtonNew type; };
@@ -1041,18 +1044,18 @@ class pTextNew : public pReferenceDefault
 		friend class PacketFactory;
 
 	private:
-		pTextNew(const pPacket& _pWindowNew, const std::string& text) : pReferenceDefault(pTypes::ID_TEXT_NEW)
+		pTextNew(const pPacket& _pWindowNew) : pReferenceDefault(pTypes::ID_TEXT_NEW)
 		{
-			construct(_pWindowNew, text);
+			construct(_pWindowNew);
 		}
 		pTextNew(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
 
-		void access(std::string& text) const
+		void access() const
 		{
-			deconstruct(text);
+			deconstruct();
 		}
 };
 template<> struct pTypesMap<pTypes::ID_TEXT_NEW> { typedef pTextNew type; };
@@ -1062,18 +1065,18 @@ class pEditNew : public pReferenceDefault
 		friend class PacketFactory;
 
 	private:
-		pEditNew(const pPacket& _pWindowNew, const std::string& text) : pReferenceDefault(pTypes::ID_EDIT_NEW)
+		pEditNew(const pPacket& _pWindowNew) : pReferenceDefault(pTypes::ID_EDIT_NEW)
 		{
-			construct(_pWindowNew, text);
+			construct(_pWindowNew);
 		}
 		pEditNew(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
 
-		void access(std::string& text) const
+		void access() const
 		{
-			deconstruct(text);
+			deconstruct();
 		}
 };
 template<> struct pTypesMap<pTypes::ID_EDIT_NEW> { typedef pEditNew type; };
@@ -1540,37 +1543,100 @@ class pPlayerConsole : public pReferenceDefault
 };
 template<> struct pTypesMap<pTypes::ID_UPDATE_CONSOLE> { typedef pPlayerConsole type; };
 
-class pGuiWindow : public pReferenceDefault
+class pGuiWpos : public pReferenceDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pGuiWindow(RakNet::NetworkID id, bool visible, bool locked, const std::pair<double, double>& pos, const std::pair<double, double>& size) : pReferenceDefault(pTypes::ID_UPDATE_WINDOW, id)
+		pGuiWpos(RakNet::NetworkID id, const std::pair<double, double>& pos) : pReferenceDefault(pTypes::ID_UPDATE_WPOS, id)
 		{
-			construct(visible, locked, pos, size);
+			construct(pos);
 		}
-		pGuiWindow(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
+		pGuiWpos(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
 
-		void access(RakNet::NetworkID& id, bool& visible, bool& locked, std::pair<double, double>& pos, std::pair<double, double>& size) const
+		void access(RakNet::NetworkID& id, std::pair<double, double>& pos) const
 		{
-			deconstruct(id, visible, locked, pos, size);
+			deconstruct(id, pos);
 		}
 };
-template<> struct pTypesMap<pTypes::ID_UPDATE_WINDOW> { typedef pGuiWindow type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_WPOS> { typedef pGuiWpos type; };
 
-class pGuiText : public pReferenceDefault
+class pGuiWsize : public pReferenceDefault
 {
 		friend class PacketFactory;
 
 	private:
-		pGuiText(RakNet::NetworkID id, const std::string& text) : pReferenceDefault(pTypes::ID_UPDATE_TEXT, id)
+		pGuiWsize(RakNet::NetworkID id, const std::pair<double, double>& size) : pReferenceDefault(pTypes::ID_UPDATE_WSIZE, id)
+		{
+			construct(size);
+		}
+		pGuiWsize(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
+		{
+
+		}
+
+		void access(RakNet::NetworkID& id, std::pair<double, double>& size) const
+		{
+			deconstruct(id, size);
+		}
+};
+template<> struct pTypesMap<pTypes::ID_UPDATE_WSIZE> { typedef pGuiWsize type; };
+
+class pGuiWvisible : public pReferenceDefault
+{
+		friend class PacketFactory;
+
+	private:
+		pGuiWvisible(RakNet::NetworkID id, bool visible) : pReferenceDefault(pTypes::ID_UPDATE_WVISIBLE, id)
+		{
+			construct(visible);
+		}
+		pGuiWvisible(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
+		{
+
+		}
+
+		void access(RakNet::NetworkID& id, bool& visible) const
+		{
+			deconstruct(id, visible);
+		}
+};
+template<> struct pTypesMap<pTypes::ID_UPDATE_WVISIBLE> { typedef pGuiWvisible type; };
+
+class pGuiWlocked : public pReferenceDefault
+{
+		friend class PacketFactory;
+
+	private:
+		pGuiWlocked(RakNet::NetworkID id, bool locked) : pReferenceDefault(pTypes::ID_UPDATE_WLOCKED, id)
+		{
+			construct(locked);
+		}
+		pGuiWlocked(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
+		{
+
+		}
+
+		void access(RakNet::NetworkID& id, bool& locked) const
+		{
+			deconstruct(id, locked);
+		}
+};
+template<> struct pTypesMap<pTypes::ID_UPDATE_WLOCKED> { typedef pGuiWlocked type; };
+
+class pGuiWtext : public pReferenceDefault
+{
+		friend class PacketFactory;
+
+	private:
+		pGuiWtext(RakNet::NetworkID id, const std::string& text) : pReferenceDefault(pTypes::ID_UPDATE_WTEXT, id)
 		{
 			construct(text);
 		}
-		pGuiText(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
+		pGuiWtext(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
 		{
 
 		}
@@ -1580,6 +1646,6 @@ class pGuiText : public pReferenceDefault
 			deconstruct(id, text);
 		}
 };
-template<> struct pTypesMap<pTypes::ID_UPDATE_TEXT> { typedef pGuiText type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_WTEXT> { typedef pGuiWtext type; };
 
 #endif

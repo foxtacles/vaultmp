@@ -521,22 +521,51 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
-				case pTypes::ID_UPDATE_WINDOW:
+				case pTypes::ID_UPDATE_WPOS:
 				{
 					NetworkID id;
-					bool visible, locked;
-					pair<double, double> pos, size;
-					PacketFactory::Access<pTypes::ID_UPDATE_WINDOW>(packet, id, visible, locked, pos, size);
+					pair<double, double> pos;
+					PacketFactory::Access<pTypes::ID_UPDATE_WPOS>(packet, id, pos);
 					auto reference = GameFactory::GetObject<Window>(id);
-					Game::net_UpdateGUIWindow(reference.get(), visible, locked, pos, size);
+					Game::net_UpdateGUIPos(reference.get(), pos);
 					break;
 				}
 
-				case pTypes::ID_UPDATE_TEXT:
+				case pTypes::ID_UPDATE_WSIZE:
+				{
+					NetworkID id;
+					pair<double, double> size;
+					PacketFactory::Access<pTypes::ID_UPDATE_WSIZE>(packet, id, size);
+					auto reference = GameFactory::GetObject<Window>(id);
+					Game::net_UpdateGUISize(reference.get(), size);
+					break;
+				}
+
+				case pTypes::ID_UPDATE_WVISIBLE:
+				{
+					NetworkID id;
+					bool visible;
+					PacketFactory::Access<pTypes::ID_UPDATE_WVISIBLE>(packet, id, visible);
+					auto reference = GameFactory::GetObject<Window>(id);
+					Game::net_UpdateGUIVisible(reference.get(), visible);
+					break;
+				}
+
+				case pTypes::ID_UPDATE_WLOCKED:
+				{
+					NetworkID id;
+					bool locked;
+					PacketFactory::Access<pTypes::ID_UPDATE_WVISIBLE>(packet, id, locked);
+					auto reference = GameFactory::GetObject<Window>(id);
+					Game::net_UpdateGUILocked(reference.get(), locked);
+					break;
+				}
+
+				case pTypes::ID_UPDATE_WTEXT:
 				{
 					NetworkID id;
 					string text;
-					PacketFactory::Access<pTypes::ID_UPDATE_TEXT>(packet, id, text);
+					PacketFactory::Access<pTypes::ID_UPDATE_WTEXT>(packet, id, text);
 					auto reference = GameFactory::GetObject<Window>(id);
 					Game::net_UpdateGUIText(reference.get(), text);
 					break;

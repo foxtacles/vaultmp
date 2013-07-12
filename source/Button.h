@@ -15,8 +15,6 @@ class Button : public Window
 		friend class GameFactory;
 
 	private:
-		std::string text;
-
 		void initialize();
 
 		Button(const Button&);
@@ -29,10 +27,6 @@ class Button : public Window
 
 	public:
 		virtual ~Button();
-
-		void SetText(const std::string& text) { this->text = text; }
-
-		const std::string& GetText() const { return text; }
 
 		/**
 		 * \brief For network transfer

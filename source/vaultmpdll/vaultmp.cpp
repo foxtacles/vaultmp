@@ -525,27 +525,57 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 			break;
 		}
 
-		case 0x0015 | VAULTFUNCTION: // GUIUpdate - Update window
+		case 0x0015 | VAULTFUNCTION: // GUIPos - Update window
+		{
+			ZeroMemory(result, sizeof(double));
+			const char* data = ((char*) args) + 2; // skip length
+			unsigned char* _args = (unsigned char*) (data + strlen(data) + 1);
+
+			float pos_X = *(double*)(_args + 1);
+			float pos_Y = *(double*)(_args + 10);
+
+			GUI_SetPosition(data, pos_X, pos_Y);
+			break;
+		}
+
+		case 0x0016 | VAULTFUNCTION: // GUISize - Update window
+		{
+			ZeroMemory(result, sizeof(double));
+			const char* data = ((char*) args) + 2; // skip length
+			unsigned char* _args = (unsigned char*) (data + strlen(data) + 1);
+
+			float size_X = *(double*)(_args + 1);
+			float size_Y = *(double*)(_args + 10);
+
+			GUI_SetSize(data, size_X, size_Y);
+			break;
+		}
+
+		case 0x0017 | VAULTFUNCTION: // GUIVisible - Update window
 		{
 			ZeroMemory(result, sizeof(double));
 			const char* data = ((char*) args) + 2; // skip length
 			unsigned char* _args = (unsigned char*) (data + strlen(data) + 1);
 
 			bool visible = (bool) *(unsigned int*)(_args + 1);
-			bool locked = (bool) *(unsigned int*)(_args + 6);
-			float pos_X = *(double*)(_args + 11);
-			float pos_Y = *(double*)(_args + 20);
-			float size_X = *(double*)(_args + 29);
-			float size_Y = *(double*)(_args + 38);
 
 			GUI_SetVisible(data, visible);
-			GUI_AllowDrag(data, !locked);
-			GUI_SetPosition(data, pos_X, pos_Y);
-			GUI_SetSize(data, size_X, size_Y);
 			break;
 		}
 
-		case 0x0016 | VAULTFUNCTION: // GUIText - Update text
+		case 0x0018 | VAULTFUNCTION: // GUILocked - Update window
+		{
+			ZeroMemory(result, sizeof(double));
+			const char* data = ((char*) args) + 2; // skip length
+			unsigned char* _args = (unsigned char*) (data + strlen(data) + 1);
+
+			bool locked = (bool) *(unsigned int*)(_args + 1);
+
+			GUI_AllowDrag(data, !locked);
+			break;
+		}
+
+		case 0x0019 | VAULTFUNCTION: // GUIText - Update text
 		{
 			ZeroMemory(result, sizeof(double));
 			const char* data = ((char*) args) + 2; // skip length
@@ -875,7 +905,7 @@ players[1].player = false;
 			const string& name = qGUI_OnClick.front();
 
 			buffer[0] = PIPE_OP_RETURN_RAW;
-			*reinterpret_cast<unsigned int*>(buffer + 1) = 0x0017 | VAULTFUNCTION;
+			*reinterpret_cast<unsigned int*>(buffer + 1) = 0x0020 | VAULTFUNCTION;
 			*reinterpret_cast<unsigned int*>(buffer + 5) = name.length();
 			memcpy(buffer + 9, name.c_str(), name.length());
 

@@ -15,8 +15,6 @@ class Edit : public Window
 		friend class GameFactory;
 
 	private:
-		std::string text;
-
 		void initialize();
 
 		Edit(const Edit&);
@@ -29,10 +27,6 @@ class Edit : public Window
 
 	public:
 		virtual ~Edit();
-
-		void SetText(const std::string& text) { this->text = text; }
-
-		const std::string& GetText() const { return text; }
 
 		/**
 		 * \brief For network transfer

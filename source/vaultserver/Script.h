@@ -301,6 +301,38 @@ class Script
 		static void SetPlayerSpawnCell(RakNet::NetworkID id, unsigned int cell);
 		static void SetPlayerConsoleEnabled(RakNet::NetworkID id, bool enabled);
 
+		static RakNet::NetworkID GetParentWindow(RakNet::NetworkID id);
+		static unsigned int GetWindowChildCount(RakNet::NetworkID id);
+		static unsigned int GetWindowChildList(RakNet::NetworkID id, RakNet::NetworkID** data);
+		static void GetWindowPos(RakNet::NetworkID id, double* X, double* Y);
+		static void GetWindowSize(RakNet::NetworkID id, double* X, double* Y);
+		static bool GetWindowVisible(RakNet::NetworkID id);
+		static bool GetWindowLocked(RakNet::NetworkID id);
+		static const char* GetWindowText(RakNet::NetworkID id);
+
+		// Avoid MinGW CreateWindow macro
+
+		#ifdef  __WIN32__
+			#pragma push_macro("CreateWindow")
+			#undef CreateWindow
+		#endif
+		static RakNet::NetworkID CreateWindow(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text);
+		#ifdef  __WIN32__
+			#pragma pop_macro("CreateWindow")
+		#endif
+
+		static bool AddChildWindow(RakNet::NetworkID id, RakNet::NetworkID child);
+		static bool RemoveChildWindow(RakNet::NetworkID id, RakNet::NetworkID child);
+		static bool DestroyWindow(RakNet::NetworkID id);
+		static bool SetWindowPos(RakNet::NetworkID id, double X, double Y);
+		static bool SetWindowSize(RakNet::NetworkID id, double X, double Y);
+		static bool SetWindowVisible(RakNet::NetworkID id, bool visible);
+		static bool SetWindowLocked(RakNet::NetworkID id, bool locked);
+		static bool SetWindowText(RakNet::NetworkID id, const char* text);
+		static RakNet::NetworkID CreateButton(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text);
+		static RakNet::NetworkID CreateText(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text);
+		static RakNet::NetworkID CreateEdit(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text);
+
 		static constexpr ScriptFunctionData functions[] {
 			{"timestamp", Utils::timestamp},
 			{"CreateTimer", Script::CreateTimer},

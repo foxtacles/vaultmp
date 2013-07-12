@@ -14,7 +14,7 @@ Button::Button(const pDefault* packet) : Window(PacketFactory::Pop<pPacket>(pack
 {
 	initialize();
 
-	PacketFactory::Access<pTypes::ID_BUTTON_NEW>(packet, text);
+	PacketFactory::Access<pTypes::ID_BUTTON_NEW>(packet);
 }
 
 Button::Button(pPacket&& packet) : Button(packet.get())
@@ -35,7 +35,7 @@ void Button::initialize()
 pPacket Button::toPacket() const
 {
 	pPacket pWindowNew = Window::toPacket();
-	pPacket packet = PacketFactory::Create<pTypes::ID_BUTTON_NEW>(pWindowNew, text);
+	pPacket packet = PacketFactory::Create<pTypes::ID_BUTTON_NEW>(pWindowNew);
 
 	return packet;
 }

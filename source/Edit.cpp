@@ -14,7 +14,7 @@ Edit::Edit(const pDefault* packet) : Window(PacketFactory::Pop<pPacket>(packet))
 {
 	initialize();
 
-	PacketFactory::Access<pTypes::ID_EDIT_NEW>(packet, text);
+	PacketFactory::Access<pTypes::ID_EDIT_NEW>(packet);
 }
 
 Edit::Edit(pPacket&& packet) : Edit(packet.get())
@@ -35,7 +35,7 @@ void Edit::initialize()
 pPacket Edit::toPacket() const
 {
 	pPacket pWindowNew = Window::toPacket();
-	pPacket packet = PacketFactory::Create<pTypes::ID_EDIT_NEW>(pWindowNew, text);
+	pPacket packet = PacketFactory::Create<pTypes::ID_EDIT_NEW>(pWindowNew);
 
 	return packet;
 }

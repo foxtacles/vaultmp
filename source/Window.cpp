@@ -16,7 +16,7 @@ Window::Window(const pDefault* packet) : Reference(0x00000000, 0x00000000)
 
 	NetworkID id;
 
-	PacketFactory::Access<pTypes::ID_WINDOW_NEW>(packet, id, parent, label, pos, size, locked, visible);
+	PacketFactory::Access<pTypes::ID_WINDOW_NEW>(packet, id, parent, label, pos, size, locked, visible, text);
 
 	this->SetNetworkID(id);
 }
@@ -38,24 +38,24 @@ void Window::initialize()
 	visible = true;
 }
 
-bool Window::SetPos(double x, double y)
+bool Window::SetPos(double X, double Y)
 {
-	if (x >= 0.0 && x <= 1.0 && y >= 0.0 && y <= 1.0)
+	if (X >= 0.0 && X <= 1.0 && Y >= 0.0 && Y <= 1.0)
 	{
-		pos.first = x;
-		pos.second = y;
+		pos.first = X;
+		pos.second = Y;
 		return true;
 	}
 
 	return false;
 }
 
-bool Window::SetSize(double x, double y)
+bool Window::SetSize(double X, double Y)
 {
-	if (x >= 0.0 && x <= 1.0 && y >= 0.0 && y <= 1.0)
+	if (X >= 0.0 && X <= 1.0 && Y >= 0.0 && Y <= 1.0)
 	{
-		size.first = x;
-		size.second = y;
+		size.first = X;
+		size.second = Y;
 		return true;
 	}
 
@@ -64,7 +64,7 @@ bool Window::SetSize(double x, double y)
 
 pPacket Window::toPacket() const
 {
-	pPacket packet = PacketFactory::Create<pTypes::ID_WINDOW_NEW>(const_cast<Window*>(this)->GetNetworkID(), parent, label, pos, size, locked, visible);
+	pPacket packet = PacketFactory::Create<pTypes::ID_WINDOW_NEW>(const_cast<Window*>(this)->GetNetworkID(), parent, label, pos, size, locked, visible, text);
 
 	return packet;
 }

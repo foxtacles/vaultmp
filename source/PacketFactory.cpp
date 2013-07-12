@@ -184,12 +184,24 @@ pPacket PacketFactory::Init(const unsigned char* stream, unsigned int len)
 			packet = new pPlayerConsole(stream, len);
 			break;
 
-		case pTypes::ID_UPDATE_WINDOW:
-			packet = new pGuiWindow(stream, len);
+		case pTypes::ID_UPDATE_WPOS:
+			packet = new pGuiWpos(stream, len);
 			break;
 
-		case pTypes::ID_UPDATE_TEXT:
-			packet = new pGuiText(stream, len);
+		case pTypes::ID_UPDATE_WSIZE:
+			packet = new pGuiWsize(stream, len);
+			break;
+
+		case pTypes::ID_UPDATE_WVISIBLE:
+			packet = new pGuiWvisible(stream, len);
+			break;
+
+		case pTypes::ID_UPDATE_WLOCKED:
+			packet = new pGuiWlocked(stream, len);
+			break;
+
+		case pTypes::ID_UPDATE_WTEXT:
+			packet = new pGuiWtext(stream, len);
 			break;
 
 		default:

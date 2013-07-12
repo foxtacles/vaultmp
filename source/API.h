@@ -304,9 +304,12 @@ namespace Values
 		Func_GUICreateText = 0x0012 | VAULTFUNCTION,
 		Func_GUICreateEdit = 0x0013 | VAULTFUNCTION,
 		Func_GUIRemoveWindow = 0x0014 | VAULTFUNCTION,
-		Func_GUIUpdate = 0x0015 | VAULTFUNCTION,
-		Func_GUIText = 0x0016 | VAULTFUNCTION,
-		Func_GUIClick = 0x0017 | VAULTFUNCTION,
+		Func_GUIPos = 0x0015 | VAULTFUNCTION,
+		Func_GUISize = 0x0016 | VAULTFUNCTION,
+		Func_GUIVisible = 0x0017 | VAULTFUNCTION,
+		Func_GUILocked = 0x0018 | VAULTFUNCTION,
+		Func_GUIText = 0x0019 | VAULTFUNCTION,
+		Func_GUIClick = 0x0020 | VAULTFUNCTION,
 	};
 
 	enum ActorVals

@@ -1098,7 +1098,11 @@ void Game::NewWindow(const FactoryObject<Window>& reference)
 		Interface::ExecuteCommand("GUICreateWindow", {RawParameter(reference->GetLabel())});
 	}
 
-	GUIWindowUpdate(reference);
+	GUIWindowPos(reference);
+	GUIWindowSize(reference);
+	GUIWindowVisible(reference);
+	GUIWindowLocked(reference);
+	GUIWindowText(reference);
 
 	Interface::EndDynamic();
 }
@@ -1117,10 +1121,7 @@ void Game::NewButton(const FactoryObject<Button>& reference)
 		Interface::ExecuteCommand("GUICreateButton", {RawParameter(Utils::toString(reference->GetParentWindow())), RawParameter(reference->GetLabel())});
 	}
 
-	GUIWindowUpdate(reference);
-
-	if (!reference->GetText().empty())
-		GUITextUpdate(reference);
+	NewWindow(reference);
 
 	Interface::EndDynamic();
 }
@@ -1139,10 +1140,7 @@ void Game::NewText(const FactoryObject<Text>& reference)
 		Interface::ExecuteCommand("GUICreateText", {RawParameter(Utils::toString(reference->GetParentWindow())), RawParameter(reference->GetLabel())});
 	}
 
-	GUIWindowUpdate(reference);
-
-	if (!reference->GetText().empty())
-		GUITextUpdate(reference);
+	NewWindow(reference);
 
 	Interface::EndDynamic();
 }
@@ -1161,10 +1159,7 @@ void Game::NewEdit(const FactoryObject<Edit>& reference)
 		Interface::ExecuteCommand("GUICreateEdit", {RawParameter(Utils::toString(reference->GetParentWindow())), RawParameter(reference->GetLabel())});
 	}
 
-	GUIWindowUpdate(reference);
-
-	if (!reference->GetText().empty())
-		GUITextUpdate(reference);
+	NewWindow(reference);
 
 	Interface::EndDynamic();
 }
@@ -1709,17 +1704,43 @@ void Game::UnequipItem(const FactoryObject<Actor>& reference, unsigned int baseI
 	Interface::EndDynamic();
 }
 
-void Game::GUIWindowUpdate(const FactoryObject<Window>& reference)
+void Game::GUIWindowPos(const FactoryObject<Window>& reference)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("GUIChange", {RawParameter(reference->GetLabel()), RawParameter(reference->GetVisible()), RawParameter(reference->GetLocked()), RawParameter(reference->GetPos().first), RawParameter(reference->GetPos().second), RawParameter(reference->GetSize().first), RawParameter(reference->GetSize().second)});
+	Interface::ExecuteCommand("GUIPos", {RawParameter(reference->GetLabel()), RawParameter(reference->GetPos().first), RawParameter(reference->GetPos().second)});
 
 	Interface::EndDynamic();
 }
 
-template<typename T>
-void Game::GUITextUpdate(const FactoryObject<T>& reference)
+void Game::GUIWindowSize(const FactoryObject<Window>& reference)
+{
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("GUISize", {RawParameter(reference->GetLabel()), RawParameter(reference->GetSize().first), RawParameter(reference->GetSize().second)});
+
+	Interface::EndDynamic();
+}
+
+void Game::GUIWindowVisible(const FactoryObject<Window>& reference)
+{
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("GUIVisible", {RawParameter(reference->GetLabel()), RawParameter(reference->GetVisible())});
+
+	Interface::EndDynamic();
+}
+
+void Game::GUIWindowLocked(const FactoryObject<Window>& reference)
+{
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("GUILocked", {RawParameter(reference->GetLabel()), RawParameter(reference->GetLocked())});
+
+	Interface::EndDynamic();
+}
+
+void Game::GUIWindowText(const FactoryObject<Window>& reference)
 {
 	Interface::StartDynamic();
 
@@ -1727,9 +1748,6 @@ void Game::GUITextUpdate(const FactoryObject<T>& reference)
 
 	Interface::EndDynamic();
 }
-template void Game::GUITextUpdate(const FactoryObject<Button>& reference);
-template void Game::GUITextUpdate(const FactoryObject<Text>& reference);
-template void Game::GUITextUpdate(const FactoryObject<Edit>& reference);
 
 Game::CellDiff Game::ScanCell(unsigned int type)
 {
@@ -2407,49 +2425,39 @@ void Game::net_UpdateConsole(bool enabled)
 	Interface::EndDynamic();
 }
 
-void Game::net_UpdateGUIWindow(const FactoryObject<Window>& reference, bool visible, bool locked, const pair<double, double>& pos, const pair<double, double>& size)
+void Game::net_UpdateGUIPos(const FactoryObject<Window>& reference, const pair<double, double>& pos)
 {
-	reference->SetVisible(visible);
-	reference->SetLocked(locked);
 	reference->SetPos(pos.first, pos.second);
+
+	GUIWindowPos(reference);
+}
+
+void Game::net_UpdateGUISize(const FactoryObject<Window>& reference, const pair<double, double>& size)
+{
 	reference->SetSize(size.first, size.second);
 
-	GUIWindowUpdate(reference);
+	GUIWindowSize(reference);
+}
+
+void Game::net_UpdateGUIVisible(const FactoryObject<Window>& reference, bool visible)
+{
+	reference->SetVisible(visible);
+
+	GUIWindowVisible(reference);
+}
+
+void Game::net_UpdateGUILocked(const FactoryObject<Window>& reference, bool locked)
+{
+	reference->SetLocked(locked);
+
+	GUIWindowLocked(reference);
 }
 
 void Game::net_UpdateGUIText(const FactoryObject<Window>& reference, const string& text)
 {
-	unsigned int type = reference.GetType();
+	reference->SetText(text);
 
-	switch (type)
-	{
-		case ID_BUTTON:
-		{
-			auto _reference = vaultcast<Button>(reference);
-			_reference->SetText(text);
-			GUITextUpdate(_reference.get());
-			break;
-		}
-
-		case ID_TEXT:
-		{
-			auto _reference = vaultcast<Text>(reference);
-			_reference->SetText(text);
-			GUITextUpdate(_reference.get());
-			break;
-		}
-
-		case ID_EDIT:
-		{
-			auto _reference = vaultcast<Edit>(reference);
-			_reference->SetText(text);
-			GUITextUpdate(_reference.get());
-			break;
-		}
-
-		default:
-			throw VaultException("Incompatible type %08X in UpdateGUIText", type);
-	}
+	GUIWindowText(reference);
 }
 
 void Game::net_UIMessage(const string& message, unsigned char emoticon)
