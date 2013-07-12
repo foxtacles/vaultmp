@@ -1,5 +1,5 @@
-#ifndef EDITGUI_H
-#define EDITGUI_H
+#ifndef BUTTONGUI_H
+#define BUTTONGUI_H
 
 #include <string>
 
@@ -10,7 +10,7 @@
  * \brief Represents a GUI static text
  */
 
-class Edit : public Window
+class Button : public Window
 {
 		friend class GameFactory;
 
@@ -19,16 +19,16 @@ class Edit : public Window
 
 		void initialize();
 
-		Edit(const Edit&);
-		Edit& operator=(const Edit&);
+		Button(const Button&);
+		Button& operator=(const Button&);
 
 	protected:
-		Edit();
-		Edit(const pDefault* packet);
-		Edit(pPacket&& packet);
+		Button();
+		Button(const pDefault* packet);
+		Button(pPacket&& packet);
 
 	public:
-		virtual ~Edit();
+		virtual ~Button();
 
 		void SetText(const std::string& text) { this->text = text; }
 

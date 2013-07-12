@@ -1003,6 +1003,80 @@ class pWindowNew : public pReferenceDefault
 };
 template<> struct pTypesMap<pTypes::ID_WINDOW_NEW> { typedef pWindowNew type; };
 
+template<>
+inline const typename pTypesMap<pTypes::ID_WINDOW_NEW>::type* PacketFactory::Cast_<pTypes::ID_WINDOW_NEW>::Cast(const pDefault* packet) {
+	pTypes type = static_cast<pTypes>(packet->get()[0]);
+	return (
+		type == pTypes::ID_WINDOW_NEW ||
+		type == pTypes::ID_BUTTON_NEW ||
+		type == pTypes::ID_TEXT_NEW ||
+		type == pTypes::ID_EDIT_NEW
+	) ? static_cast<const typename pTypesMap<pTypes::ID_WINDOW_NEW>::type*>(packet) : nullptr;
+}
+
+class pButtonNew : public pReferenceDefault
+{
+		friend class PacketFactory;
+
+	private:
+		pButtonNew(const pPacket& _pWindowNew, const std::string& text) : pReferenceDefault(pTypes::ID_BUTTON_NEW)
+		{
+			construct(_pWindowNew, text);
+		}
+		pButtonNew(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
+		{
+
+		}
+
+		void access(std::string& text) const
+		{
+			deconstruct(text);
+		}
+};
+template<> struct pTypesMap<pTypes::ID_BUTTON_NEW> { typedef pButtonNew type; };
+
+class pTextNew : public pReferenceDefault
+{
+		friend class PacketFactory;
+
+	private:
+		pTextNew(const pPacket& _pWindowNew, const std::string& text) : pReferenceDefault(pTypes::ID_TEXT_NEW)
+		{
+			construct(_pWindowNew, text);
+		}
+		pTextNew(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
+		{
+
+		}
+
+		void access(std::string& text) const
+		{
+			deconstruct(text);
+		}
+};
+template<> struct pTypesMap<pTypes::ID_TEXT_NEW> { typedef pTextNew type; };
+
+class pEditNew : public pReferenceDefault
+{
+		friend class PacketFactory;
+
+	private:
+		pEditNew(const pPacket& _pWindowNew, const std::string& text) : pReferenceDefault(pTypes::ID_EDIT_NEW)
+		{
+			construct(_pWindowNew, text);
+		}
+		pEditNew(const unsigned char* stream, unsigned int len) : pReferenceDefault(stream, len)
+		{
+
+		}
+
+		void access(std::string& text) const
+		{
+			deconstruct(text);
+		}
+};
+template<> struct pTypesMap<pTypes::ID_EDIT_NEW> { typedef pEditNew type; };
+
 class pWindowRemove : public pReferenceDefault
 {
 		friend class PacketFactory;

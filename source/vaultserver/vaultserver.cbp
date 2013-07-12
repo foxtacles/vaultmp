@@ -127,6 +127,8 @@
 		<Unit filename="../API.h" />
 		<Unit filename="../Actor.cpp" />
 		<Unit filename="../Actor.h" />
+		<Unit filename="../Button.cpp" />
+		<Unit filename="../Button.h" />
 		<Unit filename="../Container.cpp" />
 		<Unit filename="../Container.h" />
 		<Unit filename="../CriticalSection.cpp" />

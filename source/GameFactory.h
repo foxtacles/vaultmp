@@ -15,6 +15,9 @@
 #include "Actor.h"
 #include "Player.h"
 #include "Window.h"
+#include "Button.h"
+#include "Text.h"
+#include "Edit.h"
 
 #ifdef VAULTSERVER
 #include "vaultserver/vaultserver.h"
@@ -324,6 +327,9 @@ GF_TYPE_WRAPPER(Container, Object, ID_CONTAINER)
 GF_TYPE_WRAPPER(Actor, Container, ALL_ACTORS)
 GF_TYPE_WRAPPER(Player, Actor, ID_PLAYER)
 GF_TYPE_WRAPPER(Window, Reference, ALL_GUI)
+GF_TYPE_WRAPPER(Button, Window, ID_BUTTON)
+GF_TYPE_WRAPPER(Text, Window, ID_TEXT)
+GF_TYPE_WRAPPER(Edit, Window, ID_EDIT)
 
 #undef GF_TYPE_WRAPPER
 

@@ -84,6 +84,18 @@ pPacket PacketFactory::Init(const unsigned char* stream, unsigned int len)
 			packet = new pWindowNew(stream, len);
 			break;
 
+		case pTypes::ID_BUTTON_NEW:
+			packet = new pButtonNew(stream, len);
+			break;
+
+		case pTypes::ID_TEXT_NEW:
+			packet = new pTextNew(stream, len);
+			break;
+
+		case pTypes::ID_EDIT_NEW:
+			packet = new pEditNew(stream, len);
+			break;
+
 		case pTypes::ID_WINDOW_REMOVE:
 			packet = new pWindowRemove(stream, len);
 			break;

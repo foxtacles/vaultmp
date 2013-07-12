@@ -73,6 +73,9 @@ template vector<FactoryObject<Container>> GameFactory::GetObjectTypes(unsigned i
 template vector<FactoryObject<Actor>> GameFactory::GetObjectTypes(unsigned int type) noexcept;
 template vector<FactoryObject<Player>> GameFactory::GetObjectTypes(unsigned int type) noexcept;
 template vector<FactoryObject<Window>> GameFactory::GetObjectTypes(unsigned int type) noexcept;
+template vector<FactoryObject<Button>> GameFactory::GetObjectTypes(unsigned int type) noexcept;
+template vector<FactoryObject<Text>> GameFactory::GetObjectTypes(unsigned int type) noexcept;
+template vector<FactoryObject<Edit>> GameFactory::GetObjectTypes(unsigned int type) noexcept;
 
 vector<NetworkID> GameFactory::GetIDObjectTypes(unsigned int type) noexcept
 {
@@ -133,6 +136,9 @@ template Expected<FactoryObject<Container>> GameFactory::GetObject(NetworkID id)
 template Expected<FactoryObject<Actor>> GameFactory::GetObject(NetworkID id);
 template Expected<FactoryObject<Player>> GameFactory::GetObject(NetworkID id);
 template Expected<FactoryObject<Window>> GameFactory::GetObject(NetworkID id);
+template Expected<FactoryObject<Button>> GameFactory::GetObject(NetworkID id);
+template Expected<FactoryObject<Text>> GameFactory::GetObject(NetworkID id);
+template Expected<FactoryObject<Edit>> GameFactory::GetObject(NetworkID id);
 
 template<typename T>
 Expected<FactoryObject<T>> GameFactory::GetObject(unsigned int refID)
@@ -166,6 +172,9 @@ template Expected<FactoryObject<Container>> GameFactory::GetObject(unsigned int 
 template Expected<FactoryObject<Actor>> GameFactory::GetObject(unsigned int refID);
 template Expected<FactoryObject<Player>> GameFactory::GetObject(unsigned int refID);
 template Expected<FactoryObject<Window>> GameFactory::GetObject(unsigned int refID);
+template Expected<FactoryObject<Button>> GameFactory::GetObject(unsigned int refID);
+template Expected<FactoryObject<Text>> GameFactory::GetObject(unsigned int refID);
+template Expected<FactoryObject<Edit>> GameFactory::GetObject(unsigned int refID);
 
 template<typename T>
 vector<Expected<FactoryObject<T>>> GameFactory::GetMultiple(const vector<NetworkID>& objects)
@@ -203,6 +212,9 @@ template vector<Expected<FactoryObject<Container>>> GameFactory::GetMultiple(con
 template vector<Expected<FactoryObject<Actor>>> GameFactory::GetMultiple(const vector<NetworkID>& objects);
 template vector<Expected<FactoryObject<Player>>> GameFactory::GetMultiple(const vector<NetworkID>& objects);
 template vector<Expected<FactoryObject<Window>>> GameFactory::GetMultiple(const vector<NetworkID>& objects);
+template vector<Expected<FactoryObject<Button>>> GameFactory::GetMultiple(const vector<NetworkID>& objects);
+template vector<Expected<FactoryObject<Text>>> GameFactory::GetMultiple(const vector<NetworkID>& objects);
+template vector<Expected<FactoryObject<Edit>>> GameFactory::GetMultiple(const vector<NetworkID>& objects);
 
 template<typename T>
 vector<Expected<FactoryObject<T>>> GameFactory::GetMultiple(const vector<unsigned int>& objects)
@@ -241,6 +253,9 @@ template vector<Expected<FactoryObject<Container>>> GameFactory::GetMultiple(con
 template vector<Expected<FactoryObject<Actor>>> GameFactory::GetMultiple(const vector<unsigned int>& objects);
 template vector<Expected<FactoryObject<Player>>> GameFactory::GetMultiple(const vector<unsigned int>& objects);
 template vector<Expected<FactoryObject<Window>>> GameFactory::GetMultiple(const vector<unsigned int>& objects);
+template vector<Expected<FactoryObject<Button>>> GameFactory::GetMultiple(const vector<unsigned int>& objects);
+template vector<Expected<FactoryObject<Text>>> GameFactory::GetMultiple(const vector<unsigned int>& objects);
+template vector<Expected<FactoryObject<Edit>>> GameFactory::GetMultiple(const vector<unsigned int>& objects);
 
 NetworkID GameFactory::LookupNetworkID(unsigned int refID)
 {
@@ -312,6 +327,9 @@ template void GameFactory::LeaveReference(FactoryObject<Container>& reference);
 template void GameFactory::LeaveReference(FactoryObject<Actor>& reference);
 template void GameFactory::LeaveReference(FactoryObject<Player>& reference);
 template void GameFactory::LeaveReference(FactoryObject<Window>& reference);
+template void GameFactory::LeaveReference(FactoryObject<Button>& reference);
+template void GameFactory::LeaveReference(FactoryObject<Text>& reference);
+template void GameFactory::LeaveReference(FactoryObject<Edit>& reference);
 
 unsigned int GameFactory::GetType(const Reference* reference) noexcept
 {
@@ -385,6 +403,18 @@ NetworkID GameFactory::CreateInstance(unsigned int type, unsigned int refID, uns
 			reference = shared_ptr<Window>(new Window());
 			break;
 
+		case ID_BUTTON:
+			reference = shared_ptr<Window>(new Button());
+			break;
+
+		case ID_TEXT:
+			reference = shared_ptr<Window>(new Text());
+			break;
+
+		case ID_EDIT:
+			reference = shared_ptr<Window>(new Edit());
+			break;
+
 		default:
 			throw VaultException("Unknown type identifier %X", type).stacktrace();
 	}
@@ -443,6 +473,18 @@ NetworkID GameFactory::CreateKnownInstance(unsigned int type, const pDefault* pa
 
 		case ID_WINDOW:
 			reference = shared_ptr<Window>(new Window(packet));
+			break;
+
+		case ID_BUTTON:
+			reference = shared_ptr<Window>(new Button(packet));
+			break;
+
+		case ID_TEXT:
+			reference = shared_ptr<Window>(new Text(packet));
+			break;
+
+		case ID_EDIT:
+			reference = shared_ptr<Window>(new Edit(packet));
 			break;
 
 		default:
@@ -544,6 +586,9 @@ template NetworkID GameFactory::DestroyInstance(FactoryObject<Container>& refere
 template NetworkID GameFactory::DestroyInstance(FactoryObject<Actor>& reference);
 template NetworkID GameFactory::DestroyInstance(FactoryObject<Player>& reference);
 template NetworkID GameFactory::DestroyInstance(FactoryObject<Window>& reference);
+template NetworkID GameFactory::DestroyInstance(FactoryObject<Button>& reference);
+template NetworkID GameFactory::DestroyInstance(FactoryObject<Text>& reference);
+template NetworkID GameFactory::DestroyInstance(FactoryObject<Edit>& reference);
 
 void GameFactory::SetChangeFlag(bool changed)
 {

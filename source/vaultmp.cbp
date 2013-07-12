@@ -87,6 +87,8 @@
 		<Unit filename="Actor.h" />
 		<Unit filename="Bethesda.cpp" />
 		<Unit filename="Bethesda.h" />
+		<Unit filename="Button.cpp" />
+		<Unit filename="Button.h" />
 		<Unit filename="Container.cpp" />
 		<Unit filename="Container.h" />
 		<Unit filename="CriticalSection.cpp" />
