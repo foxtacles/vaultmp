@@ -13,6 +13,8 @@
 
 #include "Export.h"
 
+#include "CEGUI/cegui/include/CEGUIUDim.h"
+
 extern myIDirect3DDevice9* gl_pmyIDirect3DDevice9;
 
 CRITICAL_SECTION cs_GetQueue;
@@ -161,18 +163,6 @@ extern "C"
 		root->addChildWindow(wnd);
 	}
 
-	__declspec(dllexport) void GUI_SetFrameWindowPosition(char* name,float x,float y)
-	{
-		CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow(name));
-		w->setPosition(CEGUI::UVector2(cegui_reldim(x), cegui_reldim(y)));
-	}
-
-	__declspec(dllexport) void GUI_SetFrameWindowSize(char* name,float x,float y)
-	{
-		CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow(name));
-		w->setSize(CEGUI::UVector2(cegui_reldim(x), cegui_reldim(y)));
-	}
-
 	__declspec(dllexport) void GUI_AddStaticText(char* parent,char* name)
 	{
 		CEGUI::WindowManager& winMgr = CEGUI::WindowManager::getSingleton();
@@ -211,16 +201,16 @@ extern "C"
 		wnd->subscribeEvent(CEGUI::PushButton::EventClicked,GUI_MouseClickCallback);
 	}
 
-	__declspec(dllexport) void GUI_SetPosition(char* name,float x,float y)
+	__declspec(dllexport) void GUI_SetPosition(char* name,float x,float y,float xOffset,float yOffset)
 	{
 		CEGUI::DefaultWindow *w = ((CEGUI::DefaultWindow*)CEGUI::WindowManager::getSingleton().getWindow(name));
-		w->setPosition(CEGUI::UVector2(cegui_reldim(x), cegui_reldim(y)));
+		w->setPosition(CEGUI::UVector2(CEGUI::UDim(x,xOffset), CEGUI::UDim(y,yOffset)));
 	}
 
-	__declspec(dllexport) void GUI_SetSize(char* name,float x,float y)
+	__declspec(dllexport) void GUI_SetSize(char* name,float x,float y,float xOffset,float yOffset)
 	{
 		CEGUI::DefaultWindow *w = ((CEGUI::DefaultWindow*)CEGUI::WindowManager::getSingleton().getWindow(name));
-		w->setSize(CEGUI::UVector2(cegui_reldim(x), cegui_reldim(y)));
+		w->setSize(CEGUI::UVector2(CEGUI::UDim(x,xOffset), CEGUI::UDim(y,yOffset)));
 	}
 
 	__declspec(dllexport) void GUI_SetText(char* name,char* txt)
@@ -260,9 +250,4 @@ extern "C"
 		CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow(name));
 		w->setDragMovingEnabled(allow);
 	}
-
-	/*__declspec(dllexport) void GUI_EnterChatMode()
-	{
-
-	}*/
 }
