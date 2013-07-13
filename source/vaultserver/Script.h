@@ -162,6 +162,10 @@ class Script
 		static void SetupItem(FactoryObject<Item>& item, FactoryObject<Object>& reference, unsigned int cell, double X, double Y, double Z);
 		static void SetupContainer(FactoryObject<Container>& container, FactoryObject<Object>& reference, unsigned int cell, double X, double Y, double Z);
 		static void SetupActor(FactoryObject<Actor>& actor, FactoryObject<Object>& reference, unsigned int cell, double X, double Y, double Z);
+		static void SetupWindow(FactoryObject<Window>& window, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text);
+		static void SetupButton(FactoryObject<Button>& button, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text);
+		static void SetupText(FactoryObject<Text>& text, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text_);
+		static void SetupEdit(FactoryObject<Edit>& edit, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text);
 		static void KillTimer(RakNet::NetworkID id = 0);
 		static void MakePublic(ScriptFunc _public, const char* name, const char* def);
 		static void MakePublicPAWN(ScriptFuncPAWN _public, AMX* amx, const char* name, const char* def);
@@ -263,6 +267,8 @@ class Script
 		static unsigned int GetPlayerRespawnTime(RakNet::NetworkID id);
 		static unsigned int GetPlayerSpawnCell(RakNet::NetworkID id);
 		static bool GetPlayerConsoleEnabled(RakNet::NetworkID id);
+		static unsigned int GetPlayerWindowCount(RakNet::NetworkID id);
+		static unsigned int GetPlayerWindowList(RakNet::NetworkID id, RakNet::NetworkID** data);
 
 		static RakNet::NetworkID CreateObject(unsigned int baseID, RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z);
 		static bool DestroyObject(RakNet::NetworkID id);
@@ -300,6 +306,8 @@ class Script
 		static void SetPlayerRespawnTime(RakNet::NetworkID id, unsigned int respawn);
 		static void SetPlayerSpawnCell(RakNet::NetworkID id, unsigned int cell);
 		static void SetPlayerConsoleEnabled(RakNet::NetworkID id, bool enabled);
+		static bool AttachWindow(RakNet::NetworkID id, RakNet::NetworkID window);
+		static bool DetachWindow(RakNet::NetworkID id, RakNet::NetworkID window);
 
 		static RakNet::NetworkID GetParentWindow(RakNet::NetworkID id);
 		static RakNet::NetworkID GetWindowRoot(RakNet::NetworkID id);
@@ -412,6 +420,8 @@ class Script
 			{"GetPlayerRespawnTime", Script::GetPlayerRespawnTime},
 			{"GetPlayerSpawnCell", Script::GetPlayerSpawnCell},
 			{"GetPlayerConsoleEnabled", Script::GetPlayerConsoleEnabled},
+			{"GetPlayerWindowCount", Script::GetPlayerWindowCount},
+			{"GetPlayerWindowList", Script::GetPlayerWindowList},
 
 			{"CreateObject", Script::CreateObject},
 			{"DestroyObject", Script::DestroyObject},
@@ -448,6 +458,8 @@ class Script
 			{"SetPlayerRespawnTime", Script::SetPlayerRespawnTime},
 			{"SetPlayerSpawnCell", Script::SetPlayerSpawnCell},
 			{"SetPlayerConsoleEnabled", Script::SetPlayerConsoleEnabled},
+			{"AttachWindow", Script::AttachWindow},
+			{"DetachWindow", Script::DetachWindow},
 
 			{"GetParentWindow", Script::GetParentWindow},
 			{"GetWindowRoot", Script::GetWindowRoot},
