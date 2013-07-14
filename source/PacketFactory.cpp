@@ -13,195 +13,195 @@ pPacket PacketFactory::Init(const unsigned char* stream, unsigned int len)
 	switch (static_cast<pTypes>(stream[0]))
 	{
 		case pTypes::ID_GAME_AUTH:
-			packet = new pGameAuth(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_GAME_AUTH>::type(stream, len);
 			break;
 
 		case pTypes::ID_GAME_LOAD:
-			packet = new pGameLoad(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_GAME_LOAD>::type(stream, len);
 			break;
 
 		case pTypes::ID_GAME_MOD:
-			packet = new pGameMod(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_GAME_MOD>::type(stream, len);
 			break;
 
 		case pTypes::ID_GAME_START:
-			packet = new pGameStart(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_GAME_START>::type(stream, len);
 			break;
 
 		case pTypes::ID_GAME_END:
-			packet = new pGameEnd(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_GAME_END>::type(stream, len);
 			break;
 
 		case pTypes::ID_GAME_MESSAGE:
-			packet = new pGameMessage(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_GAME_MESSAGE>::type(stream, len);
 			break;
 
 		case pTypes::ID_GAME_CHAT:
-			packet = new pGameChat(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_GAME_CHAT>::type(stream, len);
 			break;
 
 		case pTypes::ID_GAME_GLOBAL:
-			packet = new pGameGlobal(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_GAME_GLOBAL>::type(stream, len);
 			break;
 
 		case pTypes::ID_GAME_WEATHER:
-			packet = new pGameWeather(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_GAME_WEATHER>::type(stream, len);
 			break;
 
 		case pTypes::ID_GAME_BASE:
-			packet = new pGameBase(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_GAME_BASE>::type(stream, len);
 			break;
 
 		case pTypes::ID_GAME_DELETED:
-			packet = new pGameDeleted(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_GAME_DELETED>::type(stream, len);
 			break;
 
 		case pTypes::ID_OBJECT_NEW:
-			packet = new pObjectNew(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_OBJECT_NEW>::type(stream, len);
 			break;
 
 		case pTypes::ID_ITEM_NEW:
-			packet = new pItemNew(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_ITEM_NEW>::type(stream, len);
 			break;
 
 		case pTypes::ID_CONTAINER_NEW:
-			packet = new pContainerNew(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_CONTAINER_NEW>::type(stream, len);
 			break;
 
 		case pTypes::ID_ACTOR_NEW:
-			packet = new pActorNew(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_ACTOR_NEW>::type(stream, len);
 			break;
 
 		case pTypes::ID_PLAYER_NEW:
-			packet = new pPlayerNew(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_PLAYER_NEW>::type(stream, len);
 			break;
 
 		case pTypes::ID_OBJECT_REMOVE:
-			packet = new pObjectRemove(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_OBJECT_REMOVE>::type(stream, len);
 			break;
 
 		case pTypes::ID_WINDOW_NEW:
-			packet = new pWindowNew(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_WINDOW_NEW>::type(stream, len);
 			break;
 
 		case pTypes::ID_BUTTON_NEW:
-			packet = new pButtonNew(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_BUTTON_NEW>::type(stream, len);
 			break;
 
 		case pTypes::ID_TEXT_NEW:
-			packet = new pTextNew(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_TEXT_NEW>::type(stream, len);
 			break;
 
 		case pTypes::ID_EDIT_NEW:
-			packet = new pEditNew(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_EDIT_NEW>::type(stream, len);
 			break;
 
 		case pTypes::ID_WINDOW_REMOVE:
-			packet = new pWindowRemove(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_WINDOW_REMOVE>::type(stream, len);
 			break;
 
 		case pTypes::ID_UPDATE_NAME:
-			packet = new pObjectName(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_NAME>::type(stream, len);
 			break;
 
 		case pTypes::ID_UPDATE_POS:
-			packet = new pObjectPos(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_POS>::type(stream, len);
 			break;
 
 		case pTypes::ID_UPDATE_ANGLE:
-			packet = new pObjectAngle(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_ANGLE>::type(stream, len);
 			break;
 
 		case pTypes::ID_UPDATE_CELL:
-			packet = new pObjectCell(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_CELL>::type(stream, len);
 			break;
 
 		case pTypes::ID_UPDATE_LOCK:
-			packet = new pObjectLock(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_LOCK>::type(stream, len);
 			break;
 
 		case pTypes::ID_UPDATE_OWNER:
-			packet = new pObjectOwner(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_OWNER>::type(stream, len);
 			break;
 
 		case pTypes::ID_UPDATE_COUNT:
-			packet = new pItemCount(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_COUNT>::type(stream, len);
 			break;
 
 		case pTypes::ID_UPDATE_CONDITION:
-			packet = new pItemCondition(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_CONDITION>::type(stream, len);
 			break;
 
 		case pTypes::ID_UPDATE_CONTAINER:
-			packet = new pContainerUpdate(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_CONTAINER>::type(stream, len);
 			break;
 
 		case pTypes::ID_UPDATE_VALUE:
-			packet = new pActorValue(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_VALUE>::type(stream, len);
 			break;
 
 		case pTypes::ID_UPDATE_STATE:
-			packet = new pActorState(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_STATE>::type(stream, len);
 			break;
 
 		case pTypes::ID_UPDATE_RACE:
-			packet = new pActorRace(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_RACE>::type(stream, len);
 			break;
 
 		case pTypes::ID_UPDATE_SEX:
-			packet = new pActorSex(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_SEX>::type(stream, len);
 			break;
 
 		case pTypes::ID_UPDATE_DEAD:
-			packet = new pActorDead(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_DEAD>::type(stream, len);
 			break;
 
 		case pTypes::ID_UPDATE_FIREWEAPON:
-			packet = new pActorFireweapon(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_FIREWEAPON>::type(stream, len);
 			break;
 
 		case pTypes::ID_UPDATE_IDLE:
-			packet = new pActorIdle(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_IDLE>::type(stream, len);
 			break;
 
 		case pTypes::ID_UPDATE_CONTROL:
-			packet = new pPlayerControl(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_CONTROL>::type(stream, len);
 			break;
 
 		case pTypes::ID_UPDATE_INTERIOR:
-			packet = new pPlayerInterior(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_INTERIOR>::type(stream, len);
 			break;
 
 		case pTypes::ID_UPDATE_EXTERIOR:
-			packet = new pPlayerExterior(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_EXTERIOR>::type(stream, len);
 			break;
 
 		case pTypes::ID_UPDATE_CONTEXT:
-			packet = new pPlayerContext(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_CONTEXT>::type(stream, len);
 			break;
 
 		case pTypes::ID_UPDATE_CONSOLE:
-			packet = new pPlayerConsole(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_CONSOLE>::type(stream, len);
 			break;
 
 		case pTypes::ID_UPDATE_WPOS:
-			packet = new pGuiWpos(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_WPOS>::type(stream, len);
 			break;
 
 		case pTypes::ID_UPDATE_WSIZE:
-			packet = new pGuiWsize(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_WSIZE>::type(stream, len);
 			break;
 
 		case pTypes::ID_UPDATE_WVISIBLE:
-			packet = new pGuiWvisible(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_WVISIBLE>::type(stream, len);
 			break;
 
 		case pTypes::ID_UPDATE_WLOCKED:
-			packet = new pGuiWlocked(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_WLOCKED>::type(stream, len);
 			break;
 
 		case pTypes::ID_UPDATE_WTEXT:
-			packet = new pGuiWtext(stream, len);
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_WTEXT>::type(stream, len);
 			break;
 
 		default:
@@ -209,7 +209,7 @@ pPacket PacketFactory::Init(const unsigned char* stream, unsigned int len)
 	}
 
 #ifdef VAULTMP_DEBUG
-	debug.print("Constructing packet of type ", typeid(*packet).name(), ", length ", dec, packet->length(), ", type ", static_cast<unsigned int>(*packet->get()));
+	debug.print("Constructing packet of type ", typeid(*packet).name(), ", length ", dec, packet->length(), ", type ", static_cast<unsigned int>(packet->type()));
 #endif
 
 	return pPacket(packet);

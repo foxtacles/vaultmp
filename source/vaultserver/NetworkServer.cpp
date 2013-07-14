@@ -100,7 +100,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 			pPacket _packet = PacketFactory::Init(data->data, data->length);
 			const pDefault* packet = _packet.get();
 
-			switch (static_cast<pTypes>(data->data[0]))
+			switch (packet->type())
 			{
 				case pTypes::ID_GAME_AUTH:
 				{
