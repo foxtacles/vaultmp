@@ -251,6 +251,22 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 			}
 
+			case Func_GUICreateWindow:
+			case Func_GUICreateButton:
+			case Func_GUICreateText:
+			case Func_GUICreateEdit:
+			case Func_GUIRemoveWindow:
+			case Func_GUIPos:
+			case Func_GUISize:
+			case Func_GUIVisible:
+			case Func_GUILocked:
+				break;
+
+			case Func_GUIText:
+			{
+				break;
+			}
+
 			case Func_GUIClick:
 			{
 				if (!result)
@@ -1708,7 +1724,7 @@ void Game::GUIWindowPos(const FactoryObject<Window>& reference)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("GUIPos", {RawParameter(reference->GetLabel()), RawParameter(reference->GetPos().first), RawParameter(reference->GetPos().second)});
+	Interface::ExecuteCommand("GUIPos", {RawParameter(reference->GetLabel()), RawParameter(get<0>(reference->GetPos())), RawParameter(get<1>(reference->GetPos())), RawParameter(get<2>(reference->GetPos())), RawParameter(get<3>(reference->GetPos()))});
 
 	Interface::EndDynamic();
 }
@@ -1717,7 +1733,7 @@ void Game::GUIWindowSize(const FactoryObject<Window>& reference)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("GUISize", {RawParameter(reference->GetLabel()), RawParameter(reference->GetSize().first), RawParameter(reference->GetSize().second)});
+	Interface::ExecuteCommand("GUISize", {RawParameter(reference->GetLabel()), RawParameter(get<0>(reference->GetSize())), RawParameter(get<1>(reference->GetSize())), RawParameter(get<2>(reference->GetSize())), RawParameter(get<3>(reference->GetSize()))});
 
 	Interface::EndDynamic();
 }
@@ -2425,16 +2441,16 @@ void Game::net_UpdateConsole(bool enabled)
 	Interface::EndDynamic();
 }
 
-void Game::net_UpdateGUIPos(const FactoryObject<Window>& reference, const pair<double, double>& pos)
+void Game::net_UpdateGUIPos(const FactoryObject<Window>& reference, const tuple<double, double, double, double>& pos)
 {
-	reference->SetPos(pos.first, pos.second);
+	reference->SetPos(get<0>(pos), get<1>(pos), get<2>(pos), get<3>(pos));
 
 	GUIWindowPos(reference);
 }
 
-void Game::net_UpdateGUISize(const FactoryObject<Window>& reference, const pair<double, double>& size)
+void Game::net_UpdateGUISize(const FactoryObject<Window>& reference, const tuple<double, double, double, double>& size)
 {
-	reference->SetSize(size.first, size.second);
+	reference->SetSize(get<0>(size), get<1>(size), get<2>(size), get<3>(size));
 
 	GUIWindowSize(reference);
 }

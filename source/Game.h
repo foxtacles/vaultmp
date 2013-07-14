@@ -466,11 +466,11 @@ class Game
 		/**
 		 * \brief Network function to handle GUI window pos
 		 */
-		static void net_UpdateGUIPos(const FactoryObject<Window>& reference, const std::pair<double, double>& pos);
+		static void net_UpdateGUIPos(const FactoryObject<Window>& reference, const std::tuple<double, double, double, double>& pos);
 		/**
 		 * \brief Network function to handle GUI window size
 		 */
-		static void net_UpdateGUISize(const FactoryObject<Window>& reference, const std::pair<double, double>& size);
+		static void net_UpdateGUISize(const FactoryObject<Window>& reference, const std::tuple<double, double, double, double>& size);
 		/**
 		 * \brief Network function to handle GUI window visible
 		 */

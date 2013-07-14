@@ -5,6 +5,8 @@
 #include <type_traits>
 #include <array>
 #include <unordered_map>
+#include <map>
+#include <list>
 
 #include "vaultmp.h"
 #include "VaultException.h"
@@ -991,7 +993,7 @@ class pWindowNew : public pReferenceDefault
 		friend class PacketFactory;
 
 	private:
-		pWindowNew(RakNet::NetworkID id, RakNet::NetworkID parent, const std::string& label, const std::pair<double, double>& pos, const std::pair<double, double>& size, bool locked, bool visible, const std::string& text) : pReferenceDefault(pTypes::ID_WINDOW_NEW, id)
+		pWindowNew(RakNet::NetworkID id, RakNet::NetworkID parent, const std::string& label, const std::tuple<double, double, double, double>& pos, const std::tuple<double, double, double, double>& size, bool locked, bool visible, const std::string& text) : pReferenceDefault(pTypes::ID_WINDOW_NEW, id)
 		{
 			construct(parent, label, pos, size, locked, visible, text);
 		}
@@ -1000,7 +1002,7 @@ class pWindowNew : public pReferenceDefault
 
 		}
 
-		void access(RakNet::NetworkID& id, RakNet::NetworkID& parent, std::string& label, std::pair<double, double>& pos, std::pair<double, double>& size, bool& locked, bool& visible, std::string& text) const
+		void access(RakNet::NetworkID& id, RakNet::NetworkID& parent, std::string& label, std::tuple<double, double, double, double>& pos, std::tuple<double, double, double, double>& size, bool& locked, bool& visible, std::string& text) const
 		{
 			deconstruct(id, parent, label, pos, size, locked, visible, text);
 		}
@@ -1548,7 +1550,7 @@ class pGuiWpos : public pReferenceDefault
 		friend class PacketFactory;
 
 	private:
-		pGuiWpos(RakNet::NetworkID id, const std::pair<double, double>& pos) : pReferenceDefault(pTypes::ID_UPDATE_WPOS, id)
+		pGuiWpos(RakNet::NetworkID id, const std::tuple<double, double, double, double>& pos) : pReferenceDefault(pTypes::ID_UPDATE_WPOS, id)
 		{
 			construct(pos);
 		}
@@ -1557,7 +1559,7 @@ class pGuiWpos : public pReferenceDefault
 
 		}
 
-		void access(RakNet::NetworkID& id, std::pair<double, double>& pos) const
+		void access(RakNet::NetworkID& id, std::tuple<double, double, double, double>& pos) const
 		{
 			deconstruct(id, pos);
 		}
@@ -1569,7 +1571,7 @@ class pGuiWsize : public pReferenceDefault
 		friend class PacketFactory;
 
 	private:
-		pGuiWsize(RakNet::NetworkID id, const std::pair<double, double>& size) : pReferenceDefault(pTypes::ID_UPDATE_WSIZE, id)
+		pGuiWsize(RakNet::NetworkID id, const std::tuple<double, double, double, double>& size) : pReferenceDefault(pTypes::ID_UPDATE_WSIZE, id)
 		{
 			construct(size);
 		}
@@ -1578,7 +1580,7 @@ class pGuiWsize : public pReferenceDefault
 
 		}
 
-		void access(RakNet::NetworkID& id, std::pair<double, double>& size) const
+		void access(RakNet::NetworkID& id, std::tuple<double, double, double, double>& size) const
 		{
 			deconstruct(id, size);
 		}

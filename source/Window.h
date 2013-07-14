@@ -2,7 +2,7 @@
 #define WINDOWGUI_H
 
 #include <string>
-#include <utility>
+#include <tuple>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -26,7 +26,7 @@ class Window : public Reference
 
 		RakNet::NetworkID parent;
 		std::string label;
-		std::pair<double, double> pos, size;
+		std::tuple<double, double, double, double> pos, size;
 		bool locked, visible;
 		std::string text;
 
@@ -43,21 +43,28 @@ class Window : public Reference
 	public:
 		virtual ~Window();
 
+#ifdef VAULTSERVER
+		static const char* GUI_MAIN_LABEL;
+		static const char* GUI_MAIN_TEXT;
+		static const std::tuple<double, double, double, double> GUI_MAIN_POS;
+		static const std::tuple<double, double, double, double> GUI_MAIN_SIZE;
+#endif
+
 		static const WindowChilds& GetChilds() { return childs; }
 		static void CollectChilds(RakNet::NetworkID root, std::vector<RakNet::NetworkID>& dest);
 
 		void SetParentWindow(Window* parent);
 		void SetLabel(const std::string& label) { this->label = label; }
-		bool SetPos(double X, double Y);
-		bool SetSize(double X, double Y);
+		bool SetPos(double X, double Y, double offsetX, double offsetY);
+		bool SetSize(double X, double Y, double offsetX, double offsetY);
 		void SetLocked(bool locked) { this->locked = locked; }
 		void SetVisible(bool visible) { this->visible = visible; }
 		void SetText(const std::string& text) { this->text = text; }
 
 		RakNet::NetworkID GetParentWindow() const { return parent; }
 		const std::string& GetLabel() const { return label; }
-		const std::pair<double, double>& GetPos() const { return pos; }
-		const std::pair<double, double>& GetSize() const { return size; }
+		const std::tuple<double, double, double, double>& GetPos() const { return pos; }
+		const std::tuple<double, double, double, double>& GetSize() const { return size; }
 		bool GetLocked() const { return locked; }
 		bool GetVisible() const { return visible; }
 		const std::string& GetText() const { return text; }

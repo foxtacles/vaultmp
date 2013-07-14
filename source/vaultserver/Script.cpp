@@ -442,28 +442,28 @@ void Script::SetupActor(FactoryObject<Actor>& actor, FactoryObject<Object>& refe
 		actor->SetActorRace(UINT_MAX);
 }
 
-void Script::SetupWindow(FactoryObject<Window>& window, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text)
+void Script::SetupWindow(FactoryObject<Window>& window, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text)
 {
-	window->SetPos(posX, posY);
-	window->SetSize(sizeX, sizeY);
+	window->SetPos(posX, posY, offset_posX, offset_posY);
+	window->SetSize(sizeX, sizeY, offset_sizeX, offset_sizeY);
 	window->SetVisible(visible);
 	window->SetLocked(locked);
 	window->SetText(text);
 }
 
-void Script::SetupButton(FactoryObject<Button>& button, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text)
+void Script::SetupButton(FactoryObject<Button>& button, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text)
 {
-	SetupWindow(button, posX, posY, sizeX, sizeY, visible, locked, text);
+	SetupWindow(button, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
 }
 
-void Script::SetupText(FactoryObject<Text>& text, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text_)
+void Script::SetupText(FactoryObject<Text>& text, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text_)
 {
-	SetupWindow(text, posX, posY, sizeX, sizeY, visible, locked, text_);
+	SetupWindow(text, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text_);
 }
 
-void Script::SetupEdit(FactoryObject<Edit>& edit, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text)
+void Script::SetupEdit(FactoryObject<Edit>& edit, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text)
 {
-	SetupWindow(edit, posX, posY, sizeX, sizeY, visible, locked, text);
+	SetupWindow(edit, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
 }
 
 void Script::KillTimer(NetworkID id)
@@ -1280,6 +1280,16 @@ bool Script::IsItemList(NetworkID id)
 	return scriptIL.count(id);
 }
 
+bool Script::IsChatbox(NetworkID id)
+{
+	auto window = GameFactory::GetObject<Window>(id);
+
+	if (!window)
+		return false;
+
+	return !window->GetLabel().compare(Window::GUI_MAIN_LABEL);
+}
+
 unsigned int Script::GetConnection(NetworkID id)
 {
 	unsigned int value = UINT_MAX;
@@ -1728,6 +1738,22 @@ unsigned int Script::GetPlayerWindowList(NetworkID id, NetworkID** data)
 	}
 
 	return 0;
+}
+
+NetworkID Script::GetPlayerChatboxWindow(NetworkID id)
+{
+	unordered_set<NetworkID> windows;
+
+	{
+		auto player = GameFactory::GetObject<Player>(id);
+
+		if (!player)
+			return 0;
+
+		windows = player->GetPlayerWindows();
+	}
+
+	return *find_if(windows.begin(), windows.end(), [](const NetworkID& id) { return IsChatbox(id); });
 }
 
 NetworkID Script::CreateObject(unsigned int baseID, NetworkID id, unsigned int cell, double X, double Y, double Z)
@@ -2960,7 +2986,7 @@ bool Script::DetachWindow(NetworkID id, NetworkID window)
 	{
 		auto reference = GameFactory::GetObject<Window>(window);
 
-		if (!reference)
+		if (!reference || IsChatbox(window))
 			return false;
 	}
 
@@ -3051,33 +3077,41 @@ unsigned int Script::GetWindowChildList(NetworkID id, NetworkID** data)
 	return 0;
 }
 
-void Script::GetWindowPos(NetworkID id, double* X, double* Y)
+void Script::GetWindowPos(NetworkID id, double* X, double* Y, double* offsetX, double* offsetY)
 {
 	*X = 0.0;
 	*Y = 0.0;
+	*offsetX = 0.0;
+	*offsetY = 0.0;
 
 	auto window = GameFactory::GetObject<Window>(id);
 
 	if (window)
 	{
 		const auto& pos = window->GetPos();
-		*X = pos.first;
-		*Y = pos.second;
+		*X = get<0>(pos);
+		*Y = get<1>(pos);
+		*offsetX = get<2>(pos);
+		*offsetY = get<3>(pos);
 	}
 }
 
-void Script::GetWindowSize(NetworkID id, double* X, double* Y)
+void Script::GetWindowSize(NetworkID id, double* X, double* Y, double* offsetX, double* offsetY)
 {
 	*X = 0.0;
 	*Y = 0.0;
+	*offsetX = 0.0;
+	*offsetY = 0.0;
 
 	auto window = GameFactory::GetObject<Window>(id);
 
 	if (window)
 	{
 		const auto& size = window->GetSize();
-		*X = size.first;
-		*Y = size.second;
+		*X = get<0>(size);
+		*Y = get<1>(size);
+		*offsetX = get<2>(size);
+		*offsetY = get<3>(size);
 	}
 }
 
@@ -3115,12 +3149,52 @@ const char* Script::GetWindowText(NetworkID id)
 	return "";
 }
 
-NetworkID (Script::CreateWindow)(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text)
+NetworkID (Script::CreateWindow)(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text)
 {
 	NetworkID id = GameFactory::CreateInstance(ID_WINDOW, 0x00000000);
 	auto window = GameFactory::GetObject<Window>(id);
-	SetupWindow(window.get(), posX, posY, sizeX, sizeY, visible, locked, text);
+	SetupWindow(window.get(), posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
 	return id;
+}
+
+bool Script::DestroyWindow(NetworkID id)
+{
+	NetworkID root = GetWindowRoot(id);
+
+	if (!root || IsChatbox(id))
+		return false;
+
+	vector<NetworkID> deletions;
+	Window::CollectChilds(id, deletions);
+	reverse(deletions.begin(), deletions.end()); // reverse so the order of deletion is valid
+
+	vector<RakNetGUID> guids;
+
+	{
+		auto players = GameFactory::GetObjectTypes<Player>(ID_PLAYER);
+
+		for (const auto& player : players)
+			if (player->GetPlayerWindows().count(root))
+			{
+				guids.emplace_back(Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID());
+
+				if (root == id)
+					player->DetachWindow(root);
+			}
+	}
+
+	for (const auto& id : deletions)
+	{
+		if (!guids.empty())
+			Network::Queue({Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_WINDOW_REMOVE>(id),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
+			});
+
+		GameFactory::DestroyInstance(id);
+	}
+
+	return true;
 }
 
 bool Script::AddChildWindow(NetworkID id, NetworkID child)
@@ -3128,7 +3202,7 @@ bool Script::AddChildWindow(NetworkID id, NetworkID child)
 	{
 		auto windows = GameFactory::GetMultiple<Window>(vector<NetworkID>{id, child});
 
-		if (!windows[0] || !windows[1])
+		if (!windows[0] || !windows[1] || IsChatbox(id) || IsChatbox(child))
 			return false;
 
 		if (windows[1]->GetParentWindow())
@@ -3202,52 +3276,14 @@ bool Script::RemoveChildWindow(NetworkID id, NetworkID child)
 	return true;
 }
 
-bool Script::DestroyWindow(NetworkID id)
+bool Script::SetWindowPos(NetworkID id, double X, double Y, double offset_X, double offset_Y)
 {
-	NetworkID root = GetWindowRoot(id);
-
-	if (!root)
-		return false;
-
-	vector<NetworkID> deletions;
-	Window::CollectChilds(id, deletions);
-	reverse(deletions.begin(), deletions.end()); // reverse so the order of deletion is valid
-
-	vector<RakNetGUID> guids;
-
 	{
-		auto players = GameFactory::GetObjectTypes<Player>(ID_PLAYER);
+		auto window = GameFactory::GetObject<Window>(id);
 
-		for (const auto& player : players)
-			if (player->GetPlayerWindows().count(root))
-			{
-				guids.emplace_back(Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID());
-
-				if (root == id)
-					player->DetachWindow(root);
-			}
+		if (!window || !window->SetPos(X, Y, offset_X, offset_Y))
+			return false;
 	}
-
-	for (const auto& id : deletions)
-	{
-		if (!guids.empty())
-			Network::Queue({Network::CreateResponse(
-				PacketFactory::Create<pTypes::ID_WINDOW_REMOVE>(id),
-				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
-			});
-
-		GameFactory::DestroyInstance(id);
-	}
-
-	return true;
-}
-
-bool Script::SetWindowPos(NetworkID id, double X, double Y)
-{
-	auto window = GameFactory::GetObject<Window>(id);
-
-	if (!window || !window->SetPos(X, Y))
-		return false;
 
 	NetworkID root = GetWindowRoot(id);
 
@@ -3263,19 +3299,21 @@ bool Script::SetWindowPos(NetworkID id, double X, double Y)
 
 	if (!guids.empty())
 		Network::Queue({Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_WPOS>(id, window->GetPos()),
+			PacketFactory::Create<pTypes::ID_UPDATE_WPOS>(id, tuple<double, double, double, double>{X, Y, offset_X, offset_Y}),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
 		});
 
 	return true;
 }
 
-bool Script::SetWindowSize(NetworkID id, double X, double Y)
+bool Script::SetWindowSize(NetworkID id, double X, double Y, double offset_X, double offset_Y)
 {
-	auto window = GameFactory::GetObject<Window>(id);
+	{
+		auto window = GameFactory::GetObject<Window>(id);
 
-	if (!window || !window->SetSize(X, Y))
-		return false;
+		if (!window || !window->SetSize(X, Y, offset_X, offset_Y))
+			return false;
+	}
 
 	NetworkID root = GetWindowRoot(id);
 
@@ -3291,7 +3329,7 @@ bool Script::SetWindowSize(NetworkID id, double X, double Y)
 
 	if (!guids.empty())
 		Network::Queue({Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_WSIZE>(id, window->GetSize()),
+			PacketFactory::Create<pTypes::ID_UPDATE_WSIZE>(id, tuple<double, double, double, double>{X, Y, offset_X, offset_Y}),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
 		});
 
@@ -3300,12 +3338,14 @@ bool Script::SetWindowSize(NetworkID id, double X, double Y)
 
 bool Script::SetWindowVisible(NetworkID id, bool visible)
 {
-	auto window = GameFactory::GetObject<Window>(id);
+	{
+		auto window = GameFactory::GetObject<Window>(id);
 
-	if (!window)
-		return false;
+		if (!window)
+			return false;
 
-	window->SetVisible(visible);
+		window->SetVisible(visible);
+	}
 
 	NetworkID root = GetWindowRoot(id);
 
@@ -3330,12 +3370,14 @@ bool Script::SetWindowVisible(NetworkID id, bool visible)
 
 bool Script::SetWindowLocked(NetworkID id, bool locked)
 {
-	auto window = GameFactory::GetObject<Window>(id);
+	{
+		auto window = GameFactory::GetObject<Window>(id);
 
-	if (!window)
-		return false;
+		if (!window)
+			return false;
 
-	window->SetLocked(locked);
+		window->SetLocked(locked);
+	}
 
 	NetworkID root = GetWindowRoot(id);
 
@@ -3360,12 +3402,14 @@ bool Script::SetWindowLocked(NetworkID id, bool locked)
 
 bool Script::SetWindowText(NetworkID id, const char* text)
 {
-	auto window = GameFactory::GetObject<Window>(id);
+	{
+		auto window = GameFactory::GetObject<Window>(id);
 
-	if (!window || !text)
-		return false;
+		if (!window || !text)
+			return false;
 
-	window->SetText(text);
+		window->SetText(text);
+	}
 
 	NetworkID root = GetWindowRoot(id);
 
@@ -3381,33 +3425,33 @@ bool Script::SetWindowText(NetworkID id, const char* text)
 
 	if (!guids.empty())
 		Network::Queue({Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_WTEXT>(id, window->GetText()),
+			PacketFactory::Create<pTypes::ID_UPDATE_WTEXT>(id, text),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
 		});
 
 	return true;
 }
 
-NetworkID Script::CreateButton(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text)
+NetworkID Script::CreateButton(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text)
 {
 	NetworkID id = GameFactory::CreateInstance(ID_BUTTON, 0x00000000);
 	auto window = GameFactory::GetObject<Button>(id);
-	SetupWindow(window.get(), posX, posY, sizeX, sizeY, visible, locked, text);
+	SetupWindow(window.get(), posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
 	return id;
 }
 
-NetworkID Script::CreateText(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text)
+NetworkID Script::CreateText(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text)
 {
 	NetworkID id = GameFactory::CreateInstance(ID_TEXT, 0x00000000);
 	auto window = GameFactory::GetObject<Text>(id);
-	SetupWindow(window.get(), posX, posY, sizeX, sizeY, visible, locked, text);
+	SetupWindow(window.get(), posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
 	return id;
 }
 
-NetworkID Script::CreateEdit(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text)
+NetworkID Script::CreateEdit(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text)
 {
 	NetworkID id = GameFactory::CreateInstance(ID_EDIT, 0x00000000);
 	auto window = GameFactory::GetObject<Edit>(id);
-	SetupWindow(window.get(), posX, posY, sizeX, sizeY, visible, locked, text);
+	SetupWindow(window.get(), posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
 	return id;
 }

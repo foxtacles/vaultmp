@@ -40,8 +40,8 @@ static void (*GUI_AddTextbox)(const char*, const char*);
 static void (*GUI_AddButton)(const char*, const char*);
 static void (*GUI_SetVisible)(const char*, bool);
 static void (*GUI_AllowDrag)(const char*, bool);
-static void (*GUI_SetPosition)(const char*, float, float);
-static void (*GUI_SetSize)(const char*, float, float);
+static void (*GUI_SetPosition)(const char*, float, float, float, float);
+static void (*GUI_SetSize)(const char*, float, float, float, float);
 static void (*GUI_SetText)(const char*, const char*);
 static void (*GUI_RemoveWindow)(const char*);
 static void (*GUI_ForceGUI)(bool);
@@ -533,8 +533,10 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 
 			float pos_X = *(double*)(_args + 1);
 			float pos_Y = *(double*)(_args + 10);
+			float offset_X = *(double*)(_args + 19);
+			float offset_Y = *(double*)(_args + 28);
 
-			GUI_SetPosition(data, pos_X, pos_Y);
+			GUI_SetPosition(data, pos_X, pos_Y, offset_X, offset_Y);
 			break;
 		}
 
@@ -546,8 +548,10 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 
 			float size_X = *(double*)(_args + 1);
 			float size_Y = *(double*)(_args + 10);
+			float offset_X = *(double*)(_args + 19);
+			float offset_Y = *(double*)(_args + 28);
 
-			GUI_SetSize(data, size_X, size_Y);
+			GUI_SetSize(data, size_X, size_Y, offset_X, offset_Y);
 			break;
 		}
 
@@ -571,7 +575,7 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 
 			bool locked = (bool) *(unsigned int*)(_args + 1);
 
-			GUI_AllowDrag(data, !locked);
+			//GUI_AllowDrag(data, !locked);
 			break;
 		}
 

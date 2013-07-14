@@ -226,8 +226,12 @@ vector<string> Interface::Evaluate(Native::iterator _it)
 
 		for (unsigned int j = 0; j < lsize; ++j)
 		{
-			unsigned int idx = static_cast<unsigned int>(i / mult[j]) % param[j].get().size();
-			cmd += " " + Utils::str_replace(param[j].get()[idx], " ", "|");
+			const auto& ref = param[j].get();
+			unsigned int idx = static_cast<unsigned int>(i / mult[j]) % ref.size();
+			string param = Utils::str_replace(ref[idx], " ", "|");
+
+			cmd += ' ';
+			cmd += param.empty() ? "^" : param;
 		}
 
 		result.emplace_back(move(cmd));

@@ -1,11 +1,7 @@
 #ifndef DATA_H
 #define DATA_H
 
-#include <string>
-#include <list>
-#include <future>
-#include <vector>
-#include <map>
+#include <tuple>
 
 #include "RakNet.h"
 #include "Utils.h"

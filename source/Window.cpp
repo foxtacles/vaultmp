@@ -5,6 +5,13 @@
 using namespace std;
 using namespace RakNet;
 
+#ifdef VAULTSERVER
+const char* Window::GUI_MAIN_LABEL = "Main Window";
+const char* Window::GUI_MAIN_TEXT = "Chat Box";
+const tuple<double, double, double, double> Window::GUI_MAIN_POS{0.01, 0.01, 0.0, 0.0};
+const tuple<double, double, double, double> Window::GUI_MAIN_SIZE{0.35, 0.3, 0.0, 0.0};
+#endif
+
 Window::WindowChilds Window::childs;
 
 Window::Window() : Reference(0x00000000, 0x00000000)
@@ -68,24 +75,22 @@ void Window::SetParentWindow(Window* parent)
 		this->parent = 0;
 }
 
-bool Window::SetPos(double X, double Y)
+bool Window::SetPos(double X, double Y, double offsetX, double offsetY)
 {
 	if (X >= 0.0 && X <= 1.0 && Y >= 0.0 && Y <= 1.0)
 	{
-		pos.first = X;
-		pos.second = Y;
+		pos = decltype(pos){X, Y, offsetX, offsetY};
 		return true;
 	}
 
 	return false;
 }
 
-bool Window::SetSize(double X, double Y)
+bool Window::SetSize(double X, double Y, double offsetX, double offsetY)
 {
 	if (X >= 0.0 && X <= 1.0 && Y >= 0.0 && Y <= 1.0)
 	{
-		size.first = X;
-		size.second = Y;
+		size = decltype(size){X, Y, offsetX, offsetY};
 		return true;
 	}
 

@@ -268,8 +268,8 @@ API::FunctionMap API::functions = {
 		{"GUICreateText", {"ss", Func_GUICreateText}},
 		{"GUICreateEdit", {"ss", Func_GUICreateEdit}},
 		{"GUIRemoveWindow", {"s", Func_GUIRemoveWindow}},
-		{"GUIPos", {"sdd", Func_GUIPos}},
-		{"GUISize", {"sdd", Func_GUISize}},
+		{"GUIPos", {"sdddd", Func_GUIPos}},
+		{"GUISize", {"sdddd", Func_GUISize}},
 		{"GUIVisible", {"si", Func_GUIVisible}},
 		{"GUILocked", {"si", Func_GUILocked}},
 		{"GUIText", {"ss", Func_GUIText}},
@@ -814,7 +814,7 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 
 			case 's': // String
 			{
-				string str = Utils::str_replace(tokenizer, "|", " ");
+				string str = *tokenizer != '^' ? Utils::str_replace(tokenizer, "|", " ") : "";
 
 				unsigned short length = (unsigned short) str.length();
 

@@ -524,7 +524,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				case pTypes::ID_UPDATE_WPOS:
 				{
 					NetworkID id;
-					pair<double, double> pos;
+					tuple<double, double, double, double> pos;
 					PacketFactory::Access<pTypes::ID_UPDATE_WPOS>(packet, id, pos);
 					auto reference = GameFactory::GetObject<Window>(id);
 					Game::net_UpdateGUIPos(reference.get(), pos);
@@ -534,7 +534,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				case pTypes::ID_UPDATE_WSIZE:
 				{
 					NetworkID id;
-					pair<double, double> size;
+					tuple<double, double, double, double> size;
 					PacketFactory::Access<pTypes::ID_UPDATE_WSIZE>(packet, id, size);
 					auto reference = GameFactory::GetObject<Window>(id);
 					Game::net_UpdateGUISize(reference.get(), size);

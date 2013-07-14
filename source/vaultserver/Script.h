@@ -162,10 +162,10 @@ class Script
 		static void SetupItem(FactoryObject<Item>& item, FactoryObject<Object>& reference, unsigned int cell, double X, double Y, double Z);
 		static void SetupContainer(FactoryObject<Container>& container, FactoryObject<Object>& reference, unsigned int cell, double X, double Y, double Z);
 		static void SetupActor(FactoryObject<Actor>& actor, FactoryObject<Object>& reference, unsigned int cell, double X, double Y, double Z);
-		static void SetupWindow(FactoryObject<Window>& window, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text);
-		static void SetupButton(FactoryObject<Button>& button, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text);
-		static void SetupText(FactoryObject<Text>& text, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text_);
-		static void SetupEdit(FactoryObject<Edit>& edit, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text);
+		static void SetupWindow(FactoryObject<Window>& window, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text);
+		static void SetupButton(FactoryObject<Button>& button, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text);
+		static void SetupText(FactoryObject<Text>& text, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text_);
+		static void SetupEdit(FactoryObject<Edit>& edit, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text);
 		static void KillTimer(RakNet::NetworkID id = 0);
 		static void MakePublic(ScriptFunc _public, const char* name, const char* def);
 		static void MakePublicPAWN(ScriptFuncPAWN _public, AMX* amx, const char* name, const char* def);
@@ -225,6 +225,7 @@ class Script
 		static bool IsPlayer(RakNet::NetworkID id);
 		static bool IsInterior(unsigned int cell);
 		static bool IsItemList(RakNet::NetworkID id);
+		static bool IsChatbox(RakNet::NetworkID id);
 		static unsigned int GetConnection(RakNet::NetworkID id);
 		static unsigned int GetList(unsigned int type, RakNet::NetworkID** data);
 		static unsigned int GetGameWeather();
@@ -269,6 +270,7 @@ class Script
 		static bool GetPlayerConsoleEnabled(RakNet::NetworkID id);
 		static unsigned int GetPlayerWindowCount(RakNet::NetworkID id);
 		static unsigned int GetPlayerWindowList(RakNet::NetworkID id, RakNet::NetworkID** data);
+		static RakNet::NetworkID GetPlayerChatboxWindow(RakNet::NetworkID id);
 
 		static RakNet::NetworkID CreateObject(unsigned int baseID, RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z);
 		static bool DestroyObject(RakNet::NetworkID id);
@@ -313,24 +315,24 @@ class Script
 		static RakNet::NetworkID GetWindowRoot(RakNet::NetworkID id);
 		static unsigned int GetWindowChildCount(RakNet::NetworkID id);
 		static unsigned int GetWindowChildList(RakNet::NetworkID id, RakNet::NetworkID** data);
-		static void GetWindowPos(RakNet::NetworkID id, double* X, double* Y);
-		static void GetWindowSize(RakNet::NetworkID id, double* X, double* Y);
+		static void GetWindowPos(RakNet::NetworkID id, double* X, double* Y, double* offsetX, double* offsetY);
+		static void GetWindowSize(RakNet::NetworkID id, double* X, double* Y, double* offsetX, double* offsetY);
 		static bool GetWindowVisible(RakNet::NetworkID id);
 		static bool GetWindowLocked(RakNet::NetworkID id);
 		static const char* GetWindowText(RakNet::NetworkID id);
 
-		static RakNet::NetworkID (CreateWindow)(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text);
+		static RakNet::NetworkID (CreateWindow)(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text);
 		static bool AddChildWindow(RakNet::NetworkID id, RakNet::NetworkID child);
 		static bool RemoveChildWindow(RakNet::NetworkID id, RakNet::NetworkID child);
 		static bool DestroyWindow(RakNet::NetworkID id);
-		static bool SetWindowPos(RakNet::NetworkID id, double X, double Y);
-		static bool SetWindowSize(RakNet::NetworkID id, double X, double Y);
+		static bool SetWindowPos(RakNet::NetworkID id, double X, double Y, double offsetX, double offsetY);
+		static bool SetWindowSize(RakNet::NetworkID id, double X, double Y, double offsetX, double offsetY);
 		static bool SetWindowVisible(RakNet::NetworkID id, bool visible);
 		static bool SetWindowLocked(RakNet::NetworkID id, bool locked);
 		static bool SetWindowText(RakNet::NetworkID id, const char* text);
-		static RakNet::NetworkID CreateButton(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text);
-		static RakNet::NetworkID CreateText(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text);
-		static RakNet::NetworkID CreateEdit(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text);
+		static RakNet::NetworkID CreateButton(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text);
+		static RakNet::NetworkID CreateText(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text);
+		static RakNet::NetworkID CreateEdit(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text);
 
 		static constexpr ScriptFunctionData functions[] {
 			{"timestamp", Utils::timestamp},
@@ -373,6 +375,7 @@ class Script
 			{"IsCell", DB::Record::IsValidCell},
 			{"IsInterior", Script::IsInterior},
 			{"IsItemList", Script::IsItemList},
+			{"IsChatbox", Script::IsChatbox},
 			{"GetType", (unsigned int(*)(RakNet::NetworkID)) GameFactory::GetType},
 			{"GetConnection", Script::GetConnection},
 			{"GetCount", GameFactory::GetObjectCount},
@@ -422,6 +425,7 @@ class Script
 			{"GetPlayerConsoleEnabled", Script::GetPlayerConsoleEnabled},
 			{"GetPlayerWindowCount", Script::GetPlayerWindowCount},
 			{"GetPlayerWindowList", Script::GetPlayerWindowList},
+			{"GetPlayerChatboxWindow", Script::GetPlayerChatboxWindow},
 
 			{"CreateObject", Script::CreateObject},
 			{"DestroyObject", Script::DestroyObject},
@@ -472,9 +476,9 @@ class Script
 			{"GetWindowText", Script::GetWindowText},
 
 			{"CreateWindow", Script::CreateWindow},
+			{"DestroyWindow", Script::DestroyWindow},
 			{"AddChildWindow", Script::AddChildWindow},
 			{"RemoveChildWindow", Script::RemoveChildWindow},
-			{"DestroyWindow", Script::DestroyWindow},
 			{"SetWindowPos", Script::SetWindowPos},
 			{"SetWindowSize", Script::SetWindowSize},
 			{"SetWindowVisible", Script::SetWindowVisible},

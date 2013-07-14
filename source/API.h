@@ -13,6 +13,7 @@
 #include <unordered_map>
 #include <queue>
 #include <vector>
+#include <memory>
 
 #include "vaultmp.h"
 #include "Utils.h"

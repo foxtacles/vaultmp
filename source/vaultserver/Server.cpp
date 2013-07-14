@@ -118,65 +118,78 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 	Client* client = new Client(guid, id);
 	Dedicated::self->SetServerPlayers(make_pair(Client::GetClientCount(), Dedicated::connections));
 
+	NetworkID chatbox_id;
+
+	{
+		auto chatbox = GameFactory::GetObject<Window>((Script::CreateWindow)(get<0>(Window::GUI_MAIN_POS), get<1>(Window::GUI_MAIN_POS), get<2>(Window::GUI_MAIN_POS), get<3>(Window::GUI_MAIN_POS), get<0>(Window::GUI_MAIN_SIZE), get<1>(Window::GUI_MAIN_SIZE), get<2>(Window::GUI_MAIN_SIZE), get<3>(Window::GUI_MAIN_SIZE), true, false, Window::GUI_MAIN_TEXT));
+		chatbox->SetLabel(Window::GUI_MAIN_LABEL);
+		chatbox_id = chatbox->GetNetworkID();
+	}
+
+	Script::AttachWindow(id, chatbox_id);
+
 	unsigned int result = Script::OnPlayerRequestGame(id);
+	string player_name;
 
-	auto player = GameFactory::GetObject<Player>(id).get();
+	{
+		auto player = GameFactory::GetObject<Player>(id).get();
 
-	// TODO hardcoded hack to not get DLC bases, no proper mod handling yet
-	if (!result)
-		result = DB::NPC::GetNPCNotIn(Player::GetBaseIDs(), [](const DB::NPC& data)
+		// TODO hardcoded hack to not get DLC bases, no proper mod handling yet
+		if (!result)
+			result = DB::NPC::GetNPCNotIn(Player::GetBaseIDs(), [](const DB::NPC& data)
+			{
+				return (!(data.GetBase() & 0xFF000000) && !data.IsEssential() && !DB::Race::Lookup(data.GetRace())->IsChild());
+			})->GetBase();
+
+		const auto* npc = *DB::NPC::Lookup(result);
+
+		player->SetReference(0x00000000);
+		player->SetBase(result);
+
+		auto cell = Player::GetSpawnCell();
+		player->SetNetworkCell(cell);
+		player->SetGameCell(cell);
+
+		response.emplace_back(Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_GAME_BASE>(result),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+
+		response.emplace_back(Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_CONSOLE>(0, player->GetPlayerConsoleEnabled()),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+
+		unsigned int race = npc->GetRace();
+		unsigned int old_race = player->GetActorRace();
+
+		if (player->SetActorRace(race))
 		{
-			return (!(data.GetBase() & 0xFF000000) && !data.IsEssential() && !DB::Race::Lookup(data.GetRace())->IsChild());
-		})->GetBase();
+			signed int age = DB::Race::Lookup(old_race)->GetAgeDifference(race);
 
-	const auto* npc = *DB::NPC::Lookup(result);
+			response.emplace_back(Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_RACE>(id, race, age, age),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+		}
 
-	player->SetReference(0x00000000);
-	player->SetBase(result);
+		signed int age = DB::Race::Lookup(npc->GetOriginalRace())->GetAgeDifference(race);
+		player->SetActorAge(age);
 
-	auto cell = Player::GetSpawnCell();
-	player->SetNetworkCell(cell);
-	player->SetGameCell(cell);
+		bool female = npc->IsFemale();
 
-	response.emplace_back(Network::CreateResponse(
-		PacketFactory::Create<pTypes::ID_GAME_BASE>(result),
-		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
-
-	response.emplace_back(Network::CreateResponse(
-		PacketFactory::Create<pTypes::ID_UPDATE_CONSOLE>(0, player->GetPlayerConsoleEnabled()),
-		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
-
-	unsigned int race = npc->GetRace();
-	unsigned int old_race = player->GetActorRace();
-
-	if (player->SetActorRace(race))
-	{
-		signed int age = DB::Race::Lookup(old_race)->GetAgeDifference(race);
+		if (player->SetActorFemale(female))
+		{
+			response.emplace_back(Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_SEX>(id, female),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+		}
 
 		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_RACE>(id, race, age, age),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+			player->toPacket(),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(client)));
+
+		player_name = player->GetName();
 	}
 
-	signed int age = DB::Race::Lookup(npc->GetOriginalRace())->GetAgeDifference(race);
-	player->SetActorAge(age);
-
-	bool female = npc->IsFemale();
-
-	if (player->SetActorFemale(female))
-	{
-		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_SEX>(id, female),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
-	}
-
-	response.emplace_back(Network::CreateResponse(
-		player->toPacket(),
-		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(client)));
-
-	Script::SetBaseName(id, player->GetName().c_str());
-
-	GameFactory::LeaveReference(player);
+	Script::SetBaseName(id, player_name.c_str());
 
 	Script::OnSpawn(id);
 
@@ -194,6 +207,7 @@ NetworkResponse Server::Disconnect(RakNetGUID guid, Reason reason)
 		Script::OnPlayerDisconnect(id, reason);
 		delete client;
 
+		GameFactory::DestroyInstance(Script::GetPlayerChatboxWindow(id));
 		GameFactory::DestroyInstance(id);
 
 		response.emplace_back(Network::CreateResponse(
