@@ -30,17 +30,13 @@ extern "C"
 
 	__declspec(dllexport) void GUI_CreateFrameWindow(char *name);
 
-	__declspec(dllexport) void GUI_SetFrameWindowPosition(char* name,float x,float y);
-
-	__declspec(dllexport) void GUI_SetFrameWindowSize(char* name,float x,float y);
-
 	__declspec(dllexport) void GUI_AddStaticText(char* parent,char* name);
 	__declspec(dllexport) void GUI_AddTextbox(char* parent,char* name);
 	__declspec(dllexport) void GUI_AddButton(char* parent,char* name);
 
-	__declspec(dllexport) void GUI_SetPosition(char* name,float x,float y);
+	__declspec(dllexport) void GUI_SetPosition(char* name,float x,float y,float xOffset,float yOffset);
 
-	__declspec(dllexport) void GUI_SetSize(char* name,float x,float y);
+	__declspec(dllexport) void GUI_SetSize(char* name,float x,float y,float xOffset,float yOffset);
 
 	__declspec(dllexport) void GUI_SetText(char* name,char* txt);
 
@@ -50,4 +46,6 @@ extern "C"
 	__declspec(dllexport) void GUI_SetTextChangedCallback(void (*pt)(char* name,char* t));
 
 	__declspec(dllexport) void GUI_ForceGUI(bool inGui);
+	__declspec(dllexport) void GUI_SetVisible(char* name,bool visible);
+	__declspec(dllexport) void GUI_AllowDrag(char* name,bool allow);
 }
