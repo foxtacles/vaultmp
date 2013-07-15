@@ -16,10 +16,15 @@ const Type: {
 	ID_CONTAINER = ID_ITEM << ID_REFERENCE,
 	ID_ACTOR = ID_CONTAINER << ID_REFERENCE,
 	ID_PLAYER = ID_ACTOR << ID_REFERENCE,
+	ID_WINDOW = ID_PLAYER << ID_REFERENCE,
+	ID_BUTTON = ID_WINDOW << ID_REFERENCE,
+	ID_TEXT = ID_BUTTON << ID_REFERENCE,
+	ID_EDIT = ID_TEXT << ID_REFERENCE,
 
 	ALL_OBJECTS = (ID_OBJECT | ID_ITEM | ID_CONTAINER | ID_ACTOR | ID_PLAYER),
 	ALL_CONTAINERS = (ID_CONTAINER | ID_ACTOR | ID_PLAYER),
 	ALL_ACTORS = (ID_ACTOR | ID_PLAYER),
+	ALL_WINDOWS = (ID_WINDOW | ID_BUTTON | ID_TEXT | ID_EDIT),
 }
 
 const ActorValue: {
@@ -233,6 +238,11 @@ native Bool:IsPlayer(ID);
 native Bool:IsCell(cell);
 native Bool:IsInterior(cell);
 native Bool:IsItemList(ID);
+native Bool:IsWindow(ID);
+native Bool:IsButton(ID);
+native Bool:IsText(ID);
+native Bool:IsEdit(ID);
+native Bool:IsChatbox(ID);
 native Type:GetType(ID);
 native GetConnection(ID);
 native GetCount(Type:type);
@@ -280,6 +290,9 @@ native Bool:IsActorJumping(ID);
 native GetPlayerRespawnTime(ID);
 native GetPlayerSpawnCell(ID);
 native Bool:GetPlayerConsoleEnabled(ID);
+native GetPlayerWindowCount(ID);
+native GetPlayerWindowList(ID, id[]);
+native GetPlayerChatboxWindow(ID);
 
 native CreateObject(object, ID, cell = 0, Float:X = 0.00, Float:Y = 0.00, Float:Z = 0.00);
 native Bool:DestroyObject(ID);
@@ -310,9 +323,34 @@ native Bool:SetActorAlerted(ID, Bool:alerted);
 native Bool:SetActorSneaking(ID, Bool:sneaking);
 native Bool:FireWeapon(ID);
 native KillActor(ID, Limb:limbs = Limb:None_, Death:cause = Death:None);
-native SetActorBaseRace(ID, race);
-native AgeActorBaseRace(ID, age);
-native SetActorBaseSex(ID, Bool:female);
+native Bool:SetActorBaseRace(ID, race);
+native Bool:AgeActorBaseRace(ID, age);
+native Bool:SetActorBaseSex(ID, Bool:female);
 native SetPlayerRespawnTime(ID, interval);
 native SetPlayerSpawnCell(ID, cell);
 native SetPlayerConsoleEnabled(ID, Bool:enabled);
+native Bool:AttachWindow(ID, window);
+native Bool:DetachWindow(ID, window);
+
+native GetParentWindow(ID);
+native GetWindowRoot(ID);
+native GetWindowChildCount(ID);
+native GetWindowChildList(ID, id[]);
+native GetWindowPos(ID, &Float:X, &Float:Y, &Float:offset_X, &Float:offset_Y);
+native GetWindowSize(ID, &Float:X, &Float:Y, &Float:offset_X, &Float:offset_Y);
+native Bool:GetWindowVisible(ID);
+native Bool:GetWindowLocked(ID);
+native GetWindowText(ID, text{});
+
+native CreateWindow(Float:posX, Float:posY, Float:offset_posX, Float:offset_posY, Float:sizeX, Float:sizeY, Float:offset_sizeX, Float:offset_sizeY, Bool:visible, Bool:locked, const text{});
+native Bool:DestroyWindow(ID);
+native Bool:AddChildWindow(ID, child);
+native Bool:RemoveChildWindow(ID, child);
+native Bool:SetWindowPos(ID, Float:X, Float:Y, Float:offset_X, Float:offset_Y);
+native Bool:SetWindowSize(ID, Float:X, Float:Y, Float:offset_X, Float:offset_Y);
+native Bool:SetWindowVisible(ID, Bool:visible);
+native Bool:SetWindowLocked(ID, Bool:locked);
+native Bool:SetWindowText(ID, const text{});
+native CreateButton(Float:posX, Float:posY, Float:offset_posX, Float:offset_posY, Float:sizeX, Float:sizeY, Float:offset_sizeX, Float:offset_sizeY, Bool:visible, Bool:locked, const text{});
+native CreateText(Float:posX, Float:posY, Float:offset_posX, Float:offset_posY, Float:sizeX, Float:sizeY, Float:offset_sizeX, Float:offset_sizeY, Bool:visible, Bool:locked, const text{});
+native CreateEdit(Float:posX, Float:posY, Float:offset_posX, Float:offset_posY, Float:sizeX, Float:sizeY, Float:offset_sizeX, Float:offset_sizeY, Bool:visible, Bool:locked, const text{});

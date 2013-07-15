@@ -1326,6 +1326,26 @@ bool Script::IsItemList(NetworkID id)
 	return scriptIL.count(id);
 }
 
+bool Script::IsWindow(NetworkID id)
+{
+	return (GameFactory::GetType(id) & ALL_WINDOWS);
+}
+
+bool Script::IsButton(NetworkID id)
+{
+	return (GameFactory::GetType(id) & ID_BUTTON);
+}
+
+bool Script::IsText(NetworkID id)
+{
+	return (GameFactory::GetType(id) & ID_TEXT);
+}
+
+bool Script::IsEdit(NetworkID id)
+{
+	return (GameFactory::GetType(id) & ID_EDIT);
+}
+
 bool Script::IsChatbox(NetworkID id)
 {
 	auto window = GameFactory::GetObject<Window>(id);

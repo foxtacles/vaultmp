@@ -68,10 +68,15 @@ namespace vaultmp {
 		ID_CONTAINER = ID_ITEM << 1,
 		ID_ACTOR = ID_CONTAINER << 1,
 		ID_PLAYER = ID_ACTOR << 1,
+		ID_WINDOW = ID_PLAYER << 1,
+		ID_BUTTON = ID_WINDOW << 1,
+		ID_TEXT = ID_BUTTON << 1,
+		ID_EDIT = ID_TEXT << 1,
 
 		ALL_OBJECTS = (ID_OBJECT | ID_ITEM | ID_CONTAINER | ID_ACTOR | ID_PLAYER),
 		ALL_CONTAINERS = (ID_CONTAINER | ID_ACTOR | ID_PLAYER),
 		ALL_ACTORS = (ID_ACTOR | ID_PLAYER),
+		ALL_WINDOWS = (ID_WINDOW | ID_BUTTON | ID_TEXT | ID_EDIT),
 	};
 
 	enum VAULTCPP(class) ActorValue VAULTCPP(: uint8_t)
@@ -359,6 +364,11 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsCell))(VAULTSPACE CELL) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsInterior))(VAULTSPACE CELL) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsItemList))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsWindow))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsButton))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsText))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsEdit))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsChatbox))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Type (*VAULTAPI(GetType))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetConnection))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetCount))(VAULTSPACE Type) VAULTCPP(noexcept);
@@ -406,6 +416,9 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE Interval (*VAULTAPI(GetPlayerRespawnTime))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE CELL (*VAULTAPI(GetPlayerSpawnCell))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetPlayerConsoleEnabled))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetPlayerWindowCount))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetPlayerWindowList))(VAULTSPACE ID, VAULTSPACE RawArray(VAULTSPACE ID)*) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(GetPlayerChatboxWindow))(VAULTSPACE ID) VAULTCPP(noexcept);
 
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateObject))(VAULTSPACE Base, VAULTSPACE ID, VAULTSPACE CELL, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(DestroyObject))(VAULTSPACE ID) VAULTCPP(noexcept);
@@ -442,6 +455,31 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetPlayerRespawnTime))(VAULTSPACE ID, VAULTSPACE Interval) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetPlayerSpawnCell))(VAULTSPACE ID, VAULTSPACE CELL) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetPlayerConsoleEnabled))(VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(AttachWindow))(VAULTSPACE ID, VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(DetachWindow))(VAULTSPACE ID, VAULTSPACE ID) VAULTCPP(noexcept);
+
+	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(GetParentWindow))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(GetWindowRoot))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetWindowChildCount))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetWindowChildList))(VAULTSPACE ID, VAULTSPACE RawArray(VAULTSPACE ID)*) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(GetWindowPos))(VAULTSPACE ID, VAULTSPACE Value*, VAULTSPACE Value*, VAULTSPACE Value*, VAULTSPACE Value*) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(GetWindowSize))(VAULTSPACE ID, VAULTSPACE Value*, VAULTSPACE Value*, VAULTSPACE Value*, VAULTSPACE Value*) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetWindowVisible))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetWindowLocked))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE cRawString (*VAULTAPI(GetWindowText))(VAULTSPACE ID) VAULTCPP(noexcept);
+
+	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateWindow))(VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE State, VAULTSPACE State, VAULTSPACE cRawString) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(DestroyWindow))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(AddChildWindow))(VAULTSPACE ID, VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(RemoveChildWindow))(VAULTSPACE ID, VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetWindowPos))(VAULTSPACE ID, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetWindowSize))(VAULTSPACE ID, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetWindowVisible))(VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetWindowLocked))(VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetWindowText))(VAULTSPACE ID, VAULTSPACE cRawString) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateButton))(VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE State, VAULTSPACE State, VAULTSPACE cRawString) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateText))(VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE State, VAULTSPACE State, VAULTSPACE cRawString) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateEdit))(VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE State, VAULTSPACE State, VAULTSPACE cRawString) VAULTCPP(noexcept);
 VAULTCPP(})
 
 #ifdef __cplusplus
@@ -546,13 +584,18 @@ namespace vaultmp
 	VAULTFUNCTION State IsCell(CELL cell) noexcept { return VAULTAPI(IsCell)(cell); }
 	VAULTFUNCTION State IsInterior(CELL cell) noexcept { return VAULTAPI(IsInterior)(cell); }
 	VAULTFUNCTION State IsItemList(ID id) noexcept { return VAULTAPI(IsItemList)(id); }
+	VAULTFUNCTION State IsWindow(ID id) noexcept { return VAULTAPI(IsWindow)(id); }
+	VAULTFUNCTION State IsButton(ID id) noexcept { return VAULTAPI(IsButton)(id); }
+	VAULTFUNCTION State IsText(ID id) noexcept { return VAULTAPI(IsText)(id); }
+	VAULTFUNCTION State IsEdit(ID id) noexcept { return VAULTAPI(IsEdit)(id); }
+	VAULTFUNCTION State IsChatbox(ID id) noexcept { return VAULTAPI(IsChatbox)(id); }
 	VAULTFUNCTION Type GetType(ID id) noexcept { return VAULTAPI(GetType)(id); }
 	VAULTFUNCTION UCount GetConnection(ID id) noexcept { return VAULTAPI(GetConnection)(id); }
 	VAULTFUNCTION UCount GetCount(Type type) noexcept { return VAULTAPI(GetCount)(type); }
 	VAULTFUNCTION IDVector GetList(Type type) noexcept {
 		RawArray<ID> data;
 		UCount size = VAULTAPI(GetList)(type, &data);
-		return IDVector(data, data + size);
+		return size ? IDVector(data, data + size) : IDVector();
 	}
 	VAULTFUNCTION Interval GetRespawnTime() noexcept { return VAULTAPI(GetRespawnTime)(); }
 	VAULTFUNCTION CELL GetSpawnCell() noexcept { return VAULTAPI(GetSpawnCell)(); }
@@ -600,7 +643,7 @@ namespace vaultmp
 	VAULTFUNCTION IDVector GetContainerItemList(ID id) noexcept {
 		RawArray<ID> data;
 		UCount size = VAULTAPI(GetContainerItemList)(id, &data);
-		return IDVector(data, data + size);
+		return size ? IDVector(data, data + size) : IDVector();
 	}
 	VAULTFUNCTION Value GetActorValue(ID id, ActorValue index) noexcept { return VAULTAPI(GetActorValue)(id, index); }
 	VAULTFUNCTION Value GetActorBaseValue(ID id, ActorValue index) noexcept { return VAULTAPI(GetActorBaseValue)(id, index); }
@@ -616,6 +659,13 @@ namespace vaultmp
 	VAULTFUNCTION Interval GetPlayerRespawnTime(ID id) noexcept { return VAULTAPI(GetPlayerRespawnTime)(id); }
 	VAULTFUNCTION CELL GetPlayerSpawnCell(ID id) noexcept { return VAULTAPI(GetPlayerSpawnCell)(id); }
 	VAULTFUNCTION State GetPlayerConsoleEnabled(ID id) noexcept { return VAULTAPI(GetPlayerConsoleEnabled)(id); }
+	VAULTFUNCTION UCount GetPlayerWindowCount(ID id) noexcept { return VAULTAPI(GetPlayerWindowCount)(id); }
+	VAULTFUNCTION IDVector GetPlayerWindowList(ID id) noexcept {
+		RawArray<ID> data;
+		UCount size = VAULTAPI(GetPlayerWindowList)(id, &data);
+		return size ? IDVector(data, data + size) : IDVector();
+	}
+	VAULTFUNCTION ID GetPlayerChatboxWindow(ID id) noexcept { return VAULTAPI(GetPlayerChatboxWindow)(id); }
 
 	VAULTFUNCTION ID CreateObject(Base object, ID id) noexcept { return VAULTAPI(CreateObject)(object, id, static_cast<CELL>(0), 0.00, 0.00, 0.00); }
 	VAULTFUNCTION ID CreateObject(Base object, CELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateObject)(object, static_cast<ID>(0), cell, X, Y, Z); }
@@ -789,6 +839,40 @@ namespace vaultmp
 	VAULTFUNCTION Void SetPlayerRespawnTime(ID id, Interval interval) noexcept { return VAULTAPI(SetPlayerRespawnTime)(id, interval); }
 	VAULTFUNCTION Void SetPlayerSpawnCell(ID id, CELL cell) noexcept { return VAULTAPI(SetPlayerSpawnCell)(id, cell); }
 	VAULTFUNCTION Void SetPlayerConsoleEnabled(ID id, State enabled) noexcept { return VAULTAPI(SetPlayerConsoleEnabled)(id, enabled); }
+	VAULTFUNCTION State AttachWindow(ID id, ID window) noexcept { return VAULTAPI(AttachWindow)(id, window); }
+	VAULTFUNCTION State DetachWindow(ID id, ID window) noexcept { return VAULTAPI(DetachWindow)(id, window); }
+
+	VAULTFUNCTION ID GetParentWindow(ID id) noexcept { return VAULTAPI(GetParentWindow)(id); }
+	VAULTFUNCTION ID GetWindowRoot(ID id) noexcept { return VAULTAPI(GetWindowRoot)(id); }
+	VAULTFUNCTION UCount GetWindowChildCount(ID id) noexcept { return VAULTAPI(GetWindowChildCount)(id); }
+	VAULTFUNCTION IDVector GetWindowChildList(ID id) noexcept {
+		RawArray<ID> data;
+		UCount size = VAULTAPI(GetWindowChildList)(id, &data);
+		return size ? IDVector(data, data + size) : IDVector();
+	}
+	VAULTFUNCTION Void GetWindowPos(ID id, Value& X, Value& Y, Value& offset_X, Value& offset_Y) noexcept { return VAULTAPI(GetWindowPos)(id, &X, &Y, &offset_X, &offset_Y); }
+	VAULTFUNCTION Void GetWindowSize(ID id, Value& X, Value& Y, Value& offset_X, Value& offset_Y) noexcept { return VAULTAPI(GetWindowSize)(id, &X, &Y, &offset_X, &offset_Y); }
+	VAULTFUNCTION State GetWindowVisible(ID id) noexcept { return VAULTAPI(GetWindowVisible)(id); }
+	VAULTFUNCTION State GetWindowLocked(ID id) noexcept { return VAULTAPI(GetWindowLocked)(id); }
+	VAULTFUNCTION String GetWindowText(ID id) noexcept { return String(VAULTAPI(GetWindowText)(id)); }
+
+	VAULTFUNCTION ID CreateWindow(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, const String& text) noexcept { return VAULTAPI(CreateWindow)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
+	VAULTFUNCTION ID CreateWindow(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, cRawString text) noexcept { return VAULTAPI(CreateWindow)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
+	VAULTFUNCTION State DestroyWindow(ID id) noexcept { return VAULTAPI(DestroyWindow)(id); }
+	VAULTFUNCTION State AddChildWindow(ID id, ID child) noexcept { return VAULTAPI(AddChildWindow)(id, child); }
+	VAULTFUNCTION State RemoveChildWindow(ID id, ID child) noexcept { return VAULTAPI(RemoveChildWindow)(id, child); }
+	VAULTFUNCTION State SetWindowPos(ID id, Value X, Value Y, Value offset_X, Value offset_Y) noexcept { return VAULTAPI(SetWindowPos)(id, X, Y, offset_X, offset_Y); }
+	VAULTFUNCTION State SetWindowSize(ID id, Value X, Value Y, Value offset_X, Value offset_Y) noexcept { return VAULTAPI(SetWindowSize)(id, X, Y, offset_X, offset_Y); }
+	VAULTFUNCTION State SetWindowVisible(ID id, State visible) noexcept { return VAULTAPI(SetWindowVisible)(id, visible); }
+	VAULTFUNCTION State SetWindowLocked(ID id, State locked) noexcept { return VAULTAPI(SetWindowLocked)(id, locked); }
+	VAULTFUNCTION State SetWindowText(ID id, const String& text) noexcept { return VAULTAPI(SetWindowText)(id, text.c_str()); }
+	VAULTFUNCTION State SetWindowText(ID id, cRawString text) noexcept { return VAULTAPI(SetWindowText)(id, text); }
+	VAULTFUNCTION ID CreateButton(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, const String& text) noexcept { return VAULTAPI(CreateButton)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
+	VAULTFUNCTION ID CreateButton(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, cRawString text) noexcept { return VAULTAPI(CreateButton)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
+	VAULTFUNCTION ID CreateText(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, const String& text) noexcept { return VAULTAPI(CreateText)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
+	VAULTFUNCTION ID CreateText(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, cRawString text) noexcept { return VAULTAPI(CreateText)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
+	VAULTFUNCTION ID CreateEdit(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, const String& text) noexcept { return VAULTAPI(CreateEdit)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
+	VAULTFUNCTION ID CreateEdit(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, cRawString text) noexcept { return VAULTAPI(CreateEdit)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
 
 	class Reference {
 		protected:
@@ -841,8 +925,8 @@ namespace vaultmp
 			State SetBaseName(const String& name) const noexcept { return vaultmp::SetBaseName(id, name); }
 			State SetBaseName(cRawString name) const noexcept { return vaultmp::SetBaseName(id, name); }
 
-			static ID Create(Base object, ID id) { return vaultmp::CreateObject(object, id); }
-			static ID Create(Base object, CELL cell, Value X, Value Y, Value Z) { return vaultmp::CreateObject(object, cell, X, Y, Z); }
+			static ID Create(Base object, ID id) noexcept { return vaultmp::CreateObject(object, id); }
+			static ID Create(Base object, CELL cell, Value X, Value Y, Value Z) noexcept { return vaultmp::CreateObject(object, cell, X, Y, Z); }
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_OBJECT); }
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_OBJECT); }
 	};
@@ -866,8 +950,8 @@ namespace vaultmp
 			State SetItemCondition(Value condition) const noexcept { return vaultmp::SetItemCondition(id, condition); }
 
 			#define Create_Template(type) \
-				static ID Create(type item, ID id) { return vaultmp::CreateItem(item, id); } \
-				static ID Create(type item, CELL cell, Value X, Value Y, Value Z) { return vaultmp::CreateItem(item, cell, X, Y, Z); }
+				static ID Create(type item, ID id) noexcept { return vaultmp::CreateItem(item, id); } \
+				static ID Create(type item, CELL cell, Value X, Value Y, Value Z) noexcept { return vaultmp::CreateItem(item, cell, X, Y, Z); }
 			Create_Template(Base);
 			Create_Template(ALCH);
 			Create_Template(AMMO);
@@ -943,8 +1027,8 @@ namespace vaultmp
 
 			Void RemoveAllItems() noexcept { return vaultmp::RemoveAllItems(id); }
 
-			static ID Create(CONT container, ID id) { return vaultmp::CreateContainer(container, id); }
-			static ID Create(CONT container, CELL cell, Value X, Value Y, Value Z) { return vaultmp::CreateContainer(container, cell, X, Y, Z); }
+			static ID Create(CONT container, ID id) noexcept{ return vaultmp::CreateContainer(container, id); }
+			static ID Create(CONT container, CELL cell, Value X, Value Y, Value Z) noexcept { return vaultmp::CreateContainer(container, cell, X, Y, Z); }
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_CONTAINER); }
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_CONTAINER); }
 	};
@@ -1032,11 +1116,11 @@ namespace vaultmp
 
 			Void RemoveAllItems() noexcept { return vaultmp::RemoveAllItems(id); }
 
-			static ID Create(ID source = static_cast<ID>(0)) { return vaultmp::CreateItemList(source); }
-			static ID Create(Base source) { return vaultmp::CreateItemList(source); }
-			static ID Create(std::initializer_list<ID> source) { return vaultmp::CreateItemList(source); }
-			static ID Create(std::initializer_list<Base> source) { return vaultmp::CreateItemList(source); }
-			static ID Create(std::initializer_list<AddItem_Initializer> source) { return vaultmp::CreateItemList(source); }
+			static ID Create(ID source = static_cast<ID>(0)) noexcept { return vaultmp::CreateItemList(source); }
+			static ID Create(Base source) noexcept { return vaultmp::CreateItemList(source); }
+			static ID Create(std::initializer_list<ID> source) noexcept { return vaultmp::CreateItemList(source); }
+			static ID Create(std::initializer_list<Base> source) noexcept { return vaultmp::CreateItemList(source); }
+			static ID Create(std::initializer_list<AddItem_Initializer> source) noexcept { return vaultmp::CreateItemList(source); }
 	};
 
 	class Actor : public Container {
@@ -1090,8 +1174,8 @@ namespace vaultmp
 			State SetActorBaseSex(State female) const noexcept { return vaultmp::SetActorBaseSex(id, female); }
 
 			#define Create_Template(type) \
-				static ID Create(type actor, ID id) { return vaultmp::CreateActor(actor, id); } \
-				static ID Create(type actor, CELL cell, Value X, Value Y, Value Z) { return vaultmp::CreateActor(actor, cell, X, Y, Z); }
+				static ID Create(type actor, ID id) noexcept { return vaultmp::CreateActor(actor, id); } \
+				static ID Create(type actor, CELL cell, Value X, Value Y, Value Z) noexcept { return vaultmp::CreateActor(actor, cell, X, Y, Z); }
 			Create_Template(Base);
 			Create_Template(NPC_);
 			Create_Template(CREA);
@@ -1109,10 +1193,16 @@ namespace vaultmp
 			Interval GetPlayerRespawnTime() const noexcept { return vaultmp::GetPlayerRespawnTime(id); }
 			CELL GetPlayerSpawnCell() const noexcept { return vaultmp::GetPlayerSpawnCell(id); }
 			State GetPlayerConsoleEnabled() const noexcept { return vaultmp::GetPlayerConsoleEnabled(id); }
+			UCount GetPlayerWindowCount() const noexcept { return vaultmp::GetPlayerWindowCount(id); }
+			IDVector GetPlayerWindowList() const noexcept { return vaultmp::GetPlayerWindowList(id); }
+			ID GetPlayerChatboxWindow() const noexcept { return vaultmp::GetPlayerChatboxWindow(id); }
 
 			Void SetPlayerRespawnTime(Interval interval) noexcept { return vaultmp::SetPlayerRespawnTime(id, interval); }
 			Void SetPlayerSpawnCell(CELL cell) noexcept { return vaultmp::SetPlayerSpawnCell(id, cell); }
 			Void SetPlayerConsoleEnabled(State enabled) noexcept { return vaultmp::SetPlayerConsoleEnabled(id, enabled); }
+			State AttachWindow(ID window) noexcept { return vaultmp::AttachWindow(id, window); }
+			State DetachWindow(ID window) noexcept { return vaultmp::DetachWindow(id, window); }
+
 			State Kick() noexcept { return vaultmp::Kick(id); }
 			State UIMessage(const String& message, Emoticon emoticon = Emoticon::Happy) noexcept { return vaultmp::UIMessage(id, message, emoticon); }
 			State UIMessage(cRawString message, Emoticon emoticon = Emoticon::Happy) noexcept { return vaultmp::UIMessage(id, message, emoticon); }
@@ -1133,6 +1223,94 @@ namespace vaultmp
 
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_PLAYER); }
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_PLAYER); }
+	};
+
+	class Window {
+		protected:
+			ID id;
+			Type type;
+
+			Window(ID id, Type type) noexcept : id(id), type(type) {}
+
+		public:
+			Window(ID id) noexcept : id(vaultmp::IsWindow(id) ? id : static_cast<ID>(0)), type(Type::ID_WINDOW) {}
+			virtual ~Window() noexcept {}
+
+			State IsValid() const noexcept { return id ? True : False; }
+			explicit operator bool() const noexcept { return IsValid(); }
+			explicit operator State() const noexcept { return IsValid(); }
+			bool operator==(const Window& R) const noexcept { return IsValid() && this->id == R.id; }
+			bool operator!=(const Window& R) const noexcept { return !operator==(R); }
+
+			ID GetID() const noexcept { return id; }
+			Type GetType() const noexcept { return type; }
+
+			ID GetParentWindow() const noexcept { return vaultmp::GetParentWindow(id); }
+			ID GetWindowRoot() const noexcept { return vaultmp::GetParentWindow(id); }
+			UCount GetWindowChildCount() const noexcept { return vaultmp::GetParentWindow(id); }
+			IDVector GetWindowChildList() const noexcept { return vaultmp::GetWindowChildList(id); }
+			Void GetWindowPos(Value& X, Value& Y, Value& offset_X, Value& offset_Y) const noexcept { return vaultmp::GetWindowPos(id, X, Y, offset_X, offset_Y); }
+			Void GetWindowSize(Value& X, Value& Y, Value& offset_X, Value& offset_Y) const noexcept { return vaultmp::GetWindowSize(id, X, Y, offset_X, offset_Y); }
+			State GetWindowVisible() const noexcept { return vaultmp::GetWindowVisible(id); }
+			State GetWindowLocked() const noexcept { return vaultmp::GetWindowLocked(id); }
+			String GetWindowText() const noexcept { return vaultmp::GetWindowText(id); }
+
+			State DestroyWindow() noexcept { State state = vaultmp::DestroyWindow(id); id = static_cast<ID>(0); return state; }
+			State AddChildWindow(ID child) noexcept { return vaultmp::AddChildWindow(id, child); }
+			State RemoveChildWindow(ID child) noexcept { return vaultmp::RemoveChildWindow(id, child); }
+			State SetWindowPos(Value X, Value Y, Value offset_X, Value offset_Y) noexcept { return vaultmp::SetWindowPos(id, X, Y, offset_X, offset_Y); }
+			State SetWindowSize(Value X, Value Y, Value offset_X, Value offset_Y) noexcept { return vaultmp::SetWindowSize(id, X, Y, offset_X, offset_Y); }
+			State SetWindowVisible(State visible) noexcept { return vaultmp::SetWindowVisible(id, visible); }
+			State SetWindowLocked(State locked) noexcept { return vaultmp::SetWindowLocked(id, locked); }
+			State SetWindowText(const String& text) noexcept { return vaultmp::SetWindowText(id, text); }
+			State SetWindowText(cRawString text) noexcept { return vaultmp::SetWindowText(id, text); }
+
+			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, const String& text) noexcept { return vaultmp::CreateWindow(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
+			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, cRawString text) noexcept { return vaultmp::CreateWindow(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
+			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_WINDOW); }
+			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_WINDOW); }
+	};
+
+	class Button : public Window {
+		protected:
+			Button(ID id, Type type) noexcept : Window(id, type) {}
+
+		public:
+			Button(ID id) noexcept : Window(vaultmp::IsButton(id) ? id : static_cast<ID>(0), Type::ID_BUTTON) {}
+			virtual ~Button() noexcept {}
+
+			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, const String& text) noexcept { return vaultmp::CreateButton(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
+			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, cRawString text) noexcept { return vaultmp::CreateButton(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
+			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_BUTTON); }
+			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_BUTTON); }
+	};
+
+	class Text : public Window {
+		protected:
+			Text(ID id, Type type) noexcept : Window(id, type) {}
+
+		public:
+			Text(ID id) noexcept : Window(vaultmp::IsText(id) ? id : static_cast<ID>(0), Type::ID_TEXT) {}
+			virtual ~Text() noexcept {}
+
+			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, const String& text) noexcept { return vaultmp::CreateText(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
+			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, cRawString text) noexcept { return vaultmp::CreateText(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
+			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_TEXT); }
+			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_TEXT); }
+	};
+
+	class Edit : public Window {
+		protected:
+			Edit(ID id, Type type) noexcept : Window(id, type) {}
+
+		public:
+			Edit(ID id) noexcept : Window(vaultmp::IsEdit(id) ? id : static_cast<ID>(0), Type::ID_EDIT) {}
+			virtual ~Edit() noexcept {}
+
+			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, const String& text) noexcept { return vaultmp::CreateEdit(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
+			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, cRawString text) noexcept { return vaultmp::CreateEdit(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
+			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_EDIT); }
+			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_EDIT); }
 	};
 
 	class GlobalChat {

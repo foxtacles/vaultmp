@@ -231,6 +231,10 @@ class Script
 		static bool IsPlayer(RakNet::NetworkID id);
 		static bool IsInterior(unsigned int cell);
 		static bool IsItemList(RakNet::NetworkID id);
+		static bool IsWindow(RakNet::NetworkID id);
+		static bool IsButton(RakNet::NetworkID id);
+		static bool IsText(RakNet::NetworkID id);
+		static bool IsEdit(RakNet::NetworkID id);
 		static bool IsChatbox(RakNet::NetworkID id);
 		static unsigned int GetConnection(RakNet::NetworkID id);
 		static unsigned int GetList(unsigned int type, RakNet::NetworkID** data);
@@ -328,9 +332,9 @@ class Script
 		static const char* GetWindowText(RakNet::NetworkID id);
 
 		static RakNet::NetworkID (CreateWindow)(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text);
+		static bool DestroyWindow(RakNet::NetworkID id);
 		static bool AddChildWindow(RakNet::NetworkID id, RakNet::NetworkID child);
 		static bool RemoveChildWindow(RakNet::NetworkID id, RakNet::NetworkID child);
-		static bool DestroyWindow(RakNet::NetworkID id);
 		static bool SetWindowPos(RakNet::NetworkID id, double X, double Y, double offsetX, double offsetY);
 		static bool SetWindowSize(RakNet::NetworkID id, double X, double Y, double offsetX, double offsetY);
 		static bool SetWindowVisible(RakNet::NetworkID id, bool visible);
@@ -381,6 +385,10 @@ class Script
 			{"IsCell", DB::Record::IsValidCell},
 			{"IsInterior", Script::IsInterior},
 			{"IsItemList", Script::IsItemList},
+			{"IsWindow", Script::IsWindow},
+			{"IsButton", Script::IsButton},
+			{"IsText", Script::IsText},
+			{"IsEdit", Script::IsEdit},
 			{"IsChatbox", Script::IsChatbox},
 			{"GetType", (unsigned int(*)(RakNet::NetworkID)) GameFactory::GetType},
 			{"GetConnection", Script::GetConnection},
