@@ -204,6 +204,14 @@ pPacket PacketFactory::Init(const unsigned char* stream, unsigned int len)
 			packet = new typename pTypesMap<pTypes::ID_UPDATE_WTEXT>::type(stream, len);
 			break;
 
+		case pTypes::ID_UPDATE_WCLICK:
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_WCLICK>::type(stream, len);
+			break;
+
+		case pTypes::ID_UPDATE_WMODE:
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_WMODE>::type(stream, len);
+			break;
+
 		default:
 			throw VaultException("Unhandled packet type %d", stream[0]).stacktrace();
 	}

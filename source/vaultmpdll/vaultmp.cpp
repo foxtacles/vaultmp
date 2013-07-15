@@ -27,6 +27,7 @@ mutex mGUI;
 queue<string> qGUI_OnChat;
 queue<bool> qGUI_OnMode;
 queue<string> qGUI_OnClick;
+queue<pair<string, string>> qGUI_OnText;
 
 static HANDLE hProc;
 static PipeServer pipeServer;
@@ -46,6 +47,7 @@ static void (*GUI_SetText)(const char*, const char*);
 static void (*GUI_RemoveWindow)(const char*);
 static void (*GUI_ForceGUI)(bool);
 static void (*GUI_SetClickCallback)(void (*)(const char*));
+static void (*GUI_SetTextChangedCallback)(void (*)(const char*, const char*));
 static void (*SetPlayersDataPointer)(remotePlayers*);
 static bool (*QueueUIMessage)(const char* msg, unsigned int emotion, const char* ddsPath, const char* soundName, float msgTime);
 
@@ -601,6 +603,13 @@ void GUI_OnClick(const char* name)
 	mGUI.unlock();
 }
 
+void GUI_OnText(const char* name, const char* text)
+{
+	mGUI.lock();
+	qGUI_OnText.emplace(name, text);
+	mGUI.unlock();
+}
+
 void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
 {
 	if (args.size() != 8)
@@ -775,12 +784,14 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 		GUI_RemoveWindow = reinterpret_cast<decltype(GUI_RemoveWindow)>(GetProcAddress(vaultgui, "GUI_RemoveWindow"));
 		GUI_ForceGUI = reinterpret_cast<decltype(GUI_ForceGUI)>(GetProcAddress(vaultgui, "GUI_ForceGUI"));
 		GUI_SetClickCallback = reinterpret_cast<decltype(GUI_SetClickCallback)>(GetProcAddress(vaultgui, "GUI_SetClickCallback"));
+		GUI_SetTextChangedCallback = reinterpret_cast<decltype(GUI_SetTextChangedCallback)>(GetProcAddress(vaultgui, "GUI_SetTextChangedCallback"));
 		SetPlayersDataPointer = reinterpret_cast<decltype(SetPlayersDataPointer)>(GetProcAddress(vaultgui, "SetPlayersDataPointer"));
 
-		if (!Chatbox_AddToChat || !GUI_CreateFrameWindow || !GUI_AddStaticText || !GUI_AddTextbox || !GUI_AddButton || !GUI_SetVisible || !GUI_AllowDrag || !GUI_SetPosition || !GUI_SetSize || !GUI_SetText || !GUI_RemoveWindow || !GUI_ForceGUI || !GUI_SetClickCallback || !SetPlayersDataPointer)
+		if (!Chatbox_AddToChat || !GUI_CreateFrameWindow || !GUI_AddStaticText || !GUI_AddTextbox || !GUI_AddButton || !GUI_SetVisible || !GUI_AllowDrag || !GUI_SetPosition || !GUI_SetSize || !GUI_SetText || !GUI_RemoveWindow || !GUI_ForceGUI || !GUI_SetClickCallback || !GUI_SetTextChangedCallback || !SetPlayersDataPointer)
 			DLLerror = true;
 
 		GUI_SetClickCallback(GUI_OnClick);
+		GUI_SetTextChangedCallback(GUI_OnText);
 
 /*
 players[0].health = 80.0;
@@ -916,6 +927,21 @@ players[1].player = false;
 			pipeClient.Send(buffer);
 
 			qGUI_OnClick.pop();
+		}
+
+		while (!qGUI_OnText.empty())
+		{
+			const auto& text = qGUI_OnText.front();
+
+			buffer[0] = PIPE_OP_RETURN_RAW;
+			*reinterpret_cast<unsigned int*>(buffer + 1) = 0x0019 | VAULTFUNCTION;
+			*reinterpret_cast<unsigned int*>(buffer + 5) = text.first.length() + text.second.length() + 2;
+			memcpy(buffer + 9, text.first.c_str(), text.first.length() + 1);
+			memcpy(buffer + 9 + text.first.length() + 1, text.second.c_str(), text.second.length() + 1);
+
+			pipeClient.Send(buffer);
+
+			qGUI_OnText.pop();
 		}
 
 		mGUI.unlock();

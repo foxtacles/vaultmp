@@ -4,6 +4,7 @@
 #include "Dedicated.h"
 #include "Client.h"
 #include "Player.h"
+#include "Window.h"
 #include "Network.h"
 #include "VaultException.h"
 
@@ -79,6 +80,18 @@ class Server
 		 * \brief Handles player control network packet
 		 */
 		static NetworkResponse GetPlayerControl(RakNet::RakNetGUID guid, FactoryObject<Player>& reference, unsigned char control, unsigned char key);
+		/**
+		 * \brief Handles window mode network packet
+		 */
+		static NetworkResponse GetWindowMode(RakNet::RakNetGUID guid, bool enabled);
+		/**
+		 * \brief Handles window click network packet
+		 */
+		static NetworkResponse GetWindowClick(RakNet::RakNetGUID guid, FactoryObject<Window>& reference);
+		/**
+		 * \brief Handles window click network packet
+		 */
+		static NetworkResponse GetWindowText(RakNet::RakNetGUID guid, FactoryObject<Window>& reference, const std::string& text);
 		/**
 		 * \brief Handles player chat message network packet
 		 */

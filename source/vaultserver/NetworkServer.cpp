@@ -241,6 +241,33 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					break;
 				}
 
+				case pTypes::ID_UPDATE_WMODE:
+				{
+					bool enabled;
+					PacketFactory::Access<pTypes::ID_UPDATE_WMODE>(packet, enabled);
+					response = Server::GetWindowMode(data->guid, enabled);
+					break;
+				}
+
+				case pTypes::ID_UPDATE_WCLICK:
+				{
+					NetworkID id;
+					PacketFactory::Access<pTypes::ID_UPDATE_WCLICK>(packet, id);
+					auto reference = GameFactory::GetObject<Window>(id);
+					response = Server::GetWindowClick(data->guid, reference.get());
+					break;
+				}
+
+				case pTypes::ID_UPDATE_WTEXT:
+				{
+					NetworkID id;
+					string text;
+					PacketFactory::Access<pTypes::ID_UPDATE_WTEXT>(packet, id, text);
+					auto reference = GameFactory::GetObject<Window>(id);
+					response = Server::GetWindowText(data->guid, reference.get(), text);
+					break;
+				}
+
 				default:
 					throw VaultException("Unhandled packet type %d", data->data[0]).stacktrace();
 			}

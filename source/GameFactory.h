@@ -54,7 +54,7 @@ const unsigned int ID_EDIT             = ID_TEXT << 1;
 const unsigned int ALL_OBJECTS         = (ID_OBJECT | ID_ITEM | ID_CONTAINER | ID_ACTOR | ID_PLAYER);
 const unsigned int ALL_CONTAINERS      = (ID_CONTAINER | ID_ACTOR | ID_PLAYER);
 const unsigned int ALL_ACTORS          = (ID_ACTOR | ID_PLAYER);
-const unsigned int ALL_GUI             = (ID_WINDOW | ID_BUTTON | ID_TEXT | ID_EDIT);
+const unsigned int ALL_WINDOWS         = (ID_WINDOW | ID_BUTTON | ID_TEXT | ID_EDIT);
 
 template<typename T>
 class FactoryObject;
@@ -327,7 +327,7 @@ GF_TYPE_WRAPPER(Item, Object, ID_ITEM)
 GF_TYPE_WRAPPER(Container, Object, ID_CONTAINER)
 GF_TYPE_WRAPPER(Actor, Container, ALL_ACTORS)
 GF_TYPE_WRAPPER(Player, Actor, ID_PLAYER)
-GF_TYPE_WRAPPER(Window, Reference, ALL_GUI)
+GF_TYPE_WRAPPER(Window, Reference, ALL_WINDOWS)
 GF_TYPE_WRAPPER(Button, Window, ID_BUTTON)
 GF_TYPE_WRAPPER(Text, Window, ID_TEXT)
 GF_TYPE_WRAPPER(Edit, Window, ID_EDIT)

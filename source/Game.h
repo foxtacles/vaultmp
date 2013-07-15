@@ -576,6 +576,10 @@ class Game
 		 * \brief Handles GUI click
 		 */
 		static void GetClick(std::string name);
+		/**
+		 * \brief Handles GUI text change
+		 */
+		static void GetText(std::string name, std::string text);
 };
 
 #endif

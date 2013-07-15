@@ -61,6 +61,21 @@ State VAULTSCRIPT OnPlayerChat(ID player, RawString message) noexcept
 	return True;
 }
 
+Void VAULTSCRIPT OnWindowMode(ID player, State enabled) noexcept
+{
+
+}
+
+Void VAULTSCRIPT OnWindowClick(ID window, ID player) noexcept
+{
+
+}
+
+Void VAULTSCRIPT OnWindowTextChange(ID window, ID player, cRawString text) noexcept
+{
+
+}
+
 Void VAULTSCRIPT OnSpawn(ID object) noexcept
 {
 	Player player(object);

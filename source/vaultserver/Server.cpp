@@ -560,6 +560,62 @@ NetworkResponse Server::GetPlayerControl(RakNetGUID, FactoryObject<Player>& refe
 	return response;
 }
 
+NetworkResponse Server::GetWindowMode(RakNetGUID guid, bool enabled)
+{
+	NetworkResponse response;
+
+	Script::OnWindowMode(Client::GetClientFromGUID(guid)->GetPlayer(), enabled);
+
+	return response;
+}
+
+NetworkResponse Server::GetWindowClick(RakNetGUID guid, FactoryObject<Window>& reference)
+{
+	NetworkResponse response;
+
+	NetworkID id = reference->GetNetworkID();
+	GameFactory::LeaveReference(reference);
+
+	Script::OnWindowClick(id, Client::GetClientFromGUID(guid)->GetPlayer());
+
+	return response;
+}
+
+NetworkResponse Server::GetWindowText(RakNetGUID guid, FactoryObject<Window>& reference, const string& text)
+{
+	NetworkResponse response;
+
+	NetworkID id = reference->GetNetworkID();
+	reference->SetText(text);
+	GameFactory::LeaveReference(reference);
+
+	NetworkID root = Script::GetWindowRoot(id);
+
+	vector<RakNetGUID> guids;
+
+	{
+		auto players = GameFactory::GetObjectTypes<Player>(ID_PLAYER);
+
+		for (const auto& player : players)
+			if (player->GetPlayerWindows().count(root))
+			{
+				RakNetGUID guid_ = Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID();
+
+				if (guid_ != guid)
+					guids.emplace_back(guid_);
+			}
+	}
+
+	if (!guids.empty())
+		response.emplace_back(Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_WTEXT>(id, text),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids));
+
+	Script::OnWindowTextChange(id, Client::GetClientFromGUID(guid)->GetPlayer(), text);
+
+	return response;
+}
+
 NetworkResponse Server::ChatMessage(RakNetGUID guid, string message)
 {
 	Client* client = Client::GetClientFromGUID(guid);

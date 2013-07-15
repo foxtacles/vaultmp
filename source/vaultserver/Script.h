@@ -125,6 +125,9 @@ class Script
 		void (*fOnPlayerDisconnect)(RakNet::NetworkID, Reason);
 		unsigned int (*fOnPlayerRequestGame)(RakNet::NetworkID);
 		bool (*fOnPlayerChat)(RakNet::NetworkID, char*);
+		void (*fOnWindowMode)(RakNet::NetworkID, bool);
+		void (*fOnWindowClick)(RakNet::NetworkID, RakNet::NetworkID);
+		void (*fOnWindowTextChange)(RakNet::NetworkID, RakNet::NetworkID, const char*);
 		bool (*fOnClientAuthenticate)(const char*, const char*);
 		void (*fOnGameYearChange)(unsigned int);
 		void (*fOnGameMonthChange)(unsigned int);
@@ -193,6 +196,9 @@ class Script
 		static void OnPlayerDisconnect(RakNet::NetworkID id, Reason reason);
 		static unsigned int OnPlayerRequestGame(RakNet::NetworkID id);
 		static bool OnPlayerChat(RakNet::NetworkID id, std::string& message);
+		static void OnWindowMode(RakNet::NetworkID id, bool enabled);
+		static void OnWindowClick(RakNet::NetworkID id, RakNet::NetworkID player);
+		static void OnWindowTextChange(RakNet::NetworkID id, RakNet::NetworkID player, const std::string& text);
 		static bool OnClientAuthenticate(const std::string& name, const std::string& pwd);
 		static void OnGameYearChange(unsigned int year);
 		static void OnGameMonthChange(unsigned int month);

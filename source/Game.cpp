@@ -264,6 +264,14 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 
 			case Func_GUIText:
 			{
+				if (!result)
+					break;
+
+				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
+				string name = reinterpret_cast<char*>(&data[0]);
+				string text = reinterpret_cast<char*>(&data[0]) + name.length() + 1;
+				GetText(move(name), move(text));
+				delete &data;
 				break;
 			}
 
@@ -3218,6 +3226,11 @@ void Game::GetMode(bool enabled)
 		DisablePlayerControls(true, true, true, false);
 	else
 		EnablePlayerControls();
+
+	Network::Queue({Network::CreateResponse(
+		PacketFactory::Create<pTypes::ID_UPDATE_WMODE>(enabled),
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+	});
 }
 
 void Game::GetClick(string name)
@@ -3226,4 +3239,41 @@ void Game::GetClick(string name)
 
 	if (!name.compare(exit_button))
 		Interface::SignalEnd();
+	else
+	{
+		auto windows = GameFactory::GetObjectTypes<Window>(ALL_WINDOWS);
+
+		for (auto& window : windows)
+		{
+			if (!window->GetLabel().compare(name))
+			{
+				Network::Queue({Network::CreateResponse(
+					PacketFactory::Create<pTypes::ID_UPDATE_WCLICK>(window->GetNetworkID()),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+				});
+
+				break;
+			}
+		}
+	}
+}
+
+void Game::GetText(string name, string text)
+{
+	auto windows = GameFactory::GetObjectTypes<Window>(ALL_WINDOWS);
+
+	for (auto& window : windows)
+	{
+		if (!window->GetLabel().compare(name))
+		{
+			window->SetText(text);
+
+			Network::Queue({Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_WTEXT>(window->GetNetworkID(), text),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+			});
+
+			break;
+		}
+	}
 }

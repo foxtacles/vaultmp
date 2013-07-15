@@ -77,6 +77,10 @@ Script::Script(char* path)
 			GetScript("OnPlayerDisconnect", fOnPlayerDisconnect);
 			GetScript("OnPlayerRequestGame", fOnPlayerRequestGame);
 			GetScript("OnPlayerChat", fOnPlayerChat);
+			GetScript("OnWindowMode", fOnWindowMode);
+			GetScript("OnWindowClick", fOnWindowClick);
+			GetScript("OnWindowTextChange", fOnWindowTextChange);
+			GetScript("OnPlayerChat", fOnPlayerChat);
 			GetScript("OnClientAuthenticate", fOnClientAuthenticate);
 			GetScript("OnGameYearChange", fOnGameYearChange);
 			GetScript("OnGameMonthChange", fOnGameMonthChange);
@@ -862,6 +866,48 @@ bool Script::OnPlayerChat(NetworkID id, string& message)
 	message.assign(_message);
 
 	return result;
+}
+
+void Script::OnWindowMode(NetworkID id, bool enabled)
+{
+	for (Script* script : scripts)
+	{
+		if (script->cpp_script)
+		{
+			if (script->fOnWindowMode)
+				script->fOnWindowMode(id, enabled);
+		}
+		else if (PAWN::IsCallbackPresent(script->amx, "OnWindowMode"))
+			PAWN::Call(script->amx, "OnWindowMode", "il", 0, enabled, id);
+	}
+}
+
+void Script::OnWindowClick(NetworkID id, NetworkID player)
+{
+	for (Script* script : scripts)
+	{
+		if (script->cpp_script)
+		{
+			if (script->fOnWindowClick)
+				script->fOnWindowClick(id, player);
+		}
+		else if (PAWN::IsCallbackPresent(script->amx, "OnWindowClick"))
+			PAWN::Call(script->amx, "OnWindowClick", "ll", 0, player, id);
+	}
+}
+
+void Script::OnWindowTextChange(NetworkID id, NetworkID player, const string& text)
+{
+	for (Script* script : scripts)
+	{
+		if (script->cpp_script)
+		{
+			if (script->fOnWindowTextChange)
+				script->fOnWindowTextChange(id, player, text.c_str());
+		}
+		else if (PAWN::IsCallbackPresent(script->amx, "OnWindowTextChange"))
+			PAWN::Call(script->amx, "OnWindowTextChange", "sll", 0, text.c_str(), player, id);
+	}
 }
 
 bool Script::OnClientAuthenticate(const string& name, const string& pwd)

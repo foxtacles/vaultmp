@@ -81,7 +81,9 @@ enum class pTypes : unsigned char
 	ID_UPDATE_WSIZE,
 	ID_UPDATE_WVISIBLE,
 	ID_UPDATE_WLOCKED,
-	ID_UPDATE_WTEXT
+	ID_UPDATE_WTEXT,
+	ID_UPDATE_WCLICK,
+	ID_UPDATE_WMODE
 };
 
 enum class Reason : unsigned char
@@ -775,5 +777,7 @@ template<> struct pTypesMap<pTypes::ID_UPDATE_WSIZE> { typedef pGeneratorReferen
 template<> struct pTypesMap<pTypes::ID_UPDATE_WLOCKED> { typedef pGeneratorReference<pTypes::ID_UPDATE_WLOCKED, bool> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_WVISIBLE> { typedef pGeneratorReference<pTypes::ID_UPDATE_WVISIBLE, bool> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_WTEXT> { typedef pGeneratorReference<pTypes::ID_UPDATE_WTEXT, std::string> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_WCLICK> { typedef pGeneratorReference<pTypes::ID_UPDATE_WCLICK> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_WMODE> { typedef pGeneratorDefault<pTypes::ID_UPDATE_WMODE, bool> type; };
 
 #endif

@@ -58,6 +58,21 @@ public OnPlayerChat(ID, message{})
 	return 1;
 }
 
+public OnWindowMode(ID, Bool:enabled)
+{
+
+}
+
+public OnWindowClick(ID, player)
+{
+
+}
+
+public OnWindowTextChange(ID, player, const text{})
+{
+
+}
+
 public OnSpawn(ID)
 {
 	if (IsPlayer(ID))
