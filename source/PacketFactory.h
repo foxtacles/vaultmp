@@ -7,6 +7,8 @@
 #include <unordered_map>
 #include <map>
 #include <list>
+#include <vector>
+#include <cstring>
 
 #include "vaultmp.h"
 #include "VaultException.h"
@@ -278,19 +280,19 @@ void pDefault::construct(const T& arg, const Args&... args)
 
 	data.insert(data.end(), reinterpret_cast<const unsigned char*>(&arg), reinterpret_cast<const unsigned char*>(&arg) + sizeof(T));
 
-	construct(args...);
+	construct(std::forward<const Args&>(args)...);
 }
 
 template<typename... Args>
 void pDefault::construct(const pPacket& arg, const Args&... args)
 {
-	const unsigned char* _data = arg.get()->get();
-	unsigned int length = arg.get()->length();
+	const unsigned char* _data = arg->get();
+	unsigned int length = arg->length();
 
 	construct(length);
 	data.insert(data.end(), _data, _data + length);
 
-	construct(args...);
+	construct(std::forward<const Args&>(args)...);
 }
 
 template<typename... Args>
@@ -301,7 +303,7 @@ void pDefault::construct(const std::string& arg, const Args&...args)
 
 	data.insert(data.end(), str, str + length + 1);
 
-	construct(args...);
+	construct(std::forward<const Args&>(args)...);
 }
 
 template<typename T, typename... Args>
@@ -312,7 +314,7 @@ void pDefault::construct(const std::vector<T>& arg, const Args&...args)
 	for (const auto& element : arg)
 		construct(element);
 
-	construct(args...);
+	construct(std::forward<const Args&>(args)...);
 }
 
 template<typename T, typename... Args>
@@ -323,7 +325,7 @@ void pDefault::construct(const std::list<T>& arg, const Args&...args)
 	for (const auto& element : arg)
 		construct(element);
 
-	construct(args...);
+	construct(std::forward<const Args&>(args)...);
 }
 
 template<typename K, typename V, typename... Args>
@@ -334,7 +336,7 @@ void pDefault::construct(const std::map<K, V>& arg, const Args&...args)
 	for (const auto& element : arg)
 		construct(element);
 
-	construct(args...);
+	construct(std::forward<const Args&>(args)...);
 }
 
 template<typename K, typename V, typename... Args>
@@ -345,7 +347,7 @@ void pDefault::construct(const std::unordered_map<K, V>& arg, const Args&...args
 	for (const auto& element : arg)
 		construct(element);
 
-	construct(args...);
+	construct(std::forward<const Args&>(args)...);
 }
 
 template<typename T1, typename T2, typename... Args>
@@ -353,21 +355,21 @@ void pDefault::construct(const std::pair<T1, T2>& arg, const Args&...args)
 {
 	construct(arg.first);
 	construct(arg.second);
-	construct(args...);
+	construct(std::forward<const Args&>(args)...);
 }
 
 template<typename... T, typename... Args>
 void pDefault::construct(const std::tuple<T...>& arg, const Args&...args)
 {
 	unpack_tuple(arg, tuple_count<sizeof...(T) - 1>());
-	construct(args...);
+	construct(std::forward<const Args&>(args)...);
 }
 
 template<typename T, size_t N, typename... Args>
 void pDefault::construct(const std::array<T, N>& arg, const Args&...args)
 {
 	unpack_array(arg, tuple_count<N - 1>());
-	construct(args...);
+	construct(std::forward<const Args&>(args)...);
 }
 
 template<typename... T, size_t N>
@@ -400,7 +402,7 @@ template<typename T, typename... Args>
 void pDefault::deconstruct(T& arg, Args&... args) const
 {
 	arg = deconstruct_single<T>();
-	deconstruct(args...);
+	deconstruct(std::forward<Args&>(args)...);
 }
 
 template<typename T>
@@ -435,7 +437,7 @@ inline pPacket pDefault::deconstruct_single() const
 template<typename... Args>
 void pDefault::deconstruct(std::string& arg, Args&... args) const
 {
-	unsigned int length = strlen(reinterpret_cast<const char*>(&data[location]));
+	unsigned int length = std::strlen(reinterpret_cast<const char*>(&data[location]));
 
 	if (location + length + 1 > this->length())
 		throw VaultException("Reading past the end of packet").stacktrace();
@@ -444,7 +446,7 @@ void pDefault::deconstruct(std::string& arg, Args&... args) const
 
 	location += length + 1;
 
-	deconstruct(args...);
+	deconstruct(std::forward<Args&>(args)...);
 }
 
 template<typename T, typename... Args>
@@ -457,7 +459,7 @@ void pDefault::deconstruct(std::vector<T>& arg, Args&... args) const
 	for (auto& element : arg)
 		deconstruct(element);
 
-	deconstruct(args...);
+	deconstruct(std::forward<Args&>(args)...);
 }
 
 template<typename T, typename... Args>
@@ -470,7 +472,7 @@ void pDefault::deconstruct(std::list<T>& arg, Args&... args) const
 	for (auto& element : arg)
 		deconstruct(element);
 
-	deconstruct(args...);
+	deconstruct(std::forward<Args&>(args)...);
 }
 
 template<typename K, typename V, typename... Args>
@@ -488,7 +490,7 @@ void pDefault::deconstruct(std::map<K, V>& arg, Args&... args) const
 		arg.insert(std::move(data));
 	}
 
-	deconstruct(args...);
+	deconstruct(std::forward<Args&>(args)...);
 }
 
 template<typename K, typename V, typename... Args>
@@ -505,7 +507,7 @@ void pDefault::deconstruct(std::unordered_map<K, V>& arg, Args&... args) const
 		arg.emplace(std::move(data));
 	}
 
-	deconstruct(args...);
+	deconstruct(std::forward<Args&>(args)...);
 }
 
 template<typename T1, typename T2, typename... Args>
@@ -513,21 +515,21 @@ void pDefault::deconstruct(std::pair<T1, T2>& arg, Args&... args) const
 {
 	deconstruct(arg.first);
 	deconstruct(arg.second);
-	deconstruct(args...);
+	deconstruct(std::forward<Args&>(args)...);
 }
 
 template<typename... T, typename... Args>
 void pDefault::deconstruct(std::tuple<T...>& arg, Args&... args) const
 {
 	pack_tuple(arg, tuple_count<sizeof...(T) - 1>());
-	deconstruct(args...);
+	deconstruct(std::forward<Args&>(args)...);
 }
 
 template<typename T, size_t N, typename... Args>
 void pDefault::deconstruct(std::array<T, N>& arg, Args&... args) const
 {
 	pack_array(arg, tuple_count<N - 1>());
-	deconstruct(args...);
+	deconstruct(std::forward<Args&>(args)...);
 }
 
 template<typename... T, size_t N>
