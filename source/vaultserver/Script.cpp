@@ -3079,6 +3079,19 @@ bool Script::DetachWindow(NetworkID id, NetworkID window)
 	return true;
 }
 
+void Script::ForceWindowMode(NetworkID id, bool enabled)
+{
+	auto reference = GameFactory::GetObject<Player>(id);
+
+	if (!reference)
+		return;
+
+	Network::Queue({Network::CreateResponse(
+		PacketFactory::Create<pTypes::ID_UPDATE_WMODE>(enabled),
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
+	});
+}
+
 NetworkID Script::GetParentWindow(NetworkID id)
 {
 	auto window = GameFactory::GetObject<Window>(id);
@@ -3143,12 +3156,12 @@ unsigned int Script::GetWindowChildList(NetworkID id, NetworkID** data)
 	return 0;
 }
 
-void Script::GetWindowPos(NetworkID id, double* X, double* Y, double* offsetX, double* offsetY)
+void Script::GetWindowPos(NetworkID id, double* X, double* Y, double* offset_X, double* offset_Y)
 {
 	*X = 0.0;
 	*Y = 0.0;
-	*offsetX = 0.0;
-	*offsetY = 0.0;
+	*offset_X = 0.0;
+	*offset_Y = 0.0;
 
 	auto window = GameFactory::GetObject<Window>(id);
 
@@ -3157,17 +3170,17 @@ void Script::GetWindowPos(NetworkID id, double* X, double* Y, double* offsetX, d
 		const auto& pos = window->GetPos();
 		*X = get<0>(pos);
 		*Y = get<1>(pos);
-		*offsetX = get<2>(pos);
-		*offsetY = get<3>(pos);
+		*offset_X = get<2>(pos);
+		*offset_Y = get<3>(pos);
 	}
 }
 
-void Script::GetWindowSize(NetworkID id, double* X, double* Y, double* offsetX, double* offsetY)
+void Script::GetWindowSize(NetworkID id, double* X, double* Y, double* offset_X, double* offset_Y)
 {
 	*X = 0.0;
 	*Y = 0.0;
-	*offsetX = 0.0;
-	*offsetY = 0.0;
+	*offset_X = 0.0;
+	*offset_Y = 0.0;
 
 	auto window = GameFactory::GetObject<Window>(id);
 
@@ -3176,8 +3189,8 @@ void Script::GetWindowSize(NetworkID id, double* X, double* Y, double* offsetX, 
 		const auto& size = window->GetSize();
 		*X = get<0>(size);
 		*Y = get<1>(size);
-		*offsetX = get<2>(size);
-		*offsetY = get<3>(size);
+		*offset_X = get<2>(size);
+		*offset_Y = get<3>(size);
 	}
 }
 

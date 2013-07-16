@@ -75,22 +75,22 @@ void Window::SetParentWindow(Window* parent)
 		this->parent = 0;
 }
 
-bool Window::SetPos(double X, double Y, double offsetX, double offsetY)
+bool Window::SetPos(double X, double Y, double offset_X, double offset_Y)
 {
 	if (X >= 0.0 && X <= 1.0 && Y >= 0.0 && Y <= 1.0)
 	{
-		pos = decltype(pos){X, Y, offsetX, offsetY};
+		pos = decltype(pos){X, Y, offset_X, offset_Y};
 		return true;
 	}
 
 	return false;
 }
 
-bool Window::SetSize(double X, double Y, double offsetX, double offsetY)
+bool Window::SetSize(double X, double Y, double offset_X, double offset_Y)
 {
 	if (X >= 0.0 && X <= 1.0 && Y >= 0.0 && Y <= 1.0)
 	{
-		size = decltype(size){X, Y, offsetX, offsetY};
+		size = decltype(size){X, Y, offset_X, offset_Y};
 		return true;
 	}
 

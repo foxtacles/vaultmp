@@ -457,6 +457,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetPlayerConsoleEnabled))(VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(AttachWindow))(VAULTSPACE ID, VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(DetachWindow))(VAULTSPACE ID, VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(ForceWindowMode))(VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
 
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(GetParentWindow))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(GetWindowRoot))(VAULTSPACE ID) VAULTCPP(noexcept);
@@ -781,7 +782,13 @@ namespace vaultmp
 	}
 
 	VAULTFUNCTION Void AddItemList(ID id, ID source) noexcept { return VAULTAPI(AddItemList)(id, source, static_cast<Base>(0)); }
-	VAULTFUNCTION Void AddItemList(ID id, Base source) noexcept { return VAULTAPI(AddItemList)(id, static_cast<ID>(0), source); }
+
+	#define AddItemList_Template(type) \
+		VAULTFUNCTION Void AddItemList(ID id, type source) noexcept { return VAULTAPI(AddItemList)(id, static_cast<ID>(0), static_cast<Base>(source)); }
+	AddItemList_Template(Base);
+	AddItemList_Template(NPC_);
+	AddItemList_Template(CREA);
+	#undef AddItemList_Template
 
 	#define RemoveItem_Template(type) \
 		VAULTFUNCTION UCount RemoveItem(ID id, type item, UCount count = 1, State silent = True) noexcept { return VAULTAPI(RemoveItem)(id, static_cast<Base>(item), count, silent); }
@@ -841,6 +848,7 @@ namespace vaultmp
 	VAULTFUNCTION Void SetPlayerConsoleEnabled(ID id, State enabled) noexcept { return VAULTAPI(SetPlayerConsoleEnabled)(id, enabled); }
 	VAULTFUNCTION State AttachWindow(ID id, ID window) noexcept { return VAULTAPI(AttachWindow)(id, window); }
 	VAULTFUNCTION State DetachWindow(ID id, ID window) noexcept { return VAULTAPI(DetachWindow)(id, window); }
+	VAULTFUNCTION Void ForceWindowMode(ID id, State enabled) noexcept { return VAULTAPI(ForceWindowMode)(id, enabled); }
 
 	VAULTFUNCTION ID GetParentWindow(ID id) noexcept { return VAULTAPI(GetParentWindow)(id); }
 	VAULTFUNCTION ID GetWindowRoot(ID id) noexcept { return VAULTAPI(GetWindowRoot)(id); }
@@ -1009,7 +1017,13 @@ namespace vaultmp
 
 			Void AddItem(std::initializer_list<AddItem_Initializer> source) noexcept { return vaultmp::AddItem(id, source); }
 			Void AddItemList(ID source) noexcept { return vaultmp::AddItemList(id, source); }
-			Void AddItemList(Base source) noexcept { return vaultmp::AddItemList(id, source); }
+
+			#define AddItemList_Template(type) \
+				Void AddItemList(type source) noexcept { return vaultmp::AddItemList(id, source); }
+			AddItemList_Template(Base);
+			AddItemList_Template(NPC_);
+			AddItemList_Template(CREA);
+			#undef AddItemList_Template
 
 			#define RemoveItem_Template(type) \
 				UCount RemoveItem(type item, UCount count = 1, State silent = True) noexcept { return vaultmp::RemoveItem(id, item, count, silent); }
@@ -1082,7 +1096,13 @@ namespace vaultmp
 
 			Void AddItem(std::initializer_list<AddItem_Initializer> source) noexcept { return vaultmp::AddItem(id, source); }
 			Void AddItemList(ID source) noexcept { return vaultmp::AddItemList(id, source); }
-			Void AddItemList(Base source) noexcept { return vaultmp::AddItemList(id, source); }
+
+			#define AddItemList_Template(type) \
+				Void AddItemList(type source) noexcept { return vaultmp::AddItemList(id, source); }
+			AddItemList_Template(Base);
+			AddItemList_Template(NPC_);
+			AddItemList_Template(CREA);
+			#undef AddItemList_Template
 
 			#define RemoveItem_Template(type) \
 				UCount RemoveItem(type item, UCount count = 1, State silent = True) noexcept { return vaultmp::RemoveItem(id, item, count, silent); }
@@ -1202,6 +1222,7 @@ namespace vaultmp
 			Void SetPlayerConsoleEnabled(State enabled) noexcept { return vaultmp::SetPlayerConsoleEnabled(id, enabled); }
 			State AttachWindow(ID window) noexcept { return vaultmp::AttachWindow(id, window); }
 			State DetachWindow(ID window) noexcept { return vaultmp::DetachWindow(id, window); }
+			Void ForceWindowMode(State enabled) noexcept { return vaultmp::ForceWindowMode(id, enabled); }
 
 			State Kick() noexcept { return vaultmp::Kick(id); }
 			State UIMessage(const String& message, Emoticon emoticon = Emoticon::Happy) noexcept { return vaultmp::UIMessage(id, message, emoticon); }

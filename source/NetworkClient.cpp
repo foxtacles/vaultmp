@@ -527,7 +527,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					tuple<double, double, double, double> pos;
 					PacketFactory::Access<pTypes::ID_UPDATE_WPOS>(packet, id, pos);
 					auto reference = GameFactory::GetObject<Window>(id);
-					Game::net_UpdateGUIPos(reference.get(), pos);
+					Game::net_UpdateWindowPos(reference.get(), pos);
 					break;
 				}
 
@@ -537,7 +537,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					tuple<double, double, double, double> size;
 					PacketFactory::Access<pTypes::ID_UPDATE_WSIZE>(packet, id, size);
 					auto reference = GameFactory::GetObject<Window>(id);
-					Game::net_UpdateGUISize(reference.get(), size);
+					Game::net_UpdateWindowSize(reference.get(), size);
 					break;
 				}
 
@@ -547,7 +547,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					bool visible;
 					PacketFactory::Access<pTypes::ID_UPDATE_WVISIBLE>(packet, id, visible);
 					auto reference = GameFactory::GetObject<Window>(id);
-					Game::net_UpdateGUIVisible(reference.get(), visible);
+					Game::net_UpdateWindowVisible(reference.get(), visible);
 					break;
 				}
 
@@ -557,7 +557,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					bool locked;
 					PacketFactory::Access<pTypes::ID_UPDATE_WVISIBLE>(packet, id, locked);
 					auto reference = GameFactory::GetObject<Window>(id);
-					Game::net_UpdateGUILocked(reference.get(), locked);
+					Game::net_UpdateWindowLocked(reference.get(), locked);
 					break;
 				}
 
@@ -567,7 +567,15 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					string text;
 					PacketFactory::Access<pTypes::ID_UPDATE_WTEXT>(packet, id, text);
 					auto reference = GameFactory::GetObject<Window>(id);
-					Game::net_UpdateGUIText(reference.get(), text);
+					Game::net_UpdateWindowText(reference.get(), text);
+					break;
+				}
+
+				case pTypes::ID_UPDATE_WMODE:
+				{
+					bool enabled;
+					PacketFactory::Access<pTypes::ID_UPDATE_WMODE>(packet, enabled);
+					Game::net_UpdateWindowMode(enabled);
 					break;
 				}
 

@@ -246,7 +246,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 					break;
 
 				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
-				GetMode(data[0]);
+				GetWindowMode(data[0]);
 				delete &data;
 				break;
 			}
@@ -270,7 +270,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
 				string name = reinterpret_cast<char*>(&data[0]);
 				string text = reinterpret_cast<char*>(&data[0]) + name.length() + 1;
-				GetText(move(name), move(text));
+				GetWindowText(move(name), move(text));
 				delete &data;
 				break;
 			}
@@ -281,7 +281,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 					break;
 
 				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
-				GetClick(string(reinterpret_cast<char*>(&data[0]), data.size()));
+				GetWindowClick(string(reinterpret_cast<char*>(&data[0]), data.size()));
 				delete &data;
 				break;
 			}
@@ -1122,11 +1122,11 @@ void Game::NewWindow(const FactoryObject<Window>& reference)
 		Interface::ExecuteCommand("GUICreateWindow", {RawParameter(reference->GetLabel())});
 	}
 
-	GUIWindowPos(reference);
-	GUIWindowSize(reference);
-	GUIWindowVisible(reference);
-	GUIWindowLocked(reference);
-	GUIWindowText(reference);
+	WindowPos(reference);
+	WindowSize(reference);
+	WindowVisible(reference);
+	WindowLocked(reference);
+	WindowText(reference);
 
 	Interface::EndDynamic();
 }
@@ -1728,7 +1728,7 @@ void Game::UnequipItem(const FactoryObject<Actor>& reference, unsigned int baseI
 	Interface::EndDynamic();
 }
 
-void Game::GUIWindowPos(const FactoryObject<Window>& reference)
+void Game::WindowPos(const FactoryObject<Window>& reference)
 {
 	Interface::StartDynamic();
 
@@ -1737,7 +1737,7 @@ void Game::GUIWindowPos(const FactoryObject<Window>& reference)
 	Interface::EndDynamic();
 }
 
-void Game::GUIWindowSize(const FactoryObject<Window>& reference)
+void Game::WindowSize(const FactoryObject<Window>& reference)
 {
 	Interface::StartDynamic();
 
@@ -1746,7 +1746,7 @@ void Game::GUIWindowSize(const FactoryObject<Window>& reference)
 	Interface::EndDynamic();
 }
 
-void Game::GUIWindowVisible(const FactoryObject<Window>& reference)
+void Game::WindowVisible(const FactoryObject<Window>& reference)
 {
 	Interface::StartDynamic();
 
@@ -1755,7 +1755,7 @@ void Game::GUIWindowVisible(const FactoryObject<Window>& reference)
 	Interface::EndDynamic();
 }
 
-void Game::GUIWindowLocked(const FactoryObject<Window>& reference)
+void Game::WindowLocked(const FactoryObject<Window>& reference)
 {
 	Interface::StartDynamic();
 
@@ -1764,11 +1764,25 @@ void Game::GUIWindowLocked(const FactoryObject<Window>& reference)
 	Interface::EndDynamic();
 }
 
-void Game::GUIWindowText(const FactoryObject<Window>& reference)
+void Game::WindowText(const FactoryObject<Window>& reference)
 {
 	Interface::StartDynamic();
 
 	Interface::ExecuteCommand("GUIText", {RawParameter(reference->GetLabel()), RawParameter(reference->GetText())});
+
+	Interface::EndDynamic();
+}
+
+void Game::WindowMode()
+{
+	if (GUIMode)
+		DisablePlayerControls(true, true, true, false);
+	else
+		EnablePlayerControls();
+
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("GUIMode", {RawParameter(GUIMode)});
 
 	Interface::EndDynamic();
 }
@@ -2449,39 +2463,46 @@ void Game::net_UpdateConsole(bool enabled)
 	Interface::EndDynamic();
 }
 
-void Game::net_UpdateGUIPos(const FactoryObject<Window>& reference, const tuple<double, double, double, double>& pos)
+void Game::net_UpdateWindowPos(const FactoryObject<Window>& reference, const tuple<double, double, double, double>& pos)
 {
 	reference->SetPos(get<0>(pos), get<1>(pos), get<2>(pos), get<3>(pos));
 
-	GUIWindowPos(reference);
+	WindowPos(reference);
 }
 
-void Game::net_UpdateGUISize(const FactoryObject<Window>& reference, const tuple<double, double, double, double>& size)
+void Game::net_UpdateWindowSize(const FactoryObject<Window>& reference, const tuple<double, double, double, double>& size)
 {
 	reference->SetSize(get<0>(size), get<1>(size), get<2>(size), get<3>(size));
 
-	GUIWindowSize(reference);
+	WindowSize(reference);
 }
 
-void Game::net_UpdateGUIVisible(const FactoryObject<Window>& reference, bool visible)
+void Game::net_UpdateWindowVisible(const FactoryObject<Window>& reference, bool visible)
 {
 	reference->SetVisible(visible);
 
-	GUIWindowVisible(reference);
+	WindowVisible(reference);
 }
 
-void Game::net_UpdateGUILocked(const FactoryObject<Window>& reference, bool locked)
+void Game::net_UpdateWindowLocked(const FactoryObject<Window>& reference, bool locked)
 {
 	reference->SetLocked(locked);
 
-	GUIWindowLocked(reference);
+	WindowLocked(reference);
 }
 
-void Game::net_UpdateGUIText(const FactoryObject<Window>& reference, const string& text)
+void Game::net_UpdateWindowText(const FactoryObject<Window>& reference, const string& text)
 {
 	reference->SetText(text);
 
-	GUIWindowText(reference);
+	WindowText(reference);
+}
+
+void Game::net_UpdateWindowMode(bool enabled)
+{
+	GUIMode = enabled;
+
+	WindowMode();
 }
 
 void Game::net_UIMessage(const string& message, unsigned char emoticon)
@@ -3218,7 +3239,7 @@ void Game::GetMessage(string message)
 	});
 }
 
-void Game::GetMode(bool enabled)
+void Game::GetWindowMode(bool enabled)
 {
 	GUIMode = enabled;
 
@@ -3233,7 +3254,7 @@ void Game::GetMode(bool enabled)
 	});
 }
 
-void Game::GetClick(string name)
+void Game::GetWindowClick(string name)
 {
 	static const char* exit_button = "closeBTN";
 
@@ -3258,7 +3279,7 @@ void Game::GetClick(string name)
 	}
 }
 
-void Game::GetText(string name, string text)
+void Game::GetWindowText(string name, string text)
 {
 	auto windows = GameFactory::GetObjectTypes<Window>(ALL_WINDOWS);
 

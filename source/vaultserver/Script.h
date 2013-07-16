@@ -320,13 +320,14 @@ class Script
 		static void SetPlayerConsoleEnabled(RakNet::NetworkID id, bool enabled);
 		static bool AttachWindow(RakNet::NetworkID id, RakNet::NetworkID window);
 		static bool DetachWindow(RakNet::NetworkID id, RakNet::NetworkID window);
+		static void ForceWindowMode(RakNet::NetworkID id, bool enabled);
 
 		static RakNet::NetworkID GetParentWindow(RakNet::NetworkID id);
 		static RakNet::NetworkID GetWindowRoot(RakNet::NetworkID id);
 		static unsigned int GetWindowChildCount(RakNet::NetworkID id);
 		static unsigned int GetWindowChildList(RakNet::NetworkID id, RakNet::NetworkID** data);
-		static void GetWindowPos(RakNet::NetworkID id, double* X, double* Y, double* offsetX, double* offsetY);
-		static void GetWindowSize(RakNet::NetworkID id, double* X, double* Y, double* offsetX, double* offsetY);
+		static void GetWindowPos(RakNet::NetworkID id, double* X, double* Y, double* offset_X, double* offset_Y);
+		static void GetWindowSize(RakNet::NetworkID id, double* X, double* Y, double* offset_X, double* offset_Y);
 		static bool GetWindowVisible(RakNet::NetworkID id);
 		static bool GetWindowLocked(RakNet::NetworkID id);
 		static const char* GetWindowText(RakNet::NetworkID id);
@@ -335,8 +336,8 @@ class Script
 		static bool DestroyWindow(RakNet::NetworkID id);
 		static bool AddChildWindow(RakNet::NetworkID id, RakNet::NetworkID child);
 		static bool RemoveChildWindow(RakNet::NetworkID id, RakNet::NetworkID child);
-		static bool SetWindowPos(RakNet::NetworkID id, double X, double Y, double offsetX, double offsetY);
-		static bool SetWindowSize(RakNet::NetworkID id, double X, double Y, double offsetX, double offsetY);
+		static bool SetWindowPos(RakNet::NetworkID id, double X, double Y, double offset_X, double offset_Y);
+		static bool SetWindowSize(RakNet::NetworkID id, double X, double Y, double offset_X, double offset_Y);
 		static bool SetWindowVisible(RakNet::NetworkID id, bool visible);
 		static bool SetWindowLocked(RakNet::NetworkID id, bool locked);
 		static bool SetWindowText(RakNet::NetworkID id, const char* text);
@@ -478,6 +479,7 @@ class Script
 			{"SetPlayerConsoleEnabled", Script::SetPlayerConsoleEnabled},
 			{"AttachWindow", Script::AttachWindow},
 			{"DetachWindow", Script::DetachWindow},
+			{"ForceWindowMode", Script::ForceWindowMode},
 
 			{"GetParentWindow", Script::GetParentWindow},
 			{"GetWindowRoot", Script::GetWindowRoot},

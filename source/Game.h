@@ -329,23 +329,27 @@ class Game
 		/**
 		 * \brief Updates the settings of a GUI window (pos)
 		 */
-		static void GUIWindowPos(const FactoryObject<Window>& reference);
+		static void WindowPos(const FactoryObject<Window>& reference);
 		/**
 		 * \brief Updates the settings of a GUI window (size)
 		 */
-		static void GUIWindowSize(const FactoryObject<Window>& reference);
+		static void WindowSize(const FactoryObject<Window>& reference);
 		/**
 		 * \brief Updates the settings of a GUI window (visible)
 		 */
-		static void GUIWindowVisible(const FactoryObject<Window>& reference);
+		static void WindowVisible(const FactoryObject<Window>& reference);
 		/**
 		 * \brief Updates the settings of a GUI window (locked)
 		 */
-		static void GUIWindowLocked(const FactoryObject<Window>& reference);
+		static void WindowLocked(const FactoryObject<Window>& reference);
 		/**
 		 * \brief Updates the settings of a GUI window (text)
 		 */
-		static void GUIWindowText(const FactoryObject<Window>& reference);
+		static void WindowText(const FactoryObject<Window>& reference);
+		/**
+		 * \brief Updates the window mode
+		 */
+		static void WindowMode();
 		/**
 		 * \brief Scans a cell for forms and returns the delta to previous scan
 		 */
@@ -466,23 +470,27 @@ class Game
 		/**
 		 * \brief Network function to handle GUI window pos
 		 */
-		static void net_UpdateGUIPos(const FactoryObject<Window>& reference, const std::tuple<double, double, double, double>& pos);
+		static void net_UpdateWindowPos(const FactoryObject<Window>& reference, const std::tuple<double, double, double, double>& pos);
 		/**
 		 * \brief Network function to handle GUI window size
 		 */
-		static void net_UpdateGUISize(const FactoryObject<Window>& reference, const std::tuple<double, double, double, double>& size);
+		static void net_UpdateWindowSize(const FactoryObject<Window>& reference, const std::tuple<double, double, double, double>& size);
 		/**
 		 * \brief Network function to handle GUI window visible
 		 */
-		static void net_UpdateGUIVisible(const FactoryObject<Window>& reference, bool visible);
+		static void net_UpdateWindowVisible(const FactoryObject<Window>& reference, bool visible);
 		/**
 		 * \brief Network function to handle GUI window locked
 		 */
-		static void net_UpdateGUILocked(const FactoryObject<Window>& reference, bool locked);
+		static void net_UpdateWindowLocked(const FactoryObject<Window>& reference, bool locked);
 		/**
 		 * \brief Network function to handle GUI window text
 		 */
-		static void net_UpdateGUIText(const FactoryObject<Window>& reference, const std::string& text);
+		static void net_UpdateWindowText(const FactoryObject<Window>& reference, const std::string& text);
+		/**
+		 * \brief Network function to handle GUI window mode
+		 */
+		static void net_UpdateWindowMode(bool enabled);
 		/**
 		 * \brief Network function to handle UI message
 		 */
@@ -571,15 +579,15 @@ class Game
 		/**
 		 * \brief Handles GUI mode
 		 */
-		static void GetMode(bool enabled);
+		static void GetWindowMode(bool enabled);
 		/**
 		 * \brief Handles GUI click
 		 */
-		static void GetClick(std::string name);
+		static void GetWindowClick(std::string name);
 		/**
 		 * \brief Handles GUI text change
 		 */
-		static void GetText(std::string name, std::string text);
+		static void GetWindowText(std::string name, std::string text);
 };
 
 #endif

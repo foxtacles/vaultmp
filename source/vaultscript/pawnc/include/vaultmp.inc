@@ -331,6 +331,7 @@ native SetPlayerSpawnCell(ID, cell);
 native SetPlayerConsoleEnabled(ID, Bool:enabled);
 native Bool:AttachWindow(ID, window);
 native Bool:DetachWindow(ID, window);
+native ForceWindowMode(ID, Bool:enabled);
 
 native GetParentWindow(ID);
 native GetWindowRoot(ID);

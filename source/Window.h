@@ -55,8 +55,8 @@ class Window : public Reference
 
 		void SetParentWindow(Window* parent);
 		void SetLabel(const std::string& label) { this->label = label; }
-		bool SetPos(double X, double Y, double offsetX, double offsetY);
-		bool SetSize(double X, double Y, double offsetX, double offsetY);
+		bool SetPos(double X, double Y, double offset_X, double offset_Y);
+		bool SetSize(double X, double Y, double offset_X, double offset_Y);
 		void SetLocked(bool locked) { this->locked = locked; }
 		void SetVisible(bool visible) { this->visible = visible; }
 		void SetText(const std::string& text) { this->text = text; }
