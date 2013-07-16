@@ -18,6 +18,7 @@ struct globalData
 	bool textureHookingDone;
 	bool hideChatbox;
 	bool lockChatbox;
+	bool sendClickCallbacks;
 
 	int lastChatTextTick;
 };
