@@ -198,14 +198,14 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
                 case 0x1B: 
                     
                     // Process an escape. 
-					
+					if(GUI_OnMode&&gData.chatting)
+						GUI_OnMode(false);
 					chatbox_text="";
 					gData.chatting=false;
 					gData.disableMouseInput=false;
 					CEGUI::MouseCursor::getSingleton().hide();
 					((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("closeBTN"))->setAlpha(0);
-					if(GUI_OnMode)
-						GUI_OnMode(false);
+					
 
                     
                     break; 

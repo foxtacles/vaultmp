@@ -40,8 +40,11 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReser
 
 			InitInstance(hModule);
 
+			gData.sendClickCallbacks=true;
+
 			/*TODO: Remove after testing*/
 			gData.gameReady=true;
+			
 			/**/
 
 			if(SUCCEEDED(PatchIat(GetModuleHandle(NULL),"kernel32.dll","LoadLibraryA",(PVOID)LoadLibrary_Hooked,(PVOID *)&LoadLibrary_Original)))

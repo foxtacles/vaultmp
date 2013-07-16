@@ -48,7 +48,10 @@ bool GUI_TextChanged(const CEGUI::EventArgs& e)
 
 	if(callbackPTR_OnTextChange)
 	{
-		callbackPTR_OnTextChange((char*)we.window->getName().c_str(),(char*)we.window->getText().c_str());
+		if(gData.sendClickCallbacks)
+		{
+			callbackPTR_OnTextChange((char*)we.window->getName().c_str(),(char*)we.window->getText().c_str());
+		}
 	}
 
 	return true;
@@ -216,7 +219,10 @@ extern "C"
 	__declspec(dllexport) void GUI_SetText(char* name,char* txt)
 	{
 		CEGUI::DefaultWindow *w = ((CEGUI::DefaultWindow*)CEGUI::WindowManager::getSingleton().getWindow(name));
+
+		gData.sendClickCallbacks=false;
 		w->setText(txt);
+		gData.sendClickCallbacks=true;
 	}
 
 	__declspec(dllexport) void GUI_RemoveWindow(char* name)
@@ -237,6 +243,11 @@ extern "C"
 	__declspec(dllexport) void GUI_ForceGUI(bool inGui)
 	{
 		gData.chatting=inGui;
+
+		if(inGui)
+			CEGUI::MouseCursor::getSingleton().show();
+		else
+			CEGUI::MouseCursor::getSingleton().hide();
 	}
 
 	__declspec(dllexport) void GUI_SetVisible(char* name,bool visible)
@@ -247,7 +258,10 @@ extern "C"
 
 	__declspec(dllexport) void GUI_AllowDrag(char* name,bool allow)
 	{
-		CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow(name));
-		w->setDragMovingEnabled(allow);
+		if(CEGUI::WindowManager::getSingleton().getWindow(name)->getType().compare("FrameWindow")==0)
+		{
+			CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow(name));
+			w->setDragMovingEnabled(allow);
+		}
 	}
 }
