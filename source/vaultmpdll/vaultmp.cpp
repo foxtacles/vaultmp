@@ -577,7 +577,7 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 
 			bool locked = (bool) *(unsigned int*)(_args + 1);
 
-			//GUI_AllowDrag(data, !locked);
+			GUI_AllowDrag(data, !locked);
 			break;
 		}
 
