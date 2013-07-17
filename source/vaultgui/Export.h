@@ -48,4 +48,10 @@ extern "C"
 	__declspec(dllexport) void GUI_ForceGUI(bool inGui);
 	__declspec(dllexport) void GUI_SetVisible(char* name,bool visible);
 	__declspec(dllexport) void GUI_AllowDrag(char* name,bool allow);
+
+	__declspec(dllexport) void GUI_AddListbox(char* parent,char* name);
+	__declspec(dllexport) void GUI_Listbox_AddItem(char* name,char* t);
+	__declspec(dllexport) void GUI_Listbox_RemoveItem(char* name,char* t);
+	__declspec(dllexport) void GUI_Listbox_EnableMultiSelect(char* name,bool e);
+	__declspec(dllexport) vector<string>* GUI_Listbox_GetSelectedItems(char* name);
 }
