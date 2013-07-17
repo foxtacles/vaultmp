@@ -258,7 +258,7 @@ extern "C"
 
 	__declspec(dllexport) void GUI_AllowDrag(char* name,bool allow)
 	{
-		if(CEGUI::WindowManager::getSingleton().getWindow(name)->getType().compare("FrameWindow")==0)
+		if(CEGUI::WindowManager::getSingleton().getWindow(name)->getType().compare("TaharezLook/FrameWindow")==0)
 		{
 			CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow(name));
 			w->setDragMovingEnabled(allow);
