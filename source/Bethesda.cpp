@@ -68,7 +68,7 @@ void Bethesda::Initialize()
 
 	FILE* plugins = fopen(pluginsdir, "w");
 
-	char esm[] = "Fallout3.esm\nvaultmpF3.esp\n";
+	char esm[] = "Fallout3.esm\nvaultmp.esp\n";
 	fwrite(esm, sizeof(char), sizeof(esm) - 1, plugins);
 
 	for (const auto& modfile : modfiles)

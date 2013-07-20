@@ -271,19 +271,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 
 						if (checksum_real == XLIVE_PATCH)
 						{
-							filecheck = fopen("../Data/vaultmpF3.esp", "rb");
+							filecheck = fopen("../Data/vaultmp.esp", "rb");
 
 							if (filecheck != nullptr)
 							{
 								fclose(filecheck);
 								unsigned int crc;
-								Utils::crc32file("../Data/vaultmpF3.esp", &crc);
+								Utils::crc32file("../Data/vaultmp.esp", &crc);
 
 								if (crc != VAULTMP_F3)
-									return MessageBox(nullptr, "vaultmpF3.esp is outdated or has been modified!", "Error", MB_OK | MB_ICONERROR);
+									return MessageBox(nullptr, "vaultmp.esp is outdated or has been modified!", "Error", MB_OK | MB_ICONERROR);
 							}
 							else
-								return MessageBox(nullptr, "vaultmpF3.esp is missing!", "Error", MB_OK | MB_ICONERROR);
+								return MessageBox(nullptr, "vaultmp.esp is missing!", "Error", MB_OK | MB_ICONERROR);
 						}
 						else
 							return MessageBox(nullptr, "xlive.dll is unpatched!", "Error", MB_OK | MB_ICONERROR);
