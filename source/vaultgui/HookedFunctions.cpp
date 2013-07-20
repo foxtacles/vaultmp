@@ -331,6 +331,83 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 					if(gData.chatting)
 						CEGUI::System::getSingleton().injectKeyDown(CEGUI::Key::Capital);
 					break;
+
+				case VK_CONTROL:
+					if(gData.chatting)
+					{
+						CEGUI::System::getSingleton().injectKeyDown(CEGUI::Key::LeftControl);
+					}
+					break;
+
+				case VK_SHIFT:
+					if(gData.chatting)
+					{
+						CEGUI::System::getSingleton().injectKeyDown(CEGUI::Key::LeftShift);
+					}
+					break;
+			}
+
+			break;
+		
+		case WM_KEYUP:
+
+			switch((char)wparam)
+			{
+				case VK_ADD:
+					
+					break;
+				case VK_SUBTRACT:
+					
+					break;
+
+				case VK_DELETE:
+					if(gData.chatting)
+						CEGUI::System::getSingleton().injectKeyUp(CEGUI::Key::Delete);
+					break;
+
+				case VK_LEFT:
+					if(gData.chatting)
+						CEGUI::System::getSingleton().injectKeyUp(CEGUI::Key::ArrowLeft);
+					break;
+
+				case VK_RIGHT:
+					if(gData.chatting)
+						CEGUI::System::getSingleton().injectKeyUp(CEGUI::Key::ArrowRight);
+					break;
+
+				case VK_DOWN:
+					if(gData.chatting)
+						CEGUI::System::getSingleton().injectKeyUp(CEGUI::Key::ArrowDown);
+					break;
+
+				case VK_UP:
+					if(gData.chatting)
+						CEGUI::System::getSingleton().injectKeyUp(CEGUI::Key::ArrowUp);
+					break;
+
+				case VK_TAB:
+					if(gData.chatting)
+						CEGUI::System::getSingleton().injectKeyUp(CEGUI::Key::Tab);
+					break;
+
+				case VK_CAPITAL:
+					if(gData.chatting)
+						CEGUI::System::getSingleton().injectKeyUp(CEGUI::Key::Capital);
+					break;
+
+				case VK_CONTROL:
+					if(gData.chatting)
+					{
+						CEGUI::System::getSingleton().injectKeyUp(CEGUI::Key::LeftControl);
+					}
+					break;
+
+				case VK_SHIFT:
+					if(gData.chatting)
+					{
+						CEGUI::System::getSingleton().injectKeyUp(CEGUI::Key::LeftShift);
+					}
+					break;
 			}
 
 			break;

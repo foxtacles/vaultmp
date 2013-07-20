@@ -264,4 +264,81 @@ extern "C"
 			w->setDragMovingEnabled(allow);
 		}
 	}
+
+	__declspec(dllexport) void GUI_AddListbox(char* parent,char* name)
+	{
+		CEGUI::WindowManager& winMgr = CEGUI::WindowManager::getSingleton();
+
+		CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow(parent));
+		CEGUI::DefaultWindow* wnd=(CEGUI::DefaultWindow*)winMgr.createWindow("TaharezLook/Listbox", name);
+
+		w->addChildWindow(wnd);
+	}
+
+	__declspec(dllexport) void GUI_Listbox_AddItem(char* name,char* t)
+	{
+		CEGUI::Listbox *w = ((CEGUI::Listbox*)CEGUI::WindowManager::getSingleton().getWindow(name));
+
+		CEGUI::FormattedListboxTextItem* itm=new CEGUI::FormattedListboxTextItem(t,CEGUI::HTF_WORDWRAP_LEFT_ALIGNED);
+		itm->setTextColours(0xFFFFFFFF);
+		itm->setSelectionBrushImage("TaharezLook", "MultiListSelectionBrush");
+
+		w->addItem(itm);
+
+		/*
+		Debug::FunctionCall("Chatbox_AddToChat");
+		string inp=c;
+		ParseChatText(inp);
+		CEGUI::FormattedListboxTextItem* itm=new CEGUI::FormattedListboxTextItem(inp.c_str(),CEGUI::HTF_WORDWRAP_LEFT_ALIGNED);
+		itm->setTextColours(0xFFFFFFFF);
+		CEGUI::Listbox* listb=((CEGUI::Listbox*)CEGUI::WindowManager::getSingleton().getWindow("List Box"));
+		listb->addItem(itm);
+		while(listb->getItemCount() > D_MAX_CHAT_ENTRIES) {
+			listb->removeItem(listb->getListboxItemFromIndex(0));
+		}
+		listb->ensureItemIsVisible(itm);
+
+		gData.lastChatTextTick=GetTickCount();
+		Debug::FunctionReturn("Chatbox_AddToChat");
+		*/
+	}
+
+	__declspec(dllexport) void GUI_Listbox_RemoveItem(char* name,char* t)
+	{
+		CEGUI::Listbox *w = ((CEGUI::Listbox*)CEGUI::WindowManager::getSingleton().getWindow(name));
+
+		w->removeItem(w->findItemWithText(t,NULL));
+	}
+
+	__declspec(dllexport) void GUI_Listbox_EnableMultiSelect(char* name,bool e)
+	{
+		CEGUI::Listbox *w = ((CEGUI::Listbox*)CEGUI::WindowManager::getSingleton().getWindow(name));
+
+		w->setMultiselectEnabled(e);
+	}
+
+	__declspec(dllexport) vector<string>* GUI_Listbox_GetSelectedItems(char* name)
+	{
+		static vector<string> str;
+		CEGUI::ListboxItem *tmp;
+
+		tmp=0;
+
+		str.clear();
+
+		CEGUI::Listbox *w = ((CEGUI::Listbox*)CEGUI::WindowManager::getSingleton().getWindow(name));
+
+		tmp=w->getFirstSelectedItem();
+
+		while(tmp)
+		{
+			str.push_back(tmp->getText().c_str());
+
+			tmp=w->getNextSelected(tmp);
+		}
+
+		return &str;
+	}
+
+
 }
