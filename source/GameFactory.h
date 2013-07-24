@@ -179,7 +179,7 @@ class GameFactory
 		 */
 		static RakNet::NetworkID LookupNetworkID(unsigned int refID);
 		/**
-		 * \brief Lookup a reference IDFactoryWrapper
+		 * \brief Lookup a reference ID
 		 */
 		static unsigned int LookupRefID(RakNet::NetworkID id);
 		/**
@@ -421,7 +421,8 @@ inline Expected<FactoryWrapper<T>> vaultcast(const FactoryWrapper<U>& object) no
 }
 template<typename T, typename U>
 inline Expected<FactoryWrapper<T>> vaultcast(const Expected<FactoryWrapper<U>>& object) noexcept { return vaultcast<T>(const_cast<Expected<FactoryWrapper<U>>&>(object).get()); }
-#endif
 
 using FailPolicy = GameFactory::FailPolicy;
 using LaunchPolicy = GameFactory::LaunchPolicy;
+
+#endif

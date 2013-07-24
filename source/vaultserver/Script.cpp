@@ -1048,57 +1048,52 @@ const char* Script::BaseToString(unsigned int baseID)
 
 bool Script::Kick(NetworkID id)
 {
-	if (!GameFactory::GetObject<Player>(id))
-		return false;
-
-	Network::Queue({Network::CreateResponse(
-		PacketFactory::Create<pTypes::ID_GAME_END>(Reason::ID_REASON_KICK),
-		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
+	return GameFactory::Operate<Player, FailPolicy::Return>(id, [&id](FactoryPlayer& player) {
+		Network::Queue({Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_GAME_END>(Reason::ID_REASON_KICK),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
+		});
 	});
-
-	return true;
 }
 
 bool Script::UIMessage(NetworkID id, const char* message, unsigned char emoticon)
 {
-	string _message(message);
-
-	if (_message.length() > MAX_MESSAGE_LENGTH)
-		_message.resize(MAX_MESSAGE_LENGTH);
-
-	if (id)
-	{
-		if (!GameFactory::GetObject<Player>(id))
+	return GameFactory::Operate<Player, FailPolicy::None>(id, [&id, message, emoticon](ExpectedPlayer& player) {
+		if (!message || (id && !player))
 			return false;
-	}
 
-	Network::Queue({Network::CreateResponse(
-		PacketFactory::Create<pTypes::ID_GAME_MESSAGE>(_message, emoticon),
-		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, id ? vector<RakNetGUID>{Client::GetClientFromPlayer(id)->GetGUID()} : Client::GetNetworkList(nullptr))
+		string message_(message);
+
+		if (message_.length() > MAX_MESSAGE_LENGTH)
+			message_.resize(MAX_MESSAGE_LENGTH);
+
+		Network::Queue({Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_GAME_MESSAGE>(message_, emoticon),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, id ? vector<RakNetGUID>{Client::GetClientFromPlayer(id)->GetGUID()} : Client::GetNetworkList(nullptr))
+		});
+
+		return true;
 	});
-
-	return true;
 }
 
 bool Script::ChatMessage(NetworkID id, const char* message)
 {
-	string _message(message);
-
-	if (_message.length() > MAX_CHAT_LENGTH)
-		_message.resize(MAX_CHAT_LENGTH);
-
-	if (id)
-	{
-		if (!GameFactory::GetObject<Player>(id))
+	return GameFactory::Operate<Player, FailPolicy::None>(id, [&id, message](ExpectedPlayer& player) {
+		if (!message || (id && !player))
 			return false;
-	}
 
-	Network::Queue({Network::CreateResponse(
-		PacketFactory::Create<pTypes::ID_GAME_CHAT>(_message),
-		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, id ? vector<RakNetGUID>{Client::GetClientFromPlayer(id)->GetGUID()} : Client::GetNetworkList(nullptr))
+		string message_(message);
+
+		if (message_.length() > MAX_MESSAGE_LENGTH)
+			message_.resize(MAX_MESSAGE_LENGTH);
+
+		Network::Queue({Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_GAME_CHAT>(message_),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, id ? vector<RakNetGUID>{Client::GetClientFromPlayer(id)->GetGUID()} : Client::GetNetworkList(nullptr))
+		});
+
+		return true;
 	});
-
-	return true;
 }
 
 void Script::SetSpawnCell(unsigned int cell)
