@@ -33,7 +33,7 @@ NetworkResponse NetworkClient::ProcessEvent(unsigned char id)
 		{
 			Network::ToggleDequeue(true);
 
-			FactoryObject<Player> reference = GameFactory::GetObject<Player>(PLAYER_REFERENCE).get();
+			FactoryPlayer reference = GameFactory::GetObject<Player>(PLAYER_REFERENCE).get();
 
 			return {Network::CreateResponse(
 				reference->toPacket(),

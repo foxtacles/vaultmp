@@ -281,7 +281,7 @@ vector<string> ObjectFunctor::operator()()
 	else
 	{
 		auto references = Game::GetContext(ID_OBJECT);
-		Expected<FactoryObject<Object>> object;
+		ExpectedObject object;
 
 		for (unsigned int refID : references)
 			if ((object = GameFactory::GetObject(refID)))
@@ -300,9 +300,9 @@ vector<string> ObjectFunctor::operator()()
 	return result;
 }
 
-bool ObjectFunctor::filter(FactoryObject<Reference>& reference)
+bool ObjectFunctor::filter(FactoryWrapper<Reference>& reference)
 {
-	FactoryObject<Object> object = vaultcast<Object>(reference).get();
+	FactoryObject object = vaultcast<Object>(reference).get();
 	unsigned int flags = this->flags();
 
 	if (flags & FLAG_NOTSELF && object->GetReference() == PLAYER_REFERENCE)

@@ -207,7 +207,7 @@ void Script::Initialize()
 
 	gameWeather = DEFAULT_WEATHER;
 
-	auto object_init = [](FactoryObject<Object>& object, const DB::Reference* reference)
+	auto object_init = [](FactoryObject& object, const DB::Reference* reference)
 	{
 		const auto& pos = reference->GetPos();
 		const auto& angle = reference->GetAngle();
@@ -399,7 +399,7 @@ NetworkID Script::CreateTimerPAWNEx(ScriptFuncPAWN timer, AMX* amx, unsigned int
 	return t->GetNetworkID();
 }
 
-void Script::SetupObject(FactoryObject<Object>& object, FactoryObject<Object>& reference, unsigned int cell, double X, double Y, double Z)
+void Script::SetupObject(FactoryObject& object, FactoryObject& reference, unsigned int cell, double X, double Y, double Z)
 {
 	if (reference)
 	{
@@ -412,7 +412,7 @@ void Script::SetupObject(FactoryObject<Object>& object, FactoryObject<Object>& r
 		SetCell_(object->GetNetworkID(), cell, X, Y, Z, true);
 }
 
-void Script::SetupItem(FactoryObject<Item>& item, FactoryObject<Object>& reference, unsigned int cell, double X, double Y, double Z)
+void Script::SetupItem(FactoryItem& item, FactoryObject& reference, unsigned int cell, double X, double Y, double Z)
 {
 	SetupObject(item, reference, cell, X, Y, Z);
 
@@ -420,12 +420,12 @@ void Script::SetupItem(FactoryObject<Item>& item, FactoryObject<Object>& referen
 	item->SetItemCondition(100.0);
 }
 
-void Script::SetupContainer(FactoryObject<Container>& container, FactoryObject<Object>& reference, unsigned int cell, double X, double Y, double Z)
+void Script::SetupContainer(FactoryContainer& container, FactoryObject& reference, unsigned int cell, double X, double Y, double Z)
 {
 	SetupObject(container, reference, cell, X, Y, Z);
 }
 
-void Script::SetupActor(FactoryObject<Actor>& actor, FactoryObject<Object>& reference, unsigned int cell, double X, double Y, double Z)
+void Script::SetupActor(FactoryActor& actor, FactoryObject& reference, unsigned int cell, double X, double Y, double Z)
 {
 	SetupContainer(actor, reference, cell, X, Y, Z);
 
@@ -446,7 +446,7 @@ void Script::SetupActor(FactoryObject<Actor>& actor, FactoryObject<Object>& refe
 		actor->SetActorRace(UINT_MAX);
 }
 
-void Script::SetupWindow(FactoryObject<Window>& window, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text)
+void Script::SetupWindow(FactoryWindow& window, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text)
 {
 	window->SetPos(posX, posY, offset_posX, offset_posY);
 	window->SetSize(sizeX, sizeY, offset_sizeX, offset_sizeY);
@@ -455,17 +455,17 @@ void Script::SetupWindow(FactoryObject<Window>& window, double posX, double posY
 	window->SetText(text);
 }
 
-void Script::SetupButton(FactoryObject<Button>& button, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text)
+void Script::SetupButton(FactoryButton& button, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text)
 {
 	SetupWindow(button, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
 }
 
-void Script::SetupText(FactoryObject<Text>& text, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text_)
+void Script::SetupText(FactoryText& text, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text_)
 {
 	SetupWindow(text, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text_);
 }
 
-void Script::SetupEdit(FactoryObject<Edit>& edit, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text)
+void Script::SetupEdit(FactoryEdit& edit, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text)
 {
 	SetupWindow(edit, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
 }
@@ -1825,8 +1825,8 @@ NetworkID Script::GetPlayerChatboxWindow(NetworkID id)
 NetworkID Script::CreateObject(unsigned int baseID, NetworkID id, unsigned int cell, double X, double Y, double Z)
 {
 	NetworkID result = 0;
-	FactoryObject<Object> object;
-	FactoryObject<Object> _object;
+	FactoryObject object;
+	FactoryObject _object;
 
 	if (id && !GameFactory::GetType(id))
 		return result;
@@ -2208,7 +2208,7 @@ bool Script::SetBaseName(NetworkID id, const char* name)
 		return false;
 
 	auto reference = GameFactory::GetObjectTypes(ALL_OBJECTS);
-	auto it = find_if(reference.begin(), reference.end(), [&id](const FactoryObject<Object>& object) { return object->GetNetworkID() == id; });
+	auto it = find_if(reference.begin(), reference.end(), [&id](const FactoryObject& object) { return object->GetNetworkID() == id; });
 
 	if (it == reference.end())
 		return false;
@@ -2243,8 +2243,8 @@ bool Script::SetBaseName(NetworkID id, const char* name)
 NetworkID Script::CreateItem(unsigned int baseID, NetworkID id, unsigned int cell, double X, double Y, double Z)
 {
 	NetworkID result = 0;
-	FactoryObject<Object> object;
-	FactoryObject<Item> item;
+	FactoryObject object;
+	FactoryItem item;
 
 	if (id && !GameFactory::GetType(id))
 		return result;
@@ -2330,8 +2330,8 @@ bool Script::SetItemCondition(NetworkID id, double condition)
 NetworkID Script::CreateContainer(unsigned int baseID, NetworkID id, unsigned int cell, double X, double Y, double Z)
 {
 	NetworkID result = 0;
-	FactoryObject<Object> object;
-	FactoryObject<Container> container;
+	FactoryObject object;
+	FactoryContainer container;
 
 	if (id && !GameFactory::GetType(id))
 		return result;
@@ -2499,8 +2499,8 @@ void Script::RemoveAllItems(NetworkID id)
 NetworkID Script::CreateActor(unsigned int baseID, NetworkID id, unsigned int cell, double X, double Y, double Z)
 {
 	NetworkID result = 0;
-	FactoryObject<Object> object;
-	FactoryObject<Actor> actor;
+	FactoryObject object;
+	FactoryActor actor;
 
 	if (id && !GameFactory::GetType(id))
 		return result;
@@ -2551,7 +2551,7 @@ void Script::SetActorValue(NetworkID id, unsigned char index, double value)
 void Script::SetActorBaseValue(NetworkID id, unsigned char index, double value)
 {
 	auto reference = GameFactory::GetObjectTypes<Actor>(ALL_ACTORS);
-	auto it = find_if(reference.begin(), reference.end(), [&id](const FactoryObject<Actor>& actor) { return actor->GetNetworkID() == id; });
+	auto it = find_if(reference.begin(), reference.end(), [&id](const FactoryActor& actor) { return actor->GetNetworkID() == id; });
 
 	if (it == reference.end())
 		return;
@@ -2812,7 +2812,7 @@ void Script::KillActor(NetworkID id, unsigned short limbs, signed char cause)
 bool Script::SetActorBaseRace(NetworkID id, unsigned int race)
 {
 	auto reference = GameFactory::GetObjectTypes<Actor>(ALL_ACTORS);
-	auto it = find_if(reference.begin(), reference.end(), [&id](const FactoryObject<Actor>& actor) { return actor->GetNetworkID() == id; });
+	auto it = find_if(reference.begin(), reference.end(), [&id](const FactoryActor& actor) { return actor->GetNetworkID() == id; });
 
 	if (it == reference.end())
 		return false;
@@ -2913,7 +2913,7 @@ bool Script::AgeActorBaseRace(NetworkID id, signed int age)
 bool Script::SetActorBaseSex(NetworkID id, bool female)
 {
 	auto reference = GameFactory::GetObjectTypes<Actor>(ALL_ACTORS);
-	auto it = find_if(reference.begin(), reference.end(), [&id](const FactoryObject<Actor>& actor) { return actor->GetNetworkID() == id; });
+	auto it = find_if(reference.begin(), reference.end(), [&id](const FactoryActor& actor) { return actor->GetNetworkID() == id; });
 
 	if (it == reference.end())
 		return false;

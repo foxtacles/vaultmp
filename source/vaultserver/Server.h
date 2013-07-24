@@ -7,6 +7,7 @@
 #include "Window.h"
 #include "Network.h"
 #include "VaultException.h"
+#include "GameFactory.h"
 
 /**
  * \brief Server game code, communicating with loaded scripts
@@ -47,39 +48,39 @@ class Server
 		/**
 		 * \brief Handles GetPos network packet
 		 */
-		static NetworkResponse GetPos(RakNet::RakNetGUID guid, FactoryObject<Object>& reference, double X, double Y, double Z);
+		static NetworkResponse GetPos(RakNet::RakNetGUID guid, FactoryObject& reference, double X, double Y, double Z);
 		/**
 		 * \brief Handles GetAngle network packet
 		 */
-		static NetworkResponse GetAngle(RakNet::RakNetGUID guid, FactoryObject<Object>& reference, unsigned char axis, double value);
+		static NetworkResponse GetAngle(RakNet::RakNetGUID guid, FactoryObject& reference, unsigned char axis, double value);
 		/**
 		 * \brief Handles cell network packet
 		 */
-		static NetworkResponse GetCell(RakNet::RakNetGUID guid, FactoryObject<Object>& reference, unsigned int cell);
+		static NetworkResponse GetCell(RakNet::RakNetGUID guid, FactoryObject& reference, unsigned int cell);
 		/**
 		 * \brief Handles lock update packet
 		 */
-		static NetworkResponse GetLock(RakNet::RakNetGUID guid, FactoryObject<Object>& reference, FactoryObject<Player>& player, unsigned int lock);
+		static NetworkResponse GetLock(RakNet::RakNetGUID guid, FactoryObject& reference, FactoryPlayer& player, unsigned int lock);
 		/**
 		 * \brief Handles container update network packet
 		 */
-		static NetworkResponse GetContainerUpdate(RakNet::RakNetGUID guid, FactoryObject<Container>& reference, const ItemList::NetDiff& ndiff, const ItemList::NetDiff& gdiff);
+		static NetworkResponse GetContainerUpdate(RakNet::RakNetGUID guid, FactoryContainer& reference, const ItemList::NetDiff& ndiff, const ItemList::NetDiff& gdiff);
 		/**
 		 * \brief Handles actor value network packet
 		 */
-		static NetworkResponse GetActorValue(RakNet::RakNetGUID guid, FactoryObject<Actor>& reference, bool base, unsigned char index, double value);
+		static NetworkResponse GetActorValue(RakNet::RakNetGUID guid, FactoryActor& reference, bool base, unsigned char index, double value);
 		/**
 		 * \brief Handles actor state network packet
 		 */
-		static NetworkResponse GetActorState(RakNet::RakNetGUID guid, FactoryObject<Actor>& reference, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking);
+		static NetworkResponse GetActorState(RakNet::RakNetGUID guid, FactoryActor& reference, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking);
 		/**
 		 * \brief Handles actor dead network packet
 		 */
-		static NetworkResponse GetActorDead(RakNet::RakNetGUID guid, FactoryObject<Actor>& reference, FactoryObject<Player>& killer, bool dead, unsigned short limbs, signed char cause);
+		static NetworkResponse GetActorDead(RakNet::RakNetGUID guid, FactoryActor& reference, FactoryPlayer& killer, bool dead, unsigned short limbs, signed char cause);
 		/**
 		 * \brief Handles player control network packet
 		 */
-		static NetworkResponse GetPlayerControl(RakNet::RakNetGUID guid, FactoryObject<Player>& reference, unsigned char control, unsigned char key);
+		static NetworkResponse GetPlayerControl(RakNet::RakNetGUID guid, FactoryPlayer& reference, unsigned char control, unsigned char key);
 		/**
 		 * \brief Handles window mode network packet
 		 */
@@ -87,11 +88,11 @@ class Server
 		/**
 		 * \brief Handles window click network packet
 		 */
-		static NetworkResponse GetWindowClick(RakNet::RakNetGUID guid, FactoryObject<Window>& reference);
+		static NetworkResponse GetWindowClick(RakNet::RakNetGUID guid, FactoryWindow& reference);
 		/**
 		 * \brief Handles window click network packet
 		 */
-		static NetworkResponse GetWindowText(RakNet::RakNetGUID guid, FactoryObject<Window>& reference, const std::string& text);
+		static NetworkResponse GetWindowText(RakNet::RakNetGUID guid, FactoryWindow& reference, const std::string& text);
 		/**
 		 * \brief Handles player chat message network packet
 		 */

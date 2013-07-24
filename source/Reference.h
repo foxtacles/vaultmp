@@ -22,14 +22,14 @@
  */
 
 template<typename T>
-class FactoryObject;
+class FactoryWrapper;
 
 class Reference : private CriticalSection, public RakNet::NetworkIDObject
 {
 		friend class GameFactory;
 
 		template<typename T>
-		friend class FactoryObject;
+		friend class FactoryWrapper;
 
 	private:
 #ifdef VAULTMP_DEBUG
@@ -138,7 +138,7 @@ class ReferenceFunctor : public VaultFunctor
 		ReferenceFunctor(unsigned int flags, RakNet::NetworkID id) : VaultFunctor(), _flags(flags), id(id) {}
 		virtual ~ReferenceFunctor() {}
 
-		virtual bool filter(FactoryObject<Reference>& reference) = 0;
+		virtual bool filter(FactoryWrapper<Reference>& reference) = 0;
 
 		unsigned int flags() { return _flags; }
 		RakNet::NetworkID get() { return id; }

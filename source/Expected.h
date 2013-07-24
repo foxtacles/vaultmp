@@ -87,10 +87,13 @@ class Expected
 
 		T& get()
 		{
-			if (valid)
+			if (*this)
 				return value;
 			else
 			{
+				if (valid)
+					throw VaultException("Expected<T> failed: operator bool returned false").stacktrace();
+
 				try
 				{
 					std::rethrow_exception(exception);
@@ -119,7 +122,9 @@ class Expected
 			typedef decltype(test<U>(0)) type;
 		};
 
-		explicit operator bool() const { return valid && value; }
+		template<typename U> typename std::enable_if<std::is_class<U>::value, bool>::type bool_operator() const { return valid && value; }
+		template<typename U> typename std::enable_if<!std::is_class<U>::value, bool>::type bool_operator() const { return valid; }
+		explicit operator bool() const { return bool_operator<T>(); }
 
 		template<typename U> typename std::enable_if<std::is_class<U>::value, typename result_star_operator<U>::type>::type star_operator(U& u) { return u.operator*(); }
 		template<typename U> typename std::enable_if<!std::is_class<U>::value, U&>::type star_operator(U& u) { return u; }

@@ -67,7 +67,7 @@ FuncParameter Container::CreateFunctor(unsigned int flags, NetworkID id)
 
 NetworkID Container::Copy() const
 {
-	FactoryObject<Container> container = GameFactory::GetObject<Container>(GameFactory::CreateInstance(ID_CONTAINER, 0x00000000, this->GetBase())).get();
+	FactoryContainer container = GameFactory::GetObject<Container>(GameFactory::CreateInstance(ID_CONTAINER, 0x00000000, this->GetBase())).get();
 	NetworkID id = container->GetNetworkID();
 	IL.Copy(container->IL);
 	return id;
@@ -88,7 +88,7 @@ pPacket Container::toPacket() const
 
 	for (const NetworkID& id : IL.GetItemList())
 	{
-		FactoryObject<Item> item = GameFactory::GetObject<Item>(id).get();
+		FactoryItem item = GameFactory::GetObject<Item>(id).get();
 		items.emplace_back(item->toPacket());
 	}
 
@@ -124,7 +124,7 @@ vector<string> ContainerFunctor::operator()()
 	else
 	{
 		auto references = Game::GetContext(ID_CONTAINER);
-		Expected<FactoryObject<Container>> container;
+		ExpectedContainer container;
 
 		for (unsigned int refID : references)
 			if ((container = GameFactory::GetObject<Container>(refID)))
@@ -143,7 +143,7 @@ vector<string> ContainerFunctor::operator()()
 	return result;
 }
 
-bool ContainerFunctor::filter(FactoryObject<Reference>& reference)
+bool ContainerFunctor::filter(FactoryWrapper<Reference>& reference)
 {
 	if (ObjectFunctor::filter(reference))
 		return true;

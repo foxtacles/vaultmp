@@ -69,8 +69,8 @@ NetworkResponse Server::LoadGame(RakNetGUID guid)
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 
-	vector<FactoryObject<Object>> references = GameFactory::GetObjectTypes<Object>(ALL_OBJECTS);
-	vector<FactoryObject<Object>>::iterator it;
+	vector<FactoryObject> references = GameFactory::GetObjectTypes<Object>(ALL_OBJECTS);
+	vector<FactoryObject>::iterator it;
 
 	for (it = references.begin(); it != references.end(); GameFactory::LeaveReference(*it), ++it)
 	{
@@ -220,7 +220,7 @@ NetworkResponse Server::Disconnect(RakNetGUID guid, Reason reason)
 	return response;
 }
 
-NetworkResponse Server::GetPos(RakNetGUID guid, FactoryObject<Object>& reference, double X, double Y, double Z)
+NetworkResponse Server::GetPos(RakNetGUID guid, FactoryObject& reference, double X, double Y, double Z)
 {
 	NetworkResponse response;
 
@@ -268,7 +268,7 @@ NetworkResponse Server::GetPos(RakNetGUID guid, FactoryObject<Object>& reference
 	return response;
 }
 
-NetworkResponse Server::GetAngle(RakNetGUID guid, FactoryObject<Object>& reference, unsigned char axis, double value)
+NetworkResponse Server::GetAngle(RakNetGUID guid, FactoryObject& reference, unsigned char axis, double value)
 {
 	NetworkResponse response;
 	bool result = static_cast<bool>(reference->SetAngle(axis, value));
@@ -283,7 +283,7 @@ NetworkResponse Server::GetAngle(RakNetGUID guid, FactoryObject<Object>& referen
 	return response;
 }
 
-NetworkResponse Server::GetCell(RakNetGUID guid, FactoryObject<Object>& reference, unsigned int cell)
+NetworkResponse Server::GetCell(RakNetGUID guid, FactoryObject& reference, unsigned int cell)
 {
 	NetworkResponse response;
 
@@ -316,7 +316,7 @@ NetworkResponse Server::GetCell(RakNetGUID guid, FactoryObject<Object>& referenc
 	return response;
 }
 
-NetworkResponse Server::GetLock(RakNetGUID guid, FactoryObject<Object>& reference, FactoryObject<Player>& player, unsigned int lock)
+NetworkResponse Server::GetLock(RakNetGUID guid, FactoryObject& reference, FactoryPlayer& player, unsigned int lock)
 {
 	NetworkResponse response;
 	bool result = static_cast<bool>(reference->SetLockLevel(lock));
@@ -338,7 +338,7 @@ NetworkResponse Server::GetLock(RakNetGUID guid, FactoryObject<Object>& referenc
 	return response;
 }
 
-NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, FactoryObject<Container>& reference, const ItemList::NetDiff& ndiff, const ItemList::NetDiff& gdiff)
+NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, FactoryContainer& reference, const ItemList::NetDiff& ndiff, const ItemList::NetDiff& gdiff)
 {
 	NetworkID reference_id = reference->GetNetworkID();
 
@@ -355,7 +355,7 @@ NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, FactoryObject<Contai
 	for (const auto& packet : gdiff.second)
 	{
 		NetworkID id = GameFactory::CreateKnownInstance(ID_ITEM, packet.get());
-		FactoryObject<Item> item = GameFactory::GetObject<Item>(id).get();
+		FactoryItem item = GameFactory::GetObject<Item>(id).get();
 
 		item->SetReference(0x00000000);
 
@@ -410,7 +410,7 @@ NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, FactoryObject<Contai
 	return NetworkResponse(make_move_iterator(begin(response)), make_move_iterator(end(response)));
 }
 
-NetworkResponse Server::GetActorValue(RakNetGUID guid, FactoryObject<Actor>& reference, bool base, unsigned char index, double value)
+NetworkResponse Server::GetActorValue(RakNetGUID guid, FactoryActor& reference, bool base, unsigned char index, double value)
 {
 	NetworkResponse response;
 	bool result;
@@ -435,7 +435,7 @@ NetworkResponse Server::GetActorValue(RakNetGUID guid, FactoryObject<Actor>& ref
 	return response;
 }
 
-NetworkResponse Server::GetActorState(RakNetGUID guid, FactoryObject<Actor>& reference, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking)
+NetworkResponse Server::GetActorState(RakNetGUID guid, FactoryActor& reference, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking)
 {
 	NetworkResponse response;
 	bool result, _alerted, _sneaking, _weapon, _idle;
@@ -510,7 +510,7 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, FactoryObject<Actor>& ref
 	return response;
 }
 
-NetworkResponse Server::GetActorDead(RakNetGUID guid, FactoryObject<Actor>& reference, FactoryObject<Player>& killer, bool dead, unsigned short limbs, signed char cause)
+NetworkResponse Server::GetActorDead(RakNetGUID guid, FactoryActor& reference, FactoryPlayer& killer, bool dead, unsigned short limbs, signed char cause)
 {
 	NetworkResponse response;
 	bool result;
@@ -545,7 +545,7 @@ NetworkResponse Server::GetActorDead(RakNetGUID guid, FactoryObject<Actor>& refe
 	return response;
 }
 
-NetworkResponse Server::GetPlayerControl(RakNetGUID, FactoryObject<Player>& reference, unsigned char control, unsigned char key)
+NetworkResponse Server::GetPlayerControl(RakNetGUID, FactoryPlayer& reference, unsigned char control, unsigned char key)
 {
 	NetworkResponse response;
 	bool result;
@@ -569,7 +569,7 @@ NetworkResponse Server::GetWindowMode(RakNetGUID guid, bool enabled)
 	return response;
 }
 
-NetworkResponse Server::GetWindowClick(RakNetGUID guid, FactoryObject<Window>& reference)
+NetworkResponse Server::GetWindowClick(RakNetGUID guid, FactoryWindow& reference)
 {
 	NetworkResponse response;
 
@@ -581,7 +581,7 @@ NetworkResponse Server::GetWindowClick(RakNetGUID guid, FactoryObject<Window>& r
 	return response;
 }
 
-NetworkResponse Server::GetWindowText(RakNetGUID guid, FactoryObject<Window>& reference, const string& text)
+NetworkResponse Server::GetWindowText(RakNetGUID guid, FactoryWindow& reference, const string& text)
 {
 	NetworkResponse response;
 

@@ -76,7 +76,7 @@ class ContainerFunctor : public ObjectFunctor
 		virtual ~ContainerFunctor() {}
 
 		virtual std::vector<std::string> operator()();
-		virtual bool filter(FactoryObject<Reference>& reference);
+		virtual bool filter(FactoryWrapper<Reference>& reference);
 };
 #endif
 
