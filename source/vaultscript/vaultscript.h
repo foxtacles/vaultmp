@@ -896,7 +896,7 @@ namespace vaultmp
 			State IsValid() const noexcept { return id ? True : False; }
 			explicit operator bool() const noexcept { return IsValid(); }
 			explicit operator State() const noexcept { return IsValid(); }
-			bool operator==(const Reference& R) const noexcept { return IsValid() && this->id == R.id; }
+			bool operator==(const Reference& R) const noexcept { return this->id == R.id; }
 			bool operator!=(const Reference& R) const noexcept { return !operator==(R); }
 
 			ID GetID() const noexcept { return id; }
@@ -1058,7 +1058,7 @@ namespace vaultmp
 			State IsValid() const noexcept { return id ? True : False; }
 			explicit operator bool() const noexcept { return IsValid(); }
 			explicit operator State() const noexcept { return IsValid(); }
-			bool operator==(const ItemList& R) const noexcept { return IsValid() && this->id == R.id; }
+			bool operator==(const ItemList& R) const noexcept { return this->id == R.id; }
 			bool operator!=(const ItemList& R) const noexcept { return !operator==(R); }
 
 			ID GetID() const noexcept { return id; }
@@ -1260,7 +1260,7 @@ namespace vaultmp
 			State IsValid() const noexcept { return id ? True : False; }
 			explicit operator bool() const noexcept { return IsValid(); }
 			explicit operator State() const noexcept { return IsValid(); }
-			bool operator==(const Window& R) const noexcept { return IsValid() && this->id == R.id; }
+			bool operator==(const Window& R) const noexcept { return this->id == R.id; }
 			bool operator!=(const Window& R) const noexcept { return !operator==(R); }
 
 			ID GetID() const noexcept { return id; }
