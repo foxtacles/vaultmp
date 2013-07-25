@@ -1339,12 +1339,9 @@ bool Script::IsEdit(NetworkID id)
 
 bool Script::IsChatbox(NetworkID id)
 {
-	auto window = GameFactory::GetObject<Window>(id);
-
-	if (!window)
-		return false;
-
-	return !window->GetLabel().compare(Window::GUI_MAIN_LABEL);
+	return GameFactory::Operate<Window, FailPolicy::Return>(id, [](FactoryWindow& window) {
+		return !window->GetLabel().compare(Window::GUI_MAIN_LABEL);
+	});
 }
 
 unsigned int Script::GetConnection(NetworkID id)
@@ -1408,32 +1405,23 @@ double Script::GetTimeScale()
 
 NetworkID Script::GetID(unsigned int refID)
 {
-	auto object = GameFactory::GetObject(refID);
-
-	if (object)
+	return GameFactory::Operate<Object, FailPolicy::Return>(refID, [](FactoryObject& object) {
 		return object->GetNetworkID();
-
-	return 0;
+	});
 }
 
 unsigned int Script::GetReference(NetworkID id)
 {
-	auto object = GameFactory::GetObject(id);
-
-	if (object)
+	return GameFactory::Operate<Object, FailPolicy::Return>(id, [](FactoryObject& object) {
 		return object->GetReference();
-
-	return 0;
+	});
 }
 
 unsigned int Script::GetBase(NetworkID id)
 {
-	auto object = GameFactory::GetObject(id);
-
-	if (object)
+	return GameFactory::Operate<Object, FailPolicy::Return>(id, [](FactoryObject& object) {
 		return object->GetBase();
-
-	return 0;
+	});
 }
 
 void Script::GetPos(NetworkID id, double* X, double* Y, double* Z)
@@ -1442,14 +1430,11 @@ void Script::GetPos(NetworkID id, double* X, double* Y, double* Z)
 	*Y = 0.00;
 	*Z = 0.00;
 
-	auto object = GameFactory::GetObject(id);
-
-	if (object)
-	{
+	GameFactory::Operate<Object, FailPolicy::Bool>(id, [X, Y, Z](FactoryObject& object) {
 		*X = object->GetNetworkPos(Axis_X);
 		*Y = object->GetNetworkPos(Axis_Y);
 		*Z = object->GetNetworkPos(Axis_Z);
-	}
+	});
 }
 
 void Script::GetAngle(NetworkID id, double* X, double* Y, double* Z)
@@ -1458,44 +1443,32 @@ void Script::GetAngle(NetworkID id, double* X, double* Y, double* Z)
 	*Y = 0.00;
 	*Z = 0.00;
 
-	auto object = GameFactory::GetObject(id);
-
-	if (object)
-	{
+	GameFactory::Operate<Object, FailPolicy::Bool>(id, [X, Y, Z](FactoryObject& object) {
 		*X = object->GetAngle(Axis_X);
 		*Y = object->GetAngle(Axis_Y);
 		*Z = object->GetAngle(Axis_Z);
-	}
+	});
 }
 
 unsigned int Script::GetCell(NetworkID id)
 {
-	auto object = GameFactory::GetObject(id);
-
-	if (object)
+	return GameFactory::Operate<Object, FailPolicy::Return>(id, [](FactoryObject& object) {
 		return object->GetNetworkCell();
-
-	return 0;
+	});
 }
 
 unsigned int Script::GetLock(NetworkID id)
 {
-	auto object = GameFactory::GetObject(id);
-
-	if (object)
+	return GameFactory::Operate<Object, FailPolicy::Return>(id, [](FactoryObject& object) {
 		return object->GetLockLevel();
-
-	return 0;
+	});
 }
 
 unsigned int Script::GetOwner(NetworkID id)
 {
-	auto object = GameFactory::GetObject(id);
-
-	if (object)
+	return GameFactory::Operate<Object, FailPolicy::Return>(id, [](FactoryObject& object) {
 		return object->GetOwner();
-
-	return 0;
+	});
 }
 
 const char* Script::GetBaseName(NetworkID id)
