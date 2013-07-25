@@ -1048,7 +1048,7 @@ const char* Script::BaseToString(unsigned int baseID)
 
 bool Script::Kick(NetworkID id)
 {
-	return GameFactory::Operate<Player, FailPolicy::Return>(id, [&id](FactoryPlayer& player) {
+	return GameFactory::Operate<Player, FailPolicy::Bool>(id, [&id](FactoryPlayer&) {
 		Network::Queue({Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_GAME_END>(Reason::ID_REASON_KICK),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
@@ -1058,9 +1058,9 @@ bool Script::Kick(NetworkID id)
 
 bool Script::UIMessage(NetworkID id, const char* message, unsigned char emoticon)
 {
-	return GameFactory::Operate<Player, FailPolicy::None>(id, [&id, message, emoticon](ExpectedPlayer& player) {
+	return GameFactory::Operate<Player, FailPolicy::Bool, ObjectPolicy::Expected>(id, [&id, message, emoticon](ExpectedPlayer& player) {
 		if (!message || (id && !player))
-			return false;
+			throw VaultException("Invalid parameters: player doesn't exist or message is null").stacktrace();
 
 		string message_(message);
 
@@ -1071,16 +1071,14 @@ bool Script::UIMessage(NetworkID id, const char* message, unsigned char emoticon
 			PacketFactory::Create<pTypes::ID_GAME_MESSAGE>(message_, emoticon),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, id ? vector<RakNetGUID>{Client::GetClientFromPlayer(id)->GetGUID()} : Client::GetNetworkList(nullptr))
 		});
-
-		return true;
 	});
 }
 
 bool Script::ChatMessage(NetworkID id, const char* message)
 {
-	return GameFactory::Operate<Player, FailPolicy::None>(id, [&id, message](ExpectedPlayer& player) {
+	return GameFactory::Operate<Player, FailPolicy::Bool, ObjectPolicy::Expected>(id, [&id, message](ExpectedPlayer& player) {
 		if (!message || (id && !player))
-			return false;
+			throw VaultException("Invalid parameters: player doesn't exist or message is null").stacktrace();
 
 		string message_(message);
 
@@ -1091,8 +1089,6 @@ bool Script::ChatMessage(NetworkID id, const char* message)
 			PacketFactory::Create<pTypes::ID_GAME_CHAT>(message_),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, id ? vector<RakNetGUID>{Client::GetClientFromPlayer(id)->GetGUID()} : Client::GetNetworkList(nullptr))
 		});
-
-		return true;
 	});
 }
 
