@@ -1487,276 +1487,197 @@ const char* Script::GetBaseName(NetworkID id)
 
 bool Script::IsNearPoint(NetworkID id, double X, double Y, double Z, double R)
 {
-	auto object = GameFactory::GetObject(id);
-
-	if (object)
+	return GameFactory::Operate<Object, FailPolicy::Return>(id, [&X, &Y, &Z, &R](FactoryObject& object) {
 		return object->IsNearPoint(X, Y, Z, R);
-
-	return false;
+	});
 }
 
 NetworkID Script::GetItemContainer(NetworkID id)
 {
-	auto item = GameFactory::GetObject<Item>(id);
-
-	if (item)
+	return GameFactory::Operate<Item, FailPolicy::Return>(id, [](FactoryItem& item) {
 		return item->GetItemContainer();
-
-	return 0;
+	});
 }
 
 unsigned int Script::GetItemCount(NetworkID id)
 {
-	auto item = GameFactory::GetObject<Item>(id);
-
-	if (item)
+	return GameFactory::Operate<Item, FailPolicy::Return>(id, [](FactoryItem& item) {
 		return item->GetItemCount();
-
-	return 0;
+	});
 }
 
 double Script::GetItemCondition(NetworkID id)
 {
-	auto item = GameFactory::GetObject<Item>(id);
-
-	if (item)
+	return GameFactory::Operate<Item, FailPolicy::Return>(id, [](FactoryItem& item) {
 		return item->GetItemCondition();
-
-	return 0.00;
+	});
 }
 
 bool Script::GetItemEquipped(NetworkID id)
 {
-	auto item = GameFactory::GetObject<Item>(id);
-
-	if (item)
+	return GameFactory::Operate<Item, FailPolicy::Return>(id, [](FactoryItem& item) {
 		return item->GetItemEquipped();
-
-	return false;
+	});
 }
 
 bool Script::GetItemSilent(NetworkID id)
 {
-	auto item = GameFactory::GetObject<Item>(id);
-
-	if (item)
+	return GameFactory::Operate<Item, FailPolicy::Return>(id, [](FactoryItem& item) {
 		return item->GetItemSilent();
-
-	return false;
+	});
 }
 
 bool Script::GetItemStick(NetworkID id)
 {
-	auto item = GameFactory::GetObject<Item>(id);
-
-	if (item)
+	return GameFactory::Operate<Item, FailPolicy::Return>(id, [](FactoryItem& item) {
 		return item->GetItemStick();
-
-	return false;
+	});
 }
 
 unsigned int Script::GetContainerItemCount(NetworkID id, unsigned int baseID)
 {
-	auto container = GameFactory::GetObject<Container>(id);
+	return GameFactory::Operate<Container, FailPolicy::Return, ObjectPolicy::Expected>(id, [&id, baseID](ExpectedContainer& container) {
+		if (container || scriptIL.count(id))
+		{
+			ItemList* IL = container ? &container->IL : scriptIL[id].get();
+			return IL->GetItemCount(baseID);
+		}
 
-	if (container || scriptIL.count(id))
-	{
-		ItemList* IL = container ? &container->IL : scriptIL[id].get();
-		return IL->GetItemCount(baseID);
-	}
-
-	return 0;
+		throw VaultException("Invalid parameters: container or item list doesn't exist").stacktrace();
+	});
 }
 
 unsigned int Script::GetContainerItemList(NetworkID id, NetworkID** data)
 {
 	static vector<NetworkID> _data;
-	*data = nullptr;
 
-	auto container = GameFactory::GetObject<Container>(id);
+	return GameFactory::Operate<Container, FailPolicy::Return, ObjectPolicy::Expected>(id, [&id, data](ExpectedContainer& container) {
+		if ((container || scriptIL.count(id)) && data)
+		{
+			ItemList* IL = container ? &container->IL : scriptIL[id].get();
+			_data.assign(IL->GetItemList().begin(), IL->GetItemList().end());
+			unsigned int size = _data.size();
 
-	if (container || scriptIL.count(id))
-	{
-		ItemList* IL = container ? &container->IL : scriptIL[id].get();
-		_data.assign(IL->GetItemList().begin(), IL->GetItemList().end());
-		unsigned int size = _data.size();
+			if (size)
+				*data = &_data[0];
 
-		if (size)
-			*data = &_data[0];
+			return size;
+		}
 
-		return size;
-	}
-
-	return 0;
+		throw VaultException("Invalid parameters: container or item list doesn't exist or data is null").stacktrace();
+	});
 }
 
 double Script::GetActorValue(NetworkID id, unsigned char index)
 {
-	auto actor = GameFactory::GetObject<Actor>(id);
-
-	try
-	{
-		if (actor)
-			return actor->GetActorValue(index);
-	}
-	catch (...) {}
-
-	return 0.00;
+	return GameFactory::Operate<Actor, FailPolicy::Return>(id, [index](FactoryActor& actor) {
+		return actor->GetActorValue(index);
+	});
 }
 
 double Script::GetActorBaseValue(NetworkID id, unsigned char index)
 {
-	auto actor = GameFactory::GetObject<Actor>(id);
-
-	try
-	{
-		if (actor)
-			return actor->GetActorBaseValue(index);
-	}
-	catch (...) {}
-
-	return 0.00;
+	return GameFactory::Operate<Actor, FailPolicy::Return>(id, [index](FactoryActor& actor) {
+		return actor->GetActorBaseValue(index);
+	});
 }
 
 unsigned int Script::GetActorIdleAnimation(NetworkID id)
 {
-	auto actor = GameFactory::GetObject<Actor>(id);
-
-	if (actor)
+	return GameFactory::Operate<Actor, FailPolicy::Return>(id, [](FactoryActor& actor) {
 		return actor->GetActorIdleAnimation();
-
-	return 0x00000000;
+	});
 }
 
 unsigned char Script::GetActorMovingAnimation(NetworkID id)
 {
-	auto actor = GameFactory::GetObject<Actor>(id);
-
-	if (actor)
+	return GameFactory::Operate<Actor, FailPolicy::Return>(id, [](FactoryActor& actor) {
 		return actor->GetActorMovingAnimation();
-
-	return 0x00;
+	});
 }
 
 unsigned char Script::GetActorWeaponAnimation(NetworkID id)
 {
-	auto actor = GameFactory::GetObject<Actor>(id);
-
-	if (actor)
+	return GameFactory::Operate<Actor, FailPolicy::Return>(id, [](FactoryActor& actor) {
 		return actor->GetActorWeaponAnimation();
-
-	return 0x00;
+	});
 }
 
 bool Script::GetActorAlerted(NetworkID id)
 {
-	auto actor = GameFactory::GetObject<Actor>(id);
-
-	if (actor)
+	return GameFactory::Operate<Actor, FailPolicy::Return>(id, [](FactoryActor& actor) {
 		return actor->GetActorAlerted();
-
-	return false;
+	});
 }
 
 bool Script::GetActorSneaking(NetworkID id)
 {
-	auto actor = GameFactory::GetObject<Actor>(id);
-
-	if (actor)
+	return GameFactory::Operate<Actor, FailPolicy::Return>(id, [](FactoryActor& actor) {
 		return actor->GetActorSneaking();
-
-	return false;
+	});
 }
 
 bool Script::GetActorDead(NetworkID id)
 {
-	auto actor = GameFactory::GetObject<Actor>(id);
-
-	if (actor)
+	return GameFactory::Operate<Actor, FailPolicy::Return>(id, [](FactoryActor& actor) {
 		return actor->GetActorDead();
-
-	return false;
+	});
 }
 
 unsigned int Script::GetActorBaseRace(NetworkID id)
 {
-	auto actor = GameFactory::GetObject<Actor>(id);
-
-	if (actor)
+	return GameFactory::Operate<Actor, FailPolicy::Return>(id, [](FactoryActor& actor) {
 		return actor->GetActorRace();
-
-	return 0x00000000;
+	});
 }
 
 bool Script::GetActorBaseSex(NetworkID id)
 {
-	auto actor = GameFactory::GetObject<Actor>(id);
-
-	if (actor)
+	return GameFactory::Operate<Actor, FailPolicy::Return>(id, [](FactoryActor& actor) {
 		return actor->GetActorFemale();
-
-	return false;
+	});
 }
 
 bool Script::IsActorJumping(NetworkID id)
 {
-	auto actor = GameFactory::GetObject<Actor>(id);
-
-	if (actor)
+	return GameFactory::Operate<Actor, FailPolicy::Return>(id, [](FactoryActor& actor) {
 		return actor->IsActorJumping();
-
-	return false;
+	});
 }
 
 unsigned int Script::GetPlayerRespawnTime(NetworkID id)
 {
-	auto player = GameFactory::GetObject<Player>(id);
-
-	if (player)
+	return GameFactory::Operate<Player, FailPolicy::Return>(id, [](FactoryPlayer& player) {
 		return player->GetPlayerRespawnTime();
-
-	return 0;
+	});
 }
 
 unsigned int Script::GetPlayerSpawnCell(NetworkID id)
 {
-	auto player = GameFactory::GetObject<Player>(id);
-
-	if (player)
+	return GameFactory::Operate<Player, FailPolicy::Return>(id, [](FactoryPlayer& player) {
 		return player->GetPlayerSpawnCell();
-
-	return 0x00000000;
+	});
 }
 
 bool Script::GetPlayerConsoleEnabled(NetworkID id)
 {
-	auto player = GameFactory::GetObject<Player>(id);
-
-	if (player)
+	return GameFactory::Operate<Player, FailPolicy::Return>(id, [](FactoryPlayer& player) {
 		return player->GetPlayerConsoleEnabled();
-
-	return false;
+	});
 }
 
 unsigned int Script::GetPlayerWindowCount(NetworkID id)
 {
-	auto player = GameFactory::GetObject<Player>(id);
-
-	if (player)
+	return GameFactory::Operate<Player, FailPolicy::Return>(id, [](FactoryPlayer& player) {
 		return player->GetPlayerWindows().size();
-
-	return 0;
+	});
 }
 
 unsigned int Script::GetPlayerWindowList(NetworkID id, NetworkID** data)
 {
 	static vector<NetworkID> _data;
-	*data = nullptr;
 
-	auto player = GameFactory::GetObject<Player>(id);
-
-	if (player)
-	{
+	return GameFactory::Operate<Player, FailPolicy::Return>(id, [&id, data](FactoryPlayer& player) {
 		const auto& windows = player->GetPlayerWindows();
 		_data.assign(windows.begin(), windows.end());
 		unsigned int size = _data.size();
@@ -1765,25 +1686,16 @@ unsigned int Script::GetPlayerWindowList(NetworkID id, NetworkID** data)
 			*data = &_data[0];
 
 		return size;
-	}
-
-	return 0;
+	});
 }
 
 NetworkID Script::GetPlayerChatboxWindow(NetworkID id)
 {
 	unordered_set<NetworkID> windows;
 
-	{
-		auto player = GameFactory::GetObject<Player>(id);
-
-		if (!player)
-			return 0;
-
+	return GameFactory::Operate<Player, FailPolicy::Bool>(id, [&windows](FactoryPlayer& player) {
 		windows = player->GetPlayerWindows();
-	}
-
-	return *find_if(windows.begin(), windows.end(), [](const NetworkID& id) { return IsChatbox(id); });
+	}) ? *find_if(windows.begin(), windows.end(), [](const NetworkID& id) { return IsChatbox(id); }) : 0;
 }
 
 NetworkID Script::CreateObject(unsigned int baseID, NetworkID id, unsigned int cell, double X, double Y, double Z)
