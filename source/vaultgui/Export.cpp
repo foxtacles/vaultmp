@@ -21,6 +21,7 @@ CRITICAL_SECTION cs_GetQueue;
 
 void (*callbackPTR_OnClick)(char* name)=0;
 void (*callbackPTR_OnTextChange)(char* name,char* text)=0;
+void (*callbackPTR_OnListboxSelectionChange)(char* name,vector<string>* text)=0;
 
 bool GUI_MouseClickCallback(const CEGUI::EventArgs& e)
 {
@@ -52,6 +53,17 @@ bool GUI_TextChanged(const CEGUI::EventArgs& e)
 		{
 			callbackPTR_OnTextChange((char*)we.window->getName().c_str(),(char*)we.window->getText().c_str());
 		}
+	}
+
+	return true;
+}
+
+bool GUI_ListboxSelectionChange(const CEGUI::EventArgs& e)
+{
+	const CEGUI::WindowEventArgs& we = static_cast<const CEGUI::WindowEventArgs&>(e);
+	if(callbackPTR_OnListboxSelectionChange)
+	{
+		callbackPTR_OnListboxSelectionChange((char*)we.window->getName().c_str(),GUI_Listbox_GetSelectedItems((char*)we.window->getName().c_str()));
 	}
 
 	return true;
@@ -239,6 +251,11 @@ extern "C"
 	{
 		callbackPTR_OnTextChange=pt;
 	}
+	
+	__declspec(dllexport) void GUI_SetListboxSelectionChangedCallback(void (*pt)(char* name,vector<string>* text))
+	{
+		callbackPTR_OnListboxSelectionChange=pt;
+	}
 
 	__declspec(dllexport) void GUI_ForceGUI(bool inGui)
 	{
@@ -270,7 +287,9 @@ extern "C"
 		CEGUI::WindowManager& winMgr = CEGUI::WindowManager::getSingleton();
 
 		CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow(parent));
-		CEGUI::DefaultWindow* wnd=(CEGUI::DefaultWindow*)winMgr.createWindow("TaharezLook/Listbox", name);
+		CEGUI::Listbox* wnd=(CEGUI::Listbox*)winMgr.createWindow("TaharezLook/Listbox", name);
+
+		wnd->subscribeEvent(CEGUI::Listbox::EventSelectionChanged,GUI_ListboxSelectionChange);
 
 		w->addChildWindow(wnd);
 	}
