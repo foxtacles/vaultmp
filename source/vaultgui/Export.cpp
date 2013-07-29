@@ -21,7 +21,7 @@ CRITICAL_SECTION cs_GetQueue;
 
 void (*callbackPTR_OnClick)(char* name)=0;
 void (*callbackPTR_OnTextChange)(char* name,char* text)=0;
-void (*callbackPTR_OnListboxSelectionChange)(char* name,vector<string>* text)=0;
+void (*callbackPTR_OnListboxSelectionChange)(char* name,char** text)=0;
 
 bool GUI_MouseClickCallback(const CEGUI::EventArgs& e)
 {
@@ -61,10 +61,26 @@ bool GUI_TextChanged(const CEGUI::EventArgs& e)
 bool GUI_ListboxSelectionChange(const CEGUI::EventArgs& e)
 {
 	const CEGUI::WindowEventArgs& we = static_cast<const CEGUI::WindowEventArgs&>(e);
+
+
+
+	vector<string>* arr=GUI_Listbox_GetSelectedItems((char*)we.window->getName().c_str());
+
+	char **tmp=new char*[arr->size()+1];
+	tmp[arr->size()]=0;
+
+	for(int i=0;i<arr->size();i++)
+	{
+		tmp[i]=(char*)((*arr)[i].c_str());
+	}
+
+
 	if(callbackPTR_OnListboxSelectionChange)
 	{
-		callbackPTR_OnListboxSelectionChange((char*)we.window->getName().c_str(),GUI_Listbox_GetSelectedItems((char*)we.window->getName().c_str()));
+		callbackPTR_OnListboxSelectionChange((char*)we.window->getName().c_str(),tmp);
 	}
+
+	delete tmp;
 
 	return true;
 }
@@ -252,7 +268,7 @@ extern "C"
 		callbackPTR_OnTextChange=pt;
 	}
 	
-	__declspec(dllexport) void GUI_SetListboxSelectionChangedCallback(void (*pt)(char* name,vector<string>* text))
+	__declspec(dllexport) void GUI_SetListboxSelectionChangedCallback(void (*pt)(char* name,char** text))
 	{
 		callbackPTR_OnListboxSelectionChange=pt;
 	}

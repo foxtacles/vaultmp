@@ -44,6 +44,7 @@ extern "C"
 
 	__declspec(dllexport) void GUI_SetClickCallback(void (*pt)(char* name));
 	__declspec(dllexport) void GUI_SetTextChangedCallback(void (*pt)(char* name,char* t));
+	__declspec(dllexport) void GUI_SetListboxSelectionChangedCallback(void (*pt)(char* name,char** text));
 
 	__declspec(dllexport) void GUI_ForceGUI(bool inGui);
 	__declspec(dllexport) void GUI_SetVisible(char* name,bool visible);
