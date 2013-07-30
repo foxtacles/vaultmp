@@ -80,7 +80,7 @@ bool GUI_ListboxSelectionChange(const CEGUI::EventArgs& e)
 		callbackPTR_OnListboxSelectionChange((char*)we.window->getName().c_str(),tmp);
 	}
 
-	delete tmp;
+	delete[] tmp;
 
 	return true;
 }
