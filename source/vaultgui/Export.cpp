@@ -228,6 +228,15 @@ extern "C"
 		}
 	}
 
+	__declspec(dllexport) void GUI_Textbox_SetValidationString(char* name,char* val)
+	{
+		if(CEGUI::WindowManager::getSingleton().getWindow(name)->getType().compare("TaharezLook/Editbox")==0)
+		{
+			CEGUI::Editbox *w = ((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow(name));
+			w->setValidationString(val);
+		}
+	}
+
 	__declspec(dllexport) void GUI_AddButton(char* parent,char* name)
 	{
 		CEGUI::WindowManager& winMgr = CEGUI::WindowManager::getSingleton();

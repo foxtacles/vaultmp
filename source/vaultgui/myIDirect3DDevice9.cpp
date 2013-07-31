@@ -185,14 +185,15 @@ myIDirect3DDevice9::myIDirect3DDevice9(IDirect3DDevice9* pOriginal)
 
 		wnd->addChildWindow(closeBTN);
 
-		/*GUI_CreateFrameWindow("w1");
+		GUI_CreateFrameWindow("w1");
 		GUI_SetSize("w1",0.35,0.4,0,0);
 		GUI_SetPosition("w1",0.6,0.1,0,0);
 
-		GUI_AddTextbox("w1","txt");
+		/*GUI_AddTextbox("w1","txt");
 		GUI_SetSize("txt",0.35,0.4,0,0);
 		GUI_SetPosition("txt",0.6,0.1,0,0);
-		GUI_Textbox_SetMaxLength("txt",12);*/
+		GUI_Textbox_SetMaxLength("txt",12);
+		GUI_Textbox_SetValidationString("txt","[0-9]+");*/
 
 		/*GUI_AddListbox("w1","l");
 		GUI_SetSize("l",1,0.9,0,0);

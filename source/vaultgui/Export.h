@@ -35,6 +35,7 @@ extern "C"
 
 	__declspec(dllexport) void GUI_AddTextbox(char* parent,char* name);
 	__declspec(dllexport) void GUI_Textbox_SetMaxLength(char* name,int maxLength);
+	__declspec(dllexport) void GUI_Textbox_SetValidationString(char* name,char* val);
 
 	__declspec(dllexport) void GUI_AddButton(char* parent,char* name);
 
