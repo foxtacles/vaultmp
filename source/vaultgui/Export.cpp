@@ -219,6 +219,15 @@ extern "C"
 		wnd->subscribeEvent(CEGUI::Editbox::EventTextChanged,GUI_TextChanged);
 	}
 
+	__declspec(dllexport) void GUI_Textbox_SetMaxLength(char* name,int maxL)
+	{
+		if(CEGUI::WindowManager::getSingleton().getWindow(name)->getType().compare("TaharezLook/Editbox")==0)
+		{
+			CEGUI::Editbox *w = ((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow(name));
+			w->setMaxTextLength(maxL);
+		}
+	}
+
 	__declspec(dllexport) void GUI_AddButton(char* parent,char* name)
 	{
 		CEGUI::WindowManager& winMgr = CEGUI::WindowManager::getSingleton();

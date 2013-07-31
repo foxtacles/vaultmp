@@ -31,7 +31,11 @@ extern "C"
 	__declspec(dllexport) void GUI_CreateFrameWindow(char *name);
 
 	__declspec(dllexport) void GUI_AddStaticText(char* parent,char* name);
+
+
 	__declspec(dllexport) void GUI_AddTextbox(char* parent,char* name);
+	__declspec(dllexport) void GUI_Textbox_SetMaxLength(char* name,int maxLength);
+
 	__declspec(dllexport) void GUI_AddButton(char* parent,char* name);
 
 	__declspec(dllexport) void GUI_SetPosition(char* name,float x,float y,float xOffset,float yOffset);
