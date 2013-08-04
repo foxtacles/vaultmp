@@ -18,7 +18,7 @@ unsigned int Player::default_cell;
 bool Player::default_console = true;
 #endif
 
-const map<unsigned char, pair<double, double>> Player::f3_default_values = {
+const map<unsigned char, pair<double, double>> Player::default_values = {
 	{ActorVal_Energy, {50.0, 50.0}},
 	{ActorVal_Responsibility, {50.0, 50.0}},
 	{ActorVal_Strength, {5.0, 5.0}},
@@ -73,7 +73,7 @@ Player::Player(unsigned int refID, unsigned int baseID) : Actor(refID, baseID)
 {
 	initialize();
 
-	const auto& values = f3_default_values;
+	const auto& values = default_values;
 
 	for (const auto& value : values)
 	{

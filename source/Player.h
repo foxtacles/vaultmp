@@ -63,7 +63,7 @@ class Player : public Actor
 	public:
 		virtual ~Player();
 
-		static const std::map<unsigned char, std::pair<double, double>> f3_default_values;
+		static const std::map<unsigned char, std::pair<double, double>> default_values;
 		static const std::map<unsigned int, std::tuple<unsigned int, double, bool, bool, bool>> default_items;
 
 #ifdef VAULTSERVER

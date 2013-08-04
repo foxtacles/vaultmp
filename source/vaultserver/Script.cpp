@@ -498,12 +498,24 @@ unsigned long long Script::CallPublic(const char* name, ...)
 	GetArguments(params, args, def);
 	va_end(args);
 
-	return Public::Call(name, params);
+	try
+	{
+		return Public::Call(name, params);
+	}
+	catch (...) {}
+
+	return 0;
 }
 
 unsigned long long Script::CallPublicPAWN(const char* name, const vector<boost::any>& args)
 {
-	return Public::Call(name, args);
+	try
+	{
+		return Public::Call(name, args);
+	}
+	catch (...) {}
+
+	return 0;
 }
 
 unsigned long long Script::Timer_Respawn(NetworkID id)
@@ -526,7 +538,7 @@ unsigned long long Script::Timer_Respawn(NetworkID id)
 			EquipItem(id, item.first, get<3>(item.second), get<4>(item.second));
 	}
 
-	const auto& values = Player::f3_default_values;
+	const auto& values = Player::default_values;
 
 	for (const auto& value : values)
 	{
@@ -1059,8 +1071,8 @@ bool Script::Kick(NetworkID id)
 bool Script::UIMessage(NetworkID id, const char* message, unsigned char emoticon)
 {
 	return GameFactory::Operate<Player, FailPolicy::Bool, ObjectPolicy::Expected>(id, [id, message, emoticon](ExpectedPlayer& player) {
-		if (!message || (id && !player))
-			throw VaultException("Invalid parameters: player doesn't exist or message is null").stacktrace();
+		if (id && !player)
+			throw VaultException("Invalid parameters: player doesn't exist").stacktrace();
 
 		string message_(message);
 
@@ -1077,8 +1089,8 @@ bool Script::UIMessage(NetworkID id, const char* message, unsigned char emoticon
 bool Script::ChatMessage(NetworkID id, const char* message)
 {
 	return GameFactory::Operate<Player, FailPolicy::Bool, ObjectPolicy::Expected>(id, [id, message](ExpectedPlayer& player) {
-		if (!message || (id && !player))
-			throw VaultException("Invalid parameters: player doesn't exist or message is null").stacktrace();
+		if (id && !player)
+			throw VaultException("Invalid parameters: player doesn't exist").stacktrace();
 
 		string message_(message);
 

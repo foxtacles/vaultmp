@@ -147,7 +147,7 @@ static typename enable_if<Script::functions[I].func.ret == 's', cell>::type wrap
 	const char* value = PAWN_dispatch_<Script::functions[I].func.numargs, I>::template PAWN_dispatch<const char*>(forward<AMX*>(amx), forward<const cell*>(params));
 	after_call();
 
-	if (*value) {
+	if (value) {
 		cell* dest = amx_Address(amx, params[Script::functions[I].func.numargs + 1]);
 		amx_SetString(dest, value, 1, 0, strlen(value) + 1);
 		return 1;
