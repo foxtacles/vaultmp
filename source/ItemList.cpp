@@ -116,9 +116,6 @@ ItemList::ContainerDiff ItemList::AddItem(unsigned int baseID, unsigned int coun
 {
 	ContainerDiff diff;
 
-	if ((baseID == PIPBOY_3000 || baseID == PIPBOY_GLOVES) && (source && GameFactory::GetType(source) == ID_PLAYER))
-		return diff;
-
 	FactoryItem item = GameFactory::GetObject<Item>(GameFactory::CreateInstance(ID_ITEM, baseID)).get();
 	item->SetItemCount(count);
 	item->SetItemCondition(condition);
@@ -145,9 +142,6 @@ ItemList::ContainerDiff ItemList::RemoveItem(unsigned int baseID, unsigned int c
 {
 	ContainerDiff diff;
 	ItemListImpl::const_iterator it;
-
-	if ((baseID == PIPBOY_3000 || baseID == PIPBOY_GLOVES) && (source && GameFactory::GetType(source) == ID_PLAYER))
-		return diff;
 
 	for (it = container.begin(); it != container.end() && count; ++it)
 	{
@@ -178,24 +172,12 @@ ItemList::ContainerDiff ItemList::RemoveAllItems() const
 {
 	ContainerDiff diff;
 	diff.first = this->container;
-
-	if (source && GameFactory::GetType(source) == ID_PLAYER)
-		diff.first.remove_if([](const NetworkID& id)
-		{
-			FactoryItem reference = GameFactory::GetObject<Item>(id).get();
-			unsigned int baseID = reference->GetBase();
-			return (baseID == PIPBOY_3000 || baseID == PIPBOY_GLOVES);
-		});
-
 	return diff;
 }
 
 ItemList::ContainerDiff ItemList::EquipItem(unsigned int baseID, bool silent, bool stick) const
 {
 	ContainerDiff diff;
-
-	if ((baseID == PIPBOY_3000 || baseID == PIPBOY_GLOVES) && (source && GameFactory::GetType(source) == ID_PLAYER))
-		return diff;
 
 	if (!IsEquipped(baseID))
 	{
@@ -224,9 +206,6 @@ ItemList::ContainerDiff ItemList::EquipItem(unsigned int baseID, bool silent, bo
 ItemList::ContainerDiff ItemList::UnequipItem(unsigned int baseID, bool silent, bool stick) const
 {
 	ContainerDiff diff;
-
-	if ((baseID == PIPBOY_3000 || baseID == PIPBOY_GLOVES) && (source && GameFactory::GetType(source) == ID_PLAYER))
-		return diff;
 
 	NetworkID id = IsEquipped(baseID);
 

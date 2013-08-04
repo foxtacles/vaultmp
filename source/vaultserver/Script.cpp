@@ -530,14 +530,6 @@ unsigned long long Script::Timer_Respawn(NetworkID id)
 
 	RemoveAllItems(id);
 
-	for (const auto& item : Player::default_items)
-	{
-		AddItem(id, item.first, get<0>(item.second), get<1>(item.second), get<3>(item.second));
-
-		if (get<2>(item.second))
-			EquipItem(id, item.first, get<3>(item.second), get<4>(item.second));
-	}
-
 	const auto& values = Player::default_values;
 
 	for (const auto& value : values)
@@ -2818,7 +2810,10 @@ NetworkID Script::GetWindowRoot(NetworkID id)
 		NetworkID parent;
 
 		while ((parent = window->GetParentWindow()))
+		{
+			GameFactory::LeaveReference(window);
 			window = GameFactory::GetObject<Window>(parent).get();
+		}
 
 		return window->GetNetworkID();
 	});

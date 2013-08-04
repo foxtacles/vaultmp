@@ -1561,13 +1561,6 @@ void Game::AddItem(const FactoryContainer& reference, const FactoryItem& item, u
 
 void Game::AddItem(const FactoryContainer& reference, unsigned int baseID, unsigned int count, double condition, bool silent, unsigned int key)
 {
-	if ((baseID == PIPBOY_3000 || baseID == PIPBOY_GLOVES) && reference->GetReference() == PLAYER_REFERENCE)
-	{
-		if (key)
-			Lockable::Retrieve(key);
-		return;
-	}
-
 	auto* container = reference.operator->();
 
 	auto func = [container, baseID, count, condition, silent](unsigned int key)
@@ -1589,13 +1582,6 @@ void Game::RemoveItem(const FactoryContainer& reference, const FactoryItem& item
 
 void Game::RemoveItem(const FactoryContainer& reference, unsigned int baseID, unsigned int count, bool silent, unsigned int key)
 {
-	if ((baseID == PIPBOY_3000 || baseID == PIPBOY_GLOVES) && reference->GetReference() == PLAYER_REFERENCE)
-	{
-		if (key)
-			Lockable::Retrieve(key);
-		return;
-	}
-
 	auto* container = reference.operator->();
 
 	auto func = [container, baseID, count, silent](unsigned int key)
@@ -1693,13 +1679,6 @@ void Game::EquipItem(const FactoryActor& reference, const FactoryItem& item, uns
 
 void Game::EquipItem(const FactoryActor& reference, unsigned int baseID, bool silent, bool stick, unsigned int key)
 {
-	if ((baseID == PIPBOY_3000 || baseID == PIPBOY_GLOVES) && reference->GetReference() == PLAYER_REFERENCE)
-	{
-		if (key)
-			Lockable::Retrieve(key);
-		return;
-	}
-
 	Interface::StartDynamic();
 
 	Interface::ExecuteCommand("EquipItem", {reference->GetReferenceParam(), RawParameter(baseID), RawParameter(stick), RawParameter(silent)}, key);
@@ -1714,13 +1693,6 @@ void Game::UnequipItem(const FactoryActor& reference, const FactoryItem& item, u
 
 void Game::UnequipItem(const FactoryActor& reference, unsigned int baseID, bool silent, bool stick, unsigned int key)
 {
-	if ((baseID == PIPBOY_3000 || baseID == PIPBOY_GLOVES) && reference->GetReference() == PLAYER_REFERENCE)
-	{
-		if (key)
-			Lockable::Retrieve(key);
-		return;
-	}
-
 	Interface::StartDynamic();
 
 	Interface::ExecuteCommand("UnequipItem", {reference->GetReferenceParam(), RawParameter(baseID), RawParameter(stick), RawParameter(silent)}, key);
