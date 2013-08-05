@@ -195,7 +195,7 @@ class Interface : public API
 		typedef void (*ResultHandler)(unsigned int, const std::vector<double>&, double, bool);
 
 	private:
-		typedef std::unordered_multimap<std::string, ParamContainer> Native;
+		typedef std::unordered_multimap<Values::Func, ParamContainer, _hash_Func> Native;
 		typedef std::multimap<unsigned int, Native::iterator> PriorityMap;
 		typedef std::vector<std::vector<Native::iterator>> StaticCommandList;
 		typedef std::deque<std::pair<Native::iterator, unsigned int>> DynamicCommandList;
@@ -220,7 +220,7 @@ class Interface : public API
 		static CriticalSection job_cs;
 		static Native natives;
 
-		static std::vector<std::string> Evaluate(Native::iterator _it);
+		static API::CommandInput Evaluate(Native::iterator _it);
 
 		static void CommandThreadReceive();
 		static void CommandThreadSend();
@@ -284,19 +284,12 @@ class Interface : public API
 
 		/**
 		 * \brief Setups a command
-		 *
-		 * name refers to the API command
-		 * param is a ParamContainer which is a STL list of Parameter's
-		 * priority (optional) - the lower this variable, the higher is the priority
 		 */
-		static void SetupCommand(const std::string& name, ParamContainer&& param, unsigned int priority = 1);
+		static void SetupCommand(Values::Func opcode, ParamContainer&&, unsigned int priority = 1);
 		/**
 		 * \brief Executes a command once
-		 *
-		 * name refers to an existing command
-		 * key (optional) - a key (usually from the Lockable class) which is to later identify this command
 		 */
-		static void ExecuteCommand(const std::string& name, ParamContainer&&, unsigned int key = 0);
+		static void ExecuteCommand(Values::Func opcode, ParamContainer&&, unsigned int key = 0);
 		/**
 		 * \brief Pushes a job
 		 */

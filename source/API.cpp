@@ -242,92 +242,92 @@ API::ValueList API::controls = {
 	};
 
 API::FunctionMap API::functions = {
-		{"GetPos", {"ra", Func_GetPos}},
-		{"SetPos", {"rad", Func_SetPos}},
-		{"GetAngle", {"ra", Func_GetAngle}},
-		{"SetAngle", {"rad", Func_SetAngle}},
-		{"GetBaseActorValue", {"rv", Func_GetBaseActorValue}},
-		{"SetActorValue", {"rvi", Func_SetActorValue}},
-		{"GetActorValue", {"rv", Func_GetActorValue}},
-		{"ForceActorValue", {"rvi", Func_ForceActorValue}},
-		{"GetDead", {"r", Func_GetDead}},
-		{"MoveTo", {"roDDD", Func_MoveTo}},
-		{"PlaceAtMe", {"rbIII", Func_PlaceAtMe}},
-		{"PlaceAtMeHealthPercent", {"rbdIII", Func_PlaceAtMeHealthPercent}},
-		{"SetRestrained", {"ri", Func_SetRestrained}},
-		{"PlayGroup", {"rgi", Func_PlayGroup}},
-		{"SetAlert", {"ri", Func_SetAlert}},
-		{"RemoveAllItems", {"rCI", Func_RemoveAllItems}},
-		{"GetCombatTarget", {"r", Func_GetCombatTarget}},
-		{"SetForceSneak", {"ri", Func_SetForceSneak}},
-		{"GetActorState", {"rI", Func_GetActorState}},
-		{"GUIChat", {"s", Func_GUIChat}},
-		{"GUIMode", {"i", Func_GUIMode}},
-		{"GUICreateWindow", {"s", Func_GUICreateWindow}},
-		{"GUICreateButton", {"ss", Func_GUICreateButton}},
-		{"GUICreateText", {"ss", Func_GUICreateText}},
-		{"GUICreateEdit", {"ss", Func_GUICreateEdit}},
-		{"GUIRemoveWindow", {"s", Func_GUIRemoveWindow}},
-		{"GUIPos", {"sdddd", Func_GUIPos}},
-		{"GUISize", {"sdddd", Func_GUISize}},
-		{"GUIVisible", {"si", Func_GUIVisible}},
-		{"GUILocked", {"si", Func_GUILocked}},
-		{"GUIText", {"ss", Func_GUIText}},
-		{"GUIClick", {"s", Func_GUIClick}},
-		{"GUIMaxLen", {"si", Func_GUIMaxLen}},
-		{"GUIValid", {"ss", Func_GUIValid}},
-		{"Enable", {"rI", Func_Enable}},
-		{"Disable", {"rI", Func_Disable}},
-		{"EquipItem", {"rjII", Func_EquipItem}},
-		{"UnequipItem", {"rjII", Func_UnequipItem}},
-		{"AddItem", {"rkiI", Func_AddItem}},
-		{"AddItemHealthPercent", {"rjidI", Func_AddItemHealthPercent}},
-		{"RemoveItem", {"rkiI", Func_RemoveItem}},
-		{"Kill", {"rQII", Func_Kill}},
-		{"IsMoving", {"r", Func_IsMoving}},
-		{"MarkForDelete", {"r", Func_MarkForDelete}},
-		{"IsAnimPlaying", {"rG", Func_IsAnimPlaying}},
-		{"FireWeapon", {"r$b", Func_FireWeapon}},
-		{"GetCauseofDeath", {"r", Func_GetCauseofDeath}},
-		{"IsLimbGone", {"ri", Func_IsLimbGone}},
-		{"EnablePlayerControls", {"IIIIIII", Func_EnablePlayerControls}},
-		{"DisablePlayerControls", {"$IIIIIII", Func_DisablePlayerControls}}, // $ required, else access violation...
-		{"DamageActorValue", {"rvd", Func_DamageActorValue}},
-		{"RestoreActorValue", {"rvd", Func_RestoreActorValue}},
-		{"PlayIdle", {"rs", Func_PlayIdle}},
-		{"AgeRace", {"r$i", Func_AgeRace}},
-		{"MatchRace", {"r$y", Func_MatchRace}}, // has been patched to take Race
-		{"SexChange", {"r$I", Func_SexChange}},
-		{"ForceWeather", {"nI", Func_ForceWeather}},
-		{"ScanContainer", {"r", Func_ScanContainer}},
-		{"RemoveAllItemsEx", {"r", Func_RemoveAllItemsEx}},
-		{"ForceRespawn", {"", Func_ForceRespawn}},
-		{"SetGlobalValue", {"ri", Func_SetGlobalValue}},
-		{"UIMessage", {"si", Func_UIMessage}},
-		{"Lock", {"rII", Func_Lock}},
-		{"Unlock", {"r", Func_Unlock}},
-		{"SetOwnership", {"rF", Func_SetOwnership}},
-		{"GetLocked", {"r", Func_GetLocked}},
-		{"Activate", {"roI", Func_Activate}},
-		{"CenterOnCell", {"$s", Func_CenterOnCell}},
-		{"CenterOnExterior", {"$ii", Func_CenterOnExterior}},
-		{"SetINISetting", {"$ss", Func_SetINISetting}},
+		{Func::GetPos, "ra"},
+		{Func::SetPos, "rad"},
+		{Func::GetAngle, "ra"},
+		{Func::SetAngle, "rad"},
+		{Func::GetBaseActorValue, "rv"},
+		{Func::SetActorValue, "rvi"},
+		{Func::GetActorValue, "rv"},
+		{Func::ForceActorValue, "rvi"},
+		{Func::GetDead, "r"},
+		{Func::MoveTo, "roDDD"},
+		{Func::PlaceAtMe, "rbIII"},
+		{Func::PlaceAtMeHealthPercent, "rbdIII"},
+		{Func::SetRestrained, "ri"},
+		{Func::PlayGroup, "rgi"},
+		{Func::SetAlert, "ri"},
+		{Func::RemoveAllItems, "rCI"},
+		{Func::GetCombatTarget, "r"},
+		{Func::SetForceSneak, "ri"},
+		{Func::GetActorState, "rI"},
+		{Func::GUIChat, "s"},
+		{Func::GUIMode, "i"},
+		{Func::GUICreateWindow, "s"},
+		{Func::GUICreateButton, "ss"},
+		{Func::GUICreateText, "ss"},
+		{Func::GUICreateEdit, "ss"},
+		{Func::GUIRemoveWindow, "s"},
+		{Func::GUIPos, "sdddd"},
+		{Func::GUISize, "sdddd"},
+		{Func::GUIVisible, "si"},
+		{Func::GUILocked, "si"},
+		{Func::GUIText, "ss"},
+		{Func::GUIClick, "s"},
+		{Func::GUIMaxLen, "si"},
+		{Func::GUIValid, "ss"},
+		{Func::Enable, "rI"},
+		{Func::Disable, "rI"},
+		{Func::EquipItem, "rjII"},
+		{Func::UnequipItem, "rjII"},
+		{Func::AddItem, "rkiI"},
+		{Func::AddItemHealthPercent, "rjidI"},
+		{Func::RemoveItem, "rkiI"},
+		{Func::Kill, "rQII"},
+		{Func::IsMoving, "r"},
+		{Func::MarkForDelete, "r"},
+		{Func::IsAnimPlaying, "rG"},
+		{Func::FireWeapon, "r$b"},
+		{Func::GetCauseofDeath, "r"},
+		{Func::IsLimbGone, "ri"},
+		{Func::EnablePlayerControls, "IIIIIII"},
+		{Func::DisablePlayerControls, "$IIIIIII"}, // $ required, else access violation...
+		{Func::DamageActorValue, "rvd"},
+		{Func::RestoreActorValue, "rvd"},
+		{Func::PlayIdle, "rs"},
+		{Func::AgeRace, "r$i"},
+		{Func::MatchRace, "r$y"}, // has been patched to take Race
+		{Func::SexChange, "r$I"},
+		{Func::ForceWeather, "nI"},
+		{Func::ScanContainer, "r"},
+		{Func::RemoveAllItemsEx, "r"},
+		{Func::ForceRespawn, ""},
+		{Func::SetGlobalValue, "ri"},
+		{Func::UIMessage, "si"},
+		{Func::Lock, "rII"},
+		{Func::Unlock, "r"},
+		{Func::SetOwnership, "rF"},
+		{Func::GetLocked, "r"},
+		{Func::Activate, "roI"},
+		{Func::CenterOnCell, "$s"},
+		{Func::CenterOnExterior, "$ii"},
+		{Func::SetINISetting, "$ss"},
 
-		{"Load", {"$s", Func_Load}},
-		{"CenterOnWorld", {"$wii", Func_CenterOnWorld}},
-		{"SetName", {"rsB", Func_SetName}},
-		{"GetParentCell", {"r", Func_GetParentCell}},
-		{"GetFirstRef", {"III", Func_GetFirstRef}},
-		{"GetNextRef", {"", Func_GetNextRef}},
-		{"GetControl", {"x", Func_GetControl}},
-		{"DisableControl", {"x", Func_DisableControl}},
-		{"EnableControl", {"x", Func_EnableControl}},
-		{"DisableKey", {"i", Func_DisableKey}},
-		{"EnableKey", {"i", Func_EnableKey}},
-		{"GetRefCount", {"r", Func_GetRefCount}},
-		{"SetRefCount", {"ri", Func_SetRefCount}},
-		{"GetBaseObject", {"r", Func_GetBaseObject}},
-		{"SetCurrentHealth", {"rd", Func_SetCurrentHealth}},
+		{Func::Load, "$s"},
+		{Func::CenterOnWorld, "$wii"},
+		{Func::SetName, "rsB"},
+		{Func::GetParentCell, "r"},
+		{Func::GetFirstRef, "III"},
+		{Func::GetNextRef, ""},
+		{Func::GetControl, "x"},
+		{Func::DisableControl, "x"},
+		{Func::EnableControl, "x"},
+		{Func::DisableKey, "i"},
+		{Func::EnableKey, "i"},
+		{Func::GetRefCount, "r"},
+		{Func::SetRefCount, "ri"},
+		{Func::GetBaseObject, "r"},
+		{Func::SetCurrentHealth, "rd"},
 	};
 
 #ifdef VAULTMP_DEBUG
@@ -539,44 +539,40 @@ void API::Terminate()
 	queue.clear();
 }
 
-vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* result, unsigned short opcode)
+vector<double> API::ParseCommand(const vector<string>& cmd, const char* def, unsigned short opcode, op_default* result)
 {
-	if (!cmd_ || !def || !result || !*cmd_ || !opcode)
-		throw VaultException("Invalid call to API::ParseCommand, one or more arguments are NULL (%s, %s, %04X)", cmd_, def, opcode).stacktrace();
+	string raw;
 
-	string _cmd(cmd_);
-	vector<char> cmd_buf(cmd_, cmd_ + _cmd.length() + 1);
+	for (const auto& param : cmd)
+		raw += param + " ";
+
+	if (!def || !result || !opcode)
+		throw VaultException("Invalid call to API::ParseCommand, one or more arguments are NULL or empty (%s, %s, %04X)", raw.c_str(), def, opcode).stacktrace();
+
 	vector<double> result_data;
-
-	char* cmd = &cmd_buf[0];
 
 	char* arg1_pos = reinterpret_cast<char*>(&result->arg1.unk1);
 	char* arg2_pos = reinterpret_cast<char*>(&result->arg2.param1);
 	unsigned short* _opcode = &result->arg2.opcode;
 	unsigned short* _numargs = &result->arg2.numargs;
+	unsigned int idx = 0;
 
-	char* tokenizer = nullptr;
 	unsigned int reference = 0x00;
 	result_data.emplace_back(storeIn<double>(opcode));
 
-	// Skip the function name
-	tokenizer = strtok(cmd, " ");
-
-	if (*def == 'r')
+	if (def[idx] == 'r')
 	{
-		tokenizer = strtok(nullptr, " ");
-
-		if (tokenizer == nullptr)
+		if (cmd.empty())
 			throw VaultException("API::ParseCommand expected a reference base operand, which could not be found").stacktrace();
 
-		reference = strtoul(tokenizer, nullptr, 0);
+		reference = strtoul(cmd.front().c_str(), nullptr, 0);
 
 		if (reference == 0x00)
-			throw VaultException("API::ParseCommand reference base operand is NULL (%s, %s, %04X)", _cmd.c_str(), def, opcode).stacktrace();
+			throw VaultException("API::ParseCommand reference base operand is NULL (%s, %s, %04X)", raw.c_str(), def, opcode).stacktrace();
 
 		result->arg3.reference = reference;
 		result_data.emplace_back(storeIn<double>(reference));
-		++def;
+		++idx;
 	}
 	else
 	{
@@ -593,15 +589,18 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 
 	unsigned short numargs = 0x00;
 	unsigned int refparam = 0x00;
+	unsigned int offset = 0;
 
-	while (*def)
+	while (def[idx])
 	{
-		char type = *def++;
+		const char* current = (idx - offset) < cmd.size() ? cmd[idx - offset].c_str() : nullptr;
+		char type = def[idx++];
 
 		switch (type)
 		{
 			case '$': // delegate
 				result->delegate = true;
+				++offset;
 				continue;
 
 			default:
@@ -687,17 +686,12 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 
 		arg1_pos += 0x0C;
 
-		if (tokenizer != nullptr)
-			tokenizer = strtok(nullptr, " ");
-		else
-			continue;
-
-		if (tokenizer == nullptr)
+		if (!current)
 		{
 			if (isupper(type))
 				continue;
 			else
-				throw VaultException("API::ParseCommand failed parsing command %s (end of input reached, not all required arguments could be found)", _cmd.c_str()).stacktrace();
+				throw VaultException("API::ParseCommand failed parsing command %s, %04X (end of input reached, not all required arguments could be found)", raw.c_str(), opcode).stacktrace();
 		}
 
 		/* Types:
@@ -728,10 +722,10 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 			case 'x': // Control code
 			case 'i': // Integer
 			{
-				unsigned int integer = strtoul(tokenizer, nullptr, 0);
+				unsigned int integer = strtoul(current, nullptr, 0);
 
 				if (tolower(type) == 'x' && !IsControl((unsigned char) integer))
-					throw VaultException("API::ParseCommand could not find a control code for input %s", tokenizer).stacktrace();
+					throw VaultException("API::ParseCommand could not find a control code for input %s", current).stacktrace();
 
 				*reinterpret_cast<unsigned char*>(arg2_pos) = 0x6E;
 				*reinterpret_cast<unsigned int*>(arg2_pos + sizeof(unsigned char)) = integer;
@@ -742,7 +736,7 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 
 			case 'd': // Double
 			{
-				double floating = atof(tokenizer);
+				double floating = atof(current);
 				*reinterpret_cast<unsigned char*>(arg2_pos) = 0x7A;
 				*reinterpret_cast<double*>(arg2_pos + sizeof(unsigned char)) = floating;
 				result_data.emplace_back(floating);
@@ -764,7 +758,7 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 				if (refparam != 0x00)   // We don't support more than one refparam yet
 					throw VaultException("API::ParseCommand does only support one reference argument up until now").stacktrace();
 
-				refparam = strtoul(tokenizer, nullptr, 0);
+				refparam = strtoul(current, nullptr, 0);
 
 				if (!refparam)
 					throw VaultException("API::ParseCommand reference argument is NULL").stacktrace();
@@ -778,10 +772,10 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 
 			case 'v': // Actor Value
 			{
-				unsigned char value = RetrieveValue(tokenizer);
+				unsigned char value = RetrieveValue(current);
 
 				if (value == 0xFF)
-					throw VaultException("API::ParseCommand could not find an Actor Value identifier for input %s", tokenizer).stacktrace();
+					throw VaultException("API::ParseCommand could not find an Actor Value identifier for input %s", current).stacktrace();
 
 				*reinterpret_cast<unsigned short*>(arg2_pos) = (unsigned short) value;
 				result_data.emplace_back(storeIn<double>(value));
@@ -791,10 +785,10 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 
 			case 'a': // Axis
 			{
-				unsigned char axis = RetrieveAxis(tokenizer);
+				unsigned char axis = RetrieveAxis(current);
 
 				if (axis == 0xFF)
-					throw VaultException("API::ParseCommand could not find an Axis identifier for input %s", tokenizer).stacktrace();
+					throw VaultException("API::ParseCommand could not find an Axis identifier for input %s", current).stacktrace();
 
 				*reinterpret_cast<unsigned char*>(arg2_pos) = axis;
 				result_data.emplace_back(storeIn<double>(axis));
@@ -804,10 +798,10 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 
 			case 'g': // Animation Group
 			{
-				unsigned char anim = RetrieveAnim(tokenizer);
+				unsigned char anim = RetrieveAnim(current);
 
 				if (anim == 0xFF)
-					throw VaultException("API::ParseCommand could not find an Animation identifier for input %s", tokenizer).stacktrace();
+					throw VaultException("API::ParseCommand could not find an Animation identifier for input %s", current).stacktrace();
 
 				*reinterpret_cast<unsigned short*>(arg2_pos) = (unsigned short) anim;
 				result_data.emplace_back(storeIn<double>(anim));
@@ -817,12 +811,10 @@ vector<double> API::ParseCommand(const char* cmd_, const char* def, op_default* 
 
 			case 's': // String
 			{
-				string str = *tokenizer != '^' ? Utils::str_replace(tokenizer, "|", " ") : "";
-
-				unsigned short length = (unsigned short) str.length();
+				unsigned short length = (unsigned short) strlen(current);
 
 				*reinterpret_cast<unsigned short*>(arg2_pos) = length;
-				memcpy(arg2_pos + sizeof(unsigned short), str.c_str(), length + sizeof(unsigned char));
+				memcpy(arg2_pos + sizeof(unsigned short), current, length + sizeof(unsigned char));
 				result_data.emplace_back(0); // Don't pass on string for now
 				arg2_pos += sizeof(unsigned short);
 				arg2_pos += length + sizeof(unsigned char);
@@ -962,18 +954,6 @@ vector<string> API::RetrieveAllAnims_Reverse()
 	return result;
 }
 
-const pair<string, unsigned short>& API::RetrieveFunction(const string& name)
-{
-	auto it = functions.find(name);
-
-	if (it != functions.end())
-		return it->second;
-
-	static auto empty = pair<string, unsigned short>();
-
-	return empty;
-}
-
 unsigned char* API::BuildCommandStream(vector<double>&& info, unsigned int key, unsigned char* command, unsigned int size)
 {
 	if (size + 5 > PIPE_LENGTH)
@@ -992,25 +972,23 @@ unsigned char* API::BuildCommandStream(vector<double>&& info, unsigned int key, 
 	return data;
 }
 
-API::CommandParsed API::Translate(const vector<string>& cmd, unsigned int key)
+API::CommandParsed API::Translate(const CommandInput& cmd, unsigned int key)
 {
 	CommandParsed stream;
 
-	for (const string& command : cmd)
+	if (!functions.count(cmd.first))
 	{
-		const auto& func = RetrieveFunction(command.substr(0, command.find_first_of(' ')));
-
-		if (!func.second)
-		{
 #ifdef VAULTMP_DEBUG
-			debug.print("API was not able to find function for ", command.c_str());
+		debug.print("API was not able to find function for ", hex, cmd.first);
 #endif
-			continue;
-		}
+		return stream;
+	}
 
+	for (const auto& command : cmd.second)
+	{
 		op_default result;
 
-		vector<double> parsed = ParseCommand(command.c_str(), func.first.c_str(), &result, func.second);
+		vector<double> parsed = ParseCommand(command, functions[cmd.first].c_str(), static_cast<unsigned short>(cmd.first), &result);
 		unsigned char* data = BuildCommandStream(move(parsed), key, reinterpret_cast<unsigned char*>(&result), sizeof(op_default));
 		stream.emplace_back(data);
 	}

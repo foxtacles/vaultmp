@@ -223,98 +223,98 @@ namespace Values
 	 * \brief Function opcodes
 	 */
 
-	enum Functions
+	enum class Func : unsigned short
 	{
-		Func_CenterOnCell = 0x0123,
-		Func_CenterOnExterior = 0x0127,
-		Func_SetINISetting = 0x0125,
+		CenterOnCell = 0x0123,
+		CenterOnExterior = 0x0127,
+		SetINISetting = 0x0125,
 
-		Func_GetPos = 0x1006,
-		Func_SetPos = 0x1007,
-		Func_GetAngle = 0x1008,
-		Func_SetAngle = 0x1009,
-		Func_GetBaseActorValue = 0x1115,
-		Func_SetActorValue = 0x100F,
-		Func_GetActorValue = 0x100E,
-		Func_ForceActorValue = 0x110E,
-		Func_GetDead = 0x102E,
-		Func_MoveTo = 0x109E,
-		Func_PlaceAtMe = 0x1025,
-		Func_PlaceAtMeHealthPercent = 0x11BD,
-		Func_SetRestrained = 0x10F3,
-		Func_PlayGroup = 0x1013,
-		Func_SetAlert = 0x105A,
-		Func_RemoveAllItems = 0x10AD,
-		Func_Enable = 0x1021,
-		Func_Disable = 0x1022,
-		Func_EquipItem = 0x10EE,
-		Func_UnequipItem = 0x10EF,
-		Func_AddItem = 0x1002,
-		Func_AddItemHealthPercent = 0x11BC,
-		Func_RemoveItem = 0x1052,
-		Func_Kill = 0x108B,
-		Func_GetCombatTarget = 0x10E8,
-		Func_SetForceSneak = 0x10D3,
-		Func_IsMoving = 0x1019,
-		Func_MarkForDelete = 0x11BB,
-		Func_IsAnimPlaying = 0x1128,
-		Func_FireWeapon = 0x11E2,
-		Func_GetCauseofDeath = 0x118D,
-		Func_IsLimbGone = 0x118E,
-		Func_EnablePlayerControls = 0x1060,
-		Func_DisablePlayerControls = 0x1061,
-		Func_DamageActorValue = 0x1181,
-		Func_RestoreActorValue = 0x1182,
-		Func_PlayIdle = 0x1190,
-		Func_AgeRace = 0x11E4,
-		Func_MatchRace = 0x11E5,
-		Func_SexChange = 0x11E7,
-		Func_ForceWeather = 0x112D,
-		Func_Lock = 0x1072,
-		Func_Unlock = 0x1073,
-		Func_SetOwnership = 0x1117,
-		Func_GetLocked = 0x1005,
-		Func_Activate = 0x100D,
+		GetPos = 0x1006,
+		SetPos = 0x1007,
+		GetAngle = 0x1008,
+		SetAngle = 0x1009,
+		GetBaseActorValue = 0x1115,
+		SetActorValue = 0x100F,
+		GetActorValue = 0x100E,
+		ForceActorValue = 0x110E,
+		GetDead = 0x102E,
+		MoveTo = 0x109E,
+		PlaceAtMe = 0x1025,
+		PlaceAtMeHealthPercent = 0x11BD,
+		SetRestrained = 0x10F3,
+		PlayGroup = 0x1013,
+		SetAlert = 0x105A,
+		RemoveAllItems = 0x10AD,
+		Enable = 0x1021,
+		Disable = 0x1022,
+		EquipItem = 0x10EE,
+		UnequipItem = 0x10EF,
+		AddItem = 0x1002,
+		AddItemHealthPercent = 0x11BC,
+		RemoveItem = 0x1052,
+		Kill = 0x108B,
+		GetCombatTarget = 0x10E8,
+		SetForceSneak = 0x10D3,
+		IsMoving = 0x1019,
+		MarkForDelete = 0x11BB,
+		IsAnimPlaying = 0x1128,
+		FireWeapon = 0x11E2,
+		GetCauseofDeath = 0x118D,
+		IsLimbGone = 0x118E,
+		EnablePlayerControls = 0x1060,
+		DisablePlayerControls = 0x1061,
+		DamageActorValue = 0x1181,
+		RestoreActorValue = 0x1182,
+		PlayIdle = 0x1190,
+		AgeRace = 0x11E4,
+		MatchRace = 0x11E5,
+		SexChange = 0x11E7,
+		ForceWeather = 0x112D,
+		Lock = 0x1072,
+		Unlock = 0x1073,
+		SetOwnership = 0x1117,
+		GetLocked = 0x1005,
+		Activate = 0x100D,
 
-		Func_Load = 0x014F,
-		Func_CenterOnWorld = 0x0143,
+		Load = 0x014F,
+		CenterOnWorld = 0x0143,
 
-		Func_SetName = 0x1485,
-		Func_GetParentCell = 0x1495,
-		Func_GetFirstRef = 0x14AF,
-		Func_GetNextRef = 0x14B0,
-		Func_GetControl = 0x144E,
-		Func_DisableControl = 0x145D,
-		Func_EnableControl = 0x145E,
-		Func_DisableKey = 0x143E,
-		Func_EnableKey = 0x143F,
-		Func_GetRefCount = 0x14C3,
-		Func_SetRefCount = 0x14C4,
-		Func_GetBaseObject = 0x1416,
-		Func_SetCurrentHealth = 0x14BF,
+		SetName = 0x1485,
+		GetParentCell = 0x1495,
+		GetFirstRef = 0x14AF,
+		GetNextRef = 0x14B0,
+		GetControl = 0x144E,
+		DisableControl = 0x145D,
+		EnableControl = 0x145E,
+		DisableKey = 0x143E,
+		EnableKey = 0x143F,
+		GetRefCount = 0x14C3,
+		SetRefCount = 0x14C4,
+		GetBaseObject = 0x1416,
+		SetCurrentHealth = 0x14BF,
 
-		Func_GetActorState = 0x0001 | VAULTFUNCTION,
-		Func_OnActivate = 0x0002 | VAULTFUNCTION,
-		Func_ScanContainer = 0x0003 | VAULTFUNCTION,
-		Func_UIMessage = 0x0004 | VAULTFUNCTION,
-		Func_RemoveAllItemsEx = 0x0005 | VAULTFUNCTION,
-		Func_ForceRespawn = 0x0006 | VAULTFUNCTION,
-		Func_SetGlobalValue = 0x0007 | VAULTFUNCTION,
-		Func_GUIChat = 0x0008 | VAULTFUNCTION,
-		Func_GUIMode = 0x0009 | VAULTFUNCTION,
-		Func_GUICreateWindow = 0x0010 | VAULTFUNCTION,
-		Func_GUICreateButton = 0x0011 | VAULTFUNCTION,
-		Func_GUICreateText = 0x0012 | VAULTFUNCTION,
-		Func_GUICreateEdit = 0x0013 | VAULTFUNCTION,
-		Func_GUIRemoveWindow = 0x0014 | VAULTFUNCTION,
-		Func_GUIPos = 0x0015 | VAULTFUNCTION,
-		Func_GUISize = 0x0016 | VAULTFUNCTION,
-		Func_GUIVisible = 0x0017 | VAULTFUNCTION,
-		Func_GUILocked = 0x0018 | VAULTFUNCTION,
-		Func_GUIText = 0x0019 | VAULTFUNCTION,
-		Func_GUIClick = 0x0020 | VAULTFUNCTION,
-		Func_GUIMaxLen = 0x0021 | VAULTFUNCTION,
-		Func_GUIValid = 0x0022 | VAULTFUNCTION
+		GetActorState = 0x0001 | VAULTFUNCTION,
+		OnActivate = 0x0002 | VAULTFUNCTION,
+		ScanContainer = 0x0003 | VAULTFUNCTION,
+		UIMessage = 0x0004 | VAULTFUNCTION,
+		RemoveAllItemsEx = 0x0005 | VAULTFUNCTION,
+		ForceRespawn = 0x0006 | VAULTFUNCTION,
+		SetGlobalValue = 0x0007 | VAULTFUNCTION,
+		GUIChat = 0x0008 | VAULTFUNCTION,
+		GUIMode = 0x0009 | VAULTFUNCTION,
+		GUICreateWindow = 0x0010 | VAULTFUNCTION,
+		GUICreateButton = 0x0011 | VAULTFUNCTION,
+		GUICreateText = 0x0012 | VAULTFUNCTION,
+		GUICreateEdit = 0x0013 | VAULTFUNCTION,
+		GUIRemoveWindow = 0x0014 | VAULTFUNCTION,
+		GUIPos = 0x0015 | VAULTFUNCTION,
+		GUISize = 0x0016 | VAULTFUNCTION,
+		GUIVisible = 0x0017 | VAULTFUNCTION,
+		GUILocked = 0x0018 | VAULTFUNCTION,
+		GUIText = 0x0019 | VAULTFUNCTION,
+		GUIClick = 0x0020 | VAULTFUNCTION,
+		GUIMaxLen = 0x0021 | VAULTFUNCTION,
+		GUIValid = 0x0022 | VAULTFUNCTION
 	};
 
 	enum ActorVals
@@ -471,12 +471,15 @@ namespace Values
 class API
 {
 	public:
+		struct _hash_Func { inline size_t operator() (Values::Func opcode) const { return std::hash<std::underlying_type<Values::Func>::type>()(static_cast<std::underlying_type<Values::Func>::type>(opcode)); }};
+
+		typedef std::pair<Values::Func, std::vector<std::vector<std::string>>> CommandInput;
 		typedef std::tuple<unsigned int, std::vector<double>, double, bool> CommandResult;
 		typedef std::vector<std::unique_ptr<unsigned char[]>> CommandParsed;
 
 	private:
 		typedef std::deque<std::tuple<unsigned int, std::vector<double>, unsigned int>> CommandQueue;
-		typedef std::unordered_map<std::string, std::pair<std::string, unsigned short>> FunctionMap;
+		typedef std::unordered_map<Values::Func, std::string, _hash_Func> FunctionMap;
 		typedef std::unordered_map<std::string, unsigned char> ValueMap;
 		typedef std::set<unsigned char> ValueList;
 
@@ -501,30 +504,17 @@ class API
 		static ValueList controls;
 		static CommandQueue queue;
 
-		static const std::pair<std::string, unsigned short>& RetrieveFunction(const std::string& name);
 		static unsigned char* BuildCommandStream(std::vector<double>&& info, unsigned int key, unsigned char* command, unsigned int size);
-
-		static std::vector<double> ParseCommand(const char* cmd_, const char* def, op_default* result, unsigned short opcode);
+		static std::vector<double> ParseCommand(const std::vector<std::string>& cmd, const char* def, unsigned short opcode, op_default* result);
 
 	protected:
 		/**
 		 * \brief Translates commands to a stream of bytes
-		 *
-		 * Takes a STL vector as an argument
-		 * Also takes an optional unsigned key (usually comes from the Lockable extension class) which will automatically associated with each parsed command.
-		 * Returns a STL vector containing the parsed commands (allocated on the heap; you are required to free them when you don't need them anymore).
 		 */
-		static CommandParsed Translate(const std::vector<std::string>& cmd, unsigned int key = 0);
+		static CommandParsed Translate(const CommandInput& cmd, unsigned int key = 0);
 
 		/**
 		 * \brief Translates a result from vaultmp DLL
-		 *
-		 * Given the retrieved byte stream, will attempt to translate it to CommandResult's.
-		 * CommandResult is of the form pair<pair<pair<unsigned int, vector<double> >, double>, bool>
-		 * bool indicates if the command was successful.
-		 * double is the result value of the command.
-		 * unsigned int is the key provided to the corresponding Translate call.
-		 * vector<double> is the argument list of the executed command; the first element is always the opcode of the function
 		 */
 		static std::vector<CommandResult> Translate(unsigned char* stream);
 
