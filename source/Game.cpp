@@ -3293,9 +3293,7 @@ void Game::GetWindowMode(bool enabled)
 
 void Game::GetWindowClick(string name)
 {
-	static const char* exit_button = "closeBTN";
-
-	if (!name.compare(exit_button))
+	if (!name.compare(Button::CLOSE_BUTTON))
 		Interface::SignalEnd();
 	else
 	{

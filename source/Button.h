@@ -24,6 +24,8 @@ class Button : public Window
 		Button(pPacket&& packet);
 
 	public:
+		static constexpr const char* CLOSE_BUTTON = "closeBTN";
+
 		virtual ~Button();
 
 		/**

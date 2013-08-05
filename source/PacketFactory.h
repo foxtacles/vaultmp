@@ -19,7 +19,9 @@
 #include <cstring>
 #include <memory>
 
-enum class pTypes : unsigned char
+typedef unsigned char pTypesSize;
+
+enum class pTypes : pTypesSize
 {
 	ID_GAME_AUTH = ID_GAME_FIRST,
 	ID_GAME_LOAD,
