@@ -119,8 +119,14 @@ class PacketFactory
 		template<pTypes type>
 		inline static const typename pTypesMap<type>::type* Cast(const pDefault* packet) { return Cast_<type>::Cast(packet); }
 
+		template<pTypes type>
+		inline static const typename pTypesMap<type>::type* Cast(const pPacket& packet) { return Cast_<type>::Cast(packet.get()); }
+
 		template<pTypes type, typename... Args>
 		inline static void Access(const pDefault* packet, Args&... args) { Access_<type, Args...>::Access(packet, std::forward<Args&>(args)...); }
+
+		template<pTypes type, typename... Args>
+		inline static void Access(const pPacket& packet, Args&... args) { Access_<type, Args...>::Access(packet.get(), std::forward<Args&>(args)...); }
 
 		template<typename T>
 		inline static T Pop(const pDefault* packet);
@@ -161,7 +167,7 @@ class pDefault
 		mutable unsigned int location;
 
 	protected:
-		pDefault(pTypes type) : location(0)
+		pDefault(pTypes type) : location(sizeof(pTypes))
 		{
 			construct(type);
 		}

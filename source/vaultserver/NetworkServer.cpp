@@ -99,8 +99,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 
 		default:
 		{
-			pPacket _packet = PacketFactory::Init(data->data, data->length);
-			const pDefault* packet = _packet.get();
+			pPacket packet = PacketFactory::Init(data->data, data->length);
 
 			switch (packet->type())
 			{
@@ -136,7 +135,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 
 				case pTypes::ID_PLAYER_NEW:
 				{
-					NetworkID id = GameFactory::CreateKnownInstance(ID_PLAYER, packet);
+					NetworkID id = GameFactory::CreateKnownInstance(ID_PLAYER, packet.get());
 					response = Server::NewPlayer(data->guid, id);
 					break;
 				}
