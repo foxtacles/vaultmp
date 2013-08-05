@@ -216,6 +216,10 @@ class Game
 		 */
 		static void SetRestrained(const FactoryActor& reference, bool restrained);
 		/**
+		 * \brief Activates an Object
+		 */
+		static void Activate(const FactoryObject& reference, const FactoryObject& action);
+		/**
 		 * \brief Sets the position of an Object
 		 */
 		static void SetPos(const FactoryObject& reference);

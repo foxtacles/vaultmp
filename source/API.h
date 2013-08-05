@@ -274,6 +274,7 @@ namespace Values
 		Func_Unlock = 0x1073,
 		Func_SetOwnership = 0x1117,
 		Func_GetLocked = 0x1005,
+		Func_Activate = 0x100D,
 
 		Func_Load = 0x014F,
 		Func_CenterOnWorld = 0x0143,

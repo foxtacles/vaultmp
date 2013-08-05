@@ -229,6 +229,9 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 			}
 
+			case Func_Activate:
+				break;
+
 			case Func_GUIChat:
 			{
 				if (!result)
@@ -295,6 +298,10 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 
 				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
 				unsigned int refID = *reinterpret_cast<unsigned int*>(&data[0]);
+
+				auto refs = GameFactory::GetMultiple(vector<unsigned int>{PLAYER_REFERENCE, refID});
+				Activate(refs[1].get(), refs[0].get());
+
 				delete &data;
 				break;
 			}
@@ -1310,6 +1317,15 @@ void Game::SetRestrained(const FactoryActor& reference, bool restrained)
 	Interface::StartDynamic();
 
 	Interface::ExecuteCommand("SetRestrained", {reference->GetReferenceParam(), RawParameter(restrained)});
+
+	Interface::EndDynamic();
+}
+
+void Game::Activate(const FactoryObject& reference, const FactoryObject& action)
+{
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("Activate", {reference->GetReferenceParam(), action->GetReferenceParam()});
 
 	Interface::EndDynamic();
 }

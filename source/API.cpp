@@ -308,6 +308,7 @@ API::FunctionMap API::functions = {
 		{"Unlock", {"r", Func_Unlock}},
 		{"SetOwnership", {"rF", Func_SetOwnership}},
 		{"GetLocked", {"r", Func_GetLocked}},
+		{"Activate", {"roI", Func_Activate}},
 		{"CenterOnCell", {"$s", Func_CenterOnCell}},
 		{"CenterOnExterior", {"$ii", Func_CenterOnExterior}},
 		{"SetINISetting", {"$ss", Func_SetINISetting}},
