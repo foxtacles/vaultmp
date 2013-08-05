@@ -260,6 +260,8 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func_GUISize:
 			case Func_GUIVisible:
 			case Func_GUILocked:
+			case Func_GUIMaxLen:
+			case Func_GUIValid:
 				break;
 
 			case Func_GUIText:
@@ -1133,11 +1135,11 @@ void Game::NewWindow(const FactoryWindow& reference)
 		Interface::ExecuteCommand("GUICreateWindow", {RawParameter(reference->GetLabel())});
 	}
 
-	WindowPos(reference);
-	WindowSize(reference);
-	WindowVisible(reference);
-	WindowLocked(reference);
-	WindowText(reference);
+	SetWindowPos(reference);
+	SetWindowSize(reference);
+	SetWindowVisible(reference);
+	SetWindowLocked(reference);
+	SetWindowText(reference);
 
 	Interface::EndDynamic();
 }
@@ -1195,6 +1197,9 @@ void Game::NewEdit(const FactoryEdit& reference)
 	}
 
 	NewWindow(reference);
+
+	SetEditMaxLength(reference);
+	SetEditValidation(reference);
 
 	Interface::EndDynamic();
 }
@@ -1711,7 +1716,7 @@ void Game::UnequipItem(const FactoryActor& reference, unsigned int baseID, bool 
 	Interface::EndDynamic();
 }
 
-void Game::WindowPos(const FactoryWindow& reference)
+void Game::SetWindowPos(const FactoryWindow& reference)
 {
 	Interface::StartDynamic();
 
@@ -1720,7 +1725,7 @@ void Game::WindowPos(const FactoryWindow& reference)
 	Interface::EndDynamic();
 }
 
-void Game::WindowSize(const FactoryWindow& reference)
+void Game::SetWindowSize(const FactoryWindow& reference)
 {
 	Interface::StartDynamic();
 
@@ -1729,7 +1734,7 @@ void Game::WindowSize(const FactoryWindow& reference)
 	Interface::EndDynamic();
 }
 
-void Game::WindowVisible(const FactoryWindow& reference)
+void Game::SetWindowVisible(const FactoryWindow& reference)
 {
 	Interface::StartDynamic();
 
@@ -1738,7 +1743,7 @@ void Game::WindowVisible(const FactoryWindow& reference)
 	Interface::EndDynamic();
 }
 
-void Game::WindowLocked(const FactoryWindow& reference)
+void Game::SetWindowLocked(const FactoryWindow& reference)
 {
 	Interface::StartDynamic();
 
@@ -1747,7 +1752,7 @@ void Game::WindowLocked(const FactoryWindow& reference)
 	Interface::EndDynamic();
 }
 
-void Game::WindowText(const FactoryWindow& reference)
+void Game::SetWindowText(const FactoryWindow& reference)
 {
 	Interface::StartDynamic();
 
@@ -1756,7 +1761,25 @@ void Game::WindowText(const FactoryWindow& reference)
 	Interface::EndDynamic();
 }
 
-void Game::WindowMode()
+void Game::SetEditMaxLength(const FactoryEdit& reference)
+{
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("GUIMaxLen", {RawParameter(reference->GetLabel()), RawParameter(reference->GetMaxLength())});
+
+	Interface::EndDynamic();
+}
+
+void Game::SetEditValidation(const FactoryEdit& reference)
+{
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand("GUIValid", {RawParameter(reference->GetLabel()), RawParameter(reference->GetValidation())});
+
+	Interface::EndDynamic();
+}
+
+void Game::SetWindowMode()
 {
 	if (GUIMode)
 		DisablePlayerControls(true, true, true, false);
@@ -2450,42 +2473,56 @@ void Game::net_UpdateWindowPos(const FactoryWindow& reference, const tuple<doubl
 {
 	reference->SetPos(get<0>(pos), get<1>(pos), get<2>(pos), get<3>(pos));
 
-	WindowPos(reference);
+	SetWindowPos(reference);
 }
 
 void Game::net_UpdateWindowSize(const FactoryWindow& reference, const tuple<double, double, double, double>& size)
 {
 	reference->SetSize(get<0>(size), get<1>(size), get<2>(size), get<3>(size));
 
-	WindowSize(reference);
+	SetWindowSize(reference);
 }
 
 void Game::net_UpdateWindowVisible(const FactoryWindow& reference, bool visible)
 {
 	reference->SetVisible(visible);
 
-	WindowVisible(reference);
+	SetWindowVisible(reference);
 }
 
 void Game::net_UpdateWindowLocked(const FactoryWindow& reference, bool locked)
 {
 	reference->SetLocked(locked);
 
-	WindowLocked(reference);
+	SetWindowLocked(reference);
 }
 
 void Game::net_UpdateWindowText(const FactoryWindow& reference, const string& text)
 {
 	reference->SetText(text);
 
-	WindowText(reference);
+	SetWindowText(reference);
+}
+
+void Game::net_UpdateEditMaxLength(const FactoryEdit& reference, unsigned int length)
+{
+	reference->SetMaxLength(length);
+
+	SetEditMaxLength(reference);
+}
+
+void Game::net_UpdateEditValidation(const FactoryEdit& reference, const std::string& validation)
+{
+	reference->SetValidation(validation);
+
+	SetEditValidation(reference);
 }
 
 void Game::net_UpdateWindowMode(bool enabled)
 {
 	GUIMode = enabled;
 
-	WindowMode();
+	SetWindowMode();
 }
 
 void Game::net_UIMessage(const string& message, unsigned char emoticon)

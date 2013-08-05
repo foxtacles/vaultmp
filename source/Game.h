@@ -330,27 +330,35 @@ class Game
 		/**
 		 * \brief Updates the settings of a GUI window (pos)
 		 */
-		static void WindowPos(const FactoryWindow& reference);
+		static void SetWindowPos(const FactoryWindow& reference);
 		/**
 		 * \brief Updates the settings of a GUI window (size)
 		 */
-		static void WindowSize(const FactoryWindow& reference);
+		static void SetWindowSize(const FactoryWindow& reference);
 		/**
 		 * \brief Updates the settings of a GUI window (visible)
 		 */
-		static void WindowVisible(const FactoryWindow& reference);
+		static void SetWindowVisible(const FactoryWindow& reference);
 		/**
 		 * \brief Updates the settings of a GUI window (locked)
 		 */
-		static void WindowLocked(const FactoryWindow& reference);
+		static void SetWindowLocked(const FactoryWindow& reference);
 		/**
 		 * \brief Updates the settings of a GUI window (text)
 		 */
-		static void WindowText(const FactoryWindow& reference);
+		static void SetWindowText(const FactoryWindow& reference);
+		/**
+		 * \brief Updates the settings of a GUI edit (max length)
+		 */
+		static void SetEditMaxLength(const FactoryEdit& reference);
+		/**
+		 * \brief Updates the settings of a GUI edit (validation)
+		 */
+		static void SetEditValidation(const FactoryEdit& reference);
 		/**
 		 * \brief Updates the window mode
 		 */
-		static void WindowMode();
+		static void SetWindowMode();
 		/**
 		 * \brief Scans a cell for forms and returns the delta to previous scan
 		 */
@@ -488,6 +496,14 @@ class Game
 		 * \brief Network function to handle GUI window text
 		 */
 		static void net_UpdateWindowText(const FactoryWindow& reference, const std::string& text);
+		/**
+		 * \brief Network function to handle GUI edit max length
+		 */
+		static void net_UpdateEditMaxLength(const FactoryEdit& reference, unsigned int length);
+		/**
+		 * \brief Network function to handle GUI edit validation
+		 */
+		static void net_UpdateEditValidation(const FactoryEdit& reference, const std::string& validation);
 		/**
 		 * \brief Network function to handle GUI window mode
 		 */

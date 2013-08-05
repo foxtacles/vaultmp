@@ -2905,6 +2905,22 @@ const char* Script::GetWindowText(NetworkID id)
 	}) ? text.c_str() : "";
 }
 
+unsigned int Script::GetEditMaxLength(NetworkID id)
+{
+	return GameFactory::Operate<Edit, FailPolicy::Return>(id, [id](FactoryEdit& edit) {
+		return edit->GetMaxLength();
+	});
+}
+
+const char* Script::GetEditValidation(NetworkID id)
+{
+	static string validation;
+
+	return GameFactory::Operate<Edit, FailPolicy::Bool>(id, [id](FactoryEdit& edit) {
+		validation.assign(edit->GetValidation());
+	}) ? validation.c_str() : "";
+}
+
 NetworkID (Script::CreateWindow)(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text)
 {
 	NetworkID id = GameFactory::CreateInstance(ID_WINDOW, 0x00000000);
@@ -3159,8 +3175,15 @@ bool Script::SetWindowLocked(NetworkID id, bool locked)
 
 bool Script::SetWindowText(NetworkID id, const char* text)
 {
-	if (!GameFactory::Operate<Window, FailPolicy::Bool>(id, [text](FactoryWindow& window) {
+	if (!GameFactory::Operate<Window, FailPolicy::Return>(id, [text](FactoryWindow& window) {
+		auto edit = vaultcast<Edit>(window);
+
+		if (edit && edit->GetMaxLength() < strlen(text))
+			return false;
+
 		window->SetText(text);
+
+		return true;
 	})) return false;
 
 	NetworkID root = GetWindowRoot(id);
@@ -3206,4 +3229,81 @@ NetworkID Script::CreateEdit(double posX, double posY, double offset_posX, doubl
 	auto window = GameFactory::GetObject<Edit>(id);
 	SetupWindow(window.get(), posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
 	return id;
+}
+
+bool Script::SetEditMaxLength(NetworkID id, unsigned int length)
+{
+	bool text_updated = false;
+
+	if (!GameFactory::Operate<Edit, FailPolicy::Bool>(id, [length, &text_updated](FactoryEdit& edit) {
+		edit->SetMaxLength(length);
+
+		string text = edit->GetText();
+
+		if (text.length() > length)
+		{
+			text.resize(length);
+			edit->SetText(text);
+			text_updated = true;
+		}
+	})) return false;
+
+	NetworkID root = GetWindowRoot(id);
+
+	vector<RakNetGUID> guids;
+
+	{
+		auto players = GameFactory::GetObjectTypes<Player>(ID_PLAYER);
+
+		for (const auto& player : players)
+			if (player->GetPlayerWindows().count(root))
+				guids.emplace_back(Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID());
+	}
+
+	if (!guids.empty())
+	{
+		NetworkResponse response;
+
+		if (text_updated)
+			response.emplace_back(Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_WTEXT>(id, GameFactory::GetObject<Edit>(id)->GetText()),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
+			);
+
+		response.emplace_back(Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_WMAXLEN>(id, length),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
+		);
+
+		Network::Queue(move(response));
+	}
+
+	return true;
+}
+
+bool Script::SetEditValidation(NetworkID id, const char* validation)
+{
+	if (!GameFactory::Operate<Edit, FailPolicy::Bool>(id, [validation](FactoryEdit& edit) {
+		edit->SetValidation(validation);
+	})) return false;
+
+	NetworkID root = GetWindowRoot(id);
+
+	vector<RakNetGUID> guids;
+
+	{
+		auto players = GameFactory::GetObjectTypes<Player>(ID_PLAYER);
+
+		for (const auto& player : players)
+			if (player->GetPlayerWindows().count(root))
+				guids.emplace_back(Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID());
+	}
+
+	if (!guids.empty())
+		Network::Queue({Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_WVALID>(id, validation),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
+		});
+
+	return true;
 }

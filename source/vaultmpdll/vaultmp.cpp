@@ -49,6 +49,8 @@ static void (*GUI_RemoveWindow)(const char*);
 static void (*GUI_ForceGUI)(bool);
 static void (*GUI_SetClickCallback)(void (*)(const char*));
 static void (*GUI_SetTextChangedCallback)(void (*)(const char*, const char*));
+static void (*GUI_Textbox_SetMaxLength)(const char*, unsigned int);
+static void (*GUI_Textbox_SetValidationString)(const char*, const char*);
 static void (*SetPlayersDataPointer)(remotePlayers*);
 static bool (*QueueUIMessage)(const char* msg, unsigned int emotion, const char* ddsPath, const char* soundName, float msgTime);
 
@@ -254,7 +256,7 @@ void OnActivate()
 	asm volatile(
 		"POPAD\n"
 		:
-		: "m"(OnActivate_ret)
+		:
 		:
 	);
 }
@@ -623,6 +625,26 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 			break;
 		}
 
+		case 0x0021 | VAULTFUNCTION: // GUIMaxLen - Update max length
+		{
+			ZeroMemory(result, sizeof(double));
+			const char* data = ((char*) args) + 2; // skip length
+			unsigned char* _args = (unsigned char*) (data + strlen(data) + 1);
+
+			unsigned int length = *(unsigned int*)(_args + 1);
+
+			GUI_Textbox_SetMaxLength(data, length);
+			break;
+		}
+
+		case 0x0022 | VAULTFUNCTION: // GUIValid - Update validation
+		{
+			ZeroMemory(result, sizeof(double));
+			const char* data = ((char*) args) + 2; // skip length
+			GUI_Textbox_SetValidationString(data, data + strlen(data) + 3);
+			break;
+		}
+
 		default:
 			break;
 	}
@@ -819,9 +841,11 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 		GUI_ForceGUI = reinterpret_cast<decltype(GUI_ForceGUI)>(GetProcAddress(vaultgui, "GUI_ForceGUI"));
 		GUI_SetClickCallback = reinterpret_cast<decltype(GUI_SetClickCallback)>(GetProcAddress(vaultgui, "GUI_SetClickCallback"));
 		GUI_SetTextChangedCallback = reinterpret_cast<decltype(GUI_SetTextChangedCallback)>(GetProcAddress(vaultgui, "GUI_SetTextChangedCallback"));
+		GUI_Textbox_SetMaxLength = reinterpret_cast<decltype(GUI_Textbox_SetMaxLength)>(GetProcAddress(vaultgui, "GUI_Textbox_SetMaxLength"));
+		GUI_Textbox_SetValidationString = reinterpret_cast<decltype(GUI_Textbox_SetValidationString)>(GetProcAddress(vaultgui, "GUI_Textbox_SetValidationString"));
 		SetPlayersDataPointer = reinterpret_cast<decltype(SetPlayersDataPointer)>(GetProcAddress(vaultgui, "SetPlayersDataPointer"));
 
-		if (!Chatbox_AddToChat || !GUI_CreateFrameWindow || !GUI_AddStaticText || !GUI_AddTextbox || !GUI_AddButton || !GUI_SetVisible || !GUI_AllowDrag || !GUI_SetPosition || !GUI_SetSize || !GUI_SetText || !GUI_RemoveWindow || !GUI_ForceGUI || !GUI_SetClickCallback || !GUI_SetTextChangedCallback || !SetPlayersDataPointer)
+		if (!Chatbox_AddToChat || !GUI_CreateFrameWindow || !GUI_AddStaticText || !GUI_AddTextbox || !GUI_AddButton || !GUI_SetVisible || !GUI_AllowDrag || !GUI_SetPosition || !GUI_SetSize || !GUI_SetText || !GUI_RemoveWindow || !GUI_ForceGUI || !GUI_SetClickCallback || !GUI_SetTextChangedCallback || !GUI_Textbox_SetMaxLength || !GUI_Textbox_SetValidationString || !SetPlayersDataPointer)
 			DLLerror = true;
 
 		GUI_SetClickCallback(GUI_OnClick);

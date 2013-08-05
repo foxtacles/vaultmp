@@ -571,6 +571,26 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
+				case pTypes::ID_UPDATE_WMAXLEN:
+				{
+					NetworkID id;
+					unsigned int length;
+					PacketFactory::Access<pTypes::ID_UPDATE_WMAXLEN>(packet, id, length);
+					auto reference = GameFactory::GetObject<Edit>(id);
+					Game::net_UpdateEditMaxLength(reference.get(), length);
+					break;
+				}
+
+				case pTypes::ID_UPDATE_WVALID:
+				{
+					NetworkID id;
+					string validation;
+					PacketFactory::Access<pTypes::ID_UPDATE_WVALID>(packet, id, validation);
+					auto reference = GameFactory::GetObject<Edit>(id);
+					Game::net_UpdateEditValidation(reference.get(), validation);
+					break;
+				}
+
 				case pTypes::ID_UPDATE_WMODE:
 				{
 					bool enabled;

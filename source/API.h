@@ -312,6 +312,8 @@ namespace Values
 		Func_GUILocked = 0x0018 | VAULTFUNCTION,
 		Func_GUIText = 0x0019 | VAULTFUNCTION,
 		Func_GUIClick = 0x0020 | VAULTFUNCTION,
+		Func_GUIMaxLen = 0x0021 | VAULTFUNCTION,
+		Func_GUIValid = 0x0022 | VAULTFUNCTION
 	};
 
 	enum ActorVals

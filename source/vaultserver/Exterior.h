@@ -36,7 +36,7 @@ namespace DB
 			Exterior& operator=(const Exterior&) = delete;
 
 		public:
-			static constexpr double size = 4096.0;
+			static constexpr double SIZE = 4096.0;
 
 			static Expected<Exterior*> Lookup(unsigned int baseID);
 			static Expected<Exterior*> Lookup(unsigned int world, double X, double Y);

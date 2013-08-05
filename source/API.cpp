@@ -274,6 +274,8 @@ API::FunctionMap API::functions = {
 		{"GUILocked", {"si", Func_GUILocked}},
 		{"GUIText", {"ss", Func_GUIText}},
 		{"GUIClick", {"s", Func_GUIClick}},
+		{"GUIMaxLen", {"si", Func_GUIMaxLen}},
+		{"GUIValid", {"ss", Func_GUIValid}},
 		{"Enable", {"rI", Func_Enable}},
 		{"Disable", {"rI", Func_Disable}},
 		{"EquipItem", {"rjII", Func_EquipItem}},

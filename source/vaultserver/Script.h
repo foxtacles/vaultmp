@@ -331,6 +331,8 @@ class Script
 		static bool GetWindowVisible(RakNet::NetworkID id);
 		static bool GetWindowLocked(RakNet::NetworkID id);
 		static const char* GetWindowText(RakNet::NetworkID id);
+		static unsigned int GetEditMaxLength(RakNet::NetworkID id);
+		static const char* GetEditValidation(RakNet::NetworkID id);
 
 		static RakNet::NetworkID (CreateWindow)(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text);
 		static bool DestroyWindow(RakNet::NetworkID id);
@@ -344,6 +346,8 @@ class Script
 		static RakNet::NetworkID CreateButton(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text);
 		static RakNet::NetworkID CreateText(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text);
 		static RakNet::NetworkID CreateEdit(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text);
+		static bool SetEditMaxLength(RakNet::NetworkID id, unsigned int length);
+		static bool SetEditValidation(RakNet::NetworkID id, const char* validation);
 
 		static constexpr ScriptFunctionData functions[] {
 			{"timestamp", Utils::timestamp},
@@ -490,6 +494,8 @@ class Script
 			{"GetWindowVisible", Script::GetWindowVisible},
 			{"GetWindowLocked", Script::GetWindowLocked},
 			{"GetWindowText", Script::GetWindowText},
+			{"GetEditMaxLength", Script::GetEditMaxLength},
+			{"GetEditValidation", Script::GetEditValidation},
 
 			{"CreateWindow", Script::CreateWindow},
 			{"DestroyWindow", Script::DestroyWindow},
@@ -503,6 +509,8 @@ class Script
 			{"CreateButton", Script::CreateButton},
 			{"CreateText", Script::CreateText},
 			{"CreateEdit", Script::CreateEdit},
+			{"SetEditMaxLength", Script::SetEditMaxLength},
+			{"SetEditValidation", Script::SetEditValidation},
 		};
 };
 
