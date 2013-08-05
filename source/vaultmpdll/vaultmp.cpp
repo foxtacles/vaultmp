@@ -23,11 +23,12 @@ static remotePlayers players[10];
 
 typedef void (*CallCommand)(void*, void*, void*, void*, void*, void*, void*, void*);
 
-mutex mGUI;
+mutex mInput;
 queue<string> qGUI_OnChat;
 queue<bool> qGUI_OnMode;
 queue<string> qGUI_OnClick;
 queue<pair<string, string>> qGUI_OnText;
+queue<unsigned int> qActivate;
 
 static HANDLE hProc;
 static PipeServer pipeServer;
@@ -58,6 +59,7 @@ static void RespawnDetour();
 static void AnimDetour();
 static void PlayIdleDetour();
 static void AVFix();
+static void OnActivate();
 static vector<void*> delegated;
 
 static HINSTANCE silverlock = NULL;
@@ -101,6 +103,9 @@ static unsigned AVFix_ret = 0x00473D3B;
 static unsigned AVFix_term = 0x00473E85;
 static unsigned FireFix_jmp = 0x0079236C;
 static unsigned FireFix_patch = 0x007923C5;
+static unsigned OnActivate_jmp = 0x0078A68D;
+static unsigned OnActivate_dest = (unsigned)& OnActivate;;
+static unsigned OnActivate_ret = 0x0078A995;
 
 // Those snippets / functions are from FOSE / NVSE, thanks
 
@@ -221,6 +226,35 @@ void AVFix()
 		"JMP %0\n"
 		:
 		:  "m"(AVFix_ret), "m"(AVFix_term)
+		:
+	);
+}
+
+void OnActivate()
+{
+	void* object;
+
+	asm volatile(
+		"PUSHAD\n"
+		"MOV %0,EAX\n"
+		: "=m"(object)
+		:
+		: "eax"
+	);
+
+	if (object)
+	{
+		unsigned int refID = *(unsigned int*)(((unsigned) object) + 0x0C);
+
+		mInput.lock();
+		qActivate.push(refID);
+		mInput.unlock();
+	}
+
+	asm volatile(
+		"POPAD\n"
+		:
+		: "m"(OnActivate_ret)
 		:
 	);
 }
@@ -598,16 +632,16 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 
 void GUI_OnClick(const char* name)
 {
-	mGUI.lock();
+	mInput.lock();
 	qGUI_OnClick.push(name);
-	mGUI.unlock();
+	mInput.unlock();
 }
 
 void GUI_OnText(const char* name, const char* text)
 {
-	mGUI.lock();
+	mInput.lock();
 	qGUI_OnText.emplace(name, text);
-	mGUI.unlock();
+	mInput.unlock();
 }
 
 void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
@@ -885,7 +919,7 @@ players[1].player = false;
 			}
 		}
 
-		mGUI.lock();
+		mInput.lock();
 
 		while (!qGUI_OnChat.empty())
 		{
@@ -944,7 +978,21 @@ players[1].player = false;
 			qGUI_OnText.pop();
 		}
 
-		mGUI.unlock();
+		while (!qActivate.empty())
+		{
+			unsigned int refID = qActivate.front();
+
+			buffer[0] = PIPE_OP_RETURN_RAW;
+			*reinterpret_cast<unsigned int*>(buffer + 1) = 0x0002 | VAULTFUNCTION;
+			*reinterpret_cast<unsigned int*>(buffer + 5) = sizeof(refID);
+			*reinterpret_cast<unsigned int*>(buffer + 9) = refID;
+
+			pipeClient.Send(buffer);
+
+			qActivate.pop();
+		}
+
+		mInput.unlock();
 	}
 
 	buffer[0] = PIPE_ERROR_CLOSE;
@@ -1033,6 +1081,9 @@ void PatchGame(HINSTANCE& silverlock)
 	SafeWriteBuf(playGroup_fix, playGroup_fix_B, sizeof(playGroup_fix_B));
 	WriteRelJump(playGroup_fix_src, playGroup_fix_dest);
 
+	WriteRelCall(OnActivate_jmp, OnActivate_dest);
+	WriteRelJump(OnActivate_jmp + 5, OnActivate_ret);
+
 	SafeWrite32(pluginsVMP, *(DWORD*)".vmp"); // redirect Plugins.txt
 
 	ToggleRespawn();
@@ -1042,16 +1093,16 @@ extern "C"
 {
 	void GUI_OnMode(bool enabled)
 	{
-		mGUI.lock();
+		mInput.lock();
 		qGUI_OnMode.push(enabled);
-		mGUI.unlock();
+		mInput.unlock();
 	}
 
 	void GUI_OnChat(const char* message)
 	{
-		mGUI.lock();
+		mInput.lock();
 		qGUI_OnChat.push(message);
-		mGUI.unlock();
+		mInput.unlock();
 	}
 }
 

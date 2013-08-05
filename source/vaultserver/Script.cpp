@@ -209,10 +209,12 @@ void Script::Initialize()
 
 	auto object_init = [](FactoryObject& object, const DB::Reference* reference)
 	{
+		const auto& name = DB::Record::Lookup(reference->GetBase())->GetDescription();
 		const auto& pos = reference->GetPos();
 		const auto& angle = reference->GetAngle();
 		auto cell = reference->GetCell();
 		auto lock = reference->GetLock();
+		object->SetName(name);
 		object->SetNetworkPos(Axis_X, get<0>(pos));
 		object->SetNetworkPos(Axis_Y, get<1>(pos));
 		object->SetNetworkPos(Axis_Z, get<2>(pos));

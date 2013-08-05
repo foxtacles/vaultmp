@@ -286,6 +286,17 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 			}
 
+			case Func_OnActivate:
+			{
+				if (!result)
+					break;
+
+				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
+				unsigned int refID = *reinterpret_cast<unsigned int*>(&data[0]);
+				delete &data;
+				break;
+			}
+
 			case Func_SetGlobalValue:
 				break;
 
