@@ -1,15 +1,6 @@
 #ifndef PACKETFACTORY_H
 #define PACKETFACTORY_H
 
-#include <memory>
-#include <type_traits>
-#include <array>
-#include <unordered_map>
-#include <map>
-#include <list>
-#include <vector>
-#include <cstring>
-
 #include "vaultmp.h"
 #include "VaultException.h"
 #include "Data.h"
@@ -18,16 +9,15 @@
 #include "Debug.h"
 #endif
 
-enum
-{
-	ID_EVENT_INTERFACE_LOST,
-	ID_EVENT_CLIENT_ERROR,
-	ID_EVENT_SERVER_ERROR,
-	ID_EVENT_GAME_STARTED,
-	ID_EVENT_GAME_LOADED,
-	ID_EVENT_AUTH_RECEIVED,
-	ID_EVENT_CLOSE_RECEIVED,
-};
+#include <list>
+#include <map>
+#include <unordered_map>
+#include <vector>
+#include <string>
+#include <array>
+#include <tuple>
+#include <cstring>
+#include <memory>
 
 enum class pTypes : unsigned char
 {
@@ -86,16 +76,6 @@ enum class pTypes : unsigned char
 	ID_UPDATE_WVALID,
 	ID_UPDATE_WCLICK,
 	ID_UPDATE_WMODE
-};
-
-enum class Reason : unsigned char
-{
-	ID_REASON_KICK = 0,
-	ID_REASON_BAN,
-	ID_REASON_ERROR,
-	ID_REASON_DENIED,
-	ID_REASON_QUIT,
-	ID_REASON_NONE,
 };
 
 template<pTypes>
@@ -429,7 +409,7 @@ inline pPacket pDefault::deconstruct_single() const
 	unsigned int length = deconstruct_single<unsigned int>();
 
 	if (location + length > this->length())
-		throw VaultException("Reading past the end of packet");
+		throw VaultException("Reading past the end of packet").stacktrace();
 
 	pPacket packet = PacketFactory::Init(&data[location], length);
 

@@ -1,10 +1,8 @@
 #include "ItemList.h"
-#include "PacketFactory.h"
 #include "GameFactory.h"
+#include "Network.h"
 
-#ifndef VAULTSERVER
-#include "Game.h"
-#endif
+#include <algorithm>
 
 using namespace std;
 using namespace RakNet;

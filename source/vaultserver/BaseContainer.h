@@ -1,14 +1,13 @@
 #ifndef BASECONTAINERDB_H
 #define BASECONTAINERDB_H
 
+#include "vaultserver.h"
+
+#include <vector>
+#include <string>
 #include <unordered_map>
 
-#include "vaultmp.h"
-#include "vaultserver.h"
-#include "Database.h"
-#include "Record.h"
-
-#include "sqlite/sqlite3.h"
+class sqlite3_stmt;
 
 /**
  * \brief Represents a base container

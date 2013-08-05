@@ -2,21 +2,23 @@
 #define GAME_H
 
 #include "vaultmp.h"
-#include "Interface.h"
+#include "Guarded.h"
 #include "Player.h"
 #include "Network.h"
-#include "Shared.h"
-#include "Guarded.h"
 #include "GameFactory.h"
-#include "VaultException.h"
-#include "Window.h"
-#include "Button.h"
-#include "Text.h"
-#include "Edit.h"
+#include "RakNet.h"
 
+#ifdef VAULTMP_DEBUG
+#include "Debug.h"
+#endif
+
+#include <utility>
 #include <future>
-#include <chrono>
-#include <memory>
+#include <set>
+#include <vector>
+#include <deque>
+#include <unordered_map>
+#include <unordered_set>
 
 /**
  * \brief Client game code, using the Interface to execute commands and communicate with the game

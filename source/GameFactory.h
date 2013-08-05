@@ -1,14 +1,7 @@
 #ifndef GAMEFACTORY_H
 #define GAMEFACTORY_H
 
-#include <map>
-#include <unordered_map>
-#include <list>
-#include <typeinfo>
-#include <type_traits>
-
-#include "RakNet.h"
-
+#include "vaultmp.h"
 #include "Reference.h"
 #include "Object.h"
 #include "Item.h"
@@ -19,9 +12,9 @@
 #include "Button.h"
 #include "Text.h"
 #include "Edit.h"
+#include "Expected.h"
 
 #ifdef VAULTSERVER
-#include "vaultserver/vaultserver.h"
 #include "vaultserver/Database.h"
 #include "vaultserver/Record.h"
 #include "vaultserver/Reference.h"
@@ -35,11 +28,12 @@
 #include "vaultserver/Interior.h"
 #endif
 
-#include "Expected.h"
-
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"
 #endif
+
+#include <map>
+#include <memory>
 
 const unsigned int ID_REFERENCE        = 0x01;
 const unsigned int ID_OBJECT           = ID_REFERENCE << 1;

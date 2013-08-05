@@ -2,13 +2,7 @@
 #define ITEM_H
 
 #include "vaultmp.h"
-#include "Data.h"
-#include "Value.h"
 #include "Object.h"
-
-#ifdef VAULTSERVER
-#include "vaultserver/Database.h"
-#endif
 
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"

@@ -1,4 +1,11 @@
 #include "API.h"
+#include "Data.h"
+#include "VaultException.h"
+
+#include <algorithm>
+#include <cstring>
+#include <cstdlib>
+#include <ctime>
 
 using namespace std;
 using namespace Values;
@@ -565,7 +572,7 @@ vector<double> API::ParseCommand(const vector<string>& cmd, const char* def, uns
 		if (cmd.empty())
 			throw VaultException("API::ParseCommand expected a reference base operand, which could not be found").stacktrace();
 
-		reference = strtoul(cmd.front().c_str(), nullptr, 0);
+		reference = strtoul(cmd[idx].c_str(), nullptr, 0);
 
 		if (reference == 0x00)
 			throw VaultException("API::ParseCommand reference base operand is NULL (%s, %s, %04X)", raw.c_str(), def, opcode).stacktrace();
@@ -979,7 +986,7 @@ API::CommandParsed API::Translate(const CommandInput& cmd, unsigned int key)
 	if (!functions.count(cmd.first))
 	{
 #ifdef VAULTMP_DEBUG
-		debug.print("API was not able to find function for ", hex, cmd.first);
+		debug.print("API was not able to find function for ", hex, static_cast<unsigned short>(cmd.first));
 #endif
 		return stream;
 	}

@@ -1,8 +1,6 @@
 #ifndef BUTTONGUI_H
 #define BUTTONGUI_H
 
-#include <string>
-
 #include "vaultmp.h"
 #include "Window.h"
 

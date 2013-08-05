@@ -1,4 +1,7 @@
 #include "Exterior.h"
+#include "sqlite/sqlite3.h"
+
+#include <algorithm>
 
 using namespace std;
 using namespace DB;

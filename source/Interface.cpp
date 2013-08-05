@@ -1,4 +1,8 @@
 #include "Interface.h"
+#include "Pipe.h"
+#include "VaultException.h"
+
+#include <algorithm>
 
 using namespace std;
 using namespace Values;

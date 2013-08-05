@@ -1,8 +1,8 @@
 #ifndef NETWORKSERVER_H
 #define NETWORKSERVER_H
 
+#include "vaultserver.h"
 #include "Network.h"
-#include "Server.h"
 
 /**
  * \brief Server network interface

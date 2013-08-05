@@ -44,6 +44,9 @@ static const unsigned char FILE_MODFILE         =   0x02;
 #ifndef stricmp
   #define stricmp strcasecmp
 #endif
+#endif
+
+#ifndef ZeroMemory
 #define ZeroMemory(a, b) memset(a, 0, b)
 #endif
 

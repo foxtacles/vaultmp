@@ -1,20 +1,16 @@
 #ifndef LOCKABLE_H
 #define LOCKABLE_H
 
-#include <unordered_map>
-#include <unordered_set>
-#include <string>
-#include <algorithm>
-#include <climits>
-#include <memory>
-
 #include "vaultmp.h"
 #include "CriticalSection.h"
-#include "VaultException.h"
 
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"
 #endif
+
+#include <unordered_map>
+#include <unordered_set>
+#include <memory>
 
 /**
  * \brief An extension class which provides a basic lock / unlock mechanism

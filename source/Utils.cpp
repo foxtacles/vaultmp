@@ -1,5 +1,12 @@
 #include "Utils.h"
 
+#ifdef __WIN32__
+#include <imagehlp.h>
+#endif
+
+#include <ctime>
+#include <cmath>
+
 using namespace std;
 
 void Utils::timestamp()

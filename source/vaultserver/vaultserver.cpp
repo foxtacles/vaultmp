@@ -1,16 +1,18 @@
+#include "vaultserver.h"
+#include "Dedicated.h"
+#include "Script.h"
+#include "Utils.h"
+#include "Client.h"
+#include "ServerEntry.h"
+#include "iniparser/src/dictionary.h"
+#include "iniparser/src/iniparser.h"
+
 #ifdef __WIN32__
 #include <winsock2.h>
 #endif
 #include <cstdio>
 #include <thread>
 #include <unordered_map>
-
-#include "vaultserver.h"
-#include "Dedicated.h"
-#include "Script.h"
-#include "Utils.h"
-#include "iniparser/src/dictionary.h"
-#include "iniparser/src/iniparser.h"
 
 using namespace std;
 using namespace RakNet;

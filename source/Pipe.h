@@ -1,6 +1,8 @@
+#ifndef PIPE_H
+#define PIPE_H
+
 #include <winsock2.h>
 #include <string>
-#include <vector>
 
 class Pipe
 {
@@ -36,3 +38,5 @@ class PipeClient : public Pipe
 	public:
 		bool ConnectToServer();
 };
+
+#endif

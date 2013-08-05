@@ -1,16 +1,8 @@
 #ifndef CONTAINER_H
 #define CONTAINER_H
 
-#include <map>
-#include <list>
-#include <vector>
-#include <algorithm>
-#include <cstdlib>
-
 #include "vaultmp.h"
-#include "Data.h"
 #include "Object.h"
-
 #include "ItemList.h"
 
 #ifdef VAULTMP_DEBUG

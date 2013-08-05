@@ -1,10 +1,10 @@
 #ifndef VAULTFUNCTOR_H
 #define VAULTFUNCTOR_H
 
+#include "vaultmp.h"
+
 #include <string>
 #include <vector>
-#include <algorithm>
-#include "vaultmp.h"
 
 /**
  * \brief The functor class of vaultmp

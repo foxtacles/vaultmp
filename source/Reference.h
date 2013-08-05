@@ -1,19 +1,18 @@
 #ifndef REFERENCE_H
 #define REFERENCE_H
 
-#include <array>
-#include <queue>
-
-#include "RakNet.h"
-
-#include "Data.h"
-#include "Utils.h"
-#include "Value.h"
-#include "Network.h"
+#include "vaultmp.h"
 #include "CriticalSection.h"
-#include "VaultFunctor.h"
+#include "Value.h"
 #include "Interface.h"
+#include "RakNet.h"
 #include "PacketFactory.h"
+
+#ifdef VAULTMP_DEBUG
+#include "Debug.h"
+#endif
+
+#include <queue>
 
 /**
  * \brief The base class for all in-game types

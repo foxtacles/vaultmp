@@ -1,29 +1,15 @@
-#include <winsock2.h>
-#include <cstdio>
-#include <shlwapi.h>
-#include <shlobj.h>
-#include <list>
-#include <vector>
-#include <string>
-#include <thread>
-#include <chrono>
-
-#include "RakNet.h"
+#ifndef BETHESDA_H
+#define BETHESDA_H
 
 #include "vaultmp.h"
-#include "Data.h"
-#include "Player.h"
-#include "Container.h"
-#include "Interface.h"
-#include "Lockable.h"
-#include "Game.h"
-#include "VaultException.h"
-#include "NetworkClient.h"
-#include "GameFactory.h"
+#include "RakNet.h"
 
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"
 #endif
+
+#include <string>
+#include <vector>
 
 /**
  * \brief Starting point to run a vaultmp game
@@ -72,3 +58,5 @@ class Bethesda
 		 */
 		static void InitializeVaultMP(RakNet::RakPeerInterface* peer, RakNet::SystemAddress server, const std::string& name, const std::string& pwd, bool multiinst, unsigned int inittime);
 };
+
+#endif

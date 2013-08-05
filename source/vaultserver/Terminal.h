@@ -1,15 +1,12 @@
 #ifndef TERMINALDB_H
 #define TERMINALDB_H
 
-#include <unordered_map>
-
-#include "vaultmp.h"
 #include "vaultserver.h"
-#include "Database.h"
-#include "Record.h"
 #include "Expected.h"
 
-#include "sqlite/sqlite3.h"
+#include <unordered_map>
+
+class sqlite3_stmt;
 
 /**
  * \brief Represents a terminal

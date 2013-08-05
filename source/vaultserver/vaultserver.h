@@ -1,6 +1,8 @@
 #ifndef VAULTSERVER_H
 #define VAULTSERVER_H
 
+#include "vaultmp.h"
+
 #define MODFILES_PATH "mods"
 #define DATA_PATH "data"
 #define PWNFILES_PATH "AMXFILE=files"
@@ -13,6 +15,10 @@
 
 #ifndef __WIN32__
 #define _getcwd getcwd
+#endif
+
+#ifndef HAVE_STDINT_H
+#define HAVE_STDINT_H
 #endif
 
 #endif

@@ -1,19 +1,11 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-#include <unordered_map>
-#include <string>
-
+#include "vaultserver.h"
+#include "ScriptFunction.h"
 #include "RakNet.h"
 
-#include "boost/any.hpp"
-
-#include "ScriptFunction.h"
-#include "Script.h"
-#include "PAWN.h"
-#include "vaultmp.h"
-#include "Debug.h"
-#include "Network.h"
+#include <unordered_map>
 
 /**
  * \brief Create timers to be used in scripts

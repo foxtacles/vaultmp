@@ -2,37 +2,22 @@
 #define INTERFACE_H
 
 #include "vaultmp.h"
-
-#ifndef VAULTSERVER
-#include <winsock2.h>
-#include <tlhelp32.h>
-#endif
-
-#include <string>
-#include <list>
-#include <map>
-#include <unordered_map>
-#include <vector>
-#include <thread>
-#include <chrono>
-#include <numeric>
-#include <algorithm>
-#include <queue>
-
 #include "API.h"
+#include "VaultFunctor.h"
 #include "CriticalSection.h"
-#include "Data.h"
-
-#ifndef VAULTSERVER
-	#include "Pipe.h"
-#else
-	class PipeServer;
-	class PipeClient;
-#endif
+#include "Utils.h"
 
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"
 #endif
+
+#include <map>
+#include <queue>
+#include <thread>
+#include <atomic>
+
+class PipeClient;
+class PipeServer;
 
 /**
  * \brief Provides facilities to execute engine commands, connects with the game process and is responsible for sending / retrieving game data

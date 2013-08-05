@@ -2,10 +2,7 @@
 #define OBJECT_H
 
 #include "vaultmp.h"
-#include "Data.h"
-#include "API.h"
 #include "Reference.h"
-#include "Value.h"
 #include "VaultVector.h"
 
 #ifdef VAULTMP_DEBUG

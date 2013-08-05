@@ -1,24 +1,14 @@
 #ifndef DATABASE_H
 #define DATABASE_H
 
-#ifdef __WIN32__
-	#include <winsock2.h>
-	#include <io.h>
-#else
-	#include <climits>
-	#include <unistd.h>
+#include "vaultserver.h"
+
+#ifdef VAULTMP_DEBUG
+#include "Debug.h"
 #endif
 
-#include <list>
+#include <string>
 #include <vector>
-
-#include "vaultmp.h"
-#include "vaultserver.h"
-#include "Debug.h"
-#include "Utils.h"
-#include "VaultException.h"
-
-#include "sqlite/sqlite3.h"
 
 /**
  * \brief Used to access vaultmp SQLite3 databases

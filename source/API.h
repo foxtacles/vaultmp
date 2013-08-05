@@ -1,28 +1,18 @@
 #ifndef API_H
 #define API_H
 
-#ifdef __WIN32__
-#include <winsock2.h>
-#endif
-
-#include <ctime>
-#include <climits>
-#include <string>
-#include <set>
-#include <map>
-#include <unordered_map>
-#include <queue>
-#include <vector>
-#include <memory>
-
 #include "vaultmp.h"
-#include "Utils.h"
-#include "VaultException.h"
-#include "Data.h"
 
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"
 #endif
+
+#include <vector>
+#include <deque>
+#include <set>
+#include <memory>
+#include <unordered_map>
+#include <cstdint>
 
 /*
  * \brief This namespace contains key data of the game

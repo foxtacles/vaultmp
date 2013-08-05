@@ -7,7 +7,7 @@ unique_ptr<Debug> Debug::debug;
 Debug::Debug(const char* module)
 {
 	char buf[32];
-	GetTimeFormat(buf, sizeof(buf), true);
+	GetTimeString(buf, sizeof(buf), true);
 
 	string logfile(module);
 	logfile += "_" + string(buf) + ".log";
@@ -30,7 +30,7 @@ void Debug::SetDebugHandler(const char* module)
 		Debug::debug.reset();
 }
 
-void Debug::GetTimeFormat(char* buf, unsigned int size, bool file)
+void Debug::GetTimeString(char* buf, unsigned int size, bool file)
 {
 	time_t ltime;
 	ltime = time(nullptr);

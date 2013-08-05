@@ -1,19 +1,13 @@
 #ifndef INTERIORDB_H
 #define INTERIORDB_H
 
-#include <algorithm>
-#include <vector>
-#include <array>
-#include <unordered_map>
-#include <cmath>
-
-#include "vaultmp.h"
 #include "vaultserver.h"
-#include "Database.h"
-#include "Record.h"
 #include "Expected.h"
 
-#include "sqlite/sqlite3.h"
+#include <unordered_map>
+#include <array>
+
+class sqlite3_stmt;
 
 /**
  * \brief Represents a game interior cell

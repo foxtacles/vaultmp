@@ -8,7 +8,9 @@
 #include "Database.h"
 #include "Expected.h"
 
-#include "sqlite/sqlite3.h"
+#include "vaultserver.h"
+
+class sqlite3_stmt;
 
 /**
  * \brief Represents a game weapon

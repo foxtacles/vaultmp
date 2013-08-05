@@ -1,22 +1,9 @@
 #ifndef PAWN_H
 #define PAWN_H
 
-#ifdef __WIN32__
-#include <winsock2.h>
-#endif
-#include <cstdio>
-#include <cstdlib>
-#include <map>
-
-#define HAVE_STDINT_H
+#include "vaultserver.h"
 #include "amx/amx.h"
-#include "amx/amxaux.h"
-
 #include "boost/any.hpp"
-
-#include "Utils.h"
-#include "VaultException.h"
-#include "vaultmp.h"
 
 /**
  * \brief Contains the PAWN scripting function wrappers

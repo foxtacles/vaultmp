@@ -1,27 +1,19 @@
 #ifndef SCRIPT_H
 #define SCRIPT_H
 
-#ifdef __WIN32__
-#include <winsock2.h>
-#else
-#include <dlfcn.h>
-#endif
-#include <vector>
-#include <string>
-
+#include "vaultserver.h"
+#include "RakNet.h"
+#include "Data.h"
+#include "ItemList.h"
+#include "ScriptFunction.h"
+#include "GameFactory.h"
+#include "Dedicated.h"
 #include "boost/any.hpp"
 
-#include "ScriptFunction.h"
-#include "Public.h"
-#include "PAWN.h"
-#include "Dedicated.h"
-#include "time/time64.h"
-#include "Record.h"
-#include "API.h"
-#include "GameFactory.h"
-#include "Utils.h"
-#include "vaultmp.h"
-#include "VaultException.h"
+#include <vector>
+#include <unordered_map>
+#include <memory>
+#include <chrono>
 
 /**
  * \brief Maintains communication with a script

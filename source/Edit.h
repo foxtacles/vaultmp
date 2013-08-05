@@ -1,10 +1,10 @@
 #ifndef EDITGUI_H
 #define EDITGUI_H
 
-#include <string>
-
 #include "vaultmp.h"
 #include "Window.h"
+
+#include <string>
 
 /**
  * \brief Represents a GUI static text

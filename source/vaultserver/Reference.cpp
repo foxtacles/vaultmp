@@ -1,5 +1,9 @@
 #include "Reference.h"
 #include "API.h"
+#include "Utils.h"
+#include "sqlite/sqlite3.h"
+
+#include <cmath>
 
 using namespace std;
 using namespace DB;

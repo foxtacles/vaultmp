@@ -1,12 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include <string>
-#include <map>
-#include <vector>
-#include <array>
-#include <unordered_set>
-
+#include "vaultmp.h"
 #include "Actor.h"
 
 #ifdef VAULTMP_DEBUG

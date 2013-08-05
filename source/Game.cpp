@@ -1,6 +1,7 @@
 #include "Game.h"
-#include "PacketFactory.h"
-#include "GameFactory.h"
+#include "Shared.h"
+
+#include <algorithm>
 
 using namespace std;
 using namespace RakNet;
@@ -417,7 +418,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 	else
 	{
 #ifdef VAULTMP_DEBUG
-		debug.note("Command ", hex, opcode, " failed (");
+		debug.note("Command ", hex, static_cast<unsigned short>(opcode), " failed (");
 
 		for (const auto& value : info)
 			debug.note(*reinterpret_cast<const unsigned long long*>(&value), ", ");

@@ -1,17 +1,15 @@
 #ifndef REFERENCEDB_H
 #define REFERENCEDB_H
 
-#include <unordered_map>
-#include <vector>
-#include <tuple>
-
-#include "vaultmp.h"
 #include "vaultserver.h"
-#include "Database.h"
 #include "Expected.h"
-#include "Utils.h"
 
-#include "sqlite/sqlite3.h"
+#include <vector>
+#include <string>
+#include <tuple>
+#include <unordered_map>
+
+class sqlite3_stmt;
 
 /**
  * \brief Represents a game weapon

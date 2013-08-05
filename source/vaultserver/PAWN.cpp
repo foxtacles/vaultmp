@@ -1,5 +1,8 @@
 #include "PAWN.h"
 #include "Script.h"
+#include "Public.h"
+#include "amx/amx.h"
+#include "amx/amxaux.h"
 
 using namespace std;
 using namespace RakNet;

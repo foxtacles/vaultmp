@@ -1,13 +1,9 @@
 #ifndef SERVER_H
 #define SERVER_H
 
-#include "Dedicated.h"
-#include "Client.h"
-#include "Player.h"
-#include "Window.h"
-#include "Network.h"
-#include "VaultException.h"
+#include "vaultserver.h"
 #include "GameFactory.h"
+#include "Network.h"
 
 /**
  * \brief Server game code, communicating with loaded scripts

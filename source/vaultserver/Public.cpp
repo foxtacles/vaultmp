@@ -1,4 +1,5 @@
 #include "Public.h"
+#include "VaultException.h"
 
 using namespace std;
 

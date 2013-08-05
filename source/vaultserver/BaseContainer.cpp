@@ -1,4 +1,9 @@
 #include "BaseContainer.h"
+#include "Record.h"
+#include "VaultException.h"
+#include "sqlite/sqlite3.h"
+
+#include <algorithm>
 
 using namespace std;
 using namespace DB;

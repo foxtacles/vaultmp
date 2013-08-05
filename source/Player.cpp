@@ -1,5 +1,4 @@
 #include "Player.h"
-#include "PacketFactory.h"
 #include "GameFactory.h"
 
 #ifndef VAULTSERVER

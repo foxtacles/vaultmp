@@ -4,21 +4,17 @@
 #include "vaultmp.h"
 
 #include <mutex>
-#include <chrono>
-#include <thread>
-#include <typeinfo>
 #include <atomic>
 
 #ifdef VAULTMP_DEBUG
-// only in debug, streams blow the executable size
-#include <sstream>
+#include <thread>
 #endif
-
-#define CS_TIMEOUT     5000
 
 class CriticalSection
 {
 	private:
+		static constexpr unsigned int CS_TIMEOUT = 5000;
+
 		std::recursive_timed_mutex cs;
 		std::atomic<bool> finalize;
 

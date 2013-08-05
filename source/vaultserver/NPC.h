@@ -1,16 +1,16 @@
 #ifndef NPCDB_H
 #define NPCDB_H
 
-#include <unordered_map>
-
-#include "vaultmp.h"
 #include "vaultserver.h"
-#include "Database.h"
-#include "Record.h"
-#include "BaseContainer.h"
 #include "Expected.h"
+#include "BaseContainer.h"
 
-#include "sqlite/sqlite3.h"
+#include <vector>
+#include <unordered_map>
+#include <unordered_set>
+#include <functional>
+
+class sqlite3_stmt;
 
 /**
  * \brief Represents a NPC

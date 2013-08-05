@@ -1,17 +1,10 @@
 #ifndef PUBLIC_H
 #define PUBLIC_H
 
-#include <unordered_map>
-#include <string>
-
-#include "boost/any.hpp"
-
+#include "vaultserver.h"
 #include "ScriptFunction.h"
-#include "Script.h"
-#include "PAWN.h"
-#include "vaultmp.h"
-#include "Debug.h"
-#include "Network.h"
+
+#include <unordered_map>
 
 /**
  * \brief Create publics to use across all scripts

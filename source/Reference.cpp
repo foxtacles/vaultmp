@@ -1,4 +1,5 @@
 #include "Reference.h"
+#include "Network.h"
 
 using namespace std;
 using namespace RakNet;

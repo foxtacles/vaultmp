@@ -1,5 +1,8 @@
 #include "NPC.h"
 #include "Race.h"
+#include "sqlite/sqlite3.h"
+
+#include <algorithm>
 
 using namespace std;
 using namespace DB;

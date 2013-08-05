@@ -1,7 +1,7 @@
 #include "NetworkClient.h"
 #include "Bethesda.h"
+#include "Interface.h"
 #include "Game.h"
-#include "PacketFactory.h"
 
 using namespace std;
 using namespace RakNet;

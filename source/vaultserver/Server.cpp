@@ -1,5 +1,7 @@
 #include "Server.h"
 #include "Script.h"
+#include "Client.h"
+#include "ServerEntry.h"
 
 #ifdef VAULTMP_DEBUG
 DebugInput<Server> Server::debug;

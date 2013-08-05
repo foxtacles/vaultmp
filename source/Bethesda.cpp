@@ -1,4 +1,13 @@
 #include "Bethesda.h"
+#include "Utils.h"
+#include "Interface.h"
+#include "Game.h"
+#include "NetworkClient.h"
+#include "VaultException.h"
+
+#include <tlhelp32.h>
+#include <shlwapi.h>
+#include <shlobj.h>
 
 using namespace std;
 using namespace RakNet;
