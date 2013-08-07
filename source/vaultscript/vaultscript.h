@@ -468,6 +468,8 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetWindowVisible))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetWindowLocked))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE cRawString (*VAULTAPI(GetWindowText))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetEditMaxLength))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE cRawString (*VAULTAPI(GetEditValidation))(VAULTSPACE ID) VAULTCPP(noexcept);
 
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateWindow))(VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE State, VAULTSPACE State, VAULTSPACE cRawString) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(DestroyWindow))(VAULTSPACE ID) VAULTCPP(noexcept);
@@ -481,6 +483,8 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateButton))(VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE State, VAULTSPACE State, VAULTSPACE cRawString) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateText))(VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE State, VAULTSPACE State, VAULTSPACE cRawString) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateEdit))(VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE State, VAULTSPACE State, VAULTSPACE cRawString) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetEditMaxLength))(VAULTSPACE ID, VAULTSPACE UCount) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetEditValidation))(VAULTSPACE ID, VAULTSPACE cRawString) VAULTCPP(noexcept);
 VAULTCPP(})
 
 #ifdef __cplusplus
@@ -863,9 +867,11 @@ namespace vaultmp
 	VAULTFUNCTION State GetWindowVisible(ID id) noexcept { return VAULTAPI(GetWindowVisible)(id); }
 	VAULTFUNCTION State GetWindowLocked(ID id) noexcept { return VAULTAPI(GetWindowLocked)(id); }
 	VAULTFUNCTION String GetWindowText(ID id) noexcept { return String(VAULTAPI(GetWindowText)(id)); }
+	VAULTFUNCTION UCount GetEditMaxLength(ID id) noexcept { return VAULTAPI(GetEditMaxLength)(id); }
+	VAULTFUNCTION String GetEditValidation(ID id) noexcept { return String(VAULTAPI(GetEditValidation)(id)); }
 
-	VAULTFUNCTION ID CreateWindow(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, const String& text) noexcept { return VAULTAPI(CreateWindow)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
-	VAULTFUNCTION ID CreateWindow(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, cRawString text) noexcept { return VAULTAPI(CreateWindow)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
+	VAULTFUNCTION ID CreateWindow(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible = True, State locked = False, const String& text = "") noexcept { return VAULTAPI(CreateWindow)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
+	VAULTFUNCTION ID CreateWindow(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible = True, State locked = False, cRawString text = "") noexcept { return VAULTAPI(CreateWindow)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
 	VAULTFUNCTION State DestroyWindow(ID id) noexcept { return VAULTAPI(DestroyWindow)(id); }
 	VAULTFUNCTION State AddChildWindow(ID id, ID child) noexcept { return VAULTAPI(AddChildWindow)(id, child); }
 	VAULTFUNCTION State RemoveChildWindow(ID id, ID child) noexcept { return VAULTAPI(RemoveChildWindow)(id, child); }
@@ -875,12 +881,15 @@ namespace vaultmp
 	VAULTFUNCTION State SetWindowLocked(ID id, State locked) noexcept { return VAULTAPI(SetWindowLocked)(id, locked); }
 	VAULTFUNCTION State SetWindowText(ID id, const String& text) noexcept { return VAULTAPI(SetWindowText)(id, text.c_str()); }
 	VAULTFUNCTION State SetWindowText(ID id, cRawString text) noexcept { return VAULTAPI(SetWindowText)(id, text); }
-	VAULTFUNCTION ID CreateButton(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, const String& text) noexcept { return VAULTAPI(CreateButton)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
-	VAULTFUNCTION ID CreateButton(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, cRawString text) noexcept { return VAULTAPI(CreateButton)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
-	VAULTFUNCTION ID CreateText(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, const String& text) noexcept { return VAULTAPI(CreateText)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
-	VAULTFUNCTION ID CreateText(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, cRawString text) noexcept { return VAULTAPI(CreateText)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
-	VAULTFUNCTION ID CreateEdit(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, const String& text) noexcept { return VAULTAPI(CreateEdit)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
-	VAULTFUNCTION ID CreateEdit(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, cRawString text) noexcept { return VAULTAPI(CreateEdit)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
+	VAULTFUNCTION ID CreateButton(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible = True, State locked = False, const String& text = "") noexcept { return VAULTAPI(CreateButton)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
+	VAULTFUNCTION ID CreateButton(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible = True, State locked = False, cRawString text = "") noexcept { return VAULTAPI(CreateButton)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
+	VAULTFUNCTION ID CreateText(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible = True, State locked = False, const String& text = "") noexcept { return VAULTAPI(CreateText)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
+	VAULTFUNCTION ID CreateText(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible = True, State locked = False, cRawString text = "") noexcept { return VAULTAPI(CreateText)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
+	VAULTFUNCTION ID CreateEdit(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible = True, State locked = False, const String& text = "") noexcept { return VAULTAPI(CreateEdit)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
+	VAULTFUNCTION ID CreateEdit(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible = True, State locked = False, cRawString text = "") noexcept { return VAULTAPI(CreateEdit)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
+	VAULTFUNCTION State SetEditMaxLength(ID id, UCount length) noexcept { return VAULTAPI(SetEditMaxLength)(id, length); }
+	VAULTFUNCTION State SetEditValidation(ID id, const String& validation) noexcept { return VAULTAPI(SetEditValidation)(id, validation.c_str()); }
+	VAULTFUNCTION State SetEditValidation(ID id, cRawString validation) noexcept { return VAULTAPI(SetEditValidation)(id, validation); }
 
 	class Reference {
 		protected:
@@ -896,7 +905,7 @@ namespace vaultmp
 			State IsValid() const noexcept { return id ? True : False; }
 			explicit operator bool() const noexcept { return IsValid(); }
 			explicit operator State() const noexcept { return IsValid(); }
-			bool operator==(const Reference& R) const noexcept { return IsValid() && this->id == R.id; }
+			bool operator==(const Reference& R) const noexcept { return this->id == R.id; }
 			bool operator!=(const Reference& R) const noexcept { return !operator==(R); }
 
 			ID GetID() const noexcept { return id; }
@@ -1058,7 +1067,7 @@ namespace vaultmp
 			State IsValid() const noexcept { return id ? True : False; }
 			explicit operator bool() const noexcept { return IsValid(); }
 			explicit operator State() const noexcept { return IsValid(); }
-			bool operator==(const ItemList& R) const noexcept { return IsValid() && this->id == R.id; }
+			bool operator==(const ItemList& R) const noexcept { return this->id == R.id; }
 			bool operator!=(const ItemList& R) const noexcept { return !operator==(R); }
 
 			ID GetID() const noexcept { return id; }
@@ -1260,7 +1269,7 @@ namespace vaultmp
 			State IsValid() const noexcept { return id ? True : False; }
 			explicit operator bool() const noexcept { return IsValid(); }
 			explicit operator State() const noexcept { return IsValid(); }
-			bool operator==(const Window& R) const noexcept { return IsValid() && this->id == R.id; }
+			bool operator==(const Window& R) const noexcept { return this->id == R.id; }
 			bool operator!=(const Window& R) const noexcept { return !operator==(R); }
 
 			ID GetID() const noexcept { return id; }
@@ -1286,8 +1295,8 @@ namespace vaultmp
 			State SetWindowText(const String& text) noexcept { return vaultmp::SetWindowText(id, text); }
 			State SetWindowText(cRawString text) noexcept { return vaultmp::SetWindowText(id, text); }
 
-			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, const String& text) noexcept { return vaultmp::CreateWindow(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
-			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, cRawString text) noexcept { return vaultmp::CreateWindow(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
+			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible = True, State locked = False, const String& text = "") noexcept { return vaultmp::CreateWindow(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
+			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible = True, State locked = False, cRawString text = "") noexcept { return vaultmp::CreateWindow(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_WINDOW); }
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_WINDOW); }
 	};
@@ -1300,8 +1309,8 @@ namespace vaultmp
 			Button(ID id) noexcept : Window(vaultmp::IsButton(id) ? id : static_cast<ID>(0), Type::ID_BUTTON) {}
 			virtual ~Button() noexcept {}
 
-			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, const String& text) noexcept { return vaultmp::CreateButton(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
-			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, cRawString text) noexcept { return vaultmp::CreateButton(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
+			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible = True, State locked = False, const String& text = "") noexcept { return vaultmp::CreateButton(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
+			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible = True, State locked = False, cRawString text = "") noexcept { return vaultmp::CreateButton(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_BUTTON); }
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_BUTTON); }
 	};
@@ -1314,8 +1323,8 @@ namespace vaultmp
 			Text(ID id) noexcept : Window(vaultmp::IsText(id) ? id : static_cast<ID>(0), Type::ID_TEXT) {}
 			virtual ~Text() noexcept {}
 
-			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, const String& text) noexcept { return vaultmp::CreateText(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
-			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, cRawString text) noexcept { return vaultmp::CreateText(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
+			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible = True, State locked = False, const String& text = "") noexcept { return vaultmp::CreateText(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
+			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible = True, State locked = False, cRawString text = "") noexcept { return vaultmp::CreateText(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_TEXT); }
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_TEXT); }
 	};
@@ -1328,8 +1337,15 @@ namespace vaultmp
 			Edit(ID id) noexcept : Window(vaultmp::IsEdit(id) ? id : static_cast<ID>(0), Type::ID_EDIT) {}
 			virtual ~Edit() noexcept {}
 
-			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, const String& text) noexcept { return vaultmp::CreateEdit(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
-			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible, State locked, cRawString text) noexcept { return vaultmp::CreateEdit(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
+			UCount GetEditMaxLength() const noexcept { return vaultmp::GetEditMaxLength(id); }
+			String GetEditValidation() const noexcept { return vaultmp::GetEditValidation(id); }
+
+			State SetEditMaxLength(UCount length) noexcept { return vaultmp::SetEditMaxLength(id, length); }
+			State SetEditValidation(const String& validation) noexcept { return vaultmp::SetEditValidation(id, validation); }
+			State SetEditValidation(cRawString validation) noexcept { return vaultmp::SetEditValidation(id, validation); }
+
+			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible = True, State locked = False, const String& text = "") noexcept { return vaultmp::CreateEdit(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
+			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible = True, State locked = False, cRawString text = "") noexcept { return vaultmp::CreateEdit(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_EDIT); }
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_EDIT); }
 	};

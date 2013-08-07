@@ -1,4 +1,13 @@
 #include "Bethesda.h"
+#include "Utils.h"
+#include "Interface.h"
+#include "Game.h"
+#include "NetworkClient.h"
+#include "VaultException.h"
+
+#include <tlhelp32.h>
+#include <shlwapi.h>
+#include <shlobj.h>
 
 using namespace std;
 using namespace RakNet;
@@ -227,7 +236,7 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, c
 	API::Initialize();
 
 	NetworkID id = GameFactory::CreateInstance(ID_PLAYER, PLAYER_REFERENCE, PLAYER_BASE);
-	FactoryObject<Player> reference = GameFactory::GetObject<Player>(id).get();
+	FactoryPlayer reference = GameFactory::GetObject<Player>(id).get();
 	reference->SetEnabled(true);
 	reference->SetName(name);
 	GameFactory::LeaveReference(reference);

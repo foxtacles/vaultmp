@@ -1,15 +1,6 @@
 #ifndef PACKETFACTORY_H
 #define PACKETFACTORY_H
 
-#include <memory>
-#include <type_traits>
-#include <array>
-#include <unordered_map>
-#include <map>
-#include <list>
-#include <vector>
-#include <cstring>
-
 #include "vaultmp.h"
 #include "VaultException.h"
 #include "Data.h"
@@ -18,18 +9,19 @@
 #include "Debug.h"
 #endif
 
-enum
-{
-	ID_EVENT_INTERFACE_LOST,
-	ID_EVENT_CLIENT_ERROR,
-	ID_EVENT_SERVER_ERROR,
-	ID_EVENT_GAME_STARTED,
-	ID_EVENT_GAME_LOADED,
-	ID_EVENT_AUTH_RECEIVED,
-	ID_EVENT_CLOSE_RECEIVED,
-};
+#include <list>
+#include <map>
+#include <unordered_map>
+#include <vector>
+#include <string>
+#include <array>
+#include <tuple>
+#include <cstring>
+#include <memory>
 
-enum class pTypes : unsigned char
+typedef unsigned char pTypesSize;
+
+enum class pTypes : pTypesSize
 {
 	ID_GAME_AUTH = ID_GAME_FIRST,
 	ID_GAME_LOAD,
@@ -82,18 +74,10 @@ enum class pTypes : unsigned char
 	ID_UPDATE_WVISIBLE,
 	ID_UPDATE_WLOCKED,
 	ID_UPDATE_WTEXT,
+	ID_UPDATE_WMAXLEN,
+	ID_UPDATE_WVALID,
 	ID_UPDATE_WCLICK,
 	ID_UPDATE_WMODE
-};
-
-enum class Reason : unsigned char
-{
-	ID_REASON_KICK = 0,
-	ID_REASON_BAN,
-	ID_REASON_ERROR,
-	ID_REASON_DENIED,
-	ID_REASON_QUIT,
-	ID_REASON_NONE,
 };
 
 template<pTypes>
@@ -137,8 +121,14 @@ class PacketFactory
 		template<pTypes type>
 		inline static const typename pTypesMap<type>::type* Cast(const pDefault* packet) { return Cast_<type>::Cast(packet); }
 
+		template<pTypes type>
+		inline static const typename pTypesMap<type>::type* Cast(const pPacket& packet) { return Cast_<type>::Cast(packet.get()); }
+
 		template<pTypes type, typename... Args>
 		inline static void Access(const pDefault* packet, Args&... args) { Access_<type, Args...>::Access(packet, std::forward<Args&>(args)...); }
+
+		template<pTypes type, typename... Args>
+		inline static void Access(const pPacket& packet, Args&... args) { Access_<type, Args...>::Access(packet.get(), std::forward<Args&>(args)...); }
 
 		template<typename T>
 		inline static T Pop(const pDefault* packet);
@@ -179,7 +169,7 @@ class pDefault
 		mutable unsigned int location;
 
 	protected:
-		pDefault(pTypes type) : location(0)
+		pDefault(pTypes type) : location(sizeof(pTypes))
 		{
 			construct(type);
 		}
@@ -300,7 +290,7 @@ void pDefault::construct(const pPacket& arg, const Args&... args)
 template<typename... Args>
 void pDefault::construct(const std::string& arg, const Args&...args)
 {
-	unsigned int length = arg.length();
+	size_t length = arg.length();
 	const unsigned char* str = reinterpret_cast<const unsigned char*>(arg.c_str());
 
 	data.insert(data.end(), str, str + length + 1);
@@ -427,7 +417,7 @@ inline pPacket pDefault::deconstruct_single() const
 	unsigned int length = deconstruct_single<unsigned int>();
 
 	if (location + length > this->length())
-		throw VaultException("Reading past the end of packet");
+		throw VaultException("Reading past the end of packet").stacktrace();
 
 	pPacket packet = PacketFactory::Init(&data[location], length);
 
@@ -439,7 +429,7 @@ inline pPacket pDefault::deconstruct_single() const
 template<typename... Args>
 void pDefault::deconstruct(std::string& arg, Args&... args) const
 {
-	unsigned int length = std::strlen(reinterpret_cast<const char*>(&data[location]));
+	size_t length = std::strlen(reinterpret_cast<const char*>(&data[location]));
 
 	if (location + length + 1 > this->length())
 		throw VaultException("Reading past the end of packet").stacktrace();
@@ -454,7 +444,7 @@ void pDefault::deconstruct(std::string& arg, Args&... args) const
 template<typename T, typename... Args>
 void pDefault::deconstruct(std::vector<T>& arg, Args&... args) const
 {
-	unsigned int size = deconstruct_single<unsigned int>();
+	size_t size = deconstruct_single<size_t>();
 
 	arg.resize(size);
 
@@ -467,7 +457,7 @@ void pDefault::deconstruct(std::vector<T>& arg, Args&... args) const
 template<typename T, typename... Args>
 void pDefault::deconstruct(std::list<T>& arg, Args&... args) const
 {
-	unsigned int size = deconstruct_single<unsigned int>();
+	size_t size = deconstruct_single<size_t>();
 
 	arg.resize(size);
 
@@ -480,11 +470,11 @@ void pDefault::deconstruct(std::list<T>& arg, Args&... args) const
 template<typename K, typename V, typename... Args>
 void pDefault::deconstruct(std::map<K, V>& arg, Args&... args) const
 {
-	unsigned int size = deconstruct_single<unsigned int>();
+	size_t size = deconstruct_single<size_t>();
 
 	arg.clear();
 
-	for (unsigned int i = 0; i < size; ++i)
+	for (size_t i = 0; i < size; ++i)
 	{
 		std::pair<K, V> data;
 		deconstruct(data);
@@ -498,11 +488,11 @@ void pDefault::deconstruct(std::map<K, V>& arg, Args&... args) const
 template<typename K, typename V, typename... Args>
 void pDefault::deconstruct(std::unordered_map<K, V>& arg, Args&... args) const
 {
-	unsigned int size = deconstruct_single<unsigned int>();
+	size_t size = deconstruct_single<size_t>();
 
 	arg.clear();
 
-	for (unsigned int i = 0; i < size; ++i)
+	for (size_t i = 0; i < size; ++i)
 	{
 		std::pair<K, V> data;
 		deconstruct(data);
@@ -749,7 +739,7 @@ inline const typename pTypesMap<pTypes::ID_WINDOW_NEW>::type* PacketFactory::Cas
 }
 template<> struct pTypesMap<pTypes::ID_BUTTON_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_BUTTON_NEW> type; };
 template<> struct pTypesMap<pTypes::ID_TEXT_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_TEXT_NEW> type; };
-template<> struct pTypesMap<pTypes::ID_EDIT_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_EDIT_NEW> type; };
+template<> struct pTypesMap<pTypes::ID_EDIT_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_EDIT_NEW, unsigned int, std::string> type; };
 template<> struct pTypesMap<pTypes::ID_WINDOW_REMOVE> { typedef pGeneratorReference<pTypes::ID_WINDOW_REMOVE> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_NAME> { typedef pGeneratorReference<pTypes::ID_UPDATE_NAME, std::string> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_POS> { typedef pGeneratorReference<pTypes::ID_UPDATE_POS, double, double, double> type; };
@@ -777,6 +767,8 @@ template<> struct pTypesMap<pTypes::ID_UPDATE_WSIZE> { typedef pGeneratorReferen
 template<> struct pTypesMap<pTypes::ID_UPDATE_WLOCKED> { typedef pGeneratorReference<pTypes::ID_UPDATE_WLOCKED, bool> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_WVISIBLE> { typedef pGeneratorReference<pTypes::ID_UPDATE_WVISIBLE, bool> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_WTEXT> { typedef pGeneratorReference<pTypes::ID_UPDATE_WTEXT, std::string> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_WMAXLEN> { typedef pGeneratorReference<pTypes::ID_UPDATE_WMAXLEN, unsigned int> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_WVALID> { typedef pGeneratorReference<pTypes::ID_UPDATE_WVALID, std::string> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_WCLICK> { typedef pGeneratorReference<pTypes::ID_UPDATE_WCLICK> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_WMODE> { typedef pGeneratorDefault<pTypes::ID_UPDATE_WMODE, bool> type; };
 

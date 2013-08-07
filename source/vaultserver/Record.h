@@ -1,16 +1,16 @@
 #ifndef RECORDDB_H
 #define RECORDDB_H
 
-#include <algorithm>
-#include <unordered_map>
-#include <unordered_set>
-
-#include "vaultmp.h"
 #include "vaultserver.h"
-#include "Database.h"
 #include "Expected.h"
 
-#include "sqlite/sqlite3.h"
+#include <vector>
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
+#include <functional>
+
+class sqlite3_stmt;
 
 /**
  * \brief Represents a game record

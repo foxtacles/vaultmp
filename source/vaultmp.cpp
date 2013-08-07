@@ -1,4 +1,12 @@
 #include "vaultmp.h"
+#include "Bethesda.h"
+#include "ServerEntry.h"
+#include "Data.h"
+#include "VaultException.h"
+#include "Utils.h"
+#include "ufmod.h"
+#include "iniparser/src/dictionary.h"
+#include "iniparser/src/iniparser.h"
 
 #include <winsock2.h>
 #include <shlwapi.h>
@@ -8,14 +16,6 @@
 #include <map>
 #include <chrono>
 #include <thread>
-
-#include "Bethesda.h"
-#include "ServerEntry.h"
-#include "Data.h"
-#include "VaultException.h"
-#include "ufmod.h"
-#include "iniparser/src/dictionary.h"
-#include "iniparser/src/iniparser.h"
 
 #define MSG_MINTRAYICON         (WM_USER + 1)
 

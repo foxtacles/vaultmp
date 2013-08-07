@@ -1,27 +1,19 @@
 #ifndef SCRIPT_H
 #define SCRIPT_H
 
-#ifdef __WIN32__
-#include <winsock2.h>
-#else
-#include <dlfcn.h>
-#endif
-#include <vector>
-#include <string>
-
+#include "vaultserver.h"
+#include "RakNet.h"
+#include "Data.h"
+#include "ItemList.h"
+#include "ScriptFunction.h"
+#include "GameFactory.h"
+#include "Dedicated.h"
 #include "boost/any.hpp"
 
-#include "ScriptFunction.h"
-#include "Public.h"
-#include "PAWN.h"
-#include "Dedicated.h"
-#include "time/time64.h"
-#include "Record.h"
-#include "API.h"
-#include "GameFactory.h"
-#include "Utils.h"
-#include "vaultmp.h"
-#include "VaultException.h"
+#include <vector>
+#include <unordered_map>
+#include <memory>
+#include <chrono>
 
 /**
  * \brief Maintains communication with a script
@@ -161,14 +153,14 @@ class Script
 		static RakNet::NetworkID CreateTimerEx(ScriptFunc timer, unsigned int interval, const char* def, ...);
 		static RakNet::NetworkID CreateTimerPAWN(ScriptFuncPAWN timer, AMX* amx, unsigned int interval);
 		static RakNet::NetworkID CreateTimerPAWNEx(ScriptFuncPAWN timer, AMX* amx, unsigned int interval, const char* def, const std::vector<boost::any>& args);
-		static void SetupObject(FactoryObject<Object>& object, FactoryObject<Object>& reference, unsigned int cell, double X, double Y, double Z);
-		static void SetupItem(FactoryObject<Item>& item, FactoryObject<Object>& reference, unsigned int cell, double X, double Y, double Z);
-		static void SetupContainer(FactoryObject<Container>& container, FactoryObject<Object>& reference, unsigned int cell, double X, double Y, double Z);
-		static void SetupActor(FactoryObject<Actor>& actor, FactoryObject<Object>& reference, unsigned int cell, double X, double Y, double Z);
-		static void SetupWindow(FactoryObject<Window>& window, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text);
-		static void SetupButton(FactoryObject<Button>& button, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text);
-		static void SetupText(FactoryObject<Text>& text, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text_);
-		static void SetupEdit(FactoryObject<Edit>& edit, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text);
+		static void SetupObject(FactoryObject& object, FactoryObject& reference, unsigned int cell, double X, double Y, double Z);
+		static void SetupItem(FactoryItem& item, FactoryObject& reference, unsigned int cell, double X, double Y, double Z);
+		static void SetupContainer(FactoryContainer& container, FactoryObject& reference, unsigned int cell, double X, double Y, double Z);
+		static void SetupActor(FactoryActor& actor, FactoryObject& reference, unsigned int cell, double X, double Y, double Z);
+		static void SetupWindow(FactoryWindow& window, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text);
+		static void SetupButton(FactoryButton& button, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text);
+		static void SetupText(FactoryText& text, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text_);
+		static void SetupEdit(FactoryEdit& edit, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text);
 		static void KillTimer(RakNet::NetworkID id = 0);
 		static void MakePublic(ScriptFunc _public, const char* name, const char* def);
 		static void MakePublicPAWN(ScriptFuncPAWN _public, AMX* amx, const char* name, const char* def);
@@ -331,6 +323,8 @@ class Script
 		static bool GetWindowVisible(RakNet::NetworkID id);
 		static bool GetWindowLocked(RakNet::NetworkID id);
 		static const char* GetWindowText(RakNet::NetworkID id);
+		static unsigned int GetEditMaxLength(RakNet::NetworkID id);
+		static const char* GetEditValidation(RakNet::NetworkID id);
 
 		static RakNet::NetworkID (CreateWindow)(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text);
 		static bool DestroyWindow(RakNet::NetworkID id);
@@ -344,6 +338,8 @@ class Script
 		static RakNet::NetworkID CreateButton(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text);
 		static RakNet::NetworkID CreateText(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text);
 		static RakNet::NetworkID CreateEdit(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text);
+		static bool SetEditMaxLength(RakNet::NetworkID id, unsigned int length);
+		static bool SetEditValidation(RakNet::NetworkID id, const char* validation);
 
 		static constexpr ScriptFunctionData functions[] {
 			{"timestamp", Utils::timestamp},
@@ -490,6 +486,8 @@ class Script
 			{"GetWindowVisible", Script::GetWindowVisible},
 			{"GetWindowLocked", Script::GetWindowLocked},
 			{"GetWindowText", Script::GetWindowText},
+			{"GetEditMaxLength", Script::GetEditMaxLength},
+			{"GetEditValidation", Script::GetEditValidation},
 
 			{"CreateWindow", Script::CreateWindow},
 			{"DestroyWindow", Script::DestroyWindow},
@@ -503,6 +501,8 @@ class Script
 			{"CreateButton", Script::CreateButton},
 			{"CreateText", Script::CreateText},
 			{"CreateEdit", Script::CreateEdit},
+			{"SetEditMaxLength", Script::SetEditMaxLength},
+			{"SetEditValidation", Script::SetEditValidation},
 		};
 };
 

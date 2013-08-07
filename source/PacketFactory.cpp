@@ -204,6 +204,14 @@ pPacket PacketFactory::Init(const unsigned char* stream, unsigned int len)
 			packet = new typename pTypesMap<pTypes::ID_UPDATE_WTEXT>::type(stream, len);
 			break;
 
+		case pTypes::ID_UPDATE_WMAXLEN:
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_WMAXLEN>::type(stream, len);
+			break;
+
+		case pTypes::ID_UPDATE_WVALID:
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_WVALID>::type(stream, len);
+			break;
+
 		case pTypes::ID_UPDATE_WCLICK:
 			packet = new typename pTypesMap<pTypes::ID_UPDATE_WCLICK>::type(stream, len);
 			break;

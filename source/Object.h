@@ -2,10 +2,7 @@
 #define OBJECT_H
 
 #include "vaultmp.h"
-#include "Data.h"
-#include "API.h"
 #include "Reference.h"
-#include "Value.h"
 #include "VaultVector.h"
 
 #ifdef VAULTMP_DEBUG
@@ -196,7 +193,7 @@ class ObjectFunctor : public ReferenceFunctor
 		virtual ~ObjectFunctor() {}
 
 		virtual std::vector<std::string> operator()();
-		virtual bool filter(FactoryObject<Reference>& reference);
+		virtual bool filter(FactoryWrapper<Reference>& reference);
 };
 #endif
 

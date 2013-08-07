@@ -1,21 +1,16 @@
 #ifndef ITEMLIST_H
 #define ITEMLIST_H
 
-#include <list>
-#include <unordered_map>
-#include <algorithm>
-#include <cstdlib>
-
 #include "vaultmp.h"
-#include "RakNet.h"
 #include "PacketFactory.h"
-#include "Network.h"
+#include "RakNet.h"
 
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"
 #endif
 
-class Item;
+#include <vector>
+#include <list>
 
 #ifdef VAULTSERVER
 class ItemList : public RakNet::NetworkIDObject

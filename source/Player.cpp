@@ -1,5 +1,4 @@
 #include "Player.h"
-#include "PacketFactory.h"
 #include "GameFactory.h"
 
 #ifndef VAULTSERVER
@@ -18,7 +17,7 @@ unsigned int Player::default_cell;
 bool Player::default_console = true;
 #endif
 
-const map<unsigned char, pair<double, double>> Player::f3_default_values = {
+const map<unsigned char, pair<double, double>> Player::default_values = {
 	{ActorVal_Energy, {50.0, 50.0}},
 	{ActorVal_Responsibility, {50.0, 50.0}},
 	{ActorVal_Strength, {5.0, 5.0}},
@@ -60,11 +59,6 @@ const map<unsigned char, pair<double, double>> Player::f3_default_values = {
 	{ActorVal_UnarmedDamage, {1.0, 1.25}},
 };
 
-const map<unsigned int, tuple<unsigned int, double, bool, bool, bool>> Player::default_items = {
-	{PIPBOY_3000, tuple<unsigned int, double, bool, bool, bool>{1, 100.0, true, true, true}}, // Pip-Boy 3000
-	{PIPBOY_GLOVES, tuple<unsigned int, double, bool, bool, bool>{1, 100.0, true, true, true}}, // Pip-Boy Gloves
-};
-
 #ifdef VAULTMP_DEBUG
 DebugInput<Player> Player::debug;
 #endif
@@ -73,24 +67,12 @@ Player::Player(unsigned int refID, unsigned int baseID) : Actor(refID, baseID)
 {
 	initialize();
 
-	const auto& values = f3_default_values;
+	const auto& values = default_values;
 
 	for (const auto& value : values)
 	{
 		this->SetActorBaseValue(value.first, value.second.first);
 		this->SetActorValue(value.first, value.second.second);
-	}
-
-	for (const auto& item : default_items)
-	{
-		NetworkID id = GameFactory::CreateInstance(ID_ITEM, item.first);
-		FactoryObject<Item> reference = GameFactory::GetObject<Item>(id).get();
-		reference->SetItemCount(get<0>(item.second));
-		reference->SetItemCondition(get<1>(item.second));
-		reference->SetItemEquipped(get<2>(item.second));
-		reference->SetItemSilent(get<3>(item.second));
-		reference->SetItemStick(get<4>(item.second));
-		this->IL.AddItem(id);
 	}
 
 	this->SetActorRace(RACE_CAUCASIAN);
@@ -348,7 +330,7 @@ vector<string> PlayerFunctor::operator()()
 	else
 	{
 		auto references = Game::GetContext(ID_PLAYER);
-		Expected<FactoryObject<Player>> player;
+		ExpectedPlayer player;
 
 		for (unsigned int refID : references)
 			if ((player = GameFactory::GetObject<Player>(refID)))
@@ -367,7 +349,7 @@ vector<string> PlayerFunctor::operator()()
 	return result;
 }
 
-bool PlayerFunctor::filter(FactoryObject<Reference>& reference)
+bool PlayerFunctor::filter(FactoryWrapper<Reference>& reference)
 {
 	if (ActorFunctor::filter(reference))
 		return true;

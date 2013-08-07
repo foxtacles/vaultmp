@@ -1,14 +1,10 @@
 #ifndef NETWORK_H
 #define NETWORK_H
 
-#include "RakNet.h"
-
 #include "vaultmp.h"
-#include "VaultException.h"
-#include "CriticalSection.h"
 #include "PacketFactory.h"
+#include "CriticalSection.h"
 
-#include <vector>
 #include <tuple>
 #include <deque>
 

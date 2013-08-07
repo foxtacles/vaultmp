@@ -1,6 +1,7 @@
 #include "Game.h"
-#include "PacketFactory.h"
-#include "GameFactory.h"
+#include "Shared.h"
+
+#include <algorithm>
 
 using namespace std;
 using namespace RakNet;
@@ -39,7 +40,7 @@ void Game::AdjustZAngle(double& Z, double diff)
 
 void Game::CommandHandler(unsigned int key, const vector<double>& info, double result, bool error)
 {
-	unsigned short opcode = getFrom<unsigned short>(info.at(0));
+	Func opcode = getFrom<Func>(info.at(0));
 
 	if (!error)
 	{
@@ -53,23 +54,23 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 		{
 			switch (opcode)
 			{
-				case Func_ForceRespawn:
-				case Func_RemoveAllItemsEx:
-				case Func_ScanContainer:
-				case Func_CenterOnCell:
-				case Func_CenterOnExterior:
-				case Func_PlaceAtMeHealthPercent:
-				case Func_GetCauseofDeath:
-				case Func_GetRefCount:
-				case Func_GetBaseObject:
-				case Func_CenterOnWorld:
-				case Func_Load:
+				case Func::ForceRespawn:
+				case Func::RemoveAllItemsEx:
+				case Func::ScanContainer:
+				case Func::CenterOnCell:
+				case Func::CenterOnExterior:
+				case Func::PlaceAtMeHealthPercent:
+				case Func::GetCauseofDeath:
+				case Func::GetRefCount:
+				case Func::GetBaseObject:
+				case Func::CenterOnWorld:
+				case Func::Load:
 					shared = Lockable::Poll(key);
 					break;
 
-				case Func_IsLimbGone:
-				case Func_GetFirstRef:
-				case Func_GetNextRef:
+				case Func::IsLimbGone:
+				case Func::GetFirstRef:
+				case Func::GetNextRef:
 					break;
 
 				default:
@@ -79,57 +80,57 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 
 		switch (opcode)
 		{
-			case Func_PlaceAtMeHealthPercent:
+			case Func::PlaceAtMeHealthPercent:
 				FutureSet(shared, getFrom<unsigned int>(result));
 				break;
 
-			case Func_GetPos:
+			case Func::GetPos:
 			{
 				auto reference = GameFactory::GetObject(getFrom<unsigned int>(info.at(1)));
 				GetPos(reference.get(), getFrom<unsigned char>(info.at(2)), result);
 				break;
 			}
 
-			case Func_SetPos:
+			case Func::SetPos:
 				break;
 
-			case Func_GetAngle:
+			case Func::GetAngle:
 			{
 				auto reference = GameFactory::GetObject(getFrom<unsigned int>(info.at(1)));
 				GetAngle(reference.get(), getFrom<unsigned char>(info.at(2)), result);
 				break;
 			}
 
-			case Func_SetAngle:
+			case Func::SetAngle:
 				break;
 
-			case Func_GetActorValue:
+			case Func::GetActorValue:
 			{
 				auto reference = GameFactory::GetObject<Actor>(getFrom<unsigned int>(info.at(1)));
 				GetActorValue(reference.get(), false, getFrom<unsigned char>(info.at(2)), result);
 				break;
 			}
 
-			case Func_ForceActorValue:
+			case Func::ForceActorValue:
 				break;
 
-			case Func_DamageActorValue:
+			case Func::DamageActorValue:
 				break;
 
-			case Func_RestoreActorValue:
+			case Func::RestoreActorValue:
 				break;
 
-			case Func_GetBaseActorValue:
+			case Func::GetBaseActorValue:
 			{
 				auto reference = GameFactory::GetObject<Actor>(getFrom<unsigned int>(info.at(1)));
 				GetActorValue(reference.get(), true, getFrom<unsigned char>(info.at(2)), result);
 				break;
 			}
 
-			case Func_SetActorValue:
+			case Func::SetActorValue:
 				break;
 
-			case Func_GetActorState:
+			case Func::GetActorState:
 			{
 				auto reference = GameFactory::GetObject<Actor>(getFrom<unsigned int>(info.at(1)));
 				GetActorState(reference.get(),
@@ -141,95 +142,98 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 			}
 
-			case Func_PlayGroup:
+			case Func::PlayGroup:
 				break;
 
-			case Func_PlayIdle:
+			case Func::PlayIdle:
 				break;
 
-			case Func_GetDead:
+			case Func::GetDead:
 			{
 				auto objects = GameFactory::GetMultiple<Actor>(vector<unsigned int>{getFrom<unsigned int>(info.at(1)), PLAYER_REFERENCE});
 				GetDead(objects[0].get(), vaultcast<Player>(objects[1]).get(), result);
 				break;
 			}
 
-			case Func_IsLimbGone:
+			case Func::IsLimbGone:
 				IsLimbGone(key, getFrom<unsigned int>(info.at(2)), result);
 				break;
 
-			case Func_GetCauseofDeath:
+			case Func::GetCauseofDeath:
 				FutureSet(shared, static_cast<signed char>(result));
 				break;
 
-			case Func_Kill:
+			case Func::Kill:
 				break;
 
-			case Func_MoveTo:
+			case Func::MoveTo:
 				break;
 
-			case Func_Enable:
+			case Func::Enable:
 				break;
 
-			case Func_Disable:
+			case Func::Disable:
 				break;
 
-			case Func_SetRestrained:
+			case Func::SetRestrained:
 				break;
 
-			case Func_SetAlert:
+			case Func::SetAlert:
 				break;
 
-			case Func_SetForceSneak:
+			case Func::SetForceSneak:
 				break;
 
-			case Func_AddItem:
+			case Func::AddItem:
 				break;
 
-			case Func_AddItemHealthPercent:
+			case Func::AddItemHealthPercent:
 				break;
 
-			case Func_RemoveItem:
+			case Func::RemoveItem:
 				break;
 
-			case Func_RemoveAllItems:
+			case Func::RemoveAllItems:
 				break;
 
-			case Func_EquipItem:
+			case Func::EquipItem:
 				break;
 
-			case Func_UnequipItem:
+			case Func::UnequipItem:
 				break;
 
-			case Func_FireWeapon:
+			case Func::FireWeapon:
 				break;
 
-			case Func_EnablePlayerControls:
+			case Func::EnablePlayerControls:
 				break;
 
-			case Func_DisablePlayerControls:
+			case Func::DisablePlayerControls:
 				break;
 
-			case Func_SetINISetting:
+			case Func::SetINISetting:
 				break;
 
-			case Func_Lock:
+			case Func::Lock:
 				break;
 
-			case Func_Unlock:
+			case Func::Unlock:
 				break;
 
-			case Func_SetOwnership:
+			case Func::SetOwnership:
 				break;
 
-			case Func_GetLocked:
+			case Func::GetLocked:
 			{
 				auto reference = GameFactory::GetObject<Container>(getFrom<unsigned int>(info.at(1)));
 				GetLocked(reference.get(), result);
 				break;
 			}
 
-			case Func_GUIChat:
+			case Func::Activate:
+				break;
+
+			case Func::GUIChat:
 			{
 				if (!result)
 					break;
@@ -240,7 +244,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 			}
 
-			case Func_GUIMode:
+			case Func::GUIMode:
 			{
 				if (!result)
 					break;
@@ -251,18 +255,20 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 			}
 
-			case Func_GUICreateWindow:
-			case Func_GUICreateButton:
-			case Func_GUICreateText:
-			case Func_GUICreateEdit:
-			case Func_GUIRemoveWindow:
-			case Func_GUIPos:
-			case Func_GUISize:
-			case Func_GUIVisible:
-			case Func_GUILocked:
+			case Func::GUICreateWindow:
+			case Func::GUICreateButton:
+			case Func::GUICreateText:
+			case Func::GUICreateEdit:
+			case Func::GUIRemoveWindow:
+			case Func::GUIPos:
+			case Func::GUISize:
+			case Func::GUIVisible:
+			case Func::GUILocked:
+			case Func::GUIMaxLen:
+			case Func::GUIValid:
 				break;
 
-			case Func_GUIText:
+			case Func::GUIText:
 			{
 				if (!result)
 					break;
@@ -275,7 +281,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 			}
 
-			case Func_GUIClick:
+			case Func::GUIClick:
 			{
 				if (!result)
 					break;
@@ -286,25 +292,40 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 			}
 
-			case Func_SetGlobalValue:
+			case Func::OnActivate:
+			{
+				if (!result)
+					break;
+
+				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
+				unsigned int refID = *reinterpret_cast<unsigned int*>(&data[0]);
+
+				auto refs = GameFactory::GetMultiple(vector<unsigned int>{PLAYER_REFERENCE, refID});
+				Activate(refs[1].get(), refs[0].get());
+
+				delete &data;
+				break;
+			}
+
+			case Func::SetGlobalValue:
 				break;
 
-			case Func_MarkForDelete:
+			case Func::MarkForDelete:
 				break;
 
-			case Func_AgeRace:
+			case Func::AgeRace:
 				break;
 
-			case Func_MatchRace:
+			case Func::MatchRace:
 				break;
 
-			case Func_SexChange:
+			case Func::SexChange:
 				break;
 
-			case Func_ForceWeather:
+			case Func::ForceWeather:
 				break;
 
-			case Func_ScanContainer:
+			case Func::ScanContainer:
 			{
 				auto reference = GameFactory::GetObject<Container>(getFrom<unsigned int>(info.at(1)));
 				vector<unsigned char>* data = getFrom<vector<unsigned char>*>(result);
@@ -318,7 +339,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 			}
 
-			case Func_RemoveAllItemsEx:
+			case Func::RemoveAllItemsEx:
 			{
 				auto reference = GameFactory::GetObject<Container>(getFrom<unsigned int>(info.at(1)));
 				vector<unsigned char>* data = getFrom<vector<unsigned char>*>(result);
@@ -328,66 +349,66 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 			}
 
-			case Func_GetBaseObject:
+			case Func::GetBaseObject:
 				FutureSet(shared, getFrom<unsigned int>(result));
 				break;
 
-			case Func_GetRefCount:
+			case Func::GetRefCount:
 				FutureSet(shared, static_cast<unsigned int>(result));
 				break;
 
-			case Func_SetRefCount:
+			case Func::SetRefCount:
 				break;
 
-			case Func_SetCurrentHealth:
+			case Func::SetCurrentHealth:
 				break;
 
-			case Func_GetFirstRef:
+			case Func::GetFirstRef:
 				GetNextRef(key, getFrom<unsigned int>(result), getFrom<unsigned int>(info.at(1)));
 				break;
 
-			case Func_GetNextRef:
+			case Func::GetNextRef:
 				GetNextRef(key, getFrom<unsigned int>(result));
 				break;
 
-			case Func_UIMessage:
+			case Func::UIMessage:
 				break;
 
-			case Func_GetParentCell:
+			case Func::GetParentCell:
 			{
 				auto player = GameFactory::GetObject<Player>(getFrom<unsigned int>(info.at(1)));
 				GetParentCell(player.get(), getFrom<unsigned int>(result));
 				break;
 			}
 
-			case Func_EnableControl:
+			case Func::EnableControl:
 				break;
 
-			case Func_DisableControl:
+			case Func::DisableControl:
 				break;
 
-			case Func_GetControl:
+			case Func::GetControl:
 			{
 				auto self = GameFactory::GetObject<Player>(PLAYER_REFERENCE);
 				GetControl(self.get(), getFrom<int>(info.at(1)), result);
 				break;
 			}
 
-			case Func_DisableKey:
+			case Func::DisableKey:
 				break;
 
-			case Func_EnableKey:
+			case Func::EnableKey:
 				break;
 
-			case Func_CenterOnCell:
-			case Func_CenterOnExterior:
-			case Func_ForceRespawn:
-			case Func_CenterOnWorld:
-			case Func_Load:
+			case Func::CenterOnCell:
+			case Func::CenterOnExterior:
+			case Func::ForceRespawn:
+			case Func::CenterOnWorld:
+			case Func::Load:
 				FutureSet(shared, true);
 				break;
 
-			case Func_SetName:
+			case Func::SetName:
 				break;
 
 			default:
@@ -397,7 +418,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 	else
 	{
 #ifdef VAULTMP_DEBUG
-		debug.note("Command ", hex, opcode, " failed (");
+		debug.note("Command ", hex, static_cast<unsigned short>(opcode), " failed (");
 
 		for (const auto& value : info)
 			debug.note(*reinterpret_cast<const unsigned long long*>(&value), ", ");
@@ -407,7 +428,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 
 		switch (opcode)
 		{
-			case Func_PlaceAtMeHealthPercent:
+			case Func::PlaceAtMeHealthPercent:
 				PlaceAtMe(getFrom<unsigned int>(info.at(1)), getFrom<unsigned int>(info.at(2)), getFrom<unsigned int>(info.at(3)), key);
 				break;
 
@@ -445,13 +466,13 @@ void Game::Startup()
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("GetControl", {RawParameter(API::RetrieveAllControls())});
-	Interface::ExecuteCommand("DisableControl", {RawParameter(vector<unsigned char>{
+	Interface::ExecuteCommand(Func::GetControl, {RawParameter(API::RetrieveAllControls())});
+	Interface::ExecuteCommand(Func::DisableControl, {RawParameter(vector<unsigned char>{
 		ControlCode_Quickload,
 		ControlCode_Quicksave,
 		ControlCode_VATS,
 		ControlCode_Rest})});
-	Interface::ExecuteCommand("DisableKey", {RawParameter(vector<unsigned int>{
+	Interface::ExecuteCommand(Func::DisableKey, {RawParameter(vector<unsigned int>{
 		ScanCode_Escape,
 		ScanCode_Console})});
 
@@ -461,17 +482,17 @@ void Game::Startup()
 
 	Interface::StartSetup();
 
-	Interface::SetupCommand("GetPos", {self_ref, Object::Param_Axis()});
-	Interface::SetupCommand("GetPos", {Player::CreateFunctor(FLAG_ENABLED | FLAG_NOTSELF | FLAG_ALIVE), Object::Param_Axis()}, 30);
+	Interface::SetupCommand(Func::GetPos, {self_ref, Object::Param_Axis()});
+	Interface::SetupCommand(Func::GetPos, {Player::CreateFunctor(FLAG_ENABLED | FLAG_NOTSELF | FLAG_ALIVE), Object::Param_Axis()}, 30);
 	//Interface::SetupCommand("GetPos", {Actor::CreateFunctor(FLAG_ENABLED | FLAG_ALIVE), Object::Param_Axis()}, 30);
-	Interface::SetupCommand("GetAngle", {self_ref, RawParameter(vector<string> {API::RetrieveAxis_Reverse(Axis_X), API::RetrieveAxis_Reverse(Axis_Z)})});
-	Interface::SetupCommand("GetActorState", {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), Player::CreateFunctor(FLAG_MOVCONTROLS, id)});
-	Interface::SetupCommand("GetParentCell", {Player::CreateFunctor(FLAG_SELF | FLAG_ALIVE)}, 30);
-	Interface::SetupCommand("ScanContainer", {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED)}, 50);
+	Interface::SetupCommand(Func::GetAngle, {self_ref, RawParameter(vector<string> {API::RetrieveAxis_Reverse(Axis_X), API::RetrieveAxis_Reverse(Axis_Z)})});
+	Interface::SetupCommand(Func::GetActorState, {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), Player::CreateFunctor(FLAG_MOVCONTROLS, id)});
+	Interface::SetupCommand(Func::GetParentCell, {Player::CreateFunctor(FLAG_SELF | FLAG_ALIVE)}, 30);
+	Interface::SetupCommand(Func::ScanContainer, {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED)}, 50);
 
 	auto func = Player::CreateFunctor(FLAG_ENABLED | FLAG_ALIVE);
 	func.connect(Actor::CreateFunctor(FLAG_ENABLED | FLAG_ALIVE));
-	Interface::SetupCommand("GetDead", {move(func)}, 30);
+	Interface::SetupCommand(Func::GetDead, {move(func)}, 30);
 
 	RawParameter health = RawParameter(vector<string>{
 		API::RetrieveValue_Reverse(ActorVal_Health),
@@ -483,19 +504,19 @@ void Game::Startup()
 		API::RetrieveValue_Reverse(ActorVal_RightLeg),
 		API::RetrieveValue_Reverse(ActorVal_Brain)});
 
-	Interface::SetupCommand("GetActorValue", {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), health}, 30);
+	Interface::SetupCommand(Func::GetActorValue, {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), health}, 30);
 
 	func = Player::CreateFunctor(FLAG_NOTSELF | FLAG_SELFALERT | FLAG_ENABLED | FLAG_ALIVE);
 	func.connect(Actor::CreateFunctor(FLAG_SELFALERT | FLAG_ENABLED | FLAG_ALIVE));
-	Interface::SetupCommand("GetActorValue", {move(func), health}, 30);
+	Interface::SetupCommand(Func::GetActorValue, {move(func), health}, 30);
 
 	// we could exclude health values here
-	Interface::SetupCommand("GetActorValue", {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), Actor::Param_ActorValues()}, 100);
-	Interface::SetupCommand("GetBaseActorValue", {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), Actor::Param_ActorValues()}, 200);
+	Interface::SetupCommand(Func::GetActorValue, {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), Actor::Param_ActorValues()}, 100);
+	Interface::SetupCommand(Func::GetBaseActorValue, {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), Actor::Param_ActorValues()}, 200);
 
 	func = Container::CreateFunctor(FLAG_ENABLED | FLAG_LOCKED);
 	func.connect(Object::CreateFunctor(FLAG_ENABLED | FLAG_LOCKED));
-	Interface::SetupCommand("GetLocked", {move(func)}, 200);
+	Interface::SetupCommand(Func::GetLocked, {move(func)}, 200);
 
 	Interface::EndSetup();
 
@@ -548,7 +569,7 @@ void Game::JobDispatch(chrono::milliseconds&& time, function<void()>&& func)
 		func_();
 }
 
-void Game::DelayOrExecute(const FactoryObject<Object>& reference, function<void(unsigned int)>&& func, unsigned int key)
+void Game::DelayOrExecute(const FactoryObject& reference, function<void(unsigned int)>&& func, unsigned int key)
 {
 	if (!reference->GetReference())
 	{
@@ -585,7 +606,7 @@ void Game::LoadGame(string savegame)
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("Load", {RawParameter(savegame)}, key);
+	Interface::ExecuteCommand(Func::Load, {RawParameter(savegame)}, key);
 
 	Interface::EndDynamic();
 
@@ -619,7 +640,7 @@ void Game::CenterOnCell(const string& cell, bool spawn)
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("CenterOnCell", {RawParameter(cell)}, key);
+	Interface::ExecuteCommand(Func::CenterOnCell, {RawParameter(cell)}, key);
 
 	Interface::EndDynamic();
 
@@ -656,7 +677,7 @@ void Game::CenterOnExterior(signed int x, signed int y, bool spawn)
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("CenterOnExterior", {RawParameter(x), RawParameter(y)}, key);
+	Interface::ExecuteCommand(Func::CenterOnExterior, {RawParameter(x), RawParameter(y)}, key);
 
 	Interface::EndDynamic();
 
@@ -693,7 +714,7 @@ void Game::CenterOnWorld(unsigned int baseID, signed int x, signed int y, bool s
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("CenterOnWorld", {RawParameter(baseID), RawParameter(x), RawParameter(y)}, key);
+	Interface::ExecuteCommand(Func::CenterOnWorld, {RawParameter(baseID), RawParameter(x), RawParameter(y)}, key);
 
 	Interface::EndDynamic();
 
@@ -716,7 +737,7 @@ void Game::SetINISetting(const string& key, const string& value)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("SetINISetting", {RawParameter(key), RawParameter(value)});
+	Interface::ExecuteCommand(Func::SetINISetting, {RawParameter(key), RawParameter(value)});
 
 	Interface::EndDynamic();
 }
@@ -725,7 +746,7 @@ void Game::SetGlobalValue(unsigned int global, signed int value)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("SetGlobalValue", {RawParameter(global), RawParameter(value)});
+	Interface::ExecuteCommand(Func::SetGlobalValue, {RawParameter(global), RawParameter(value)});
 
 	Interface::EndDynamic();
 }
@@ -763,29 +784,28 @@ void Game::LoadEnvironment()
 
 	for (NetworkID& id : reference)
 	{
-		auto _reference = GameFactory::GetObject(id);
-		auto& reference = _reference.get();
-
-		if (!reference->IsPersistent() || reference->GetReference() == PLAYER_REFERENCE)
-		{
-			cellRefs.StartSession();
-			(*cellRefs)[reference->GetNetworkCell()][reference.GetType()].erase(reference->GetReference());
-			cellRefs.EndSession();
-
-			if (reference->GetReference() != PLAYER_REFERENCE)
-				reference->SetReference(0x00000000);
-			else
+		GameFactory::Operate(id, [](FactoryObject& object) {
+			if (!object->IsPersistent() || object->GetReference() == PLAYER_REFERENCE)
 			{
-				reference->SetNetworkCell(spawnContext[0]);
-				reference->SetGameCell(spawnContext[0]);
-			}
-		}
+				cellRefs.StartSession();
+				(*cellRefs)[object->GetNetworkCell()][object.GetType()].erase(object->GetReference());
+				cellRefs.EndSession();
 
-		NewDispatch(reference);
+				if (object->GetReference() != PLAYER_REFERENCE)
+					object->SetReference(0x00000000);
+				else
+				{
+					object->SetNetworkCell(spawnContext[0]);
+					object->SetGameCell(spawnContext[0]);
+				}
+			}
+
+			NewDispatch(object);
+		});
 	}
 }
 
-void Game::NewDispatch(FactoryObject<Object>& reference)
+void Game::NewDispatch(FactoryObject& reference)
 {
 	NetworkID id = reference->GetNetworkID();
 	unsigned int type = reference.GetType();
@@ -839,7 +859,7 @@ void Game::UIMessage(const string& message, unsigned char emoticon)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("UIMessage", {RawParameter(message), RawParameter(emoticon)});
+	Interface::ExecuteCommand(Func::UIMessage, {RawParameter(message), RawParameter(emoticon)});
 
 	Interface::EndDynamic();
 }
@@ -848,12 +868,12 @@ void Game::ChatMessage(const string& message)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("GUIChat", {RawParameter(message)});
+	Interface::ExecuteCommand(Func::GUIChat, {RawParameter(message)});
 
 	Interface::EndDynamic();
 }
 
-void Game::NewObject(FactoryObject<Object>& reference)
+void Game::NewObject(FactoryObject& reference)
 {
 	if (IsInContext(reference->GetNetworkCell()))
 		NewObject_(reference);
@@ -867,7 +887,7 @@ void Game::NewObject(FactoryObject<Object>& reference)
 	}
 }
 
-void Game::NewObject_(FactoryObject<Object>& reference)
+void Game::NewObject_(FactoryObject& reference)
 {
 	reference->Release();
 
@@ -945,7 +965,7 @@ void Game::NewObject_(FactoryObject<Object>& reference)
 	// maybe more
 }
 
-void Game::NewItem(FactoryObject<Item>& reference)
+void Game::NewItem(FactoryItem& reference)
 {
 	if (IsInContext(reference->GetNetworkCell()))
 		NewItem_(reference);
@@ -959,7 +979,7 @@ void Game::NewItem(FactoryObject<Item>& reference)
 	}
 }
 
-void Game::NewItem_(FactoryObject<Item>& reference)
+void Game::NewItem_(FactoryItem& reference)
 {
 	NetworkID id = reference->GetItemContainer();
 
@@ -970,7 +990,7 @@ void Game::NewItem_(FactoryObject<Item>& reference)
 	SetRefCount(reference);
 }
 
-void Game::NewContainer(FactoryObject<Container>& reference)
+void Game::NewContainer(FactoryContainer& reference)
 {
 	if (IsInContext(reference->GetNetworkCell()))
 		NewContainer_(reference);
@@ -984,7 +1004,7 @@ void Game::NewContainer(FactoryObject<Container>& reference)
 	}
 }
 
-void Game::NewContainer_(FactoryObject<Container>& reference)
+void Game::NewContainer_(FactoryContainer& reference)
 {
 	NewObject_(reference);
 	auto items = GameFactory::GetMultiple<Item>(vector<NetworkID>(reference->IL.GetItemList().begin(), reference->IL.GetItemList().end()));
@@ -999,7 +1019,7 @@ void Game::NewContainer_(FactoryObject<Container>& reference)
 	}
 }
 
-void Game::NewActor(FactoryObject<Actor>& reference)
+void Game::NewActor(FactoryActor& reference)
 {
 	if (IsInContext(reference->GetNetworkCell()))
 		NewActor_(reference);
@@ -1013,7 +1033,7 @@ void Game::NewActor(FactoryObject<Actor>& reference)
 	}
 }
 
-void Game::NewActor_(FactoryObject<Actor>& reference)
+void Game::NewActor_(FactoryActor& reference)
 {
 	NewContainer_(reference);
 
@@ -1051,7 +1071,7 @@ void Game::NewActor_(FactoryObject<Actor>& reference)
 	}
 }
 
-void Game::NewPlayer(FactoryObject<Player>& reference)
+void Game::NewPlayer(FactoryPlayer& reference)
 {
 	if (IsInContext(reference->GetNetworkCell()) || reference->GetReference() == PLAYER_REFERENCE)
 		NewPlayer_(reference);
@@ -1065,14 +1085,14 @@ void Game::NewPlayer(FactoryObject<Player>& reference)
 	}
 }
 
-void Game::NewPlayer_(FactoryObject<Player>& reference)
+void Game::NewPlayer_(FactoryPlayer& reference)
 {
 	NewActor_(reference);
 
 	// ...
 }
 
-void Game::RemoveObject(const FactoryObject<Object>& reference)
+void Game::RemoveObject(const FactoryObject& reference)
 {
 	if (!reference->GetReference())
 		return;
@@ -1084,7 +1104,7 @@ void Game::RemoveObject(const FactoryObject<Object>& reference)
 
 		Interface::StartDynamic();
 
-		Interface::ExecuteCommand("MarkForDelete", {reference->GetReferenceParam()});
+		Interface::ExecuteCommand(Func::MarkForDelete, {reference->GetReferenceParam()});
 
 		Interface::EndDynamic();
 	}
@@ -1106,12 +1126,12 @@ void Game::RemoveObject(unsigned int refID)
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("MarkForDelete", {RawParameter(refID)});
+	Interface::ExecuteCommand(Func::MarkForDelete, {RawParameter(refID)});
 
 	Interface::EndDynamic();
 }
 
-void Game::NewWindow(const FactoryObject<Window>& reference)
+void Game::NewWindow(const FactoryWindow& reference)
 {
 	Interface::StartDynamic();
 
@@ -1119,38 +1139,19 @@ void Game::NewWindow(const FactoryObject<Window>& reference)
 	{
 		reference->SetLabel(Utils::toString(reference->GetNetworkID()));
 
-		Interface::ExecuteCommand("GUICreateWindow", {RawParameter(reference->GetLabel())});
+		Interface::ExecuteCommand(Func::GUICreateWindow, {RawParameter(reference->GetLabel())});
 	}
 
-	WindowPos(reference);
-	WindowSize(reference);
-	WindowVisible(reference);
-	WindowLocked(reference);
-	WindowText(reference);
+	SetWindowPos(reference);
+	SetWindowSize(reference);
+	SetWindowVisible(reference);
+	SetWindowLocked(reference);
+	SetWindowText(reference);
 
 	Interface::EndDynamic();
 }
 
-void Game::NewButton(const FactoryObject<Button>& reference)
-{
-	if (!reference->GetParentWindow())
-		throw VaultException("Window %llu requires a parent", reference->GetNetworkID());
-
-	Interface::StartDynamic();
-
-	if (reference->GetLabel().empty())
-	{
-		reference->SetLabel(Utils::toString(reference->GetNetworkID()));
-
-		Interface::ExecuteCommand("GUICreateButton", {RawParameter(Utils::toString(reference->GetParentWindow())), RawParameter(reference->GetLabel())});
-	}
-
-	NewWindow(reference);
-
-	Interface::EndDynamic();
-}
-
-void Game::NewText(const FactoryObject<Text>& reference)
+void Game::NewButton(const FactoryButton& reference)
 {
 	if (!reference->GetParentWindow())
 		throw VaultException("Window %llu requires a parent", reference->GetNetworkID());
@@ -1161,7 +1162,7 @@ void Game::NewText(const FactoryObject<Text>& reference)
 	{
 		reference->SetLabel(Utils::toString(reference->GetNetworkID()));
 
-		Interface::ExecuteCommand("GUICreateText", {RawParameter(Utils::toString(reference->GetParentWindow())), RawParameter(reference->GetLabel())});
+		Interface::ExecuteCommand(Func::GUICreateButton, {RawParameter(Utils::toString(reference->GetParentWindow())), RawParameter(reference->GetLabel())});
 	}
 
 	NewWindow(reference);
@@ -1169,7 +1170,7 @@ void Game::NewText(const FactoryObject<Text>& reference)
 	Interface::EndDynamic();
 }
 
-void Game::NewEdit(const FactoryObject<Edit>& reference)
+void Game::NewText(const FactoryText& reference)
 {
 	if (!reference->GetParentWindow())
 		throw VaultException("Window %llu requires a parent", reference->GetNetworkID());
@@ -1180,7 +1181,7 @@ void Game::NewEdit(const FactoryObject<Edit>& reference)
 	{
 		reference->SetLabel(Utils::toString(reference->GetNetworkID()));
 
-		Interface::ExecuteCommand("GUICreateEdit", {RawParameter(Utils::toString(reference->GetParentWindow())), RawParameter(reference->GetLabel())});
+		Interface::ExecuteCommand(Func::GUICreateText, {RawParameter(Utils::toString(reference->GetParentWindow())), RawParameter(reference->GetLabel())});
 	}
 
 	NewWindow(reference);
@@ -1188,7 +1189,29 @@ void Game::NewEdit(const FactoryObject<Edit>& reference)
 	Interface::EndDynamic();
 }
 
-void Game::PlaceAtMe(const FactoryObject<Object>& reference, unsigned int baseID, double condition, unsigned int count, unsigned int key)
+void Game::NewEdit(const FactoryEdit& reference)
+{
+	if (!reference->GetParentWindow())
+		throw VaultException("Window %llu requires a parent", reference->GetNetworkID());
+
+	Interface::StartDynamic();
+
+	if (reference->GetLabel().empty())
+	{
+		reference->SetLabel(Utils::toString(reference->GetNetworkID()));
+
+		Interface::ExecuteCommand(Func::GUICreateEdit, {RawParameter(Utils::toString(reference->GetParentWindow())), RawParameter(reference->GetLabel())});
+	}
+
+	NewWindow(reference);
+
+	SetEditMaxLength(reference);
+	SetEditValidation(reference);
+
+	Interface::EndDynamic();
+}
+
+void Game::PlaceAtMe(const FactoryObject& reference, unsigned int baseID, double condition, unsigned int count, unsigned int key)
 {
 	PlaceAtMe(reference->GetReference(), baseID, condition, count, key);
 }
@@ -1197,12 +1220,12 @@ void Game::PlaceAtMe(unsigned int refID, unsigned int baseID, double condition, 
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("PlaceAtMeHealthPercent", {RawParameter(refID), RawParameter(baseID), RawParameter(condition), RawParameter(count)}, key);
+	Interface::ExecuteCommand(Func::PlaceAtMeHealthPercent, {RawParameter(refID), RawParameter(baseID), RawParameter(condition), RawParameter(count)}, key);
 
 	Interface::EndDynamic();
 }
 
-void Game::ToggleEnabled(const FactoryObject<Object>& reference)
+void Game::ToggleEnabled(const FactoryObject& reference)
 {
 	ToggleEnabled(reference->GetReference(), reference->GetEnabled());
 }
@@ -1212,14 +1235,14 @@ void Game::ToggleEnabled(unsigned int refID, bool enabled)
 	Interface::StartDynamic();
 
 	if (enabled)
-		Interface::ExecuteCommand("Enable", {RawParameter(refID), RawParameter(true)});
+		Interface::ExecuteCommand(Func::Enable, {RawParameter(refID), RawParameter(true)});
 	else
-		Interface::ExecuteCommand("Disable", {RawParameter(refID), RawParameter(false)});
+		Interface::ExecuteCommand(Func::Disable, {RawParameter(refID), RawParameter(false)});
 
 	Interface::EndDynamic();
 }
 
-void Game::DeleteObject(FactoryObject<Object>& reference)
+void Game::DeleteObject(FactoryObject& reference)
 {
 	RemoveObject(reference);
 
@@ -1237,11 +1260,11 @@ void Game::DeleteObject(FactoryObject<Object>& reference)
 	GameFactory::DestroyInstance(reference);
 }
 
-void Game::DeleteWindow(FactoryObject<Window>& reference)
+void Game::DeleteWindow(FactoryWindow& reference)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("GUIRemoveWindow", {RawParameter(reference->GetLabel())});
+	Interface::ExecuteCommand(Func::GUIRemoveWindow, {RawParameter(reference->GetLabel())});
 
 	Interface::EndDynamic();
 
@@ -1255,7 +1278,7 @@ unsigned int Game::GetBase(unsigned int refID)
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("GetBaseObject", {RawParameter(refID)}, key);
+	Interface::ExecuteCommand(Func::GetBaseObject, {RawParameter(refID)}, key);
 
 	Interface::EndDynamic();
 
@@ -1273,7 +1296,7 @@ unsigned int Game::GetBase(unsigned int refID)
 	return baseID;
 }
 
-void Game::SetName(const FactoryObject<Object>& reference)
+void Game::SetName(const FactoryObject& reference)
 {
 	const string& name = reference->GetName();
 
@@ -1282,23 +1305,32 @@ void Game::SetName(const FactoryObject<Object>& reference)
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("SetName", {reference->GetReferenceParam(), RawParameter(name)});
+	Interface::ExecuteCommand(Func::SetName, {reference->GetReferenceParam(), RawParameter(name)});
 
 	Interface::EndDynamic();
 }
 
-void Game::SetRestrained(const FactoryObject<Actor>& reference, bool restrained)
+void Game::SetRestrained(const FactoryActor& reference, bool restrained)
 {
 	//bool restrained = actor->GetActorRestrained();
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("SetRestrained", {reference->GetReferenceParam(), RawParameter(restrained)});
+	Interface::ExecuteCommand(Func::SetRestrained, {reference->GetReferenceParam(), RawParameter(restrained)});
 
 	Interface::EndDynamic();
 }
 
-void Game::SetPos(const FactoryObject<Object>& reference)
+void Game::Activate(const FactoryObject& reference, const FactoryObject& action)
+{
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand(Func::Activate, {reference->GetReferenceParam(), action->GetReferenceParam()});
+
+	Interface::EndDynamic();
+}
+
+void Game::SetPos(const FactoryObject& reference)
 {
 	if (!reference->HasValidCoordinates())
 		return;
@@ -1309,24 +1341,24 @@ void Game::SetPos(const FactoryObject<Object>& reference)
 
 	key = reference->SetGamePos(Axis_X, reference->GetNetworkPos(Axis_X));
 
-	Interface::ExecuteCommand("SetPos", {reference->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_X)), RawParameter(reference->GetNetworkPos(Axis_X))}, key ? key->Lock() : 0);
+	Interface::ExecuteCommand(Func::SetPos, {reference->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_X)), RawParameter(reference->GetNetworkPos(Axis_X))}, key ? key->Lock() : 0);
 
 	key = reference->SetGamePos(Axis_Y, reference->GetNetworkPos(Axis_Y));
 
-	Interface::ExecuteCommand("SetPos", {reference->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_Y)), RawParameter(reference->GetNetworkPos(Axis_Y))}, key ? key->Lock() : 0);
+	Interface::ExecuteCommand(Func::SetPos, {reference->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_Y)), RawParameter(reference->GetNetworkPos(Axis_Y))}, key ? key->Lock() : 0);
 
 	key = reference->SetGamePos(Axis_Z, reference->GetNetworkPos(Axis_Z));
 
-	Interface::ExecuteCommand("SetPos", {reference->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_Z)), RawParameter(reference->GetNetworkPos(Axis_Z))}, key ? key->Lock() : 0);
+	Interface::ExecuteCommand(Func::SetPos, {reference->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_Z)), RawParameter(reference->GetNetworkPos(Axis_Z))}, key ? key->Lock() : 0);
 
 	Interface::EndDynamic();
 }
 
-void Game::SetAngle(const FactoryObject<Object>& reference)
+void Game::SetAngle(const FactoryObject& reference)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("SetAngle", {reference->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_X)), RawParameter(reference->GetAngle(Axis_X))});
+	Interface::ExecuteCommand(Func::SetAngle, {reference->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_X)), RawParameter(reference->GetAngle(Axis_X))});
 
 	double value = reference->GetAngle(Axis_Z);
 	auto actor = vaultcast<Actor>(reference);
@@ -1339,12 +1371,12 @@ void Game::SetAngle(const FactoryObject<Object>& reference)
 			AdjustZAngle(value, 45.0);
 	}
 
-	Interface::ExecuteCommand("SetAngle", {reference->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_Z)), RawParameter(value)});
+	Interface::ExecuteCommand(Func::SetAngle, {reference->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_Z)), RawParameter(value)});
 
 	Interface::EndDynamic();
 }
 
-void Game::MoveTo(const FactoryObject<Object>& reference, const FactoryObject<Object>& object, bool cell, unsigned int key)
+void Game::MoveTo(const FactoryObject& reference, const FactoryObject& object, bool cell, unsigned int key)
 {
 	Interface::StartDynamic();
 
@@ -1357,12 +1389,12 @@ void Game::MoveTo(const FactoryObject<Object>& reference, const FactoryObject<Ob
 		param_MoveTo.emplace_back(reference->GetNetworkPos(Axis_Z) - object->GetNetworkPos(Axis_Z));
 	}
 
-	Interface::ExecuteCommand("MoveTo", move(param_MoveTo), key);
+	Interface::ExecuteCommand(Func::MoveTo, move(param_MoveTo), key);
 
 	Interface::EndDynamic();
 }
 
-void Game::SetLock(const FactoryObject<Object>& reference, unsigned int key)
+void Game::SetLock(const FactoryObject& reference, unsigned int key)
 {
 	unsigned int lock = reference->GetLockLevel();
 
@@ -1376,9 +1408,9 @@ void Game::SetLock(const FactoryObject<Object>& reference, unsigned int key)
 		Interface::StartDynamic();
 
 		if (lock != Lock_Unlocked)
-			Interface::ExecuteCommand("Lock", {object->GetReferenceParam(), RawParameter(lock)}, key);
+			Interface::ExecuteCommand(Func::Lock, {object->GetReferenceParam(), RawParameter(lock)}, key);
 		else
-			Interface::ExecuteCommand("Unlock", {object->GetReferenceParam()}, key);
+			Interface::ExecuteCommand(Func::Unlock, {object->GetReferenceParam()}, key);
 
 		Interface::EndDynamic();
 	};
@@ -1386,7 +1418,7 @@ void Game::SetLock(const FactoryObject<Object>& reference, unsigned int key)
 	DelayOrExecute(reference, func, key);
 }
 
-void Game::SetOwner(const FactoryObject<Object>& reference, unsigned int key)
+void Game::SetOwner(const FactoryObject& reference, unsigned int key)
 {
 	unsigned int owner = reference->GetOwner();
 
@@ -1399,7 +1431,7 @@ void Game::SetOwner(const FactoryObject<Object>& reference, unsigned int key)
 	{
 		Interface::StartDynamic();
 
-		Interface::ExecuteCommand("SetOwnership", {object->GetReferenceParam(), RawParameter(owner)}, key);
+		Interface::ExecuteCommand(Func::SetOwnership, {object->GetReferenceParam(), RawParameter(owner)}, key);
 
 		Interface::EndDynamic();
 	};
@@ -1407,85 +1439,85 @@ void Game::SetOwner(const FactoryObject<Object>& reference, unsigned int key)
 	DelayOrExecute(reference, func, key);
 }
 
-void Game::SetActorValue(const FactoryObject<Actor>& reference, bool base, unsigned char index, unsigned int key)
+void Game::SetActorValue(const FactoryActor& reference, bool base, unsigned char index, unsigned int key)
 {
 	Interface::StartDynamic();
 
 	if (base)
-		Interface::ExecuteCommand("SetActorValue", {reference->GetReferenceParam(), RawParameter(API::RetrieveValue_Reverse(index)), RawParameter(reference->GetActorBaseValue(index))}, key);
+		Interface::ExecuteCommand(Func::SetActorValue, {reference->GetReferenceParam(), RawParameter(API::RetrieveValue_Reverse(index)), RawParameter(reference->GetActorBaseValue(index))}, key);
 	else
-		Interface::ExecuteCommand("ForceActorValue", {reference->GetReferenceParam(), RawParameter(API::RetrieveValue_Reverse(index)), RawParameter(reference->GetActorValue(index))}, key);
+		Interface::ExecuteCommand(Func::ForceActorValue, {reference->GetReferenceParam(), RawParameter(API::RetrieveValue_Reverse(index)), RawParameter(reference->GetActorValue(index))}, key);
 
 	Interface::EndDynamic();
 }
 
-void Game::DamageActorValue(const FactoryObject<Actor>& reference, unsigned char index, double value, unsigned int key)
+void Game::DamageActorValue(const FactoryActor& reference, unsigned char index, double value, unsigned int key)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("DamageActorValue", {reference->GetReferenceParam(), RawParameter(API::RetrieveValue_Reverse(index)), RawParameter(value)}, key);
+	Interface::ExecuteCommand(Func::DamageActorValue, {reference->GetReferenceParam(), RawParameter(API::RetrieveValue_Reverse(index)), RawParameter(value)}, key);
 
 	Interface::EndDynamic();
 }
 
-void Game::RestoreActorValue(const FactoryObject<Actor>& reference, unsigned char index, double value, unsigned int key)
+void Game::RestoreActorValue(const FactoryActor& reference, unsigned char index, double value, unsigned int key)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("RestoreActorValue", {reference->GetReferenceParam(), RawParameter(API::RetrieveValue_Reverse(index)), RawParameter(value)}, key);
+	Interface::ExecuteCommand(Func::RestoreActorValue, {reference->GetReferenceParam(), RawParameter(API::RetrieveValue_Reverse(index)), RawParameter(value)}, key);
 
 	Interface::EndDynamic();
 }
 
-void Game::SetActorSneaking(const FactoryObject<Actor>& reference, unsigned int key)
+void Game::SetActorSneaking(const FactoryActor& reference, unsigned int key)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("SetForceSneak", {reference->GetReferenceParam(), RawParameter(reference->GetActorSneaking())}, key);
+	Interface::ExecuteCommand(Func::SetForceSneak, {reference->GetReferenceParam(), RawParameter(reference->GetActorSneaking())}, key);
 
 	Interface::EndDynamic();
 }
 
-void Game::SetActorAlerted(const FactoryObject<Actor>& reference, unsigned int key)
+void Game::SetActorAlerted(const FactoryActor& reference, unsigned int key)
 {
 	// really need to introduce restrained state in Actor class
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("SetAlert", {reference->GetReferenceParam(), RawParameter(reference->GetActorAlerted())}, key);
+	Interface::ExecuteCommand(Func::SetAlert, {reference->GetReferenceParam(), RawParameter(reference->GetActorAlerted())}, key);
 
 	Interface::EndDynamic();
 }
 
-void Game::SetActorAnimation(const FactoryObject<Actor>& reference, unsigned char anim, unsigned int key)
+void Game::SetActorAnimation(const FactoryActor& reference, unsigned char anim, unsigned int key)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("PlayGroup", {reference->GetReferenceParam(), RawParameter(API::RetrieveAnim_Reverse(anim)), RawParameter(true)}, key);
+	Interface::ExecuteCommand(Func::PlayGroup, {reference->GetReferenceParam(), RawParameter(API::RetrieveAnim_Reverse(anim)), RawParameter(true)}, key);
 
 	Interface::EndDynamic();
 }
 
-void Game::SetActorMovingAnimation(const FactoryObject<Actor>& reference, unsigned int key)
+void Game::SetActorMovingAnimation(const FactoryActor& reference, unsigned int key)
 {
 	SetActorAnimation(reference, reference->GetActorMovingAnimation(), key);
 }
 
-void Game::SetActorWeaponAnimation(const FactoryObject<Actor>& reference, unsigned int key)
+void Game::SetActorWeaponAnimation(const FactoryActor& reference, unsigned int key)
 {
 	SetActorAnimation(reference, reference->GetActorWeaponAnimation(), key);
 }
 
-void Game::SetActorIdleAnimation(const FactoryObject<Actor>& reference, const string& anim, unsigned int key)
+void Game::SetActorIdleAnimation(const FactoryActor& reference, const string& anim, unsigned int key)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("PlayIdle", {reference->GetReferenceParam(), RawParameter(anim)}, key);
+	Interface::ExecuteCommand(Func::PlayIdle, {reference->GetReferenceParam(), RawParameter(anim)}, key);
 
 	Interface::EndDynamic();
 }
 
-void Game::SetActorRace(const FactoryObject<Actor>& reference, signed int delta_age, unsigned int key)
+void Game::SetActorRace(const FactoryActor& reference, signed int delta_age, unsigned int key)
 {
 	unsigned int baseID = reference->GetBase();
 	unsigned int race = reference->GetActorRace();
@@ -1502,15 +1534,15 @@ void Game::SetActorRace(const FactoryObject<Actor>& reference, signed int delta_
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("MatchRace", {reference->GetReferenceParam(), RawParameter(race)}, delta_age ? 0 : key);
+	Interface::ExecuteCommand(Func::MatchRace, {reference->GetReferenceParam(), RawParameter(race)}, delta_age ? 0 : key);
 
 	if (delta_age)
-		Interface::ExecuteCommand("AgeRace", {reference->GetReferenceParam(), RawParameter(delta_age)}, key);
+		Interface::ExecuteCommand(Func::AgeRace, {reference->GetReferenceParam(), RawParameter(delta_age)}, key);
 
 	Interface::EndDynamic();
 }
 
-void Game::SetActorFemale(const FactoryObject<Actor>& reference, unsigned int key)
+void Game::SetActorFemale(const FactoryActor& reference, unsigned int key)
 {
 	if (reference->GetActorRace() == UINT_MAX) // creature test
 	{
@@ -1521,12 +1553,12 @@ void Game::SetActorFemale(const FactoryObject<Actor>& reference, unsigned int ke
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("SexChange", {reference->GetReferenceParam(), RawParameter(reference->GetActorFemale())}, key);
+	Interface::ExecuteCommand(Func::SexChange, {reference->GetReferenceParam(), RawParameter(reference->GetActorFemale())}, key);
 
 	Interface::EndDynamic();
 }
 
-void Game::KillActor(const FactoryObject<Actor>& reference, unsigned short limbs, signed char cause, unsigned int key)
+void Game::KillActor(const FactoryActor& reference, unsigned short limbs, signed char cause, unsigned int key)
 {
 	Interface::StartDynamic();
 
@@ -1537,44 +1569,37 @@ void Game::KillActor(const FactoryObject<Actor>& reference, unsigned short limbs
 
 		for (unsigned int i = 1; i <= limbs; i <<= 1, ++j)
 			if (limbs & i)
-				Interface::ExecuteCommand("Kill", {reference->GetReferenceParam(), reference->GetReferenceParam(), RawParameter(j), RawParameter(cause)}, ((i << 1) > limbs) ? key : 0x00);
+				Interface::ExecuteCommand(Func::Kill, {reference->GetReferenceParam(), reference->GetReferenceParam(), RawParameter(j), RawParameter(cause)}, ((i << 1) > limbs) ? key : 0x00);
 	}
 	else
-		Interface::ExecuteCommand("Kill", {reference->GetReferenceParam(), reference->GetReferenceParam(), RawParameter(Limb_None), RawParameter(cause)}, key);
+		Interface::ExecuteCommand(Func::Kill, {reference->GetReferenceParam(), reference->GetReferenceParam(), RawParameter(Limb_None), RawParameter(cause)}, key);
 
 	Interface::EndDynamic();
 }
 
-void Game::FireWeapon(const FactoryObject<Actor>& reference, unsigned int weapon, unsigned int key)
+void Game::FireWeapon(const FactoryActor& reference, unsigned int weapon, unsigned int key)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("FireWeapon", {reference->GetReferenceParam(), RawParameter(weapon)}, key);
+	Interface::ExecuteCommand(Func::FireWeapon, {reference->GetReferenceParam(), RawParameter(weapon)}, key);
 
 	Interface::EndDynamic();
 }
 
-void Game::AddItem(const FactoryObject<Container>& reference, const FactoryObject<Item>& item, unsigned int key)
+void Game::AddItem(const FactoryContainer& reference, const FactoryItem& item, unsigned int key)
 {
 	AddItem(reference, item->GetBase(), item->GetItemCount(), item->GetItemCondition(), item->GetItemSilent(), key);
 }
 
-void Game::AddItem(const FactoryObject<Container>& reference, unsigned int baseID, unsigned int count, double condition, bool silent, unsigned int key)
+void Game::AddItem(const FactoryContainer& reference, unsigned int baseID, unsigned int count, double condition, bool silent, unsigned int key)
 {
-	if ((baseID == PIPBOY_3000 || baseID == PIPBOY_GLOVES) && reference->GetReference() == PLAYER_REFERENCE)
-	{
-		if (key)
-			Lockable::Retrieve(key);
-		return;
-	}
-
 	auto* container = reference.operator->();
 
 	auto func = [container, baseID, count, condition, silent](unsigned int key)
 	{
 		Interface::StartDynamic();
 
-		Interface::ExecuteCommand("AddItemHealthPercent", {container->GetReferenceParam(), RawParameter(baseID), RawParameter(count), RawParameter(condition / 100), RawParameter(silent)}, key);
+		Interface::ExecuteCommand(Func::AddItemHealthPercent, {container->GetReferenceParam(), RawParameter(baseID), RawParameter(count), RawParameter(condition / 100), RawParameter(silent)}, key);
 
 		Interface::EndDynamic();
 	};
@@ -1582,27 +1607,20 @@ void Game::AddItem(const FactoryObject<Container>& reference, unsigned int baseI
 	DelayOrExecute(reference, func, key);
 }
 
-void Game::RemoveItem(const FactoryObject<Container>& reference, const FactoryObject<Item>& item, unsigned int key)
+void Game::RemoveItem(const FactoryContainer& reference, const FactoryItem& item, unsigned int key)
 {
 	RemoveItem(reference, item->GetBase(), item->GetItemCount(), item->GetItemSilent(), key);
 }
 
-void Game::RemoveItem(const FactoryObject<Container>& reference, unsigned int baseID, unsigned int count, bool silent, unsigned int key)
+void Game::RemoveItem(const FactoryContainer& reference, unsigned int baseID, unsigned int count, bool silent, unsigned int key)
 {
-	if ((baseID == PIPBOY_3000 || baseID == PIPBOY_GLOVES) && reference->GetReference() == PLAYER_REFERENCE)
-	{
-		if (key)
-			Lockable::Retrieve(key);
-		return;
-	}
-
 	auto* container = reference.operator->();
 
 	auto func = [container, baseID, count, silent](unsigned int key)
 	{
 		Interface::StartDynamic();
 
-		Interface::ExecuteCommand("RemoveItem", {container->GetReferenceParam(), RawParameter(baseID), RawParameter(count), RawParameter(silent)}, key);
+		Interface::ExecuteCommand(Func::RemoveItem, {container->GetReferenceParam(), RawParameter(baseID), RawParameter(count), RawParameter(silent)}, key);
 
 		Interface::EndDynamic();
 	};
@@ -1610,23 +1628,23 @@ void Game::RemoveItem(const FactoryObject<Container>& reference, unsigned int ba
 	DelayOrExecute(reference, func, key);
 }
 
-void Game::RemoveAllItems(const FactoryObject<Container>& reference, unsigned int key)
+void Game::RemoveAllItems(const FactoryContainer& reference, unsigned int key)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("RemoveAllItems", {reference->GetReferenceParam()}, key);
+	Interface::ExecuteCommand(Func::RemoveAllItems, {reference->GetReferenceParam()}, key);
 
 	Interface::EndDynamic();
 }
 
-void Game::RemoveAllItemsEx(FactoryObject<Container>& reference)
+void Game::RemoveAllItemsEx(FactoryContainer& reference)
 {
 	auto store = make_shared<Shared<bool>>();
 	unsigned int key = Lockable::Share(store);
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("RemoveAllItemsEx", {reference->GetReferenceParam()}, key);
+	Interface::ExecuteCommand(Func::RemoveAllItemsEx, {reference->GetReferenceParam()}, key);
 
 	Interface::EndDynamic();
 
@@ -1643,20 +1661,20 @@ void Game::RemoveAllItemsEx(FactoryObject<Container>& reference)
 	}
 }
 
-void Game::SetRefCount(const FactoryObject<Item>& reference, unsigned int key)
+void Game::SetRefCount(const FactoryItem& reference, unsigned int key)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("SetRefCount", {reference->GetReferenceParam(), RawParameter(reference->GetItemCount())}, key);
+	Interface::ExecuteCommand(Func::SetRefCount, {reference->GetReferenceParam(), RawParameter(reference->GetItemCount())}, key);
 
 	Interface::EndDynamic();
 }
 
-void Game::SetCurrentHealth(const FactoryObject<Item>& reference, unsigned int health, unsigned int key)
+void Game::SetCurrentHealth(const FactoryItem& reference, unsigned int health, unsigned int key)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("SetCurrentHealth", {reference->GetReferenceParam(), RawParameter(health)}, key);
+	Interface::ExecuteCommand(Func::SetCurrentHealth, {reference->GetReferenceParam(), RawParameter(health)}, key);
 
 	Interface::EndDynamic();
 }
@@ -1668,7 +1686,7 @@ unsigned int Game::GetRefCount(unsigned int refID)
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("GetRefCount", {RawParameter(refID)}, key);
+	Interface::ExecuteCommand(Func::GetRefCount, {RawParameter(refID)}, key);
 
 	Interface::EndDynamic();
 
@@ -1686,94 +1704,98 @@ unsigned int Game::GetRefCount(unsigned int refID)
 	return count;
 }
 
-void Game::EquipItem(const FactoryObject<Actor>& reference, const FactoryObject<Item>& item, unsigned int key)
+void Game::EquipItem(const FactoryActor& reference, const FactoryItem& item, unsigned int key)
 {
 	EquipItem(reference, item->GetBase(), item->GetItemSilent(), item->GetItemStick(), key);
 }
 
-void Game::EquipItem(const FactoryObject<Actor>& reference, unsigned int baseID, bool silent, bool stick, unsigned int key)
+void Game::EquipItem(const FactoryActor& reference, unsigned int baseID, bool silent, bool stick, unsigned int key)
 {
-	if ((baseID == PIPBOY_3000 || baseID == PIPBOY_GLOVES) && reference->GetReference() == PLAYER_REFERENCE)
-	{
-		if (key)
-			Lockable::Retrieve(key);
-		return;
-	}
-
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("EquipItem", {reference->GetReferenceParam(), RawParameter(baseID), RawParameter(stick), RawParameter(silent)}, key);
+	Interface::ExecuteCommand(Func::EquipItem, {reference->GetReferenceParam(), RawParameter(baseID), RawParameter(stick), RawParameter(silent)}, key);
 
 	Interface::EndDynamic();
 }
 
-void Game::UnequipItem(const FactoryObject<Actor>& reference, const FactoryObject<Item>& item, unsigned int key)
+void Game::UnequipItem(const FactoryActor& reference, const FactoryItem& item, unsigned int key)
 {
 	UnequipItem(reference, item->GetBase(), item->GetItemSilent(), item->GetItemStick(), key);
 }
 
-void Game::UnequipItem(const FactoryObject<Actor>& reference, unsigned int baseID, bool silent, bool stick, unsigned int key)
+void Game::UnequipItem(const FactoryActor& reference, unsigned int baseID, bool silent, bool stick, unsigned int key)
 {
-	if ((baseID == PIPBOY_3000 || baseID == PIPBOY_GLOVES) && reference->GetReference() == PLAYER_REFERENCE)
-	{
-		if (key)
-			Lockable::Retrieve(key);
-		return;
-	}
-
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("UnequipItem", {reference->GetReferenceParam(), RawParameter(baseID), RawParameter(stick), RawParameter(silent)}, key);
+	Interface::ExecuteCommand(Func::UnequipItem, {reference->GetReferenceParam(), RawParameter(baseID), RawParameter(stick), RawParameter(silent)}, key);
 
 	Interface::EndDynamic();
 }
 
-void Game::WindowPos(const FactoryObject<Window>& reference)
+void Game::SetWindowPos(const FactoryWindow& reference)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("GUIPos", {RawParameter(reference->GetLabel()), RawParameter(get<0>(reference->GetPos())), RawParameter(get<1>(reference->GetPos())), RawParameter(get<2>(reference->GetPos())), RawParameter(get<3>(reference->GetPos()))});
+	Interface::ExecuteCommand(Func::GUIPos, {RawParameter(reference->GetLabel()), RawParameter(get<0>(reference->GetPos())), RawParameter(get<1>(reference->GetPos())), RawParameter(get<2>(reference->GetPos())), RawParameter(get<3>(reference->GetPos()))});
 
 	Interface::EndDynamic();
 }
 
-void Game::WindowSize(const FactoryObject<Window>& reference)
+void Game::SetWindowSize(const FactoryWindow& reference)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("GUISize", {RawParameter(reference->GetLabel()), RawParameter(get<0>(reference->GetSize())), RawParameter(get<1>(reference->GetSize())), RawParameter(get<2>(reference->GetSize())), RawParameter(get<3>(reference->GetSize()))});
+	Interface::ExecuteCommand(Func::GUISize, {RawParameter(reference->GetLabel()), RawParameter(get<0>(reference->GetSize())), RawParameter(get<1>(reference->GetSize())), RawParameter(get<2>(reference->GetSize())), RawParameter(get<3>(reference->GetSize()))});
 
 	Interface::EndDynamic();
 }
 
-void Game::WindowVisible(const FactoryObject<Window>& reference)
+void Game::SetWindowVisible(const FactoryWindow& reference)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("GUIVisible", {RawParameter(reference->GetLabel()), RawParameter(reference->GetVisible())});
+	Interface::ExecuteCommand(Func::GUIVisible, {RawParameter(reference->GetLabel()), RawParameter(reference->GetVisible())});
 
 	Interface::EndDynamic();
 }
 
-void Game::WindowLocked(const FactoryObject<Window>& reference)
+void Game::SetWindowLocked(const FactoryWindow& reference)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("GUILocked", {RawParameter(reference->GetLabel()), RawParameter(reference->GetLocked())});
+	Interface::ExecuteCommand(Func::GUILocked, {RawParameter(reference->GetLabel()), RawParameter(reference->GetLocked())});
 
 	Interface::EndDynamic();
 }
 
-void Game::WindowText(const FactoryObject<Window>& reference)
+void Game::SetWindowText(const FactoryWindow& reference)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("GUIText", {RawParameter(reference->GetLabel()), RawParameter(reference->GetText())});
+	Interface::ExecuteCommand(Func::GUIText, {RawParameter(reference->GetLabel()), RawParameter(reference->GetText())});
 
 	Interface::EndDynamic();
 }
 
-void Game::WindowMode()
+void Game::SetEditMaxLength(const FactoryEdit& reference)
+{
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand(Func::GUIMaxLen, {RawParameter(reference->GetLabel()), RawParameter(reference->GetMaxLength())});
+
+	Interface::EndDynamic();
+}
+
+void Game::SetEditValidation(const FactoryEdit& reference)
+{
+	Interface::StartDynamic();
+
+	Interface::ExecuteCommand(Func::GUIValid, {RawParameter(reference->GetLabel()), RawParameter(reference->GetValidation())});
+
+	Interface::EndDynamic();
+}
+
+void Game::SetWindowMode()
 {
 	if (GUIMode)
 		DisablePlayerControls(true, true, true, false);
@@ -1782,7 +1804,7 @@ void Game::WindowMode()
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("GUIMode", {RawParameter(GUIMode)});
+	Interface::ExecuteCommand(Func::GUIMode, {RawParameter(GUIMode)});
 
 	Interface::EndDynamic();
 }
@@ -1794,7 +1816,7 @@ Game::CellDiff Game::ScanCell(unsigned int type)
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("GetFirstRef", {RawParameter(type)}, key);
+	Interface::ExecuteCommand(Func::GetFirstRef, {RawParameter(type)}, key);
 
 	Interface::EndDynamic();
 
@@ -1812,14 +1834,14 @@ Game::CellDiff Game::ScanCell(unsigned int type)
 	return diff;
 }
 
-pair<ItemList::NetDiff, ItemList::GameDiff> Game::ScanContainer(FactoryObject<Container>& reference)
+pair<ItemList::NetDiff, ItemList::GameDiff> Game::ScanContainer(FactoryContainer& reference)
 {
 	auto store = make_shared<Shared<pair<ItemList::NetDiff, ItemList::GameDiff>>>();
 	unsigned int key = Lockable::Share(store);
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("ScanContainer", {reference->GetReferenceParam()}, key);
+	Interface::ExecuteCommand(Func::ScanContainer, {reference->GetReferenceParam()}, key);
 
 	Interface::EndDynamic();
 
@@ -1845,7 +1867,7 @@ void Game::EnablePlayerControls(bool movement, bool pipboy, bool fighting, bool 
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("EnablePlayerControls", {RawParameter(movement), RawParameter(pipboy), RawParameter(fighting), RawParameter(pov), RawParameter(looking), RawParameter(rollover), RawParameter(sneaking)});
+	Interface::ExecuteCommand(Func::EnablePlayerControls, {RawParameter(movement), RawParameter(pipboy), RawParameter(fighting), RawParameter(pov), RawParameter(looking), RawParameter(rollover), RawParameter(sneaking)});
 
 	Interface::EndDynamic();
 }
@@ -1854,7 +1876,7 @@ void Game::DisablePlayerControls(bool movement, bool pipboy, bool fighting, bool
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("DisablePlayerControls", {RawParameter(movement), RawParameter(pipboy), RawParameter(fighting), RawParameter(pov), RawParameter(looking), RawParameter(rollover), RawParameter(sneaking)});
+	Interface::ExecuteCommand(Func::DisablePlayerControls, {RawParameter(movement), RawParameter(pipboy), RawParameter(fighting), RawParameter(pov), RawParameter(looking), RawParameter(rollover), RawParameter(sneaking)});
 
 	Interface::EndDynamic();
 }
@@ -1863,7 +1885,7 @@ void Game::SetWeather(unsigned int weather)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("ForceWeather", {RawParameter(weather), RawParameter(1)});
+	Interface::ExecuteCommand(Func::ForceWeather, {RawParameter(weather), RawParameter(1)});
 
 	Interface::EndDynamic();
 }
@@ -1875,7 +1897,7 @@ void Game::ForceRespawn()
 
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand("ForceRespawn", {}, key);
+	Interface::ExecuteCommand(Func::ForceRespawn, {}, key);
 
 	Interface::EndDynamic();
 
@@ -1922,7 +1944,7 @@ vector<unsigned int> Game::GetContext(unsigned int type)
 	return result;
 }
 
-void Game::net_SetName(const FactoryObject<Object>& reference, const string& name)
+void Game::net_SetName(const FactoryObject& reference, const string& name)
 {
 	bool result = static_cast<bool>(reference->SetName(name));
 
@@ -1930,7 +1952,7 @@ void Game::net_SetName(const FactoryObject<Object>& reference, const string& nam
 		SetName(reference);
 }
 
-void Game::net_SetPos(const FactoryObject<Object>& reference, double X, double Y, double Z)
+void Game::net_SetPos(const FactoryObject& reference, double X, double Y, double Z)
 {
 	bool result = (static_cast<bool>(reference->SetNetworkPos(Axis_X, X)) | static_cast<bool>(reference->SetNetworkPos(Axis_Y, Y)) | static_cast<bool>(reference->SetNetworkPos(Axis_Z, Z)));
 
@@ -1943,7 +1965,7 @@ void Game::net_SetPos(const FactoryObject<Object>& reference, double X, double Y
 	}
 }
 
-void Game::net_SetAngle(const FactoryObject<Object>& reference, unsigned char axis, double value)
+void Game::net_SetAngle(const FactoryObject& reference, unsigned char axis, double value)
 {
 	bool result = static_cast<bool>(reference->SetAngle(axis, value));
 
@@ -1964,7 +1986,7 @@ void Game::net_SetAngle(const FactoryObject<Object>& reference, unsigned char ax
 	}
 }
 
-void Game::net_SetCell(FactoryObject<Object>& reference, FactoryObject<Player>& player, unsigned int cell, double X, double Y, double Z)
+void Game::net_SetCell(FactoryObject& reference, FactoryPlayer& player, unsigned int cell, double X, double Y, double Z)
 {
 	unsigned int old_cell = reference->GetNetworkCell();
 	reference->SetNetworkCell(cell);
@@ -2056,7 +2078,7 @@ void Game::net_SetCell(FactoryObject<Object>& reference, FactoryObject<Player>& 
 	}
 }
 
-void Game::net_SetLock(const FactoryObject<Object>& reference, unsigned int lock)
+void Game::net_SetLock(const FactoryObject& reference, unsigned int lock)
 {
 	Lockable* result;
 
@@ -2064,13 +2086,13 @@ void Game::net_SetLock(const FactoryObject<Object>& reference, unsigned int lock
 		SetLock(reference, result->Lock());
 }
 
-void Game::net_SetOwner(const FactoryObject<Object>& reference, unsigned int owner)
+void Game::net_SetOwner(const FactoryObject& reference, unsigned int owner)
 {
 	if (reference->SetOwner(owner))
 		SetOwner(reference);
 }
 
-void Game::net_SetItemCount(const FactoryObject<Item>& reference, unsigned int count)
+void Game::net_SetItemCount(const FactoryItem& reference, unsigned int count)
 {
 	if (reference->GetItemContainer())
 		return;
@@ -2079,7 +2101,7 @@ void Game::net_SetItemCount(const FactoryObject<Item>& reference, unsigned int c
 		SetRefCount(reference);
 }
 
-void Game::net_SetItemCondition(const FactoryObject<Item>& reference, double condition, unsigned int health)
+void Game::net_SetItemCondition(const FactoryItem& reference, double condition, unsigned int health)
 {
 	if (reference->GetItemContainer())
 		return;
@@ -2088,7 +2110,7 @@ void Game::net_SetItemCondition(const FactoryObject<Item>& reference, double con
 		SetCurrentHealth(reference, health);
 }
 
-void Game::net_UpdateContainer(FactoryObject<Container>& reference, const ItemList::NetDiff& ndiff, const ItemList::NetDiff& gdiff)
+void Game::net_UpdateContainer(FactoryContainer& reference, const ItemList::NetDiff& ndiff, const ItemList::NetDiff& gdiff)
 {
 	Lockable* result;
 
@@ -2153,7 +2175,7 @@ void Game::net_UpdateContainer(FactoryObject<Container>& reference, const ItemLi
 	}
 }
 
-void Game::net_SetActorValue(const FactoryObject<Actor>& reference, bool base, unsigned char index, double value)
+void Game::net_SetActorValue(const FactoryActor& reference, bool base, unsigned char index, double value)
 {
 	Lockable* result;
 
@@ -2180,7 +2202,7 @@ void Game::net_SetActorValue(const FactoryObject<Actor>& reference, bool base, u
 	}
 }
 
-void Game::net_SetActorState(const FactoryObject<Actor>& reference, unsigned int, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking, bool firing)
+void Game::net_SetActorState(const FactoryActor& reference, unsigned int, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking, bool firing)
 {
 	Lockable* result;
 	bool enabled = reference->GetEnabled();
@@ -2233,20 +2255,20 @@ void Game::net_SetActorState(const FactoryObject<Actor>& reference, unsigned int
 	}
 }
 
-void Game::net_SetActorRace(const FactoryObject<Actor>& reference, unsigned int race, signed int age, signed int delta_age)
+void Game::net_SetActorRace(const FactoryActor& reference, unsigned int race, signed int age, signed int delta_age)
 {
 	reference->SetActorRace(race);
 	reference->SetActorAge(age); // delta from original race to new race
 	SetActorRace(reference, delta_age); // using delta from current race to new race
 }
 
-void Game::net_SetActorFemale(const FactoryObject<Actor>& reference, bool female)
+void Game::net_SetActorFemale(const FactoryActor& reference, bool female)
 {
 	reference->SetActorFemale(female);
 	SetActorFemale(reference);
 }
 
-void Game::net_SetActorDead(FactoryObject<Actor>& reference, bool dead, unsigned short limbs, signed char cause)
+void Game::net_SetActorDead(FactoryActor& reference, bool dead, unsigned short limbs, signed char cause)
 {
 	Lockable* result;
 
@@ -2294,7 +2316,7 @@ void Game::net_SetActorDead(FactoryObject<Actor>& reference, bool dead, unsigned
 	}
 }
 
-void Game::net_FireWeapon(const FactoryObject<Actor>& reference, unsigned int weapon, double rate)
+void Game::net_FireWeapon(const FactoryActor& reference, unsigned int weapon, double rate)
 {
 	bool enabled = reference->GetEnabled();
 
@@ -2311,7 +2333,7 @@ void Game::net_FireWeapon(const FactoryObject<Actor>& reference, unsigned int we
 			{
 				try
 				{
-					Expected<FactoryObject<Actor>> reference;
+					ExpectedActor reference;
 
 					// rate: per second
 					auto us = chrono::microseconds(static_cast<unsigned long long>(1000000ull / rate));
@@ -2332,7 +2354,7 @@ void Game::net_FireWeapon(const FactoryObject<Actor>& reference, unsigned int we
 	}
 }
 
-void Game::net_SetActorIdle(const FactoryObject<Actor>& reference, unsigned int idle, const string& name)
+void Game::net_SetActorIdle(const FactoryActor& reference, unsigned int idle, const string& name)
 {
 	Lockable* result;
 	bool enabled = reference->GetEnabled();
@@ -2456,53 +2478,67 @@ void Game::net_UpdateConsole(bool enabled)
 	Interface::StartDynamic();
 
 	if (enabled)
-		Interface::ExecuteCommand("EnableKey", {RawParameter(ScanCode_Console)});
+		Interface::ExecuteCommand(Func::EnableKey, {RawParameter(ScanCode_Console)});
 	else
-		Interface::ExecuteCommand("DisableKey", {RawParameter(ScanCode_Console)});
+		Interface::ExecuteCommand(Func::DisableKey, {RawParameter(ScanCode_Console)});
 
 	Interface::EndDynamic();
 }
 
-void Game::net_UpdateWindowPos(const FactoryObject<Window>& reference, const tuple<double, double, double, double>& pos)
+void Game::net_UpdateWindowPos(const FactoryWindow& reference, const tuple<double, double, double, double>& pos)
 {
 	reference->SetPos(get<0>(pos), get<1>(pos), get<2>(pos), get<3>(pos));
 
-	WindowPos(reference);
+	SetWindowPos(reference);
 }
 
-void Game::net_UpdateWindowSize(const FactoryObject<Window>& reference, const tuple<double, double, double, double>& size)
+void Game::net_UpdateWindowSize(const FactoryWindow& reference, const tuple<double, double, double, double>& size)
 {
 	reference->SetSize(get<0>(size), get<1>(size), get<2>(size), get<3>(size));
 
-	WindowSize(reference);
+	SetWindowSize(reference);
 }
 
-void Game::net_UpdateWindowVisible(const FactoryObject<Window>& reference, bool visible)
+void Game::net_UpdateWindowVisible(const FactoryWindow& reference, bool visible)
 {
 	reference->SetVisible(visible);
 
-	WindowVisible(reference);
+	SetWindowVisible(reference);
 }
 
-void Game::net_UpdateWindowLocked(const FactoryObject<Window>& reference, bool locked)
+void Game::net_UpdateWindowLocked(const FactoryWindow& reference, bool locked)
 {
 	reference->SetLocked(locked);
 
-	WindowLocked(reference);
+	SetWindowLocked(reference);
 }
 
-void Game::net_UpdateWindowText(const FactoryObject<Window>& reference, const string& text)
+void Game::net_UpdateWindowText(const FactoryWindow& reference, const string& text)
 {
 	reference->SetText(text);
 
-	WindowText(reference);
+	SetWindowText(reference);
+}
+
+void Game::net_UpdateEditMaxLength(const FactoryEdit& reference, unsigned int length)
+{
+	reference->SetMaxLength(length);
+
+	SetEditMaxLength(reference);
+}
+
+void Game::net_UpdateEditValidation(const FactoryEdit& reference, const std::string& validation)
+{
+	reference->SetValidation(validation);
+
+	SetEditValidation(reference);
 }
 
 void Game::net_UpdateWindowMode(bool enabled)
 {
 	GUIMode = enabled;
 
-	WindowMode();
+	SetWindowMode();
 }
 
 void Game::net_UIMessage(const string& message, unsigned char emoticon)
@@ -2542,7 +2578,7 @@ void Game::net_SetDeletedStatic(DeletedObjects&& deletedStatic)
 	Game::deletedStatic.EndSession();
 }
 
-void Game::GetPos(const FactoryObject<Object>& reference, unsigned char axis, double value)
+void Game::GetPos(const FactoryObject& reference, unsigned char axis, double value)
 {
 	static bool update = false;
 
@@ -2572,7 +2608,7 @@ void Game::GetPos(const FactoryObject<Object>& reference, unsigned char axis, do
 	}
 }
 
-void Game::GetAngle(const FactoryObject<Object>& reference, unsigned char axis, double value)
+void Game::GetAngle(const FactoryObject& reference, unsigned char axis, double value)
 {
 	bool result = static_cast<bool>(reference->SetAngle(axis, value));
 
@@ -2583,7 +2619,7 @@ void Game::GetAngle(const FactoryObject<Object>& reference, unsigned char axis, 
 		});
 }
 
-void Game::GetParentCell(const FactoryObject<Player>& player, unsigned int cell)
+void Game::GetParentCell(const FactoryPlayer& player, unsigned int cell)
 {
 	bool result = static_cast<bool>(player->SetGameCell(cell));
 
@@ -2594,7 +2630,7 @@ void Game::GetParentCell(const FactoryObject<Player>& player, unsigned int cell)
 		});
 }
 
-void Game::GetDead(const FactoryObject<Actor>& reference, const FactoryObject<Player>&, bool dead)
+void Game::GetDead(const FactoryActor& reference, const FactoryPlayer&, bool dead)
 {
 	/*if (actor != self && !self->GetActorAlerted())
 	{
@@ -2626,7 +2662,7 @@ void Game::GetDead(const FactoryObject<Actor>& reference, const FactoryObject<Pl
 
 						Interface::StartDynamic();
 
-						Interface::ExecuteCommand("IsLimbGone", {RawParameter(refID), RawParameter(vector<unsigned char>{
+						Interface::ExecuteCommand(Func::IsLimbGone, {RawParameter(refID), RawParameter(vector<unsigned char>{
 							Limb_Torso,
 							Limb_Head1,
 							Limb_Head2,
@@ -2661,7 +2697,7 @@ void Game::GetDead(const FactoryObject<Actor>& reference, const FactoryObject<Pl
 
 						Interface::StartDynamic();
 
-						Interface::ExecuteCommand("GetCauseofDeath", {RawParameter(refID)}, key);
+						Interface::ExecuteCommand(Func::GetCauseofDeath, {RawParameter(refID)}, key);
 
 						Interface::EndDynamic();
 
@@ -2714,7 +2750,7 @@ void Game::IsLimbGone(unsigned int key, unsigned char limb, bool gone)
 		store->set_promise();
 }
 
-void Game::GetActorValue(const FactoryObject<Actor>& reference, bool base, unsigned char index, double value)
+void Game::GetActorValue(const FactoryActor& reference, bool base, unsigned char index, double value)
 {
 	bool result;
 
@@ -2730,7 +2766,7 @@ void Game::GetActorValue(const FactoryObject<Actor>& reference, bool base, unsig
 		});
 }
 
-void Game::GetActorState(const FactoryObject<Actor>& reference, unsigned int idle, unsigned char moving, unsigned char weapon, unsigned char flags, bool sneaking)
+void Game::GetActorState(const FactoryActor& reference, unsigned int idle, unsigned char moving, unsigned char weapon, unsigned char flags, bool sneaking)
 {
 	static pair<unsigned char, unsigned char> buf_weapon{AnimGroup_Idle, AnimGroup_Idle};
 
@@ -2766,7 +2802,7 @@ void Game::GetActorState(const FactoryObject<Actor>& reference, unsigned int idl
 		});
 }
 
-void Game::ScanContainer(const FactoryObject<Container>& reference, const vector<unsigned char>& data)
+void Game::ScanContainer(const FactoryContainer& reference, const vector<unsigned char>& data)
 {
 	Lockable* result;
 
@@ -2914,7 +2950,7 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 								unsigned int cell;
 
 								{
-									FactoryObject<Container> reference = GameFactory::GetObject<Container>(id).get();
+									FactoryContainer reference = GameFactory::GetObject<Container>(id).get();
 
 									static const double spawn_offset = 100.0;
 
@@ -2944,7 +2980,7 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 									for (const auto& _result : result.second)
 									{
 										NetworkID id = GameFactory::CreateInstance(ID_ITEM, _result.first, _found.first);
-										FactoryObject<Item> reference = GameFactory::GetObject<Item>(id).get();
+										FactoryItem reference = GameFactory::GetObject<Item>(id).get();
 
 										reference->SetEnabled(true);
 										reference->SetGamePos(Axis_X, X);
@@ -3066,7 +3102,7 @@ void Game::ScanContainer(const FactoryObject<Container>& reference, const vector
 	}
 }
 
-pair<ItemList::NetDiff, ItemList::GameDiff> Game::GetScanContainer(const FactoryObject<Container>& reference, const vector<unsigned char>& data)
+pair<ItemList::NetDiff, ItemList::GameDiff> Game::GetScanContainer(const FactoryContainer& reference, const vector<unsigned char>& data)
 {
 	pair<ItemList::NetDiff, ItemList::GameDiff> result;
 
@@ -3083,11 +3119,11 @@ pair<ItemList::NetDiff, ItemList::GameDiff> Game::GetScanContainer(const Factory
 	const ItemInfo* items = reinterpret_cast<const ItemInfo*>(&data[0]);
 	unsigned int count = data.size() / sizeof(ItemInfo);
 
-	FactoryObject<Container> temp = GameFactory::GetObject<Container>(GameFactory::CreateInstance(ID_CONTAINER, 0x00000000)).get();
+	FactoryContainer temp = GameFactory::GetObject<Container>(GameFactory::CreateInstance(ID_CONTAINER, 0x00000000)).get();
 
 	for (unsigned int i = 0; i < count; ++i)
 	{
-		FactoryObject<Item> item = GameFactory::GetObject<Item>(GameFactory::CreateInstance(ID_ITEM, items[i].baseID)).get();
+		FactoryItem item = GameFactory::GetObject<Item>(GameFactory::CreateInstance(ID_ITEM, items[i].baseID)).get();
 		item->SetItemCount(items[i].count);
 		item->SetItemEquipped(static_cast<bool>(items[i].equipped));
 		item->SetItemCondition(items[i].condition);
@@ -3107,7 +3143,7 @@ pair<ItemList::NetDiff, ItemList::GameDiff> Game::GetScanContainer(const Factory
 	return result;
 }
 
-void Game::GetRemoveAllItemsEx(const FactoryObject<Container>& reference, const vector<unsigned char>& data)
+void Game::GetRemoveAllItemsEx(const FactoryContainer& reference, const vector<unsigned char>& data)
 {
 #pragma pack(push, 1)
 	struct ItemInfo
@@ -3126,7 +3162,7 @@ void Game::GetRemoveAllItemsEx(const FactoryObject<Container>& reference, const 
 		RemoveItem(reference, items[i].baseID, items[i].count, true);
 }
 
-void Game::GetLocked(const FactoryObject<Container>& reference, unsigned int lock)
+void Game::GetLocked(const FactoryContainer& reference, unsigned int lock)
 {
 	switch (lock)
 	{
@@ -3149,7 +3185,7 @@ void Game::GetLocked(const FactoryObject<Container>& reference, unsigned int loc
 	}
 }
 
-void Game::GetControl(const FactoryObject<Player>& reference, unsigned char control, unsigned char key)
+void Game::GetControl(const FactoryPlayer& reference, unsigned char control, unsigned char key)
 {
 	bool result = static_cast<bool>(reference->SetPlayerControl(control, key));
 
@@ -3174,7 +3210,7 @@ void Game::GetNextRef(unsigned int key, unsigned int refID, unsigned int type)
 
 	if (first)
 	{
-		FactoryObject<Player> reference = GameFactory::GetObject<Player>(PLAYER_REFERENCE).get();
+		FactoryPlayer reference = GameFactory::GetObject<Player>(PLAYER_REFERENCE).get();
 		cell = reference->GetGameCell();
 		_type = typemap[type];
 		first = false;
@@ -3186,7 +3222,7 @@ void Game::GetNextRef(unsigned int key, unsigned int refID, unsigned int type)
 
 		Interface::StartDynamic();
 
-		Interface::ExecuteCommand("GetNextRef", {}, key);
+		Interface::ExecuteCommand(Func::GetNextRef, {}, key);
 
 		Interface::EndDynamic();
 	}
@@ -3256,9 +3292,7 @@ void Game::GetWindowMode(bool enabled)
 
 void Game::GetWindowClick(string name)
 {
-	static const char* exit_button = "closeBTN";
-
-	if (!name.compare(exit_button))
+	if (!name.compare(Button::CLOSE_BUTTON))
 		Interface::SignalEnd();
 	else
 	{

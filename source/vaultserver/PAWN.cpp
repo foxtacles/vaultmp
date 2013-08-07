@@ -1,5 +1,8 @@
 #include "PAWN.h"
 #include "Script.h"
+#include "Public.h"
+#include "amx/amx.h"
+#include "amx/amxaux.h"
 
 using namespace std;
 using namespace RakNet;
@@ -147,7 +150,7 @@ static typename enable_if<Script::functions[I].func.ret == 's', cell>::type wrap
 	const char* value = PAWN_dispatch_<Script::functions[I].func.numargs, I>::template PAWN_dispatch<const char*>(forward<AMX*>(amx), forward<const cell*>(params));
 	after_call();
 
-	if (*value) {
+	if (value) {
 		cell* dest = amx_Address(amx, params[Script::functions[I].func.numargs + 1]);
 		amx_SetString(dest, value, 1, 0, strlen(value) + 1);
 		return 1;
@@ -319,6 +322,10 @@ AMX_NATIVE_INFO PAWN::functions[] {
 	F_<147>::F,
 	F_<148>::F,
 	F_<149>::F,
+	F_<150>::F,
+	F_<151>::F,
+	F_<152>::F,
+	F_<153>::F,
 
 	{0, 0}
 };

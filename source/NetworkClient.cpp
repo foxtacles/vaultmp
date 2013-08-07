@@ -1,7 +1,7 @@
 #include "NetworkClient.h"
 #include "Bethesda.h"
+#include "Interface.h"
 #include "Game.h"
-#include "PacketFactory.h"
 
 using namespace std;
 using namespace RakNet;
@@ -33,7 +33,7 @@ NetworkResponse NetworkClient::ProcessEvent(unsigned char id)
 		{
 			Network::ToggleDequeue(true);
 
-			FactoryObject<Player> reference = GameFactory::GetObject<Player>(PLAYER_REFERENCE).get();
+			FactoryPlayer reference = GameFactory::GetObject<Player>(PLAYER_REFERENCE).get();
 
 			return {Network::CreateResponse(
 				reference->toPacket(),
@@ -89,8 +89,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
 		default:
 		{
-			pPacket _packet = PacketFactory::Init(data->data, data->length);
-			const pDefault* packet = _packet.get();
+			pPacket packet = PacketFactory::Init(data->data, data->length);
 
 			switch (packet->type())
 			{
@@ -219,7 +218,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
 				case pTypes::ID_OBJECT_NEW:
 				{
-					NetworkID id = GameFactory::CreateKnownInstance(ID_OBJECT, packet);
+					NetworkID id = GameFactory::CreateKnownInstance(ID_OBJECT, packet.get());
 					auto reference = GameFactory::GetObject(id);
 					Game::NewObject(reference.get());
 					break;
@@ -227,7 +226,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
 				case pTypes::ID_ITEM_NEW:
 				{
-					NetworkID id = GameFactory::CreateKnownInstance(ID_ITEM, packet);
+					NetworkID id = GameFactory::CreateKnownInstance(ID_ITEM, packet.get());
 					auto reference = GameFactory::GetObject<Item>(id);
 					Game::NewItem(reference.get());
 					break;
@@ -235,7 +234,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
 				case pTypes::ID_CONTAINER_NEW:
 				{
-					NetworkID id = GameFactory::CreateKnownInstance(ID_CONTAINER, packet);
+					NetworkID id = GameFactory::CreateKnownInstance(ID_CONTAINER, packet.get());
 					auto reference = GameFactory::GetObject<Container>(id);
 					Game::NewContainer(reference.get());
 					break;
@@ -243,7 +242,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
 				case pTypes::ID_ACTOR_NEW:
 				{
-					NetworkID id = GameFactory::CreateKnownInstance(ID_ACTOR, packet);
+					NetworkID id = GameFactory::CreateKnownInstance(ID_ACTOR, packet.get());
 					auto reference = GameFactory::GetObject<Actor>(id);
 					Game::NewActor(reference.get());
 					break;
@@ -251,7 +250,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
 				case pTypes::ID_PLAYER_NEW:
 				{
-					NetworkID id = GameFactory::CreateKnownInstance(ID_PLAYER, packet);
+					NetworkID id = GameFactory::CreateKnownInstance(ID_PLAYER, packet.get());
 					auto reference = GameFactory::GetObject<Player>(id);
 					Game::NewPlayer(reference.get());
 					break;
@@ -268,7 +267,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
 				case pTypes::ID_WINDOW_NEW:
 				{
-					NetworkID id = GameFactory::CreateKnownInstance(ID_WINDOW, packet);
+					NetworkID id = GameFactory::CreateKnownInstance(ID_WINDOW, packet.get());
 					auto reference = GameFactory::GetObject<Window>(id);
 					Game::NewWindow(reference.get());
 					break;
@@ -276,7 +275,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
 				case pTypes::ID_BUTTON_NEW:
 				{
-					NetworkID id = GameFactory::CreateKnownInstance(ID_BUTTON, packet);
+					NetworkID id = GameFactory::CreateKnownInstance(ID_BUTTON, packet.get());
 					auto reference = GameFactory::GetObject<Button>(id);
 					Game::NewButton(reference.get());
 					break;
@@ -284,7 +283,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
 				case pTypes::ID_TEXT_NEW:
 				{
-					NetworkID id = GameFactory::CreateKnownInstance(ID_TEXT, packet);
+					NetworkID id = GameFactory::CreateKnownInstance(ID_TEXT, packet.get());
 					auto reference = GameFactory::GetObject<Text>(id);
 					Game::NewText(reference.get());
 					break;
@@ -292,7 +291,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
 				case pTypes::ID_EDIT_NEW:
 				{
-					NetworkID id = GameFactory::CreateKnownInstance(ID_EDIT, packet);
+					NetworkID id = GameFactory::CreateKnownInstance(ID_EDIT, packet.get());
 					auto reference = GameFactory::GetObject<Edit>(id);
 					Game::NewEdit(reference.get());
 					break;
@@ -568,6 +567,26 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					PacketFactory::Access<pTypes::ID_UPDATE_WTEXT>(packet, id, text);
 					auto reference = GameFactory::GetObject<Window>(id);
 					Game::net_UpdateWindowText(reference.get(), text);
+					break;
+				}
+
+				case pTypes::ID_UPDATE_WMAXLEN:
+				{
+					NetworkID id;
+					unsigned int length;
+					PacketFactory::Access<pTypes::ID_UPDATE_WMAXLEN>(packet, id, length);
+					auto reference = GameFactory::GetObject<Edit>(id);
+					Game::net_UpdateEditMaxLength(reference.get(), length);
+					break;
+				}
+
+				case pTypes::ID_UPDATE_WVALID:
+				{
+					NetworkID id;
+					string validation;
+					PacketFactory::Access<pTypes::ID_UPDATE_WVALID>(packet, id, validation);
+					auto reference = GameFactory::GetObject<Edit>(id);
+					Game::net_UpdateEditValidation(reference.get(), validation);
 					break;
 				}
 

@@ -1,14 +1,12 @@
 #ifndef ITEMDB_H
 #define ITEMDB_H
 
-#include <unordered_map>
-
-#include "vaultmp.h"
 #include "vaultserver.h"
-#include "Database.h"
 #include "Expected.h"
 
-#include "sqlite/sqlite3.h"
+#include <unordered_map>
+
+class sqlite3_stmt;
 
 /**
  * \brief Represents an item

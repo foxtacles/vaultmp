@@ -1,8 +1,6 @@
 #ifndef TEXTGUI_H
 #define TEXTGUI_H
 
-#include <string>
-
 #include "vaultmp.h"
 #include "Window.h"
 

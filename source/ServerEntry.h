@@ -1,12 +1,11 @@
 #ifndef SERVERENTRY_H
 #define SERVERENTRY_H
 
-#include <climits>
+#include "vaultmp.h"
+
 #include <string>
 #include <map>
 #include <vector>
-
-#include "vaultmp.h"
 
 class ServerEntry
 {

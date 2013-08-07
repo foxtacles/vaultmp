@@ -1,11 +1,9 @@
 #include "Edit.h"
-#include "PacketFactory.h"
-#include "GameFactory.h"
 
 using namespace std;
 using namespace RakNet;
 
-Edit::Edit() : Window()
+Edit::Edit() : Window(), length(DEFAULT_LENGTH), validation(DEFAULT_VALIDATION)
 {
 	initialize();
 }
@@ -14,7 +12,7 @@ Edit::Edit(const pDefault* packet) : Window(PacketFactory::Pop<pPacket>(packet))
 {
 	initialize();
 
-	PacketFactory::Access<pTypes::ID_EDIT_NEW>(packet);
+	PacketFactory::Access<pTypes::ID_EDIT_NEW>(packet, length, validation);
 }
 
 Edit::Edit(pPacket&& packet) : Edit(packet.get())
@@ -35,7 +33,7 @@ void Edit::initialize()
 pPacket Edit::toPacket() const
 {
 	pPacket pWindowNew = Window::toPacket();
-	pPacket packet = PacketFactory::Create<pTypes::ID_EDIT_NEW>(pWindowNew);
+	pPacket packet = PacketFactory::Create<pTypes::ID_EDIT_NEW>(pWindowNew, length, validation);
 
 	return packet;
 }

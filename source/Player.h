@@ -1,12 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include <string>
-#include <map>
-#include <vector>
-#include <array>
-#include <unordered_set>
-
+#include "vaultmp.h"
 #include "Actor.h"
 
 #ifdef VAULTMP_DEBUG
@@ -63,8 +58,7 @@ class Player : public Actor
 	public:
 		virtual ~Player();
 
-		static const std::map<unsigned char, std::pair<double, double>> f3_default_values;
-		static const std::map<unsigned int, std::tuple<unsigned int, double, bool, bool, bool>> default_items;
+		static const std::map<unsigned char, std::pair<double, double>> default_values;
 
 #ifdef VAULTSERVER
 		static const unsigned int DEFAULT_PLAYER_RESPAWN = 8000;
@@ -194,7 +188,7 @@ class PlayerFunctor : public ActorFunctor
 		virtual ~PlayerFunctor() {}
 
 		virtual std::vector<std::string> operator()();
-		virtual bool filter(FactoryObject<Reference>& reference);
+		virtual bool filter(FactoryWrapper<Reference>& reference);
 };
 #endif
 

@@ -1,20 +1,10 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
-#ifdef __WIN32__
-#include <winsock2.h>
-#endif
-
-#include <ctime>
-#include <cstdio>
-#include <cstdarg>
-#include <cstring>
-
-#include <string>
-#include <fstream>
-
 #include "vaultmp.h"
 #include "CriticalSection.h"
+
+#include <fstream>
 
 template<typename T>
 struct DebugInput;
@@ -30,7 +20,7 @@ class Debug : private CriticalSection
 		std::fstream vaultmplog;
 		static std::unique_ptr<Debug> debug;
 
-		static void GetTimeFormat(char* buf, unsigned int size, bool file);
+		static void GetTimeString(char* buf, unsigned int size, bool file);
 
 		template <typename T, typename... Args>
 		void Note(T&& arg, Args&&... args)
@@ -48,7 +38,7 @@ class Debug : private CriticalSection
 		void Print(Args&&... args)
 		{
 			char buf[32];
-			GetTimeFormat(buf, sizeof(buf), false);
+			Debug::GetTimeString(buf, sizeof(buf), false);
 			vaultmplog << "[" << buf << "] ";
 
 			Note(std::forward<Args>(args)...);

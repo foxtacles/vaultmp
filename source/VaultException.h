@@ -1,23 +1,13 @@
 #ifndef VAULTEXCEPTION_H
 #define VAULTEXCEPTION_H
 
-#ifdef __WIN32__
-#include <winsock2.h>
-#endif
-
-#include <cstdio>
-#include <cstring>
-#include <cstdarg>
-#include <string>
-#include <typeinfo>
-
 #include "vaultmp.h"
 
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"
-#include "dbg/stack.hpp"
-#include <ostream>
 #endif
+
+#include <stdexcept>
 
 /**
  * \brief The exception class of vaultmp

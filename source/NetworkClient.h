@@ -1,6 +1,7 @@
 #ifndef NETWORKCLIENT_H
 #define NETWORKCLIENT_H
 
+#include "vaultmp.h"
 #include "Network.h"
 
 /**

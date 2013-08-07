@@ -1,5 +1,17 @@
 #include "VaultException.h"
 
+#ifdef VAULTMP_DEBUG
+#include <sstream>
+#include "dbg/stack.hpp"
+#endif
+
+#ifdef __WIN32__
+#include <winsock2.h>
+#endif
+
+#include <cstring>
+#include <cstdarg>
+
 using namespace std;
 
 #ifdef VAULTMP_DEBUG

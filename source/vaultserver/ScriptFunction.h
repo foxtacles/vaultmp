@@ -1,11 +1,9 @@
 #ifndef SCRIPTFUNCTION_H
 #define SCRIPTFUNCTION_H
 
-#include <string>
-
+#include "vaultserver.h"
+#include "amx/amx.h"
 #include "boost/any.hpp"
-
-#include "PAWN.h"
 
 typedef unsigned long long(*ScriptFunc)();
 typedef std::string ScriptFuncPAWN;

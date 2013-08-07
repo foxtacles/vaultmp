@@ -1,5 +1,4 @@
 #include "Item.h"
-#include "PacketFactory.h"
 #include "GameFactory.h"
 
 using namespace std;
@@ -115,7 +114,7 @@ Lockable* Item::SetItemStick(bool stick)
 
 NetworkID Item::Copy() const
 {
-	FactoryObject<Item> item = GameFactory::GetObject<Item>(GameFactory::CreateInstance(ID_ITEM, 0x00000000, this->GetBase())).get();
+	FactoryItem item = GameFactory::GetObject<Item>(GameFactory::CreateInstance(ID_ITEM, 0x00000000, this->GetBase())).get();
 
 	item->SetItemContainer(this->GetItemContainer());
 	item->SetItemCount(this->GetItemCount());

@@ -1,4 +1,5 @@
 #include "Lockable.h"
+#include "VaultException.h"
 
 using namespace std;
 

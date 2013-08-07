@@ -1,8 +1,6 @@
 #ifndef BUTTONGUI_H
 #define BUTTONGUI_H
 
-#include <string>
-
 #include "vaultmp.h"
 #include "Window.h"
 
@@ -26,6 +24,8 @@ class Button : public Window
 		Button(pPacket&& packet);
 
 	public:
+		static constexpr const char* CLOSE_BUTTON = "closeBTN";
+
 		virtual ~Button();
 
 		/**

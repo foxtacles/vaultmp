@@ -1,6 +1,10 @@
 #include "CriticalSection.h"
 #include "VaultException.h"
 
+#ifdef VAULTMP_DEBUG
+#include <sstream>
+#endif
+
 using namespace std;
 
 #ifdef VAULTMP_DEBUG

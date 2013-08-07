@@ -1,12 +1,12 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#include <string>
-#include <map>
-#include <stack>
-#include <vector>
-
+#include "vaultserver.h"
 #include "RakNet.h"
+
+#include <vector>
+#include <stack>
+#include <map>
 
 class Player;
 

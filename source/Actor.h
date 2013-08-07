@@ -1,23 +1,8 @@
 #ifndef ACTOR_H
 #define ACTOR_H
 
-#include <string>
-#include <list>
-#include <cmath>
-#include <typeinfo>
-#include <cstdlib>
-
-#include "Value.h"
+#include "vaultmp.h"
 #include "Container.h"
-#include "VaultException.h"
-#include "VaultFunctor.h"
-#include "Utils.h"
-#include "API.h"
-#include "PacketFactory.h"
-
-#ifdef VAULTSERVER
-#include "vaultserver/Database.h"
-#endif
 
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"
@@ -246,7 +231,7 @@ class ActorFunctor : public ContainerFunctor
 		virtual ~ActorFunctor() {}
 
 		virtual std::vector<std::string> operator()();
-		virtual bool filter(FactoryObject<Reference>& reference);
+		virtual bool filter(FactoryWrapper<Reference>& reference);
 };
 #endif
 

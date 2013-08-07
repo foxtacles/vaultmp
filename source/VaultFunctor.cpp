@@ -1,5 +1,7 @@
 #include "VaultFunctor.h"
 
+#include <algorithm>
+
 using namespace std;
 
 VaultFunctor::~VaultFunctor()

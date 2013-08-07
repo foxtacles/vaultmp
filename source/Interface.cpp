@@ -1,6 +1,11 @@
 #include "Interface.h"
+#include "Pipe.h"
+#include "VaultException.h"
+
+#include <algorithm>
 
 using namespace std;
+using namespace Values;
 
 PipeClient* Interface::pipeServer;
 PipeServer* Interface::pipeClient;
@@ -177,14 +182,14 @@ void Interface::EndDynamic()
 	dynamic_cs.EndSession();
 }
 
-void Interface::SetupCommand(const string& name, ParamContainer&& param, unsigned int priority)
+void Interface::SetupCommand(Func opcode, ParamContainer&& param, unsigned int priority)
 {
-	priorityMap.insert(make_pair(priority, natives.emplace(name, move(param))));
+	priorityMap.insert(make_pair(priority, natives.emplace(opcode, move(param))));
 }
 
-void Interface::ExecuteCommand(const string& name, ParamContainer&& param, unsigned int key)
+void Interface::ExecuteCommand(Func opcode, ParamContainer&& param, unsigned int key)
 {
-	dynamic_cmdlist.emplace_back(natives.emplace(make_pair(name, move(param))), key);
+	dynamic_cmdlist.emplace_back(natives.emplace(opcode, move(param)), key);
 }
 
 void Interface::PushJob(chrono::steady_clock::time_point&& T, function<void()>&& F)
@@ -194,9 +199,8 @@ void Interface::PushJob(chrono::steady_clock::time_point&& T, function<void()>&&
 	job_cs.EndSession();
 }
 
-vector<string> Interface::Evaluate(Native::iterator _it)
+API::CommandInput Interface::Evaluate(Native::iterator _it)
 {
-	const string& name = _it->first;
 	ParamContainer& param = _it->second;
 
 	unsigned int i = 0;
@@ -204,9 +208,8 @@ vector<string> Interface::Evaluate(Native::iterator _it)
 	unsigned int lsize = param.size();
 
 	vector<unsigned int> mult;
-	vector<string> result;
+	CommandInput result;
 	mult.reserve(lsize);
-	result.reserve(lsize);
 
 	for (i = lsize; i != 0; --i)
 	{
@@ -222,20 +225,20 @@ vector<string> Interface::Evaluate(Native::iterator _it)
 
 	for (i = 0; i < rsize; ++i)
 	{
-		string cmd = name;
+		// dynarray
+		result.second.emplace_back();
+		auto& cmd = result.second.back();
+		cmd.reserve(lsize);
 
 		for (unsigned int j = 0; j < lsize; ++j)
 		{
 			const auto& ref = param[j].get();
 			unsigned int idx = static_cast<unsigned int>(i / mult[j]) % ref.size();
-			string param = Utils::str_replace(ref[idx], " ", "|");
-
-			cmd += ' ';
-			cmd += param.empty() ? "^" : param;
+			cmd.emplace_back(ref[idx]);
 		}
-
-		result.emplace_back(move(cmd));
 	}
+
+	result.first = _it->first;
 
 	return result;
 }
@@ -335,9 +338,9 @@ void Interface::CommandThreadSend()
 
 					for (auto it = next_list.begin(); it != next_list.end() && !endThread; ++it)
 					{
-						vector<string> cmd = Interface::Evaluate(*it);
+						auto cmd = Interface::Evaluate(*it);
 
-						if (!cmd.empty())
+						if (!cmd.second.empty())
 						{
 							CommandParsed stream = API::Translate(cmd);
 
@@ -363,9 +366,9 @@ void Interface::CommandThreadSend()
 
 					const auto& dynamic = dynamic_cmdlist.front();
 
-					vector<string> cmd = Interface::Evaluate(dynamic.first);
+					auto cmd = Interface::Evaluate(dynamic.first);
 
-					if (!cmd.empty())
+					if (!cmd.second.empty())
 					{
 						CommandParsed stream = API::Translate(cmd, dynamic.second);
 

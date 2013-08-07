@@ -3,19 +3,12 @@
 
 #ifdef __WIN32__
 #include <winsock2.h>
-#include <imagehlp.h>
 #endif
-
-#include <cstdio>
-#include <ctime>
-#include <cmath>
-#include <cstring>
 
 #include <string>
 
 class Utils
 {
-
 	private:
 		static unsigned int updateCRC32(unsigned char ch, unsigned int crc);
 
@@ -38,11 +31,8 @@ class Utils
 		static bool crc32file(const char* name, unsigned int* crc);
 
 #ifdef __WIN32__
-		static BOOL GenerateChecksum(const std::string& szFilename,
-									 DWORD& dwExistingChecksum,
-									 DWORD& dwChecksum);
+		static BOOL GenerateChecksum(const std::string& szFilename, DWORD& dwExistingChecksum, DWORD& dwChecksum);
 #endif
-
 };
 
 #endif

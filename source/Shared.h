@@ -3,13 +3,13 @@
 
 #include "vaultmp.h"
 #include "Value.h"
-
-#include <chrono>
-#include <future>
+#include "VaultException.h"
 
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"
 #endif
+
+#include <future>
 
 /**
  * \brief An extension of the Value class to enable sharing of the value

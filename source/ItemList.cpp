@@ -1,10 +1,8 @@
 #include "ItemList.h"
-#include "PacketFactory.h"
 #include "GameFactory.h"
+#include "Network.h"
 
-#ifndef VAULTSERVER
-#include "Game.h"
-#endif
+#include <algorithm>
 
 using namespace std;
 using namespace RakNet;
@@ -65,7 +63,7 @@ ItemList::StripCopy ItemList::Strip() const
 	StripCopy result;
 	result.first = GameFactory::GetObject<Container>(source)->Copy();
 
-	FactoryObject<Container> copy = GameFactory::GetObject<Container>(result.first).get();
+	FactoryContainer copy = GameFactory::GetObject<Container>(result.first).get();
 	ItemListImpl this_container = this->container;
 
 	ItemListImpl::iterator it, it2, it3, it4;
@@ -73,14 +71,14 @@ ItemList::StripCopy ItemList::Strip() const
 	for (it = this_container.begin(), it2 = copy->IL.container.begin(); it != this_container.end() && it2 != copy->IL.container.end(); ++it, ++it2)
 	{
 		auto it5 = result.second.emplace(*it2, ItemListImpl{*it});
-		FactoryObject<Item> opt = GameFactory::GetObject<Item>(*it2).get();
+		FactoryItem opt = GameFactory::GetObject<Item>(*it2).get();
 
 		if (opt->GetItemEquipped())
 			continue;
 
 		for (++(it3 = it2), ++(it4 = it); it3 != copy->IL.container.end() && it4 != this_container.end();)
 		{
-			FactoryObject<Item> ins = GameFactory::GetObject<Item>(*it3).get();
+			FactoryItem ins = GameFactory::GetObject<Item>(*it3).get();
 
 			if (ins->GetBase() == opt->GetBase())
 			{
@@ -116,10 +114,7 @@ ItemList::ContainerDiff ItemList::AddItem(unsigned int baseID, unsigned int coun
 {
 	ContainerDiff diff;
 
-	if ((baseID == PIPBOY_3000 || baseID == PIPBOY_GLOVES) && (source && GameFactory::GetType(source) == ID_PLAYER))
-		return diff;
-
-	FactoryObject<Item> item = GameFactory::GetObject<Item>(GameFactory::CreateInstance(ID_ITEM, baseID)).get();
+	FactoryItem item = GameFactory::GetObject<Item>(GameFactory::CreateInstance(ID_ITEM, baseID)).get();
 	item->SetItemCount(count);
 	item->SetItemCondition(condition);
 	item->SetItemSilent(silent);
@@ -136,7 +131,7 @@ void ItemList::RemoveItem(NetworkID id)
 	if (it == container.end())
 		throw VaultException("Unknown Item with NetworkID %llu in ItemList", id).stacktrace();
 
-	FactoryObject<Item> reference = GameFactory::GetObject<Item>(*it).get();
+	FactoryItem reference = GameFactory::GetObject<Item>(*it).get();
 	reference->SetItemContainer(0);
 	container.erase(it);
 }
@@ -146,12 +141,9 @@ ItemList::ContainerDiff ItemList::RemoveItem(unsigned int baseID, unsigned int c
 	ContainerDiff diff;
 	ItemListImpl::const_iterator it;
 
-	if ((baseID == PIPBOY_3000 || baseID == PIPBOY_GLOVES) && (source && GameFactory::GetType(source) == ID_PLAYER))
-		return diff;
-
 	for (it = container.begin(); it != container.end() && count; ++it)
 	{
-		FactoryObject<Item> item = GameFactory::GetObject<Item>(*it).get();
+		FactoryItem item = GameFactory::GetObject<Item>(*it).get();
 
 		if (item->GetBase() == baseID)
 		{
@@ -160,7 +152,7 @@ ItemList::ContainerDiff ItemList::RemoveItem(unsigned int baseID, unsigned int c
 
 			if (item->GetItemCount() > count)
 			{
-				FactoryObject<Item> copy = GameFactory::GetObject<Item>(item->Copy()).get();
+				FactoryItem copy = GameFactory::GetObject<Item>(item->Copy()).get();
 				copy->SetItemCount(item->GetItemCount() - count);
 				copy->SetItemSilent(silent);
 				diff.second.emplace_back(copy->GetNetworkID());
@@ -178,15 +170,6 @@ ItemList::ContainerDiff ItemList::RemoveAllItems() const
 {
 	ContainerDiff diff;
 	diff.first = this->container;
-
-	if (source && GameFactory::GetType(source) == ID_PLAYER)
-		diff.first.remove_if([](const NetworkID& id)
-		{
-			FactoryObject<Item> reference = GameFactory::GetObject<Item>(id).get();
-			unsigned int baseID = reference->GetBase();
-			return (baseID == PIPBOY_3000 || baseID == PIPBOY_GLOVES);
-		});
-
 	return diff;
 }
 
@@ -194,20 +177,17 @@ ItemList::ContainerDiff ItemList::EquipItem(unsigned int baseID, bool silent, bo
 {
 	ContainerDiff diff;
 
-	if ((baseID == PIPBOY_3000 || baseID == PIPBOY_GLOVES) && (source && GameFactory::GetType(source) == ID_PLAYER))
-		return diff;
-
 	if (!IsEquipped(baseID))
 	{
 		for (const NetworkID& id : container)
 		{
-			FactoryObject<Item> item = GameFactory::GetObject<Item>(id).get();
+			FactoryItem item = GameFactory::GetObject<Item>(id).get();
 
 			if (item->GetBase() == baseID)
 			{
 				diff.first.emplace_back(id);
 
-				FactoryObject<Item> copy = GameFactory::GetObject<Item>(item->Copy()).get();
+				FactoryItem copy = GameFactory::GetObject<Item>(item->Copy()).get();
 				copy->SetItemEquipped(true);
 				copy->SetItemSilent(silent);
 				copy->SetItemStick(stick);
@@ -225,17 +205,14 @@ ItemList::ContainerDiff ItemList::UnequipItem(unsigned int baseID, bool silent, 
 {
 	ContainerDiff diff;
 
-	if ((baseID == PIPBOY_3000 || baseID == PIPBOY_GLOVES) && (source && GameFactory::GetType(source) == ID_PLAYER))
-		return diff;
-
 	NetworkID id = IsEquipped(baseID);
 
 	if (id)
 	{
-		FactoryObject<Item> item = GameFactory::GetObject<Item>(id).get();
+		FactoryItem item = GameFactory::GetObject<Item>(id).get();
 		diff.first.emplace_back(id);
 
-		FactoryObject<Item> copy = GameFactory::GetObject<Item>(item->Copy()).get();
+		FactoryItem copy = GameFactory::GetObject<Item>(item->Copy()).get();
 		copy->SetItemEquipped(false);
 		copy->SetItemSilent(silent);
 		copy->SetItemStick(stick);
@@ -247,20 +224,20 @@ ItemList::ContainerDiff ItemList::UnequipItem(unsigned int baseID, bool silent, 
 
 ItemList::ContainerDiff ItemList::Compare(NetworkID id) const
 {
-	FactoryObject<Container> container = GameFactory::GetObject<Container>(id).get();
+	FactoryContainer container = GameFactory::GetObject<Container>(id).get();
 	ContainerDiff diff;
 
 	StripCopy _strip_self = this->Strip();
 	unordered_map<NetworkID, ItemListImpl>& _strip_assoc = _strip_self.second;
-	FactoryObject<Container> self = GameFactory::GetObject<Container>(_strip_self.first).get();
-	FactoryObject<Container> compare = GameFactory::GetObject<Container>(container->IL.Strip().first).get();
+	FactoryContainer self = GameFactory::GetObject<Container>(_strip_self.first).get();
+	FactoryContainer compare = GameFactory::GetObject<Container>(container->IL.Strip().first).get();
 
 	ItemListImpl::iterator it, it2;
 
 	for (it = compare->IL.container.begin(), it2 = self->IL.container.begin(); it != compare->IL.container.end() && it2 != self->IL.container.end();)
 	{
-		FactoryObject<Item> iCompare = GameFactory::GetObject<Item>(*it).get();
-		FactoryObject<Item> iSelf = GameFactory::GetObject<Item>(*it2).get();
+		FactoryItem iCompare = GameFactory::GetObject<Item>(*it).get();
+		FactoryItem iSelf = GameFactory::GetObject<Item>(*it2).get();
 
 		unsigned int iCompare_base = iCompare->GetBase();
 		unsigned int iSelf_base = iSelf->GetBase();
@@ -315,7 +292,7 @@ NetworkID ItemList::IsEquipped(unsigned int baseID) const
 {
 	for (const NetworkID& id : container)
 	{
-		FactoryObject<Item> item = GameFactory::GetObject<Item>(id).get();
+		FactoryItem item = GameFactory::GetObject<Item>(id).get();
 
 		if (item->GetBase() == baseID && item->GetItemEquipped())
 			return id;
@@ -357,7 +334,7 @@ ItemList::GameDiff ItemList::ApplyDiff(ContainerDiff& diff)
 
 	for (NetworkID& id : diff.second)
 	{
-		FactoryObject<Item> iNew = GameFactory::GetObject<Item>(id).get();
+		FactoryItem iNew = GameFactory::GetObject<Item>(id).get();
 		Diff* _diff = nullptr;
 		auto it = assoc_delete.find(iNew->GetBase());
 
@@ -431,7 +408,7 @@ ItemList::NetDiff ItemList::ToNetDiff(const ContainerDiff& diff)
 
 	for (const auto& id : diff.second)
 	{
-		FactoryObject<Item> item = GameFactory::GetObject<Item>(id).get();
+		FactoryItem item = GameFactory::GetObject<Item>(id).get();
 		_diff.second.emplace_back(item->toPacket());
 	}
 
@@ -453,7 +430,7 @@ void ItemList::Copy(ItemList& IL) const
 
 	for (const NetworkID& id : this->container)
 	{
-		FactoryObject<Item> item = GameFactory::GetObject<Item>(id).get();
+		FactoryItem item = GameFactory::GetObject<Item>(id).get();
 		IL.AddItem(item->Copy());
 	}
 }
@@ -469,7 +446,7 @@ unsigned int ItemList::GetItemCount(unsigned int baseID) const
 
 	for (const NetworkID& id : container)
 	{
-		FactoryObject<Item> item = GameFactory::GetObject<Item>(id).get();
+		FactoryItem item = GameFactory::GetObject<Item>(id).get();
 
 		if (!baseID || item->GetBase() == baseID)
 			count += item->GetItemCount();
@@ -498,7 +475,7 @@ ItemList::ItemListImpl ItemList::GetItemTypes(const string& type) const
 
 	for (const NetworkID& id : container)
 	{
-		FactoryObject<Item> item = GameFactory::GetObject<Item>(id).get();
+		FactoryItem item = GameFactory::GetObject<Item>(id).get();
 
 		if (DB::Record::Lookup(item->GetBase(), type))
 			result.emplace_back(id);

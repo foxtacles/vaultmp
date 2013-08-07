@@ -1,14 +1,7 @@
 #ifndef WINDOWGUI_H
 #define WINDOWGUI_H
 
-#include <string>
-#include <tuple>
-#include <unordered_map>
-#include <unordered_set>
-#include <vector>
-
 #include "vaultmp.h"
-#include "RakNet.h"
 #include "Reference.h"
 
 /**

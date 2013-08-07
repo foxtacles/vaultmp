@@ -1,3 +1,4 @@
+#include "Utils.h"
 #include "Database.h"
 #include "Record.h"
 #include "Reference.h"
@@ -9,6 +10,15 @@
 #include "Item.h"
 #include "Terminal.h"
 #include "Interior.h"
+#include "sqlite/sqlite3.h"
+
+#ifdef __WIN32__
+	#include <winsock2.h>
+	#include <io.h>
+#else
+	#include <climits>
+	#include <unistd.h>
+#endif
 
 using namespace std;
 

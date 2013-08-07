@@ -1,19 +1,14 @@
 #ifndef EXTERIORDB_H
 #define EXTERIORDB_H
 
-#include <algorithm>
+#include "vaultserver.h"
+#include "Expected.h"
+
 #include <vector>
 #include <array>
 #include <unordered_map>
-#include <cmath>
 
-#include "vaultmp.h"
-#include "vaultserver.h"
-#include "Database.h"
-#include "Record.h"
-#include "Expected.h"
-
-#include "sqlite/sqlite3.h"
+class sqlite3_stmt;
 
 /**
  * \brief Represents a game exterior cell
@@ -36,7 +31,7 @@ namespace DB
 			Exterior& operator=(const Exterior&) = delete;
 
 		public:
-			static constexpr double size = 4096.0;
+			static constexpr double SIZE = 4096.0;
 
 			static Expected<Exterior*> Lookup(unsigned int baseID);
 			static Expected<Exterior*> Lookup(unsigned int world, double X, double Y);

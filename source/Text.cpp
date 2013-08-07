@@ -1,6 +1,4 @@
 #include "Text.h"
-#include "PacketFactory.h"
-#include "GameFactory.h"
 
 using namespace std;
 using namespace RakNet;

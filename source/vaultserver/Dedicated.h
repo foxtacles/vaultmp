@@ -1,28 +1,15 @@
 #ifndef DEDICATED_H
 #define DEDICATED_H
 
-#ifdef __WIN32__
-#include <winsock2.h>
-#include <io.h>
-#endif
-#include <thread>
-#include <chrono>
-#include <cstdio>
-
+#include "vaultserver.h"
 #include "RakNet.h"
 
-#include "vaultmp.h"
-#include "ServerEntry.h"
-#include "Actor.h"
-#include "Player.h"
-#include "Data.h"
-#include "Utils.h"
-#include "VaultException.h"
-#include "API.h"
-#include "Client.h"
-#include "NetworkServer.h"
-#include "time/time64.h"
-#include "vaultserver.h"
+#ifdef VAULTMP_DEBUG
+#include "Debug.h"
+#endif
+
+#include <vector>
+#include <thread>
 
 #define RAKNET_STANDARD_PORT            1770
 #define RAKNET_STANDARD_CONNECTIONS     4
@@ -34,6 +21,8 @@ typedef std::vector<std::pair<std::string, unsigned int>> ModList;
 /**
  * \brief The main class of the dedicated server
  */
+
+class ServerEntry;
 
 class Dedicated
 {

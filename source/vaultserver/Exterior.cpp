@@ -1,4 +1,7 @@
 #include "Exterior.h"
+#include "sqlite/sqlite3.h"
+
+#include <algorithm>
 
 using namespace std;
 using namespace DB;
@@ -57,8 +60,8 @@ Expected<Exterior*> Exterior::Lookup(unsigned int baseID)
 
 Expected<Exterior*> Exterior::Lookup(unsigned int world, double X, double Y)
 {
-	signed int x = floor(X / size);
-	signed int y = floor(Y / size);
+	signed int x = floor(X / SIZE);
+	signed int y = floor(Y / SIZE);
 
 	auto it = find_if(worlds[world].begin(), worlds[world].end(), [&x, &y](const Exterior* cell) { return cell->x == x && cell->y == y; });
 
@@ -90,28 +93,28 @@ signed int Exterior::GetY() const
 
 array<unsigned int, 9> Exterior::GetAdjacents() const
 {
-	double X = GetX() * size;
-	double Y = GetY() * size;
+	double X = GetX() * SIZE;
+	double Y = GetY() * SIZE;
 
 	Expected<Exterior*> next_exterior;
 
 	return
 		{{GetBase(),
-		(next_exterior = DB::Exterior::Lookup(world, X, Y + size)) ? next_exterior->GetBase() : 0u,
-		(next_exterior = DB::Exterior::Lookup(world, X + size, Y + size)) ? next_exterior->GetBase() : 0u,
-		(next_exterior = DB::Exterior::Lookup(world, X + size, Y)) ? next_exterior->GetBase() : 0u,
-		(next_exterior = DB::Exterior::Lookup(world, X + size, Y - size)) ? next_exterior->GetBase() : 0u,
-		(next_exterior = DB::Exterior::Lookup(world, X, Y - size)) ? next_exterior->GetBase() : 0u,
-		(next_exterior = DB::Exterior::Lookup(world, X - size, Y - size)) ? next_exterior->GetBase() : 0u,
-		(next_exterior = DB::Exterior::Lookup(world, X - size, Y)) ? next_exterior->GetBase() : 0u,
-		(next_exterior = DB::Exterior::Lookup(world, X - size, Y + size)) ? next_exterior->GetBase() : 0u}};
+		(next_exterior = DB::Exterior::Lookup(world, X, Y + SIZE)) ? next_exterior->GetBase() : 0u,
+		(next_exterior = DB::Exterior::Lookup(world, X + SIZE, Y + SIZE)) ? next_exterior->GetBase() : 0u,
+		(next_exterior = DB::Exterior::Lookup(world, X + SIZE, Y)) ? next_exterior->GetBase() : 0u,
+		(next_exterior = DB::Exterior::Lookup(world, X + SIZE, Y - SIZE)) ? next_exterior->GetBase() : 0u,
+		(next_exterior = DB::Exterior::Lookup(world, X, Y - SIZE)) ? next_exterior->GetBase() : 0u,
+		(next_exterior = DB::Exterior::Lookup(world, X - SIZE, Y - SIZE)) ? next_exterior->GetBase() : 0u,
+		(next_exterior = DB::Exterior::Lookup(world, X - SIZE, Y)) ? next_exterior->GetBase() : 0u,
+		(next_exterior = DB::Exterior::Lookup(world, X - SIZE, Y + SIZE)) ? next_exterior->GetBase() : 0u}};
 }
 
 bool Exterior::IsValidCoordinate(double X, double Y) const
 {
-	double x1 = x * size;
-	double y1 = y * size;
-	double x2 = (x + 1) * size;
-	double y2 = (y + 1) * size;
+	double x1 = x * SIZE;
+	double y1 = y * SIZE;
+	double x2 = x1 + SIZE;
+	double y2 = y1 + SIZE;
 	return ((X >= x1 && X < x2) && (Y >= y1 && Y < y2));
 }

@@ -1,4 +1,5 @@
 #include "Item.h"
+#include "sqlite/sqlite3.h"
 
 using namespace std;
 using namespace DB;
