@@ -784,25 +784,24 @@ void Game::LoadEnvironment()
 
 	for (NetworkID& id : reference)
 	{
-		auto _reference = GameFactory::GetObject(id);
-		auto& reference = _reference.get();
-
-		if (!reference->IsPersistent() || reference->GetReference() == PLAYER_REFERENCE)
-		{
-			cellRefs.StartSession();
-			(*cellRefs)[reference->GetNetworkCell()][reference.GetType()].erase(reference->GetReference());
-			cellRefs.EndSession();
-
-			if (reference->GetReference() != PLAYER_REFERENCE)
-				reference->SetReference(0x00000000);
-			else
+		GameFactory::Operate(id, [](FactoryObject& object) {
+			if (!object->IsPersistent() || object->GetReference() == PLAYER_REFERENCE)
 			{
-				reference->SetNetworkCell(spawnContext[0]);
-				reference->SetGameCell(spawnContext[0]);
-			}
-		}
+				cellRefs.StartSession();
+				(*cellRefs)[object->GetNetworkCell()][object.GetType()].erase(object->GetReference());
+				cellRefs.EndSession();
 
-		NewDispatch(reference);
+				if (object->GetReference() != PLAYER_REFERENCE)
+					object->SetReference(0x00000000);
+				else
+				{
+					object->SetNetworkCell(spawnContext[0]);
+					object->SetGameCell(spawnContext[0]);
+				}
+			}
+
+			NewDispatch(object);
+		});
 	}
 }
 
