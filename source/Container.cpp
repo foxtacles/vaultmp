@@ -72,14 +72,6 @@ NetworkID Container::Copy() const
 	return id;
 }
 
-Lockable* Container::getLock()
-{
-	if (flag_Lock.IsLocked())
-		return nullptr;
-
-	return &flag_Lock;
-}
-
 pPacket Container::toPacket() const
 {
 	vector<pPacket> items;

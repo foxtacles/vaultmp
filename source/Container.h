@@ -18,8 +18,6 @@ class Container : public Object
 		static DebugInput<Container> debug;
 #endif
 
-		Value<bool> flag_Lock;
-
 		void initialize();
 
 		Container(const Container&) = delete;
@@ -51,7 +49,6 @@ class Container : public Object
 		virtual Lockable* SetBase(unsigned int baseID);
 #endif
 
-		Lockable* getLock();
 		RakNet::NetworkID Copy() const;
 
 		/**
