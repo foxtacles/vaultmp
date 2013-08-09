@@ -967,7 +967,7 @@ namespace vaultmp
 
 			State SetItemCount(UCount count) const noexcept { return vaultmp::SetItemCount(id, count); }
 			State SetItemCondition(Value condition) const noexcept { return vaultmp::SetItemCondition(id, condition); }
-			State SetItemEquipped(State equipped, State silent, State stick) const noexcept { return vaultmp::SetItemEquipped(id, equipped, silent, stick); }
+			State SetItemEquipped(State equipped, State silent = True, State stick = False) const noexcept { return vaultmp::SetItemEquipped(id, equipped, silent, stick); }
 
 			#define Create_Template(type) \
 				static ID Create(type item, ID id) noexcept { return vaultmp::CreateItem(item, id); } \

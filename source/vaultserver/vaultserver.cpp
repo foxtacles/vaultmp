@@ -13,6 +13,7 @@
 #include <cstdio>
 #include <thread>
 #include <unordered_map>
+#include <csignal>
 
 using namespace std;
 using namespace RakNet;
@@ -77,8 +78,15 @@ void InputThread()
 			}
 		}
 	}
-	while (!(cmd_exit = !strcmp(cmd.c_str(), "exit")));
+	while (!cmd_exit && !(cmd_exit = !strcmp(cmd.c_str(), "exit")));
 
+	Dedicated::TerminateThread();
+}
+
+void SignalHandler(int)
+{
+	printf("SIGTERM/SIGINT received. Shutting down...press enter to continue\n");
+	cmd_exit = true;
 	Dedicated::TerminateThread();
 }
 
@@ -98,8 +106,11 @@ int main(int, char* argv[])
 #ifdef __WIN32__
 	printf("Vault-Tec dedicated server %s (Windows)\n----------------------------------------------------------\n", DEDICATED_VERSION);
 #else
-	printf("Vault-Tec dedicated server %s (Unix)\n----------------------------------------------------------\n", DEDICATED_VERSION);
+	printf("Vault-Tec dedicated server %s (Linux)\n----------------------------------------------------------\n", DEDICATED_VERSION);
 #endif
+
+	signal(SIGINT, SignalHandler);
+	signal(SIGTERM, SignalHandler);
 
 	unordered_map<string, const char*> args;
 	unsigned int arg_ = 1;
