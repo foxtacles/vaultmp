@@ -200,7 +200,7 @@ class Game
 		/**
 		 * \brief Deletes an Object
 		 */
-		static void DeleteObject(FactoryObject& reference);
+		static void DeleteObject(FactoryObject& reference, bool silent);
 		/**
 		 * \brief Deletes a Window
 		 */
@@ -304,14 +304,6 @@ class Game
 		static void RemoveItem(const FactoryContainer& reference, const FactoryItem& item, unsigned int key = 0);
 		static void RemoveItem(const FactoryContainer& reference, unsigned int baseID, unsigned int count, bool silent = false, unsigned int key = 0);
 		/**
-		 * \brief Removes all items from a Container
-		 */
-		static void RemoveAllItems(const FactoryContainer& reference, unsigned int key = 0);
-		/**
-		 * \brief Removes all (including fixed equipment) items from a Container
-		 */
-		static void RemoveAllItemsEx(FactoryContainer& reference);
-		/**
 		 * \brief Sets the reference count of an Item
 		 */
 		static void SetRefCount(const FactoryItem& reference, unsigned int key = 0);
@@ -320,14 +312,10 @@ class Game
 		 */
 		static void SetCurrentHealth(const FactoryItem& reference, unsigned int health, unsigned int key = 0);
 		/**
-		 * \brief Returns the reference count of an Item
-		 */
-		static unsigned int GetRefCount(unsigned int refID);
-		/**
 		 * \brief Makes an Actor equip an Item
 		 */
 		static void EquipItem(const FactoryActor& reference, const FactoryItem& item, unsigned int key = 0);
-		static void EquipItem(const FactoryActor& reference, unsigned int baseID, bool silent = false, bool stick = false, unsigned int key = 0);
+		static void EquipItem(const FactoryActor& reference, unsigned int baseID, double condition, bool silent = false, bool stick = false, unsigned int key = 0);
 		/**
 		 * \brief Makes an Actor unequip an Item
 		 */
@@ -365,14 +353,6 @@ class Game
 		 * \brief Updates the window mode
 		 */
 		static void SetWindowMode();
-		/**
-		 * \brief Scans a cell for forms and returns the delta to previous scan
-		 */
-		static CellDiff ScanCell(unsigned int type);
-		/**
-		 * \brief Scans an inventory and returns the difference
-		 */
-		static std::pair<ItemList::NetDiff, ItemList::GameDiff> ScanContainer(FactoryContainer& reference);
 		/**
 		 * \brief Enable player controls
 		 */
@@ -429,15 +409,15 @@ class Game
 		/**
 		 * \brief Network function to handle Item count
 		 */
-		static void net_SetItemCount(const FactoryItem& reference, unsigned int count);
+		static void net_SetItemCount(FactoryItem& reference, unsigned int count, bool silent);
 		/**
 		 * \brief Network function to handle Item condition
 		 */
-		static void net_SetItemCondition(const FactoryItem& reference, double condition, unsigned int health);
+		static void net_SetItemCondition(FactoryItem& reference, double condition, unsigned int health);
 		/**
-		 * \brief Network function to handle Container update
+		 * \brief Network function to handle Item equipped state
 		 */
-		static void net_UpdateContainer(FactoryContainer& reference, const ItemList::NetDiff& ndiff, const ItemList::NetDiff& gdiff);
+		static void net_SetItemEquipped(FactoryItem& reference, bool equipped, bool silent, bool stick);
 		/**
 		 * \brief Network function to handle Actor value
 		 */
@@ -556,14 +536,6 @@ class Game
 		 */
 		static void GetParentCell(const FactoryPlayer& player, unsigned int cell);
 		/**
-		 * \brief Handles GetDead command result
-		 */
-		static void GetDead(const FactoryActor& reference, const FactoryPlayer& player, bool dead);
-		/**
-		 * \brief Handles IsLimbGone command result
-		 */
-		static void IsLimbGone(unsigned int key, unsigned char limb, bool gone);
-		/**
 		 * \brief Handles GetActorValue command result
 		 */
 		static void GetActorValue(const FactoryActor& reference, bool base, unsigned char index, double value);
@@ -572,29 +544,9 @@ class Game
 		 */
 		static void GetActorState(const FactoryActor& reference, unsigned int idle, unsigned char moving, unsigned char weapon, unsigned char flags, bool sneaking);
 		/**
-		 * \brief Handles ScanContainer command result
-		 */
-		static void ScanContainer(const FactoryContainer& reference, const std::vector<unsigned char>& data);
-		/**
-		 * \brief Handles ScanContainer (synchronized) command result
-		 */
-		static std::pair<ItemList::NetDiff, ItemList::GameDiff> GetScanContainer(const FactoryContainer& reference, const std::vector<unsigned char>& data);
-		/**
-		 * \brief Handles RemoveAllItemsEx command result
-		 */
-		static void GetRemoveAllItemsEx(const FactoryContainer& reference, const std::vector<unsigned char>& data);
-		/**
-		 * \brief Handles GetLocked command result
-		 */
-		static void GetLocked(const FactoryContainer& reference, unsigned int lock);
-		/**
 		 * \brief Handles GetControl command result
 		 */
 		static void GetControl(const FactoryPlayer& reference, unsigned char control, unsigned char key);
-		/**
-		 * \brief Handles GetFirstRef / GetNextRef command result
-		 */
-		static void GetNextRef(unsigned int key, unsigned int refID, unsigned int type = UINT_MAX);
 		/**
 		 * \brief Handles GUI message
 		 */

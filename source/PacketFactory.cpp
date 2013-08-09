@@ -132,8 +132,8 @@ pPacket PacketFactory::Init(const unsigned char* stream, unsigned int len)
 			packet = new typename pTypesMap<pTypes::ID_UPDATE_CONDITION>::type(stream, len);
 			break;
 
-		case pTypes::ID_UPDATE_CONTAINER:
-			packet = new typename pTypesMap<pTypes::ID_UPDATE_CONTAINER>::type(stream, len);
+		case pTypes::ID_UPDATE_EQUIPPED:
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_EQUIPPED>::type(stream, len);
 			break;
 
 		case pTypes::ID_UPDATE_VALUE:

@@ -259,9 +259,10 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				case pTypes::ID_OBJECT_REMOVE:
 				{
 					NetworkID id;
-					PacketFactory::Access<pTypes::ID_OBJECT_REMOVE>(packet, id);
+					bool silent;
+					PacketFactory::Access<pTypes::ID_OBJECT_REMOVE>(packet, id, silent);
 					auto reference = GameFactory::GetObject(id);
-					Game::DeleteObject(reference.get());
+					Game::DeleteObject(reference.get(), silent);
 					break;
 				}
 
@@ -374,9 +375,10 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				{
 					NetworkID id;
 					unsigned int count;
-					PacketFactory::Access<pTypes::ID_UPDATE_COUNT>(packet, id, count);
+					bool silent;
+					PacketFactory::Access<pTypes::ID_UPDATE_COUNT>(packet, id, count, silent);
 					auto reference = GameFactory::GetObject<Item>(id);
-					Game::net_SetItemCount(reference.get(), count);
+					Game::net_SetItemCount(reference.get(), count, silent);
 					break;
 				}
 
@@ -391,13 +393,13 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
-				case pTypes::ID_UPDATE_CONTAINER:
+				case pTypes::ID_UPDATE_EQUIPPED:
 				{
 					NetworkID id;
-					pair<list<NetworkID>, vector<pPacket>> ndiff, gdiff;
-					PacketFactory::Access<pTypes::ID_UPDATE_CONTAINER>(packet, id, ndiff, gdiff);
-					auto reference = GameFactory::GetObject<Container>(id);
-					Game::net_UpdateContainer(reference.get(), ndiff, gdiff);
+					bool equipped, silent, stick;
+					PacketFactory::Access<pTypes::ID_UPDATE_EQUIPPED>(packet, id, equipped, silent, stick);
+					auto reference = GameFactory::GetObject<Item>(id);
+					Game::net_SetItemEquipped(reference.get(), equipped, silent, stick);
 					break;
 				}
 

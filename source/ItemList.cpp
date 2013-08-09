@@ -70,7 +70,7 @@ NetworkID ItemList::AddItem(NetworkID id)
 	else
 	{
 		GameFactory::Operate<Item>(id, [this](FactoryItem& item) {
-			item->SetItemContainer(this->GetNetworkID());
+			item->SetItemContainer(this->source);
 		});
 
 		container.emplace_back(id);
@@ -107,7 +107,7 @@ ItemList::AddOp ItemList::AddItem(unsigned int baseID, unsigned int count, doubl
 			item->SetItemCount(count);
 			item->SetItemCondition(condition);
 			item->SetItemSilent(silent);
-			item->SetItemContainer(this->GetNetworkID());
+			item->SetItemContainer(this->source);
 		});
 
 		container.emplace_back(result.second);

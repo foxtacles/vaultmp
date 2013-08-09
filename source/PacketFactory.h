@@ -56,7 +56,7 @@ enum class pTypes : pTypesSize
 	ID_UPDATE_OWNER,
 	ID_UPDATE_COUNT,
 	ID_UPDATE_CONDITION,
-	ID_UPDATE_CONTAINER,
+	ID_UPDATE_EQUIPPED,
 	ID_UPDATE_VALUE,
 	ID_UPDATE_STATE,
 	ID_UPDATE_RACE,
@@ -725,7 +725,7 @@ inline const typename pTypesMap<pTypes::ID_ACTOR_NEW>::type* PacketFactory::Cast
 	) ? static_cast<const typename pTypesMap<pTypes::ID_ACTOR_NEW>::type*>(packet) : nullptr;
 }
 template<> struct pTypesMap<pTypes::ID_PLAYER_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_PLAYER_NEW, std::map<unsigned char, std::pair<unsigned char, bool>>> type; };
-template<> struct pTypesMap<pTypes::ID_OBJECT_REMOVE> { typedef pGeneratorReference<pTypes::ID_OBJECT_REMOVE> type; };
+template<> struct pTypesMap<pTypes::ID_OBJECT_REMOVE> { typedef pGeneratorReference<pTypes::ID_OBJECT_REMOVE, bool> type; };
 template<> struct pTypesMap<pTypes::ID_WINDOW_NEW> { typedef pGeneratorReference<pTypes::ID_WINDOW_NEW, RakNet::NetworkID, std::string, std::tuple<double, double, double, double>, std::tuple<double, double, double, double>, bool, bool, std::string> type; };
 template<>
 inline const typename pTypesMap<pTypes::ID_WINDOW_NEW>::type* PacketFactory::Cast_<pTypes::ID_WINDOW_NEW>::Cast(const pDefault* packet) {
@@ -747,9 +747,9 @@ template<> struct pTypesMap<pTypes::ID_UPDATE_ANGLE> { typedef pGeneratorReferen
 template<> struct pTypesMap<pTypes::ID_UPDATE_CELL> { typedef pGeneratorReference<pTypes::ID_UPDATE_CELL, unsigned int, double, double, double> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_LOCK> { typedef pGeneratorReference<pTypes::ID_UPDATE_LOCK, unsigned int> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_OWNER> { typedef pGeneratorReference<pTypes::ID_UPDATE_OWNER, unsigned int> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_COUNT> { typedef pGeneratorReference<pTypes::ID_UPDATE_COUNT, unsigned int> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_COUNT> { typedef pGeneratorReference<pTypes::ID_UPDATE_COUNT, unsigned int, bool> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_CONDITION> { typedef pGeneratorReference<pTypes::ID_UPDATE_CONDITION, double, unsigned int> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_CONTAINER> { typedef pGeneratorReference<pTypes::ID_UPDATE_CONTAINER, std::pair<std::list<RakNet::NetworkID>, std::vector<pPacket>>, std::pair<std::list<RakNet::NetworkID>, std::vector<pPacket>>> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_EQUIPPED> { typedef pGeneratorReference<pTypes::ID_UPDATE_EQUIPPED, bool, bool, bool> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_VALUE> { typedef pGeneratorReference<pTypes::ID_UPDATE_VALUE, bool, unsigned char, double> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_STATE> { typedef pGeneratorReference<pTypes::ID_UPDATE_STATE, unsigned int, unsigned char, unsigned char, unsigned char, bool, bool, bool> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_RACE> { typedef pGeneratorReference<pTypes::ID_UPDATE_RACE, unsigned int, signed int, signed int> type; };

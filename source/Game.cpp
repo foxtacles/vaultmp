@@ -149,14 +149,9 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 
 			case Func::GetDead:
-			{
-				auto objects = GameFactory::GetMultiple<Actor>(vector<unsigned int>{getFrom<unsigned int>(info.at(1)), PLAYER_REFERENCE});
-				GetDead(objects[0].get(), vaultcast<Player>(objects[1]).get(), result);
 				break;
-			}
 
 			case Func::IsLimbGone:
-				IsLimbGone(key, getFrom<unsigned int>(info.at(2)), result);
 				break;
 
 			case Func::GetCauseofDeath:
@@ -224,11 +219,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 
 			case Func::GetLocked:
-			{
-				auto reference = GameFactory::GetObject<Container>(getFrom<unsigned int>(info.at(1)));
-				GetLocked(reference.get(), result);
 				break;
-			}
 
 			case Func::Activate:
 				break;
@@ -326,28 +317,10 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 
 			case Func::ScanContainer:
-			{
-				auto reference = GameFactory::GetObject<Container>(getFrom<unsigned int>(info.at(1)));
-				vector<unsigned char>* data = getFrom<vector<unsigned char>*>(result);
-
-				if (key)
-					FutureSet(shared, GetScanContainer(reference.get(), *data));
-				else
-					ScanContainer(reference.get(), *data);
-
-				delete data;
 				break;
-			}
 
 			case Func::RemoveAllItemsEx:
-			{
-				auto reference = GameFactory::GetObject<Container>(getFrom<unsigned int>(info.at(1)));
-				vector<unsigned char>* data = getFrom<vector<unsigned char>*>(result);
-				GetRemoveAllItemsEx(reference.get(), *data);
-				FutureSet(shared, true);
-				delete data;
 				break;
-			}
 
 			case Func::GetBaseObject:
 				FutureSet(shared, getFrom<unsigned int>(result));
@@ -361,14 +334,6 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 
 			case Func::SetCurrentHealth:
-				break;
-
-			case Func::GetFirstRef:
-				GetNextRef(key, getFrom<unsigned int>(result), getFrom<unsigned int>(info.at(1)));
-				break;
-
-			case Func::GetNextRef:
-				GetNextRef(key, getFrom<unsigned int>(result));
 				break;
 
 			case Func::UIMessage:
@@ -488,35 +453,11 @@ void Game::Startup()
 	Interface::SetupCommand(Func::GetAngle, {self_ref, RawParameter(vector<string> {API::RetrieveAxis_Reverse(Axis_X), API::RetrieveAxis_Reverse(Axis_Z)})});
 	Interface::SetupCommand(Func::GetActorState, {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), Player::CreateFunctor(FLAG_MOVCONTROLS, id)});
 	Interface::SetupCommand(Func::GetParentCell, {Player::CreateFunctor(FLAG_SELF | FLAG_ALIVE)}, 30);
-	Interface::SetupCommand(Func::ScanContainer, {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED)}, 50);
 
-	auto func = Player::CreateFunctor(FLAG_ENABLED | FLAG_ALIVE);
-	func.connect(Actor::CreateFunctor(FLAG_ENABLED | FLAG_ALIVE));
-	Interface::SetupCommand(Func::GetDead, {move(func)}, 30);
-
-	RawParameter health = RawParameter(vector<string>{
-		API::RetrieveValue_Reverse(ActorVal_Health),
-		API::RetrieveValue_Reverse(ActorVal_Head),
-		API::RetrieveValue_Reverse(ActorVal_Torso),
-		API::RetrieveValue_Reverse(ActorVal_LeftArm),
-		API::RetrieveValue_Reverse(ActorVal_RightArm),
-		API::RetrieveValue_Reverse(ActorVal_LeftLeg),
-		API::RetrieveValue_Reverse(ActorVal_RightLeg),
-		API::RetrieveValue_Reverse(ActorVal_Brain)});
-
-	Interface::SetupCommand(Func::GetActorValue, {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), health}, 30);
-
-	func = Player::CreateFunctor(FLAG_NOTSELF | FLAG_SELFALERT | FLAG_ENABLED | FLAG_ALIVE);
-	func.connect(Actor::CreateFunctor(FLAG_SELFALERT | FLAG_ENABLED | FLAG_ALIVE));
-	Interface::SetupCommand(Func::GetActorValue, {move(func), health}, 30);
-
-	// we could exclude health values here
+/*
 	Interface::SetupCommand(Func::GetActorValue, {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), Actor::Param_ActorValues()}, 100);
 	Interface::SetupCommand(Func::GetBaseActorValue, {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), Actor::Param_ActorValues()}, 200);
-
-	func = Container::CreateFunctor(FLAG_ENABLED | FLAG_LOCKED);
-	func.connect(Object::CreateFunctor(FLAG_ENABLED | FLAG_LOCKED));
-	Interface::SetupCommand(Func::GetLocked, {move(func)}, 200);
+*/
 
 	Interface::EndSetup();
 
@@ -967,15 +908,36 @@ void Game::NewObject_(FactoryObject& reference)
 
 void Game::NewItem(FactoryItem& reference)
 {
-	if (IsInContext(reference->GetNetworkCell()))
-		NewItem_(reference);
+	NetworkID item = reference->GetNetworkID();
+	NetworkID container = reference->GetItemContainer();
+
+	if (container)
+	{
+		GameFactory::LeaveReference(reference);
+
+		GameFactory::Operate<Container>(container, [item](FactoryContainer& container) {
+			GameFactory::Operate<Item>(item, [&container](FactoryItem& item) {
+				AddItem(container, item);
+
+				if (item->GetItemEquipped())
+					GameFactory::Operate<Actor>(container->GetNetworkID(), [&item](FactoryActor& actor) {
+						EquipItem(actor, item);
+					});
+			});
+		});
+	}
 	else
 	{
-		reference->SetEnabled(false);
+		if (IsInContext(reference->GetNetworkCell()))
+			NewItem_(reference);
+		else
+		{
+			reference->SetEnabled(false);
 
-		uninitObj.StartSession();
-		(*uninitObj)[reference->GetNetworkCell()].emplace(reference->GetNetworkID());
-		uninitObj.EndSession();
+			uninitObj.StartSession();
+			(*uninitObj)[reference->GetNetworkCell()].emplace(reference->GetNetworkID());
+			uninitObj.EndSession();
+		}
 	}
 }
 
@@ -1242,22 +1204,55 @@ void Game::ToggleEnabled(unsigned int refID, bool enabled)
 	Interface::EndDynamic();
 }
 
-void Game::DeleteObject(FactoryObject& reference)
+void Game::DeleteObject(FactoryObject& reference, bool silent)
 {
-	RemoveObject(reference);
+	NetworkID id = reference->GetNetworkID();
 
-	uninitObj.StartSession();
-	(*uninitObj)[reference->GetNetworkCell()].erase(reference->GetNetworkID());
-	uninitObj.EndSession();
+	NetworkID container = GameFactory::Operate<Item, FailPolicy::Return>(id, [](FactoryItem& item) {
+		return item->GetItemContainer();
+	});
 
-	if (reference->IsPersistent())
+	if (container)
 	{
-		deletedStatic.StartSession();
-		(*deletedStatic)[reference->GetNetworkCell()].emplace_back(reference->GetReference());
-		deletedStatic.EndSession();
-	}
+		GameFactory::LeaveReference(reference);
 
-	GameFactory::DestroyInstance(reference);
+		GameFactory::Operate<Container>(container, [id, silent](FactoryContainer& container) {
+			container->IL.RemoveItem(id);
+
+			GameFactory::Operate<Item>(id, [&container, silent](FactoryItem& item) {
+				RemoveItem(container, item->GetBase(), item->GetItemCount(), silent);
+
+				// Game always removes equipped item first - workaround (is this really always the case?)
+				NetworkID equipped = container->IL.IsEquipped(item->GetBase());
+
+				if (equipped)
+					GameFactory::Operate<Actor>(container->GetNetworkID(), [equipped](FactoryActor& actor) {
+						GameFactory::Operate<Item>(equipped, [&actor](FactoryItem& item) {
+							EquipItem(actor, item->GetBase(), item->GetItemCondition(), false, item->GetItemStick());
+						});
+					});
+			});
+
+			GameFactory::DestroyInstance(id);
+		});
+	}
+	else
+	{
+		RemoveObject(reference);
+
+		uninitObj.StartSession();
+		(*uninitObj)[reference->GetNetworkCell()].erase(reference->GetNetworkID());
+		uninitObj.EndSession();
+
+		if (reference->IsPersistent())
+		{
+			deletedStatic.StartSession();
+			(*deletedStatic)[reference->GetNetworkCell()].emplace_back(reference->GetReference());
+			deletedStatic.EndSession();
+		}
+
+		GameFactory::DestroyInstance(reference);
+	}
 }
 
 void Game::DeleteWindow(FactoryWindow& reference)
@@ -1628,39 +1623,6 @@ void Game::RemoveItem(const FactoryContainer& reference, unsigned int baseID, un
 	DelayOrExecute(reference, func, key);
 }
 
-void Game::RemoveAllItems(const FactoryContainer& reference, unsigned int key)
-{
-	Interface::StartDynamic();
-
-	Interface::ExecuteCommand(Func::RemoveAllItems, {reference->GetReferenceParam()}, key);
-
-	Interface::EndDynamic();
-}
-
-void Game::RemoveAllItemsEx(FactoryContainer& reference)
-{
-	auto store = make_shared<Shared<bool>>();
-	unsigned int key = Lockable::Share(store);
-
-	Interface::StartDynamic();
-
-	Interface::ExecuteCommand(Func::RemoveAllItemsEx, {reference->GetReferenceParam()}, key);
-
-	Interface::EndDynamic();
-
-	NetworkID id = reference->GetNetworkID();
-	GameFactory::LeaveReference(reference);
-
-	try
-	{
-		store->get_future(chrono::seconds(5));
-	}
-	catch (exception& e)
-	{
-		throw VaultException("Obtaining of all items of %llu for RemoveAllItemsEx failed (%s)", id, e.what()).stacktrace();
-	}
-}
-
 void Game::SetRefCount(const FactoryItem& reference, unsigned int key)
 {
 	Interface::StartDynamic();
@@ -1679,43 +1641,20 @@ void Game::SetCurrentHealth(const FactoryItem& reference, unsigned int health, u
 	Interface::EndDynamic();
 }
 
-unsigned int Game::GetRefCount(unsigned int refID)
-{
-	auto store = make_shared<Shared<unsigned int>>();
-	unsigned int key = Lockable::Share(store);
-
-	Interface::StartDynamic();
-
-	Interface::ExecuteCommand(Func::GetRefCount, {RawParameter(refID)}, key);
-
-	Interface::EndDynamic();
-
-	unsigned int count;
-
-	try
-	{
-		count = store->get_future(chrono::seconds(5));
-	}
-	catch (exception& e)
-	{
-		throw VaultException("Obtaining of reference count of refID %08X (%s)", refID, e.what()).stacktrace();
-	}
-
-	return count;
-}
-
 void Game::EquipItem(const FactoryActor& reference, const FactoryItem& item, unsigned int key)
 {
-	EquipItem(reference, item->GetBase(), item->GetItemSilent(), item->GetItemStick(), key);
+	EquipItem(reference, item->GetBase(), item->GetItemCondition(), item->GetItemSilent(), item->GetItemStick(), key);
 }
 
-void Game::EquipItem(const FactoryActor& reference, unsigned int baseID, bool silent, bool stick, unsigned int key)
+void Game::EquipItem(const FactoryActor& reference, unsigned int baseID, double condition, bool silent, bool stick, unsigned int key)
 {
 	Interface::StartDynamic();
 
 	Interface::ExecuteCommand(Func::EquipItem, {reference->GetReferenceParam(), RawParameter(baseID), RawParameter(stick), RawParameter(silent)}, key);
 
 	Interface::EndDynamic();
+
+	// Add: adjust condition
 }
 
 void Game::UnequipItem(const FactoryActor& reference, const FactoryItem& item, unsigned int key)
@@ -1807,60 +1746,6 @@ void Game::SetWindowMode()
 	Interface::ExecuteCommand(Func::GUIMode, {RawParameter(GUIMode)});
 
 	Interface::EndDynamic();
-}
-
-Game::CellDiff Game::ScanCell(unsigned int type)
-{
-	auto store = make_shared<Shared<CellDiff>>();
-	unsigned int key = Lockable::Share(store);
-
-	Interface::StartDynamic();
-
-	Interface::ExecuteCommand(Func::GetFirstRef, {RawParameter(type)}, key);
-
-	Interface::EndDynamic();
-
-	CellDiff diff;
-
-	try
-	{
-		diff = store->get_future(chrono::seconds(5));
-	}
-	catch (exception& e)
-	{
-		throw VaultException("Scan of player cell with type %d failed (%s)", type, e.what()).stacktrace();
-	}
-
-	return diff;
-}
-
-pair<ItemList::NetDiff, ItemList::GameDiff> Game::ScanContainer(FactoryContainer& reference)
-{
-	auto store = make_shared<Shared<pair<ItemList::NetDiff, ItemList::GameDiff>>>();
-	unsigned int key = Lockable::Share(store);
-
-	Interface::StartDynamic();
-
-	Interface::ExecuteCommand(Func::ScanContainer, {reference->GetReferenceParam()}, key);
-
-	Interface::EndDynamic();
-
-	NetworkID id = reference->GetNetworkID();
-	GameFactory::LeaveReference(reference);
-
-	pair<ItemList::NetDiff, ItemList::GameDiff> diff;
-
-	try
-	{
-		diff = store->get_future(chrono::seconds(5));
-	}
-	catch (exception& e)
-	{
-		// for resolving a weird bug with promise already satisfied, investigate
-		VaultException("Scan of container inventory %llu failed (%s)", id, e.what()).stacktrace();
-	}
-
-	return diff;
 }
 
 void Game::EnablePlayerControls(bool movement, bool pipboy, bool fighting, bool pov, bool looking, bool rollover, bool sneaking)
@@ -2092,86 +1977,87 @@ void Game::net_SetOwner(const FactoryObject& reference, unsigned int owner)
 		SetOwner(reference);
 }
 
-void Game::net_SetItemCount(const FactoryItem& reference, unsigned int count)
+void Game::net_SetItemCount(FactoryItem& reference, unsigned int count, bool silent)
 {
-	if (reference->GetItemContainer())
-		return;
+	unsigned int old_count = reference->GetItemCount();
 
 	if (reference->SetItemCount(count))
-		SetRefCount(reference);
+	{
+		NetworkID container = reference->GetItemContainer();
+
+		if (!container)
+			SetRefCount(reference);
+		else
+		{
+			reference->SetItemSilent(silent);
+
+			unsigned int baseID = reference->GetBase();
+			double condition = reference->GetItemCondition();
+
+			GameFactory::LeaveReference(reference);
+
+			GameFactory::Operate<Container>(container, [count, old_count, baseID, condition, silent](FactoryContainer& container) {
+				signed int diff = count - old_count;
+
+				if (diff > 0)
+					AddItem(container, baseID, diff, condition, silent);
+				else
+				{
+					RemoveItem(container, baseID, abs(diff), silent);
+
+					// Game always removes equipped item first - workaround (is this really always the case?)
+					NetworkID equipped = container->IL.IsEquipped(baseID);
+
+					if (equipped)
+						GameFactory::Operate<Actor>(container->GetNetworkID(), [equipped](FactoryActor& actor) {
+							GameFactory::Operate<Item>(equipped, [&actor](FactoryItem& item) {
+								EquipItem(actor, item->GetBase(), item->GetItemCondition(), false, item->GetItemStick());
+							});
+						});
+				}
+			});
+		}
+	}
 }
 
-void Game::net_SetItemCondition(const FactoryItem& reference, double condition, unsigned int health)
+void Game::net_SetItemCondition(FactoryItem& reference, double condition, unsigned int health)
 {
-	if (reference->GetItemContainer())
-		return;
-
 	if (reference->SetItemCondition(condition))
-		SetCurrentHealth(reference, health);
+	{
+		NetworkID container = reference->GetItemContainer();
+
+		if (!container)
+			SetCurrentHealth(reference, health);
+		else if (reference->GetItemEquipped())
+		{
+			GameFactory::LeaveReference(reference);
+
+			// SetEquippedCurrentHealth
+		}
+	}
+
 }
 
-void Game::net_UpdateContainer(FactoryContainer& reference, const ItemList::NetDiff& ndiff, const ItemList::NetDiff& gdiff)
+void Game::net_SetItemEquipped(FactoryItem& reference, bool equipped, bool silent, bool stick)
 {
-	Lockable* result;
-
-	// cleaner solution here
-
-	ItemList::ContainerDiff diff = ItemList::ToContainerDiff(ndiff);
-	NetworkID id = reference->GetNetworkID();
-	auto container = reference.operator ->();
-	GameFactory::LeaveReference(reference);
-
-	while (!(result = container->getLock()));
-
-	reference = GameFactory::GetObject<Container>(id).get();
-
-	unsigned int key = result->Lock();
-
-	ItemList::GameDiff _gdiff = reference->IL.ApplyDiff(diff);
-
-	for (const auto& diff : _gdiff)
+	if (reference->SetItemEquipped(equipped))
 	{
-		if (diff.second.equipped)
-		{
-			if (diff.second.equipped > 0)
-				EquipItem(vaultcast<Actor>(reference).get(), diff.first, diff.second.silent, diff.second.stick, result->Lock());
-			else if (diff.second.equipped < 0)
-				UnequipItem(vaultcast<Actor>(reference).get(), diff.first, diff.second.silent, diff.second.stick, result->Lock());
-		}
-		else if (diff.second.count > 0)
-			AddItem(reference, diff.first, diff.second.count, diff.second.condition, diff.second.silent, result->Lock());
-		else if (diff.second.count < 0)
-			RemoveItem(reference, diff.first, abs(diff.second.count), diff.second.silent, result->Lock());
+		reference->SetItemSilent(silent);
+		reference->SetItemStick(stick);
 
-		//else
-		// new condition, can't handle yet
-	}
+		NetworkID item = reference->GetNetworkID();
+		NetworkID container = reference->GetItemContainer();
 
-	result->Unlock(key);
+		GameFactory::LeaveReference(reference);
 
-	GameFactory::LeaveReference(reference);
-
-	for (const auto& id : gdiff.first)
-	{
-		auto reference = GameFactory::GetObject<Item>(id);
-
-		if (!reference)
-		{
-#ifdef VAULTMP_DEBUG
-			debug.print("WARNING (net_ContainerUpdate): item ", dec, id, " not found. Has it already been deleted? ", GameFactory::IsDeleted(id) ? "YES" : "NO");
-#endif
-			continue;
-		}
-
-		DeleteObject(reference.get());
-	}
-
-	for (const auto& packet : gdiff.second)
-	{
-		NetworkID id = GameFactory::CreateKnownInstance(ID_ITEM, packet.get());
-		auto reference = GameFactory::GetObject<Item>(id);
-		reference->SetReference(0x00000000);
-		NewItem(reference.get());
+		GameFactory::Operate<Actor>(container, [equipped, item](FactoryActor& actor) {
+			GameFactory::Operate<Item>(item, [&actor, equipped](FactoryItem& item) {
+				if (equipped)
+					EquipItem(actor, item);
+				else
+					UnequipItem(actor, item);
+			});
+		});
 	}
 }
 
@@ -2630,126 +2516,6 @@ void Game::GetParentCell(const FactoryPlayer& player, unsigned int cell)
 		});
 }
 
-void Game::GetDead(const FactoryActor& reference, const FactoryPlayer&, bool dead)
-{
-	/*if (actor != self && !self->GetActorAlerted())
-	{
-	    // "bug death"
-
-	    return;
-	}*/
-
-	bool result = static_cast<bool>(reference->SetActorDead(dead));
-
-	if (result)
-	{
-		if (dead)
-		{
-			NetworkID id = reference->GetNetworkID();
-
-			AsyncDispatch([id]
-			{
-				try
-				{
-					unsigned int refID = GameFactory::GetObject<Actor>(id)->GetReference();
-					unsigned int key;
-					unsigned short limbs;
-					signed char cause;
-
-					{
-						auto store = make_shared<Shared<unsigned short>>();
-						key = Lockable::Share(store);
-
-						Interface::StartDynamic();
-
-						Interface::ExecuteCommand(Func::IsLimbGone, {RawParameter(refID), RawParameter(vector<unsigned char>{
-							Limb_Torso,
-							Limb_Head1,
-							Limb_Head2,
-							Limb_LeftArm1,
-							Limb_LeftArm2,
-							Limb_RightArm1,
-							Limb_RightArm2,
-							Limb_LeftLeg1,
-							Limb_LeftLeg2,
-							Limb_LeftLeg3,
-							Limb_RightLeg1,
-							Limb_RightLeg2,
-							Limb_RightLeg3,
-							Limb_Brain,
-							Limb_Weapon})}, key);
-
-						Interface::EndDynamic();
-
-						try
-						{
-							limbs = store->get_future(chrono::seconds(5));
-						}
-						catch (exception& e)
-						{
-							throw VaultException("Obtaining of limb data of %08X failed (%s)", refID, e.what()).stacktrace();
-						}
-					}
-
-					{
-						auto store = make_shared<Shared<signed char>>();
-						key = Lockable::Share(store);
-
-						Interface::StartDynamic();
-
-						Interface::ExecuteCommand(Func::GetCauseofDeath, {RawParameter(refID)}, key);
-
-						Interface::EndDynamic();
-
-						try
-						{
-							cause = store->get_future(chrono::seconds(5));
-						}
-						catch (exception& e)
-						{
-							throw VaultException("Obtaining of cause of death of %08X failed (%s)", refID, e.what()).stacktrace();
-						}
-					}
-
-					Network::Queue({Network::CreateResponse(
-						PacketFactory::Create<pTypes::ID_UPDATE_DEAD>(id, true, limbs, cause),
-						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
-					});
-				}
-				catch (...) {}
-			});
-		}
-		else
-		{
-			Network::Queue({Network::CreateResponse(
-				PacketFactory::Create<pTypes::ID_UPDATE_DEAD>(reference->GetNetworkID(), false, 0, 0),
-				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
-			});
-		}
-	}
-}
-
-void Game::IsLimbGone(unsigned int key, unsigned char limb, bool gone)
-{
-	bool last_limb = limb == Limb_Weapon;
-
-	shared_ptr<Lockable> shared = Lockable::Poll(key, last_limb).lock();
-	Lockable* locked = shared.get();
-
-	if (locked == nullptr)
-		throw VaultException("Storage has expired").stacktrace();
-
-	Shared<unsigned short>* store = dynamic_cast<Shared<unsigned short>*>(locked);
-
-	if (store == nullptr)
-		throw VaultException("Storage is corrupted").stacktrace();
-
-	(**store) |= (static_cast<unsigned short>(gone) << limb);
-
-	if (last_limb)
-		store->set_promise();
-}
-
 void Game::GetActorValue(const FactoryActor& reference, bool base, unsigned char index, double value)
 {
 	bool result;
@@ -2802,389 +2568,6 @@ void Game::GetActorState(const FactoryActor& reference, unsigned int idle, unsig
 		});
 }
 
-void Game::ScanContainer(const FactoryContainer& reference, const vector<unsigned char>& data)
-{
-	Lockable* result;
-
-	if ((result = reference->getLock()))
-	{
-		unsigned int key = result->Lock();
-
-		auto _result = GetScanContainer(reference, data);
-
-		if (!_result.first.first.empty() || !_result.first.second.empty())
-		{
-			auto& ndiff = _result.first;
-			auto& gdiff = _result.second;
-
-			gdiff.remove_if([](const pair<unsigned int, ItemList::Diff>& diff) { return !diff.second.count; });
-
-			if (!gdiff.empty())
-			{
-				// lambda can't capture by move :(
-
-				auto _ndiff = make_shared<ItemList::NetDiff>(move(ndiff));
-				NetworkID id = reference->GetNetworkID();
-
-				JobDispatch(chrono::milliseconds(0), [_ndiff, gdiff, key, result, id]() mutable
-				{
-					try
-					{
-						{
-							// ALL_CONTAINERS: removed due to weird behaviour. fix
-							auto reference = GetContext(ID_CONTAINER);
-							auto player = GameFactory::GetObject<Player>(id).get();
-
-							double X = player->GetGamePos(Axis_X);
-							double Y = player->GetGamePos(Axis_Y);
-							double Z = player->GetGamePos(Axis_Z);
-
-							GameFactory::LeaveReference(player);
-
-							for (unsigned int ref : reference)
-							{
-								auto container = GameFactory::GetObject<Container>(ref).get();
-								NetworkID id_ = container->GetNetworkID();
-
-								if (!container->IsNearPoint(X, Y, Z, 500.0))
-									continue;
-
-								auto result = Game::ScanContainer(container);
-
-								if (!result.first.first.empty() || !result.first.second.empty())
-								{
-									Network::Queue({Network::CreateResponse(
-										PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id_, result.first, ItemList::NetDiff()),
-										HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
-									});
-
-									for (const auto& _diff : result.second)
-										for (auto& diff : gdiff)
-											if (_diff.first == diff.first && _diff.second.count)
-												if ((_diff.second.count > 0 && diff.second.count < 0 && (_diff.second.count + diff.second.count) >= 0) ||
-													(_diff.second.count < 0 && diff.second.count > 0 && (_diff.second.count + diff.second.count) <= 0))
-													diff.second.count += _diff.second.count;
-								}
-							}
-
-							gdiff.remove_if([](const pair<unsigned int, ItemList::Diff>& diff) { return !diff.second.count; });
-						}
-
-						ItemList::NetDiff ndiff;
-
-						if (!gdiff.empty())
-						{
-							CellDiff cdiff = ScanCell(FormType_Inventory);
-							map<unsigned int, pair<ItemList::GameDiff::iterator, list<pair<unsigned int, unsigned int>>>> found;
-
-							const auto best_match = [](decltype(found)::value_type& found)
-							{
-								auto& data = found.second.second;
-								data.sort();
-
-								unsigned int count = abs(found.second.first->second.count);
-								pair<unsigned int, vector<pair<unsigned int, unsigned int>>> result;
-								result.first = UINT_MAX;
-
-								do
-								{
-									unsigned int num = 0;
-									signed int i = count;
-
-									for (const auto& ref : data)
-									{
-										i -= ref.second;
-										++num;
-
-										if (i < 0)
-											num = 0;
-
-										if (i <= 0)
-											break;
-									}
-
-									if (!i && result.first > num)
-									{
-										auto it = data.begin(); advance(it, num);
-										result.second.assign(data.begin(), it);
-										result.first = num;
-									}
-								} while (next_permutation(data.begin(), data.end()));
-
-								return result;
-							};
-
-							for (unsigned int refID : cdiff.first)
-							{
-								unsigned int baseID = Game::GetBase(refID);
-
-								auto it = find_if(gdiff.begin(), gdiff.end(), [baseID](const pair<unsigned int, ItemList::Diff>& diff) { return diff.first == baseID; });
-
-								if (it != gdiff.end())
-								{
-									if (it->second.count < 0)
-									{
-										unsigned int count = Game::GetRefCount(refID);
-
-										if (static_cast<signed int>(count) + it->second.count <= 0)
-										{
-											auto& data = found[baseID];
-											data.first = it;
-											data.second.emplace_back(refID, count);
-										}
-#ifdef VAULTMP_DEBUG
-										else
-											debug.print("Item match (drop): could not match ", hex, refID, " (baseID: ", baseID, "), count ", dec, count);
-#endif
-									}
-								}
-#ifdef VAULTMP_DEBUG
-								else
-									debug.print("Item match (drop): could not match ", hex, refID, " (baseID: ", baseID, ") at all");
-#endif
-							}
-
-							if (!found.empty())
-							{
-								double X, Y, Z;
-								unsigned int cell;
-
-								{
-									FactoryContainer reference = GameFactory::GetObject<Container>(id).get();
-
-									static const double spawn_offset = 100.0;
-
-									// maybe better synchronically obtain XYZ for correctness
-									auto offset = reference->GetOffset(spawn_offset);
-
-									X = offset.first;
-									Y = offset.second;
-									Z = reference->GetGamePos(Axis_Z) + 70.0;
-
-									cell = reference->GetGameCell();
-								}
-
-								for (auto& _found : found)
-								{
-									auto result = best_match(_found);
-
-#ifdef VAULTMP_DEBUG
-									unsigned int count = abs(_found.second.first->second.count);
-
-									if (!result.second.empty())
-										debug.print("Player dropped ", hex, _found.first, " (count ", dec, count, ", stacks ", result.second.size(), ")");
-									else
-										debug.print("Could not find a matching set for item drop ", hex, _found.first, " (count ", dec, ")");
-#endif
-
-									for (const auto& _result : result.second)
-									{
-										NetworkID id = GameFactory::CreateInstance(ID_ITEM, _result.first, _found.first);
-										FactoryItem reference = GameFactory::GetObject<Item>(id).get();
-
-										reference->SetEnabled(true);
-										reference->SetGamePos(Axis_X, X);
-										reference->SetGamePos(Axis_Y, Y);
-										reference->SetGamePos(Axis_Z, Z);
-										reference->SetNetworkPos(Axis_X, X);
-										reference->SetNetworkPos(Axis_Y, Y);
-										reference->SetNetworkPos(Axis_Z, Z);
-										reference->SetNetworkCell(cell);
-										reference->SetGameCell(cell);
-
-										reference->SetItemCount(_result.second);
-										reference->SetItemCondition(_found.second.first->second.condition);
-
-										ndiff.second.emplace_back(reference->toPacket());
-									}
-
-									gdiff.erase(_found.second.first);
-								}
-							}
-
-							found.clear();
-
-							for (unsigned int refID : cdiff.second)
-							{
-								auto _reference = GameFactory::GetObject<Item>(refID);
-
-								if (!_reference)
-								{
-#ifdef VAULTMP_DEBUG
-									debug.print("Item match (pickup): could not find ", hex, refID);
-#endif
-									continue;
-								}
-
-								auto& reference = _reference.get();
-
-								unsigned int baseID = reference->GetBase();
-
-								auto it = find_if(gdiff.begin(), gdiff.end(), [baseID](const pair<unsigned int, ItemList::Diff>& diff) { return diff.first == baseID; });
-
-								if (it != gdiff.end())
-								{
-									if (it->second.count > 0)
-									{
-										unsigned int count = reference->GetItemCount();
-
-										if (it->second.count - static_cast<signed int>(count) >= 0)
-										{
-											auto& data = found[baseID];
-											data.first = it;
-											data.second.emplace_back(refID, count);
-										}
-#ifdef VAULTMP_DEBUG
-										else
-											debug.print("Item match (pickup): could not match ", hex, refID, " (baseID: ", baseID, "), count ", dec, count);
-#endif
-									}
-								}
-#ifdef VAULTMP_DEBUG
-								else
-									debug.print("Item match (pickup): could not match ", hex, refID, " (baseID: ", baseID, ") at all");
-#endif
-							}
-
-							if (!found.empty())
-							{
-								for (auto& _found : found)
-								{
-									auto result = best_match(_found);
-
-#ifdef VAULTMP_DEBUG
-									unsigned int count = abs(_found.second.first->second.count);
-
-									if (!result.second.empty())
-										debug.print("Player picked up ", hex, _found.first, " (count ", dec, count, ", stacks ", result.second.size(), ")");
-									else
-										debug.print("Could not find a matching set for item pickup ", hex, _found.first, " (count ", dec, count, ")");
-#endif
-
-									for (const auto& _result : result.second)
-									{
-										NetworkID id = GameFactory::LookupNetworkID(_result.first);
-										ndiff.first.emplace_back(id);
-										GameFactory::DestroyInstance(id);
-									}
-
-									gdiff.erase(_found.second.first);
-								}
-							}
-
-#ifdef VAULTMP_DEBUG
-							for (const auto& _gdiff : gdiff)
-								debug.print("Could not match drop / pickup ", hex, _gdiff.first, " (count ", dec, _gdiff.second.count, ")");
-#endif
-						}
-
-						Network::Queue({Network::CreateResponse(
-							PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(id, *_ndiff, ndiff),
-							HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
-						});
-					}
-					catch (...) {}
-
-					result->Unlock(key);
-				});
-
-				key = 0x00000000;
-			}
-			else
-				Network::Queue({Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(reference->GetNetworkID(), ndiff, ItemList::NetDiff()),
-					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
-				});
-		}
-
-		if (key)
-			result->Unlock(key);
-	}
-}
-
-pair<ItemList::NetDiff, ItemList::GameDiff> Game::GetScanContainer(const FactoryContainer& reference, const vector<unsigned char>& data)
-{
-	pair<ItemList::NetDiff, ItemList::GameDiff> result;
-
-#pragma pack(push, 1)
-	struct ItemInfo
-	{
-		unsigned int baseID;
-		unsigned int count;
-		unsigned int equipped;
-		double condition;
-	};
-#pragma pack(pop)
-
-	const ItemInfo* items = reinterpret_cast<const ItemInfo*>(&data[0]);
-	unsigned int count = data.size() / sizeof(ItemInfo);
-
-	FactoryContainer temp = GameFactory::GetObject<Container>(GameFactory::CreateInstance(ID_CONTAINER, 0x00000000)).get();
-
-	for (unsigned int i = 0; i < count; ++i)
-	{
-		FactoryItem item = GameFactory::GetObject<Item>(GameFactory::CreateInstance(ID_ITEM, items[i].baseID)).get();
-		item->SetItemCount(items[i].count);
-		item->SetItemEquipped(static_cast<bool>(items[i].equipped));
-		item->SetItemCondition(items[i].condition);
-		temp->IL.AddItem(item->GetNetworkID());
-	}
-
-	auto diff = reference->IL.Compare(temp->GetNetworkID());
-
-	if (!diff.first.empty() || !diff.second.empty())
-	{
-		result.first = ItemList::ToNetDiff(diff);
-		result.second = reference->IL.ApplyDiff(diff);
-	}
-
-	GameFactory::DestroyInstance(temp);
-
-	return result;
-}
-
-void Game::GetRemoveAllItemsEx(const FactoryContainer& reference, const vector<unsigned char>& data)
-{
-#pragma pack(push, 1)
-	struct ItemInfo
-	{
-		unsigned int baseID;
-		unsigned int count;
-		unsigned int equipped;
-		double condition;
-	};
-#pragma pack(pop)
-
-	const ItemInfo* items = reinterpret_cast<const ItemInfo*>(&data[0]);
-	unsigned int count = data.size() / sizeof(ItemInfo);
-
-	for (unsigned int i = 0; i < count; ++i)
-		RemoveItem(reference, items[i].baseID, items[i].count, true);
-}
-
-void Game::GetLocked(const FactoryContainer& reference, unsigned int lock)
-{
-	switch (lock)
-	{
-		case 0:
-			if (reference->SetLockLevel(Lock_Unlocked))
-				Network::Queue({Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_UPDATE_LOCK>(reference->GetNetworkID(), Lock_Unlocked),
-					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
-				});
-			break;
-		case 1:
-			break;
-		case 2:
-			if (reference->SetLockLevel(Lock_Broken))
-				Network::Queue({Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_UPDATE_LOCK>(reference->GetNetworkID(), Lock_Broken),
-					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
-				});
-			break;
-	}
-}
-
 void Game::GetControl(const FactoryPlayer& reference, unsigned char control, unsigned char key)
 {
 	bool result = static_cast<bool>(reference->SetPlayerControl(control, key));
@@ -3194,71 +2577,6 @@ void Game::GetControl(const FactoryPlayer& reference, unsigned char control, uns
 			PacketFactory::Create<pTypes::ID_UPDATE_CONTROL>(reference->GetNetworkID(), control, key),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 		});
-}
-
-void Game::GetNextRef(unsigned int key, unsigned int refID, unsigned int type)
-{
-	static bool first = true;
-	static unsigned int cell;
-	static unsigned int _type;
-	static set<unsigned int> data;
-
-	static unordered_map<unsigned int, unsigned int> typemap {
-		{FormType_Inventory, ID_ITEM},
-		{FormType_Actor, ID_ACTOR},
-	};
-
-	if (first)
-	{
-		FactoryPlayer reference = GameFactory::GetObject<Player>(PLAYER_REFERENCE).get();
-		cell = reference->GetGameCell();
-		_type = typemap[type];
-		first = false;
-	}
-
-	if (refID)
-	{
-		data.insert(refID);
-
-		Interface::StartDynamic();
-
-		Interface::ExecuteCommand(Func::GetNextRef, {}, key);
-
-		Interface::EndDynamic();
-	}
-	else
-	{
-		shared_ptr<Lockable> shared = Lockable::Poll(key).lock();
-		Lockable* locked = shared.get();
-
-		if (locked == nullptr)
-			throw VaultException("Storage has expired").stacktrace();
-
-		Shared<CellDiff>* store = dynamic_cast<Shared<CellDiff>*>(locked);
-
-		if (store == nullptr)
-			throw VaultException("Storage is corrupted").stacktrace();
-
-		CellDiff diff;
-
-		cellRefs.StartSession();
-
-		auto& refs = (*cellRefs)[cell][_type];
-
-		set_difference(data.begin(), data.end(), refs.begin(), refs.end(), inserter(diff.first, diff.first.begin()));
-		set_difference(refs.begin(), refs.end(), data.begin(), data.end(), inserter(diff.second, diff.second.begin()));
-
-		refs.swap(data);
-
-		cellRefs.EndSession();
-
-		data.clear();
-
-		store->set(diff);
-		store->set_promise();
-
-		first = true;
-	}
 }
 
 void Game::GetMessage(string message)
