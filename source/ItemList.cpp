@@ -43,12 +43,26 @@ NetworkID ItemList::FindStackableItem(unsigned int baseID, double condition) con
 
 NetworkID ItemList::AddItem(NetworkID id)
 {
-	auto data = GameFactory::Operate<Item>(id, [](FactoryItem& item) {
-		if (item->GetItemContainer())
+	auto data = GameFactory::Operate<Item>(id, [this, id](FactoryItem& item) {
+		NetworkID container = item->GetItemContainer();
+
+		if (container)
+		{
+			// Alternative code path if the item has been received over network
+			if (container == this->source && find(this->container.begin(), this->container.end(), id) == this->container.end())
+			{
+				this->container.emplace_back(id);
+				return make_pair(0u, 0.0);
+			}
+
 			throw VaultException("Item is already owned by container %llu", item->GetItemContainer()).stacktrace();
+		}
 
 		return make_pair(item->GetBase(), item->GetItemCondition());
 	});
+
+	if (!data.first)
+		return id;
 
 	NetworkID stackable = FindStackableItem(data.first, data.second);
 
@@ -133,6 +147,7 @@ void ItemList::RemoveItem(NetworkID id)
 ItemList::RemoveOp ItemList::RemoveItem(unsigned int baseID, unsigned int count, bool silent)
 {
 	RemoveOp result;
+	unsigned int count_ = count;
 
 	for (const NetworkID& id : container)
 	{
@@ -164,7 +179,7 @@ ItemList::RemoveOp ItemList::RemoveItem(unsigned int baseID, unsigned int count,
 	if (!deleted.empty())
 		remove_if(container.begin(), container.end(), [&deleted](const NetworkID& item) { return find(deleted.begin(), deleted.end(), item) != deleted.end(); });
 
-	get<0>(result) = count;
+	get<0>(result) = count_ - count;
 
 	return result;
 }

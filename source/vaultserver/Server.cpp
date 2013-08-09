@@ -213,7 +213,7 @@ NetworkResponse Server::Disconnect(RakNetGUID guid, Reason reason)
 		GameFactory::DestroyInstance(id);
 
 		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_OBJECT_REMOVE>(id),
+			PacketFactory::Create<pTypes::ID_OBJECT_REMOVE>(id, true),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr)));
 
 		Dedicated::self->SetServerPlayers(make_pair(Client::GetClientCount(), Dedicated::connections));
@@ -318,125 +318,6 @@ NetworkResponse Server::GetCell(RakNetGUID guid, FactoryObject& reference, unsig
 	return response;
 }
 
-NetworkResponse Server::GetLock(RakNetGUID guid, FactoryObject& reference, FactoryPlayer& player, unsigned int lock)
-{
-	NetworkResponse response;
-	bool result = static_cast<bool>(reference->SetLockLevel(lock));
-
-	if (result)
-	{
-		NetworkID id = reference->GetNetworkID();
-		NetworkID player_id = player->GetNetworkID();
-
-		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_LOCK>(id, lock),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
-
-		GameFactory::LeaveReference(reference);
-		GameFactory::LeaveReference(player);
-		Script::OnLockChange(id, player_id, lock);
-	}
-
-	return response;
-}
-
-NetworkResponse Server::GetContainerUpdate(RakNetGUID guid, FactoryContainer& reference, const ItemList::NetDiff& ndiff, const ItemList::NetDiff& gdiff)
-{
-	NetworkID reference_id = reference->GetNetworkID();
-
-	SingleResponse response[] = {Network::CreateResponse(
-		PacketFactory::Create<pTypes::ID_UPDATE_CONTAINER>(reference_id, ndiff, gdiff),
-		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid))
-	};
-
-	auto diff = ItemList::ToContainerDiff(ndiff);
-	auto _gdiff = reference->IL.ApplyDiff(diff);
-
-	GameFactory::LeaveReference(reference);
-
-	for (const auto& packet : gdiff.second)
-	{
-		NetworkID id = GameFactory::CreateKnownInstance(ID_ITEM, packet.get());
-		FactoryItem item = GameFactory::GetObject<Item>(id).get();
-
-		item->SetReference(0x00000000);
-
-		unsigned int baseID = item->GetBase();
-		unsigned int count = item->GetItemCount();
-		double condition = item->GetItemCondition();
-		_gdiff.remove_if([baseID](const pair<unsigned int, ItemList::Diff>& diff) { return diff.first == baseID; });
-
-		GameFactory::LeaveReference(item);
-		Script::OnActorDropItem(reference_id, baseID, count, condition);
-	}
-
-	for (const auto& id : gdiff.first)
-	{
-		auto _item = GameFactory::GetObject<Item>(id);
-
-		if (!_item)
-		{
-#ifdef VAULTMP_DEBUG
-			debug.print("WARNING (GetContainerUpdate): item ", dec, id, " not found. Has it already been deleted? ", GameFactory::IsDeleted(id) ? "YES" : "NO");
-#endif
-			continue;
-		}
-
-		auto& item = _item.get();
-
-		unsigned int baseID = item->GetBase();
-		_gdiff.remove_if([baseID](const pair<unsigned int, ItemList::Diff>& diff) { return diff.first == baseID; });
-
-		unsigned int count = item->GetItemCount();
-		double condition = item->GetItemCondition();
-		unsigned int owner = item->GetOwner();
-
-		GameFactory::DestroyInstance(item);
-
-		Script::OnActorPickupItem(reference_id, baseID, count, condition, owner);
-	}
-
-	for (const auto& _diff : _gdiff)
-	{
-		if (_diff.second.equipped)
-		{
-			if (_diff.second.equipped > 0)
-				Script::OnActorEquipItem(reference_id, _diff.first, _diff.second.condition);
-			else if (_diff.second.equipped < 0)
-				Script::OnActorUnequipItem(reference_id, _diff.first, _diff.second.condition);
-		}
-		else
-			Script::OnContainerItemChange(reference_id, _diff.first, _diff.second.count, _diff.second.condition);
-	}
-
-	return NetworkResponse(make_move_iterator(begin(response)), make_move_iterator(end(response)));
-}
-
-NetworkResponse Server::GetActorValue(RakNetGUID guid, FactoryActor& reference, bool base, unsigned char index, double value)
-{
-	NetworkResponse response;
-	bool result;
-
-	if (base)
-		result = static_cast<bool>(reference->SetActorBaseValue(index, value));
-	else
-		result = static_cast<bool>(reference->SetActorValue(index, value));
-
-	if (result)
-	{
-		NetworkID id = reference->GetNetworkID();
-
-		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_VALUE>(id, base, index, value),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
-
-		GameFactory::LeaveReference(reference);
-		Script::OnActorValueChange(id, index, base, value);
-	}
-
-	return response;
-}
-
 NetworkResponse Server::GetActorState(RakNetGUID guid, FactoryActor& reference, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking)
 {
 	NetworkResponse response;
@@ -507,41 +388,6 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, FactoryActor& reference, 
 
 		if (_sneaking)
 			Script::OnActorSneak(id, sneaking);
-	}
-
-	return response;
-}
-
-NetworkResponse Server::GetActorDead(RakNetGUID guid, FactoryActor& reference, FactoryPlayer& killer, bool dead, unsigned short limbs, signed char cause)
-{
-	NetworkResponse response;
-	bool result;
-
-	result = static_cast<bool>(reference->SetActorDead(dead));
-
-	if (result)
-	{
-		NetworkID id = reference->GetNetworkID();
-		NetworkID killer_id = killer->GetNetworkID();
-
-		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_DEAD>(id, dead, limbs, cause),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
-
-		GameFactory::LeaveReference(reference);
-		GameFactory::LeaveReference(killer);
-
-		if (dead)
-		{
-			Script::OnActorDeath(id, killer_id, limbs, cause);
-
-			auto player = GameFactory::GetObject<Player>(id);
-
-			if (player)
-				Script::CreateTimerEx(reinterpret_cast<ScriptFunc>(&Script::Timer_Respawn), player->GetPlayerRespawnTime(), "l", player->GetNetworkID());
-		}
-		else
-			Script::OnSpawn(id);
 	}
 
 	return response;

@@ -172,40 +172,6 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					break;
 				}
 
-				case pTypes::ID_UPDATE_LOCK:
-				{
-					NetworkID id;
-					unsigned int lock;
-					PacketFactory::Access<pTypes::ID_UPDATE_LOCK>(packet, id, lock);
-					auto reference = GameFactory::GetMultiple(vector<NetworkID>{id, Client::GetClientFromGUID(data->guid)->GetPlayer()});
-					auto player = vaultcast<Player>(reference[1]);
-					GameFactory::LeaveReference(reference[1].get());
-					response = Server::GetLock(data->guid, reference[0].get(), player.get(), lock);
-					break;
-				}
-
-				case pTypes::ID_UPDATE_CONTAINER:
-				{
-					NetworkID id;
-					pair<list<NetworkID>, vector<pPacket>> ndiff, gdiff;
-					PacketFactory::Access<pTypes::ID_UPDATE_CONTAINER>(packet, id, ndiff, gdiff);
-					auto reference = GameFactory::GetObject<Container>(id);
-					response = Server::GetContainerUpdate(data->guid, reference.get(), ndiff, gdiff);
-					break;
-				}
-
-				case pTypes::ID_UPDATE_VALUE:
-				{
-					NetworkID id;
-					bool base;
-					unsigned char index;
-					double value;
-					PacketFactory::Access<pTypes::ID_UPDATE_VALUE>(packet, id, base, index, value);
-					auto reference = GameFactory::GetObject<Actor>(id);
-					response = Server::GetActorValue(data->guid, reference.get(), base, index, value);
-					break;
-				}
-
 				case pTypes::ID_UPDATE_STATE:
 				{
 					NetworkID id;
@@ -215,20 +181,6 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					PacketFactory::Access<pTypes::ID_UPDATE_STATE>(packet, id, idle, moving, movingxy, weapon, alerted, sneaking, firing);
 					auto reference = GameFactory::GetObject<Actor>(id);
 					response = Server::GetActorState(data->guid, reference.get(), idle, moving, movingxy, weapon, alerted, sneaking);
-					break;
-				}
-
-				case pTypes::ID_UPDATE_DEAD:
-				{
-					NetworkID id;
-					bool dead;
-					unsigned short limbs;
-					signed char cause;
-					PacketFactory::Access<pTypes::ID_UPDATE_DEAD>(packet, id, dead, limbs, cause);
-					auto reference = GameFactory::GetMultiple<Actor>(vector<NetworkID>{id, Client::GetClientFromGUID(data->guid)->GetPlayer()});
-					auto player = vaultcast<Player>(reference[1]);
-					GameFactory::LeaveReference(reference[1].get());
-					response = Server::GetActorDead(data->guid, reference[0].get(), player.get(), dead, limbs, cause);
 					break;
 				}
 

@@ -865,6 +865,8 @@ void Game::NewItem(FactoryItem& reference)
 		GameFactory::LeaveReference(reference);
 
 		GameFactory::Operate<Container>(container, [item](FactoryContainer& container) {
+			container->IL.AddItem(item);
+
 			GameFactory::Operate<Item>(item, [&container](FactoryItem& item) {
 				AddItem(container, item);
 

@@ -54,25 +54,9 @@ class Server
 		 */
 		static NetworkResponse GetCell(RakNet::RakNetGUID guid, FactoryObject& reference, unsigned int cell);
 		/**
-		 * \brief Handles lock update packet
-		 */
-		static NetworkResponse GetLock(RakNet::RakNetGUID guid, FactoryObject& reference, FactoryPlayer& player, unsigned int lock);
-		/**
-		 * \brief Handles container update network packet
-		 */
-		static NetworkResponse GetContainerUpdate(RakNet::RakNetGUID guid, FactoryContainer& reference, const ItemList::NetDiff& ndiff, const ItemList::NetDiff& gdiff);
-		/**
-		 * \brief Handles actor value network packet
-		 */
-		static NetworkResponse GetActorValue(RakNet::RakNetGUID guid, FactoryActor& reference, bool base, unsigned char index, double value);
-		/**
 		 * \brief Handles actor state network packet
 		 */
 		static NetworkResponse GetActorState(RakNet::RakNetGUID guid, FactoryActor& reference, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking);
-		/**
-		 * \brief Handles actor dead network packet
-		 */
-		static NetworkResponse GetActorDead(RakNet::RakNetGUID guid, FactoryActor& reference, FactoryPlayer& killer, bool dead, unsigned short limbs, signed char cause);
 		/**
 		 * \brief Handles player control network packet
 		 */
