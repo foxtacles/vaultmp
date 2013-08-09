@@ -1749,11 +1749,6 @@ bool Script::DestroyObject(NetworkID id)
 		else if (vaultcast<Player>(object))
 			return false;
 
-		Network::Queue({Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_OBJECT_REMOVE>(id, true),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-		});
-
 		if (object->IsPersistent())
 			deletedStatic[object->GetNetworkCell()].emplace_back(object->GetReference());
 
@@ -1761,11 +1756,17 @@ bool Script::DestroyObject(NetworkID id)
 			return item->GetItemContainer();
 		});
 
+		if (!scriptIL.count(container))
+			Network::Queue({Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_OBJECT_REMOVE>(id, true),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+			});
+
 		if (container)
 		{
 			GameFactory::LeaveReference(object.get());
 
-			GameFactory::Operate<Container, FailPolicy::Return, ObjectPolicy::Expected>(container, [id, container](ExpectedContainer& container_) {
+			GameFactory::Operate<Container, FailPolicy::Exception, ObjectPolicy::Expected>(container, [id, container](ExpectedContainer& container_) {
 				ItemList* IL = container_ ? &container_->IL : scriptIL.at(container).get();
 				IL->RemoveItem(id);
 			});
