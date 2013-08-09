@@ -305,6 +305,7 @@ native Bool:SetBaseName(ID, const name{});
 native CreateItem(item, ID, cell = 0, Float:X = 0.00, Float:Y = 0.00, Float:Z = 0.00);
 native Bool:SetItemCount(ID, count);
 native Bool:SetItemCondition(ID, Float:condition);
+native Bool:SetItemEquipped(ID, Bool:equipped, Bool:silent = Bool:true, Bool:stick = Bool:false)
 native CreateContainer(container, ID, cell = 0, Float:X = 0.00, Float:Y = 0.00, Float:Z = 0.00);
 native CreateItemList(source, base = 0);
 native Bool:AddItem(ID, item, count = 1, Float:value = 100.0, Bool:silent = Bool:true);
@@ -314,8 +315,8 @@ native RemoveAllItems(ID);
 native CreateActor(actor, ID, cell = 0, Float:X = 0.00, Float:Y = 0.00, Float:Z = 0.00);
 native SetActorValue(ID, ActorValue:index, Float:value);
 native SetActorBaseValue(ID, ActorValue:index, Float:value);
-native Bool:EquipItem(ID, item, Bool:silent = Bool:true, Bool:stick = Bool:true);
-native Bool:UnequipItem(ID, item, Bool:silent = Bool:true, Bool:stick = Bool:true);
+native Bool:EquipItem(ID, item, Bool:silent = Bool:true, Bool:stick = Bool:false);
+native Bool:UnequipItem(ID, item, Bool:silent = Bool:true, Bool:stick = Bool:false);
 native Bool:PlayIdle(ID, idle);
 native Bool:SetActorMovingAnimation(ID, anim);
 native Bool:SetActorWeaponAnimation(ID, anim);

@@ -200,7 +200,7 @@ class Game
 		/**
 		 * \brief Deletes an Object
 		 */
-		static void DeleteObject(FactoryObject& reference, bool silent);
+		static void DestroyObject(FactoryObject& reference, bool silent);
 		/**
 		 * \brief Deletes a Window
 		 */

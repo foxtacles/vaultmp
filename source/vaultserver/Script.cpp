@@ -1765,8 +1765,9 @@ bool Script::DestroyObject(NetworkID id)
 		{
 			GameFactory::LeaveReference(object.get());
 
-			GameFactory::Operate<Container>(container, [id](FactoryContainer& container) {
-				container->IL.RemoveItem(id);
+			GameFactory::Operate<Container, FailPolicy::Return, ObjectPolicy::Expected>(container, [id, container](ExpectedContainer& container_) {
+				ItemList* IL = container_ ? &container_->IL : scriptIL.at(container).get();
+				IL->RemoveItem(id);
 			});
 
 			return GameFactory::DestroyInstance(id);
@@ -2130,10 +2131,11 @@ bool Script::SetItemCount(NetworkID id, unsigned int count)
 		if (!item->SetItemCount(count))
 			return false;
 
-		Network::Queue({Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_COUNT>(id, count, false),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-		});
+		if (!scriptIL.count(item->GetItemContainer()))
+			Network::Queue({Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_COUNT>(id, count, false),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+			});
 
 		return true;
 	});
@@ -2153,12 +2155,44 @@ bool Script::SetItemCondition(NetworkID id, double condition)
 		if (!item->SetItemCondition(condition))
 			return false;
 
-		Network::Queue({Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_CONDITION>(id, condition, static_cast<unsigned int>(item_->GetHealth() * (condition / 100.0))),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-		});
+		if (!scriptIL.count(item->GetItemContainer()))
+			Network::Queue({Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_CONDITION>(id, condition, static_cast<unsigned int>(item_->GetHealth() * (condition / 100.0))),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+			});
 
 		return true;
+	});
+}
+
+bool Script::SetItemEquipped(NetworkID id, bool equipped, bool silent, bool stick)
+{
+	return GameFactory::Operate<Item, FailPolicy::Return>(id, [id, equipped, silent, stick](FactoryItem& item) {
+		NetworkID container = item->GetItemContainer();
+
+		if (!container)
+			return false;
+
+		GameFactory::LeaveReference(item);
+
+		return GameFactory::Operate<Actor, FailPolicy::Return, ObjectPolicy::Expected>(container, [id, equipped, silent, stick](ExpectedActor& actor) {
+			ItemList* IL = actor ? &actor->IL : scriptIL.at(id).get();
+
+			return GameFactory::Operate<Item>(id, [&actor, IL, id, equipped, silent, stick](FactoryItem& item) {
+				if (IL->IsEquipped(item->GetBase()) == equipped)
+					return false;
+
+				item->SetItemEquipped(equipped);
+				item->SetItemSilent(silent);
+				item->SetItemEquipped(equipped);
+
+				if (actor)
+					Network::Queue({Network::CreateResponse(
+						PacketFactory::Create<pTypes::ID_UPDATE_EQUIPPED>(id, equipped, silent, stick),
+						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+					});
+			});
+		});
 	});
 }
 

@@ -262,7 +262,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					bool silent;
 					PacketFactory::Access<pTypes::ID_OBJECT_REMOVE>(packet, id, silent);
 					auto reference = GameFactory::GetObject(id);
-					Game::DeleteObject(reference.get(), silent);
+					Game::DestroyObject(reference.get(), silent);
 					break;
 				}
 

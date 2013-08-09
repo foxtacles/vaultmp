@@ -286,6 +286,7 @@ class Script
 		static RakNet::NetworkID CreateItem(unsigned int baseID, RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z);
 		static bool SetItemCount(RakNet::NetworkID id, unsigned int count);
 		static bool SetItemCondition(RakNet::NetworkID id, double condition);
+		static bool SetItemEquipped(RakNet::NetworkID id, bool equipped, bool silent, bool stick);
 		static RakNet::NetworkID CreateContainer(unsigned int baseID, RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z);
 		static RakNet::NetworkID CreateItemList(RakNet::NetworkID source, unsigned int baseID);
 		static bool AddItem(RakNet::NetworkID id, unsigned int baseID, unsigned int count, double condition, bool silent);
@@ -449,6 +450,7 @@ class Script
 			{"CreateItem", Script::CreateItem},
 			{"SetItemCount", Script::SetItemCount},
 			{"SetItemCondition", Script::SetItemCondition},
+			{"SetItemEquipped", Script::SetItemEquipped},
 			{"CreateContainer", Script::CreateContainer},
 			{"CreateItemList", Script::CreateItemList},
 			{"AddItem", Script::AddItem},

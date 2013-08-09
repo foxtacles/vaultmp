@@ -431,6 +431,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateItem))(VAULTSPACE Base, VAULTSPACE ID, VAULTSPACE CELL, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetItemCount))(VAULTSPACE ID, VAULTSPACE UCount) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetItemCondition))(VAULTSPACE ID, VAULTSPACE Value) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetItemEquipped))(VAULTSPACE ID, VAULTSPACE State, VAULTSPACE State, VAULTSPACE State) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateContainer))(VAULTSPACE CONT, VAULTSPACE ID, VAULTSPACE CELL, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateItemList))(VAULTSPACE ID, VAULTSPACE Base) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(AddItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE UCount, VAULTSPACE Value, VAULTSPACE State) VAULTCPP(noexcept);
@@ -700,6 +701,7 @@ namespace vaultmp
 
 	VAULTFUNCTION State SetItemCount(ID id, UCount count) noexcept { return VAULTAPI(SetItemCount)(id, count); }
 	VAULTFUNCTION State SetItemCondition(ID id, Value condition) noexcept { return VAULTAPI(SetItemCondition)(id, condition); }
+	VAULTFUNCTION State SetItemEquipped(ID id, State equipped, State silent = True, State stick = False) noexcept { return VAULTAPI(SetItemEquipped)(id, equipped, silent, stick); }
 	VAULTFUNCTION ID CreateContainer(CONT container, ID id) noexcept { return VAULTAPI(CreateContainer)(container, id, static_cast<CELL>(0), 0.00, 0.00, 0.00); }
 	VAULTFUNCTION ID CreateContainer(CONT container, CELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateContainer)(container, static_cast<ID>(0), cell, X, Y, Z); }
 
@@ -712,7 +714,7 @@ namespace vaultmp
 		State stick;
 
 		#define AddItem_Initializer_ctor(type) \
-			AddItem_Initializer(type item, UCount count = 1, Value condition = 100.0, State silent = True, State equipped = False, State stick = True) : item(static_cast<Base>(item)), count(count), condition(condition), silent(silent), equipped(equipped), stick(stick) {}
+			AddItem_Initializer(type item, UCount count = 1, Value condition = 100.0, State silent = True, State equipped = False, State stick = False) : item(static_cast<Base>(item)), count(count), condition(condition), silent(silent), equipped(equipped), stick(stick) {}
 		AddItem_Initializer_ctor(Base);
 		AddItem_Initializer_ctor(ALCH);
 		AddItem_Initializer_ctor(AMMO);
@@ -822,7 +824,7 @@ namespace vaultmp
 	VAULTFUNCTION Void SetActorBaseValue(ID id, ActorValue index, Value value) noexcept { return VAULTAPI(SetActorBaseValue)(id, index, value); }
 
 	#define EquipItem_Template(type) \
-		VAULTFUNCTION State EquipItem(ID id, type item, State silent = True, State stick = True) noexcept { return VAULTAPI(EquipItem)(id, static_cast<Base>(item), silent, stick); }
+		VAULTFUNCTION State EquipItem(ID id, type item, State silent = True, State stick = False) noexcept { return VAULTAPI(EquipItem)(id, static_cast<Base>(item), silent, stick); }
 	EquipItem_Template(Base);
 	EquipItem_Template(ARMA);
 	EquipItem_Template(ARMO);
@@ -830,7 +832,7 @@ namespace vaultmp
 	#undef EquipItem_Template
 
 	#define UnequipItem_Template(type) \
-		VAULTFUNCTION State UnequipItem(ID id, type item, State silent = True, State stick = True) noexcept { return VAULTAPI(UnequipItem)(id, static_cast<Base>(item), silent, stick); }
+		VAULTFUNCTION State UnequipItem(ID id, type item, State silent = True, State stick = False) noexcept { return VAULTAPI(UnequipItem)(id, static_cast<Base>(item), silent, stick); }
 	UnequipItem_Template(Base);
 	UnequipItem_Template(ARMA);
 	UnequipItem_Template(ARMO);
@@ -965,6 +967,7 @@ namespace vaultmp
 
 			State SetItemCount(UCount count) const noexcept { return vaultmp::SetItemCount(id, count); }
 			State SetItemCondition(Value condition) const noexcept { return vaultmp::SetItemCondition(id, condition); }
+			State SetItemEquipped(State equipped, State silent, State stick) const noexcept { return vaultmp::SetItemEquipped(id, equipped, silent, stick); }
 
 			#define Create_Template(type) \
 				static ID Create(type item, ID id) noexcept { return vaultmp::CreateItem(item, id); } \
@@ -1128,7 +1131,7 @@ namespace vaultmp
 			#undef RemoveItem_Template
 
 			#define EquipItem_Template(type) \
-				State EquipItem(type item, State silent = True, State stick = True) noexcept { return vaultmp::EquipItem(id, item, silent, stick); }
+				State EquipItem(type item, State silent = True, State stick = False) noexcept { return vaultmp::EquipItem(id, item, silent, stick); }
 			EquipItem_Template(Base);
 			EquipItem_Template(ARMA);
 			EquipItem_Template(ARMO);
@@ -1136,7 +1139,7 @@ namespace vaultmp
 			#undef EquipItem_Template
 
 			#define UnequipItem_Template(type) \
-				State UnequipItem(type item, State silent = True, State stick = True) noexcept { return vaultmp::UnequipItem(id, item, silent, stick); }
+				State UnequipItem(type item, State silent = True, State stick = False) noexcept { return vaultmp::UnequipItem(id, item, silent, stick); }
 			UnequipItem_Template(Base);
 			UnequipItem_Template(ARMA);
 			UnequipItem_Template(ARMO);
@@ -1176,7 +1179,7 @@ namespace vaultmp
 			Void SetActorBaseValue(ActorValue index, Value value) noexcept { return vaultmp::SetActorBaseValue(id, index, value); }
 
 			#define EquipItem_Template(type) \
-				State EquipItem(type item, State silent = True, State stick = True) noexcept { return vaultmp::EquipItem(id, item, silent, stick); }
+				State EquipItem(type item, State silent = True, State stick = False) noexcept { return vaultmp::EquipItem(id, item, silent, stick); }
 			EquipItem_Template(Base);
 			EquipItem_Template(ARMA);
 			EquipItem_Template(ARMO);
@@ -1184,7 +1187,7 @@ namespace vaultmp
 			#undef EquipItem_Template
 
 			#define UnequipItem_Template(type) \
-				State UnequipItem(type item, State silent = True, State stick = True) noexcept { return vaultmp::UnequipItem(id, item, silent, stick); }
+				State UnequipItem(type item, State silent = True, State stick = False) noexcept { return vaultmp::UnequipItem(id, item, silent, stick); }
 			UnequipItem_Template(Base);
 			UnequipItem_Template(ARMA);
 			UnequipItem_Template(ARMO);

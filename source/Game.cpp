@@ -1155,7 +1155,7 @@ void Game::ToggleEnabled(unsigned int refID, bool enabled)
 	Interface::EndDynamic();
 }
 
-void Game::DeleteObject(FactoryObject& reference, bool silent)
+void Game::DestroyObject(FactoryObject& reference, bool silent)
 {
 	NetworkID id = reference->GetNetworkID();
 
