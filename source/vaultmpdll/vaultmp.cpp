@@ -61,7 +61,7 @@ static void RespawnDetour();
 static void AnimDetour();
 static void PlayIdleDetour();
 static void AVFix();
-static void OnActivate();
+static void GetActivate();
 static vector<void*> delegated;
 
 static HINSTANCE silverlock = NULL;
@@ -105,9 +105,9 @@ static unsigned AVFix_ret = 0x00473D3B;
 static unsigned AVFix_term = 0x00473E85;
 static unsigned FireFix_jmp = 0x0079236C;
 static unsigned FireFix_patch = 0x007923C5;
-static unsigned OnActivate_jmp = 0x0078A68D;
-static unsigned OnActivate_dest = (unsigned)& OnActivate;;
-static unsigned OnActivate_ret = 0x0078A995;
+static unsigned GetActivate_jmp = 0x0078A68D;
+static unsigned GetActivate_dest = (unsigned)& GetActivate;;
+static unsigned GetActivate_ret = 0x0078A995;
 
 // Those snippets / functions are from FOSE / NVSE, thanks
 
@@ -232,7 +232,7 @@ void AVFix()
 	);
 }
 
-void OnActivate()
+void GetActivate()
 {
 	void* object;
 
@@ -1105,8 +1105,8 @@ void PatchGame(HINSTANCE& silverlock)
 	SafeWriteBuf(playGroup_fix, playGroup_fix_B, sizeof(playGroup_fix_B));
 	WriteRelJump(playGroup_fix_src, playGroup_fix_dest);
 
-	WriteRelCall(OnActivate_jmp, OnActivate_dest);
-	WriteRelJump(OnActivate_jmp + 5, OnActivate_ret);
+	WriteRelCall(GetActivate_jmp, GetActivate_dest);
+	WriteRelJump(GetActivate_jmp + 5, GetActivate_ret);
 
 	SafeWrite32(pluginsVMP, *(DWORD*)".vmp"); // redirect Plugins.txt
 

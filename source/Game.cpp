@@ -54,23 +54,11 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 		{
 			switch (opcode)
 			{
-				case Func::ForceRespawn:
-				case Func::RemoveAllItemsEx:
-				case Func::ScanContainer:
 				case Func::CenterOnCell:
-				case Func::CenterOnExterior:
-				case Func::PlaceAtMeHealthPercent:
-				case Func::GetCauseofDeath:
-				case Func::GetRefCount:
-				case Func::GetBaseObject:
 				case Func::CenterOnWorld:
-				case Func::Load:
+				case Func::ForceRespawn:
+				case Func::PlaceAtMeHealthPercent:
 					shared = Lockable::Poll(key);
-					break;
-
-				case Func::IsLimbGone:
-				case Func::GetFirstRef:
-				case Func::GetNextRef:
 					break;
 
 				default:
@@ -148,16 +136,6 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func::PlayIdle:
 				break;
 
-			case Func::GetDead:
-				break;
-
-			case Func::IsLimbGone:
-				break;
-
-			case Func::GetCauseofDeath:
-				FutureSet(shared, static_cast<signed char>(result));
-				break;
-
 			case Func::Kill:
 				break;
 
@@ -179,16 +157,10 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func::SetForceSneak:
 				break;
 
-			case Func::AddItem:
-				break;
-
 			case Func::AddItemHealthPercent:
 				break;
 
 			case Func::RemoveItem:
-				break;
-
-			case Func::RemoveAllItems:
 				break;
 
 			case Func::EquipItem:
@@ -216,9 +188,6 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 
 			case Func::SetOwnership:
-				break;
-
-			case Func::GetLocked:
 				break;
 
 			case Func::Activate:
@@ -283,7 +252,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 			}
 
-			case Func::OnActivate:
+			case Func::GetActivate:
 			{
 				if (!result)
 					break;
@@ -291,8 +260,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
 				unsigned int refID = *reinterpret_cast<unsigned int*>(&data[0]);
 
-				auto refs = GameFactory::GetMultiple(vector<unsigned int>{PLAYER_REFERENCE, refID});
-				Activate(refs[1].get(), refs[0].get());
+				// GetActivate(refID);
 
 				delete &data;
 				break;
@@ -316,20 +284,6 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func::ForceWeather:
 				break;
 
-			case Func::ScanContainer:
-				break;
-
-			case Func::RemoveAllItemsEx:
-				break;
-
-			case Func::GetBaseObject:
-				FutureSet(shared, getFrom<unsigned int>(result));
-				break;
-
-			case Func::GetRefCount:
-				FutureSet(shared, static_cast<unsigned int>(result));
-				break;
-
 			case Func::SetRefCount:
 				break;
 
@@ -345,9 +299,6 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				GetParentCell(player.get(), getFrom<unsigned int>(result));
 				break;
 			}
-
-			case Func::EnableControl:
-				break;
 
 			case Func::DisableControl:
 				break;
@@ -366,10 +317,8 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 
 			case Func::CenterOnCell:
-			case Func::CenterOnExterior:
-			case Func::ForceRespawn:
 			case Func::CenterOnWorld:
-			case Func::Load:
+			case Func::ForceRespawn:
 				FutureSet(shared, true);
 				break;
 

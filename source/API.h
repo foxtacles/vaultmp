@@ -284,7 +284,7 @@ namespace Values
 		SetCurrentHealth = 0x14BF,
 
 		GetActorState = 0x0001 | VAULTFUNCTION,
-		OnActivate = 0x0002 | VAULTFUNCTION,
+		GetActivate = 0x0002 | VAULTFUNCTION,
 		ScanContainer = 0x0003 | VAULTFUNCTION,
 		UIMessage = 0x0004 | VAULTFUNCTION,
 		RemoveAllItemsEx = 0x0005 | VAULTFUNCTION,
