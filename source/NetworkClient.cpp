@@ -371,6 +371,16 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
+				case pTypes::ID_UPDATE_ACTIVATE:
+				{
+					NetworkID id;
+					unsigned int refID;
+					PacketFactory::Access<pTypes::ID_UPDATE_ACTIVATE>(packet, id, refID);
+					auto reference = GameFactory::GetMultiple(vector<NetworkID>{id, GameFactory::LookupNetworkID(refID)});
+					Game::net_GetActivate(reference[0].get(), reference[1].get());
+					break;
+				}
+
 				case pTypes::ID_UPDATE_COUNT:
 				{
 					NetworkID id;

@@ -318,6 +318,40 @@ NetworkResponse Server::GetCell(RakNetGUID guid, FactoryObject& reference, unsig
 	return response;
 }
 
+NetworkResponse Server::GetActivate(RakNetGUID guid, FactoryObject& reference, unsigned int refID)
+{
+	NetworkResponse response;
+
+	NetworkID id = reference->GetNetworkID();
+	NetworkID action;
+
+	try
+	{
+		action = GameFactory::LookupNetworkID(refID);
+	}
+	catch (...)
+	{
+#ifdef VAULTMP_DEBUG
+		debug.print("Player ", dec, id, " activated unknown item ", hex, refID);
+#endif
+		return response;
+	}
+
+	auto objects = GameFactory::GetMultiple(vector<NetworkID>{id, action});
+
+	if (objects[1]->IsPersistent() && !DB::Reference::Lookup(refID)->GetType().compare("DOOR"))
+		response.emplace_back(Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_ACTIVATE>(id, refID),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+
+	GameFactory::LeaveReference(objects[0].get());
+	GameFactory::LeaveReference(objects[1].get());
+
+	Script::OnActivate(id, action);
+
+	return response;
+}
+
 NetworkResponse Server::GetActorState(RakNetGUID guid, FactoryActor& reference, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking)
 {
 	NetworkResponse response;

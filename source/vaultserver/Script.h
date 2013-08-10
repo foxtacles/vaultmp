@@ -100,6 +100,7 @@ class Script
 
 		void (*fexec)();
 		void (*fOnSpawn)(RakNet::NetworkID);
+		void (*fOnActivate)(RakNet::NetworkID, RakNet::NetworkID);
 		void (*fOnCellChange)(RakNet::NetworkID, unsigned int);
 		void (*fOnLockChange)(RakNet::NetworkID, RakNet::NetworkID, unsigned int);
 		void (*fOnContainerItemChange)(RakNet::NetworkID, unsigned int, signed int, double);
@@ -172,6 +173,7 @@ class Script
 		static unsigned long long Timer_GameTime();
 
 		static void OnSpawn(RakNet::NetworkID id);
+		static void OnActivate(RakNet::NetworkID id, RakNet::NetworkID action);
 		static void OnCellChange(RakNet::NetworkID id, unsigned int cell);
 		static void OnLockChange(RakNet::NetworkID id, RakNet::NetworkID player, unsigned int lock);
 		static void OnContainerItemChange(RakNet::NetworkID id, unsigned int baseID, signed int count, double condition);

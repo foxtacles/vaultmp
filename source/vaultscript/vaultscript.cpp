@@ -84,6 +84,11 @@ Void VAULTSCRIPT OnSpawn(ID object) noexcept
 		player.UIMessage("Hello, " + player.GetBaseName() + "!");
 }
 
+Void VAULTSCRIPT OnActivate(ID object, ID action) noexcept
+{
+
+}
+
 Void VAULTSCRIPT OnCellChange(ID object, CELL cell) noexcept
 {
 

@@ -407,6 +407,10 @@ class Game
 		 */
 		static void net_SetOwner(const FactoryObject& reference, unsigned int owner);
 		/**
+		 * \brief Network function to handle Object activate
+		 */
+		static void net_GetActivate(const FactoryObject& reference, const FactoryObject& action);
+		/**
 		 * \brief Network function to handle Item count
 		 */
 		static void net_SetItemCount(FactoryItem& reference, unsigned int count, bool silent);
@@ -536,10 +540,6 @@ class Game
 		 */
 		static void GetParentCell(const FactoryPlayer& player, unsigned int cell);
 		/**
-		 * \brief Handles GetActorValue command result
-		 */
-		static void GetActorValue(const FactoryActor& reference, bool base, unsigned char index, double value);
-		/**
 		 * \brief Handles GetActorState command result
 		 */
 		static void GetActorState(const FactoryActor& reference, unsigned int idle, unsigned char moving, unsigned char weapon, unsigned char flags, bool sneaking);
@@ -547,6 +547,10 @@ class Game
 		 * \brief Handles GetControl command result
 		 */
 		static void GetControl(const FactoryPlayer& reference, unsigned char control, unsigned char key);
+		/**
+		 * \brief Handles GetActivate command result
+		 */
+		static void GetActivate(const FactoryPlayer& reference, unsigned int refID);
 		/**
 		 * \brief Handles GUI message
 		 */

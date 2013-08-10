@@ -54,6 +54,7 @@ enum class pTypes : pTypesSize
 	ID_UPDATE_CELL,
 	ID_UPDATE_LOCK,
 	ID_UPDATE_OWNER,
+	ID_UPDATE_ACTIVATE,
 	ID_UPDATE_COUNT,
 	ID_UPDATE_CONDITION,
 	ID_UPDATE_EQUIPPED,
@@ -747,6 +748,7 @@ template<> struct pTypesMap<pTypes::ID_UPDATE_ANGLE> { typedef pGeneratorReferen
 template<> struct pTypesMap<pTypes::ID_UPDATE_CELL> { typedef pGeneratorReference<pTypes::ID_UPDATE_CELL, unsigned int, double, double, double> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_LOCK> { typedef pGeneratorReference<pTypes::ID_UPDATE_LOCK, unsigned int> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_OWNER> { typedef pGeneratorReference<pTypes::ID_UPDATE_OWNER, unsigned int> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_ACTIVATE> { typedef pGeneratorReference<pTypes::ID_UPDATE_ACTIVATE, unsigned int> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_COUNT> { typedef pGeneratorReference<pTypes::ID_UPDATE_COUNT, unsigned int, bool> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_CONDITION> { typedef pGeneratorReference<pTypes::ID_UPDATE_CONDITION, double, unsigned int> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_EQUIPPED> { typedef pGeneratorReference<pTypes::ID_UPDATE_EQUIPPED, bool, bool, bool> type; };

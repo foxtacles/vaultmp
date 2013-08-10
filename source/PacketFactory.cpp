@@ -124,6 +124,10 @@ pPacket PacketFactory::Init(const unsigned char* stream, unsigned int len)
 			packet = new typename pTypesMap<pTypes::ID_UPDATE_OWNER>::type(stream, len);
 			break;
 
+		case pTypes::ID_UPDATE_ACTIVATE:
+			packet = new typename pTypesMap<pTypes::ID_UPDATE_ACTIVATE>::type(stream, len);
+			break;
+
 		case pTypes::ID_UPDATE_COUNT:
 			packet = new typename pTypesMap<pTypes::ID_UPDATE_COUNT>::type(stream, len);
 			break;

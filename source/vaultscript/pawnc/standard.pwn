@@ -85,6 +85,11 @@ public OnSpawn(ID)
 	}
 }
 
+public OnActivate(ID, action)
+{
+
+}
+
 public OnCellChange(ID, cell)
 {
 

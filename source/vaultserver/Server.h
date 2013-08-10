@@ -54,6 +54,10 @@ class Server
 		 */
 		static NetworkResponse GetCell(RakNet::RakNetGUID guid, FactoryObject& reference, unsigned int cell);
 		/**
+		 * \brief Handles activate network packet
+		 */
+		static NetworkResponse GetActivate(RakNet::RakNetGUID guid, FactoryObject& reference, unsigned int refID);
+		/**
 		 * \brief Handles actor state network packet
 		 */
 		static NetworkResponse GetActorState(RakNet::RakNetGUID guid, FactoryActor& reference, unsigned int idle, unsigned char moving, unsigned char movingxy, unsigned char weapon, bool alerted, bool sneaking);

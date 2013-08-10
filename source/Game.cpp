@@ -95,7 +95,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func::GetActorValue:
 			{
 				auto reference = GameFactory::GetObject<Actor>(getFrom<unsigned int>(info.at(1)));
-				GetActorValue(reference.get(), false, getFrom<unsigned char>(info.at(2)), result);
+				//GetActorValue(reference.get(), false, getFrom<unsigned char>(info.at(2)), result);
 				break;
 			}
 
@@ -111,7 +111,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func::GetBaseActorValue:
 			{
 				auto reference = GameFactory::GetObject<Actor>(getFrom<unsigned int>(info.at(1)));
-				GetActorValue(reference.get(), true, getFrom<unsigned char>(info.at(2)), result);
+				//GetActorValue(reference.get(), true, getFrom<unsigned char>(info.at(2)), result);
 				break;
 			}
 
@@ -259,9 +259,8 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 
 				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
 				unsigned int refID = *reinterpret_cast<unsigned int*>(&data[0]);
-
-				// GetActivate(refID);
-
+				auto player = GameFactory::GetObject<Player>(PLAYER_REFERENCE);
+				GetActivate(player.get(), refID);
 				delete &data;
 				break;
 			}
@@ -1276,7 +1275,7 @@ void Game::Activate(const FactoryObject& reference, const FactoryObject& action)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand(Func::Activate, {reference->GetReferenceParam(), action->GetReferenceParam()});
+	Interface::ExecuteCommand(Func::Activate, {action->GetReferenceParam(), reference->GetReferenceParam()});
 
 	Interface::EndDynamic();
 }
@@ -2026,6 +2025,11 @@ void Game::net_SetOwner(const FactoryObject& reference, unsigned int owner)
 		SetOwner(reference);
 }
 
+void Game::net_GetActivate(const FactoryObject& reference, const FactoryObject& action)
+{
+	Activate(reference, action);
+}
+
 void Game::net_SetItemCount(FactoryItem& reference, unsigned int count, bool silent)
 {
 	unsigned int old_count = reference->GetItemCount();
@@ -2565,6 +2569,7 @@ void Game::GetParentCell(const FactoryPlayer& player, unsigned int cell)
 		});
 }
 
+/*
 void Game::GetActorValue(const FactoryActor& reference, bool base, unsigned char index, double value)
 {
 	bool result;
@@ -2580,7 +2585,7 @@ void Game::GetActorValue(const FactoryActor& reference, bool base, unsigned char
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 		});
 }
-
+*/
 void Game::GetActorState(const FactoryActor& reference, unsigned int idle, unsigned char moving, unsigned char weapon, unsigned char flags, bool sneaking)
 {
 	static pair<unsigned char, unsigned char> buf_weapon{AnimGroup_Idle, AnimGroup_Idle};
@@ -2626,6 +2631,14 @@ void Game::GetControl(const FactoryPlayer& reference, unsigned char control, uns
 			PacketFactory::Create<pTypes::ID_UPDATE_CONTROL>(reference->GetNetworkID(), control, key),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 		});
+}
+
+void Game::GetActivate(const FactoryPlayer& reference, unsigned int refID)
+{
+	Network::Queue({Network::CreateResponse(
+		PacketFactory::Create<pTypes::ID_UPDATE_ACTIVATE>(reference->GetNetworkID(), refID),
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+	});
 }
 
 void Game::GetMessage(string message)

@@ -72,6 +72,7 @@ Script::Script(char* path)
 			string vpf(vaultprefix);
 
 			GetScript("OnSpawn", fOnSpawn);
+			GetScript("OnActivate", fOnActivate);
 			GetScript("OnLockChange", fOnLockChange);
 			GetScript("OnCellChange", fOnCellChange);
 			GetScript("OnContainerItemChange", fOnContainerItemChange);
@@ -629,6 +630,20 @@ void Script::OnSpawn(NetworkID id)
 		}
 		else if (PAWN::IsCallbackPresent(script->amx, "OnSpawn"))
 			PAWN::Call(script->amx, "OnSpawn", "l", 0, id);
+	}
+}
+
+void Script::OnActivate(NetworkID id, NetworkID action)
+{
+	for (Script* script : scripts)
+	{
+		if (script->cpp_script)
+		{
+			if (script->fOnActivate)
+				script->fOnActivate(id, action);
+		}
+		else if (PAWN::IsCallbackPresent(script->amx, "OnActivate"))
+			PAWN::Call(script->amx, "OnActivate", "ll", 0, action, id);
 	}
 }
 
