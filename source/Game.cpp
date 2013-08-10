@@ -901,6 +901,7 @@ void Game::NewItem_(FactoryItem& reference)
 
 	NewObject_(reference);
 	SetRefCount(reference);
+	// add SetCurrentHealth
 }
 
 void Game::NewContainer(FactoryContainer& reference)
@@ -1246,14 +1247,18 @@ void Game::SetName(const FactoryObject& reference)
 {
 	const string& name = reference->GetName();
 
-	if (name.empty())
-		return;
+	auto* object = reference.operator->();
 
-	Interface::StartDynamic();
+	auto func = [object, name](unsigned int)
+	{
+		Interface::StartDynamic();
 
-	Interface::ExecuteCommand(Func::SetName, {reference->GetReferenceParam(), RawParameter(name)});
+		Interface::ExecuteCommand(Func::SetName, {object->GetReferenceParam(), RawParameter(name)});
 
-	Interface::EndDynamic();
+		Interface::EndDynamic();
+	};
+
+	DelayOrExecute(reference, func, 0);
 }
 
 void Game::SetRestrained(const FactoryActor& reference, bool restrained)
@@ -1387,52 +1392,91 @@ void Game::SetOwner(const FactoryObject& reference, unsigned int key)
 
 void Game::SetActorValue(const FactoryActor& reference, bool base, unsigned char index, unsigned int key)
 {
-	Interface::StartDynamic();
+	auto* actor = reference.operator->();
 
-	if (base)
-		Interface::ExecuteCommand(Func::SetActorValue, {reference->GetReferenceParam(), RawParameter(API::RetrieveValue_Reverse(index)), RawParameter(reference->GetActorBaseValue(index))}, key);
-	else
-		Interface::ExecuteCommand(Func::ForceActorValue, {reference->GetReferenceParam(), RawParameter(API::RetrieveValue_Reverse(index)), RawParameter(reference->GetActorValue(index))}, key);
+	double value = base ? actor->GetActorBaseValue(index) : actor->GetActorValue(index);
 
-	Interface::EndDynamic();
+	auto func = [actor, base, index, value](unsigned int key)
+	{
+		Interface::StartDynamic();
+
+		if (base)
+			Interface::ExecuteCommand(Func::SetActorValue, {actor->GetReferenceParam(), RawParameter(API::RetrieveValue_Reverse(index)), RawParameter(value)}, key);
+		else
+			Interface::ExecuteCommand(Func::ForceActorValue, {actor->GetReferenceParam(), RawParameter(API::RetrieveValue_Reverse(index)), RawParameter(value)}, key);
+
+		Interface::EndDynamic();
+	};
+
+	DelayOrExecute(reference, func, key);
 }
 
 void Game::DamageActorValue(const FactoryActor& reference, unsigned char index, double value, unsigned int key)
 {
-	Interface::StartDynamic();
+	auto* actor = reference.operator->();
 
-	Interface::ExecuteCommand(Func::DamageActorValue, {reference->GetReferenceParam(), RawParameter(API::RetrieveValue_Reverse(index)), RawParameter(value)}, key);
+	auto func = [actor, index, value](unsigned int key)
+	{
+		Interface::StartDynamic();
 
-	Interface::EndDynamic();
+		Interface::ExecuteCommand(Func::DamageActorValue, {actor->GetReferenceParam(), RawParameter(API::RetrieveValue_Reverse(index)), RawParameter(value)}, key);
+
+		Interface::EndDynamic();
+	};
+
+	DelayOrExecute(reference, func, key);
 }
 
 void Game::RestoreActorValue(const FactoryActor& reference, unsigned char index, double value, unsigned int key)
 {
-	Interface::StartDynamic();
+	auto* actor = reference.operator->();
 
-	Interface::ExecuteCommand(Func::RestoreActorValue, {reference->GetReferenceParam(), RawParameter(API::RetrieveValue_Reverse(index)), RawParameter(value)}, key);
+	auto func = [actor, index, value](unsigned int key)
+	{
+		Interface::StartDynamic();
 
-	Interface::EndDynamic();
+		Interface::ExecuteCommand(Func::RestoreActorValue, {actor->GetReferenceParam(), RawParameter(API::RetrieveValue_Reverse(index)), RawParameter(value)}, key);
+
+		Interface::EndDynamic();
+	};
+
+	DelayOrExecute(reference, func, key);
 }
 
 void Game::SetActorSneaking(const FactoryActor& reference, unsigned int key)
 {
-	Interface::StartDynamic();
+	auto* actor = reference.operator->();
 
-	Interface::ExecuteCommand(Func::SetForceSneak, {reference->GetReferenceParam(), RawParameter(reference->GetActorSneaking())}, key);
+	bool sneaking = actor->GetActorSneaking();
 
-	Interface::EndDynamic();
+	auto func = [actor, sneaking](unsigned int key)
+	{
+		Interface::StartDynamic();
+
+		Interface::ExecuteCommand(Func::SetAlert, {actor->GetReferenceParam(), RawParameter(sneaking)}, key);
+
+		Interface::EndDynamic();
+	};
+
+	DelayOrExecute(reference, func, key);
 }
 
 void Game::SetActorAlerted(const FactoryActor& reference, unsigned int key)
 {
-	// really need to introduce restrained state in Actor class
+	auto* actor = reference.operator->();
 
-	Interface::StartDynamic();
+	bool alerted = actor->GetActorAlerted();
 
-	Interface::ExecuteCommand(Func::SetAlert, {reference->GetReferenceParam(), RawParameter(reference->GetActorAlerted())}, key);
+	auto func = [actor, alerted](unsigned int key)
+	{
+		Interface::StartDynamic();
 
-	Interface::EndDynamic();
+		Interface::ExecuteCommand(Func::SetAlert, {actor->GetReferenceParam(), RawParameter(alerted)}, key);
+
+		Interface::EndDynamic();
+	};
+
+	DelayOrExecute(reference, func, key);
 }
 
 void Game::SetActorAnimation(const FactoryActor& reference, unsigned char anim, unsigned int key)
@@ -1465,62 +1509,86 @@ void Game::SetActorIdleAnimation(const FactoryActor& reference, const string& an
 
 void Game::SetActorRace(const FactoryActor& reference, signed int delta_age, unsigned int key)
 {
-	unsigned int baseID = reference->GetBase();
-	unsigned int race = reference->GetActorRace();
+	auto* actor = reference.operator->();
 
-	// set only once per base
-	if (baseRaces[baseID] == race || race == UINT_MAX) // creature test
+	unsigned int race = actor->GetActorRace();
+
+	auto func = [actor, race, delta_age](unsigned int key)
 	{
-		if (key)
-			Lockable::Retrieve(key);
-		return;
-	}
+		unsigned int baseID = actor->GetBase();
 
-	baseRaces[baseID] = race;
+		// set only once per base
+		if (baseRaces[baseID] == race || race == UINT_MAX) // creature test
+		{
+			if (key)
+				Lockable::Retrieve(key);
+			return;
+		}
 
-	Interface::StartDynamic();
+		baseRaces[baseID] = race;
 
-	Interface::ExecuteCommand(Func::MatchRace, {reference->GetReferenceParam(), RawParameter(race)}, delta_age ? 0 : key);
+		Interface::StartDynamic();
 
-	if (delta_age)
-		Interface::ExecuteCommand(Func::AgeRace, {reference->GetReferenceParam(), RawParameter(delta_age)}, key);
+		Interface::ExecuteCommand(Func::MatchRace, {actor->GetReferenceParam(), RawParameter(race)}, delta_age ? 0 : key);
 
-	Interface::EndDynamic();
+		if (delta_age)
+			Interface::ExecuteCommand(Func::AgeRace, {actor->GetReferenceParam(), RawParameter(delta_age)}, key);
+
+		Interface::EndDynamic();
+	};
+
+	DelayOrExecute(reference, func, key);
 }
 
 void Game::SetActorFemale(const FactoryActor& reference, unsigned int key)
 {
-	if (reference->GetActorRace() == UINT_MAX) // creature test
+	auto* actor = reference.operator->();
+
+	bool female = actor->GetActorFemale();
+
+	auto func = [actor, female](unsigned int key)
 	{
-		if (key)
-			Lockable::Retrieve(key);
-		return;
-	}
+		if (actor->GetActorRace() == UINT_MAX) // creature test
+		{
+			if (key)
+				Lockable::Retrieve(key);
+			return;
+		}
 
-	Interface::StartDynamic();
+		Interface::StartDynamic();
 
-	Interface::ExecuteCommand(Func::SexChange, {reference->GetReferenceParam(), RawParameter(reference->GetActorFemale())}, key);
+		Interface::ExecuteCommand(Func::SexChange, {actor->GetReferenceParam(), RawParameter(female)}, key);
 
-	Interface::EndDynamic();
+		Interface::EndDynamic();
+	};
+
+	DelayOrExecute(reference, func, key);
 }
 
 void Game::KillActor(const FactoryActor& reference, unsigned short limbs, signed char cause, unsigned int key)
 {
-	Interface::StartDynamic();
+	auto* actor = reference.operator->();
 
-	// maybe add valid killer later
-	if (limbs)
+	auto func = [actor, limbs, cause](unsigned int key)
 	{
-		unsigned int j = 0;
+		Interface::StartDynamic();
 
-		for (unsigned int i = 1; i <= limbs; i <<= 1, ++j)
-			if (limbs & i)
-				Interface::ExecuteCommand(Func::Kill, {reference->GetReferenceParam(), reference->GetReferenceParam(), RawParameter(j), RawParameter(cause)}, ((i << 1) > limbs) ? key : 0x00);
-	}
-	else
-		Interface::ExecuteCommand(Func::Kill, {reference->GetReferenceParam(), reference->GetReferenceParam(), RawParameter(Limb_None), RawParameter(cause)}, key);
+		// maybe add valid killer later
+		if (limbs)
+		{
+			unsigned int j = 0;
 
-	Interface::EndDynamic();
+			for (unsigned int i = 1; i <= limbs; i <<= 1, ++j)
+				if (limbs & i)
+					Interface::ExecuteCommand(Func::Kill, {actor->GetReferenceParam(), actor->GetReferenceParam(), RawParameter(j), RawParameter(cause)}, ((i << 1) > limbs) ? key : 0x00);
+		}
+		else
+			Interface::ExecuteCommand(Func::Kill, {actor->GetReferenceParam(), actor->GetReferenceParam(), RawParameter(Limb_None), RawParameter(cause)}, key);
+
+		Interface::EndDynamic();
+	};
+
+	DelayOrExecute(reference, func, key);
 }
 
 void Game::FireWeapon(const FactoryActor& reference, unsigned int weapon, unsigned int key)
@@ -1576,20 +1644,36 @@ void Game::RemoveItem(const FactoryContainer& reference, unsigned int baseID, un
 
 void Game::SetRefCount(const FactoryItem& reference, unsigned int key)
 {
-	Interface::StartDynamic();
+	auto* item = reference.operator->();
 
-	Interface::ExecuteCommand(Func::SetRefCount, {reference->GetReferenceParam(), RawParameter(reference->GetItemCount())}, key);
+	unsigned int count = item->GetItemCount();
 
-	Interface::EndDynamic();
+	auto func = [item, count](unsigned int key)
+	{
+		Interface::StartDynamic();
+
+		Interface::ExecuteCommand(Func::SetRefCount, {item->GetReferenceParam(), RawParameter(count)}, key);
+
+		Interface::EndDynamic();
+	};
+
+	DelayOrExecute(reference, func, key);
 }
 
 void Game::SetCurrentHealth(const FactoryItem& reference, unsigned int health, unsigned int key)
 {
-	Interface::StartDynamic();
+	auto* item = reference.operator->();
 
-	Interface::ExecuteCommand(Func::SetCurrentHealth, {reference->GetReferenceParam(), RawParameter(health)}, key);
+	auto func = [item, health](unsigned int key)
+	{
+		Interface::StartDynamic();
 
-	Interface::EndDynamic();
+		Interface::ExecuteCommand(Func::SetCurrentHealth, {item->GetReferenceParam(), RawParameter(health)}, key);
+
+		Interface::EndDynamic();
+	};
+
+	DelayOrExecute(reference, func, key);
 }
 
 void Game::EquipItem(const FactoryActor& reference, const FactoryItem& item, unsigned int key)
@@ -1599,13 +1683,20 @@ void Game::EquipItem(const FactoryActor& reference, const FactoryItem& item, uns
 
 void Game::EquipItem(const FactoryActor& reference, unsigned int baseID, double condition, bool silent, bool stick, unsigned int key)
 {
-	Interface::StartDynamic();
+	auto* actor = reference.operator->();
 
-	Interface::ExecuteCommand(Func::EquipItem, {reference->GetReferenceParam(), RawParameter(baseID), RawParameter(stick), RawParameter(silent)}, key);
+	auto func = [actor, baseID, condition, silent, stick](unsigned int key)
+	{
+		Interface::StartDynamic();
 
-	Interface::EndDynamic();
+		Interface::ExecuteCommand(Func::EquipItem, {actor->GetReferenceParam(), RawParameter(baseID), RawParameter(stick), RawParameter(silent)}, key);
 
-	// Add: adjust condition
+		Interface::EndDynamic();
+
+		// Add: adjust condition
+	};
+
+	DelayOrExecute(reference, func, key);
 }
 
 void Game::UnequipItem(const FactoryActor& reference, const FactoryItem& item, unsigned int key)
@@ -1615,11 +1706,18 @@ void Game::UnequipItem(const FactoryActor& reference, const FactoryItem& item, u
 
 void Game::UnequipItem(const FactoryActor& reference, unsigned int baseID, bool silent, bool stick, unsigned int key)
 {
-	Interface::StartDynamic();
+	auto* actor = reference.operator->();
 
-	Interface::ExecuteCommand(Func::UnequipItem, {reference->GetReferenceParam(), RawParameter(baseID), RawParameter(stick), RawParameter(silent)}, key);
+	auto func = [actor, baseID, silent, stick](unsigned int key)
+	{
+		Interface::StartDynamic();
 
-	Interface::EndDynamic();
+		Interface::ExecuteCommand(Func::UnequipItem, {actor->GetReferenceParam(), RawParameter(baseID), RawParameter(stick), RawParameter(silent)}, key);
+
+		Interface::EndDynamic();
+	};
+
+	DelayOrExecute(reference, func, key);
 }
 
 void Game::SetWindowPos(const FactoryWindow& reference)
@@ -2114,7 +2212,7 @@ void Game::net_SetActorDead(FactoryActor& reference, bool dead, unsigned short l
 	if (result && reference->GetReference())
 	{
 		if (dead)
-			KillActor(reference, limbs, cause, result->Lock());
+			KillActor(reference, limbs, cause);
 		else if (reference->GetReference() != PLAYER_REFERENCE)
 		{
 			RemoveObject(reference);
