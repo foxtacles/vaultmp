@@ -97,15 +97,15 @@ unsigned long long ScriptFunction::Call(const vector<boost::any>& args)
 			"POP ES\n"
 			"CLD\n"
 			"REP MOVSB\n"
-			"MOV EBP,ESP\n"
+			"MOV ESI,ESP\n"
 			"SUB ESP,%3\n"
 			"CALL %2\n"
-			"MOV ESP,EBP\n"
+			"MOV ESP,ESI\n"
 			"MOV %0,EAX\n"
 			"MOV %1,EDX\n"
 			: "=m"(low), "=m"(high)
 			: "m"(fCpp) , "m"(size), "m"(source)
-			: "eax", "edx", "ecx", "esi", "edi", "ebp", "cc"
+			: "eax", "edx", "ecx", "esi", "edi", "cc"
 		);
 
 		*reinterpret_cast<unsigned int*>(&result) = low;

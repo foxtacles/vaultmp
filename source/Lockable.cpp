@@ -1,6 +1,8 @@
 #include "Lockable.h"
 #include "VaultException.h"
 
+#include <climits>
+
 using namespace std;
 
 unsigned int Lockable::key = 0x01;

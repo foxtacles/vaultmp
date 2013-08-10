@@ -31,7 +31,7 @@ void ServerEntry::SetServerPing(unsigned int ping)
 
 void ServerEntry::SetModFiles(const string& name)
 {
-    this->modfiles.push_back(name);
+	this->modfiles.push_back(name);
 }
 
 const string& ServerEntry::GetServerName()
@@ -61,10 +61,10 @@ unsigned int ServerEntry::GetServerPing()
 
 const std::vector<string>& ServerEntry::GetServerModFiles()
 {
-    return modfiles;
+	return modfiles;
 }
 
 void ServerEntry::ClearModFiles()
 {
-    modfiles.clear();
+	modfiles.clear();
 }

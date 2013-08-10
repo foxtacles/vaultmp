@@ -13,6 +13,7 @@
 #include <memory>
 #include <unordered_map>
 #include <cstdint>
+#include <climits>
 
 /*
  * \brief This namespace contains key data of the game
