@@ -2192,6 +2192,8 @@ bool Script::SetItemEquipped(NetworkID id, bool equipped, bool silent, bool stic
 						PacketFactory::Create<pTypes::ID_UPDATE_EQUIPPED>(id, equipped, silent, stick),
 						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 					});
+
+				return true;
 			});
 		});
 	});

@@ -23,15 +23,14 @@ unsigned long long ScriptFunction::Call(const vector<boost::any>& args)
 
 	if (pawn)
 		result = PAWN::Call(amx, fPawn.c_str(), def.c_str(), args);
-
 	else
 	{
 		// cdecl convention
-		string::reverse_iterator it;
-		vector<boost::any>::const_reverse_iterator it2;
+		string::iterator it;
+		vector<boost::any>::const_iterator it2;
 		vector<unsigned int> data;
 
-		for (it = def.rbegin(), it2 = args.rbegin(); it != def.rend(); ++it, ++it2)
+		for (it = def.begin(), it2 = args.begin(); it != def.end(); ++it, ++it2)
 		{
 			switch (*it)
 			{
@@ -52,16 +51,16 @@ unsigned long long ScriptFunction::Call(const vector<boost::any>& args)
 				case 'l':
 				{
 					unsigned long long value = boost::any_cast<unsigned long long>(*it2);
-					data.push_back(*reinterpret_cast<unsigned int*>((unsigned) &value + 4));
 					data.push_back(*reinterpret_cast<unsigned int*>(&value));
+					data.push_back(*reinterpret_cast<unsigned int*>((unsigned) &value + 4));
 					break;
 				}
 
 				case 'f':
 				{
 					double value = boost::any_cast<double>(*it2);
-					data.push_back(*reinterpret_cast<unsigned int*>((unsigned) &value + 4));
 					data.push_back(*reinterpret_cast<unsigned int*>(&value));
+					data.push_back(*reinterpret_cast<unsigned int*>((unsigned) &value + 4));
 					break;
 				}
 
@@ -74,8 +73,8 @@ unsigned long long ScriptFunction::Call(const vector<boost::any>& args)
 
 				case 's':
 				{
-					const string& value = boost::any_cast<string>(*it2);
-					data.push_back(reinterpret_cast<unsigned int>(value.c_str()));
+					const char* value = boost::any_cast<const char*>(*it2);
+					data.push_back(reinterpret_cast<unsigned int>(value));
 					break;
 				}
 
@@ -84,32 +83,29 @@ unsigned long long ScriptFunction::Call(const vector<boost::any>& args)
 			}
 		}
 
-
 		unsigned int low;
 		unsigned int high;
-		unsigned int size = data.size();
-		unsigned int* _data = &data[0];
-
-		for (unsigned int i = 0; i < size; ++i, ++_data)
-		{
-			asm(
-				"PUSH %0\n"
-				:
-				: "m"(*_data)
-				:
-			);
-		}
-
-		size *= 4;
+		unsigned int* source = &data[0];
+		unsigned int size = data.size() * 4;
 
 		asm(
+			"MOV EDI,ESP\n"
+			"SUB EDI,%3\n"
+			"MOV ESI,%4\n"
+			"MOV ECX,%3\n"
+			"PUSH DS\n"
+			"POP ES\n"
+			"CLD\n"
+			"REP MOVSB\n"
+			"MOV EBP,ESP\n"
+			"SUB ESP,%3\n"
 			"CALL %2\n"
-			"ADD ESP,%3\n"
+			"MOV ESP,EBP\n"
 			"MOV %0,EAX\n"
 			"MOV %1,EDX\n"
 			: "=m"(low), "=m"(high)
-			: "m"(fCpp) , "m"(size)
-			: "eax", "edx", "ecx", "cc"
+			: "m"(fCpp) , "m"(size), "m"(source)
+			: "eax", "edx", "ecx", "esi", "edi", "ebp", "cc"
 		);
 
 		*reinterpret_cast<unsigned int*>(&result) = low;

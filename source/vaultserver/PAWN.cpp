@@ -567,7 +567,7 @@ cell PAWN::Call(AMX* amx, const char* name, const char* argl, int buf, ...)
 	va_list args;
 	va_start(args, buf);
 	cell ret = 0;
-	vector<pair<cell*, char*> > strings;
+	vector<pair<cell*, char*>> strings;
 
 	try
 	{
@@ -641,15 +641,15 @@ cell PAWN::Call(AMX* amx, const char* name, const char* argl, int buf, ...)
 
 		if (buf != 0)
 		{
-			for (vector<pair<cell*, char*> >::iterator it = strings.begin(); it != strings.end(); ++it)
+			for (const auto& str : strings)
 			{
 				int length;
-				amx_StrLen(it->first, &length);
+				amx_StrLen(str.first, &length);
 
 				if (buf >= length)
 				{
-					ZeroMemory(it->second, buf);
-					amx_GetString(it->second, it->first, 0, UNLIMITED);
+					ZeroMemory(str.second, buf);
+					amx_GetString(str.second, str.first, 0, UNLIMITED);
 				}
 			}
 		}
@@ -727,8 +727,7 @@ cell PAWN::Call(AMX* amx, const char* name, const char* argl, const vector<boost
 
 				case 's':
 				{
-					string _string = boost::any_cast<string>(args.at(i));
-					const char* string = _string.c_str();
+					const char* string = boost::any_cast<const char*>(args.at(i));
 					cell* store;
 					amx_PushString(amx, &store, string, 1, 0);
 
