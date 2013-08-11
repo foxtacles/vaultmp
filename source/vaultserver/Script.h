@@ -8,6 +8,7 @@
 #include "ScriptFunction.h"
 #include "GameFactory.h"
 #include "Dedicated.h"
+#include "PAWN.h"
 #include "boost/any.hpp"
 
 #include <vector>
@@ -33,6 +34,7 @@ template<typename T> struct TypeChar<T, sizeof(uint16_t)> { enum { value = 'i' }
 template<typename T> struct TypeChar<T, sizeof(uint32_t)> { enum { value = 'i' }; };
 template<typename T> struct TypeChar<T, sizeof(uint64_t)> { enum { value = 'l' }; };
 template<> struct TypeChar<double, sizeof(double)> { enum { value = 'f' }; };
+template<> struct TypeChar<char*, sizeof(char*)> { enum { value = 's' }; };
 template<> struct TypeChar<const char*, sizeof(const char*)> { enum { value = 's' }; };
 template<> struct TypeChar<void, sizeof_void<void>::value> { enum { value = 'v' }; };
 
@@ -40,6 +42,7 @@ template<const char t> struct CharType { static_assert(!t, "Unsupported type in 
 template<> struct CharType<'p'> { typedef void* type; };
 template<> struct CharType<'d'> { typedef double* type; };
 template<> struct CharType<'n'> { typedef RakNet::NetworkID** type; };
+template<> struct CharType<'q'> { typedef signed int type; };
 template<> struct CharType<'i'> { typedef unsigned int type; };
 template<> struct CharType<'l'> { typedef unsigned long long type; };
 template<> struct CharType<'f'> { typedef double type; };
@@ -53,34 +56,56 @@ struct TypeString {
 	};
 };
 
-class ScriptFunctionPointer
+template<typename R, typename... Types>
+using Function = R(*)(Types...);
+
+template<typename R>
+using FunctionEllipsis = R(*)(...);
+
+struct ScriptIdentity
 {
+	const char* types;
+	const char ret;
+	const unsigned int numargs;
+
+	constexpr bool matches(const char* types, const unsigned int N = 0) {
+		return N < numargs ? this->types[N] == types[N] && matches(types, N + 1) : this->types[N] == types[N];
+	}
+
 	template<typename R, typename... Types>
-	using ScriptFunctionPointer_ = R(*)(Types...);
+	constexpr ScriptIdentity(Function<R, Types...>) : types(TypeString<Types...>::value), ret(TypeChar<R, sizeof_void<R>::value>::value), numargs(sizeof(TypeString<Types...>::value) - 1) {}
+};
 
-	public:
-		ScriptFunctionPointer_<void> addr;
-		const char* types;
-		const char ret;
-		const unsigned int numargs;
+struct ScriptFunctionPointer : public ScriptIdentity
+{
+	Function<void> addr;
 
-		template<typename R, typename... Types>
-		constexpr ScriptFunctionPointer(ScriptFunctionPointer_<R, Types...> addr) : addr(reinterpret_cast<ScriptFunctionPointer_<void>>(addr)), types(TypeString<Types...>::value), ret(TypeChar<R, sizeof_void<R>::value>::value), numargs(sizeof(TypeString<Types...>::value) - 1) {}
+	template<typename R, typename... Types>
+	constexpr ScriptFunctionPointer(Function<R, Types...> addr) : ScriptIdentity(addr), addr(reinterpret_cast<Function<void>>(addr)) {}
 };
 
 struct ScriptFunctionData
 {
 	const char* name;
-	ScriptFunctionPointer func;
+	const ScriptFunctionPointer func;
 
 	constexpr ScriptFunctionData(const char* name, ScriptFunctionPointer func) : name(name), func(func) {}
+};
+
+struct ScriptCallbackData
+{
+	const char* name;
+	const unsigned int index;
+	const ScriptIdentity callback;
+
+	template<size_t N>
+	constexpr ScriptCallbackData(const char(&name)[N], ScriptIdentity callback) : name(name), index(Utils::hash(name)), callback(callback) {}
 };
 
 class Script
 {
 	private:
 		Script(char* path);
-		~Script();
 
 #ifdef __WIN32__
 		typedef HMODULE lib_t;
@@ -95,39 +120,26 @@ class Script
 		};
 
 		bool cpp_script;
+		std::unordered_map<unsigned int, FunctionEllipsis<void>> callbacks_;
 
 		static void GetArguments(std::vector<boost::any>& params, va_list args, const std::string& def);
 
-		void (*fexec)();
-		void (*fOnSpawn)(RakNet::NetworkID);
-		void (*fOnActivate)(RakNet::NetworkID, RakNet::NetworkID);
-		void (*fOnCellChange)(RakNet::NetworkID, unsigned int);
-		void (*fOnLockChange)(RakNet::NetworkID, RakNet::NetworkID, unsigned int);
-		void (*fOnContainerItemChange)(RakNet::NetworkID, unsigned int, signed int, double);
-		void (*fOnActorValueChange)(RakNet::NetworkID, unsigned char, double);
-		void (*fOnActorBaseValueChange)(RakNet::NetworkID, unsigned char, double);
-		void (*fOnActorAlert)(RakNet::NetworkID, bool);
-		void (*fOnActorSneak)(RakNet::NetworkID, bool);
-		void (*fOnActorDeath)(RakNet::NetworkID, RakNet::NetworkID, unsigned short, signed char);
-		void (*fOnActorEquipItem)(RakNet::NetworkID, unsigned int, double);
-		void (*fOnActorUnequipItem)(RakNet::NetworkID, unsigned int, double);
-		void (*fOnActorPunch)(RakNet::NetworkID, bool);
-		void (*fOnActorFireWeapon)(RakNet::NetworkID, unsigned int);
-		void (*fOnPlayerDisconnect)(RakNet::NetworkID, Reason);
-		unsigned int (*fOnPlayerRequestGame)(RakNet::NetworkID);
-		bool (*fOnPlayerChat)(RakNet::NetworkID, char*);
-		void (*fOnWindowMode)(RakNet::NetworkID, bool);
-		void (*fOnWindowClick)(RakNet::NetworkID, RakNet::NetworkID);
-		void (*fOnWindowTextChange)(RakNet::NetworkID, RakNet::NetworkID, const char*);
-		bool (*fOnClientAuthenticate)(const char*, const char*);
-		void (*fOnGameYearChange)(unsigned int);
-		void (*fOnGameMonthChange)(unsigned int);
-		void (*fOnGameDayChange)(unsigned int);
-		void (*fOnGameHourChange)(unsigned int);
-		void (*fOnServerInit)();
-		void (*fOnServerExit)();
+		template<typename R>
+		R GetScript(const char* name)
+		{
+			if (cpp_script)
+			{
+#ifdef __WIN32__
+				return reinterpret_cast<R>(GetProcAddress(lib, name));
+#else
+				return reinterpret_cast<R>(dlsym(lib, name));
+#endif
+			}
+			else
+				return reinterpret_cast<R>(PAWN::IsCallbackPresent(amx, name));
+		}
 
-		typedef std::vector<Script*> ScriptList;
+		typedef std::vector<std::unique_ptr<Script>> ScriptList;
 		typedef std::unordered_map<RakNet::NetworkID, std::unique_ptr<ItemList>> ScriptItemLists;
 		typedef std::unordered_map<unsigned int, std::vector<unsigned int>> DeletedObjects;
 		typedef std::pair<std::chrono::system_clock::time_point, double> GameTime;
@@ -136,16 +148,17 @@ class Script
 		static ScriptList scripts;
 		static ScriptItemLists scriptIL;
 		static DeletedObjects deletedStatic;
-		static GameTime gameTime;
-		static GameWeather gameWeather;
+		static GameTime time;
+		static GameWeather weather;
 
 		Script(const Script&) = delete;
 		Script& operator=(const Script&) = delete;
 
 	public:
+		~Script();
+
 		static void LoadScripts(char* scripts, char* base);
 		static void Initialize();
-		static void Run();
 		static void UnloadScripts();
 
 		static RakNet::NetworkID CreateTimer(ScriptFunc timer, unsigned int interval);
@@ -169,33 +182,6 @@ class Script
 
 		static unsigned long long Timer_Respawn(RakNet::NetworkID id);
 		static unsigned long long Timer_GameTime();
-
-		static void OnSpawn(RakNet::NetworkID id);
-		static void OnActivate(RakNet::NetworkID id, RakNet::NetworkID actor);
-		static void OnCellChange(RakNet::NetworkID id, unsigned int cell);
-		static void OnLockChange(RakNet::NetworkID id, RakNet::NetworkID actor, unsigned int lock);
-		static void OnContainerItemChange(RakNet::NetworkID id, unsigned int baseID, signed int count, double condition);
-		static void OnActorValueChange(RakNet::NetworkID id, unsigned char index, bool base, double value);
-		static void OnActorAlert(RakNet::NetworkID id, bool alerted);
-		static void OnActorSneak(RakNet::NetworkID id, bool sneaking);
-		static void OnActorDeath(RakNet::NetworkID id, RakNet::NetworkID killer, unsigned short limbs, signed char cause);
-		static void OnActorEquipItem(RakNet::NetworkID id, unsigned int baseID, double condition);
-		static void OnActorUnequipItem(RakNet::NetworkID id, unsigned int baseID, double condition);
-		static void OnActorPunch(RakNet::NetworkID id, bool power);
-		static void OnActorFireWeapon(RakNet::NetworkID id, unsigned int weapon);
-		static void OnPlayerDisconnect(RakNet::NetworkID id, Reason reason);
-		static unsigned int OnPlayerRequestGame(RakNet::NetworkID id);
-		static bool OnPlayerChat(RakNet::NetworkID id, std::string& message);
-		static void OnWindowMode(RakNet::NetworkID id, bool enabled);
-		static void OnWindowClick(RakNet::NetworkID id, RakNet::NetworkID player);
-		static void OnWindowTextChange(RakNet::NetworkID id, RakNet::NetworkID player, const std::string& text);
-		static bool OnClientAuthenticate(const std::string& name, const std::string& pwd);
-		static void OnGameYearChange(unsigned int year);
-		static void OnGameMonthChange(unsigned int month);
-		static void OnGameDayChange(unsigned int day);
-		static void OnGameHourChange(unsigned int hour);
-		static void OnServerInit();
-		static void OnServerExit();
 
 		static const char* ValueToString(unsigned char index);
 		static const char* AxisToString(unsigned char index);
@@ -506,6 +492,106 @@ class Script
 			{"SetEditMaxLength", Script::SetEditMaxLength},
 			{"SetEditValidation", Script::SetEditValidation},
 		};
+
+		static constexpr ScriptCallbackData callbacks[] {
+			{"OnSpawn", Function<void, RakNet::NetworkID>()},
+			{"OnActivate", Function<void, RakNet::NetworkID, RakNet::NetworkID>()},
+			{"OnCellChange", Function<void, RakNet::NetworkID, unsigned int>()},
+			{"OnLockChange", Function<void, RakNet::NetworkID, RakNet::NetworkID, unsigned int>()},
+			{"OnContainerItemChange", Function<void, RakNet::NetworkID, unsigned int, signed int, double>()},
+			{"OnActorValueChange", Function<void, RakNet::NetworkID, unsigned char, double>()},
+			{"OnActorBaseValueChange", Function<void, RakNet::NetworkID, unsigned char, double>()},
+			{"OnActorAlert", Function<void, RakNet::NetworkID, bool>()},
+			{"OnActorSneak", Function<void, RakNet::NetworkID, bool>()},
+			{"OnActorDeath", Function<void, RakNet::NetworkID, RakNet::NetworkID, unsigned short, signed char>()},
+			{"OnActorEquipItem", Function<void, RakNet::NetworkID, unsigned int, double>()},
+			{"OnActorUnequipItem", Function<void, RakNet::NetworkID, unsigned int, double>()},
+			{"OnActorPunch", Function<void, RakNet::NetworkID, bool>()},
+			{"OnActorFireWeapon", Function<void, RakNet::NetworkID, unsigned int>()},
+			{"OnPlayerDisconnect", Function<void, RakNet::NetworkID, Reason>()},
+			{"OnPlayerRequestGame", Function<unsigned int, RakNet::NetworkID>()},
+			{"OnPlayerChat", Function<bool, RakNet::NetworkID, char*>()},
+			{"OnWindowMode", Function<void, RakNet::NetworkID, bool>()},
+			{"OnWindowClick", Function<void, RakNet::NetworkID, RakNet::NetworkID>()},
+			{"OnWindowTextChange", Function<void, RakNet::NetworkID, RakNet::NetworkID, const char*>()},
+			{"OnClientAuthenticate", Function<bool, const char*, const char*>()},
+			{"OnGameYearChange", Function<void, unsigned int>()},
+			{"OnGameMonthChange", Function<void, unsigned int>()},
+			{"OnGameDayChange", Function<void, unsigned int>()},
+			{"OnGameHourChange", Function<void, unsigned int>()},
+			{"OnServerInit", Function<void>()},
+			{"OnServerExit", Function<void>()},
+		};
+
+		static constexpr ScriptCallbackData const& GetScriptCallback(const unsigned int I, const unsigned int N = 0) {
+			return callbacks[N].index == I ? callbacks[N] : GetScriptCallback(I, N + 1);
+		}
+
+		template<unsigned int I>
+		using CBR = typename CharType<GetScriptCallback(I).callback.ret>::type;
+
+		template<std::size_t N>
+		static constexpr unsigned int CBI(const char(&str)[N]) {
+			return Utils::hash(str);
+		}
+
+		template<unsigned int I, bool B = false, typename... Args>
+		static unsigned int Call(CBR<I>& result, Args&&... args) {
+			constexpr ScriptCallbackData const& data = GetScriptCallback(I);
+			static_assert(data.callback.matches(TypeString<Args...>::value), "Wrong number or types of arguments");
+			using ReturnType = typename CharType<data.callback.ret>::type;
+
+			unsigned int count = 0;
+
+			for (auto& script : scripts)
+			{
+				if (!script->callbacks_.count(I))
+					script->callbacks_.emplace(I, script->GetScript<FunctionEllipsis<void>>(data.name));
+
+				auto callback = script->callbacks_[I];
+
+				if (!callback)
+					continue;
+
+				if (script->cpp_script)
+					result = reinterpret_cast<FunctionEllipsis<ReturnType>>(callback)(std::forward<Args>(args)...);
+				else
+					result = static_cast<ReturnType>(PAWN::Call(script->amx, data.name, data.callback.types, B, std::forward<Args>(args)...));
+
+				++count;
+			}
+
+			return count;
+		}
+
+		template<unsigned int I, bool B = false, typename... Args>
+		static unsigned int Call(Args&&... args) {
+			constexpr ScriptCallbackData const& data = GetScriptCallback(I);
+			static_assert(data.callback.matches(TypeString<Args...>::value), "Wrong number or types of arguments");
+			using ReturnType = typename CharType<data.callback.ret>::type;
+
+			unsigned int count = 0;
+
+			for (auto& script : scripts)
+			{
+				if (!script->callbacks_.count(I))
+					script->callbacks_.emplace(I, script->GetScript<FunctionEllipsis<void>>(data.name));
+
+				auto callback = script->callbacks_[I];
+
+				if (!callback)
+					continue;
+
+				if (script->cpp_script)
+					reinterpret_cast<FunctionEllipsis<ReturnType>>(callback)(std::forward<Args>(args)...);
+				else
+					PAWN::Call(script->amx, data.name, data.callback.types, B, std::forward<Args>(args)...);
+
+				++count;
+			}
+
+			return count;
+		}
 };
 
 #endif

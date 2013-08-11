@@ -80,7 +80,7 @@ class Server
 		/**
 		 * \brief Handles player chat message network packet
 		 */
-		static NetworkResponse ChatMessage(RakNet::RakNetGUID guid, std::string message);
+		static NetworkResponse ChatMessage(RakNet::RakNetGUID guid, const std::string& message);
 };
 
 #endif

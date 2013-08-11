@@ -43,10 +43,12 @@
 		</Build>
 		<Compiler>
 			<Add option="-std=gnu++0x" />
+			<Add directory="." />
 		</Compiler>
 		<Linker>
 			<Add option="-static" />
 		</Linker>
+		<Unit filename="default/pickup.h" />
 		<Unit filename="records.h" />
 		<Unit filename="vaultscript.cpp" />
 		<Unit filename="vaultscript.h" />

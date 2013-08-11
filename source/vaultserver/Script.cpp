@@ -1,5 +1,4 @@
 #include "Script.h"
-#include "PAWN.h"
 #include "Timer.h"
 #include "Public.h"
 #include "Client.h"
@@ -20,12 +19,13 @@ using namespace Values;
 Script::ScriptList Script::scripts;
 Script::ScriptItemLists Script::scriptIL;
 Script::DeletedObjects Script::deletedStatic;
-Script::GameTime Script::gameTime;
-Script::GameWeather Script::gameWeather;
+Script::GameTime Script::time;
+Script::GameWeather Script::weather;
 
 template<typename... Types>
 constexpr char TypeString<Types...>::value[];
 constexpr ScriptFunctionData Script::functions[];
+constexpr ScriptCallbackData Script::callbacks[];
 
 Script::Script(char* path)
 {
@@ -51,54 +51,14 @@ Script::Script(char* path)
 
 		if (!handle)
 			throw VaultException("Was not able to load C++ script: %s", path).stacktrace();
+
 		try
 		{
 			this->lib = handle;
 			this->cpp_script = true;
 
-#ifdef __WIN32__
-	#define GetScript(a,b) (b = (decltype(b)) GetProcAddress(this->lib,a))
-#else
-	#define GetScript(a,b) (b = (decltype(b)) dlsym(this->lib,a))
-#endif
-
-			GetScript("exec", fexec);
-
-			if (!fexec)
-				throw VaultException("Could not find exec() callback in: %s", path).stacktrace();
-
-			const char* vaultprefix;
-			GetScript("vaultprefix", vaultprefix);
+			const char* vaultprefix = GetScript<const char*>("vaultprefix");
 			string vpf(vaultprefix);
-
-			GetScript("OnSpawn", fOnSpawn);
-			GetScript("OnActivate", fOnActivate);
-			GetScript("OnLockChange", fOnLockChange);
-			GetScript("OnCellChange", fOnCellChange);
-			GetScript("OnContainerItemChange", fOnContainerItemChange);
-			GetScript("OnActorValueChange", fOnActorValueChange);
-			GetScript("OnActorBaseValueChange", fOnActorBaseValueChange);
-			GetScript("OnActorAlert", fOnActorAlert);
-			GetScript("OnActorSneak", fOnActorSneak);
-			GetScript("OnActorDeath", fOnActorDeath);
-			GetScript("OnActorEquipItem", fOnActorEquipItem);
-			GetScript("OnActorUnequipItem", fOnActorUnequipItem);
-			GetScript("OnActorPunch", fOnActorPunch);
-			GetScript("OnActorFireWeapon", fOnActorFireWeapon);
-			GetScript("OnPlayerDisconnect", fOnPlayerDisconnect);
-			GetScript("OnPlayerRequestGame", fOnPlayerRequestGame);
-			GetScript("OnPlayerChat", fOnPlayerChat);
-			GetScript("OnWindowMode", fOnWindowMode);
-			GetScript("OnWindowClick", fOnWindowClick);
-			GetScript("OnWindowTextChange", fOnWindowTextChange);
-			GetScript("OnPlayerChat", fOnPlayerChat);
-			GetScript("OnClientAuthenticate", fOnClientAuthenticate);
-			GetScript("OnGameYearChange", fOnGameYearChange);
-			GetScript("OnGameMonthChange", fOnGameMonthChange);
-			GetScript("OnGameDayChange", fOnGameDayChange);
-			GetScript("OnGameHourChange", fOnGameHourChange);
-			GetScript("OnServerInit", fOnServerInit);
-			GetScript("OnServerExit", fOnServerExit);
 
 			auto SetScript = [this](const char* name, ScriptFunctionPointer func)
 			{
@@ -147,6 +107,12 @@ Script::Script(char* path)
 
 			if (err != AMX_ERR_NONE)
 				throw VaultException("PAWN script %s error (%d): \"%s\"", path, err, aux_StrError(err)).stacktrace();
+
+			cell ret;
+			err = PAWN::Exec(amx, &ret, AMX_EXEC_MAIN);
+
+			if (err != AMX_ERR_NONE)
+				throw VaultException("PAWN script %s error (%d): \"%s\"", path, err, aux_StrError(err)).stacktrace();
 		}
 		catch (...)
 		{
@@ -188,14 +154,15 @@ void Script::LoadScripts(char* scripts, char* base)
 	{
 		while (token != nullptr)
 		{
+			// make_unique
 #ifdef __WIN32__
-			Script* script = new Script(token);
+			Script::scripts.emplace_back(new Script(token));
 #else
 			char path[MAX_PATH];
 			snprintf(path, sizeof(path), "%s/%s", base, token);
-			Script* script = new Script(path);
+			Script::scripts.emplace_back(new Script(path));
 #endif
-			Script::scripts.emplace_back(script);
+
 			token = strtok(nullptr, ",");
 		}
 	}
@@ -212,11 +179,11 @@ void Script::Initialize()
 
 	deletedStatic.clear();
 
-	gameTime.first = chrono::system_clock::now();
-	gameTime.second = 1.0;
+	time.first = chrono::system_clock::now();
+	time.second = 1.0;
 	CreateTimer(&Timer_GameTime, 1000);
 
-	gameWeather = DEFAULT_WEATHER;
+	weather = DEFAULT_WEATHER;
 
 	auto object_init = [](FactoryObject& object, const DB::Reference* reference)
 	{
@@ -294,32 +261,12 @@ void Script::Initialize()
 	}
 }
 
-void Script::Run()
-{
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-			script->fexec();
-		else
-		{
-			cell ret;
-			int err = PAWN::Exec(script->amx, &ret, AMX_EXEC_MAIN);
-
-			if (err != AMX_ERR_NONE)
-				throw VaultException("PAWN script error (%d): \"%s\"", err, aux_StrError(err)).stacktrace();
-		}
-	}
-}
-
 void Script::UnloadScripts()
 {
-	for (Script* script : scripts)
-		delete script;
-
 	Timer::TerminateAll();
 	Public::DeleteAll();
-	scripts.clear();
 	scriptIL.clear();
+	scripts.clear();
 }
 
 void Script::GetArguments(vector<boost::any>& params, va_list args, const string& def)
@@ -564,14 +511,14 @@ unsigned long long Script::Timer_Respawn(NetworkID id)
 
 unsigned long long Script::Timer_GameTime()
 {
-	Time64_T t = chrono::duration_cast<chrono::seconds>(gameTime.first.time_since_epoch()).count();
+	Time64_T t = chrono::duration_cast<chrono::seconds>(time.first.time_since_epoch()).count();
 
 	TM _tm;
 	gmtime64_r(&t, &_tm);
 
-	gameTime.first += chrono::milliseconds(static_cast<unsigned long long>(1000ull * gameTime.second));
+	time.first += chrono::milliseconds(static_cast<unsigned long long>(1000ull * time.second));
 
-	t = chrono::duration_cast<chrono::seconds>(gameTime.first.time_since_epoch()).count();
+	t = chrono::duration_cast<chrono::seconds>(time.first.time_since_epoch()).count();
 	TM _tm_new;
 	gmtime64_r(&t, &_tm_new);
 
@@ -582,7 +529,7 @@ unsigned long long Script::Timer_GameTime()
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		});
 
-		Script::OnGameYearChange(_tm_new.tm_year + 1900);
+		Call<CBI("OnGameYearChange")>(_tm_new.tm_year + 1900);
 	}
 
 	if (_tm.tm_mon != _tm_new.tm_mon)
@@ -592,7 +539,7 @@ unsigned long long Script::Timer_GameTime()
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		});
 
-		Script::OnGameMonthChange(_tm_new.tm_mon);
+		Call<CBI("OnGameMonthChange")>(_tm_new.tm_mon);
 	}
 
 	if (_tm.tm_mday != _tm_new.tm_mday)
@@ -602,7 +549,7 @@ unsigned long long Script::Timer_GameTime()
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		});
 
-		Script::OnGameDayChange(_tm_new.tm_mday);
+		Call<CBI("OnGameDayChange")>(_tm_new.tm_mday);
 	}
 
 	if (_tm.tm_hour != _tm_new.tm_hour)
@@ -612,409 +559,16 @@ unsigned long long Script::Timer_GameTime()
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		});
 
-		Script::OnGameHourChange(_tm_new.tm_hour);
+		Call<CBI("OnGameHourChange")>(_tm_new.tm_hour);
 	}
 
 	return 1;
 }
 
-void Script::OnSpawn(NetworkID id)
-{
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-		{
-			if (script->fOnSpawn)
-				script->fOnSpawn(id);
-		}
-		else if (PAWN::IsCallbackPresent(script->amx, "OnSpawn"))
-			PAWN::Call(script->amx, "OnSpawn", "l", 0, id);
-	}
-}
-
-void Script::OnActivate(NetworkID id, NetworkID actor)
-{
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-		{
-			if (script->fOnActivate)
-				script->fOnActivate(id, actor);
-		}
-		else if (PAWN::IsCallbackPresent(script->amx, "OnActivate"))
-			PAWN::Call(script->amx, "OnActivate", "ll", 0, actor, id);
-	}
-}
-
-void Script::OnCellChange(NetworkID id, unsigned int cell)
-{
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-		{
-			if (script->fOnCellChange)
-				script->fOnCellChange(id, cell);
-		}
-		else if (PAWN::IsCallbackPresent(script->amx, "OnCellChange"))
-			PAWN::Call(script->amx, "OnCellChange", "il", 0, cell, id);
-	}
-}
-
-void Script::OnLockChange(NetworkID id, NetworkID actor, unsigned int lock)
-{
+/*
 	if (lock < 5 && DB::Terminal::Lookup(GameFactory::GetObject(id)->GetBase()))
 		lock *= 25;
-
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-		{
-			if (script->fOnLockChange)
-				script->fOnLockChange(id, actor, lock);
-		}
-		else if (PAWN::IsCallbackPresent(script->amx, "OnLockChange"))
-			PAWN::Call(script->amx, "OnLockChange", "ill", 0, lock, actor, id);
-	}
-}
-
-void Script::OnContainerItemChange(NetworkID id, unsigned int baseID, signed int count, double condition)
-{
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-		{
-			if (script->fOnContainerItemChange)
-				script->fOnContainerItemChange(id, baseID, count, condition);
-		}
-		else if (PAWN::IsCallbackPresent(script->amx, "OnContainerItemChange"))
-			PAWN::Call(script->amx, "OnContainerItemChange", "fqil", 0, condition, count, baseID, id);
-	}
-}
-
-void Script::OnActorValueChange(NetworkID id, unsigned char index, bool base, double value)
-{
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-		{
-			if (base)
-			{
-				if (script->fOnActorBaseValueChange)
-					script->fOnActorBaseValueChange(id, index, value);
-			}
-			else if (script->fOnActorValueChange)
-				script->fOnActorValueChange(id, index, value);
-		}
-		else
-		{
-			if (base)
-			{
-				if (PAWN::IsCallbackPresent(script->amx, "OnActorBaseValueChange"))
-					PAWN::Call(script->amx, "OnActorBaseValueChange", "fil", 0, value, (unsigned int) index, id);
-			}
-			else if (PAWN::IsCallbackPresent(script->amx, "OnActorValueChange"))
-				PAWN::Call(script->amx, "OnActorValueChange", "fil", 0, value, (unsigned int) index, id);
-		}
-	}
-}
-
-void Script::OnActorAlert(NetworkID id, bool alerted)
-{
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-		{
-			if (script->fOnActorAlert)
-				script->fOnActorAlert(id, alerted);
-		}
-		else if (PAWN::IsCallbackPresent(script->amx, "OnActorAlert"))
-			PAWN::Call(script->amx, "OnActorAlert", "il", 0, (unsigned int) alerted, id);
-	}
-}
-
-void Script::OnActorSneak(NetworkID id, bool sneaking)
-{
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-		{
-			if (script->fOnActorSneak)
-				script->fOnActorSneak(id, sneaking);
-		}
-		else if (PAWN::IsCallbackPresent(script->amx, "OnActorSneak"))
-			PAWN::Call(script->amx, "OnActorSneak", "il", 0, (unsigned int) sneaking, id);
-	}
-}
-
-void Script::OnActorDeath(NetworkID id, NetworkID killer, unsigned short limbs, signed char cause)
-{
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-		{
-			if (script->fOnActorDeath)
-				script->fOnActorDeath(id, killer, limbs, cause);
-		}
-		else if (PAWN::IsCallbackPresent(script->amx, "OnActorDeath"))
-			PAWN::Call(script->amx, "OnActorDeath", "qill", 0, cause, limbs, killer, id);
-	}
-}
-
-void Script::OnActorEquipItem(NetworkID id, unsigned int baseID, double condition)
-{
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-		{
-			if (script->fOnActorEquipItem)
-				script->fOnActorEquipItem(id, baseID, condition);
-		}
-		else if (PAWN::IsCallbackPresent(script->amx, "OnActorEquipItem"))
-			PAWN::Call(script->amx, "OnActorEquipItem", "fil", 0, condition, baseID, id);
-	}
-}
-
-void Script::OnActorUnequipItem(NetworkID id, unsigned int baseID, double condition)
-{
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-		{
-			if (script->fOnActorUnequipItem)
-				script->fOnActorUnequipItem(id, baseID, condition);
-		}
-		else if (PAWN::IsCallbackPresent(script->amx, "OnActorUnequipItem"))
-			PAWN::Call(script->amx, "OnActorUnequipItem", "fil", 0, condition, baseID, id);
-	}
-}
-
-void Script::OnActorPunch(NetworkID id, bool power)
-{
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-		{
-			if (script->fOnActorPunch)
-				script->fOnActorPunch(id, power);
-		}
-		else if (PAWN::IsCallbackPresent(script->amx, "OnActorPunch"))
-			PAWN::Call(script->amx, "OnActorPunch", "il", 0, power, id);
-	}
-}
-
-void Script::OnActorFireWeapon(NetworkID id, unsigned int weapon)
-{
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-		{
-			if (script->fOnActorFireWeapon)
-				script->fOnActorFireWeapon(id, weapon);
-		}
-		else if (PAWN::IsCallbackPresent(script->amx, "OnActorFireWeapon"))
-			PAWN::Call(script->amx, "OnActorFireWeapon", "il", 0, weapon, id);
-	}
-}
-
-void Script::OnPlayerDisconnect(NetworkID id, Reason reason)
-{
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-		{
-			if (script->fOnPlayerDisconnect)
-				script->fOnPlayerDisconnect(id, reason);
-		}
-		else if (PAWN::IsCallbackPresent(script->amx, "OnPlayerDisconnect"))
-			PAWN::Call(script->amx, "OnPlayerDisconnect", "il", 0, (unsigned int) reason, id);
-	}
-}
-
-unsigned int Script::OnPlayerRequestGame(NetworkID id)
-{
-	unsigned int result = 0;
-
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-		{
-			if (script->fOnPlayerRequestGame)
-				result = script->fOnPlayerRequestGame(id);
-		}
-		else if (PAWN::IsCallbackPresent(script->amx, "OnPlayerRequestGame"))
-			result = (unsigned int) PAWN::Call(script->amx, "OnPlayerRequestGame", "l", 0, id);
-	}
-
-	return result;
-}
-
-bool Script::OnPlayerChat(NetworkID id, string& message)
-{
-	bool result = true;
-
-	char _message[MAX_CHAT_LENGTH + 1];
-	ZeroMemory(_message, sizeof(_message));
-	strncpy(_message, message.c_str(), sizeof(_message) - 1);
-
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-		{
-			if (script->fOnPlayerChat)
-				result = script->fOnPlayerChat(id, _message);
-		}
-		else if (PAWN::IsCallbackPresent(script->amx, "OnPlayerChat"))
-			result = static_cast<bool>(PAWN::Call(script->amx, "OnPlayerChat", "sl", 1, _message, id));
-	}
-
-	message.assign(_message);
-
-	return result;
-}
-
-void Script::OnWindowMode(NetworkID id, bool enabled)
-{
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-		{
-			if (script->fOnWindowMode)
-				script->fOnWindowMode(id, enabled);
-		}
-		else if (PAWN::IsCallbackPresent(script->amx, "OnWindowMode"))
-			PAWN::Call(script->amx, "OnWindowMode", "il", 0, enabled, id);
-	}
-}
-
-void Script::OnWindowClick(NetworkID id, NetworkID player)
-{
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-		{
-			if (script->fOnWindowClick)
-				script->fOnWindowClick(id, player);
-		}
-		else if (PAWN::IsCallbackPresent(script->amx, "OnWindowClick"))
-			PAWN::Call(script->amx, "OnWindowClick", "ll", 0, player, id);
-	}
-}
-
-void Script::OnWindowTextChange(NetworkID id, NetworkID player, const string& text)
-{
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-		{
-			if (script->fOnWindowTextChange)
-				script->fOnWindowTextChange(id, player, text.c_str());
-		}
-		else if (PAWN::IsCallbackPresent(script->amx, "OnWindowTextChange"))
-			PAWN::Call(script->amx, "OnWindowTextChange", "sll", 0, text.c_str(), player, id);
-	}
-}
-
-bool Script::OnClientAuthenticate(const string& name, const string& pwd)
-{
-	bool result = true;
-
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-		{
-			if (script->fOnClientAuthenticate)
-				result = script->fOnClientAuthenticate(name.c_str(), pwd.c_str());
-		}
-		else if (PAWN::IsCallbackPresent(script->amx, "OnClientAuthenticate"))
-			result = static_cast<bool>(PAWN::Call(script->amx, "OnClientAuthenticate", "ss", 0, pwd.c_str(), name.c_str()));
-	}
-
-	return result;
-}
-
-void Script::OnGameYearChange(unsigned int year)
-{
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-		{
-			if (script->fOnGameYearChange)
-				script->fOnGameYearChange(year);
-		}
-		else if (PAWN::IsCallbackPresent(script->amx, "OnGameYearChange"))
-			PAWN::Call(script->amx, "OnGameYearChange", "i", 0, year);
-	}
-}
-
-void Script::OnGameMonthChange(unsigned int month)
-{
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-		{
-			if (script->fOnGameMonthChange)
-				script->fOnGameMonthChange(month);
-		}
-		else if (PAWN::IsCallbackPresent(script->amx, "OnGameMonthChange"))
-			PAWN::Call(script->amx, "OnGameMonthChange", "i", 0, month);
-	}
-}
-
-void Script::OnGameDayChange(unsigned int day)
-{
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-		{
-			if (script->fOnGameDayChange)
-				script->fOnGameDayChange(day);
-		}
-		else if (PAWN::IsCallbackPresent(script->amx, "OnGameDayChange"))
-			PAWN::Call(script->amx, "OnGameDayChange", "i", 0, day);
-	}
-}
-
-void Script::OnGameHourChange(unsigned int hour)
-{
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-		{
-			if (script->fOnGameHourChange)
-				script->fOnGameHourChange(hour);
-		}
-		else if (PAWN::IsCallbackPresent(script->amx, "OnGameHourChange"))
-			PAWN::Call(script->amx, "OnGameHourChange", "i", 0, hour);
-	}
-}
-
-void Script::OnServerInit()
-{
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-		{
-			if (script->fOnServerInit)
-				script->fOnServerInit();
-		}
-		else if (PAWN::IsCallbackPresent(script->amx, "OnServerInit"))
-			PAWN::Call(script->amx, "OnServerInit", "", 0);
-	}
-}
-
-void Script::OnServerExit()
-{
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-		{
-			if (script->fOnServerExit)
-				script->fOnServerExit();
-		}
-		else if (PAWN::IsCallbackPresent(script->amx, "OnServerExit"))
-			PAWN::Call(script->amx, "OnServerExit", "", 0);
-	}
-}
+*/
 
 const char* Script::ValueToString(unsigned char index)
 {
@@ -1107,12 +661,12 @@ void Script::SetSpawnCell(unsigned int cell)
 
 void Script::SetGameWeather(unsigned int weather)
 {
-	if (Script::gameWeather == weather)
+	if (Script::weather == weather)
 		return;
 
 	if (DB::Record::IsValidWeather(weather))
 	{
-		Script::gameWeather = weather;
+		Script::weather = weather;
 
 		Network::Queue({Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_GAME_WEATHER>(weather),
@@ -1131,49 +685,41 @@ void Script::SetGameTime(signed long long time)
 	if (!success)
 		return;
 
-	Time64_T t = chrono::duration_cast<chrono::seconds>(gameTime.first.time_since_epoch()).count();
+	Time64_T t = chrono::duration_cast<chrono::seconds>(Script::time.first.time_since_epoch()).count();
 
 	TM _tm;
 	gmtime64_r(&t, &_tm);
 
 	if (_tm.tm_year != _tm_new.tm_year)
-	{
 		Network::Queue({Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameYear, _tm_new.tm_year),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		});
-	}
 
 	if (_tm.tm_mon != _tm_new.tm_mon)
-	{
 		Network::Queue({Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameMonth, _tm_new.tm_mon),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		});
-	}
 
 	if (_tm.tm_mday != _tm_new.tm_mday)
-	{
 		Network::Queue({Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameDay, _tm_new.tm_mday),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		});
-	}
 
 	if (_tm.tm_hour != _tm_new.tm_hour)
-	{
 		Network::Queue({Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameHour, _tm_new.tm_hour),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		});
-	}
 
-	gameTime.first = chrono::time_point<chrono::system_clock>(chrono::seconds(t_new));
+	Script::time.first = chrono::time_point<chrono::system_clock>(chrono::seconds(t_new));
 }
 
 void Script::SetGameYear(unsigned int year)
 {
-	Time64_T t = chrono::duration_cast<chrono::seconds>(gameTime.first.time_since_epoch()).count();
+	Time64_T t = chrono::duration_cast<chrono::seconds>(time.first.time_since_epoch()).count();
 
 	TM _tm;
 	gmtime64_r(&t, &_tm);
@@ -1185,7 +731,7 @@ void Script::SetGameYear(unsigned int year)
 
 		if (t != -1)
 		{
-			gameTime.first = chrono::time_point<chrono::system_clock>(chrono::seconds(t));
+			time.first = chrono::time_point<chrono::system_clock>(chrono::seconds(t));
 
 			Network::Queue({Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameYear, year),
@@ -1200,7 +746,7 @@ void Script::SetGameMonth(unsigned int month)
 	if (month > 11)
 		return;
 
-	Time64_T t = chrono::duration_cast<chrono::seconds>(gameTime.first.time_since_epoch()).count();
+	Time64_T t = chrono::duration_cast<chrono::seconds>(time.first.time_since_epoch()).count();
 
 	TM _tm;
 	gmtime64_r(&t, &_tm);
@@ -1212,7 +758,7 @@ void Script::SetGameMonth(unsigned int month)
 
 		if (t != -1)
 		{
-			gameTime.first = chrono::time_point<chrono::system_clock>(chrono::seconds(t));
+			time.first = chrono::time_point<chrono::system_clock>(chrono::seconds(t));
 
 			Network::Queue({Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameMonth, month),
@@ -1227,7 +773,7 @@ void Script::SetGameDay(unsigned int day)
 	if (!day || day > 31)
 		return;
 
-	Time64_T t = chrono::duration_cast<chrono::seconds>(gameTime.first.time_since_epoch()).count();
+	Time64_T t = chrono::duration_cast<chrono::seconds>(time.first.time_since_epoch()).count();
 
 	TM _tm;
 	gmtime64_r(&t, &_tm);
@@ -1239,7 +785,7 @@ void Script::SetGameDay(unsigned int day)
 
 		if (t != -1)
 		{
-			gameTime.first = chrono::time_point<chrono::system_clock>(chrono::seconds(t));
+			time.first = chrono::time_point<chrono::system_clock>(chrono::seconds(t));
 
 			Network::Queue({Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameDay, day),
@@ -1254,7 +800,7 @@ void Script::SetGameHour(unsigned int hour)
 	if (hour > 23)
 		return;
 
-	Time64_T t = chrono::duration_cast<chrono::seconds>(gameTime.first.time_since_epoch()).count();
+	Time64_T t = chrono::duration_cast<chrono::seconds>(time.first.time_since_epoch()).count();
 
 	TM _tm;
 	gmtime64_r(&t, &_tm);
@@ -1266,7 +812,7 @@ void Script::SetGameHour(unsigned int hour)
 
 		if (t != -1)
 		{
-			gameTime.first = chrono::time_point<chrono::system_clock>(chrono::seconds(t));
+			time.first = chrono::time_point<chrono::system_clock>(chrono::seconds(t));
 
 			Network::Queue({Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameHour, hour),
@@ -1278,7 +824,7 @@ void Script::SetGameHour(unsigned int hour)
 
 void Script::SetTimeScale(double scale)
 {
-	gameTime.second = scale;
+	time.second = scale;
 }
 
 bool Script::IsValid(NetworkID id)
@@ -1369,42 +915,42 @@ unsigned int Script::GetList(unsigned int type, NetworkID** data)
 
 unsigned int Script::GetGameWeather()
 {
-	return Script::gameWeather;
+	return weather;
 }
 
 signed long long Script::GetGameTime()
 {
-	Time64_T t = chrono::duration_cast<chrono::seconds>(gameTime.first.time_since_epoch()).count();
+	Time64_T t = chrono::duration_cast<chrono::seconds>(time.first.time_since_epoch()).count();
 	return t;
 }
 
 unsigned int Script::GetGameYear()
 {
-	Time64_T t = chrono::duration_cast<chrono::seconds>(gameTime.first.time_since_epoch()).count();
+	Time64_T t = chrono::duration_cast<chrono::seconds>(time.first.time_since_epoch()).count();
 	return gmtime64(&t)->tm_year + 1900;
 }
 
 unsigned int Script::GetGameMonth()
 {
-	Time64_T t = chrono::duration_cast<chrono::seconds>(gameTime.first.time_since_epoch()).count();
+	Time64_T t = chrono::duration_cast<chrono::seconds>(time.first.time_since_epoch()).count();
 	return gmtime64(&t)->tm_mon;
 }
 
 unsigned int Script::GetGameDay()
 {
-	Time64_T t = chrono::duration_cast<chrono::seconds>(gameTime.first.time_since_epoch()).count();
+	Time64_T t = chrono::duration_cast<chrono::seconds>(time.first.time_since_epoch()).count();
 	return gmtime64(&t)->tm_mday;
 }
 
 unsigned int Script::GetGameHour()
 {
-	Time64_T t = chrono::duration_cast<chrono::seconds>(gameTime.first.time_since_epoch()).count();
+	Time64_T t = chrono::duration_cast<chrono::seconds>(time.first.time_since_epoch()).count();
 	return gmtime64(&t)->tm_hour;
 }
 
 double Script::GetTimeScale()
 {
-	return gameTime.second;
+	return time.second;
 }
 
 NetworkID Script::GetID(unsigned int refID)
@@ -2134,15 +1680,15 @@ NetworkID Script::SetItemContainer(NetworkID id, NetworkID container)
 		return true;
 	})) return 0;
 
-	NetworkID new_id = Script::AddItem(container, baseID, count, condition, silent);
+	NetworkID new_id = AddItem(container, baseID, count, condition, silent);
 
 	if (!new_id)
 		return 0;
 
 	if (equipped)
-		Script::SetItemEquipped(new_id, true, silent, stick);
+		SetItemEquipped(new_id, true, silent, stick);
 
-	Script::DestroyObject(id);
+	DestroyObject(id);
 
 	return new_id;
 }
@@ -2654,7 +2200,7 @@ void Script::KillActor(NetworkID id, unsigned short limbs, signed char cause)
 		auto player = vaultcast<Player>(actor);
 
 		if (player)
-			Script::CreateTimerEx(reinterpret_cast<ScriptFunc>(&Script::Timer_Respawn), player->GetPlayerRespawnTime(), "l", id);
+			CreateTimerEx(reinterpret_cast<ScriptFunc>(&Timer_Respawn), player->GetPlayerRespawnTime(), "l", id);
 	});
 }
 

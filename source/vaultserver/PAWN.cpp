@@ -61,9 +61,6 @@ void after_call(const unsigned int& result) {
 	free_data(result);
 }
 
-template<typename R>
-using FunctionPointerEllipsis = R(*)(...);
-
 template<typename R, unsigned int I, unsigned int F>
 struct PAWN_extract_ {
 	inline static R PAWN_extract(AMX*&&, const cell*&& params) {
@@ -127,7 +124,7 @@ struct PAWN_dispatch_<0, F> {
 	template<typename R, typename... Args>
 	inline static R PAWN_dispatch(AMX*&&, const cell*&&, Args&&... args) {
 		constexpr ScriptFunctionData const& F_ = Script::functions[F];
-		return reinterpret_cast<FunctionPointerEllipsis<R>>(F_.func.addr)(forward<Args>(args)...);
+		return reinterpret_cast<FunctionEllipsis<R>>(F_.func.addr)(forward<Args>(args)...);
 	}
 };
 
@@ -587,49 +584,51 @@ cell PAWN::Call(AMX* amx, const char* name, const char* argl, int buf, ...)
 			throw VaultException("PAWN runtime error (%d): \"%s\"", err, aux_StrError(err)).stacktrace();
 
 		unsigned int len = strlen(argl);
+		vector<cell> args_amx;
 
-		for (unsigned int i = 0; i < len; i++)
+		for (unsigned int i = 0; i < len; ++i)
 		{
 			switch (argl[i])
 			{
 				case 'i':
-				{
-					cell value = (cell) va_arg(args, unsigned int);
-					amx_Push(amx, value);
+					args_amx.emplace_back(va_arg(args, unsigned int));
 					break;
-				}
 
 				case 'q':
-				{
-					cell value = (cell) va_arg(args, signed int);
-					amx_Push(amx, value);
+					args_amx.emplace_back(va_arg(args, signed int));
 					break;
-				}
 
 				case 'l':
-				{
-					cell value = (cell) va_arg(args, unsigned long long);
-					amx_Push(amx, value);
+					args_amx.emplace_back(va_arg(args, unsigned long long));
 					break;
-				}
 
 				case 'f':
 				{
 					double value = va_arg(args, double);
-					amx_Push(amx, amx_ftoc(value));
+					args_amx.emplace_back(amx_ftoc(value));
 					break;
 				}
 
 				case 'p':
-				{
-					cell value = (cell) va_arg(args, void*);
-					amx_Push(amx, value);
+					args_amx.emplace_back(reinterpret_cast<unsigned int>(va_arg(args, void*)));
 					break;
-				}
 
 				case 's':
+					args_amx.emplace_back(reinterpret_cast<unsigned int>(va_arg(args, char*)));
+					break;
+
+				default:
+					throw VaultException("PAWN call: Unknown argument identifier %02X", argl[i]).stacktrace();
+			}
+		}
+
+		for (unsigned int i = len; i; --i)
+		{
+			switch (argl[i - 1])
+			{
+				case 's':
 				{
-					char* string = va_arg(args, char*);
+					char* string = reinterpret_cast<char*>(static_cast<unsigned int>(args_amx[i - 1]));
 					cell* store;
 					amx_PushString(amx, &store, string, 1, 0);
 					strings.emplace_back(store, string);
@@ -637,7 +636,8 @@ cell PAWN::Call(AMX* amx, const char* name, const char* argl, int buf, ...)
 				}
 
 				default:
-					throw VaultException("PAWN call: Unknown argument identifier %02X", argl[i]).stacktrace();
+					amx_Push(amx, args_amx[i - 1]);
+					break;
 			}
 		}
 
@@ -647,19 +647,8 @@ cell PAWN::Call(AMX* amx, const char* name, const char* argl, int buf, ...)
 			throw VaultException("PAWN runtime error (%d): \"%s\"", err, aux_StrError(err)).stacktrace();
 
 		if (buf != 0)
-		{
 			for (const auto& str : strings)
-			{
-				int length;
-				amx_StrLen(str.first, &length);
-
-				if (buf >= length)
-				{
-					ZeroMemory(str.second, buf);
-					amx_GetString(str.second, str.first, 0, UNLIMITED);
-				}
-			}
-		}
+				amx_GetString(str.second, str.first, 0, strlen(str.second) + 1);
 
 		if (!strings.empty())
 			amx_Release(amx, strings[0].first);

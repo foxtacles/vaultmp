@@ -291,8 +291,7 @@ void Dedicated::DedicatedThread()
 		Utils::timestamp();
 		printf("Dedicated server initialized, running scripts now\n");
 
-		Script::Run();
-		Script::OnServerInit();
+		Script::Call<Script::CBI("OnServerInit")>();
 
 		try
 		{
@@ -345,11 +344,11 @@ void Dedicated::DedicatedThread()
 		}
 		catch (...)
 		{
-			Script::OnServerExit();
+			Script::Call<Script::CBI("OnServerExit")>();
 			throw;
 		}
 
-		Script::OnServerExit();
+		Script::Call<Script::CBI("OnServerExit")>();
 	}
 	catch (exception& e)
 	{

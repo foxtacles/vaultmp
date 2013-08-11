@@ -7,32 +7,32 @@
 
 #include <string>
 
-class Utils
+namespace Utils
 {
-	private:
-		static unsigned int updateCRC32(unsigned char ch, unsigned int crc);
+		template<std::size_t N>
+		constexpr unsigned int hash(const char(&str)[N], std::size_t I = N) {
+			return (I == 1 ? ((2166136261u ^ str[0]) * 16777619u) : ((hash(str, I - 1) ^ str[I - 1]) * 16777619u));
+		}
 
-		Utils();
-
-	public:
-		static void timestamp();
-		static int progress_func(double TotalToDownload, double NowDownloaded);
-		static bool DoubleCompare(double a, double b, double epsilon);
-		static std::string toString(signed int value);
-		static std::string toString(unsigned int value);
-		static std::string toString(unsigned char value);
-		static std::string toString(double value);
-		static std::string toString(unsigned long long value);
-		static std::string str_replace(const std::string& source, const char* find, const char* replace);
-		static std::string& RemoveExtension(std::string& file);
-		static const char* FileOnly(const char* path);
-		static unsigned int FileLength(const char* file);
-		static unsigned int crc32buf(char* buf, size_t len);
-		static bool crc32file(const char* name, unsigned int* crc);
+		void timestamp();
+		int progress_func(double TotalToDownload, double NowDownloaded);
+		bool DoubleCompare(double a, double b, double epsilon);
+		std::string toString(signed int value);
+		std::string toString(unsigned int value);
+		std::string toString(unsigned char value);
+		std::string toString(double value);
+		std::string toString(unsigned long long value);
+		std::string str_replace(const std::string& source, const char* find, const char* replace);
+		std::string& RemoveExtension(std::string& file);
+		const char* FileOnly(const char* path);
+		unsigned int FileLength(const char* file);
+		unsigned int crc32buf(char* buf, size_t len);
+		unsigned int updateCRC32(unsigned char ch, unsigned int crc);
+		bool crc32file(const char* name, unsigned int* crc);
 
 #ifdef __WIN32__
-		static BOOL GenerateChecksum(const std::string& szFilename, DWORD& dwExistingChecksum, DWORD& dwChecksum);
+		BOOL GenerateChecksum(const std::string& szFilename, DWORD& dwExistingChecksum, DWORD& dwChecksum);
 #endif
-};
+}
 
 #endif
