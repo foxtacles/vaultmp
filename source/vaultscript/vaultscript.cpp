@@ -7,11 +7,6 @@ using namespace vaultmp;
 
 Result VAULTSCRIPT OnItemPickup(ID item, ID actor) noexcept;
 
-Void VAULTSCRIPT exec() noexcept
-{
-
-}
-
 Void VAULTSCRIPT OnServerInit() noexcept
 {
 	std::printf("My first C++ vaultscript <3\n");
