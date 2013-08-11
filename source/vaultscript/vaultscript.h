@@ -422,7 +422,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetPos))(VAULTSPACE ID, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetAngle))(VAULTSPACE ID, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetCell))(VAULTSPACE ID, VAULTSPACE CELL, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetLock))(VAULTSPACE ID, VAULTSPACE Lock) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetLock))(VAULTSPACE ID, VAULTSPACE ID, VAULTSPACE Lock) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetOwner))(VAULTSPACE ID, VAULTSPACE NPC_) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetBaseName))(VAULTSPACE ID, VAULTSPACE cRawString) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateItem))(VAULTSPACE Base, VAULTSPACE ID, VAULTSPACE CELL, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
@@ -447,7 +447,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetActorAlerted))(VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetActorSneaking))(VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(FireWeapon))(VAULTSPACE ID) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(KillActor))(VAULTSPACE ID, VAULTSPACE Limb, VAULTSPACE Death) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(KillActor))(VAULTSPACE ID, VAULTSPACE ID, VAULTSPACE Limb, VAULTSPACE Death) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetActorBaseRace))(VAULTSPACE ID, VAULTSPACE RACE) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(AgeActorBaseRace))(VAULTSPACE ID, VAULTSPACE Count) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetActorBaseSex))(VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
@@ -677,7 +677,7 @@ namespace vaultmp
 	VAULTFUNCTION State SetPos(ID id, Value X, Value Y, Value Z) noexcept { return VAULTAPI(SetPos)(id, X, Y, Z); }
 	VAULTFUNCTION State SetAngle(ID id, Value X, Value Y, Value Z) noexcept { return VAULTAPI(SetAngle)(id, X, Y, Z); }
 	VAULTFUNCTION State SetCell(ID id, CELL cell, Value X = 0.00, Value Y = 0.00, Value Z = 0.00) noexcept { return VAULTAPI(SetCell)(id, cell, X, Y, Z); }
-	VAULTFUNCTION State SetLock(ID id, Lock lock) noexcept { return VAULTAPI(SetLock)(id, lock); }
+	VAULTFUNCTION State SetLock(ID id, ID actor, Lock lock) noexcept { return VAULTAPI(SetLock)(id, actor, lock); }
 	VAULTFUNCTION State SetOwner(ID id, NPC_ owner) noexcept { return VAULTAPI(SetOwner)(id, owner); }
 	VAULTFUNCTION State SetBaseName(ID id, const String& name) noexcept { return VAULTAPI(SetBaseName)(id, name.c_str()); }
 	VAULTFUNCTION State SetBaseName(ID id, cRawString name) noexcept { return VAULTAPI(SetBaseName)(id, name); }
@@ -844,7 +844,7 @@ namespace vaultmp
 	VAULTFUNCTION State SetActorAlerted(ID id, State alerted) noexcept { return VAULTAPI(SetActorAlerted)(id, alerted); }
 	VAULTFUNCTION State SetActorSneaking(ID id, State sneaking) noexcept { return VAULTAPI(SetActorSneaking)(id, sneaking); }
 	VAULTFUNCTION State FireWeapon(ID id) noexcept { return VAULTAPI(FireWeapon)(id); }
-	VAULTFUNCTION Void KillActor(ID id, Limb limbs = Limb::None, Death cause = Death::None) noexcept { return VAULTAPI(KillActor)(id, limbs, cause); }
+	VAULTFUNCTION Void KillActor(ID id, ID killer, Limb limbs = Limb::None, Death cause = Death::None) noexcept { return VAULTAPI(KillActor)(id, killer, limbs, cause); }
 	VAULTFUNCTION State SetActorBaseRace(ID id, RACE race) noexcept { return VAULTAPI(SetActorBaseRace)(id, race); }
 	VAULTFUNCTION State AgeActorBaseRace(ID id, Count age) noexcept { return VAULTAPI(AgeActorBaseRace)(id, age); }
 	VAULTFUNCTION State SetActorBaseSex(ID id, State female) noexcept { return VAULTAPI(SetActorBaseSex)(id, female); }
@@ -938,7 +938,7 @@ namespace vaultmp
 			State SetPos(Value X, Value Y, Value Z) noexcept { return vaultmp::SetPos(id, X, Y, Z); }
 			State SetAngle(Value X, Value Y, Value Z) noexcept { return vaultmp::SetAngle(id, X, Y, Z); }
 			State SetCell(CELL cell, Value X = 0.00, Value Y = 0.00, Value Z = 0.00) noexcept { return vaultmp::SetCell(id, cell, X, Y, Z); }
-			State SetLock(Lock lock) noexcept { return vaultmp::SetLock(id, lock); }
+			State SetLock(ID actor, Lock lock) noexcept { return vaultmp::SetLock(id, actor, lock); }
 			State SetOwner(NPC_ owner) noexcept { return vaultmp::SetOwner(id, owner); }
 			State SetBaseName(const String& name) noexcept { return vaultmp::SetBaseName(id, name); }
 			State SetBaseName(cRawString name) noexcept { return vaultmp::SetBaseName(id, name); }
@@ -1200,7 +1200,7 @@ namespace vaultmp
 			State SetActorAlerted(State alerted) noexcept { return vaultmp::SetActorAlerted(id, alerted); }
 			State SetActorSneaking(State sneaking) noexcept { return vaultmp::SetActorSneaking(id, sneaking); }
 			State FireWeapon() noexcept { return vaultmp::FireWeapon(id); }
-			Void KillActor(Limb limbs = Limb::None, Death cause = Death::None) noexcept { return vaultmp::KillActor(id, limbs, cause); }
+			Void KillActor(ID killer = static_cast<ID>(0), Limb limbs = Limb::None, Death cause = Death::None) noexcept { return vaultmp::KillActor(id, killer, limbs, cause); }
 			State SetActorBaseRace(RACE race) noexcept { return vaultmp::SetActorBaseRace(id, race); }
 			State AgeActorBaseRace(Count age) noexcept { return vaultmp::AgeActorBaseRace(id, age); }
 			State SetActorBaseSex(State female) noexcept { return vaultmp::SetActorBaseSex(id, female); }

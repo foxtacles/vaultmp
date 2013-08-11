@@ -1352,7 +1352,7 @@ void Game::SetLock(const FactoryObject& reference, unsigned int key)
 	unsigned int lock = reference->GetLockLevel();
 
 	if (lock == Lock_Broken) // workaround: can't set lock to broken, so set it to impossible
-		lock = 255;
+		lock = Lock_Impossible;
 
 	auto* object = reference.operator->();
 

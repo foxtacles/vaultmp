@@ -265,7 +265,7 @@ class Script
 		static bool SetAngle(RakNet::NetworkID id, double X, double Y, double Z);
 		static bool SetCell(RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z);
 		static bool SetCell_(RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z, bool nosend);
-		static bool SetLock(RakNet::NetworkID id, unsigned int lock);
+		static bool SetLock(RakNet::NetworkID id, RakNet::NetworkID actor, unsigned int lock);
 		static bool SetOwner(RakNet::NetworkID id, unsigned int owner);
 		static bool SetBaseName(RakNet::NetworkID id, const char* name);
 		static RakNet::NetworkID CreateItem(unsigned int baseID, RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z);
@@ -290,7 +290,7 @@ class Script
 		static bool SetActorAlerted(RakNet::NetworkID id, bool alerted);
 		static bool SetActorSneaking(RakNet::NetworkID id, bool sneaking);
 		static bool FireWeapon(RakNet::NetworkID id);
-		static void KillActor(RakNet::NetworkID id, unsigned short limbs, signed char cause);
+		static void KillActor(RakNet::NetworkID id, RakNet::NetworkID actor, unsigned short limbs, signed char cause);
 		static bool SetActorBaseRace(RakNet::NetworkID id, unsigned int race);
 		static bool AgeActorBaseRace(RakNet::NetworkID id, signed int age);
 		static bool SetActorBaseSex(RakNet::NetworkID id, bool female);
@@ -539,7 +539,7 @@ class Script
 		template<unsigned int I, bool B = false, typename... Args>
 		static unsigned int Call(CBR<I>& result, Args&&... args) {
 			constexpr ScriptCallbackData const& data = CBD(I);
-			static_assert(data.callback.matches(TypeString<Args...>::value), "Wrong number or types of arguments");
+			static_assert(data.callback.matches(TypeString<typename std::remove_reference<Args>::type...>::value), "Wrong number or types of arguments");
 
 			unsigned int count = 0;
 
@@ -567,7 +567,7 @@ class Script
 		template<unsigned int I, bool B = false, typename... Args>
 		static unsigned int Call(Args&&... args) {
 			constexpr ScriptCallbackData const& data = CBD(I);
-			static_assert(data.callback.matches(TypeString<Args...>::value), "Wrong number or types of arguments");
+			static_assert(data.callback.matches(TypeString<typename std::remove_reference<Args>::type...>::value), "Wrong number or types of arguments");
 
 			unsigned int count = 0;
 

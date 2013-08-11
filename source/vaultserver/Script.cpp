@@ -531,7 +531,7 @@ unsigned long long Script::Timer_GameTime()
 	if (_tm.tm_year != _tm_new.tm_year)
 	{
 		Network::Queue({Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameYear, _tm_new.tm_year),
+			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameYear, _tm_new.tm_year + 1900),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		});
 
@@ -570,11 +570,6 @@ unsigned long long Script::Timer_GameTime()
 
 	return 1;
 }
-
-/*
-	if (lock < 5 && DB::Terminal::Lookup(GameFactory::GetObject(id)->GetBase()))
-		lock *= 25;
-*/
 
 const char* Script::ValueToString(unsigned char index)
 {
@@ -697,28 +692,44 @@ void Script::SetGameTime(signed long long time)
 	gmtime64_r(&t, &_tm);
 
 	if (_tm.tm_year != _tm_new.tm_year)
+	{
 		Network::Queue({Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameYear, _tm_new.tm_year),
+			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameYear, _tm_new.tm_year + 1900),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		});
 
+		Call<CBI("OnGameYearChange")>(static_cast<unsigned int>(_tm_new.tm_year + 1900));
+	}
+
 	if (_tm.tm_mon != _tm_new.tm_mon)
+	{
 		Network::Queue({Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameMonth, _tm_new.tm_mon),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		});
 
+		Call<CBI("OnGameMonthChange")>(static_cast<unsigned int>(_tm_new.tm_mon));
+	}
+
 	if (_tm.tm_mday != _tm_new.tm_mday)
+	{
 		Network::Queue({Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameDay, _tm_new.tm_mday),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		});
 
+		Call<CBI("OnGameDayChange")>(static_cast<unsigned int>(_tm_new.tm_mday));
+	}
+
 	if (_tm.tm_hour != _tm_new.tm_hour)
+	{
 		Network::Queue({Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameHour, _tm_new.tm_hour),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		});
+
+		Call<CBI("OnGameHourChange")>(static_cast<unsigned int>(_tm_new.tm_hour));
+	}
 
 	Script::time.first = chrono::time_point<chrono::system_clock>(chrono::seconds(t_new));
 }
@@ -743,6 +754,8 @@ void Script::SetGameYear(unsigned int year)
 				PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameYear, year),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 			});
+
+			Call<CBI("OnGameYearChange")>(year);
 		}
 	}
 }
@@ -770,6 +783,8 @@ void Script::SetGameMonth(unsigned int month)
 				PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameMonth, month),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 			});
+
+			Call<CBI("OnGameMonthChange")>(month);
 		}
 	}
 }
@@ -797,6 +812,8 @@ void Script::SetGameDay(unsigned int day)
 				PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameDay, day),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 			});
+
+			Call<CBI("OnGameDayChange")>(day);
 		}
 	}
 }
@@ -824,6 +841,8 @@ void Script::SetGameHour(unsigned int hour)
 				PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameHour, hour),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 			});
+
+			Call<CBI("OnGameHourChange")>(hour);
 		}
 	}
 }
@@ -1318,7 +1337,9 @@ bool Script::DestroyObject(NetworkID id)
 
 bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 {
-	return GameFactory::Operate<Object, FailPolicy::Return>(id, [id, X, Y, Z](FactoryObject& object) {
+	unsigned int new_cell_;
+
+	bool success = GameFactory::Operate<Object, FailPolicy::Return>(id, [id, X, Y, Z, &new_cell_](FactoryObject& object) {
 		if (object->IsPersistent())
 			return false;
 
@@ -1350,7 +1371,6 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 		object->SetGamePos(Axis_Z, Z);
 
 		NetworkResponse response;
-		unsigned int new_cell_;
 
 		if (new_cell && object->SetNetworkCell((new_cell_ = new_cell->GetBase())))
 		{
@@ -1377,15 +1397,24 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z)
 			);
 		}
 		else
+		{
+			new_cell_ = 0x00000000;
+
 			response.emplace_back(Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_UPDATE_POS>(id, X, Y, Z),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 			);
+		}
 
 		Network::Queue(move(response));
 
 		return true;
 	});
+
+	if (success && new_cell_)
+		Call<CBI("OnCellChange")>(id, new_cell_);
+
+	return success;
 }
 
 bool Script::SetAngle(NetworkID id, double X, double Y, double Z)
@@ -1427,7 +1456,7 @@ bool Script::SetCell(NetworkID id, unsigned int cell, double X, double Y, double
 
 bool Script::SetCell_(NetworkID id, unsigned int cell, double X, double Y, double Z, bool nosend)
 {
-	return GameFactory::Operate<Object, FailPolicy::Return>(id, [id, cell, X, Y, Z, nosend](FactoryObject& object) {
+	bool success = GameFactory::Operate<Object, FailPolicy::Return>(id, [id, &cell, X, Y, Z, nosend](FactoryObject& object) {
 		if (object->IsPersistent())
 			return false;
 
@@ -1509,6 +1538,8 @@ bool Script::SetCell_(NetworkID id, unsigned int cell, double X, double Y, doubl
 
 			state = true;
 		}
+		else
+			cell = 0x00000000;
 
 		if (update_pos && (static_cast<bool>(object->SetNetworkPos(Axis_X, X)) | static_cast<bool>(object->SetNetworkPos(Axis_Y, Y)) | static_cast<bool>(object->SetNetworkPos(Axis_Z, Z))))
 		{
@@ -1530,11 +1561,18 @@ bool Script::SetCell_(NetworkID id, unsigned int cell, double X, double Y, doubl
 
 		return state;
 	});
+
+	if (success && cell && !nosend)
+		Call<CBI("OnCellChange")>(id, cell);
+
+	return success;
 }
 
-bool Script::SetLock(NetworkID id, unsigned int lock)
+bool Script::SetLock(NetworkID id, NetworkID actor, unsigned int lock)
 {
-	return GameFactory::Operate<Object, FailPolicy::Return>(id, [id, lock](FactoryObject& object) mutable {
+	bool is_terminal;
+
+	bool success = GameFactory::Operate<Object, FailPolicy::Return>(id, [id, &lock, &is_terminal](FactoryObject& object) mutable {
 		if (object->GetLockLevel() == Lock_Broken)
 			return false;
 
@@ -1545,7 +1583,9 @@ bool Script::SetLock(NetworkID id, unsigned int lock)
 			if (lock > Lock_VeryHard)
 				lock = Lock_Impossible;
 
-			if (DB::Terminal::Lookup(object->GetBase()))
+			is_terminal = DB::Terminal::Lookup(object->GetBase()).operator bool();
+
+			if (is_terminal)
 			{
 				if (lock == Lock_Impossible)
 					lock = 5;
@@ -1564,6 +1604,21 @@ bool Script::SetLock(NetworkID id, unsigned int lock)
 
 		return true;
 	});
+
+	if (success)
+	{
+		if (is_terminal)
+		{
+			if (lock == 5)
+				lock = Lock_Impossible;
+			else
+				lock *= 25;
+		}
+
+		Call<CBI("OnLockChange")>(id, actor, lock);
+	}
+
+	return success;
 }
 
 bool Script::SetOwner(NetworkID id, unsigned int owner)
@@ -1995,13 +2050,20 @@ NetworkID Script::CreateActor(unsigned int baseID, NetworkID id, unsigned int ce
 
 void Script::SetActorValue(NetworkID id, unsigned char index, double value)
 {
-	GameFactory::Operate<Actor, FailPolicy::Return>(id, [id, index, value](FactoryActor& actor) {
-		if (actor->SetActorValue(index, value))
-			Network::Queue({Network::CreateResponse(
-				PacketFactory::Create<pTypes::ID_UPDATE_VALUE>(id, false, index, value),
-				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-			});
+	bool success = GameFactory::Operate<Actor, FailPolicy::Return>(id, [id, index, value](FactoryActor& actor) {
+		if (!actor->SetActorValue(index, value))
+			return false;
+
+		Network::Queue({Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_VALUE>(id, false, index, value),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+		});
+
+		return true;
 	});
+
+	if (success)
+		Call<CBI("OnActorValueChange")>(id, index, value);
 }
 
 void Script::SetActorBaseValue(NetworkID id, unsigned char index, double value)
@@ -2120,7 +2182,7 @@ bool Script::SetActorWeaponAnimation(NetworkID id, unsigned char anim)
 
 bool Script::SetActorAlerted(NetworkID id, bool alerted)
 {
-	return GameFactory::Operate<Actor, FailPolicy::Return>(id, [id, alerted](FactoryActor& actor) {
+	bool success = GameFactory::Operate<Actor, FailPolicy::Return>(id, [id, alerted](FactoryActor& actor) {
 		if (vaultcast<Player>(actor))
 			return false;
 
@@ -2134,11 +2196,16 @@ bool Script::SetActorAlerted(NetworkID id, bool alerted)
 
 		return true;
 	});
+
+	if (success)
+		Call<CBI("OnActorAlert")>(id, alerted);
+
+	return success;
 }
 
 bool Script::SetActorSneaking(NetworkID id, bool sneaking)
 {
-	return GameFactory::Operate<Actor, FailPolicy::Return>(id, [id, sneaking](FactoryActor& actor) {
+	bool success = GameFactory::Operate<Actor, FailPolicy::Return>(id, [id, sneaking](FactoryActor& actor) {
 		if (vaultcast<Player>(actor))
 			return false;
 
@@ -2152,12 +2219,19 @@ bool Script::SetActorSneaking(NetworkID id, bool sneaking)
 
 		return true;
 	});
+
+	if (success)
+		Call<CBI("OnActorSneak")>(id, sneaking);
+
+	return success;
 }
 
 bool Script::FireWeapon(NetworkID id)
 {
-	return GameFactory::Operate<Actor, FailPolicy::Return>(id, [id](FactoryActor& actor) {
-		unsigned int baseID = actor->GetEquippedWeapon();
+	unsigned int baseID;
+
+	bool success = GameFactory::Operate<Actor, FailPolicy::Return>(id, [id, &baseID](FactoryActor& actor) {
+		baseID = actor->GetEquippedWeapon();
 		auto weapon = DB::Weapon::Lookup(baseID);
 
 		if (!weapon)
@@ -2170,6 +2244,11 @@ bool Script::FireWeapon(NetworkID id)
 
 		return true;
 	});
+
+	if (success)
+		Call<CBI("OnActorFireWeapon")>(id, baseID);
+
+	return success;
 }
 
 bool Script::PlayIdle(NetworkID id, unsigned int idle)
@@ -2192,11 +2271,11 @@ bool Script::PlayIdle(NetworkID id, unsigned int idle)
 	});
 }
 
-void Script::KillActor(NetworkID id, unsigned short limbs, signed char cause)
+void Script::KillActor(NetworkID id, NetworkID actor, unsigned short limbs, signed char cause)
 {
-	GameFactory::Operate<Actor, FailPolicy::Return>(id, [id, limbs, cause](FactoryActor& actor) {
+	bool success = GameFactory::Operate<Actor, FailPolicy::Return>(id, [id, limbs, cause](FactoryActor& actor) {
 		if (!actor->SetActorDead(true))
-			return;
+			return false;
 
 		Network::Queue({Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_DEAD>(id, true, limbs, cause),
@@ -2207,7 +2286,12 @@ void Script::KillActor(NetworkID id, unsigned short limbs, signed char cause)
 
 		if (player)
 			CreateTimerEx(reinterpret_cast<ScriptFunc>(&Timer_Respawn), player->GetPlayerRespawnTime(), "l", id);
+
+		return true;
 	});
+
+	if (success)
+		Call<CBI("OnActorDeath")>(id, actor, limbs, cause);
 }
 
 bool Script::SetActorBaseRace(NetworkID id, unsigned int race)

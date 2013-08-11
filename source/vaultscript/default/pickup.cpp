@@ -8,8 +8,6 @@ using namespace std;
 vector<string> callbacks;
 Result VAULTSCRIPT RegisterPickup(cRawString name) noexcept;
 
-Void exec() noexcept {}
-
 Void VAULTSCRIPT OnServerInit() noexcept
 {
 	MakePublic(RegisterPickup, "Pickup::Register");
