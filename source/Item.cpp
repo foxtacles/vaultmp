@@ -47,6 +47,8 @@ void Item::initialize()
 	if (this->GetName().empty())
 		this->SetName(record->GetDescription());
 #endif
+
+	this->SetItemSilent(true);
 }
 
 NetworkID Item::GetItemContainer() const

@@ -56,7 +56,7 @@ class Server
 		/**
 		 * \brief Handles activate network packet
 		 */
-		static NetworkResponse GetActivate(RakNet::RakNetGUID guid, FactoryObject& reference, unsigned int refID);
+		static NetworkResponse GetActivate(RakNet::RakNetGUID guid, FactoryObject& reference, FactoryObject& action);
 		/**
 		 * \brief Handles actor state network packet
 		 */

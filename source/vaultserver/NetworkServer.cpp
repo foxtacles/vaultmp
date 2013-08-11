@@ -174,11 +174,10 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 
 				case pTypes::ID_UPDATE_ACTIVATE:
 				{
-					NetworkID id;
-					unsigned int refID;
-					PacketFactory::Access<pTypes::ID_UPDATE_ACTIVATE>(packet, id, refID);
-					auto reference = GameFactory::GetObject(id);
-					response = Server::GetActivate(data->guid, reference.get(), refID);
+					NetworkID id, action;
+					PacketFactory::Access<pTypes::ID_UPDATE_ACTIVATE>(packet, id, action);
+					auto reference = GameFactory::GetMultiple(vector<NetworkID>{id, action});
+					response = Server::GetActivate(data->guid, reference[0].get(), reference[1].get());
 					break;
 				}
 

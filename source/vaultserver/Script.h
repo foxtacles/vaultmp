@@ -286,12 +286,13 @@ class Script
 		static bool SetOwner(RakNet::NetworkID id, unsigned int owner);
 		static bool SetBaseName(RakNet::NetworkID id, const char* name);
 		static RakNet::NetworkID CreateItem(unsigned int baseID, RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z);
+		static RakNet::NetworkID SetItemContainer(RakNet::NetworkID id, RakNet::NetworkID container);
 		static bool SetItemCount(RakNet::NetworkID id, unsigned int count);
 		static bool SetItemCondition(RakNet::NetworkID id, double condition);
 		static bool SetItemEquipped(RakNet::NetworkID id, bool equipped, bool silent, bool stick);
 		static RakNet::NetworkID CreateContainer(unsigned int baseID, RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z);
 		static RakNet::NetworkID CreateItemList(RakNet::NetworkID source, unsigned int baseID);
-		static bool AddItem(RakNet::NetworkID id, unsigned int baseID, unsigned int count, double condition, bool silent);
+		static RakNet::NetworkID AddItem(RakNet::NetworkID id, unsigned int baseID, unsigned int count, double condition, bool silent);
 		static void AddItemList(RakNet::NetworkID id, RakNet::NetworkID source, unsigned int baseID);
 		static unsigned int RemoveItem(RakNet::NetworkID id, unsigned int baseID, unsigned int count, bool silent);
 		static void RemoveAllItems(RakNet::NetworkID id);
@@ -450,6 +451,7 @@ class Script
 			{"SetOwner", Script::SetOwner},
 			{"SetBaseName", Script::SetBaseName},
 			{"CreateItem", Script::CreateItem},
+			{"SetItemContainer", Script::SetItemContainer},
 			{"SetItemCount", Script::SetItemCount},
 			{"SetItemCondition", Script::SetItemCondition},
 			{"SetItemEquipped", Script::SetItemEquipped},

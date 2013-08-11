@@ -2138,6 +2138,35 @@ NetworkID Script::CreateItem(unsigned int baseID, NetworkID id, unsigned int cel
 	return result;
 }
 
+NetworkID Script::SetItemContainer(NetworkID id, NetworkID container)
+{
+	unsigned int baseID, count;
+	double condition;
+	bool equipped, silent, stick;
+
+	if (!GameFactory::Operate<Item, FailPolicy::Return>(id, [id, &baseID, &count, &condition, &equipped, &silent, &stick](FactoryItem& item) {
+		baseID = item->GetBase();
+		count = item->GetItemCount();
+		condition = item->GetItemCondition();
+		equipped = item->GetItemEquipped();
+		silent = item->GetItemSilent();
+		stick = item->GetItemStick();
+		return true;
+	})) return 0;
+
+	NetworkID new_id = Script::AddItem(container, baseID, count, condition, silent);
+
+	if (!new_id)
+		return 0;
+
+	if (equipped)
+		Script::SetItemEquipped(new_id, true, silent, stick);
+
+	Script::DestroyObject(id);
+
+	return new_id;
+}
+
 bool Script::SetItemCount(NetworkID id, unsigned int count)
 {
 	return GameFactory::Operate<Item, FailPolicy::Return>(id, [id, count](FactoryItem& item) {
@@ -2259,14 +2288,14 @@ NetworkID Script::CreateItemList(NetworkID source, unsigned int baseID)
 	return id;
 }
 
-bool Script::AddItem(NetworkID id, unsigned int baseID, unsigned int count, double condition, bool silent)
+NetworkID Script::AddItem(NetworkID id, unsigned int baseID, unsigned int count, double condition, bool silent)
 {
 	return GameFactory::Operate<Container, FailPolicy::Return, ObjectPolicy::Expected>(id, [id, baseID, count, condition, silent](ExpectedContainer& container) {
 		if (!count)
-			return false;
+			return 0ull;
 
 		if (!container && !scriptIL.count(id))
-			return false;
+			return 0ull;
 
 		ItemList* IL = container ? &container->IL : scriptIL[id].get();
 		auto diff = IL->AddItem(baseID, count, condition, silent);
@@ -2285,7 +2314,7 @@ bool Script::AddItem(NetworkID id, unsigned int baseID, unsigned int count, doub
 					});
 			});
 
-		return true;
+		return diff.second;
 	});
 }
 

@@ -259,8 +259,11 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 
 				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
 				unsigned int refID = *reinterpret_cast<unsigned int*>(&data[0]);
-				auto player = GameFactory::GetObject<Player>(PLAYER_REFERENCE);
-				GetActivate(player.get(), refID);
+				auto reference = GameFactory::GetMultiple(vector<unsigned int>{PLAYER_REFERENCE, refID});
+
+				if (reference[1])
+					GetActivate(reference[0].get(), reference[1].get());
+
 				delete &data;
 				break;
 			}
@@ -2633,10 +2636,10 @@ void Game::GetControl(const FactoryPlayer& reference, unsigned char control, uns
 		});
 }
 
-void Game::GetActivate(const FactoryPlayer& reference, unsigned int refID)
+void Game::GetActivate(const FactoryObject& reference, const FactoryObject& action)
 {
 	Network::Queue({Network::CreateResponse(
-		PacketFactory::Create<pTypes::ID_UPDATE_ACTIVATE>(reference->GetNetworkID(), refID),
+		PacketFactory::Create<pTypes::ID_UPDATE_ACTIVATE>(reference->GetNetworkID(), action->GetNetworkID()),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 	});
 }

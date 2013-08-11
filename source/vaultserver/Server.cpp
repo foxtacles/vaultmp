@@ -318,36 +318,22 @@ NetworkResponse Server::GetCell(RakNetGUID guid, FactoryObject& reference, unsig
 	return response;
 }
 
-NetworkResponse Server::GetActivate(RakNetGUID guid, FactoryObject& reference, unsigned int refID)
+NetworkResponse Server::GetActivate(RakNetGUID guid, FactoryObject& reference, FactoryObject& action)
 {
 	NetworkResponse response;
 
-	NetworkID id = reference->GetNetworkID();
-	NetworkID action;
+	NetworkID reference_id = reference->GetNetworkID();
+	NetworkID action_id = action->GetNetworkID();
 
-	try
-	{
-		action = GameFactory::LookupNetworkID(refID);
-	}
-	catch (...)
-	{
-#ifdef VAULTMP_DEBUG
-		debug.print("Player ", dec, id, " activated unknown item ", hex, refID);
-#endif
-		return response;
-	}
-
-	auto objects = GameFactory::GetMultiple(vector<NetworkID>{id, action});
-
-	if (objects[1]->IsPersistent() && !DB::Reference::Lookup(refID)->GetType().compare("DOOR"))
+	if (action->IsPersistent() && !DB::Reference::Lookup(action->GetReference())->GetType().compare("DOOR"))
 		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_ACTIVATE>(id, refID),
+			PacketFactory::Create<pTypes::ID_UPDATE_ACTIVATE>(reference_id, action_id),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 
-	GameFactory::LeaveReference(objects[0].get());
-	GameFactory::LeaveReference(objects[1].get());
+	GameFactory::LeaveReference(reference);
+	GameFactory::LeaveReference(action);
 
-	Script::OnActivate(id, action);
+	Script::OnActivate(reference_id, action_id);
 
 	return response;
 }

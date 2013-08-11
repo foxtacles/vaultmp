@@ -550,7 +550,7 @@ class Game
 		/**
 		 * \brief Handles GetActivate command result
 		 */
-		static void GetActivate(const FactoryPlayer& reference, unsigned int refID);
+		static void GetActivate(const FactoryObject& reference, const FactoryObject& action);
 		/**
 		 * \brief Handles GUI message
 		 */
