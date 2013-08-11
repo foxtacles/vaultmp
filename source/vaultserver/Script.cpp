@@ -83,8 +83,6 @@ Script::Script(char* path)
 			GetScript("OnActorDeath", fOnActorDeath);
 			GetScript("OnActorEquipItem", fOnActorEquipItem);
 			GetScript("OnActorUnequipItem", fOnActorUnequipItem);
-			GetScript("OnActorDropItem", fOnActorDropItem);
-			GetScript("OnActorPickupItem", fOnActorPickupItem);
 			GetScript("OnActorPunch", fOnActorPunch);
 			GetScript("OnActorFireWeapon", fOnActorFireWeapon);
 			GetScript("OnPlayerDisconnect", fOnPlayerDisconnect);
@@ -366,7 +364,7 @@ void Script::GetArguments(vector<boost::any>& params, va_list args, const string
 
 				case 's':
 				{
-					params.emplace_back(va_arg(args, const char*));
+					params.emplace_back(string(va_arg(args, const char*)));
 					break;
 				}
 
@@ -506,15 +504,16 @@ void Script::MakePublicPAWN(ScriptFuncPAWN _public, AMX* amx, const char* name, 
 unsigned long long Script::CallPublic(const char* name, ...)
 {
 	vector<boost::any> params;
-	string def = Public::GetDefinition(name);
-
-	va_list args;
-	va_start(args, name);
-	GetArguments(params, args, def);
-	va_end(args);
 
 	try
 	{
+		string def = Public::GetDefinition(name);
+
+		va_list args;
+		va_start(args, name);
+		GetArguments(params, args, def);
+		va_end(args);
+
 		return Public::Call(name, params);
 	}
 	catch (...) {}
@@ -786,34 +785,6 @@ void Script::OnActorUnequipItem(NetworkID id, unsigned int baseID, double condit
 		}
 		else if (PAWN::IsCallbackPresent(script->amx, "OnActorUnequipItem"))
 			PAWN::Call(script->amx, "OnActorUnequipItem", "fil", 0, condition, baseID, id);
-	}
-}
-
-void Script::OnActorDropItem(NetworkID id, unsigned int baseID, unsigned int count, double condition)
-{
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-		{
-			if (script->fOnActorDropItem)
-				script->fOnActorDropItem(id, baseID, count, condition);
-		}
-		else if (PAWN::IsCallbackPresent(script->amx, "OnActorDropItem"))
-			PAWN::Call(script->amx, "OnActorDropItem", "fiil", 0, condition, count, baseID, id);
-	}
-}
-
-void Script::OnActorPickupItem(NetworkID id, unsigned int baseID, unsigned int count, double condition, unsigned int owner)
-{
-	for (Script* script : scripts)
-	{
-		if (script->cpp_script)
-		{
-			if (script->fOnActorPickupItem)
-				script->fOnActorPickupItem(id, baseID, count, condition, owner);
-		}
-		else if (PAWN::IsCallbackPresent(script->amx, "OnActorPickupItem"))
-			PAWN::Call(script->amx, "OnActorPickupItem", "ifiil", 0, owner, condition, count, baseID, id);
 	}
 }
 
@@ -2143,6 +2114,15 @@ NetworkID Script::SetItemContainer(NetworkID id, NetworkID container)
 	unsigned int baseID, count;
 	double condition;
 	bool equipped, silent, stick;
+
+	if (!GameFactory::Operate<Container, FailPolicy::Return, ObjectPolicy::Expected>(container, [id, container](ExpectedContainer& container_) {
+		if (!container_ && !scriptIL.count(container))
+			return false;
+
+		const auto& items = (container_ ? &container_->IL : scriptIL[container].get())->GetItemList();
+
+		return find(items.begin(), items.end(), id) == items.end();
+	})) return 0;
 
 	if (!GameFactory::Operate<Item, FailPolicy::Return>(id, [id, &baseID, &count, &condition, &equipped, &silent, &stick](FactoryItem& item) {
 		baseID = item->GetBase();

@@ -466,7 +466,13 @@ cell PAWN::CallPublic(AMX* amx, const cell* params)
 
 	amx_GetString(&name[0], source, 0, UNLIMITED);
 
-	string def = Public::GetDefinition(&name[0]);
+	string def;
+
+	try
+	{
+		def = Public::GetDefinition(&name[0]);
+	}
+	catch (...) { return 0; }
 
 	vector<boost::any> args;
 	unsigned int count = (params[0] / sizeof(cell)) - 1;
@@ -728,9 +734,9 @@ cell PAWN::Call(AMX* amx, const char* name, const char* argl, const vector<boost
 
 				case 's':
 				{
-					const char* string = boost::any_cast<const char*>(args.at(i));
+					string string_ = boost::any_cast<string>(args.at(i));
 					cell* store;
-					amx_PushString(amx, &store, string, 1, 0);
+					amx_PushString(amx, &store, string_.c_str(), 1, 0);
 
 					if (!str)
 						str = store;

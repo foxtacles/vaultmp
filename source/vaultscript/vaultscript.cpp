@@ -1,19 +1,25 @@
 #include "vaultscript.h"
+#include "default/pickup.h"
+
 #include <cstdio>
 
 using namespace vaultmp;
 
+Result VAULTSCRIPT OnItemPickup(ID item, ID actor) noexcept;
+
 Void VAULTSCRIPT exec() noexcept
+{
+
+}
+
+Void VAULTSCRIPT OnServerInit() noexcept
 {
 	std::printf("My first C++ vaultscript <3\n");
 	SetServerName("vaultmp 0.1a server");
 	SetServerRule("website", "vaultmp.com");
 	SetServerMap("the wasteland");
-}
 
-Void VAULTSCRIPT OnServerInit() noexcept
-{
-
+	Pickup::Register(OnItemPickup, "vaultscript::OnItemPickup");
 }
 
 Void VAULTSCRIPT OnServerExit() noexcept
@@ -99,6 +105,11 @@ Void VAULTSCRIPT OnLockChange(ID object, ID actor, Lock lock) noexcept
 
 }
 
+Result VAULTSCRIPT OnItemPickup(ID item, ID actor) noexcept
+{
+	return static_cast<Result>(True);
+}
+
 Void VAULTSCRIPT OnContainerItemChange(ID container, Base item, Count count, Value value) noexcept
 {
 
@@ -135,16 +146,6 @@ Void VAULTSCRIPT OnActorEquipItem(ID actor, Base item, Value value) noexcept
 }
 
 Void VAULTSCRIPT OnActorUnequipItem(ID actor, Base item, Value value) noexcept
-{
-
-}
-
-Void VAULTSCRIPT OnActorDropItem(ID actor, Base item, UCount count, Value value) noexcept
-{
-
-}
-
-Void VAULTSCRIPT OnActorPickupItem(ID actor, Base item, UCount count, Value value, NPC_ owner) noexcept
 {
 
 }

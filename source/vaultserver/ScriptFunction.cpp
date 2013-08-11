@@ -73,8 +73,8 @@ unsigned long long ScriptFunction::Call(const vector<boost::any>& args)
 
 				case 's':
 				{
-					const char* value = boost::any_cast<const char*>(*it2);
-					data.push_back(reinterpret_cast<unsigned int>(value));
+					const string* value = boost::any_cast<string>(&*it2);
+					data.push_back(reinterpret_cast<unsigned int>(value->c_str()));
 					break;
 				}
 

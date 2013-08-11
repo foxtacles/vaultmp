@@ -111,8 +111,6 @@ class Script
 		void (*fOnActorDeath)(RakNet::NetworkID, RakNet::NetworkID, unsigned short, signed char);
 		void (*fOnActorEquipItem)(RakNet::NetworkID, unsigned int, double);
 		void (*fOnActorUnequipItem)(RakNet::NetworkID, unsigned int, double);
-		void (*fOnActorDropItem)(RakNet::NetworkID, unsigned int, unsigned int, double);
-		void (*fOnActorPickupItem)(RakNet::NetworkID, unsigned int, unsigned int, double, unsigned int);
 		void (*fOnActorPunch)(RakNet::NetworkID, bool);
 		void (*fOnActorFireWeapon)(RakNet::NetworkID, unsigned int);
 		void (*fOnPlayerDisconnect)(RakNet::NetworkID, Reason);
@@ -183,8 +181,6 @@ class Script
 		static void OnActorDeath(RakNet::NetworkID id, RakNet::NetworkID killer, unsigned short limbs, signed char cause);
 		static void OnActorEquipItem(RakNet::NetworkID id, unsigned int baseID, double condition);
 		static void OnActorUnequipItem(RakNet::NetworkID id, unsigned int baseID, double condition);
-		static void OnActorDropItem(RakNet::NetworkID id, unsigned int baseID, unsigned int count, double condition);
-		static void OnActorPickupItem(RakNet::NetworkID id, unsigned int baseID, unsigned int count, double condition, unsigned int owner);
 		static void OnActorPunch(RakNet::NetworkID id, bool power);
 		static void OnActorFireWeapon(RakNet::NetworkID id, unsigned int weapon);
 		static void OnPlayerDisconnect(RakNet::NetworkID id, Reason reason);

@@ -1,16 +1,21 @@
 #include <vaultmp>
+#include <default/pickup>
+
+forward OnItemPickup(ID, actor);
 
 main()
+{
+
+}
+
+public OnServerInit()
 {
 	printf("My first PAWN vaultscript <3\n");
 	SetServerName("vaultmp 0.1a server");
 	SetServerRule("website", "vaultmp.com");
 	SetServerMap("the wasteland");
-}
 
-public OnServerInit()
-{
-
+	Pickup_Register("OnItemPickup", "vaultscript::OnItemPickup");
 }
 
 public OnServerExit()
@@ -98,6 +103,11 @@ public OnCellChange(ID, cell)
 public OnLockChange(ID, actor, Lock:lock)
 {
 
+}
+
+public OnItemPickup(ID, actor)
+{
+	return 1;
 }
 
 public OnContainerItemChange(ID, item, count, Float:value)

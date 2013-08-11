@@ -307,8 +307,6 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE Void OnActorDeath(VAULTSPACE ID, VAULTSPACE ID, VAULTSPACE Limb, VAULTSPACE Death) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void OnActorEquipItem(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void OnActorUnequipItem(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE Value) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE Void OnActorDropItem(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE UCount, VAULTSPACE Value) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE Void OnActorPickupItem(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE UCount, VAULTSPACE Value, VAULTSPACE NPC_) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void OnActorPunch(VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void OnActorFireWeapon(VAULTSPACE ID, VAULTSPACE WEAP) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void OnPlayerDisconnect(VAULTSPACE ID, VAULTSPACE Reason) VAULTCPP(noexcept);
@@ -538,13 +536,13 @@ namespace vaultmp
 
 	template<typename... Types>
 	VAULTFUNCTION Result CallPublic(const String& name, Types... values) noexcept {
-		TypeString<Types...>::value;
+		static_assert(TypeString<Types...>::value != nullptr, "Unsupported type in variadic type list");
 		return VAULTAPI(CallPublic)(name.c_str(), values...);
 	}
 
 	template<typename... Types>
 	VAULTFUNCTION Result CallPublic(cRawString name, Types... values) noexcept {
-		TypeString<Types...>::value;
+		static_assert(TypeString<Types...>::value != nullptr, "Unsupported type in variadic type list");
 		return VAULTAPI(CallPublic)(name, values...);
 	}
 
