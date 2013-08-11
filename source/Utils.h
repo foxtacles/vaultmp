@@ -9,8 +9,8 @@
 
 namespace Utils
 {
-		template<std::size_t N>
-		constexpr unsigned int hash(const char(&str)[N], std::size_t I = N) {
+		template<size_t N>
+		constexpr unsigned int hash(const char(&str)[N], size_t I = N) {
 			return (I == 1 ? ((2166136261u ^ str[0]) * 16777619u) : ((hash(str, I - 1) ^ str[I - 1]) * 16777619u));
 		}
 

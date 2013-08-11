@@ -524,23 +524,22 @@ class Script
 			{"OnServerExit", Function<void>()},
 		};
 
-		static constexpr ScriptCallbackData const& GetScriptCallback(const unsigned int I, const unsigned int N = 0) {
-			return callbacks[N].index == I ? callbacks[N] : GetScriptCallback(I, N + 1);
+		static constexpr ScriptCallbackData const& CBD(const unsigned int I, const unsigned int N = 0) {
+			return callbacks[N].index == I ? callbacks[N] : CBD(I, N + 1);
 		}
 
 		template<unsigned int I>
-		using CBR = typename CharType<GetScriptCallback(I).callback.ret>::type;
+		using CBR = typename CharType<CBD(I).callback.ret>::type;
 
-		template<std::size_t N>
+		template<size_t N>
 		static constexpr unsigned int CBI(const char(&str)[N]) {
 			return Utils::hash(str);
 		}
 
 		template<unsigned int I, bool B = false, typename... Args>
 		static unsigned int Call(CBR<I>& result, Args&&... args) {
-			constexpr ScriptCallbackData const& data = GetScriptCallback(I);
+			constexpr ScriptCallbackData const& data = CBD(I);
 			static_assert(data.callback.matches(TypeString<Args...>::value), "Wrong number or types of arguments");
-			using ReturnType = typename CharType<data.callback.ret>::type;
 
 			unsigned int count = 0;
 
@@ -555,9 +554,9 @@ class Script
 					continue;
 
 				if (script->cpp_script)
-					result = reinterpret_cast<FunctionEllipsis<ReturnType>>(callback)(std::forward<Args>(args)...);
+					result = reinterpret_cast<FunctionEllipsis<CBR<I>>>(callback)(std::forward<Args>(args)...);
 				else
-					result = static_cast<ReturnType>(PAWN::Call(script->amx, data.name, data.callback.types, B, std::forward<Args>(args)...));
+					result = static_cast<CBR<I>>(PAWN::Call(script->amx, data.name, data.callback.types, B, std::forward<Args>(args)...));
 
 				++count;
 			}
@@ -567,9 +566,8 @@ class Script
 
 		template<unsigned int I, bool B = false, typename... Args>
 		static unsigned int Call(Args&&... args) {
-			constexpr ScriptCallbackData const& data = GetScriptCallback(I);
+			constexpr ScriptCallbackData const& data = CBD(I);
 			static_assert(data.callback.matches(TypeString<Args...>::value), "Wrong number or types of arguments");
-			using ReturnType = typename CharType<data.callback.ret>::type;
 
 			unsigned int count = 0;
 
@@ -584,7 +582,7 @@ class Script
 					continue;
 
 				if (script->cpp_script)
-					reinterpret_cast<FunctionEllipsis<ReturnType>>(callback)(std::forward<Args>(args)...);
+					reinterpret_cast<FunctionEllipsis<CBR<I>>>(callback)(std::forward<Args>(args)...);
 				else
 					PAWN::Call(script->amx, data.name, data.callback.types, B, std::forward<Args>(args)...);
 

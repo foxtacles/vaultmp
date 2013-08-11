@@ -503,11 +503,9 @@ NetworkResponse Server::ChatMessage(RakNetGUID guid, const string& message)
 	Script::Call<Script::CBI("OnPlayerChat"), true>(result, id, static_cast<char*>(_message));
 
 	if (result && *_message)
-	{
 		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_GAME_CHAT>(_message),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr)));
-	}
 
 	return response;
 }
