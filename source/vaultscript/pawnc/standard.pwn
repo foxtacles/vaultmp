@@ -85,7 +85,7 @@ public OnSpawn(ID)
 	}
 }
 
-public OnActivate(ID, action)
+public OnActivate(ID, actor)
 {
 
 }
@@ -95,7 +95,7 @@ public OnCellChange(ID, cell)
 
 }
 
-public OnLockChange(ID, player, Lock:lock)
+public OnLockChange(ID, actor, Lock:lock)
 {
 
 }

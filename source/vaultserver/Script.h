@@ -173,9 +173,9 @@ class Script
 		static unsigned long long Timer_GameTime();
 
 		static void OnSpawn(RakNet::NetworkID id);
-		static void OnActivate(RakNet::NetworkID id, RakNet::NetworkID action);
+		static void OnActivate(RakNet::NetworkID id, RakNet::NetworkID actor);
 		static void OnCellChange(RakNet::NetworkID id, unsigned int cell);
-		static void OnLockChange(RakNet::NetworkID id, RakNet::NetworkID player, unsigned int lock);
+		static void OnLockChange(RakNet::NetworkID id, RakNet::NetworkID actor, unsigned int lock);
 		static void OnContainerItemChange(RakNet::NetworkID id, unsigned int baseID, signed int count, double condition);
 		static void OnActorValueChange(RakNet::NetworkID id, unsigned char index, bool base, double value);
 		static void OnActorAlert(RakNet::NetworkID id, bool alerted);

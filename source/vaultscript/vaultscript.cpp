@@ -84,7 +84,7 @@ Void VAULTSCRIPT OnSpawn(ID object) noexcept
 		player.UIMessage("Hello, " + player.GetBaseName() + "!");
 }
 
-Void VAULTSCRIPT OnActivate(ID object, ID action) noexcept
+Void VAULTSCRIPT OnActivate(ID object, ID actor) noexcept
 {
 
 }
@@ -94,7 +94,7 @@ Void VAULTSCRIPT OnCellChange(ID object, CELL cell) noexcept
 
 }
 
-Void VAULTSCRIPT OnLockChange(ID object, ID player, Lock lock) noexcept
+Void VAULTSCRIPT OnLockChange(ID object, ID actor, Lock lock) noexcept
 {
 
 }

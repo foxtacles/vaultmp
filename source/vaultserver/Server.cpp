@@ -318,22 +318,22 @@ NetworkResponse Server::GetCell(RakNetGUID guid, FactoryObject& reference, unsig
 	return response;
 }
 
-NetworkResponse Server::GetActivate(RakNetGUID guid, FactoryObject& reference, FactoryObject& action)
+NetworkResponse Server::GetActivate(RakNetGUID guid, FactoryObject& reference, FactoryObject& actor)
 {
 	NetworkResponse response;
 
 	NetworkID reference_id = reference->GetNetworkID();
-	NetworkID action_id = action->GetNetworkID();
+	NetworkID actor_id = actor->GetNetworkID();
 
-	if (action->IsPersistent() && !DB::Reference::Lookup(action->GetReference())->GetType().compare("DOOR"))
+	if (reference->IsPersistent() && !DB::Reference::Lookup(reference->GetReference())->GetType().compare("DOOR"))
 		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_ACTIVATE>(reference_id, action_id),
+			PacketFactory::Create<pTypes::ID_UPDATE_ACTIVATE>(reference_id, actor_id),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 
 	GameFactory::LeaveReference(reference);
-	GameFactory::LeaveReference(action);
+	GameFactory::LeaveReference(actor);
 
-	Script::OnActivate(reference_id, action_id);
+	Script::OnActivate(reference_id, actor_id);
 
 	return response;
 }

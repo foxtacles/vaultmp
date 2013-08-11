@@ -168,9 +168,9 @@ const Interval: {
 // Callbacks
 
 forward OnSpawn(ID);
-forward OnActivate(ID, action);
+forward OnActivate(ID, actor);
 forward OnCellChange(ID, cell);
-forward OnLockChange(ID, player, Lock:lock);
+forward OnLockChange(ID, actor, Lock:lock);
 forward OnContainerItemChange(ID, item, count, Float:value);
 forward OnActorValueChange(ID, ActorValue:index, Float:value);
 forward OnActorBaseValueChange(ID, ActorValue:index, Float:value);

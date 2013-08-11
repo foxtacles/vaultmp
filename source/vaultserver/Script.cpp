@@ -633,17 +633,17 @@ void Script::OnSpawn(NetworkID id)
 	}
 }
 
-void Script::OnActivate(NetworkID id, NetworkID action)
+void Script::OnActivate(NetworkID id, NetworkID actor)
 {
 	for (Script* script : scripts)
 	{
 		if (script->cpp_script)
 		{
 			if (script->fOnActivate)
-				script->fOnActivate(id, action);
+				script->fOnActivate(id, actor);
 		}
 		else if (PAWN::IsCallbackPresent(script->amx, "OnActivate"))
-			PAWN::Call(script->amx, "OnActivate", "ll", 0, action, id);
+			PAWN::Call(script->amx, "OnActivate", "ll", 0, actor, id);
 	}
 }
 
@@ -661,7 +661,7 @@ void Script::OnCellChange(NetworkID id, unsigned int cell)
 	}
 }
 
-void Script::OnLockChange(NetworkID id, NetworkID player, unsigned int lock)
+void Script::OnLockChange(NetworkID id, NetworkID actor, unsigned int lock)
 {
 	if (lock < 5 && DB::Terminal::Lookup(GameFactory::GetObject(id)->GetBase()))
 		lock *= 25;
@@ -671,10 +671,10 @@ void Script::OnLockChange(NetworkID id, NetworkID player, unsigned int lock)
 		if (script->cpp_script)
 		{
 			if (script->fOnLockChange)
-				script->fOnLockChange(id, player, lock);
+				script->fOnLockChange(id, actor, lock);
 		}
 		else if (PAWN::IsCallbackPresent(script->amx, "OnLockChange"))
-			PAWN::Call(script->amx, "OnLockChange", "ill", 0, lock, player, id);
+			PAWN::Call(script->amx, "OnLockChange", "ill", 0, lock, actor, id);
 	}
 }
 

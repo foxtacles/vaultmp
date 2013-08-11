@@ -259,9 +259,9 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 
 				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
 				unsigned int refID = *reinterpret_cast<unsigned int*>(&data[0]);
-				auto reference = GameFactory::GetMultiple(vector<unsigned int>{PLAYER_REFERENCE, refID});
+				auto reference = GameFactory::GetMultiple(vector<unsigned int>{refID, PLAYER_REFERENCE});
 
-				if (reference[1])
+				if (reference[0])
 					GetActivate(reference[0].get(), reference[1].get());
 
 				delete &data;
@@ -1274,11 +1274,11 @@ void Game::SetRestrained(const FactoryActor& reference, bool restrained)
 	Interface::EndDynamic();
 }
 
-void Game::Activate(const FactoryObject& reference, const FactoryObject& action)
+void Game::Activate(const FactoryObject& reference, const FactoryObject& actor)
 {
 	Interface::StartDynamic();
 
-	Interface::ExecuteCommand(Func::Activate, {action->GetReferenceParam(), reference->GetReferenceParam()});
+	Interface::ExecuteCommand(Func::Activate, {reference->GetReferenceParam(), actor->GetReferenceParam()});
 
 	Interface::EndDynamic();
 }
@@ -2028,9 +2028,9 @@ void Game::net_SetOwner(const FactoryObject& reference, unsigned int owner)
 		SetOwner(reference);
 }
 
-void Game::net_GetActivate(const FactoryObject& reference, const FactoryObject& action)
+void Game::net_GetActivate(const FactoryObject& reference, const FactoryObject& actor)
 {
-	Activate(reference, action);
+	Activate(reference, actor);
 }
 
 void Game::net_SetItemCount(FactoryItem& reference, unsigned int count, bool silent)
@@ -2636,10 +2636,10 @@ void Game::GetControl(const FactoryPlayer& reference, unsigned char control, uns
 		});
 }
 
-void Game::GetActivate(const FactoryObject& reference, const FactoryObject& action)
+void Game::GetActivate(const FactoryObject& reference, const FactoryObject& actor)
 {
 	Network::Queue({Network::CreateResponse(
-		PacketFactory::Create<pTypes::ID_UPDATE_ACTIVATE>(reference->GetNetworkID(), action->GetNetworkID()),
+		PacketFactory::Create<pTypes::ID_UPDATE_ACTIVATE>(reference->GetNetworkID(), actor->GetNetworkID()),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 	});
 }
