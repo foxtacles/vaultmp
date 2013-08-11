@@ -56,6 +56,14 @@ unsigned long long ScriptFunction::Call(const vector<boost::any>& args)
 					break;
 				}
 
+				case 'w':
+				{
+					signed long long value = boost::any_cast<signed long long>(*it2);
+					data.push_back(*reinterpret_cast<unsigned int*>(&value));
+					data.push_back(*reinterpret_cast<unsigned int*>((unsigned) &value + 4));
+					break;
+				}
+
 				case 'f':
 				{
 					double value = boost::any_cast<double>(*it2);

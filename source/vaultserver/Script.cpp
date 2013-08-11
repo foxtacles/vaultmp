@@ -297,6 +297,12 @@ void Script::GetArguments(vector<boost::any>& params, va_list args, const string
 					break;
 				}
 
+				case 'w':
+				{
+					params.emplace_back(va_arg(args, signed long long));
+					break;
+				}
+
 				case 'f':
 				{
 					params.emplace_back(va_arg(args, double));
@@ -529,7 +535,7 @@ unsigned long long Script::Timer_GameTime()
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		});
 
-		Call<CBI("OnGameYearChange")>(_tm_new.tm_year + 1900);
+		Call<CBI("OnGameYearChange")>(static_cast<unsigned int>(_tm_new.tm_year + 1900));
 	}
 
 	if (_tm.tm_mon != _tm_new.tm_mon)
@@ -539,7 +545,7 @@ unsigned long long Script::Timer_GameTime()
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		});
 
-		Call<CBI("OnGameMonthChange")>(_tm_new.tm_mon);
+		Call<CBI("OnGameMonthChange")>(static_cast<unsigned int>(_tm_new.tm_mon));
 	}
 
 	if (_tm.tm_mday != _tm_new.tm_mday)
@@ -549,7 +555,7 @@ unsigned long long Script::Timer_GameTime()
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		});
 
-		Call<CBI("OnGameDayChange")>(_tm_new.tm_mday);
+		Call<CBI("OnGameDayChange")>(static_cast<unsigned int>(_tm_new.tm_mday));
 	}
 
 	if (_tm.tm_hour != _tm_new.tm_hour)
@@ -559,7 +565,7 @@ unsigned long long Script::Timer_GameTime()
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		});
 
-		Call<CBI("OnGameHourChange")>(_tm_new.tm_hour);
+		Call<CBI("OnGameHourChange")>(static_cast<unsigned int>(_tm_new.tm_hour));
 	}
 
 	return 1;

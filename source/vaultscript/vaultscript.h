@@ -494,7 +494,7 @@ namespace vaultmp
 	template<typename T> struct TypeChar<T, sizeof(uint8_t)> { enum { value = std::is_signed<T>::value ? 'q' : 'i' }; };
 	template<typename T> struct TypeChar<T, sizeof(uint16_t)> { enum { value = std::is_signed<T>::value ? 'q' : 'i' }; };
 	template<typename T> struct TypeChar<T, sizeof(uint32_t)> { enum { value = std::is_signed<T>::value ? 'q' : 'i' }; };
-	template<typename T> struct TypeChar<T, sizeof(uint64_t)> { enum { value = 'l' }; };
+	template<typename T> struct TypeChar<T, sizeof(uint64_t)> { enum { value = std::is_signed<T>::value ? 'w' : 'l' }; };
 	template<> struct TypeChar<Value, sizeof(Value)> { enum { value = 'f' }; };
 	template<> struct TypeChar<cRawString, sizeof(cRawString)> { enum { value = 's' }; };
 	template<> struct TypeChar<RawString, sizeof(RawString)> { enum { value = 's' }; };
