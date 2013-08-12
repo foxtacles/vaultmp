@@ -9,7 +9,7 @@
 #endif
 
 #include <unordered_map>
-#include <unordered_set>
+#include <vector>
 #include <memory>
 
 /**
@@ -24,11 +24,10 @@ class Lockable
 		static unsigned int key;
 		static std::unordered_map<unsigned int, Lockable*> keymap;
 		static std::unordered_map<unsigned int, std::weak_ptr<Lockable>> sharemap;
+		static std::unordered_map<const Lockable*, std::vector<unsigned int>> lockmap;
 		static CriticalSection cs;
 
 		static unsigned int NextKey();
-
-		std::unordered_set<unsigned int> locks;
 
 #ifdef VAULTMP_DEBUG
 		static DebugInput<Lockable> debug;
@@ -38,8 +37,8 @@ class Lockable
 
 	protected:
 		Lockable() = default;
-		Lockable(Lockable &&) = default;
-		Lockable& operator=(Lockable &&) = default;
+		Lockable(Lockable&&) = default;
+		Lockable& operator=(Lockable&&) = default;
 		virtual ~Lockable() {};
 
 	public:

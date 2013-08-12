@@ -4,6 +4,8 @@
 #include "vaultmp.h"
 #include "Reference.h"
 
+#include <unordered_set>
+
 /**
  * \brief Represents a GUI frame window
  */

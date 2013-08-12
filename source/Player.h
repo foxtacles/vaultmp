@@ -8,6 +8,8 @@
 #include "Debug.h"
 #endif
 
+#include <unordered_set>
+
 const unsigned int FLAG_MOVCONTROLS = FLAG_NOTALERT << 1;
 
 /**

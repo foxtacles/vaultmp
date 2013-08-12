@@ -1,6 +1,7 @@
 #include "Lockable.h"
 #include "VaultException.h"
 
+#include <algorithm>
 #include <climits>
 
 using namespace std;
@@ -8,6 +9,7 @@ using namespace std;
 unsigned int Lockable::key = 0x01;
 unordered_map<unsigned int, Lockable*> Lockable::keymap;
 unordered_map<unsigned int, weak_ptr<Lockable>> Lockable::sharemap;
+unordered_map<const Lockable*, vector<unsigned int>> Lockable::lockmap;
 CriticalSection Lockable::cs;
 
 #ifdef VAULTMP_DEBUG
@@ -39,6 +41,8 @@ unsigned int Lockable::NextKey()
 void Lockable::Reset()
 {
 	keymap.clear();
+	sharemap.clear();
+	lockmap.clear();
 	key = 0x01;
 }
 
@@ -92,7 +96,10 @@ weak_ptr<Lockable> Lockable::Poll(unsigned int key, bool remove)
 
 bool Lockable::IsLocked() const
 {
-	return !locks.empty();
+	cs.StartSession();
+	bool locked = lockmap.count(this) ? !lockmap.at(this).empty() : false;
+	cs.EndSession();
+	return locked;
 }
 
 unsigned int Lockable::Lock()
@@ -111,7 +118,7 @@ unsigned int Lockable::Lock()
 		throw;
 	}
 
-	locks.insert(next_key);
+	lockmap[this].emplace_back(next_key);
 	keymap.emplace(next_key, this);
 
 	cs.EndSession();
@@ -125,27 +132,25 @@ unsigned int Lockable::Lock()
 
 Lockable* Lockable::Unlock(unsigned int key)
 {
-	if (!IsLocked())
-		return this;
+	cs.StartSession();
 
-	if (locks.count(key))
+	auto& locks = lockmap[this];
+	auto lock = find(locks.begin(), locks.end(), key);
+
+	if (lock != locks.end())
 	{
-		locks.erase(key);
-
-		cs.StartSession();
+		locks.erase(lock);
 		keymap.erase(key);
+
 		cs.EndSession();
 
 #ifdef VAULTMP_DEBUG
 		debug.print(hex, this, " (", typeid(*this).name(), ") has been unlocked with key ", key);
 #endif
-
 		return this;
 	}
 
-#ifdef VAULTMP_DEBUG
-	debug.print(hex, this, " is still locked (key used: ", key, ")");
-#endif
+	cs.EndSession();
 
 	return nullptr;
 }

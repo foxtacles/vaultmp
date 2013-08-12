@@ -2019,7 +2019,7 @@ void Game::net_SetLock(const FactoryObject& reference, unsigned int lock)
 	Lockable* result;
 
 	if ((result = reference->SetLockLevel(lock)))
-		SetLock(reference, result->Lock());
+		SetLock(reference);
 }
 
 void Game::net_SetOwner(const FactoryObject& reference, unsigned int owner)
@@ -2135,12 +2135,12 @@ void Game::net_SetActorValue(const FactoryActor& reference, bool base, unsigned 
 			double diff = value - prev_value;
 
 			if (diff < 0.00)
-				DamageActorValue(reference, index, diff, result->Lock());
+				DamageActorValue(reference, index, diff);
 			else if (diff > 0.00)
-				RestoreActorValue(reference, index, diff, result->Lock());
+				RestoreActorValue(reference, index, diff);
 		}
 		else
-			SetActorValue(reference, base, index, result->Lock());
+			SetActorValue(reference, base, index);
 	}
 }
 
