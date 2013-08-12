@@ -11,6 +11,8 @@
 #include "BitStream.h"
 #include "SocketDefines.h"
 
+// #define NTDS_VERBOSE
+
 using namespace RakNet;
 
 STATIC_FACTORY_DEFINITIONS(NatTypeDetectionServer,NatTypeDetectionServer);
@@ -140,13 +142,19 @@ void NatTypeDetectionServer::Update(void)
 					// If different, then symmetric
 					if (senderAddr!=natDetectionAttempts[i].systemAddress)
 					{
+
+#ifdef NTDS_VERBOSE
 						printf("Determined client is symmetric\n");
+#endif
 						bs.Write((unsigned char) NAT_TYPE_SYMMETRIC);
 					}
 					else
 					{
 						// else port restricted
+#ifdef NTDS_VERBOSE
+
 						printf("Determined client is port restricted\n");
+#endif
 						bs.Write((unsigned char) NAT_TYPE_PORT_RESTRICTED);
 					}
 
@@ -200,13 +208,19 @@ void NatTypeDetectionServer::Update(void)
 				// If different, then symmetric
 				if (senderAddr!=natDetectionAttempts[i].systemAddress)
 				{
+
+				#ifdef NTDS_VERBOSE
 					printf("Determined client is symmetric\n");
+				#endif
 					bs.Write((unsigned char) NAT_TYPE_SYMMETRIC);
 				}
 				else
 				{
 					// else port restricted
+
+					#ifdef NTDS_VERBOSE
 					printf("Determined client is port restricted\n");
+					#endif
 					bs.Write((unsigned char) NAT_TYPE_PORT_RESTRICTED);
 				}
 
@@ -245,7 +259,10 @@ void NatTypeDetectionServer::Update(void)
 			case STATE_TESTING_NONE_1:
 			case STATE_TESTING_NONE_2:
 				c = NAT_TYPE_NONE;
+
+#ifdef NTDS_VERBOSE
 				printf("Testing NAT_TYPE_NONE\n");
+#endif
 				// S4P5 sends to C2. If arrived, no NAT. Done. (Else S4P5 potentially banned, do not use again).
 				saOut=natDetectionAttempts[i].systemAddress;
 				saOut.SetPortHostOrder(natDetectionAttempts[i].c2Port);
@@ -257,7 +274,10 @@ void NatTypeDetectionServer::Update(void)
 				break;
 			case STATE_TESTING_FULL_CONE_1:
 			case STATE_TESTING_FULL_CONE_2:
+
+#ifdef NTDS_VERBOSE
 				printf("Testing NAT_TYPE_FULL_CONE\n");
+#endif
 				rakPeerInterface->WriteOutOfBandHeader(&bs);
 				bs.Write((unsigned char) ID_NAT_TYPE_DETECT);
 				bs.Write((unsigned char) NAT_TYPE_FULL_CONE);
@@ -272,7 +292,10 @@ void NatTypeDetectionServer::Update(void)
 				break;
 			case STATE_TESTING_ADDRESS_RESTRICTED_1:
 			case STATE_TESTING_ADDRESS_RESTRICTED_2:
+
+#ifdef NTDS_VERBOSE
 				printf("Testing NAT_TYPE_ADDRESS_RESTRICTED\n");
+#endif
 				rakPeerInterface->WriteOutOfBandHeader(&bs);
 				bs.Write((unsigned char) ID_NAT_TYPE_DETECT);
 				bs.Write((unsigned char) NAT_TYPE_ADDRESS_RESTRICTED);
@@ -288,14 +311,20 @@ void NatTypeDetectionServer::Update(void)
 			case STATE_TESTING_PORT_RESTRICTED_1:
 			case STATE_TESTING_PORT_RESTRICTED_2:
 				// C1 sends to S3P4. If address of C1 as seen by S3P4 is the same as the address of C1 as seen by S1P1, then port-restricted cone nat. Done
+
+#ifdef NTDS_VERBOSE
 				printf("Testing NAT_TYPE_PORT_RESTRICTED\n");
+#endif
 				bs.Write((unsigned char) ID_NAT_TYPE_DETECTION_REQUEST);
 				bs.Write(RakString::NonVariadic(s3p4Address));
 				bs.Write(s3p4->GetBoundAddress().GetPort());
 				rakPeerInterface->Send(&bs,HIGH_PRIORITY,RELIABLE,0,natDetectionAttempts[i].systemAddress,false);
 				break;
 			default:
+
+#ifdef NTDS_VERBOSE
 				printf("Warning, exceeded final check STATE_TESTING_PORT_RESTRICTED_2.\nExpected that client would have sent NAT_TYPE_PORT_RESTRICTED on s3p4.\nDefaulting to Symmetric\n");
+#endif
 				bs.Write((unsigned char) ID_NAT_TYPE_DETECTION_RESULT);
 				bs.Write((unsigned char) NAT_TYPE_SYMMETRIC);
 				rakPeerInterface->Send(&bs,HIGH_PRIORITY,RELIABLE,0,natDetectionAttempts[i].systemAddress,false);

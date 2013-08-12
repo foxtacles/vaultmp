@@ -192,7 +192,7 @@ PluginReceiveResult FullyConnectedMesh2::OnReceive(Packet *packet)
 	case ID_FCM2_VERIFIED_JOIN_CAPABLE:
 		return OnVerifiedJoinCapable(packet);
 	case ID_FCM2_VERIFIED_JOIN_FAILED:
-		OnVerifiedJoinFailed(packet->guid);
+		OnVerifiedJoinFailed(packet->guid, true);
 		return RR_CONTINUE_PROCESSING;
 	case ID_FCM2_VERIFIED_JOIN_ACCEPTED:
 		if (packet->wasGeneratedLocally==false)
@@ -886,6 +886,17 @@ PluginReceiveResult FullyConnectedMesh2::OnVerifiedJoinStart(Packet *packet)
 	joinsInProgress.Push(vjip, _FILE_AND_LINE_);
 	return RR_CONTINUE_PROCESSING;
 }
+void FullyConnectedMesh2::SkipToVJCUserData(RakNet::BitStream *bsIn)
+{
+	bsIn->IgnoreBytes(sizeof(MessageID));
+	unsigned short listSize;
+	bsIn->Read(listSize);
+	for (unsigned short i=0; i < listSize; i++)
+	{
+		bsIn->IgnoreBytes(RakNetGUID::size());
+		bsIn->IgnoreBytes(SystemAddress::size());
+	}
+}
 void FullyConnectedMesh2::DecomposeJoinCapable(Packet *packet, VerifiedJoinInProgress *vjip)
 {
 	RakNet::BitStream bsIn(packet->data,packet->length,false);
@@ -951,20 +962,24 @@ PluginReceiveResult FullyConnectedMesh2::OnVerifiedJoinCapable(Packet *packet)
 	// Let server decide if to accept or reject via RespondOnVerifiedJoinCapable
 	return RR_CONTINUE_PROCESSING;
 }
-void FullyConnectedMesh2::OnVerifiedJoinFailed(RakNetGUID hostGuid)
+void FullyConnectedMesh2::OnVerifiedJoinFailed(RakNetGUID hostGuid, bool callCloseConnection)
 {
 	unsigned int curIndex = GetJoinsInProgressIndex(hostGuid);
 	if (curIndex==(unsigned int) -1)
 		return;
 
-	VerifiedJoinInProgress *vjip = joinsInProgress[curIndex];
-	for (unsigned int j=0; j < vjip->members.Size(); j++)
+	if (callCloseConnection)
 	{
-		if (vjip->members[j].joinInProgressState!=JIPS_FAILED)
+		VerifiedJoinInProgress *vjip = joinsInProgress[curIndex];
+		for (unsigned int j=0; j < vjip->members.Size(); j++)
 		{
-			rakPeerInterface->CloseConnection(vjip->members[j].guid, true);
+			if (vjip->members[j].joinInProgressState!=JIPS_FAILED)
+			{
+				rakPeerInterface->CloseConnection(vjip->members[j].guid, true);
+			}
 		}
 	}
+	
 
 	// Clear joinsInProgress for packet->guid
 	RakNet::OP_DELETE(joinsInProgress[curIndex], _FILE_AND_LINE_);
@@ -1020,7 +1035,7 @@ void FullyConnectedMesh2::OnVerifiedJoinAccepted(Packet *packet)
 }
 void FullyConnectedMesh2::OnVerifiedJoinRejected(Packet *packet)
 {
-	OnVerifiedJoinFailed(packet->guid);
+	OnVerifiedJoinFailed(packet->guid, true);
 }
 unsigned int FullyConnectedMesh2::GetJoinsInProgressIndex(RakNetGUID requester) const
 {
@@ -1084,19 +1099,24 @@ bool FullyConnectedMesh2::ProcessVerifiedJoinInProgressIfCompleted(VerifiedJoinI
 
 	// Send results to server
 	BitStream bsOut;
-	bsOut.Write((MessageID) ID_FCM2_VERIFIED_JOIN_CAPABLE);
-	bsOut.WriteCasted<unsigned short>(vjip->members.Size());
-	unsigned int i;
-	for (i=0; i < vjip->members.Size(); i++)
-	{
-		bsOut.Write(vjip->members[i].guid);
-		bsOut.Write(vjip->members[i].systemAddress);
-		bsOut.WriteCasted<unsigned char>(vjip->members[i].joinInProgressState);
-	}
+	WriteVerifiedJoinCapable(&bsOut, vjip);
+	WriteVJCUserData(&bsOut);
 	SendUnified(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, vjip->requester, false);
 
 	//vjip->sentResults=true;
 	return true;
+}
+void FullyConnectedMesh2::WriteVerifiedJoinCapable(RakNet::BitStream *bsOut, VerifiedJoinInProgress *vjip)
+{
+	bsOut->Write((MessageID) ID_FCM2_VERIFIED_JOIN_CAPABLE);
+	bsOut->WriteCasted<unsigned short>(vjip->members.Size());
+	unsigned int i;
+	for (i=0; i < vjip->members.Size(); i++)
+	{
+		bsOut->Write(vjip->members[i].guid);
+		bsOut->Write(vjip->members[i].systemAddress);
+		bsOut->WriteCasted<unsigned char>(vjip->members[i].joinInProgressState);
+	}
 }
 
 void FullyConnectedMesh2::ReadVerifiedJoinInProgressMember(RakNet::BitStream *bsIn, VerifiedJoinInProgressMember *vjipm)

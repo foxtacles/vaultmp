@@ -8,6 +8,7 @@
 #include "RakSleep.h"
 #include "RakNetDefines.h"
 #include "DS_Queue.h"
+//#include "GetTime.h"
 
 using namespace RakNet;
 
@@ -412,14 +413,17 @@ void RPC4::Signal(const char *sharedIdentifier, RakNet::BitStream *bitStream, Pa
 
 	if (invokeLocal)
 	{
+		//TimeUS t1 = GetTimeUS();
+
 		DataStructures::HashIndex functionIndex;
 		functionIndex = localSlots.GetIndexOf(sharedIdentifier);
+		//TimeUS t2 = GetTimeUS();
 		if (functionIndex.IsInvalid())
 			return;
 		
 		Packet p;
 		p.guid=rakPeerInterface->GetMyGUID();
-		p.systemAddress=rakPeerInterface->GetMyBoundAddress(0);
+		p.systemAddress=rakPeerInterface->GetInternalID(UNASSIGNED_SYSTEM_ADDRESS);
 		p.wasGeneratedLocally=true;
 		RakNet::BitStream *bsptr, bstemp;
 		if (bitStream)
@@ -435,7 +439,13 @@ void RPC4::Signal(const char *sharedIdentifier, RakNet::BitStream *bitStream, Pa
 			p.bitSize=0;
 			bsptr=&bstemp;
 		}
+
+		//TimeUS t3 = GetTimeUS();
 		InvokeSignal(functionIndex, bsptr, &p);
+		//TimeUS t4 = GetTimeUS();
+		//printf("b1: %I64d\n", t2-t1);
+		//printf("b2: %I64d\n", t3-t2);
+		//printf("b3: %I64d\n", t4-t3);
 	}
 }
 void RPC4::InvokeSignal(DataStructures::HashIndex functionIndex, RakNet::BitStream *serializedParameters, Packet *packet)
@@ -443,13 +453,21 @@ void RPC4::InvokeSignal(DataStructures::HashIndex functionIndex, RakNet::BitStre
 	if (functionIndex.IsInvalid())
 		return;
 
+	//TimeUS t1 = GetTimeUS();
+	//TimeUS t2=0;
+	//TimeUS t3=0;
+
 	interruptSignal=false;
 	LocalSlot *localSlot = localSlots.ItemAtIndex(functionIndex);
 	unsigned int i;
 	i=0;
 	while (i < localSlot->slotObjects.Size())
 	{
+		//t2 = GetTimeUS();
+
 		localSlot->slotObjects[i].functionPointer(serializedParameters, packet);
+
+		//t3 = GetTimeUS();
 
 		// Not threadsafe
 		if (interruptSignal==true)
@@ -459,6 +477,12 @@ void RPC4::InvokeSignal(DataStructures::HashIndex functionIndex, RakNet::BitStre
 
 		i++;
 	}
+
+	//TimeUS t4 = GetTimeUS();
+
+	//printf("b1: %I64d\n", t2-t1);
+	//printf("b2: %I64d\n", t3-t2);
+	//printf("b3: %I64d\n", t4-t3);
 }
 void RPC4::InterruptSignal(void)
 {

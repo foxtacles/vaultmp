@@ -27,9 +27,18 @@ bool PRO::operator!=( const PRO& right ) const
 
 int Connection_RM3::Replica3LSRComp( Replica3 * const &replica3, LastSerializationResult * const &data )
 {
+	/*
 	if (replica3->GetNetworkID() < data->replica->GetNetworkID())
 		return -1;
 	if (replica3->GetNetworkID() > data->replica->GetNetworkID())
+		return 1;
+		*/
+
+	// 7/28/2013 - If GetNetworkID chagned during runtime, the list would be out of order and lookup would always fail or go out of bounds
+	// I remember before that I could not directly compare 
+	if (replica3->referenceIndex < data->replica->referenceIndex)
+		return -1;
+	if (replica3->referenceIndex > data->replica->referenceIndex)
 		return 1;
 	return 0;
 }
@@ -205,13 +214,28 @@ RakNet::Connection_RM3 * ReplicaManager3::PopConnection(unsigned int index, Worl
 		replicaList[index2]->OnPoppedConnection(connection);
 		if (action==RM3AOPC_DELETE_REPLICA)
 		{
-			destructionList.Push( replicaList[index2]->GetNetworkID(), _FILE_AND_LINE_  );
+			if (replicaList[index2]->GetNetworkIDManager())
+				destructionList.Push( replicaList[index2]->GetNetworkID(), _FILE_AND_LINE_  );
 		}
 		else if (action==RM3AOPC_DELETE_REPLICA_AND_BROADCAST_DESTRUCTION)
 		{
-			destructionList.Push( replicaList[index2]->GetNetworkID(), _FILE_AND_LINE_  );
+			if (replicaList[index2]->GetNetworkIDManager())
+				destructionList.Push( replicaList[index2]->GetNetworkID(), _FILE_AND_LINE_  );
 
 			broadcastList.Push( replicaList[index2], _FILE_AND_LINE_  );
+		}
+		else if (action==RM3AOPC_DO_NOTHING)
+		{
+			for (unsigned int index3 = 0; index3 < connection->queryToSerializeReplicaList.Size(); index3++)
+			{
+				LastSerializationResult *lsr = connection->queryToSerializeReplicaList[index3];
+				lsr->whenLastSerialized=0;
+				if (lsr->lastSerializationResultBS)
+				{
+					for (int z=0; z < RM3_NUM_OUTPUT_BITSTREAM_CHANNELS; z++)
+						lsr->lastSerializationResultBS->bitStream[z].Reset();
+				}
+			}
 		}
 	}
 
@@ -290,10 +314,14 @@ unsigned int ReplicaManager3::ReferenceInternal(RakNet::Replica3 *replica3, Worl
 		if (replica3->creatingSystemGUID==UNASSIGNED_RAKNET_GUID)
 			replica3->creatingSystemGUID=rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
 		replica3->replicaManager=this;
+		if (replica3->referenceIndex==(uint32_t)-1)
+		{
+			replica3->referenceIndex=nextReferenceIndex++;
+		}
 		world->userReplicaList.Push(replica3,_FILE_AND_LINE_);
 		return world->userReplicaList.Size()-1;
 	}
-	return -1;
+	return (unsigned int) -1;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -822,7 +850,7 @@ void Connection_RM3::AutoConstructByQuery(ReplicaManager3 *replicaManager3, Worl
 				unsigned int j;
 				for (j=0; j < queryToSerializeReplicaList.Size(); j++)
 				{
-					if (queryToSerializeReplicaList[j]->replica->GetNetworkID()==destroyedReplicasCulled[idx2]->GetNetworkID() )
+					if (queryToSerializeReplicaList[j]->replica==destroyedReplicasCulled[idx2] )
 					{
 						queryToSerializeReplicaList.RemoveAtIndex(j);
 						break;
@@ -1762,6 +1790,9 @@ void Connection_RM3::OnDereference(Replica3* replica3, ReplicaManager3 *replicaM
 {
 	ValidateLists(replicaManager);
 
+	if (replica3->GetNetworkIDManager() == 0)
+		return;
+
 	LastSerializationResult* lsr=0;
 	unsigned int idx;
 
@@ -1827,7 +1858,7 @@ void Connection_RM3::OnDownloadFromThisSystem(Replica3* replica3, ReplicaManager
 		unsigned int j;
 		for (j=0; j < queryToConstructReplicaList.Size(); j++)
 		{
-			if (queryToConstructReplicaList[j]->replica->GetNetworkID()==replica3->GetNetworkID() )
+			if (queryToConstructReplicaList[j]->replica==replica3 )
 			{
 				queryToConstructReplicaList.RemoveAtIndex(j);
 				break;
@@ -1837,9 +1868,11 @@ void Connection_RM3::OnDownloadFromThisSystem(Replica3* replica3, ReplicaManager
 		queryToDestructReplicaList.Push(lsr,_FILE_AND_LINE_);
 	}
 
-	constructedReplicaList.Insert(lsr->replica, lsr, true, _FILE_AND_LINE_);
-	//assert(queryToSerializeReplicaList.GetIndexOf(replica3)==(unsigned int)-1);
-	queryToSerializeReplicaList.Push(lsr,_FILE_AND_LINE_);
+	if (constructedReplicaList.Insert(lsr->replica, lsr, true, _FILE_AND_LINE_) != (unsigned) -1)
+	{
+		//assert(queryToSerializeReplicaList.GetIndexOf(replica3)==(unsigned int)-1);
+		queryToSerializeReplicaList.Push(lsr,_FILE_AND_LINE_);
+	}
 
 	ValidateLists(replicaManager);
 }
@@ -1854,7 +1887,7 @@ void Connection_RM3::OnDownloadFromOtherSystem(Replica3* replica3, ReplicaManage
 		unsigned int j;
 		for (j=0; j < queryToConstructReplicaList.Size(); j++)
 		{
-			if (queryToConstructReplicaList[j]->replica->GetNetworkID()==replica3->GetNetworkID() )
+			if (queryToConstructReplicaList[j]->replica==replica3 )
 			{
 				return;
 			}
@@ -1990,7 +2023,7 @@ void Connection_RM3::OnSendDestructionFromQuery(unsigned int queryToDestructIdx,
 	unsigned int j;
 	for (j=0; j < queryToSerializeReplicaList.Size(); j++)
 	{
-		if (queryToSerializeReplicaList[j]->replica->GetNetworkID()==lsr->replica->GetNetworkID() )
+		if (queryToSerializeReplicaList[j]->replica==lsr->replica )
 		{
 			queryToSerializeReplicaList.RemoveAtIndex(j);
 			break;
@@ -1998,7 +2031,7 @@ void Connection_RM3::OnSendDestructionFromQuery(unsigned int queryToDestructIdx,
 	}
 	for (j=0; j < constructedReplicaList.Size(); j++)
 	{
-		if (constructedReplicaList[j]->replica->GetNetworkID()==lsr->replica->GetNetworkID() )
+		if (constructedReplicaList[j]->replica==lsr->replica )
 		{
 			constructedReplicaList.RemoveAtIndex(j);
 			break;
@@ -2343,6 +2376,7 @@ Replica3::Replica3()
 	replicaManager=0;
 	forceSendUntilNextUpdate=false;
 	lsr=0;
+	referenceIndex = (uint32_t)-1;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -228,7 +228,7 @@ struct RemoteClient
 
 #if OPEN_SSL_CLIENT_SUPPORT==1
 	SSL*     ssl;
-	void InitSSL(SSL_CTX* ctx, SSL_METHOD *meth);
+	bool InitSSL(SSL_CTX* ctx, SSL_METHOD *meth);
 	void DisconnectSSL(void);
 	void FreeSSL(void);
 	int Send(const char *data, unsigned int length);

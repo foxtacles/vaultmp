@@ -142,6 +142,7 @@ namespace DataStructures
 			}
 			else// if (res>0)
 			{
+
 				lowerBound=index+1;
 			}
 
@@ -151,6 +152,14 @@ namespace DataStructures
 			{
 				*objectExists=false;
 				return (unsigned)lowerBound; // No match
+			}
+
+			if (index < 0 || index >= (int) orderedList.Size())
+			{
+				// This should never hit unless the comparison function was inconsistent
+				RakAssert(index && 0);
+				*objectExists=false;
+				return 0;
 			}
 		}
 	}

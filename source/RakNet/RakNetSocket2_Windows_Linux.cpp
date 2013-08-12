@@ -1,9 +1,5 @@
 #include "EmptyHeader.h"
 
-#ifndef _WIN32
-#include <netdb.h>
-#endif
-
 #ifdef RAKNET_SOCKET_2_INLINE_FUNCTIONS
 
 #ifndef RAKNETSOCKET2_WINDOWS_LINUX_CPP
@@ -26,7 +22,7 @@ void GetMyIP_Windows_Linux_IPV4And6( SystemAddress addresses[MAXIMUM_NUMBER_OF_I
 	char ac[ 80 ];
 	int err = gethostname( ac, sizeof( ac ) );
 	RakAssert(err != -1);
-	
+
 	struct addrinfo hints;
 	struct addrinfo *servinfo=0, *aip;  // will point to the results
 	PrepareAddrInfoHints2(&hints);
@@ -48,7 +44,7 @@ void GetMyIP_Windows_Linux_IPV4And6( SystemAddress addresses[MAXIMUM_NUMBER_OF_I
 	}
 
 	freeaddrinfo(servinfo); // free the linked-list
-	
+
 	while (idx < MAXIMUM_NUMBER_OF_INTERNAL_IDS)
 	{
 		addresses[idx]=UNASSIGNED_SYSTEM_ADDRESS;
@@ -58,14 +54,20 @@ void GetMyIP_Windows_Linux_IPV4And6( SystemAddress addresses[MAXIMUM_NUMBER_OF_I
 
 #else
 
+#if (defined(__GNUC__)  || defined(__GCCXML__)) && !defined(__WIN32__)
+#include <netdb.h>
+#endif
 void GetMyIP_Windows_Linux_IPV4( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
 {
+
+
+
 	int idx=0;
 	char ac[ 80 ];
 	int err = gethostname( ac, sizeof( ac ) );
     (void) err;
 	RakAssert(err != -1);
-	
+
 	struct hostent *phe = gethostbyname( ac );
 
 	if ( phe == 0 )
@@ -80,12 +82,13 @@ void GetMyIP_Windows_Linux_IPV4( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTER
 
 		memcpy(&addresses[idx].address.addr4.sin_addr,phe->h_addr_list[ idx ],sizeof(struct in_addr));
 	}
-	
+
 	while (idx < MAXIMUM_NUMBER_OF_INTERNAL_IDS)
 	{
 		addresses[idx]=UNASSIGNED_SYSTEM_ADDRESS;
 		idx++;
 	}
+
 }
 
 #endif // RAKNET_SUPPORT_IPV6==1

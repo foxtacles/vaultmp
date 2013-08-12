@@ -9,6 +9,10 @@
 #ifndef __NETWORK_TYPES_H
 #define __NETWORK_TYPES_H
 
+
+
+
+
 #include "RakNetDefines.h"
 #include "NativeTypes.h"
 #include "RakNetTime.h"
@@ -193,10 +197,14 @@ struct RAK_DLL_EXPORT SystemAddress
 
 
 
+
+
+
 	/// SystemAddress, with RAKNET_SUPPORT_IPV6 defined, holds both an sockaddr_in6 and a sockaddr_in
 	union// In6OrIn4
 	{
 #if RAKNET_SUPPORT_IPV6==1
+		struct sockaddr_storage sa_stor;
 		sockaddr_in6 addr6;
 #endif
 
@@ -280,6 +288,8 @@ struct RAK_DLL_EXPORT SystemAddress
 
 	/// \internal sockaddr_in6 requires extra data beyond just the IP and port. Copy that extra data from an existing SystemAddress that already has it
 	void FixForIPVersion(const SystemAddress &boundAddressToSocket);
+
+	bool IsLANAddress(void);
 
 	SystemAddress& operator = ( const SystemAddress& input );
 	bool operator==( const SystemAddress& right ) const;

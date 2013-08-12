@@ -367,7 +367,7 @@ public:
 	int GetLastPing( const AddressOrGUID systemIdentifier ) const;
 
 	/// \brief Returns the lowest ping time read or -1 if none read yet.
-	/// \param[in] systemAddress Which system we are referring to
+	/// \param[in] systemIdentifier Which system we are referring to
 	/// \return The lowest ping time for this system, or -1.
 	int GetLowestPing( const AddressOrGUID systemIdentifier ) const;
 
@@ -376,6 +376,12 @@ public:
 	/// It would be true by default to prevent timestamp drift, since in the event of a clock spike, the timestamp deltas would no longer be accurate
 	/// \param[in] doPing True to start occasional pings.  False to stop them.
 	void SetOccasionalPing( bool doPing );
+
+	/// Return the clock difference between your system and the specified system
+	/// Subtract the time from a time returned by the remote system to get that time relative to your own system
+	/// Returns 0 if the system is unknown
+	/// \param[in] systemIdentifier Which system we are referring to
+	RakNet::Time GetClockDifferential( const AddressOrGUID systemIdentifier );
 	
 	// --------------------------------------------------------------------------------------------Static Data Functions - Functions dealing with API defined synchronized memory--------------------------------------------------------------------------------------------
 	/// \brief Sets the data to send along with a LAN server discovery or offline ping reply.
@@ -920,6 +926,7 @@ protected:
 	void ClearRequestedConnectionList(void);
 	void AddPacketToProducer(RakNet::Packet *p);
 	unsigned int GenerateSeedFromGuid(void);
+	RakNet::Time GetClockDifferentialInt(RemoteSystemStruct *remoteSystem) const;
 	SimpleMutex securityExceptionMutex;
 
 	//DataStructures::AVLBalancedBinarySearchTree<RPCNode> rpcTree;
@@ -1007,7 +1014,7 @@ protected:
 
 
 	virtual void OnRNS2Recv(RNS2RecvStruct *recvStruct);
-
+	void FillIPList(void);
 } 
 // #if defined(SN_TARGET_PSP2)
 // __attribute__((aligned(8)))

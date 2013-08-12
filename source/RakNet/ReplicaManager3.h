@@ -328,6 +328,9 @@ protected:
 	RakNet::Time lastAutoSerializeOccurance;
 	bool autoCreateConnections, autoDestroyConnections;
 	Replica3 *currentlyDeallocatingReplica;
+	// Set on the first call to ReferenceInternal(), and should never be changed after that
+	// Used to lookup in Replica3LSRComp. I don't want to rely on GetNetworkID() in case it changes at runtime
+	uint32_t nextReferenceIndex;
 
 	// For O(1) lookup
 	RM3World *worldsArray[255];
@@ -934,7 +937,7 @@ public:
 	/// <\OL>
 	/// <BR>
 	/// Override with {delete this;} to actually delete the object (and any other processing you wish).<BR>
-	/// If you don't want to delete the object, just do nothing, however, the system will not know this so you are responsible for deleting it yoruself later.<BR>
+	/// If you don't want to delete the object, just do nothing, however, the system will not know this. You may wish to call Dereference() if the object should no longer be networked, but remain in memory. You are responsible for deleting it yoruself later.<BR>
 	/// destructionBitstream may be 0 if the object was deleted locally
 	virtual void DeallocReplica(RakNet::Connection_RM3 *sourceConnection)=0;
 
@@ -1077,6 +1080,7 @@ public:
 	LastSerializationResultBS lastSentSerialization;
 	bool forceSendUntilNextUpdate;
 	LastSerializationResult *lsr;
+	uint32_t referenceIndex;
 };
 
 /// \brief Use Replica3 through composition instead of inheritance by containing an instance of this templated class

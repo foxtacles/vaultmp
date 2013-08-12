@@ -47,14 +47,17 @@ public:
 		return (returnType) nio;
 	}
 
+	// Stop tracking all NetworkID objects
+	void Clear(void);
+
 	/// \internal
 	NetworkIDObject *GET_BASE_OBJECT_FROM_ID(NetworkID x);
 
+protected:
 	/// \internal
 	void TrackNetworkIDObject(NetworkIDObject *networkIdObject);
 	void StopTrackingNetworkIDObject(NetworkIDObject *networkIdObject);
 
-protected:
 	friend class NetworkIDObject;
 
 	NetworkIDObject *networkIdHash[NETWORK_ID_MANAGER_HASH_LENGTH];

@@ -7,10 +7,14 @@
 
 
 
+
+
 #else
 #include <pthread.h>
 #include <time.h>
 #include <sys/time.h>
+pthread_mutex_t fakeMutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t fakeCond = PTHREAD_COND_INITIALIZER;
 #endif
 
 #include "RakSleep.h"
@@ -28,15 +32,13 @@ void RakSleep(unsigned int ms)
 
 
 
-#elif defined(_PS4__)
-	_PS4_usleep((SceKernelUseconds) ms * 1000);
+
+
 
 
 #else
 	//Single thread sleep code thanks to Furquan Shaikh, http://somethingswhichidintknow.blogspot.com/2009/09/sleep-in-pthread.html
 	//Modified slightly from the original
-	pthread_mutex_t fakeMutex = PTHREAD_MUTEX_INITIALIZER;
-	pthread_cond_t fakeCond = PTHREAD_COND_INITIALIZER;
 	struct timespec timeToWait;
 	struct timeval now;
 	int rt;

@@ -21,36 +21,58 @@ NetworkIDObject::NetworkIDObject()
 }
 NetworkIDObject::~NetworkIDObject()
 {
-	if (networkID!=UNASSIGNED_NETWORK_ID && networkIDManager)
+	if (networkIDManager)
 		networkIDManager->StopTrackingNetworkIDObject(this);
 }
 void NetworkIDObject::SetNetworkIDManager( NetworkIDManager *manager)
 {
+	if (manager==networkIDManager)
+		return;
+
+	if (networkIDManager)
+		networkIDManager->StopTrackingNetworkIDObject(this);
+
 	networkIDManager=manager;
+	if (networkIDManager==0)
+	{
+		networkID = UNASSIGNED_NETWORK_ID;
+		return;
+	}
+	
+	if (networkID == UNASSIGNED_NETWORK_ID)
+	{
+		// Prior ID not set
+		networkID = networkIDManager->GetNewNetworkID();
+	}
+
+	networkIDManager->TrackNetworkIDObject(this);
 }
-NetworkIDManager * NetworkIDObject::GetNetworkIDManager( void )
+NetworkIDManager * NetworkIDObject::GetNetworkIDManager( void ) const
 {
 	return networkIDManager;
 }
 NetworkID NetworkIDObject::GetNetworkID( void )
 {
-	if (networkID==UNASSIGNED_NETWORK_ID)
-	{
-		RakAssert(networkIDManager);
-		networkID = networkIDManager->GetNewNetworkID();
-		networkIDManager->TrackNetworkIDObject(this);
-	}
 	return networkID;
 }
 void NetworkIDObject::SetNetworkID( NetworkID id )
 {
-	if (id==networkID)
+	if (networkID==id)
 		return;
 
-	if (networkID!=UNASSIGNED_NETWORK_ID)
+	if ( id == UNASSIGNED_NETWORK_ID )
+	{
+		SetNetworkIDManager(0);
+		return;
+	}
+
+	if ( networkIDManager )
 		networkIDManager->StopTrackingNetworkIDObject(this);
+
 	networkID = id;
-	networkIDManager->TrackNetworkIDObject(this);
+
+	if (networkIDManager)
+		networkIDManager->TrackNetworkIDObject(this);
 }
 void NetworkIDObject::SetParent( void *_parent )
 {

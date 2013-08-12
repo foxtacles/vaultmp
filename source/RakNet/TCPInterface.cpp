@@ -20,7 +20,6 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <pthread.h>
-#include <netdb.h>
 #endif
 #include <string.h>
 #include "RakAssert.h"
@@ -32,6 +31,9 @@
 #include "Itoa.h"
 #include "SocketLayer.h"
 #include "SocketDefines.h"
+#if (defined(__GNUC__)  || defined(__GCCXML__)) && !defined(__WIN32__)
+#include <netdb.h>
+#endif
 
 #ifdef _DO_PRINTF
 #endif
@@ -228,7 +230,7 @@ bool TCPInterface::Start(unsigned short port, unsigned short maxIncomingConnecti
 
 	while (threadRunning.GetValue()==0)
 		RakSleep(0);
-	
+
 	unsigned int i;
 	for (i=0; i < messageHandlerList.Size(); i++)
 		messageHandlerList[i]->OnRakPeerStartup();
@@ -260,7 +262,7 @@ void TCPInterface::Stop(void)
 #ifdef _WIN32
 		shutdown__(listenSocket, SD_BOTH);
 
-#else		
+#else
 		shutdown__(listenSocket, SHUT_RDWR);
 #endif
 		closesocket__(listenSocket);
@@ -404,7 +406,7 @@ SystemAddress TCPInterface::Connect(const char* host, unsigned short remotePort,
 			failedConnectionAttempts.Push(s->systemAddress, _FILE_AND_LINE_ );
 		}
 		return UNASSIGNED_SYSTEM_ADDRESS;
-	}	
+	}
 }
 #if OPEN_SSL_CLIENT_SUPPORT==1
 void TCPInterface::StartSSLClient(SystemAddress systemAddress)
@@ -519,7 +521,7 @@ Packet* TCPInterface::Receive( void )
 			}
 		}
 	}
-	
+
 
 	return outgoingPacket;
 }
@@ -795,14 +797,14 @@ __TCPSOCKET__ TCPInterface::SocketConnect(const char* host, unsigned short remot
 		__TCPSOCKET__ sockfd = WinRTCreateStreamSocket(AF_INET, SOCK_STREAM, 0);
 	#else
 		__TCPSOCKET__ sockfd = socket__(AF_INET, SOCK_STREAM, 0);
-		if (sockfd < 0) 
+		if (sockfd < 0)
 			return 0;
 	#endif
 
 	memset(&serverAddress, 0, sizeof(serverAddress));
 	serverAddress.sin_family = AF_INET;
 	serverAddress.sin_port = htons( remotePort );
-	
+
 
 	if ( bindAddress && bindAddress[0] )
 	{
@@ -915,7 +917,7 @@ RAK_THREAD_DECLARATION(RakNet::ConnectionAttemptLoop)
 		tcpInterface->completedConnectionAttemptMutex.Lock();
 		tcpInterface->completedConnectionAttempts.Push(systemAddress, _FILE_AND_LINE_ );
 		tcpInterface->completedConnectionAttemptMutex.Unlock();
-	}	
+	}
 
 
 
@@ -1041,7 +1043,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 #endif
 
 
-			selectResult=(int) select__(largestDescriptor+1, &readFD, &writeFD, &exceptionFD, &tv);		
+			selectResult=(int) select__(largestDescriptor+1, &readFD, &writeFD, &exceptionFD, &tv);
 
 
 
@@ -1113,7 +1115,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 				RAKNET_DEBUG_PRINTF("Socket error %s on listening socket\n", err);
 #endif
 			}
-			
+
 			{
 				i=0;
 				while (i < (unsigned int) sts->remoteClientsLength)
@@ -1143,7 +1145,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 // 							in.s_addr = sts->remoteClients[i].systemAddress.binaryAddress;
 // 							RAKNET_DEBUG_PRINTF("Socket error %i on %s:%i\n", err,inet_ntoa( in ), sts->remoteClients[i].systemAddress.GetPort() );
 // 						}
-// 						
+//
 // #endif
 						// Connection lost abruptly
 						SystemAddress *lostConnectionSystemAddress=sts->lostConnections.Allocate( _FILE_AND_LINE_ );
@@ -1160,18 +1162,29 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 							// if recv returns 0 this was a graceful close
 							len = sts->remoteClients[i].Recv(data,BUFF_SIZE);
 
-						
+
 							// removeme
 // 								data[len]=0;
 // 								printf(data);
-							
+
 							if (len>0)
 							{
 								incomingMessage=sts->incomingMessages.Allocate( _FILE_AND_LINE_ );
 								incomingMessage->data = (unsigned char*) rakMalloc_Ex( len+1, _FILE_AND_LINE_ );
 								memcpy(incomingMessage->data, data, len);
 								incomingMessage->data[len]=0; // Null terminate this so we can print it out as regular strings.  This is different from RakNet which does not do this.
-//								printf("RECV: %s\n",incomingMessage->data);
+								// printf("RECV: %s\n",incomingMessage->data);
+								/*
+								if (1)
+								{
+									static FILE *fp=0;
+									if (fp==0)
+									{
+										fp = fopen("tcpRcv.txt", "wb");
+									}
+									fwrite(data,1,len,fp);
+								}
+								*/
 								incomingMessage->length=len;
 								incomingMessage->deleteData=true; // actually means came from SPSC, rather than AllocatePacket
 								incomingMessage->systemAddress=sts->remoteClients[i].systemAddress;
@@ -1221,7 +1234,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 							}
 							rc->outgoingDataMutex.Unlock();
 						}
-							
+
 						i++; // Nothing deleted so increment the index
 					}
 				}
@@ -1288,26 +1301,34 @@ void RemoteClient::SendOrBuffer(const char **data, const unsigned int *lengths, 
 	}
 }
 #if OPEN_SSL_CLIENT_SUPPORT==1
-void RemoteClient::InitSSL(SSL_CTX* ctx, SSL_METHOD *meth)
+bool RemoteClient::InitSSL(SSL_CTX* ctx, SSL_METHOD *meth)
 {
 	(void) meth;
 
-	ssl = SSL_new (ctx);                         
-	RakAssert(ssl);    
+	ssl = SSL_new (ctx);
+	RakAssert(ssl);
 	int res;
 	res = SSL_set_fd (ssl, socket);
 	if (res!=1)
+	{
 		printf("SSL_set_fd error: %s\n", ERR_reason_error_string(ERR_get_error()));
+		SSL_free(ssl);
+		ssl=0;
+		return false;
+	}
 	RakAssert(res==1);
 	res = SSL_connect (ssl);
 	if (res<0)
 	{
 		unsigned long err = ERR_get_error();
 		printf("SSL_connect error: %s\n", ERR_reason_error_string(err));
+		SSL_free(ssl);
+		ssl=0;
+		return false;
 	}
 	else if (res==0)
 	{
-		// The TLS/SSL handshake was not successful but was shut down controlled and by the specifications of the TLS/SSL protocol. Call SSL_get_error() with the return value ret to find out the reason. 
+		// The TLS/SSL handshake was not successful but was shut down controlled and by the specifications of the TLS/SSL protocol. Call SSL_get_error() with the return value ret to find out the reason.
 		int err = SSL_get_error(ssl, res);
 		switch (err)
 		{
@@ -1349,7 +1370,14 @@ void RemoteClient::InitSSL(SSL_CTX* ctx, SSL_METHOD *meth)
 		}
 
 	}
-	RakAssert(res==1);
+
+	if (res!=1)
+	{
+		SSL_free(ssl);
+		ssl=0;
+		return false;
+	}
+	return true;
 }
 void RemoteClient::DisconnectSSL(void)
 {

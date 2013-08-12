@@ -74,6 +74,7 @@ public:
 	void DeallocWideChar(WCHAR * w);
 
 	void FromWideChar(const wchar_t *source);
+	static RakNet::RakString FromWideChar_S(const wchar_t *source);
 #endif
 	
 	/// String class find replacement

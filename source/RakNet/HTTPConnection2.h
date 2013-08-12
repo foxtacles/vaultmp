@@ -89,6 +89,9 @@ public:
 		int contentOffset;
 		int contentLength;
 		int ipVersion;
+		bool chunked;
+		size_t thisChunkSize;
+		size_t bytesReadForThisChunk;
 	};
 
 	/// \internal

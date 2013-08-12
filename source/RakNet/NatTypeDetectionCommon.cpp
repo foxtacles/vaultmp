@@ -114,6 +114,7 @@ RakNetSocket2* RakNet::CreateNonblockingBoundSocket(const char *bindAddr
 		bbp.protocol=0;
 		bbp.nonBlockingSocket=true;
 		bbp.setBroadcast=true;
+		bbp.setIPHdrIncl=false;
 		bbp.doNotFragment=false;
 		bbp.pollingThreadPriority=0;
 		bbp.eventHandler=eventHandler;

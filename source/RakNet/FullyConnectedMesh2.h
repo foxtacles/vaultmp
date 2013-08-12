@@ -141,6 +141,7 @@ public:
 	/// \param[in] packet The system that sent ID_FCM2_VERIFIED_JOIN_CAPABLE. Based on \accept, ID_FCM2_VERIFIED_JOIN_ACCEPTED or ID_FCM2_VERIFIED_JOIN_REJECTED will be sent in reply
 	/// \param[in] accept True to accept, and thereby automatically call AddParticipant() on all systems on the mesh. False to reject, and call CloseConnection() to all mesh systems on the target
 	/// \param[in] additionalData Any additional data you want to add to the ID_FCM2_VERIFIED_JOIN_ACCEPTED or ID_FCM2_VERIFIED_JOIN_REJECTED messages
+	/// \sa WriteVJCUserData()
 	virtual void RespondOnVerifiedJoinCapable(Packet *packet, bool accept, BitStream *additionalData);
 
 	/// \brief On ID_FCM2_VERIFIED_JOIN_START, read the SystemAddress and RakNetGUID values of each system to connect to
@@ -177,6 +178,15 @@ public:
 	/// \param[in] packet Packet containing the ID_FCM2_VERIFIED_JOIN_REJECTED message
 	/// \param[out] additionalData \a additionalData parameter passed to RespondOnVerifiedJoinCapable().
 	virtual void GetVerifiedJoinRejectedAdditionalData(Packet *packet, BitStream *additionalData);
+
+	/// Override to write data when ID_VERIFIED_JOIN_CAPABLE is sent
+	virtual void WriteVJCUserData(RakNet::BitStream *bsOut) {(void) bsOut;}
+	/// Use to read data written from WriteVJCUserData()
+	/// \code
+	/// RakNet::BitStream bsIn(packet->data,packet->length,false);
+	/// FullyConnectedMesh2::SkipToVJCUserData(&bsIn);
+	/// // Your code here
+	static void SkipToVJCUserData(RakNet::BitStream *bsIn);
 
 	/// \internal
 	RakNet::TimeUS GetElapsedRuntime(void);
@@ -253,7 +263,7 @@ protected:
 	void IncrementTotalConnectionCount(unsigned int i);
 	PluginReceiveResult OnVerifiedJoinStart(Packet *packet);
 	PluginReceiveResult OnVerifiedJoinCapable(Packet *packet);
-	virtual void OnVerifiedJoinFailed(RakNetGUID hostGuid);
+	virtual void OnVerifiedJoinFailed(RakNetGUID hostGuid, bool callCloseConnection);
 	virtual void OnVerifiedJoinAccepted(Packet *packet);
 	virtual void OnVerifiedJoinRejected(Packet *packet);
 	unsigned int GetJoinsInProgressIndex(RakNetGUID requester) const;
@@ -262,6 +272,7 @@ protected:
 	void ReadVerifiedJoinInProgressMember(RakNet::BitStream *bsIn, VerifiedJoinInProgressMember *vjipm);
 	unsigned int GetVerifiedJoinInProgressMemberIndex(const AddressOrGUID systemIdentifier, VerifiedJoinInProgress *vjip);
 	void DecomposeJoinCapable(Packet *packet, VerifiedJoinInProgress *vjip);
+	void WriteVerifiedJoinCapable(RakNet::BitStream *bsOut, VerifiedJoinInProgress *vjip);
 	void CategorizeVJIP(VerifiedJoinInProgress *vjip,
 		DataStructures::List<RakNetGUID> &participatingMembersOnClientSucceeded,
 		DataStructures::List<RakNetGUID> &participatingMembersOnClientFailed,

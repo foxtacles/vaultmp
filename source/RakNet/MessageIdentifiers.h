@@ -24,7 +24,9 @@ enum OutOfBandIdentifiers
 	ID_ROUTER_2_MINI_PUNCH_REPLY_BOUNCE,
 	ID_XBOX_360_VOICE,
 	ID_XBOX_360_GET_NETWORK_ROOM,
-	ID_XBOX_360_RETURN_NETWORK_ROOM
+	ID_XBOX_360_RETURN_NETWORK_ROOM,
+	ID_NAT_PING,
+	ID_NAT_PONG,
 };
 
 /// You should not edit the file MessageIdentifiers.h as it is a part of RakNet static library
@@ -406,11 +408,8 @@ enum DefaultMessageIDTypes
 	ID_LIB_VOICE,
 
 	ID_RELAY_PLUGIN,
-	ID_RESERVED_0,
-
-	// RelayPlugin::AddParticipantRequestFromClient()
-	ID_RESERVED_1,
-	// Result of RelayPlugin::AddParticipantRequestFromClient(). Use bitStream to read one byte, true for success, false for failure (name in use). Use bitStream with ReadCompressed on a RakString to read the original name specified
+	ID_NAT_REQUEST_BOUND_ADDRESSES,
+	ID_NAT_RESPOND_BOUND_ADDRESSES,
 	ID_RESERVED_2,
 	ID_RESERVED_3,
 	ID_RESERVED_4,

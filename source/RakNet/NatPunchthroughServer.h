@@ -136,6 +136,9 @@ protected:
 	uint16_t sessionId;
 	NatPunchthroughServerDebugInterface *natPunchthroughServerDebugInterface;
 
+	SystemAddress boundAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
+	unsigned char boundAddressCount;
+
 };
 
 } // namespace RakNet

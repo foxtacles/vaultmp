@@ -344,6 +344,12 @@ public:
 	/// \param[in] doPing True to start occasional pings.  False to stop them.
 	virtual void SetOccasionalPing( bool doPing )=0;
 
+	/// Return the clock difference between your system and the specified system
+	/// Subtract the time from a time returned by the remote system to get that time relative to your own system
+	/// Returns 0 if the system is unknown
+	/// \param[in] systemIdentifier Which system we are referring to
+	virtual RakNet::Time GetClockDifferential( const AddressOrGUID systemIdentifier )=0;
+
 	// --------------------------------------------------------------------------------------------Static Data Functions - Functions dealing with API defined synchronized memory--------------------------------------------------------------------------------------------
 	/// Sets the data to send along with a LAN server discovery or offline ping reply.
 	/// \a length should be under 400 bytes, as a security measure against flood attacks
@@ -528,6 +534,9 @@ public:
 	/// Return true from the callback to have RakPeer handle the datagram. Return false and RakPeer will ignore the datagram.
 	/// This can be used to filter incoming datagrams by system, or to share a recvfrom socket with RakPeer
 	/// RNS2RecvStruct will only remain valid for the duration of the call
+	/// If the incoming datagram is not from your game at all, it is a RakNet packet.
+	/// If the incoming datagram has an IP address that matches a known address from your game, then check the first byte of data.
+	/// For RakNet connected systems, the first bit is always 1. So for your own game packets, make sure the first bit is always 0.
 	virtual void SetIncomingDatagramEventHandler( bool (*_incomingDatagramEventHandler)(RNS2RecvStruct *) )=0;
 
 	// --------------------------------------------------------------------------------------------Network Simulator Functions--------------------------------------------------------------------------------------------

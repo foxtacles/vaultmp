@@ -275,6 +275,7 @@ bool IRNS2_Berkley::IsPortInUse(unsigned short port, const char *hostAddress, un
 	bbp.port=port; bbp.hostAddress=(char*) hostAddress;	bbp.addressFamily=addressFamily;
 	bbp.type=type; bbp.protocol=0; bbp.nonBlockingSocket=false;
 	bbp.setBroadcast=false;	bbp.doNotFragment=false; bbp.protocol=0;
+	bbp.setIPHdrIncl=false;
 	SystemAddress boundAddress;
 	RNS2_Berkley *rns2 = (RNS2_Berkley*) RakNetSocket2Allocator::AllocRNS2();
 	RNS2BindResult bindResult = rns2->Bind(&bbp, _FILE_AND_LINE_);
@@ -296,6 +297,7 @@ RNS2BindResult RNS2_Berkley::BindShared( RNS2_BerkleyBindParameters *bindParamet
 #else
 	br=BindSharedIPV4(bindParameters, file, line);
 #endif
+
 	if (br!=BR_SUCCESS)
 		return br;
 
@@ -423,6 +425,8 @@ void RNS2_Berkley::BlockOnStopRecvPollingThread(void)
 const RNS2_BerkleyBindParameters *RNS2_Berkley::GetBindings(void) const {return &binding;}
 RNS2Socket RNS2_Berkley::GetSocket(void) const {return rns2Socket;}
 // See RakNetSocket2_Berkley.cpp for WriteSharedIPV4, BindSharedIPV4And6 and other implementations
+
+
 
 
 

@@ -41,7 +41,7 @@ public:
 	virtual void SetNetworkIDManager( NetworkIDManager *manager);
 
 	/// Returns what was passed to SetNetworkIDManager
-	virtual NetworkIDManager * GetNetworkIDManager( void );
+	virtual NetworkIDManager * GetNetworkIDManager( void ) const;
 	
 	/// Returns the NetworkID that you can use to refer to this object over the network.
 	/// \pre You must first call SetNetworkIDManager before using this function
@@ -63,9 +63,10 @@ public:
 	virtual void* GetParent( void ) const;
 	
 protected:
+
 	/// The  network ID of this object
-	NetworkID networkID;
-	
+	// networkID is assigned when networkIDManager is set.
+	NetworkID networkID;	
 	NetworkIDManager *networkIDManager;
 
 	/// The parent set by SetParent()
