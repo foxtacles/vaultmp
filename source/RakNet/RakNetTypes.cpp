@@ -461,7 +461,8 @@ void SystemAddress::FixForIPVersion(const SystemAddress &boundAddressToSocket)
 bool SystemAddress::IsLANAddress(void)
 {
 //	return address.addr4.sin_addr.S_un.S_un_b.s_b1==10 || address.addr4.sin_addr.S_un.s_b1==192;
-	return address.addr4.sin_addr.S_un.S_un_b.s_b1==10 || address.addr4.sin_addr.S_un.S_un_b.s_b1==192;
+//	return address.addr4.sin_addr.S_un.S_un_b.s_b1==10 || address.addr4.sin_addr.S_un.S_un_b.s_b1==192;
+return false;
 }
 bool SystemAddress::SetBinaryAddress(const char *str, char portDelineator)
 {

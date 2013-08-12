@@ -11,6 +11,12 @@
 #include "PAWN.h"
 #include "boost/any.hpp"
 
+#ifdef __WIN32__
+#include <winsock2.h>
+#else
+#include <dlfcn.h>
+#endif
+
 #include <vector>
 #include <unordered_map>
 #include <memory>

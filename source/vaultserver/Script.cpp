@@ -6,12 +6,6 @@
 #include "amx/amxaux.h"
 #include "time/time64.h"
 
-#ifdef __WIN32__
-#include <winsock2.h>
-#else
-#include <dlfcn.h>
-#endif
-
 using namespace std;
 using namespace RakNet;
 using namespace Values;
