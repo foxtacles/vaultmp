@@ -20,21 +20,21 @@ static vector<const char*> strings;
 static vector<pair<cell*, double>> floats;
 static pair<cell*, NetworkID*> data = {nullptr, nullptr};
 
-void free_strings() {
+void free_strings() noexcept {
 	for (const auto* value : strings)
 		delete[] value;
 
 	strings.clear();
 }
 
-void free_floats() {
+void free_floats() noexcept {
 	for (const auto& value : floats)
 		*value.first = amx_ftoc(value.second);
 
 	floats.clear();
 }
 
-void free_data(unsigned int size) {
+void free_data(unsigned int size) noexcept {
 	if (data.first && data.second)
 		for (unsigned int i = 0; i < size; ++i)
 			data.first[i] = data.second[i];
@@ -43,19 +43,19 @@ void free_data(unsigned int size) {
 	data.second = nullptr;
 }
 
-void after_call() {
+void after_call() noexcept {
 	free_strings();
 	free_floats();
 }
 
 template<typename R>
-void after_call(const R&) {
+void after_call(const R&) noexcept {
 	free_strings();
 	free_floats();
 }
 
 template<>
-void after_call(const unsigned int& result) {
+void after_call(const unsigned int& result) noexcept {
 	free_strings();
 	free_floats();
 	free_data(result);
@@ -63,21 +63,21 @@ void after_call(const unsigned int& result) {
 
 template<typename R, unsigned int I, unsigned int F>
 struct PAWN_extract_ {
-	inline static R PAWN_extract(AMX*&&, const cell*&& params) {
+	inline static R PAWN_extract(AMX*&&, const cell*&& params) noexcept {
 		return static_cast<R>(forward<const cell*>(params)[I]);
 	}
 };
 
 template<unsigned int I, unsigned int F>
 struct PAWN_extract_<double, I, F> {
-	inline static double PAWN_extract(AMX*&&, const cell*&& params) {
+	inline static double PAWN_extract(AMX*&&, const cell*&& params) noexcept {
 		return amx_ctof(forward<const cell*>(params)[I]);
 	}
 };
 
 template<unsigned int I, unsigned int F>
 struct PAWN_extract_<const char*, I, F> {
-	inline static const char* PAWN_extract(AMX*&& amx, const cell*&& params) {
+	inline static const char* PAWN_extract(AMX*&& amx, const cell*&& params) noexcept {
 		int len;
 		cell* source;
 
@@ -94,7 +94,7 @@ struct PAWN_extract_<const char*, I, F> {
 
 template<unsigned int I, unsigned int F>
 struct PAWN_extract_<double*, I, F> {
-	inline static double* PAWN_extract(AMX*&& amx, const cell*&& params) {
+	inline static double* PAWN_extract(AMX*&& amx, const cell*&& params) noexcept {
 		floats.emplace_back(amx_Address(amx, params[I]), 0.00);
 		return &floats.back().second;
 	}
@@ -102,7 +102,7 @@ struct PAWN_extract_<double*, I, F> {
 
 template<unsigned int I, unsigned int F>
 struct PAWN_extract_<NetworkID**, I, F> {
-	inline static NetworkID** PAWN_extract(AMX*&& amx, const cell*&& params) {
+	inline static NetworkID** PAWN_extract(AMX*&& amx, const cell*&& params) noexcept {
 		constexpr ScriptFunctionData const& F_ = Script::functions[F];
 		static_assert(F_.func.numargs == I, "NetworkID** must be the last parameter");
 		data.first = amx_Address(amx, params[I]);
@@ -113,7 +113,7 @@ struct PAWN_extract_<NetworkID**, I, F> {
 template<unsigned int I, unsigned int F>
 struct PAWN_dispatch_ {
 	template<typename R, typename... Args>
-	inline static R PAWN_dispatch(AMX*&& amx, const cell*&& params, Args&&... args) {
+	inline static R PAWN_dispatch(AMX*&& amx, const cell*&& params, Args&&... args) noexcept {
 		constexpr ScriptFunctionData const& F_ = Script::functions[F];
 		return PAWN_dispatch_<I - 1, F>::template PAWN_dispatch<R>(forward<AMX*>(amx), forward<const cell*>(params), PAWN_extract_<typename CharType<F_.func.types[I - 1]>::type, I, F>::PAWN_extract(forward<AMX*>(amx), forward<const cell*>(params)), forward<Args>(args)...);
 	}
@@ -122,28 +122,28 @@ struct PAWN_dispatch_ {
 template<unsigned int F>
 struct PAWN_dispatch_<0, F> {
 	template<typename R, typename... Args>
-	inline static R PAWN_dispatch(AMX*&&, const cell*&&, Args&&... args) {
+	inline static R PAWN_dispatch(AMX*&&, const cell*&&, Args&&... args) noexcept {
 		constexpr ScriptFunctionData const& F_ = Script::functions[F];
 		return reinterpret_cast<FunctionEllipsis<R>>(F_.func.addr)(forward<Args>(args)...);
 	}
 };
 
 template<unsigned int I>
-static typename enable_if<Script::functions[I].func.ret == 'v', cell>::type wrapper(AMX* amx, const cell* params) {
+static typename enable_if<Script::functions[I].func.ret == 'v', cell>::type wrapper(AMX* amx, const cell* params) noexcept {
 	PAWN_dispatch_<Script::functions[I].func.numargs, I>::template PAWN_dispatch<void>(forward<AMX*>(amx), forward<const cell*>(params));
 	after_call();
 	return 1;
 }
 
 template<unsigned int I>
-static typename enable_if<Script::functions[I].func.ret == 'f', cell>::type wrapper(AMX* amx, const cell* params) {
+static typename enable_if<Script::functions[I].func.ret == 'f', cell>::type wrapper(AMX* amx, const cell* params) noexcept {
 	double value = PAWN_dispatch_<Script::functions[I].func.numargs, I>::template PAWN_dispatch<double>(forward<AMX*>(amx), forward<const cell*>(params));
 	after_call();
 	return amx_ftoc(value);
 }
 
 template<unsigned int I>
-static typename enable_if<Script::functions[I].func.ret == 's', cell>::type wrapper(AMX* amx, const cell* params) {
+static typename enable_if<Script::functions[I].func.ret == 's', cell>::type wrapper(AMX* amx, const cell* params) noexcept {
 	const char* value = PAWN_dispatch_<Script::functions[I].func.numargs, I>::template PAWN_dispatch<const char*>(forward<AMX*>(amx), forward<const cell*>(params));
 	after_call();
 
@@ -157,7 +157,7 @@ static typename enable_if<Script::functions[I].func.ret == 's', cell>::type wrap
 }
 
 template<unsigned int I>
-static typename enable_if<Script::functions[I].func.ret != 'v' && Script::functions[I].func.ret != 'f' && Script::functions[I].func.ret != 's', cell>::type wrapper(AMX* amx, const cell* params) {
+static typename enable_if<Script::functions[I].func.ret != 'v' && Script::functions[I].func.ret != 'f' && Script::functions[I].func.ret != 's', cell>::type wrapper(AMX* amx, const cell* params) noexcept {
 	auto result = PAWN_dispatch_<Script::functions[I].func.numargs, I>::template PAWN_dispatch<typename CharType<Script::functions[I].func.ret>::type>(forward<AMX*>(amx), forward<const cell*>(params));
 	after_call(result);
 	return result;
@@ -329,7 +329,7 @@ AMX_NATIVE_INFO PAWN::functions[] {
 	{0, 0}
 };
 
-cell PAWN::CreateTimer(AMX* amx, const cell* params)
+cell PAWN::CreateTimer(AMX* amx, const cell* params) noexcept
 {
 	int len;
 	cell* source;
@@ -345,7 +345,7 @@ cell PAWN::CreateTimer(AMX* amx, const cell* params)
 	return Script::CreateTimerPAWN(&name[0], amx, params[2]);
 }
 
-cell PAWN::CreateTimerEx(AMX* amx, const cell* params)
+cell PAWN::CreateTimerEx(AMX* amx, const cell* params) noexcept
 {
 	int len;
 	cell* source;
@@ -426,7 +426,7 @@ cell PAWN::CreateTimerEx(AMX* amx, const cell* params)
 	return Script::CreateTimerPAWNEx(&name[0], amx, params[2], &def[0], args);
 }
 
-cell PAWN::MakePublic(AMX* amx, const cell* params)
+cell PAWN::MakePublic(AMX* amx, const cell* params) noexcept
 {
 	int len;
 	cell* source;
@@ -457,7 +457,7 @@ cell PAWN::MakePublic(AMX* amx, const cell* params)
 	return 1;
 }
 
-cell PAWN::CallPublic(AMX* amx, const cell* params)
+cell PAWN::CallPublic(AMX* amx, const cell* params) noexcept
 {
 	int len;
 	cell* source;

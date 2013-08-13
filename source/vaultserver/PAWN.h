@@ -16,10 +16,10 @@ class PAWN
 
 		static AMX_NATIVE_INFO functions[];
 
-		static cell CreateTimer(AMX* amx, const cell* params);
-		static cell CreateTimerEx(AMX* amx, const cell* params);
-		static cell MakePublic(AMX* amx, const cell* params);
-		static cell CallPublic(AMX* amx, const cell* params);
+		static cell CreateTimer(AMX* amx, const cell* params) noexcept;
+		static cell CreateTimerEx(AMX* amx, const cell* params) noexcept;
+		static cell MakePublic(AMX* amx, const cell* params) noexcept;
+		static cell CallPublic(AMX* amx, const cell* params) noexcept;
 
 	public:
 		static int LoadProgram(AMX* amx, char* filename, void* memblock);
