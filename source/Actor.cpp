@@ -54,15 +54,7 @@ Actor::Actor(const pDefault* packet) : Container(PacketFactory::Pop<pPacket>(pac
 	this->SetActorDead(dead);
 }
 
-Actor::Actor(pPacket&& packet) : Actor(packet.get())
-{
-
-}
-
-Actor::~Actor()
-{
-
-}
+Actor::~Actor() noexcept {}
 
 void Actor::initialize()
 {

@@ -143,18 +143,18 @@ class GameFactory
 
 		template<typename T, FailPolicy FP, ObjectPolicy OP, LaunchPolicy LP, typename I, typename F>
 		struct OperateFunctions<T, FP, OP, LP, I, F, false> {
-			static typename OperateReturn<FP, OP, LP, T, F, false>::type Operate(I id, F function);
+			static typename OperateReturn<FP, OP, LP, T, F, false>::type Operate(I id, F function) noexcept(FP != FailPolicy::Exception);
 		};
 
 		template<typename T, FailPolicy FP, ObjectPolicy OP, LaunchPolicy LP, typename I, typename F>
 		struct OperateFunctions<T, FP, OP, LP, I, F, true> {
-			static typename OperateReturn<FP, OP, LP, T, F, true>::type Operate(const std::vector<I>& id, F function);
+			static typename OperateReturn<FP, OP, LP, T, F, true>::type Operate(const std::vector<I>& id, F function) noexcept(FP != FailPolicy::Exception);
 		};
 
 		template<ObjectPolicy OP, typename T>
 		struct ObjectPolicyHelper {
-			inline static typename ObjectPolicyType<OP, T>::type& Unwrap(Expected<FactoryWrapper<T>>& reference);
-			inline static typename ObjectPolicyType<OP, T>::type& Unwrap(std::vector<Expected<FactoryWrapper<T>>>& reference);
+			inline static typename ObjectPolicyType<OP, T>::type& Unwrap(Expected<FactoryWrapper<T>>& reference) noexcept(OP == ObjectPolicy::Expected);
+			inline static typename ObjectPolicyType<OP, T>::type& Unwrap(std::vector<Expected<FactoryWrapper<T>>>& reference) noexcept(OP == ObjectPolicy::Expected);
 		};
 
 		template<typename T>
@@ -177,8 +177,8 @@ class GameFactory
 
 		template<typename T>
 		struct ObjectPolicyHelper<ObjectPolicy::Expected, T> {
-			inline static typename ObjectPolicyType<ObjectPolicy::Expected, T>::type& Unwrap(Expected<FactoryWrapper<T>>& reference) { return reference; }
-			inline static typename std::vector<typename ObjectPolicyType<ObjectPolicy::Validated, T>::type>& Unwrap(std::vector<Expected<FactoryWrapper<T>>>& reference) { return reference; }
+			inline static typename ObjectPolicyType<ObjectPolicy::Expected, T>::type& Unwrap(Expected<FactoryWrapper<T>>& reference) noexcept { return reference; }
+			inline static typename std::vector<typename ObjectPolicyType<ObjectPolicy::Validated, T>::type>& Unwrap(std::vector<Expected<FactoryWrapper<T>>>& reference) noexcept { return reference; }
 		};
 
 	public:
@@ -415,7 +415,7 @@ class FactoryWrapper<Reference>
 		unsigned int type;
 
 	protected:
-		FactoryWrapper(Reference* reference, unsigned int type) noexcept : reference(reinterpret_cast<Reference*>(reference->StartSession())), type(type) {}
+		FactoryWrapper(Reference* reference, unsigned int type) noexcept : reference(static_cast<Reference*>(reference->StartSession())), type(type) {}
 
 		FactoryWrapper(const FactoryWrapper& p) noexcept : reference(p.reference), type(p.type)
 		{

@@ -205,6 +205,8 @@ class Interface : public API
 		static CriticalSection job_cs;
 		static Native natives;
 
+		static void StartSetup_();
+		static void EndSetup_();
 		static API::CommandInput Evaluate(Native::iterator _it);
 
 		static void CommandThreadReceive();
@@ -242,30 +244,28 @@ class Interface : public API
 		static bool HasShutdown();
 
 		/**
-		 * \brief Starts a setup Interface session
+		 * \brief Executes Interface setup
 		 *
 		 * Used to start input static commands
 		 */
-		static void StartSetup();
-		/**
-		 * \brief Ends a setup Interface session
-		 *
-		 * Must be called when finished inputting static commands
-		 */
-		static void EndSetup();
+		template<typename F>
+		static void Setup(F function) {
+			CriticalLock lock(static_cs);
+			StartSetup_();
+			function();
+			EndSetup_();
+		}
 
 		/**
-		 * \brief Starts an Interface session
+		 * \brief Executes Interface commands
 		 *
 		 * Used to start input dynamic commands
 		 */
-		static void StartDynamic();
-		/**
-		 * \brief Ends an Interface session
-		 *
-		 * Must be called when finished inputting dynamic commands
-		 */
-		static void EndDynamic();
+		template<typename F>
+		static void Dynamic(F function) {
+			CriticalLock lock(dynamic_cs);
+			function();
+		}
 
 		/**
 		 * \brief Setups a command

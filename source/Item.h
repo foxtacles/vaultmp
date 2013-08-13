@@ -37,7 +37,7 @@ class Item : public Object
 		Item(const pDefault* packet);
 
 	public:
-		virtual ~Item();
+		virtual ~Item() noexcept;
 
 		RakNet::NetworkID GetItemContainer() const;
 		unsigned int GetItemCount() const;

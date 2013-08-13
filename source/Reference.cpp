@@ -16,10 +16,7 @@ Reference::Reference(unsigned int refID, unsigned int baseID)
 	this->SetNetworkIDManager(Network::Manager());
 }
 
-Reference::~Reference()
-{
-
-}
+Reference::~Reference() noexcept {}
 
 /*
 unsigned int Reference::ResolveIndex(unsigned int baseID)

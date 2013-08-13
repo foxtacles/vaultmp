@@ -29,10 +29,10 @@ class Edit : public Window
 	protected:
 		Edit();
 		Edit(const pDefault* packet);
-		Edit(pPacket&& packet);
+		Edit(pPacket&& packet) : Edit(packet.get()) {};
 
 	public:
-		virtual ~Edit();
+		virtual ~Edit() noexcept;
 
 		void SetMaxLength(unsigned int length) { this->length = length; }
 		void SetValidation(const std::string& validation) { this->validation = validation; }

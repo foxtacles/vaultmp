@@ -15,15 +15,7 @@ Edit::Edit(const pDefault* packet) : Window(PacketFactory::Pop<pPacket>(packet))
 	PacketFactory::Access<pTypes::ID_EDIT_NEW>(packet, length, validation);
 }
 
-Edit::Edit(pPacket&& packet) : Edit(packet.get())
-{
-
-}
-
-Edit::~Edit()
-{
-
-}
+Edit::~Edit() noexcept {}
 
 void Edit::initialize()
 {

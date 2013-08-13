@@ -26,10 +26,11 @@ class Container : public Object
 	protected:
 		Container(unsigned int refID, unsigned int baseID);
 		Container(const pDefault* packet);
-		Container(pPacket&& packet);
+		Container(pPacket&& packet) : Container(packet.get()) {};
 
 	public:
-		virtual ~Container();
+		virtual ~Container() noexcept;
+
 #ifndef VAULTSERVER
 		/**
 		 * \brief Creates a Parameter containing a VaultFunctor initialized with the given flags

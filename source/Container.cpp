@@ -32,15 +32,7 @@ Container::Container(const pDefault* packet) : Object(PacketFactory::Pop<pPacket
 	}
 }
 
-Container::Container(pPacket&& packet) : Container(packet.get())
-{
-
-}
-
-Container::~Container()
-{
-
-}
+Container::~Container() noexcept {}
 
 void Container::initialize()
 {

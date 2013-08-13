@@ -55,7 +55,7 @@ class Reference : private CriticalSection, public RakNet::NetworkIDObject
 		Reference(unsigned int refID, unsigned int baseID);
 
 	public:
-		virtual ~Reference();
+		virtual ~Reference() noexcept;
 
 		/**
 		 * \brief Retrieves the Reference's reference ID

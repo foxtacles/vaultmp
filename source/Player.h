@@ -58,7 +58,7 @@ class Player : public Actor
 		Player(const pDefault* packet);
 
 	public:
-		virtual ~Player();
+		virtual ~Player() noexcept;
 
 		static const std::map<unsigned char, std::pair<double, double>> default_values;
 

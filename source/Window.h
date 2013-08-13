@@ -33,10 +33,10 @@ class Window : public Reference
 	protected:
 		Window();
 		Window(const pDefault* packet);
-		Window(pPacket&& packet);
+		Window(pPacket&& packet) : Window(packet.get()) {};
 
 	public:
-		virtual ~Window();
+		virtual ~Window() noexcept;
 
 #ifdef VAULTSERVER
 		static const char* GUI_MAIN_LABEL;

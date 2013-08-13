@@ -15,15 +15,7 @@ Text::Text(const pDefault* packet) : Window(PacketFactory::Pop<pPacket>(packet))
 	PacketFactory::Access<pTypes::ID_TEXT_NEW>(packet);
 }
 
-Text::Text(pPacket&& packet) : Text(packet.get())
-{
-
-}
-
-Text::~Text()
-{
-
-}
+Text::~Text() noexcept {}
 
 void Text::initialize()
 {

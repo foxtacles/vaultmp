@@ -52,10 +52,10 @@ class Actor : public Container
 	protected:
 		Actor(unsigned int refID, unsigned int baseID);
 		Actor(const pDefault* packet);
-		Actor(pPacket&& packet);
+		Actor(pPacket&& packet) : Actor(packet.get()) {};
 
 	public:
-		virtual ~Actor();
+		virtual ~Actor() noexcept;
 
 		/**
 		 * \brief Retrieves a reference to a constant Parameter containing every available actor value string representation

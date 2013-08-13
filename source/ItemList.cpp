@@ -25,7 +25,7 @@ ItemList::ItemList(NetworkID source) : source(source)
 #endif
 }
 
-ItemList::~ItemList()
+ItemList::~ItemList() noexcept
 {
 	this->FlushContainer();
 }

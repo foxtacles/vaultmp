@@ -13,27 +13,56 @@
 class CriticalSection
 {
 	private:
-		static constexpr unsigned int CS_TIMEOUT = 5000;
-
-		std::recursive_timed_mutex cs;
+		std::recursive_mutex cs;
 		std::atomic<bool> finalize;
 
 		CriticalSection(const CriticalSection&) = delete;
 		CriticalSection& operator=(const CriticalSection&) = delete;
 
 	public:
-		CriticalSection() : finalize(false) {}
-		virtual ~CriticalSection() {}
+		CriticalSection() noexcept : finalize(false) {}
+		virtual ~CriticalSection() noexcept {}
 
-		CriticalSection* StartSession();
-		void EndSession();
-		void Finalize();
+		CriticalSection* StartSession() noexcept
+		{
+			if (finalize)
+				return nullptr;
+
+			cs.lock();
+
+			if (!finalize)
+				return this;
+
+			cs.unlock();
+
+			return nullptr;
+		}
+
+		void EndSession() noexcept { cs.unlock(); }
+
+		void Finalize() noexcept // must be called by the thread which wants to delete this object
+		{
+			finalize = true;
+			EndSession();
+		}
 
 #ifdef VAULTMP_DEBUG
 		static std::string thread_id(std::thread&);
 		static std::string thread_id();
 #endif
+};
 
+class CriticalLock
+{
+	private:
+		CriticalSection* lock;
+
+		CriticalLock(const CriticalLock&) = delete;
+		CriticalLock& operator=(const CriticalLock&) = delete;
+
+	public:
+		CriticalLock(CriticalSection& lock) noexcept : lock(lock.StartSession()) {}
+		~CriticalLock() noexcept { if (lock) lock->EndSession(); }
 };
 
 #endif

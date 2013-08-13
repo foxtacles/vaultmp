@@ -31,12 +31,7 @@ Window::Window(const pDefault* packet) : Reference(0x00000000, 0x00000000)
 		childs[parent].emplace(id);
 }
 
-Window::Window(pPacket&& packet) : Window(packet.get())
-{
-
-}
-
-Window::~Window()
+Window::~Window() noexcept
 {
 	if (parent)
 		childs[parent].erase(this->GetNetworkID());

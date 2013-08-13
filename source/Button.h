@@ -21,12 +21,12 @@ class Button : public Window
 	protected:
 		Button();
 		Button(const pDefault* packet);
-		Button(pPacket&& packet);
+		Button(pPacket&& packet) : Button(packet.get()) {};
 
 	public:
 		static constexpr const char* CLOSE_BUTTON = "closeBTN";
 
-		virtual ~Button();
+		virtual ~Button() noexcept;
 
 		/**
 		 * \brief For network transfer

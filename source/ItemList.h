@@ -41,7 +41,7 @@ class ItemList
 
 	public:
 		ItemList(RakNet::NetworkID source);
-		~ItemList();
+		~ItemList() noexcept;
 
 		RakNet::NetworkID AddItem(RakNet::NetworkID id);
 		AddOp AddItem(unsigned int baseID, unsigned int count, double condition, bool silent);

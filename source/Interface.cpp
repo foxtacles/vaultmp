@@ -115,15 +115,13 @@ bool Interface::HasShutdown()
 	return shutdown;
 }
 
-void Interface::StartSetup()
+void Interface::StartSetup_()
 {
-	static_cs.StartSession();
-
 	static_cmdlist.clear();
 	priorityMap.clear();
 }
 
-void Interface::EndSetup()
+void Interface::EndSetup_()
 {
 	vector<unsigned int> priorities;
 	priorities.reserve(priorityMap.size());
@@ -168,18 +166,6 @@ void Interface::EndSetup()
 
 		static_cmdlist.emplace_back(move(content));
 	}
-
-	static_cs.EndSession();
-}
-
-void Interface::StartDynamic()
-{
-	dynamic_cs.StartSession();
-}
-
-void Interface::EndDynamic()
-{
-	dynamic_cs.EndSession();
 }
 
 void Interface::SetupCommand(Func opcode, ParamContainer&& param, unsigned int priority)

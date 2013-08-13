@@ -21,10 +21,10 @@ class Text : public Window
 	protected:
 		Text();
 		Text(const pDefault* packet);
-		Text(pPacket&& packet);
+		Text(pPacket&& packet) : Text(packet.get()) {};
 
 	public:
-		virtual ~Text();
+		virtual ~Text() noexcept;
 
 		/**
 		 * \brief For network transfer

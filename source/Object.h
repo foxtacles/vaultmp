@@ -55,10 +55,10 @@ class Object : public Reference
 	protected:
 		Object(unsigned int refID, unsigned int baseID);
 		Object(const pDefault* packet);
-		Object(pPacket&& packet);
+		Object(pPacket&& packet) : Object(packet.get()) {};
 
 	public:
-		virtual ~Object();
+		virtual ~Object() noexcept;
 
 		/**
 		 * \brief Retrieves a reference to a constant Parameter containing every available axis value string representation

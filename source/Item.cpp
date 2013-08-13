@@ -32,10 +32,7 @@ Item::Item(const pDefault* packet) : Object(PacketFactory::Pop<pPacket>(packet))
 	this->SetItemStick(stick);
 }
 
-Item::~Item()
-{
-
-}
+Item::~Item() noexcept {}
 
 void Item::initialize()
 {

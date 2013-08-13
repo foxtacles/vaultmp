@@ -15,15 +15,7 @@ Button::Button(const pDefault* packet) : Window(PacketFactory::Pop<pPacket>(pack
 	PacketFactory::Access<pTypes::ID_BUTTON_NEW>(packet);
 }
 
-Button::Button(pPacket&& packet) : Button(packet.get())
-{
-
-}
-
-Button::~Button()
-{
-
-}
+Button::~Button() noexcept {}
 
 void Button::initialize()
 {

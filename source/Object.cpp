@@ -62,15 +62,7 @@ Object::Object(const pDefault* packet) : Reference(0x00000000, 0x00000000)
 	}
 }
 
-Object::Object(pPacket&& packet) : Object(packet.get())
-{
-
-}
-
-Object::~Object()
-{
-
-}
+Object::~Object() noexcept {}
 
 void Object::initialize()
 {

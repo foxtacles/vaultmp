@@ -94,7 +94,7 @@ Player::Player(const pDefault* packet) : Actor(PacketFactory::Pop<pPacket>(packe
 	}
 }
 
-Player::~Player()
+Player::~Player() noexcept
 {
 #ifdef VAULTMP_DEBUG
 	debug.print("Player object destroyed (ref: ", hex, this->GetReference(), ")");

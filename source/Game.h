@@ -362,6 +362,10 @@ class Game
 		 */
 		static void DisablePlayerControls(bool movement = true, bool pipboy = true, bool fighting = true, bool pov = true, bool looking = false, bool rollover = false, bool sneaking = false);
 		/**
+		 * \brief Enables / disables a key
+		 */
+		static void ToggleKey(bool enabled, unsigned int scancode);
+		/**
 		 * \brief Sets the weather
 		 */
 		static void SetWeather(unsigned int weather);
@@ -517,7 +521,7 @@ class Game
 		/**
 		 * \brief Network function to handle player base
 		 */
-		static void net_SetBase(unsigned int base);
+		static void net_SetBase(unsigned int playerBase);
 		/**
 		 * \brief Network function to handle deleted static references
 		 */
