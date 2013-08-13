@@ -56,6 +56,10 @@ const unsigned int ALL_WINDOWS         = (ID_WINDOW | ID_BUTTON | ID_TEXT | ID_E
   */
 template<typename T>
 class FactoryWrapper;
+template<typename T, typename U> Expected<FactoryWrapper<T>> vaultcast(const FactoryWrapper<U>& object) noexcept;
+template<typename T, typename U> Expected<FactoryWrapper<T>> vaultcast(const Expected<FactoryWrapper<U>>& object) noexcept;
+template<typename T, typename U> Expected<FactoryWrapper<T>> vaultcast_swap(FactoryWrapper<U>& object) noexcept;
+template<typename T, typename U> Expected<FactoryWrapper<T>> vaultcast_swap(Expected<FactoryWrapper<U>>& object) noexcept;
 
 /**
  * \brief Create, use and destroy game object instances via the GameFactory
@@ -143,12 +147,12 @@ class GameFactory
 
 		template<typename T, FailPolicy FP, ObjectPolicy OP, LaunchPolicy LP, typename I, typename F>
 		struct OperateFunctions<T, FP, OP, LP, I, F, false> {
-			static typename OperateReturn<FP, OP, LP, T, F, false>::type Operate(I id, F function) noexcept(FP != FailPolicy::Exception);
+			static typename OperateReturn<FP, OP, LP, T, F, false>::type Operate(I&& id, F function) noexcept(FP != FailPolicy::Exception);
 		};
 
 		template<typename T, FailPolicy FP, ObjectPolicy OP, LaunchPolicy LP, typename I, typename F>
 		struct OperateFunctions<T, FP, OP, LP, I, F, true> {
-			static typename OperateReturn<FP, OP, LP, T, F, true>::type Operate(const std::vector<I>& id, F function) noexcept(FP != FailPolicy::Exception);
+			static typename OperateReturn<FP, OP, LP, T, F, true>::type Operate(std::vector<typename I::value_type>&& id, F function) noexcept(FP != FailPolicy::Exception);
 		};
 
 		template<ObjectPolicy OP, typename T>
@@ -181,6 +185,11 @@ class GameFactory
 			inline static typename std::vector<typename ObjectPolicyType<ObjectPolicy::Validated, T>::type>& Unwrap(std::vector<Expected<FactoryWrapper<T>>>& reference) noexcept { return reference; }
 		};
 
+		template<typename I>
+		struct InputPolicyHelper {
+			static constexpr bool M = !std::is_trivial<typename std::remove_reference<I>::type>::value && !std::is_base_of<FactoryWrapper<Reference>, typename std::remove_reference<I>::type>::value;
+		};
+
 	public:
 		static void Initialize();
 
@@ -199,15 +208,10 @@ class GameFactory
 		template<typename T = Object>
 		static Expected<FactoryWrapper<T>> GetObject(unsigned int refID) noexcept;
 		/**
-		 * \brief Executes a function on a Reference
-		 *
-		 * The Reference is identified by an arbitrary type. This can be a NetworkID or a reference ID only.
+		 * \brief This is an alias to vaultcast_swap
 		 */
-		template<typename I, typename F> static typename OperateReturnProxy<typename std::enable_if<std::is_trivial<I>::value, typename std::enable_if<!std::is_base_of<Reference, F>::value>::type>::type, FailPolicy::Default, ObjectPolicy::Default, LaunchPolicy::Default, Object, F, false>::type Operate(I id, F function) { return OperateFunctions<Object, FailPolicy::Default, ObjectPolicy::Default, LaunchPolicy::Default, I, F, false>::Operate(id, function); }
-		template<typename T, typename I, typename F> static typename OperateReturnProxy<typename std::enable_if<std::is_trivial<I>::value>::type, FailPolicy::Default, ObjectPolicy::Default, LaunchPolicy::Default, T, F, false>::type Operate(I id, F function) { return OperateFunctions<T, FailPolicy::Default, ObjectPolicy::Default, LaunchPolicy::Default, I, F, false>::Operate(id, function); }
-		template<typename T, FailPolicy FP, typename I, typename F> static typename OperateReturnProxy<typename std::enable_if<std::is_trivial<I>::value>::type, FP, ObjectPolicy::Default, LaunchPolicy::Default, T, F, false>::type Operate(I id, F function) { return OperateFunctions<T, FP, ObjectPolicy::Default, LaunchPolicy::Default, I, F, false>::Operate(id, function); }
-		template<typename T, FailPolicy FP, ObjectPolicy OP, typename I, typename F> static typename OperateReturnProxy<typename std::enable_if<std::is_trivial<I>::value>::type, FP, OP, LaunchPolicy::Default, T, F, false>::type Operate(I id, F function) { return OperateFunctions<T, FP, OP, LaunchPolicy::Default, I, F, false>::Operate(id, function); }
-		template<typename T, FailPolicy FP, ObjectPolicy OP, LaunchPolicy LP, typename I, typename F> static typename OperateReturnProxy<typename std::enable_if<std::is_trivial<I>::value>::type, FP, OP, LP, T, F, false>::type Operate(I id, F function) { return OperateFunctions<T, FP, OP, LP, I, F, false>::Operate(id, function); }
+		template<typename T, typename U> inline static Expected<FactoryWrapper<T>> GetObject(FactoryWrapper<U>& reference) noexcept { return vaultcast_swap<T>(reference); }
+		template<typename T, typename U> inline static Expected<FactoryWrapper<T>> GetObject(Expected<FactoryWrapper<U>>& reference) noexcept { return vaultcast_swap<T>(reference); }
 		/**
 		 * \brief Obtains a lock on multiple References
 		 *
@@ -225,15 +229,15 @@ class GameFactory
 		template<typename T = Object>
 		static std::vector<Expected<FactoryWrapper<T>>> GetMultiple(const std::vector<RakNet::NetworkID>& objects) noexcept;
 		/**
-		 * \brief Executes a function on multiple References
+		 * \brief Executes a function on one or multiple References
 		 *
-		 * The References are identified by an arbitrary type. This can be a NetworkID or a reference ID only.
+		 * The References are identified by an arbitrary type. This can be a NetworkID, reference ID or FactoryWrapper
 		 */
-		template<typename I, typename F> static typename OperateReturnProxy<typename std::enable_if<!std::is_base_of<Reference, F>::value>::type, FailPolicy::Default, ObjectPolicy::Default, LaunchPolicy::Default, Object, F, true>::type Operate(const std::vector<I>& id, F function) { return OperateFunctions<Object, FailPolicy::Default, ObjectPolicy::Default, LaunchPolicy::Default, I, F, true>::Operate(id, function); }
-		template<typename T, typename I, typename F> static typename OperateReturn<FailPolicy::Default, ObjectPolicy::Default, LaunchPolicy::Default, T, F, true>::type Operate(const std::vector<I>& id, F function) { return OperateFunctions<T, FailPolicy::Default, ObjectPolicy::Default, LaunchPolicy::Default, I, F, true>::Operate(id, function); }
-		template<typename T, FailPolicy FP, typename I, typename F> static typename OperateReturn<FP, ObjectPolicy::Default, LaunchPolicy::Default, T, F, true>::type Operate(const std::vector<I>& id, F function) { return OperateFunctions<T, FP, ObjectPolicy::Default, LaunchPolicy::Default, I, F, true>::Operate(id, function); }
-		template<typename T, FailPolicy FP, ObjectPolicy OP, typename I, typename F> static typename OperateReturn<FP, OP, LaunchPolicy::Default, T, F, true>::type Operate(const std::vector<I>& id, F function) { return OperateFunctions<T, FP, OP, LaunchPolicy::Default, I, F, true>::Operate(id, function); }
-		template<typename T, FailPolicy FP, ObjectPolicy OP, LaunchPolicy LP, typename I, typename F> static typename OperateReturn<FP, OP, LP, T, F, true>::type Operate(const std::vector<I>& id, F function) { return OperateFunctions<T, FP, OP, LP, I, F, true>::Operate(id, function); }
+		template<typename I, typename F> static typename OperateReturnProxy<typename std::enable_if<!std::is_base_of<Reference, F>::value>::type, FailPolicy::Default, ObjectPolicy::Default, LaunchPolicy::Default, Object, F, InputPolicyHelper<I>::M>::type Operate(I&& id, F function) { return OperateFunctions<Object, FailPolicy::Default, ObjectPolicy::Default, LaunchPolicy::Default, I, F, InputPolicyHelper<I>::M>::Operate(std::forward<I>(id), function); }
+		template<typename T, typename I, typename F> static typename OperateReturn<FailPolicy::Default, ObjectPolicy::Default, LaunchPolicy::Default, T, F, InputPolicyHelper<I>::M>::type Operate(I&& id, F function) { return OperateFunctions<T, FailPolicy::Default, ObjectPolicy::Default, LaunchPolicy::Default, I, F, InputPolicyHelper<I>::M>::Operate(std::forward<I>(id), function); }
+		template<typename T, FailPolicy FP, typename I, typename F> static typename OperateReturn<FP, ObjectPolicy::Default, LaunchPolicy::Default, T, F, InputPolicyHelper<I>::M>::type Operate(I&& id, F function) { return OperateFunctions<T, FP, ObjectPolicy::Default, LaunchPolicy::Default, I, F, InputPolicyHelper<I>::M>::Operate(std::forward<I>(id), function); }
+		template<typename T, FailPolicy FP, ObjectPolicy OP, typename I, typename F> static typename OperateReturn<FP, OP, LaunchPolicy::Default, T, F, InputPolicyHelper<I>::M>::type Operate(I&& id, F function) { return OperateFunctions<T, FP, OP, LaunchPolicy::Default, I, F, InputPolicyHelper<I>::M>::Operate(std::forward<I>(id), function); }
+		template<typename T, FailPolicy FP, ObjectPolicy OP, LaunchPolicy LP, typename I, typename F> static typename OperateReturn<FP, OP, LP, T, F, InputPolicyHelper<I>::M>::type Operate(I&& id, F function) { return OperateFunctions<T, FP, OP, LP, I, F, InputPolicyHelper<I>::M>::Operate(std::forward<I>(id), function); }
 		/**
 		 * \brief Lookup a NetworkID
 		 */
@@ -317,9 +321,9 @@ using ObjectPolicy = GameFactory::ObjectPolicy;
 
 template<ObjectPolicy OP, typename T, typename I, typename F>
 struct GameFactory::OperateFunctions<T, FailPolicy::Return, OP, LaunchPolicy::Blocking, I, F, false> {
-	static typename OperateReturn<FailPolicy::Return, OP, LaunchPolicy::Blocking, T, F, false>::type Operate(I id, F function) noexcept
+	static typename OperateReturn<FailPolicy::Return, OP, LaunchPolicy::Blocking, T, F, false>::type Operate(I&& id, F function) noexcept
 	{
-		auto reference = GameFactory::GetObject<T>(id);
+		auto reference = GameFactory::GetObject<T>(std::forward<I>(id));
 
 		try
 		{
@@ -331,11 +335,11 @@ struct GameFactory::OperateFunctions<T, FailPolicy::Return, OP, LaunchPolicy::Bl
 
 template<ObjectPolicy OP, typename T, typename I, typename F>
 struct GameFactory::OperateFunctions<T, FailPolicy::Bool, OP, LaunchPolicy::Blocking, I, F, false> {
-	static typename OperateReturn<FailPolicy::Bool, OP, LaunchPolicy::Blocking, T, F, false>::type Operate(I id, F function) noexcept
+	static typename OperateReturn<FailPolicy::Bool, OP, LaunchPolicy::Blocking, T, F, false>::type Operate(I&& id, F function) noexcept
 	{
 		static_assert(std::is_same<typename ObjectPolicyReturn<OP, T, F, false>::type, void>::value, "Function return value disregarded");
 
-		auto reference = GameFactory::GetObject<T>(id);
+		auto reference = GameFactory::GetObject<T>(std::forward<I>(id));
 
 		try
 		{
@@ -349,18 +353,18 @@ struct GameFactory::OperateFunctions<T, FailPolicy::Bool, OP, LaunchPolicy::Bloc
 
 template<ObjectPolicy OP, typename T, typename I, typename F>
 struct GameFactory::OperateFunctions<T, FailPolicy::Exception, OP, LaunchPolicy::Blocking, I, F, false> {
-	static typename OperateReturn<FailPolicy::Exception, OP, LaunchPolicy::Blocking, T, F, false>::type Operate(I id, F function)
+	static typename OperateReturn<FailPolicy::Exception, OP, LaunchPolicy::Blocking, T, F, false>::type Operate(I&& id, F function)
 	{
-		auto reference = GameFactory::GetObject<T>(id);
+		auto reference = GameFactory::GetObject<T>(std::forward<I>(id));
 		return function(ObjectPolicyHelper<OP, T>::Unwrap(reference));
 	}
 };
 
 template<ObjectPolicy OP, typename T, typename I, typename F>
 struct GameFactory::OperateFunctions<T, FailPolicy::Return, OP, LaunchPolicy::Blocking, I, F, true> {
-	static typename OperateReturn<FailPolicy::Return, OP, LaunchPolicy::Blocking, T, F, true>::type Operate(const std::vector<I>& id, F function) noexcept
+	static typename OperateReturn<FailPolicy::Return, OP, LaunchPolicy::Blocking, T, F, true>::type Operate(std::vector<typename I::value_type>&& id, F function) noexcept
 	{
-		auto reference = GameFactory::GetMultiple<T>(id);
+		auto reference = GameFactory::GetMultiple<T>(std::forward<I>(id));
 
 		try
 		{
@@ -373,11 +377,11 @@ struct GameFactory::OperateFunctions<T, FailPolicy::Return, OP, LaunchPolicy::Bl
 
 template<ObjectPolicy OP, typename T, typename I, typename F>
 struct GameFactory::OperateFunctions<T, FailPolicy::Bool, OP, LaunchPolicy::Blocking, I, F, true> {
-	static typename OperateReturn<FailPolicy::Bool, OP, LaunchPolicy::Blocking, T, F, true>::type Operate(const std::vector<I>& id, F function) noexcept
+	static typename OperateReturn<FailPolicy::Bool, OP, LaunchPolicy::Blocking, T, F, true>::type Operate(std::vector<typename I::value_type>&& id, F function) noexcept
 	{
 		static_assert(std::is_same<typename ObjectPolicyReturn<OP, T, F, true>::type, void>::value, "Function return value disregarded");
 
-		auto reference = GameFactory::GetMultiple<T>(id);
+		auto reference = GameFactory::GetMultiple<T>(std::forward<I>(id));
 
 		try
 		{
@@ -392,9 +396,9 @@ struct GameFactory::OperateFunctions<T, FailPolicy::Bool, OP, LaunchPolicy::Bloc
 
 template<ObjectPolicy OP, typename T, typename I, typename F>
 struct GameFactory::OperateFunctions<T, FailPolicy::Exception, OP, LaunchPolicy::Blocking, I, F, true> {
-	static typename OperateReturn<FailPolicy::Exception, OP, LaunchPolicy::Blocking, T, F, true>::type Operate(const std::vector<I>& id, F function)
+	static typename OperateReturn<FailPolicy::Exception, OP, LaunchPolicy::Blocking, T, F, true>::type Operate(std::vector<typename I::value_type>&& id, F function)
 	{
-		auto reference = GameFactory::GetMultiple<T>(id);
+		auto reference = GameFactory::GetMultiple<T>(std::forward<I>(id));
 		auto&& param = ObjectPolicyHelper<OP, T>::Unwrap(reference); // depending on OP, returns either a reference or value
 		return function(param);
 	}
@@ -554,13 +558,9 @@ inline Expected<FactoryWrapper<T>> vaultcast_swap(FactoryWrapper<U>& object) noe
 
 	return result;
 }
-template<typename T, typename U>
-inline Expected<FactoryWrapper<T>> vaultcast_swap(Expected<FactoryWrapper<U>>& object) noexcept { return vaultcast_swap<T>(object.get()); }
 
-template<typename T, typename U>
-inline bool vaultcast_test(const FactoryWrapper<U>& object) noexcept { return object.template validate<T>(); }
-
-template<typename T, typename U>
-inline bool vaultcast_test(const Expected<FactoryWrapper<U>>& object) noexcept { return const_cast<Expected<FactoryWrapper<U>>&>(object).get().template validate<T>(); }
+template<typename T, typename U> inline Expected<FactoryWrapper<T>> vaultcast_swap(Expected<FactoryWrapper<U>>& object) noexcept { return vaultcast_swap<T>(object.get()); }
+template<typename T, typename U> inline bool vaultcast_test(const FactoryWrapper<U>& object) noexcept { return object.template validate<T>(); }
+template<typename T, typename U> inline bool vaultcast_test(const Expected<FactoryWrapper<U>>& object) noexcept { return const_cast<Expected<FactoryWrapper<U>>&>(object).get().template validate<T>(); }
 
 #endif

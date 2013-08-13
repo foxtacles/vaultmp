@@ -1287,11 +1287,18 @@ NetworkID Script::CreateObject(unsigned int baseID, NetworkID id, unsigned int c
 
 bool Script::DestroyObject(NetworkID id) noexcept
 {
+	if (!GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(id, [id](ExpectedObject& object) -> bool {
+		if (!object)
+			return scriptIL.count(id);
+		else if (vaultcast_test<Player>(object))
+			return false;
+	})) return false;
+
+	Script::Call<CBI("OnDestroy")>(id);
+
 	return GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(id, [id](ExpectedObject& object) -> bool {
 		if (!object)
 			return scriptIL.erase(id);
-		else if (vaultcast_test<Player>(object))
-			return false;
 
 		if (object->IsPersistent())
 			deletedStatic[object->GetNetworkCell()].emplace_back(object->GetReference());
