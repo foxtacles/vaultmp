@@ -299,7 +299,7 @@ unsigned int Actor::GetEquippedWeapon() const
 	// this won't reliably work if the actor has equipped more than one weapon
 	for (const auto& weapon : weapons)
 		if ((baseID = GameFactory::Operate<Item>(weapon, [](FactoryItem& item) {
-			return item->GetBase();
+			return item->GetItemEquipped() ? item->GetBase() : 0x00000000;
 		}))) return baseID;
 
 	return 0x00000000;

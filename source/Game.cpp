@@ -622,25 +622,16 @@ void Game::NewDispatch(FactoryObject& reference)
 		}
 
 		case ID_CONTAINER:
-		{
-			auto container = vaultcast_swap<Container>(reference).get();
-			NewContainer(container);
+			NewContainer(vaultcast_swap<Container>(reference).get());
 			break;
-		}
 
 		case ID_ACTOR:
-		{
-			auto actor = vaultcast_swap<Actor>(reference).get();
-			NewActor(actor);
+			NewActor(vaultcast_swap<Actor>(reference).get());
 			break;
-		}
 
 		case ID_PLAYER:
-		{
-			auto player = vaultcast_swap<Player>(reference).get();
-			NewPlayer(player);
+			NewPlayer(vaultcast_swap<Player>(reference).get());
 			break;
-		}
 
 		default:
 			throw VaultException("Can't create object of unknown type %08X", type).stacktrace();

@@ -110,25 +110,21 @@ unsigned int GameFactory::GetObjectCount(unsigned int type) noexcept
 template<typename T>
 Expected<FactoryWrapper<T>> GameFactory::GetObject(NetworkID id)
 {
-	Reference* reference = nullptr;
-	unsigned int type;
+	pair<ReferenceList::key_type, ReferenceList::mapped_type> reference;
 
 	cs.StartSession();
 
 	auto it = GetShared(id);
 
 	if (it != instances.end())
-	{
-		reference = it->first.get();
-		type = it->second;
-	}
+		reference = *it;
 
 	cs.EndSession();
 
-	if (!reference)
+	if (!reference.first)
 		return VaultException("Unknown object with NetworkID %llu", id);
 
-	return FactoryWrapper<T>(reference, type);
+	return FactoryWrapper<T>(reference.first.get(), reference.second);
 }
 template ExpectedObject GameFactory::GetObject(NetworkID id);
 template ExpectedItem GameFactory::GetObject(NetworkID id);
@@ -143,8 +139,7 @@ template ExpectedEdit GameFactory::GetObject(NetworkID id);
 template<typename T>
 Expected<FactoryWrapper<T>> GameFactory::GetObject(unsigned int refID)
 {
-	Reference* reference;
-	unsigned int type;
+	pair<ReferenceList::key_type, ReferenceList::mapped_type> reference;
 	ReferenceList::iterator it;
 
 	cs.StartSession();
@@ -152,19 +147,14 @@ Expected<FactoryWrapper<T>> GameFactory::GetObject(unsigned int refID)
 	for (it = instances.begin(); it != instances.end() && it->first->GetReference() != refID; ++it);
 
 	if (it != instances.end())
-	{
-		reference = it->first.get();
-		type = it->second;
-	}
-	else
-		reference = nullptr;
+		reference = *it;
 
 	cs.EndSession();
 
-	if (!reference)
+	if (!reference.first)
 		return VaultException("Unknown object with reference %08X", refID);
 
-	return FactoryWrapper<T>(reference, type);
+	return FactoryWrapper<T>(reference.first.get(), reference.second);
 }
 template ExpectedObject GameFactory::GetObject(unsigned int refID);
 template ExpectedItem GameFactory::GetObject(unsigned int refID);
