@@ -33,12 +33,12 @@ NetworkResponse NetworkClient::ProcessEvent(unsigned char id)
 		{
 			Network::ToggleDequeue(true);
 
-			FactoryPlayer reference = GameFactory::GetObject<Player>(PLAYER_REFERENCE).get();
-
-			return {Network::CreateResponse(
-				reference->toPacket(),
-				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Game::server)
-			};
+			return GameFactory::Operate<Player>(PLAYER_REFERENCE, [](FactoryPlayer& player) {
+				return NetworkResponse{Network::CreateResponse(
+					player->toPacket(),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Game::server)
+				};
+			});
 		}
 
 		default:
@@ -217,44 +217,29 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				}
 
 				case pTypes::ID_OBJECT_NEW:
-				{
-					NetworkID id = GameFactory::CreateKnownInstance(ID_OBJECT, packet.get());
-					auto reference = GameFactory::GetObject(id);
-					Game::NewObject(reference.get());
-					break;
-				}
+					GameFactory::Operate(GameFactory::CreateKnownInstance(ID_OBJECT, packet.get()), [](FactoryObject& object) {
+						Game::NewObject(object);
+					}); break;
 
 				case pTypes::ID_ITEM_NEW:
-				{
-					NetworkID id = GameFactory::CreateKnownInstance(ID_ITEM, packet.get());
-					auto reference = GameFactory::GetObject<Item>(id);
-					Game::NewItem(reference.get());
-					break;
-				}
+					GameFactory::Operate<Item>(GameFactory::CreateKnownInstance(ID_ITEM, packet.get()), [](FactoryItem& item) {
+						Game::NewItem(item);
+					}); break;
 
 				case pTypes::ID_CONTAINER_NEW:
-				{
-					NetworkID id = GameFactory::CreateKnownInstance(ID_CONTAINER, packet.get());
-					auto reference = GameFactory::GetObject<Container>(id);
-					Game::NewContainer(reference.get());
-					break;
-				}
+					GameFactory::Operate<Container>(GameFactory::CreateKnownInstance(ID_CONTAINER, packet.get()), [](FactoryContainer& container) {
+						Game::NewContainer(container);
+					}); break;
 
 				case pTypes::ID_ACTOR_NEW:
-				{
-					NetworkID id = GameFactory::CreateKnownInstance(ID_ACTOR, packet.get());
-					auto reference = GameFactory::GetObject<Actor>(id);
-					Game::NewActor(reference.get());
-					break;
-				}
+					GameFactory::Operate<Actor>(GameFactory::CreateKnownInstance(ID_ACTOR, packet.get()), [](FactoryActor& actor) {
+						Game::NewActor(actor);
+					}); break;
 
 				case pTypes::ID_PLAYER_NEW:
-				{
-					NetworkID id = GameFactory::CreateKnownInstance(ID_PLAYER, packet.get());
-					auto reference = GameFactory::GetObject<Player>(id);
-					Game::NewPlayer(reference.get());
-					break;
-				}
+					GameFactory::Operate<Player>(GameFactory::CreateKnownInstance(ID_PLAYER, packet.get()), [](FactoryPlayer& player) {
+						Game::NewPlayer(player);
+					}); break;
 
 				case pTypes::ID_OBJECT_REMOVE:
 				{
@@ -345,8 +330,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					double X, Y, Z;
 					PacketFactory::Access<pTypes::ID_UPDATE_CELL>(packet, id, cell, X, Y, Z);
 					auto reference = GameFactory::GetMultiple(vector<NetworkID>{id, GameFactory::LookupNetworkID(PLAYER_REFERENCE)});
-					auto player = vaultcast<Player>(reference[1]);
-					GameFactory::LeaveReference(reference[1].get());
+					auto player = vaultcast_swap<Player>(reference[1]);
 					Game::net_SetCell(reference[0].get(), player.get(), cell, X, Y, Z);
 					break;
 				}

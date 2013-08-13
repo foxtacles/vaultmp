@@ -66,10 +66,10 @@ FuncParameter Container::CreateFunctor(unsigned int flags, NetworkID id)
 
 NetworkID Container::Copy() const
 {
-	FactoryContainer container = GameFactory::GetObject<Container>(GameFactory::CreateInstance(ID_CONTAINER, 0x00000000, this->GetBase())).get();
-	NetworkID id = container->GetNetworkID();
-	IL.Copy(container->IL);
-	return id;
+	return GameFactory::Operate<Container>(GameFactory::CreateInstance(ID_CONTAINER, 0x00000000, this->GetBase()), [this](FactoryContainer& container) {
+		IL.Copy(container->IL);
+		return container->GetNetworkID();
+	});
 }
 
 pPacket Container::toPacket() const
@@ -78,10 +78,7 @@ pPacket Container::toPacket() const
 	items.reserve(IL.GetItemList().size());
 
 	for (const NetworkID& id : IL.GetItemList())
-	{
-		FactoryItem item = GameFactory::GetObject<Item>(id).get();
-		items.emplace_back(item->toPacket());
-	}
+		items.emplace_back(GameFactory::Operate<Item>(id, [](FactoryItem& item) { return item->toPacket(); }));
 
 	pPacket pObjectNew = Object::toPacket();
 	pPacket packet = PacketFactory::Create<pTypes::ID_CONTAINER_NEW>(pObjectNew, move(items));
@@ -115,18 +112,12 @@ vector<string> ContainerFunctor::operator()()
 	else
 	{
 		auto references = Game::GetContext(ID_CONTAINER);
-		ExpectedContainer container;
 
 		for (unsigned int refID : references)
-			if ((container = GameFactory::GetObject<Container>(refID)))
-			{
-				auto& container_ = container.get();
-
-				if (!filter(container_))
+			GameFactory::Operate<Container, FailPolicy::Return>(refID, [this, refID, &result](FactoryContainer& container) {
+				if (!filter(container))
 					result.emplace_back(Utils::toString(refID));
-
-				GameFactory::LeaveReference(container_);
-			}
+			});
 	}
 
 	_next(result);

@@ -73,20 +73,21 @@ NetworkResponse Server::LoadGame(RakNetGUID guid)
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 
-	vector<FactoryObject> references = GameFactory::GetObjectTypes<Object>(ALL_OBJECTS);
-	vector<FactoryObject>::iterator it;
+	GameFactory::Operate(GameFactory::GetIDObjectTypes(ALL_OBJECTS), [&response, guid](FactoryObjects& objects) {
+		FactoryObjects::iterator it;
 
-	for (it = references.begin(); it != references.end(); GameFactory::LeaveReference(*it), ++it)
-	{
-		auto item = vaultcast<Item>(*it);
+		for (it = objects.begin(); it != objects.end(); GameFactory::LeaveReference(*it), ++it)
+		{
+			auto item = vaultcast<Item>(*it);
 
-		if (item && item->GetItemContainer())
-			continue;
+			if (item && item->GetItemContainer())
+				continue;
 
-		response.emplace_back(Network::CreateResponse(
-			(*it)->toPacket(),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
-	}
+			response.emplace_back(Network::CreateResponse(
+				(*it)->toPacket(),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+		}
+	});
 
 	response.emplace_back(Network::CreateResponse(
 		PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameYear, Script::GetGameYear()),
@@ -245,21 +246,17 @@ NetworkResponse Server::GetPos(RakNetGUID guid, FactoryObject& reference, double
 		if (reference->SetGameCell(cell))
 		{
 			NetworkID id = reference->GetNetworkID();
-			auto player = vaultcast<Player>(reference);
 			reference->SetGameCell(cell);
 
 			response.emplace_back(Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, cell, X, Y, Z),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
-			if (player)
-			{
+			GameFactory::Operate<Player, FailPolicy::Return>(id, [&response, guid, id](FactoryPlayer& player) {
 				response.emplace_back(Network::CreateResponse(
 					PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(id, player->GetPlayerCellContext(), false),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
-
-				GameFactory::LeaveReference(player.get());
-			}
+			});
 
 			GameFactory::LeaveReference(reference);
 			Script::Call<Script::CBI("OnCellChange")>(id, cell);
@@ -298,21 +295,17 @@ NetworkResponse Server::GetCell(RakNetGUID guid, FactoryObject& reference, unsig
 	if (result)
 	{
 		NetworkID id = reference->GetNetworkID();
-		auto player = vaultcast<Player>(reference);
 		reference->SetGameCell(cell);
 
 		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, cell, reference->GetNetworkPos(Axis_X), reference->GetNetworkPos(Axis_Y), reference->GetNetworkPos(Axis_Z)),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
-		if (player)
-		{
+		GameFactory::Operate<Player, FailPolicy::Return>(id, [&response, guid, id](FactoryPlayer& player) {
 			response.emplace_back(Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(id, player->GetPlayerCellContext(), false),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
-
-			GameFactory::LeaveReference(player.get());
-		}
+		});
 
 		GameFactory::LeaveReference(reference);
 		Script::Call<Script::CBI("OnCellChange")>(id, cell);

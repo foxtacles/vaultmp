@@ -243,11 +243,10 @@ void ItemList::Copy(ItemList& IL) const
 {
 	IL.FlushContainer();
 
-	for (const NetworkID& id : this->container)
-	{
-		FactoryItem item = GameFactory::GetObject<Item>(id).get();
-		IL.AddItem(item->Copy());
-	}
+	for (const NetworkID& id : container)
+		GameFactory::Operate<Item>(id, [&IL](FactoryItem& item) {
+			IL.AddItem(item->Copy());
+		});
 }
 
 bool ItemList::IsEmpty() const
@@ -260,12 +259,10 @@ unsigned int ItemList::GetItemCount(unsigned int baseID) const
 	unsigned int count = 0;
 
 	for (const NetworkID& id : container)
-	{
-		FactoryItem item = GameFactory::GetObject<Item>(id).get();
-
-		if (!baseID || item->GetBase() == baseID)
-			count += item->GetItemCount();
-	}
+		GameFactory::Operate<Item>(id, [&count, baseID](FactoryItem& item) {
+			if (!baseID || item->GetBase() == baseID)
+				count += item->GetItemCount();
+		});
 
 	return count;
 }
@@ -289,12 +286,10 @@ ItemList::Impl ItemList::GetItemTypes(const string& type) const
 	Impl result;
 
 	for (const NetworkID& id : container)
-	{
-		FactoryItem item = GameFactory::GetObject<Item>(id).get();
-
-		if (DB::Record::Lookup(item->GetBase(), type))
-			result.emplace_back(id);
-	}
+		GameFactory::Operate<Item>(id, [&result, &type, id](FactoryItem& item) {
+			if (DB::Record::Lookup(item->GetBase(), type))
+				result.emplace_back(id);
+		});
 
 	return result;
 }

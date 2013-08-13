@@ -116,16 +116,15 @@ Lockable* Item::SetItemStick(bool stick)
 
 NetworkID Item::Copy() const
 {
-	FactoryItem item = GameFactory::GetObject<Item>(GameFactory::CreateInstance(ID_ITEM, 0x00000000, this->GetBase())).get();
-
-	item->SetItemContainer(this->GetItemContainer());
-	item->SetItemCount(this->GetItemCount());
-	item->SetItemCondition(this->GetItemCondition());
-	item->SetItemEquipped(this->GetItemEquipped());
-	item->SetItemSilent(this->GetItemSilent());
-	item->SetItemStick(this->GetItemStick());
-
-	return item->GetNetworkID();
+	return GameFactory::Operate<Item>(GameFactory::CreateInstance(ID_ITEM, 0x00000000, this->GetBase()), [this](FactoryItem& item) {
+		item->SetItemContainer(this->GetItemContainer());
+		item->SetItemCount(this->GetItemCount());
+		item->SetItemCondition(this->GetItemCondition());
+		item->SetItemEquipped(this->GetItemEquipped());
+		item->SetItemSilent(this->GetItemSilent());
+		item->SetItemStick(this->GetItemStick());
+		return item->GetNetworkID();
+	});
 }
 
 #ifdef VAULTSERVER

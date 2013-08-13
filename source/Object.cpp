@@ -264,34 +264,23 @@ vector<string> ObjectFunctor::operator()()
 	NetworkID id = get();
 
 	if (id)
-	{
-		auto object = GameFactory::GetObject(id);
-
-		if (object)
-		{
+		GameFactory::Operate<Object, FailPolicy::Return>(id, [this, &result](FactoryObject& object) {
 			unsigned int flags = this->flags();
 
 			if (flags & FLAG_REFERENCE)
 				result.emplace_back(Utils::toString(object->GetReference()));
 			else if (flags & FLAG_BASE)
 				result.emplace_back(Utils::toString(object->GetBase()));
-		}
-	}
+		});
 	else
 	{
 		auto references = Game::GetContext(ID_OBJECT);
-		ExpectedObject object;
 
 		for (unsigned int refID : references)
-			if ((object = GameFactory::GetObject(refID)))
-			{
-				auto& object_ = object.get();
-
-				if (!filter(object_))
+			GameFactory::Operate<Object, FailPolicy::Return>(refID, [this, refID, &result](FactoryObject& object) {
+				if (!filter(object))
 					result.emplace_back(Utils::toString(refID));
-
-				GameFactory::LeaveReference(object_);
-			}
+			});
 	}
 
 	_next(result);
@@ -301,29 +290,30 @@ vector<string> ObjectFunctor::operator()()
 
 bool ObjectFunctor::filter(FactoryWrapper<Reference>& reference)
 {
-	FactoryObject object = vaultcast<Object>(reference).get();
-	unsigned int flags = this->flags();
+	return GameFactory::Operate(reference->GetNetworkID(), [this](FactoryObject& object) {
+		unsigned int flags = this->flags();
 
-	if (flags & FLAG_NOTSELF && object->GetReference() == PLAYER_REFERENCE)
-		return true;
-
-	else if (flags & FLAG_SELF && object->GetReference() != PLAYER_REFERENCE)
-		return true;
-
-	if (flags & FLAG_ENABLED && !object->GetEnabled())
-		return true;
-
-	else if (flags & FLAG_DISABLED && object->GetEnabled())
-		return true;
-
-	if (flags & FLAG_LOCKED)
-	{
-		unsigned int lock = object->GetLockLevel();
-
-		if (lock == UINT_MAX || lock == UINT_MAX - 1 || lock == 255 || lock == 5)
+		if (flags & FLAG_NOTSELF && object->GetReference() == PLAYER_REFERENCE)
 			return true;
-	}
 
-	return false;
+		else if (flags & FLAG_SELF && object->GetReference() != PLAYER_REFERENCE)
+			return true;
+
+		if (flags & FLAG_ENABLED && !object->GetEnabled())
+			return true;
+
+		else if (flags & FLAG_DISABLED && object->GetEnabled())
+			return true;
+
+		if (flags & FLAG_LOCKED)
+		{
+			unsigned int lock = object->GetLockLevel();
+
+			if (lock == UINT_MAX || lock == UINT_MAX - 1 || lock == 255 || lock == 5)
+				return true;
+		}
+
+		return false;
+	});
 }
 #endif

@@ -294,15 +294,13 @@ bool Actor::IsActorAttacking() const
 unsigned int Actor::GetEquippedWeapon() const
 {
 	auto weapons = this->IL.GetItemTypes("WEAP");
+	unsigned int baseID;
 
 	// this won't reliably work if the actor has equipped more than one weapon
 	for (const auto& weapon : weapons)
-	{
-		auto item = GameFactory::GetObject<Item>(weapon);
-
-		if (item->GetItemEquipped())
+		if ((baseID = GameFactory::Operate<Item>(weapon, [](FactoryItem& item) {
 			return item->GetBase();
-	}
+		}))) return baseID;
 
 	return 0x00000000;
 }
@@ -340,18 +338,12 @@ vector<string> ActorFunctor::operator()()
 	else
 	{
 		auto references = Game::GetContext(ID_ACTOR);
-		ExpectedActor actor;
 
 		for (unsigned int refID : references)
-			if ((actor = GameFactory::GetObject<Actor>(refID)))
-			{
-				auto& actor_ = actor.get();
-
-				if (!filter(actor_))
+			GameFactory::Operate<Actor, FailPolicy::Return>(refID, [this, refID, &result](FactoryActor& actor) {
+				if (!filter(actor))
 					result.emplace_back(Utils::toString(refID));
-
-				GameFactory::LeaveReference(actor_);
-			}
+			});
 	}
 
 	_next(result);
@@ -364,23 +356,24 @@ bool ActorFunctor::filter(FactoryWrapper<Reference>& reference)
 	if (ContainerFunctor::filter(reference))
 		return true;
 
-	FactoryActor actor = vaultcast<Actor>(reference).get();
-	unsigned int flags = this->flags();
+	return GameFactory::Operate<Actor>(reference->GetNetworkID(), [this](FactoryActor& actor) {
+		unsigned int flags = this->flags();
 
-	if (flags & FLAG_ALIVE && actor->GetActorDead())
-		return true;
+		if (flags & FLAG_ALIVE && actor->GetActorDead())
+			return true;
 
-	else if (flags & FLAG_DEAD && !actor->GetActorDead())
-		return true;
+		else if (flags & FLAG_DEAD && !actor->GetActorDead())
+			return true;
 
-	if (flags & FLAG_ISALERT && !actor->GetActorAlerted())
-		return true;
+		if (flags & FLAG_ISALERT && !actor->GetActorAlerted())
+			return true;
 
-	else if (flags & FLAG_NOTALERT && actor->GetActorAlerted())
-		return true;
+		else if (flags & FLAG_NOTALERT && actor->GetActorAlerted())
+			return true;
 
-	// FLAG_SELFALERT
+		// FLAG_SELFALERT
 
-	return false;
+		return false;
+	});
 }
 #endif

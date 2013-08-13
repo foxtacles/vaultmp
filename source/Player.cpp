@@ -305,11 +305,7 @@ vector<string> PlayerFunctor::operator()()
 	NetworkID id = get();
 
 	if (id)
-	{
-		auto player = GameFactory::GetObject<Player>(id);
-
-		if (player)
-		{
+		GameFactory::Operate<Player>(id, [this, &result](FactoryPlayer& player) {
 			unsigned int flags = this->flags();
 
 			if (flags & FLAG_MOVCONTROLS)
@@ -325,23 +321,16 @@ vector<string> PlayerFunctor::operator()()
 
 				result.emplace_back(Utils::toString(movcontrols));
 			}
-		}
-	}
+		});
 	else
 	{
 		auto references = Game::GetContext(ID_PLAYER);
-		ExpectedPlayer player;
 
 		for (unsigned int refID : references)
-			if ((player = GameFactory::GetObject<Player>(refID)))
-			{
-				auto& player_ = player.get();
-
-				if (!filter(player_))
+			GameFactory::Operate<Player, FailPolicy::Return>(refID, [this, refID, &result](FactoryPlayer& player) {
+				if (!filter(player))
 					result.emplace_back(Utils::toString(refID));
-
-				GameFactory::LeaveReference(player_);
-			}
+			});
 	}
 
 	_next(result);
@@ -354,15 +343,16 @@ bool PlayerFunctor::filter(FactoryWrapper<Reference>& reference)
 	if (ActorFunctor::filter(reference))
 		return true;
 
-	//Player* player = vaultcast<Player>(reference);
-	unsigned int flags = this->flags();
+	return GameFactory::Operate<Player>(reference->GetNetworkID(), [this](FactoryPlayer& player) {
+		unsigned int flags = this->flags();
 
-	if (flags & FLAG_SELFALERT)
-	{
-		if (!GameFactory::GetObject<Player>(PLAYER_REFERENCE)->GetActorAlerted())
-			return true;
-	}
+		if (flags & FLAG_SELFALERT)
+		{
+			if (!player->GetActorAlerted())
+				return true;
+		}
 
-	return false;
+		return false;
+	});
 }
 #endif

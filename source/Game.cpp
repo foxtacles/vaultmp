@@ -73,125 +73,60 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 
 			case Func::GetPos:
-			{
-				auto reference = GameFactory::GetObject(getFrom<unsigned int>(info.at(1)));
-				GetPos(reference.get(), getFrom<unsigned char>(info.at(2)), result);
-				break;
-			}
-
-			case Func::SetPos:
-				break;
+				GameFactory::Operate(getFrom<unsigned int>(info.at(1)), [&info, result](FactoryObject& object) {
+					GetPos(object, getFrom<unsigned char>(info.at(2)), result);
+				}); break;
 
 			case Func::GetAngle:
+				GameFactory::Operate(getFrom<unsigned int>(info.at(1)), [&info, result](FactoryObject& object) {
+					GetAngle(object, getFrom<unsigned char>(info.at(2)), result);
+				}); break;
+
+			case Func::GetActivate:
 			{
-				auto reference = GameFactory::GetObject(getFrom<unsigned int>(info.at(1)));
-				GetAngle(reference.get(), getFrom<unsigned char>(info.at(2)), result);
+				if (!result)
+					break;
+
+				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
+				unsigned int refID = *reinterpret_cast<unsigned int*>(&data[0]);
+
+				GameFactory::Operate<Object, FailPolicy::Return>(vector<unsigned int>{refID, PLAYER_REFERENCE}, [result](FactoryObjects& objects) {
+					GetActivate(objects[0], objects[1]);
+				});
+
+				delete &data;
 				break;
 			}
-
-			case Func::SetAngle:
-				break;
-
+/*
 			case Func::GetActorValue:
-			{
-				auto reference = GameFactory::GetObject<Actor>(getFrom<unsigned int>(info.at(1)));
-				//GetActorValue(reference.get(), false, getFrom<unsigned char>(info.at(2)), result);
-				break;
-			}
-
-			case Func::ForceActorValue:
-				break;
-
-			case Func::DamageActorValue:
-				break;
-
-			case Func::RestoreActorValue:
-				break;
+				GameFactory::Operate<Actor>(getFrom<unsigned int>(info.at(1)), [&info, result](FactoryActor& actor) {
+					GetActorValue(reference.get(), false, getFrom<unsigned char>(info.at(2)), result);
+				});
 
 			case Func::GetBaseActorValue:
-			{
-				auto reference = GameFactory::GetObject<Actor>(getFrom<unsigned int>(info.at(1)));
-				//GetActorValue(reference.get(), true, getFrom<unsigned char>(info.at(2)), result);
-				break;
-			}
-
-			case Func::SetActorValue:
-				break;
-
+				GameFactory::Operate<Actor>(getFrom<unsigned int>(info.at(1)), [&info, result](FactoryActor& actor) {
+					//GetActorValue(reference.get(), true, getFrom<unsigned char>(info.at(2)), result);
+				});
+*/
 			case Func::GetActorState:
-			{
-				auto reference = GameFactory::GetObject<Actor>(getFrom<unsigned int>(info.at(1)));
-				GetActorState(reference.get(),
-									*reinterpret_cast<unsigned int*>(&result),
-									*reinterpret_cast<unsigned char*>(((unsigned) &result) + 4),
-									*reinterpret_cast<unsigned char*>(((unsigned) &result) + 6),
-									*reinterpret_cast<unsigned char*>(((unsigned) &result) + 5),
-									*reinterpret_cast<unsigned char*>(((unsigned) &result) + 7));
-				break;
-			}
+				GameFactory::Operate<Actor>(getFrom<unsigned int>(info.at(1)), [&info, result](FactoryActor& actor) mutable {
+					GetActorState(actor,
+						*reinterpret_cast<unsigned int*>(&result),
+						*reinterpret_cast<unsigned char*>(((unsigned) &result) + 4),
+						*reinterpret_cast<unsigned char*>(((unsigned) &result) + 6),
+						*reinterpret_cast<unsigned char*>(((unsigned) &result) + 5),
+						*reinterpret_cast<unsigned char*>(((unsigned) &result) + 7));
+				}); break;
 
-			case Func::PlayGroup:
-				break;
+			case Func::GetParentCell:
+				GameFactory::Operate<Player>(getFrom<unsigned int>(info.at(1)), [result](FactoryPlayer& player) {
+					GetParentCell(player, getFrom<unsigned int>(result));
+				}); break;
 
-			case Func::PlayIdle:
-				break;
-
-			case Func::Kill:
-				break;
-
-			case Func::MoveTo:
-				break;
-
-			case Func::Enable:
-				break;
-
-			case Func::Disable:
-				break;
-
-			case Func::SetRestrained:
-				break;
-
-			case Func::SetAlert:
-				break;
-
-			case Func::SetForceSneak:
-				break;
-
-			case Func::AddItemHealthPercent:
-				break;
-
-			case Func::RemoveItem:
-				break;
-
-			case Func::EquipItem:
-				break;
-
-			case Func::UnequipItem:
-				break;
-
-			case Func::FireWeapon:
-				break;
-
-			case Func::EnablePlayerControls:
-				break;
-
-			case Func::DisablePlayerControls:
-				break;
-
-			case Func::SetINISetting:
-				break;
-
-			case Func::Lock:
-				break;
-
-			case Func::Unlock:
-				break;
-
-			case Func::SetOwnership:
-				break;
-
-			case Func::Activate:
-				break;
+			case Func::GetControl:
+				GameFactory::Operate<Player>(PLAYER_REFERENCE, [&info, result](FactoryPlayer& player) {
+					GetControl(player, getFrom<int>(info.at(1)), result);
+				}); break;
 
 			case Func::GUIChat:
 			{
@@ -214,19 +149,6 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				delete &data;
 				break;
 			}
-
-			case Func::GUICreateWindow:
-			case Func::GUICreateButton:
-			case Func::GUICreateText:
-			case Func::GUICreateEdit:
-			case Func::GUIRemoveWindow:
-			case Func::GUIPos:
-			case Func::GUISize:
-			case Func::GUIVisible:
-			case Func::GUILocked:
-			case Func::GUIMaxLen:
-			case Func::GUIValid:
-				break;
 
 			case Func::GUIText:
 			{
@@ -252,78 +174,62 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 			}
 
-			case Func::GetActivate:
-			{
-				if (!result)
-					break;
-
-				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
-				unsigned int refID = *reinterpret_cast<unsigned int*>(&data[0]);
-				auto reference = GameFactory::GetMultiple(vector<unsigned int>{refID, PLAYER_REFERENCE});
-
-				if (reference[0])
-					GetActivate(reference[0].get(), reference[1].get());
-
-				delete &data;
-				break;
-			}
-
-			case Func::SetGlobalValue:
-				break;
-
-			case Func::MarkForDelete:
-				break;
-
-			case Func::AgeRace:
-				break;
-
-			case Func::MatchRace:
-				break;
-
-			case Func::SexChange:
-				break;
-
-			case Func::ForceWeather:
-				break;
-
-			case Func::SetRefCount:
-				break;
-
-			case Func::SetCurrentHealth:
-				break;
-
-			case Func::UIMessage:
-				break;
-
-			case Func::GetParentCell:
-			{
-				auto player = GameFactory::GetObject<Player>(getFrom<unsigned int>(info.at(1)));
-				GetParentCell(player.get(), getFrom<unsigned int>(result));
-				break;
-			}
-
-			case Func::DisableControl:
-				break;
-
-			case Func::GetControl:
-			{
-				auto self = GameFactory::GetObject<Player>(PLAYER_REFERENCE);
-				GetControl(self.get(), getFrom<int>(info.at(1)), result);
-				break;
-			}
-
-			case Func::DisableKey:
-				break;
-
-			case Func::EnableKey:
-				break;
-
 			case Func::CenterOnCell:
 			case Func::CenterOnWorld:
 			case Func::ForceRespawn:
 				FutureSet(shared, true);
 				break;
 
+			case Func::SetPos:
+			case Func::SetAngle:
+			case Func::ForceActorValue:
+			case Func::DamageActorValue:
+			case Func::RestoreActorValue:
+			case Func::SetActorValue:
+			case Func::PlayGroup:
+			case Func::PlayIdle:
+			case Func::Kill:
+			case Func::MoveTo:
+			case Func::Enable:
+			case Func::Disable:
+			case Func::SetRestrained:
+			case Func::SetAlert:
+			case Func::SetForceSneak:
+			case Func::AddItemHealthPercent:
+			case Func::RemoveItem:
+			case Func::EquipItem:
+			case Func::UnequipItem:
+			case Func::FireWeapon:
+			case Func::EnablePlayerControls:
+			case Func::DisablePlayerControls:
+			case Func::SetINISetting:
+			case Func::Lock:
+			case Func::Unlock:
+			case Func::SetOwnership:
+			case Func::Activate:
+			case Func::GUICreateWindow:
+			case Func::GUICreateButton:
+			case Func::GUICreateText:
+			case Func::GUICreateEdit:
+			case Func::GUIRemoveWindow:
+			case Func::GUIPos:
+			case Func::GUISize:
+			case Func::GUIVisible:
+			case Func::GUILocked:
+			case Func::GUIMaxLen:
+			case Func::GUIValid:
+			case Func::SetGlobalValue:
+			case Func::MarkForDelete:
+			case Func::AgeRace:
+			case Func::MatchRace:
+			case Func::SexChange:
+			case Func::ForceWeather:
+			case Func::SetRefCount:
+			case Func::SetCurrentHealth:
+			case Func::UIMessage:
+			case Func::DisableControl:
+			case Func::DisableKey:
+			case Func::EnableKey:
 			case Func::SetName:
 				break;
 
@@ -356,23 +262,22 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 
 NetworkResponse Game::Authenticate(const string& password)
 {
-	auto reference = GameFactory::GetObject<Player>(PLAYER_REFERENCE);
-
-	return {Network::CreateResponse(
-		PacketFactory::Create<pTypes::ID_GAME_AUTH>(reference->GetName(), password),
-		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
-	};
+	return GameFactory::Operate<Player>(PLAYER_REFERENCE, [&password](FactoryPlayer& player) {
+		return NetworkResponse{Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_GAME_AUTH>(player->GetName(), password),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+		};
+	});
 }
 
 void Game::Startup()
 {
-	auto reference = GameFactory::GetObject<Player>(PLAYER_REFERENCE);
-	auto& player = reference.get();
+	NetworkID id;
 
-	RawParameter self_ref = player->GetReferenceParam();
-	NetworkID id = player->GetNetworkID();
-
-	GameFactory::LeaveReference(player);
+	RawParameter self_ref = GameFactory::Operate<Player>(PLAYER_REFERENCE, [&id](FactoryPlayer& player) {
+		id = player->GetNetworkID();
+		return player->GetReferenceParam();
+	});
 
 	SetINISetting("bSaveOnInteriorExteriorSwitch:GamePlay", "0");
 	SetINISetting("bSaveOnTravel:GamePlay", "0");
@@ -699,7 +604,6 @@ void Game::LoadEnvironment()
 
 void Game::NewDispatch(FactoryObject& reference)
 {
-	NetworkID id = reference->GetNetworkID();
 	unsigned int type = reference.GetType();
 
 	switch (type)
@@ -710,8 +614,7 @@ void Game::NewDispatch(FactoryObject& reference)
 
 		case ID_ITEM:
 		{
-			auto item = GameFactory::GetObject<Item>(id).get();
-			GameFactory::LeaveReference(reference);
+			auto item = vaultcast_swap<Item>(reference).get();
 
 			if (!item->GetItemContainer())
 				NewItem(item);
@@ -720,24 +623,21 @@ void Game::NewDispatch(FactoryObject& reference)
 
 		case ID_CONTAINER:
 		{
-			auto container = GameFactory::GetObject<Container>(id).get();
-			GameFactory::LeaveReference(reference);
+			auto container = vaultcast_swap<Container>(reference).get();
 			NewContainer(container);
 			break;
 		}
 
 		case ID_ACTOR:
 		{
-			auto actor = GameFactory::GetObject<Actor>(id).get();
-			GameFactory::LeaveReference(reference);
+			auto actor = vaultcast_swap<Actor>(reference).get();
 			NewActor(actor);
 			break;
 		}
 
 		case ID_PLAYER:
 		{
-			auto player = GameFactory::GetObject<Player>(id).get();
-			GameFactory::LeaveReference(reference);
+			auto player = vaultcast_swap<Player>(reference).get();
 			NewPlayer(player);
 			break;
 		}
@@ -788,8 +688,12 @@ void Game::NewObject_(FactoryObject& reference)
 		auto store = make_shared<Shared<unsigned int>>();
 		unsigned int key = Lockable::Share(store);
 
-		auto item = vaultcast<Item>(reference);
-		double condition = item ? (item->GetItemCondition() / 100.0) : 1.00;
+		double condition;
+
+		{
+			auto item = vaultcast<Item>(reference);
+			condition = item ? (item->GetItemCondition() / 100.0) : 1.00;
+		}
 
 		unsigned int baseID = reference->GetBase();
 		PlaceAtMe(PLAYER_REFERENCE, baseID, condition, 1, key);
@@ -1938,7 +1842,7 @@ void Game::net_SetCell(FactoryObject& reference, FactoryPlayer& player, unsigned
 		{
 			if (IsInContext(cell))
 			{
-				if (vaultcast<Actor>(reference) || IsInContext(old_cell))
+				if (vaultcast_test<Actor>(reference) || IsInContext(old_cell))
 				{
 					cellRefs.StartSession();
 					(*cellRefs)[old_cell][reference.GetType()].erase(reference->GetReference());
@@ -1967,7 +1871,7 @@ void Game::net_SetCell(FactoryObject& reference, FactoryPlayer& player, unsigned
 			}
 			else
 			{
-				if (vaultcast<Actor>(reference))
+				if (vaultcast_test<Actor>(reference))
 				{
 					cellRefs.StartSession();
 					(*cellRefs)[old_cell][reference.GetType()].erase(reference->GetReference());
@@ -2246,9 +2150,9 @@ void Game::net_SetActorDead(FactoryActor& reference, bool dead, unsigned short l
 
 			Game::LoadEnvironment();
 
-			reference = GameFactory::GetObject<Actor>(id).get();
-			reference->SetEnabled(true);
-			GameFactory::LeaveReference(reference);
+			GameFactory::Operate<Actor>(id, [](FactoryActor& actor) {
+				actor->SetEnabled(true);
+			});
 
 			Network::Queue({Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_UPDATE_DEAD>(id, false, 0, 0),
@@ -2322,56 +2226,49 @@ void Game::net_UpdateContext(Player::CellContext& context, bool spawn)
 	if (spawn)
 		spawnContext = context;
 
-	auto player = GameFactory::GetObject<Player>(PLAYER_REFERENCE).get();
-	unsigned int old_cell = player->GetNetworkCell();
-
-	player->SetNetworkCell(context[0]);
-	player->SetGameCell(context[0]);
-
-	cellRefs.StartSession();
-	cellContext.StartSession();
-
-	(*cellRefs)[old_cell][ID_PLAYER].erase(PLAYER_REFERENCE);
-	(*cellRefs)[context[0]][ID_PLAYER].insert(PLAYER_REFERENCE);
-
-	sort(context.begin(), context.end());
+	CellRefs copy;
 	pair<vector<unsigned int>, vector<unsigned int>> diff;
 
-	set_difference(context.begin(), context.end(), (*cellContext).begin(), (*cellContext).end(), inserter(diff.first, diff.first.begin()));
-	set_difference((*cellContext).begin(), (*cellContext).end(), context.begin(), context.end(), inserter(diff.second, diff.second.begin()));
+	GameFactory::Operate<Player>(PLAYER_REFERENCE, [&context, &copy, &diff](FactoryPlayer& player) {
+		unsigned int old_cell = player->GetNetworkCell();
 
-	*cellContext = context;
-	CellRefs copy;
+		player->SetNetworkCell(context[0]);
+		player->SetGameCell(context[0]);
 
-	for (const auto& cell : diff.second)
-		if (cell)
-			copy[cell] = (*cellRefs)[cell];
+		cellRefs.StartSession();
+		cellContext.StartSession();
 
-	for (const auto& cell : diff.first)
-		if (cell)
-			copy[cell] = (*cellRefs)[cell];
+		(*cellRefs)[old_cell][ID_PLAYER].erase(PLAYER_REFERENCE);
+		(*cellRefs)[context[0]][ID_PLAYER].insert(PLAYER_REFERENCE);
 
-	cellContext.EndSession();
-	cellRefs.EndSession();
+		sort(context.begin(), context.end());
 
-	GameFactory::LeaveReference(player);
+		set_difference(context.begin(), context.end(), (*cellContext).begin(), (*cellContext).end(), inserter(diff.first, diff.first.begin()));
+		set_difference((*cellContext).begin(), (*cellContext).end(), context.begin(), context.end(), inserter(diff.second, diff.second.begin()));
+
+		*cellContext = context;
+
+		for (const auto& cell : diff.second)
+			if (cell)
+				copy[cell] = (*cellRefs)[cell];
+
+		for (const auto& cell : diff.first)
+			if (cell)
+				copy[cell] = (*cellRefs)[cell];
+
+		cellContext.EndSession();
+		cellRefs.EndSession();
+	});
 
 	for (const auto& cell : diff.second)
 		if (cell)
 			for (const auto& refs : copy[cell])
 				for (unsigned int refID : refs.second)
 					if (refID != PLAYER_REFERENCE)
-					{
-						auto reference = GameFactory::GetObject(refID);
-
-						if (!reference)
-							continue; // we don't have information about static refs yet. remove
-
-						auto& object = reference.get();
-
-						if (!object->IsPersistent() && object->SetEnabled(false))
-							ToggleEnabled(object);
-					}
+						GameFactory::Operate(refID, [](FactoryObject& object) {
+							if (!object->IsPersistent() && object->SetEnabled(false))
+								ToggleEnabled(object);
+						});
 
 	for (const auto& cell : diff.first)
 		if (cell)
@@ -2386,32 +2283,24 @@ void Game::net_UpdateContext(Player::CellContext& context, bool spawn)
 			for (const auto& refs : copy[cell])
 				for (unsigned int refID : refs.second)
 					if (refID != PLAYER_REFERENCE)
-					{
-						auto reference = GameFactory::GetMultiple(vector<unsigned int>{refID, PLAYER_REFERENCE});
+						GameFactory::Operate(vector<unsigned int>{refID, PLAYER_REFERENCE}, [cell](FactoryObjects& objects) {
+							if (objects[0]->SetEnabled(true))
+								ToggleEnabled(objects[0]);
 
-						if (!reference[0])
-							continue; // we don't have information about static refs yet. remove
+							if (objects[0]->SetGameCell(cell))
+								MoveTo(objects[0], objects[1], true);
 
-						auto& object = reference[0].get();
-
-						if (object->SetEnabled(true))
-							ToggleEnabled(object);
-
-						if (object->SetGameCell(cell))
-							MoveTo(object, reference[1].get(), true);
-
-						object->Work();
-					}
+							objects[0]->Work();
+						});
 
 			uninitObj.StartSession();
 			unordered_set<NetworkID> ids = move((*uninitObj)[cell]);
 			uninitObj.EndSession();
 
 			for (const auto& id : ids)
-			{
-				auto reference = GameFactory::GetObject(id);
-				NewDispatch(reference.get());
-			}
+				GameFactory::Operate(id, [](FactoryObject& object) {
+					NewDispatch(object);
+				});
 		}
 }
 
