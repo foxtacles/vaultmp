@@ -193,6 +193,18 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					break;
 				}
 
+				case pTypes::ID_UPDATE_DEAD:
+				{
+					NetworkID id;
+					bool dead;
+					unsigned short limbs;
+					signed char cause;
+					PacketFactory::Access<pTypes::ID_UPDATE_DEAD>(packet, id, dead, limbs, cause);
+					auto reference = GameFactory::GetObject<Player>(id);
+					response = Server::GetActorDead(data->guid, reference.get(), dead, limbs, cause);
+					break;
+				}
+
 				case pTypes::ID_UPDATE_CONTROL:
 				{
 					NetworkID id;

@@ -182,7 +182,7 @@ class GameFactory
 		template<typename T>
 		struct ObjectPolicyHelper<ObjectPolicy::Expected, T> {
 			inline static typename ObjectPolicyType<ObjectPolicy::Expected, T>::type& Unwrap(Expected<FactoryWrapper<T>>& reference) noexcept { return reference; }
-			inline static typename std::vector<typename ObjectPolicyType<ObjectPolicy::Validated, T>::type>& Unwrap(std::vector<Expected<FactoryWrapper<T>>>& reference) noexcept { return reference; }
+			inline static typename std::vector<typename ObjectPolicyType<ObjectPolicy::Expected, T>::type>& Unwrap(std::vector<Expected<FactoryWrapper<T>>>& reference) noexcept { return reference; }
 		};
 
 		template<typename I>

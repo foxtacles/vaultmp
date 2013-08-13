@@ -78,6 +78,16 @@ public OnWindowTextChange(ID, player, const text{})
 
 }
 
+public OnCreate(ID)
+{
+
+}
+
+public OnDestroy(ID)
+{
+
+}
+
 public OnSpawn(ID)
 {
 	if (IsPlayer(ID))
@@ -110,11 +120,6 @@ public OnItemPickup(ID, actor)
 	return 1;
 }
 
-public OnContainerItemChange(ID, item, count, Float:value)
-{
-
-}
-
 public OnActorValueChange(ID, ActorValue:index, Float:value)
 {
 
@@ -136,26 +141,6 @@ public OnActorSneak(ID, Bool:sneaking)
 }
 
 public OnActorDeath(ID, killer, Limb:limbs, Death:cause)
-{
-
-}
-
-public OnActorEquipItem(ID, item, Float:value)
-{
-
-}
-
-public OnActorUnequipItem(ID, item, Float:value)
-{
-
-}
-
-public OnActorDropItem(ID, item, count, Float:value)
-{
-
-}
-
-public OnActorPickupItem(ID, item, count, Float:value, owner)
 {
 
 }

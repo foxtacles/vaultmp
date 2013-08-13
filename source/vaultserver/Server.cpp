@@ -409,6 +409,32 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, FactoryActor& reference, 
 	return response;
 }
 
+NetworkResponse Server::GetActorDead(RakNetGUID guid, FactoryPlayer& reference, bool dead, unsigned short, signed char)
+{
+	NetworkResponse response;
+	bool result;
+
+	if (dead) // only used by the client to notify about respawn of player
+		return response;
+
+	result = static_cast<bool>(reference->SetActorDead(dead));
+
+	if (result)
+	{
+		NetworkID id = reference->GetNetworkID();
+
+		response.emplace_back(Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_DEAD>(id, dead, 0, 0),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
+
+		GameFactory::LeaveReference(reference);
+
+		Script::Call<Script::CBI("OnSpawn")>(id);
+	}
+
+	return response;
+}
+
 NetworkResponse Server::GetPlayerControl(RakNetGUID, FactoryPlayer& reference, unsigned char control, unsigned char key)
 {
 	NetworkResponse response;

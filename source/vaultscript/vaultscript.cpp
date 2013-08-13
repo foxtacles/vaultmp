@@ -77,6 +77,16 @@ Void VAULTSCRIPT OnWindowTextChange(ID window, ID player, cRawString text) noexc
 
 }
 
+Void VAULTSCRIPT OnCreate(ID reference) noexcept
+{
+
+}
+
+Void VAULTSCRIPT OnDestroy(ID reference) noexcept
+{
+
+}
+
 Void VAULTSCRIPT OnSpawn(ID object) noexcept
 {
 	Player player(object);
@@ -105,11 +115,6 @@ Result VAULTSCRIPT OnItemPickup(ID item, ID actor) noexcept
 	return static_cast<Result>(True);
 }
 
-Void VAULTSCRIPT OnContainerItemChange(ID container, Base item, Count count, Value value) noexcept
-{
-
-}
-
 Void VAULTSCRIPT OnActorValueChange(ID actor, ActorValue index, Value value) noexcept
 {
 
@@ -131,16 +136,6 @@ Void VAULTSCRIPT OnActorSneak(ID actor, State sneaking) noexcept
 }
 
 Void VAULTSCRIPT OnActorDeath(ID actor, ID killer, Limb limbs, Death cause) noexcept
-{
-
-}
-
-Void VAULTSCRIPT OnActorEquipItem(ID actor, Base item, Value value) noexcept
-{
-
-}
-
-Void VAULTSCRIPT OnActorUnequipItem(ID actor, Base item, Value value) noexcept
 {
 
 }

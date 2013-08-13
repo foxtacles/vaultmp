@@ -172,14 +172,14 @@ class Script
 		static RakNet::NetworkID CreateTimerEx(ScriptFunc timer, unsigned int interval, const char* def, ...) noexcept;
 		static RakNet::NetworkID CreateTimerPAWN(ScriptFuncPAWN timer, AMX* amx, unsigned int interval) noexcept;
 		static RakNet::NetworkID CreateTimerPAWNEx(ScriptFuncPAWN timer, AMX* amx, unsigned int interval, const char* def, const std::vector<boost::any>& args) noexcept;
-		static void SetupObject(FactoryObject& object, FactoryObject& reference, unsigned int cell, double X, double Y, double Z) noexcept;
-		static void SetupItem(FactoryItem& item, FactoryObject& reference, unsigned int cell, double X, double Y, double Z) noexcept;
-		static void SetupContainer(FactoryContainer& container, FactoryObject& reference, unsigned int cell, double X, double Y, double Z) noexcept;
-		static void SetupActor(FactoryActor& actor, FactoryObject& reference, unsigned int cell, double X, double Y, double Z) noexcept;
-		static void SetupWindow(FactoryWindow& window, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept;
-		static void SetupButton(FactoryButton& button, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept;
-		static void SetupText(FactoryText& text, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text_) noexcept;
-		static void SetupEdit(FactoryEdit& edit, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept;
+		static void SetupObject(const FactoryObject& object, const FactoryObject& reference, unsigned int cell, double X, double Y, double Z) noexcept;
+		static void SetupItem(const FactoryItem& item, const FactoryObject& reference, unsigned int cell, double X, double Y, double Z) noexcept;
+		static void SetupContainer(const FactoryContainer& container, const FactoryObject& reference, unsigned int cell, double X, double Y, double Z) noexcept;
+		static void SetupActor(const FactoryActor& actor, const FactoryObject& reference, unsigned int cell, double X, double Y, double Z) noexcept;
+		static void SetupWindow(const FactoryWindow& window, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept;
+		static void SetupButton(const FactoryButton& button, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept;
+		static void SetupText(const FactoryText& text, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text_) noexcept;
+		static void SetupEdit(const FactoryEdit& edit, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept;
 		static void KillTimer(RakNet::NetworkID id = 0) noexcept;
 		static void MakePublic(ScriptFunc _public, const char* name, const char* def) noexcept;
 		static void MakePublicPAWN(ScriptFuncPAWN _public, AMX* amx, const char* name, const char* def) noexcept;
@@ -267,6 +267,7 @@ class Script
 
 		static RakNet::NetworkID CreateObject(unsigned int baseID, RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z) noexcept;
 		static bool DestroyObject(RakNet::NetworkID id) noexcept;
+		static bool Activate(RakNet::NetworkID id, RakNet::NetworkID actor) noexcept;
 		static bool SetPos(RakNet::NetworkID id, double X, double Y, double Z) noexcept;
 		static bool SetAngle(RakNet::NetworkID id, double X, double Y, double Z) noexcept;
 		static bool SetCell(RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z) noexcept;
@@ -433,6 +434,7 @@ class Script
 
 			{"CreateObject", Script::CreateObject},
 			{"DestroyObject", Script::DestroyObject},
+			{"Activate", Script::Activate},
 			{"SetPos", Script::SetPos},
 			{"SetAngle", Script::SetAngle},
 			{"SetCell", Script::SetCell},
@@ -501,9 +503,9 @@ class Script
 		};
 
 		static constexpr ScriptCallbackData callbacks[] {
-			{"OnSpawn", Function<void, RakNet::NetworkID>()},
 			{"OnCreate", Function<void, RakNet::NetworkID>()},
 			{"OnDestroy", Function<void, RakNet::NetworkID>()},
+			{"OnSpawn", Function<void, RakNet::NetworkID>()},
 			{"OnActivate", Function<void, RakNet::NetworkID, RakNet::NetworkID>()},
 			{"OnCellChange", Function<void, RakNet::NetworkID, unsigned int>()},
 			{"OnLockChange", Function<void, RakNet::NetworkID, RakNet::NetworkID, unsigned int>()},
@@ -512,8 +514,6 @@ class Script
 			{"OnActorAlert", Function<void, RakNet::NetworkID, bool>()},
 			{"OnActorSneak", Function<void, RakNet::NetworkID, bool>()},
 			{"OnActorDeath", Function<void, RakNet::NetworkID, RakNet::NetworkID, unsigned short, signed char>()},
-			{"OnActorEquipItem", Function<void, RakNet::NetworkID, RakNet::NetworkID, bool>()},
-			{"OnActorUnequipItem", Function<void, RakNet::NetworkID,RakNet::NetworkID, bool>()},
 			{"OnActorPunch", Function<void, RakNet::NetworkID, bool>()},
 			{"OnActorFireWeapon", Function<void, RakNet::NetworkID, unsigned int>()},
 			{"OnPlayerDisconnect", Function<void, RakNet::NetworkID, Reason>()},

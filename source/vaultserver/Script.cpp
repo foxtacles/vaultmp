@@ -362,7 +362,7 @@ NetworkID Script::CreateTimerPAWNEx(ScriptFuncPAWN timer, AMX* amx, unsigned int
 	return t->GetNetworkID();
 }
 
-void Script::SetupObject(FactoryObject& object, FactoryObject& reference, unsigned int cell, double X, double Y, double Z) noexcept
+void Script::SetupObject(const FactoryObject& object, const FactoryObject& reference, unsigned int cell, double X, double Y, double Z) noexcept
 {
 	if (reference)
 	{
@@ -375,7 +375,7 @@ void Script::SetupObject(FactoryObject& object, FactoryObject& reference, unsign
 		SetCell_(object->GetNetworkID(), cell, X, Y, Z, true);
 }
 
-void Script::SetupItem(FactoryItem& item, FactoryObject& reference, unsigned int cell, double X, double Y, double Z) noexcept
+void Script::SetupItem(const FactoryItem& item, const FactoryObject& reference, unsigned int cell, double X, double Y, double Z) noexcept
 {
 	SetupObject(item, reference, cell, X, Y, Z);
 
@@ -383,12 +383,12 @@ void Script::SetupItem(FactoryItem& item, FactoryObject& reference, unsigned int
 	item->SetItemCondition(100.0);
 }
 
-void Script::SetupContainer(FactoryContainer& container, FactoryObject& reference, unsigned int cell, double X, double Y, double Z) noexcept
+void Script::SetupContainer(const FactoryContainer& container, const FactoryObject& reference, unsigned int cell, double X, double Y, double Z) noexcept
 {
 	SetupObject(container, reference, cell, X, Y, Z);
 }
 
-void Script::SetupActor(FactoryActor& actor, FactoryObject& reference, unsigned int cell, double X, double Y, double Z) noexcept
+void Script::SetupActor(const FactoryActor& actor, const FactoryObject& reference, unsigned int cell, double X, double Y, double Z) noexcept
 {
 	SetupContainer(actor, reference, cell, X, Y, Z);
 
@@ -409,7 +409,7 @@ void Script::SetupActor(FactoryActor& actor, FactoryObject& reference, unsigned 
 		actor->SetActorRace(UINT_MAX);
 }
 
-void Script::SetupWindow(FactoryWindow& window, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
+void Script::SetupWindow(const FactoryWindow& window, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
 {
 	window->SetPos(posX, posY, offset_posX, offset_posY);
 	window->SetSize(sizeX, sizeY, offset_sizeX, offset_sizeY);
@@ -418,17 +418,17 @@ void Script::SetupWindow(FactoryWindow& window, double posX, double posY, double
 	window->SetText(text);
 }
 
-void Script::SetupButton(FactoryButton& button, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
+void Script::SetupButton(const FactoryButton& button, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
 {
 	SetupWindow(button, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
 }
 
-void Script::SetupText(FactoryText& text, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text_) noexcept
+void Script::SetupText(const FactoryText& text, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text_) noexcept
 {
 	SetupWindow(text, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text_);
 }
 
-void Script::SetupEdit(FactoryEdit& edit, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
+void Script::SetupEdit(const FactoryEdit& edit, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
 {
 	SetupWindow(edit, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
 }
@@ -1268,8 +1268,8 @@ NetworkID Script::CreateObject(unsigned int baseID, NetworkID id, unsigned int c
 	if (id && !GameFactory::GetType(id))
 		return 0;
 
-	NetworkID result = GameFactory::Operate<Object, FailPolicy::Return>(vector<NetworkID>{GameFactory::CreateInstance(ID_OBJECT, baseID), id}, [cell, X, Y, Z](FactoryObjects& objects) {
-		SetupObject(objects[0], objects[1], cell, X, Y, Z);
+	NetworkID result = GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(vector<NetworkID>{GameFactory::CreateInstance(ID_OBJECT, baseID), id}, [cell, X, Y, Z](ExpectedObjects& objects) {
+		SetupObject(objects[0].get(), objects[1] ? objects[1].get() : FactoryObject(), cell, X, Y, Z);
 
 		Network::Queue({Network::CreateResponse(
 			objects[0]->toPacket(),
@@ -1290,15 +1290,15 @@ bool Script::DestroyObject(NetworkID id) noexcept
 	if (!GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(id, [id](ExpectedObject& object) -> bool {
 		if (!object)
 			return scriptIL.count(id);
-		else if (vaultcast_test<Player>(object))
-			return false;
+
+		return !vaultcast_test<Player>(object);
 	})) return false;
 
 	Script::Call<CBI("OnDestroy")>(id);
 
 	return GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(id, [id](ExpectedObject& object) -> bool {
 		if (!object)
-			return scriptIL.erase(id);
+			scriptIL.erase(id);
 
 		if (object->IsPersistent())
 			deletedStatic[object->GetNetworkCell()].emplace_back(object->GetReference());
@@ -1327,6 +1327,17 @@ bool Script::DestroyObject(NetworkID id) noexcept
 
 		return GameFactory::DestroyInstance(object.get());
 	});
+}
+
+bool Script::Activate(NetworkID id, NetworkID actor) noexcept
+{
+	if (!GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(vector<NetworkID>{id, actor}, [actor](ExpectedObjects& objects) {
+		return objects[0] && ((!objects[1] && !actor) || vaultcast_test<Actor>(objects[1]));
+	})) return false;
+
+	Call<CBI("OnActivate")>(id, actor);
+
+	return true;
 }
 
 bool Script::SetPos(NetworkID id, double X, double Y, double Z) noexcept
@@ -1682,10 +1693,10 @@ NetworkID Script::CreateItem(unsigned int baseID, NetworkID id, unsigned int cel
 	if (id && !GameFactory::GetType(id))
 		return 0;
 
-	NetworkID result = GameFactory::Operate<Object, FailPolicy::Return>(vector<NetworkID>{GameFactory::CreateInstance(ID_ITEM, baseID), id}, [cell, X, Y, Z](FactoryObjects& objects) {
+	NetworkID result = GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(vector<NetworkID>{GameFactory::CreateInstance(ID_ITEM, baseID), id}, [cell, X, Y, Z](ExpectedObjects& objects) {
 		FactoryItem item = vaultcast_swap<Item>(objects[0]).get();
 
-		SetupItem(item, objects[1], cell, X, Y, Z);
+		SetupItem(item, objects[1] ? objects[1].get() : FactoryObject(), cell, X, Y, Z);
 
 		Network::Queue({Network::CreateResponse(
 			item->toPacket(),
@@ -1820,10 +1831,10 @@ NetworkID Script::CreateContainer(unsigned int baseID, NetworkID id, unsigned in
 	if (id && !GameFactory::GetType(id))
 		return 0;
 
-	NetworkID result = GameFactory::Operate<Object, FailPolicy::Return>(vector<NetworkID>{GameFactory::CreateInstance(ID_CONTAINER, baseID), id}, [cell, X, Y, Z](FactoryObjects& objects) {
+	NetworkID result = GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(vector<NetworkID>{GameFactory::CreateInstance(ID_CONTAINER, baseID), id}, [cell, X, Y, Z](ExpectedObjects& objects) {
 		FactoryContainer container = vaultcast_swap<Container>(objects[0]).get();
 
-		SetupContainer(container, objects[1], cell, X, Y, Z);
+		SetupContainer(container, objects[1] ? objects[1].get() : FactoryObject(), cell, X, Y, Z);
 
 		Network::Queue({Network::CreateResponse(
 			container->toPacket(),
@@ -1848,6 +1859,8 @@ NetworkID Script::CreateItemList(NetworkID source, unsigned int baseID) noexcept
 
 	if (source || baseID)
 		AddItemList(id, source, baseID);
+
+	Script::Call<CBI("OnCreate")>(id);
 
 	return id;
 }
@@ -1884,24 +1897,19 @@ NetworkID Script::AddItem(NetworkID id, unsigned int baseID, unsigned int count,
 
 void Script::AddItemList(NetworkID id, NetworkID source, unsigned int baseID) noexcept
 {
-	GameFactory::Operate<Container, FailPolicy::Return, ObjectPolicy::Expected>(id, [id, source, baseID](ExpectedContainer& container) {
-		if (!container && !scriptIL.count(id))
+	GameFactory::Operate<Container, FailPolicy::Return, ObjectPolicy::Expected>(vector<NetworkID>{id, source}, [id, source, baseID](ExpectedContainers& containers) {
+		if (!containers[0] && !scriptIL.count(id))
 			return;
 
 		if (source)
 		{
-			if (container)
-				GameFactory::LeaveReference(container.get());
-
-			container = GameFactory::GetObject<Container>(source);
-
-			if (!container && !scriptIL.count(source))
+			if (!containers[1] && !scriptIL.count(source))
 				return;
 
-			ItemList* IL = container ? &container->IL : scriptIL[source].get();
+			ItemList* IL = containers[1] ? &containers[1]->IL : scriptIL[source].get();
 
 			GameFactory::Operate<Item>(vector<NetworkID>{IL->GetItemList().begin(), IL->GetItemList().end()}, [id](FactoryItems& items) {
-				for (auto& item : items)
+				for (const auto& item : items)
 				{
 					AddItem(id, item->GetBase(), item->GetItemCount(), item->GetItemCondition(), item->GetItemSilent());
 
@@ -1910,9 +1918,9 @@ void Script::AddItemList(NetworkID id, NetworkID source, unsigned int baseID) no
 				}
 			});
 		}
-		else if (container || baseID)
+		else if (containers[0] || baseID)
 		{
-			const auto& items = DB::BaseContainer::Lookup(container ? container->GetBase() : baseID);
+			const auto& items = DB::BaseContainer::Lookup(containers[0] ? containers[0]->GetBase() : baseID);
 
 			for (const auto* item : items)
 			{
@@ -1999,10 +2007,10 @@ NetworkID Script::CreateActor(unsigned int baseID, NetworkID id, unsigned int ce
 	if (id && !GameFactory::GetType(id))
 		return 0;
 
-	NetworkID result = GameFactory::Operate<Object, FailPolicy::Return>(vector<NetworkID>{GameFactory::CreateInstance(ID_ACTOR, baseID), id}, [cell, X, Y, Z](FactoryObjects& objects) {
+	NetworkID result = GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(vector<NetworkID>{GameFactory::CreateInstance(ID_ACTOR, baseID), id}, [cell, X, Y, Z](ExpectedObjects& objects) {
 		FactoryActor actor = vaultcast_swap<Actor>(objects[0]).get();
 
-		SetupActor(actor, objects[1], cell, X, Y, Z);
+		SetupActor(actor, objects[1] ? objects[1].get() : FactoryObject(), cell, X, Y, Z);
 
 		Network::Queue({Network::CreateResponse(
 			actor->toPacket(),
@@ -2310,7 +2318,7 @@ bool Script::SetActorBaseRace(NetworkID id, unsigned int race) noexcept
 
 bool Script::AgeActorBaseRace(NetworkID id, signed int age) noexcept
 {
-	GameFactory::Operate<Actor, FailPolicy::Return>(id, [id, age](FactoryActor& actor) {
+	return GameFactory::Operate<Actor, FailPolicy::Return>(id, [id, age](FactoryActor& actor) {
 		if (DB::Record::Lookup(actor->GetBase(), "CREA"))
 			return false;
 
@@ -2643,6 +2651,13 @@ bool Script::DestroyWindow(NetworkID id) noexcept
 	NetworkID root = GetWindowRoot(id);
 
 	if (!root || IsChatbox(id))
+		return false;
+
+	Script::Call<CBI("OnDestroy")>(id);
+
+	root = GetWindowRoot(id); // if for some reason DestroyWindow gets called on the same window in OnDestroy...
+
+	if (!root)
 		return false;
 
 	vector<NetworkID> deletions;

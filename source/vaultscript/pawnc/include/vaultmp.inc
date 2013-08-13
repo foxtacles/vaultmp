@@ -167,18 +167,19 @@ const Interval: {
 
 // Callbacks
 
+forward OnCreate(ID);
+forward OnDestroy(ID);
 forward OnSpawn(ID);
 forward OnActivate(ID, actor);
 forward OnCellChange(ID, cell);
 forward OnLockChange(ID, actor, Lock:lock);
-forward OnContainerItemChange(ID, item, count, Float:value);
 forward OnActorValueChange(ID, ActorValue:index, Float:value);
 forward OnActorBaseValueChange(ID, ActorValue:index, Float:value);
 forward OnActorAlert(ID, Bool:alerted);
 forward OnActorSneak(ID, Bool:sneaking);
 forward OnActorDeath(ID, killer, Limb:limbs, Death:cause);
-forward OnActorEquipItem(ID, item, Float:value);
-forward OnActorUnequipItem(ID, item, Float:value);
+forward OnActorEquipItem(ID, item);
+forward OnActorUnequipItem(ID, item);
 forward OnActorDropItem(ID, item, count, Float:value);
 forward OnActorPickupItem(ID, item, count, Float:value, owner);
 forward OnActorPunch(ID, Bool:power);
@@ -297,6 +298,7 @@ native GetPlayerChatboxWindow(ID);
 
 native CreateObject(object, ID, cell = 0, Float:X = 0.00, Float:Y = 0.00, Float:Z = 0.00);
 native Bool:DestroyObject(ID);
+native Bool:Activate(ID, actor);
 native Bool:SetPos(ID, Float:X, Float:Y, Float:Z);
 native Bool:SetAngle(ID, Float:X, Float:Y, Float:Z);
 native Bool:SetCell(ID, cell, Float:X = 0.00, Float:Y = 0.00, Float:Z = 0.00);
