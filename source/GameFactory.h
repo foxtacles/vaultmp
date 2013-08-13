@@ -190,14 +190,14 @@ class GameFactory
 		 * The Reference is identified by a NetworkID
 		 */
 		template<typename T = Object>
-		static Expected<FactoryWrapper<T>> GetObject(RakNet::NetworkID id);
+		static Expected<FactoryWrapper<T>> GetObject(RakNet::NetworkID id) noexcept;
 		/**
 		 * \brief Obtains a lock on a Reference
 		 *
 		 * The Reference is identified by a reference ID
 		 */
 		template<typename T = Object>
-		static Expected<FactoryWrapper<T>> GetObject(unsigned int refID);
+		static Expected<FactoryWrapper<T>> GetObject(unsigned int refID) noexcept;
 		/**
 		 * \brief Executes a function on a Reference
 		 *
@@ -215,7 +215,7 @@ class GameFactory
 		 * Returns a STL vector which contains the locked References in the same ordering as the input vector.
 		 */
 		template<typename T = Object>
-		static std::vector<Expected<FactoryWrapper<T>>> GetMultiple(const std::vector<unsigned int>& objects);
+		static std::vector<Expected<FactoryWrapper<T>>> GetMultiple(const std::vector<unsigned int>& objects) noexcept;
 		/**
 		 * \brief Obtains a lock on multiple References
 		 *
@@ -223,7 +223,7 @@ class GameFactory
 		 * Returns a STL vector which contains the locked References in the same ordering as the input vector.
 		 */
 		template<typename T = Object>
-		static std::vector<Expected<FactoryWrapper<T>>> GetMultiple(const std::vector<RakNet::NetworkID>& objects);
+		static std::vector<Expected<FactoryWrapper<T>>> GetMultiple(const std::vector<RakNet::NetworkID>& objects) noexcept;
 		/**
 		 * \brief Executes a function on multiple References
 		 *
@@ -245,7 +245,7 @@ class GameFactory
 		/**
 		 * \brief Checks if an ID has been deleted
 		 */
-		static bool IsDeleted(RakNet::NetworkID id);
+		static bool IsDeleted(RakNet::NetworkID id) noexcept;
 		/**
 		 * \brief Returns the type of the given NetworkID
 		 */
@@ -292,7 +292,7 @@ class GameFactory
 		/**
 		 * \brief Destroys all instances and cleans up type classes
 		 */
-		static void DestroyAllInstances();
+		static void DestroyAllInstances() noexcept;
 		/**
 		 * \brief Destroys an instance
 		 */
@@ -308,7 +308,7 @@ class GameFactory
 		/**
 		 * \brief Used to set the changed flag for the next network reference going to be created
 		 */
-		static void SetChangeFlag(bool changed);
+		static void SetChangeFlag(bool changed) noexcept;
 };
 
 using FailPolicy = GameFactory::FailPolicy;

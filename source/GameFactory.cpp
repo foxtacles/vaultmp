@@ -108,7 +108,7 @@ unsigned int GameFactory::GetObjectCount(unsigned int type) noexcept
 }
 
 template<typename T>
-Expected<FactoryWrapper<T>> GameFactory::GetObject(NetworkID id)
+Expected<FactoryWrapper<T>> GameFactory::GetObject(NetworkID id) noexcept
 {
 	pair<ReferenceList::key_type, ReferenceList::mapped_type> reference;
 
@@ -137,7 +137,7 @@ template ExpectedText GameFactory::GetObject(NetworkID id);
 template ExpectedEdit GameFactory::GetObject(NetworkID id);
 
 template<typename T>
-Expected<FactoryWrapper<T>> GameFactory::GetObject(unsigned int refID)
+Expected<FactoryWrapper<T>> GameFactory::GetObject(unsigned int refID) noexcept
 {
 	pair<ReferenceList::key_type, ReferenceList::mapped_type> reference;
 	ReferenceList::iterator it;
@@ -167,7 +167,7 @@ template ExpectedText GameFactory::GetObject(unsigned int refID);
 template ExpectedEdit GameFactory::GetObject(unsigned int refID);
 
 template<typename T>
-vector<Expected<FactoryWrapper<T>>> GameFactory::GetMultiple(const vector<NetworkID>& objects)
+vector<Expected<FactoryWrapper<T>>> GameFactory::GetMultiple(const vector<NetworkID>& objects) noexcept
 {
 	vector<Expected<FactoryWrapper<T>>> result(objects.size());
 	multimap<ReferenceList::value_type, unsigned int> sort;
@@ -207,7 +207,7 @@ template vector<ExpectedText> GameFactory::GetMultiple(const vector<NetworkID>& 
 template vector<ExpectedEdit> GameFactory::GetMultiple(const vector<NetworkID>& objects);
 
 template<typename T>
-vector<Expected<FactoryWrapper<T>>> GameFactory::GetMultiple(const vector<unsigned int>& objects)
+vector<Expected<FactoryWrapper<T>>> GameFactory::GetMultiple(const vector<unsigned int>& objects) noexcept
 {
 	vector<Expected<FactoryWrapper<T>>> result(objects.size());
 	multimap<ReferenceList::value_type, unsigned int> sort;
@@ -286,7 +286,7 @@ unsigned int GameFactory::LookupRefID(NetworkID id)
 	return refID;
 }
 
-bool GameFactory::IsDeleted(NetworkID id)
+bool GameFactory::IsDeleted(NetworkID id) noexcept
 {
 	bool result;
 
@@ -500,23 +500,11 @@ NetworkID GameFactory::CreateKnownInstance(unsigned int type, const pDefault* pa
 	return id;
 }
 
-void GameFactory::DestroyAllInstances()
+void GameFactory::DestroyAllInstances() noexcept
 {
 	cs.StartSession();
 
-	for (const auto& instance : instances)
-	{
-		if (instance.second & ALL_CONTAINERS)
-			static_cast<Container*>(instance.first.get())->IL.container.clear();
-
-#ifdef VAULTMP_DEBUG
-		debug.print("Reference ", hex, instance.first->GetReference(), " with base ", instance.first->GetBase(), " and NetworkID ", dec, instance.first->GetNetworkID(), " (type: ", typeid(*(instance.first)).name(), ") to be destructed (", instance.first.get(), ")");
-#endif
-
-		Reference* reference = static_cast<Reference*>(instance.first->StartSession());
-
-		reference->Finalize();
-	}
+	ReferenceList copy = instances;
 
 	instances.clear();
 	index.clear();
@@ -524,6 +512,20 @@ void GameFactory::DestroyAllInstances()
 	delrefs.clear();
 
 	cs.EndSession();
+
+	for (const auto& instance : copy)
+	{
+		Reference* reference = static_cast<Reference*>(instance.first->StartSession());
+
+		if (instance.second & ALL_CONTAINERS)
+			static_cast<Container*>(instance.first.get())->IL.container.clear();
+
+#ifdef VAULTMP_DEBUG
+		debug.print("Reference ", hex, instance.first->GetReference(), " with base ", instance.first->GetBase(), " and NetworkID ", dec, instance.first->GetNetworkID(), " (type: ", typeid(*(instance.first)).name(), ") to be destructed (", instance.first.get(), ")");
+#endif
+
+		reference->Finalize();
+	}
 
 	// Cleanup classes
 
@@ -554,12 +556,16 @@ NetworkID GameFactory::DestroyInstance(FactoryWrapper<T>& reference)
 	debug.print("Reference ", hex, _reference->GetReference(), " with base ",  _reference->GetBase(), " and NetworkID ", dec, _reference->GetNetworkID(), " (type: ", typeid(*_reference).name(), ") to be destructed");
 #endif
 
+	ReferenceList::key_type copy; // because the destructor of a type may also delete references, the actual destructor call must not happen within the CS block
+
 	cs.StartSession();
 
 	ReferenceList::iterator it = GetShared(id);
 
+	copy = it->first; // saved. will be deleted past this block
 	--typecount[it->second];
 	_reference->Finalize();
+
 	instances.erase(it);
 	index.erase(id);
 	delrefs.emplace(id);
@@ -567,7 +573,7 @@ NetworkID GameFactory::DestroyInstance(FactoryWrapper<T>& reference)
 	cs.EndSession();
 
 	reference.reference = nullptr;
-	reference.type = 0x00;
+	reference.type = 0x00000000;
 
 	return id;
 }
@@ -581,7 +587,7 @@ template NetworkID GameFactory::DestroyInstance(FactoryButton& reference);
 template NetworkID GameFactory::DestroyInstance(FactoryText& reference);
 template NetworkID GameFactory::DestroyInstance(FactoryEdit& reference);
 
-void GameFactory::SetChangeFlag(bool changed)
+void GameFactory::SetChangeFlag(bool changed) noexcept
 {
 	GameFactory::changed = changed;
 }
