@@ -544,7 +544,7 @@ cell PAWN::CallPublic(AMX* amx, const cell* params) noexcept
 	return Script::CallPublicPAWN(&name[0], args);
 }
 
-int PAWN::LoadProgram(AMX* amx, char* filename, void* memblock)
+int PAWN::LoadProgram(AMX* amx, const char* filename, void* memblock)
 {
 	return aux_LoadProgram(amx, filename, memblock);
 }

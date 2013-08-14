@@ -22,7 +22,7 @@ class PAWN
 		static cell CallPublic(AMX* amx, const cell* params) noexcept;
 
 	public:
-		static int LoadProgram(AMX* amx, char* filename, void* memblock);
+		static int LoadProgram(AMX* amx, const char* filename, void* memblock);
 		static int Init(AMX* amx);
 		static int Exec(AMX* amx, cell* retval, int index);
 		static int FreeProgram(AMX* amx);

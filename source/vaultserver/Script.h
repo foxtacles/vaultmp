@@ -22,12 +22,6 @@
 #include <memory>
 #include <chrono>
 
-/**
- * \brief Maintains communication with a script
- *
- * A script can be either a C++ or PAWN script
- */
-
 template<typename T> struct sizeof_void { enum { value = sizeof(T) }; };
 template<> struct sizeof_void<void> { enum { value = 0 }; };
 
@@ -122,15 +116,15 @@ struct SystemInterface
 	{
 		R result;
 #ifdef __WIN32__
-		decltype(GetProcAddress(HMODULE(), LPCSTR())) data;
+		decltype(GetProcAddress(lib_t(), nullptr)) data;
 #else
-		decltype(dlsym(nullptr, nullptr)) data;
+		decltype(dlsym(lib_t(), nullptr)) data;
 #endif
 	};
 
 	static_assert(sizeof(result) == sizeof(data), "R should be the same size");
 
-	SystemInterface() : data() {}
+	SystemInterface() : data(nullptr) {}
 	explicit operator bool() { return data; }
 
 #ifdef __WIN32__
@@ -140,10 +134,16 @@ struct SystemInterface
 #endif
 };
 
+/**
+ * \brief Maintains communication with a script
+ *
+ * A script can be either a C++ or PAWN script
+ */
+
 class Script
 {
 	private:
-		Script(char* path);
+		Script(const char* path);
 
 		union
 		{
@@ -163,6 +163,17 @@ class Script
 				return SystemInterface<R>(lib, name).result;
 			else
 				return reinterpret_cast<R>(PAWN::IsCallbackPresent(amx, name));
+		}
+
+		template<typename R>
+		bool SetScript(const char* name, R value)
+		{
+			SystemInterface<R*> result(lib, name);
+
+			if (result)
+				*result.result = value;
+
+			return result.operator bool();
 		}
 
 		typedef std::vector<std::unique_ptr<Script>> ScriptList;

@@ -21,7 +21,7 @@ constexpr char TypeString<Types...>::value[];
 constexpr ScriptFunctionData Script::functions[];
 constexpr ScriptCallbackData Script::callbacks[];
 
-Script::Script(char* path)
+Script::Script(const char* path)
 {
 	FILE* file = fopen(path, "rb");
 
@@ -54,18 +54,9 @@ Script::Script(char* path)
 			const char* vaultprefix = GetScript<const char*>("vaultprefix");
 			string vpf(vaultprefix);
 
-			auto SetScript = [this](const char* name, ScriptFunctionPointer func)
-			{
-				SystemInterface<decltype(func.addr)*> result(this->lib, name);
-
-				if (result)
-					*result.result = func.addr;
-				else
-					printf("Script function pointer not found: %s\n", name);
-			};
-
 			for (const auto& function : functions)
-				SetScript(string(vpf + function.name).c_str(), function.func);
+				if (!SetScript(string(vpf + function.name).c_str(), function.func.addr))
+					printf("Script function pointer not found: %s\n", function.name);
 		}
 		catch (...)
 		{
