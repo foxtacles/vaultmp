@@ -48,7 +48,7 @@ class Debug : private CriticalSection
 		Debug& operator=(const Debug&) = delete;
 
 	public:
-		~Debug();
+		~Debug() noexcept;
 
 		static void SetDebugHandler(const char* module);
 };

@@ -15,7 +15,7 @@ Debug::Debug(const char* module)
 	this->vaultmplog.open(logfile.c_str(), fstream::out | fstream::trunc);
 }
 
-Debug::~Debug()
+Debug::~Debug() noexcept
 {
 	this->Note("-----------------------------------------------------------------------------------------------------");
 	this->Note("END OF LOG");

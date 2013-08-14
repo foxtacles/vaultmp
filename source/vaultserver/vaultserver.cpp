@@ -172,7 +172,7 @@ int main(int, char* argv[])
 #ifdef __WIN32__
 			putenv(PWNFILES_PATH);
 #else
-			setenv(PWNFILES_KEY, PWNFILES_VAL, )
+			setenv(PWNFILES_KEY, PWNFILES_VAL, 1);
 #endif
 			vector<char> _scripts(scripts, scripts + strlen(scripts) + 1);
 			Script::LoadScripts(&_scripts[0], base);
