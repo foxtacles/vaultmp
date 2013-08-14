@@ -3,6 +3,8 @@
 
 #include "vaultmp.h"
 #include "Reference.h"
+#include "ReferenceTypes.h"
+#include "GameFactory.h"
 
 #include <unordered_set>
 
@@ -69,5 +71,27 @@ class Window : public Reference
 		 */
 		virtual pPacket toPacket() const;
 };
+
+GF_TYPE_WRAPPER(Window, Reference, ALL_WINDOWS)
+
+template<> struct pTypesMap<pTypes::ID_WINDOW_NEW> { typedef pGeneratorReference<pTypes::ID_WINDOW_NEW, RakNet::NetworkID, std::string, std::tuple<double, double, double, double>, std::tuple<double, double, double, double>, bool, bool, std::string> type; };
+template<>
+inline const typename pTypesMap<pTypes::ID_WINDOW_NEW>::type* PacketFactory::Cast_<pTypes::ID_WINDOW_NEW>::Cast(const pDefault* packet) {
+	pTypes type = packet->type();
+	return (
+		type == pTypes::ID_WINDOW_NEW ||
+		type == pTypes::ID_BUTTON_NEW ||
+		type == pTypes::ID_TEXT_NEW ||
+		type == pTypes::ID_EDIT_NEW
+	) ? static_cast<const typename pTypesMap<pTypes::ID_WINDOW_NEW>::type*>(packet) : nullptr;
+}
+template<> struct pTypesMap<pTypes::ID_WINDOW_REMOVE> { typedef pGeneratorReference<pTypes::ID_WINDOW_REMOVE> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_WPOS> { typedef pGeneratorReference<pTypes::ID_UPDATE_WPOS, std::tuple<double, double, double, double>> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_WSIZE> { typedef pGeneratorReference<pTypes::ID_UPDATE_WSIZE, std::tuple<double, double, double, double>> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_WLOCKED> { typedef pGeneratorReference<pTypes::ID_UPDATE_WLOCKED, bool> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_WVISIBLE> { typedef pGeneratorReference<pTypes::ID_UPDATE_WVISIBLE, bool> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_WTEXT> { typedef pGeneratorReference<pTypes::ID_UPDATE_WTEXT, std::string> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_WCLICK> { typedef pGeneratorReference<pTypes::ID_UPDATE_WCLICK> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_WMODE> { typedef pGeneratorDefault<pTypes::ID_UPDATE_WMODE, bool> type; };
 
 #endif

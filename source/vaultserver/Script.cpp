@@ -3,6 +3,7 @@
 #include "Public.h"
 #include "Client.h"
 #include "Network.h"
+#include "Game.h"
 #include "amx/amxaux.h"
 #include "time/time64.h"
 

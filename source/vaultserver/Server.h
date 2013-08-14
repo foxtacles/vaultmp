@@ -2,7 +2,10 @@
 #define SERVER_H
 
 #include "vaultserver.h"
-#include "GameFactory.h"
+#include "Object.h"
+#include "Actor.h"
+#include "Player.h"
+#include "Window.h"
 #include "Network.h"
 
 /**

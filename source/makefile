@@ -372,7 +372,7 @@ $(OBJDIR_DEBUG)\\Player.o: Player.cpp
 $(OBJDIR_DEBUG)\\Pipe.o: Pipe.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Pipe.cpp -o $(OBJDIR_DEBUG)\\Pipe.o
 
-$(OBJDIR_DEBUG)\\PacketFactory.o: PacketFactory.cpp
+$(OBJDIR_DEBUG)\\PacketFactory.o: packet\\PacketFactory.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c PacketFactory.cpp -o $(OBJDIR_DEBUG)\\PacketFactory.o
 
 $(OBJDIR_DEBUG)\\Object.o: Object.cpp
@@ -596,8 +596,8 @@ $(OBJDIR_RELEASE)\\Player.o: Player.cpp
 $(OBJDIR_RELEASE)\\Pipe.o: Pipe.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Pipe.cpp -o $(OBJDIR_RELEASE)\\Pipe.o
 
-$(OBJDIR_RELEASE)\\PacketFactory.o: PacketFactory.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c PacketFactory.cpp -o $(OBJDIR_RELEASE)\\PacketFactory.o
+$(OBJDIR_RELEASE)\\PacketFactory.o: packet\\PacketFactory.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c packet\\PacketFactory.cpp -o $(OBJDIR_RELEASE)\\PacketFactory.o
 
 $(OBJDIR_RELEASE)\\Object.o: Object.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Object.cpp -o $(OBJDIR_RELEASE)\\Object.o

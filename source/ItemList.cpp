@@ -1,6 +1,6 @@
 #include "ItemList.h"
-#include "GameFactory.h"
 #include "Network.h"
+#include "Item.h"
 
 #include <algorithm>
 
@@ -197,7 +197,6 @@ NetworkID ItemList::EquipItem(unsigned int baseID, bool silent, bool stick) cons
 	NetworkID result = 0;
 
 	if (!IsEquipped(baseID))
-	{
 		for (const NetworkID& id : container)
 			if (GameFactory::Operate<Item>(id, [id, baseID, silent, stick](FactoryItem& item) {
 				if (item->GetBase() != baseID)
@@ -209,7 +208,6 @@ NetworkID ItemList::EquipItem(unsigned int baseID, bool silent, bool stick) cons
 				return id;
 			}))
 				return id;
-	}
 
 	return result;
 }

@@ -34,4 +34,8 @@ class Button : public Window
 		virtual pPacket toPacket() const;
 };
 
+GF_TYPE_WRAPPER(Button, Window, ID_BUTTON)
+
+template<> struct pTypesMap<pTypes::ID_BUTTON_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_BUTTON_NEW> type; };
+
 #endif

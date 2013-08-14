@@ -4,3 +4,6 @@
 [submodule "source/vaultserver/time"]
 	path = source/vaultserver/time
 	url = https://github.com/Foxtacles/y2038.git
+[submodule "source/packet"]
+	path = source/packet
+	url = https://github.com/Foxtacles/serialization.git

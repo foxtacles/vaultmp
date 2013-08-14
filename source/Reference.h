@@ -6,7 +6,7 @@
 #include "Value.h"
 #include "Interface.h"
 #include "RakNet.h"
-#include "PacketFactory.h"
+#include "packet/PacketFactory.h"
 
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"

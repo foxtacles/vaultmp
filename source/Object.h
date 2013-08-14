@@ -3,6 +3,8 @@
 
 #include "vaultmp.h"
 #include "Reference.h"
+#include "ReferenceTypes.h"
+#include "GameFactory.h"
 #include "VaultVector.h"
 
 #ifdef VAULTMP_DEBUG
@@ -196,5 +198,28 @@ class ObjectFunctor : public ReferenceFunctor
 		virtual bool filter(FactoryWrapper<Reference>& reference);
 };
 #endif
+
+GF_TYPE_WRAPPER(Object, Reference, ALL_OBJECTS)
+
+template<> struct pTypesMap<pTypes::ID_OBJECT_NEW> { typedef pGeneratorReferenceNew<pTypes::ID_OBJECT_NEW, bool, std::string, double, double, double, double, double, double, unsigned int, bool, unsigned int, unsigned int> type; };
+template<>
+inline const typename pTypesMap<pTypes::ID_OBJECT_NEW>::type* PacketFactory::Cast_<pTypes::ID_OBJECT_NEW>::Cast(const pDefault* packet) {
+	pTypes type = packet->type();
+	return (
+		type == pTypes::ID_OBJECT_NEW ||
+		type == pTypes::ID_ITEM_NEW ||
+		type == pTypes::ID_CONTAINER_NEW ||
+		type == pTypes::ID_ACTOR_NEW ||
+		type == pTypes::ID_PLAYER_NEW
+	) ? static_cast<const typename pTypesMap<pTypes::ID_OBJECT_NEW>::type*>(packet) : nullptr;
+}
+template<> struct pTypesMap<pTypes::ID_OBJECT_REMOVE> { typedef pGeneratorReference<pTypes::ID_OBJECT_REMOVE, bool> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_NAME> { typedef pGeneratorReference<pTypes::ID_UPDATE_NAME, std::string> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_POS> { typedef pGeneratorReference<pTypes::ID_UPDATE_POS, double, double, double> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_ANGLE> { typedef pGeneratorReference<pTypes::ID_UPDATE_ANGLE, unsigned char, double> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_CELL> { typedef pGeneratorReference<pTypes::ID_UPDATE_CELL, unsigned int, double, double, double> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_LOCK> { typedef pGeneratorReference<pTypes::ID_UPDATE_LOCK, unsigned int> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_OWNER> { typedef pGeneratorReference<pTypes::ID_UPDATE_OWNER, unsigned int> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_ACTIVATE> { typedef pGeneratorReference<pTypes::ID_UPDATE_ACTIVATE, RakNet::NetworkID> type; };
 
 #endif

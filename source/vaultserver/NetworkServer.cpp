@@ -3,6 +3,7 @@
 #include "Utils.h"
 #include "Server.h"
 #include "Dedicated.h"
+#include "Game.h"
 
 using namespace std;
 using namespace RakNet;

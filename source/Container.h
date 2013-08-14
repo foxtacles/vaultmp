@@ -70,4 +70,17 @@ class ContainerFunctor : public ObjectFunctor
 };
 #endif
 
+GF_TYPE_WRAPPER(Container, Object, ID_CONTAINER)
+
+template<> struct pTypesMap<pTypes::ID_CONTAINER_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_CONTAINER_NEW, std::vector<pPacket>> type; };
+template<>
+inline const typename pTypesMap<pTypes::ID_CONTAINER_NEW>::type* PacketFactory::Cast_<pTypes::ID_CONTAINER_NEW>::Cast(const pDefault* packet) {
+	pTypes type = packet->type();
+	return (
+		type == pTypes::ID_CONTAINER_NEW ||
+		type == pTypes::ID_ACTOR_NEW ||
+		type == pTypes::ID_PLAYER_NEW
+	) ? static_cast<const typename pTypesMap<pTypes::ID_CONTAINER_NEW>::type*>(packet) : nullptr;
+}
+
 #endif

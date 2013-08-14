@@ -152,8 +152,7 @@
 		<Unit filename="../Network.h" />
 		<Unit filename="../Object.cpp" />
 		<Unit filename="../Object.h" />
-		<Unit filename="../PacketFactory.cpp" />
-		<Unit filename="../PacketFactory.h" />
+		<Unit filename="../PacketTypes.h" />
 		<Unit filename="../Player.cpp" />
 		<Unit filename="../Player.h" />
 		<Unit filename="../RakNet/AutopatcherPatchContext.h" />
@@ -398,6 +397,7 @@
 		<Unit filename="../RakNet/rdlmalloc.h" />
 		<Unit filename="../Reference.cpp" />
 		<Unit filename="../Reference.h" />
+		<Unit filename="../ReferenceTypes.h" />
 		<Unit filename="../ServerEntry.cpp" />
 		<Unit filename="../ServerEntry.h" />
 		<Unit filename="../Text.cpp" />
@@ -422,6 +422,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../iniparser/src/iniparser.h" />
+		<Unit filename="../packet/PacketExtensions.h" />
+		<Unit filename="../packet/PacketFactory.cpp" />
+		<Unit filename="../packet/PacketFactory.h" />
+		<Unit filename="../packet/PacketTypes.h" />
 		<Unit filename="../stack_trace/include/dbg/stack.hpp">
 			<Option target="Debug" />
 			<Option target="DebugUnix" />

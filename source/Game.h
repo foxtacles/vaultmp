@@ -6,6 +6,10 @@
 #include "Player.h"
 #include "Network.h"
 #include "GameFactory.h"
+#include "Item.h"
+#include "Button.h"
+#include "Text.h"
+#include "Edit.h"
 #include "RakNet.h"
 
 #ifdef VAULTMP_DEBUG
@@ -31,17 +35,7 @@ class Game
 		friend class NetworkClient;
 		friend class Bethesda;
 
-	private:
-		Game() = delete;
-
-#ifdef VAULTMP_DEBUG
-		static DebugInput<Game> debug;
-#endif
-
-		static RakNet::RakNetGUID server;
-
-		static void AdjustZAngle(double& Z, double diff);
-
+	public:
 		typedef std::pair<std::future<void>, std::chrono::milliseconds> AsyncPack;
 		typedef std::pair<std::set<unsigned int>, std::set<unsigned int>> CellDiff;
 		typedef std::unordered_map<unsigned int, std::unordered_map<unsigned int, std::set<unsigned int>>> CellRefs;
@@ -54,6 +48,16 @@ class Game
 		typedef std::function<void()> SpawnFunc;
 		typedef std::deque<std::function<void()>> StartupQueue;
 
+	private:
+		Game() = delete;
+
+#ifdef VAULTMP_DEBUG
+		static DebugInput<Game> debug;
+#endif
+
+		static RakNet::RakNetGUID server;
+
+		static void AdjustZAngle(double& Z, double diff);
 		static Guarded<CellRefs> cellRefs;
 		static Guarded<Player::CellContext> cellContext;
 		static Guarded<UninitializedObjects> uninitObj;
@@ -572,5 +576,17 @@ class Game
 		 */
 		static void GetWindowText(std::string name, std::string text);
 };
+
+template<> struct pTypesMap<pTypes::ID_GAME_AUTH> { typedef pGeneratorDefault<pTypes::ID_GAME_AUTH, std::string, std::string> type; };
+template<> struct pTypesMap<pTypes::ID_GAME_LOAD> { typedef pGeneratorDefault<pTypes::ID_GAME_LOAD> type; };
+template<> struct pTypesMap<pTypes::ID_GAME_MOD> { typedef pGeneratorDefault<pTypes::ID_GAME_MOD, std::string, unsigned int> type; };
+template<> struct pTypesMap<pTypes::ID_GAME_START> { typedef pGeneratorDefault<pTypes::ID_GAME_START> type; };
+template<> struct pTypesMap<pTypes::ID_GAME_END> { typedef pGeneratorDefault<pTypes::ID_GAME_END, Reason> type; };
+template<> struct pTypesMap<pTypes::ID_GAME_MESSAGE> { typedef pGeneratorDefault<pTypes::ID_GAME_MESSAGE, std::string, unsigned char> type; };
+template<> struct pTypesMap<pTypes::ID_GAME_CHAT> { typedef pGeneratorDefault<pTypes::ID_GAME_CHAT, std::string> type; };
+template<> struct pTypesMap<pTypes::ID_GAME_GLOBAL> { typedef pGeneratorDefault<pTypes::ID_GAME_GLOBAL, unsigned int, signed int> type; };
+template<> struct pTypesMap<pTypes::ID_GAME_WEATHER> { typedef pGeneratorDefault<pTypes::ID_GAME_WEATHER, Game::Weather> type; };
+template<> struct pTypesMap<pTypes::ID_GAME_BASE> { typedef pGeneratorDefault<pTypes::ID_GAME_BASE, Game::PlayerBase> type; };
+template<> struct pTypesMap<pTypes::ID_GAME_DELETED> { typedef pGeneratorDefault<pTypes::ID_GAME_DELETED, Game::DeletedObjects> type; };
 
 #endif

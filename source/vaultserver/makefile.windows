@@ -518,8 +518,8 @@ $(OBJDIR_DEBUG)\\API.o: ..\\API.cpp
 $(OBJDIR_DEBUG)\\Player.o: ..\\Player.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ..\\Player.cpp -o $(OBJDIR_DEBUG)\\Player.o
 
-$(OBJDIR_DEBUG)\\PacketFactory.o: ..\\PacketFactory.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ..\\PacketFactory.cpp -o $(OBJDIR_DEBUG)\\PacketFactory.o
+$(OBJDIR_DEBUG)\\PacketFactory.o: ..\\packet\\PacketFactory.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ..\\packet\\PacketFactory.cpp -o $(OBJDIR_DEBUG)\\PacketFactory.o
 
 $(OBJDIR_DEBUG)\\Expected.o: ..\\Expected.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ..\\Expected.cpp -o $(OBJDIR_DEBUG)\\Expected.o
@@ -820,8 +820,8 @@ $(OBJDIR_RELEASE)\\API.o: ..\\API.cpp
 $(OBJDIR_RELEASE)\\Player.o: ..\\Player.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ..\\Player.cpp -o $(OBJDIR_RELEASE)\\Player.o
 
-$(OBJDIR_RELEASE)\\PacketFactory.o: ..\\PacketFactory.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ..\\PacketFactory.cpp -o $(OBJDIR_RELEASE)\\PacketFactory.o
+$(OBJDIR_RELEASE)\\PacketFactory.o: ..\\packet\\PacketFactory.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ..\\packet\\PacketFactory.cpp -o $(OBJDIR_RELEASE)\\PacketFactory.o
 
 $(OBJDIR_RELEASE)\\Expected.o: ..\\Expected.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ..\\Expected.cpp -o $(OBJDIR_RELEASE)\\Expected.o

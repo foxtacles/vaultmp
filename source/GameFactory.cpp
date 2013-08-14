@@ -1,5 +1,15 @@
 #include "GameFactory.h"
 
+#include "Object.h"
+#include "Item.h"
+#include "Container.h"
+#include "Actor.h"
+#include "Player.h"
+#include "Window.h"
+#include "Button.h"
+#include "Text.h"
+#include "Edit.h"
+
 using namespace std;
 using namespace RakNet;
 

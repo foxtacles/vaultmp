@@ -2,7 +2,7 @@
 #define NETWORK_H
 
 #include "vaultmp.h"
-#include "PacketFactory.h"
+#include "packet/PacketFactory.h"
 #include "CriticalSection.h"
 
 #include <tuple>

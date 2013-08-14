@@ -3,15 +3,6 @@
 
 #include "vaultmp.h"
 #include "Reference.h"
-#include "Object.h"
-#include "Item.h"
-#include "Container.h"
-#include "Actor.h"
-#include "Player.h"
-#include "Window.h"
-#include "Button.h"
-#include "Text.h"
-#include "Edit.h"
 #include "Expected.h"
 
 #ifdef VAULTSERVER
@@ -34,32 +25,18 @@
 
 #include <map>
 #include <memory>
-
-const unsigned int ID_REFERENCE        = 0x01;
-const unsigned int ID_OBJECT           = ID_REFERENCE << 1;
-const unsigned int ID_ITEM             = ID_OBJECT << 1;
-const unsigned int ID_CONTAINER        = ID_ITEM << 1;
-const unsigned int ID_ACTOR            = ID_CONTAINER << 1;
-const unsigned int ID_PLAYER           = ID_ACTOR << 1;
-const unsigned int ID_WINDOW           = ID_PLAYER << 1;
-const unsigned int ID_BUTTON           = ID_WINDOW << 1;
-const unsigned int ID_TEXT             = ID_BUTTON << 1;
-const unsigned int ID_EDIT             = ID_TEXT << 1;
-
-const unsigned int ALL_OBJECTS         = (ID_OBJECT | ID_ITEM | ID_CONTAINER | ID_ACTOR | ID_PLAYER);
-const unsigned int ALL_CONTAINERS      = (ID_CONTAINER | ID_ACTOR | ID_PLAYER);
-const unsigned int ALL_ACTORS          = (ID_ACTOR | ID_PLAYER);
-const unsigned int ALL_WINDOWS         = (ID_WINDOW | ID_BUTTON | ID_TEXT | ID_EDIT);
+#include <unordered_set>
 
 /**
   * \brief Holds an instance pointer
   */
-template<typename T>
-class FactoryWrapper;
+template<typename T> class FactoryWrapper;
 template<typename T, typename U> Expected<FactoryWrapper<T>> vaultcast(const FactoryWrapper<U>& object) noexcept;
 template<typename T, typename U> Expected<FactoryWrapper<T>> vaultcast(const Expected<FactoryWrapper<U>>& object) noexcept;
 template<typename T, typename U> Expected<FactoryWrapper<T>> vaultcast_swap(FactoryWrapper<U>& object) noexcept;
 template<typename T, typename U> Expected<FactoryWrapper<T>> vaultcast_swap(Expected<FactoryWrapper<U>>& object) noexcept;
+
+class Object;
 
 /**
  * \brief Create, use and destroy game object instances via the GameFactory
@@ -516,18 +493,6 @@ typedef FactoryWrapper<derived> Factory##derived;                               
 typedef std::vector<FactoryWrapper<derived>> Factory##derived##s;                                                                                                    \
 typedef Expected<FactoryWrapper<derived>> Expected##derived;                                                                                                         \
 typedef std::vector<Expected<FactoryWrapper<derived>>> Expected##derived##s;
-
-GF_TYPE_WRAPPER(Object, Reference, ALL_OBJECTS)
-GF_TYPE_WRAPPER(Item, Object, ID_ITEM)
-GF_TYPE_WRAPPER(Container, Object, ID_CONTAINER)
-GF_TYPE_WRAPPER(Actor, Container, ALL_ACTORS)
-GF_TYPE_WRAPPER(Player, Actor, ID_PLAYER)
-GF_TYPE_WRAPPER(Window, Reference, ALL_WINDOWS)
-GF_TYPE_WRAPPER(Button, Window, ID_BUTTON)
-GF_TYPE_WRAPPER(Text, Window, ID_TEXT)
-GF_TYPE_WRAPPER(Edit, Window, ID_EDIT)
-
-#undef GF_TYPE_WRAPPER
 
 /**
   * \brief Tries to cast the instance pointer of a FactoryWrapper

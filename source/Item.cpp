@@ -1,5 +1,4 @@
 #include "Item.h"
-#include "GameFactory.h"
 
 using namespace std;
 using namespace RakNet;

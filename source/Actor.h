@@ -235,4 +235,22 @@ class ActorFunctor : public ContainerFunctor
 };
 #endif
 
+GF_TYPE_WRAPPER(Actor, Container, ALL_ACTORS)
+
+template<> struct pTypesMap<pTypes::ID_ACTOR_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_ACTOR_NEW, std::map<unsigned char, double>, std::map<unsigned char, double>, unsigned int, signed int, unsigned int, unsigned char, unsigned char, unsigned char, bool, bool, bool, bool> type; };
+template<>
+inline const typename pTypesMap<pTypes::ID_ACTOR_NEW>::type* PacketFactory::Cast_<pTypes::ID_ACTOR_NEW>::Cast(const pDefault* packet) {
+	pTypes type = packet->type();
+	return (
+		type == pTypes::ID_ACTOR_NEW ||
+		type == pTypes::ID_PLAYER_NEW
+	) ? static_cast<const typename pTypesMap<pTypes::ID_ACTOR_NEW>::type*>(packet) : nullptr;
+}
+template<> struct pTypesMap<pTypes::ID_UPDATE_STATE> { typedef pGeneratorReference<pTypes::ID_UPDATE_STATE, unsigned int, unsigned char, unsigned char, unsigned char, bool, bool, bool> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_RACE> { typedef pGeneratorReference<pTypes::ID_UPDATE_RACE, unsigned int, signed int, signed int> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_SEX> { typedef pGeneratorReference<pTypes::ID_UPDATE_SEX, bool> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_DEAD> { typedef pGeneratorReference<pTypes::ID_UPDATE_DEAD, bool, unsigned short, signed char> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_FIREWEAPON> { typedef pGeneratorReference<pTypes::ID_UPDATE_FIREWEAPON, unsigned int, double> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_IDLE> { typedef pGeneratorReference<pTypes::ID_UPDATE_IDLE, unsigned int, std::string> type; };
+
 #endif
