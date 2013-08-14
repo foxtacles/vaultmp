@@ -169,7 +169,11 @@ int main(int, char* argv[])
 
 		try
 		{
+#ifdef __WIN32__
 			putenv(PWNFILES_PATH);
+#else
+			setenv(PWNFILES_KEY, PWNFILES_VAL, )
+#endif
 			vector<char> _scripts(scripts, scripts + strlen(scripts) + 1);
 			Script::LoadScripts(&_scripts[0], base);
 		}
@@ -238,6 +242,8 @@ int main(int, char* argv[])
 
 #ifdef __WIN32__
 	system("PAUSE");
+#else
+	unsetenv(PWNFILES_KEY);
 #endif
 
 	return 0;

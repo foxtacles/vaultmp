@@ -370,7 +370,7 @@ cell PAWN::CreateTimerEx(AMX* amx, const cell* params) noexcept
 	vector<boost::any> args;
 	unsigned int count = (params[0] / sizeof(cell)) - 3;
 
-	if (count != len)
+	if (count != static_cast<unsigned int>(len))
 		throw VaultException("Script call: Number of arguments does not match definition").stacktrace();
 
 	for (unsigned int i = 0; i < count; ++i)
