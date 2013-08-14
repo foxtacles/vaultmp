@@ -34,6 +34,9 @@ public:
     void draw(GeometryBuffer& buffer, const Rect& targetRect,
               float alpha, const Rect* clipper) const;
 
+	void setCustomID(CEGUI::String str);
+	CEGUI::String getCustomID();
+
 protected:
     //! Helper to create a FormattedRenderedString of an appropriate type.
     void setupStringFormatter() const;
@@ -43,6 +46,8 @@ protected:
     mutable FormattedRenderedString* d_formattedRenderedString;
     //! Tracks target area for rendering so we can reformat when needed
     mutable Size d_formattingAreaSize;
+
+	CEGUI::String cID;
 };
 
 }

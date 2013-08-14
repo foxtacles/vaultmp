@@ -16,12 +16,23 @@ FormattedListboxTextItem::FormattedListboxTextItem(const String& text,
     d_formattedRenderedString(0),
     d_formattingAreaSize(0, 0)
 {
+	cID="";
 }
 
 //----------------------------------------------------------------------------//
 FormattedListboxTextItem::~FormattedListboxTextItem()
 {
     delete d_formattedRenderedString;
+}
+
+void FormattedListboxTextItem::setCustomID(CEGUI::String str)
+{
+	cID=str;
+}
+
+CEGUI::String FormattedListboxTextItem::getCustomID()
+{
+	return cID;
 }
 
 //----------------------------------------------------------------------------//

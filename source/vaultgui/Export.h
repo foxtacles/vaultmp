@@ -4,6 +4,7 @@ using namespace std;
 
 bool GUI_MouseClickCallback(const CEGUI::EventArgs& e);
 bool GUI_TextChanged(const CEGUI::EventArgs& e);
+bool GUI_CheckboxChanged(const CEGUI::EventArgs& e);
 
 extern "C"
 {
@@ -50,14 +51,18 @@ extern "C"
 	__declspec(dllexport) void GUI_SetClickCallback(void (*pt)(char* name));
 	__declspec(dllexport) void GUI_SetTextChangedCallback(void (*pt)(char* name,char* t));
 	__declspec(dllexport) void GUI_SetListboxSelectionChangedCallback(void (*pt)(char* name,char** text));
+	__declspec(dllexport) void GUI_SetCheckboxChangedCallback(void (*pt)(char* name,bool checked));
 
 	__declspec(dllexport) void GUI_ForceGUI(bool inGui);
 	__declspec(dllexport) void GUI_SetVisible(char* name,bool visible);
 	__declspec(dllexport) void GUI_AllowDrag(char* name,bool allow);
 
 	__declspec(dllexport) void GUI_AddListbox(char* parent,char* name);
-	__declspec(dllexport) void GUI_Listbox_AddItem(char* name,char* t);
+	__declspec(dllexport) void GUI_Listbox_AddItem(char* parent,char* name,char* t);
 	__declspec(dllexport) void GUI_Listbox_RemoveItem(char* name,char* t);
 	__declspec(dllexport) void GUI_Listbox_EnableMultiSelect(char* name,bool e);
 	__declspec(dllexport) vector<string>* GUI_Listbox_GetSelectedItems(char* name);
+
+	__declspec(dllexport) void GUI_AddCheckbox(char* parent,char* name);
+	__declspec(dllexport) void GUI_Checkbox_SetChecked(char* name,bool checked);
 }

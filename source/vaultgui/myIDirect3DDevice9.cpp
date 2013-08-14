@@ -185,9 +185,14 @@ myIDirect3DDevice9::myIDirect3DDevice9(IDirect3DDevice9* pOriginal)
 
 		wnd->addChildWindow(closeBTN);
 
-		/*GUI_CreateFrameWindow("w1");
+		GUI_CreateFrameWindow("w1");
 		GUI_SetSize("w1",0.35,0.4,0,0);
-		GUI_SetPosition("w1",0.6,0.1,0,0);*/
+		GUI_SetPosition("w1",0.6,0.1,0,0);
+
+		/*GUI_AddCheckbox("w1","c");
+		GUI_SetPosition("c",0.1,0.1,0,0);
+		GUI_Checkbox_SetChecked("c",true);*/
+
 
 		/*GUI_AddTextbox("w1","txt");
 		GUI_SetSize("txt",0.35,0.4,0,0);
@@ -199,40 +204,16 @@ myIDirect3DDevice9::myIDirect3DDevice9(IDirect3DDevice9* pOriginal)
 		GUI_SetSize("l",1,0.9,0,0);
 		GUI_SetPosition("l",0,0,0,0);
 
-		GUI_Listbox_AddItem("l","1");
-		GUI_Listbox_AddItem("l","2");
-		GUI_Listbox_AddItem("l","3");
-		GUI_Listbox_AddItem("l","4");
-		GUI_Listbox_AddItem("l","5");
-		GUI_Listbox_AddItem("l","6");
-		GUI_Listbox_AddItem("l","7");
-		GUI_Listbox_AddItem("l","8");
-		GUI_Listbox_AddItem("l","9");
-		GUI_Listbox_AddItem("l","10");
-		GUI_Listbox_AddItem("l","1");
-		GUI_Listbox_AddItem("l","2");
-		GUI_Listbox_AddItem("l","3");
-		GUI_Listbox_AddItem("l","4");
-		GUI_Listbox_AddItem("l","5");
-		GUI_Listbox_AddItem("l","6");
-		GUI_Listbox_AddItem("l","7");
-		GUI_Listbox_AddItem("l","8");
-		GUI_Listbox_AddItem("l","9");
-		GUI_Listbox_AddItem("l","10");
-		GUI_Listbox_AddItem("l","1");
-		GUI_Listbox_AddItem("l","2");
-		GUI_Listbox_AddItem("l","3");
-		GUI_Listbox_AddItem("l","4");
-		GUI_Listbox_AddItem("l","5");
-		GUI_Listbox_AddItem("l","6");
-		GUI_Listbox_AddItem("l","7");
-		GUI_Listbox_AddItem("l","8");
-		GUI_Listbox_AddItem("l","9");
-		GUI_Listbox_AddItem("l","10");
+		GUI_Listbox_AddItem("l","1","1");
+		GUI_Listbox_AddItem("l","2","2");
+		GUI_Listbox_AddItem("l","3","3");
+		GUI_Listbox_AddItem("l","4","4");
+		GUI_Listbox_RemoveItem("l","3");*/
+		/*
 
 		GUI_Listbox_RemoveItem("l","7");
 
-		GUI_Listbox_EnableMultiSelect("l",true);*/
+		GUI_Listbox_EnableMultiSelect("l",true);
 
 		/*GUI_AddStaticText("w1","ctrl");
 		GUI_SetSize("ctrl",0.5,0.1,0,0);

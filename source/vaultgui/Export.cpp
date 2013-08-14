@@ -22,6 +22,7 @@ CRITICAL_SECTION cs_GetQueue;
 void (*callbackPTR_OnClick)(char* name)=0;
 void (*callbackPTR_OnTextChange)(char* name,char* text)=0;
 void (*callbackPTR_OnListboxSelectionChange)(char* name,char** text)=0;
+void (*callbackPTR_OnCheckboxChange)(char* name,bool checked)=0;
 
 bool GUI_MouseClickCallback(const CEGUI::EventArgs& e)
 {
@@ -81,6 +82,20 @@ bool GUI_ListboxSelectionChange(const CEGUI::EventArgs& e)
 	}
 
 	delete[] tmp;
+
+	return true;
+}
+
+bool GUI_CheckboxChanged(const CEGUI::EventArgs& e)
+{
+	const CEGUI::WindowEventArgs& we = static_cast<const CEGUI::WindowEventArgs&>(e);
+
+	CEGUI::Checkbox* c=(CEGUI::Checkbox*)we.window;
+	if(callbackPTR_OnCheckboxChange)
+	{
+		callbackPTR_OnCheckboxChange((char*)c->getName().c_str(),c->isSelected());
+	}
+		
 
 	return true;
 }
@@ -291,6 +306,11 @@ extern "C"
 		callbackPTR_OnListboxSelectionChange=pt;
 	}
 
+	__declspec(dllexport) void GUI_SetCheckboxChangedCallback(void (*pt)(char* name,bool checked))
+	{
+		callbackPTR_OnCheckboxChange=pt;
+	}
+
 	__declspec(dllexport) void GUI_ForceGUI(bool inGui)
 	{
 		gData.chatting=inGui;
@@ -328,13 +348,14 @@ extern "C"
 		w->addChildWindow(wnd);
 	}
 
-	__declspec(dllexport) void GUI_Listbox_AddItem(char* name,char* t)
+	__declspec(dllexport) void GUI_Listbox_AddItem(char* name,char* id,char* t)
 	{
 		CEGUI::Listbox *w = ((CEGUI::Listbox*)CEGUI::WindowManager::getSingleton().getWindow(name));
 
 		CEGUI::FormattedListboxTextItem* itm=new CEGUI::FormattedListboxTextItem(t,CEGUI::HTF_WORDWRAP_LEFT_ALIGNED);
 		itm->setTextColours(0xFFFFFFFF);
 		itm->setSelectionBrushImage("TaharezLook", "MultiListSelectionBrush");
+		itm->setCustomID(id);
 
 		w->addItem(itm);
 
@@ -360,7 +381,16 @@ extern "C"
 	{
 		CEGUI::Listbox *w = ((CEGUI::Listbox*)CEGUI::WindowManager::getSingleton().getWindow(name));
 
-		w->removeItem(w->findItemWithText(t,NULL));
+		for(int i=0;i<w->getItemCount();i++)
+		{
+			CEGUI::FormattedListboxTextItem* itm=(CEGUI::FormattedListboxTextItem*)w->getListboxItemFromIndex(i);
+			if(itm->getCustomID().compare(t)==0)
+			{
+				w->removeItem(itm);
+				i--;
+			}
+		}
+		
 	}
 
 	__declspec(dllexport) void GUI_Listbox_EnableMultiSelect(char* name,bool e)
@@ -373,7 +403,7 @@ extern "C"
 	__declspec(dllexport) vector<string>* GUI_Listbox_GetSelectedItems(char* name)
 	{
 		static vector<string> str;
-		CEGUI::ListboxItem *tmp;
+		CEGUI::FormattedListboxTextItem *tmp;
 
 		tmp=0;
 
@@ -381,16 +411,38 @@ extern "C"
 
 		CEGUI::Listbox *w = ((CEGUI::Listbox*)CEGUI::WindowManager::getSingleton().getWindow(name));
 
-		tmp=w->getFirstSelectedItem();
+		tmp=(CEGUI::FormattedListboxTextItem*)w->getFirstSelectedItem();
 
 		while(tmp)
 		{
-			str.push_back(tmp->getText().c_str());
+			str.push_back(tmp->getCustomID().c_str());
 
-			tmp=w->getNextSelected(tmp);
+			tmp=(CEGUI::FormattedListboxTextItem*)w->getNextSelected(tmp);
 		}
 
 		return &str;
+	}
+
+	__declspec(dllexport) void GUI_AddCheckbox(char* parent,char* name)
+	{
+		CEGUI::WindowManager& winMgr = CEGUI::WindowManager::getSingleton();
+
+		CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow(parent));
+		CEGUI::Checkbox* wnd=(CEGUI::Checkbox*)winMgr.createWindow("TaharezLook/Checkbox", name);
+
+		wnd->subscribeEvent(CEGUI::Checkbox::EventCheckStateChanged,GUI_CheckboxChanged);
+
+		w->addChildWindow(wnd);
+		
+	}
+
+	__declspec(dllexport) void GUI_Checkbox_SetChecked(char* name,bool checked)
+	{
+		if(CEGUI::WindowManager::getSingleton().getWindow(name)->getType().compare("TaharezLook/Checkbox")==0)
+		{
+			CEGUI::Checkbox *w = ((CEGUI::Checkbox*)CEGUI::WindowManager::getSingleton().getWindow(name));
+			w->setSelected(checked);
+		}
 	}
 
 
