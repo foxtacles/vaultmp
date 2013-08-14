@@ -122,7 +122,7 @@ struct SystemInterface
 #endif
 	};
 
-	static_assert(sizeof(result) == sizeof(data), "R should be the same size");
+	static_assert(sizeof(result) == sizeof(data), "R should have the same size");
 
 	SystemInterface() : data(nullptr) {}
 	explicit operator bool() { return data; }
@@ -168,6 +168,9 @@ class Script
 		template<typename R>
 		bool SetScript(const char* name, R value)
 		{
+			if (!cpp_script)
+				return false;
+
 			SystemInterface<R*> result(lib, name);
 
 			if (result)

@@ -233,11 +233,8 @@ class GameFactory
 		 *
 		 * The References are identified by an arbitrary type. This can be a NetworkID, reference ID or FactoryWrapper
 		 */
-		template<typename I, typename F> static typename OperateReturnProxy<typename std::enable_if<!std::is_base_of<Reference, F>::value>::type, FailPolicy::Default, ObjectPolicy::Default, LaunchPolicy::Default, Object, F, InputPolicyHelper<I>::M>::type Operate(I&& id, F function) { return OperateFunctions<Object, FailPolicy::Default, ObjectPolicy::Default, LaunchPolicy::Default, I, F, InputPolicyHelper<I>::M>::Operate(std::forward<I>(id), function); }
-		template<typename T, typename I, typename F> static typename OperateReturn<FailPolicy::Default, ObjectPolicy::Default, LaunchPolicy::Default, T, F, InputPolicyHelper<I>::M>::type Operate(I&& id, F function) { return OperateFunctions<T, FailPolicy::Default, ObjectPolicy::Default, LaunchPolicy::Default, I, F, InputPolicyHelper<I>::M>::Operate(std::forward<I>(id), function); }
-		template<typename T, FailPolicy FP, typename I, typename F> static typename OperateReturn<FP, ObjectPolicy::Default, LaunchPolicy::Default, T, F, InputPolicyHelper<I>::M>::type Operate(I&& id, F function) { return OperateFunctions<T, FP, ObjectPolicy::Default, LaunchPolicy::Default, I, F, InputPolicyHelper<I>::M>::Operate(std::forward<I>(id), function); }
-		template<typename T, FailPolicy FP, ObjectPolicy OP, typename I, typename F> static typename OperateReturn<FP, OP, LaunchPolicy::Default, T, F, InputPolicyHelper<I>::M>::type Operate(I&& id, F function) { return OperateFunctions<T, FP, OP, LaunchPolicy::Default, I, F, InputPolicyHelper<I>::M>::Operate(std::forward<I>(id), function); }
-		template<typename T, FailPolicy FP, ObjectPolicy OP, LaunchPolicy LP, typename I, typename F> static typename OperateReturn<FP, OP, LP, T, F, InputPolicyHelper<I>::M>::type Operate(I&& id, F function) { return OperateFunctions<T, FP, OP, LP, I, F, InputPolicyHelper<I>::M>::Operate(std::forward<I>(id), function); }
+		template<typename T = Object, FailPolicy FP = FailPolicy::Default, ObjectPolicy OP = ObjectPolicy::Default, LaunchPolicy LP = LaunchPolicy::Default, typename I, typename F>
+		static typename OperateReturn<FP, OP, LP, T, F, InputPolicyHelper<I>::M>::type Operate(I&& id, F function) { return OperateFunctions<T, FP, OP, LP, I, F, InputPolicyHelper<I>::M>::Operate(std::forward<I>(id), function); }
 		/**
 		 * \brief Lookup a NetworkID
 		 */
