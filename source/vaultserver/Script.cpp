@@ -36,7 +36,7 @@ Script::Script(char* path)
 	if (strstr(path, ".so"))
 #endif
 	{
-		lib_t handle;
+		SystemInterface<>::lib_t handle;
 #ifdef __WIN32__
 		handle = LoadLibrary(path);
 #else
@@ -56,13 +56,10 @@ Script::Script(char* path)
 
 			auto SetScript = [this](const char* name, ScriptFunctionPointer func)
 			{
-#ifdef __WIN32__
-				auto addr = GetProcAddress(this->lib, name);
-#else
-				auto addr = dlsym(this->lib, name);
-#endif
-				if (addr)
-					*reinterpret_cast<decltype(func.addr)*>(addr) = func.addr;
+				SystemInterface<decltype(func.addr)*> result(this->lib, name);
+
+				if (result)
+					*result.result = func.addr;
 				else
 					printf("Script function pointer not found: %s\n", name);
 			};
@@ -738,7 +735,7 @@ void Script::SetGameYear(unsigned int year) noexcept
 	TM _tm;
 	gmtime64_r(&t, &_tm);
 
-	if (_tm.tm_year != year)
+	if (static_cast<unsigned int>(_tm.tm_year) != year)
 	{
 		_tm.tm_year = year - 1900;
 		t = mktime64(&_tm);
@@ -767,7 +764,7 @@ void Script::SetGameMonth(unsigned int month) noexcept
 	TM _tm;
 	gmtime64_r(&t, &_tm);
 
-	if (_tm.tm_mon != month)
+	if (static_cast<unsigned int>(_tm.tm_mon) != month)
 	{
 		_tm.tm_mon = month;
 		t = mktime64(&_tm);
@@ -796,7 +793,7 @@ void Script::SetGameDay(unsigned int day) noexcept
 	TM _tm;
 	gmtime64_r(&t, &_tm);
 
-	if (_tm.tm_mday != day)
+	if (static_cast<unsigned int>(_tm.tm_mday) != day)
 	{
 		_tm.tm_mday = day;
 		t = mktime64(&_tm);
@@ -825,7 +822,7 @@ void Script::SetGameHour(unsigned int hour) noexcept
 	TM _tm;
 	gmtime64_r(&t, &_tm);
 
-	if (_tm.tm_hour != hour)
+	if (static_cast<unsigned int>(_tm.tm_hour) != hour)
 	{
 		_tm.tm_hour = hour;
 		t = mktime64(&_tm);
@@ -2327,9 +2324,7 @@ bool Script::AgeActorBaseRace(NetworkID id, signed int age) noexcept
 
 		if (age < 0)
 		{
-			unsigned int _age = abs(age);
-
-			for (unsigned int i = 0; i < _age; ++i)
+			for (signed int i = 0; i > age; --i)
 			{
 				new_race = race->GetYounger();
 

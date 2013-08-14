@@ -109,20 +109,45 @@ struct ScriptCallbackData
 	constexpr ScriptCallbackData(const char(&name)[N], ScriptIdentity callback) : name(name), index(Utils::hash(name)), callback(callback) {}
 };
 
+template<typename R = void*>
+struct SystemInterface
+{
+#ifdef __WIN32__
+	typedef HMODULE lib_t;
+#else
+	typedef void* lib_t;
+#endif
+
+	union
+	{
+		R result;
+#ifdef __WIN32__
+		decltype(GetProcAddress(HMODULE(), LPCSTR())) data;
+#else
+		decltype(dlsym(nullptr, nullptr)) data;
+#endif
+	};
+
+	static_assert(sizeof(result) == sizeof(data), "R should be the same size");
+
+	SystemInterface() : data() {}
+	explicit operator bool() { return data; }
+
+#ifdef __WIN32__
+	SystemInterface(lib_t handle, const char* name) : data(GetProcAddress(handle, name)) {}
+#else
+	SystemInterface(lib_t handle, const char* name) : data(dlsym(handle, name)) {}
+#endif
+};
+
 class Script
 {
 	private:
 		Script(char* path);
 
-#ifdef __WIN32__
-		typedef HMODULE lib_t;
-#else
-		typedef void* lib_t;
-#endif
-
 		union
 		{
-			lib_t lib;
+			SystemInterface<>::lib_t lib;
 			AMX* amx;
 		};
 
@@ -135,13 +160,7 @@ class Script
 		R GetScript(const char* name)
 		{
 			if (cpp_script)
-			{
-#ifdef __WIN32__
-				return reinterpret_cast<R>(GetProcAddress(lib, name));
-#else
-				return reinterpret_cast<R>(dlsym(lib, name));
-#endif
-			}
+				return SystemInterface<R>(lib, name).result;
 			else
 				return reinterpret_cast<R>(PAWN::IsCallbackPresent(amx, name));
 		}
