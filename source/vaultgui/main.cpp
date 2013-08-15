@@ -41,6 +41,7 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReser
 			InitInstance(hModule);
 
 			gData.sendClickCallbacks=true;
+			gData.sendCheckboxCallbacks=true;
 
 			/*TODO: Remove after testing*/
 			gData.gameReady=true;

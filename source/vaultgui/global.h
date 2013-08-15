@@ -19,6 +19,7 @@ struct globalData
 	bool hideChatbox;
 	bool lockChatbox;
 	bool sendClickCallbacks;
+	bool sendCheckboxCallbacks;
 
 	int lastChatTextTick;
 };

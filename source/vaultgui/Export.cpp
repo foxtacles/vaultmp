@@ -93,7 +93,8 @@ bool GUI_CheckboxChanged(const CEGUI::EventArgs& e)
 	CEGUI::Checkbox* c=(CEGUI::Checkbox*)we.window;
 	if(callbackPTR_OnCheckboxChange)
 	{
-		callbackPTR_OnCheckboxChange((char*)c->getName().c_str(),c->isSelected());
+		if(gData.sendCheckboxCallbacks)
+			callbackPTR_OnCheckboxChange((char*)c->getName().c_str(),c->isSelected());
 	}
 		
 
@@ -441,7 +442,9 @@ extern "C"
 		if(CEGUI::WindowManager::getSingleton().getWindow(name)->getType().compare("TaharezLook/Checkbox")==0)
 		{
 			CEGUI::Checkbox *w = ((CEGUI::Checkbox*)CEGUI::WindowManager::getSingleton().getWindow(name));
+			gData.sendCheckboxCallbacks=false;
 			w->setSelected(checked);
+			gData.sendCheckboxCallbacks=true;
 		}
 	}
 

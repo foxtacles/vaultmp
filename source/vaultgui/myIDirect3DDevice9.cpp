@@ -185,9 +185,9 @@ myIDirect3DDevice9::myIDirect3DDevice9(IDirect3DDevice9* pOriginal)
 
 		wnd->addChildWindow(closeBTN);
 
-		GUI_CreateFrameWindow("w1");
+		/*GUI_CreateFrameWindow("w1");
 		GUI_SetSize("w1",0.35,0.4,0,0);
-		GUI_SetPosition("w1",0.6,0.1,0,0);
+		GUI_SetPosition("w1",0.6,0.1,0,0);*/
 
 		/*GUI_AddCheckbox("w1","c");
 		GUI_SetPosition("c",0.1,0.1,0,0);
