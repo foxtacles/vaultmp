@@ -3,13 +3,6 @@
 using namespace std;
 using namespace RakNet;
 
-#ifdef VAULTSERVER
-const char* Window::GUI_MAIN_LABEL = "Main Window";
-const char* Window::GUI_MAIN_TEXT = "Chat Box";
-const tuple<double, double, double, double> Window::GUI_MAIN_POS{0.01, 0.01, 0.0, 0.0};
-const tuple<double, double, double, double> Window::GUI_MAIN_SIZE{0.35, 0.3, 0.0, 0.0};
-#endif
-
 Window::WindowChilds Window::childs;
 
 Window::Window() : Reference(0x00000000, 0x00000000)

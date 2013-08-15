@@ -2,10 +2,8 @@
 #define SERVER_H
 
 #include "vaultserver.h"
-#include "Object.h"
-#include "Actor.h"
 #include "Player.h"
-#include "Window.h"
+#include "Checkbox.h"
 #include "Network.h"
 
 /**
@@ -81,9 +79,13 @@ class Server
 		 */
 		static NetworkResponse GetWindowClick(RakNet::RakNetGUID guid, FactoryWindow& reference);
 		/**
-		 * \brief Handles window click network packet
+		 * \brief Handles window text network packet
 		 */
 		static NetworkResponse GetWindowText(RakNet::RakNetGUID guid, FactoryWindow& reference, const std::string& text);
+		/**
+		 * \brief Handles checkbox selected network packet
+		 */
+		static NetworkResponse GetCheckboxSelected(RakNet::RakNetGUID guid, FactoryCheckbox& reference, bool selected);
 		/**
 		 * \brief Handles player chat message network packet
 		 */

@@ -72,11 +72,12 @@ namespace vaultmp {
 		ID_BUTTON = ID_WINDOW << 1,
 		ID_TEXT = ID_BUTTON << 1,
 		ID_EDIT = ID_TEXT << 1,
+		ID_CHECKBOX = ID_EDIT << 1,
 
 		ALL_OBJECTS = (ID_OBJECT | ID_ITEM | ID_CONTAINER | ID_ACTOR | ID_PLAYER),
 		ALL_CONTAINERS = (ID_CONTAINER | ID_ACTOR | ID_PLAYER),
 		ALL_ACTORS = (ID_ACTOR | ID_PLAYER),
-		ALL_WINDOWS = (ID_WINDOW | ID_BUTTON | ID_TEXT | ID_EDIT),
+		ALL_WINDOWS = (ID_WINDOW | ID_BUTTON | ID_TEXT | ID_EDIT | ID_CHECKBOX),
 	};
 
 	enum VAULTCPP(class) ActorValue VAULTCPP(: uint8_t)
@@ -312,6 +313,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE Void OnWindowMode(VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void OnWindowClick(VAULTSPACE ID, VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void OnWindowTextChange(VAULTSPACE ID, VAULTSPACE ID, VAULTSPACE cRawString) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void OnCheckboxSelect(VAULTSPACE ID, VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State OnClientAuthenticate(VAULTSPACE cRawString, VAULTSPACE cRawString) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void OnGameYearChange(VAULTSPACE UCount) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void OnGameMonthChange(VAULTSPACE UCount) VAULTCPP(noexcept);
@@ -364,6 +366,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsButton))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsText))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsEdit))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsCheckbox))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsChatbox))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Type (*VAULTAPI(GetType))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetConnection))(VAULTSPACE ID) VAULTCPP(noexcept);
@@ -469,6 +472,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE cRawString (*VAULTAPI(GetWindowText))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetEditMaxLength))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE cRawString (*VAULTAPI(GetEditValidation))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetCheckboxSelected))(VAULTSPACE ID) VAULTCPP(noexcept);
 
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateWindow))(VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE State, VAULTSPACE State, VAULTSPACE cRawString) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(DestroyWindow))(VAULTSPACE ID) VAULTCPP(noexcept);
@@ -484,6 +488,8 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateEdit))(VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE State, VAULTSPACE State, VAULTSPACE cRawString) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetEditMaxLength))(VAULTSPACE ID, VAULTSPACE UCount) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetEditValidation))(VAULTSPACE ID, VAULTSPACE cRawString) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateCheckbox))(VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE State, VAULTSPACE State, VAULTSPACE cRawString) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetCheckboxSelected))(VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
 VAULTCPP(})
 
 #ifdef __cplusplus
@@ -592,6 +598,7 @@ namespace vaultmp
 	VAULTFUNCTION State IsButton(ID id) noexcept { return VAULTAPI(IsButton)(id); }
 	VAULTFUNCTION State IsText(ID id) noexcept { return VAULTAPI(IsText)(id); }
 	VAULTFUNCTION State IsEdit(ID id) noexcept { return VAULTAPI(IsEdit)(id); }
+	VAULTFUNCTION State IsCheckbox(ID id) noexcept { return VAULTAPI(IsCheckbox)(id); }
 	VAULTFUNCTION State IsChatbox(ID id) noexcept { return VAULTAPI(IsChatbox)(id); }
 	VAULTFUNCTION Type GetType(ID id) noexcept { return VAULTAPI(GetType)(id); }
 	VAULTFUNCTION UCount GetConnection(ID id) noexcept { return VAULTAPI(GetConnection)(id); }
@@ -871,6 +878,7 @@ namespace vaultmp
 	VAULTFUNCTION String GetWindowText(ID id) noexcept { return String(VAULTAPI(GetWindowText)(id)); }
 	VAULTFUNCTION UCount GetEditMaxLength(ID id) noexcept { return VAULTAPI(GetEditMaxLength)(id); }
 	VAULTFUNCTION String GetEditValidation(ID id) noexcept { return String(VAULTAPI(GetEditValidation)(id)); }
+	VAULTFUNCTION State GetCheckboxSelected(ID id) noexcept { return VAULTAPI(GetCheckboxSelected)(id); }
 
 	VAULTFUNCTION ID CreateWindow(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible = True, State locked = False, const String& text = "") noexcept { return VAULTAPI(CreateWindow)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
 	VAULTFUNCTION ID CreateWindow(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible = True, State locked = False, cRawString text = "") noexcept { return VAULTAPI(CreateWindow)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
@@ -892,6 +900,9 @@ namespace vaultmp
 	VAULTFUNCTION State SetEditMaxLength(ID id, UCount length) noexcept { return VAULTAPI(SetEditMaxLength)(id, length); }
 	VAULTFUNCTION State SetEditValidation(ID id, const String& validation) noexcept { return VAULTAPI(SetEditValidation)(id, validation.c_str()); }
 	VAULTFUNCTION State SetEditValidation(ID id, cRawString validation) noexcept { return VAULTAPI(SetEditValidation)(id, validation); }
+	VAULTFUNCTION ID CreateCheckbox(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible = True, State locked = False, const String& text = "") noexcept { return VAULTAPI(CreateCheckbox)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
+	VAULTFUNCTION ID CreateCheckbox(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible = True, State locked = False, cRawString text = "") noexcept { return VAULTAPI(CreateCheckbox)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
+	VAULTFUNCTION State SetCheckboxSelected(ID id, State selected) noexcept { return VAULTAPI(SetCheckboxSelected)(id, selected); }
 
 	class Reference {
 		protected:
@@ -1353,6 +1364,24 @@ namespace vaultmp
 			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible = True, State locked = False, cRawString text = "") noexcept { return vaultmp::CreateEdit(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_EDIT); }
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_EDIT); }
+	};
+
+	class Checkbox : public Window {
+		protected:
+			Checkbox(ID id, Type type) noexcept : Window(id, type) {}
+
+		public:
+			Checkbox(ID id) noexcept : Window(vaultmp::IsCheckbox(id) ? id : static_cast<ID>(0), Type::ID_CHECKBOX) {}
+			virtual ~Checkbox() noexcept {}
+
+			State GetCheckboxSelected() const noexcept { return vaultmp::GetCheckboxSelected(id); }
+
+			State SetCheckboxSelected(State selected) noexcept { return vaultmp::SetCheckboxSelected(id, selected); }
+
+			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible = True, State locked = False, const String& text = "") noexcept { return vaultmp::CreateCheckbox(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
+			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible = True, State locked = False, cRawString text = "") noexcept { return vaultmp::CreateCheckbox(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
+			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_CHECKBOX); }
+			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_CHECKBOX); }
 	};
 
 	class GlobalChat {

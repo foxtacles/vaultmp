@@ -305,7 +305,9 @@ namespace Values
 		GUIText = 0x0019 | VAULTFUNCTION,
 		GUIClick = 0x0020 | VAULTFUNCTION,
 		GUIMaxLen = 0x0021 | VAULTFUNCTION,
-		GUIValid = 0x0022 | VAULTFUNCTION
+		GUIValid = 0x0022 | VAULTFUNCTION,
+		GUICreateCheckbox = 0x0023 | VAULTFUNCTION,
+		GUICheckbox = 0x0024 | VAULTFUNCTION
 	};
 
 	enum ActorVals

@@ -28,6 +28,7 @@ queue<string> qGUI_OnChat;
 queue<bool> qGUI_OnMode;
 queue<string> qGUI_OnClick;
 queue<pair<string, string>> qGUI_OnText;
+queue<pair<string, bool>> qGUI_OnCheckbox;
 queue<unsigned int> qActivate;
 
 static HANDLE hProc;
@@ -51,6 +52,9 @@ static void (*GUI_SetClickCallback)(void (*)(const char*));
 static void (*GUI_SetTextChangedCallback)(void (*)(const char*, const char*));
 static void (*GUI_Textbox_SetMaxLength)(const char*, unsigned int);
 static void (*GUI_Textbox_SetValidationString)(const char*, const char*);
+static void (*GUI_AddCheckbox)(const char*, const char*);
+static void (*GUI_Checkbox_SetChecked)(const char*, bool);
+static void (*GUI_SetCheckboxChangedCallback)(void (*)(const char*, bool));
 static void (*SetPlayersDataPointer)(remotePlayers*);
 static bool (*QueueUIMessage)(const char* msg, unsigned int emotion, const char* ddsPath, const char* soundName, float msgTime);
 
@@ -645,6 +649,26 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 			break;
 		}
 
+		case 0x0023 | VAULTFUNCTION: // GUICreateCheckbox - Create checkbox
+		{
+			ZeroMemory(result, sizeof(double));
+			const char* data = ((char*) args) + 2; // skip length
+			GUI_AddCheckbox(data, data + strlen(data) + 3);
+			break;
+		}
+
+		case 0x0024 | VAULTFUNCTION: // GUICheckbox - Update checkbox
+		{
+			ZeroMemory(result, sizeof(double));
+			const char* data = ((char*) args) + 2; // skip length
+			unsigned char* _args = (unsigned char*) (data + strlen(data) + 1);
+
+			bool selected = (bool) *(unsigned int*)(_args + 1);
+
+			GUI_Checkbox_SetChecked(data, selected);
+			break;
+		}
+
 		default:
 			break;
 	}
@@ -663,6 +687,13 @@ void GUI_OnText(const char* name, const char* text)
 {
 	mInput.lock();
 	qGUI_OnText.emplace(name, text);
+	mInput.unlock();
+}
+
+void GUI_OnCheckbox(const char* name, bool selected)
+{
+	mInput.lock();
+	qGUI_OnCheckbox.emplace(name, selected);
 	mInput.unlock();
 }
 
@@ -843,13 +874,17 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 		GUI_SetTextChangedCallback = reinterpret_cast<decltype(GUI_SetTextChangedCallback)>(GetProcAddress(vaultgui, "GUI_SetTextChangedCallback"));
 		GUI_Textbox_SetMaxLength = reinterpret_cast<decltype(GUI_Textbox_SetMaxLength)>(GetProcAddress(vaultgui, "GUI_Textbox_SetMaxLength"));
 		GUI_Textbox_SetValidationString = reinterpret_cast<decltype(GUI_Textbox_SetValidationString)>(GetProcAddress(vaultgui, "GUI_Textbox_SetValidationString"));
+		GUI_AddCheckbox = reinterpret_cast<decltype(GUI_AddCheckbox)>(GetProcAddress(vaultgui, "GUI_AddCheckbox"));
+		GUI_Checkbox_SetChecked = reinterpret_cast<decltype(GUI_Checkbox_SetChecked)>(GetProcAddress(vaultgui, "GUI_Checkbox_SetChecked"));
+		GUI_SetCheckboxChangedCallback = reinterpret_cast<decltype(GUI_SetCheckboxChangedCallback)>(GetProcAddress(vaultgui, "GUI_SetCheckboxChangedCallback"));
 		SetPlayersDataPointer = reinterpret_cast<decltype(SetPlayersDataPointer)>(GetProcAddress(vaultgui, "SetPlayersDataPointer"));
 
-		if (!Chatbox_AddToChat || !GUI_CreateFrameWindow || !GUI_AddStaticText || !GUI_AddTextbox || !GUI_AddButton || !GUI_SetVisible || !GUI_AllowDrag || !GUI_SetPosition || !GUI_SetSize || !GUI_SetText || !GUI_RemoveWindow || !GUI_ForceGUI || !GUI_SetClickCallback || !GUI_SetTextChangedCallback || !GUI_Textbox_SetMaxLength || !GUI_Textbox_SetValidationString || !SetPlayersDataPointer)
+		if (!Chatbox_AddToChat || !GUI_CreateFrameWindow || !GUI_AddStaticText || !GUI_AddTextbox || !GUI_AddButton || !GUI_SetVisible || !GUI_AllowDrag || !GUI_SetPosition || !GUI_SetSize || !GUI_SetText || !GUI_RemoveWindow || !GUI_ForceGUI || !GUI_SetClickCallback || !GUI_SetTextChangedCallback || !GUI_Textbox_SetMaxLength || !GUI_Textbox_SetValidationString || !SetPlayersDataPointer || !GUI_AddCheckbox || !GUI_Checkbox_SetChecked || !GUI_SetCheckboxChangedCallback)
 			DLLerror = true;
 
 		GUI_SetClickCallback(GUI_OnClick);
 		GUI_SetTextChangedCallback(GUI_OnText);
+		GUI_SetCheckboxChangedCallback(GUI_OnCheckbox);
 
 /*
 players[0].health = 80.0;
@@ -1000,6 +1035,21 @@ players[1].player = false;
 			pipeClient.Send(buffer);
 
 			qGUI_OnText.pop();
+		}
+
+		while (!qGUI_OnCheckbox.empty())
+		{
+			const auto& checkbox = qGUI_OnCheckbox.front();
+
+			buffer[0] = PIPE_OP_RETURN_RAW;
+			*reinterpret_cast<unsigned int*>(buffer + 1) = 0x0024 | VAULTFUNCTION;
+			*reinterpret_cast<unsigned int*>(buffer + 5) = checkbox.first.length() + sizeof(bool) + 1;
+			memcpy(buffer + 9, checkbox.first.c_str(), checkbox.first.length() + 1);
+			memcpy(buffer + 9 + checkbox.first.length() + 1, &checkbox.second, sizeof(bool));
+
+			pipeClient.Send(buffer);
+
+			qGUI_OnCheckbox.pop();
 		}
 
 		while (!qActivate.empty())

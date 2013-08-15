@@ -129,6 +129,8 @@
 		<Unit filename="../Actor.h" />
 		<Unit filename="../Button.cpp" />
 		<Unit filename="../Button.h" />
+		<Unit filename="../Checkbox.cpp" />
+		<Unit filename="../Checkbox.h" />
 		<Unit filename="../Container.cpp" />
 		<Unit filename="../Container.h" />
 		<Unit filename="../CriticalSection.cpp" />

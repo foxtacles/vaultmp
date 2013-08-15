@@ -422,6 +422,11 @@ void Script::SetupEdit(const FactoryEdit& edit, double posX, double posY, double
 	SetupWindow(edit, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
 }
 
+void Script::SetupCheckbox(const FactoryCheckbox& checkbox, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
+{
+	SetupWindow(checkbox, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+}
+
 void Script::KillTimer(NetworkID id) noexcept
 {
 	if (!id)
@@ -896,6 +901,11 @@ bool Script::IsText(NetworkID id) noexcept
 bool Script::IsEdit(NetworkID id) noexcept
 {
 	return (GameFactory::GetType(id) & ID_EDIT);
+}
+
+bool Script::IsCheckbox(NetworkID id) noexcept
+{
+	return (GameFactory::GetType(id) & ID_CHECKBOX);
 }
 
 bool Script::IsChatbox(NetworkID id) noexcept
@@ -2625,11 +2635,19 @@ const char* Script::GetEditValidation(NetworkID id) noexcept
 	}) ? validation.c_str() : "";
 }
 
+bool Script::GetCheckboxSelected(NetworkID id) noexcept
+{
+	return GameFactory::Operate<Checkbox, FailPolicy::Return>(id, [id](FactoryCheckbox& checkbox) {
+		return checkbox->GetSelected();
+	});
+}
+
 NetworkID (Script::CreateWindow)(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
 {
 	NetworkID id = GameFactory::CreateInstance(ID_WINDOW, 0x00000000);
 	auto window = GameFactory::GetObject<Window>(id);
 	SetupWindow(window.get(), posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+	Call<CBI("OnCreate")>(id);
 	return id;
 }
 
@@ -2919,7 +2937,8 @@ NetworkID Script::CreateButton(double posX, double posY, double offset_posX, dou
 {
 	NetworkID id = GameFactory::CreateInstance(ID_BUTTON, 0x00000000);
 	auto window = GameFactory::GetObject<Button>(id);
-	SetupWindow(window.get(), posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+	SetupButton(window.get(), posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+	Call<CBI("OnCreate")>(id);
 	return id;
 }
 
@@ -2927,7 +2946,8 @@ NetworkID Script::CreateText(double posX, double posY, double offset_posX, doubl
 {
 	NetworkID id = GameFactory::CreateInstance(ID_TEXT, 0x00000000);
 	auto window = GameFactory::GetObject<Text>(id);
-	SetupWindow(window.get(), posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+	SetupText(window.get(), posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+	Call<CBI("OnCreate")>(id);
 	return id;
 }
 
@@ -2935,7 +2955,8 @@ NetworkID Script::CreateEdit(double posX, double posY, double offset_posX, doubl
 {
 	NetworkID id = GameFactory::CreateInstance(ID_EDIT, 0x00000000);
 	auto window = GameFactory::GetObject<Edit>(id);
-	SetupWindow(window.get(), posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+	SetupEdit(window.get(), posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+	Call<CBI("OnCreate")>(id);
 	return id;
 }
 
@@ -3010,6 +3031,42 @@ bool Script::SetEditValidation(NetworkID id, const char* validation) noexcept
 	if (!guids.empty())
 		Network::Queue({Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_WVALID>(id, validation),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
+		});
+
+	return true;
+}
+
+NetworkID (Script::CreateCheckbox)(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
+{
+	NetworkID id = GameFactory::CreateInstance(ID_CHECKBOX, 0x00000000);
+	auto window = GameFactory::GetObject<Checkbox>(id);
+	SetupCheckbox(window.get(), posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+	Call<CBI("OnCreate")>(id);
+	return id;
+}
+
+bool Script::SetCheckboxSelected(NetworkID id, bool selected) noexcept
+{
+	if (!GameFactory::Operate<Checkbox, FailPolicy::Bool>(id, [selected](FactoryCheckbox& checkbox) {
+		checkbox->SetSelected(selected);
+	})) return false;
+
+	NetworkID root = GetWindowRoot(id);
+
+	vector<RakNetGUID> guids;
+
+	{
+		auto players = GameFactory::GetObjectTypes<Player>(ID_PLAYER);
+
+		for (const auto& player : players)
+			if (player->GetPlayerWindows().count(root))
+				guids.emplace_back(Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID());
+	}
+
+	if (!guids.empty())
+		Network::Queue({Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_WSELECTED>(id, selected),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
 		});
 

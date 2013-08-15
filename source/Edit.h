@@ -7,7 +7,7 @@
 #include <string>
 
 /**
- * \brief Represents a GUI static text
+ * \brief Represents a GUI edit
  */
 
 class Edit : public Window

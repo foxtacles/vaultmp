@@ -174,6 +174,18 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 			}
 
+			case Func::GUICheckbox:
+			{
+				if (!result)
+					break;
+
+				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
+				string name = reinterpret_cast<char*>(&data[0]);
+				GetCheckboxSelected(name, *reinterpret_cast<bool*>(&data[0] + name.length() + 1));
+				delete &data;
+				break;
+			}
+
 			case Func::CenterOnCell:
 			case Func::CenterOnWorld:
 			case Func::ForceRespawn:
@@ -218,6 +230,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func::GUILocked:
 			case Func::GUIMaxLen:
 			case Func::GUIValid:
+			case Func::GUICreateCheckbox:
 			case Func::SetGlobalValue:
 			case Func::MarkForDelete:
 			case Func::AgeRace:
@@ -279,13 +292,13 @@ void Game::Startup()
 		return player->GetReferenceParam();
 	});
 
-	SetINISetting("bSaveOnInteriorExteriorSwitch:GamePlay", "0");
-	SetINISetting("bSaveOnTravel:GamePlay", "0");
-	SetINISetting("bSaveOnWait:GamePlay", "0");
-	SetINISetting("bSaveOnRest:GamePlay", "0");
-	SetGlobalValue(Global_TimeScale, 0);
-
 	Interface::Dynamic([]() {
+		SetINISetting("bSaveOnInteriorExteriorSwitch:GamePlay", "0");
+		SetINISetting("bSaveOnTravel:GamePlay", "0");
+		SetINISetting("bSaveOnWait:GamePlay", "0");
+		SetINISetting("bSaveOnRest:GamePlay", "0");
+		SetGlobalValue(Global_TimeScale, 0);
+
 		Interface::ExecuteCommand(Func::GetControl, {RawParameter(API::RetrieveAllControls())});
 		Interface::ExecuteCommand(Func::DisableControl, {RawParameter(vector<unsigned char>{
 			ControlCode_Quickload,
@@ -293,11 +306,12 @@ void Game::Startup()
 			ControlCode_VATS,
 			ControlCode_Rest,
 			ControlCode_MenuMode})});
+
 		ToggleKey(false, ScanCode_Escape);
 		ToggleKey(false, ScanCode_Console);
-	});
 
-	EnablePlayerControls();
+		EnablePlayerControls();
+	});
 
 	Interface::Setup([&self_ref, id]() {
 		Interface::SetupCommand(Func::GetPos, {self_ref, Object::Param_Axis()});
@@ -972,6 +986,25 @@ void Game::NewEdit(const FactoryEdit& reference)
 	});
 }
 
+void Game::NewCheckbox(const FactoryCheckbox& reference)
+{
+	if (!reference->GetParentWindow())
+		throw VaultException("Window %llu requires a parent", reference->GetNetworkID());
+
+	Interface::Dynamic([&reference]() {
+		if (reference->GetLabel().empty())
+		{
+			reference->SetLabel(Utils::toString(reference->GetNetworkID()));
+
+			Interface::ExecuteCommand(Func::GUICreateCheckbox, {RawParameter(Utils::toString(reference->GetParentWindow())), RawParameter(reference->GetLabel())});
+		}
+
+		NewWindow(reference);
+
+		SetCheckboxSelected(reference);
+	});
+}
+
 void Game::PlaceAtMe(const FactoryObject& reference, unsigned int baseID, double condition, unsigned int count, unsigned int key)
 {
 	PlaceAtMe(reference->GetReference(), baseID, condition, count, key);
@@ -1491,6 +1524,13 @@ void Game::SetEditValidation(const FactoryEdit& reference)
 {
 	Interface::Dynamic([&reference]() {
 		Interface::ExecuteCommand(Func::GUIValid, {RawParameter(reference->GetLabel()), RawParameter(reference->GetValidation())});
+	});
+}
+
+void Game::SetCheckboxSelected(const FactoryCheckbox& reference)
+{
+	Interface::Dynamic([&reference]() {
+		Interface::ExecuteCommand(Func::GUICheckbox, {RawParameter(reference->GetLabel()), RawParameter(reference->GetSelected())});
 	});
 }
 
@@ -2160,6 +2200,13 @@ void Game::net_UpdateEditValidation(const FactoryEdit& reference, const std::str
 	SetEditValidation(reference);
 }
 
+void Game::net_UpdateCheckboxSelected(const FactoryCheckbox& reference, bool selected)
+{
+	reference->SetSelected(selected);
+
+	SetCheckboxSelected(reference);
+}
+
 void Game::net_UpdateWindowMode(bool enabled)
 {
 	GUIMode = enabled;
@@ -2358,45 +2405,56 @@ void Game::GetWindowMode(bool enabled)
 	});
 }
 
-void Game::GetWindowClick(string name)
+void Game::GetWindowClick(const string& name)
 {
 	if (!name.compare(Button::CLOSE_BUTTON))
 		Interface::SignalEnd();
 	else
 	{
-		auto windows = GameFactory::GetObjectTypes<Window>(ALL_WINDOWS);
+		NetworkID window = strtoull(name.c_str(), nullptr, 10);
 
-		for (auto& window : windows)
-		{
-			if (!window->GetLabel().compare(name))
-			{
-				Network::Queue({Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_UPDATE_WCLICK>(window->GetNetworkID()),
+		if (!window)
+			return;
+
+		GameFactory::Operate<Window>(window, [](FactoryWindow& window) {
+			Network::Queue({Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_WCLICK>(window->GetNetworkID()),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
-				});
-
-				break;
-			}
-		}
+			});
+		});
 	}
 }
 
-void Game::GetWindowText(string name, string text)
+void Game::GetWindowText(const string& name, const string& text)
 {
-	auto windows = GameFactory::GetObjectTypes<Window>(ALL_WINDOWS);
+	NetworkID window = strtoull(name.c_str(), nullptr, 10);
 
-	for (auto& window : windows)
-	{
-		if (!window->GetLabel().compare(name))
-		{
-			window->SetText(text);
+	if (!window)
+		return;
 
-			Network::Queue({Network::CreateResponse(
-				PacketFactory::Create<pTypes::ID_UPDATE_WTEXT>(window->GetNetworkID(), text),
-				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
-			});
+	GameFactory::Operate<Window>(window, [&text](FactoryWindow& window) {
+		window->SetText(text);
 
-			break;
-		}
-	}
+		Network::Queue({Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_WTEXT>(window->GetNetworkID(), text),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+		});
+	});
+}
+
+void Game::GetCheckboxSelected(const string& name, bool selected)
+{
+	NetworkID checkbox = strtoull(name.c_str(), nullptr, 10);
+
+	if (!checkbox)
+		return;
+
+	GameFactory::Operate<Checkbox>(checkbox, [selected](FactoryCheckbox& checkbox) {
+		checkbox->SetSelected(selected);
+
+		Network::Queue({Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_WSELECTED>(checkbox->GetNetworkID(), selected),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+		});
+	});
 }

@@ -78,6 +78,11 @@ public OnWindowTextChange(ID, player, const text{})
 
 }
 
+public OnCheckboxSelect(ID, player, Bool:selected)
+{
+
+}
+
 public OnCreate(ID)
 {
 

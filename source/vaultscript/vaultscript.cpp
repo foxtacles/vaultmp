@@ -77,6 +77,11 @@ Void VAULTSCRIPT OnWindowTextChange(ID window, ID player, cRawString text) noexc
 
 }
 
+Void VAULTSCRIPT OnCheckboxSelect(ID checkbox, ID player, State selected) noexcept
+{
+
+}
+
 Void VAULTSCRIPT OnCreate(ID reference) noexcept
 {
 

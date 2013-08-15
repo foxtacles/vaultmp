@@ -20,11 +20,12 @@ const Type: {
 	ID_BUTTON = ID_WINDOW << ID_REFERENCE,
 	ID_TEXT = ID_BUTTON << ID_REFERENCE,
 	ID_EDIT = ID_TEXT << ID_REFERENCE,
+	ID_CHECKBOX = ID_EDIT << ID_REFERENCE,
 
 	ALL_OBJECTS = (ID_OBJECT | ID_ITEM | ID_CONTAINER | ID_ACTOR | ID_PLAYER),
 	ALL_CONTAINERS = (ID_CONTAINER | ID_ACTOR | ID_PLAYER),
 	ALL_ACTORS = (ID_ACTOR | ID_PLAYER),
-	ALL_WINDOWS = (ID_WINDOW | ID_BUTTON | ID_TEXT | ID_EDIT),
+	ALL_WINDOWS = (ID_WINDOW | ID_BUTTON | ID_TEXT | ID_EDIT | ID_CHECKBOX),
 }
 
 const ActorValue: {
@@ -186,6 +187,7 @@ forward OnPlayerChat(ID, message{});
 forward OnWindowMode(ID, Bool:enabled);
 forward OnWindowClick(ID, player);
 forward OnWindowTextChange(ID, player, const text{});
+forward OnCheckboxSelect(ID, player, Bool:selected);
 forward OnClientAuthenticate(const name{}, const pwd{});
 forward OnGameYearChange(year);
 forward OnGameMonthChange(month);
@@ -240,6 +242,7 @@ native Bool:IsWindow(ID);
 native Bool:IsButton(ID);
 native Bool:IsText(ID);
 native Bool:IsEdit(ID);
+native Bool:IsCheckbox(ID);
 native Bool:IsChatbox(ID);
 native Type:GetType(ID);
 native GetConnection(ID);
@@ -345,6 +348,7 @@ native Bool:GetWindowLocked(ID);
 native GetWindowText(ID, text{});
 native GetEditMaxLength(ID);
 native GetEditValidation(ID, validation{});
+native Bool:GetCheckboxSelected(ID);
 
 native CreateWindow(Float:posX, Float:posY, Float:offset_posX, Float:offset_posY, Float:sizeX, Float:sizeY, Float:offset_sizeX, Float:offset_sizeY, Bool:visible, Bool:locked, const text{});
 native Bool:DestroyWindow(ID);
@@ -360,3 +364,5 @@ native CreateText(Float:posX, Float:posY, Float:offset_posX, Float:offset_posY, 
 native CreateEdit(Float:posX, Float:posY, Float:offset_posX, Float:offset_posY, Float:sizeX, Float:sizeY, Float:offset_sizeX, Float:offset_sizeY, Bool:visible = Bool:true, Bool:locked = Bool:false, const text{} = "");
 native Bool:SetEditMaxLength(ID, length);
 native Bool:SetEditValidation(ID, validation{});
+native CreateCheckbox(Float:posX, Float:posY, Float:offset_posX, Float:offset_posY, Float:sizeX, Float:sizeY, Float:offset_sizeX, Float:offset_sizeY, Bool:visible = Bool:true, Bool:locked = Bool:false, const text{} = "");
+native Bool:SetCheckboxSelected(ID, Bool:selected);

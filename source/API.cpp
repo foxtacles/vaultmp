@@ -283,6 +283,8 @@ API::FunctionMap API::functions = {
 		{Func::GUIClick, "s"},
 		{Func::GUIMaxLen, "si"},
 		{Func::GUIValid, "ss"},
+		{Func::GUICreateCheckbox, "ss"},
+		{Func::GUICheckbox, "si"},
 		{Func::Enable, "rI"},
 		{Func::Disable, "rI"},
 		{Func::EquipItem, "rjII"},

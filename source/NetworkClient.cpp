@@ -284,6 +284,14 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
+				case pTypes::ID_CHECKBOX_NEW:
+				{
+					NetworkID id = GameFactory::CreateKnownInstance(ID_CHECKBOX, packet.get());
+					auto reference = GameFactory::GetObject<Checkbox>(id);
+					Game::NewCheckbox(reference.get());
+					break;
+				}
+
 				case pTypes::ID_WINDOW_REMOVE:
 				{
 					NetworkID id;
@@ -583,6 +591,16 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					PacketFactory::Access<pTypes::ID_UPDATE_WVALID>(packet, id, validation);
 					auto reference = GameFactory::GetObject<Edit>(id);
 					Game::net_UpdateEditValidation(reference.get(), validation);
+					break;
+				}
+
+				case pTypes::ID_UPDATE_WSELECTED:
+				{
+					NetworkID id;
+					bool selected;
+					PacketFactory::Access<pTypes::ID_UPDATE_WSELECTED>(packet, id, selected);
+					auto reference = GameFactory::GetObject<Checkbox>(id);
+					Game::net_UpdateCheckboxSelected(reference.get(), selected);
 					break;
 				}
 

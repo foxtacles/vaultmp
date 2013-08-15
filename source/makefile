@@ -110,6 +110,7 @@ $(OBJDIR_DEBUG)\\Window.o \
 $(OBJDIR_DEBUG)\\Button.o \
 $(OBJDIR_DEBUG)\\Text.o \
 $(OBJDIR_DEBUG)\\Edit.o \
+$(OBJDIR_DEBUG)\\Checkbox.o \
 $(OBJDIR_DEBUG)\\Debug.o
 
 OBJ_RELEASE = \
@@ -181,7 +182,8 @@ $(OBJDIR_RELEASE)\\Expected.o \
 $(OBJDIR_RELEASE)\\Window.o \
 $(OBJDIR_RELEASE)\\Button.o \
 $(OBJDIR_RELEASE)\\Text.o \
-$(OBJDIR_RELEASE)\\Edit.o
+$(OBJDIR_RELEASE)\\Edit.o \
+$(OBJDIR_RELEASE)\\Checkbox.o
 
 all: debug release
 
@@ -411,6 +413,9 @@ $(OBJDIR_DEBUG)\\Text.o: Text.cpp
 $(OBJDIR_DEBUG)\\Edit.o: Edit.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Edit.cpp -o $(OBJDIR_DEBUG)\\Edit.o
 
+$(OBJDIR_DEBUG)\\Checkbox.o: Checkbox.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Checkbox.cpp -o $(OBJDIR_DEBUG)\\Checkbox.o
+
 clean_debug:
 	cmd /c del /f $(OBJ_DEBUG) $(OUT_DEBUG)
 	cmd /c rd $(OBJDIR_DEBUG)
@@ -631,6 +636,9 @@ $(OBJDIR_RELEASE)\\Text.o: Text.cpp
 
 $(OBJDIR_RELEASE)\\Edit.o: Edit.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Edit.cpp -o $(OBJDIR_RELEASE)\\Edit.o
+
+$(OBJDIR_RELEASE)\\Checkbox.o: Checkbox.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Checkbox.cpp -o $(OBJDIR_RELEASE)\\Checkbox.o
 
 clean_release:
 	cmd /c del /f $(OBJ_RELEASE) $(OUT_RELEASE)

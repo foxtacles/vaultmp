@@ -1,14 +1,11 @@
 #include "GameFactory.h"
 
-#include "Object.h"
 #include "Item.h"
-#include "Container.h"
-#include "Actor.h"
 #include "Player.h"
-#include "Window.h"
 #include "Button.h"
 #include "Text.h"
 #include "Edit.h"
+#include "Checkbox.h"
 
 using namespace std;
 using namespace RakNet;
@@ -86,6 +83,7 @@ template vector<FactoryWindow> GameFactory::GetObjectTypes(unsigned int type) no
 template vector<FactoryButton> GameFactory::GetObjectTypes(unsigned int type) noexcept;
 template vector<FactoryText> GameFactory::GetObjectTypes(unsigned int type) noexcept;
 template vector<FactoryEdit> GameFactory::GetObjectTypes(unsigned int type) noexcept;
+template vector<FactoryCheckbox> GameFactory::GetObjectTypes(unsigned int type) noexcept;
 
 vector<NetworkID> GameFactory::GetIDObjectTypes(unsigned int type) noexcept
 {
@@ -145,6 +143,7 @@ template ExpectedWindow GameFactory::GetObject(NetworkID id);
 template ExpectedButton GameFactory::GetObject(NetworkID id);
 template ExpectedText GameFactory::GetObject(NetworkID id);
 template ExpectedEdit GameFactory::GetObject(NetworkID id);
+template ExpectedCheckbox GameFactory::GetObject(NetworkID id);
 
 template<typename T>
 Expected<FactoryWrapper<T>> GameFactory::GetObject(unsigned int refID) noexcept
@@ -175,6 +174,7 @@ template ExpectedWindow GameFactory::GetObject(unsigned int refID);
 template ExpectedButton GameFactory::GetObject(unsigned int refID);
 template ExpectedText GameFactory::GetObject(unsigned int refID);
 template ExpectedEdit GameFactory::GetObject(unsigned int refID);
+template ExpectedCheckbox GameFactory::GetObject(unsigned int refID);
 
 template<typename T>
 vector<Expected<FactoryWrapper<T>>> GameFactory::GetMultiple(const vector<NetworkID>& objects) noexcept
@@ -215,6 +215,7 @@ template vector<ExpectedWindow> GameFactory::GetMultiple(const vector<NetworkID>
 template vector<ExpectedButton> GameFactory::GetMultiple(const vector<NetworkID>& objects);
 template vector<ExpectedText> GameFactory::GetMultiple(const vector<NetworkID>& objects);
 template vector<ExpectedEdit> GameFactory::GetMultiple(const vector<NetworkID>& objects);
+template vector<ExpectedCheckbox> GameFactory::GetMultiple(const vector<NetworkID>& objects);
 
 template<typename T>
 vector<Expected<FactoryWrapper<T>>> GameFactory::GetMultiple(const vector<unsigned int>& objects) noexcept
@@ -256,6 +257,7 @@ template vector<ExpectedWindow> GameFactory::GetMultiple(const vector<unsigned i
 template vector<ExpectedButton> GameFactory::GetMultiple(const vector<unsigned int>& objects);
 template vector<ExpectedText> GameFactory::GetMultiple(const vector<unsigned int>& objects);
 template vector<ExpectedEdit> GameFactory::GetMultiple(const vector<unsigned int>& objects);
+template vector<ExpectedCheckbox> GameFactory::GetMultiple(const vector<unsigned int>& objects);
 
 NetworkID GameFactory::LookupNetworkID(unsigned int refID)
 {
@@ -330,6 +332,7 @@ template void GameFactory::LeaveReference(FactoryWindow& reference);
 template void GameFactory::LeaveReference(FactoryButton& reference);
 template void GameFactory::LeaveReference(FactoryText& reference);
 template void GameFactory::LeaveReference(FactoryEdit& reference);
+template void GameFactory::LeaveReference(FactoryCheckbox& reference);
 
 unsigned int GameFactory::GetType(const Reference* reference) noexcept
 {
@@ -415,6 +418,10 @@ NetworkID GameFactory::CreateInstance(unsigned int type, unsigned int refID, uns
 			reference = shared_ptr<Window>(new Edit());
 			break;
 
+		case ID_CHECKBOX:
+			reference = shared_ptr<Window>(new Checkbox());
+			break;
+
 		default:
 			throw VaultException("Unknown type identifier %X", type).stacktrace();
 	}
@@ -485,6 +492,10 @@ NetworkID GameFactory::CreateKnownInstance(unsigned int type, const pDefault* pa
 
 		case ID_EDIT:
 			reference = shared_ptr<Window>(new Edit(packet));
+			break;
+
+		case ID_CHECKBOX:
+			reference = shared_ptr<Checkbox>(new Checkbox(packet));
 			break;
 
 		default:
@@ -596,6 +607,7 @@ template NetworkID GameFactory::DestroyInstance(FactoryWindow& reference);
 template NetworkID GameFactory::DestroyInstance(FactoryButton& reference);
 template NetworkID GameFactory::DestroyInstance(FactoryText& reference);
 template NetworkID GameFactory::DestroyInstance(FactoryEdit& reference);
+template NetworkID GameFactory::DestroyInstance(FactoryCheckbox& reference);
 
 void GameFactory::SetChangeFlag(bool changed) noexcept
 {

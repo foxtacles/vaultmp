@@ -10,6 +10,7 @@
 #include "Button.h"
 #include "Text.h"
 #include "Edit.h"
+#include "Checkbox.h"
 #include "RakNet.h"
 
 #ifdef VAULTMP_DEBUG
@@ -192,6 +193,10 @@ class Game
 		 */
 		static void NewEdit(const FactoryEdit& reference);
 		/**
+		 * \brief Creates a new Checkbox
+		 */
+		static void NewCheckbox(const FactoryCheckbox& reference);
+		/**
 		 * \brief Places an Object in-game
 		 */
 		static void PlaceAtMe(const FactoryObject& reference, unsigned int baseID, double condition = 1.00, unsigned int count = 1, unsigned int key = 0);
@@ -354,6 +359,10 @@ class Game
 		 */
 		static void SetEditValidation(const FactoryEdit& reference);
 		/**
+		 * \brief Updates the settings of a GUI checkbox (selected)
+		 */
+		static void SetCheckboxSelected(const FactoryCheckbox& reference);
+		/**
 		 * \brief Updates the window mode
 		 */
 		static void SetWindowMode();
@@ -503,6 +512,10 @@ class Game
 		 */
 		static void net_UpdateEditValidation(const FactoryEdit& reference, const std::string& validation);
 		/**
+		 * \brief Network function to handle GUI checkbox selected
+		 */
+		static void net_UpdateCheckboxSelected(const FactoryCheckbox& reference, bool selected);
+		/**
 		 * \brief Network function to handle GUI window mode
 		 */
 		static void net_UpdateWindowMode(bool enabled);
@@ -570,11 +583,15 @@ class Game
 		/**
 		 * \brief Handles GUI click
 		 */
-		static void GetWindowClick(std::string name);
+		static void GetWindowClick(const std::string& name);
 		/**
 		 * \brief Handles GUI text change
 		 */
-		static void GetWindowText(std::string name, std::string text);
+		static void GetWindowText(const std::string& name, const std::string& text);
+		/**
+		 * \brief Handles GUI checkbox selected change
+		 */
+		static void GetCheckboxSelected(const std::string& name, bool selected);
 };
 
 template<> struct pTypesMap<pTypes::ID_GAME_AUTH> { typedef pGeneratorDefault<pTypes::ID_GAME_AUTH, std::string, std::string> type; };

@@ -507,6 +507,41 @@ NetworkResponse Server::GetWindowText(RakNetGUID guid, FactoryWindow& reference,
 	return response;
 }
 
+NetworkResponse Server::GetCheckboxSelected(RakNetGUID guid, FactoryCheckbox& reference, bool selected)
+{
+	NetworkResponse response;
+
+	NetworkID id = reference->GetNetworkID();
+	reference->SetSelected(selected);
+	GameFactory::LeaveReference(reference);
+
+	NetworkID root = Script::GetWindowRoot(id);
+
+	vector<RakNetGUID> guids;
+
+	{
+		auto players = GameFactory::GetObjectTypes<Player>(ID_PLAYER);
+
+		for (const auto& player : players)
+			if (player->GetPlayerWindows().count(root))
+			{
+				RakNetGUID guid_ = Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID();
+
+				if (guid_ != guid)
+					guids.emplace_back(guid_);
+			}
+	}
+
+	if (!guids.empty())
+		response.emplace_back(Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_WSELECTED>(id, selected),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids));
+
+	Script::Call<Script::CBI("OnCheckboxSelect")>(id, Client::GetClientFromGUID(guid)->GetPlayer(), selected);
+
+	return response;
+}
+
 NetworkResponse Server::ChatMessage(RakNetGUID guid, const string& message)
 {
 	Client* client = Client::GetClientFromGUID(guid);
