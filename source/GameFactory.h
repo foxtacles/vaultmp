@@ -35,6 +35,7 @@ template<typename T, typename U> Expected<FactoryWrapper<T>> vaultcast(const Fac
 template<typename T, typename U> Expected<FactoryWrapper<T>> vaultcast(const Expected<FactoryWrapper<U>>& object) noexcept;
 template<typename T, typename U> Expected<FactoryWrapper<T>> vaultcast_swap(FactoryWrapper<U>& object) noexcept;
 template<typename T, typename U> Expected<FactoryWrapper<T>> vaultcast_swap(Expected<FactoryWrapper<U>>& object) noexcept;
+template<typename T> struct rTypes;
 
 class Object;
 
@@ -175,15 +176,8 @@ class GameFactory
 		 *
 		 * The Reference is identified by a NetworkID
 		 */
-		template<typename T = Object>
-		static Expected<FactoryWrapper<T>> GetObject(RakNet::NetworkID id) noexcept;
-		/**
-		 * \brief Obtains a lock on a Reference
-		 *
-		 * The Reference is identified by a reference ID
-		 */
-		template<typename T = Object>
-		static Expected<FactoryWrapper<T>> GetObject(unsigned int refID) noexcept;
+		template<typename T = Object, typename I = RakNet::NetworkID>
+		static Expected<FactoryWrapper<T>> GetObject(I id) noexcept;
 		/**
 		 * \brief This is an alias to vaultcast_swap
 		 */
@@ -192,19 +186,11 @@ class GameFactory
 		/**
 		 * \brief Obtains a lock on multiple References
 		 *
-		 * The References are identified by a STL vector of reference IDs. You must use this function if you want to obtain multiple locks.
-		 * Returns a STL vector which contains the locked References in the same ordering as the input vector.
-		 */
-		template<typename T = Object>
-		static std::vector<Expected<FactoryWrapper<T>>> GetMultiple(const std::vector<unsigned int>& objects) noexcept;
-		/**
-		 * \brief Obtains a lock on multiple References
-		 *
 		 * The References are identified by a STL vector of NetworkID. You must use this function if you want to obtain multiple locks.
 		 * Returns a STL vector which contains the locked References in the same ordering as the input vector.
 		 */
-		template<typename T = Object>
-		static std::vector<Expected<FactoryWrapper<T>>> GetMultiple(const std::vector<RakNet::NetworkID>& objects) noexcept;
+		template<typename T = Object, typename I = RakNet::NetworkID>
+		static std::vector<Expected<FactoryWrapper<T>>> GetMultiple(const std::vector<I>& ids) noexcept;
 		/**
 		 * \brief Executes a function on one or multiple References
 		 *
@@ -212,14 +198,6 @@ class GameFactory
 		 */
 		template<typename T = Object, FailPolicy FP = FailPolicy::Default, ObjectPolicy OP = ObjectPolicy::Default, LaunchPolicy LP = LaunchPolicy::Default, typename I, typename F>
 		static typename OperateReturn<FP, OP, LP, T, F, InputPolicyHelper<I>::M>::type Operate(I&& id, F function) { return OperateFunctions<T, FP, OP, LP, I, F, InputPolicyHelper<I>::M>::Operate(std::forward<I>(id), function); }
-		/**
-		 * \brief Lookup a NetworkID
-		 */
-		static RakNet::NetworkID LookupNetworkID(unsigned int refID);
-		/**
-		 * \brief Lookup a reference ID
-		 */
-		static unsigned int LookupRefID(RakNet::NetworkID id);
 		/**
 		 * \brief Checks if an ID has been deleted
 		 */
@@ -232,10 +210,6 @@ class GameFactory
 		 * \brief Returns the type of the given reference
 		 */
 		static unsigned int GetType(const Reference* reference) noexcept;
-		/**
-		 * \brief Returns the type of the given reference ID
-		 */
-		static unsigned int GetType(unsigned int refID) noexcept;
 		/**
 		 * \brief Obtains a lock on all References of a given type
 		 */
@@ -257,15 +231,13 @@ class GameFactory
 		/**
 		 * \brief Creates a new instance of a given type
 		 */
-		static RakNet::NetworkID CreateInstance(unsigned int type, unsigned int refID, unsigned int baseID);
-		/**
-		 * \brief Creates a new instance of a given type
-		 */
-		static RakNet::NetworkID CreateInstance(unsigned int type, unsigned int baseID);
+		template<typename T = Object>
+		static RakNet::NetworkID CreateInstance();
 		/**
 		 * \brief Creates a known instance from a network packet
 		 */
-		static RakNet::NetworkID CreateKnownInstance(unsigned int type, const pDefault* packet);
+		template<typename T = Object>
+		static RakNet::NetworkID CreateKnownInstance(const pDefault* packet);
 
 		/**
 		 * \brief Destroys all instances and cleans up type classes
@@ -282,12 +254,70 @@ class GameFactory
 		 */
 		template<typename T>
 		static RakNet::NetworkID DestroyInstance(FactoryWrapper<T>& reference);
-
-		/**
-		 * \brief Used to set the changed flag for the next network reference going to be created
-		 */
-		static void SetChangeFlag(bool changed) noexcept;
 };
+
+template<typename T>
+Expected<FactoryWrapper<T>> GameFactory::GetObject<T, RakNet::NetworkID>(RakNet::NetworkID id) noexcept
+{
+	std::pair<ReferenceList::key_type, ReferenceList::mapped_type> reference;
+
+	cs.StartSession();
+
+	auto it = GetShared(id);
+
+	if (it != instances.end())
+		reference = *it;
+
+	cs.EndSession();
+
+	if (!reference.first)
+		return VaultException("Unknown object with NetworkID %llu", id);
+
+	return FactoryWrapper<T>(reference.first.get(), reference.second);
+}
+
+template<typename T, typename I>
+inline Expected<FactoryWrapper<T>> GameFactory::GetObject<T, I>(I id) noexcept
+{
+	return GetObject<T>(T::PickBy<I>(id));
+}
+
+template<typename T>
+std::vector<Expected<FactoryWrapper<T>>> GameFactory::GetMultiple<T, RakNet::NetworkID>(const std::vector<RakNet::NetworkID>& ids) noexcept
+{
+	std::vector<Expected<FactoryWrapper<T>>> result(ids.size());
+	std::multimap<ReferenceList::value_type, unsigned int> sort;
+
+	cs.StartSession();
+
+	unsigned int i = 0;
+
+	for (const auto& id : ids)
+	{
+		auto it = GetShared(id);
+
+		if (it == instances.end())
+			result[i] = VaultException("Unknown object with NetworkID %llu", id);
+		else
+			// emplace
+			sort.insert(make_pair(*it, i));
+
+		++i;
+	}
+
+	cs.EndSession();
+
+	for (const auto& reference : sort)
+		result[reference.second] = FactoryWrapper<T>(reference.first.first.get(), reference.first.second);
+
+	return result;
+}
+
+template<typename T, typename I>
+inline std::vector<Expected<FactoryWrapper<T>>> GameFactory::GetMultiple<T, I>(const std::vector<ID>& ids) noexcept
+{
+	return GetMultiple<T>(T::PickBy<I>(ids));
+}
 
 using FailPolicy = GameFactory::FailPolicy;
 using LaunchPolicy = GameFactory::LaunchPolicy;
@@ -377,6 +407,130 @@ struct GameFactory::OperateFunctions<T, FailPolicy::Exception, OP, LaunchPolicy:
 		return function(param);
 	}
 };
+
+template<typename T>
+std::vector<FactoryWrapper<T>> GameFactory::GetObjectTypes(unsigned int type) noexcept
+{
+	std::vector<FactoryWrapper<T>> result;
+	ReferenceList::iterator it;
+
+	cs.StartSession();
+
+	result.reserve(typecount[type]);
+	ReferenceList copy = instances;
+
+	cs.EndSession();
+
+	for (const auto& reference : copy)
+		if (reference.second & type)
+		{
+			auto object = FactoryWrapper<T>(reference.first.get(), reference.second);
+
+			if (object)
+				result.emplace_back(move(object));
+		}
+
+	return result;
+}
+
+template<typename T>
+void GameFactory::LeaveReference(FactoryWrapper<T>& reference)
+{
+	Reference* _reference = reference.reference;
+
+	if (!_reference)
+		throw VaultException("GameFactory::LeaveReference Reference is NULL").stacktrace();
+
+	_reference->EndSession();
+	reference.reference = nullptr;
+	reference.type = 0x00;
+}
+
+template<typename T>
+RakNet::NetworkID GameFactory::CreateInstance()
+{
+	static_assert(std::is_base_of<Reference, T>::value, "T must be derived from Reference");
+
+	std::shared_ptr<Reference> reference(new T());
+	constexpr unsigned int type = rTypes<T>::value;
+
+	RakNet::NetworkID id = reference->GetNetworkID();
+
+#ifdef VAULTSERVER
+	reference->SetBase(reference->GetBase());
+#endif
+
+	cs.StartSession();
+
+	++typecount[type];
+	// emplace
+	index[id] = instances.insert(make_pair(reference, type)).first;
+
+	cs.EndSession();
+
+	return id;
+}
+
+template<typename T>
+RakNet::NetworkID GameFactory::CreateKnownInstance(const pDefault* packet)
+{
+	static_assert(std::is_base_of<Reference, T>::value, "T must be derived from Reference");
+
+	std::shared_ptr<Reference> reference(new T(packet));
+	constexpr unsigned int type = rTypes<T>::value;
+
+	RakNet::NetworkID id = reference->GetNetworkID();
+
+#ifdef VAULTSERVER
+	reference->SetBase(reference->GetBase());
+#endif
+
+	cs.StartSession();
+
+	++typecount[type];
+	// emplace
+	index[id] = instances.insert(make_pair(reference, type)).first;
+
+	cs.EndSession();
+
+	return id;
+}
+
+template<typename T>
+RakNet::NetworkID GameFactory::DestroyInstance(FactoryWrapper<T>& reference)
+{
+	Reference* _reference = reference.reference;
+
+	if (!_reference)
+		throw VaultException("GameFactory::DestroyInstance Reference is NULL").stacktrace();
+
+	RakNet::NetworkID id = _reference->GetNetworkID();
+
+#ifdef VAULTMP_DEBUG
+	debug.print("Reference ", hex, _reference->GetReference(), " with base ",  _reference->GetBase(), " and NetworkID ", dec, _reference->GetNetworkID(), " (type: ", typeid(*_reference).name(), ") to be destructed");
+#endif
+
+	ReferenceList::key_type copy; // because the destructor of a type may also delete references, the actual destructor call must not happen within the CS block
+
+	cs.StartSession();
+
+	ReferenceList::iterator it = GetShared(id);
+
+	copy = it->first; // saved. will be deleted past this block
+	--typecount[it->second];
+	_reference->Finalize();
+
+	instances.erase(it);
+	index.erase(id);
+	delrefs.emplace(id);
+
+	cs.EndSession();
+
+	reference.reference = nullptr;
+	reference.type = 0x00000000;
+
+	return id;
+}
 
 template<>
 class FactoryWrapper<Reference>

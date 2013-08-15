@@ -36,6 +36,8 @@ class Object : public Reference
 		static DebugInput<Object> debug;
 #endif
 
+		Value<unsigned int> refID;
+		Value<unsigned int> baseID;
 		Value<std::string> object_Name;
 		std::unordered_map<unsigned char, Value<double>> object_Game_Pos;
 		std::unordered_map<unsigned char, Value<double>> object_Network_Pos;
@@ -80,7 +82,7 @@ class Object : public Reference
 		/**
 		 * \brief Retrieves the Object's name
 		 */
-		std::string GetName() const;
+		const std::string& GetName() const;
 		/**
 		 * \brief Retrieves the Object's game coordinate on the specified axis (axis value hex code)
 		 */
@@ -117,7 +119,27 @@ class Object : public Reference
 		 * \brief Retrieves the Object's owner
 		 */
 		unsigned int GetOwner() const;
+		/**
+		 * \brief Retrieves the Reference's reference ID
+		 */
+		unsigned int GetReference() const;
+		/**
+		 * \brief Retrieves the Reference's base ID
+		 */
+		unsigned int GetBase() const;
 
+		/**
+		 * \brief Sets the Object's reference ID
+		 */
+		Lockable* SetReference(unsigned int refID);
+		/**
+		 * \brief Sets the Object's base ID
+		 */
+#ifdef VAULTSERVER
+		virtual Lockable* SetBase(unsigned int baseID);
+#else
+		Lockable* SetBase(unsigned int baseID);
+#endif
 		/**
 		 * \brief Sets the Object's name
 		 */
@@ -165,6 +187,18 @@ class Object : public Reference
 		VaultVector vvec() const;
 
 		/**
+		 * \brief Determines if the reference ID is persistent
+		 */
+		bool IsPersistent() const;
+		/**
+		 * \brief Returns a constant Parameter used to pass the reference ID of this Object to the Interface
+		 */
+		RawParameter GetReferenceParam() const { return RawParameter(refID.get()); };
+		/**
+		 * \brief Returns a constant Parameter used to pass the base ID of this Object to the Interface
+		 */
+		RawParameter GetBaseParam() const { return RawParameter(baseID.get()); };
+		/**
 		 * \brief Returns true if the Object is in a given range
 		 */
 		bool IsNearPoint(double X, double Y, double Z, double R) const;
@@ -200,8 +234,9 @@ class ObjectFunctor : public ReferenceFunctor
 #endif
 
 GF_TYPE_WRAPPER(Object, Reference, ALL_OBJECTS)
+template<> struct rTypes<Object> { enum { value = ID_OBJECT }; };
 
-template<> struct pTypesMap<pTypes::ID_OBJECT_NEW> { typedef pGeneratorReferenceNew<pTypes::ID_OBJECT_NEW, bool, std::string, double, double, double, double, double, double, unsigned int, bool, unsigned int, unsigned int> type; };
+template<> struct pTypesMap<pTypes::ID_OBJECT_NEW> { typedef pGeneratorReferenceNew<pTypes::ID_OBJECT_NEW, std::string, double, double, double, double, double, double, unsigned int, bool, unsigned int, unsigned int> type; };
 template<>
 inline const typename pTypesMap<pTypes::ID_OBJECT_NEW>::type* PacketFactory::Cast_<pTypes::ID_OBJECT_NEW>::Cast(const pDefault* packet) {
 	pTypes type = packet->type();

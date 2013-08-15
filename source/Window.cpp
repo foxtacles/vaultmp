@@ -5,12 +5,12 @@ using namespace RakNet;
 
 Window::WindowChilds Window::childs;
 
-Window::Window() : Reference(0x00000000, 0x00000000)
+Window::Window() : Reference()
 {
 	initialize();
 }
 
-Window::Window(const pDefault* packet) : Reference(0x00000000, 0x00000000)
+Window::Window(const pDefault* packet) : Reference()
 {
 	initialize();
 

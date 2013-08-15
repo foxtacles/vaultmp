@@ -195,6 +195,7 @@ class PlayerFunctor : public ActorFunctor
 #endif
 
 GF_TYPE_WRAPPER(Player, Actor, ID_PLAYER)
+template<> struct rTypes<Player> { enum { value = ID_PLAYER }; };
 
 template<> struct pTypesMap<pTypes::ID_PLAYER_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_PLAYER_NEW, std::map<unsigned char, std::pair<unsigned char, bool>>> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_CONTROL> { typedef pGeneratorReference<pTypes::ID_UPDATE_CONTROL, unsigned char, unsigned char> type; };

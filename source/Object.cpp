@@ -14,18 +14,20 @@ RawParameter Object::param_Axis = RawParameter(vector<string>());
 DebugInput<Object> Object::debug;
 #endif
 
-Object::Object(unsigned int refID, unsigned int baseID) : Reference(refID, baseID)
+Object::Object(unsigned int refID, unsigned int baseID) : Reference()
 {
+	this->SetReference(refID);
+	this->SetBase(baseID);
+
 	initialize();
 }
 
-Object::Object(const pDefault* packet) : Reference(0x00000000, 0x00000000)
+Object::Object(const pDefault* packet) : Reference()
 {
 	initialize();
 
 	NetworkID id;
 	unsigned int refID, baseID;
-	bool changed;
 	string name;
 	double X, Y, Z, aX, aY, aZ;
 	unsigned int cell;
@@ -33,9 +35,7 @@ Object::Object(const pDefault* packet) : Reference(0x00000000, 0x00000000)
 	unsigned int lock;
 	unsigned int owner;
 
-	PacketFactory::Access<pTypes::ID_OBJECT_NEW>(packet, id, refID, baseID, changed, name, X, Y, Z, aX, aY, aZ, cell, enabled, lock, owner);
-
-	GameFactory::SetChangeFlag(changed);
+	PacketFactory::Access<pTypes::ID_OBJECT_NEW>(packet, id, refID, baseID, name, X, Y, Z, aX, aY, aZ, cell, enabled, lock, owner);
 
 	this->SetNetworkID(id);
 	this->SetReference(refID);
@@ -105,7 +105,17 @@ FuncParameter Object::CreateFunctor(unsigned int flags, NetworkID id)
 }
 #endif
 
-string Object::GetName() const
+unsigned int Reference::GetReference() const
+{
+	return refID.get();
+}
+
+unsigned int Reference::GetBase() const
+{
+	return baseID.get();
+}
+
+const string& Object::GetName() const
 {
 	return object_Name.get();
 }
@@ -148,6 +158,16 @@ unsigned int Object::GetLockLevel() const
 unsigned int Object::GetOwner() const
 {
 	return state_Owner.get();
+}
+
+Lockable* Reference::SetReference(unsigned int refID)
+{
+	return SetObjectValue(this->refID, refID);
+}
+
+Lockable* Reference::SetBase(unsigned int baseID)
+{
+	return SetObjectValue(this->baseID, baseID);
 }
 
 Lockable* Object::SetName(const string& name)
@@ -213,6 +233,12 @@ Lockable* Object::SetOwner(unsigned int owner)
 VaultVector Object::vvec() const
 {
 	return VaultVector(GetGamePos(Axis_X), GetGamePos(Axis_Y), GetGamePos(Axis_Z));
+}
+
+bool Reference::IsPersistent() const
+{
+	unsigned int refID = GetReference();
+	return ((refID & 0xFF000000) != 0xFF000000) && refID;
 }
 
 bool Object::IsNearPoint(double X, double Y, double Z, double R) const

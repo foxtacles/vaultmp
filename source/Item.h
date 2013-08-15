@@ -69,6 +69,7 @@ class Item : public Object
 };
 
 GF_TYPE_WRAPPER(Item, Object, ID_ITEM)
+template<> struct rTypes<Item> { enum { value = ID_ITEM }; };
 
 template<> struct pTypesMap<pTypes::ID_ITEM_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_ITEM_NEW, RakNet::NetworkID, unsigned int, double, bool, bool, bool> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_COUNT> { typedef pGeneratorReference<pTypes::ID_UPDATE_COUNT, unsigned int, bool> type; };

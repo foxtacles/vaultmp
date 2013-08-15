@@ -35,6 +35,7 @@ class Button : public Window
 };
 
 GF_TYPE_WRAPPER(Button, Window, ID_BUTTON)
+template<> struct rTypes<Button> { enum { value = ID_BUTTON }; };
 
 template<> struct pTypesMap<pTypes::ID_BUTTON_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_BUTTON_NEW> type; };
 

@@ -71,6 +71,7 @@ class Window : public Reference
 };
 
 GF_TYPE_WRAPPER(Window, Reference, ALL_WINDOWS)
+template<> struct rTypes<Window> { enum { value = ID_WINDOW }; };
 
 template<> struct pTypesMap<pTypes::ID_WINDOW_NEW> { typedef pGeneratorReference<pTypes::ID_WINDOW_NEW, RakNet::NetworkID, std::string, std::tuple<double, double, double, double>, std::tuple<double, double, double, double>, bool, bool, std::string> type; };
 template<>

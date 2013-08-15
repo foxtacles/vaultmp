@@ -35,10 +35,6 @@ class Reference : private CriticalSection, public RakNet::NetworkIDObject
 		static DebugInput<Reference> debug;
 #endif
 
-		Value<unsigned int> refID;
-		Value<unsigned int> baseID;
-		Value<bool> changed;
-
 #ifndef VAULTSERVER
 		std::queue<std::function<void()>> tasks;
 #endif
@@ -49,62 +45,13 @@ class Reference : private CriticalSection, public RakNet::NetworkIDObject
 	protected:
 		//static unsigned int ResolveIndex(unsigned int baseID);
 
-		template <typename T>
+		template<typename T>
 		Lockable* SetObjectValue(Value<T>& dest, const T& value);
 
-		Reference(unsigned int refID, unsigned int baseID);
+		Reference();
 
 	public:
 		virtual ~Reference() noexcept;
-
-		/**
-		 * \brief Retrieves the Reference's reference ID
-		 */
-		unsigned int GetReference() const;
-		/**
-		 * \brief Retrieves the Reference's base ID
-		 */
-		unsigned int GetBase() const;
-		/**
-		 * \brief Retrieves the Reference's changed state
-		 */
-		bool GetChanged() const;
-		/**
-		 * \brief Determines if the reference ID is persistent
-		 */
-		bool IsPersistent() const;
-
-		/**
-		 * \brief Sets the Reference's reference ID
-		 */
-		Lockable* SetReference(unsigned int refID);
-		/**
-		 * \brief Sets the Reference's base ID
-		 */
-#ifdef VAULTSERVER
-		virtual Lockable* SetBase(unsigned int baseID);
-#else
-		Lockable* SetBase(unsigned int baseID);
-#endif
-		/**
-		 * \brief Sets the Reference's changed state
-		 */
-		Lockable* SetChanged(bool changed);
-
-		/**
-		 * \brief Returns a constant Parameter used to pass the reference ID of this Reference to the Interface
-		 */
-		RawParameter GetReferenceParam() const
-		{
-			return RawParameter(refID.get());
-		};
-		/**
-		 * \brief Returns a constant Parameter used to pass the base ID of this Reference to the Interface
-		 */
-		RawParameter GetBaseParam() const
-		{
-			return RawParameter(baseID.get());
-		};
 
 #ifndef VAULTSERVER
 		/**
@@ -126,6 +73,30 @@ class Reference : private CriticalSection, public RakNet::NetworkIDObject
 		 */
 		virtual pPacket toPacket() const = 0;
 };
+
+template<typename T>
+Lockable* Reference::SetObjectValue(Value<T>& dest, const T& value)
+{
+	if (dest.get() == value)
+		return nullptr;
+
+	if (!dest.set(value))
+		return nullptr;
+
+	return &dest;
+}
+
+template<>
+Lockable* Reference::SetObjectValue(Value<double>& dest, const double& value)
+{
+	if (Utils::DoubleCompare(dest.get(), value, 0.0001))
+		return nullptr;
+
+	if (!dest.set(value))
+		return nullptr;
+
+	return &dest;
+}
 
 class ReferenceFunctor : public VaultFunctor
 {

@@ -70,7 +70,8 @@ class ContainerFunctor : public ObjectFunctor
 };
 #endif
 
-GF_TYPE_WRAPPER(Container, Object, ID_CONTAINER)
+GF_TYPE_WRAPPER(Container, Object, ALL_CONTAINERS)
+template<> struct rTypes<Container> { enum { value = ID_CONTAINER }; };
 
 template<> struct pTypesMap<pTypes::ID_CONTAINER_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_CONTAINER_NEW, std::vector<pPacket>> type; };
 template<>

@@ -47,6 +47,7 @@ class Edit : public Window
 };
 
 GF_TYPE_WRAPPER(Edit, Window, ID_EDIT)
+template<> struct rTypes<Edit> { enum { value = ID_EDIT }; };
 
 template<> struct pTypesMap<pTypes::ID_EDIT_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_EDIT_NEW, unsigned int, std::string> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_WMAXLEN> { typedef pGeneratorReference<pTypes::ID_UPDATE_WMAXLEN, unsigned int> type; };
