@@ -271,6 +271,6 @@ class GameFactory
 		static RakNet::NetworkID Destroy(FactoryWrapper<T>& reference);
 };
 
-#include "GameFactory.tpp"
+#include "GameFactory.hpp"
 
 #endif
