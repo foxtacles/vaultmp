@@ -144,7 +144,7 @@
 		<Unit filename="../Expected.h" />
 		<Unit filename="../GameFactory.cpp" />
 		<Unit filename="../GameFactory.h" />
-		<Unit filename="../GameFactory.tpp" />
+		<Unit filename="../GameFactory.hpp" />
 		<Unit filename="../Item.cpp" />
 		<Unit filename="../Item.h" />
 		<Unit filename="../ItemList.cpp" />

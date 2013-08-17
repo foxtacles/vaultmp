@@ -51,72 +51,31 @@ using LaunchPolicy = GameFactory::LaunchPolicy;
 using ObjectPolicy = GameFactory::ObjectPolicy;
 
 template<ObjectPolicy OP, typename T, typename I, typename F>
-struct GameFactory::OperateFunctions<T, FailPolicy::Return, OP, LaunchPolicy::Blocking, I, F, false> {
-	static typename OperateReturn<FailPolicy::Return, OP, LaunchPolicy::Blocking, T, F, false>::type Operate(I&& id, F function) noexcept
+struct GameFactory::OperateFunctions<T, FailPolicy::Return, OP, LaunchPolicy::Blocking, I, F> {
+	static typename OperateReturn<FailPolicy::Return, OP, LaunchPolicy::Blocking, T, F, I>::type Operate(I&& id, F function) noexcept
 	{
 		auto reference = GameFactory::Get<T>(std::forward<I>(id));
 
 		try
 		{
-			return function(ObjectPolicyHelper<OP, T>::Unwrap(reference));
-		}
-		catch (...) { return typename ObjectPolicyReturn<OP, T, F, false>::type(); }
-	}
-};
-
-template<ObjectPolicy OP, typename T, typename I, typename F>
-struct GameFactory::OperateFunctions<T, FailPolicy::Bool, OP, LaunchPolicy::Blocking, I, F, false> {
-	static typename OperateReturn<FailPolicy::Bool, OP, LaunchPolicy::Blocking, T, F, false>::type Operate(I&& id, F function) noexcept
-	{
-		static_assert(std::is_same<typename ObjectPolicyReturn<OP, T, F, false>::type, void>::value, "Function return value disregarded");
-
-		auto reference = GameFactory::Get<T>(std::forward<I>(id));
-
-		try
-		{
-			function(ObjectPolicyHelper<OP, T>::Unwrap(reference));
-		}
-		catch (...) { return false; }
-
-		return true;
-	}
-};
-
-template<ObjectPolicy OP, typename T, typename I, typename F>
-struct GameFactory::OperateFunctions<T, FailPolicy::Exception, OP, LaunchPolicy::Blocking, I, F, false> {
-	static typename OperateReturn<FailPolicy::Exception, OP, LaunchPolicy::Blocking, T, F, false>::type Operate(I&& id, F function)
-	{
-		auto reference = GameFactory::Get<T>(std::forward<I>(id));
-		return function(ObjectPolicyHelper<OP, T>::Unwrap(reference));
-	}
-};
-
-template<ObjectPolicy OP, typename T, typename I, typename F>
-struct GameFactory::OperateFunctions<T, FailPolicy::Return, OP, LaunchPolicy::Blocking, I, F, true> {
-	static typename OperateReturn<FailPolicy::Return, OP, LaunchPolicy::Blocking, T, F, true>::type Operate(std::vector<typename I::value_type>&& id, F function) noexcept
-	{
-		auto reference = GameFactory::Get<T>(std::forward<I>(id));
-
-		try
-		{
-			auto&& param = ObjectPolicyHelper<OP, T>::Unwrap(reference); // depending on OP, returns either a reference or value
+			auto&& param = ObjectPolicyHelper<OP, T>::Unwrap(reference);
 			return function(param);
 		}
-		catch (...) { return typename ObjectPolicyReturn<OP, T, F, true>::type(); }
+		catch (...) { return typename ObjectPolicyReturn<OP, T, F, InputPolicyHelper<I>::value>::type(); }
 	}
 };
 
 template<ObjectPolicy OP, typename T, typename I, typename F>
-struct GameFactory::OperateFunctions<T, FailPolicy::Bool, OP, LaunchPolicy::Blocking, I, F, true> {
-	static typename OperateReturn<FailPolicy::Bool, OP, LaunchPolicy::Blocking, T, F, true>::type Operate(std::vector<typename I::value_type>&& id, F function) noexcept
+struct GameFactory::OperateFunctions<T, FailPolicy::Bool, OP, LaunchPolicy::Blocking, I, F> {
+	static typename OperateReturn<FailPolicy::Bool, OP, LaunchPolicy::Blocking, T, F, I>::type Operate(I&& id, F function) noexcept
 	{
-		static_assert(std::is_same<typename ObjectPolicyReturn<OP, T, F, true>::type, void>::value, "Function return value disregarded");
+		static_assert(std::is_same<typename ObjectPolicyReturn<OP, T, F, InputPolicyHelper<I>::value>::type, void>::value, "Function return value disregarded");
 
 		auto reference = GameFactory::Get<T>(std::forward<I>(id));
 
 		try
 		{
-			auto&& param = ObjectPolicyHelper<OP, T>::Unwrap(reference); // depending on OP, returns either a reference or value
+			auto&& param = ObjectPolicyHelper<OP, T>::Unwrap(reference);
 			function(param);
 		}
 		catch (...) { return false; }
@@ -126,11 +85,11 @@ struct GameFactory::OperateFunctions<T, FailPolicy::Bool, OP, LaunchPolicy::Bloc
 };
 
 template<ObjectPolicy OP, typename T, typename I, typename F>
-struct GameFactory::OperateFunctions<T, FailPolicy::Exception, OP, LaunchPolicy::Blocking, I, F, true> {
-	static typename OperateReturn<FailPolicy::Exception, OP, LaunchPolicy::Blocking, T, F, true>::type Operate(std::vector<typename I::value_type>&& id, F function)
+struct GameFactory::OperateFunctions<T, FailPolicy::Exception, OP, LaunchPolicy::Blocking, I, F> {
+	static typename OperateReturn<FailPolicy::Exception, OP, LaunchPolicy::Blocking, T, F, I>::type Operate(I&& id, F function)
 	{
 		auto reference = GameFactory::Get<T>(std::forward<I>(id));
-		auto&& param = ObjectPolicyHelper<OP, T>::Unwrap(reference); // depending on OP, returns either a reference or value
+		auto&& param = ObjectPolicyHelper<OP, T>::Unwrap(reference);
 		return function(param);
 	}
 };

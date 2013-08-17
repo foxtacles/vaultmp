@@ -106,7 +106,7 @@
 		<Unit filename="Game.h" />
 		<Unit filename="GameFactory.cpp" />
 		<Unit filename="GameFactory.h" />
-		<Unit filename="GameFactory.tpp" />
+		<Unit filename="GameFactory.hpp" />
 		<Unit filename="Guarded.cpp" />
 		<Unit filename="Guarded.h" />
 		<Unit filename="Interface.cpp" />
