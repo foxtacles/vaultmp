@@ -428,7 +428,7 @@ class Script
 			{"IsChatbox", Script::IsChatbox},
 			{"GetType", (unsigned int(*)(RakNet::NetworkID)) GameFactory::GetType},
 			{"GetConnection", Script::GetConnection},
-			{"GetCount", GameFactory::GetObjectCount},
+			{"GetCount", GameFactory::GetCount},
 			{"GetList", Script::GetList},
 			{"GetRespawnTime", Player::GetRespawnTime},
 			{"GetSpawnCell", Player::GetSpawnCell},

@@ -201,7 +201,7 @@ void Bethesda::Terminate(RakPeerInterface* peer)
 		peer->DeallocatePacket(packet); // disconnection notification might still arrive
 
 	Interface::Terminate();
-	GameFactory::DestroyAllInstances();
+	GameFactory::DestroyAll();
 	API::Terminate();
 
 	if (initialized)
@@ -235,7 +235,7 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, c
 	GameFactory::Initialize();
 	API::Initialize();
 
-	NetworkID id = GameFactory::CreateInstance(ID_PLAYER, PLAYER_REFERENCE, PLAYER_BASE);
+	NetworkID id = GameFactory::Create<Player>(PLAYER_REFERENCE, PLAYER_BASE);
 
 	GameFactory::Operate<Player>(id, [&name](FactoryPlayer& player) {
 		player->SetEnabled(true);

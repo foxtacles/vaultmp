@@ -70,7 +70,7 @@ NetworkID ItemList::AddItem(NetworkID id)
 	{
 		auto data = GameFactory::Operate<Item>(id, [](FactoryItem& item) {
 			auto data = make_pair(item->GetItemEquipped(), item->GetItemCount());
-			GameFactory::DestroyInstance(item);
+			GameFactory::Destroy(item);
 			return data;
 		});
 
@@ -115,7 +115,7 @@ ItemList::AddOp ItemList::AddItem(unsigned int baseID, unsigned int count, doubl
 	else
 	{
 		result.first = true;
-		result.second = GameFactory::CreateInstance(ID_ITEM, baseID);
+		result.second = GameFactory::Create<Item>(baseID);
 
 		GameFactory::Operate<Item>(result.second, [this, count, condition, silent](FactoryItem& item) {
 			item->SetItemCount(count);
@@ -169,7 +169,7 @@ ItemList::RemoveOp ItemList::RemoveItem(unsigned int baseID, unsigned int count,
 				{
 					get<1>(result).emplace_back(id);
 					count -= item->GetItemCount();
-					GameFactory::DestroyInstance(item);
+					GameFactory::Destroy(item);
 				}
 			});
 	}
@@ -187,7 +187,7 @@ ItemList::RemoveOp ItemList::RemoveItem(unsigned int baseID, unsigned int count,
 ItemList::Impl ItemList::RemoveAllItems()
 {
 	for (const NetworkID& id : container)
-		GameFactory::DestroyInstance(id);
+		GameFactory::Destroy(id);
 
 	return move(container);
 }
@@ -268,7 +268,7 @@ unsigned int ItemList::GetItemCount(unsigned int baseID) const
 void ItemList::FlushContainer()
 {
 	for (const NetworkID& id : container)
-		GameFactory::DestroyInstance(id);
+		GameFactory::Destroy(id);
 
 	container.clear();
 }

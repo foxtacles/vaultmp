@@ -14,7 +14,7 @@
  * Derives from Lockable to lock / unlock the data member
  */
 
-template <typename T>
+template<typename T>
 class Value : public Lockable
 {
 	private:

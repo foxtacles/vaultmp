@@ -136,7 +136,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 
 				case pTypes::ID_PLAYER_NEW:
 				{
-					NetworkID id = GameFactory::CreateKnownInstance(ID_PLAYER, packet.get());
+					NetworkID id = GameFactory::Create<Player>(packet.get());
 					response = Server::NewPlayer(data->guid, id);
 					break;
 				}
@@ -146,7 +146,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					NetworkID id;
 					double X, Y, Z;
 					PacketFactory::Access<pTypes::ID_UPDATE_POS>(packet, id, X, Y, Z);
-					auto reference = GameFactory::GetObject(id);
+					auto reference = GameFactory::Get<Object>(id);
 					response = Server::GetPos(data->guid, reference.get(), X, Y, Z);
 					break;
 				}
@@ -157,7 +157,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					unsigned char axis;
 					double value;
 					PacketFactory::Access<pTypes::ID_UPDATE_ANGLE>(packet, id, axis, value);
-					auto reference = GameFactory::GetObject(id);
+					auto reference = GameFactory::Get<Object>(id);
 					response = Server::GetAngle(data->guid, reference.get(), axis, value);
 					break;
 				}
@@ -168,7 +168,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					unsigned int cell;
 					double X, Y, Z;
 					PacketFactory::Access<pTypes::ID_UPDATE_CELL>(packet, id, cell, X, Y, Z);
-					auto reference = GameFactory::GetObject(id);
+					auto reference = GameFactory::Get<Object>(id);
 					response = Server::GetCell(data->guid, reference.get(), cell);
 					break;
 				}
@@ -177,7 +177,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 				{
 					NetworkID id, actor;
 					PacketFactory::Access<pTypes::ID_UPDATE_ACTIVATE>(packet, id, actor);
-					auto reference = GameFactory::GetMultiple(vector<NetworkID>{id, actor});
+					auto reference = GameFactory::Get<Object>(vector<NetworkID>{id, actor});
 					response = Server::GetActivate(data->guid, reference[0].get(), reference[1].get());
 					break;
 				}
@@ -189,7 +189,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					unsigned char moving, movingxy, weapon;
 					bool alerted, sneaking, firing;
 					PacketFactory::Access<pTypes::ID_UPDATE_STATE>(packet, id, idle, moving, movingxy, weapon, alerted, sneaking, firing);
-					auto reference = GameFactory::GetObject<Actor>(id);
+					auto reference = GameFactory::Get<Actor>(id);
 					response = Server::GetActorState(data->guid, reference.get(), idle, moving, movingxy, weapon, alerted, sneaking);
 					break;
 				}
@@ -201,7 +201,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					unsigned short limbs;
 					signed char cause;
 					PacketFactory::Access<pTypes::ID_UPDATE_DEAD>(packet, id, dead, limbs, cause);
-					auto reference = GameFactory::GetObject<Player>(id);
+					auto reference = GameFactory::Get<Player>(id);
 					response = Server::GetActorDead(data->guid, reference.get(), dead, limbs, cause);
 					break;
 				}
@@ -211,7 +211,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					NetworkID id;
 					unsigned char control, key;
 					PacketFactory::Access<pTypes::ID_UPDATE_CONTROL>(packet, id, control, key);
-					auto reference = GameFactory::GetObject<Player>(id);
+					auto reference = GameFactory::Get<Player>(id);
 					response = Server::GetPlayerControl(data->guid, reference.get(), control, key);
 					break;
 				}
@@ -228,7 +228,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 				{
 					NetworkID id;
 					PacketFactory::Access<pTypes::ID_UPDATE_WCLICK>(packet, id);
-					auto reference = GameFactory::GetObject<Window>(id);
+					auto reference = GameFactory::Get<Window>(id);
 					response = Server::GetWindowClick(data->guid, reference.get());
 					break;
 				}
@@ -238,7 +238,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					NetworkID id;
 					string text;
 					PacketFactory::Access<pTypes::ID_UPDATE_WTEXT>(packet, id, text);
-					auto reference = GameFactory::GetObject<Window>(id);
+					auto reference = GameFactory::Get<Window>(id);
 					response = Server::GetWindowText(data->guid, reference.get(), text);
 					break;
 				}
@@ -248,7 +248,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					NetworkID id;
 					bool selected;
 					PacketFactory::Access<pTypes::ID_UPDATE_WSELECTED>(packet, id, selected);
-					auto reference = GameFactory::GetObject<Checkbox>(id);
+					auto reference = GameFactory::Get<Checkbox>(id);
 					response = Server::GetCheckboxSelected(data->guid, reference.get(), selected);
 					break;
 				}

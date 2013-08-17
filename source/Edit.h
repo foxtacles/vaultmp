@@ -46,8 +46,7 @@ class Edit : public Window
 		virtual pPacket toPacket() const;
 };
 
-GF_TYPE_WRAPPER(Edit, Window, ID_EDIT)
-template<> struct rTypes<Edit> { enum { value = ID_EDIT }; };
+GF_TYPE_WRAPPER_FINAL(Edit, Window, ID_EDIT)
 
 template<> struct pTypesMap<pTypes::ID_EDIT_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_EDIT_NEW, unsigned int, std::string> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_WMAXLEN> { typedef pGeneratorReference<pTypes::ID_UPDATE_WMAXLEN, unsigned int> type; };

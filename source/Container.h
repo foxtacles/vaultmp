@@ -25,6 +25,7 @@ class Container : public Object
 
 	protected:
 		Container(unsigned int refID, unsigned int baseID);
+		Container(unsigned int baseID) : Container(0x00000000, baseID) {}
 		Container(const pDefault* packet);
 		Container(pPacket&& packet) : Container(packet.get()) {};
 
@@ -70,8 +71,7 @@ class ContainerFunctor : public ObjectFunctor
 };
 #endif
 
-GF_TYPE_WRAPPER(Container, Object, ALL_CONTAINERS)
-template<> struct rTypes<Container> { enum { value = ID_CONTAINER }; };
+GF_TYPE_WRAPPER(Container, Object, ID_CONTAINER, ALL_CONTAINERS)
 
 template<> struct pTypesMap<pTypes::ID_CONTAINER_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_CONTAINER_NEW, std::vector<pPacket>> type; };
 template<>

@@ -51,6 +51,7 @@ class Actor : public Container
 
 	protected:
 		Actor(unsigned int refID, unsigned int baseID);
+		Actor(unsigned int baseID) : Actor(0x00000000, baseID) {}
 		Actor(const pDefault* packet);
 		Actor(pPacket&& packet) : Actor(packet.get()) {};
 
@@ -235,8 +236,7 @@ class ActorFunctor : public ContainerFunctor
 };
 #endif
 
-GF_TYPE_WRAPPER(Actor, Container, ALL_ACTORS)
-template<> struct rTypes<Actor> { enum { value = ID_ACTOR }; };
+GF_TYPE_WRAPPER(Actor, Container, ID_ACTOR, ALL_ACTORS)
 
 template<> struct pTypesMap<pTypes::ID_ACTOR_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_ACTOR_NEW, std::map<unsigned char, double>, std::map<unsigned char, double>, unsigned int, signed int, unsigned int, unsigned char, unsigned char, unsigned char, bool, bool, bool, bool> type; };
 template<>

@@ -8,6 +8,8 @@ using namespace std;
 using namespace RakNet;
 using namespace Values;
 
+Guarded<Object::RefIDs> Object::refIDs;
+
 RawParameter Object::param_Axis = RawParameter(vector<string>());
 
 #ifdef VAULTMP_DEBUG
@@ -61,7 +63,12 @@ Object::Object(const pDefault* packet) : Reference()
 	}
 }
 
-Object::~Object() noexcept {}
+Object::~Object() noexcept
+{
+	refIDs.Operate([this](RefIDs& refIDs) {
+		refIDs.erase(this->refID.get());
+	});
+}
 
 void Object::initialize()
 {
@@ -105,19 +112,19 @@ FuncParameter Object::CreateFunctor(unsigned int flags, NetworkID id)
 }
 #endif
 
-unsigned int Reference::GetReference() const
+unsigned int Object::GetReference() const
 {
 	return refID.get();
 }
 
-unsigned int Reference::GetBase() const
+unsigned int Object::GetBase() const
 {
 	return baseID.get();
 }
 
 const string& Object::GetName() const
 {
-	return object_Name.get();
+	return *object_Name;
 }
 
 double Object::GetGamePos(unsigned char axis) const
@@ -160,12 +167,24 @@ unsigned int Object::GetOwner() const
 	return state_Owner.get();
 }
 
-Lockable* Reference::SetReference(unsigned int refID)
+Lockable* Object::SetReference(unsigned int refID)
 {
-	return SetObjectValue(this->refID, refID);
+	unsigned int old_refID = this->refID.get();
+
+	auto* result = SetObjectValue(this->refID, refID);
+
+	if (result)
+		refIDs.Operate([this, old_refID, refID](RefIDs& refIDs) {
+			refIDs.erase(old_refID);
+
+			if (refID)
+				refIDs.emplace(refID, this->GetNetworkID());
+		});
+
+	return result;
 }
 
-Lockable* Reference::SetBase(unsigned int baseID)
+Lockable* Object::SetBase(unsigned int baseID)
 {
 	return SetObjectValue(this->baseID, baseID);
 }
@@ -235,7 +254,7 @@ VaultVector Object::vvec() const
 	return VaultVector(GetGamePos(Axis_X), GetGamePos(Axis_Y), GetGamePos(Axis_Z));
 }
 
-bool Reference::IsPersistent() const
+bool Object::IsPersistent() const
 {
 	unsigned int refID = GetReference();
 	return ((refID & 0xFF000000) != 0xFF000000) && refID;
@@ -267,7 +286,7 @@ bool Object::HasValidCoordinates() const
 
 pPacket Object::toPacket() const
 {
-	pPacket packet = PacketFactory::Create<pTypes::ID_OBJECT_NEW>(const_cast<Object*>(this)->GetNetworkID(), this->GetReference(), this->GetBase(), this->GetChanged(),
+	pPacket packet = PacketFactory::Create<pTypes::ID_OBJECT_NEW>(const_cast<Object*>(this)->GetNetworkID(), this->GetReference(), this->GetBase(),
 		this->GetName(), this->GetNetworkPos(Values::Axis_X), this->GetNetworkPos(Values::Axis_Y), this->GetNetworkPos(Values::Axis_Z),
 		this->GetAngle(Values::Axis_X), this->GetAngle(Values::Axis_Y), this->GetAngle(Values::Axis_Z), this->GetNetworkCell(), this->GetEnabled(), this->GetLockLevel(), this->GetOwner());
 
@@ -307,7 +326,7 @@ vector<string> ObjectFunctor::operator()()
 
 bool ObjectFunctor::filter(FactoryWrapper<Reference>& reference)
 {
-	return GameFactory::Operate(reference->GetNetworkID(), [this](FactoryObject& object) {
+	return GameFactory::Operate<Object>(reference->GetNetworkID(), [this](FactoryObject& object) {
 		unsigned int flags = this->flags();
 
 		if (flags & FLAG_NOTSELF && object->GetReference() == PLAYER_REFERENCE)

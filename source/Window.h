@@ -70,8 +70,7 @@ class Window : public Reference
 		virtual pPacket toPacket() const;
 };
 
-GF_TYPE_WRAPPER(Window, Reference, ALL_WINDOWS)
-template<> struct rTypes<Window> { enum { value = ID_WINDOW }; };
+GF_TYPE_WRAPPER(Window, Reference, ID_WINDOW, ALL_WINDOWS)
 
 template<> struct pTypesMap<pTypes::ID_WINDOW_NEW> { typedef pGeneratorReference<pTypes::ID_WINDOW_NEW, RakNet::NetworkID, std::string, std::tuple<double, double, double, double>, std::tuple<double, double, double, double>, bool, bool, std::string> type; };
 template<>

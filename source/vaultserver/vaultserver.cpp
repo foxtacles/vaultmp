@@ -52,7 +52,7 @@ void InputThread()
 				if (client)
 				{
 					unsigned int id = client->GetID();
-					auto player = GameFactory::GetObject<Player>(client->GetPlayer());
+					auto player = GameFactory::Get<Player>(client->GetPlayer());
 
 					if (player)
 						printf("client ID: %d, player name: %s\n", id, player->GetName().c_str());

@@ -5,7 +5,7 @@ using namespace RakNet;
 
 Window::WindowChilds Window::childs;
 
-Window::Window() : Reference()
+Window::Window() : Reference(), parent(0), locked(false), visible(true)
 {
 	initialize();
 }
@@ -32,9 +32,7 @@ Window::~Window() noexcept
 
 void Window::initialize()
 {
-	parent = 0;
-	locked = false;
-	visible = true;
+
 }
 
 void Window::CollectChilds(NetworkID root, vector<NetworkID>& dest)

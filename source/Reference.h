@@ -4,8 +4,8 @@
 #include "vaultmp.h"
 #include "CriticalSection.h"
 #include "Value.h"
-#include "Interface.h"
 #include "RakNet.h"
+#include "VaultFunctor.h"
 #include "packet/PacketFactory.h"
 
 #ifdef VAULTMP_DEBUG
@@ -45,8 +45,7 @@ class Reference : private CriticalSection, public RakNet::NetworkIDObject
 	protected:
 		//static unsigned int ResolveIndex(unsigned int baseID);
 
-		template<typename T>
-		Lockable* SetObjectValue(Value<T>& dest, const T& value);
+		template<typename T> static Lockable* SetObjectValue(Value<T>& dest, const T& value);
 
 		Reference();
 
@@ -66,6 +65,8 @@ class Reference : private CriticalSection, public RakNet::NetworkIDObject
 		 * \brief Releases all tasks
 		 */
 		void Release();
+#else
+		virtual void virtual_initializers() {}
 #endif
 
 		/**
@@ -86,17 +87,7 @@ Lockable* Reference::SetObjectValue(Value<T>& dest, const T& value)
 	return &dest;
 }
 
-template<>
-Lockable* Reference::SetObjectValue(Value<double>& dest, const double& value)
-{
-	if (Utils::DoubleCompare(dest.get(), value, 0.0001))
-		return nullptr;
-
-	if (!dest.set(value))
-		return nullptr;
-
-	return &dest;
-}
+template<> Lockable* Reference::SetObjectValue(Value<double>& dest, const double& value);
 
 class ReferenceFunctor : public VaultFunctor
 {

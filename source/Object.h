@@ -5,6 +5,8 @@
 #include "Reference.h"
 #include "ReferenceTypes.h"
 #include "GameFactory.h"
+#include "Guarded.h"
+#include "Interface.h"
 #include "VaultVector.h"
 
 #ifdef VAULTMP_DEBUG
@@ -30,7 +32,10 @@ class Object : public Reference
 		friend class GameFactory;
 
 	private:
+		typedef std::unordered_map<unsigned int, RakNet::NetworkID> RefIDs;
+
 		static RawParameter param_Axis;
+		static Guarded<RefIDs> refIDs;
 
 #ifdef VAULTMP_DEBUG
 		static DebugInput<Object> debug;
@@ -51,6 +56,15 @@ class Object : public Reference
 		static bool IsValidCoordinate(double C);
 		static bool IsValidAngle(unsigned char axis, double A);
 
+		template<typename T>
+		struct PickBy_ {
+			static RakNet::NetworkID PickBy(T id) noexcept;
+			static std::vector<RakNet::NetworkID> PickBy(const std::vector<T>& ids) noexcept;
+		};
+
+		template<typename T> inline static RakNet::NetworkID PickBy(T id) noexcept { return PickBy_<T>::PickBy(id); }
+		template<typename T> inline static std::vector<RakNet::NetworkID> PickBy(const std::vector<T>& ids) noexcept { return PickBy_<T>::PickBy(ids); }
+
 		void initialize();
 
 		Object(const Object&);
@@ -58,6 +72,7 @@ class Object : public Reference
 
 	protected:
 		Object(unsigned int refID, unsigned int baseID);
+		Object(unsigned int baseID) : Object(0x00000000, baseID) {}
 		Object(const pDefault* packet);
 		Object(pPacket&& packet) : Object(packet.get()) {};
 
@@ -215,10 +230,36 @@ class Object : public Reference
 		 */
 		bool HasValidCoordinates() const;
 
+#ifdef VAULTSERVER
+		virtual void virtual_initializers() {
+			this->SetBase(this->GetBase());
+		}
+#endif
+
 		/**
 		 * \brief For network transfer
 		 */
 		virtual pPacket toPacket() const;
+};
+
+template<>
+struct Object::PickBy_<unsigned int> {
+	static RakNet::NetworkID PickBy(unsigned int id) noexcept {
+		return refIDs.Operate([id](RefIDs& refIDs) {
+			return refIDs[id];
+		});
+	}
+
+	static std::vector<RakNet::NetworkID> PickBy(const std::vector<unsigned int>& ids) noexcept {
+		return refIDs.Operate([&ids](RefIDs& refIDs) {
+			std::vector<RakNet::NetworkID> result;
+
+			for (const auto& id : ids)
+				result.emplace_back(refIDs[id]);
+
+			return result;
+		});
+	}
 };
 
 #ifndef VAULTSERVER
@@ -233,8 +274,7 @@ class ObjectFunctor : public ReferenceFunctor
 };
 #endif
 
-GF_TYPE_WRAPPER(Object, Reference, ALL_OBJECTS)
-template<> struct rTypes<Object> { enum { value = ID_OBJECT }; };
+GF_TYPE_WRAPPER(Object, Reference, ID_OBJECT, ALL_OBJECTS)
 
 template<> struct pTypesMap<pTypes::ID_OBJECT_NEW> { typedef pGeneratorReferenceNew<pTypes::ID_OBJECT_NEW, std::string, double, double, double, double, double, double, unsigned int, bool, unsigned int, unsigned int> type; };
 template<>

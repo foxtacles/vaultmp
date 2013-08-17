@@ -34,6 +34,7 @@ class Item : public Object
 
 	protected:
 		Item(unsigned int refID, unsigned int baseID);
+		Item(unsigned int baseID) : Item(0x00000000, baseID) {}
 		Item(const pDefault* packet);
 
 	public:
@@ -68,8 +69,7 @@ class Item : public Object
 		virtual pPacket toPacket() const;
 };
 
-GF_TYPE_WRAPPER(Item, Object, ID_ITEM)
-template<> struct rTypes<Item> { enum { value = ID_ITEM }; };
+GF_TYPE_WRAPPER_FINAL(Item, Object, ID_ITEM)
 
 template<> struct pTypesMap<pTypes::ID_ITEM_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_ITEM_NEW, RakNet::NetworkID, unsigned int, double, bool, bool, bool> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_COUNT> { typedef pGeneratorReference<pTypes::ID_UPDATE_COUNT, unsigned int, bool> type; };

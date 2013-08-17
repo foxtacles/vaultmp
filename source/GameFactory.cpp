@@ -6,7 +6,7 @@
 using namespace std;
 using namespace RakNet;
 
-CriticalSection GameFactory::cs;
+Guarded<> GameFactory::cs;
 GameFactory::ReferenceList GameFactory::instances;
 GameFactory::ReferenceIndex GameFactory::index;
 GameFactory::ReferenceCount GameFactory::typecount;
@@ -45,17 +45,15 @@ void GameFactory::Initialize()
 #endif
 }
 
-vector<NetworkID> GameFactory::GetIDObjectTypes(unsigned int type) noexcept
+vector<NetworkID> GameFactory::GetByTypeID(unsigned int type) noexcept
 {
 	vector<NetworkID> result;
 	ReferenceList::iterator it;
 
-	cs.StartSession();
-
-	result.reserve(typecount[type]);
-	ReferenceList copy = instances;
-
-	cs.EndSession();
+	auto copy = cs.Operate([&result, type]() {
+		result.reserve(typecount[type]);
+		return instances;
+	});
 
 	for (const auto& reference : copy)
 		if (reference.second & type)
@@ -64,28 +62,18 @@ vector<NetworkID> GameFactory::GetIDObjectTypes(unsigned int type) noexcept
 	return result;
 }
 
-unsigned int GameFactory::GetObjectCount(unsigned int type) noexcept
+unsigned int GameFactory::GetCount(unsigned int type) noexcept
 {
-	cs.StartSession();
-
-	unsigned int count = typecount[type];
-
-	cs.EndSession();
-
-	return count;
+	return cs.Operate([type]() {
+		return typecount[type];
+	});
 }
 
 bool GameFactory::IsDeleted(NetworkID id) noexcept
 {
-	bool result;
-
-	cs.StartSession();
-
-	result = delrefs.find(id) != delrefs.end();
-
-	cs.EndSession();
-
-	return result;
+	return cs.Operate([id]() {
+		return delrefs.find(id) != delrefs.end();
+	});
 }
 
 unsigned int GameFactory::GetType(const Reference* reference) noexcept
@@ -95,29 +83,22 @@ unsigned int GameFactory::GetType(const Reference* reference) noexcept
 
 unsigned int GameFactory::GetType(NetworkID id) noexcept
 {
-	cs.StartSession();
-
-	unsigned int type;
-	auto it = GetShared(id);
-	type = (it != instances.end() ? it->second : 0x00);
-
-	cs.EndSession();
-
-	return type;
+	return cs.Operate([id]() {
+		auto it = GetShared(id);
+		return it != instances.end() ? it->second : 0x00;
+	});
 }
 
-void GameFactory::DestroyAllInstances() noexcept
+void GameFactory::DestroyAll() noexcept
 {
-	cs.StartSession();
+	ReferenceList copy;
 
-	ReferenceList copy = instances;
-
-	instances.clear();
-	index.clear();
-	typecount.clear();
-	delrefs.clear();
-
-	cs.EndSession();
+	cs.Operate([&copy]() {
+		copy = move(instances);
+		index.clear();
+		typecount.clear();
+		delrefs.clear();
+	});
 
 	for (const auto& instance : copy)
 	{
@@ -142,8 +123,7 @@ void GameFactory::DestroyAllInstances() noexcept
 	Lockable::Reset();
 }
 
-bool GameFactory::DestroyInstance(NetworkID id)
+bool GameFactory::Destroy(NetworkID id)
 {
-	DestroyInstance(GetObject(id).get());
-	return true;
+	return Destroy(Get<Reference>(id).get());
 }

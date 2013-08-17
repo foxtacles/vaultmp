@@ -1,5 +1,6 @@
 #include "Reference.h"
 #include "Network.h"
+#include "Utils.h"
 
 using namespace std;
 using namespace RakNet;
@@ -27,6 +28,18 @@ unsigned int Reference::ResolveIndex(unsigned int baseID)
 	return baseID;
 }
 */
+
+template<>
+Lockable* Reference::SetObjectValue(Value<double>& dest, const double& value)
+{
+	if (Utils::DoubleCompare(dest.get(), value, 0.0001))
+		return nullptr;
+
+	if (!dest.set(value))
+		return nullptr;
+
+	return &dest;
+}
 
 #ifndef VAULTSERVER
 void Reference::Enqueue(const function<void()>& task)

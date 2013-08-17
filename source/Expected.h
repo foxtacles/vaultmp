@@ -8,7 +8,7 @@
  * \brief http://channel9.msdn.com/Shows/Going+Deep/C-and-Beyond-2012-Andrei-Alexandrescu-Systematic-Error-Handling-in-C
  */
 
-template <typename T>
+template<typename T>
 class Expected
 {
 	private:

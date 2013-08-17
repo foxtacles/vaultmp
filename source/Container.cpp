@@ -27,10 +27,7 @@ Container::Container(const pDefault* packet) : Object(PacketFactory::Pop<pPacket
 	PacketFactory::Access<pTypes::ID_CONTAINER_NEW>(packet, items);
 
 	for (const pPacket& _packet : items)
-	{
-		NetworkID id = GameFactory::CreateKnownInstance(ID_ITEM, _packet.get());
-		IL.AddItem(id);
-	}
+		IL.AddItem(GameFactory::Create<Item>(_packet.get()));
 }
 
 Container::~Container() noexcept {}
@@ -59,7 +56,7 @@ FuncParameter Container::CreateFunctor(unsigned int flags, NetworkID id)
 
 NetworkID Container::Copy() const
 {
-	return GameFactory::Operate<Container>(GameFactory::CreateInstance(ID_CONTAINER, 0x00000000, this->GetBase()), [this](FactoryContainer& container) {
+	return GameFactory::Operate<Container>(GameFactory::Create<Container>(0x00000000, this->GetBase()), [this](FactoryContainer& container) {
 		IL.Copy(container->IL);
 		return container->GetNetworkID();
 	});
@@ -87,7 +84,7 @@ Lockable* Container::SetBase(unsigned int baseID)
 	if (this->GetName().empty())
 		this->SetName(record->GetDescription());
 
-	return Reference::SetBase(baseID);
+	return Object::SetBase(baseID);
 }
 #endif
 

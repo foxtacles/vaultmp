@@ -237,7 +237,7 @@ Lockable* Actor::SetBase(unsigned int baseID)
 	if (this->GetName().empty())
 		this->SetName(record->GetDescription());
 
-	return Reference::SetBase(baseID);
+	return Object::SetBase(baseID);
 }
 #endif
 
