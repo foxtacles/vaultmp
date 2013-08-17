@@ -64,5 +64,6 @@ extern "C"
 	__declspec(dllexport) vector<string>* GUI_Listbox_GetSelectedItems(char* name);
 
 	__declspec(dllexport) void GUI_AddCheckbox(char* parent,char* name);
-	__declspec(dllexport) void GUI_Checkbox_SetChecked(char* name,bool checked);
+	__declspec(dllexport) void GUI_AddRadioButton(char* parent,char* name,unsigned long int groupID);
+	__declspec(dllexport) void GUI_SetChecked(char* name,bool checked);
 }

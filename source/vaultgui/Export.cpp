@@ -90,13 +90,27 @@ bool GUI_CheckboxChanged(const CEGUI::EventArgs& e)
 {
 	const CEGUI::WindowEventArgs& we = static_cast<const CEGUI::WindowEventArgs&>(e);
 
-	CEGUI::Checkbox* c=(CEGUI::Checkbox*)we.window;
-	if(callbackPTR_OnCheckboxChange)
+	if(we.window->getType().compare("TaharezLook/Checkbox")==0)
 	{
-		if(gData.sendCheckboxCallbacks)
-			callbackPTR_OnCheckboxChange((char*)c->getName().c_str(),c->isSelected());
+		CEGUI::Checkbox* c=(CEGUI::Checkbox*)we.window;
+		if(callbackPTR_OnCheckboxChange)
+		{
+			if(gData.sendCheckboxCallbacks)
+				callbackPTR_OnCheckboxChange((char*)c->getName().c_str(),c->isSelected());
+			
+		}
 	}
-		
+
+	if(we.window->getType().compare("TaharezLook/RadioButton")==0)
+	{
+		CEGUI::RadioButton* c=(CEGUI::RadioButton*)we.window;
+		if(callbackPTR_OnCheckboxChange)
+		{
+			if(gData.sendCheckboxCallbacks)
+				callbackPTR_OnCheckboxChange((char*)c->getName().c_str(),c->isSelected());
+			
+		}
+	}
 
 	return true;
 }
@@ -437,11 +451,33 @@ extern "C"
 		
 	}
 
-	__declspec(dllexport) void GUI_Checkbox_SetChecked(char* name,bool checked)
+	__declspec(dllexport) void GUI_AddRadioButton(char* parent,char* name,unsigned long int groupID)
+	{
+		CEGUI::WindowManager& winMgr = CEGUI::WindowManager::getSingleton();
+
+		CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow(parent));
+		CEGUI::RadioButton* wnd=(CEGUI::RadioButton*)winMgr.createWindow("TaharezLook/RadioButton", name);
+
+		wnd->subscribeEvent(CEGUI::RadioButton::EventSelectStateChanged,GUI_CheckboxChanged);
+		wnd->setGroupID(groupID);
+
+		w->addChildWindow(wnd);
+		
+	}
+
+	__declspec(dllexport) void GUI_SetChecked(char* name,bool checked)
 	{
 		if(CEGUI::WindowManager::getSingleton().getWindow(name)->getType().compare("TaharezLook/Checkbox")==0)
 		{
 			CEGUI::Checkbox *w = ((CEGUI::Checkbox*)CEGUI::WindowManager::getSingleton().getWindow(name));
+			gData.sendCheckboxCallbacks=false;
+			w->setSelected(checked);
+			gData.sendCheckboxCallbacks=true;
+		}
+		
+		if(CEGUI::WindowManager::getSingleton().getWindow(name)->getType().compare("TaharezLook/RadioButton")==0)
+		{
+			CEGUI::RadioButton *w = ((CEGUI::RadioButton*)CEGUI::WindowManager::getSingleton().getWindow(name));
 			gData.sendCheckboxCallbacks=false;
 			w->setSelected(checked);
 			gData.sendCheckboxCallbacks=true;
