@@ -187,7 +187,20 @@ myIDirect3DDevice9::myIDirect3DDevice9(IDirect3DDevice9* pOriginal)
 
 		/*GUI_CreateFrameWindow("w1");
 		GUI_SetSize("w1",0.35,0.4,0,0);
-		GUI_SetPosition("w1",0.6,0.1,0,0);*/
+		GUI_SetPosition("w1",0.6,0.1,0,0);
+
+		GUI_AddRadioButton("w1","r",1);
+		GUI_SetPosition("r",0.0,0.0,0,0);
+		GUI_SetSize("r",1,0.1,0,0);
+		GUI_SetChecked("r",true);
+
+		GUI_AddRadioButton("w1","r2",1);
+		GUI_SetPosition("r2",0.0,0.1,0,0);
+		GUI_SetSize("r2",1,0.2,0,0);
+
+		GUI_AddRadioButton("w1","r3",1);
+		GUI_SetPosition("r3",0.0,0.2,0,0);
+		GUI_SetSize("r3",1,0.2,0,0);*/
 
 		/*GUI_AddCheckbox("w1","c");
 		GUI_SetPosition("c",0.1,0.1,0,0);
