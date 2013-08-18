@@ -124,28 +124,23 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 	Client* client = new Client(guid, id);
 	Dedicated::self->SetServerPlayers(make_pair(Client::GetClientCount(), Dedicated::connections));
 
-	NetworkID chatbox_id;
-
-	{
-		auto chatbox = GameFactory::Get<Window>((Script::CreateWindow)(get<0>(Window::GUI_MAIN_POS), get<1>(Window::GUI_MAIN_POS), get<2>(Window::GUI_MAIN_POS), get<3>(Window::GUI_MAIN_POS), get<0>(Window::GUI_MAIN_SIZE), get<1>(Window::GUI_MAIN_SIZE), get<2>(Window::GUI_MAIN_SIZE), get<3>(Window::GUI_MAIN_SIZE), true, false, Window::GUI_MAIN_TEXT));
-		chatbox->SetLabel(Window::GUI_MAIN_LABEL);
-		chatbox_id = chatbox->GetNetworkID();
-	}
-
-	Script::AttachWindow(id, chatbox_id);
+	Script::AttachWindow(id, GameFactory::Operate<Window>(GameFactory::Create<Window>(), [](FactoryWindow& window) {
+		Script::SetupWindow(window, get<0>(Window::GUI_MAIN_POS), get<1>(Window::GUI_MAIN_POS), get<2>(Window::GUI_MAIN_POS), get<3>(Window::GUI_MAIN_POS), get<0>(Window::GUI_MAIN_SIZE), get<1>(Window::GUI_MAIN_SIZE), get<2>(Window::GUI_MAIN_SIZE), get<3>(Window::GUI_MAIN_SIZE), true, false, Window::GUI_MAIN_TEXT);
+		window->SetLabel(Window::GUI_MAIN_LABEL);
+		return window->GetNetworkID();
+	}));
 
 	Script::CBR<Script::CBI("OnPlayerRequestGame")> result = 0x00000000;
 	Script::Call<Script::CBI("OnPlayerRequestGame")>(result, id);
-	string player_name;
 
-	{
-		auto player = GameFactory::Get<Player>(id).get();
+	auto player_name = GameFactory::Operate<Player>(id, [&response, guid, id, client, &result](FactoryPlayer& player) {
+		auto baseIDs = Player::GetBaseIDs();
 
 		// TODO hardcoded hack to not get DLC bases, no proper mod handling yet
 		if (!result)
-			result = DB::NPC::GetNPCNotIn(Player::GetBaseIDs(), [](const DB::NPC& data)
+			result = DB::NPC::GetNPC([&baseIDs](const DB::NPC& data)
 			{
-				return (!(data.GetBase() & 0xFF000000) && !data.IsEssential() && !DB::Race::Lookup(data.GetRace())->IsChild());
+				return find(baseIDs.begin(), baseIDs.end(), data.GetBase()) == baseIDs.end() && (!(data.GetBase() & 0xFF000000) && !data.IsEssential() && !DB::Race::Lookup(data.GetRace())->IsChild());
 			})->GetBase();
 
 		const auto* npc = *DB::NPC::Lookup(result);
@@ -193,8 +188,8 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 			player->toPacket(),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(client)));
 
-		player_name = player->GetName();
-	}
+		return player->GetName();
+	});
 
 	Script::SetBaseName(id, player_name.c_str());
 
@@ -482,20 +477,7 @@ NetworkResponse Server::GetWindowText(RakNetGUID guid, FactoryWindow& reference,
 
 	NetworkID root = Script::GetWindowRoot(id);
 
-	vector<RakNetGUID> guids;
-
-	{
-		auto players = GameFactory::GetByType<Player>(ID_PLAYER);
-
-		for (const auto& player : players)
-			if (player->GetPlayerWindows().count(root))
-			{
-				RakNetGUID guid_ = Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID();
-
-				if (guid_ != guid)
-					guids.emplace_back(guid_);
-			}
-	}
+	vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root), guid));
 
 	if (!guids.empty())
 		response.emplace_back(Network::CreateResponse(
@@ -517,20 +499,7 @@ NetworkResponse Server::GetCheckboxSelected(RakNetGUID guid, FactoryCheckbox& re
 
 	NetworkID root = Script::GetWindowRoot(id);
 
-	vector<RakNetGUID> guids;
-
-	{
-		auto players = GameFactory::GetByType<Player>(ID_PLAYER);
-
-		for (const auto& player : players)
-			if (player->GetPlayerWindows().count(root))
-			{
-				RakNetGUID guid_ = Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID();
-
-				if (guid_ != guid)
-					guids.emplace_back(guid_);
-			}
-	}
+	vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root), guid));
 
 	if (!guids.empty())
 		response.emplace_back(Network::CreateResponse(

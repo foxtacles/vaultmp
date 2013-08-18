@@ -48,12 +48,11 @@ void GameFactory::Initialize()
 vector<NetworkID> GameFactory::GetByTypeID(unsigned int type) noexcept
 {
 	vector<NetworkID> result;
-	ReferenceList::iterator it;
 
-	auto copy = cs.Operate([&result, type]() {
+	ReferenceList copy(cs.Operate([&result, type]() {
 		result.reserve(typecount[type]);
 		return instances;
-	});
+	}));
 
 	for (const auto& reference : copy)
 		if (reference.second & type)

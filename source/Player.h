@@ -25,7 +25,9 @@ class Player : public Actor
 
 	public:
 		typedef std::array<unsigned int, 9> CellContext;
-		typedef std::unordered_set<RakNet::NetworkID> AttachedWindows;
+		typedef std::vector<RakNet::NetworkID> AttachedWindows;
+		typedef std::vector<unsigned int> BaseIDTracker;
+		typedef std::unordered_map<RakNet::NetworkID, std::vector<RakNet::NetworkID>> WindowTracker;
 
 	private:
 #ifdef VAULTMP_DEBUG
@@ -33,11 +35,12 @@ class Player : public Actor
 #endif
 
 #ifdef VAULTSERVER
-		static std::unordered_set<unsigned int> baseIDs;
+		static Guarded<BaseIDTracker> baseIDs;
+		static Guarded<WindowTracker> attachedWindows;
 
-		static unsigned int default_respawn;
-		static unsigned int default_cell;
-		static bool default_console;
+		static std::atomic<unsigned int> default_respawn;
+		static std::atomic<unsigned int> default_cell;
+		static std::atomic<bool> default_console;
 
 		Value<unsigned int> player_Respawn;
 		Value<unsigned int> player_Cell;
@@ -93,7 +96,11 @@ class Player : public Actor
 		/**
 		 * \brief Returns the set of all used base IDs by players
 		 */
-		static const std::unordered_set<unsigned int>& GetBaseIDs();
+		static BaseIDTracker GetBaseIDs() { return baseIDs.Operate([](BaseIDTracker& baseIDs) { return baseIDs; }); }
+		/**
+		 * \brief Returns the set of players who have a given window attached
+		 */
+		static WindowTracker::mapped_type GetWindowPlayers(RakNet::NetworkID id) { return attachedWindows.Operate([id](WindowTracker& attachedWindows) { return attachedWindows[id]; }); }
 #endif
 #ifndef VAULTSERVER
 		/**
@@ -132,7 +139,7 @@ class Player : public Actor
 		/**
 		 * \brief Returns the Player's attached windows
 		 */
-		const AttachedWindows& GetPlayerWindows() const;
+		const AttachedWindows& GetPlayerWindows() const { return *player_Windows; };
 #endif
 
 		/**

@@ -1,5 +1,7 @@
 #include "Player.h"
 
+#include <algorithm>
+
 #ifndef VAULTSERVER
 #include "Game.h"
 #endif
@@ -9,11 +11,12 @@ using namespace RakNet;
 using namespace Values;
 
 #ifdef VAULTSERVER
-unordered_set<unsigned int> Player::baseIDs;
+Guarded<Player::BaseIDTracker> Player::baseIDs;
+Guarded<Player::WindowTracker> Player::attachedWindows;
 
-unsigned int Player::default_respawn = DEFAULT_PLAYER_RESPAWN;
-unsigned int Player::default_cell;
-bool Player::default_console = true;
+atomic<unsigned int> Player::default_respawn(DEFAULT_PLAYER_RESPAWN);
+atomic<unsigned int> Player::default_cell;
+atomic<bool> Player::default_console(true);
 #endif
 
 const map<unsigned char, pair<double, double>> Player::default_values = {
@@ -100,7 +103,14 @@ Player::~Player() noexcept
 #endif
 
 #ifdef VAULTSERVER
-	baseIDs.erase(this->GetBase());
+	baseIDs.Operate([this](BaseIDTracker& baseIDs) {
+		baseIDs.erase(find(baseIDs.begin(), baseIDs.end(), this->GetBase()));
+	});
+
+	attachedWindows.Operate([this](WindowTracker& attachedWindows) {
+		for (const auto& id : *player_Windows)
+			attachedWindows[id].erase(find(attachedWindows[id].begin(), attachedWindows[id].end(), this->GetNetworkID()));
+	});
 #endif
 }
 
@@ -112,7 +122,9 @@ void Player::initialize()
 		player_Controls.insert(make_pair(_data, make_pair(Value<unsigned char>(), Value<bool>(true))));
 
 #ifdef VAULTSERVER
-	baseIDs.insert(this->GetBase());
+	baseIDs.Operate([this](BaseIDTracker& baseIDs) {
+		baseIDs.emplace_back(this->GetBase());
+	});
 
 	player_Respawn.set(default_respawn);
 	player_Cell.set(default_cell);
@@ -153,11 +165,6 @@ void Player::SetConsoleEnabled(bool enabled)
 {
 	default_console = enabled;
 }
-
-const unordered_set<unsigned int>& Player::GetBaseIDs()
-{
-	return baseIDs;
-}
 #endif
 
 #ifndef VAULTSERVER
@@ -196,11 +203,6 @@ const Player::CellContext& Player::GetPlayerCellContext() const
 bool Player::GetPlayerConsoleEnabled() const
 {
 	return state_Console.get();
-}
-
-const Player::AttachedWindows& Player::GetPlayerWindows() const
-{
-	return (*player_Windows);
 }
 #endif
 
@@ -252,16 +254,34 @@ Lockable* Player::SetPlayerConsoleEnabled(bool enabled)
 
 Lockable* Player::AttachWindow(RakNet::NetworkID id)
 {
-	if ((*player_Windows).emplace(id).second)
+	if (find(player_Windows->begin(), player_Windows->end(), id) == player_Windows->end())
+	{
+		player_Windows->emplace_back(id);
+
+		attachedWindows.Operate([this, id](WindowTracker& attachedWindows) {
+			attachedWindows[id].emplace_back(this->GetNetworkID());
+		});
+
 		return &player_Windows;
+	}
 
 	return nullptr;
 }
 
 Lockable* Player::DetachWindow(RakNet::NetworkID id)
 {
-	if ((*player_Windows).erase(id))
+	AttachedWindows::iterator it;
+
+	if ((it = find(player_Windows->begin(), player_Windows->end(), id)) != player_Windows->end())
+	{
+		player_Windows->erase(it);
+
+		attachedWindows.Operate([this, id](WindowTracker& attachedWindows) {
+			attachedWindows[id].erase(find(attachedWindows[id].begin(), attachedWindows[id].end(), this->GetNetworkID()));
+		});
+
 		return &player_Windows;
+	}
 
 	return nullptr;
 }
@@ -274,10 +294,9 @@ Lockable* Player::SetBase(unsigned int baseID)
 	auto ret = Actor::SetBase(baseID);
 
 	if (ret)
-	{
-		baseIDs.erase(prev_baseID);
-		baseIDs.insert(baseID);
-	}
+		baseIDs.Operate([prev_baseID, baseID](BaseIDTracker& baseIDs) {
+			*find(baseIDs.begin(), baseIDs.end(), prev_baseID) = baseID;
+		});
 
 	return ret;
 }

@@ -39,6 +39,7 @@ namespace DB
 			Reference& operator=(const Reference&) = delete;
 
 		public:
+			static const std::unordered_map<unsigned int, Reference*>& Get() { return refs; }
 			static Expected<Reference*> Lookup(unsigned int refID);
 			static std::vector<Reference*> Lookup(const std::string& type);
 

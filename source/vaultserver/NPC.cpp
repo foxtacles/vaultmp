@@ -66,14 +66,14 @@ Expected<NPC*> NPC::Lookup(unsigned int baseID)
 	return VaultException("No NPC with baseID %08X found", baseID);
 }
 
-Expected<NPC*> NPC::GetNPCNotIn(const unordered_set<unsigned int>& _set, const function<bool(const NPC&)>& pred)
+Expected<NPC*> NPC::GetNPC(const function<bool(const NPC&)>& pred)
 {
-	auto it = find_if(npcs.begin(), npcs.end(), [&_set, &pred](const pair<const unsigned int, const NPC*>& npcs) { return !_set.count(npcs.first) && pred(*npcs.second); });
+	auto it = find_if(npcs.begin(), npcs.end(), [&pred](const pair<const unsigned int, const NPC*>& npcs) { return pred(*npcs.second); });
 
 	if (it != npcs.end())
 		return it->second;
 
-	return VaultException("No NPC found which is not in the given set");
+	return VaultException("No NPC found fulfilling the conditions of the given function");
 }
 
 unsigned int NPC::GetBase() const

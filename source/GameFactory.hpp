@@ -98,12 +98,11 @@ template<typename T>
 std::vector<FactoryWrapper<T>> GameFactory::GetByType(unsigned int type) noexcept
 {
 	std::vector<FactoryWrapper<T>> result;
-	ReferenceList copy;
 
-	cs.Operate([&result, &copy, type]() {
+	ReferenceList copy(cs.Operate([&result, type]() {
 		result.reserve(typecount[type]);
-		copy = std::move(instances);
-	});
+		return instances;
+	}));
 
 	for (const auto& reference : copy)
 		if (reference.second & type)

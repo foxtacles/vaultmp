@@ -206,44 +206,36 @@ void Script::Initialize()
 		object->SetLockLevel(lock);
 	};
 
-	auto objects = DB::Reference::Lookup("CONT");
+	const auto& references = DB::Reference::Get();
 
-	for (const auto* reference : objects)
+	for (const auto& reference : references)
 	{
 		// FIXME dlc support
-		if (reference->GetReference() & 0xFF000000)
+		if (reference.first & 0xFF000000)
 			continue;
 
-		GameFactory::Operate<Container>(GameFactory::Create<Container>(reference->GetReference(), reference->GetBase()), [&object_init, reference](FactoryContainer& container) {
-			object_init(container, reference);
-		});
-	}
+		const auto* data = reference.second;
 
-	objects = DB::Reference::Lookup("DOOR");
+		switch (Utils::hash(data->GetType().c_str(), data->GetType().length() + 1))
+		{
+			case Utils::hash("CONT"):
+				GameFactory::Operate<Container>(GameFactory::Create<Container>(data->GetReference(), data->GetBase()), [&object_init, data](FactoryContainer& container) {
+					object_init(container, data);
+				});
+				break;
 
-	for (const auto* reference : objects)
-	{
-		// FIXME dlc support
-		if (reference->GetReference() & 0xFF000000)
-			continue;
+			case Utils::hash("TERM"):
+				GameFactory::Operate<Object>(GameFactory::Create<Object>(data->GetReference(), data->GetBase()), [&object_init, data](FactoryObject& object) {
+					object_init(object, data);
+					object->SetLockLevel(DB::Terminal::Lookup(data->GetBase())->GetLock());
+				});
+				break;
 
-		GameFactory::Operate<Object>(GameFactory::Create<Object>(reference->GetReference(), reference->GetBase()), [&object_init, reference](FactoryObject& door) {
-			object_init(door, reference);
-		});
-	}
-
-	objects = DB::Reference::Lookup("TERM");
-
-	for (const auto* reference : objects)
-	{
-		// FIXME dlc support
-		if (reference->GetReference() & 0xFF000000)
-			continue;
-
-		GameFactory::Operate<Object>(GameFactory::Create<Object>(reference->GetReference(), reference->GetBase()), [&object_init, reference](FactoryObject& terminal) {
-			object_init(terminal, reference);
-			terminal->SetLockLevel(DB::Terminal::Lookup(reference->GetBase())->GetLock());
-		});
+			default:
+				GameFactory::Operate<Object>(GameFactory::Create<Object>(data->GetReference(), data->GetBase()), [&object_init, data](FactoryObject& object) {
+					object_init(object, data);
+				});
+		}
 	}
 }
 
@@ -1255,7 +1247,7 @@ unsigned int Script::GetPlayerWindowList(NetworkID id, NetworkID** data) noexcep
 
 NetworkID Script::GetPlayerChatboxWindow(NetworkID id) noexcept
 {
-	unordered_set<NetworkID> windows;
+	vector<NetworkID> windows;
 
 	return GameFactory::Operate<Player, FailPolicy::Bool>(id, [&windows](FactoryPlayer& player) {
 		windows = player->GetPlayerWindows();
@@ -2644,10 +2636,13 @@ bool Script::GetCheckboxSelected(NetworkID id) noexcept
 
 NetworkID (Script::CreateWindow)(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
 {
-	NetworkID id = GameFactory::Create<Window>();
-	auto window = GameFactory::Get<Window>(id);
-	SetupWindow(window.get(), posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+	NetworkID id = GameFactory::Operate<Window>(GameFactory::Create<Window>(), [posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text](FactoryWindow& window) {
+		SetupWindow(window, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+		return window->GetNetworkID();
+	});
+
 	Call<CBI("OnCreate")>(id);
+
 	return id;
 }
 
@@ -2669,21 +2664,15 @@ bool Script::DestroyWindow(NetworkID id) noexcept
 	Window::CollectChilds(id, deletions);
 	reverse(deletions.begin(), deletions.end()); // reverse so the order of deletion is valid
 
-	vector<RakNetGUID> guids;
+	auto players = Player::GetWindowPlayers(root);
 
-	{
-		auto players = GameFactory::GetByType<Player>(ID_PLAYER);
+	if (root == id)
+		for (const auto& id : players)
+			GameFactory::Operate<Player, FailPolicy::Return>(id, [root](FactoryPlayer& player) {
+				player->DetachWindow(root);
+			});
 
-		for (const auto& player : players)
-			if (player->GetPlayerWindows().count(root))
-			{
-				guids.emplace_back(Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID());
-
-				if (root == id)
-					player->DetachWindow(root);
-			}
-	}
-
+	vector<RakNetGUID> guids(Client::GetNetworkList(players));
 	NetworkResponse response;
 
 	for (const auto& id : deletions)
@@ -2717,20 +2706,11 @@ bool Script::AddChildWindow(NetworkID id, NetworkID child) noexcept
 		return true;
 	})) return false;
 
-	NetworkID root = GetWindowRoot(id);
-
 	vector<NetworkID> additions;
 	Window::CollectChilds(child, additions);
 
-	vector<RakNetGUID> guids;
-
-	{
-		auto players = GameFactory::GetByType<Player>(ID_PLAYER);
-
-		for (const auto& player : players)
-			if (player->GetPlayerWindows().count(root))
-				guids.emplace_back(Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID());
-	}
+	NetworkID root = GetWindowRoot(id);
+	vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
 
 	if (!guids.empty())
 	{
@@ -2759,21 +2739,12 @@ bool Script::RemoveChildWindow(NetworkID id, NetworkID child) noexcept
 		return true;
 	})) return false;
 
-	NetworkID root = GetWindowRoot(id);
-
 	vector<NetworkID> deletions;
 	Window::CollectChilds(child, deletions);
 	reverse(deletions.begin(), deletions.end()); // reverse so the order of deletion is valid
 
-	vector<RakNetGUID> guids;
-
-	{
-		auto players = GameFactory::GetByType<Player>(ID_PLAYER);
-
-		for (const auto& player : players)
-			if (player->GetPlayerWindows().count(root))
-				guids.emplace_back(Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID());
-	}
+	NetworkID root = GetWindowRoot(id);
+	vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
 
 	if (!guids.empty())
 	{
@@ -2798,16 +2769,7 @@ bool Script::SetWindowPos(NetworkID id, double X, double Y, double offset_X, dou
 	})) return false;
 
 	NetworkID root = GetWindowRoot(id);
-
-	vector<RakNetGUID> guids;
-
-	{
-		auto players = GameFactory::GetByType<Player>(ID_PLAYER);
-
-		for (const auto& player : players)
-			if (player->GetPlayerWindows().count(root))
-				guids.emplace_back(Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID());
-	}
+	vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
 
 	if (!guids.empty())
 		Network::Queue({Network::CreateResponse(
@@ -2825,16 +2787,7 @@ bool Script::SetWindowSize(NetworkID id, double X, double Y, double offset_X, do
 	})) return false;
 
 	NetworkID root = GetWindowRoot(id);
-
-	vector<RakNetGUID> guids;
-
-	{
-		auto players = GameFactory::GetByType<Player>(ID_PLAYER);
-
-		for (const auto& player : players)
-			if (player->GetPlayerWindows().count(root))
-				guids.emplace_back(Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID());
-	}
+	vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
 
 	if (!guids.empty())
 		Network::Queue({Network::CreateResponse(
@@ -2852,16 +2805,7 @@ bool Script::SetWindowVisible(NetworkID id, bool visible) noexcept
 	})) return false;
 
 	NetworkID root = GetWindowRoot(id);
-
-	vector<RakNetGUID> guids;
-
-	{
-		auto players = GameFactory::GetByType<Player>(ID_PLAYER);
-
-		for (const auto& player : players)
-			if (player->GetPlayerWindows().count(root))
-				guids.emplace_back(Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID());
-	}
+	vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
 
 	if (!guids.empty())
 		Network::Queue({Network::CreateResponse(
@@ -2879,16 +2823,7 @@ bool Script::SetWindowLocked(NetworkID id, bool locked) noexcept
 	})) return false;
 
 	NetworkID root = GetWindowRoot(id);
-
-	vector<RakNetGUID> guids;
-
-	{
-		auto players = GameFactory::GetByType<Player>(ID_PLAYER);
-
-		for (const auto& player : players)
-			if (player->GetPlayerWindows().count(root))
-				guids.emplace_back(Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID());
-	}
+	vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
 
 	if (!guids.empty())
 		Network::Queue({Network::CreateResponse(
@@ -2913,16 +2848,7 @@ bool Script::SetWindowText(NetworkID id, const char* text) noexcept
 	})) return false;
 
 	NetworkID root = GetWindowRoot(id);
-
-	vector<RakNetGUID> guids;
-
-	{
-		auto players = GameFactory::GetByType<Player>(ID_PLAYER);
-
-		for (const auto& player : players)
-			if (player->GetPlayerWindows().count(root))
-				guids.emplace_back(Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID());
-	}
+	vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
 
 	if (!guids.empty())
 		Network::Queue({Network::CreateResponse(
@@ -2935,28 +2861,37 @@ bool Script::SetWindowText(NetworkID id, const char* text) noexcept
 
 NetworkID Script::CreateButton(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
 {
-	NetworkID id = GameFactory::Create<Button>();
-	auto window = GameFactory::Get<Button>(id);
-	SetupButton(window.get(), posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+	NetworkID id = GameFactory::Operate<Button>(GameFactory::Create<Button>(), [posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text](FactoryButton& button) {
+		SetupButton(button, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+		return button->GetNetworkID();
+	});
+
 	Call<CBI("OnCreate")>(id);
+
 	return id;
 }
 
 NetworkID Script::CreateText(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
 {
-	NetworkID id = GameFactory::Create<Text>();
-	auto window = GameFactory::Get<Text>(id);
-	SetupText(window.get(), posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+	NetworkID id = GameFactory::Operate<Text>(GameFactory::Create<Text>(), [posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text](FactoryText& text_) {
+		SetupText(text_, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+		return text_->GetNetworkID();
+	});
+
 	Call<CBI("OnCreate")>(id);
+
 	return id;
 }
 
 NetworkID Script::CreateEdit(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
 {
-	NetworkID id = GameFactory::Create<Edit>();
-	auto window = GameFactory::Get<Edit>(id);
-	SetupEdit(window.get(), posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+	NetworkID id = GameFactory::Operate<Edit>(GameFactory::Create<Edit>(), [posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text](FactoryEdit& edit) {
+		SetupEdit(edit, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+		return edit->GetNetworkID();
+	});
+
 	Call<CBI("OnCreate")>(id);
+
 	return id;
 }
 
@@ -2978,16 +2913,7 @@ bool Script::SetEditMaxLength(NetworkID id, unsigned int length) noexcept
 	})) return false;
 
 	NetworkID root = GetWindowRoot(id);
-
-	vector<RakNetGUID> guids;
-
-	{
-		auto players = GameFactory::GetByType<Player>(ID_PLAYER);
-
-		for (const auto& player : players)
-			if (player->GetPlayerWindows().count(root))
-				guids.emplace_back(Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID());
-	}
+	vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
 
 	if (!guids.empty())
 	{
@@ -3017,16 +2943,7 @@ bool Script::SetEditValidation(NetworkID id, const char* validation) noexcept
 	})) return false;
 
 	NetworkID root = GetWindowRoot(id);
-
-	vector<RakNetGUID> guids;
-
-	{
-		auto players = GameFactory::GetByType<Player>(ID_PLAYER);
-
-		for (const auto& player : players)
-			if (player->GetPlayerWindows().count(root))
-				guids.emplace_back(Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID());
-	}
+	vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
 
 	if (!guids.empty())
 		Network::Queue({Network::CreateResponse(
@@ -3039,10 +2956,13 @@ bool Script::SetEditValidation(NetworkID id, const char* validation) noexcept
 
 NetworkID (Script::CreateCheckbox)(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
 {
-	NetworkID id = GameFactory::Create<Checkbox>();
-	auto window = GameFactory::Get<Checkbox>(id);
-	SetupCheckbox(window.get(), posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+	NetworkID id = GameFactory::Operate<Checkbox>(GameFactory::Create<Checkbox>(), [posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text](FactoryCheckbox& checkbox) {
+		SetupCheckbox(checkbox, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+		return checkbox->GetNetworkID();
+	});
+
 	Call<CBI("OnCreate")>(id);
+
 	return id;
 }
 
@@ -3053,16 +2973,7 @@ bool Script::SetCheckboxSelected(NetworkID id, bool selected) noexcept
 	})) return false;
 
 	NetworkID root = GetWindowRoot(id);
-
-	vector<RakNetGUID> guids;
-
-	{
-		auto players = GameFactory::GetByType<Player>(ID_PLAYER);
-
-		for (const auto& player : players)
-			if (player->GetPlayerWindows().count(root))
-				guids.emplace_back(Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID());
-	}
+	vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
 
 	if (!guids.empty())
 		Network::Queue({Network::CreateResponse(

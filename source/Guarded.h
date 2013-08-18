@@ -19,8 +19,7 @@ class Guarded : private Value<T>, private CriticalSection
 		template<typename F>
 		typename std::enable_if<!std::is_same<typename std::result_of<F(T&)>::type, void>::value, typename std::result_of<F(T&)>::type>::type Operate(F function) {
 			CriticalLock lock(*this);
-			auto&& result = function(**this);
-			return std::forward<typename std::remove_reference<typename std::result_of<F(T&)>::type>::type>(result);
+			return function(**this);
 		}
 
 		template<typename F>
@@ -39,8 +38,7 @@ class Guarded<void> : private CriticalSection
 		template<typename F>
 		typename std::enable_if<!std::is_same<typename std::result_of<F()>::type, void>::value, typename std::result_of<F()>::type>::type Operate(F function) {
 			CriticalLock lock(*this);
-			auto&& result = function();
-			return std::forward<typename std::remove_reference<typename std::result_of<F()>::type>::type>(result);
+			return function();
 		}
 
 		template<typename F>
