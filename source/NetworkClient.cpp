@@ -328,11 +328,10 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				case pTypes::ID_UPDATE_ANGLE:
 				{
 					NetworkID id;
-					unsigned char axis;
-					double value;
-					PacketFactory::Access<pTypes::ID_UPDATE_ANGLE>(packet, id, axis, value);
+					double X, Z;
+					PacketFactory::Access<pTypes::ID_UPDATE_ANGLE>(packet, id, X, Z);
 					auto reference = GameFactory::Get<Object>(id);
-					Game::net_SetAngle(reference.get(), axis, value);
+					Game::net_SetAngle(reference.get(), X, 0.00, Z);
 					break;
 				}
 

@@ -285,6 +285,7 @@ API::FunctionMap API::functions = {
 		{Func::GUIValid, "ss"},
 		{Func::GUICreateCheckbox, "ss"},
 		{Func::GUICheckbox, "si"},
+		{Func::GetPosAngle, "r"},
 		{Func::Enable, "rI"},
 		{Func::Disable, "rI"},
 		{Func::EquipItem, "rjII"},
@@ -308,8 +309,6 @@ API::FunctionMap API::functions = {
 		{Func::MatchRace, "r$y"}, // has been patched to take Race
 		{Func::SexChange, "r$I"},
 		{Func::ForceWeather, "nI"},
-		{Func::ScanContainer, "r"},
-		{Func::RemoveAllItemsEx, "r"},
 		{Func::ForceRespawn, ""},
 		{Func::SetGlobalValue, "ri"},
 		{Func::UIMessage, "si"},

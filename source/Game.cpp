@@ -72,15 +72,19 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				FutureSet(shared, getFrom<unsigned int>(result));
 				break;
 
-			case Func::GetPos:
-				GameFactory::Operate<Object>(getFrom<unsigned int>(info.at(1)), [&info, result](FactoryObject& object) {
-					GetPos(object, getFrom<unsigned char>(info.at(2)), result);
-				}); break;
+			case Func::GetPosAngle:
+			{
+				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
 
-			case Func::GetAngle:
-				GameFactory::Operate<Object>(getFrom<unsigned int>(info.at(1)), [&info, result](FactoryObject& object) {
-					GetAngle(object, getFrom<unsigned char>(info.at(2)), result);
-				}); break;
+				GameFactory::Operate<Object>(getFrom<unsigned int>(info.at(1)), [&info, data](FactoryObject& object) {
+					const float* data_ = reinterpret_cast<const float*>(&data[0]);
+					GetAngle(object, data_[0], data_[1], data_[2]);
+					GetPos(object, data_[3], data_[4], data_[5]);
+				});
+
+				delete &data;
+				break;
+			}
 
 			case Func::GetActivate:
 			{
@@ -314,10 +318,8 @@ void Game::Startup()
 	});
 
 	Interface::Setup([&self_ref, id]() {
-		Interface::SetupCommand(Func::GetPos, {self_ref, Object::Param_Axis()});
-		Interface::SetupCommand(Func::GetPos, {Player::CreateFunctor(FLAG_ENABLED | FLAG_NOTSELF | FLAG_ALIVE), Object::Param_Axis()}, 30);
-		//Interface::SetupCommand("GetPos", {Actor::CreateFunctor(FLAG_ENABLED | FLAG_ALIVE), Object::Param_Axis()}, 30);
-		Interface::SetupCommand(Func::GetAngle, {self_ref, RawParameter(vector<string> {API::RetrieveAxis_Reverse(Axis_X), API::RetrieveAxis_Reverse(Axis_Z)})});
+		Interface::SetupCommand(Func::GetPosAngle, {self_ref});
+		Interface::SetupCommand(Func::GetPosAngle, {Player::CreateFunctor(FLAG_ENABLED | FLAG_NOTSELF | FLAG_ALIVE)}, 30);
 		Interface::SetupCommand(Func::GetActorState, {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), Player::CreateFunctor(FLAG_MOVCONTROLS, id)});
 		Interface::SetupCommand(Func::GetParentCell, {Player::CreateFunctor(FLAG_SELF | FLAG_ALIVE)}, 30);
 
@@ -1644,23 +1646,24 @@ void Game::net_SetPos(const FactoryObject& reference, double X, double Y, double
 	}
 }
 
-void Game::net_SetAngle(const FactoryObject& reference, unsigned char axis, double value)
+void Game::net_SetAngle(const FactoryObject& reference, double X, double Y, double Z)
 {
-	bool result = static_cast<bool>(reference->SetAngle(axis, value));
+	bool result_x = static_cast<bool>(reference->SetAngle(Axis_X, X));
+	bool result = (result_x | static_cast<bool>(reference->SetAngle(Axis_Y, Y)) | static_cast<bool>(reference->SetAngle(Axis_Z, Z)));
 
 	if (result && reference->GetEnabled())
 	{
 		SetAngle(reference);
 
-		if (axis == Axis_X)
-		{
-			auto actor = vaultcast<Actor>(reference);
+		if (!result_x)
+			return;
 
-			if (actor && actor->GetActorWeaponAnimation() == AnimGroup_AimIS)
-			{
-				SetActorAnimation(actor.get(), AnimGroup_AimISDown);
-				SetActorAnimation(actor.get(), AnimGroup_AimISUp);
-			}
+		auto actor = vaultcast<Actor>(reference);
+
+		if (actor && actor->GetActorWeaponAnimation() == AnimGroup_AimIS)
+		{
+			SetActorAnimation(actor.get(), AnimGroup_AimISDown);
+			SetActorAnimation(actor.get(), AnimGroup_AimISUp);
 		}
 	}
 }
@@ -2252,43 +2255,30 @@ void Game::net_SetDeletedStatic(DeletedObjects&& deletedStatic)
 	});
 }
 
-void Game::GetPos(const FactoryObject& reference, unsigned char axis, double value)
+void Game::GetPos(const FactoryObject& reference, double X, double Y, double Z)
 {
-	static bool update = false;
+	bool result = (static_cast<bool>(reference->SetGamePos(Axis_X, X)) | static_cast<bool>(reference->SetGamePos(Axis_Y, Y)) | static_cast<bool>(reference->SetGamePos(Axis_Z, Z)));
 
-	bool result = static_cast<bool>(reference->SetGamePos(axis, value));
-
-	if (reference->GetReference() == PLAYER_REFERENCE)
+	if (result && reference->GetReference() == PLAYER_REFERENCE)
 	{
-		update |= result;
+		reference->SetNetworkPos(Axis_X, X);
+		reference->SetNetworkPos(Axis_Y, Y);
+		reference->SetNetworkPos(Axis_Z, Z);
 
-		if (axis == Axis_Z && update)
-		{
-			update = false;
-
-			double X = reference->GetGamePos(Axis_X);
-			double Y = reference->GetGamePos(Axis_Y);
-			double Z = reference->GetGamePos(Axis_Z);
-
-			reference->SetNetworkPos(Axis_X, X);
-			reference->SetNetworkPos(Axis_Y, Y);
-			reference->SetNetworkPos(Axis_Z, Z);
-
-			Network::Queue({Network::CreateResponse(
-				PacketFactory::Create<pTypes::ID_UPDATE_POS>(reference->GetNetworkID(), X, Y, Z),
-				HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, server)
-			});
-		}
+		Network::Queue({Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_POS>(reference->GetNetworkID(), X, Y, Z),
+			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, server)
+		});
 	}
 }
 
-void Game::GetAngle(const FactoryObject& reference, unsigned char axis, double value)
+void Game::GetAngle(const FactoryObject& reference, double X, double Y, double Z)
 {
-	bool result = static_cast<bool>(reference->SetAngle(axis, value));
+	bool result = (static_cast<bool>(reference->SetAngle(Axis_X, X)) | static_cast<bool>(reference->SetAngle(Axis_Y, Y)) | static_cast<bool>(reference->SetAngle(Axis_Z, Z)));
 
 	if (result)
 		Network::Queue({Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_ANGLE>(reference->GetNetworkID(), axis, value),
+			PacketFactory::Create<pTypes::ID_UPDATE_ANGLE>(reference->GetNetworkID(), X, Z),
 			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, server)
 		});
 }

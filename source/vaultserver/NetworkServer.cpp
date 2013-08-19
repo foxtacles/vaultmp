@@ -154,11 +154,10 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 				case pTypes::ID_UPDATE_ANGLE:
 				{
 					NetworkID id;
-					unsigned char axis;
-					double value;
-					PacketFactory::Access<pTypes::ID_UPDATE_ANGLE>(packet, id, axis, value);
+					double X, Z;
+					PacketFactory::Access<pTypes::ID_UPDATE_ANGLE>(packet, id, X, Z);
 					auto reference = GameFactory::Get<Object>(id);
-					response = Server::GetAngle(data->guid, reference.get(), axis, value);
+					response = Server::GetAngle(data->guid, reference.get(), X, 0.00, Z);
 					break;
 				}
 

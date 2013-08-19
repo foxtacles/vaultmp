@@ -126,7 +126,7 @@ void GameFactory::Leave(FactoryWrapper<T>& base)
 
 	_base->EndSession();
 	base.base = nullptr;
-	base.type = 0x00;
+	base.type = 0x00000000;
 }
 
 template<typename T, typename... Args>

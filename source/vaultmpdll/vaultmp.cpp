@@ -4,6 +4,7 @@
 #include <string>
 #include <mutex>
 #include <queue>
+#include <cmath>
 
 #include "vaultmp.h"
 
@@ -350,127 +351,22 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 			break;
 		}
 
-		case 0x0003 | VAULTFUNCTION: // ScanContainer - Returns a containers content including baseID, amount, condition, equipped state
-		case 0x0005 | VAULTFUNCTION: // RemoveAllItemsEx - same functionality, client will use the information for RemoveItem
+		case 0x0003 | VAULTFUNCTION: // GetPosAngle - Get pos and angle
 		{
 			ZeroMemory(result, sizeof(double));
 
-			unsigned int count;
+			if (!reference)
+				return false;
 
-			asm(
-				"MOV ECX,%1\n"
-				"PUSH 1\n"
-				"PUSH 0\n"
-				"CALL %2\n"
-				"MOV %0,EAX\n"
-				: "=m"(count)
-				: "m"(reference), "r"(ITEM_COUNT)
-				: "eax", "ecx"
-			);
+			*(unsigned int*) result = sizeof(float) * 6;
+			float* data = (float*) ((unsigned) result + 4);
 
-			if (count > 0)
-			{
-				unsigned int size = count * 20;
-				vector<unsigned char> container;
-				container.reserve(size);
-
-				for (unsigned int i = 0; i < count; ++i)
-				{
-					unsigned int item;
-
-					// dynamic allocation here
-
-					asm(
-						"MOV ECX,%2\n"
-						"PUSH 0\n"
-						"PUSH %1\n"
-						"CALL %3\n"
-						"MOV %0,EAX\n"
-						: "=m"(item)
-						: "r"(i), "m"(reference), "r"(ITEM_GET)
-						: "eax", "ecx"
-					);
-
-					if (item)
-					{
-						unsigned int amount = *((unsigned int*)(((unsigned) item) + 0x04));
-						unsigned int baseForm = *((unsigned int*)(((unsigned) item) + 0x08));
-
-						if (baseForm)
-						{
-							unsigned char type = *((unsigned char*)(((unsigned) baseForm) + 0x04));
-							unsigned int baseID = *((unsigned int*)(((unsigned) baseForm) + 0x0C));
-
-							container.insert(container.end(), (unsigned char*) &baseID, ((unsigned char*) &baseID) + 4);
-							container.insert(container.end(), (unsigned char*) &amount, ((unsigned char*) &amount) + 4);
-
-							unsigned int equipped;
-
-							asm(
-								"MOV ECX,%1\n"
-								"PUSH 0\n"
-								"CALL %2\n"
-								"MOV %0,EAX\n"
-								: "=m"(equipped)
-								: "m"(item), "r"(ITEM_ISEQUIPPED)
-								: "eax", "ecx"
-							);
-
-							equipped &= 0x00000001;
-
-							container.insert(container.end(), (unsigned char*) &equipped, ((unsigned char*) &equipped) + 4);
-
-							double condition;
-
-							// there's also a way to get the absolute health value
-
-							if (type == 0x18 || type == 0x28)
-							{
-								asm(
-									"MOV ECX,%1\n"
-									"PUSH 1\n"
-									"CALL %2\n"
-									"FSTP QWORD PTR %0\n"
-									: "=m"(condition)
-									: "m"(item), "r"(ITEM_CONDITION)
-									: "ecx"
-								);
-							}
-
-							container.insert(container.end(), (unsigned char*) &condition, ((unsigned char*) &condition) + 8);
-
-							asm (
-								"MOV ECX,%0\n"
-								"CALL %1\n"
-								"PUSH %0\n"
-								:
-								: "m"(item), "r"(ITEM_UNK1)
-								: "ecx"
-							);
-
-							// the following is probably a free function
-
-							asm (
-								"MOV ECX,%0\n"
-								"CALL %1\n"
-								:
-								: "r"(ITEM_UNK3), "r"(ITEM_UNK2)
-								: "ecx"
-							);
-						}
-						else
-							return true;
-					}
-				}
-
-				size = container.size();
-				unsigned char* data = new unsigned char[size];
-				memcpy(data, &container[0], size);
-
-				memcpy(result, &size, 4);
-				memcpy((void*)((unsigned) result + 4), &data, 4);
-			}
-
+			data[0] = (*(float*)((unsigned char*) reference + 0x20)) * 180 / M_PI;
+			data[1] = (*(float*)((unsigned char*) reference + 0x24)) * 180 / M_PI;
+			data[2] = (*(float*)((unsigned char*) reference + 0x28)) * 180 / M_PI;
+			data[3] = *(float*)((unsigned char*) reference + 0x2C);
+			data[4] = *(float*)((unsigned char*) reference + 0x30);
+			data[5] = *(float*)((unsigned char*) reference + 0x34);
 			return true;
 		}
 
@@ -767,10 +663,15 @@ void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
 		*((unsigned int*)(((unsigned)** param2) + 0x08)) = param2_ref;
 	}
 
+	unsigned char result[PIPE_LENGTH];
+	ZeroMemory(result, sizeof(result));
+
+	*((unsigned int*)((unsigned) result + 1)) = r;
+
 	bool bigresult = false;
 
 	if ((opcode & VAULTFUNCTION) == VAULTFUNCTION)
-		bigresult = vaultfunction((void*) reference, args[6], _args, opcode);
+		bigresult = vaultfunction((void*) reference, result + 5, _args, opcode);
 	else
 	{
 		unsigned int function = FuncLookup((unsigned int) opcode);
@@ -808,31 +709,10 @@ void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
 		}
 	}
 
-	unsigned char result[PIPE_LENGTH];
-	ZeroMemory(result, sizeof(result));
-
-	*((unsigned int*)((unsigned) result + 1)) = r;
-
 	if (!bigresult)
-	{
 		result[0] = PIPE_OP_RETURN;
-		memcpy(result + 5, args[6], sizeof(double));
-	}
 	else
-	{
 		result[0] = PIPE_OP_RETURN_BIG;
-		void* data = args[6];
-		unsigned int size = *((unsigned int*) data);
-		unsigned char* _data = (unsigned char*) * ((unsigned int*)(((unsigned) data) + 4));
-
-		if (size && size <= (PIPE_LENGTH - 9))
-		{
-			memcpy(result + 5, &size, 4);
-			memcpy(result + 9, _data, size);
-		}
-
-		delete[] _data;
-	}
 
 	pipeClient.Send(result);
 }

@@ -410,7 +410,7 @@ class Game
 		/**
 		 * \brief Network function to handle Object position
 		 */
-		static void net_SetAngle(const FactoryObject& reference, unsigned char axis, double value);
+		static void net_SetAngle(const FactoryObject& reference, double X, double Y, double Z);
 		/**
 		 * \brief Network function to handle Object cell
 		 */
@@ -551,11 +551,11 @@ class Game
 		/**
 		 * \brief Handles GetPos command result
 		 */
-		static void GetPos(const FactoryObject& reference, unsigned char axis, double value);
+		static void GetPos(const FactoryObject& reference, double X, double Y, double Z);
 		/**
 		 * \brief Handles GetAngle command result
 		 */
-		static void GetAngle(const FactoryObject& reference, unsigned char axis, double value);
+		static void GetAngle(const FactoryObject& reference, double X, double Y, double Z);
 		/**
 		 * \brief Handles GetParentCell command result
 		 */

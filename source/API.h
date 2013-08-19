@@ -286,9 +286,8 @@ namespace Values
 
 		GetActorState = 0x0001 | VAULTFUNCTION,
 		GetActivate = 0x0002 | VAULTFUNCTION,
-		ScanContainer = 0x0003 | VAULTFUNCTION,
+		GetPosAngle = 0x0003 | VAULTFUNCTION,
 		UIMessage = 0x0004 | VAULTFUNCTION,
-		RemoveAllItemsEx = 0x0005 | VAULTFUNCTION,
 		ForceRespawn = 0x0006 | VAULTFUNCTION,
 		SetGlobalValue = 0x0007 | VAULTFUNCTION,
 		GUIChat = 0x0008 | VAULTFUNCTION,
@@ -307,7 +306,7 @@ namespace Values
 		GUIMaxLen = 0x0021 | VAULTFUNCTION,
 		GUIValid = 0x0022 | VAULTFUNCTION,
 		GUICreateCheckbox = 0x0023 | VAULTFUNCTION,
-		GUICheckbox = 0x0024 | VAULTFUNCTION
+		GUICheckbox = 0x0024 | VAULTFUNCTION,
 	};
 
 	enum ActorVals

@@ -22,22 +22,18 @@ NetworkResponse Server::Authenticate(RakNetGUID guid, const string& name, const 
 	if (result)
 	{
 		for (const auto& mod : Dedicated::modfiles)
-		{
 			response.emplace_back(Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_GAME_MOD>(mod.first, mod.second),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
-		}
 
 		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_GAME_START>(),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 	else
-	{
 		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_GAME_END>(Reason::ID_REASON_DENIED),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
-	}
 
 	return response;
 }
@@ -266,17 +262,15 @@ NetworkResponse Server::GetPos(RakNetGUID guid, FactoryObject& reference, double
 	return response;
 }
 
-NetworkResponse Server::GetAngle(RakNetGUID guid, FactoryObject& reference, unsigned char axis, double value)
+NetworkResponse Server::GetAngle(RakNetGUID guid, FactoryObject& reference, double X, double Y, double Z)
 {
 	NetworkResponse response;
-	bool result = static_cast<bool>(reference->SetAngle(axis, value));
+	bool result = static_cast<bool>(reference->SetAngle(Axis_X, X)) |  static_cast<bool>(reference->SetAngle(Axis_Y, Y)) |  static_cast<bool>(reference->SetAngle(Axis_Z, Z));
 
 	if (result)
-	{
 		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_ANGLE>(reference->GetNetworkID(), axis, value),
+			PacketFactory::Create<pTypes::ID_UPDATE_ANGLE>(reference->GetNetworkID(), X, Z),
 			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, Client::GetNetworkList(guid)));
-	}
 
 	return response;
 }

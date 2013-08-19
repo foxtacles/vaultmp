@@ -84,7 +84,7 @@ unsigned int GameFactory::GetType(NetworkID id) noexcept
 {
 	return cs.Operate([id]() {
 		auto it = GetShared(id);
-		return it != instances.end() ? it->second : 0x00;
+		return it != instances.end() ? it->second : 0x00000000;
 	});
 }
 
