@@ -2,18 +2,14 @@
 #include <WinBase.h>
 #include "myIDirect3DDevice9.h"
 #include <queue>
-
 #include "global.h"
-
 #include "GameData.h"
-
 #include "ChatUtils.h"
-
 #include "debug.h"
-
 #include "Export.h"
 
 #include "CEGUI/cegui/include/CEGUIUDim.h"
+#include "GUIHelper.h"
 
 extern myIDirect3DDevice9* gl_pmyIDirect3DDevice9;
 
@@ -107,8 +103,10 @@ bool GUI_CheckboxChanged(const CEGUI::EventArgs& e)
 		if(callbackPTR_OnCheckboxChange)
 		{
 			if(gData.sendCheckboxCallbacks)
-				callbackPTR_OnCheckboxChange((char*)c->getName().c_str(),c->isSelected());
-			
+			{
+				if(c->isSelected())	//Fire event only if selected radio button, not unseelected one
+					callbackPTR_OnCheckboxChange((char*)c->getName().c_str(),c->isSelected());
+			}
 		}
 	}
 
@@ -191,110 +189,61 @@ extern "C"
 		Debug::FunctionReturn("SetPlayersDataPointer");
 	}
 
-	/*__declspec(dllexport) void HideChatbox(bool hide)
-	{
-		gData.hideChatbox=hide;
-	}
-
-	__declspec(dllexport) void LockChatbox(bool lock)
-	{
-		gData.lockChatbox=lock;
-	}
-
-	__declspec(dllexport) void SetChatboxPos(float x,float y)
-	{
-		CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"));
-		w->setPosition(CEGUI::UVector2(cegui_reldim(x), cegui_reldim(y)));
-	}
-
-	__declspec(dllexport) void SetChatboxSize(float x,float y)
-	{
-		CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"));
-		w->setSize(CEGUI::UVector2(cegui_reldim(x), cegui_reldim(y)));
-	}*/
-
-
 
 
 	__declspec(dllexport) void GUI_CreateFrameWindow(char *name)
 	{
-		CEGUI::WindowManager& winMgr = CEGUI::WindowManager::getSingleton();
-		CEGUI::DefaultWindow* root = (CEGUI::DefaultWindow*)winMgr.getWindow("Root");
-		CEGUI::FrameWindow * wnd = (CEGUI::FrameWindow*)winMgr.createWindow("TaharezLook/FrameWindow", name);
-		root->addChildWindow(wnd);
+		GUIHelper::newFramedWindow(name);
 	}
 
 	__declspec(dllexport) void GUI_AddStaticText(char* parent,char* name)
 	{
-		CEGUI::WindowManager& winMgr = CEGUI::WindowManager::getSingleton();
-
-		CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow(parent));
-		CEGUI::DefaultWindow* wnd=(CEGUI::DefaultWindow*)winMgr.createWindow("TaharezLook/StaticText", name);
-
-		w->addChildWindow(wnd);
-
-		wnd->subscribeEvent(CEGUI::Window::EventMouseClick,GUI_MouseClickCallback);
+		GUIHelper::newWindow(parent,name,"TaharezLook/StaticText")->subscribeEvent(CEGUI::Window::EventMouseClick,GUI_MouseClickCallback);
 	}
 
 	__declspec(dllexport) void GUI_AddTextbox(char* parent,char* name)
 	{
-		CEGUI::WindowManager& winMgr = CEGUI::WindowManager::getSingleton();
-
-		CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow(parent));
-
-		CEGUI::Editbox* wnd=(CEGUI::Editbox*)winMgr.createWindow("TaharezLook/Editbox", name);
-
-		w->addChildWindow(wnd);
-
-		wnd->subscribeEvent(CEGUI::Editbox::EventTextChanged,GUI_TextChanged);
+		GUIHelper::newWindow(parent,name,"TaharezLook/Editbox")->subscribeEvent(CEGUI::Editbox::EventTextChanged,GUI_TextChanged);
 	}
 
 	__declspec(dllexport) void GUI_Textbox_SetMaxLength(char* name,int maxL)
 	{
-		if(CEGUI::WindowManager::getSingleton().getWindow(name)->getType().compare("TaharezLook/Editbox")==0)
+		if(GUIHelper::getWindow(name)->getType().compare("TaharezLook/Editbox")==0)
 		{
-			CEGUI::Editbox *w = ((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow(name));
+			CEGUI::Editbox *w = ((CEGUI::Editbox*)GUIHelper::getWindow(name));
 			w->setMaxTextLength(maxL);
 		}
 	}
 
 	__declspec(dllexport) void GUI_Textbox_SetValidationString(char* name,char* val)
 	{
-		if(CEGUI::WindowManager::getSingleton().getWindow(name)->getType().compare("TaharezLook/Editbox")==0)
+		if(GUIHelper::getWindow(name)->getType().compare("TaharezLook/Editbox")==0)
 		{
-			CEGUI::Editbox *w = ((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow(name));
+			CEGUI::Editbox *w = ((CEGUI::Editbox*)GUIHelper::getWindow(name));
 			w->setValidationString(val);
 		}
 	}
 
 	__declspec(dllexport) void GUI_AddButton(char* parent,char* name)
 	{
-		CEGUI::WindowManager& winMgr = CEGUI::WindowManager::getSingleton();
-
-		CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow(parent));
-
-		CEGUI::Editbox* wnd=(CEGUI::Editbox*)winMgr.createWindow("TaharezLook/Button",name);
-
-		w->addChildWindow(wnd);
-
-		wnd->subscribeEvent(CEGUI::PushButton::EventClicked,GUI_MouseClickCallback);
+		GUIHelper::newWindow(parent,name,"TaharezLook/Button")->subscribeEvent(CEGUI::PushButton::EventClicked,GUI_MouseClickCallback);
 	}
 
 	__declspec(dllexport) void GUI_SetPosition(char* name,float x,float y,float xOffset,float yOffset)
 	{
-		CEGUI::DefaultWindow *w = ((CEGUI::DefaultWindow*)CEGUI::WindowManager::getSingleton().getWindow(name));
+		CEGUI::DefaultWindow *w = ((CEGUI::DefaultWindow*)GUIHelper::getWindow(name));
 		w->setPosition(CEGUI::UVector2(CEGUI::UDim(x,xOffset), CEGUI::UDim(y,yOffset)));
 	}
 
 	__declspec(dllexport) void GUI_SetSize(char* name,float x,float y,float xOffset,float yOffset)
 	{
-		CEGUI::DefaultWindow *w = ((CEGUI::DefaultWindow*)CEGUI::WindowManager::getSingleton().getWindow(name));
+		CEGUI::DefaultWindow *w = ((CEGUI::DefaultWindow*)GUIHelper::getWindow(name));
 		w->setSize(CEGUI::UVector2(CEGUI::UDim(x,xOffset), CEGUI::UDim(y,yOffset)));
 	}
 
 	__declspec(dllexport) void GUI_SetText(char* name,char* txt)
 	{
-		CEGUI::DefaultWindow *w = ((CEGUI::DefaultWindow*)CEGUI::WindowManager::getSingleton().getWindow(name));
+		CEGUI::DefaultWindow *w = ((CEGUI::DefaultWindow*)GUIHelper::getWindow(name));
 
 		gData.sendClickCallbacks=false;
 		w->setText(txt);
@@ -303,7 +252,7 @@ extern "C"
 
 	__declspec(dllexport) void GUI_RemoveWindow(char* name)
 	{
-		CEGUI::WindowManager::getSingleton().destroyWindow(name);
+		GUIHelper::destroyWindow(name);
 	}
 
 	__declspec(dllexport) void GUI_SetClickCallback(void (*pt)(char* name))
@@ -338,34 +287,27 @@ extern "C"
 
 	__declspec(dllexport) void GUI_SetVisible(char* name,bool visible)
 	{
-		CEGUI::DefaultWindow *w = ((CEGUI::DefaultWindow*)CEGUI::WindowManager::getSingleton().getWindow(name));
+		CEGUI::DefaultWindow *w = ((CEGUI::DefaultWindow*)GUIHelper::getWindow(name));
 		w->setVisible(visible);
 	}
 
 	__declspec(dllexport) void GUI_AllowDrag(char* name,bool allow)
 	{
-		if(CEGUI::WindowManager::getSingleton().getWindow(name)->getType().compare("TaharezLook/FrameWindow")==0)
+		if(GUIHelper::getWindow(name)->getType().compare("TaharezLook/FrameWindow")==0)
 		{
-			CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow(name));
+			CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)GUIHelper::getWindow(name));
 			w->setDragMovingEnabled(allow);
 		}
 	}
 
 	__declspec(dllexport) void GUI_AddListbox(char* parent,char* name)
 	{
-		CEGUI::WindowManager& winMgr = CEGUI::WindowManager::getSingleton();
-
-		CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow(parent));
-		CEGUI::Listbox* wnd=(CEGUI::Listbox*)winMgr.createWindow("TaharezLook/Listbox", name);
-
-		wnd->subscribeEvent(CEGUI::Listbox::EventSelectionChanged,GUI_ListboxSelectionChange);
-
-		w->addChildWindow(wnd);
+		GUIHelper::newWindow(parent,name,"TaharezLook/Listbox")->subscribeEvent(CEGUI::Listbox::EventSelectionChanged,GUI_ListboxSelectionChange);
 	}
 
 	__declspec(dllexport) void GUI_Listbox_AddItem(char* name,char* id,char* t)
 	{
-		CEGUI::Listbox *w = ((CEGUI::Listbox*)CEGUI::WindowManager::getSingleton().getWindow(name));
+		CEGUI::Listbox *w = ((CEGUI::Listbox*)GUIHelper::getWindow(name));
 
 		CEGUI::FormattedListboxTextItem* itm=new CEGUI::FormattedListboxTextItem(t,CEGUI::HTF_WORDWRAP_LEFT_ALIGNED);
 		itm->setTextColours(0xFFFFFFFF);
@@ -373,28 +315,11 @@ extern "C"
 		itm->setCustomID(id);
 
 		w->addItem(itm);
-
-		/*
-		Debug::FunctionCall("Chatbox_AddToChat");
-		string inp=c;
-		ParseChatText(inp);
-		CEGUI::FormattedListboxTextItem* itm=new CEGUI::FormattedListboxTextItem(inp.c_str(),CEGUI::HTF_WORDWRAP_LEFT_ALIGNED);
-		itm->setTextColours(0xFFFFFFFF);
-		CEGUI::Listbox* listb=((CEGUI::Listbox*)CEGUI::WindowManager::getSingleton().getWindow("List Box"));
-		listb->addItem(itm);
-		while(listb->getItemCount() > D_MAX_CHAT_ENTRIES) {
-			listb->removeItem(listb->getListboxItemFromIndex(0));
-		}
-		listb->ensureItemIsVisible(itm);
-
-		gData.lastChatTextTick=GetTickCount();
-		Debug::FunctionReturn("Chatbox_AddToChat");
-		*/
 	}
 
 	__declspec(dllexport) void GUI_Listbox_RemoveItem(char* name,char* t)
 	{
-		CEGUI::Listbox *w = ((CEGUI::Listbox*)CEGUI::WindowManager::getSingleton().getWindow(name));
+		CEGUI::Listbox *w = ((CEGUI::Listbox*)GUIHelper::getWindow(name));
 
 		for(int i=0;i<w->getItemCount();i++)
 		{
@@ -410,7 +335,7 @@ extern "C"
 
 	__declspec(dllexport) void GUI_Listbox_EnableMultiSelect(char* name,bool e)
 	{
-		CEGUI::Listbox *w = ((CEGUI::Listbox*)CEGUI::WindowManager::getSingleton().getWindow(name));
+		CEGUI::Listbox *w = ((CEGUI::Listbox*)GUIHelper::getWindow(name));
 
 		w->setMultiselectEnabled(e);
 	}
@@ -424,7 +349,7 @@ extern "C"
 
 		str.clear();
 
-		CEGUI::Listbox *w = ((CEGUI::Listbox*)CEGUI::WindowManager::getSingleton().getWindow(name));
+		CEGUI::Listbox *w = ((CEGUI::Listbox*)GUIHelper::getWindow(name));
 
 		tmp=(CEGUI::FormattedListboxTextItem*)w->getFirstSelectedItem();
 
@@ -440,49 +365,37 @@ extern "C"
 
 	__declspec(dllexport) void GUI_AddCheckbox(char* parent,char* name)
 	{
-		CEGUI::WindowManager& winMgr = CEGUI::WindowManager::getSingleton();
-
-		CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow(parent));
-		CEGUI::Checkbox* wnd=(CEGUI::Checkbox*)winMgr.createWindow("TaharezLook/Checkbox", name);
-
-		wnd->subscribeEvent(CEGUI::Checkbox::EventCheckStateChanged,GUI_CheckboxChanged);
-
-		w->addChildWindow(wnd);
-		
+		GUIHelper::newWindow(parent,name,"TaharezLook/Checkbox")->subscribeEvent(CEGUI::Checkbox::EventCheckStateChanged,GUI_CheckboxChanged);
 	}
 
 	__declspec(dllexport) void GUI_AddRadioButton(char* parent,char* name,unsigned long int groupID)
 	{
-		CEGUI::WindowManager& winMgr = CEGUI::WindowManager::getSingleton();
-
-		CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow(parent));
-		CEGUI::RadioButton* wnd=(CEGUI::RadioButton*)winMgr.createWindow("TaharezLook/RadioButton", name);
-
+		CEGUI::RadioButton* wnd=(CEGUI::RadioButton*)GUIHelper::newWindow(parent,name,"TaharezLook/RadioButton");
 		wnd->subscribeEvent(CEGUI::RadioButton::EventSelectStateChanged,GUI_CheckboxChanged);
 		wnd->setGroupID(groupID);
-
-		w->addChildWindow(wnd);
-		
 	}
 
 	__declspec(dllexport) void GUI_SetChecked(char* name,bool checked)
 	{
-		if(CEGUI::WindowManager::getSingleton().getWindow(name)->getType().compare("TaharezLook/Checkbox")==0)
+		if(GUIHelper::getWindow(name)->getType().compare("TaharezLook/Checkbox")==0)
 		{
-			CEGUI::Checkbox *w = ((CEGUI::Checkbox*)CEGUI::WindowManager::getSingleton().getWindow(name));
+			CEGUI::Checkbox *w = ((CEGUI::Checkbox*)GUIHelper::getWindow(name));
 			gData.sendCheckboxCallbacks=false;
 			w->setSelected(checked);
 			gData.sendCheckboxCallbacks=true;
 		}
 		
-		if(CEGUI::WindowManager::getSingleton().getWindow(name)->getType().compare("TaharezLook/RadioButton")==0)
+		if(GUIHelper::getWindow(name)->getType().compare("TaharezLook/RadioButton")==0)
 		{
-			CEGUI::RadioButton *w = ((CEGUI::RadioButton*)CEGUI::WindowManager::getSingleton().getWindow(name));
+			CEGUI::RadioButton *w = ((CEGUI::RadioButton*)GUIHelper::getWindow(name));
 			gData.sendCheckboxCallbacks=false;
 			w->setSelected(checked);
 			gData.sendCheckboxCallbacks=true;
 		}
 	}
 
-
+	__declspec(dllexport) void GUI_SetTextColour(char* name,char* colour)	//AARRGGBB
+	{
+		GUIHelper::setTextColour(GUIHelper::getWindow(name),colour);
+	}
 }

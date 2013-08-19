@@ -135,6 +135,9 @@ myIDirect3DDevice9::myIDirect3DDevice9(IDirect3DDevice9* pOriginal)
 
 		using namespace CEGUI;
 		SchemeManager::getSingleton().create("TaharezLook.scheme");
+		//SchemeManager::getSingleton().create("VanillaSkin.scheme");
+
+
 		CEGUI::System::getSingleton().setDefaultMouseCursor("TaharezLook", "MouseArrow");
 		WindowManager& winMgr = WindowManager::getSingleton();
 		DefaultWindow* root = (DefaultWindow*)winMgr.createWindow("DefaultWindow", "Root");
@@ -187,20 +190,26 @@ myIDirect3DDevice9::myIDirect3DDevice9(IDirect3DDevice9* pOriginal)
 
 		/*GUI_CreateFrameWindow("w1");
 		GUI_SetSize("w1",0.35,0.4,0,0);
-		GUI_SetPosition("w1",0.6,0.1,0,0);
+		GUI_SetPosition("w1",0.6,0.1,0,0);*/
 
-		GUI_AddRadioButton("w1","r",1);
+		/*GUI_AddRadioButton("w1","r",1);
 		GUI_SetPosition("r",0.0,0.0,0,0);
 		GUI_SetSize("r",1,0.1,0,0);
-		GUI_SetChecked("r",true);
+		GUI_SetChecked("r",true);*/
 
-		GUI_AddRadioButton("w1","r2",1);
+		/*GUI_AddRadioButton("w1","r2",1);
 		GUI_SetPosition("r2",0.0,0.1,0,0);
 		GUI_SetSize("r2",1,0.2,0,0);
 
 		GUI_AddRadioButton("w1","r3",1);
 		GUI_SetPosition("r3",0.0,0.2,0,0);
-		GUI_SetSize("r3",1,0.2,0,0);*/
+		GUI_SetSize("r3",1,0.2,0,0);
+
+		GUI_AddStaticText("w1","st");
+		GUI_SetText("st","test");
+		GUI_SetPosition("st",0.0,0.5,0,0);
+		GUI_SetSize("st",1,0.2,0,0);
+		GUI_SetTextColour("st","FFFF0000");*/
 
 		/*GUI_AddCheckbox("w1","c");
 		GUI_SetPosition("c",0.1,0.1,0,0);
