@@ -5,6 +5,7 @@
 #include "Window.h"
 
 #include <string>
+#include <climits>
 
 /**
  * \brief Represents a GUI edit
