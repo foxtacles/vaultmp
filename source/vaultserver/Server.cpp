@@ -74,10 +74,10 @@ NetworkResponse Server::LoadGame(RakNetGUID guid)
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 
-	GameFactory::Operate<Object>(GameFactory::GetByTypeID(ALL_OBJECTS), [&response, guid](FactoryObjects& objects) {
-		FactoryObjects::iterator it;
+	GameFactory::Operate<Reference>(GameFactory::GetByTypeID(ALL_REFERENCES), [&response, guid](FactoryReferences& references) {
+		FactoryReferences::iterator it;
 
-		for (it = objects.begin(); it != objects.end(); GameFactory::Leave(*it), ++it)
+		for (it = references.begin(); it != references.end(); GameFactory::Leave(*it), ++it)
 		{
 			auto item = vaultcast<Item>(*it);
 
@@ -310,7 +310,7 @@ NetworkResponse Server::GetCell(RakNetGUID guid, FactoryObject& reference, unsig
 	return response;
 }
 
-NetworkResponse Server::GetActivate(RakNetGUID guid, FactoryObject& reference, FactoryObject& actor)
+NetworkResponse Server::GetActivate(RakNetGUID guid, FactoryReference& reference, FactoryReference& actor)
 {
 	NetworkResponse response;
 

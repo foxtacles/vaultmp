@@ -13,21 +13,14 @@ using namespace RakNet;
 DebugInput<Container> Container::debug;
 #endif
 
-Container::Container(unsigned int refID, unsigned int baseID) : Object(refID, baseID), IL(this->GetNetworkID())
+Container::Container(unsigned int refID, unsigned int baseID) : Object(refID, baseID), ItemList()
 {
 	initialize();
 }
 
-Container::Container(const pDefault* packet) : Object(PacketFactory::Pop<pPacket>(packet)), IL(this->GetNetworkID())
+Container::Container(const pDefault* packet) : Object(PacketFactory::Pop<pPacket>(packet)), ItemList(PacketFactory::Pop<pPacket>(packet))
 {
 	initialize();
-
-	vector<pPacket> items;
-
-	PacketFactory::Access<pTypes::ID_CONTAINER_NEW>(packet, items);
-
-	for (const pPacket& _packet : items)
-		IL.AddItem(GameFactory::Create<Item>(_packet.get()));
 }
 
 Container::~Container() noexcept {}
@@ -57,21 +50,17 @@ FuncParameter Container::CreateFunctor(unsigned int flags, NetworkID id)
 NetworkID Container::Copy() const
 {
 	return GameFactory::Operate<Container>(GameFactory::Create<Container>(0x00000000, this->GetBase()), [this](FactoryContainer& container) {
-		IL.Copy(container->IL);
+		ItemList::Copy(*container);
 		return container->GetNetworkID();
 	});
 }
 
 pPacket Container::toPacket() const
 {
-	vector<pPacket> items;
-	items.reserve(IL.GetItemList().size());
-
-	for (const NetworkID& id : IL.GetItemList())
-		items.emplace_back(GameFactory::Operate<Item>(id, [](FactoryItem& item) { return item->toPacket(); }));
-
 	pPacket pObjectNew = Object::toPacket();
-	pPacket packet = PacketFactory::Create<pTypes::ID_CONTAINER_NEW>(pObjectNew, move(items));
+	pPacket pItemListNew = ItemList::toPacket();
+
+	pPacket packet = PacketFactory::Create<pTypes::ID_CONTAINER_NEW>(pObjectNew, pItemListNew);
 
 	return packet;
 }

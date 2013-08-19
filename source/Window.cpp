@@ -5,23 +5,19 @@ using namespace RakNet;
 
 Window::WindowChilds Window::childs;
 
-Window::Window() : Reference(), parent(0), locked(false), visible(true)
+Window::Window() : Base(), parent(0), locked(false), visible(true)
 {
 	initialize();
 }
 
-Window::Window(const pDefault* packet) : Reference()
+Window::Window(const pDefault* packet) : Base(PacketFactory::Pop<pPacket>(packet))
 {
 	initialize();
 
-	NetworkID id;
-
-	PacketFactory::Access<pTypes::ID_WINDOW_NEW>(packet, id, parent, label, pos, size, locked, visible, text);
-
-	this->SetNetworkID(id);
+	PacketFactory::Access<pTypes::ID_WINDOW_NEW>(packet, parent, label, pos, size, locked, visible, text);
 
 	if (parent)
-		childs[parent].emplace(id);
+		childs[parent].emplace(this->GetNetworkID());
 }
 
 Window::~Window() noexcept
@@ -83,7 +79,9 @@ bool Window::SetSize(double X, double Y, double offset_X, double offset_Y)
 
 pPacket Window::toPacket() const
 {
-	pPacket packet = PacketFactory::Create<pTypes::ID_WINDOW_NEW>(const_cast<Window*>(this)->GetNetworkID(), parent, label, pos, size, locked, visible, text);
+	pPacket pBaseNew = Base::toPacket();
+
+	pPacket packet = PacketFactory::Create<pTypes::ID_WINDOW_NEW>(pBaseNew, parent, label, pos, size, locked, visible, text);
 
 	return packet;
 }

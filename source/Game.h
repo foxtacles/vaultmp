@@ -229,7 +229,7 @@ class Game
 		/**
 		 * \brief Activates an Object
 		 */
-		static void Activate(const FactoryObject& reference, const FactoryObject& action);
+		static void Activate(const FactoryReference& reference, const FactoryReference& action);
 		/**
 		 * \brief Sets the position of an Object
 		 */
@@ -426,7 +426,7 @@ class Game
 		/**
 		 * \brief Network function to handle Object activate
 		 */
-		static void net_GetActivate(const FactoryObject& reference, const FactoryObject& action);
+		static void net_GetActivate(const FactoryReference& reference, const FactoryReference& action);
 		/**
 		 * \brief Network function to handle Item count
 		 */
@@ -571,7 +571,7 @@ class Game
 		/**
 		 * \brief Handles GetActivate command result
 		 */
-		static void GetActivate(const FactoryObject& reference, const FactoryObject& action);
+		static void GetActivate(const FactoryReference& reference, const FactoryReference& action);
 		/**
 		 * \brief Handles GUI message
 		 */

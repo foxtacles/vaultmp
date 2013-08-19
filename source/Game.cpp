@@ -90,8 +90,8 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
 				unsigned int refID = *reinterpret_cast<unsigned int*>(&data[0]);
 
-				GameFactory::Operate<Object, FailPolicy::Return>(vector<unsigned int>{refID, PLAYER_REFERENCE}, [result](FactoryObjects& objects) {
-					GetActivate(objects[0], objects[1]);
+				GameFactory::Operate<Reference, FailPolicy::Return>(vector<unsigned int>{refID, PLAYER_REFERENCE}, [result](FactoryReferences& references) {
+					GetActivate(references[0], references[1]);
 				});
 
 				delete &data;
@@ -740,7 +740,7 @@ void Game::NewItem(FactoryItem& reference)
 		GameFactory::Leave(reference);
 
 		GameFactory::Operate<Container>(container, [item](FactoryContainer& container) {
-			container->IL.AddItem(item);
+			container->AddItem(item);
 
 			GameFactory::Operate<Item>(item, [&container](FactoryItem& item) {
 				AddItem(container, item);
@@ -796,7 +796,7 @@ void Game::NewContainer(FactoryContainer& reference)
 void Game::NewContainer_(FactoryContainer& reference)
 {
 	NewObject_(reference);
-	auto items = GameFactory::Get<Item>(vector<NetworkID>(reference->IL.GetItemList().begin(), reference->IL.GetItemList().end()));
+	auto items = GameFactory::Get<Item>(vector<NetworkID>(reference->GetItemList().begin(), reference->GetItemList().end()));
 
 	for (auto& _item : items)
 	{
@@ -1045,13 +1045,13 @@ void Game::DestroyObject(FactoryObject& reference, bool silent)
 		GameFactory::Leave(reference);
 
 		GameFactory::Operate<Container>(container, [id, silent](FactoryContainer& container) {
-			container->IL.RemoveItem(id);
+			container->RemoveItem(id);
 
 			GameFactory::Operate<Item>(id, [&container, silent](FactoryItem& item) {
 				RemoveItem(container, item->GetBase(), item->GetItemCount(), silent);
 
 				// Game always removes equipped item first - workaround (is this really always the case?)
-				NetworkID equipped = container->IL.IsEquipped(item->GetBase());
+				NetworkID equipped = container->IsEquipped(item->GetBase());
 
 				if (equipped)
 					GameFactory::Operate<Actor>(container->GetNetworkID(), [equipped](FactoryActor& actor) {
@@ -1133,7 +1133,7 @@ void Game::SetRestrained(const FactoryActor& reference, bool restrained)
 	});
 }
 
-void Game::Activate(const FactoryObject& reference, const FactoryObject& actor)
+void Game::Activate(const FactoryReference& reference, const FactoryReference& actor)
 {
 	Interface::Dynamic([&reference, &actor]() {
 		Interface::ExecuteCommand(Func::Activate, {reference->GetReferenceParam(), actor->GetReferenceParam()});
@@ -1772,7 +1772,7 @@ void Game::net_SetOwner(const FactoryObject& reference, unsigned int owner)
 		SetOwner(reference);
 }
 
-void Game::net_GetActivate(const FactoryObject& reference, const FactoryObject& actor)
+void Game::net_GetActivate(const FactoryReference& reference, const FactoryReference& actor)
 {
 	Activate(reference, actor);
 }
@@ -1806,7 +1806,7 @@ void Game::net_SetItemCount(FactoryItem& reference, unsigned int count, bool sil
 					RemoveItem(container, baseID, abs(diff), silent);
 
 					// Game always removes equipped item first - workaround (is this really always the case?)
-					NetworkID equipped = container->IL.IsEquipped(baseID);
+					NetworkID equipped = container->IsEquipped(baseID);
 
 					if (equipped)
 						GameFactory::Operate<Actor>(container->GetNetworkID(), [equipped](FactoryActor& actor) {
@@ -2026,7 +2026,7 @@ void Game::net_FireWeapon(const FactoryActor& reference, unsigned int weapon, do
 
 					this_thread::sleep_for(us);
 
-					while ((reference = GameFactory::Get<Actor>(id)) && reference->IsActorFiring() && reference->IL.IsEquipped(weapon))
+					while ((reference = GameFactory::Get<Actor>(id)) && reference->IsActorFiring() && reference->IsEquipped(weapon))
 					{
 						auto& _reference = reference.get();
 						FireWeapon(_reference, weapon);
@@ -2368,7 +2368,7 @@ void Game::GetControl(const FactoryPlayer& reference, unsigned char control, uns
 		});
 }
 
-void Game::GetActivate(const FactoryObject& reference, const FactoryObject& actor)
+void Game::GetActivate(const FactoryReference& reference, const FactoryReference& actor)
 {
 	Network::Queue({Network::CreateResponse(
 		PacketFactory::Create<pTypes::ID_UPDATE_ACTIVATE>(reference->GetNetworkID(), actor->GetNetworkID()),

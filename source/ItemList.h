@@ -2,8 +2,11 @@
 #define ITEMLIST_H
 
 #include "vaultmp.h"
-#include "packet/PacketFactory.h"
 #include "RakNet.h"
+#include "Base.h"
+#include "ReferenceTypes.h"
+#include "GameFactory.h"
+#include "packet/PacketFactory.h"
 
 #ifdef VAULTMP_DEBUG
 #include "Debug.h"
@@ -12,11 +15,7 @@
 #include <vector>
 #include <tuple>
 
-#ifdef VAULTSERVER
-class ItemList : public RakNet::NetworkIDObject
-#else
-class ItemList
-#endif
+class ItemList : public virtual Base
 {
 		friend class GameFactory;
 
@@ -33,15 +32,20 @@ class ItemList
 
 		RakNet::NetworkID FindStackableItem(unsigned int baseID, double condition) const;
 
-		RakNet::NetworkID source;
 		Impl container;
+
+		void initialize();
 
 		ItemList(const ItemList&) = delete;
 		ItemList& operator=(const ItemList&) = delete;
 
+	protected:
+		ItemList();
+		ItemList(const pDefault* packet);
+		ItemList(pPacket&& packet) : ItemList(packet.get()) {};
+
 	public:
-		ItemList(RakNet::NetworkID source);
-		~ItemList() noexcept;
+		virtual ~ItemList() noexcept;
 
 		RakNet::NetworkID AddItem(RakNet::NetworkID id);
 		AddOp AddItem(unsigned int baseID, unsigned int count, double condition, bool silent);
@@ -62,6 +66,25 @@ class ItemList
 
 		void FlushContainer();
 		void Copy(ItemList& IL) const;
+
+		/**
+		 * \brief For network transfer
+		 */
+		virtual pPacket toPacket() const;
 };
+
+GF_TYPE_WRAPPER(ItemList, Base, ID_ITEMLIST, ALL_ITEMLISTS)
+
+template<> struct pTypesMap<pTypes::ID_ITEMLIST_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_ITEMLIST_NEW, std::vector<pPacket>> type; };
+template<>
+inline const typename pTypesMap<pTypes::ID_ITEMLIST_NEW>::type* PacketFactory::Cast_<pTypes::ID_ITEMLIST_NEW>::Cast(const pDefault* packet) {
+	pTypes type = packet->type();
+	return (
+		type == pTypes::ID_ITEMLIST_NEW ||
+		type == pTypes::ID_CONTAINER_NEW ||
+		type == pTypes::ID_ACTOR_NEW ||
+		type == pTypes::ID_PLAYER_NEW
+	) ? static_cast<const typename pTypesMap<pTypes::ID_ITEMLIST_NEW>::type*>(packet) : nullptr;
+}
 
 #endif

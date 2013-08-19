@@ -10,7 +10,7 @@
 
 #include <unordered_set>
 
-const unsigned int FLAG_MOVCONTROLS = FLAG_NOTALERT << 1;
+const unsigned int FLAG_MOVCONTROLS = FLAG_ALIVE << 1;
 
 /**
  * \brief Derives from Actor class and represents a player in-game

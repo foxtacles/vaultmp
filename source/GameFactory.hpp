@@ -2,25 +2,25 @@ template<typename T>
 struct GameFactory::Get_<T, RakNet::NetworkID> {
 	static Expected<FactoryWrapper<T>> Get(RakNet::NetworkID id) noexcept
 	{
-		std::pair<ReferenceList::key_type, ReferenceList::mapped_type> reference;
+		std::pair<BaseList::key_type, BaseList::mapped_type> base;
 
-		cs.Operate([id, &reference]() {
+		cs.Operate([id, &base]() {
 			auto it = GetShared(id);
 
 			if (it != instances.end())
-				reference = *it;
+				base = *it;
 		});
 
-		if (!reference.first)
+		if (!base.first)
 			return VaultException("Unknown object with NetworkID %llu", id);
 
-		return FactoryWrapper<T>(reference.first.get(), reference.second);
+		return FactoryWrapper<T>(base.first.get(), base.second);
 	}
 
 	static std::vector<Expected<FactoryWrapper<T>>> Get(const std::vector<RakNet::NetworkID>& ids) noexcept
 	{
 		std::vector<Expected<FactoryWrapper<T>>> result(ids.size());
-		std::multimap<ReferenceList::value_type, unsigned int> sort;
+		std::multimap<BaseList::value_type, unsigned int> sort;
 
 		cs.Operate([&ids, &result, &sort]() {
 			unsigned int i = 0;
@@ -39,8 +39,8 @@ struct GameFactory::Get_<T, RakNet::NetworkID> {
 			}
 		});
 
-		for (const auto& reference : sort)
-			result[reference.second] = FactoryWrapper<T>(reference.first.first.get(), reference.first.second);
+		for (const auto& base : sort)
+			result[base.second] = FactoryWrapper<T>(base.first.first.get(), base.first.second);
 
 		return result;
 	}
@@ -54,11 +54,11 @@ template<ObjectPolicy OP, typename T, typename I, typename F>
 struct GameFactory::OperateFunctions<T, FailPolicy::Return, OP, LaunchPolicy::Blocking, I, F> {
 	static typename OperateReturn<FailPolicy::Return, OP, LaunchPolicy::Blocking, T, F, I>::type Operate(I&& id, F function) noexcept
 	{
-		auto reference = GameFactory::Get<T>(std::forward<I>(id));
+		auto base = GameFactory::Get<T>(std::forward<I>(id));
 
 		try
 		{
-			auto&& param = ObjectPolicyHelper<OP, T>::Unwrap(reference);
+			auto&& param = ObjectPolicyHelper<OP, T>::Unwrap(base);
 			return function(param);
 		}
 		catch (...) { return typename ObjectPolicyReturn<OP, T, F, InputPolicyHelper<I>::value>::type(); }
@@ -71,11 +71,11 @@ struct GameFactory::OperateFunctions<T, FailPolicy::Bool, OP, LaunchPolicy::Bloc
 	{
 		static_assert(std::is_same<typename ObjectPolicyReturn<OP, T, F, InputPolicyHelper<I>::value>::type, void>::value, "Function return value disregarded");
 
-		auto reference = GameFactory::Get<T>(std::forward<I>(id));
+		auto base = GameFactory::Get<T>(std::forward<I>(id));
 
 		try
 		{
-			auto&& param = ObjectPolicyHelper<OP, T>::Unwrap(reference);
+			auto&& param = ObjectPolicyHelper<OP, T>::Unwrap(base);
 			function(param);
 		}
 		catch (...) { return false; }
@@ -88,8 +88,8 @@ template<ObjectPolicy OP, typename T, typename I, typename F>
 struct GameFactory::OperateFunctions<T, FailPolicy::Exception, OP, LaunchPolicy::Blocking, I, F> {
 	static typename OperateReturn<FailPolicy::Exception, OP, LaunchPolicy::Blocking, T, F, I>::type Operate(I&& id, F function)
 	{
-		auto reference = GameFactory::Get<T>(std::forward<I>(id));
-		auto&& param = ObjectPolicyHelper<OP, T>::Unwrap(reference);
+		auto base = GameFactory::Get<T>(std::forward<I>(id));
+		auto&& param = ObjectPolicyHelper<OP, T>::Unwrap(base);
 		return function(param);
 	}
 };
@@ -99,15 +99,15 @@ std::vector<FactoryWrapper<T>> GameFactory::GetByType(unsigned int type) noexcep
 {
 	std::vector<FactoryWrapper<T>> result;
 
-	ReferenceList copy(cs.Operate([&result, type]() {
+	BaseList copy(cs.Operate([&result, type]() {
 		result.reserve(typecount[type]);
 		return instances;
 	}));
 
-	for (const auto& reference : copy)
-		if (reference.second & type)
+	for (const auto& base : copy)
+		if (base.second & type)
 		{
-			auto object = FactoryWrapper<T>(reference.first.get(), reference.second);
+			auto object = FactoryWrapper<T>(base.first.get(), base.second);
 
 			if (object)
 				result.emplace_back(std::move(object));
@@ -117,36 +117,36 @@ std::vector<FactoryWrapper<T>> GameFactory::GetByType(unsigned int type) noexcep
 }
 
 template<typename T>
-void GameFactory::Leave(FactoryWrapper<T>& reference)
+void GameFactory::Leave(FactoryWrapper<T>& base)
 {
-	Reference* _reference = reference.reference;
+	Base* _base = base.base;
 
-	if (!_reference)
-		throw VaultException("GameFactory::Leave Reference is NULL").stacktrace();
+	if (!_base)
+		throw VaultException("GameFactory::Leave Base is NULL").stacktrace();
 
-	_reference->EndSession();
-	reference.reference = nullptr;
-	reference.type = 0x00;
+	_base->EndSession();
+	base.base = nullptr;
+	base.type = 0x00;
 }
 
 template<typename T, typename... Args>
 RakNet::NetworkID GameFactory::Create(Args&&... args)
 {
-	static_assert(std::is_base_of<Reference, T>::value, "T must be derived from Reference");
+	static_assert(std::is_base_of<Base, T>::value, "T must be derived from Base");
 
-	std::shared_ptr<Reference> reference(new T(std::forward<Args>(args)...));
+	std::shared_ptr<Base> base(new T(std::forward<Args>(args)...));
 	constexpr unsigned int type = rTypes<T>::value;
 
-	RakNet::NetworkID id = reference->GetNetworkID();
+	RakNet::NetworkID id = base->GetNetworkID();
 
 #ifdef VAULTSERVER
-	reference->virtual_initializers();
+	base->virtual_initializers();
 #endif
 
-	cs.Operate([id, type, &reference]() {
+	cs.Operate([id, type, &base]() {
 		++typecount[type];
 		// emplace
-		index[id] = instances.insert(make_pair(std::move(reference), type)).first;
+		index[id] = instances.insert(make_pair(std::move(base), type)).first;
 	});
 
 	return id;
@@ -155,62 +155,62 @@ RakNet::NetworkID GameFactory::Create(Args&&... args)
 template<typename T>
 RakNet::NetworkID GameFactory::Create(const pDefault* packet)
 {
-	static_assert(std::is_base_of<Reference, T>::value, "T must be derived from Reference");
+	static_assert(std::is_base_of<Base, T>::value, "T must be derived from Base");
 
-	std::shared_ptr<Reference> reference(new T(packet));
+	std::shared_ptr<Base> base(new T(packet));
 	constexpr unsigned int type = rTypes<T>::value;
 
-	RakNet::NetworkID id = reference->GetNetworkID();
+	RakNet::NetworkID id = base->GetNetworkID();
 
 #ifdef VAULTSERVER
-	reference->virtual_initializers();
+	base->virtual_initializers();
 #endif
 
-	cs.Operate([id, type, &reference]() {
+	cs.Operate([id, type, &base]() {
 		++typecount[type];
 		// emplace
-		index[id] = instances.insert(make_pair(std::move(reference), type)).first;
+		index[id] = instances.insert(make_pair(std::move(base), type)).first;
 	});
 
 	return id;
 }
 
 template<typename T>
-RakNet::NetworkID GameFactory::Destroy(FactoryWrapper<T>& reference)
+RakNet::NetworkID GameFactory::Destroy(FactoryWrapper<T>& base)
 {
-	Reference* _reference = reference.reference;
+	Base* _base = base.base;
 
-	if (!_reference)
-		throw VaultException("GameFactory::Destroy Reference is NULL").stacktrace();
+	if (!_base)
+		throw VaultException("GameFactory::Destroy Base is NULL").stacktrace();
 
-	RakNet::NetworkID id = _reference->GetNetworkID();
+	RakNet::NetworkID id = _base->GetNetworkID();
 
 #ifdef VAULTMP_DEBUG
-	debug.print("Reference ", hex, _reference->GetReference(), " with base ",  _reference->GetBase(), " and NetworkID ", dec, _reference->GetNetworkID(), " (type: ", typeid(*_reference).name(), ") to be destructed");
+	debug.print("Base ", std::dec, _base->GetNetworkID(), " (type: ", typeid(*_base).name(), ") to be destructed");
 #endif
 
-	ReferenceList::key_type copy; // because the destructor of a type may also delete references, the actual destructor call must not happen within the CS block
+	BaseList::key_type copy; // because the destructor of a type may also delete bases, the actual destructor call must not happen within the CS block
 
-	cs.Operate([id, _reference, &copy]() {
+	cs.Operate([id, _base, &copy]() {
 		auto it = GetShared(id);
 
 		copy = it->first; // saved. will be deleted past this block
 		--typecount[it->second];
-		_reference->Finalize();
+		_base->Finalize();
 
 		instances.erase(it);
 		index.erase(id);
 		delrefs.emplace(id);
 	});
 
-	reference.reference = nullptr;
-	reference.type = 0x00000000;
+	base.base = nullptr;
+	base.type = 0x00000000;
 
 	return id;
 }
 
 template<>
-class FactoryWrapper<Reference>
+class FactoryWrapper<Base>
 {
 		friend class GameFactory;
 
@@ -219,78 +219,81 @@ class FactoryWrapper<Reference>
 		template<typename T, typename U>
 		friend Expected<FactoryWrapper<T>> vaultcast_swap(FactoryWrapper<U>& object) noexcept;
 
-	private:
-		Reference* reference;
+	protected:
+		Base* base;
 		unsigned int type;
 
-	protected:
-		FactoryWrapper(Reference* reference, unsigned int type) noexcept : reference(static_cast<Reference*>(reference->StartSession())), type(type) {}
+		FactoryWrapper(Base* base, unsigned int type) noexcept : base(static_cast<Base*>(base->StartSession())), type(type) {}
 
 	public:
-		FactoryWrapper(const FactoryWrapper& p) noexcept : reference(p.reference), type(p.type)
+		FactoryWrapper(const FactoryWrapper& p) noexcept : base(p.base), type(p.type)
 		{
-			if (reference)
-				reference->StartSession();
+			if (base)
+				base->StartSession();
 		}
 		FactoryWrapper& operator=(const FactoryWrapper& p) noexcept
 		{
 			if (this != &p)
 			{
-				if (reference)
-					reference->EndSession();
+				if (base)
+					base->EndSession();
 
-				reference = p.reference;
+				base = p.base;
 				type = p.type;
 
-				if (reference)
-					reference->StartSession();
+				if (base)
+					base->StartSession();
 			}
 
 			return *this;
 		}
 
-		FactoryWrapper(FactoryWrapper&& p) noexcept : reference(p.reference), type(p.type)
+		FactoryWrapper(FactoryWrapper&& p) noexcept : base(p.base), type(p.type)
 		{
-			p.reference = nullptr;
+			p.base = nullptr;
 			p.type = 0x00000000;
 		}
 		FactoryWrapper& operator=(FactoryWrapper&& p) noexcept
 		{
 			if (this != &p)
 			{
-				if (reference)
-					reference->EndSession();
+				if (base)
+					base->EndSession();
 
-				reference = p.reference;
+				base = p.base;
 				type = p.type;
 
-				p.reference = nullptr;
+				p.base = nullptr;
 				p.type = 0x00000000;
 			}
 
 			return *this;
 		}
 
-		FactoryWrapper() noexcept : reference(nullptr), type(0x00000000) {};
+		FactoryWrapper() noexcept : base(nullptr), type(0x00000000) {};
 		~FactoryWrapper() noexcept
 		{
-			if (reference)
-				reference->EndSession();
+			if (base)
+				base->EndSession();
 		}
 
 		unsigned int GetType() const noexcept { return type; }
-		Reference& operator*() const noexcept { return *reference; }
-		Reference* operator->() const noexcept { return reference; }
-		explicit operator bool() const noexcept { return reference; }
-		bool operator==(const FactoryWrapper& p) const noexcept { return reference == p.reference; }
+		Base& operator*() const noexcept { return *base; }
+		Base* operator->() const noexcept { return base; }
+		explicit operator bool() const noexcept { return base; }
+		bool operator==(const FactoryWrapper& p) const noexcept { return base == p.base; }
 		bool operator!=(const FactoryWrapper& p) const noexcept { return !operator==(p); }
 
 		template<typename T>
 		inline bool validate(unsigned int type = 0x00000000) const noexcept { return type ? (type & rTypesToken<T>::value) : (this->type & rTypesToken<T>::value); }
 };
+typedef FactoryWrapper<Base> FactoryBase;
+typedef std::vector<FactoryWrapper<Base>> FactoryBases;
+typedef Expected<FactoryWrapper<Base>> ExpectedBase;
+typedef std::vector<Expected<FactoryWrapper<Base>>> ExpectedBases;
 
-#define GF_TYPE_WRAPPER(derived, base, identity, token)                                                                                                              \
-	template<> class FactoryWrapper<derived> : public FactoryWrapper<base>                                                                                           \
+#define GF_TYPE_WRAPPER(derived_class, base_class, identity, token)                                                                                                  \
+	template<> class FactoryWrapper<derived_class> : public FactoryWrapper<base_class>                                                                               \
 	{                                                                                                                                                                \
 		friend class GameFactory;                                                                                                                                    \
                                                                                                                                                                      \
@@ -300,33 +303,33 @@ class FactoryWrapper<Reference>
 		friend Expected<FactoryWrapper<T>> vaultcast_swap(FactoryWrapper<U>& object) noexcept;                                                                       \
                                                                                                                                                                      \
 	protected:                                                                                                                                                       \
-		FactoryWrapper(Reference* reference, unsigned int type) noexcept : FactoryWrapper<base>(reference, type)                                                     \
+		FactoryWrapper(Base* base, unsigned int type) noexcept : FactoryWrapper<base_class>(base, type)                                                              \
 		{                                                                                                                                                            \
-			if (!validate<derived>())                                                                                                                                \
-				reference = nullptr;                                                                                                                                 \
+			if (!validate<derived_class>())                                                                                                                          \
+				this->base = nullptr;                                                                                                                                \
 		}                                                                                                                                                            \
-		template<typename T> FactoryWrapper(const FactoryWrapper<T>& p) noexcept : FactoryWrapper<base>(p) {}                                                        \
-		template<typename T> FactoryWrapper& operator=(const FactoryWrapper<T>& p) noexcept { return FactoryWrapper<base>::operator=(p); }                           \
+		template<typename T> FactoryWrapper(const FactoryWrapper<T>& p) noexcept : FactoryWrapper<base_class>(p) {}                                                  \
+		template<typename T> FactoryWrapper& operator=(const FactoryWrapper<T>& p) noexcept { return FactoryWrapper<base_class>::operator=(p); }                     \
                                                                                                                                                                      \
 	public:                                                                                                                                                          \
-		FactoryWrapper() noexcept : FactoryWrapper<base>() {}                                                                                                        \
-		FactoryWrapper(const FactoryWrapper& p) noexcept : FactoryWrapper<base>(p) {}                                                                                \
+		FactoryWrapper() noexcept : FactoryWrapper<base_class>() {}                                                                                                  \
+		FactoryWrapper(const FactoryWrapper& p) noexcept : FactoryWrapper<base_class>(p) {}                                                                          \
 		FactoryWrapper& operator=(const FactoryWrapper&) = default;                                                                                                  \
-		FactoryWrapper(FactoryWrapper&& p) noexcept : FactoryWrapper<base>(std::move(p)) {}                                                                          \
+		FactoryWrapper(FactoryWrapper&& p) noexcept : FactoryWrapper<base_class>(std::move(p)) {}                                                                    \
 		FactoryWrapper& operator=(FactoryWrapper&&) = default;                                                                                                       \
 		~FactoryWrapper() = default;                                                                                                                                 \
 																																							         \
-		derived* operator->() const noexcept { return static_cast<derived*>(FactoryWrapper<Reference>::operator->()); }                                              \
-		derived& operator*() const noexcept { return static_cast<derived&>(FactoryWrapper<Reference>::operator*()); }                                                \
+		derived_class* operator->() const noexcept { return dynamic_cast<derived_class*>(base); }                                                                    \
+		derived_class& operator*() const noexcept { return dynamic_cast<derived_class&>(*base); }                                                                    \
 };                                                                                                                                                                   \
-template<> struct rTypes<derived> { enum { value = identity }; };                                                                                                    \
-template<> struct rTypesToken<derived> { enum { value = token }; };                                                                                                  \
-typedef FactoryWrapper<derived> Factory##derived;                                                                                                                    \
-typedef std::vector<FactoryWrapper<derived>> Factory##derived##s;                                                                                                    \
-typedef Expected<FactoryWrapper<derived>> Expected##derived;                                                                                                         \
-typedef std::vector<Expected<FactoryWrapper<derived>>> Expected##derived##s;
+template<> struct rTypes<derived_class> { enum { value = identity }; };                                                                                              \
+template<> struct rTypesToken<derived_class> { enum { value = token }; };                                                                                            \
+typedef FactoryWrapper<derived_class> Factory##derived_class;                                                                                                        \
+typedef std::vector<FactoryWrapper<derived_class>> Factory##derived_class##s;                                                                                        \
+typedef Expected<FactoryWrapper<derived_class>> Expected##derived_class;                                                                                             \
+typedef std::vector<Expected<FactoryWrapper<derived_class>>> Expected##derived_class##s;
 
-#define GF_TYPE_WRAPPER_FINAL(derived, base, identity) GF_TYPE_WRAPPER(derived, base, identity, identity)
+#define GF_TYPE_WRAPPER_FINAL(derived_class, base_class, identity) GF_TYPE_WRAPPER(derived_class, base_class, identity, identity)
 
 /**
   * \brief Tries to cast the instance pointer of a FactoryWrapper

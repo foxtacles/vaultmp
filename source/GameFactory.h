@@ -2,7 +2,7 @@
 #define GAMEFACTORY_H
 
 #include "vaultmp.h"
-#include "Reference.h"
+#include "Base.h"
 #include "Expected.h"
 #include "Guarded.h"
 
@@ -31,12 +31,14 @@
 /**
   * \brief Holds an instance pointer
   */
-template<typename T> class FactoryWrapper;
+template<typename T>
+class FactoryWrapper;
 
 template<typename T, typename U> Expected<FactoryWrapper<T>> vaultcast(const FactoryWrapper<U>& object) noexcept;
 template<typename T, typename U> Expected<FactoryWrapper<T>> vaultcast(const Expected<FactoryWrapper<U>>& object) noexcept;
 template<typename T, typename U> Expected<FactoryWrapper<T>> vaultcast_swap(FactoryWrapper<U>& object) noexcept;
 template<typename T, typename U> Expected<FactoryWrapper<T>> vaultcast_swap(Expected<FactoryWrapper<U>>& object) noexcept;
+
 template<typename T> struct rTypes;
 template<typename T> struct rTypesToken;
 
@@ -46,10 +48,10 @@ template<typename T> struct rTypesToken;
 class GameFactory
 {
 	private:
-		typedef std::map<std::shared_ptr<Reference>, unsigned int> ReferenceList;
-		typedef std::unordered_map<RakNet::NetworkID, ReferenceList::iterator> ReferenceIndex;
-		typedef std::unordered_map<unsigned int, unsigned int> ReferenceCount;
-		typedef std::unordered_set<RakNet::NetworkID> ReferenceDeleted;
+		typedef std::map<std::shared_ptr<Base>, unsigned int> BaseList;
+		typedef std::unordered_map<RakNet::NetworkID, BaseList::iterator> BaseIndex;
+		typedef std::unordered_map<unsigned int, unsigned int> BaseCount;
+		typedef std::unordered_set<RakNet::NetworkID> BaseDeleted;
 
 		GameFactory() = delete;
 
@@ -58,10 +60,10 @@ class GameFactory
 #endif
 
 		static Guarded<> cs;
-		static ReferenceList instances;
-		static ReferenceIndex index;
-		static ReferenceCount typecount;
-		static ReferenceDeleted delrefs;
+		static BaseList instances;
+		static BaseIndex index;
+		static BaseCount typecount;
+		static BaseDeleted delrefs;
 
 #ifdef VAULTSERVER
 		static Database<DB::Record> dbRecords;
@@ -76,7 +78,7 @@ class GameFactory
 		static Database<DB::Interior> dbInteriors;
 #endif
 
-		inline static ReferenceList::iterator GetShared(const RakNet::NetworkID& id) { return index.count(id) ? index[id] : instances.end(); }
+		inline static BaseList::iterator GetShared(const RakNet::NetworkID& id) { return index.count(id) ? index[id] : instances.end(); }
 
 	public:
 		enum class FailPolicy
@@ -114,7 +116,7 @@ class GameFactory
 
 		template<typename I>
 		struct InputPolicyHelper {
-			static constexpr bool value = !std::is_trivial<typename std::remove_reference<I>::type>::value && !std::is_base_of<FactoryWrapper<Reference>, typename std::remove_reference<I>::type>::value;
+			static constexpr bool value = !std::is_trivial<typename std::remove_reference<I>::type>::value && !std::is_base_of<FactoryWrapper<Base>, typename std::remove_reference<I>::type>::value;
 		};
 
 		template<FailPolicy FP, ObjectPolicy OP, LaunchPolicy LP, typename T, typename F, typename I> struct OperateReturn;
@@ -133,20 +135,20 @@ class GameFactory
 
 		template<ObjectPolicy OP, typename T>
 		struct ObjectPolicyHelper {
-			inline static typename ObjectPolicyType<OP, T>::type& Unwrap(Expected<FactoryWrapper<T>>& reference) noexcept(OP == ObjectPolicy::Expected);
-			inline static typename ObjectPolicyType<OP, T>::type& Unwrap(std::vector<Expected<FactoryWrapper<T>>>& reference) noexcept(OP == ObjectPolicy::Expected);
+			inline static typename ObjectPolicyType<OP, T>::type& Unwrap(Expected<FactoryWrapper<T>>& base) noexcept(OP == ObjectPolicy::Expected);
+			inline static typename ObjectPolicyType<OP, T>::type& Unwrap(std::vector<Expected<FactoryWrapper<T>>>& base) noexcept(OP == ObjectPolicy::Expected);
 		};
 
 		template<typename T>
 		struct ObjectPolicyHelper<ObjectPolicy::Validated, T> {
-			inline static typename ObjectPolicyType<ObjectPolicy::Validated, T>::type& Unwrap(Expected<FactoryWrapper<T>>& reference) { return reference.get(); }
-			inline static typename std::vector<typename ObjectPolicyType<ObjectPolicy::Validated, T>::type> Unwrap(std::vector<Expected<FactoryWrapper<T>>>& reference) {
+			inline static typename ObjectPolicyType<ObjectPolicy::Validated, T>::type& Unwrap(Expected<FactoryWrapper<T>>& base) { return base.get(); }
+			inline static typename std::vector<typename ObjectPolicyType<ObjectPolicy::Validated, T>::type> Unwrap(std::vector<Expected<FactoryWrapper<T>>>& base) {
 				// a solution with std::reference_wrapper would also be possible. not sure which would perform better
 				std::vector<FactoryWrapper<T>> result;
-				result.reserve(reference.size());
+				result.reserve(base.size());
 
-				for (auto& reference_ : reference)
-					result.emplace_back(std::move(reference_.get()));
+				for (auto& base_ : base)
+					result.emplace_back(std::move(base_.get()));
 
 				return result;
 			}
@@ -154,8 +156,8 @@ class GameFactory
 
 		template<typename T>
 		struct ObjectPolicyHelper<ObjectPolicy::Expected, T> {
-			inline static typename ObjectPolicyType<ObjectPolicy::Expected, T>::type& Unwrap(Expected<FactoryWrapper<T>>& reference) noexcept { return reference; }
-			inline static typename std::vector<typename ObjectPolicyType<ObjectPolicy::Expected, T>::type>& Unwrap(std::vector<Expected<FactoryWrapper<T>>>& reference) noexcept { return reference; }
+			inline static typename ObjectPolicyType<ObjectPolicy::Expected, T>::type& Unwrap(Expected<FactoryWrapper<T>>& base) noexcept { return base; }
+			inline static typename std::vector<typename ObjectPolicyType<ObjectPolicy::Expected, T>::type>& Unwrap(std::vector<Expected<FactoryWrapper<T>>>& base) noexcept { return base; }
 		};
 
 		template<typename T, typename I>
@@ -172,29 +174,29 @@ class GameFactory
 		static void Initialize();
 
 		/**
-		 * \brief Obtains a lock on a Reference
+		 * \brief Obtains a lock on a Base
 		 *
-		 * The Reference is identified by a NetworkID
+		 * The Base is identified by a NetworkID
 		 */
 		template<typename T, typename I = RakNet::NetworkID>
 		inline static typename std::enable_if<std::is_trivial<I>::value, Expected<FactoryWrapper<T>>>::type Get(I id) noexcept { return Get_<T, I>::Get(id); }
 		/**
 		 * \brief This is an alias to vaultcast_swap
 		 */
-		template<typename T, typename U> inline static Expected<FactoryWrapper<T>> Get(FactoryWrapper<U>& reference) noexcept { return vaultcast_swap<T>(reference); }
-		template<typename T, typename U> inline static Expected<FactoryWrapper<T>> Get(Expected<FactoryWrapper<U>>& reference) noexcept { return vaultcast_swap<T>(reference); }
+		template<typename T, typename U> inline static Expected<FactoryWrapper<T>> Get(FactoryWrapper<U>& base) noexcept { return vaultcast_swap<T>(base); }
+		template<typename T, typename U> inline static Expected<FactoryWrapper<T>> Get(Expected<FactoryWrapper<U>>& base) noexcept { return vaultcast_swap<T>(base); }
 		/**
-		 * \brief Obtains a lock on multiple References
+		 * \brief Obtains a lock on multiple Bases
 		 *
-		 * The References are identified by a STL vector of NetworkID. You must use this function if you want to obtain multiple locks.
-		 * Returns a STL vector which contains the locked References in the same ordering as the input vector.
+		 * The Bases are identified by a STL vector of NetworkID. You must use this function if you want to obtain multiple locks.
+		 * Returns a STL vector which contains the locked Bases in the same ordering as the input vector.
 		 */
 		template<typename T, typename I = RakNet::NetworkID>
 		inline static std::vector<Expected<FactoryWrapper<T>>> Get(const std::vector<I>& ids) noexcept { return Get_<T, I>::Get(ids); }
 		/**
-		 * \brief Executes a function on one or multiple References
+		 * \brief Executes a function on one or multiple Bases
 		 *
-		 * The References are identified by an arbitrary type. This can be a NetworkID, reference ID or FactoryWrapper
+		 * The Bases are identified by an arbitrary type
 		 */
 		template<typename T, FailPolicy FP = FailPolicy::Default, ObjectPolicy OP = ObjectPolicy::Default, LaunchPolicy LP = LaunchPolicy::Default, typename I, typename F>
 		static typename OperateReturn<FP, OP, LP, T, F, I>::type Operate(I&& id, F function) noexcept(FP != FailPolicy::Exception) { return OperateFunctions<T, FP, OP, LP, I, F>::Operate(std::forward<I>(id), function); }
@@ -212,27 +214,27 @@ class GameFactory
 		 */
 		static unsigned int GetType(RakNet::NetworkID id) noexcept;
 		/**
-		 * \brief Returns the type of the given reference
+		 * \brief Returns the type of the given base
 		 */
-		static unsigned int GetType(const Reference* reference) noexcept;
+		static unsigned int GetType(const Base* base) noexcept;
 		/**
-		 * \brief Obtains a lock on all References of a given type
+		 * \brief Obtains a lock on all Bases of a given type
 		 */
 		template<typename T>
 		static std::vector<FactoryWrapper<T>> GetByType(unsigned int type) noexcept;
 		/**
-		 * \brief Returns the NetworkID's of all References of a given type
+		 * \brief Returns the NetworkID's of all Bases of a given type
 		 */
 		static std::vector<RakNet::NetworkID> GetByTypeID(unsigned int type) noexcept;
 		/**
-		 * \brief Counts the amount of References of a given type
+		 * \brief Counts the amount of Bases of a given type
 		 */
 		static unsigned int GetCount(unsigned int type) noexcept;
 		/**
-		 * \brief Invalidates a Reference held by a FactoryWrapper
+		 * \brief Invalidates a Base held by a FactoryWrapper
 		 */
 		template<typename T>
-		static void Leave(FactoryWrapper<T>& reference);
+		static void Leave(FactoryWrapper<T>& base);
 		/**
 		 * \brief Creates a new instance of a given type
 		 */
@@ -255,10 +257,10 @@ class GameFactory
 		/**
 		 * \brief Destroys an instance which has previously been locked
 		 *
-		 * You must make sure the lock count of the given Reference equals to one
+		 * You must make sure the lock count of the given Base equals to one
 		 */
 		template<typename T>
-		static RakNet::NetworkID Destroy(FactoryWrapper<T>& reference);
+		static RakNet::NetworkID Destroy(FactoryWrapper<T>& base);
 };
 
 #include "GameFactory.hpp"

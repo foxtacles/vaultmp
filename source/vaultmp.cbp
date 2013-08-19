@@ -85,6 +85,8 @@
 		<Unit filename="API.h" />
 		<Unit filename="Actor.cpp" />
 		<Unit filename="Actor.h" />
+		<Unit filename="Base.cpp" />
+		<Unit filename="Base.h" />
 		<Unit filename="Bethesda.cpp" />
 		<Unit filename="Bethesda.h" />
 		<Unit filename="Button.cpp" />
@@ -123,7 +125,6 @@
 		<Unit filename="NetworkClient.h" />
 		<Unit filename="Object.cpp" />
 		<Unit filename="Object.h" />
-		<Unit filename="PacketTypes.h" />
 		<Unit filename="Pipe.cpp" />
 		<Unit filename="Pipe.h" />
 		<Unit filename="Player.cpp" />

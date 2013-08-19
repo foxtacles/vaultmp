@@ -1,5 +1,4 @@
 #include "Reference.h"
-#include "Network.h"
 #include "Utils.h"
 
 using namespace std;
@@ -9,12 +8,38 @@ using namespace RakNet;
 DebugInput<Reference> Reference::debug;
 #endif
 
-Reference::Reference()
+Guarded<Reference::RefIDs> Reference::refIDs;
+
+Reference::Reference(unsigned int refID, unsigned int baseID) : Base()
 {
-	this->SetNetworkIDManager(Network::Manager());
+	this->SetReference(refID);
+	this->SetBase(baseID);
 }
 
-Reference::~Reference() noexcept {}
+Reference::Reference(const pDefault* packet)
+{
+	pPacket pBaseNew = PacketFactory::Pop<pPacket>(packet);
+
+	NetworkID id;
+
+	PacketFactory::Access<pTypes::ID_BASE_NEW>(pBaseNew, id);
+
+	this->SetNetworkID(id);
+
+	unsigned int refID, baseID;
+
+	PacketFactory::Access<pTypes::ID_REFERENCE_NEW>(packet, refID, baseID);
+
+	this->SetReference(refID);
+	this->SetBase(baseID);
+}
+
+Reference::~Reference() noexcept
+{
+	refIDs.Operate([this](RefIDs& refIDs) {
+		refIDs.erase(this->refID.get());
+	});
+}
 
 /*
 unsigned int Reference::ResolveIndex(unsigned int baseID)
@@ -41,6 +66,44 @@ Lockable* Reference::SetObjectValue(Value<double>& dest, const double& value)
 	return &dest;
 }
 
+unsigned int Reference::GetReference() const
+{
+	return refID.get();
+}
+
+unsigned int Reference::GetBase() const
+{
+	return baseID.get();
+}
+
+Lockable* Reference::SetReference(unsigned int refID)
+{
+	unsigned int old_refID = this->refID.get();
+
+	auto* result = SetObjectValue(this->refID, refID);
+
+	if (result)
+		refIDs.Operate([this, old_refID, refID](RefIDs& refIDs) {
+			refIDs.erase(old_refID);
+
+			if (refID)
+				refIDs.emplace(refID, this->GetNetworkID());
+		});
+
+	return result;
+}
+
+Lockable* Reference::SetBase(unsigned int baseID)
+{
+	return SetObjectValue(this->baseID, baseID);
+}
+
+bool Reference::IsPersistent() const
+{
+	unsigned int refID = GetReference();
+	return ((refID & 0xFF000000) != 0xFF000000) && refID;
+}
+
 #ifndef VAULTSERVER
 void Reference::Enqueue(const function<void()>& task)
 {
@@ -62,3 +125,12 @@ void Reference::Release()
 		tasks.pop();
 }
 #endif
+
+pPacket Reference::toPacket() const
+{
+	pPacket pBaseNew = Base::toPacket();
+
+	pPacket packet = PacketFactory::Create<pTypes::ID_REFERENCE_NEW>(pBaseNew, this->GetReference(), this->GetBase());
+
+	return packet;
+}

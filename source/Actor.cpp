@@ -285,7 +285,7 @@ bool Actor::IsActorAttacking() const
 #ifdef VAULTSERVER
 unsigned int Actor::GetEquippedWeapon() const
 {
-	auto weapons = this->IL.GetItemTypes("WEAP");
+	auto weapons = this->GetItemTypes("WEAP");
 	unsigned int baseID;
 
 	// this won't reliably work if the actor has equipped more than one weapon
@@ -353,17 +353,6 @@ bool ActorFunctor::filter(FactoryWrapper<Reference>& reference)
 
 		if (flags & FLAG_ALIVE && actor->GetActorDead())
 			return true;
-
-		else if (flags & FLAG_DEAD && !actor->GetActorDead())
-			return true;
-
-		if (flags & FLAG_ISALERT && !actor->GetActorAlerted())
-			return true;
-
-		else if (flags & FLAG_NOTALERT && actor->GetActorAlerted())
-			return true;
-
-		// FLAG_SELFALERT
 
 		return false;
 	});

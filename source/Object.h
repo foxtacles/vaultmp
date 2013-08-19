@@ -3,10 +3,6 @@
 
 #include "vaultmp.h"
 #include "Reference.h"
-#include "ReferenceTypes.h"
-#include "GameFactory.h"
-#include "Guarded.h"
-#include "Interface.h"
 #include "VaultVector.h"
 
 #ifdef VAULTMP_DEBUG
@@ -14,12 +10,8 @@
 #endif
 
 const unsigned int FLAG_ENABLED = 0x00000001;
-const unsigned int FLAG_DISABLED = FLAG_ENABLED << 1;
-const unsigned int FLAG_NOTSELF = FLAG_DISABLED << 1;
+const unsigned int FLAG_NOTSELF = FLAG_ENABLED << 1;
 const unsigned int FLAG_SELF = FLAG_NOTSELF << 1;
-const unsigned int FLAG_REFERENCE = FLAG_SELF << 1;
-const unsigned int FLAG_BASE = FLAG_REFERENCE << 1;
-const unsigned int FLAG_LOCKED = FLAG_BASE << 1;
 
 /**
  * \brief Derives from Reference class and represents an object in-game
@@ -32,17 +24,12 @@ class Object : public Reference
 		friend class GameFactory;
 
 	private:
-		typedef std::unordered_map<unsigned int, RakNet::NetworkID> RefIDs;
-
 		static RawParameter param_Axis;
-		static Guarded<RefIDs> refIDs;
 
 #ifdef VAULTMP_DEBUG
 		static DebugInput<Object> debug;
 #endif
 
-		Value<unsigned int> refID;
-		Value<unsigned int> baseID;
 		Value<std::string> object_Name;
 		std::unordered_map<unsigned char, Value<double>> object_Game_Pos;
 		std::unordered_map<unsigned char, Value<double>> object_Network_Pos;
@@ -55,15 +42,6 @@ class Object : public Reference
 
 		static bool IsValidCoordinate(double C);
 		static bool IsValidAngle(unsigned char axis, double A);
-
-		template<typename T>
-		struct PickBy_ {
-			static RakNet::NetworkID PickBy(T id) noexcept;
-			static std::vector<RakNet::NetworkID> PickBy(const std::vector<T>& ids) noexcept;
-		};
-
-		template<typename T> inline static RakNet::NetworkID PickBy(T id) noexcept { return PickBy_<T>::PickBy(id); }
-		template<typename T> inline static std::vector<RakNet::NetworkID> PickBy(const std::vector<T>& ids) noexcept { return PickBy_<T>::PickBy(ids); }
 
 		void initialize();
 
@@ -134,27 +112,7 @@ class Object : public Reference
 		 * \brief Retrieves the Object's owner
 		 */
 		unsigned int GetOwner() const;
-		/**
-		 * \brief Retrieves the Reference's reference ID
-		 */
-		unsigned int GetReference() const;
-		/**
-		 * \brief Retrieves the Reference's base ID
-		 */
-		unsigned int GetBase() const;
 
-		/**
-		 * \brief Sets the Object's reference ID
-		 */
-		Lockable* SetReference(unsigned int refID);
-		/**
-		 * \brief Sets the Object's base ID
-		 */
-#ifdef VAULTSERVER
-		virtual Lockable* SetBase(unsigned int baseID);
-#else
-		Lockable* SetBase(unsigned int baseID);
-#endif
 		/**
 		 * \brief Sets the Object's name
 		 */
@@ -200,19 +158,6 @@ class Object : public Reference
 		 * \brief Returns a vector representation of the game coordinates
 		 */
 		VaultVector vvec() const;
-
-		/**
-		 * \brief Determines if the reference ID is persistent
-		 */
-		bool IsPersistent() const;
-		/**
-		 * \brief Returns a constant Parameter used to pass the reference ID of this Object to the Interface
-		 */
-		RawParameter GetReferenceParam() const { return RawParameter(refID.get()); };
-		/**
-		 * \brief Returns a constant Parameter used to pass the base ID of this Object to the Interface
-		 */
-		RawParameter GetBaseParam() const { return RawParameter(baseID.get()); };
 		/**
 		 * \brief Returns true if the Object is in a given range
 		 */
@@ -231,9 +176,7 @@ class Object : public Reference
 		bool HasValidCoordinates() const;
 
 #ifdef VAULTSERVER
-		virtual void virtual_initializers() {
-			this->SetBase(this->GetBase());
-		}
+		virtual void virtual_initializers() { this->SetBase(this->GetBase()); }
 #endif
 
 		/**
@@ -276,7 +219,7 @@ class ObjectFunctor : public ReferenceFunctor
 
 GF_TYPE_WRAPPER(Object, Reference, ID_OBJECT, ALL_OBJECTS)
 
-template<> struct pTypesMap<pTypes::ID_OBJECT_NEW> { typedef pGeneratorReferenceNew<pTypes::ID_OBJECT_NEW, std::string, double, double, double, double, double, double, unsigned int, bool, unsigned int, unsigned int> type; };
+template<> struct pTypesMap<pTypes::ID_OBJECT_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_OBJECT_NEW, std::string, double, double, double, double, double, double, unsigned int, bool, unsigned int, unsigned int> type; };
 template<>
 inline const typename pTypesMap<pTypes::ID_OBJECT_NEW>::type* PacketFactory::Cast_<pTypes::ID_OBJECT_NEW>::Cast(const pDefault* packet) {
 	pTypes type = packet->type();

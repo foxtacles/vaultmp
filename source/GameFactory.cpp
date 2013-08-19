@@ -7,10 +7,10 @@ using namespace std;
 using namespace RakNet;
 
 Guarded<> GameFactory::cs;
-GameFactory::ReferenceList GameFactory::instances;
-GameFactory::ReferenceIndex GameFactory::index;
-GameFactory::ReferenceCount GameFactory::typecount;
-GameFactory::ReferenceDeleted GameFactory::delrefs;
+GameFactory::BaseList GameFactory::instances;
+GameFactory::BaseIndex GameFactory::index;
+GameFactory::BaseCount GameFactory::typecount;
+GameFactory::BaseDeleted GameFactory::delrefs;
 
 #ifdef VAULTMP_DEBUG
 DebugInput<GameFactory> GameFactory::debug;
@@ -49,7 +49,7 @@ vector<NetworkID> GameFactory::GetByTypeID(unsigned int type) noexcept
 {
 	vector<NetworkID> result;
 
-	ReferenceList copy(cs.Operate([&result, type]() {
+	BaseList copy(cs.Operate([&result, type]() {
 		result.reserve(typecount[type]);
 		return instances;
 	}));
@@ -75,9 +75,9 @@ bool GameFactory::IsDeleted(NetworkID id) noexcept
 	});
 }
 
-unsigned int GameFactory::GetType(const Reference* reference) noexcept
+unsigned int GameFactory::GetType(const Base* reference) noexcept
 {
-	return GetType(const_cast<Reference*>(reference)->GetNetworkID());
+	return GetType(const_cast<Base*>(reference)->GetNetworkID());
 }
 
 unsigned int GameFactory::GetType(NetworkID id) noexcept
@@ -90,7 +90,7 @@ unsigned int GameFactory::GetType(NetworkID id) noexcept
 
 void GameFactory::DestroyAll() noexcept
 {
-	ReferenceList copy;
+	BaseList copy;
 
 	cs.Operate([&copy]() {
 		copy = move(instances);
@@ -101,13 +101,13 @@ void GameFactory::DestroyAll() noexcept
 
 	for (const auto& instance : copy)
 	{
-		Reference* reference = static_cast<Reference*>(instance.first->StartSession());
+		Base* reference = static_cast<Base*>(instance.first->StartSession());
 
-		if (instance.second & ALL_CONTAINERS)
-			static_cast<Container*>(instance.first.get())->IL.container.clear();
+		if (instance.second & ALL_ITEMLISTS)
+			dynamic_cast<ItemList*>(instance.first.get())->container.clear();
 
 #ifdef VAULTMP_DEBUG
-		debug.print("Reference ", hex, instance.first->GetReference(), " with base ", instance.first->GetBase(), " and NetworkID ", dec, instance.first->GetNetworkID(), " (type: ", typeid(*(instance.first)).name(), ") to be destructed (", instance.first.get(), ")");
+		debug.print("Base ", std::dec, instance.first->GetNetworkID(), " (type: ", typeid(*(instance.first)).name(), ") to be destructed (", instance.first.get(), ")");
 #endif
 
 		reference->Finalize();
@@ -124,5 +124,5 @@ void GameFactory::DestroyAll() noexcept
 
 bool GameFactory::Destroy(NetworkID id)
 {
-	return Destroy(Get<Reference>(id).get());
+	return Destroy(Get<Base>(id).get());
 }

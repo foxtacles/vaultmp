@@ -216,7 +216,11 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					Game::net_SetDeletedStatic(move(deletedStatic));
 					break;
 				}
-
+/*
+				case pTypes::ID_REFERENCE_NEW:
+					GameFactory::Operate<Reference>(GameFactory::Create<Reference>(packet.get()), [](FactoryReference& reference) {
+					}); break;
+*/
 				case pTypes::ID_OBJECT_NEW:
 					GameFactory::Operate<Object>(GameFactory::Create<Object>(packet.get()), [](FactoryObject& object) {
 						Game::NewObject(object);
@@ -368,7 +372,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				{
 					NetworkID id, actor;
 					PacketFactory::Access<pTypes::ID_UPDATE_ACTIVATE>(packet, id, actor);
-					auto reference = GameFactory::Get<Object>(vector<NetworkID>{id, actor});
+					auto reference = GameFactory::Get<Reference>(vector<NetworkID>{id, actor});
 					Game::net_GetActivate(reference[0].get(), reference[1].get());
 					break;
 				}

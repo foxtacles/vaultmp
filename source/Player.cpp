@@ -118,6 +118,7 @@ void Player::initialize()
 {
 	vector<unsigned char> data = API::RetrieveAllControls();
 
+	// emplace
 	for (unsigned char _data : data)
 		player_Controls.insert(make_pair(_data, make_pair(Value<unsigned char>(), Value<bool>(true))));
 
@@ -361,16 +362,6 @@ bool PlayerFunctor::filter(FactoryWrapper<Reference>& reference)
 	if (ActorFunctor::filter(reference))
 		return true;
 
-	return GameFactory::Operate<Player>(reference->GetNetworkID(), [this](FactoryPlayer& player) {
-		unsigned int flags = this->flags();
-
-		if (flags & FLAG_SELFALERT)
-		{
-			if (!player->GetActorAlerted())
-				return true;
-		}
-
-		return false;
-	});
+	return false;
 }
 #endif

@@ -9,7 +9,7 @@
 #include "Debug.h"
 #endif
 
-class Container : public Object
+class Container : public Object, public ItemList
 {
 		friend class GameFactory;
 
@@ -42,8 +42,6 @@ class Container : public Object
 		static FuncParameter CreateFunctor(unsigned int flags, RakNet::NetworkID id = 0);
 #endif
 
-		ItemList IL;
-
 #ifdef VAULTSERVER
 		/**
 		 * \brief Sets the Container's base ID
@@ -73,7 +71,7 @@ class ContainerFunctor : public ObjectFunctor
 
 GF_TYPE_WRAPPER(Container, Object, ID_CONTAINER, ALL_CONTAINERS)
 
-template<> struct pTypesMap<pTypes::ID_CONTAINER_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_CONTAINER_NEW, std::vector<pPacket>> type; };
+template<> struct pTypesMap<pTypes::ID_CONTAINER_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_CONTAINER_NEW, pPacket> type; };
 template<>
 inline const typename pTypesMap<pTypes::ID_CONTAINER_NEW>::type* PacketFactory::Cast_<pTypes::ID_CONTAINER_NEW>::Cast(const pDefault* packet) {
 	pTypes type = packet->type();

@@ -186,13 +186,11 @@ class Script
 		}
 
 		typedef std::vector<std::unique_ptr<Script>> ScriptList;
-		typedef std::unordered_map<RakNet::NetworkID, std::unique_ptr<ItemList>> ScriptItemLists;
 		typedef std::unordered_map<unsigned int, std::vector<unsigned int>> DeletedObjects;
 		typedef std::pair<std::chrono::system_clock::time_point, double> GameTime;
 		typedef unsigned int GameWeather;
 
 		static ScriptList scripts;
-		static ScriptItemLists scriptIL;
 		static DeletedObjects deletedStatic;
 		static GameTime time;
 		static GameWeather weather;

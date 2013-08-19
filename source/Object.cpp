@@ -8,28 +8,21 @@ using namespace std;
 using namespace RakNet;
 using namespace Values;
 
-Guarded<Object::RefIDs> Object::refIDs;
-
 RawParameter Object::param_Axis = RawParameter(vector<string>());
 
 #ifdef VAULTMP_DEBUG
 DebugInput<Object> Object::debug;
 #endif
 
-Object::Object(unsigned int refID, unsigned int baseID) : Reference()
+Object::Object(unsigned int refID, unsigned int baseID) : Reference(refID, baseID)
 {
-	this->SetReference(refID);
-	this->SetBase(baseID);
-
 	initialize();
 }
 
-Object::Object(const pDefault* packet) : Reference()
+Object::Object(const pDefault* packet) : Reference(PacketFactory::Pop<pPacket>(packet))
 {
 	initialize();
 
-	NetworkID id;
-	unsigned int refID, baseID;
 	string name;
 	double X, Y, Z, aX, aY, aZ;
 	unsigned int cell;
@@ -37,11 +30,8 @@ Object::Object(const pDefault* packet) : Reference()
 	unsigned int lock;
 	unsigned int owner;
 
-	PacketFactory::Access<pTypes::ID_OBJECT_NEW>(packet, id, refID, baseID, name, X, Y, Z, aX, aY, aZ, cell, enabled, lock, owner);
+	PacketFactory::Access<pTypes::ID_OBJECT_NEW>(packet, name, X, Y, Z, aX, aY, aZ, cell, enabled, lock, owner);
 
-	this->SetNetworkID(id);
-	this->SetReference(refID);
-	this->SetBase(baseID);
 	this->SetName(move(name));
 	this->SetNetworkPos(Axis_X, X);
 	this->SetNetworkPos(Axis_Y, Y);
@@ -54,7 +44,7 @@ Object::Object(const pDefault* packet) : Reference()
 	this->SetLockLevel(lock);
 	this->SetOwner(owner);
 
-	if (refID)
+	if (this->GetReference())
 	{
 		this->SetGamePos(Axis_X, X);
 		this->SetGamePos(Axis_Y, Y);
@@ -65,9 +55,7 @@ Object::Object(const pDefault* packet) : Reference()
 
 Object::~Object() noexcept
 {
-	refIDs.Operate([this](RefIDs& refIDs) {
-		refIDs.erase(this->refID.get());
-	});
+
 }
 
 void Object::initialize()
@@ -112,16 +100,6 @@ FuncParameter Object::CreateFunctor(unsigned int flags, NetworkID id)
 }
 #endif
 
-unsigned int Object::GetReference() const
-{
-	return refID.get();
-}
-
-unsigned int Object::GetBase() const
-{
-	return baseID.get();
-}
-
 const string& Object::GetName() const
 {
 	return *object_Name;
@@ -165,28 +143,6 @@ unsigned int Object::GetLockLevel() const
 unsigned int Object::GetOwner() const
 {
 	return state_Owner.get();
-}
-
-Lockable* Object::SetReference(unsigned int refID)
-{
-	unsigned int old_refID = this->refID.get();
-
-	auto* result = SetObjectValue(this->refID, refID);
-
-	if (result)
-		refIDs.Operate([this, old_refID, refID](RefIDs& refIDs) {
-			refIDs.erase(old_refID);
-
-			if (refID)
-				refIDs.emplace(refID, this->GetNetworkID());
-		});
-
-	return result;
-}
-
-Lockable* Object::SetBase(unsigned int baseID)
-{
-	return SetObjectValue(this->baseID, baseID);
 }
 
 Lockable* Object::SetName(const string& name)
@@ -254,12 +210,6 @@ VaultVector Object::vvec() const
 	return VaultVector(GetGamePos(Axis_X), GetGamePos(Axis_Y), GetGamePos(Axis_Z));
 }
 
-bool Object::IsPersistent() const
-{
-	unsigned int refID = GetReference();
-	return ((refID & 0xFF000000) != 0xFF000000) && refID;
-}
-
 bool Object::IsNearPoint(double X, double Y, double Z, double R) const
 {
 	return this->vvec().IsNearPoint(VaultVector(X, Y, Z), R);
@@ -286,8 +236,9 @@ bool Object::HasValidCoordinates() const
 
 pPacket Object::toPacket() const
 {
-	pPacket packet = PacketFactory::Create<pTypes::ID_OBJECT_NEW>(const_cast<Object*>(this)->GetNetworkID(), this->GetReference(), this->GetBase(),
-		this->GetName(), this->GetNetworkPos(Values::Axis_X), this->GetNetworkPos(Values::Axis_Y), this->GetNetworkPos(Values::Axis_Z),
+	pPacket pReferenceNew = Reference::toPacket();
+
+	pPacket packet = PacketFactory::Create<pTypes::ID_OBJECT_NEW>(pReferenceNew, this->GetName(), this->GetNetworkPos(Values::Axis_X), this->GetNetworkPos(Values::Axis_Y), this->GetNetworkPos(Values::Axis_Z),
 		this->GetAngle(Values::Axis_X), this->GetAngle(Values::Axis_Y), this->GetAngle(Values::Axis_Z), this->GetNetworkCell(), this->GetEnabled(), this->GetLockLevel(), this->GetOwner());
 
 	return packet;
@@ -301,12 +252,7 @@ vector<string> ObjectFunctor::operator()()
 
 	if (id)
 		GameFactory::Operate<Object, FailPolicy::Return>(id, [this, &result](FactoryObject& object) {
-			unsigned int flags = this->flags();
-
-			if (flags & FLAG_REFERENCE)
-				result.emplace_back(Utils::toString(object->GetReference()));
-			else if (flags & FLAG_BASE)
-				result.emplace_back(Utils::toString(object->GetBase()));
+			result.emplace_back(Utils::toString(object->GetReference()));
 		});
 	else
 	{
@@ -337,17 +283,6 @@ bool ObjectFunctor::filter(FactoryWrapper<Reference>& reference)
 
 		if (flags & FLAG_ENABLED && !object->GetEnabled())
 			return true;
-
-		else if (flags & FLAG_DISABLED && object->GetEnabled())
-			return true;
-
-		if (flags & FLAG_LOCKED)
-		{
-			unsigned int lock = object->GetLockLevel();
-
-			if (lock == UINT_MAX || lock == UINT_MAX - 1 || lock == 255 || lock == 5)
-				return true;
-		}
 
 		return false;
 	});
