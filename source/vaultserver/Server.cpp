@@ -22,22 +22,18 @@ NetworkResponse Server::Authenticate(RakNetGUID guid, const string& name, const 
 	if (result)
 	{
 		for (const auto& mod : Dedicated::modfiles)
-		{
 			response.emplace_back(Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_GAME_MOD>(mod.first, mod.second),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
-		}
 
 		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_GAME_START>(),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 	else
-	{
 		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_GAME_END>(Reason::ID_REASON_DENIED),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
-	}
 
 	return response;
 }
@@ -74,10 +70,10 @@ NetworkResponse Server::LoadGame(RakNetGUID guid)
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 
-	GameFactory::Operate(GameFactory::GetIDObjectTypes(ALL_OBJECTS), [&response, guid](FactoryObjects& objects) {
-		FactoryObjects::iterator it;
+	GameFactory::Operate<Reference>(GameFactory::GetByTypeID(ALL_REFERENCES), [&response, guid](FactoryReferences& references) {
+		FactoryReferences::iterator it;
 
-		for (it = objects.begin(); it != objects.end(); GameFactory::LeaveReference(*it), ++it)
+		for (it = references.begin(); it != references.end(); GameFactory::Leave(*it), ++it)
 		{
 			auto item = vaultcast<Item>(*it);
 
@@ -124,28 +120,23 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 	Client* client = new Client(guid, id);
 	Dedicated::self->SetServerPlayers(make_pair(Client::GetClientCount(), Dedicated::connections));
 
-	NetworkID chatbox_id;
-
-	{
-		auto chatbox = GameFactory::GetObject<Window>((Script::CreateWindow)(get<0>(Window::GUI_MAIN_POS), get<1>(Window::GUI_MAIN_POS), get<2>(Window::GUI_MAIN_POS), get<3>(Window::GUI_MAIN_POS), get<0>(Window::GUI_MAIN_SIZE), get<1>(Window::GUI_MAIN_SIZE), get<2>(Window::GUI_MAIN_SIZE), get<3>(Window::GUI_MAIN_SIZE), true, false, Window::GUI_MAIN_TEXT));
-		chatbox->SetLabel(Window::GUI_MAIN_LABEL);
-		chatbox_id = chatbox->GetNetworkID();
-	}
-
-	Script::AttachWindow(id, chatbox_id);
+	Script::AttachWindow(id, GameFactory::Operate<Window>(GameFactory::Create<Window>(), [](FactoryWindow& window) {
+		Script::SetupWindow(window, get<0>(Window::GUI_MAIN_POS), get<1>(Window::GUI_MAIN_POS), get<2>(Window::GUI_MAIN_POS), get<3>(Window::GUI_MAIN_POS), get<0>(Window::GUI_MAIN_SIZE), get<1>(Window::GUI_MAIN_SIZE), get<2>(Window::GUI_MAIN_SIZE), get<3>(Window::GUI_MAIN_SIZE), true, false, Window::GUI_MAIN_TEXT);
+		window->SetLabel(Window::GUI_MAIN_LABEL);
+		return window->GetNetworkID();
+	}));
 
 	Script::CBR<Script::CBI("OnPlayerRequestGame")> result = 0x00000000;
 	Script::Call<Script::CBI("OnPlayerRequestGame")>(result, id);
-	string player_name;
 
-	{
-		auto player = GameFactory::GetObject<Player>(id).get();
+	auto player_name = GameFactory::Operate<Player>(id, [&response, guid, id, client, &result](FactoryPlayer& player) {
+		auto baseIDs = Player::GetBaseIDs();
 
 		// TODO hardcoded hack to not get DLC bases, no proper mod handling yet
 		if (!result)
-			result = DB::NPC::GetNPCNotIn(Player::GetBaseIDs(), [](const DB::NPC& data)
+			result = DB::NPC::GetNPC([&baseIDs](const DB::NPC& data)
 			{
-				return (!(data.GetBase() & 0xFF000000) && !data.IsEssential() && !DB::Race::Lookup(data.GetRace())->IsChild());
+				return find(baseIDs.begin(), baseIDs.end(), data.GetBase()) == baseIDs.end() && (!(data.GetBase() & 0xFF000000) && !data.IsEssential() && !DB::Race::Lookup(data.GetRace())->IsChild());
 			})->GetBase();
 
 		const auto* npc = *DB::NPC::Lookup(result);
@@ -193,8 +184,8 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 			player->toPacket(),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(client)));
 
-		player_name = player->GetName();
-	}
+		return player->GetName();
+	});
 
 	Script::SetBaseName(id, player_name.c_str());
 
@@ -210,12 +201,12 @@ NetworkResponse Server::Disconnect(RakNetGUID guid, Reason reason)
 
 	if (client != nullptr)
 	{
-		NetworkID id = GameFactory::GetObject<Player>(client->GetPlayer())->GetNetworkID();
+		NetworkID id = GameFactory::Get<Player>(client->GetPlayer())->GetNetworkID();
 		Script::Call<Script::CBI("OnPlayerDisconnect")>(id, reason);
 		delete client;
 
-		GameFactory::DestroyInstance(Script::GetPlayerChatboxWindow(id));
-		GameFactory::DestroyInstance(id);
+		GameFactory::Destroy(Script::GetPlayerChatboxWindow(id));
+		GameFactory::Destroy(id);
 
 		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_OBJECT_REMOVE>(id, true),
@@ -259,7 +250,7 @@ NetworkResponse Server::GetPos(RakNetGUID guid, FactoryObject& reference, double
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 			});
 
-			GameFactory::LeaveReference(reference);
+			GameFactory::Leave(reference);
 			Script::Call<Script::CBI("OnCellChange")>(id, cell);
 		}
 		else
@@ -271,17 +262,15 @@ NetworkResponse Server::GetPos(RakNetGUID guid, FactoryObject& reference, double
 	return response;
 }
 
-NetworkResponse Server::GetAngle(RakNetGUID guid, FactoryObject& reference, unsigned char axis, double value)
+NetworkResponse Server::GetAngle(RakNetGUID guid, FactoryObject& reference, double X, double Y, double Z)
 {
 	NetworkResponse response;
-	bool result = static_cast<bool>(reference->SetAngle(axis, value));
+	bool result = static_cast<bool>(reference->SetAngle(Axis_X, X)) |  static_cast<bool>(reference->SetAngle(Axis_Y, Y)) |  static_cast<bool>(reference->SetAngle(Axis_Z, Z));
 
 	if (result)
-	{
 		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_ANGLE>(reference->GetNetworkID(), axis, value),
+			PacketFactory::Create<pTypes::ID_UPDATE_ANGLE>(reference->GetNetworkID(), X, Z),
 			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, Client::GetNetworkList(guid)));
-	}
 
 	return response;
 }
@@ -308,14 +297,14 @@ NetworkResponse Server::GetCell(RakNetGUID guid, FactoryObject& reference, unsig
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 		});
 
-		GameFactory::LeaveReference(reference);
+		GameFactory::Leave(reference);
 		Script::Call<Script::CBI("OnCellChange")>(id, cell);
 	}
 
 	return response;
 }
 
-NetworkResponse Server::GetActivate(RakNetGUID guid, FactoryObject& reference, FactoryObject& actor)
+NetworkResponse Server::GetActivate(RakNetGUID guid, FactoryReference& reference, FactoryReference& actor)
 {
 	NetworkResponse response;
 
@@ -327,8 +316,8 @@ NetworkResponse Server::GetActivate(RakNetGUID guid, FactoryObject& reference, F
 			PacketFactory::Create<pTypes::ID_UPDATE_ACTIVATE>(reference_id, actor_id),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 
-	GameFactory::LeaveReference(reference);
-	GameFactory::LeaveReference(actor);
+	GameFactory::Leave(reference);
+	GameFactory::Leave(actor);
 
 	Script::Call<Script::CBI("OnActivate")>(reference_id, actor_id);
 
@@ -374,12 +363,12 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, FactoryActor& reference, 
 		{
 			if (power_punching)
 			{
-				GameFactory::LeaveReference(reference);
+				GameFactory::Leave(reference);
 				Script::Call<Script::CBI("OnActorPunch")>(id, true);
 			}
 			else if (punching)
 			{
-				GameFactory::LeaveReference(reference);
+				GameFactory::Leave(reference);
 				Script::Call<Script::CBI("OnActorPunch")>(id, false);
 			}
 			else if (firing)
@@ -391,14 +380,14 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, FactoryActor& reference, 
 					PacketFactory::Create<pTypes::ID_UPDATE_FIREWEAPON>(id, baseID, weapon->IsAutomatic() ? weapon->GetFireRate() : 0.00),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
-				GameFactory::LeaveReference(reference);
+				GameFactory::Leave(reference);
 				Script::Call<Script::CBI("OnActorFireWeapon")>(id, baseID);
 			}
 			else
-				GameFactory::LeaveReference(reference);
+				GameFactory::Leave(reference);
 		}
 		else
-			GameFactory::LeaveReference(reference);
+			GameFactory::Leave(reference);
 
 		if (_alerted)
 			Script::Call<Script::CBI("OnActorAlert")>(id, alerted);
@@ -428,7 +417,7 @@ NetworkResponse Server::GetActorDead(RakNetGUID guid, FactoryPlayer& reference, 
 			PacketFactory::Create<pTypes::ID_UPDATE_DEAD>(id, dead, 0, 0),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
-		GameFactory::LeaveReference(reference);
+		GameFactory::Leave(reference);
 
 		Script::Call<Script::CBI("OnSpawn")>(id);
 	}
@@ -465,7 +454,7 @@ NetworkResponse Server::GetWindowClick(RakNetGUID guid, FactoryWindow& reference
 	NetworkResponse response;
 
 	NetworkID id = reference->GetNetworkID();
-	GameFactory::LeaveReference(reference);
+	GameFactory::Leave(reference);
 
 	Script::Call<Script::CBI("OnWindowClick")>(id, Client::GetClientFromGUID(guid)->GetPlayer());
 
@@ -478,24 +467,11 @@ NetworkResponse Server::GetWindowText(RakNetGUID guid, FactoryWindow& reference,
 
 	NetworkID id = reference->GetNetworkID();
 	reference->SetText(text);
-	GameFactory::LeaveReference(reference);
+	GameFactory::Leave(reference);
 
 	NetworkID root = Script::GetWindowRoot(id);
 
-	vector<RakNetGUID> guids;
-
-	{
-		auto players = GameFactory::GetObjectTypes<Player>(ID_PLAYER);
-
-		for (const auto& player : players)
-			if (player->GetPlayerWindows().count(root))
-			{
-				RakNetGUID guid_ = Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID();
-
-				if (guid_ != guid)
-					guids.emplace_back(guid_);
-			}
-	}
+	vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root), guid));
 
 	if (!guids.empty())
 		response.emplace_back(Network::CreateResponse(
@@ -513,24 +489,11 @@ NetworkResponse Server::GetCheckboxSelected(RakNetGUID guid, FactoryCheckbox& re
 
 	NetworkID id = reference->GetNetworkID();
 	reference->SetSelected(selected);
-	GameFactory::LeaveReference(reference);
+	GameFactory::Leave(reference);
 
 	NetworkID root = Script::GetWindowRoot(id);
 
-	vector<RakNetGUID> guids;
-
-	{
-		auto players = GameFactory::GetObjectTypes<Player>(ID_PLAYER);
-
-		for (const auto& player : players)
-			if (player->GetPlayerWindows().count(root))
-			{
-				RakNetGUID guid_ = Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID();
-
-				if (guid_ != guid)
-					guids.emplace_back(guid_);
-			}
-	}
+	vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root), guid));
 
 	if (!guids.empty())
 		response.emplace_back(Network::CreateResponse(
@@ -546,7 +509,7 @@ NetworkResponse Server::ChatMessage(RakNetGUID guid, const string& message)
 {
 	Client* client = Client::GetClientFromGUID(guid);
 
-	NetworkID id = GameFactory::GetObject<Player>(client->GetPlayer())->GetNetworkID();
+	NetworkID id = GameFactory::Get<Player>(client->GetPlayer())->GetNetworkID();
 
 	NetworkResponse response;
 

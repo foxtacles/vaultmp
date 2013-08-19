@@ -127,6 +127,8 @@
 		<Unit filename="../API.h" />
 		<Unit filename="../Actor.cpp" />
 		<Unit filename="../Actor.h" />
+		<Unit filename="../Base.cpp" />
+		<Unit filename="../Base.h" />
 		<Unit filename="../Button.cpp" />
 		<Unit filename="../Button.h" />
 		<Unit filename="../Checkbox.cpp" />
@@ -144,6 +146,7 @@
 		<Unit filename="../Expected.h" />
 		<Unit filename="../GameFactory.cpp" />
 		<Unit filename="../GameFactory.h" />
+		<Unit filename="../GameFactory.hpp" />
 		<Unit filename="../Item.cpp" />
 		<Unit filename="../Item.h" />
 		<Unit filename="../ItemList.cpp" />
@@ -154,7 +157,6 @@
 		<Unit filename="../Network.h" />
 		<Unit filename="../Object.cpp" />
 		<Unit filename="../Object.h" />
-		<Unit filename="../PacketTypes.h" />
 		<Unit filename="../Player.cpp" />
 		<Unit filename="../Player.h" />
 		<Unit filename="../RakNet/AutopatcherPatchContext.h" />

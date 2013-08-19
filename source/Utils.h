@@ -14,6 +14,10 @@ namespace Utils
 			return (I == 1 ? ((2166136261u ^ str[0]) * 16777619u) : ((hash(str, I - 1) ^ str[I - 1]) * 16777619u));
 		}
 
+		inline unsigned int hash(const char* str, std::size_t I) {
+			return (I == 1 ? ((2166136261u ^ str[0]) * 16777619u) : ((hash(str, I - 1) ^ str[I - 1]) * 16777619u));
+		}
+
 		void timestamp();
 		int progress_func(double TotalToDownload, double NowDownloaded);
 		bool DoubleCompare(double a, double b, double epsilon);

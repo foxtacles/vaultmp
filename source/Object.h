@@ -3,8 +3,6 @@
 
 #include "vaultmp.h"
 #include "Reference.h"
-#include "ReferenceTypes.h"
-#include "GameFactory.h"
 #include "VaultVector.h"
 
 #ifdef VAULTMP_DEBUG
@@ -12,12 +10,8 @@
 #endif
 
 const unsigned int FLAG_ENABLED = 0x00000001;
-const unsigned int FLAG_DISABLED = FLAG_ENABLED << 1;
-const unsigned int FLAG_NOTSELF = FLAG_DISABLED << 1;
+const unsigned int FLAG_NOTSELF = FLAG_ENABLED << 1;
 const unsigned int FLAG_SELF = FLAG_NOTSELF << 1;
-const unsigned int FLAG_REFERENCE = FLAG_SELF << 1;
-const unsigned int FLAG_BASE = FLAG_REFERENCE << 1;
-const unsigned int FLAG_LOCKED = FLAG_BASE << 1;
 
 /**
  * \brief Derives from Reference class and represents an object in-game
@@ -56,6 +50,7 @@ class Object : public Reference
 
 	protected:
 		Object(unsigned int refID, unsigned int baseID);
+		Object(unsigned int baseID) : Object(0x00000000, baseID) {}
 		Object(const pDefault* packet);
 		Object(pPacket&& packet) : Object(packet.get()) {};
 
@@ -80,7 +75,7 @@ class Object : public Reference
 		/**
 		 * \brief Retrieves the Object's name
 		 */
-		std::string GetName() const;
+		const std::string& GetName() const;
 		/**
 		 * \brief Retrieves the Object's game coordinate on the specified axis (axis value hex code)
 		 */
@@ -163,7 +158,6 @@ class Object : public Reference
 		 * \brief Returns a vector representation of the game coordinates
 		 */
 		VaultVector vvec() const;
-
 		/**
 		 * \brief Returns true if the Object is in a given range
 		 */
@@ -181,10 +175,34 @@ class Object : public Reference
 		 */
 		bool HasValidCoordinates() const;
 
+#ifdef VAULTSERVER
+		virtual void virtual_initializers() { this->SetBase(this->GetBase()); }
+#endif
+
 		/**
 		 * \brief For network transfer
 		 */
 		virtual pPacket toPacket() const;
+};
+
+template<>
+struct Object::PickBy_<unsigned int> {
+	static RakNet::NetworkID PickBy(unsigned int id) noexcept {
+		return refIDs.Operate([id](RefIDs& refIDs) {
+			return refIDs[id];
+		});
+	}
+
+	static std::vector<RakNet::NetworkID> PickBy(const std::vector<unsigned int>& ids) noexcept {
+		return refIDs.Operate([&ids](RefIDs& refIDs) {
+			std::vector<RakNet::NetworkID> result;
+
+			for (const auto& id : ids)
+				result.emplace_back(refIDs[id]);
+
+			return result;
+		});
+	}
 };
 
 #ifndef VAULTSERVER
@@ -199,9 +217,9 @@ class ObjectFunctor : public ReferenceFunctor
 };
 #endif
 
-GF_TYPE_WRAPPER(Object, Reference, ALL_OBJECTS)
+GF_TYPE_WRAPPER(Object, Reference, ID_OBJECT, ALL_OBJECTS)
 
-template<> struct pTypesMap<pTypes::ID_OBJECT_NEW> { typedef pGeneratorReferenceNew<pTypes::ID_OBJECT_NEW, bool, std::string, double, double, double, double, double, double, unsigned int, bool, unsigned int, unsigned int> type; };
+template<> struct pTypesMap<pTypes::ID_OBJECT_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_OBJECT_NEW, std::string, double, double, double, double, double, double, unsigned int, bool, unsigned int, unsigned int> type; };
 template<>
 inline const typename pTypesMap<pTypes::ID_OBJECT_NEW>::type* PacketFactory::Cast_<pTypes::ID_OBJECT_NEW>::Cast(const pDefault* packet) {
 	pTypes type = packet->type();
@@ -216,7 +234,7 @@ inline const typename pTypesMap<pTypes::ID_OBJECT_NEW>::type* PacketFactory::Cas
 template<> struct pTypesMap<pTypes::ID_OBJECT_REMOVE> { typedef pGeneratorReference<pTypes::ID_OBJECT_REMOVE, bool> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_NAME> { typedef pGeneratorReference<pTypes::ID_UPDATE_NAME, std::string> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_POS> { typedef pGeneratorReference<pTypes::ID_UPDATE_POS, double, double, double> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_ANGLE> { typedef pGeneratorReference<pTypes::ID_UPDATE_ANGLE, unsigned char, double> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_ANGLE> { typedef pGeneratorReference<pTypes::ID_UPDATE_ANGLE, double, double> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_CELL> { typedef pGeneratorReference<pTypes::ID_UPDATE_CELL, unsigned int, double, double, double> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_LOCK> { typedef pGeneratorReference<pTypes::ID_UPDATE_LOCK, unsigned int> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_OWNER> { typedef pGeneratorReference<pTypes::ID_UPDATE_OWNER, unsigned int> type; };

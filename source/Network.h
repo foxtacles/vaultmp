@@ -5,6 +5,10 @@
 #include "packet/PacketFactory.h"
 #include "CriticalSection.h"
 
+#ifdef VAULTMP_DEBUG
+#include "Debug.h"
+#endif
+
 #include <tuple>
 #include <deque>
 

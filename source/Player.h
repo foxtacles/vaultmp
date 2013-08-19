@@ -10,7 +10,7 @@
 
 #include <unordered_set>
 
-const unsigned int FLAG_MOVCONTROLS = FLAG_NOTALERT << 1;
+const unsigned int FLAG_MOVCONTROLS = FLAG_ALIVE << 1;
 
 /**
  * \brief Derives from Actor class and represents a player in-game
@@ -25,7 +25,9 @@ class Player : public Actor
 
 	public:
 		typedef std::array<unsigned int, 9> CellContext;
-		typedef std::unordered_set<RakNet::NetworkID> AttachedWindows;
+		typedef std::vector<RakNet::NetworkID> AttachedWindows;
+		typedef std::vector<unsigned int> BaseIDTracker;
+		typedef std::unordered_map<RakNet::NetworkID, std::vector<RakNet::NetworkID>> WindowTracker;
 
 	private:
 #ifdef VAULTMP_DEBUG
@@ -33,11 +35,12 @@ class Player : public Actor
 #endif
 
 #ifdef VAULTSERVER
-		static std::unordered_set<unsigned int> baseIDs;
+		static Guarded<BaseIDTracker> baseIDs;
+		static Guarded<WindowTracker> attachedWindows;
 
-		static unsigned int default_respawn;
-		static unsigned int default_cell;
-		static bool default_console;
+		static std::atomic<unsigned int> default_respawn;
+		static std::atomic<unsigned int> default_cell;
+		static std::atomic<bool> default_console;
 
 		Value<unsigned int> player_Respawn;
 		Value<unsigned int> player_Cell;
@@ -55,6 +58,7 @@ class Player : public Actor
 
 	protected:
 		Player(unsigned int refID, unsigned int baseID);
+		Player(unsigned int baseID) : Player(0x00000000, baseID) {}
 		Player(const pDefault* packet);
 
 	public:
@@ -92,7 +96,11 @@ class Player : public Actor
 		/**
 		 * \brief Returns the set of all used base IDs by players
 		 */
-		static const std::unordered_set<unsigned int>& GetBaseIDs();
+		static BaseIDTracker GetBaseIDs() { return baseIDs.Operate([](BaseIDTracker& baseIDs) { return baseIDs; }); }
+		/**
+		 * \brief Returns the set of players who have a given window attached
+		 */
+		static WindowTracker::mapped_type GetWindowPlayers(RakNet::NetworkID id) { return attachedWindows.Operate([id](WindowTracker& attachedWindows) { return attachedWindows[id]; }); }
 #endif
 #ifndef VAULTSERVER
 		/**
@@ -131,7 +139,7 @@ class Player : public Actor
 		/**
 		 * \brief Returns the Player's attached windows
 		 */
-		const AttachedWindows& GetPlayerWindows() const;
+		const AttachedWindows& GetPlayerWindows() const { return *player_Windows; };
 #endif
 
 		/**
@@ -194,7 +202,7 @@ class PlayerFunctor : public ActorFunctor
 };
 #endif
 
-GF_TYPE_WRAPPER(Player, Actor, ID_PLAYER)
+GF_TYPE_WRAPPER_FINAL(Player, Actor, ID_PLAYER)
 
 template<> struct pTypesMap<pTypes::ID_PLAYER_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_PLAYER_NEW, std::map<unsigned char, std::pair<unsigned char, bool>>> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_CONTROL> { typedef pGeneratorReference<pTypes::ID_UPDATE_CONTROL, unsigned char, unsigned char> type; };

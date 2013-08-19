@@ -72,29 +72,27 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				FutureSet(shared, getFrom<unsigned int>(result));
 				break;
 
-			case Func::GetPos:
-				GameFactory::Operate(getFrom<unsigned int>(info.at(1)), [&info, result](FactoryObject& object) {
-					GetPos(object, getFrom<unsigned char>(info.at(2)), result);
-				}); break;
+			case Func::GetPosAngle:
+			{
+				float* data = getFrom<float*>(result);
 
-			case Func::GetAngle:
-				GameFactory::Operate(getFrom<unsigned int>(info.at(1)), [&info, result](FactoryObject& object) {
-					GetAngle(object, getFrom<unsigned char>(info.at(2)), result);
-				}); break;
+				GameFactory::Operate<Object>(getFrom<unsigned int>(info.at(1)), [&info, data](FactoryObject& object) {
+					GetAngle(object, data[0], data[1], data[2]);
+					GetPos(object, data[3], data[4], data[5]);
+				});
+				break;
+			}
 
 			case Func::GetActivate:
 			{
 				if (!result)
 					break;
 
-				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
-				unsigned int refID = *reinterpret_cast<unsigned int*>(&data[0]);
+				unsigned int refID = *getFrom<unsigned int*>(result);
 
-				GameFactory::Operate<Object, FailPolicy::Return>(vector<unsigned int>{refID, PLAYER_REFERENCE}, [result](FactoryObjects& objects) {
-					GetActivate(objects[0], objects[1]);
+				GameFactory::Operate<Reference, FailPolicy::Return>(vector<unsigned int>{refID, PLAYER_REFERENCE}, [result](FactoryReferences& references) {
+					GetActivate(references[0], references[1]);
 				});
-
-				delete &data;
 				break;
 			}
 /*
@@ -133,9 +131,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				if (!result)
 					break;
 
-				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
-				GetMessage(string(reinterpret_cast<char*>(&data[0]), data.size()));
-				delete &data;
+				GetMessage(string(getFrom<char*>(result)));
 				break;
 			}
 
@@ -144,9 +140,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				if (!result)
 					break;
 
-				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
-				GetWindowMode(data[0]);
-				delete &data;
+				GetWindowMode(*getFrom<bool*>(result));
 				break;
 			}
 
@@ -155,11 +149,10 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				if (!result)
 					break;
 
-				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
-				string name = reinterpret_cast<char*>(&data[0]);
-				string text = reinterpret_cast<char*>(&data[0]) + name.length() + 1;
+				char* data = getFrom<char*>(result);
+				string name = data;
+				string text = data + name.length() + 1;
 				GetWindowText(move(name), move(text));
-				delete &data;
 				break;
 			}
 
@@ -168,9 +161,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				if (!result)
 					break;
 
-				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
-				GetWindowClick(string(reinterpret_cast<char*>(&data[0]), data.size()));
-				delete &data;
+				GetWindowClick(string(getFrom<char*>(result)));
 				break;
 			}
 
@@ -179,10 +170,9 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				if (!result)
 					break;
 
-				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
-				string name = reinterpret_cast<char*>(&data[0]);
-				GetCheckboxSelected(name, *reinterpret_cast<bool*>(&data[0] + name.length() + 1));
-				delete &data;
+				char* data = getFrom<char*>(result);
+				string name = data;
+				GetCheckboxSelected(name, *reinterpret_cast<bool*>(data + name.length() + 1));
 				break;
 			}
 
@@ -244,6 +234,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func::DisableKey:
 			case Func::EnableKey:
 			case Func::SetName:
+			case Func::PlaceAtMePrepare:
 				break;
 
 			default:
@@ -314,10 +305,8 @@ void Game::Startup()
 	});
 
 	Interface::Setup([&self_ref, id]() {
-		Interface::SetupCommand(Func::GetPos, {self_ref, Object::Param_Axis()});
-		Interface::SetupCommand(Func::GetPos, {Player::CreateFunctor(FLAG_ENABLED | FLAG_NOTSELF | FLAG_ALIVE), Object::Param_Axis()}, 30);
-		//Interface::SetupCommand("GetPos", {Actor::CreateFunctor(FLAG_ENABLED | FLAG_ALIVE), Object::Param_Axis()}, 30);
-		Interface::SetupCommand(Func::GetAngle, {self_ref, RawParameter(vector<string> {API::RetrieveAxis_Reverse(Axis_X), API::RetrieveAxis_Reverse(Axis_Z)})});
+		Interface::SetupCommand(Func::GetPosAngle, {self_ref});
+		Interface::SetupCommand(Func::GetPosAngle, {Player::CreateFunctor(FLAG_ENABLED | FLAG_NOTSELF | FLAG_ALIVE)}, 30);
 		Interface::SetupCommand(Func::GetActorState, {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), Player::CreateFunctor(FLAG_MOVCONTROLS, id)});
 		Interface::SetupCommand(Func::GetParentCell, {Player::CreateFunctor(FLAG_SELF | FLAG_ALIVE)}, 30);
 
@@ -573,10 +562,10 @@ void Game::LoadEnvironment()
 			}
 	});
 
-	vector<NetworkID> reference = GameFactory::GetIDObjectTypes(ALL_OBJECTS);
+	vector<NetworkID> reference = GameFactory::GetByTypeID(ALL_OBJECTS);
 
 	for (NetworkID& id : reference)
-		GameFactory::Operate(id, [](FactoryObject& object) {
+		GameFactory::Operate<Object>(id, [](FactoryObject& object) {
 			if (!object->IsPersistent() || object->GetReference() == PLAYER_REFERENCE)
 			{
 				cellRefs.Operate([&object](CellRefs& cellRefs) {
@@ -655,7 +644,8 @@ void Game::NewObject(FactoryObject& reference)
 		reference->SetEnabled(false);
 
 		uninitObj.Operate([&reference](UninitializedObjects& uninitObj) {
-			uninitObj[reference->GetNetworkCell()].emplace(reference->GetNetworkID());
+			auto& sub = uninitObj[reference->GetNetworkCell()];
+			sub.insert(reference->IsPersistent() ? sub.begin() : sub.end(), reference->GetNetworkID());
 		});
 	}
 }
@@ -663,6 +653,7 @@ void Game::NewObject(FactoryObject& reference)
 void Game::NewObject_(FactoryObject& reference)
 {
 	reference->Release();
+	unsigned int refID = reference->GetReference();
 
 	if (!reference->GetReference())
 	{
@@ -677,55 +668,62 @@ void Game::NewObject_(FactoryObject& reference)
 		}
 
 		unsigned int baseID = reference->GetBase();
-		PlaceAtMe(PLAYER_REFERENCE, baseID, condition, 1, key);
+		unsigned int cell = reference->GetNetworkCell();
+
+		unsigned int anchorID = cellRefs.Operate([cell](CellRefs& cellRefs) {
+			const auto& refs = cellRefs[cell];
+
+			unsigned int anchorID = [&refs]() {
+				for (const auto& subrefs : refs)
+					if (!subrefs.second.empty())
+						return *subrefs.second.begin();
+
+				return 0x00000000u;
+			}();
+
+			if (!anchorID)
+				throw VaultException("No anchor reference in cell %08X", cell).stacktrace();
+
+			return anchorID;
+		});
+
+		Interface::Dynamic([&reference, anchorID, baseID, condition, key]() {
+			Interface::ExecuteCommand(Func::PlaceAtMePrepare, {RawParameter(reference->GetAngle(Axis_X)), RawParameter(reference->GetAngle(Axis_Y)), RawParameter(reference->GetAngle(Axis_Z)), RawParameter(reference->GetNetworkPos(Axis_X)), RawParameter(reference->GetNetworkPos(Axis_Y)), RawParameter(reference->GetNetworkPos(Axis_Z))});
+
+			PlaceAtMe(anchorID, baseID, condition, 1, key);
+		});
 
 		NetworkID id = reference->GetNetworkID();
 
-		GameFactory::LeaveReference(reference);
-
-		unsigned int refID;
+		GameFactory::Leave(reference);
 
 		try
 		{
-			refID = store->get_future(chrono::seconds(15));
+			refID = store->get_future(chrono::seconds(5));
 		}
 		catch (exception& e)
 		{
 			throw VaultException("Object creation with baseID %08X and NetworkID %llu failed (%s)", baseID, id, e.what()).stacktrace();
 		}
 
-		reference = GameFactory::GetObject(id).get();
+		reference = GameFactory::Get<Object>(id).get();
 		reference->SetReference(refID);
 	}
 
 	reference->SetEnabled(true);
+	reference->SetGameCell(reference->GetNetworkCell());
+
+	cellRefs.Operate([&reference, refID](CellRefs& cellRefs) {
+		cellRefs[reference->GetNetworkCell()][reference.GetType()].insert(refID);
+	});
 
 	SetName(reference);
-	SetAngle(reference);
 
 	//if (reference->GetLockLevel() != Lock_Unlocked)
 		SetLock(reference);
 
 	if (reference->GetOwner())
 		SetOwner(reference);
-
-	unsigned int refID = reference->GetReference();
-
-	// experimental
-	if (refID != PLAYER_REFERENCE)
-		if (!reference->IsPersistent())
-			JobDispatch(chrono::milliseconds(500), [refID] {
-				GameFactory::Operate<Object, FailPolicy::Return>(vector<unsigned int>{refID, PLAYER_REFERENCE}, [](FactoryObjects& objects) {
-					MoveTo(objects[0], objects[1], true);
-
-					objects[0]->SetGameCell(objects[1]->GetGameCell());
-					objects[0]->Work();
-				});
-			});
-
-	cellRefs.Operate([&reference, refID](CellRefs& cellRefs) {
-		cellRefs[reference->GetNetworkCell()][reference.GetType()].insert(refID);
-	});
 
 	// maybe more
 }
@@ -737,10 +735,10 @@ void Game::NewItem(FactoryItem& reference)
 
 	if (container)
 	{
-		GameFactory::LeaveReference(reference);
+		GameFactory::Leave(reference);
 
 		GameFactory::Operate<Container>(container, [item](FactoryContainer& container) {
-			container->IL.AddItem(item);
+			container->AddItem(item);
 
 			GameFactory::Operate<Item>(item, [&container](FactoryItem& item) {
 				AddItem(container, item);
@@ -761,7 +759,8 @@ void Game::NewItem(FactoryItem& reference)
 			reference->SetEnabled(false);
 
 			uninitObj.Operate([&reference](UninitializedObjects& uninitObj) {
-				uninitObj[reference->GetNetworkCell()].emplace(reference->GetNetworkID());
+				auto& sub = uninitObj[reference->GetNetworkCell()];
+				sub.insert(reference->IsPersistent() ? sub.begin() : sub.end(), reference->GetNetworkID());
 			});
 		}
 	}
@@ -788,7 +787,8 @@ void Game::NewContainer(FactoryContainer& reference)
 		reference->SetEnabled(false);
 
 		uninitObj.Operate([&reference](UninitializedObjects& uninitObj) {
-			uninitObj[reference->GetNetworkCell()].emplace(reference->GetNetworkID());
+			auto& sub = uninitObj[reference->GetNetworkCell()];
+			sub.insert(reference->IsPersistent() ? sub.begin() : sub.end(), reference->GetNetworkID());
 		});
 	}
 }
@@ -796,7 +796,7 @@ void Game::NewContainer(FactoryContainer& reference)
 void Game::NewContainer_(FactoryContainer& reference)
 {
 	NewObject_(reference);
-	auto items = GameFactory::GetMultiple<Item>(vector<NetworkID>(reference->IL.GetItemList().begin(), reference->IL.GetItemList().end()));
+	auto items = GameFactory::Get<Item>(vector<NetworkID>(reference->GetItemList().begin(), reference->GetItemList().end()));
 
 	for (auto& _item : items)
 	{
@@ -817,7 +817,8 @@ void Game::NewActor(FactoryActor& reference)
 		reference->SetEnabled(false);
 
 		uninitObj.Operate([&reference](UninitializedObjects& uninitObj) {
-			uninitObj[reference->GetNetworkCell()].emplace(reference->GetNetworkID());
+			auto& sub = uninitObj[reference->GetNetworkCell()];
+			sub.insert(reference->IsPersistent() ? sub.begin() : sub.end(), reference->GetNetworkID());
 		});
 	}
 }
@@ -869,7 +870,8 @@ void Game::NewPlayer(FactoryPlayer& reference)
 		reference->SetEnabled(false);
 
 		uninitObj.Operate([&reference](UninitializedObjects& uninitObj) {
-			uninitObj[reference->GetNetworkCell()].emplace(reference->GetNetworkID());
+			auto& sub = uninitObj[reference->GetNetworkCell()];
+			sub.insert(reference->IsPersistent() ? sub.begin() : sub.end(), reference->GetNetworkID());
 		});
 	}
 }
@@ -1042,16 +1044,16 @@ void Game::DestroyObject(FactoryObject& reference, bool silent)
 
 	if (container)
 	{
-		GameFactory::LeaveReference(reference);
+		GameFactory::Leave(reference);
 
 		GameFactory::Operate<Container>(container, [id, silent](FactoryContainer& container) {
-			container->IL.RemoveItem(id);
+			container->RemoveItem(id);
 
 			GameFactory::Operate<Item>(id, [&container, silent](FactoryItem& item) {
 				RemoveItem(container, item->GetBase(), item->GetItemCount(), silent);
 
 				// Game always removes equipped item first - workaround (is this really always the case?)
-				NetworkID equipped = container->IL.IsEquipped(item->GetBase());
+				NetworkID equipped = container->IsEquipped(item->GetBase());
 
 				if (equipped)
 					GameFactory::Operate<Actor>(container->GetNetworkID(), [equipped](FactoryActor& actor) {
@@ -1061,7 +1063,7 @@ void Game::DestroyObject(FactoryObject& reference, bool silent)
 					});
 			});
 
-			GameFactory::DestroyInstance(id);
+			GameFactory::Destroy(id);
 		});
 	}
 	else
@@ -1069,7 +1071,11 @@ void Game::DestroyObject(FactoryObject& reference, bool silent)
 		RemoveObject(reference);
 
 		uninitObj.Operate([&reference](UninitializedObjects& uninitObj) {
-			uninitObj[reference->GetNetworkCell()].erase(reference->GetNetworkID());
+			auto& sub = uninitObj[reference->GetNetworkCell()];
+			auto it = find(sub.begin(), sub.end(), reference->GetNetworkID());
+
+			if (it != sub.end())
+				sub.erase(it);
 		});
 
 		if (reference->IsPersistent())
@@ -1077,7 +1083,7 @@ void Game::DestroyObject(FactoryObject& reference, bool silent)
 				deletedStatic[reference->GetNetworkCell()].emplace_back(reference->GetReference());
 			});
 
-		GameFactory::DestroyInstance(reference);
+		GameFactory::Destroy(reference);
 	}
 }
 
@@ -1087,7 +1093,7 @@ void Game::DeleteWindow(FactoryWindow& reference)
 		Interface::ExecuteCommand(Func::GUIRemoveWindow, {RawParameter(reference->GetLabel())});
 	});
 
-	GameFactory::DestroyInstance(reference);
+	GameFactory::Destroy(reference);
 }
 
 unsigned int Game::GetBase(unsigned int refID)
@@ -1133,7 +1139,7 @@ void Game::SetRestrained(const FactoryActor& reference, bool restrained)
 	});
 }
 
-void Game::Activate(const FactoryObject& reference, const FactoryObject& actor)
+void Game::Activate(const FactoryReference& reference, const FactoryReference& actor)
 {
 	Interface::Dynamic([&reference, &actor]() {
 		Interface::ExecuteCommand(Func::Activate, {reference->GetReferenceParam(), actor->GetReferenceParam()});
@@ -1644,23 +1650,24 @@ void Game::net_SetPos(const FactoryObject& reference, double X, double Y, double
 	}
 }
 
-void Game::net_SetAngle(const FactoryObject& reference, unsigned char axis, double value)
+void Game::net_SetAngle(const FactoryObject& reference, double X, double Y, double Z)
 {
-	bool result = static_cast<bool>(reference->SetAngle(axis, value));
+	bool result_x = static_cast<bool>(reference->SetAngle(Axis_X, X));
+	bool result = (result_x | static_cast<bool>(reference->SetAngle(Axis_Y, Y)) | static_cast<bool>(reference->SetAngle(Axis_Z, Z)));
 
 	if (result && reference->GetEnabled())
 	{
 		SetAngle(reference);
 
-		if (axis == Axis_X)
-		{
-			auto actor = vaultcast<Actor>(reference);
+		if (!result_x)
+			return;
 
-			if (actor && actor->GetActorWeaponAnimation() == AnimGroup_AimIS)
-			{
-				SetActorAnimation(actor.get(), AnimGroup_AimISDown);
-				SetActorAnimation(actor.get(), AnimGroup_AimISUp);
-			}
+		auto actor = vaultcast<Actor>(reference);
+
+		if (actor && actor->GetActorWeaponAnimation() == AnimGroup_AimIS)
+		{
+			SetActorAnimation(actor.get(), AnimGroup_AimISDown);
+			SetActorAnimation(actor.get(), AnimGroup_AimISUp);
 		}
 	}
 }
@@ -1704,7 +1711,7 @@ void Game::net_SetCell(FactoryObject& reference, FactoryPlayer& player, unsigned
 					reference->SetReference(0x00000000);
 					reference->SetEnabled(false);
 
-					GameFactory::LeaveReference(player);
+					GameFactory::Leave(player);
 					NewDispatch(reference);
 				}
 			}
@@ -1727,7 +1734,7 @@ void Game::net_SetCell(FactoryObject& reference, FactoryPlayer& player, unsigned
 					});
 
 					uninitObj.Operate([&reference, cell](UninitializedObjects& uninitObj) {
-						uninitObj[cell].emplace(reference->GetNetworkID());
+						uninitObj[cell].push_back(reference->GetNetworkID());
 					});
 
 					RemoveObject(reference);
@@ -1744,15 +1751,18 @@ void Game::net_SetCell(FactoryObject& reference, FactoryPlayer& player, unsigned
 		bool context = IsInContext(cell);
 
 		uninitObj.Operate([&reference, old_cell, cell, context](UninitializedObjects& uninitObj) {
-			uninitObj[old_cell].erase(reference->GetNetworkID());
+			NetworkID id = reference->GetNetworkID();
+
+			auto& sub = uninitObj[old_cell];
+			sub.erase(find(sub.begin(), sub.end(), id));
 
 			if (!context)
-				uninitObj[cell].insert(reference->GetNetworkID());
+				uninitObj[cell].push_back(id);
 		});
 
 		if (context)
 		{
-			GameFactory::LeaveReference(player);
+			GameFactory::Leave(player);
 			NewDispatch(reference);
 		}
 	}
@@ -1772,7 +1782,7 @@ void Game::net_SetOwner(const FactoryObject& reference, unsigned int owner)
 		SetOwner(reference);
 }
 
-void Game::net_GetActivate(const FactoryObject& reference, const FactoryObject& actor)
+void Game::net_GetActivate(const FactoryReference& reference, const FactoryReference& actor)
 {
 	Activate(reference, actor);
 }
@@ -1794,7 +1804,7 @@ void Game::net_SetItemCount(FactoryItem& reference, unsigned int count, bool sil
 			unsigned int baseID = reference->GetBase();
 			double condition = reference->GetItemCondition();
 
-			GameFactory::LeaveReference(reference);
+			GameFactory::Leave(reference);
 
 			GameFactory::Operate<Container>(container, [count, old_count, baseID, condition, silent](FactoryContainer& container) {
 				signed int diff = count - old_count;
@@ -1806,7 +1816,7 @@ void Game::net_SetItemCount(FactoryItem& reference, unsigned int count, bool sil
 					RemoveItem(container, baseID, abs(diff), silent);
 
 					// Game always removes equipped item first - workaround (is this really always the case?)
-					NetworkID equipped = container->IL.IsEquipped(baseID);
+					NetworkID equipped = container->IsEquipped(baseID);
 
 					if (equipped)
 						GameFactory::Operate<Actor>(container->GetNetworkID(), [equipped](FactoryActor& actor) {
@@ -1830,7 +1840,7 @@ void Game::net_SetItemCondition(FactoryItem& reference, double condition, unsign
 			SetCurrentHealth(reference, health);
 		else if (reference->GetItemEquipped())
 		{
-			GameFactory::LeaveReference(reference);
+			GameFactory::Leave(reference);
 
 			// SetEquippedCurrentHealth
 		}
@@ -1848,7 +1858,7 @@ void Game::net_SetItemEquipped(FactoryItem& reference, bool equipped, bool silen
 		NetworkID item = reference->GetNetworkID();
 		NetworkID container = reference->GetItemContainer();
 
-		GameFactory::LeaveReference(reference);
+		GameFactory::Leave(reference);
 
 		GameFactory::Operate<Actor>(container, [equipped, item](FactoryActor& actor) {
 			GameFactory::Operate<Item>(item, [&actor, equipped](FactoryItem& item) {
@@ -1974,7 +1984,7 @@ void Game::net_SetActorDead(FactoryActor& reference, bool dead, unsigned short l
 		{
 			NetworkID id = reference->GetNetworkID();
 			reference->SetEnabled(false);
-			GameFactory::LeaveReference(reference);
+			GameFactory::Leave(reference);
 
 			ForceRespawn();
 
@@ -2026,11 +2036,11 @@ void Game::net_FireWeapon(const FactoryActor& reference, unsigned int weapon, do
 
 					this_thread::sleep_for(us);
 
-					while ((reference = GameFactory::GetObject<Actor>(id)) && reference->IsActorFiring() && reference->IL.IsEquipped(weapon))
+					while ((reference = GameFactory::Get<Actor>(id)) && reference->IsActorFiring() && reference->IsEquipped(weapon))
 					{
 						auto& _reference = reference.get();
 						FireWeapon(_reference, weapon);
-						GameFactory::LeaveReference(_reference);
+						GameFactory::Leave(_reference);
 						this_thread::sleep_for(us);
 					}
 				}
@@ -2103,7 +2113,7 @@ void Game::net_UpdateContext(Player::CellContext& context, bool spawn)
 			for (const auto& refs : copy[cell])
 				for (unsigned int refID : refs.second)
 					if (refID != PLAYER_REFERENCE)
-						GameFactory::Operate(refID, [](FactoryObject& object) {
+						GameFactory::Operate<Object>(refID, [](FactoryObject& object) {
 							if (!object->IsPersistent() && object->SetEnabled(false))
 								ToggleEnabled(object);
 						});
@@ -2123,7 +2133,7 @@ void Game::net_UpdateContext(Player::CellContext& context, bool spawn)
 			for (const auto& refs : copy[cell])
 				for (unsigned int refID : refs.second)
 					if (refID != PLAYER_REFERENCE)
-						GameFactory::Operate(vector<unsigned int>{refID, PLAYER_REFERENCE}, [cell](FactoryObjects& objects) {
+						GameFactory::Operate<Object>(vector<unsigned int>{refID, PLAYER_REFERENCE}, [cell](FactoryObjects& objects) {
 							if (objects[0]->SetEnabled(true))
 								ToggleEnabled(objects[0]);
 
@@ -2133,14 +2143,14 @@ void Game::net_UpdateContext(Player::CellContext& context, bool spawn)
 							objects[0]->Work();
 						});
 
-			unordered_set<NetworkID> ids;
+			UninitializedObjects::mapped_type ids;
 
 			uninitObj.Operate([&ids, cell](UninitializedObjects& uninitObj) {
 				ids = move(uninitObj[cell]);
 			});
 
 			for (const auto& id : ids)
-				GameFactory::Operate(id, [](FactoryObject& object) {
+				GameFactory::Operate<Object>(id, [](FactoryObject& object) {
 					NewDispatch(object);
 				});
 		}
@@ -2252,43 +2262,30 @@ void Game::net_SetDeletedStatic(DeletedObjects&& deletedStatic)
 	});
 }
 
-void Game::GetPos(const FactoryObject& reference, unsigned char axis, double value)
+void Game::GetPos(const FactoryObject& reference, double X, double Y, double Z)
 {
-	static bool update = false;
+	bool result = (static_cast<bool>(reference->SetGamePos(Axis_X, X)) | static_cast<bool>(reference->SetGamePos(Axis_Y, Y)) | static_cast<bool>(reference->SetGamePos(Axis_Z, Z)));
 
-	bool result = static_cast<bool>(reference->SetGamePos(axis, value));
-
-	if (reference->GetReference() == PLAYER_REFERENCE)
+	if (result && reference->GetReference() == PLAYER_REFERENCE)
 	{
-		update |= result;
+		reference->SetNetworkPos(Axis_X, X);
+		reference->SetNetworkPos(Axis_Y, Y);
+		reference->SetNetworkPos(Axis_Z, Z);
 
-		if (axis == Axis_Z && update)
-		{
-			update = false;
-
-			double X = reference->GetGamePos(Axis_X);
-			double Y = reference->GetGamePos(Axis_Y);
-			double Z = reference->GetGamePos(Axis_Z);
-
-			reference->SetNetworkPos(Axis_X, X);
-			reference->SetNetworkPos(Axis_Y, Y);
-			reference->SetNetworkPos(Axis_Z, Z);
-
-			Network::Queue({Network::CreateResponse(
-				PacketFactory::Create<pTypes::ID_UPDATE_POS>(reference->GetNetworkID(), X, Y, Z),
-				HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, server)
-			});
-		}
+		Network::Queue({Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_POS>(reference->GetNetworkID(), X, Y, Z),
+			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, server)
+		});
 	}
 }
 
-void Game::GetAngle(const FactoryObject& reference, unsigned char axis, double value)
+void Game::GetAngle(const FactoryObject& reference, double X, double Y, double Z)
 {
-	bool result = static_cast<bool>(reference->SetAngle(axis, value));
+	bool result = (static_cast<bool>(reference->SetAngle(Axis_X, X)) | static_cast<bool>(reference->SetAngle(Axis_Y, Y)) | static_cast<bool>(reference->SetAngle(Axis_Z, Z)));
 
 	if (result)
 		Network::Queue({Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_ANGLE>(reference->GetNetworkID(), axis, value),
+			PacketFactory::Create<pTypes::ID_UPDATE_ANGLE>(reference->GetNetworkID(), X, Z),
 			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, server)
 		});
 }
@@ -2368,7 +2365,7 @@ void Game::GetControl(const FactoryPlayer& reference, unsigned char control, uns
 		});
 }
 
-void Game::GetActivate(const FactoryObject& reference, const FactoryObject& actor)
+void Game::GetActivate(const FactoryReference& reference, const FactoryReference& actor)
 {
 	Network::Queue({Network::CreateResponse(
 		PacketFactory::Create<pTypes::ID_UPDATE_ACTIVATE>(reference->GetNetworkID(), actor->GetNetworkID()),

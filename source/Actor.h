@@ -8,11 +8,7 @@
 #include "Debug.h"
 #endif
 
-const unsigned int FLAG_ALIVE = FLAG_LOCKED << 1;
-const unsigned int FLAG_DEAD = FLAG_ALIVE << 1;
-const unsigned int FLAG_SELFALERT = FLAG_DEAD << 1;
-const unsigned int FLAG_ISALERT = FLAG_SELFALERT << 1;
-const unsigned int FLAG_NOTALERT = FLAG_ISALERT << 1;
+const unsigned int FLAG_ALIVE = FLAG_SELF << 1;
 
 /**
  * \brief Derives from Container class and represents an actor in-game
@@ -51,6 +47,7 @@ class Actor : public Container
 
 	protected:
 		Actor(unsigned int refID, unsigned int baseID);
+		Actor(unsigned int baseID) : Actor(0x00000000, baseID) {}
 		Actor(const pDefault* packet);
 		Actor(pPacket&& packet) : Actor(packet.get()) {};
 
@@ -235,7 +232,7 @@ class ActorFunctor : public ContainerFunctor
 };
 #endif
 
-GF_TYPE_WRAPPER(Actor, Container, ALL_ACTORS)
+GF_TYPE_WRAPPER(Actor, Container, ID_ACTOR, ALL_ACTORS)
 
 template<> struct pTypesMap<pTypes::ID_ACTOR_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_ACTOR_NEW, std::map<unsigned char, double>, std::map<unsigned char, double>, unsigned int, signed int, unsigned int, unsigned char, unsigned char, unsigned char, bool, bool, bool, bool> type; };
 template<>

@@ -2,7 +2,7 @@
 #define WINDOWGUI_H
 
 #include "vaultmp.h"
-#include "Reference.h"
+#include "Base.h"
 #include "ReferenceTypes.h"
 #include "GameFactory.h"
 
@@ -12,7 +12,7 @@
  * \brief Represents a GUI frame window
  */
 
-class Window : public Reference
+class Window : public Base
 {
 		friend class GameFactory;
 
@@ -70,9 +70,9 @@ class Window : public Reference
 		virtual pPacket toPacket() const;
 };
 
-GF_TYPE_WRAPPER(Window, Reference, ALL_WINDOWS)
+GF_TYPE_WRAPPER(Window, Base, ID_WINDOW, ALL_WINDOWS)
 
-template<> struct pTypesMap<pTypes::ID_WINDOW_NEW> { typedef pGeneratorReference<pTypes::ID_WINDOW_NEW, RakNet::NetworkID, std::string, std::tuple<double, double, double, double>, std::tuple<double, double, double, double>, bool, bool, std::string> type; };
+template<> struct pTypesMap<pTypes::ID_WINDOW_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_WINDOW_NEW, RakNet::NetworkID, std::string, std::tuple<double, double, double, double>, std::tuple<double, double, double, double>, bool, bool, std::string> type; };
 template<>
 inline const typename pTypesMap<pTypes::ID_WINDOW_NEW>::type* PacketFactory::Cast_<pTypes::ID_WINDOW_NEW>::Cast(const pDefault* packet) {
 	pTypes type = packet->type();
@@ -80,7 +80,8 @@ inline const typename pTypesMap<pTypes::ID_WINDOW_NEW>::type* PacketFactory::Cas
 		type == pTypes::ID_WINDOW_NEW ||
 		type == pTypes::ID_BUTTON_NEW ||
 		type == pTypes::ID_TEXT_NEW ||
-		type == pTypes::ID_EDIT_NEW
+		type == pTypes::ID_EDIT_NEW ||
+		type == pTypes::ID_CHECKBOX_NEW
 	) ? static_cast<const typename pTypesMap<pTypes::ID_WINDOW_NEW>::type*>(packet) : nullptr;
 }
 template<> struct pTypesMap<pTypes::ID_WINDOW_REMOVE> { typedef pGeneratorReference<pTypes::ID_WINDOW_REMOVE> type; };

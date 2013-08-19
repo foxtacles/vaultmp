@@ -2,10 +2,12 @@
 #define REFERENCE_H
 
 #include "vaultmp.h"
-#include "CriticalSection.h"
 #include "Value.h"
-#include "Interface.h"
 #include "RakNet.h"
+#include "Base.h"
+#include "Interface.h"
+#include "ReferenceTypes.h"
+#include "GameFactory.h"
 #include "packet/PacketFactory.h"
 
 #ifdef VAULTMP_DEBUG
@@ -17,31 +19,37 @@
 /**
  * \brief The base class for all in-game types
  *
- * Data specific to References are a reference ID, a base ID and a NetworkID
+ * Data specific to References are a reference ID and a base ID
  */
 
-template<typename T>
-class FactoryWrapper;
-
-class Reference : private CriticalSection, public RakNet::NetworkIDObject
+class Reference : public virtual Base
 {
 		friend class GameFactory;
 
-		template<typename T>
-		friend class FactoryWrapper;
-
 	private:
+		typedef std::unordered_map<unsigned int, RakNet::NetworkID> RefIDs;
+
 #ifdef VAULTMP_DEBUG
 		static DebugInput<Reference> debug;
 #endif
 
-		Value<unsigned int> refID;
-		Value<unsigned int> baseID;
-		Value<bool> changed;
+		static Guarded<RefIDs> refIDs;
 
 #ifndef VAULTSERVER
 		std::queue<std::function<void()>> tasks;
 #endif
+
+		Value<unsigned int> refID;
+		Value<unsigned int> baseID;
+
+		template<typename T>
+		struct PickBy_ {
+			static RakNet::NetworkID PickBy(T id) noexcept;
+			static std::vector<RakNet::NetworkID> PickBy(const std::vector<T>& ids) noexcept;
+		};
+
+		template<typename T> inline static RakNet::NetworkID PickBy(T id) noexcept { return PickBy_<T>::PickBy(id); }
+		template<typename T> inline static std::vector<RakNet::NetworkID> PickBy(const std::vector<T>& ids) noexcept { return PickBy_<T>::PickBy(ids); }
 
 		Reference(const Reference&) = delete;
 		Reference& operator=(const Reference&) = delete;
@@ -49,10 +57,12 @@ class Reference : private CriticalSection, public RakNet::NetworkIDObject
 	protected:
 		//static unsigned int ResolveIndex(unsigned int baseID);
 
-		template <typename T>
-		Lockable* SetObjectValue(Value<T>& dest, const T& value);
+		template<typename T> static Lockable* SetObjectValue(Value<T>& dest, const T& value);
 
 		Reference(unsigned int refID, unsigned int baseID);
+		Reference(unsigned int baseID) : Reference(0x00000000, baseID) {}
+		Reference(const pDefault* packet);
+		Reference(pPacket&& packet) : Reference(packet.get()) {};
 
 	public:
 		virtual ~Reference() noexcept;
@@ -65,46 +75,32 @@ class Reference : private CriticalSection, public RakNet::NetworkIDObject
 		 * \brief Retrieves the Reference's base ID
 		 */
 		unsigned int GetBase() const;
-		/**
-		 * \brief Retrieves the Reference's changed state
-		 */
-		bool GetChanged() const;
-		/**
-		 * \brief Determines if the reference ID is persistent
-		 */
-		bool IsPersistent() const;
 
 		/**
-		 * \brief Sets the Reference's reference ID
+		 * \brief Sets the References's reference ID
 		 */
 		Lockable* SetReference(unsigned int refID);
 		/**
-		 * \brief Sets the Reference's base ID
+		 * \brief Sets the References's base ID
 		 */
 #ifdef VAULTSERVER
 		virtual Lockable* SetBase(unsigned int baseID);
 #else
 		Lockable* SetBase(unsigned int baseID);
 #endif
-		/**
-		 * \brief Sets the Reference's changed state
-		 */
-		Lockable* SetChanged(bool changed);
 
+		/**
+		 * \brief Determines if the reference ID is persistent
+		 */
+		bool IsPersistent() const;
 		/**
 		 * \brief Returns a constant Parameter used to pass the reference ID of this Reference to the Interface
 		 */
-		RawParameter GetReferenceParam() const
-		{
-			return RawParameter(refID.get());
-		};
+		RawParameter GetReferenceParam() const { return RawParameter(refID.get()); };
 		/**
 		 * \brief Returns a constant Parameter used to pass the base ID of this Reference to the Interface
 		 */
-		RawParameter GetBaseParam() const
-		{
-			return RawParameter(baseID.get());
-		};
+		RawParameter GetBaseParam() const { return RawParameter(baseID.get()); };
 
 #ifndef VAULTSERVER
 		/**
@@ -124,8 +120,22 @@ class Reference : private CriticalSection, public RakNet::NetworkIDObject
 		/**
 		 * \brief For network transfer
 		 */
-		virtual pPacket toPacket() const = 0;
+		virtual pPacket toPacket() const;
 };
+
+template<typename T>
+Lockable* Reference::SetObjectValue(Value<T>& dest, const T& value)
+{
+	if (dest.get() == value)
+		return nullptr;
+
+	if (!dest.set(value))
+		return nullptr;
+
+	return &dest;
+}
+
+template<> Lockable* Reference::SetObjectValue(Value<double>& dest, const double& value);
 
 class ReferenceFunctor : public VaultFunctor
 {
@@ -142,5 +152,21 @@ class ReferenceFunctor : public VaultFunctor
 		unsigned int flags() { return _flags; }
 		RakNet::NetworkID get() { return id; }
 };
+
+GF_TYPE_WRAPPER(Reference, Base, ID_REFERENCE, ALL_REFERENCES)
+
+template<> struct pTypesMap<pTypes::ID_REFERENCE_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_REFERENCE_NEW, unsigned int, unsigned int> type; };
+template<>
+inline const typename pTypesMap<pTypes::ID_REFERENCE_NEW>::type* PacketFactory::Cast_<pTypes::ID_REFERENCE_NEW>::Cast(const pDefault* packet) {
+	pTypes type = packet->type();
+	return (
+		type == pTypes::ID_REFERENCE_NEW ||
+		type == pTypes::ID_OBJECT_NEW ||
+		type == pTypes::ID_ITEM_NEW ||
+		type == pTypes::ID_CONTAINER_NEW ||
+		type == pTypes::ID_ACTOR_NEW ||
+		type == pTypes::ID_PLAYER_NEW
+	) ? static_cast<const typename pTypesMap<pTypes::ID_REFERENCE_NEW>::type*>(packet) : nullptr;
+}
 
 #endif

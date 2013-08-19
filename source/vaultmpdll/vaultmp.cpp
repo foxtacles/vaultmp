@@ -4,6 +4,7 @@
 #include <string>
 #include <mutex>
 #include <queue>
+#include <cmath>
 
 #include "vaultmp.h"
 
@@ -53,7 +54,7 @@ static void (*GUI_SetTextChangedCallback)(void (*)(const char*, const char*));
 static void (*GUI_Textbox_SetMaxLength)(const char*, unsigned int);
 static void (*GUI_Textbox_SetValidationString)(const char*, const char*);
 static void (*GUI_AddCheckbox)(const char*, const char*);
-static void (*GUI_Checkbox_SetChecked)(const char*, bool);
+static void (*GUI_SetChecked)(const char*, bool);
 static void (*GUI_SetCheckboxChangedCallback)(void (*)(const char*, bool));
 static void (*SetPlayersDataPointer)(remotePlayers*);
 static bool (*QueueUIMessage)(const char* msg, unsigned int emotion, const char* ddsPath, const char* soundName, float msgTime);
@@ -66,6 +67,7 @@ static void AnimDetour();
 static void PlayIdleDetour();
 static void AVFix();
 static void GetActivate();
+static void PlaceAtMe();
 static vector<void*> delegated;
 
 static HINSTANCE silverlock = NULL;
@@ -76,6 +78,7 @@ static bool respawn = true;
 static bool DLLerror = false;
 static unsigned int anim = 0x00;
 static unsigned int* _anim = NULL;
+static float PlaceAtMe_data[6];
 
 static const unsigned pluginsVMP = 0x00E10FF1;
 static const unsigned PlayGroup = 0x0045F704;
@@ -110,8 +113,12 @@ static unsigned AVFix_term = 0x00473E85;
 static unsigned FireFix_jmp = 0x0079236C;
 static unsigned FireFix_patch = 0x007923C5;
 static unsigned GetActivate_jmp = 0x0078A68D;
-static unsigned GetActivate_dest = (unsigned)& GetActivate;;
+static unsigned GetActivate_dest = (unsigned)& GetActivate;
 static unsigned GetActivate_ret = 0x0078A995;
+static unsigned PlaceAtMe_jmp = 0x00539785;
+static unsigned PlaceAtMe_dest = (unsigned)& PlaceAtMe;
+static unsigned PlaceAtMe_call = 0x0043DEF0;
+static unsigned PlaceAtMe_ret = PlaceAtMe_jmp + 5;
 
 // Those snippets / functions are from FOSE / NVSE, thanks
 
@@ -265,6 +272,31 @@ void GetActivate()
 	);
 }
 
+void PlaceAtMe()
+{
+	asm volatile(
+		"CALL %0\n"
+		"PUSH ECX\n"
+		"MOV ECX,%1\n"
+		"MOV [EAX+0x20],ECX\n"
+		"MOV ECX,%2\n"
+		"MOV [EAX+0x24],ECX\n"
+		"MOV ECX,%3\n"
+		"MOV [EAX+0x28],ECX\n"
+		"MOV ECX,%4\n"
+		"MOV [EAX+0x2C],ECX\n"
+		"MOV ECX,%5\n"
+		"MOV [EAX+0x30],ECX\n"
+		"MOV ECX,%6\n"
+		"MOV [EAX+0x34],ECX\n"
+		"POP ECX\n"
+		"JMP %7\n"
+		:
+		:  "m"(PlaceAtMe_call), "m"(PlaceAtMe_data[0]), "m"(PlaceAtMe_data[1]), "m"(PlaceAtMe_data[2]), "m"(PlaceAtMe_data[3]), "m"(PlaceAtMe_data[4]), "m"(PlaceAtMe_data[5]), "m"(PlaceAtMe_ret)
+		:
+	);
+}
+
 bool vaultfunction(void* reference, void* result, void* args, unsigned short opcode)
 {
 	switch (opcode)
@@ -350,127 +382,21 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 			break;
 		}
 
-		case 0x0003 | VAULTFUNCTION: // ScanContainer - Returns a containers content including baseID, amount, condition, equipped state
-		case 0x0005 | VAULTFUNCTION: // RemoveAllItemsEx - same functionality, client will use the information for RemoveItem
+		case 0x0003 | VAULTFUNCTION: // GetPosAngle - Get pos and angle
 		{
 			ZeroMemory(result, sizeof(double));
 
-			unsigned int count;
+			if (!reference)
+				return false;
 
-			asm(
-				"MOV ECX,%1\n"
-				"PUSH 1\n"
-				"PUSH 0\n"
-				"CALL %2\n"
-				"MOV %0,EAX\n"
-				: "=m"(count)
-				: "m"(reference), "r"(ITEM_COUNT)
-				: "eax", "ecx"
-			);
+			float* data = (float*) result;
 
-			if (count > 0)
-			{
-				unsigned int size = count * 20;
-				vector<unsigned char> container;
-				container.reserve(size);
-
-				for (unsigned int i = 0; i < count; ++i)
-				{
-					unsigned int item;
-
-					// dynamic allocation here
-
-					asm(
-						"MOV ECX,%2\n"
-						"PUSH 0\n"
-						"PUSH %1\n"
-						"CALL %3\n"
-						"MOV %0,EAX\n"
-						: "=m"(item)
-						: "r"(i), "m"(reference), "r"(ITEM_GET)
-						: "eax", "ecx"
-					);
-
-					if (item)
-					{
-						unsigned int amount = *((unsigned int*)(((unsigned) item) + 0x04));
-						unsigned int baseForm = *((unsigned int*)(((unsigned) item) + 0x08));
-
-						if (baseForm)
-						{
-							unsigned char type = *((unsigned char*)(((unsigned) baseForm) + 0x04));
-							unsigned int baseID = *((unsigned int*)(((unsigned) baseForm) + 0x0C));
-
-							container.insert(container.end(), (unsigned char*) &baseID, ((unsigned char*) &baseID) + 4);
-							container.insert(container.end(), (unsigned char*) &amount, ((unsigned char*) &amount) + 4);
-
-							unsigned int equipped;
-
-							asm(
-								"MOV ECX,%1\n"
-								"PUSH 0\n"
-								"CALL %2\n"
-								"MOV %0,EAX\n"
-								: "=m"(equipped)
-								: "m"(item), "r"(ITEM_ISEQUIPPED)
-								: "eax", "ecx"
-							);
-
-							equipped &= 0x00000001;
-
-							container.insert(container.end(), (unsigned char*) &equipped, ((unsigned char*) &equipped) + 4);
-
-							double condition;
-
-							// there's also a way to get the absolute health value
-
-							if (type == 0x18 || type == 0x28)
-							{
-								asm(
-									"MOV ECX,%1\n"
-									"PUSH 1\n"
-									"CALL %2\n"
-									"FSTP QWORD PTR %0\n"
-									: "=m"(condition)
-									: "m"(item), "r"(ITEM_CONDITION)
-									: "ecx"
-								);
-							}
-
-							container.insert(container.end(), (unsigned char*) &condition, ((unsigned char*) &condition) + 8);
-
-							asm (
-								"MOV ECX,%0\n"
-								"CALL %1\n"
-								"PUSH %0\n"
-								:
-								: "m"(item), "r"(ITEM_UNK1)
-								: "ecx"
-							);
-
-							// the following is probably a free function
-
-							asm (
-								"MOV ECX,%0\n"
-								"CALL %1\n"
-								:
-								: "r"(ITEM_UNK3), "r"(ITEM_UNK2)
-								: "ecx"
-							);
-						}
-						else
-							return true;
-					}
-				}
-
-				size = container.size();
-				unsigned char* data = new unsigned char[size];
-				memcpy(data, &container[0], size);
-
-				memcpy(result, &size, 4);
-				memcpy((void*)((unsigned) result + 4), &data, 4);
-			}
-
+			data[0] = (*(float*)((unsigned char*) reference + 0x20)) * 180 / M_PI;
+			data[1] = (*(float*)((unsigned char*) reference + 0x24)) * 180 / M_PI;
+			data[2] = (*(float*)((unsigned char*) reference + 0x28)) * 180 / M_PI;
+			data[3] = *(float*)((unsigned char*) reference + 0x2C);
+			data[4] = *(float*)((unsigned char*) reference + 0x30);
+			data[5] = *(float*)((unsigned char*) reference + 0x34);
 			return true;
 		}
 
@@ -483,6 +409,20 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 
 			QueueUIMessage(data, emoticon, NULL, NULL, 2.0); // add more later
 
+			break;
+		}
+
+		case 0x0005 | VAULTFUNCTION: // PlaceAtMePrepare - prepares pos / angle data
+		{
+			ZeroMemory(result, sizeof(double));
+
+			unsigned char* _args = (unsigned char*) args;
+			PlaceAtMe_data[0] = (*(double*)(_args + 1)) * M_PI / 180;
+			PlaceAtMe_data[1] = (*(double*)(_args + 10)) * M_PI / 180;
+			PlaceAtMe_data[2] = (*(double*)(_args + 19)) * M_PI / 180;
+			PlaceAtMe_data[3] = *(double*)(_args + 28);
+			PlaceAtMe_data[4] = *(double*)(_args + 37);
+			PlaceAtMe_data[5] = *(double*)(_args + 46);
 			break;
 		}
 
@@ -665,7 +605,7 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 
 			bool selected = (bool) *(unsigned int*)(_args + 1);
 
-			GUI_Checkbox_SetChecked(data, selected);
+			GUI_SetChecked(data, selected);
 			break;
 		}
 
@@ -767,10 +707,15 @@ void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
 		*((unsigned int*)(((unsigned)** param2) + 0x08)) = param2_ref;
 	}
 
+	unsigned char result[PIPE_LENGTH];
+	ZeroMemory(result, sizeof(result));
+
+	*((unsigned int*)((unsigned) result + 1)) = r;
+
 	bool bigresult = false;
 
 	if ((opcode & VAULTFUNCTION) == VAULTFUNCTION)
-		bigresult = vaultfunction((void*) reference, args[6], _args, opcode);
+		bigresult = vaultfunction((void*) reference, result + 5, _args, opcode);
 	else
 	{
 		unsigned int function = FuncLookup((unsigned int) opcode);
@@ -808,31 +753,13 @@ void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
 		}
 	}
 
-	unsigned char result[PIPE_LENGTH];
-	ZeroMemory(result, sizeof(result));
-
-	*((unsigned int*)((unsigned) result + 1)) = r;
-
 	if (!bigresult)
 	{
 		result[0] = PIPE_OP_RETURN;
 		memcpy(result + 5, args[6], sizeof(double));
 	}
 	else
-	{
 		result[0] = PIPE_OP_RETURN_BIG;
-		void* data = args[6];
-		unsigned int size = *((unsigned int*) data);
-		unsigned char* _data = (unsigned char*) * ((unsigned int*)(((unsigned) data) + 4));
-
-		if (size && size <= (PIPE_LENGTH - 9))
-		{
-			memcpy(result + 5, &size, 4);
-			memcpy(result + 9, _data, size);
-		}
-
-		delete[] _data;
-	}
 
 	pipeClient.Send(result);
 }
@@ -875,11 +802,11 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 		GUI_Textbox_SetMaxLength = reinterpret_cast<decltype(GUI_Textbox_SetMaxLength)>(GetProcAddress(vaultgui, "GUI_Textbox_SetMaxLength"));
 		GUI_Textbox_SetValidationString = reinterpret_cast<decltype(GUI_Textbox_SetValidationString)>(GetProcAddress(vaultgui, "GUI_Textbox_SetValidationString"));
 		GUI_AddCheckbox = reinterpret_cast<decltype(GUI_AddCheckbox)>(GetProcAddress(vaultgui, "GUI_AddCheckbox"));
-		GUI_Checkbox_SetChecked = reinterpret_cast<decltype(GUI_Checkbox_SetChecked)>(GetProcAddress(vaultgui, "GUI_Checkbox_SetChecked"));
+		GUI_SetChecked = reinterpret_cast<decltype(GUI_SetChecked)>(GetProcAddress(vaultgui, "GUI_SetChecked"));
 		GUI_SetCheckboxChangedCallback = reinterpret_cast<decltype(GUI_SetCheckboxChangedCallback)>(GetProcAddress(vaultgui, "GUI_SetCheckboxChangedCallback"));
 		SetPlayersDataPointer = reinterpret_cast<decltype(SetPlayersDataPointer)>(GetProcAddress(vaultgui, "SetPlayersDataPointer"));
 
-		if (!Chatbox_AddToChat || !GUI_CreateFrameWindow || !GUI_AddStaticText || !GUI_AddTextbox || !GUI_AddButton || !GUI_SetVisible || !GUI_AllowDrag || !GUI_SetPosition || !GUI_SetSize || !GUI_SetText || !GUI_RemoveWindow || !GUI_ForceGUI || !GUI_SetClickCallback || !GUI_SetTextChangedCallback || !GUI_Textbox_SetMaxLength || !GUI_Textbox_SetValidationString || !SetPlayersDataPointer || !GUI_AddCheckbox || !GUI_Checkbox_SetChecked || !GUI_SetCheckboxChangedCallback)
+		if (!Chatbox_AddToChat || !GUI_CreateFrameWindow || !GUI_AddStaticText || !GUI_AddTextbox || !GUI_AddButton || !GUI_SetVisible || !GUI_AllowDrag || !GUI_SetPosition || !GUI_SetSize || !GUI_SetText || !GUI_RemoveWindow || !GUI_ForceGUI || !GUI_SetClickCallback || !GUI_SetTextChangedCallback || !GUI_Textbox_SetMaxLength || !GUI_Textbox_SetValidationString || !SetPlayersDataPointer || !GUI_AddCheckbox || !GUI_SetChecked || !GUI_SetCheckboxChangedCallback)
 			DLLerror = true;
 
 		GUI_SetClickCallback(GUI_OnClick);
@@ -986,8 +913,7 @@ players[1].player = false;
 
 			buffer[0] = PIPE_OP_RETURN_RAW;
 			*reinterpret_cast<unsigned int*>(buffer + 1) = 0x0008 | VAULTFUNCTION;
-			*reinterpret_cast<unsigned int*>(buffer + 5) = chat.length();
-			memcpy(buffer + 9, chat.c_str(), chat.length());
+			memcpy(buffer + 5, chat.c_str(), chat.length() + 1);
 
 			pipeClient.Send(buffer);
 
@@ -1000,8 +926,7 @@ players[1].player = false;
 
 			buffer[0] = PIPE_OP_RETURN_RAW;
 			*reinterpret_cast<unsigned int*>(buffer + 1) = 0x0009 | VAULTFUNCTION;
-			*reinterpret_cast<unsigned int*>(buffer + 5) = 1;
-			*reinterpret_cast<bool*>(buffer + 9) = mode;
+			*reinterpret_cast<bool*>(buffer + 5) = mode;
 
 			pipeClient.Send(buffer);
 
@@ -1014,8 +939,7 @@ players[1].player = false;
 
 			buffer[0] = PIPE_OP_RETURN_RAW;
 			*reinterpret_cast<unsigned int*>(buffer + 1) = 0x0020 | VAULTFUNCTION;
-			*reinterpret_cast<unsigned int*>(buffer + 5) = name.length();
-			memcpy(buffer + 9, name.c_str(), name.length());
+			memcpy(buffer + 5, name.c_str(), name.length());
 
 			pipeClient.Send(buffer);
 
@@ -1028,9 +952,8 @@ players[1].player = false;
 
 			buffer[0] = PIPE_OP_RETURN_RAW;
 			*reinterpret_cast<unsigned int*>(buffer + 1) = 0x0019 | VAULTFUNCTION;
-			*reinterpret_cast<unsigned int*>(buffer + 5) = text.first.length() + text.second.length() + 2;
-			memcpy(buffer + 9, text.first.c_str(), text.first.length() + 1);
-			memcpy(buffer + 9 + text.first.length() + 1, text.second.c_str(), text.second.length() + 1);
+			memcpy(buffer + 5, text.first.c_str(), text.first.length() + 1);
+			memcpy(buffer + 5 + text.first.length() + 1, text.second.c_str(), text.second.length() + 1);
 
 			pipeClient.Send(buffer);
 
@@ -1043,9 +966,8 @@ players[1].player = false;
 
 			buffer[0] = PIPE_OP_RETURN_RAW;
 			*reinterpret_cast<unsigned int*>(buffer + 1) = 0x0024 | VAULTFUNCTION;
-			*reinterpret_cast<unsigned int*>(buffer + 5) = checkbox.first.length() + sizeof(bool) + 1;
-			memcpy(buffer + 9, checkbox.first.c_str(), checkbox.first.length() + 1);
-			memcpy(buffer + 9 + checkbox.first.length() + 1, &checkbox.second, sizeof(bool));
+			memcpy(buffer + 5, checkbox.first.c_str(), checkbox.first.length() + 1);
+			memcpy(buffer + 5 + checkbox.first.length() + 1, &checkbox.second, sizeof(bool));
 
 			pipeClient.Send(buffer);
 
@@ -1058,8 +980,7 @@ players[1].player = false;
 
 			buffer[0] = PIPE_OP_RETURN_RAW;
 			*reinterpret_cast<unsigned int*>(buffer + 1) = 0x0002 | VAULTFUNCTION;
-			*reinterpret_cast<unsigned int*>(buffer + 5) = sizeof(refID);
-			*reinterpret_cast<unsigned int*>(buffer + 9) = refID;
+			*reinterpret_cast<unsigned int*>(buffer + 5) = refID;
 
 			pipeClient.Send(buffer);
 
@@ -1157,6 +1078,8 @@ void PatchGame(HINSTANCE& silverlock)
 
 	WriteRelCall(GetActivate_jmp, GetActivate_dest);
 	WriteRelJump(GetActivate_jmp + 5, GetActivate_ret);
+
+	WriteRelJump(PlaceAtMe_jmp, PlaceAtMe_dest);
 
 	SafeWrite32(pluginsVMP, *(DWORD*)".vmp"); // redirect Plugins.txt
 

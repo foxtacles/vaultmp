@@ -371,7 +371,7 @@ void Dedicated::DedicatedThread()
 	peer->Shutdown(300);
 	RakPeerInterface::DestroyInstance(peer);
 
-	GameFactory::DestroyAllInstances();
+	GameFactory::DestroyAll();
 	API::Terminate();
 
 #ifdef VAULTMP_DEBUG

@@ -1,90 +1,118 @@
 #include "Client.h"
 
+#include <algorithm>
+
 using namespace std;
 using namespace RakNet;
 
+Guarded<> Client::cs;
 map<RakNetGUID, Client*> Client::clients;
 stack<unsigned int> Client::clientID;
 
-Client::Client(RakNetGUID guid, NetworkID player) : guid(guid), ID(clientID.top()), player(player)
+Client::Client(RakNetGUID guid, NetworkID player) : guid(guid), player(player)
 {
-	// emplace
-	clients.insert(make_pair(guid, this));
-	clientID.pop();
+	cs.Operate([guid, this]() {
+		// emplace
+		ID = clientID.top();
+		clients.insert(make_pair(guid, this));
+		clientID.pop();
+	});
 }
 
 Client::~Client()
 {
-	clients.erase(this->guid);
-	clientID.push(this->ID);
+	cs.Operate([this]() {
+		clients.erase(this->guid);
+		clientID.push(this->ID);
+	});
 }
 
 void Client::SetMaximumClients(unsigned int clients)
 {
-	for (signed int i = clients - 1; i >= 0; --i)
-		clientID.push(i);
+	cs.Operate([clients]() {
+		for (signed int i = clients - 1; i >= 0; --i)
+			clientID.push(i);
+	});
 }
 
 unsigned int Client::GetClientCount()
 {
-	return clients.size();
+	return cs.Operate([]() {
+		return clients.size();
+	});
 }
 
 Client* Client::GetClientFromGUID(RakNetGUID guid)
 {
-	map<RakNetGUID, Client*>::iterator it;
-	it = clients.find(guid);
+	return cs.Operate([guid]() -> Client* {
+		auto it = clients.find(guid);
 
-	if (it != clients.end())
-		return it->second;
+		if (it != clients.end())
+			return it->second;
 
-	return nullptr;
+		return nullptr;
+	});
 }
 
 Client* Client::GetClientFromID(unsigned int ID)
 {
-	map<RakNetGUID, Client*>::iterator it;
+	return cs.Operate([ID]() -> Client* {
+		for (auto it = clients.begin(); it != clients.end(); ++it)
+			if (it->second->GetID() == ID)
+				return it->second;
 
-	for (it = clients.begin(); it != clients.end(); ++it)
-		if (it->second->GetID() == ID)
-			return it->second;
-
-	return nullptr;
+		return nullptr;
+	});
 }
 
 Client* Client::GetClientFromPlayer(NetworkID id)
 {
-	map<RakNetGUID, Client*>::iterator it;
+	return cs.Operate([id]() -> Client* {
+		for (auto it = clients.begin(); it != clients.end(); ++it)
+			if (it->second->GetPlayer() == id)
+				return it->second;
 
-	for (it = clients.begin(); it != clients.end(); ++it)
-		if (it->second->GetPlayer() == id)
-			return it->second;
-
-	return nullptr;
+		return nullptr;
+	});
 }
 
 vector<RakNetGUID> Client::GetNetworkList(Client* except)
 {
-	vector<RakNetGUID> network;
-	map<RakNetGUID, Client*>::iterator it;
+	return cs.Operate([except]() {
+		vector<RakNetGUID> network;
 
-	for (it = clients.begin(); it != clients.end(); ++it)
-		if (it->second != except)
-			network.emplace_back(it->first);
+		for (auto it = clients.begin(); it != clients.end(); ++it)
+			if (it->second != except)
+				network.emplace_back(it->first);
 
-	return network;
+		return network;
+	});
 }
 
 vector<RakNetGUID> Client::GetNetworkList(RakNetGUID except)
 {
-	vector<RakNetGUID> network;
-	map<RakNetGUID, Client*>::iterator it;
+	return cs.Operate([except]() {
+		vector<RakNetGUID> network;
 
-	for (it = clients.begin(); it != clients.end(); ++it)
-		if (it->first != except)
-			network.emplace_back(it->first);
+		for (auto it = clients.begin(); it != clients.end(); ++it)
+			if (it->first != except)
+				network.emplace_back(it->first);
 
-	return network;
+		return network;
+	});
+}
+
+vector<RakNetGUID> Client::GetNetworkList(const vector<NetworkID>& players, RakNetGUID except)
+{
+	return cs.Operate([&players, except]() {
+		vector<RakNetGUID> network;
+
+		for (auto it = clients.begin(); it != clients.end(); ++it)
+			if (it->first != except && find(players.begin(), players.end(), it->second->player) != players.end())
+				network.emplace_back(it->first);
+
+		return network;
+	});
 }
 
 RakNetGUID Client::GetGUID()

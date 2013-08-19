@@ -8,7 +8,7 @@
  * \brief http://channel9.msdn.com/Shows/Going+Deep/C-and-Beyond-2012-Andrei-Alexandrescu-Systematic-Error-Handling-in-C
  */
 
-template <typename T>
+template<typename T>
 class Expected
 {
 	private:
@@ -87,7 +87,7 @@ class Expected
 
 		T& get()
 		{
-			if (*this)
+			if (this->operator bool())
 				return value;
 			else
 			{
@@ -122,7 +122,7 @@ class Expected
 			typedef decltype(test<U>(0)) type;
 		};
 
-		template<typename U> typename std::enable_if<std::is_class<U>::value, bool>::type bool_operator() const { return valid && value; }
+		template<typename U> typename std::enable_if<std::is_class<U>::value, bool>::type bool_operator() const { return valid && value.operator bool(); }
 		template<typename U> typename std::enable_if<!std::is_class<U>::value, bool>::type bool_operator() const { return valid; }
 		explicit operator bool() const { return bool_operator<T>(); }
 

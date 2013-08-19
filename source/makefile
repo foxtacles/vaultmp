@@ -111,6 +111,7 @@ $(OBJDIR_DEBUG)\\Button.o \
 $(OBJDIR_DEBUG)\\Text.o \
 $(OBJDIR_DEBUG)\\Edit.o \
 $(OBJDIR_DEBUG)\\Checkbox.o \
+$(OBJDIR_DEBUG)\\Base.o \
 $(OBJDIR_DEBUG)\\Debug.o
 
 OBJ_RELEASE = \
@@ -183,7 +184,8 @@ $(OBJDIR_RELEASE)\\Window.o \
 $(OBJDIR_RELEASE)\\Button.o \
 $(OBJDIR_RELEASE)\\Text.o \
 $(OBJDIR_RELEASE)\\Edit.o \
-$(OBJDIR_RELEASE)\\Checkbox.o
+$(OBJDIR_RELEASE)\\Checkbox.o \
+$(OBJDIR_RELEASE)\\Base.o
 
 all: debug release
 
@@ -375,7 +377,7 @@ $(OBJDIR_DEBUG)\\Pipe.o: Pipe.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Pipe.cpp -o $(OBJDIR_DEBUG)\\Pipe.o
 
 $(OBJDIR_DEBUG)\\PacketFactory.o: packet\\PacketFactory.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c PacketFactory.cpp -o $(OBJDIR_DEBUG)\\PacketFactory.o
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c packet\\PacketFactory.cpp -o $(OBJDIR_DEBUG)\\PacketFactory.o
 
 $(OBJDIR_DEBUG)\\Object.o: Object.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Object.cpp -o $(OBJDIR_DEBUG)\\Object.o
@@ -415,6 +417,9 @@ $(OBJDIR_DEBUG)\\Edit.o: Edit.cpp
 
 $(OBJDIR_DEBUG)\\Checkbox.o: Checkbox.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Checkbox.cpp -o $(OBJDIR_DEBUG)\\Checkbox.o
+
+$(OBJDIR_DEBUG)\\Base.o: Base.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Base.cpp -o $(OBJDIR_DEBUG)\\Base.o
 
 clean_debug:
 	cmd /c del /f $(OBJ_DEBUG) $(OUT_DEBUG)
@@ -639,6 +644,9 @@ $(OBJDIR_RELEASE)\\Edit.o: Edit.cpp
 
 $(OBJDIR_RELEASE)\\Checkbox.o: Checkbox.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Checkbox.cpp -o $(OBJDIR_RELEASE)\\Checkbox.o
+
+$(OBJDIR_RELEASE)\\Base.o: Base.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Base.cpp -o $(OBJDIR_RELEASE)\\Base.o
 
 clean_release:
 	cmd /c del /f $(OBJ_RELEASE) $(OUT_RELEASE)

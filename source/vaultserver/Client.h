@@ -2,6 +2,7 @@
 #define CLIENT_H
 
 #include "vaultserver.h"
+#include "Guarded.h"
 #include "RakNet.h"
 
 #include <vector>
@@ -17,6 +18,7 @@ class Player;
 class Client
 {
 	private:
+		static Guarded<> cs;
 		static std::map<RakNet::RakNetGUID, Client*> clients;
 		static std::stack<unsigned int> clientID;
 
@@ -63,6 +65,10 @@ class Client
 		 * except (optional, RakNetGUID) - excludes a RakNetGUID from the result
 		 */
 		static std::vector<RakNet::RakNetGUID> GetNetworkList(RakNet::RakNetGUID except = RakNet::UNASSIGNED_RAKNET_GUID);
+		/**
+		 * \brief Returns a STL vector containing the RakNetGUIDs matching the player IDs
+		 */
+		static std::vector<RakNet::RakNetGUID> GetNetworkList(const std::vector<RakNet::NetworkID>& players, RakNet::RakNetGUID except = RakNet::UNASSIGNED_RAKNET_GUID);
 
 		/**
 		 * \brief Returns the RakNetGUID

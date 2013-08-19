@@ -85,6 +85,8 @@
 		<Unit filename="API.h" />
 		<Unit filename="Actor.cpp" />
 		<Unit filename="Actor.h" />
+		<Unit filename="Base.cpp" />
+		<Unit filename="Base.h" />
 		<Unit filename="Bethesda.cpp" />
 		<Unit filename="Bethesda.h" />
 		<Unit filename="Button.cpp" />
@@ -106,6 +108,7 @@
 		<Unit filename="Game.h" />
 		<Unit filename="GameFactory.cpp" />
 		<Unit filename="GameFactory.h" />
+		<Unit filename="GameFactory.hpp" />
 		<Unit filename="Guarded.cpp" />
 		<Unit filename="Guarded.h" />
 		<Unit filename="Interface.cpp" />
@@ -122,7 +125,6 @@
 		<Unit filename="NetworkClient.h" />
 		<Unit filename="Object.cpp" />
 		<Unit filename="Object.h" />
-		<Unit filename="PacketTypes.h" />
 		<Unit filename="Pipe.cpp" />
 		<Unit filename="Pipe.h" />
 		<Unit filename="Player.cpp" />
@@ -417,6 +419,15 @@
 			<code_completion />
 			<debugger />
 			<envvars />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

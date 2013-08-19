@@ -32,7 +32,7 @@ class Text : public Window
 		virtual pPacket toPacket() const;
 };
 
-GF_TYPE_WRAPPER(Text, Window, ID_TEXT)
+GF_TYPE_WRAPPER_FINAL(Text, Window, ID_TEXT)
 
 template<> struct pTypesMap<pTypes::ID_TEXT_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_TEXT_NEW> type; };
 

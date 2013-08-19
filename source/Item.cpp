@@ -112,7 +112,7 @@ Lockable* Item::SetItemStick(bool stick)
 
 NetworkID Item::Copy() const
 {
-	return GameFactory::Operate<Item>(GameFactory::CreateInstance(ID_ITEM, 0x00000000, this->GetBase()), [this](FactoryItem& item) {
+	return GameFactory::Operate<Item>(GameFactory::Create<Item>(0x00000000, this->GetBase()), [this](FactoryItem& item) {
 		item->SetItemContainer(this->GetItemContainer());
 		item->SetItemCount(this->GetItemCount());
 		item->SetItemCondition(this->GetItemCondition());
@@ -131,7 +131,7 @@ Lockable* Item::SetBase(unsigned int baseID)
 	if (this->GetName().empty())
 		this->SetName(record->GetDescription());
 
-	return Reference::SetBase(baseID);
+	return Object::SetBase(baseID);
 }
 #endif
 

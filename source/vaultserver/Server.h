@@ -49,7 +49,7 @@ class Server
 		/**
 		 * \brief Handles GetAngle network packet
 		 */
-		static NetworkResponse GetAngle(RakNet::RakNetGUID guid, FactoryObject& reference, unsigned char axis, double value);
+		static NetworkResponse GetAngle(RakNet::RakNetGUID guid, FactoryObject& reference, double X, double Y, double Z);
 		/**
 		 * \brief Handles cell network packet
 		 */
@@ -57,7 +57,7 @@ class Server
 		/**
 		 * \brief Handles activate network packet
 		 */
-		static NetworkResponse GetActivate(RakNet::RakNetGUID guid, FactoryObject& reference, FactoryObject& action);
+		static NetworkResponse GetActivate(RakNet::RakNetGUID guid, FactoryReference& reference, FactoryReference& action);
 		/**
 		 * \brief Handles actor state network packet
 		 */

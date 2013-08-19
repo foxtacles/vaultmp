@@ -12,7 +12,6 @@ using namespace RakNet;
 using namespace Values;
 
 Script::ScriptList Script::scripts;
-Script::ScriptItemLists Script::scriptIL;
 Script::DeletedObjects Script::deletedStatic;
 Script::GameTime Script::time;
 Script::GameWeather Script::weather;
@@ -206,44 +205,40 @@ void Script::Initialize()
 		object->SetLockLevel(lock);
 	};
 
-	auto objects = DB::Reference::Lookup("CONT");
+	const auto& references = DB::Reference::Get();
 
-	for (const auto* reference : objects)
+	for (const auto& reference : references)
 	{
 		// FIXME dlc support
-		if (reference->GetReference() & 0xFF000000)
+		if (reference.first & 0xFF000000)
 			continue;
 
-		GameFactory::Operate<Container>(GameFactory::CreateInstance(ID_CONTAINER, reference->GetReference(), reference->GetBase()), [&object_init, reference](FactoryContainer& container) {
-			object_init(container, reference);
-		});
-	}
+		const auto* data = reference.second;
 
-	objects = DB::Reference::Lookup("DOOR");
+		switch (Utils::hash(data->GetType().c_str(), data->GetType().length() + 1))
+		{
+			case Utils::hash("CONT"):
+				GameFactory::Operate<Container>(GameFactory::Create<Container>(data->GetReference(), data->GetBase()), [&object_init, data](FactoryContainer& container) {
+					object_init(container, data);
+				});
+				break;
 
-	for (const auto* reference : objects)
-	{
-		// FIXME dlc support
-		if (reference->GetReference() & 0xFF000000)
-			continue;
-
-		GameFactory::Operate(GameFactory::CreateInstance(ID_OBJECT, reference->GetReference(), reference->GetBase()), [&object_init, reference](FactoryObject& door) {
-			object_init(door, reference);
-		});
-	}
-
-	objects = DB::Reference::Lookup("TERM");
-
-	for (const auto* reference : objects)
-	{
-		// FIXME dlc support
-		if (reference->GetReference() & 0xFF000000)
-			continue;
-
-		GameFactory::Operate(GameFactory::CreateInstance(ID_OBJECT, reference->GetReference(), reference->GetBase()), [&object_init, reference](FactoryObject& terminal) {
-			object_init(terminal, reference);
-			terminal->SetLockLevel(DB::Terminal::Lookup(reference->GetBase())->GetLock());
-		});
+			case Utils::hash("TERM"):
+				GameFactory::Operate<Object>(GameFactory::Create<Object>(data->GetReference(), data->GetBase()), [&object_init, data](FactoryObject& object) {
+					object_init(object, data);
+					object->SetLockLevel(DB::Terminal::Lookup(data->GetBase())->GetLock());
+				});
+				break;
+/*
+			case Utils::hash("STAT"):
+				GameFactory::Create<Reference>(data->GetReference(), data->GetBase());
+				break;
+*/
+			default:
+				GameFactory::Operate<Object>(GameFactory::Create<Object>(data->GetReference(), data->GetBase()), [&object_init, data](FactoryObject& object) {
+					object_init(object, data);
+				});
+		}
 	}
 }
 
@@ -251,7 +246,6 @@ void Script::UnloadScripts()
 {
 	Timer::TerminateAll();
 	Public::DeleteAll();
-	scriptIL.clear();
 	scripts.clear();
 }
 
@@ -478,7 +472,7 @@ unsigned long long Script::CallPublicPAWN(const char* name, const vector<boost::
 
 unsigned long long Script::Timer_Respawn(NetworkID id) noexcept
 {
-	if (!GameFactory::GetObject<Player>(id))
+	if (!GameFactory::Get<Player>(id))
 	{
 		KillTimer(); // Player has already left the server
 		return 0;
@@ -845,7 +839,7 @@ void Script::SetTimeScale(double scale) noexcept
 
 bool Script::IsValid(NetworkID id) noexcept
 {
-	return GameFactory::GetType(id) || scriptIL.count(id);
+	return GameFactory::GetType(id);
 }
 
 bool Script::IsObject(NetworkID id) noexcept
@@ -880,7 +874,7 @@ bool Script::IsInterior(unsigned int cell) noexcept
 
 bool Script::IsItemList(NetworkID id) noexcept
 {
-	return scriptIL.count(id);
+	return (GameFactory::GetType(id) & ALL_ITEMLISTS);
 }
 
 bool Script::IsWindow(NetworkID id) noexcept
@@ -929,7 +923,7 @@ unsigned int Script::GetConnection(NetworkID id) noexcept
 unsigned int Script::GetList(unsigned int type, NetworkID** data) noexcept
 {
 	static vector<NetworkID> _data;
-	_data = GameFactory::GetIDObjectTypes(type);
+	_data = GameFactory::GetByTypeID(type);
 	*data = &_data[0];
 	return _data.size();
 }
@@ -1102,14 +1096,8 @@ bool Script::GetItemStick(NetworkID id) noexcept
 
 unsigned int Script::GetContainerItemCount(NetworkID id, unsigned int baseID) noexcept
 {
-	return GameFactory::Operate<Container, FailPolicy::Return, ObjectPolicy::Expected>(id, [id, baseID](ExpectedContainer& container) {
-		if (container || scriptIL.count(id))
-		{
-			ItemList* IL = container ? &container->IL : scriptIL[id].get();
-			return IL->GetItemCount(baseID);
-		}
-
-		throw VaultException("Invalid parameters: container or item list doesn't exist").stacktrace();
+	return GameFactory::Operate<ItemList, FailPolicy::Return>(id, [id, baseID](FactoryItemList& itemlist) {
+		return itemlist->GetItemCount(baseID);
 	});
 }
 
@@ -1117,12 +1105,8 @@ unsigned int Script::GetContainerItemList(NetworkID id, NetworkID** data) noexce
 {
 	static vector<NetworkID> _data;
 
-	return GameFactory::Operate<Container, FailPolicy::Return, ObjectPolicy::Expected>(id, [id, data](ExpectedContainer& container) {
-		if (!container && !scriptIL.count(id))
-			return 0u;
-
-		ItemList* IL = container ? &container->IL : scriptIL[id].get();
-		_data.assign(IL->GetItemList().begin(), IL->GetItemList().end());
+	return GameFactory::Operate<ItemList, FailPolicy::Return>(id, [id, data](FactoryItemList& itemlist) {
+		_data.assign(itemlist->GetItemList().begin(), itemlist->GetItemList().end());
 		unsigned int size = _data.size();
 
 		if (size)
@@ -1255,7 +1239,7 @@ unsigned int Script::GetPlayerWindowList(NetworkID id, NetworkID** data) noexcep
 
 NetworkID Script::GetPlayerChatboxWindow(NetworkID id) noexcept
 {
-	unordered_set<NetworkID> windows;
+	vector<NetworkID> windows;
 
 	return GameFactory::Operate<Player, FailPolicy::Bool>(id, [&windows](FactoryPlayer& player) {
 		windows = player->GetPlayerWindows();
@@ -1267,7 +1251,7 @@ NetworkID Script::CreateObject(unsigned int baseID, NetworkID id, unsigned int c
 	if (id && !GameFactory::GetType(id))
 		return 0;
 
-	NetworkID result = GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(vector<NetworkID>{GameFactory::CreateInstance(ID_OBJECT, baseID), id}, [cell, X, Y, Z](ExpectedObjects& objects) {
+	NetworkID result = GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(vector<NetworkID>{GameFactory::Create<Object>(baseID), id}, [cell, X, Y, Z](ExpectedObjects& objects) {
 		SetupObject(objects[0].get(), objects[1] ? objects[1].get() : FactoryObject(), cell, X, Y, Z);
 
 		Network::Queue({Network::CreateResponse(
@@ -1286,27 +1270,23 @@ NetworkID Script::CreateObject(unsigned int baseID, NetworkID id, unsigned int c
 
 bool Script::DestroyObject(NetworkID id) noexcept
 {
-	if (!GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(id, [id](ExpectedObject& object) -> bool {
-		if (!object)
-			return scriptIL.count(id);
-
-		return !vaultcast_test<Player>(object);
+	if (!GameFactory::Operate<Base, FailPolicy::Return>(id, [id](FactoryBase& base) {
+		return !vaultcast_test<Player>(base);
 	})) return false;
 
 	Script::Call<CBI("OnDestroy")>(id);
 
-	return GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(id, [id](ExpectedObject& object) -> bool {
-		if (!object)
-			scriptIL.erase(id);
-
-		if (object->IsPersistent())
-			deletedStatic[object->GetNetworkCell()].emplace_back(object->GetReference());
+	return GameFactory::Operate<Base, FailPolicy::Return>(id, [id](FactoryBase& base) -> bool {
+		GameFactory::Operate<Object, FailPolicy::Return>(id, [](FactoryObject& object) {
+			if (object->IsPersistent())
+				deletedStatic[object->GetNetworkCell()].emplace_back(object->GetReference());
+		});
 
 		NetworkID container = GameFactory::Operate<Item, FailPolicy::Return>(id, [](FactoryItem& item) {
 			return item->GetItemContainer();
 		});
 
-		if (!scriptIL.count(container))
+		if (!container || GameFactory::GetType(container) != ID_ITEMLIST)
 			Network::Queue({Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_OBJECT_REMOVE>(id, true),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
@@ -1314,17 +1294,16 @@ bool Script::DestroyObject(NetworkID id) noexcept
 
 		if (container)
 		{
-			GameFactory::LeaveReference(object.get());
+			GameFactory::Leave(base);
 
-			GameFactory::Operate<Container, FailPolicy::Exception, ObjectPolicy::Expected>(container, [id, container](ExpectedContainer& container_) {
-				ItemList* IL = container_ ? &container_->IL : scriptIL.at(container).get();
-				IL->RemoveItem(id);
+			GameFactory::Operate<ItemList, FailPolicy::Exception>(container, [id, container](FactoryItemList& itemlist) {
+				itemlist->RemoveItem(id);
 			});
 
-			return GameFactory::DestroyInstance(id);
+			return GameFactory::Destroy(id);
 		}
 
-		return GameFactory::DestroyInstance(object.get());
+		return GameFactory::Destroy(base);
 	});
 }
 
@@ -1424,6 +1403,9 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z) noexcept
 bool Script::SetAngle(NetworkID id, double X, double Y, double Z) noexcept
 {
 	return GameFactory::Operate<Object, FailPolicy::Return>(id, [id, X, Y, Z](FactoryObject& object) {
+		if (!object->IsPersistent())
+			return false;
+
 		NetworkResponse response;
 
 		if (object->SetAngle(Axis_X, X))
@@ -1655,7 +1637,7 @@ bool Script::SetBaseName(NetworkID id, const char* name) noexcept
 	if (_name.length() > MAX_PLAYER_NAME)
 		return false;
 
-	return GameFactory::Operate<Object, FailPolicy::Return>(GameFactory::GetIDObjectTypes(ALL_OBJECTS), [id, &_name](FactoryObjects& objects) {
+	return GameFactory::Operate<Object, FailPolicy::Return>(GameFactory::GetByTypeID(ALL_OBJECTS), [id, &_name](FactoryObjects& objects) {
 		auto it = find_if(objects.begin(), objects.end(), [id](const FactoryObject& object) { return object->GetNetworkID() == id; });
 
 		if (it == objects.end())
@@ -1692,7 +1674,7 @@ NetworkID Script::CreateItem(unsigned int baseID, NetworkID id, unsigned int cel
 	if (id && !GameFactory::GetType(id))
 		return 0;
 
-	NetworkID result = GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(vector<NetworkID>{GameFactory::CreateInstance(ID_ITEM, baseID), id}, [cell, X, Y, Z](ExpectedObjects& objects) {
+	NetworkID result = GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(vector<NetworkID>{GameFactory::Create<Item>(baseID), id}, [cell, X, Y, Z](ExpectedObjects& objects) {
 		FactoryItem item = vaultcast_swap<Item>(objects[0]).get();
 
 		SetupItem(item, objects[1] ? objects[1].get() : FactoryObject(), cell, X, Y, Z);
@@ -1717,11 +1699,8 @@ NetworkID Script::SetItemContainer(NetworkID id, NetworkID container) noexcept
 	double condition;
 	bool equipped, silent, stick;
 
-	if (!GameFactory::Operate<Container, FailPolicy::Return, ObjectPolicy::Expected>(container, [id, container](ExpectedContainer& container_) {
-		if (!container_ && !scriptIL.count(container))
-			return false;
-
-		const auto& items = (container_ ? &container_->IL : scriptIL[container].get())->GetItemList();
+	if (!GameFactory::Operate<ItemList, FailPolicy::Return>(container, [id, container](FactoryItemList& itemlist) {
+		const auto& items = itemlist->GetItemList();
 
 		return find(items.begin(), items.end(), id) == items.end();
 	})) return 0;
@@ -1758,7 +1737,7 @@ bool Script::SetItemCount(NetworkID id, unsigned int count) noexcept
 		if (!item->SetItemCount(count))
 			return false;
 
-		if (!scriptIL.count(item->GetItemContainer()))
+		if (GameFactory::GetType(item->GetItemContainer()) != ID_ITEMLIST)
 			Network::Queue({Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_UPDATE_COUNT>(id, count, false),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
@@ -1782,7 +1761,7 @@ bool Script::SetItemCondition(NetworkID id, double condition) noexcept
 		if (!item->SetItemCondition(condition))
 			return false;
 
-		if (!scriptIL.count(item->GetItemContainer()))
+		if (GameFactory::GetType(item->GetItemContainer()) != ID_ITEMLIST)
 			Network::Queue({Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_UPDATE_CONDITION>(id, condition, static_cast<unsigned int>(item_->GetHealth() * (condition / 100.0))),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
@@ -1800,20 +1779,18 @@ bool Script::SetItemEquipped(NetworkID id, bool equipped, bool silent, bool stic
 		if (!container)
 			return false;
 
-		GameFactory::LeaveReference(item);
+		GameFactory::Leave(item);
 
-		return GameFactory::Operate<Actor, FailPolicy::Return, ObjectPolicy::Expected>(container, [id, equipped, silent, stick](ExpectedActor& actor) {
-			ItemList* IL = actor ? &actor->IL : scriptIL.at(id).get();
-
-			return GameFactory::Operate<Item>(id, [&actor, IL, id, equipped, silent, stick](FactoryItem& item) {
-				if (IL->IsEquipped(item->GetBase()) == equipped)
+		return GameFactory::Operate<ItemList, FailPolicy::Return>(container, [id, equipped, silent, stick](FactoryItemList& itemlist) {
+			return GameFactory::Operate<Item>(id, [&itemlist, id, equipped, silent, stick](FactoryItem& item) {
+				if (itemlist->IsEquipped(item->GetBase()) == equipped)
 					return false;
 
 				item->SetItemEquipped(equipped);
 				item->SetItemSilent(silent);
 				item->SetItemEquipped(equipped);
 
-				if (actor)
+				if (vaultcast_test<Actor>(itemlist))
 					Network::Queue({Network::CreateResponse(
 						PacketFactory::Create<pTypes::ID_UPDATE_EQUIPPED>(id, equipped, silent, stick),
 						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
@@ -1830,7 +1807,7 @@ NetworkID Script::CreateContainer(unsigned int baseID, NetworkID id, unsigned in
 	if (id && !GameFactory::GetType(id))
 		return 0;
 
-	NetworkID result = GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(vector<NetworkID>{GameFactory::CreateInstance(ID_CONTAINER, baseID), id}, [cell, X, Y, Z](ExpectedObjects& objects) {
+	NetworkID result = GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(vector<NetworkID>{GameFactory::Create<Container>(baseID), id}, [cell, X, Y, Z](ExpectedObjects& objects) {
 		FactoryContainer container = vaultcast_swap<Container>(objects[0]).get();
 
 		SetupContainer(container, objects[1] ? objects[1].get() : FactoryObject(), cell, X, Y, Z);
@@ -1851,10 +1828,7 @@ NetworkID Script::CreateContainer(unsigned int baseID, NetworkID id, unsigned in
 
 NetworkID Script::CreateItemList(NetworkID source, unsigned int baseID) noexcept
 {
-	// make_unique
-	auto IL = unique_ptr<ItemList>(new ItemList(0));
-	NetworkID id = IL->GetNetworkID();
-	scriptIL.emplace(id, move(IL));
+	NetworkID id = GameFactory::Create<ItemList>();
 
 	if (source || baseID)
 		AddItemList(id, source, baseID);
@@ -1866,17 +1840,13 @@ NetworkID Script::CreateItemList(NetworkID source, unsigned int baseID) noexcept
 
 NetworkID Script::AddItem(NetworkID id, unsigned int baseID, unsigned int count, double condition, bool silent) noexcept
 {
-	return GameFactory::Operate<Container, FailPolicy::Return, ObjectPolicy::Expected>(id, [id, baseID, count, condition, silent](ExpectedContainer& container) {
+	return GameFactory::Operate<ItemList, FailPolicy::Return>(id, [id, baseID, count, condition, silent](FactoryItemList& itemlist) {
 		if (!count)
 			return 0ull;
 
-		if (!container && !scriptIL.count(id))
-			return 0ull;
+		auto diff = itemlist->AddItem(baseID, count, condition, silent);
 
-		ItemList* IL = container ? &container->IL : scriptIL[id].get();
-		auto diff = IL->AddItem(baseID, count, condition, silent);
-
-		if (container)
+		if (vaultcast_test<Container>(itemlist))
 			GameFactory::Operate<Item>(diff.second, [&diff, silent](FactoryItem& item) {
 				if (diff.first)
 					Network::Queue({Network::CreateResponse(
@@ -1896,18 +1866,13 @@ NetworkID Script::AddItem(NetworkID id, unsigned int baseID, unsigned int count,
 
 void Script::AddItemList(NetworkID id, NetworkID source, unsigned int baseID) noexcept
 {
-	GameFactory::Operate<Container, FailPolicy::Return, ObjectPolicy::Expected>(vector<NetworkID>{id, source}, [id, source, baseID](ExpectedContainers& containers) {
-		if (!containers[0] && !scriptIL.count(id))
+	GameFactory::Operate<ItemList, FailPolicy::Return, ObjectPolicy::Expected>(vector<NetworkID>{id, source}, [id, source, baseID](ExpectedItemLists& itemlists) {
+		if (!itemlists[0])
 			return;
 
-		if (source)
+		if (itemlists[1])
 		{
-			if (!containers[1] && !scriptIL.count(source))
-				return;
-
-			ItemList* IL = containers[1] ? &containers[1]->IL : scriptIL[source].get();
-
-			GameFactory::Operate<Item>(vector<NetworkID>{IL->GetItemList().begin(), IL->GetItemList().end()}, [id](FactoryItems& items) {
+			GameFactory::Operate<Item>(itemlists[1]->GetItemList(), [id](FactoryItems& items) {
 				for (const auto& item : items)
 				{
 					AddItem(id, item->GetBase(), item->GetItemCount(), item->GetItemCondition(), item->GetItemSilent());
@@ -1917,9 +1882,9 @@ void Script::AddItemList(NetworkID id, NetworkID source, unsigned int baseID) no
 				}
 			});
 		}
-		else if (containers[0] || baseID)
+		else if (baseID)
 		{
-			const auto& items = DB::BaseContainer::Lookup(containers[0] ? containers[0]->GetBase() : baseID);
+			const auto& items = DB::BaseContainer::Lookup(baseID);
 
 			for (const auto* item : items)
 			{
@@ -1935,22 +1900,18 @@ void Script::AddItemList(NetworkID id, NetworkID source, unsigned int baseID) no
 
 unsigned int Script::RemoveItem(NetworkID id, unsigned int baseID, unsigned int count, bool silent) noexcept
 {
-	return GameFactory::Operate<Container, FailPolicy::Return, ObjectPolicy::Expected>(id, [id, baseID, count, silent](ExpectedContainer& container) {
+	return GameFactory::Operate<ItemList, FailPolicy::Return>(id, [id, baseID, count, silent](FactoryItemList& itemlist) {
 		if (!count)
 			return 0u;
 
-		if (!container && !scriptIL.count(id))
-			return 0u;
-
-		ItemList* IL = container ? &container->IL : scriptIL[id].get();
-		auto diff = IL->RemoveItem(baseID, count, silent);
+		auto diff = itemlist->RemoveItem(baseID, count, silent);
 
 		unsigned int count = get<0>(diff);
 
 		if (!count)
 			return 0u;
 
-		if (container)
+		if (vaultcast_test<Container>(itemlist))
 		{
 			const auto& remove = get<1>(diff);
 			NetworkID update = get<2>(diff);
@@ -1979,14 +1940,10 @@ unsigned int Script::RemoveItem(NetworkID id, unsigned int baseID, unsigned int 
 
 void Script::RemoveAllItems(NetworkID id) noexcept
 {
-	GameFactory::Operate<Container, FailPolicy::Return, ObjectPolicy::Expected>(id, [id](ExpectedContainer& container) {
-		if (!container && !scriptIL.count(id))
-			return;
+	GameFactory::Operate<ItemList, FailPolicy::Return>(id, [id](FactoryItemList& itemlist) {
+		auto diff = itemlist->RemoveAllItems();
 
-		ItemList* IL = container ? &container->IL : scriptIL[id].get();
-		auto diff = IL->RemoveAllItems();
-
-		if (container)
+		if (vaultcast_test<Container>(itemlist))
 		{
 			NetworkResponse response;
 
@@ -2006,7 +1963,7 @@ NetworkID Script::CreateActor(unsigned int baseID, NetworkID id, unsigned int ce
 	if (id && !GameFactory::GetType(id))
 		return 0;
 
-	NetworkID result = GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(vector<NetworkID>{GameFactory::CreateInstance(ID_ACTOR, baseID), id}, [cell, X, Y, Z](ExpectedObjects& objects) {
+	NetworkID result = GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(vector<NetworkID>{GameFactory::Create<Actor>(baseID), id}, [cell, X, Y, Z](ExpectedObjects& objects) {
 		FactoryActor actor = vaultcast_swap<Actor>(objects[0]).get();
 
 		SetupActor(actor, objects[1] ? objects[1].get() : FactoryObject(), cell, X, Y, Z);
@@ -2045,7 +2002,7 @@ void Script::SetActorValue(NetworkID id, unsigned char index, double value) noex
 
 void Script::SetActorBaseValue(NetworkID id, unsigned char index, double value) noexcept
 {
-	GameFactory::Operate<Actor, FailPolicy::Return>(GameFactory::GetIDObjectTypes(ALL_ACTORS), [id, index, value](FactoryActors& actors) {
+	GameFactory::Operate<Actor, FailPolicy::Return>(GameFactory::GetByTypeID(ALL_ACTORS), [id, index, value](FactoryActors& actors) {
 		auto it = find_if(actors.begin(), actors.end(), [id](const FactoryActor& actor) { return actor->GetNetworkID() == id; });
 
 		if (it == actors.end())
@@ -2068,17 +2025,13 @@ void Script::SetActorBaseValue(NetworkID id, unsigned char index, double value) 
 
 bool Script::EquipItem(NetworkID id, unsigned int baseID, bool silent, bool stick) noexcept
 {
-	return GameFactory::Operate<Actor, FailPolicy::Return, ObjectPolicy::Expected>(id, [id, baseID, silent, stick](ExpectedActor& actor) {
-		if (!actor && !scriptIL.count(id))
-			return false;
-
-		ItemList* IL = actor ? &actor->IL : scriptIL[id].get();
-		auto diff = IL->EquipItem(baseID, silent, stick);
+	return GameFactory::Operate<ItemList, FailPolicy::Return>(id, [id, baseID, silent, stick](FactoryItemList& itemlist) {
+		auto diff = itemlist->EquipItem(baseID, silent, stick);
 
 		if (!diff)
 			return false;
 
-		if (actor)
+		if (vaultcast_test<Actor>(itemlist))
 			Network::Queue({Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_UPDATE_EQUIPPED>(diff, true, silent, stick),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
@@ -2090,17 +2043,13 @@ bool Script::EquipItem(NetworkID id, unsigned int baseID, bool silent, bool stic
 
 bool Script::UnequipItem(NetworkID id, unsigned int baseID, bool silent, bool stick) noexcept
 {
-	return GameFactory::Operate<Actor, FailPolicy::Return, ObjectPolicy::Expected>(id, [id, baseID, silent, stick](ExpectedActor& actor) {
-		if (!actor && !scriptIL.count(id))
-			return false;
-
-		ItemList* IL = actor ? &actor->IL : scriptIL[id].get();
-		auto diff = IL->UnequipItem(baseID, silent, stick);
+	return GameFactory::Operate<ItemList, FailPolicy::Return>(id, [id, baseID, silent, stick](FactoryItemList& itemlist) {
+		auto diff = itemlist->UnequipItem(baseID, silent, stick);
 
 		if (!diff)
 			return false;
 
-		if (actor)
+		if (vaultcast_test<Actor>(itemlist))
 			Network::Queue({Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_UPDATE_EQUIPPED>(diff, false, silent, stick),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
@@ -2266,7 +2215,7 @@ void Script::KillActor(NetworkID id, NetworkID actor, unsigned short limbs, sign
 
 bool Script::SetActorBaseRace(NetworkID id, unsigned int race) noexcept
 {
-	return GameFactory::Operate<Actor, FailPolicy::Return>(GameFactory::GetIDObjectTypes(ALL_ACTORS), [id, race](FactoryActors& actors) {
+	return GameFactory::Operate<Actor, FailPolicy::Return>(GameFactory::GetByTypeID(ALL_ACTORS), [id, race](FactoryActors& actors) {
 		auto it = find_if(actors.begin(), actors.end(), [id](const FactoryActor& actor) { return actor->GetNetworkID() == id; });
 
 		if (it == actors.end())
@@ -2351,7 +2300,7 @@ bool Script::AgeActorBaseRace(NetworkID id, signed int age) noexcept
 		else
 			return true;
 
-		GameFactory::LeaveReference(actor);
+		GameFactory::Leave(actor);
 
 		return SetActorBaseRace(id, new_race);
 	});
@@ -2359,7 +2308,7 @@ bool Script::AgeActorBaseRace(NetworkID id, signed int age) noexcept
 
 bool Script::SetActorBaseSex(NetworkID id, bool female) noexcept
 {
-	return GameFactory::Operate<Actor, FailPolicy::Return>(GameFactory::GetIDObjectTypes(ALL_ACTORS), [id, female](FactoryActors& actors) {
+	return GameFactory::Operate<Actor, FailPolicy::Return>(GameFactory::GetByTypeID(ALL_ACTORS), [id, female](FactoryActors& actors) {
 		auto it = find_if(actors.begin(), actors.end(), [id](const FactoryActor& actor) { return actor->GetNetworkID() == id; });
 
 		if (it == actors.end())
@@ -2467,7 +2416,7 @@ bool Script::AttachWindow(NetworkID id, NetworkID window) noexcept
 
 	for (const auto& id_ : additions)
 		response.emplace_back(Network::CreateResponse(
-			GameFactory::GetObject<Window>(id_)->toPacket(),
+			GameFactory::Get<Window>(id_)->toPacket(),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
 		);
 
@@ -2527,8 +2476,8 @@ NetworkID Script::GetWindowRoot(NetworkID id) noexcept
 
 		while ((parent = window->GetParentWindow()))
 		{
-			GameFactory::LeaveReference(window);
-			window = GameFactory::GetObject<Window>(parent).get();
+			GameFactory::Leave(window);
+			window = GameFactory::Get<Window>(parent).get();
 		}
 
 		return window->GetNetworkID();
@@ -2644,10 +2593,13 @@ bool Script::GetCheckboxSelected(NetworkID id) noexcept
 
 NetworkID (Script::CreateWindow)(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
 {
-	NetworkID id = GameFactory::CreateInstance(ID_WINDOW, 0x00000000);
-	auto window = GameFactory::GetObject<Window>(id);
-	SetupWindow(window.get(), posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+	NetworkID id = GameFactory::Operate<Window>(GameFactory::Create<Window>(), [posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text](FactoryWindow& window) {
+		SetupWindow(window, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+		return window->GetNetworkID();
+	});
+
 	Call<CBI("OnCreate")>(id);
+
 	return id;
 }
 
@@ -2669,21 +2621,15 @@ bool Script::DestroyWindow(NetworkID id) noexcept
 	Window::CollectChilds(id, deletions);
 	reverse(deletions.begin(), deletions.end()); // reverse so the order of deletion is valid
 
-	vector<RakNetGUID> guids;
+	auto players = Player::GetWindowPlayers(root);
 
-	{
-		auto players = GameFactory::GetObjectTypes<Player>(ID_PLAYER);
+	if (root == id)
+		for (const auto& id : players)
+			GameFactory::Operate<Player, FailPolicy::Return>(id, [root](FactoryPlayer& player) {
+				player->DetachWindow(root);
+			});
 
-		for (const auto& player : players)
-			if (player->GetPlayerWindows().count(root))
-			{
-				guids.emplace_back(Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID());
-
-				if (root == id)
-					player->DetachWindow(root);
-			}
-	}
-
+	vector<RakNetGUID> guids(Client::GetNetworkList(players));
 	NetworkResponse response;
 
 	for (const auto& id : deletions)
@@ -2694,7 +2640,7 @@ bool Script::DestroyWindow(NetworkID id) noexcept
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
 			);
 
-		GameFactory::DestroyInstance(id);
+		GameFactory::Destroy(id);
 	}
 
 	if (!response.empty())
@@ -2717,20 +2663,11 @@ bool Script::AddChildWindow(NetworkID id, NetworkID child) noexcept
 		return true;
 	})) return false;
 
-	NetworkID root = GetWindowRoot(id);
-
 	vector<NetworkID> additions;
 	Window::CollectChilds(child, additions);
 
-	vector<RakNetGUID> guids;
-
-	{
-		auto players = GameFactory::GetObjectTypes<Player>(ID_PLAYER);
-
-		for (const auto& player : players)
-			if (player->GetPlayerWindows().count(root))
-				guids.emplace_back(Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID());
-	}
+	NetworkID root = GetWindowRoot(id);
+	vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
 
 	if (!guids.empty())
 	{
@@ -2738,7 +2675,7 @@ bool Script::AddChildWindow(NetworkID id, NetworkID child) noexcept
 
 		for (const auto& id : additions)
 			response.emplace_back(Network::CreateResponse(
-				GameFactory::GetObject<Window>(id)->toPacket(),
+				GameFactory::Get<Window>(id)->toPacket(),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
 			);
 
@@ -2759,21 +2696,12 @@ bool Script::RemoveChildWindow(NetworkID id, NetworkID child) noexcept
 		return true;
 	})) return false;
 
-	NetworkID root = GetWindowRoot(id);
-
 	vector<NetworkID> deletions;
 	Window::CollectChilds(child, deletions);
 	reverse(deletions.begin(), deletions.end()); // reverse so the order of deletion is valid
 
-	vector<RakNetGUID> guids;
-
-	{
-		auto players = GameFactory::GetObjectTypes<Player>(ID_PLAYER);
-
-		for (const auto& player : players)
-			if (player->GetPlayerWindows().count(root))
-				guids.emplace_back(Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID());
-	}
+	NetworkID root = GetWindowRoot(id);
+	vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
 
 	if (!guids.empty())
 	{
@@ -2798,16 +2726,7 @@ bool Script::SetWindowPos(NetworkID id, double X, double Y, double offset_X, dou
 	})) return false;
 
 	NetworkID root = GetWindowRoot(id);
-
-	vector<RakNetGUID> guids;
-
-	{
-		auto players = GameFactory::GetObjectTypes<Player>(ID_PLAYER);
-
-		for (const auto& player : players)
-			if (player->GetPlayerWindows().count(root))
-				guids.emplace_back(Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID());
-	}
+	vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
 
 	if (!guids.empty())
 		Network::Queue({Network::CreateResponse(
@@ -2825,16 +2744,7 @@ bool Script::SetWindowSize(NetworkID id, double X, double Y, double offset_X, do
 	})) return false;
 
 	NetworkID root = GetWindowRoot(id);
-
-	vector<RakNetGUID> guids;
-
-	{
-		auto players = GameFactory::GetObjectTypes<Player>(ID_PLAYER);
-
-		for (const auto& player : players)
-			if (player->GetPlayerWindows().count(root))
-				guids.emplace_back(Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID());
-	}
+	vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
 
 	if (!guids.empty())
 		Network::Queue({Network::CreateResponse(
@@ -2852,16 +2762,7 @@ bool Script::SetWindowVisible(NetworkID id, bool visible) noexcept
 	})) return false;
 
 	NetworkID root = GetWindowRoot(id);
-
-	vector<RakNetGUID> guids;
-
-	{
-		auto players = GameFactory::GetObjectTypes<Player>(ID_PLAYER);
-
-		for (const auto& player : players)
-			if (player->GetPlayerWindows().count(root))
-				guids.emplace_back(Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID());
-	}
+	vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
 
 	if (!guids.empty())
 		Network::Queue({Network::CreateResponse(
@@ -2879,16 +2780,7 @@ bool Script::SetWindowLocked(NetworkID id, bool locked) noexcept
 	})) return false;
 
 	NetworkID root = GetWindowRoot(id);
-
-	vector<RakNetGUID> guids;
-
-	{
-		auto players = GameFactory::GetObjectTypes<Player>(ID_PLAYER);
-
-		for (const auto& player : players)
-			if (player->GetPlayerWindows().count(root))
-				guids.emplace_back(Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID());
-	}
+	vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
 
 	if (!guids.empty())
 		Network::Queue({Network::CreateResponse(
@@ -2913,16 +2805,7 @@ bool Script::SetWindowText(NetworkID id, const char* text) noexcept
 	})) return false;
 
 	NetworkID root = GetWindowRoot(id);
-
-	vector<RakNetGUID> guids;
-
-	{
-		auto players = GameFactory::GetObjectTypes<Player>(ID_PLAYER);
-
-		for (const auto& player : players)
-			if (player->GetPlayerWindows().count(root))
-				guids.emplace_back(Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID());
-	}
+	vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
 
 	if (!guids.empty())
 		Network::Queue({Network::CreateResponse(
@@ -2935,28 +2818,37 @@ bool Script::SetWindowText(NetworkID id, const char* text) noexcept
 
 NetworkID Script::CreateButton(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
 {
-	NetworkID id = GameFactory::CreateInstance(ID_BUTTON, 0x00000000);
-	auto window = GameFactory::GetObject<Button>(id);
-	SetupButton(window.get(), posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+	NetworkID id = GameFactory::Operate<Button>(GameFactory::Create<Button>(), [posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text](FactoryButton& button) {
+		SetupButton(button, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+		return button->GetNetworkID();
+	});
+
 	Call<CBI("OnCreate")>(id);
+
 	return id;
 }
 
 NetworkID Script::CreateText(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
 {
-	NetworkID id = GameFactory::CreateInstance(ID_TEXT, 0x00000000);
-	auto window = GameFactory::GetObject<Text>(id);
-	SetupText(window.get(), posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+	NetworkID id = GameFactory::Operate<Text>(GameFactory::Create<Text>(), [posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text](FactoryText& text_) {
+		SetupText(text_, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+		return text_->GetNetworkID();
+	});
+
 	Call<CBI("OnCreate")>(id);
+
 	return id;
 }
 
 NetworkID Script::CreateEdit(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
 {
-	NetworkID id = GameFactory::CreateInstance(ID_EDIT, 0x00000000);
-	auto window = GameFactory::GetObject<Edit>(id);
-	SetupEdit(window.get(), posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+	NetworkID id = GameFactory::Operate<Edit>(GameFactory::Create<Edit>(), [posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text](FactoryEdit& edit) {
+		SetupEdit(edit, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+		return edit->GetNetworkID();
+	});
+
 	Call<CBI("OnCreate")>(id);
+
 	return id;
 }
 
@@ -2978,16 +2870,7 @@ bool Script::SetEditMaxLength(NetworkID id, unsigned int length) noexcept
 	})) return false;
 
 	NetworkID root = GetWindowRoot(id);
-
-	vector<RakNetGUID> guids;
-
-	{
-		auto players = GameFactory::GetObjectTypes<Player>(ID_PLAYER);
-
-		for (const auto& player : players)
-			if (player->GetPlayerWindows().count(root))
-				guids.emplace_back(Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID());
-	}
+	vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
 
 	if (!guids.empty())
 	{
@@ -2995,7 +2878,7 @@ bool Script::SetEditMaxLength(NetworkID id, unsigned int length) noexcept
 
 		if (text_updated)
 			response.emplace_back(Network::CreateResponse(
-				PacketFactory::Create<pTypes::ID_UPDATE_WTEXT>(id, GameFactory::GetObject<Edit>(id)->GetText()),
+				PacketFactory::Create<pTypes::ID_UPDATE_WTEXT>(id, GameFactory::Get<Edit>(id)->GetText()),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
 			);
 
@@ -3017,16 +2900,7 @@ bool Script::SetEditValidation(NetworkID id, const char* validation) noexcept
 	})) return false;
 
 	NetworkID root = GetWindowRoot(id);
-
-	vector<RakNetGUID> guids;
-
-	{
-		auto players = GameFactory::GetObjectTypes<Player>(ID_PLAYER);
-
-		for (const auto& player : players)
-			if (player->GetPlayerWindows().count(root))
-				guids.emplace_back(Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID());
-	}
+	vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
 
 	if (!guids.empty())
 		Network::Queue({Network::CreateResponse(
@@ -3039,10 +2913,13 @@ bool Script::SetEditValidation(NetworkID id, const char* validation) noexcept
 
 NetworkID (Script::CreateCheckbox)(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
 {
-	NetworkID id = GameFactory::CreateInstance(ID_CHECKBOX, 0x00000000);
-	auto window = GameFactory::GetObject<Checkbox>(id);
-	SetupCheckbox(window.get(), posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+	NetworkID id = GameFactory::Operate<Checkbox>(GameFactory::Create<Checkbox>(), [posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text](FactoryCheckbox& checkbox) {
+		SetupCheckbox(checkbox, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+		return checkbox->GetNetworkID();
+	});
+
 	Call<CBI("OnCreate")>(id);
+
 	return id;
 }
 
@@ -3053,16 +2930,7 @@ bool Script::SetCheckboxSelected(NetworkID id, bool selected) noexcept
 	})) return false;
 
 	NetworkID root = GetWindowRoot(id);
-
-	vector<RakNetGUID> guids;
-
-	{
-		auto players = GameFactory::GetObjectTypes<Player>(ID_PLAYER);
-
-		for (const auto& player : players)
-			if (player->GetPlayerWindows().count(root))
-				guids.emplace_back(Client::GetClientFromPlayer(player->GetNetworkID())->GetGUID());
-	}
+	vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
 
 	if (!guids.empty())
 		Network::Queue({Network::CreateResponse(

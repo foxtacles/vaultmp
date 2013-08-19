@@ -11,23 +11,39 @@ using namespace RakNet;
 DebugInput<ItemList> ItemList::debug;
 #endif
 
-ItemList::ItemList(NetworkID source) : source(source)
+ItemList::ItemList() : Base()
 {
-#ifdef VAULTSERVER
-	if (!source)
-	{
-		SetNetworkIDManager(Network::Manager());
-		this->source = GetNetworkID();
-	}
-#else
-	if (!source)
-		throw VaultException("Source NetworkID must not be null").stacktrace();
-#endif
+	initialize();
+}
+
+ItemList::ItemList(const pDefault* packet)
+{
+	initialize();
+
+	pPacket pBaseNew = PacketFactory::Pop<pPacket>(packet);
+
+	NetworkID id;
+
+	PacketFactory::Access<pTypes::ID_BASE_NEW>(pBaseNew, id);
+
+	this->SetNetworkID(id);
+
+	vector<pPacket> items;
+
+	PacketFactory::Access<pTypes::ID_ITEMLIST_NEW>(packet, items);
+
+	for (const pPacket& _packet : items)
+		AddItem(GameFactory::Create<Item>(_packet.get()));
 }
 
 ItemList::~ItemList() noexcept
 {
 	this->FlushContainer();
+}
+
+void ItemList::initialize()
+{
+
 }
 
 NetworkID ItemList::FindStackableItem(unsigned int baseID, double condition) const
@@ -49,7 +65,7 @@ NetworkID ItemList::AddItem(NetworkID id)
 		if (container)
 		{
 			// Alternative code path if the item has been received over network
-			if (container == this->source && find(this->container.begin(), this->container.end(), id) == this->container.end())
+			if (container == this->GetNetworkID() && find(this->container.begin(), this->container.end(), id) == this->container.end())
 			{
 				this->container.emplace_back(id);
 				return make_pair(0u, 0.0);
@@ -70,7 +86,7 @@ NetworkID ItemList::AddItem(NetworkID id)
 	{
 		auto data = GameFactory::Operate<Item>(id, [](FactoryItem& item) {
 			auto data = make_pair(item->GetItemEquipped(), item->GetItemCount());
-			GameFactory::DestroyInstance(item);
+			GameFactory::Destroy(item);
 			return data;
 		});
 
@@ -84,7 +100,7 @@ NetworkID ItemList::AddItem(NetworkID id)
 	else
 	{
 		GameFactory::Operate<Item>(id, [this](FactoryItem& item) {
-			item->SetItemContainer(this->source);
+			item->SetItemContainer(this->GetNetworkID());
 		});
 
 		container.emplace_back(id);
@@ -115,13 +131,13 @@ ItemList::AddOp ItemList::AddItem(unsigned int baseID, unsigned int count, doubl
 	else
 	{
 		result.first = true;
-		result.second = GameFactory::CreateInstance(ID_ITEM, baseID);
+		result.second = GameFactory::Create<Item>(baseID);
 
 		GameFactory::Operate<Item>(result.second, [this, count, condition, silent](FactoryItem& item) {
 			item->SetItemCount(count);
 			item->SetItemCondition(condition);
 			item->SetItemSilent(silent);
-			item->SetItemContainer(this->source);
+			item->SetItemContainer(this->GetNetworkID());
 		});
 
 		container.emplace_back(result.second);
@@ -169,7 +185,7 @@ ItemList::RemoveOp ItemList::RemoveItem(unsigned int baseID, unsigned int count,
 				{
 					get<1>(result).emplace_back(id);
 					count -= item->GetItemCount();
-					GameFactory::DestroyInstance(item);
+					GameFactory::Destroy(item);
 				}
 			});
 	}
@@ -187,7 +203,7 @@ ItemList::RemoveOp ItemList::RemoveItem(unsigned int baseID, unsigned int count,
 ItemList::Impl ItemList::RemoveAllItems()
 {
 	for (const NetworkID& id : container)
-		GameFactory::DestroyInstance(id);
+		GameFactory::Destroy(id);
 
 	return move(container);
 }
@@ -268,7 +284,7 @@ unsigned int ItemList::GetItemCount(unsigned int baseID) const
 void ItemList::FlushContainer()
 {
 	for (const NetworkID& id : container)
-		GameFactory::DestroyInstance(id);
+		GameFactory::Destroy(id);
 
 	container.clear();
 }
@@ -292,3 +308,17 @@ ItemList::Impl ItemList::GetItemTypes(const string& type) const
 	return result;
 }
 #endif
+
+pPacket ItemList::toPacket() const
+{
+	vector<pPacket> items;
+	items.reserve(GetItemList().size());
+
+	for (const NetworkID& id : GetItemList())
+		items.emplace_back(GameFactory::Operate<Item>(id, [](FactoryItem& item) { return item->toPacket(); }));
+
+	pPacket pBaseNew = Base::toPacket();
+	pPacket packet = PacketFactory::Create<pTypes::ID_ITEMLIST_NEW>(pBaseNew, move(items));
+
+	return packet;
+}

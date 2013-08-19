@@ -53,7 +53,7 @@ namespace DB
 
 		public:
 			static Expected<NPC*> Lookup(unsigned int baseID);
-			static Expected<NPC*> GetNPCNotIn(const std::unordered_set<unsigned int>& _set, const std::function<bool(const NPC&)>& pred);
+			static Expected<NPC*> GetNPC(const std::function<bool(const NPC&)>& pred);
 
 			unsigned int GetBase() const;
 			bool IsEssential() const;

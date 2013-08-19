@@ -1,5 +1,5 @@
 #include "Reference.h"
-#include "Network.h"
+#include "Utils.h"
 
 using namespace std;
 using namespace RakNet;
@@ -8,15 +8,38 @@ using namespace RakNet;
 DebugInput<Reference> Reference::debug;
 #endif
 
-Reference::Reference(unsigned int refID, unsigned int baseID)
+Guarded<Reference::RefIDs> Reference::refIDs;
+
+Reference::Reference(unsigned int refID, unsigned int baseID) : Base()
 {
-	this->refID.set(refID);
-	this->baseID.set(baseID);
-	this->changed.set(false);
-	this->SetNetworkIDManager(Network::Manager());
+	this->SetReference(refID);
+	this->SetBase(baseID);
 }
 
-Reference::~Reference() noexcept {}
+Reference::Reference(const pDefault* packet)
+{
+	pPacket pBaseNew = PacketFactory::Pop<pPacket>(packet);
+
+	NetworkID id;
+
+	PacketFactory::Access<pTypes::ID_BASE_NEW>(pBaseNew, id);
+
+	this->SetNetworkID(id);
+
+	unsigned int refID, baseID;
+
+	PacketFactory::Access<pTypes::ID_REFERENCE_NEW>(packet, refID, baseID);
+
+	this->SetReference(refID);
+	this->SetBase(baseID);
+}
+
+Reference::~Reference() noexcept
+{
+	refIDs.Operate([this](RefIDs& refIDs) {
+		refIDs.erase(this->refID.get());
+	});
+}
 
 /*
 unsigned int Reference::ResolveIndex(unsigned int baseID)
@@ -31,25 +54,7 @@ unsigned int Reference::ResolveIndex(unsigned int baseID)
 }
 */
 
-template <typename T>
-Lockable* Reference::SetObjectValue(Value<T>& dest, const T& value)
-{
-	if (dest.get() == value)
-		return nullptr;
-
-	if (!dest.set(value))
-		return nullptr;
-
-	changed.set(true);
-
-#ifdef VAULTMP_DEBUG
-
-#endif
-
-	return &dest;
-}
-
-template <>
+template<>
 Lockable* Reference::SetObjectValue(Value<double>& dest, const double& value)
 {
 	if (Utils::DoubleCompare(dest.get(), value, 0.0001))
@@ -58,36 +63,7 @@ Lockable* Reference::SetObjectValue(Value<double>& dest, const double& value)
 	if (!dest.set(value))
 		return nullptr;
 
-	changed.set(true);
-
-#ifdef VAULTMP_DEBUG
-
-#endif
-
 	return &dest;
-}
-template Lockable* Reference::SetObjectValue(Value<unsigned int>&, const unsigned int&);
-template Lockable* Reference::SetObjectValue(Value<signed int>&, const signed int&);
-template Lockable* Reference::SetObjectValue(Value<unsigned char>&, const unsigned char&);
-template Lockable* Reference::SetObjectValue(Value<bool>&, const bool&);
-template Lockable* Reference::SetObjectValue(Value<string>&, const string&);
-template Lockable* Reference::SetObjectValue(Value<NetworkID>&, const NetworkID&);
-template Lockable* Reference::SetObjectValue(Value<array<unsigned int, 9>>&, const array<unsigned int, 9>&);
-template Lockable* Reference::SetObjectValue(Value<pair<double, double>>&, const pair<double, double>&);
-
-Lockable* Reference::SetReference(unsigned int refID)
-{
-	return SetObjectValue(this->refID, refID);
-}
-
-Lockable* Reference::SetBase(unsigned int baseID)
-{
-	return SetObjectValue(this->baseID, baseID);
-}
-
-Lockable* Reference::SetChanged(bool changed)
-{
-	return this->changed.set(changed) ? &this->changed : nullptr;
 }
 
 unsigned int Reference::GetReference() const
@@ -100,9 +76,26 @@ unsigned int Reference::GetBase() const
 	return baseID.get();
 }
 
-bool Reference::GetChanged() const
+Lockable* Reference::SetReference(unsigned int refID)
 {
-	return changed.get();
+	unsigned int old_refID = this->refID.get();
+
+	auto* result = SetObjectValue(this->refID, refID);
+
+	if (result)
+		refIDs.Operate([this, old_refID, refID](RefIDs& refIDs) {
+			refIDs.erase(old_refID);
+
+			if (refID)
+				refIDs.emplace(refID, this->GetNetworkID());
+		});
+
+	return result;
+}
+
+Lockable* Reference::SetBase(unsigned int baseID)
+{
+	return SetObjectValue(this->baseID, baseID);
 }
 
 bool Reference::IsPersistent() const
@@ -132,3 +125,12 @@ void Reference::Release()
 		tasks.pop();
 }
 #endif
+
+pPacket Reference::toPacket() const
+{
+	pPacket pBaseNew = Base::toPacket();
+
+	pPacket packet = PacketFactory::Create<pTypes::ID_REFERENCE_NEW>(pBaseNew, this->GetReference(), this->GetBase());
+
+	return packet;
+}

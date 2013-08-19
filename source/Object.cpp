@@ -19,13 +19,10 @@ Object::Object(unsigned int refID, unsigned int baseID) : Reference(refID, baseI
 	initialize();
 }
 
-Object::Object(const pDefault* packet) : Reference(0x00000000, 0x00000000)
+Object::Object(const pDefault* packet) : Reference(PacketFactory::Pop<pPacket>(packet))
 {
 	initialize();
 
-	NetworkID id;
-	unsigned int refID, baseID;
-	bool changed;
 	string name;
 	double X, Y, Z, aX, aY, aZ;
 	unsigned int cell;
@@ -33,13 +30,8 @@ Object::Object(const pDefault* packet) : Reference(0x00000000, 0x00000000)
 	unsigned int lock;
 	unsigned int owner;
 
-	PacketFactory::Access<pTypes::ID_OBJECT_NEW>(packet, id, refID, baseID, changed, name, X, Y, Z, aX, aY, aZ, cell, enabled, lock, owner);
+	PacketFactory::Access<pTypes::ID_OBJECT_NEW>(packet, name, X, Y, Z, aX, aY, aZ, cell, enabled, lock, owner);
 
-	GameFactory::SetChangeFlag(changed);
-
-	this->SetNetworkID(id);
-	this->SetReference(refID);
-	this->SetBase(baseID);
 	this->SetName(move(name));
 	this->SetNetworkPos(Axis_X, X);
 	this->SetNetworkPos(Axis_Y, Y);
@@ -52,7 +44,7 @@ Object::Object(const pDefault* packet) : Reference(0x00000000, 0x00000000)
 	this->SetLockLevel(lock);
 	this->SetOwner(owner);
 
-	if (refID)
+	if (this->GetReference())
 	{
 		this->SetGamePos(Axis_X, X);
 		this->SetGamePos(Axis_Y, Y);
@@ -61,7 +53,10 @@ Object::Object(const pDefault* packet) : Reference(0x00000000, 0x00000000)
 	}
 }
 
-Object::~Object() noexcept {}
+Object::~Object() noexcept
+{
+
+}
 
 void Object::initialize()
 {
@@ -105,9 +100,9 @@ FuncParameter Object::CreateFunctor(unsigned int flags, NetworkID id)
 }
 #endif
 
-string Object::GetName() const
+const string& Object::GetName() const
 {
-	return object_Name.get();
+	return *object_Name;
 }
 
 double Object::GetGamePos(unsigned char axis) const
@@ -241,8 +236,9 @@ bool Object::HasValidCoordinates() const
 
 pPacket Object::toPacket() const
 {
-	pPacket packet = PacketFactory::Create<pTypes::ID_OBJECT_NEW>(const_cast<Object*>(this)->GetNetworkID(), this->GetReference(), this->GetBase(), this->GetChanged(),
-		this->GetName(), this->GetNetworkPos(Values::Axis_X), this->GetNetworkPos(Values::Axis_Y), this->GetNetworkPos(Values::Axis_Z),
+	pPacket pReferenceNew = Reference::toPacket();
+
+	pPacket packet = PacketFactory::Create<pTypes::ID_OBJECT_NEW>(pReferenceNew, this->GetName(), this->GetNetworkPos(Values::Axis_X), this->GetNetworkPos(Values::Axis_Y), this->GetNetworkPos(Values::Axis_Z),
 		this->GetAngle(Values::Axis_X), this->GetAngle(Values::Axis_Y), this->GetAngle(Values::Axis_Z), this->GetNetworkCell(), this->GetEnabled(), this->GetLockLevel(), this->GetOwner());
 
 	return packet;
@@ -256,12 +252,7 @@ vector<string> ObjectFunctor::operator()()
 
 	if (id)
 		GameFactory::Operate<Object, FailPolicy::Return>(id, [this, &result](FactoryObject& object) {
-			unsigned int flags = this->flags();
-
-			if (flags & FLAG_REFERENCE)
-				result.emplace_back(Utils::toString(object->GetReference()));
-			else if (flags & FLAG_BASE)
-				result.emplace_back(Utils::toString(object->GetBase()));
+			result.emplace_back(Utils::toString(object->GetReference()));
 		});
 	else
 	{
@@ -281,7 +272,7 @@ vector<string> ObjectFunctor::operator()()
 
 bool ObjectFunctor::filter(FactoryWrapper<Reference>& reference)
 {
-	return GameFactory::Operate(reference->GetNetworkID(), [this](FactoryObject& object) {
+	return GameFactory::Operate<Object>(reference->GetNetworkID(), [this](FactoryObject& object) {
 		unsigned int flags = this->flags();
 
 		if (flags & FLAG_NOTSELF && object->GetReference() == PLAYER_REFERENCE)
@@ -292,17 +283,6 @@ bool ObjectFunctor::filter(FactoryWrapper<Reference>& reference)
 
 		if (flags & FLAG_ENABLED && !object->GetEnabled())
 			return true;
-
-		else if (flags & FLAG_DISABLED && object->GetEnabled())
-			return true;
-
-		if (flags & FLAG_LOCKED)
-		{
-			unsigned int lock = object->GetLockLevel();
-
-			if (lock == UINT_MAX || lock == UINT_MAX - 1 || lock == 255 || lock == 5)
-				return true;
-		}
 
 		return false;
 	});

@@ -23,7 +23,6 @@
 #include <vector>
 #include <deque>
 #include <unordered_map>
-#include <unordered_set>
 
 /**
  * \brief Client game code, using the Interface to execute commands and communicate with the game
@@ -40,7 +39,7 @@ class Game
 		typedef std::pair<std::future<void>, std::chrono::milliseconds> AsyncPack;
 		typedef std::pair<std::set<unsigned int>, std::set<unsigned int>> CellDiff;
 		typedef std::unordered_map<unsigned int, std::unordered_map<unsigned int, std::set<unsigned int>>> CellRefs;
-		typedef std::unordered_map<unsigned int, std::unordered_set<RakNet::NetworkID>> UninitializedObjects;
+		typedef std::unordered_map<unsigned int, std::deque<RakNet::NetworkID>> UninitializedObjects;
 		typedef std::unordered_map<unsigned int, std::vector<unsigned int>> DeletedObjects;
 		typedef std::unordered_map<unsigned int, unsigned int> BaseRaces;
 		typedef std::unordered_map<unsigned int, signed int> Globals;
@@ -229,7 +228,7 @@ class Game
 		/**
 		 * \brief Activates an Object
 		 */
-		static void Activate(const FactoryObject& reference, const FactoryObject& action);
+		static void Activate(const FactoryReference& reference, const FactoryReference& action);
 		/**
 		 * \brief Sets the position of an Object
 		 */
@@ -410,7 +409,7 @@ class Game
 		/**
 		 * \brief Network function to handle Object position
 		 */
-		static void net_SetAngle(const FactoryObject& reference, unsigned char axis, double value);
+		static void net_SetAngle(const FactoryObject& reference, double X, double Y, double Z);
 		/**
 		 * \brief Network function to handle Object cell
 		 */
@@ -426,7 +425,7 @@ class Game
 		/**
 		 * \brief Network function to handle Object activate
 		 */
-		static void net_GetActivate(const FactoryObject& reference, const FactoryObject& action);
+		static void net_GetActivate(const FactoryReference& reference, const FactoryReference& action);
 		/**
 		 * \brief Network function to handle Item count
 		 */
@@ -551,11 +550,11 @@ class Game
 		/**
 		 * \brief Handles GetPos command result
 		 */
-		static void GetPos(const FactoryObject& reference, unsigned char axis, double value);
+		static void GetPos(const FactoryObject& reference, double X, double Y, double Z);
 		/**
 		 * \brief Handles GetAngle command result
 		 */
-		static void GetAngle(const FactoryObject& reference, unsigned char axis, double value);
+		static void GetAngle(const FactoryObject& reference, double X, double Y, double Z);
 		/**
 		 * \brief Handles GetParentCell command result
 		 */
@@ -571,7 +570,7 @@ class Game
 		/**
 		 * \brief Handles GetActivate command result
 		 */
-		static void GetActivate(const FactoryObject& reference, const FactoryObject& action);
+		static void GetActivate(const FactoryReference& reference, const FactoryReference& action);
 		/**
 		 * \brief Handles GUI message
 		 */

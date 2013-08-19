@@ -4,8 +4,6 @@
 #include "vaultmp.h"
 #include "Window.h"
 
-#include <string>
-
 /**
  * \brief Represents a GUI checkbox
  */
@@ -42,7 +40,7 @@ class Checkbox : public Window
 		virtual pPacket toPacket() const;
 };
 
-GF_TYPE_WRAPPER(Checkbox, Window, ID_CHECKBOX)
+GF_TYPE_WRAPPER_FINAL(Checkbox, Window, ID_CHECKBOX)
 
 template<> struct pTypesMap<pTypes::ID_CHECKBOX_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_CHECKBOX_NEW, bool> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_WSELECTED> { typedef pGeneratorReference<pTypes::ID_UPDATE_WSELECTED, bool> type; };
