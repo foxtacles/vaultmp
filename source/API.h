@@ -288,6 +288,7 @@ namespace Values
 		GetActivate = 0x0002 | VAULTFUNCTION,
 		GetPosAngle = 0x0003 | VAULTFUNCTION,
 		UIMessage = 0x0004 | VAULTFUNCTION,
+		PlaceAtMePrepare = 0x0005 | VAULTFUNCTION,
 		ForceRespawn = 0x0006 | VAULTFUNCTION,
 		SetGlobalValue = 0x0007 | VAULTFUNCTION,
 		GUIChat = 0x0008 | VAULTFUNCTION,

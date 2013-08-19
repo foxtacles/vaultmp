@@ -74,15 +74,12 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 
 			case Func::GetPosAngle:
 			{
-				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
+				float* data = getFrom<float*>(result);
 
 				GameFactory::Operate<Object>(getFrom<unsigned int>(info.at(1)), [&info, data](FactoryObject& object) {
-					const float* data_ = reinterpret_cast<const float*>(&data[0]);
-					GetAngle(object, data_[0], data_[1], data_[2]);
-					GetPos(object, data_[3], data_[4], data_[5]);
+					GetAngle(object, data[0], data[1], data[2]);
+					GetPos(object, data[3], data[4], data[5]);
 				});
-
-				delete &data;
 				break;
 			}
 
@@ -91,14 +88,11 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				if (!result)
 					break;
 
-				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
-				unsigned int refID = *reinterpret_cast<unsigned int*>(&data[0]);
+				unsigned int refID = *getFrom<unsigned int*>(result);
 
 				GameFactory::Operate<Reference, FailPolicy::Return>(vector<unsigned int>{refID, PLAYER_REFERENCE}, [result](FactoryReferences& references) {
 					GetActivate(references[0], references[1]);
 				});
-
-				delete &data;
 				break;
 			}
 /*
@@ -137,9 +131,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				if (!result)
 					break;
 
-				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
-				GetMessage(string(reinterpret_cast<char*>(&data[0]), data.size()));
-				delete &data;
+				GetMessage(string(getFrom<char*>(result)));
 				break;
 			}
 
@@ -148,9 +140,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				if (!result)
 					break;
 
-				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
-				GetWindowMode(data[0]);
-				delete &data;
+				GetWindowMode(*getFrom<bool*>(result));
 				break;
 			}
 
@@ -159,11 +149,10 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				if (!result)
 					break;
 
-				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
-				string name = reinterpret_cast<char*>(&data[0]);
-				string text = reinterpret_cast<char*>(&data[0]) + name.length() + 1;
+				char* data = getFrom<char*>(result);
+				string name = data;
+				string text = data + name.length() + 1;
 				GetWindowText(move(name), move(text));
-				delete &data;
 				break;
 			}
 
@@ -172,9 +161,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				if (!result)
 					break;
 
-				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
-				GetWindowClick(string(reinterpret_cast<char*>(&data[0]), data.size()));
-				delete &data;
+				GetWindowClick(string(getFrom<char*>(result)));
 				break;
 			}
 
@@ -183,10 +170,9 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				if (!result)
 					break;
 
-				vector<unsigned char>& data = *getFrom<vector<unsigned char>*>(result);
-				string name = reinterpret_cast<char*>(&data[0]);
-				GetCheckboxSelected(name, *reinterpret_cast<bool*>(&data[0] + name.length() + 1));
-				delete &data;
+				char* data = getFrom<char*>(result);
+				string name = data;
+				GetCheckboxSelected(name, *reinterpret_cast<bool*>(data + name.length() + 1));
 				break;
 			}
 
@@ -248,6 +234,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func::DisableKey:
 			case Func::EnableKey:
 			case Func::SetName:
+			case Func::PlaceAtMePrepare:
 				break;
 
 			default:
@@ -657,7 +644,8 @@ void Game::NewObject(FactoryObject& reference)
 		reference->SetEnabled(false);
 
 		uninitObj.Operate([&reference](UninitializedObjects& uninitObj) {
-			uninitObj[reference->GetNetworkCell()].emplace(reference->GetNetworkID());
+			auto& sub = uninitObj[reference->GetNetworkCell()];
+			sub.insert(reference->IsPersistent() ? sub.begin() : sub.end(), reference->GetNetworkID());
 		});
 	}
 }
@@ -665,6 +653,7 @@ void Game::NewObject(FactoryObject& reference)
 void Game::NewObject_(FactoryObject& reference)
 {
 	reference->Release();
+	unsigned int refID = reference->GetReference();
 
 	if (!reference->GetReference())
 	{
@@ -679,17 +668,38 @@ void Game::NewObject_(FactoryObject& reference)
 		}
 
 		unsigned int baseID = reference->GetBase();
-		PlaceAtMe(PLAYER_REFERENCE, baseID, condition, 1, key);
+		unsigned int cell = reference->GetNetworkCell();
+
+		unsigned int anchorID = cellRefs.Operate([cell](CellRefs& cellRefs) {
+			const auto& refs = cellRefs[cell];
+
+			unsigned int anchorID = [&refs]() {
+				for (const auto& subrefs : refs)
+					if (!subrefs.second.empty())
+						return *subrefs.second.begin();
+
+				return 0x00000000u;
+			}();
+
+			if (!anchorID)
+				throw VaultException("No anchor reference in cell %08X", cell).stacktrace();
+
+			return anchorID;
+		});
+
+		Interface::Dynamic([&reference, anchorID, baseID, condition, key]() {
+			Interface::ExecuteCommand(Func::PlaceAtMePrepare, {RawParameter(reference->GetAngle(Axis_X)), RawParameter(reference->GetAngle(Axis_Y)), RawParameter(reference->GetAngle(Axis_Z)), RawParameter(reference->GetNetworkPos(Axis_X)), RawParameter(reference->GetNetworkPos(Axis_Y)), RawParameter(reference->GetNetworkPos(Axis_Z))});
+
+			PlaceAtMe(anchorID, baseID, condition, 1, key);
+		});
 
 		NetworkID id = reference->GetNetworkID();
 
 		GameFactory::Leave(reference);
 
-		unsigned int refID;
-
 		try
 		{
-			refID = store->get_future(chrono::seconds(15));
+			refID = store->get_future(chrono::seconds(5));
 		}
 		catch (exception& e)
 		{
@@ -701,33 +711,19 @@ void Game::NewObject_(FactoryObject& reference)
 	}
 
 	reference->SetEnabled(true);
+	reference->SetGameCell(reference->GetNetworkCell());
+
+	cellRefs.Operate([&reference, refID](CellRefs& cellRefs) {
+		cellRefs[reference->GetNetworkCell()][reference.GetType()].insert(refID);
+	});
 
 	SetName(reference);
-	SetAngle(reference);
 
 	//if (reference->GetLockLevel() != Lock_Unlocked)
 		SetLock(reference);
 
 	if (reference->GetOwner())
 		SetOwner(reference);
-
-	unsigned int refID = reference->GetReference();
-
-	// experimental
-	if (refID != PLAYER_REFERENCE)
-		if (!reference->IsPersistent())
-			JobDispatch(chrono::milliseconds(500), [refID] {
-				GameFactory::Operate<Object, FailPolicy::Return>(vector<unsigned int>{refID, PLAYER_REFERENCE}, [](FactoryObjects& objects) {
-					MoveTo(objects[0], objects[1], true);
-
-					objects[0]->SetGameCell(objects[1]->GetGameCell());
-					objects[0]->Work();
-				});
-			});
-
-	cellRefs.Operate([&reference, refID](CellRefs& cellRefs) {
-		cellRefs[reference->GetNetworkCell()][reference.GetType()].insert(refID);
-	});
 
 	// maybe more
 }
@@ -763,7 +759,8 @@ void Game::NewItem(FactoryItem& reference)
 			reference->SetEnabled(false);
 
 			uninitObj.Operate([&reference](UninitializedObjects& uninitObj) {
-				uninitObj[reference->GetNetworkCell()].emplace(reference->GetNetworkID());
+				auto& sub = uninitObj[reference->GetNetworkCell()];
+				sub.insert(reference->IsPersistent() ? sub.begin() : sub.end(), reference->GetNetworkID());
 			});
 		}
 	}
@@ -790,7 +787,8 @@ void Game::NewContainer(FactoryContainer& reference)
 		reference->SetEnabled(false);
 
 		uninitObj.Operate([&reference](UninitializedObjects& uninitObj) {
-			uninitObj[reference->GetNetworkCell()].emplace(reference->GetNetworkID());
+			auto& sub = uninitObj[reference->GetNetworkCell()];
+			sub.insert(reference->IsPersistent() ? sub.begin() : sub.end(), reference->GetNetworkID());
 		});
 	}
 }
@@ -819,7 +817,8 @@ void Game::NewActor(FactoryActor& reference)
 		reference->SetEnabled(false);
 
 		uninitObj.Operate([&reference](UninitializedObjects& uninitObj) {
-			uninitObj[reference->GetNetworkCell()].emplace(reference->GetNetworkID());
+			auto& sub = uninitObj[reference->GetNetworkCell()];
+			sub.insert(reference->IsPersistent() ? sub.begin() : sub.end(), reference->GetNetworkID());
 		});
 	}
 }
@@ -871,7 +870,8 @@ void Game::NewPlayer(FactoryPlayer& reference)
 		reference->SetEnabled(false);
 
 		uninitObj.Operate([&reference](UninitializedObjects& uninitObj) {
-			uninitObj[reference->GetNetworkCell()].emplace(reference->GetNetworkID());
+			auto& sub = uninitObj[reference->GetNetworkCell()];
+			sub.insert(reference->IsPersistent() ? sub.begin() : sub.end(), reference->GetNetworkID());
 		});
 	}
 }
@@ -1071,7 +1071,11 @@ void Game::DestroyObject(FactoryObject& reference, bool silent)
 		RemoveObject(reference);
 
 		uninitObj.Operate([&reference](UninitializedObjects& uninitObj) {
-			uninitObj[reference->GetNetworkCell()].erase(reference->GetNetworkID());
+			auto& sub = uninitObj[reference->GetNetworkCell()];
+			auto it = find(sub.begin(), sub.end(), reference->GetNetworkID());
+
+			if (it != sub.end())
+				sub.erase(it);
 		});
 
 		if (reference->IsPersistent())
@@ -1730,7 +1734,7 @@ void Game::net_SetCell(FactoryObject& reference, FactoryPlayer& player, unsigned
 					});
 
 					uninitObj.Operate([&reference, cell](UninitializedObjects& uninitObj) {
-						uninitObj[cell].emplace(reference->GetNetworkID());
+						uninitObj[cell].push_back(reference->GetNetworkID());
 					});
 
 					RemoveObject(reference);
@@ -1747,10 +1751,13 @@ void Game::net_SetCell(FactoryObject& reference, FactoryPlayer& player, unsigned
 		bool context = IsInContext(cell);
 
 		uninitObj.Operate([&reference, old_cell, cell, context](UninitializedObjects& uninitObj) {
-			uninitObj[old_cell].erase(reference->GetNetworkID());
+			NetworkID id = reference->GetNetworkID();
+
+			auto& sub = uninitObj[old_cell];
+			sub.erase(find(sub.begin(), sub.end(), id));
 
 			if (!context)
-				uninitObj[cell].insert(reference->GetNetworkID());
+				uninitObj[cell].push_back(id);
 		});
 
 		if (context)
@@ -2136,7 +2143,7 @@ void Game::net_UpdateContext(Player::CellContext& context, bool spawn)
 							objects[0]->Work();
 						});
 
-			unordered_set<NetworkID> ids;
+			UninitializedObjects::mapped_type ids;
 
 			uninitObj.Operate([&ids, cell](UninitializedObjects& uninitObj) {
 				ids = move(uninitObj[cell]);

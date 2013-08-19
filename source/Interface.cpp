@@ -254,7 +254,7 @@ void Interface::CommandThreadReceive()
 
 				if (code == PIPE_OP_RETURN || code == PIPE_OP_RETURN_BIG || code == PIPE_OP_RETURN_RAW)
 				{
-					vector<CommandResult> result = API::Translate(buffer);
+					vector<CommandResult> result(API::Translate(buffer));
 
 					for (CommandResult& _result : result)
 					{

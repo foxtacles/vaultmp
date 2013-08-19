@@ -23,7 +23,6 @@
 #include <vector>
 #include <deque>
 #include <unordered_map>
-#include <unordered_set>
 
 /**
  * \brief Client game code, using the Interface to execute commands and communicate with the game
@@ -40,7 +39,7 @@ class Game
 		typedef std::pair<std::future<void>, std::chrono::milliseconds> AsyncPack;
 		typedef std::pair<std::set<unsigned int>, std::set<unsigned int>> CellDiff;
 		typedef std::unordered_map<unsigned int, std::unordered_map<unsigned int, std::set<unsigned int>>> CellRefs;
-		typedef std::unordered_map<unsigned int, std::unordered_set<RakNet::NetworkID>> UninitializedObjects;
+		typedef std::unordered_map<unsigned int, std::deque<RakNet::NetworkID>> UninitializedObjects;
 		typedef std::unordered_map<unsigned int, std::vector<unsigned int>> DeletedObjects;
 		typedef std::unordered_map<unsigned int, unsigned int> BaseRaces;
 		typedef std::unordered_map<unsigned int, signed int> Globals;

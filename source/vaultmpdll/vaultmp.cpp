@@ -67,6 +67,7 @@ static void AnimDetour();
 static void PlayIdleDetour();
 static void AVFix();
 static void GetActivate();
+static void PlaceAtMe();
 static vector<void*> delegated;
 
 static HINSTANCE silverlock = NULL;
@@ -77,6 +78,7 @@ static bool respawn = true;
 static bool DLLerror = false;
 static unsigned int anim = 0x00;
 static unsigned int* _anim = NULL;
+static float PlaceAtMe_data[6];
 
 static const unsigned pluginsVMP = 0x00E10FF1;
 static const unsigned PlayGroup = 0x0045F704;
@@ -111,8 +113,12 @@ static unsigned AVFix_term = 0x00473E85;
 static unsigned FireFix_jmp = 0x0079236C;
 static unsigned FireFix_patch = 0x007923C5;
 static unsigned GetActivate_jmp = 0x0078A68D;
-static unsigned GetActivate_dest = (unsigned)& GetActivate;;
+static unsigned GetActivate_dest = (unsigned)& GetActivate;
 static unsigned GetActivate_ret = 0x0078A995;
+static unsigned PlaceAtMe_jmp = 0x00539785;
+static unsigned PlaceAtMe_dest = (unsigned)& PlaceAtMe;
+static unsigned PlaceAtMe_call = 0x0043DEF0;
+static unsigned PlaceAtMe_ret = PlaceAtMe_jmp + 5;
 
 // Those snippets / functions are from FOSE / NVSE, thanks
 
@@ -266,6 +272,31 @@ void GetActivate()
 	);
 }
 
+void PlaceAtMe()
+{
+	asm volatile(
+		"CALL %0\n"
+		"PUSH ECX\n"
+		"MOV ECX,%1\n"
+		"MOV [EAX+0x20],ECX\n"
+		"MOV ECX,%2\n"
+		"MOV [EAX+0x24],ECX\n"
+		"MOV ECX,%3\n"
+		"MOV [EAX+0x28],ECX\n"
+		"MOV ECX,%4\n"
+		"MOV [EAX+0x2C],ECX\n"
+		"MOV ECX,%5\n"
+		"MOV [EAX+0x30],ECX\n"
+		"MOV ECX,%6\n"
+		"MOV [EAX+0x34],ECX\n"
+		"POP ECX\n"
+		"JMP %7\n"
+		:
+		:  "m"(PlaceAtMe_call), "m"(PlaceAtMe_data[0]), "m"(PlaceAtMe_data[1]), "m"(PlaceAtMe_data[2]), "m"(PlaceAtMe_data[3]), "m"(PlaceAtMe_data[4]), "m"(PlaceAtMe_data[5]), "m"(PlaceAtMe_ret)
+		:
+	);
+}
+
 bool vaultfunction(void* reference, void* result, void* args, unsigned short opcode)
 {
 	switch (opcode)
@@ -358,8 +389,7 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 			if (!reference)
 				return false;
 
-			*(unsigned int*) result = sizeof(float) * 6;
-			float* data = (float*) ((unsigned) result + 4);
+			float* data = (float*) result;
 
 			data[0] = (*(float*)((unsigned char*) reference + 0x20)) * 180 / M_PI;
 			data[1] = (*(float*)((unsigned char*) reference + 0x24)) * 180 / M_PI;
@@ -379,6 +409,20 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 
 			QueueUIMessage(data, emoticon, NULL, NULL, 2.0); // add more later
 
+			break;
+		}
+
+		case 0x0005 | VAULTFUNCTION: // PlaceAtMePrepare - prepares pos / angle data
+		{
+			ZeroMemory(result, sizeof(double));
+
+			unsigned char* _args = (unsigned char*) args;
+			PlaceAtMe_data[0] = (*(double*)(_args + 1)) * M_PI / 180;
+			PlaceAtMe_data[1] = (*(double*)(_args + 10)) * M_PI / 180;
+			PlaceAtMe_data[2] = (*(double*)(_args + 19)) * M_PI / 180;
+			PlaceAtMe_data[3] = *(double*)(_args + 28);
+			PlaceAtMe_data[4] = *(double*)(_args + 37);
+			PlaceAtMe_data[5] = *(double*)(_args + 46);
 			break;
 		}
 
@@ -710,7 +754,10 @@ void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
 	}
 
 	if (!bigresult)
+	{
 		result[0] = PIPE_OP_RETURN;
+		memcpy(result + 5, args[6], sizeof(double));
+	}
 	else
 		result[0] = PIPE_OP_RETURN_BIG;
 
@@ -866,8 +913,7 @@ players[1].player = false;
 
 			buffer[0] = PIPE_OP_RETURN_RAW;
 			*reinterpret_cast<unsigned int*>(buffer + 1) = 0x0008 | VAULTFUNCTION;
-			*reinterpret_cast<unsigned int*>(buffer + 5) = chat.length();
-			memcpy(buffer + 9, chat.c_str(), chat.length());
+			memcpy(buffer + 5, chat.c_str(), chat.length() + 1);
 
 			pipeClient.Send(buffer);
 
@@ -880,8 +926,7 @@ players[1].player = false;
 
 			buffer[0] = PIPE_OP_RETURN_RAW;
 			*reinterpret_cast<unsigned int*>(buffer + 1) = 0x0009 | VAULTFUNCTION;
-			*reinterpret_cast<unsigned int*>(buffer + 5) = 1;
-			*reinterpret_cast<bool*>(buffer + 9) = mode;
+			*reinterpret_cast<bool*>(buffer + 5) = mode;
 
 			pipeClient.Send(buffer);
 
@@ -894,8 +939,7 @@ players[1].player = false;
 
 			buffer[0] = PIPE_OP_RETURN_RAW;
 			*reinterpret_cast<unsigned int*>(buffer + 1) = 0x0020 | VAULTFUNCTION;
-			*reinterpret_cast<unsigned int*>(buffer + 5) = name.length();
-			memcpy(buffer + 9, name.c_str(), name.length());
+			memcpy(buffer + 5, name.c_str(), name.length());
 
 			pipeClient.Send(buffer);
 
@@ -908,9 +952,8 @@ players[1].player = false;
 
 			buffer[0] = PIPE_OP_RETURN_RAW;
 			*reinterpret_cast<unsigned int*>(buffer + 1) = 0x0019 | VAULTFUNCTION;
-			*reinterpret_cast<unsigned int*>(buffer + 5) = text.first.length() + text.second.length() + 2;
-			memcpy(buffer + 9, text.first.c_str(), text.first.length() + 1);
-			memcpy(buffer + 9 + text.first.length() + 1, text.second.c_str(), text.second.length() + 1);
+			memcpy(buffer + 5, text.first.c_str(), text.first.length() + 1);
+			memcpy(buffer + 5 + text.first.length() + 1, text.second.c_str(), text.second.length() + 1);
 
 			pipeClient.Send(buffer);
 
@@ -923,9 +966,8 @@ players[1].player = false;
 
 			buffer[0] = PIPE_OP_RETURN_RAW;
 			*reinterpret_cast<unsigned int*>(buffer + 1) = 0x0024 | VAULTFUNCTION;
-			*reinterpret_cast<unsigned int*>(buffer + 5) = checkbox.first.length() + sizeof(bool) + 1;
-			memcpy(buffer + 9, checkbox.first.c_str(), checkbox.first.length() + 1);
-			memcpy(buffer + 9 + checkbox.first.length() + 1, &checkbox.second, sizeof(bool));
+			memcpy(buffer + 5, checkbox.first.c_str(), checkbox.first.length() + 1);
+			memcpy(buffer + 5 + checkbox.first.length() + 1, &checkbox.second, sizeof(bool));
 
 			pipeClient.Send(buffer);
 
@@ -938,8 +980,7 @@ players[1].player = false;
 
 			buffer[0] = PIPE_OP_RETURN_RAW;
 			*reinterpret_cast<unsigned int*>(buffer + 1) = 0x0002 | VAULTFUNCTION;
-			*reinterpret_cast<unsigned int*>(buffer + 5) = sizeof(refID);
-			*reinterpret_cast<unsigned int*>(buffer + 9) = refID;
+			*reinterpret_cast<unsigned int*>(buffer + 5) = refID;
 
 			pipeClient.Send(buffer);
 
@@ -1037,6 +1078,8 @@ void PatchGame(HINSTANCE& silverlock)
 
 	WriteRelCall(GetActivate_jmp, GetActivate_dest);
 	WriteRelJump(GetActivate_jmp + 5, GetActivate_ret);
+
+	WriteRelJump(PlaceAtMe_jmp, PlaceAtMe_dest);
 
 	SafeWrite32(pluginsVMP, *(DWORD*)".vmp"); // redirect Plugins.txt
 

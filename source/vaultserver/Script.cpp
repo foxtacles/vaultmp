@@ -1403,6 +1403,9 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z) noexcept
 bool Script::SetAngle(NetworkID id, double X, double Y, double Z) noexcept
 {
 	return GameFactory::Operate<Object, FailPolicy::Return>(id, [id, X, Y, Z](FactoryObject& object) {
+		if (!object->IsPersistent())
+			return false;
+
 		NetworkResponse response;
 
 		if (object->SetAngle(Axis_X, X))

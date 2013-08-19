@@ -261,6 +261,7 @@ API::FunctionMap API::functions = {
 		{Func::MoveTo, "roDDD"},
 		{Func::PlaceAtMe, "rbIII"},
 		{Func::PlaceAtMeHealthPercent, "rbdIII"},
+		{Func::PlaceAtMePrepare, "dddddd"},
 		{Func::SetRestrained, "ri"},
 		{Func::PlayGroup, "rgi"},
 		{Func::SetAlert, "ri"},
@@ -1063,12 +1064,7 @@ vector<API::CommandResult> API::Translate(unsigned char* stream)
 	unsigned char* data = stream + 5;
 
 	if (stream[0] != PIPE_OP_RETURN)
-	{
-		unsigned int length = *reinterpret_cast<unsigned int*>(data);
-		data += sizeof(unsigned int);
-		vector<unsigned char>* big = new vector<unsigned char>(data, data + length);
-		get<2>(_result) = storeIn<double>(big);
-	}
+		get<2>(_result) = storeIn<double>(data);
 	else
 		get<2>(_result) = *reinterpret_cast<double*>(data);
 
