@@ -1691,7 +1691,7 @@ void Game::net_SetCell(FactoryObject& reference, FactoryPlayer& player, unsigned
 		{
 			if (IsInContext(cell))
 			{
-				if (vaultcast_test<Actor>(reference) || IsInContext(old_cell))
+				if (IsInContext(old_cell))
 				{
 					cellRefs.Operate([&reference, old_cell, cell](CellRefs& cellRefs) {
 						cellRefs[old_cell][reference.GetType()].erase(reference->GetReference());
@@ -1720,30 +1720,17 @@ void Game::net_SetCell(FactoryObject& reference, FactoryPlayer& player, unsigned
 			}
 			else
 			{
-				if (vaultcast_test<Actor>(reference))
-				{
-					cellRefs.Operate([&reference, old_cell, cell](CellRefs& cellRefs) {
-						cellRefs[old_cell][reference.GetType()].erase(reference->GetReference());
-						cellRefs[cell][reference.GetType()].insert(reference->GetReference());
-					});
+				cellRefs.Operate([&reference, old_cell](CellRefs& cellRefs) {
+					cellRefs[old_cell][reference.GetType()].erase(reference->GetReference());
+				});
 
-					if (reference->SetEnabled(false))
-						ToggleEnabled(reference);
-				}
-				else
-				{
-					cellRefs.Operate([&reference, old_cell](CellRefs& cellRefs) {
-						cellRefs[old_cell][reference.GetType()].erase(reference->GetReference());
-					});
+				uninitObj.Operate([&reference, cell](UninitializedObjects& uninitObj) {
+					uninitObj[cell].push_back(reference->GetNetworkID());
+				});
 
-					uninitObj.Operate([&reference, cell](UninitializedObjects& uninitObj) {
-						uninitObj[cell].push_back(reference->GetNetworkID());
-					});
-
-					RemoveObject(reference);
-					reference->SetReference(0x00000000);
-					reference->SetEnabled(false);
-				}
+				RemoveObject(reference);
+				reference->SetReference(0x00000000);
+				reference->SetEnabled(false);
 			}
 		}
 		else if (result)
