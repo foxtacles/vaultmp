@@ -327,6 +327,10 @@ void Game::Startup()
 		startupQueue.front()();
 		startupQueue.pop_front();
 	}
+
+	while (!GameFactory::Operate<Player>(id, [](FactoryPlayer& player) {
+		return player->GetGamePos(Axis_X);
+	})) this_thread::sleep_for(chrono::milliseconds(10));
 }
 
 template <typename T>

@@ -753,13 +753,12 @@ void ExecuteCommand(vector<void*>& args, unsigned int r, bool delegate_flag)
 			CallCommand Call = (CallCommand) callAddr;
 			Call(args[0], args[1], (void*) reference, (void*) * ((unsigned int*) args[3]), args[4], (void*) &arg4, args[6], args[7]);
 		}
+
+		memcpy(result + 5, args[6], sizeof(double));
 	}
 
 	if (!bigresult)
-	{
 		result[0] = PIPE_OP_RETURN;
-		memcpy(result + 5, args[6], sizeof(double));
-	}
 	else
 		result[0] = PIPE_OP_RETURN_BIG;
 
