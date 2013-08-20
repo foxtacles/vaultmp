@@ -1271,7 +1271,7 @@ NetworkID Script::CreateObject(unsigned int baseID, NetworkID id, unsigned int c
 bool Script::DestroyObject(NetworkID id) noexcept
 {
 	if (!GameFactory::Operate<Base, FailPolicy::Return>(id, [id](FactoryBase& base) {
-		return !vaultcast_test<Player>(base);
+		return !vaultcast_test<Player>(base) && !vaultcast_test<Window>(base);
 	})) return false;
 
 	Script::Call<CBI("OnDestroy")>(id);
@@ -1403,33 +1403,16 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z) noexcept
 bool Script::SetAngle(NetworkID id, double X, double Y, double Z) noexcept
 {
 	return GameFactory::Operate<Object, FailPolicy::Return>(id, [id, X, Y, Z](FactoryObject& object) {
-		if (!object->IsPersistent())
+		if (object->IsPersistent())
 			return false;
 
-		NetworkResponse response;
-
-		if (object->SetAngle(Axis_X, X))
-			response.emplace_back(Network::CreateResponse(
-				PacketFactory::Create<pTypes::ID_UPDATE_ANGLE>(id, Axis_X, X),
-				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-			);
-
-		if (object->SetAngle(Axis_Y, Y))
-			response.emplace_back(Network::CreateResponse(
-				PacketFactory::Create<pTypes::ID_UPDATE_ANGLE>(id, Axis_Y, Y),
-				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-			);
-
-		if (object->SetAngle(Axis_Z, Z))
-			response.emplace_back(Network::CreateResponse(
-				PacketFactory::Create<pTypes::ID_UPDATE_ANGLE>(id, Axis_Z, Z),
-				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-			);
-
-		if (response.empty())
+		if (!(static_cast<bool>(object->SetAngle(Axis_X, X)) | static_cast<bool>(object->SetAngle(Axis_Z, Z))))
 			return false;
 
-		Network::Queue(move(response));
+		Network::Queue({Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_ANGLE>(id, X, Z),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+		});
 
 		return true;
 	});

@@ -276,12 +276,11 @@ NetworkResponse Game::Authenticate(const string& password)
 
 void Game::Startup()
 {
-	NetworkID id;
+	NetworkID id = GameFactory::Lookup<Player>(PLAYER_REFERENCE);
 
-	RawParameter self_ref = GameFactory::Operate<Player>(PLAYER_REFERENCE, [&id](FactoryPlayer& player) {
-		id = player->GetNetworkID();
+	static RawParameter self_ref(GameFactory::Operate<Player>(id, [](FactoryPlayer& player) {
 		return player->GetReferenceParam();
-	});
+	}));
 
 	Interface::Dynamic([]() {
 		SetINISetting("bSaveOnInteriorExteriorSwitch:GamePlay", "0");
@@ -304,7 +303,11 @@ void Game::Startup()
 		EnablePlayerControls();
 	});
 
-	Interface::Setup([&self_ref, id]() {
+	Interface::Setup([id]() {
+		Interface::SetupCommand(Func::GetPosAngle, {self_ref});
+		Interface::SetupCommand(Func::GetPosAngle, {self_ref});
+		Interface::SetupCommand(Func::GetPosAngle, {self_ref});
+		Interface::SetupCommand(Func::GetPosAngle, {self_ref});
 		Interface::SetupCommand(Func::GetPosAngle, {self_ref});
 		Interface::SetupCommand(Func::GetPosAngle, {Player::CreateFunctor(FLAG_ENABLED | FLAG_NOTSELF | FLAG_ALIVE)}, 30);
 		Interface::SetupCommand(Func::GetActorState, {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), Player::CreateFunctor(FLAG_MOVCONTROLS, id)});
@@ -2281,6 +2284,9 @@ void Game::GetPos(const FactoryObject& reference, double X, double Y, double Z)
 
 void Game::GetAngle(const FactoryObject& reference, double X, double Y, double Z)
 {
+	if (reference->GetReference() != PLAYER_REFERENCE)
+		return;
+
 	bool result = (static_cast<bool>(reference->SetAngle(Axis_X, X)) | static_cast<bool>(reference->SetAngle(Axis_Y, Y)) | static_cast<bool>(reference->SetAngle(Axis_Z, Z)));
 
 	if (result)
