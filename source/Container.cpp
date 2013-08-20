@@ -27,17 +27,7 @@ Container::~Container() noexcept {}
 
 void Container::initialize()
 {
-#ifdef VAULTSERVER
-	unsigned int baseID = this->GetBase();
 
-	if (baseID != PLAYER_BASE)
-	{
-		const DB::Record* record = *DB::Record::Lookup(baseID, vector<string>{"CONT", "NPC_", "CREA"});
-
-		if (this->GetName().empty())
-			this->SetName(record->GetDescription());
-	}
-#endif
 }
 
 #ifndef VAULTSERVER
@@ -68,12 +58,12 @@ pPacket Container::toPacket() const
 #ifdef VAULTSERVER
 Lockable* Container::SetBase(unsigned int baseID)
 {
-	const DB::Record* record = *DB::Record::Lookup(baseID, vector<string>{"CONT", "NPC_", "CREA"});
+	const DB::Record* record = *DB::Record::Lookup(baseID, "CONT");
 
 	if (this->GetName().empty())
 		this->SetName(record->GetDescription());
 
-	return Object::SetBase(baseID);
+	return Reference::SetBase(baseID);
 }
 #endif
 

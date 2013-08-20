@@ -71,34 +71,29 @@ Expected<Record*> Record::Lookup(unsigned int baseID, const vector<string>& type
 	return VaultException("No record with baseID %08X found", baseID);
 }
 
-Expected<Record*> Record::GetRecordNotIn(const unordered_set<unsigned int>& _set, const function<bool(const Record&)>& pred)
-{
-	auto it = find_if(data.begin(), data.end(), [&_set, &pred](const pair<const unsigned int, const Record*>& data) { return !_set.count(data.first) && pred(*data.second); });
-
-	if (it != data.end())
-		return it->second;
-
-	return VaultException("No record found which is not in the given set");
-}
-
-bool Record::IsValidCell(unsigned int baseID)
+bool Record::IsValidCell(unsigned int baseID) noexcept
 {
 	return Record::Lookup(baseID, "CELL").operator bool();
 }
 
-bool Record::IsValidWeather(unsigned int baseID)
+bool Record::IsValidWeather(unsigned int baseID) noexcept
 {
 	return Record::Lookup(baseID, "WTHR").operator bool();
 }
 
-bool Record::IsValidCoordinate(unsigned int baseID, double X, double Y, double Z)
+bool Record::IsValidCoordinate(unsigned int baseID, double X, double Y, double Z) noexcept
 {
 	auto exterior = Exterior::Lookup(baseID);
 
 	if (exterior)
 		return exterior->IsValidCoordinate(X, Y);
 
-	return Interior::Lookup(baseID)->IsValidCoordinate(X, Y, Z);
+	auto interior = Interior::Lookup(baseID);
+
+	if (interior)
+		return interior->IsValidCoordinate(X, Y, Z);
+
+	return false;
 }
 
 unsigned int Record::GetBase() const

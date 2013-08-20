@@ -423,6 +423,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(GetPlayerChatboxWindow))(VAULTSPACE ID) VAULTCPP(noexcept);
 
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateObject))(VAULTSPACE Base, VAULTSPACE ID, VAULTSPACE CELL, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(CreateVolatile))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(DestroyObject))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(Activate))(VAULTSPACE ID, VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetPos))(VAULTSPACE ID, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
@@ -681,8 +682,22 @@ namespace vaultmp
 	}
 	VAULTFUNCTION ID GetPlayerChatboxWindow(ID id) noexcept { return VAULTAPI(GetPlayerChatboxWindow)(id); }
 
-	VAULTFUNCTION ID CreateObject(Base object, ID id) noexcept { return VAULTAPI(CreateObject)(object, id, static_cast<CELL>(0), 0.00, 0.00, 0.00); }
-	VAULTFUNCTION ID CreateObject(Base object, CELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateObject)(object, static_cast<ID>(0), cell, X, Y, Z); }
+	#define CreateObject_Template(type) \
+		VAULTFUNCTION ID CreateObject(type object, ID id) noexcept { return VAULTAPI(CreateObject)(static_cast<Base>(object), id, static_cast<CELL>(0), 0.00, 0.00, 0.00); } \
+		VAULTFUNCTION ID CreateObject(type object, CELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateObject)(static_cast<Base>(object), static_cast<ID>(0), cell, X, Y, Z); }
+	CreateObject_Template(Base);
+	CreateObject_Template(DOOR);
+	CreateObject_Template(TERM);
+	CreateObject_Template(STAT);
+	#undef CreateObject_Template
+
+	#define CreateVolatile_Template(type) \
+		VAULTFUNCTION State CreateVolatile(ID id, type object, Value aX, Value aY, Value aZ) noexcept { return VAULTAPI(CreateVolatile)(id, static_cast<Base>(object), aX, aY, aZ); }
+	CreateVolatile_Template(Base);
+	CreateVolatile_Template(PROJ);
+	CreateVolatile_Template(EXPL);
+	#undef CreateVolatile_Template
+
 	VAULTFUNCTION State DestroyObject(ID id) noexcept { return VAULTAPI(DestroyObject)(id); }
 	VAULTFUNCTION State Activate(ID id, ID actor = static_cast<ID>(0)) noexcept { return VAULTAPI(Activate)(id, actor); }
 	VAULTFUNCTION State SetPos(ID id, Value X, Value Y, Value Z) noexcept { return VAULTAPI(SetPos)(id, X, Y, Z); }
@@ -959,10 +974,36 @@ namespace vaultmp
 			State SetBaseName(const String& name) noexcept { return vaultmp::SetBaseName(id, name); }
 			State SetBaseName(cRawString name) noexcept { return vaultmp::SetBaseName(id, name); }
 
-			static ID Create(Base object, ID id) noexcept { return vaultmp::CreateObject(object, id); }
-			static ID Create(Base object, CELL cell, Value X, Value Y, Value Z) noexcept { return vaultmp::CreateObject(object, cell, X, Y, Z); }
+			#define Create_Template(type) \
+				static ID Create(type object, ID id) noexcept { return vaultmp::CreateObject(object, id); } \
+				static ID Create(type object, CELL cell, Value X, Value Y, Value Z) noexcept { return vaultmp::CreateObject(object, cell, X, Y, Z); }
+			Create_Template(Base);
+			Create_Template(DOOR);
+			Create_Template(TERM);
+			Create_Template(STAT);
+			#undef Create_Template
+
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_OBJECT); }
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_OBJECT); }
+	};
+
+	template<typename T>
+	class Volatile {
+		public:
+			ID id;
+			T object;
+			Value aX, aY, aZ;
+
+			#define Volatile_Template(type) \
+				Volatile(ID id, type object, Value aX, Value aY, Value aZ) noexcept : id(id), object(object), aX(aX), aY(aY), aZ(aZ) {} \
+				Volatile(type object, Value aX, Value aY, Value aZ) noexcept : id(static_cast<ID>(0)), object(object), aX(aX), aY(aY), aZ(aZ) {}
+			Volatile_Template(Base);
+			Volatile_Template(PROJ);
+			Volatile_Template(EXPL);
+			#undef Volatile_Template
+
+			State Create() noexcept { return vaultmp::CreateVolatile(id, object, aX, aY, aZ); }
+			State Create(ID id) noexcept { return vaultmp::CreateVolatile(id, object, aX, aY, aZ); }
 	};
 
 	class Item : public Object {

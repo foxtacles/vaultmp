@@ -260,7 +260,7 @@ API::FunctionMap API::functions = {
 		{Func::GetDead, "r"},
 		{Func::MoveTo, "roDDD"},
 		{Func::PlaceAtMe, "rbIII"},
-		{Func::PlaceAtMeHealthPercent, "rbdIII"},
+		{Func::PlaceAtMeHealthPercent, "r$bdIII"},
 		{Func::PlaceAtMePrepare, "dddddd"},
 		{Func::SetRestrained, "ri"},
 		{Func::PlayGroup, "rgi"},

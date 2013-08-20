@@ -73,19 +73,12 @@ class Game
 		static bool GUIMode;
 		static bool startup;
 
-	public:
-		/**
-		 * \brief Handles translated command results from the game
-		 */
-		static void CommandHandler(unsigned int key, const std::vector<double>& info, double result, bool error);
-		/**
-		 * \brief Builds an authenticate packet for the server
-		 */
-		static NetworkResponse Authenticate(const std::string& password);
-		/**
-		 * \brief Starts the game command schedule
-		 */
-		static void Startup();
+		static void NewObject_(FactoryObject& reference);
+		static void NewItem_(FactoryItem& reference);
+		static void NewContainer_(FactoryContainer& reference);
+		static void NewActor_(FactoryActor& reference);
+		static void NewPlayer_(FactoryPlayer& reference);
+
 		/**
 		 * \brief Future set
 		 */
@@ -103,6 +96,20 @@ class Game
 		 * \brief Delay or execute
 		 */
 		static void DelayOrExecute(const FactoryObject& reference, std::function<void(unsigned int)>&& func, unsigned int key = 0x00000000);
+
+	public:
+		/**
+		 * \brief Handles translated command results from the game
+		 */
+		static void CommandHandler(unsigned int key, const std::vector<double>& info, double result, bool error);
+		/**
+		 * \brief Builds an authenticate packet for the server
+		 */
+		static NetworkResponse Authenticate(const std::string& password);
+		/**
+		 * \brief Starts the game command schedule
+		 */
+		static void Startup();
 
 		/**
 		 * Game functions
@@ -149,27 +156,26 @@ class Game
 		 * \brief Creates a new Object
 		 */
 		static void NewObject(FactoryObject& reference);
-		static void NewObject_(FactoryObject& reference);
+		/**
+		 * \brief Creates a new volatile Object
+		 */
+		static void NewVolatile(FactoryObject& reference, unsigned int baseID, double aX, double aY, double aZ);
 		/**
 		 * \brief Creates a new Item
 		 */
 		static void NewItem(FactoryItem& reference);
-		static void NewItem_(FactoryItem& reference);
 		/**
 		 * \brief Creates a new Container
 		 */
 		static void NewContainer(FactoryContainer& reference);
-		static void NewContainer_(FactoryContainer& reference);
 		/**
 		 * \brief Creates a new Actor
 		 */
 		static void NewActor(FactoryActor& reference);
-		static void NewActor_(FactoryActor& reference);
 		/**
 		 * \brief Creates a new Player
 		 */
 		static void NewPlayer(FactoryPlayer& reference);
-		static void NewPlayer_(FactoryPlayer& reference);
 		/**
 		 * \brief Removes an Object from the game
 		 */
@@ -393,6 +399,10 @@ class Game
 		 * \brief Retrieves reference IDs of context objects
 		 */
 		static std::vector<unsigned int> GetContext(unsigned int type);
+		/**
+		 * \brief Retrieves the first reference in the given cell
+		 */
+		static unsigned int GetAnchor(unsigned int cell);
 
 		/**
 		 * Network functions

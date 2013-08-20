@@ -40,9 +40,6 @@ class Object : public Reference
 		Value<unsigned int> state_Lock;
 		Value<unsigned int> state_Owner;
 
-		static bool IsValidCoordinate(double C);
-		static bool IsValidAngle(unsigned char axis, double A);
-
 		void initialize();
 
 		Object(const Object&);
@@ -72,6 +69,9 @@ class Object : public Reference
 		 */
 		static FuncParameter CreateFunctor(unsigned int flags, RakNet::NetworkID id = 0);
 #endif
+		static bool IsValidCoordinate(double C);
+		static bool IsValidAngle(unsigned char axis, double A);
+
 		/**
 		 * \brief Retrieves the Object's name
 		 */
@@ -176,6 +176,11 @@ class Object : public Reference
 		bool HasValidCoordinates() const;
 
 #ifdef VAULTSERVER
+		/**
+		 * \brief Sets the Object's base ID
+		 */
+		virtual Lockable* SetBase(unsigned int baseID);
+
 		virtual void virtual_initializers() { this->SetBase(this->GetBase()); }
 #endif
 
@@ -231,6 +236,7 @@ inline const typename pTypesMap<pTypes::ID_OBJECT_NEW>::type* PacketFactory::Cas
 		type == pTypes::ID_PLAYER_NEW
 	) ? static_cast<const typename pTypesMap<pTypes::ID_OBJECT_NEW>::type*>(packet) : nullptr;
 }
+template<> struct pTypesMap<pTypes::ID_VOLATILE_NEW> { typedef pGeneratorReference<pTypes::ID_VOLATILE_NEW, unsigned int, double, double, double> type; };
 template<> struct pTypesMap<pTypes::ID_OBJECT_REMOVE> { typedef pGeneratorReference<pTypes::ID_OBJECT_REMOVE, bool> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_NAME> { typedef pGeneratorReference<pTypes::ID_UPDATE_NAME, std::string> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_POS> { typedef pGeneratorReference<pTypes::ID_UPDATE_POS, double, double, double> type; };

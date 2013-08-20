@@ -32,14 +32,14 @@ namespace DB
 			Record& operator=(const Record&) = delete;
 
 		public:
+			static const std::unordered_map<unsigned int, Record*>& Get() { return data; }
 			static Expected<Record*> Lookup(unsigned int baseID);
 			static Expected<Record*> Lookup(unsigned int baseID, const std::string& type);
 			static Expected<Record*> Lookup(unsigned int baseID, const std::vector<std::string>& type);
-			static Expected<Record*> GetRecordNotIn(const std::unordered_set<unsigned int>& _set, const std::function<bool(const Record&)>& pred);
 
-			static bool IsValidCell(unsigned int baseID);
-			static bool IsValidWeather(unsigned int baseID);
-			static bool IsValidCoordinate(unsigned int baseID, double X, double Y, double Z);
+			static bool IsValidCell(unsigned int baseID) noexcept;
+			static bool IsValidWeather(unsigned int baseID) noexcept;
+			static bool IsValidCoordinate(unsigned int baseID, double X, double Y, double Z) noexcept;
 
 			unsigned int GetBase() const;
 			const std::string& GetName() const;

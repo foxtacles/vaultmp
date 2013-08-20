@@ -211,7 +211,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 
 				case pTypes::ID_GAME_DELETED:
 				{
-					std::unordered_map<unsigned int, std::vector<unsigned int>> deletedStatic;
+					Game::DeletedObjects deletedStatic;
 					PacketFactory::Access<pTypes::ID_GAME_DELETED>(packet, deletedStatic);
 					Game::net_SetDeletedStatic(move(deletedStatic));
 					break;
@@ -225,6 +225,17 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					GameFactory::Operate<Object>(GameFactory::Create<Object>(packet.get()), [](FactoryObject& object) {
 						Game::NewObject(object);
 					}); break;
+
+				case pTypes::ID_VOLATILE_NEW:
+				{
+					NetworkID id;
+					unsigned int baseID;
+					double aX, aY, aZ;
+					PacketFactory::Access<pTypes::ID_VOLATILE_NEW>(packet, id, baseID, aX, aY, aZ);
+					auto reference = GameFactory::Get<Object>(id);
+					Game::NewVolatile(reference.get(), baseID, aX, aY, aZ);
+					break;
+				}
 
 				case pTypes::ID_ITEM_NEW:
 					GameFactory::Operate<Item>(GameFactory::Create<Item>(packet.get()), [](FactoryItem& item) {

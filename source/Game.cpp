@@ -69,7 +69,8 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 		switch (opcode)
 		{
 			case Func::PlaceAtMeHealthPercent:
-				FutureSet(shared, getFrom<unsigned int>(result));
+				if (key)
+					FutureSet(shared, getFrom<unsigned int>(result));
 				break;
 
 			case Func::GetPosAngle:
@@ -671,24 +672,7 @@ void Game::NewObject_(FactoryObject& reference)
 		}
 
 		unsigned int baseID = reference->GetBase();
-		unsigned int cell = reference->GetNetworkCell();
-
-		unsigned int anchorID = cellRefs.Operate([cell](CellRefs& cellRefs) {
-			const auto& refs = cellRefs[cell];
-
-			unsigned int anchorID = [&refs]() {
-				for (const auto& subrefs : refs)
-					if (!subrefs.second.empty())
-						return *subrefs.second.begin();
-
-				return 0x00000000u;
-			}();
-
-			if (!anchorID)
-				throw VaultException("No anchor reference in cell %08X", cell).stacktrace();
-
-			return anchorID;
-		});
+		unsigned int anchorID = GetAnchor(reference->GetNetworkCell());
 
 		Interface::Dynamic([&reference, anchorID, baseID, condition, key]() {
 			Interface::ExecuteCommand(Func::PlaceAtMePrepare, {RawParameter(reference->GetAngle(Axis_X)), RawParameter(reference->GetAngle(Axis_Y)), RawParameter(reference->GetAngle(Axis_Z)), RawParameter(reference->GetNetworkPos(Axis_X)), RawParameter(reference->GetNetworkPos(Axis_Y)), RawParameter(reference->GetNetworkPos(Axis_Z))});
@@ -729,6 +713,18 @@ void Game::NewObject_(FactoryObject& reference)
 		SetOwner(reference);
 
 	// maybe more
+}
+
+void Game::NewVolatile(FactoryObject& reference, unsigned int baseID, double aX, double aY, double aZ)
+{
+	if (!IsInContext(reference->GetNetworkCell()))
+		return;
+
+	Interface::Dynamic([&reference, baseID, aX, aY, aZ]() {
+		Interface::ExecuteCommand(Func::PlaceAtMePrepare, {RawParameter(aX), RawParameter(aY), RawParameter(aZ), RawParameter(reference->GetNetworkPos(Axis_X)), RawParameter(reference->GetNetworkPos(Axis_Y)), RawParameter(reference->GetNetworkPos(Axis_Z))});
+
+		PlaceAtMe(reference, baseID, 1.00, 1);
+	});
 }
 
 void Game::NewItem(FactoryItem& reference)
@@ -778,7 +774,6 @@ void Game::NewItem_(FactoryItem& reference)
 
 	NewObject_(reference);
 	SetRefCount(reference);
-	// add SetCurrentHealth
 }
 
 void Game::NewContainer(FactoryContainer& reference)
@@ -1629,6 +1624,26 @@ vector<unsigned int> Game::GetContext(unsigned int type)
 
 			return result;
 		});
+	});
+}
+
+unsigned int Game::GetAnchor(unsigned int cell)
+{
+	return cellRefs.Operate([cell](CellRefs& cellRefs) {
+		const auto& refs = cellRefs[cell];
+
+		unsigned int anchorID = [&refs]() {
+			for (const auto& subrefs : refs)
+				if (!subrefs.second.empty())
+					return *subrefs.second.begin();
+
+			return 0x00000000u;
+		}();
+
+		if (!anchorID)
+			throw VaultException("No anchor reference in cell %08X", cell).stacktrace();
+
+		return anchorID;
 	});
 }
 

@@ -35,15 +35,6 @@ Item::~Item() noexcept {}
 
 void Item::initialize()
 {
-#ifdef VAULTSERVER
-	unsigned int baseID = this->GetBase();
-
-	const DB::Record* record = *DB::Record::Lookup(baseID, vector<string>{"ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "ENCH", "KEYM", "MISC", "NOTE", "WEAP", "LIGH"});
-
-	if (this->GetName().empty())
-		this->SetName(record->GetDescription());
-#endif
-
 	this->SetItemSilent(true);
 }
 
@@ -131,7 +122,7 @@ Lockable* Item::SetBase(unsigned int baseID)
 	if (this->GetName().empty())
 		this->SetName(record->GetDescription());
 
-	return Object::SetBase(baseID);
+	return Reference::SetBase(baseID);
 }
 #endif
 

@@ -1251,6 +1251,9 @@ NetworkID Script::CreateObject(unsigned int baseID, NetworkID id, unsigned int c
 	if (id && !GameFactory::GetType(id))
 		return 0;
 
+	if (!id && !DB::Record::IsValidCoordinate(cell, X, Y, Z))
+		return 0;
+
 	NetworkID result = GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(vector<NetworkID>{GameFactory::Create<Object>(baseID), id}, [cell, X, Y, Z](ExpectedObjects& objects) {
 		SetupObject(objects[0].get(), objects[1] ? objects[1].get() : FactoryObject(), cell, X, Y, Z);
 
@@ -1266,6 +1269,22 @@ NetworkID Script::CreateObject(unsigned int baseID, NetworkID id, unsigned int c
 		Call<CBI("OnCreate")>(result);
 
 	return result;
+}
+
+bool Script::CreateVolatile(NetworkID id, unsigned int baseID, double aX, double aY, double aZ) noexcept
+{
+	if (!DB::Record::Lookup(baseID, vector<string>{"EXPL", "PROJ"}))
+		return false;
+
+	if (!Object::IsValidAngle(Axis_X, aX) || !Object::IsValidAngle(Axis_Z, aZ))
+		return false;
+
+	return GameFactory::Operate<Object, FailPolicy::Bool>(id, [id, baseID, aX, aY, aZ](FactoryObject&) {
+		Network::Queue({Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_VOLATILE_NEW>(id, baseID, aX, aY, aZ),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+		});
+	});
 }
 
 bool Script::DestroyObject(NetworkID id) noexcept
@@ -1657,6 +1676,9 @@ NetworkID Script::CreateItem(unsigned int baseID, NetworkID id, unsigned int cel
 	if (id && !GameFactory::GetType(id))
 		return 0;
 
+	if (!id && !DB::Record::IsValidCoordinate(cell, X, Y, Z))
+		return 0;
+
 	NetworkID result = GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(vector<NetworkID>{GameFactory::Create<Item>(baseID), id}, [cell, X, Y, Z](ExpectedObjects& objects) {
 		FactoryItem item = vaultcast_swap<Item>(objects[0]).get();
 
@@ -1788,6 +1810,9 @@ bool Script::SetItemEquipped(NetworkID id, bool equipped, bool silent, bool stic
 NetworkID Script::CreateContainer(unsigned int baseID, NetworkID id, unsigned int cell, double X, double Y, double Z) noexcept
 {
 	if (id && !GameFactory::GetType(id))
+		return 0;
+
+	if (!id && !DB::Record::IsValidCoordinate(cell, X, Y, Z))
 		return 0;
 
 	NetworkID result = GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(vector<NetworkID>{GameFactory::Create<Container>(baseID), id}, [cell, X, Y, Z](ExpectedObjects& objects) {
@@ -1944,6 +1969,9 @@ void Script::RemoveAllItems(NetworkID id) noexcept
 NetworkID Script::CreateActor(unsigned int baseID, NetworkID id, unsigned int cell, double X, double Y, double Z) noexcept
 {
 	if (id && !GameFactory::GetType(id))
+		return 0;
+
+	if (!id && !DB::Record::IsValidCoordinate(cell, X, Y, Z))
 		return 0;
 
 	NetworkID result = GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(vector<NetworkID>{GameFactory::Create<Actor>(baseID), id}, [cell, X, Y, Z](ExpectedObjects& objects) {

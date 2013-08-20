@@ -67,18 +67,6 @@ void Actor::initialize()
 		actor_BaseValues.insert(make_pair(_data, Value<double>()));
 	}
 
-#ifdef VAULTSERVER
-	unsigned int baseID = this->GetBase();
-
-	if (baseID != PLAYER_BASE)
-	{
-		const DB::Record* record = *DB::Record::Lookup(baseID, vector<string>{"NPC_", "CREA"});
-
-		if (this->GetName().empty())
-			this->SetName(record->GetDescription());
-	}
-#endif
-
 #ifdef VAULTMP_DEBUG
 	debug.print("New actor object created (ref: ", hex, this->GetReference(), ")");
 #endif
@@ -237,7 +225,7 @@ Lockable* Actor::SetBase(unsigned int baseID)
 	if (this->GetName().empty())
 		this->SetName(record->GetDescription());
 
-	return Object::SetBase(baseID);
+	return Reference::SetBase(baseID);
 }
 #endif
 

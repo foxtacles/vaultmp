@@ -305,6 +305,7 @@ class Script
 		static RakNet::NetworkID GetPlayerChatboxWindow(RakNet::NetworkID id) noexcept;
 
 		static RakNet::NetworkID CreateObject(unsigned int baseID, RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z) noexcept;
+		static bool CreateVolatile(RakNet::NetworkID id, unsigned int baseID, double aX, double aY, double aZ) noexcept;
 		static bool DestroyObject(RakNet::NetworkID id) noexcept;
 		static bool Activate(RakNet::NetworkID id, RakNet::NetworkID actor) noexcept;
 		static bool SetPos(RakNet::NetworkID id, double X, double Y, double Z) noexcept;
@@ -475,6 +476,7 @@ class Script
 			{"GetPlayerWindowList", Script::GetPlayerWindowList},
 			{"GetPlayerChatboxWindow", Script::GetPlayerChatboxWindow},
 
+			{"CreateVolatile", Script::CreateVolatile},
 			{"CreateObject", Script::CreateObject},
 			{"DestroyObject", Script::DestroyObject},
 			{"Activate", Script::Activate},

@@ -299,6 +299,7 @@ native GetPlayerWindowList(ID, id[]);
 native GetPlayerChatboxWindow(ID);
 
 native CreateObject(object, ID, cell = 0, Float:X = 0.00, Float:Y = 0.00, Float:Z = 0.00);
+native Bool:CreateVolatile(ID, object, Float:aX = 0.00, Float:aY = 0.00, Float:aZ = 0.00);
 native Bool:DestroyObject(ID);
 native Bool:Activate(ID, actor);
 native Bool:SetPos(ID, Float:X, Float:Y, Float:Z);

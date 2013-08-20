@@ -73,13 +73,11 @@ void Object::initialize()
 	this->SetLockLevel(Lock_Unlocked);
 }
 
-inline
 bool Object::IsValidCoordinate(double C)
 {
 	return (C != 2048.0 && C != 128.0 && C != 0.0);
 }
 
-inline
 bool Object::IsValidAngle(unsigned char axis, double A)
 {
 	return (axis == Axis_Z ? (A >= 0.0 && A <= 360.0) : (A >= -90.0 && A <= 90.0));
@@ -233,6 +231,18 @@ bool Object::HasValidCoordinates() const
 
 	return true;
 }
+
+#ifdef VAULTSERVER
+Lockable* Object::SetBase(unsigned int baseID)
+{
+	const DB::Record* record = *DB::Record::Lookup(baseID, vector<string>{"DOOR", "TERM", "STAT"});
+
+	if (this->GetName().empty())
+		this->SetName(record->GetDescription());
+
+	return Reference::SetBase(baseID);
+}
+#endif
 
 pPacket Object::toPacket() const
 {

@@ -162,10 +162,6 @@ RakNet::NetworkID GameFactory::Create(const pDefault* packet)
 
 	RakNet::NetworkID id = base->GetNetworkID();
 
-#ifdef VAULTSERVER
-	base->virtual_initializers();
-#endif
-
 	cs.Operate([id, type, &base]() {
 		++typecount[type];
 		// emplace
