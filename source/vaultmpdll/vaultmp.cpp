@@ -119,6 +119,8 @@ static unsigned PlaceAtMe_jmp = 0x00539785;
 static unsigned PlaceAtMe_dest = (unsigned)& PlaceAtMe;
 static unsigned PlaceAtMe_call = 0x0043DEF0;
 static unsigned PlaceAtMe_ret = PlaceAtMe_jmp + 5;
+static unsigned PlaceAtMe_fix = 0x006F1CB6;
+static unsigned PlaceAtMe_fix_dest = 0x006F1F6E;
 
 // Those snippets / functions are from FOSE / NVSE, thanks
 
@@ -1080,6 +1082,8 @@ void PatchGame(HINSTANCE& silverlock)
 	WriteRelJump(GetActivate_jmp + 5, GetActivate_ret);
 
 	WriteRelJump(PlaceAtMe_jmp, PlaceAtMe_dest);
+	WriteRelJump(PlaceAtMe_fix, PlaceAtMe_fix_dest);
+	SafeWriteBuf(PlaceAtMe_fix + 5, NOP, 1);
 
 	SafeWrite32(pluginsVMP, *(DWORD*)".vmp"); // redirect Plugins.txt
 
