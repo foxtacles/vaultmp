@@ -2002,7 +2002,7 @@ void Game::net_SetActorDead(FactoryActor& reference, bool dead, unsigned short l
 
 			ForceRespawn();
 
-			this_thread::sleep_for(chrono::seconds(1));
+			this_thread::sleep_for(chrono::seconds(3));
 
 			// remove all base effects so they get re-applied in LoadEnvironment
 			baseRaces.clear();
@@ -2013,10 +2013,6 @@ void Game::net_SetActorDead(FactoryActor& reference, bool dead, unsigned short l
 			});
 
 			LoadEnvironment();
-
-			GameFactory::Operate<Actor>(id, [](FactoryActor& actor) {
-				actor->SetEnabled(true);
-			});
 
 			Network::Queue({Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_UPDATE_DEAD>(id, false, 0, 0),

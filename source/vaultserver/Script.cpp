@@ -480,8 +480,6 @@ unsigned long long Script::Timer_Respawn(NetworkID id) noexcept
 
 	RakNetGUID guid = Client::GetClientFromPlayer(id)->GetGUID();
 
-	RemoveAllItems(id);
-
 	const auto& values = Player::default_values;
 
 	for (const auto& value : values)
@@ -2168,7 +2166,7 @@ bool Script::FireWeapon(NetworkID id) noexcept
 			return false;
 
 		Network::Queue({Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_FIREWEAPON>(id, baseID, weapon->IsAutomatic() ? weapon->GetFireRate() : 0.00),
+			PacketFactory::Create<pTypes::ID_UPDATE_FIREWEAPON>(id, baseID),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		});
 
