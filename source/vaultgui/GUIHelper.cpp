@@ -1,18 +1,54 @@
 #include "GUIHelper.h"
 
+#include "Export.h"
+
 namespace GUIHelper
 {
+	/*
+	*********************Handlers********************************
+	*/
+	void (*callbackPTR_OnClick)(char* name)=0;
+	void (*callbackPTR_OnTextChange)(char* name,char* text)=0;
+	void (*callbackPTR_OnListboxSelectionChange)(char* name,char** text)=0;
+	void (*callbackPTR_OnCheckboxChange)(char* name,bool checked)=0;
+	void (*callbackPTR_OnReturnDown)(char* name)=0;
+	/*
+	*********************Events********************************
+	*/
 	bool onMouseEnter(const CEGUI::EventArgs& e)
 	{
 		CEGUI::WindowEventArgs *ev=(CEGUI::WindowEventArgs*)&e;
-		return true;
+		return false;
 	}
 
 	bool onMouseLeave(const CEGUI::EventArgs& e)
 	{
 		CEGUI::WindowEventArgs *ev=(CEGUI::WindowEventArgs*)&e;
-		return true;
+		return false;
 	}
+	
+	bool onKeyDown(const CEGUI::EventArgs& e)
+	{
+		CEGUI::KeyEventArgs *ev=(CEGUI::KeyEventArgs*)&e;
+		if(ev->scancode==CEGUI::Key::Scan::Return)
+		{
+			if(callbackPTR_OnReturnDown)
+			{
+				callbackPTR_OnReturnDown((char*)ev->window->getName().c_str());
+			}
+		}
+		return false;
+	}
+
+	bool onKeyUp(const CEGUI::EventArgs& e)
+	{
+		CEGUI::WindowEventArgs *ev=(CEGUI::WindowEventArgs*)&e;
+		return false;
+	}
+
+	/*
+	**********************************************************
+	*/
 
 	CEGUI::Window* newFramedWindow(string wname)
 	{
@@ -37,12 +73,15 @@ namespace GUIHelper
 		wnd->subscribeEvent(CEGUI::Window::EventMouseEnters,onMouseEnter);
 		wnd->subscribeEvent(CEGUI::Window::EventMouseLeaves,onMouseLeave);
 
+		wnd->subscribeEvent(CEGUI::Window::EventKeyDown,onKeyDown);
+		wnd->subscribeEvent(CEGUI::Window::EventKeyUp,onKeyUp);
+
 		/*if(wname.compare("st")==0)
 		{
-			
-			wnd->setProperty("FrameEnabled","True");
-			wnd->setProperty("BackgroundColours","tl:FF000000 tr:FF000000 bl:FF000000 br:FF000000");
-			wnd->setProperty("BackgroundEnabled","True");
+			wnd->setProperty("FrameColours","tl:FF111111 tr:FF111111 bl:FF111111 br:FF111111");
+			//wnd->setProperty("FrameEnabled","True");
+			wnd->setProperty("BackgroundColours","tl:FF111111 tr:FF111111 bl:FF111111 br:FF111111");
+			//wnd->setProperty("BackgroundEnabled","True");
 		}*/
 
 		return wnd;

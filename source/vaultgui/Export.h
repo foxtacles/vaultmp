@@ -38,6 +38,8 @@ extern "C"
 	__declspec(dllexport) void GUI_Textbox_SetMaxLength(char* name,int maxLength);
 	__declspec(dllexport) void GUI_Textbox_SetValidationString(char* name,char* val);
 
+	__declspec(dllexport) void GUI_AddMultilineTextbox(char* parent,char* name);
+
 	__declspec(dllexport) void GUI_AddButton(char* parent,char* name);
 
 	__declspec(dllexport) void GUI_SetPosition(char* name,float x,float y,float xOffset,float yOffset);
@@ -52,6 +54,7 @@ extern "C"
 	__declspec(dllexport) void GUI_SetTextChangedCallback(void (*pt)(char* name,char* t));
 	__declspec(dllexport) void GUI_SetListboxSelectionChangedCallback(void (*pt)(char* name,char** text));
 	__declspec(dllexport) void GUI_SetCheckboxChangedCallback(void (*pt)(char* name,bool checked));
+	__declspec(dllexport) void GUI_SetReturnKeyDownCallback(void (*pt)(char* name));
 
 	__declspec(dllexport) void GUI_ForceGUI(bool inGui);
 	__declspec(dllexport) void GUI_SetVisible(char* name,bool visible);
@@ -67,4 +70,5 @@ extern "C"
 	__declspec(dllexport) void GUI_AddRadioButton(char* parent,char* name,unsigned long int groupID);
 	__declspec(dllexport) void GUI_SetChecked(char* name,bool checked);
 	__declspec(dllexport) void GUI_SetTextColour(char* name,char* colour);	//AARRGGBB
+	__declspec(dllexport) void GUI_Radio_SetGroupID(char* name,int gid);
 }

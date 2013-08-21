@@ -345,6 +345,13 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 						CEGUI::System::getSingleton().injectKeyDown(CEGUI::Key::LeftShift);
 					}
 					break;
+
+				case VK_RETURN:
+					if(gData.chatting)
+					{
+						CEGUI::System::getSingleton().injectKeyDown(CEGUI::Key::Return);
+					}
+					break;
 			}
 
 			break;
@@ -406,6 +413,13 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 					if(gData.chatting)
 					{
 						CEGUI::System::getSingleton().injectKeyUp(CEGUI::Key::LeftShift);
+					}
+					break;
+
+				case VK_RETURN:
+					if(gData.chatting)
+					{
+						CEGUI::System::getSingleton().injectKeyUp(CEGUI::Key::Return);
 					}
 					break;
 			}

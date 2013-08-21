@@ -15,10 +15,7 @@ extern myIDirect3DDevice9* gl_pmyIDirect3DDevice9;
 
 CRITICAL_SECTION cs_GetQueue;
 
-void (*callbackPTR_OnClick)(char* name)=0;
-void (*callbackPTR_OnTextChange)(char* name,char* text)=0;
-void (*callbackPTR_OnListboxSelectionChange)(char* name,char** text)=0;
-void (*callbackPTR_OnCheckboxChange)(char* name,bool checked)=0;
+
 
 bool GUI_MouseClickCallback(const CEGUI::EventArgs& e)
 {
@@ -29,9 +26,9 @@ bool GUI_MouseClickCallback(const CEGUI::EventArgs& e)
 
 	//Chatbox_AddToChat(buf);
 
-	if(callbackPTR_OnClick)
+	if(GUIHelper::callbackPTR_OnClick)
 	{
-		callbackPTR_OnClick((char*)we.window->getName().c_str());
+		GUIHelper::callbackPTR_OnClick((char*)we.window->getName().c_str());
 	}
 
 	return true;
@@ -44,11 +41,11 @@ bool GUI_TextChanged(const CEGUI::EventArgs& e)
 	//sprintf(buf,"TEXT CHANGED ON %s",we.window->getName().c_str());
 	//Chatbox_AddToChat(buf);
 
-	if(callbackPTR_OnTextChange)
+	if(GUIHelper::callbackPTR_OnTextChange)
 	{
 		if(gData.sendClickCallbacks)
 		{
-			callbackPTR_OnTextChange((char*)we.window->getName().c_str(),(char*)we.window->getText().c_str());
+			GUIHelper::callbackPTR_OnTextChange((char*)we.window->getName().c_str(),(char*)we.window->getText().c_str());
 		}
 	}
 
@@ -72,9 +69,9 @@ bool GUI_ListboxSelectionChange(const CEGUI::EventArgs& e)
 	}
 
 
-	if(callbackPTR_OnListboxSelectionChange)
+	if(GUIHelper::callbackPTR_OnListboxSelectionChange)
 	{
-		callbackPTR_OnListboxSelectionChange((char*)we.window->getName().c_str(),tmp);
+		GUIHelper::callbackPTR_OnListboxSelectionChange((char*)we.window->getName().c_str(),tmp);
 	}
 
 	delete[] tmp;
@@ -89,10 +86,10 @@ bool GUI_CheckboxChanged(const CEGUI::EventArgs& e)
 	if(we.window->getType().compare("TaharezLook/Checkbox")==0)
 	{
 		CEGUI::Checkbox* c=(CEGUI::Checkbox*)we.window;
-		if(callbackPTR_OnCheckboxChange)
+		if(GUIHelper::callbackPTR_OnCheckboxChange)
 		{
 			if(gData.sendCheckboxCallbacks)
-				callbackPTR_OnCheckboxChange((char*)c->getName().c_str(),c->isSelected());
+				GUIHelper::callbackPTR_OnCheckboxChange((char*)c->getName().c_str(),c->isSelected());
 			
 		}
 	}
@@ -100,12 +97,12 @@ bool GUI_CheckboxChanged(const CEGUI::EventArgs& e)
 	if(we.window->getType().compare("TaharezLook/RadioButton")==0)
 	{
 		CEGUI::RadioButton* c=(CEGUI::RadioButton*)we.window;
-		if(callbackPTR_OnCheckboxChange)
+		if(GUIHelper::callbackPTR_OnCheckboxChange)
 		{
 			if(gData.sendCheckboxCallbacks)
 			{
 				if(c->isSelected())	//Fire event only if selected radio button, not unseelected one
-					callbackPTR_OnCheckboxChange((char*)c->getName().c_str(),c->isSelected());
+					GUIHelper::callbackPTR_OnCheckboxChange((char*)c->getName().c_str(),c->isSelected());
 			}
 		}
 	}
@@ -206,6 +203,11 @@ extern "C"
 		GUIHelper::newWindow(parent,name,"TaharezLook/Editbox")->subscribeEvent(CEGUI::Editbox::EventTextChanged,GUI_TextChanged);
 	}
 
+	__declspec(dllexport) void GUI_AddMultilineTextbox(char* parent,char* name)
+	{
+		GUIHelper::newWindow(parent,name,"TaharezLook/MultiLineEditbox")->subscribeEvent(CEGUI::Editbox::EventTextChanged,GUI_TextChanged);
+	}
+
 	__declspec(dllexport) void GUI_Textbox_SetMaxLength(char* name,int maxL)
 	{
 		if(GUIHelper::getWindow(name)->getType().compare("TaharezLook/Editbox")==0)
@@ -257,22 +259,27 @@ extern "C"
 
 	__declspec(dllexport) void GUI_SetClickCallback(void (*pt)(char* name))
 	{
-		callbackPTR_OnClick=pt;
+		GUIHelper::callbackPTR_OnClick=pt;
 	}
 
 	__declspec(dllexport) void GUI_SetTextChangedCallback(void (*pt)(char* name,char* t))
 	{
-		callbackPTR_OnTextChange=pt;
+		GUIHelper::callbackPTR_OnTextChange=pt;
 	}
 	
 	__declspec(dllexport) void GUI_SetListboxSelectionChangedCallback(void (*pt)(char* name,char** text))
 	{
-		callbackPTR_OnListboxSelectionChange=pt;
+		GUIHelper::callbackPTR_OnListboxSelectionChange=pt;
 	}
 
 	__declspec(dllexport) void GUI_SetCheckboxChangedCallback(void (*pt)(char* name,bool checked))
 	{
-		callbackPTR_OnCheckboxChange=pt;
+		GUIHelper::callbackPTR_OnCheckboxChange=pt;
+	}
+
+	__declspec(dllexport) void GUI_SetReturnKeyDownCallback(void (*pt)(char* name))
+	{
+		GUIHelper::callbackPTR_OnReturnDown=pt;
 	}
 
 	__declspec(dllexport) void GUI_ForceGUI(bool inGui)
@@ -391,6 +398,15 @@ extern "C"
 			gData.sendCheckboxCallbacks=false;
 			w->setSelected(checked);
 			gData.sendCheckboxCallbacks=true;
+		}
+	}
+
+	__declspec(dllexport) void GUI_Radio_SetGroupID(char* name,int gid)
+	{
+		if(GUIHelper::getWindow(name)->getType().compare("TaharezLook/RadioButton")==0)
+		{
+			CEGUI::RadioButton *w = ((CEGUI::RadioButton*)GUIHelper::getWindow(name));
+			w->setGroupID(gid);
 		}
 	}
 
