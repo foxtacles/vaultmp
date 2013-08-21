@@ -898,11 +898,11 @@ players[1].player = false;
 
 				for (unsigned int i = 0; i < 8 && !DLLerror; ++i)
 				{
-					unsigned char size = *content;
+					unsigned short size = *(unsigned short*) content;
 
 					if (size)
 					{
-						++content;
+						content += sizeof(unsigned short);
 						args.push_back((void*) content);
 						content += size;
 					}

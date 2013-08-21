@@ -512,7 +512,7 @@ namespace vaultmp
 	template<typename... Types>
 	struct TypeString {
 		static constexpr RawChar value[sizeof...(Types) + 1] = {
-			TypeChar<typeof(Types), sizeof(Types)>::value...
+			TypeChar<Types, sizeof(Types)>::value...
 		};
 	};
 

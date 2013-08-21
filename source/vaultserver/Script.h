@@ -59,7 +59,7 @@ template<> struct CharType<'v'> { typedef void type; };
 template<typename... Types>
 struct TypeString {
 	static constexpr char value[sizeof...(Types) + 1] = {
-		TypeChar<typeof(Types), sizeof(Types)>::value...
+		TypeChar<Types, sizeof(Types)>::value...
 	};
 };
 

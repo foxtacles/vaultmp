@@ -379,7 +379,7 @@ struct API::op_Arg2
 	unsigned short unk2; // varies but not read
 	unsigned short numargs; // number of arguments passed
 	double param1;
-	double more[16];
+	double more[220];
 
 	op_Arg2()
 	{
@@ -506,21 +506,21 @@ struct API::op_Arg8
 struct API::op_default
 {
 	bool delegate;
-	unsigned char size_arg1;
+	unsigned short size_arg1;
 	op_Arg1 arg1;
-	unsigned char size_arg2;
+	unsigned short size_arg2;
 	op_Arg2 arg2;
-	unsigned char size_arg3;
+	unsigned short size_arg3;
 	op_Arg3 arg3;
-	unsigned char size_arg4;
+	unsigned short size_arg4;
 	op_Arg4 arg4;
-	unsigned char size_arg5;
+	unsigned short size_arg5;
 	op_Arg5 arg5;
-	unsigned char size_arg6;
+	unsigned short size_arg6;
 	op_Arg6 arg6;
-	unsigned char size_arg7;
+	unsigned short size_arg7;
 	op_Arg7 arg7;
-	unsigned char size_arg8;
+	unsigned short size_arg8;
 	op_Arg8 arg8;
 
 	op_default()
@@ -541,6 +541,8 @@ struct API::op_default
 
 void API::Initialize()
 {
+	static_assert(sizeof(op_default) + 5 < PIPE_LENGTH, "Command struct size too big");
+
 	srand(time(nullptr));
 }
 
@@ -966,9 +968,6 @@ vector<string> API::RetrieveAllAnims_Reverse()
 
 unsigned char* API::BuildCommandStream(vector<double>&& info, unsigned int key, unsigned char* command, unsigned int size)
 {
-	if (size + 5 > PIPE_LENGTH)
-		throw VaultException("Error in API class; command size (%d bytes) exceeds the pipe length of %d bytes", size + 5, PIPE_LENGTH).stacktrace();
-
 	unsigned char* data = new unsigned char[PIPE_LENGTH];
 	ZeroMemory(data, PIPE_LENGTH);
 	data[0] = PIPE_OP_COMMAND;
