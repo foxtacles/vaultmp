@@ -308,6 +308,7 @@ namespace Values
 		GUIValid = 0x0022 | VAULTFUNCTION,
 		GUICreateCheckbox = 0x0023 | VAULTFUNCTION,
 		GUICheckbox = 0x0024 | VAULTFUNCTION,
+		GetFireWeapon = 0x0025 | VAULTFUNCTION,
 	};
 
 	enum ActorVals

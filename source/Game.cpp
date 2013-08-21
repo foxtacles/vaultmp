@@ -96,6 +96,11 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				});
 				break;
 			}
+
+			case Func::GetFireWeapon:
+				GameFactory::Operate<Player>(PLAYER_REFERENCE, [](FactoryPlayer& player) {
+					GetFireWeapon(player);
+				}); break;
 /*
 			case Func::GetActorValue:
 				GameFactory::Operate<Actor>(getFrom<unsigned int>(info.at(1)), [&info, result](FactoryActor& actor) {
@@ -2021,42 +2026,10 @@ void Game::net_SetActorDead(FactoryActor& reference, bool dead, unsigned short l
 	}
 }
 
-void Game::net_FireWeapon(const FactoryActor& reference, unsigned int weapon, double rate)
+void Game::net_FireWeapon(const FactoryActor& reference, unsigned int weapon)
 {
-	bool enabled = reference->GetEnabled();
-
-	if (enabled)
-	{
+	if (reference->GetEnabled())
 		FireWeapon(reference, weapon);
-		NetworkID id = reference->GetNetworkID();
-
-		if (rate)
-		{
-			// automatic weapons
-
-			AsyncDispatch([id, weapon, rate]
-			{
-				try
-				{
-					ExpectedActor reference;
-
-					// rate: per second
-					auto us = chrono::microseconds(static_cast<unsigned long long>(1000000ull / rate));
-
-					this_thread::sleep_for(us);
-
-					while ((reference = GameFactory::Get<Actor>(id)) && reference->IsActorFiring() && reference->IsEquipped(weapon))
-					{
-						auto& _reference = reference.get();
-						FireWeapon(_reference, weapon);
-						GameFactory::Leave(_reference);
-						this_thread::sleep_for(us);
-					}
-				}
-				catch (...) {}
-			});
-		}
-	}
 }
 
 void Game::net_SetActorIdle(const FactoryActor& reference, unsigned int idle, const string& name)
@@ -2381,6 +2354,14 @@ void Game::GetActivate(const FactoryReference& reference, const FactoryReference
 {
 	Network::Queue({Network::CreateResponse(
 		PacketFactory::Create<pTypes::ID_UPDATE_ACTIVATE>(reference->GetNetworkID(), actor->GetNetworkID()),
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+	});
+}
+
+void Game::GetFireWeapon(const FactoryPlayer& reference)
+{
+	Network::Queue({Network::CreateResponse(
+		PacketFactory::Create<pTypes::ID_UPDATE_FIREWEAPON>(reference->GetNetworkID(), 0),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 	});
 }

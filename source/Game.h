@@ -471,7 +471,7 @@ class Game
 		/**
 		 * \brief Network function to handle Actor fire weapon
 		 */
-		static void net_FireWeapon(const FactoryActor& reference, unsigned int weapon, double rate);
+		static void net_FireWeapon(const FactoryActor& reference, unsigned int weapon);
 		/**
 		 * \brief Network function to handle Actor idle animation
 		 */
@@ -581,6 +581,10 @@ class Game
 		 * \brief Handles GetActivate command result
 		 */
 		static void GetActivate(const FactoryReference& reference, const FactoryReference& action);
+			/**
+		 * \brief Handles GetFireWeapon command result
+		 */
+		static void GetFireWeapon(const FactoryPlayer& reference);
 		/**
 		 * \brief Handles GUI message
 		 */

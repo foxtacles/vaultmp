@@ -480,10 +480,9 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				{
 					NetworkID id;
 					unsigned int weapon;
-					double rate;
-					PacketFactory::Access<pTypes::ID_UPDATE_FIREWEAPON>(packet, id, weapon, rate);
+					PacketFactory::Access<pTypes::ID_UPDATE_FIREWEAPON>(packet, id, weapon);
 					auto reference = GameFactory::Get<Actor>(id);
-					Game::net_FireWeapon(reference.get(), weapon, rate);
+					Game::net_FireWeapon(reference.get(), weapon);
 					break;
 				}
 

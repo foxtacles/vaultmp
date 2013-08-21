@@ -247,7 +247,7 @@ template<> struct pTypesMap<pTypes::ID_UPDATE_STATE> { typedef pGeneratorReferen
 template<> struct pTypesMap<pTypes::ID_UPDATE_RACE> { typedef pGeneratorReference<pTypes::ID_UPDATE_RACE, unsigned int, signed int, signed int> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_SEX> { typedef pGeneratorReference<pTypes::ID_UPDATE_SEX, bool> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_DEAD> { typedef pGeneratorReference<pTypes::ID_UPDATE_DEAD, bool, unsigned short, signed char> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_FIREWEAPON> { typedef pGeneratorReference<pTypes::ID_UPDATE_FIREWEAPON, unsigned int, double> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_FIREWEAPON> { typedef pGeneratorReference<pTypes::ID_UPDATE_FIREWEAPON, unsigned int> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_IDLE> { typedef pGeneratorReference<pTypes::ID_UPDATE_IDLE, unsigned int, std::string> type; };
 
 #endif

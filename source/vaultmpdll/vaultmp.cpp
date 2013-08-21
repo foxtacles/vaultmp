@@ -31,6 +31,7 @@ queue<string> qGUI_OnClick;
 queue<pair<string, string>> qGUI_OnText;
 queue<pair<string, bool>> qGUI_OnCheckbox;
 queue<unsigned int> qActivate;
+unsigned int qFire;
 
 static HANDLE hProc;
 static PipeServer pipeServer;
@@ -68,6 +69,7 @@ static void PlayIdleDetour();
 static void AVFix();
 static void GetActivate();
 static void PlaceAtMe();
+static void FireWeapon();
 static vector<void*> delegated;
 
 static HINSTANCE silverlock = NULL;
@@ -121,6 +123,10 @@ static unsigned PlaceAtMe_call = 0x0043DEF0;
 static unsigned PlaceAtMe_ret = PlaceAtMe_jmp + 5;
 static unsigned PlaceAtMe_fix = 0x006F1CB6;
 static unsigned PlaceAtMe_fix_dest = 0x006F1F6E;
+static unsigned FireWeapon_jmp = 0x0071F05F;
+static unsigned FireWeapon_dest = (unsigned)& FireWeapon;
+static unsigned FireWeapon_call = 0x004BE1A0;
+static unsigned FireWeapon_ret = FireWeapon_jmp + 5;
 
 // Those snippets / functions are from FOSE / NVSE, thanks
 
@@ -295,6 +301,18 @@ void PlaceAtMe()
 		"JMP %7\n"
 		:
 		:  "m"(PlaceAtMe_call), "m"(PlaceAtMe_data[0]), "m"(PlaceAtMe_data[1]), "m"(PlaceAtMe_data[2]), "m"(PlaceAtMe_data[3]), "m"(PlaceAtMe_data[4]), "m"(PlaceAtMe_data[5]), "m"(PlaceAtMe_ret)
+		:
+	);
+}
+
+void FireWeapon()
+{
+	asm volatile(
+		"LOCK INC %0\n"
+		"CALL %1\n"
+		"JMP %2\n"
+		:
+		: "m"(qFire), "m"(FireWeapon_call), "m"(FireWeapon_ret)
 		:
 	);
 }
@@ -988,6 +1006,16 @@ players[1].player = false;
 			qActivate.pop();
 		}
 
+		while (qFire)
+		{
+			buffer[0] = PIPE_OP_RETURN_RAW;
+			*reinterpret_cast<unsigned int*>(buffer + 1) = 0x0025 | VAULTFUNCTION;
+
+			pipeClient.Send(buffer);
+
+			--qFire;
+		}
+
 		mInput.unlock();
 	}
 
@@ -1083,6 +1111,8 @@ void PatchGame(HINSTANCE& silverlock)
 	WriteRelJump(PlaceAtMe_jmp, PlaceAtMe_dest);
 	WriteRelJump(PlaceAtMe_fix, PlaceAtMe_fix_dest);
 	SafeWriteBuf(PlaceAtMe_fix + 5, NOP, 1);
+
+	WriteRelJump(FireWeapon_jmp, FireWeapon_dest);
 
 	SafeWrite32(pluginsVMP, *(DWORD*)".vmp"); // redirect Plugins.txt
 

@@ -205,6 +205,16 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					break;
 				}
 
+				case pTypes::ID_UPDATE_FIREWEAPON:
+				{
+					NetworkID id;
+					unsigned int weapon;
+					PacketFactory::Access<pTypes::ID_UPDATE_FIREWEAPON>(packet, id, weapon);
+					auto reference = GameFactory::Get<Player>(id);
+					response = Server::GetActorFireWeapon(data->guid, reference.get());
+					break;
+				}
+
 				case pTypes::ID_UPDATE_CONTROL:
 				{
 					NetworkID id;

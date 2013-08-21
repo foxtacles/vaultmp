@@ -371,18 +371,6 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, FactoryActor& reference, 
 				GameFactory::Leave(reference);
 				Script::Call<Script::CBI("OnActorPunch")>(id, false);
 			}
-			else if (firing)
-			{
-				unsigned int baseID = reference->GetEquippedWeapon();
-				const DB::Weapon* weapon = *DB::Weapon::Lookup(baseID);
-
-				response.emplace_back(Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_UPDATE_FIREWEAPON>(id, baseID, weapon->IsAutomatic() ? weapon->GetFireRate() : 0.00),
-					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
-
-				GameFactory::Leave(reference);
-				Script::Call<Script::CBI("OnActorFireWeapon")>(id, baseID);
-			}
 			else
 				GameFactory::Leave(reference);
 		}
@@ -421,6 +409,24 @@ NetworkResponse Server::GetActorDead(RakNetGUID guid, FactoryPlayer& reference, 
 
 		Script::Call<Script::CBI("OnSpawn")>(id);
 	}
+
+	return response;
+}
+
+NetworkResponse Server::GetActorFireWeapon(RakNet::RakNetGUID guid, FactoryPlayer& reference)
+{
+	NetworkResponse response;
+	NetworkID id = reference->GetNetworkID();
+
+	unsigned int baseID = reference->GetEquippedWeapon();
+
+	response.emplace_back(Network::CreateResponse(
+		PacketFactory::Create<pTypes::ID_UPDATE_FIREWEAPON>(id, baseID),
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
+
+	GameFactory::Leave(reference);
+
+	Script::Call<Script::CBI("OnActorFireWeapon")>(id, baseID);
 
 	return response;
 }

@@ -287,6 +287,7 @@ API::FunctionMap API::functions = {
 		{Func::GUICreateCheckbox, "ss"},
 		{Func::GUICheckbox, "si"},
 		{Func::GetPosAngle, "r"},
+		{Func::GetFireWeapon, ""},
 		{Func::Enable, "rI"},
 		{Func::Disable, "rI"},
 		{Func::EquipItem, "r$jII"},
