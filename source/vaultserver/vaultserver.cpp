@@ -240,9 +240,7 @@ int main(int, char* argv[])
 
 	iniparser_freedict(config);
 
-#ifdef __WIN32__
-	system("PAUSE");
-#else
+#ifndef __WIN32__
 	unsetenv(PWNFILES_KEY);
 #endif
 

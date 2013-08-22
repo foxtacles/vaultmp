@@ -343,7 +343,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					double X, Y, Z;
 					PacketFactory::Access<pTypes::ID_UPDATE_CELL>(packet, id, cell, X, Y, Z);
 					auto reference = GameFactory::Get<Object>(vector<NetworkID>{id, GameFactory::Lookup<Object>(PLAYER_REFERENCE)});
-					auto player = vaultcast_swap<Player>(reference[1]);
+					auto player = vaultcast_swap<Player>(move(reference[1]));
 					Game::net_SetCell(reference[0].get(), player.get(), cell, X, Y, Z);
 					break;
 				}

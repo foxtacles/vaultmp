@@ -21,8 +21,6 @@ class Actor : public Container
 		friend class GameFactory;
 
 	private:
-		static RawParameter param_ActorValues;
-
 #ifdef VAULTMP_DEBUG
 		static DebugInput<Actor> debug;
 #endif
@@ -54,12 +52,8 @@ class Actor : public Container
 	public:
 		virtual ~Actor() noexcept;
 
-		/**
-		 * \brief Retrieves a reference to a constant Parameter containing every available actor value string representation
-		 *
-		 * Used to pass actor values to the Interface
-		 */
-		static const RawParameter& Param_ActorValues();
+		static const std::map<unsigned char, std::pair<const double, const double>> default_values;
+
 #ifndef VAULTSERVER
 		/**
 		 * \brief Creates a Parameter containing a VaultFunctor initialized with the given flags

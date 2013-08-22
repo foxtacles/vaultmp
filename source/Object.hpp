@@ -24,8 +24,6 @@ class Object : public Reference
 		friend class GameFactory;
 
 	private:
-		static RawParameter param_Axis;
-
 #ifdef VAULTMP_DEBUG
 		static DebugInput<Object> debug;
 #endif
@@ -54,12 +52,6 @@ class Object : public Reference
 	public:
 		virtual ~Object() noexcept;
 
-		/**
-		 * \brief Retrieves a reference to a constant Parameter containing every available axis value string representation
-		 *
-		 * Used to pass axis values to the Interface
-		 */
-		static const RawParameter& Param_Axis();
 #ifndef VAULTSERVER
 		/**
 		 * \brief Creates a Parameter containing a VaultFunctor initialized with the given flags

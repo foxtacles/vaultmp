@@ -364,14 +364,7 @@ struct API::op_Arg1
 	unsigned int unk8;
 	double more[6];
 
-	op_Arg1()
-	{
-		type1 = 0x00000000; // ASCII, not read
-		type2 = 0x00000000;
-		type3 = 0x00000000;
-		type4 = 0x00000000;
-		ZeroMemory(more, sizeof(more));
-	}
+	op_Arg1() : type1(0x00000000), type2(0x00000000), type3(0x00000000), type4(0x00000000), more{0} {}
 };
 
 struct API::op_Arg2
@@ -383,32 +376,22 @@ struct API::op_Arg2
 	double param1;
 	double more[220];
 
-	op_Arg2()
-	{
-		unk1 = 0x0001001C; // this is when we operate on a reference (via console)
-		param1 = 0x0000000000000000;
-		ZeroMemory(more, sizeof(more));
-	}
+	// unk1 - this is when we operate on a reference (via console)
+	op_Arg2() : unk1(0x0001001C), param1(0x0000000000000000), more{0} {}
 };
 
 struct API::op_Arg3
 {
 	unsigned int reference; // the reference the command operates on, can be 0x00
 
-	op_Arg3()
-	{
-		reference = 0x00000000;
-	}
+	op_Arg3() : reference(0x00000000) {}
 };
 
 struct API::op_Arg4
 {
 	unsigned int unk1; // always 0x00?
 
-	op_Arg4()
-	{
-		unk1 = 0x00000000;
-	}
+	op_Arg4() : unk1(0x00000000) {}
 };
 
 struct API::op_Arg5
@@ -443,35 +426,31 @@ struct API::op_Arg5
 	unsigned int param2_reference;
 	unsigned int param2_unk4;
 
-	op_Arg5()
+	op_Arg5() :
+		unk1(0x00DD3D0C),
+		unk2(0x00000000),
+		unk3(0x0000400A),
+		unk4(0x00000000),
+		numargs(0x00000000),
+		unk12(0x00000000),
+		param1(0x00000000),
+		param2(0x00000000),
+		param1_reftext(0x00000000),
+		param1_unk2(0x00000000),
+		param1_reference(0x00000000),
+		param1_unk4(0x00000000),
+		param2_null(0x00000000),
+		param2_reftext(0x00000000),
+		param2_unk2(0x00000000),
+		param2_reference(0x00000000),
+		param2_unk4(0x00000000)
 	{
-		unk1 = 0x00DD3D0C;
-		unk2 = 0x00000000;
-		unk3 = 0x0000400A;
-		unk4 = 0x00000000;
-		unk12 = 0x00000000;
-		param1 = 0x00000000;
-		param2 = 0x00000000;
-
-		numargs = 0x00000000;
-
-		param1_reftext = 0x00000000;
-		param1_unk2 = 0x00000000;
-		param1_reference = 0x00000000;
-		param1_unk4 = 0x00000000;
-
-		param2_reftext = 0x00000000;
-		param2_unk2 = 0x00000000;
-		param2_reference = 0x00000000;
-		param2_unk4 = 0x00000000;
-
 		unsigned int** param1 = &this->param1;
 		unsigned int** * param2 = &this->param2;
 
 		*param1 = (unsigned int*)((unsigned) &param1_reftext - (unsigned) &unk1);
 		*param2 = (unsigned int**)((unsigned) &param2_real - (unsigned) &unk1);
 		param2_real = (unsigned int*)((unsigned) &param2_reftext - (unsigned) &unk1);
-		param2_null = 0x00000000;
 	}
 };
 
@@ -479,34 +458,27 @@ struct API::op_Arg6
 {
 	void* arg5; // pointer to Arg5
 
-	op_Arg6()
-	{
-		arg5 = 0x00000000;
-	}
+	op_Arg6() : arg5(0x00000000) {}
 };
 
 struct API::op_Arg7
 {
 	double result; // result storage
 
-	op_Arg7()
-	{
-		result = 0x0000000000000000;
-	}
+	op_Arg7() : result(0x0000000000000000) {}
 };
 
 struct API::op_Arg8
 {
 	unsigned int offset; // offset beginning arg2 to arguments
 
-	op_Arg8()
-	{
-		offset = 0x00000008;
-	}
+	op_Arg8() : offset(0x00000008) {}
 };
 
 struct API::op_default
 {
+	unsigned char id;
+	unsigned int R;
 	bool delegate;
 	unsigned short size_arg1;
 	op_Arg1 arg1;
@@ -525,18 +497,7 @@ struct API::op_default
 	unsigned short size_arg8;
 	op_Arg8 arg8;
 
-	op_default()
-	{
-		delegate = false;
-		size_arg1 = sizeof(op_Arg1);
-		size_arg2 = sizeof(op_Arg2);
-		size_arg3 = sizeof(op_Arg3);
-		size_arg4 = sizeof(op_Arg4);
-		size_arg5 = sizeof(op_Arg5);
-		size_arg6 = sizeof(op_Arg6);
-		size_arg7 = sizeof(op_Arg7);
-		size_arg8 = sizeof(op_Arg8);
-	}
+	op_default() : id(PIPE_OP_COMMAND), R(rand()), delegate(false), size_arg1(sizeof(op_Arg1)), size_arg2(sizeof(op_Arg2)), size_arg3(sizeof(op_Arg3)), size_arg4(sizeof(op_Arg4)), size_arg5(sizeof(op_Arg5)), size_arg6(sizeof(op_Arg6)), size_arg7(sizeof(op_Arg7)), size_arg8(sizeof(op_Arg8)) {}
 };
 
 #pragma pack(pop)
@@ -738,7 +699,7 @@ vector<double> API::ParseCommand(const vector<string>& cmd, const char* def, uns
 			{
 				unsigned int integer = strtoul(current, nullptr, 0);
 
-				if (tolower(type) == 'x' && !IsControl((unsigned char) integer))
+				if (tolower(type) == 'x' && find(controls.begin(), controls.end(), integer) == controls.end())
 					throw VaultException("API::ParseCommand could not find a control code for input %s", current).stacktrace();
 
 				*reinterpret_cast<unsigned char*>(arg2_pos) = 0x6E;
@@ -786,9 +747,9 @@ vector<double> API::ParseCommand(const vector<string>& cmd, const char* def, uns
 
 			case 'v': // Actor Value
 			{
-				unsigned char value = RetrieveValue(current);
+				unsigned char value = strtoul(current, nullptr, 0);
 
-				if (value == 0xFF)
+				if (find_if(values.begin(), values.end(), [value](const ValueMap::value_type& value_) { return value_.second == value; }) == values.end())
 					throw VaultException("API::ParseCommand could not find an Actor Value identifier for input %s", current).stacktrace();
 
 				*reinterpret_cast<unsigned short*>(arg2_pos) = (unsigned short) value;
@@ -799,9 +760,9 @@ vector<double> API::ParseCommand(const vector<string>& cmd, const char* def, uns
 
 			case 'a': // Axis
 			{
-				unsigned char axis = RetrieveAxis(current);
+				unsigned char axis = strtoul(current, nullptr, 0);
 
-				if (axis == 0xFF)
+				if (find_if(API::axis.begin(), API::axis.end(), [axis](const ValueMap::value_type& axis_) { return axis_.second == axis; }) == API::axis.end())
 					throw VaultException("API::ParseCommand could not find an Axis identifier for input %s", current).stacktrace();
 
 				*reinterpret_cast<unsigned char*>(arg2_pos) = axis;
@@ -812,9 +773,9 @@ vector<double> API::ParseCommand(const vector<string>& cmd, const char* def, uns
 
 			case 'g': // Animation Group
 			{
-				unsigned char anim = RetrieveAnim(current);
+				unsigned char anim = strtoul(current, nullptr, 0);
 
-				if (anim == 0xFF)
+				if (find_if(anims.begin(), anims.end(), [anim](const ValueMap::value_type& anim_) { return anim_.second == anim; }) == anims.end())
 					throw VaultException("API::ParseCommand could not find an Animation identifier for input %s", current).stacktrace();
 
 				*reinterpret_cast<unsigned short*>(arg2_pos) = (unsigned short) anim;
@@ -874,134 +835,17 @@ vector<double> API::ParseCommand(const vector<string>& cmd, const char* def, uns
 	return result_data;
 }
 
-unsigned char API::RetrieveValue(const char* value)
-{
-	auto it = values.find(value);
-	return it != values.end() ? it->second : 0xFF;
-}
-
-unsigned char API::RetrieveAxis(const char* axis)
-{
-	auto it = API::axis.find(axis);
-	return it != API::axis.end() ? it->second : 0xFF;
-}
-
-unsigned char API::RetrieveAnim(const char* anim)
-{
-	auto it = anims.find(anim);
-	return it != anims.end() ? it->second : 0xFF;
-}
-
-bool API::IsControl(unsigned char control)
-{
-	return controls.find(control) != controls.end();
-}
-
-string API::RetrieveValue_Reverse(unsigned char value)
-{
-	auto it = find_if(values.begin(), values.end(), [value](const ValueMap::value_type& data) { return data.second == value; });
-	return it != values.end() ? it->first : string();
-}
-
-string API::RetrieveAxis_Reverse(unsigned char axis)
-{
-	auto it = find_if(API::axis.begin(), API::axis.end(), [axis](const ValueMap::value_type& data) { return data.second == axis; });
-	return it != API::axis.end() ? it->first : string();
-}
-
-string API::RetrieveAnim_Reverse(unsigned char anim)
-{
-	auto it = find_if(anims.begin(), anims.end(), [anim](const ValueMap::value_type& data) { return data.second == anim; });
-	return it != anims.end() ? it->first : string();
-}
-
-vector<unsigned char> API::RetrieveAllValues()
-{
-	vector<unsigned char> result;
-	result.reserve(values.size());
-	transform(values.begin(), values.end(), back_inserter(result), [](const ValueMap::value_type& data) { return data.second; });
-	return result;
-}
-
-vector<unsigned char> API::RetrieveAllAxis()
-{
-	vector<unsigned char> result;
-	result.reserve(axis.size());
-	transform(axis.begin(), axis.end(), back_inserter(result), [](const ValueMap::value_type& data) { return data.second; });
-	return result;
-}
-
-vector<unsigned char> API::RetrieveAllAnims()
-{
-	vector<unsigned char> result;
-	result.reserve(anims.size());
-	transform(anims.begin(), anims.end(), back_inserter(result), [](const ValueMap::value_type& data) { return data.second; });
-	return result;
-}
-
-vector<unsigned char> API::RetrieveAllControls()
-{
-	return {controls.begin(), controls.end()};
-}
-
-vector<string> API::RetrieveAllValues_Reverse()
-{
-	vector<string> result;
-	result.reserve(values.size());
-	transform(values.begin(), values.end(), back_inserter(result), [](const ValueMap::value_type& data) { return data.first; });
-	return result;
-}
-
-vector<string> API::RetrieveAllAxis_Reverse()
-{
-	vector<string> result;
-	result.reserve(axis.size());
-	transform(axis.begin(), axis.end(), back_inserter(result), [](const ValueMap::value_type& data) { return data.first; });
-	return result;
-}
-
-vector<string> API::RetrieveAllAnims_Reverse()
-{
-	vector<string> result;
-	result.reserve(anims.size());
-	transform(anims.begin(), anims.end(), back_inserter(result), [](const ValueMap::value_type& data) { return data.first; });
-	return result;
-}
-
-unsigned char* API::BuildCommandStream(vector<double>&& info, unsigned int key, unsigned char* command, unsigned int size)
-{
-	unsigned char* data = new unsigned char[PIPE_LENGTH];
-	ZeroMemory(data, PIPE_LENGTH);
-	data[0] = PIPE_OP_COMMAND;
-
-	memcpy(data + 5, command, size);
-
-	unsigned int r = rand();
-	*reinterpret_cast<unsigned int*>(data + 1) = r;
-	queue.emplace_front(r, move(info), key);
-
-	return data;
-}
-
 API::CommandParsed API::Translate(const CommandInput& cmd, unsigned int key)
 {
 	CommandParsed stream;
 
-	if (!functions.count(cmd.first))
-	{
-#ifdef VAULTMP_DEBUG
-		debug.print("API was not able to find function for ", hex, static_cast<unsigned short>(cmd.first));
-#endif
-		return stream;
-	}
-
 	for (const auto& command : cmd.second)
 	{
-		op_default result;
-
-		vector<double> parsed = ParseCommand(command, functions[cmd.first].c_str(), static_cast<unsigned short>(cmd.first), &result);
-		unsigned char* data = BuildCommandStream(move(parsed), key, reinterpret_cast<unsigned char*>(&result), sizeof(op_default));
-		stream.emplace_back(data);
+		// make_unique
+		unique_ptr<unsigned char[]> result(new unsigned char[PIPE_LENGTH]);
+		op_default* data = new (result.get()) op_default;
+		queue.emplace_front(data->R, ParseCommand(command, functions.at(cmd.first), static_cast<unsigned short>(cmd.first), data), key);
+		stream.emplace_back(move(result));
 	}
 
 	return stream;

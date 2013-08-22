@@ -101,17 +101,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				GameFactory::Operate<Player>(PLAYER_REFERENCE, [](FactoryPlayer& player) {
 					GetFireWeapon(player);
 				}); break;
-/*
-			case Func::GetActorValue:
-				GameFactory::Operate<Actor>(getFrom<unsigned int>(info.at(1)), [&info, result](FactoryActor& actor) {
-					GetActorValue(reference.get(), false, getFrom<unsigned char>(info.at(2)), result);
-				});
 
-			case Func::GetBaseActorValue:
-				GameFactory::Operate<Actor>(getFrom<unsigned int>(info.at(1)), [&info, result](FactoryActor& actor) {
-					//GetActorValue(reference.get(), true, getFrom<unsigned char>(info.at(2)), result);
-				});
-*/
 			case Func::GetActorState:
 				GameFactory::Operate<Actor>(getFrom<unsigned int>(info.at(1)), [&info, result](FactoryActor& actor) mutable {
 					GetActorState(actor,
@@ -297,7 +287,7 @@ void Game::Startup()
 		SetINISetting("bSaveOnRest:GamePlay", "0");
 		SetGlobalValue(Global_TimeScale, 0);
 
-		Interface::ExecuteCommand(Func::GetControl, {RawParameter(API::RetrieveAllControls())});
+		Interface::ExecuteCommand(Func::GetControl, {RawParameter(API::controls)});
 		Interface::ExecuteCommand(Func::DisableControl, {RawParameter(vector<unsigned char>{
 			ControlCode_Quickload,
 			ControlCode_Quicksave,
@@ -320,11 +310,6 @@ void Game::Startup()
 		Interface::SetupCommand(Func::GetPosAngle, {Player::CreateFunctor(FLAG_ENABLED | FLAG_NOTSELF | FLAG_ALIVE)}, 30);
 		Interface::SetupCommand(Func::GetActorState, {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), Player::CreateFunctor(FLAG_MOVCONTROLS, id)});
 		Interface::SetupCommand(Func::GetParentCell, {Player::CreateFunctor(FLAG_SELF | FLAG_ALIVE)}, 30);
-
-	/*
-		Interface::SetupCommand(Func::GetActorValue, {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), Actor::Param_ActorValues()}, 100);
-		Interface::SetupCommand(Func::GetBaseActorValue, {Player::CreateFunctor(FLAG_SELF | FLAG_ENABLED), Actor::Param_ActorValues()}, 200);
-	*/
 	});
 
 	startup = true;
@@ -612,7 +597,7 @@ void Game::NewDispatch(FactoryObject& reference)
 
 		case ID_ITEM:
 		{
-			auto item = vaultcast_swap<Item>(reference).get();
+			auto item = vaultcast_swap<Item>(move(reference)).get();
 
 			if (!item->GetItemContainer())
 				NewItem(item);
@@ -620,15 +605,15 @@ void Game::NewDispatch(FactoryObject& reference)
 		}
 
 		case ID_CONTAINER:
-			NewContainer(vaultcast_swap<Container>(reference).get());
+			NewContainer(vaultcast_swap<Container>(move(reference)).get());
 			break;
 
 		case ID_ACTOR:
-			NewActor(vaultcast_swap<Actor>(reference).get());
+			NewActor(vaultcast_swap<Actor>(move(reference)).get());
 			break;
 
 		case ID_PLAYER:
-			NewPlayer(vaultcast_swap<Player>(reference).get());
+			NewPlayer(vaultcast_swap<Player>(move(reference)).get());
 			break;
 
 		default:
@@ -836,12 +821,10 @@ void Game::NewActor_(FactoryActor& reference)
 {
 	NewContainer_(reference);
 
-	vector<unsigned char> values = API::RetrieveAllValues();
-
-	for (unsigned char value : values)
+	for (const auto& value : API::values)
 	{
-		SetActorValue(reference, true, value);
-		SetActorValue(reference, false, value);
+		SetActorValue(reference, true, value.second);
+		SetActorValue(reference, false, value.second);
 	}
 
 	SetActorRace(reference, reference->GetActorAge()); // FIXME - AgeRace is a delta, do only once per base (redo on respawn). sucks a bit
@@ -1184,22 +1167,22 @@ void Game::SetPos(const FactoryObject& reference)
 
 		key = reference->SetGamePos(Axis_X, reference->GetNetworkPos(Axis_X));
 
-		Interface::ExecuteCommand(Func::SetPos, {reference->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_X)), RawParameter(reference->GetNetworkPos(Axis_X))}, key ? key->Lock() : 0);
+		Interface::ExecuteCommand(Func::SetPos, {reference->GetReferenceParam(), RawParameter(Axis_X), RawParameter(reference->GetNetworkPos(Axis_X))}, key ? key->Lock() : 0);
 
 		key = reference->SetGamePos(Axis_Y, reference->GetNetworkPos(Axis_Y));
 
-		Interface::ExecuteCommand(Func::SetPos, {reference->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_Y)), RawParameter(reference->GetNetworkPos(Axis_Y))}, key ? key->Lock() : 0);
+		Interface::ExecuteCommand(Func::SetPos, {reference->GetReferenceParam(), RawParameter(Axis_Y), RawParameter(reference->GetNetworkPos(Axis_Y))}, key ? key->Lock() : 0);
 
 		key = reference->SetGamePos(Axis_Z, reference->GetNetworkPos(Axis_Z));
 
-		Interface::ExecuteCommand(Func::SetPos, {reference->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_Z)), RawParameter(reference->GetNetworkPos(Axis_Z))}, key ? key->Lock() : 0);
+		Interface::ExecuteCommand(Func::SetPos, {reference->GetReferenceParam(), RawParameter(Axis_Z), RawParameter(reference->GetNetworkPos(Axis_Z))}, key ? key->Lock() : 0);
 	});
 }
 
 void Game::SetAngle(const FactoryObject& reference)
 {
 	Interface::Dynamic([&reference]() {
-		Interface::ExecuteCommand(Func::SetAngle, {reference->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_X)), RawParameter(reference->GetAngle(Axis_X))});
+		Interface::ExecuteCommand(Func::SetAngle, {reference->GetReferenceParam(), RawParameter(Axis_X), RawParameter(reference->GetAngle(Axis_X))});
 
 		double value = reference->GetAngle(Axis_Z);
 		auto actor = vaultcast<Actor>(reference);
@@ -1212,7 +1195,7 @@ void Game::SetAngle(const FactoryObject& reference)
 				AdjustZAngle(value, 45.0);
 		}
 
-		Interface::ExecuteCommand(Func::SetAngle, {reference->GetReferenceParam(), RawParameter(API::RetrieveAxis_Reverse(Axis_Z)), RawParameter(value)});
+		Interface::ExecuteCommand(Func::SetAngle, {reference->GetReferenceParam(), RawParameter(Axis_Z), RawParameter(value)});
 	});
 }
 
@@ -1273,9 +1256,9 @@ void Game::SetActorValue(const FactoryActor& reference, bool base, unsigned char
 	DelayOrExecute(reference, [actor, base, index, value](unsigned int key) {
 		Interface::Dynamic([actor, base, index, value, key]() {
 			if (base)
-				Interface::ExecuteCommand(Func::SetActorValue, {actor->GetReferenceParam(), RawParameter(API::RetrieveValue_Reverse(index)), RawParameter(value)}, key);
+				Interface::ExecuteCommand(Func::SetActorValue, {actor->GetReferenceParam(), RawParameter(index), RawParameter(value)}, key);
 			else
-				Interface::ExecuteCommand(Func::ForceActorValue, {actor->GetReferenceParam(), RawParameter(API::RetrieveValue_Reverse(index)), RawParameter(value)}, key);
+				Interface::ExecuteCommand(Func::ForceActorValue, {actor->GetReferenceParam(), RawParameter(index), RawParameter(value)}, key);
 		});
 	}, key);
 }
@@ -1286,7 +1269,7 @@ void Game::DamageActorValue(const FactoryActor& reference, unsigned char index, 
 
 	DelayOrExecute(reference, [actor, index, value](unsigned int key) {
 		Interface::Dynamic([actor, index, value, key]() {
-			Interface::ExecuteCommand(Func::DamageActorValue, {actor->GetReferenceParam(), RawParameter(API::RetrieveValue_Reverse(index)), RawParameter(value)}, key);
+			Interface::ExecuteCommand(Func::DamageActorValue, {actor->GetReferenceParam(), RawParameter(index), RawParameter(value)}, key);
 		});
 	}, key);
 }
@@ -1297,7 +1280,7 @@ void Game::RestoreActorValue(const FactoryActor& reference, unsigned char index,
 
 	DelayOrExecute(reference, [actor, index, value](unsigned int key) {
 		Interface::Dynamic([actor, index, value, key]() {
-			Interface::ExecuteCommand(Func::RestoreActorValue, {actor->GetReferenceParam(), RawParameter(API::RetrieveValue_Reverse(index)), RawParameter(value)}, key);
+			Interface::ExecuteCommand(Func::RestoreActorValue, {actor->GetReferenceParam(), RawParameter(index), RawParameter(value)}, key);
 		});
 	}, key);
 }
@@ -1329,7 +1312,7 @@ void Game::SetActorAlerted(const FactoryActor& reference, unsigned int key)
 void Game::SetActorAnimation(const FactoryActor& reference, unsigned char anim, unsigned int key)
 {
 	Interface::Dynamic([&reference, anim, key]() {
-		Interface::ExecuteCommand(Func::PlayGroup, {reference->GetReferenceParam(), RawParameter(API::RetrieveAnim_Reverse(anim)), RawParameter(true)}, key);
+		Interface::ExecuteCommand(Func::PlayGroup, {reference->GetReferenceParam(), RawParameter(anim), RawParameter(true)}, key);
 	});
 }
 
@@ -2334,23 +2317,6 @@ void Game::GetParentCell(const FactoryPlayer& player, unsigned int cell)
 		});
 }
 
-/*
-void Game::GetActorValue(const FactoryActor& reference, bool base, unsigned char index, double value)
-{
-	bool result;
-
-	if (base)
-		result = static_cast<bool>(reference->SetActorBaseValue(index, value));
-	else
-		result = static_cast<bool>(reference->SetActorValue(index, value));
-
-	if (result)
-		Network::Queue({Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_VALUE>(reference->GetNetworkID(), base, index, value),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
-		});
-}
-*/
 void Game::GetActorState(const FactoryActor& reference, unsigned int idle, unsigned char moving, unsigned char weapon, unsigned char flags, bool sneaking)
 {
 	static pair<unsigned char, unsigned char> buf_weapon{AnimGroup_Idle, AnimGroup_Idle};

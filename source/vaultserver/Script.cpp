@@ -562,21 +562,24 @@ unsigned long long Script::Timer_GameTime() noexcept
 const char* Script::ValueToString(unsigned char index) noexcept
 {
 	static string value;
-	value.assign(API::RetrieveValue_Reverse(index));
+	auto it = find_if(API::values.begin(), API::values.end(), [index](const decltype(API::values)::value_type& value) { return value.second == index; });
+	value.assign(it != API::values.end() ? it->first : "");
 	return value.c_str();
 }
 
 const char* Script::AxisToString(unsigned char index) noexcept
 {
 	static string axis;
-	axis.assign(API::RetrieveAxis_Reverse(index));
+	auto it = find_if(API::axis.begin(), API::axis.end(), [index](const decltype(API::axis)::value_type& axis) { return axis.second == index; });
+	axis.assign(it != API::axis.end() ? it->first : "");
 	return axis.c_str();
 }
 
 const char* Script::AnimToString(unsigned char index) noexcept
 {
 	static string anim;
-	anim.assign(API::RetrieveAnim_Reverse(index));
+	auto it = find_if(API::anims.begin(), API::anims.end(), [index](const decltype(API::anims)::value_type& anims) { return anims.second == index; });
+	anim.assign(it != API::anims.end() ? it->first : "");
 	return anim.c_str();
 }
 
@@ -1688,7 +1691,7 @@ NetworkID Script::CreateItem(unsigned int baseID, NetworkID id, unsigned int cel
 		return 0;
 
 	NetworkID result = GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(vector<NetworkID>{GameFactory::Create<Item>(baseID), id}, [cell, X, Y, Z](ExpectedObjects& objects) {
-		FactoryItem item = vaultcast_swap<Item>(objects[0]).get();
+		FactoryItem item = vaultcast_swap<Item>(move(objects[0])).get();
 
 		SetupItem(item, objects[1] ? objects[1].get() : FactoryObject(), cell, X, Y, Z);
 
@@ -1824,7 +1827,7 @@ NetworkID Script::CreateContainer(unsigned int baseID, NetworkID id, unsigned in
 		return 0;
 
 	NetworkID result = GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(vector<NetworkID>{GameFactory::Create<Container>(baseID), id}, [cell, X, Y, Z](ExpectedObjects& objects) {
-		FactoryContainer container = vaultcast_swap<Container>(objects[0]).get();
+		FactoryContainer container = vaultcast_swap<Container>(move(objects[0])).get();
 
 		SetupContainer(container, objects[1] ? objects[1].get() : FactoryObject(), cell, X, Y, Z);
 
@@ -1983,7 +1986,7 @@ NetworkID Script::CreateActor(unsigned int baseID, NetworkID id, unsigned int ce
 		return 0;
 
 	NetworkID result = GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(vector<NetworkID>{GameFactory::Create<Actor>(baseID), id}, [cell, X, Y, Z](ExpectedObjects& objects) {
-		FactoryActor actor = vaultcast_swap<Actor>(objects[0]).get();
+		FactoryActor actor = vaultcast_swap<Actor>(move(objects[0])).get();
 
 		SetupActor(actor, objects[1] ? objects[1].get() : FactoryObject(), cell, X, Y, Z);
 

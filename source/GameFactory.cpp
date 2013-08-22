@@ -119,8 +119,6 @@ void GameFactory::DestroyAll() noexcept
 
 	// Cleanup classes
 
-	Object::param_Axis = RawParameter(vector<string>());
-	Actor::param_ActorValues = RawParameter(vector<string>());
 	Window::childs.clear();
 
 	Lockable::Reset();

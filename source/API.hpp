@@ -475,9 +475,9 @@ class API
 
 	private:
 		typedef std::deque<std::tuple<unsigned int, std::vector<double>, unsigned int>> CommandQueue;
-		typedef std::unordered_map<Values::Func, std::string, _hash_Func> FunctionMap;
-		typedef std::unordered_map<std::string, unsigned char> ValueMap;
-		typedef std::set<unsigned char> ValueList;
+		typedef const std::unordered_map<Values::Func, const char* const, _hash_Func> FunctionMap;
+		typedef const std::vector<std::pair<const char* const, const unsigned char>> ValueMap;
+		typedef const std::vector<unsigned char> ValueList;
 
 #ifdef VAULTMP_DEBUG
 		static DebugInput<API> debug;
@@ -494,13 +494,8 @@ class API
 		struct op_default;
 
 		static FunctionMap functions;
-		static ValueMap values;
-		static ValueMap axis;
-		static ValueMap anims;
-		static ValueList controls;
 		static CommandQueue queue;
 
-		static unsigned char* BuildCommandStream(std::vector<double>&& info, unsigned int key, unsigned char* command, unsigned int size);
 		static std::vector<double> ParseCommand(const std::vector<std::string>& cmd, const char* def, unsigned short opcode, op_default* result);
 
 	protected:
@@ -517,6 +512,11 @@ class API
 		API() = delete;
 
 	public:
+		static ValueMap values;
+		static ValueMap axis;
+		static ValueMap anims;
+		static ValueList controls;
+
 		/**
 		 * \brief Initializes the API. Must be called before the API can be used
 		 */
@@ -526,64 +526,6 @@ class API
 		 * \brief Must be called when you are finished with the current API environment.
 		 */
 		static void Terminate();
-
-
-		/**
-		 * \brief Given the string representation of an actor value, returns the hex code. 0xFF indicates an error
-		 */
-		static unsigned char RetrieveValue(const char* value);
-		/**
-		 * \brief Given the string representation of an axis value, returns the hex code. 0xFF indicates an error
-		 */
-		static unsigned char RetrieveAxis(const char* axis);
-		/**
-		 * \brief Given the string representation of an animation value, returns the hex code. 0xFF indicates an error
-		 */
-		static unsigned char RetrieveAnim(const char* anim);
-		/**
-		 * \brief Returns true if the given value is a valid control code
-		 */
-		static bool IsControl(unsigned char control);
-		/**
-		 * \brief Given the hex code of an actor value, returns the string representation. An empty string indicates an error
-		 */
-		static std::string RetrieveValue_Reverse(unsigned char value);
-		/**
-		 * \brief Given the hex code of an axis value, returns the string representation. An empty string indicates an error
-		 */
-		static std::string RetrieveAxis_Reverse(unsigned char axis);
-		/**
-		 * \brief Given the hex code of an animation value, returns the string representation. An empty string indicates an error
-		 */
-		static std::string RetrieveAnim_Reverse(unsigned char anim);
-		/**
-		 * \brief Returns a STL vector containing every available actor value hex code
-		 */
-		static std::vector<unsigned char> RetrieveAllValues();
-		/**
-		 * \brief Returns a STL vector containing every available axis value hex code
-		 */
-		static std::vector<unsigned char> RetrieveAllAxis();
-		/**
-		 * \brief Returns a STL vector containing every available animation value hex code
-		 */
-		static std::vector<unsigned char> RetrieveAllAnims();
-		/**
-		 * \brief Returns a STL vector containing every available control code
-		 */
-		static std::vector<unsigned char> RetrieveAllControls();
-		/**
-		 * \brief Returns a STL vector containing every available actor value string representation
-		 */
-		static std::vector<std::string> RetrieveAllValues_Reverse();
-		/**
-		 * \brief Returns a STL vector containing every available axis value string representation
-		 */
-		static std::vector<std::string> RetrieveAllAxis_Reverse();
-		/**
-		 * \brief Returns a STL vector containing every available animation value string representation
-		 */
-		static std::vector<std::string> RetrieveAllAnims_Reverse();
 };
 
 #endif

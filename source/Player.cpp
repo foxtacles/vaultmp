@@ -19,48 +19,6 @@ atomic<unsigned int> Player::default_cell;
 atomic<bool> Player::default_console(true);
 #endif
 
-const map<unsigned char, pair<double, double>> Player::default_values = {
-	{ActorVal_Energy, {50.0, 50.0}},
-	{ActorVal_Responsibility, {50.0, 50.0}},
-	{ActorVal_Strength, {5.0, 5.0}},
-	{ActorVal_Perception, {5.0, 5.0}},
-	{ActorVal_Endurance, {5.0, 5.0}},
-	{ActorVal_Charisma, {5.0, 5.0}},
-	{ActorVal_Intelligence, {5.0, 5.0}},
-	{ActorVal_Agility, {5.0, 5.0}},
-	{ActorVal_Luck, {5.0, 5.0}},
-	{ActorVal_ActionPoints, {75.0, 75.0}},
-	{ActorVal_CarryWeight, {200.0, 200.0}},
-	{ActorVal_CritChance, {5.0, 5.0}},
-	{ActorVal_Health, {200.0, 200.0}},
-	{ActorVal_MeleeDamage, {2.0, 2.0}},
-	{ActorVal_PoisonResistance, {20.0, 20.0}},
-	{ActorVal_RadResistance, {8.0, 8.0}},
-	{ActorVal_SpeedMultiplier, {100.0, 100.0}},
-	{ActorVal_Fatigue, {200.0, 200.0}},
-	{ActorVal_Head, {100.0, 100.0}},
-	{ActorVal_Torso, {100.0, 100.0}},
-	{ActorVal_LeftArm, {100.0, 100.0}},
-	{ActorVal_RightArm, {100.0, 100.0}},
-	{ActorVal_LeftLeg, {100.0, 100.0}},
-	{ActorVal_RightLeg, {100.0, 100.0}},
-	{ActorVal_Brain, {100.0, 100.0}},
-	{ActorVal_Barter, {15.0, 15.0}},
-	{ActorVal_BigGuns, {15.0, 15.0}},
-	{ActorVal_EnergyWeapons, {15.0, 15.0}},
-	{ActorVal_Explosives, {15.0, 15.0}},
-	{ActorVal_Lockpick, {15.0, 15.0}},
-	{ActorVal_Medicine, {15.0, 15.0}},
-	{ActorVal_MeleeWeapons, {15.0, 15.0}},
-	{ActorVal_Repair, {15.0, 15.0}},
-	{ActorVal_Science, {15.0, 15.0}},
-	{ActorVal_SmallGuns, {15.0, 15.0}},
-	{ActorVal_Sneak, {15.0, 15.0}},
-	{ActorVal_Speech, {15.0, 15.0}},
-	{ActorVal_Unarmed, {15.0, 15.0}},
-	{ActorVal_UnarmedDamage, {1.0, 1.25}},
-};
-
 #ifdef VAULTMP_DEBUG
 DebugInput<Player> Player::debug;
 #endif
@@ -68,14 +26,6 @@ DebugInput<Player> Player::debug;
 Player::Player(unsigned int refID, unsigned int baseID) : Actor(refID, baseID)
 {
 	initialize();
-
-	const auto& values = default_values;
-
-	for (const auto& value : values)
-	{
-		this->SetActorBaseValue(value.first, value.second.first);
-		this->SetActorValue(value.first, value.second.second);
-	}
 
 	this->SetActorRace(RACE_CAUCASIAN);
 	this->SetActorFemale(false);
@@ -116,11 +66,9 @@ Player::~Player() noexcept
 
 void Player::initialize()
 {
-	vector<unsigned char> data = API::RetrieveAllControls();
-
 	// emplace
-	for (unsigned char _data : data)
-		player_Controls.insert(make_pair(_data, make_pair(Value<unsigned char>(), Value<bool>(true))));
+	for (auto control : API::controls)
+		player_Controls.insert(make_pair(control, make_pair(Value<unsigned char>(), Value<bool>(true))));
 
 #ifdef VAULTSERVER
 	baseIDs.Operate([this](BaseIDTracker& baseIDs) {
@@ -305,11 +253,10 @@ Lockable* Player::SetBase(unsigned int baseID)
 
 pPacket Player::toPacket() const
 {
-	vector<unsigned char> data = API::RetrieveAllControls();
 	map<unsigned char, pair<unsigned char, bool>> controls;
 
-	for (unsigned char _data : data)
-		controls.insert(make_pair(_data, make_pair(this->GetPlayerControl(_data), this->GetPlayerControlEnabled(_data))));
+	for (const auto& control : player_Controls)
+		controls.insert(make_pair(control.first, make_pair(this->GetPlayerControl(control.first), this->GetPlayerControlEnabled(control.first))));
 
 	pPacket pActorNew = Actor::toPacket();
 	pPacket packet = PacketFactory::Create<pTypes::ID_PLAYER_NEW>(pActorNew, controls);

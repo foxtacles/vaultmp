@@ -8,11 +8,50 @@
 #include "Item.hpp"
 #endif
 
+#include <algorithm>
+
 using namespace std;
 using namespace RakNet;
 using namespace Values;
 
-RawParameter Actor::param_ActorValues = RawParameter(vector<string>());
+const map<unsigned char, pair<const double, const double>> Actor::default_values = {
+	{ActorVal_Energy, {50, 50}},
+	{ActorVal_Responsibility, {50, 50}},
+	{ActorVal_Strength, {5, 5}},
+	{ActorVal_Perception, {5, 5}},
+	{ActorVal_Endurance, {5, 5}},
+	{ActorVal_Charisma, {5, 5}},
+	{ActorVal_Intelligence, {5, 5}},
+	{ActorVal_Agility, {5, 5}},
+	{ActorVal_Luck, {5, 5}},
+	{ActorVal_ActionPoints, {75, 75}},
+	{ActorVal_CarryWeight, {200, 200}},
+	{ActorVal_Health, {200, 200}},
+	{ActorVal_PoisonResistance, {20, 20}},
+	{ActorVal_RadResistance, {8, 8}},
+	{ActorVal_SpeedMultiplier, {100, 100}},
+	{ActorVal_Fatigue, {200, 200}},
+	{ActorVal_Head, {100, 100}},
+	{ActorVal_Torso, {100, 100}},
+	{ActorVal_LeftArm, {100, 100}},
+	{ActorVal_RightArm, {100, 100}},
+	{ActorVal_LeftLeg, {100, 100}},
+	{ActorVal_RightLeg, {100, 100}},
+	{ActorVal_Brain, {100, 100}},
+	{ActorVal_Barter, {15, 15}},
+	{ActorVal_BigGuns, {15, 15}},
+	{ActorVal_EnergyWeapons, {15, 15}},
+	{ActorVal_Explosives, {15, 15}},
+	{ActorVal_Lockpick, {15, 15}},
+	{ActorVal_Medicine, {15, 15}},
+	{ActorVal_MeleeWeapons, {15, 15}},
+	{ActorVal_Repair, {15, 15}},
+	{ActorVal_Science, {15, 15}},
+	{ActorVal_SmallGuns, {15, 15}},
+	{ActorVal_Sneak, {15, 15}},
+	{ActorVal_Speech, {15, 15}},
+	{ActorVal_Unarmed, {15, 15}},
+};
 
 #ifdef VAULTMP_DEBUG
 DebugInput<Actor> Actor::debug;
@@ -21,6 +60,12 @@ DebugInput<Actor> Actor::debug;
 Actor::Actor(unsigned int refID, unsigned int baseID) : Container(refID, baseID)
 {
 	initialize();
+
+	for (const auto& value : default_values)
+	{
+		this->SetActorBaseValue(value.first, value.second.first);
+		this->SetActorValue(value.first, value.second.second);
+	}
 }
 
 Actor::Actor(const pDefault* packet) : Container(PacketFactory::Pop<pPacket>(packet))
@@ -58,26 +103,16 @@ Actor::~Actor() noexcept {}
 
 void Actor::initialize()
 {
-	vector<unsigned char> data = API::RetrieveAllValues();
-
-	for (unsigned char _data : data)
+	for (const auto& value : API::values)
 	{
 		// emplace
-		actor_Values.insert(make_pair(_data, Value<double>()));
-		actor_BaseValues.insert(make_pair(_data, Value<double>()));
+		actor_Values.insert(make_pair(value.second, Value<double>()));
+		actor_BaseValues.insert(make_pair(value.second, Value<double>()));
 	}
 
 #ifdef VAULTMP_DEBUG
 	debug.print("New actor object created (ref: ", hex, this->GetReference(), ")");
 #endif
-}
-
-const RawParameter& Actor::Param_ActorValues()
-{
-	if (param_ActorValues.get().empty())
-		param_ActorValues = API::RetrieveAllValues_Reverse();
-
-	return param_ActorValues;
 }
 
 #ifndef VAULTSERVER
@@ -174,9 +209,7 @@ Lockable* Actor::SetActorIdleAnimation(unsigned int idle)
 
 Lockable* Actor::SetActorMovingAnimation(unsigned char index)
 {
-	string anim = API::RetrieveAnim_Reverse(index);
-
-	if (anim.empty())
+	if (find_if(API::anims.begin(), API::anims.end(), [index](const decltype(API::values)::value_type& value) { return value.second == index; }) == API::anims.end())
 		throw VaultException("Value %02X not defined in database", index).stacktrace();
 
 	return SetObjectValue(this->anim_Moving, index);
@@ -189,9 +222,7 @@ Lockable* Actor::SetActorMovingXY(unsigned char moving)
 
 Lockable* Actor::SetActorWeaponAnimation(unsigned char index)
 {
-	string anim = API::RetrieveAnim_Reverse(index);
-
-	if (anim.empty())
+	if (find_if(API::anims.begin(), API::anims.end(), [index](const decltype(API::values)::value_type& value) { return value.second == index; }) == API::anims.end())
 		throw VaultException("Value %02X not defined in database", index).stacktrace();
 
 	return SetObjectValue(this->anim_Weapon, index);
@@ -288,14 +319,13 @@ unsigned int Actor::GetEquippedWeapon() const
 
 pPacket Actor::toPacket() const
 {
-	vector<unsigned char> data = API::RetrieveAllValues();
 	map<unsigned char, double> values, baseValues;
 
-	for (unsigned char _data : data)
+	for (const auto& value : actor_Values)
 	{
 		// emplace
-		values.insert(make_pair(_data, this->GetActorValue(_data)));
-		baseValues.insert(make_pair(_data, this->GetActorBaseValue(_data)));
+		values.insert(make_pair(value.first, this->GetActorValue(value.first)));
+		baseValues.insert(make_pair(value.first, this->GetActorBaseValue(value.first)));
 	}
 
 	pPacket pContainerNew = Container::toPacket();

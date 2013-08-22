@@ -38,8 +38,8 @@ class FactoryWrapper;
 
 template<typename T, typename U> Expected<FactoryWrapper<T>> vaultcast(const FactoryWrapper<U>& object) noexcept;
 template<typename T, typename U> Expected<FactoryWrapper<T>> vaultcast(const Expected<FactoryWrapper<U>>& object) noexcept;
-template<typename T, typename U> Expected<FactoryWrapper<T>> vaultcast_swap(FactoryWrapper<U>& object) noexcept;
-template<typename T, typename U> Expected<FactoryWrapper<T>> vaultcast_swap(Expected<FactoryWrapper<U>>& object) noexcept;
+template<typename T, typename U> Expected<FactoryWrapper<T>> vaultcast_swap(FactoryWrapper<U>&& object) noexcept;
+template<typename T, typename U> Expected<FactoryWrapper<T>> vaultcast_swap(Expected<FactoryWrapper<U>>&& object) noexcept;
 
 template<typename T> struct rTypes;
 template<typename T> struct rTypesToken;
@@ -187,8 +187,8 @@ class GameFactory
 		/**
 		 * \brief This is an alias to vaultcast_swap
 		 */
-		template<typename T, typename U> inline static Expected<FactoryWrapper<T>> Get(FactoryWrapper<U>& base) noexcept { return vaultcast_swap<T>(base); }
-		template<typename T, typename U> inline static Expected<FactoryWrapper<T>> Get(Expected<FactoryWrapper<U>>& base) noexcept { return vaultcast_swap<T>(base); }
+		template<typename T, typename U> inline static Expected<FactoryWrapper<T>> Get(FactoryWrapper<U>&& base) noexcept { return vaultcast_swap<T>(move(base)); }
+		template<typename T, typename U> inline static Expected<FactoryWrapper<T>> Get(Expected<FactoryWrapper<U>>&& base) noexcept { return vaultcast_swap<T>(move(base)); }
 		/**
 		 * \brief Obtains a lock on multiple Bases
 		 *
@@ -482,7 +482,7 @@ class FactoryWrapper<Base>
 		template<typename T, typename U>
 		friend Expected<FactoryWrapper<T>> vaultcast(const FactoryWrapper<U>& object) noexcept;
 		template<typename T, typename U>
-		friend Expected<FactoryWrapper<T>> vaultcast_swap(FactoryWrapper<U>& object) noexcept;
+		friend Expected<FactoryWrapper<T>> vaultcast_swap(FactoryWrapper<U>&& object) noexcept;
 
 	protected:
 		Base* base;
@@ -565,7 +565,7 @@ typedef std::vector<Expected<FactoryWrapper<Base>>> ExpectedBases;
 		template<typename T, typename U>                                                                                                                             \
 		friend Expected<FactoryWrapper<T>> vaultcast(const FactoryWrapper<U>& object) noexcept;                                                                      \
 		template<typename T, typename U>                                                                                                                             \
-		friend Expected<FactoryWrapper<T>> vaultcast_swap(FactoryWrapper<U>& object) noexcept;                                                                       \
+		friend Expected<FactoryWrapper<T>> vaultcast_swap(FactoryWrapper<U>&& object) noexcept;                                                                      \
                                                                                                                                                                      \
 	protected:                                                                                                                                                       \
 		FactoryWrapper(Base* base, unsigned int type) noexcept : FactoryWrapper<base_class>(validate<derived_class>(type) ? base : nullptr, type) {}                 \
@@ -607,19 +607,15 @@ template<typename T, typename U>
 inline Expected<FactoryWrapper<T>> vaultcast(const Expected<FactoryWrapper<U>>& object) noexcept { return vaultcast<T>(const_cast<Expected<FactoryWrapper<U>>&>(object).get()); }
 
 template<typename T, typename U>
-inline Expected<FactoryWrapper<T>> vaultcast_swap(FactoryWrapper<U>& object) noexcept
+inline Expected<FactoryWrapper<T>> vaultcast_swap(FactoryWrapper<U>&& object) noexcept
 {
 	if (!object.template validate<T>())
 		return VaultException("vaultcast failed");
 
-	auto result = FactoryWrapper<T>(object);
-
-	GameFactory::Leave(object);
-
-	return result;
+	return FactoryWrapper<T>(std::move(object));
 }
 
-template<typename T, typename U> inline Expected<FactoryWrapper<T>> vaultcast_swap(Expected<FactoryWrapper<U>>& object) noexcept { return vaultcast_swap<T>(object.get()); }
+template<typename T, typename U> inline Expected<FactoryWrapper<T>> vaultcast_swap(Expected<FactoryWrapper<U>>&& object) noexcept { return vaultcast_swap<T>(std::move(object.get())); }
 template<typename T, typename U> inline bool vaultcast_test(const FactoryWrapper<U>& object) noexcept { return object.template validate<T>(); }
 template<typename T, typename U> inline bool vaultcast_test(const Expected<FactoryWrapper<U>>& object) noexcept { return const_cast<Expected<FactoryWrapper<U>>&>(object).get().template validate<T>(); }
 

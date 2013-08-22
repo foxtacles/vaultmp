@@ -64,8 +64,6 @@ class Player : public Actor
 	public:
 		virtual ~Player() noexcept;
 
-		static const std::map<unsigned char, std::pair<double, double>> default_values;
-
 #ifdef VAULTSERVER
 		static const unsigned int DEFAULT_PLAYER_RESPAWN = 8000;
 

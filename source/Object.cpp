@@ -8,8 +8,6 @@ using namespace std;
 using namespace RakNet;
 using namespace Values;
 
-RawParameter Object::param_Axis = RawParameter(vector<string>());
-
 #ifdef VAULTMP_DEBUG
 DebugInput<Object> Object::debug;
 #endif
@@ -60,14 +58,12 @@ Object::~Object() noexcept
 
 void Object::initialize()
 {
-	vector<unsigned char> data = API::RetrieveAllAxis();
-
-	for (unsigned char _data : data)
+	for (const auto& axis : API::axis)
 	{
 		// emplace
-		object_Game_Pos.insert(make_pair(_data, Value<double>()));
-		object_Network_Pos.insert(make_pair(_data, Value<double>()));
-		object_Angle.insert(make_pair(_data, Value<double>()));
+		object_Game_Pos.insert(make_pair(axis.second, Value<double>()));
+		object_Network_Pos.insert(make_pair(axis.second, Value<double>()));
+		object_Angle.insert(make_pair(axis.second, Value<double>()));
 	}
 
 	this->SetLockLevel(Lock_Unlocked);
@@ -81,14 +77,6 @@ bool Object::IsValidCoordinate(double C)
 bool Object::IsValidAngle(unsigned char axis, double A)
 {
 	return (axis == Axis_Z ? (A >= 0.0 && A <= 360.0) : (A >= -90.0 && A <= 90.0));
-}
-
-const RawParameter& Object::Param_Axis()
-{
-	if (param_Axis.get().empty())
-		param_Axis = API::RetrieveAllAxis_Reverse();
-
-	return param_Axis;
 }
 
 #ifndef VAULTSERVER
