@@ -55,6 +55,7 @@ static void (*GUI_SetTextChangedCallback)(void (*)(const char*, const char*));
 static void (*GUI_Textbox_SetMaxLength)(const char*, unsigned int);
 static void (*GUI_Textbox_SetValidationString)(const char*, const char*);
 static void (*GUI_AddCheckbox)(const char*, const char*);
+static void (*GUI_AddRadioButton)(const char*, const char*, unsigned long int);
 static void (*GUI_SetChecked)(const char*, bool);
 static void (*GUI_SetCheckboxChangedCallback)(void (*)(const char*, bool));
 static void (*SetPlayersDataPointer)(remotePlayers*);
@@ -629,6 +630,16 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 			break;
 		}
 
+		case 0x0026 | VAULTFUNCTION: // GUICreateRadio - Create radio button
+		{
+			ZeroMemory(result, sizeof(double));
+			const char* data = ((char*) args) + 2; // skip length
+			const char* str2 = data + strlen(data) + 3;
+
+			GUI_AddRadioButton(data, str2, *(unsigned int*) (str2 + strlen(str2) + 1));
+			break;
+		}
+
 		default:
 			break;
 	}
@@ -821,11 +832,12 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 		GUI_Textbox_SetMaxLength = reinterpret_cast<decltype(GUI_Textbox_SetMaxLength)>(GetProcAddress(vaultgui, "GUI_Textbox_SetMaxLength"));
 		GUI_Textbox_SetValidationString = reinterpret_cast<decltype(GUI_Textbox_SetValidationString)>(GetProcAddress(vaultgui, "GUI_Textbox_SetValidationString"));
 		GUI_AddCheckbox = reinterpret_cast<decltype(GUI_AddCheckbox)>(GetProcAddress(vaultgui, "GUI_AddCheckbox"));
+		GUI_AddRadioButton = reinterpret_cast<decltype(GUI_AddRadioButton)>(GetProcAddress(vaultgui, "GUI_AddRadioButton"));
 		GUI_SetChecked = reinterpret_cast<decltype(GUI_SetChecked)>(GetProcAddress(vaultgui, "GUI_SetChecked"));
 		GUI_SetCheckboxChangedCallback = reinterpret_cast<decltype(GUI_SetCheckboxChangedCallback)>(GetProcAddress(vaultgui, "GUI_SetCheckboxChangedCallback"));
 		SetPlayersDataPointer = reinterpret_cast<decltype(SetPlayersDataPointer)>(GetProcAddress(vaultgui, "SetPlayersDataPointer"));
 
-		if (!Chatbox_AddToChat || !GUI_CreateFrameWindow || !GUI_AddStaticText || !GUI_AddTextbox || !GUI_AddButton || !GUI_SetVisible || !GUI_AllowDrag || !GUI_SetPosition || !GUI_SetSize || !GUI_SetText || !GUI_RemoveWindow || !GUI_ForceGUI || !GUI_SetClickCallback || !GUI_SetTextChangedCallback || !GUI_Textbox_SetMaxLength || !GUI_Textbox_SetValidationString || !SetPlayersDataPointer || !GUI_AddCheckbox || !GUI_SetChecked || !GUI_SetCheckboxChangedCallback)
+		if (!Chatbox_AddToChat || !GUI_CreateFrameWindow || !GUI_AddStaticText || !GUI_AddTextbox || !GUI_AddButton || !GUI_SetVisible || !GUI_AllowDrag || !GUI_SetPosition || !GUI_SetSize || !GUI_SetText || !GUI_RemoveWindow || !GUI_ForceGUI || !GUI_SetClickCallback || !GUI_SetTextChangedCallback || !GUI_Textbox_SetMaxLength || !GUI_Textbox_SetValidationString || !SetPlayersDataPointer || !GUI_AddCheckbox || !GUI_AddRadioButton || !GUI_SetChecked || !GUI_SetCheckboxChangedCallback)
 			DLLerror = true;
 
 		GUI_SetClickCallback(GUI_OnClick);

@@ -159,6 +159,8 @@
 		<Unit filename="../Object.h" />
 		<Unit filename="../Player.cpp" />
 		<Unit filename="../Player.h" />
+		<Unit filename="../RadioButton.cpp" />
+		<Unit filename="../RadioButton.h" />
 		<Unit filename="../RakNet/AutopatcherPatchContext.h" />
 		<Unit filename="../RakNet/AutopatcherRepositoryInterface.h" />
 		<Unit filename="../RakNet/BitStream.cpp" />

@@ -129,6 +129,8 @@
 		<Unit filename="Pipe.h" />
 		<Unit filename="Player.cpp" />
 		<Unit filename="Player.h" />
+		<Unit filename="RadioButton.cpp" />
+		<Unit filename="RadioButton.h" />
 		<Unit filename="RakNet.h" />
 		<Unit filename="RakNet/AutopatcherPatchContext.h" />
 		<Unit filename="RakNet/AutopatcherRepositoryInterface.h" />

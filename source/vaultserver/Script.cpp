@@ -421,6 +421,11 @@ void Script::SetupCheckbox(const FactoryCheckbox& checkbox, double posX, double 
 	SetupWindow(checkbox, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
 }
 
+void Script::SetupRadioButton(const FactoryRadioButton& radiobutton, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
+{
+	SetupWindow(radiobutton, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+}
+
 void Script::KillTimer(NetworkID id) noexcept
 {
 	if (!id)
@@ -898,6 +903,11 @@ bool Script::IsEdit(NetworkID id) noexcept
 bool Script::IsCheckbox(NetworkID id) noexcept
 {
 	return (GameFactory::GetType(id) & ID_CHECKBOX);
+}
+
+bool Script::IsRadioButton(NetworkID id) noexcept
+{
+	return (GameFactory::GetType(id) & ID_RADIOBUTTON);
 }
 
 bool Script::IsChatbox(NetworkID id) noexcept
@@ -2600,6 +2610,20 @@ bool Script::GetCheckboxSelected(NetworkID id) noexcept
 	});
 }
 
+bool Script::GetRadioButtonSelected(NetworkID id) noexcept
+{
+	return GameFactory::Operate<RadioButton, FailPolicy::Return>(id, [id](FactoryRadioButton& radiobutton) {
+		return radiobutton->GetSelected();
+	});
+}
+
+unsigned int Script::GetRadioButtonGroup(NetworkID id) noexcept
+{
+	return GameFactory::Operate<RadioButton, FailPolicy::Return>(id, [id](FactoryRadioButton& radiobutton) {
+		return radiobutton->GetGroup();
+	});
+}
+
 NetworkID (Script::CreateWindow)(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
 {
 	NetworkID id = GameFactory::Operate<Window>(GameFactory::Create<Window>(), [posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text](FactoryWindow& window) {
@@ -2920,7 +2944,7 @@ bool Script::SetEditValidation(NetworkID id, const char* validation) noexcept
 	return true;
 }
 
-NetworkID (Script::CreateCheckbox)(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
+NetworkID Script::CreateCheckbox(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
 {
 	NetworkID id = GameFactory::Operate<Checkbox>(GameFactory::Create<Checkbox>(), [posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text](FactoryCheckbox& checkbox) {
 		SetupCheckbox(checkbox, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
@@ -2944,6 +2968,51 @@ bool Script::SetCheckboxSelected(NetworkID id, bool selected) noexcept
 	if (!guids.empty())
 		Network::Queue({Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_WSELECTED>(id, selected),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
+		});
+
+	return true;
+}
+
+NetworkID Script::CreateRadioButton(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
+{
+	NetworkID id = GameFactory::Operate<RadioButton>(GameFactory::Create<RadioButton>(), [posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text](FactoryRadioButton& radiobutton) {
+		SetupRadioButton(radiobutton, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+		return radiobutton->GetNetworkID();
+	});
+
+	Call<CBI("OnCreate")>(id);
+
+	return id;
+}
+
+bool Script::SetRadioButtonSelected(NetworkID id, bool selected) noexcept
+{
+	if (GameFactory::GetType(id) != ID_RADIOBUTTON)
+		return false;
+
+	unsigned int group = GameFactory::Operate<RadioButton, FailPolicy::Return>(id, [selected](FactoryRadioButton& radiobutton) {
+		radiobutton->SetSelected(selected);
+		return radiobutton->GetGroup();
+	});
+
+	NetworkID previous = selected ? GameFactory::Operate<RadioButton, FailPolicy::Return>(GameFactory::GetByTypeID(ID_RADIOBUTTON), [group, id](FactoryRadioButtons& radiobuttons) {
+		for (const auto& radiobutton : radiobuttons)
+			if (radiobutton->GetGroup() == group && radiobutton->GetSelected() && radiobutton->GetNetworkID() != id)
+			{
+				radiobutton->SetSelected(false);
+				return radiobutton->GetNetworkID();
+			}
+
+		return 0ull;
+	}) : 0;
+
+	NetworkID root = GetWindowRoot(id);
+	vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
+
+	if (!guids.empty())
+		Network::Queue({Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_WRSELECTED>(id, previous, selected),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
 		});
 

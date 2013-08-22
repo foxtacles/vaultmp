@@ -83,6 +83,11 @@ public OnCheckboxSelect(ID, player, Bool:selected)
 
 }
 
+public OnRadioButtonSelect(ID, previous, player)
+{
+
+}
+
 public OnCreate(ID)
 {
 

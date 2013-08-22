@@ -268,44 +268,34 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				}
 
 				case pTypes::ID_WINDOW_NEW:
-				{
-					NetworkID id = GameFactory::Create<Window>(packet.get());
-					auto reference = GameFactory::Get<Window>(id);
-					Game::NewWindow(reference.get());
-					break;
-				}
+					GameFactory::Operate<Window>(GameFactory::Create<Window>(packet.get()), [](FactoryWindow& window) {
+						Game::NewWindow(window);
+					}); break;
 
 				case pTypes::ID_BUTTON_NEW:
-				{
-					NetworkID id = GameFactory::Create<Button>(packet.get());
-					auto reference = GameFactory::Get<Button>(id);
-					Game::NewButton(reference.get());
-					break;
-				}
+					GameFactory::Operate<Button>(GameFactory::Create<Button>(packet.get()), [](FactoryButton& button) {
+						Game::NewButton(button);
+					}); break;
 
 				case pTypes::ID_TEXT_NEW:
-				{
-					NetworkID id = GameFactory::Create<Text>(packet.get());
-					auto reference = GameFactory::Get<Text>(id);
-					Game::NewText(reference.get());
-					break;
-				}
+					GameFactory::Operate<Text>(GameFactory::Create<Text>(packet.get()), [](FactoryText& text) {
+						Game::NewText(text);
+					}); break;
 
 				case pTypes::ID_EDIT_NEW:
-				{
-					NetworkID id = GameFactory::Create<Edit>(packet.get());
-					auto reference = GameFactory::Get<Edit>(id);
-					Game::NewEdit(reference.get());
-					break;
-				}
+					GameFactory::Operate<Edit>(GameFactory::Create<Edit>(packet.get()), [](FactoryEdit& edit) {
+						Game::NewEdit(edit);
+					}); break;
 
 				case pTypes::ID_CHECKBOX_NEW:
-				{
-					NetworkID id = GameFactory::Create<Checkbox>(packet.get());
-					auto reference = GameFactory::Get<Checkbox>(id);
-					Game::NewCheckbox(reference.get());
-					break;
-				}
+					GameFactory::Operate<Checkbox>(GameFactory::Create<Checkbox>(packet.get()), [](FactoryCheckbox& checkbox) {
+						Game::NewCheckbox(checkbox);
+					}); break;
+
+				case pTypes::ID_RADIOBUTTON_NEW:
+					GameFactory::Operate<RadioButton>(GameFactory::Create<RadioButton>(packet.get()), [](FactoryRadioButton& radiobutton) {
+						Game::NewRadioButton(radiobutton);
+					}); break;
 
 				case pTypes::ID_WINDOW_REMOVE:
 				{
@@ -614,6 +604,16 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					PacketFactory::Access<pTypes::ID_UPDATE_WSELECTED>(packet, id, selected);
 					auto reference = GameFactory::Get<Checkbox>(id);
 					Game::net_UpdateCheckboxSelected(reference.get(), selected);
+					break;
+				}
+
+				case pTypes::ID_UPDATE_WRSELECTED:
+				{
+					NetworkID id, previous;
+					bool selected;
+					PacketFactory::Access<pTypes::ID_UPDATE_WRSELECTED>(packet, id, previous, selected);
+					auto reference = GameFactory::Get<RadioButton>(vector<NetworkID>{id, previous});
+					Game::net_UpdateRadioButtonSelected(reference[0].get(), reference[1], selected);
 					break;
 				}
 

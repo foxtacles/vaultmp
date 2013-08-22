@@ -4,6 +4,7 @@
 #include "vaultserver.h"
 #include "Player.h"
 #include "Checkbox.h"
+#include "RadioButton.h"
 #include "Network.h"
 
 /**
@@ -90,6 +91,10 @@ class Server
 		 * \brief Handles checkbox selected network packet
 		 */
 		static NetworkResponse GetCheckboxSelected(RakNet::RakNetGUID guid, FactoryCheckbox& reference, bool selected);
+		/**
+		 * \brief Handles radio button selected network packet
+		 */
+		static NetworkResponse GetRadioButtonSelected(RakNet::RakNetGUID guid, FactoryRadioButton& reference, ExpectedRadioButton& previous);
 		/**
 		 * \brief Handles player chat message network packet
 		 */

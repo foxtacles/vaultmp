@@ -227,6 +227,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func::GUIMaxLen:
 			case Func::GUIValid:
 			case Func::GUICreateCheckbox:
+			case Func::GUICreateRadio:
 			case Func::SetGlobalValue:
 			case Func::MarkForDelete:
 			case Func::AgeRace:
@@ -1014,6 +1015,25 @@ void Game::NewCheckbox(const FactoryCheckbox& reference)
 	});
 }
 
+void Game::NewRadioButton(const FactoryRadioButton& reference)
+{
+	if (!reference->GetParentWindow())
+		throw VaultException("Window %llu requires a parent", reference->GetNetworkID());
+
+	Interface::Dynamic([&reference]() {
+		if (reference->GetLabel().empty())
+		{
+			reference->SetLabel(Utils::toString(reference->GetNetworkID()));
+
+			Interface::ExecuteCommand(Func::GUICreateRadio, {RawParameter(Utils::toString(reference->GetParentWindow())), RawParameter(reference->GetLabel()), RawParameter(reference->GetGroup())});
+		}
+
+		NewWindow(reference);
+
+		SetRadioButtonSelected(reference);
+	});
+}
+
 void Game::PlaceAtMe(const FactoryObject& reference, unsigned int baseID, double condition, unsigned int count, unsigned int key)
 {
 	PlaceAtMe(reference->GetReference(), baseID, condition, count, key);
@@ -1541,6 +1561,13 @@ void Game::SetEditValidation(const FactoryEdit& reference)
 }
 
 void Game::SetCheckboxSelected(const FactoryCheckbox& reference)
+{
+	Interface::Dynamic([&reference]() {
+		Interface::ExecuteCommand(Func::GUICheckbox, {RawParameter(reference->GetLabel()), RawParameter(reference->GetSelected())});
+	});
+}
+
+void Game::SetRadioButtonSelected(const FactoryRadioButton& reference)
 {
 	Interface::Dynamic([&reference]() {
 		Interface::ExecuteCommand(Func::GUICheckbox, {RawParameter(reference->GetLabel()), RawParameter(reference->GetSelected())});
@@ -2195,6 +2222,16 @@ void Game::net_UpdateCheckboxSelected(const FactoryCheckbox& reference, bool sel
 	SetCheckboxSelected(reference);
 }
 
+void Game::net_UpdateRadioButtonSelected(const FactoryRadioButton& reference, ExpectedRadioButton& previous, bool selected)
+{
+	if (previous)
+		previous->SetSelected(false);
+
+	reference->SetSelected(selected);
+
+	SetRadioButtonSelected(reference);
+}
+
 void Game::net_UpdateWindowMode(bool enabled)
 {
 	GUIMode = enabled;
@@ -2435,12 +2472,37 @@ void Game::GetCheckboxSelected(const string& name, bool selected)
 	if (!checkbox)
 		return;
 
-	GameFactory::Operate<Checkbox>(checkbox, [selected](FactoryCheckbox& checkbox) {
+	if (!GameFactory::Operate<Checkbox, FailPolicy::Bool>(checkbox, [selected](FactoryCheckbox& checkbox) {
 		checkbox->SetSelected(selected);
 
 		Network::Queue({Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_WSELECTED>(checkbox->GetNetworkID(), selected),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 		});
-	});
+	}))
+	{
+		if (!selected)
+			throw VaultException("Radio button event should only fire on selection");
+
+		unsigned int group = GameFactory::Operate<RadioButton>(checkbox, [](FactoryRadioButton& radiobutton) {
+			radiobutton->SetSelected(true);
+			return radiobutton->GetGroup();
+		});
+
+		NetworkID previous = GameFactory::Operate<RadioButton>(GameFactory::GetByTypeID(ID_RADIOBUTTON), [checkbox, group](FactoryRadioButtons& radiobuttons) {
+			for (const auto& radiobutton : radiobuttons)
+				if (radiobutton->GetGroup() == group && radiobutton->GetSelected() && radiobutton->GetNetworkID() != checkbox)
+				{
+					radiobutton->SetSelected(false);
+					return radiobutton->GetNetworkID();
+				}
+
+			return 0ull;
+		});
+
+		Network::Queue({Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_WRSELECTED>(checkbox, previous, true),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+		});
+	}
 }

@@ -219,7 +219,7 @@ class FactoryWrapper<Base>
 		Base* base;
 		unsigned int type;
 
-		FactoryWrapper(Base* base, unsigned int type) noexcept : base(static_cast<Base*>(base->StartSession())), type(type) {}
+		FactoryWrapper(Base* base, unsigned int type) noexcept : base(base ? static_cast<Base*>(base->StartSession()) : nullptr), type(type) {}
 
 	public:
 		FactoryWrapper(const FactoryWrapper& p) noexcept : base(p.base), type(p.type)
@@ -299,11 +299,7 @@ typedef std::vector<Expected<FactoryWrapper<Base>>> ExpectedBases;
 		friend Expected<FactoryWrapper<T>> vaultcast_swap(FactoryWrapper<U>& object) noexcept;                                                                       \
                                                                                                                                                                      \
 	protected:                                                                                                                                                       \
-		FactoryWrapper(Base* base, unsigned int type) noexcept : FactoryWrapper<base_class>(base, type)                                                              \
-		{                                                                                                                                                            \
-			if (!validate<derived_class>())                                                                                                                          \
-				this->base = nullptr;                                                                                                                                \
-		}                                                                                                                                                            \
+		FactoryWrapper(Base* base, unsigned int type) noexcept : FactoryWrapper<base_class>(validate<derived_class>(type) ? base : nullptr, type) {}                 \
 		template<typename T> FactoryWrapper(const FactoryWrapper<T>& p) noexcept : FactoryWrapper<base_class>(p) {}                                                  \
 		template<typename T> FactoryWrapper& operator=(const FactoryWrapper<T>& p) noexcept { return FactoryWrapper<base_class>::operator=(p); }                     \
                                                                                                                                                                      \

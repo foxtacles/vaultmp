@@ -11,6 +11,7 @@
 #include "Text.h"
 #include "Edit.h"
 #include "Checkbox.h"
+#include "RadioButton.h"
 #include "RakNet.h"
 
 #ifdef VAULTMP_DEBUG
@@ -202,6 +203,10 @@ class Game
 		 */
 		static void NewCheckbox(const FactoryCheckbox& reference);
 		/**
+		 * \brief Creates a new RadioButton
+		 */
+		static void NewRadioButton(const FactoryRadioButton& reference);
+		/**
 		 * \brief Places an Object in-game
 		 */
 		static void PlaceAtMe(const FactoryObject& reference, unsigned int baseID, double condition = 1.00, unsigned int count = 1, unsigned int key = 0);
@@ -368,6 +373,10 @@ class Game
 		 */
 		static void SetCheckboxSelected(const FactoryCheckbox& reference);
 		/**
+		 * \brief Updates the settings of a GUI radio button (selected)
+		 */
+		static void SetRadioButtonSelected(const FactoryRadioButton& reference);
+		/**
 		 * \brief Updates the window mode
 		 */
 		static void SetWindowMode();
@@ -524,6 +533,10 @@ class Game
 		 * \brief Network function to handle GUI checkbox selected
 		 */
 		static void net_UpdateCheckboxSelected(const FactoryCheckbox& reference, bool selected);
+		/**
+		 * \brief Network function to handle GUI radio button selected
+		 */
+		static void net_UpdateRadioButtonSelected(const FactoryRadioButton& reference, ExpectedRadioButton& previous, bool selected);
 		/**
 		 * \brief Network function to handle GUI window mode
 		 */

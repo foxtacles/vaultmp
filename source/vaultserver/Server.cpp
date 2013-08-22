@@ -511,6 +511,37 @@ NetworkResponse Server::GetCheckboxSelected(RakNetGUID guid, FactoryCheckbox& re
 	return response;
 }
 
+NetworkResponse Server::GetRadioButtonSelected(RakNetGUID guid, FactoryRadioButton& reference, ExpectedRadioButton& previous)
+{
+	NetworkResponse response;
+
+	NetworkID id = reference->GetNetworkID();
+	NetworkID previous_id = 0;
+
+	reference->SetSelected(true);
+	GameFactory::Leave(reference);
+
+	if (previous)
+	{
+		previous_id = previous->GetNetworkID();
+		previous->SetSelected(false);
+		GameFactory::Leave(previous.get());
+	}
+
+	NetworkID root = Script::GetWindowRoot(id);
+
+	vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root), guid));
+
+	if (!guids.empty())
+		response.emplace_back(Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_WRSELECTED>(id, previous_id, true),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids));
+
+	Script::Call<Script::CBI("OnRadioButtonSelect")>(id, previous_id, Client::GetClientFromGUID(guid)->GetPlayer());
+
+	return response;
+}
+
 NetworkResponse Server::ChatMessage(RakNetGUID guid, const string& message)
 {
 	Client* client = Client::GetClientFromGUID(guid);

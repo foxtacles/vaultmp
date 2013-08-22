@@ -22,9 +22,9 @@ static const unsigned int MAX_PLAYER_NAME       =   16;
 static const unsigned int MAX_PASSWORD_SIZE     =   16;
 static const unsigned int MAX_MASTER_SERVER     =   32;
 static const unsigned int MAX_MOD_FILE          =   64;
-static const unsigned int MAX_CELL_NAME			=	36;
+static const unsigned int MAX_CELL_NAME         =   36;
 static const unsigned int MAX_MESSAGE_LENGTH    =   64;
-static const unsigned int MAX_CHAT_LENGTH		=	128;
+static const unsigned int MAX_CHAT_LENGTH       =   128;
 
 static const unsigned short VAULTFUNCTION       =   0xE000;
 
@@ -33,7 +33,7 @@ static const unsigned char PIPE_SYS_WAKEUP      =   0x01;
 static const unsigned char PIPE_OP_COMMAND      =   0x02;
 static const unsigned char PIPE_OP_RETURN       =   0x03;
 static const unsigned char PIPE_OP_RETURN_BIG   =   0x04;
-static const unsigned char PIPE_OP_RETURN_RAW	=	0x05;
+static const unsigned char PIPE_OP_RETURN_RAW	=   0x05;
 static const unsigned char PIPE_ERROR_CLOSE     =   0x06;
 
 static const unsigned int RAKNET_FILE_SERVER    =   1550;

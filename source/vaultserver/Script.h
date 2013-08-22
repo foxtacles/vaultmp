@@ -13,6 +13,7 @@
 #include "Text.h"
 #include "Edit.h"
 #include "Checkbox.h"
+#include "RadioButton.h"
 #include "Dedicated.h"
 #include "PAWN.h"
 #include "boost/any.hpp"
@@ -218,6 +219,7 @@ class Script
 		static void SetupText(const FactoryText& text, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text_) noexcept;
 		static void SetupEdit(const FactoryEdit& edit, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept;
 		static void SetupCheckbox(const FactoryCheckbox& checkbox, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept;
+		static void SetupRadioButton(const FactoryRadioButton& radiobutton, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept;
 		static void KillTimer(RakNet::NetworkID id = 0) noexcept;
 		static void MakePublic(ScriptFunc _public, const char* name, const char* def) noexcept;
 		static void MakePublicPAWN(ScriptFuncPAWN _public, AMX* amx, const char* name, const char* def) noexcept;
@@ -257,6 +259,7 @@ class Script
 		static bool IsText(RakNet::NetworkID id) noexcept;
 		static bool IsEdit(RakNet::NetworkID id) noexcept;
 		static bool IsCheckbox(RakNet::NetworkID id) noexcept;
+		static bool IsRadioButton(RakNet::NetworkID id) noexcept;
 		static bool IsChatbox(RakNet::NetworkID id) noexcept;
 		static unsigned int GetConnection(RakNet::NetworkID id) noexcept;
 		static unsigned int GetList(unsigned int type, RakNet::NetworkID** data) noexcept;
@@ -360,6 +363,8 @@ class Script
 		static unsigned int GetEditMaxLength(RakNet::NetworkID id) noexcept;
 		static const char* GetEditValidation(RakNet::NetworkID id) noexcept;
 		static bool GetCheckboxSelected(RakNet::NetworkID id) noexcept;
+		static bool GetRadioButtonSelected(RakNet::NetworkID id) noexcept;
+		static unsigned int GetRadioButtonGroup(RakNet::NetworkID id) noexcept;
 
 		static RakNet::NetworkID (CreateWindow)(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept;
 		static bool DestroyWindow(RakNet::NetworkID id) noexcept;
@@ -377,6 +382,8 @@ class Script
 		static bool SetEditValidation(RakNet::NetworkID id, const char* validation) noexcept;
 		static RakNet::NetworkID CreateCheckbox(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept;
 		static bool SetCheckboxSelected(RakNet::NetworkID id, bool selected) noexcept;
+		static RakNet::NetworkID CreateRadioButton(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept;
+		static bool SetRadioButtonSelected(RakNet::NetworkID id, bool selected) noexcept;
 
 		static constexpr ScriptFunctionData functions[] {
 			{"timestamp", Utils::timestamp},
@@ -424,6 +431,7 @@ class Script
 			{"IsText", Script::IsText},
 			{"IsEdit", Script::IsEdit},
 			{"IsCheckbox", Script::IsCheckbox},
+			{"IsRadioButton", Script::IsRadioButton},
 			{"IsChatbox", Script::IsChatbox},
 			{"GetType", (unsigned int(*)(RakNet::NetworkID)) GameFactory::GetType},
 			{"GetConnection", Script::GetConnection},
@@ -531,6 +539,8 @@ class Script
 			{"GetEditMaxLength", Script::GetEditMaxLength},
 			{"GetEditValidation", Script::GetEditValidation},
 			{"GetCheckboxSelected", Script::GetCheckboxSelected},
+			{"GetRadioButtonSelected", Script::GetRadioButtonSelected},
+			{"GetRadioButtonGroup", Script::GetRadioButtonGroup},
 
 			{"CreateWindow", Script::CreateWindow},
 			{"DestroyWindow", Script::DestroyWindow},
@@ -548,6 +558,8 @@ class Script
 			{"SetEditValidation", Script::SetEditValidation},
 			{"CreateCheckbox", Script::CreateCheckbox},
 			{"SetCheckboxSelected", Script::SetCheckboxSelected},
+			{"CreateRadioButton", Script::CreateRadioButton},
+			{"SetRadioButtonSelected", Script::SetRadioButtonSelected},
 		};
 
 		static constexpr ScriptCallbackData callbacks[] {
@@ -571,6 +583,7 @@ class Script
 			{"OnWindowClick", Function<void, RakNet::NetworkID, RakNet::NetworkID>()},
 			{"OnWindowTextChange", Function<void, RakNet::NetworkID, RakNet::NetworkID, const char*>()},
 			{"OnCheckboxSelect", Function<void, RakNet::NetworkID, RakNet::NetworkID, bool>()},
+			{"OnRadioButtonSelect", Function<void, RakNet::NetworkID, RakNet::NetworkID, RakNet::NetworkID>()},
 			{"OnClientAuthenticate", Function<bool, const char*, const char*>()},
 			{"OnGameYearChange", Function<void, unsigned int>()},
 			{"OnGameMonthChange", Function<void, unsigned int>()},

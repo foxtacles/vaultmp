@@ -262,6 +262,16 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					break;
 				}
 
+				case pTypes::ID_UPDATE_WRSELECTED:
+				{
+					NetworkID id, previous;
+					bool selected;
+					PacketFactory::Access<pTypes::ID_UPDATE_WRSELECTED>(packet, id, previous, selected);
+					auto reference = GameFactory::Get<RadioButton>(vector<NetworkID>{id, previous});
+					response = Server::GetRadioButtonSelected(data->guid, reference[0].get(), reference[1]);
+					break;
+				}
+
 				default:
 					throw VaultException("Unhandled packet type %d", data->data[0]).stacktrace();
 			}

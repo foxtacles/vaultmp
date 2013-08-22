@@ -82,6 +82,11 @@ Void VAULTSCRIPT OnCheckboxSelect(ID checkbox, ID player, State selected) noexce
 
 }
 
+Void VAULTSCRIPT OnRadioButtonSelect(ID radiobutton, ID previous, ID player) noexcept
+{
+
+}
+
 Void VAULTSCRIPT OnCreate(ID reference) noexcept
 {
 
