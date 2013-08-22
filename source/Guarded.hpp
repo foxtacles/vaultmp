@@ -14,7 +14,7 @@ template<typename T = void>
 class Guarded : private Value<T>, private CriticalSection
 {
 	public:
-		virtual ~Guarded() noexcept {};
+		~Guarded() noexcept {};
 
 		template<typename F>
 		typename std::enable_if<!std::is_same<typename std::result_of<F(T&)>::type, void>::value, typename std::result_of<F(T&)>::type>::type Operate(F function) {
