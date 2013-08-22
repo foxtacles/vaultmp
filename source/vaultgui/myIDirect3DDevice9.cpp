@@ -188,9 +188,9 @@ myIDirect3DDevice9::myIDirect3DDevice9(IDirect3DDevice9* pOriginal)
 
 		wnd->addChildWindow(closeBTN);
 
-		/*GUI_CreateFrameWindow("w1");
+		GUI_CreateFrameWindow("w1");
 		GUI_SetSize("w1",0.35,0.4,0,0);
-		GUI_SetPosition("w1",0.6,0.1,0,0);*/
+		GUI_SetPosition("w1",0.6,0.1,0,0);
 
 		/*GUI_AddRadioButton("w1","r",1);
 		GUI_SetPosition("r",0.0,0.0,0,0);
@@ -203,13 +203,14 @@ myIDirect3DDevice9::myIDirect3DDevice9(IDirect3DDevice9* pOriginal)
 
 		GUI_AddRadioButton("w1","r3",1);
 		GUI_SetPosition("r3",0.0,0.2,0,0);
-		GUI_SetSize("r3",1,0.2,0,0);
+		GUI_SetSize("r3",1,0.2,0,0);*/
 
-		GUI_AddStaticText("w1","st");
-		GUI_SetText("st","test");
-		GUI_SetPosition("st",0.0,0.5,0,0);
-		GUI_SetSize("st",1,0.2,0,0);
-		GUI_SetTextColour("st","FFFF0000");*/
+		/*GUI_AddMultilineTextbox("w1","st");
+		GUI_SetText("st","testtest\r\nblboblba\r\nasgatesttest\r\nblboblba\r\nasga");
+		GUI_SetPosition("st",0.0,0.1,0,0);
+		GUI_SetSize("st",1,0.7,0,0);*/
+
+		//GUI_SetTextColour("st","FFFF0000");
 
 		/*GUI_AddCheckbox("w1","c");
 		GUI_SetPosition("c",0.1,0.1,0,0);
