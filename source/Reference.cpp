@@ -1,5 +1,5 @@
-#include "Reference.h"
-#include "Utils.h"
+#include "Reference.hpp"
+#include "Utils.hpp"
 
 using namespace std;
 using namespace RakNet;

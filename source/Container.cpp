@@ -1,9 +1,9 @@
-#include "Container.h"
+#include "Container.hpp"
 
 #ifndef VAULTSERVER
-#include "Game.h"
+#include "Game.hpp"
 #else
-#include "Item.h"
+#include "Item.hpp"
 #endif
 
 using namespace std;

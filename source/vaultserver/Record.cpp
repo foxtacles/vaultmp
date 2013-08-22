@@ -1,6 +1,6 @@
-#include "Record.h"
-#include "Exterior.h"
-#include "Interior.h"
+#include "Record.hpp"
+#include "Exterior.hpp"
+#include "Interior.hpp"
 #include "sqlite/sqlite3.h"
 
 #include <algorithm>

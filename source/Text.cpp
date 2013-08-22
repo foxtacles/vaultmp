@@ -1,4 +1,4 @@
-#include "Text.h"
+#include "Text.hpp"
 
 using namespace std;
 using namespace RakNet;

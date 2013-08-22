@@ -1,4 +1,4 @@
-#include "Network.h"
+#include "Network.hpp"
 
 using namespace std;
 using namespace RakNet;

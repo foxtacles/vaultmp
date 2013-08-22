@@ -1,7 +1,7 @@
-#include "Object.h"
+#include "Object.hpp"
 
 #ifndef VAULTSERVER
-#include "Game.h"
+#include "Game.hpp"
 #endif
 
 using namespace std;

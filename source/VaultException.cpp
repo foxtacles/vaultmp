@@ -1,4 +1,4 @@
-#include "VaultException.h"
+#include "VaultException.hpp"
 
 #ifdef VAULTMP_DEBUG
 #include <sstream>

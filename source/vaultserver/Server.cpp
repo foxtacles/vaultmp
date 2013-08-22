@@ -1,8 +1,8 @@
-#include "Server.h"
-#include "Script.h"
-#include "Client.h"
-#include "ServerEntry.h"
-#include "Game.h"
+#include "Server.hpp"
+#include "Script.hpp"
+#include "Client.hpp"
+#include "ServerEntry.hpp"
+#include "Game.hpp"
 
 #ifdef VAULTMP_DEBUG
 DebugInput<Server> Server::debug;

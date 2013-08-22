@@ -1,6 +1,6 @@
-#include "ItemList.h"
-#include "Network.h"
-#include "Item.h"
+#include "ItemList.hpp"
+#include "Network.hpp"
+#include "Item.hpp"
 
 #include <algorithm>
 

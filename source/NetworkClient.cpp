@@ -1,7 +1,7 @@
-#include "NetworkClient.h"
-#include "Bethesda.h"
-#include "Interface.h"
-#include "Game.h"
+#include "NetworkClient.hpp"
+#include "Bethesda.hpp"
+#include "Interface.hpp"
+#include "Game.hpp"
 
 using namespace std;
 using namespace RakNet;

@@ -1,6 +1,6 @@
-#include "BaseContainer.h"
-#include "Record.h"
-#include "VaultException.h"
+#include "BaseContainer.hpp"
+#include "Record.hpp"
+#include "VaultException.hpp"
 #include "sqlite/sqlite3.h"
 
 #include <algorithm>

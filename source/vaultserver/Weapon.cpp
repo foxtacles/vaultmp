@@ -1,4 +1,4 @@
-#include "Weapon.h"
+#include "Weapon.hpp"
 #include "sqlite/sqlite3.h"
 
 using namespace std;

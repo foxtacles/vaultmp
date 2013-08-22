@@ -1,6 +1,6 @@
-#include "ScriptFunction.h"
-#include "VaultException.h"
-#include "PAWN.h"
+#include "ScriptFunction.hpp"
+#include "VaultException.hpp"
+#include "PAWN.hpp"
 
 using namespace std;
 

@@ -28,12 +28,10 @@
 			<Add option="-limagehlp" />
 			<Add option="-static" />
 		</Linker>
-		<Unit filename="..\Pipe.cpp" />
-		<Unit filename="..\Pipe.h" />
-		<Unit filename="..\Utils.cpp" />
-		<Unit filename="..\Utils.h" />
+		<Unit filename="../Pipe.cpp" />
+		<Unit filename="../Utils.cpp" />
 		<Unit filename="vaultmp.cpp" />
-		<Unit filename="vaultmp.h" />
+		<Unit filename="vaultmp.hpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />

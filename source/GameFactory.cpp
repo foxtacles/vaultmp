@@ -1,7 +1,7 @@
-#include "GameFactory.h"
+#include "GameFactory.hpp"
 
-#include "Actor.h"
-#include "Window.h"
+#include "Actor.hpp"
+#include "Window.hpp"
 
 using namespace std;
 using namespace RakNet;

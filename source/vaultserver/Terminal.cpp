@@ -1,5 +1,5 @@
-#include "Terminal.h"
-#include "API.h"
+#include "Terminal.hpp"
+#include "API.hpp"
 #include "sqlite/sqlite3.h"
 
 using namespace std;

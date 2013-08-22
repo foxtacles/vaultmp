@@ -1,4 +1,4 @@
-#include "VaultFunctor.h"
+#include "VaultFunctor.hpp"
 
 #include <algorithm>
 

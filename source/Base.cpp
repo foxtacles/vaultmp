@@ -1,5 +1,5 @@
-#include "Base.h"
-#include "Network.h"
+#include "Base.hpp"
+#include "Network.hpp"
 
 using namespace std;
 using namespace RakNet;

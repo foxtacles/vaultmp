@@ -1,5 +1,5 @@
-#include "NPC.h"
-#include "Race.h"
+#include "NPC.hpp"
+#include "Race.hpp"
 #include "sqlite/sqlite3.h"
 
 #include <algorithm>

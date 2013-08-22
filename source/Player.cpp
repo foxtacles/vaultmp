@@ -1,9 +1,9 @@
-#include "Player.h"
+#include "Player.hpp"
 
 #include <algorithm>
 
 #ifndef VAULTSERVER
-#include "Game.h"
+#include "Game.hpp"
 #endif
 
 using namespace std;

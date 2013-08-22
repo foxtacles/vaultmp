@@ -1,5 +1,5 @@
-#include "Timer.h"
-#include "Network.h"
+#include "Timer.hpp"
+#include "Network.hpp"
 
 using namespace std;
 using namespace RakNet;

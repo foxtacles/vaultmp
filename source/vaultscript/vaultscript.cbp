@@ -48,10 +48,9 @@
 		<Linker>
 			<Add option="-static" />
 		</Linker>
-		<Unit filename="default/pickup.h" />
-		<Unit filename="records.h" />
+		<Unit filename="records.hpp" />
 		<Unit filename="vaultscript.cpp" />
-		<Unit filename="vaultscript.h" />
+		<Unit filename="vaultscript.hpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />

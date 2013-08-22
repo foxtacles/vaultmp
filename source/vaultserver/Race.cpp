@@ -1,4 +1,4 @@
-#include "Race.h"
+#include "Race.hpp"
 #include "sqlite/sqlite3.h"
 
 using namespace std;

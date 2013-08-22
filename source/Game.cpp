@@ -1,5 +1,5 @@
-#include "Game.h"
-#include "Shared.h"
+#include "Game.hpp"
+#include "Shared.hpp"
 
 #include <algorithm>
 

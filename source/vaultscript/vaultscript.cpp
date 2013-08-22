@@ -1,5 +1,5 @@
-#include "vaultscript.h"
-#include "default/pickup.h"
+#include "vaultscript.hpp"
+#include "default/pickup.hpp"
 
 #include <cstdio>
 

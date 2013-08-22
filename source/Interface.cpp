@@ -1,6 +1,6 @@
-#include "Interface.h"
-#include "Pipe.h"
-#include "VaultException.h"
+#include "Interface.hpp"
+#include "Pipe.hpp"
+#include "VaultException.hpp"
 
 #include <algorithm>
 

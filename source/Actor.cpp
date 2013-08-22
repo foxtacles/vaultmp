@@ -1,11 +1,11 @@
-#include "Actor.h"
+#include "Actor.hpp"
 
 #ifndef VAULTSERVER
-#include "Game.h"
+#include "Game.hpp"
 #else
-#include "vaultserver/Record.h"
-#include "vaultserver/Weapon.h"
-#include "Item.h"
+#include "vaultserver/Record.hpp"
+#include "vaultserver/Weapon.hpp"
+#include "Item.hpp"
 #endif
 
 using namespace std;

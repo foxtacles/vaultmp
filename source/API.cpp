@@ -1,6 +1,6 @@
-#include "API.h"
-#include "Data.h"
-#include "VaultException.h"
+#include "API.hpp"
+#include "Data.hpp"
+#include "VaultException.hpp"
 
 #include <algorithm>
 #include <cstring>

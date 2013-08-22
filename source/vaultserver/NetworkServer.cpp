@@ -1,9 +1,9 @@
-#include "NetworkServer.h"
-#include "Client.h"
-#include "Utils.h"
-#include "Server.h"
-#include "Dedicated.h"
-#include "Game.h"
+#include "NetworkServer.hpp"
+#include "Client.hpp"
+#include "Utils.hpp"
+#include "Server.hpp"
+#include "Dedicated.hpp"
+#include "Game.hpp"
 
 using namespace std;
 using namespace RakNet;

@@ -1,4 +1,4 @@
-#include "Exterior.h"
+#include "Exterior.hpp"
 #include "sqlite/sqlite3.h"
 
 #include <algorithm>

@@ -1,5 +1,5 @@
-#include "CriticalSection.h"
-#include "VaultException.h"
+#include "CriticalSection.hpp"
+#include "VaultException.hpp"
 
 #ifdef VAULTMP_DEBUG
 #include <sstream>

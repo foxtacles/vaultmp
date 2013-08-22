@@ -1,6 +1,6 @@
-#include "Reference.h"
-#include "API.h"
-#include "Utils.h"
+#include "Reference.hpp"
+#include "API.hpp"
+#include "Utils.hpp"
 #include "sqlite/sqlite3.h"
 
 #include <cmath>

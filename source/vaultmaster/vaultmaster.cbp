@@ -48,7 +48,6 @@
 			<Add option="-std=gnu++0x" />
 			<Add directory=".." />
 		</Compiler>
-		<Unit filename="../Data.h" />
 		<Unit filename="../RakNet/AutopatcherPatchContext.h" />
 		<Unit filename="../RakNet/AutopatcherRepositoryInterface.h" />
 		<Unit filename="../RakNet/Base64Encoder.cpp" />
@@ -294,13 +293,13 @@
 		<Unit filename="../RakNet/rdlmalloc.cpp" />
 		<Unit filename="../RakNet/rdlmalloc.h" />
 		<Unit filename="../ServerEntry.cpp" />
-		<Unit filename="../ServerEntry.h" />
 		<Unit filename="../Utils.cpp" />
-		<Unit filename="../Utils.h" />
 		<Unit filename="MasterServer.cpp" />
 		<Unit filename="MasterServer.h" />
+		<Unit filename="MasterServer.hpp" />
 		<Unit filename="vaultmaster.cpp" />
 		<Unit filename="vaultmaster.h" />
+		<Unit filename="vaultmaster.hpp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

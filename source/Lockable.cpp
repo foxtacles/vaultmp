@@ -1,5 +1,5 @@
-#include "Lockable.h"
-#include "VaultException.h"
+#include "Lockable.hpp"
+#include "VaultException.hpp"
 
 #include <algorithm>
 #include <climits>

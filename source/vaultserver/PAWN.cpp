@@ -1,6 +1,6 @@
-#include "PAWN.h"
-#include "Script.h"
-#include "Public.h"
+#include "PAWN.hpp"
+#include "Script.hpp"
+#include "Public.hpp"
 #include "amx/amx.h"
 #include "amx/amxaux.h"
 

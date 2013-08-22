@@ -1,9 +1,9 @@
-#include "Bethesda.h"
-#include "Utils.h"
-#include "Interface.h"
-#include "Game.h"
-#include "NetworkClient.h"
-#include "VaultException.h"
+#include "Bethesda.hpp"
+#include "Utils.hpp"
+#include "Interface.hpp"
+#include "Game.hpp"
+#include "NetworkClient.hpp"
+#include "VaultException.hpp"
 
 #include <tlhelp32.h>
 #include <shlwapi.h>
