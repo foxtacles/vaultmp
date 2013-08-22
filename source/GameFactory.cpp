@@ -27,6 +27,8 @@ Database<DB::BaseContainer> GameFactory::dbContainers;
 Database<DB::Item> GameFactory::dbItems;
 Database<DB::Terminal> GameFactory::dbTerminals;
 Database<DB::Interior> GameFactory::dbInteriors;
+Database<DB::ActorReference> GameFactory::dbActorReferences;
+Database<DB::CreatureReference> GameFactory::dbCreatureReferences;
 #endif
 
 void GameFactory::Initialize()
@@ -42,6 +44,8 @@ void GameFactory::Initialize()
 	dbItems.initialize(DB_FALLOUT3, {"items"});
 	dbTerminals.initialize(DB_FALLOUT3, {"terminals"});
 	dbInteriors.initialize(DB_FALLOUT3, {"interiors"});
+	dbActorReferences.initialize(DB_FALLOUT3, {"arefs"});
+	dbCreatureReferences.initialize(DB_FALLOUT3, {"crefs"});
 #endif
 }
 

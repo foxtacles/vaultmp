@@ -12,7 +12,7 @@
 class sqlite3_stmt;
 
 /**
- * \brief Represents a game weapon
+ * \brief Represents a game reference
  */
 
 namespace DB

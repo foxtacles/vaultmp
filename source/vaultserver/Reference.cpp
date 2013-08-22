@@ -85,7 +85,7 @@ Expected<Reference*> Reference::Lookup(unsigned int refID)
 	if (it != refs.end())
 		return it->second;
 
-	return VaultException("No weapon with refID %08X found", refID);
+	return VaultException("No reference with refID %08X found", refID);
 }
 
 vector<Reference*> Reference::Lookup(const std::string& type)

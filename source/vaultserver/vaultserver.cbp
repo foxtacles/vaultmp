@@ -380,10 +380,14 @@
 			<Option target="Debug" />
 			<Option target="DebugUnix" />
 		</Unit>
+		<Unit filename="ActorReference.cpp" />
+		<Unit filename="ActorReference.hpp" />
 		<Unit filename="BaseContainer.cpp" />
 		<Unit filename="BaseContainer.hpp" />
 		<Unit filename="Client.cpp" />
 		<Unit filename="Client.hpp" />
+		<Unit filename="CreatureReference.cpp" />
+		<Unit filename="CreatureReference.hpp" />
 		<Unit filename="Database.cpp" />
 		<Unit filename="Database.hpp" />
 		<Unit filename="Dedicated.cpp" />

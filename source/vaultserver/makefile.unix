@@ -111,6 +111,8 @@ $(OBJDIR_DEBUG)/vaultserver/Item.o \
 $(OBJDIR_DEBUG)/vaultserver/Reference.o \
 $(OBJDIR_DEBUG)/vaultserver/Terminal.o \
 $(OBJDIR_DEBUG)/vaultserver/Interior.o \
+$(OBJDIR_DEBUG)/vaultserver/ActorReference.o \
+$(OBJDIR_DEBUG)/vaultserver/CreatureReference.o \
 $(OBJDIR_DEBUG)/ServerEntry.o \
 $(OBJDIR_DEBUG)/Reference.o \
 $(OBJDIR_DEBUG)/VaultVector.o \
@@ -212,6 +214,8 @@ $(OBJDIR_RELEASE)/vaultserver/Item.o \
 $(OBJDIR_RELEASE)/vaultserver/Reference.o \
 $(OBJDIR_RELEASE)/vaultserver/Terminal.o \
 $(OBJDIR_RELEASE)/vaultserver/Interior.o \
+$(OBJDIR_RELEASE)/vaultserver/ActorReference.o \
+$(OBJDIR_RELEASE)/vaultserver/CreatureReference.o \
 $(OBJDIR_RELEASE)/ServerEntry.o \
 $(OBJDIR_RELEASE)/Reference.o \
 $(OBJDIR_RELEASE)/VaultVector.o \
@@ -476,6 +480,12 @@ $(OBJDIR_DEBUG)/vaultserver/Terminal.o: Terminal.cpp
 
 $(OBJDIR_DEBUG)/vaultserver/Interior.o: Interior.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Interior.cpp -o $(OBJDIR_DEBUG)/vaultserver/Interior.o
+
+$(OBJDIR_DEBUG)/vaultserver/ActorReference.o: ActorReference.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ActorReference.cpp -o $(OBJDIR_DEBUG)/vaultserver/ActorReference.o
+
+$(OBJDIR_DEBUG)/vaultserver/CreatureReference.o: CreatureReference.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c CreatureReference.cpp -o $(OBJDIR_DEBUG)/vaultserver/CreatureReference.o
 
 $(OBJDIR_DEBUG)/ServerEntry.o: ../ServerEntry.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ../ServerEntry.cpp -o $(OBJDIR_DEBUG)/ServerEntry.o
@@ -796,6 +806,12 @@ $(OBJDIR_RELEASE)/vaultserver/Terminal.o: Terminal.cpp
 
 $(OBJDIR_RELEASE)/vaultserver/Interior.o: Interior.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Interior.cpp -o $(OBJDIR_RELEASE)/vaultserver/Interior.o
+
+$(OBJDIR_RELEASE)/vaultserver/ActorReference.o: ActorReference.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ActorReference.cpp -o $(OBJDIR_RELEASE)/vaultserver/ActorReference.o
+
+$(OBJDIR_RELEASE)/vaultserver/CreatureReference.o: CreatureReference.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c CreatureReference.cpp -o $(OBJDIR_RELEASE)/vaultserver/CreatureReference.o
 
 $(OBJDIR_RELEASE)/ServerEntry.o: ../ServerEntry.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../ServerEntry.cpp -o $(OBJDIR_RELEASE)/ServerEntry.o
