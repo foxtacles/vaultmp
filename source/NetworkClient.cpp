@@ -617,6 +617,16 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
+				case pTypes::ID_UPDATE_WGROUP:
+				{
+					NetworkID id;
+					unsigned int group;
+					PacketFactory::Access<pTypes::ID_UPDATE_WGROUP>(packet, id, group);
+					auto reference = GameFactory::Get<RadioButton>(id);
+					Game::net_UpdateRadioButtonGroup(reference.get(), group);
+					break;
+				}
+
 				case pTypes::ID_UPDATE_WMODE:
 				{
 					bool enabled;

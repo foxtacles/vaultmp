@@ -377,3 +377,4 @@ native CreateCheckbox(Float:posX, Float:posY, Float:offset_posX, Float:offset_po
 native Bool:SetCheckboxSelected(ID, Bool:selected);
 native CreateRadioButton(Float:posX, Float:posY, Float:offset_posX, Float:offset_posY, Float:sizeX, Float:sizeY, Float:offset_sizeX, Float:offset_sizeY, Bool:visible = Bool:true, Bool:locked = Bool:false, const text{} = "");
 native Bool:SetRadioButtonSelected(ID, Bool:selected);
+native Bool:SetRadioButtonGroup(ID, group);

@@ -377,6 +377,10 @@ class Game
 		 */
 		static void SetRadioButtonSelected(const FactoryRadioButton& reference);
 		/**
+		 * \brief Updates the settings of a GUI radio button (group)
+		 */
+		static void SetRadioButtonGroup(const FactoryRadioButton& reference);
+		/**
 		 * \brief Updates the window mode
 		 */
 		static void SetWindowMode();
@@ -537,6 +541,10 @@ class Game
 		 * \brief Network function to handle GUI radio button selected
 		 */
 		static void net_UpdateRadioButtonSelected(const FactoryRadioButton& reference, ExpectedRadioButton& previous, bool selected);
+		/**
+		 * \brief Network function to handle GUI radio button group
+		 */
+		static void net_UpdateRadioButtonGroup(const FactoryRadioButton& reference, unsigned int group);
 		/**
 		 * \brief Network function to handle GUI window mode
 		 */

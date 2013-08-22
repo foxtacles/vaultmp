@@ -289,6 +289,7 @@ API::FunctionMap API::functions = {
 		{Func::GetPosAngle, "r"},
 		{Func::GetFireWeapon, ""},
 		{Func::GUICreateRadio, "ssi"},
+		{Func::GUIRadioGroup, "si"},
 		{Func::Enable, "rI"},
 		{Func::Disable, "rI"},
 		{Func::EquipItem, "r$jII"},

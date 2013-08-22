@@ -383,6 +383,7 @@ class Script
 		static bool SetCheckboxSelected(RakNet::NetworkID id, bool selected) noexcept;
 		static RakNet::NetworkID CreateRadioButton(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept;
 		static bool SetRadioButtonSelected(RakNet::NetworkID id, bool selected) noexcept;
+		static bool SetRadioButtonGroup(RakNet::NetworkID id, unsigned int group);
 
 		static constexpr ScriptFunctionData functions[] {
 			{"timestamp", Utils::timestamp},
@@ -559,6 +560,7 @@ class Script
 			{"SetCheckboxSelected", Script::SetCheckboxSelected},
 			{"CreateRadioButton", Script::CreateRadioButton},
 			{"SetRadioButtonSelected", Script::SetRadioButtonSelected},
+			{"SetRadioButtonGroup", Script::SetRadioButtonGroup},
 		};
 
 		static constexpr ScriptCallbackData callbacks[] {

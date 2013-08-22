@@ -48,5 +48,6 @@ GF_TYPE_WRAPPER_FINAL(RadioButton, Window, ID_RADIOBUTTON)
 
 template<> struct pTypesMap<pTypes::ID_RADIOBUTTON_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_RADIOBUTTON_NEW, bool, unsigned int> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_WRSELECTED> { typedef pGeneratorReference<pTypes::ID_UPDATE_WRSELECTED, RakNet::NetworkID, bool> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_WGROUP> { typedef pGeneratorReference<pTypes::ID_UPDATE_WGROUP, unsigned int> type; };
 
 #endif

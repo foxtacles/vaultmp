@@ -336,6 +336,7 @@ AMX_NATIVE_INFO PAWN::functions[] {
 	F_<164>::F,
 	F_<165>::F,
 	F_<166>::F,
+	F_<167>::F,
 
 	{0, 0}
 };

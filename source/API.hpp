@@ -310,6 +310,7 @@ namespace Values
 		GUICheckbox = 0x0024 | VAULTFUNCTION,
 		GetFireWeapon = 0x0025 | VAULTFUNCTION,
 		GUICreateRadio = 0x0026 | VAULTFUNCTION,
+		GUIRadioGroup = 0x0027 | VAULTFUNCTION,
 	};
 
 	enum ActorVals

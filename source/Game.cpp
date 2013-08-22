@@ -228,6 +228,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func::GUIValid:
 			case Func::GUICreateCheckbox:
 			case Func::GUICreateRadio:
+			case Func::GUIRadioGroup:
 			case Func::SetGlobalValue:
 			case Func::MarkForDelete:
 			case Func::AgeRace:
@@ -1574,6 +1575,13 @@ void Game::SetRadioButtonSelected(const FactoryRadioButton& reference)
 	});
 }
 
+void Game::SetRadioButtonGroup(const FactoryRadioButton& reference)
+{
+	Interface::Dynamic([&reference]() {
+		Interface::ExecuteCommand(Func::GUIRadioGroup, {RawParameter(reference->GetLabel()), RawParameter(reference->GetGroup())});
+	});
+}
+
 void Game::SetWindowMode()
 {
 	Interface::Dynamic([]() {
@@ -2230,6 +2238,13 @@ void Game::net_UpdateRadioButtonSelected(const FactoryRadioButton& reference, Ex
 	reference->SetSelected(selected);
 
 	SetRadioButtonSelected(reference);
+}
+
+void Game::net_UpdateRadioButtonGroup(const FactoryRadioButton& reference, unsigned int group)
+{
+	reference->SetGroup(group);
+
+	SetRadioButtonGroup(reference);
 }
 
 void Game::net_UpdateWindowMode(bool enabled)

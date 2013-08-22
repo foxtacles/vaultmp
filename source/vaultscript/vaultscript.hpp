@@ -501,6 +501,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetCheckboxSelected))(VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateRadioButton))(VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE State, VAULTSPACE State, VAULTSPACE cRawString) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetRadioButtonSelected))(VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetRadioButtonGroup))(VAULTSPACE ID, VAULTSPACE UCount) VAULTCPP(noexcept);
 VAULTCPP(})
 
 #ifdef __cplusplus
@@ -934,6 +935,7 @@ namespace vaultmp
 	VAULTFUNCTION ID CreateRadioButton(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible = True, State locked = False, const String& text = "") noexcept { return VAULTAPI(CreateRadioButton)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
 	VAULTFUNCTION ID CreateRadioButton(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible = True, State locked = False, cRawString text = "") noexcept { return VAULTAPI(CreateRadioButton)(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }
 	VAULTFUNCTION State SetRadioButtonSelected(ID id, State selected) noexcept { return VAULTAPI(SetRadioButtonSelected)(id, selected); }
+	VAULTFUNCTION State SetRadioButtonGroup(ID id, UCount group) noexcept { return VAULTAPI(SetRadioButtonGroup)(id, group); }
 
 	class Reference {
 		protected:
@@ -1453,6 +1455,7 @@ namespace vaultmp
 			UCount GetRadioButtonGroup() const noexcept { return vaultmp::GetRadioButtonGroup(id); }
 
 			State SetRadioButtonSelected(State selected) noexcept { return vaultmp::SetRadioButtonSelected(id, selected); }
+			State SetRadioButtonGroup(UCount group) noexcept { return vaultmp::SetRadioButtonGroup(id, group); }
 
 			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible = True, State locked = False, const String& text = "") noexcept { return vaultmp::CreateRadioButton(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text.c_str()); }
 			static ID Create(Value posX, Value posY, Value offset_posX, Value offset_posY, Value sizeX, Value sizeY, Value offset_sizeX, Value offset_sizeY, State visible = True, State locked = False, cRawString text = "") noexcept { return vaultmp::CreateRadioButton(posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text); }

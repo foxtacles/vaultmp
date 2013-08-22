@@ -3018,3 +3018,40 @@ bool Script::SetRadioButtonSelected(NetworkID id, bool selected) noexcept
 
 	return true;
 }
+
+bool Script::SetRadioButtonGroup(NetworkID id, unsigned int group)
+{
+	if (GameFactory::GetType(id) != ID_RADIOBUTTON)
+		return false;
+
+	pair<unsigned int, bool> data = GameFactory::Operate<RadioButton, FailPolicy::Return>(id, [](FactoryRadioButton& radiobutton) {
+		return make_pair(radiobutton->GetGroup(), radiobutton->GetSelected());
+	});
+
+	if (data.first == group)
+		return false;
+
+	if (data.second)
+		if (!GameFactory::Operate<RadioButton, FailPolicy::Return>(GameFactory::GetByTypeID(ID_RADIOBUTTON), [group](FactoryRadioButtons& radiobuttons) {
+			for (const auto& radiobutton : radiobuttons)
+				if (radiobutton->GetGroup() == group && radiobutton->GetSelected())
+					return false;
+
+			return true;
+		})) return false;
+
+	GameFactory::Operate<RadioButton, FailPolicy::Return>(id, [group](FactoryRadioButton& radiobutton) {
+		radiobutton->SetGroup(group);
+	});
+
+	NetworkID root = GetWindowRoot(id);
+	vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
+
+	if (!guids.empty())
+		Network::Queue({Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_WGROUP>(id, group),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
+		});
+
+	return true;
+}
