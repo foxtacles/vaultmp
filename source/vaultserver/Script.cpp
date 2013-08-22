@@ -2849,6 +2849,8 @@ bool Script::SetWindowText(NetworkID id, const char* text) noexcept
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
 		});
 
+	Call<CBI("OnWindowTextChange")>(id, 0ull, text);
+
 	return true;
 }
 
@@ -2974,6 +2976,8 @@ bool Script::SetCheckboxSelected(NetworkID id, bool selected) noexcept
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
 		});
 
+	Call<CBI("OnCheckboxSelect")>(id, 0ull, selected);
+
 	return true;
 }
 
@@ -3018,6 +3022,8 @@ bool Script::SetRadioButtonSelected(NetworkID id, bool selected) noexcept
 			PacketFactory::Create<pTypes::ID_UPDATE_WRSELECTED>(id, previous, selected),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
 		});
+
+	Call<CBI("OnRadioButtonSelect")>(id, previous, 0ull);
 
 	return true;
 }
