@@ -198,6 +198,12 @@ extern "C"
 		GUIHelper::newWindow(parent,name,"TaharezLook/StaticText")->subscribeEvent(CEGUI::Window::EventMouseClick,GUI_MouseClickCallback);
 	}
 
+	__declspec(dllexport) void GUI_StaticText_SetAlign(char* name,char* align)
+	{
+		if(GUIHelper::getWindow(name)->getType().compare("TaharezLook/StaticText")==0)
+			GUIHelper::getWindow(name)->setProperty("HorzFormatting",align);
+	}
+
 	__declspec(dllexport) void GUI_AddTextbox(char* parent,char* name)
 	{
 		GUIHelper::newWindow(parent,name,"TaharezLook/Editbox")->subscribeEvent(CEGUI::Editbox::EventTextChanged,GUI_TextChanged);

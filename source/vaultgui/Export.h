@@ -33,6 +33,17 @@ extern "C"
 
 	__declspec(dllexport) void GUI_AddStaticText(char* parent,char* name);
 
+	/*
+	"LeftAligned"
+	"RightAligned"
+	"HorzCentred"
+	"HorzJustified"
+	"WordWrapLeftAligned"
+	"WordWrapRightAligned"
+	"WordWrapCentred"
+	"WordWrapJustified"
+	*/
+	__declspec(dllexport) void GUI_StaticText_SetAlign(char* name,char* align);
 
 	__declspec(dllexport) void GUI_AddTextbox(char* parent,char* name);
 	__declspec(dllexport) void GUI_Textbox_SetMaxLength(char* name,int maxLength);
