@@ -1,8 +1,5 @@
 #include "GameFactory.hpp"
 
-#include "Actor.hpp"
-#include "Window.hpp"
-
 using namespace std;
 using namespace RakNet;
 
@@ -106,9 +103,7 @@ void GameFactory::DestroyAll() noexcept
 	for (const auto& instance : copy)
 	{
 		Base* reference = static_cast<Base*>(instance.first->StartSession());
-
-		if (instance.second & ALL_ITEMLISTS)
-			dynamic_cast<ItemList*>(instance.first.get())->container.clear();
+		reference->freecontents();
 
 #ifdef VAULTMP_DEBUG
 		debug.print("Base ", std::dec, instance.first->GetNetworkID(), " (type: ", typeid(*(instance.first)).name(), ") to be destructed (", instance.first.get(), ")");
@@ -116,10 +111,6 @@ void GameFactory::DestroyAll() noexcept
 
 		reference->Finalize();
 	}
-
-	// Cleanup classes
-
-	Window::childs.clear();
 
 	Lockable::Reset();
 }

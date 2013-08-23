@@ -21,8 +21,10 @@ class List : public Window
 
 		void initialize();
 
-		List(const List&);
-		List& operator=(const List&);
+		List(const List&) = delete;
+		List& operator=(const List&) = delete;
+
+		virtual void freecontents() { container.clear(); }
 
 	protected:
 		List();

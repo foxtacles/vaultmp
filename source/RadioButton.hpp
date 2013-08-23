@@ -21,8 +21,8 @@ class RadioButton : public Window
 
 		void initialize();
 
-		RadioButton(const RadioButton&);
-		RadioButton& operator=(const RadioButton&);
+		RadioButton(const RadioButton&) = delete;
+		RadioButton& operator=(const RadioButton&) = delete;
 
 	protected:
 		RadioButton();

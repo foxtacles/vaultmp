@@ -25,8 +25,8 @@ class ListItem : public Base
 
 		void initialize();
 
-		ListItem(const ListItem&);
-		ListItem& operator=(const ListItem&);
+		ListItem(const ListItem&) = delete;
+		ListItem& operator=(const ListItem&) = delete;
 
 	protected:
 		ListItem();

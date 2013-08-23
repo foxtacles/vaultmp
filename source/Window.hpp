@@ -29,8 +29,8 @@ class Window : public Base
 
 		void initialize();
 
-		Window(const Window&);
-		Window& operator=(const Window&);
+		Window(const Window&) = delete;
+		Window& operator=(const Window&) = delete;
 
 	protected:
 		Window();

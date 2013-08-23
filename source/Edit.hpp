@@ -24,8 +24,8 @@ class Edit : public Window
 
 		void initialize();
 
-		Edit(const Edit&);
-		Edit& operator=(const Edit&);
+		Edit(const Edit&) = delete;
+		Edit& operator=(const Edit&) = delete;
 
 	protected:
 		Edit();

@@ -15,8 +15,8 @@ class Button : public Window
 	private:
 		void initialize();
 
-		Button(const Button&);
-		Button& operator=(const Button&);
+		Button(const Button&) = delete;
+		Button& operator=(const Button&) = delete;
 
 	protected:
 		Button();

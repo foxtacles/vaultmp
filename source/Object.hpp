@@ -40,8 +40,12 @@ class Object : public Reference
 
 		void initialize();
 
-		Object(const Object&);
-		Object& operator=(const Object&);
+		Object(const Object&) = delete;
+		Object& operator=(const Object&) = delete;
+
+#ifdef VAULTSERVER
+		virtual void initializers() { this->SetBase(this->GetBase()); }
+#endif
 
 	protected:
 		Object(unsigned int refID, unsigned int baseID);
@@ -172,8 +176,6 @@ class Object : public Reference
 		 * \brief Sets the Object's base ID
 		 */
 		virtual Lockable* SetBase(unsigned int baseID);
-
-		virtual void virtual_initializers() { this->SetBase(this->GetBase()); }
 #endif
 
 		/**

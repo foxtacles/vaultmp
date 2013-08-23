@@ -15,8 +15,8 @@ class Text : public Window
 	private:
 		void initialize();
 
-		Text(const Text&);
-		Text& operator=(const Text&);
+		Text(const Text&) = delete;
+		Text& operator=(const Text&) = delete;
 
 	protected:
 		Text();

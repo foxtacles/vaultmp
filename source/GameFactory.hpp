@@ -409,7 +409,7 @@ RakNet::NetworkID GameFactory::Create(Args&&... args)
 	RakNet::NetworkID id = base->GetNetworkID();
 
 #ifdef VAULTSERVER
-	base->virtual_initializers();
+	base->initializers();
 #endif
 
 	cs.Operate([id, type, &base]() {

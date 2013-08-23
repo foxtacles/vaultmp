@@ -24,6 +24,9 @@ class Base : private CriticalSection, public RakNet::NetworkIDObject
 		Base(const Base&) = delete;
 		Base& operator=(const Base&) = delete;
 
+		virtual void initializers() {}
+		virtual void freecontents() {}
+
 	protected:
 		Base();
 		Base(const pDefault* packet);
@@ -36,8 +39,6 @@ class Base : private CriticalSection, public RakNet::NetworkIDObject
 		 * \brief For network transfer
 		 */
 		virtual pPacket toPacket() const;
-
-		virtual void virtual_initializers() {}
 };
 
 template<> struct pTypesMap<pTypes::ID_BASE_NEW> { typedef pGeneratorReference<pTypes::ID_BASE_NEW> type; };

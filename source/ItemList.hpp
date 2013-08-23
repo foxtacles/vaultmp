@@ -38,6 +38,8 @@ class ItemList : public virtual Base
 		ItemList(const ItemList&) = delete;
 		ItemList& operator=(const ItemList&) = delete;
 
+		virtual void freecontents() { container.clear(); }
+
 	protected:
 		ItemList();
 		ItemList(const pDefault* packet);

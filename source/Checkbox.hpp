@@ -19,8 +19,8 @@ class Checkbox : public Window
 
 		void initialize();
 
-		Checkbox(const Checkbox&);
-		Checkbox& operator=(const Checkbox&);
+		Checkbox(const Checkbox&) = delete;
+		Checkbox& operator=(const Checkbox&) = delete;
 
 	protected:
 		Checkbox();

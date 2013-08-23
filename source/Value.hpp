@@ -24,6 +24,7 @@ class Value : public Lockable
 		static DebugInput<Value<T>> debug;
 #endif
 
+		Value(const Value&) = delete;
 		Value& operator=(const Value&) = delete;
 
 	public:
