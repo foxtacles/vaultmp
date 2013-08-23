@@ -6,6 +6,8 @@
 #include "GameFactory.hpp"
 #include "ReferenceTypes.hpp"
 
+#include <string>
+
 /**
  * \brief Represents a GUI list item
  */
@@ -18,6 +20,7 @@ class ListItem : public Base
 		static constexpr bool DEFAULT_SELECTED = false;
 
 		RakNet::NetworkID list;
+		std::string text;
 		bool selected;
 
 		void initialize();
@@ -47,7 +50,8 @@ class ListItem : public Base
 
 GF_TYPE_WRAPPER_FINAL(ListItem, Base, ID_LISTITEM)
 
-template<> struct pTypesMap<pTypes::ID_LISTITEM_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_LISTITEM_NEW, RakNet::NetworkID, bool> type; };
+template<> struct pTypesMap<pTypes::ID_LISTITEM_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_LISTITEM_NEW, RakNet::NetworkID, std::string, bool> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_WLTEXT> { typedef pGeneratorReference<pTypes::ID_UPDATE_WLTEXT, std::string> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_WLSELECTED> { typedef pGeneratorReference<pTypes::ID_UPDATE_WLSELECTED, bool> type; };
 
 #endif
