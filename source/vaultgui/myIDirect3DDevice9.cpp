@@ -8,6 +8,7 @@
 
 #include "HookedFunctions.h"
 #include "TextureHooking.h"
+#include "GUIHelper.h"
 
 bool logging=false;
 
@@ -115,6 +116,10 @@ myIDirect3DDevice9::myIDirect3DDevice9(IDirect3DDevice9* pOriginal)
 
    try
    {
+
+	   GUIHelper::chatboxHistory.historyIndex=0;
+	   GUIHelper::chatboxHistory.history.clear();
+
 		GUI=&CEGUI::Direct3D9Renderer::bootstrapSystem(pOriginal);
 
 		CEGUI::DefaultResourceProvider* rp = static_cast<CEGUI::DefaultResourceProvider*>(CEGUI::System::getSingleton().getResourceProvider());
@@ -153,6 +158,7 @@ myIDirect3DDevice9::myIDirect3DDevice9(IDirect3DDevice9* pOriginal)
 		//wnd->setDragMovingEnabled(false);
 		
 		CEGUI::Editbox* editb=(CEGUI::Editbox*)winMgr.createWindow("TaharezLook/Editbox", "Edit Box");
+		editb->subscribeEvent(CEGUI::Window::EventKeyDown,GUIHelper::onKeyDown);
 		editb->setMaxTextLength(120);
 		wnd->addChildWindow(editb);
 		editb->setText("");
@@ -232,7 +238,8 @@ myIDirect3DDevice9::myIDirect3DDevice9(IDirect3DDevice9* pOriginal)
 		GUI_Listbox_AddItem("l","2","2");
 		GUI_Listbox_AddItem("l","3","3");
 		GUI_Listbox_AddItem("l","4","4");
-		GUI_Listbox_RemoveItem("l","3");*/
+		GUI_Listbox_SetItemSelected("l","3",true);
+		GUI_Listbox_SetItemText("l","3","12");*/
 		/*
 
 		GUI_Listbox_RemoveItem("l","7");

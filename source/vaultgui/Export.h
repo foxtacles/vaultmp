@@ -73,7 +73,9 @@ extern "C"
 
 	__declspec(dllexport) void GUI_AddListbox(char* parent,char* name);
 	__declspec(dllexport) void GUI_Listbox_AddItem(char* parent,char* name,char* t);
-	__declspec(dllexport) void GUI_Listbox_RemoveItem(char* name,char* t);
+	__declspec(dllexport) void GUI_Listbox_RemoveItem(char* name,char* itemID);
+	__declspec(dllexport) void GUI_Listbox_SetItemText(char* name,char* itemID,char* newText);
+	__declspec(dllexport) void GUI_Listbox_SetItemSelected(char* name,char* itemID,bool selected);
 	__declspec(dllexport) void GUI_Listbox_EnableMultiSelect(char* name,bool e);
 	__declspec(dllexport) vector<string>* GUI_Listbox_GetSelectedItems(char* name);
 

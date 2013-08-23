@@ -330,20 +330,61 @@ extern "C"
 		w->addItem(itm);
 	}
 
-	__declspec(dllexport) void GUI_Listbox_RemoveItem(char* name,char* t)
+	__declspec(dllexport) void GUI_Listbox_RemoveItem(char* name,char* itemID)
 	{
 		CEGUI::Listbox *w = ((CEGUI::Listbox*)GUIHelper::getWindow(name));
 
 		for(int i=0;i<w->getItemCount();i++)
 		{
 			CEGUI::FormattedListboxTextItem* itm=(CEGUI::FormattedListboxTextItem*)w->getListboxItemFromIndex(i);
-			if(itm->getCustomID().compare(t)==0)
+			if(itm->getCustomID().compare(itemID)==0)
 			{
 				w->removeItem(itm);
 				i--;
 			}
 		}
 		
+	}
+
+	__declspec(dllexport) void GUI_Listbox_SetItemText(char* name,char* itemID,char* newText)
+	{
+		CEGUI::Listbox *w = ((CEGUI::Listbox*)GUIHelper::getWindow(name));
+
+		for(int i=0;i<w->getItemCount();i++)
+		{
+			CEGUI::FormattedListboxTextItem* itm=(CEGUI::FormattedListboxTextItem*)w->getListboxItemFromIndex(i);
+			if(itm->getCustomID().compare(itemID)==0)
+			{
+				CEGUI::String id=itm->getCustomID();
+
+				CEGUI::FormattedListboxTextItem *n=new CEGUI::FormattedListboxTextItem(newText,CEGUI::HTF_WORDWRAP_LEFT_ALIGNED);
+				n->setTextColours(0xFFFFFFFF);
+				n->setSelectionBrushImage("TaharezLook", "MultiListSelectionBrush");
+				n->setCustomID(id);
+
+				w->insertItem(n,itm);
+
+				if(itm->isSelected())
+					w->setItemSelectState(n,true);
+
+				
+				w->removeItem(itm);
+				break;
+			}
+		}
+	}
+	__declspec(dllexport) void GUI_Listbox_SetItemSelected(char* name,char* itemID,bool selected)
+	{
+		CEGUI::Listbox *w = ((CEGUI::Listbox*)GUIHelper::getWindow(name));
+
+		for(int i=0;i<w->getItemCount();i++)
+		{
+			CEGUI::FormattedListboxTextItem* itm=(CEGUI::FormattedListboxTextItem*)w->getListboxItemFromIndex(i);
+			if(itm->getCustomID().compare(itemID)==0)
+			{
+				w->setItemSelectState(itm,selected);
+			}
+		}
 	}
 
 	__declspec(dllexport) void GUI_Listbox_EnableMultiSelect(char* name,bool e)

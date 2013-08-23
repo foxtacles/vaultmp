@@ -4,6 +4,19 @@
 
 namespace GUIHelper
 {
+	/*Events callback*/
+	bool onKeyDown(const CEGUI::EventArgs& e);
+	bool onKeyUp(const CEGUI::EventArgs& e);
+	/**/
+	struct ChatboxHistory
+	{
+		vector<string> history;
+		int historyIndex;
+	};
+	extern ChatboxHistory chatboxHistory;
+	void chatboxHistory_Add(string);
+	string chatboxHistory_Up();
+	string chatboxHistory_Down();
 
 	extern void (*callbackPTR_OnClick)(char* name);
 	extern void (*callbackPTR_OnTextChange)(char* name,char* text);

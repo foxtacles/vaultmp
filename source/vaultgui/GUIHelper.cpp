@@ -4,6 +4,39 @@
 
 namespace GUIHelper
 {
+	ChatboxHistory chatboxHistory;
+	void chatboxHistory_Add(string s)
+	{
+		chatboxHistory.history.push_back(s);
+		if(chatboxHistory.history.size()>=20)
+			chatboxHistory.history.erase(chatboxHistory.history.begin());
+		chatboxHistory.historyIndex=chatboxHistory.history.size();
+	}
+
+	string chatboxHistory_Up()
+	{
+		if(chatboxHistory.history.size()==0)
+			return "";
+		chatboxHistory.historyIndex--;
+		if(chatboxHistory.historyIndex<0)
+			chatboxHistory.historyIndex=0;
+		return chatboxHistory.history[chatboxHistory.historyIndex];
+	}
+
+	string chatboxHistory_Down()
+	{
+		if(chatboxHistory.history.size()==0)
+			return "";
+		chatboxHistory.historyIndex++;
+		if(chatboxHistory.historyIndex>=chatboxHistory.history.size())
+		{
+			chatboxHistory.historyIndex=chatboxHistory.history.size()-1;
+		}
+		return chatboxHistory.history[chatboxHistory.historyIndex];
+	}
+
+	
+
 	/*
 	*********************Handlers********************************
 	*/
@@ -35,6 +68,17 @@ namespace GUIHelper
 			if(callbackPTR_OnReturnDown)
 			{
 				callbackPTR_OnReturnDown((char*)ev->window->getName().c_str());
+			}
+		}
+		if(ev->window->getName().compare("Edit Box")==0)
+		{
+			if(ev->scancode==CEGUI::Key::Scan::ArrowUp)
+			{
+				ev->window->setText(chatboxHistory_Up());
+			}
+			else if(ev->scancode==CEGUI::Key::Scan::ArrowDown)
+			{
+				ev->window->setText(chatboxHistory_Down());
 			}
 		}
 		return false;

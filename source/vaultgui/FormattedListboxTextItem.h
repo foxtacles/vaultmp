@@ -37,6 +37,8 @@ public:
 	void setCustomID(CEGUI::String str);
 	CEGUI::String getCustomID();
 
+	virtual void setText(const String& text);
+
 protected:
     //! Helper to create a FormattedRenderedString of an appropriate type.
     void setupStringFormatter() const;

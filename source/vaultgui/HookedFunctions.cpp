@@ -9,6 +9,7 @@
 #include "Export.h"
 
 #include "import.h"
+#include "GUIHelper.h"
 
 IDirect3D9* (WINAPI *Direct3DCreate9_Original)(UINT SDKVersion);
 HRESULT (WINAPI *DirectInput8Create_Original)(HINSTANCE hinst, DWORD dwVersion, REFIID riidltf, LPVOID * ppvOut, LPUNKNOWN punkOuter);
@@ -236,7 +237,7 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 							else
 							chatQueue.push_back((char*)txt.c_str());
 							//Chatbox_AddToChat((char*)txt.c_str());
-
+							GUIHelper::chatboxHistory_Add(txt.c_str());
 
 							chatbox_text="";
 							((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("closeBTN"))->setAlpha(0);

@@ -173,5 +173,11 @@ void FormattedListboxTextItem::setupStringFormatter() const
     }
 }
 
+void FormattedListboxTextItem::setText(const String& text)
+{
+    ListboxTextItem::setText(text);
+	this->setFormatting(CEGUI::HTF_WORDWRAP_LEFT_ALIGNED);
+}
+
 //----------------------------------------------------------------------------//
 }
