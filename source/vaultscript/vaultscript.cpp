@@ -1,15 +1,11 @@
-#include "vaultscript.hpp"
+#include "vaultscript.h"
 #include "default/pickup.hpp"
-#include "default/convo.hpp"
 
 #include <cstdio>
 
 using namespace vaultmp;
 
 Result VAULTSCRIPT OnItemPickup(ID item, ID actor) noexcept;
-
-ID win;
-ID grp;
 
 Void VAULTSCRIPT OnServerInit() noexcept
 {
@@ -19,31 +15,6 @@ Void VAULTSCRIPT OnServerInit() noexcept
 	SetServerMap("the wasteland");
 
 	Pickup::Register(OnItemPickup, "vaultscript::OnItemPickup");
-
-	win = Window::Create(0.4, 0.4, 0.0, 0.0, 0.3, 0.3, 0.0, 0.0, True, False, "Some window");
-
-	Window window(win);
-	window.AddChildWindow(Edit::Create(0.0, 0.0, 0.0, 0.0, 1.0, 0.2, 0.0, 0.0, True, False, "Some edit"));
-	window.AddChildWindow(Button::Create(0.0, 0.2, 0.0, 0.0, 1.0, 0.2, 0.0, 0.0, True, False, "Some button"));
-	window.AddChildWindow(Text::Create(0.0, 0.4, 0.0, 0.0, 1.0, 0.2, 0.0, 0.0, True, False, "Some text"));
-	window.AddChildWindow(Checkbox::Create(0.0, 0.6, 0.0, 0.0, 1.0, 0.2, 0.0, 0.0, True, False, "Some checkbox"));
-
-	ID r1 = RadioButton::Create(0.0, 0.8, 0.0, 0.0, 0.25, 0.2, 0.0, 0.0, True, False, "R1");
-	ID r2 = RadioButton::Create(0.25, 0.8, 0.0, 0.0, 0.25, 0.2, 0.0, 0.0, True, False, "R2");
-	ID r3 = RadioButton::Create(0.5, 0.8, 0.0, 0.0, 0.25, 0.2, 0.0, 0.0, True, False, "R3");
-	ID r4 = RadioButton::Create(0.75, 0.8, 0.0, 0.0, 0.25, 0.2, 0.0, 0.0, True, False, "R4");
-
-	SetRadioButtonGroup(r1, 0);
-	SetRadioButtonGroup(r2, 0);
-	SetRadioButtonGroup(r3, 1);
-	SetRadioButtonGroup(r4, 1);
-
-	grp =r3;
-
-	window.AddChildWindow(r1);
-	window.AddChildWindow(r2);
-	window.AddChildWindow(r3);
-	window.AddChildWindow(r4);
 }
 
 Void VAULTSCRIPT OnServerExit() noexcept
@@ -85,112 +56,9 @@ NPC_ VAULTSCRIPT OnPlayerRequestGame(ID player) noexcept
 {
 	return static_cast<NPC_>(0x00000000);
 }
-#include <cstring>
+
 State VAULTSCRIPT OnPlayerChat(ID player, RawString message) noexcept
 {
-	if (!std::strcmp(message, "fatman")) {
-
-			Player q(player);
-			Value X,Y,Z;
-			q.GetPos(X,Y,Z);
-
-			Item::Create(WEAP::WeapFatman, q.GetCell(), X, Y, Z + 150);
-	return False;
-	}
-	else if (!std::strcmp(message,"guy")) {
-
-			Player q(player);
-			Value X,Y,Z;
-			q.GetPos(X,Y,Z);
-
-			auto p = Actor::Create(NPC_::Carter, q.GetCell(), X, Y, Z + 400);
-
-			AddItem(p, ARMO::VaultSuit101);
-	return False;
-	}
-	else if (!std::strcmp(message,"kill")) {
-
-		auto a = Actor::GetList();
-
-		for (auto w : a)
-		{
-
-KillActor(w, w, Limb::ALL_LIMBS);
-		}
-
-	return False;
-	}
-	else if (!std::strcmp(message,"aggr")) {
-
-		auto a = Actor::GetList();
-			Player q(player);
-			Value X,Y,Z;
-			q.GetPos(X,Y,Z);
-		for (auto w : a)
-		{
-
-
-			SetCell(w,q.GetCell(), X, Y, Z );
-		}
-
-	return False;
-	}
-	else if (!std::strcmp(message,"boom")) {
-
-		Volatile<PROJ> ww(PROJ::FatMan, -90,0,0);
-	ww.Create(player);
-
-	return False;
-	}
-	else if (!std::strcmp(message,"expl")) {
-
-		Volatile<EXPL> ww(EXPL::EyebotExplosion, -90,0,0);
-	ww.Create(player);
-
-	return False;
-	}
-
-	else if (!std::strcmp(message,"fire")) {
-
-		SetItemEquipped(AddItem(player, WEAP::WeapFlamer), True);
-		AddItem(player, AMMO::AmmoFlamerFuel, 500);
-
-	return False;
-	}
-
-	else if (!std::strcmp(message,"mekill")) {
-
-		KillActor(player,(ID) 0);
-
-	return False;
-	}
-	else if (!std::strcmp(message,"convo")) {
-
-	auto w=	Player::GetList();
-
-		for (auto q : w)
-		{
-			if (q != player) {
-			Conversation::Open(player,q);
-			}
-		}
-
-	return False;
-	}
-	else if (!std::strcmp(message,"weap")) {
-
-		SetItemEquipped(AddItem(player, WEAP::Weap10mmSubmachineGun), True);
-		AddItem(player, AMMO::Ammo10mm, 500);
-
-	return False;
-	}
-	else if (!std::strcmp(message,"grp")) {
-
-		SetRadioButtonGroup(grp, 0);
-
-	return False;
-	}
-
 	return True;
 }
 
@@ -211,12 +79,12 @@ Void VAULTSCRIPT OnWindowTextChange(ID window, ID player, cRawString text) noexc
 
 Void VAULTSCRIPT OnCheckboxSelect(ID checkbox, ID player, State selected) noexcept
 {
-	printf("%llu %d\n", checkbox, selected);
+
 }
 
 Void VAULTSCRIPT OnRadioButtonSelect(ID radiobutton, ID previous, ID player) noexcept
 {
-	printf("%llu %llu\n", radiobutton, previous);
+
 }
 
 Void VAULTSCRIPT OnCreate(ID reference) noexcept
@@ -232,8 +100,6 @@ Void VAULTSCRIPT OnDestroy(ID reference) noexcept
 Void VAULTSCRIPT OnSpawn(ID object) noexcept
 {
 	Player player(object);
-
-	player.AttachWindow(win);
 
 	if (player)
 		player.UIMessage("Hello, " + player.GetBaseName() + "!");

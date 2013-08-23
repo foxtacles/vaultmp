@@ -1,4 +1,4 @@
-#include "vaultscript.hpp"
+#include "vaultscript.h"
 
 namespace vaultmp
 {
