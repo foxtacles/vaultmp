@@ -71,7 +71,8 @@ bool GUI_ListboxSelectionChange(const CEGUI::EventArgs& e)
 
 	if(GUIHelper::callbackPTR_OnListboxSelectionChange)
 	{
-		GUIHelper::callbackPTR_OnListboxSelectionChange((char*)we.window->getName().c_str(),tmp);
+		if(gData.sendListboxCallbacks)
+			GUIHelper::callbackPTR_OnListboxSelectionChange((char*)we.window->getName().c_str(),tmp);
 	}
 
 	delete[] tmp;
@@ -348,6 +349,7 @@ extern "C"
 
 	__declspec(dllexport) void GUI_Listbox_SetItemText(char* name,char* itemID,char* newText)
 	{
+		gData.sendListboxCallbacks=false;
 		CEGUI::Listbox *w = ((CEGUI::Listbox*)GUIHelper::getWindow(name));
 
 		for(int i=0;i<w->getItemCount();i++)
@@ -372,9 +374,11 @@ extern "C"
 				break;
 			}
 		}
+		gData.sendListboxCallbacks=true;
 	}
 	__declspec(dllexport) void GUI_Listbox_SetItemSelected(char* name,char* itemID,bool selected)
 	{
+		gData.sendListboxCallbacks=false;
 		CEGUI::Listbox *w = ((CEGUI::Listbox*)GUIHelper::getWindow(name));
 
 		for(int i=0;i<w->getItemCount();i++)
@@ -385,6 +389,7 @@ extern "C"
 				w->setItemSelectState(itm,selected);
 			}
 		}
+		gData.sendListboxCallbacks=true;
 	}
 
 	__declspec(dllexport) void GUI_Listbox_EnableMultiSelect(char* name,bool e)
