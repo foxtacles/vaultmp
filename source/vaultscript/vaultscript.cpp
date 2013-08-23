@@ -87,6 +87,11 @@ Void VAULTSCRIPT OnRadioButtonSelect(ID radiobutton, ID previous, ID player) noe
 
 }
 
+Void VAULTSCRIPT OnListItemSelect(ID listitem, ID player, State selected) noexcept
+{
+
+}
+
 Void VAULTSCRIPT OnCreate(ID reference) noexcept
 {
 

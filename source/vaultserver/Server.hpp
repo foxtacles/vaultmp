@@ -5,6 +5,7 @@
 #include "Player.hpp"
 #include "Checkbox.hpp"
 #include "RadioButton.hpp"
+#include "ListItem.hpp"
 #include "Network.hpp"
 
 /**
@@ -95,6 +96,10 @@ class Server
 		 * \brief Handles radio button selected network packet
 		 */
 		static NetworkResponse GetRadioButtonSelected(RakNet::RakNetGUID guid, FactoryRadioButton& reference, ExpectedRadioButton& previous);
+		/**
+		 * \brief Handles list item selected network packet
+		 */
+		static NetworkResponse GetListItemSelected(RakNet::RakNetGUID guid, FactoryListItem& reference, bool selected);
 		/**
 		 * \brief Handles player chat message network packet
 		 */

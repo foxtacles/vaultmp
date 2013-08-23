@@ -23,7 +23,10 @@ List::List(const pDefault* packet) : Window(PacketFactory::Pop<pPacket>(packet))
 		AddItem(GameFactory::Create<ListItem>(_packet.get()));
 }
 
-List::~List() noexcept {}
+List::~List() noexcept
+{
+	this->RemoveAllItems();
+}
 
 void List::initialize()
 {

@@ -13,6 +13,7 @@
 #include "Edit.hpp"
 #include "Checkbox.hpp"
 #include "RadioButton.hpp"
+#include "List.hpp"
 #include "Dedicated.hpp"
 #include "PAWN.hpp"
 #include "boost/any.hpp"
@@ -213,12 +214,13 @@ class Script
 		static void SetupItem(const FactoryItem& item, const FactoryObject& reference, unsigned int cell, double X, double Y, double Z) noexcept;
 		static void SetupContainer(const FactoryContainer& container, const FactoryObject& reference, unsigned int cell, double X, double Y, double Z) noexcept;
 		static void SetupActor(const FactoryActor& actor, const FactoryObject& reference, unsigned int cell, double X, double Y, double Z) noexcept;
-		static void SetupWindow(const FactoryWindow& window, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept;
-		static void SetupButton(const FactoryButton& button, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept;
-		static void SetupText(const FactoryText& text, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text_) noexcept;
-		static void SetupEdit(const FactoryEdit& edit, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept;
-		static void SetupCheckbox(const FactoryCheckbox& checkbox, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept;
-		static void SetupRadioButton(const FactoryRadioButton& radiobutton, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept;
+		static void SetupWindow(const FactoryWindow& window, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept;
+		static void SetupButton(const FactoryButton& button, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept;
+		static void SetupText(const FactoryText& text, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text_) noexcept;
+		static void SetupEdit(const FactoryEdit& edit, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept;
+		static void SetupCheckbox(const FactoryCheckbox& checkbox, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept;
+		static void SetupRadioButton(const FactoryRadioButton& radiobutton, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept;
+		static void SetupList(const FactoryList& list, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept;
 		static void KillTimer(RakNet::NetworkID id = 0) noexcept;
 		static void MakePublic(ScriptFunc _public, const char* name, const char* def) noexcept;
 		static void MakePublicPAWN(ScriptFuncPAWN _public, AMX* amx, const char* name, const char* def) noexcept;
@@ -259,6 +261,8 @@ class Script
 		static bool IsEdit(RakNet::NetworkID id) noexcept;
 		static bool IsCheckbox(RakNet::NetworkID id) noexcept;
 		static bool IsRadioButton(RakNet::NetworkID id) noexcept;
+		static bool IsListItem(RakNet::NetworkID id) noexcept;
+		static bool IsList(RakNet::NetworkID id) noexcept;
 		static bool IsChatbox(RakNet::NetworkID id) noexcept;
 		static unsigned int GetConnection(RakNet::NetworkID id) noexcept;
 		static unsigned int GetList(unsigned int type, RakNet::NetworkID** data) noexcept;
@@ -365,7 +369,7 @@ class Script
 		static bool GetRadioButtonSelected(RakNet::NetworkID id) noexcept;
 		static unsigned int GetRadioButtonGroup(RakNet::NetworkID id) noexcept;
 
-		static RakNet::NetworkID (CreateWindow)(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept;
+		static RakNet::NetworkID (CreateWindow)(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept;
 		static bool DestroyWindow(RakNet::NetworkID id) noexcept;
 		static bool AddChildWindow(RakNet::NetworkID id, RakNet::NetworkID child) noexcept;
 		static bool RemoveChildWindow(RakNet::NetworkID id, RakNet::NetworkID child) noexcept;
@@ -374,16 +378,19 @@ class Script
 		static bool SetWindowVisible(RakNet::NetworkID id, bool visible) noexcept;
 		static bool SetWindowLocked(RakNet::NetworkID id, bool locked) noexcept;
 		static bool SetWindowText(RakNet::NetworkID id, const char* text) noexcept;
-		static RakNet::NetworkID CreateButton(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept;
-		static RakNet::NetworkID CreateText(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept;
-		static RakNet::NetworkID CreateEdit(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept;
+		static RakNet::NetworkID CreateButton(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept;
+		static RakNet::NetworkID CreateText(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept;
+		static RakNet::NetworkID CreateEdit(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept;
 		static bool SetEditMaxLength(RakNet::NetworkID id, unsigned int length) noexcept;
 		static bool SetEditValidation(RakNet::NetworkID id, const char* validation) noexcept;
-		static RakNet::NetworkID CreateCheckbox(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept;
+		static RakNet::NetworkID CreateCheckbox(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept;
 		static bool SetCheckboxSelected(RakNet::NetworkID id, bool selected) noexcept;
-		static RakNet::NetworkID CreateRadioButton(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept;
+		static RakNet::NetworkID CreateRadioButton(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept;
 		static bool SetRadioButtonSelected(RakNet::NetworkID id, bool selected) noexcept;
 		static bool SetRadioButtonGroup(RakNet::NetworkID id, unsigned int group);
+		static RakNet::NetworkID CreateList(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept;
+		static RakNet::NetworkID AddListItem(RakNet::NetworkID id, const char* text) noexcept;
+		static bool RemoveListItem(RakNet::NetworkID id) noexcept;
 
 		static constexpr ScriptFunctionData functions[] {
 			{"timestamp", Utils::timestamp},
@@ -432,6 +439,8 @@ class Script
 			{"IsEdit", Script::IsEdit},
 			{"IsCheckbox", Script::IsCheckbox},
 			{"IsRadioButton", Script::IsRadioButton},
+			{"IsListItem", Script::IsListItem},
+			{"IsList", Script::IsList},
 			{"IsChatbox", Script::IsChatbox},
 			{"GetType", (unsigned int(*)(RakNet::NetworkID)) GameFactory::GetType},
 			{"GetConnection", Script::GetConnection},
@@ -561,6 +570,9 @@ class Script
 			{"CreateRadioButton", Script::CreateRadioButton},
 			{"SetRadioButtonSelected", Script::SetRadioButtonSelected},
 			{"SetRadioButtonGroup", Script::SetRadioButtonGroup},
+			{"CreateList", Script::CreateList},
+			{"AddListItem", Script::AddListItem},
+			{"RemoveListItem", Script::RemoveListItem},
 		};
 
 		static constexpr ScriptCallbackData callbacks[] {
@@ -585,6 +597,7 @@ class Script
 			{"OnWindowTextChange", Function<void, RakNet::NetworkID, RakNet::NetworkID, const char*>()},
 			{"OnCheckboxSelect", Function<void, RakNet::NetworkID, RakNet::NetworkID, bool>()},
 			{"OnRadioButtonSelect", Function<void, RakNet::NetworkID, RakNet::NetworkID, RakNet::NetworkID>()},
+			{"OnListItemSelect", Function<void, RakNet::NetworkID, RakNet::NetworkID, bool>()},
 			{"OnClientAuthenticate", Function<bool, const char*, const char*>()},
 			{"OnGameYearChange", Function<void, unsigned int>()},
 			{"OnGameMonthChange", Function<void, unsigned int>()},

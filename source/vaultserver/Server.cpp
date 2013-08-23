@@ -121,7 +121,7 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 	Dedicated::self->SetServerPlayers(make_pair(Client::GetClientCount(), Dedicated::connections));
 
 	Script::AttachWindow(id, GameFactory::Operate<Window>(GameFactory::Create<Window>(), [](FactoryWindow& window) {
-		Script::SetupWindow(window, get<0>(Window::GUI_MAIN_POS), get<1>(Window::GUI_MAIN_POS), get<2>(Window::GUI_MAIN_POS), get<3>(Window::GUI_MAIN_POS), get<0>(Window::GUI_MAIN_SIZE), get<1>(Window::GUI_MAIN_SIZE), get<2>(Window::GUI_MAIN_SIZE), get<3>(Window::GUI_MAIN_SIZE), true, false, Window::GUI_MAIN_TEXT);
+		Script::SetupWindow(window, get<0>(Window::GUI_MAIN_POS), get<1>(Window::GUI_MAIN_POS), get<0>(Window::GUI_MAIN_SIZE), get<1>(Window::GUI_MAIN_SIZE), true, false, Window::GUI_MAIN_TEXT);
 		window->SetLabel(Window::GUI_MAIN_LABEL);
 		return window->GetNetworkID();
 	}));
@@ -541,6 +541,29 @@ NetworkResponse Server::GetRadioButtonSelected(RakNetGUID guid, FactoryRadioButt
 
 	return response;
 }
+
+ NetworkResponse Server::GetListItemSelected(RakNetGUID guid, FactoryListItem& reference, bool selected)
+ {
+	NetworkResponse response;
+
+	NetworkID id = reference->GetNetworkID();
+	NetworkID list = reference->GetItemContainer()
+;	reference->SetSelected(selected);
+	GameFactory::Leave(reference);
+
+	NetworkID root = Script::GetWindowRoot(list);
+
+	vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root), guid));
+
+	if (!guids.empty())
+		response.emplace_back(Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_WLSELECTED>(id, selected),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids));
+
+	Script::Call<Script::CBI("OnListItemSelect")>(id, Client::GetClientFromGUID(guid)->GetPlayer(), selected);
+
+	return response;
+ }
 
 NetworkResponse Server::ChatMessage(RakNetGUID guid, const string& message)
 {

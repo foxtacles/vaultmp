@@ -297,6 +297,16 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 						Game::NewRadioButton(radiobutton);
 					}); break;
 
+				case pTypes::ID_LISTITEM_NEW:
+					GameFactory::Operate<ListItem>(GameFactory::Create<ListItem>(packet.get()), [](FactoryListItem& listitem) {
+						Game::NewListItem(listitem);
+					}); break;
+
+				case pTypes::ID_LIST_NEW:
+					GameFactory::Operate<List>(GameFactory::Create<List>(packet.get()), [](FactoryList& list) {
+						Game::NewList(list);
+					}); break;
+
 				case pTypes::ID_WINDOW_REMOVE:
 				{
 					NetworkID id;

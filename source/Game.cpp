@@ -172,6 +172,27 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				break;
 			}
 
+			case Func::GUISelect:
+			{
+				if (!result)
+					break;
+
+				char* data = getFrom<char*>(result);
+				string name = data;
+				data += name.length() + 1;
+
+				vector<const char*> selections;
+
+				while (*data)
+				{
+					selections.emplace_back(data);
+					data += strlen(data) + 1;
+				}
+
+				GetListboxSelections(name, selections);
+				break;
+			}
+
 			case Func::CenterOnCell:
 			case Func::CenterOnWorld:
 			case Func::ForceRespawn:
@@ -219,6 +240,9 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func::GUICreateCheckbox:
 			case Func::GUICreateRadio:
 			case Func::GUIRadioGroup:
+			case Func::GUICreateListbox:
+			case Func::GUICreateItem:
+			case Func::GUIRemoveItem:
 			case Func::SetGlobalValue:
 			case Func::MarkForDelete:
 			case Func::AgeRace:
@@ -1018,6 +1042,48 @@ void Game::NewRadioButton(const FactoryRadioButton& reference)
 	});
 }
 
+void Game::NewListItem(FactoryListItem& reference)
+{
+	NetworkID item = reference->GetNetworkID();
+	NetworkID list = reference->GetItemContainer();
+
+	GameFactory::Leave(reference);
+
+	GameFactory::Operate<List>(list, [item](FactoryList& list) {
+		list->AddItem(item);
+
+		GameFactory::Operate<ListItem>(item, [&list](FactoryListItem& listitem) {
+			Interface::Dynamic([&listitem, &list]() {
+				Interface::ExecuteCommand(Func::GUICreateItem, {RawParameter(list->GetLabel()), RawParameter(Utils::toString(listitem->GetNetworkID())), RawParameter(listitem->GetText())});
+			});
+		});
+	});
+}
+
+void Game::NewList(const FactoryList& reference)
+{
+	if (!reference->GetParentWindow())
+		throw VaultException("Window %llu requires a parent", reference->GetNetworkID());
+
+	Interface::Dynamic([&reference]() {
+		if (reference->GetLabel().empty())
+		{
+			reference->SetLabel(Utils::toString(reference->GetNetworkID()));
+
+			Interface::ExecuteCommand(Func::GUICreateListbox, {RawParameter(Utils::toString(reference->GetParentWindow())), RawParameter(reference->GetLabel())});
+		}
+
+		NewWindow(reference);
+	});
+
+	GameFactory::Operate<ListItem>(reference->GetItemList(), [&reference](FactoryListItems& listitems) {
+		Interface::Dynamic([&listitems, &reference]() {
+			for (const auto& listitem : listitems)
+				Interface::ExecuteCommand(Func::GUICreateItem, {RawParameter(reference->GetLabel()), RawParameter(Utils::toString(listitem->GetNetworkID())), RawParameter(listitem->GetText())});
+		});
+	});
+}
+
 void Game::PlaceAtMe(const FactoryObject& reference, unsigned int baseID, double condition, unsigned int count, unsigned int key)
 {
 	PlaceAtMe(reference->GetReference(), baseID, condition, count, key);
@@ -1100,6 +1166,15 @@ void Game::DestroyObject(FactoryObject& reference, bool silent)
 
 void Game::DeleteWindow(FactoryWindow& reference)
 {
+	GameFactory::Operate<List, FailPolicy::Return>(reference->GetNetworkID(), [](FactoryList& list) {
+		GameFactory::Operate<ListItem>(list->GetItemList(), [&list](FactoryListItems& items) {
+			Interface::Dynamic([&items, &list]() {
+				for (const auto& item : items)
+					Interface::ExecuteCommand(Func::GUIRemoveItem, {RawParameter(list->GetLabel()), RawParameter(Utils::toString(item->GetNetworkID()))});
+			});
+		});
+	});
+
 	Interface::Dynamic([&reference]() {
 		Interface::ExecuteCommand(Func::GUIRemoveWindow, {RawParameter(reference->GetLabel())});
 	});
@@ -2069,6 +2144,8 @@ void Game::net_UpdateExterior(unsigned int baseID, signed int x, signed int y, b
 
 void Game::net_UpdateContext(Player::CellContext& context, bool spawn)
 {
+	sort(context.begin(), context.end());
+
 	if (spawn)
 		spawnContext = context;
 
@@ -2086,10 +2163,8 @@ void Game::net_UpdateContext(Player::CellContext& context, bool spawn)
 				cellRefs[old_cell][ID_PLAYER].erase(PLAYER_REFERENCE);
 				cellRefs[context[0]][ID_PLAYER].insert(PLAYER_REFERENCE);
 
-				sort(context.begin(), context.end());
-
-				set_difference(context.begin(), context.end(), cellContext.begin(), cellContext.end(), inserter(diff.first, diff.first.begin()));
-				set_difference(cellContext.begin(), cellContext.end(), context.begin(), context.end(), inserter(diff.second, diff.second.begin()));
+				set_difference(context.begin(), context.end(), cellContext.begin(), cellContext.end(), back_inserter(diff.first));
+				set_difference(cellContext.begin(), cellContext.end(), context.begin(), context.end(), back_inserter(diff.second));
 
 				cellContext = context;
 
@@ -2433,9 +2508,6 @@ void Game::GetWindowText(const string& name, const string& text)
 {
 	NetworkID window = strtoull(name.c_str(), nullptr, 10);
 
-	if (!window)
-		return;
-
 	GameFactory::Operate<Window>(window, [&text](FactoryWindow& window) {
 		window->SetText(text);
 
@@ -2449,9 +2521,6 @@ void Game::GetWindowText(const string& name, const string& text)
 void Game::GetCheckboxSelected(const string& name, bool selected)
 {
 	NetworkID checkbox = strtoull(name.c_str(), nullptr, 10);
-
-	if (!checkbox)
-		return;
 
 	if (!GameFactory::Operate<Checkbox, FailPolicy::Bool>(checkbox, [selected](FactoryCheckbox& checkbox) {
 		checkbox->SetSelected(selected);
@@ -2486,4 +2555,45 @@ void Game::GetCheckboxSelected(const string& name, bool selected)
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 		});
 	}
+}
+
+void Game::GetListboxSelections(const string& name, const vector<const char*>& selections)
+{
+	NetworkID list = strtoull(name.c_str(), nullptr, 10);
+
+	set<NetworkID> selected_ids;
+	transform(selections.begin(), selections.end(), inserter(selected_ids, selected_ids.begin()), [](const char* selection) { return strtoull(selection, nullptr, 10); });
+
+	NetworkResponse r_deselected, r_selected;
+
+	GameFactory::Operate<List>(list, [&selected_ids, &r_deselected, &r_selected](FactoryList& list) {
+		GameFactory::Operate<ListItem>(list->GetItemList(), [&selected_ids, &r_deselected, &r_selected](FactoryListItems& listitems) {
+			for (const auto& listitem : listitems)
+			{
+				NetworkID id = listitem->GetNetworkID();
+				bool old_selected = listitem->GetSelected();
+				bool selected = selected_ids.count(id);
+
+				if (selected == old_selected)
+					continue;
+
+				if (selected && !old_selected)
+					r_selected.emplace_back(Network::CreateResponse(
+						PacketFactory::Create<pTypes::ID_UPDATE_WLSELECTED>(id, true),
+						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server));
+				else
+					r_deselected.emplace_back(Network::CreateResponse(
+						PacketFactory::Create<pTypes::ID_UPDATE_WLSELECTED>(id, false),
+						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server));
+
+				listitem->SetSelected(selected);
+			}
+		});
+	});
+
+	if (!r_deselected.empty())
+		Network::Queue(move(r_deselected));
+
+	if (!r_selected.empty())
+		Network::Queue(move(r_selected));
 }

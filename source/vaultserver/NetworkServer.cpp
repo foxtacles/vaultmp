@@ -272,6 +272,16 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					break;
 				}
 
+				case pTypes::ID_UPDATE_WLSELECTED:
+				{
+					NetworkID id;
+					bool selected;
+					PacketFactory::Access<pTypes::ID_UPDATE_WLSELECTED>(packet, id, selected);
+					auto reference = GameFactory::Get<ListItem>(id);
+					response = Server::GetListItemSelected(data->guid, reference.get(), selected);
+					break;
+				}
+
 				default:
 					throw VaultException("Unhandled packet type %d", data->data[0]).stacktrace();
 			}

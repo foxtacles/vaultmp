@@ -42,8 +42,8 @@ class Window : public Base
 
 		static constexpr const char* GUI_MAIN_LABEL = "Main Window";
 		static constexpr const char* GUI_MAIN_TEXT = "Chat Box";
-		static constexpr std::tuple<double, double, double, double> GUI_MAIN_POS{0.01, 0.01, 0.0, 0.0};
-		static constexpr std::tuple<double, double, double, double> GUI_MAIN_SIZE{0.35, 0.3, 0.0, 0.0};
+		static constexpr std::tuple<double, double> GUI_MAIN_POS{0.01, 0.01};
+		static constexpr std::tuple<double, double> GUI_MAIN_SIZE{0.35, 0.3};
 
 		static const WindowChilds& GetChilds() { return childs; }
 		static void CollectChilds(RakNet::NetworkID root, std::vector<RakNet::NetworkID>& dest);

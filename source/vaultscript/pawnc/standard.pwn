@@ -88,6 +88,11 @@ public OnRadioButtonSelect(ID, previous, player)
 
 }
 
+public OnListItemSelect(ID, player, Bool:selected)
+{
+
+}
+
 public OnCreate(ID)
 {
 

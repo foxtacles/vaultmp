@@ -37,9 +37,11 @@ class ListItem : public Base
 		virtual ~ListItem() noexcept;
 
 		void SetItemContainer(RakNet::NetworkID list) { this->list = list; }
+		void SetText(const std::string& text) { this->text = text; }
 		void SetSelected(bool selected) { this->selected = selected; }
 
 		RakNet::NetworkID GetItemContainer() const { return list; }
+		const std::string& GetText() const { return text; }
 		bool GetSelected() const { return selected; }
 
 		/**

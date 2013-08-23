@@ -50,7 +50,7 @@
 		</Linker>
 		<Unit filename="records.hpp" />
 		<Unit filename="vaultscript.cpp" />
-		<Unit filename="vaultscript.hpp" />
+		<Unit filename="vaultscript.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />

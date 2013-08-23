@@ -23,13 +23,15 @@ const Type: {
 	ID_EDIT = ID_TEXT << ID_REFERENCE,
 	ID_CHECKBOX = ID_EDIT << ID_REFERENCE,
 	ID_RADIOBUTTON = ID_CHECKBOX << ID_REFERENCE,
+	ID_LISTITEM = ID_RADIOBUTTON << ID_REFERENCE,
+	ID_LIST = ID_LISTITEM << ID_REFERENCE,
 
 	ALL_REFERENCES = (ID_REFERENCE | ID_OBJECT | ID_ITEM | ID_CONTAINER | ID_ACTOR | ID_PLAYER),
 	ALL_OBJECTS = (ID_OBJECT | ID_ITEM | ID_CONTAINER | ID_ACTOR | ID_PLAYER),
 	ALL_ITEMLISTS = (ID_ITEMLIST | ID_CONTAINER | ID_ACTOR | ID_PLAYER),
 	ALL_CONTAINERS = (ID_CONTAINER | ID_ACTOR | ID_PLAYER),
 	ALL_ACTORS = (ID_ACTOR | ID_PLAYER),
-	ALL_WINDOWS = (ID_WINDOW | ID_BUTTON | ID_TEXT | ID_EDIT | ID_CHECKBOX | ID_RADIOBUTTON),
+	ALL_WINDOWS = (ID_WINDOW | ID_BUTTON | ID_TEXT | ID_EDIT | ID_CHECKBOX | ID_RADIOBUTTON | ID_LIST),
 }
 
 const ActorValue: {
@@ -193,6 +195,7 @@ forward OnWindowClick(ID, player);
 forward OnWindowTextChange(ID, player, const text{});
 forward OnCheckboxSelect(ID, player, Bool:selected);
 forward OnRadioButtonSelect(ID, previous, player);
+forward OnListItemSelect(ID, player, Bool:selected);
 forward OnClientAuthenticate(const name{}, const pwd{});
 forward OnGameYearChange(year);
 forward OnGameMonthChange(month);
@@ -249,6 +252,8 @@ native Bool:IsText(ID);
 native Bool:IsEdit(ID);
 native Bool:IsCheckbox(ID);
 native Bool:IsRadioButton(ID);
+native Bool:IsListItem(ID);
+native Bool:IsList(ID);
 native Bool:IsChatbox(ID);
 native Type:GetType(ID);
 native GetConnection(ID);
@@ -359,7 +364,7 @@ native Bool:GetCheckboxSelected(ID);
 native Bool:GetRadioButtonSelected(ID);
 native GetRadioButtonGroup(ID);
 
-native CreateWindow(Float:posX, Float:posY, Float:offset_posX, Float:offset_posY, Float:sizeX, Float:sizeY, Float:offset_sizeX, Float:offset_sizeY, Bool:visible, Bool:locked, const text{});
+native CreateWindow(Float:posX, Float:posY, Float:sizeX, Float:sizeY, Bool:visible, Bool:locked, const text{});
 native Bool:DestroyWindow(ID);
 native Bool:AddChildWindow(ID, child);
 native Bool:RemoveChildWindow(ID, child);
@@ -368,13 +373,16 @@ native Bool:SetWindowSize(ID, Float:X, Float:Y, Float:offset_X, Float:offset_Y);
 native Bool:SetWindowVisible(ID, Bool:visible);
 native Bool:SetWindowLocked(ID, Bool:locked);
 native Bool:SetWindowText(ID, const text{});
-native CreateButton(Float:posX, Float:posY, Float:offset_posX, Float:offset_posY, Float:sizeX, Float:sizeY, Float:offset_sizeX, Float:offset_sizeY, Bool:visible = Bool:true, Bool:locked = Bool:false, const text{} = "");
-native CreateText(Float:posX, Float:posY, Float:offset_posX, Float:offset_posY, Float:sizeX, Float:sizeY, Float:offset_sizeX, Float:offset_sizeY, Bool:visible = Bool:true, Bool:locked = Bool:false, const text{} = "");
-native CreateEdit(Float:posX, Float:posY, Float:offset_posX, Float:offset_posY, Float:sizeX, Float:sizeY, Float:offset_sizeX, Float:offset_sizeY, Bool:visible = Bool:true, Bool:locked = Bool:false, const text{} = "");
+native CreateButton(Float:posX, Float:posY, Float:sizeX, Float:sizeY, Bool:visible = Bool:true, Bool:locked = Bool:false, const text{} = "");
+native CreateText(Float:posX, Float:posY, Float:sizeX, Float:sizeY, Bool:visible = Bool:true, Bool:locked = Bool:false, const text{} = "");
+native CreateEdit(Float:posX, Float:posY, Float:sizeX, Float:sizeY, Bool:visible = Bool:true, Bool:locked = Bool:false, const text{} = "");
 native Bool:SetEditMaxLength(ID, length);
 native Bool:SetEditValidation(ID, validation{});
-native CreateCheckbox(Float:posX, Float:posY, Float:offset_posX, Float:offset_posY, Float:sizeX, Float:sizeY, Float:offset_sizeX, Float:offset_sizeY, Bool:visible = Bool:true, Bool:locked = Bool:false, const text{} = "");
+native CreateCheckbox(Float:posX, Float:posY, Float:sizeX, Float:sizeY, Bool:visible = Bool:true, Bool:locked = Bool:false, const text{} = "");
 native Bool:SetCheckboxSelected(ID, Bool:selected);
-native CreateRadioButton(Float:posX, Float:posY, Float:offset_posX, Float:offset_posY, Float:sizeX, Float:sizeY, Float:offset_sizeX, Float:offset_sizeY, Bool:visible = Bool:true, Bool:locked = Bool:false, const text{} = "");
+native CreateRadioButton(Float:posX, Float:posY, Float:sizeX, Float:sizeY, Bool:visible = Bool:true, Bool:locked = Bool:false, const text{} = "");
 native Bool:SetRadioButtonSelected(ID, Bool:selected);
 native Bool:SetRadioButtonGroup(ID, group);
+native CreateList(Float:posX, Float:posY, Float:sizeX, Float:sizeY, Bool:visible = Bool:true, Bool:locked = Bool:false, const text{} = "");
+native AddListItem(ID, const text{});
+native Bool:RemoveListItem(ID);

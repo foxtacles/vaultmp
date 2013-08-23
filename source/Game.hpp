@@ -12,6 +12,8 @@
 #include "Edit.hpp"
 #include "Checkbox.hpp"
 #include "RadioButton.hpp"
+#include "ListItem.hpp"
+#include "List.hpp"
 #include "RakNet.hpp"
 
 #ifdef VAULTMP_DEBUG
@@ -206,6 +208,14 @@ class Game
 		 * \brief Creates a new RadioButton
 		 */
 		static void NewRadioButton(const FactoryRadioButton& reference);
+		/**
+		 * \brief Creates a new ListItem
+		 */
+		static void NewListItem(FactoryListItem& reference);
+		/**
+		 * \brief Creates a new List
+		 */
+		static void NewList(const FactoryList& reference);
 		/**
 		 * \brief Places an Object in-game
 		 */
@@ -626,6 +636,10 @@ class Game
 		 * \brief Handles GUI checkbox selected change
 		 */
 		static void GetCheckboxSelected(const std::string& name, bool selected);
+		/**
+		 * \brief Handles GUI listbox selected change
+		 */
+		static void GetListboxSelections(const std::string& name, const std::vector<const char*>& selections);
 };
 
 template<> struct pTypesMap<pTypes::ID_GAME_AUTH> { typedef pGeneratorDefault<pTypes::ID_GAME_AUTH, std::string, std::string> type; };

@@ -310,6 +310,10 @@ namespace Values
 		GetFireWeapon = 0x0025 | VAULTFUNCTION,
 		GUICreateRadio = 0x0026 | VAULTFUNCTION,
 		GUIRadioGroup = 0x0027 | VAULTFUNCTION,
+		GUICreateListbox = 0x0028 | VAULTFUNCTION,
+		GUICreateItem = 0x0029 | VAULTFUNCTION,
+		GUIRemoveItem = 0x0030 | VAULTFUNCTION,
+		GUISelect = 0x0031 | VAULTFUNCTION,
 	};
 
 	enum ActorVals

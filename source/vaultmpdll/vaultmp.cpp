@@ -30,6 +30,7 @@ queue<bool> qGUI_OnMode;
 queue<string> qGUI_OnClick;
 queue<pair<string, string>> qGUI_OnText;
 queue<pair<string, bool>> qGUI_OnCheckbox;
+queue<vector<string>> qGUI_OnSelect;
 queue<unsigned int> qActivate;
 unsigned int qFire;
 
@@ -59,6 +60,10 @@ static void (*GUI_AddRadioButton)(const char*, const char*, unsigned long int);
 static void (*GUI_SetChecked)(const char*, bool);
 static void (*GUI_Radio_SetGroupID)(const char*, int);
 static void (*GUI_SetCheckboxChangedCallback)(void (*)(const char*, bool));
+static void (*GUI_AddListbox)(const char*, const char*);
+static void (*GUI_Listbox_AddItem)(const char*, const char*, const char*);
+static void (*GUI_Listbox_RemoveItem)(const char*, const char*);
+static void (*GUI_SetListboxSelectionChangedCallback)(void (*)(const char* name, const char**));
 static void (*SetPlayersDataPointer)(remotePlayers*);
 static bool (*QueueUIMessage)(const char* msg, unsigned int emotion, const char* ddsPath, const char* soundName, float msgTime);
 
@@ -650,6 +655,32 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 			break;
 		}
 
+		case 0x0028 | VAULTFUNCTION: // GUICreateListbox - Create listbox
+		{
+			ZeroMemory(result, sizeof(double));
+			const char* data = ((char*) args) + 2; // skip length
+			GUI_AddListbox(data, data + strlen(data) + 3);
+			break;
+		}
+
+		case 0x0029 | VAULTFUNCTION: // GUICreateItem - Create item
+		{
+			ZeroMemory(result, sizeof(double));
+			const char* data = ((char*) args) + 2; // skip length
+			const char* str2 = data + strlen(data) + 3;
+
+			GUI_Listbox_AddItem(data, str2, str2 + strlen(str2) + 3);
+			break;
+		}
+
+		case 0x0030 | VAULTFUNCTION: // GUIRemoveItem - Remove item
+		{
+			ZeroMemory(result, sizeof(double));
+			const char* data = ((char*) args) + 2; // skip length
+			GUI_Listbox_RemoveItem(data, data + strlen(data) + 3);
+			break;
+		}
+
 		default:
 			break;
 	}
@@ -675,6 +706,23 @@ void GUI_OnCheckbox(const char* name, bool selected)
 {
 	mInput.lock();
 	qGUI_OnCheckbox.emplace(name, selected);
+	mInput.unlock();
+}
+
+void GUI_OnSelection(const char* name, const char** selections)
+{
+	mInput.lock();
+
+	vector<string> select{name};
+
+	while (*selections)
+	{
+		select.emplace_back(*selections);
+		++selections;
+	}
+
+	qGUI_OnSelect.emplace(move(select));
+
 	mInput.unlock();
 }
 
@@ -846,14 +894,22 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 		GUI_SetChecked = reinterpret_cast<decltype(GUI_SetChecked)>(GetProcAddress(vaultgui, "GUI_SetChecked"));
 		GUI_Radio_SetGroupID = reinterpret_cast<decltype(GUI_Radio_SetGroupID)>(GetProcAddress(vaultgui, "GUI_Radio_SetGroupID"));
 		GUI_SetCheckboxChangedCallback = reinterpret_cast<decltype(GUI_SetCheckboxChangedCallback)>(GetProcAddress(vaultgui, "GUI_SetCheckboxChangedCallback"));
+		GUI_AddListbox = reinterpret_cast<decltype(GUI_AddListbox)>(GetProcAddress(vaultgui, "GUI_AddListbox"));
+		GUI_Listbox_AddItem = reinterpret_cast<decltype(GUI_Listbox_AddItem)>(GetProcAddress(vaultgui, "GUI_Listbox_AddItem"));
+		GUI_Listbox_RemoveItem = reinterpret_cast<decltype(GUI_Listbox_RemoveItem)>(GetProcAddress(vaultgui, "GUI_Listbox_RemoveItem"));
+		GUI_SetListboxSelectionChangedCallback = reinterpret_cast<decltype(GUI_SetListboxSelectionChangedCallback)>(GetProcAddress(vaultgui, "GUI_SetListboxSelectionChangedCallback"));
 		SetPlayersDataPointer = reinterpret_cast<decltype(SetPlayersDataPointer)>(GetProcAddress(vaultgui, "SetPlayersDataPointer"));
 
-		if (!Chatbox_AddToChat || !GUI_CreateFrameWindow || !GUI_AddStaticText || !GUI_AddTextbox || !GUI_AddButton || !GUI_SetVisible || !GUI_AllowDrag || !GUI_SetPosition || !GUI_SetSize || !GUI_SetText || !GUI_RemoveWindow || !GUI_ForceGUI || !GUI_SetClickCallback || !GUI_SetTextChangedCallback || !GUI_Textbox_SetMaxLength || !GUI_Textbox_SetValidationString || !SetPlayersDataPointer || !GUI_AddCheckbox || !GUI_AddRadioButton || !GUI_SetChecked || !GUI_Radio_SetGroupID || !GUI_SetCheckboxChangedCallback)
+		if (!Chatbox_AddToChat || !GUI_CreateFrameWindow || !GUI_AddStaticText || !GUI_AddTextbox || !GUI_AddButton || !GUI_SetVisible || !GUI_AllowDrag ||
+			!GUI_SetPosition || !GUI_SetSize || !GUI_SetText || !GUI_RemoveWindow || !GUI_ForceGUI || !GUI_SetClickCallback || !GUI_SetTextChangedCallback ||
+			!GUI_Textbox_SetMaxLength || !GUI_Textbox_SetValidationString || !SetPlayersDataPointer || !GUI_AddCheckbox || !GUI_AddRadioButton || !GUI_SetChecked
+			|| !GUI_Radio_SetGroupID || !GUI_AddListbox || !GUI_Listbox_AddItem || !GUI_Listbox_RemoveItem || !GUI_SetListboxSelectionChangedCallback || !GUI_SetCheckboxChangedCallback)
 			DLLerror = true;
 
 		GUI_SetClickCallback(GUI_OnClick);
 		GUI_SetTextChangedCallback(GUI_OnText);
 		GUI_SetCheckboxChangedCallback(GUI_OnCheckbox);
+		GUI_SetListboxSelectionChangedCallback(GUI_OnSelection);
 
 /*
 players[0].health = 80.0;
@@ -1037,6 +1093,27 @@ players[1].player = false;
 			pipeClient.Send(buffer);
 
 			--qFire;
+		}
+
+		while (!qGUI_OnSelect.empty())
+		{
+			const auto& select = qGUI_OnSelect.front();
+
+			buffer[0] = PIPE_OP_RETURN_RAW;
+			*reinterpret_cast<unsigned int*>(buffer + 1) = 0x0031 | VAULTFUNCTION;
+			unsigned int pos = 0;
+
+			for (const auto& str : select)
+			{
+				memcpy(buffer + pos + 5, str.c_str(), str.length() + 1);
+				pos += str.length() + 1;
+			}
+
+			*(buffer + pos + 5) = 0x00;
+
+			pipeClient.Send(buffer);
+
+			qGUI_OnSelect.pop();
 		}
 
 		mInput.unlock();

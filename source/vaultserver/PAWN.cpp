@@ -337,11 +337,17 @@ AMX_NATIVE_INFO PAWN::functions[] {
 	F_<165>::F,
 	F_<166>::F,
 	F_<167>::F,
+	F_<168>::F,
+	F_<169>::F,
+	F_<170>::F,
+	F_<171>::F,
+	F_<172>::F,
 
 	{0, 0}
 };
 
 cell PAWN::CreateTimer(AMX* amx, const cell* params) noexcept
+
 {
 	int len;
 	cell* source;

@@ -392,38 +392,43 @@ void Script::SetupActor(const FactoryActor& actor, const FactoryObject& referenc
 		actor->SetActorRace(UINT_MAX);
 }
 
-void Script::SetupWindow(const FactoryWindow& window, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
+void Script::SetupWindow(const FactoryWindow& window, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept
 {
-	window->SetPos(posX, posY, offset_posX, offset_posY);
-	window->SetSize(sizeX, sizeY, offset_sizeX, offset_sizeY);
+	window->SetPos(posX, posY, 0.0, 0.0);
+	window->SetSize(sizeX, sizeY, 0.0, 0.0);
 	window->SetVisible(visible);
 	window->SetLocked(locked);
 	window->SetText(text);
 }
 
-void Script::SetupButton(const FactoryButton& button, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
+void Script::SetupButton(const FactoryButton& button, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept
 {
-	SetupWindow(button, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+	SetupWindow(button, posX, posY, sizeX, sizeY, visible, locked, text);
 }
 
-void Script::SetupText(const FactoryText& text, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text_) noexcept
+void Script::SetupText(const FactoryText& text, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text_) noexcept
 {
-	SetupWindow(text, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text_);
+	SetupWindow(text, posX, posY, sizeX, sizeY, visible, locked, text_);
 }
 
-void Script::SetupEdit(const FactoryEdit& edit, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
+void Script::SetupEdit(const FactoryEdit& edit, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept
 {
-	SetupWindow(edit, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+	SetupWindow(edit, posX, posY, sizeX, sizeY, visible, locked, text);
 }
 
-void Script::SetupCheckbox(const FactoryCheckbox& checkbox, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
+void Script::SetupCheckbox(const FactoryCheckbox& checkbox, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept
 {
-	SetupWindow(checkbox, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+	SetupWindow(checkbox, posX, posY, sizeX, sizeY, visible, locked, text);
 }
 
-void Script::SetupRadioButton(const FactoryRadioButton& radiobutton, double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
+void Script::SetupRadioButton(const FactoryRadioButton& radiobutton, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept
 {
-	SetupWindow(radiobutton, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+	SetupWindow(radiobutton, posX, posY, sizeX, sizeY, visible, locked, text);
+}
+
+void Script::SetupList(const FactoryList& list, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept
+{
+	SetupWindow(list, posX, posY, sizeX, sizeY, visible, locked, text);
 }
 
 void Script::KillTimer(NetworkID id) noexcept
@@ -913,6 +918,16 @@ bool Script::IsRadioButton(NetworkID id) noexcept
 	return (GameFactory::GetType(id) & ID_RADIOBUTTON);
 }
 
+bool Script::IsListItem(NetworkID id) noexcept
+{
+	return (GameFactory::GetType(id) & ID_LISTITEM);
+}
+
+bool Script::IsList(NetworkID id) noexcept
+{
+	return (GameFactory::GetType(id) & ID_LIST);
+}
+
 bool Script::IsChatbox(NetworkID id) noexcept
 {
 	return GameFactory::Operate<Window, FailPolicy::Return>(id, [](FactoryWindow& window) {
@@ -1301,12 +1316,12 @@ bool Script::CreateVolatile(NetworkID id, unsigned int baseID, double aX, double
 bool Script::DestroyObject(NetworkID id) noexcept
 {
 	if (!GameFactory::Operate<Base, FailPolicy::Return>(id, [id](FactoryBase& base) {
-		return !vaultcast_test<Player>(base) && !vaultcast_test<Window>(base);
+		return !vaultcast_test<Player>(base) && !vaultcast_test<Window>(base) && !vaultcast_test<ListItem>(base);
 	})) return false;
 
 	Script::Call<CBI("OnDestroy")>(id);
 
-	return GameFactory::Operate<Base, FailPolicy::Return>(id, [id](FactoryBase& base) -> bool {
+	return GameFactory::Operate<Base, FailPolicy::Bool>(id, [id](FactoryBase& base) {
 		GameFactory::Operate<Object, FailPolicy::Return>(id, [](FactoryObject& object) {
 			if (object->IsPersistent())
 				deletedStatic[object->GetNetworkCell()].emplace_back(object->GetReference());
@@ -1326,14 +1341,14 @@ bool Script::DestroyObject(NetworkID id) noexcept
 		{
 			GameFactory::Leave(base);
 
-			GameFactory::Operate<ItemList, FailPolicy::Exception>(container, [id, container](FactoryItemList& itemlist) {
+			GameFactory::Operate<ItemList>(container, [id, container](FactoryItemList& itemlist) {
 				itemlist->RemoveItem(id);
 			});
 
-			return GameFactory::Destroy(id);
+			GameFactory::Destroy(id);
 		}
-
-		return GameFactory::Destroy(base);
+		else
+			GameFactory::Destroy(base);
 	});
 }
 
@@ -2627,12 +2642,15 @@ unsigned int Script::GetRadioButtonGroup(NetworkID id) noexcept
 	});
 }
 
-NetworkID (Script::CreateWindow)(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
+NetworkID (Script::CreateWindow)(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept
 {
-	NetworkID id = GameFactory::Operate<Window>(GameFactory::Create<Window>(), [posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text](FactoryWindow& window) {
-		SetupWindow(window, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+	NetworkID id = GameFactory::Operate<Window, FailPolicy::Return>(GameFactory::Create<Window>(), [posX, posY, sizeX, sizeY, visible, locked, text](FactoryWindow& window) {
+		SetupWindow(window, posX, posY, sizeX, sizeY, visible, locked, text);
 		return window->GetNetworkID();
 	});
+
+	if (!id)
+		return id;
 
 	Call<CBI("OnCreate")>(id);
 
@@ -2854,36 +2872,45 @@ bool Script::SetWindowText(NetworkID id, const char* text) noexcept
 	return true;
 }
 
-NetworkID Script::CreateButton(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
+NetworkID Script::CreateButton(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept
 {
-	NetworkID id = GameFactory::Operate<Button>(GameFactory::Create<Button>(), [posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text](FactoryButton& button) {
-		SetupButton(button, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+	NetworkID id = GameFactory::Operate<Button, FailPolicy::Return>(GameFactory::Create<Button>(), [posX, posY, sizeX, sizeY, visible, locked, text](FactoryButton& button) {
+		SetupButton(button, posX, posY, sizeX, sizeY, visible, locked, text);
 		return button->GetNetworkID();
 	});
 
+	if (!id)
+		return id;
+
 	Call<CBI("OnCreate")>(id);
 
 	return id;
 }
 
-NetworkID Script::CreateText(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
+NetworkID Script::CreateText(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept
 {
-	NetworkID id = GameFactory::Operate<Text>(GameFactory::Create<Text>(), [posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text](FactoryText& text_) {
-		SetupText(text_, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+	NetworkID id = GameFactory::Operate<Text, FailPolicy::Return>(GameFactory::Create<Text>(), [posX, posY, sizeX, sizeY, visible, locked, text](FactoryText& text_) {
+		SetupText(text_, posX, posY, sizeX, sizeY, visible, locked, text);
 		return text_->GetNetworkID();
 	});
 
+	if (!id)
+		return id;
+
 	Call<CBI("OnCreate")>(id);
 
 	return id;
 }
 
-NetworkID Script::CreateEdit(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
+NetworkID Script::CreateEdit(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept
 {
-	NetworkID id = GameFactory::Operate<Edit>(GameFactory::Create<Edit>(), [posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text](FactoryEdit& edit) {
-		SetupEdit(edit, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+	NetworkID id = GameFactory::Operate<Edit, FailPolicy::Return>(GameFactory::Create<Edit>(), [posX, posY, sizeX, sizeY, visible, locked, text](FactoryEdit& edit) {
+		SetupEdit(edit, posX, posY, sizeX, sizeY, visible, locked, text);
 		return edit->GetNetworkID();
 	});
+
+	if (!id)
+		return id;
 
 	Call<CBI("OnCreate")>(id);
 
@@ -2949,12 +2976,15 @@ bool Script::SetEditValidation(NetworkID id, const char* validation) noexcept
 	return true;
 }
 
-NetworkID Script::CreateCheckbox(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
+NetworkID Script::CreateCheckbox(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept
 {
-	NetworkID id = GameFactory::Operate<Checkbox>(GameFactory::Create<Checkbox>(), [posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text](FactoryCheckbox& checkbox) {
-		SetupCheckbox(checkbox, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+	NetworkID id = GameFactory::Operate<Checkbox, FailPolicy::Return>(GameFactory::Create<Checkbox>(), [posX, posY, sizeX, sizeY, visible, locked, text](FactoryCheckbox& checkbox) {
+		SetupCheckbox(checkbox, posX, posY, sizeX, sizeY, visible, locked, text);
 		return checkbox->GetNetworkID();
 	});
+
+	if (!id)
+		return id;
 
 	Call<CBI("OnCreate")>(id);
 
@@ -2981,12 +3011,15 @@ bool Script::SetCheckboxSelected(NetworkID id, bool selected) noexcept
 	return true;
 }
 
-NetworkID Script::CreateRadioButton(double posX, double posY, double offset_posX, double offset_posY, double sizeX, double sizeY, double offset_sizeX, double offset_sizeY, bool visible, bool locked, const char* text) noexcept
+NetworkID Script::CreateRadioButton(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept
 {
-	NetworkID id = GameFactory::Operate<RadioButton>(GameFactory::Create<RadioButton>(), [posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text](FactoryRadioButton& radiobutton) {
-		SetupRadioButton(radiobutton, posX, posY, offset_posX, offset_posY, sizeX, sizeY, offset_sizeX, offset_sizeY, visible, locked, text);
+	NetworkID id = GameFactory::Operate<RadioButton, FailPolicy::Return>(GameFactory::Create<RadioButton>(), [posX, posY, sizeX, sizeY, visible, locked, text](FactoryRadioButton& radiobutton) {
+		SetupRadioButton(radiobutton, posX, posY, sizeX, sizeY, visible, locked, text);
 		return radiobutton->GetNetworkID();
 	});
+
+	if (!id)
+		return id;
 
 	Call<CBI("OnCreate")>(id);
 
@@ -3063,4 +3096,77 @@ bool Script::SetRadioButtonGroup(NetworkID id, unsigned int group)
 		});
 
 	return true;
+}
+
+NetworkID Script::CreateList(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept
+{
+	NetworkID id = GameFactory::Operate<List, FailPolicy::Return>(GameFactory::Create<List>(), [posX, posY, sizeX, sizeY, visible, locked, text](FactoryList& list) {
+		SetupList(list, posX, posY, sizeX, sizeY, visible, locked, text);
+		return list->GetNetworkID();
+	});
+
+	if (!id)
+		return id;
+
+	Call<CBI("OnCreate")>(id);
+
+	return id;
+}
+
+NetworkID Script::AddListItem(NetworkID id, const char* text) noexcept
+{
+	NetworkID listitem = GameFactory::Operate<List, FailPolicy::Return>(id, [id, text](FactoryList& list) {
+		return GameFactory::Operate<ListItem>(GameFactory::Create<ListItem>(), [id, text, &list](FactoryListItem& listitem) {
+			NetworkID listitem_id = listitem->GetNetworkID();
+			list->AddItem(listitem_id);
+			listitem->SetText(text);
+
+			NetworkID root = GetWindowRoot(id);
+			vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
+
+			if (!guids.empty())
+				Network::Queue({Network::CreateResponse(
+					listitem->toPacket(),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
+				});
+
+			return listitem_id;
+		});
+	});
+
+	if (!listitem)
+		return listitem;
+
+	Call<CBI("OnCreate")>(listitem);
+
+	return id;
+}
+
+bool Script::RemoveListItem(NetworkID id) noexcept
+{
+	NetworkID list = GameFactory::Operate<ListItem, FailPolicy::Return>(id, [](FactoryListItem& listitem) {
+		return listitem->GetItemContainer();
+	});
+
+	if (!list)
+		return false;
+
+	Call<CBI("OnDestroy")>(id);
+
+	return GameFactory::Operate<List, FailPolicy::Bool>(list, [id](FactoryList& list) {
+		list->RemoveItem(id);
+
+/*
+		NetworkID root = GetWindowRoot(list->GetNetworkID());
+		vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
+
+		if (!guids.empty())
+			Network::Queue({Network::CreateResponse(
+				listitem->toPacket(),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
+			});
+*/
+
+		GameFactory::Destroy(id);
+	});
 }

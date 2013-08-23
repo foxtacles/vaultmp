@@ -4,8 +4,8 @@ using namespace std;
 using namespace RakNet;
 
 Window::WindowChilds Window::childs;
-constexpr tuple<double, double, double, double> Window::GUI_MAIN_SIZE;
-constexpr tuple<double, double, double, double> Window::GUI_MAIN_POS;
+constexpr tuple<double, double> Window::GUI_MAIN_SIZE;
+constexpr tuple<double, double> Window::GUI_MAIN_POS;
 
 Window::Window() : Base(), parent(0), locked(false), visible(true)
 {
