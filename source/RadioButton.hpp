@@ -35,8 +35,8 @@ class RadioButton : public Window
 		void SetSelected(bool selected) { this->selected = selected; }
 		void SetGroup(unsigned int group) { this->group = group; }
 
-		bool GetSelected() { return selected; }
-		unsigned int GetGroup() { return group; }
+		bool GetSelected() const { return selected; }
+		unsigned int GetGroup() const { return group; }
 
 		/**
 		 * \brief For network transfer

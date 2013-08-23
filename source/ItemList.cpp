@@ -38,7 +38,7 @@ ItemList::ItemList(const pDefault* packet)
 
 ItemList::~ItemList() noexcept
 {
-	this->FlushContainer();
+	this->RemoveAllItems();
 }
 
 void ItemList::initialize()
@@ -71,7 +71,7 @@ NetworkID ItemList::AddItem(NetworkID id)
 				return make_pair(0u, 0.0);
 			}
 
-			throw VaultException("Item is already owned by container %llu", item->GetItemContainer()).stacktrace();
+			throw VaultException("Item is already owned by container %llu", container).stacktrace();
 		}
 
 		return make_pair(item->GetBase(), item->GetItemCondition());
@@ -255,17 +255,12 @@ NetworkID ItemList::IsEquipped(unsigned int baseID) const
 
 void ItemList::Copy(ItemList& IL) const
 {
-	IL.FlushContainer();
+	IL.RemoveAllItems();
 
 	for (const NetworkID& id : container)
 		GameFactory::Operate<Item>(id, [&IL](FactoryItem& item) {
 			IL.AddItem(item->Copy());
 		});
-}
-
-bool ItemList::IsEmpty() const
-{
-	return container.empty();
 }
 
 unsigned int ItemList::GetItemCount(unsigned int baseID) const
@@ -279,19 +274,6 @@ unsigned int ItemList::GetItemCount(unsigned int baseID) const
 		});
 
 	return count;
-}
-
-void ItemList::FlushContainer()
-{
-	for (const NetworkID& id : container)
-		GameFactory::Destroy(id);
-
-	container.clear();
-}
-
-const ItemList::Impl& ItemList::GetItemList() const
-{
-	return container;
 }
 
 #ifdef VAULTSERVER
@@ -312,9 +294,9 @@ ItemList::Impl ItemList::GetItemTypes(const string& type) const
 pPacket ItemList::toPacket() const
 {
 	vector<pPacket> items;
-	items.reserve(GetItemList().size());
+	items.reserve(container.size());
 
-	for (const NetworkID& id : GetItemList())
+	for (const NetworkID& id : container)
 		items.emplace_back(GameFactory::Operate<Item>(id, [](FactoryItem& item) { return item->toPacket(); }));
 
 	pPacket pBaseNew = Base::toPacket();

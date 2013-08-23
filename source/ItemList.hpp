@@ -6,7 +6,6 @@
 #include "Base.hpp"
 #include "ReferenceTypes.hpp"
 #include "GameFactory.hpp"
-#include "packet/PacketFactory.hpp"
 
 #ifdef VAULTMP_DEBUG
 #include "Debug.hpp"
@@ -56,15 +55,14 @@ class ItemList : public virtual Base
 		RakNet::NetworkID UnequipItem(unsigned int baseID, bool silent, bool stick) const;
 
 		RakNet::NetworkID IsEquipped(unsigned int baseID) const;
-		bool IsEmpty() const;
+		bool IsEmpty() const { return container.empty(); }
 		unsigned int GetItemCount(unsigned int baseID = 0) const;
-		const Impl& GetItemList() const;
+		const Impl& GetItemList() const { return container; }
 
 #ifdef VAULTSERVER
 		Impl GetItemTypes(const std::string& type) const;
 #endif
 
-		void FlushContainer();
 		void Copy(ItemList& IL) const;
 
 		/**

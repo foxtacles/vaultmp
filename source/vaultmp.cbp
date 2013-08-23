@@ -116,6 +116,10 @@
 		<Unit filename="Item.hpp" />
 		<Unit filename="ItemList.cpp" />
 		<Unit filename="ItemList.hpp" />
+		<Unit filename="List.cpp" />
+		<Unit filename="List.hpp" />
+		<Unit filename="ListItem.cpp" />
+		<Unit filename="ListItem.hpp" />
 		<Unit filename="Lockable.cpp" />
 		<Unit filename="Lockable.hpp" />
 		<Unit filename="Network.cpp" />

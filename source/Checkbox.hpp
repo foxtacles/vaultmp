@@ -32,7 +32,7 @@ class Checkbox : public Window
 
 		void SetSelected(bool selected) { this->selected = selected; }
 
-		bool GetSelected() { return selected; }
+		bool GetSelected() const { return selected; }
 
 		/**
 		 * \brief For network transfer

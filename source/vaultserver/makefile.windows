@@ -138,6 +138,8 @@ $(OBJDIR_DEBUG)\\Edit.o \
 $(OBJDIR_DEBUG)\\Checkbox.o \
 $(OBJDIR_DEBUG)\\Base.o \
 $(OBJDIR_DEBUG)\\RadioButton.o \
+$(OBJDIR_DEBUG)\\ListItem.o \
+$(OBJDIR_DEBUG)\\List.o \
 $(OBJDIR_DEBUG)\\Debug.o
 
 OBJ_RELEASE = \
@@ -238,7 +240,9 @@ $(OBJDIR_RELEASE)\\Text.o \
 $(OBJDIR_RELEASE)\\Edit.o \
 $(OBJDIR_RELEASE)\\Checkbox.o \
 $(OBJDIR_RELEASE)\\Base.o \
-$(OBJDIR_RELEASE)\\RadioButton.o
+$(OBJDIR_RELEASE)\\RadioButton.o \
+$(OBJDIR_RELEASE)\\ListItem.o \
+$(OBJDIR_RELEASE)\\List.o
 
 all: debug release
 
@@ -561,6 +565,12 @@ $(OBJDIR_DEBUG)\\Base.o: ..\\Base.cpp
 $(OBJDIR_DEBUG)\\RadioButton.o: ..\\RadioButton.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ..\\RadioButton.cpp -o $(OBJDIR_DEBUG)\\RadioButton.o
 
+$(OBJDIR_DEBUG)\\ListItem.o: ..\\ListItem.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ..\\ListItem.cpp -o $(OBJDIR_DEBUG)\\ListItem.o
+
+$(OBJDIR_DEBUG)\\List.o: ..\\List.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c ..\\List.cpp -o $(OBJDIR_DEBUG)\\List.o
+
 clean_debug:
 	cmd /c del /f $(OBJ_DEBUG) $(OUT_DEBUG)
 	cmd /c rd $(OBJDIR_DEBUG)
@@ -877,6 +887,12 @@ $(OBJDIR_RELEASE)\\Base.o: ..\\Base.cpp
 
 $(OBJDIR_RELEASE)\\RadioButton.o: ..\\RadioButton.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ..\\RadioButton.cpp -o $(OBJDIR_RELEASE)\\RadioButton.o
+
+$(OBJDIR_RELEASE)\\ListItem.o: ..\\ListItem.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ..\\ListItem.cpp -o $(OBJDIR_RELEASE)\\ListItem.o
+
+$(OBJDIR_RELEASE)\\List.o: ..\\List.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ..\\List.cpp -o $(OBJDIR_RELEASE)\\List.o
 
 clean_release:
 	cmd /c del /f $(OBJ_RELEASE) $(OUT_RELEASE)

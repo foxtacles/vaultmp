@@ -38,8 +38,8 @@ class Edit : public Window
 		void SetMaxLength(unsigned int length) { this->length = length; }
 		void SetValidation(const std::string& validation) { this->validation = validation; }
 
-		unsigned int GetMaxLength() { return length; }
-		const std::string& GetValidation() { return validation; }
+		unsigned int GetMaxLength() const { return length; }
+		const std::string& GetValidation() const { return validation; }
 
 		/**
 		 * \brief For network transfer
