@@ -485,7 +485,7 @@ unsigned long long Script::Timer_Respawn(NetworkID id) noexcept
 
 	RakNetGUID guid = Client::GetClientFromPlayer(id)->GetGUID();
 
-	const auto& values = Player::default_values;
+	const auto& values = Actor::default_values;
 
 	for (const auto& value : values)
 	{
