@@ -699,7 +699,7 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 			const char* data = ((char*) args) + 2; // skip length
 			const char* str2 = data + strlen(data) + 3;
 
-			GUI_Listbox_SetItemText(data, str2, str2 + strlen(str2) + 2);
+			GUI_Listbox_SetItemText(data, str2, str2 + strlen(str2) + 3);
 			break;
 		}
 

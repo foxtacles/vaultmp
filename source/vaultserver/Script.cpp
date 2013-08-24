@@ -3131,6 +3131,9 @@ NetworkID Script::CreateList(double posX, double posY, double sizeX, double size
 
 NetworkID Script::AddListItem(NetworkID id, const char* text) noexcept
 {
+	if (!*text)
+		return 0ull;
+
 	NetworkID listitem = GameFactory::Operate<List, FailPolicy::Return>(id, [id, text](FactoryList& list) {
 		return GameFactory::Operate<ListItem>(GameFactory::Create<ListItem>(), [id, text, &list](FactoryListItem& listitem) {
 			NetworkID listitem_id = listitem->GetNetworkID();
@@ -3248,6 +3251,9 @@ bool Script::SetListItemSelected(NetworkID id, bool selected) noexcept
 
 bool Script::SetListItemText(NetworkID id, const char* text) noexcept
 {
+	if (!*text)
+		return 0ull;
+
 	NetworkID list = GameFactory::Operate<ListItem, FailPolicy::Return>(id, [](FactoryListItem& listitem) {
 		return listitem->GetItemContainer();
 	});

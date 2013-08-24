@@ -2,8 +2,6 @@
 
 #ifndef VAULTSERVER
 #include "Game.hpp"
-#else
-#include "Item.hpp"
 #endif
 
 using namespace std;
