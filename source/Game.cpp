@@ -243,6 +243,8 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func::GUICreateListbox:
 			case Func::GUICreateItem:
 			case Func::GUIRemoveItem:
+			case Func::GUISelectChange:
+			case Func::GUISelectText:
 			case Func::SetGlobalValue:
 			case Func::MarkForDelete:
 			case Func::AgeRace:
@@ -960,7 +962,7 @@ void Game::NewButton(const FactoryButton& reference)
 		{
 			reference->SetLabel(Utils::toString(reference->GetNetworkID()));
 
-			Interface::ExecuteCommand(Func::GUICreateButton, {RawParameter(Utils::toString(reference->GetParentWindow())), RawParameter(reference->GetLabel())});
+			Interface::ExecuteCommand(Func::GUICreateButton, {RawParameter(reference->GetParentWindow()), RawParameter(reference->GetLabel())});
 		}
 
 		NewWindow(reference);
@@ -977,7 +979,7 @@ void Game::NewText(const FactoryText& reference)
 		{
 			reference->SetLabel(Utils::toString(reference->GetNetworkID()));
 
-			Interface::ExecuteCommand(Func::GUICreateText, {RawParameter(Utils::toString(reference->GetParentWindow())), RawParameter(reference->GetLabel())});
+			Interface::ExecuteCommand(Func::GUICreateText, {RawParameter(reference->GetParentWindow()), RawParameter(reference->GetLabel())});
 		}
 
 		NewWindow(reference);
@@ -994,7 +996,7 @@ void Game::NewEdit(const FactoryEdit& reference)
 		{
 			reference->SetLabel(Utils::toString(reference->GetNetworkID()));
 
-			Interface::ExecuteCommand(Func::GUICreateEdit, {RawParameter(Utils::toString(reference->GetParentWindow())), RawParameter(reference->GetLabel())});
+			Interface::ExecuteCommand(Func::GUICreateEdit, {RawParameter(reference->GetParentWindow()), RawParameter(reference->GetLabel())});
 		}
 
 		NewWindow(reference);
@@ -1014,7 +1016,7 @@ void Game::NewCheckbox(const FactoryCheckbox& reference)
 		{
 			reference->SetLabel(Utils::toString(reference->GetNetworkID()));
 
-			Interface::ExecuteCommand(Func::GUICreateCheckbox, {RawParameter(Utils::toString(reference->GetParentWindow())), RawParameter(reference->GetLabel())});
+			Interface::ExecuteCommand(Func::GUICreateCheckbox, {RawParameter(reference->GetParentWindow()), RawParameter(reference->GetLabel())});
 		}
 
 		NewWindow(reference);
@@ -1033,7 +1035,7 @@ void Game::NewRadioButton(const FactoryRadioButton& reference)
 		{
 			reference->SetLabel(Utils::toString(reference->GetNetworkID()));
 
-			Interface::ExecuteCommand(Func::GUICreateRadio, {RawParameter(Utils::toString(reference->GetParentWindow())), RawParameter(reference->GetLabel()), RawParameter(reference->GetGroup())});
+			Interface::ExecuteCommand(Func::GUICreateRadio, {RawParameter(reference->GetParentWindow()), RawParameter(reference->GetLabel()), RawParameter(reference->GetGroup())});
 		}
 
 		NewWindow(reference);
@@ -1054,7 +1056,7 @@ void Game::NewListItem(FactoryListItem& reference)
 
 		GameFactory::Operate<ListItem>(item, [&list](FactoryListItem& listitem) {
 			Interface::Dynamic([&listitem, &list]() {
-				Interface::ExecuteCommand(Func::GUICreateItem, {RawParameter(list->GetLabel()), RawParameter(Utils::toString(listitem->GetNetworkID())), RawParameter(listitem->GetText())});
+				Interface::ExecuteCommand(Func::GUICreateItem, {RawParameter(list->GetLabel()), RawParameter(listitem->GetNetworkID()), RawParameter(listitem->GetText())});
 			});
 		});
 	});
@@ -1070,7 +1072,7 @@ void Game::NewList(const FactoryList& reference)
 		{
 			reference->SetLabel(Utils::toString(reference->GetNetworkID()));
 
-			Interface::ExecuteCommand(Func::GUICreateListbox, {RawParameter(Utils::toString(reference->GetParentWindow())), RawParameter(reference->GetLabel())});
+			Interface::ExecuteCommand(Func::GUICreateListbox, {RawParameter(reference->GetParentWindow()), RawParameter(reference->GetLabel())});
 		}
 
 		NewWindow(reference);
@@ -1079,7 +1081,7 @@ void Game::NewList(const FactoryList& reference)
 	GameFactory::Operate<ListItem>(reference->GetItemList(), [&reference](FactoryListItems& listitems) {
 		Interface::Dynamic([&listitems, &reference]() {
 			for (const auto& listitem : listitems)
-				Interface::ExecuteCommand(Func::GUICreateItem, {RawParameter(reference->GetLabel()), RawParameter(Utils::toString(listitem->GetNetworkID())), RawParameter(listitem->GetText())});
+				Interface::ExecuteCommand(Func::GUICreateItem, {RawParameter(reference->GetLabel()), RawParameter(listitem->GetNetworkID()), RawParameter(listitem->GetText())});
 		});
 	});
 }
@@ -1170,7 +1172,10 @@ void Game::DeleteWindow(FactoryWindow& reference)
 		GameFactory::Operate<ListItem>(list->GetItemList(), [&list](FactoryListItems& items) {
 			Interface::Dynamic([&items, &list]() {
 				for (const auto& item : items)
-					Interface::ExecuteCommand(Func::GUIRemoveItem, {RawParameter(list->GetLabel()), RawParameter(Utils::toString(item->GetNetworkID()))});
+				{
+					list->RemoveItem(item->GetNetworkID());
+					Interface::ExecuteCommand(Func::GUIRemoveItem, {RawParameter(list->GetLabel()), RawParameter(item->GetNetworkID())});
+				}
 			});
 		});
 	});
@@ -1180,6 +1185,26 @@ void Game::DeleteWindow(FactoryWindow& reference)
 	});
 
 	GameFactory::Destroy(reference);
+}
+
+void Game::DeleteListItem(FactoryListItem& reference)
+{
+	NetworkID item = reference->GetNetworkID();
+	NetworkID list = reference->GetItemContainer();
+
+	GameFactory::Leave(reference);
+
+	GameFactory::Operate<List>(list, [item](FactoryList& list) {
+		list->RemoveItem(item);
+
+		GameFactory::Operate<ListItem>(item, [&list](FactoryListItem& listitem) {
+			Interface::Dynamic([&listitem, &list]() {
+				Interface::ExecuteCommand(Func::GUIRemoveItem, {RawParameter(list->GetLabel()), RawParameter(listitem->GetNetworkID())});
+			});
+		});
+
+		GameFactory::Destroy(item);
+	});
 }
 
 unsigned int Game::GetBase(unsigned int refID)
@@ -1637,6 +1662,20 @@ void Game::SetRadioButtonGroup(const FactoryRadioButton& reference)
 {
 	Interface::Dynamic([&reference]() {
 		Interface::ExecuteCommand(Func::GUIRadioGroup, {RawParameter(reference->GetLabel()), RawParameter(reference->GetGroup())});
+	});
+}
+
+void Game::SetListItemSelected(const FactoryListItem& reference)
+{
+	Interface::Dynamic([&reference]() {
+		Interface::ExecuteCommand(Func::GUISelectChange, {RawParameter(reference->GetItemContainer()), RawParameter(reference->GetNetworkID()), RawParameter(reference->GetSelected())});
+	});
+}
+
+void Game::SetListItemText(const FactoryListItem& reference)
+{
+	Interface::Dynamic([&reference]() {
+		Interface::ExecuteCommand(Func::GUISelectText, {RawParameter(reference->GetItemContainer()), RawParameter(reference->GetNetworkID()), RawParameter(reference->GetText())});
 	});
 }
 
@@ -2305,6 +2344,20 @@ void Game::net_UpdateRadioButtonGroup(const FactoryRadioButton& reference, unsig
 	SetRadioButtonGroup(reference);
 }
 
+void Game::net_UpdateListItemSelected(const FactoryListItem& reference, bool selected)
+{
+	reference->SetSelected(selected);
+
+	SetListItemSelected(reference);
+}
+
+void Game::net_UpdateListItemText(const FactoryListItem& reference, const string& text)
+{
+	reference->SetText(text);
+
+	SetListItemText(reference);
+}
+
 void Game::net_UpdateWindowMode(bool enabled)
 {
 	GUIMode = enabled;
@@ -2324,8 +2377,7 @@ void Game::net_ChatMessage(const string& message)
 
 void Game::net_SetGlobalValue(unsigned int global, signed int value)
 {
-	globals.erase(global);
-	globals.emplace(global, value);
+	globals[global] = value;
 
 	SetGlobalValue(global, value);
 }
@@ -2491,9 +2543,6 @@ void Game::GetWindowClick(const string& name)
 	else
 	{
 		NetworkID window = strtoull(name.c_str(), nullptr, 10);
-
-		if (!window)
-			return;
 
 		GameFactory::Operate<Window>(window, [](FactoryWindow& window) {
 			Network::Queue({Network::CreateResponse(

@@ -235,6 +235,10 @@ class Game
 		 */
 		static void DeleteWindow(FactoryWindow& reference);
 		/**
+		 * \brief Deletes a ListItem
+		 */
+		static void DeleteListItem(FactoryListItem& reference);
+		/**
 		 * \brief Returns the baseID of an Object
 		 */
 		static unsigned int GetBase(unsigned int refID);
@@ -390,6 +394,14 @@ class Game
 		 * \brief Updates the settings of a GUI radio button (group)
 		 */
 		static void SetRadioButtonGroup(const FactoryRadioButton& reference);
+		/**
+		 * \brief Updates the settings of a GUI list item (selected)
+		 */
+		static void SetListItemSelected(const FactoryListItem& reference);
+		/**
+		 * \brief Updates the settings of a GUI list item (text)
+		 */
+		static void SetListItemText(const FactoryListItem& reference);
 		/**
 		 * \brief Updates the window mode
 		 */
@@ -555,6 +567,14 @@ class Game
 		 * \brief Network function to handle GUI radio button group
 		 */
 		static void net_UpdateRadioButtonGroup(const FactoryRadioButton& reference, unsigned int group);
+		/**
+		 * \brief Network function to handle GUI list item selected
+		 */
+		static void net_UpdateListItemSelected(const FactoryListItem& reference, bool selected);
+		/**
+		 * \brief Network function to handle GUI list item text
+		 */
+		static void net_UpdateListItemText(const FactoryListItem& reference, const std::string& text);
 		/**
 		 * \brief Network function to handle GUI window mode
 		 */

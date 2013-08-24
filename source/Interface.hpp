@@ -69,25 +69,11 @@ class Interface : public API
 					return convert;
 				}
 
-				static std::vector<std::string> make(signed int str)
-				{
-					return std::vector<std::string>{Utils::toString(str)};
-				}
-
-				static std::vector<std::string> make(unsigned int str)
-				{
-					return std::vector<std::string>{Utils::toString(str)};
-				}
-
-				static std::vector<std::string> make(double str)
-				{
-					return std::vector<std::string>{Utils::toString(str)};
-				}
-
-				static std::vector<std::string> make(bool str)
-				{
-					return std::vector<std::string>{str ? "1" : "0"};
-				}
+				static std::vector<std::string> make(signed int str) { return std::vector<std::string>{Utils::toString(str)}; }
+				static std::vector<std::string> make(unsigned int str) { return std::vector<std::string>{Utils::toString(str)}; }
+				static std::vector<std::string> make(unsigned long long str) { return std::vector<std::string>{Utils::toString(str)}; }
+				static std::vector<std::string> make(double str) { return std::vector<std::string>{Utils::toString(str)}; }
+				static std::vector<std::string> make(bool str) { return std::vector<std::string>{str ? "1" : "0"}; }
 
 			public:
 				RawParameter(const std::string& str) : data({str}) {}
@@ -96,6 +82,7 @@ class Interface : public API
 				RawParameter(const std::vector<unsigned int>& str) : data(make(str)) {}
 				RawParameter(signed int str) : data(make(str)) {}
 				RawParameter(unsigned int str) : data(make(str)) {}
+				RawParameter(unsigned long long str) : data(make(str)) {}
 				RawParameter(double str) : data(make(str)) {}
 				RawParameter(bool str) : data(make(str)) {}
 				RawParameter(const RawParameter&) = default;

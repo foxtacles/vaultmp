@@ -2642,6 +2642,22 @@ unsigned int Script::GetRadioButtonGroup(NetworkID id) noexcept
 	});
 }
 
+bool Script::GetListItemSelected(NetworkID id) noexcept
+{
+	return GameFactory::Operate<ListItem, FailPolicy::Return>(id, [id](FactoryListItem& listitem) {
+		return listitem->GetSelected();
+	});
+}
+
+const char* Script::GetListItemText(NetworkID id) noexcept
+{
+	static string text;
+
+	return GameFactory::Operate<ListItem, FailPolicy::Bool>(id, [id](FactoryListItem& listitem) {
+		text.assign(listitem->GetText());
+	}) ? text.c_str() : "";
+}
+
 NetworkID (Script::CreateWindow)(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept
 {
 	NetworkID id = GameFactory::Operate<Window, FailPolicy::Return>(GameFactory::Create<Window>(), [posX, posY, sizeX, sizeY, visible, locked, text](FactoryWindow& window) {
@@ -3139,7 +3155,7 @@ NetworkID Script::AddListItem(NetworkID id, const char* text) noexcept
 
 	Call<CBI("OnCreate")>(listitem);
 
-	return id;
+	return listitem;
 }
 
 bool Script::RemoveListItem(NetworkID id) noexcept
@@ -3156,17 +3172,101 @@ bool Script::RemoveListItem(NetworkID id) noexcept
 	return GameFactory::Operate<List, FailPolicy::Bool>(list, [id](FactoryList& list) {
 		list->RemoveItem(id);
 
-/*
 		NetworkID root = GetWindowRoot(list->GetNetworkID());
 		vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
 
 		if (!guids.empty())
 			Network::Queue({Network::CreateResponse(
-				listitem->toPacket(),
+				PacketFactory::Create<pTypes::ID_LISTITEM_REMOVE>(id),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
 			});
-*/
 
 		GameFactory::Destroy(id);
+	});
+}
+
+bool Script::SetListItemSelected(NetworkID id, bool selected) noexcept
+{
+	NetworkID list = GameFactory::Operate<ListItem, FailPolicy::Return>(id, [selected](FactoryListItem& listitem) {
+		return listitem->GetSelected() != selected ? listitem->GetItemContainer() : 0ull;
+	});
+
+	if (!list)
+		return false;
+
+	NetworkID previous;
+
+	bool success = GameFactory::Operate<List, FailPolicy::Bool>(list, [id, selected, &previous](FactoryList& list) {
+		if (selected)
+			previous = GameFactory::Operate<ListItem>(list->GetItemList(), [id](FactoryListItems& listitems) {
+				for (const auto& listitem : listitems)
+					if (listitem->GetSelected())
+					{
+						listitem->SetSelected(false);
+						return listitem->GetNetworkID();
+					}
+
+				return 0ull;
+			});
+		else
+			previous = 0;
+
+		GameFactory::Operate<ListItem>(id, [selected](FactoryListItem& listitem) {
+			listitem->SetSelected(selected);
+		});
+
+		NetworkID root = GetWindowRoot(list->GetNetworkID());
+		vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
+
+		if (!guids.empty())
+		{
+			NetworkResponse response;
+
+			if (previous)
+				response.emplace_back(Network::CreateResponse(
+					PacketFactory::Create<pTypes::ID_UPDATE_WLSELECTED>(previous, false),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids));
+
+			response.emplace_back(Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_WLSELECTED>(id, selected),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids));
+
+			Network::Queue(move(response));
+		}
+	});
+
+	if (success)
+	{
+		if (previous)
+			Call<CBI("OnListItemSelect")>(previous, 0ull, false);
+
+		Call<CBI("OnListItemSelect")>(id, 0ull, selected);
+	}
+
+	return success;
+}
+
+bool Script::SetListItemText(NetworkID id, const char* text) noexcept
+{
+	NetworkID list = GameFactory::Operate<ListItem, FailPolicy::Return>(id, [](FactoryListItem& listitem) {
+		return listitem->GetItemContainer();
+	});
+
+	if (!list)
+		return false;
+
+	return GameFactory::Operate<List, FailPolicy::Bool>(list, [text, id](FactoryList& list) {
+		return GameFactory::Operate<ListItem>(id, [text, id, &list](FactoryListItem& listitem) {
+			listitem->SetText(text);
+
+			NetworkID root = GetWindowRoot(list->GetNetworkID());
+			vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
+
+			if (!guids.empty())
+				Network::Queue({Network::CreateResponse(
+					PacketFactory::Create<pTypes::ID_UPDATE_WLTEXT>(id, text),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
+				});
+		});
 	});
 }

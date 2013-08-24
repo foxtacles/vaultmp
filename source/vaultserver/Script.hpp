@@ -368,6 +368,8 @@ class Script
 		static bool GetCheckboxSelected(RakNet::NetworkID id) noexcept;
 		static bool GetRadioButtonSelected(RakNet::NetworkID id) noexcept;
 		static unsigned int GetRadioButtonGroup(RakNet::NetworkID id) noexcept;
+		static bool GetListItemSelected(RakNet::NetworkID id) noexcept;
+		static const char* GetListItemText(RakNet::NetworkID id) noexcept;
 
 		static RakNet::NetworkID (CreateWindow)(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept;
 		static bool DestroyWindow(RakNet::NetworkID id) noexcept;
@@ -391,6 +393,8 @@ class Script
 		static RakNet::NetworkID CreateList(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept;
 		static RakNet::NetworkID AddListItem(RakNet::NetworkID id, const char* text) noexcept;
 		static bool RemoveListItem(RakNet::NetworkID id) noexcept;
+		static bool SetListItemSelected(RakNet::NetworkID id, bool selected) noexcept;
+		static bool SetListItemText(RakNet::NetworkID id, const char* text) noexcept;
 
 		static constexpr ScriptFunctionData functions[] {
 			{"timestamp", Utils::timestamp},
@@ -550,6 +554,8 @@ class Script
 			{"GetCheckboxSelected", Script::GetCheckboxSelected},
 			{"GetRadioButtonSelected", Script::GetRadioButtonSelected},
 			{"GetRadioButtonGroup", Script::GetRadioButtonGroup},
+			{"GetListItemSelected", Script::GetListItemSelected},
+			{"GetListItemText", Script::GetListItemText},
 
 			{"CreateWindow", Script::CreateWindow},
 			{"DestroyWindow", Script::DestroyWindow},
@@ -573,6 +579,8 @@ class Script
 			{"CreateList", Script::CreateList},
 			{"AddListItem", Script::AddListItem},
 			{"RemoveListItem", Script::RemoveListItem},
+			{"SetListItemSelected", Script::SetListItemSelected},
+			{"SetListItemText", Script::SetListItemText},
 		};
 
 		static constexpr ScriptCallbackData callbacks[] {
