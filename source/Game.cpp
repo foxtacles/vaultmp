@@ -588,7 +588,7 @@ void Game::LoadEnvironment()
 			}
 	});
 
-	vector<NetworkID> reference = GameFactory::GetByTypeID(ALL_OBJECTS);
+	vector<NetworkID> reference = GameFactory::GetByType(ALL_OBJECTS);
 
 	for (NetworkID& id : reference)
 		GameFactory::Operate<Object>(id, [](FactoryObject& object) {
@@ -2588,7 +2588,7 @@ void Game::GetCheckboxSelected(const string& name, bool selected)
 			return radiobutton->GetGroup();
 		});
 
-		NetworkID previous = GameFactory::Operate<RadioButton>(GameFactory::GetByTypeID(ID_RADIOBUTTON), [checkbox, group](FactoryRadioButtons& radiobuttons) {
+		NetworkID previous = GameFactory::Operate<RadioButton>(GameFactory::GetByType(ID_RADIOBUTTON), [checkbox, group](FactoryRadioButtons& radiobuttons) {
 			for (const auto& radiobutton : radiobuttons)
 				if (radiobutton->GetGroup() == group && radiobutton->GetSelected() && radiobutton->GetNetworkID() != checkbox)
 				{

@@ -46,20 +46,18 @@ void GameFactory::Initialize()
 #endif
 }
 
-vector<NetworkID> GameFactory::GetByTypeID(unsigned int type) noexcept
+vector<NetworkID> GameFactory::GetByType(unsigned int type) noexcept
 {
-	vector<NetworkID> result;
-
-	BaseList copy(cs.Operate([&result, type]() {
+	return cs.Operate([type]() {
+		vector<NetworkID> result;
 		result.reserve(typecount[type]);
-		return instances;
-	}));
 
-	for (const auto& reference : copy)
-		if (reference.second & type)
-			result.emplace_back(reference.first->GetNetworkID());
+		for (const auto& reference : instances)
+			if (reference.second & type)
+				result.emplace_back(reference.first->GetNetworkID());
 
-	return result;
+		return result;
+	});
 }
 
 unsigned int GameFactory::GetCount(unsigned int type) noexcept

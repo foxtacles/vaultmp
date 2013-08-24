@@ -949,7 +949,7 @@ unsigned int Script::GetConnection(NetworkID id) noexcept
 unsigned int Script::GetList(unsigned int type, NetworkID** data) noexcept
 {
 	static vector<NetworkID> _data;
-	_data = GameFactory::GetByTypeID(type);
+	_data = GameFactory::GetByType(type);
 	*data = &_data[0];
 	return _data.size();
 }
@@ -1665,7 +1665,7 @@ bool Script::SetBaseName(NetworkID id, const char* name) noexcept
 	if (_name.length() > MAX_PLAYER_NAME)
 		return false;
 
-	return GameFactory::Operate<Object, FailPolicy::Return>(GameFactory::GetByTypeID(ALL_OBJECTS), [id, &_name](FactoryObjects& objects) {
+	return GameFactory::Operate<Object, FailPolicy::Return>(GameFactory::GetByType(ALL_OBJECTS), [id, &_name](FactoryObjects& objects) {
 		auto it = find_if(objects.begin(), objects.end(), [id](const FactoryObject& object) { return object->GetNetworkID() == id; });
 
 		if (it == objects.end())
@@ -2039,7 +2039,7 @@ void Script::SetActorValue(NetworkID id, unsigned char index, double value) noex
 
 void Script::SetActorBaseValue(NetworkID id, unsigned char index, double value) noexcept
 {
-	GameFactory::Operate<Actor, FailPolicy::Return>(GameFactory::GetByTypeID(ALL_ACTORS), [id, index, value](FactoryActors& actors) {
+	GameFactory::Operate<Actor, FailPolicy::Return>(GameFactory::GetByType(ALL_ACTORS), [id, index, value](FactoryActors& actors) {
 		auto it = find_if(actors.begin(), actors.end(), [id](const FactoryActor& actor) { return actor->GetNetworkID() == id; });
 
 		if (it == actors.end())
@@ -2252,7 +2252,7 @@ void Script::KillActor(NetworkID id, NetworkID actor, unsigned short limbs, sign
 
 bool Script::SetActorBaseRace(NetworkID id, unsigned int race) noexcept
 {
-	return GameFactory::Operate<Actor, FailPolicy::Return>(GameFactory::GetByTypeID(ALL_ACTORS), [id, race](FactoryActors& actors) {
+	return GameFactory::Operate<Actor, FailPolicy::Return>(GameFactory::GetByType(ALL_ACTORS), [id, race](FactoryActors& actors) {
 		auto it = find_if(actors.begin(), actors.end(), [id](const FactoryActor& actor) { return actor->GetNetworkID() == id; });
 
 		if (it == actors.end())
@@ -2345,7 +2345,7 @@ bool Script::AgeActorBaseRace(NetworkID id, signed int age) noexcept
 
 bool Script::SetActorBaseSex(NetworkID id, bool female) noexcept
 {
-	return GameFactory::Operate<Actor, FailPolicy::Return>(GameFactory::GetByTypeID(ALL_ACTORS), [id, female](FactoryActors& actors) {
+	return GameFactory::Operate<Actor, FailPolicy::Return>(GameFactory::GetByType(ALL_ACTORS), [id, female](FactoryActors& actors) {
 		auto it = find_if(actors.begin(), actors.end(), [id](const FactoryActor& actor) { return actor->GetNetworkID() == id; });
 
 		if (it == actors.end())
@@ -2600,7 +2600,7 @@ const char* Script::GetWindowText(NetworkID id) noexcept
 {
 	static string text;
 
-	return GameFactory::Operate<Window, FailPolicy::Bool>(id, [id](FactoryWindow& window) {
+	return GameFactory::Operate<Window, FailPolicy::Bool>(id, [](FactoryWindow& window) {
 		text.assign(window->GetText());
 	}) ? text.c_str() : "";
 }
@@ -2616,7 +2616,7 @@ const char* Script::GetEditValidation(NetworkID id) noexcept
 {
 	static string validation;
 
-	return GameFactory::Operate<Edit, FailPolicy::Bool>(id, [id](FactoryEdit& edit) {
+	return GameFactory::Operate<Edit, FailPolicy::Bool>(id, [](FactoryEdit& edit) {
 		validation.assign(edit->GetValidation());
 	}) ? validation.c_str() : "";
 }
@@ -2653,7 +2653,7 @@ const char* Script::GetListItemText(NetworkID id) noexcept
 {
 	static string text;
 
-	return GameFactory::Operate<ListItem, FailPolicy::Bool>(id, [id](FactoryListItem& listitem) {
+	return GameFactory::Operate<ListItem, FailPolicy::Bool>(id, [](FactoryListItem& listitem) {
 		text.assign(listitem->GetText());
 	}) ? text.c_str() : "";
 }
@@ -3052,7 +3052,7 @@ bool Script::SetRadioButtonSelected(NetworkID id, bool selected) noexcept
 		return radiobutton->GetGroup();
 	});
 
-	NetworkID previous = selected ? GameFactory::Operate<RadioButton, FailPolicy::Return>(GameFactory::GetByTypeID(ID_RADIOBUTTON), [group, id](FactoryRadioButtons& radiobuttons) {
+	NetworkID previous = selected ? GameFactory::Operate<RadioButton, FailPolicy::Return>(GameFactory::GetByType(ID_RADIOBUTTON), [group, id](FactoryRadioButtons& radiobuttons) {
 		for (const auto& radiobutton : radiobuttons)
 			if (radiobutton->GetGroup() == group && radiobutton->GetSelected() && radiobutton->GetNetworkID() != id)
 			{
@@ -3090,7 +3090,7 @@ bool Script::SetRadioButtonGroup(NetworkID id, unsigned int group)
 		return false;
 
 	if (data.second)
-		if (!GameFactory::Operate<RadioButton, FailPolicy::Return>(GameFactory::GetByTypeID(ID_RADIOBUTTON), [group](FactoryRadioButtons& radiobuttons) {
+		if (!GameFactory::Operate<RadioButton, FailPolicy::Return>(GameFactory::GetByType(ID_RADIOBUTTON), [group](FactoryRadioButtons& radiobuttons) {
 			for (const auto& radiobutton : radiobuttons)
 				if (radiobutton->GetGroup() == group && radiobutton->GetSelected())
 					return false;
