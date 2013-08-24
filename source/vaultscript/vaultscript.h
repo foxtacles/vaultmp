@@ -487,6 +487,8 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetCheckboxSelected))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetRadioButtonSelected))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetRadioButtonGroup))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetListItemSelected))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE cRawString (*VAULTAPI(GetListItemText))(VAULTSPACE ID) VAULTCPP(noexcept);
 
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateWindow))(VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE State, VAULTSPACE State, VAULTSPACE cRawString) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(DestroyWindow))(VAULTSPACE ID) VAULTCPP(noexcept);
@@ -510,6 +512,8 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateList))(VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE State, VAULTSPACE State, VAULTSPACE cRawString) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(AddListItem))(VAULTSPACE ID, VAULTSPACE cRawString) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(RemoveListItem))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetListItemSelected))(VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetListItemText))(VAULTSPACE ID, VAULTSPACE cRawString) VAULTCPP(noexcept);
 VAULTCPP(})
 
 #ifdef __cplusplus
@@ -918,6 +922,8 @@ namespace vaultmp
 	VAULTFUNCTION State GetCheckboxSelected(ID id) noexcept { return VAULTAPI(GetCheckboxSelected)(id); }
 	VAULTFUNCTION State GetRadioButtonSelected(ID id) noexcept { return VAULTAPI(GetRadioButtonSelected)(id); }
 	VAULTFUNCTION UCount GetRadioButtonGroup(ID id) noexcept { return VAULTAPI(GetRadioButtonGroup)(id); }
+	VAULTFUNCTION State GetListItemSelected(ID id) noexcept { return VAULTAPI(GetListItemSelected)(id); }
+	VAULTFUNCTION String GetListItemText(ID id) noexcept { return VAULTAPI(GetListItemText)(id); }
 
 	VAULTFUNCTION ID CreateWindow(Value posX, Value posY, Value sizeX, Value sizeY, State visible = True, State locked = False, const String& text = "") noexcept { return VAULTAPI(CreateWindow)(posX, posY, sizeX, sizeY, visible, locked, text.c_str()); }
 	VAULTFUNCTION ID CreateWindow(Value posX, Value posY, Value sizeX, Value sizeY, State visible = True, State locked = False, cRawString text = "") noexcept { return VAULTAPI(CreateWindow)(posX, posY, sizeX, sizeY, visible, locked, text); }
@@ -951,6 +957,9 @@ namespace vaultmp
 	VAULTFUNCTION ID AddListItem(ID id, const String& text) noexcept { return VAULTAPI(AddListItem)(id, text.c_str()); }
 	VAULTFUNCTION ID AddListItem(ID id, cRawString text) noexcept { return VAULTAPI(AddListItem)(id, text); }
 	VAULTFUNCTION State RemoveListItem(ID id) noexcept { return VAULTAPI(RemoveListItem)(id); }
+	VAULTFUNCTION State SetListItemSelected(ID id, State selected) noexcept { return VAULTAPI(SetListItemSelected)(id, selected); }
+	VAULTFUNCTION State SetListItemText(ID id, const String& text) noexcept { return VAULTAPI(SetListItemText)(id, text.c_str()); }
+	VAULTFUNCTION State SetListItemText(ID id, cRawString text) noexcept { return VAULTAPI(SetListItemText)(id, text); }
 
 	class Reference {
 		protected:
@@ -1488,7 +1497,6 @@ namespace vaultmp
 
 			ID AddListItem(const String& text) noexcept { return vaultmp::AddListItem(id, text); }
 			ID AddListItem(cRawString text) noexcept { return vaultmp::AddListItem(id, text); }
-			State RemoveListItem(ID id) noexcept { return vaultmp::RemoveListItem(id); }
 
 			static ID Create(Value posX, Value posY, Value sizeX, Value sizeY, State visible = True, State locked = False, const String& text = "") noexcept { return vaultmp::CreateList(posX, posY, sizeX, sizeY, visible, locked, text.c_str()); }
 			static ID Create(Value posX, Value posY, Value sizeX, Value sizeY, State visible = True, State locked = False, cRawString text = "") noexcept { return vaultmp::CreateList(posX, posY, sizeX, sizeY, visible, locked, text); }

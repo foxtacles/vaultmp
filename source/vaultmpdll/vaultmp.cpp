@@ -63,6 +63,8 @@ static void (*GUI_SetCheckboxChangedCallback)(void (*)(const char*, bool));
 static void (*GUI_AddListbox)(const char*, const char*);
 static void (*GUI_Listbox_AddItem)(const char*, const char*, const char*);
 static void (*GUI_Listbox_RemoveItem)(const char*, const char*);
+static void (*GUI_Listbox_SetItemText)(const char*, const char*, const char*);
+static void (*GUI_Listbox_SetItemSelected)(const char*, const char*, bool);
 static void (*GUI_SetListboxSelectionChangedCallback)(void (*)(const char* name, const char**));
 static void (*SetPlayersDataPointer)(remotePlayers*);
 static bool (*QueueUIMessage)(const char* msg, unsigned int emotion, const char* ddsPath, const char* soundName, float msgTime);
@@ -681,6 +683,26 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 			break;
 		}
 
+		case 0x0032 | VAULTFUNCTION: // GUISelectChange - Change select state
+		{
+			ZeroMemory(result, sizeof(double));
+			const char* data = ((char*) args) + 2; // skip length
+			const char* str2 = data + strlen(data) + 3;
+
+			GUI_Listbox_SetItemSelected(data, str2, *(unsigned int*)(str2 + strlen(str2) + 2));
+			break;
+		}
+
+		case 0x0033 | VAULTFUNCTION: // GUISelectText - Change text
+		{
+			ZeroMemory(result, sizeof(double));
+			const char* data = ((char*) args) + 2; // skip length
+			const char* str2 = data + strlen(data) + 3;
+
+			GUI_Listbox_SetItemText(data, str2, str2 + strlen(str2) + 2);
+			break;
+		}
+
 		default:
 			break;
 	}
@@ -897,13 +919,16 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 		GUI_AddListbox = reinterpret_cast<decltype(GUI_AddListbox)>(GetProcAddress(vaultgui, "GUI_AddListbox"));
 		GUI_Listbox_AddItem = reinterpret_cast<decltype(GUI_Listbox_AddItem)>(GetProcAddress(vaultgui, "GUI_Listbox_AddItem"));
 		GUI_Listbox_RemoveItem = reinterpret_cast<decltype(GUI_Listbox_RemoveItem)>(GetProcAddress(vaultgui, "GUI_Listbox_RemoveItem"));
+		GUI_Listbox_SetItemText = reinterpret_cast<decltype(GUI_Listbox_SetItemText)>(GetProcAddress(vaultgui, "GUI_Listbox_SetItemText"));
+		GUI_Listbox_SetItemSelected = reinterpret_cast<decltype(GUI_Listbox_SetItemSelected)>(GetProcAddress(vaultgui, "GUI_Listbox_SetItemSelected"));
 		GUI_SetListboxSelectionChangedCallback = reinterpret_cast<decltype(GUI_SetListboxSelectionChangedCallback)>(GetProcAddress(vaultgui, "GUI_SetListboxSelectionChangedCallback"));
 		SetPlayersDataPointer = reinterpret_cast<decltype(SetPlayersDataPointer)>(GetProcAddress(vaultgui, "SetPlayersDataPointer"));
 
 		if (!Chatbox_AddToChat || !GUI_CreateFrameWindow || !GUI_AddStaticText || !GUI_AddTextbox || !GUI_AddButton || !GUI_SetVisible || !GUI_AllowDrag ||
 			!GUI_SetPosition || !GUI_SetSize || !GUI_SetText || !GUI_RemoveWindow || !GUI_ForceGUI || !GUI_SetClickCallback || !GUI_SetTextChangedCallback ||
-			!GUI_Textbox_SetMaxLength || !GUI_Textbox_SetValidationString || !SetPlayersDataPointer || !GUI_AddCheckbox || !GUI_AddRadioButton || !GUI_SetChecked
-			|| !GUI_Radio_SetGroupID || !GUI_AddListbox || !GUI_Listbox_AddItem || !GUI_Listbox_RemoveItem || !GUI_SetListboxSelectionChangedCallback || !GUI_SetCheckboxChangedCallback)
+			!GUI_Textbox_SetMaxLength || !GUI_Textbox_SetValidationString || !SetPlayersDataPointer || !GUI_AddCheckbox || !GUI_AddRadioButton || !GUI_SetChecked ||
+			!GUI_Radio_SetGroupID || !GUI_AddListbox || !GUI_Listbox_AddItem || !GUI_Listbox_RemoveItem || !GUI_Listbox_SetItemText || !GUI_Listbox_SetItemSelected ||
+			!GUI_SetListboxSelectionChangedCallback || !GUI_SetCheckboxChangedCallback)
 			DLLerror = true;
 
 		GUI_SetClickCallback(GUI_OnClick);

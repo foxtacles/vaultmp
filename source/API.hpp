@@ -314,6 +314,8 @@ namespace Values
 		GUICreateItem = 0x0029 | VAULTFUNCTION,
 		GUIRemoveItem = 0x0030 | VAULTFUNCTION,
 		GUISelect = 0x0031 | VAULTFUNCTION,
+		GUISelectChange = 0x0032 | VAULTFUNCTION,
+		GUISelectText = 0x0033 | VAULTFUNCTION,
 	};
 
 	enum ActorVals

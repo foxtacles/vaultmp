@@ -294,6 +294,8 @@ API::FunctionMap API::functions = {
 		{Func::GUICreateItem, "sss"},
 		{Func::GUIRemoveItem, "ss"},
 		{Func::GUISelect, "s"},
+		{Func::GUISelectChange, "ssi"},
+		{Func::GUISelectText, "sss"},
 		{Func::Enable, "rI"},
 		{Func::Disable, "rI"},
 		{Func::EquipItem, "r$jII"},

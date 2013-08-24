@@ -201,8 +201,6 @@ void Bethesda::Terminate(RakPeerInterface* peer)
 		peer->DeallocatePacket(packet); // disconnection notification might still arrive
 
 	Interface::Terminate();
-	GameFactory::DestroyAll();
-	API::Terminate();
 
 	if (initialized)
 	{
@@ -214,6 +212,9 @@ void Bethesda::Terminate(RakPeerInterface* peer)
 			CloseHandle(hProcess);
 		}
 	}
+
+	GameFactory::DestroyAll();
+	API::Terminate();
 }
 
 void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, const string& name, const string& pwd, bool multiinst, unsigned int inittime)

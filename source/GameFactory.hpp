@@ -179,8 +179,6 @@ class GameFactory
 
 		/**
 		 * \brief Obtains a lock on a Base
-		 *
-		 * The Base is identified by a NetworkID
 		 */
 		template<typename T, typename I = RakNet::NetworkID>
 		inline static typename std::enable_if<std::is_trivial<I>::value, Expected<FactoryWrapper<T>>>::type Get(I id) noexcept { return Get_<T, I>::Get(id); }
@@ -191,16 +189,11 @@ class GameFactory
 		template<typename T, typename U> inline static Expected<FactoryWrapper<T>> Get(Expected<FactoryWrapper<U>>&& base) noexcept { return vaultcast_swap<T>(move(base)); }
 		/**
 		 * \brief Obtains a lock on multiple Bases
-		 *
-		 * The Bases are identified by a STL vector of NetworkID. You must use this function if you want to obtain multiple locks.
-		 * Returns a STL vector which contains the locked Bases in the same ordering as the input vector.
 		 */
 		template<typename T, typename I = RakNet::NetworkID>
 		inline static std::vector<Expected<FactoryWrapper<T>>> Get(const std::vector<I>& ids) noexcept { return Get_<T, I>::Get(ids); }
 		/**
 		 * \brief Executes a function on one or multiple Bases
-		 *
-		 * The Bases are identified by an arbitrary type
 		 */
 		template<typename T, FailPolicy FP = FailPolicy::Default, ObjectPolicy OP = ObjectPolicy::Default, LaunchPolicy LP = LaunchPolicy::Default, typename I, typename F>
 		static typename OperateReturn<FP, OP, LP, T, F, I>::type Operate(I&& id, F function) noexcept(FP != FailPolicy::Exception) { return OperateFunctions<T, FP, OP, LP, I, F>::Operate(std::forward<I>(id), function); }
@@ -222,14 +215,9 @@ class GameFactory
 		 */
 		static unsigned int GetType(const Base* base) noexcept;
 		/**
-		 * \brief Obtains a lock on all Bases of a given type
-		 */
-		template<typename T>
-		static std::vector<FactoryWrapper<T>> GetByType(unsigned int type) noexcept;
-		/**
 		 * \brief Returns the NetworkID's of all Bases of a given type
 		 */
-		static std::vector<RakNet::NetworkID> GetByTypeID(unsigned int type) noexcept;
+		static std::vector<RakNet::NetworkID> GetByType(unsigned int type) noexcept;
 		/**
 		 * \brief Counts the amount of Bases of a given type
 		 */
@@ -362,28 +350,6 @@ struct GameFactory::OperateFunctions<T, FailPolicy::Exception, OP, LaunchPolicy:
 		return function(param);
 	}
 };
-
-template<typename T>
-std::vector<FactoryWrapper<T>> GameFactory::GetByType(unsigned int type) noexcept
-{
-	std::vector<FactoryWrapper<T>> result;
-
-	BaseList copy(cs.Operate([&result, type]() {
-		result.reserve(typecount[type]);
-		return instances;
-	}));
-
-	for (const auto& base : copy)
-		if (base.second & type)
-		{
-			auto object = FactoryWrapper<T>(base.first.get(), base.second);
-
-			if (object)
-				result.emplace_back(std::move(object));
-		}
-
-	return result;
-}
 
 template<typename T>
 void GameFactory::Leave(FactoryWrapper<T>& base)

@@ -316,6 +316,15 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
+				case pTypes::ID_LISTITEM_REMOVE:
+				{
+					NetworkID id;
+					PacketFactory::Access<pTypes::ID_LISTITEM_REMOVE>(packet, id);
+					auto reference = GameFactory::Get<ListItem>(id);
+					Game::DeleteListItem(reference.get());
+					break;
+				}
+
 				case pTypes::ID_UPDATE_NAME:
 				{
 					NetworkID id;
@@ -634,6 +643,26 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					PacketFactory::Access<pTypes::ID_UPDATE_WGROUP>(packet, id, group);
 					auto reference = GameFactory::Get<RadioButton>(id);
 					Game::net_UpdateRadioButtonGroup(reference.get(), group);
+					break;
+				}
+
+				case pTypes::ID_UPDATE_WLSELECTED:
+				{
+					NetworkID id;
+					bool selected;
+					PacketFactory::Access<pTypes::ID_UPDATE_WLSELECTED>(packet, id, selected);
+					auto reference = GameFactory::Get<ListItem>(id);
+					Game::net_UpdateListItemSelected(reference.get(), selected);
+					break;
+				}
+
+				case pTypes::ID_UPDATE_WLTEXT:
+				{
+					NetworkID id;
+					string text;
+					PacketFactory::Access<pTypes::ID_UPDATE_WLTEXT>(packet, id, text);
+					auto reference = GameFactory::Get<ListItem>(id);
+					Game::net_UpdateListItemText(reference.get(), text);
 					break;
 				}
 

@@ -949,7 +949,7 @@ unsigned int Script::GetConnection(NetworkID id) noexcept
 unsigned int Script::GetList(unsigned int type, NetworkID** data) noexcept
 {
 	static vector<NetworkID> _data;
-	_data = GameFactory::GetByTypeID(type);
+	_data = GameFactory::GetByType(type);
 	*data = &_data[0];
 	return _data.size();
 }
@@ -1665,7 +1665,7 @@ bool Script::SetBaseName(NetworkID id, const char* name) noexcept
 	if (_name.length() > MAX_PLAYER_NAME)
 		return false;
 
-	return GameFactory::Operate<Object, FailPolicy::Return>(GameFactory::GetByTypeID(ALL_OBJECTS), [id, &_name](FactoryObjects& objects) {
+	return GameFactory::Operate<Object, FailPolicy::Return>(GameFactory::GetByType(ALL_OBJECTS), [id, &_name](FactoryObjects& objects) {
 		auto it = find_if(objects.begin(), objects.end(), [id](const FactoryObject& object) { return object->GetNetworkID() == id; });
 
 		if (it == objects.end())
@@ -2039,7 +2039,7 @@ void Script::SetActorValue(NetworkID id, unsigned char index, double value) noex
 
 void Script::SetActorBaseValue(NetworkID id, unsigned char index, double value) noexcept
 {
-	GameFactory::Operate<Actor, FailPolicy::Return>(GameFactory::GetByTypeID(ALL_ACTORS), [id, index, value](FactoryActors& actors) {
+	GameFactory::Operate<Actor, FailPolicy::Return>(GameFactory::GetByType(ALL_ACTORS), [id, index, value](FactoryActors& actors) {
 		auto it = find_if(actors.begin(), actors.end(), [id](const FactoryActor& actor) { return actor->GetNetworkID() == id; });
 
 		if (it == actors.end())
@@ -2252,7 +2252,7 @@ void Script::KillActor(NetworkID id, NetworkID actor, unsigned short limbs, sign
 
 bool Script::SetActorBaseRace(NetworkID id, unsigned int race) noexcept
 {
-	return GameFactory::Operate<Actor, FailPolicy::Return>(GameFactory::GetByTypeID(ALL_ACTORS), [id, race](FactoryActors& actors) {
+	return GameFactory::Operate<Actor, FailPolicy::Return>(GameFactory::GetByType(ALL_ACTORS), [id, race](FactoryActors& actors) {
 		auto it = find_if(actors.begin(), actors.end(), [id](const FactoryActor& actor) { return actor->GetNetworkID() == id; });
 
 		if (it == actors.end())
@@ -2345,7 +2345,7 @@ bool Script::AgeActorBaseRace(NetworkID id, signed int age) noexcept
 
 bool Script::SetActorBaseSex(NetworkID id, bool female) noexcept
 {
-	return GameFactory::Operate<Actor, FailPolicy::Return>(GameFactory::GetByTypeID(ALL_ACTORS), [id, female](FactoryActors& actors) {
+	return GameFactory::Operate<Actor, FailPolicy::Return>(GameFactory::GetByType(ALL_ACTORS), [id, female](FactoryActors& actors) {
 		auto it = find_if(actors.begin(), actors.end(), [id](const FactoryActor& actor) { return actor->GetNetworkID() == id; });
 
 		if (it == actors.end())
@@ -2600,7 +2600,7 @@ const char* Script::GetWindowText(NetworkID id) noexcept
 {
 	static string text;
 
-	return GameFactory::Operate<Window, FailPolicy::Bool>(id, [id](FactoryWindow& window) {
+	return GameFactory::Operate<Window, FailPolicy::Bool>(id, [](FactoryWindow& window) {
 		text.assign(window->GetText());
 	}) ? text.c_str() : "";
 }
@@ -2616,7 +2616,7 @@ const char* Script::GetEditValidation(NetworkID id) noexcept
 {
 	static string validation;
 
-	return GameFactory::Operate<Edit, FailPolicy::Bool>(id, [id](FactoryEdit& edit) {
+	return GameFactory::Operate<Edit, FailPolicy::Bool>(id, [](FactoryEdit& edit) {
 		validation.assign(edit->GetValidation());
 	}) ? validation.c_str() : "";
 }
@@ -2640,6 +2640,22 @@ unsigned int Script::GetRadioButtonGroup(NetworkID id) noexcept
 	return GameFactory::Operate<RadioButton, FailPolicy::Return>(id, [id](FactoryRadioButton& radiobutton) {
 		return radiobutton->GetGroup();
 	});
+}
+
+bool Script::GetListItemSelected(NetworkID id) noexcept
+{
+	return GameFactory::Operate<ListItem, FailPolicy::Return>(id, [id](FactoryListItem& listitem) {
+		return listitem->GetSelected();
+	});
+}
+
+const char* Script::GetListItemText(NetworkID id) noexcept
+{
+	static string text;
+
+	return GameFactory::Operate<ListItem, FailPolicy::Bool>(id, [](FactoryListItem& listitem) {
+		text.assign(listitem->GetText());
+	}) ? text.c_str() : "";
 }
 
 NetworkID (Script::CreateWindow)(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept
@@ -3036,7 +3052,7 @@ bool Script::SetRadioButtonSelected(NetworkID id, bool selected) noexcept
 		return radiobutton->GetGroup();
 	});
 
-	NetworkID previous = selected ? GameFactory::Operate<RadioButton, FailPolicy::Return>(GameFactory::GetByTypeID(ID_RADIOBUTTON), [group, id](FactoryRadioButtons& radiobuttons) {
+	NetworkID previous = selected ? GameFactory::Operate<RadioButton, FailPolicy::Return>(GameFactory::GetByType(ID_RADIOBUTTON), [group, id](FactoryRadioButtons& radiobuttons) {
 		for (const auto& radiobutton : radiobuttons)
 			if (radiobutton->GetGroup() == group && radiobutton->GetSelected() && radiobutton->GetNetworkID() != id)
 			{
@@ -3074,7 +3090,7 @@ bool Script::SetRadioButtonGroup(NetworkID id, unsigned int group)
 		return false;
 
 	if (data.second)
-		if (!GameFactory::Operate<RadioButton, FailPolicy::Return>(GameFactory::GetByTypeID(ID_RADIOBUTTON), [group](FactoryRadioButtons& radiobuttons) {
+		if (!GameFactory::Operate<RadioButton, FailPolicy::Return>(GameFactory::GetByType(ID_RADIOBUTTON), [group](FactoryRadioButtons& radiobuttons) {
 			for (const auto& radiobutton : radiobuttons)
 				if (radiobutton->GetGroup() == group && radiobutton->GetSelected())
 					return false;
@@ -3139,7 +3155,7 @@ NetworkID Script::AddListItem(NetworkID id, const char* text) noexcept
 
 	Call<CBI("OnCreate")>(listitem);
 
-	return id;
+	return listitem;
 }
 
 bool Script::RemoveListItem(NetworkID id) noexcept
@@ -3156,17 +3172,101 @@ bool Script::RemoveListItem(NetworkID id) noexcept
 	return GameFactory::Operate<List, FailPolicy::Bool>(list, [id](FactoryList& list) {
 		list->RemoveItem(id);
 
-/*
 		NetworkID root = GetWindowRoot(list->GetNetworkID());
 		vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
 
 		if (!guids.empty())
 			Network::Queue({Network::CreateResponse(
-				listitem->toPacket(),
+				PacketFactory::Create<pTypes::ID_LISTITEM_REMOVE>(id),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
 			});
-*/
 
 		GameFactory::Destroy(id);
+	});
+}
+
+bool Script::SetListItemSelected(NetworkID id, bool selected) noexcept
+{
+	NetworkID list = GameFactory::Operate<ListItem, FailPolicy::Return>(id, [selected](FactoryListItem& listitem) {
+		return listitem->GetSelected() != selected ? listitem->GetItemContainer() : 0ull;
+	});
+
+	if (!list)
+		return false;
+
+	NetworkID previous;
+
+	bool success = GameFactory::Operate<List, FailPolicy::Bool>(list, [id, selected, &previous](FactoryList& list) {
+		if (selected)
+			previous = GameFactory::Operate<ListItem>(list->GetItemList(), [id](FactoryListItems& listitems) {
+				for (const auto& listitem : listitems)
+					if (listitem->GetSelected())
+					{
+						listitem->SetSelected(false);
+						return listitem->GetNetworkID();
+					}
+
+				return 0ull;
+			});
+		else
+			previous = 0;
+
+		GameFactory::Operate<ListItem>(id, [selected](FactoryListItem& listitem) {
+			listitem->SetSelected(selected);
+		});
+
+		NetworkID root = GetWindowRoot(list->GetNetworkID());
+		vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
+
+		if (!guids.empty())
+		{
+			NetworkResponse response;
+
+			if (previous)
+				response.emplace_back(Network::CreateResponse(
+					PacketFactory::Create<pTypes::ID_UPDATE_WLSELECTED>(previous, false),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids));
+
+			response.emplace_back(Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_WLSELECTED>(id, selected),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids));
+
+			Network::Queue(move(response));
+		}
+	});
+
+	if (success)
+	{
+		if (previous)
+			Call<CBI("OnListItemSelect")>(previous, 0ull, false);
+
+		Call<CBI("OnListItemSelect")>(id, 0ull, selected);
+	}
+
+	return success;
+}
+
+bool Script::SetListItemText(NetworkID id, const char* text) noexcept
+{
+	NetworkID list = GameFactory::Operate<ListItem, FailPolicy::Return>(id, [](FactoryListItem& listitem) {
+		return listitem->GetItemContainer();
+	});
+
+	if (!list)
+		return false;
+
+	return GameFactory::Operate<List, FailPolicy::Bool>(list, [text, id](FactoryList& list) {
+		return GameFactory::Operate<ListItem>(id, [text, id, &list](FactoryListItem& listitem) {
+			listitem->SetText(text);
+
+			NetworkID root = GetWindowRoot(list->GetNetworkID());
+			vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
+
+			if (!guids.empty())
+				Network::Queue({Network::CreateResponse(
+					PacketFactory::Create<pTypes::ID_UPDATE_WLTEXT>(id, text),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
+				});
+		});
 	});
 }

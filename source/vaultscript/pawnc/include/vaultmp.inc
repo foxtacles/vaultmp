@@ -363,6 +363,8 @@ native GetEditValidation(ID, validation{});
 native Bool:GetCheckboxSelected(ID);
 native Bool:GetRadioButtonSelected(ID);
 native GetRadioButtonGroup(ID);
+native Bool:GetListItemSelected(ID);
+native GetListItemText(ID, text{});
 
 native CreateWindow(Float:posX, Float:posY, Float:sizeX, Float:sizeY, Bool:visible, Bool:locked, const text{});
 native Bool:DestroyWindow(ID);
@@ -377,7 +379,7 @@ native CreateButton(Float:posX, Float:posY, Float:sizeX, Float:sizeY, Bool:visib
 native CreateText(Float:posX, Float:posY, Float:sizeX, Float:sizeY, Bool:visible = Bool:true, Bool:locked = Bool:false, const text{} = "");
 native CreateEdit(Float:posX, Float:posY, Float:sizeX, Float:sizeY, Bool:visible = Bool:true, Bool:locked = Bool:false, const text{} = "");
 native Bool:SetEditMaxLength(ID, length);
-native Bool:SetEditValidation(ID, validation{});
+native Bool:SetEditValidation(ID, const validation{});
 native CreateCheckbox(Float:posX, Float:posY, Float:sizeX, Float:sizeY, Bool:visible = Bool:true, Bool:locked = Bool:false, const text{} = "");
 native Bool:SetCheckboxSelected(ID, Bool:selected);
 native CreateRadioButton(Float:posX, Float:posY, Float:sizeX, Float:sizeY, Bool:visible = Bool:true, Bool:locked = Bool:false, const text{} = "");
@@ -386,3 +388,5 @@ native Bool:SetRadioButtonGroup(ID, group);
 native CreateList(Float:posX, Float:posY, Float:sizeX, Float:sizeY, Bool:visible = Bool:true, Bool:locked = Bool:false, const text{} = "");
 native AddListItem(ID, const text{});
 native Bool:RemoveListItem(ID);
+native Bool:SetListItemSelected(ID, Bool:selected);
+native Bool:SetListItemText(ID, const text{});

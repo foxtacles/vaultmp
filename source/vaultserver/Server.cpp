@@ -70,7 +70,7 @@ NetworkResponse Server::LoadGame(RakNetGUID guid)
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 
-	GameFactory::Operate<Reference>(GameFactory::GetByTypeID(ALL_REFERENCES), [&response, guid](FactoryReferences& references) {
+	GameFactory::Operate<Reference>(GameFactory::GetByType(ALL_REFERENCES), [&response, guid](FactoryReferences& references) {
 		FactoryReferences::iterator it;
 
 		for (it = references.begin(); it != references.end(); GameFactory::Leave(*it), ++it)
