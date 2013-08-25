@@ -364,8 +364,11 @@ native Bool:GetCheckboxSelected(ID);
 native Bool:GetRadioButtonSelected(ID);
 native GetRadioButtonGroup(ID);
 native Bool:GetListMultiSelect(ID);
+native GetListItemCount(ID);
 native GetListItemList(ID, id[]);
+native GetListSelectedItemCount(ID);
 native GetListSelectedItemList(ID, id[]);
+native GetListItemContainer(ID);
 native Bool:GetListItemSelected(ID);
 native GetListItemText(ID, text{});
 
@@ -392,5 +395,6 @@ native CreateList(Float:posX, Float:posY, Float:sizeX, Float:sizeY, Bool:visible
 native Bool:SetListMultiSelect(ID, Bool:multiselect);
 native AddListItem(ID, const text{});
 native Bool:RemoveListItem(ID);
+native SetListItemContainer(ID, container);
 native Bool:SetListItemSelected(ID, Bool:selected);
 native Bool:SetListItemText(ID, const text{});

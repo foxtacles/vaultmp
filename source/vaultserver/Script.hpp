@@ -369,8 +369,11 @@ class Script
 		static bool GetRadioButtonSelected(RakNet::NetworkID id) noexcept;
 		static unsigned int GetRadioButtonGroup(RakNet::NetworkID id) noexcept;
 		static bool GetListMultiSelect(RakNet::NetworkID id) noexcept;
+		static unsigned int GetListItemCount(RakNet::NetworkID id) noexcept;
 		static unsigned int GetListItemList(RakNet::NetworkID id, RakNet::NetworkID** data) noexcept;
+		static unsigned int GetListSelectedItemCount(RakNet::NetworkID id) noexcept;
 		static unsigned int GetListSelectedItemList(RakNet::NetworkID id, RakNet::NetworkID** data) noexcept;
+		static RakNet::NetworkID GetListItemContainer(RakNet::NetworkID id) noexcept;
 		static bool GetListItemSelected(RakNet::NetworkID id) noexcept;
 		static const char* GetListItemText(RakNet::NetworkID id) noexcept;
 
@@ -397,6 +400,7 @@ class Script
 		static bool SetListMultiSelect(RakNet::NetworkID id, bool multiselect);
 		static RakNet::NetworkID AddListItem(RakNet::NetworkID id, const char* text) noexcept;
 		static bool RemoveListItem(RakNet::NetworkID id) noexcept;
+		static RakNet::NetworkID SetListItemContainer(RakNet::NetworkID id, RakNet::NetworkID container) noexcept;
 		static bool SetListItemSelected(RakNet::NetworkID id, bool selected) noexcept;
 		static bool SetListItemText(RakNet::NetworkID id, const char* text) noexcept;
 
@@ -559,8 +563,11 @@ class Script
 			{"GetRadioButtonSelected", Script::GetRadioButtonSelected},
 			{"GetRadioButtonGroup", Script::GetRadioButtonGroup},
 			{"GetListMultiSelect", Script::GetListMultiSelect},
+			{"GetListItemCount", Script::GetListItemCount},
 			{"GetListItemList", Script::GetListItemList},
+			{"GetListSelectedItemCount", Script::GetListSelectedItemCount},
 			{"GetListSelectedItemList", Script::GetListSelectedItemList},
+			{"GetListItemContainer", Script::GetListItemContainer},
 			{"GetListItemSelected", Script::GetListItemSelected},
 			{"GetListItemText", Script::GetListItemText},
 
@@ -587,6 +594,7 @@ class Script
 			{"SetListMultiSelect", Script::SetListMultiSelect},
 			{"AddListItem", Script::AddListItem},
 			{"RemoveListItem", Script::RemoveListItem},
+			{"SetListItemContainer", Script::SetListItemContainer},
 			{"SetListItemSelected", Script::SetListItemSelected},
 			{"SetListItemText", Script::SetListItemText},
 		};

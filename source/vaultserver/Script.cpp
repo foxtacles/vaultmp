@@ -1730,13 +1730,10 @@ NetworkID Script::SetItemContainer(NetworkID id, NetworkID container) noexcept
 	double condition;
 	bool equipped, silent, stick;
 
-	if (!GameFactory::Operate<ItemList, FailPolicy::Return>(container, [id, container](FactoryItemList& itemlist) {
-		const auto& items = itemlist->GetItemList();
+	if (!GameFactory::Operate<Item, FailPolicy::Return>(id, [id, container, &baseID, &count, &condition, &equipped, &silent, &stick](FactoryItem& item) {
+		if (item->GetItemContainer() == container)
+			return false;
 
-		return find(items.begin(), items.end(), id) == items.end();
-	})) return 0;
-
-	if (!GameFactory::Operate<Item, FailPolicy::Return>(id, [id, &baseID, &count, &condition, &equipped, &silent, &stick](FactoryItem& item) {
 		baseID = item->GetBase();
 		count = item->GetItemCount();
 		condition = item->GetItemCondition();
@@ -2649,6 +2646,13 @@ bool Script::GetListMultiSelect(NetworkID id) noexcept
 	});
 }
 
+unsigned int Script::GetListItemCount(NetworkID id) noexcept
+{
+	return GameFactory::Operate<List, FailPolicy::Return>(id, [id](FactoryList& list) {
+		return list->GetItemList().size();
+	});
+}
+
 unsigned int Script::GetListItemList(NetworkID id, NetworkID** data) noexcept
 {
 	static vector<NetworkID> _data;
@@ -2662,6 +2666,13 @@ unsigned int Script::GetListItemList(NetworkID id, NetworkID** data) noexcept
 			*data = &_data[0];
 
 		return size;
+	});
+}
+
+unsigned int Script::GetListSelectedItemCount(NetworkID id) noexcept
+{
+	return GameFactory::Operate<List, FailPolicy::Return>(id, [id](FactoryList& list) {
+		return count_if(list->GetItemList().begin(), list->GetItemList().end(), [](NetworkID listitem) { return GameFactory::Get<ListItem>(listitem)->GetSelected(); });
 	});
 }
 
@@ -2679,6 +2690,13 @@ unsigned int Script::GetListSelectedItemList(NetworkID id, NetworkID** data) noe
 			*data = &_data[0];
 
 		return size;
+	});
+}
+
+NetworkID Script::GetListItemContainer(NetworkID id) noexcept
+{
+	return GameFactory::Operate<ListItem, FailPolicy::Return>(id, [id](FactoryListItem& listitem) {
+		return listitem->GetItemContainer();
 	});
 }
 
@@ -3259,6 +3277,33 @@ bool Script::RemoveListItem(NetworkID id) noexcept
 
 		GameFactory::Destroy(id);
 	});
+}
+
+NetworkID Script::SetListItemContainer(NetworkID id, NetworkID container) noexcept
+{
+	const string* text;
+	bool selected;
+
+	if (!GameFactory::Operate<ListItem, FailPolicy::Return>(id, [id, container, &text, &selected](FactoryListItem& listitem) {
+		if (listitem->GetItemContainer() == container)
+			return false;
+
+		text = &listitem->GetText();
+		selected = listitem->GetSelected();
+		return true;
+	})) return 0;
+
+	NetworkID new_id = AddListItem(container, text->c_str());
+
+	if (!new_id)
+		return 0;
+
+	if (selected)
+		SetListItemSelected(new_id, true);
+
+	RemoveListItem(id);
+
+	return new_id;
 }
 
 bool Script::SetListItemSelected(NetworkID id, bool selected) noexcept
