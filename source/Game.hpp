@@ -423,6 +423,10 @@ class Game
 		 */
 		static void ToggleKey(bool enabled, unsigned int scancode);
 		/**
+		 * \brief Enables / disables a control
+		 */
+		static void ToggleControl(bool enabled, unsigned int control);
+		/**
 		 * \brief Sets the weather
 		 */
 		static void SetWeather(unsigned int weather);
@@ -580,7 +584,7 @@ class Game
 		 */
 		static void net_UpdateListItemText(const FactoryListItem& reference, const std::string& text);
 		/**
-		 * \brief Network function to handle GUI list item text
+		 * \brief Network function to handle GUI list multiselect
 		 */
 		static void net_UpdateListMultiSelect(const FactoryList& reference, bool multiselect);
 		/**

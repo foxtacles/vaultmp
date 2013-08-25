@@ -256,6 +256,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func::SetCurrentHealth:
 			case Func::UIMessage:
 			case Func::DisableControl:
+			case Func::EnableControl:
 			case Func::DisableKey:
 			case Func::EnableKey:
 			case Func::SetName:
@@ -315,13 +316,11 @@ void Game::Startup()
 		SetGlobalValue(Global_TimeScale, 0);
 
 		Interface::ExecuteCommand(Func::GetControl, {RawParameter(API::controls)});
-		Interface::ExecuteCommand(Func::DisableControl, {RawParameter(vector<unsigned char>{
-			ControlCode_Quickload,
-			ControlCode_Quicksave,
-			ControlCode_VATS,
-			ControlCode_Rest,
-			ControlCode_MenuMode})});
 
+		ToggleControl(false, ControlCode_Quickload);
+		ToggleControl(false, ControlCode_VATS);
+		ToggleControl(false, ControlCode_Rest);
+		ToggleControl(false, ControlCode_MenuMode);
 		ToggleKey(false, ScanCode_Escape);
 		ToggleKey(false, ScanCode_Console);
 
@@ -1693,9 +1692,17 @@ void Game::SetWindowMode()
 {
 	Interface::Dynamic([]() {
 		if (GUIMode)
+		{
 			DisablePlayerControls(true, true, true, false);
+			ToggleControl(false, ControlCode_TogglePOV);
+			ToggleControl(false, ControlCode_Crouch);
+		}
 		else
+		{
 			EnablePlayerControls();
+			ToggleControl(true, ControlCode_TogglePOV);
+			ToggleControl(true, ControlCode_Crouch);
+		}
 
 		Interface::ExecuteCommand(Func::GUIMode, {RawParameter(GUIMode)});
 	});
@@ -1722,6 +1729,16 @@ void Game::ToggleKey(bool enabled, unsigned int scancode)
 			Interface::ExecuteCommand(Func::EnableKey, {RawParameter(scancode)});
 		else
 			Interface::ExecuteCommand(Func::DisableKey, {RawParameter(scancode)});
+	});
+}
+
+void Game::ToggleControl(bool enabled, unsigned int control)
+{
+	Interface::Dynamic([enabled, control]() {
+		if (enabled)
+			Interface::ExecuteCommand(Func::EnableControl, {RawParameter(control)});
+		else
+			Interface::ExecuteCommand(Func::DisableControl, {RawParameter(control)});
 	});
 }
 
@@ -2542,10 +2559,20 @@ void Game::GetWindowMode(bool enabled)
 {
 	GUIMode = enabled;
 
-	if (GUIMode)
-		DisablePlayerControls(true, true, true, false);
-	else
-		EnablePlayerControls();
+	Interface::Dynamic([]() {
+		if (GUIMode)
+		{
+			DisablePlayerControls(true, true, true, false);
+			ToggleControl(false, ControlCode_TogglePOV);
+			ToggleControl(false, ControlCode_Crouch);
+		}
+		else
+		{
+			EnablePlayerControls();
+			ToggleControl(true, ControlCode_TogglePOV);
+			ToggleControl(true, ControlCode_Crouch);
+		}
+	});
 
 	Network::Queue({Network::CreateResponse(
 		PacketFactory::Create<pTypes::ID_UPDATE_WMODE>(enabled),
