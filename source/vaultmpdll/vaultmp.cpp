@@ -65,6 +65,7 @@ static void (*GUI_Listbox_AddItem)(const char*, const char*, const char*);
 static void (*GUI_Listbox_RemoveItem)(const char*, const char*);
 static void (*GUI_Listbox_SetItemText)(const char*, const char*, const char*);
 static void (*GUI_Listbox_SetItemSelected)(const char*, const char*, bool);
+static void (*GUI_Listbox_EnableMultiSelect)(const char*, bool);
 static void (*GUI_SetListboxSelectionChangedCallback)(void (*)(const char* name, const char**));
 static void (*SetPlayersDataPointer)(remotePlayers*);
 static bool (*QueueUIMessage)(const char* msg, unsigned int emotion, const char* ddsPath, const char* soundName, float msgTime);
@@ -703,6 +704,15 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 			break;
 		}
 
+		case 0x0034 | VAULTFUNCTION: // GUISelectMulti - Toggle multi select
+		{
+			ZeroMemory(result, sizeof(double));
+			const char* data = ((char*) args) + 2; // skip length
+
+			GUI_Listbox_EnableMultiSelect(data, *(unsigned int*)(data + strlen(data) + 2));
+			break;
+		}
+
 		default:
 			break;
 	}
@@ -921,6 +931,7 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 		GUI_Listbox_RemoveItem = reinterpret_cast<decltype(GUI_Listbox_RemoveItem)>(GetProcAddress(vaultgui, "GUI_Listbox_RemoveItem"));
 		GUI_Listbox_SetItemText = reinterpret_cast<decltype(GUI_Listbox_SetItemText)>(GetProcAddress(vaultgui, "GUI_Listbox_SetItemText"));
 		GUI_Listbox_SetItemSelected = reinterpret_cast<decltype(GUI_Listbox_SetItemSelected)>(GetProcAddress(vaultgui, "GUI_Listbox_SetItemSelected"));
+		GUI_Listbox_EnableMultiSelect = reinterpret_cast<decltype(GUI_Listbox_EnableMultiSelect)>(GetProcAddress(vaultgui, "GUI_Listbox_EnableMultiSelect"));
 		GUI_SetListboxSelectionChangedCallback = reinterpret_cast<decltype(GUI_SetListboxSelectionChangedCallback)>(GetProcAddress(vaultgui, "GUI_SetListboxSelectionChangedCallback"));
 		SetPlayersDataPointer = reinterpret_cast<decltype(SetPlayersDataPointer)>(GetProcAddress(vaultgui, "SetPlayersDataPointer"));
 
@@ -928,7 +939,7 @@ DWORD WINAPI vaultmp_pipe(LPVOID data)
 			!GUI_SetPosition || !GUI_SetSize || !GUI_SetText || !GUI_RemoveWindow || !GUI_ForceGUI || !GUI_SetClickCallback || !GUI_SetTextChangedCallback ||
 			!GUI_Textbox_SetMaxLength || !GUI_Textbox_SetValidationString || !SetPlayersDataPointer || !GUI_AddCheckbox || !GUI_AddRadioButton || !GUI_SetChecked ||
 			!GUI_Radio_SetGroupID || !GUI_AddListbox || !GUI_Listbox_AddItem || !GUI_Listbox_RemoveItem || !GUI_Listbox_SetItemText || !GUI_Listbox_SetItemSelected ||
-			!GUI_SetListboxSelectionChangedCallback || !GUI_SetCheckboxChangedCallback)
+			!GUI_Listbox_EnableMultiSelect || !GUI_SetListboxSelectionChangedCallback || !GUI_SetCheckboxChangedCallback)
 			DLLerror = true;
 
 		GUI_SetClickCallback(GUI_OnClick);

@@ -666,6 +666,16 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
+				case pTypes::ID_UPDATE_WLMULTI:
+				{
+					NetworkID id;
+					bool multiselect;
+					PacketFactory::Access<pTypes::ID_UPDATE_WLMULTI>(packet, id, multiselect);
+					auto reference = GameFactory::Get<List>(id);
+					Game::net_UpdateListMultiSelect(reference.get(), multiselect);
+					break;
+				}
+
 				case pTypes::ID_UPDATE_WMODE:
 				{
 					bool enabled;

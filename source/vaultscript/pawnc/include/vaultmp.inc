@@ -363,6 +363,9 @@ native GetEditValidation(ID, validation{});
 native Bool:GetCheckboxSelected(ID);
 native Bool:GetRadioButtonSelected(ID);
 native GetRadioButtonGroup(ID);
+native Bool:GetListMultiSelect(ID);
+native GetListItemList(ID, id[]);
+native GetListSelectedItemList(ID, id[]);
 native Bool:GetListItemSelected(ID);
 native GetListItemText(ID, text{});
 
@@ -386,6 +389,7 @@ native CreateRadioButton(Float:posX, Float:posY, Float:sizeX, Float:sizeY, Bool:
 native Bool:SetRadioButtonSelected(ID, Bool:selected);
 native Bool:SetRadioButtonGroup(ID, group);
 native CreateList(Float:posX, Float:posY, Float:sizeX, Float:sizeY, Bool:visible = Bool:true, Bool:locked = Bool:false, const text{} = "");
+native Bool:SetListMultiSelect(ID, Bool:multiselect);
 native AddListItem(ID, const text{});
 native Bool:RemoveListItem(ID);
 native Bool:SetListItemSelected(ID, Bool:selected);

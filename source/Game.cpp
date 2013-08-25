@@ -245,6 +245,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func::GUIRemoveItem:
 			case Func::GUISelectChange:
 			case Func::GUISelectText:
+			case Func::GUISelectMulti:
 			case Func::SetGlobalValue:
 			case Func::MarkForDelete:
 			case Func::AgeRace:
@@ -1076,6 +1077,8 @@ void Game::NewList(const FactoryList& reference)
 		}
 
 		NewWindow(reference);
+
+		SetListMultiSelect(reference);
 	});
 
 	GameFactory::Operate<ListItem>(reference->GetItemList(), [&reference](FactoryListItems& listitems) {
@@ -1676,6 +1679,13 @@ void Game::SetListItemText(const FactoryListItem& reference)
 {
 	Interface::Dynamic([&reference]() {
 		Interface::ExecuteCommand(Func::GUISelectText, {RawParameter(reference->GetItemContainer()), RawParameter(reference->GetNetworkID()), RawParameter(reference->GetText())});
+	});
+}
+
+void Game::SetListMultiSelect(const FactoryList& reference)
+{
+	Interface::Dynamic([&reference]() {
+		Interface::ExecuteCommand(Func::GUISelectMulti, {RawParameter(reference->GetLabel()), RawParameter(reference->GetMultiSelect())});
 	});
 }
 
@@ -2356,6 +2366,13 @@ void Game::net_UpdateListItemText(const FactoryListItem& reference, const string
 	reference->SetText(text);
 
 	SetListItemText(reference);
+}
+
+void Game::net_UpdateListMultiSelect(const FactoryList& reference, bool multiselect)
+{
+	reference->SetMultiSelect(multiselect);
+
+	SetListMultiSelect(reference);
 }
 
 void Game::net_UpdateWindowMode(bool enabled)

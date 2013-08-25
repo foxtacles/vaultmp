@@ -6,7 +6,7 @@
 using namespace std;
 using namespace RakNet;
 
-List::List() : Window()
+List::List() : Window(), multiselect(DEFAULT_MULTISELECT)
 {
 	initialize();
 }
@@ -17,7 +17,7 @@ List::List(const pDefault* packet) : Window(PacketFactory::Pop<pPacket>(packet))
 
 	vector<pPacket> items;
 
-	PacketFactory::Access<pTypes::ID_LIST_NEW>(packet, items);
+	PacketFactory::Access<pTypes::ID_LIST_NEW>(packet, items, multiselect);
 
 	for (const pPacket& _packet : items)
 		AddItem(GameFactory::Create<ListItem>(_packet.get()));
@@ -89,7 +89,7 @@ pPacket List::toPacket() const
 		items.emplace_back(GameFactory::Operate<ListItem>(id, [](FactoryListItem& listitem) { return listitem->toPacket(); }));
 
 	pPacket pWindowNew = Window::toPacket();
-	pPacket packet = PacketFactory::Create<pTypes::ID_LIST_NEW>(pWindowNew, move(items));
+	pPacket packet = PacketFactory::Create<pTypes::ID_LIST_NEW>(pWindowNew, move(items), multiselect);
 
 	return packet;
 }

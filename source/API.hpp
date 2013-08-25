@@ -316,6 +316,7 @@ namespace Values
 		GUISelect = 0x0031 | VAULTFUNCTION,
 		GUISelectChange = 0x0032 | VAULTFUNCTION,
 		GUISelectText = 0x0033 | VAULTFUNCTION,
+		GUISelectMulti = 0x0034 | VAULTFUNCTION,
 	};
 
 	enum ActorVals

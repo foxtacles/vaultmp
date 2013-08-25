@@ -403,6 +403,10 @@ class Game
 		 */
 		static void SetListItemText(const FactoryListItem& reference);
 		/**
+		 * \brief Updates the settings of a GUI list (multiselect)
+		 */
+		static void SetListMultiSelect(const FactoryList& reference);
+		/**
 		 * \brief Updates the window mode
 		 */
 		static void SetWindowMode();
@@ -575,6 +579,10 @@ class Game
 		 * \brief Network function to handle GUI list item text
 		 */
 		static void net_UpdateListItemText(const FactoryListItem& reference, const std::string& text);
+		/**
+		 * \brief Network function to handle GUI list item text
+		 */
+		static void net_UpdateListMultiSelect(const FactoryList& reference, bool multiselect);
 		/**
 		 * \brief Network function to handle GUI window mode
 		 */

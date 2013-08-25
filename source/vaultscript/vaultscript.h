@@ -487,6 +487,9 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetCheckboxSelected))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetRadioButtonSelected))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetRadioButtonGroup))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetListMultiSelect))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetListItemList))(VAULTSPACE ID, VAULTSPACE RawArray(VAULTSPACE ID)*) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetListSelectedItemList))(VAULTSPACE ID, VAULTSPACE RawArray(VAULTSPACE ID)*) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetListItemSelected))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE cRawString (*VAULTAPI(GetListItemText))(VAULTSPACE ID) VAULTCPP(noexcept);
 
@@ -510,6 +513,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetRadioButtonSelected))(VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetRadioButtonGroup))(VAULTSPACE ID, VAULTSPACE UCount) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateList))(VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE State, VAULTSPACE State, VAULTSPACE cRawString) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetListMultiSelect))(VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(AddListItem))(VAULTSPACE ID, VAULTSPACE cRawString) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(RemoveListItem))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetListItemSelected))(VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
@@ -922,6 +926,17 @@ namespace vaultmp
 	VAULTFUNCTION State GetCheckboxSelected(ID id) noexcept { return VAULTAPI(GetCheckboxSelected)(id); }
 	VAULTFUNCTION State GetRadioButtonSelected(ID id) noexcept { return VAULTAPI(GetRadioButtonSelected)(id); }
 	VAULTFUNCTION UCount GetRadioButtonGroup(ID id) noexcept { return VAULTAPI(GetRadioButtonGroup)(id); }
+	VAULTFUNCTION State GetListMultiSelect(ID id) noexcept { return VAULTAPI(GetListMultiSelect)(id); }
+	VAULTFUNCTION IDVector GetListItemList(ID id) noexcept {
+		RawArray<ID> data;
+		UCount size = VAULTAPI(GetListItemList)(id, &data);
+		return size ? IDVector(data, data + size) : IDVector();
+	}
+	VAULTFUNCTION IDVector GetListSelectedItemList(ID id) noexcept {
+		RawArray<ID> data;
+		UCount size = VAULTAPI(GetListSelectedItemList)(id, &data);
+		return size ? IDVector(data, data + size) : IDVector();
+	}
 	VAULTFUNCTION State GetListItemSelected(ID id) noexcept { return VAULTAPI(GetListItemSelected)(id); }
 	VAULTFUNCTION String GetListItemText(ID id) noexcept { return VAULTAPI(GetListItemText)(id); }
 
@@ -954,6 +969,7 @@ namespace vaultmp
 	VAULTFUNCTION State SetRadioButtonGroup(ID id, UCount group) noexcept { return VAULTAPI(SetRadioButtonGroup)(id, group); }
 	VAULTFUNCTION ID CreateList(Value posX, Value posY, Value sizeX, Value sizeY, State visible = True, State locked = False, const String& text = "") noexcept { return VAULTAPI(CreateList)(posX, posY, sizeX, sizeY, visible, locked, text.c_str()); }
 	VAULTFUNCTION ID CreateList(Value posX, Value posY, Value sizeX, Value sizeY, State visible = True, State locked = False, cRawString text = "") noexcept { return VAULTAPI(CreateList)(posX, posY, sizeX, sizeY, visible, locked, text); }
+	VAULTFUNCTION State SetListMultiSelect(ID id, State multiselect) noexcept { return VAULTAPI(SetListMultiSelect)(id, multiselect); }
 	VAULTFUNCTION ID AddListItem(ID id, const String& text) noexcept { return VAULTAPI(AddListItem)(id, text.c_str()); }
 	VAULTFUNCTION ID AddListItem(ID id, cRawString text) noexcept { return VAULTAPI(AddListItem)(id, text); }
 	VAULTFUNCTION State RemoveListItem(ID id) noexcept { return VAULTAPI(RemoveListItem)(id); }
@@ -1495,6 +1511,11 @@ namespace vaultmp
 			List(ID id) noexcept : Window(vaultmp::IsList(id) ? id : static_cast<ID>(0), Type::ID_LIST) {}
 			virtual ~List() noexcept {}
 
+			State GetListMultiSelect() const noexcept { return vaultmp::GetListMultiSelect(id); }
+			IDVector GetListItemList() const noexcept { return vaultmp::GetListItemList(id); }
+			IDVector GetListSelectedItemList() const noexcept { return vaultmp::GetListSelectedItemList(id); }
+
+			State SetListMultiSelect(State multiselect) const noexcept { return vaultmp::SetListMultiSelect(id, multiselect); }
 			ID AddListItem(const String& text) noexcept { return vaultmp::AddListItem(id, text); }
 			ID AddListItem(cRawString text) noexcept { return vaultmp::AddListItem(id, text); }
 

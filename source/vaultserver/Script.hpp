@@ -368,6 +368,9 @@ class Script
 		static bool GetCheckboxSelected(RakNet::NetworkID id) noexcept;
 		static bool GetRadioButtonSelected(RakNet::NetworkID id) noexcept;
 		static unsigned int GetRadioButtonGroup(RakNet::NetworkID id) noexcept;
+		static bool GetListMultiSelect(RakNet::NetworkID id) noexcept;
+		static unsigned int GetListItemList(RakNet::NetworkID id, RakNet::NetworkID** data) noexcept;
+		static unsigned int GetListSelectedItemList(RakNet::NetworkID id, RakNet::NetworkID** data) noexcept;
 		static bool GetListItemSelected(RakNet::NetworkID id) noexcept;
 		static const char* GetListItemText(RakNet::NetworkID id) noexcept;
 
@@ -391,6 +394,7 @@ class Script
 		static bool SetRadioButtonSelected(RakNet::NetworkID id, bool selected) noexcept;
 		static bool SetRadioButtonGroup(RakNet::NetworkID id, unsigned int group);
 		static RakNet::NetworkID CreateList(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept;
+		static bool SetListMultiSelect(RakNet::NetworkID id, bool multiselect);
 		static RakNet::NetworkID AddListItem(RakNet::NetworkID id, const char* text) noexcept;
 		static bool RemoveListItem(RakNet::NetworkID id) noexcept;
 		static bool SetListItemSelected(RakNet::NetworkID id, bool selected) noexcept;
@@ -554,6 +558,9 @@ class Script
 			{"GetCheckboxSelected", Script::GetCheckboxSelected},
 			{"GetRadioButtonSelected", Script::GetRadioButtonSelected},
 			{"GetRadioButtonGroup", Script::GetRadioButtonGroup},
+			{"GetListMultiSelect", Script::GetListMultiSelect},
+			{"GetListItemList", Script::GetListItemList},
+			{"GetListSelectedItemList", Script::GetListSelectedItemList},
 			{"GetListItemSelected", Script::GetListItemSelected},
 			{"GetListItemText", Script::GetListItemText},
 
@@ -577,6 +584,7 @@ class Script
 			{"SetRadioButtonSelected", Script::SetRadioButtonSelected},
 			{"SetRadioButtonGroup", Script::SetRadioButtonGroup},
 			{"CreateList", Script::CreateList},
+			{"SetListMultiSelect", Script::SetListMultiSelect},
 			{"AddListItem", Script::AddListItem},
 			{"RemoveListItem", Script::RemoveListItem},
 			{"SetListItemSelected", Script::SetListItemSelected},

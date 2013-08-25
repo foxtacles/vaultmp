@@ -2642,6 +2642,46 @@ unsigned int Script::GetRadioButtonGroup(NetworkID id) noexcept
 	});
 }
 
+bool Script::GetListMultiSelect(NetworkID id) noexcept
+{
+	return GameFactory::Operate<List, FailPolicy::Return>(id, [id](FactoryList& list) {
+		return list->GetMultiSelect();
+	});
+}
+
+unsigned int Script::GetListItemList(NetworkID id, NetworkID** data) noexcept
+{
+	static vector<NetworkID> _data;
+
+	return GameFactory::Operate<List, FailPolicy::Return>(id, [id, data](FactoryList& list) {
+		const auto& listitems = list->GetItemList();
+		_data.assign(listitems.begin(), listitems.end());
+		unsigned int size = _data.size();
+
+		if (size)
+			*data = &_data[0];
+
+		return size;
+	});
+}
+
+unsigned int Script::GetListSelectedItemList(NetworkID id, NetworkID** data) noexcept
+{
+	static vector<NetworkID> _data;
+
+	return GameFactory::Operate<List, FailPolicy::Return>(id, [id, data](FactoryList& list) {
+		const auto& listitems = list->GetItemList();
+		_data.clear();
+		copy_if(listitems.begin(), listitems.end(), back_inserter(_data), [](NetworkID listitem) { return GameFactory::Get<ListItem>(listitem)->GetSelected(); });
+		unsigned int size = _data.size();
+
+		if (size)
+			*data = &_data[0];
+
+		return size;
+	});
+}
+
 bool Script::GetListItemSelected(NetworkID id) noexcept
 {
 	return GameFactory::Operate<ListItem, FailPolicy::Return>(id, [id](FactoryListItem& listitem) {
@@ -3129,6 +3169,39 @@ NetworkID Script::CreateList(double posX, double posY, double sizeX, double size
 	return id;
 }
 
+bool Script::SetListMultiSelect(NetworkID id, bool multiselect)
+{
+	return GameFactory::Operate<List, FailPolicy::Return>(id, [id, multiselect](FactoryList& list) {
+		if (list->GetMultiSelect() == multiselect)
+			return false;
+
+		if (!multiselect)
+		{
+			NetworkID* selected;
+			unsigned int count = GetListSelectedItemList(id, &selected);
+
+			while (count > 1)
+			{
+				SetListItemSelected(selected[count - 1], false);
+				--count;
+			}
+		}
+
+		list->SetMultiSelect(multiselect);
+
+		NetworkID root = GetWindowRoot(id);
+		vector<RakNetGUID> guids(Client::GetNetworkList(Player::GetWindowPlayers(root)));
+
+		if (!guids.empty())
+			Network::Queue({Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_WLMULTI>(id, multiselect),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
+			});
+
+		return true;
+	});
+}
+
 NetworkID Script::AddListItem(NetworkID id, const char* text) noexcept
 {
 	if (!*text)
@@ -3197,22 +3270,16 @@ bool Script::SetListItemSelected(NetworkID id, bool selected) noexcept
 	if (!list)
 		return false;
 
-	NetworkID previous;
+	NetworkID previous = 0;
 
 	bool success = GameFactory::Operate<List, FailPolicy::Bool>(list, [id, selected, &previous](FactoryList& list) {
-		if (selected)
-			previous = GameFactory::Operate<ListItem>(list->GetItemList(), [id](FactoryListItems& listitems) {
-				for (const auto& listitem : listitems)
-					if (listitem->GetSelected())
-					{
-						listitem->SetSelected(false);
-						return listitem->GetNetworkID();
-					}
+		if (selected && !list->GetMultiSelect())
+		{
+			NetworkID* selected;
 
-				return 0ull;
-			});
-		else
-			previous = 0;
+			if (GetListSelectedItemList(list->GetNetworkID(), &selected))
+				previous = selected[0];
+		}
 
 		GameFactory::Operate<ListItem>(id, [selected](FactoryListItem& listitem) {
 			listitem->SetSelected(selected);
@@ -3252,7 +3319,7 @@ bool Script::SetListItemSelected(NetworkID id, bool selected) noexcept
 bool Script::SetListItemText(NetworkID id, const char* text) noexcept
 {
 	if (!*text)
-		return 0ull;
+		return false;
 
 	NetworkID list = GameFactory::Operate<ListItem, FailPolicy::Return>(id, [](FactoryListItem& listitem) {
 		return listitem->GetItemContainer();
