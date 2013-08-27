@@ -76,6 +76,7 @@ extern "C"
 	__declspec(dllexport) void GUI_Listbox_RemoveItem(char* name,char* itemID);
 	__declspec(dllexport) void GUI_Listbox_SetItemText(char* name,char* itemID,char* newText);
 	__declspec(dllexport) void GUI_Listbox_SetItemSelected(char* name,char* itemID,bool selected);
+	__declspec(dllexport) void GUI_Listbox_SetItemTextColor(char* name,char* itemID,unsigned int color);
 	__declspec(dllexport) void GUI_Listbox_EnableMultiSelect(char* name,bool e);
 	__declspec(dllexport) vector<string>* GUI_Listbox_GetSelectedItems(char* name);
 

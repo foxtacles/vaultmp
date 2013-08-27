@@ -392,6 +392,22 @@ extern "C"
 		gData.sendListboxCallbacks=true;
 	}
 
+	__declspec(dllexport) void GUI_Listbox_SetItemTextColor(char* name,char* itemID,unsigned int color)
+	{
+		CEGUI::Listbox *w = ((CEGUI::Listbox*)GUIHelper::getWindow(name));
+
+		for(int i=0;i<w->getItemCount();i++)
+		{
+			CEGUI::FormattedListboxTextItem* itm=(CEGUI::FormattedListboxTextItem*)w->getListboxItemFromIndex(i);
+			if(itm->getCustomID().compare(itemID)==0)
+			{
+				CEGUI::colour col;
+				col.setARGB(color);
+				itm->setTextColours(col);
+			}
+		}
+	}
+
 	__declspec(dllexport) void GUI_Listbox_EnableMultiSelect(char* name,bool e)
 	{
 		CEGUI::Listbox *w = ((CEGUI::Listbox*)GUIHelper::getWindow(name));
