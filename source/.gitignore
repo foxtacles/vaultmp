@@ -12,3 +12,4 @@ RakNet/other
 obj
 .objs
 *.sleepy
+*.cbTemp
