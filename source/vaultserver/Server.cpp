@@ -70,22 +70,6 @@ NetworkResponse Server::LoadGame(RakNetGUID guid)
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 	}
 
-	GameFactory::Operate<Reference>(GameFactory::GetByType(ALL_REFERENCES), [&response, guid](FactoryReferences& references) {
-		FactoryReferences::iterator it;
-
-		for (it = references.begin(); it != references.end(); GameFactory::Leave(*it), ++it)
-		{
-			auto item = vaultcast<Item>(*it);
-
-			if (item && item->GetItemContainer())
-				continue;
-
-			response.emplace_back(Network::CreateResponse(
-				(*it)->toPacket(),
-				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
-		}
-	});
-
 	response.emplace_back(Network::CreateResponse(
 		PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameYear, Script::GetGameYear()),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
@@ -187,6 +171,25 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 		return player->GetName();
 	});
 
+	GameFactory::Operate<Reference>(GameFactory::GetByType(ALL_REFERENCES), [&response, guid, id](FactoryReferences& references) {
+		FactoryReferences::iterator it;
+
+		for (it = references.begin(); it != references.end(); GameFactory::Leave(*it), ++it)
+		{
+			if ((*it)->GetNetworkID() == id)
+				continue;
+
+			auto item = vaultcast<Item>(*it);
+
+			if (item && item->GetItemContainer())
+				continue;
+
+			response.emplace_back(Network::CreateResponse(
+				(*it)->toPacket(),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
+		}
+	});
+
 	Script::SetBaseName(id, player_name.c_str());
 
 	Script::Call<Script::CBI("OnSpawn")>(id);
@@ -256,7 +259,7 @@ NetworkResponse Server::GetPos(RakNetGUID guid, FactoryObject& reference, double
 		else
 			response.emplace_back(Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_UPDATE_POS>(reference->GetNetworkID(), X, Y, Z),
-				HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, Client::GetNetworkList(guid)));
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 	}
 
 	return response;
@@ -270,7 +273,7 @@ NetworkResponse Server::GetAngle(RakNetGUID guid, FactoryObject& reference, doub
 	if (result)
 		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_ANGLE>(reference->GetNetworkID(), X, Z),
-			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, Client::GetNetworkList(guid)));
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
 	return response;
 }

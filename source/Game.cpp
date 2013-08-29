@@ -20,9 +20,7 @@ Game::Weather Game::weather;
 Game::PlayerBase Game::playerBase;
 Game::SpawnFunc Game::spawnFunc;
 Player::CellContext Game::spawnContext;
-Game::StartupQueue Game::startupQueue;
 bool Game::GUIMode;
-bool Game::startup;
 
 #ifdef VAULTMP_DEBUG
 DebugInput<Game> Game::debug;
@@ -338,14 +336,6 @@ void Game::Startup()
 		Interface::SetupCommand(Func::GetParentCell, {Player::CreateFunctor(FLAG_SELF | FLAG_ALIVE)}, 30);
 	});
 
-	startup = true;
-
-	while (!startupQueue.empty())
-	{
-		startupQueue.front()();
-		startupQueue.pop_front();
-	}
-
 	while (!GameFactory::Operate<Player>(id, [](FactoryPlayer& player) {
 		return player->GetGamePos(Axis_X);
 	})) this_thread::sleep_for(chrono::milliseconds(10));
@@ -382,13 +372,7 @@ void Game::AsyncDispatch(function<void()>&& func)
 
 void Game::JobDispatch(chrono::milliseconds&& time, function<void()>&& func)
 {
-	// no move supported
-	auto func_ = [time, func]() mutable { Interface::PushJob(chrono::steady_clock::now() + time, move(func)); };
-
-	if (!startup)
-		startupQueue.emplace_back(func_);
-	else
-		func_();
+	Interface::PushJob(chrono::steady_clock::now() + time, move(func));
 }
 
 void Game::DelayOrExecute(const FactoryObject& reference, function<void(unsigned int)>&& func, unsigned int key)
@@ -590,7 +574,7 @@ void Game::LoadEnvironment()
 
 	vector<NetworkID> reference = GameFactory::GetByType(ALL_OBJECTS);
 
-	for (NetworkID& id : reference)
+	for (NetworkID id : reference)
 		GameFactory::Operate<Object>(id, [](FactoryObject& object) {
 			if (!object->IsPersistent() || object->GetReference() == PLAYER_REFERENCE)
 			{
@@ -1831,8 +1815,9 @@ void Game::net_SetPos(const FactoryObject& reference, double X, double Y, double
 	{
 		auto actor = vaultcast<Actor>(reference); // maybe we should consider items, too (they have physics)
 
-		if (!actor || (!reference->IsNearPoint(reference->GetNetworkPos(Axis_X), reference->GetNetworkPos(Axis_Y), reference->GetNetworkPos(Axis_Z), 50.0)) || actor->IsActorJumping() || actor->GetReference() == PLAYER_REFERENCE)
-			SetPos(reference);
+		//if (!actor || (!reference->IsNearPoint(reference->GetNetworkPos(Axis_X), reference->GetNetworkPos(Axis_Y), reference->GetNetworkPos(Axis_Z), 50.0)) || actor->IsActorJumping() || actor->GetReference() == PLAYER_REFERENCE)
+
+		SetPos(reference);
 	}
 }
 
@@ -2210,8 +2195,6 @@ void Game::net_UpdateExterior(unsigned int baseID, signed int x, signed int y, b
 
 void Game::net_UpdateContext(Player::CellContext& context, bool spawn)
 {
-	sort(context.begin(), context.end());
-
 	if (spawn)
 		spawnContext = context;
 
@@ -2228,6 +2211,9 @@ void Game::net_UpdateContext(Player::CellContext& context, bool spawn)
 			cellContext.Operate([&context, &copy, &diff, old_cell, &cellRefs](Player::CellContext& cellContext) {
 				cellRefs[old_cell][ID_PLAYER].erase(PLAYER_REFERENCE);
 				cellRefs[context[0]][ID_PLAYER].insert(PLAYER_REFERENCE);
+
+				sort(context.begin(), context.end());
+				sort(cellContext.begin(), cellContext.end());
 
 				set_difference(context.begin(), context.end(), cellContext.begin(), cellContext.end(), back_inserter(diff.first));
 				set_difference(cellContext.begin(), cellContext.end(), context.begin(), context.end(), back_inserter(diff.second));
@@ -2448,7 +2434,7 @@ void Game::GetPos(const FactoryObject& reference, double X, double Y, double Z)
 
 		Network::Queue({Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_POS>(reference->GetNetworkID(), X, Y, Z),
-			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, server)
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 		});
 	}
 }
@@ -2463,7 +2449,7 @@ void Game::GetAngle(const FactoryObject& reference, double X, double Y, double Z
 	if (result)
 		Network::Queue({Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_ANGLE>(reference->GetNetworkID(), X, Z),
-			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, server)
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 		});
 }
 
@@ -2474,7 +2460,7 @@ void Game::GetParentCell(const FactoryPlayer& player, unsigned int cell)
 	if (result)
 		Network::Queue({Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_CELL>(player->GetNetworkID(), cell, 0.0, 0.0, 0.0),
-			HIGH_PRIORITY, RELIABLE_SEQUENCED, CHANNEL_GAME, server)
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 		});
 }
 

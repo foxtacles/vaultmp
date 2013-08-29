@@ -72,9 +72,7 @@ class Game
 		static PlayerBase playerBase;
 		static SpawnFunc spawnFunc;
 		static Player::CellContext spawnContext;
-		static StartupQueue startupQueue;
 		static bool GUIMode;
-		static bool startup;
 
 		static void NewObject_(FactoryObject& reference);
 		static void NewItem_(FactoryItem& reference);
