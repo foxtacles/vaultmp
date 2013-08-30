@@ -124,7 +124,7 @@ unsigned int Reference::GetCount() const
 	return count;
 }
 
-double Reference::GetHealth() const
+float Reference::GetHealth() const
 {
 	return health;
 }
@@ -134,12 +134,12 @@ unsigned int Reference::GetCell() const
 	return cell;
 }
 
-const std::tuple<double, double, double>& Reference::GetPos() const
+const std::tuple<float, float, float>& Reference::GetPos() const
 {
 	return pos;
 }
 
-const std::tuple<double, double, double>& Reference::GetAngle() const
+const std::tuple<float, float, float>& Reference::GetAngle() const
 {
 	return angle;
 }

@@ -81,12 +81,12 @@ unsigned int CreatureReference::GetCell() const
 	return cell;
 }
 
-const std::tuple<double, double, double>& CreatureReference::GetPos() const
+const std::tuple<float, float, float>& CreatureReference::GetPos() const
 {
 	return pos;
 }
 
-const std::tuple<double, double, double>& CreatureReference::GetAngle() const
+const std::tuple<float, float, float>& CreatureReference::GetAngle() const
 {
 	return angle;
 }

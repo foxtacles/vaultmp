@@ -144,7 +144,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 				case pTypes::ID_UPDATE_POS:
 				{
 					NetworkID id;
-					double X, Y, Z;
+					float X, Y, Z;
 					PacketFactory::Access<pTypes::ID_UPDATE_POS>(packet, id, X, Y, Z);
 					auto reference = GameFactory::Get<Object>(id);
 					response = Server::GetPos(data->guid, reference.get(), X, Y, Z);
@@ -154,7 +154,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 				case pTypes::ID_UPDATE_ANGLE:
 				{
 					NetworkID id;
-					double X, Z;
+					float X, Z;
 					PacketFactory::Access<pTypes::ID_UPDATE_ANGLE>(packet, id, X, Z);
 					auto reference = GameFactory::Get<Object>(id);
 					response = Server::GetAngle(data->guid, reference.get(), X, 0.00, Z);
@@ -165,7 +165,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 				{
 					NetworkID id;
 					unsigned int cell;
-					double X, Y, Z;
+					float X, Y, Z;
 					PacketFactory::Access<pTypes::ID_UPDATE_CELL>(packet, id, cell, X, Y, Z);
 					auto reference = GameFactory::Get<Object>(id);
 					response = Server::GetCell(data->guid, reference.get(), cell);

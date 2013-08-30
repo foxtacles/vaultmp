@@ -25,7 +25,7 @@ namespace DB
 			unsigned int refID;
 			unsigned int baseID;
 			unsigned int cell;
-			std::tuple<double, double, double> pos, angle;
+			std::tuple<float, float, float> pos, angle;
 			unsigned int flags;
 
 			CreatureReference(const CreatureReference&) = delete;
@@ -39,8 +39,8 @@ namespace DB
 			unsigned int GetReference() const;
 			unsigned int GetBase() const;
 			unsigned int GetCell() const;
-			const std::tuple<double, double, double>& GetPos() const;
-			const std::tuple<double, double, double>& GetAngle() const;
+			const std::tuple<float, float, float>& GetPos() const;
+			const std::tuple<float, float, float>& GetAngle() const;
 			unsigned int GetFlags() const;
 
 			CreatureReference(const std::string& table, sqlite3_stmt* stmt);

@@ -228,7 +228,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				{
 					NetworkID id;
 					unsigned int baseID;
-					double aX, aY, aZ;
+					float aX, aY, aZ;
 					PacketFactory::Access<pTypes::ID_VOLATILE_NEW>(packet, id, baseID, aX, aY, aZ);
 					auto reference = GameFactory::Get<Object>(id);
 					Game::NewVolatile(reference.get(), baseID, aX, aY, aZ);
@@ -336,7 +336,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				case pTypes::ID_UPDATE_POS:
 				{
 					NetworkID id;
-					double X, Y, Z;
+					float X, Y, Z;
 					PacketFactory::Access<pTypes::ID_UPDATE_POS>(packet, id, X, Y, Z);
 					auto reference = GameFactory::Get<Object>(id);
 					Game::net_SetPos(reference.get(), X, Y, Z);
@@ -346,7 +346,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				case pTypes::ID_UPDATE_ANGLE:
 				{
 					NetworkID id;
-					double X, Z;
+					float X, Z;
 					PacketFactory::Access<pTypes::ID_UPDATE_ANGLE>(packet, id, X, Z);
 					auto reference = GameFactory::Get<Object>(id);
 					Game::net_SetAngle(reference.get(), X, 0.00, Z);
@@ -357,7 +357,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				{
 					NetworkID id;
 					unsigned int cell;
-					double X, Y, Z;
+					float X, Y, Z;
 					PacketFactory::Access<pTypes::ID_UPDATE_CELL>(packet, id, cell, X, Y, Z);
 					auto reference = GameFactory::Get<Object>(vector<NetworkID>{id, GameFactory::Lookup<Object>(PLAYER_REFERENCE)});
 					auto player = vaultcast_swap<Player>(move(reference[1]));
@@ -408,7 +408,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				case pTypes::ID_UPDATE_CONDITION:
 				{
 					NetworkID id;
-					double condition;
+					float condition;
 					unsigned int health;
 					PacketFactory::Access<pTypes::ID_UPDATE_CONDITION>(packet, id, condition, health);
 					auto reference = GameFactory::Get<Item>(id);
@@ -431,7 +431,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					NetworkID id;
 					bool base;
 					unsigned char index;
-					double value;
+					float value;
 					PacketFactory::Access<pTypes::ID_UPDATE_VALUE>(packet, id, base, index, value);
 					auto reference = GameFactory::Get<Actor>(id);
 					Game::net_SetActorValue(reference.get(), base, index, value);
@@ -547,7 +547,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				case pTypes::ID_UPDATE_WPOS:
 				{
 					NetworkID id;
-					tuple<double, double, double, double> pos;
+					tuple<float, float, float, float> pos;
 					PacketFactory::Access<pTypes::ID_UPDATE_WPOS>(packet, id, pos);
 					auto reference = GameFactory::Get<Window>(id);
 					Game::net_UpdateWindowPos(reference.get(), pos);
@@ -557,7 +557,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				case pTypes::ID_UPDATE_WSIZE:
 				{
 					NetworkID id;
-					tuple<double, double, double, double> size;
+					tuple<float, float, float, float> size;
 					PacketFactory::Access<pTypes::ID_UPDATE_WSIZE>(packet, id, size);
 					auto reference = GameFactory::Get<Window>(id);
 					Game::net_UpdateWindowSize(reference.get(), size);

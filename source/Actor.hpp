@@ -25,8 +25,8 @@ class Actor : public Container
 		static DebugInput<Actor> debug;
 #endif
 
-		std::unordered_map<unsigned char, Value<double>> actor_Values;
-		std::unordered_map<unsigned char, Value<double>> actor_BaseValues;
+		std::unordered_map<unsigned char, Value<float>> actor_Values;
+		std::unordered_map<unsigned char, Value<float>> actor_BaseValues;
 		Value<unsigned int> actor_Race;
 		Value<signed int> actor_Age;
 		Value<unsigned int> anim_Idle;
@@ -52,7 +52,7 @@ class Actor : public Container
 	public:
 		virtual ~Actor() noexcept;
 
-		static const std::map<unsigned char, std::pair<const double, const double>> default_values;
+		static const std::map<unsigned char, std::pair<const float, const float>> default_values;
 
 #ifndef VAULTSERVER
 		/**
@@ -66,11 +66,11 @@ class Actor : public Container
 		/**
 		 * \brief Retrieves the Actor's actor value specified by index (actor value hex code)
 		 */
-		double GetActorValue(unsigned char index) const;
+		float GetActorValue(unsigned char index) const;
 		/**
 		 * \brief Retrieves the Actor's base actor value specified by index (actor value hex code)
 		 */
-		double GetActorBaseValue(unsigned char index) const;
+		float GetActorBaseValue(unsigned char index) const;
 		/**
 		 * \brief Retrieves the Actor's race
 		 */
@@ -119,11 +119,11 @@ class Actor : public Container
 		/**
 		 * \brief Sets the Actor's actor value specified by index (actor value hex code)
 		 */
-		Lockable* SetActorValue(unsigned char index, double value);
+		Lockable* SetActorValue(unsigned char index, float value);
 		/**
 		 * \brief Sets the Actor's base actor value specified by index (actor value hex code)
 		 */
-		Lockable* SetActorBaseValue(unsigned char index, double value);
+		Lockable* SetActorBaseValue(unsigned char index, float value);
 		/**
 		 * \brief Sets the Actor's race
 		 */
@@ -228,7 +228,7 @@ class ActorFunctor : public ContainerFunctor
 
 GF_TYPE_WRAPPER(Actor, Container, ID_ACTOR, ALL_ACTORS)
 
-template<> struct pTypesMap<pTypes::ID_ACTOR_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_ACTOR_NEW, std::map<unsigned char, double>, std::map<unsigned char, double>, unsigned int, signed int, unsigned int, unsigned char, unsigned char, unsigned char, bool, bool, bool, bool> type; };
+template<> struct pTypesMap<pTypes::ID_ACTOR_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_ACTOR_NEW, std::map<unsigned char, float>, std::map<unsigned char, float>, unsigned int, signed int, unsigned int, unsigned char, unsigned char, unsigned char, bool, bool, bool, bool> type; };
 template<>
 inline const typename pTypesMap<pTypes::ID_ACTOR_NEW>::type* PacketFactory::Cast_<pTypes::ID_ACTOR_NEW>::Cast(const pDefault* packet) {
 	pTypes type = packet->type();

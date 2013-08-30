@@ -135,7 +135,8 @@ Lockable* Reference::SetObjectValue(Value<T>& dest, const T& value)
 	return &dest;
 }
 
-template<> Lockable* Reference::SetObjectValue(Value<double>& dest, const double& value);
+template<> Lockable* Reference::SetObjectValue(Value<float>& dest, const float& value);
+template<> Lockable* Reference::SetObjectValue(Value<std::tuple<float, float, float>>& dest, const std::tuple<float, float, float>& value);
 
 class ReferenceFunctor : public VaultFunctor
 {

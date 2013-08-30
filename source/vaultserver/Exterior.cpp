@@ -58,7 +58,7 @@ Expected<Exterior*> Exterior::Lookup(unsigned int baseID)
 	return VaultException("No cell with baseID %08X found", baseID);
 }
 
-Expected<Exterior*> Exterior::Lookup(unsigned int world, double X, double Y)
+Expected<Exterior*> Exterior::Lookup(unsigned int world, float X, float Y)
 {
 	signed int x = floor(X / SIZE);
 	signed int y = floor(Y / SIZE);
@@ -93,8 +93,8 @@ signed int Exterior::GetY() const
 
 array<unsigned int, 9> Exterior::GetAdjacents() const
 {
-	double X = GetX() * SIZE;
-	double Y = GetY() * SIZE;
+	float X = GetX() * SIZE;
+	float Y = GetY() * SIZE;
 
 	Expected<Exterior*> next_exterior;
 
@@ -110,11 +110,11 @@ array<unsigned int, 9> Exterior::GetAdjacents() const
 		(next_exterior = DB::Exterior::Lookup(world, X - SIZE, Y + SIZE)) ? next_exterior->GetBase() : 0u}};
 }
 
-bool Exterior::IsValidCoordinate(double X, double Y) const
+bool Exterior::IsValidCoordinate(float X, float Y) const
 {
-	double x1 = x * SIZE;
-	double y1 = y * SIZE;
-	double x2 = x1 + SIZE;
-	double y2 = y1 + SIZE;
+	float x1 = x * SIZE;
+	float y1 = y * SIZE;
+	float x2 = x1 + SIZE;
+	float y2 = y1 + SIZE;
 	return ((X >= x1 && X < x2) && (Y >= y1 && Y < y2));
 }

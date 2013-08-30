@@ -60,7 +60,7 @@ class Game
 
 		static RakNet::RakNetGUID server;
 
-		static void AdjustZAngle(double& Z, double diff);
+		static void AdjustZAngle(float& Z, float diff);
 		static Guarded<CellRefs> cellRefs;
 		static Guarded<Player::CellContext> cellContext;
 		static Guarded<UninitializedObjects> uninitObj;
@@ -160,7 +160,7 @@ class Game
 		/**
 		 * \brief Creates a new volatile Object
 		 */
-		static void NewVolatile(FactoryObject& reference, unsigned int baseID, double aX, double aY, double aZ);
+		static void NewVolatile(FactoryObject& reference, unsigned int baseID, float aX, float aY, float aZ);
 		/**
 		 * \brief Creates a new Item
 		 */
@@ -217,8 +217,8 @@ class Game
 		/**
 		 * \brief Places an Object in-game
 		 */
-		static void PlaceAtMe(const FactoryObject& reference, unsigned int baseID, double condition = 1.00, unsigned int count = 1, unsigned int key = 0);
-		static void PlaceAtMe(unsigned int refID, unsigned int baseID, double condition = 1.00, unsigned int count = 1, unsigned int key = 0);
+		static void PlaceAtMe(const FactoryObject& reference, unsigned int baseID, float condition = 1.00, unsigned int count = 1, unsigned int key = 0);
+		static void PlaceAtMe(unsigned int refID, unsigned int baseID, float condition = 1.00, unsigned int count = 1, unsigned int key = 0);
 		/**
 		 * \brief Enables / Disables an Object
 		 */
@@ -279,11 +279,11 @@ class Game
 		/**
 		 * \brief Damages an actor value of an Actor
 		 */
-		static void DamageActorValue(const FactoryActor& reference, unsigned char index, double value, unsigned int key = 0);
+		static void DamageActorValue(const FactoryActor& reference, unsigned char index, float value, unsigned int key = 0);
 		/**
 		 * \brief Restores an actor value of an Actor
 		 */
-		static void RestoreActorValue(const FactoryActor& reference, unsigned char index, double value, unsigned int key = 0);
+		static void RestoreActorValue(const FactoryActor& reference, unsigned char index, float value, unsigned int key = 0);
 		/**
 		 * \brief Sets the sneaking state of an Actor
 		 */
@@ -328,7 +328,7 @@ class Game
 		 * \brief Adds an Item to a Container
 		 */
 		static void AddItem(const FactoryContainer& reference, const FactoryItem& item, unsigned int key = 0);
-		static void AddItem(const FactoryContainer& reference, unsigned int baseID, unsigned int count, double condition, bool silent = false, unsigned int key = 0);
+		static void AddItem(const FactoryContainer& reference, unsigned int baseID, unsigned int count, float condition, bool silent = false, unsigned int key = 0);
 		/**
 		 * \brief Removes an Item from a Container
 		 */
@@ -346,7 +346,7 @@ class Game
 		 * \brief Makes an Actor equip an Item
 		 */
 		static void EquipItem(const FactoryActor& reference, const FactoryItem& item, unsigned int key = 0);
-		static void EquipItem(const FactoryActor& reference, unsigned int baseID, double condition, bool silent = false, bool stick = false, unsigned int key = 0);
+		static void EquipItem(const FactoryActor& reference, unsigned int baseID, float condition, bool silent = false, bool stick = false, unsigned int key = 0);
 		/**
 		 * \brief Makes an Actor unequip an Item
 		 */
@@ -456,15 +456,15 @@ class Game
 		/**
 		 * \brief Network function to handle Object position
 		 */
-		static void net_SetPos(const FactoryObject& reference, double X, double Y, double Z);
+		static void net_SetPos(const FactoryObject& reference, float X, float Y, float Z);
 		/**
 		 * \brief Network function to handle Object position
 		 */
-		static void net_SetAngle(const FactoryObject& reference, double X, double Y, double Z);
+		static void net_SetAngle(const FactoryObject& reference, float X, float Y, float Z);
 		/**
 		 * \brief Network function to handle Object cell
 		 */
-		static void net_SetCell(FactoryObject& reference, FactoryPlayer& player, unsigned int cell, double X, double Y, double Z);
+		static void net_SetCell(FactoryObject& reference, FactoryPlayer& player, unsigned int cell, float X, float Y, float Z);
 		/**
 		 * \brief Network function to handle Object lock level
 		 */
@@ -484,7 +484,7 @@ class Game
 		/**
 		 * \brief Network function to handle Item condition
 		 */
-		static void net_SetItemCondition(FactoryItem& reference, double condition, unsigned int health);
+		static void net_SetItemCondition(FactoryItem& reference, float condition, unsigned int health);
 		/**
 		 * \brief Network function to handle Item equipped state
 		 */
@@ -492,7 +492,7 @@ class Game
 		/**
 		 * \brief Network function to handle Actor value
 		 */
-		static void net_SetActorValue(const FactoryActor& reference, bool base, unsigned char index, double value);
+		static void net_SetActorValue(const FactoryActor& reference, bool base, unsigned char index, float value);
 		/**
 		 * \brief Network function to handle Actor state
 		 */
@@ -536,11 +536,11 @@ class Game
 		/**
 		 * \brief Network function to handle GUI window pos
 		 */
-		static void net_UpdateWindowPos(const FactoryWindow& reference, const std::tuple<double, double, double, double>& pos);
+		static void net_UpdateWindowPos(const FactoryWindow& reference, const std::tuple<float, float, float, float>& pos);
 		/**
 		 * \brief Network function to handle GUI window size
 		 */
-		static void net_UpdateWindowSize(const FactoryWindow& reference, const std::tuple<double, double, double, double>& size);
+		static void net_UpdateWindowSize(const FactoryWindow& reference, const std::tuple<float, float, float, float>& size);
 		/**
 		 * \brief Network function to handle GUI window visible
 		 */
@@ -621,11 +621,11 @@ class Game
 		/**
 		 * \brief Handles GetPos command result
 		 */
-		static void GetPos(const FactoryObject& reference, double X, double Y, double Z);
+		static void GetPos(const FactoryObject& reference, float X, float Y, float Z);
 		/**
 		 * \brief Handles GetAngle command result
 		 */
-		static void GetAngle(const FactoryObject& reference, double X, double Y, double Z);
+		static void GetAngle(const FactoryObject& reference, float X, float Y, float Z);
 		/**
 		 * \brief Handles GetParentCell command result
 		 */

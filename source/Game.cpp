@@ -26,14 +26,14 @@ bool Game::GUIMode;
 DebugInput<Game> Game::debug;
 #endif
 
-void Game::AdjustZAngle(double& Z, double diff)
+void Game::AdjustZAngle(float& Z, float diff)
 {
 	Z += diff;
 
-	if (Z > 360.0)
-		Z -= 360.0;
-	else if (Z < 0.00)
-		Z += 360.0;
+	if (Z > 360.0f)
+		Z -= 360.0f;
+	else if (Z < 0.00f)
+		Z += 360.0f;
 }
 
 void Game::CommandHandler(unsigned int key, const vector<double>& info, double result, bool error)
@@ -197,7 +197,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				FutureSet(shared, true);
 				break;
 
-			case Func::SetPos:
+			case Func::SetPosFast:
 			case Func::SetAngle:
 			case Func::ForceActorValue:
 			case Func::DamageActorValue:
@@ -337,7 +337,7 @@ void Game::Startup()
 	});
 
 	while (!GameFactory::Operate<Player>(id, [](FactoryPlayer& player) {
-		return player->GetGamePos(Axis_X);
+		return get<0>(player->GetGamePos());
 	})) this_thread::sleep_for(chrono::milliseconds(10));
 }
 
@@ -369,12 +369,12 @@ void Game::AsyncDispatch(function<void()>&& func)
 	thread t(move(func));
 	t.detach();
 }
-
+/*
 void Game::JobDispatch(chrono::milliseconds&& time, function<void()>&& func)
 {
 	Interface::PushJob(chrono::steady_clock::now() + time, move(func));
 }
-
+*/
 void Game::DelayOrExecute(const FactoryObject& reference, function<void(unsigned int)>&& func, unsigned int key)
 {
 	if (!reference->GetReference())
@@ -670,7 +670,7 @@ void Game::NewObject_(FactoryObject& reference)
 		auto store = make_shared<Shared<unsigned int>>();
 		unsigned int key = Lockable::Share(store);
 
-		double condition;
+		float condition;
 
 		{
 			auto item = vaultcast<Item>(reference);
@@ -681,7 +681,10 @@ void Game::NewObject_(FactoryObject& reference)
 		unsigned int anchorID = GetAnchor(reference->GetNetworkCell());
 
 		Interface::Dynamic([&reference, anchorID, baseID, condition, key]() {
-			Interface::ExecuteCommand(Func::PlaceAtMePrepare, {RawParameter(reference->GetAngle(Axis_X)), RawParameter(reference->GetAngle(Axis_Y)), RawParameter(reference->GetAngle(Axis_Z)), RawParameter(reference->GetNetworkPos(Axis_X)), RawParameter(reference->GetNetworkPos(Axis_Y)), RawParameter(reference->GetNetworkPos(Axis_Z))});
+			const auto& angle = reference->GetAngle();
+			const auto& pos = reference->GetNetworkPos();
+
+			Interface::ExecuteCommand(Func::PlaceAtMePrepare, {RawParameter(get<0>(angle)), RawParameter(get<1>(angle)), RawParameter(get<2>(angle)), RawParameter(get<0>(pos)), RawParameter(get<1>(pos)), RawParameter(get<2>(pos))});
 
 			PlaceAtMe(anchorID, baseID, condition, 1, key);
 		});
@@ -721,15 +724,17 @@ void Game::NewObject_(FactoryObject& reference)
 	// maybe more
 }
 
-void Game::NewVolatile(FactoryObject& reference, unsigned int baseID, double aX, double aY, double aZ)
+void Game::NewVolatile(FactoryObject& reference, unsigned int baseID, float aX, float aY, float aZ)
 {
 	if (!IsInContext(reference->GetNetworkCell()))
 		return;
 
 	Interface::Dynamic([&reference, baseID, aX, aY, aZ]() {
-		Interface::ExecuteCommand(Func::PlaceAtMePrepare, {RawParameter(aX), RawParameter(aY), RawParameter(aZ), RawParameter(reference->GetNetworkPos(Axis_X)), RawParameter(reference->GetNetworkPos(Axis_Y)), RawParameter(reference->GetNetworkPos(Axis_Z))});
+		const auto& pos = reference->GetNetworkPos()
+;
+		Interface::ExecuteCommand(Func::PlaceAtMePrepare, {RawParameter(aX), RawParameter(aY), RawParameter(aZ), RawParameter(get<0>(pos)), RawParameter(get<1>(pos)), RawParameter(get<2>(pos))});
 
-		PlaceAtMe(reference, baseID, 1.00, 1);
+		PlaceAtMe(reference, baseID, 1.00f, 1);
 	});
 }
 
@@ -1072,12 +1077,12 @@ void Game::NewList(const FactoryList& reference)
 	});
 }
 
-void Game::PlaceAtMe(const FactoryObject& reference, unsigned int baseID, double condition, unsigned int count, unsigned int key)
+void Game::PlaceAtMe(const FactoryObject& reference, unsigned int baseID, float condition, unsigned int count, unsigned int key)
 {
 	PlaceAtMe(reference->GetReference(), baseID, condition, count, key);
 }
 
-void Game::PlaceAtMe(unsigned int refID, unsigned int baseID, double condition, unsigned int count, unsigned int key)
+void Game::PlaceAtMe(unsigned int refID, unsigned int baseID, float condition, unsigned int count, unsigned int key)
 {
 	Interface::Dynamic([refID, baseID, condition, count, key]() {
 		Interface::ExecuteCommand(Func::PlaceAtMeHealthPercent, {RawParameter(refID), RawParameter(baseID), RawParameter(condition), RawParameter(count)}, key);
@@ -1249,36 +1254,30 @@ void Game::SetPos(const FactoryObject& reference)
 		return;
 
 	Interface::Dynamic([&reference]() {
-		Lockable* key = nullptr;
+		const auto& pos = reference->GetNetworkPos();
 
-		key = reference->SetGamePos(Axis_X, reference->GetNetworkPos(Axis_X));
+		Lockable* key = reference->SetGamePos(pos);
 
-		Interface::ExecuteCommand(Func::SetPos, {reference->GetReferenceParam(), RawParameter(Axis_X), RawParameter(reference->GetNetworkPos(Axis_X))}, key ? key->Lock() : 0);
-
-		key = reference->SetGamePos(Axis_Y, reference->GetNetworkPos(Axis_Y));
-
-		Interface::ExecuteCommand(Func::SetPos, {reference->GetReferenceParam(), RawParameter(Axis_Y), RawParameter(reference->GetNetworkPos(Axis_Y))}, key ? key->Lock() : 0);
-
-		key = reference->SetGamePos(Axis_Z, reference->GetNetworkPos(Axis_Z));
-
-		Interface::ExecuteCommand(Func::SetPos, {reference->GetReferenceParam(), RawParameter(Axis_Z), RawParameter(reference->GetNetworkPos(Axis_Z))}, key ? key->Lock() : 0);
+		Interface::ExecuteCommand(Func::SetPosFast, {reference->GetReferenceParam(), RawParameter(get<0>(pos)), RawParameter(get<1>(pos)), RawParameter(get<2>(pos))}, key ? key->Lock() : 0);
 	});
 }
 
 void Game::SetAngle(const FactoryObject& reference)
 {
 	Interface::Dynamic([&reference]() {
-		Interface::ExecuteCommand(Func::SetAngle, {reference->GetReferenceParam(), RawParameter(Axis_X), RawParameter(reference->GetAngle(Axis_X))});
+		const auto& angle = reference->GetAngle();
 
-		double value = reference->GetAngle(Axis_Z);
+		Interface::ExecuteCommand(Func::SetAngle, {reference->GetReferenceParam(), RawParameter(Axis_X), RawParameter(get<0>(angle))});
+
+		float value = get<2>(angle);
 		auto actor = vaultcast<Actor>(reference);
 
 		if (actor)
 		{
 			if (actor->GetActorMovingXY() == 0x01)
-				AdjustZAngle(value, -45.0);
+				AdjustZAngle(value, -45.0f);
 			else if (actor->GetActorMovingXY() == 0x02)
-				AdjustZAngle(value, 45.0);
+				AdjustZAngle(value, 45.0f);
 		}
 
 		Interface::ExecuteCommand(Func::SetAngle, {reference->GetReferenceParam(), RawParameter(Axis_Z), RawParameter(value)});
@@ -1292,9 +1291,12 @@ void Game::MoveTo(const FactoryObject& reference, const FactoryObject& object, b
 
 		if (cell)
 		{
-			param_MoveTo.emplace_back(reference->GetNetworkPos(Axis_X) - object->GetNetworkPos(Axis_X));
-			param_MoveTo.emplace_back(reference->GetNetworkPos(Axis_Y) - object->GetNetworkPos(Axis_Y));
-			param_MoveTo.emplace_back(reference->GetNetworkPos(Axis_Z) - object->GetNetworkPos(Axis_Z));
+			const auto& pos_1 = reference->GetNetworkPos();
+			const auto& pos_2 = object->GetNetworkPos();
+
+			param_MoveTo.emplace_back(get<0>(pos_1) - get<0>(pos_2));
+			param_MoveTo.emplace_back(get<1>(pos_1) - get<1>(pos_2));
+			param_MoveTo.emplace_back(get<2>(pos_1) - get<2>(pos_2));
 		}
 
 		Interface::ExecuteCommand(Func::MoveTo, move(param_MoveTo), key);
@@ -1337,7 +1339,7 @@ void Game::SetOwner(const FactoryObject& reference, unsigned int key)
 void Game::SetActorValue(const FactoryActor& reference, bool base, unsigned char index, unsigned int key)
 {
 	auto* actor = reference.operator->();
-	double value = base ? actor->GetActorBaseValue(index) : actor->GetActorValue(index);
+	float value = base ? actor->GetActorBaseValue(index) : actor->GetActorValue(index);
 
 	DelayOrExecute(reference, [actor, base, index, value](unsigned int key) {
 		Interface::Dynamic([actor, base, index, value, key]() {
@@ -1349,7 +1351,7 @@ void Game::SetActorValue(const FactoryActor& reference, bool base, unsigned char
 	}, key);
 }
 
-void Game::DamageActorValue(const FactoryActor& reference, unsigned char index, double value, unsigned int key)
+void Game::DamageActorValue(const FactoryActor& reference, unsigned char index, float value, unsigned int key)
 {
 	auto* actor = reference.operator->();
 
@@ -1360,7 +1362,7 @@ void Game::DamageActorValue(const FactoryActor& reference, unsigned char index, 
 	}, key);
 }
 
-void Game::RestoreActorValue(const FactoryActor& reference, unsigned char index, double value, unsigned int key)
+void Game::RestoreActorValue(const FactoryActor& reference, unsigned char index, float value, unsigned int key)
 {
 	auto* actor = reference.operator->();
 
@@ -1498,7 +1500,7 @@ void Game::AddItem(const FactoryContainer& reference, const FactoryItem& item, u
 	AddItem(reference, item->GetBase(), item->GetItemCount(), item->GetItemCondition(), item->GetItemSilent(), key);
 }
 
-void Game::AddItem(const FactoryContainer& reference, unsigned int baseID, unsigned int count, double condition, bool silent, unsigned int key)
+void Game::AddItem(const FactoryContainer& reference, unsigned int baseID, unsigned int count, float condition, bool silent, unsigned int key)
 {
 	auto* container = reference.operator->();
 
@@ -1553,7 +1555,7 @@ void Game::EquipItem(const FactoryActor& reference, const FactoryItem& item, uns
 	EquipItem(reference, item->GetBase(), item->GetItemCondition(), item->GetItemSilent(), item->GetItemStick(), key);
 }
 
-void Game::EquipItem(const FactoryActor& reference, unsigned int baseID, double condition, bool silent, bool stick, unsigned int key)
+void Game::EquipItem(const FactoryActor& reference, unsigned int baseID, float condition, bool silent, bool stick, unsigned int key)
 {
 	auto* actor = reference.operator->();
 
@@ -1807,9 +1809,9 @@ void Game::net_SetName(const FactoryObject& reference, const string& name)
 		SetName(reference);
 }
 
-void Game::net_SetPos(const FactoryObject& reference, double X, double Y, double Z)
+void Game::net_SetPos(const FactoryObject& reference, float X, float Y, float Z)
 {
-	bool result = (static_cast<bool>(reference->SetNetworkPos(Axis_X, X)) | static_cast<bool>(reference->SetNetworkPos(Axis_Y, Y)) | static_cast<bool>(reference->SetNetworkPos(Axis_Z, Z)));
+	bool result = static_cast<bool>(reference->SetNetworkPos(tuple<float, float, float>{X, Y, Z}));
 
 	if (result && reference->GetEnabled())
 	{
@@ -1821,17 +1823,13 @@ void Game::net_SetPos(const FactoryObject& reference, double X, double Y, double
 	}
 }
 
-void Game::net_SetAngle(const FactoryObject& reference, double X, double Y, double Z)
+void Game::net_SetAngle(const FactoryObject& reference, float X, float Y, float Z)
 {
-	bool result_x = static_cast<bool>(reference->SetAngle(Axis_X, X));
-	bool result = (result_x | static_cast<bool>(reference->SetAngle(Axis_Y, Y)) | static_cast<bool>(reference->SetAngle(Axis_Z, Z)));
+	bool result = static_cast<bool>(reference->SetAngle(tuple<float, float, float>{X, Y, Z}));
 
 	if (result && reference->GetEnabled())
 	{
 		SetAngle(reference);
-
-		if (!result_x)
-			return;
 
 		auto actor = vaultcast<Actor>(reference);
 
@@ -1843,7 +1841,7 @@ void Game::net_SetAngle(const FactoryObject& reference, double X, double Y, doub
 	}
 }
 
-void Game::net_SetCell(FactoryObject& reference, FactoryPlayer& player, unsigned int cell, double X, double Y, double Z)
+void Game::net_SetCell(FactoryObject& reference, FactoryPlayer& player, unsigned int cell, float X, float Y, float Z)
 {
 	unsigned int old_cell = reference->GetNetworkCell();
 	reference->SetNetworkCell(cell);
@@ -1851,7 +1849,7 @@ void Game::net_SetCell(FactoryObject& reference, FactoryPlayer& player, unsigned
 	bool result = false;
 
 	if (X || Y || Z)
-		result = (static_cast<bool>(reference->SetNetworkPos(Axis_X, X)) | static_cast<bool>(reference->SetNetworkPos(Axis_Y, Y)) | static_cast<bool>(reference->SetNetworkPos(Axis_Z, Z)));
+		result = static_cast<bool>(reference->SetNetworkPos(tuple<float, float, float>{X, Y, Z}));
 
 	if (reference->GetReference())
 	{
@@ -1960,7 +1958,7 @@ void Game::net_SetItemCount(FactoryItem& reference, unsigned int count, bool sil
 			reference->SetItemSilent(silent);
 
 			unsigned int baseID = reference->GetBase();
-			double condition = reference->GetItemCondition();
+			float condition = reference->GetItemCondition();
 
 			GameFactory::Leave(reference);
 
@@ -1988,7 +1986,7 @@ void Game::net_SetItemCount(FactoryItem& reference, unsigned int count, bool sil
 	}
 }
 
-void Game::net_SetItemCondition(FactoryItem& reference, double condition, unsigned int health)
+void Game::net_SetItemCondition(FactoryItem& reference, float condition, unsigned int health)
 {
 	if (reference->SetItemCondition(condition))
 	{
@@ -2029,11 +2027,11 @@ void Game::net_SetItemEquipped(FactoryItem& reference, bool equipped, bool silen
 	}
 }
 
-void Game::net_SetActorValue(const FactoryActor& reference, bool base, unsigned char index, double value)
+void Game::net_SetActorValue(const FactoryActor& reference, bool base, unsigned char index, float value)
 {
 	Lockable* result;
 
-	double prev_value = reference->GetActorValue(index);
+	float prev_value = reference->GetActorValue(index);
 
 	if (base)
 		result = reference->SetActorBaseValue(index, value);
@@ -2044,11 +2042,11 @@ void Game::net_SetActorValue(const FactoryActor& reference, bool base, unsigned 
 	{
 		if (!base && (index == ActorVal_Health || (index >= ActorVal_Head && index <= ActorVal_Brain)))
 		{
-			double diff = value - prev_value;
+			float diff = value - prev_value;
 
-			if (diff < 0.00)
+			if (diff < 0.00f)
 				DamageActorValue(reference, index, diff);
-			else if (diff > 0.00)
+			else if (diff > 0.00f)
 				RestoreActorValue(reference, index, diff);
 		}
 		else
@@ -2284,14 +2282,14 @@ void Game::net_UpdateConsole(bool enabled)
 	ToggleKey(enabled, ScanCode_Console);
 }
 
-void Game::net_UpdateWindowPos(const FactoryWindow& reference, const tuple<double, double, double, double>& pos)
+void Game::net_UpdateWindowPos(const FactoryWindow& reference, const tuple<float, float, float, float>& pos)
 {
 	reference->SetPos(get<0>(pos), get<1>(pos), get<2>(pos), get<3>(pos));
 
 	SetWindowPos(reference);
 }
 
-void Game::net_UpdateWindowSize(const FactoryWindow& reference, const tuple<double, double, double, double>& size)
+void Game::net_UpdateWindowSize(const FactoryWindow& reference, const tuple<float, float, float, float>& size)
 {
 	reference->SetSize(get<0>(size), get<1>(size), get<2>(size), get<3>(size));
 
@@ -2422,15 +2420,13 @@ void Game::net_SetDeletedStatic(DeletedObjects&& deletedStatic)
 	});
 }
 
-void Game::GetPos(const FactoryObject& reference, double X, double Y, double Z)
+void Game::GetPos(const FactoryObject& reference, float X, float Y, float Z)
 {
-	bool result = (static_cast<bool>(reference->SetGamePos(Axis_X, X)) | static_cast<bool>(reference->SetGamePos(Axis_Y, Y)) | static_cast<bool>(reference->SetGamePos(Axis_Z, Z)));
+	bool result = static_cast<bool>(reference->SetGamePos(tuple<float, float, float>{X, Y, Z}));
 
 	if (result && reference->GetReference() == PLAYER_REFERENCE)
 	{
-		reference->SetNetworkPos(Axis_X, X);
-		reference->SetNetworkPos(Axis_Y, Y);
-		reference->SetNetworkPos(Axis_Z, Z);
+		reference->SetNetworkPos(tuple<float, float, float>{X, Y, Z});
 
 		Network::Queue({Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_UPDATE_POS>(reference->GetNetworkID(), X, Y, Z),
@@ -2439,12 +2435,12 @@ void Game::GetPos(const FactoryObject& reference, double X, double Y, double Z)
 	}
 }
 
-void Game::GetAngle(const FactoryObject& reference, double X, double Y, double Z)
+void Game::GetAngle(const FactoryObject& reference, float X, float Y, float Z)
 {
 	if (reference->GetReference() != PLAYER_REFERENCE)
 		return;
 
-	bool result = (static_cast<bool>(reference->SetAngle(Axis_X, X)) | static_cast<bool>(reference->SetAngle(Axis_Y, Y)) | static_cast<bool>(reference->SetAngle(Axis_Z, Z)));
+	bool result = static_cast<bool>(reference->SetAngle(tuple<float, float, float>{X, Y, Z}));
 
 	if (result)
 		Network::Queue({Network::CreateResponse(
@@ -2459,7 +2455,7 @@ void Game::GetParentCell(const FactoryPlayer& player, unsigned int cell)
 
 	if (result)
 		Network::Queue({Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_CELL>(player->GetNetworkID(), cell, 0.0, 0.0, 0.0),
+			PacketFactory::Create<pTypes::ID_UPDATE_CELL>(player->GetNetworkID(), cell, 0.0f, 0.0f, 0.0f),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 		});
 }

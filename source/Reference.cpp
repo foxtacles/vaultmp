@@ -55,9 +55,21 @@ unsigned int Reference::ResolveIndex(unsigned int baseID)
 */
 
 template<>
-Lockable* Reference::SetObjectValue(Value<double>& dest, const double& value)
+Lockable* Reference::SetObjectValue(Value<float>& dest, const float& value)
 {
-	if (Utils::DoubleCompare(dest.get(), value, 0.0001))
+	if (Utils::DoubleCompare(dest.get(), value, 0.001f))
+		return nullptr;
+
+	if (!dest.set(value))
+		return nullptr;
+
+	return &dest;
+}
+
+template<>
+Lockable* Reference::SetObjectValue(Value<tuple<float, float, float>>& dest, const tuple<float, float, float>& value)
+{
+	if (Utils::DoubleCompare(get<0>(dest.get()), get<0>(value), 0.001f) && Utils::DoubleCompare(get<1>(dest.get()), get<1>(value), 0.001f) && Utils::DoubleCompare(get<2>(dest.get()), get<2>(value), 0.001f))
 		return nullptr;
 
 	if (!dest.set(value))

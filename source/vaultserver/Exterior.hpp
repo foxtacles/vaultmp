@@ -31,17 +31,17 @@ namespace DB
 			Exterior& operator=(const Exterior&) = delete;
 
 		public:
-			static constexpr double SIZE = 4096.0;
+			static constexpr float SIZE = 4096.0f;
 
 			static Expected<Exterior*> Lookup(unsigned int baseID);
-			static Expected<Exterior*> Lookup(unsigned int world, double X, double Y);
+			static Expected<Exterior*> Lookup(unsigned int world, float X, float Y);
 
 			unsigned int GetBase() const;
 			unsigned int GetWorld() const;
 			signed int GetX() const;
 			signed int GetY() const;
 			std::array<unsigned int, 9> GetAdjacents() const;
-			bool IsValidCoordinate(double X, double Y) const;
+			bool IsValidCoordinate(float X, float Y) const;
 
 			Exterior(const std::string& table, sqlite3_stmt* stmt);
 			~Exterior() = default;

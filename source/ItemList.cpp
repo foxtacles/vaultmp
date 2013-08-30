@@ -46,7 +46,7 @@ void ItemList::initialize()
 
 }
 
-NetworkID ItemList::FindStackableItem(unsigned int baseID, double condition) const
+NetworkID ItemList::FindStackableItem(unsigned int baseID, float condition) const
 {
 	for (const NetworkID& id : container)
 		if (GameFactory::Operate<Item>(id, [baseID, condition](FactoryItem& item) {
@@ -68,7 +68,7 @@ NetworkID ItemList::AddItem(NetworkID id)
 			if (container == this->GetNetworkID() && find(this->container.begin(), this->container.end(), id) == this->container.end())
 			{
 				this->container.emplace_back(id);
-				return make_pair(0u, 0.0);
+				return make_pair(0u, 0.0f);
 			}
 
 			throw VaultException("Item is already owned by container %llu", container).stacktrace();
@@ -109,7 +109,7 @@ NetworkID ItemList::AddItem(NetworkID id)
 	return stackable ? stackable : id;
 }
 
-ItemList::AddOp ItemList::AddItem(unsigned int baseID, unsigned int count, double condition, bool silent)
+ItemList::AddOp ItemList::AddItem(unsigned int baseID, unsigned int count, float condition, bool silent)
 {
 	AddOp result;
 

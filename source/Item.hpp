@@ -22,7 +22,7 @@ class Item : public Object
 
 		Value<RakNet::NetworkID> item_Container;
 		Value<unsigned int> item_Count;
-		Value<double> item_Condition;
+		Value<float> item_Condition;
 		Value<bool> state_Equipped;
 		Value<bool> flag_Silent;
 		Value<bool> flag_Stick;
@@ -42,14 +42,14 @@ class Item : public Object
 
 		RakNet::NetworkID GetItemContainer() const;
 		unsigned int GetItemCount() const;
-		double GetItemCondition() const;
+		float GetItemCondition() const;
 		bool GetItemEquipped() const;
 		bool GetItemSilent() const;
 		bool GetItemStick() const;
 
 		Lockable* SetItemContainer(RakNet::NetworkID id);
 		Lockable* SetItemCount(unsigned int count);
-		Lockable* SetItemCondition(double condition);
+		Lockable* SetItemCondition(float condition);
 		Lockable* SetItemEquipped(bool state);
 		Lockable* SetItemSilent(bool silent);
 		Lockable* SetItemStick(bool stick);
@@ -71,10 +71,10 @@ class Item : public Object
 
 GF_TYPE_WRAPPER_FINAL(Item, Object, ID_ITEM)
 
-template<> struct pTypesMap<pTypes::ID_ITEM_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_ITEM_NEW, RakNet::NetworkID, unsigned int, double, bool, bool, bool> type; };
+template<> struct pTypesMap<pTypes::ID_ITEM_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_ITEM_NEW, RakNet::NetworkID, unsigned int, float, bool, bool, bool> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_COUNT> { typedef pGeneratorReference<pTypes::ID_UPDATE_COUNT, unsigned int, bool> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_CONDITION> { typedef pGeneratorReference<pTypes::ID_UPDATE_CONDITION, double, unsigned int> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_CONDITION> { typedef pGeneratorReference<pTypes::ID_UPDATE_CONDITION, float, unsigned int> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_EQUIPPED> { typedef pGeneratorReference<pTypes::ID_UPDATE_EQUIPPED, bool, bool, bool> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_VALUE> { typedef pGeneratorReference<pTypes::ID_UPDATE_VALUE, bool, unsigned char, double> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_VALUE> { typedef pGeneratorReference<pTypes::ID_UPDATE_VALUE, bool, unsigned char, float> type; };
 
 #endif

@@ -81,12 +81,12 @@ unsigned int ActorReference::GetCell() const
 	return cell;
 }
 
-const std::tuple<double, double, double>& ActorReference::GetPos() const
+const std::tuple<float, float, float>& ActorReference::GetPos() const
 {
 	return pos;
 }
 
-const std::tuple<double, double, double>& ActorReference::GetAngle() const
+const std::tuple<float, float, float>& ActorReference::GetAngle() const
 {
 	return angle;
 }

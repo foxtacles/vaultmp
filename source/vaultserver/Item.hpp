@@ -22,7 +22,7 @@ namespace DB
 			unsigned int baseID;
 			unsigned int value;
 			unsigned int health;
-			double weight;
+			float weight;
 			unsigned int slot;
 
 			Item(const Item&) = delete;
@@ -34,7 +34,7 @@ namespace DB
 			unsigned int GetBase() const;
 			unsigned int GetValue() const;
 			unsigned int GetHealth() const;
-			double GetWeight() const;
+			float GetWeight() const;
 			unsigned int GetSlot() const;
 
 			Item(const std::string& table, sqlite3_stmt* stmt);

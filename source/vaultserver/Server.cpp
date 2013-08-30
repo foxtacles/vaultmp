@@ -221,20 +221,18 @@ NetworkResponse Server::Disconnect(RakNetGUID guid, Reason reason)
 	return response;
 }
 
-NetworkResponse Server::GetPos(RakNetGUID guid, FactoryObject& reference, double X, double Y, double Z)
+NetworkResponse Server::GetPos(RakNetGUID guid, FactoryObject& reference, float X, float Y, float Z)
 {
 	NetworkResponse response;
 
 	if (!DB::Record::IsValidCoordinate(reference->GetNetworkCell(), X, Y, Z))
 		return response;
 
-	bool result = (static_cast<bool>(reference->SetNetworkPos(Axis_X, X)) | static_cast<bool>(reference->SetNetworkPos(Axis_Y, Y)) | static_cast<bool>(reference->SetNetworkPos(Axis_Z, Z)));
+	bool result = static_cast<bool>(reference->SetNetworkPos(tuple<float, float, float>{X, Y, Z}));
 
 	if (result)
 	{
-		reference->SetGamePos(Axis_X, X);
-		reference->SetGamePos(Axis_Y, Y);
-		reference->SetGamePos(Axis_Z, Z);
+		reference->SetGamePos(tuple<float, float, float>{X, Y, Z});
 
 		unsigned int cell = reference->GetNetworkCell();
 
@@ -265,10 +263,10 @@ NetworkResponse Server::GetPos(RakNetGUID guid, FactoryObject& reference, double
 	return response;
 }
 
-NetworkResponse Server::GetAngle(RakNetGUID guid, FactoryObject& reference, double X, double Y, double Z)
+NetworkResponse Server::GetAngle(RakNetGUID guid, FactoryObject& reference, float X, float Y, float Z)
 {
 	NetworkResponse response;
-	bool result = static_cast<bool>(reference->SetAngle(Axis_X, X)) |  static_cast<bool>(reference->SetAngle(Axis_Y, Y)) |  static_cast<bool>(reference->SetAngle(Axis_Z, Z));
+	bool result = static_cast<bool>(reference->SetAngle(tuple<float, float, float>{X, Y, Z}));
 
 	if (result)
 		response.emplace_back(Network::CreateResponse(
@@ -282,7 +280,8 @@ NetworkResponse Server::GetCell(RakNetGUID guid, FactoryObject& reference, unsig
 {
 	NetworkResponse response;
 
-	bool valid = DB::Record::IsValidCoordinate(cell, reference->GetNetworkPos(Axis_X), reference->GetNetworkPos(Axis_Y), reference->GetNetworkPos(Axis_Z));
+	const auto& pos = reference->GetNetworkPos();
+	bool valid = DB::Record::IsValidCoordinate(cell, get<0>(pos), get<1>(pos), get<2>(pos));
 	bool result = static_cast<bool>(reference->SetNetworkCell(cell)) && valid;
 
 	if (result)
@@ -291,7 +290,7 @@ NetworkResponse Server::GetCell(RakNetGUID guid, FactoryObject& reference, unsig
 		reference->SetGameCell(cell);
 
 		response.emplace_back(Network::CreateResponse(
-			PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, cell, reference->GetNetworkPos(Axis_X), reference->GetNetworkPos(Axis_Y), reference->GetNetworkPos(Axis_Z)),
+			PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, cell, get<0>(pos), get<1>(pos), get<2>(pos)),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
 		GameFactory::Operate<Player, FailPolicy::Return>(id, [&response, guid, id](FactoryPlayer& player) {

@@ -58,7 +58,7 @@ unsigned int Item::GetHealth() const
 	return health;
 }
 
-double Item::GetWeight() const
+float Item::GetWeight() const
 {
 	return weight;
 }

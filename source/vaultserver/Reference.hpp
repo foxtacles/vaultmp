@@ -27,9 +27,9 @@ namespace DB
 			unsigned int refID;
 			unsigned int baseID;
 			unsigned int count;
-			double health;
+			float health;
 			unsigned int cell;
-			std::tuple<double, double, double> pos, angle;
+			std::tuple<float, float, float> pos, angle;
 			unsigned int flags;
 			unsigned int lock;
 			unsigned int key;
@@ -48,10 +48,10 @@ namespace DB
 			unsigned int GetReference() const;
 			unsigned int GetBase() const;
 			unsigned int GetCount() const;
-			double GetHealth() const;
+			float GetHealth() const;
 			unsigned int GetCell() const;
-			const std::tuple<double, double, double>& GetPos() const;
-			const std::tuple<double, double, double>& GetAngle() const;
+			const std::tuple<float, float, float>& GetPos() const;
+			const std::tuple<float, float, float>& GetAngle() const;
 			unsigned int GetFlags() const;
 			unsigned int GetLock() const;
 			unsigned int GetKey() const;

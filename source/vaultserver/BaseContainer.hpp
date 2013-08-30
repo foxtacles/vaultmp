@@ -23,7 +23,7 @@ namespace DB
 			unsigned int baseID;
 			unsigned int item;
 			unsigned int count;
-			double condition;
+			float condition;
 
 			BaseContainer(const BaseContainer&) = delete;
 			BaseContainer& operator=(const BaseContainer&) = delete;
@@ -34,7 +34,7 @@ namespace DB
 			unsigned int GetBase() const;
 			unsigned int GetItem() const;
 			unsigned int GetCount() const;
-			double GetCondition() const;
+			float GetCondition() const;
 
 			BaseContainer(const std::string& table, sqlite3_stmt* stmt);
 			~BaseContainer() = default;

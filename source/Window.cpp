@@ -4,8 +4,8 @@ using namespace std;
 using namespace RakNet;
 
 Window::WindowChilds Window::childs;
-constexpr tuple<double, double> Window::GUI_MAIN_SIZE;
-constexpr tuple<double, double> Window::GUI_MAIN_POS;
+constexpr tuple<float, float> Window::GUI_MAIN_SIZE;
+constexpr tuple<float, float> Window::GUI_MAIN_POS;
 
 Window::Window() : Base(), parent(0), locked(false), visible(true)
 {
@@ -57,9 +57,9 @@ void Window::SetParentWindow(Window* parent)
 		this->parent = 0;
 }
 
-bool Window::SetPos(double X, double Y, double offset_X, double offset_Y)
+bool Window::SetPos(float X, float Y, float offset_X, float offset_Y)
 {
-	if (X >= 0.0 && X <= 1.0 && Y >= 0.0 && Y <= 1.0)
+	if (X >= 0.0f && X <= 1.0f && Y >= 0.0f && Y <= 1.0f)
 	{
 		pos = decltype(pos){X, Y, offset_X, offset_Y};
 		return true;
@@ -68,9 +68,9 @@ bool Window::SetPos(double X, double Y, double offset_X, double offset_Y)
 	return false;
 }
 
-bool Window::SetSize(double X, double Y, double offset_X, double offset_Y)
+bool Window::SetSize(float X, float Y, float offset_X, float offset_Y)
 {
-	if (X >= 0.0 && X <= 1.0 && Y >= 0.0 && Y <= 1.0)
+	if (X >= 0.0f && X <= 1.0f && Y >= 0.0f && Y <= 1.0f)
 	{
 		size = decltype(size){X, Y, offset_X, offset_Y};
 		return true;

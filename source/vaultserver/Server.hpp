@@ -47,11 +47,11 @@ class Server
 		/**
 		 * \brief Handles GetPos network packet
 		 */
-		static NetworkResponse GetPos(RakNet::RakNetGUID guid, FactoryObject& reference, double X, double Y, double Z);
+		static NetworkResponse GetPos(RakNet::RakNetGUID guid, FactoryObject& reference, float X, float Y, float Z);
 		/**
 		 * \brief Handles GetAngle network packet
 		 */
-		static NetworkResponse GetAngle(RakNet::RakNetGUID guid, FactoryObject& reference, double X, double Y, double Z);
+		static NetworkResponse GetAngle(RakNet::RakNetGUID guid, FactoryObject& reference, float X, float Y, float Z);
 		/**
 		 * \brief Handles cell network packet
 		 */

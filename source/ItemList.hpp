@@ -19,7 +19,7 @@ class ItemList : public virtual Base
 		friend class GameFactory;
 
 	private:
-		static constexpr double CONDITION_EPS = 0.001;
+		static constexpr float CONDITION_EPS = 0.001f;
 
 		typedef std::vector<RakNet::NetworkID> Impl;
 		typedef std::pair<bool, RakNet::NetworkID> AddOp;
@@ -29,7 +29,7 @@ class ItemList : public virtual Base
 		static DebugInput<ItemList> debug;
 #endif
 
-		RakNet::NetworkID FindStackableItem(unsigned int baseID, double condition) const;
+		RakNet::NetworkID FindStackableItem(unsigned int baseID, float condition) const;
 
 		Impl container;
 
@@ -49,7 +49,7 @@ class ItemList : public virtual Base
 		virtual ~ItemList() noexcept;
 
 		RakNet::NetworkID AddItem(RakNet::NetworkID id);
-		AddOp AddItem(unsigned int baseID, unsigned int count, double condition, bool silent);
+		AddOp AddItem(unsigned int baseID, unsigned int count, float condition, bool silent);
 		void RemoveItem(RakNet::NetworkID id);
 		RemoveOp RemoveItem(unsigned int baseID, unsigned int count, bool silent);
 		Impl RemoveAllItems();

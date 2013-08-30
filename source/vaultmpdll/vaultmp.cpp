@@ -69,6 +69,7 @@ static void (*GUI_Listbox_EnableMultiSelect)(const char*, bool);
 static void (*GUI_SetListboxSelectionChangedCallback)(void (*)(const char* name, const char**));
 static void (*SetPlayersDataPointer)(remotePlayers*);
 static bool (*QueueUIMessage)(const char* msg, unsigned int emotion, const char* ddsPath, const char* soundName, float msgTime);
+static void (*SetPos)(unsigned int unk, unsigned short opcode, void* reference, unsigned char axis, double pos);
 
 static void PatchGame(HINSTANCE& silverlock);
 static void BethesdaDelegator();
@@ -713,6 +714,20 @@ bool vaultfunction(void* reference, void* result, void* args, unsigned short opc
 			break;
 		}
 
+		case 0x0035 | VAULTFUNCTION: // SetPosFast - set position
+		{
+			ZeroMemory(result, sizeof(double));
+			double X = *(double*) ((char*) args + 1);
+			double Y = *(double*) ((char*) args + 10);
+			double Z = *(double*) ((char*) args + 19);
+			unsigned int unk = *(unsigned int*) 0x0107A79C;
+
+			SetPos(unk, 0x1007, reference, 'X', X);
+			SetPos(unk, 0x1007, reference, 'Y', Y);
+			SetPos(unk, 0x1007, reference, 'Z', Z);
+			break;
+		}
+
 		default:
 			break;
 	}
@@ -1204,6 +1219,7 @@ void PatchGame(HINSTANCE& silverlock)
 	FormLookup = (decltype(FormLookup)) LOOKUP_FORM;
 	FuncLookup = (decltype(FuncLookup)) LOOKUP_FUNC;
 	QueueUIMessage = (decltype(QueueUIMessage)) QUEUE_UI_MESSAGE;
+	SetPos = (decltype(SetPos)) SETPOS;
 
 	SafeWrite8(delegator_dest, 0x51);   // PUSH ECX
 	SafeWrite8(delegatorCall_src + 5, 0x59);   // POP ECX

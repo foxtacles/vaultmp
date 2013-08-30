@@ -21,8 +21,8 @@ namespace DB
 			static std::unordered_map<unsigned int, Interior*> cells;
 
 			unsigned int baseID;
-			double x1, y1, z1;
-			double x2, y2, z2;
+			float x1, y1, z1;
+			float x2, y2, z2;
 
 			Interior(const Interior&) = delete;
 			Interior& operator=(const Interior&) = delete;
@@ -31,8 +31,8 @@ namespace DB
 			static Expected<Interior*> Lookup(unsigned int baseID);
 
 			unsigned int GetBase() const;
-			std::array<double, 6> GetBounds() const;
-			bool IsValidCoordinate(double X, double Y, double Z) const;
+			std::array<float, 6> GetBounds() const;
+			bool IsValidCoordinate(float X, float Y, float Z) const;
 
 			Interior(const std::string& table, sqlite3_stmt* stmt);
 			~Interior() = default;

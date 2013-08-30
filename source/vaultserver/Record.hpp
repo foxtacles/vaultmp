@@ -39,7 +39,7 @@ namespace DB
 
 			static bool IsValidCell(unsigned int baseID) noexcept;
 			static bool IsValidWeather(unsigned int baseID) noexcept;
-			static bool IsValidCoordinate(unsigned int baseID, double X, double Y, double Z) noexcept;
+			static bool IsValidCoordinate(unsigned int baseID, float X, float Y, float Z) noexcept;
 
 			unsigned int GetBase() const;
 			const std::string& GetName() const;

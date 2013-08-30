@@ -52,12 +52,12 @@ unsigned int Interior::GetBase() const
 	return baseID;
 }
 
-array<double, 6> Interior::GetBounds() const
+array<float, 6> Interior::GetBounds() const
 {
 	return {{x1, y1, z1, x2, y2, z2}};
 }
 
-bool Interior::IsValidCoordinate(double X, double Y, double Z) const
+bool Interior::IsValidCoordinate(float X, float Y, float Z) const
 {
 	return ((X >= x2 && X <= x1) && (Y >= y2 && Y <= y1) && (Z >= z2 && Z <= z1));
 }

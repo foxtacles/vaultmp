@@ -29,9 +29,9 @@ class Object : public Reference
 #endif
 
 		Value<std::string> object_Name;
-		std::unordered_map<unsigned char, Value<double>> object_Game_Pos;
-		std::unordered_map<unsigned char, Value<double>> object_Network_Pos;
-		std::unordered_map<unsigned char, Value<double>> object_Angle;
+		Value<std::tuple<float, float, float>> object_Game_Pos;
+		Value<std::tuple<float, float, float>> object_Network_Pos;
+		Value<std::tuple<float, float, float>> object_Angle;
 		Value<unsigned int> cell_Game;
 		Value<unsigned int> cell_Network;
 		Value<bool> state_Enabled;
@@ -65,25 +65,25 @@ class Object : public Reference
 		 */
 		static FuncParameter CreateFunctor(unsigned int flags, RakNet::NetworkID id = 0);
 #endif
-		static bool IsValidCoordinate(double C);
-		static bool IsValidAngle(unsigned char axis, double A);
+		static bool IsValidCoordinate(float C);
+		static bool IsValidAngle(unsigned char axis, float A);
 
 		/**
 		 * \brief Retrieves the Object's name
 		 */
 		const std::string& GetName() const;
 		/**
-		 * \brief Retrieves the Object's game coordinate on the specified axis (axis value hex code)
+		 * \brief Retrieves the Object's game coordinates
 		 */
-		double GetGamePos(unsigned char axis) const;
+		const std::tuple<float, float, float>& GetGamePos() const;
 		/**
-		 * \brief Retrieves the Object's network coordinate on the specified axis (axis value hex code)
+		 * \brief Retrieves the Object's network coordinates
 		 */
-		double GetNetworkPos(unsigned char axis) const;
+		const std::tuple<float, float, float>& GetNetworkPos() const;
 		/**
-		 * \brief Retrieves the Object's angle on the specified axis (axis value hex code)
+		 * \brief Retrieves the Object's angles
 		 */
-		double GetAngle(unsigned char axis) const;
+		const std::tuple<float, float, float>& GetAngle() const;
 		/**
 		 * \brief Retrieves the Object's game cell
 		 *
@@ -114,17 +114,17 @@ class Object : public Reference
 		 */
 		Lockable* SetName(const std::string& name);
 		/**
-		 * \brief Sets the Object's game coordiante on the specified axis (axis value hex code)
+		 * \brief Sets the Object's game coordiantes
 		 */
-		Lockable* SetGamePos(unsigned char axis, double pos);
+		Lockable* SetGamePos(const std::tuple<float, float, float>& pos);
 		/**
-		 * \brief Sets the Object's network coordiante on the specified axis (axis value hex code)
+		 * \brief Sets the Object's network coordiantes
 		 */
-		Lockable* SetNetworkPos(unsigned char axis, double pos);
+		Lockable* SetNetworkPos(const std::tuple<float, float, float>& pos);
 		/**
-		 * \brief Sets the Object's angle on the specified axis (axis value hex code)
+		 * \brief Sets the Object's angles
 		 */
-		Lockable* SetAngle(unsigned char axis, double angle);
+		Lockable* SetAngle(const std::tuple<float, float, float>& angle);
 		/**
 		 * \brief Sets the Object's game cell
 		 */
@@ -157,15 +157,15 @@ class Object : public Reference
 		/**
 		 * \brief Returns true if the Object is in a given range
 		 */
-		bool IsNearPoint(double X, double Y, double Z, double R) const;
+		bool IsNearPoint(float X, float Y, float Z, float R) const;
 		/**
 		 * \brief Returns true if the Object's coordinate sepcified by axis (axis value hex code) is in a given range
 		 */
-		bool IsCoordinateInRange(unsigned char axis, double value, double R) const;
+		bool IsCoordinateInRange(unsigned char axis, float value, float R) const;
 		/**
 		 * \brief Returns distant coordinates of the object using the Z-angle
 		 */
-		std::pair<double, double> GetOffset(double N) const;
+		std::pair<float, float> GetOffset(float N) const;
 		/**
 		 * \brief Returns true if the Object's network coordinates are valid
 		 */
@@ -218,7 +218,7 @@ class ObjectFunctor : public ReferenceFunctor
 
 GF_TYPE_WRAPPER(Object, Reference, ID_OBJECT, ALL_OBJECTS)
 
-template<> struct pTypesMap<pTypes::ID_OBJECT_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_OBJECT_NEW, std::string, double, double, double, double, double, double, unsigned int, bool, unsigned int, unsigned int> type; };
+template<> struct pTypesMap<pTypes::ID_OBJECT_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_OBJECT_NEW, std::string, std::tuple<float, float, float>, std::tuple<float, float, float>, unsigned int, bool, unsigned int, unsigned int> type; };
 template<>
 inline const typename pTypesMap<pTypes::ID_OBJECT_NEW>::type* PacketFactory::Cast_<pTypes::ID_OBJECT_NEW>::Cast(const pDefault* packet) {
 	pTypes type = packet->type();
@@ -230,12 +230,12 @@ inline const typename pTypesMap<pTypes::ID_OBJECT_NEW>::type* PacketFactory::Cas
 		type == pTypes::ID_PLAYER_NEW
 	) ? static_cast<const typename pTypesMap<pTypes::ID_OBJECT_NEW>::type*>(packet) : nullptr;
 }
-template<> struct pTypesMap<pTypes::ID_VOLATILE_NEW> { typedef pGeneratorReference<pTypes::ID_VOLATILE_NEW, unsigned int, double, double, double> type; };
+template<> struct pTypesMap<pTypes::ID_VOLATILE_NEW> { typedef pGeneratorReference<pTypes::ID_VOLATILE_NEW, unsigned int, float, float, float> type; };
 template<> struct pTypesMap<pTypes::ID_OBJECT_REMOVE> { typedef pGeneratorReference<pTypes::ID_OBJECT_REMOVE, bool> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_NAME> { typedef pGeneratorReference<pTypes::ID_UPDATE_NAME, std::string> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_POS> { typedef pGeneratorReference<pTypes::ID_UPDATE_POS, double, double, double> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_ANGLE> { typedef pGeneratorReference<pTypes::ID_UPDATE_ANGLE, double, double> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_CELL> { typedef pGeneratorReference<pTypes::ID_UPDATE_CELL, unsigned int, double, double, double> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_POS> { typedef pGeneratorReference<pTypes::ID_UPDATE_POS, float, float, float> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_ANGLE> { typedef pGeneratorReference<pTypes::ID_UPDATE_ANGLE, float, float> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_CELL> { typedef pGeneratorReference<pTypes::ID_UPDATE_CELL, unsigned int, float, float, float> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_LOCK> { typedef pGeneratorReference<pTypes::ID_UPDATE_LOCK, unsigned int> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_OWNER> { typedef pGeneratorReference<pTypes::ID_UPDATE_OWNER, unsigned int> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_ACTIVATE> { typedef pGeneratorReference<pTypes::ID_UPDATE_ACTIVATE, RakNet::NetworkID> type; };

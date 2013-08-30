@@ -70,7 +70,7 @@ unsigned int BaseContainer::GetCount() const
 	return count;
 }
 
-double BaseContainer::GetCondition() const
+float BaseContainer::GetCondition() const
 {
 	return condition;
 }

@@ -22,21 +22,17 @@ Object::Object(const pDefault* packet) : Reference(PacketFactory::Pop<pPacket>(p
 	initialize();
 
 	string name;
-	double X, Y, Z, aX, aY, aZ;
+	tuple<float, float, float> pos, angle;
 	unsigned int cell;
 	bool enabled;
 	unsigned int lock;
 	unsigned int owner;
 
-	PacketFactory::Access<pTypes::ID_OBJECT_NEW>(packet, name, X, Y, Z, aX, aY, aZ, cell, enabled, lock, owner);
+	PacketFactory::Access<pTypes::ID_OBJECT_NEW>(packet, name, pos, angle, cell, enabled, lock, owner);
 
+	this->SetNetworkPos(pos);
+	this->SetAngle(angle);
 	this->SetName(move(name));
-	this->SetNetworkPos(Axis_X, X);
-	this->SetNetworkPos(Axis_Y, Y);
-	this->SetNetworkPos(Axis_Z, Z);
-	this->SetAngle(Axis_X, aX);
-	this->SetAngle(Axis_Y, aY);
-	this->SetAngle(Axis_Z, aZ);
 	this->SetNetworkCell(cell);
 	this->SetEnabled(enabled);
 	this->SetLockLevel(lock);
@@ -44,9 +40,7 @@ Object::Object(const pDefault* packet) : Reference(PacketFactory::Pop<pPacket>(p
 
 	if (this->GetReference())
 	{
-		this->SetGamePos(Axis_X, X);
-		this->SetGamePos(Axis_Y, Y);
-		this->SetGamePos(Axis_Z, Z);
+		this->SetGamePos(pos);
 		this->SetGameCell(cell);
 	}
 }
@@ -58,23 +52,15 @@ Object::~Object() noexcept
 
 void Object::initialize()
 {
-	for (const auto& axis : API::axis)
-	{
-		// emplace
-		object_Game_Pos.insert(make_pair(axis.second, Value<double>()));
-		object_Network_Pos.insert(make_pair(axis.second, Value<double>()));
-		object_Angle.insert(make_pair(axis.second, Value<double>()));
-	}
-
 	this->SetLockLevel(Lock_Unlocked);
 }
 
-bool Object::IsValidCoordinate(double C)
+bool Object::IsValidCoordinate(float C)
 {
 	return (C != 2048.0 && C != 128.0 && C != 0.0);
 }
 
-bool Object::IsValidAngle(unsigned char axis, double A)
+bool Object::IsValidAngle(unsigned char axis, float A)
 {
 	return (axis == Axis_Z ? (A >= 0.0 && A <= 360.0) : (A >= -90.0 && A <= 90.0));
 }
@@ -91,19 +77,19 @@ const string& Object::GetName() const
 	return *object_Name;
 }
 
-double Object::GetGamePos(unsigned char axis) const
+const tuple<float, float, float>& Object::GetGamePos() const
 {
-	return object_Game_Pos.at(axis).get();
+	return *object_Game_Pos;
 }
 
-double Object::GetNetworkPos(unsigned char axis) const
+const tuple<float, float, float>& Object::GetNetworkPos() const
 {
-	return object_Network_Pos.at(axis).get();
+	return *object_Network_Pos;
 }
 
-double Object::GetAngle(unsigned char axis) const
+const tuple<float, float, float>& Object::GetAngle() const
 {
-	return object_Angle.at(axis).get();
+	return *object_Angle;
 }
 
 unsigned int Object::GetGameCell() const
@@ -136,28 +122,28 @@ Lockable* Object::SetName(const string& name)
 	return SetObjectValue(this->object_Name, name);
 }
 
-Lockable* Object::SetGamePos(unsigned char axis, double pos)
+Lockable* Object::SetGamePos(const tuple<float, float, float>& pos)
 {
-	if (!IsValidCoordinate(pos))
+	if (!IsValidCoordinate(get<0>(pos)) || !IsValidCoordinate(get<1>(pos)) || !IsValidCoordinate(get<2>(pos)))
 		return nullptr;
 
-	return SetObjectValue(this->object_Game_Pos.at(axis), pos);
+	return SetObjectValue(this->object_Game_Pos, pos);
 }
 
-Lockable* Object::SetNetworkPos(unsigned char axis, double pos)
+Lockable* Object::SetNetworkPos(const tuple<float, float, float>& pos)
 {
-	if (!IsValidCoordinate(pos))
+	if (!IsValidCoordinate(get<0>(pos)) || !IsValidCoordinate(get<1>(pos)) || !IsValidCoordinate(get<2>(pos)))
 		return nullptr;
 
-	return SetObjectValue(this->object_Network_Pos.at(axis), pos);
+	return SetObjectValue(this->object_Network_Pos, pos);
 }
 
-Lockable* Object::SetAngle(unsigned char axis, double angle)
+Lockable* Object::SetAngle(const tuple<float, float, float>& angle)
 {
-	if (!IsValidAngle(axis, angle))
+	if (!IsValidAngle(Axis_X, get<0>(angle)) || !IsValidAngle(Axis_Z, get<2>(angle)))
 		return nullptr;
 
-	return SetObjectValue(this->object_Angle.at(axis), angle);
+	return SetObjectValue(this->object_Angle, angle);
 }
 
 Lockable* Object::SetGameCell(unsigned int cell)
@@ -193,29 +179,29 @@ Lockable* Object::SetOwner(unsigned int owner)
 
 VaultVector Object::vvec() const
 {
-	return VaultVector(GetGamePos(Axis_X), GetGamePos(Axis_Y), GetGamePos(Axis_Z));
+	return VaultVector(get<0>(*object_Game_Pos), get<1>(*object_Game_Pos), get<2>(*object_Game_Pos));
 }
 
-bool Object::IsNearPoint(double X, double Y, double Z, double R) const
+bool Object::IsNearPoint(float X, float Y, float Z, float R) const
 {
 	return this->vvec().IsNearPoint(VaultVector(X, Y, Z), R);
 }
 
-bool Object::IsCoordinateInRange(unsigned char axis, double pos, double R) const
+bool Object::IsCoordinateInRange(unsigned char axis, float pos, float R) const
 {
-	return (GetGamePos(axis) > (pos - R) && GetGamePos(axis) < (pos + R));
+	float pos_ = axis == Axis_X ? get<0>(*object_Game_Pos) : (axis == Axis_Y ? get<1>(*object_Game_Pos) : (axis == Axis_Z ? get<2>(*object_Game_Pos) : throw VaultException("Unknown axis value")));
+	return (pos_ > (pos - R) && pos_ < (pos + R));
 }
 
-pair<double, double> Object::GetOffset(double N) const
+pair<float, float> Object::GetOffset(float N) const
 {
-	return this->vvec().GetOffset(GetAngle(Axis_Z), N);
+	return this->vvec().GetOffset(get<2>(*object_Angle), N);
 }
 
 bool Object::HasValidCoordinates() const
 {
-	for (const auto& pos : object_Network_Pos)
-		if (!IsValidCoordinate(pos.second.get()))
-			return false;
+	if (!IsValidCoordinate(get<0>(*object_Network_Pos)) || !IsValidCoordinate(get<1>(*object_Network_Pos)) || !IsValidCoordinate(get<2>(*object_Network_Pos)))
+		return false;
 
 	return true;
 }
@@ -236,8 +222,7 @@ pPacket Object::toPacket() const
 {
 	pPacket pReferenceNew = Reference::toPacket();
 
-	pPacket packet = PacketFactory::Create<pTypes::ID_OBJECT_NEW>(pReferenceNew, this->GetName(), this->GetNetworkPos(Values::Axis_X), this->GetNetworkPos(Values::Axis_Y), this->GetNetworkPos(Values::Axis_Z),
-		this->GetAngle(Values::Axis_X), this->GetAngle(Values::Axis_Y), this->GetAngle(Values::Axis_Z), this->GetNetworkCell(), this->GetEnabled(), this->GetLockLevel(), this->GetOwner());
+	pPacket packet = PacketFactory::Create<pTypes::ID_OBJECT_NEW>(pReferenceNew, this->GetName(), this->GetNetworkPos(), this->GetAngle(), this->GetNetworkCell(), this->GetEnabled(), this->GetLockLevel(), this->GetOwner());
 
 	return packet;
 }

@@ -81,7 +81,7 @@ bool Record::IsValidWeather(unsigned int baseID) noexcept
 	return Record::Lookup(baseID, "WTHR").operator bool();
 }
 
-bool Record::IsValidCoordinate(unsigned int baseID, double X, double Y, double Z) noexcept
+bool Record::IsValidCoordinate(unsigned int baseID, float X, float Y, float Z) noexcept
 {
 	auto exterior = Exterior::Lookup(baseID);
 

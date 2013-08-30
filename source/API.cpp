@@ -297,6 +297,7 @@ API::FunctionMap API::functions = {
 		{Func::GUISelectChange, "ssi"},
 		{Func::GUISelectText, "sss"},
 		{Func::GUISelectMulti, "si"},
+		{Func::SetPosFast, "rddd"},
 		{Func::Enable, "rI"},
 		{Func::Disable, "rI"},
 		{Func::EquipItem, "r$jII"},

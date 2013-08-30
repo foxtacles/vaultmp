@@ -14,7 +14,7 @@ using namespace std;
 using namespace RakNet;
 using namespace Values;
 
-const map<unsigned char, pair<const double, const double>> Actor::default_values = {
+const map<unsigned char, pair<const float, const float>> Actor::default_values = {
 	{ActorVal_Energy, {50, 50}},
 	{ActorVal_Responsibility, {50, 50}},
 	{ActorVal_Strength, {5, 5}},
@@ -72,8 +72,8 @@ Actor::Actor(const pDefault* packet) : Container(PacketFactory::Pop<pPacket>(pac
 {
 	initialize();
 
-	map<unsigned char, double> values, baseValues;
-	map<unsigned char, double>::iterator it, it2;
+	map<unsigned char, float> values, baseValues;
+	map<unsigned char, float>::iterator it, it2;
 	unsigned int race, idle;
 	signed int age;
 	unsigned char moving, movingxy, weapon;
@@ -106,8 +106,8 @@ void Actor::initialize()
 	for (const auto& value : API::values)
 	{
 		// emplace
-		actor_Values.insert(make_pair(value.second, Value<double>()));
-		actor_BaseValues.insert(make_pair(value.second, Value<double>()));
+		actor_Values.insert(make_pair(value.second, Value<float>()));
+		actor_BaseValues.insert(make_pair(value.second, Value<float>()));
 	}
 
 #ifdef VAULTMP_DEBUG
@@ -122,12 +122,12 @@ FuncParameter Actor::CreateFunctor(unsigned int flags, NetworkID id)
 }
 #endif
 
-double Actor::GetActorValue(unsigned char index) const
+float Actor::GetActorValue(unsigned char index) const
 {
 	return actor_Values.at(index).get();
 }
 
-double Actor::GetActorBaseValue(unsigned char index) const
+float Actor::GetActorBaseValue(unsigned char index) const
 {
 	return actor_BaseValues.at(index).get();
 }
@@ -182,12 +182,12 @@ bool Actor::GetActorDead() const
 	return state_Dead.get();
 }
 
-Lockable* Actor::SetActorValue(unsigned char index, double value)
+Lockable* Actor::SetActorValue(unsigned char index, float value)
 {
 	return SetObjectValue(this->actor_Values.at(index), value);
 }
 
-Lockable* Actor::SetActorBaseValue(unsigned char index, double value)
+Lockable* Actor::SetActorBaseValue(unsigned char index, float value)
 {
 	return SetObjectValue(this->actor_BaseValues.at(index), value);
 }
@@ -319,7 +319,7 @@ unsigned int Actor::GetEquippedWeapon() const
 
 pPacket Actor::toPacket() const
 {
-	map<unsigned char, double> values, baseValues;
+	map<unsigned char, float> values, baseValues;
 
 	for (const auto& value : actor_Values)
 	{

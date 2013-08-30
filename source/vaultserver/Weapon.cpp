@@ -55,17 +55,17 @@ unsigned int Weapon::GetBase() const
 	return baseID;
 }
 
-double Weapon::GetDamage() const
+float Weapon::GetDamage() const
 {
 	return damage;
 }
 
-double Weapon::GetReloadTime() const
+float Weapon::GetReloadTime() const
 {
 	return reload;
 }
 
-double Weapon::GetFireRate() const
+float Weapon::GetFireRate() const
 {
 	return rate;
 }

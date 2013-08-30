@@ -175,15 +175,9 @@ void Script::Initialize()
 		auto cell = reference->GetCell();
 		auto lock = reference->GetLock();
 		object->SetName(name);
-		object->SetNetworkPos(Axis_X, get<0>(pos));
-		object->SetNetworkPos(Axis_Y, get<1>(pos));
-		object->SetNetworkPos(Axis_Z, get<2>(pos));
-		object->SetGamePos(Axis_X, get<0>(pos));
-		object->SetGamePos(Axis_Y, get<1>(pos));
-		object->SetGamePos(Axis_Z, get<2>(pos));
-		object->SetAngle(Axis_X, get<0>(angle));
-		object->SetAngle(Axis_Y, get<1>(angle));
-		object->SetAngle(Axis_Z, get<2>(angle));
+		object->SetNetworkPos(pos);
+		object->SetGamePos(pos);
+		object->SetAngle(angle);
 
 		auto exterior = DB::Exterior::Lookup(cell);
 
@@ -350,9 +344,7 @@ void Script::SetupObject(const FactoryObject& object, const FactoryObject& refer
 	if (reference)
 	{
 		object->SetNetworkCell(reference->GetNetworkCell());
-		object->SetNetworkPos(Axis_X, reference->GetNetworkPos(Axis_X));
-		object->SetNetworkPos(Axis_Y, reference->GetNetworkPos(Axis_Y));
-		object->SetNetworkPos(Axis_Z, reference->GetNetworkPos(Axis_Z));
+		object->SetNetworkPos(reference->GetNetworkPos());
 	}
 	else
 		SetCell_(object->GetNetworkID(), cell, X, Y, Z, true);
@@ -1022,9 +1014,10 @@ void Script::GetPos(NetworkID id, double* X, double* Y, double* Z) noexcept
 	*Z = 0.00;
 
 	GameFactory::Operate<Object, FailPolicy::Return>(id, [X, Y, Z](FactoryObject& object) {
-		*X = object->GetNetworkPos(Axis_X);
-		*Y = object->GetNetworkPos(Axis_Y);
-		*Z = object->GetNetworkPos(Axis_Z);
+		const auto& pos = object->GetNetworkPos();
+		*X = get<0>(pos);
+		*Y = get<1>(pos);
+		*Z = get<2>(pos);
 	});
 }
 
@@ -1035,9 +1028,10 @@ void Script::GetAngle(NetworkID id, double* X, double* Y, double* Z) noexcept
 	*Z = 0.00;
 
 	GameFactory::Operate<Object, FailPolicy::Return>(id, [X, Y, Z](FactoryObject& object) {
-		*X = object->GetAngle(Axis_X);
-		*Y = object->GetAngle(Axis_Y);
-		*Z = object->GetAngle(Axis_Z);
+		const auto& angle = object->GetAngle();
+		*X = get<0>(angle);
+		*Y = get<1>(angle);
+		*Z = get<2>(angle);
 	});
 }
 
@@ -1391,12 +1385,10 @@ bool Script::SetPos(NetworkID id, double X, double Y, double Z) noexcept
 				return false;
 		}
 
-		if (!(static_cast<bool>(object->SetNetworkPos(Axis_X, X)) | static_cast<bool>(object->SetNetworkPos(Axis_Y, Y)) | static_cast<bool>(object->SetNetworkPos(Axis_Z, Z))))
+		if (!static_cast<bool>(object->SetNetworkPos(tuple<float, float, float>{X, Y, Z})))
 			return false;
 
-		object->SetGamePos(Axis_X, X);
-		object->SetGamePos(Axis_Y, Y);
-		object->SetGamePos(Axis_Z, Z);
+		object->SetGamePos(tuple<float, float, float>{X, Y, Z});
 
 		NetworkResponse response;
 
@@ -1451,7 +1443,7 @@ bool Script::SetAngle(NetworkID id, double X, double Y, double Z) noexcept
 		if (object->IsPersistent())
 			return false;
 
-		if (!(static_cast<bool>(object->SetAngle(Axis_X, X)) | static_cast<bool>(object->SetAngle(Axis_Z, Z))))
+		if (!static_cast<bool>(object->SetAngle(tuple<float, float, float>{X, 0.0f, Z})))
 			return false;
 
 		Network::Queue({Network::CreateResponse(
@@ -1532,11 +1524,9 @@ bool Script::SetCell_(NetworkID id, unsigned int cell, double X, double Y, doubl
 					);
 				}
 
-				if (update_pos && (static_cast<bool>(object->SetNetworkPos(Axis_X, X)) | static_cast<bool>(object->SetNetworkPos(Axis_Y, Y)) | static_cast<bool>(object->SetNetworkPos(Axis_Z, Z))))
+				if (update_pos && static_cast<bool>(object->SetNetworkPos(tuple<float, float, float>{X, Y, Z})))
 				{
-					object->SetGamePos(Axis_X, X);
-					object->SetGamePos(Axis_Y, Y);
-					object->SetGamePos(Axis_Z, Z);
+					object->SetGamePos(tuple<float, float, float>{X, Y, Z});
 
 					response.emplace_back(Network::CreateResponse(
 						PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, cell, X, Y, Z),
@@ -1555,11 +1545,9 @@ bool Script::SetCell_(NetworkID id, unsigned int cell, double X, double Y, doubl
 		else
 			cell = 0x00000000;
 
-		if (update_pos && (static_cast<bool>(object->SetNetworkPos(Axis_X, X)) | static_cast<bool>(object->SetNetworkPos(Axis_Y, Y)) | static_cast<bool>(object->SetNetworkPos(Axis_Z, Z))))
+		if (update_pos && static_cast<bool>(object->SetNetworkPos(tuple<float, float, float>{X, Y, Z})))
 		{
-			object->SetGamePos(Axis_X, X);
-			object->SetGamePos(Axis_Y, Y);
-			object->SetGamePos(Axis_Z, Z);
+			object->SetGamePos(tuple<float, float, float>{X, Y, Z});
 
 			if (!nosend)
 				response.emplace_back(Network::CreateResponse(

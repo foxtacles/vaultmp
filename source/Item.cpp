@@ -18,7 +18,7 @@ Item::Item(const pDefault* packet) : Object(PacketFactory::Pop<pPacket>(packet))
 
 	NetworkID id;
 	unsigned int count;
-	double condition;
+	float condition;
 	bool equipped, silent, stick;
 
 	PacketFactory::Access<pTypes::ID_ITEM_NEW>(packet, id, count, condition, equipped, silent, stick);
@@ -48,7 +48,7 @@ unsigned int Item::GetItemCount() const
 	return this->item_Count.get();
 }
 
-double Item::GetItemCondition() const
+float Item::GetItemCondition() const
 {
 	return this->item_Condition.get();
 }
@@ -78,9 +78,9 @@ Lockable* Item::SetItemCount(unsigned int count)
 	return SetObjectValue(this->item_Count, count);
 }
 
-Lockable* Item::SetItemCondition(double condition)
+Lockable* Item::SetItemCondition(float condition)
 {
-	if (condition < 0.00 || condition > 100.0)
+	if (condition < 0.00f || condition > 100.0f)
 		return nullptr;
 
 	return SetObjectValue(this->item_Condition, condition);

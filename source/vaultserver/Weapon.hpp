@@ -24,9 +24,9 @@ namespace DB
 			static std::unordered_map<unsigned int, Weapon*> weapons;
 
 			unsigned int baseID;
-			double damage;
-			double reload;
-			double rate;
+			float damage;
+			float reload;
+			float rate;
 			bool automatic;
 			unsigned int ammo;
 
@@ -37,9 +37,9 @@ namespace DB
 			static Expected<Weapon*> Lookup(unsigned int baseID);
 
 			unsigned int GetBase() const;
-			double GetDamage() const;
-			double GetReloadTime() const;
-			double GetFireRate() const;
+			float GetDamage() const;
+			float GetReloadTime() const;
+			float GetFireRate() const;
 			bool IsAutomatic() const;
 			unsigned int GetAmmo() const;
 

@@ -17,11 +17,11 @@ bool Interface::initialized;
 Interface::PriorityMap Interface::priorityMap;
 Interface::StaticCommandList Interface::static_cmdlist;
 Interface::DynamicCommandList Interface::dynamic_cmdlist;
-Interface::JobList Interface::job_cmdlist;
+//Interface::JobList Interface::job_cmdlist;
 Interface::Native Interface::natives;
 thread Interface::hCommandThreadReceive;
 thread Interface::hCommandThreadSend;
-thread Interface::hCommandThreadJob;
+//thread Interface::hCommandThreadJob;
 CriticalSection Interface::static_cs;
 CriticalSection Interface::dynamic_cs;
 CriticalSection Interface::job_cs;
@@ -45,9 +45,9 @@ bool Interface::Initialize(ResultHandler resultHandler)
 
 		hCommandThreadReceive = thread(CommandThreadReceive);
 		hCommandThreadSend = thread(CommandThreadSend);
-		hCommandThreadJob = thread(CommandThreadJob);
+		//hCommandThreadJob = thread(CommandThreadJob);
 
-		if (!hCommandThreadReceive.joinable() || !hCommandThreadSend.joinable() || !hCommandThreadJob.joinable())
+		if (!hCommandThreadReceive.joinable() || !hCommandThreadSend.joinable() /* || !hCommandThreadJob.joinable() */ )
 		{
 			delete pipeServer;
 			delete pipeClient;
@@ -79,14 +79,14 @@ void Interface::Terminate()
 		if (hCommandThreadSend.joinable())
 			hCommandThreadSend.join();
 
-		if (hCommandThreadJob.joinable())
-			hCommandThreadJob.join();
+		//if (hCommandThreadJob.joinable())
+			//hCommandThreadJob.join();
 
 		static_cmdlist.clear();
 		dynamic_cmdlist.clear();
 
-		while (!job_cmdlist.empty())
-			job_cmdlist.pop();
+		//while (!job_cmdlist.empty())
+			//job_cmdlist.pop();
 
 		priorityMap.clear();
 		natives.clear();
@@ -107,7 +107,7 @@ void Interface::SignalEnd()
 
 bool Interface::IsAvailable()
 {
-	return (wakeup && !endThread && hCommandThreadReceive.joinable() && hCommandThreadSend.joinable() && hCommandThreadJob.joinable());
+	return (wakeup && !endThread && hCommandThreadReceive.joinable() && hCommandThreadSend.joinable() /*&& hCommandThreadJob.joinable()*/);
 }
 
 bool Interface::HasShutdown()
@@ -178,12 +178,14 @@ void Interface::ExecuteCommand(Func opcode, ParamContainer&& param, unsigned int
 	dynamic_cmdlist.emplace_back(natives.emplace(opcode, move(param)), key);
 }
 
+/*
 void Interface::PushJob(chrono::steady_clock::time_point&& T, function<void()>&& F)
 {
 	job_cs.StartSession();
 	job_cmdlist.emplace(move(T), move(F));
 	job_cs.EndSession();
 }
+*/
 
 API::CommandInput Interface::Evaluate(Native::iterator _it)
 {
@@ -406,7 +408,7 @@ void Interface::CommandThreadSend()
 
 	endThread = true;
 }
-
+/*
 void Interface::CommandThreadJob()
 {
 	try
@@ -456,3 +458,4 @@ void Interface::CommandThreadJob()
 
 	endThread = true;
 }
+*/
