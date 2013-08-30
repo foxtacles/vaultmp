@@ -2982,16 +2982,17 @@ NetworkID Script::CreateEdit(double posX, double posY, double sizeX, double size
 bool Script::SetEditMaxLength(NetworkID id, unsigned int length) noexcept
 {
 	bool text_updated = false;
+	string new_text;
 
-	if (!GameFactory::Operate<Edit, FailPolicy::Bool>(id, [length, &text_updated](FactoryEdit& edit) {
+	if (!GameFactory::Operate<Edit, FailPolicy::Bool>(id, [length, &text_updated, &new_text](FactoryEdit& edit) {
 		edit->SetMaxLength(length);
 
-		string text = edit->GetText();
+		new_text = edit->GetText();
 
-		if (text.length() > length)
+		if (new_text.length() > length)
 		{
-			text.resize(length);
-			edit->SetText(text);
+			new_text.resize(length);
+			edit->SetText(new_text);
 			text_updated = true;
 		}
 	})) return false;
@@ -3005,7 +3006,7 @@ bool Script::SetEditMaxLength(NetworkID id, unsigned int length) noexcept
 
 		if (text_updated)
 			response.emplace_back(Network::CreateResponse(
-				PacketFactory::Create<pTypes::ID_UPDATE_WTEXT>(id, GameFactory::Get<Edit>(id)->GetText()),
+				PacketFactory::Create<pTypes::ID_UPDATE_WTEXT>(id, new_text),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
 			);
 
@@ -3016,6 +3017,9 @@ bool Script::SetEditMaxLength(NetworkID id, unsigned int length) noexcept
 
 		Network::Queue(move(response));
 	}
+
+	if (text_updated)
+		Call<CBI("OnWindowTextChange")>(id, 0ull, new_text.c_str());
 
 	return true;
 }

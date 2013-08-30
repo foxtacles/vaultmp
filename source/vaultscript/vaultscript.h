@@ -293,7 +293,7 @@ namespace vaultmp {
 	#define RawFunction(types) 	Function<types>
 #endif
 
-#include "records.hpp"
+#include "records.h"
 
 VAULTCPP(})
 
