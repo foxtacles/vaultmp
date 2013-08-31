@@ -49,8 +49,6 @@ class Container : public Object, public ItemList
 		virtual Lockable* SetBase(unsigned int baseID);
 #endif
 
-		RakNet::NetworkID Copy() const;
-
 		/**
 		 * \brief For network transfer
 		 */

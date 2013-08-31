@@ -22,8 +22,6 @@ class ItemList : public virtual Base
 		static constexpr float CONDITION_EPS = 0.001f;
 
 		typedef std::vector<RakNet::NetworkID> Impl;
-		typedef std::pair<bool, RakNet::NetworkID> AddOp;
-		typedef std::tuple<unsigned int, Impl, RakNet::NetworkID> RemoveOp;
 
 #ifdef VAULTMP_DEBUG
 		static DebugInput<ItemList> debug;
@@ -46,13 +44,15 @@ class ItemList : public virtual Base
 		ItemList(pPacket&& packet) : ItemList(packet.get()) {};
 
 	public:
+		typedef std::pair<bool, RakNet::NetworkID> AddOp;
+		typedef std::tuple<unsigned int, Impl, RakNet::NetworkID> RemoveOp;
+
 		virtual ~ItemList() noexcept;
 
 		RakNet::NetworkID AddItem(RakNet::NetworkID id);
 		AddOp AddItem(unsigned int baseID, unsigned int count, float condition, bool silent);
 		void RemoveItem(RakNet::NetworkID id);
 		RemoveOp RemoveItem(unsigned int baseID, unsigned int count, bool silent);
-		Impl RemoveAllItems();
 		RakNet::NetworkID EquipItem(unsigned int baseID, bool silent, bool stick) const;
 		RakNet::NetworkID UnequipItem(unsigned int baseID, bool silent, bool stick) const;
 
@@ -64,8 +64,6 @@ class ItemList : public virtual Base
 #ifdef VAULTSERVER
 		Impl GetItemTypes(const std::string& type) const;
 #endif
-
-		void Copy(ItemList& IL) const;
 
 		/**
 		 * \brief For network transfer

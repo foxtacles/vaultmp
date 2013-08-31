@@ -35,14 +35,6 @@ FuncParameter Container::CreateFunctor(unsigned int flags, NetworkID id)
 }
 #endif
 
-NetworkID Container::Copy() const
-{
-	return GameFactory::Operate<Container>(GameFactory::Create<Container>(0x00000000, this->GetBase()), [this](FactoryContainer& container) {
-		ItemList::Copy(*container);
-		return container->GetNetworkID();
-	});
-}
-
 pPacket Container::toPacket() const
 {
 	pPacket pObjectNew = Object::toPacket();

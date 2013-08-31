@@ -1321,21 +1321,21 @@ bool Script::DestroyObject(NetworkID id) noexcept
 				deletedStatic[object->GetNetworkCell()].emplace_back(object->GetReference());
 		});
 
-		NetworkID container = GameFactory::Operate<Item, FailPolicy::Return>(id, [](FactoryItem& item) {
-			return item->GetItemContainer();
+		auto container = GameFactory::Operate<Item, FailPolicy::Return>(id, [](FactoryItem& item) -> pair<NetworkID, bool> {
+			return {item->GetItemContainer(), item->GetItemSilent()};
 		});
 
-		if (!container || GameFactory::GetType(container) != ID_ITEMLIST)
+		if (!container.first || GameFactory::GetType(container.first) != ID_ITEMLIST)
 			Network::Queue({Network::CreateResponse(
-				PacketFactory::Create<pTypes::ID_OBJECT_REMOVE>(id, true),
+				PacketFactory::Create<pTypes::ID_OBJECT_REMOVE>(id, container.second),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 			});
 
-		if (container)
+		if (container.first)
 		{
 			GameFactory::Leave(base);
 
-			GameFactory::Operate<ItemList>(container, [id, container](FactoryItemList& itemlist) {
+			GameFactory::Operate<ItemList>(container.first, [id](FactoryItemList& itemlist) {
 				itemlist->RemoveItem(id);
 			});
 
@@ -1746,7 +1746,7 @@ NetworkID Script::SetItemContainer(NetworkID id, NetworkID container) noexcept
 
 bool Script::SetItemCount(NetworkID id, unsigned int count) noexcept
 {
-	return GameFactory::Operate<Item, FailPolicy::Return>(id, [id, count](FactoryItem& item) {
+	bool result = GameFactory::Operate<Item, FailPolicy::Return>(id, [id, count](FactoryItem& item) {
 		if (!count)
 			return false;
 
@@ -1761,11 +1761,16 @@ bool Script::SetItemCount(NetworkID id, unsigned int count) noexcept
 
 		return true;
 	});
+
+	if (result)
+		Call<CBI("OnItemCountChange")>(id, count);
+
+	return result;
 }
 
 bool Script::SetItemCondition(NetworkID id, double condition) noexcept
 {
-	return GameFactory::Operate<Item, FailPolicy::Return>(id, [id, condition](FactoryItem& item) {
+	bool result = GameFactory::Operate<Item, FailPolicy::Return>(id, [id, condition](FactoryItem& item) {
 		if (condition < 0.00 || condition > 100.0)
 			return false;
 
@@ -1785,11 +1790,16 @@ bool Script::SetItemCondition(NetworkID id, double condition) noexcept
 
 		return true;
 	});
+
+	if (result)
+		Call<CBI("OnItemConditionChange")>(id, condition);
+
+	return result;
 }
 
 bool Script::SetItemEquipped(NetworkID id, bool equipped, bool silent, bool stick) noexcept
 {
-	return GameFactory::Operate<Item, FailPolicy::Return>(id, [id, equipped, silent, stick](FactoryItem& item) {
+	bool result = GameFactory::Operate<Item, FailPolicy::Return>(id, [id, equipped, silent, stick](FactoryItem& item) {
 		NetworkID container = item->GetItemContainer();
 
 		if (!container)
@@ -1816,6 +1826,11 @@ bool Script::SetItemEquipped(NetworkID id, bool equipped, bool silent, bool stic
 			});
 		});
 	});
+
+	if (result)
+		Call<CBI("OnItemEquippedChange")>(id, equipped);
+
+	return result;
 }
 
 NetworkID Script::CreateContainer(unsigned int baseID, NetworkID id, unsigned int cell, double X, double Y, double Z) noexcept
@@ -1859,28 +1874,46 @@ NetworkID Script::CreateItemList(NetworkID source, unsigned int baseID) noexcept
 
 NetworkID Script::AddItem(NetworkID id, unsigned int baseID, unsigned int count, double condition, bool silent) noexcept
 {
-	return GameFactory::Operate<ItemList, FailPolicy::Return>(id, [id, baseID, count, condition, silent](FactoryItemList& itemlist) {
+	auto data = GameFactory::Operate<ItemList, FailPolicy::Return>(id, [id, baseID, count, condition, silent](FactoryItemList& itemlist) -> pair<NetworkID, unsigned int> {
 		if (!count)
-			return 0ull;
+			return {};
 
 		auto diff = itemlist->AddItem(baseID, count, condition, silent);
+		unsigned int count;
 
-		if (vaultcast_test<Container>(itemlist))
-			GameFactory::Operate<Item>(diff.second, [&diff, silent](FactoryItem& item) {
-				if (diff.first)
-					Network::Queue({Network::CreateResponse(
-						item->toPacket(),
-						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-					});
-				else
-					Network::Queue({Network::CreateResponse(
-						PacketFactory::Create<pTypes::ID_UPDATE_COUNT>(diff.second, item->GetItemCount(), silent),
-						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-					});
-			});
+		GameFactory::Operate<Item>(diff.second, [&itemlist, &diff, &count, silent](FactoryItem& item) {
+			count = item->GetItemCount();
 
-		return diff.second;
+			if (!vaultcast_test<Container>(itemlist))
+				return;
+
+			if (diff.first)
+				Network::Queue({Network::CreateResponse(
+					item->toPacket(),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+				});
+			else
+				Network::Queue({Network::CreateResponse(
+					PacketFactory::Create<pTypes::ID_UPDATE_COUNT>(diff.second, count, silent),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+				});
+		});
+
+		if (diff.first)
+			count = 0;
+
+		return {diff.second, count};
 	});
+
+	if (data.first)
+	{
+		if (!data.second)
+			Call<CBI("OnCreate")>(data.first);
+		else
+			Call<CBI("OnItemCountChange")>(data.first, data.second);
+	}
+
+	return data.first;
 }
 
 void Script::AddItemList(NetworkID id, NetworkID source, unsigned int baseID) noexcept
@@ -1919,62 +1952,51 @@ void Script::AddItemList(NetworkID id, NetworkID source, unsigned int baseID) no
 
 unsigned int Script::RemoveItem(NetworkID id, unsigned int baseID, unsigned int count, bool silent) noexcept
 {
-	return GameFactory::Operate<ItemList, FailPolicy::Return>(id, [id, baseID, count, silent](FactoryItemList& itemlist) {
+	auto data = GameFactory::Operate<ItemList, FailPolicy::Return>(id, [id, baseID, count, silent](FactoryItemList& itemlist) -> pair<ItemList::RemoveOp, unsigned int> {
 		if (!count)
-			return 0u;
+			return {};
 
 		auto diff = itemlist->RemoveItem(baseID, count, silent);
 
 		unsigned int count = get<0>(diff);
 
 		if (!count)
-			return 0u;
+			return {};
 
-		if (vaultcast_test<Container>(itemlist))
-		{
-			const auto& remove = get<1>(diff);
-			NetworkID update = get<2>(diff);
-			NetworkResponse response;
+		NetworkID update = get<2>(diff);
+		unsigned int new_count = 0;
 
-			for (const auto& id : remove)
-				response.emplace_back(Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_OBJECT_REMOVE>(id, silent),
-					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-				);
+		if (update)
+			GameFactory::Operate<Item>(update, [&itemlist, &new_count, update, silent](FactoryItem& item) {
+				new_count = item->GetItemCount();
 
-			if (update)
-				GameFactory::Operate<Item>(update, [&response, update, silent](FactoryItem& item) {
-					response.emplace_back(Network::CreateResponse(
-						PacketFactory::Create<pTypes::ID_UPDATE_COUNT>(update, item->GetItemCount(), silent),
+				if (vaultcast_test<Container>(itemlist))
+					Network::Queue({Network::CreateResponse(
+						PacketFactory::Create<pTypes::ID_UPDATE_COUNT>(update, new_count, silent),
 						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-					);
-				});
+					});
+			});
 
-			Network::Queue(move(response));
-		}
-
-		return count;
+		return {move(diff), new_count};
 	});
+
+	if (data.second)
+		Call<CBI("OnItemCountChange")>(get<2>(data.first), data.second);
+
+	for (const auto& id : get<1>(data.first))
+		DestroyObject(id);
+
+	return get<0>(data.first);
 }
 
 void Script::RemoveAllItems(NetworkID id) noexcept
 {
-	GameFactory::Operate<ItemList, FailPolicy::Return>(id, [id](FactoryItemList& itemlist) {
-		auto diff = itemlist->RemoveAllItems();
-
-		if (vaultcast_test<Container>(itemlist))
-		{
-			NetworkResponse response;
-
-			for (const auto& id : diff)
-				response.emplace_back(Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_OBJECT_REMOVE>(id, true),
-					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-				);
-
-			Network::Queue(move(response));
-		}
+	auto items = GameFactory::Operate<ItemList, FailPolicy::Return>(id, [id](FactoryItemList& itemlist) {
+		return itemlist->GetItemList();
 	});
+
+	for (const auto& id : items)
+		DestroyObject(id);
 }
 
 NetworkID Script::CreateActor(unsigned int baseID, NetworkID id, unsigned int cell, double X, double Y, double Z) noexcept

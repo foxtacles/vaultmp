@@ -54,8 +54,6 @@ class Item : public Object
 		Lockable* SetItemSilent(bool silent);
 		Lockable* SetItemStick(bool stick);
 
-		RakNet::NetworkID Copy() const;
-
 #ifdef VAULTSERVER
 		/**
 		 * \brief Sets the Item's base ID

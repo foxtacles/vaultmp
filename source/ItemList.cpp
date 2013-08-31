@@ -38,7 +38,8 @@ ItemList::ItemList(const pDefault* packet)
 
 ItemList::~ItemList() noexcept
 {
-	this->RemoveAllItems();
+	for (const NetworkID& id : container)
+		GameFactory::Destroy(id);
 }
 
 void ItemList::initialize()
@@ -184,28 +185,15 @@ ItemList::RemoveOp ItemList::RemoveItem(unsigned int baseID, unsigned int count,
 				else
 				{
 					get<1>(result).emplace_back(id);
+					item->SetItemSilent(silent);
 					count -= item->GetItemCount();
-					GameFactory::Destroy(item);
 				}
 			});
 	}
 
-	const auto& deleted = get<1>(result);
-
-	if (!deleted.empty())
-		remove_if(container.begin(), container.end(), [&deleted](const NetworkID& item) { return find(deleted.begin(), deleted.end(), item) != deleted.end(); });
-
 	get<0>(result) = count_ - count;
 
 	return result;
-}
-
-ItemList::Impl ItemList::RemoveAllItems()
-{
-	for (const NetworkID& id : container)
-		GameFactory::Destroy(id);
-
-	return move(container);
 }
 
 NetworkID ItemList::EquipItem(unsigned int baseID, bool silent, bool stick) const
@@ -251,16 +239,6 @@ NetworkID ItemList::IsEquipped(unsigned int baseID) const
 			return id;
 
 	return 0;
-}
-
-void ItemList::Copy(ItemList& IL) const
-{
-	IL.RemoveAllItems();
-
-	for (const NetworkID& id : container)
-		GameFactory::Operate<Item>(id, [&IL](FactoryItem& item) {
-			IL.AddItem(item->Copy());
-		});
 }
 
 unsigned int ItemList::GetItemCount(unsigned int baseID) const
