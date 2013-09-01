@@ -280,7 +280,13 @@ namespace vaultmp {
 	using BaseHash = std::unordered_map<Base, V, _hash_Base>;
 
 	template <typename V>
+	using BaseMultiHash = std::unordered_multimap<Base, V, _hash_Base>;
+
+	template <typename V>
 	using IDHash = std::unordered_map<ID, V, _hash_ID>;
+
+	template <typename V>
+	using IDMultiHash = std::unordered_multimap<ID, V, _hash_ID>;
 
 	template <typename T>
 	using RawArray = T*;
@@ -339,6 +345,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(KillTimer))(VAULTSPACE Timer) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(MakePublic))(VAULTSPACE RawFunction(), VAULTSPACE cRawString, VAULTSPACE cRawString) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Result (*VAULTAPI(CallPublic))(VAULTSPACE cRawString, ...) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsPAWN))(VAULTSPACE cRawString) VAULTCPP(noexcept);
 
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetServerName))(VAULTSPACE cRawString) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetServerMap))(VAULTSPACE cRawString) VAULTCPP(noexcept);
@@ -538,7 +545,6 @@ namespace vaultmp
 	template<typename T> struct TypeChar<T, sizeof(uint64_t)> { enum { value = std::is_signed<T>::value ? 'w' : 'l' }; };
 	template<> struct TypeChar<Value, sizeof(Value)> { enum { value = 'f' }; };
 	template<> struct TypeChar<cRawString, sizeof(cRawString)> { enum { value = 's' }; };
-	template<> struct TypeChar<RawString, sizeof(RawString)> { enum { value = 's' }; };
 
 	template<typename... Types>
 	struct TypeString {
@@ -584,6 +590,9 @@ namespace vaultmp
 		static_assert(TypeString<Types...>::value != nullptr, "Unsupported type in variadic type list");
 		return VAULTAPI(CallPublic)(name, values...);
 	}
+
+	VAULTFUNCTION State IsPAWN(const String& name) noexcept { return VAULTAPI(IsPAWN)(name.c_str()); }
+	VAULTFUNCTION State IsPAWN(cRawString name) noexcept { return VAULTAPI(IsPAWN)(name); }
 
 	VAULTFUNCTION Void SetServerName(const String& name) noexcept { return VAULTAPI(SetServerName)(name.c_str()); }
 	VAULTFUNCTION Void SetServerName(cRawString name) noexcept { return VAULTAPI(SetServerName)(name); }

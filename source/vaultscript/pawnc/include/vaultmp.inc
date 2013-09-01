@@ -215,6 +215,7 @@ native CreateTimerEx(const func{}, interval, const def{}, {Fixed,Float,_}:...);
 native KillTimer(timer = 0);
 native MakePublic(const func{}, const name{}, const def{});
 native CallPublic(const name{}, {Fixed,Float,_}:...);
+native Bool:IsPAWN(const name{});
 
 native SetServerName(const name{});
 native SetServerMap(const map{});

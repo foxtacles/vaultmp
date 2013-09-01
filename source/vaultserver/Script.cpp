@@ -472,6 +472,17 @@ unsigned long long Script::CallPublicPAWN(const char* name, const vector<boost::
 	return 0;
 }
 
+bool Script::IsPAWN(const char* name) noexcept
+{
+	try
+	{
+		return Public::IsPAWN(name);
+	}
+	catch (...) {}
+
+	return false;
+}
+
 unsigned long long Script::Timer_Respawn(NetworkID id) noexcept
 {
 	if (!GameFactory::Get<Player>(id))

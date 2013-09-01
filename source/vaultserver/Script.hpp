@@ -226,6 +226,7 @@ class Script
 		static void MakePublicPAWN(ScriptFuncPAWN _public, AMX* amx, const char* name, const char* def) noexcept;
 		static unsigned long long CallPublic(const char* name, ...) noexcept;
 		static unsigned long long CallPublicPAWN(const char* name, const std::vector<boost::any>& args) noexcept;
+		static bool IsPAWN(const char* name) noexcept;
 		static const DeletedObjects& GetDeletedStatic() noexcept { return deletedStatic; }
 
 		static unsigned long long Timer_Respawn(RakNet::NetworkID id) noexcept;
@@ -407,10 +408,11 @@ class Script
 		static constexpr ScriptFunctionData functions[] {
 			{"timestamp", Utils::timestamp},
 			{"CreateTimer", Script::CreateTimer},
-			{"CreateTimerEx", reinterpret_cast<void(*)()>(Script::CreateTimerEx)},
+			{"CreateTimerEx", reinterpret_cast<Function<void>>(Script::CreateTimerEx)},
 			{"KillTimer", Script::KillTimer},
 			{"MakePublic", Script::MakePublic},
-			{"CallPublic", reinterpret_cast<void(*)()>(Script::CallPublic)},
+			{"CallPublic", reinterpret_cast<Function<void>>(Script::CallPublic)},
+			{"IsPAWN", Script::IsPAWN},
 
 			{"SetServerName", Dedicated::SetServerName},
 			{"SetServerMap", Dedicated::SetServerMap},

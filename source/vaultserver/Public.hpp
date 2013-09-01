@@ -28,7 +28,11 @@ class Public : public ScriptFunction
 		/**
 		 * \brief Retrieves the definition of a public
 		 */
-		static std::string GetDefinition(const std::string& name);
+		static const std::string& GetDefinition(const std::string& name);
+		/**
+		 * \brief Checks whether public function is a PAWN function
+		 */
+		static bool IsPAWN(const std::string& name);
 		/**
 		 * \brief Deletes all publics
 		 */
