@@ -39,7 +39,6 @@ class Game
 		friend class Bethesda;
 
 	public:
-		typedef std::pair<std::future<void>, std::chrono::milliseconds> AsyncPack;
 		typedef std::pair<std::set<unsigned int>, std::set<unsigned int>> CellDiff;
 		typedef std::unordered_map<unsigned int, std::unordered_map<unsigned int, std::set<unsigned int>>> CellRefs;
 		typedef std::unordered_map<unsigned int, std::deque<RakNet::NetworkID>> UninitializedObjects;
@@ -49,7 +48,6 @@ class Game
 		typedef unsigned int Weather;
 		typedef unsigned int PlayerBase;
 		typedef std::function<void()> SpawnFunc;
-		typedef std::deque<std::function<void()>> StartupQueue;
 
 	private:
 		Game() = delete;

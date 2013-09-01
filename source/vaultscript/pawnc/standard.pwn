@@ -130,6 +130,21 @@ public OnLockChange(ID, actor, Lock:lock)
 
 }
 
+public OnItemCountChange(ID, count)
+{
+
+}
+
+public OnItemConditionChange(ID, Float:condition)
+{
+
+}
+
+public OnItemEquippedChange(ID, Bool:equipped)
+{
+
+}
+
 public OnItemPickup(ID, actor)
 {
 	return 1;

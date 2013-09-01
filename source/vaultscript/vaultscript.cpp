@@ -125,6 +125,21 @@ Void VAULTSCRIPT OnLockChange(ID object, ID actor, Lock lock) noexcept
 
 }
 
+Void VAULTSCRIPT OnItemCountChange(ID item, UCount count) noexcept
+{
+
+}
+
+Void VAULTSCRIPT OnItemConditionChange(ID item, Value condition) noexcept
+{
+
+}
+
+Void VAULTSCRIPT OnItemEquippedChange(ID item, State equipped) noexcept
+{
+
+}
+
 Result VAULTSCRIPT OnItemPickup(ID item, ID actor) noexcept
 {
 	return static_cast<Result>(True);
