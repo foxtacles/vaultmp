@@ -212,9 +212,16 @@ class GameFactory
 		 */
 		static unsigned int GetType(RakNet::NetworkID id) noexcept;
 		/**
-		 * \brief Returns the type of the given base
+		 * \brief Returns true if the given object exists
 		 */
-		static unsigned int GetType(const Base* base) noexcept;
+		template<typename T>
+		static bool Exists(RakNet::NetworkID id) noexcept { return GetType(id) & rTypesToken<T>::value; }
+		static bool Exists(RakNet::NetworkID id) noexcept { return GetType(id); }
+		/**
+		 * \brief Returns true if the type matches exactly
+		 */
+		template<typename T>
+		static bool Is(RakNet::NetworkID id) noexcept { return GetType(id) == rTypes<T>::value; }
 		/**
 		 * \brief Returns the NetworkID's of all Bases of a given type
 		 */

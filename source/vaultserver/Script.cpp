@@ -485,7 +485,7 @@ bool Script::IsPAWN(const char* name) noexcept
 
 unsigned long long Script::Timer_Respawn(NetworkID id) noexcept
 {
-	if (!GameFactory::Get<Player>(id))
+	if (!GameFactory::Exists<Player>(id))
 	{
 		KillTimer(); // Player has already left the server
 		return 0;
@@ -858,27 +858,27 @@ bool Script::IsValid(NetworkID id) noexcept
 
 bool Script::IsObject(NetworkID id) noexcept
 {
-	return (GameFactory::GetType(id) & ALL_OBJECTS);
+	return GameFactory::Exists<Object>(id);
 }
 
 bool Script::IsItem(NetworkID id) noexcept
 {
-	return (GameFactory::GetType(id) & ID_ITEM);
+	return GameFactory::Exists<Item>(id);
 }
 
 bool Script::IsContainer(NetworkID id) noexcept
 {
-	return (GameFactory::GetType(id) & ALL_CONTAINERS);
+	return GameFactory::Exists<Container>(id);
 }
 
 bool Script::IsActor(NetworkID id) noexcept
 {
-	return (GameFactory::GetType(id) & ALL_ACTORS);
+	return GameFactory::Exists<Actor>(id);
 }
 
 bool Script::IsPlayer(NetworkID id) noexcept
 {
-	return (GameFactory::GetType(id) & ID_PLAYER);
+	return GameFactory::Exists<Player>(id);
 }
 
 bool Script::IsInterior(unsigned int cell) noexcept
@@ -888,47 +888,47 @@ bool Script::IsInterior(unsigned int cell) noexcept
 
 bool Script::IsItemList(NetworkID id) noexcept
 {
-	return (GameFactory::GetType(id) & ALL_ITEMLISTS);
+	return GameFactory::Exists<ItemList>(id);
 }
 
 bool Script::IsWindow(NetworkID id) noexcept
 {
-	return (GameFactory::GetType(id) & ALL_WINDOWS);
+	return GameFactory::Exists<Window>(id);
 }
 
 bool Script::IsButton(NetworkID id) noexcept
 {
-	return (GameFactory::GetType(id) & ID_BUTTON);
+	return GameFactory::Exists<Button>(id);
 }
 
 bool Script::IsText(NetworkID id) noexcept
 {
-	return (GameFactory::GetType(id) & ID_TEXT);
+	return GameFactory::Exists<Text>(id);
 }
 
 bool Script::IsEdit(NetworkID id) noexcept
 {
-	return (GameFactory::GetType(id) & ID_EDIT);
+	return GameFactory::Exists<Edit>(id);
 }
 
 bool Script::IsCheckbox(NetworkID id) noexcept
 {
-	return (GameFactory::GetType(id) & ID_CHECKBOX);
+	return GameFactory::Exists<Checkbox>(id);
 }
 
 bool Script::IsRadioButton(NetworkID id) noexcept
 {
-	return (GameFactory::GetType(id) & ID_RADIOBUTTON);
+	return GameFactory::Exists<RadioButton>(id);
 }
 
 bool Script::IsListItem(NetworkID id) noexcept
 {
-	return (GameFactory::GetType(id) & ID_LISTITEM);
+	return GameFactory::Exists<ListItem>(id);
 }
 
 bool Script::IsList(NetworkID id) noexcept
 {
-	return (GameFactory::GetType(id) & ID_LIST);
+	return GameFactory::Exists<List>(id);
 }
 
 bool Script::IsChatbox(NetworkID id) noexcept
@@ -1279,7 +1279,7 @@ NetworkID Script::GetPlayerChatboxWindow(NetworkID id) noexcept
 
 NetworkID Script::CreateObject(unsigned int baseID, NetworkID id, unsigned int cell, double X, double Y, double Z) noexcept
 {
-	if (id && !GameFactory::GetType(id))
+	if (id && !GameFactory::Exists(id))
 		return 0;
 
 	if (!id && !DB::Record::IsValidCoordinate(cell, X, Y, Z))
@@ -1336,7 +1336,7 @@ bool Script::DestroyObject(NetworkID id) noexcept
 			return {item->GetItemContainer(), item->GetItemSilent()};
 		});
 
-		if (!container.first || GameFactory::GetType(container.first) != ID_ITEMLIST)
+		if (!container.first || !GameFactory::Is<ItemList>(container.first))
 			Network::Queue({Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_OBJECT_REMOVE>(id, container.second),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
@@ -1698,7 +1698,7 @@ bool Script::SetBaseName(NetworkID id, const char* name) noexcept
 
 NetworkID Script::CreateItem(unsigned int baseID, NetworkID id, unsigned int cell, double X, double Y, double Z) noexcept
 {
-	if (id && !GameFactory::GetType(id))
+	if (id && !GameFactory::Exists(id))
 		return 0;
 
 	if (!id && !DB::Record::IsValidCoordinate(cell, X, Y, Z))
@@ -1764,7 +1764,7 @@ bool Script::SetItemCount(NetworkID id, unsigned int count) noexcept
 		if (!item->SetItemCount(count))
 			return false;
 
-		if (GameFactory::GetType(item->GetItemContainer()) != ID_ITEMLIST)
+		if (!GameFactory::Is<ItemList>(item->GetItemContainer()))
 			Network::Queue({Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_UPDATE_COUNT>(id, count, false),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
@@ -1793,7 +1793,7 @@ bool Script::SetItemCondition(NetworkID id, double condition) noexcept
 		if (!item->SetItemCondition(condition))
 			return false;
 
-		if (GameFactory::GetType(item->GetItemContainer()) != ID_ITEMLIST)
+		if (!GameFactory::Is<ItemList>(item->GetItemContainer()))
 			Network::Queue({Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_UPDATE_CONDITION>(id, condition, static_cast<unsigned int>(item_->GetHealth() * (condition / 100.0))),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
@@ -1846,7 +1846,7 @@ bool Script::SetItemEquipped(NetworkID id, bool equipped, bool silent, bool stic
 
 NetworkID Script::CreateContainer(unsigned int baseID, NetworkID id, unsigned int cell, double X, double Y, double Z) noexcept
 {
-	if (id && !GameFactory::GetType(id))
+	if (id && !GameFactory::Exists(id))
 		return 0;
 
 	if (!id && !DB::Record::IsValidCoordinate(cell, X, Y, Z))
@@ -2012,7 +2012,7 @@ void Script::RemoveAllItems(NetworkID id) noexcept
 
 NetworkID Script::CreateActor(unsigned int baseID, NetworkID id, unsigned int cell, double X, double Y, double Z) noexcept
 {
-	if (id && !GameFactory::GetType(id))
+	if (id && !GameFactory::Exists(id))
 		return 0;
 
 	if (!id && !DB::Record::IsValidCoordinate(cell, X, Y, Z))
@@ -2296,6 +2296,7 @@ bool Script::SetActorBaseRace(NetworkID id, unsigned int race) noexcept
 		npc->SetRace(race);
 		signed int delta_age = DB::Race::Lookup(old_race)->GetAgeDifference(race);
 		signed int new_age = DB::Race::Lookup(npc->GetOriginalRace())->GetAgeDifference(race);
+		signed int diff_age = DB::Race::Lookup(RACE_CAUCASIAN)->GetAgeDifference(race);
 
 		for (const auto& actor : actors)
 			if (actor->GetBase() == baseID)
@@ -2305,7 +2306,7 @@ bool Script::SetActorBaseRace(NetworkID id, unsigned int race) noexcept
 
 				if (vaultcast_test<Player>(actor))
 					Network::Queue({Network::CreateResponse(
-						PacketFactory::Create<pTypes::ID_UPDATE_RACE>(actor->GetNetworkID(), race, DB::Race::Lookup(RACE_CAUCASIAN)->GetAgeDifference(race), delta_age),
+						PacketFactory::Create<pTypes::ID_UPDATE_RACE>(actor->GetNetworkID(), race, diff_age, delta_age),
 						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 					});
 				else
@@ -2759,13 +2760,6 @@ bool Script::DestroyWindow(NetworkID id) noexcept
 	if (!root || IsChatbox(id))
 		return false;
 
-	Script::Call<CBI("OnDestroy")>(id);
-
-	root = GetWindowRoot(id); // if for some reason DestroyWindow gets called on the same window in OnDestroy...
-
-	if (!root)
-		return false;
-
 	vector<NetworkID> deletions;
 	Window::CollectChilds(id, deletions);
 	reverse(deletions.begin(), deletions.end()); // reverse so the order of deletion is valid
@@ -2783,6 +2777,14 @@ bool Script::DestroyWindow(NetworkID id) noexcept
 
 	for (const auto& id : deletions)
 	{
+		if (!GameFactory::Exists<Window>(id))
+			continue;
+
+		Call<CBI("OnDestroy")>(id);
+
+		if (!GameFactory::Exists<Window>(id))
+			continue;
+
 		if (!guids.empty())
 			response.emplace_back(Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_WINDOW_REMOVE>(id),
@@ -3127,7 +3129,7 @@ NetworkID Script::CreateRadioButton(double posX, double posY, double sizeX, doub
 
 bool Script::SetRadioButtonSelected(NetworkID id, bool selected) noexcept
 {
-	if (GameFactory::GetType(id) != ID_RADIOBUTTON)
+	if (!GameFactory::Exists<RadioButton>(id))
 		return false;
 
 	unsigned int group = GameFactory::Operate<RadioButton, FailPolicy::Return>(id, [selected](FactoryRadioButton& radiobutton) {
@@ -3162,7 +3164,7 @@ bool Script::SetRadioButtonSelected(NetworkID id, bool selected) noexcept
 
 bool Script::SetRadioButtonGroup(NetworkID id, unsigned int group)
 {
-	if (GameFactory::GetType(id) != ID_RADIOBUTTON)
+	if (!GameFactory::Exists<RadioButton>(id))
 		return false;
 
 	pair<unsigned int, bool> data = GameFactory::Operate<RadioButton, FailPolicy::Return>(id, [](FactoryRadioButton& radiobutton) {

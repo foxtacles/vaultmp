@@ -74,11 +74,6 @@ bool GameFactory::IsDeleted(NetworkID id) noexcept
 	});
 }
 
-unsigned int GameFactory::GetType(const Base* reference) noexcept
-{
-	return GetType(const_cast<Base*>(reference)->GetNetworkID());
-}
-
 unsigned int GameFactory::GetType(NetworkID id) noexcept
 {
 	return cs.Operate([id]() {
