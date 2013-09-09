@@ -372,6 +372,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetGameHour))(VAULTSPACE UCount) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetTimeScale))(VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsValid))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsReference))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsObject))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsItem))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsContainer))(VAULTSPACE ID) VAULTCPP(noexcept);
@@ -631,6 +632,7 @@ namespace vaultmp
 	VAULTFUNCTION Void SetGameHour(UCount hour) noexcept { return VAULTAPI(SetGameHour)(hour); }
 	VAULTFUNCTION Void SetTimeScale(Value scale) noexcept { return VAULTAPI(SetTimeScale)(scale); }
 	VAULTFUNCTION State IsValid(ID id) noexcept { return VAULTAPI(IsValid)(id); }
+	VAULTFUNCTION State IsReference(ID id) noexcept { return VAULTAPI(IsReference)(id); }
 	VAULTFUNCTION State IsObject(ID id) noexcept { return VAULTAPI(IsObject)(id); }
 	VAULTFUNCTION State IsItem(ID id) noexcept { return VAULTAPI(IsItem)(id); }
 	VAULTFUNCTION State IsContainer(ID id) noexcept { return VAULTAPI(IsContainer)(id); }
@@ -998,17 +1000,31 @@ namespace vaultmp
 	VAULTFUNCTION State SetListItemText(ID id, const String& text) noexcept { return VAULTAPI(SetListItemText)(id, text.c_str()); }
 	VAULTFUNCTION State SetListItemText(ID id, cRawString text) noexcept { return VAULTAPI(SetListItemText)(id, text); }
 
-	class Reference {
+	class BaseClass {
 		protected:
 			ID id;
-			Ref refID;
-			Base baseID;
-			Type type;
 
-			Reference(ID id, Type type) noexcept : id(id), refID(id ? vaultmp::GetReference(id) : static_cast<Ref>(0)), baseID(id ? vaultmp::GetBase(id) : static_cast<Base>(0)), type(type) {}
-			virtual ~Reference() noexcept {}
+			BaseClass() noexcept {}
+			~BaseClass() noexcept {}
 
 		public:
+			State IsValid() const noexcept { return id ? True : False; }
+			explicit operator bool() const noexcept { return IsValid(); }
+			explicit operator State() const noexcept { return IsValid(); }
+			bool operator==(const BaseClass& R) const noexcept { return this->id == R.id; }
+			bool operator!=(const BaseClass& R) const noexcept { return !operator==(R); }
+
+			ID GetID() const noexcept { return id; }
+	};
+
+	class Reference : public BaseClass {
+		protected:
+			Reference() noexcept {}
+
+		public:
+			Reference(ID id) noexcept { this->id = vaultmp::IsReference(id) ? id : static_cast<ID>(0); }
+			~Reference() noexcept {}
+
 			State IsValid() const noexcept { return id ? True : False; }
 			explicit operator bool() const noexcept { return IsValid(); }
 			explicit operator State() const noexcept { return IsValid(); }
@@ -1016,9 +1032,6 @@ namespace vaultmp
 			bool operator!=(const Reference& R) const noexcept { return !operator==(R); }
 
 			ID GetID() const noexcept { return id; }
-			Ref GetReference() const noexcept { return refID; }
-			Base GetBase() const noexcept { return baseID; }
-			Type GetType() const noexcept { return type; }
 
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_REFERENCE); }
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_REFERENCE); }
@@ -1026,11 +1039,11 @@ namespace vaultmp
 
 	class Object : public Reference {
 		protected:
-			Object(ID id, Type type) noexcept : Reference(id, type) {}
+			Object() noexcept {}
 
 		public:
-			Object(ID id) noexcept : Reference(vaultmp::IsObject(id) ? id : static_cast<ID>(0), Type::ID_OBJECT) {}
-			virtual ~Object() noexcept {}
+			Object(ID id) noexcept { this->id = vaultmp::IsObject(id) ? id : static_cast<ID>(0); }
+			~Object() noexcept {}
 
 			Void GetPos(Value& X, Value& Y, Value& Z) const noexcept { return vaultmp::GetPos(id, X, Y, Z); }
 			Void GetAngle(Value& X, Value& Y, Value& Z) const noexcept { return vaultmp::GetAngle(id, X, Y, Z); }
@@ -1083,12 +1096,9 @@ namespace vaultmp
 	};
 
 	class Item : public Object {
-		protected:
-			Item(ID id, Type type) noexcept : Object(id, type) {}
-
 		public:
-			Item(ID id) noexcept : Object(vaultmp::IsItem(id) ? id : static_cast<ID>(0), Type::ID_ITEM) {}
-			virtual ~Item() noexcept {}
+			Item(ID id) noexcept { this->id = vaultmp::IsItem(id) ? id : static_cast<ID>(0); }
+			~Item() noexcept {}
 
 			ID GetItemContainer() const noexcept { return vaultmp::GetItemContainer(id); }
 			UCount GetItemCount() const noexcept { return vaultmp::GetItemCount(id); }
@@ -1123,11 +1133,11 @@ namespace vaultmp
 
 	class Container : public Object {
 		protected:
-			Container(ID id, Type type) noexcept : Object(id, type) {}
+			Container() noexcept {}
 
 		public:
-			Container(ID id) noexcept : Object(vaultmp::IsContainer(id) ? id : static_cast<ID>(0), Type::ID_CONTAINER) {}
-			virtual ~Container() noexcept {}
+			Container(ID id) noexcept { id = vaultmp::IsContainer(id) ? id : static_cast<ID>(0); }
+			~Container() noexcept {}
 
 			#define GetContainerItemCount_Template(type) \
 				UCount GetContainerItemCount(type item = static_cast<type>(0)) const noexcept { return vaultmp::GetContainerItemCount(id, item); }
@@ -1192,21 +1202,10 @@ namespace vaultmp
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_CONTAINER); }
 	};
 
-	class ItemList {
-		protected:
-			ID id;
-
+	class ItemList : public BaseClass {
 		public:
-			ItemList(ID id) noexcept : id(vaultmp::IsItemList(id) ? id : static_cast<ID>(0)) {}
-			virtual ~ItemList() noexcept {}
-
-			State IsValid() const noexcept { return id ? True : False; }
-			explicit operator bool() const noexcept { return IsValid(); }
-			explicit operator State() const noexcept { return IsValid(); }
-			bool operator==(const ItemList& R) const noexcept { return this->id == R.id; }
-			bool operator!=(const ItemList& R) const noexcept { return !operator==(R); }
-
-			ID GetID() const noexcept { return id; }
+			ItemList(ID id) noexcept { this->id = vaultmp::IsItemList(id) ? id : static_cast<ID>(0); }
+			~ItemList() noexcept {}
 
 			#define GetContainerItemCount_Template(type) \
 				UCount GetContainerItemCount(type item = static_cast<type>(0)) const noexcept { return vaultmp::GetContainerItemCount(id, item); }
@@ -1290,11 +1289,11 @@ namespace vaultmp
 
 	class Actor : public Container {
 		protected:
-			Actor(ID id, Type type) noexcept : Container(id, type) {}
+			Actor() noexcept {}
 
 		public:
-			Actor(ID id) noexcept : Container(vaultmp::IsActor(id) ? id : static_cast<ID>(0), Type::ID_ACTOR) {}
-			virtual ~Actor() noexcept {}
+			Actor(ID id) noexcept { this->id = vaultmp::IsActor(id) ? id : static_cast<ID>(0); }
+			~Actor() noexcept {}
 
 			Value GetActorValue(ActorValue index) const noexcept { return vaultmp::GetActorValue(id, index); }
 			Value GetActorBaseValue(ActorValue index) const noexcept { return vaultmp::GetActorBaseValue(id, index); }
@@ -1352,8 +1351,8 @@ namespace vaultmp
 
 	class Player : public Actor {
 		public:
-			Player(ID id) noexcept : Actor(vaultmp::IsPlayer(id) ? id : static_cast<ID>(0), Type::ID_PLAYER) {}
-			virtual ~Player() noexcept {}
+			Player(ID id) noexcept { this->id = vaultmp::IsPlayer(id) ? id : static_cast<ID>(0); }
+			~Player() noexcept {}
 
 			Interval GetPlayerRespawnTime() const noexcept { return vaultmp::GetPlayerRespawnTime(id); }
 			CELL GetPlayerSpawnCell() const noexcept { return vaultmp::GetPlayerSpawnCell(id); }
@@ -1391,25 +1390,13 @@ namespace vaultmp
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_PLAYER); }
 	};
 
-	class Window {
+	class Window : public BaseClass {
 		protected:
-			ID id;
-			Type type;
-
-			Window(ID id, Type type) noexcept : id(id), type(type) {}
+			Window() noexcept {}
 
 		public:
-			Window(ID id) noexcept : id(vaultmp::IsWindow(id) ? id : static_cast<ID>(0)), type(Type::ID_WINDOW) {}
-			virtual ~Window() noexcept {}
-
-			State IsValid() const noexcept { return id ? True : False; }
-			explicit operator bool() const noexcept { return IsValid(); }
-			explicit operator State() const noexcept { return IsValid(); }
-			bool operator==(const Window& R) const noexcept { return this->id == R.id; }
-			bool operator!=(const Window& R) const noexcept { return !operator==(R); }
-
-			ID GetID() const noexcept { return id; }
-			Type GetType() const noexcept { return type; }
+			Window(ID id) noexcept { this->id = vaultmp::IsWindow(id) ? id : static_cast<ID>(0); }
+			~Window() noexcept {}
 
 			ID GetParentWindow() const noexcept { return vaultmp::GetParentWindow(id); }
 			ID GetWindowRoot() const noexcept { return vaultmp::GetParentWindow(id); }
@@ -1438,12 +1425,9 @@ namespace vaultmp
 	};
 
 	class Button : public Window {
-		protected:
-			Button(ID id, Type type) noexcept : Window(id, type) {}
-
 		public:
-			Button(ID id) noexcept : Window(vaultmp::IsButton(id) ? id : static_cast<ID>(0), Type::ID_BUTTON) {}
-			virtual ~Button() noexcept {}
+			Button(ID id) noexcept { this->id = vaultmp::IsButton(id) ? id : static_cast<ID>(0); }
+			~Button() noexcept {}
 
 			static ID Create(Value posX, Value posY, Value sizeX, Value sizeY, State visible = True, State locked = False, const String& text = "") noexcept { return vaultmp::CreateButton(posX, posY, sizeX, sizeY, visible, locked, text.c_str()); }
 			static ID Create(Value posX, Value posY, Value sizeX, Value sizeY, State visible = True, State locked = False, cRawString text = "") noexcept { return vaultmp::CreateButton(posX, posY, sizeX, sizeY, visible, locked, text); }
@@ -1452,12 +1436,9 @@ namespace vaultmp
 	};
 
 	class Text : public Window {
-		protected:
-			Text(ID id, Type type) noexcept : Window(id, type) {}
-
 		public:
-			Text(ID id) noexcept : Window(vaultmp::IsText(id) ? id : static_cast<ID>(0), Type::ID_TEXT) {}
-			virtual ~Text() noexcept {}
+			Text(ID id) noexcept { this->id = vaultmp::IsText(id) ? id : static_cast<ID>(0); }
+			~Text() noexcept {}
 
 			static ID Create(Value posX, Value posY, Value sizeX, Value sizeY, State visible = True, State locked = False, const String& text = "") noexcept { return vaultmp::CreateText(posX, posY, sizeX, sizeY, visible, locked, text.c_str()); }
 			static ID Create(Value posX, Value posY, Value sizeX, Value sizeY, State visible = True, State locked = False, cRawString text = "") noexcept { return vaultmp::CreateText(posX, posY, sizeX, sizeY, visible, locked, text); }
@@ -1466,12 +1447,9 @@ namespace vaultmp
 	};
 
 	class Edit : public Window {
-		protected:
-			Edit(ID id, Type type) noexcept : Window(id, type) {}
-
 		public:
-			Edit(ID id) noexcept : Window(vaultmp::IsEdit(id) ? id : static_cast<ID>(0), Type::ID_EDIT) {}
-			virtual ~Edit() noexcept {}
+			Edit(ID id) noexcept { this->id = vaultmp::IsEdit(id) ? id : static_cast<ID>(0); }
+			~Edit() noexcept {}
 
 			UCount GetEditMaxLength() const noexcept { return vaultmp::GetEditMaxLength(id); }
 			String GetEditValidation() const noexcept { return vaultmp::GetEditValidation(id); }
@@ -1487,12 +1465,9 @@ namespace vaultmp
 	};
 
 	class Checkbox : public Window {
-		protected:
-			Checkbox(ID id, Type type) noexcept : Window(id, type) {}
-
 		public:
-			Checkbox(ID id) noexcept : Window(vaultmp::IsCheckbox(id) ? id : static_cast<ID>(0), Type::ID_CHECKBOX) {}
-			virtual ~Checkbox() noexcept {}
+			Checkbox(ID id) noexcept { this->id = vaultmp::IsCheckbox(id) ? id : static_cast<ID>(0); }
+			~Checkbox() noexcept {}
 
 			State GetCheckboxSelected() const noexcept { return vaultmp::GetCheckboxSelected(id); }
 
@@ -1505,12 +1480,9 @@ namespace vaultmp
 	};
 
 	class RadioButton : public Window {
-		protected:
-			RadioButton(ID id, Type type) noexcept : Window(id, type) {}
-
 		public:
-			RadioButton(ID id) noexcept : Window(vaultmp::IsRadioButton(id) ? id : static_cast<ID>(0), Type::ID_RADIOBUTTON) {}
-			virtual ~RadioButton() noexcept {}
+			RadioButton(ID id) { this->id = vaultmp::IsRadioButton(id) ? id : static_cast<ID>(0); }
+			~RadioButton() noexcept {}
 
 			State GetRadioButtonSelected() const noexcept { return vaultmp::GetRadioButtonSelected(id); }
 			UCount GetRadioButtonGroup() const noexcept { return vaultmp::GetRadioButtonGroup(id); }
@@ -1524,13 +1496,28 @@ namespace vaultmp
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_RADIOBUTTON); }
 	};
 
-	class List : public Window {
-		protected:
-			List(ID id, Type type) noexcept : Window(id, type) {}
-
+	class ListItem : public BaseClass {
 		public:
-			List(ID id) noexcept : Window(vaultmp::IsList(id) ? id : static_cast<ID>(0), Type::ID_LIST) {}
-			virtual ~List() noexcept {}
+			ListItem(ID id) noexcept { this->id = vaultmp::IsListItem(id) ? id : static_cast<ID>(0); }
+			~ListItem() noexcept {}
+
+			ID GetListItemContainer() const noexcept { return vaultmp::GetListItemContainer(id); }
+			State GetListItemSelected() const noexcept { return vaultmp::GetListItemSelected(id); }
+			String GetListItemText() const noexcept { return vaultmp::GetListItemText(id); }
+
+			ID SetListItemContainer(ID container) noexcept { return vaultmp::SetListItemContainer(id, container); }
+			State SetListItemSelected(State selected) noexcept { return vaultmp::SetListItemSelected(id, selected); }
+			State SetListItemText(const String& text) noexcept { return vaultmp::SetListItemText(id, text); }
+			State SetListItemText(cRawString text) noexcept { return vaultmp::SetListItemText(id, text); }
+
+			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_LISTITEM); }
+			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_LISTITEM); }
+	};
+
+	class List : public Window {
+		public:
+			List(ID id) noexcept { this->id = vaultmp::IsList(id) ? id : static_cast<ID>(0); }
+			~List() noexcept {}
 
 			State GetListMultiSelect() const noexcept { return vaultmp::GetListMultiSelect(id); }
 			UCount GetListItemCount() const noexcept { return vaultmp::GetListItemCount(id); }
@@ -1541,6 +1528,7 @@ namespace vaultmp
 			State SetListMultiSelect(State multiselect) const noexcept { return vaultmp::SetListMultiSelect(id, multiselect); }
 			ID AddListItem(const String& text) noexcept { return vaultmp::AddListItem(id, text); }
 			ID AddListItem(cRawString text) noexcept { return vaultmp::AddListItem(id, text); }
+			State RemoveListItem(ID id) noexcept { return vaultmp::RemoveListItem(id); }
 
 			static ID Create(Value posX, Value posY, Value sizeX, Value sizeY, State visible = True, State locked = False, const String& text = "") noexcept { return vaultmp::CreateList(posX, posY, sizeX, sizeY, visible, locked, text.c_str()); }
 			static ID Create(Value posX, Value posY, Value sizeX, Value sizeY, State visible = True, State locked = False, cRawString text = "") noexcept { return vaultmp::CreateList(posX, posY, sizeX, sizeY, visible, locked, text); }

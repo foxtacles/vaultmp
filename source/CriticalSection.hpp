@@ -21,7 +21,7 @@ class CriticalSection
 
 	public:
 		CriticalSection() noexcept : finalize(false) {}
-		virtual ~CriticalSection() noexcept {}
+		~CriticalSection() noexcept {}
 
 		CriticalSection* StartSession() noexcept
 		{

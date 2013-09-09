@@ -234,7 +234,7 @@ class GameFactory
 		 * \brief Invalidates a Base held by a FactoryWrapper
 		 */
 		template<typename T>
-		static void Leave(FactoryWrapper<T>& base);
+		static void Free(FactoryWrapper<T>& base);
 		/**
 		 * \brief Creates a new instance of a given type
 		 */
@@ -360,12 +360,12 @@ struct GameFactory::OperateFunctions<T, FailPolicy::Exception, OP, LaunchPolicy:
 };
 
 template<typename T>
-void GameFactory::Leave(FactoryWrapper<T>& base)
+void GameFactory::Free(FactoryWrapper<T>& base)
 {
 	Base* _base = base.base;
 
 	if (!_base)
-		throw VaultException("GameFactory::Leave Base is NULL").stacktrace();
+		throw VaultException("GameFactory::Free Base is NULL").stacktrace();
 
 	_base->EndSession();
 	base.base = nullptr;

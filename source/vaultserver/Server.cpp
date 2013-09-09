@@ -174,7 +174,7 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 	GameFactory::Operate<Reference>(GameFactory::GetByType(ALL_REFERENCES), [&response, guid, id](FactoryReferences& references) {
 		FactoryReferences::iterator it;
 
-		for (it = references.begin(); it != references.end(); GameFactory::Leave(*it), ++it)
+		for (it = references.begin(); it != references.end(); GameFactory::Free(*it), ++it)
 		{
 			if ((*it)->GetNetworkID() == id)
 				continue;
@@ -251,7 +251,7 @@ NetworkResponse Server::GetPos(RakNetGUID guid, FactoryObject& reference, float 
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 			});
 
-			GameFactory::Leave(reference);
+			GameFactory::Free(reference);
 			Script::Call<Script::CBI("OnCellChange")>(id, cell);
 		}
 		else
@@ -299,7 +299,7 @@ NetworkResponse Server::GetCell(RakNetGUID guid, FactoryObject& reference, unsig
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 		});
 
-		GameFactory::Leave(reference);
+		GameFactory::Free(reference);
 		Script::Call<Script::CBI("OnCellChange")>(id, cell);
 	}
 
@@ -318,8 +318,8 @@ NetworkResponse Server::GetActivate(RakNetGUID guid, FactoryReference& reference
 			PacketFactory::Create<pTypes::ID_UPDATE_ACTIVATE>(reference_id, actor_id),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 
-	GameFactory::Leave(reference);
-	GameFactory::Leave(actor);
+	GameFactory::Free(reference);
+	GameFactory::Free(actor);
 
 	Script::Call<Script::CBI("OnActivate")>(reference_id, actor_id);
 
@@ -365,19 +365,19 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, FactoryActor& reference, 
 		{
 			if (power_punching)
 			{
-				GameFactory::Leave(reference);
+				GameFactory::Free(reference);
 				Script::Call<Script::CBI("OnActorPunch")>(id, true);
 			}
 			else if (punching)
 			{
-				GameFactory::Leave(reference);
+				GameFactory::Free(reference);
 				Script::Call<Script::CBI("OnActorPunch")>(id, false);
 			}
 			else
-				GameFactory::Leave(reference);
+				GameFactory::Free(reference);
 		}
 		else
-			GameFactory::Leave(reference);
+			GameFactory::Free(reference);
 
 		if (_alerted)
 			Script::Call<Script::CBI("OnActorAlert")>(id, alerted);
@@ -407,7 +407,7 @@ NetworkResponse Server::GetActorDead(RakNetGUID guid, FactoryPlayer& reference, 
 			PacketFactory::Create<pTypes::ID_UPDATE_DEAD>(id, dead, 0, 0),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
-		GameFactory::Leave(reference);
+		GameFactory::Free(reference);
 
 		Script::Call<Script::CBI("OnSpawn")>(id);
 	}
@@ -426,7 +426,7 @@ NetworkResponse Server::GetActorFireWeapon(RakNet::RakNetGUID guid, FactoryPlaye
 		PacketFactory::Create<pTypes::ID_UPDATE_FIREWEAPON>(id, baseID),
 		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
-	GameFactory::Leave(reference);
+	GameFactory::Free(reference);
 
 	Script::Call<Script::CBI("OnActorFireWeapon")>(id, baseID);
 
@@ -462,7 +462,7 @@ NetworkResponse Server::GetWindowClick(RakNetGUID guid, FactoryWindow& reference
 	NetworkResponse response;
 
 	NetworkID id = reference->GetNetworkID();
-	GameFactory::Leave(reference);
+	GameFactory::Free(reference);
 
 	Script::Call<Script::CBI("OnWindowClick")>(id, Client::GetClientFromGUID(guid)->GetPlayer());
 
@@ -475,7 +475,7 @@ NetworkResponse Server::GetWindowText(RakNetGUID guid, FactoryWindow& reference,
 
 	NetworkID id = reference->GetNetworkID();
 	reference->SetText(text);
-	GameFactory::Leave(reference);
+	GameFactory::Free(reference);
 
 	NetworkID root = Script::GetWindowRoot(id);
 
@@ -497,7 +497,7 @@ NetworkResponse Server::GetCheckboxSelected(RakNetGUID guid, FactoryCheckbox& re
 
 	NetworkID id = reference->GetNetworkID();
 	reference->SetSelected(selected);
-	GameFactory::Leave(reference);
+	GameFactory::Free(reference);
 
 	NetworkID root = Script::GetWindowRoot(id);
 
@@ -521,13 +521,13 @@ NetworkResponse Server::GetRadioButtonSelected(RakNetGUID guid, FactoryRadioButt
 	NetworkID previous_id = 0;
 
 	reference->SetSelected(true);
-	GameFactory::Leave(reference);
+	GameFactory::Free(reference);
 
 	if (previous)
 	{
 		previous_id = previous->GetNetworkID();
 		previous->SetSelected(false);
-		GameFactory::Leave(previous.get());
+		GameFactory::Free(previous.get());
 	}
 
 	NetworkID root = Script::GetWindowRoot(id);
@@ -551,7 +551,7 @@ NetworkResponse Server::GetRadioButtonSelected(RakNetGUID guid, FactoryRadioButt
 	NetworkID id = reference->GetNetworkID();
 	NetworkID list = reference->GetItemContainer()
 ;	reference->SetSelected(selected);
-	GameFactory::Leave(reference);
+	GameFactory::Free(reference);
 
 	NetworkID root = Script::GetWindowRoot(list);
 

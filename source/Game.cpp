@@ -691,7 +691,7 @@ void Game::NewObject_(FactoryObject& reference)
 
 		NetworkID id = reference->GetNetworkID();
 
-		GameFactory::Leave(reference);
+		GameFactory::Free(reference);
 
 		try
 		{
@@ -745,7 +745,7 @@ void Game::NewItem(FactoryItem& reference)
 
 	if (container)
 	{
-		GameFactory::Leave(reference);
+		GameFactory::Free(reference);
 
 		GameFactory::Operate<Container>(container, [item](FactoryContainer& container) {
 			container->AddItem(item);
@@ -1038,7 +1038,7 @@ void Game::NewListItem(FactoryListItem& reference)
 	NetworkID item = reference->GetNetworkID();
 	NetworkID list = reference->GetItemContainer();
 
-	GameFactory::Leave(reference);
+	GameFactory::Free(reference);
 
 	GameFactory::Operate<List>(list, [item](FactoryList& list) {
 		list->AddItem(item);
@@ -1114,7 +1114,7 @@ void Game::DestroyObject(FactoryObject& reference, bool silent)
 
 	if (container)
 	{
-		GameFactory::Leave(reference);
+		GameFactory::Free(reference);
 
 		GameFactory::Operate<Container>(container, [id, silent](FactoryContainer& container) {
 			container->RemoveItem(id);
@@ -1183,7 +1183,7 @@ void Game::DeleteListItem(FactoryListItem& reference)
 	NetworkID item = reference->GetNetworkID();
 	NetworkID list = reference->GetItemContainer();
 
-	GameFactory::Leave(reference);
+	GameFactory::Free(reference);
 
 	GameFactory::Operate<List>(list, [item](FactoryList& list) {
 		list->RemoveItem(item);
@@ -1880,7 +1880,7 @@ void Game::net_SetCell(FactoryObject& reference, FactoryPlayer& player, unsigned
 					reference->SetReference(0x00000000);
 					reference->SetEnabled(false);
 
-					GameFactory::Leave(player);
+					GameFactory::Free(player);
 					NewDispatch(reference);
 				}
 			}
@@ -1918,7 +1918,7 @@ void Game::net_SetCell(FactoryObject& reference, FactoryPlayer& player, unsigned
 
 		if (context)
 		{
-			GameFactory::Leave(player);
+			GameFactory::Free(player);
 			NewDispatch(reference);
 		}
 	}
@@ -1960,7 +1960,7 @@ void Game::net_SetItemCount(FactoryItem& reference, unsigned int count, bool sil
 			unsigned int baseID = reference->GetBase();
 			float condition = reference->GetItemCondition();
 
-			GameFactory::Leave(reference);
+			GameFactory::Free(reference);
 
 			GameFactory::Operate<Container>(container, [count, old_count, baseID, condition, silent](FactoryContainer& container) {
 				signed int diff = count - old_count;
@@ -1996,7 +1996,7 @@ void Game::net_SetItemCondition(FactoryItem& reference, float condition, unsigne
 			SetCurrentHealth(reference, health);
 		else if (reference->GetItemEquipped())
 		{
-			GameFactory::Leave(reference);
+			GameFactory::Free(reference);
 
 			// SetEquippedCurrentHealth
 		}
@@ -2014,7 +2014,7 @@ void Game::net_SetItemEquipped(FactoryItem& reference, bool equipped, bool silen
 		NetworkID item = reference->GetNetworkID();
 		NetworkID container = reference->GetItemContainer();
 
-		GameFactory::Leave(reference);
+		GameFactory::Free(reference);
 
 		GameFactory::Operate<Actor>(container, [equipped, item](FactoryActor& actor) {
 			GameFactory::Operate<Item>(item, [&actor, equipped](FactoryItem& item) {
@@ -2140,7 +2140,7 @@ void Game::net_SetActorDead(FactoryActor& reference, bool dead, unsigned short l
 		{
 			NetworkID id = reference->GetNetworkID();
 			reference->SetEnabled(false);
-			GameFactory::Leave(reference);
+			GameFactory::Free(reference);
 
 			ForceRespawn();
 

@@ -242,6 +242,7 @@ native SetGameDay(day);
 native SetGameHour(hour);
 native SetTimeScale(Float:scale);
 native Bool:IsValid(ID);
+native Bool:IsReference(ID);
 native Bool:IsObject(ID);
 native Bool:IsItem(ID);
 native Bool:IsContainer(ID);

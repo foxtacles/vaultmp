@@ -856,6 +856,11 @@ bool Script::IsValid(NetworkID id) noexcept
 	return GameFactory::GetType(id);
 }
 
+bool Script::IsReference(NetworkID id) noexcept
+{
+	return GameFactory::Exists<Reference>(id);
+}
+
 bool Script::IsObject(NetworkID id) noexcept
 {
 	return GameFactory::Exists<Object>(id);
@@ -1344,7 +1349,7 @@ bool Script::DestroyObject(NetworkID id) noexcept
 
 		if (container.first)
 		{
-			GameFactory::Leave(base);
+			GameFactory::Free(base);
 
 			GameFactory::Operate<ItemList>(container.first, [id](FactoryItemList& itemlist) {
 				itemlist->RemoveItem(id);
@@ -1816,7 +1821,7 @@ bool Script::SetItemEquipped(NetworkID id, bool equipped, bool silent, bool stic
 		if (!container)
 			return false;
 
-		GameFactory::Leave(item);
+		GameFactory::Free(item);
 
 		return GameFactory::Operate<ItemList, FailPolicy::Return>(container, [id, equipped, silent, stick](FactoryItemList& itemlist) {
 			return GameFactory::Operate<Item>(id, [&itemlist, id, equipped, silent, stick](FactoryItem& item) {
@@ -2356,7 +2361,7 @@ bool Script::AgeActorBaseRace(NetworkID id, signed int age) noexcept
 		else
 			return true;
 
-		GameFactory::Leave(actor);
+		GameFactory::Free(actor);
 
 		return SetActorBaseRace(id, new_race);
 	});
@@ -2532,7 +2537,7 @@ NetworkID Script::GetWindowRoot(NetworkID id) noexcept
 
 		while ((parent = window->GetParentWindow()))
 		{
-			GameFactory::Leave(window);
+			GameFactory::Free(window);
 			window = GameFactory::Get<Window>(parent).get();
 		}
 

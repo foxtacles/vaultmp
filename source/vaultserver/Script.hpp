@@ -249,6 +249,7 @@ class Script
 		static void SetGameHour(unsigned int hour) noexcept;
 		static void SetTimeScale(double scale) noexcept;
 		static bool IsValid(RakNet::NetworkID id) noexcept;
+		static bool IsReference(RakNet::NetworkID id) noexcept;
 		static bool IsObject(RakNet::NetworkID id) noexcept;
 		static bool IsItem(RakNet::NetworkID id) noexcept;
 		static bool IsContainer(RakNet::NetworkID id) noexcept;
@@ -439,6 +440,7 @@ class Script
 			{"SetGameHour", Script::SetGameHour},
 			{"SetTimeScale", Script::SetTimeScale},
 			{"IsValid", Script::IsValid},
+			{"IsReference", Script::IsReference},
 			{"IsObject", Script::IsObject},
 			{"IsItem", Script::IsItem},
 			{"IsContainer", Script::IsContainer},
