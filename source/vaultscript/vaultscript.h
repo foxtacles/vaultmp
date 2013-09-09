@@ -1025,13 +1025,8 @@ namespace vaultmp
 			Reference(ID id) noexcept { this->id = vaultmp::IsReference(id) ? id : static_cast<ID>(0); }
 			~Reference() noexcept {}
 
-			State IsValid() const noexcept { return id ? True : False; }
-			explicit operator bool() const noexcept { return IsValid(); }
-			explicit operator State() const noexcept { return IsValid(); }
-			bool operator==(const Reference& R) const noexcept { return this->id == R.id; }
-			bool operator!=(const Reference& R) const noexcept { return !operator==(R); }
-
-			ID GetID() const noexcept { return id; }
+			Ref GetReference() const noexcept { return vaultmp::GetReference(id); }
+			Base GetBase() const noexcept { return vaultmp::GetBase(id); }
 
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_REFERENCE); }
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_REFERENCE); }
