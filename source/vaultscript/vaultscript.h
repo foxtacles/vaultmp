@@ -332,10 +332,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE Void OnRadioButtonSelect(VAULTSPACE ID, VAULTSPACE ID, VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void OnListItemSelect(VAULTSPACE ID, VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State OnClientAuthenticate(VAULTSPACE cRawString, VAULTSPACE cRawString) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE Void OnGameYearChange(VAULTSPACE UCount) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE Void OnGameMonthChange(VAULTSPACE UCount) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE Void OnGameDayChange(VAULTSPACE UCount) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE Void OnGameHourChange(VAULTSPACE UCount) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Void OnGameTimeChange(VAULTSPACE UCount, VAULTSPACE UCount, VAULTSPACE UCount, VAULTSPACE UCount) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void OnServerInit() VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void OnServerExit() VAULTCPP(noexcept);
 
@@ -458,6 +455,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetItemEquipped))(VAULTSPACE ID, VAULTSPACE State, VAULTSPACE State, VAULTSPACE State) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateContainer))(VAULTSPACE CONT, VAULTSPACE ID, VAULTSPACE CELL, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateItemList))(VAULTSPACE ID, VAULTSPACE Base) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(DestroyItemList))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(AddItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE UCount, VAULTSPACE Value, VAULTSPACE State) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(AddItemList))(VAULTSPACE ID, VAULTSPACE ID, VAULTSPACE Base) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(RemoveItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE UCount, VAULTSPACE State) VAULTCPP(noexcept);
@@ -834,6 +832,8 @@ namespace vaultmp
 		return result;
 	}
 
+	VAULTFUNCTION State DestroyItemList(ID id) noexcept { return VAULTAPI(DestroyItemList)(id); }
+
 	#define AddItem_Template(type) \
 		VAULTFUNCTION ID AddItem(ID id, type item, UCount count = 1, Value condition = 100.0, State silent = True) noexcept { return VAULTAPI(AddItem)(id, static_cast<Base>(item), count, condition, silent); }
 	AddItem_Template(Base);
@@ -1028,6 +1028,8 @@ namespace vaultmp
 			Ref GetReference() const noexcept { return vaultmp::GetReference(id); }
 			Base GetBase() const noexcept { return vaultmp::GetBase(id); }
 
+			State DestroyObject() noexcept { State state = vaultmp::DestroyObject(id); id = static_cast<ID>(0); return state; }
+
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_REFERENCE); }
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_REFERENCE); }
 	};
@@ -1048,7 +1050,6 @@ namespace vaultmp
 			String GetBaseName() const noexcept { return vaultmp::GetBaseName(id); }
 			State IsNearPoint(Value X, Value Y, Value Z, Value R) const noexcept { return vaultmp::IsNearPoint(id, X, Y, Z, R); }
 
-			State DestroyObject() noexcept { State state = vaultmp::DestroyObject(id); id = static_cast<ID>(0); return state; }
 			State Activate(ID actor = static_cast<ID>(0)) noexcept { return vaultmp::Activate(id, actor); }
 			State SetPos(Value X, Value Y, Value Z) noexcept { return vaultmp::SetPos(id, X, Y, Z); }
 			State SetAngle(Value X, Value Y, Value Z) noexcept { return vaultmp::SetAngle(id, X, Y, Z); }
@@ -1131,7 +1132,7 @@ namespace vaultmp
 			Container() noexcept {}
 
 		public:
-			Container(ID id) noexcept { id = vaultmp::IsContainer(id) ? id : static_cast<ID>(0); }
+			Container(ID id) noexcept { this->id = vaultmp::IsContainer(id) ? id : static_cast<ID>(0); }
 			~Container() noexcept {}
 
 			#define GetContainerItemCount_Template(type) \
@@ -1218,6 +1219,8 @@ namespace vaultmp
 
 			UCount GetContainerItemCount() const noexcept { return vaultmp::GetContainerItemCount(id, static_cast<Base>(0)); }
 			IDVector GetContainerItemList() const noexcept { return vaultmp::GetContainerItemList(id); }
+
+			State DestroyItemList() noexcept { State state = vaultmp::DestroyItemList(id); id = static_cast<ID>(0); return state; }
 
 			#define AddItem_Template(type) \
 				ID AddItem(type item, UCount count = 1, Value condition = 100.0, State silent = True) noexcept { return vaultmp::AddItem(id, item, count, condition, silent); }

@@ -330,6 +330,7 @@ class Script
 		static bool SetItemEquipped(RakNet::NetworkID id, bool equipped, bool silent, bool stick) noexcept;
 		static RakNet::NetworkID CreateContainer(unsigned int baseID, RakNet::NetworkID id, unsigned int cell, double X, double Y, double Z) noexcept;
 		static RakNet::NetworkID CreateItemList(RakNet::NetworkID source, unsigned int baseID) noexcept;
+		static bool DestroyItemList(RakNet::NetworkID id) noexcept;
 		static RakNet::NetworkID AddItem(RakNet::NetworkID id, unsigned int baseID, unsigned int count, double condition, bool silent) noexcept;
 		static void AddItemList(RakNet::NetworkID id, RakNet::NetworkID source, unsigned int baseID) noexcept;
 		static unsigned int RemoveItem(RakNet::NetworkID id, unsigned int baseID, unsigned int count, bool silent) noexcept;
@@ -526,6 +527,7 @@ class Script
 			{"SetItemEquipped", Script::SetItemEquipped},
 			{"CreateContainer", Script::CreateContainer},
 			{"CreateItemList", Script::CreateItemList},
+			{"DestroyItemList", Script::DestroyItemList},
 			{"AddItem", Script::AddItem},
 			{"RemoveItem", Script::RemoveItem},
 			{"RemoveAllItems", Script::RemoveAllItems},
@@ -630,10 +632,7 @@ class Script
 			{"OnRadioButtonSelect", Function<void, RakNet::NetworkID, RakNet::NetworkID, RakNet::NetworkID>()},
 			{"OnListItemSelect", Function<void, RakNet::NetworkID, RakNet::NetworkID, bool>()},
 			{"OnClientAuthenticate", Function<bool, const char*, const char*>()},
-			{"OnGameYearChange", Function<void, unsigned int>()},
-			{"OnGameMonthChange", Function<void, unsigned int>()},
-			{"OnGameDayChange", Function<void, unsigned int>()},
-			{"OnGameHourChange", Function<void, unsigned int>()},
+			{"OnGameTimeChange", Function<void, unsigned int, unsigned int, unsigned int, unsigned int>()},
 			{"OnServerInit", Function<void>()},
 			{"OnServerExit", Function<void>()},
 		};

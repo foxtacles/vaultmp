@@ -200,10 +200,7 @@ forward OnCheckboxSelect(ID, player, Bool:selected);
 forward OnRadioButtonSelect(ID, previous, player);
 forward OnListItemSelect(ID, player, Bool:selected);
 forward OnClientAuthenticate(const name{}, const pwd{});
-forward OnGameYearChange(year);
-forward OnGameMonthChange(month);
-forward OnGameDayChange(day);
-forward OnGameHourChange(hour);
+forward OnGameTimeChange(year, month, day, hour);
 forward OnServerInit();
 forward OnServerExit();
 
@@ -328,6 +325,7 @@ native Bool:SetItemCondition(ID, Float:condition);
 native Bool:SetItemEquipped(ID, Bool:equipped, Bool:silent = Bool:true, Bool:stick = Bool:false)
 native CreateContainer(container, ID, cell = 0, Float:X = 0.00, Float:Y = 0.00, Float:Z = 0.00);
 native CreateItemList(source, base = 0);
+native Bool:DestroyItemList(ID);
 native AddItem(ID, item, count = 1, Float:value = 100.0, Bool:silent = Bool:true);
 native AddItemList(ID, source, base = 0);
 native RemoveItem(ID, item, count = 1, Bool:silent = Bool:true);

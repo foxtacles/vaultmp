@@ -22,22 +22,7 @@ Void VAULTSCRIPT OnServerExit() noexcept
 
 }
 
-Void VAULTSCRIPT OnGameYearChange(UCount year) noexcept
-{
-
-}
-
-Void VAULTSCRIPT OnGameMonthChange(UCount month) noexcept
-{
-
-}
-
-Void VAULTSCRIPT OnGameDayChange(UCount day) noexcept
-{
-
-}
-
-Void VAULTSCRIPT OnGameHourChange(UCount hour) noexcept
+Void VAULTSCRIPT OnGameTimeChange(UCount year, UCount month, UCount day, UCount hour) noexcept
 {
 
 }

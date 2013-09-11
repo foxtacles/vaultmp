@@ -524,44 +524,36 @@ unsigned long long Script::Timer_GameTime() noexcept
 	TM _tm_new;
 	gmtime64_r(&t, &_tm_new);
 
+	NetworkResponse response;
+
 	if (_tm.tm_year != _tm_new.tm_year)
-	{
-		Network::Queue({Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameYear, _tm_new.tm_year + 1900),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-		});
-
-		Call<CBI("OnGameYearChange")>(static_cast<unsigned int>(_tm_new.tm_year + 1900));
-	}
+		);
 
 	if (_tm.tm_mon != _tm_new.tm_mon)
-	{
-		Network::Queue({Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameMonth, _tm_new.tm_mon),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-		});
-
-		Call<CBI("OnGameMonthChange")>(static_cast<unsigned int>(_tm_new.tm_mon));
-	}
+		);
 
 	if (_tm.tm_mday != _tm_new.tm_mday)
-	{
-		Network::Queue({Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameDay, _tm_new.tm_mday),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-		});
-
-		Call<CBI("OnGameDayChange")>(static_cast<unsigned int>(_tm_new.tm_mday));
-	}
+		);
 
 	if (_tm.tm_hour != _tm_new.tm_hour)
-	{
-		Network::Queue({Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameHour, _tm_new.tm_hour),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-		});
+		);
 
-		Call<CBI("OnGameHourChange")>(static_cast<unsigned int>(_tm_new.tm_hour));
+	if (!response.empty())
+	{
+		Network::Queue(move(response));
+		Call<CBI("OnGameTimeChange")>(static_cast<unsigned int>(_tm_new.tm_year + 1900), static_cast<unsigned int>(_tm_new.tm_mon), static_cast<unsigned int>(_tm_new.tm_mday), static_cast<unsigned int>(_tm_new.tm_hour));
 	}
 
 	return 1;
@@ -690,47 +682,39 @@ void Script::SetGameTime(signed long long time) noexcept
 	TM _tm;
 	gmtime64_r(&t, &_tm);
 
+	NetworkResponse response;
+
 	if (_tm.tm_year != _tm_new.tm_year)
-	{
-		Network::Queue({Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameYear, _tm_new.tm_year + 1900),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-		});
-
-		Call<CBI("OnGameYearChange")>(static_cast<unsigned int>(_tm_new.tm_year + 1900));
-	}
+		);
 
 	if (_tm.tm_mon != _tm_new.tm_mon)
-	{
-		Network::Queue({Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameMonth, _tm_new.tm_mon),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-		});
-
-		Call<CBI("OnGameMonthChange")>(static_cast<unsigned int>(_tm_new.tm_mon));
-	}
+		);
 
 	if (_tm.tm_mday != _tm_new.tm_mday)
-	{
-		Network::Queue({Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameDay, _tm_new.tm_mday),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-		});
-
-		Call<CBI("OnGameDayChange")>(static_cast<unsigned int>(_tm_new.tm_mday));
-	}
+		);
 
 	if (_tm.tm_hour != _tm_new.tm_hour)
-	{
-		Network::Queue({Network::CreateResponse(
+		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_GAME_GLOBAL>(Global_GameHour, _tm_new.tm_hour),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-		});
-
-		Call<CBI("OnGameHourChange")>(static_cast<unsigned int>(_tm_new.tm_hour));
-	}
+		);
 
 	Script::time.first = chrono::time_point<chrono::system_clock>(chrono::seconds(t_new));
+
+	if (!response.empty())
+	{
+		Network::Queue(move(response));
+		Call<CBI("OnGameTimeChange")>(static_cast<unsigned int>(_tm_new.tm_year + 1900), static_cast<unsigned int>(_tm_new.tm_mon), static_cast<unsigned int>(_tm_new.tm_mday), static_cast<unsigned int>(_tm_new.tm_hour));
+	}
 }
 
 void Script::SetGameYear(unsigned int year) noexcept
@@ -754,7 +738,7 @@ void Script::SetGameYear(unsigned int year) noexcept
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 			});
 
-			Call<CBI("OnGameYearChange")>(year);
+			Call<CBI("OnGameTimeChange")>(static_cast<unsigned int>(_tm.tm_year + 1900), static_cast<unsigned int>(_tm.tm_mon), static_cast<unsigned int>(_tm.tm_mday), static_cast<unsigned int>(_tm.tm_hour));
 		}
 	}
 }
@@ -783,7 +767,7 @@ void Script::SetGameMonth(unsigned int month) noexcept
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 			});
 
-			Call<CBI("OnGameMonthChange")>(month);
+			Call<CBI("OnGameTimeChange")>(static_cast<unsigned int>(_tm.tm_year + 1900), static_cast<unsigned int>(_tm.tm_mon), static_cast<unsigned int>(_tm.tm_mday), static_cast<unsigned int>(_tm.tm_hour));
 		}
 	}
 }
@@ -812,7 +796,7 @@ void Script::SetGameDay(unsigned int day) noexcept
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 			});
 
-			Call<CBI("OnGameDayChange")>(day);
+			Call<CBI("OnGameTimeChange")>(static_cast<unsigned int>(_tm.tm_year + 1900), static_cast<unsigned int>(_tm.tm_mon), static_cast<unsigned int>(_tm.tm_mday), static_cast<unsigned int>(_tm.tm_hour));
 		}
 	}
 }
@@ -841,7 +825,7 @@ void Script::SetGameHour(unsigned int hour) noexcept
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 			});
 
-			Call<CBI("OnGameHourChange")>(hour);
+			Call<CBI("OnGameTimeChange")>(static_cast<unsigned int>(_tm.tm_year + 1900), static_cast<unsigned int>(_tm.tm_mon), static_cast<unsigned int>(_tm.tm_mday), static_cast<unsigned int>(_tm.tm_hour));
 		}
 	}
 }
@@ -1325,13 +1309,13 @@ bool Script::CreateVolatile(NetworkID id, unsigned int baseID, double aX, double
 
 bool Script::DestroyObject(NetworkID id) noexcept
 {
-	if (!GameFactory::Operate<Base, FailPolicy::Return>(id, [id](FactoryBase& base) {
-		return !vaultcast_test<Player>(base) && !vaultcast_test<Window>(base) && !vaultcast_test<ListItem>(base);
+	if (!GameFactory::Operate<Reference, FailPolicy::Return>(id, [id](FactoryReference& reference) {
+		return !vaultcast_test<Player>(reference);
 	})) return false;
 
 	Script::Call<CBI("OnDestroy")>(id);
 
-	return GameFactory::Operate<Base, FailPolicy::Bool>(id, [id](FactoryBase& base) {
+	return GameFactory::Operate<Reference, FailPolicy::Bool>(id, [id](FactoryReference& reference) {
 		GameFactory::Operate<Object, FailPolicy::Return>(id, [](FactoryObject& object) {
 			if (object->IsPersistent())
 				deletedStatic[object->GetNetworkCell()].emplace_back(object->GetReference());
@@ -1349,7 +1333,7 @@ bool Script::DestroyObject(NetworkID id) noexcept
 
 		if (container.first)
 		{
-			GameFactory::Free(base);
+			GameFactory::Free(reference);
 
 			GameFactory::Operate<ItemList>(container.first, [id](FactoryItemList& itemlist) {
 				itemlist->RemoveItem(id);
@@ -1358,7 +1342,7 @@ bool Script::DestroyObject(NetworkID id) noexcept
 			GameFactory::Destroy(id);
 		}
 		else
-			GameFactory::Destroy(base);
+			GameFactory::Destroy(reference);
 	});
 }
 
@@ -1886,6 +1870,18 @@ NetworkID Script::CreateItemList(NetworkID source, unsigned int baseID) noexcept
 	Script::Call<CBI("OnCreate")>(id);
 
 	return id;
+}
+
+bool Script::DestroyItemList(NetworkID id) noexcept
+{
+	if (!GameFactory::Exists<ItemList>(id))
+		return false;
+
+	Script::Call<CBI("OnDestroy")>(id);
+
+	return GameFactory::Operate<ItemList, FailPolicy::Bool>(id, [id](FactoryItemList& itemlist) {
+		GameFactory::Destroy(itemlist);
+	});
 }
 
 NetworkID Script::AddItem(NetworkID id, unsigned int baseID, unsigned int count, double condition, bool silent) noexcept

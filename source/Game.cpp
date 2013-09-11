@@ -730,8 +730,8 @@ void Game::NewVolatile(FactoryObject& reference, unsigned int baseID, float aX, 
 		return;
 
 	Interface::Dynamic([&reference, baseID, aX, aY, aZ]() {
-		const auto& pos = reference->GetNetworkPos()
-;
+		const auto& pos = reference->GetNetworkPos();
+
 		Interface::ExecuteCommand(Func::PlaceAtMePrepare, {RawParameter(aX), RawParameter(aY), RawParameter(aZ), RawParameter(get<0>(pos)), RawParameter(get<1>(pos)), RawParameter(get<2>(pos))});
 
 		PlaceAtMe(reference, baseID, 1.00f, 1);
