@@ -1,4 +1,4 @@
-#include "ActorReference.hpp"
+#include "AcReference.hpp"
 #include "sqlite/sqlite3.h"
 
 #include <cmath>
@@ -6,12 +6,12 @@
 using namespace std;
 using namespace DB;
 
-unordered_map<unsigned int, ActorReference*> ActorReference::refs;
+unordered_map<unsigned int, AcReference*> AcReference::refs;
 
-ActorReference::ActorReference(const string& table, sqlite3_stmt* stmt)
+AcReference::AcReference(const string& table, sqlite3_stmt* stmt)
 {
 	if (sqlite3_column_count(stmt) != 12)
-		throw VaultException("Malformed input database (actor references): %s", table.c_str()).stacktrace();
+		throw VaultException("Malformed input database (actor / creature references): %s", table.c_str()).stacktrace();
 
 	unsigned int dlc = static_cast<unsigned int>(sqlite3_column_int(stmt, 11));
 	// if DLC enabled
@@ -51,47 +51,47 @@ ActorReference::ActorReference(const string& table, sqlite3_stmt* stmt)
 	refs.emplace(refID, this);
 }
 
-Expected<ActorReference*> ActorReference::Lookup(unsigned int refID)
+Expected<AcReference*> AcReference::Lookup(unsigned int refID)
 {
 	auto it = refs.find(refID);
 
 	if (it != refs.end())
 		return it->second;
 
-	return VaultException("No actor reference with refID %08X found", refID);
+	return VaultException("No actor / creature reference with refID %08X found", refID);
 }
 
-const string& ActorReference::GetEditor() const
+const string& AcReference::GetEditor() const
 {
 	return editor;
 }
 
-unsigned int ActorReference::GetReference() const
+unsigned int AcReference::GetReference() const
 {
 	return refID;
 }
 
-unsigned int ActorReference::GetBase() const
+unsigned int AcReference::GetBase() const
 {
 	return baseID;
 }
 
-unsigned int ActorReference::GetCell() const
+unsigned int AcReference::GetCell() const
 {
 	return cell;
 }
 
-const std::tuple<float, float, float>& ActorReference::GetPos() const
+const std::tuple<float, float, float>& AcReference::GetPos() const
 {
 	return pos;
 }
 
-const std::tuple<float, float, float>& ActorReference::GetAngle() const
+const std::tuple<float, float, float>& AcReference::GetAngle() const
 {
 	return angle;
 }
 
-unsigned int ActorReference::GetFlags() const
+unsigned int AcReference::GetFlags() const
 {
 	return flags;
 }

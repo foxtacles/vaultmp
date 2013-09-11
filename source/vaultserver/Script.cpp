@@ -988,22 +988,20 @@ double Script::GetTimeScale() noexcept
 
 NetworkID Script::GetID(unsigned int refID) noexcept
 {
-	return GameFactory::Operate<Object, FailPolicy::Return>(refID, [](FactoryObject& object) {
-		return object->GetNetworkID();
-	});
+	return GameFactory::Lookup<Reference>(refID);
 }
 
 unsigned int Script::GetReference(NetworkID id) noexcept
 {
-	return GameFactory::Operate<Object, FailPolicy::Return>(id, [](FactoryObject& object) {
-		return object->GetReference();
+	return GameFactory::Operate<Reference, FailPolicy::Return>(id, [](FactoryReference& reference) {
+		return reference->GetReference();
 	});
 }
 
 unsigned int Script::GetBase(NetworkID id) noexcept
 {
-	return GameFactory::Operate<Object, FailPolicy::Return>(id, [](FactoryObject& object) {
-		return object->GetBase();
+	return GameFactory::Operate<Reference, FailPolicy::Return>(id, [](FactoryReference& reference) {
+		return reference->GetBase();
 	});
 }
 

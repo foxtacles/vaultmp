@@ -138,6 +138,26 @@ Lockable* Reference::SetObjectValue(Value<T>& dest, const T& value)
 template<> Lockable* Reference::SetObjectValue(Value<float>& dest, const float& value);
 template<> Lockable* Reference::SetObjectValue(Value<std::tuple<float, float, float>>& dest, const std::tuple<float, float, float>& value);
 
+template<>
+struct Reference::PickBy_<unsigned int> {
+	static RakNet::NetworkID PickBy(unsigned int id) noexcept {
+		return refIDs.Operate([id](RefIDs& refIDs) {
+			return refIDs[id];
+		});
+	}
+
+	static std::vector<RakNet::NetworkID> PickBy(const std::vector<unsigned int>& ids) noexcept {
+		return refIDs.Operate([&ids](RefIDs& refIDs) {
+			std::vector<RakNet::NetworkID> result;
+
+			for (const auto& id : ids)
+				result.emplace_back(refIDs[id]);
+
+			return result;
+		});
+	}
+};
+
 class ReferenceFunctor : public VaultFunctor
 {
 	private:

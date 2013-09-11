@@ -184,26 +184,6 @@ class Object : public Reference
 		virtual pPacket toPacket() const;
 };
 
-template<>
-struct Object::PickBy_<unsigned int> {
-	static RakNet::NetworkID PickBy(unsigned int id) noexcept {
-		return refIDs.Operate([id](RefIDs& refIDs) {
-			return refIDs[id];
-		});
-	}
-
-	static std::vector<RakNet::NetworkID> PickBy(const std::vector<unsigned int>& ids) noexcept {
-		return refIDs.Operate([&ids](RefIDs& refIDs) {
-			std::vector<RakNet::NetworkID> result;
-
-			for (const auto& id : ids)
-				result.emplace_back(refIDs[id]);
-
-			return result;
-		});
-	}
-};
-
 #ifndef VAULTSERVER
 class ObjectFunctor : public ReferenceFunctor
 {

@@ -18,8 +18,7 @@
 #include "vaultserver/Item.hpp"
 #include "vaultserver/Terminal.hpp"
 #include "vaultserver/Interior.hpp"
-#include "vaultserver/ActorReference.hpp"
-#include "vaultserver/CreatureReference.hpp"
+#include "vaultserver/AcReference.hpp"
 #endif
 
 #ifdef VAULTMP_DEBUG
@@ -78,8 +77,7 @@ class GameFactory
 		static Database<DB::Item> dbItems;
 		static Database<DB::Terminal> dbTerminals;
 		static Database<DB::Interior> dbInteriors;
-		static Database<DB::ActorReference> dbActorReferences;
-		static Database<DB::CreatureReference> dbCreatureReferences;
+		static Database<DB::AcReference> dbAcReferences;
 #endif
 
 		inline static BaseList::iterator GetShared(const RakNet::NetworkID& id) { return index.count(id) ? index[id] : instances.end(); }

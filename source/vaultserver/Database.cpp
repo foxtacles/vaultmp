@@ -10,8 +10,7 @@
 #include "Item.hpp"
 #include "Terminal.hpp"
 #include "Interior.hpp"
-#include "ActorReference.hpp"
-#include "CreatureReference.hpp"
+#include "AcReference.hpp"
 #include "sqlite/sqlite3.h"
 
 #ifdef __WIN32__
@@ -153,5 +152,4 @@ template class Database<DB::BaseContainer>;
 template class Database<DB::Item>;
 template class Database<DB::Terminal>;
 template class Database<DB::Interior>;
-template class Database<DB::ActorReference>;
-template class Database<DB::CreatureReference>;
+template class Database<DB::AcReference>;

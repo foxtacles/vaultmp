@@ -1,5 +1,5 @@
-#ifndef ACTORREFERENCEDB_H
-#define ACTORREFERENCEDB_H
+#ifndef ACREFERENCE_H
+#define ACREFERENCE_H
 
 #include "vaultserver.hpp"
 #include "Expected.hpp"
@@ -11,15 +11,15 @@
 class sqlite3_stmt;
 
 /**
- * \brief Represents a game actor reference
+ * \brief Represents a game creature reference
  */
 
 namespace DB
 {
-	class ActorReference
+	class AcReference
 	{
 		private:
-			static std::unordered_map<unsigned int, ActorReference*> refs;
+			static std::unordered_map<unsigned int, AcReference*> refs;
 
 			std::string editor;
 			unsigned int refID;
@@ -28,12 +28,12 @@ namespace DB
 			std::tuple<float, float, float> pos, angle;
 			unsigned int flags;
 
-			ActorReference(const ActorReference&) = delete;
-			ActorReference& operator=(const ActorReference&) = delete;
+			AcReference(const AcReference&) = delete;
+			AcReference& operator=(const AcReference&) = delete;
 
 		public:
-			static const std::unordered_map<unsigned int, ActorReference*>& Get() { return refs; }
-			static Expected<ActorReference*> Lookup(unsigned int refID);
+			static const std::unordered_map<unsigned int, AcReference*>& Get() { return refs; }
+			static Expected<AcReference*> Lookup(unsigned int refID);
 
 			const std::string& GetEditor() const;
 			unsigned int GetReference() const;
@@ -43,11 +43,11 @@ namespace DB
 			const std::tuple<float, float, float>& GetAngle() const;
 			unsigned int GetFlags() const;
 
-			ActorReference(const std::string& table, sqlite3_stmt* stmt);
-			~ActorReference() = default;
+			AcReference(const std::string& table, sqlite3_stmt* stmt);
+			~AcReference() = default;
 			// must never be called. only defined because vector requires it
-			ActorReference(ActorReference&&) { std::terminate(); }
-			ActorReference& operator=(ActorReference&&) = delete;
+			AcReference(AcReference&&) { std::terminate(); }
+			AcReference& operator=(AcReference&&) = delete;
 	};
 }
 
