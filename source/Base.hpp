@@ -29,8 +29,8 @@ class Base : private CriticalSection, public RakNet::NetworkIDObject
 
 	protected:
 		Base();
-		Base(const pDefault* packet);
-		Base(pPacket&& packet) : Base(packet.get()) {};
+		Base(const pPacket& packet);
+		Base(pPacket&& packet) : Base(packet) {};
 
 	public:
 		virtual ~Base() noexcept;
@@ -43,7 +43,7 @@ class Base : private CriticalSection, public RakNet::NetworkIDObject
 
 template<> struct pTypesMap<pTypes::ID_BASE_NEW> { typedef pGeneratorReference<pTypes::ID_BASE_NEW> type; };
 template<>
-inline const typename pTypesMap<pTypes::ID_BASE_NEW>::type* PacketFactory::Cast_<pTypes::ID_BASE_NEW>::Cast(const pDefault* packet) {
+inline const typename pTypesMap<pTypes::ID_BASE_NEW>::type* PacketFactory::Cast_<pTypes::ID_BASE_NEW>::Cast(const pPacket* packet) {
 	return static_cast<const typename pTypesMap<pTypes::ID_BASE_NEW>::type*>(packet);
 }
 

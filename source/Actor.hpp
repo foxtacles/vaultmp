@@ -46,8 +46,8 @@ class Actor : public Container
 	protected:
 		Actor(unsigned int refID, unsigned int baseID);
 		Actor(unsigned int baseID) : Actor(0x00000000, baseID) {}
-		Actor(const pDefault* packet);
-		Actor(pPacket&& packet) : Actor(packet.get()) {};
+		Actor(const pPacket& packet);
+		Actor(pPacket&& packet) : Actor(packet) {};
 
 	public:
 		virtual ~Actor() noexcept;
@@ -230,7 +230,7 @@ GF_TYPE_WRAPPER(Actor, Container, ID_ACTOR, ALL_ACTORS)
 
 template<> struct pTypesMap<pTypes::ID_ACTOR_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_ACTOR_NEW, std::map<unsigned char, float>, std::map<unsigned char, float>, unsigned int, signed int, unsigned int, unsigned char, unsigned char, unsigned char, bool, bool, bool, bool> type; };
 template<>
-inline const typename pTypesMap<pTypes::ID_ACTOR_NEW>::type* PacketFactory::Cast_<pTypes::ID_ACTOR_NEW>::Cast(const pDefault* packet) {
+inline const typename pTypesMap<pTypes::ID_ACTOR_NEW>::type* PacketFactory::Cast_<pTypes::ID_ACTOR_NEW>::Cast(const pPacket* packet) {
 	pTypes type = packet->type();
 	return (
 		type == pTypes::ID_ACTOR_NEW ||

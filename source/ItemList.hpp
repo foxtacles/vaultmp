@@ -40,8 +40,8 @@ class ItemList : public virtual Base
 
 	protected:
 		ItemList();
-		ItemList(const pDefault* packet);
-		ItemList(pPacket&& packet) : ItemList(packet.get()) {};
+		ItemList(const pPacket& packet);
+		ItemList(pPacket&& packet) : ItemList(packet) {};
 
 	public:
 		typedef std::pair<bool, RakNet::NetworkID> AddOp;
@@ -75,7 +75,7 @@ GF_TYPE_WRAPPER(ItemList, Base, ID_ITEMLIST, ALL_ITEMLISTS)
 
 template<> struct pTypesMap<pTypes::ID_ITEMLIST_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_ITEMLIST_NEW, std::vector<pPacket>> type; };
 template<>
-inline const typename pTypesMap<pTypes::ID_ITEMLIST_NEW>::type* PacketFactory::Cast_<pTypes::ID_ITEMLIST_NEW>::Cast(const pDefault* packet) {
+inline const typename pTypesMap<pTypes::ID_ITEMLIST_NEW>::type* PacketFactory::Cast_<pTypes::ID_ITEMLIST_NEW>::Cast(const pPacket* packet) {
 	pTypes type = packet->type();
 	return (
 		type == pTypes::ID_ITEMLIST_NEW ||

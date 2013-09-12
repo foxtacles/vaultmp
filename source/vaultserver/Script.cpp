@@ -223,11 +223,11 @@ void Script::Initialize()
 					object->SetLockLevel(DB::Terminal::Lookup(data->GetBase())->GetLock());
 				});
 				break;
-/*
+
 			case Utils::hash("STAT"):
 				GameFactory::Create<Reference>(data->GetReference(), data->GetBase());
 				break;
-*/
+
 			default:
 				GameFactory::Operate<Object>(GameFactory::Create<Object>(data->GetReference(), data->GetBase()), [&object_init, data](FactoryObject& object) {
 					object_init(object, data);

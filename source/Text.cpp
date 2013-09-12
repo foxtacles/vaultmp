@@ -8,7 +8,7 @@ Text::Text() : Window()
 	initialize();
 }
 
-Text::Text(const pDefault* packet) : Window(PacketFactory::Pop<pPacket>(packet))
+Text::Text(const pPacket& packet) : Window(PacketFactory::Pop<pPacket>(packet))
 {
 	initialize();
 

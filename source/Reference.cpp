@@ -16,7 +16,7 @@ Reference::Reference(unsigned int refID, unsigned int baseID) : Base()
 	this->SetBase(baseID);
 }
 
-Reference::Reference(const pDefault* packet)
+Reference::Reference(const pPacket& packet)
 {
 	pPacket pBaseNew = PacketFactory::Pop<pPacket>(packet);
 

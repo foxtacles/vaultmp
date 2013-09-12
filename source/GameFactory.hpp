@@ -238,11 +238,6 @@ class GameFactory
 		 */
 		template<typename T, typename... Args>
 		static RakNet::NetworkID Create(Args&&... args);
-		/**
-		 * \brief Creates a known instance from a network packet
-		 */
-		template<typename T>
-		static RakNet::NetworkID Create(const pDefault* packet);
 
 		/**
 		 * \brief Destroys all instances and cleans up type classes
@@ -383,25 +378,6 @@ RakNet::NetworkID GameFactory::Create(Args&&... args)
 #ifdef VAULTSERVER
 	base->initializers();
 #endif
-
-	cs.Operate([id, type, &base]() {
-		++typecount[type];
-		// emplace
-		index[id] = instances.insert(make_pair(std::move(base), type)).first;
-	});
-
-	return id;
-}
-
-template<typename T>
-RakNet::NetworkID GameFactory::Create(const pDefault* packet)
-{
-	static_assert(std::is_base_of<Base, T>::value, "T must be derived from Base");
-
-	std::shared_ptr<Base> base(new T(packet));
-	constexpr unsigned int type = rTypes<T>::value;
-
-	RakNet::NetworkID id = base->GetNetworkID();
 
 	cs.Operate([id, type, &base]() {
 		++typecount[type];

@@ -12,7 +12,7 @@ Window::Window() : Base(), parent(0), locked(false), visible(true)
 	initialize();
 }
 
-Window::Window(const pDefault* packet) : Base(PacketFactory::Pop<pPacket>(packet))
+Window::Window(const pPacket& packet) : Base(PacketFactory::Pop<pPacket>(packet))
 {
 	initialize();
 

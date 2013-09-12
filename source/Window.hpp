@@ -34,8 +34,8 @@ class Window : public Base
 
 	protected:
 		Window();
-		Window(const pDefault* packet);
-		Window(pPacket&& packet) : Window(packet.get()) {};
+		Window(const pPacket& packet);
+		Window(pPacket&& packet) : Window(packet) {};
 
 	public:
 		virtual ~Window() noexcept;
@@ -74,7 +74,7 @@ GF_TYPE_WRAPPER(Window, Base, ID_WINDOW, ALL_WINDOWS)
 
 template<> struct pTypesMap<pTypes::ID_WINDOW_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_WINDOW_NEW, RakNet::NetworkID, std::string, std::tuple<float, float, float, float>, std::tuple<float, float, float, float>, bool, bool, std::string> type; };
 template<>
-inline const typename pTypesMap<pTypes::ID_WINDOW_NEW>::type* PacketFactory::Cast_<pTypes::ID_WINDOW_NEW>::Cast(const pDefault* packet) {
+inline const typename pTypesMap<pTypes::ID_WINDOW_NEW>::type* PacketFactory::Cast_<pTypes::ID_WINDOW_NEW>::Cast(const pPacket* packet) {
 	pTypes type = packet->type();
 	return (
 		type == pTypes::ID_WINDOW_NEW ||

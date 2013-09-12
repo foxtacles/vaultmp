@@ -371,7 +371,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../iniparser/src/iniparser.h" />
-		<Unit filename="../packet/PacketFactory.cpp" />
 		<Unit filename="../stack_trace/include/dbg/stack.hpp">
 			<Option target="Debug" />
 			<Option target="DebugUnix" />

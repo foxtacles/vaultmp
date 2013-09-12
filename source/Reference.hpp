@@ -61,8 +61,8 @@ class Reference : public virtual Base
 
 		Reference(unsigned int refID, unsigned int baseID);
 		Reference(unsigned int baseID) : Reference(0x00000000, baseID) {}
-		Reference(const pDefault* packet);
-		Reference(pPacket&& packet) : Reference(packet.get()) {};
+		Reference(const pPacket& packet);
+		Reference(pPacket&& packet) : Reference(packet) {};
 
 	public:
 		virtual ~Reference() noexcept;
@@ -178,7 +178,7 @@ GF_TYPE_WRAPPER(Reference, Base, ID_REFERENCE, ALL_REFERENCES)
 
 template<> struct pTypesMap<pTypes::ID_REFERENCE_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_REFERENCE_NEW, unsigned int, unsigned int> type; };
 template<>
-inline const typename pTypesMap<pTypes::ID_REFERENCE_NEW>::type* PacketFactory::Cast_<pTypes::ID_REFERENCE_NEW>::Cast(const pDefault* packet) {
+inline const typename pTypesMap<pTypes::ID_REFERENCE_NEW>::type* PacketFactory::Cast_<pTypes::ID_REFERENCE_NEW>::Cast(const pPacket* packet) {
 	pTypes type = packet->type();
 	return (
 		type == pTypes::ID_REFERENCE_NEW ||

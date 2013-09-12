@@ -31,7 +31,7 @@ Player::Player(unsigned int refID, unsigned int baseID) : Actor(refID, baseID)
 	this->SetActorFemale(false);
 }
 
-Player::Player(const pDefault* packet) : Actor(PacketFactory::Pop<pPacket>(packet))
+Player::Player(const pPacket& packet) : Actor(PacketFactory::Pop<pPacket>(packet))
 {
 	initialize();
 

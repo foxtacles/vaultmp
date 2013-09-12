@@ -9,7 +9,7 @@ Base::Base()
 	this->SetNetworkIDManager(Network::Manager());
 }
 
-Base::Base(const pDefault* packet) : Base()
+Base::Base(const pPacket& packet) : Base()
 {
 	NetworkID id;
 

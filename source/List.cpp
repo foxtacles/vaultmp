@@ -11,7 +11,7 @@ List::List() : Window(), multiselect(DEFAULT_MULTISELECT)
 	initialize();
 }
 
-List::List(const pDefault* packet) : Window(PacketFactory::Pop<pPacket>(packet))
+List::List(const pPacket& packet) : Window(PacketFactory::Pop<pPacket>(packet))
 {
 	initialize();
 
@@ -20,7 +20,7 @@ List::List(const pDefault* packet) : Window(PacketFactory::Pop<pPacket>(packet))
 	PacketFactory::Access<pTypes::ID_LIST_NEW>(packet, items, multiselect);
 
 	for (const pPacket& _packet : items)
-		AddItem(GameFactory::Create<ListItem>(_packet.get()));
+		AddItem(GameFactory::Create<ListItem>(_packet));
 }
 
 List::~List() noexcept

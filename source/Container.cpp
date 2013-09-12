@@ -16,7 +16,7 @@ Container::Container(unsigned int refID, unsigned int baseID) : Object(refID, ba
 	initialize();
 }
 
-Container::Container(const pDefault* packet) : Object(PacketFactory::Pop<pPacket>(packet)), ItemList(PacketFactory::Pop<pPacket>(packet))
+Container::Container(const pPacket& packet) : Object(PacketFactory::Pop<pPacket>(packet)), ItemList(PacketFactory::Pop<pPacket>(packet))
 {
 	initialize();
 }

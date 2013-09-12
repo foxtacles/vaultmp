@@ -26,8 +26,8 @@ class Container : public Object, public ItemList
 	protected:
 		Container(unsigned int refID, unsigned int baseID);
 		Container(unsigned int baseID) : Container(0x00000000, baseID) {}
-		Container(const pDefault* packet);
-		Container(pPacket&& packet) : Container(packet.get()) {};
+		Container(const pPacket& packet);
+		Container(pPacket&& packet) : Container(packet) {};
 
 	public:
 		virtual ~Container() noexcept;
@@ -71,7 +71,7 @@ GF_TYPE_WRAPPER(Container, Object, ID_CONTAINER, ALL_CONTAINERS)
 
 template<> struct pTypesMap<pTypes::ID_CONTAINER_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_CONTAINER_NEW, pPacket> type; };
 template<>
-inline const typename pTypesMap<pTypes::ID_CONTAINER_NEW>::type* PacketFactory::Cast_<pTypes::ID_CONTAINER_NEW>::Cast(const pDefault* packet) {
+inline const typename pTypesMap<pTypes::ID_CONTAINER_NEW>::type* PacketFactory::Cast_<pTypes::ID_CONTAINER_NEW>::Cast(const pPacket* packet) {
 	pTypes type = packet->type();
 	return (
 		type == pTypes::ID_CONTAINER_NEW ||

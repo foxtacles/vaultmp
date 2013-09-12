@@ -26,8 +26,8 @@ class RadioButton : public Window
 
 	protected:
 		RadioButton();
-		RadioButton(const pDefault* packet);
-		RadioButton(pPacket&& packet) : RadioButton(packet.get()) {};
+		RadioButton(const pPacket& packet);
+		RadioButton(pPacket&& packet) : RadioButton(packet) {};
 
 	public:
 		virtual ~RadioButton() noexcept;

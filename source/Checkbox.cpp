@@ -8,7 +8,7 @@ Checkbox::Checkbox() : Window(), selected(DEFAULT_SELECTED)
 	initialize();
 }
 
-Checkbox::Checkbox(const pDefault* packet) : Window(PacketFactory::Pop<pPacket>(packet))
+Checkbox::Checkbox(const pPacket& packet) : Window(PacketFactory::Pop<pPacket>(packet))
 {
 	initialize();
 

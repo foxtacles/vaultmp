@@ -30,8 +30,8 @@ class ListItem : public Base
 
 	protected:
 		ListItem();
-		ListItem(const pDefault* packet);
-		ListItem(pPacket&& packet) : ListItem(packet.get()) {};
+		ListItem(const pPacket& packet);
+		ListItem(pPacket&& packet) : ListItem(packet) {};
 
 	public:
 		virtual ~ListItem() noexcept;

@@ -20,8 +20,8 @@ class Button : public Window
 
 	protected:
 		Button();
-		Button(const pDefault* packet);
-		Button(pPacket&& packet) : Button(packet.get()) {};
+		Button(const pPacket& packet);
+		Button(pPacket&& packet) : Button(packet) {};
 
 	public:
 		static constexpr const char* CLOSE_BUTTON = "closeBTN";

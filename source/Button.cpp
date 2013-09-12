@@ -8,7 +8,7 @@ Button::Button() : Window()
 	initialize();
 }
 
-Button::Button(const pDefault* packet) : Window(PacketFactory::Pop<pPacket>(packet))
+Button::Button(const pPacket& packet) : Window(PacketFactory::Pop<pPacket>(packet))
 {
 	initialize();
 

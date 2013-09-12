@@ -8,7 +8,7 @@ Edit::Edit() : Window(), length(DEFAULT_LENGTH), validation(DEFAULT_VALIDATION)
 	initialize();
 }
 
-Edit::Edit(const pDefault* packet) : Window(PacketFactory::Pop<pPacket>(packet))
+Edit::Edit(const pPacket& packet) : Window(PacketFactory::Pop<pPacket>(packet))
 {
 	initialize();
 

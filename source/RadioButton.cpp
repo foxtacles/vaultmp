@@ -8,7 +8,7 @@ RadioButton::RadioButton() : Window(), selected(DEFAULT_SELECTED), group(DEFAULT
 	initialize();
 }
 
-RadioButton::RadioButton(const pDefault* packet) : Window(PacketFactory::Pop<pPacket>(packet))
+RadioButton::RadioButton(const pPacket& packet) : Window(PacketFactory::Pop<pPacket>(packet))
 {
 	initialize();
 

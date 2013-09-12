@@ -98,7 +98,6 @@ $(OBJDIR_DEBUG)\\Actor.o \
 $(OBJDIR_DEBUG)\\API.o \
 $(OBJDIR_DEBUG)\\Player.o \
 $(OBJDIR_DEBUG)\\Pipe.o \
-$(OBJDIR_DEBUG)\\PacketFactory.o \
 $(OBJDIR_DEBUG)\\Object.o \
 $(OBJDIR_DEBUG)\\NetworkClient.o \
 $(OBJDIR_DEBUG)\\Network.o \
@@ -175,7 +174,6 @@ $(OBJDIR_RELEASE)\\Actor.o \
 $(OBJDIR_RELEASE)\\API.o \
 $(OBJDIR_RELEASE)\\Player.o \
 $(OBJDIR_RELEASE)\\Pipe.o \
-$(OBJDIR_RELEASE)\\PacketFactory.o \
 $(OBJDIR_RELEASE)\\Object.o \
 $(OBJDIR_RELEASE)\\NetworkClient.o \
 $(OBJDIR_RELEASE)\\Network.o \
@@ -381,9 +379,6 @@ $(OBJDIR_DEBUG)\\Player.o: Player.cpp
 
 $(OBJDIR_DEBUG)\\Pipe.o: Pipe.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Pipe.cpp -o $(OBJDIR_DEBUG)\\Pipe.o
-
-$(OBJDIR_DEBUG)\\PacketFactory.o: packet\\PacketFactory.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c packet\\PacketFactory.cpp -o $(OBJDIR_DEBUG)\\PacketFactory.o
 
 $(OBJDIR_DEBUG)\\Object.o: Object.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Object.cpp -o $(OBJDIR_DEBUG)\\Object.o
@@ -620,9 +615,6 @@ $(OBJDIR_RELEASE)\\Player.o: Player.cpp
 
 $(OBJDIR_RELEASE)\\Pipe.o: Pipe.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Pipe.cpp -o $(OBJDIR_RELEASE)\\Pipe.o
-
-$(OBJDIR_RELEASE)\\PacketFactory.o: packet\\PacketFactory.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c packet\\PacketFactory.cpp -o $(OBJDIR_RELEASE)\\PacketFactory.o
 
 $(OBJDIR_RELEASE)\\Object.o: Object.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c Object.cpp -o $(OBJDIR_RELEASE)\\Object.o

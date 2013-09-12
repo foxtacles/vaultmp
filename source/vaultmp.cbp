@@ -405,7 +405,6 @@
 		</Unit>
 		<Unit filename="iniparser/src/iniparser.h" />
 		<Unit filename="packet/PacketExtensions.hpp" />
-		<Unit filename="packet/PacketFactory.cpp" />
 		<Unit filename="packet/PacketFactory.hpp" />
 		<Unit filename="packet/PacketTypes.hpp" />
 		<Unit filename="stack_trace/include/dbg/stack.hpp">

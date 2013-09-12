@@ -16,7 +16,7 @@ ItemList::ItemList() : Base()
 	initialize();
 }
 
-ItemList::ItemList(const pDefault* packet)
+ItemList::ItemList(const pPacket& packet)
 {
 	initialize();
 
@@ -33,7 +33,7 @@ ItemList::ItemList(const pDefault* packet)
 	PacketFactory::Access<pTypes::ID_ITEMLIST_NEW>(packet, items);
 
 	for (const pPacket& _packet : items)
-		AddItem(GameFactory::Create<Item>(_packet.get()));
+		AddItem(GameFactory::Create<Item>(_packet));
 }
 
 ItemList::~ItemList() noexcept

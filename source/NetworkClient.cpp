@@ -91,7 +91,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 		{
 			pPacket packet = PacketFactory::Init(data->data, data->length);
 
-			switch (packet->type())
+			switch (packet.type())
 			{
 				case pTypes::ID_GAME_MOD:
 				{
@@ -214,13 +214,14 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					Game::net_SetDeletedStatic(move(deletedStatic));
 					break;
 				}
-/*
+
 				case pTypes::ID_REFERENCE_NEW:
-					GameFactory::Operate<Reference>(GameFactory::Create<Reference>(packet.get()), [](FactoryReference& reference) {
-					}); break;
-*/
+					GameFactory::Create<Reference>(packet);
+					/*GameFactory::Operate<Reference>(GameFactory::Create<Reference>(packet.get()), [](FactoryReference& reference) {
+					});*/ break;
+
 				case pTypes::ID_OBJECT_NEW:
-					GameFactory::Operate<Object>(GameFactory::Create<Object>(packet.get()), [](FactoryObject& object) {
+					GameFactory::Operate<Object>(GameFactory::Create<Object>(packet), [](FactoryObject& object) {
 						Game::NewObject(object);
 					}); break;
 
@@ -236,22 +237,22 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				}
 
 				case pTypes::ID_ITEM_NEW:
-					GameFactory::Operate<Item>(GameFactory::Create<Item>(packet.get()), [](FactoryItem& item) {
+					GameFactory::Operate<Item>(GameFactory::Create<Item>(packet), [](FactoryItem& item) {
 						Game::NewItem(item);
 					}); break;
 
 				case pTypes::ID_CONTAINER_NEW:
-					GameFactory::Operate<Container>(GameFactory::Create<Container>(packet.get()), [](FactoryContainer& container) {
+					GameFactory::Operate<Container>(GameFactory::Create<Container>(packet), [](FactoryContainer& container) {
 						Game::NewContainer(container);
 					}); break;
 
 				case pTypes::ID_ACTOR_NEW:
-					GameFactory::Operate<Actor>(GameFactory::Create<Actor>(packet.get()), [](FactoryActor& actor) {
+					GameFactory::Operate<Actor>(GameFactory::Create<Actor>(packet), [](FactoryActor& actor) {
 						Game::NewActor(actor);
 					}); break;
 
 				case pTypes::ID_PLAYER_NEW:
-					GameFactory::Operate<Player>(GameFactory::Create<Player>(packet.get()), [](FactoryPlayer& player) {
+					GameFactory::Operate<Player>(GameFactory::Create<Player>(packet), [](FactoryPlayer& player) {
 						Game::NewPlayer(player);
 					}); break;
 
@@ -266,42 +267,42 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				}
 
 				case pTypes::ID_WINDOW_NEW:
-					GameFactory::Operate<Window>(GameFactory::Create<Window>(packet.get()), [](FactoryWindow& window) {
+					GameFactory::Operate<Window>(GameFactory::Create<Window>(packet), [](FactoryWindow& window) {
 						Game::NewWindow(window);
 					}); break;
 
 				case pTypes::ID_BUTTON_NEW:
-					GameFactory::Operate<Button>(GameFactory::Create<Button>(packet.get()), [](FactoryButton& button) {
+					GameFactory::Operate<Button>(GameFactory::Create<Button>(packet), [](FactoryButton& button) {
 						Game::NewButton(button);
 					}); break;
 
 				case pTypes::ID_TEXT_NEW:
-					GameFactory::Operate<Text>(GameFactory::Create<Text>(packet.get()), [](FactoryText& text) {
+					GameFactory::Operate<Text>(GameFactory::Create<Text>(packet), [](FactoryText& text) {
 						Game::NewText(text);
 					}); break;
 
 				case pTypes::ID_EDIT_NEW:
-					GameFactory::Operate<Edit>(GameFactory::Create<Edit>(packet.get()), [](FactoryEdit& edit) {
+					GameFactory::Operate<Edit>(GameFactory::Create<Edit>(packet), [](FactoryEdit& edit) {
 						Game::NewEdit(edit);
 					}); break;
 
 				case pTypes::ID_CHECKBOX_NEW:
-					GameFactory::Operate<Checkbox>(GameFactory::Create<Checkbox>(packet.get()), [](FactoryCheckbox& checkbox) {
+					GameFactory::Operate<Checkbox>(GameFactory::Create<Checkbox>(packet), [](FactoryCheckbox& checkbox) {
 						Game::NewCheckbox(checkbox);
 					}); break;
 
 				case pTypes::ID_RADIOBUTTON_NEW:
-					GameFactory::Operate<RadioButton>(GameFactory::Create<RadioButton>(packet.get()), [](FactoryRadioButton& radiobutton) {
+					GameFactory::Operate<RadioButton>(GameFactory::Create<RadioButton>(packet), [](FactoryRadioButton& radiobutton) {
 						Game::NewRadioButton(radiobutton);
 					}); break;
 
 				case pTypes::ID_LISTITEM_NEW:
-					GameFactory::Operate<ListItem>(GameFactory::Create<ListItem>(packet.get()), [](FactoryListItem& listitem) {
+					GameFactory::Operate<ListItem>(GameFactory::Create<ListItem>(packet), [](FactoryListItem& listitem) {
 						Game::NewListItem(listitem);
 					}); break;
 
 				case pTypes::ID_LIST_NEW:
-					GameFactory::Operate<List>(GameFactory::Create<List>(packet.get()), [](FactoryList& list) {
+					GameFactory::Operate<List>(GameFactory::Create<List>(packet), [](FactoryList& list) {
 						Game::NewList(list);
 					}); break;
 

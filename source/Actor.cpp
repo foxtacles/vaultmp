@@ -68,7 +68,7 @@ Actor::Actor(unsigned int refID, unsigned int baseID) : Container(refID, baseID)
 	}
 }
 
-Actor::Actor(const pDefault* packet) : Container(PacketFactory::Pop<pPacket>(packet))
+Actor::Actor(const pPacket& packet) : Container(PacketFactory::Pop<pPacket>(packet))
 {
 	initialize();
 

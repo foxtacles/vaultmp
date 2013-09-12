@@ -20,8 +20,8 @@ class Text : public Window
 
 	protected:
 		Text();
-		Text(const pDefault* packet);
-		Text(pPacket&& packet) : Text(packet.get()) {};
+		Text(const pPacket& packet);
+		Text(pPacket&& packet) : Text(packet) {};
 
 	public:
 		virtual ~Text() noexcept;

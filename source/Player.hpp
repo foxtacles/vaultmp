@@ -59,7 +59,7 @@ class Player : public Actor
 	protected:
 		Player(unsigned int refID, unsigned int baseID);
 		Player(unsigned int baseID) : Player(0x00000000, baseID) {}
-		Player(const pDefault* packet);
+		Player(const pPacket& packet);
 
 	public:
 		virtual ~Player() noexcept;

@@ -50,8 +50,8 @@ class Object : public Reference
 	protected:
 		Object(unsigned int refID, unsigned int baseID);
 		Object(unsigned int baseID) : Object(0x00000000, baseID) {}
-		Object(const pDefault* packet);
-		Object(pPacket&& packet) : Object(packet.get()) {};
+		Object(const pPacket& packet);
+		Object(pPacket&& packet) : Object(packet) {};
 
 	public:
 		virtual ~Object() noexcept;
@@ -200,7 +200,7 @@ GF_TYPE_WRAPPER(Object, Reference, ID_OBJECT, ALL_OBJECTS)
 
 template<> struct pTypesMap<pTypes::ID_OBJECT_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_OBJECT_NEW, std::string, std::tuple<float, float, float>, std::tuple<float, float, float>, unsigned int, bool, unsigned int, unsigned int> type; };
 template<>
-inline const typename pTypesMap<pTypes::ID_OBJECT_NEW>::type* PacketFactory::Cast_<pTypes::ID_OBJECT_NEW>::Cast(const pDefault* packet) {
+inline const typename pTypesMap<pTypes::ID_OBJECT_NEW>::type* PacketFactory::Cast_<pTypes::ID_OBJECT_NEW>::Cast(const pPacket* packet) {
 	pTypes type = packet->type();
 	return (
 		type == pTypes::ID_OBJECT_NEW ||

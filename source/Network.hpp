@@ -47,7 +47,7 @@ class Network
 				SingleResponse(const SingleResponse& response) : SingleResponse(std::move(const_cast<SingleResponse&>(response))) {}
 
 				const std::vector<RakNet::RakNetGUID>& get_targets() const { return targets; }
-				const pDefault* get_packet() const { return packet.get(); }
+				const pPacket* get_packet() const { return &packet; }
 		};
 
 		typedef std::vector<SingleResponse> NetworkResponse;

@@ -29,8 +29,8 @@ class Edit : public Window
 
 	protected:
 		Edit();
-		Edit(const pDefault* packet);
-		Edit(pPacket&& packet) : Edit(packet.get()) {};
+		Edit(const pPacket& packet);
+		Edit(pPacket&& packet) : Edit(packet) {};
 
 	public:
 		virtual ~Edit() noexcept;

@@ -8,7 +8,7 @@ ListItem::ListItem() : Base(), list(0), selected(DEFAULT_SELECTED)
 	initialize();
 }
 
-ListItem::ListItem(const pDefault* packet) : Base(PacketFactory::Pop<pPacket>(packet))
+ListItem::ListItem(const pPacket& packet) : Base(PacketFactory::Pop<pPacket>(packet))
 {
 	initialize();
 

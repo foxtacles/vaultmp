@@ -102,7 +102,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 		{
 			pPacket packet = PacketFactory::Init(data->data, data->length);
 
-			switch (packet->type())
+			switch (packet.type())
 			{
 				case pTypes::ID_GAME_AUTH:
 				{
@@ -136,7 +136,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 
 				case pTypes::ID_PLAYER_NEW:
 				{
-					NetworkID id = GameFactory::Create<Player>(packet.get());
+					NetworkID id = GameFactory::Create<Player>(packet);
 					response = Server::NewPlayer(data->guid, id);
 					break;
 				}

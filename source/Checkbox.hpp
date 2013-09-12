@@ -24,8 +24,8 @@ class Checkbox : public Window
 
 	protected:
 		Checkbox();
-		Checkbox(const pDefault* packet);
-		Checkbox(pPacket&& packet) : Checkbox(packet.get()) {};
+		Checkbox(const pPacket& packet);
+		Checkbox(pPacket&& packet) : Checkbox(packet) {};
 
 	public:
 		virtual ~Checkbox() noexcept;

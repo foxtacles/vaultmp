@@ -17,7 +17,7 @@ Object::Object(unsigned int refID, unsigned int baseID) : Reference(refID, baseI
 	initialize();
 }
 
-Object::Object(const pDefault* packet) : Reference(PacketFactory::Pop<pPacket>(packet))
+Object::Object(const pPacket& packet) : Reference(PacketFactory::Pop<pPacket>(packet))
 {
 	initialize();
 

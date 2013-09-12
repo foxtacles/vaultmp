@@ -31,8 +31,8 @@ class List : public Window
 
 	protected:
 		List();
-		List(const pDefault* packet);
-		List(pPacket&& packet) : List(packet.get()) {};
+		List(const pPacket& packet);
+		List(pPacket&& packet) : List(packet) {};
 
 	public:
 		virtual ~List() noexcept;
