@@ -28,7 +28,7 @@ class Value : public Lockable
 		Value& operator=(const Value&) = delete;
 
 	public:
-		Value() : value(T()) {};
+		Value() : value() {};
 		Value(const T& t) : value(t) {};
 		Value(Value&&) = default;
 		Value& operator=(Value&&) = default;

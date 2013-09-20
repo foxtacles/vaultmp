@@ -31,7 +31,7 @@ void GameFactory::Initialize()
 {
 #ifdef VAULTSERVER
 	dbRecords.initialize(DB_FALLOUT3, {"CONT", "NPC_", "CREA", "LVLI", "ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "ENCH", "KEYM", "MISC", "NOTE", "WEAP", "CELL", "IDLE", "WTHR", "STAT", "MSTT", "RACE", "LIGH", "DOOR", "TERM", "EXPL", "PROJ"});
-	dbReferences.initialize(DB_FALLOUT3, {"refs_CONT", "refs_DOOR", "refs_TERM", "refs_STAT"});
+	dbReferences.initialize(DB_FALLOUT3, {"refs_CONT", "refs_DOOR", "refs_TERM"});
 	dbExteriors.initialize(DB_FALLOUT3, {"exteriors"});
 	dbWeapons.initialize(DB_FALLOUT3, {"weapons"});
 	dbRaces.initialize(DB_FALLOUT3, {"races"});

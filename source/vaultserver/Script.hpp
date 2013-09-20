@@ -627,6 +627,7 @@ class Script
 			{"OnPlayerChat", Function<bool, RakNet::NetworkID, char*>()},
 			{"OnWindowMode", Function<void, RakNet::NetworkID, bool>()},
 			{"OnWindowClick", Function<void, RakNet::NetworkID, RakNet::NetworkID>()},
+			{"OnWindowReturn", Function<void, RakNet::NetworkID, RakNet::NetworkID>()},
 			{"OnWindowTextChange", Function<void, RakNet::NetworkID, RakNet::NetworkID, const char*>()},
 			{"OnCheckboxSelect", Function<void, RakNet::NetworkID, RakNet::NetworkID, bool>()},
 			{"OnRadioButtonSelect", Function<void, RakNet::NetworkID, RakNet::NetworkID, RakNet::NetworkID>()},

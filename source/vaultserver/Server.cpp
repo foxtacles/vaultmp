@@ -469,6 +469,18 @@ NetworkResponse Server::GetWindowClick(RakNetGUID guid, FactoryWindow& reference
 	return response;
 }
 
+NetworkResponse Server::GetWindowReturn(RakNetGUID guid, FactoryWindow& reference)
+{
+	NetworkResponse response;
+
+	NetworkID id = reference->GetNetworkID();
+	GameFactory::Free(reference);
+
+	Script::Call<Script::CBI("OnWindowReturn")>(id, Client::GetClientFromGUID(guid)->GetPlayer());
+
+	return response;
+}
+
 NetworkResponse Server::GetWindowText(RakNetGUID guid, FactoryWindow& reference, const string& text)
 {
 	NetworkResponse response;

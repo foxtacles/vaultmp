@@ -125,7 +125,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				if (!result)
 					break;
 
-				GetMessage(string(getFrom<char*>(result)));
+				GetMessage(getFrom<char*>(result));
 				break;
 			}
 
@@ -155,7 +155,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				if (!result)
 					break;
 
-				GetWindowClick(string(getFrom<char*>(result)));
+				GetWindowClick(getFrom<char*>(result));
 				break;
 			}
 
@@ -188,6 +188,15 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				}
 
 				GetListboxSelections(name, selections);
+				break;
+			}
+
+			case Func::GUIReturn:
+			{
+				if (!result)
+					break;
+
+				GetWindowReturn(getFrom<char*>(result));
 				break;
 			}
 
@@ -807,13 +816,12 @@ void Game::NewContainer_(FactoryContainer& reference)
 	NewObject_(reference);
 	auto items = GameFactory::Get<Item>(vector<NetworkID>(reference->GetItemList().begin(), reference->GetItemList().end()));
 
-	for (auto& _item : items)
+	for (auto& item : items)
 	{
-		AddItem(reference, _item.get());
-		//debug->PrintFormat("ID: %llu, %s, %08X, %d, %d, %d, %d", true, item->GetNetworkID(), item->GetName().c_str(), item->GetBase(), (int)item->GetItemEquipped(), (int)item->GetItemSilent(), (int)item->GetItemStick(), item->GetItemCount());
+		AddItem(reference, item.get());
 
-		if (_item->GetItemEquipped())
-			EquipItem(vaultcast<Actor>(reference).get(), _item.get());
+		if (item->GetItemEquipped())
+			EquipItem(vaultcast<Actor>(reference).get(), item.get());
 	}
 }
 
@@ -2573,10 +2581,25 @@ void Game::GetWindowClick(const string& name)
 		GameFactory::Operate<Window>(window, [](FactoryWindow& window) {
 			Network::Queue({Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_UPDATE_WCLICK>(window->GetNetworkID()),
-					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 			});
 		});
 	}
+}
+
+void Game::GetWindowReturn(const string& name)
+{
+	NetworkID window = strtoull(name.c_str(), nullptr, 10);
+
+	if (!window)
+		return;
+
+	GameFactory::Operate<Window>(window, [](FactoryWindow& window) {
+		Network::Queue({Network::CreateResponse(
+			PacketFactory::Create<pTypes::ID_UPDATE_WRETURN>(window->GetNetworkID()),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+		});
+	});
 }
 
 void Game::GetWindowText(const string& name, const string& text)

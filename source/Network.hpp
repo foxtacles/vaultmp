@@ -34,7 +34,7 @@ class Network
 				std::vector<RakNet::RakNetGUID> targets;
 
 				SingleResponse(pPacket&& packet, PacketDescriptor descriptor, const std::vector<RakNet::RakNetGUID>& targets) : packet(std::move(packet)), descriptor(descriptor), targets(targets) {}
-				SingleResponse(pPacket&& packet, PacketDescriptor descriptor, RakNet::RakNetGUID target) : packet(std::move(packet)), descriptor(descriptor), targets(std::vector<RakNet::RakNetGUID>{target}) {}
+				SingleResponse(pPacket&& packet, PacketDescriptor descriptor, RakNet::RakNetGUID target) : packet(std::move(packet)), descriptor(descriptor), targets{target} {}
 
 			public:
 				~SingleResponse() = default;

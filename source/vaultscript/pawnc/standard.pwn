@@ -23,22 +23,7 @@ public OnServerExit()
 
 }
 
-public OnGameYearChange(year)
-{
-
-}
-
-public OnGameMonthChange(month)
-{
-
-}
-
-public OnGameDayChange(day)
-{
-
-}
-
-public OnGameHourChange(hour)
+public OnGameTimeChange(year, month, day, hour)
 {
 
 }
@@ -69,6 +54,11 @@ public OnWindowMode(ID, Bool:enabled)
 }
 
 public OnWindowClick(ID, player)
+{
+
+}
+
+public OnWindowReturn(ID, player)
 {
 
 }

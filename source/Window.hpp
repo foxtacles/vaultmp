@@ -92,5 +92,6 @@ template<> struct pTypesMap<pTypes::ID_UPDATE_WVISIBLE> { typedef pGeneratorRefe
 template<> struct pTypesMap<pTypes::ID_UPDATE_WTEXT> { typedef pGeneratorReference<pTypes::ID_UPDATE_WTEXT, std::string> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_WCLICK> { typedef pGeneratorReference<pTypes::ID_UPDATE_WCLICK> type; };
 template<> struct pTypesMap<pTypes::ID_UPDATE_WMODE> { typedef pGeneratorDefault<pTypes::ID_UPDATE_WMODE, bool> type; };
+template<> struct pTypesMap<pTypes::ID_UPDATE_WRETURN> { typedef pGeneratorReference<pTypes::ID_UPDATE_WRETURN> type; };
 
 #endif

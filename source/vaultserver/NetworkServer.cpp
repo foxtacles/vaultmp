@@ -242,6 +242,15 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					break;
 				}
 
+				case pTypes::ID_UPDATE_WRETURN:
+				{
+					NetworkID id;
+					PacketFactory::Access<pTypes::ID_UPDATE_WRETURN>(packet, id);
+					auto reference = GameFactory::Get<Window>(id);
+					response = Server::GetWindowReturn(data->guid, reference.get());
+					break;
+				}
+
 				case pTypes::ID_UPDATE_WTEXT:
 				{
 					NetworkID id;

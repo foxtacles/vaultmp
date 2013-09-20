@@ -57,6 +57,11 @@ Void VAULTSCRIPT OnWindowClick(ID window, ID player) noexcept
 
 }
 
+Void VAULTSCRIPT OnWindowReturn(ID window, ID player) noexcept
+{
+
+}
+
 Void VAULTSCRIPT OnWindowTextChange(ID window, ID player, cRawString text) noexcept
 {
 

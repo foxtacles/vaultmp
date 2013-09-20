@@ -195,6 +195,7 @@ forward OnPlayerRequestGame(ID);
 forward OnPlayerChat(ID, message{});
 forward OnWindowMode(ID, Bool:enabled);
 forward OnWindowClick(ID, player);
+forward OnWindowReturn(ID, player);
 forward OnWindowTextChange(ID, player, const text{});
 forward OnCheckboxSelect(ID, player, Bool:selected);
 forward OnRadioButtonSelect(ID, previous, player);

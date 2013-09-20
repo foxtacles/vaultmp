@@ -85,6 +85,10 @@ class Server
 		 */
 		static NetworkResponse GetWindowClick(RakNet::RakNetGUID guid, FactoryWindow& reference);
 		/**
+		 * \brief Handles window return network packet
+		 */
+		static NetworkResponse GetWindowReturn(RakNet::RakNetGUID guid, FactoryWindow& reference);
+		/**
 		 * \brief Handles window text network packet
 		 */
 		static NetworkResponse GetWindowText(RakNet::RakNetGUID guid, FactoryWindow& reference, const std::string& text);

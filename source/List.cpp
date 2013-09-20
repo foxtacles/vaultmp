@@ -19,8 +19,8 @@ List::List(const pPacket& packet) : Window(PacketFactory::Pop<pPacket>(packet))
 
 	PacketFactory::Access<pTypes::ID_LIST_NEW>(packet, items, multiselect);
 
-	for (const pPacket& _packet : items)
-		AddItem(GameFactory::Create<ListItem>(_packet));
+	for (const auto& packet_ : items)
+		AddItem(GameFactory::Create<ListItem>(packet_));
 }
 
 List::~List() noexcept

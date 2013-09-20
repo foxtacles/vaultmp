@@ -612,6 +612,7 @@ class Game
 		 */
 		static void net_SetDeletedStatic(DeletedObjects&& deletedStatic);
 
+	private:
 		/**
 		 * Interface result functions
 		 */
@@ -656,6 +657,10 @@ class Game
 		 * \brief Handles GUI click
 		 */
 		static void GetWindowClick(const std::string& name);
+		/**
+		 * \brief Handles GUI return
+		 */
+		static void GetWindowReturn(const std::string& name);
 		/**
 		 * \brief Handles GUI text change
 		 */
