@@ -236,9 +236,7 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, c
 	GameFactory::Initialize();
 	API::Initialize();
 
-	NetworkID id = GameFactory::Create<Player>(PLAYER_REFERENCE, PLAYER_BASE);
-
-	GameFactory::Operate<Player>(id, [&name](FactoryPlayer& player) {
+	GameFactory::Operate<Player>(GameFactory::Create<Player>(PLAYER_REFERENCE, PLAYER_BASE), [&name](FactoryPlayer& player) {
 		player->SetEnabled(true);
 		player->SetName(name);
 	});
@@ -251,13 +249,12 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, c
 		if (peer->Connect(server.ToString(false), server.GetPort(), DEDICATED_VERSION, sizeof(DEDICATED_VERSION), 0, 0, 3, 500, 0) == CONNECTION_ATTEMPT_STARTED)
 		{
 			bool query = true;
-			Packet* packet;
 
 			while (query)
 			{
 				while (Network::Dispatch(peer));
 
-				for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
+				for (Packet* packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
 				{
 					if (packet->data[0] == ID_DISCONNECTION_NOTIFICATION)
 						query = false;

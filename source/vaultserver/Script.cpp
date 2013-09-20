@@ -339,33 +339,30 @@ NetworkID Script::CreateTimerPAWNEx(ScriptFuncPAWN timer, AMX* amx, unsigned int
 	return t->GetNetworkID();
 }
 
-void Script::SetupObject(const FactoryObject& object, const FactoryObject& reference, unsigned int cell, double X, double Y, double Z) noexcept
+void Script::SetupObject(const FactoryObject& object, unsigned int cell, float X, float Y, float Z) noexcept
 {
-	if (reference)
-	{
-		object->SetNetworkCell(reference->GetNetworkCell());
-		object->SetNetworkPos(reference->GetNetworkPos());
-	}
-	else
-		SetCell_(object->GetNetworkID(), cell, X, Y, Z, true);
+	object->SetNetworkCell(cell);
+	object->SetGameCell(cell);
+	object->SetNetworkPos(tuple<float, float, float>{X, Y, Z});
+	object->SetGamePos(tuple<float, float, float>{X, Y, Z});
 }
 
-void Script::SetupItem(const FactoryItem& item, const FactoryObject& reference, unsigned int cell, double X, double Y, double Z) noexcept
+void Script::SetupItem(const FactoryItem& item, unsigned int cell, float X, float Y, float Z) noexcept
 {
-	SetupObject(item, reference, cell, X, Y, Z);
+	SetupObject(item, cell, X, Y, Z);
 
 	item->SetItemCount(1);
 	item->SetItemCondition(100.0);
 }
 
-void Script::SetupContainer(const FactoryContainer& container, const FactoryObject& reference, unsigned int cell, double X, double Y, double Z) noexcept
+void Script::SetupContainer(const FactoryContainer& container, unsigned int cell, float X, float Y, float Z) noexcept
 {
-	SetupObject(container, reference, cell, X, Y, Z);
+	SetupObject(container, cell, X, Y, Z);
 }
 
-void Script::SetupActor(const FactoryActor& actor, const FactoryObject& reference, unsigned int cell, double X, double Y, double Z) noexcept
+void Script::SetupActor(const FactoryActor& actor, unsigned int cell, float X, float Y, float Z) noexcept
 {
-	SetupContainer(actor, reference, cell, X, Y, Z);
+	SetupContainer(actor, cell, X, Y, Z);
 
 	unsigned int baseID = actor->GetBase();
 
@@ -384,7 +381,7 @@ void Script::SetupActor(const FactoryActor& actor, const FactoryObject& referenc
 		actor->SetActorRace(UINT_MAX);
 }
 
-void Script::SetupWindow(const FactoryWindow& window, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept
+void Script::SetupWindow(const FactoryWindow& window, float posX, float posY, float sizeX, float sizeY, bool visible, bool locked, const char* text) noexcept
 {
 	window->SetPos(posX, posY, 0.0, 0.0);
 	window->SetSize(sizeX, sizeY, 0.0, 0.0);
@@ -393,32 +390,32 @@ void Script::SetupWindow(const FactoryWindow& window, double posX, double posY, 
 	window->SetText(text);
 }
 
-void Script::SetupButton(const FactoryButton& button, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept
+void Script::SetupButton(const FactoryButton& button, float posX, float posY, float sizeX, float sizeY, bool visible, bool locked, const char* text) noexcept
 {
 	SetupWindow(button, posX, posY, sizeX, sizeY, visible, locked, text);
 }
 
-void Script::SetupText(const FactoryText& text, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text_) noexcept
+void Script::SetupText(const FactoryText& text, float posX, float posY, float sizeX, float sizeY, bool visible, bool locked, const char* text_) noexcept
 {
 	SetupWindow(text, posX, posY, sizeX, sizeY, visible, locked, text_);
 }
 
-void Script::SetupEdit(const FactoryEdit& edit, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept
+void Script::SetupEdit(const FactoryEdit& edit, float posX, float posY, float sizeX, float sizeY, bool visible, bool locked, const char* text) noexcept
 {
 	SetupWindow(edit, posX, posY, sizeX, sizeY, visible, locked, text);
 }
 
-void Script::SetupCheckbox(const FactoryCheckbox& checkbox, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept
+void Script::SetupCheckbox(const FactoryCheckbox& checkbox, float posX, float posY, float sizeX, float sizeY, bool visible, bool locked, const char* text) noexcept
 {
 	SetupWindow(checkbox, posX, posY, sizeX, sizeY, visible, locked, text);
 }
 
-void Script::SetupRadioButton(const FactoryRadioButton& radiobutton, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept
+void Script::SetupRadioButton(const FactoryRadioButton& radiobutton, float posX, float posY, float sizeX, float sizeY, bool visible, bool locked, const char* text) noexcept
 {
 	SetupWindow(radiobutton, posX, posY, sizeX, sizeY, visible, locked, text);
 }
 
-void Script::SetupList(const FactoryList& list, double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept
+void Script::SetupList(const FactoryList& list, float posX, float posY, float sizeX, float sizeY, bool visible, bool locked, const char* text) noexcept
 {
 	SetupWindow(list, posX, posY, sizeX, sizeY, visible, locked, text);
 }
@@ -1264,23 +1261,20 @@ NetworkID Script::GetPlayerChatboxWindow(NetworkID id) noexcept
 	}) ? *find_if(windows.begin(), windows.end(), [](const NetworkID& id) { return IsChatbox(id); }) : 0;
 }
 
-NetworkID Script::CreateObject(unsigned int baseID, NetworkID id, unsigned int cell, double X, double Y, double Z) noexcept
+NetworkID Script::CreateObject(unsigned int baseID, unsigned int cell, double X, double Y, double Z) noexcept
 {
-	if (id && !GameFactory::Exists(id))
+	if (!DB::Record::IsValidCoordinate(cell, X, Y, Z))
 		return 0;
 
-	if (!id && !DB::Record::IsValidCoordinate(cell, X, Y, Z))
-		return 0;
-
-	NetworkID result = GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(vector<NetworkID>{GameFactory::Create<Object>(baseID), id}, [cell, X, Y, Z](ExpectedObjects& objects) {
-		SetupObject(objects[0].get(), objects[1] ? objects[1].get() : FactoryObject(), cell, X, Y, Z);
+	NetworkID result = GameFactory::Operate<Object, FailPolicy::Return>(GameFactory::Create<Object>(baseID), [cell, X, Y, Z](FactoryObject& object) {
+		SetupObject(object, cell, X, Y, Z);
 
 		Network::Queue({Network::CreateResponse(
-			objects[0]->toPacket(),
+			object->toPacket(),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
 		});
 
-		return objects[0]->GetNetworkID();
+		return object->GetNetworkID();
 	});
 
 	if (result)
@@ -1455,12 +1449,7 @@ bool Script::SetAngle(NetworkID id, double X, double Y, double Z) noexcept
 
 bool Script::SetCell(NetworkID id, unsigned int cell, double X, double Y, double Z) noexcept
 {
-	return SetCell_(id, cell, X, Y, Z, false);
-}
-
-bool Script::SetCell_(NetworkID id, unsigned int cell, double X, double Y, double Z, bool nosend) noexcept
-{
-	bool success = GameFactory::Operate<Object, FailPolicy::Return>(id, [id, &cell, X, Y, Z, nosend](FactoryObject& object) {
+	bool success = GameFactory::Operate<Object, FailPolicy::Return>(id, [id, &cell, X, Y, Z](FactoryObject& object) {
 		if (object->IsPersistent())
 			return false;
 
@@ -1495,48 +1484,46 @@ bool Script::SetCell_(NetworkID id, unsigned int cell, double X, double Y, doubl
 		NetworkResponse response;
 
 		bool state = false;
-		auto player = vaultcast<Player>(object);
 
 		if (object->SetNetworkCell(cell))
 		{
 			object->SetGameCell(cell);
 
-			if (!nosend)
-			{
-				if (player)
-				{
-					if (new_interior)
-						response.emplace_back(Network::CreateResponse(
-							PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(id, DB::Record::Lookup(cell, "CELL")->GetName(), false),
-							HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
-						);
-					else
-						response.emplace_back(Network::CreateResponse(
-							PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, new_exterior->GetWorld(), new_exterior->GetX(), new_exterior->GetY(), false),
-							HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
-						);
+			auto player = vaultcast<Player>(object);
 
+			if (player)
+			{
+				if (new_interior)
 					response.emplace_back(Network::CreateResponse(
-						PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(id, player->GetPlayerCellContext(), false),
+						PacketFactory::Create<pTypes::ID_UPDATE_INTERIOR>(id, DB::Record::Lookup(cell, "CELL")->GetName(), false),
 						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
 					);
-				}
-
-				if (update_pos && static_cast<bool>(object->SetNetworkPos(tuple<float, float, float>{X, Y, Z})))
-				{
-					object->SetGamePos(tuple<float, float, float>{X, Y, Z});
-
-					response.emplace_back(Network::CreateResponse(
-						PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, cell, X, Y, Z),
-						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-					);
-				}
 				else
-					response.emplace_back(Network::CreateResponse(
-						PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, cell, 0.0, 0.0, 0.0),
-						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+						response.emplace_back(Network::CreateResponse(
+						PacketFactory::Create<pTypes::ID_UPDATE_EXTERIOR>(id, new_exterior->GetWorld(), new_exterior->GetX(), new_exterior->GetY(), false),
+						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
 					);
+
+				response.emplace_back(Network::CreateResponse(
+					PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(id, player->GetPlayerCellContext(), false),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
+				);
 			}
+
+			if (update_pos && static_cast<bool>(object->SetNetworkPos(tuple<float, float, float>{X, Y, Z})))
+			{
+				object->SetGamePos(tuple<float, float, float>{X, Y, Z});
+
+					response.emplace_back(Network::CreateResponse(
+					PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, cell, X, Y, Z),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+				);
+			}
+			else
+				response.emplace_back(Network::CreateResponse(
+					PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, cell, 0.0, 0.0, 0.0),
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+				);
 
 			state = true;
 		}
@@ -1547,22 +1534,21 @@ bool Script::SetCell_(NetworkID id, unsigned int cell, double X, double Y, doubl
 		{
 			object->SetGamePos(tuple<float, float, float>{X, Y, Z});
 
-			if (!nosend)
-				response.emplace_back(Network::CreateResponse(
-					PacketFactory::Create<pTypes::ID_UPDATE_POS>(id, X, Y, Z),
-					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
-				);
+			response.emplace_back(Network::CreateResponse(
+				PacketFactory::Create<pTypes::ID_UPDATE_POS>(id, X, Y, Z),
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+			);
 
 			state = true;
 		}
 
-		if (!response.empty() && !nosend)
+		if (!response.empty())
 			Network::Queue(move(response));
 
 		return state;
 	});
 
-	if (success && cell && !nosend)
+	if (success && cell)
 		Call<CBI("OnCellChange")>(id, cell);
 
 	return success;
@@ -1683,18 +1669,13 @@ bool Script::SetBaseName(NetworkID id, const char* name) noexcept
 	});
 }
 
-NetworkID Script::CreateItem(unsigned int baseID, NetworkID id, unsigned int cell, double X, double Y, double Z) noexcept
+NetworkID Script::CreateItem(unsigned int baseID, unsigned int cell, double X, double Y, double Z) noexcept
 {
-	if (id && !GameFactory::Exists(id))
+	if (!DB::Record::IsValidCoordinate(cell, X, Y, Z))
 		return 0;
 
-	if (!id && !DB::Record::IsValidCoordinate(cell, X, Y, Z))
-		return 0;
-
-	NetworkID result = GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(vector<NetworkID>{GameFactory::Create<Item>(baseID), id}, [cell, X, Y, Z](ExpectedObjects& objects) {
-		FactoryItem item = vaultcast_swap<Item>(move(objects[0])).get();
-
-		SetupItem(item, objects[1] ? objects[1].get() : FactoryObject(), cell, X, Y, Z);
+	NetworkID result = GameFactory::Operate<Item, FailPolicy::Return>(GameFactory::Create<Item>(baseID), [cell, X, Y, Z](FactoryItem& item) {
+		SetupItem(item, cell, X, Y, Z);
 
 		Network::Queue({Network::CreateResponse(
 			item->toPacket(),
@@ -1831,18 +1812,13 @@ bool Script::SetItemEquipped(NetworkID id, bool equipped, bool silent, bool stic
 	return result;
 }
 
-NetworkID Script::CreateContainer(unsigned int baseID, NetworkID id, unsigned int cell, double X, double Y, double Z) noexcept
+NetworkID Script::CreateContainer(unsigned int baseID, unsigned int cell, double X, double Y, double Z) noexcept
 {
-	if (id && !GameFactory::Exists(id))
+	if (!DB::Record::IsValidCoordinate(cell, X, Y, Z))
 		return 0;
 
-	if (!id && !DB::Record::IsValidCoordinate(cell, X, Y, Z))
-		return 0;
-
-	NetworkID result = GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(vector<NetworkID>{GameFactory::Create<Container>(baseID), id}, [cell, X, Y, Z](ExpectedObjects& objects) {
-		FactoryContainer container = vaultcast_swap<Container>(move(objects[0])).get();
-
-		SetupContainer(container, objects[1] ? objects[1].get() : FactoryObject(), cell, X, Y, Z);
+	NetworkID result = GameFactory::Operate<Container, FailPolicy::Return>(GameFactory::Create<Container>(baseID), [cell, X, Y, Z](FactoryContainer& container) {
+		SetupContainer(container, cell, X, Y, Z);
 
 		Network::Queue({Network::CreateResponse(
 			container->toPacket(),
@@ -2009,18 +1985,13 @@ void Script::RemoveAllItems(NetworkID id) noexcept
 		DestroyObject(id);
 }
 
-NetworkID Script::CreateActor(unsigned int baseID, NetworkID id, unsigned int cell, double X, double Y, double Z) noexcept
+NetworkID Script::CreateActor(unsigned int baseID, unsigned int cell, double X, double Y, double Z) noexcept
 {
-	if (id && !GameFactory::Exists(id))
+	if (!DB::Record::IsValidCoordinate(cell, X, Y, Z))
 		return 0;
 
-	if (!id && !DB::Record::IsValidCoordinate(cell, X, Y, Z))
-		return 0;
-
-	NetworkID result = GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::Expected>(vector<NetworkID>{GameFactory::Create<Actor>(baseID), id}, [cell, X, Y, Z](ExpectedObjects& objects) {
-		FactoryActor actor = vaultcast_swap<Actor>(move(objects[0])).get();
-
-		SetupActor(actor, objects[1] ? objects[1].get() : FactoryObject(), cell, X, Y, Z);
+	NetworkID result = GameFactory::Operate<Actor, FailPolicy::Return>(GameFactory::Create<Actor>(baseID), [cell, X, Y, Z](FactoryActor& actor) {
+		SetupActor(actor, cell, X, Y, Z);
 
 		Network::Queue({Network::CreateResponse(
 			actor->toPacket(),

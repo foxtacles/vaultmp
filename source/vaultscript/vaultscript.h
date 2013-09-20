@@ -439,7 +439,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetPlayerWindowList))(VAULTSPACE ID, VAULTSPACE RawArray(VAULTSPACE ID)*) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(GetPlayerChatboxWindow))(VAULTSPACE ID) VAULTCPP(noexcept);
 
-	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateObject))(VAULTSPACE Base, VAULTSPACE ID, VAULTSPACE CELL, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateObject))(VAULTSPACE Base, VAULTSPACE CELL, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(CreateVolatile))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(DestroyObject))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(Activate))(VAULTSPACE ID, VAULTSPACE ID) VAULTCPP(noexcept);
@@ -449,19 +449,19 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetLock))(VAULTSPACE ID, VAULTSPACE ID, VAULTSPACE Lock) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetOwner))(VAULTSPACE ID, VAULTSPACE NPC_) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetBaseName))(VAULTSPACE ID, VAULTSPACE cRawString) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateItem))(VAULTSPACE Base, VAULTSPACE ID, VAULTSPACE CELL, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateItem))(VAULTSPACE Base, VAULTSPACE CELL, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(SetItemContainer))(VAULTSPACE ID, VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetItemCount))(VAULTSPACE ID, VAULTSPACE UCount) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetItemCondition))(VAULTSPACE ID, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetItemEquipped))(VAULTSPACE ID, VAULTSPACE State, VAULTSPACE State, VAULTSPACE State) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateContainer))(VAULTSPACE CONT, VAULTSPACE ID, VAULTSPACE CELL, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateContainer))(VAULTSPACE CONT, VAULTSPACE CELL, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateItemList))(VAULTSPACE ID, VAULTSPACE Base) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(DestroyItemList))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(AddItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE UCount, VAULTSPACE Value, VAULTSPACE State) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(AddItemList))(VAULTSPACE ID, VAULTSPACE ID, VAULTSPACE Base) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(RemoveItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE UCount, VAULTSPACE State) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(RemoveAllItems))(VAULTSPACE ID) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateActor))(VAULTSPACE Base, VAULTSPACE ID, VAULTSPACE CELL, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateActor))(VAULTSPACE Base, VAULTSPACE CELL, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetActorValue))(VAULTSPACE ID, VAULTSPACE ActorValue, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetActorBaseValue))(VAULTSPACE ID, VAULTSPACE ActorValue, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(EquipItem))(VAULTSPACE ID, VAULTSPACE Base, VAULTSPACE State, VAULTSPACE State) VAULTCPP(noexcept);
@@ -728,8 +728,7 @@ namespace vaultmp
 	VAULTFUNCTION ID GetPlayerChatboxWindow(ID id) noexcept { return VAULTAPI(GetPlayerChatboxWindow)(id); }
 
 	#define CreateObject_Template(type) \
-		VAULTFUNCTION ID CreateObject(type object, ID id) noexcept { return VAULTAPI(CreateObject)(static_cast<Base>(object), id, static_cast<CELL>(0), 0.00, 0.00, 0.00); } \
-		VAULTFUNCTION ID CreateObject(type object, CELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateObject)(static_cast<Base>(object), static_cast<ID>(0), cell, X, Y, Z); }
+		VAULTFUNCTION ID CreateObject(type object, CELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateObject)(static_cast<Base>(object), cell, X, Y, Z); }
 	CreateObject_Template(Base);
 	CreateObject_Template(DOOR);
 	CreateObject_Template(TERM);
@@ -754,8 +753,7 @@ namespace vaultmp
 	VAULTFUNCTION State SetBaseName(ID id, cRawString name) noexcept { return VAULTAPI(SetBaseName)(id, name); }
 
 	#define CreateItem_Template(type) \
-		VAULTFUNCTION ID CreateItem(type item, ID id) noexcept { return VAULTAPI(CreateItem)(static_cast<Base>(item), id, static_cast<CELL>(0), 0.00, 0.00, 0.00); } \
-		VAULTFUNCTION ID CreateItem(type item, CELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateItem)(static_cast<Base>(item), static_cast<ID>(0), cell, X, Y, Z); }
+		VAULTFUNCTION ID CreateItem(type item, CELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateItem)(static_cast<Base>(item), cell, X, Y, Z); }
 	CreateItem_Template(Base);
 	CreateItem_Template(ALCH);
 	CreateItem_Template(AMMO);
@@ -772,8 +770,7 @@ namespace vaultmp
 	VAULTFUNCTION State SetItemCount(ID id, UCount count) noexcept { return VAULTAPI(SetItemCount)(id, count); }
 	VAULTFUNCTION State SetItemCondition(ID id, Value condition) noexcept { return VAULTAPI(SetItemCondition)(id, condition); }
 	VAULTFUNCTION State SetItemEquipped(ID id, State equipped, State silent = True, State stick = False) noexcept { return VAULTAPI(SetItemEquipped)(id, equipped, silent, stick); }
-	VAULTFUNCTION ID CreateContainer(CONT container, ID id) noexcept { return VAULTAPI(CreateContainer)(container, id, static_cast<CELL>(0), 0.00, 0.00, 0.00); }
-	VAULTFUNCTION ID CreateContainer(CONT container, CELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateContainer)(container, static_cast<ID>(0), cell, X, Y, Z); }
+	VAULTFUNCTION ID CreateContainer(CONT container, CELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateContainer)(container, cell, X, Y, Z); }
 
 	struct AddItem_Initializer {
 		Base item;
@@ -885,8 +882,7 @@ namespace vaultmp
 	VAULTFUNCTION Void RemoveAllItems(ID id) noexcept { return VAULTAPI(RemoveAllItems)(id); }
 
 	#define CreateActor_Template(type) \
-		VAULTFUNCTION ID CreateActor(type actor, ID id) noexcept { return VAULTAPI(CreateActor)(static_cast<Base>(actor), id, static_cast<CELL>(0), 0.00, 0.00, 0.00); } \
-		VAULTFUNCTION ID CreateActor(type actor, CELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateActor)(static_cast<Base>(actor), static_cast<ID>(0), cell, X, Y, Z); }
+		VAULTFUNCTION ID CreateActor(type actor, CELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateActor)(static_cast<Base>(actor), cell, X, Y, Z); }
 	CreateActor_Template(Base);
 	CreateActor_Template(NPC_);
 	CreateActor_Template(CREA);
@@ -1061,7 +1057,6 @@ namespace vaultmp
 			State SetBaseName(cRawString name) noexcept { return vaultmp::SetBaseName(id, name); }
 
 			#define Create_Template(type) \
-				static ID Create(type object, ID id) noexcept { return vaultmp::CreateObject(object, id); } \
 				static ID Create(type object, CELL cell, Value X, Value Y, Value Z) noexcept { return vaultmp::CreateObject(object, cell, X, Y, Z); }
 			Create_Template(Base);
 			Create_Template(DOOR);
@@ -1110,7 +1105,6 @@ namespace vaultmp
 			State SetItemEquipped(State equipped, State silent = True, State stick = False) noexcept { return vaultmp::SetItemEquipped(id, equipped, silent, stick); }
 
 			#define Create_Template(type) \
-				static ID Create(type item, ID id) noexcept { return vaultmp::CreateItem(item, id); } \
 				static ID Create(type item, CELL cell, Value X, Value Y, Value Z) noexcept { return vaultmp::CreateItem(item, cell, X, Y, Z); }
 			Create_Template(Base);
 			Create_Template(ALCH);
@@ -1193,7 +1187,6 @@ namespace vaultmp
 
 			Void RemoveAllItems() noexcept { return vaultmp::RemoveAllItems(id); }
 
-			static ID Create(CONT container, ID id) noexcept{ return vaultmp::CreateContainer(container, id); }
 			static ID Create(CONT container, CELL cell, Value X, Value Y, Value Z) noexcept { return vaultmp::CreateContainer(container, cell, X, Y, Z); }
 			static UCount GetCount() noexcept { return vaultmp::GetCount(Type::ID_CONTAINER); }
 			static IDVector GetList() noexcept { return vaultmp::GetList(Type::ID_CONTAINER); }
@@ -1337,7 +1330,6 @@ namespace vaultmp
 			State SetActorBaseSex(State female) noexcept { return vaultmp::SetActorBaseSex(id, female); }
 
 			#define Create_Template(type) \
-				static ID Create(type actor, ID id) noexcept { return vaultmp::CreateActor(actor, id); } \
 				static ID Create(type actor, CELL cell, Value X, Value Y, Value Z) noexcept { return vaultmp::CreateActor(actor, cell, X, Y, Z); }
 			Create_Template(Base);
 			Create_Template(NPC_);
