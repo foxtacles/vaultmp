@@ -89,7 +89,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 
 				unsigned int refID = *getFrom<unsigned int*>(result);
 
-				GameFactory::Operate<Reference, FailPolicy::Return>(vector<unsigned int>{refID, PLAYER_REFERENCE}, [result](FactoryReferences& references) {
+				GameFactory::Operate<Reference, FailPolicy::Return>({refID, PLAYER_REFERENCE}, [result](FactoryReferences& references) {
 					GetActivate(references[0], references[1]);
 				});
 				break;
@@ -814,7 +814,7 @@ void Game::NewContainer(FactoryContainer& reference)
 void Game::NewContainer_(FactoryContainer& reference)
 {
 	NewObject_(reference);
-	auto items = GameFactory::Get<Item>(vector<NetworkID>(reference->GetItemList().begin(), reference->GetItemList().end()));
+	auto items = GameFactory::Get<Item>(reference->GetItemList());
 
 	for (auto& item : items)
 	{
@@ -2262,7 +2262,7 @@ void Game::net_UpdateContext(Player::CellContext& context, bool spawn)
 			for (const auto& refs : copy[cell])
 				for (unsigned int refID : refs.second)
 					if (refID != PLAYER_REFERENCE)
-						GameFactory::Operate<Object>(vector<unsigned int>{refID, PLAYER_REFERENCE}, [cell](FactoryObjects& objects) {
+						GameFactory::Operate<Object>({refID, PLAYER_REFERENCE}, [cell](FactoryObjects& objects) {
 							if (objects[0]->SetEnabled(true))
 								ToggleEnabled(objects[0]);
 

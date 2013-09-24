@@ -176,7 +176,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 				{
 					NetworkID id, actor;
 					PacketFactory::Access<pTypes::ID_UPDATE_ACTIVATE>(packet, id, actor);
-					auto reference = GameFactory::Get<Reference>(vector<NetworkID>{id, actor});
+					auto reference = GameFactory::Get<Reference>({id, actor});
 					response = Server::GetActivate(data->guid, reference[0].get(), reference[1].get());
 					break;
 				}
@@ -276,7 +276,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 					NetworkID id, previous;
 					bool selected;
 					PacketFactory::Access<pTypes::ID_UPDATE_WRSELECTED>(packet, id, previous, selected);
-					auto reference = GameFactory::Get<RadioButton>(vector<NetworkID>{id, previous});
+					auto reference = GameFactory::Get<RadioButton>({id, previous});
 					response = Server::GetRadioButtonSelected(data->guid, reference[0].get(), reference[1]);
 					break;
 				}

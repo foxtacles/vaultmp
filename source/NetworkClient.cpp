@@ -360,7 +360,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					unsigned int cell;
 					float X, Y, Z;
 					PacketFactory::Access<pTypes::ID_UPDATE_CELL>(packet, id, cell, X, Y, Z);
-					auto reference = GameFactory::Get<Object>(vector<NetworkID>{id, GameFactory::Lookup<Object>(PLAYER_REFERENCE)});
+					auto reference = GameFactory::Get<Object>({id, GameFactory::Lookup<Object>(PLAYER_REFERENCE)});
 					auto player = vaultcast_swap<Player>(move(reference[1]));
 					Game::net_SetCell(reference[0].get(), player.get(), cell, X, Y, Z);
 					break;
@@ -390,7 +390,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				{
 					NetworkID id, actor;
 					PacketFactory::Access<pTypes::ID_UPDATE_ACTIVATE>(packet, id, actor);
-					auto reference = GameFactory::Get<Reference>(vector<NetworkID>{id, actor});
+					auto reference = GameFactory::Get<Reference>({id, actor});
 					Game::net_GetActivate(reference[0].get(), reference[1].get());
 					break;
 				}
@@ -630,7 +630,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					NetworkID id, previous;
 					bool selected;
 					PacketFactory::Access<pTypes::ID_UPDATE_WRSELECTED>(packet, id, previous, selected);
-					auto reference = GameFactory::Get<RadioButton>(vector<NetworkID>{id, previous});
+					auto reference = GameFactory::Get<RadioButton>({id, previous});
 					Game::net_UpdateRadioButtonSelected(reference[0].get(), reference[1], selected);
 					break;
 				}

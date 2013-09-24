@@ -45,11 +45,13 @@ class Reference : public virtual Base
 		template<typename T>
 		struct PickBy_ {
 			static RakNet::NetworkID PickBy(T id) noexcept;
-			static std::vector<RakNet::NetworkID> PickBy(const std::vector<T>& ids) noexcept;
+			template<template<typename...> class C> static std::vector<RakNet::NetworkID> PickBy(C<T>&& ids) noexcept;
+			template<template<typename...> class C> static std::vector<RakNet::NetworkID> PickBy(const C<T>& ids) noexcept;
 		};
 
 		template<typename T> inline static RakNet::NetworkID PickBy(T id) noexcept { return PickBy_<T>::PickBy(id); }
-		template<typename T> inline static std::vector<RakNet::NetworkID> PickBy(const std::vector<T>& ids) noexcept { return PickBy_<T>::PickBy(ids); }
+		template<typename T, template<typename...> class C> inline static std::vector<RakNet::NetworkID> PickBy(C<T>&& ids) noexcept { return PickBy_<T>::PickBy(std::move(ids)); }
+		template<typename T, template<typename...> class C> inline static std::vector<RakNet::NetworkID> PickBy(const C<T>& ids) noexcept { return PickBy_<T>::PickBy(ids); }
 
 		Reference(const Reference&) = delete;
 		Reference& operator=(const Reference&) = delete;
@@ -146,11 +148,17 @@ struct Reference::PickBy_<unsigned int> {
 		});
 	}
 
-	static std::vector<RakNet::NetworkID> PickBy(const std::vector<unsigned int>& ids) noexcept {
+	template<template<typename...> class C>
+	static std::vector<RakNet::NetworkID> PickBy(C<unsigned int>&& ids) noexcept {
+		return PickBy(ids);
+	}
+
+	template<template<typename...> class C>
+	static std::vector<RakNet::NetworkID> PickBy(const C<unsigned int>& ids) noexcept {
 		return refIDs.Operate([&ids](RefIDs& refIDs) {
 			std::vector<RakNet::NetworkID> result;
 
-			for (const auto& id : ids)
+			for (auto id : ids)
 				result.emplace_back(refIDs[id]);
 
 			return result;

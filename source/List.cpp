@@ -35,7 +35,7 @@ void List::initialize()
 
 void List::AddItem(NetworkID id)
 {
-	if (!GameFactory::Operate<ListItem>(id, [this, id](FactoryListItem& listitem) {
+	if (!GameFactory::Operate<ListItem>(id, [this, id](ListItem* listitem) {
 		NetworkID container = listitem->GetItemContainer();
 
 		if (!container)
@@ -51,7 +51,7 @@ void List::AddItem(NetworkID id)
 		throw VaultException("ListItem is already owned by container %llu", container).stacktrace();
 	})) return;
 
-	GameFactory::Operate<ListItem>(id, [this](FactoryListItem& listitem) {
+	GameFactory::Operate<ListItem>(id, [this](ListItem* listitem) {
 		listitem->SetItemContainer(this->GetNetworkID());
 	});
 
@@ -65,7 +65,7 @@ void List::RemoveItem(NetworkID id)
 	if (it == container.end())
 		throw VaultException("Unknown ListItem with NetworkID %llu in List", id).stacktrace();
 
-	GameFactory::Operate<ListItem>(id, [](FactoryListItem& listitem) {
+	GameFactory::Operate<ListItem>(id, [](ListItem* listitem) {
 		listitem->SetItemContainer(0);
 	});
 
@@ -86,7 +86,7 @@ pPacket List::toPacket() const
 	items.reserve(container.size());
 
 	for (const NetworkID& id : container)
-		items.emplace_back(GameFactory::Operate<ListItem>(id, [](FactoryListItem& listitem) { return listitem->toPacket(); }));
+		items.emplace_back(GameFactory::Operate<ListItem>(id, [](ListItem* listitem) { return listitem->toPacket(); }));
 
 	pPacket pWindowNew = Window::toPacket();
 	pPacket packet = PacketFactory::Create<pTypes::ID_LIST_NEW>(pWindowNew, move(items), multiselect);

@@ -5,8 +5,8 @@
 
 static const unsigned int PLAYER_REFERENCE  = 0x00000014;
 static const unsigned int PLAYER_BASE       = 0x00000007;
-static const unsigned int RACE_CAUCASIAN	= 0x00000019;
-static const unsigned int DEFAULT_WEATHER	= 0x0000015E;
+static const unsigned int RACE_CAUCASIAN    = 0x00000019;
+static const unsigned int DEFAULT_WEATHER   = 0x0000015E;
 
 template <typename R, typename T>
 inline static R storeIn(const T& t)

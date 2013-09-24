@@ -50,7 +50,7 @@ void ItemList::initialize()
 NetworkID ItemList::FindStackableItem(unsigned int baseID, float condition) const
 {
 	for (const NetworkID& id : container)
-		if (GameFactory::Operate<Item>(id, [baseID, condition](FactoryItem& item) {
+		if (GameFactory::Operate<Item>(id, [baseID, condition](Item* item) {
 			return item->GetBase() == baseID && Utils::DoubleCompare(item->GetItemCondition(), condition, CONDITION_EPS);
 		}))
 			return id;
@@ -60,7 +60,7 @@ NetworkID ItemList::FindStackableItem(unsigned int baseID, float condition) cons
 
 NetworkID ItemList::AddItem(NetworkID id)
 {
-	auto data = GameFactory::Operate<Item>(id, [this, id](FactoryItem& item) {
+	auto data = GameFactory::Operate<Item>(id, [this, id](Item* item) {
 		NetworkID container = item->GetItemContainer();
 
 		if (container)
@@ -85,13 +85,13 @@ NetworkID ItemList::AddItem(NetworkID id)
 
 	if (stackable)
 	{
-		auto data = GameFactory::Operate<Item>(id, [](FactoryItem& item) {
+		auto data = GameFactory::Operate<Item, FailPolicy::Exception, ObjectPolicy::FactoryValidated>(id, [](FactoryItem& item) {
 			auto data = make_pair(item->GetItemEquipped(), item->GetItemCount());
 			GameFactory::Destroy(item);
 			return data;
 		});
 
-		GameFactory::Operate<Item>(stackable, [&data](FactoryItem& item) {
+		GameFactory::Operate<Item>(stackable, [&data](Item* item) {
 			if (data.first)
 				item->SetItemEquipped(true);
 
@@ -100,7 +100,7 @@ NetworkID ItemList::AddItem(NetworkID id)
 	}
 	else
 	{
-		GameFactory::Operate<Item>(id, [this](FactoryItem& item) {
+		GameFactory::Operate<Item>(id, [this](Item* item) {
 			item->SetItemContainer(this->GetNetworkID());
 		});
 
@@ -124,7 +124,7 @@ ItemList::AddOp ItemList::AddItem(unsigned int baseID, unsigned int count, float
 		result.first = false;
 		result.second = stackable;
 
-		GameFactory::Operate<Item>(result.second, [count, silent](FactoryItem& item) {
+		GameFactory::Operate<Item>(result.second, [count, silent](Item* item) {
 			item->SetItemCount(item->GetItemCount() + count);
 			item->SetItemSilent(silent);
 		});
@@ -134,7 +134,7 @@ ItemList::AddOp ItemList::AddItem(unsigned int baseID, unsigned int count, float
 		result.first = true;
 		result.second = GameFactory::Create<Item>(baseID);
 
-		GameFactory::Operate<Item>(result.second, [this, count, condition, silent](FactoryItem& item) {
+		GameFactory::Operate<Item>(result.second, [this, count, condition, silent](Item* item) {
 			item->SetItemCount(count);
 			item->SetItemCondition(condition);
 			item->SetItemSilent(silent);
@@ -154,7 +154,7 @@ void ItemList::RemoveItem(NetworkID id)
 	if (it == container.end())
 		throw VaultException("Unknown Item with NetworkID %llu in ItemList", id).stacktrace();
 
-	GameFactory::Operate<Item>(id, [](FactoryItem& item) {
+	GameFactory::Operate<Item>(id, [](Item* item) {
 		item->SetItemContainer(0);
 	});
 
@@ -171,7 +171,7 @@ ItemList::RemoveOp ItemList::RemoveItem(unsigned int baseID, unsigned int count,
 		if (!count)
 			break;
 		else
-			GameFactory::Operate<Item>(id, [&result, id, baseID, &count, silent](FactoryItem& item) {
+			GameFactory::Operate<Item>(id, [&result, id, baseID, &count, silent](Item* item) {
 				if (item->GetBase() != baseID)
 					return;
 
@@ -202,7 +202,7 @@ NetworkID ItemList::EquipItem(unsigned int baseID, bool silent, bool stick) cons
 
 	if (!IsEquipped(baseID))
 		for (const NetworkID& id : container)
-			if (GameFactory::Operate<Item>(id, [id, baseID, silent, stick](FactoryItem& item) {
+			if (GameFactory::Operate<Item>(id, [id, baseID, silent, stick](Item* item) {
 				if (item->GetBase() != baseID)
 					return 0ull;
 
@@ -221,7 +221,7 @@ NetworkID ItemList::UnequipItem(unsigned int baseID, bool silent, bool stick) co
 	NetworkID id = IsEquipped(baseID);
 
 	if (id)
-		GameFactory::Operate<Item>(id, [silent, stick](FactoryItem& item) {
+		GameFactory::Operate<Item>(id, [silent, stick](Item* item) {
 			item->SetItemEquipped(false);
 			item->SetItemSilent(silent);
 			item->SetItemStick(stick);
@@ -233,7 +233,7 @@ NetworkID ItemList::UnequipItem(unsigned int baseID, bool silent, bool stick) co
 NetworkID ItemList::IsEquipped(unsigned int baseID) const
 {
 	for (const NetworkID& id : container)
-		if (GameFactory::Operate<Item>(id, [baseID](FactoryItem& item) {
+		if (GameFactory::Operate<Item>(id, [baseID](Item* item) {
 			return item->GetBase() == baseID && item->GetItemEquipped();
 		}))
 			return id;
@@ -246,7 +246,7 @@ unsigned int ItemList::GetItemCount(unsigned int baseID) const
 	unsigned int count = 0;
 
 	for (const NetworkID& id : container)
-		GameFactory::Operate<Item>(id, [&count, baseID](FactoryItem& item) {
+		GameFactory::Operate<Item>(id, [&count, baseID](Item* item) {
 			if (!baseID || item->GetBase() == baseID)
 				count += item->GetItemCount();
 		});
@@ -260,7 +260,7 @@ ItemList::Impl ItemList::GetItemTypes(const string& type) const
 	Impl result;
 
 	for (const NetworkID& id : container)
-		GameFactory::Operate<Item>(id, [&result, &type, id](FactoryItem& item) {
+		GameFactory::Operate<Item>(id, [&result, &type, id](Item* item) {
 			if (DB::Record::Lookup(item->GetBase(), type))
 				result.emplace_back(id);
 		});
@@ -275,7 +275,7 @@ pPacket ItemList::toPacket() const
 	items.reserve(container.size());
 
 	for (const NetworkID& id : container)
-		items.emplace_back(GameFactory::Operate<Item>(id, [](FactoryItem& item) { return item->toPacket(); }));
+		items.emplace_back(GameFactory::Operate<Item>(id, [](Item* item) { return item->toPacket(); }));
 
 	pPacket pBaseNew = Base::toPacket();
 	pPacket packet = PacketFactory::Create<pTypes::ID_ITEMLIST_NEW>(pBaseNew, move(items));
