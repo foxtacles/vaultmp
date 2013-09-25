@@ -69,10 +69,10 @@ class Item : public Object
 
 GF_TYPE_WRAPPER_FINAL(Item, Object, ID_ITEM)
 
-template<> struct pTypesMap<pTypes::ID_ITEM_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_ITEM_NEW, RakNet::NetworkID, unsigned int, float, bool, bool, bool> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_COUNT> { typedef pGeneratorReference<pTypes::ID_UPDATE_COUNT, unsigned int, bool> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_CONDITION> { typedef pGeneratorReference<pTypes::ID_UPDATE_CONDITION, float, unsigned int> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_EQUIPPED> { typedef pGeneratorReference<pTypes::ID_UPDATE_EQUIPPED, bool, bool, bool> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_VALUE> { typedef pGeneratorReference<pTypes::ID_UPDATE_VALUE, bool, unsigned char, float> type; };
+PF_PACKET(ID_ITEM_NEW, pGeneratorReferenceExtend, RakNet::NetworkID, unsigned int, float, bool, bool, bool)
+PF_PACKET(ID_UPDATE_COUNT, pGeneratorReference, unsigned int, bool)
+PF_PACKET(ID_UPDATE_CONDITION, pGeneratorReference, float, unsigned int)
+PF_PACKET(ID_UPDATE_EQUIPPED, pGeneratorReference, bool, bool, bool)
+PF_PACKET(ID_UPDATE_VALUE, pGeneratorReference, bool, unsigned char, float)
 
 #endif

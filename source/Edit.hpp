@@ -49,8 +49,8 @@ class Edit : public Window
 
 GF_TYPE_WRAPPER_FINAL(Edit, Window, ID_EDIT)
 
-template<> struct pTypesMap<pTypes::ID_EDIT_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_EDIT_NEW, unsigned int, std::string> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_WMAXLEN> { typedef pGeneratorReference<pTypes::ID_UPDATE_WMAXLEN, unsigned int> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_WVALID> { typedef pGeneratorReference<pTypes::ID_UPDATE_WVALID, std::string> type; };
+PF_PACKET(ID_EDIT_NEW, pGeneratorReferenceExtend, unsigned int, std::string)
+PF_PACKET(ID_UPDATE_WMAXLEN, pGeneratorReference, unsigned int)
+PF_PACKET(ID_UPDATE_WVALID, pGeneratorReference, std::string)
 
 #endif

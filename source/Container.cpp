@@ -73,7 +73,7 @@ vector<string> ContainerFunctor::operator()()
 		auto references = Game::GetContext(ID_CONTAINER);
 
 		for (unsigned int refID : references)
-			GameFactory::Operate<Container, FailPolicy::Return, ObjectPolicy::FactoryValidated>(refID, [this, refID, &result](FactoryContainer& container) {
+			GameFactory::Operate<Container, RET_F_VALID>(refID, [this, refID, &result](FactoryContainer& container) {
 				if (!filter(container))
 					result.emplace_back(Utils::toString(refID));
 			});

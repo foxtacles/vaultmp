@@ -35,9 +35,6 @@
 
 class Game
 {
-		friend class NetworkClient;
-		friend class Bethesda;
-
 	public:
 		typedef std::pair<std::set<unsigned int>, std::set<unsigned int>> CellDiff;
 		typedef std::unordered_map<unsigned int, std::unordered_map<unsigned int, std::set<unsigned int>>> CellRefs;
@@ -55,8 +52,6 @@ class Game
 #ifdef VAULTMP_DEBUG
 		static DebugInput<Game> debug;
 #endif
-
-		static RakNet::RakNetGUID server;
 
 		static void AdjustZAngle(float& Z, float diff);
 		static Guarded<CellRefs> cellRefs;
@@ -97,6 +92,8 @@ class Game
 		static void DelayOrExecute(const FactoryObject& reference, std::function<void(unsigned int)>&& func, unsigned int key = 0x00000000);
 
 	public:
+		static RakNet::RakNetGUID server;
+
 		/**
 		 * \brief Handles translated command results from the game
 		 */
@@ -105,6 +102,10 @@ class Game
 		 * \brief Builds an authenticate packet for the server
 		 */
 		static NetworkResponse Authenticate(const std::string& password);
+		/**
+		 * \brief Initializes internal states
+		 */
+		static void Initialize();
 		/**
 		 * \brief Starts the game command schedule
 		 */
@@ -675,16 +676,16 @@ class Game
 		static void GetListboxSelections(const std::string& name, const std::vector<const char*>& selections);
 };
 
-template<> struct pTypesMap<pTypes::ID_GAME_AUTH> { typedef pGeneratorDefault<pTypes::ID_GAME_AUTH, std::string, std::string> type; };
-template<> struct pTypesMap<pTypes::ID_GAME_LOAD> { typedef pGeneratorDefault<pTypes::ID_GAME_LOAD> type; };
-template<> struct pTypesMap<pTypes::ID_GAME_MOD> { typedef pGeneratorDefault<pTypes::ID_GAME_MOD, std::string, unsigned int> type; };
-template<> struct pTypesMap<pTypes::ID_GAME_START> { typedef pGeneratorDefault<pTypes::ID_GAME_START> type; };
-template<> struct pTypesMap<pTypes::ID_GAME_END> { typedef pGeneratorDefault<pTypes::ID_GAME_END, Reason> type; };
-template<> struct pTypesMap<pTypes::ID_GAME_MESSAGE> { typedef pGeneratorDefault<pTypes::ID_GAME_MESSAGE, std::string, unsigned char> type; };
-template<> struct pTypesMap<pTypes::ID_GAME_CHAT> { typedef pGeneratorDefault<pTypes::ID_GAME_CHAT, std::string> type; };
-template<> struct pTypesMap<pTypes::ID_GAME_GLOBAL> { typedef pGeneratorDefault<pTypes::ID_GAME_GLOBAL, unsigned int, signed int> type; };
-template<> struct pTypesMap<pTypes::ID_GAME_WEATHER> { typedef pGeneratorDefault<pTypes::ID_GAME_WEATHER, Game::Weather> type; };
-template<> struct pTypesMap<pTypes::ID_GAME_BASE> { typedef pGeneratorDefault<pTypes::ID_GAME_BASE, Game::PlayerBase> type; };
-template<> struct pTypesMap<pTypes::ID_GAME_DELETED> { typedef pGeneratorDefault<pTypes::ID_GAME_DELETED, Game::DeletedObjects> type; };
+PF_PACKET(ID_GAME_AUTH, pGeneratorDefault, std::string, std::string)
+PF_PACKET_E(ID_GAME_LOAD, pGeneratorDefault)
+PF_PACKET(ID_GAME_MOD, pGeneratorDefault, std::string, unsigned int)
+PF_PACKET_E(ID_GAME_START, pGeneratorDefault)
+PF_PACKET(ID_GAME_END, pGeneratorDefault, Reason)
+PF_PACKET(ID_GAME_MESSAGE, pGeneratorDefault, std::string, unsigned char)
+PF_PACKET(ID_GAME_CHAT, pGeneratorDefault, std::string)
+PF_PACKET(ID_GAME_GLOBAL, pGeneratorDefault, unsigned int, signed int)
+PF_PACKET(ID_GAME_WEATHER, pGeneratorDefault, Game::Weather)
+PF_PACKET(ID_GAME_BASE, pGeneratorDefault, Game::PlayerBase)
+PF_PACKET(ID_GAME_DELETED, pGeneratorDefault, Game::DeletedObjects)
 
 #endif

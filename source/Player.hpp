@@ -202,11 +202,11 @@ class PlayerFunctor : public ActorFunctor
 
 GF_TYPE_WRAPPER_FINAL(Player, Actor, ID_PLAYER)
 
-template<> struct pTypesMap<pTypes::ID_PLAYER_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_PLAYER_NEW, std::map<unsigned char, std::pair<unsigned char, bool>>> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_CONTROL> { typedef pGeneratorReference<pTypes::ID_UPDATE_CONTROL, unsigned char, unsigned char> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_INTERIOR> { typedef pGeneratorReference<pTypes::ID_UPDATE_INTERIOR, std::string, bool> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_EXTERIOR> { typedef pGeneratorReference<pTypes::ID_UPDATE_EXTERIOR, unsigned int, signed int, signed int, bool> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_CONTEXT> { typedef pGeneratorReference<pTypes::ID_UPDATE_CONTEXT, std::array<unsigned int, 9>, bool> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_CONSOLE> { typedef pGeneratorReference<pTypes::ID_UPDATE_CONSOLE, bool> type; };
+PF_PACKET(ID_PLAYER_NEW, pGeneratorReferenceExtend, std::map<unsigned char, std::pair<unsigned char, bool>>)
+PF_PACKET(ID_UPDATE_CONTROL, pGeneratorReference, unsigned char, unsigned char)
+PF_PACKET(ID_UPDATE_INTERIOR, pGeneratorReference, std::string, bool)
+PF_PACKET(ID_UPDATE_EXTERIOR, pGeneratorReference, unsigned int, signed int, signed int, bool)
+PF_PACKET(ID_UPDATE_CONTEXT, pGeneratorReference, std::array<unsigned int, 9>, bool)
+PF_PACKET(ID_UPDATE_CONSOLE, pGeneratorReference, bool)
 
 #endif

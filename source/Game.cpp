@@ -89,7 +89,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 
 				unsigned int refID = *getFrom<unsigned int*>(result);
 
-				GameFactory::Operate<Reference, FailPolicy::Return, ObjectPolicy::FactoryValidated>({refID, PLAYER_REFERENCE}, [result](FactoryReferences& references) {
+				GameFactory::Operate<Reference, RET_F_VALID>({refID, PLAYER_REFERENCE}, [result](FactoryReferences& references) {
 					GetActivate(references[0], references[1]);
 				});
 				break;
@@ -305,6 +305,23 @@ NetworkResponse Game::Authenticate(const string& password)
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
 		};
 	});
+}
+
+void Game::Initialize()
+{
+	cellRefs.Operate([](CellRefs& cellRefs) { cellRefs.clear(); });
+	cellContext.Operate([](Player::CellContext& cellContext) { cellContext = {{0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u}}; });
+	uninitObj.Operate([](UninitializedObjects& uninitObj) { uninitObj.clear(); });
+	deletedObj.Operate([](DeletedObjects& deletedObj) { deletedObj.clear(); });
+	deletedStatic.Operate([](DeletedObjects& deletedStatic) { deletedStatic.clear(); });
+
+	baseRaces.clear();
+	globals.clear();
+	weather = 0x00000000;
+	playerBase = 0x00000000;
+	spawnFunc = SpawnFunc();
+	spawnContext = {{0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u}};
+	GUIMode = false;
 }
 
 void Game::Startup()
@@ -1116,7 +1133,7 @@ void Game::DestroyObject(FactoryObject& reference, bool silent)
 {
 	NetworkID id = reference->GetNetworkID();
 
-	NetworkID container = GameFactory::Operate<Item, FailPolicy::Return>(id, [](Item* item) {
+	NetworkID container = GameFactory::Operate<Item, RET_VALID>(id, [](Item* item) {
 		return item->GetItemContainer();
 	});
 
@@ -1167,7 +1184,7 @@ void Game::DestroyObject(FactoryObject& reference, bool silent)
 
 void Game::DeleteWindow(FactoryWindow& reference)
 {
-	GameFactory::Operate<List, FailPolicy::Return>(reference->GetNetworkID(), [](List* list) {
+	GameFactory::Operate<List, RET_VALID>(reference->GetNetworkID(), [](List* list) {
 		GameFactory::Operate<ListItem>(list->GetItemList(), [list](ListItems& items) {
 			Interface::Dynamic([&items, list]() {
 				for (auto item : items)
@@ -2620,7 +2637,7 @@ void Game::GetCheckboxSelected(const string& name, bool selected)
 {
 	NetworkID checkbox = strtoull(name.c_str(), nullptr, 10);
 
-	if (!GameFactory::Operate<Checkbox, FailPolicy::Bool>(checkbox, [selected](Checkbox* checkbox) {
+	if (!GameFactory::Operate<Checkbox, BOOL_VALID>(checkbox, [selected](Checkbox* checkbox) {
 		checkbox->SetSelected(selected);
 
 		Network::Queue({Network::CreateResponse(

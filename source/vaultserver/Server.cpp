@@ -245,7 +245,7 @@ NetworkResponse Server::GetPos(RakNetGUID guid, FactoryObject& reference, float 
 				PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, cell, X, Y, Z),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
-			GameFactory::Operate<Player, FailPolicy::Return>(id, [&response, guid, id](Player* player) {
+			GameFactory::Operate<Player, RET_VALID>(id, [&response, guid, id](Player* player) {
 				response.emplace_back(Network::CreateResponse(
 					PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(id, player->GetPlayerCellContext(), false),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
@@ -293,7 +293,7 @@ NetworkResponse Server::GetCell(RakNetGUID guid, FactoryObject& reference, unsig
 			PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, cell, get<0>(pos), get<1>(pos), get<2>(pos)),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
-		GameFactory::Operate<Player, FailPolicy::Return>(id, [&response, guid, id](Player* player) {
+		GameFactory::Operate<Player, RET_VALID>(id, [&response, guid, id](Player* player) {
 			response.emplace_back(Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(id, player->GetPlayerCellContext(), false),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));

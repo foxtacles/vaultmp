@@ -198,7 +198,7 @@ class ObjectFunctor : public ReferenceFunctor
 
 GF_TYPE_WRAPPER(Object, Reference, ID_OBJECT, ALL_OBJECTS)
 
-template<> struct pTypesMap<pTypes::ID_OBJECT_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_OBJECT_NEW, std::string, std::tuple<float, float, float>, std::tuple<float, float, float>, unsigned int, bool, unsigned int, unsigned int> type; };
+PF_PACKET(ID_OBJECT_NEW, pGeneratorReferenceExtend, std::string, std::tuple<float, float, float>, std::tuple<float, float, float>, unsigned int, bool, unsigned int, unsigned int)
 template<>
 inline const typename pTypesMap<pTypes::ID_OBJECT_NEW>::type* PacketFactory::Cast_<pTypes::ID_OBJECT_NEW>::Cast(const pPacket* packet) {
 	pTypes type = packet->type();
@@ -210,14 +210,14 @@ inline const typename pTypesMap<pTypes::ID_OBJECT_NEW>::type* PacketFactory::Cas
 		type == pTypes::ID_PLAYER_NEW
 	) ? static_cast<const typename pTypesMap<pTypes::ID_OBJECT_NEW>::type*>(packet) : nullptr;
 }
-template<> struct pTypesMap<pTypes::ID_VOLATILE_NEW> { typedef pGeneratorReference<pTypes::ID_VOLATILE_NEW, unsigned int, float, float, float> type; };
-template<> struct pTypesMap<pTypes::ID_OBJECT_REMOVE> { typedef pGeneratorReference<pTypes::ID_OBJECT_REMOVE, bool> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_NAME> { typedef pGeneratorReference<pTypes::ID_UPDATE_NAME, std::string> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_POS> { typedef pGeneratorReference<pTypes::ID_UPDATE_POS, float, float, float> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_ANGLE> { typedef pGeneratorReference<pTypes::ID_UPDATE_ANGLE, float, float> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_CELL> { typedef pGeneratorReference<pTypes::ID_UPDATE_CELL, unsigned int, float, float, float> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_LOCK> { typedef pGeneratorReference<pTypes::ID_UPDATE_LOCK, unsigned int> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_OWNER> { typedef pGeneratorReference<pTypes::ID_UPDATE_OWNER, unsigned int> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_ACTIVATE> { typedef pGeneratorReference<pTypes::ID_UPDATE_ACTIVATE, RakNet::NetworkID> type; };
+PF_PACKET(ID_VOLATILE_NEW, pGeneratorReference, unsigned int, float, float, float)
+PF_PACKET(ID_OBJECT_REMOVE, pGeneratorReference, bool)
+PF_PACKET(ID_UPDATE_NAME, pGeneratorReference, std::string)
+PF_PACKET(ID_UPDATE_POS, pGeneratorReference, float, float, float)
+PF_PACKET(ID_UPDATE_ANGLE, pGeneratorReference, float, float)
+PF_PACKET(ID_UPDATE_CELL, pGeneratorReference, unsigned int, float, float, float)
+PF_PACKET(ID_UPDATE_LOCK, pGeneratorReference, unsigned int)
+PF_PACKET(ID_UPDATE_OWNER, pGeneratorReference, unsigned int)
+PF_PACKET(ID_UPDATE_ACTIVATE, pGeneratorReference, RakNet::NetworkID)
 
 #endif

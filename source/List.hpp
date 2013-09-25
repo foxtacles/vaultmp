@@ -53,7 +53,7 @@ class List : public Window
 
 GF_TYPE_WRAPPER_FINAL(List, Window, ID_LIST)
 
-template<> struct pTypesMap<pTypes::ID_LIST_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_LIST_NEW, std::vector<pPacket>, bool> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_WLMULTI> { typedef pGeneratorReference<pTypes::ID_UPDATE_WLMULTI, bool> type; };
+PF_PACKET(ID_LIST_NEW, pGeneratorReferenceExtend, std::vector<pPacket>, bool)
+PF_PACKET(ID_UPDATE_WLMULTI, pGeneratorReference, bool)
 
 #endif

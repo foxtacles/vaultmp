@@ -107,6 +107,19 @@ class GameFactory
 			Default = Validated
 		};
 
+		#define RET_VALID       FailPolicy::Return, ObjectPolicy::Validated
+		#define RET_EXPECTED    FailPolicy::Return, ObjectPolicy::Expected
+		#define RET_F_VALID     FailPolicy::Return, ObjectPolicy::FactoryValidated
+		#define RET_F_EXPECTED  FailPolicy::Return, ObjectPolicy::FactoryExpected
+		#define EX_VALID        FailPolicy::Exception, ObjectPolicy::Validated
+		#define EX_EXPECTED     FailPolicy::Exception, ObjectPolicy::Expected
+		#define EX_F_VALID      FailPolicy::Exception, ObjectPolicy::FactoryValidated
+		#define EX_F_EXPECTED   FailPolicy::Exception, ObjectPolicy::FactoryExpected
+		#define BOOL_VALID      FailPolicy::Bool, ObjectPolicy::Validated
+		#define BOOL_EXPECTED   FailPolicy::Bool, ObjectPolicy::Expected
+		#define BOOL_F_VALID    FailPolicy::Bool, ObjectPolicy::FactoryValidated
+		#define BOOL_F_EXPECTED FailPolicy::Bool, ObjectPolicy::FactoryExpected
+
 	private:
 		template<ObjectPolicy OP, typename T> struct ObjectPolicyType;
 		template<typename T> struct ObjectPolicyType<ObjectPolicy::Validated, T> { typedef T* type; };
@@ -133,14 +146,14 @@ class GameFactory
 
 		template<FailPolicy FP, ObjectPolicy OP, LaunchPolicy LP, typename T, typename F, typename I> struct OperateReturn;
 		template<ObjectPolicy OP, typename T, typename F, typename I> struct OperateReturn<FailPolicy::Bool, OP, LaunchPolicy::Blocking, T, F, I> { typedef bool type; };
-		template<typename T, typename F, typename I> struct OperateReturn<FailPolicy::Return, ObjectPolicy::Validated, LaunchPolicy::Blocking, T, F, I> { typedef OPR<ObjectPolicy::Validated, T, F, InputPolicyHelper<I>::value> type; };
-		template<typename T, typename F, typename I> struct OperateReturn<FailPolicy::Return, ObjectPolicy::Expected, LaunchPolicy::Blocking, T, F, I> { typedef OPR<ObjectPolicy::Expected, T, F, InputPolicyHelper<I>::value> type; };
-		template<typename T, typename F, typename I> struct OperateReturn<FailPolicy::Return, ObjectPolicy::FactoryValidated, LaunchPolicy::Blocking, T, F, I> { typedef OPR<ObjectPolicy::FactoryValidated, T, F, InputPolicyHelper<I>::value> type; };
-		template<typename T, typename F, typename I> struct OperateReturn<FailPolicy::Return, ObjectPolicy::FactoryExpected, LaunchPolicy::Blocking, T, F, I> { typedef OPR<ObjectPolicy::FactoryExpected, T, F, InputPolicyHelper<I>::value> type; };
-		template<typename T, typename F, typename I> struct OperateReturn<FailPolicy::Exception, ObjectPolicy::Validated, LaunchPolicy::Blocking, T, F, I> { typedef OPR<ObjectPolicy::Validated, T, F, InputPolicyHelper<I>::value> type; };
-		template<typename T, typename F, typename I> struct OperateReturn<FailPolicy::Exception, ObjectPolicy::Expected, LaunchPolicy::Blocking, T, F, I> { typedef OPR<ObjectPolicy::Expected, T, F, InputPolicyHelper<I>::value> type; };
-		template<typename T, typename F, typename I> struct OperateReturn<FailPolicy::Exception, ObjectPolicy::FactoryValidated, LaunchPolicy::Blocking, T, F, I> { typedef OPR<ObjectPolicy::FactoryValidated, T, F, InputPolicyHelper<I>::value> type; };
-		template<typename T, typename F, typename I> struct OperateReturn<FailPolicy::Exception, ObjectPolicy::FactoryExpected, LaunchPolicy::Blocking, T, F, I> { typedef OPR<ObjectPolicy::FactoryExpected, T, F, InputPolicyHelper<I>::value> type; };
+		template<typename T, typename F, typename I> struct OperateReturn<RET_VALID, LaunchPolicy::Blocking, T, F, I> { typedef OPR<ObjectPolicy::Validated, T, F, InputPolicyHelper<I>::value> type; };
+		template<typename T, typename F, typename I> struct OperateReturn<RET_EXPECTED, LaunchPolicy::Blocking, T, F, I> { typedef OPR<ObjectPolicy::Expected, T, F, InputPolicyHelper<I>::value> type; };
+		template<typename T, typename F, typename I> struct OperateReturn<RET_F_VALID, LaunchPolicy::Blocking, T, F, I> { typedef OPR<ObjectPolicy::FactoryValidated, T, F, InputPolicyHelper<I>::value> type; };
+		template<typename T, typename F, typename I> struct OperateReturn<RET_F_EXPECTED, LaunchPolicy::Blocking, T, F, I> { typedef OPR<ObjectPolicy::FactoryExpected, T, F, InputPolicyHelper<I>::value> type; };
+		template<typename T, typename F, typename I> struct OperateReturn<EX_VALID, LaunchPolicy::Blocking, T, F, I> { typedef OPR<ObjectPolicy::Validated, T, F, InputPolicyHelper<I>::value> type; };
+		template<typename T, typename F, typename I> struct OperateReturn<EX_EXPECTED, LaunchPolicy::Blocking, T, F, I> { typedef OPR<ObjectPolicy::Expected, T, F, InputPolicyHelper<I>::value> type; };
+		template<typename T, typename F, typename I> struct OperateReturn<EX_F_VALID, LaunchPolicy::Blocking, T, F, I> { typedef OPR<ObjectPolicy::FactoryValidated, T, F, InputPolicyHelper<I>::value> type; };
+		template<typename T, typename F, typename I> struct OperateReturn<EX_F_EXPECTED, LaunchPolicy::Blocking, T, F, I> { typedef OPR<ObjectPolicy::FactoryExpected, T, F, InputPolicyHelper<I>::value> type; };
 		template<FailPolicy FP, ObjectPolicy OP, LaunchPolicy LP, typename T, typename F, typename I> using OR = typename OperateReturn<FP, OP, LP, T, F, I>::type;
 
 		template<typename T, FailPolicy FP, ObjectPolicy OP, LaunchPolicy LP, typename I, typename F>
@@ -592,8 +605,6 @@ typedef Expected<FactoryWrapper<derived_class>> Expected##derived_class;        
 typedef std::vector<Expected<FactoryWrapper<derived_class>>> Expected##derived_class##s;
 
 #define GF_TYPE_WRAPPER_FINAL(derived_class, base_class, identity) GF_TYPE_WRAPPER(derived_class, base_class, identity, identity)
-
-#define EX_F_VALID FailPolicy::Exception, ObjectPolicy::FactoryValidated
 
 /**
   * \brief Tries to cast the instance pointer of a FactoryWrapper

@@ -36,6 +36,6 @@ class Button : public Window
 
 GF_TYPE_WRAPPER_FINAL(Button, Window, ID_BUTTON)
 
-template<> struct pTypesMap<pTypes::ID_BUTTON_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_BUTTON_NEW> type; };
+PF_PACKET_E(ID_BUTTON_NEW, pGeneratorReferenceExtend)
 
 #endif

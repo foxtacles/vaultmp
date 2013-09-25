@@ -42,7 +42,7 @@ class Checkbox : public Window
 
 GF_TYPE_WRAPPER_FINAL(Checkbox, Window, ID_CHECKBOX)
 
-template<> struct pTypesMap<pTypes::ID_CHECKBOX_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_CHECKBOX_NEW, bool> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_WSELECTED> { typedef pGeneratorReference<pTypes::ID_UPDATE_WSELECTED, bool> type; };
+PF_PACKET(ID_CHECKBOX_NEW, pGeneratorReferenceExtend, bool)
+PF_PACKET(ID_UPDATE_WSELECTED, pGeneratorReference, bool)
 
 #endif

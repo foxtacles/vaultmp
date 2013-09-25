@@ -34,6 +34,6 @@ class Text : public Window
 
 GF_TYPE_WRAPPER_FINAL(Text, Window, ID_TEXT)
 
-template<> struct pTypesMap<pTypes::ID_TEXT_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_TEXT_NEW> type; };
+PF_PACKET_E(ID_TEXT_NEW, pGeneratorReferenceExtend)
 
 #endif

@@ -52,9 +52,9 @@ class ListItem : public Base
 
 GF_TYPE_WRAPPER_FINAL(ListItem, Base, ID_LISTITEM)
 
-template<> struct pTypesMap<pTypes::ID_LISTITEM_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_LISTITEM_NEW, RakNet::NetworkID, std::string, bool> type; };
-template<> struct pTypesMap<pTypes::ID_LISTITEM_REMOVE> { typedef pGeneratorReference<pTypes::ID_LISTITEM_REMOVE> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_WLTEXT> { typedef pGeneratorReference<pTypes::ID_UPDATE_WLTEXT, std::string> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_WLSELECTED> { typedef pGeneratorReference<pTypes::ID_UPDATE_WLSELECTED, bool> type; };
+PF_PACKET(ID_LISTITEM_NEW, pGeneratorReferenceExtend, RakNet::NetworkID, std::string, bool)
+PF_PACKET_E(ID_LISTITEM_REMOVE, pGeneratorReference)
+PF_PACKET(ID_UPDATE_WLTEXT, pGeneratorReference, std::string)
+PF_PACKET(ID_UPDATE_WLSELECTED, pGeneratorReference, bool)
 
 #endif

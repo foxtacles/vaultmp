@@ -228,7 +228,7 @@ class ActorFunctor : public ContainerFunctor
 
 GF_TYPE_WRAPPER(Actor, Container, ID_ACTOR, ALL_ACTORS)
 
-template<> struct pTypesMap<pTypes::ID_ACTOR_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_ACTOR_NEW, std::map<unsigned char, float>, std::map<unsigned char, float>, unsigned int, signed int, unsigned int, unsigned char, unsigned char, unsigned char, bool, bool, bool, bool> type; };
+PF_PACKET(ID_ACTOR_NEW, pGeneratorReferenceExtend, std::map<unsigned char, float>, std::map<unsigned char, float>, unsigned int, signed int, unsigned int, unsigned char, unsigned char, unsigned char, bool, bool, bool, bool)
 template<>
 inline const typename pTypesMap<pTypes::ID_ACTOR_NEW>::type* PacketFactory::Cast_<pTypes::ID_ACTOR_NEW>::Cast(const pPacket* packet) {
 	pTypes type = packet->type();
@@ -237,11 +237,11 @@ inline const typename pTypesMap<pTypes::ID_ACTOR_NEW>::type* PacketFactory::Cast
 		type == pTypes::ID_PLAYER_NEW
 	) ? static_cast<const typename pTypesMap<pTypes::ID_ACTOR_NEW>::type*>(packet) : nullptr;
 }
-template<> struct pTypesMap<pTypes::ID_UPDATE_STATE> { typedef pGeneratorReference<pTypes::ID_UPDATE_STATE, unsigned int, unsigned char, unsigned char, unsigned char, bool, bool, bool> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_RACE> { typedef pGeneratorReference<pTypes::ID_UPDATE_RACE, unsigned int, signed int, signed int> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_SEX> { typedef pGeneratorReference<pTypes::ID_UPDATE_SEX, bool> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_DEAD> { typedef pGeneratorReference<pTypes::ID_UPDATE_DEAD, bool, unsigned short, signed char> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_FIREWEAPON> { typedef pGeneratorReference<pTypes::ID_UPDATE_FIREWEAPON, unsigned int> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_IDLE> { typedef pGeneratorReference<pTypes::ID_UPDATE_IDLE, unsigned int, std::string> type; };
+PF_PACKET(ID_UPDATE_STATE, pGeneratorReference, unsigned int, unsigned char, unsigned char, unsigned char, bool, bool, bool)
+PF_PACKET(ID_UPDATE_RACE, pGeneratorReference, unsigned int, signed int, signed int)
+PF_PACKET(ID_UPDATE_SEX, pGeneratorReference, bool)
+PF_PACKET(ID_UPDATE_DEAD, pGeneratorReference, bool, unsigned short, signed char)
+PF_PACKET(ID_UPDATE_FIREWEAPON, pGeneratorReference, unsigned int)
+PF_PACKET(ID_UPDATE_IDLE, pGeneratorReference, unsigned int, std::string)
 
 #endif

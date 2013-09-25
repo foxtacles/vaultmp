@@ -72,7 +72,7 @@ class Window : public Base
 
 GF_TYPE_WRAPPER(Window, Base, ID_WINDOW, ALL_WINDOWS)
 
-template<> struct pTypesMap<pTypes::ID_WINDOW_NEW> { typedef pGeneratorReferenceExtend<pTypes::ID_WINDOW_NEW, RakNet::NetworkID, std::string, std::tuple<float, float, float, float>, std::tuple<float, float, float, float>, bool, bool, std::string> type; };
+PF_PACKET(ID_WINDOW_NEW, pGeneratorReferenceExtend, RakNet::NetworkID, std::string, std::tuple<float, float, float, float>, std::tuple<float, float, float, float>, bool, bool, std::string)
 template<>
 inline const typename pTypesMap<pTypes::ID_WINDOW_NEW>::type* PacketFactory::Cast_<pTypes::ID_WINDOW_NEW>::Cast(const pPacket* packet) {
 	pTypes type = packet->type();
@@ -84,14 +84,14 @@ inline const typename pTypesMap<pTypes::ID_WINDOW_NEW>::type* PacketFactory::Cas
 		type == pTypes::ID_CHECKBOX_NEW
 	) ? static_cast<const typename pTypesMap<pTypes::ID_WINDOW_NEW>::type*>(packet) : nullptr;
 }
-template<> struct pTypesMap<pTypes::ID_WINDOW_REMOVE> { typedef pGeneratorReference<pTypes::ID_WINDOW_REMOVE> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_WPOS> { typedef pGeneratorReference<pTypes::ID_UPDATE_WPOS, std::tuple<float, float, float, float>> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_WSIZE> { typedef pGeneratorReference<pTypes::ID_UPDATE_WSIZE, std::tuple<float, float, float, float>> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_WLOCKED> { typedef pGeneratorReference<pTypes::ID_UPDATE_WLOCKED, bool> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_WVISIBLE> { typedef pGeneratorReference<pTypes::ID_UPDATE_WVISIBLE, bool> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_WTEXT> { typedef pGeneratorReference<pTypes::ID_UPDATE_WTEXT, std::string> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_WCLICK> { typedef pGeneratorReference<pTypes::ID_UPDATE_WCLICK> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_WMODE> { typedef pGeneratorDefault<pTypes::ID_UPDATE_WMODE, bool> type; };
-template<> struct pTypesMap<pTypes::ID_UPDATE_WRETURN> { typedef pGeneratorReference<pTypes::ID_UPDATE_WRETURN> type; };
+PF_PACKET_E(ID_WINDOW_REMOVE, pGeneratorReference)
+PF_PACKET(ID_UPDATE_WPOS, pGeneratorReference, std::tuple<float, float, float, float>)
+PF_PACKET(ID_UPDATE_WSIZE, pGeneratorReference, std::tuple<float, float, float, float>)
+PF_PACKET(ID_UPDATE_WLOCKED, pGeneratorReference, bool)
+PF_PACKET(ID_UPDATE_WVISIBLE, pGeneratorReference, bool)
+PF_PACKET(ID_UPDATE_WTEXT, pGeneratorReference, std::string)
+PF_PACKET_E(ID_UPDATE_WCLICK, pGeneratorReference)
+PF_PACKET(ID_UPDATE_WMODE, pGeneratorDefault, bool)
+PF_PACKET_E(ID_UPDATE_WRETURN, pGeneratorReference)
 
 #endif

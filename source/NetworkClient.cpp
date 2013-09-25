@@ -110,20 +110,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 #endif
 
 					Bethesda::Initialize();
-
-					Game::cellRefs.Operate([](Game::CellRefs& cellRefs) { cellRefs.clear(); });
-					Game::cellContext.Operate([](Player::CellContext& cellContext) { cellContext = {{0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u}}; });
-					Game::uninitObj.Operate([](Game::UninitializedObjects& uninitObj) { uninitObj.clear(); });
-					Game::deletedObj.Operate([](Game::DeletedObjects& deletedObj) { deletedObj.clear(); });
-					Game::deletedStatic.Operate([](Game::DeletedObjects& deletedStatic) { deletedStatic.clear(); });
-
-					Game::baseRaces.clear();
-					Game::globals.clear();
-					Game::weather = 0x00000000;
-					Game::playerBase = 0x00000000;
-					Game::spawnFunc = Game::SpawnFunc();
-					Game::spawnContext = {{0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u}};
-					Game::GUIMode = false;
+					Game::Initialize();
 
 					Game::DisablePlayerControls(true, true, true, false, true);
 
