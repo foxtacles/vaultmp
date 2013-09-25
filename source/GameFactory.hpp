@@ -5,6 +5,7 @@
 #include "Base.hpp"
 #include "Expected.hpp"
 #include "Guarded.hpp"
+#include "Utils.hpp"
 
 #ifdef VAULTSERVER
 #include "vaultserver/Database.hpp"
@@ -592,8 +593,8 @@ typedef std::vector<Expected<FactoryWrapper<Base>>> ExpectedBases;
 		FactoryWrapper& operator=(FactoryWrapper&&) = default;                                                                                                       \
 		~FactoryWrapper() = default;                                                                                                                                 \
 																																							         \
-		derived_class* operator->() const noexcept { return dynamic_cast<derived_class*>(base); }                                                                    \
-		derived_class& operator*() const noexcept { return dynamic_cast<derived_class&>(*base); }                                                                    \
+		derived_class* operator->() const noexcept { return Utils::static_or_dynamic_cast<derived_class>(base); }                                                    \
+		derived_class& operator*() const noexcept { return *operator->(); }                                                                                          \
 		operator derived_class*() const noexcept { return operator->(); }                                                                                            \
 };                                                                                                                                                                   \
 template<> struct rTypes<derived_class> { enum { value = identity }; };                                                                                              \

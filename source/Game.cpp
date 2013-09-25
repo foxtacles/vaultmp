@@ -2136,12 +2136,14 @@ void Game::net_SetActorRace(const FactoryActor& reference, unsigned int race, si
 {
 	reference->SetActorRace(race);
 	reference->SetActorAge(age); // delta from original race to new race
+
 	SetActorRace(reference, delta_age); // using delta from current race to new race
 }
 
 void Game::net_SetActorFemale(const FactoryActor& reference, bool female)
 {
 	reference->SetActorFemale(female);
+
 	SetActorFemale(reference);
 }
 

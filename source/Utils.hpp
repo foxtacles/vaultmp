@@ -6,6 +6,7 @@
 #endif
 
 #include <string>
+#include <type_traits>
 
 namespace Utils
 {
@@ -33,6 +34,12 @@ namespace Utils
 		unsigned int crc32buf(char* buf, size_t len);
 		unsigned int updateCRC32(unsigned char ch, unsigned int crc);
 		bool crc32file(const char* name, unsigned int* crc);
+
+		template<typename F, typename T, typename E = void> struct is_static_castable : std::false_type {};
+		template<typename F, typename T> struct is_static_castable<F, T, typename std::conditional<true, void, decltype(static_cast<T>(std::declval<F>()))>::type> : std::true_type {};
+
+		template<typename T, typename F> inline static typename std::enable_if<is_static_castable<F*, T*>::value, T*>::type static_or_dynamic_cast(F* from) { return static_cast<T*>(from); }
+		template<typename T, typename F> inline static typename std::enable_if<!is_static_castable<F*, T*>::value, T*>::type static_or_dynamic_cast(F* from) { return dynamic_cast<T*>(from); }
 
 #ifdef __WIN32__
 		BOOL GenerateChecksum(const std::string& szFilename, DWORD& dwExistingChecksum, DWORD& dwChecksum);
