@@ -2038,7 +2038,7 @@ void Script::SetActorBaseValue(NetworkID id, unsigned char index, double value) 
 		if (baseID == PLAYER_BASE)
 			return;
 
-		for (const auto& actor : actors)
+		for (auto actor : actors)
 			if (actor->GetBase() == baseID)
 				if (actor->SetActorBaseValue(index, value))
 					Network::Queue({Network::CreateResponse(
@@ -2488,7 +2488,7 @@ void Script::ForceWindowMode(NetworkID id, bool enabled) noexcept
 	});
 }
 
-NetworkID Script::GetParentWindow(NetworkID id) noexcept
+NetworkID Script::GetWindowParent(NetworkID id) noexcept
 {
 	return GameFactory::Operate<Window, RET_VALID>(id, [id](Window* window) {
 		return window->GetParentWindow();

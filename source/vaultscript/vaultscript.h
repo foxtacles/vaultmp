@@ -483,7 +483,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(DetachWindow))(VAULTSPACE ID, VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(ForceWindowMode))(VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
 
-	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(GetParentWindow))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(GetWindowParent))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(GetWindowRoot))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetWindowChildCount))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE UCount (*VAULTAPI(GetWindowChildList))(VAULTSPACE ID, VAULTSPACE RawArray(VAULTSPACE ID)*) VAULTCPP(noexcept);
@@ -924,7 +924,7 @@ namespace vaultmp
 	VAULTFUNCTION State DetachWindow(ID id, ID window) noexcept { return VAULTAPI(DetachWindow)(id, window); }
 	VAULTFUNCTION Void ForceWindowMode(ID id, State enabled) noexcept { return VAULTAPI(ForceWindowMode)(id, enabled); }
 
-	VAULTFUNCTION ID GetParentWindow(ID id) noexcept { return VAULTAPI(GetParentWindow)(id); }
+	VAULTFUNCTION ID GetWindowParent(ID id) noexcept { return VAULTAPI(GetWindowParent)(id); }
 	VAULTFUNCTION ID GetWindowRoot(ID id) noexcept { return VAULTAPI(GetWindowRoot)(id); }
 	VAULTFUNCTION UCount GetWindowChildCount(ID id) noexcept { return VAULTAPI(GetWindowChildCount)(id); }
 	VAULTFUNCTION IDVector GetWindowChildList(ID id) noexcept {
@@ -1389,9 +1389,9 @@ namespace vaultmp
 			Window(ID id) noexcept { this->id = vaultmp::IsWindow(id) ? id : static_cast<ID>(0); }
 			~Window() noexcept {}
 
-			ID GetParentWindow() const noexcept { return vaultmp::GetParentWindow(id); }
-			ID GetWindowRoot() const noexcept { return vaultmp::GetParentWindow(id); }
-			UCount GetWindowChildCount() const noexcept { return vaultmp::GetParentWindow(id); }
+			ID GetWindowParent() const noexcept { return vaultmp::GetWindowParent(id); }
+			ID GetWindowRoot() const noexcept { return vaultmp::GetWindowRoot(id); }
+			UCount GetWindowChildCount() const noexcept { return vaultmp::GetWindowChildCount(id); }
 			IDVector GetWindowChildList() const noexcept { return vaultmp::GetWindowChildList(id); }
 			Void GetWindowPos(Value& X, Value& Y, Value& offset_X, Value& offset_Y) const noexcept { return vaultmp::GetWindowPos(id, X, Y, offset_X, offset_Y); }
 			Void GetWindowSize(Value& X, Value& Y, Value& offset_X, Value& offset_Y) const noexcept { return vaultmp::GetWindowSize(id, X, Y, offset_X, offset_Y); }

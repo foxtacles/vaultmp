@@ -353,7 +353,7 @@ native Bool:AttachWindow(ID, window);
 native Bool:DetachWindow(ID, window);
 native ForceWindowMode(ID, Bool:enabled);
 
-native GetParentWindow(ID);
+native GetWindowParent(ID);
 native GetWindowRoot(ID);
 native GetWindowChildCount(ID);
 native GetWindowChildList(ID, id[]);

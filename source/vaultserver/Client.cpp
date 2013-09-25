@@ -30,6 +30,9 @@ Client::~Client()
 void Client::SetMaximumClients(unsigned int clients)
 {
 	cs.Operate([clients]() {
+		while (!clientID.empty())
+			clientID.pop();
+
 		for (signed int i = clients - 1; i >= 0; --i)
 			clientID.push(i);
 	});

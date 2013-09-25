@@ -356,7 +356,7 @@ class Script
 		static bool DetachWindow(RakNet::NetworkID id, RakNet::NetworkID window) noexcept;
 		static void ForceWindowMode(RakNet::NetworkID id, bool enabled) noexcept;
 
-		static RakNet::NetworkID GetParentWindow(RakNet::NetworkID id) noexcept;
+		static RakNet::NetworkID GetWindowParent(RakNet::NetworkID id) noexcept;
 		static RakNet::NetworkID GetWindowRoot(RakNet::NetworkID id) noexcept;
 		static unsigned int GetWindowChildCount(RakNet::NetworkID id) noexcept;
 		static unsigned int GetWindowChildList(RakNet::NetworkID id, RakNet::NetworkID** data) noexcept;
@@ -553,7 +553,7 @@ class Script
 			{"DetachWindow", Script::DetachWindow},
 			{"ForceWindowMode", Script::ForceWindowMode},
 
-			{"GetParentWindow", Script::GetParentWindow},
+			{"GetWindowParent", Script::GetWindowParent},
 			{"GetWindowRoot", Script::GetWindowRoot},
 			{"GetWindowChildCount", Script::GetWindowChildCount},
 			{"GetWindowChildList", Script::GetWindowChildList},

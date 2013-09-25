@@ -277,8 +277,6 @@ void Dedicated::DedicatedThread()
 
 	try
 	{
-		Packet* packet;
-
 		GameFactory::Initialize();
 		API::Initialize();
 		Client::SetMaximumClients(connections);
@@ -299,7 +297,7 @@ void Dedicated::DedicatedThread()
 			{
 				while (Network::Dispatch(peer));
 
-				for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
+				for (Packet* packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive())
 				{
 					if (packet->data[0] == ID_MASTER_UPDATE)
 						Query(packet);
