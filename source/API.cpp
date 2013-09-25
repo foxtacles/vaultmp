@@ -846,15 +846,14 @@ vector<double> API::ParseCommand(const vector<string>& cmd, const char* def, uns
 
 API::CommandParsed API::Translate(const CommandInput& cmd, unsigned int key)
 {
-	CommandParsed stream;
+	CommandParsed stream(cmd.second.size());
+	unsigned int i = 0;
 
 	for (const auto& command : cmd.second)
 	{
-		// make_unique
-		unique_ptr<unsigned char[]> result(new unsigned char[PIPE_LENGTH]);
-		op_default* data = new (result.get()) op_default;
+		op_default* data = new (&stream[i][0]) op_default;
 		queue.emplace_front(data->R, ParseCommand(command, functions.at(cmd.first), static_cast<unsigned short>(cmd.first), data), key);
-		stream.emplace_back(move(result));
+		++i;
 	}
 
 	return stream;

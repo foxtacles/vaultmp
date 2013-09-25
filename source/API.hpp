@@ -10,6 +10,7 @@
 #include <vector>
 #include <deque>
 #include <memory>
+#include <array>
 #include <unordered_map>
 #include <cstdint>
 #include <climits>
@@ -479,7 +480,7 @@ class API
 
 		typedef std::pair<Values::Func, std::vector<std::vector<std::string>>> CommandInput;
 		typedef std::tuple<unsigned int, std::vector<double>, double, bool> CommandResult;
-		typedef std::vector<std::unique_ptr<unsigned char[]>> CommandParsed;
+		typedef std::vector<std::array<unsigned char, PIPE_LENGTH>> CommandParsed;
 
 	private:
 		typedef std::deque<std::tuple<unsigned int, std::vector<double>, unsigned int>> CommandQueue;

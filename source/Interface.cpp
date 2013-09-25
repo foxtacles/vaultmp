@@ -333,7 +333,7 @@ void Interface::CommandThreadSend()
 							CommandParsed stream = API::Translate(cmd);
 
 							for (auto it = stream.begin(); it != stream.end() && !endThread; ++it)
-								while (!endThread && !pipeServer->Send(it->get()))
+								while (!endThread && !pipeServer->Send(&(*it)[0]))
 								{
 									DWORD error = GetLastError();
 
@@ -361,7 +361,7 @@ void Interface::CommandThreadSend()
 						CommandParsed stream = API::Translate(cmd, dynamic.second);
 
 						for (auto it = stream.begin(); it != stream.end() && !endThread; ++it)
-							while (!endThread && !pipeServer->Send(it->get()))
+							while (!endThread && !pipeServer->Send(&(*it)[0]))
 							{
 								DWORD error = GetLastError();
 
