@@ -350,7 +350,7 @@ vector<string> ActorFunctor::operator()()
 		auto references = Game::GetContext(ID_ACTOR);
 
 		for (unsigned int refID : references)
-			GameFactory::Operate<Actor, FailPolicy::Return>(refID, [this, refID, &result](FactoryActor& actor) {
+			GameFactory::Operate<Actor, FailPolicy::Return, ObjectPolicy::FactoryValidated>(refID, [this, refID, &result](FactoryActor& actor) {
 				if (!filter(actor))
 					result.emplace_back(Utils::toString(refID));
 			});
@@ -366,7 +366,7 @@ bool ActorFunctor::filter(FactoryWrapper<Reference>& reference)
 	if (ContainerFunctor::filter(reference))
 		return true;
 
-	return GameFactory::Operate<Actor>(reference->GetNetworkID(), [this](FactoryActor& actor) {
+	return GameFactory::Operate<Actor>(reference->GetNetworkID(), [this](Actor* actor) {
 		unsigned int flags = this->flags();
 
 		if (flags & FLAG_ALIVE && actor->GetActorDead())

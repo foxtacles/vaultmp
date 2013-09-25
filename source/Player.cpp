@@ -271,7 +271,7 @@ vector<string> PlayerFunctor::operator()()
 	NetworkID id = get();
 
 	if (id)
-		GameFactory::Operate<Player>(id, [this, &result](FactoryPlayer& player) {
+		GameFactory::Operate<Player>(id, [this, &result](Player* player) {
 			unsigned int flags = this->flags();
 
 			if (flags & FLAG_MOVCONTROLS)
@@ -293,7 +293,7 @@ vector<string> PlayerFunctor::operator()()
 		auto references = Game::GetContext(ID_PLAYER);
 
 		for (unsigned int refID : references)
-			GameFactory::Operate<Player, FailPolicy::Return>(refID, [this, refID, &result](FactoryPlayer& player) {
+			GameFactory::Operate<Player, FailPolicy::Return, ObjectPolicy::FactoryValidated>(refID, [this, refID, &result](FactoryPlayer& player) {
 				if (!filter(player))
 					result.emplace_back(Utils::toString(refID));
 			});

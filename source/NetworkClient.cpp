@@ -33,7 +33,7 @@ NetworkResponse NetworkClient::ProcessEvent(unsigned char id)
 		{
 			Network::ToggleDequeue(true);
 
-			return GameFactory::Operate<Player>(PLAYER_REFERENCE, [](FactoryPlayer& player) {
+			return GameFactory::Operate<Player>(PLAYER_REFERENCE, [](Player* player) {
 				return NetworkResponse{Network::CreateResponse(
 					player->toPacket(),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Game::server)
@@ -221,7 +221,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					});*/ break;
 
 				case pTypes::ID_OBJECT_NEW:
-					GameFactory::Operate<Object>(GameFactory::Create<Object>(packet), [](FactoryObject& object) {
+					GameFactory::Operate<Object, EX_F_VALID>(GameFactory::Create<Object>(packet), [](FactoryObject& object) {
 						Game::NewObject(object);
 					}); break;
 
@@ -237,22 +237,22 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				}
 
 				case pTypes::ID_ITEM_NEW:
-					GameFactory::Operate<Item>(GameFactory::Create<Item>(packet), [](FactoryItem& item) {
+					GameFactory::Operate<Item, EX_F_VALID>(GameFactory::Create<Item>(packet), [](FactoryItem& item) {
 						Game::NewItem(item);
 					}); break;
 
 				case pTypes::ID_CONTAINER_NEW:
-					GameFactory::Operate<Container>(GameFactory::Create<Container>(packet), [](FactoryContainer& container) {
+					GameFactory::Operate<Container, EX_F_VALID>(GameFactory::Create<Container>(packet), [](FactoryContainer& container) {
 						Game::NewContainer(container);
 					}); break;
 
 				case pTypes::ID_ACTOR_NEW:
-					GameFactory::Operate<Actor>(GameFactory::Create<Actor>(packet), [](FactoryActor& actor) {
+					GameFactory::Operate<Actor, EX_F_VALID>(GameFactory::Create<Actor>(packet), [](FactoryActor& actor) {
 						Game::NewActor(actor);
 					}); break;
 
 				case pTypes::ID_PLAYER_NEW:
-					GameFactory::Operate<Player>(GameFactory::Create<Player>(packet), [](FactoryPlayer& player) {
+					GameFactory::Operate<Player, EX_F_VALID>(GameFactory::Create<Player>(packet), [](FactoryPlayer& player) {
 						Game::NewPlayer(player);
 					}); break;
 
@@ -267,42 +267,42 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				}
 
 				case pTypes::ID_WINDOW_NEW:
-					GameFactory::Operate<Window>(GameFactory::Create<Window>(packet), [](FactoryWindow& window) {
+					GameFactory::Operate<Window, EX_F_VALID>(GameFactory::Create<Window>(packet), [](FactoryWindow& window) {
 						Game::NewWindow(window);
 					}); break;
 
 				case pTypes::ID_BUTTON_NEW:
-					GameFactory::Operate<Button>(GameFactory::Create<Button>(packet), [](FactoryButton& button) {
+					GameFactory::Operate<Button, EX_F_VALID>(GameFactory::Create<Button>(packet), [](FactoryButton& button) {
 						Game::NewButton(button);
 					}); break;
 
 				case pTypes::ID_TEXT_NEW:
-					GameFactory::Operate<Text>(GameFactory::Create<Text>(packet), [](FactoryText& text) {
+					GameFactory::Operate<Text, EX_F_VALID>(GameFactory::Create<Text>(packet), [](FactoryText& text) {
 						Game::NewText(text);
 					}); break;
 
 				case pTypes::ID_EDIT_NEW:
-					GameFactory::Operate<Edit>(GameFactory::Create<Edit>(packet), [](FactoryEdit& edit) {
+					GameFactory::Operate<Edit, EX_F_VALID>(GameFactory::Create<Edit>(packet), [](FactoryEdit& edit) {
 						Game::NewEdit(edit);
 					}); break;
 
 				case pTypes::ID_CHECKBOX_NEW:
-					GameFactory::Operate<Checkbox>(GameFactory::Create<Checkbox>(packet), [](FactoryCheckbox& checkbox) {
+					GameFactory::Operate<Checkbox, EX_F_VALID>(GameFactory::Create<Checkbox>(packet), [](FactoryCheckbox& checkbox) {
 						Game::NewCheckbox(checkbox);
 					}); break;
 
 				case pTypes::ID_RADIOBUTTON_NEW:
-					GameFactory::Operate<RadioButton>(GameFactory::Create<RadioButton>(packet), [](FactoryRadioButton& radiobutton) {
+					GameFactory::Operate<RadioButton, EX_F_VALID>(GameFactory::Create<RadioButton>(packet), [](FactoryRadioButton& radiobutton) {
 						Game::NewRadioButton(radiobutton);
 					}); break;
 
 				case pTypes::ID_LISTITEM_NEW:
-					GameFactory::Operate<ListItem>(GameFactory::Create<ListItem>(packet), [](FactoryListItem& listitem) {
+					GameFactory::Operate<ListItem, EX_F_VALID>(GameFactory::Create<ListItem>(packet), [](FactoryListItem& listitem) {
 						Game::NewListItem(listitem);
 					}); break;
 
 				case pTypes::ID_LIST_NEW:
-					GameFactory::Operate<List>(GameFactory::Create<List>(packet), [](FactoryList& list) {
+					GameFactory::Operate<List, EX_F_VALID>(GameFactory::Create<List>(packet), [](FactoryList& list) {
 						Game::NewList(list);
 					}); break;
 

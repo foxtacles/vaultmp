@@ -581,6 +581,7 @@ typedef std::vector<Expected<FactoryWrapper<Base>>> ExpectedBases;
 																																							         \
 		derived_class* operator->() const noexcept { return dynamic_cast<derived_class*>(base); }                                                                    \
 		derived_class& operator*() const noexcept { return dynamic_cast<derived_class&>(*base); }                                                                    \
+		operator derived_class*() const noexcept { return operator->(); }                                                                                            \
 };                                                                                                                                                                   \
 template<> struct rTypes<derived_class> { enum { value = identity }; };                                                                                              \
 template<> struct rTypesToken<derived_class> { enum { value = token }; };                                                                                            \
@@ -591,6 +592,8 @@ typedef Expected<FactoryWrapper<derived_class>> Expected##derived_class;        
 typedef std::vector<Expected<FactoryWrapper<derived_class>>> Expected##derived_class##s;
 
 #define GF_TYPE_WRAPPER_FINAL(derived_class, base_class, identity) GF_TYPE_WRAPPER(derived_class, base_class, identity, identity)
+
+#define EX_F_VALID FailPolicy::Exception, ObjectPolicy::FactoryValidated
 
 /**
   * \brief Tries to cast the instance pointer of a FactoryWrapper

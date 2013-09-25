@@ -171,7 +171,7 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 		return player->GetName();
 	});
 
-	GameFactory::Operate<Reference, FailPolicy::Exception, ObjectPolicy::FactoryValidated>(GameFactory::GetByType(ALL_REFERENCES), [&response, guid, id](FactoryReferences& references) {
+	GameFactory::Operate<Reference, EX_F_VALID>(GameFactory::GetByType(ALL_REFERENCES), [&response, guid, id](FactoryReferences& references) {
 		FactoryReferences::iterator it;
 
 		for (it = references.begin(); it != references.end(); GameFactory::Free(*it), ++it)

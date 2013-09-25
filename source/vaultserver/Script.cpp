@@ -2498,7 +2498,7 @@ NetworkID Script::GetParentWindow(NetworkID id) noexcept
 NetworkID Script::GetWindowRoot(NetworkID id) noexcept
 {
 	return GameFactory::Operate<Window, FailPolicy::Return, ObjectPolicy::FactoryValidated>(id, [id](FactoryWindow& window) {
-		for (NetworkID parent = window->GetParentWindow(); parent; GameFactory::Free(window), window = GameFactory::Get<Window>(parent).get());
+		for (NetworkID parent; (parent = window->GetParentWindow()); GameFactory::Free(window), window = GameFactory::Get<Window>(parent).get());
 
 		return window->GetNetworkID();
 	});

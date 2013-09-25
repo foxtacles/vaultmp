@@ -85,7 +85,7 @@ NetworkID ItemList::AddItem(NetworkID id)
 
 	if (stackable)
 	{
-		auto data = GameFactory::Operate<Item, FailPolicy::Exception, ObjectPolicy::FactoryValidated>(id, [](FactoryItem& item) {
+		auto data = GameFactory::Operate<Item, EX_F_VALID>(id, [](FactoryItem& item) {
 			auto data = make_pair(item->GetItemEquipped(), item->GetItemCount());
 			GameFactory::Destroy(item);
 			return data;

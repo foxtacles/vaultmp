@@ -234,7 +234,7 @@ vector<string> ObjectFunctor::operator()()
 	NetworkID id = get();
 
 	if (id)
-		GameFactory::Operate<Object, FailPolicy::Return>(id, [this, &result](FactoryObject& object) {
+		GameFactory::Operate<Object, FailPolicy::Return>(id, [this, &result](Object* object) {
 			result.emplace_back(Utils::toString(object->GetReference()));
 		});
 	else
@@ -242,7 +242,7 @@ vector<string> ObjectFunctor::operator()()
 		auto references = Game::GetContext(ID_OBJECT);
 
 		for (unsigned int refID : references)
-			GameFactory::Operate<Object, FailPolicy::Return>(refID, [this, refID, &result](FactoryObject& object) {
+			GameFactory::Operate<Object, FailPolicy::Return, ObjectPolicy::FactoryValidated>(refID, [this, refID, &result](FactoryObject& object) {
 				if (!filter(object))
 					result.emplace_back(Utils::toString(refID));
 			});
@@ -255,7 +255,7 @@ vector<string> ObjectFunctor::operator()()
 
 bool ObjectFunctor::filter(FactoryWrapper<Reference>& reference)
 {
-	return GameFactory::Operate<Object>(reference->GetNetworkID(), [this](FactoryObject& object) {
+	return GameFactory::Operate<Object>(reference->GetNetworkID(), [this](Object* object) {
 		unsigned int flags = this->flags();
 
 		if (flags & FLAG_NOTSELF && object->GetReference() == PLAYER_REFERENCE)
