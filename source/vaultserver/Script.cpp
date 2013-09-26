@@ -1713,7 +1713,7 @@ NetworkID Script::SetItemContainer(NetworkID id, NetworkID container) noexcept
 	if (!new_id)
 		return 0;
 
-	if (equipped && GameFactory::Exists<Actor>(container))
+	if (equipped)
 		SetItemEquipped(new_id, true, silent, stick);
 
 	DestroyObject(id);

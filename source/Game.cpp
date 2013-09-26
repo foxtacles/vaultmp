@@ -779,7 +779,7 @@ void Game::NewItem(FactoryItem& reference)
 			GameFactory::Operate<Item, EX_F_VALID>(item, [&container](FactoryItem& item) {
 				AddItem(container, item);
 
-				if (item->GetItemEquipped())
+				if (item->GetItemEquipped() && vaultcast_test<Actor>(container))
 					GameFactory::Operate<Actor, EX_F_VALID>(container->GetNetworkID(), [&item](FactoryActor& actor) {
 						EquipItem(actor, item);
 					});
@@ -837,7 +837,7 @@ void Game::NewContainer_(FactoryContainer& reference)
 	{
 		AddItem(reference, item.get());
 
-		if (item->GetItemEquipped())
+		if (item->GetItemEquipped() && vaultcast_test<Actor>(reference))
 			EquipItem(vaultcast<Actor>(reference).get(), item.get());
 	}
 }
@@ -1150,7 +1150,7 @@ void Game::DestroyObject(FactoryObject& reference, bool silent)
 				// Game always removes equipped item first - workaround (is this really always the case?)
 				NetworkID equipped = container->IsEquipped(item->GetBase());
 
-				if (equipped)
+				if (equipped && vaultcast_test<Actor>(container))
 					GameFactory::Operate<Actor, EX_F_VALID>(container->GetNetworkID(), [equipped](FactoryActor& actor) {
 						GameFactory::Operate<Item>(equipped, [&actor](Item* item) {
 							EquipItem(actor, item->GetBase(), item->GetItemCondition(), false, item->GetItemStick());
@@ -1999,7 +1999,7 @@ void Game::net_SetItemCount(FactoryItem& reference, unsigned int count, bool sil
 					// Game always removes equipped item first - workaround (is this really always the case?)
 					NetworkID equipped = container->IsEquipped(baseID);
 
-					if (equipped)
+					if (equipped && vaultcast_test<Actor>(container))
 						GameFactory::Operate<Actor, EX_F_VALID>(container->GetNetworkID(), [equipped](FactoryActor& actor) {
 							GameFactory::Operate<Item>(equipped, [&actor](Item* item) {
 								EquipItem(actor, item->GetBase(), item->GetItemCondition(), false, item->GetItemStick());
