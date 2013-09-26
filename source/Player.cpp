@@ -58,7 +58,7 @@ Player::~Player() noexcept
 	});
 
 	attachedWindows.Operate([this](WindowTracker& attachedWindows) {
-		for (const auto& id : *player_Windows)
+		for (auto id : *player_Windows)
 			attachedWindows[id].erase(find(attachedWindows[id].begin(), attachedWindows[id].end(), this->GetNetworkID()));
 	});
 #endif

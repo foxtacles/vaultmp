@@ -81,7 +81,7 @@ class GameFactory
 		static Database<DB::AcReference> dbAcReferences;
 #endif
 
-		inline static BaseList::iterator GetShared(const RakNet::NetworkID& id) { return index.count(id) ? index[id] : instances.end(); }
+		inline static BaseList::iterator GetShared(RakNet::NetworkID id) { return index.count(id) ? index[id] : instances.end(); }
 
 	public:
 		enum class FailPolicy

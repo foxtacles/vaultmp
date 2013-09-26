@@ -545,7 +545,6 @@ namespace vaultmp
 	template<typename T> struct TypeChar<T, sizeof(uint64_t)> { enum { value = std::is_signed<T>::value ? 'w' : 'l' }; };
 	template<> struct TypeChar<Value, sizeof(Value)> { enum { value = 'f' }; };
 	template<> struct TypeChar<cRawString, sizeof(cRawString)> { enum { value = 's' }; };
-	template<> struct TypeChar<RawString, sizeof(RawString)> { enum { value = 's' }; };
 
 	template<typename... Types>
 	struct TypeString {
@@ -801,7 +800,7 @@ namespace vaultmp
 	VAULTFUNCTION ID CreateItemList(std::initializer_list<ID> source) noexcept {
 		ID result = VAULTAPI(CreateItemList)(static_cast<ID>(0), static_cast<Base>(0));
 
-		for (const auto& id : source)
+		for (auto id : source)
 			VAULTAPI(AddItemList)(result, id, static_cast<Base>(0));
 
 		return result;
@@ -810,7 +809,7 @@ namespace vaultmp
 	VAULTFUNCTION ID CreateItemList(std::initializer_list<Base> source) noexcept {
 		ID result = VAULTAPI(CreateItemList)(static_cast<ID>(0), static_cast<Base>(0));
 
-		for (const auto& base : source)
+		for (auto base : source)
 			VAULTAPI(AddItemList)(result, static_cast<ID>(0), base);
 
 		return result;

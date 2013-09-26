@@ -74,7 +74,7 @@ void List::RemoveItem(NetworkID id)
 
 List::Impl List::RemoveAllItems()
 {
-	for (const NetworkID& id : container)
+	for (NetworkID id : container)
 		GameFactory::Destroy(id);
 
 	return move(container);
@@ -85,7 +85,7 @@ pPacket List::toPacket() const
 	vector<pPacket> items;
 	items.reserve(container.size());
 
-	for (const NetworkID& id : container)
+	for (NetworkID id : container)
 		items.emplace_back(GameFactory::Operate<ListItem>(id, [](ListItem* listitem) { return listitem->toPacket(); }));
 
 	pPacket pWindowNew = Window::toPacket();

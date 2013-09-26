@@ -2245,11 +2245,11 @@ void Game::net_UpdateContext(Player::CellContext& context, bool spawn)
 
 				cellContext = context;
 
-				for (const auto& cell : diff.second)
+				for (auto cell : diff.second)
 					if (cell)
 						copy[cell] = cellRefs[cell];
 
-				for (const auto& cell : diff.first)
+				for (auto cell : diff.first)
 					if (cell)
 						copy[cell] = cellRefs[cell];
 			});
@@ -2275,7 +2275,7 @@ void Game::net_UpdateContext(Player::CellContext& context, bool spawn)
 				refIDs = move(deletedObj[cell]);
 			});
 
-			for (const auto& id : refIDs)
+			for (auto id : refIDs)
 				RemoveObject(id);
 
 			for (const auto& refs : copy[cell])
@@ -2297,7 +2297,7 @@ void Game::net_UpdateContext(Player::CellContext& context, bool spawn)
 				ids = move(uninitObj[cell]);
 			});
 
-			for (const auto& id : ids)
+			for (auto id : ids)
 				GameFactory::Operate<Object, EX_F_VALID>(id, [](FactoryObject& object) {
 					NewDispatch(object);
 				});

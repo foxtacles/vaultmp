@@ -38,7 +38,7 @@ ItemList::ItemList(const pPacket& packet)
 
 ItemList::~ItemList() noexcept
 {
-	for (const NetworkID& id : container)
+	for (NetworkID id : container)
 		GameFactory::Destroy(id);
 }
 
@@ -49,7 +49,7 @@ void ItemList::initialize()
 
 NetworkID ItemList::FindStackableItem(unsigned int baseID, float condition) const
 {
-	for (const NetworkID& id : container)
+	for (NetworkID id : container)
 		if (GameFactory::Operate<Item>(id, [baseID, condition](Item* item) {
 			return item->GetBase() == baseID && Utils::DoubleCompare(item->GetItemCondition(), condition, CONDITION_EPS);
 		}))
@@ -166,7 +166,7 @@ ItemList::RemoveOp ItemList::RemoveItem(unsigned int baseID, unsigned int count,
 	RemoveOp result;
 	unsigned int count_ = count;
 
-	for (const NetworkID& id : container)
+	for (NetworkID id : container)
 	{
 		if (!count)
 			break;
@@ -201,7 +201,7 @@ NetworkID ItemList::EquipItem(unsigned int baseID, bool silent, bool stick) cons
 	NetworkID result = 0;
 
 	if (!IsEquipped(baseID))
-		for (const NetworkID& id : container)
+		for (NetworkID id : container)
 			if (GameFactory::Operate<Item>(id, [id, baseID, silent, stick](Item* item) {
 				if (item->GetBase() != baseID)
 					return 0ull;
@@ -232,7 +232,7 @@ NetworkID ItemList::UnequipItem(unsigned int baseID, bool silent, bool stick) co
 
 NetworkID ItemList::IsEquipped(unsigned int baseID) const
 {
-	for (const NetworkID& id : container)
+	for (NetworkID id : container)
 		if (GameFactory::Operate<Item>(id, [baseID](Item* item) {
 			return item->GetBase() == baseID && item->GetItemEquipped();
 		}))
@@ -245,7 +245,7 @@ unsigned int ItemList::GetItemCount(unsigned int baseID) const
 {
 	unsigned int count = 0;
 
-	for (const NetworkID& id : container)
+	for (NetworkID id : container)
 		GameFactory::Operate<Item>(id, [&count, baseID](Item* item) {
 			if (!baseID || item->GetBase() == baseID)
 				count += item->GetItemCount();
@@ -259,7 +259,7 @@ ItemList::Impl ItemList::GetItemTypes(const string& type) const
 {
 	Impl result;
 
-	for (const NetworkID& id : container)
+	for (NetworkID id : container)
 		GameFactory::Operate<Item>(id, [&result, &type, id](Item* item) {
 			if (DB::Record::Lookup(item->GetBase(), type))
 				result.emplace_back(id);
@@ -274,7 +274,7 @@ pPacket ItemList::toPacket() const
 	vector<pPacket> items;
 	items.reserve(container.size());
 
-	for (const NetworkID& id : container)
+	for (NetworkID id : container)
 		items.emplace_back(GameFactory::Operate<Item>(id, [](Item* item) { return item->toPacket(); }));
 
 	pPacket pBaseNew = Base::toPacket();

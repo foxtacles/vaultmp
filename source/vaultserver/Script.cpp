@@ -490,9 +490,7 @@ unsigned long long Script::Timer_Respawn(NetworkID id) noexcept
 
 	RakNetGUID guid = Client::GetClientFromPlayer(id)->GetGUID();
 
-	const auto& values = Actor::default_values;
-
-	for (const auto& value : values)
+	for (const auto& value : Actor::default_values)
 	{
 		SetActorBaseValue(id, value.first, value.second.first);
 		SetActorValue(id, value.first, value.second.second);
@@ -1258,7 +1256,7 @@ NetworkID Script::GetPlayerChatboxWindow(NetworkID id) noexcept
 
 	return GameFactory::Operate<Player, BOOL_VALID>(id, [&windows](Player* player) {
 		windows = player->GetPlayerWindows();
-	}) ? *find_if(windows.begin(), windows.end(), [](const NetworkID& id) { return IsChatbox(id); }) : 0;
+	}) ? *find_if(windows.begin(), windows.end(), [](NetworkID id) { return IsChatbox(id); }) : 0;
 }
 
 NetworkID Script::CreateObject(unsigned int baseID, unsigned int cell, double X, double Y, double Z) noexcept
@@ -1715,7 +1713,7 @@ NetworkID Script::SetItemContainer(NetworkID id, NetworkID container) noexcept
 	if (!new_id)
 		return 0;
 
-	if (equipped)
+	if (equipped && GameFactory::Exists<Actor>(container))
 		SetItemEquipped(new_id, true, silent, stick);
 
 	DestroyObject(id);
@@ -1969,7 +1967,7 @@ unsigned int Script::RemoveItem(NetworkID id, unsigned int baseID, unsigned int 
 	if (data.second)
 		Call<CBI("OnItemCountChange")>(get<2>(data.first), data.second);
 
-	for (const auto& id : get<1>(data.first))
+	for (auto id : get<1>(data.first))
 		DestroyObject(id);
 
 	return get<0>(data.first);
@@ -1981,7 +1979,7 @@ void Script::RemoveAllItems(NetworkID id) noexcept
 		return itemlist->GetItemList();
 	});
 
-	for (const auto& id : items)
+	for (auto id : items)
 		DestroyObject(id);
 }
 
@@ -2440,7 +2438,7 @@ bool Script::AttachWindow(NetworkID id, NetworkID window) noexcept
 
 	NetworkResponse response;
 
-	for (const auto& id_ : additions)
+	for (auto id_ : additions)
 		response.emplace_back(Network::CreateResponse(
 			GameFactory::Get<Window>(id_)->toPacket(),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
@@ -2467,7 +2465,7 @@ bool Script::DetachWindow(NetworkID id, NetworkID window) noexcept
 
 	NetworkResponse response;
 
-	for (const auto& id_ : deletions)
+	for (auto id_ : deletions)
 		response.emplace_back(Network::CreateResponse(
 			PacketFactory::Create<pTypes::ID_WINDOW_REMOVE>(id_),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetClientFromPlayer(id)->GetGUID())
@@ -2731,7 +2729,7 @@ bool Script::DestroyWindow(NetworkID id) noexcept
 	auto players = Player::GetWindowPlayers(root);
 
 	if (root == id)
-		for (const auto& id : players)
+		for (auto id : players)
 			GameFactory::Operate<Player, RET_VALID>(id, [root](Player* player) {
 				player->DetachWindow(root);
 			});
@@ -2739,7 +2737,7 @@ bool Script::DestroyWindow(NetworkID id) noexcept
 	vector<RakNetGUID> guids(Client::GetNetworkList(players));
 	NetworkResponse response;
 
-	for (const auto& id : deletions)
+	for (auto id : deletions)
 	{
 		if (!GameFactory::Exists<Window>(id))
 			continue;
@@ -2788,7 +2786,7 @@ bool Script::AddChildWindow(NetworkID id, NetworkID child) noexcept
 	{
 		NetworkResponse response;
 
-		for (const auto& id : additions)
+		for (auto id : additions)
 			response.emplace_back(Network::CreateResponse(
 				GameFactory::Get<Window>(id)->toPacket(),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
@@ -2822,7 +2820,7 @@ bool Script::RemoveChildWindow(NetworkID id, NetworkID child) noexcept
 	{
 		NetworkResponse response;
 
-		for (const auto& id : deletions)
+		for (auto id : deletions)
 			response.emplace_back(Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_WINDOW_REMOVE>(id),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)

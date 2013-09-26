@@ -37,7 +37,7 @@ void Window::CollectChilds(NetworkID root, vector<NetworkID>& dest)
 {
 	dest.emplace_back(root);
 
-	for (const auto& child : childs[root])
+	for (auto child : childs[root])
 		CollectChilds(child, dest);
 }
 
