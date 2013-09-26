@@ -14,7 +14,7 @@ Void VAULTSCRIPT OnServerInit() noexcept
 	SetServerRule("website", "vaultmp.com");
 	SetServerMap("the wasteland");
 
-	Pickup::Register(OnItemPickup, "vaultscript::OnItemPickup");
+	Pickup::Register(OnItemPickup);
 }
 
 Void VAULTSCRIPT OnServerExit() noexcept
