@@ -591,6 +591,19 @@ const char* Script::BaseToString(unsigned int baseID) noexcept
 	return base.c_str();
 }
 
+const char* Script::BaseToType(unsigned int baseID) noexcept
+{
+	static string base;
+	base.clear();
+
+	auto record = DB::Record::Lookup(baseID);
+
+	if (record)
+		base.assign(record->GetType());
+
+	return base.c_str();
+}
+
 bool Script::Kick(NetworkID id) noexcept
 {
 	return GameFactory::Operate<Player, BOOL_VALID>(id, [id](Player*) {
@@ -2726,17 +2739,6 @@ bool Script::DestroyWindow(NetworkID id) noexcept
 	Window::CollectChilds(id, deletions);
 	reverse(deletions.begin(), deletions.end()); // reverse so the order of deletion is valid
 
-	auto players = Player::GetWindowPlayers(root);
-
-	if (root == id)
-		for (auto id : players)
-			GameFactory::Operate<Player, RET_VALID>(id, [root](Player* player) {
-				player->DetachWindow(root);
-			});
-
-	vector<RakNetGUID> guids(Client::GetNetworkList(players));
-	NetworkResponse response;
-
 	for (auto id : deletions)
 	{
 		if (!GameFactory::Exists<Window>(id))
@@ -2747,17 +2749,23 @@ bool Script::DestroyWindow(NetworkID id) noexcept
 		if (!GameFactory::Exists<Window>(id))
 			continue;
 
+		auto players = Player::GetWindowPlayers(root);
+		vector<RakNetGUID> guids(Client::GetNetworkList(players));
+
+		if (root == id)
+			for (auto id : players)
+				GameFactory::Operate<Player, RET_VALID>(id, [root](Player* player) {
+					player->DetachWindow(root);
+				});
+
 		if (!guids.empty())
-			response.emplace_back(Network::CreateResponse(
+			Network::Queue({Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_WINDOW_REMOVE>(id),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guids)
-			);
+			});
 
 		GameFactory::Destroy(id);
 	}
-
-	if (!response.empty())
-		Network::Queue(move(response));
 
 	return true;
 }

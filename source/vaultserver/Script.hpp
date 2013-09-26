@@ -236,6 +236,7 @@ class Script
 		static const char* AxisToString(unsigned char index) noexcept;
 		static const char* AnimToString(unsigned char index) noexcept;
 		static const char* BaseToString(unsigned int baseID) noexcept;
+		static const char* BaseToType(unsigned int baseID) noexcept;
 
 		static bool Kick(RakNet::NetworkID id) noexcept;
 		static bool UIMessage(RakNet::NetworkID id, const char* message, unsigned char emoticon) noexcept;
@@ -425,6 +426,7 @@ class Script
 			{"AxisToString", Script::AxisToString},
 			{"AnimToString", Script::AnimToString},
 			{"BaseToString", Script::BaseToString},
+			{"BaseToType", Script::BaseToType},
 
 			{"Kick", Script::Kick},
 			{"UIMessage", Script::UIMessage},

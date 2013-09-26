@@ -225,6 +225,7 @@ native ValueToString(index, value{});
 native AxisToString(index, value{});
 native AnimToString(index, value{});
 native BaseToString(base, value{});
+native BaseToType(base, value{});
 
 native Bool:Kick(ID);
 native Bool:UIMessage(ID, const message{}, Emoticon:emoticon = Emoticon:Happy);

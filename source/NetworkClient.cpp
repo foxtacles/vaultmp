@@ -298,7 +298,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					NetworkID id;
 					PacketFactory::Access<pTypes::ID_WINDOW_REMOVE>(packet, id);
 					auto reference = GameFactory::Get<Window>(id);
-					Game::DeleteWindow(reference.get());
+					Game::DestroyWindow(reference.get());
 					break;
 				}
 
@@ -307,7 +307,7 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					NetworkID id;
 					PacketFactory::Access<pTypes::ID_LISTITEM_REMOVE>(packet, id);
 					auto reference = GameFactory::Get<ListItem>(id);
-					Game::DeleteListItem(reference.get());
+					Game::DestroyListItem(reference.get());
 					break;
 				}
 

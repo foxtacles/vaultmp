@@ -355,6 +355,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE cRawString (*VAULTAPI(AxisToString))(VAULTSPACE Index) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE cRawString (*VAULTAPI(AnimToString))(VAULTSPACE Index) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE cRawString (*VAULTAPI(BaseToString))(VAULTSPACE Base) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE cRawString (*VAULTAPI(BaseToType))(VAULTSPACE Base) VAULTCPP(noexcept);
 
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(Kick))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(UIMessage))(VAULTSPACE ID, VAULTSPACE cRawString, VAULTSPACE Emoticon) VAULTCPP(noexcept);
@@ -609,6 +610,7 @@ namespace vaultmp
 	VAULTFUNCTION String AxisToString(Index index) noexcept { return String(VAULTAPI(AxisToString)(index)); }
 	VAULTFUNCTION String AnimToString(Index index) noexcept { return String(VAULTAPI(AnimToString)(index)); }
 	VAULTFUNCTION String BaseToString(Base base) noexcept { return String(VAULTAPI(BaseToString)(base)); }
+	VAULTFUNCTION String BaseToType(Base base) noexcept { return String(VAULTAPI(BaseToType)(base)); }
 
 	VAULTFUNCTION State Kick(ID id) noexcept { return VAULTAPI(Kick)(id); }
 	VAULTFUNCTION State UIMessage(ID id, const String& message, Emoticon emoticon = Emoticon::Happy) noexcept { return VAULTAPI(UIMessage)(id, message.c_str(), emoticon); }
@@ -1023,6 +1025,8 @@ namespace vaultmp
 
 			Ref GetReference() const noexcept { return vaultmp::GetReference(id); }
 			Base GetBase() const noexcept { return vaultmp::GetBase(id); }
+			String BaseToString() const noexcept { return vaultmp::BaseToString(GetBase()); }
+			String BaseToType() const noexcept { return vaultmp::BaseToType(GetBase()); }
 
 			State DestroyObject() noexcept { State state = vaultmp::DestroyObject(id); id = static_cast<ID>(0); return state; }
 

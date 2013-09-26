@@ -6,7 +6,7 @@ namespace vaultmp
 {
 	namespace CView
 	{
-		VAULTFUNCTION ID Create(ID itemlist_left, ID itemlist_right, Function<ID, ID> notify, Function<ID, char*> format) noexcept {
+		VAULTFUNCTION ID Create(ID itemlist_left, ID itemlist_right, Function<ID, ID, ID, ID> notify, Function<ID, char*> format) noexcept {
 			char function_name[16];
 
 			std::snprintf(function_name, sizeof(function_name), "%p", reinterpret_cast<void*>(notify));

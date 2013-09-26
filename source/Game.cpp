@@ -1182,7 +1182,7 @@ void Game::DestroyObject(FactoryObject& reference, bool silent)
 	}
 }
 
-void Game::DeleteWindow(FactoryWindow& reference)
+void Game::DestroyWindow(FactoryWindow& reference)
 {
 	GameFactory::Operate<List, RET_VALID>(reference->GetNetworkID(), [](List* list) {
 		GameFactory::Operate<ListItem>(list->GetItemList(), [list](ListItems& items) {
@@ -1203,7 +1203,7 @@ void Game::DeleteWindow(FactoryWindow& reference)
 	GameFactory::Destroy(reference);
 }
 
-void Game::DeleteListItem(FactoryListItem& reference)
+void Game::DestroyListItem(FactoryListItem& reference)
 {
 	NetworkID item = reference->GetNetworkID();
 	NetworkID list = reference->GetItemContainer();

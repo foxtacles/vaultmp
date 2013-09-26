@@ -230,11 +230,11 @@ class Game
 		/**
 		 * \brief Deletes a Window
 		 */
-		static void DeleteWindow(FactoryWindow& reference);
+		static void DestroyWindow(FactoryWindow& reference);
 		/**
 		 * \brief Deletes a ListItem
 		 */
-		static void DeleteListItem(FactoryListItem& reference);
+		static void DestroyListItem(FactoryListItem& reference);
 		/**
 		 * \brief Returns the baseID of an Object
 		 */

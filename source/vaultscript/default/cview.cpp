@@ -16,6 +16,7 @@ IDHash<ID> itemlist_to_itemlist;
 IDHash<ID> button_to_view;
 IDHash<IDSet> itemlist_sel;
 IDHash<ContainerView> views;
+IDHash<String> notify_cbs;
 
 Result VAULTSCRIPT Create(ID itemlist_left, ID itemlist_right, cRawString notify, cRawString format) noexcept;
 
@@ -60,9 +61,9 @@ Result VAULTSCRIPT Create(ID itemlist_left, ID itemlist_right, cRawString notify
 	SetListMultiSelect(il_left, True);
 	SetListMultiSelect(il_right, True);
 
-	auto main = Window::Create(0.6, 0.6, 0.35, 0.35, True, False, GetBaseName(itemlist_left) + " - " + GetBaseName(itemlist_right));
-	auto button_left = Button::Create(0.47, 0.2, 0.06, 0.2, True, True, "<<");
-	auto button_right = Button::Create(0.47, 0.6, 0.06, 0.2, True, True, ">>");
+	auto main = Window::Create(0.4, 0.15, 0.57, 0.35, True, False, GetBaseName(itemlist_left) + " - " + GetBaseName(itemlist_right));
+	auto button_left = Button::Create(0.47, 0.2, 0.06, 0.2, True, True, "<");
+	auto button_right = Button::Create(0.47, 0.6, 0.06, 0.2, True, True, ">");
 
 	AddChildWindow(main, il_left);
 	AddChildWindow(main, il_right);
@@ -76,6 +77,7 @@ Result VAULTSCRIPT Create(ID itemlist_left, ID itemlist_right, cRawString notify
 	button_to_view.emplace(button_left, main);
 	button_to_view.emplace(button_right, main);
 	views.emplace(main, ContainerView{il_left, il_right, button_left, button_right});
+	notify_cbs.emplace(main, notify);
 
 	return static_cast<Result>(main);
 }
@@ -83,10 +85,17 @@ Result VAULTSCRIPT Create(ID itemlist_left, ID itemlist_right, cRawString notify
 Void VAULTSCRIPT OnDestroy(ID reference) noexcept
 {
 	views.erase(reference);
-	itemlist_to_view.erase(reference);
+	notify_cbs.erase(reference);
 	itemlist_to_itemlist.erase(reference);
 	itemlist_sel.erase(reference);
 	button_to_view.erase(reference);
+
+	if (itemlist_to_view.count(reference))
+	{
+		auto main = itemlist_to_view[reference];
+		itemlist_to_view.erase(reference);
+		DestroyWindow(main);
+	}
 }
 
 Void VAULTSCRIPT OnWindowClick(ID window, ID player) noexcept
@@ -96,10 +105,14 @@ Void VAULTSCRIPT OnWindowClick(ID window, ID player) noexcept
 		const auto& view = views[button_to_view[window]];
 
 		if (view.button_left == window)
+		{
 			for (auto item : itemlist_sel[view.il_right])
-				SetItemContainer(item, itemlist_to_itemlist[view.il_left]);
+				if (CallPublic(notify_cbs[button_to_view[window]], button_to_view[window], item, itemlist_to_itemlist[view.il_left], player))
+					SetItemContainer(item, itemlist_to_itemlist[view.il_left]);
+		}
 		else
 			for (auto item : itemlist_sel[view.il_left])
-				SetItemContainer(item, itemlist_to_itemlist[view.il_right]);
+				if (CallPublic(notify_cbs[button_to_view[window]], button_to_view[window], item, itemlist_to_itemlist[view.il_right], player))
+					SetItemContainer(item, itemlist_to_itemlist[view.il_right]);
 	}
 }

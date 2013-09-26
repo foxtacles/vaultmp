@@ -1,11 +1,58 @@
 #include "vaultscript.h"
 #include "default/pickup.hpp"
+#include "default/ilview.hpp"
+#include "default/cview.hpp"
 
 #include <cstdio>
 
 using namespace vaultmp;
 
+IDHash<ID> open_cviews;
+IDHash<ID> cview_map;
+
 Result VAULTSCRIPT OnItemPickup(ID item, ID actor) noexcept;
+Result VAULTSCRIPT OnItemMove(ID cview, ID item, ID destination, ID player) noexcept;
+
+Result VAULTSCRIPT FormatItemCView(ID item, char* format) noexcept
+{
+	Item data(item);
+	Actor actor(data.GetItemContainer());
+	auto type = data.BaseToType();
+
+	if (!type.compare("WEAP") || !type.compare("ARMO") || !type.compare("ARMA"))
+		std::snprintf(format, IlView::MAX_LENGTH_ITEM, "%dx %s (%d%%)%s", data.GetItemCount(), data.BaseToString().c_str(), static_cast<unsigned int>(data.GetItemCondition()), actor && data.GetItemEquipped() ? " (equipped)" : "");
+	else
+		std::snprintf(format, IlView::MAX_LENGTH_ITEM, "%dx %s", data.GetItemCount(), data.BaseToString().c_str());
+
+	return static_cast<Result>(True);
+}
+
+Result VAULTSCRIPT Timer_CloseCView(ID player, ID cview) noexcept
+{
+	constexpr Value distance = 150.0;
+
+	Container container(cview_map[cview]);
+	Value X, Y, Z;
+	container.GetPos(X, Y, Z);
+
+	if (!container || !IsNearPoint(player, X, Y, Z, distance))
+	{
+		DestroyWindow(cview);
+		KillTimer();
+	}
+
+	return static_cast<Result>(True);
+}
+
+State IsCViewOpen(ID player, ID itemlist) noexcept
+{
+	for (const auto& cview : open_cviews)
+		if (cview.second == player)
+			if (cview_map[cview.first] == itemlist)
+				return True;
+
+	return False;
+}
 
 Void VAULTSCRIPT OnServerInit() noexcept
 {
@@ -89,7 +136,8 @@ Void VAULTSCRIPT OnCreate(ID reference) noexcept
 
 Void VAULTSCRIPT OnDestroy(ID reference) noexcept
 {
-
+	open_cviews.erase(reference);
+	cview_map.erase(reference);
 }
 
 Void VAULTSCRIPT OnSpawn(ID object) noexcept
@@ -102,7 +150,19 @@ Void VAULTSCRIPT OnSpawn(ID object) noexcept
 
 Void VAULTSCRIPT OnActivate(ID object, ID actor) noexcept
 {
+	Container container(object);
+	Player player(actor);
 
+	if (container && player && container.GetLock() == Lock::Unlocked && !IsCViewOpen(actor, object))
+	{
+		auto cview = CView::Create(actor, object, OnItemMove, FormatItemCView);
+		open_cviews.emplace(cview, actor);
+		cview_map.emplace(cview, object);
+		player.AttachWindow(cview);
+
+		constexpr Interval interval = static_cast<Interval>(500);
+		CreateTimerEx(Timer_CloseCView, interval, actor, cview);
+	}
 }
 
 Void VAULTSCRIPT OnCellChange(ID object, CELL cell) noexcept
@@ -131,6 +191,11 @@ Void VAULTSCRIPT OnItemEquippedChange(ID item, State equipped) noexcept
 }
 
 Result VAULTSCRIPT OnItemPickup(ID item, ID actor) noexcept
+{
+	return static_cast<Result>(True);
+}
+
+Result VAULTSCRIPT OnItemMove(ID cview, ID item, ID destination, ID player) noexcept
 {
 	return static_cast<Result>(True);
 }
