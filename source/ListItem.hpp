@@ -52,9 +52,9 @@ class ListItem : public Base
 
 GF_TYPE_WRAPPER_FINAL(ListItem, Base, ID_LISTITEM)
 
-PF_PACKET(ID_LISTITEM_NEW, pGeneratorReferenceExtend, RakNet::NetworkID, std::string, bool)
-PF_PACKET_E(ID_LISTITEM_REMOVE, pGeneratorReference)
-PF_PACKET(ID_UPDATE_WLTEXT, pGeneratorReference, std::string)
-PF_PACKET(ID_UPDATE_WLSELECTED, pGeneratorReference, bool)
+PF_MAKE(ID_LISTITEM_NEW, pGeneratorReferenceExtend, RakNet::NetworkID, std::string, bool)
+PF_MAKE_E(ID_LISTITEM_REMOVE, pGeneratorReference)
+PF_MAKE(ID_UPDATE_WLTEXT, pGeneratorReference, std::string)
+PF_MAKE(ID_UPDATE_WLSELECTED, pGeneratorReference, bool)
 
 #endif

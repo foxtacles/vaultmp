@@ -46,8 +46,8 @@ class RadioButton : public Window
 
 GF_TYPE_WRAPPER_FINAL(RadioButton, Window, ID_RADIOBUTTON)
 
-PF_PACKET(ID_RADIOBUTTON_NEW, pGeneratorReferenceExtend, bool, unsigned int)
-PF_PACKET(ID_UPDATE_WRSELECTED, pGeneratorReference, RakNet::NetworkID, bool)
-PF_PACKET(ID_UPDATE_WGROUP, pGeneratorReference, unsigned int)
+PF_MAKE(ID_RADIOBUTTON_NEW, pGeneratorReferenceExtend, bool, unsigned int)
+PF_MAKE(ID_UPDATE_WRSELECTED, pGeneratorReference, RakNet::NetworkID, bool)
+PF_MAKE(ID_UPDATE_WGROUP, pGeneratorReference, unsigned int)
 
 #endif

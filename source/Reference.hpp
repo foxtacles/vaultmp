@@ -184,7 +184,7 @@ class ReferenceFunctor : public VaultFunctor
 
 GF_TYPE_WRAPPER(Reference, Base, ID_REFERENCE, ALL_REFERENCES)
 
-PF_PACKET(ID_REFERENCE_NEW, pGeneratorReferenceExtend, unsigned int, unsigned int)
+PF_MAKE(ID_REFERENCE_NEW, pGeneratorReferenceExtend, unsigned int, unsigned int)
 template<>
 inline const typename pTypesMap<pTypes::ID_REFERENCE_NEW>::type* PacketFactory::Cast_<pTypes::ID_REFERENCE_NEW>::Cast(const pPacket* packet) {
 	pTypes type = packet->type();

@@ -72,7 +72,7 @@ class Window : public Base
 
 GF_TYPE_WRAPPER(Window, Base, ID_WINDOW, ALL_WINDOWS)
 
-PF_PACKET(ID_WINDOW_NEW, pGeneratorReferenceExtend, RakNet::NetworkID, std::string, std::tuple<float, float, float, float>, std::tuple<float, float, float, float>, bool, bool, std::string)
+PF_MAKE(ID_WINDOW_NEW, pGeneratorReferenceExtend, RakNet::NetworkID, std::string, std::tuple<float, float, float, float>, std::tuple<float, float, float, float>, bool, bool, std::string)
 template<>
 inline const typename pTypesMap<pTypes::ID_WINDOW_NEW>::type* PacketFactory::Cast_<pTypes::ID_WINDOW_NEW>::Cast(const pPacket* packet) {
 	pTypes type = packet->type();
@@ -84,14 +84,14 @@ inline const typename pTypesMap<pTypes::ID_WINDOW_NEW>::type* PacketFactory::Cas
 		type == pTypes::ID_CHECKBOX_NEW
 	) ? static_cast<const typename pTypesMap<pTypes::ID_WINDOW_NEW>::type*>(packet) : nullptr;
 }
-PF_PACKET_E(ID_WINDOW_REMOVE, pGeneratorReference)
-PF_PACKET(ID_UPDATE_WPOS, pGeneratorReference, std::tuple<float, float, float, float>)
-PF_PACKET(ID_UPDATE_WSIZE, pGeneratorReference, std::tuple<float, float, float, float>)
-PF_PACKET(ID_UPDATE_WLOCKED, pGeneratorReference, bool)
-PF_PACKET(ID_UPDATE_WVISIBLE, pGeneratorReference, bool)
-PF_PACKET(ID_UPDATE_WTEXT, pGeneratorReference, std::string)
-PF_PACKET_E(ID_UPDATE_WCLICK, pGeneratorReference)
-PF_PACKET(ID_UPDATE_WMODE, pGeneratorDefault, bool)
-PF_PACKET_E(ID_UPDATE_WRETURN, pGeneratorReference)
+PF_MAKE_E(ID_WINDOW_REMOVE, pGeneratorReference)
+PF_MAKE(ID_UPDATE_WPOS, pGeneratorReference, std::tuple<float, float, float, float>)
+PF_MAKE(ID_UPDATE_WSIZE, pGeneratorReference, std::tuple<float, float, float, float>)
+PF_MAKE(ID_UPDATE_WLOCKED, pGeneratorReference, bool)
+PF_MAKE(ID_UPDATE_WVISIBLE, pGeneratorReference, bool)
+PF_MAKE(ID_UPDATE_WTEXT, pGeneratorReference, std::string)
+PF_MAKE_E(ID_UPDATE_WCLICK, pGeneratorReference)
+PF_MAKE(ID_UPDATE_WMODE, pGeneratorDefault, bool)
+PF_MAKE_E(ID_UPDATE_WRETURN, pGeneratorReference)
 
 #endif

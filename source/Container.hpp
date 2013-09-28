@@ -69,7 +69,7 @@ class ContainerFunctor : public ObjectFunctor
 
 GF_TYPE_WRAPPER(Container, Object, ID_CONTAINER, ALL_CONTAINERS)
 
-PF_PACKET(ID_CONTAINER_NEW, pGeneratorReferenceExtend, pPacket)
+PF_MAKE(ID_CONTAINER_NEW, pGeneratorReferenceExtend, pPacket)
 template<>
 inline const typename pTypesMap<pTypes::ID_CONTAINER_NEW>::type* PacketFactory::Cast_<pTypes::ID_CONTAINER_NEW>::Cast(const pPacket* packet) {
 	pTypes type = packet->type();

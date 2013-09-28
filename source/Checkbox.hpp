@@ -42,7 +42,7 @@ class Checkbox : public Window
 
 GF_TYPE_WRAPPER_FINAL(Checkbox, Window, ID_CHECKBOX)
 
-PF_PACKET(ID_CHECKBOX_NEW, pGeneratorReferenceExtend, bool)
-PF_PACKET(ID_UPDATE_WSELECTED, pGeneratorReference, bool)
+PF_MAKE(ID_CHECKBOX_NEW, pGeneratorReferenceExtend, bool)
+PF_MAKE(ID_UPDATE_WSELECTED, pGeneratorReference, bool)
 
 #endif

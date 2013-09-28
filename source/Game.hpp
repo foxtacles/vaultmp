@@ -676,16 +676,16 @@ class Game
 		static void GetListboxSelections(const std::string& name, const std::vector<const char*>& selections);
 };
 
-PF_PACKET(ID_GAME_AUTH, pGeneratorDefault, std::string, std::string)
-PF_PACKET_E(ID_GAME_LOAD, pGeneratorDefault)
-PF_PACKET(ID_GAME_MOD, pGeneratorDefault, std::string, unsigned int)
-PF_PACKET_E(ID_GAME_START, pGeneratorDefault)
-PF_PACKET(ID_GAME_END, pGeneratorDefault, Reason)
-PF_PACKET(ID_GAME_MESSAGE, pGeneratorDefault, std::string, unsigned char)
-PF_PACKET(ID_GAME_CHAT, pGeneratorDefault, std::string)
-PF_PACKET(ID_GAME_GLOBAL, pGeneratorDefault, unsigned int, signed int)
-PF_PACKET(ID_GAME_WEATHER, pGeneratorDefault, Game::Weather)
-PF_PACKET(ID_GAME_BASE, pGeneratorDefault, Game::PlayerBase)
-PF_PACKET(ID_GAME_DELETED, pGeneratorDefault, Game::DeletedObjects)
+PF_MAKE(ID_GAME_AUTH, pGeneratorDefault, std::string, std::string)
+PF_MAKE_E(ID_GAME_LOAD, pGeneratorDefault)
+PF_MAKE(ID_GAME_MOD, pGeneratorDefault, std::string, unsigned int)
+PF_MAKE_E(ID_GAME_START, pGeneratorDefault)
+PF_MAKE(ID_GAME_END, pGeneratorDefault, Reason)
+PF_MAKE(ID_GAME_MESSAGE, pGeneratorDefault, std::string, unsigned char)
+PF_MAKE(ID_GAME_CHAT, pGeneratorDefault, std::string)
+PF_MAKE(ID_GAME_GLOBAL, pGeneratorDefault, unsigned int, signed int)
+PF_MAKE(ID_GAME_WEATHER, pGeneratorDefault, Game::Weather)
+PF_MAKE(ID_GAME_BASE, pGeneratorDefault, Game::PlayerBase)
+PF_MAKE(ID_GAME_DELETED, pGeneratorDefault, Game::DeletedObjects)
 
 #endif

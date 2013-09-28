@@ -36,6 +36,6 @@ class Button : public Window
 
 GF_TYPE_WRAPPER_FINAL(Button, Window, ID_BUTTON)
 
-PF_PACKET_E(ID_BUTTON_NEW, pGeneratorReferenceExtend)
+PF_MAKE_E(ID_BUTTON_NEW, pGeneratorReferenceExtend)
 
 #endif

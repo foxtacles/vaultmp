@@ -69,10 +69,10 @@ class Item : public Object
 
 GF_TYPE_WRAPPER_FINAL(Item, Object, ID_ITEM)
 
-PF_PACKET(ID_ITEM_NEW, pGeneratorReferenceExtend, RakNet::NetworkID, unsigned int, float, bool, bool, bool)
-PF_PACKET(ID_UPDATE_COUNT, pGeneratorReference, unsigned int, bool)
-PF_PACKET(ID_UPDATE_CONDITION, pGeneratorReference, float, unsigned int)
-PF_PACKET(ID_UPDATE_EQUIPPED, pGeneratorReference, bool, bool, bool)
-PF_PACKET(ID_UPDATE_VALUE, pGeneratorReference, bool, unsigned char, float)
+PF_MAKE(ID_ITEM_NEW, pGeneratorReferenceExtend, RakNet::NetworkID, unsigned int, float, bool, bool, bool)
+PF_MAKE(ID_UPDATE_COUNT, pGeneratorReference, unsigned int, bool)
+PF_MAKE(ID_UPDATE_CONDITION, pGeneratorReference, float, unsigned int)
+PF_MAKE(ID_UPDATE_EQUIPPED, pGeneratorReference, bool, bool, bool)
+PF_MAKE(ID_UPDATE_VALUE, pGeneratorReference, bool, unsigned char, float)
 
 #endif

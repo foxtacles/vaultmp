@@ -49,8 +49,8 @@ class Edit : public Window
 
 GF_TYPE_WRAPPER_FINAL(Edit, Window, ID_EDIT)
 
-PF_PACKET(ID_EDIT_NEW, pGeneratorReferenceExtend, unsigned int, std::string)
-PF_PACKET(ID_UPDATE_WMAXLEN, pGeneratorReference, unsigned int)
-PF_PACKET(ID_UPDATE_WVALID, pGeneratorReference, std::string)
+PF_MAKE(ID_EDIT_NEW, pGeneratorReferenceExtend, unsigned int, std::string)
+PF_MAKE(ID_UPDATE_WMAXLEN, pGeneratorReference, unsigned int)
+PF_MAKE(ID_UPDATE_WVALID, pGeneratorReference, std::string)
 
 #endif

@@ -202,11 +202,11 @@ class PlayerFunctor : public ActorFunctor
 
 GF_TYPE_WRAPPER_FINAL(Player, Actor, ID_PLAYER)
 
-PF_PACKET(ID_PLAYER_NEW, pGeneratorReferenceExtend, std::map<unsigned char, std::pair<unsigned char, bool>>)
-PF_PACKET(ID_UPDATE_CONTROL, pGeneratorReference, unsigned char, unsigned char)
-PF_PACKET(ID_UPDATE_INTERIOR, pGeneratorReference, std::string, bool)
-PF_PACKET(ID_UPDATE_EXTERIOR, pGeneratorReference, unsigned int, signed int, signed int, bool)
-PF_PACKET(ID_UPDATE_CONTEXT, pGeneratorReference, std::array<unsigned int, 9>, bool)
-PF_PACKET(ID_UPDATE_CONSOLE, pGeneratorReference, bool)
+PF_MAKE(ID_PLAYER_NEW, pGeneratorReferenceExtend, std::map<unsigned char, std::pair<unsigned char, bool>>)
+PF_MAKE(ID_UPDATE_CONTROL, pGeneratorReference, unsigned char, unsigned char)
+PF_MAKE(ID_UPDATE_INTERIOR, pGeneratorReference, std::string, bool)
+PF_MAKE(ID_UPDATE_EXTERIOR, pGeneratorReference, unsigned int, signed int, signed int, bool)
+PF_MAKE(ID_UPDATE_CONTEXT, pGeneratorReference, std::array<unsigned int, 9>, bool)
+PF_MAKE(ID_UPDATE_CONSOLE, pGeneratorReference, bool)
 
 #endif

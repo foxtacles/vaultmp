@@ -53,7 +53,7 @@ class List : public Window
 
 GF_TYPE_WRAPPER_FINAL(List, Window, ID_LIST)
 
-PF_PACKET(ID_LIST_NEW, pGeneratorReferenceExtend, std::vector<pPacket>, bool)
-PF_PACKET(ID_UPDATE_WLMULTI, pGeneratorReference, bool)
+PF_MAKE(ID_LIST_NEW, pGeneratorReferenceExtend, std::vector<pPacket>, bool)
+PF_MAKE(ID_UPDATE_WLMULTI, pGeneratorReference, bool)
 
 #endif

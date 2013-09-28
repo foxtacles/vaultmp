@@ -41,7 +41,7 @@ class Base : private CriticalSection, public RakNet::NetworkIDObject
 		virtual pPacket toPacket() const;
 };
 
-PF_PACKET_E(ID_BASE_NEW, pGeneratorReference)
+PF_MAKE_E(ID_BASE_NEW, pGeneratorReference)
 template<>
 inline const typename pTypesMap<pTypes::ID_BASE_NEW>::type* PacketFactory::Cast_<pTypes::ID_BASE_NEW>::Cast(const pPacket* packet) {
 	return static_cast<const typename pTypesMap<pTypes::ID_BASE_NEW>::type*>(packet);

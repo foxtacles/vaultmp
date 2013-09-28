@@ -34,6 +34,6 @@ class Text : public Window
 
 GF_TYPE_WRAPPER_FINAL(Text, Window, ID_TEXT)
 
-PF_PACKET_E(ID_TEXT_NEW, pGeneratorReferenceExtend)
+PF_MAKE_E(ID_TEXT_NEW, pGeneratorReferenceExtend)
 
 #endif

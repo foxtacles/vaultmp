@@ -73,7 +73,7 @@ class ItemList : public virtual Base
 
 GF_TYPE_WRAPPER(ItemList, Base, ID_ITEMLIST, ALL_ITEMLISTS)
 
-PF_PACKET(ID_ITEMLIST_NEW, pGeneratorReferenceExtend, std::vector<pPacket>)
+PF_MAKE(ID_ITEMLIST_NEW, pGeneratorReferenceExtend, std::vector<pPacket>)
 template<>
 inline const typename pTypesMap<pTypes::ID_ITEMLIST_NEW>::type* PacketFactory::Cast_<pTypes::ID_ITEMLIST_NEW>::Cast(const pPacket* packet) {
 	pTypes type = packet->type();

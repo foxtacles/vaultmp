@@ -198,7 +198,7 @@ class ObjectFunctor : public ReferenceFunctor
 
 GF_TYPE_WRAPPER(Object, Reference, ID_OBJECT, ALL_OBJECTS)
 
-PF_PACKET(ID_OBJECT_NEW, pGeneratorReferenceExtend, std::string, std::tuple<float, float, float>, std::tuple<float, float, float>, unsigned int, bool, unsigned int, unsigned int)
+PF_MAKE(ID_OBJECT_NEW, pGeneratorReferenceExtend, std::string, std::tuple<float, float, float>, std::tuple<float, float, float>, unsigned int, bool, unsigned int, unsigned int)
 template<>
 inline const typename pTypesMap<pTypes::ID_OBJECT_NEW>::type* PacketFactory::Cast_<pTypes::ID_OBJECT_NEW>::Cast(const pPacket* packet) {
 	pTypes type = packet->type();
@@ -210,14 +210,14 @@ inline const typename pTypesMap<pTypes::ID_OBJECT_NEW>::type* PacketFactory::Cas
 		type == pTypes::ID_PLAYER_NEW
 	) ? static_cast<const typename pTypesMap<pTypes::ID_OBJECT_NEW>::type*>(packet) : nullptr;
 }
-PF_PACKET(ID_VOLATILE_NEW, pGeneratorReference, unsigned int, float, float, float)
-PF_PACKET(ID_OBJECT_REMOVE, pGeneratorReference, bool)
-PF_PACKET(ID_UPDATE_NAME, pGeneratorReference, std::string)
-PF_PACKET(ID_UPDATE_POS, pGeneratorReference, float, float, float)
-PF_PACKET(ID_UPDATE_ANGLE, pGeneratorReference, float, float)
-PF_PACKET(ID_UPDATE_CELL, pGeneratorReference, unsigned int, float, float, float)
-PF_PACKET(ID_UPDATE_LOCK, pGeneratorReference, unsigned int)
-PF_PACKET(ID_UPDATE_OWNER, pGeneratorReference, unsigned int)
-PF_PACKET(ID_UPDATE_ACTIVATE, pGeneratorReference, RakNet::NetworkID)
+PF_MAKE(ID_VOLATILE_NEW, pGeneratorReference, unsigned int, float, float, float)
+PF_MAKE(ID_OBJECT_REMOVE, pGeneratorReference, bool)
+PF_MAKE(ID_UPDATE_NAME, pGeneratorReference, std::string)
+PF_MAKE(ID_UPDATE_POS, pGeneratorReference, float, float, float)
+PF_MAKE(ID_UPDATE_ANGLE, pGeneratorReference, float, float)
+PF_MAKE(ID_UPDATE_CELL, pGeneratorReference, unsigned int, float, float, float)
+PF_MAKE(ID_UPDATE_LOCK, pGeneratorReference, unsigned int)
+PF_MAKE(ID_UPDATE_OWNER, pGeneratorReference, unsigned int)
+PF_MAKE(ID_UPDATE_ACTIVATE, pGeneratorReference, RakNet::NetworkID)
 
 #endif
