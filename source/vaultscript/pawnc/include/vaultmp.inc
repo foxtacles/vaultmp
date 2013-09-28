@@ -168,6 +168,11 @@ const Emoticon: {
 	Pain = 3,
 }
 
+const Sex: {
+	Male = 0,
+	Female = 1,
+}
+
 const Interval: {
 	DEFAULT_PLAYER_RESPAWN = 8000,
 }
@@ -301,7 +306,7 @@ native Bool:GetActorAlerted(ID);
 native Bool:GetActorSneaking(ID);
 native Bool:GetActorDead(ID);
 native GetActorBaseRace(ID);
-native Bool:GetActorBaseSex(ID);
+native Sex:GetActorBaseSex(ID);
 native Bool:IsActorJumping(ID);
 native GetPlayerRespawnTime(ID);
 native GetPlayerSpawnCell(ID);
@@ -346,7 +351,7 @@ native Bool:FireWeapon(ID);
 native KillActor(ID, killer, Limb:limbs = Limb:None_, Death:cause = Death:None);
 native Bool:SetActorBaseRace(ID, race);
 native Bool:AgeActorBaseRace(ID, age);
-native Bool:SetActorBaseSex(ID, Bool:female);
+native Bool:SetActorBaseSex(ID, Sex:sex);
 native SetPlayerRespawnTime(ID, interval);
 native SetPlayerSpawnCell(ID, cell);
 native SetPlayerConsoleEnabled(ID, Bool:enabled);

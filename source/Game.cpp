@@ -1858,10 +1858,20 @@ void Game::net_SetAngle(const FactoryObject& reference, float X, float Y, float 
 
 		auto actor = vaultcast<Actor>(reference);
 
-		if (actor && actor->GetActorWeaponAnimation() == AnimGroup_AimIS)
+		if (actor)
 		{
-			SetActorAnimation(actor.get(), AnimGroup_AimISDown);
-			SetActorAnimation(actor.get(), AnimGroup_AimISUp);
+			static map<AnimationGroups, array<AnimationGroups, 2>> reactions = {
+				{AnimGroup_AimIS, {{AnimGroup_AimISDown, AnimGroup_AimISUp}}},
+				{AnimGroup_AttackSpin2, {{AnimGroup_AttackSpin2Down, AnimGroup_AttackSpin2Up}}},
+			};
+
+			auto anim = static_cast<AnimationGroups>(actor->GetActorWeaponAnimation());
+
+			if (reactions.count(anim))
+			{
+				SetActorAnimation(actor.get(), reactions[anim][0]);
+				SetActorAnimation(actor.get(), reactions[anim][1]);
+			}
 		}
 	}
 }

@@ -225,6 +225,12 @@ namespace vaultmp {
 		Pain = 3,
 	};
 
+	enum VAULTCPP(class) Sex VAULTCPP(: uint8_t)
+	{
+		Male = 0,
+		Female = 1,
+	};
+
 	enum VAULTCPP(class) Interval VAULTCPP(: uint32_t)
 	{
 		DEFAULT_PLAYER_RESPAWN = 8000,
@@ -267,8 +273,8 @@ namespace vaultmp {
 	enum Result : uint64_t;
 	enum Time : int64_t;
 
-	struct _hash_Base { inline size_t operator() (const Base& base) const { return std::hash<std::underlying_type<Base>::type>()(static_cast<std::underlying_type<Base>::type>(base)); }};
-	struct _hash_ID { inline size_t operator() (const ID& id) const { return std::hash<std::underlying_type<ID>::type>()(static_cast<std::underlying_type<ID>::type>(id)); }};
+	struct _hash_Base { inline size_t operator() (Base base) const { return std::hash<std::underlying_type<Base>::type>()(static_cast<std::underlying_type<Base>::type>(base)); }};
+	struct _hash_ID { inline size_t operator() (ID id) const { return std::hash<std::underlying_type<ID>::type>()(static_cast<std::underlying_type<ID>::type>(id)); }};
 
 	typedef std::string String;
 	typedef std::vector<Base> BaseVector;
@@ -431,7 +437,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetActorSneaking))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetActorDead))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE RACE (*VAULTAPI(GetActorBaseRace))(VAULTSPACE ID) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(GetActorBaseSex))(VAULTSPACE ID) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE Sex (*VAULTAPI(GetActorBaseSex))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsActorJumping))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Interval (*VAULTAPI(GetPlayerRespawnTime))(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE CELL (*VAULTAPI(GetPlayerSpawnCell))(VAULTSPACE ID) VAULTCPP(noexcept);
@@ -476,7 +482,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(KillActor))(VAULTSPACE ID, VAULTSPACE ID, VAULTSPACE Limb, VAULTSPACE Death) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetActorBaseRace))(VAULTSPACE ID, VAULTSPACE RACE) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(AgeActorBaseRace))(VAULTSPACE ID, VAULTSPACE Count) VAULTCPP(noexcept);
-	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetActorBaseSex))(VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetActorBaseSex))(VAULTSPACE ID, VAULTSPACE Sex) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetPlayerRespawnTime))(VAULTSPACE ID, VAULTSPACE Interval) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetPlayerSpawnCell))(VAULTSPACE ID, VAULTSPACE CELL) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetPlayerConsoleEnabled))(VAULTSPACE ID, VAULTSPACE State) VAULTCPP(noexcept);
@@ -715,7 +721,7 @@ namespace vaultmp
 	VAULTFUNCTION State GetActorSneaking(ID id) noexcept { return VAULTAPI(GetActorSneaking)(id); }
 	VAULTFUNCTION State GetActorDead(ID id) noexcept { return VAULTAPI(GetActorDead)(id); }
 	VAULTFUNCTION RACE GetActorBaseRace(ID id) noexcept { return VAULTAPI(GetActorBaseRace)(id); }
-	VAULTFUNCTION State GetActorBaseSex(ID id) noexcept { return VAULTAPI(GetActorBaseSex)(id); }
+	VAULTFUNCTION Sex GetActorBaseSex(ID id) noexcept { return VAULTAPI(GetActorBaseSex)(id); }
 	VAULTFUNCTION State IsActorJumping(ID id) noexcept { return VAULTAPI(IsActorJumping)(id); }
 	VAULTFUNCTION Interval GetPlayerRespawnTime(ID id) noexcept { return VAULTAPI(GetPlayerRespawnTime)(id); }
 	VAULTFUNCTION CELL GetPlayerSpawnCell(ID id) noexcept { return VAULTAPI(GetPlayerSpawnCell)(id); }
@@ -917,7 +923,7 @@ namespace vaultmp
 	VAULTFUNCTION Void KillActor(ID id, ID killer, Limb limbs = Limb::None, Death cause = Death::None) noexcept { return VAULTAPI(KillActor)(id, killer, limbs, cause); }
 	VAULTFUNCTION State SetActorBaseRace(ID id, RACE race) noexcept { return VAULTAPI(SetActorBaseRace)(id, race); }
 	VAULTFUNCTION State AgeActorBaseRace(ID id, Count age) noexcept { return VAULTAPI(AgeActorBaseRace)(id, age); }
-	VAULTFUNCTION State SetActorBaseSex(ID id, State female) noexcept { return VAULTAPI(SetActorBaseSex)(id, female); }
+	VAULTFUNCTION State SetActorBaseSex(ID id, Sex sex) noexcept { return VAULTAPI(SetActorBaseSex)(id, sex); }
 	VAULTFUNCTION Void SetPlayerRespawnTime(ID id, Interval interval) noexcept { return VAULTAPI(SetPlayerRespawnTime)(id, interval); }
 	VAULTFUNCTION Void SetPlayerSpawnCell(ID id, CELL cell) noexcept { return VAULTAPI(SetPlayerSpawnCell)(id, cell); }
 	VAULTFUNCTION Void SetPlayerConsoleEnabled(ID id, State enabled) noexcept { return VAULTAPI(SetPlayerConsoleEnabled)(id, enabled); }
@@ -1299,7 +1305,7 @@ namespace vaultmp
 			State GetActorSneaking() const noexcept { return vaultmp::GetActorSneaking(id); }
 			State GetActorDead() const noexcept { return vaultmp::GetActorDead(id); }
 			RACE GetActorBaseRace() const noexcept { return vaultmp::GetActorBaseRace(id); }
-			State GetActorBaseSex() const noexcept { return vaultmp::GetActorBaseSex(id); }
+			Sex GetActorBaseSex() const noexcept { return vaultmp::GetActorBaseSex(id); }
 			State IsActorJumping() const noexcept { return vaultmp::IsActorJumping(id); }
 
 			Void SetActorValue(ActorValue index, Value value) noexcept { return vaultmp::SetActorValue(id, index, value); }
@@ -1330,7 +1336,7 @@ namespace vaultmp
 			Void KillActor(ID killer = static_cast<ID>(0), Limb limbs = Limb::None, Death cause = Death::None) noexcept { return vaultmp::KillActor(id, killer, limbs, cause); }
 			State SetActorBaseRace(RACE race) noexcept { return vaultmp::SetActorBaseRace(id, race); }
 			State AgeActorBaseRace(Count age) noexcept { return vaultmp::AgeActorBaseRace(id, age); }
-			State SetActorBaseSex(State female) noexcept { return vaultmp::SetActorBaseSex(id, female); }
+			State SetActorBaseSex(Sex sex) noexcept { return vaultmp::SetActorBaseSex(id, sex); }
 
 			#define Create_Template(type) \
 				static ID Create(type actor, CELL cell, Value X, Value Y, Value Z) noexcept { return vaultmp::CreateActor(actor, cell, X, Y, Z); }
