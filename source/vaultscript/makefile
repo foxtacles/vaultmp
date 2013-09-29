@@ -6,7 +6,7 @@ AR = ar
 LD = g++
 WINDRES = windres
 
-INC = -I.
+INC = -I. -Idefault
 CFLAGS = -std=gnu++0x
 RESINC = 
 LIBDIR = 
