@@ -1405,7 +1405,7 @@ void Game::SetActorSneaking(const FactoryActor& reference, unsigned int key)
 
 	DelayOrExecute(reference, [actor, sneaking](unsigned int key) {
 		Interface::Dynamic([actor, sneaking, key]() {
-			Interface::ExecuteCommand(Func::SetAlert, {actor->GetReferenceParam(), RawParameter(sneaking)}, key);
+			Interface::ExecuteCommand(Func::SetForceSneak, {actor->GetReferenceParam(), RawParameter(sneaking)}, key);
 		});
 	}, key);
 }
@@ -1862,7 +1862,7 @@ void Game::net_SetAngle(const FactoryObject& reference, float X, float Y, float 
 		{
 			static map<AnimationGroups, array<AnimationGroups, 2>> reactions = {
 				{AnimGroup_AimIS, {{AnimGroup_AimISDown, AnimGroup_AimISUp}}},
-				{AnimGroup_AttackSpin2, {{AnimGroup_AttackSpin2Down, AnimGroup_AttackSpin2Up}}},
+				{AnimGroup_AttackSpin2, {{AnimGroup_AimUp, AnimGroup_AimDown}}},
 			};
 
 			auto anim = static_cast<AnimationGroups>(actor->GetActorWeaponAnimation());
