@@ -294,9 +294,21 @@ extern "C"
 		gData.chatting=inGui;
 
 		if(inGui)
+		{
 			CEGUI::MouseCursor::getSingleton().show();
+			gData.disableMouseInput=true;
+			CEGUI::Editbox* edb = ((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("Edit Box"));
+
+			((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("closeBTN"))->setAlpha(1);
+
+			edb->activate();
+		}
 		else
+		{
 			CEGUI::MouseCursor::getSingleton().hide();
+			((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("closeBTN"))->setAlpha(0);
+			gData.disableMouseInput=false;
+		}
 	}
 
 	__declspec(dllexport) void GUI_SetVisible(char* name,bool visible)
