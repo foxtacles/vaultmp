@@ -318,7 +318,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 		sprintf(asd, "%08X", checksum_real);
 		MessageBox(NULL,asd,asd,MB_OK);
 */
-		if (false && checksum_real != VAULTMP_DLL)
+		if (checksum_real != VAULTMP_DLL)
 			return MessageBox(NULL, "vaultmp.dll is not up to date!", "Error", MB_OK | MB_ICONERROR);
 	}
 	else
