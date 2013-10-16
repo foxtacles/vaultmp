@@ -227,6 +227,8 @@ Void VAULTSCRIPT OnWindowClick(ID window, ID player) noexcept
 			for (auto actor : actors)
 				KillActor(actor, actor, Limb::ALL_LIMBS);
 		}
+
+		ForceWindowMode(player, False);
 	}
 }
 

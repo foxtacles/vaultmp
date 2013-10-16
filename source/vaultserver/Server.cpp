@@ -351,10 +351,7 @@ NetworkResponse Server::GetActorState(RakNetGUID guid, FactoryActor& reference, 
 
 		if (_idle)
 		{
-			const DB::Record* record = nullptr;
-
-			if (idle)
-				record = *DB::Record::Lookup(idle, "IDLE");
+			auto record = DB::Record::Lookup(idle, "IDLE");
 
 			response.emplace_back(Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_UPDATE_IDLE>(id, idle, record ? record->GetName() : ""),

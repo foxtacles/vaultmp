@@ -278,7 +278,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 								fclose(filecheck);
 								unsigned int crc;
 								Utils::crc32file("../Data/vaultmp.esp", &crc);
-
+/*
+								char asd[123];
+								sprintf(asd, "%08X", crc);
+								MessageBox(NULL,asd,asd,MB_OK);
+*/
 								if (crc != VAULTMP_F3)
 									return MessageBox(nullptr, "vaultmp.esp is outdated or has been modified!", "Error", MB_OK | MB_ICONERROR);
 							}
