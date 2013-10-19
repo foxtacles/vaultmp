@@ -637,6 +637,7 @@ using FactoryWrapperPtr = typename std::conditional<Utils::is_static_castable<F,
         FactoryWrapper(Base* base, unsigned int type) noexcept : FactoryWrapperPtr<base_class, derived_class>(validate<derived_class>(type) ? base : (base = nullptr)),   \
                                                                  FactoryWrapper<base_class>(FactoryWrapperPtr<base_class, derived_class>::get_ptr(base), type) {}         \
         template<typename T> FactoryWrapper(const FactoryWrapper<T>& p) noexcept : FactoryWrapper(p.operator->(), p.GetType()) {}                                         \
+        template<typename T> FactoryWrapper(FactoryWrapper<T>&& p) noexcept : FactoryWrapper(p.operator->(), p.GetType()) { GameFactory::Free(p); }                       \
                                                                                                                                                                           \
     public:                                                                                                                                                               \
         FactoryWrapper() = default;                                                                                                                                       \
