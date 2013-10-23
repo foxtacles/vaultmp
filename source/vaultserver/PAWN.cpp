@@ -16,14 +16,11 @@ extern "C" {
 	int AMXAPI amx_FileInit(AMX*);
 }
 
-static vector<const char*> strings;
+static vector<vector<char>> strings;
 static vector<pair<cell*, double>> floats;
 static pair<cell*, NetworkID*> data = {nullptr, nullptr};
 
 void free_strings() noexcept {
-	for (const auto* value : strings)
-		delete[] value;
-
 	strings.clear();
 }
 
@@ -84,9 +81,9 @@ struct PAWN_extract_<const char*, I, F> {
 		source = amx_Address(amx, params[I]);
 		amx_StrLen(source, &len);
 
-		char* value = new char[len + 1];
+		strings.emplace_back(len + 1);
+		char* value = &strings.back()[0];
 		amx_GetString(value, source, 0, UNLIMITED);
-		strings.emplace_back(value);
 
 		return value;
 	}
@@ -173,7 +170,7 @@ template<> struct F_<2> { static constexpr AMX_NATIVE_INFO F{"CreateTimerEx", PA
 template<> struct F_<4> { static constexpr AMX_NATIVE_INFO F{"MakePublic", PAWN::MakePublic}; };
 template<> struct F_<5> { static constexpr AMX_NATIVE_INFO F{"CallPublic", PAWN::CallPublic}; };
 
-template<std::size_t... Indices>
+template<size_t... Indices>
 inline AMX_NATIVE_INFO* PAWN::functions(indices<Indices...>) {
 	static AMX_NATIVE_INFO functions_[sizeof...(Indices)] {
 		F_<Indices>::F...
