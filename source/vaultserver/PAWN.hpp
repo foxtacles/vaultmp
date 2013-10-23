@@ -14,14 +14,22 @@ class PAWN
 	private:
 		PAWN() = delete;
 
-		static AMX_NATIVE_INFO functions[];
+		// thanks to http://fuch.si/eg
 
+		template<std::size_t... Is> struct indices {};
+		template<std::size_t N, std::size_t... Is> struct build_indices : build_indices<N-1, N-1, Is...> {};
+		template<std::size_t... Is> struct build_indices<0, Is...> : indices<Is...> {};
+		template<std::size_t N> using IndicesFor = build_indices<N>;
+
+		template<std::size_t... Indices>
+		static AMX_NATIVE_INFO* functions(indices<Indices...>);
+
+	public:
 		static cell CreateTimer(AMX* amx, const cell* params) noexcept;
 		static cell CreateTimerEx(AMX* amx, const cell* params) noexcept;
 		static cell MakePublic(AMX* amx, const cell* params) noexcept;
 		static cell CallPublic(AMX* amx, const cell* params) noexcept;
 
-	public:
 		static int LoadProgram(AMX* amx, const char* filename, void* memblock);
 		static int Init(AMX* amx);
 		static int Exec(AMX* amx, cell* retval, int index);
