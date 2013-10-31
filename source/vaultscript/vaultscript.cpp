@@ -60,6 +60,13 @@ Result VAULTSCRIPT Timer_CloseCView(ID player, ID cview) noexcept
 	return static_cast<Result>(True);
 }
 
+Result VAULTSCRIPT Timer_RemoveActor(ID actor) noexcept
+{
+	DestroyObject(actor);
+	KillTimer();
+	return static_cast<Result>(True);
+}
+
 State IsCViewOpen(ID player, ID itemlist) noexcept
 {
 	for (const auto& cview : open_cviews)
@@ -366,7 +373,10 @@ Void VAULTSCRIPT OnActorSneak(ID actor, State sneaking) noexcept
 
 Void VAULTSCRIPT OnActorDeath(ID actor, ID killer, Limb limbs, Death cause) noexcept
 {
+	constexpr Interval delete_after_ms = static_cast<Interval>(10000);
 
+	if (IsActor(actor))
+		CreateTimerEx(Timer_RemoveActor, delete_after_ms, actor);
 }
 
 Void VAULTSCRIPT OnActorPunch(ID actor, State power) noexcept
