@@ -1,5 +1,5 @@
 /*
- * Very hacky weekend code. Basically unmaintainable and bullshit. It works though :(
+ * Very hacky weekend code from 2010. Basically unmaintainable and bullshit. It works though :(
  * Note: completely scrap and re-engineer
  * More note: be careful. here be pointers to pointers to pointers and dragons
  */
