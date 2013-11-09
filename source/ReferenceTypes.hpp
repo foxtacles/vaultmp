@@ -24,6 +24,7 @@ const unsigned int ALL_CONTAINERS      = (ID_CONTAINER | ID_ACTOR | ID_PLAYER);
 const unsigned int ALL_ACTORS          = (ID_ACTOR | ID_PLAYER);
 const unsigned int ALL_WINDOWS         = (ID_WINDOW | ID_BUTTON | ID_TEXT | ID_EDIT | ID_CHECKBOX | ID_RADIOBUTTON | ID_LIST);
 
+template<typename T> struct rBases;
 template<typename T> struct rTypes;
 template<typename T> struct rTypesToken;
 

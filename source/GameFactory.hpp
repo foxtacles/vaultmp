@@ -41,6 +41,7 @@ template<typename T, typename U> Expected<FactoryWrapper<T>> vaultcast(const Exp
 template<typename T, typename U> Expected<FactoryWrapper<T>> vaultcast_swap(FactoryWrapper<U>&& object) noexcept;
 template<typename T, typename U> Expected<FactoryWrapper<T>> vaultcast_swap(Expected<FactoryWrapper<U>>&& object) noexcept;
 
+template<typename T> struct rBases;
 template<typename T> struct rTypes;
 template<typename T> struct rTypesToken;
 
@@ -621,43 +622,49 @@ class FactoryWrapperPtrEmpty
 template<typename F, typename T>
 using FactoryWrapperPtr = typename std::conditional<Utils::is_static_castable<F, T>::value, FactoryWrapperPtrEmpty<T>, FactoryWrapperPtrType<T>>::type;
 
-#define GF_TYPE_WRAPPER(derived_class, base_class, identity, token)                                                                                                       \
-    template<> class FactoryWrapper<derived_class> : private FactoryWrapperPtr<base_class, derived_class>, public FactoryWrapper<base_class>                              \
-    {                                                                                                                                                                     \
-        friend class GameFactory;                                                                                                                                         \
-                                                                                                                                                                          \
-        template<typename T, typename U>                                                                                                                                  \
-        friend Expected<FactoryWrapper<T>> vaultcast(const FactoryWrapper<U>& object) noexcept;                                                                           \
-        template<typename T, typename U>                                                                                                                                  \
-        friend Expected<FactoryWrapper<T>> vaultcast_swap(FactoryWrapper<U>&& object) noexcept;                                                                           \
-                                                                                                                                                                          \
-    protected:                                                                                                                                                            \
-        FactoryWrapper(derived_class* ptr, unsigned int type) noexcept : FactoryWrapperPtr<base_class, derived_class>(ptr),                                               \
-                                                                         FactoryWrapper<base_class>(FactoryWrapperPtr<base_class, derived_class>::get_ptr(ptr), type) {}  \
-        FactoryWrapper(Base* base, unsigned int type) noexcept : FactoryWrapperPtr<base_class, derived_class>(validate<derived_class>(type) ? base : (base = nullptr)),   \
-                                                                 FactoryWrapper<base_class>(FactoryWrapperPtr<base_class, derived_class>::get_ptr(base), type) {}         \
-        template<typename T> FactoryWrapper(const FactoryWrapper<T>& p) noexcept : FactoryWrapper(p.operator->(), p.GetType()) {}                                         \
-        template<typename T> FactoryWrapper(FactoryWrapper<T>&& p) noexcept : FactoryWrapper(p.operator->(), p.GetType()) { GameFactory::Free(p); }                       \
-                                                                                                                                                                          \
-    public:                                                                                                                                                               \
-        FactoryWrapper() = default;                                                                                                                                       \
-        FactoryWrapper(const FactoryWrapper&) = default;                                                                                                                  \
-        FactoryWrapper& operator=(const FactoryWrapper&) = default;                                                                                                       \
-        FactoryWrapper(FactoryWrapper&&) = default;                                                                                                                       \
-        FactoryWrapper& operator=(FactoryWrapper&&) = default;                                                                                                            \
-        ~FactoryWrapper() = default;                                                                                                                                      \
-                                                                                                                                                                          \
-        derived_class* operator->() const noexcept { return FactoryWrapperPtr<base_class, derived_class>::get_ptr(base); }                                                \
-        derived_class& operator*() const noexcept { return *operator->(); }                                                                                               \
-        operator derived_class*() const noexcept { return operator->(); }                                                                                                 \
-};                                                                                                                                                                        \
-template<> struct rTypes<derived_class> { enum { value = identity }; };                                                                                                   \
-template<> struct rTypesToken<derived_class> { enum { value = token }; };                                                                                                 \
-typedef std::vector<derived_class*> derived_class##s;                                                                                                                     \
-typedef FactoryWrapper<derived_class> Factory##derived_class;                                                                                                             \
-typedef std::vector<FactoryWrapper<derived_class>> Factory##derived_class##s;                                                                                             \
-typedef Expected<FactoryWrapper<derived_class>> Expected##derived_class;                                                                                                  \
-typedef std::vector<Expected<FactoryWrapper<derived_class>>> Expected##derived_class##s;
+template<typename D>
+class FactoryWrapper : private FactoryWrapperPtr<typename rBases<D>::type, D>, public FactoryWrapper<typename rBases<D>::type>
+{
+	using base_class = typename rBases<D>::type;
+	using derived_class = D;
+
+	friend class GameFactory;
+
+	template<typename T, typename U>
+	friend Expected<FactoryWrapper<T>> vaultcast(const FactoryWrapper<U>& object) noexcept;
+	template<typename T, typename U>
+	friend Expected<FactoryWrapper<T>> vaultcast_swap(FactoryWrapper<U>&& object) noexcept;
+
+	protected:
+		FactoryWrapper(derived_class* ptr, unsigned int type) noexcept : FactoryWrapperPtr<base_class, derived_class>(ptr),
+                                                                         FactoryWrapper<base_class>(FactoryWrapperPtr<base_class, derived_class>::get_ptr(ptr), type) {}
+		FactoryWrapper(Base* base, unsigned int type) noexcept : FactoryWrapperPtr<base_class, derived_class>(FactoryWrapper<Base>::validate<derived_class>(type) ? base : (base = nullptr)),
+                                                                 FactoryWrapper<base_class>(FactoryWrapperPtr<base_class, derived_class>::get_ptr(base), type) {}
+		template<typename T> FactoryWrapper(const FactoryWrapper<T>& p) noexcept : FactoryWrapper(p.operator->(), p.GetType()) {}
+		template<typename T> FactoryWrapper(FactoryWrapper<T>&& p) noexcept : FactoryWrapper(p.operator->(), p.GetType()) { GameFactory::Free(p); }
+
+	public:
+		FactoryWrapper() = default;
+		FactoryWrapper(const FactoryWrapper&) = default;
+		FactoryWrapper& operator=(const FactoryWrapper&) = default;
+		FactoryWrapper(FactoryWrapper&&) = default;
+		FactoryWrapper& operator=(FactoryWrapper&&) = default;
+		~FactoryWrapper() = default;
+
+		derived_class* operator->() const noexcept { return FactoryWrapperPtr<base_class, derived_class>::get_ptr(FactoryWrapper<Base>::base); }
+		derived_class& operator*() const noexcept { return *operator->(); }
+		operator derived_class*() const noexcept { return operator->(); }
+};
+
+#define GF_TYPE_WRAPPER(derived_class, base_class, identity, token)                                \
+template<> struct rBases<derived_class> { typedef base_class type; };                              \
+template<> struct rTypes<derived_class> { enum { value = identity }; };                            \
+template<> struct rTypesToken<derived_class> { enum { value = token }; };                          \
+typedef std::vector<derived_class*> derived_class##s;                                              \
+typedef FactoryWrapper<derived_class> Factory##derived_class;                                      \
+typedef std::vector<FactoryWrapper<derived_class>> Factory##derived_class##s;                      \
+typedef Expected<FactoryWrapper<derived_class>> Expected##derived_class;                           \
+typedef std::vector<Expected<FactoryWrapper<derived_class>>> Expected##derived_class##s;           \
 
 #define GF_TYPE_WRAPPER_FINAL(derived_class, base_class, identity) GF_TYPE_WRAPPER(derived_class, base_class, identity, identity)
 
