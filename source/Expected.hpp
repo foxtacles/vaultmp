@@ -128,11 +128,11 @@ class Expected
 
 		template<typename U> typename std::enable_if<std::is_class<U>::value, typename result_star_operator<U>::type>::type star_operator(U& u) { return u.operator*(); }
 		template<typename U> typename std::enable_if<!std::is_class<U>::value, U&>::type star_operator(U& u) { return u; }
-		auto operator*() -> decltype(this->star_operator<T>(value)) { return star_operator<T>(get()); }
+		auto operator*() { return star_operator<T>(get()); }
 
 		template<typename U> typename std::enable_if<std::is_class<U>::value, typename result_pointer_operator<U>::type>::type pointer_operator(U& u) { return u.operator->(); }
 		template<typename U> typename std::enable_if<!std::is_class<U>::value && std::is_pointer<U>::value, U>::type pointer_operator(U& u) { return u; }
-		auto operator->() -> decltype(this->pointer_operator<T>(value)) { return pointer_operator<T>(get()); }
+		auto operator->() { return pointer_operator<T>(get()); }
 };
 
 #endif

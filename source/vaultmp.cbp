@@ -6,7 +6,6 @@
 		<Option platforms="Windows;" />
 		<Option makefile="makefile" />
 		<Option makefile_is_custom="1" />
-		<Option execution_dir="D:/Programmierung/vaultmp/source" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<MakeCommands>
