@@ -21,7 +21,7 @@ class Expected
 		bool valid;
 
 	public:
-		Expected() : value(T()), valid(true) {}
+		Expected() : value(), valid(true) {}
 		Expected(const T& value) : value(value), valid(true) {}
 		Expected(T&& value) : value(std::move(value)), valid(true) {}
 		Expected(const Expected& expected) : valid(expected.valid)

@@ -7,13 +7,13 @@ LD = g++.exe
 WINDRES = windres.exe
 
 INC = -I. -Istack_trace\\include
-CFLAGS = -pedantic-errors -pedantic -Wfatal-errors -Wextra -Wall -std=gnu++0x -m32
-CFLAGSEXT = -std=gnu++0x -m32
+CFLAGS = -pedantic-errors -pedantic -Wfatal-errors -Wextra -Wall -std=gnu++1y -m32
+CFLAGSEXT = -std=gnu++1y -m32
 RESINC =
 RCFLAGS = -F pe-i386
 LIBDIR =
 LIB =
-LDFLAGS = -m32 ufmod.obj -lshlwapi -lcomctl32 -lwinmm -lws2_32 -limagehlp -static -mwindows
+LDFLAGS = -m32 ufmod.obj -lshlwapi -lcomctl32 -lwinmm -lws2_32 -lz -limagehlp -static -mwindows
 
 INC_DEBUG = $(INC)
 CFLAGS_DEBUG = $(CFLAGS) -gstabs -DVAULTMP_DEBUG

@@ -7,8 +7,8 @@ LD = g++
 WINDRES = windres
 
 INC = -I.. -Iamx/linux
-CFLAGS = -pedantic-errors -pedantic -Wfatal-errors -Wextra -Wall -std=gnu++0x -m32 -DVAULTSERVER
-CFLAGSEXT = -std=gnu++0x -m32
+CFLAGS = -pedantic-errors -pedantic -Wfatal-errors -Wextra -Wall -std=gnu++1y -m32 -DVAULTSERVER
+CFLAGSEXT = -std=gnu++1y -m32
 RESINC =
 LIBDIR =
 LIB =

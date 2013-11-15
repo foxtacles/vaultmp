@@ -17,7 +17,7 @@
 			<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
 		</MakeCommands>
 		<Build>
-			<Target title="Debug">
+			<Target title="debug">
 				<Option platforms="Windows;" />
 				<Option output="vaultserverd.exe" prefix_auto="0" extension_auto="0" />
 				<Option object_output=".objs/Debug" />
@@ -45,7 +45,7 @@
 					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
 				</MakeCommands>
 			</Target>
-			<Target title="Release">
+			<Target title="release">
 				<Option platforms="Windows;" />
 				<Option output="vaultserver.exe" prefix_auto="0" extension_auto="0" />
 				<Option object_output=".objs/Release" />
@@ -70,46 +70,6 @@
 					<AskRebuildNeeded command="$make -q -f $makefile $target" />
 					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
 				</MakeCommands>
-			</Target>
-			<Target title="DebugUnix">
-				<Option platforms="Unix;" />
-				<Option output="vaultserverd" prefix_auto="0" extension_auto="0" />
-				<Option object_output=".objs/DebugUnix" />
-				<Option type="1" />
-				<Option compiler="gcc" />
-				<Compiler>
-					<Add option="-Wredundant-decls" />
-					<Add option="-Wunreachable-code" />
-					<Add option="-gstabs" />
-					<Add option="-DVAULTMP_DEBUG" />
-					<Add directory="amx/linux" />
-				</Compiler>
-				<Linker>
-					<Add option="-ldl" />
-					<Add option="-lncurses" />
-					<Add option="-lpthread" />
-					<Add option="-static" />
-				</Linker>
-			</Target>
-			<Target title="ReleaseUnix">
-				<Option platforms="Unix;" />
-				<Option output="vaultserver" prefix_auto="0" extension_auto="0" />
-				<Option object_output=".objs/ReleaseUnix" />
-				<Option type="1" />
-				<Option compiler="gcc" />
-				<Compiler>
-					<Add option="-O2" />
-					<Add option="-Wredundant-decls" />
-					<Add option="-Wunreachable-code" />
-					<Add directory="amx/linux" />
-				</Compiler>
-				<Linker>
-					<Add option="-s" />
-					<Add option="-ldl" />
-					<Add option="-lncurses" />
-					<Add option="-lpthread" />
-					<Add option="-static" />
-				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
@@ -372,12 +332,10 @@
 		</Unit>
 		<Unit filename="../iniparser/src/iniparser.h" />
 		<Unit filename="../stack_trace/include/dbg/stack.hpp">
-			<Option target="Debug" />
-			<Option target="DebugUnix" />
+			<Option target="debug" />
 		</Unit>
 		<Unit filename="../stack_trace/src/stack.cpp">
-			<Option target="Debug" />
-			<Option target="DebugUnix" />
+			<Option target="debug" />
 		</Unit>
 		<Unit filename="AcReference.cpp" />
 		<Unit filename="AcReference.hpp" />

@@ -6,6 +6,7 @@
 		<Option platforms="Windows;" />
 		<Option makefile="makefile" />
 		<Option makefile_is_custom="1" />
+		<Option execution_dir="D:/Programmierung/vaultmp/source" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<MakeCommands>
@@ -17,7 +18,7 @@
 			<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
 		</MakeCommands>
 		<Build>
-			<Target title="Debug">
+			<Target title="debug">
 				<Option platforms="Windows;" />
 				<Option output="vaultmpd" prefix_auto="1" extension_auto="1" />
 				<Option object_output=".objs/Debug" />
@@ -40,7 +41,7 @@
 					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
 				</MakeCommands>
 			</Target>
-			<Target title="Release">
+			<Target title="release">
 				<Option platforms="Windows;" />
 				<Option output="vaultmp" prefix_auto="1" extension_auto="1" />
 				<Option object_output=".objs/Release" />
@@ -408,10 +409,10 @@
 		<Unit filename="packet/PacketFactory.hpp" />
 		<Unit filename="packet/PacketTypes.hpp" />
 		<Unit filename="stack_trace/include/dbg/stack.hpp">
-			<Option target="Debug" />
+			<Option target="debug" />
 		</Unit>
 		<Unit filename="stack_trace/src/stack.cpp">
-			<Option target="Debug" />
+			<Option target="debug" />
 		</Unit>
 		<Unit filename="vaultmp.cpp" />
 		<Unit filename="vaultmp.hpp" />

@@ -7,12 +7,12 @@ LD = g++.exe
 WINDRES = windres.exe
 
 INC = -I..
-CFLAGS = -pedantic-errors -pedantic -Wfatal-errors -Wextra -Wall -std=gnu++0x -m32 -DVAULTSERVER
-CFLAGSEXT = -std=gnu++0x -m32
+CFLAGS = -pedantic-errors -pedantic -Wfatal-errors -Wextra -Wall -std=gnu++1y -m32 -DVAULTSERVER
+CFLAGSEXT = -std=gnu++1y -m32
 RESINC =
 LIBDIR =
 LIB =
-LDFLAGS = -m32 -lws2_32 -lwinmm -lm -limagehlp -static
+LDFLAGS = -m32 -lws2_32 -lwinmm -lm -lz -limagehlp -static
 
 INC_DEBUG = $(INC) -I..\\stack_trace\\include
 CFLAGS_DEBUG = $(CFLAGS) -gstabs -DVAULTMP_DEBUG
