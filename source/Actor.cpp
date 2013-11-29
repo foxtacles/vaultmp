@@ -78,8 +78,10 @@ Actor::Actor(const pPacket& packet) : Container(PacketFactory::Pop<pPacket>(pack
 	signed int age;
 	unsigned char moving, movingxy, weapon;
 	bool female, alerted, sneaking, dead;
+	unsigned short limbs;
+	signed char cause;
 
-	PacketFactory::Access<pTypes::ID_ACTOR_NEW>(packet, values, baseValues, race, age, idle, moving, movingxy, weapon, female, alerted, sneaking, dead);
+	PacketFactory::Access<pTypes::ID_ACTOR_NEW>(packet, values, baseValues, race, age, idle, moving, movingxy, weapon, female, alerted, sneaking, dead, limbs, cause);
 
 	for (it = values.begin(), it2 = baseValues.begin(); it != values.end() && it2 != baseValues.end(); ++it, ++it2)
 	{
@@ -96,7 +98,7 @@ Actor::Actor(const pPacket& packet) : Container(PacketFactory::Pop<pPacket>(pack
 	this->SetActorFemale(female);
 	this->SetActorAlerted(alerted);
 	this->SetActorSneaking(sneaking);
-	this->SetActorDead(dead);
+	this->SetActorDead(dead, limbs, cause);
 }
 
 Actor::~Actor() noexcept {}
@@ -113,6 +115,9 @@ void Actor::initialize()
 #ifdef VAULTMP_DEBUG
 	debug.print("New actor object created (ref: ", hex, this->GetReference(), ")");
 #endif
+
+	death_Limbs.set(0x0000);
+	death_Cause.set(Death_None);
 }
 
 #ifndef VAULTSERVER
@@ -182,6 +187,16 @@ bool Actor::GetActorDead() const
 	return state_Dead.get();
 }
 
+unsigned short Actor::GetActorLimbs() const
+{
+	return death_Limbs.get();
+}
+
+signed char Actor::GetActorDeathCause() const
+{
+	return death_Cause.get();
+}
+
 Lockable* Actor::SetActorValue(unsigned char index, float value)
 {
 	return SetObjectValue(this->actor_Values.at(index), value);
@@ -243,8 +258,11 @@ Lockable* Actor::SetActorSneaking(bool state)
 	return SetObjectValue(this->state_Sneaking, state);
 }
 
-Lockable* Actor::SetActorDead(bool state)
+Lockable* Actor::SetActorDead(bool state, unsigned short limbs, signed char cause)
 {
+	SetObjectValue(this->death_Limbs, limbs);
+	SetObjectValue(this->death_Cause, cause);
+
 	return SetObjectValue(this->state_Dead, state);
 }
 
@@ -329,7 +347,7 @@ pPacket Actor::toPacket() const
 	}
 
 	pPacket pContainerNew = Container::toPacket();
-	pPacket packet = PacketFactory::Create<pTypes::ID_ACTOR_NEW>(pContainerNew, values, baseValues, this->GetActorRace(), this->GetActorAge(), this->GetActorIdleAnimation(), this->GetActorMovingAnimation(), this->GetActorMovingXY(), this->GetActorWeaponAnimation(), this->GetActorFemale(), this->GetActorAlerted(), this->GetActorSneaking(), this->GetActorDead());
+	pPacket packet = PacketFactory::Create<pTypes::ID_ACTOR_NEW>(pContainerNew, values, baseValues, this->GetActorRace(), this->GetActorAge(), this->GetActorIdleAnimation(), this->GetActorMovingAnimation(), this->GetActorMovingXY(), this->GetActorWeaponAnimation(), this->GetActorFemale(), this->GetActorAlerted(), this->GetActorSneaking(), this->GetActorDead(), this->GetActorLimbs(), this->GetActorDeathCause());
 
 	return packet;
 }

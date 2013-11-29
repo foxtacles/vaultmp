@@ -889,7 +889,7 @@ void Game::NewActor_(FactoryActor& reference)
 				SetActorWeaponAnimation(reference);
 		}
 		else
-			KillActor(reference, 0, Death_None);
+			KillActor(reference);
 	}
 }
 
@@ -1492,9 +1492,11 @@ void Game::SetActorFemale(const FactoryActor& reference, unsigned int key)
 	}, key);
 }
 
-void Game::KillActor(const FactoryActor& reference, unsigned short limbs, signed char cause, unsigned int key)
+void Game::KillActor(const FactoryActor& reference, unsigned int key)
 {
 	auto* actor = reference.operator->();
+	unsigned short limbs = reference->GetActorLimbs();
+	signed char cause = reference->GetActorDeathCause();
 
 	DelayOrExecute(reference, [actor, limbs, cause](unsigned int key) {
 		Interface::Dynamic([actor, limbs, cause, key]() {
@@ -2161,12 +2163,12 @@ void Game::net_SetActorDead(FactoryActor& reference, bool dead, unsigned short l
 {
 	Lockable* result;
 
-	result = reference->SetActorDead(dead);
+	result = reference->SetActorDead(dead, limbs, cause);
 
 	if (result && reference->GetReference())
 	{
 		if (dead)
-			KillActor(reference, limbs, cause);
+			KillActor(reference);
 		else if (reference->GetReference() != PLAYER_REFERENCE)
 		{
 			RemoveObject(reference);

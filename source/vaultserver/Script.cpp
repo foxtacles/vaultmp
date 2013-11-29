@@ -2229,7 +2229,7 @@ bool Script::PlayIdle(NetworkID id, unsigned int idle) noexcept
 void Script::KillActor(NetworkID id, NetworkID actor, unsigned short limbs, signed char cause) noexcept
 {
 	bool success = GameFactory::Operate<Actor, RET_F_VALID>(id, [id, limbs, cause](FactoryActor& actor) {
-		if (!actor->SetActorDead(true))
+		if (!actor->SetActorDead(true, limbs, cause))
 			return false;
 
 		Network::Queue({Network::CreateResponse(

@@ -318,7 +318,7 @@ class Game
 		/**
 		 * \brief Kills an Actor
 		 */
-		static void KillActor(const FactoryActor& reference, unsigned short limbs, signed char cause, unsigned int key = 0);
+		static void KillActor(const FactoryActor& reference, unsigned int key = 0);
 		/**
 		 * \brief Makes an Actor fire a weapon
 		 */

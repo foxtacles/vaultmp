@@ -394,7 +394,7 @@ NetworkResponse Server::GetActorDead(RakNetGUID guid, FactoryPlayer& reference, 
 	if (dead) // only used by the client to notify about respawn of player
 		return response;
 
-	result = static_cast<bool>(reference->SetActorDead(dead));
+	result = static_cast<bool>(reference->SetActorDead(dead, 0x0000, Death_None));
 
 	if (result)
 	{

@@ -455,7 +455,7 @@ struct API::op_Arg5
 		param2_unk4(0x00000000)
 	{
 		unsigned int** param1 = &this->param1;
-		unsigned int** * param2 = &this->param2;
+		unsigned int*** param2 = &this->param2;
 
 		*param1 = (unsigned int*)((unsigned) &param1_reftext - (unsigned) &unk1);
 		*param2 = (unsigned int**)((unsigned) &param2_real - (unsigned) &unk1);

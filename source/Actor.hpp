@@ -37,6 +37,8 @@ class Actor : public Container
 		Value<bool> state_Alerted;
 		Value<bool> state_Sneaking;
 		Value<bool> state_Dead;
+		Value<unsigned short> death_Limbs;
+		Value<signed char> death_Cause;
 
 		void initialize();
 
@@ -115,6 +117,14 @@ class Actor : public Container
 		 * \brief Retrieves the Actor's dead state
 		 */
 		bool GetActorDead() const;
+		/**
+		 * \brief Retrieves the Actor's last limb state after death
+		 */
+		unsigned short GetActorLimbs() const;
+		/**
+		 * \brief Retrieves the Actor's last death cause
+		 */
+		signed char GetActorDeathCause() const;
 
 		/**
 		 * \brief Sets the Actor's actor value specified by index (actor value hex code)
@@ -167,7 +177,7 @@ class Actor : public Container
 		/**
 		 * \brief Sets the Actor's dead state
 		 */
-		Lockable* SetActorDead(bool state);
+		Lockable* SetActorDead(bool state, unsigned short limbs, signed char cause);
 
 #ifdef VAULTSERVER
 		/**
@@ -228,7 +238,7 @@ class ActorFunctor : public ContainerFunctor
 
 GF_TYPE_WRAPPER(Actor, Container, ID_ACTOR, ALL_ACTORS)
 
-PF_MAKE(ID_ACTOR_NEW, pGeneratorReferenceExtend, std::map<unsigned char, float>, std::map<unsigned char, float>, unsigned int, signed int, unsigned int, unsigned char, unsigned char, unsigned char, bool, bool, bool, bool)
+PF_MAKE(ID_ACTOR_NEW, pGeneratorReferenceExtend, std::map<unsigned char, float>, std::map<unsigned char, float>, unsigned int, signed int, unsigned int, unsigned char, unsigned char, unsigned char, bool, bool, bool, bool, unsigned short, signed char)
 template<>
 inline const typename pTypesMap<pTypes::ID_ACTOR_NEW>::type* PacketFactory::Cast_<pTypes::ID_ACTOR_NEW>::Cast(const pPacket* packet) {
 	pTypes type = packet->type();
