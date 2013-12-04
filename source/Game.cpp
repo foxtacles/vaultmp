@@ -75,7 +75,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			{
 				float* data = getFrom<float*>(result);
 
-				GameFactory::Operate<Object, EX_F_VALID>(getFrom<unsigned int>(info.at(1)), [&info, data](FactoryObject& object) {
+				GameFactory::Operate<Object, EXCEPTION_FACTORY_VALIDATED>(getFrom<unsigned int>(info.at(1)), [&info, data](FactoryObject& object) {
 					GetAngle(object, data[0], data[1], data[2]);
 					GetPos(object, data[3], data[4], data[5]);
 				});
@@ -89,19 +89,19 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 
 				unsigned int refID = *getFrom<unsigned int*>(result);
 
-				GameFactory::Operate<Reference, RET_F_VALID>({refID, PLAYER_REFERENCE}, [result](FactoryReferences& references) {
+				GameFactory::Operate<Reference, RETURN_FACTORY_VALIDATED>({refID, PLAYER_REFERENCE}, [result](FactoryReferences& references) {
 					GetActivate(references[0], references[1]);
 				});
 				break;
 			}
 
 			case Func::GetFireWeapon:
-				GameFactory::Operate<Player, EX_F_VALID>(PLAYER_REFERENCE, [](FactoryPlayer& player) {
+				GameFactory::Operate<Player, EXCEPTION_FACTORY_VALIDATED>(PLAYER_REFERENCE, [](FactoryPlayer& player) {
 					GetFireWeapon(player);
 				}); break;
 
 			case Func::GetActorState:
-				GameFactory::Operate<Actor, EX_F_VALID>(getFrom<unsigned int>(info.at(1)), [&info, result](FactoryActor& actor) mutable {
+				GameFactory::Operate<Actor, EXCEPTION_FACTORY_VALIDATED>(getFrom<unsigned int>(info.at(1)), [&info, result](FactoryActor& actor) mutable {
 					GetActorState(actor,
 						*reinterpret_cast<unsigned int*>(&result),
 						*reinterpret_cast<unsigned char*>(((unsigned) &result) + 4),
@@ -111,12 +111,12 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 				}); break;
 
 			case Func::GetParentCell:
-				GameFactory::Operate<Player, EX_F_VALID>(getFrom<unsigned int>(info.at(1)), [result](FactoryPlayer& player) {
+				GameFactory::Operate<Player, EXCEPTION_FACTORY_VALIDATED>(getFrom<unsigned int>(info.at(1)), [result](FactoryPlayer& player) {
 					GetParentCell(player, getFrom<unsigned int>(result));
 				}); break;
 
 			case Func::GetControl:
-				GameFactory::Operate<Player, EX_F_VALID>(PLAYER_REFERENCE, [&info, result](FactoryPlayer& player) {
+				GameFactory::Operate<Player, EXCEPTION_FACTORY_VALIDATED>(PLAYER_REFERENCE, [&info, result](FactoryPlayer& player) {
 					GetControl(player, getFrom<int>(info.at(1)), result);
 				}); break;
 
@@ -601,7 +601,7 @@ void Game::LoadEnvironment()
 	vector<NetworkID> reference = GameFactory::GetByType(ALL_OBJECTS);
 
 	for (NetworkID id : reference)
-		GameFactory::Operate<Object, EX_F_VALID>(id, [](FactoryObject& object) {
+		GameFactory::Operate<Object, EXCEPTION_FACTORY_VALIDATED>(id, [](FactoryObject& object) {
 			if (!object->IsPersistent() || object->GetReference() == PLAYER_REFERENCE)
 			{
 				cellRefs.Operate([&object](CellRefs& cellRefs) {
@@ -773,14 +773,14 @@ void Game::NewItem(FactoryItem& reference)
 	{
 		GameFactory::Free(reference);
 
-		GameFactory::Operate<Container, EX_F_VALID>(container, [item](FactoryContainer& container) {
+		GameFactory::Operate<Container, EXCEPTION_FACTORY_VALIDATED>(container, [item](FactoryContainer& container) {
 			container->AddItem(item);
 
-			GameFactory::Operate<Item, EX_F_VALID>(item, [&container](FactoryItem& item) {
+			GameFactory::Operate<Item, EXCEPTION_FACTORY_VALIDATED>(item, [&container](FactoryItem& item) {
 				AddItem(container, item);
 
 				if (item->GetItemEquipped() && vaultcast_test<Actor>(container))
-					GameFactory::Operate<Actor, EX_F_VALID>(container->GetNetworkID(), [&item](FactoryActor& actor) {
+					GameFactory::Operate<Actor, EXCEPTION_FACTORY_VALIDATED>(container->GetNetworkID(), [&item](FactoryActor& actor) {
 						EquipItem(actor, item);
 					});
 			});
@@ -1133,7 +1133,7 @@ void Game::DestroyObject(FactoryObject& reference, bool silent)
 {
 	NetworkID id = reference->GetNetworkID();
 
-	NetworkID container = GameFactory::Operate<Item, RET_VALID>(id, [](Item* item) {
+	NetworkID container = GameFactory::Operate<Item, RETURN_VALIDATED>(id, [](Item* item) {
 		return item->GetItemContainer();
 	});
 
@@ -1141,7 +1141,7 @@ void Game::DestroyObject(FactoryObject& reference, bool silent)
 	{
 		GameFactory::Free(reference);
 
-		GameFactory::Operate<Container, EX_F_VALID>(container, [id, silent](FactoryContainer& container) {
+		GameFactory::Operate<Container, EXCEPTION_FACTORY_VALIDATED>(container, [id, silent](FactoryContainer& container) {
 			container->RemoveItem(id);
 
 			GameFactory::Operate<Item>(id, [&container, silent](Item* item) {
@@ -1151,7 +1151,7 @@ void Game::DestroyObject(FactoryObject& reference, bool silent)
 				NetworkID equipped = container->IsEquipped(item->GetBase());
 
 				if (equipped && vaultcast_test<Actor>(container))
-					GameFactory::Operate<Actor, EX_F_VALID>(container->GetNetworkID(), [equipped](FactoryActor& actor) {
+					GameFactory::Operate<Actor, EXCEPTION_FACTORY_VALIDATED>(container->GetNetworkID(), [equipped](FactoryActor& actor) {
 						GameFactory::Operate<Item>(equipped, [&actor](Item* item) {
 							EquipItem(actor, item->GetBase(), item->GetItemCondition(), false, item->GetItemStick());
 						});
@@ -1184,7 +1184,7 @@ void Game::DestroyObject(FactoryObject& reference, bool silent)
 
 void Game::DestroyWindow(FactoryWindow& reference)
 {
-	GameFactory::Operate<List, RET_VALID>(reference->GetNetworkID(), [](List* list) {
+	GameFactory::Operate<List, RETURN_VALIDATED>(reference->GetNetworkID(), [](List* list) {
 		GameFactory::Operate<ListItem>(list->GetItemList(), [list](ListItems& items) {
 			Interface::Dynamic([&items, list]() {
 				for (auto item : items)
@@ -1999,7 +1999,7 @@ void Game::net_SetItemCount(FactoryItem& reference, unsigned int count, bool sil
 
 			GameFactory::Free(reference);
 
-			GameFactory::Operate<Container, EX_F_VALID>(container, [count, old_count, baseID, condition, silent](FactoryContainer& container) {
+			GameFactory::Operate<Container, EXCEPTION_FACTORY_VALIDATED>(container, [count, old_count, baseID, condition, silent](FactoryContainer& container) {
 				signed int diff = count - old_count;
 
 				if (diff > 0)
@@ -2012,7 +2012,7 @@ void Game::net_SetItemCount(FactoryItem& reference, unsigned int count, bool sil
 					NetworkID equipped = container->IsEquipped(baseID);
 
 					if (equipped && vaultcast_test<Actor>(container))
-						GameFactory::Operate<Actor, EX_F_VALID>(container->GetNetworkID(), [equipped](FactoryActor& actor) {
+						GameFactory::Operate<Actor, EXCEPTION_FACTORY_VALIDATED>(container->GetNetworkID(), [equipped](FactoryActor& actor) {
 							GameFactory::Operate<Item>(equipped, [&actor](Item* item) {
 								EquipItem(actor, item->GetBase(), item->GetItemCondition(), false, item->GetItemStick());
 							});
@@ -2053,8 +2053,8 @@ void Game::net_SetItemEquipped(FactoryItem& reference, bool equipped, bool silen
 
 		GameFactory::Free(reference);
 
-		GameFactory::Operate<Actor, EX_F_VALID>(container, [equipped, item](FactoryActor& actor) {
-			GameFactory::Operate<Item, EX_F_VALID>(item, [&actor, equipped](FactoryItem& item) {
+		GameFactory::Operate<Actor, EXCEPTION_FACTORY_VALIDATED>(container, [equipped, item](FactoryActor& actor) {
+			GameFactory::Operate<Item, EXCEPTION_FACTORY_VALIDATED>(item, [&actor, equipped](FactoryItem& item) {
 				if (equipped)
 					EquipItem(actor, item);
 				else
@@ -2273,7 +2273,7 @@ void Game::net_UpdateContext(Player::CellContext& context, bool spawn)
 			for (const auto& refs : copy[cell])
 				for (unsigned int refID : refs.second)
 					if (refID != PLAYER_REFERENCE)
-						GameFactory::Operate<Object, EX_F_VALID>(refID, [](FactoryObject& object) {
+						GameFactory::Operate<Object, EXCEPTION_FACTORY_VALIDATED>(refID, [](FactoryObject& object) {
 							if (!object->IsPersistent() && object->SetEnabled(false))
 								ToggleEnabled(object);
 						});
@@ -2293,7 +2293,7 @@ void Game::net_UpdateContext(Player::CellContext& context, bool spawn)
 			for (const auto& refs : copy[cell])
 				for (unsigned int refID : refs.second)
 					if (refID != PLAYER_REFERENCE)
-						GameFactory::Operate<Object, EX_F_VALID>({refID, PLAYER_REFERENCE}, [cell](FactoryObjects& objects) {
+						GameFactory::Operate<Object, EXCEPTION_FACTORY_VALIDATED>({refID, PLAYER_REFERENCE}, [cell](FactoryObjects& objects) {
 							if (objects[0]->SetEnabled(true))
 								ToggleEnabled(objects[0]);
 
@@ -2310,7 +2310,7 @@ void Game::net_UpdateContext(Player::CellContext& context, bool spawn)
 			});
 
 			for (auto id : ids)
-				GameFactory::Operate<Object, EX_F_VALID>(id, [](FactoryObject& object) {
+				GameFactory::Operate<Object, EXCEPTION_FACTORY_VALIDATED>(id, [](FactoryObject& object) {
 					NewDispatch(object);
 				});
 		}
@@ -2651,7 +2651,7 @@ void Game::GetCheckboxSelected(const string& name, bool selected)
 {
 	NetworkID checkbox = strtoull(name.c_str(), nullptr, 10);
 
-	if (!GameFactory::Operate<Checkbox, BOOL_VALID>(checkbox, [selected](Checkbox* checkbox) {
+	if (!GameFactory::Operate<Checkbox, BOOL_VALIDATED>(checkbox, [selected](Checkbox* checkbox) {
 		checkbox->SetSelected(selected);
 
 		Network::Queue({Network::CreateResponse(

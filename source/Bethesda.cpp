@@ -236,7 +236,7 @@ void Bethesda::InitializeVaultMP(RakPeerInterface* peer, SystemAddress server, c
 	GameFactory::Initialize();
 	API::Initialize();
 
-	GameFactory::Operate<Player>(GameFactory::Create<Player>(PLAYER_REFERENCE, PLAYER_BASE), [&name](Player* player) {
+	GameFactory::Operate<Player>(GameFactory::Create<Player, FailPolicy::Exception>(PLAYER_REFERENCE, PLAYER_BASE), [&name](Player* player) {
 		player->SetEnabled(true);
 		player->SetName(name);
 	});

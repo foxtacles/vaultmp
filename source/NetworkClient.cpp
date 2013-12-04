@@ -203,12 +203,12 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				}
 
 				case pTypes::ID_REFERENCE_NEW:
-					GameFactory::Create<Reference>(packet);
+					GameFactory::Create<Reference, FailPolicy::Exception>(packet);
 					/*GameFactory::Operate<Reference>(GameFactory::Create<Reference>(packet.get()), [](FactoryReference& reference) {
 					});*/ break;
 
 				case pTypes::ID_OBJECT_NEW:
-					GameFactory::Operate<Object, EX_F_VALID>(GameFactory::Create<Object>(packet), [](FactoryObject& object) {
+					GameFactory::Operate<Object, EXCEPTION_FACTORY_VALIDATED>(GameFactory::Create<Object, FailPolicy::Exception>(packet), [](FactoryObject& object) {
 						Game::NewObject(object);
 					}); break;
 
@@ -224,22 +224,22 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				}
 
 				case pTypes::ID_ITEM_NEW:
-					GameFactory::Operate<Item, EX_F_VALID>(GameFactory::Create<Item>(packet), [](FactoryItem& item) {
+					GameFactory::Operate<Item, EXCEPTION_FACTORY_VALIDATED>(GameFactory::Create<Item, FailPolicy::Exception>(packet), [](FactoryItem& item) {
 						Game::NewItem(item);
 					}); break;
 
 				case pTypes::ID_CONTAINER_NEW:
-					GameFactory::Operate<Container, EX_F_VALID>(GameFactory::Create<Container>(packet), [](FactoryContainer& container) {
+					GameFactory::Operate<Container, EXCEPTION_FACTORY_VALIDATED>(GameFactory::Create<Container, FailPolicy::Exception>(packet), [](FactoryContainer& container) {
 						Game::NewContainer(container);
 					}); break;
 
 				case pTypes::ID_ACTOR_NEW:
-					GameFactory::Operate<Actor, EX_F_VALID>(GameFactory::Create<Actor>(packet), [](FactoryActor& actor) {
+					GameFactory::Operate<Actor, EXCEPTION_FACTORY_VALIDATED>(GameFactory::Create<Actor, FailPolicy::Exception>(packet), [](FactoryActor& actor) {
 						Game::NewActor(actor);
 					}); break;
 
 				case pTypes::ID_PLAYER_NEW:
-					GameFactory::Operate<Player, EX_F_VALID>(GameFactory::Create<Player>(packet), [](FactoryPlayer& player) {
+					GameFactory::Operate<Player, EXCEPTION_FACTORY_VALIDATED>(GameFactory::Create<Player, FailPolicy::Exception>(packet), [](FactoryPlayer& player) {
 						Game::NewPlayer(player);
 					}); break;
 
@@ -254,42 +254,42 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 				}
 
 				case pTypes::ID_WINDOW_NEW:
-					GameFactory::Operate<Window, EX_F_VALID>(GameFactory::Create<Window>(packet), [](FactoryWindow& window) {
+					GameFactory::Operate<Window, EXCEPTION_FACTORY_VALIDATED>(GameFactory::Create<Window, FailPolicy::Exception>(packet), [](FactoryWindow& window) {
 						Game::NewWindow(window);
 					}); break;
 
 				case pTypes::ID_BUTTON_NEW:
-					GameFactory::Operate<Button, EX_F_VALID>(GameFactory::Create<Button>(packet), [](FactoryButton& button) {
+					GameFactory::Operate<Button, EXCEPTION_FACTORY_VALIDATED>(GameFactory::Create<Button, FailPolicy::Exception>(packet), [](FactoryButton& button) {
 						Game::NewButton(button);
 					}); break;
 
 				case pTypes::ID_TEXT_NEW:
-					GameFactory::Operate<Text, EX_F_VALID>(GameFactory::Create<Text>(packet), [](FactoryText& text) {
+					GameFactory::Operate<Text, EXCEPTION_FACTORY_VALIDATED>(GameFactory::Create<Text, FailPolicy::Exception>(packet), [](FactoryText& text) {
 						Game::NewText(text);
 					}); break;
 
 				case pTypes::ID_EDIT_NEW:
-					GameFactory::Operate<Edit, EX_F_VALID>(GameFactory::Create<Edit>(packet), [](FactoryEdit& edit) {
+					GameFactory::Operate<Edit, EXCEPTION_FACTORY_VALIDATED>(GameFactory::Create<Edit, FailPolicy::Exception>(packet), [](FactoryEdit& edit) {
 						Game::NewEdit(edit);
 					}); break;
 
 				case pTypes::ID_CHECKBOX_NEW:
-					GameFactory::Operate<Checkbox, EX_F_VALID>(GameFactory::Create<Checkbox>(packet), [](FactoryCheckbox& checkbox) {
+					GameFactory::Operate<Checkbox, EXCEPTION_FACTORY_VALIDATED>(GameFactory::Create<Checkbox, FailPolicy::Exception>(packet), [](FactoryCheckbox& checkbox) {
 						Game::NewCheckbox(checkbox);
 					}); break;
 
 				case pTypes::ID_RADIOBUTTON_NEW:
-					GameFactory::Operate<RadioButton, EX_F_VALID>(GameFactory::Create<RadioButton>(packet), [](FactoryRadioButton& radiobutton) {
+					GameFactory::Operate<RadioButton, EXCEPTION_FACTORY_VALIDATED>(GameFactory::Create<RadioButton, FailPolicy::Exception>(packet), [](FactoryRadioButton& radiobutton) {
 						Game::NewRadioButton(radiobutton);
 					}); break;
 
 				case pTypes::ID_LISTITEM_NEW:
-					GameFactory::Operate<ListItem, EX_F_VALID>(GameFactory::Create<ListItem>(packet), [](FactoryListItem& listitem) {
+					GameFactory::Operate<ListItem, EXCEPTION_FACTORY_VALIDATED>(GameFactory::Create<ListItem, FailPolicy::Exception>(packet), [](FactoryListItem& listitem) {
 						Game::NewListItem(listitem);
 					}); break;
 
 				case pTypes::ID_LIST_NEW:
-					GameFactory::Operate<List, EX_F_VALID>(GameFactory::Create<List>(packet), [](FactoryList& list) {
+					GameFactory::Operate<List, EXCEPTION_FACTORY_VALIDATED>(GameFactory::Create<List, FailPolicy::Exception>(packet), [](FactoryList& list) {
 						Game::NewList(list);
 					}); break;
 

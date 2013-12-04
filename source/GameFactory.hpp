@@ -109,18 +109,18 @@ class GameFactory
 			Default = Validated
 		};
 
-		#define RET_VALID       FailPolicy::Return, ObjectPolicy::Validated
-		#define RET_EXPECTED    FailPolicy::Return, ObjectPolicy::Expected
-		#define RET_F_VALID     FailPolicy::Return, ObjectPolicy::FactoryValidated
-		#define RET_F_EXPECTED  FailPolicy::Return, ObjectPolicy::FactoryExpected
-		#define EX_VALID        FailPolicy::Exception, ObjectPolicy::Validated
-		#define EX_EXPECTED     FailPolicy::Exception, ObjectPolicy::Expected
-		#define EX_F_VALID      FailPolicy::Exception, ObjectPolicy::FactoryValidated
-		#define EX_F_EXPECTED   FailPolicy::Exception, ObjectPolicy::FactoryExpected
-		#define BOOL_VALID      FailPolicy::Bool, ObjectPolicy::Validated
-		#define BOOL_EXPECTED   FailPolicy::Bool, ObjectPolicy::Expected
-		#define BOOL_F_VALID    FailPolicy::Bool, ObjectPolicy::FactoryValidated
-		#define BOOL_F_EXPECTED FailPolicy::Bool, ObjectPolicy::FactoryExpected
+		#define RETURN_VALIDATED             FailPolicy::Return, ObjectPolicy::Validated
+		#define RETURN_EXPECTED              FailPolicy::Return, ObjectPolicy::Expected
+		#define RETURN_FACTORY_VALIDATED     FailPolicy::Return, ObjectPolicy::FactoryValidated
+		#define RETURN_FACTORY_EXPECTED      FailPolicy::Return, ObjectPolicy::FactoryExpected
+		#define EXCEPTION_VALIDATED          FailPolicy::Exception, ObjectPolicy::Validated
+		#define EXCEPTION_EXPECTED           FailPolicy::Exception, ObjectPolicy::Expected
+		#define EXCEPTION_FACTORY_VALIDATED  FailPolicy::Exception, ObjectPolicy::FactoryValidated
+		#define EXCEPTION_FACTORY_EXPECTED   FailPolicy::Exception, ObjectPolicy::FactoryExpected
+		#define BOOL_VALIDATED               FailPolicy::Bool, ObjectPolicy::Validated
+		#define BOOL_EXPECTED                FailPolicy::Bool, ObjectPolicy::Expected
+		#define BOOL_FACTORY_VALIDATED       FailPolicy::Bool, ObjectPolicy::FactoryValidated
+		#define BOOL_FACTORY_EXPECTED        FailPolicy::Bool, ObjectPolicy::FactoryExpected
 
 	private:
 		template<typename T, FailPolicy FP, ObjectPolicy OP, LaunchPolicy LP, typename I, typename F>
@@ -192,6 +192,9 @@ class GameFactory
 			}
 		};
 
+		template<typename T, FailPolicy FP, typename... Args>
+		struct Create_;
+
 	public:
 		static void Initialize();
 
@@ -258,8 +261,8 @@ class GameFactory
 		/**
 		 * \brief Creates a new instance of a given type
 		 */
-		template<typename T, typename... Args>
-		static RakNet::NetworkID Create(Args&&... args);
+		template<typename T, FailPolicy FP, typename... Args>
+		static auto Create(Args&&... args) { return Create_<T, FP, Args...>::Create(std::forward<Args>(args)...); }
 
 		/**
 		 * \brief Destroys all instances and cleans up type classes
@@ -396,26 +399,48 @@ void GameFactory::Free(FactoryWrapper<T>& base)
 }
 
 template<typename T, typename... Args>
-RakNet::NetworkID GameFactory::Create(Args&&... args)
-{
-	static_assert(std::is_base_of<Base, T>::value, "T must be derived from Base");
+struct GameFactory::Create_<T, FailPolicy::Exception, Args...> {
+	static RakNet::NetworkID Create(Args&&... args)
+	{
+		static_assert(std::is_base_of<Base, T>::value, "T must be derived from Base");
 
-	std::shared_ptr<Base> base(new T(std::forward<Args>(args)...));
-	constexpr unsigned int type = rTypes<T>::value;
+		std::shared_ptr<Base> base(new T(std::forward<Args>(args)...));
+		constexpr unsigned int type = rTypes<T>::value;
 
-	RakNet::NetworkID id = base->GetNetworkID();
+		RakNet::NetworkID id = base->GetNetworkID();
 
-#ifdef VAULTSERVER
-	base->initializers();
-#endif
+	#ifdef VAULTSERVER
+		base->initializers();
+	#endif
 
-	cs.Operate([id, type, &base]() {
-		++typecount[type];
-		index[id] = instances.emplace(std::move(base), type).first;
-	});
+		cs.Operate([id, type, &base]() {
+			++typecount[type];
+			index[id] = instances.emplace(std::move(base), type).first;
+		});
 
-	return id;
-}
+		return id;
+	}
+};
+
+template<typename T, typename... Args>
+struct GameFactory::Create_<T, FailPolicy::Return, Args...> {
+	static RakNet::NetworkID Create(Args&&... args)
+	{
+		try
+		{
+			return Create_<T, FailPolicy::Exception, Args...>::Create(std::forward<Args>(args)...);
+		}
+		catch (...) { return 0ull; }
+	}
+};
+
+template<typename T, typename... Args>
+struct GameFactory::Create_<T, FailPolicy::Bool, Args...> {
+	static bool Create(Args&&... args)
+	{
+		return Create_<T, FailPolicy::Return, Args...>::Create(std::forward<Args>(args)...);
+	}
+};
 
 template<typename T>
 RakNet::NetworkID GameFactory::Destroy(FactoryWrapper<T>& base)

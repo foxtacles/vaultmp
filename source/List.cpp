@@ -20,7 +20,7 @@ List::List(const pPacket& packet) : Window(PacketFactory::Pop<pPacket>(packet))
 	PacketFactory::Access<pTypes::ID_LIST_NEW>(packet, items, multiselect);
 
 	for (const auto& packet_ : items)
-		AddItem(GameFactory::Create<ListItem>(packet_));
+		AddItem(GameFactory::Create<ListItem, FailPolicy::Exception>(packet_));
 }
 
 List::~List() noexcept

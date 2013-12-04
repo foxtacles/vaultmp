@@ -104,7 +104,7 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 	Client* client = new Client(guid, id);
 	Dedicated::self->SetServerPlayers(make_pair(Client::GetClientCount(), Dedicated::connections));
 
-	Script::AttachWindow(id, GameFactory::Operate<Window>(GameFactory::Create<Window>(), [](Window* window) {
+	Script::AttachWindow(id, GameFactory::Operate<Window>(GameFactory::Create<Window, FailPolicy::Exception>(), [](Window* window) {
 		Script::SetupWindow(window, get<0>(Window::GUI_MAIN_POS), get<1>(Window::GUI_MAIN_POS), get<0>(Window::GUI_MAIN_SIZE), get<1>(Window::GUI_MAIN_SIZE), true, false, Window::GUI_MAIN_TEXT);
 		window->SetLabel(Window::GUI_MAIN_LABEL);
 		return window->GetNetworkID();
@@ -171,7 +171,7 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 		return player->GetName();
 	});
 
-	GameFactory::Operate<Reference, EX_F_VALID>(GameFactory::GetByType(ALL_REFERENCES), [&response, guid, id](FactoryReferences& references) {
+	GameFactory::Operate<Reference, EXCEPTION_FACTORY_VALIDATED>(GameFactory::GetByType(ALL_REFERENCES), [&response, guid, id](FactoryReferences& references) {
 		FactoryReferences::iterator it;
 
 		for (it = references.begin(); it != references.end(); GameFactory::Free(*it), ++it)
@@ -245,7 +245,7 @@ NetworkResponse Server::GetPos(RakNetGUID guid, FactoryObject& reference, float 
 				PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, cell, X, Y, Z),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
-			GameFactory::Operate<Player, RET_VALID>(id, [&response, guid, id](Player* player) {
+			GameFactory::Operate<Player, RETURN_VALIDATED>(id, [&response, guid, id](Player* player) {
 				response.emplace_back(Network::CreateResponse(
 					PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(id, player->GetPlayerCellContext(), false),
 					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
@@ -293,7 +293,7 @@ NetworkResponse Server::GetCell(RakNetGUID guid, FactoryObject& reference, unsig
 			PacketFactory::Create<pTypes::ID_UPDATE_CELL>(id, cell, get<0>(pos), get<1>(pos), get<2>(pos)),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(guid)));
 
-		GameFactory::Operate<Player, RET_VALID>(id, [&response, guid, id](Player* player) {
+		GameFactory::Operate<Player, RETURN_VALIDATED>(id, [&response, guid, id](Player* player) {
 			response.emplace_back(Network::CreateResponse(
 				PacketFactory::Create<pTypes::ID_UPDATE_CONTEXT>(id, player->GetPlayerCellContext(), false),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));

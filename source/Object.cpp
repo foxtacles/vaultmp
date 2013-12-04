@@ -234,7 +234,7 @@ vector<string> ObjectFunctor::operator()()
 	NetworkID id = get();
 
 	if (id)
-		GameFactory::Operate<Object, RET_VALID>(id, [this, &result](Object* object) {
+		GameFactory::Operate<Object, RETURN_VALIDATED>(id, [this, &result](Object* object) {
 			result.emplace_back(Utils::toString(object->GetReference()));
 		});
 	else
@@ -242,7 +242,7 @@ vector<string> ObjectFunctor::operator()()
 		auto references = Game::GetContext(ID_OBJECT);
 
 		for (unsigned int refID : references)
-			GameFactory::Operate<Object, RET_F_VALID>(refID, [this, refID, &result](FactoryObject& object) {
+			GameFactory::Operate<Object, RETURN_FACTORY_VALIDATED>(refID, [this, refID, &result](FactoryObject& object) {
 				if (!filter(object))
 					result.emplace_back(Utils::toString(refID));
 			});

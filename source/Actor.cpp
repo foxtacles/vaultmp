@@ -366,7 +366,7 @@ vector<string> ActorFunctor::operator()()
 		auto references = Game::GetContext(ID_ACTOR);
 
 		for (unsigned int refID : references)
-			GameFactory::Operate<Actor, RET_F_VALID>(refID, [this, refID, &result](FactoryActor& actor) {
+			GameFactory::Operate<Actor, RETURN_FACTORY_VALIDATED>(refID, [this, refID, &result](FactoryActor& actor) {
 				if (!filter(actor))
 					result.emplace_back(Utils::toString(refID));
 			});

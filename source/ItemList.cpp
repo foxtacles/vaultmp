@@ -33,7 +33,7 @@ ItemList::ItemList(const pPacket& packet)
 	PacketFactory::Access<pTypes::ID_ITEMLIST_NEW>(packet, items);
 
 	for (const pPacket& _packet : items)
-		AddItem(GameFactory::Create<Item>(_packet));
+		AddItem(GameFactory::Create<Item, FailPolicy::Exception>(_packet));
 }
 
 ItemList::~ItemList() noexcept
@@ -85,7 +85,7 @@ NetworkID ItemList::AddItem(NetworkID id)
 
 	if (stackable)
 	{
-		auto data = GameFactory::Operate<Item, EX_F_VALID>(id, [](FactoryItem& item) {
+		auto data = GameFactory::Operate<Item, EXCEPTION_FACTORY_VALIDATED>(id, [](FactoryItem& item) {
 			auto data = make_pair(item->GetItemEquipped(), item->GetItemCount());
 			GameFactory::Destroy(item);
 			return data;
@@ -132,7 +132,7 @@ ItemList::AddOp ItemList::AddItem(unsigned int baseID, unsigned int count, float
 	else
 	{
 		result.first = true;
-		result.second = GameFactory::Create<Item>(baseID);
+		result.second = GameFactory::Create<Item, FailPolicy::Exception>(baseID);
 
 		GameFactory::Operate<Item>(result.second, [this, count, condition, silent](Item* item) {
 			item->SetItemCount(count);

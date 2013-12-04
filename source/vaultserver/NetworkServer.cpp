@@ -136,7 +136,7 @@ NetworkResponse NetworkServer::ProcessPacket(Packet* data)
 
 				case pTypes::ID_PLAYER_NEW:
 				{
-					NetworkID id = GameFactory::Create<Player>(packet);
+					NetworkID id = GameFactory::Create<Player, FailPolicy::Exception>(packet);
 					response = Server::NewPlayer(data->guid, id);
 					break;
 				}
