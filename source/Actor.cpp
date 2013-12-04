@@ -107,9 +107,8 @@ void Actor::initialize()
 {
 	for (const auto& value : API::values)
 	{
-		// emplace
-		actor_Values.insert(make_pair(value.second, Value<float>()));
-		actor_BaseValues.insert(make_pair(value.second, Value<float>()));
+		actor_Values.emplace(value.second, Value<float>());
+		actor_BaseValues.emplace(value.second, Value<float>());
 	}
 
 #ifdef VAULTMP_DEBUG
@@ -341,9 +340,8 @@ pPacket Actor::toPacket() const
 
 	for (const auto& value : actor_Values)
 	{
-		// emplace
-		values.insert(make_pair(value.first, this->GetActorValue(value.first)));
-		baseValues.insert(make_pair(value.first, this->GetActorBaseValue(value.first)));
+		values.emplace(value.first, this->GetActorValue(value.first));
+		baseValues.emplace(value.first, this->GetActorBaseValue(value.first));
 	}
 
 	pPacket pContainerNew = Container::toPacket();

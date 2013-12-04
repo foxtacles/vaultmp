@@ -12,9 +12,8 @@ stack<unsigned int> Client::clientID;
 Client::Client(RakNetGUID guid, NetworkID player) : guid(guid), player(player)
 {
 	cs.Operate([guid, this]() {
-		// emplace
 		ID = clientID.top();
-		clients.insert(make_pair(guid, this));
+		clients.emplace(guid, this);
 		clientID.pop();
 	});
 }

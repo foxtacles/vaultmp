@@ -316,8 +316,7 @@ struct GameFactory::Get_<T, RakNet::NetworkID> {
 				if (it == instances.end())
 					result[i] = VaultException("Unknown object with NetworkID %llu", id);
 				else
-					// emplace
-					sort.insert(make_pair(*it, i));
+					sort.emplace(*it, i);
 
 				++i;
 			}
@@ -412,8 +411,7 @@ RakNet::NetworkID GameFactory::Create(Args&&... args)
 
 	cs.Operate([id, type, &base]() {
 		++typecount[type];
-		// emplace
-		index[id] = instances.insert(make_pair(std::move(base), type)).first;
+		index[id] = instances.emplace(std::move(base), type).first;
 	});
 
 	return id;

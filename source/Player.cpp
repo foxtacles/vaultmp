@@ -66,9 +66,8 @@ Player::~Player() noexcept
 
 void Player::initialize()
 {
-	// emplace
 	for (auto control : API::controls)
-		player_Controls.insert(make_pair(control, make_pair(Value<unsigned char>(), Value<bool>(true))));
+		player_Controls.emplace(control, make_pair(Value<unsigned char>(), Value<bool>(true)));
 
 #ifdef VAULTSERVER
 	baseIDs.Operate([this](BaseIDTracker& baseIDs) {

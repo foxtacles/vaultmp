@@ -15,8 +15,7 @@ void ServerEntry::SetServerMap(const string& map)
 void ServerEntry::SetServerRule(const string& rule, const string& value)
 {
 	this->rules.erase(rule);
-	// emplace
-	this->rules.insert(make_pair(rule, value));
+	this->rules.emplace(rule, value);
 }
 
 void ServerEntry::SetServerPlayers(const pair<unsigned int, unsigned int>& players)
