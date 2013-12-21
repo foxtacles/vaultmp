@@ -642,7 +642,7 @@ class FactoryWrapper : protected FactoryWrapperPtr<typename rBases<D>::type, D>,
 		    : FactoryWrapperPtr<base_class, derived_class>(ptr),
 		      FactoryWrapper<base_class>(ptr, type) {}
 		FactoryWrapper(Base* base, unsigned int type, derived_class* casted = nullptr) noexcept
-            : FactoryWrapperPtr<base_class, derived_class>(FactoryWrapper<Base>::validate<derived_class>(type) ? (casted = Utils::static_or_dynamic_cast<derived_class>(base)) : (casted = nullptr)),
+		    : FactoryWrapperPtr<base_class, derived_class>(FactoryWrapper<Base>::validate<derived_class>(type) ? (casted = Utils::static_or_dynamic_cast<derived_class>(base)) : (casted = nullptr)),
 		      FactoryWrapper<base_class>(casted, type) {}
 		template<typename T> FactoryWrapper(const FactoryWrapper<T>& p) noexcept : FactoryWrapper(p.operator->(), p.GetType()) {}
 		template<typename T> FactoryWrapper(FactoryWrapper<T>&& p) noexcept : FactoryWrapper(p.operator->(), p.GetType()) { GameFactory::Free(p); }
