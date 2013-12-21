@@ -12,6 +12,17 @@ Window::Window() : Base(), parent(0), locked(false), visible(true)
 	initialize();
 }
 
+Window::Window(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) : Base(), parent(0), locked(locked), visible(visible), text(text)
+{
+	initialize();
+
+	if (!SetPos(posX, posY, 0.0f, 0.0f))
+		throw VaultException("Invalid position values");
+
+	if (!SetSize(sizeX, sizeY, 0.0f, 0.0f))
+		throw VaultException("Invalid size values");
+}
+
 Window::Window(const pPacket& packet) : Base(PacketFactory::Pop<pPacket>(packet))
 {
 	initialize();

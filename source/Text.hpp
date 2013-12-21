@@ -20,6 +20,11 @@ class Text : public Window
 
 	protected:
 		Text();
+
+		template<typename... Args>
+		Text(Args&&... args) : Window(std::forward<Args>(args)...) { initialize(); }
+
+		Text(pPacket& packet) : Text(const_cast<const pPacket&>(packet)) {}
 		Text(const pPacket& packet);
 		Text(pPacket&& packet) : Text(packet) {};
 

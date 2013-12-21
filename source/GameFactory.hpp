@@ -476,9 +476,63 @@ RakNet::NetworkID GameFactory::Destroy(FactoryWrapper<T>& base)
 	return id;
 }
 
-template<>
-class FactoryWrapper<Base>
+template<typename T>
+class FactoryWrapperPtrType
 {
+	private:
+		T* ptr;
+
+	protected:
+		FactoryWrapperPtrType() : ptr(nullptr) {}
+		FactoryWrapperPtrType(T* ptr) : ptr(ptr) {}
+		//FactoryWrapperPtrType(Base* ptr) : ptr(ptr ? dynamic_cast<T*>(ptr) : nullptr) {}
+
+		inline T* get_ptr(Base*) const { return ptr; }
+
+	public:
+		FactoryWrapperPtrType(const FactoryWrapperPtrType&) = default;
+		FactoryWrapperPtrType& operator=(const FactoryWrapperPtrType&) = default;
+		FactoryWrapperPtrType(FactoryWrapperPtrType&& p) noexcept : ptr(p.ptr) { p.ptr = nullptr; }
+		FactoryWrapperPtrType& operator=(FactoryWrapperPtrType&& p) noexcept
+		{
+			if (this != &p)
+			{
+				ptr = p.ptr;
+				p.ptr = nullptr;
+			}
+
+			return *this;
+		}
+		~FactoryWrapperPtrType() = default;
+};
+
+template<typename T>
+class FactoryWrapperPtrEmpty
+{
+	protected:
+		FactoryWrapperPtrEmpty() {}
+		FactoryWrapperPtrEmpty(Base*) {}
+
+		inline T* get_ptr(Base* base) const { return static_cast<T*>(base); }
+
+	public:
+		FactoryWrapperPtrEmpty(const FactoryWrapperPtrEmpty&) = default;
+		FactoryWrapperPtrEmpty& operator=(const FactoryWrapperPtrEmpty&) = default;
+		FactoryWrapperPtrEmpty(FactoryWrapperPtrEmpty&&) = default;
+		FactoryWrapperPtrEmpty& operator=(FactoryWrapperPtrEmpty&&) = default;
+		~FactoryWrapperPtrEmpty() = default;
+};
+
+template<typename F, typename T>
+using FactoryWrapperPtr = typename std::conditional<Utils::is_static_castable<F*, T*>::value, FactoryWrapperPtrEmpty<T>, FactoryWrapperPtrType<T>>::type;
+
+template<>
+class FactoryWrapper<Base> : protected FactoryWrapperPtr<Base, Base>
+{
+	public:
+		using base_class = Base;
+		using derived_class = Base;
+
 		friend class GameFactory;
 
 		template<typename T, typename U>
@@ -493,7 +547,7 @@ class FactoryWrapper<Base>
 		FactoryWrapper(Base* base, unsigned int type) noexcept : base(base ? static_cast<Base*>(base->StartSession()) : nullptr), type(type) {}
 
 	public:
-		FactoryWrapper(const FactoryWrapper& p) noexcept : base(p.base), type(p.type)
+		FactoryWrapper(const FactoryWrapper& p) noexcept : FactoryWrapperPtr<Base, Base>(), base(p.base), type(p.type)
 		{
 			if (base)
 				base->StartSession();
@@ -559,75 +613,37 @@ typedef std::vector<FactoryWrapper<Base>> FactoryBases;
 typedef Expected<FactoryWrapper<Base>> ExpectedBase;
 typedef std::vector<Expected<FactoryWrapper<Base>>> ExpectedBases;
 
-template<typename T>
-class FactoryWrapperPtrType
-{
-	private:
-		T* ptr;
-
-	protected:
-		FactoryWrapperPtrType() : ptr(nullptr) {}
-		FactoryWrapperPtrType(T* ptr) : ptr(ptr) {}
-		FactoryWrapperPtrType(Base* ptr) : ptr(ptr ? dynamic_cast<T*>(ptr) : nullptr) {}
-
-		inline T* get_ptr(Base*) const { return ptr; }
-
-	public:
-		FactoryWrapperPtrType(const FactoryWrapperPtrType&) = default;
-		FactoryWrapperPtrType& operator=(const FactoryWrapperPtrType&) = default;
-		FactoryWrapperPtrType(FactoryWrapperPtrType&& p) noexcept : ptr(p.ptr) { p.ptr = nullptr; }
-		FactoryWrapperPtrType& operator=(FactoryWrapperPtrType&& p) noexcept
-		{
-			if (this != &p)
-			{
-				ptr = p.ptr;
-				p.ptr = nullptr;
-			}
-
-			return *this;
-		}
-		~FactoryWrapperPtrType() = default;
+template<typename F>
+struct FindCastablePointer {
+	using base_class = typename rBases<F>::type;
+	typedef typename std::conditional<!Utils::is_static_castable<base_class*, F*>::value, F, typename FindCastablePointer<base_class>::type>::type type;
 };
+template<> struct FindCastablePointer<Base> { typedef Base type; };
 
-template<typename T>
-class FactoryWrapperPtrEmpty
-{
-	protected:
-		FactoryWrapperPtrEmpty() {}
-		FactoryWrapperPtrEmpty(T*) {}
-		FactoryWrapperPtrEmpty(Base*) {}
-
-		inline T* get_ptr(Base* base) const { return static_cast<T*>(base); }
-
-	public:
-		FactoryWrapperPtrEmpty(const FactoryWrapperPtrEmpty&) = default;
-		FactoryWrapperPtrEmpty& operator=(const FactoryWrapperPtrEmpty&) = default;
-		FactoryWrapperPtrEmpty(FactoryWrapperPtrEmpty&&) = default;
-		FactoryWrapperPtrEmpty& operator=(FactoryWrapperPtrEmpty&&) = default;
-		~FactoryWrapperPtrEmpty() = default;
-};
-
-template<typename F, typename T>
-using FactoryWrapperPtr = typename std::conditional<Utils::is_static_castable<F, T>::value, FactoryWrapperPtrEmpty<T>, FactoryWrapperPtrType<T>>::type;
+template<typename F>
+using CastablePointer = typename FindCastablePointer<F>::type;
 
 template<typename D>
-class FactoryWrapper : private FactoryWrapperPtr<typename rBases<D>::type, D>, public FactoryWrapper<typename rBases<D>::type>
+class FactoryWrapper : protected FactoryWrapperPtr<typename rBases<D>::type, D>, public FactoryWrapper<typename rBases<D>::type>
 {
-	using base_class = typename rBases<D>::type;
-	using derived_class = D;
+	public:
+		using base_class = typename rBases<D>::type;
+		using derived_class = D;
 
-	friend class GameFactory;
+		friend class GameFactory;
 
-	template<typename T, typename U>
-	friend Expected<FactoryWrapper<T>> vaultcast(const FactoryWrapper<U>& object) noexcept;
-	template<typename T, typename U>
-	friend Expected<FactoryWrapper<T>> vaultcast_swap(FactoryWrapper<U>&& object) noexcept;
+		template<typename T, typename U>
+		friend Expected<FactoryWrapper<T>> vaultcast(const FactoryWrapper<U>& object) noexcept;
+		template<typename T, typename U>
+		friend Expected<FactoryWrapper<T>> vaultcast_swap(FactoryWrapper<U>&& object) noexcept;
 
 	protected:
-		FactoryWrapper(derived_class* ptr, unsigned int type) noexcept : FactoryWrapperPtr<base_class, derived_class>(ptr),
-                                                                         FactoryWrapper<base_class>(FactoryWrapperPtr<base_class, derived_class>::get_ptr(ptr), type) {}
-		FactoryWrapper(Base* base, unsigned int type) noexcept : FactoryWrapperPtr<base_class, derived_class>(FactoryWrapper<Base>::validate<derived_class>(type) ? base : (base = nullptr)),
-                                                                 FactoryWrapper<base_class>(FactoryWrapperPtr<base_class, derived_class>::get_ptr(base), type) {}
+		FactoryWrapper(derived_class* ptr, unsigned int type) noexcept
+		    : FactoryWrapperPtr<base_class, derived_class>(ptr),
+		      FactoryWrapper<base_class>(ptr, type) {}
+		FactoryWrapper(Base* base, unsigned int type, derived_class* casted = nullptr) noexcept
+            : FactoryWrapperPtr<base_class, derived_class>(FactoryWrapper<Base>::validate<derived_class>(type) ? (casted = Utils::static_or_dynamic_cast<derived_class>(base)) : (casted = nullptr)),
+		      FactoryWrapper<base_class>(casted, type) {}
 		template<typename T> FactoryWrapper(const FactoryWrapper<T>& p) noexcept : FactoryWrapper(p.operator->(), p.GetType()) {}
 		template<typename T> FactoryWrapper(FactoryWrapper<T>&& p) noexcept : FactoryWrapper(p.operator->(), p.GetType()) { GameFactory::Free(p); }
 
@@ -639,7 +655,10 @@ class FactoryWrapper : private FactoryWrapperPtr<typename rBases<D>::type, D>, p
 		FactoryWrapper& operator=(FactoryWrapper&&) = default;
 		~FactoryWrapper() = default;
 
-		derived_class* operator->() const noexcept { return FactoryWrapperPtr<base_class, derived_class>::get_ptr(FactoryWrapper<Base>::base); }
+		derived_class* operator->() const noexcept {
+			using castable_pointer_wrapper = FactoryWrapper<CastablePointer<derived_class>>;
+			return static_cast<derived_class*>(FactoryWrapperPtr<typename castable_pointer_wrapper::base_class, typename castable_pointer_wrapper::derived_class>::get_ptr(FactoryWrapper<Base>::base));
+		}
 		derived_class& operator*() const noexcept { return *operator->(); }
 		operator derived_class*() const noexcept { return operator->(); }
 };

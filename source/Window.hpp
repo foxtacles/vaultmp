@@ -34,6 +34,7 @@ class Window : public Base
 
 	protected:
 		Window();
+		Window(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text);
 		Window(const pPacket& packet);
 		Window(pPacket&& packet) : Window(packet) {};
 

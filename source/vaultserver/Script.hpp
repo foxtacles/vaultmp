@@ -214,13 +214,6 @@ class Script
 		static void SetupItem(Item* item, unsigned int cell, float X, float Y, float Z) noexcept;
 		static void SetupContainer(Container* container, unsigned int cell, float X, float Y, float Z) noexcept;
 		static void SetupActor(Actor* actor, unsigned int cell, float X, float Y, float Z) noexcept;
-		static void SetupWindow(Window* window, float posX, float posY, float sizeX, float sizeY, bool visible, bool locked, const char* text) noexcept;
-		static void SetupButton(Button* button, float posX, float posY, float sizeX, float sizeY, bool visible, bool locked, const char* text) noexcept;
-		static void SetupText(Text* text, float posX, float posY, float sizeX, float sizeY, bool visible, bool locked, const char* text_) noexcept;
-		static void SetupEdit(Edit* edit, float posX, float posY, float sizeX, float sizeY, bool visible, bool locked, const char* text) noexcept;
-		static void SetupCheckbox(Checkbox* checkbox, float posX, float posY, float sizeX, float sizeY, bool visible, bool locked, const char* text) noexcept;
-		static void SetupRadioButton(RadioButton* radiobutton, float posX, float posY, float sizeX, float sizeY, bool visible, bool locked, const char* text) noexcept;
-		static void SetupList(List* list, float posX, float posY, float sizeX, float sizeY, bool visible, bool locked, const char* text) noexcept;
 		static void KillTimer(RakNet::NetworkID id = 0) noexcept;
 		static void MakePublic(ScriptFunc _public, const char* name, const char* def) noexcept;
 		static void MakePublicPAWN(ScriptFuncPAWN _public, AMX* amx, const char* name, const char* def) noexcept;

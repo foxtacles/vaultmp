@@ -104,8 +104,7 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 	Client* client = new Client(guid, id);
 	Dedicated::self->SetServerPlayers(make_pair(Client::GetClientCount(), Dedicated::connections));
 
-	Script::AttachWindow(id, GameFactory::Operate<Window>(GameFactory::Create<Window, FailPolicy::Exception>(), [](Window* window) {
-		Script::SetupWindow(window, get<0>(Window::GUI_MAIN_POS), get<1>(Window::GUI_MAIN_POS), get<0>(Window::GUI_MAIN_SIZE), get<1>(Window::GUI_MAIN_SIZE), true, false, Window::GUI_MAIN_TEXT);
+	Script::AttachWindow(id, GameFactory::Operate<Window>(GameFactory::Create<Window, FailPolicy::Exception>(get<0>(Window::GUI_MAIN_POS), get<1>(Window::GUI_MAIN_POS), get<0>(Window::GUI_MAIN_SIZE), get<1>(Window::GUI_MAIN_SIZE), true, false, Window::GUI_MAIN_TEXT), [](Window* window) {
 		window->SetLabel(Window::GUI_MAIN_LABEL);
 		return window->GetNetworkID();
 	}));

@@ -57,7 +57,7 @@ namespace vaultmp {
 		MAX_PLAYER_NAME = 16,
 		MAX_PASSWORD_SIZE = 16,
 		MAX_MESSAGE_LENGTH = 64,
-		MAX_CHAT_LENGTH	= 128,
+		MAX_CHAT_LENGTH = 128,
 	};
 
 	enum VAULTCPP(class) Type VAULTCPP(: uint32_t)

@@ -381,45 +381,6 @@ void Script::SetupActor(Actor* actor, unsigned int cell, float X, float Y, float
 		actor->SetActorRace(UINT_MAX);
 }
 
-void Script::SetupWindow(Window* window, float posX, float posY, float sizeX, float sizeY, bool visible, bool locked, const char* text) noexcept
-{
-	window->SetPos(posX, posY, 0.0, 0.0);
-	window->SetSize(sizeX, sizeY, 0.0, 0.0);
-	window->SetVisible(visible);
-	window->SetLocked(locked);
-	window->SetText(text);
-}
-
-void Script::SetupButton(Button* button, float posX, float posY, float sizeX, float sizeY, bool visible, bool locked, const char* text) noexcept
-{
-	SetupWindow(button, posX, posY, sizeX, sizeY, visible, locked, text);
-}
-
-void Script::SetupText(Text* text, float posX, float posY, float sizeX, float sizeY, bool visible, bool locked, const char* text_) noexcept
-{
-	SetupWindow(text, posX, posY, sizeX, sizeY, visible, locked, text_);
-}
-
-void Script::SetupEdit(Edit* edit, float posX, float posY, float sizeX, float sizeY, bool visible, bool locked, const char* text) noexcept
-{
-	SetupWindow(edit, posX, posY, sizeX, sizeY, visible, locked, text);
-}
-
-void Script::SetupCheckbox(Checkbox* checkbox, float posX, float posY, float sizeX, float sizeY, bool visible, bool locked, const char* text) noexcept
-{
-	SetupWindow(checkbox, posX, posY, sizeX, sizeY, visible, locked, text);
-}
-
-void Script::SetupRadioButton(RadioButton* radiobutton, float posX, float posY, float sizeX, float sizeY, bool visible, bool locked, const char* text) noexcept
-{
-	SetupWindow(radiobutton, posX, posY, sizeX, sizeY, visible, locked, text);
-}
-
-void Script::SetupList(List* list, float posX, float posY, float sizeX, float sizeY, bool visible, bool locked, const char* text) noexcept
-{
-	SetupWindow(list, posX, posY, sizeX, sizeY, visible, locked, text);
-}
-
 void Script::KillTimer(NetworkID id) noexcept
 {
 	if (!id)
@@ -2718,8 +2679,7 @@ const char* Script::GetListItemText(NetworkID id) noexcept
 
 NetworkID (Script::CreateWindow)(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept
 {
-	NetworkID id = GameFactory::Operate<Window, RETURN_VALIDATED>(GameFactory::Create<Window, FailPolicy::Return>(), [posX, posY, sizeX, sizeY, visible, locked, text](Window* window) {
-		SetupWindow(window, posX, posY, sizeX, sizeY, visible, locked, text);
+	NetworkID id = GameFactory::Operate<Window, RETURN_VALIDATED>(GameFactory::Create<Window, FailPolicy::Return>(posX, posY, sizeX, sizeY, visible, locked, text), [](Window* window) {
 		return window->GetNetworkID();
 	});
 
@@ -2944,8 +2904,7 @@ bool Script::SetWindowText(NetworkID id, const char* text) noexcept
 
 NetworkID Script::CreateButton(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept
 {
-	NetworkID id = GameFactory::Operate<Button, RETURN_VALIDATED>(GameFactory::Create<Button, FailPolicy::Return>(), [posX, posY, sizeX, sizeY, visible, locked, text](Button* button) {
-		SetupButton(button, posX, posY, sizeX, sizeY, visible, locked, text);
+	NetworkID id = GameFactory::Operate<Button, RETURN_VALIDATED>(GameFactory::Create<Button, FailPolicy::Return>(posX, posY, sizeX, sizeY, visible, locked, text), [](Button* button) {
 		return button->GetNetworkID();
 	});
 
@@ -2959,9 +2918,8 @@ NetworkID Script::CreateButton(double posX, double posY, double sizeX, double si
 
 NetworkID Script::CreateText(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept
 {
-	NetworkID id = GameFactory::Operate<Text, RETURN_VALIDATED>(GameFactory::Create<Text, FailPolicy::Return>(), [posX, posY, sizeX, sizeY, visible, locked, text](Text* text_) {
-		SetupText(text_, posX, posY, sizeX, sizeY, visible, locked, text);
-		return text_->GetNetworkID();
+	NetworkID id = GameFactory::Operate<Text, RETURN_VALIDATED>(GameFactory::Create<Text, FailPolicy::Return>(posX, posY, sizeX, sizeY, visible, locked, text), [](Text* text) {
+		return text->GetNetworkID();
 	});
 
 	if (!id)
@@ -2974,8 +2932,7 @@ NetworkID Script::CreateText(double posX, double posY, double sizeX, double size
 
 NetworkID Script::CreateEdit(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept
 {
-	NetworkID id = GameFactory::Operate<Edit, RETURN_VALIDATED>(GameFactory::Create<Edit, FailPolicy::Return>(), [posX, posY, sizeX, sizeY, visible, locked, text](Edit* edit) {
-		SetupEdit(edit, posX, posY, sizeX, sizeY, visible, locked, text);
+	NetworkID id = GameFactory::Operate<Edit, RETURN_VALIDATED>(GameFactory::Create<Edit, FailPolicy::Return>(posX, posY, sizeX, sizeY, visible, locked, text), [](Edit* edit) {
 		return edit->GetNetworkID();
 	});
 
@@ -3052,8 +3009,7 @@ bool Script::SetEditValidation(NetworkID id, const char* validation) noexcept
 
 NetworkID Script::CreateCheckbox(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept
 {
-	NetworkID id = GameFactory::Operate<Checkbox, RETURN_VALIDATED>(GameFactory::Create<Checkbox, FailPolicy::Return>(), [posX, posY, sizeX, sizeY, visible, locked, text](Checkbox* checkbox) {
-		SetupCheckbox(checkbox, posX, posY, sizeX, sizeY, visible, locked, text);
+	NetworkID id = GameFactory::Operate<Checkbox, RETURN_VALIDATED>(GameFactory::Create<Checkbox, FailPolicy::Return>(posX, posY, sizeX, sizeY, visible, locked, text), [](Checkbox* checkbox) {
 		return checkbox->GetNetworkID();
 	});
 
@@ -3087,8 +3043,7 @@ bool Script::SetCheckboxSelected(NetworkID id, bool selected) noexcept
 
 NetworkID Script::CreateRadioButton(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept
 {
-	NetworkID id = GameFactory::Operate<RadioButton, RETURN_VALIDATED>(GameFactory::Create<RadioButton, FailPolicy::Return>(), [posX, posY, sizeX, sizeY, visible, locked, text](RadioButton* radiobutton) {
-		SetupRadioButton(radiobutton, posX, posY, sizeX, sizeY, visible, locked, text);
+	NetworkID id = GameFactory::Operate<RadioButton, RETURN_VALIDATED>(GameFactory::Create<RadioButton, FailPolicy::Return>(posX, posY, sizeX, sizeY, visible, locked, text), [](RadioButton* radiobutton) {
 		return radiobutton->GetNetworkID();
 	});
 
@@ -3174,8 +3129,7 @@ bool Script::SetRadioButtonGroup(NetworkID id, unsigned int group)
 
 NetworkID Script::CreateList(double posX, double posY, double sizeX, double sizeY, bool visible, bool locked, const char* text) noexcept
 {
-	NetworkID id = GameFactory::Operate<List, RETURN_VALIDATED>(GameFactory::Create<List, FailPolicy::Return>(), [posX, posY, sizeX, sizeY, visible, locked, text](List* list) {
-		SetupList(list, posX, posY, sizeX, sizeY, visible, locked, text);
+	NetworkID id = GameFactory::Operate<List, RETURN_VALIDATED>(GameFactory::Create<List, FailPolicy::Return>(posX, posY, sizeX, sizeY, visible, locked, text), [](List* list) {
 		return list->GetNetworkID();
 	});
 

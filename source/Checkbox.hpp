@@ -24,6 +24,11 @@ class Checkbox : public Window
 
 	protected:
 		Checkbox();
+
+		template<typename... Args>
+		Checkbox(Args&&... args) : Window(std::forward<Args>(args)...), selected(DEFAULT_SELECTED) { initialize(); }
+
+		Checkbox(pPacket& packet) : Checkbox(const_cast<const pPacket&>(packet)) {}
 		Checkbox(const pPacket& packet);
 		Checkbox(pPacket&& packet) : Checkbox(packet) {};
 

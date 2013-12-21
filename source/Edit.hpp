@@ -29,6 +29,11 @@ class Edit : public Window
 
 	protected:
 		Edit();
+
+		template<typename... Args>
+		Edit(Args&&... args) : Window(std::forward<Args>(args)...), length(DEFAULT_LENGTH), validation(DEFAULT_VALIDATION) { initialize(); }
+
+		Edit(pPacket& packet) : Edit(const_cast<const pPacket&>(packet)) {}
 		Edit(const pPacket& packet);
 		Edit(pPacket&& packet) : Edit(packet) {};
 

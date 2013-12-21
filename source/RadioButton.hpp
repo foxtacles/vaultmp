@@ -26,6 +26,11 @@ class RadioButton : public Window
 
 	protected:
 		RadioButton();
+
+		template<typename... Args>
+		RadioButton(Args&&... args) : Window(std::forward<Args>(args)...), selected(DEFAULT_SELECTED), group(DEFAULT_GROUP) { initialize(); }
+
+		RadioButton(pPacket& packet) : RadioButton(const_cast<const pPacket&>(packet)) {}
 		RadioButton(const pPacket& packet);
 		RadioButton(pPacket&& packet) : RadioButton(packet) {};
 

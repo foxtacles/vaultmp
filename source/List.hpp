@@ -31,6 +31,11 @@ class List : public Window
 
 	protected:
 		List();
+
+		template<typename... Args>
+		List(Args&&... args) : Window(std::forward<Args>(args)...), multiselect(DEFAULT_MULTISELECT) { initialize(); }
+
+		List(pPacket& packet) : List(const_cast<const pPacket&>(packet)) {}
 		List(const pPacket& packet);
 		List(pPacket&& packet) : List(packet) {};
 

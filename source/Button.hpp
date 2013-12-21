@@ -20,6 +20,11 @@ class Button : public Window
 
 	protected:
 		Button();
+
+		template<typename... Args>
+		Button(Args&&... args) : Window(std::forward<Args>(args)...) { initialize(); }
+
+		Button(pPacket& packet) : Button(const_cast<const pPacket&>(packet)) {}
 		Button(const pPacket& packet);
 		Button(pPacket&& packet) : Button(packet) {};
 
