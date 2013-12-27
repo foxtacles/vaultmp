@@ -1765,7 +1765,6 @@ bool Script::SetItemEquipped(NetworkID id, bool equipped, bool silent, bool stic
 
 				item->SetItemEquipped(equipped);
 				item->SetItemSilent(silent);
-				item->SetItemEquipped(equipped);
 
 				if (vaultcast_test<Actor>(itemlist))
 					Network::Queue({Network::CreateResponse(

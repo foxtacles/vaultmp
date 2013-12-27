@@ -389,13 +389,13 @@ void Game::FutureSet(const weak_ptr<Lockable>& data, T&& t)
 	}
 	catch (...) {}  // for resolving a weird bug with promise already satisfied, investigate
 }
-
+/*
 void Game::AsyncDispatch(function<void()>&& func)
 {
 	thread t(move(func));
 	t.detach();
 }
-/*
+
 void Game::JobDispatch(chrono::milliseconds&& time, function<void()>&& func)
 {
 	Interface::PushJob(chrono::steady_clock::now() + time, move(func));

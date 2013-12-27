@@ -612,16 +612,28 @@ typedef FactoryWrapper<Base> FactoryBase;
 typedef std::vector<FactoryWrapper<Base>> FactoryBases;
 typedef Expected<FactoryWrapper<Base>> ExpectedBase;
 typedef std::vector<Expected<FactoryWrapper<Base>>> ExpectedBases;
+template<> struct rBases<Base> { typedef void type; };
 
 template<typename F>
 struct FindCastablePointer {
 	using base_class = typename rBases<F>::type;
 	typedef typename std::conditional<!Utils::is_static_castable<base_class*, F*>::value, F, typename FindCastablePointer<base_class>::type>::type type;
+	using next_base = typename rBases<type>::type;
 };
-template<> struct FindCastablePointer<Base> { typedef Base type; };
+template<>
+struct FindCastablePointer<Base> {
+	typedef Base type;
+	using next_base = void;
+};
 
 template<typename F>
 using CastablePointer = typename FindCastablePointer<F>::type;
+
+template<typename T>
+constexpr unsigned int PointerCount(unsigned int count = 1) { return !std::is_same<typename FindCastablePointer<T>::type, Base>::value ? PointerCount<typename FindCastablePointer<T>::next_base>(count + 1) : count; }
+
+template<>
+constexpr unsigned int PointerCount<void>(unsigned int) { return 0; }
 
 template<typename D>
 class FactoryWrapper : protected FactoryWrapperPtr<typename rBases<D>::type, D>, public FactoryWrapper<typename rBases<D>::type>
@@ -672,6 +684,7 @@ typedef FactoryWrapper<derived_class> Factory##derived_class;                   
 typedef std::vector<FactoryWrapper<derived_class>> Factory##derived_class##s;                      \
 typedef Expected<FactoryWrapper<derived_class>> Expected##derived_class;                           \
 typedef std::vector<Expected<FactoryWrapper<derived_class>>> Expected##derived_class##s;           \
+static_assert(sizeof(Factory##derived_class) == (PointerCount<derived_class>() * sizeof(void*)) + sizeof(unsigned int), "Unexpected object size");
 
 #define GF_TYPE_WRAPPER_FINAL(derived_class, base_class, identity) GF_TYPE_WRAPPER(derived_class, base_class, identity, identity)
 
