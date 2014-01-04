@@ -4,6 +4,7 @@ using namespace std;
 using namespace RakNet;
 
 Window::WindowChilds Window::childs;
+constexpr const char* Window::GUI_MAIN_TEXT;
 constexpr tuple<float, float> Window::GUI_MAIN_SIZE;
 constexpr tuple<float, float> Window::GUI_MAIN_POS;
 
