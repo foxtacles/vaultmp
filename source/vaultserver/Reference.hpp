@@ -21,6 +21,7 @@ namespace DB
 	{
 		private:
 			static std::unordered_map<unsigned int, Reference*> refs;
+			static std::unordered_map<unsigned int, std::vector<Reference*>> cells;
 
 			std::string type;
 			std::string editor;
@@ -40,6 +41,7 @@ namespace DB
 
 		public:
 			static const std::unordered_map<unsigned int, Reference*>& Get() { return refs; }
+			static const std::unordered_map<unsigned int, std::vector<Reference*>>& GetCells() { return cells; }
 			static Expected<Reference*> Lookup(unsigned int refID);
 			static std::vector<Reference*> Lookup(const std::string& type);
 

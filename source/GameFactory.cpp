@@ -30,8 +30,7 @@ Database<DB::AcReference> GameFactory::dbAcReferences;
 void GameFactory::Initialize()
 {
 #ifdef VAULTSERVER
-	dbRecords.initialize(DB_FALLOUT3, {"CONT", "NPC_", "CREA", "LVLI", "ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "ENCH", "KEYM", "MISC", "NOTE", "WEAP", "CELL", "IDLE", "WTHR", "STAT", "MSTT", "RACE", "LIGH", "DOOR", "TERM", "EXPL", "PROJ"});
-	dbReferences.initialize(DB_FALLOUT3, {"refs_CONT", "refs_DOOR", "refs_TERM"});
+	dbRecords.initialize(DB_FALLOUT3, {"CONT", "NPC_", "CREA", "LVLI", "ALCH", "AMMO", "ARMA", "ARMO", "BOOK", "ENCH", "KEYM", "MISC", "NOTE", "WEAP", "CELL", "IDLE", "WTHR", "STAT", "MSTT", "RACE", "LIGH", "DOOR", "TERM", "EXPL", "PROJ", "STAT"});
 	dbExteriors.initialize(DB_FALLOUT3, {"exteriors"});
 	dbWeapons.initialize(DB_FALLOUT3, {"weapons"});
 	dbRaces.initialize(DB_FALLOUT3, {"races"});
@@ -41,6 +40,7 @@ void GameFactory::Initialize()
 	dbTerminals.initialize(DB_FALLOUT3, {"terminals"});
 	dbInteriors.initialize(DB_FALLOUT3, {"interiors"});
 	dbAcReferences.initialize(DB_FALLOUT3, {"arefs", "crefs"});
+	dbReferences.initialize(DB_FALLOUT3, {"refs_CONT", "refs_DOOR", "refs_TERM", "refs_STAT"});
 #endif
 }
 

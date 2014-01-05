@@ -178,28 +178,15 @@ void Script::Initialize()
 		object->SetNetworkPos(pos);
 		object->SetGamePos(pos);
 		object->SetAngle(angle);
-
-		auto exterior = DB::Exterior::Lookup(cell);
-
-		if (exterior)
-		{
-			auto match_exterior = DB::Exterior::Lookup(exterior->GetWorld(), get<0>(pos), get<1>(pos));
-
-#ifdef VAULTMP_DEBUG
-/*
-			if (exterior->GetBase() != match_exterior->GetBase())
-				debug.print("Error matching position with cell: ", hex, object->GetReference(), " relocating from ", dec, exterior->GetX(), ",", exterior->GetY(), " to ",  match_exterior->GetX(), ",", match_exterior->GetY());
-*/
-#endif
-			cell = match_exterior->GetBase();
-		}
-
 		object->SetNetworkCell(cell);
 		object->SetGameCell(cell);
 		object->SetLockLevel(lock);
 	};
 
 	const auto& references = DB::Reference::Get();
+	const auto& cells = DB::Reference::GetCells();
+	unordered_set<unsigned int> refs_cells;
+	transform(cells.begin(), cells.end(), inserter(refs_cells, refs_cells.end()), [](const pair<const unsigned int, vector<DB::Reference*>>& cell) { return cell.first; });
 
 	for (const auto& reference : references)
 	{
@@ -208,6 +195,7 @@ void Script::Initialize()
 			continue;
 
 		const auto* data = reference.second;
+		unsigned int cell = data->GetCell();
 
 		switch (Utils::hash(data->GetType().c_str(), data->GetType().length() + 1))
 		{
@@ -223,16 +211,21 @@ void Script::Initialize()
 					object->SetLockLevel(DB::Terminal::Lookup(data->GetBase())->GetLock());
 				});
 				break;
-/*
+
 			case Utils::hash("STAT"):
-				GameFactory::Create<Reference, FailPolicy::Exception>(data->GetReference(), data->GetBase());
+				if (refs_cells.count(cell))
+					GameFactory::Operate<Object>(GameFactory::Create<Object, FailPolicy::Exception>(data->GetReference(), data->GetBase()), [&object_init, data](Object* object) {
+						object_init(object, data);
+					});
 				break;
-*/
+
 			default:
 				GameFactory::Operate<Object>(GameFactory::Create<Object, FailPolicy::Exception>(data->GetReference(), data->GetBase()), [&object_init, data](Object* object) {
 					object_init(object, data);
 				});
 		}
+
+		refs_cells.erase(cell);
 	}
 }
 

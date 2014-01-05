@@ -1,15 +1,18 @@
 #include "Reference.hpp"
 #include "API.hpp"
 #include "Utils.hpp"
+#include "Exterior.hpp"
 #include "sqlite/sqlite3.h"
 
 #include <cmath>
+#include <algorithm>
 
 using namespace std;
 using namespace DB;
 using namespace Values;
 
 unordered_map<unsigned int, Reference*> Reference::refs;
+unordered_map<unsigned int, vector<Reference*>> Reference::cells;
 
 Reference::Reference(const string& table, sqlite3_stmt* stmt)
 {
@@ -43,24 +46,42 @@ Reference::Reference(const string& table, sqlite3_stmt* stmt)
 	key = static_cast<unsigned int>(sqlite3_column_int(stmt, 14));
 	link = static_cast<unsigned int>(sqlite3_column_int(stmt, 15));
 
+	if (cell & 0xFF000000)
+	{
+		cell &= 0x00FFFFFF;
+		cell |= dlc;
+	}
+
+	auto exterior = Exterior::Lookup(cell);
+
+	if (exterior)
+	{
+		auto match_exterior = DB::Exterior::Lookup(exterior->GetWorld(), get<0>(pos), get<1>(pos));
+
+#ifdef VAULTMP_DEBUG
+/*
+		if (exterior->GetBase() != match_exterior->GetBase())
+			debug.print("Error matching position with cell: ", hex, object->GetReference(), " relocating from ", dec, exterior->GetX(), ",", exterior->GetY(), " to ",  match_exterior->GetX(), ",", match_exterior->GetY());
+*/
+#endif
+		cell = match_exterior->GetBase();
+	}
+
 	if (refID & 0xFF000000)
 	{
 		refID &= 0x00FFFFFF;
 		refID |= dlc;
 	}
 	else
+	{
 		refs.erase(refID);
+		cells[cell].erase(remove_if(cells[cell].begin(), cells[cell].end(), [this](const Reference* reference) { return reference->GetReference() == refID; }), cells[cell].end());
+	}
 
 	if (baseID & 0xFF000000)
 	{
 		baseID &= 0x00FFFFFF;
 		baseID |= dlc;
-	}
-
-	if (cell & 0xFF000000)
-	{
-		cell &= 0x00FFFFFF;
-		cell |= dlc;
 	}
 
 	if (key & 0xFF000000)
@@ -76,6 +97,7 @@ Reference::Reference(const string& table, sqlite3_stmt* stmt)
 	}
 
 	refs.emplace(refID, this);
+	cells[cell].emplace_back(this);
 }
 
 Expected<Reference*> Reference::Lookup(unsigned int refID)
