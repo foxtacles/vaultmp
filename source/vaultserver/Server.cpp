@@ -171,30 +171,23 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 	});
 
 	GameFactory::Operate<Reference, EXCEPTION_FACTORY_VALIDATED>(GameFactory::GetByType(ALL_REFERENCES), [&response, guid, id](FactoryReferences& references) {
-		FactoryReferences::iterator it;
+		partition(references.begin(), references.end(), [](FactoryReference& reference) { return reference->IsPersistent() && reference->GetReference() != PLAYER_REFERENCE; });
 
-		multimap<Reference*, FactoryReferences::iterator, bool(*)(const Reference*, const Reference*)> sorted([](const Reference* first, const Reference*) { return first->IsPersistent() && first->GetReference() != PLAYER_REFERENCE; });
-
-		for (it = references.begin(); it != references.end(); ++it)
-			sorted.emplace(it->operator->(), it);
-
-		for (const auto& reference : sorted)
+		for (auto& reference : references)
 		{
-			it = reference.second;
-
-			if ((*it)->GetNetworkID() == id)
+			if (reference->GetNetworkID() == id)
 				continue;
 
-			auto item = vaultcast<Item>(*it);
+			auto item = vaultcast<Item>(reference);
 
 			if (item && item->GetItemContainer())
 				continue;
 
 			response.emplace_back(Network::CreateResponse(
-				(*it)->toPacket(),
+				reference->toPacket(),
 				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, guid));
 
-			GameFactory::Free(*it);
+			GameFactory::Free(reference);
 		}
 	});
 
