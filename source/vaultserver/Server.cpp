@@ -102,7 +102,7 @@ NetworkResponse Server::NewPlayer(RakNetGUID guid, NetworkID id)
 	NetworkResponse response;
 
 	Client* client = new Client(guid, id);
-	Dedicated::self->SetServerPlayers(make_pair(Client::GetClientCount(), Dedicated::connections));
+	Dedicated::self->SetServerPlayers({Client::GetClientCount(), Dedicated::connections});
 
 	Script::AttachWindow(id, GameFactory::Operate<Window>(GameFactory::Create<Window, FailPolicy::Exception>(get<0>(Window::GUI_MAIN_POS), get<1>(Window::GUI_MAIN_POS), get<0>(Window::GUI_MAIN_SIZE), get<1>(Window::GUI_MAIN_SIZE), true, false, Window::GUI_MAIN_TEXT), [](Window* window) {
 		window->SetLabel(Window::GUI_MAIN_LABEL);
@@ -216,7 +216,7 @@ NetworkResponse Server::Disconnect(RakNetGUID guid, Reason reason)
 			PacketFactory::Create<pTypes::ID_OBJECT_REMOVE>(id, true),
 			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr)));
 
-		Dedicated::self->SetServerPlayers(make_pair(Client::GetClientCount(), Dedicated::connections));
+		Dedicated::self->SetServerPlayers({Client::GetClientCount(), Dedicated::connections});
 	}
 
 	return response;
@@ -559,8 +559,8 @@ NetworkResponse Server::GetRadioButtonSelected(RakNetGUID guid, FactoryRadioButt
 	NetworkResponse response;
 
 	NetworkID id = reference->GetNetworkID();
-	NetworkID list = reference->GetItemContainer()
-;	reference->SetSelected(selected);
+	NetworkID list = reference->GetItemContainer();
+	reference->SetSelected(selected);
 	GameFactory::Free(reference);
 
 	NetworkID root = Script::GetWindowRoot(list);

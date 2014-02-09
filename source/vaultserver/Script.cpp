@@ -25,7 +25,7 @@ Script::Script(const char* path)
 {
 	FILE* file = fopen(path, "rb");
 
-	if (file == nullptr)
+	if (!file)
 		throw VaultException("Script not found: %s", path).stacktrace();
 
 	fclose(file);
@@ -134,7 +134,7 @@ void Script::LoadScripts(char* scripts, char* base)
 
 	try
 	{
-		while (token != nullptr)
+		while (token)
 		{
 			// make_unique
 #ifdef __WIN32__
