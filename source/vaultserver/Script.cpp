@@ -2976,6 +2976,7 @@ bool Script::SetEditMaxLength(NetworkID id, unsigned int length) noexcept
 bool Script::SetEditValidation(NetworkID id, const char* validation) noexcept
 {
 	if (!GameFactory::Operate<Edit, BOOL_VALIDATED>(id, [validation](Edit* edit) {
+		regex verify(validation);
 		edit->SetValidation(validation);
 	})) return false;
 

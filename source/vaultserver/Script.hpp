@@ -28,6 +28,7 @@
 #include <unordered_map>
 #include <memory>
 #include <chrono>
+#include <regex>
 
 template<typename T> struct sizeof_void { enum { value = sizeof(T) }; };
 template<> struct sizeof_void<void> { enum { value = 0 }; };
