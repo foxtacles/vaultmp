@@ -16,7 +16,7 @@ The main goal is to enable players to roam the open world of the wasteland and e
 
 # Compilation
 
-All sources (except source/vaultgui) can be compiled with >=GCC 4.8 (std::thread is required). On Windows operating systems, you should use a MinGW setup. The following makefiles are available:
+All sources (except source/vaultgui) can be compiled with >=GCC 4.9 (std::thread is required). On Windows operating systems, you should use a MinGW setup. The following makefiles are available:
 
 * source/makefile (main application, Windows only)
 * source/vaultserver/makefile.windows (dedicated server, Windows)
