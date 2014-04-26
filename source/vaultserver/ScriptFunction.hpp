@@ -11,16 +11,22 @@ typedef std::string ScriptFuncPAWN;
 class ScriptFunction
 {
 	private:
-		ScriptFunc fCpp;
-		ScriptFuncPAWN fPawn;
-		AMX* amx;
+		union
+		{
+			ScriptFunc fCpp;
+			struct {
+				AMX* amx;
+				ScriptFuncPAWN name;
+			} fPawn;
+		};
 
 	protected:
 		std::string def;
 		bool pawn;
 
 		ScriptFunction(ScriptFunc fCpp, const std::string& def);
-		ScriptFunction(ScriptFuncPAWN fPawn, AMX* amx, const std::string& def);
+		ScriptFunction(const ScriptFuncPAWN& fPawn, AMX* amx, const std::string& def);
+		~ScriptFunction();
 
 		unsigned long long Call(const std::vector<boost::any>& args);
 

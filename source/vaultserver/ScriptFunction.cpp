@@ -9,9 +9,15 @@ ScriptFunction::ScriptFunction(ScriptFunc fCpp, const string& def) : fCpp(fCpp),
 
 }
 
-ScriptFunction::ScriptFunction(ScriptFuncPAWN fPawn, AMX* amx, const string& def) : fPawn(fPawn), amx(amx), def(def), pawn(true)
+ScriptFunction::ScriptFunction(const ScriptFuncPAWN& fPawn, AMX* amx, const string& def) : fPawn({amx, fPawn}), def(def), pawn(true)
 {
 
+}
+
+ScriptFunction::~ScriptFunction()
+{
+	if (pawn)
+		fPawn.name.~ScriptFuncPAWN();
 }
 
 unsigned long long ScriptFunction::Call(const vector<boost::any>& args)
@@ -22,7 +28,7 @@ unsigned long long ScriptFunction::Call(const vector<boost::any>& args)
 		throw VaultException("Script call: Number of arguments does not match definition").stacktrace();
 
 	if (pawn)
-		result = PAWN::Call(amx, fPawn.c_str(), def.c_str(), args);
+		result = PAWN::Call(fPawn.amx, fPawn.name.c_str(), def.c_str(), args);
 	else
 	{
 		// cdecl convention
