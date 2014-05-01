@@ -630,7 +630,7 @@ class Script
 			{"OnClientAuthenticate", Function<bool, const char*, const char*>()},
 			{"OnGameTimeChange", Function<void, unsigned int, unsigned int, unsigned int, unsigned int>()},
 			{"OnServerInit", Function<void>()},
-			{"OnServerExit", Function<void>()},
+			{"OnServerExit", Function<void, bool>()},
 		};
 
 		static constexpr ScriptCallbackData const& CBD(const unsigned int I, const unsigned int N = 0) {

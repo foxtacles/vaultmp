@@ -208,7 +208,7 @@ forward OnListItemSelect(ID, player, Bool:selected);
 forward OnClientAuthenticate(const name{}, const pwd{});
 forward OnGameTimeChange(year, month, day, hour);
 forward OnServerInit();
-forward OnServerExit();
+forward OnServerExit(Bool:error);
 
 // Functions
 

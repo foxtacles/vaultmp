@@ -18,7 +18,7 @@ public OnServerInit()
 	Pickup_Register("OnItemPickup", "vaultscript::OnItemPickup");
 }
 
-public OnServerExit()
+public OnServerExit(Bool:error)
 {
 
 }

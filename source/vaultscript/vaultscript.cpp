@@ -131,7 +131,7 @@ Void VAULTSCRIPT OnServerInit() noexcept
 	Pickup::Register(OnItemPickup);
 }
 
-Void VAULTSCRIPT OnServerExit() noexcept
+Void VAULTSCRIPT OnServerExit(State error) noexcept
 {
 
 }

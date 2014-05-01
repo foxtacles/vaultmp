@@ -342,11 +342,11 @@ void Dedicated::DedicatedThread()
 		}
 		catch (...)
 		{
-			Script::Call<Script::CBI("OnServerExit")>();
+			Script::Call<Script::CBI("OnServerExit")>(true);
 			throw;
 		}
 
-		Script::Call<Script::CBI("OnServerExit")>();
+		Script::Call<Script::CBI("OnServerExit")>(false);
 	}
 	catch (exception& e)
 	{
