@@ -21,7 +21,7 @@ Void VAULTSCRIPT OnServerInit() noexcept
 	MakePublic(Create, "IlView::Create");
 }
 
-Void VAULTSCRIPT OnServerExit() noexcept
+Void VAULTSCRIPT OnServerExit(State error) noexcept
 {
 	IDVector views;
 	transform(view_to_container.begin(), view_to_container.end(), back_inserter(views), [](const decltype(container_to_view)::value_type& list) { return list.first; });
