@@ -303,8 +303,7 @@ void Script::GetArguments(vector<boost::any>& params, va_list args, const string
 
 NetworkID Script::CreateTimer(ScriptFunc timer, unsigned int interval) noexcept
 {
-	Timer* t = new Timer(timer, string(), vector<boost::any>(), interval);
-	return t->GetNetworkID();
+	return Timer::MakeTimer(timer, string(), vector<boost::any>(), interval)->GetNetworkID();
 }
 
 NetworkID Script::CreateTimerEx(ScriptFunc timer, unsigned int interval, const char* def, ...) noexcept
@@ -316,20 +315,17 @@ NetworkID Script::CreateTimerEx(ScriptFunc timer, unsigned int interval, const c
 	GetArguments(params, args, def);
 	va_end(args);
 
-	Timer* t = new Timer(timer, def, params, interval);
-	return t->GetNetworkID();
+	return Timer::MakeTimer(timer, def, params, interval)->GetNetworkID();
 }
 
 NetworkID Script::CreateTimerPAWN(ScriptFuncPAWN timer, AMX* amx, unsigned int interval) noexcept
 {
-	Timer* t = new Timer(timer, amx, string(), vector<boost::any>(), interval);
-	return t->GetNetworkID();
+	return Timer::MakeTimer(timer, amx, string(), vector<boost::any>(), interval)->GetNetworkID();
 }
 
 NetworkID Script::CreateTimerPAWNEx(ScriptFuncPAWN timer, AMX* amx, unsigned int interval, const char* def, const vector<boost::any>& args) noexcept
 {
-	Timer* t = new Timer(timer, amx, string(def), args, interval);
-	return t->GetNetworkID();
+	return Timer::MakeTimer(timer, amx, string(def), args, interval)->GetNetworkID();
 }
 
 void Script::SetupObject(Object* object, unsigned int cell, float X, float Y, float Z) noexcept

@@ -21,8 +21,8 @@ class Public : public ScriptFunction
 		Public(ScriptFuncPAWN _public, AMX* amx, const std::string& name, const std::string& def);
 
 	public:
-		static void MakePublic(ScriptFunc _public, const std::string& name, const std::string& def) { new Public(_public, name, def); }
-		static void MakePublic(ScriptFuncPAWN _public, AMX* amx, const std::string& name, const std::string& def) { new Public(_public, amx, name, def); }
+		template<typename... Args>
+		static void MakePublic(Args&&... args) { new Public(std::forward<Args>(args)...); }
 
 		/**
 		 * \brief Calls a public

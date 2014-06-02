@@ -25,9 +25,12 @@ class Timer : public ScriptFunction, public RakNet::NetworkIDObject
 		static RakNet::NetworkID last_timer;
 		static unsigned int msecs();
 
-	public:
 		Timer(ScriptFunc timer, const std::string& def, std::vector<boost::any> args, unsigned int interval);
 		Timer(ScriptFuncPAWN timer, AMX* amx, const std::string& def, std::vector<boost::any> args, unsigned int interval);
+
+	public:
+		template<typename... Args>
+		static Timer* MakeTimer(Args&&... args) { return new Timer(std::forward<Args>(args)...); }
 
 		/**
 		 * \brief Called from the dedicated server main thread
