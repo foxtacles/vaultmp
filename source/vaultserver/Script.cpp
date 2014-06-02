@@ -384,12 +384,12 @@ void Script::KillTimer(NetworkID id) noexcept
 
 void Script::MakePublic(ScriptFunc _public, const char* name, const char* def) noexcept
 {
-	new Public(_public, string(name), string(def));
+	Public::MakePublic(_public, name, def);
 }
 
 void Script::MakePublicPAWN(ScriptFuncPAWN _public, AMX* amx, const char* name, const char* def) noexcept
 {
-	new Public(_public, amx, string(name), string(def));
+	Public::MakePublic(_public, amx, name, def);
 }
 
 unsigned long long Script::CallPublic(const char* name, ...) noexcept
