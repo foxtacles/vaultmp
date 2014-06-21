@@ -300,9 +300,9 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 NetworkResponse Game::Authenticate(const string& password)
 {
 	return GameFactory::Operate<Player>(PLAYER_REFERENCE, [&password](Player* player) {
-		return NetworkResponse{Network::CreateResponse(
+		return NetworkResponse{{
 			PacketFactory::Create<pTypes::ID_GAME_AUTH>(player->GetName(), password),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server}
 		};
 	});
 }
@@ -2195,9 +2195,9 @@ void Game::net_SetActorDead(FactoryActor& reference, bool dead, unsigned short l
 
 			LoadEnvironment();
 
-			Network::Queue({Network::CreateResponse(
+			Network::Queue({{
 				PacketFactory::Create<pTypes::ID_UPDATE_DEAD>(id, false, 0, 0),
-				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server}
 			});
 		}
 	}
@@ -2467,9 +2467,9 @@ void Game::GetPos(const FactoryObject& reference, float X, float Y, float Z)
 	{
 		reference->SetNetworkPos(tuple<float, float, float>{X, Y, Z});
 
-		Network::Queue({Network::CreateResponse(
+		Network::Queue({{
 			PacketFactory::Create<pTypes::ID_UPDATE_POS>(reference->GetNetworkID(), X, Y, Z),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server}
 		});
 	}
 }
@@ -2482,9 +2482,9 @@ void Game::GetAngle(const FactoryObject& reference, float X, float Y, float Z)
 	bool result = static_cast<bool>(reference->SetAngle(tuple<float, float, float>{X, Y, Z}));
 
 	if (result)
-		Network::Queue({Network::CreateResponse(
+		Network::Queue({{
 			PacketFactory::Create<pTypes::ID_UPDATE_ANGLE>(reference->GetNetworkID(), X, Z),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server}
 		});
 }
 
@@ -2493,9 +2493,9 @@ void Game::GetParentCell(const FactoryPlayer& player, unsigned int cell)
 	bool result = static_cast<bool>(player->SetGameCell(cell));
 
 	if (result)
-		Network::Queue({Network::CreateResponse(
+		Network::Queue({{
 			PacketFactory::Create<pTypes::ID_UPDATE_CELL>(player->GetNetworkID(), cell, 0.0f, 0.0f, 0.0f),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server}
 		});
 }
 
@@ -2529,9 +2529,9 @@ void Game::GetActorState(const FactoryActor& reference, unsigned int idle, unsig
 	}
 
 	if (result)
-		Network::Queue({Network::CreateResponse(
+		Network::Queue({{
 			PacketFactory::Create<pTypes::ID_UPDATE_STATE>(reference->GetNetworkID(), idle, moving, movingxy, reference->GetActorWeaponAnimation(), reference->GetActorAlerted(), sneaking, false),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server}
 		});
 }
 
@@ -2540,25 +2540,25 @@ void Game::GetControl(const FactoryPlayer& reference, unsigned char control, uns
 	bool result = static_cast<bool>(reference->SetPlayerControl(control, key));
 
 	if (result)
-		Network::Queue({Network::CreateResponse(
+		Network::Queue({{
 			PacketFactory::Create<pTypes::ID_UPDATE_CONTROL>(reference->GetNetworkID(), control, key),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server}
 		});
 }
 
 void Game::GetActivate(const FactoryReference& reference, const FactoryReference& actor)
 {
-	Network::Queue({Network::CreateResponse(
+	Network::Queue({{
 		PacketFactory::Create<pTypes::ID_UPDATE_ACTIVATE>(reference->GetNetworkID(), actor->GetNetworkID()),
-		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server}
 	});
 }
 
 void Game::GetFireWeapon(const FactoryPlayer& reference)
 {
-	Network::Queue({Network::CreateResponse(
+	Network::Queue({{
 		PacketFactory::Create<pTypes::ID_UPDATE_FIREWEAPON>(reference->GetNetworkID(), 0),
-		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server}
 	});
 }
 
@@ -2570,9 +2570,9 @@ void Game::GetMessage(string message)
 	if (message.length() > MAX_CHAT_LENGTH)
 		message.resize(MAX_CHAT_LENGTH);
 
-	Network::Queue({Network::CreateResponse(
+	Network::Queue({{
 		PacketFactory::Create<pTypes::ID_GAME_CHAT>(message),
-		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server}
 	});
 }
 
@@ -2595,9 +2595,9 @@ void Game::GetWindowMode(bool enabled)
 		}
 	});
 
-	Network::Queue({Network::CreateResponse(
+	Network::Queue({{
 		PacketFactory::Create<pTypes::ID_UPDATE_WMODE>(enabled),
-		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+		HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server}
 	});
 }
 
@@ -2610,9 +2610,9 @@ void Game::GetWindowClick(const string& name)
 		NetworkID window = strtoull(name.c_str(), nullptr, 10);
 
 		GameFactory::Operate<Window>(window, [](Window* window) {
-			Network::Queue({Network::CreateResponse(
+			Network::Queue({{
 				PacketFactory::Create<pTypes::ID_UPDATE_WCLICK>(window->GetNetworkID()),
-				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server}
 			});
 		});
 	}
@@ -2626,9 +2626,9 @@ void Game::GetWindowReturn(const string& name)
 		return;
 
 	GameFactory::Operate<Window>(window, [](Window* window) {
-		Network::Queue({Network::CreateResponse(
+		Network::Queue({{
 			PacketFactory::Create<pTypes::ID_UPDATE_WRETURN>(window->GetNetworkID()),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server}
 		});
 	});
 }
@@ -2640,9 +2640,9 @@ void Game::GetWindowText(const string& name, const string& text)
 	GameFactory::Operate<Window>(window, [&text](Window* window) {
 		window->SetText(text);
 
-		Network::Queue({Network::CreateResponse(
+		Network::Queue({{
 			PacketFactory::Create<pTypes::ID_UPDATE_WTEXT>(window->GetNetworkID(), text),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server}
 		});
 	});
 }
@@ -2654,9 +2654,9 @@ void Game::GetCheckboxSelected(const string& name, bool selected)
 	if (!GameFactory::Operate<Checkbox, BOOL_VALIDATED>(checkbox, [selected](Checkbox* checkbox) {
 		checkbox->SetSelected(selected);
 
-		Network::Queue({Network::CreateResponse(
+		Network::Queue({{
 			PacketFactory::Create<pTypes::ID_UPDATE_WSELECTED>(checkbox->GetNetworkID(), selected),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server}
 		});
 	}))
 	{
@@ -2679,9 +2679,9 @@ void Game::GetCheckboxSelected(const string& name, bool selected)
 			return 0ull;
 		});
 
-		Network::Queue({Network::CreateResponse(
+		Network::Queue({{
 			PacketFactory::Create<pTypes::ID_UPDATE_WRSELECTED>(checkbox, previous, true),
-			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server)
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server}
 		});
 	}
 }
@@ -2707,13 +2707,13 @@ void Game::GetListboxSelections(const string& name, const vector<const char*>& s
 					continue;
 
 				if (selected && !old_selected)
-					r_selected.emplace_back(Network::CreateResponse(
+					r_selected.emplace_back(
 						PacketFactory::Create<pTypes::ID_UPDATE_WLSELECTED>(id, true),
-						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server));
+						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server);
 				else
-					r_deselected.emplace_back(Network::CreateResponse(
+					r_deselected.emplace_back(
 						PacketFactory::Create<pTypes::ID_UPDATE_WLSELECTED>(id, false),
-						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server));
+						HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, server);
 
 				listitem->SetSelected(selected);
 			}

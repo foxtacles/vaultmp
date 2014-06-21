@@ -17,9 +17,9 @@ NetworkResponse NetworkServer::ProcessEvent(unsigned char id)
 	switch (id)
 	{
 		case ID_EVENT_SERVER_ERROR:
-			return {Network::CreateResponse(
+			return {{
 				PacketFactory::Create<pTypes::ID_GAME_END>(Reason::ID_REASON_ERROR),
-				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr))
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr)}
 			};
 
 		default:

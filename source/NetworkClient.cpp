@@ -16,17 +16,17 @@ NetworkResponse NetworkClient::ProcessEvent(unsigned char id)
 	{
 		case ID_EVENT_CLIENT_ERROR:
 		case ID_EVENT_INTERFACE_LOST:
-			return {Network::CreateResponse(
+			return {{
 				PacketFactory::Create<pTypes::ID_GAME_END>(Interface::HasShutdown() ? Reason::ID_REASON_QUIT : Reason::ID_REASON_ERROR),
-				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Game::server)
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Game::server}
 			};
 
 		case ID_EVENT_GAME_STARTED:
 			Network::ToggleDequeue(false);
 
-			return {Network::CreateResponse(
+			return {{
 				PacketFactory::Create<pTypes::ID_GAME_LOAD>(),
-				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Game::server)
+				HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Game::server}
 			};
 
 		case ID_EVENT_GAME_LOADED:
@@ -34,9 +34,9 @@ NetworkResponse NetworkClient::ProcessEvent(unsigned char id)
 			Network::ToggleDequeue(true);
 
 			return GameFactory::Operate<Player>(PLAYER_REFERENCE, [](Player* player) {
-				return NetworkResponse{Network::CreateResponse(
+				return NetworkResponse{{
 					player->toPacket(),
-					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Game::server)
+					HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Game::server}
 				};
 			});
 		}

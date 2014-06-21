@@ -12,16 +12,6 @@ bool Network::dequeue = true;
 DebugInput<Network> Network::debug;
 #endif
 
-Network::SingleResponse Network::CreateResponse(pPacket&& packet, PacketPriority priority, PacketReliability reliability, unsigned char channel, const vector<RakNetGUID>& targets)
-{
-	return SingleResponse(move(packet), PacketDescriptor(priority, reliability, channel), targets);
-}
-
-Network::SingleResponse Network::CreateResponse(pPacket&& packet, PacketPriority priority, PacketReliability reliability, unsigned char channel, RakNetGUID target)
-{
-	return SingleResponse(move(packet), PacketDescriptor(priority, reliability, channel), vector<RakNetGUID>{target});
-}
-
 void Network::Dispatch(RakPeerInterface* peer, NetworkResponse&& response)
 {
 	for (SingleResponse& s : move(response))

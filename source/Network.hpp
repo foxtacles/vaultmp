@@ -33,10 +33,9 @@ class Network
 				PacketDescriptor descriptor;
 				std::vector<RakNet::RakNetGUID> targets;
 
-				SingleResponse(pPacket&& packet, PacketDescriptor descriptor, const std::vector<RakNet::RakNetGUID>& targets) : packet(std::move(packet)), descriptor(descriptor), targets(targets) {}
-				SingleResponse(pPacket&& packet, PacketDescriptor descriptor, RakNet::RakNetGUID target) : packet(std::move(packet)), descriptor(descriptor), targets{target} {}
-
 			public:
+				SingleResponse(pPacket&& packet, PacketPriority priority, PacketReliability reliability, unsigned char channel, const std::vector<RakNet::RakNetGUID>& targets) : packet(std::move(packet)), descriptor(priority, reliability, channel), targets(targets) {}
+				SingleResponse(pPacket&& packet, PacketPriority priority, PacketReliability reliability, unsigned char channel, RakNet::RakNetGUID target) : packet(std::move(packet)), descriptor(priority, reliability, channel), targets{target} {}
 				~SingleResponse() = default;
 
 				SingleResponse(SingleResponse&&) = default;
@@ -67,26 +66,6 @@ class Network
 		static bool dequeue;
 
 	public:
-		/**
-		 * \brief Creates a SingleResponse given multiple network targets
-		 *
-		 * packet is a pPacket retrieved via the PacketFactory
-		 * priority specifies the RakNet priority (see PacketPriority.h)
-		 * reliability specifies the RakNet reliability (see PacketPriority.h)
-		 * channel sepcifies the RakNet channel to send this packet on
-		 * targets is a STL vector containing RakNetGUID's
-		 */
-		static SingleResponse CreateResponse(pPacket&& packet, PacketPriority priority, PacketReliability reliability, unsigned char channel, const std::vector<RakNet::RakNetGUID>& targets);
-		/**
-		 * \brief Creates a SingleResponse given a single network target
-		 *
-		 * packet is a pPacket retrieved via the PacketFactory
-		 * priority specifies the RakNet priority (see PacketPriority.h)
-		 * reliability specifies the RakNet reliability (see PacketPriority.h)
-		 * channel sepcifies the RakNet channel to send this packet on
-		 * target is a RakNetGUID
-		 */
-		static SingleResponse CreateResponse(pPacket&& packet, PacketPriority priority, PacketReliability reliability, unsigned char channel, RakNet::RakNetGUID target);
 		/**
 		 * \brief Sends a NetworkResponse over RakPeerInterface peer
 		 *
