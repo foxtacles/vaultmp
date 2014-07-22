@@ -6,7 +6,7 @@ AR = ar.exe
 LD = g++.exe
 WINDRES = windres.exe
 
-INC = -I.. -IF:\SDK\boost_1_55_0 -I..\\lib
+INC = -I.. -I..\\lib
 CFLAGS = -pedantic-errors -pedantic -Wfatal-errors -Wextra -Wall -std=gnu++1y -m32 -DVAULTSERVER
 CFLAGSEXT = -DPACKAGE -DPACKAGE_VERSION
 RESINC =
