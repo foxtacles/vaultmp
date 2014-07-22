@@ -37,13 +37,13 @@
 #define IDC_GRID0               2009
 #define IDC_GRID1               2010
 #define IDC_CHECK0              2011
-#define IDC_BUTTON0             2012
-#define IDC_BUTTON1             2013
-#define IDC_BUTTON2             2014
-#define IDC_BUTTON3             2015
-#define IDC_EDIT0               2017
-#define IDC_EDIT1               2018
-#define IDC_EDIT3               2019
+#define IDC_BUTTON_JOIN         2012
+#define IDC_BUTTON_UPDATE       2013
+#define IDC_BUTTON_GET_SERVERS  2014
+#define IDC_BUTTON_GET_MODS     2015
+#define IDC_EDIT_LOGIN          2017
+#define IDC_EDIT_PASS           2018
+#define IDC_EDIT_MASTER               2019
 #define IDC_PROGRESS0           2020
 
 #define CHIPTUNE                3000
@@ -88,6 +88,7 @@ int MessageLoop();
 void InitRakNet();
 void CreateWindowContent(HWND parent);
 void CleanUp();
+void SaveConfig(HWND hwnd);
 LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 FileListTransfer* flt;
@@ -463,28 +464,28 @@ void CreateWindowContent(HWND parent)
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 	wndchiptune = wnd;
 
-	wnd = CreateWindowEx(0x00000000, "Button", "Join server", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 555, 239, 100, 25, parent, (HMENU) IDC_BUTTON0, instance, nullptr);
+	wnd = CreateWindowEx(0x00000000, "Button", "Join server", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 555, 239, 100, 25, parent, (HMENU) IDC_BUTTON_JOIN, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
-	wnd = CreateWindowEx(0x00000000, "Button", "Update server", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 660, 239, 100, 25, parent, (HMENU) IDC_BUTTON1, instance, nullptr);
+	wnd = CreateWindowEx(0x00000000, "Button", "Update server", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 660, 239, 100, 25, parent, (HMENU) IDC_BUTTON_UPDATE, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
-	wnd = CreateWindowEx(0x00000000, "Button", "Get servers", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 555, 272, 100, 25, parent, (HMENU) IDC_BUTTON2, instance, nullptr);
+	wnd = CreateWindowEx(0x00000000, "Button", "Get servers", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 555, 272, 100, 25, parent, (HMENU) IDC_BUTTON_GET_SERVERS, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 
-	wnd = CreateWindowEx(0x00000000, "Button", "Get mods", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 660, 272, 100, 25, parent, (HMENU) IDC_BUTTON3, instance, nullptr);
+	wnd = CreateWindowEx(0x00000000, "Button", "Get mods", WS_BORDER | WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, 660, 272, 100, 25, parent, (HMENU) IDC_BUTTON_GET_MODS, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 	wndsync = wnd;
 
-	wnd = CreateWindowEx(0x00000200, "Edit", "vaultmp.com", 0x50010080, 611, 305, 146, 20, parent, (HMENU) IDC_EDIT3, instance, nullptr);
+	wnd = CreateWindowEx(0x00000200, "Edit", "vaultmp.com", 0x50010080, 611, 305, 146, 20, parent, (HMENU) IDC_EDIT_MASTER, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 	SendMessage(wnd, EM_SETLIMITTEXT, (WPARAM) MAX_MASTER_SERVER, 0);
 
-	wnd = CreateWindowEx(0x00000200, "Edit", "", 0x50010080, 611, 331, 146, 20, parent, (HMENU) IDC_EDIT0, instance, nullptr);
+	wnd = CreateWindowEx(0x00000200, "Edit", "", 0x50010080, 611, 331, 146, 20, parent, (HMENU) IDC_EDIT_LOGIN, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 	SendMessage(wnd, EM_SETLIMITTEXT, (WPARAM) MAX_PLAYER_NAME, 0);
 
-	wnd = CreateWindowEx(0x00000200, "Edit", "", 0x500100A0, 611, 357, 146, 20, parent, (HMENU) IDC_EDIT1, instance, nullptr);
+	wnd = CreateWindowEx(0x00000200, "Edit", "", 0x500100A0, 611, 357, 146, 20, parent, (HMENU) IDC_EDIT_PASS, instance, nullptr);
 	SendMessage(wnd, WM_SETFONT, (WPARAM) hFont, TRUE);
 	SendMessage(wnd, EM_SETLIMITTEXT, (WPARAM) MAX_PASSWORD_SIZE, 0);
 
@@ -603,6 +604,20 @@ void RefreshServerList()
 	}
 }
 
+void SaveConfig(HWND hwnd)
+{
+    dictionary *conf = iniparser_load("vaultmp.ini");
+    char buf[255];
+    GetDlgItemText(hwnd, IDC_EDIT_LOGIN, buf, 254);
+    iniparser_set(conf, "general:name", buf);
+    GetDlgItemText(hwnd, IDC_EDIT_MASTER, buf, 254);
+    iniparser_set(conf, "general:master", buf);
+    FILE *file = fopen("vaultmp.ini", "w");
+    iniparser_dump_ini(conf, file);
+    fclose(file);
+    iniparser_freedict(conf);
+}
+
 int CALLBACK CompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 {
 	static char buf[64], buf2[64];
@@ -630,10 +645,10 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 			GetObject(hBitmap, sizeof(BITMAP), &bitmap);
 
 			if (*player_name)
-				SetDlgItemText(hwnd, IDC_EDIT0, player_name);
+				SetDlgItemText(hwnd, IDC_EDIT_LOGIN, player_name);
 
 			if (*server_name)
-				SetDlgItemText(hwnd, IDC_EDIT3, server_name);
+				SetDlgItemText(hwnd, IDC_EDIT_MASTER, server_name);
 
 			break;
 
@@ -657,7 +672,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 		case WM_COMMAND:
 			switch (wParam)
 			{
-				case IDC_BUTTON0:
+				case IDC_BUTTON_JOIN:
 
 					if (peer->NumberOfConnections() == 0)
 					{
@@ -665,8 +680,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 						{
 							SystemAddress addr = *selectedServer;
 							char name[MAX_PLAYER_NAME], pwd[MAX_PASSWORD_SIZE];
-							GetDlgItemText(hwnd, IDC_EDIT0, name, sizeof(name));
-							GetDlgItemText(hwnd, IDC_EDIT1, pwd, sizeof(pwd));
+							GetDlgItemText(hwnd, IDC_EDIT_LOGIN, name, sizeof(name));
+							GetDlgItemText(hwnd, IDC_EDIT_PASS, pwd, sizeof(pwd));
 
 							if (strlen(name) < 3)
 							{
@@ -706,13 +721,13 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 					break;
 
-				case IDC_BUTTON1:
+				case IDC_BUTTON_UPDATE:
 					if (selectedServer != nullptr)
 						update = true;
 
 					else break;
 
-				case IDC_BUTTON2:
+				case IDC_BUTTON_GET_SERVERS:
 
 					/* RakNet Master Query */
 
@@ -723,11 +738,11 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 						SystemAddress master;
 						char maddr[32];
-						GetDlgItemText(hwnd, IDC_EDIT3, maddr, sizeof(maddr));
+						GetDlgItemText(hwnd, IDC_EDIT_MASTER, maddr, sizeof(maddr));
 
 						if (strcmp(maddr, "") == 0)
 						{
-							SetDlgItemText(hwnd, IDC_EDIT3, (char*) RAKNET_MASTER_ADDRESS);
+							SetDlgItemText(hwnd, IDC_EDIT_MASTER, (char*) RAKNET_MASTER_ADDRESS);
 							master.SetBinaryAddress(RAKNET_MASTER_ADDRESS);
 							master.SetPortHostOrder(RAKNET_MASTER_PORT);
 						}
@@ -981,7 +996,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 					RefreshServerList();
 					break;
 
-				case IDC_BUTTON3:
+				case IDC_BUTTON_GET_MODS:
 				{
 					/* RakNet File Transfer */
 
@@ -1116,6 +1131,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 			break;
 
 		case WM_DESTROY:
+		    SaveConfig(hwnd);
 			PostQuitMessage(0);
 			break;
 

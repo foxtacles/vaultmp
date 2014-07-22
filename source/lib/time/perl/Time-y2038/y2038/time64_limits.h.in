@@ -1,0 +1,96 @@
+/* 
+   Maximum and minimum inputs your system's respective time functions
+   can correctly handle.  time64.h will use your system functions if
+   the input falls inside these ranges and corresponding USE_SYSTEM_*
+   constant is defined.
+*/
+
+#ifndef TIME64_LIMITS_H
+#define TIME64_LIMITS_H
+
+/* Max/min for localtime() */
+#define SYSTEM_LOCALTIME_MAX    %%localtime_max%%
+#define SYSTEM_LOCALTIME_MIN    %%localtime_min%%
+
+/* Max/min for gmtime() */
+#define SYSTEM_GMTIME_MAX       %%gmtime_max%%
+#define SYSTEM_GMTIME_MIN       %%gmtime_min%%
+
+/* Max/min for mktime() */
+static const struct tm SYSTEM_MKTIME_MAX = {
+    %%mktime_max_tm_sec%%,
+    %%mktime_max_tm_min%%,
+    %%mktime_max_tm_hour%%,
+    %%mktime_max_tm_mday%%,
+    %%mktime_max_tm_mon%%,
+    %%mktime_max_tm_year%%,
+    %%mktime_max_tm_wday%%,
+    %%mktime_max_tm_yday%%,
+    %%mktime_max_tm_isdst%%
+#ifdef HAS_TM_TM_GMTOFF
+    ,%%mktime_max_tm_gmtoff%%
+#endif
+#ifdef HAS_TM_TM_ZONE
+    ,"%%mktime_max_tm_zone%%"
+#endif
+};
+
+static const struct tm SYSTEM_MKTIME_MIN = {
+    %%mktime_min_tm_sec%%,
+    %%mktime_min_tm_min%%,
+    %%mktime_min_tm_hour%%,
+    %%mktime_min_tm_mday%%,
+    %%mktime_min_tm_mon%%,
+    %%mktime_min_tm_year%%,
+    %%mktime_min_tm_wday%%,
+    %%mktime_min_tm_yday%%,
+    %%mktime_min_tm_isdst%%
+#ifdef HAS_TM_TM_GMTOFF
+    ,%%mktime_min_tm_gmtoff%%
+#endif
+#ifdef HAS_TM_TM_ZONE
+    ,"%%mktime_min_tm_zone%%"
+#endif
+};
+
+
+/* Max/min for timegm() */
+#ifdef HAS_TIMEGM
+static const struct tm SYSTEM_TIMEGM_MAX = {
+    %%timegm_max_tm_sec%%,
+    %%timegm_max_tm_min%%,
+    %%timegm_max_tm_hour%%,
+    %%timegm_max_tm_mday%%,
+    %%timegm_max_tm_mon%%,
+    %%timegm_max_tm_year%%,
+    %%timegm_max_tm_wday%%,
+    %%timegm_max_tm_yday%%,
+    %%timegm_max_tm_isdst%%
+#ifdef HAS_TM_TM_GMTOFF
+    ,%%timegm_max_tm_gmtoff%%
+#endif
+#ifdef HAS_TM_TM_ZONE
+    ,"%%timegm_max_tm_zone%%"
+#endif
+};
+
+static const struct tm SYSTEM_TIMEGM_MIN = {
+    %%timegm_min_tm_sec%%,
+    %%timegm_min_tm_min%%,
+    %%timegm_min_tm_hour%%,
+    %%timegm_min_tm_mday%%,
+    %%timegm_min_tm_mon%%,
+    %%timegm_min_tm_year%%,
+    %%timegm_min_tm_wday%%,
+    %%timegm_min_tm_yday%%,
+    %%timegm_min_tm_isdst%%
+#ifdef HAS_TM_TM_GMTOFF
+    ,%%timegm_min_tm_gmtoff%%
+#endif
+#ifdef HAS_TM_TM_ZONE
+    ,"%%timegm_min_tm_zone%%"
+#endif
+};
+#endif /* HAS_TIMEGM */
+
+#endif /* TIME64_LIMITS_H */
