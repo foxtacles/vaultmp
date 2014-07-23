@@ -6,17 +6,17 @@ AR = ar.exe
 LD = g++.exe
 WINDRES = windres.exe
 
-INC = -I. -Istack_trace\\include -Ilib
+INC = -I. -Ilib
 CFLAGS = -pedantic-errors -pedantic -Wfatal-errors -Wextra -Wall -std=gnu++1y
-CFLAGSEXT = -DPACKAGE -DPACKAGE_VERSION
+CFLAGSEXT =
 RESINC =
 RCFLAGS = -F pe-i386
 LIBDIR =
 LIB = -Llib\\RakNet -Llib\\iniparser
 LDFLAGS = -m32 -liniparser -lRakNet ufmod.obj -lshlwapi -lcomctl32 -lwinmm -lws2_32 -lz -limagehlp -static -mwindows
 
-INC_DEBUG = $(INC)
-CFLAGS_DEBUG = $(CFLAGS) -gstabs -DVAULTMP_DEBUG
+INC_DEBUG = $(INC) -Ilib\\stack_trace\\include
+CFLAGS_DEBUG = $(CFLAGS) -gstabs -DVAULTMP_DEBUG -DPACKAGE -DPACKAGE_VERSION
 CFLAGSEXT_DEBUG = $(CFLAGSEXT)
 RESINC_DEBUG = $(RESINC)
 RCFLAGS_DEBUG = $(RCFLAGS)
@@ -40,7 +40,7 @@ DEP_RELEASE =
 OUT_RELEASE = vaultmp.exe
 
 OBJ_DEBUG = \
-$(OBJDIR_DEBUG)\\stack_trace\\src\\stack.o \
+$(OBJDIR_DEBUG)\\lib\\stack_trace\\src\\stack.o \
 $(OBJDIR_DEBUG)\\Utils.o \
 $(OBJDIR_DEBUG)\\Shared.o \
 $(OBJDIR_DEBUG)\\ServerEntry.o \
@@ -125,8 +125,7 @@ clean: clean_debug clean_release
 
 before_debug:
 	cmd /c if not exist $(OBJDIR_DEBUG) md $(OBJDIR_DEBUG)
-	cmd /c if not exist $(OBJDIR_DEBUG)\\stack_trace\\src md $(OBJDIR_DEBUG)\\stack_trace\\src
-	cmd /c if not exist $(OBJDIR_DEBUG)\\iniparser\\src md $(OBJDIR_DEBUG)\\iniparser\\src
+	cmd /c if not exist $(OBJDIR_DEBUG)\\lib\\stack_trace\\src md $(OBJDIR_DEBUG)\\lib\\stack_trace\\src
 
 after_debug:
 
@@ -135,8 +134,8 @@ debug: before_debug out_debug after_debug
 out_debug: $(OBJ_DEBUG) $(DEP_DEBUG)
 	$(LD) $(LIBDIR_DEBUG) $(OBJ_DEBUG) $(LIB_DEBUG) -o $(OUT_DEBUG) $(LDFLAGS_DEBUG)
 
-$(OBJDIR_DEBUG)\\stack_trace\\src\\stack.o: stack_trace\\src\\stack.cpp
-	$(CXX) $(CFLAGSEXT_DEBUG) $(INC_DEBUG) -c stack_trace\\src\\stack.cpp -o $(OBJDIR_DEBUG)\\stack_trace\\src\\stack.o
+$(OBJDIR_DEBUG)\\lib\\stack_trace\\src\\stack.o: lib\\stack_trace\\src\\stack.cpp
+	$(CXX) $(CFLAGSEXT_DEBUG) $(INC_DEBUG) -c lib\\stack_trace\\src\\stack.cpp -o $(OBJDIR_DEBUG)\\lib\\stack_trace\\src\\stack.o
 
 $(OBJDIR_DEBUG)\\Utils.o: Utils.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Utils.cpp -o $(OBJDIR_DEBUG)\\Utils.o
@@ -252,11 +251,10 @@ $(OBJDIR_DEBUG)\\List.o: List.cpp
 
 clean_debug:
 	cmd /c del /f $(OBJ_DEBUG) $(OUT_DEBUG)
-	cmd /c rd $(OBJDIR_DEBUG)
+	cmd /c rd /s/q $(OBJDIR_DEBUG)
 
 before_release:
 	cmd /c if not exist $(OBJDIR_RELEASE) md $(OBJDIR_RELEASE)
-	cmd /c if not exist $(OBJDIR_RELEASE)\\iniparser\\src md $(OBJDIR_RELEASE)\\iniparser\\src
 
 after_release:
 
@@ -376,7 +374,7 @@ $(OBJDIR_RELEASE)\\List.o: List.cpp
 
 clean_release:
 	cmd /c del /f $(OBJ_RELEASE) $(OUT_RELEASE)
-	cmd /c rd $(OBJDIR_RELEASE)
+	cmd /c rd /s/q $(OBJDIR_RELEASE)
 
 .PHONY: before_debug after_debug clean_debug before_release after_release clean_release
 

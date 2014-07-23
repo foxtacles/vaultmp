@@ -59,7 +59,7 @@ $(OBJDIR_WINDOWS)\\vaultmaster\\vaultmaster.o: vaultmaster.cpp
 
 clean_windows:
 	cmd /c del /f $(OBJ_WINDOWS) $(OUT_WINDOWS)
-	cmd /c rd $(OBJDIR_WINDOWS)
+	cmd /c rd /s/q $(OBJDIR_WINDOWS)
 
 .PHONY: before_windows after_windows clean_windows
 

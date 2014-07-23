@@ -8,15 +8,15 @@ WINDRES = windres.exe
 
 INC = -I.. -I..\\lib
 CFLAGS = -pedantic-errors -pedantic -Wfatal-errors -Wextra -Wall -std=gnu++1y -m32 -DVAULTSERVER
-CFLAGSEXT = -DPACKAGE -DPACKAGE_VERSION
+CFLAGSEXT =
 RESINC =
 LIBDIR =
 LIB = -L..\\lib\\RakNet -L..\\lib\\amx -L..\\lib\\sqlite -L..\\lib\\iniparser -L..\\lib\\time
 LDFLAGS = -m32 -ltime64 -liniparser -lsqlite3 -lamx -lRakNet -lws2_32 -lwinmm -lm -lz -limagehlp -static
 
-INC_DEBUG = $(INC) -I..\\stack_trace\\include
+INC_DEBUG = $(INC) -I..\\..\\listack_trace\\include
 CFLAGS_DEBUG = $(CFLAGS) -gstabs -DVAULTMP_DEBUG
-CFLAGSEXT_DEBUG = $(CFLAGSEXT)
+CFLAGSEXT_DEBUG = $(CFLAGSEXT) -DPACKAGE -DPACKAGE_VERSION
 RESINC_DEBUG = $(RESINC)
 RCFLAGS_DEBUG = $(RCFLAGS)
 LIBDIR_DEBUG = $(LIBDIR)
@@ -39,7 +39,7 @@ DEP_RELEASE =
 OUT_RELEASE = vaultserver.exe
 
 OBJ_DEBUG = \
-$(OBJDIR_DEBUG)\\stack_trace\\src\\stack.o \
+$(OBJDIR_DEBUG)\\lib\\stack_trace\\src\\stack.o \
 $(OBJDIR_DEBUG)\\vaultserver\\Script.o \
 $(OBJDIR_DEBUG)\\vaultserver\\Record.o \
 $(OBJDIR_DEBUG)\\vaultserver\\Race.o \
@@ -151,7 +151,7 @@ clean: clean_debug clean_release
 before_debug:
 	cmd /c if not exist $(OBJDIR_DEBUG) md $(OBJDIR_DEBUG)
 	cmd /c if not exist $(OBJDIR_DEBUG)\\vaultserver md $(OBJDIR_DEBUG)\\vaultserver
-	cmd /c if not exist $(OBJDIR_DEBUG)\\stack_trace\\src md $(OBJDIR_DEBUG)\\stack_trace\\src
+	cmd /c if not exist $(OBJDIR_DEBUG)\\lib\\stack_trace\\src md $(OBJDIR_DEBUG)\\lib\\stack_trace\\src
 
 after_debug:
 
@@ -160,8 +160,8 @@ debug: before_debug out_debug after_debug
 out_debug: $(OBJ_DEBUG) $(DEP_DEBUG)
 	$(LD) $(LIBDIR_DEBUG) $(OBJ_DEBUG) $(LIB_DEBUG) -o $(OUT_DEBUG) $(LDFLAGS_DEBUG)
 
-$(OBJDIR_DEBUG)\\stack_trace\\src\\stack.o: ..\\stack_trace\\src\\stack.cpp
-	$(CXX) $(CFLAGSEXT_DEBUG) $(INC_DEBUG) -c ..\\stack_trace\\src\\stack.cpp -o $(OBJDIR_DEBUG)\\stack_trace\\src\\stack.o
+$(OBJDIR_DEBUG)\\lib\\stack_trace\\src\\stack.o: ..\\lib\\stack_trace\\src\\stack.cpp
+	$(CXX) $(CFLAGSEXT_DEBUG) $(INC_DEBUG) -c ..\\lib\\stack_trace\\src\\stack.cpp -o $(OBJDIR_DEBUG)\\lib\\stack_trace\\src\\stack.o
 
 $(OBJDIR_DEBUG)\\vaultserver\\Script.o: Script.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c Script.cpp -o $(OBJDIR_DEBUG)\\vaultserver\\Script.o
