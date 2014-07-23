@@ -1,1 +1,0 @@
-../../bin/check_max.c

@@ -3,7 +3,7 @@
 	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="time64" />
-		<Option makefile="Makefile.Windows" />
+		<Option makefile="time_makefile.windows" />
 		<Option makefile_is_custom="1" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
@@ -32,12 +32,12 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="time64.c">
+		<Unit filename="time/time64.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="time64.h" />
-		<Unit filename="time64_config.h" />
-		<Unit filename="time64_limits.h" />
+		<Unit filename="time/time64.h" />
+		<Unit filename="time/time64_config.h" />
+		<Unit filename="time/time64_limits.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

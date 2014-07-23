@@ -1,5 +1,5 @@
 #
-# sqlite3 Makefile
+# iniparser Makefile
 #
 
 CC      = gcc
@@ -18,15 +18,15 @@ COMPILE.c=$(CC) $(CFLAGS) -c
 	$(COMPILE.c) -o $@ $<
 
 
-SRCS = time64.c
+SRCS = iniparser\\src\\dictionary.c iniparser\\src\\iniparser.c
 
 OBJS = $(SRCS:.c=.o)
 
 
-default:	libtime64.a
+default:	iniparser\\libiniparser.a
 
-libtime64.a:	$(OBJS)
-	$(AR) -rv libtime64.a $(OBJS)
+iniparser\\libiniparser.a:	$(OBJS)
+	$(AR) -rv iniparser\\libiniparser.a $(OBJS)
 
 clean:
 	$(RM) $(OBJS)
