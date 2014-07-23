@@ -1,0 +1,150 @@
+WORKDIR = %cd%
+
+CC = gcc.exe
+CXX = g++.exe
+AR = ar.exe
+LD = g++.exe
+WINDRES = windres.exe
+
+INC =
+CFLAGS = -pedantic-errors -pedantic -Wfatal-errors -Wextra -Wall -std=gnu++1y -m32
+CFLAGSEXT =-m32 -w
+RESINC =
+LIBDIR =
+LIB =
+LDFLAGS =
+
+INC_DEBUG = $(INC)
+CFLAGS_DEBUG = $(CFLAGS) -gstabs
+CFLAGSEXT_DEBUG = $(CFLAGSEXT)
+RESINC_DEBUG = $(RESINC)
+RCFLAGS_DEBUG = $(RCFLAGS)
+LIBDIR_DEBUG = $(LIBDIR)
+LIB_DEBUG = $(LIB)
+LDFLAGS_DEBUG = -lbfd -liberty $(LDFLAGS)
+OBJDIR_DEBUG = .objs\\Debug
+DEP_DEBUG =
+OUT_DEBUG = libamxd.a
+
+INC_RELEASE = $(INC)
+CFLAGS_RELEASE = $(CFLAGS) -O2 -DNDEBUG
+CFLAGSEXT_RELEASE = $(CFLAGSEXT) -O2 -DNDEBUG
+RESINC_RELEASE = $(RESINC)
+RCFLAGS_RELEASE = $(RCFLAGS)
+LIBDIR_RELEASE = $(LIBDIR)
+LIB_RELEASE = $(LIB)
+LDFLAGS_RELEASE = -s $(LDFLAGS)
+OBJDIR_RELEASE = .objs\\Release
+DEP_RELEASE =
+OUT_RELEASE = libamx.a
+
+OBJ_DEBUG = \
+$(OBJDIR_DEBUG)\\amxexec_gcc.o \
+$(OBJDIR_DEBUG)\\amxcore.o \
+$(OBJDIR_DEBUG)\\amxfile.o \
+$(OBJDIR_DEBUG)\\amxcons.o \
+$(OBJDIR_DEBUG)\\amxstring.o \
+$(OBJDIR_DEBUG)\\amxtime.o \
+$(OBJDIR_DEBUG)\\float.o \
+$(OBJDIR_DEBUG)\\amxaux.o \
+$(OBJDIR_DEBUG)\\amx.o
+
+OBJ_RELEASE = \
+$(OBJDIR_RELEASE)\\amxexec_gcc.o \
+$(OBJDIR_RELEASE)\\amxcore.o \
+$(OBJDIR_RELEASE)\\amxfile.o \
+$(OBJDIR_RELEASE)\\amxcons.o \
+$(OBJDIR_RELEASE)\\amxstring.o \
+$(OBJDIR_RELEASE)\\amxtime.o \
+$(OBJDIR_RELEASE)\\float.o \
+$(OBJDIR_RELEASE)\\amxaux.o \
+$(OBJDIR_RELEASE)\\amx.o \
+
+all: debug release
+
+clean: clean_debug clean_release
+
+before_debug:
+	cmd /c if not exist $(OBJDIR_DEBUG) md $(OBJDIR_DEBUG)
+
+after_debug:
+
+debug: before_debug out_debug after_debug
+
+out_debug: $(OBJ_DEBUG) $(DEP_DEBUG)
+	$(AR) -rv $(OUT_DEBUG) $(OBJ_DEBUG)
+
+$(OBJDIR_DEBUG)\\amxexec_gcc.o: amxexec_gcc.c
+	$(CC) $(CFLAGSEXT_DEBUG) $(INC_DEBUG) -c amxexec_gcc.c -o $(OBJDIR_DEBUG)\\amxexec_gcc.o
+
+$(OBJDIR_DEBUG)\\amxcore.o: amxcore.c
+	$(CC) $(CFLAGSEXT_DEBUG) $(INC_DEBUG) -c amxcore.c -o $(OBJDIR_DEBUG)\\amxcore.o
+
+$(OBJDIR_DEBUG)\\amxfile.o: amxfile.c
+	$(CC) $(CFLAGSEXT_DEBUG) $(INC_DEBUG) -c amxfile.c -o $(OBJDIR_DEBUG)\\amxfile.o
+
+$(OBJDIR_DEBUG)\\amxcons.o: amxcons.c
+	$(CC) $(CFLAGSEXT_DEBUG) $(INC_DEBUG) -c amxcons.c -o $(OBJDIR_DEBUG)\\amxcons.o
+
+$(OBJDIR_DEBUG)\\amxstring.o: amxstring.c
+	$(CC) $(CFLAGSEXT_DEBUG) $(INC_DEBUG) -c amxstring.c -o $(OBJDIR_DEBUG)\\amxstring.o
+
+$(OBJDIR_DEBUG)\\amxtime.o: amxtime.c
+	$(CC) $(CFLAGSEXT_DEBUG) $(INC_DEBUG) -c amxtime.c -o $(OBJDIR_DEBUG)\\amxtime.o
+
+$(OBJDIR_DEBUG)\\float.o: float.c
+	$(CC) $(CFLAGSEXT_DEBUG) $(INC_DEBUG) -c float.c -o $(OBJDIR_DEBUG)\\float.o
+
+$(OBJDIR_DEBUG)\\amxaux.o: amxaux.c
+	$(CC) $(CFLAGSEXT_DEBUG) $(INC_DEBUG) -c amxaux.c -o $(OBJDIR_DEBUG)\\amxaux.o
+
+$(OBJDIR_DEBUG)\\amx.o: amx.c
+	$(CC) $(CFLAGSEXT_DEBUG) $(INC_DEBUG) -c amx.c -o $(OBJDIR_DEBUG)\\amx.o
+
+clean_debug:
+	cmd /c del /f $(OUT_DEBUG)
+	cmd /c rd /s/q $(OBJDIR_DEBUG)
+
+before_release:
+	cmd /c if not exist $(OBJDIR_RELEASE) md $(OBJDIR_RELEASE)
+
+after_release:
+
+release: before_release out_release after_release
+
+out_release: $(OBJ_RELEASE) $(DEP_RELEASE)
+	$(AR) -rv $(OUT_RELEASE) $(OBJ_RELEASE)
+
+$(OBJDIR_RELEASE)\\amxexec_gcc.o: amxexec_gcc.c
+	$(CC) $(CFLAGSEXT_RELEASE) $(INC_RELEASE) -c amxexec_gcc.c -o $(OBJDIR_RELEASE)\\amxexec_gcc.o
+
+$(OBJDIR_RELEASE)\\amxcore.o: amxcore.c
+	$(CC) $(CFLAGSEXT_RELEASE) $(INC_RELEASE) -c amxcore.c -o $(OBJDIR_RELEASE)\\amxcore.o
+
+$(OBJDIR_RELEASE)\\amxfile.o: amxfile.c
+	$(CC) $(CFLAGSEXT_RELEASE) $(INC_RELEASE) -c amxfile.c -o $(OBJDIR_RELEASE)\\amxfile.o
+
+$(OBJDIR_RELEASE)\\amxcons.o: amxcons.c
+	$(CC) $(CFLAGSEXT_RELEASE) $(INC_RELEASE) -c amxcons.c -o $(OBJDIR_RELEASE)\\amxcons.o
+
+$(OBJDIR_RELEASE)\\amxstring.o: amxstring.c
+	$(CC) $(CFLAGSEXT_RELEASE) $(INC_RELEASE) -c amxstring.c -o $(OBJDIR_RELEASE)\\amxstring.o
+
+$(OBJDIR_RELEASE)\\amxtime.o: amxtime.c
+	$(CC) $(CFLAGSEXT_RELEASE) $(INC_RELEASE) -c amxtime.c -o $(OBJDIR_RELEASE)\\amxtime.o
+
+$(OBJDIR_RELEASE)\\float.o: float.c
+	$(CC) $(CFLAGSEXT_RELEASE) $(INC_RELEASE) -c float.c -o $(OBJDIR_RELEASE)\\float.o
+
+$(OBJDIR_RELEASE)\\amxaux.o: amxaux.c
+	$(CC) $(CFLAGSEXT_RELEASE) $(INC_RELEASE) -c amxaux.c -o $(OBJDIR_RELEASE)\\amxaux.o
+
+$(OBJDIR_RELEASE)\\amx.o: amx.c
+	$(CC) $(CFLAGSEXT_RELEASE) $(INC_RELEASE) -c amx.c -o $(OBJDIR_RELEASE)\\amx.o
+
+clean_release:
+	cmd /c del /f $(OUT_RELEASE)
+	cmd /c rd /s/q $(OBJDIR_RELEASE)
+
+.PHONY: before_debug after_debug clean_debug before_release after_release clean_release
+

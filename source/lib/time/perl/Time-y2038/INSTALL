@@ -1,0 +1,82 @@
+This is the Time::y2038 Perl module.  It is a wrapper around the y2038
+C library to use its functions from Perl.  The latest version and
+project information can be had from: http://y2038.googlecode.com/
+
+Run "perldoc Time::y2038" for documentation (before or after installing) or
+see http://search.cpan.org/perldoc?Time::y2038.
+
+
+SIMPLE INSTALL
+--------------
+
+Use the CPAN shell.  Run "cpan" and type "install Time::y2038".  This
+will resolve all module dependencies and get you the latest version.
+
+
+SLIGHTLY LESS SIMPLE INSTALL
+----------------------------
+
+In the Time-y2038 directory, run "cpan .".  This will resolve all
+module dependencies from CPAN and install Time::y2038 from your source
+directory.
+
+
+MANUAL INSTALL
+--------------
+
+This module uses Module::Build.  To install, you must first have the
+required prerequisites.
+
+Build & testing requirements...
+
+    perl                5.6.1
+    Module::Build       0.2808
+    Test::Warn          0.11
+    Test::Exception     0.27
+    Test::More          0.62
+    ExtUtils::CBuilder  0.24
+    An ANSI C compiler that ExtUtils::CBuilder knows about.
+
+Runtime requirements...
+
+    perl                5.6.1
+
+The simplest way to resolve the module dependencies is to run "cpan ."
+in the source directory.  The CPAN shell will install all dependencies
+from CPAN and Time::y2038 from the source directory.
+
+Once all dependencies are installed, run these commands:
+
+    perl Build.PL
+    ./Build
+    ./Build test
+    ./Build install
+
+This will install the module as part of your perl installation.
+If you want to install it for personal use...
+
+    perl Build.PL --install_base ~
+
+and the rest as normal.  This will install the library under
+~/lib/perl5/ and the man pages in ~/man/.  Set your PERL5LIB and
+MANPATH environment variables appropriately.
+
+
+PROBLEMS
+--------
+
+If you encounter any problems building or testing this module, please
+report it at http://rt.cpan.org/Dist/Display.html?Queue=Time-y2038
+
+Please include the complete output of your build.  Don't cut things
+out to save me trouble, you never know what's important.  Also include
+the output of "perl -V", the type and version of your C compiler, your
+operating system, the versions of the prerequisite modules and the
+output of running the bin/check_max program.
+
+If you don't have time for all that, just copy & paste what you've got
+and send it off.
+
+Do not wait until you have a patch.  Don't assume your bug is known or
+your platform is too weird to bother with.  Report early, report
+often.

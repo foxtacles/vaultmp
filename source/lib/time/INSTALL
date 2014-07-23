@@ -1,0 +1,15 @@
+There is currently no installer, sorry.  If somebody wants to take a
+crack at it, please go ahead.
+
+This project is not intended to be installed on your system, but to be
+used as part of an application or project.  It is written to the POSIX
+time.h standard and should work with any ANSI C 89 compiler.
+
+This project consists of a few C and header files which should be copied
+and built like any other ANSI C code.
+
+1) Copy time64.c, time64.h and time64_config.h into your C project.
+2) Tweak configuration values in time64_config.h.
+3) #include "time64.h" in your code and make use of the new functions
+   in place of time.h's.
+4) Build your C project normally.

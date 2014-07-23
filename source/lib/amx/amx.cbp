@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="amx" />
+		<Option platforms="Windows;Unix;" />
+		<Option makefile="makefile.windows" />
+		<Option makefile_is_custom="1" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<MakeCommands>
+			<Build command="$make -f $makefile $target" />
+			<CompileFile command="$make -f $makefile $file" />
+			<Clean command="$make -f $makefile clean_$target" />
+			<DistClean command="$make -f $makefile distclean$target" />
+			<AskRebuildNeeded command="$make -q -f $makefile $target" />
+			<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
+		</MakeCommands>
+		<Build>
+			<Target title="release">
+				<Option platforms="Windows;" />
+				<Option output="./bin/amx" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="/release/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-Wall" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+				<MakeCommands>
+					<Build command="$make -f $makefile $target" />
+					<CompileFile command="$make -f $makefile $file" />
+					<Clean command="$make -f $makefile clean_$target" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="$make -q -f $makefile $target" />
+					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+			<Target title="debug">
+				<Option output="amx" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<MakeCommands>
+					<Build command="$make -f $makefile $target" />
+					<CompileFile command="$make -f $makefile $file" />
+					<Clean command="$make -f $makefile clean_$target" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="$make -q -f $makefile $target" />
+					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="CMakeLists.txt" />
+		<Unit filename="amx.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="amx.h" />
+		<Unit filename="amxDGram.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
+		<Unit filename="amxFile.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
+		<Unit filename="amxFixed.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
+		<Unit filename="amxFloat.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
+		<Unit filename="amxProcess.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
+		<Unit filename="amxargs.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="amxargs.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
+		<Unit filename="amxaux.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="amxaux.h" />
+		<Unit filename="amxcons.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="amxcons.h" />
+		<Unit filename="amxcore.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="amxdbg.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="amxdbg.h" />
+		<Unit filename="amxdef.asm" />
+		<Unit filename="amxdefn.asm" />
+		<Unit filename="amxdgram.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="amxexec.asm" />
+		<Unit filename="amxexec_arm7.s" />
+		<Unit filename="amxexec_arm7_gas.s" />
+		<Unit filename="amxexec_gcc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="amxexec_thumb2.s" />
+		<Unit filename="amxexec_thumb2_gas.s" />
+		<Unit filename="amxexecn.asm" />
+		<Unit filename="amxfile.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="amxfixed.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="amxfloat.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="amxgc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="amxgc.h" />
+		<Unit filename="amxjitr.asm" />
+		<Unit filename="amxjits.asm" />
+		<Unit filename="amxjitsn.asm" />
+		<Unit filename="amxpool.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="amxpool.h" />
+		<Unit filename="amxprocess.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="amxstring.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="amxstring.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
+		<Unit filename="amxtime.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="amxtime.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
+		<Unit filename="dllmain.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="fixed.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="float.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="fpattern.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="fpattern.h" />
+		<Unit filename="keeloq.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="keeloq.h" />
+		<Unit filename="makefile.windows" />
+		<Unit filename="minGlue.h" />
+		<Unit filename="minIni.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="minIni.h" />
+		<Unit filename="osdefs.h" />
+		<Unit filename="pawndbg.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="pawnrun.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="term_ga.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="term_ga.h" />
+		<Unit filename="termwin.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="termwin.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
