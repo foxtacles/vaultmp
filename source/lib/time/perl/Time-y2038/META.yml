@@ -1,0 +1,31 @@
+---
+abstract: "Versions of Perl's time functions which work beyond 2038"
+author:
+  - 'Michael G Schwern <schwern@pobox.com>'
+build_requires:
+  ExtUtils::CBuilder: 0.24
+  JSON: 2.17
+  Module::Build: 0.36
+  Test::Exception: 0.27
+  Test::More: 0.82
+  Test::Warn: 0.11
+configure_requires:
+  Module::Build: 0.36
+generated_by: 'Module::Build version 0.3603'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Time-y2038
+provides:
+  Time::y2038:
+    file: lib/Time/y2038.pm
+    version: 20100403
+  Time::y2038::Everywhere:
+    file: lib/Time/y2038/Everywhere.pm
+    version: 20100403
+requires:
+  perl: v5.6.1
+resources:
+  license: http://dev.perl.org/licenses/
+version: 20100403

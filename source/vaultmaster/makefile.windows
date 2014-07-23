@@ -1,0 +1,65 @@
+WORKDIR = `pwd`
+
+CC = gcc
+CXX = g++
+AR = ar
+LD = g++
+WINDRES = windres
+
+INC = -I.. -I..\\lib
+CFLAGS =  -m32 -std=gnu++0x
+RESINC =
+LIBDIR =
+LIB = -L..\\lib\\RakNet
+LDFLAGS = -m32 -lRakNet -lpthread -lws2_32 -limagehlp -static
+
+INC_WINDOWS =  $(INC)
+CFLAGS_WINDOWS =  $(CFLAGS) -O2 -Wredundant-decls -Wunreachable-code
+RESINC_WINDOWS =  $(RESINC)
+RCFLAGS_WINDOWS =  $(RCFLAGS)
+LIBDIR_WINDOWS =  $(LIBDIR)
+LIB_WINDOWS = $(LIB)
+LDFLAGS_WINDOWS =  $(LDFLAGS) -s
+OBJDIR_WINDOWS = .obj
+DEP_WINDOWS =
+OUT_WINDOWS = vaultmaster.exe
+
+OBJ_WINDOWS = \
+$(OBJDIR_WINDOWS)\\ServerEntry.o \
+$(OBJDIR_WINDOWS)\\Utils.o \
+$(OBJDIR_WINDOWS)\\vaultmaster\\MasterServer.o \
+$(OBJDIR_WINDOWS)\\vaultmaster\\vaultmaster.o
+
+all: Windows
+
+clean: clean_windows
+
+before_windows:
+	cmd /c if not exist $(OBJDIR_WINDOWS) md $(OBJDIR_WINDOWS)
+	cmd /c if not exist $(OBJDIR_WINDOWS)\\vaultmaster md $(OBJDIR_WINDOWS)\\vaultmaster
+
+after_windows:
+
+Windows: before_windows out_windows after_windows
+
+out_windows: $(OBJ_WINDOWS) $(DEP_WINDOWS)
+	$(LD) $(LIBDIR_WINDOWS) $(OBJ_WINDOWS) $(LIB_WINDOWS) -o $(OUT_WINDOWS) $(LDFLAGS_WINDOWS)
+
+$(OBJDIR_WINDOWS)\\ServerEntry.o: ..\\ServerEntry.cpp
+	$(CXX) $(CFLAGS_WINDOWS) $(INC_WINDOWS) -c ..\\ServerEntry.cpp -o $(OBJDIR_WINDOWS)\\ServerEntry.o
+
+$(OBJDIR_WINDOWS)\\Utils.o: ..\\Utils.cpp
+	$(CXX) $(CFLAGS_WINDOWS) $(INC_WINDOWS) -c ..\\Utils.cpp -o $(OBJDIR_WINDOWS)\\Utils.o
+
+$(OBJDIR_WINDOWS)\\vaultmaster\\MasterServer.o: MasterServer.cpp
+	$(CXX) $(CFLAGS_WINDOWS) $(INC_WINDOWS) -c MasterServer.cpp -o $(OBJDIR_WINDOWS)\\vaultmaster\\MasterServer.o
+
+$(OBJDIR_WINDOWS)\\vaultmaster\\vaultmaster.o: vaultmaster.cpp
+	$(CXX) $(CFLAGS_WINDOWS) $(INC_WINDOWS) -c vaultmaster.cpp -o $(OBJDIR_WINDOWS)\\vaultmaster\\vaultmaster.o
+
+clean_windows:
+	cmd /c del /f $(OBJ_WINDOWS) $(OUT_WINDOWS)
+	cmd /c rd /s/q $(OBJDIR_WINDOWS)
+
+.PHONY: before_windows after_windows clean_windows
+

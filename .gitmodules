@@ -1,9 +1,9 @@
-[submodule "source/iniparser"]
-	path = source/iniparser
+[submodule "source/lib/iniparser"]
+	path = source/lib/iniparser
 	url = git://github.com/foxtacles/iniparser.git
-[submodule "source/vaultserver/time"]
-	path = source/vaultserver/time
+[submodule "source/lib/time"]
+	path = source/lib/time
 	url = https://github.com/foxtacles/y2038.git
-[submodule "source/packet"]
-	path = source/packet
+[submodule "source/lib/packet"]
+	path = source/lib/packet
 	url = https://github.com/foxtacles/serialization.git
