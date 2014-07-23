@@ -41,7 +41,7 @@ void HookCall(BYTE* orig,BYTE* hook,int length)
 
   Parameters:
     Module              - Module to use IAT from.
-    ImportedModuleName  - Name of imported DLL from which 
+    ImportedModuleName  - Name of imported DLL from which
                           function is imported.
     ImportedProcName    - Name of imported function.
     AlternateProc       - Function to be written to IAT.
@@ -51,6 +51,15 @@ void HookCall(BYTE* orig,BYTE* hook,int length)
     S_OK on success.
     (any HRESULT) on failure.
 --*/
+#ifndef _MSC_VER
+HRESULT PatchIat(
+  HMODULE Module,
+  PSTR ImportedModuleName,
+  PSTR ImportedProcName,
+  PVOID AlternateProc,
+  PVOID *OldProc
+  )
+#else
 HRESULT PatchIat(
   __in HMODULE Module,
   __in PSTR ImportedModuleName,
@@ -58,9 +67,10 @@ HRESULT PatchIat(
   __in PVOID AlternateProc,
   __out_opt PVOID *OldProc
   )
+#endif
 {
   PIMAGE_DOS_HEADER DosHeader = ( PIMAGE_DOS_HEADER ) Module;
-  PIMAGE_NT_HEADERS NtHeader; 
+  PIMAGE_NT_HEADERS NtHeader;
   PIMAGE_IMPORT_DESCRIPTOR ImportDescriptor;
   UINT Index;
 
@@ -69,26 +79,26 @@ HRESULT PatchIat(
   _ASSERTE( ImportedProcName );
   _ASSERTE( AlternateProc );
 
-  NtHeader = ( PIMAGE_NT_HEADERS ) 
+  NtHeader = ( PIMAGE_NT_HEADERS )
     PtrFromRva( DosHeader, DosHeader->e_lfanew );
   if( IMAGE_NT_SIGNATURE != NtHeader->Signature )
   {
     return HRESULT_FROM_WIN32( ERROR_BAD_EXE_FORMAT );
   }
 
-  ImportDescriptor = ( PIMAGE_IMPORT_DESCRIPTOR ) 
-    PtrFromRva( DosHeader, 
+  ImportDescriptor = ( PIMAGE_IMPORT_DESCRIPTOR )
+    PtrFromRva( DosHeader,
       NtHeader->OptionalHeader.DataDirectory
         [ IMAGE_DIRECTORY_ENTRY_IMPORT ].VirtualAddress );
 
   //
   // Iterate over import descriptors/DLLs.
   //
-  for ( Index = 0; 
-        ImportDescriptor[ Index ].Characteristics != 0; 
+  for ( Index = 0;
+        ImportDescriptor[ Index ].Characteristics != 0;
         Index++ )
   {
-    PSTR dllName = ( PSTR ) 
+    PSTR dllName = ( PSTR )
       PtrFromRva( DosHeader, ImportDescriptor[ Index ].Name );
 
     if ( 0 == _strcmpi( dllName, ImportedModuleName ) )
@@ -106,13 +116,13 @@ HRESULT PatchIat(
       }
 
       Thunk = ( PIMAGE_THUNK_DATA )
-        PtrFromRva( DosHeader, 
+        PtrFromRva( DosHeader,
           ImportDescriptor[ Index ].FirstThunk );
       OrigThunk = ( PIMAGE_THUNK_DATA )
-        PtrFromRva( DosHeader, 
+        PtrFromRva( DosHeader,
           ImportDescriptor[ Index ].OriginalFirstThunk );
 
-      for ( ; OrigThunk->u1.Function != NULL; 
+      for ( ; OrigThunk->u1.Function != NULL;
               OrigThunk++, Thunk++ )
       {
         if ( OrigThunk->u1.Ordinal & IMAGE_ORDINAL_FLAG )
@@ -127,7 +137,7 @@ HRESULT PatchIat(
         PIMAGE_IMPORT_BY_NAME import = ( PIMAGE_IMPORT_BY_NAME )
           PtrFromRva( DosHeader, OrigThunk->u1.AddressOfData );
 
-        if ( 0 == strcmp( ImportedProcName, 
+        if ( 0 == strcmp( ImportedProcName,
                               ( char* ) import->Name ) )
         {
           //
@@ -157,14 +167,14 @@ HRESULT PatchIat(
           //
           if ( OldProc )
           {
-            *OldProc = ( PVOID ) ( DWORD_PTR ) 
+            *OldProc = ( PVOID ) ( DWORD_PTR )
                 Thunk->u1.Function;
           }
 #ifdef _WIN64
-          Thunk->u1.Function = ( ULONGLONG ) ( DWORD_PTR ) 
+          Thunk->u1.Function = ( ULONGLONG ) ( DWORD_PTR )
               AlternateProc;
 #else
-          Thunk->u1.Function = ( DWORD ) ( DWORD_PTR ) 
+          Thunk->u1.Function = ( DWORD ) ( DWORD_PTR )
               AlternateProc;
 #endif
           //
@@ -182,11 +192,11 @@ HRESULT PatchIat(
           return S_OK;
         }
       }
-      
+
       //
       // Import not found.
       //
-      return HRESULT_FROM_WIN32( ERROR_PROC_NOT_FOUND );    
+      return HRESULT_FROM_WIN32( ERROR_PROC_NOT_FOUND );
     }
   }
 

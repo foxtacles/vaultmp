@@ -1,4 +1,4 @@
-#include "CEGUI\cegui\include\CEGUI.h"
+#include "CEGUI.h"
 
 #include "common.h"
 

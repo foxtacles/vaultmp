@@ -4,6 +4,8 @@
 
 #include "common.h"
 
+#include "VS_macro.h"
+
 #include "DirectInputHook.h"
 
 /*
@@ -69,7 +71,7 @@ public:
 		return m_device->GetCapabilities(devCaps);
 	}
 
-	STDMETHOD(EnumObjects)(LPDIENUMDEVICEOBJECTSCALLBACK callback, LPVOID ref, DWORD flags)	
+	STDMETHOD(EnumObjects)(LPDIENUMDEVICEOBJECTSCALLBACK callback, LPVOID ref, DWORD flags)
 	{
 		SendToLog("MyDirectDevice::EnumObjects");
 		return m_device->EnumObjects(callback, ref, flags);
@@ -88,7 +90,7 @@ public:
 
 		/*
 		You can detect immediate/buffered modes as such:
-		
+
 		HRESULT hr = m_device->SetProperty(rguid, ph);
 
 		if(SUCCEEDED(hr) && rguid == DIPROP_BUFFERSIZE)

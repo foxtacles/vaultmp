@@ -44,7 +44,7 @@ IDirect3D9* WINAPI Direct3DCreate9_Hooked(UINT SDKVersion)
 	IDirect3D9* tmp;
 	tmp=(*Direct3DCreate9_Original)(SDKVersion);
 	gl_pmyIDirect3D9 = new myIDirect3D9(tmp);
-	
+
 	SendToLog("Returning DX Pointer");
 
 	return gl_pmyIDirect3D9;
@@ -88,7 +88,7 @@ FARPROC WINAPI GetProcAddress_Hooked(HMODULE hModule,LPCSTR lpProcName)
 		SendToLog((char*)out.c_str());
 
 		FARPROC tmp=GetProcAddress_Original(hModule,lpProcName);
-		SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)&OnApplicationCrash);  
+		SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)&OnApplicationCrash);
 		DBB("GetProcAddress_Hooked("<<lpProcName<<")");
 		if(strcmp(lpProcName,"Direct3DCreate9")==0)
 		{
@@ -99,9 +99,11 @@ FARPROC WINAPI GetProcAddress_Hooked(HMODULE hModule,LPCSTR lpProcName)
         return tmp;
 }
 
-ATOM WINAPI RegisterClass_Hooked(
-  __in  const WNDCLASS *lpWndClass
-)
+#ifndef _MSC_VER
+ATOM WINAPI RegisterClass_Hooked(const WNDCLASS *lpWndClass)
+#else
+ATOM WINAPI RegisterClass_Hooked(__in  const WNDCLASS *lpWndClass)
+#endif // _MSC_VER
 {
 	SendToLog("RegisterClass_Hooked called");
 	WindowProcedure_Original=lpWndClass->lpfnWndProc;
@@ -122,13 +124,13 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 	SendToLog("CustomWindowProcedure called");
 
 	switch(message)
-	{	
+	{
 
 /*		case WM_MOUSEMOVE:
 			if(chatting)
 			{
 
-				int xPos = GET_X_LPARAM(lparam); 
+				int xPos = GET_X_LPARAM(lparam);
 				int yPos = GET_Y_LPARAM(lparam);
 				CEGUI::System::getSingleton().injectMousePosition(xPos,yPos);
 
@@ -141,7 +143,7 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 			if(chatting)
 			{
 
-				int xPos = GET_X_LPARAM(lparam); 
+				int xPos = GET_X_LPARAM(lparam);
 				int yPos = GET_Y_LPARAM(lparam);
 				CEGUI::System::getSingleton().injectMouseButtonDown(CEGUI::MouseButton::LeftButton);
 
@@ -152,7 +154,7 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 			if(chatting)
 			{
 				#ifdef USE_CEGUI
-				int xPos = GET_X_LPARAM(lparam); 
+				int xPos = GET_X_LPARAM(lparam);
 				int yPos = GET_Y_LPARAM(lparam);
 				CEGUI::System::getSingleton().injectMouseButtonUp(CEGUI::MouseButton::LeftButton);
 #endif
@@ -163,7 +165,7 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 			if(chatting)
 			{
 				#ifdef USE_CEGUI
-				int xPos = GET_X_LPARAM(lparam); 
+				int xPos = GET_X_LPARAM(lparam);
 				int yPos = GET_Y_LPARAM(lparam);
 				CEGUI::System::getSingleton().injectMouseButtonDoubleClick(CEGUI::MouseButton::LeftButton);
 #endif
@@ -173,32 +175,32 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 		case WM_CHAR:
 			switch((char)wparam)
 			{
-				case 0x08: 
-                    
-                    // Process a backspace. 
+				case 0x08:
+
+                    // Process a backspace.
 					/*if(chatting&&chatbox_text.length()>0)
 					{
 						chatbox_text.pop_back();
 					}*/
 					if(gData.chatting)
 						CEGUI::System::getSingleton().injectKeyDown(CEGUI::Key::Backspace);
-                     
-                    break; 
 
-				case VK_DELETE: 
+                    break;
+
+				case VK_DELETE:
 					if(gData.chatting)
 						CEGUI::System::getSingleton().injectKeyDown(CEGUI::Key::Delete);
 					break;
- 
-                case 0x0A: 
-                    
-                    // Process a linefeed. 
-                     
-                    break; 
- 
-                case 0x1B: 
-                    
-                    // Process an escape. 
+
+                case 0x0A:
+
+                    // Process a linefeed.
+
+                    break;
+
+                case 0x1B:
+
+                    // Process an escape.
 					if(GUI_OnMode&&gData.chatting)
 						GUI_OnMode(false);
 					chatbox_text="";
@@ -206,24 +208,24 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 					gData.disableMouseInput=false;
 					CEGUI::MouseCursor::getSingleton().hide();
 					((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("closeBTN"))->setAlpha(0);
-					
 
-                    
-                    break; 
- 
-                case 0x09: 
-                    
-                    // Process a tab. 
-                     
-                    break; 
-				
- 
-                case 0x0D: 
-                    
-                    // Process a carriage return. 
+
+
+                    break;
+
+                case 0x09:
+
+                    // Process a tab.
+
+                    break;
+
+
+                case 0x0D:
+
+                    // Process a carriage return.
 					if(gData.chatting)
 					{
-						
+
 						CEGUI::Editbox* edb = ((CEGUI::Editbox*)CEGUI::WindowManager::getSingleton().getWindow("Edit Box"));
 
 						if(edb->hasInputFocus())
@@ -249,8 +251,8 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 								GUI_OnMode(false);
 						}
 					}
-                     
-                    break; 
+
+                    break;
 
 				default:
 
@@ -282,9 +284,9 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 					if(GUI_OnMode)
 						GUI_OnMode(true);
 				}
-				
+
 			}
-			
+
 		break;
 
 		case WM_KEYDOWN:
@@ -292,10 +294,10 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 			switch((char)wparam)
 			{
 				case VK_ADD:
-					
+
 					break;
 				case VK_SUBTRACT:
-					
+
 					break;
 
 				case VK_DELETE:
@@ -356,16 +358,16 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 			}
 
 			break;
-		
+
 		case WM_KEYUP:
 
 			switch((char)wparam)
 			{
 				case VK_ADD:
-					
+
 					break;
 				case VK_SUBTRACT:
-					
+
 					break;
 
 				case VK_DELETE:
@@ -464,7 +466,7 @@ HRESULT WINAPI D3DXCreateTextureFromFileInMemory_Hook(LPDIRECT3DDEVICE9 pDevice,
 	if(lastTextureLoadedBackup!=0)
 		TextureHooking::registerTexture((char*)lastTextureLoadedBackup,*ppTexture);
 
-	
+
 	/*unsigned int textureHash=createHash((const char*)pSrcData,SrcDataSize);
 	sprintf(tmp,"textureDump/%u.png",textureHash);
 	D3DXSaveTextureToFile(tmp,D3DXIFF_PNG,(*ppTexture),NULL);*/
@@ -476,13 +478,23 @@ HRESULT WINAPI D3DXCreateTextureFromFileInMemory_Hook(LPDIRECT3DDEVICE9 pDevice,
 char* lastTextureLoaded=0;
 int loadTextureJmp=0xAA1070;
 
-__declspec(naked) void loadTextureHook()
+/*__declspec(naked)*/ void loadTextureHook()
 {
+    #ifndef _MSC_VER
+
+    #error I don't know how to port this correctly in GAS. I think need move it into pure assembly (MASM/FASM/NASM) code. This function must be naked?
+    asm(//"movl %%ebx, %1\n"
+        "jmp %0\n"
+        "ret\n"
+        :"=r"(lastTextureLoaded)
+        :"r"(loadTextureJmp));
+    #else
 	_asm
 	{
 		mov lastTextureLoaded,ebx
 		jmp loadTextureJmp
 	}
+    #endif // _MSC_VER
 }
 
 /*Some mess with player pointer data (FNV)*/

@@ -5,7 +5,9 @@
 #include "common.h"
 
 #include <shlwapi.h>
+#ifdef _MSC_VER
 #pragma comment(lib,"shlwapi.lib")
+#endif // _MSC_VER
 #include "shlobj.h"
 
 #include <sstream>
@@ -28,7 +30,7 @@ void ResetLog()
 	}
 }
 
-void SendToLog(char* str)
+void SendToLog(const char* str)
 {
 	TCHAR szPath[MAX_PATH];
 	if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, szPath)))

@@ -1,6 +1,7 @@
-#pragma once 
+#pragma once
 #include <windows.h>
 #include <d3d9.h>
+#include "VS_macro.h"
 #include "myIDirect3D9.h"
 #include "myIDirect3DDevice9.h"
 #include <fstream>
@@ -8,7 +9,9 @@
 #include "FormattedListboxTextItem.h"
 
 #include <shlwapi.h>
+#ifdef _MSC_VER
 #pragma comment(lib,"shlwapi.lib")
+#endif // _MSC_VER
 #include "shlobj.h"
 
 extern myIDirect3D9*       gl_pmyIDirect3D9;

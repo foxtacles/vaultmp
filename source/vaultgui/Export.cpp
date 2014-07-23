@@ -8,7 +8,7 @@
 #include "debug.h"
 #include "Export.h"
 
-#include "CEGUI/cegui/include/CEGUIUDim.h"
+#include "CEGUIUDim.h"
 #include "GUIHelper.h"
 
 extern myIDirect3DDevice9* gl_pmyIDirect3DDevice9;
@@ -91,7 +91,7 @@ bool GUI_CheckboxChanged(const CEGUI::EventArgs& e)
 		{
 			if(gData.sendCheckboxCallbacks)
 				GUIHelper::callbackPTR_OnCheckboxChange((char*)c->getName().c_str(),c->isSelected());
-			
+
 		}
 	}
 
@@ -273,7 +273,7 @@ extern "C"
 	{
 		GUIHelper::callbackPTR_OnTextChange=pt;
 	}
-	
+
 	__declspec(dllexport) void GUI_SetListboxSelectionChangedCallback(void (*pt)(char* name,char** text))
 	{
 		GUIHelper::callbackPTR_OnListboxSelectionChange=pt;
@@ -356,7 +356,7 @@ extern "C"
 				i--;
 			}
 		}
-		
+
 	}
 
 	__declspec(dllexport) void GUI_Listbox_SetItemText(char* name,char* itemID,char* newText)
@@ -381,7 +381,7 @@ extern "C"
 				if(itm->isSelected())
 					w->setItemSelectState(n,true);
 
-				
+
 				w->removeItem(itm);
 				break;
 			}
@@ -471,7 +471,7 @@ extern "C"
 			w->setSelected(checked);
 			gData.sendCheckboxCallbacks=true;
 		}
-		
+
 		if(GUIHelper::getWindow(name)->getType().compare("TaharezLook/RadioButton")==0)
 		{
 			CEGUI::RadioButton *w = ((CEGUI::RadioButton*)GUIHelper::getWindow(name));

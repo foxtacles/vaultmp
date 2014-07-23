@@ -2,7 +2,7 @@
 #include <fstream>
 #include <d3d9.h>
 #include <conio.h>
-
+#include "VS_macro.h"
 //#define TARGET_FUNCTION "GetModuleHandleW"
 #define IMPORT_TABLE_OFFSET 1
 
