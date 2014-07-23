@@ -606,16 +606,16 @@ void RefreshServerList()
 
 void SaveConfig(HWND hwnd)
 {
-    dictionary *conf = iniparser_load("vaultmp.ini");
-    char buf[255];
-    GetDlgItemText(hwnd, IDC_EDIT_LOGIN, buf, 254);
-    iniparser_set(conf, "general:name", buf);
-    GetDlgItemText(hwnd, IDC_EDIT_MASTER, buf, 254);
-    iniparser_set(conf, "general:master", buf);
-    FILE *file = fopen("vaultmp.ini", "w");
-    iniparser_dump_ini(conf, file);
-    fclose(file);
-    iniparser_freedict(conf);
+	dictionary *conf = iniparser_load("vaultmp.ini");
+	char buf[255];
+	GetDlgItemText(hwnd, IDC_EDIT_LOGIN, buf, 254);
+	iniparser_set(conf, "general:name", buf);
+	GetDlgItemText(hwnd, IDC_EDIT_MASTER, buf, 254);
+	iniparser_set(conf, "general:master", buf);
+	FILE *file = fopen("vaultmp.ini", "w");
+	iniparser_dump_ini(conf, file);
+	fclose(file);
+	niparser_freedict(conf);
 }
 
 int CALLBACK CompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
@@ -1131,7 +1131,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 			break;
 
 		case WM_DESTROY:
-		    SaveConfig(hwnd);
+			SaveConfig(hwnd);
 			PostQuitMessage(0);
 			break;
 
