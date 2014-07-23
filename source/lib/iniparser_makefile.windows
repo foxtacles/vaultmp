@@ -1,0 +1,32 @@
+#
+# iniparser Makefile
+#
+
+CC      = gcc
+AR	    = ar
+CFLAGS  = -O2 -fPIC -Wall -ansi -pedantic
+
+SHLD = ${CC} ${CFLAGS}
+LDSHFLAGS =
+LDFLAGS =
+
+RM      = cmd /c del /f
+
+
+COMPILE.c=$(CC) $(CFLAGS) -c
+.c.o:
+	$(COMPILE.c) -o $@ $<
+
+
+SRCS = iniparser\\src\\dictionary.c iniparser\\src\\iniparser.c
+
+OBJS = $(SRCS:.c=.o)
+
+
+default:	iniparser\\libiniparser.a
+
+iniparser\\libiniparser.a:	$(OBJS)
+	$(AR) -rv iniparser\\libiniparser.a $(OBJS)
+
+clean:
+	$(RM) $(OBJS)

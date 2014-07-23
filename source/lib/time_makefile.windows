@@ -1,0 +1,32 @@
+#
+# time Makefile
+#
+
+CC      = gcc
+AR	    = ar
+CFLAGS  = -O2 -fPIC -Wall -ansi -pedantic
+
+SHLD = ${CC} ${CFLAGS}
+LDSHFLAGS =
+LDFLAGS =
+
+RM      = cmd /c del /f
+
+
+COMPILE.c=$(CC) $(CFLAGS) -c
+.c.o:
+	$(COMPILE.c) -o $@ $<
+
+
+SRCS = time\\time64.c
+
+OBJS = $(SRCS:.c=.o)
+
+
+default:	time\\libtime64.a
+
+time\\libtime64.a:	$(OBJS)
+	$(AR) -rv time\\libtime64.a $(OBJS)
+
+clean:
+	$(RM) $(OBJS)
