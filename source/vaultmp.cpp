@@ -615,7 +615,7 @@ void SaveConfig(HWND hwnd)
 	FILE *file = fopen("vaultmp.ini", "w");
 	iniparser_dump_ini(conf, file);
 	fclose(file);
-	niparser_freedict(conf);
+	iniparser_freedict(conf);
 }
 
 int CALLBACK CompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
