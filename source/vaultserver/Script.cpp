@@ -1630,6 +1630,21 @@ bool Script::SetBaseName(NetworkID id, const char* name) noexcept
 	});
 }
 
+bool Script::PlaySound(NetworkID id, unsigned int sound)
+{
+	return GameFactory::Operate<Object, RETURN_VALIDATED>(id, [id, sound](Object*) {
+		if (!DB::Record::IsValidSound(sound))
+			return false;
+
+		Network::Queue({{
+			PacketFactory::Create<pTypes::ID_UPDATE_SOUND>(id, sound),
+			HIGH_PRIORITY, RELIABLE_ORDERED, CHANNEL_GAME, Client::GetNetworkList(nullptr)}
+		});
+
+		return true;
+	});
+}
+
 NetworkID Script::CreateItem(unsigned int baseID, unsigned int cell, double X, double Y, double Z) noexcept
 {
 	if (!DB::Record::IsValidCoordinate(cell, X, Y, Z))

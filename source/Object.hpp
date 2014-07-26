@@ -219,5 +219,6 @@ PF_MAKE(ID_UPDATE_CELL, pGeneratorReference, unsigned int, float, float, float)
 PF_MAKE(ID_UPDATE_LOCK, pGeneratorReference, unsigned int)
 PF_MAKE(ID_UPDATE_OWNER, pGeneratorReference, unsigned int)
 PF_MAKE(ID_UPDATE_ACTIVATE, pGeneratorReference, RakNet::NetworkID)
+PF_MAKE(ID_UPDATE_SOUND, pGeneratorReference, unsigned int)
 
 #endif

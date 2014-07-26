@@ -325,6 +325,7 @@ native Bool:SetCell(ID, cell, Float:X = 0.00, Float:Y = 0.00, Float:Z = 0.00);
 native Bool:SetLock(ID, actor, Lock:lock);
 native Bool:SetOwner(ID, owner);
 native Bool:SetBaseName(ID, const name{});
+native Bool:PlaySound(ID, sound);
 native CreateItem(item, cell = 0, Float:X = 0.00, Float:Y = 0.00, Float:Z = 0.00);
 native SetItemContainer(ID, container);
 native Bool:SetItemCount(ID, count);

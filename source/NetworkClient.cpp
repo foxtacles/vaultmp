@@ -481,6 +481,16 @@ NetworkResponse NetworkClient::ProcessPacket(Packet* data)
 					break;
 				}
 
+				case pTypes::ID_UPDATE_SOUND:
+				{
+					NetworkID id;
+					unsigned int sound;
+					PacketFactory::Access<pTypes::ID_UPDATE_SOUND>(packet, id, sound);
+					auto reference = GameFactory::Get<Object>(id);
+					Game::net_PlaySound(reference.get(), sound);
+					break;
+				}
+
 				case pTypes::ID_UPDATE_IDLE:
 				{
 					NetworkID id;

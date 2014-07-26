@@ -1992,6 +1992,11 @@ void Game::net_GetActivate(const FactoryReference& reference, const FactoryRefer
 	Activate(reference, actor);
 }
 
+void Game::net_PlaySound(const FactoryObject& reference, unsigned int sound)
+{
+	PlaySound(reference, sound);
+}
+
 void Game::net_SetItemCount(FactoryItem& reference, unsigned int count, bool silent)
 {
 	unsigned int old_count = reference->GetItemCount();

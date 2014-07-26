@@ -481,6 +481,10 @@ class Game
 		 */
 		static void net_GetActivate(const FactoryReference& reference, const FactoryReference& action);
 		/**
+		 * \brief Network function to handle Object sound
+		 */
+		static void net_PlaySound(const FactoryObject& reference, unsigned int sound);
+		/**
 		 * \brief Network function to handle Item count
 		 */
 		static void net_SetItemCount(FactoryItem& reference, unsigned int count, bool silent);
