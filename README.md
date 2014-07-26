@@ -21,13 +21,13 @@ All sources (except source/vaultgui) can be compiled with >=GCC 4.9 (std::thread
 * source/makefile (main application, Windows only)
 * source/vaultserver/makefile.windows (dedicated server, Windows)
 * source/vaultserver/makefile.unix (dedicated server, Linux)
-* source/vaultmaster/makefile (master server, Linux)
+* source/vaultmaster/makefile.windows (master server, Windows)
+* source/vaultmaster/makefile.unix (master server, Linux)
 * source/vaultscript/makefile (default C++ script, Linux)
 
 Code::Blocks project files are available for the parts for which there are no makefiles yet:
 
 * source/vaultmpdll/vaultmpDLL.cbp
-* source/vaultmaster/vaultmaster.cbp
 * source/vaultscript/vaultscript.cbp
 
 # Scripting
