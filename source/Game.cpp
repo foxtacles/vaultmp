@@ -268,6 +268,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func::EnableKey:
 			case Func::SetName:
 			case Func::PlaceAtMePrepare:
+			case Func::PlaySound_:
 				break;
 
 			default:
