@@ -269,6 +269,7 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func::SetName:
 			case Func::PlaceAtMePrepare:
 			case Func::PlaySound_:
+			case Func::PlaySound3D:
 				break;
 
 			default:
@@ -1360,6 +1361,16 @@ void Game::SetOwner(const FactoryObject& reference, unsigned int key)
 			Interface::ExecuteCommand(Func::SetOwnership, {object->GetReferenceParam(), RawParameter(owner)}, key);
 		});
 	}, key);
+}
+
+void Game::PlaySound(const FactoryObject& reference, unsigned int sound)
+{
+	if (!IsInContext(reference->GetNetworkCell()))
+		return;
+
+	Interface::Dynamic([&reference, sound]() {
+		Interface::ExecuteCommand(Func::PlaySound3D, {reference->GetReferenceParam(), RawParameter(sound)});
+	});
 }
 
 void Game::SetActorValue(const FactoryActor& reference, bool base, unsigned char index, unsigned int key)

@@ -272,6 +272,10 @@ class Game
 		 */
 		static void SetOwner(const FactoryObject& reference, unsigned int key = 0);
 		/**
+		 * \brief Plays a sound at an Object
+		 */
+		static void PlaySound(const FactoryObject& reference, unsigned int sound);
+		/**
 		 * \brief Sets an actor value of an Actor
 		 */
 		static void SetActorValue(const FactoryActor& reference, bool base, unsigned char index, unsigned int key = 0);

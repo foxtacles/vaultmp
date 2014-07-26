@@ -331,6 +331,7 @@ API::FunctionMap API::functions = {
 		{Func::GetLocked, "r"},
 		{Func::Activate, "roI"},
 		{Func::PlaySound_, "zI"},
+		{Func::PlaySound3D, "rz"},
 		{Func::CenterOnCell, "$s"},
 		{Func::CenterOnExterior, "$ii"},
 		{Func::SetINISetting, "$ss"},
