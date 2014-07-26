@@ -14,7 +14,7 @@ LIBDIR =
 LIB = -L..\\lib\\RakNet -L..\\lib\\amx -L..\\lib\\sqlite -L..\\lib\\iniparser -L..\\lib\\time
 LDFLAGS = -m32 -ltime64 -liniparser -lsqlite3 -lamx -lRakNet -lws2_32 -lwinmm -lm -lz -limagehlp -static
 
-INC_DEBUG = $(INC) -I..\\..\\listack_trace\\include
+INC_DEBUG = $(INC) -I..\\lib\stack_trace\\include
 CFLAGS_DEBUG = $(CFLAGS) -gstabs -DVAULTMP_DEBUG
 CFLAGSEXT_DEBUG = $(CFLAGSEXT) -DPACKAGE -DPACKAGE_VERSION
 RESINC_DEBUG = $(RESINC)

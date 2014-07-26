@@ -39,6 +39,7 @@ namespace DB
 
 			static bool IsValidCell(unsigned int baseID) noexcept;
 			static bool IsValidWeather(unsigned int baseID) noexcept;
+			static bool IsValidSound(unsigned int baseID) noexcept;
 			static bool IsValidCoordinate(unsigned int baseID, float X, float Y, float Z) noexcept;
 
 			unsigned int GetBase() const;
