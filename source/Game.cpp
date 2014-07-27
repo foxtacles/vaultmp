@@ -268,6 +268,8 @@ void Game::CommandHandler(unsigned int key, const vector<double>& info, double r
 			case Func::EnableKey:
 			case Func::SetName:
 			case Func::PlaceAtMePrepare:
+			case Func::PlaySound_:
+			case Func::PlaySound3D:
 				break;
 
 			default:
@@ -1361,6 +1363,16 @@ void Game::SetOwner(const FactoryObject& reference, unsigned int key)
 	}, key);
 }
 
+void Game::PlaySound(const FactoryObject& reference, unsigned int sound)
+{
+	if (!IsInContext(reference->GetNetworkCell()))
+		return;
+
+	Interface::Dynamic([&reference, sound]() {
+		Interface::ExecuteCommand(Func::PlaySound3D, {reference->GetReferenceParam(), RawParameter(sound)});
+	});
+}
+
 void Game::SetActorValue(const FactoryActor& reference, bool base, unsigned char index, unsigned int key)
 {
 	auto* actor = reference.operator->();
@@ -1978,6 +1990,11 @@ void Game::net_SetOwner(const FactoryObject& reference, unsigned int owner)
 void Game::net_GetActivate(const FactoryReference& reference, const FactoryReference& actor)
 {
 	Activate(reference, actor);
+}
+
+void Game::net_PlaySound(const FactoryObject& reference, unsigned int sound)
+{
+	PlaySound(reference, sound);
 }
 
 void Game::net_SetItemCount(FactoryItem& reference, unsigned int count, bool silent)

@@ -317,6 +317,7 @@ class Script
 		static bool SetLock(RakNet::NetworkID id, RakNet::NetworkID actor, unsigned int lock) noexcept;
 		static bool SetOwner(RakNet::NetworkID id, unsigned int owner) noexcept;
 		static bool SetBaseName(RakNet::NetworkID id, const char* name) noexcept;
+		static bool PlaySound(RakNet::NetworkID id, unsigned int sound);
 		static RakNet::NetworkID CreateItem(unsigned int baseID, unsigned int cell, double X, double Y, double Z) noexcept;
 		static RakNet::NetworkID SetItemContainer(RakNet::NetworkID id, RakNet::NetworkID container) noexcept;
 		static bool SetItemCount(RakNet::NetworkID id, unsigned int count) noexcept;
@@ -515,6 +516,7 @@ class Script
 			{"SetLock", Script::SetLock},
 			{"SetOwner", Script::SetOwner},
 			{"SetBaseName", Script::SetBaseName},
+			{"PlaySound", Script::PlaySound},
 			{"CreateItem", Script::CreateItem},
 			{"SetItemContainer", Script::SetItemContainer},
 			{"SetItemCount", Script::SetItemCount},

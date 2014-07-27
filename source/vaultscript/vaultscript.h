@@ -456,6 +456,7 @@ VAULTCPP(extern "C" {)
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetLock))(VAULTSPACE ID, VAULTSPACE ID, VAULTSPACE Lock) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetOwner))(VAULTSPACE ID, VAULTSPACE NPC_) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetBaseName))(VAULTSPACE ID, VAULTSPACE cRawString) VAULTCPP(noexcept);
+	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(PlaySound))(VAULTSPACE ID, VAULTSPACE SOUN) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(CreateItem))(VAULTSPACE Base, VAULTSPACE CELL, VAULTSPACE Value, VAULTSPACE Value, VAULTSPACE Value) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE ID (*VAULTAPI(SetItemContainer))(VAULTSPACE ID, VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE State (*VAULTAPI(SetItemCount))(VAULTSPACE ID, VAULTSPACE UCount) VAULTCPP(noexcept);
@@ -758,6 +759,7 @@ namespace vaultmp
 	VAULTFUNCTION State SetOwner(ID id, NPC_ owner) noexcept { return VAULTAPI(SetOwner)(id, owner); }
 	VAULTFUNCTION State SetBaseName(ID id, const String& name) noexcept { return VAULTAPI(SetBaseName)(id, name.c_str()); }
 	VAULTFUNCTION State SetBaseName(ID id, cRawString name) noexcept { return VAULTAPI(SetBaseName)(id, name); }
+	VAULTFUNCTION State PlaySound(ID id, SOUN sound) noexcept { return VAULTAPI(PlaySound)(id, sound); }
 
 	#define CreateItem_Template(type) \
 		VAULTFUNCTION ID CreateItem(type item, CELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateItem)(static_cast<Base>(item), cell, X, Y, Z); }
@@ -1064,6 +1066,7 @@ namespace vaultmp
 			State SetOwner(NPC_ owner) noexcept { return vaultmp::SetOwner(id, owner); }
 			State SetBaseName(const String& name) noexcept { return vaultmp::SetBaseName(id, name); }
 			State SetBaseName(cRawString name) noexcept { return vaultmp::SetBaseName(id, name); }
+			State PlaySound(SOUN sound) noexcept { return vaultmp::PlaySound(id, sound); }
 
 			#define Create_Template(type) \
 				static ID Create(type object, CELL cell, Value X, Value Y, Value Z) noexcept { return vaultmp::CreateObject(object, cell, X, Y, Z); }

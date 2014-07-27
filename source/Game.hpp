@@ -272,6 +272,10 @@ class Game
 		 */
 		static void SetOwner(const FactoryObject& reference, unsigned int key = 0);
 		/**
+		 * \brief Plays a sound at an Object
+		 */
+		static void PlaySound(const FactoryObject& reference, unsigned int sound);
+		/**
 		 * \brief Sets an actor value of an Actor
 		 */
 		static void SetActorValue(const FactoryActor& reference, bool base, unsigned char index, unsigned int key = 0);
@@ -476,6 +480,10 @@ class Game
 		 * \brief Network function to handle Object activate
 		 */
 		static void net_GetActivate(const FactoryReference& reference, const FactoryReference& action);
+		/**
+		 * \brief Network function to handle Object sound
+		 */
+		static void net_PlaySound(const FactoryObject& reference, unsigned int sound);
 		/**
 		 * \brief Network function to handle Item count
 		 */

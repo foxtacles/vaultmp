@@ -266,6 +266,8 @@ namespace Values
 		SetOwnership = 0x1117,
 		GetLocked = 0x1005,
 		Activate = 0x100D,
+		PlaySound_ = 0x1026,
+		PlaySound3D = 0x10B2,
 
 		Load = 0x014F,
 		CenterOnWorld = 0x0143,

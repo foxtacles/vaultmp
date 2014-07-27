@@ -330,6 +330,8 @@ API::FunctionMap API::functions = {
 		{Func::SetOwnership, "rF"},
 		{Func::GetLocked, "r"},
 		{Func::Activate, "roI"},
+		{Func::PlaySound_, "zI"},
+		{Func::PlaySound3D, "rz"},
 		{Func::CenterOnCell, "$s"},
 		{Func::CenterOnExterior, "$ii"},
 		{Func::SetINISetting, "$ss"},
@@ -658,6 +660,10 @@ vector<double> API::ParseCommand(const vector<string>& cmd, const char* def, uns
 				typecode = 0x00000023;
 				break;
 
+			case 'z': // Sound
+				typecode = 0x0000000C;
+				break;
+
 			case 'k': // Object ID base item
 				typecode = 0x00000032;
 				break;
@@ -696,6 +702,7 @@ vector<double> API::ParseCommand(const vector<string>& cmd, const char* def, uns
 			s (String, 2 byte, length, followed by chars) - 0x00000000
 			x (Control code, 4 byte, 0x6E) - 0x00000001
 			f (Owner, 2 byte, 0x72, stream) - 0x00000023
+			z (Sound, 2 byte, 0x72, stream) - 0x0000000C
 			r (Reference)
 
 			upper case means optional
@@ -738,6 +745,7 @@ vector<double> API::ParseCommand(const vector<string>& cmd, const char* def, uns
 			case 'y': // Race
 			case 'n': // Weather
 			case 'f': // Owner
+			case 'z': // Sound
 			{
 				if (refparam != 0x00)   // We don't support more than one refparam yet
 					throw VaultException("API::ParseCommand does only support one reference argument up until now").stacktrace();
