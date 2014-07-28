@@ -83,12 +83,6 @@
 			<Add directory=".." />
 			<Add directory="../stack_trace/include" />
 		</Compiler>
-		<Unit filename="../stack_trace/include/dbg/stack.hpp">
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../stack_trace/src/stack.cpp">
-			<Option target="debug" />
-		</Unit>
 		<Unit filename="AcReference.cpp" />
 		<Unit filename="AcReference.hpp" />
 		<Unit filename="BaseContainer.cpp" />
