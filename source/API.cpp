@@ -13,28 +13,28 @@ using namespace Values;
 API::CommandQueue API::queue;
 
 API::ValueMap API::axis = {
-    {"X", Axis_X},
-    {"Y", Axis_Y},
-    {"Z", Axis_Z},
+	{"X", Axis_X},
+	{"Y", Axis_Y},
+	{"Z", Axis_Z},
 };
 
 API::ValueMap API::anims = {
-    {"Idle", AnimGroup_Idle},
-    {"DynamicIdle", AnimGroup_DynamicIdle},
-    {"SpecialIdle", AnimGroup_SpecialIdle},
-    {"Forward", AnimGroup_Forward},
-    {"Backward", AnimGroup_Backward},
-    {"Left", AnimGroup_Left},
-    {"Right", AnimGroup_Right},
-    {"FastForward", AnimGroup_FastForward},
-    {"FastBackward", AnimGroup_FastBackward},
-    {"FastLeft", AnimGroup_FastLeft},
-    {"FastRight", AnimGroup_FastRight},
-    {"DodgeForward", AnimGroup_DodgeForward},
-    {"DodgeBack", AnimGroup_DodgeBack},
-    {"DodgeLeft", AnimGroup_DodgeLeft},
-    {"DodgeRight", AnimGroup_DodgeRight},
-    {"TurnLeft", AnimGroup_TurnLeft},
+	{"Idle", AnimGroup_Idle},
+	{"DynamicIdle", AnimGroup_DynamicIdle},
+	{"SpecialIdle", AnimGroup_SpecialIdle},
+	{"Forward", AnimGroup_Forward},
+	{"Backward", AnimGroup_Backward},
+	{"Left", AnimGroup_Left},
+	{"Right", AnimGroup_Right},
+	{"FastForward", AnimGroup_FastForward},
+	{"FastBackward", AnimGroup_FastBackward},
+	{"FastLeft", AnimGroup_FastLeft},
+	{"FastRight", AnimGroup_FastRight},
+	{"DodgeForward", AnimGroup_DodgeForward},
+	{"DodgeBack", AnimGroup_DodgeBack},
+	{"DodgeLeft", AnimGroup_DodgeLeft},
+	{"DodgeRight", AnimGroup_DodgeRight},
+	{"TurnLeft", AnimGroup_TurnLeft},
 	{"TurnRight", AnimGroup_TurnRight},
 	{"Aim", AnimGroup_Aim},
 	{"AimUp", AnimGroup_AimUp},
@@ -456,8 +456,8 @@ struct API::op_Arg5
 	param2_reference(0x00000000),
 	param2_unk4(0x00000000)
 	{
-        unsigned int** param1 = &this->param1;
-        unsigned int*** param2 = &this->param2;
+		unsigned int** param1 = &this->param1;
+		unsigned int*** param2 = &this->param2;
 
 		*param1 = (unsigned int*)((unsigned) &param1_reftext - (unsigned) &unk1);
 		*param2 = (unsigned int**)((unsigned) &param2_real - (unsigned) &unk1);
