@@ -357,11 +357,7 @@ vector<string> ActorFunctor::operator()()
 
 	NetworkID id = get();
 
-	if (id)
-	{
-
-	}
-	else
+	if (!id)
 	{
 		auto references = Game::GetContext(ID_ACTOR);
 

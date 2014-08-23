@@ -10,23 +10,19 @@ using namespace std;
 #ifdef VAULTMP_DEBUG
 string CriticalSection::thread_id(thread& t)
 {
-	string id;
-	stringstream s;
+	stringstream id;
 
-	s << t.get_id();
-	s >> id;
+	id << t.get_id();
 
-	return id;
+	return id.str();
 }
 
 string CriticalSection::thread_id()
 {
-	string id;
-	stringstream s;
+	stringstream id;
 
-	s << this_thread::get_id();
-	s >> id;
+	id << this_thread::get_id();
 
-	return id;
+	return id.str();
 }
 #endif
