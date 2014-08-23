@@ -2470,8 +2470,7 @@ void Game::net_SetBase(unsigned int playerBase)
 
 void Game::net_SetDeletedStatic(DeletedObjects&& deletedStatic)
 {
-	// move into lambda not possible
-	Game::deletedStatic.Operate([&deletedStatic](DeletedObjects& deletedStatic_) {
+	Game::deletedStatic.Operate([deletedStatic = move(deletedStatic)](DeletedObjects& deletedStatic_) {
 		deletedStatic_ = move(deletedStatic);
 	});
 }
