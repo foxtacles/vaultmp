@@ -124,11 +124,7 @@ Script::~Script()
 	}
 }
 
-#ifdef __WIN32__
-void Script::LoadScripts(char* scripts, char*)
-#else
 void Script::LoadScripts(char* scripts, char* base)
-#endif
 {
 	char* token = strtok(scripts, ",");
 
@@ -136,15 +132,9 @@ void Script::LoadScripts(char* scripts, char* base)
 	{
 		while (token)
 		{
-			// make_unique
-#ifdef __WIN32__
-			Script::scripts.emplace_back(new Script(token));
-#else
 			char path[MAX_PATH];
-			snprintf(path, sizeof(path), "%s/%s", base, token);
+			snprintf(path, sizeof(path), "%s/%s/%s", base, SCRIPTS_PATH, token);
 			Script::scripts.emplace_back(new Script(path));
-#endif
-
 			token = strtok(nullptr, ",");
 		}
 	}
