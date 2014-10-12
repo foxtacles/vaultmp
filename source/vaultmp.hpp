@@ -15,7 +15,7 @@
 static const unsigned int FALLOUT3_EN_VER17            =   0x00E59528;
 static const unsigned int FOSE_VER0122                 =   0x0004E1B5;
 static const unsigned int VAULTMP_DLL                  =   0x000368FD;
-static const unsigned int VAULTMP_F3                   =   0x5CC92F06;
+static const unsigned int VAULTMP_F3                   =   0x1C877592;
 static const unsigned int XLIVE_PATCH                  =   0x0000D57E;
 
 static const unsigned int MAX_PLAYER_NAME       =   16;

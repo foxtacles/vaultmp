@@ -3,11 +3,12 @@
 
 #include "vaultmp.hpp"
 
-#define MODFILES_PATH "mods"
-#define DATA_PATH "data"
-#define PWNFILES_PATH "AMXFILE=files"
-#define PWNFILES_KEY  "AMXFILE"
-#define PWNFILES_VAL  "files"
+#define MODFILES_PATH  "mods"
+#define SCRIPTS_PATH   "scripts"
+#define DATA_PATH      "data"
+#define PWNFILES_PATH  "AMXFILE=files"
+#define PWNFILES_KEY   "AMXFILE"
+#define PWNFILES_VAL   "files"
 
 #define DB_FALLOUT3 "fallout3.sqlite3"
 
