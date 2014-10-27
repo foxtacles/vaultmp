@@ -34,11 +34,11 @@
 		#define __cdecl __attribute__((__cdecl__))
 	#endif
 	#define VAULTVAR __attribute__ ((__visibility__("default")))
-	#define VAULTSCRIPT VAULTVAR __cdecl
 #else
 	#define VAULTVAR __declspec(dllexport)
-	#define VAULTSCRIPT VAULTVAR __cdecl
 #endif
+
+#define VAULTSCRIPT VAULTVAR __cdecl
 
 VAULTCPP(
 namespace vaultmp {
