@@ -50,7 +50,14 @@ HRESULT WINAPI D3DXCreateTextureFromFileInMemory_Hook(LPDIRECT3DDEVICE9 pDevice,
 
 extern char* lastTextureLoaded;
 extern int loadTextureJmp;
+#ifndef _MSC_VER
+asm ("_loadTextureHook: movl %ebx, _lastTextureLoaded\n"
+						"mov _loadTextureJmp, %eax\n"
+						"jmp %eax");
+extern "C" void loadTextureHook();
+#else
 void loadTextureHook();
+#endif
 
 extern int playerPointer;
 void playerPointerHook();

@@ -478,18 +478,7 @@ HRESULT WINAPI D3DXCreateTextureFromFileInMemory_Hook(LPDIRECT3DDEVICE9 pDevice,
 char* lastTextureLoaded=0;
 int loadTextureJmp=0xAA1070;
 
-#ifndef _MSC_VER
-void loadTextureHook()
-{
-
-    #error I don't know how to port this correctly in GAS. I think need move it into pure assembly (MASM/FASM/NASM) code. This function must be naked?
-    asm(//"movl %%ebx, %1\n"
-        "jmp %0\n"
-        "ret\n"
-        :"=r"(lastTextureLoaded)
-        :"r"(loadTextureJmp));
-}
-#else
+#ifdef _MSC_VER
 __declspec(naked) void loadTextureHook()
 {
 
