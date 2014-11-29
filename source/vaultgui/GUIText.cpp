@@ -3,9 +3,9 @@
 GUIText::GUIText( char* s , ID3DXFont* f )
 {
 	static char* colorsName[]={"red","blue","green","pink","black","white"};
-	static int colorsHex[]={0xFFFF0000,0xFF0000FF,0xFF00FF00,0xFFFF6EC7,0xFFFFFFFF,0xFF000000};
+	static unsigned colorsHex[]={0xFFFF0000,0xFF0000FF,0xFF00FF00,0xFFFF6EC7,0xFFFFFFFF,0xFF000000};
 
-	static int predefinedColorsHex[]={0xFFFF0000,0xFF0000FF,0xFF00FF00,0xFFFF6EC7,0xFFFFFFFF,0xFF000000};
+	static unsigned predefinedColorsHex[]={0xFFFF0000,0xFF0000FF,0xFF00FF00,0xFFFF6EC7,0xFFFFFFFF,0xFF000000};
 
 	int lastIndex=0;
 
@@ -19,12 +19,12 @@ GUIText::GUIText( char* s , ID3DXFont* f )
 	else
 		strcpy(str,s);
 
-	for(int i=0;i<strlen(str);i++)
+	for(unsigned i=0;i<strlen(str);i++)
 	{
 		if(str[i]=='$')
 		{
 			bool done=false;
-			for(int k=0;k<(sizeof(colorsName)/sizeof(char*));k++)
+			for(unsigned k=0;k<(sizeof(colorsName)/sizeof(char*));k++)
 			{
 				if(strncmp((str+i+1),colorsName[k],strlen(colorsName[k]))==0)
 				{
@@ -77,7 +77,7 @@ GUIText::GUIText( char* s , ID3DXFont* f )
 
 						color|=(val<<((2-k)*8));
 					}
-					
+
 					GUIColorChunk tmp;
 					tmp.color=color;
 					tmp.start=lastIndex;
@@ -104,7 +104,7 @@ GUIText::GUIText( char* s , ID3DXFont* f )
 	/*
 	2 - Calculate offsets
 	*/
-	for(int i=0;i<textChunks.size();i++)
+	for(unsigned i=0;i<textChunks.size();i++)
 	{
 		char tmp[512];
 		memset(tmp,0,sizeof(tmp));
@@ -115,7 +115,7 @@ GUIText::GUIText( char* s , ID3DXFont* f )
 		font_rect.bottom=200;
 
 
-		
+
 		if(i>0)
 		{
 			strncpy(tmp,str+textChunks[i-1].start,textChunks[i-1].end-textChunks[i-1].start);
@@ -132,7 +132,7 @@ GUIText::GUIText( char* s , ID3DXFont* f )
 		}
 		else
 		{
-			
+
 			textChunks[i].color=0xFF000000;
 			textChunks[i].offsetX=0;
 		}
@@ -152,7 +152,7 @@ GUIText::~GUIText()
 void GUIText::Draw( int xOff , int yOff , float mul )
 {
 	char tmp[512];
-	for(int i=0;i<textChunks.size();i++)
+	for(unsigned i=0;i<textChunks.size();i++)
 	{
 		memset(tmp,0,sizeof(tmp));
 		strncpy(tmp,str+textChunks[i].start,textChunks[i].end-textChunks[i].start);

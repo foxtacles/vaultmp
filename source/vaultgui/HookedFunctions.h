@@ -12,7 +12,7 @@
 #ifdef _MSC_VER
 #pragma comment(lib,"shlwapi.lib")
 #endif // _MSC_VER
-#include "shlobj.h"
+#include <shlobj.h>
 
 extern myIDirect3D9*       gl_pmyIDirect3D9;
 extern myIDirect3DDevice9* gl_pmyIDirect3DDevice9;

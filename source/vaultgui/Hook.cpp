@@ -122,7 +122,7 @@ HRESULT PatchIat(
         PtrFromRva( DosHeader,
           ImportDescriptor[ Index ].OriginalFirstThunk );
 
-      for ( ; OrigThunk->u1.Function != NULL;
+      for ( ; OrigThunk->u1.Function;
               OrigThunk++, Thunk++ )
       {
         if ( OrigThunk->u1.Ordinal & IMAGE_ORDINAL_FLAG )

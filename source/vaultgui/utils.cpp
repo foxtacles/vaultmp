@@ -10,7 +10,7 @@ bool Reversing_FunctionAlreadyCalled(string f,int c)
 {
 	if(c==0)
 	{
-		for(int i=0;i<mainMenu.size();i++)
+		for(unsigned i=0;i<mainMenu.size();i++)
 		{
 			if(mainMenu[i]==f)
 				return true;
@@ -18,7 +18,7 @@ bool Reversing_FunctionAlreadyCalled(string f,int c)
 	}
 	if(c==1)
 	{
-		for(int i=0;i<game.size();i++)
+		for(unsigned i=0;i<game.size();i++)
 		{
 			if(game[i]==f)
 				return true;
@@ -26,7 +26,7 @@ bool Reversing_FunctionAlreadyCalled(string f,int c)
 	}
 	if(c==2)
 	{
-		for(int i=0;i<menu.size();i++)
+		for(unsigned i=0;i<menu.size();i++)
 		{
 			if(menu[i]==f)
 				return true;
@@ -35,7 +35,7 @@ bool Reversing_FunctionAlreadyCalled(string f,int c)
 
 
 	return false;
-	
+
 }
 
 void Reversing_AddFunctionCall(string f,int c)

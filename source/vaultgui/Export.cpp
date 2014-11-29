@@ -63,7 +63,7 @@ bool GUI_ListboxSelectionChange(const CEGUI::EventArgs& e)
 	char **tmp=new char*[arr->size()+1];
 	tmp[arr->size()]=0;
 
-	for(int i=0;i<arr->size();i++)
+	for(unsigned  i=0;i<arr->size();i++)
 	{
 		tmp[i]=(char*)((*arr)[i].c_str());
 	}
@@ -347,7 +347,7 @@ extern "C"
 	{
 		CEGUI::Listbox *w = ((CEGUI::Listbox*)GUIHelper::getWindow(name));
 
-		for(int i=0;i<w->getItemCount();i++)
+		for(unsigned i=0;i<w->getItemCount();i++)
 		{
 			CEGUI::FormattedListboxTextItem* itm=(CEGUI::FormattedListboxTextItem*)w->getListboxItemFromIndex(i);
 			if(itm->getCustomID().compare(itemID)==0)
@@ -364,7 +364,7 @@ extern "C"
 		gData.sendListboxCallbacks=false;
 		CEGUI::Listbox *w = ((CEGUI::Listbox*)GUIHelper::getWindow(name));
 
-		for(int i=0;i<w->getItemCount();i++)
+		for(unsigned i=0;i<w->getItemCount();i++)
 		{
 			CEGUI::FormattedListboxTextItem* itm=(CEGUI::FormattedListboxTextItem*)w->getListboxItemFromIndex(i);
 			if(itm->getCustomID().compare(itemID)==0)
@@ -393,7 +393,7 @@ extern "C"
 		gData.sendListboxCallbacks=false;
 		CEGUI::Listbox *w = ((CEGUI::Listbox*)GUIHelper::getWindow(name));
 
-		for(int i=0;i<w->getItemCount();i++)
+		for(unsigned i=0;i<w->getItemCount();i++)
 		{
 			CEGUI::FormattedListboxTextItem* itm=(CEGUI::FormattedListboxTextItem*)w->getListboxItemFromIndex(i);
 			if(itm->getCustomID().compare(itemID)==0)
@@ -408,7 +408,7 @@ extern "C"
 	{
 		CEGUI::Listbox *w = ((CEGUI::Listbox*)GUIHelper::getWindow(name));
 
-		for(int i=0;i<w->getItemCount();i++)
+		for(unsigned i=0;i<w->getItemCount();i++)
 		{
 			CEGUI::FormattedListboxTextItem* itm=(CEGUI::FormattedListboxTextItem*)w->getListboxItemFromIndex(i);
 			if(itm->getCustomID().compare(itemID)==0)

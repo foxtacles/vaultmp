@@ -8,7 +8,7 @@ int DIPointers[2]={0,0};
 
 void RealityKeyDown(LPVOID ths, DWORD size, LPVOID data)
 {
-	char buf[150];
+	//char buf[150];
 	MyDirectDevice* dev=(MyDirectDevice*)ths;
 
 	if(ths!=(LPVOID)DIPointers[0])
@@ -25,7 +25,7 @@ void RealityKeyDown(LPVOID ths, DWORD size, LPVOID data)
 
 	if(memcmp(dev->dataFormat,&c_dfDIMouse,sizeof(DIDATAFORMAT)))
 	{
-		
+
 		DIMOUSESTATE *state=(DIMOUSESTATE*)data;
 		#ifdef USE_CEGUI
 		if(gData.chatting&&DIPointers[1]==(int)ths)
@@ -38,7 +38,7 @@ void RealityKeyDown(LPVOID ths, DWORD size, LPVOID data)
 					CEGUI::System::getSingleton().injectMouseButtonDown(CEGUI::MouseButton::LeftButton);
 				}
 				lastMouseState[0]=true;
-				
+
 			}
 			else if(lastMouseState[0])
 			{
@@ -51,7 +51,7 @@ void RealityKeyDown(LPVOID ths, DWORD size, LPVOID data)
 				CEGUI::System::getSingleton().injectMouseButtonDown(CEGUI::MouseButton::RightButton);
 			}
 		}
-#endif
+		#endif
 
 		if(gData.disableMouseInput)
 		{
@@ -86,7 +86,7 @@ void RealityKeyDown(LPVOID ths, DWORD size, LPVOID data)
 				CEGUI::System::getSingleton().injectMouseButtonDown(CEGUI::MouseButton::RightButton);
 			}*/
 		}
-#endif
+		#endif
 
 		if(gData.disableMouseInput)
 		{
@@ -94,7 +94,7 @@ void RealityKeyDown(LPVOID ths, DWORD size, LPVOID data)
 			state->lY=0;
 		}
 	}
-	
+
 	if(memcmp(dev->dataFormat,&c_dfDIKeyboard,sizeof(DIDATAFORMAT)))
 	{
 		//if (diKeys[DIK_ESCAPE] & 0x80) DoSomething();
@@ -122,7 +122,7 @@ void SimulateKeyDown(LPVOID ths, DWORD size, LPVOID data)
 		state->lX=0;
 		state->lY=0;*/
 	}
-	
+
 	if(memcmp(dev->dataFormat,&c_dfDIKeyboard,sizeof(DIDATAFORMAT)))
 	{
 		//if (diKeys[DIK_ESCAPE] & 0x80) DoSomething();
@@ -153,9 +153,9 @@ void SimulateKeyDown(LPVOID ths, DWORD size, LPVOID data)
 		/*wnd->setPosition(UVector2(cegui_reldim(0.01f), cegui_reldim( 0.01f)));
 		wnd->setSize(UVector2(cegui_reldim(0.35f), cegui_reldim( 0.30f)));*/
 
-		if(!gData.lockChatbox)
-		{
-			char* d=(char*)data;
+		/*if(!gData.lockChatbox)
+		{*/
+			//char* d=(char*)data;
 			/*if (d[DIK_NUMPAD9] & 0x80 && d[DIK_LSHIFT] & 0x80)
 			{
 				CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"));
@@ -203,7 +203,7 @@ void SimulateKeyDown(LPVOID ths, DWORD size, LPVOID data)
 				CEGUI::FrameWindow *w = ((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"));
 				w->setPosition(CEGUI::UVector2(cegui_reldim(0.01f), cegui_reldim( 1.0f-0.30f-0.01f)));
 			}*/
-		}
+		//}
 	}
 
 	//TaskManager::Update();

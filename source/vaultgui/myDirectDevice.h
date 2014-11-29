@@ -38,6 +38,11 @@ public:
 	{
 	}
 
+	virtual ~MyDirectDevice()
+	{
+
+	}
+
 	/*** IUnknown methods ***/
 	STDMETHOD(QueryInterface)(REFIID riid, void** ppvObj)
 	{

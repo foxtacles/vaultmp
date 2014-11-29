@@ -118,8 +118,8 @@ LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, L
 {
 	static string chatbox_text="";
 	/*static bool chatting=false;*/
-	static int maxV=0;
-	static char buff[100];
+	//static int maxV=0;
+	//static char buff[100];
 
 	SendToLog("CustomWindowProcedure called");
 
@@ -452,8 +452,8 @@ HRESULT WINAPI D3DXCreateTextureFromFileInMemory_Hook(LPDIRECT3DDEVICE9 pDevice,
 {
 	char* lastTextureLoadedBackup=lastTextureLoaded;
 	char tmp[300];
-	char *tmp2=(char*)pSrcData;
-	sprintf(tmp,"0x%x D3DXCreateTextureFromFileInMemory %s",_ReturnAddress(),lastTextureLoadedBackup);
+	//char *tmp2=(char*)pSrcData;
+	sprintf(tmp,"0x%x D3DXCreateTextureFromFileInMemory %s",(unsigned)_ReturnAddress(),(char*)lastTextureLoadedBackup);
 	SendToLog(tmp);
 
 	if(lastTextureLoadedBackup!=0)

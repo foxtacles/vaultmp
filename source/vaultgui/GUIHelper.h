@@ -11,7 +11,7 @@ namespace GUIHelper
 	struct ChatboxHistory
 	{
 		vector<string> history;
-		int historyIndex;
+		unsigned historyIndex;
 	};
 	extern ChatboxHistory chatboxHistory;
 	void chatboxHistory_Add(string);

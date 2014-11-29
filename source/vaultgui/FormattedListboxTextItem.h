@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CEGUI.h"
+#include <CEGUI.h>
 
 namespace CEGUI
 {

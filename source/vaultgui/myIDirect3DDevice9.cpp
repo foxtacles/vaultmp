@@ -156,7 +156,7 @@ myIDirect3DDevice9::myIDirect3DDevice9(IDirect3DDevice9* pOriginal)
 		wnd->setText("Chat Box");
 		wnd->setAlpha(0.9);
 		//wnd->setDragMovingEnabled(false);
-		
+
 		CEGUI::Editbox* editb=(CEGUI::Editbox*)winMgr.createWindow("TaharezLook/Editbox", "Edit Box");
 		editb->subscribeEvent(CEGUI::Window::EventKeyDown,GUIHelper::onKeyDown);
 		editb->setMaxTextLength(120);
@@ -164,7 +164,7 @@ myIDirect3DDevice9::myIDirect3DDevice9(IDirect3DDevice9* pOriginal)
 		editb->setText("");
 		editb->setSize(UVector2(cegui_reldim(1.0f), cegui_reldim( 0.15f)));
 		editb->setPosition(UVector2(cegui_reldim(0.0f), cegui_reldim( 0.85f)));
-		
+
 
 		CEGUI::Listbox* listb=(CEGUI::Listbox*)winMgr.createWindow("TaharezLook/Listbox", "List Box");
 		wnd->addChildWindow(listb);
@@ -193,82 +193,6 @@ myIDirect3DDevice9::myIDirect3DDevice9(IDirect3DDevice9* pOriginal)
 		closeBTN->setAlpha(0);
 
 		wnd->addChildWindow(closeBTN);
-
-		/*GUI_CreateFrameWindow("w1");
-		GUI_SetSize("w1",0.35,0.4,0,0);
-		GUI_SetPosition("w1",0.6,0.1,0,0);*/
-
-		/*GUI_AddRadioButton("w1","r",1);
-		GUI_SetPosition("r",0.0,0.0,0,0);
-		GUI_SetSize("r",1,0.1,0,0);
-		GUI_SetChecked("r",true);*/
-
-		/*GUI_AddRadioButton("w1","r2",1);
-		GUI_SetPosition("r2",0.0,0.1,0,0);
-		GUI_SetSize("r2",1,0.2,0,0);
-
-		GUI_AddRadioButton("w1","r3",1);
-		GUI_SetPosition("r3",0.0,0.2,0,0);
-		GUI_SetSize("r3",1,0.2,0,0);*/
-
-		/*GUI_AddStaticText("w1","st");
-		GUI_StaticText_SetAlign("st","RightAligned");
-		GUI_SetText("st","testtest\r\nblboblba\r\nasgatesttest\r\nblboblba\r\nasga");
-		GUI_SetPosition("st",0.0,0.1,0,0);
-		GUI_SetSize("st",1,0.7,0,0);*/
-
-		//GUI_SetTextColour("st","FFFF0000");
-
-		/*GUI_AddCheckbox("w1","c");
-		GUI_SetPosition("c",0.1,0.1,0,0);
-		GUI_Checkbox_SetChecked("c",true);*/
-
-
-		/*GUI_AddTextbox("w1","txt");
-		GUI_SetSize("txt",0.35,0.4,0,0);
-		GUI_SetPosition("txt",0.6,0.1,0,0);
-		GUI_Textbox_SetMaxLength("txt",12);
-		GUI_Textbox_SetValidationString("txt","[0-9]+");*/
-
-		/*GUI_AddListbox("w1","l");
-		GUI_SetSize("l",1,0.9,0,0);
-		GUI_SetPosition("l",0,0,0,0);
-
-		GUI_Listbox_AddItem("l","1","1");
-		GUI_Listbox_AddItem("l","2","2");
-		GUI_Listbox_AddItem("l","3","3");
-		GUI_Listbox_AddItem("l","4","4");
-		GUI_Listbox_SetItemSelected("l","3",true);
-		GUI_Listbox_SetItemText("l","3","12");*/
-		/*
-
-		GUI_Listbox_RemoveItem("l","7");
-
-		GUI_Listbox_EnableMultiSelect("l",true);
-
-		/*GUI_AddStaticText("w1","ctrl");
-		GUI_SetSize("ctrl",0.5,0.1,0,0);
-		GUI_SetPosition("ctrl",0,0.9,0,0);
-		GUI_SetText("ctrl","ctrl");
-		GUI_SetVisible("ctrl",false);*/
-
-		/*GUI_CreateFrameWindow("debugmain");
-		GUI_SetFrameWindowPosition("debugmain",0.75,0.05);
-		GUI_SetFrameWindowSize("debugmain",0.20,0.3);
-		GUI_AddStaticText("debugmain","debug");
-		GUI_SetText("debug","This is a static text");
-		GUI_SetPosition("debug",0,0);
-		GUI_SetSize("debug",1,0.4);
-
-		GUI_AddTextbox("debugmain","debug2");
-		GUI_SetText("debug2","This is a textbox");
-		GUI_SetPosition("debug2",0,0.4);
-		GUI_SetSize("debug2",1,0.3);
-
-		GUI_AddButton("debugmain","debug3");
-		GUI_SetText("debug3","This is a button");
-		GUI_SetPosition("debug3",0,0.7);
-		GUI_SetSize("debug3",1,0.3);*/
 
 		debug_TexturesCount=0;
 
@@ -305,13 +229,13 @@ HRESULT myIDirect3DDevice9::QueryInterface (REFIID riid, void** ppvObj)
     // check if original dll can provide interface. then send *our* address
 	*ppvObj = NULL;
 
-	HRESULT hRes = m_pIDirect3DDevice9->QueryInterface(riid, ppvObj); 
+	HRESULT hRes = m_pIDirect3DDevice9->QueryInterface(riid, ppvObj);
 
 	if (hRes == NOERROR)
 	{
 		*ppvObj = this;
 	}
-	
+
 	return hRes;
 }
 
@@ -327,7 +251,7 @@ ULONG myIDirect3DDevice9::Release(void)
 	extern myIDirect3DDevice9* gl_pmyIDirect3DDevice9;
 
 	ULONG count = m_pIDirect3DDevice9->Release();
-	
+
 	if(count==0)
 	{
 		gl_pmyIDirect3DDevice9 = NULL;
@@ -387,7 +311,7 @@ void    myIDirect3DDevice9::SetCursorPosition(int X,int Y,DWORD Flags)
 }
 
 BOOL    myIDirect3DDevice9::ShowCursor(BOOL bShow)
-{ 
+{
 	DB("myIDirect3DDevice9::ShowCursor");
 	/*if(bShow)
 		Reversing_AddDebug("myIDirect3DDevice9::ShowCursor(true)");
@@ -397,7 +321,7 @@ BOOL    myIDirect3DDevice9::ShowCursor(BOOL bShow)
     return(m_pIDirect3DDevice9->ShowCursor(bShow));
 }
 
-HRESULT myIDirect3DDevice9::CreateAdditionalSwapChain(D3DPRESENT_PARAMETERS* pPresentationParameters,IDirect3DSwapChain9** pSwapChain)  
+HRESULT myIDirect3DDevice9::CreateAdditionalSwapChain(D3DPRESENT_PARAMETERS* pPresentationParameters,IDirect3DSwapChain9** pSwapChain)
 { DB("myIDirect3DDevice9::CreateAdditionalSwapChain");
     return(m_pIDirect3DDevice9->CreateAdditionalSwapChain(pPresentationParameters,pSwapChain));
 }
@@ -414,7 +338,7 @@ UINT    myIDirect3DDevice9::GetNumberOfSwapChains(void)
 
 HRESULT myIDirect3DDevice9::Reset(D3DPRESENT_PARAMETERS* pPresentationParameters)
 { DB("myIDirect3DDevice9::Reset");
-	
+
     HRESULT t=(m_pIDirect3DDevice9->Reset(pPresentationParameters));
 	CEGUI::System::getSingleton().invalidateAllCachedRendering();
 	return t;
@@ -422,7 +346,7 @@ HRESULT myIDirect3DDevice9::Reset(D3DPRESENT_PARAMETERS* pPresentationParameters
 
 HRESULT myIDirect3DDevice9::Present(CONST RECT* pSourceRect,CONST RECT* pDestRect,HWND hDestWindowOverride,CONST RGNDATA* pDirtyRegion)
 { DB("myIDirect3DDevice9::Present");
-    
+
 #ifdef USE_CEGUI
 	if(gData.gameReady&&!gData.hideChatbox)
 	{
@@ -432,7 +356,7 @@ HRESULT myIDirect3DDevice9::Present(CONST RECT* pSourceRect,CONST RECT* pDestRec
 		if(gData.chatting)
 		{
 			((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"))->setAlpha(0.9);
-			
+
 		}
 		else
 		{
@@ -480,7 +404,7 @@ HRESULT myIDirect3DDevice9::Present(CONST RECT* pSourceRect,CONST RECT* pDestRec
 			{
 				((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"))->setAlpha(0.50);
 			}*/
-			else 
+			else
 				((CEGUI::FrameWindow*)CEGUI::WindowManager::getSingleton().getWindow("Main Window"))->setAlpha(0.40);
 		}
 
@@ -489,7 +413,7 @@ HRESULT myIDirect3DDevice9::Present(CONST RECT* pSourceRect,CONST RECT* pDestRec
 
 
 
-		
+
 		/*D3DXMATRIX world_matrix;
 		D3DXMatrixIdentity(&world_matrix);
 		D3DXMatrixTranslation(&world_matrix,20,20,10);
@@ -506,9 +430,9 @@ HRESULT myIDirect3DDevice9::Present(CONST RECT* pSourceRect,CONST RECT* pDestRec
 
 		pStateBlockBackup[1]->Apply();
 
-		
 
-		
+
+
 	}
 #endif
 
@@ -726,7 +650,7 @@ HRESULT myIDirect3DDevice9::GetDepthStencilSurface(IDirect3DSurface9** ppZStenci
 
 HRESULT myIDirect3DDevice9::BeginScene(void)
 { DB("myIDirect3DDevice9::BeginScene");
-	
+
     return(m_pIDirect3DDevice9->BeginScene());
 }
 
@@ -738,7 +662,7 @@ HRESULT myIDirect3DDevice9::EndScene(void)
 }
 
 HRESULT myIDirect3DDevice9::Clear(DWORD Count,CONST D3DRECT* pRects,DWORD Flags,D3DCOLOR Color,float Z,DWORD Stencil)
-{ 
+{
 	if(Flags==7)
 		grabMatrix=1;
 	DB("myIDirect3DDevice9::Clear");
@@ -748,7 +672,7 @@ HRESULT myIDirect3DDevice9::Clear(DWORD Count,CONST D3DRECT* pRects,DWORD Flags,
 }
 
 HRESULT myIDirect3DDevice9::SetTransform(D3DTRANSFORMSTATETYPE State,CONST D3DMATRIX* pMatrix)
-{ 
+{
 	if(State==D3DTS_PROJECTION)
 	{
 		if(grabMatrix==1)
@@ -763,7 +687,7 @@ HRESULT myIDirect3DDevice9::SetTransform(D3DTRANSFORMSTATETYPE State,CONST D3DMA
 		{
 			GameData::lastView=(*pMatrix);
 		}
-		
+
 	}
 
 	DB("myIDirect3DDevice9::SetTransform");
@@ -831,7 +755,7 @@ HRESULT myIDirect3DDevice9::GetClipPlane(DWORD Index,float* pPlane)
 }
 
 HRESULT myIDirect3DDevice9::SetRenderState(D3DRENDERSTATETYPE State,DWORD Value)
-{ 
+{
 	DB("myIDirect3DDevice9::SetRenderState()");
     return(m_pIDirect3DDevice9->SetRenderState(State, Value));
 }
@@ -873,7 +797,7 @@ HRESULT myIDirect3DDevice9::GetTexture(DWORD Stage,IDirect3DBaseTexture9** ppTex
 
 HRESULT myIDirect3DDevice9::SetTexture(DWORD Stage,IDirect3DBaseTexture9* pTexture)
 { DB("myIDirect3DDevice9::SetTexture");
-	
+
     return(m_pIDirect3DDevice9->SetTexture(Stage,pTexture));
 }
 
@@ -958,7 +882,7 @@ HRESULT myIDirect3DDevice9::DrawPrimitive(D3DPRIMITIVETYPE PrimitiveType,UINT St
 }
 
 HRESULT myIDirect3DDevice9::DrawIndexedPrimitive(D3DPRIMITIVETYPE PrimitiveType,INT BaseVertexIndex,UINT MinVertexIndex,UINT NumVertices,UINT startIndex,UINT primCount)
-{ 
+{
 	//DB2("myIDirect3DDevice9::DrawIndexedPrimitive () ");
 
 	/*if((unsigned int)_ReturnAddress()==0x879968)	//Disattiva la landscape
