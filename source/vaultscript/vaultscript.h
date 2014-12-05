@@ -14,19 +14,19 @@
 	#include <cstdint>
 	#include <climits>
 	#define VAULTFUNCTION inline static
-	#define VAULTAPI(name) c##name
+	#define VAULTAPI(...) c##__VA_ARGS__
 	#define VAULTAPI_PREFIX 'c'
 	#define VAULTSPACE vaultmp::
-	#define VAULTCPP(expr) expr
-	#define VAULTC(expr)
+	#define VAULTCPP(...) __VA_ARGS__
+	#define VAULTC(...)
 #else
 	#include <stdint.h>
 	#include <limits.h>
-	#define VAULTAPI(name) name
+	#define VAULTAPI(...) __VA_ARGS__
 	#define VAULTAPI_PREFIX '\0'
 	#define VAULTSPACE
-	#define VAULTCPP(expr)
-	#define VAULTC(expr) expr
+	#define VAULTCPP(...)
+	#define VAULTC(...) __VA_ARGS__
 #endif
 
 #ifndef __WIN32__
