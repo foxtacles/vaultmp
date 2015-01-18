@@ -438,7 +438,7 @@ namespace vaultmp
 	State DestroyItemList(ID id) noexcept { return VAULTAPI(DestroyItemList)(id); }
 
 	#define AddItem_Template(type) \
-				ID AddItem(ID id, type item, UCount count, Value condition, State silent) noexcept { return vaultmp::AddItem(id, item, count, condition, silent); }
+				ID AddItem(ID id, type item, UCount count, Value condition, State silent) noexcept { return VAULTAPI(AddItem)(id, static_cast<Base>(item), count, condition, silent); }
 			AddItem_Template(Base);
 			AddItem_Template(ALCH);
 			AddItem_Template(AMMO);
@@ -483,6 +483,14 @@ namespace vaultmp
 	Void SetActorValue(ID id, ActorValue index, Value value) noexcept { return VAULTAPI(SetActorValue)(id, index, value); }
 	Void SetActorBaseValue(ID id, ActorValue index, Value value) noexcept { return VAULTAPI(SetActorBaseValue)(id, index, value); }
 
+	#define EquipItem_Template(type) \
+		VAULTFUNCTION State EquipItem(ID id, type item, State silent, State stick) noexcept { return VAULTAPI(EquipItem)(id, static_cast<Base>(item), silent, stick); }
+	EquipItem_Template(Base);
+	EquipItem_Template(ARMA);
+	EquipItem_Template(ARMO);
+	EquipItem_Template(WEAP);
+	#undef EquipItem_Template
+	
 	State PlayIdle(ID id, IDLE idle) noexcept { return VAULTAPI(PlayIdle)(id, idle); }
 	State SetActorMovingAnimation(ID id, Index anim) noexcept { return VAULTAPI(SetActorMovingAnimation)(id, anim); }
 	State SetActorWeaponAnimation(ID id, Index anim) noexcept { return VAULTAPI(SetActorWeaponAnimation)(id, anim); }
