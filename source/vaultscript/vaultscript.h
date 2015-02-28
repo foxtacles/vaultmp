@@ -310,9 +310,8 @@ namespace vaultmp {
 VAULTCPP(})
 
 VAULTCPP(extern "C" {)
-
 	VAULTC(VAULTVAR VAULTSPACE RawChar vaultprefix = VAULTAPI_PREFIX;)
-		
+
 	VAULTSCRIPT VAULTSPACE Void OnCreate(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void OnDestroy(VAULTSPACE ID) VAULTCPP(noexcept);
 	VAULTSCRIPT VAULTSPACE Void OnSpawn(VAULTSPACE ID) VAULTCPP(noexcept);
@@ -351,7 +350,7 @@ VAULTCPP(extern "C" {)
 	VAULTCPP(extern) VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(MakePublic))(VAULTSPACE RawFunction(), VAULTSPACE cRawString, VAULTSPACE cRawString) VAULTCPP(noexcept);
 	VAULTCPP(extern) VAULTSCRIPT VAULTSPACE Result (*VAULTAPI(CallPublic))(VAULTSPACE cRawString, ...) VAULTCPP(noexcept);
 	VAULTCPP(extern) VAULTSCRIPT VAULTSPACE State (*VAULTAPI(IsPAWN))(VAULTSPACE cRawString) VAULTCPP(noexcept);
-	
+
 	VAULTCPP(extern) VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetServerName))(VAULTSPACE cRawString) VAULTCPP(noexcept);
 	VAULTCPP(extern) VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetServerMap))(VAULTSPACE cRawString) VAULTCPP(noexcept);
 	VAULTCPP(extern) VAULTSCRIPT VAULTSPACE Void (*VAULTAPI(SetServerRule))(VAULTSPACE cRawString, VAULTSPACE cRawString) VAULTCPP(noexcept);
@@ -569,34 +568,34 @@ namespace vaultmp
 	VAULTFUNCTION Timer CreateTimer(Function<> function, Interval interval) noexcept ;
 
 	template<typename... Types>
-		Timer CreateTimerEx(Function<Types...> function, Interval interval, Types... values) noexcept {
-				cRawString types = TypeString<Types...>::value;
-				return VAULTAPI(CreateTimerEx)(reinterpret_cast<Function<>>(function), interval, types, values...);
-		}
-		
-		template<typename... Types>
-		Void MakePublic(Function<Types...> function, const String& name) noexcept {
-				cRawString types = TypeString<Types...>::value;
-				return VAULTAPI(MakePublic)(reinterpret_cast<Function<>>(function), name.c_str(), types);
-		}
+	Timer CreateTimerEx(Function<Types...> function, Interval interval, Types... values) noexcept {
+		cRawString types = TypeString<Types...>::value;
+		return VAULTAPI(CreateTimerEx)(reinterpret_cast<Function<>>(function), interval, types, values...);
+	}
 
-		template<typename... Types>
-		Void MakePublic(Function<Types...> function, cRawString name) noexcept {
-				cRawString types = TypeString<Types...>::value;
-				return VAULTAPI(MakePublic)(reinterpret_cast<Function<>>(function), name, types);
-		}
+	template<typename... Types>
+	Void MakePublic(Function<Types...> function, const String& name) noexcept {
+		cRawString types = TypeString<Types...>::value;
+		return VAULTAPI(MakePublic)(reinterpret_cast<Function<>>(function), name.c_str(), types);
+	}
 
-		template<typename... Types>
-		Result CallPublic(const String& name, Types... values) noexcept {
-				static_assert(TypeString<Types...>::value != nullptr, "Unsupported type in variadic type list");
-				return VAULTAPI(CallPublic)(name.c_str(), values...);
-		}
+	template<typename... Types>
+	Void MakePublic(Function<Types...> function, cRawString name) noexcept {
+		cRawString types = TypeString<Types...>::value;
+		return VAULTAPI(MakePublic)(reinterpret_cast<Function<>>(function), name, types);
+	}
 
-		template<typename... Types>
-		Result CallPublic(cRawString name, Types... values) noexcept {
-				static_assert(TypeString<Types...>::value != nullptr, "Unsupported type in variadic type list");
-				return VAULTAPI(CallPublic)(name, values...);
-		}
+	template<typename... Types>
+	Result CallPublic(const String& name, Types... values) noexcept {
+		static_assert(TypeString<Types...>::value != nullptr, "Unsupported type in variadic type list");
+		return VAULTAPI(CallPublic)(name.c_str(), values...);
+	}
+
+	template<typename... Types>
+	Result CallPublic(cRawString name, Types... values) noexcept {
+		static_assert(TypeString<Types...>::value != nullptr, "Unsupported type in variadic type list");
+		return VAULTAPI(CallPublic)(name, values...);
+	}
 
 	VAULTFUNCTION Void KillTimer(Timer timer = static_cast<Timer>(0)) noexcept;
 
@@ -780,7 +779,7 @@ namespace vaultmp
 	VAULTFUNCTION State SetItemCondition(ID id, Value condition) noexcept;
 	VAULTFUNCTION State SetItemEquipped(ID id, State equipped, State silent = True, State stick = False) noexcept;
 	VAULTFUNCTION ID CreateContainer(CONT container, CELL cell, Value X, Value Y, Value Z) noexcept;
-		
+
 	struct AddItem_Initializer {
 		Base item;
 		UCount count;

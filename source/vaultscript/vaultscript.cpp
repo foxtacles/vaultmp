@@ -206,7 +206,6 @@ extern "C" {
 
 namespace vaultmp
 {
-
 	State operator!(State state) { return state ? False : True; }
 
 	GlobalChat Chat;
@@ -215,8 +214,6 @@ namespace vaultmp
 	Timer CreateTimer(Function<> function, Interval interval) noexcept { return VAULTAPI(CreateTimer)(function, interval); }
 
 	Void KillTimer(Timer timer) noexcept { return VAULTAPI(KillTimer)(timer); }
-
-
 
 	State IsPAWN(const String& name) noexcept { return VAULTAPI(IsPAWN)(name.c_str()); }
 	State IsPAWN(cRawString name) noexcept { return VAULTAPI(IsPAWN)(name); }
@@ -280,9 +277,9 @@ namespace vaultmp
 	UCount GetConnection(ID id) noexcept { return VAULTAPI(GetConnection)(id); }
 	UCount GetCount(Type type) noexcept { return VAULTAPI(GetCount)(type); }
 	IDVector GetList(Type type) noexcept {
-			RawArray<ID> data;
-			UCount size = VAULTAPI(GetList)(type, &data);
-			return size ? IDVector(data, data + size) : IDVector();
+		RawArray<ID> data;
+		UCount size = VAULTAPI(GetList)(type, &data);
+		return size ? IDVector(data, data + size) : IDVector();
 	}
 	Interval GetRespawnTime() noexcept { return VAULTAPI(GetRespawnTime)(); }
 	CELL GetSpawnCell() noexcept { return VAULTAPI(GetSpawnCell)(); }
@@ -313,7 +310,7 @@ namespace vaultmp
 	State GetItemStick(ID id) noexcept { return VAULTAPI(GetItemStick)(id); }
 
 	#define GetContainerItemCount_Template(type) \
-			UCount GetContainerItemCount(ID id, type item) noexcept { return VAULTAPI(GetContainerItemCount)(id, static_cast<Base>(item)); }
+		UCount GetContainerItemCount(ID id, type item) noexcept { return VAULTAPI(GetContainerItemCount)(id, static_cast<Base>(item)); }
 	GetContainerItemCount_Template(Base);
 	GetContainerItemCount_Template(ALCH);
 	GetContainerItemCount_Template(AMMO);
@@ -328,9 +325,9 @@ namespace vaultmp
 
 	UCount GetContainerItemCount(ID id) noexcept { return VAULTAPI(GetContainerItemCount)(id, static_cast<Base>(0)); }
 	IDVector GetContainerItemList(ID id) noexcept {
-			RawArray<ID> data;
-			UCount size = VAULTAPI(GetContainerItemList)(id, &data);
-			return size ? IDVector(data, data + size) : IDVector();
+		RawArray<ID> data;
+		UCount size = VAULTAPI(GetContainerItemList)(id, &data);
+		return size ? IDVector(data, data + size) : IDVector();
 	}
 	Value GetActorValue(ID id, ActorValue index) noexcept { return VAULTAPI(GetActorValue)(id, index); }
 	Value GetActorBaseValue(ID id, ActorValue index) noexcept { return VAULTAPI(GetActorBaseValue)(id, index); }
@@ -348,14 +345,14 @@ namespace vaultmp
 	State GetPlayerConsoleEnabled(ID id) noexcept { return VAULTAPI(GetPlayerConsoleEnabled)(id); }
 	UCount GetPlayerWindowCount(ID id) noexcept { return VAULTAPI(GetPlayerWindowCount)(id); }
 	IDVector GetPlayerWindowList(ID id) noexcept {
-			RawArray<ID> data;
-			UCount size = VAULTAPI(GetPlayerWindowList)(id, &data);
-			return size ? IDVector(data, data + size) : IDVector();
+		RawArray<ID> data;
+		UCount size = VAULTAPI(GetPlayerWindowList)(id, &data);
+		return size ? IDVector(data, data + size) : IDVector();
 	}
 	ID GetPlayerChatboxWindow(ID id) noexcept { return VAULTAPI(GetPlayerChatboxWindow)(id); }
 
 	#define CreateObject_Template(type) \
-			ID CreateObject(type object, CELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateObject)(static_cast<Base>(object), cell, X, Y, Z); }
+		ID CreateObject(type object, CELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateObject)(static_cast<Base>(object), cell, X, Y, Z); }
 	CreateObject_Template(Base);
 	CreateObject_Template(DOOR);
 	CreateObject_Template(TERM);
@@ -363,7 +360,7 @@ namespace vaultmp
 	#undef CreateObject_Template
 
 	#define CreateVolatile_Template(type) \
-			State CreateVolatile(ID id, type object, Value aX, Value aY, Value aZ) noexcept { return VAULTAPI(CreateVolatile)(id, static_cast<Base>(object), aX, aY, aZ); }
+		State CreateVolatile(ID id, type object, Value aX, Value aY, Value aZ) noexcept { return VAULTAPI(CreateVolatile)(id, static_cast<Base>(object), aX, aY, aZ); }
 	CreateVolatile_Template(Base);
 	CreateVolatile_Template(PROJ);
 	CreateVolatile_Template(EXPL);
@@ -381,7 +378,7 @@ namespace vaultmp
 	State PlaySound(ID id, SOUN sound) noexcept { return VAULTAPI(PlaySound)(id, sound); }
 
 	#define CreateItem_Template(type) \
-			ID CreateItem(type item, CELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateItem)(static_cast<Base>(item), cell, X, Y, Z); }
+		ID CreateItem(type item, CELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateItem)(static_cast<Base>(item), cell, X, Y, Z); }
 	CreateItem_Template(Base);
 	CreateItem_Template(ALCH);
 	CreateItem_Template(AMMO);
@@ -404,77 +401,76 @@ namespace vaultmp
 	ID CreateItemList(Base source) noexcept { return VAULTAPI(CreateItemList)(static_cast<ID>(0), source); }
 
 	ID CreateItemList(std::initializer_list<ID> source) noexcept {
-			ID result = VAULTAPI(CreateItemList)(static_cast<ID>(0), static_cast<Base>(0));
+		ID result = VAULTAPI(CreateItemList)(static_cast<ID>(0), static_cast<Base>(0));
 
-			for (auto id : source)
-					VAULTAPI(AddItemList)(result, id, static_cast<Base>(0));
+		for (auto id : source)
+			VAULTAPI(AddItemList)(result, id, static_cast<Base>(0));
 
-			return result;
+		return result;
 	}
 
 	ID CreateItemList(std::initializer_list<Base> source) noexcept {
-			ID result = VAULTAPI(CreateItemList)(static_cast<ID>(0), static_cast<Base>(0));
+		ID result = VAULTAPI(CreateItemList)(static_cast<ID>(0), static_cast<Base>(0));
 
-			for (auto base : source)
-					VAULTAPI(AddItemList)(result, static_cast<ID>(0), base);
+		for (auto base : source)
+			VAULTAPI(AddItemList)(result, static_cast<ID>(0), base);
 
-			return result;
+		return result;
 	}
 
 	ID CreateItemList(std::initializer_list<AddItem_Initializer> source) noexcept {
-			ID result = VAULTAPI(CreateItemList)(static_cast<ID>(0), static_cast<Base>(0));
+		ID result = VAULTAPI(CreateItemList)(static_cast<ID>(0), static_cast<Base>(0));
 
-			for (const auto& item : source)
-			{
-					VAULTAPI(AddItem)(result, item.item, item.count, item.condition, item.silent);
+		for (const auto& item : source)
+		{
+			VAULTAPI(AddItem)(result, item.item, item.count, item.condition, item.silent);
 
-					if (item.equipped)
-							VAULTAPI(EquipItem)(result, item.item, item.silent, item.stick);
-			}
+			if (item.equipped)
+				VAULTAPI(EquipItem)(result, item.item, item.silent, item.stick);
+		}
 
-			return result;
+		return result;
 	}
 
 	State DestroyItemList(ID id) noexcept { return VAULTAPI(DestroyItemList)(id); }
 
 	#define AddItem_Template(type) \
-				ID AddItem(ID id, type item, UCount count, Value condition, State silent) noexcept { return VAULTAPI(AddItem)(id, static_cast<Base>(item), count, condition, silent); }
-			AddItem_Template(Base);
-			AddItem_Template(ALCH);
-			AddItem_Template(AMMO);
-			AddItem_Template(ARMA);
-			AddItem_Template(ARMO);
-			AddItem_Template(ENCH);
-			AddItem_Template(KEYM);
-			AddItem_Template(MISC);
-			AddItem_Template(NOTE);
-			AddItem_Template(WEAP);
+		ID AddItem(ID id, type item, UCount count, Value condition, State silent) noexcept { return VAULTAPI(AddItem)(id, static_cast<Base>(item), count, condition, silent); }
+	AddItem_Template(Base);
+	AddItem_Template(ALCH);
+	AddItem_Template(AMMO);
+	AddItem_Template(ARMA);
+	AddItem_Template(ARMO);
+	AddItem_Template(ENCH);
+	AddItem_Template(KEYM);
+	AddItem_Template(MISC);
+	AddItem_Template(NOTE);
+	AddItem_Template(WEAP);
 	#undef AddItem_Template
 
 	Void AddItem(ID id, std::initializer_list<AddItem_Initializer> source) noexcept {
-			for (const auto& item : source)
-			{
-					VAULTAPI(AddItem)(id, item.item, item.count, item.condition, item.silent);
+		for (const auto& item : source)
+		{
+			VAULTAPI(AddItem)(id, item.item, item.count, item.condition, item.silent);
 
-					if (item.equipped)
-							VAULTAPI(EquipItem)(id, item.item, item.silent, item.stick);
-			}
+			if (item.equipped)
+				VAULTAPI(EquipItem)(id, item.item, item.silent, item.stick);
+		}
 	}
 
 	Void AddItemList(ID id, ID source) noexcept { return VAULTAPI(AddItemList)(id, source, static_cast<Base>(0)); }
 
 	#define AddItemList_Template(type) \
-			Void AddItemList(ID id, type source) noexcept { return VAULTAPI(AddItemList)(id, static_cast<ID>(0), static_cast<Base>(source)); }
+		Void AddItemList(ID id, type source) noexcept { return VAULTAPI(AddItemList)(id, static_cast<ID>(0), static_cast<Base>(source)); }
 	AddItemList_Template(Base);
 	AddItemList_Template(NPC_);
 	AddItemList_Template(CREA);
 	#undef AddItemList_Template
 
-
 	Void RemoveAllItems(ID id) noexcept { return VAULTAPI(RemoveAllItems)(id); }
 
 	#define CreateActor_Template(type) \
-			ID CreateActor(type actor, CELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateActor)(static_cast<Base>(actor), cell, X, Y, Z); }
+		ID CreateActor(type actor, CELL cell, Value X, Value Y, Value Z) noexcept { return VAULTAPI(CreateActor)(static_cast<Base>(actor), cell, X, Y, Z); }
 	CreateActor_Template(Base);
 	CreateActor_Template(NPC_);
 	CreateActor_Template(CREA);
@@ -490,7 +486,7 @@ namespace vaultmp
 	EquipItem_Template(ARMO);
 	EquipItem_Template(WEAP);
 	#undef EquipItem_Template
-	
+
 	State PlayIdle(ID id, IDLE idle) noexcept { return VAULTAPI(PlayIdle)(id, idle); }
 	State SetActorMovingAnimation(ID id, Index anim) noexcept { return VAULTAPI(SetActorMovingAnimation)(id, anim); }
 	State SetActorWeaponAnimation(ID id, Index anim) noexcept { return VAULTAPI(SetActorWeaponAnimation)(id, anim); }
@@ -512,9 +508,9 @@ namespace vaultmp
 	ID GetWindowRoot(ID id) noexcept { return VAULTAPI(GetWindowRoot)(id); }
 	UCount GetWindowChildCount(ID id) noexcept { return VAULTAPI(GetWindowChildCount)(id); }
 	IDVector GetWindowChildList(ID id) noexcept {
-			RawArray<ID> data;
-			UCount size = VAULTAPI(GetWindowChildList)(id, &data);
-			return size ? IDVector(data, data + size) : IDVector();
+		RawArray<ID> data;
+		UCount size = VAULTAPI(GetWindowChildList)(id, &data);
+		return size ? IDVector(data, data + size) : IDVector();
 	}
 	Void GetWindowPos(ID id, Value& X, Value& Y, Value& offset_X, Value& offset_Y) noexcept { return VAULTAPI(GetWindowPos)(id, &X, &Y, &offset_X, &offset_Y); }
 	Void GetWindowSize(ID id, Value& X, Value& Y, Value& offset_X, Value& offset_Y) noexcept { return VAULTAPI(GetWindowSize)(id, &X, &Y, &offset_X, &offset_Y); }
@@ -529,15 +525,15 @@ namespace vaultmp
 	State GetListMultiSelect(ID id) noexcept { return VAULTAPI(GetListMultiSelect)(id); }
 	UCount GetListItemCount(ID id) noexcept { return VAULTAPI(GetListItemCount)(id); }
 	IDVector GetListItemList(ID id) noexcept {
-			RawArray<ID> data;
-			UCount size = VAULTAPI(GetListItemList)(id, &data);
-			return size ? IDVector(data, data + size) : IDVector();
+		RawArray<ID> data;
+		UCount size = VAULTAPI(GetListItemList)(id, &data);
+		return size ? IDVector(data, data + size) : IDVector();
 	}
 	UCount GetListSelectedItemCount(ID id) noexcept { return VAULTAPI(GetListSelectedItemCount)(id); }
 	IDVector GetListSelectedItemList(ID id) noexcept {
-			RawArray<ID> data;
-			UCount size = VAULTAPI(GetListSelectedItemList)(id, &data);
-			return size ? IDVector(data, data + size) : IDVector();
+		RawArray<ID> data;
+		UCount size = VAULTAPI(GetListSelectedItemList)(id, &data);
+		return size ? IDVector(data, data + size) : IDVector();
 	}
 	ID GetListItemContainer(ID id) noexcept { return VAULTAPI(GetListItemContainer)(id); }
 	State GetListItemSelected(ID id) noexcept { return VAULTAPI(GetListItemSelected)(id); }
