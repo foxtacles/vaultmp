@@ -49,6 +49,7 @@
 			<Add option="-static" />
 		</Linker>
 		<Unit filename="records.h" />
+		<Unit filename="vaultplugin.cpp" />
 		<Unit filename="vaultscript.cpp" />
 		<Unit filename="vaultscript.h" />
 		<Extensions>
