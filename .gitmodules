@@ -7,3 +7,6 @@
 [submodule "source/lib/packet"]
 	path = source/lib/packet
 	url = https://github.com/foxtacles/serialization.git
+[submodule "source/lib/RakNet"]
+	path = source/lib/RakNet
+	url = https://github.com/OculusVR/RakNet.git
