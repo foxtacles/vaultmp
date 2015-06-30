@@ -12,7 +12,7 @@ CFLAGS =
 CFLAGSEXT = 
 
 INC_RELEASE = $(INC)
-CFLAGS_RELEASE = $(CFLAGS) -O2 -D_RAKNET_LIB -DNDEBUG
+CFLAGS_RELEASE = $(CFLAGS) -O2 -D_RAKNET_LIB -DNDEBUG -D_TCHAR_DEFINED
 CFLAGSEXT_RELEASE = $(CFLAGSEXT)
 OBJDIR_RELEASE = $(OBJ_DIR)/Release
 DEP_RELEASE =
@@ -25,6 +25,7 @@ RD = rm -rf
 DEL = $(RD)
 MKDIR = mkdir -p
 FixPath= $1
+COPY = cp
 
 ifneq ($(shell uname -s), Linux)
 	ifneq ($(shell uname -o), Cygwin)
@@ -33,6 +34,7 @@ ifneq ($(shell uname -s), Linux)
 			RD = rd /s/q
 			DEL = del /q
 			MKDIR = md
+			COPY = copy
 			CFLAGSEXT_RELEASE = $(CFLAGSEXT) -DWIN32
 		endif
 	endif
