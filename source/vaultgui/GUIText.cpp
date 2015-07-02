@@ -1,8 +1,8 @@
 #include "GUIText.h"
 
-GUIText::GUIText( char* s , ID3DXFont* f )
+GUIText::GUIText(const char* s , ID3DXFont* f )
 {
-	static char* colorsName[]={"red","blue","green","pink","black","white"};
+	static const char* colorsName[]={"red","blue","green","pink","black","white"};
 	static unsigned colorsHex[]={0xFFFF0000,0xFF0000FF,0xFF00FF00,0xFFFF6EC7,0xFFFFFFFF,0xFF000000};
 
 	static unsigned predefinedColorsHex[]={0xFFFF0000,0xFF0000FF,0xFF00FF00,0xFFFF6EC7,0xFFFFFFFF,0xFF000000};

@@ -53,7 +53,6 @@ IDirect3D9* WINAPI Direct3DCreate9_Hooked(UINT SDKVersion)
 LONG OnApplicationCrash(LPEXCEPTION_POINTERS p)
 {
 	//Exception handler
-	//char* exstr=ExceptionToString(p->ExceptionRecord);
 	SendToLog("EXCEPTION!");
 	SendToLog(ExceptionToString(p->ExceptionRecord));
 

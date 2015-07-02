@@ -313,10 +313,6 @@ void    myIDirect3DDevice9::SetCursorPosition(int X,int Y,DWORD Flags)
 BOOL    myIDirect3DDevice9::ShowCursor(BOOL bShow)
 {
 	DB("myIDirect3DDevice9::ShowCursor");
-	/*if(bShow)
-		Reversing_AddDebug("myIDirect3DDevice9::ShowCursor(true)");
-	else
-		Reversing_AddDebug("myIDirect3DDevice9::ShowCursor(false)");*/
 
     return(m_pIDirect3DDevice9->ShowCursor(bShow));
 }
@@ -1073,7 +1069,3 @@ HRESULT myIDirect3DDevice9::CreateQuery(D3DQUERYTYPE Type,IDirect3DQuery9** ppQu
 { DB("myIDirect3DDevice9::CreateQuery");
     return(m_pIDirect3DDevice9->CreateQuery(Type,ppQuery));
 }
-
-
-
-

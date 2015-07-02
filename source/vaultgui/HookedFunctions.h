@@ -39,7 +39,7 @@ HRESULT WINAPI DirectInput8Create_Hooked(HINSTANCE hinst, DWORD dwVersion, REFII
 HMODULE WINAPI LoadLibrary_Hooked(LPCTSTR lpFileName);
 
 FARPROC WINAPI GetProcAddress_Hooked(HMODULE hModule,LPCSTR lpProcName);
-HRESULT PatchIat(HMODULE Module,PSTR ImportedModuleName,PSTR ImportedProcName,PVOID AlternateProc,PVOID *OldProc);
+HRESULT PatchIat(HMODULE Module, LPCSTR ImportedModuleName, LPCSTR ImportedProcName,PVOID AlternateProc,PVOID *OldProc);
 ATOM (WINAPI RegisterClass_Hooked)(const WNDCLASS *lpWndClass);
 LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
 

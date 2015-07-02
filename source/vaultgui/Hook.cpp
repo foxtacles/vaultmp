@@ -54,8 +54,8 @@ void HookCall(BYTE* orig,BYTE* hook,int length)
 #ifndef _MSC_VER
 HRESULT PatchIat(
   HMODULE Module,
-  PSTR ImportedModuleName,
-  PSTR ImportedProcName,
+  LPCSTR ImportedModuleName,
+  LPCSTR ImportedProcName,
   PVOID AlternateProc,
   PVOID *OldProc
   )

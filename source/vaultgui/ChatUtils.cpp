@@ -46,8 +46,4 @@ void ParseChatText(string& p)
  	myReplace(p,"$navy","[colour='FF000080']");
  	myReplace(p,"$fuchsia","[colour='FFFF00FF']");
  	myReplace(p,"$purple","[colour='FF800080']");
-	
-
-
-	//p=p.replace("$red","[colour='FF0000']");
 }
