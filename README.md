@@ -1,3 +1,5 @@
+This project is no longer being maintained. This video demonstrates the latest state of the mod: https://www.youtube.com/watch?v=x_vShp_YdjE
+
 # Vault-Tec Multiplayer Mod
 
 *Vault-Tec Multiplayer Mod* ("VaultMP") is a multiplayer mod for the PC version of Bethesda's award-winning role-playing game [Fallout 3](http://en.wikipedia.org/wiki/Fallout_3 "Fallout 3"). It's currently in development, but is going to support the following:
@@ -12,7 +14,7 @@ The main goal is to enable players to roam the open world of the wasteland and e
 
 # The application
 
-![Application structure](http://www.brickster.net/files/vaultmp/structure.png "Application structure")
+![Application structure](https://raw.githubusercontent.com/foxtacles/vaultmp/master/other/arch.png "Application structure")
 
 # Compilation
 
