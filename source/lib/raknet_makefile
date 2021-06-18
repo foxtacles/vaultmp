@@ -1,0 +1,77 @@
+SRC_DIR = RakNet/Source
+OBJ_DIR = .objs/RakNet
+
+CC = gcc
+CXX = g++
+AR = ar
+LD = g++
+
+
+INC = -I.
+CFLAGS =
+CFLAGSEXT = 
+
+INC_RELEASE = $(INC)
+CFLAGS_RELEASE = $(CFLAGS) -O2 -D_RAKNET_LIB -DNDEBUG -D_TCHAR_DEFINED
+CFLAGSEXT_RELEASE = $(CFLAGSEXT)
+OBJDIR_RELEASE = $(OBJ_DIR)/Release
+DEP_RELEASE =
+OUT_RELEASE = $(SRC_DIR)/../libRakNet.a
+
+CPP_FILES = $(wildcard $(SRC_DIR)/*.cpp)
+OBJ_RELEASE = $(addprefix $(OBJDIR_RELEASE)/,$(notdir $(CPP_FILES:.cpp=.o)))
+
+RD = rm -rf
+DEL = $(RD)
+MKDIR = mkdir -p
+FixPath= $1
+COPY = cp
+
+ifneq ($(shell uname -s), Linux)
+	ifneq ($(shell uname -o), Cygwin)
+		ifneq ($(shell uname -o), Msys)
+			FixPath = $(subst /,\,$1)
+			RD = rd /s/q
+			DEL = del /q
+			MKDIR = md
+			COPY = copy
+			CFLAGSEXT_RELEASE = $(CFLAGSEXT) -DWIN32
+		endif
+	endif
+endif
+
+all: release
+
+clean: clean_release
+
+before_release:
+ifneq ($(wildcard $(OBJDIR_RELEASE)/.*),)
+	echo "Found " $(OBJDIR_RELEASE)
+else
+	$(MKDIR) $(call FixPath,$(OBJDIR_RELEASE))
+endif
+
+after_release:
+ifneq ($(wildcard $(call FixPath,$(SRC_DIR)/../*.h)),)
+	echo "Skipping copying..."
+else
+	$(COPY) $(call FixPath,$(SRC_DIR)/*.h) $(call FixPath,$(SRC_DIR)/..)
+endif
+	
+release: before_release out_release after_release
+
+out_release: $(OBJ_RELEASE) $(DEP_RELEASE)
+	$(AR) -rv $(OUT_RELEASE) $(OBJ_RELEASE)
+
+$(OBJDIR_RELEASE)/%.o: $(SRC_DIR)/%.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(CFLAGSEXT_RELEASE) $(INC_RELEASE) -c $< -o $@
+
+clean_release:
+ifneq ($(wildcard $(call FixPath,$(OUT_RELEASE))),)
+	$(DEL) $(call FixPath,$(OUT_RELEASE)) 
+endif
+ifneq ($(wildcard $(call FixPath,$(SRC_DIR)/../*.h)),)
+	$(DEL) $(call FixPath,$(SRC_DIR)/../*.h)
+endif
+
+.PHONY: before_release after_release clean_release
