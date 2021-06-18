@@ -24,7 +24,7 @@ class GUIText
 
 	string overflowingText;
 public:
-	GUIText(char*,ID3DXFont*);
+	GUIText(const char*,ID3DXFont*);
 	~GUIText();
 	void Draw( int xOff , int yOff , float mul );
 };

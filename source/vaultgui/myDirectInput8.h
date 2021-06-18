@@ -8,7 +8,10 @@ public:
 	MyDirectInput8(IDirectInput8* di) : m_di(di)
 	{
 	}
-
+	virtual ~MyDirectInput8()
+	{
+		Release();
+	}
 	/*** IUnknown methods ***/
     HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObj)
 	{

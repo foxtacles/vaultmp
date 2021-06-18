@@ -1,4 +1,4 @@
-#include "CEGUI\cegui\include\CEGUI.h"
+#include "CEGUI.h"
 
 #include "common.h"
 
@@ -11,7 +11,7 @@ namespace GUIHelper
 	struct ChatboxHistory
 	{
 		vector<string> history;
-		int historyIndex;
+		unsigned historyIndex;
 	};
 	extern ChatboxHistory chatboxHistory;
 	void chatboxHistory_Add(string);

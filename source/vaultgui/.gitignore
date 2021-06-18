@@ -1,8 +1,7 @@
-ipch
-Release
-vaultgui
-
-*.sdf
+bin
+*.depend
+*.cscope_file_list
+*.layout
 /taskManager.cpp
 /taskManager.h
 /tasks.cpp

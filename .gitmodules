@@ -7,3 +7,6 @@
 [submodule "source/lib/packet"]
 	path = source/lib/packet
 	url = https://github.com/foxtacles/serialization.git
+[submodule "source/lib/CEGUI"]
+	path = source/lib/CEGUI
+	url = https://github.com/Koncord/CEGUI.git

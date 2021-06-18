@@ -17,9 +17,8 @@ namespace GUIHelper
 	{
 		if(chatboxHistory.history.size()==0)
 			return "";
-		chatboxHistory.historyIndex--;
-		if(chatboxHistory.historyIndex<0)
-			chatboxHistory.historyIndex=0;
+		if(chatboxHistory.historyIndex > 0)
+			chatboxHistory.historyIndex--;
 		return chatboxHistory.history[chatboxHistory.historyIndex];
 	}
 
@@ -35,7 +34,7 @@ namespace GUIHelper
 		return chatboxHistory.history[chatboxHistory.historyIndex];
 	}
 
-	
+
 
 	/*
 	*********************Handlers********************************
@@ -59,7 +58,7 @@ namespace GUIHelper
 		CEGUI::WindowEventArgs *ev=(CEGUI::WindowEventArgs*)&e;
 		return false;
 	}
-	
+
 	bool onKeyDown(const CEGUI::EventArgs& e)
 	{
 		CEGUI::KeyEventArgs *ev=(CEGUI::KeyEventArgs*)&e;

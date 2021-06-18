@@ -1,6 +1,7 @@
-#pragma once 
+#pragma once
 #include <windows.h>
 #include <d3d9.h>
+#include "VS_macro.h"
 #include "myIDirect3D9.h"
 #include "myIDirect3DDevice9.h"
 #include <fstream>
@@ -8,8 +9,10 @@
 #include "FormattedListboxTextItem.h"
 
 #include <shlwapi.h>
+#ifdef _MSC_VER
 #pragma comment(lib,"shlwapi.lib")
-#include "shlobj.h"
+#endif // _MSC_VER
+#include <shlobj.h>
 
 extern myIDirect3D9*       gl_pmyIDirect3D9;
 extern myIDirect3DDevice9* gl_pmyIDirect3DDevice9;
@@ -36,7 +39,7 @@ HRESULT WINAPI DirectInput8Create_Hooked(HINSTANCE hinst, DWORD dwVersion, REFII
 HMODULE WINAPI LoadLibrary_Hooked(LPCTSTR lpFileName);
 
 FARPROC WINAPI GetProcAddress_Hooked(HMODULE hModule,LPCSTR lpProcName);
-HRESULT PatchIat(HMODULE Module,PSTR ImportedModuleName,PSTR ImportedProcName,PVOID AlternateProc,PVOID *OldProc);
+HRESULT PatchIat(HMODULE Module, LPCSTR ImportedModuleName, LPCSTR ImportedProcName,PVOID AlternateProc,PVOID *OldProc);
 ATOM (WINAPI RegisterClass_Hooked)(const WNDCLASS *lpWndClass);
 LRESULT CALLBACK CustomWindowProcedure(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
 
@@ -47,7 +50,14 @@ HRESULT WINAPI D3DXCreateTextureFromFileInMemory_Hook(LPDIRECT3DDEVICE9 pDevice,
 
 extern char* lastTextureLoaded;
 extern int loadTextureJmp;
+#ifndef _MSC_VER
+asm ("_loadTextureHook: movl %ebx, _lastTextureLoaded\n"
+						"mov _loadTextureJmp, %eax\n"
+						"jmp %eax");
+extern "C" void loadTextureHook();
+#else
 void loadTextureHook();
+#endif
 
 extern int playerPointer;
 void playerPointerHook();

@@ -1,7 +1,5 @@
 #pragma once
 
-#define USE_CEGUI
-
 #include <d3d9.h>
 #include <d3dx9.h>
 
@@ -27,17 +25,17 @@ struct PlayerScreenName
 
 #include "GameData.h"
 #include "global.h"
-#include "taskManager.h"
+//#include "taskManager.h"
 
 #include "debug.h"
 
 #ifdef USE_CEGUI
 
-	#include "CEGUI\cegui\include\CEGUI.h"
-	#include "CEGUI\cegui\include\RendererModules\Direct3D9\CEGUIDirect3D9Renderer.h"
-	#include "CEGUI\cegui\include\CEGUISystem.h"
-	#include "CEGUI\cegui\include\CEGUISchemeManager.h"
-	#include "CEGUI\cegui\include\CEGUIcolour.h"
+	#include "CEGUI.h"
+	#include "RendererModules\Direct3D9\CEGUIDirect3D9Renderer.h"
+	#include "CEGUISystem.h"
+	#include "CEGUISchemeManager.h"
+	#include "CEGUIcolour.h"
 	#include "FormattedListboxTextItem.h"
 
 #endif
@@ -45,7 +43,7 @@ struct PlayerScreenName
 #define IsHex(a) ((a>='0'&&a<='9')||(a>='A'&&a<='F')||(a>='a'&&a<='f'))
 
 void ResetLog();
-void SendToLog(char* str);
+void SendToLog(const char* str);
 char* ExceptionToString(PEXCEPTION_RECORD p);
 bool GetScreenPosition(D3DXVECTOR2& ScreenPosition, float& Distance, D3DXVECTOR3 PositionOffset);
 void CreateDevice(LPVOID ths, BOOL isKeyboard);

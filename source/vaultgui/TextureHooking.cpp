@@ -10,7 +10,7 @@ namespace TextureHooking
 {
 	vector<registeredTexture> textures;
 
-	char* loadingScreen="";
+	//char* loadingScreen="";
 
 	void hookTextureIfNecessary(char* path,char** data,int* size)
 	{
@@ -49,8 +49,8 @@ namespace TextureHooking
 			textureHookCount++;
 			SendToLog("Hooked!");
 		}
-		
-		
+
+
 	}
 
 	void registerTexture(char* path,void* ptr)
@@ -59,7 +59,7 @@ namespace TextureHooking
 		tmp.path=path;
 		tmp.ptr=ptr;
 		textures.push_back(tmp);
-		
+
 		if(strnicmp(path,"Data\\Textures\\interface\\icons\\typeicons\\hot_keys_icon_ammoswap.dds",strlen("Data\\Textures\\interface\\icons\\typeicons\\hot_keys_icon_ammoswap.dds"))==0)
 		{
 			//exit(0);
